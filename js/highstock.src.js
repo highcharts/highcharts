@@ -9058,12 +9058,14 @@ Pointer.prototype = {
 
 		// common IE normalizing
 		e = e || win.event;
-		if (!e.target) {
-			e.target = e.srcElement;
-		}
 
 		// Framework specific normalizing (#1165)
 		e = washMouseEvent(e);
+
+		// More IE normalizing, needs to go after washMouseEvent
+		if (!e.target) {
+			e.target = e.srcElement;
+		}
 		
 		// iOS
 		ePos = e.touches ? e.touches.item(0) : e;

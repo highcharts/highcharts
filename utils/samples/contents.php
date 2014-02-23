@@ -234,7 +234,7 @@
 							$batchClass = 'batch';
 							$compareClass = '';
 							if (preg_match('/^[a-z0-9\-,]+$/', $innerFile)) {
-								$yaml = file_get_contents(($samplesDir ."/$dir/$file/$innerFile/demo.details"));
+								$yaml = @file_get_contents(($samplesDir ."/$dir/$file/$innerFile/demo.details"));
 								$path = "$dir/$file/$innerFile";
 								$suffix = '';
 								$dissIndex = '';

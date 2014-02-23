@@ -7,7 +7,7 @@ define('FRAMEWORK', 'jQuery');
 
 require_once('functions.php');
 
-$path = $_GET['path'];
+@$path = $_GET['path'];
 if (!preg_match('/^[a-z]+\/[a-z\-]+\/[a-z0-9\-,]+$/', $path)) {
 	die ('Invalid sample path input');
 }
@@ -20,7 +20,7 @@ $fullpath = dirname(__FILE__) . '/../../samples/' . $path;
 
 // Get HTML and use dev server
 ob_start();
-include("$fullpath/demo.html");
+@include("$fullpath/demo.html");
 $httpHost = $_SERVER['HTTP_HOST'];
 $httpHost = explode('.', $httpHost);
 $topDomain = $httpHost[sizeof($httpHost) - 1];

@@ -34,7 +34,7 @@ $(function () {
         };
 
         csv = csv.split(/\n/);
-        
+
         var countries = {},
             mapChart,
             countryChart,
@@ -43,8 +43,8 @@ $(function () {
             categories = CSVtoArray(csv[1]).slice(4);
 
         // Parse the CSV into arrays, one array each country
-        $.each(csv.splice(2), function () {
-            var row = CSVtoArray(this),
+        $.each(csv.slice(2), function (j, line) {
+            var row = CSVtoArray(line),
                 data = row.slice(4);
 
             $.each(data, function (i, val) {
@@ -173,9 +173,8 @@ $(function () {
                 while (countryChart.series.length > points.length) {
                     countryChart.series[countryChart.series.length - 1].remove(false);
                 }
-
-
                 countryChart.redraw();
+
             } else {
                 $('#info #flag').attr('class', '');
                 $('#info h2').html('');
