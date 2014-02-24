@@ -44,7 +44,9 @@
 		return !!this.points.length; /* != 0 */
 	}
 
-	seriesTypes.pie.prototype.hasData = hasDataPie;
+	if (seriesTypes.pie) {
+		seriesTypes.pie.prototype.hasData = hasDataPie;
+	}
 
 	if (seriesTypes.gauge) {
 		seriesTypes.gauge.prototype.hasData = hasDataPie;

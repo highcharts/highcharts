@@ -1197,7 +1197,9 @@ Chart.prototype = {
 		}
 		each(chart.series, function (serie) {
 			serie.translate();
-			serie.setTooltipPoints();
+			if (serie.setTooltipPoints) {
+				serie.setTooltipPoints();
+			}
 			serie.render();
 		});
 
