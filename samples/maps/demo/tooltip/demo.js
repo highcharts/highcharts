@@ -31,7 +31,7 @@ $(function () {
             },
         
             tooltip: {
-                backgroundColor: null,
+                backgroundColor: 'none',
                 borderWidth: 0,
                 shadow: false,
                 useHTML: true,

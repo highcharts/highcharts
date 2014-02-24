@@ -23,7 +23,12 @@ $(function () {
                     dataLabels: {
                         enabled: true,
                         color: 'white',
-                        format: '{point.properties.WB_A2}',
+                        formatter: function () {
+                            if (this.point.properties.LABELRANK.toString() < 5) {
+                                return this.point.properties.WB_A2;
+                            }
+                        },
+                        format: null,
                         style: {
                             fontWeight: 'bold',
                             textShadow: '0 0 3px black'

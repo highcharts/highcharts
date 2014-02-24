@@ -38,6 +38,7 @@ $(function () {
             },
             
             series : [{
+                animation: true,
                 data : data,
                 mapData: Highcharts.maps.us,
                 joinBy: 'code',
