@@ -1,9 +1,5 @@
 /* Support for touch devices */
-
-/* set the global to determine if we're dealing with a touch based device */
-hasTouch = doc.documentElement.ontouchstart !== UNDEFINED;
-
-extend(Highcharts.Pointer, {
+extend(Highcharts.Pointer.prototype, {
 
 	/**
 	 * Run translation operations

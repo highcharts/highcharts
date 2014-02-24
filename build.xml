@@ -305,6 +305,7 @@
             <file name="parts/LogarithmicAxis.js"/>
             <file name="parts/Tooltip.js"/>
             <file name="parts/Pointer.js"/>
+            <file name="parts/TouchPointer.js"/>
             <file name="parts/MSPointer.js"/>
             <file name="parts/Legend.js"/>
             <file name="parts/Chart.js"/>

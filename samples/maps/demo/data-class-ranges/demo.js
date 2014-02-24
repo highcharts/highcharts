@@ -11,7 +11,6 @@ $(function () {
         
         // custom handler when the spreadsheet is parsed
         parsed: function (columns) {
-            console.log(columns)
             
             // Read the columns into the data array
             var data = [];
@@ -43,14 +42,17 @@ $(function () {
                 
                 legend: {
                     title: {
-                        text: 'Individuals per km²'
+                        text: 'Individuals per km²',
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.textColor) || 'black'
+                        }
                     },
                     align: 'left',
                     verticalAlign: 'bottom',
                     floating: true,
                     layout: 'vertical',
                     valueDecimals: 0,
-                    backgroundColor: 'rgba(255,255,255,0.9)',
+                    backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || 'rgba(255, 255, 255, 0.85)',
                     symbolRadius: 0,
                     symbolHeight: 14
                 },

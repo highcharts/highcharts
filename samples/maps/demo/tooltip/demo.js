@@ -16,7 +16,10 @@ $(function () {
             
             legend: {
                 title: {
-                    text: 'Population density per km²'
+                    text: 'Population density per km²',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.textColor) || 'black'
+                    }
                 }
             },
 
@@ -28,7 +31,7 @@ $(function () {
             },
         
             tooltip: {
-                backgroundColor: 'white',
+                backgroundColor: null,
                 borderWidth: 0,
                 shadow: false,
                 useHTML: true,

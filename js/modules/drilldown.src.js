@@ -16,6 +16,7 @@
 		defaultOptions = H.getOptions(),
 		each = H.each,
 		extend = H.extend,
+		format = H.format,
 		wrap = H.wrap,
 		Chart = H.Chart,
 		seriesTypes = H.seriesTypes,
@@ -175,8 +176,8 @@
 
 	Chart.prototype.getDrilldownBackText = function () {
 		var lastLevel = this.drilldownLevels[this.drilldownLevels.length - 1];
-
-		return this.options.lang.drillUpText.replace('{series.name}', lastLevel.seriesOptions.name);
+		lastLevel.series = lastLevel.seriesOptions;
+		return format(this.options.lang.drillUpText, lastLevel);
 
 	};
 

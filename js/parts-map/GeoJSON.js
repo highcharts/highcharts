@@ -2,7 +2,7 @@
 /**
  * Convert a geojson object to map data of a given Highcharts type (map, mappoint or mapline).
  */
-Highcharts.geojson = function (geojson, hType) { // docs: API methods
+Highcharts.geojson = function (geojson, hType) {
 	var mapData = [],
 		path = [],
 		polygonToPath = function (polygon) {
@@ -64,7 +64,7 @@ Highcharts.geojson = function (geojson, hType) { // docs: API methods
 		}
 		if (point) {
 			mapData.push(extend(point, {
-				name: properties.name, 
+				name: properties.name || properties.NAME, 
 				properties: properties
 			}));
 		}

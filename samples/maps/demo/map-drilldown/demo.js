@@ -16254,12 +16254,16 @@ $.each(drilldownSeries, function () {
     });
 });
 
+    // Some responsiveness
+    var small = $('#container').width() < 400;
 
-    var options = {
+    // Instanciate the map
+    $('#container').highcharts('Map', {
         chart : {
             events: {
                 drilldown: function (e) {
                     this.setTitle(null, { text: e.point.name });
+                    e.seriesOptions.name = e.point.name;
                 },
                 drillup: function (e) {
                     this.setTitle(null, { text: 'US Mainland' });
@@ -16304,10 +16308,16 @@ $.each(drilldownSeries, function () {
         },
 
         subtitle: {
-            text: 'US Mainland'
+            text: 'US Mainland',
+            floating: true,
+            align: 'right',
+            y: 50,
+            style: {
+                fontSize: '16px'
+            }
         },
 
-        legend: {
+        legend: small ? {} : {
             layout: 'vertical',
             align: 'right',
             verticalAlign: 'middle'
@@ -16339,14 +16349,28 @@ $.each(drilldownSeries, function () {
         
         series : [{
             data : Highcharts.maps['US-states'],
-            name: 'US'
+            name: 'US Mainland',
+            dataLabels: {
+                enabled: true,
+                formatter: function () {
+                    return this.point.id.substr(3, 2);
+                },
+                format: null
+            }
         }], 
 
         drilldown: {
-            series: drilldownSeries
+            series: drilldownSeries,
+            activeDataLabelStyle: {
+                color: 'white'
+            },
+            drillUpButton: {
+                relativeTo: 'spacingBox',
+                position: {
+                    x: 0,
+                    y: 60
+                }
+            }
         }
-    };
-
-    // Instanciate the map
-    $('#container').highcharts('Map', options);
+    });
 });

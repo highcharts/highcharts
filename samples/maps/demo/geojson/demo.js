@@ -74,7 +74,7 @@ $(function () {
         $('#container').highcharts('Map', {
             
             title : {
-                text : 'Geojson in Highmaps'
+                text : 'GeoJSON in Highmaps'
             },
 
             mapNavigation: {

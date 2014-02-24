@@ -22051,14 +22051,17 @@ for (var i = 0; i < num; i++) {
 
         legend: {
             title: {
-                text: 'Unemployment<br>rate'
+                text: 'Unemployment<br>rate',
+                style: {
+                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'black'
+                }
             },
             layout: 'vertical',
             align: 'right',
             floating: true,
             valueDecimals: 0,
             valueSuffix: '%',
-            backgroundColor: 'rgba(255, 255, 255, 0.85)',
+            backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || 'rgba(255, 255, 255, 0.85)',
             symbolRadius: 0,
             symbolHeight: 14
         },

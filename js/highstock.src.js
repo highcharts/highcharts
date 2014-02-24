@@ -9001,6 +9001,10 @@ Tooltip.prototype = {
 		});
 	}
 };
+
+// Global flag for touch support
+hasTouch = doc.documentElement.ontouchstart !== UNDEFINED;
+
 /**
  * The mouse tracker object. All methods starting with "on" are primary DOM event handlers. 
  * Subsequent methods should be named differently from what they are doing.
@@ -9667,11 +9671,7 @@ Pointer.prototype = {
 
 
 /* Support for touch devices */
-
-/* set the global to determine if we're dealing with a touch based device */
-hasTouch = doc.documentElement.ontouchstart !== UNDEFINED;
-
-extend(Highcharts.Pointer, {
+extend(Highcharts.Pointer.prototype, {
 
 	/**
 	 * Run translation operations

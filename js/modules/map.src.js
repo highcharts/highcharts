@@ -848,7 +848,6 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 // Extend the pinchTranslate method to preserve fixed ratio when zooming
 wrap(Pointer.prototype, 'pinchTranslate', function (proceed, zoomHor, zoomVert, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
 	var xBigger;
-
 	proceed.call(this, zoomHor, zoomVert, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 
 	// Keep ratio
@@ -1617,7 +1616,7 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 /**
  * Convert a geojson object to map data of a given Highcharts type (map, mappoint or mapline).
  */
-Highcharts.geojson = function (geojson, hType) { // docs: API methods
+Highcharts.geojson = function (geojson, hType) {
 	var mapData = [],
 		path = [],
 		polygonToPath = function (polygon) {
@@ -1679,7 +1678,7 @@ Highcharts.geojson = function (geojson, hType) { // docs: API methods
 		}
 		if (point) {
 			mapData.push(extend(point, {
-				name: properties.name, 
+				name: properties.name || properties.NAME, 
 				properties: properties
 			}));
 		}
