@@ -350,6 +350,14 @@
             <file name="js/modules/${exporting.minified.name}"/>
             <file name="js/modules/${data.minified.name}"/>
         </filelist>
+
+        <!-- Convenience list for modules, used in download builder  -->
+        <filelist id="highcharts-modules.files" dir="${basedir}/js">
+            <file name="modules/${exporting.src.name}"/>
+            <file name="modules/${data.src.name}"/>
+            <file name="modules/${drilldown.src.name}"/>
+            <file name="modules/${nodata.src.name}"/>
+        </filelist>
     </target>
 
     <!-- Set up a clean build folder. -->
@@ -1600,6 +1608,19 @@
         </copy>
         <copy todir="${highcharts.site.dir}/lib">
             <fileset dir="lib"/>
+        </copy>      
+        <!-- files for downloadbuilder -->            
+        <copy file="js/parts.js" tofile="${highcharts.site.dir}/templates/yoo_symphony/js/parts.js"/>
+        <!-- copy the highstock partfiles , these include also highcharts partfiles -->
+        <copy todir="${highcharts.site.dir}/components/com_download/source/parts">
+            <filelist refid="highstock.files"/>
+        </copy>
+        <copy todir="${highcharts.site.dir}/components/com_download/source/parts-more">
+            <filelist refid="highchartsmore.files"/>
+        </copy>
+        <copy file="${standalone.src.file}" todir="${highcharts.site.dir}/components/com_download/source/adapters"/>
+        <copy todir="${highcharts.site.dir}/components/com_download/source/modules">
+            <filelist refid="highcharts-modules.files"/>
         </copy>
     </target>
 
