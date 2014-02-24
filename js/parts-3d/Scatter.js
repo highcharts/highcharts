@@ -33,6 +33,9 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 
 		pCo = perspective([pCo], alpha, beta, origin)[0];		
 
+		point.plotXold = point.plotX;
+		point.plotYold = point.plotY;
+		
 		point.plotX = pCo.x;
 		point.plotY = pCo.y;
 		point.plotZ = pCo.z;

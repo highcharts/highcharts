@@ -28,9 +28,9 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 		if (args.x && args.y) {
 			var renderer = this.renderer,
 			paths = renderer.cuboidPath(args);
-			this.front.animate({d: paths[0]}, duration, complete);
-			this.top.animate({d: paths[1]}, duration, complete);
-			this.side.animate({d: paths[2]}, duration, complete);
+			this.front.animate({d: paths[0], zIndex: paths[3]}, duration, complete);
+			this.top.animate({d: paths[1], zIndex: paths[4]}, duration, complete);
+			this.side.animate({d: paths[2], zIndex: paths[5]}, duration, complete);
 		} else {
 			Highcharts.SVGElement.prototype.animate.call(this, args, duration, complete);
 		}

@@ -188,3 +188,16 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getLabelPosition', function (proceed
 	pos = perspective([{x: pos.x, y: pos.y, z: 0}], alpha, beta, origin)[0];
 	return pos;
 });
+
+Highcharts.wrap(Highcharts.Axis.prototype, 'drawCrosshair', function (proceed) {
+	var args = arguments;
+	if (this.chart.is3d()) {
+		if (args[2]) {
+			args[2] = {
+				plotX: args[2].plotXold || args[2].plotX,
+				plotY: args[2].plotYold || args[2].plotY
+			};
+		}
+	}
+	proceed.apply(this, [].slice.call(args, 1));
+});
