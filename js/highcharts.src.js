@@ -5780,7 +5780,7 @@ Tick.prototype = {
 			labelOptions = options.labels,
 			size = horiz ? bBox.width : bBox.height,
 			leftSide = horiz ?
-				labelOptions.x - size * { left: 0, center: 0.5, right: 1 }[axis.labelAlign] : 
+				labelOptions.x - size * { left: 0, center: 0.5, right: 1 }[axis.labelAlign] :
 				0,
 			rightSide = horiz ?
 				size + leftSide :
@@ -6029,7 +6029,6 @@ Tick.prototype = {
 			}
 
 			markPath = tick.getMarkPath(x, y, tickLength, tickWidth * reverseCrisp, horiz, renderer);
-
 			if (mark) { // updating
 				mark.animate({
 					d: markPath,
@@ -15907,7 +15906,7 @@ var PieSeries = {
 			if (graphic) {
 				graphic.animate(extend(shapeArgs, groupTranslation));
 			} else {
-				point.graphic = graphic = renderer.arc(shapeArgs)
+				point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 					.setRadialReference(series.center)
 					.attr(
 						point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE]
