@@ -575,6 +575,7 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
 			// then add the moved units and translate back to values. This happens on the
 			// extended ordinal positions if the new position is out of range, else it happens
 			// on the current x axis which is smaller and faster.
+			chart.fixedRange = max - min;
 			trimmedRange = xAxis.toFixedRange(null, null,
 				lin2val.apply(searchAxisLeft, [
 					val2lin.apply(searchAxisLeft, [min, true]) + movedUnits, // the new index
