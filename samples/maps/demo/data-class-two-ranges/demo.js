@@ -316,6 +316,15 @@ $(function () {
             
             // Initiate the chart
             chart = new Highcharts.Map(options);
+        },
+
+        error: function () {
+            $('#container').html('<div class="loading">' + 
+                '<i class="icon-frown icon-large"></i> ' + 
+                'Error loading data from Google Spreadsheets' + 
+                '</div>');
         }
+        
+        
     });
 });

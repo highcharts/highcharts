@@ -8,7 +8,7 @@ $(function () {
     Highcharts.data({
 
         googleSpreadsheetKey: '0AoIaUO7wH1HwdFJHaFI4eUJDYlVna3k5TlpuXzZubHc',
-        
+
         // custom handler when the spreadsheet is parsed
         parsed: function (columns) {
             
@@ -96,6 +96,12 @@ $(function () {
                     },
                 }]
             });
+        },
+        error: function () {
+            $('#container').html('<div class="loading">' + 
+                '<i class="icon-frown icon-large"></i> ' + 
+                'Error loading data from Google Spreadsheets' + 
+                '</div>');
         }
     });
 });
