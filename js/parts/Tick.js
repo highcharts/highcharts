@@ -38,7 +38,7 @@ Tick.prototype = {
 			css,
 			attr,
 			value = categories ?
-				pick(categories[pos], names[pos], pos) : 
+				pick(categories[pos], names[pos], pos) :
 				pos,
 			label = tick.label,
 			tickPositionInfo = tickPositions.info,
@@ -49,7 +49,6 @@ Tick.prototype = {
 		if (axis.isDatetimeAxis && tickPositionInfo) {
 			dateTimeLabelFormat = options.dateTimeLabelFormats[tickPositionInfo.higherRanks[pos] || tickPositionInfo.unitName];
 		}
-
 		// set properties for access in render method
 		tick.isFirst = isFirst;
 		tick.isLast = isLast;
@@ -110,7 +109,7 @@ Tick.prototype = {
 		var label = this.label,
 			axis = this.axis;
 		return label ?
-			((this.labelBBox = label.getBBox()))[axis.horiz ? 'height' : 'width'] :
+			label.getBBox()[axis.horiz ? 'height' : 'width'] :
 			0;
 	},
 
@@ -119,14 +118,20 @@ Tick.prototype = {
 	 * detection with overflow logic.
 	 */
 	getLabelSides: function () {
-		var bBox = this.labelBBox, // assume getLabelSize has run at this point
+		var bBox = this.label.getBBox(),
 			axis = this.axis,
+			horiz = axis.horiz,
 			options = axis.options,
 			labelOptions = options.labels,
-			width = bBox.width,
-			leftSide = width * { left: 0, center: 0.5, right: 1 }[axis.labelAlign] - labelOptions.x;
+			size = horiz ? bBox.width : bBox.height,
+			leftSide = horiz ?
+				labelOptions.x - size * { left: 0, center: 0.5, right: 1 }[axis.labelAlign] : 
+				0,
+			rightSide = horiz ?
+				size + leftSide :
+				size;
 
-		return [-leftSide, width - leftSide];
+		return [leftSide, rightSide];
 	},
 
 	/**
@@ -138,42 +143,65 @@ Tick.prototype = {
 			axis = this.axis,
 			isFirst = this.isFirst,
 			isLast = this.isLast,
-			x = xy.x,
+			horiz = axis.horiz,
+			pxPos = horiz ? xy.x : xy.y,
 			reversed = axis.reversed,
-			tickPositions = axis.tickPositions;
+			tickPositions = axis.tickPositions,
+			sides = this.getLabelSides(),
+			leftSide = sides[0],
+			rightSide = sides[1],
+			axisLeft,
+			axisRight,
+			neighbour,
+			neighbourEdge,
+			line = this.label.line || 0,
+			labelEdge = axis.labelEdge,
+			justifyLabel = axis.justifyLabels && (isFirst || isLast),
+			justifyToPlot;
 
-		if (isFirst || isLast) {
+		// Hide it if it now overlaps the neighbour label
+		if (labelEdge[line] === UNDEFINED || pxPos + leftSide > labelEdge[line]) {
+			labelEdge[line] = pxPos + rightSide;
 
-			var sides = this.getLabelSides(),
-				leftSide = sides[0],
-				rightSide = sides[1],
-				axisLeft = axis.pos,
-				axisRight = axisLeft + axis.len,
-				neighbour = axis.ticks[tickPositions[index + (isFirst ? 1 : -1)]],
-				neighbourEdge = neighbour && neighbour.label.xy && neighbour.label.xy.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
+		} else if (!justifyLabel) {
+			show = false;
+		}
+
+		if (justifyLabel) {
+			justifyToPlot = axis.justifyToPlot;
+			axisLeft = justifyToPlot ? axis.pos : 0;
+			axisRight = justifyToPlot ? axisLeft + axis.len : axis.chart.chartWidth;
+
+			// Find the firsth neighbour on the same line
+			do {
+				index += (isFirst ? 1 : -1);
+				neighbour = axis.ticks[tickPositions[index]];
+			} while (tickPositions[index] && (!neighbour || neighbour.label.line !== line));
+
+			neighbourEdge = neighbour && neighbour.label.xy && neighbour.label.xy.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
 
 			if ((isFirst && !reversed) || (isLast && reversed)) {
 				// Is the label spilling out to the left of the plot area?
-				if (x + leftSide < axisLeft) {
+				if (pxPos + leftSide < axisLeft) {
 
 					// Align it to plot left
-					x = axisLeft - leftSide;
+					pxPos = axisLeft - leftSide;
 
 					// Hide it if it now overlaps the neighbour label
-					if (neighbour && x + rightSide > neighbourEdge) {
+					if (neighbour && pxPos + rightSide > neighbourEdge) {
 						show = false;
 					}
 				}
 
 			} else {
 				// Is the label spilling out to the right of the plot area?
-				if (x + rightSide > axisRight) {
+				if (pxPos + rightSide > axisRight) {
 
 					// Align it to plot right
-					x = axisRight - rightSide;
+					pxPos = axisRight - rightSide;
 
 					// Hide it if it now overlaps the neighbour label
-					if (neighbour && x + leftSide < neighbourEdge) {
+					if (neighbour && pxPos + leftSide < neighbourEdge) {
 						show = false;
 					}
 
@@ -181,7 +209,7 @@ Tick.prototype = {
 			}
 
 			// Set the modified x position of the label
-			xy.x = x;
+			xy.x = pxPos;
 		}
 		return show;
 	},
@@ -193,7 +221,7 @@ Tick.prototype = {
 		var axis = this.axis,
 			chart = axis.chart,
 			cHeight = (old && chart.oldChartHeight) || chart.chartHeight;
-		
+
 		return {
 			x: horiz ?
 				axis.translate(pos + tickmarkOffset, null, null, old) + axis.transB :
@@ -203,9 +231,9 @@ Tick.prototype = {
 				cHeight - axis.bottom + axis.offset - (axis.opposite ? axis.height : 0) :
 				cHeight - axis.translate(pos + tickmarkOffset, null, null, old) - axis.transB
 		};
-		
+
 	},
-	
+
 	/**
 	 * Get the x, y position of the tick label
 	 */
@@ -216,7 +244,7 @@ Tick.prototype = {
 			staggerLines = axis.staggerLines,
 			baseline = axis.chart.renderer.fontMetrics(labelOptions.style.fontSize).b,
 			rotation = labelOptions.rotation;
-			
+
 		x = x + labelOptions.x - (tickmarkOffset && horiz ?
 			tickmarkOffset * transA * (reversed ? -1 : 1) : 0);
 		y = y + labelOptions.y - (tickmarkOffset && !horiz ?
@@ -226,23 +254,24 @@ Tick.prototype = {
 		if (rotation && axis.side === 2) {
 			y -= baseline - baseline * mathCos(rotation * deg2rad);
 		}
-		
+
 		// Vertically centered
 		if (!defined(labelOptions.y) && !rotation) { // #1951
 			y += baseline - label.getBBox().height / 2;
 		}
-		
+
 		// Correct for staggered labels
 		if (staggerLines) {
-			y += (index / (step || 1) % staggerLines) * (axis.labelOffset / staggerLines);
+			label.line = (index / (step || 1) % staggerLines);
+			y += label.line * (axis.labelOffset / staggerLines);
 		}
-		
+
 		return {
 			x: x,
 			y: y
 		};
 	},
-	
+
 	/**
 	 * Extendible method to return the path of the marker
 	 */
@@ -287,18 +316,17 @@ Tick.prototype = {
 			gridLinePath,
 			mark = tick.mark,
 			markPath,
-			step = axis.step,
+			step = labelOptions.step,
 			attribs,
 			show = true,
 			tickmarkOffset = axis.tickmarkOffset,
 			xy = tick.getPosition(horiz, pos, tickmarkOffset, old),
 			x = xy.x,
 			y = xy.y,
-			reverseCrisp = ((horiz && x === axis.pos + axis.len) || (!horiz && y === axis.pos)) ? -1 : 1, // #1480, #1687
-			staggerLines = axis.staggerLines;
+			reverseCrisp = ((horiz && x === axis.pos + axis.len) || (!horiz && y === axis.pos)) ? -1 : 1; // #1480, #1687
 
 		this.isActive = true;
-		
+
 		// create the grid line
 		if (gridLineWidth) {
 			gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLineWidth * reverseCrisp, old, true);
@@ -336,35 +364,36 @@ Tick.prototype = {
 
 		// create the tick mark
 		if (tickWidth && tickLength) {
-			if (axis.len / axis.tickPositions.length > tickWidth + 1) {
-				// negate the length
-				if (tickPosition === 'inside') {
-					tickLength = -tickLength;
-				}
-				if (axis.opposite) {
-					tickLength = -tickLength;
-				}
 
-				markPath = tick.getMarkPath(x, y, tickLength, tickWidth * reverseCrisp, horiz, renderer);
+			// negate the length
+			if (tickPosition === 'inside') {
+				tickLength = -tickLength;
+			}
+			if (axis.opposite) {
+				tickLength = -tickLength;
+			}
 
-				if (mark) { // updating
-					mark.animate({
-						d: markPath,
-						opacity: opacity
-					});
-				} else { // first time
-					tick.mark = renderer.path(
-						markPath
-					).attr({
-						stroke: tickColor,
-						'stroke-width': tickWidth,
-						opacity: opacity
-					}).add(axis.axisGroup);
-				}
+			markPath = tick.getMarkPath(x, y, tickLength, tickWidth * reverseCrisp, horiz, renderer);
 
+<<<<<<< HEAD
 			// Don't draw ticks so close they appear as a gray mass
 			} else if (mark) {
 				tick.mark = mark.destroy();
+=======
+			if (mark) { // updating
+				mark.animate({
+					d: markPath,
+					opacity: opacity
+				});
+			} else { // first time
+				tick.mark = renderer.path(
+					markPath
+				).attr({
+					stroke: tickColor,
+					'stroke-width': tickWidth,
+					opacity: opacity
+				}).add(axis.axisGroup);
+>>>>>>> master
 			}
 		}
 
@@ -372,15 +401,15 @@ Tick.prototype = {
 		if (label && !isNaN(x)) {
 			label.xy = xy = tick.getLabelPosition(x, y, label, horiz, labelOptions, tickmarkOffset, index, step);
 
-			// Apply show first and show last. If the tick is both first and last, it is 
+			// Apply show first and show last. If the tick is both first and last, it is
 			// a single centered tick, in which case we show the label anyway (#2100).
 			if ((tick.isFirst && !tick.isLast && !pick(options.showFirstLabel, 1)) ||
 					(tick.isLast && !tick.isFirst && !pick(options.showLastLabel, 1))) {
 				show = false;
 
 			// Handle label overflow and show or hide accordingly
-			} else if (!staggerLines && horiz && labelOptions.overflow === 'justify' && !tick.handleOverflow(index, xy)) {
-				show = false;
+			} else if (!axis.isRadial && !labelOptions.step && !labelOptions.rotation && !old && opacity !== 0) {
+				show = tick.handleOverflow(index, xy);
 			}
 
 			// apply step

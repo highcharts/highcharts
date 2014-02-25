@@ -39,7 +39,6 @@ var radialAxisMixin = {
 		minorTickLength: 10,
 		minorTickPosition: 'inside',
 		minorTickWidth: 1,
-		plotBands: [],
 		tickLength: 10,
 		tickPosition: 'inside',
 		tickWidth: 2,
@@ -60,7 +59,6 @@ var radialAxisMixin = {
 		},
 		maxPadding: 0,
 		minPadding: 0,
-		plotBands: [],
 		showLastLabel: false, 
 		tickLength: 0
 	},
@@ -73,7 +71,6 @@ var radialAxisMixin = {
 			x: -3,
 			y: -2
 		},
-		plotBands: [],
 		showLastLabel: false,
 		title: {
 			x: 4,
@@ -87,11 +84,16 @@ var radialAxisMixin = {
 	 */
 	setOptions: function (userOptions) {
 		
-		this.options = merge(
+		var options = this.options = merge(
 			this.defaultOptions,
 			this.defaultRadialOptions,
 			userOptions
 		);
+
+		// Make sure the plotBands array is instanciated for each Axis (#2649)
+		if (!options.plotBands) {
+			options.plotBands = [];
+		}
 		
 	},
 	
@@ -107,7 +109,7 @@ var radialAxisMixin = {
 		this.chart.axisOffset[this.side] = 0;
 		
 		// Set the center array
-		this.center = this.pane.center = Highcharts.CenteredSeriesMixin.getCenter.call(this.pane);
+		this.center = this.pane.center = CenteredSeriesMixin.getCenter.call(this.pane);
 	},
 
 
@@ -156,8 +158,11 @@ var radialAxisMixin = {
 			}
 			
 			if (this.isXAxis) {
-				this.minPixelPadding = this.transA * this.minPointOffset +
-					(this.reversed ? (this.endAngleRad - this.startAngleRad) / 4 : 0); // ???
+				this.minPixelPadding = this.transA * this.minPointOffset;
+			} else {
+				// This is a workaround for regression #2593, but categories still don't position correctly.
+				// TODO: Implement true handling of Y axis categories on gauges.
+				this.minPixelPadding = 0; 
 			}
 		}
 	},
@@ -183,11 +188,17 @@ var radialAxisMixin = {
 		if (this.isRadial) {
 
 			// Set the center array
-			this.center = this.pane.center = seriesTypes.pie.prototype.getCenter.call(this.pane);
+			this.center = this.pane.center = Highcharts.CenteredSeriesMixin.getCenter.call(this.pane);
+
+			// The sector is used in Axis.translate to compute the translation of reversed axis points (#2570)
+			if (this.isCircular) {
+				this.sector = this.endAngleRad - this.startAngleRad;	
+			}
 			
-			this.len = this.width = this.height = this.isCircular ?
-				this.center[2] * (this.endAngleRad - this.startAngleRad) / 2 :
-				this.center[2] / 2;
+			// Axis len is used to lay out the ticks
+			this.len = this.width = this.height = this.center[2] * pick(this.sector, 0.5);
+
+
 		}
 	},
 	
@@ -462,8 +473,7 @@ wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, label
 		
 		// Vertically centered
 		} else if (optionsY === null) {
-			optionsY = pInt(label.styles.lineHeight) * 0.9 - label.getBBox().height / 2;
-		
+			optionsY = axis.chart.renderer.fontMetrics(label.styles.fontSize).b - label.getBBox().height / 2;
 		}
 		
 		// Automatic alignment

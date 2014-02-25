@@ -2,7 +2,7 @@
 	$path = $_GET['path'];
 	$mode = @$_GET['mode'];
 	$i = $_GET['i'];
-	$continue = $_GET['continue'];
+	$continue = @$_GET['continue'];
 
 	if (!get_browser(null, true)) {
 		$warning = 'Unable to get the browser info. Make sure a php_browscap.ini file extists, see ' .
@@ -15,7 +15,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Compare SVG</title>
 		
-		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.js"></script>
+		<script src="http://code.jquery.com/jquery-1.7.js"></script>
 		<script src="http://ejohn.org/files/jsdiff.js"></script>
 		
 		<script type="text/javascript">
@@ -24,6 +24,8 @@
 				$('#reload').click(function() {
 					location.reload();
 				});
+
+				$(window).bind('keydown', parent.keyDown);
 
 				$('#svg').click(function () {
 					$(this).css({
@@ -179,6 +181,51 @@
 					return "";
 				}
 			}
+
+			function activateOverlayCompare() {
+
+				var $button = $('button#overlay-compare'),
+					$leftImage = $('#left-image'),
+					$rightImage = $('#right-image'),
+					showingRight,
+					toggle = function () {
+
+						// Initiate
+						if (showingRight === undefined) {
+
+							$('#preview').css({ height: $('#preview').height() })
+
+							$leftImage.css('position', 'absolute');
+							$rightImage
+								.css({
+									left: 300,
+									position: 'absolute'
+								})
+								.animate({
+									left: 0
+								});
+							;
+							$button.html('Showing right. Click to show left');
+							showingRight = true;
+
+						// Show left
+						} else if (showingRight) {
+							$rightImage.hide();
+							$button.html('Showing left. Click to show right');
+							showingRight = false;
+						} else {
+							$rightImage.show();
+							$button.html('Showing right. Click to show left.');
+							showingRight = true;
+						}
+					};
+
+				$button
+					.css('display', '')
+					.click(toggle);
+				$leftImage.click(toggle);
+				$rightImage.click(toggle);
+			}
 			
 			var report = "";
 			function onBothLoad() {
@@ -237,8 +284,8 @@
 									onIdentical();
 									
 								} else if (data.dissimilarityIndex === undefined) {
-									report += '<br/>Exporting one of the images failed';
-									onDifferent();
+									report += '<br/><b>Image export failed. Is the server responding?</b>';
+									onDifferent('Error');
 									
 								} else {
 									report += '<br/>The exported images are different (dissimilarity index: '+ data.dissimilarityIndex.toFixed(2) +')';
@@ -246,8 +293,10 @@
 									onDifferent(data);
 								}
 								
-								$('#preview').html('<h4>Generated images:</h4><img src="'+ data.sourceImage.url +'?' + (+new Date()) + '"/>' +
-									'<img src="'+ data.matchImage.url + '?' + (+new Date()) + '"/>');
+								$('#preview').html('<h4>Generated images (click to compare)</h4><img id="left-image" src="'+ data.sourceImage.url +'?' + (+new Date()) + '"/>' +
+									'<img id="right-image" src="'+ data.matchImage.url + '?' + (+new Date()) + '"/>');
+
+								activateOverlayCompare();
 								
 								$('#report').html(report)
 									.css('background', identical ? 'green' : 'red');
@@ -285,7 +334,7 @@
 						leftSVG.replace(/>/g, '>\n'),
 						rightSVG.replace(/>/g, '>\n')
 					)
-					$("#svg").html('<h4>Generated SVG:</h4>' + wash(out));
+					$("#svg").html('<h4 style="margin:0 auto 1em 0">Generated SVG (click to view)</h4>' + wash(out));
 				}
 
 				/*report +=  '<br/>Left length: '+ leftSVG.length + '; right length: '+ rightSVG.length +
@@ -368,8 +417,9 @@
 			</tr>
 			<tr>
 				<td colspan="2">
-					<pre style="overflow: auto; width: 1000px; height: 300px; cursor: pointer" id="svg"></pre>
-					<div style="overflow: auto; width: 1000px" id="preview"></pre>
+					<pre id="svg" style="overflow: hidden; width: 1000px; height: 10px; cursor: pointer;"></pre>
+					<div id="preview" style="overflow: auto; width: 1000px; position: relative"></div>
+					<button id="overlay-compare" style="display:none">Compare overlaid</button>
 				</td>
 			</tr>
 		</table>

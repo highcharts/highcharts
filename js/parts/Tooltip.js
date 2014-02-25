@@ -3,9 +3,9 @@
  * @param {Object} chart The chart instance
  * @param {Object} options Tooltip options
  */
-function Tooltip() {
+var Tooltip = Highcharts.Tooltip = function () {
 	this.init.apply(this, arguments);
-}
+};
 
 Tooltip.prototype = {
 
@@ -44,7 +44,7 @@ Tooltip.prototype = {
 			.css(style)
 			.css({ padding: 0 }) // Remove it from VML, the padding is applied as an attribute instead (#1117)
 			.add()
-			.attr({ y: -999 }); // #2301
+			.attr({ y: -9999 }); // #2301, #2657
 
 		// When using canVG the shadow shows up as a gray circle
 		// even if the tooltip is hidden.
@@ -200,12 +200,12 @@ Tooltip.prototype = {
 			plotWidth = chart.plotWidth,
 			plotHeight = chart.plotHeight,
 			distance = pick(this.options.distance, 12),
-			pointX = point.plotX,
+			pointX = (isNaN(point.plotX) ? 0 : point.plotX), //#2599
 			pointY = point.plotY,
 			x = pointX + plotLeft + (chart.inverted ? distance : -boxWidth - distance),
 			y = pointY - boxHeight + plotTop + 15, // 15 means the point is 15 pixels up from the bottom of the tooltip
 			alignedRight;
-	
+
 		// It is too far to the left, adjust it
 		if (x < 7) {
 			x = plotLeft + mathMax(pointX, 0) + distance;
@@ -248,7 +248,7 @@ Tooltip.prototype = {
 			s;
 
 		// build the header
-		s = [series.tooltipHeaderFormatter(items[0])];
+		s = [tooltip.tooltipHeaderFormatter(items[0])];
 
 		// build the values
 		each(items, function (item) {
@@ -380,5 +380,48 @@ Tooltip.prototype = {
 			point.plotX + chart.plotLeft, 
 			point.plotY + chart.plotTop
 		);
+	},
+
+
+	/**
+	 * Format the header of the tooltip
+	 */
+	tooltipHeaderFormatter: function (point) {
+		var series = point.series,
+			tooltipOptions = series.tooltipOptions,
+			dateTimeLabelFormats = tooltipOptions.dateTimeLabelFormats,
+			xDateFormat = tooltipOptions.xDateFormat,
+			xAxis = series.xAxis,
+			isDateTime = xAxis && xAxis.options.type === 'datetime' && isNumber(point.key),
+			headerFormat = tooltipOptions.headerFormat,
+			closestPointRange = xAxis && xAxis.closestPointRange,
+			n;
+
+		// Guess the best date format based on the closest point distance (#568)
+		if (isDateTime && !xDateFormat) {
+			if (closestPointRange) {
+				for (n in timeUnits) {
+					if (timeUnits[n] >= closestPointRange || point.key % timeUnits[n] > 0) { // #2637
+						xDateFormat = dateTimeLabelFormats[n];
+						break;
+					}
+				}
+			} else {
+				xDateFormat = dateTimeLabelFormats.day;
+			}
+
+			xDateFormat = xDateFormat || dateTimeLabelFormats.year; // #2546, 2581
+
+		}
+
+		// Insert the header date format if any
+		if (isDateTime && xDateFormat) {
+			headerFormat = headerFormat.replace('{point.key}', '{point.key:' + xDateFormat + '}');
+		}
+
+		return format(headerFormat, {
+			point: point,
+			series: series
+		});
 	}
 };

@@ -1,12 +1,12 @@
 $(function () {
 
-    $.getJSON('http://www.highcharts.local/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
         
         // Initiate the chart
         $('#container').highcharts('Map', {
 
             title : {
-                text : 'Set axis extremes'
+                text : 'Update the color axis'
             },
 
             colorAxis: {
@@ -39,7 +39,7 @@ $(function () {
         var colorAxis = $('#container').highcharts().colorAxis[0];
 
         colorAxis.update({
-            maxColor: blackAndWhite ? '#102d4c' : '#000000'
+            maxColor: blackAndWhite ? '#980043' : '#000000'
         });
         blackAndWhite = !blackAndWhite;
     });

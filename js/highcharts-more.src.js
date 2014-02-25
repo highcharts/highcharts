@@ -2,9 +2,9 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v3.0.7-modified ()
+ * @license Highcharts JS v3.0.9-modified ()
  *
- * (c) 2009-2013 Torstein Hønsi
+ * (c) 2009-2014 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -28,12 +28,16 @@ var arrayMin = Highcharts.arrayMin,
 	wrap = Highcharts.wrap,
 	Axis = Highcharts.Axis,
 	Tick = Highcharts.Tick,
+	Point = Highcharts.Point,
 	Pointer = Highcharts.Pointer,
+	TrackerMixin = Highcharts.TrackerMixin,
+	CenteredSeriesMixin = Highcharts.CenteredSeriesMixin,
 	Series = Highcharts.Series,
 	math = Math,
 	mathRound = math.round,
 	mathFloor = math.floor,
 	mathMax = math.max,
+	Color = Highcharts.Color,
 	noop = function () {};/**
  * The Pane object allows options that are common to a set of X and Y axes.
  * 
@@ -151,7 +155,6 @@ var radialAxisMixin = {
 		minorTickLength: 10,
 		minorTickPosition: 'inside',
 		minorTickWidth: 1,
-		plotBands: [],
 		tickLength: 10,
 		tickPosition: 'inside',
 		tickWidth: 2,
@@ -172,7 +175,6 @@ var radialAxisMixin = {
 		},
 		maxPadding: 0,
 		minPadding: 0,
-		plotBands: [],
 		showLastLabel: false, 
 		tickLength: 0
 	},
@@ -185,7 +187,6 @@ var radialAxisMixin = {
 			x: -3,
 			y: -2
 		},
-		plotBands: [],
 		showLastLabel: false,
 		title: {
 			x: 4,
@@ -199,11 +200,16 @@ var radialAxisMixin = {
 	 */
 	setOptions: function (userOptions) {
 		
-		this.options = merge(
+		var options = this.options = merge(
 			this.defaultOptions,
 			this.defaultRadialOptions,
 			userOptions
 		);
+
+		// Make sure the plotBands array is instanciated for each Axis (#2649)
+		if (!options.plotBands) {
+			options.plotBands = [];
+		}
 		
 	},
 	
@@ -219,7 +225,7 @@ var radialAxisMixin = {
 		this.chart.axisOffset[this.side] = 0;
 		
 		// Set the center array
-		this.center = this.pane.center = Highcharts.CenteredSeriesMixin.getCenter.call(this.pane);
+		this.center = this.pane.center = CenteredSeriesMixin.getCenter.call(this.pane);
 	},
 
 
@@ -268,8 +274,11 @@ var radialAxisMixin = {
 			}
 			
 			if (this.isXAxis) {
-				this.minPixelPadding = this.transA * this.minPointOffset +
-					(this.reversed ? (this.endAngleRad - this.startAngleRad) / 4 : 0); // ???
+				this.minPixelPadding = this.transA * this.minPointOffset;
+			} else {
+				// This is a workaround for regression #2593, but categories still don't position correctly.
+				// TODO: Implement true handling of Y axis categories on gauges.
+				this.minPixelPadding = 0; 
 			}
 		}
 	},
@@ -295,11 +304,17 @@ var radialAxisMixin = {
 		if (this.isRadial) {
 
 			// Set the center array
-			this.center = this.pane.center = seriesTypes.pie.prototype.getCenter.call(this.pane);
+			this.center = this.pane.center = Highcharts.CenteredSeriesMixin.getCenter.call(this.pane);
+
+			// The sector is used in Axis.translate to compute the translation of reversed axis points (#2570)
+			if (this.isCircular) {
+				this.sector = this.endAngleRad - this.startAngleRad;	
+			}
 			
-			this.len = this.width = this.height = this.isCircular ?
-				this.center[2] * (this.endAngleRad - this.startAngleRad) / 2 :
-				this.center[2] / 2;
+			// Axis len is used to lay out the ticks
+			this.len = this.width = this.height = this.center[2] * pick(this.sector, 0.5);
+
+
 		}
 	},
 	
@@ -574,8 +589,7 @@ wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, label
 		
 		// Vertically centered
 		} else if (optionsY === null) {
-			optionsY = pInt(label.styles.lineHeight) * 0.9 - label.getBBox().height / 2;
-		
+			optionsY = axis.chart.renderer.fontMetrics(label.styles.fontSize).b - label.getBBox().height / 2;
 		}
 		
 		// Automatic alignment
@@ -655,7 +669,7 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 /**
  * Add the series type
  */
-seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
+seriesTypes.arearange = extendClass(seriesTypes.area, {
 	type: 'arearange',
 	pointArrayMap: ['low', 'high'],
 	toYData: function (point) {
@@ -804,7 +818,10 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 					dataLabelOptions.y = dataLabelOptions.yHigh;
 				}
 			}
-			seriesProto.drawDataLabels.apply(this, arguments); // #1209
+			
+			if (seriesProto.drawDataLabels) {
+				seriesProto.drawDataLabels.apply(this, arguments); // #1209
+			}
 			
 			// Step 2: reorganize and handle data labels for the lower values
 			i = length;
@@ -828,12 +845,16 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 					dataLabelOptions.y = dataLabelOptions.yLow;
 				}
 			}
-			seriesProto.drawDataLabels.apply(this, arguments);
+			if (seriesProto.drawDataLabels) {
+				seriesProto.drawDataLabels.apply(this, arguments);
+			}
 		}
 	
 	},
 	
-	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
+	alignDataLabel: function () {
+		seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
+	},
 	
 	getSymbol: seriesTypes.column.prototype.getSymbol,
 	
@@ -929,6 +950,7 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 		borderWidth: 1,
 		borderColor: 'silver',
 		borderRadius: 3,
+		crop: false,
 		style: {
 			fontWeight: 'bold'
 		},
@@ -960,7 +982,7 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 /**
  * Extend the point object
  */
-var GaugePoint = Highcharts.extendClass(Highcharts.Point, {
+var GaugePoint = extendClass(Point, {
 	/**
 	 * Don't do any hover colors or anything
 	 */
@@ -982,6 +1004,7 @@ var GaugeSeries = {
 	angular: true, 
 	drawGraph: noop,
 	fixedBox: true,
+	forceDL: true,
 	trackerGroups: ['group', 'dataLabels'],
 	
 	/**
@@ -1004,12 +1027,18 @@ var GaugeSeries = {
 				rearLength = (pInt(pick(dialOptions.rearLength, 10)) * radius) / 100,
 				baseWidth = dialOptions.baseWidth || 3,
 				topWidth = dialOptions.topWidth || 1,
+				overshoot = options.overshoot, // docs: http://jsfiddle.net/highcharts/gEGaf/1/
 				rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true);
 
-			// Handle the wrap option
-			if (options.wrap === false) {
+			// Handle the wrap and overshoot options
+			if (overshoot && typeof overshoot === 'number') {
+				overshoot = overshoot / 180 * Math.PI;
+				rotation = Math.max(yAxis.startAngleRad - overshoot, Math.min(yAxis.endAngleRad + overshoot, rotation));			
+			
+			} else if (options.wrap === false) {
 				rotation = Math.max(yAxis.startAngleRad, Math.min(yAxis.endAngleRad, rotation));
 			}
+
 			rotation = rotation * 180 / Math.PI;
 				
 			point.shapeType = 'path';
@@ -1128,10 +1157,23 @@ var GaugeSeries = {
 		this.group.clip(this.chart.clipRect);
 	},
 	
-	setData: seriesTypes.pie.prototype.setData,
-	drawTracker: Highcharts.PointTrackerMixin.drawTracker
+	/**
+	 * Extend the basic setData method by running processData and generatePoints immediately,
+	 * in order to access the points from the legend.
+	 */
+	setData: function (data, redraw) {
+		Series.prototype.setData.call(this, data, false);
+		this.processData();
+		this.generatePoints();
+		if (pick(redraw, true)) {
+			this.chart.redraw();
+		}
+	},
+	drawTracker: TrackerMixin.drawTrackerPoint
 };
-seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);/* ****************************************************************************
+seriesTypes.gauge = extendClass(seriesTypes.line, GaugeSeries);
+
+/* ****************************************************************************
  * Start Box plot series code											      *
  *****************************************************************************/
 
@@ -1749,7 +1791,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		fill = fill || markerOptions.fillColor || this.color; 
 		
 		if (fillOpacity !== 1) {
-			fill = Highcharts.Color(fill).setOpacity(fillOpacity).get('rgba');
+			fill = Color(fill).setOpacity(fillOpacity).get('rgba');
 		}
 		return fill;
 	},
@@ -2011,14 +2053,20 @@ Axis.prototype.beforePadding = function () {
 		var xy,
 			chart = this.chart,
 			plotX = point.plotX,
-			plotY = point.plotY;
+			plotY = point.plotY,
+			clientX;
 	
 		// Save rectangular plotX, plotY for later computation
 		point.rectPlotX = plotX;
 		point.rectPlotY = plotY;
 	
 		// Record the angle in degrees for use in tooltip
-		point.clientX = ((plotX / Math.PI * 180) + this.xAxis.pane.options.startAngle) % 360;
+		clientX = ((plotX / Math.PI * 180) + this.xAxis.pane.options.startAngle) % 360;
+		if (clientX < 0) { // #2665
+			clientX += 360;
+		}
+		point.clientX = clientX;
+
 	
 		// Find the polar plotX and plotY
 		xy = this.xAxis.postTranslate(point.plotX, this.yAxis.len - plotY);
@@ -2301,7 +2349,6 @@ Axis.prototype.beforePadding = function () {
 				tooltipLen: 360 // degrees are the resolution unit of the tooltipPoints array
 			});	
 		}
-	
 		// Run uber method
 		return proceed.call(this, renew);
 	});

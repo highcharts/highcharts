@@ -1,6 +1,6 @@
 /**
  * Gray theme for Highcharts JS
- * @author Torstein Hønsi
+ * @author Torstein Honsi
  */
 
 Highcharts.theme = {
@@ -15,7 +15,7 @@ Highcharts.theme = {
 			]
 		},
 		borderWidth: 0,
-		borderRadius: 15,
+		borderRadius: 0,
 		plotBackgroundColor: null,
 		plotShadow: false,
 		plotBorderWidth: 0
@@ -102,7 +102,7 @@ Highcharts.theme = {
 
 	plotOptions: {
 		series: {
-			shadow: true
+			nullColor: '#444444'
 		},
 		line: {
 			dataLabels: {

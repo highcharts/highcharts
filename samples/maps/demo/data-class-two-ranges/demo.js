@@ -255,7 +255,7 @@ $(function () {
                     floating: true,
                     layout: 'vertical',
                     valueDecimals: 0,
-                    backgroundColor: 'rgba(255,255,255,0.85)'
+                    backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || 'rgba(255, 255, 255, 0.85)',
                 },
 
                 mapNavigation: {
@@ -283,12 +283,11 @@ $(function () {
                     dataLabels: {
                         enabled: true,
                         color: 'white',
-                        formatter: function(dataLabelOptions) {
-                            return this.point.options.key.toUpperCase();
-                        },
+                        format: '{point.code}',
                         style: {
                             fontWeight: 'bold',
-                            textShadow: '0 1px 2px black'
+                            textShadow: '0 1px 2px black',
+                            textTransform: 'uppercase'
                         }
                     },
                     name: 'Democrats margin',
@@ -317,6 +316,15 @@ $(function () {
             
             // Initiate the chart
             chart = new Highcharts.Map(options);
+        },
+
+        error: function () {
+            $('#container').html('<div class="loading">' + 
+                '<i class="icon-frown icon-large"></i> ' + 
+                'Error loading data from Google Spreadsheets' + 
+                '</div>');
         }
+        
+        
     });
 });

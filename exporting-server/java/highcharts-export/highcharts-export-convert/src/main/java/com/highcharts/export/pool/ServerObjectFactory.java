@@ -164,7 +164,7 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 
 	@PostConstruct
 	public void afterBeanInit() {
-		String jarLocation = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
+		String jarLocation = getClass().getProtectionDomain().getCodeSource().getLocation().getPath().split("!")[0].replace("file:/", "");
 		try {
 			jarLocation = URLDecoder.decode(jarLocation, "utf-8");
 			// get filesystem depend path

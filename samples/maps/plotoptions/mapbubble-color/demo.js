@@ -1,6 +1,6 @@
 $(function () {
 
-    $.getJSON('http://www.highcharts.local/samples/data/jsonp.php?filename=world-population.json&callback=?', function (data) {
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population.json&callback=?', function (data) {
 
         $('#container').highcharts('Map', {
             chart : {

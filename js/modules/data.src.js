@@ -1,8 +1,7 @@
 /**
  * @license Data plugin for Highcharts
  *
- * (c) 2012-2013 Torstein Hønsi
- * Last revision 2013-06-07
+ * (c) 2012-2014 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -72,6 +71,10 @@
  *
  * - startRow : Integer
  * In tabular input data, the first row (indexed by 0) to use.
+ *
+ * - switchRowsAndColumns : Boolean
+ * Switch rows and columns of the input data, so that this.columns effectively becomes the
+ * rows of the data set, and the rows are interpreted as series.
  *
  * - table : String|HTMLElement
  * A HTML table or the id of such to be parsed as input data. Related options ara startRow,
@@ -145,8 +148,16 @@
 		};
 	},
 
-
+	/**
+	 * When the data is parsed into columns, either by CSV, table, GS or direct input,
+	 * continue with other operations.
+	 */
 	dataFound: function () {
+		
+		if (this.options.switchRowsAndColumns) {
+			this.columns = this.rowsToColumns(this.columns);
+		}
+
 		// Interpret the values into right types
 		this.parseTypes();
 		
@@ -221,9 +232,8 @@
 			startRow = options.startRow || 0,
 			endRow = options.endRow || Number.MAX_VALUE,
 			startColumn = options.startColumn || 0,
-			endColumn = options.endColumn || Number.MAX_VALUE,
-			colNo;
-			
+			endColumn = options.endColumn || Number.MAX_VALUE;
+
 		if (table) {
 			
 			if (typeof table === 'string') {
@@ -231,16 +241,14 @@
 			}
 			
 			each(table.getElementsByTagName('tr'), function (tr, rowNo) {
-				colNo = 0; 
 				if (rowNo >= startRow && rowNo <= endRow) {
-					each(tr.childNodes, function (item) {
+					each(tr.children, function (item, colNo) {
 						if ((item.tagName === 'TD' || item.tagName === 'TH') && colNo >= startColumn && colNo <= endColumn) {
-							if (!columns[colNo]) {
-								columns[colNo] = [];					
+							if (!columns[colNo - startColumn]) {
+								columns[colNo - startColumn] = [];					
 							}
-							columns[colNo][rowNo - startRow] = item.innerHTML;
 							
-							colNo += 1;
+							columns[colNo - startColumn][rowNo - startRow] = item.innerHTML;
 						}
 					});
 				}
@@ -251,8 +259,6 @@
 	},
 
 	/**
-	 * TODO: 
-	 * - switchRowsAndColumns
 	 */
 	parseGoogleSpreadsheet: function () {
 		var self = this,
@@ -267,53 +273,56 @@
 			gc; // google column
 
 		if (googleSpreadsheetKey) {
-			jQuery.getJSON('https://spreadsheets.google.com/feeds/cells/' + 
+			jQuery.ajax({
+				dataType: 'json', 
+				url: 'https://spreadsheets.google.com/feeds/cells/' + 
 				  googleSpreadsheetKey + '/' + (options.googleSpreadsheetWorksheet || 'od6') +
 					  '/public/values?alt=json-in-script&callback=?',
-					  function (json) {
-					
-				// Prepare the data from the spreadsheat
-				var cells = json.feed.entry,
-					cell,
-					cellCount = cells.length,
-					colCount = 0,
-					rowCount = 0,
-					i;
-			
-				// First, find the total number of columns and rows that 
-				// are actually filled with data
-				for (i = 0; i < cellCount; i++) {
-					cell = cells[i];
-					colCount = Math.max(colCount, cell.gs$cell.col);
-					rowCount = Math.max(rowCount, cell.gs$cell.row);			
-				}
-			
-				// Set up arrays containing the column data
-				for (i = 0; i < colCount; i++) {
-					if (i >= startColumn && i <= endColumn) {
-						// Create new columns with the length of either end-start or rowCount
-						columns[i - startColumn] = [];
-
-						// Setting the length to avoid jslint warning
-						columns[i - startColumn].length = Math.min(rowCount, endRow - startRow);
-					}
-				}
+				error: options.error,
+				success: function (json) {
+					// Prepare the data from the spreadsheat
+					var cells = json.feed.entry,
+						cell,
+						cellCount = cells.length,
+						colCount = 0,
+						rowCount = 0,
+						i;
 				
-				// Loop over the cells and assign the value to the right
-				// place in the column arrays
-				for (i = 0; i < cellCount; i++) {
-					cell = cells[i];
-					gr = cell.gs$cell.row - 1; // rows start at 1
-					gc = cell.gs$cell.col - 1; // columns start at 1
-
-					// If both row and col falls inside start and end
-					// set the transposed cell value in the newly created columns
-					if (gc >= startColumn && gc <= endColumn &&
-						gr >= startRow && gr <= endRow) {
-						columns[gc - startColumn][gr - startRow] = cell.content.$t;
+					// First, find the total number of columns and rows that 
+					// are actually filled with data
+					for (i = 0; i < cellCount; i++) {
+						cell = cells[i];
+						colCount = Math.max(colCount, cell.gs$cell.col);
+						rowCount = Math.max(rowCount, cell.gs$cell.row);			
 					}
+				
+					// Set up arrays containing the column data
+					for (i = 0; i < colCount; i++) {
+						if (i >= startColumn && i <= endColumn) {
+							// Create new columns with the length of either end-start or rowCount
+							columns[i - startColumn] = [];
+
+							// Setting the length to avoid jslint warning
+							columns[i - startColumn].length = Math.min(rowCount, endRow - startRow);
+						}
+					}
+					
+					// Loop over the cells and assign the value to the right
+					// place in the column arrays
+					for (i = 0; i < cellCount; i++) {
+						cell = cells[i];
+						gr = cell.gs$cell.row - 1; // rows start at 1
+						gc = cell.gs$cell.col - 1; // columns start at 1
+
+						// If both row and col falls inside start and end
+						// set the transposed cell value in the newly created columns
+						if (gc >= startColumn && gc <= endColumn &&
+							gr >= startRow && gr <= endRow) {
+							columns[gc - startColumn][gr - startRow] = cell.content.$t;
+						}
+					}
+					self.dataFound();
 				}
-				self.dataFound();
 			});
 		}
 	},
@@ -342,7 +351,6 @@
 	
 	/**
 	 * Parse numeric cells in to number types and date types in to true dates.
-	 * @param {Object} columns
 	 */
 	parseTypes: function () {
 		var columns = this.columns,
@@ -387,7 +395,11 @@
 			}
 		}
 	},
-	//*
+	
+	/**
+	 * A collection of available date formats, extendable from the outside to support
+	 * custom date formats.
+	 */
 	dateFormats: {
 		'YYYY-mm-dd': {
 			regex: '^([0-9]{4})-([0-9]{2})-([0-9]{2})$',
@@ -396,7 +408,7 @@
 			}
 		}
 	},
-	// */
+	
 	/**
 	 * Parse a date and return it as a number. Overridable through options.parseDate.
 	 */
@@ -511,22 +523,27 @@
 				
 				// Iterate down the cells of each column and add data to the series
 				data = [];
-				for (j = 0; j < columns[i].length; j++) {
-					data[j] = [
-						firstCol[j], 
-						columns[i][j] !== undefined ? columns[i][j] : null
-					];
-					if (valueCount > 1) {
-						data[j].push(columns[i + 1][j] !== undefined ? columns[i + 1][j] : null);
-					}
-					if (valueCount > 2) {
-						data[j].push(columns[i + 2][j] !== undefined ? columns[i + 2][j] : null);
-					}
-					if (valueCount > 3) {
-						data[j].push(columns[i + 3][j] !== undefined ? columns[i + 3][j] : null);
-					}
-					if (valueCount > 4) {
-						data[j].push(columns[i + 4][j] !== undefined ? columns[i + 4][j] : null);
+
+				// Only loop and fill the data series if there are columns available.
+				// We need this check to avoid reading outside the array bounds.
+				if (i + valueCount <= columns.length) {
+					for (j = 0; j < columns[i].length; j++) {
+						data[j] = [
+							firstCol[j],
+							columns[i][j] !== undefined ? columns[i][j] : null
+						];
+						if (valueCount > 1) {
+							data[j].push(columns[i + 1][j] !== undefined ? columns[i + 1][j] : null);
+						}
+						if (valueCount > 2) {
+							data[j].push(columns[i + 2][j] !== undefined ? columns[i + 2][j] : null);
+						}
+						if (valueCount > 3) {
+							data[j].push(columns[i + 3][j] !== undefined ? columns[i + 3][j] : null);
+						}
+						if (valueCount > 4) {
+							data[j].push(columns[i + 4][j] !== undefined ? columns[i + 4][j] : null);
+						}
 					}
 				}
 

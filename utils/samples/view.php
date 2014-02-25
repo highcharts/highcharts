@@ -1,11 +1,13 @@
 <?php
 
+session_start();
+$defaults = json_decode(file_get_contents('default-settings.json'));
 
-define(FRAMEWORK, 'jQuery');
+define('FRAMEWORK', 'jQuery');
 
 require_once('functions.php');
 
-$path = $_GET['path'];
+@$path = $_GET['path'];
 if (!preg_match('/^[a-z]+\/[a-z\-]+\/[a-z0-9\-,]+$/', $path)) {
 	die ('Invalid sample path input');
 }
@@ -18,13 +20,13 @@ $fullpath = dirname(__FILE__) . '/../../samples/' . $path;
 
 // Get HTML and use dev server
 ob_start();
-include("$fullpath/demo.html");
+@include("$fullpath/demo.html");
 $httpHost = $_SERVER['HTTP_HOST'];
 $httpHost = explode('.', $httpHost);
 $topDomain = $httpHost[sizeof($httpHost) - 1];
 $html = ob_get_clean();
 $html = str_replace('/code.highcharts.com/', "/code.highcharts.$topDomain/", $html);
-$html = str_replace('.js"', '.js?' . mktime() . '"', $html); // Force no-cache for debugging
+$html = str_replace('.js"', '.js?' . time() . '"', $html); // Force no-cache for debugging
 
 
 
@@ -73,10 +75,48 @@ function getResources() {
 		<title>Highstock Example</title>
 		<?php echo getFramework(FRAMEWORK); ?>
 		<?php echo getResources(); ?>
-		<script type="text/javascript">
+		<script>
+
+		/* Wrappers for recording mouse events in order to write automatic tests */
+		$(function () {
+
+			$(window).bind('keydown', parent.keyDown);
+			
+			var checkbox = $('#record')[0],
+				pre = $('pre#recording')[0];
+			Highcharts.wrap(Highcharts.Pointer.prototype, 'onContainerMouseDown', function (proceed, e) {
+				if (checkbox.checked) {
+					pre.innerHTML += "chart.pointer.onContainerMouseDown({\n"+
+						"    type: 'mousedown',\n" +
+						"    pageX: " + e.pageX + ",\n" + 
+						"    pageY: " + e.pageY + "\n" + 
+						"});\n\n";
+				}
+				return proceed.call(this, e);
+			});
+			Highcharts.wrap(Highcharts.Pointer.prototype, 'onContainerMouseMove', function (proceed, e) {
+				if (checkbox.checked) {
+					pre.innerHTML += "chart.pointer.onContainerMouseMove({\n"+
+						"    type: 'mousemove',\n" +
+						"    pageX: " + e.pageX + ",\n" + 
+						"    pageY: " + e.pageY + ",\n" +  
+						"    target: chart.container\n" + 
+						"});\n\n";
+				}
+				return proceed.call(this, e);
+			});
+			Highcharts.wrap(Highcharts.Pointer.prototype, 'onDocumentMouseUp', function (proceed, e) {
+				if (checkbox.checked) {
+					pre.innerHTML += "chart.pointer.onContainerMouseMove({\n"+
+						"    type: 'mouseup'\n" + 
+						"});\n\n";
+				}
+				return proceed.call(this, e);
+			});
+		});
 
 
-		<?php if ($_GET['profile']) : ?>
+		<?php if (@$_GET['profile']) : ?>
 		$(function () {
 			Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 				var chart,
@@ -98,7 +138,7 @@ function getResources() {
 			});
 		});
 		<?php endif ?>
-		<?php if ($_GET['time']) : ?>
+		<?php if (@$_GET['time']) : ?>
 		$(function () {
 			Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 				var chart,
@@ -216,6 +256,9 @@ function getResources() {
 				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
 					href="http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/<?php echo $path ?>/"
 					target="_blank">» jsFiddle</a>
+
+				<input id="record" type="checkbox" />
+				<label for="record" title="Record calls to Pointer mouse events that can be added to test.js for automatic testing of tooltip and other mouse operations">Record mouse</label>
 			</div>
 		</div>
 
@@ -227,6 +270,7 @@ function getResources() {
 		<ul>
 			<li>Mobile testing: <a href="http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft">http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft</a></li>
 		</ul>
+		<pre id="recording" style="padding: 1em"></pre>
 
 	</body>
 </html>

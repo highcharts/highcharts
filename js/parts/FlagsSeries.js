@@ -37,6 +37,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	sorted: false,
 	noSharedTooltip: true,
 	takeOrdinalPosition: false, // #1074
+	trackerGroups: ['markerGroup'],
 	forceCrop: true,
 	/**
 	 * Inherit the initialization from base Series
@@ -92,7 +93,6 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			while (i-- && points[cursor]) {
 				point = points[cursor];
 				leftPoint = onData[i];
-				
 				
 				if (leftPoint.x <= point.x && leftPoint.plotY !== UNDEFINED) {
 					if (point.x <= lastX) { // #803
@@ -151,6 +151,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	drawPoints: function () {
 		var series = this,
 			pointAttr,
+			seriesPointAttr = series.pointAttr[''],
 			points = series.points,
 			chart = series.chart,
 			renderer = chart.renderer,
@@ -159,20 +160,20 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			options = series.options,
 			optionsY = options.y,
 			shape,
-			box,
-			bBox,
 			i,
 			point,
 			graphic,
 			stackIndex,
 			crisp = (options.lineWidth % 2 / 2),
 			anchorX,
-			anchorY;
+			anchorY,
+			outsideRight;
 
 		i = points.length;
 		while (i--) {
 			point = points[i];
-			plotX = point.plotX + crisp;
+			outsideRight = point.plotX > series.xAxis.len;
+			plotX = point.plotX + (outsideRight ? crisp : -crisp);
 			stackIndex = point.stackIndex;
 			shape = point.options.shape || options.shape;
 			plotY = point.plotY;
@@ -185,9 +186,9 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			graphic = point.graphic;
 
 			// only draw the point if y is defined and the flag is within the visible area
-			if (plotY !== UNDEFINED && plotX >= 0 && plotX < series.xAxis.len) {
+			if (plotY !== UNDEFINED && plotX >= 0 && !outsideRight) {
 				// shortcuts
-				pointAttr = point.pointAttr[point.selected ? 'select' : ''];
+				pointAttr = point.pointAttr[point.selected ? 'select' : ''] || seriesPointAttr;
 				if (graphic) { // update
 					graphic.attr({
 						x: plotX,
@@ -213,14 +214,10 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 						width: options.width,
 						height: options.height
 					})
-					.add(series.group)
+					.add(series.markerGroup)
 					.shadow(options.shadow);
 
 				}
-
-				// get the bounding box
-				box = graphic.box;
-				bBox = box.getBBox();
 
 				// Set the tooltip anchor position
 				point.tooltipPos = [plotX, plotY];
@@ -240,7 +237,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 		var series = this,
 			points = series.points;
 		
-		seriesTypes.column.prototype.drawTracker.apply(this);
+		TrackerMixin.drawTrackerPoint.apply(this);
 
 		// Bring each stacked flag up on mouse over, this allows readability of vertically
 		// stacked elements as well as tight points on the x axis. #1924.

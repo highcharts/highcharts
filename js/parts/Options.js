@@ -15,14 +15,14 @@ defaultLabelOptions = {
 	style: {
 		color: '#666',
 		cursor: 'default',
-		fontSize: '11px',
-		lineHeight: '14px'
+		fontSize: '11px'
 	}
 };
 
 defaultOptions = {
 	colors: ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970',
 		'#f28f43', '#77a1e5', '#c42525', '#a6c96a'],
+	//colors: ['#8085e8', '#252530', '#90ee7e', '#8d4654', '#2b908f', '#76758e', '#f6a45c', '#7eb5ee', '#f45b5b', '#9ff0cf'],
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
 		loading: 'Loading...',
@@ -38,7 +38,7 @@ defaultOptions = {
 	},
 	global: {
 		useUTC: true,
-		//timezoneOffset: 0, // docs: highcharts/global/timezoneoffset
+		//timezoneOffset: 0,
 		canvasToolsURL: 'http://code.highcharts.com@product.cdnpath@/@product.version@/modules/canvas-tools.js',
 		VMLRadialGradientURL: 'http://code.highcharts.com@product.cdnpath@/@product.version@/gfx/vml-radial-gradient.png'
 	},
@@ -232,8 +232,7 @@ defaultOptions = {
 		/*style: {
 			padding: '5px'
 		},*/
-		itemStyle: {
-			cursor: 'pointer',
+		itemStyle: {			
 			color: '#274b6d',
 			fontSize: '12px'
 		},

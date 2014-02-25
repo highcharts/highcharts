@@ -4,7 +4,7 @@ $(function () {
     $('#container').highcharts('Map', {
         
         title : {
-            text : 'Remove point by id'
+            text : 'Select point by id'
         },
 
         colorAxis: {},
@@ -67,14 +67,14 @@ $(function () {
                 }
             },
             states: {
-                hover: {
+                select: {
                     color: '#BADA55'
                 }
             }
         }]
     });
 
-    $('#remove').click(function () {
-        $('#container').highcharts().get('nt').remove();
+    $('#select').click(function () {
+        $('#container').highcharts().get('nt').select();
     });
 });

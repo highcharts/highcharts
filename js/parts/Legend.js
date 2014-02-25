@@ -1,9 +1,9 @@
 /**
  * The overview of the chart's series
  */
-function Legend(chart, options) {
+var Legend = Highcharts.Legend = function (chart, options) {
 	this.init(chart, options);
-}
+};
 
 Legend.prototype = {
 	
@@ -61,7 +61,7 @@ Legend.prototype = {
 			legendSymbol = item.legendSymbol,
 			hiddenColor = legend.itemHiddenStyle.color,
 			textColor = visible ? options.itemStyle.color : hiddenColor,
-			symbolColor = visible ? (item.legendColor || item.color) : hiddenColor,
+			symbolColor = visible ? (item.legendColor || item.color || '#CCC') : hiddenColor,
 			markerOptions = item.options && item.options.marker,
 			symbolAttr = {
 				stroke: symbolColor,
@@ -235,7 +235,7 @@ Legend.prototype = {
 			li = item.legendItem,
 			series = item.series && item.series.drawLegendSymbol ? item.series : item,
 			seriesOptions = series.options,
-			showCheckbox = seriesOptions && seriesOptions.showCheckbox,
+			showCheckbox = legend.createCheckboxForItem && seriesOptions && seriesOptions.showCheckbox,
 			useHTML = options.useHTML;
 
 		if (!li) { // generate it once, later move it
@@ -263,55 +263,16 @@ Legend.prototype = {
 				})
 				.add(item.legendGroup);
 
-			// Set the events on the item group, or in case of useHTML, the item itself (#1249)
-			(useHTML ? li : item.legendGroup).on('mouseover', function () {
-					item.setState(HOVER_STATE);
-					li.css(legend.options.itemHoverStyle);
-				})
-				.on('mouseout', function () {
-					li.css(item.visible ? itemStyle : itemHiddenStyle);
-					item.setState();
-				})
-				.on('click', function (event) {
-					var strLegendItemClick = 'legendItemClick',
-						fnLegendItemClick = function () {
-							item.setVisible();
-						};
-						
-					// Pass over the click/touch event. #4.
-					event = {
-						browserEvent: event
-					};
-
-					// click the name or symbol
-					if (item.firePointEvent) { // point
-						item.firePointEvent(strLegendItemClick, event, fnLegendItemClick);
-					} else {
-						fireEvent(item, strLegendItemClick, event, fnLegendItemClick);
-					}
-				});
+			if (legend.setItemEvents) {
+				legend.setItemEvents(item, li, useHTML, itemStyle, itemHiddenStyle);
+			}			
 
 			// Colorize the items
 			legend.colorizeItem(item, item.visible);
 
 			// add the HTML checkbox on top
 			if (showCheckbox) {
-				item.checkbox = createElement('input', {
-					type: 'checkbox',
-					checked: item.selected,
-					defaultChecked: item.selected // required by IE7
-				}, options.itemCheckboxStyle, chart.container);
-
-				addEvent(item.checkbox, 'click', function (event) {
-					var target = event.target;
-					fireEvent(item, 'checkboxClick', {
-							checked: target.checked
-						},
-						function () {
-							item.select();
-						}
-					);
-				});
+				legend.createCheckboxForItem(item);				
 			}
 		}
 
@@ -324,7 +285,7 @@ Legend.prototype = {
 		legend.itemHeight = itemHeight = mathRound(item.legendItemHeight || bBox.height);
 
 		// if the item exceeds the width, start a new line
-		if (horizontal && legend.itemX - initialItemX + itemWidth >
+		if (horizontal && legend.itemX - initialItemX + itemWidth + options.x >
 				(widthOption || (chart.chartWidth - 2 * padding - initialItemX))) {
 			legend.itemX = initialItemX;
 			legend.itemY += itemMarginTop + legend.lastLineHeight + itemMarginBottom;
@@ -561,15 +522,16 @@ Legend.prototype = {
 			// the scroll top for each page (#2098)
 			each(allItems, function (item, i) {
 				var y = item._legendItemPos[1],
-					h = mathRound(item.legendItem.bBox.height),
+					h = mathRound(item.legendItem.getBBox().height),
 					len = pages.length;
 				
-				if (!len || (y - pages[len - 1] > clipHeight)) {
+				if (!len || (y - pages[len - 1] > clipHeight && (lastY || y) !== pages[len - 1])) {
 					pages.push(lastY || y);
+					len++;
 				}
 				
 				if (i === allItems.length - 1 && y + h - pages[len - 1] > clipHeight) {
-					pages.push(lastY);
+					pages.push(y);
 				}
 				if (y !== lastY) {
 					lastY = y;
@@ -662,7 +624,7 @@ Legend.prototype = {
 					cursor: currentPage === 1 ? 'default' : 'pointer'
 				});
 			pager.attr({
-				text: currentPage + '/' + this.pageCount
+				text: currentPage + '/' + pageCount
 			});
 			this.down.attr({
 					x: 18 + this.pager.getBBox().width, // adjust to text width
@@ -676,11 +638,7 @@ Legend.prototype = {
 
 			this.scrollGroup.animate({
 				translateY: scrollOffset
-			});
-			pager.attr({
-				text: currentPage + '/' + pageCount
-			});
-			
+			});			
 			
 			this.currentPage = currentPage;
 			this.positionCheckboxes(scrollOffset);
@@ -703,14 +661,14 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 	 * @param {Object} item The series (this) or point
 	 */
 	drawRectangle: function (legend, item) {
-		var symbolHeight = legend.options.symbolHeight || 12; // docs
+		var symbolHeight = legend.options.symbolHeight || 12;
 		
 		item.legendSymbol = this.chart.renderer.rect(
 			0,
 			legend.baseline - 5 - (symbolHeight / 2),
 			legend.symbolWidth,
 			symbolHeight,
-			pick(legend.options.symbolRadius, 2) // docs
+			pick(legend.options.symbolRadius, 2)
 		).attr({
 			zIndex: 3
 		}).add(item.legendGroup);		
@@ -772,14 +730,17 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 	}
 };
 
-// Workaround for #2030, horizontal legend items not displaying in IE11 Preview.
-// TODO: When IE11 is released, check again for this bug, and remove the fix
-// or make a better one.
-if (/Trident\/7\.0/.test(userAgent)) {
+// Workaround for #2030, horizontal legend items not displaying in IE11 Preview,
+// and for #2580, a similar drawing flaw in Firefox 26.
+// TODO: Explore if there's a general cause for this. The problem may be related 
+// to nested group elements, as the legend item texts are within 4 group elements.
+if (/Trident\/7\.0/.test(userAgent) || isFirefox) {
 	wrap(Legend.prototype, 'positionItem', function (proceed, item) {
 		var legend = this,
-			runPositionItem = function () {
-				proceed.call(legend, item);
+			runPositionItem = function () { // If chart destroyed in sync, this is undefined (#2030)
+				if (item._legendItemPos) {
+					proceed.call(legend, item);
+				}
 			};
 
 		if (legend.chart.renderer.forExport) {

@@ -26,7 +26,7 @@
 		<title>Rendering div not found</title>
 		<description>
 			This error occurs if the <a href="http://api.highcharts.com/#renderTo">chart.renderTo</a> 
-			option is misconfugured so that Highcharts is unable to find the HTML element to render the chart in.
+			option is misconfigured so that Highcharts is unable to find the HTML element to render the chart in.
 		</description>
 	</error>
 	<error id="14">
@@ -66,7 +66,7 @@
 		<title>The requested series type does not exist</title>
 		<description>
 			<p>This error happens when you are setting <code>chart.type</code> or <code>series.type</code> to a series type
-			this isn't defined in Highcharts. A typical reason may be that your are missing the extension file where the serires type
+			that isn't defined in Highcharts. A typical reason may be that your are missing the extension file where the series type
 			is defined, for example in order to run an <code>arearange</code> series you need to load the <code>highcharts-more.js</code>
 			file.</p> 
 		</description>

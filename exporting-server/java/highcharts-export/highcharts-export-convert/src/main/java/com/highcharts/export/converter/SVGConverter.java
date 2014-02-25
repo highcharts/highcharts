@@ -50,7 +50,7 @@ public class SVGConverter {
 			if (filename != null) {
 				params.put("outfile", filename);
 			} else {
-				params.put("outtype", mime.name().toLowerCase());
+				params.put("type", mime.name().toLowerCase());
 			}
 
 			params.put("infile", input);

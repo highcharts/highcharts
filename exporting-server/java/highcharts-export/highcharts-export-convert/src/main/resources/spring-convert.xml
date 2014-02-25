@@ -18,6 +18,7 @@
 	<context:component-scan base-package="com.highcharts.export.converter" />
 
 	<context:property-placeholder location="classpath*:app-convert.properties" order="0"/>
+	<!-- If there is a file in the following location then it has the highest precedence and ignore the above settings --> 
 	<context:property-placeholder ignore-unresolvable="true" ignore-resource-not-found="true" location="WEB-INF/spring/app-convert.properties" order="-1"/>
 
 	<bean id="tempDir" class="com.highcharts.export.util.TempDir"/>

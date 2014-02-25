@@ -21996,320 +21996,32 @@ $(function () {
     {
         "name": "Weston, WY",
         "value": 4.0
-    },
-    {
-        "name": "Adjuntas Municipio, PR",
-        "value": 23.3
-    },
-    {
-        "name": "Aguada Municipio, PR",
-        "value": 15.9
-    },
-    {
-        "name": "Aguadilla Municipio, PR",
-        "value": 14.7
-    },
-    {
-        "name": "Aguas Buenas Municipio, PR",
-        "value": 15.2
-    },
-    {
-        "name": "Aibonito Municipio, PR",
-        "value": 16.6
-    },
-    {
-        "name": "Anasco Municipio, PR",
-        "value": 16.3
-    },
-    {
-        "name": "Arecibo Municipio, PR",
-        "value": 15.0
-    },
-    {
-        "name": "Arroyo Municipio, PR",
-        "value": 24.8
-    },
-    {
-        "name": "Barceloneta Municipio, PR",
-        "value": 20.5
-    },
-    {
-        "name": "Barranquitas Municipio, PR",
-        "value": 18.0
-    },
-    {
-        "name": "Bayamon Municipio, PR",
-        "value": 11.9
-    },
-    {
-        "name": "Cabo Rojo Municipio, PR",
-        "value": 15.8
-    },
-    {
-        "name": "Caguas Municipio, PR",
-        "value": 12.5
-    },
-    {
-        "name": "Camuy Municipio, PR",
-        "value": 15.4
-    },
-    {
-        "name": "Canovanas Municipio, PR",
-        "value": 17.4
-    },
-    {
-        "name": "Carolina Municipio, PR",
-        "value": 10.7
-    },
-    {
-        "name": "Catano Municipio, PR",
-        "value": 16.0
-    },
-    {
-        "name": "Cayey Municipio, PR",
-        "value": 15.9
-    },
-    {
-        "name": "Ceiba Municipio, PR",
-        "value": 16.6
-    },
-    {
-        "name": "Ciales Municipio, PR",
-        "value": 27.0
-    },
-    {
-        "name": "Cidra Municipio, PR",
-        "value": 15.2
-    },
-    {
-        "name": "Coamo Municipio, PR",
-        "value": 20.9
-    },
-    {
-        "name": "Comerio Municipio, PR",
-        "value": 22.6
-    },
-    {
-        "name": "Corozal Municipio, PR",
-        "value": 18.1
-    },
-    {
-        "name": "Culebra Municipio, PR",
-        "value": 8.3
-    },
-    {
-        "name": "Dorado Municipio, PR",
-        "value": 11.8
-    },
-    {
-        "name": "Fajardo Municipio, PR",
-        "value": 15.8
-    },
-    {
-        "name": "Florida Municipio, PR",
-        "value": 19.6
-    },
-    {
-        "name": "Guanica Municipio, PR",
-        "value": 20.8
-    },
-    {
-        "name": "Guayama Municipio, PR",
-        "value": 20.1
-    },
-    {
-        "name": "Guayanilla Municipio, PR",
-        "value": 19.3
-    },
-    {
-        "name": "Guaynabo Municipio, PR",
-        "value": 8.9
-    },
-    {
-        "name": "Gurabo Municipio, PR",
-        "value": 12.8
-    },
-    {
-        "name": "Hatillo Municipio, PR",
-        "value": 14.3
-    },
-    {
-        "name": "Hormigueros Municipio, PR",
-        "value": 16.0
-    },
-    {
-        "name": "Humacao Municipio, PR",
-        "value": 16.9
-    },
-    {
-        "name": "Isabela Municipio, PR",
-        "value": 14.2
-    },
-    {
-        "name": "Jayuya Municipio, PR",
-        "value": 20.0
-    },
-    {
-        "name": "Juana Diaz Municipio, PR",
-        "value": 15.8
-    },
-    {
-        "name": "Juncos Municipio, PR",
-        "value": 15.8
-    },
-    {
-        "name": "Lajas Municipio, PR",
-        "value": 20.0
-    },
-    {
-        "name": "Lares Municipio, PR",
-        "value": 19.8
-    },
-    {
-        "name": "Las Marias Municipio, PR",
-        "value": 16.7
-    },
-    {
-        "name": "Las Piedras Municipio, PR",
-        "value": 16.4
-    },
-    {
-        "name": "Loiza Municipio, PR",
-        "value": 18.5
-    },
-    {
-        "name": "Luquillo Municipio, PR",
-        "value": 17.3
-    },
-    {
-        "name": "Manati Municipio, PR",
-        "value": 14.8
-    },
-    {
-        "name": "Maricao Municipio, PR",
-        "value": 23.6
-    },
-    {
-        "name": "Maunabo Municipio, PR",
-        "value": 19.1
-    },
-    {
-        "name": "Mayaguez Municipio, PR",
-        "value": 18.8
-    },
-    {
-        "name": "Moca Municipio, PR",
-        "value": 16.6
-    },
-    {
-        "name": "Morovis Municipio, PR",
-        "value": 19.9
-    },
-    {
-        "name": "Naguabo Municipio, PR",
-        "value": 17.7
-    },
-    {
-        "name": "Naranjito Municipio, PR",
-        "value": 18.0
-    },
-    {
-        "name": "Orocovis Municipio, PR",
-        "value": 20.9
-    },
-    {
-        "name": "Patillas Municipio, PR",
-        "value": 19.4
-    },
-    {
-        "name": "Penuelas Municipio, PR",
-        "value": 17.4
-    },
-    {
-        "name": "Ponce Municipio, PR",
-        "value": 14.5
-    },
-    {
-        "name": "Quebradillas Municipio, PR",
-        "value": 16.5
-    },
-    {
-        "name": "Rincon Municipio, PR",
-        "value": 15.5
-    },
-    {
-        "name": "Rio Grande Municipio, PR",
-        "value": 15.1
-    },
-    {
-        "name": "Sabana Grande Municipio, PR",
-        "value": 18.0
-    },
-    {
-        "name": "Salinas Municipio, PR",
-        "value": 25.7
-    },
-    {
-        "name": "San German Municipio, PR",
-        "value": 18.7
-    },
-    {
-        "name": "San Juan Municipio, PR",
-        "value": 10.0
-    },
-    {
-        "name": "San Lorenzo Municipio, PR",
-        "value": 17.5
-    },
-    {
-        "name": "San Sebastian Municipio, PR",
-        "value": 17.6
-    },
-    {
-        "name": "Santa Isabel Municipio, PR",
-        "value": 20.1
-    },
-    {
-        "name": "Toa Alta Municipio, PR",
-        "value": 11.8
-    },
-    {
-        "name": "Toa Baja Municipio, PR",
-        "value": 12.7
-    },
-    {
-        "name": "Trujillo Alto Municipio, PR",
-        "value": 9.8
-    },
-    {
-        "name": "Utuado Municipio, PR",
-        "value": 18.8
-    },
-    {
-        "name": "Vega Alta Municipio, PR",
-        "value": 14.9
-    },
-    {
-        "name": "Vega Baja Municipio, PR",
-        "value": 15.7
-    },
-    {
-        "name": "Vieques Municipio, PR",
-        "value": 16.0
-    },
-    {
-        "name": "Villalba Municipio, PR",
-        "value": 19.5
-    },
-    {
-        "name": "Yabucoa Municipio, PR",
-        "value": 22.9
-    },
-    {
-        "name": "Yauco Municipio, PR",
-        "value": 16.2
     }
 ];
+/*
+Highcharts.maps.uscounties = [{
+    path: 'M0 0,L2 0,2 2,0 2z'
+}, {
+    path: 'M300 0,L302 0,302 2,300 2z'
+}, {
+    path: 'M500 0,L502 0,502 2,500 2z'
+}, {
+    path: 'M500 50,L502 50,502 52,500 52z'
+}, {
+    path: 'M500 -50,L502 -50,502 -52,500 -52z'
+}];
+data = [{
+    value: 1
+}, {
+    value: 1
+}, {
+    value: 1
+}, {
+    value: 1
+}, {
+    value: 1
+}];
+*/
 /*
 Highcharts.maps.uscounties.length = [];
 data.length = [];
@@ -22339,14 +22051,17 @@ for (var i = 0; i < num; i++) {
 
         legend: {
             title: {
-                text: 'Unemployment<br>rate'
+                text: 'Unemployment<br>rate',
+                style: {
+                    color: (Highcharts.theme && Highcharts.theme.textColor) || 'black'
+                }
             },
             layout: 'vertical',
             align: 'right',
             floating: true,
             valueDecimals: 0,
             valueSuffix: '%',
-            backgroundColor: 'rgba(255, 255, 255, 0.85)',
+            backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || 'rgba(255, 255, 255, 0.85)',
             symbolRadius: 0,
             symbolHeight: 14
         },
@@ -22398,6 +22113,13 @@ for (var i = 0; i < num; i++) {
             },
             tooltip: {
                 valueSuffix: '%'
+            },
+            point: {
+                events: {
+                    click: function () {
+                        console.log(this.name, [this._midX, this._midY])
+                    }
+                }
             }
         }, {
             type: "mapline",
@@ -22423,4 +22145,10 @@ for (var i = 0; i < num; i++) {
 
     // Instanciate the map
     $('#container').highcharts('Map', options);
+
+    /*$('#container').bind('mousemove', function (e) {
+        var chart = $('#container').highcharts();
+        e = chart.pointer.normalize(e);
+        console.log('plotX', e.chartX - chart.plotLeft)
+    })*/
 });

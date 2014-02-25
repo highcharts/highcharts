@@ -82,19 +82,16 @@ var PiePoint = extendClass(Point, {
 	setVisible: function (vis) {
 		var point = this,
 			series = point.series,
-			chart = series.chart,
-			method;
+			chart = series.chart;
 
 		// if called without an argument, toggle visibility
 		point.visible = point.options.visible = vis = vis === UNDEFINED ? !point.visible : vis;
 		series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
-		
-		method = vis ? 'show' : 'hide';
 
 		// Show and hide associated elements
 		each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
 			if (point[key]) {
-				point[key][method]();
+				point[key][vis ? 'show' : 'hide'](true);
 			}
 		});
 
@@ -159,6 +156,7 @@ var PieSeries = {
 		'stroke-width': 'borderWidth',
 		fill: 'color'
 	},
+	singularTooltips: true,
 
 	/**
 	 * Pies have one color each point
@@ -204,12 +202,12 @@ var PieSeries = {
 	 * Extend the basic setData method by running processData and generatePoints immediately,
 	 * in order to access the points from the legend.
 	 */
-	setData: function (data, redraw) {
-		Series.prototype.setData.call(this, data, false);
+	setData: function (data, redraw, animation, updatePoints) {
+		Series.prototype.setData.call(this, data, false, animation, updatePoints);
 		this.processData();
 		this.generatePoints();
 		if (pick(redraw, true)) {
-			this.chart.redraw();
+			this.chart.redraw(animation);
 		} 
 	},
 
@@ -263,7 +261,7 @@ var PieSeries = {
 			angle,
 			startAngle = options.startAngle || 0,
 			startAngleRad = series.startAngleRad = mathPI / 180 * (startAngle - 90),
-			endAngleRad = series.endAngleRad = mathPI / 180 * ((options.endAngle || (startAngle + 360)) - 90),
+			endAngleRad = series.endAngleRad = mathPI / 180 * ((pick(options.endAngle, startAngle + 360)) - 90),
 			circ = endAngleRad - startAngleRad, //2 * mathPI,
 			points = series.points,
 			radiusX, // the x component of the radius vector for a given point
@@ -284,7 +282,7 @@ var PieSeries = {
 		// utility for getting the x value from a given y, used for anticollision logic in data labels
 		series.getX = function (y, left) {
 
-			angle = math.asin((y - positions[1]) / (positions[2] / 2 + labelDistance));
+			angle = math.asin(mathMin((y - positions[1]) / (positions[2] / 2 + labelDistance), 1));
 
 			return positions[0] +
 				(left ? -1 : 1) *
@@ -314,11 +312,15 @@ var PieSeries = {
 				end: mathRound(end * precision) / precision
 			};
 
-			// center for the sliced out slice
+			// The angle must stay within -90 and 270 (#2645)
 			angle = (end + start) / 2;
-			if (angle > 0.75 * circ) {
+			if (angle > 1.5 * mathPI) {
 				angle -= 2 * mathPI;
+			} else if (angle < -mathPI / 2) {
+				angle += 2 * mathPI;
 			}
+
+			// Center for the sliced out slice
 			point.slicedTranslation = {
 				translateX: mathRound(mathCos(angle) * slicedOffset),
 				translateY: mathRound(mathSin(angle) * slicedOffset)
@@ -352,8 +354,7 @@ var PieSeries = {
 
 		}
 	},
-
-	setTooltipPoints: noop,
+	
 	drawGraph: null,
 
 	/**
@@ -408,7 +409,10 @@ var PieSeries = {
 					.attr(
 						point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE]
 					)
-					.attr({ 'stroke-linejoin': 'round' })
+					.attr({ 
+						'stroke-linejoin': 'round',
+						zIndex: 1 // #2722
+					})
 					.attr(groupTranslation)
 					.add(series.group)
 					.shadow(shadow, shadowGroup);	
@@ -430,391 +434,7 @@ var PieSeries = {
 		points.sort(function (a, b) {
 			return a.angle !== undefined && (b.angle - a.angle) * sign;
 		});
-	},
-
-	/**
-	 * Override the base drawDataLabels method by pie specific functionality
-	 */
-	drawDataLabels: function () {
-		var series = this,
-			data = series.data,
-			point,
-			chart = series.chart,
-			options = series.options.dataLabels,
-			connectorPadding = pick(options.connectorPadding, 10),
-			connectorWidth = pick(options.connectorWidth, 1),
-			plotWidth = chart.plotWidth,
-			plotHeight = chart.plotHeight,
-			connector,
-			connectorPath,
-			softConnector = pick(options.softConnector, true),
-			distanceOption = options.distance,
-			seriesCenter = series.center,
-			radius = seriesCenter[2] / 2,
-			centerY = seriesCenter[1],
-			outside = distanceOption > 0,
-			dataLabel,
-			dataLabelWidth,
-			labelPos,
-			labelHeight,
-			halves = [// divide the points into right and left halves for anti collision
-				[], // right
-				[]  // left
-			],
-			x,
-			y,
-			visibility,
-			rankArr,
-			i,
-			j,
-			overflow = [0, 0, 0, 0], // top, right, bottom, left
-			sort = function (a, b) {
-				return b.y - a.y;
-			};
-
-		// get out if not enabled
-		if (!series.visible || (!options.enabled && !series._hasPointLabels)) {
-			return;
-		}
-
-		// run parent method
-		Series.prototype.drawDataLabels.apply(series);
-
-		// arrange points for detection collision
-		each(data, function (point) {
-			if (point.dataLabel) { // it may have been cancelled in the base method (#407)
-				halves[point.half].push(point);
-			}
-		});
-
-		// assume equal label heights
-		i = 0;
-		while (!labelHeight && data[i]) { // #1569
-			labelHeight = data[i] && data[i].dataLabel && (data[i].dataLabel.getBBox().height || 21); // 21 is for #968
-			i++;
-		}
-
-		/* Loop over the points in each half, starting from the top and bottom
-		 * of the pie to detect overlapping labels.
-		 */
-		i = 2;
-		while (i--) {
-
-			var slots = [],
-				slotsLength,
-				usedSlots = [],
-				points = halves[i],
-				pos,
-				length = points.length,
-				slotIndex;
-				
-			// Sort by angle
-			series.sortByAngle(points, i - 0.5);
-
-			// Only do anti-collision when we are outside the pie and have connectors (#856)
-			if (distanceOption > 0) {
-				
-				// build the slots
-				for (pos = centerY - radius - distanceOption; pos <= centerY + radius + distanceOption; pos += labelHeight) {
-					slots.push(pos);
-					
-					// visualize the slot
-					/*
-					var slotX = series.getX(pos, i) + chart.plotLeft - (i ? 100 : 0),
-						slotY = pos + chart.plotTop;
-					if (!isNaN(slotX)) {
-						chart.renderer.rect(slotX, slotY - 7, 100, labelHeight, 1)
-							.attr({
-								'stroke-width': 1,
-								stroke: 'silver'
-							})
-							.add();
-						chart.renderer.text('Slot '+ (slots.length - 1), slotX, slotY + 4)
-							.attr({
-								fill: 'silver'
-							}).add();
-					}
-					*/
-				}
-				slotsLength = slots.length;
-	
-				// if there are more values than available slots, remove lowest values
-				if (length > slotsLength) {
-					// create an array for sorting and ranking the points within each quarter
-					rankArr = [].concat(points);
-					rankArr.sort(sort);
-					j = length;
-					while (j--) {
-						rankArr[j].rank = j;
-					}
-					j = length;
-					while (j--) {
-						if (points[j].rank >= slotsLength) {
-							points.splice(j, 1);
-						}
-					}
-					length = points.length;
-				}
-	
-				// The label goes to the nearest open slot, but not closer to the edge than
-				// the label's index.
-				for (j = 0; j < length; j++) {
-	
-					point = points[j];
-					labelPos = point.labelPos;
-	
-					var closest = 9999,
-						distance,
-						slotI;
-	
-					// find the closest slot index
-					for (slotI = 0; slotI < slotsLength; slotI++) {
-						distance = mathAbs(slots[slotI] - labelPos[1]);
-						if (distance < closest) {
-							closest = distance;
-							slotIndex = slotI;
-						}
-					}
-	
-					// if that slot index is closer to the edges of the slots, move it
-					// to the closest appropriate slot
-					if (slotIndex < j && slots[j] !== null) { // cluster at the top
-						slotIndex = j;
-					} else if (slotsLength  < length - j + slotIndex && slots[j] !== null) { // cluster at the bottom
-						slotIndex = slotsLength - length + j;
-						while (slots[slotIndex] === null) { // make sure it is not taken
-							slotIndex++;
-						}
-					} else {
-						// Slot is taken, find next free slot below. In the next run, the next slice will find the
-						// slot above these, because it is the closest one
-						while (slots[slotIndex] === null) { // make sure it is not taken
-							slotIndex++;
-						}
-					}
-	
-					usedSlots.push({ i: slotIndex, y: slots[slotIndex] });
-					slots[slotIndex] = null; // mark as taken
-				}
-				// sort them in order to fill in from the top
-				usedSlots.sort(sort);
-			}
-
-			// now the used slots are sorted, fill them up sequentially
-			for (j = 0; j < length; j++) {
-				
-				var slot, naturalY;
-
-				point = points[j];
-				labelPos = point.labelPos;
-				dataLabel = point.dataLabel;
-				visibility = point.visible === false ? HIDDEN : VISIBLE;
-				naturalY = labelPos[1];
-				
-				if (distanceOption > 0) {
-					slot = usedSlots.pop();
-					slotIndex = slot.i;
-
-					// if the slot next to currrent slot is free, the y value is allowed
-					// to fall back to the natural position
-					y = slot.y;
-					if ((naturalY > y && slots[slotIndex + 1] !== null) ||
-							(naturalY < y &&  slots[slotIndex - 1] !== null)) {
-						y = naturalY;
-					}
-					
-				} else {
-					y = naturalY;
-				}
-
-				// get the x - use the natural x position for first and last slot, to prevent the top
-				// and botton slice connectors from touching each other on either side
-				x = options.justify ? 
-					seriesCenter[0] + (i ? -1 : 1) * (radius + distanceOption) :
-					series.getX(slotIndex === 0 || slotIndex === slots.length - 1 ? naturalY : y, i);
-				
-			
-				// Record the placement and visibility
-				dataLabel._attr = {
-					visibility: visibility,
-					align: labelPos[6]
-				};
-				dataLabel._pos = {
-					x: x + options.x +
-						({ left: connectorPadding, right: -connectorPadding }[labelPos[6]] || 0),
-					y: y + options.y - 10 // 10 is for the baseline (label vs text)
-				};
-				dataLabel.connX = x;
-				dataLabel.connY = y;
-				
-						
-				// Detect overflowing data labels
-				if (this.options.size === null) {
-					dataLabelWidth = dataLabel.width;
-					// Overflow left
-					if (x - dataLabelWidth < connectorPadding) {
-						overflow[3] = mathMax(mathRound(dataLabelWidth - x + connectorPadding), overflow[3]);
-						
-					// Overflow right
-					} else if (x + dataLabelWidth > plotWidth - connectorPadding) {
-						overflow[1] = mathMax(mathRound(x + dataLabelWidth - plotWidth + connectorPadding), overflow[1]);
-					}
-					
-					// Overflow top
-					if (y - labelHeight / 2 < 0) {
-						overflow[0] = mathMax(mathRound(-y + labelHeight / 2), overflow[0]);
-						
-					// Overflow left
-					} else if (y + labelHeight / 2 > plotHeight) {
-						overflow[2] = mathMax(mathRound(y + labelHeight / 2 - plotHeight), overflow[2]);
-					}
-				}
-			} // for each point
-		} // for each half
-		
-		// Do not apply the final placement and draw the connectors until we have verified
-		// that labels are not spilling over. 
-		if (arrayMax(overflow) === 0 || this.verifyDataLabelOverflow(overflow)) {
-			
-			// Place the labels in the final position
-			this.placeDataLabels();
-			
-			// Draw the connectors
-			if (outside && connectorWidth) {
-				each(this.points, function (point) {
-					connector = point.connector;
-					labelPos = point.labelPos;
-					dataLabel = point.dataLabel;
-					
-					if (dataLabel && dataLabel._pos) {
-						visibility = dataLabel._attr.visibility;
-						x = dataLabel.connX;
-						y = dataLabel.connY;
-						connectorPath = softConnector ? [
-							M,
-							x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
-							'C',
-							x, y, // first break, next to the label
-							2 * labelPos[2] - labelPos[4], 2 * labelPos[3] - labelPos[5],
-							labelPos[2], labelPos[3], // second break
-							L,
-							labelPos[4], labelPos[5] // base
-						] : [
-							M,
-							x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
-							L,
-							labelPos[2], labelPos[3], // second break
-							L,
-							labelPos[4], labelPos[5] // base
-						];
-		
-						if (connector) {
-							connector.animate({ d: connectorPath });
-							connector.attr('visibility', visibility);
-		
-						} else {
-							point.connector = connector = series.chart.renderer.path(connectorPath).attr({
-								'stroke-width': connectorWidth,
-								stroke: options.connectorColor || point.color || '#606060',
-								visibility: visibility
-							})
-							.add(series.group);
-						}
-					} else if (connector) {
-						point.connector = connector.destroy();
-					}
-				});
-			}			
-		}
-	},
-	
-	/**
-	 * Verify whether the data labels are allowed to draw, or we should run more translation and data
-	 * label positioning to keep them inside the plot area. Returns true when data labels are ready 
-	 * to draw.
-	 */
-	verifyDataLabelOverflow: function (overflow) {
-		
-		var center = this.center,
-			options = this.options,
-			centerOption = options.center,
-			minSize = options.minSize || 80,
-			newSize = minSize,
-			ret;
-			
-		// Handle horizontal size and center
-		if (centerOption[0] !== null) { // Fixed center
-			newSize = mathMax(center[2] - mathMax(overflow[1], overflow[3]), minSize);
-			
-		} else { // Auto center
-			newSize = mathMax(
-				center[2] - overflow[1] - overflow[3], // horizontal overflow					
-				minSize
-			);
-			center[0] += (overflow[3] - overflow[1]) / 2; // horizontal center
-		}
-		
-		// Handle vertical size and center
-		if (centerOption[1] !== null) { // Fixed center
-			newSize = mathMax(mathMin(newSize, center[2] - mathMax(overflow[0], overflow[2])), minSize);
-			
-		} else { // Auto center
-			newSize = mathMax(
-				mathMin(
-					newSize,		
-					center[2] - overflow[0] - overflow[2] // vertical overflow
-				),
-				minSize
-			);
-			center[1] += (overflow[0] - overflow[2]) / 2; // vertical center
-		}
-		
-		// If the size must be decreased, we need to run translate and drawDataLabels again
-		if (newSize < center[2]) {
-			center[2] = newSize;
-			this.translate(center);
-			each(this.points, function (point) {
-				if (point.dataLabel) {
-					point.dataLabel._pos = null; // reset
-				}
-			});
-			this.drawDataLabels();
-			
-		// Else, return true to indicate that the pie and its labels is within the plot area
-		} else {
-			ret = true;
-		}
-		return ret;
-	},
-	
-	/**
-	 * Perform the final placement of the data labels after we have verified that they
-	 * fall within the plot area.
-	 */
-	placeDataLabels: function () {
-		each(this.points, function (point) {
-			var dataLabel = point.dataLabel,
-				_pos;
-			
-			if (dataLabel) {
-				_pos = dataLabel._pos;
-				if (_pos) {
-					dataLabel.attr(dataLabel._attr);			
-					dataLabel[dataLabel.moved ? 'animate' : 'attr'](_pos);
-					dataLabel.moved = true;
-				} else if (dataLabel) {
-					dataLabel.attr({ y: -999 });
-				}
-			}
-		});
-	},
-	
-	alignDataLabel: noop,
-
-	/**
-	 * Draw point specific tracker objects. Inherit directly from column series.
-	 */
-	drawTracker: PointTrackerMixin.drawTracker,
+	},		
 
 	/**
 	 * Use a simple symbol from LegendSymbolMixin

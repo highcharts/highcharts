@@ -1,6 +1,6 @@
 $(function () {
 
-    $.getJSON('http://www.highcharts.local/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
         
         // Initiate the chart
         $('#container').highcharts('Map', {
@@ -66,13 +66,21 @@ $(function () {
                         color: '#BADA55'
                     },
                     select: {
-                        color: 'black'
+                        color: '#EFFFEF',
+                        borderColor: 'black',
+                        dashStyle: 'dot'
                     }
                 },
                 tooltip: {
                     valueSuffix: '/km²'
                 }
             }]
+        });
+
+        $('#getselectedpoints').click(function () {
+            var chart = $('#container').highcharts(),
+                selectedPoints = chart.getSelectedPoints();
+            alert ('You selected '+ selectedPoints.length +' points');
         });
     });
 });

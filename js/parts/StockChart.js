@@ -46,13 +46,7 @@ Highcharts.StockChart = function (options, callback) {
 				labels: {
 					overflow: 'justify'
 				},
-				showLastLabel: true,
-				crosshair: {
-					label: {
-						enabled: true,
-						format: '{value:%b %d, %Y}' // TODO: pick best time format like tooltips
-					}
-				}
+				showLastLabel: true
 			}, xAxisOptions, // user options 
 			{ // forced options
 				type: 'datetime',
@@ -72,12 +66,6 @@ Highcharts.StockChart = function (options, callback) {
 				y: -2
 			},
 			showLastLabel: false,
-			crosshair: {
-				label: {
-					enabled: false,
-					format: '{value}' // TODO: formatting/decimals like tooltip
-				}
-			},
 			title: {
 				text: null
 			}
@@ -153,11 +141,103 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 	this.pinchY = this.pinchVert = pinchType.indexOf('y') !== -1;
 });
 
+// Override getPlotLinePath to allow for multipane charts
+Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, translatedValue) {
+	var axis = this,
+		renderer = axis.chart.renderer,
+		axisLeft = axis.left,
+		axisTop = axis.top,
+		x1,
+		y1,
+		x2,
+		y2,
+		result = [];
+
+	// Get the related axes.
+	var axes = (this.isXAxis ? 
+					(defined(this.options.yAxis) ?
+						[this.chart.yAxis[this.options.yAxis]] : 
+						map(axis.series, function (S) { return S.yAxis; })
+					) :
+					(defined(this.options.xAxis) ?
+						[this.chart.xAxis[this.options.xAxis]] : 
+						map(axis.series, function (S) { return S.xAxis; })
+					)
+				);
+
+	// remove duplicates in the axes array
+	var uAxes = [];
+	each(axes, function (axis2) {
+		if (inArray(axis2, uAxes) === -1) {
+			uAxes.push(axis2);
+		}
+	});
+	
+	translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
+	
+	if (!isNaN(translatedValue)) {
+		if (axis.horiz) {
+			each(uAxes, function (axis2) {
+				y1 = axis2.top;
+				y2 = y1 + axis2.len;
+				x1 = x2 = mathRound(translatedValue + axis.transB);
+
+				if ((x1 >= axisLeft && x1 <= axisLeft + axis.width) || force) {
+					result.push('M', x1, y1, 'L', x2, y2);
+				}
+			});
+		} else {
+			each(uAxes, function (axis2) {
+				x1 = axis2.left;
+				x2 = x1 + axis2.width;
+				y1 = y2 = mathRound(axisTop + axis.height - translatedValue);
+
+				if ((y1 >= axisTop && y1 <= axisTop + axis.height) || force) {
+					result.push('M', x1, y1, 'L', x2, y2);
+				}
+			});
+		}
+	}
+	if (result.length > 0) {
+		return renderer.crispPolyLine(result, lineWidth || 1); 
+	} else {
+		return null;
+	}
+};
+
+// Function to crisp a line with multiple segments
+SVGRenderer.prototype.crispPolyLine = function (points, width) {
+	// points format: [M, 0, 0, L, 100, 0]		
+	// normalize to a crisp line
+	var i;
+	for (i = 0; i < points.length; i = i + 6) {
+		if (points[i + 1] === points[i + 4]) {
+			// Substract due to #1129. Now bottom and left axis gridlines behave the same.
+			points[i + 1] = points[i + 4] = mathRound(points[i + 1]) - (width % 2 / 2);
+		}
+		if (points[i + 2] === points[i + 5]) {
+			points[i + 2] = points[i + 5] = mathRound(points[i + 2]) + (width % 2 / 2);
+		}
+	}
+	return points;
+};
+if (Renderer === Highcharts.VMLRenderer) {
+	VMLRenderer.prototype.crispPolyLine = SVGRenderer.prototype.crispPolyLine;
+}
+
+
 // Wrapper to hide the label
-wrap(Axis.prototype, 'hideCrosshair', function (proceed, e, point) {
-	proceed.call(this, e, point);
-	if (this.crossLabel) {
-		this.crossLabel.hide();
+wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
+	proceed.call(this, i);
+
+	if (!defined(this.crossLabelArray)) { return; }
+
+	if (defined(i)) {
+		if (this.crossLabelArray[i]) { this.crossLabelArray[i].hide(); }
+	} else {
+		each(this.crossLabelArray, function (crosslabel) {
+			crosslabel.hide();
+		});
 	}
 });
 
@@ -167,40 +247,45 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	proceed.call(this, e, point);
 
 	// Check if the label has to be drawn
-	if (!defined(this.crosshair.label)) { return; }
-	if (!this.crosshair.label.enabled) { return; }
-	if (!defined(point)) { return; }
+	if (!defined(this.crosshair.label) || !this.crosshair.label.enabled || !defined(point)) { 
+		return; 
+	}
 
-	var options = this.options.crosshair.label,		// the label's options
-		axis = this.xOrY,							// axis name
+	var chart = this.chart,
+		options = this.options.crosshair.label,		// the label's options
+		axis = this.isXAxis ? 'x' : 'y',			// axis name
 		horiz = this.horiz,							// axis orientation
 		opposite = this.opposite,					// axis position
 		left = this.left,							// left position
 		top = this.top,								// top position
-		crossLabel = this.crossLabel;				// reference to the svgElement
+		crossLabel = this.crossLabel,				// reference to the svgElement
+		posx,
+		posy,
+		crossBox,
+		formatOption = options.format,
+		formatFormat = '',
+		limit;
 
 	// If the label does not exist yet, create it.
 	if (!crossLabel) {
-		crossLabel = this.crossLabel = this.chart.renderer.label()			
+		crossLabel = this.crossLabel = chart.renderer.label()			
 		.attr({
 			align: options.align || horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'center') : (this.labelAlign === 'left' ? 'left' : 'center'),
 			zIndex: 12,
-			fill: options.backgroundColor || 'lightgrey',
-			padding: 5,
-			stroke: options.stroke || null,
-			'stroke-width': options.strokeWidth || 0
+			height: horiz ? 16 : UNDEFINED,
+			fill: options.backgroundColor || (this.series[0] && this.series[0].color) || 'gray',
+			padding: pick(options.padding, 2),
+			stroke: options.borderColor || null,
+			'stroke-width': options.borderWidth || 0
 		})
-		.css({				
-			color: options.color || 'black',
-			fontWeight: options.fontWeight || 'bold',
+		.css(extend({				
+			color: 'white',
+			fontWeight: 'normal',
+			fontSize: '11px',
 			textAlign: 'center'
-		})
+		}, options.style))
 		.add();
 	}
-
-	var txt = options.format ? format(options.format, {value: point[axis]}) : options.formatter.call(this, point[axis]),
-		posx,
-		posy;
 
 	if (horiz) {
 		posx = point.plotX + left;
@@ -216,9 +301,22 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		return;
 	}
 
+	// TODO: Dynamic date formats like in Series.tooltipHeaderFormat. 
+	if (!formatOption && !options.formatter) {
+		if (this.isDatetimeAxis) {
+			formatFormat = '%b %d, %Y';
+		}
+		formatOption = '{value' + (formatFormat ? ':' + formatFormat : '') + '}';
+	}
+
 	// show the label
-	crossLabel.attr({x: posx, y: posy, text: txt, visibility: VISIBLE});
-	var crossBox = crossLabel.box;
+	crossLabel.attr({
+		x: posx, 
+		y: posy, 
+		text: formatOption ? format(formatOption, {value: point[axis]}) : options.formatter.call(this, point[axis]), 
+		visibility: VISIBLE
+	});
+	crossBox = crossLabel.box;
 
 	// now it is placed we can correct its position
 	if (horiz) {
@@ -231,8 +329,6 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	}
 
 	// check the edges
-	var renderBox = this.chart.renderer.box;
-	var limit;
 	if (horiz) {
 		limit = {
 			left: left - crossBox.x,
@@ -240,18 +336,18 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		};
 	} else {
 		limit = {
-			left: this.labelAlign === 'left' ? left : renderBox.clientLeft,
-			right: this.labelAlign === 'right' ? left + this.width : renderBox.clientLeft + renderBox.clientWidth
+			left: this.labelAlign === 'left' ? left : 0,
+			right: this.labelAlign === 'right' ? left + this.width : chart.chartWidth
 		};
 	}
 
 	// left edge
 	if (crossLabel.translateX < limit.left) {
-		posx = posx + (limit.left - crossLabel.translateX);
+		posx += limit.left - crossLabel.translateX;
 	}
 	// right edge
 	if (crossLabel.translateX + crossBox.width >= limit.right) {
-		posx = posx - (crossLabel.translateX + crossBox.width - limit.right);
+		posx -= crossLabel.translateX + crossBox.width - limit.right;
 	}
 
 	// show the crosslabel
@@ -289,14 +385,18 @@ seriesProto.setCompare = function (compare) {
 	this.modifyValue = (compare === 'value' || compare === 'percent') ? function (value, point) {
 		var compareValue = this.compareValue;
 		
-		// get the modified value
-		value = compare === 'value' ? 
-			value - compareValue : // compare value
-			value = 100 * (value / compareValue) - 100; // compare percent
+		if (value !== UNDEFINED) { // #2601
+
+			// get the modified value
+			value = compare === 'value' ? 
+				value - compareValue : // compare value
+				value = 100 * (value / compareValue) - 100; // compare percent
+				
+			// record for tooltip etc.
+			if (point) {
+				point.change = value;
+			}
 			
-		// record for tooltip etc.
-		if (point) {
-			point.change = value;
 		}
 		
 		return value;

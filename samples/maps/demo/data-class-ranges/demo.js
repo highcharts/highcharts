@@ -7,9 +7,8 @@ $(function () {
     // https://docs.google.com/a/highsoft.com/spreadsheet/pub?hl=en_GB&hl=en_GB&key=0AoIaUO7wH1HwdFJHaFI4eUJDYlVna3k5TlpuXzZubHc&output=html
     Highcharts.data({
 
-        
         googleSpreadsheetKey: '0AoIaUO7wH1HwdFJHaFI4eUJDYlVna3k5TlpuXzZubHc',
-        
+
         // custom handler when the spreadsheet is parsed
         parsed: function (columns) {
             
@@ -29,6 +28,9 @@ $(function () {
                 chart : {
                     borderWidth : 1
                 },
+
+                colors: ['rgba(19,64,117,0.05)', 'rgba(19,64,117,0.2)', 'rgba(19,64,117,0.4)',
+                    'rgba(19,64,117,0.5)', 'rgba(19,64,117,0.6)', 'rgba(19,64,117,0.8)', 'rgba(19,64,117,1)'],
                 
                 title : {
                     text : 'Population density by country (/km²)'
@@ -40,43 +42,41 @@ $(function () {
                 
                 legend: {
                     title: {
-                        text: 'Individuals per km²'
+                        text: 'Individuals per km²',
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.textColor) || 'black'
+                        }
                     },
                     align: 'left',
                     verticalAlign: 'bottom',
                     floating: true,
                     layout: 'vertical',
                     valueDecimals: 0,
-                    backgroundColor: 'rgba(255,255,255,0.9)'
+                    backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || 'rgba(255, 255, 255, 0.85)',
+                    symbolRadius: 0,
+                    symbolHeight: 14
                 },
 
                 colorAxis: {
                     dataClasses: [{
-                        to: 3,
-                        color: 'rgba(19,64,117,0.05)'
+                        to: 3
                     }, {
                         from: 3,
-                        to: 10,
-                        color: 'rgba(19,64,117,0.2)'
+                        to: 10 
                     }, {
                         from: 10,
-                        to: 30,
-                        color: 'rgba(19,64,117,0.4)'
+                        to: 30 
                     }, {
                         from: 30,
-                        to: 100,
-                        color: 'rgba(19,64,117,0.5)'
+                        to: 100
                     }, {
                         from: 100,
                         to: 300,
-                        color: 'rgba(19,64,117,0.6)'
                     }, {
                         from: 300,
-                        to: 1000,
-                        color: 'rgba(19,64,117,0.8)'
+                        to: 1000
                     }, {
-                        from: 1000,
-                        color: 'rgba(19,64,117,1)'
+                        from: 1000
                     }]
                 },
 
@@ -84,6 +84,7 @@ $(function () {
                     data : data,
                     mapData: Highcharts.maps.world,
                     joinBy: 'code',
+                    animation: true,
                     name: 'Population density',
                     states: {
                         hover: {
@@ -95,6 +96,12 @@ $(function () {
                     },
                 }]
             });
+        },
+        error: function () {
+            $('#container').html('<div class="loading">' + 
+                '<i class="icon-frown icon-large"></i> ' + 
+                'Error loading data from Google Spreadsheets' + 
+                '</div>');
         }
     });
 });

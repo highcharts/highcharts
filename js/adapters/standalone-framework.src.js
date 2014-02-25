@@ -304,7 +304,7 @@ return {
 				// HTML styles
 				} else {
 					styles = {};
-					styles[elem] = this.now + this.unit;
+					styles[this.prop] = this.now + this.unit;
 					Highcharts.css(elem, styles);
 				}
 				
@@ -350,9 +350,10 @@ return {
 					ret,
 					done,
 					options = this.options,
+					elem = this.elem,
 					i;
-
-				if (this.elem.stopAnimation) {
+				
+				if (elem.stopAnimation || (elem.attr && !elem.element)) { // #2616, element including flag is destroyed
 					ret = false;
 
 				} else if (gotoEnd || t >= options.duration + this.startTime) {
@@ -371,7 +372,7 @@ return {
 
 					if (done) {
 						if (options.complete) {
-							options.complete.call(this.elem);
+							options.complete.call(elem);
 						}
 					}
 					ret = false;
@@ -504,19 +505,16 @@ return {
 		return results;
 	},
 
+	/**
+	 * Get the element's offset position, corrected by overflow:auto. Loosely based on jQuery's offset method.
+	 */
 	offset: function (el) {
-		var left = 0,
-			top = 0;
-
-		while (el) {
-			left += el.offsetLeft;
-			top += el.offsetTop;
-			el = el.offsetParent;
-		}
+		var docElem = document.documentElement,
+			box = el.getBoundingClientRect();
 
 		return {
-			left: left,
-			top: top
+			top: box.top  + (window.pageYOffset || docElem.scrollTop)  - (docElem.clientTop  || 0),
+			left: box.left + (window.pageXOffset || docElem.scrollLeft) - (docElem.clientLeft || 0)
 		};
 	},
 

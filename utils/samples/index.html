@@ -2,11 +2,22 @@
 <html>
 	<head>
 		<title>Highcharts examples quick view</title>
+		<script>
+		function keyDown(e) {
+			if (e.ctrlKey && e.keyCode === 13) {
+				window.frames['main'].location.reload();
+				return false;
+			}
+		}
+		window.onload = function () {
+			window.onkeydown = keyDown;
+		}
+		</script>
 	</head>	
 
 	<frameset cols="400, *">
 		<frame src="contents.php" name="contents">
-		<frame serc="view.php" name="main" id="main">
+		<frame src="view.php" name="main" id="main">
 	</frameset>
 
 </html>

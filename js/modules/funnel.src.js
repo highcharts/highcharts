@@ -1,8 +1,8 @@
 /**
  * @license 
- * Highcharts funnel module, Beta
+ * Highcharts funnel module
  *
- * (c) 2010-2012 Torstein Hønsi
+ * (c) 2010-2014 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -48,6 +48,7 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 	
 	type: 'funnel',
 	animate: noop,
+	singularTooltips: true,
 
 	/**
 	 * Overrides the pie translate method
@@ -199,10 +200,7 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 			point.half = half;
 
 			cumulative += fraction;
-		});
-
-
-		series.setTooltipPoints();
+		});		
 	},
 	/**
 	 * Draw a single point (wedge)

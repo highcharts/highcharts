@@ -107,14 +107,14 @@ if (get_magic_quotes_gpc()) {
 }
 
 $leftImage = post(EXPORT_SERVER, array(
-	'width' => '300',
+	'width' => 500,
 	'type' => 'image/png',
 	'svg' => $leftSVG
 ));
 
 $rightImage = post(EXPORT_SERVER, array(
-	'width' => '300',
-	'type' => 'image/png',
+	'width' => 500,
+ 	'type' => 'image/png',
 	'svg' => $rightSVG
 ));
 
@@ -138,7 +138,7 @@ $path = str_replace('--', '/', $_POST['path']);
 $tempFile = 'temp/compare.json';
 $compare = file_exists($tempFile) ? json_decode(file_get_contents($tempFile)) : new stdClass;
 $browser = get_browser(null, true);
-$key = $browser['parent'];
+$key = isset($browser['parent']) ? $browser['parent'] : 'Unknown';
 
 if (isset($compare->$path->$key)) {  
 	$difference['reference'] = $compare->$path->$key;

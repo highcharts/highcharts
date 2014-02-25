@@ -13,6 +13,9 @@
 		<script>
 			var diffThreshold = 0;
 			$(function () {
+
+				$(window).bind('keydown', parent.keyDown);
+
 				$("#batch-compare").click(function() {
 					var currentLi = document.currentLi || $('#li1')[0];
 					if (currentLi) {
@@ -231,7 +234,7 @@
 							$batchClass = 'batch';
 							$compareClass = '';
 							if (preg_match('/^[a-z0-9\-,]+$/', $innerFile)) {
-								$yaml = file_get_contents(($samplesDir ."/$dir/$file/$innerFile/demo.details"));
+								$yaml = @file_get_contents(($samplesDir ."/$dir/$file/$innerFile/demo.details"));
 								$path = "$dir/$file/$innerFile";
 								$suffix = '';
 								$dissIndex = '';
@@ -247,11 +250,15 @@
 										$diff = round($diff, 2);
 										$compareClass = 'different';
 										$dissIndex = "
-											<a class='dissimilarity-index' href='view.php?path=$path&amp;i=$i' target='main' data-diff='$diff'>$diff</a>
+											<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main' data-diff='$diff'>$diff</a>
 										";
 									} else {
 										$compareClass = 'identical';
 									}
+								} else {
+									$dissIndex = "
+										<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main'><i class='icon-columns'></i></a>
+									";
 								}
 								echo "
 								<li id='li$i' class='$compareClass'>$i. $suffix 

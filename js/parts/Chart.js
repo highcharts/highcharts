@@ -125,63 +125,6 @@ Chart.prototype = {
 	},
 
 	/**
-	 * Add a series dynamically after  time
-	 *
-	 * @param {Object} options The config options
-	 * @param {Boolean} redraw Whether to redraw the chart after adding. Defaults to true.
-	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
-	 *    configuration
-	 *
-	 * @return {Object} series The newly created series object
-	 */
-	addSeries: function (options, redraw, animation) {
-		var series,
-			chart = this;
-
-		if (options) {
-			redraw = pick(redraw, true); // defaults to true
-
-			fireEvent(chart, 'addSeries', { options: options }, function () {
-				series = chart.initSeries(options);
-				
-				chart.isDirtyLegend = true; // the series array is out of sync with the display
-				chart.linkSeries();
-				if (redraw) {
-					chart.redraw(animation);
-				}
-			});
-		}
-
-		return series;
-	},
-
-	/**
-     * Add an axis to the chart
-     * @param {Object} options The axis option
-     * @param {Boolean} isX Whether it is an X axis or a value axis
-     */
-	addAxis: function (options, isX, redraw, animation) {
-		var key = isX ? 'xAxis' : 'yAxis',
-			chartOptions = this.options,
-			axis;
-
-		/*jslint unused: false*/
-		axis = new Axis(this, merge(options, {
-			index: this[key].length,
-			isX: isX
-		}));
-		/*jslint unused: true*/
-
-		// Push the new axis options to the chart options
-		chartOptions[key] = splat(chartOptions[key] || {});
-		chartOptions[key].push(options);
-
-		if (pick(redraw, true)) {
-			this.redraw(animation);
-		}
-	},
-
-	/**
 	 * Check whether a given point is within the plot area
 	 *
 	 * @param {Number} plotX Pixel x relative to the plot area
@@ -344,7 +287,7 @@ Chart.prototype = {
 		});
 
 		// move tooltip or reset
-		if (pointer && pointer.reset) {
+		if (pointer) {
 			pointer.reset(true);
 		}
 
@@ -362,79 +305,6 @@ Chart.prototype = {
 		each(afterRedraw, function (callback) {
 			callback.call();
 		});
-	},
-
-
-
-	/**
-	 * Dim the chart and show a loading text or symbol
-	 * @param {String} str An optional text to show in the loading label instead of the default one
-	 */
-	showLoading: function (str) {
-		var chart = this,
-			options = chart.options,
-			loadingDiv = chart.loadingDiv;
-
-		var loadingOptions = options.loading;
-
-		// create the layer at the first call
-		if (!loadingDiv) {
-			chart.loadingDiv = loadingDiv = createElement(DIV, {
-				className: PREFIX + 'loading'
-			}, extend(loadingOptions.style, {
-				zIndex: 10,
-				display: NONE
-			}), chart.container);
-
-			chart.loadingSpan = createElement(
-				'span',
-				null,
-				loadingOptions.labelStyle,
-				loadingDiv
-			);
-
-		}
-
-		// update text
-		chart.loadingSpan.innerHTML = str || options.lang.loading;
-
-		// show it
-		if (!chart.loadingShown) {
-			css(loadingDiv, { 
-				opacity: 0, 
-				display: '',
-				left: chart.plotLeft + PX,
-				top: chart.plotTop + PX,
-				width: chart.plotWidth + PX,
-				height: chart.plotHeight + PX
-			});
-			animate(loadingDiv, {
-				opacity: loadingOptions.style.opacity
-			}, {
-				duration: loadingOptions.showDuration || 0
-			});
-			chart.loadingShown = true;
-		}
-	},
-
-	/**
-	 * Hide the loading layer
-	 */
-	hideLoading: function () {
-		var options = this.options,
-			loadingDiv = this.loadingDiv;
-
-		if (loadingDiv) {
-			animate(loadingDiv, {
-				opacity: 0
-			}, {
-				duration: options.loading.hideDuration || 100,
-				complete: function () {
-					css(loadingDiv, { display: NONE });
-				}
-			});
-		}
-		this.loadingShown = false;
 	},
 
 	/**
@@ -548,127 +418,7 @@ Chart.prototype = {
 				series.stackKey = series.type + pick(series.options.stack, '');
 			}
 		});
-	},
-
-	/**
-	 * Display the zoom button
-	 */
-	showResetZoom: function () {
-		var chart = this,
-			lang = defaultOptions.lang,
-			btnOptions = chart.options.chart.resetZoomButton,
-			theme = btnOptions.theme,
-			states = theme.states,
-			alignTo = btnOptions.relativeTo === 'chart' ? null : 'plotBox';
-			
-		this.resetZoomButton = chart.renderer.button(lang.resetZoom, null, null, function () { chart.zoomOut(); }, theme, states && states.hover)
-			.attr({
-				align: btnOptions.position.align,
-				title: lang.resetZoomTitle
-			})
-			.add()
-			.align(btnOptions.position, false, alignTo);
-			
-	},
-
-	/**
-	 * Zoom out to 1:1
-	 */
-	zoomOut: function () {
-		var chart = this;
-		fireEvent(chart, 'selection', { resetSelection: true }, function () { 
-			chart.zoom();
-		});
-	},
-
-	/**
-	 * Zoom into a given portion of the chart given by axis coordinates
-	 * @param {Object} event
-	 */
-	zoom: function (event) {
-		var chart = this,
-			hasZoomed,
-			pointer = chart.pointer,
-			displayButton = false,
-			resetZoomButton;
-
-		// If zoom is called with no arguments, reset the axes
-		if (!event || event.resetSelection) {
-			each(chart.axes, function (axis) {
-				hasZoomed = axis.zoom();
-			});
-		} else { // else, zoom in on all axes
-			each(event.xAxis.concat(event.yAxis), function (axisData) {
-				var axis = axisData.axis,
-					isXAxis = axis.isXAxis;
-
-				// don't zoom more than minRange
-				if (pointer[isXAxis ? 'zoomX' : 'zoomY'] || pointer[isXAxis ? 'pinchX' : 'pinchY']) {
-					hasZoomed = axis.zoom(axisData.min, axisData.max);
-					if (axis.displayBtn) {
-						displayButton = true;
-					}
-				}
-			});
-		}
-		
-		// Show or hide the Reset zoom button
-		resetZoomButton = chart.resetZoomButton;
-		if (displayButton && !resetZoomButton) {
-			chart.showResetZoom();
-		} else if (!displayButton && isObject(resetZoomButton)) {
-			chart.resetZoomButton = resetZoomButton.destroy();
-		}
-		
-
-		// Redraw
-		if (hasZoomed) {
-			chart.redraw(
-				pick(chart.options.chart.animation, event && event.animation, chart.pointCount < 100) // animation
-			);
-		}
-	},
-
-	/**
-	 * Pan the chart by dragging the mouse across the pane. This function is called
-	 * on mouse move, and the distance to pan is computed from chartX compared to
-	 * the first chartX position in the dragging operation.
-	 */
-	pan: function (e, panning) {
-
-		var chart = this,
-			hoverPoints = chart.hoverPoints,
-			doRedraw;
-
-		// remove active points for shared tooltip
-		if (hoverPoints) {
-			each(hoverPoints, function (point) {
-				point.setState();
-			});
-		}
-
-		each(panning === 'xy' ? [1, 0] : [1], function (isX) { // xy is used in maps
-			var mousePos = e[isX ? 'chartX' : 'chartY'],
-				axis = chart[isX ? 'xAxis' : 'yAxis'][0],
-				startPos = chart[isX ? 'mouseDownX' : 'mouseDownY'],
-				halfPointRange = (axis.pointRange || 0) / 2,
-				extremes = axis.getExtremes(),
-				newMin = axis.toValue(startPos - mousePos, true) + halfPointRange,
-				newMax = axis.toValue(startPos + chart[isX ? 'plotWidth' : 'plotHeight'] - mousePos, true) - halfPointRange;
-
-			if (axis.series.length && newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
-				axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
-				doRedraw = true;
-			}
-
-			chart[isX ? 'mouseDownX' : 'mouseDownY'] = mousePos; // set new reference for next run
-		});
-
-		if (doRedraw) {
-			chart.redraw(false);
-		}
-		css(chart.container, { cursor: 'move' });
-	},
+	},	
 
 	/**
 	 * Show the title and subtitle of the chart
@@ -764,14 +514,20 @@ Chart.prototype = {
 	getChartSize: function () {
 		var chart = this,
 			optionsChart = chart.options.chart,
+			widthOption = optionsChart.width,
+			heightOption = optionsChart.height,
 			renderTo = chart.renderToClone || chart.renderTo;
 
 		// get inner width and height from jQuery (#824)
-		chart.containerWidth = adapterRun(renderTo, 'width');
-		chart.containerHeight = adapterRun(renderTo, 'height');
+		if (!defined(widthOption)) {
+			chart.containerWidth = adapterRun(renderTo, 'width');
+		}
+		if (!defined(heightOption)) {
+			chart.containerHeight = adapterRun(renderTo, 'height');
+		}
 		
-		chart.chartWidth = mathMax(0, optionsChart.width || chart.containerWidth || 600); // #1393, 1460
-		chart.chartHeight = mathMax(0, pick(optionsChart.height,
+		chart.chartWidth = mathMax(0, widthOption || chart.containerWidth || 600); // #1393, 1460
+		chart.chartHeight = mathMax(0, pick(heightOption,
 			// the offsetHeight of an empty container is 0 in standard browsers, but 19 in IE7:
 			chart.containerHeight > 19 ? chart.containerHeight : 400));
 	},
@@ -803,6 +559,9 @@ Chart.prototype = {
 				top: '-9999px',
 				display: 'block' // #833
 			});
+			if (clone.style.setProperty) { // #2631
+				clone.style.setProperty('display', 'block', 'important');
+			}
 			doc.body.appendChild(clone);
 			if (container) {
 				clone.appendChild(container);
@@ -837,9 +596,12 @@ Chart.prototype = {
 			error(13, true);
 		}
 		
-		// If the container already holds a chart, destroy it
+		// If the container already holds a chart, destroy it. The check for hasRendered is there
+		// because web pages that are saved to disk from the browser, will preserve the data-highcharts-chart
+		// attribute and the SVG contents, but not an interactive chart. So in this case,
+		// charts[oldChartIndex] will point to the wrong chart if any (#2609).
 		oldChartIndex = pInt(attr(renderTo, indexAttrName));
-		if (!isNaN(oldChartIndex) && charts[oldChartIndex]) {
+		if (!isNaN(oldChartIndex) && charts[oldChartIndex] && charts[oldChartIndex].hasRendered) {
 			charts[oldChartIndex].destroy();
 		}		
 		
@@ -852,8 +614,9 @@ Chart.prototype = {
 		// If the container doesn't have an offsetWidth, it has or is a child of a node
 		// that has display:none. We need to temporarily move it out to a visible
 		// state to determine the size, else the legend and tooltips won't render
-		// properly
-		if (!renderTo.offsetWidth) {
+		// properly. The allowClone option is used in sparklines as a micro optimization,
+		// saving about 1-2 ms each chart.
+		if (!optionsChart.skipClone && !renderTo.offsetWidth) {
 			chart.cloneRenderTo();
 		}
 
@@ -888,6 +651,9 @@ Chart.prototype = {
 			optionsChart.forExport ? // force SVG, used for SVG export
 				new SVGRenderer(container, chartWidth, chartHeight, true) :
 				new Renderer(container, chartWidth, chartHeight);
+
+		// Set the default font style directly on the top SVG node
+		chart.renderer.boxWrapper.css(optionsChart.style); // #2723 // docs: remove disclaimer in API about this working only globally
 
 		if (useCanVG) {
 			// If we need canvg library, extend and configure the renderer
@@ -991,38 +757,48 @@ Chart.prototype = {
 	},
 
 	/**
-	 * Add the event handlers necessary for auto resizing
-	 *
+	 * Resize the chart to its container if size is not explicitly set
 	 */
-	initReflow: function () {
+	reflow: function (e) {
 		var chart = this,
 			optionsChart = chart.options.chart,
 			renderTo = chart.renderTo,
-			reflowTimeout;
-			
-		function reflow(e) {
-			var width = optionsChart.width || adapterRun(renderTo, 'width'),
-				height = optionsChart.height || adapterRun(renderTo, 'height'),
-				target = e ? e.target : win; // #805 - MooTools doesn't supply e
-				
-			// Width and height checks for display:none. Target is doc in IE8 and Opera,
-			// win in Firefox, Chrome and IE9.
-			if (!chart.hasUserSize && width && height && (target === win || target === doc)) {
-				
-				if (width !== chart.containerWidth || height !== chart.containerHeight) {
-					clearTimeout(reflowTimeout);
-					chart.reflowTimeout = reflowTimeout = setTimeout(function () {
-						if (chart.container) { // It may have been destroyed in the meantime (#1257)
-							chart.setSize(width, height, false);
-							chart.hasUserSize = null;
-						}
-					}, 100);
+			width = optionsChart.width || adapterRun(renderTo, 'width'),
+			height = optionsChart.height || adapterRun(renderTo, 'height'),
+			target = e ? e.target : win, // #805 - MooTools doesn't supply e
+			doReflow = function () {
+				if (chart.container) { // It may have been destroyed in the meantime (#1257)
+					chart.setSize(width, height, false);
+					chart.hasUserSize = null;
 				}
-				chart.containerWidth = width;
-				chart.containerHeight = height;
+			};
+			
+		// Width and height checks for display:none. Target is doc in IE8 and Opera,
+		// win in Firefox, Chrome and IE9.
+		if (!chart.hasUserSize && width && height && (target === win || target === doc)) {
+			if (width !== chart.containerWidth || height !== chart.containerHeight) {
+				clearTimeout(chart.reflowTimeout);
+				if (e) { // Called from window.resize
+					chart.reflowTimeout = setTimeout(doReflow, 100);
+				} else { // Called directly (#2224)
+					doReflow();
+				}
 			}
+			chart.containerWidth = width;
+			chart.containerHeight = height;
 		}
-		chart.reflow = reflow;
+	},
+
+	/**
+	 * Add the event handlers necessary for auto resizing
+	 */
+	initReflow: function () {
+		var chart = this,
+			reflow = function (e) {
+				chart.reflow(e);
+			};
+			
+		
 		addEvent(win, 'resize', reflow);
 		addEvent(chart, 'destroy', function () {
 			removeEvent(win, 'resize', reflow);
@@ -1064,10 +840,12 @@ Chart.prototype = {
 			chart.chartHeight = chartHeight = mathMax(0, mathRound(height));
 		}
 
-		css(chart.container, {
+		// Resize the container with the global animation applied if enabled (#2503)
+		(globalAnimation ? animate : css)(chart.container, {
 			width: chartWidth + PX,
 			height: chartHeight + PX
-		});
+		}, globalAnimation);
+
 		chart.setChartSize(true);
 		chart.renderer.setSize(chartWidth, chartHeight, animation);
 
@@ -1419,7 +1197,9 @@ Chart.prototype = {
 		}
 		each(chart.series, function (serie) {
 			serie.translate();
-			serie.setTooltipPoints();
+			if (serie.setTooltipPoints) {
+				serie.setTooltipPoints();
+			}
 			serie.render();
 		});
 
@@ -1605,7 +1385,9 @@ Chart.prototype = {
 		fireEvent(chart, 'beforeRender'); 
 
 		// depends on inverted and on margins being set
-		chart.pointer = new Pointer(chart, options);
+		if (Highcharts.Pointer) {
+			chart.pointer = new Pointer(chart, options);
+		}
 
 		chart.render();
 
@@ -1622,7 +1404,7 @@ Chart.prototype = {
 		
 		// If the chart was rendered outside the top container, put it back in
 		chart.cloneRenderTo(true);
-
+		
 		fireEvent(chart, 'load');
 
 	},

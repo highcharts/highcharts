@@ -1,6 +1,11 @@
 $(function () {
 
-    $.getJSON('http://www.highcharts.local/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
+
+        // Add lower case codes to the data set for inclusion in the tooltip.pointFormat
+        $.each(data, function () {
+            this.flag = this.code.toLowerCase();
+        });
         
         // Initiate the chart
         $('#container').highcharts('Map', {
@@ -26,7 +31,9 @@ $(function () {
                 backgroundColor: null,
                 borderWidth: 0,
                 shadow: false,
-                useHTML: true
+                useHTML: true,
+                pointFormat: '<span class="f32"><span class="flag {point.flag}"></span></span>'
+                    + ' {point.name}: <b>{point.value}</b>/km²'
             },
 
             colorAxis: {
@@ -44,9 +51,6 @@ $(function () {
                     hover: {
                         color: '#BADA55'
                     }
-                },
-                tooltip: {
-                    valueSuffix: '/km²'
                 }
             }]
         });
