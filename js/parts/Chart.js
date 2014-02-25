@@ -427,7 +427,7 @@ Chart.prototype = {
 	 * @param subtitleOptions {Object} New subtitle options
 	 *
 	 */
-	setTitle: function (titleOptions, subtitleOptions) {
+	setTitle: function (titleOptions, subtitleOptions, redraw) { // docs: redraw option
 		var chart = this,
 			options = chart.options,
 			chartTitleOptions,
@@ -466,13 +466,13 @@ Chart.prototype = {
 				.add();
 			}	
 		});
-		chart.layOutTitles();
+		chart.layOutTitles(redraw);
 	},
 
 	/**
 	 * Lay out the chart titles and cache the full offset height for use in getMargins
 	 */
-	layOutTitles: function () {
+	layOutTitles: function (redraw) {
 		var titleOffset = 0,
 			title = this.title,
 			subtitle = this.subtitle,
@@ -505,7 +505,14 @@ Chart.prototype = {
 			}
 		}
 
+		this.isDirtyBox = this.titleOffset !== titleOffset;
+			
 		this.titleOffset = titleOffset; // used in getMargins
+
+		// Redraw if necessary (#2719, #2744)		
+		if (this.hasRendered && pick(redraw, true) && this.isDirtyBox) {
+			this.redraw();
+		}
 	},
 
 	/**
