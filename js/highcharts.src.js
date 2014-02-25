@@ -5780,7 +5780,7 @@ Tick.prototype = {
 			labelOptions = options.labels,
 			size = horiz ? bBox.width : bBox.height,
 			leftSide = horiz ?
-				labelOptions.x - size * { left: 0, center: 0.5, right: 1 }[axis.labelAlign] : 
+				labelOptions.x - size * { left: 0, center: 0.5, right: 1 }[axis.labelAlign] :
 				0,
 			rightSide = horiz ?
 				size + leftSide :
@@ -6029,12 +6029,6 @@ Tick.prototype = {
 			}
 
 			markPath = tick.getMarkPath(x, y, tickLength, tickWidth * reverseCrisp, horiz, renderer);
-
-<<<<<<< HEAD
-			// Don't draw ticks so close they appear as a gray mass
-			} else if (mark) {
-				tick.mark = mark.destroy();
-=======
 			if (mark) { // updating
 				mark.animate({
 					d: markPath,
@@ -6048,7 +6042,6 @@ Tick.prototype = {
 					'stroke-width': tickWidth,
 					opacity: opacity
 				}).add(axis.axisGroup);
->>>>>>> master
 			}
 		}
 
@@ -15385,29 +15378,12 @@ var ColumnSeries = extendClass(Series, {
 					stop(graphic);
 					graphic[series.points.length < animationLimit ? 'animate' : 'attr'](merge(shapeArgs));
 
-<<<<<<< HEAD
-			// draw the slice
-			if (graphic) {
-				graphic.animate(extend(shapeArgs, groupTranslation));
-			} else {
-				point.graphic = graphic = renderer[point.shapeType](shapeArgs)
-					.setRadialReference(series.center)
-					.attr(
-						point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE]
-					)
-					.attr({ 'stroke-linejoin': 'round' })
-					.attr(groupTranslation)
-					.add(series.group)
-					.shadow(shadow, shadowGroup);	
-			}
-=======
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 						.attr(point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE])
 						.add(series.group)
 						.shadow(options.shadow, null, options.stacking && !options.borderRadius);
 				}
->>>>>>> master
 
 			} else if (graphic) {
 				point.graphic = graphic.destroy(); // #1269
@@ -15923,7 +15899,7 @@ var PieSeries = {
 			if (graphic) {
 				graphic.animate(extend(shapeArgs, groupTranslation));
 			} else {
-				point.graphic = graphic = renderer.arc(shapeArgs)
+				point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 					.setRadialReference(series.center)
 					.attr(
 						point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE]

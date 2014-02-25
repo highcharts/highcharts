@@ -247,7 +247,6 @@
             <file name="Outro.js"/>
         </filelist>
 
-<<<<<<< HEAD
         <!-- This is the list of files for highcharts-3d -->
         <filelist id="highcharts3d.files" dir="${highcharts3d.parts.dir}">
             <file name="Intro.js"/>
@@ -262,8 +261,6 @@
             <file name="VMLRenderer.js"/>
             <file name="Outro.js"/>
         </filelist>
-        
-=======
 
         <!-- This is the list of files for the maps module -->
         <filelist id="maps.files" dir="${basedir}/js">
@@ -363,9 +360,6 @@
             <file name="parts/Outro.js"/>
         </filelist>
 
-
-
->>>>>>> master
         <filelist id="highcharts-all.files" dir="${dist.dir}">
             <file name="js/adapters/${standalone.minified.name}"/>
             <file name="highcharts/js/${highcharts.minified.name}"/>

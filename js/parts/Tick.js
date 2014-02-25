@@ -125,7 +125,7 @@ Tick.prototype = {
 			labelOptions = options.labels,
 			size = horiz ? bBox.width : bBox.height,
 			leftSide = horiz ?
-				labelOptions.x - size * { left: 0, center: 0.5, right: 1 }[axis.labelAlign] : 
+				labelOptions.x - size * { left: 0, center: 0.5, right: 1 }[axis.labelAlign] :
 				0,
 			rightSide = horiz ?
 				size + leftSide :
@@ -374,12 +374,6 @@ Tick.prototype = {
 			}
 
 			markPath = tick.getMarkPath(x, y, tickLength, tickWidth * reverseCrisp, horiz, renderer);
-
-<<<<<<< HEAD
-			// Don't draw ticks so close they appear as a gray mass
-			} else if (mark) {
-				tick.mark = mark.destroy();
-=======
 			if (mark) { // updating
 				mark.animate({
 					d: markPath,
@@ -393,7 +387,6 @@ Tick.prototype = {
 					'stroke-width': tickWidth,
 					opacity: opacity
 				}).add(axis.axisGroup);
->>>>>>> master
 			}
 		}
 

@@ -5722,11 +5722,6 @@ Tick.prototype = {
 		css = width && { width: mathMax(1, mathRound(width - 2 * (labelOptions.padding || 10))) + PX };
 		css = extend(css, labelOptions.style);
 
-<<<<<<< HEAD
-			// Don't draw ticks so close they appear as a gray mass
-			} else if (mark) {
-				tick.mark = mark.destroy();
-=======
 		// first call
 		if (!defined(label)) {
 			attr = {
@@ -5734,7 +5729,6 @@ Tick.prototype = {
 			};
 			if (isNumber(labelOptions.rotation)) {
 				attr.rotation = labelOptions.rotation;
->>>>>>> master
 			}
 			if (width && labelOptions.ellipsis) {
 				attr._clipHeight = axis.len / tickPositions.length;
@@ -5786,7 +5780,7 @@ Tick.prototype = {
 			labelOptions = options.labels,
 			size = horiz ? bBox.width : bBox.height,
 			leftSide = horiz ?
-				labelOptions.x - size * { left: 0, center: 0.5, right: 1 }[axis.labelAlign] : 
+				labelOptions.x - size * { left: 0, center: 0.5, right: 1 }[axis.labelAlign] :
 				0,
 			rightSide = horiz ?
 				size + leftSide :
@@ -6035,7 +6029,6 @@ Tick.prototype = {
 			}
 
 			markPath = tick.getMarkPath(x, y, tickLength, tickWidth * reverseCrisp, horiz, renderer);
-
 			if (mark) { // updating
 				mark.animate({
 					d: markPath,
@@ -15906,7 +15899,7 @@ var PieSeries = {
 			if (graphic) {
 				graphic.animate(extend(shapeArgs, groupTranslation));
 			} else {
-				point.graphic = graphic = renderer.arc(shapeArgs)
+				point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 					.setRadialReference(series.center)
 					.attr(
 						point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE]
@@ -17202,16 +17195,6 @@ extend(Point.prototype, {
 				radius = markerStateOptions.radius;
 				newSymbol = pointMarker.symbol || series.symbol;
 
-<<<<<<< HEAD
-			// draw the slice
-			if (graphic) {
-				graphic.animate(extend(shapeArgs, groupTranslation));
-			} else {
-				point.graphic = graphic = renderer[point.shapeType](shapeArgs)
-					.setRadialReference(series.center)
-					.attr(
-						point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE]
-=======
 				// If the point has another symbol than the previous one, throw away the
 				// state marker graphic and force a new one (#1459)
 				if (stateMarkerGraphic && stateMarkerGraphic.currentSymbol !== newSymbol) {
@@ -17226,7 +17209,6 @@ extend(Point.prototype, {
 						plotY - radius,
 						2 * radius,
 						2 * radius
->>>>>>> master
 					)
 					.attr(pointAttr[state])
 					.add(series.markerGroup);
