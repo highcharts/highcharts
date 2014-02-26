@@ -137,8 +137,14 @@
 			getValueCount = function (type) {
 				return (Highcharts.seriesTypes[type || 'line'].prototype.pointArrayMap || [0]).length;
 			},
+			getPointArrayMap = function (type) {
+				return Highcharts.seriesTypes[type || 'line'].prototype.pointArrayMap;
+			},
 			globalType = chartOptions && chartOptions.chart && chartOptions.chart.type,
-			individualCounts = [];
+			individualCounts = [],
+			seriesBuilders = [],
+			seriesIndex,
+			i;
 
 		each((chartOptions && chartOptions.series) || [], function (series) {
 			individualCounts.push(getValueCount(series.type || globalType));
@@ -154,10 +160,44 @@
 			xColumns.push(0);
 		}
 
+		// Loop all seriesMappings and constructs SeriesBuilders from
+		// the mapping options.
+		each((options && options.seriesMapping) || [], function (mapping) {
+			var builder = new SeriesBuilder(),
+				numberOfValueColumnsNeeded = individualCounts[seriesIndex] || getValueCount(globalType),
+				seriesArr = (chartOptions && chartOptions.series) || [],
+				series = seriesArr[seriesIndex] || {},
+				pointArrayMap = getPointArrayMap(series.type || globalType) || ['y'];
+
+			// Add an x reader from the x property or from an undefined column
+			// if the property is not set. It will then be auto populated later.
+			builder.addXReader(mapping.x);
+
+			// Fill with readers from the series pointArrayMap 
+			for (i = 0; i < numberOfValueColumnsNeeded; i++) {
+				builder.addNextColumnReader(pointArrayMap[i]);
+			}
+
+			// If there is a mapping for a label column, add it as well.
+			if (mapping.label !== undefined) {
+				builder.addColumnReader(mapping.label, 'label');
+			}
+
+			seriesBuilders.push(builder);
+			seriesIndex++;
+		});
+
+		var globalPointArrayMap = getPointArrayMap(globalType);
+		if (globalPointArrayMap === undefined) {
+			globalPointArrayMap = ['y'];
+		}
+
 		this.valueCount = {
 			global: getValueCount(globalType),
 			xColumns: xColumns,
-			individual: individualCounts
+			individual: individualCounts,
+			seriesBuilders: seriesBuilders,
+			globalPointArrayMap: globalPointArrayMap
 		};
 	},
 
@@ -492,61 +532,19 @@
 	complete: function () {
 		
 		var columns = this.columns,
-			firstCol,
 			xColumns = [],
-			knownXColumnIndexes = [],
 			type,
 			options = this.options,
-			valueCount,
 			series,
 			data,
 			i,
 			j,
-			seriesIndex;
+			seriesIndex,
+			allSeriesBuilders = [],
+			builder;
 			
 		xColumns.length = columns.length;
 		if (options.complete) {
-
-			// Use first column for X data or categories?
-			if (columns.length > 1) {
-
-				// Move column references from columns to xColumns based on the
-				// value returned by getColumnDistribution
-				for (i = 0; i < this.valueCount.xColumns.length; i++) {
-					// Get the xColumn index
-					var xColumnIndex = this.valueCount.xColumns[i];
-					if (knownXColumnIndexes.indexOf(xColumnIndex) === -1) {
-						// If it not known then move the column to xColumns and
-						// shift out the first cell (column name)
-						knownXColumnIndexes.push(xColumnIndex);
-						xColumns[xColumnIndex] = columns[xColumnIndex];
-
-						if (firstCol === undefined) {
-							firstCol = xColumns[xColumnIndex];
-
-							if (firstCol !== undefined) {
-								if (firstCol.isDatetime) {
-									type = 'datetime';
-								} else if (!firstCol.isNumeric) {
-									type = 'category';
-								}
-							}
-						}
-
-						if (this.headerRow === 0) {
-							xColumns[xColumnIndex].shift(); // remove the first cell
-						}
-					}
-				}
-
-				// Splice out the x-columns from the data-set from end to beginning to not bother about
-				// indexes and length changing
-				knownXColumnIndexes.sort().reverse();
-				for (i = 0; i < knownXColumnIndexes.length; i++) {
-					xColumnIndex = knownXColumnIndexes[i];
-					columns.splice(xColumnIndex, 1);
-				}
-			}
 
 			// Get the names and shift the top row
 			for (i = 0; i < columns.length; i++) {
@@ -557,47 +555,63 @@
 			
 			// Use the next columns for series
 			series = [];
-			for (i = 0, seriesIndex = 0; i < columns.length; seriesIndex++) {
+			var columnCursor = new ColumnCursor(columns.length, this.valueCount.seriesBuilders);
 
-				// This series' value count
-				valueCount = Highcharts.pick(this.valueCount.individual[seriesIndex], this.valueCount.global);
-				var seriesXColumnIndex = this.valueCount.xColumns[seriesIndex] || 0;
+			// Populate defined series
+			for (seriesIndex = 0; seriesIndex < this.valueCount.seriesBuilders.length; seriesIndex++) {
+				builder = this.valueCount.seriesBuilders[seriesIndex];
+
+				// If the builder can be populated with remaining columns, then add it to allBuilders
+				if (builder.populateColumns(columnCursor)) {
+					allSeriesBuilders.push(builder);
+				}
+			}
+
+			// Populate dynamic series
+			while (columnCursor.freeIndexes.length > 0) {
+				builder = new SeriesBuilder();
+				builder.addXReader(0);
+				columnCursor.addUsedIndex(0);
+
+				for (i = 0; i < this.valueCount.global; i++) {
+					builder.addNextColumnReader(this.valueCount.globalPointArrayMap[i]);
+				}
+
+				// If the builder can be populated with remaining columns, then add it to allBuilders
+				if (builder.populateColumns(columnCursor)) {
+					allSeriesBuilders.push(builder);
+				}
+			}
+
+			// Read data for all builders
+			for (seriesIndex = 0; seriesIndex < allSeriesBuilders.length; seriesIndex++) {
+				builder = allSeriesBuilders[seriesIndex];
 
 				// Iterate down the cells of each column and add data to the series
 				data = [];
-
-				// Only loop and fill the data series if there are columns available.
-				// We need this check to avoid reading outside the array bounds.
-				if (i + valueCount <= columns.length) {
-					for (j = 0; j < columns[i].length; j++) {
-						data[j] = [
-							xColumns[seriesXColumnIndex][j],
-							columns[i][j] !== undefined ? columns[i][j] : null
-						];
-						if (valueCount > 1) {
-							data[j].push(columns[i + 1][j] !== undefined ? columns[i + 1][j] : null);
-						}
-						if (valueCount > 2) {
-							data[j].push(columns[i + 2][j] !== undefined ? columns[i + 2][j] : null);
-						}
-						if (valueCount > 3) {
-							data[j].push(columns[i + 3][j] !== undefined ? columns[i + 3][j] : null);
-						}
-						if (valueCount > 4) {
-							data[j].push(columns[i + 4][j] !== undefined ? columns[i + 4][j] : null);
-						}
-					}
+				for (j = 0; j < columns[0].length; j++) { // TODO: which column's length should we use here
+					data[j] = builder.read(columns, j);
 				}
 
 				// Add the series
 				series[seriesIndex] = {
-					name: columns[i].name,
+					name: builder.getName(),
 					data: data
 				};
-
-				i += valueCount;
 			}
-			
+
+			// Get the data-type from the first series x column
+			if (allSeriesBuilders.length > 0 && allSeriesBuilders[0].readers.length > 0) {
+				var typeCol = columns[allSeriesBuilders[0].readers[0].columnIndex];
+				if (typeCol !== undefined) {
+					if (typeCol.isDatetime) {
+						type = 'datetime';
+					} else if (!typeCol.isNumeric) {
+						type = 'category';
+					}
+				}
+			}
+
 			// Do the callback
 			options.complete({
 				xAxis: {
@@ -641,5 +655,260 @@
 			proceed.call(chart, userOptions, callback);
 		}
 	});
+
+	/**
+	 * Creates a new SeriesBuilder. A SeriesBuilder consists of a number
+	 * of ColumnReaders that reads columns and give them a name.
+	 * Ex: A series builder can be constructed to read column 3 as 'x' and
+	 * column 7 and 8 as 'y1' and 'y2'.
+	 * The output would then be points/rows of the form {x: 11, y1: 22, y2: 33}
+	 * 
+	 * The name of the builder is taken from the second column. In the above
+	 * example it would be the column with index 7.
+	 * @constructor
+	 */
+	function SeriesBuilder() {
+		this.readers = [];
+		this.pointIsArray = true;
+	}
+
+	/**
+	 * Populates readers with column indexes. A reader can be added without
+	 * a specific index and for those readers the index is taken sequentially
+	 * from the free columns (this is handled by the ColumnCursor instance).
+	 * @param columnCursor
+	 * @returns {boolean}
+	 */
+	SeriesBuilder.prototype.populateColumns = function (columnCursor) {
+		var builder = this,
+			enoughColumns = true;
+
+		// Loop each reader and give it an index if its missing.
+		// The columnCursor.next() will return undefined if there
+		// are no more columns.
+		each(builder.readers, function (reader) {
+			if (!reader.hasIndex()) {
+				reader.setIndex(columnCursor.next());
+			}
+		});
+
+		// Now, all readers should have columns mapped. If not
+		// then return false to signal that this series should
+		// not be added.
+		each(builder.readers, function (reader) {
+			if (!reader.hasIndex()) {
+				enoughColumns = false;
+			}
+		});
+
+		return enoughColumns;
+	};
+
+	/**
+	 * Reads a row from the dataset and returns a point or array depending
+	 * on the names of the readers.
+	 * @param columns
+	 * @param rowIndex
+	 * @returns {Array | Object}
+	 */
+	SeriesBuilder.prototype.read = function (columns, rowIndex) {
+		var builder = this,
+			pointIsArray = builder.pointIsArray,
+			point = pointIsArray ? [] : {};
+
+		// Loop each reader and ask it to read its value.
+		// Then, build an array or point based on the readers names.
+		each(builder.readers, function (reader) {
+			var value = reader.read(columns, rowIndex);
+			if (pointIsArray) {
+				point.push(value);
+			} else {
+				point[reader.getConfigName()] = value; 
+			}
+		});
+
+		// The name comes from the second reader (the one after the x column)
+		if (builder.readers.length >= 2) {
+			this.name = columns[builder.readers[1].columnIndex].name;
+		}
+
+		return point;
+	};
+
+	/**
+	 * Creates and adds ColumnReader from the given columnIndex and configName.
+	 * ColumnIndex can be undefined and in that case the reader will be given
+	 * an index when columns are populated.
+	 * @param columnIndex {Number | undefined}
+	 * @param configName
+	 */
+	SeriesBuilder.prototype.addColumnReader = function (columnIndex, configName) {
+		this.readers.push(new ColumnReader(columnIndex, configName));
+
+		if (!(configName === 'x' || configName === 'y' || configName === undefined)) {
+			this.pointIsArray = false;
+		}
+	};
+
+	/**
+	 * Adds a columnReader for the x column.
+	 * @param columnIndex
+	 */
+	SeriesBuilder.prototype.addXReader = function (columnIndex) {
+		this.addColumnReader(columnIndex, 'x');
+	};
+
+	/**
+	 * Creates and adds a column reader for the next free column index.
+	 * @param configName
+	 */
+	SeriesBuilder.prototype.addNextColumnReader = function (configName) {
+		this.addColumnReader(undefined, configName);
+	};
+
+	/**
+	 * Returns an array of column indexes that the builder will use when
+	 * reading data.
+	 * @returns {Array}
+	 */
+	SeriesBuilder.prototype.getReferencedColumnIndexes = function () {
+		var i,
+			referencedColumnIndexes = [],
+			columnReader;
+		
+		for (i = 0; i < this.readers.length; i = i + 1) {
+			columnReader = this.readers[i];
+			if (columnReader.hasIndex()) {
+				referencedColumnIndexes.push(columnReader.getIndex());
+			}
+		}
+
+		return referencedColumnIndexes;
+	};
+
+	/**
+	 * Returns the name that the created series should have.
+	 * @returns {String}
+	 */
+	SeriesBuilder.prototype.getName = function () {
+		return this.name;
+	};
+
+	/**
+	 * The column cursor keeps track of which columns are free and which
+	 * are used. Then the free columns are used to populate dynamically
+	 * added series.
+	 * @param numberOfColumns
+	 * @param seriesBuilders
+	 * @constructor
+	 */
+	function ColumnCursor(numberOfColumns, seriesBuilders) {
+		var s,
+			i,
+			freeIndexes = [],
+			freeIndexValues = [],
+			referencedIndexes;
+
+		// Add all columns as free
+		for (i = 0; i < numberOfColumns; i = i + 1) {
+			freeIndexes.push(true);
+		}
+
+		// Loop all defined builders and remove their referenced columns
+		for (s = 0; s < seriesBuilders.length; s = s + 1) {
+			referencedIndexes = seriesBuilders[s].getReferencedColumnIndexes();
+
+			for (i = 0; i < referencedIndexes.length; i = i + 1) {
+				freeIndexes[referencedIndexes[i]] = false;
+			}
+		}
+
+		// Collect the values for the free indexes
+		for (i = 0; i < freeIndexes.length; i = i + 1) {
+			if (freeIndexes[i]) {
+				freeIndexValues.push(i);
+			}
+		}
+
+		this.freeIndexes = freeIndexValues;
+	}
+
+	/**
+	 * Mark an index as used (not free).
+	 * @param usedIndex {Number}
+	 */
+	ColumnCursor.prototype.addUsedIndex = function (usedIndex) {
+		var index = this.freeIndexes.indexOf(usedIndex);
+		if (index !== -1) {
+			this.freeIndexes.splice(index, 1);
+		}
+	};
+
+	/**
+	 * Returns the next free index or undefined if there are no
+	 * more free indexes.
+	 * @returns {Number | undefined}
+	 */
+	ColumnCursor.prototype.next = function () {
+		return this.freeIndexes.shift();
+	};
+
+	/**
+	 * Creates a new ColumnReader that reads data from a column by the column index.
+	 * @param columnIndex or undefined
+	 * @param configName or undefined
+	 * @constructor
+	 */
+	function ColumnReader(columnIndex, configName) {
+		this.columnIndex = columnIndex;
+		this.configName = configName;
+	}
+
+	/**
+	 * Reads and returns the value in a cell in the data set.
+	 * @param columns
+	 * @param rowIndex
+	 * @returns {*}
+	 */
+	ColumnReader.prototype.read = function (columns, rowIndex) {
+		return columns[this.columnIndex][rowIndex];
+	};
+
+	/**
+	 * Returns the config name for this column reader. Ex: 'x' or 'label'.
+	 * @returns {*}
+	 */
+	ColumnReader.prototype.getConfigName = function () {
+		return this.configName;
+	};
+
+	/**
+	 * Returns true if the reader has its index specified.
+	 * @returns {boolean}
+	 */
+	ColumnReader.prototype.hasIndex = function () {
+		return this.columnIndex !== undefined;
+	};
+
+	/**
+	 * Sets the column index for the reader.
+	 * @param index {Number}
+	 */
+	ColumnReader.prototype.setIndex = function (index) {
+		this.columnIndex = index;
+	};
+
+	/**
+	 * Returns the index that the reader reads from.
+	 * @returns {Number}
+	 */
+	ColumnReader.prototype.getIndex = function () {
+		return this.columnIndex;
+	};
+
+/*	// Exposed for testing
+	window.ColumnReader = ColumnReader;
+	window.ColumnCursor = ColumnCursor;
+	window.SeriesBuilder = SeriesBuilder;*/
 
 }(Highcharts));
