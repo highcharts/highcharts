@@ -1016,7 +1016,7 @@ Chart.prototype = {
 
 			} else { // resize
 				chartBackground.animate(
-					chartBackground.crisp(null, null, null, chartWidth - mgn, chartHeight - mgn)
+					chartBackground.crisp({ width: chartWidth - mgn, height: chartHeight - mgn })
 				);
 			}
 		}
@@ -1066,7 +1066,7 @@ Chart.prototype = {
 					.add();
 			} else {
 				plotBorder.animate(
-					plotBorder.crisp(null, plotLeft, plotTop, plotWidth, plotHeight)
+					plotBorder.crisp({ x: plotLeft, y: plotTop, width: plotWidth, height: plotHeight })
 				);
 			}
 		}

@@ -356,27 +356,26 @@ SVGElement.prototype = {
 	 * @param {Number} width
 	 * @param {Number} height
 	 */
-	crisp: function (strokeWidth, x, y, width, height) {
+	crisp: function (rect) {
 
 		var wrapper = this,
 			key,
 			attribs = {},
-			values = {},
-			normalizer;
+			normalizer,
+			strokeWidth = rect.strokeWidth || wrapper.strokeWidth || (wrapper.attr && wrapper.attr('stroke-width')) || 0;
 
-		strokeWidth = strokeWidth || wrapper.strokeWidth || (wrapper.attr && wrapper.attr('stroke-width')) || 0;
 		normalizer = mathRound(strokeWidth) % 2 / 2; // mathRound because strokeWidth can sometimes have roundoff errors
 
 		// normalize for crisp edges
-		values.x = mathFloor(x || wrapper.x || 0) + normalizer;
-		values.y = mathFloor(y || wrapper.y || 0) + normalizer;
-		values.width = mathFloor((width || wrapper.width || 0) - 2 * normalizer);
-		values.height = mathFloor((height || wrapper.height || 0) - 2 * normalizer);
-		values.strokeWidth = strokeWidth;
+		rect.x = mathFloor(rect.x || wrapper.x || 0) + normalizer;
+		rect.y = mathFloor(rect.y || wrapper.y || 0) + normalizer;
+		rect.width = mathFloor((rect.width || wrapper.width || 0) - 2 * normalizer);
+		rect.height = mathFloor((rect.height || wrapper.height || 0) - 2 * normalizer);
+		rect.strokeWidth = strokeWidth;
 
-		for (key in values) {
-			if (wrapper[key] !== values[key]) { // only set attribute if changed
-				wrapper[key] = attribs[key] = values[key];
+		for (key in rect) {
+			if (wrapper[key] !== rect[key]) { // only set attribute if changed
+				wrapper[key] = attribs[key] = rect[key];
 			}
 		}
 
@@ -754,7 +753,7 @@ SVGElement.prototype = {
 		var renderer = this.renderer,
 			parentWrapper = parent || renderer,
 			parentNode = parentWrapper.element || renderer.box,
-			childNodes = parentNode.childNodes,
+			childNodes,
 			element = this.element,
 			zIndex = this.zIndex,
 			otherElement,
@@ -782,6 +781,7 @@ SVGElement.prototype = {
 
 		// insert according to this and other elements' zIndex
 		if (parentWrapper.handleZ) { // this element or any of its siblings has a z index
+			childNodes = parentNode.childNodes;
 			for (i = 0; i < childNodes.length; i++) {
 				otherElement = childNodes[i];
 				otherZIndex = attr(otherElement, 'zIndex');
@@ -808,7 +808,9 @@ SVGElement.prototype = {
 		this.added = true;
 
 		// fire an event for internal hooks
-		fireEvent(this, 'add');
+		if (this.onAdd) {
+			this.onAdd();
+		}
 
 		return this;
 	},
@@ -1473,17 +1475,23 @@ SVGRenderer.prototype = {
 
 		r = isObject(x) ? x.r : r;
 
-		var wrapper = this.createElement('rect').attr({
-				rx: r,
-				ry: r,
-				fill: NONE
-			});
-		return wrapper.attr(
-				isObject(x) ?
-					x :
-					// do not crispify when an object is passed in (as in column charts)
-					wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0))
-			);
+		var wrapper = this.createElement('rect'),
+			attr = isObject(x) ? x : {
+				x: x,
+				y: y,
+				width: width,
+				height: height
+			};
+
+		if (strokeWidth !== UNDEFINED) {
+			attr = wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0));
+		}
+
+		if (r) {
+			attr.rx = attr.ry = r;
+		}		
+		
+		return wrapper.attr(attr);
 	},
 
 	/**
@@ -2082,7 +2090,11 @@ SVGRenderer.prototype = {
 			}
 		}
 
-		function getSizeAfterAdd() {
+		/**
+		 * After the text element is added, get the desired size of the border box
+		 * and add it before the text in the DOM.
+		 */
+		wrapper.onAdd = function () {
 			text.add(wrapper);
 			wrapper.attr({
 				text: str, // alignment is available now
@@ -2096,13 +2108,7 @@ SVGRenderer.prototype = {
 					anchorY: anchorY
 				});
 			}
-		}
-
-		/**
-		 * After the text element is added, get the desired size of the border box
-		 * and add it before the text in the DOM.
-		 */
-		addEvent(wrapper, 'add', getSizeAfterAdd);
+		};
 
 		/*
 		 * Add specific attribute setters.
@@ -2233,7 +2239,6 @@ SVGRenderer.prototype = {
 			 * Destroy and release memory.
 			 */
 			destroy: function () {
-				removeEvent(wrapper, 'add', getSizeAfterAdd);
 
 				// Added by button implementation
 				removeEvent(wrapper.element, 'mouseenter');
@@ -2249,7 +2254,7 @@ SVGRenderer.prototype = {
 				SVGElement.prototype.destroy.call(wrapper);
 
 				// Release local pointers (#1298)
-				wrapper = renderer = updateBoxSize = updateTextPadding = boxAttr = getSizeAfterAdd = null;
+				wrapper = renderer = updateBoxSize = updateTextPadding = boxAttr = null;
 			}
 		});
 	}

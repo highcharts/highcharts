@@ -850,7 +850,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 						applyRadialGradient();
 					} else {
 						// We need to know the bounding box to get the size and position right
-						addEvent(wrapper, 'add', applyRadialGradient);
+						wrapper.onAdd = applyRadialGradient;
 					}
 
 					// The fill element's color attribute is broken in IE8 standards mode, so we
@@ -1006,17 +1006,25 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 * VML uses a shape for rect to overcome bugs and rotation problems
 	 */
 	rect: function (x, y, width, height, r, strokeWidth) {
+		r = isObject(x) ? x.r : r;
 
-		var wrapper = this.symbol('rect');
-		wrapper.r = isObject(x) ? x.r : r;
+		var wrapper = this.symbol('rect'),
+			attr = isObject(x) ? x : {
+				x: x,
+				y: y,
+				width: width,
+				height: height
+			};
 
-		//return wrapper.attr(wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0)));
-		return wrapper.attr(
-				isObject(x) ?
-					x :
-					// do not crispify when an object is passed in (as in column charts)
-					wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0))
-			);
+		if (strokeWidth !== UNDEFINED) {
+			attr = wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0));
+		}
+
+		if (r) {
+			attr.rx = attr.ry = r;
+		}		
+		
+		return wrapper.attr(attr);
 	},
 
 	/**

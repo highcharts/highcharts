@@ -437,7 +437,7 @@ Legend.prototype = {
 
 			} else if (legendWidth > 0 && legendHeight > 0) {
 				box[box.isNew ? 'attr' : 'animate'](
-					box.crisp(null, null, null, legendWidth, legendHeight)
+					box.crisp({ width: legendWidth, height: legendHeight })
 				);
 				box.isNew = false;
 			}
