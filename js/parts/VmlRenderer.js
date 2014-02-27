@@ -1017,7 +1017,8 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			};
 
 		if (strokeWidth !== UNDEFINED) {
-			attr = wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0));
+			attr.strokeWidth = strokeWidth;
+			attr = wrapper.crisp(attr);
 		}
 
 		if (r) {

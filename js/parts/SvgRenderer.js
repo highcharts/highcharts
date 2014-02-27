@@ -1479,12 +1479,13 @@ SVGRenderer.prototype = {
 			attr = isObject(x) ? x : {
 				x: x,
 				y: y,
-				width: width,
-				height: height
+				width: mathMax(width, 0),
+				height: mathMax(height, 0)
 			};
 
 		if (strokeWidth !== UNDEFINED) {
-			attr = wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0));
+			attr.strokeWidth = strokeWidth;
+			attr = wrapper.crisp(attr);
 		}
 
 		if (r) {
