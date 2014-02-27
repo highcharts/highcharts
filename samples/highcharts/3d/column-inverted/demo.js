@@ -7,20 +7,20 @@ $(function () {
             options3d: {
                 alpha: 15,
                 beta: 15,
-                depth: 50,
+                depth: 50
             }
         },
-        xAxis: {
-            gridLineWidth: 1
+        yAxis: {
+            reversed: true,
         },
         plotOptions: {
             column: {
-                depth: 25,
-                negativeColor: 'red',
+                depth: 25
             }
         },
         series: [{
-            data: [-1, 3, -3, -2, 1, 0],
+            data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
+
         }]
     });
 });
