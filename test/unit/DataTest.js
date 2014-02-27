@@ -72,7 +72,6 @@ DataTest.prototype.testSeriesMappingSameX = function () {
 			data = result;
 		},
 		seriesMapping: [{
-			noXDefined: undefined
 		}]
 	});
 
@@ -133,7 +132,7 @@ DataTest.prototype.testSeriesMappingWithSpecifiedLabelCol = function () {
 		},
 		seriesMapping: [{
 			x: 2,
-			label: 3
+			name: 3
 		}, {
 			x: 2
 		}]
@@ -145,7 +144,7 @@ DataTest.prototype.testSeriesMappingWithSpecifiedLabelCol = function () {
 			type: 'datetime'
 		},
 		series: [{
-			data: [{x: Date.UTC(2013,0,1), y: 2, label: 'one'}, {x: Date.UTC(2013,0,2), y: 3, label: 'two'}, {x: Date.UTC(2013,0,3), y: 4, label: 'three'}],
+			data: [{x: Date.UTC(2013,0,1), y: 2, name: 'one'}, {x: Date.UTC(2013,0,2), y: 3, name: 'two'}, {x: Date.UTC(2013,0,3), y: 4, name: 'three'}],
 			name: 'Val1'
 		}, {
 			data: [[Date.UTC(2013,0,1), 3], [Date.UTC(2013,0,2), 4], [Date.UTC(2013,0,3), 4]],
@@ -205,16 +204,16 @@ DataTest.prototype.testSeriesBuilderWithSpecificConfig = function () {
 	var testData = [[0,10,20], [1,11,21], [2,12,22]];
 
 	var builder = new SeriesBuilder();
-	builder.addColumnReader(1, 'label');
+	builder.addColumnReader(1, 'name');
 	builder.addColumnReader(1, 'low');
 	builder.addColumnReader(2, 'high');
 	builder.addColumnReader(0, 'x');
 	var cursor = new ColumnCursor(testData.length, [builder]);
 	builder.populateColumns(cursor);
 
-	assertEquals({label:1, low: 1, high: 2, x: 0}, builder.read(testData, 0, cursor));
-	assertEquals({label:11, low: 11, high: 12, x: 10}, builder.read(testData, 1, cursor));
-	assertEquals({label:21, low: 21, high: 22, x: 20}, builder.read(testData, 2, cursor));
+	assertEquals({name:1, low: 1, high: 2, x: 0}, builder.read(testData, 0, cursor));
+	assertEquals({name:11, low: 11, high: 12, x: 10}, builder.read(testData, 1, cursor));
+	assertEquals({name:21, low: 21, high: 22, x: 20}, builder.read(testData, 2, cursor));
 };
 
 DataTest.prototype.testSeriesBuilderNextColWithConfig = function () {
@@ -281,5 +280,21 @@ DataTest.prototype.testSeriesBuilderNextColWithSparseConfig = function () {
 //	assertEquals({x:2, low: 3, high: 4}, builders[0].read(testData, 0, cursor));
 //	assertEquals([0, 1], builders[1].read(testData, 0, cursor));
 //	assertEquals({x:20, low: 21, high: 22}, builder.read(testData, 2, cursor));
+};
+
+DataTest.prototype.testSeriesBuilderHasReader = function () {
+	var testData = [[0,10,20], [1,11,21], [2,12,22]];
+
+	var builder = new SeriesBuilder();
+	builder.addColumnReader(1, 'name');
+	builder.addColumnReader(1, 'low');
+	builder.addColumnReader(2, 'high');
+	builder.addColumnReader(0, 'x');
+
+	assertTrue(builder.hasReader('name'));
+	assertTrue(builder.hasReader('low'));
+	assertTrue(builder.hasReader('high'));
+	assertTrue(builder.hasReader('x'));
+	assertFalse(builder.hasReader('meep'));
 };
 

@@ -173,14 +173,18 @@
 			// if the property is not set. It will then be auto populated later.
 			builder.addXReader(mapping.x);
 
-			// Fill with readers from the series pointArrayMap 
-			for (i = 0; i < numberOfValueColumnsNeeded; i++) {
-				builder.addNextColumnReader(pointArrayMap[i]);
+			// Add all column mappings
+			for (var name in mapping) {
+				if (mapping.hasOwnProperty(name) && name !== 'x') {
+					builder.addColumnReader(mapping[name], name);
+				}
 			}
 
-			// If there is a mapping for a label column, add it as well.
-			if (mapping.label !== undefined) {
-				builder.addColumnReader(mapping.label, 'label');
+			// Add missing columns
+			for (i = 0; i < numberOfValueColumnsNeeded; i++) {
+				if (!builder.hasReader(pointArrayMap[i])) {
+					builder.addNextColumnReader(pointArrayMap[i]);
+				}
 			}
 
 			seriesBuilders.push(builder);
@@ -727,9 +731,19 @@
 			}
 		});
 
-		// The name comes from the second reader (the one after the x column)
-		if (builder.readers.length >= 2) {
-			this.name = columns[builder.readers[1].columnIndex].name;
+		// The name comes from the first column (excluding the x column)
+		if (this.name === undefined && builder.readers.length >= 2) {
+			var columnIndexes = builder.getReferencedColumnIndexes();
+			if (columnIndexes.length >= 2) {
+				// remove the first one (x col)
+				columnIndexes.shift();
+
+				// Sort the remaining
+				columnIndexes.sort();
+
+				// Now use the lowest index as name column
+				this.name = columns[columnIndexes.shift()].name;
+			}
 		}
 
 		return point;
@@ -784,6 +798,23 @@
 		}
 
 		return referencedColumnIndexes;
+	};
+
+	/**
+	 * Returns true if the builder has a reader for the given configName.
+	 * @param configName
+	 * @returns {boolean}
+	 */
+	SeriesBuilder.prototype.hasReader = function (configName) {
+		var i, columnReader;
+		for (i = 0; i < this.readers.length; i = i + 1) {
+			columnReader = this.readers[i];
+			if (columnReader.getConfigName() === configName) {
+				return true;
+			}
+		}
+
+		return false;
 	};
 
 	/**
@@ -906,9 +937,9 @@
 		return this.columnIndex;
 	};
 
-/*	// Exposed for testing
+//*	// Exposed for testing
 	window.ColumnReader = ColumnReader;
 	window.ColumnCursor = ColumnCursor;
-	window.SeriesBuilder = SeriesBuilder;*/
+	window.SeriesBuilder = SeriesBuilder;//*/
 
 }(Highcharts));
