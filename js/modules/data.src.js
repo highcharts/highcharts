@@ -937,7 +937,7 @@
 		return this.columnIndex;
 	};
 
-//*	// Exposed for testing
+/*	// Exposed for testing
 	window.ColumnReader = ColumnReader;
 	window.ColumnCursor = ColumnCursor;
 	window.SeriesBuilder = SeriesBuilder;//*/
