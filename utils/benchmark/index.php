@@ -1,12 +1,11 @@
-<!DOCTYPE html>
+<?php 
+session_start();
+?><!DOCTYPE html>
 <html>
 	<head>
 		<link rel="stylesheet" type="text/css" href="test-style.css">
 
 		<?php
-			if (!isset($_SESSION)){
-				session_start();
-			}
 
 			// Array of different jquery versions.
 			// index 0 being default.
@@ -19,7 +18,7 @@
 			$highchartsVersions = array(
 				'http://code.highcharts.local/highcharts.js',
 				'http://code.highcharts.com/highcharts.js',
-				'http://code.highcharts.com/3.0.2/highcharts.js'
+				'http://github.highcharts.com/highcharts.js'
 			);
 
 			// Repetitions each chart is to be run within runChart();
@@ -86,7 +85,7 @@
 
 				// Sort array properly
 				foreach ($tmpFolders as $folder) {
-					if (count(scandir('tests-js/'.$folder)) > 2) {
+					if (is_dir('tests-js/'.$folder) && count(scandir('tests-js/'.$folder)) > 2) {
 						$folders[] = $folder;
 					}
 				}
@@ -197,7 +196,7 @@
 				} else {
 					echo "
 						<form method='post' action='index.php'>
-							<button name='reset' value='reset'>Reset results ($_SESSION)</button>
+							<button name='reset' value='reset'>Reset results</button>
 						</form>
 						";
 				}
