@@ -3200,9 +3200,7 @@ SVGRenderer.prototype = {
 	 * @param {Array} path An SVG path in array form
 	 */
 	path: function (path) {
-		var attr = {
-			fill: NONE
-		};
+		var attr = {};
 		if (isArray(path)) {
 			attr.d = path;
 		} else if (isObject(path)) { // attributes
@@ -13714,6 +13712,7 @@ Series.prototype = {
 				attribs = {
 					stroke: prop[1],
 					'stroke-width': lineWidth,
+					fill: NONE,
 					zIndex: 1 // #1069
 				};
 				if (dashStyle) {

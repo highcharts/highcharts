@@ -1312,6 +1312,7 @@ Series.prototype = {
 				attribs = {
 					stroke: prop[1],
 					'stroke-width': lineWidth,
+					fill: NONE,
 					zIndex: 1 // #1069
 				};
 				if (dashStyle) {
