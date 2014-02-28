@@ -178,28 +178,24 @@ extend(SVGRenderer.prototype, {
 	html: function (str, x, y) {
 		var defaultChartStyle = defaultOptions.chart.style,
 			wrapper = this.createElement('span'),
-			attrSetters = wrapper.attrSetters,
 			element = wrapper.element,
 			renderer = wrapper.renderer;
 
 		// Text setter
-		attrSetters.text = function (value) {
+		wrapper.textSetter = function (value) {
 			if (value !== element.innerHTML) {
 				delete this.bBox;
 			}
 			element.innerHTML = this.textStr = value;
-			return false;
 		};
 
 		// Various setters which rely on update transform
-		attrSetters.x = attrSetters.y = attrSetters.align = attrSetters.rotation = function (value, key) {
+		wrapper.xSetter = wrapper.ySetter = wrapper.alignSetter = wrapper.rotationSetter = function (value, key) {
 			if (key === 'align') {
 				key = 'textAlign'; // Do not overwrite the SVGElement.align method. Same as VML.
 			}
 			wrapper[key] = value;
 			wrapper.htmlUpdateTransform();
-			
-			return false;
 		};
 
 		// Set the default attributes

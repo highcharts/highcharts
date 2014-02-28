@@ -19,7 +19,7 @@
 			$highchartsVersions = array(
 				'http://code.highcharts.local/highcharts.js',
 				'http://code.highcharts.com/highcharts.js',
-				'http://code.highcharts.com/3.0.2/highcharts.js'
+				'http://github.highcharts.com/highcharts.js'
 			);
 
 			// Repetitions each chart is to be run within runChart();

@@ -3,8 +3,10 @@
         renderTo: 'container'
     },
     
+    
+
     series: [{
-        type: 'area',
+        type: 'column',
         animation: false,
         data: (function () {
             var arr = [];
@@ -16,6 +18,7 @@
         dataLabels: {
             enabled: true
         }
+
     }]
 
 }

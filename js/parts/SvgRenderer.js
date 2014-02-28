@@ -22,7 +22,7 @@ SVGElement.prototype = {
 		 * setter to run. Returning a value causes the default setter to set that value. Used in
 		 * Renderer.label.
 		 */
-		wrapper.attrSetters = {};
+		//wrapper.attrSetters = {};
 	},
 	/**
 	 * Default base for animation
@@ -63,11 +63,144 @@ SVGElement.prototype = {
 			i,
 			child,
 			element = wrapper.element,
+			nodeName = wrapper.nodeName = element.nodeName.toLowerCase(), // Android2 requires lower for "text"
+			renderer = wrapper.renderer,
+			titleNode,
+			//attrSetters = wrapper.attrSetters,
+			shadows = wrapper.shadows,
+			hasSetSymbolSize,
+			ret = wrapper;
+
+		// single key-value pair
+		if (typeof hash === 'string' && val !== UNDEFINED) {
+			key = hash;
+			hash = {};
+			hash[key] = val;
+		}
+
+		// used as a getter: first argument is a string, second is undefined
+		if (typeof hash === 'string') {
+			key = hash;
+			if (nodeName === 'circle') {
+				key = { x: 'cx', y: 'cy' }[key] || key;
+			} else if (key === 'strokeWidth') {
+				key = 'stroke-width';
+			}
+			ret = attr(element, key) || wrapper[key] || 0;
+			if (key !== 'd' && key !== 'visibility' && key !== 'fill') { // 'd' is string in animation step
+				ret = parseFloat(ret);
+			}
+
+		// setter
+		} else {
+
+				
+				
+
+			for (key in hash) {
+				value = hash[key];
+				skipAttr = false;
+
+				// let the shadow follow the main element
+				if (shadows && /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)) {
+					i = shadows.length;
+					while (i--) {
+						attr(
+							shadows[i],
+							key,
+							key === 'height' ?
+								mathMax(value - (shadows[i].cutHeight || 0), 0) :
+								value
+						);
+					}
+				}
+
+
+				if (wrapper.symbolName && /^(x|y|width|height|r|start|end|innerR|anchorX|anchorY)/.test(key)) {
+					if (!hasSetSymbolSize) {
+						wrapper.symbolAttr(hash);
+						hasSetSymbolSize = true;
+					}
+					skipAttr = true;
+				}
+
+				if (wrapper.rotation && (key === 'x' || key === 'y')) {
+					this.doTransform = true;
+				}
+				
+				if (!skipAttr) {
+					(this[key + 'Setter'] || this._defaultSetter).call(this, value, key, element);
+				}
+
+
+
+				/*
+					
+				if (result !== false) {
+					if (result !== UNDEFINED) {
+						value = result; // the attribute setter has returned a new value to set
+					} else {
+
+
+						// jQuery animate changes case
+						if (key === 'strokeWidth') {
+							key = 'stroke-width';
+						}
+
+						
+						
+						
+						// validate heights
+						if ((key === 'width' || key === 'height') && nodeName === 'rect' && value < 0) {
+							value = 0;
+						}
+						
+					}
+					
+
+					// Record for animation and quick access without polling the DOM
+					//wrapper[key] = value;
+
+					
+					if (key === 'text') {
+						
+					} else if (!this.skipAttr) {
+						//attr(element, key, value);
+						if (value !== undefined) {
+							element.setAttribute(key, value);
+						}
+					}
+					this.skipAttr = false;
+					
+				}
+				*/
+
+			}
+
+			// Update transform. Do this outside the loop to prevent redundant updating for batch setting
+			// of attributes.
+			if (this.doTransform) {
+				this.updateTransform();
+				this.doTransform = false;
+			}
+
+		}
+
+		return ret;
+	},
+
+	_attr: function (hash, val) {
+		var wrapper = this,
+			key,
+			value,
+			result,
+			i,
+			child,
+			element = wrapper.element,
 			nodeName = element.nodeName.toLowerCase(), // Android2 requires lower for "text"
 			renderer = wrapper.renderer,
 			skipAttr,
 			titleNode,
-			attrSetters = wrapper.attrSetters,
 			shadows = wrapper.shadows,
 			hasSetSymbolSize,
 			doTransform,
@@ -936,6 +1069,215 @@ SVGElement.prototype = {
 		}
 		return this;
 
+	},
+
+
+	dSetter: function (value, key, element) {
+		if (value && value.join) { // join path
+			value = value.join(' ');
+		}
+		if (/(NaN| {2}|^$)/.test(value)) {
+			value = 'M 0 0';
+		}
+		element.setAttribute(key, value);
+
+		this[key] = value;
+	},
+	dashstyleSetter: function (value) {
+		value = value && value.toLowerCase();
+		if (value) {
+			value = value
+				.replace('shortdashdotdot', '3,1,1,1,1,1,')
+				.replace('shortdashdot', '3,1,1,1')
+				.replace('shortdot', '1,1,')
+				.replace('shortdash', '3,1,')
+				.replace('longdash', '8,3,')
+				.replace(/dot/g, '1,3,')
+				.replace('dash', '4,3,')
+				.replace(/,$/, '')
+				.split(','); // ending comma
+
+			i = value.length;
+			while (i--) {
+				value[i] = pInt(value[i]) * pick(hash['stroke-width'], wrapper['stroke-width']);
+			}
+			value = value.join(',');
+			this.element.setAttribute('stroke-dasharray', value);
+		}
+	},
+	alignSetter: function (value) {
+		this.element.setAttribute('text-anchor', { left: 'start', center: 'middle', right: 'end' }[value]);
+	},
+	titleSetter: function (value) {
+		var titleNode = this.element.getElementsByTagName('title')[0];
+		if (!titleNode) {
+			titleNode = doc.createElementNS(SVG_NS, 'title');
+			this.element.appendChild(titleNode);
+		}
+		titleNode.textContent = value;
+	},
+	textSetter: function (value) {
+		if (value !== this.textStr) {
+			// Delete bBox memo when the text changes
+			delete this.bBox;
+		
+			this.textStr = value;
+			if (this.added) {
+				this.renderer.buildText(this);
+			}
+		}
+	},
+	/**
+	 * Take a color and return it if it's a string, make it a gradient if it's a
+	 * gradient configuration object. Prior to Highstock, an array was used to define
+	 * a linear gradient with pixel positions relative to the SVG. In newer versions
+	 * we change the coordinates to apply relative to the shape, using coordinates
+	 * 0-1 within the shape. To preserve backwards compatibility, linearGradient
+	 * in this definition is an object of x1, y1, x2 and y2.
+	 *
+	 * @param {Object} color The color or config object
+	 */
+	fillSetter: function (color, prop, elem) {
+		var renderer = this.renderer,
+			colorObject,
+			gradName,
+			gradAttr,
+			gradients,
+			gradientObject,
+			stops,
+			stopColor,
+			stopOpacity,
+			radialReference,
+			n,
+			id,
+			key = [],
+			colAttr;
+
+		// Apply linear or radial gradients
+		if (color && color.linearGradient) {
+			gradName = 'linearGradient';
+		} else if (color && color.radialGradient) {
+			gradName = 'radialGradient';
+		}
+
+		if (gradName) {
+			gradAttr = color[gradName];
+			gradients = renderer.gradients;
+			stops = color.stops;
+			radialReference = elem.radialReference;
+
+			// Keep < 2.2 kompatibility
+			if (isArray(gradAttr)) {
+				color[gradName] = gradAttr = {
+					x1: gradAttr[0],
+					y1: gradAttr[1],
+					x2: gradAttr[2],
+					y2: gradAttr[3],
+					gradientUnits: 'userSpaceOnUse'
+				};
+			}
+
+			// Correct the radial gradient for the radial reference system
+			if (gradName === 'radialGradient' && radialReference && !defined(gradAttr.gradientUnits)) {
+				gradAttr = merge(gradAttr, {
+					cx: (radialReference[0] - radialReference[2] / 2) + gradAttr.cx * radialReference[2],
+					cy: (radialReference[1] - radialReference[2] / 2) + gradAttr.cy * radialReference[2],
+					r: gradAttr.r * radialReference[2],
+					gradientUnits: 'userSpaceOnUse'
+				});
+			}
+
+			// Build the unique key to detect whether we need to create a new element (#1282)
+			for (n in gradAttr) {
+				if (n !== 'id') {
+					key.push(n, gradAttr[n]);
+				}
+			}
+			for (n in stops) {
+				key.push(stops[n]);
+			}
+			key = key.join(',');
+
+			// Check if a gradient object with the same config object is created within this renderer
+			if (gradients[key]) {
+				id = gradients[key].id;
+
+			} else {
+
+				// Set the id and create the element
+				gradAttr.id = id = PREFIX + idCounter++;
+				gradients[key] = gradientObject = renderer.createElement(gradName)
+					.attr(gradAttr)
+					.add(renderer.defs);
+
+
+				// The gradient needs to keep a list of stops to be able to destroy them
+				gradientObject.stops = [];
+				each(stops, function (stop) {
+					var stopObject;
+					if (regexRgba.test(stop[1])) {
+						colorObject = Color(stop[1]);
+						stopColor = colorObject.get('rgb');
+						stopOpacity = colorObject.get('a');
+					} else {
+						stopColor = stop[1];
+						stopOpacity = 1;
+					}
+					stopObject = renderer.createElement('stop').attr({
+						offset: stop[0],
+						'stop-color': stopColor,
+						'stop-opacity': stopOpacity
+					}).add(gradientObject);
+
+					// Add the stop element to the gradient
+					gradientObject.stops.push(stopObject);
+				});
+			}
+
+			// Return the reference to the gradient object
+			colAttr = 'url(' + renderer.url + '#' + id + ')';
+
+		// Webkit and Batik can't show rgba.
+		} else if (color.indexOf('rgba') === 0) {
+			colorObject = Color(color);
+			attr(elem, prop + '-opacity', colorObject.get('a'));
+
+			colAttr = colorObject.get('rgb');
+
+
+		} else {
+			// Remove the opacity attribute added above. Does not throw if the attribute is not there.
+			elem.removeAttribute(prop + '-opacity');
+
+			colAttr = color;
+		}
+		elem.setAttribute(prop, colAttr);
+
+	},
+	_defaultSetter: function (value, key, element) {
+		this[key] = value;
+		element.setAttribute(key, value);
+	}
+};
+SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter = 
+		SVGElement.prototype.rotationSetter = SVGElement.prototype.verticalAlignSetter = 
+		SVGElement.prototype.scaleXSetter = SVGElement.prototype.scaleYSetter = function (value, key) {
+	this[key] = value;
+	this.doTransform = true;
+};
+
+// In Chrome/Win < 6 as well as Batik, the stroke attribute can't be set when the stroke-
+// width is 0. #1369
+SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter = function (value, key) {
+	this[key] = value;
+	// Only apply the stroke attribute if the stroke width is defined and larger than 0
+	if (this.stroke && this['stroke-width']) {
+		this.element.setAttribute('stroke', this.stroke);
+		this.element.setAttribute('stroke-width', this['stroke-width']);
+		this.hasStroke = true;
+	} else if (key === 'stroke-width' && value === 0 && this.hasStroke) {
+		this.element.removeAttribute('stroke');
+		this.hasStroke = false;
 	}
 };
 
@@ -1129,6 +1471,12 @@ SVGRenderer.prototype = {
 			lines.pop();
 		}
 
+		// Skip tspans, add text directly to text node
+		if (lines.length === 1 && lines[0].indexOf(' ') === -1) {
+			textNode.appendChild(doc.createTextNode(lines[0]));
+			return;
+		}
+
 		// build the lines
 		each(lines, function (line, lineNo) {
 			var spans, spanNo = 0;
@@ -1161,7 +1509,9 @@ SVGRenderer.prototype = {
 						tspan.appendChild(doc.createTextNode(span));
 
 						if (!spanNo) { // first span in a line, align it to the left
-							attributes.x = parentX;
+							if (lineNo) {
+								attributes.x = parentX;
+							}
 						} else {
 							attributes.dx = 0; // #16
 						}
@@ -1425,9 +1775,14 @@ SVGRenderer.prototype = {
 				x: x,
 				y: y,
 				r: r
-			};
+			},
+			wrapper = this.createElement('circle');
 
-		return this.createElement('circle').attr(attr);
+		wrapper.xSetter = wrapper.ySetter = function (value, key) {
+			this.element.setAttribute({ x: 'cx', y: 'cy' }[key] || key, value);
+			this[key] = value;
+		};
+		return wrapper.attr(attr);
 	},
 
 	/**
@@ -1476,7 +1831,7 @@ SVGRenderer.prototype = {
 		r = isObject(x) ? x.r : r;
 
 		var wrapper = this.createElement('rect'),
-			attr = isObject(x) ? x : {
+			attribs = isObject(x) ? x : {
 				x: x,
 				y: y,
 				width: mathMax(width, 0),
@@ -1484,15 +1839,22 @@ SVGRenderer.prototype = {
 			};
 
 		if (strokeWidth !== UNDEFINED) {
-			attr.strokeWidth = strokeWidth;
-			attr = wrapper.crisp(attr);
+			attribs.strokeWidth = strokeWidth;
+			attribs = wrapper.crisp(attribs);
 		}
 
 		if (r) {
-			attr.rx = attr.ry = r;
-		}		
+			attribs.rx = attribs.ry = r;
+		}
+
+		wrapper.rSetter = function (value) {
+			attr(this.element, {
+				rx: value,
+				ry: value
+			});
+		};
 		
-		return wrapper.attr(attr);
+		return wrapper.attr(attribs);
 	},
 
 	/**
@@ -1783,132 +2145,7 @@ SVGRenderer.prototype = {
 	},
 
 
-	/**
-	 * Take a color and return it if it's a string, make it a gradient if it's a
-	 * gradient configuration object. Prior to Highstock, an array was used to define
-	 * a linear gradient with pixel positions relative to the SVG. In newer versions
-	 * we change the coordinates to apply relative to the shape, using coordinates
-	 * 0-1 within the shape. To preserve backwards compatibility, linearGradient
-	 * in this definition is an object of x1, y1, x2 and y2.
-	 *
-	 * @param {Object} color The color or config object
-	 */
-	color: function (color, elem, prop) {
-		var renderer = this,
-			colorObject,
-			regexRgba = /^rgba/,
-			gradName,
-			gradAttr,
-			gradients,
-			gradientObject,
-			stops,
-			stopColor,
-			stopOpacity,
-			radialReference,
-			n,
-			id,
-			key = [];
-
-		// Apply linear or radial gradients
-		if (color && color.linearGradient) {
-			gradName = 'linearGradient';
-		} else if (color && color.radialGradient) {
-			gradName = 'radialGradient';
-		}
-
-		if (gradName) {
-			gradAttr = color[gradName];
-			gradients = renderer.gradients;
-			stops = color.stops;
-			radialReference = elem.radialReference;
-
-			// Keep < 2.2 kompatibility
-			if (isArray(gradAttr)) {
-				color[gradName] = gradAttr = {
-					x1: gradAttr[0],
-					y1: gradAttr[1],
-					x2: gradAttr[2],
-					y2: gradAttr[3],
-					gradientUnits: 'userSpaceOnUse'
-				};
-			}
-
-			// Correct the radial gradient for the radial reference system
-			if (gradName === 'radialGradient' && radialReference && !defined(gradAttr.gradientUnits)) {
-				gradAttr = merge(gradAttr, {
-					cx: (radialReference[0] - radialReference[2] / 2) + gradAttr.cx * radialReference[2],
-					cy: (radialReference[1] - radialReference[2] / 2) + gradAttr.cy * radialReference[2],
-					r: gradAttr.r * radialReference[2],
-					gradientUnits: 'userSpaceOnUse'
-				});
-			}
-
-			// Build the unique key to detect whether we need to create a new element (#1282)
-			for (n in gradAttr) {
-				if (n !== 'id') {
-					key.push(n, gradAttr[n]);
-				}
-			}
-			for (n in stops) {
-				key.push(stops[n]);
-			}
-			key = key.join(',');
-
-			// Check if a gradient object with the same config object is created within this renderer
-			if (gradients[key]) {
-				id = gradients[key].id;
-
-			} else {
-
-				// Set the id and create the element
-				gradAttr.id = id = PREFIX + idCounter++;
-				gradients[key] = gradientObject = renderer.createElement(gradName)
-					.attr(gradAttr)
-					.add(renderer.defs);
-
-
-				// The gradient needs to keep a list of stops to be able to destroy them
-				gradientObject.stops = [];
-				each(stops, function (stop) {
-					var stopObject;
-					if (regexRgba.test(stop[1])) {
-						colorObject = Color(stop[1]);
-						stopColor = colorObject.get('rgb');
-						stopOpacity = colorObject.get('a');
-					} else {
-						stopColor = stop[1];
-						stopOpacity = 1;
-					}
-					stopObject = renderer.createElement('stop').attr({
-						offset: stop[0],
-						'stop-color': stopColor,
-						'stop-opacity': stopOpacity
-					}).add(gradientObject);
-
-					// Add the stop element to the gradient
-					gradientObject.stops.push(stopObject);
-				});
-			}
-
-			// Return the reference to the gradient object
-			return 'url(' + renderer.url + '#' + id + ')';
-
-		// Webkit and Batik can't show rgba.
-		} else if (regexRgba.test(color)) {
-			colorObject = Color(color);
-			attr(elem, prop + '-opacity', colorObject.get('a'));
-
-			return colorObject.get('rgb');
-
-
-		} else {
-			// Remove the opacity attribute added above. Does not throw if the attribute is not there.
-			elem.removeAttribute(prop + '-opacity');
-
-			return color;
-		}
-
-	},
+	
 
 
 	/**
@@ -1944,6 +2181,23 @@ SVGRenderer.prototype = {
 			wrapper.css({
 				position: ABSOLUTE
 			});
+		}
+
+		if (!useHTML) {
+			wrapper.xSetter = function (value, key, element) {
+				var childNodes = element.childNodes,
+					child;
+				this[key] = value;
+				for (i = 1; i < childNodes.length; i++) {
+					child = childNodes[i];
+					// if the x values are equal, the tspan represents a linebreak
+					if (attr(child, 'x') === attr(element, 'x')) {
+						//child.setAttribute('x', value);
+						attr(child, 'x', value);
+					}
+				}
+				element.setAttribute(key, value);
+			}
 		}
 
 		wrapper.x = x;
@@ -2003,7 +2257,6 @@ SVGRenderer.prototype = {
 			crispAdjust = 0,
 			deferredAttr = {},
 			baselineOffset,
-			attrSetters = wrapper.attrSetters,
 			needsBox;
 
 		/**
@@ -2116,84 +2369,72 @@ SVGRenderer.prototype = {
 		 */
 
 		// only change local variables
-		attrSetters.width = function (value) {
+		wrapper.widthSetter = function (value) {
 			width = value;
-			return false;
 		};
-		attrSetters.height = function (value) {
+		wrapper.heightSetter = function (value) {
 			height = value;
-			return false;
 		};
-		attrSetters.padding =  function (value) {
+		wrapper.paddingSetter =  function (value) {
 			if (defined(value) && value !== padding) {
 				padding = value;
 				updateTextPadding();
 			}
-			return false;
 		};
-		attrSetters.paddingLeft =  function (value) {
+		wrapper.paddingLeftSetter =  function (value) {
 			if (defined(value) && value !== paddingLeft) {
 				paddingLeft = value;
 				updateTextPadding();
 			}
-			return false;
 		};
 
 
-		// change local variable and set attribue as well
-		attrSetters.align = function (value) {
+		// change local variable and prevent setting attribute on the group
+		wrapper.alignSetter = function (value) {
 			alignFactor = { left: 0, center: 0.5, right: 1 }[value];
-			return false; // prevent setting text-anchor on the group
 		};
 
 		// apply these to the box and the text alike
-		attrSetters.text = function (value, key) {
+		wrapper.textSetter = function (value, key) {
 			text.attr(key, value);
 			updateBoxSize();
 			updateTextPadding();
-			return false;
 		};
 
 		// apply these to the box but not to the text
-		attrSetters[STROKE_WIDTH] = function (value, key) {
+		wrapper['stroke-widthSetter'] = function (value, key) {
 			if (value) {
 				needsBox = true;
 			}
 			crispAdjust = value % 2 / 2;
 			boxAttr(key, value);
-			return false;
 		};
-		attrSetters.stroke = attrSetters.fill = attrSetters.r = function (value, key) {
+		wrapper.strokeSetter = wrapper.fillSetter = wrapper.rSetter = function (value, key) {
 			if (key === 'fill' && value) {
 				needsBox = true;
 			}
 			boxAttr(key, value);
-			return false;
 		};
-		attrSetters.anchorX = function (value, key) {
+		wrapper.anchorXSetter = function (value, key) {
 			anchorX = value;
 			boxAttr(key, value + crispAdjust - wrapperX);
-			return false;
 		};
-		attrSetters.anchorY = function (value, key) {
+		wrapper.anchorYSetter = function (value, key) {
 			anchorY = value;
 			boxAttr(key, value - wrapperY);
-			return false;
 		};
 
 		// rename attributes
-		attrSetters.x = function (value) {
+		wrapper.xSetter = function (value) {
 			wrapper.x = value; // for animation getter
 			value -= alignFactor * ((width || bBox.width) + padding);
 			wrapperX = mathRound(value);
 
 			wrapper.attr('translateX', wrapperX);
-			return false;
 		};
-		attrSetters.y = function (value) {
+		wrapper.ySetter = function (value) {
 			wrapperY = wrapper.y = mathRound(value);
 			wrapper.attr('translateY', wrapperY);
-			return false;
 		};
 
 		// Redirect certain methods to either the box or the text
