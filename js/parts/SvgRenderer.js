@@ -1401,7 +1401,9 @@ SVGRenderer.prototype = {
 	 * @param {Array} path An SVG path in array form
 	 */
 	path: function (path) {
-		var attr = {};
+		var attr = {
+			fill: NONE
+		};
 		if (isArray(path)) {
 			attr.d = path;
 		} else if (isObject(path)) { // attributes
