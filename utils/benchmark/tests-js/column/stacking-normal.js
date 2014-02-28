@@ -1,6 +1,7 @@
 {
     chart: {
-        renderTo: 'container'
+        renderTo: 'container',
+        type: 'column'
     },
     
     plotOptions: {
@@ -10,55 +11,50 @@
     },
 
     series: [{
-        type: 'area',
         animation: false,
         data: (function () {
             var arr = [];
-            for (var j = 0; j < 100; j++) {
+            for (var j = 0; j < 20; j++) {
                 arr.push(j);
             }
             return arr;
         }())
     }, 
     {
-        type: 'area',
         animation: false,
         data: (function () {
             var arr = [];
-            for (var j = 100; j < 200; j++) {
+            for (var j = 0; j < 20; j++) {
                 arr.push(j);
             }
             return arr;
         }())
     }, 
     {
-        type: 'area',
         animation: false,
         data: (function () {
             var arr = [];
-            for (var j = 200; j < 300; j++) {
+            for (var j = 0; j < 20; j++) {
                 arr.push(j);
             }
             return arr;
         }())
     }, 
     {
-        type: 'area',
         animation: false,
         data: (function () {
             var arr = [];
-            for (var j = 300; j < 400; j++) {
+            for (var j = 0; j < 20; j++) {
                 arr.push(j);
             }
             return arr;
         }())
     }, 
     {
-        type: 'area',
         animation: false,
         data: (function () {
             var arr = [];
-            for (var j = 500; j < 600; j++) {
+            for (var j = 0; j < 20; j++) {
                 arr.push(j);
             }
             return arr;

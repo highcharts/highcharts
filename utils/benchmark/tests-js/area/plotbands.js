@@ -3,30 +3,7 @@
         renderTo: 'container'
     },
     
-    title: {
-        text: null
-    },
-    
-    credits: {
-        enabled: false
-    },
-    
-    xAxis: {
-        labels: {
-            enabled: false
-        },
-        tickLength: 0,
-        lineWidth: 0
-    },
-    
     yAxis: {
-        labels: {
-            enabled: false
-        },
-        gridLineWidth: 0,
-        title: {
-            text: null
-        },
         plotBands: [{
             from: 0,
             to: 5,
@@ -240,14 +217,6 @@
         }]
     },
     
-    legend: {
-        enabled: false
-    },
-
-    tooltip: {
-        enabled: false
-    },
-
     series: [{
         type: 'area',
         animation: false,
@@ -257,10 +226,7 @@
                 arr.push(j);
             }
             return arr;
-        }()),
-        marker: {
-             enabled: false
-        }
+        }())
     }]
 
 }
