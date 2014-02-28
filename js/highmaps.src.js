@@ -11324,6 +11324,7 @@ Chart.prototype = {
 					.attr({
 						stroke: optionsChart.plotBorderColor,
 						'stroke-width': plotBorderWidth,
+						fill: NONE,
 						zIndex: 1
 					})
 					.add();
