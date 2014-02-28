@@ -4,8 +4,8 @@ $(function () {
             type: 'pie',
             is3d: true,
             options3d: {
-                alpha: 15,
-                beta: 15,
+                alpha: 45,
+                beta: 0,
             }
         },
         plotOptions: {

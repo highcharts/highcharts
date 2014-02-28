@@ -26,7 +26,7 @@ $(function () {
         },
         plotOptions: {
             column: {
-                depth: 25,
+                depth: 5,
                 groupZPadding: 15
             }
         },
