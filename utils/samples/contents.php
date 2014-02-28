@@ -221,7 +221,7 @@
 			echo "<h2>$dir</h2>";
 			
 			while (false !== ($file = readdir($handle))) {
-				if (preg_match('/^[a-z\-]+$/', $file)) {
+				if (preg_match('/^[a-z0-9\-]+$/', $file)) {
 					echo "
 					<h4>$dir/$file</h4>
 					<ul>
