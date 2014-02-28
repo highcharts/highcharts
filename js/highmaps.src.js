@@ -16784,7 +16784,7 @@ Axis.prototype.beforePadding = function () {
 			var seriesOptions = series.options,
 				zData;
 
-			if (series.bubblePadding && series.visible) {
+			if (series.bubblePadding && (series.visible || !chart.options.chart.ignoreHiddenSeries)) {
 
 				// Correction for #1673
 				axis.allowZoomOutside = true;
