@@ -1,6 +1,17 @@
 /*** 
 	EXTENSION FOR 3D COLUMNS
 ***/
+Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proceed) {
+	var args = arguments,
+		series = this;
+	if (args[1].is3d) {
+		args[2].borderColor = args[2].borderColor || (function () {	
+			return series.color;
+		}());
+	}
+	proceed.apply(this, [].slice.call(arguments, 1));
+});	
+
 Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
@@ -46,15 +57,7 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
 	// Do not do this if the chart is not 3D
 	if (this.chart.is3d()) {
-		var type = this.chart.options.chart.type,
-			options = this.chart.options.plotOptions[type];
-		
-		var stack = (this.options.stack || 0),
-			order = this.chart.series.length - this._i;
-
-		var z = this.group.zIndex * 10;
-
-		this.group.attr({zIndex: z});
+		this.group.attr({zIndex: this.group.zIndex * 10});
 	}
 	proceed.apply(this, [].slice.call(arguments, 1));
 });
@@ -89,8 +92,7 @@ Highcharts.wrap(Highcharts.seriesTypes.cylinder.prototype, 'translate', function
 			y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2, 
 			z: options3d.depth
 		},
-		alpha = options3d.alpha,
-		beta = options3d.beta;
+		alpha = options3d.alpha;
 
 	var z = cylOptions.stacking ? (this.options.stack || 0) * depth : series._i * depth;
 	z += depth / 2;

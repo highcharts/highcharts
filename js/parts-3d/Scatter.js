@@ -57,4 +57,5 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'init', function (proc
 			this.tooltipOptions.pointFormat = default3dScatterTooltip;
 		}
 	}
+	return result;
 });

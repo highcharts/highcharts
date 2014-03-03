@@ -3,7 +3,7 @@
 ***/
 // Shorthand to check the is3d flag
 Highcharts.Chart.prototype.is3d = function () {
-	return this.options.chart.is3d || false;
+	return this.options.chart.options3d && this.options.chart.options3d.enabled;
 };
 
 Highcharts.wrap(Highcharts.Chart.prototype, 'isInsidePlot', function (proceed) {
@@ -69,7 +69,8 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'firstRender', function (proceed) {
 	
 	if (this.is3d()) {
 		// Change the order for drawing the series
-		var invSeries = [];
+		var invSeries = [],
+			i;
 		for (i = 0; i < this.series.length; i++) {
 			invSeries.push(this.series[this.series.length - (i + 1)]);
 		}

@@ -1,6 +1,52 @@
 /*** 
 	EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
 	***/
+////// HELPER METHODS //////
+var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
+
+function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
+	var result = [];
+	if ((end > start) && (end - start > PI / 2 + 0.0001)) {
+		result = result.concat(curveTo(cx, cy, rx, ry, start, start + (PI / 2), dx, dy));
+		result = result.concat(curveTo(cx, cy, rx, ry, start + (PI / 2), end, dx, dy));
+		return result;
+	} else if ((end < start) && (start - end > PI / 2 + 0.0001)) {			
+		result = result.concat(curveTo(cx, cy, rx, ry, start, start - (PI / 2), dx, dy));
+		result = result.concat(curveTo(cx, cy, rx, ry, start - (PI / 2), end, dx, dy));
+		return result;
+	} else {
+		var arcAngle = end - start;
+		return [
+			'C', 
+			cx + (rx * cos(start)) - ((rx * dFactor * arcAngle) * sin(start)) + dx,
+			cy + (ry * sin(start)) + ((ry * dFactor * arcAngle) * cos(start)) + dy,
+			cx + (rx * cos(end)) + ((rx * dFactor * arcAngle) * sin(end)) + dx,
+			cy + (ry * sin(end)) - ((ry * dFactor * arcAngle) * cos(end)) + dy,
+
+			cx + (rx * cos(end)) + dx,
+			cy + (ry * sin(end)) + dy
+		];
+	}
+}
+
+Highcharts.SVGRenderer.prototype.toLinePath = function (points, closed) {
+	var result = [];
+
+	// Put "L x y" for each point
+	Highcharts.each(points, function (point) {
+		result.push('L', point.x, point.y);
+	});
+
+	// Set the first element to M
+	result[0] = 'M';
+
+	// If it is a closed line, add Z
+	if (closed) {
+		result.push('Z');
+	}
+	
+	return result;
+};
 
 ////// CUBOIDS //////
 Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
@@ -50,8 +96,7 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 
 
 Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
-	var inverted = shapeArgs.inverted || false,
-		x = shapeArgs.x,
+	var x = shapeArgs.x,
 		y = shapeArgs.y,
 		z = shapeArgs.z,
 		h = shapeArgs.height,
@@ -195,15 +240,13 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 	var cx = shapeArgs.x,
 		cy = shapeArgs.y,
-		z = shapeArgs.z,
 		start = shapeArgs.start,
 		end = shapeArgs.end - 0.00001,
 		r = shapeArgs.r,
 		ir = shapeArgs.innerR,
 		d = shapeArgs.depth,
 		alpha = shapeArgs.alpha,
-		beta = shapeArgs.beta,
-		origin = shapeArgs.origin;
+		beta = shapeArgs.beta;
 
 	// Some Variables
 	var cs = cos(start),
@@ -290,51 +333,4 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 		zSide2: zSide2 * 100,
 		zAll: zIndex
 	};
-};
-
-////// HELPER METHODS //////
-var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
-
-function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
-	var result = [];
-	if ((end > start) && (end - start > PI / 2 + 0.0001)) {
-		result = result.concat(curveTo(cx, cy, rx, ry, start, start + (PI / 2), dx, dy));
-		result = result.concat(curveTo(cx, cy, rx, ry, start + (PI / 2), end, dx, dy));
-		return result;
-	} else if ((end < start) && (start - end > PI / 2 + 0.0001)) {			
-		result = result.concat(curveTo(cx, cy, rx, ry, start, start - (PI / 2), dx, dy));
-		result = result.concat(curveTo(cx, cy, rx, ry, start - (PI / 2), end, dx, dy));
-		return result;
-	} else {
-		var arcAngle = end - start;
-		return [
-			'C', 
-			cx + (rx * cos(start)) - ((rx * dFactor * arcAngle) * sin(start)) + dx,
-			cy + (ry * sin(start)) + ((ry * dFactor * arcAngle) * cos(start)) + dy,
-			cx + (rx * cos(end)) + ((rx * dFactor * arcAngle) * sin(end)) + dx,
-			cy + (ry * sin(end)) - ((ry * dFactor * arcAngle) * cos(end)) + dy,
-
-			cx + (rx * cos(end)) + dx,
-			cy + (ry * sin(end)) + dy
-		];
-	}
-}
-
-Highcharts.SVGRenderer.prototype.toLinePath = function (points, closed) {
-	var result = [];
-
-	// Put "L x y" for each point
-	Highcharts.each(points, function (point) {
-		result.push('L', point.x, point.y);
-	});
-
-	// Set the first element to M
-	result[0] = 'M';
-
-	// If it is a closed line, add Z
-	if (closed) {
-		result.push('Z');
-	}
-	
-	return result;
 };

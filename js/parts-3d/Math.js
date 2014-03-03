@@ -4,13 +4,9 @@
 var PI = Math.PI,
 	deg2rad = (PI / 180), // degrees to radians 
 	sin = Math.sin,
-	cos = Math.cos,
-
-	min = Math.min,
-	max = Math.max, 
+	cos = Math.cos, 
 
 	round = Math.round;
-
 
 function perspective(points, angle2, angle1, origin) {
 	angle1 *= deg2rad;

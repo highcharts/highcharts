@@ -9,10 +9,7 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 	if (!this.chart.is3d()) {
 		return;
 	}	
-
-
-	var type = this.chart.options.chart.type;
-
+	
 	var series = this,
 		chart = series.chart,
 		options = chart.options,
