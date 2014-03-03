@@ -3,8 +3,8 @@ $(function () {
         chart: {
             type: 'column',
             margin: 75,
-            is3d: true,
             options3d: {
+				enabled: true,
                 alpha: 15,
                 beta: 15,
                 depth: 50,
@@ -31,7 +31,7 @@ $(function () {
             }
         },
         series: [{
-            data: [2, 3, null, 4, 0, 5]          
+            data: [2, 3, null, 4, 0, 5]
         }]
     });
 });

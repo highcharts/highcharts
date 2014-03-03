@@ -3,8 +3,8 @@ $(function () {
         chart: {
             type: 'column',
             margin: 75,
-            is3d: true,
             options3d: {
+				enabled: true,
                 alpha: 15,
                 beta: 15,
                 depth: 50
@@ -18,7 +18,7 @@ $(function () {
         },
         plotOptions: {
             column: {
-                depth: 25  
+                depth: 25
             }
         },
         series: [{
