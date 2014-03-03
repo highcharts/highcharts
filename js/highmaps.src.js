@@ -7484,6 +7484,7 @@ Axis.prototype = {
 				.add();
 			axis.labelGroup = renderer.g('axis-labels')
 				.attr({ zIndex: labelOptions.zIndex || 7 })
+				.addClass(PREFIX + axis.coll.toLowerCase() + '-labels')
 				.add();
 		}
 
@@ -7575,6 +7576,7 @@ Axis.prototype = {
 						axisTitleOptions.textAlign ||
 						{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
 				})
+				.addClass(PREFIX + this.coll.toLowerCase() + '-title')
 				.css(axisTitleOptions.style)
 				.add(axis.axisGroup);
 				axis.axisTitle.isNew = true;
@@ -11274,6 +11276,7 @@ Chart.prototype = {
 				chart.chartBackground = renderer.rect(mgn / 2, mgn / 2, chartWidth - mgn, chartHeight - mgn,
 						optionsChart.borderRadius, chartBorderWidth)
 					.attr(bgAttr)
+					.addClass(PREFIX + 'background')
 					.add()
 					.shadow(optionsChart.shadow);
 
@@ -15232,16 +15235,15 @@ extend(ColorAxis.prototype, {
 	 * is the from color and 1 is the to color
 	 */
 	tweenColors: function (from, to, pos) {
-		var i = 4,
-			val,
-			rgba = [];
-
-		while (i--) {
-			val = to.rgba[i] + (from.rgba[i] - to.rgba[i]) * (1 - pos);
-			rgba[i] = i === 3 ? val : Math.round(val); // Do not round opacity
-		}
-		return 'rgba(' + rgba.join(',') + ')';
-	},
+		// Check for has alpha, because rgba colors perform worse due to lack of
+		// support in WebKit.
+		var hasAlpha = (to.rgba[3] !== 1 || from.rgba[3] !== 1);
+		return (hasAlpha ? 'rgba(' : 'rgb(') + 
+			Math.round(to.rgba[0] + (from.rgba[0] - to.rgba[0]) * (1 - pos)) + ',' + 
+			Math.round(to.rgba[1] + (from.rgba[1] - to.rgba[1]) * (1 - pos)) + ',' + 
+			Math.round(to.rgba[2] + (from.rgba[2] - to.rgba[2]) * (1 - pos)) + 
+			(hasAlpha ? (',' + (to.rgba[3] + (from.rgba[3] - to.rgba[3]) * (1 - pos))) : '') + ')';
+		},
 
 	initDataClasses: function (userOptions) {
 		var axis = this,
