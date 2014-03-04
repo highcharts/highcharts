@@ -1465,6 +1465,9 @@ SVGRenderer.prototype = {
 		// Complex strings, add more logic
 		} else {
 
+			styleRegex = /style="([^"]+)"/;
+			hrefRegex = /href="(http[^"]+)"/;
+
 			if (width && !wrapper.added) {
 				this.box.appendChild(textNode); // attach it to the DOM to read offset width
 			}
@@ -1476,9 +1479,6 @@ SVGRenderer.prototype = {
 					.replace(/<a/g, '<span')
 					.replace(/<\/(b|strong|i|em|a)>/g, '</span>')
 					.split(/<br.*?>/g);
-
-				styleRegex = /style="([^"]+)"/;
-				hrefRegex = /href="(http[^"]+)"/;
 
 			} else {
 				lines = [textStr];
