@@ -4445,7 +4445,9 @@ Highcharts.VMLElement = VMLElement = {
 		}
 
 		// fire an event for internal hooks
-		fireEvent(wrapper, 'add');
+		if (wrapper.onAdd) {
+			wrapper.onAdd();
+		}
 
 		return wrapper;
 	},
