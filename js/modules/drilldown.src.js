@@ -349,9 +349,11 @@
 			animateFrom.x += (this.xAxis.oldPos - this.xAxis.pos);
 	
 			each(this.points, function (point) {
-				point.graphic
-					.attr(animateFrom)
-					.animate(point.shapeArgs, animationOptions);
+				if (point.graphic) {
+					point.graphic
+						.attr(animateFrom)
+						.animate(point.shapeArgs, animationOptions);
+				}
 				if (point.dataLabel) {
 					point.dataLabel.fadeIn(animationOptions);
 				}
@@ -374,26 +376,29 @@
 			var graphic = point.graphic,
 				startColor = H.Color(point.color).rgba;
 
-			delete point.graphic;
+			if (graphic) {
+			
+				delete point.graphic;
 
-			/*jslint unparam: true*/
-			graphic.animate(level.shapeArgs, H.merge(animationOptions, {
+				/*jslint unparam: true*/
+				graphic.animate(level.shapeArgs, H.merge(animationOptions, {
 
-				step: function (val, fx) {
-					if (fx.prop === 'start') {
-						this.attr({
-							fill: tweenColors(startColor, H.Color(level.color).rgba, fx.pos)
-						});
+					step: function (val, fx) {
+						if (fx.prop === 'start') {
+							this.attr({
+								fill: tweenColors(startColor, H.Color(level.color).rgba, fx.pos)
+							});
+						}
+					},
+					complete: function () {
+						graphic.destroy();
+						if (group) {
+							group = group.destroy();
+						}
 					}
-				},
-				complete: function () {
-					graphic.destroy();
-					if (group) {
-						group = group.destroy();
-					}
-				}
-			}));
-			/*jslint unparam: false*/
+				}));
+				/*jslint unparam: false*/
+			}
 		});
 	};
 
