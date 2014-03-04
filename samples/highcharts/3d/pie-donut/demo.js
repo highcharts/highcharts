@@ -4,13 +4,13 @@ $(function () {
             type: 'pie',
             options3d: {
 				enabled: true,
-                alpha: 45,
-                beta: 0
+                alpha: 25
             }
         },
         plotOptions: {
             pie: {
-                depth: 25
+                innerSize: 100,
+                depth: 45
             }
         },
         series: [{

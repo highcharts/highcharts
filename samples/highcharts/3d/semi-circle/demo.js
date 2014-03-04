@@ -9,8 +9,9 @@ $(function () {
         },
         plotOptions: {
             pie: {
-                innerSize: 100,
-                depth: 45
+                depth: 45,
+                startAngle: -90,
+                endAngle: 90
             }
         },
         series: [{
