@@ -1,4 +1,6 @@
 
+var hoverChartIndex;
+
 // Global flag for touch support
 hasTouch = doc.documentElement.ontouchstart !== UNDEFINED;
 
@@ -196,7 +198,9 @@ Pointer.prototype = {
 		// Start the event listener to pick up the tooltip 
 		if (tooltip && !pointer._onDocumentMouseMove) {
 			pointer._onDocumentMouseMove = function (e) {
-				pointer.onDocumentMouseMove(e);
+				if (defined(hoverChartIndex)) {
+					charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
+				}
 			};
 			addEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
 		}
@@ -468,7 +472,9 @@ Pointer.prototype = {
 	
 
 	onDocumentMouseUp: function (e) {
-		this.drop(e);
+		if (defined(hoverChartIndex)) {
+			charts[hoverChartIndex].pointer.drop(e);
+		}
 	},
 
 	/**
@@ -493,14 +499,20 @@ Pointer.prototype = {
 	 * When mouse leaves the container, hide the tooltip.
 	 */
 	onContainerMouseLeave: function () {
-		this.reset();
-		this.chartPosition = null; // also reset the chart position, used in #149 fix
+		var chart = charts[hoverChartIndex];
+		if (chart) {
+			chart.pointer.reset();
+			chart.pointer.chartPosition = null; // also reset the chart position, used in #149 fix
+		}
+		hoverChartIndex = null;
 	},
 
 	// The mousemove, touchmove and touchstart event handler
 	onContainerMouseMove: function (e) {
 
 		var chart = this.chart;
+
+		hoverChartIndex = chart.index;
 
 		// normalize
 		e = this.normalize(e);		
@@ -608,40 +620,29 @@ Pointer.prototype = {
 	setDOMEvents: function () {
 
 		var pointer = this,
-			container = pointer.chart.container,
-			events;
+			container = pointer.chart.container;
 
-		this._events = events = [
-			[container, 'onmousedown', 'onContainerMouseDown'],
-			[container, 'onmousemove', 'onContainerMouseMove'],
-			[container, 'onclick', 'onContainerClick'],
-			[container, 'mouseleave', 'onContainerMouseLeave'],
-			[doc, 'mouseup', 'onDocumentMouseUp']
-		];
+		container.onmousedown = function (e) {
+			pointer.onContainerMouseDown(e);
+		};
+		container.onmousemove = function (e) {
+			pointer.onContainerMouseMove(e);
+		};
+		container.onclick = function (e) {
+			pointer.onContainerClick(e);
+		};
+		addEvent(container, 'mouseleave', pointer.onContainerMouseLeave);
+		addEvent(doc, 'mouseup', pointer.onDocumentMouseUp);
 
 		if (hasTouch) {
-			events.push(
-				[container, 'ontouchstart', 'onContainerTouchStart'],
-				[container, 'ontouchmove', 'onContainerTouchMove'],
-				[doc, 'touchend', 'onDocumentTouchEnd']
-			);
-		}
-
-		each(events, function (eventConfig) {
-
-			// First, create the callback function that in turn calls the method on Pointer
-			pointer['_' + eventConfig[2]] = function (e) {
-				pointer[eventConfig[2]](e);
+			container.ontouchstart = function (e) {
+				pointer.onContainerTouchStart(e);
 			};
-
-			// Now attach the function, either as a direct property or through addEvent
-			if (eventConfig[1].indexOf('on') === 0) {
-				eventConfig[0][eventConfig[1]] = pointer['_' + eventConfig[2]];
-			} else {
-				addEvent(eventConfig[0], eventConfig[1], pointer['_' + eventConfig[2]]);
-			}
-		});
-
+			container.ontouchmove = function (e) {
+				pointer.onContainerTouchMove(e);
+			};
+			addEvent(doc, 'touchend', pointer.onDocumentTouchEnd);
+		}
 		
 	},
 
@@ -649,20 +650,18 @@ Pointer.prototype = {
 	 * Destroys the Pointer object and disconnects DOM events.
 	 */
 	destroy: function () {
-		var pointer = this;
+		var prop;
 
-		// Release all DOM events
-		each(pointer._events, function (eventConfig) {	
-			if (eventConfig[1].indexOf('on') === 0) {
-				eventConfig[0][eventConfig[1]] = null; // delete breaks oldIE
-			} else {		
-				removeEvent(eventConfig[0], eventConfig[1], pointer['_' + eventConfig[2]]);
-			}
-		});
-		delete pointer._events;
-
+		removeEvent(this.chart.container, 'mouseleave', this.onContainerMouseLeave);
+		removeEvent(doc, 'mouseup', this.onDocumentMouseUp);
+		removeEvent(doc, 'touchend', this.onDocumentTouchEnd);
+		
 		// memory and CPU leak
-		clearInterval(pointer.tooltipTimeout);
+		clearInterval(this.tooltipTimeout);
+
+		for (prop in this) {
+			this[prop] = null;
+		}
 	}
 };
 
