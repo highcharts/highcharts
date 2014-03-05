@@ -243,7 +243,11 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 	/**
 	 * Funnel items don't have angles (#2289)
 	 */
-	sortByAngle: noop,
+	sortByAngle: function (points) {
+		points.sort(function (a, b) {
+			return a.plotY - b.plotY;
+		});
+	},
 	
 	/**
 	 * Extend the pie data label method
@@ -289,9 +293,10 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 
 });
 
-/** PYRAMID SERIES
-	A pyramid series is a special type of funnel, without neck and reversed by default.
-**/
+/** 
+ * Pyramid series type. // docs
+ * A pyramid series is a special type of funnel, without neck and reversed by default.
+ */
 defaultOptions.plotOptions.pyramid = Highcharts.merge(defaultOptions.plotOptions.funnel, {        
 	neckWidth: '0%',
 	neckHeight: '0%',
