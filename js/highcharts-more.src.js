@@ -312,7 +312,7 @@ var radialAxisMixin = {
 			}
 			
 			// Axis len is used to lay out the ticks
-			this.len = this.width = this.height = this.center[2] * pick(this.sector, 0.5);
+			this.len = this.width = this.height = this.center[2] * pick(this.sector, 1) / 2;
 
 
 		}
