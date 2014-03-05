@@ -1005,29 +1005,10 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	},
 
 	/**
-	 * VML uses a shape for rect to overcome bugs and rotation problems
+	 * For rectangles, VML uses a shape for rect to overcome bugs and rotation problems
 	 */
-	rect: function (x, y, width, height, r, strokeWidth) {
-		r = isObject(x) ? x.r : r;
-
-		var wrapper = this.symbol('rect'),
-			attr = isObject(x) ? x : {
-				x: x,
-				y: y,
-				width: width,
-				height: height
-			};
-
-		if (strokeWidth !== UNDEFINED) {
-			attr.strokeWidth = strokeWidth;
-			attr = wrapper.crisp(attr);
-		}
-
-		if (r) {
-			attr.rx = attr.ry = r;
-		}		
-		
-		return wrapper.attr(attr);
+	createElement: function (nodeName) {
+		return nodeName === 'rect' ? this.symbol(nodeName) : SVGRenderer.prototype.createElement.call(this, nodeName);	
 	},
 
 	/**

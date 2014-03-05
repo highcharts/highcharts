@@ -1476,7 +1476,7 @@ SVGRenderer.prototype = {
 		r = isObject(x) ? x.r : r;
 
 		var wrapper = this.createElement('rect'),
-			attr = isObject(x) ? x : {
+			attr = isObject(x) ? x : x === UNDEFINED ? {} : {
 				x: x,
 				y: y,
 				width: mathMax(width, 0),
