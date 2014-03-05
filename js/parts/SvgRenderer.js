@@ -1098,8 +1098,8 @@ SVGRenderer.prototype = {
 				.replace(/<\/(b|strong|i|em|a)>/g, '</span>')
 				.split(/<br.*?>/g),
 			childNodes = textNode.childNodes,
-			styleRegex = /style="([^"]+)"/,
-			hrefRegex = /href="(http[^"]+)"/,
+			styleRegex = /<.*style="([^"]+)".*>/,
+			hrefRegex = /<.*href="(http[^"]+)".*>/,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
 			width = wrapper.textWidth,
@@ -2034,7 +2034,7 @@ SVGRenderer.prototype = {
 					wrapper.box = box = shape ?
 						renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height, deferredAttr) :
 						renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
-					box.add(wrapper);
+					box.attr('fill', NONE).add(wrapper);
 				}
 
 				// apply the box attributes
