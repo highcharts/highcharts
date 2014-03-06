@@ -144,6 +144,7 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 // Override getPlotLinePath to allow for multipane charts
 Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, translatedValue) {
 	var axis = this,
+		series = (this.isLinked ? this.linkedParent.series : this.series),
 		renderer = axis.chart.renderer,
 		axisLeft = axis.left,
 		axisTop = axis.top,
@@ -157,11 +158,11 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 	var axes = (this.isXAxis ? 
 					(defined(this.options.yAxis) ?
 						[this.chart.yAxis[this.options.yAxis]] : 
-						map(axis.series, function (S) { return S.yAxis; })
+						map(series, function (S) { return S.yAxis; })
 					) :
 					(defined(this.options.xAxis) ?
 						[this.chart.xAxis[this.options.xAxis]] : 
-						map(axis.series, function (S) { return S.xAxis; })
+						map(series, function (S) { return S.xAxis; })
 					)
 				);
 
