@@ -8984,7 +8984,11 @@ Tooltip.prototype = {
 		if (isDateTime && !xDateFormat) {
 			if (closestPointRange) {
 				for (n in timeUnits) {
-					if (timeUnits[n] >= closestPointRange || point.key % timeUnits[n] > 0) { // #2637
+					if (timeUnits[n] >= closestPointRange || 
+							// If the point is placed every day at 23:59, we need to show
+							// the minutes as well. This logic only works for time units less than 
+							// a day, since all higher time units are dividable by those. #2637.
+							(timeUnits[n] <= timeUnits[DAY] && point.key % timeUnits[n] > 0)) {
 						xDateFormat = dateTimeLabelFormats[n];
 						break;
 					}
@@ -11211,6 +11215,7 @@ Chart.prototype = {
 			options = this.options,
 			titleOptions = options.title,
 			subtitleOptions = options.subtitle,
+			requiresDirtyBox,
 			autoWidth = this.spacingBox.width - 44; // 44 makes room for default context button
 
 		if (title) {
@@ -11237,13 +11242,15 @@ Chart.prototype = {
 			}
 		}
 
-		this.isDirtyBox = this.titleOffset !== titleOffset;
-			
+		requiresDirtyBox = this.titleOffset !== titleOffset;				
 		this.titleOffset = titleOffset; // used in getMargins
 
-		// Redraw if necessary (#2719, #2744)		
-		if (this.hasRendered && pick(redraw, true) && this.isDirtyBox) {
-			this.redraw();
+		if (!this.isDirtyBox && requiresDirtyBox) {
+			this.isDirtyBox = requiresDirtyBox;
+			// Redraw if necessary (#2719, #2744)		
+			if (this.hasRendered && pick(redraw, true) && this.isDirtyBox) {
+				this.redraw();
+			}
 		}
 	},
 
@@ -18599,7 +18606,12 @@ tooltipProto.tooltipHeaderFormatter = function (point) {
 		// least distance is one day, skip hours and minutes etc.
 		} else if (!xDateFormat && dateTimeLabelFormats) {
 			for (n in timeUnits) {
-				if (timeUnits[n] >= xAxis.closestPointRange || point.key % timeUnits[n] > 0) { // #2637
+				if (timeUnits[n] >= xAxis.closestPointRange || 
+						// If the point is placed every day at 23:59, we need to show
+						// the minutes as well. This logic only works for time units less than 
+						// a day, since all higher time units are dividable by those. #2637.
+						(timeUnits[n] <= timeUnits[DAY] && point.key % timeUnits[n] > 0)) {
+						
 					xDateFormat = dateTimeLabelFormats[n][0];
 					break;
 				}
