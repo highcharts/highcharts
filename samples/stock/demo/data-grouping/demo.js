@@ -11,7 +11,7 @@ $(function() {
 				events: {
 					load: function(chart) {
 						this.setTitle(null, {
-							text: 'Built chart at '+ (new Date() - start) +'ms'
+							text: 'Built chart in '+ (new Date() - start) +'ms'
 						});
 					}
 				},
@@ -57,7 +57,7 @@ $(function() {
 			},
 
 			subtitle: {
-				text: 'Built chart at...' // dummy text to reserve space for dynamic subtitle
+				text: 'Built chart in ...' // dummy text to reserve space for dynamic subtitle
 			},
 
 			series: [{
