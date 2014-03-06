@@ -1497,7 +1497,7 @@ SVGRenderer.prototype = {
 		}
 
 		if (r) {
-			attr.rx = attr.ry = r;
+			attr.r = r;
 		}		
 		
 		return wrapper.attr(attr);

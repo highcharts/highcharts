@@ -16,7 +16,7 @@ session_start();
 			// Array of different Highcharts versions.
 			// index 0 being default.
 			$highchartsVersions = array(
-				'http://code.highcharts.local/highcharts.js',
+				'http://code.highcharts.th/highcharts.js',
 				'http://code.highcharts.com/highcharts.js',
 				'http://github.highcharts.com/highcharts.js'
 			);
@@ -47,7 +47,7 @@ session_start();
 				echo "<script src='".$_SESSION['highcharts']."'></script>";
 
 			} else {
-				echo "<script src='".$highchartsVersios[0]."'></script>";
+				echo "<script src='".$highchartsVersions[0]."'></script>";
 				$_SESSION['highcharts'] = $highchartsVersions[0];
 			}
 
