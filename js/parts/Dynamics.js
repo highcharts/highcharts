@@ -286,7 +286,7 @@ extend(Series.prototype, {
 
 		// Get the insertion point
 		i = xData.length;
-		if (series.requireSorting && x < xData[i - 1]) {
+		if (seriesOptions.requireSorting && x < xData[i - 1]) {
 			isInTheMiddle = true;
 			while (i && xData[i - 1] > x) {
 				i--;
