@@ -62,19 +62,3 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'redraw', function (proceed) {
 	}
 	proceed.apply(this, [].slice.call(arguments, 1));	
 });
-
-
-Highcharts.wrap(Highcharts.Chart.prototype, 'firstRender', function (proceed) {		
-	proceed.apply(this, [].slice.call(arguments, 1));
-	
-	if (this.is3d()) {
-		// Change the order for drawing the series
-		var invSeries = [],
-			i;
-		for (i = 0; i < this.series.length; i++) {
-			invSeries.push(this.series[this.series.length - (i + 1)]);
-		}
-		this.series = invSeries;	
-		this.redraw();
-	}
-});

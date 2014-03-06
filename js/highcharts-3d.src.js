@@ -468,22 +468,6 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'redraw', function (proceed) {
 	}
 	proceed.apply(this, [].slice.call(arguments, 1));	
 });
-
-
-Highcharts.wrap(Highcharts.Chart.prototype, 'firstRender', function (proceed) {		
-	proceed.apply(this, [].slice.call(arguments, 1));
-	
-	if (this.is3d()) {
-		// Change the order for drawing the series
-		var invSeries = [],
-			i;
-		for (i = 0; i < this.series.length; i++) {
-			invSeries.push(this.series[this.series.length - (i + 1)]);
-		}
-		this.series = invSeries;	
-		this.redraw();
-	}
-});
 /*** 
 	EXTENSION TO THE AXIS
 ***/
@@ -973,5 +957,20 @@ Highcharts.VMLRenderer.prototype.createElement3D = Highcharts.SVGRenderer.protot
 Highcharts.VMLRenderer.prototype.arc3d = Highcharts.SVGRenderer.prototype.arc3d;
 Highcharts.VMLRenderer.prototype.arc3dPath = Highcharts.SVGRenderer.prototype.arc3dPath;
 
+// Draw the series in the reverse order
+Highcharts.Chart.prototype.renderSeries = function () {
+	var serie,
+		i = this.series.length;
+	while (i--) {		
+		serie = this.series[i];
+		serie.translate();
+		if (serie.setTooltipPoints) {
+			serie.setTooltipPoints();
+		}
+		serie.render();	
+	}
+};
+
 }
+
 }(Highcharts));

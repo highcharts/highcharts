@@ -1147,6 +1147,19 @@ Chart.prototype = {
 	},
 
 	/**
+	 * Render series for the chart
+	 */
+	renderSeries: function () {
+		each(this.series, function (serie) {
+			serie.translate();
+			if (serie.setTooltipPoints) {
+				serie.setTooltipPoints();
+			}
+			serie.render();
+		});
+	},
+
+	/**
 	 * Render all graphics for the chart
 	 */
 	render: function () {
@@ -1202,13 +1215,7 @@ Chart.prototype = {
 				.attr({ zIndex: 3 })
 				.add();
 		}
-		each(chart.series, function (serie) {
-			serie.translate();
-			if (serie.setTooltipPoints) {
-				serie.setTooltipPoints();
-			}
-			serie.render();
-		});
+		chart.renderSeries();
 
 		// Labels
 		if (labels.items) {

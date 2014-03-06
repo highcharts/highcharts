@@ -13,4 +13,18 @@ Highcharts.VMLRenderer.prototype.createElement3D = Highcharts.SVGRenderer.protot
 Highcharts.VMLRenderer.prototype.arc3d = Highcharts.SVGRenderer.prototype.arc3d;
 Highcharts.VMLRenderer.prototype.arc3dPath = Highcharts.SVGRenderer.prototype.arc3dPath;
 
+// Draw the series in the reverse order
+Highcharts.Chart.prototype.renderSeries = function () {
+	var serie,
+		i = this.series.length;
+	while (i--) {		
+		serie = this.series[i];
+		serie.translate();
+		if (serie.setTooltipPoints) {
+			serie.setTooltipPoints();
+		}
+		serie.render();	
+	}
+};
+
 }

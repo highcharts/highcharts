@@ -9498,7 +9498,7 @@ if (win.PointerEvent || win.MSPointerEvent) {
 			addEvent(eventConfig[0], eventName, pointer['_' + eventName]);
 
 			// Register for removing in destroy (#2691)
-			pointer._events.push([eventConfig[0], eventName, eventName]);
+			//pointer._events.push([eventConfig[0], eventName, eventName]);
 		});
 	   
 	});
@@ -11404,6 +11404,19 @@ Chart.prototype = {
 	},
 
 	/**
+	 * Render series for the chart
+	 */
+	renderSeries: function () {
+		each(this.series, function (serie) {
+			serie.translate();
+			if (serie.setTooltipPoints) {
+				serie.setTooltipPoints();
+			}
+			serie.render();
+		});
+	},
+
+	/**
 	 * Render all graphics for the chart
 	 */
 	render: function () {
@@ -11459,13 +11472,7 @@ Chart.prototype = {
 				.attr({ zIndex: 3 })
 				.add();
 		}
-		each(chart.series, function (serie) {
-			serie.translate();
-			if (serie.setTooltipPoints) {
-				serie.setTooltipPoints();
-			}
-			serie.render();
-		});
+		chart.renderSeries();
 
 		// Labels
 		if (labels.items) {
