@@ -105,8 +105,8 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 				pointAttr = point.pointAttr[point.selected ? 'selected' : ''];
 
 				// crisp vector coordinates
-				crispCorr = -(pointAttr['stroke-width'] % 2) / 2; // #2596
-				crispX = mathRound(point.plotX) + crispCorr;
+				crispCorr = (pointAttr['stroke-width'] % 2) / 2;
+				crispX = mathRound(point.plotX) - crispCorr;  // #2596
 				halfWidth = mathRound(point.shapeArgs.width / 2);
 
 				// the vertical stem

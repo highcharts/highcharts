@@ -84,8 +84,8 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 				pointAttr = point.pointAttr[point.selected ? 'selected' : ''] || seriesPointAttr;
 
 				// crisp vector coordinates
-				crispCorr = -(pointAttr['stroke-width'] % 2) / 2; // #2596
-				crispX = mathRound(point.plotX) + crispCorr;
+				crispCorr = (pointAttr['stroke-width'] % 2) / 2;
+				crispX = mathRound(point.plotX) - crispCorr; // #2596
 				plotOpen = point.plotOpen;
 				plotClose = point.plotClose;
 				topBox = math.min(plotOpen, plotClose);
