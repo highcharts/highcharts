@@ -479,6 +479,7 @@ Chart.prototype = {
 			options = this.options,
 			titleOptions = options.title,
 			subtitleOptions = options.subtitle,
+			requiresDirtyBox,
 			autoWidth = this.spacingBox.width - 44; // 44 makes room for default context button
 
 		if (title) {
@@ -505,13 +506,15 @@ Chart.prototype = {
 			}
 		}
 
-		this.isDirtyBox = this.titleOffset !== titleOffset;
-			
+		requiresDirtyBox = this.titleOffset !== titleOffset;				
 		this.titleOffset = titleOffset; // used in getMargins
 
-		// Redraw if necessary (#2719, #2744)		
-		if (this.hasRendered && pick(redraw, true) && this.isDirtyBox) {
-			this.redraw();
+		if (!this.isDirtyBox && requiresDirtyBox) {
+			this.isDirtyBox = requiresDirtyBox;
+			// Redraw if necessary (#2719, #2744)		
+			if (this.hasRendered && pick(redraw, true) && this.isDirtyBox) {
+				this.redraw();
+			}
 		}
 	},
 
