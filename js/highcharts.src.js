@@ -9894,76 +9894,90 @@ extend(Highcharts.Pointer.prototype, {
 if (win.PointerEvent || win.MSPointerEvent) {
 	
 	// The touches object keeps track of the points being touched at all times
-	var touches = {};
-
-	// Emulate a Webkit TouchList 
-	Pointer.prototype.getWebkitTouches = function () {
-		var key, fake = [];
-		fake.item = function (i) { return this[i]; };
-		for (key in touches) {
-			if (touches.hasOwnProperty(key)) {
-				fake.push({
-					pageX: touches[key].pageX,
-					pageY: touches[key].pageY,
-					target: touches[key].target
-				});
+	var touches = {},
+		hasPointerEvent = !!win.PointerEvent,
+		getWebkitTouches = function () {
+			var key, fake = [];
+			fake.item = function (i) { return this[i]; };
+			for (key in touches) {
+				if (touches.hasOwnProperty(key)) {
+					fake.push({
+						pageX: touches[key].pageX,
+						pageY: touches[key].pageY,
+						target: touches[key].target
+					});
+				}
 			}
+			return fake;
+		},
+		translateMSPointer = function (e, method, wktype, callback) {
+			var p;
+			e = e.originalEvent || e;
+			if ((e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) && charts[hoverChartIndex]) {
+				callback(e);
+				p = charts[hoverChartIndex].pointer;
+				p[method]({
+					type: wktype,
+					target: e.currentTarget,
+					preventDefault: noop,
+					touches: getWebkitTouches()
+				});				
+			}
+		};
+
+	/**
+	 * Extend the Pointer prototype with methods for each event handler and more
+	 */
+	extend(Pointer.prototype, {
+		onContainerPointerDown: function (e) {
+			translateMSPointer(e, 'onContainerTouchStart', 'touchstart', function (e) {
+				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY, target: e.currentTarget };
+			});
+		},
+		onContainerPointerMove: function (e) {
+			translateMSPointer(e, 'onContainerTouchMove', 'touchmove', function (e) {
+				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY };
+				if (!touches[e.pointerId].target) {
+					touches[e.pointerId].target = e.currentTarget;
+				}
+			});
+		},
+		onDocumentPointerUp: function (e) {
+			translateMSPointer(e, 'onContainerTouchEnd', 'touchend', function (e) {
+				delete touches[e.pointerId];
+			});
+		},
+
+		/**
+		 * Add or remove the MS Pointer specific events
+		 */
+		batchMSEvents: function (fn) {
+			fn(this.chart.container, hasPointerEvent ? 'pointerdown' : 'MSPointerDown', this.onContainerPointerDown);
+			fn(this.chart.container, hasPointerEvent ? 'pointermove' : 'MSPointerMove', this.onContainerPointerMove);
+			fn(doc, hasPointerEvent ? 'pointerup' : 'MSPointerUp', this.onDocumentPointerUp);
 		}
-		return fake;
-	};
+	});
 
 	// Disable default IE actions for pinch and such on chart element
 	wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
-		chart.container.style['-ms-touch-action'] = chart.container.style['touch-action'] = NONE;
+		css(chart.container, {
+			'-ms-touch-action': NONE,
+			'touch-action': NONE
+		});
 		proceed.call(this, chart, options);
 	});
 
 	// Add IE specific touch events to chart
 	wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
-		var pointer = this, 
-			eventmap;
 		proceed.apply(this);
-		eventmap = [
-			[this.chart.container, 'PointerDown', 'touchstart', 'onContainerTouchStart', function (e) {
-				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY, target: e.currentTarget };
-			}],
-			[this.chart.container, 'PointerMove', 'touchmove', 'onContainerTouchMove', function (e) {
-				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY };
-				if (!touches[e.pointerId].target) {
-					touches[e.pointerId].target = e.currentTarget;
-				}	
-			}],
-			[document, 'PointerUp', 'touchend', 'onDocumentTouchEnd', function (e) {
-				delete touches[e.pointerId];
-			}]
-		];
-		
-		// Add the events based on the eventmap configuration
-		each(eventmap, function (eventConfig) {
-			var eventName = window.PointerEvent ? eventConfig[1].toLowerCase() : 'MS' + eventConfig[1];
-
-			pointer['_' + eventName] = function (e) {
-				e = e.originalEvent || e;
-				if (e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) {
-					eventConfig[4](e);
-					
-					// This event corresponds to ontouchstart - call onContainerTouchStart
-					pointer[eventConfig[3]]({
-						type: eventConfig[2],
-						target: e.currentTarget,
-						preventDefault: noop,
-						touches: pointer.getWebkitTouches()
-					});
-				}
-			};
-			addEvent(eventConfig[0], eventName, pointer['_' + eventName]);
-
-			// Register for removing in destroy (#2691)
-			//pointer._events.push([eventConfig[0], eventName, eventName]);
-		});
-	   
+		this.batchMSEvents(addEvent);
 	});
-}	 
+	// Destroy MS events also
+	wrap(Pointer.prototype, 'destroy', function (proceed) {
+		this.batchMSEvents(removeEvent);
+		proceed.call(this);
+	});
+}
 /**
  * The overview of the chart's series
  */
