@@ -232,6 +232,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		return this;
 	};
 
+	result.zIndex = zIndex;
 	result.attr({zIndex: zIndex});
 	return result;
 };
