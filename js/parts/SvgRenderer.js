@@ -1764,6 +1764,56 @@ SVGRenderer.prototype = {
 
 				open ? '' : 'Z' // close
 			];
+		},
+
+		callout: function (x, y, w, h, options) {
+			var arrowLength = 6,
+				halfDistance = 6,
+				r = mathMin((options && options.r) || 0, w, h),
+				anchorX = options && options.anchorX,
+				anchorY = options && options.anchorY,
+				path = [
+					'M', x + r, y, 
+					'L', x + w - r, y, // top side
+					'C', x + w, y, x + w, y, x + w, y + r, // top-right corner
+					'L', x + w, y + h - r, // right side
+					'C', x + w, y + h, x + w, y + h, x + w - r, y + h, // bottom-right corner
+					'L', x + r, y + h, // bottom side
+					'C', x, y + h, x, y + h, x, y + h - r, // bottom-left corner
+					'L', x, y + r, // left side
+					'C', x, y, x, y, x + r, y // top-right corner
+				];
+			
+			if (anchorX && anchorX > w) { // replace right side
+				path.splice(13, 3,
+					'L', x + w, anchorY - halfDistance, 
+					x + w + arrowLength, anchorY,
+					x + w, anchorY + halfDistance,
+					x + w, y + h - r
+				);
+			} else if (anchorX && anchorX < 0) { // replace left side
+				path.splice(33, 3, 
+					'L', x, anchorY + halfDistance, 
+					x - arrowLength, anchorY,
+					x, anchorY - halfDistance,
+					x, y + r
+				);
+			} else if (anchorY && anchorY > h) { // replace bottom
+				path.splice(23, 3,
+					'L', anchorX + halfDistance, y + h,
+					anchorX, y + h + arrowLength,
+					anchorX - halfDistance, y + h,
+					x + r, y + h
+				);
+			} else if (anchorY && anchorY < 0) { // replace top
+				path.splice(3, 3,
+					'L', anchorX - halfDistance, y,
+					anchorX, y - arrowLength,
+					anchorX + halfDistance, y,
+					w - r, y
+				);
+			}
+			return path;
 		}
 	},
 

@@ -1124,71 +1124,13 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		},
 		/**
 		 * Add rectangle symbol path which eases rotation and omits arcsize problems
-		 * compared to the built-in VML roundrect shape
-		 *
-		 * @param {Number} left Left position
-		 * @param {Number} top Top position
-		 * @param {Number} r Border radius
-		 * @param {Object} options Width and height
+		 * compared to the built-in VML roundrect shape. When borders are not rounded,
+		 * use the simpler square path, else use the callout path without the arrow.
 		 */
-
-		rect: function (left, top, width, height, options) {
-
-			var right = left + width,
-				bottom = top + height,
-				ret,
-				r;
-
-			// No radius, return the more lightweight square
-			if (!defined(options) || !options.r) {
-				ret = SVGRenderer.prototype.symbols.square.apply(0, arguments);
-
-			// Has radius add arcs for the corners
-			} else {
-
-				r = mathMin(options.r, width, height);
-				ret = [
-					M,
-					left + r, top,
-
-					L,
-					right - r, top,
-					'wa',
-					right - 2 * r, top,
-					right, top + 2 * r,
-					right - r, top,
-					right, top + r,
-
-					L,
-					right, bottom - r,
-					'wa',
-					right - 2 * r, bottom - 2 * r,
-					right, bottom,
-					right, bottom - r,
-					right - r, bottom,
-
-					L,
-					left + r, bottom,
-					'wa',
-					left, bottom - 2 * r,
-					left + 2 * r, bottom,
-					left + r, bottom,
-					left, bottom - r,
-
-					L,
-					left, top + r,
-					'wa',
-					left, top,
-					left + 2 * r, top + 2 * r,
-					left, top + r,
-					left + r, top,
-
-
-					'x',
-					'e'
-				];
-			}
-			return ret;
+		rect: function (x, y, w, h, options) {
+			return SVGRenderer.prototype.symbols[
+				!defined(options) || !options.r ? 'square' : 'callout'
+			].call(0, x, y, w, h, options);
 		}
 	}
 };
