@@ -300,6 +300,7 @@ defaultOptions = {
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
 		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
 		shadow: true,
+		//shape: 'calout',
 		//shared: false,
 		snap: isTouchDevice ? 25 : 10,
 		style: {

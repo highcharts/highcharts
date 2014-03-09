@@ -33,7 +33,7 @@ Tooltip.prototype = {
 
 
 		// create the label
-		this.label = chart.renderer.label('', 0, 0, options.shape, null, null, options.useHTML, null, 'tooltip')
+		this.label = chart.renderer.label('', 0, 0, options.shape || 'callout', null, null, options.useHTML, null, 'tooltip')
 			.attr({
 				padding: padding,
 				fill: options.backgroundColor,
@@ -200,11 +200,21 @@ Tooltip.prototype = {
 			plotWidth = chart.plotWidth,
 			plotHeight = chart.plotHeight,
 			distance = pick(this.options.distance, 12),
-			pointX = (isNaN(point.plotX) ? 0 : point.plotX), //#2599
+			pointX = point.plotX, //#2599
 			pointY = point.plotY,
-			x = pointX + plotLeft + (chart.inverted ? distance : -boxWidth - distance),
-			y = pointY - boxHeight + plotTop + 15, // 15 means the point is 15 pixels up from the bottom of the tooltip
-			alignedRight;
+			preferTop = !chart.inverted,
+			alignedRight,
+			x,
+			y;
+
+		if (preferTop) {
+			x = plotLeft + pointX - boxWidth / 2;
+			y = plotTop + pointY - boxHeight - distance;
+
+		} else {
+			x = plotLeft + pointX + (chart.inverted ? distance : -boxWidth - distance);
+			y = plotTop + pointY - boxHeight / 2;
+		}
 
 		// It is too far to the left, adjust it
 		if (x < 7) {
@@ -224,7 +234,7 @@ Tooltip.prototype = {
 			y = plotTop + 5;
 	
 			// If the tooltip is still covering the point, move it below instead
-			if (alignedRight && pointY >= y && pointY <= (y + boxHeight)) {
+			if ((alignedRight || preferTop) && plotTop + pointY >= y && plotTop + pointY <= (y + boxHeight)) {
 				y = pointY + plotTop + distance; // below
 			}
 		} 
