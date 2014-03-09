@@ -190,6 +190,9 @@ var ColumnSeries = extendClass(Series, {
 			point.barX = barX;
 			point.pointWidth = pointWidth;
 
+			// Fix the tooltip on center of grouped columns (#1216)
+			point.tooltipPos = [barX + barW / 2, plotY];
+
 			// Round off to obtain crisp edges
 			fromLeft = mathAbs(barX) < 0.5;
 			right = mathRound(barX + barW) + xCrisp;
