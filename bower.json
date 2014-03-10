@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "v3.0.10",
+  "version": "v3.0.10-modified",
   "main": [
     "js/highcharts.src.js",
     "js/highcharts-more.src.js",
