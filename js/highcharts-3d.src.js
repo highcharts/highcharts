@@ -425,8 +425,8 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 	var args = arguments;
 	args[1] = Highcharts.merge({ 
 		chart: {
-			is3d: false,
 			options3d: {
+				enabled: false,
 				alpha: 0,
 				beta: 0,
 				depth: 0,
