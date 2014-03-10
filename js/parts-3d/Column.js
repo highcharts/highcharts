@@ -1,17 +1,6 @@
 /*** 
 	EXTENSION FOR 3D COLUMNS
 ***/
-Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proceed) {
-	var args = arguments,
-		series = this;
-	if (args[1].is3d) {
-		args[2].borderColor = args[2].borderColor || (function () {	
-			return series.color;
-		}());
-	}
-	proceed.apply(this, [].slice.call(arguments, 1));
-});	
-
 Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
@@ -58,7 +47,15 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'drawPoints', function 
 	// Do not do this if the chart is not 3D
 	if (this.chart.is3d()) {
 		this.group.attr({zIndex: this.group.zIndex * 10});
+		// Set the border color to the fill color to provide a smooth edge
+		Highcharts.each(this.data, function (point) {
+			var c = point.options.borderColor || point.color || point.series.userOptions.borderColor || point.series.color;
+			point.options.borderColor = c;
+			point.borderColor = c;
+			point.pointAttr[''].stroke = c;
+		});	
 	}
+
 	proceed.apply(this, [].slice.call(arguments, 1));
 });
 
