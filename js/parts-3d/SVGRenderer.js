@@ -70,13 +70,36 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 		return this;
 	};
 
+	result.attrSetters.opacity = function (opacity) {
+		this.front.attr({opacity: opacity});
+		this.top.attr({opacity: opacity});
+		this.side.attr({opacity: opacity});
+		return this;
+	};
+
+	result.attr = function (args) {
+		if (args.x && args.y) {
+			var paths = this.renderer.cuboidPath(args);
+			this.front.attr({d: paths[0], zIndex: paths[3]});
+			this.top.attr({d: paths[1], zIndex: paths[4]});
+			this.side.attr({d: paths[2], zIndex: paths[5]});			
+		} else {
+			Highcharts.SVGElement.prototype.attr.call(this, args);
+		}
+
+		return this;
+	};
+	
 	result.animate = function (args, duration, complete) {
 		if (args.x && args.y) {
-			var renderer = this.renderer,
-			paths = renderer.cuboidPath(args);
+			var paths = this.renderer.cuboidPath(args);
 			this.front.animate({d: paths[0], zIndex: paths[3]}, duration, complete);
 			this.top.animate({d: paths[1], zIndex: paths[4]}, duration, complete);
 			this.side.animate({d: paths[2], zIndex: paths[5]}, duration, complete);
+		} else if (args.opacity) {				
+				this.front.animate(args, duration, complete);
+				this.top.animate(args, duration, complete);
+				this.side.animate(args, duration, complete);
 		} else {
 			Highcharts.SVGElement.prototype.animate.call(this, args, duration, complete);
 		}
