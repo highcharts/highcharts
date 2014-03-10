@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v3.0.9-modified ()
+ * @license Highcharts JS v3.0.10 (2014-03-10)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -1028,7 +1028,7 @@ var GaugeSeries = {
 				rearLength = (pInt(pick(dialOptions.rearLength, 10)) * radius) / 100,
 				baseWidth = dialOptions.baseWidth || 3,
 				topWidth = dialOptions.topWidth || 1,
-				overshoot = options.overshoot, // docs: http://jsfiddle.net/highcharts/gEGaf/1/
+				overshoot = options.overshoot,
 				rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true);
 
 			// Handle the wrap and overshoot options
