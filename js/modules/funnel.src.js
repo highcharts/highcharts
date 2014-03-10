@@ -294,7 +294,7 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 });
 
 /** 
- * Pyramid series type. // docs
+ * Pyramid series type.
  * A pyramid series is a special type of funnel, without neck and reversed by default.
  */
 defaultOptions.plotOptions.pyramid = Highcharts.merge(defaultOptions.plotOptions.funnel, {        
