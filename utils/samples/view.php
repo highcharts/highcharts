@@ -35,7 +35,7 @@ function getResources() {
 
 	// No idea why file_get_contents doesn't work here...
 	ob_start();
-	include("$fullpath/demo.details");
+	@include("$fullpath/demo.details");
 	$s = ob_get_clean();
 
 	$html = '';
