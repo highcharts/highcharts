@@ -223,13 +223,15 @@
 			drilldownLevels = chart.drilldownLevels,
 			levelNumber = drilldownLevels[drilldownLevels.length - 1].levelNumber,
 			i = drilldownLevels.length,
+			chartSeries = chart.series,
+			seriesI = chartSeries.length,
 			level,
 			oldSeries,
 			newSeries,
 			oldExtremes,
 			addSeries = function (seriesOptions) {
 				var addedSeries;
-				each(chart.series, function (series) {
+				each(chartSeries, function (series) {
 					if (series.userOptions === seriesOptions) {
 						addedSeries = series;
 					}
@@ -250,7 +252,12 @@
 			if (level.levelNumber === levelNumber) {
 				drilldownLevels.pop();
 				
-				oldSeries = level.lowerSeries;
+				// Get the lower series by id (#2786)
+				while (seriesI-- && !oldSeries) {
+					if (chartSeries[seriesI].options.id === level.lowerSeriesOptions.id) {
+						oldSeries = chartSeries[seriesI];
+					}
+				}
 
 				each(level.levelSeriesOptions, addSeries);
 				
@@ -258,7 +265,7 @@
 
 				if (newSeries.type === oldSeries.type) {
 					newSeries.drilldownLevel = level;
-					newSeries.options.animation = true;
+					newSeries.options.animation = chart.options.drilldown.animation;
 
 					if (oldSeries.animateDrillupFrom) {
 						oldSeries.animateDrillupFrom(level);
@@ -374,30 +381,35 @@
 		delete this.group;
 		each(this.points, function (point) {
 			var graphic = point.graphic,
-				startColor = H.Color(point.color).rgba;
+				startColor = H.Color(point.color).rgba,
+				complete = function () {
+					graphic.destroy();
+					if (group) {
+						group = group.destroy();
+					}
+				};
 
 			if (graphic) {
 			
 				delete point.graphic;
 
-				/*jslint unparam: true*/
-				graphic.animate(level.shapeArgs, H.merge(animationOptions, {
-
-					step: function (val, fx) {
-						if (fx.prop === 'start') {
-							this.attr({
-								fill: tweenColors(startColor, H.Color(level.color).rgba, fx.pos)
-							});
-						}
-					},
-					complete: function () {
-						graphic.destroy();
-						if (group) {
-							group = group.destroy();
-						}
-					}
-				}));
-				/*jslint unparam: false*/
+				if (animationOptions) {
+					/*jslint unparam: true*/
+					graphic.animate(level.shapeArgs, H.merge(animationOptions, {
+						step: function (val, fx) {
+							if (fx.prop === 'start') {
+								this.attr({
+									fill: tweenColors(startColor, H.Color(level.color).rgba, fx.pos)
+								});
+							}
+						},
+						complete: complete
+					}));
+					/*jslint unparam: false*/
+				} else {
+					graphic.attr(level.shapeArgs);
+					complete();
+				}
 			}
 		});
 	};
