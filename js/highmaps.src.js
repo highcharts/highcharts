@@ -17239,26 +17239,26 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 		// Add reference to the point
 		each(series.points, function (point) {
 			if (point.graphic) {
-			point.graphic.element.point = point;
+				point.graphic.element.point = point;
 			}
 			if (point.dataLabel) {
-			point.dataLabel.element.point = point;
+				point.dataLabel.element.point = point;
 			}
 		});
 
 		// Add the event listeners, we need to do this only once
 		if (!series._hasTracking) {
 			each(series.trackerGroups, function (key) {
-			if (series[key]) { // we don't always have dataLabelsGroup
-				series[key]
-				.addClass(PREFIX + 'tracker')
-				.on('mouseover', onMouseOver)
-				.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
-				.css(css);
-				if (hasTouch) {
-				series[key].on('touchstart', onMouseOver);
+				if (series[key]) { // we don't always have dataLabelsGroup
+					series[key]
+						.addClass(PREFIX + 'tracker')
+						.on('mouseover', onMouseOver)
+						.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
+						.css(css);
+					if (hasTouch) {
+						series[key].on('touchstart', onMouseOver);
+					}
 				}
-			}
 			});
 			series._hasTracking = true;
 		}

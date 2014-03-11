@@ -376,7 +376,16 @@
 	 */
 	ColumnSeries.prototype.animateDrillupFrom = function (level) {
 		var animationOptions = this.chart.options.drilldown.animation,
-			group = this.group;
+			group = this.group,
+			series = this;
+
+		// Cancel mouse events on the series group (#2787)
+		each(series.trackerGroups, function (key) {
+			if (series[key]) { // we don't always have dataLabelsGroup
+				series[key].on('mouseover');
+			}
+		});
+			
 
 		delete this.group;
 		each(this.points, function (point) {
