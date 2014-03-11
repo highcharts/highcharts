@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v3.0.9-modified ()
+ * @license Highcharts JS v3.0.10-modified ()
  *
  * (c) 2009-2013 Torstein Hønsi
  *
@@ -140,13 +140,36 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 		return this;
 	};
 
+	result.attrSetters.opacity = function (opacity) {
+		this.front.attr({opacity: opacity});
+		this.top.attr({opacity: opacity});
+		this.side.attr({opacity: opacity});
+		return this;
+	};
+
+	result.attr = function (args) {
+		if (args.x && args.y) {
+			var paths = this.renderer.cuboidPath(args);
+			this.front.attr({d: paths[0], zIndex: paths[3]});
+			this.top.attr({d: paths[1], zIndex: paths[4]});
+			this.side.attr({d: paths[2], zIndex: paths[5]});			
+		} else {
+			Highcharts.SVGElement.prototype.attr.call(this, args);
+		}
+
+		return this;
+	};
+	
 	result.animate = function (args, duration, complete) {
 		if (args.x && args.y) {
-			var renderer = this.renderer,
-			paths = renderer.cuboidPath(args);
+			var paths = this.renderer.cuboidPath(args);
 			this.front.animate({d: paths[0], zIndex: paths[3]}, duration, complete);
 			this.top.animate({d: paths[1], zIndex: paths[4]}, duration, complete);
 			this.side.animate({d: paths[2], zIndex: paths[5]}, duration, complete);
+		} else if (args.opacity) {				
+				this.front.animate(args, duration, complete);
+				this.top.animate(args, duration, complete);
+				this.side.animate(args, duration, complete);
 		} else {
 			Highcharts.SVGElement.prototype.animate.call(this, args, duration, complete);
 		}
@@ -302,6 +325,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		return this;
 	};
 
+	result.zIndex = zIndex;
 	result.attr({zIndex: zIndex});
 	return result;
 };
@@ -424,8 +448,8 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 	var args = arguments;
 	args[1] = Highcharts.merge({ 
 		chart: {
-			is3d: false,
 			options3d: {
+				enabled: false,
 				alpha: 0,
 				beta: 0,
 				depth: 0,
@@ -682,17 +706,6 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'drawCrosshair', function (proceed) {
 });/*** 
 	EXTENSION FOR 3D COLUMNS
 ***/
-Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proceed) {
-	var args = arguments,
-		series = this;
-	if (args[1].is3d) {
-		args[2].borderColor = args[2].borderColor || (function () {	
-			return series.color;
-		}());
-	}
-	proceed.apply(this, [].slice.call(arguments, 1));
-});	
-
 Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
@@ -739,7 +752,15 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'drawPoints', function 
 	// Do not do this if the chart is not 3D
 	if (this.chart.is3d()) {
 		this.group.attr({zIndex: this.group.zIndex * 10});
+		// Set the border color to the fill color to provide a smooth edge
+		Highcharts.each(this.data, function (point) {
+			var c = point.options.borderColor || point.color || point.series.userOptions.borderColor || point.series.color;
+			point.options.borderColor = c;
+			point.borderColor = c;
+			point.pointAttr[''].stroke = c;
+		});	
 	}
+
 	proceed.apply(this, [].slice.call(arguments, 1));
 });
 
@@ -954,7 +975,12 @@ Highcharts.VMLRenderer.prototype.toLinePath = Highcharts.SVGRenderer.prototype.t
 
 Highcharts.VMLRenderer.prototype.createElement3D = Highcharts.SVGRenderer.prototype.createElement3D;
 
-Highcharts.VMLRenderer.prototype.arc3d = Highcharts.SVGRenderer.prototype.arc3d;
+Highcharts.VMLRenderer.prototype.arc3d = function (shapeArgs) { 
+	var result = Highcharts.SVGRenderer.prototype.arc3d.call(this, shapeArgs);
+	result.css({zIndex: result.zIndex});
+	return result;
+};
+
 Highcharts.VMLRenderer.prototype.arc3dPath = Highcharts.SVGRenderer.prototype.arc3dPath;
 
 // Draw the series in the reverse order

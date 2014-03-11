@@ -1119,7 +1119,7 @@ SVGRenderer.prototype = {
 					renderer.fontMetrics(
 						/(px|em)$/.test(tspan && tspan.style.fontSize) ?
 							tspan.style.fontSize :
-							(textStyles.fontSize || 11)
+							((textStyles && textStyles.fontSize) || renderer.style.fontSize || 12)
 					).h;
 			};
 
@@ -2120,7 +2120,7 @@ SVGRenderer.prototype = {
 			y = baseline ? 0 : baselineOffset;
 
 			// compensate for alignment
-			if (defined(width) && (textAlign === 'center' || textAlign === 'right')) {
+			if (defined(width) && bBox && (textAlign === 'center' || textAlign === 'right')) {
 				x += { center: 0.5, right: 1 }[textAlign] * (width - bBox.width);
 			}
 

@@ -7,14 +7,17 @@ $(function () {
      */
     (function (H) {
 
-        function KDTree (points, depth) {
+        /**
+         * Recursively builds a K-D-tree 
+         */
+        function KDTree(points, depth) {
             var axis, median, length = points && points.length;
 
             if (length) {
 
                 // alternate between the axis
-                axis = depth % 2;
-            
+                axis = ['plotX', 'plotY'][depth % 2];
+
                 // sort point array
                 points.sort(function(a, b) {
                     return a[axis] - b[axis];
@@ -30,45 +33,46 @@ $(function () {
                 };
             
             }
-        };
-
-
-function nearest(search, tree, depth) {
-    var point = tree.point,
-        axis = depth % 2,
-        tdist,
-        sideA,
-        sideB;
-    
-    // get REAL distance
-    point.dist = (search[0] - point[0]) * (search[0] - point[0]) + (search[1] - point[1]) * (search[1] - point[1]) ;
-    // pick side based on distance to splitting point
-    tdist = (search[axis] - point[axis]);
-    sideA = tdist < 0 ? 'left' : 'right';
-    sideB = tdist < 0 ? 'right' : 'left';
-
-    // end of tree
-    if (!tree[sideA]) {
-        return point;
-    } else {
-        var result = point,
-            nPoint1 = nearest(search, tree[sideA], depth+1),
-            nPoint2;
-
-        result = (nPoint1.dist < result.dist ? nPoint1 : result);
-
-        if (!tree[sideB]) {
-            return result;
-        } else {
-            // compare distance to current best to splitting point to decide wether to check side B or not
-            if (Math.abs(tdist) < result.dist) {
-                nPoint2 = nearest(search, tree[sideB], depth+1);
-                result = (nPoint2.dist < result.dist ? nPoint2 : result);
-            }
-        return result;
         }
-    }
-}
+
+        /**
+         * Recursively searches for the nearest neighbour using the given K-D-tree
+         */
+        function nearest(search, tree, depth) {
+            var point = tree.point,
+                axis = ['plotX', 'plotY'][depth % 2],
+                tdist,
+                sideA,
+                sideB,
+                ret = point,
+                nPoint1,
+                nPoint2;
+            
+            // Get distance
+            point.dist = Math.pow(search.plotX - point.plotX, 2) + 
+                Math.pow(search.plotY - point.plotY, 2);
+            
+            // Pick side based on distance to splitting point
+            tdist = search[axis] - point[axis];
+            sideA = tdist < 0 ? 'left' : 'right';
+
+            // End of tree
+            if (tree[sideA]) {
+                nPoint1 = nearest(search, tree[sideA], depth + 1);
+
+                ret = (nPoint1.dist < ret.dist ? nPoint1 : point);
+
+                sideB = tdist < 0 ? 'right' : 'left';
+                if (tree[sideB]) {
+                    // compare distance to current best to splitting point to decide wether to check side B or not
+                    if (Math.abs(tdist) < ret.dist) {
+                        nPoint2 = nearest(search, tree[sideB], depth + 1);
+                        ret = (nPoint2.dist < ret.dist ? nPoint2 : ret);
+                    }
+                }
+            }
+            return ret;
+        }
 
 
         // Skip advanced options testing, assume all points are given as [x, y]
@@ -210,28 +214,16 @@ function nearest(search, tree, depth) {
             layers.length = i;
         };
         H.seriesTypes.scatter.prototype.setTooltipPoints = function () {
-            var series = this,
-                i = this.points.length,
-                point,
-                treePoints = [];
+            var series = this;
 
             this.tree = null;
             setTimeout(function () {
-                var treePoint;
-                while (i--) {
-                    point = series.points[i];
-                    treePoint = [point.plotX, point.plotY];
-                    treePoint.index = i;
-                    treePoints.push(treePoint);
-                }
-                series.tree = KDTree(treePoints, 0);
+                series.tree = KDTree(series.points, 0);
             });
         };
         H.seriesTypes.scatter.prototype.getNearest = function (search) {
             if (this.tree) {
-                return this.points[
-                    nearest(search, this.tree, 0).index
-                ];
+                return nearest(search, this.tree, 0);
             }
         };
 
@@ -244,7 +236,10 @@ function nearest(search, tree, depth) {
             H.each(chart.series, function (series) {
                 var point;
                 if (series.getNearest) {
-                    point = series.getNearest([e.chartX - chart.plotLeft, e.chartY - chart.plotTop]);
+                    point = series.getNearest({ 
+                        plotX: e.chartX - chart.plotLeft, 
+                        plotY: e.chartY - chart.plotTop
+                    });
                     if (point) {
                         point.onMouseOver(e);
                     }

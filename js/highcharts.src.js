@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v3.0.9-modified ()
+ * @license Highcharts JS v3.0.10-modified ()
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -55,7 +55,7 @@ var UNDEFINED,
 	noop = function () {},
 	charts = [],
 	PRODUCT = 'Highcharts',
-	VERSION = '3.0.9-modified',
+	VERSION = '3.0.10-modified',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -1310,8 +1310,8 @@ defaultOptions = {
 	global: {
 		useUTC: true,
 		//timezoneOffset: 0,
-		canvasToolsURL: 'http://code.highcharts.com/3.0.9-modified/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/3.0.9-modified/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/3.0.10-modified/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/3.0.10-modified/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -2918,7 +2918,7 @@ SVGRenderer.prototype = {
 					renderer.fontMetrics(
 						/(px|em)$/.test(tspan && tspan.style.fontSize) ?
 							tspan.style.fontSize :
-							(textStyles.fontSize || 11)
+							((textStyles && textStyles.fontSize) || renderer.style.fontSize || 12)
 					).h;
 			};
 
@@ -3919,7 +3919,7 @@ SVGRenderer.prototype = {
 			y = baseline ? 0 : baselineOffset;
 
 			// compensate for alignment
-			if (defined(width) && (textAlign === 'center' || textAlign === 'right')) {
+			if (defined(width) && bBox && (textAlign === 'center' || textAlign === 'right')) {
 				x += { center: 0.5, right: 1 }[textAlign] * (width - bBox.width);
 			}
 
@@ -6479,9 +6479,6 @@ Axis.prototype = {
 	 */
 	defaultLeftAxisOptions: {
 		labels: {
-			style: {
-				lineHeight: '11px'
-			},
 			x: -8,
 			y: null
 		},
@@ -6495,9 +6492,6 @@ Axis.prototype = {
 	 */
 	defaultRightAxisOptions: {
 		labels: {
-			style: {
-				lineHeight: '11px'
-			},
 			x: 8,
 			y: null
 		},
@@ -7954,7 +7948,7 @@ Axis.prototype = {
 			showAxis = axis.showAxis,
 			from,
 			overflow = options.labels.overflow,
-			justifyLabels = axis.justifyLabels = horiz && overflow !== false, // docs: false is new
+			justifyLabels = axis.justifyLabels = horiz && overflow !== false,
 			to;
 
 		// Reset
@@ -9520,7 +9514,6 @@ Pointer.prototype = {
 			chart.pointer.reset();
 			chart.pointer.chartPosition = null; // also reset the chart position, used in #149 fix
 		}
-		hoverChartIndex = null;
 	},
 
 	// The mousemove, touchmove and touchstart event handler
@@ -9857,6 +9850,8 @@ extend(Highcharts.Pointer.prototype, {
 
 	onContainerTouchStart: function (e) {
 		var chart = this.chart;
+
+		hoverChartIndex = chart.index;
 
 		if (e.touches.length === 1) {
 
@@ -11165,7 +11160,7 @@ Chart.prototype = {
 	 * @param subtitleOptions {Object} New subtitle options
 	 *
 	 */
-	setTitle: function (titleOptions, subtitleOptions, redraw) { // docs: redraw option
+	setTitle: function (titleOptions, subtitleOptions, redraw) {
 		var chart = this,
 			options = chart.options,
 			chartTitleOptions,
@@ -12760,7 +12755,7 @@ Series.prototype = {
 	 * @param {Object} data
 	 * @param {Object} redraw
 	 */
-	setData: function (data, redraw, animation, updatePoints) { // docs: animation and updatePoints
+	setData: function (data, redraw, animation, updatePoints) {
 		var series = this,
 			oldData = series.points,
 			oldDataLength = (oldData && oldData.length) || 0,
@@ -14153,7 +14148,7 @@ StackItem.prototype = {
  */
 Axis.prototype.buildStacks = function () {
 	var series = this.series,
-		reversedStacks = pick(this.options.reversedStacks, true), // docs. Demo created. Provide "see also" from series.stacking and legend.reversed.
+		reversedStacks = pick(this.options.reversedStacks, true),
 		i = series.length;
 	if (!this.isXAxis) {
 		this.usePercentage = false;
@@ -16727,26 +16722,26 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 		// Add reference to the point
 		each(series.points, function (point) {
 			if (point.graphic) {
-			point.graphic.element.point = point;
+				point.graphic.element.point = point;
 			}
 			if (point.dataLabel) {
-			point.dataLabel.element.point = point;
+				point.dataLabel.element.point = point;
 			}
 		});
 
 		// Add the event listeners, we need to do this only once
 		if (!series._hasTracking) {
 			each(series.trackerGroups, function (key) {
-			if (series[key]) { // we don't always have dataLabelsGroup
-				series[key]
-				.addClass(PREFIX + 'tracker')
-				.on('mouseover', onMouseOver)
-				.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
-				.css(css);
-				if (hasTouch) {
-				series[key].on('touchstart', onMouseOver);
+				if (series[key]) { // we don't always have dataLabelsGroup
+					series[key]
+						.addClass(PREFIX + 'tracker')
+						.on('mouseover', onMouseOver)
+						.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
+						.css(css);
+					if (hasTouch) {
+						series[key].on('touchstart', onMouseOver);
+					}
 				}
-			}
 			});
 			series._hasTracking = true;
 		}

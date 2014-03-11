@@ -135,17 +135,8 @@ $difference['matchImage']['url'] = "temp/right.png";
 
 // compare to reference
 $path = str_replace('--', '/', $_POST['path']);
-$tempFile = 'temp/compare.json';
-$compare = file_exists($tempFile) ? json_decode(file_get_contents($tempFile)) : new stdClass;
-$browser = get_browser(null, true);
-$key = isset($browser['parent']) ? $browser['parent'] : 'Unknown';
 
-if (isset($compare->$path->$key)) {  
-	$difference['reference'] = $compare->$path->$key;
-} elseif (isset($difference['dissimilarityIndex'])) {
-	@$compare->$path->$key = $difference['dissimilarityIndex'];
-}
-file_put_contents($tempFile, json_encode($compare));
+require_once('compare-update-report.php');
 
 echo json_encode($difference);
 

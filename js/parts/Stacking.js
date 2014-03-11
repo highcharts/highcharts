@@ -112,7 +112,7 @@ StackItem.prototype = {
  */
 Axis.prototype.buildStacks = function () {
 	var series = this.series,
-		reversedStacks = pick(this.options.reversedStacks, true), // docs. Demo created. Provide "see also" from series.stacking and legend.reversed.
+		reversedStacks = pick(this.options.reversedStacks, true),
 		i = series.length;
 	if (!this.isXAxis) {
 		this.usePercentage = false;

@@ -133,9 +133,6 @@ Axis.prototype = {
 	 */
 	defaultLeftAxisOptions: {
 		labels: {
-			style: {
-				lineHeight: '11px'
-			},
 			x: -8,
 			y: null
 		},
@@ -149,9 +146,6 @@ Axis.prototype = {
 	 */
 	defaultRightAxisOptions: {
 		labels: {
-			style: {
-				lineHeight: '11px'
-			},
 			x: 8,
 			y: null
 		},
@@ -1608,7 +1602,7 @@ Axis.prototype = {
 			showAxis = axis.showAxis,
 			from,
 			overflow = options.labels.overflow,
-			justifyLabels = axis.justifyLabels = horiz && overflow !== false, // docs: false is new
+			justifyLabels = axis.justifyLabels = horiz && overflow !== false,
 			to;
 
 		// Reset
