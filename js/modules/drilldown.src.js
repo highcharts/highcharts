@@ -391,6 +391,7 @@
 		each(this.points, function (point) {
 			var graphic = point.graphic,
 				startColor = H.Color(point.color).rgba,
+				endColor = H.Color(level.color).rgba,
 				complete = function () {
 					graphic.destroy();
 					if (group) {
@@ -406,9 +407,9 @@
 					/*jslint unparam: true*/
 					graphic.animate(level.shapeArgs, H.merge(animationOptions, {
 						step: function (val, fx) {
-							if (fx.prop === 'start') {
+							if (fx.prop === 'start' && startColor.length === 4 && endColor.length === 4) {
 								this.attr({
-									fill: tweenColors(startColor, H.Color(level.color).rgba, fx.pos)
+									fill: tweenColors(startColor, endColor, fx.pos)
 								});
 							}
 						},
@@ -447,10 +448,9 @@
 							.attr(H.merge(animateFrom, {
 								start: start + i * startAngle,
 								end: start + (i + 1) * startAngle
-							}))
-							.animate(point.shapeArgs, H.merge(animationOptions, {
+							}))[animationOptions ? 'animate' : 'attr'](point.shapeArgs, H.merge(animationOptions, {
 								step: function (val, fx) {
-									if (fx.prop === 'start') {
+									if (fx.prop === 'start' && startColor.length === 4 && endColor.length === 4) {
 										this.attr({
 											fill: tweenColors(startColor, endColor, fx.pos)
 										});
