@@ -9051,7 +9051,6 @@ Pointer.prototype = {
 			chart.pointer.reset();
 			chart.pointer.chartPosition = null; // also reset the chart position, used in #149 fix
 		}
-		hoverChartIndex = null;
 	},
 
 	// The mousemove, touchmove and touchstart event handler
