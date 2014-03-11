@@ -208,7 +208,7 @@
 
 	<div id="main-nav">
 	<?php
-	$products = array('highcharts', 'maps', 'stock');
+	$products = array('highcharts', 'maps', 'stock', 'issues');
 	$samplesDir = dirname(__FILE__). '/../../samples/';
 	$browser = get_browser(null, true);
 	$browserKey = $browser['parent'];
@@ -221,7 +221,7 @@
 			echo "<h2>$dir</h2>";
 			
 			while (false !== ($file = readdir($handle))) {
-				if (preg_match('/^[a-z0-9\-]+$/', $file)) {
+				if ($file !== '.' && $file !== '..') {
 					echo "
 					<h4>$dir/$file</h4>
 					<ul>
