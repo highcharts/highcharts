@@ -212,7 +212,7 @@
 	$samplesDir = dirname(__FILE__). '/../../samples/';
 	$browser = get_browser(null, true);
 	$browserKey = $browser['parent'];
-	$compare = json_decode(file_get_contents('temp/compare.json'));
+	$compare = @json_decode(file_get_contents('temp/compare.json'));
 
 	$i = 1;
 	foreach ($products as $dir) {
@@ -221,7 +221,7 @@
 			echo "<h2>$dir</h2>";
 			
 			while (false !== ($file = readdir($handle))) {
-				if ($file !== '.' && $file !== '..') {
+				if (is_dir("$samplesDir/$dir/$file") && substr($file, 0, 1) != '.') {
 					echo "
 					<h4>$dir/$file</h4>
 					<ul>
