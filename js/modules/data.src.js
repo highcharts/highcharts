@@ -590,6 +590,29 @@
 				}
 			}
 
+			// Get the data-type from the first series x column
+			if (allSeriesBuilders.length > 0 && allSeriesBuilders[0].readers.length > 0) {
+				var typeCol = columns[allSeriesBuilders[0].readers[0].columnIndex];
+				if (typeCol !== undefined) {
+					if (typeCol.isDatetime) {
+						type = 'datetime';
+					} else if (!typeCol.isNumeric) {
+						type = 'category';
+					}
+				}
+			}
+			// Axis type is category, then the "x" column should be called "name"
+			if (type === 'category') {
+				for (seriesIndex = 0; seriesIndex < allSeriesBuilders.length; seriesIndex++) {
+					builder = allSeriesBuilders[seriesIndex];
+					for (var r = 0; r < builder.readers.length; r++) {
+						if (builder.readers[r].getConfigName() === 'x') {
+							builder.readers[r].setConfigName('name');
+						}
+					}
+				}
+			}
+
 			// Read data for all builders
 			for (seriesIndex = 0; seriesIndex < allSeriesBuilders.length; seriesIndex++) {
 				builder = allSeriesBuilders[seriesIndex];
@@ -607,17 +630,7 @@
 				};
 			}
 
-			// Get the data-type from the first series x column
-			if (allSeriesBuilders.length > 0 && allSeriesBuilders[0].readers.length > 0) {
-				var typeCol = columns[allSeriesBuilders[0].readers[0].columnIndex];
-				if (typeCol !== undefined) {
-					if (typeCol.isDatetime) {
-						type = 'datetime';
-					} else if (!typeCol.isNumeric) {
-						type = 'category';
-					}
-				}
-			}
+
 
 			// Do the callback
 			options.complete({
@@ -914,6 +927,14 @@
 	 */
 	ColumnReader.prototype.getConfigName = function () {
 		return this.configName;
+	};
+
+	/**
+	 * Sets the config name for this column reader. Ex: 'x' or 'label'.
+	 * @param configName String
+	 */
+	ColumnReader.prototype.setConfigName = function (configName) {
+		this.configName = configName
 	};
 
 	/**
