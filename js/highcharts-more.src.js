@@ -1552,7 +1552,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 			// get current stack
 			stack = series.getStack(i);
-			stackPoint = stack.points[series.index];
+			stackPoint = stack.points[series.index + ',' + i];
 
 			// override point value for sums
 			if (isNaN(point.y)) {
