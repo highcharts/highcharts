@@ -285,8 +285,8 @@ Legend.prototype = {
 		legend.itemHeight = itemHeight = mathRound(item.legendItemHeight || bBox.height);
 
 		// if the item exceeds the width, start a new line
-		if (horizontal && legend.itemX - initialItemX + itemWidth + options.x >
-				(widthOption || (chart.chartWidth - 2 * padding - initialItemX))) {
+		if (horizontal && legend.itemX - initialItemX + itemWidth >
+				(widthOption || (chart.chartWidth - 2 * padding - initialItemX - options.x))) {
 			legend.itemX = initialItemX;
 			legend.itemY += itemMarginTop + legend.lastLineHeight + itemMarginBottom;
 			legend.lastLineHeight = 0; // reset for next line
@@ -437,7 +437,7 @@ Legend.prototype = {
 
 			} else if (legendWidth > 0 && legendHeight > 0) {
 				box[box.isNew ? 'attr' : 'animate'](
-					box.crisp(null, null, null, legendWidth, legendHeight)
+					box.crisp({ width: legendWidth, height: legendHeight })
 				);
 				box.isNew = false;
 			}
@@ -527,6 +527,7 @@ Legend.prototype = {
 				
 				if (!len || (y - pages[len - 1] > clipHeight && (lastY || y) !== pages[len - 1])) {
 					pages.push(lastY || y);
+					len++;
 				}
 				
 				if (i === allItems.length - 1 && y + h - pages[len - 1] > clipHeight) {

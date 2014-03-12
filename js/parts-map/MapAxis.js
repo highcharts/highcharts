@@ -78,11 +78,10 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 		if (fixTo) {
 			fixDiff = fixTo[1] - padAxis.toValue(fixTo[0], true);
 			fixDiff *= padAxis.transA;
-			if (Math.abs(fixDiff) > padAxis.minPixelPadding) { // zooming out again, keep within restricted area
+			if (Math.abs(fixDiff) > padAxis.minPixelPadding || (padAxis.min === padAxis.dataMin && padAxis.max === padAxis.dataMax)) { // zooming out again, keep within restricted area
 				fixDiff = 0;
 			}
 			padAxis.minPixelPadding -= fixDiff;
-			
 		}
 	}
 });

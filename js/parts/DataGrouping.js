@@ -414,7 +414,12 @@ tooltipProto.tooltipHeaderFormatter = function (point) {
 		// least distance is one day, skip hours and minutes etc.
 		} else if (!xDateFormat && dateTimeLabelFormats) {
 			for (n in timeUnits) {
-				if (timeUnits[n] >= xAxis.closestPointRange || point.key % timeUnits[n] > 0) { // #2637
+				if (timeUnits[n] >= xAxis.closestPointRange || 
+						// If the point is placed every day at 23:59, we need to show
+						// the minutes as well. This logic only works for time units less than 
+						// a day, since all higher time units are dividable by those. #2637.
+						(timeUnits[n] <= timeUnits[DAY] && point.key % timeUnits[n] > 0)) {
+						
 					xDateFormat = dateTimeLabelFormats[n][0];
 					break;
 				}

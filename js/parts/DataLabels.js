@@ -539,8 +539,8 @@ if (seriesTypes.pie) {
 							point.connector = connector = series.chart.renderer.path(connectorPath).attr({
 								'stroke-width': connectorWidth,
 								stroke: options.connectorColor || point.color || '#606060',
-								visibility: visibility,
-								zIndex: 0 // #2722
+								visibility: visibility
+								//zIndex: 0 // #2722 (reversed)
 							})
 							.add(series.group);
 						}

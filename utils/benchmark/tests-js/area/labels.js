@@ -3,40 +3,6 @@
         renderTo: 'container'
     },
     
-    title: {
-        text: null
-    },
-    
-    credits: {
-        enabled: false
-    },
-    
-    xAxis: {
-        labels: {
-            enabled: true
-        },
-        tickLength: 0,
-        lineWidth: 0
-    },
-    
-    yAxis: {
-        labels: {
-            enabled: true
-        },
-        gridLineWidth: 0,
-        title: {
-            text: null
-        }
-    },
-    
-    legend: {
-        enabled: false
-    },
-
-    tooltip: {
-        enabled: false
-    },
-
     series: [{
         type: 'area',
         animation: false,
@@ -47,8 +13,8 @@
             }
             return arr;
         }()),
-        marker: {
-             enabled: false
+        dataLabels: {
+            enabled: true
         }
     }]
 

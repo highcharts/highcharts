@@ -1,6 +1,6 @@
 $(function () {
 
-    $.getJSON('http://www.highcharts.th/samples/data/jsonp.php?filename=world-population-history.csv&callback=?', function (csv) {
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-history.csv&callback=?', function (csv) {
 
         // Parse the CSV Data
         /*Highcharts.data({
@@ -11,30 +11,15 @@ $(function () {
             }
         });*/
 
-        // Return array of string values, or NULL if CSV string not well formed.
-        // Regex parser function written by ridgerunner, http://stackoverflow.com/questions/8493195/how-can-i-parse-a-csv-string-with-javascript
+        // Very simple and case-specific CSV string splitting
         function CSVtoArray(text) {
-            var re_valid = /^\s*(?:'[^'\\]*(?:\\[\S\s][^'\\]*)*'|"[^"\\]*(?:\\[\S\s][^"\\]*)*"|[^,'"\s\\]*(?:\s+[^,'"\s\\]+)*)\s*(?:,\s*(?:'[^'\\]*(?:\\[\S\s][^'\\]*)*'|"[^"\\]*(?:\\[\S\s][^"\\]*)*"|[^,'"\s\\]*(?:\s+[^,'"\s\\]+)*)\s*)*$/;
-            var re_value = /(?!\s*$)\s*(?:'([^'\\]*(?:\\[\S\s][^'\\]*)*)'|"([^"\\]*(?:\\[\S\s][^"\\]*)*)"|([^,'"\s\\]*(?:\s+[^,'"\s\\]+)*))\s*(?:,|$)/g;
-            // Return NULL if input string is not well formed CSV string.
-            if (!re_valid.test(text)) return null;
-            var a = [];                     // Initialize array to receive values.
-            text.replace(re_value, // "Walk" the string using replace with callback.
-                function(m0, m1, m2, m3) {
-                    // Remove backslash from \' in single quoted values.
-                    if      (m1 !== undefined) a.push(m1.replace(/\\'/g, "'"));
-                    // Remove backslash from \" in double quoted values.
-                    else if (m2 !== undefined) a.push(m2.replace(/\\"/g, '"'));
-                    else if (m3 !== undefined) a.push(m3);
-                    return ''; // Return empty string.
-                });
-            // Handle special case of empty last value.
-            if (/,\s*$/.test(text)) a.push('');
-            return a;
+            return text.replace(/^"/, '')
+                .replace(/",$/, '')
+                .split('","');
         };
 
         csv = csv.split(/\n/);
-        
+
         var countries = {},
             mapChart,
             countryChart,
@@ -43,8 +28,8 @@ $(function () {
             categories = CSVtoArray(csv[1]).slice(4);
 
         // Parse the CSV into arrays, one array each country
-        $.each(csv.splice(2), function () {
-            var row = CSVtoArray(this),
+        $.each(csv.slice(2), function (j, line) {
+            var row = CSVtoArray(line),
                 data = row.slice(4);
 
             $.each(data, function (i, val) {
@@ -173,9 +158,8 @@ $(function () {
                 while (countryChart.series.length > points.length) {
                     countryChart.series[countryChart.series.length - 1].remove(false);
                 }
-
-
                 countryChart.redraw();
+
             } else {
                 $('#info #flag').attr('class', '');
                 $('#info h2').html('');

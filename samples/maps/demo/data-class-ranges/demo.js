@@ -7,9 +7,8 @@ $(function () {
     // https://docs.google.com/a/highsoft.com/spreadsheet/pub?hl=en_GB&hl=en_GB&key=0AoIaUO7wH1HwdFJHaFI4eUJDYlVna3k5TlpuXzZubHc&output=html
     Highcharts.data({
 
-        
         googleSpreadsheetKey: '0AoIaUO7wH1HwdFJHaFI4eUJDYlVna3k5TlpuXzZubHc',
-        
+
         // custom handler when the spreadsheet is parsed
         parsed: function (columns) {
             
@@ -43,14 +42,17 @@ $(function () {
                 
                 legend: {
                     title: {
-                        text: 'Individuals per km²'
+                        text: 'Individuals per km²',
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.textColor) || 'black'
+                        }
                     },
                     align: 'left',
                     verticalAlign: 'bottom',
                     floating: true,
                     layout: 'vertical',
                     valueDecimals: 0,
-                    backgroundColor: 'rgba(255,255,255,0.9)',
+                    backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || 'rgba(255, 255, 255, 0.85)',
                     symbolRadius: 0,
                     symbolHeight: 14
                 },
@@ -94,6 +96,12 @@ $(function () {
                     },
                 }]
             });
+        },
+        error: function () {
+            $('#container').html('<div class="loading">' + 
+                '<i class="icon-frown icon-large"></i> ' + 
+                'Error loading data from Google Spreadsheets' + 
+                '</div>');
         }
     });
 });

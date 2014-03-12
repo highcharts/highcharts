@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v0.3 ()
+ * @license Highmaps JS v1.0.0-beta-modified ()
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -116,11 +116,10 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 		if (fixTo) {
 			fixDiff = fixTo[1] - padAxis.toValue(fixTo[0], true);
 			fixDiff *= padAxis.transA;
-			if (Math.abs(fixDiff) > padAxis.minPixelPadding) { // zooming out again, keep within restricted area
+			if (Math.abs(fixDiff) > padAxis.minPixelPadding || (padAxis.min === padAxis.dataMin && padAxis.max === padAxis.dataMax)) { // zooming out again, keep within restricted area
 				fixDiff = 0;
 			}
 			padAxis.minPixelPadding -= fixDiff;
-			
 		}
 	}
 });
@@ -138,6 +137,7 @@ wrap(Axis.prototype, 'render', function (proceed) {
  * The ColorAxis object for inclusion in gradient legends
  */
 var ColorAxis = Highcharts.ColorAxis = function () {
+	this.isColorAxis = true;
 	this.init.apply(this, arguments);
 };
 extend(ColorAxis.prototype, Axis.prototype);
@@ -174,7 +174,8 @@ extend(ColorAxis.prototype, {
 			isX: horiz,
 			opposite: !horiz,
 			showEmpty: false,
-			title: null
+			title: null,
+			isColor: true
 		});
 
 		Axis.prototype.init.call(this, chart, options);
@@ -190,6 +191,7 @@ extend(ColorAxis.prototype, {
 		// Override original axis properties
 		this.isXAxis = true;
 		this.horiz = horiz;
+		this.zoomEnabled = false;
 	},
 
 	/*
@@ -197,16 +199,15 @@ extend(ColorAxis.prototype, {
 	 * is the from color and 1 is the to color
 	 */
 	tweenColors: function (from, to, pos) {
-		var i = 4,
-			val,
-			rgba = [];
-
-		while (i--) {
-			val = to.rgba[i] + (from.rgba[i] - to.rgba[i]) * (1 - pos);
-			rgba[i] = i === 3 ? val : Math.round(val); // Do not round opacity
-		}
-		return 'rgba(' + rgba.join(',') + ')';
-	},
+		// Check for has alpha, because rgba colors perform worse due to lack of
+		// support in WebKit.
+		var hasAlpha = (to.rgba[3] !== 1 || from.rgba[3] !== 1);
+		return (hasAlpha ? 'rgba(' : 'rgb(') + 
+			Math.round(to.rgba[0] + (from.rgba[0] - to.rgba[0]) * (1 - pos)) + ',' + 
+			Math.round(to.rgba[1] + (from.rgba[1] - to.rgba[1]) * (1 - pos)) + ',' + 
+			Math.round(to.rgba[2] + (from.rgba[2] - to.rgba[2]) * (1 - pos)) + 
+			(hasAlpha ? (',' + (to.rgba[3] + (from.rgba[3] - to.rgba[3]) * (1 - pos))) : '') + ')';
+		},
 
 	initDataClasses: function (userOptions) {
 		var axis = this,
@@ -448,6 +449,9 @@ extend(ColorAxis.prototype, {
 	},
 
 	update: function (newOptions, redraw) {
+		each(this.series, function (series) {
+			series.isDirtyData = true; // Needed for Axis.update when choropleth colors change
+		});
 		Axis.prototype.update.call(this, newOptions, redraw);
 		if (this.legendItem) {
 			this.setLegendColor();
@@ -512,7 +516,8 @@ extend(ColorAxis.prototype, {
 			}, dataClass));
 		});
 		return legendItems;
-	}
+	},
+	name: '' // Prevents 'undefined' in legend in IE8
 });
 
 
@@ -729,6 +734,10 @@ extend(Chart.prototype, {
 		}
 		
 		// Prevent zooming until this one is finished animating
+		/*chart.holdMapZoom = true;
+		setTimeout(function () {
+			chart.holdMapZoom = false;
+		}, 200);*/
 		/*delay = animation ? animation.duration || 500 : 0;
 		if (delay) {
 			chart.isMapZooming = true;
@@ -812,7 +821,8 @@ extend(Pointer.prototype, {
 		delta = e.detail || -(e.wheelDelta / 120);
 		if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
 			chart.mapZoom(
-				delta > 0 ? 2 : 1 / 2,
+				//delta > 0 ? 2 : 0.5,
+				Math.pow(2, delta),
 				chart.xAxis[0].toValue(e.chartX),
 				chart.yAxis[0].toValue(e.chartY),
 				e.chartX,
@@ -837,7 +847,6 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 // Extend the pinchTranslate method to preserve fixed ratio when zooming
 wrap(Pointer.prototype, 'pinchTranslate', function (proceed, zoomHor, zoomVert, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
 	var xBigger;
-
 	proceed.call(this, zoomHor, zoomVert, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 
 	// Keep ratio
@@ -1028,10 +1037,14 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * Get the bounding box of all paths in the map combined.
 	 */
 	getBox: function (paths) {
-		var maxX = Number.MIN_VALUE, 
-			minX =  Number.MAX_VALUE, 
-			maxY = Number.MIN_VALUE, 
-			minY =  Number.MAX_VALUE,
+		var MAX_VALUE = Number.MAX_VALUE,
+			maxX = -MAX_VALUE, 
+			minX =  MAX_VALUE, 
+			maxY = -MAX_VALUE, 
+			minY =  MAX_VALUE,
+			minRange = MAX_VALUE,
+			xAxis = this.xAxis,
+			yAxis = this.yAxis,
 			hasBox;
 		
 		// Find the bounding box
@@ -1045,10 +1058,10 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				var path = point.path || [],
 					i = path.length,
 					even = false, // while loop reads from the end
-					pointMaxX = Number.MIN_VALUE, 
-					pointMinX =  Number.MAX_VALUE, 
-					pointMaxY = Number.MIN_VALUE, 
-					pointMinY =  Number.MAX_VALUE;
+					pointMaxX = -MAX_VALUE, 
+					pointMinX =  MAX_VALUE, 
+					pointMaxY = -MAX_VALUE, 
+					pointMinY =  MAX_VALUE;
 
 				// The first time a map point is used, analyze its box
 				if (!point._foundBox) {
@@ -1078,17 +1091,27 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				minX = Math.min(minX, point._minX);
 				maxY = Math.max(maxY, point._maxY);
 				minY = Math.min(minY, point._minY);
-
+				minRange = Math.min(point._maxX - point._minX, point._maxY - point._minY, minRange);
 				hasBox = true;
 			}
 		});
 
 		// Set the box for the whole series
 		if (hasBox) {
-			this.minY = Math.min(minY, pick(this.minY, Number.MAX_VALUE));
-			this.maxY = Math.max(maxY, pick(this.maxY, Number.MIN_VALUE));
-			this.minX = Math.min(minX, pick(this.minX, Number.MAX_VALUE));
-			this.maxX = Math.max(maxX, pick(this.maxX, Number.MIN_VALUE));
+			this.minY = Math.min(minY, pick(this.minY, MAX_VALUE));
+			this.maxY = Math.max(maxY, pick(this.maxY, -MAX_VALUE));
+			this.minX = Math.min(minX, pick(this.minX, MAX_VALUE));
+			this.maxX = Math.max(maxX, pick(this.maxX, -MAX_VALUE));
+
+			// If no minRange option is set, set the default minimum zooming range to 5 times the 
+			// size of the smallest element
+			if (xAxis.options.minRange === undefined) {
+				xAxis.minRange = Math.min(5 * minRange, (this.maxX - this.minX) / 5, xAxis.minRange || MAX_VALUE);
+			}
+			if (yAxis.options.minRange === undefined) {
+				yAxis.minRange = Math.min(5 * minRange, (this.maxY - this.minY) / 5, yAxis.minRange || MAX_VALUE);
+			}
+
 		}
 	},
 	
@@ -1285,22 +1308,22 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		}
 		
 		// Draw the shapes again
-		if (series.isDirtyData || renderer.isVML) {
-
-			// Draw them in transformGroup
-			series.group = series.transformGroup;
-			seriesTypes.column.prototype.drawPoints.apply(series);
-			series.group = group; // Reset
+		if (series.isDirtyData || renderer.isVML || !baseTrans) {
 
 			// Individual point actions	
 			each(series.points, function (point) {
 
 				// Reset color on update/redraw
 				if (chart.hasRendered && point.graphic) {
-					point.graphic.attr('fill', point.options.color);
+					point.graphic.attr('fill', point.color);
 				}
 
 			});
+
+			// Draw them in transformGroup
+			series.group = series.transformGroup;
+			seriesTypes.column.prototype.drawPoints.apply(series);
+			series.group = group; // Reset
 
 			// Set the base for later scale-zooming. The originX and originY properties are the 
 			// axis values in the plot area's upper left corner.
@@ -1464,7 +1487,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * When drilling up, keep the upper series invisible until the lower series has
 	 * moved into place
 	 */
-	_animateDrillupTo: function (init) {
+	animateDrillupTo: function (init) {
 		seriesTypes.column.prototype.animateDrillupTo.call(this, init);
 	}
 }));
@@ -1480,7 +1503,8 @@ seriesTypes.mapline = extendClass(seriesTypes.map, {
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'color',
 		'stroke-width': 'lineWidth',
-		fill: 'fillColor'
+		fill: 'fillColor',
+		dashstyle: 'dashStyle'
 	},
 	drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
 });
@@ -1491,13 +1515,16 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 		enabled: true,
 		format: '{point.name}',
 		color: 'black',
+		crop: false,
+		overflow: false,
 		style: {
 			textShadow: '0 0 5px white'
 		}
 	}
 });
 seriesTypes.mappoint = extendClass(seriesTypes.scatter, {
-	type: 'mappoint'
+	type: 'mappoint',
+	forceDL: true
 });
 
 // The mapbubble series type
@@ -1535,7 +1562,7 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	init: function () {
 		seriesTypes.scatter.prototype.init.apply(this, arguments);
 		this.pointRange = this.options.colsize || 1;
-		// TODO: similar logic for the Y axis
+		this.yAxis.axisPointRange = this.options.rowsize || 1; // general point range
 	},
 	translate: function () {
 		var series = this,
@@ -1565,7 +1592,6 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			};
 		});
 		
-		series.pointRange = options.colsize || 1;
 		series.translateColors();
 	},
 	drawPoints: seriesTypes.column.prototype.drawPoints,
@@ -1586,6 +1612,79 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 }));
 
 
+/**
+ * Convert a geojson object to map data of a given Highcharts type (map, mappoint or mapline).
+ */
+Highcharts.geojson = function (geojson, hType) {
+	var mapData = [],
+		path = [],
+		polygonToPath = function (polygon) {
+			var i = 0,
+				len = polygon.length;
+			path.push('M');
+			for (; i < len; i++) {
+				if (i === 1) {
+					path.push('L');
+				}
+				path.push(polygon[i][0], -polygon[i][1]);
+			}
+		};
+	
+	each(geojson.features, function (feature) {
+
+		var geometry = feature.geometry,
+			type = geometry.type,
+			coordinates = geometry.coordinates,
+			properties = feature.properties,
+			point;
+		
+		path = [];
+
+		if (hType === 'map') {
+			if (type === 'Polygon') {
+				each(coordinates, polygonToPath);
+				path.push('Z');
+
+			} else if (type === 'MultiPolygon') {
+				each(coordinates, function (items) {
+					each(items, polygonToPath);
+				});
+				path.push('Z');
+			}
+
+			if (path.length) {
+				point = { path: path };
+			}
+		
+		} else if (hType === 'mapline') {
+			if (type === 'LineString') {
+				polygonToPath(coordinates);
+			} else if (type === 'MultiLineString') {
+				each(coordinates, polygonToPath);
+			}
+
+			if (path.length) {
+				point = { path: path };
+			}
+		
+		} else if (hType === 'mappoint') {
+			if (type === 'Point') {
+				point = {
+					x: coordinates[0],
+					y: -coordinates[1]
+				};
+			}
+		}
+		if (point) {
+			mapData.push(extend(point, {
+				name: properties.name || properties.NAME, 
+				properties: properties
+			}));
+		}
+		
+	});
+	return mapData;
+};
 
 // Add language
 extend(defaultOptions.lang, {

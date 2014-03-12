@@ -333,53 +333,56 @@
 			gc; // google column
 
 		if (googleSpreadsheetKey) {
-			jQuery.getJSON('https://spreadsheets.google.com/feeds/cells/' + 
+			jQuery.ajax({
+				dataType: 'json', 
+				url: 'https://spreadsheets.google.com/feeds/cells/' + 
 				  googleSpreadsheetKey + '/' + (options.googleSpreadsheetWorksheet || 'od6') +
 					  '/public/values?alt=json-in-script&callback=?',
-					  function (json) {
-					
-				// Prepare the data from the spreadsheat
-				var cells = json.feed.entry,
-					cell,
-					cellCount = cells.length,
-					colCount = 0,
-					rowCount = 0,
-					i;
-			
-				// First, find the total number of columns and rows that 
-				// are actually filled with data
-				for (i = 0; i < cellCount; i++) {
-					cell = cells[i];
-					colCount = Math.max(colCount, cell.gs$cell.col);
-					rowCount = Math.max(rowCount, cell.gs$cell.row);			
-				}
-			
-				// Set up arrays containing the column data
-				for (i = 0; i < colCount; i++) {
-					if (i >= startColumn && i <= endColumn) {
-						// Create new columns with the length of either end-start or rowCount
-						columns[i - startColumn] = [];
-
-						// Setting the length to avoid jslint warning
-						columns[i - startColumn].length = Math.min(rowCount, endRow - startRow);
-					}
-				}
+				error: options.error,
+				success: function (json) {
+					// Prepare the data from the spreadsheat
+					var cells = json.feed.entry,
+						cell,
+						cellCount = cells.length,
+						colCount = 0,
+						rowCount = 0,
+						i;
 				
-				// Loop over the cells and assign the value to the right
-				// place in the column arrays
-				for (i = 0; i < cellCount; i++) {
-					cell = cells[i];
-					gr = cell.gs$cell.row - 1; // rows start at 1
-					gc = cell.gs$cell.col - 1; // columns start at 1
-
-					// If both row and col falls inside start and end
-					// set the transposed cell value in the newly created columns
-					if (gc >= startColumn && gc <= endColumn &&
-						gr >= startRow && gr <= endRow) {
-						columns[gc - startColumn][gr - startRow] = cell.content.$t;
+					// First, find the total number of columns and rows that 
+					// are actually filled with data
+					for (i = 0; i < cellCount; i++) {
+						cell = cells[i];
+						colCount = Math.max(colCount, cell.gs$cell.col);
+						rowCount = Math.max(rowCount, cell.gs$cell.row);			
 					}
+				
+					// Set up arrays containing the column data
+					for (i = 0; i < colCount; i++) {
+						if (i >= startColumn && i <= endColumn) {
+							// Create new columns with the length of either end-start or rowCount
+							columns[i - startColumn] = [];
+
+							// Setting the length to avoid jslint warning
+							columns[i - startColumn].length = Math.min(rowCount, endRow - startRow);
+						}
+					}
+					
+					// Loop over the cells and assign the value to the right
+					// place in the column arrays
+					for (i = 0; i < cellCount; i++) {
+						cell = cells[i];
+						gr = cell.gs$cell.row - 1; // rows start at 1
+						gc = cell.gs$cell.col - 1; // columns start at 1
+
+						// If both row and col falls inside start and end
+						// set the transposed cell value in the newly created columns
+						if (gc >= startColumn && gc <= endColumn &&
+							gr >= startRow && gr <= endRow) {
+							columns[gc - startColumn][gr - startRow] = cell.content.$t;
+						}
+					}
+					self.dataFound();
 				}
-				self.dataFound();
 			});
 		}
 	},

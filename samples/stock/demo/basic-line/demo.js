@@ -6,7 +6,8 @@ $(function() {
 			
 
 			rangeSelector : {
-				selected : 1
+				selected : 1,
+				inputEnabled: $('#container').width() > 480
 			},
 
 			title : {

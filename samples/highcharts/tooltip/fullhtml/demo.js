@@ -8,7 +8,10 @@ $(function () {
             backgroundColor: null,
             borderWidth: 0,
             shadow: false,
-            useHTML: true
+            useHTML: true,
+            style: {
+                padding: 0
+            }
         },
         
         xAxis: {

@@ -38,7 +38,7 @@ var HighchartsConfig = {
 			{name: 'Point', component: 'Core', group: 'Core', baseUrl: 'parts'},
 			{name: 'Series', component: 'Core', group: "Core", baseUrl: 'parts'},
 			{name: 'Stacking', component: 'Stacking', group: "Features", baseUrl: 'parts'},
-			{name: 'Dynamics', component: 'Dynamics', group: 'Dynamics and Interaction', depends: {component: ['Core']}},			
+			{name: 'Dynamics', component: 'Dynamics', group: 'Dynamics and Interaction', depends: {component: ['Core']}},
 			{name: 'LineSeries', component: 'LineSeries', group: "Chart and Serie types", depends: {component: ['Core']}, baseUrl: 'parts'},
 			{name: 'AreaSeries', component: 'AreaSeries', group: "Chart and Serie types", depends: {component: ['Core']}, baseUrl: 'parts'},
 			{name: 'SplineSeries', component: 'SplineSeries', group: "Chart and Serie types", depends: {component: ['Core']}, baseUrl: 'parts'},
@@ -78,7 +78,9 @@ var HighchartsConfig = {
 			/* MODULES */
 			{name: 'funnel.src', component: 'Funnel', group: "Chart and Serie types", depends: {component: ['Core', 'DataLabels', 'PieSeries']}, baseUrl: 'modules'},
 			{name: 'exporting.src', component: 'Exporting', group: "Modules", depends: {component: ['Core']}, baseUrl: 'modules'},
-			{name: 'data.src', component: 'Data', group: "Modules", depends: {component: ['Core']}, baseUrl: 'modules'}
+			{name: 'data.src', component: 'Data', group: "Modules", depends: {component: ['Core']}, baseUrl: 'modules'},
+			{name: 'no-data-to-display.src', component: 'No-data-to-display', group: "Modules", depends: {component: ['Core']}, baseUrl: 'modules'},
+			{name: 'drilldown.src', component: 'Drilldown', group: "Modules", depends: {component: ['Core']}, baseUrl: 'modules'}
 		],
 
 		groups: {
@@ -97,7 +99,7 @@ var HighchartsConfig = {
 			'Standalone Framework': {description: 'If you don\'t want to load JQuery in your page'},
 			'JQuery Adapter': {description: 'Run Highcharts on top of JQuery'},
 			'Core': { description: 'This module is required for all other modules.'},
-			'Stock': { description: 'For general stock and timeline chart, including navigator, scrollbar and range selector'},			
+			'Stock': { description: 'For general stock and timeline chart, including navigator, scrollbar and range selector'},
 			'Chart and Serie types': { description:  'The chart types available with Highcharts'},
 			'VML Renderer': {description: 'This concerns old IE, which doesn\'t support SVG.'},
 			'CanVG Renderer': {description: 'For rendering charts with Android 2.* devices, charts are rendered on canvas.'},
@@ -124,7 +126,7 @@ var HighchartsConfig = {
 			'AreaSplineSeries': { description:  ''},
 			'AreaSplineRangeSeries': { description:  ''},
 			'ColumnRangeSeries': { description:  ''},
-			'Gauge': { description:  ''},			
+			'Gauge': { description:  ''},
 			'BoxPlotSeries': {description: 'A box plot, or box-and-whiskers chart, displays groups of data by their five point summaries: minimum, lower quartile, median, upper quartile and maximum. '},
 			'BubbleSeries': {description: 'Bubble charts allow three dimensional data to be plotted in an X/Y diagram with sized bubbles.'},
 			'WaterfallSeries': { description: 'Waterfall charts display the cumulative effects of income and expences, or other similar data. In Highcharts, a point can either be positive or negative, an intermediate sum or the total sum.'},
@@ -134,6 +136,8 @@ var HighchartsConfig = {
 			'Candlestick': {description: 'Like the OHLC chart, using columns to represent the range of price movement.'},
 			'Flags': {description: 'Series consists of flags marking events or points of interests'},
 			'Exporting': {description: 'For saving the chart to an image'},
-			'Data': {description: 'Intended to ease the common process of loading data from CSV, HTML tables and even Google Spreadsheets'}
+			'Data': {description: 'Intended to ease the common process of loading data from CSV, HTML tables and even Google Spreadsheets'},
+			'No-data-to-display': {description: 'When there\'s no data to display, the chart is showing a message'},
+			'Drilldown': {description: 'Module to drilldown your data'}
 		}
 	};

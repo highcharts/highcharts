@@ -5,6 +5,7 @@
  * The ColorAxis object for inclusion in gradient legends
  */
 var ColorAxis = Highcharts.ColorAxis = function () {
+	this.isColorAxis = true;
 	this.init.apply(this, arguments);
 };
 extend(ColorAxis.prototype, Axis.prototype);
@@ -41,7 +42,8 @@ extend(ColorAxis.prototype, {
 			isX: horiz,
 			opposite: !horiz,
 			showEmpty: false,
-			title: null
+			title: null,
+			isColor: true
 		});
 
 		Axis.prototype.init.call(this, chart, options);
@@ -57,6 +59,7 @@ extend(ColorAxis.prototype, {
 		// Override original axis properties
 		this.isXAxis = true;
 		this.horiz = horiz;
+		this.zoomEnabled = false;
 	},
 
 	/*
@@ -64,16 +67,15 @@ extend(ColorAxis.prototype, {
 	 * is the from color and 1 is the to color
 	 */
 	tweenColors: function (from, to, pos) {
-		var i = 4,
-			val,
-			rgba = [];
-
-		while (i--) {
-			val = to.rgba[i] + (from.rgba[i] - to.rgba[i]) * (1 - pos);
-			rgba[i] = i === 3 ? val : Math.round(val); // Do not round opacity
-		}
-		return 'rgba(' + rgba.join(',') + ')';
-	},
+		// Check for has alpha, because rgba colors perform worse due to lack of
+		// support in WebKit.
+		var hasAlpha = (to.rgba[3] !== 1 || from.rgba[3] !== 1);
+		return (hasAlpha ? 'rgba(' : 'rgb(') + 
+			Math.round(to.rgba[0] + (from.rgba[0] - to.rgba[0]) * (1 - pos)) + ',' + 
+			Math.round(to.rgba[1] + (from.rgba[1] - to.rgba[1]) * (1 - pos)) + ',' + 
+			Math.round(to.rgba[2] + (from.rgba[2] - to.rgba[2]) * (1 - pos)) + 
+			(hasAlpha ? (',' + (to.rgba[3] + (from.rgba[3] - to.rgba[3]) * (1 - pos))) : '') + ')';
+		},
 
 	initDataClasses: function (userOptions) {
 		var axis = this,
@@ -315,6 +317,9 @@ extend(ColorAxis.prototype, {
 	},
 
 	update: function (newOptions, redraw) {
+		each(this.series, function (series) {
+			series.isDirtyData = true; // Needed for Axis.update when choropleth colors change
+		});
 		Axis.prototype.update.call(this, newOptions, redraw);
 		if (this.legendItem) {
 			this.setLegendColor();
@@ -379,7 +384,8 @@ extend(ColorAxis.prototype, {
 			}, dataClass));
 		});
 		return legendItems;
-	}
+	},
+	name: '' // Prevents 'undefined' in legend in IE8
 });
 
 

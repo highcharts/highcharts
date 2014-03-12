@@ -1,0 +1,73 @@
+<li>Fixed #2755 where attributes in pseudo-HTML were applied outside elements.</li>
+<li>Added 'pyramid' type of series</li>
+<li>Added 'reversed' option to funnel series.</li>
+<li>Fixed #2753 which caused errors and broken behaviour on drilldown containing null points.</li>
+<li>Fixed #2770 where data labels on error bars were not displayed.</li>
+<li>Fixed #2681 where the Pointer object leaked memory after <code>Chart.destroy</code>.</li>
+<li>Fixed #2763 where series on log axes would disappear alltogether when the axis became too short.</li>
+<li>Fixed #2760 where the <code>ignoreHiddenSeries</code> setting had no effect on bubble sizes.</li>
+<li>Fixed issue with <code>Chart.setTitle</code> not causing the chart to redraw to adapt to changed size of the title. Closes #2719. Closes #2744.</li>
+<li>Fixed #2738 where legend navigation would add one page too many when the last page had two items.</li>
+<li>Fixed #2722 where pie slice data label connectors would have the wrong Z index after hiding and showing the slice.</li>
+<li>Made <code>chart.style</code> option take effect on chart instances, not only globally. Closes #2723.</li>
+<li>Fixed #2713 where series connected to a dynamically added X axis would fail.</li>
+<li>Added smarter logic to <code>Series.setData</code>, where instead of re-creating all the data points, existing points are updated. This allows animation, performs faster and is less prone to memory issues.</li>
+<li>Added option, <a href="http://api.highcharts.com/#yAxis.reversedStacks">yAxis.reversedStacks</a>, to choose whether to stack from the top down or from the bottom of the stack and up.</li>
+<li>Fixed issue with horizontal axis labels being clipped instead of justified into chart area. Closes #2703.</li>
+<li>Fixed #2700 causing data labels to not render inside columns if the actual value of the column was cropped.</li>
+<li>Fixed #2693 with drilling up from drilldown caused interference between charts.</li>
+<li>Added sparkline demo</li>
+<li>Fixed memory leaks in IE11 due to implementation of touch support. Closes #2691.</li>
+<li>Export server: Fixed jar location lookup on Windows, closes #2869</li>
+<li>Fixed issue with disappearing bar chart data labels in certain chart widths. Closes #2683.</li>
+<li>Fixed issue with <code>showLoading</code> not displaying in IE9. Closes #2686.</li>
+<li>Fixed issue with <code>Axis.update</code> not removing all associated series. Closes #2687.</li>
+<li>Fixed failure in updating stacking from percent to normal. Closes #2682.</li>
+<li>Fixed issue with misalignment of rotated axis labels with useHTML in IE11. Closes #2684.</li>
+<li>Fixed issue with wrapping horizontal legends not taking the x option into account. Closes #2680.</li>
+<li>Added support for drilldown on multi-series column charts. Closes #2604.</li>
+<li>Fixed issue with JS errors on hovering chart when running IE11 in combination with the Standalone Framework. Closes #2672.</li>
+<li>Fixed issue with wrong rotation of polar charts when X axis was reversed. Closes #2570.</li>
+<li>Fixed issue with tooltip position and hover point on polar chart where <code>startAngle</code> was < 0. Closes #2665.</li>
+<li>Fixed issue with empty tooltip boxes visible in tall pages in IE10.</li>
+<li>Fixed issue with <code>showLoading</code> not working in Standalone Framework. Closes #2653.</li>
+<li>Fixed issues with pie slices and data labels remaining visible after hiding the pie series itself. Closes #2315. Closes #2656.</li>
+<li>Fixed issue with automatic line height on labels with <code>em</code> font sizes. Closes #2651.</li>
+<li>Fixed issue in 3.0.9 where wrong vertical axis labels would be skipped when they were of varying height. Closes #2642.</li>
+<li>Provided reasonable default column width and group width for column charts with only one X value when minRange was set. Closes #2610.</li>
+<li>Fixed issue with too many pages in the legend when using legend navigation. Closes #2617.</li>
+<li>Fixed unexpected effects of zooming outside the data range. Closes #1734.</li>
+<li>Fixed issue with line graphs not being vertically centered when there was only one value which exceeded the upper limit of 44bit values. Closes #2619.</li>
+<li>Worked around Firefox 26 drawing issue where legend items would not redraw after resizing the chart. Closes #2580.</li>
+<li>Fixed issue with mispositioned data label on single pie slice with certain pie sizes, caused by JavaScript rounding error. Closes #2650.</li>
+<li>Fixed issue with text bounding boxes not being correctly computed when the chart was added to a container with <code>display:none !important</code>. Closes #2631.</li>
+<li>Fixed issue with gauge pane background color not taking effect on multiple panes, or respecting  changes. Closes #2257. Closes #2649.</li>
+<li>Fixed error in Standalone Framework where calling destroy on an animating element would result in endless error messages. Caused errors when a chart was destroyed while fading out the tooltip. Closes #2616.</li>
+<li>Fixed pie chart issue with messed up data labels with certain combinations of start and end angle. Closes #2645.</li>
+<li>Fixed issue with pies ignoring endAngle when it was set to 0.</li>
+<li>Performance improvement for updating tick labels. Closes #2640.</li>
+<li>Fixed issue with tooltip header not displaying relevant time resolution when points where added at minute or hour resolution with a day between them. Closes #2637.</li>
+<li>Fixed issue with wrong bounding box detection of numeric texts when they were of number type instead of strings. Closes #2316.</li>
+<li>Added new option, <a href="http://api.highcharts.com/#plotOptions.gauge.overshoot">plotOptions.gauge.overshoot</a>, that takes a value in degrees for how much the dial should overshoot when the value is off the chart.</li>
+<li>Fixed issue with JS errors and failing to activate charts in pages that are saved to disk from the browser. Closes #2609.</li>
+<li>Fixed issue with <code>followPointer</code> not working correctly for line charts.</li>
+<li>Fixed issue with numerical legend items crashing chart when navigation was enabled. Removed unsafe internal use of elemWrapper.bBox, used elemWrapper.getBBox() instead. Closes #2605.</li>
+<li>Fixed regression with pie slice hover color becoming increasingly brightened after repeated redraws. Closes #1619.</li>
+<li>Fixed issue with positioning of markers in oldIE in inverted charts. Closes #1111.</li>
+<li>Fixed oldIE issue with box plots and error bars not showing in inverted charts. Closed #1680. Closed #1806.</li>
+<li>Fixed missing stack percentage in normal stacks. Closes #2551.</li>
+<li>Fixed issue in Standalone Framework with getting the right mouse position inside a scrollable div. Closes #2205.</li>
+<li>Fixed JS error on hovering over a chart after running Chart.setData without redrawing. Closes #2594.</li>
+<li>Fixed issue with tooltip position if data is NaN</li>
+
+<!-- Highstock -->
+<li>Fixed #2708 where panning on an ordinal axis containing candlesticks, OHLC or column series would cause the zoomed range to decrease.</li>
+<li>Fixed #2696 where a single point outside the visible X range would be grouped within the first data group.</li>
+<li>Fixed issue with data grouping not being reset when zooming in and multiple series were present. Closes #2692.</li>
+<li>Fixed issue with first point being left out in data grouping when grouped to an earlier time. Closes #2533.</li>
+<li>Fixed issue with percentage stacking in combination with data grouping. Closes #2445.</li>
+<li>Fixed issue with navigator not reflecting the limitations of the minRange. Closes #2618.</li>
+<li>Fixed issue with scrollbar giving the wrong results in the chart when the axis was padded with axis.max. Closes #2611.</li>
+<li>Fixed issue with compare mode breaking down when at least one series had empty data. Closes #2601.</li>
+<li>Fixed issue with candlestick not aligning with crosshairs.</li>
+

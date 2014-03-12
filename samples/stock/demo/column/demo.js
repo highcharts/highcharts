@@ -8,6 +8,7 @@ $(function() {
 		    },
 
 		    rangeSelector: {
+				inputEnabled: $('#container').width() > 480,
 		        selected: 1
 		    },
 

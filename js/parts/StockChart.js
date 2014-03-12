@@ -144,6 +144,7 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 // Override getPlotLinePath to allow for multipane charts
 Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, translatedValue) {
 	var axis = this,
+		series = (this.isLinked ? this.linkedParent.series : this.series),
 		renderer = axis.chart.renderer,
 		axisLeft = axis.left,
 		axisTop = axis.top,
@@ -157,11 +158,11 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 	var axes = (this.isXAxis ? 
 					(defined(this.options.yAxis) ?
 						[this.chart.yAxis[this.options.yAxis]] : 
-						map(axis.series, function (S) { return S.yAxis; })
+						map(series, function (S) { return S.yAxis; })
 					) :
 					(defined(this.options.xAxis) ?
 						[this.chart.xAxis[this.options.xAxis]] : 
-						map(axis.series, function (S) { return S.xAxis; })
+						map(series, function (S) { return S.xAxis; })
 					)
 				);
 
@@ -207,20 +208,24 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 
 // Function to crisp a line with multiple segments
 SVGRenderer.prototype.crispPolyLine = function (points, width) {
-		// points format: [M, 0, 0, L, 100, 0]		
-		// normalize to a crisp line
-		var i;
-		for (i = 0; i < points.length; i = i + 6) {
-			if (points[i + 1] === points[i + 4]) {
-				// Substract due to #1129. Now bottom and left axis gridlines behave the same.
-				points[i + 1] = points[i + 4] = mathRound(points[i + 1]) - (width % 2 / 2);
-			}
-			if (points[i + 2] === points[i + 5]) {
-				points[i + 2] = points[i + 5] = mathRound(points[i + 2]) + (width % 2 / 2);
-			}
+	// points format: [M, 0, 0, L, 100, 0]		
+	// normalize to a crisp line
+	var i;
+	for (i = 0; i < points.length; i = i + 6) {
+		if (points[i + 1] === points[i + 4]) {
+			// Substract due to #1129. Now bottom and left axis gridlines behave the same.
+			points[i + 1] = points[i + 4] = mathRound(points[i + 1]) - (width % 2 / 2);
 		}
-		return points;
-	};
+		if (points[i + 2] === points[i + 5]) {
+			points[i + 2] = points[i + 5] = mathRound(points[i + 2]) + (width % 2 / 2);
+		}
+	}
+	return points;
+};
+if (Renderer === Highcharts.VMLRenderer) {
+	VMLRenderer.prototype.crispPolyLine = SVGRenderer.prototype.crispPolyLine;
+}
+
 
 // Wrapper to hide the label
 wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
@@ -266,7 +271,7 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	if (!crossLabel) {
 		crossLabel = this.crossLabel = chart.renderer.label()			
 		.attr({
-			align: options.align || horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'center') : (this.labelAlign === 'left' ? 'left' : 'center'),
+			align: options.align || (horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'left') : (this.labelAlign === 'left' ? 'left' : 'center')),
 			zIndex: 12,
 			height: horiz ? 16 : UNDEFINED,
 			fill: options.backgroundColor || (this.series[0] && this.series[0].color) || 'gray',

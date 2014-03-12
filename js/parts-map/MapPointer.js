@@ -39,7 +39,8 @@ extend(Pointer.prototype, {
 		delta = e.detail || -(e.wheelDelta / 120);
 		if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
 			chart.mapZoom(
-				delta > 0 ? 2 : 1 / 2,
+				//delta > 0 ? 2 : 0.5,
+				Math.pow(2, delta),
 				chart.xAxis[0].toValue(e.chartX),
 				chart.yAxis[0].toValue(e.chartY),
 				e.chartX,
@@ -64,7 +65,6 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 // Extend the pinchTranslate method to preserve fixed ratio when zooming
 wrap(Pointer.prototype, 'pinchTranslate', function (proceed, zoomHor, zoomVert, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
 	var xBigger;
-
 	proceed.call(this, zoomHor, zoomVert, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 
 	// Keep ratio

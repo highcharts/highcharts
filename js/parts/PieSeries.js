@@ -404,14 +404,14 @@ var PieSeries = {
 			if (graphic) {
 				graphic.animate(extend(shapeArgs, groupTranslation));
 			} else {
-				point.graphic = graphic = renderer.arc(shapeArgs)
+				point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 					.setRadialReference(series.center)
 					.attr(
 						point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE]
 					)
 					.attr({ 
-						'stroke-linejoin': 'round',
-						zIndex: 1 // #2722
+						'stroke-linejoin': 'round'
+						//zIndex: 1 // #2722 (reversed)
 					})
 					.attr(groupTranslation)
 					.add(series.group)

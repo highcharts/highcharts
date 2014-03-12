@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v3.0.9-modified ()
+ * @license Highcharts JS v3.0.10-modified ()
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -312,7 +312,7 @@ var radialAxisMixin = {
 			}
 			
 			// Axis len is used to lay out the ticks
-			this.len = this.width = this.height = this.center[2] * pick(this.sector, 0.5);
+			this.len = this.width = this.height = this.center[2] * pick(this.sector, 1) / 2;
 
 
 		}
@@ -802,6 +802,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 				
 				// Set preliminary values
 				point.y = point.high;
+				point._plotY = point.plotY;
 				point.plotY = point.plotHigh;
 				
 				// Store original data labels and set preliminary label objects to be picked up 
@@ -834,7 +835,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 				
 				// Reset values
 				point.y = point.low;
-				point.plotY = point.plotLow;
+				point.plotY = point._plotY;
 				
 				// Set the default offset
 				point.below = true;
@@ -1027,7 +1028,7 @@ var GaugeSeries = {
 				rearLength = (pInt(pick(dialOptions.rearLength, 10)) * radius) / 100,
 				baseWidth = dialOptions.baseWidth || 3,
 				topWidth = dialOptions.topWidth || 1,
-				overshoot = options.overshoot, // docs: http://jsfiddle.net/highcharts/gEGaf/1/
+				overshoot = options.overshoot,
 				rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true);
 
 			// Handle the wrap and overshoot options
@@ -1470,6 +1471,7 @@ seriesTypes.errorbar = extendClass(seriesTypes.boxplot, {
 	},
 	pointValKey: 'high', // defines the top of the tracker
 	doQuartiles: false,
+	drawDataLabels: seriesTypes.arearange ? seriesTypes.arearange.prototype.drawDataLabels : noop,
 
 	/**
 	 * Get the width and X offset, either on top of the linked series column
@@ -1960,7 +1962,7 @@ Axis.prototype.beforePadding = function () {
 			var seriesOptions = series.options,
 				zData;
 
-			if (series.bubblePadding && series.visible) {
+			if (series.bubblePadding && (series.visible || !chart.options.chart.ignoreHiddenSeries)) {
 
 				// Correction for #1673
 				axis.allowZoomOutside = true;

@@ -18,8 +18,8 @@
 
 	// Defaults
 	if (!@$_SESSION['branch']) {
-		$_SESSION['after'] = strftime('%Y-%m-%d', mktime() - 30 * 24 * 3600);
-		$_SESSION['before'] = strftime('%Y-%m-%d', mktime());
+		$_SESSION['after'] = strftime('%Y-%m-%d', time() - 30 * 24 * 3600);
+		$_SESSION['before'] = strftime('%Y-%m-%d', time());
 		$_SESSION['branch'] = 'master';
 	}
 

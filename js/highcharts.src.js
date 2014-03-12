@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v3.0.9-modified ()
+ * @license Highcharts JS v3.0.10-modified ()
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -55,7 +55,7 @@ var UNDEFINED,
 	noop = function () {},
 	charts = [],
 	PRODUCT = 'Highcharts',
-	VERSION = '3.0.9-modified',
+	VERSION = '3.0.10-modified',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -1294,6 +1294,7 @@ defaultLabelOptions = {
 defaultOptions = {
 	colors: ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970',
 		'#f28f43', '#77a1e5', '#c42525', '#a6c96a'],
+	//colors: ['#8085e8', '#252530', '#90ee7e', '#8d4654', '#2b908f', '#76758e', '#f6a45c', '#7eb5ee', '#f45b5b', '#9ff0cf'],
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
 		loading: 'Loading...',
@@ -1310,8 +1311,8 @@ defaultOptions = {
 	global: {
 		useUTC: true,
 		//timezoneOffset: 0,
-		canvasToolsURL: 'http://code.highcharts.com/3.0.9-modified/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/3.0.9-modified/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/3.0.10-modified/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/3.0.10-modified/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -1336,10 +1337,10 @@ defaultOptions = {
 		//spacingRight: 10,
 		//spacingBottom: 15,
 		//spacingLeft: 10,
-		style: {
-			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
-			fontSize: '12px'
-		},
+		//style: {
+		//	fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
+		//	fontSize: '12px'
+		//},
 		backgroundColor: '#FFFFFF',
 		//plotBackgroundColor: null,
 		plotBorderColor: '#C0C0C0',
@@ -2154,27 +2155,26 @@ SVGElement.prototype = {
 	 * @param {Number} width
 	 * @param {Number} height
 	 */
-	crisp: function (strokeWidth, x, y, width, height) {
+	crisp: function (rect) {
 
 		var wrapper = this,
 			key,
 			attribs = {},
-			values = {},
-			normalizer;
+			normalizer,
+			strokeWidth = rect.strokeWidth || wrapper.strokeWidth || (wrapper.attr && wrapper.attr('stroke-width')) || 0;
 
-		strokeWidth = strokeWidth || wrapper.strokeWidth || (wrapper.attr && wrapper.attr('stroke-width')) || 0;
 		normalizer = mathRound(strokeWidth) % 2 / 2; // mathRound because strokeWidth can sometimes have roundoff errors
 
 		// normalize for crisp edges
-		values.x = mathFloor(x || wrapper.x || 0) + normalizer;
-		values.y = mathFloor(y || wrapper.y || 0) + normalizer;
-		values.width = mathFloor((width || wrapper.width || 0) - 2 * normalizer);
-		values.height = mathFloor((height || wrapper.height || 0) - 2 * normalizer);
-		values.strokeWidth = strokeWidth;
+		rect.x = mathFloor(rect.x || wrapper.x || 0) + normalizer;
+		rect.y = mathFloor(rect.y || wrapper.y || 0) + normalizer;
+		rect.width = mathFloor((rect.width || wrapper.width || 0) - 2 * normalizer);
+		rect.height = mathFloor((rect.height || wrapper.height || 0) - 2 * normalizer);
+		rect.strokeWidth = strokeWidth;
 
-		for (key in values) {
-			if (wrapper[key] !== values[key]) { // only set attribute if changed
-				wrapper[key] = attribs[key] = values[key];
+		for (key in rect) {
+			if (wrapper[key] !== rect[key]) { // only set attribute if changed
+				wrapper[key] = attribs[key] = rect[key];
 			}
 		}
 
@@ -2453,7 +2453,7 @@ SVGElement.prototype = {
 		// we assume that a label of n characters has the same bounding box as others 
 		// of the same length.
 		if (textStr === '' || numRegex.test(textStr)) {
-			numKey = textStr.toString().length + '|' + styles.fontSize + '|' + styles.fontFamily;
+			numKey = textStr.toString().length + (styles ? ('|' + styles.fontSize + '|' + styles.fontFamily) : '');
 			bBox = renderer.cache[numKey];
 		}
 
@@ -2552,7 +2552,7 @@ SVGElement.prototype = {
 		var renderer = this.renderer,
 			parentWrapper = parent || renderer,
 			parentNode = parentWrapper.element || renderer.box,
-			childNodes = parentNode.childNodes,
+			childNodes,
 			element = this.element,
 			zIndex = this.zIndex,
 			otherElement,
@@ -2580,6 +2580,7 @@ SVGElement.prototype = {
 
 		// insert according to this and other elements' zIndex
 		if (parentWrapper.handleZ) { // this element or any of its siblings has a z index
+			childNodes = parentNode.childNodes;
 			for (i = 0; i < childNodes.length; i++) {
 				otherElement = childNodes[i];
 				otherZIndex = attr(otherElement, 'zIndex');
@@ -2606,7 +2607,9 @@ SVGElement.prototype = {
 		this.added = true;
 
 		// fire an event for internal hooks
-		fireEvent(this, 'add');
+		if (this.onAdd) {
+			this.onAdd();
+		}
 
 		return this;
 	},
@@ -2752,7 +2755,7 @@ SVGRenderer.prototype = {
 	 * @param {Number} height
 	 * @param {Boolean} forExport
 	 */
-	init: function (container, width, height, forExport) {
+	init: function (container, width, height, style, forExport) {
 		var renderer = this,
 			loc = location,
 			boxWrapper,
@@ -2762,7 +2765,8 @@ SVGRenderer.prototype = {
 		boxWrapper = renderer.createElement('svg')
 			.attr({
 				version: '1.1'
-			});
+			})
+			.css(this.getStyle(style));
 		element = boxWrapper.element;
 		container.appendChild(element);
 
@@ -2822,6 +2826,13 @@ SVGRenderer.prototype = {
 			// run it on resize
 			addEvent(win, 'resize', subPixelFix);
 		}
+	},
+
+	getStyle: function (style) {
+		return (this.style = extend({
+			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
+			fontSize: '12px'
+		}, style));
 	},
 
 	/**
@@ -2894,8 +2905,8 @@ SVGRenderer.prototype = {
 				.replace(/<\/(b|strong|i|em|a)>/g, '</span>')
 				.split(/<br.*?>/g),
 			childNodes = textNode.childNodes,
-			styleRegex = /style="([^"]+)"/,
-			hrefRegex = /href="(http[^"]+)"/,
+			styleRegex = /<.*style="([^"]+)".*>/,
+			hrefRegex = /<.*href="(http[^"]+)".*>/,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
 			width = wrapper.textWidth,
@@ -2907,7 +2918,7 @@ SVGRenderer.prototype = {
 					renderer.fontMetrics(
 						/(px|em)$/.test(tspan && tspan.style.fontSize) ?
 							tspan.style.fontSize :
-							(textStyles.fontSize || 11)
+							((textStyles && textStyles.fontSize) || renderer.style.fontSize || 12)
 					).h;
 			};
 
@@ -3271,17 +3282,24 @@ SVGRenderer.prototype = {
 
 		r = isObject(x) ? x.r : r;
 
-		var wrapper = this.createElement('rect').attr({
-				rx: r,
-				ry: r,
-				fill: NONE
-			});
-		return wrapper.attr(
-				isObject(x) ?
-					x :
-					// do not crispify when an object is passed in (as in column charts)
-					wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0))
-			);
+		var wrapper = this.createElement('rect'),
+			attr = isObject(x) ? x : x === UNDEFINED ? {} : {
+				x: x,
+				y: y,
+				width: mathMax(width, 0),
+				height: mathMax(height, 0)
+			};
+
+		if (strokeWidth !== UNDEFINED) {
+			attr.strokeWidth = strokeWidth;
+			attr = wrapper.crisp(attr);
+		}
+
+		if (r) {
+			attr.r = r;
+		}		
+		
+		return wrapper.attr(attr);
 	},
 
 	/**
@@ -3744,7 +3762,8 @@ SVGRenderer.prototype = {
 	 * Utility to return the baseline offset and total line height from the font size
 	 */
 	fontMetrics: function (fontSize) {
-		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 11;
+		fontSize = fontSize || this.style.fontSize;
+		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
 
 		// Empirical values found by comparing font size and bounding box height.
 		// Applies to the default font family. http://jsfiddle.net/highcharts/7xvn7/
@@ -3823,7 +3842,7 @@ SVGRenderer.prototype = {
 					wrapper.box = box = shape ?
 						renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height, deferredAttr) :
 						renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
-					box.add(wrapper);
+					box.attr('fill', NONE).add(wrapper);
 				}
 
 				// apply the box attributes
@@ -3850,7 +3869,7 @@ SVGRenderer.prototype = {
 			y = baseline ? 0 : baselineOffset;
 
 			// compensate for alignment
-			if (defined(width) && (textAlign === 'center' || textAlign === 'right')) {
+			if (defined(width) && bBox && (textAlign === 'center' || textAlign === 'right')) {
 				x += { center: 0.5, right: 1 }[textAlign] * (width - bBox.width);
 			}
 
@@ -3880,7 +3899,11 @@ SVGRenderer.prototype = {
 			}
 		}
 
-		function getSizeAfterAdd() {
+		/**
+		 * After the text element is added, get the desired size of the border box
+		 * and add it before the text in the DOM.
+		 */
+		wrapper.onAdd = function () {
 			text.add(wrapper);
 			wrapper.attr({
 				text: str, // alignment is available now
@@ -3894,13 +3917,7 @@ SVGRenderer.prototype = {
 					anchorY: anchorY
 				});
 			}
-		}
-
-		/**
-		 * After the text element is added, get the desired size of the border box
-		 * and add it before the text in the DOM.
-		 */
-		addEvent(wrapper, 'add', getSizeAfterAdd);
+		};
 
 		/*
 		 * Add specific attribute setters.
@@ -3947,13 +3964,15 @@ SVGRenderer.prototype = {
 
 		// apply these to the box but not to the text
 		attrSetters[STROKE_WIDTH] = function (value, key) {
-			needsBox = true;
+			if (value) {
+				needsBox = true;
+			}
 			crispAdjust = value % 2 / 2;
 			boxAttr(key, value);
 			return false;
 		};
 		attrSetters.stroke = attrSetters.fill = attrSetters.r = function (value, key) {
-			if (key === 'fill') {
+			if (key === 'fill' && value) {
 				needsBox = true;
 			}
 			boxAttr(key, value);
@@ -4029,7 +4048,6 @@ SVGRenderer.prototype = {
 			 * Destroy and release memory.
 			 */
 			destroy: function () {
-				removeEvent(wrapper, 'add', getSizeAfterAdd);
 
 				// Added by button implementation
 				removeEvent(wrapper.element, 'mouseenter');
@@ -4045,7 +4063,7 @@ SVGRenderer.prototype = {
 				SVGElement.prototype.destroy.call(wrapper);
 
 				// Release local pointers (#1298)
-				wrapper = renderer = updateBoxSize = updateTextPadding = boxAttr = getSizeAfterAdd = null;
+				wrapper = renderer = updateBoxSize = updateTextPadding = boxAttr = null;
 			}
 		});
 	}
@@ -4232,8 +4250,7 @@ extend(SVGRenderer.prototype, {
 	 * @param {Number} y
 	 */
 	html: function (str, x, y) {
-		var defaultChartStyle = defaultOptions.chart.style,
-			wrapper = this.createElement('span'),
+		var wrapper = this.createElement('span'),
 			attrSetters = wrapper.attrSetters,
 			element = wrapper.element,
 			renderer = wrapper.renderer;
@@ -4253,9 +4270,8 @@ extend(SVGRenderer.prototype, {
 				key = 'textAlign'; // Do not overwrite the SVGElement.align method. Same as VML.
 			}
 			wrapper[key] = value;
-			if (this.textStr) {
-				wrapper.htmlUpdateTransform();
-			}
+			wrapper.htmlUpdateTransform();
+			
 			return false;
 		};
 
@@ -4268,8 +4284,8 @@ extend(SVGRenderer.prototype, {
 			.css({
 				position: ABSOLUTE,
 				whiteSpace: 'nowrap',
-				fontFamily: defaultChartStyle.fontFamily,
-				fontSize: defaultChartStyle.fontSize
+				fontFamily: this.style.fontFamily,
+				fontSize: this.style.fontSize
 			});
 
 		// Use the HTML specific .css method
@@ -4437,7 +4453,9 @@ Highcharts.VMLElement = VMLElement = {
 		}
 
 		// fire an event for internal hooks
-		fireEvent(wrapper, 'add');
+		if (wrapper.onAdd) {
+			wrapper.onAdd();
+		}
 
 		return wrapper;
 	},
@@ -4955,7 +4973,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 * @param {Number} width
 	 * @param {Number} height
 	 */
-	init: function (container, width, height) {
+	init: function (container, width, height, style) {
 		var renderer = this,
 			boxWrapper,
 			box,
@@ -4963,9 +4981,9 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 		renderer.alignedObjects = [];
 
-		boxWrapper = renderer.createElement(DIV);
+		boxWrapper = renderer.createElement(DIV)
+			.css(extend(this.getStyle(style), { position: RELATIVE}));
 		box = boxWrapper.element;
-		box.style.position = RELATIVE; // for freeform drawing using renderer directly
 		container.appendChild(boxWrapper.element);
 
 
@@ -5203,7 +5221,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 						applyRadialGradient();
 					} else {
 						// We need to know the bounding box to get the size and position right
-						addEvent(wrapper, 'add', applyRadialGradient);
+						wrapper.onAdd = applyRadialGradient;
 					}
 
 					// The fill element's color attribute is broken in IE8 standards mode, so we
@@ -5356,20 +5374,10 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	},
 
 	/**
-	 * VML uses a shape for rect to overcome bugs and rotation problems
+	 * For rectangles, VML uses a shape for rect to overcome bugs and rotation problems
 	 */
-	rect: function (x, y, width, height, r, strokeWidth) {
-
-		var wrapper = this.symbol('rect');
-		wrapper.r = isObject(x) ? x.r : r;
-
-		//return wrapper.attr(wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0)));
-		return wrapper.attr(
-				isObject(x) ?
-					x :
-					// do not crispify when an object is passed in (as in column charts)
-					wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0))
-			);
+	createElement: function (nodeName) {
+		return nodeName === 'rect' ? this.symbol(nodeName) : SVGRenderer.prototype.createElement.call(this, nodeName);	
 	},
 
 	/**
@@ -5778,7 +5786,7 @@ Tick.prototype = {
 			labelOptions = options.labels,
 			size = horiz ? bBox.width : bBox.height,
 			leftSide = horiz ?
-				labelOptions.x - size * { left: 0, center: 0.5, right: 1 }[axis.labelAlign] : 
+				labelOptions.x - size * { left: 0, center: 0.5, right: 1 }[axis.labelAlign] :
 				0,
 			rightSide = horiz ?
 				size + leftSide :
@@ -6027,7 +6035,6 @@ Tick.prototype = {
 			}
 
 			markPath = tick.getMarkPath(x, y, tickLength, tickWidth * reverseCrisp, horiz, renderer);
-
 			if (mark) { // updating
 				mark.animate({
 					d: markPath,
@@ -6480,9 +6487,6 @@ Axis.prototype = {
 	 */
 	defaultLeftAxisOptions: {
 		labels: {
-			style: {
-				lineHeight: '11px'
-			},
 			x: -8,
 			y: null
 		},
@@ -6496,9 +6500,6 @@ Axis.prototype = {
 	 */
 	defaultRightAxisOptions: {
 		labels: {
-			style: {
-				lineHeight: '11px'
-			},
 			x: 8,
 			y: null
 		},
@@ -6665,10 +6666,12 @@ Axis.prototype = {
 
 		// Register
 		if (inArray(axis, chart.axes) === -1) { // don't add it again on Axis.update()
-			chart.axes.push(axis);
-			chart.axes.sort(function (a) { // X axes first when adding X axes dynamically (#2713)
-				return !a.isXAxis;
-			});
+			if (isXAxis && !this.isColorAxis) { // #2713
+				chart.axes.splice(chart.xAxis.length, 0, axis);
+			} else {
+				chart.axes.push(axis);
+			}
+
 			chart[axis.coll].push(axis);
 		}
 
@@ -7113,7 +7116,7 @@ Axis.prototype = {
 	setAxisTranslation: function (saveOld) {
 		var axis = this,
 			range = axis.max - axis.min,
-			pointRange = 0,
+			pointRange = axis.axisPointRange || 0,
 			closestPointRange,
 			minPointOffset = 0,
 			pointRangePadding = 0,
@@ -7123,14 +7126,14 @@ Axis.prototype = {
 			transA = axis.transA;
 
 		// Adjust translation for padding. Y axis with categories need to go through the same (#1784).
-		if (axis.isXAxis || hasCategories) {
+		if (axis.isXAxis || hasCategories || pointRange) {
 			if (linkedParent) {
 				minPointOffset = linkedParent.minPointOffset;
 				pointRangePadding = linkedParent.pointRangePadding;
 
 			} else {
 				each(axis.series, function (series) {
-					var seriesPointRange = mathMax(series.pointRange, +hasCategories),
+					var seriesPointRange = mathMax(axis.isXAxis ? series.pointRange : (axis.axisPointRange || 0), +hasCategories),
 						pointPlacement = series.options.pointPlacement,
 						seriesClosestPointRange = series.closestPointRange;
 
@@ -7250,7 +7253,7 @@ Axis.prototype = {
 
 		// Pad the values to get clear of the chart's edges. To avoid tickInterval taking the padding
 		// into account, we do this after computing tick interval (#1337).
-		if (!categories && !axis.usePercentage && !isLinked && defined(axis.min) && defined(axis.max)) {
+		if (!categories && !axis.axisPointRange && !axis.usePercentage && !isLinked && defined(axis.min) && defined(axis.max)) {
 			length = axis.max - axis.min;
 			if (length) {
 				if (!defined(options.min) && !defined(axis.userMin) && minPadding && (axis.dataMin < 0 || !axis.ignoreMinPadding)) {
@@ -7278,7 +7281,7 @@ Axis.prototype = {
 			);
 			// For squished axes, set only two ticks
 			if (!defined(tickIntervalOption) && axis.len < tickPixelIntervalOption && !this.isRadial &&
-					!categories && options.startOnTick && options.endOnTick) {
+					!this.isLog && !categories && options.startOnTick && options.endOnTick) {
 				keepTwoTicksOnly = true;
 				axis.tickInterval /= 4; // tick extremes closer to the real values
 			}
@@ -7727,6 +7730,7 @@ Axis.prototype = {
 				.add();
 			axis.labelGroup = renderer.g('axis-labels')
 				.attr({ zIndex: labelOptions.zIndex || 7 })
+				.addClass(PREFIX + axis.coll.toLowerCase() + '-labels')
 				.add();
 		}
 
@@ -7818,6 +7822,7 @@ Axis.prototype = {
 						axisTitleOptions.textAlign ||
 						{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
 				})
+				.addClass(PREFIX + this.coll.toLowerCase() + '-title')
 				.css(axisTitleOptions.style)
 				.add(axis.axisGroup);
 				axis.axisTitle.isNew = true;
@@ -7951,7 +7956,7 @@ Axis.prototype = {
 			showAxis = axis.showAxis,
 			from,
 			overflow = options.labels.overflow,
-			justifyLabels = axis.justifyLabels = horiz && overflow !== false, // docs: false is new
+			justifyLabels = axis.justifyLabels = horiz && overflow !== false,
 			to;
 
 		// Reset
@@ -8973,7 +8978,11 @@ Tooltip.prototype = {
 		if (isDateTime && !xDateFormat) {
 			if (closestPointRange) {
 				for (n in timeUnits) {
-					if (timeUnits[n] >= closestPointRange || point.key % timeUnits[n] > 0) { // #2637
+					if (timeUnits[n] >= closestPointRange || 
+							// If the point is placed every day at 23:59, we need to show
+							// the minutes as well. This logic only works for time units less than 
+							// a day, since all higher time units are dividable by those. #2637.
+							(timeUnits[n] <= timeUnits[DAY] && point.key % timeUnits[n] > 0)) {
 						xDateFormat = dateTimeLabelFormats[n];
 						break;
 					}
@@ -8997,6 +9006,12 @@ Tooltip.prototype = {
 		});
 	}
 };
+
+var hoverChartIndex;
+
+// Global flag for touch support
+hasTouch = doc.documentElement.ontouchstart !== UNDEFINED;
+
 /**
  * The mouse tracker object. All methods starting with "on" are primary DOM event handlers. 
  * Subsequent methods should be named differently from what they are doing.
@@ -9054,12 +9069,14 @@ Pointer.prototype = {
 
 		// common IE normalizing
 		e = e || win.event;
-		if (!e.target) {
-			e.target = e.srcElement;
-		}
 
 		// Framework specific normalizing (#1165)
 		e = washMouseEvent(e);
+
+		// More IE normalizing, needs to go after washMouseEvent
+		if (!e.target) {
+			e.target = e.srcElement;
+		}
 		
 		// iOS
 		ePos = e.touches ? e.touches.item(0) : e;
@@ -9189,7 +9206,9 @@ Pointer.prototype = {
 		// Start the event listener to pick up the tooltip 
 		if (tooltip && !pointer._onDocumentMouseMove) {
 			pointer._onDocumentMouseMove = function (e) {
-				pointer.onDocumentMouseMove(e);
+				if (defined(hoverChartIndex)) {
+					charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
+				}
 			};
 			addEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
 		}
@@ -9461,7 +9480,9 @@ Pointer.prototype = {
 	
 
 	onDocumentMouseUp: function (e) {
-		this.drop(e);
+		if (defined(hoverChartIndex)) {
+			charts[hoverChartIndex].pointer.drop(e);
+		}
 	},
 
 	/**
@@ -9486,14 +9507,19 @@ Pointer.prototype = {
 	 * When mouse leaves the container, hide the tooltip.
 	 */
 	onContainerMouseLeave: function () {
-		this.reset();
-		this.chartPosition = null; // also reset the chart position, used in #149 fix
+		var chart = charts[hoverChartIndex];
+		if (chart) {
+			chart.pointer.reset();
+			chart.pointer.chartPosition = null; // also reset the chart position, used in #149 fix
+		}
 	},
 
 	// The mousemove, touchmove and touchstart event handler
 	onContainerMouseMove: function (e) {
 
 		var chart = this.chart;
+
+		hoverChartIndex = chart.index;
 
 		// normalize
 		e = this.normalize(e);		
@@ -9601,40 +9627,29 @@ Pointer.prototype = {
 	setDOMEvents: function () {
 
 		var pointer = this,
-			container = pointer.chart.container,
-			events;
+			container = pointer.chart.container;
 
-		this._events = events = [
-			[container, 'onmousedown', 'onContainerMouseDown'],
-			[container, 'onmousemove', 'onContainerMouseMove'],
-			[container, 'onclick', 'onContainerClick'],
-			[container, 'mouseleave', 'onContainerMouseLeave'],
-			[doc, 'mouseup', 'onDocumentMouseUp']
-		];
+		container.onmousedown = function (e) {
+			pointer.onContainerMouseDown(e);
+		};
+		container.onmousemove = function (e) {
+			pointer.onContainerMouseMove(e);
+		};
+		container.onclick = function (e) {
+			pointer.onContainerClick(e);
+		};
+		addEvent(container, 'mouseleave', pointer.onContainerMouseLeave);
+		addEvent(doc, 'mouseup', pointer.onDocumentMouseUp);
 
 		if (hasTouch) {
-			events.push(
-				[container, 'ontouchstart', 'onContainerTouchStart'],
-				[container, 'ontouchmove', 'onContainerTouchMove'],
-				[doc, 'touchend', 'onDocumentTouchEnd']
-			);
-		}
-
-		each(events, function (eventConfig) {
-
-			// First, create the callback function that in turn calls the method on Pointer
-			pointer['_' + eventConfig[2]] = function (e) {
-				pointer[eventConfig[2]](e);
+			container.ontouchstart = function (e) {
+				pointer.onContainerTouchStart(e);
 			};
-
-			// Now attach the function, either as a direct property or through addEvent
-			if (eventConfig[1].indexOf('on') === 0) {
-				eventConfig[0][eventConfig[1]] = pointer['_' + eventConfig[2]];
-			} else {
-				addEvent(eventConfig[0], eventConfig[1], pointer['_' + eventConfig[2]]);
-			}
-		});
-
+			container.ontouchmove = function (e) {
+				pointer.onContainerTouchMove(e);
+			};
+			addEvent(doc, 'touchend', pointer.onDocumentTouchEnd);
+		}
 		
 	},
 
@@ -9642,30 +9657,24 @@ Pointer.prototype = {
 	 * Destroys the Pointer object and disconnects DOM events.
 	 */
 	destroy: function () {
-		var pointer = this;
+		var prop;
 
-		// Release all DOM events
-		each(pointer._events, function (eventConfig) {	
-			if (eventConfig[1].indexOf('on') === 0) {
-				eventConfig[0][eventConfig[1]] = null; // delete breaks oldIE
-			} else {		
-				removeEvent(eventConfig[0], eventConfig[1], pointer['_' + eventConfig[2]]);
-			}
-		});
-		delete pointer._events;
-
+		removeEvent(this.chart.container, 'mouseleave', this.onContainerMouseLeave);
+		removeEvent(doc, 'mouseup', this.onDocumentMouseUp);
+		removeEvent(doc, 'touchend', this.onDocumentTouchEnd);
+		
 		// memory and CPU leak
-		clearInterval(pointer.tooltipTimeout);
+		clearInterval(this.tooltipTimeout);
+
+		for (prop in this) {
+			this[prop] = null;
+		}
 	}
 };
 
 
 /* Support for touch devices */
-
-/* set the global to determine if we're dealing with a touch based device */
-hasTouch = doc.documentElement.ontouchstart !== UNDEFINED;
-
-extend(Highcharts.Pointer, {
+extend(Highcharts.Pointer.prototype, {
 
 	/**
 	 * Run translation operations
@@ -9840,6 +9849,8 @@ extend(Highcharts.Pointer, {
 	onContainerTouchStart: function (e) {
 		var chart = this.chart;
 
+		hoverChartIndex = chart.index;
+
 		if (e.touches.length === 1) {
 
 			e = this.normalize(e);
@@ -9873,83 +9884,99 @@ extend(Highcharts.Pointer, {
 	},
 
 	onDocumentTouchEnd: function (e) {
-		this.drop(e);
+		if (defined(hoverChartIndex)) {
+			charts[hoverChartIndex].pointer.drop(e);
+		}
 	}
 
 });
 if (win.PointerEvent || win.MSPointerEvent) {
 	
 	// The touches object keeps track of the points being touched at all times
-	var touches = {};
-
-	// Emulate a Webkit TouchList 
-	Pointer.prototype.getWebkitTouches = function () {
-		var key, fake = [];
-		fake.item = function (i) { return this[i]; };
-		for (key in touches) {
-			if (touches.hasOwnProperty(key)) {
-				fake.push({
-					pageX: touches[key].pageX,
-					pageY: touches[key].pageY,
-					target: touches[key].target
-				});
+	var touches = {},
+		hasPointerEvent = !!win.PointerEvent,
+		getWebkitTouches = function () {
+			var key, fake = [];
+			fake.item = function (i) { return this[i]; };
+			for (key in touches) {
+				if (touches.hasOwnProperty(key)) {
+					fake.push({
+						pageX: touches[key].pageX,
+						pageY: touches[key].pageY,
+						target: touches[key].target
+					});
+				}
 			}
+			return fake;
+		},
+		translateMSPointer = function (e, method, wktype, callback) {
+			var p;
+			e = e.originalEvent || e;
+			if ((e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) && charts[hoverChartIndex]) {
+				callback(e);
+				p = charts[hoverChartIndex].pointer;
+				p[method]({
+					type: wktype,
+					target: e.currentTarget,
+					preventDefault: noop,
+					touches: getWebkitTouches()
+				});				
+			}
+		};
+
+	/**
+	 * Extend the Pointer prototype with methods for each event handler and more
+	 */
+	extend(Pointer.prototype, {
+		onContainerPointerDown: function (e) {
+			translateMSPointer(e, 'onContainerTouchStart', 'touchstart', function (e) {
+				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY, target: e.currentTarget };
+			});
+		},
+		onContainerPointerMove: function (e) {
+			translateMSPointer(e, 'onContainerTouchMove', 'touchmove', function (e) {
+				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY };
+				if (!touches[e.pointerId].target) {
+					touches[e.pointerId].target = e.currentTarget;
+				}
+			});
+		},
+		onDocumentPointerUp: function (e) {
+			translateMSPointer(e, 'onContainerTouchEnd', 'touchend', function (e) {
+				delete touches[e.pointerId];
+			});
+		},
+
+		/**
+		 * Add or remove the MS Pointer specific events
+		 */
+		batchMSEvents: function (fn) {
+			fn(this.chart.container, hasPointerEvent ? 'pointerdown' : 'MSPointerDown', this.onContainerPointerDown);
+			fn(this.chart.container, hasPointerEvent ? 'pointermove' : 'MSPointerMove', this.onContainerPointerMove);
+			fn(doc, hasPointerEvent ? 'pointerup' : 'MSPointerUp', this.onDocumentPointerUp);
 		}
-		return fake;
-	};
+	});
 
 	// Disable default IE actions for pinch and such on chart element
 	wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
-		chart.container.style['-ms-touch-action'] = chart.container.style['touch-action'] = NONE;
+		css(chart.container, {
+			'-ms-touch-action': NONE,
+			'touch-action': NONE
+		});
 		proceed.call(this, chart, options);
 	});
 
 	// Add IE specific touch events to chart
 	wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
-		var pointer = this, 
-			eventmap;
 		proceed.apply(this);
-		eventmap = [
-			[this.chart.container, 'PointerDown', 'touchstart', 'onContainerTouchStart', function (e) {
-				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY, target: e.currentTarget };
-			}],
-			[this.chart.container, 'PointerMove', 'touchmove', 'onContainerTouchMove', function (e) {
-				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY };
-				if (!touches[e.pointerId].target) {
-					touches[e.pointerId].target = e.currentTarget;
-				}	
-			}],
-			[document, 'PointerUp', 'touchend', 'onDocumentTouchEnd', function (e) {
-				delete touches[e.pointerId];
-			}]
-		];
-		
-		// Add the events based on the eventmap configuration
-		each(eventmap, function (eventConfig) {
-			var eventName = window.PointerEvent ? eventConfig[1].toLowerCase() : 'MS' + eventConfig[1];
-
-			pointer['_' + eventName] = function (e) {
-				e = e.originalEvent || e;
-				if (e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) {
-					eventConfig[4](e);
-					
-					// This event corresponds to ontouchstart - call onContainerTouchStart
-					pointer[eventConfig[3]]({
-						type: eventConfig[2],
-						target: e.currentTarget,
-						preventDefault: noop,
-						touches: pointer.getWebkitTouches()
-					});
-				}
-			};
-			addEvent(eventConfig[0], eventName, pointer['_' + eventName]);
-
-			// Register for removing in destroy (#2691)
-			pointer._events.push([eventConfig[0], eventName, eventName]);
-		});
-	   
+		this.batchMSEvents(addEvent);
 	});
-}	 
+	// Destroy MS events also
+	wrap(Pointer.prototype, 'destroy', function (proceed) {
+		this.batchMSEvents(removeEvent);
+		proceed.call(this);
+	});
+}
 /**
  * The overview of the chart's series
  */
@@ -10237,8 +10264,8 @@ Legend.prototype = {
 		legend.itemHeight = itemHeight = mathRound(item.legendItemHeight || bBox.height);
 
 		// if the item exceeds the width, start a new line
-		if (horizontal && legend.itemX - initialItemX + itemWidth + options.x >
-				(widthOption || (chart.chartWidth - 2 * padding - initialItemX))) {
+		if (horizontal && legend.itemX - initialItemX + itemWidth >
+				(widthOption || (chart.chartWidth - 2 * padding - initialItemX - options.x))) {
 			legend.itemX = initialItemX;
 			legend.itemY += itemMarginTop + legend.lastLineHeight + itemMarginBottom;
 			legend.lastLineHeight = 0; // reset for next line
@@ -10389,7 +10416,7 @@ Legend.prototype = {
 
 			} else if (legendWidth > 0 && legendHeight > 0) {
 				box[box.isNew ? 'attr' : 'animate'](
-					box.crisp(null, null, null, legendWidth, legendHeight)
+					box.crisp({ width: legendWidth, height: legendHeight })
 				);
 				box.isNew = false;
 			}
@@ -10479,6 +10506,7 @@ Legend.prototype = {
 				
 				if (!len || (y - pages[len - 1] > clipHeight && (lastY || y) !== pages[len - 1])) {
 					pages.push(lastY || y);
+					len++;
 				}
 				
 				if (i === allItems.length - 1 && y + h - pages[len - 1] > clipHeight) {
@@ -11130,7 +11158,7 @@ Chart.prototype = {
 	 * @param subtitleOptions {Object} New subtitle options
 	 *
 	 */
-	setTitle: function (titleOptions, subtitleOptions) {
+	setTitle: function (titleOptions, subtitleOptions, redraw) {
 		var chart = this,
 			options = chart.options,
 			chartTitleOptions,
@@ -11169,19 +11197,20 @@ Chart.prototype = {
 				.add();
 			}	
 		});
-		chart.layOutTitles();
+		chart.layOutTitles(redraw);
 	},
 
 	/**
 	 * Lay out the chart titles and cache the full offset height for use in getMargins
 	 */
-	layOutTitles: function () {
+	layOutTitles: function (redraw) {
 		var titleOffset = 0,
 			title = this.title,
 			subtitle = this.subtitle,
 			options = this.options,
 			titleOptions = options.title,
 			subtitleOptions = options.subtitle,
+			requiresDirtyBox,
 			autoWidth = this.spacingBox.width - 44; // 44 makes room for default context button
 
 		if (title) {
@@ -11208,7 +11237,16 @@ Chart.prototype = {
 			}
 		}
 
+		requiresDirtyBox = this.titleOffset !== titleOffset;				
 		this.titleOffset = titleOffset; // used in getMargins
+
+		if (!this.isDirtyBox && requiresDirtyBox) {
+			this.isDirtyBox = requiresDirtyBox;
+			// Redraw if necessary (#2719, #2744)		
+			if (this.hasRendered && pick(redraw, true) && this.isDirtyBox) {
+				this.redraw();
+			}
+		}
 	},
 
 	/**
@@ -11350,13 +11388,11 @@ Chart.prototype = {
 		// cache the cursor (#1650)
 		chart._cursor = container.style.cursor;
 
+		// Initialize the renderer
 		chart.renderer =
 			optionsChart.forExport ? // force SVG, used for SVG export
-				new SVGRenderer(container, chartWidth, chartHeight, true) :
-				new Renderer(container, chartWidth, chartHeight);
-
-		// Set the default font style directly on the top SVG node
-		chart.renderer.boxWrapper.css(optionsChart.style); // #2723 // docs: remove disclaimer in API about this working only globally
+				new SVGRenderer(container, chartWidth, chartHeight, optionsChart.style, true) :
+				new Renderer(container, chartWidth, chartHeight, optionsChart.style);
 
 		if (useCanVG) {
 			// If we need canvg library, extend and configure the renderer
@@ -11707,12 +11743,13 @@ Chart.prototype = {
 				chart.chartBackground = renderer.rect(mgn / 2, mgn / 2, chartWidth - mgn, chartHeight - mgn,
 						optionsChart.borderRadius, chartBorderWidth)
 					.attr(bgAttr)
+					.addClass(PREFIX + 'background')
 					.add()
 					.shadow(optionsChart.shadow);
 
 			} else { // resize
 				chartBackground.animate(
-					chartBackground.crisp(null, null, null, chartWidth - mgn, chartHeight - mgn)
+					chartBackground.crisp({ width: chartWidth - mgn, height: chartHeight - mgn })
 				);
 			}
 		}
@@ -11757,12 +11794,13 @@ Chart.prototype = {
 					.attr({
 						stroke: optionsChart.plotBorderColor,
 						'stroke-width': plotBorderWidth,
+						fill: NONE,
 						zIndex: 1
 					})
 					.add();
 			} else {
 				plotBorder.animate(
-					plotBorder.crisp(null, plotLeft, plotTop, plotWidth, plotHeight)
+					plotBorder.crisp({ x: plotLeft, y: plotTop, width: plotWidth, height: plotHeight })
 				);
 			}
 		}
@@ -11843,6 +11881,19 @@ Chart.prototype = {
 	},
 
 	/**
+	 * Render series for the chart
+	 */
+	renderSeries: function () {
+		each(this.series, function (serie) {
+			serie.translate();
+			if (serie.setTooltipPoints) {
+				serie.setTooltipPoints();
+			}
+			serie.render();
+		});
+	},
+
+	/**
 	 * Render all graphics for the chart
 	 */
 	render: function () {
@@ -11898,11 +11949,7 @@ Chart.prototype = {
 				.attr({ zIndex: 3 })
 				.add();
 		}
-		each(chart.series, function (serie) {
-			serie.translate();
-			serie.setTooltipPoints();
-			serie.render();
-		});
+		chart.renderSeries();
 
 		// Labels
 		if (labels.items) {
@@ -12706,7 +12753,7 @@ Series.prototype = {
 	 * @param {Object} data
 	 * @param {Object} redraw
 	 */
-	setData: function (data, redraw, animation, updatePoints) { // docs: animation and updatePoints
+	setData: function (data, redraw, animation, updatePoints) {
 		var series = this,
 			oldData = series.points,
 			oldDataLength = (oldData && oldData.length) || 0,
@@ -12731,7 +12778,7 @@ Series.prototype = {
 
 		// If the point count is the same as is was, just run Point.update which is
 		// cheaper, allows animation, and keeps references to points.
-		if (updatePoints !== false && oldDataLength === dataLength && !series.cropped && !series.hasGroupedData) {
+		if (updatePoints !== false && dataLength && oldDataLength === dataLength && !series.cropped && !series.hasGroupedData) {
 			each(data, function (point, i) {
 				oldData[i].update(point, false);
 			});
@@ -13683,6 +13730,7 @@ Series.prototype = {
 				attribs = {
 					stroke: prop[1],
 					'stroke-width': lineWidth,
+					fill: NONE,
 					zIndex: 1 // #1069
 				};
 				if (dashStyle) {
@@ -14098,7 +14146,7 @@ StackItem.prototype = {
  */
 Axis.prototype.buildStacks = function () {
 	var series = this.series,
-		reversedStacks = pick(this.options.reversedStacks, true), // docs. Demo created. Provide "see also" from series.stacking and legend.reversed.
+		reversedStacks = pick(this.options.reversedStacks, true),
 		i = series.length;
 	if (!this.isXAxis) {
 		this.usePercentage = false;
@@ -15298,7 +15346,6 @@ var ColumnSeries = extendClass(Series, {
 			point.barX = barX;
 			point.pointWidth = pointWidth;
 
-
 			// Round off to obtain crisp edges
 			fromLeft = mathAbs(barX) < 0.5;
 			right = mathRound(barX + barW) + xCrisp;
@@ -15891,14 +15938,14 @@ var PieSeries = {
 			if (graphic) {
 				graphic.animate(extend(shapeArgs, groupTranslation));
 			} else {
-				point.graphic = graphic = renderer.arc(shapeArgs)
+				point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 					.setRadialReference(series.center)
 					.attr(
 						point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE]
 					)
 					.attr({ 
-						'stroke-linejoin': 'round',
-						zIndex: 1 // #2722
+						'stroke-linejoin': 'round'
+						//zIndex: 1 // #2722 (reversed)
 					})
 					.attr(groupTranslation)
 					.add(series.group)
@@ -16483,8 +16530,8 @@ if (seriesTypes.pie) {
 							point.connector = connector = series.chart.renderer.path(connectorPath).attr({
 								'stroke-width': connectorWidth,
 								stroke: options.connectorColor || point.color || '#606060',
-								visibility: visibility,
-								zIndex: 0 // #2722
+								visibility: visibility
+								//zIndex: 0 // #2722 (reversed)
 							})
 							.add(series.group);
 						}
@@ -16670,26 +16717,26 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 		// Add reference to the point
 		each(series.points, function (point) {
 			if (point.graphic) {
-			point.graphic.element.point = point;
+				point.graphic.element.point = point;
 			}
 			if (point.dataLabel) {
-			point.dataLabel.element.point = point;
+				point.dataLabel.element.point = point;
 			}
 		});
 
 		// Add the event listeners, we need to do this only once
 		if (!series._hasTracking) {
 			each(series.trackerGroups, function (key) {
-			if (series[key]) { // we don't always have dataLabelsGroup
-				series[key]
-				.addClass(PREFIX + 'tracker')
-				.on('mouseover', onMouseOver)
-				.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
-				.css(css);
-				if (hasTouch) {
-				series[key].on('touchstart', onMouseOver);
+				if (series[key]) { // we don't always have dataLabelsGroup
+					series[key]
+						.addClass(PREFIX + 'tracker')
+						.on('mouseover', onMouseOver)
+						.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
+						.css(css);
+					if (hasTouch) {
+						series[key].on('touchstart', onMouseOver);
+					}
 				}
-			}
 			});
 			series._hasTracking = true;
 		}
@@ -16801,7 +16848,7 @@ if (seriesTypes.column) {
 }
 
 if (seriesTypes.pie) {
-	PieSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
+	seriesTypes.pie.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
 if (seriesTypes.scatter) {

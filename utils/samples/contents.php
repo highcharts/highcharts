@@ -208,11 +208,11 @@
 
 	<div id="main-nav">
 	<?php
-	$products = array('highcharts', 'maps', 'stock');
+	$products = array('highcharts', 'maps', 'stock', 'issues');
 	$samplesDir = dirname(__FILE__). '/../../samples/';
 	$browser = get_browser(null, true);
 	$browserKey = $browser['parent'];
-	$compare = json_decode(file_get_contents('temp/compare.json'));
+	$compare = @json_decode(file_get_contents('temp/compare.json'));
 
 	$i = 1;
 	foreach ($products as $dir) {
@@ -221,7 +221,7 @@
 			echo "<h2>$dir</h2>";
 			
 			while (false !== ($file = readdir($handle))) {
-				if (preg_match('/^[a-z\-]+$/', $file)) {
+				if (is_dir("$samplesDir/$dir/$file") && substr($file, 0, 1) != '.') {
 					echo "
 					<h4>$dir/$file</h4>
 					<ul>
@@ -234,7 +234,7 @@
 							$batchClass = 'batch';
 							$compareClass = '';
 							if (preg_match('/^[a-z0-9\-,]+$/', $innerFile)) {
-								$yaml = file_get_contents(($samplesDir ."/$dir/$file/$innerFile/demo.details"));
+								$yaml = @file_get_contents(($samplesDir ."/$dir/$file/$innerFile/demo.details"));
 								$path = "$dir/$file/$innerFile";
 								$suffix = '';
 								$dissIndex = '';

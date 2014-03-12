@@ -1,9 +1,5 @@
 /* Support for touch devices */
-
-/* set the global to determine if we're dealing with a touch based device */
-hasTouch = doc.documentElement.ontouchstart !== UNDEFINED;
-
-extend(Highcharts.Pointer, {
+extend(Highcharts.Pointer.prototype, {
 
 	/**
 	 * Run translation operations
@@ -178,6 +174,8 @@ extend(Highcharts.Pointer, {
 	onContainerTouchStart: function (e) {
 		var chart = this.chart;
 
+		hoverChartIndex = chart.index;
+
 		if (e.touches.length === 1) {
 
 			e = this.normalize(e);
@@ -211,7 +209,9 @@ extend(Highcharts.Pointer, {
 	},
 
 	onDocumentTouchEnd: function (e) {
-		this.drop(e);
+		if (defined(hoverChartIndex)) {
+			charts[hoverChartIndex].pointer.drop(e);
+		}
 	}
 
 });

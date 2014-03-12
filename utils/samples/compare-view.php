@@ -148,6 +148,7 @@
 			}
 				
 			function onIdentical() {
+				$.get('compare-update-report.php', { path: '<?php echo $path ?>', diff: 0 });
 				markList("identical");
 				proceed();
 			}

@@ -16,6 +16,7 @@
 		defaultOptions = H.getOptions(),
 		each = H.each,
 		extend = H.extend,
+		format = H.format,
 		wrap = H.wrap,
 		Chart = H.Chart,
 		seriesTypes = H.seriesTypes,
@@ -175,8 +176,8 @@
 
 	Chart.prototype.getDrilldownBackText = function () {
 		var lastLevel = this.drilldownLevels[this.drilldownLevels.length - 1];
-
-		return this.options.lang.drillUpText.replace('{series.name}', lastLevel.seriesOptions.name);
+		lastLevel.series = lastLevel.seriesOptions;
+		return format(this.options.lang.drillUpText, lastLevel);
 
 	};
 
@@ -222,13 +223,15 @@
 			drilldownLevels = chart.drilldownLevels,
 			levelNumber = drilldownLevels[drilldownLevels.length - 1].levelNumber,
 			i = drilldownLevels.length,
+			chartSeries = chart.series,
+			seriesI = chartSeries.length,
 			level,
 			oldSeries,
 			newSeries,
 			oldExtremes,
 			addSeries = function (seriesOptions) {
 				var addedSeries;
-				each(chart.series, function (series) {
+				each(chartSeries, function (series) {
 					if (series.userOptions === seriesOptions) {
 						addedSeries = series;
 					}
@@ -249,7 +252,12 @@
 			if (level.levelNumber === levelNumber) {
 				drilldownLevels.pop();
 				
-				oldSeries = level.lowerSeries;
+				// Get the lower series by id (#2786)
+				while (seriesI-- && !oldSeries) {
+					if (chartSeries[seriesI].options.id === level.lowerSeriesOptions.id) {
+						oldSeries = chartSeries[seriesI];
+					}
+				}
 
 				each(level.levelSeriesOptions, addSeries);
 				
@@ -257,7 +265,7 @@
 
 				if (newSeries.type === oldSeries.type) {
 					newSeries.drilldownLevel = level;
-					newSeries.options.animation = true;
+					newSeries.options.animation = chart.options.drilldown.animation;
 
 					if (oldSeries.animateDrillupFrom) {
 						oldSeries.animateDrillupFrom(level);
@@ -287,47 +295,14 @@
 		}
 	};
 
-	PieSeries.prototype.animateDrilldown = function (init) {
-		var level = this.chart.drilldownLevels[this.chart.drilldownLevels.length - 1],
-			animationOptions = this.chart.options.drilldown.animation,
-			animateFrom = level.shapeArgs,
-			start = animateFrom.start,
-			angle = animateFrom.end - start,
-			startAngle = angle / this.points.length,
-			startColor = H.Color(level.color).rgba;
 
-		if (!init) {
-			each(this.points, function (point, i) {
-				var endColor = H.Color(point.color).rgba;
-
-				/*jslint unparam: true*/
-				point.graphic
-					.attr(H.merge(animateFrom, {
-						start: start + i * startAngle,
-						end: start + (i + 1) * startAngle
-					}))
-					.animate(point.shapeArgs, H.merge(animationOptions, {
-						step: function (val, fx) {
-							if (fx.prop === 'start') {
-								this.attr({
-									fill: tweenColors(startColor, endColor, fx.pos)
-								});
-							}
-						}
-					}));
-				/*jslint unparam: false*/
-			});
-			this.animate = null;
-		}
-	};
-
-
+	ColumnSeries.prototype.supportsDrilldown = true;
+	
 	/**
 	 * When drilling up, keep the upper series invisible until the lower series has
 	 * moved into place
 	 */
-	PieSeries.prototype.animateDrillupTo = 
-			ColumnSeries.prototype.animateDrillupTo = function (init) {
+	ColumnSeries.prototype.animateDrillupTo = function (init) {
 		if (!init) {
 			var newSeries = this,
 				level = newSeries.drilldownLevel;
@@ -381,9 +356,11 @@
 			animateFrom.x += (this.xAxis.oldPos - this.xAxis.pos);
 	
 			each(this.points, function (point) {
-				point.graphic
-					.attr(animateFrom)
-					.animate(point.shapeArgs, animationOptions);
+				if (point.graphic) {
+					point.graphic
+						.attr(animateFrom)
+						.animate(point.shapeArgs, animationOptions);
+				}
 				if (point.dataLabel) {
 					point.dataLabel.fadeIn(animationOptions);
 				}
@@ -397,39 +374,96 @@
 	 * When drilling up, pull out the individual point graphics from the lower series
 	 * and animate them into the origin point in the upper series.
 	 */
-	ColumnSeries.prototype.animateDrillupFrom = 
-		PieSeries.prototype.animateDrillupFrom =
-	function (level) {
+	ColumnSeries.prototype.animateDrillupFrom = function (level) {
 		var animationOptions = this.chart.options.drilldown.animation,
-			group = this.group;
+			group = this.group,
+			series = this;
+
+		// Cancel mouse events on the series group (#2787)
+		each(series.trackerGroups, function (key) {
+			if (series[key]) { // we don't always have dataLabelsGroup
+				series[key].on('mouseover');
+			}
+		});
+			
 
 		delete this.group;
 		each(this.points, function (point) {
 			var graphic = point.graphic,
-				startColor = H.Color(point.color).rgba;
-
-			delete point.graphic;
-
-			/*jslint unparam: true*/
-			graphic.animate(level.shapeArgs, H.merge(animationOptions, {
-
-				step: function (val, fx) {
-					if (fx.prop === 'start') {
-						this.attr({
-							fill: tweenColors(startColor, H.Color(level.color).rgba, fx.pos)
-						});
-					}
-				},
-				complete: function () {
+				startColor = H.Color(point.color).rgba,
+				endColor = H.Color(level.color).rgba,
+				complete = function () {
 					graphic.destroy();
 					if (group) {
 						group = group.destroy();
 					}
+				};
+
+			if (graphic) {
+			
+				delete point.graphic;
+
+				if (animationOptions) {
+					/*jslint unparam: true*/
+					graphic.animate(level.shapeArgs, H.merge(animationOptions, {
+						step: function (val, fx) {
+							if (fx.prop === 'start' && startColor.length === 4 && endColor.length === 4) {
+								this.attr({
+									fill: tweenColors(startColor, endColor, fx.pos)
+								});
+							}
+						},
+						complete: complete
+					}));
+					/*jslint unparam: false*/
+				} else {
+					graphic.attr(level.shapeArgs);
+					complete();
 				}
-			}));
-			/*jslint unparam: false*/
+			}
 		});
 	};
+
+	if (PieSeries) {
+		extend(PieSeries.prototype, {
+			supportsDrilldown: true,
+			animateDrillupTo: ColumnSeries.prototype.animateDrillupTo,
+			animateDrillupFrom: ColumnSeries.prototype.animateDrillupFrom,
+
+			animateDrilldown: function (init) {
+				var level = this.chart.drilldownLevels[this.chart.drilldownLevels.length - 1],
+					animationOptions = this.chart.options.drilldown.animation,
+					animateFrom = level.shapeArgs,
+					start = animateFrom.start,
+					angle = animateFrom.end - start,
+					startAngle = angle / this.points.length,
+					startColor = H.Color(level.color).rgba;
+
+				if (!init) {
+					each(this.points, function (point, i) {
+						var endColor = H.Color(point.color).rgba;
+
+						/*jslint unparam: true*/
+						point.graphic
+							.attr(H.merge(animateFrom, {
+								start: start + i * startAngle,
+								end: start + (i + 1) * startAngle
+							}))[animationOptions ? 'animate' : 'attr'](point.shapeArgs, H.merge(animationOptions, {
+								step: function (val, fx) {
+									if (fx.prop === 'start' && startColor.length === 4 && endColor.length === 4) {
+										this.attr({
+											fill: tweenColors(startColor, endColor, fx.pos)
+										});
+									}
+								}
+							}));
+						/*jslint unparam: false*/
+					});
+					this.animate = null;
+				}
+			}
+		});
+	}
 	
 	H.Point.prototype.doDrilldown = function (_holdRedraw) {
 		var series = this.series,
@@ -523,8 +557,6 @@
 	});
 
 	// Mark the trackers with a pointer 
-	ColumnSeries.prototype.supportsDrilldown = true;
-	PieSeries.prototype.supportsDrilldown = true;
 	var type, 
 		drawTrackerWrapper = function (proceed) {
 			proceed.call(this);

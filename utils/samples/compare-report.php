@@ -20,7 +20,7 @@ foreach ($compare as $path => $sample) {
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>Compare SVG</title>
+		<title>Comparison report :: Highcharts Utils</title>
 		<script src="http://code.jquery.com/jquery.js"></script>
 		<script>
 			function updateDiff() {
@@ -170,13 +170,15 @@ foreach ($compare as $path => $sample) {
 						}
 
 
+
 						echo "<tr><th class='path'>$path</th>";
 						
 						foreach ($browsers as $browser) {
 							echo "<td class='value'>" . (isset($sample->$browser) ? round($sample->$browser, 2) : '-') . '</td>';
 						}
 
-						echo "<td class='diff'>$sample->range</td>"; 
+						$range = isset($sample->range) ? $sample->range : '';
+						echo "<td class='diff'>$range</td>"; 
 						echo '</tr>';
 						$i++;
 					}

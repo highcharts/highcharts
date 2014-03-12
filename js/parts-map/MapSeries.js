@@ -170,10 +170,14 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * Get the bounding box of all paths in the map combined.
 	 */
 	getBox: function (paths) {
-		var maxX = Number.MIN_VALUE, 
-			minX =  Number.MAX_VALUE, 
-			maxY = Number.MIN_VALUE, 
-			minY =  Number.MAX_VALUE,
+		var MAX_VALUE = Number.MAX_VALUE,
+			maxX = -MAX_VALUE, 
+			minX =  MAX_VALUE, 
+			maxY = -MAX_VALUE, 
+			minY =  MAX_VALUE,
+			minRange = MAX_VALUE,
+			xAxis = this.xAxis,
+			yAxis = this.yAxis,
 			hasBox;
 		
 		// Find the bounding box
@@ -187,10 +191,10 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				var path = point.path || [],
 					i = path.length,
 					even = false, // while loop reads from the end
-					pointMaxX = Number.MIN_VALUE, 
-					pointMinX =  Number.MAX_VALUE, 
-					pointMaxY = Number.MIN_VALUE, 
-					pointMinY =  Number.MAX_VALUE;
+					pointMaxX = -MAX_VALUE, 
+					pointMinX =  MAX_VALUE, 
+					pointMaxY = -MAX_VALUE, 
+					pointMinY =  MAX_VALUE;
 
 				// The first time a map point is used, analyze its box
 				if (!point._foundBox) {
@@ -220,17 +224,27 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				minX = Math.min(minX, point._minX);
 				maxY = Math.max(maxY, point._maxY);
 				minY = Math.min(minY, point._minY);
-
+				minRange = Math.min(point._maxX - point._minX, point._maxY - point._minY, minRange);
 				hasBox = true;
 			}
 		});
 
 		// Set the box for the whole series
 		if (hasBox) {
-			this.minY = Math.min(minY, pick(this.minY, Number.MAX_VALUE));
-			this.maxY = Math.max(maxY, pick(this.maxY, Number.MIN_VALUE));
-			this.minX = Math.min(minX, pick(this.minX, Number.MAX_VALUE));
-			this.maxX = Math.max(maxX, pick(this.maxX, Number.MIN_VALUE));
+			this.minY = Math.min(minY, pick(this.minY, MAX_VALUE));
+			this.maxY = Math.max(maxY, pick(this.maxY, -MAX_VALUE));
+			this.minX = Math.min(minX, pick(this.minX, MAX_VALUE));
+			this.maxX = Math.max(maxX, pick(this.maxX, -MAX_VALUE));
+
+			// If no minRange option is set, set the default minimum zooming range to 5 times the 
+			// size of the smallest element
+			if (xAxis.options.minRange === undefined) {
+				xAxis.minRange = Math.min(5 * minRange, (this.maxX - this.minX) / 5, xAxis.minRange || MAX_VALUE);
+			}
+			if (yAxis.options.minRange === undefined) {
+				yAxis.minRange = Math.min(5 * minRange, (this.maxY - this.minY) / 5, yAxis.minRange || MAX_VALUE);
+			}
+
 		}
 	},
 	
@@ -427,22 +441,22 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		}
 		
 		// Draw the shapes again
-		if (series.isDirtyData || renderer.isVML) {
-
-			// Draw them in transformGroup
-			series.group = series.transformGroup;
-			seriesTypes.column.prototype.drawPoints.apply(series);
-			series.group = group; // Reset
+		if (series.isDirtyData || renderer.isVML || !baseTrans) {
 
 			// Individual point actions	
 			each(series.points, function (point) {
 
 				// Reset color on update/redraw
 				if (chart.hasRendered && point.graphic) {
-					point.graphic.attr('fill', point.options.color);
+					point.graphic.attr('fill', point.color);
 				}
 
 			});
+
+			// Draw them in transformGroup
+			series.group = series.transformGroup;
+			seriesTypes.column.prototype.drawPoints.apply(series);
+			series.group = group; // Reset
 
 			// Set the base for later scale-zooming. The originX and originY properties are the 
 			// axis values in the plot area's upper left corner.
@@ -606,7 +620,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * When drilling up, keep the upper series invisible until the lower series has
 	 * moved into place
 	 */
-	_animateDrillupTo: function (init) {
+	animateDrillupTo: function (init) {
 		seriesTypes.column.prototype.animateDrillupTo.call(this, init);
 	}
 }));

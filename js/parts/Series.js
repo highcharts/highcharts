@@ -335,7 +335,7 @@ Series.prototype = {
 	 * @param {Object} data
 	 * @param {Object} redraw
 	 */
-	setData: function (data, redraw, animation, updatePoints) { // docs: animation and updatePoints
+	setData: function (data, redraw, animation, updatePoints) {
 		var series = this,
 			oldData = series.points,
 			oldDataLength = (oldData && oldData.length) || 0,
@@ -360,7 +360,7 @@ Series.prototype = {
 
 		// If the point count is the same as is was, just run Point.update which is
 		// cheaper, allows animation, and keeps references to points.
-		if (updatePoints !== false && oldDataLength === dataLength && !series.cropped && !series.hasGroupedData) {
+		if (updatePoints !== false && dataLength && oldDataLength === dataLength && !series.cropped && !series.hasGroupedData) {
 			each(data, function (point, i) {
 				oldData[i].update(point, false);
 			});
@@ -1312,6 +1312,7 @@ Series.prototype = {
 				attribs = {
 					stroke: prop[1],
 					'stroke-width': lineWidth,
+					fill: NONE,
 					zIndex: 1 // #1069
 				};
 				if (dashStyle) {

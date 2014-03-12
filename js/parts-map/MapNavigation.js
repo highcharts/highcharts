@@ -130,6 +130,10 @@ extend(Chart.prototype, {
 		}
 		
 		// Prevent zooming until this one is finished animating
+		/*chart.holdMapZoom = true;
+		setTimeout(function () {
+			chart.holdMapZoom = false;
+		}, 200);*/
 		/*delay = animation ? animation.duration || 500 : 0;
 		if (delay) {
 			chart.isMapZooming = true;

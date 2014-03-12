@@ -1,3 +1,5 @@
+var wrap = Highcharts.wrap,
+	seriesTypes = Highcharts.seriesTypes;
 
 Highcharts.Series.prototype.getContext = function () {
 	if (!this.canvas) {
@@ -13,8 +15,8 @@ Highcharts.Series.prototype.getContext = function () {
 	return this.ctx;
 
 }
-Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
-	console.time('@drawPoints');
+Highcharts.wrap(Highcharts.seriesTypes.heatmap.prototype, 'drawPoints', function (proceed) {
+	//console.time('@drawPoints');
 
 	var useCanvas = true;
 
@@ -39,7 +41,7 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'drawPoints', function 
 	
 	}
 
-	console.timeEnd('@drawPoints');
+	//console.timeEnd('@drawPoints');
 });
 /*
 Highcharts.seriesTypes.scatter.prototype.pointClass = Highcharts.extendClass(Highcharts.Point, {

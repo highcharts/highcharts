@@ -1,6 +1,6 @@
 $(function () {
 
-    $.getJSON('http://www.highcharts.local/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
 
         // Remove Greenland from the map
         var greenland = Highcharts.extend(data[73], Highcharts.maps.world[72]);
