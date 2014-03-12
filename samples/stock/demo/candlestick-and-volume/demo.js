@@ -46,14 +46,14 @@ $(function() {
 		        title: {
 		            text: 'OHLC'
 		        },
-		        height: 200,
+		        height: 160,
 		        lineWidth: 2
 		    }, {
 		        title: {
 		            text: 'Volume'
 		        },
-		        top: 300,
-		        height: 100,
+		        top: 248,
+		        height: 60,
 		        offset: 0,
 		        lineWidth: 2
 		    }],
