@@ -1,6 +1,6 @@
 <?php 
 	// Move the log file back from temp dir
-	copy(sys_get_temp_dir() . '/log.txt', 'log.txt');
+	@copy(sys_get_temp_dir() . '/log.txt', 'log.txt');
 ?>
 <html>
 	

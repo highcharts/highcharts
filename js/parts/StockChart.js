@@ -144,6 +144,7 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 // Override getPlotLinePath to allow for multipane charts
 Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, translatedValue) {
 	var axis = this,
+		series = (this.isLinked ? this.linkedParent.series : this.series),
 		renderer = axis.chart.renderer,
 		axisLeft = axis.left,
 		axisTop = axis.top,
@@ -151,25 +152,29 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 		y1,
 		x2,
 		y2,
-		result = [];
+		result = [],
+		axes,
+		uniqueAxes;
 
 	// Get the related axes.
-	var axes = (this.isXAxis ? 
-					(defined(this.options.yAxis) ?
-						[this.chart.yAxis[this.options.yAxis]] : 
-						map(axis.series, function (S) { return S.yAxis; })
-					) :
-					(defined(this.options.xAxis) ?
-						[this.chart.xAxis[this.options.xAxis]] : 
-						map(axis.series, function (S) { return S.xAxis; })
-					)
-				);
+	axes = (this.isXAxis ? 
+		(defined(this.options.yAxis) ?
+			[this.chart.yAxis[this.options.yAxis]] : 
+			map(series, function (S) { return S.yAxis; })
+		) :
+		(defined(this.options.xAxis) ?
+			[this.chart.xAxis[this.options.xAxis]] : 
+			map(series, function (S) { return S.xAxis; })
+		)
+	);
 
-	// remove duplicates in the axes array
-	var uAxes = [];
+	// Remove duplicates in the axes array. If there are no axes in the axes array,
+	// we are adding an axis without data, so we need to populate this with grid
+	// lines (#2796).
+	uniqueAxes = axes.length ? [] : [axis];
 	each(axes, function (axis2) {
-		if (inArray(axis2, uAxes) === -1) {
-			uAxes.push(axis2);
+		if (inArray(axis2, uniqueAxes) === -1) {
+			uniqueAxes.push(axis2);
 		}
 	});
 	
@@ -177,7 +182,7 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 	
 	if (!isNaN(translatedValue)) {
 		if (axis.horiz) {
-			each(uAxes, function (axis2) {
+			each(uniqueAxes, function (axis2) {
 				y1 = axis2.top;
 				y2 = y1 + axis2.len;
 				x1 = x2 = mathRound(translatedValue + axis.transB);
@@ -187,7 +192,7 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 				}
 			});
 		} else {
-			each(uAxes, function (axis2) {
+			each(uniqueAxes, function (axis2) {
 				x1 = axis2.left;
 				x2 = x1 + axis2.width;
 				y1 = y2 = mathRound(axisTop + axis.height - translatedValue);
@@ -200,8 +205,6 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 	}
 	if (result.length > 0) {
 		return renderer.crispPolyLine(result, lineWidth || 1); 
-	} else {
-		return null;
 	}
 };
 
@@ -270,7 +273,7 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	if (!crossLabel) {
 		crossLabel = this.crossLabel = chart.renderer.label()			
 		.attr({
-			align: options.align || horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'center') : (this.labelAlign === 'left' ? 'left' : 'center'),
+			align: options.align || (horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'left') : (this.labelAlign === 'left' ? 'left' : 'center')),
 			zIndex: 12,
 			height: horiz ? 16 : UNDEFINED,
 			fill: options.backgroundColor || (this.series[0] && this.series[0].color) || 'gray',

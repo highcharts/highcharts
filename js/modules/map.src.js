@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.0.0-beta (2014-02-24)
+ * @license Highmaps JS v1.0.0-beta-modified ()
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -199,16 +199,15 @@ extend(ColorAxis.prototype, {
 	 * is the from color and 1 is the to color
 	 */
 	tweenColors: function (from, to, pos) {
-		var i = 4,
-			val,
-			rgba = [];
-
-		while (i--) {
-			val = to.rgba[i] + (from.rgba[i] - to.rgba[i]) * (1 - pos);
-			rgba[i] = i === 3 ? val : Math.round(val); // Do not round opacity
-		}
-		return 'rgba(' + rgba.join(',') + ')';
-	},
+		// Check for has alpha, because rgba colors perform worse due to lack of
+		// support in WebKit.
+		var hasAlpha = (to.rgba[3] !== 1 || from.rgba[3] !== 1);
+		return (hasAlpha ? 'rgba(' : 'rgb(') + 
+			Math.round(to.rgba[0] + (from.rgba[0] - to.rgba[0]) * (1 - pos)) + ',' + 
+			Math.round(to.rgba[1] + (from.rgba[1] - to.rgba[1]) * (1 - pos)) + ',' + 
+			Math.round(to.rgba[2] + (from.rgba[2] - to.rgba[2]) * (1 - pos)) + 
+			(hasAlpha ? (',' + (to.rgba[3] + (from.rgba[3] - to.rgba[3]) * (1 - pos))) : '') + ')';
+		},
 
 	initDataClasses: function (userOptions) {
 		var axis = this,
@@ -1107,10 +1106,10 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			// If no minRange option is set, set the default minimum zooming range to 5 times the 
 			// size of the smallest element
 			if (xAxis.options.minRange === undefined) {
-				xAxis.minRange = Math.min(5 * minRange, xAxis.minRange || MAX_VALUE);
+				xAxis.minRange = Math.min(5 * minRange, (this.maxX - this.minX) / 5, xAxis.minRange || MAX_VALUE);
 			}
 			if (yAxis.options.minRange === undefined) {
-				yAxis.minRange = Math.min(5 * minRange, yAxis.minRange || MAX_VALUE);
+				yAxis.minRange = Math.min(5 * minRange, (this.maxY - this.minY) / 5, yAxis.minRange || MAX_VALUE);
 			}
 
 		}
@@ -1504,7 +1503,8 @@ seriesTypes.mapline = extendClass(seriesTypes.map, {
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'color',
 		'stroke-width': 'lineWidth',
-		fill: 'fillColor'
+		fill: 'fillColor',
+		dashstyle: 'dashStyle'
 	},
 	drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
 });
@@ -1562,7 +1562,7 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	init: function () {
 		seriesTypes.scatter.prototype.init.apply(this, arguments);
 		this.pointRange = this.options.colsize || 1;
-		// TODO: similar logic for the Y axis
+		this.yAxis.axisPointRange = this.options.rowsize || 1; // general point range
 	},
 	translate: function () {
 		var series = this,
@@ -1592,7 +1592,6 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			};
 		});
 		
-		series.pointRange = options.colsize || 1;
 		series.translateColors();
 	},
 	drawPoints: seriesTypes.column.prototype.drawPoints,

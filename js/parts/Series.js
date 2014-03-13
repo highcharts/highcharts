@@ -335,7 +335,7 @@ Series.prototype = {
 	 * @param {Object} data
 	 * @param {Object} redraw
 	 */
-	setData: function (data, redraw, animation, updatePoints) { // docs: animation and updatePoints
+	setData: function (data, redraw, animation, updatePoints) {
 		var series = this,
 			oldData = series.points,
 			oldDataLength = (oldData && oldData.length) || 0,
@@ -737,7 +737,7 @@ Series.prototype = {
 			if (stacking && series.visible && stack && stack[xValue]) {
 
 				pointStack = stack[xValue];
-				stackValues = pointStack.points[series.index];
+				stackValues = pointStack.points[series.index + ',' + i];
 				yBottom = stackValues[0];
 				yValue = stackValues[1];
 
@@ -1312,6 +1312,7 @@ Series.prototype = {
 				attribs = {
 					stroke: prop[1],
 					'stroke-width': lineWidth,
+					fill: NONE,
 					zIndex: 1 // #1069
 				};
 				if (dashStyle) {

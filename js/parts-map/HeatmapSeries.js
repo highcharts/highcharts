@@ -9,7 +9,7 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	init: function () {
 		seriesTypes.scatter.prototype.init.apply(this, arguments);
 		this.pointRange = this.options.colsize || 1;
-		// TODO: similar logic for the Y axis
+		this.yAxis.axisPointRange = this.options.rowsize || 1; // general point range
 	},
 	translate: function () {
 		var series = this,
@@ -39,7 +39,6 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			};
 		});
 		
-		series.pointRange = options.colsize || 1;
 		series.translateColors();
 	},
 	drawPoints: seriesTypes.column.prototype.drawPoints,

@@ -3,7 +3,7 @@
 ***/
 // Shorthand to check the is3d flag
 Highcharts.Chart.prototype.is3d = function () {
-	return this.options.chart.is3d || false;
+	return this.options.chart.options3d && this.options.chart.options3d.enabled;
 };
 
 Highcharts.wrap(Highcharts.Chart.prototype, 'isInsidePlot', function (proceed) {
@@ -18,11 +18,12 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 	var args = arguments;
 	args[1] = Highcharts.merge({ 
 		chart: {
-			is3d: false,
 			options3d: {
+				enabled: false,
 				alpha: 0,
 				beta: 0,
-				depth: 0,
+				depth: 100,
+				viewDistance: 100,
 
 				frame: {
 					bottom: { size: 1, color: 'transparent' },
@@ -61,19 +62,4 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'redraw', function (proceed) {
 		this.isDirtyBox = true;
 	}
 	proceed.apply(this, [].slice.call(arguments, 1));	
-});
-
-
-Highcharts.wrap(Highcharts.Chart.prototype, 'firstRender', function (proceed) {		
-	proceed.apply(this, [].slice.call(arguments, 1));
-	
-	if (this.is3d()) {
-		// Change the order for drawing the series
-		var invSeries = [];
-		for (i = 0; i < this.series.length; i++) {
-			invSeries.push(this.series[this.series.length - (i + 1)]);
-		}
-		this.series = invSeries;	
-		this.redraw();
-	}
 });

@@ -16,11 +16,12 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 		typeOptions = options.plotOptions[type],		
 		options3d = options.chart.options3d,
 
-		depth = typeOptions.depth || 0,
+		depth = typeOptions.depth || 25,
 		origin = {
 			x: chart.plotWidth / 2,
 			y: chart.plotHeight / 2, 
-			z: options3d.depth
+			z: options3d.depth,
+			vd: options3d.viewDistance
 		},
 		alpha = options3d.alpha,
 		beta = options3d.beta;
@@ -46,16 +47,16 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
 	// Do not do this if the chart is not 3D
 	if (this.chart.is3d()) {
-		var type = this.chart.options.chart.type,
-			options = this.chart.options.plotOptions[type];
-		
-		var stack = (this.options.stack || 0),
-			order = this.chart.series.length - this._i;
-
-		var z = this.group.zIndex * 10;
-
-		this.group.attr({zIndex: z});
+		this.group.attr({zIndex: this.group.zIndex * 10});
+		// Set the border color to the fill color to provide a smooth edge
+		Highcharts.each(this.data, function (point) {
+			var c = point.options.borderColor || point.color || point.series.userOptions.borderColor || point.series.color;
+			point.options.borderColor = c;
+			point.borderColor = c;
+			point.pointAttr[''].stroke = c;
+		});	
 	}
+
 	proceed.apply(this, [].slice.call(arguments, 1));
 });
 
@@ -87,10 +88,10 @@ Highcharts.wrap(Highcharts.seriesTypes.cylinder.prototype, 'translate', function
 		origin = {
 			x: chart.inverted ? chart.plotHeight / 2 : chart.plotWidth / 2,
 			y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2, 
-			z: options3d.depth
+			z: options3d.depth,
+			vd: options3d.viewDistance
 		},
-		alpha = options3d.alpha,
-		beta = options3d.beta;
+		alpha = options3d.alpha;
 
 	var z = cylOptions.stacking ? (this.options.stack || 0) * depth : series._i * depth;
 	z += depth / 2;

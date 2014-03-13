@@ -91,7 +91,7 @@ var GaugeSeries = {
 				rearLength = (pInt(pick(dialOptions.rearLength, 10)) * radius) / 100,
 				baseWidth = dialOptions.baseWidth || 3,
 				topWidth = dialOptions.topWidth || 1,
-				overshoot = options.overshoot, // docs: http://jsfiddle.net/highcharts/gEGaf/1/
+				overshoot = options.overshoot,
 				rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true);
 
 			// Handle the wrap and overshoot options

@@ -2,19 +2,19 @@ $(function () {
     $('#container').highcharts({
         chart: {
             type: 'pie',
-            is3d: true,
             options3d: {
-                alpha: 15,
-                beta: 15,
+				enabled: true,
+                alpha: 25
             }
         },
         plotOptions: {
             pie: {
-                depth: 25  
+                innerSize: 100,
+                depth: 45
             }
         },
         series: [{
-            data: [2, 4, 6, 1, 3]          
+            data: [2, 4, 6, 1, 3]
         }]
     });
 });

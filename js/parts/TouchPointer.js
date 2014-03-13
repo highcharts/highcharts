@@ -174,6 +174,8 @@ extend(Highcharts.Pointer.prototype, {
 	onContainerTouchStart: function (e) {
 		var chart = this.chart;
 
+		hoverChartIndex = chart.index;
+
 		if (e.touches.length === 1) {
 
 			e = this.normalize(e);
@@ -207,7 +209,9 @@ extend(Highcharts.Pointer.prototype, {
 	},
 
 	onDocumentTouchEnd: function (e) {
-		this.drop(e);
+		if (defined(hoverChartIndex)) {
+			charts[hoverChartIndex].pointer.drop(e);
+		}
 	}
 
 });

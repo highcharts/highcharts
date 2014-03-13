@@ -143,7 +143,7 @@ function getScripts(group, tests) {
 			}
 			
 			start = new Date();
-			new Highcharts.Chart(options, function() { 
+			new Highcharts[options._constructor || 'Chart'](options, function() { 
 
 				total = total ? total + Math.round((new Date() - start)) : Math.round((new Date() - start));
 

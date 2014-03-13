@@ -84,7 +84,9 @@ Highcharts.VMLElement = VMLElement = {
 		}
 
 		// fire an event for internal hooks
-		fireEvent(wrapper, 'add');
+		if (wrapper.onAdd) {
+			wrapper.onAdd();
+		}
 
 		return wrapper;
 	},
@@ -602,7 +604,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 * @param {Number} width
 	 * @param {Number} height
 	 */
-	init: function (container, width, height) {
+	init: function (container, width, height, style) {
 		var renderer = this,
 			boxWrapper,
 			box,
@@ -610,9 +612,9 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 		renderer.alignedObjects = [];
 
-		boxWrapper = renderer.createElement(DIV);
+		boxWrapper = renderer.createElement(DIV)
+			.css(extend(this.getStyle(style), { position: RELATIVE}));
 		box = boxWrapper.element;
-		box.style.position = RELATIVE; // for freeform drawing using renderer directly
 		container.appendChild(boxWrapper.element);
 
 
@@ -1003,29 +1005,10 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	},
 
 	/**
-	 * VML uses a shape for rect to overcome bugs and rotation problems
+	 * For rectangles, VML uses a shape for rect to overcome bugs and rotation problems
 	 */
-	rect: function (x, y, width, height, r, strokeWidth) {
-		r = isObject(x) ? x.r : r;
-
-		var wrapper = this.symbol('rect'),
-			attr = isObject(x) ? x : {
-				x: x,
-				y: y,
-				width: width,
-				height: height
-			};
-
-		if (strokeWidth !== UNDEFINED) {
-			attr.strokeWidth = strokeWidth;
-			attr = wrapper.crisp(attr);
-		}
-
-		if (r) {
-			attr.rx = attr.ry = r;
-		}		
-		
-		return wrapper.attr(attr);
+	createElement: function (nodeName) {
+		return nodeName === 'rect' ? this.symbol(nodeName) : SVGRenderer.prototype.createElement.call(this, nodeName);	
 	},
 
 	/**

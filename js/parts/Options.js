@@ -65,10 +65,10 @@ defaultOptions = {
 		//spacingRight: 10,
 		//spacingBottom: 15,
 		//spacingLeft: 10,
-		style: {
-			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
-			fontSize: '12px'
-		},
+		//style: {
+		//	fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
+		//	fontSize: '12px'
+		//},
 		backgroundColor: '#FFFFFF',
 		//plotBackgroundColor: null,
 		plotBorderColor: '#C0C0C0',

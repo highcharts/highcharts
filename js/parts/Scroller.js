@@ -381,6 +381,7 @@ Scroller.prototype = {
 				// the scrollbar track
 				strokeWidth = scrollbarOptions.trackBorderWidth;
 				scroller.scrollbarTrack = scrollbarTrack = renderer.rect().attr({
+					x: 0,
 					y: -strokeWidth % 2 / 2,
 					fill: scrollbarOptions.trackBackgroundColor,
 					stroke: scrollbarOptions.trackBorderColor,

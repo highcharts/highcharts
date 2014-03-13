@@ -133,9 +133,6 @@ Axis.prototype = {
 	 */
 	defaultLeftAxisOptions: {
 		labels: {
-			style: {
-				lineHeight: '11px'
-			},
 			x: -8,
 			y: null
 		},
@@ -149,9 +146,6 @@ Axis.prototype = {
 	 */
 	defaultRightAxisOptions: {
 		labels: {
-			style: {
-				lineHeight: '11px'
-			},
 			x: 8,
 			y: null
 		},
@@ -768,7 +762,7 @@ Axis.prototype = {
 	setAxisTranslation: function (saveOld) {
 		var axis = this,
 			range = axis.max - axis.min,
-			pointRange = 0,
+			pointRange = axis.axisPointRange || 0,
 			closestPointRange,
 			minPointOffset = 0,
 			pointRangePadding = 0,
@@ -778,14 +772,14 @@ Axis.prototype = {
 			transA = axis.transA;
 
 		// Adjust translation for padding. Y axis with categories need to go through the same (#1784).
-		if (axis.isXAxis || hasCategories) {
+		if (axis.isXAxis || hasCategories || pointRange) {
 			if (linkedParent) {
 				minPointOffset = linkedParent.minPointOffset;
 				pointRangePadding = linkedParent.pointRangePadding;
 
 			} else {
 				each(axis.series, function (series) {
-					var seriesPointRange = mathMax(series.pointRange, +hasCategories),
+					var seriesPointRange = hasCategories ? 1 : (axis.isXAxis ? series.pointRange : (axis.axisPointRange || 0)), // #2806
 						pointPlacement = series.options.pointPlacement,
 						seriesClosestPointRange = series.closestPointRange;
 
@@ -905,7 +899,7 @@ Axis.prototype = {
 
 		// Pad the values to get clear of the chart's edges. To avoid tickInterval taking the padding
 		// into account, we do this after computing tick interval (#1337).
-		if (!categories && !axis.usePercentage && !isLinked && defined(axis.min) && defined(axis.max)) {
+		if (!categories && !axis.axisPointRange && !axis.usePercentage && !isLinked && defined(axis.min) && defined(axis.max)) {
 			length = axis.max - axis.min;
 			if (length) {
 				if (!defined(options.min) && !defined(axis.userMin) && minPadding && (axis.dataMin < 0 || !axis.ignoreMinPadding)) {
@@ -933,7 +927,7 @@ Axis.prototype = {
 			);
 			// For squished axes, set only two ticks
 			if (!defined(tickIntervalOption) && axis.len < tickPixelIntervalOption && !this.isRadial &&
-					!categories && options.startOnTick && options.endOnTick) {
+					!this.isLog && !categories && options.startOnTick && options.endOnTick) {
 				keepTwoTicksOnly = true;
 				axis.tickInterval /= 4; // tick extremes closer to the real values
 			}
@@ -1382,6 +1376,7 @@ Axis.prototype = {
 				.add();
 			axis.labelGroup = renderer.g('axis-labels')
 				.attr({ zIndex: labelOptions.zIndex || 7 })
+				.addClass(PREFIX + axis.coll.toLowerCase() + '-labels')
 				.add();
 		}
 
@@ -1473,6 +1468,7 @@ Axis.prototype = {
 						axisTitleOptions.textAlign ||
 						{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
 				})
+				.addClass(PREFIX + this.coll.toLowerCase() + '-title')
 				.css(axisTitleOptions.style)
 				.add(axis.axisGroup);
 				axis.axisTitle.isNew = true;
@@ -1606,7 +1602,7 @@ Axis.prototype = {
 			showAxis = axis.showAxis,
 			from,
 			overflow = options.labels.overflow,
-			justifyLabels = axis.justifyLabels = horiz && overflow !== false, // docs: false is new
+			justifyLabels = axis.justifyLabels = horiz && overflow !== false,
 			to;
 
 		// Reset

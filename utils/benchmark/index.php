@@ -1,12 +1,11 @@
-<!DOCTYPE html>
+<?php 
+session_start();
+?><!DOCTYPE html>
 <html>
 	<head>
 		<link rel="stylesheet" type="text/css" href="test-style.css">
 
 		<?php
-			if (!isset($_SESSION)){
-				session_start();
-			}
 
 			// Array of different jquery versions.
 			// index 0 being default.
@@ -17,9 +16,9 @@
 			// Array of different Highcharts versions.
 			// index 0 being default.
 			$highchartsVersions = array(
-				'http://code.highcharts.local/highcharts.js',
-				'http://code.highcharts.com/highcharts.js',
-				'http://github.highcharts.com/highcharts.js'
+				'http://code.highcharts.local/stock/highstock.js',
+				'http://code.highcharts.com/stock/highstock.js',
+				'http://github.highcharts.com/stock/highstock.js'
 			);
 
 			// Repetitions each chart is to be run within runChart();
@@ -48,7 +47,7 @@
 				echo "<script src='".$_SESSION['highcharts']."'></script>";
 
 			} else {
-				echo "<script src='".$highchartsVersios[0]."'></script>";
+				echo "<script src='".$highchartsVersions[0]."'></script>";
 				$_SESSION['highcharts'] = $highchartsVersions[0];
 			}
 
@@ -86,7 +85,7 @@
 
 				// Sort array properly
 				foreach ($tmpFolders as $folder) {
-					if (count(scandir('tests-js/'.$folder)) > 2) {
+					if (is_dir('tests-js/'.$folder) && count(scandir('tests-js/'.$folder)) > 2) {
 						$folders[] = $folder;
 					}
 				}
@@ -197,7 +196,7 @@
 				} else {
 					echo "
 						<form method='post' action='index.php'>
-							<button name='reset' value='reset'>Reset results ($_SESSION)</button>
+							<button name='reset' value='reset'>Reset results</button>
 						</form>
 						";
 				}

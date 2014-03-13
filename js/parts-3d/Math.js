@@ -4,13 +4,9 @@
 var PI = Math.PI,
 	deg2rad = (PI / 180), // degrees to radians 
 	sin = Math.sin,
-	cos = Math.cos,
-
-	min = Math.min,
-	max = Math.max, 
+	cos = Math.cos, 
 
 	round = Math.round;
-
 
 function perspective(points, angle2, angle1, origin) {
 	angle1 *= deg2rad;
@@ -25,7 +21,7 @@ function perspective(points, angle2, angle1, origin) {
 	
 	xe = origin.x;
 	ye = origin.y;
-	ze = (origin.z === 0 ? 0.0001 : origin.z * 100);
+	ze = (origin.z === 0 ? 0.0001 : origin.z) * (origin.vd || 100);
 
 	// some kind of minimum?
 
