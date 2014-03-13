@@ -20,7 +20,8 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 		origin = {
 			x: chart.plotWidth / 2,
 			y: chart.plotHeight / 2, 
-			z: options3d.depth
+			z: options3d.depth,
+			vd: options3d.viewDistance
 		},
 		alpha = options3d.alpha,
 		beta = options3d.beta;
@@ -87,7 +88,8 @@ Highcharts.wrap(Highcharts.seriesTypes.cylinder.prototype, 'translate', function
 		origin = {
 			x: chart.inverted ? chart.plotHeight / 2 : chart.plotWidth / 2,
 			y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2, 
-			z: options3d.depth
+			z: options3d.depth,
+			vd: options3d.viewDistance
 		},
 		alpha = options3d.alpha;
 

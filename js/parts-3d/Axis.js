@@ -36,7 +36,8 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 	var origin = {
 		x: chart.plotLeft + (chart.plotWidth / 2),
 		y: chart.plotTop + (chart.plotHeight / 2),
-		z: depth
+		z: depth,
+		vd: options3d.viewDistance
 	};
 	if (this.horiz) {
 		/// BOTTOM
@@ -118,7 +119,8 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed)
 	options3d.origin = {
 		x: chart.plotLeft + (chart.plotWidth / 2),
 		y: chart.plotTop + (chart.plotHeight / 2),
-		z: d
+		z: d,
+		vd: options3d.viewDistance
 	};
 
 	var pArr = [
@@ -155,7 +157,8 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getMarkPath', function (proceed) {
 	var origin = {
 		x: chart.plotLeft + (chart.plotWidth / 2),
 		y: chart.plotTop + (chart.plotHeight / 2),
-		z: options3d.depth
+		z: options3d.depth,
+		vd: options3d.viewDistance
 	};
 
 	var pArr = [
@@ -188,7 +191,8 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getLabelPosition', function (proceed
 	var origin = {
 		x: chart.plotLeft + (chart.plotWidth / 2),
 		y: chart.plotTop + (chart.plotHeight / 2),
-		z: options3d.depth
+		z: options3d.depth,
+		vd: options3d.viewDistance
 	};
 	
 	var alpha = chart.inverted ? options3d.beta : options3d.alpha,

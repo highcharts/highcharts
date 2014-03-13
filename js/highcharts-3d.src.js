@@ -39,7 +39,7 @@ function perspective(points, angle2, angle1, origin) {
 	
 	xe = origin.x;
 	ye = origin.y;
-	ze = (origin.z === 0 ? 0.0001 : origin.z * 100);
+	ze = (origin.z === 0 ? 0.0001 : origin.z * (origin.vd || 100));
 
 	// some kind of minimum?
 
@@ -453,6 +453,7 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 				alpha: 0,
 				beta: 0,
 				depth: 100,
+				viewDistance: 100,
 
 				frame: {
 					bottom: { size: 1, color: 'transparent' },
@@ -530,7 +531,8 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 	var origin = {
 		x: chart.plotLeft + (chart.plotWidth / 2),
 		y: chart.plotTop + (chart.plotHeight / 2),
-		z: depth
+		z: depth,
+		vd: options3d.viewDistance
 	};
 	if (this.horiz) {
 		/// BOTTOM
@@ -612,7 +614,8 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed)
 	options3d.origin = {
 		x: chart.plotLeft + (chart.plotWidth / 2),
 		y: chart.plotTop + (chart.plotHeight / 2),
-		z: d
+		z: d,
+		vd: options3d.viewDistance
 	};
 
 	var pArr = [
@@ -649,7 +652,8 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getMarkPath', function (proceed) {
 	var origin = {
 		x: chart.plotLeft + (chart.plotWidth / 2),
 		y: chart.plotTop + (chart.plotHeight / 2),
-		z: options3d.depth
+		z: options3d.depth,
+		vd: options3d.viewDistance
 	};
 
 	var pArr = [
@@ -682,7 +686,8 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getLabelPosition', function (proceed
 	var origin = {
 		x: chart.plotLeft + (chart.plotWidth / 2),
 		y: chart.plotTop + (chart.plotHeight / 2),
-		z: options3d.depth
+		z: options3d.depth,
+		vd: options3d.viewDistance
 	};
 	
 	var alpha = chart.inverted ? options3d.beta : options3d.alpha,
@@ -725,7 +730,8 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 		origin = {
 			x: chart.plotWidth / 2,
 			y: chart.plotHeight / 2, 
-			z: options3d.depth
+			z: options3d.depth,
+			vd: options3d.viewDistance
 		},
 		alpha = options3d.alpha,
 		beta = options3d.beta;
@@ -792,7 +798,8 @@ Highcharts.wrap(Highcharts.seriesTypes.cylinder.prototype, 'translate', function
 		origin = {
 			x: chart.inverted ? chart.plotHeight / 2 : chart.plotWidth / 2,
 			y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2, 
-			z: options3d.depth
+			z: options3d.depth,
+			vd: options3d.viewDistance
 		},
 		alpha = options3d.alpha;
 
@@ -922,7 +929,8 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 		origin = {
 			x: chart.inverted ? chart.plotHeight / 2 : chart.plotWidth / 2,
 			y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2, 
-			z: options3d.depth
+			z: options3d.depth,
+			vd: options3d.viewDistance
 		},
 		depth = options3d.depth,
 		zAxis = chart.options.zAxis || { min : 0, max: depth };

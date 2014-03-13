@@ -23,6 +23,7 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 				alpha: 0,
 				beta: 0,
 				depth: 100,
+				viewDistance: 100,
 
 				frame: {
 					bottom: { size: 1, color: 'transparent' },
