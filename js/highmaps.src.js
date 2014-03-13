@@ -6872,7 +6872,7 @@ Axis.prototype = {
 
 			} else {
 				each(axis.series, function (series) {
-					var seriesPointRange = mathMax(axis.isXAxis ? series.pointRange : (axis.axisPointRange || 0), +hasCategories),
+					var seriesPointRange = hasCategories ? 1 : (axis.isXAxis ? series.pointRange : (axis.axisPointRange || 0)), // #2806
 						pointPlacement = series.options.pointPlacement,
 						seriesClosestPointRange = series.closestPointRange;
 
