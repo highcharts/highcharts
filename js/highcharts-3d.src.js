@@ -452,7 +452,7 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 				enabled: false,
 				alpha: 0,
 				beta: 0,
-				depth: 0,
+				depth: 100,
 
 				frame: {
 					bottom: { size: 1, color: 'transparent' },
@@ -721,7 +721,7 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 		typeOptions = options.plotOptions[type],		
 		options3d = options.chart.options3d,
 
-		depth = typeOptions.depth || 0,
+		depth = typeOptions.depth || 25,
 		origin = {
 			x: chart.plotWidth / 2,
 			y: chart.plotHeight / 2, 
