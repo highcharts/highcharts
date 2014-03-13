@@ -86,7 +86,8 @@ SVGElement.prototype = {
 				key = 'stroke-width';
 			}
 			ret = attr(element, key) || wrapper[key] || 0;
-			if (key !== 'd' && key !== 'visibility' && key !== 'fill') { // 'd' is string in animation step
+
+			if (/^[0-9\.]+$/.test(ret)) {
 				ret = parseFloat(ret);
 			}
 
@@ -203,6 +204,7 @@ SVGElement.prototype = {
 			shadows = wrapper.shadows,
 			hasSetSymbolSize,
 			doTransform,
+			attrSetters = {},
 			ret = wrapper;
 
 		// single key-value pair
@@ -672,7 +674,7 @@ SVGElement.prototype = {
 		if (inverted) {
 			transform.push('rotate(90) scale(-1,1)');
 		} else if (rotation) { // text rotation
-			transform.push('rotate(' + rotation + ' ' + (wrapper.x || 0) + ' ' + (wrapper.y || 0) + ')');
+			transform.push('rotate(' + rotation + ' ' + (wrapper.element.getAttribute('x') || 0) + ' ' + (wrapper.element.getAttribute('y') || 0) + ')');
 		}
 
 		// apply scale
@@ -1098,7 +1100,7 @@ SVGElement.prototype = {
 
 			i = value.length;
 			while (i--) {
-				value[i] = pInt(value[i]) * pick(hash['stroke-width'], wrapper['stroke-width']);
+				value[i] = pInt(value[i]) * this.element.getAttribute('stroke-width');
 			}
 			value = value.join(',');
 			this.element.setAttribute('stroke-dasharray', value);
@@ -1199,7 +1201,7 @@ SVGElement.prototype = {
 
 			// Check if a gradient object with the same config object is created within this renderer
 			if (gradients[key]) {
-				id = gradients[key].id;
+				id = gradients[key].attr('id');
 
 			} else {
 
@@ -1214,7 +1216,7 @@ SVGElement.prototype = {
 				gradientObject.stops = [];
 				each(stops, function (stop) {
 					var stopObject;
-					if (regexRgba.test(stop[1])) {
+					if (stop[1].indexOf('rgba') === 0) {
 						colorObject = Color(stop[1]);
 						stopColor = colorObject.get('rgb');
 						stopOpacity = colorObject.get('a');
@@ -1252,6 +1254,10 @@ SVGElement.prototype = {
 		}
 		elem.setAttribute(prop, colAttr);
 
+	},
+	zIndexSetter: function (value, key, element) {
+		element.setAttribute(key, value);
+		this[key] = value;
 	},
 	_defaultSetter: function (value, key, element) {
 		element.setAttribute(key, value);
@@ -1499,7 +1505,6 @@ SVGRenderer.prototype = {
 			}
 
 			
-
 			// build the lines
 			each(lines, function (line, lineNo) {
 				var spans, spanNo = 0;
@@ -1532,7 +1537,7 @@ SVGRenderer.prototype = {
 							tspan.appendChild(doc.createTextNode(span));
 
 							if (!spanNo) { // first span in a line, align it to the left
-								if (lineNo) {
+								if (lineNo && parentX !== null) {
 									attributes.x = parentX;
 								}
 							} else {
@@ -1802,9 +1807,11 @@ SVGRenderer.prototype = {
 			},
 			wrapper = this.createElement('circle');
 
-		wrapper.xSetter = wrapper.ySetter = function (value, key) {
-			this.element.setAttribute({ x: 'cx', y: 'cy' }[key] || key, value);
-			this[key] = value;
+		wrapper.xSetter = function (value) {
+			this.element.setAttribute('cx', value);
+		};
+		wrapper.ySetter = function (value) {
+			this.element.setAttribute('cy', value);
 		};
 		return wrapper.attr(attr);
 	},
@@ -2191,9 +2198,7 @@ SVGRenderer.prototype = {
 			return renderer.html(str, x, y);
 		}
 
-		if (x) {
-			attr.x = Math.round(x);
-		}
+		attr.x = Math.round(x || 0); // X is always needed for line-wrap logic
 		if (y) {
 			attr.y = Math.round(y);
 		}
@@ -2215,13 +2220,11 @@ SVGRenderer.prototype = {
 			wrapper.xSetter = function (value, key, element) {
 				var childNodes = element.childNodes,
 					child;
-				this[key] = value;
 				for (i = 1; i < childNodes.length; i++) {
 					child = childNodes[i];
 					// if the x values are equal, the tspan represents a linebreak
-					if (attr(child, 'x') === attr(element, 'x')) {
-						//child.setAttribute('x', value);
-						attr(child, 'x', value);
+					if (child.getAttribute('x') === element.getAttribute('x')) {
+						child.setAttribute('x', value);
 					}
 				}
 				element.setAttribute(key, value);
@@ -2298,19 +2301,16 @@ SVGRenderer.prototype = {
 				boxY,
 				style = text.element.style;
 
-			
-// update the label-scoped y offset
-			baselineOffset = padding + renderer.fontMetrics(style && style.fontSize).b;
-
-			if (needsBox) {
 			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && text.textStr && 
 				text.getBBox();
-			
 			wrapper.width = (width || bBox.width || 0) + 2 * padding + paddingLeft;
 			wrapper.height = (height || bBox.height || 0) + 2 * padding;
 
+			// update the label-scoped y offset
+			baselineOffset = padding + renderer.fontMetrics(style && style.fontSize).b;
+
 			
-			//if (needsBox) {
+			if (needsBox) {
 
 				// create the border box if it is not already present
 				if (!box) {
@@ -2353,10 +2353,10 @@ SVGRenderer.prototype = {
 
 			// update if anything changed
 			if (x !== text.x || y !== text.y) {
-				text.attr({
-					x: x,
-					y: y
-				});
+				text.attr('x', x);
+				if (y !== UNDEFINED) {
+					text.attr('y', y);
+				}
 			}
 
 			// record current values
