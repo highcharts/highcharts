@@ -4,12 +4,12 @@
     },
 
     series: [{
-        type: 'line',
+        type: 'pie',
         animation: false,
         data: (function () {
             var arr = [];
-            for (var j = 0; j < 50; j++) {
-                arr.push(j);
+            for (var j = 0; j < 16; j++) {
+                arr.push(1);
             }
             return arr;
         }())
