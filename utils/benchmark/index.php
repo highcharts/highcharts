@@ -16,9 +16,9 @@ session_start();
 			// Array of different Highcharts versions.
 			// index 0 being default.
 			$highchartsVersions = array(
-				'http://code.highcharts.th/highcharts.js',
-				'http://code.highcharts.com/highcharts.js',
-				'http://github.highcharts.com/highcharts.js'
+				'http://code.highcharts.local/stock/highstock.js',
+				'http://code.highcharts.com/stock/highstock.js',
+				'http://github.highcharts.com/stock/highstock.js'
 			);
 
 			// Repetitions each chart is to be run within runChart();
