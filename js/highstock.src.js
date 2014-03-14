@@ -21393,8 +21393,9 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 // Override getPlotLinePath to allow for multipane charts
 Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, translatedValue) {
 	var axis = this,
-		series = (this.isLinked ? this.linkedParent.series : this.series),
-		renderer = axis.chart.renderer,
+		series = (this.isLinked && !this.series ? this.linkedParent.series : this.series),
+		chart = axis.chart,
+		renderer = chart.renderer,
 		axisLeft = axis.left,
 		axisTop = axis.top,
 		x1,
@@ -21403,19 +21404,33 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 		y2,
 		result = [],
 		axes,
+		axes2,
 		uniqueAxes;
 
-	// Get the related axes.
-	axes = (this.isXAxis ? 
-		(defined(this.options.yAxis) ?
-			[this.chart.yAxis[this.options.yAxis]] : 
+	// Get the related axes based on series
+	axes = (axis.isXAxis ? 
+		(defined(axis.options.yAxis) ?
+			[chart.yAxis[axis.options.yAxis]] : 
 			map(series, function (S) { return S.yAxis; })
 		) :
-		(defined(this.options.xAxis) ?
-			[this.chart.xAxis[this.options.xAxis]] : 
+		(defined(axis.options.xAxis) ?
+			[chart.xAxis[axis.options.xAxis]] : 
 			map(series, function (S) { return S.xAxis; })
 		)
 	);
+
+
+	// Get the related axes based options.*Axis setting
+	axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
+	each(axes2, function (A) {
+		var a = (A.isXAxis ? 'yAxis' : 'xAxis'),
+			rax = (defined(A.options[a]) ? chart[a][A.options[a]] : chart[a][0]);			
+
+		if (axis === rax) {
+			axes.push(A);
+		}
+	});
+
 
 	// Remove duplicates in the axes array. If there are no axes in the axes array,
 	// we are adding an axis without data, so we need to populate this with grid
