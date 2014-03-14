@@ -1849,6 +1849,7 @@ SVGElement.prototype = {
 			}
 		}
 	},
+
 	/**
 	 * Set or get a given attribute
 	 * @param {Object|String} hash
@@ -1858,16 +1859,12 @@ SVGElement.prototype = {
 		var wrapper = this,
 			key,
 			value,
-			result,
 			i,
-			child,
 			element = wrapper.element,
-			nodeName,
-			titleNode,
-			//attrSetters = wrapper.attrSetters,
 			shadows = wrapper.shadows,
 			hasSetSymbolSize,
-			ret = wrapper;
+			ret = wrapper,
+			skipAttr;
 
 		// single key-value pair
 		if (typeof hash === 'string' && val !== UNDEFINED) {
@@ -1878,23 +1875,10 @@ SVGElement.prototype = {
 
 		// used as a getter: first argument is a string, second is undefined
 		if (typeof hash === 'string') {
-			key = hash;
-			if (element.nodeName === 'circle') {
-				key = { x: 'cx', y: 'cy' }[key] || key;
-			} else if (key === 'strokeWidth') {
-				key = 'stroke-width';
-			}
-			ret = attr(element, key) || wrapper[key] || 0;
-
-			if (/^[0-9\.]+$/.test(ret)) {
-				ret = parseFloat(ret);
-			}
-
+			ret = (this[hash + 'Getter'] || this._defaultGetter).call(this, hash, element);
+		
 		// setter
 		} else {
-
-				
-				
 
 			for (key in hash) {
 				value = hash[key];
@@ -1987,244 +1971,6 @@ SVGElement.prototype = {
 
 		return ret;
 	},
-
-	_attr: function (hash, val) {
-		var wrapper = this,
-			key,
-			value,
-			result,
-			i,
-			child,
-			element = wrapper.element,
-			nodeName = element.nodeName.toLowerCase(), // Android2 requires lower for "text"
-			renderer = wrapper.renderer,
-			skipAttr,
-			titleNode,
-			shadows = wrapper.shadows,
-			hasSetSymbolSize,
-			doTransform,
-			attrSetters = {},
-			ret = wrapper;
-
-		// single key-value pair
-		if (isString(hash) && defined(val)) {
-			key = hash;
-			hash = {};
-			hash[key] = val;
-		}
-
-		// used as a getter: first argument is a string, second is undefined
-		if (isString(hash)) {
-			key = hash;
-			if (nodeName === 'circle') {
-				key = { x: 'cx', y: 'cy' }[key] || key;
-			} else if (key === 'strokeWidth') {
-				key = 'stroke-width';
-			}
-			ret = attr(element, key) || wrapper[key] || 0;
-			if (key !== 'd' && key !== 'visibility' && key !== 'fill') { // 'd' is string in animation step
-				ret = parseFloat(ret);
-			}
-
-		// setter
-		} else {
-
-			for (key in hash) {
-				skipAttr = false; // reset
-				value = hash[key];
-
-				// check for a specific attribute setter
-				result = attrSetters[key] && attrSetters[key].call(wrapper, value, key);
-
-				if (result !== false) {
-					if (result !== UNDEFINED) {
-						value = result; // the attribute setter has returned a new value to set
-					}
-
-
-					// paths
-					if (key === 'd') {
-						if (value && value.join) { // join path
-							value = value.join(' ');
-						}
-						if (/(NaN| {2}|^$)/.test(value)) {
-							value = 'M 0 0';
-						}
-						//wrapper.d = value; // shortcut for animations
-
-					// update child tspans x values
-					} else if (key === 'x' && nodeName === 'text') {
-						for (i = 0; i < element.childNodes.length; i++) {
-							child = element.childNodes[i];
-							// if the x values are equal, the tspan represents a linebreak
-							if (attr(child, 'x') === attr(element, 'x')) {
-								//child.setAttribute('x', value);
-								attr(child, 'x', value);
-							}
-						}
-
-					} else if (wrapper.rotation && (key === 'x' || key === 'y')) {
-						doTransform = true;
-
-					// apply gradients
-					} else if (key === 'fill') {
-						value = renderer.color(value, element, key);
-
-					// circle x and y
-					} else if (nodeName === 'circle' && (key === 'x' || key === 'y')) {
-						key = { x: 'cx', y: 'cy' }[key] || key;
-
-					// rectangle border radius
-					} else if (nodeName === 'rect' && key === 'r') {
-						attr(element, {
-							rx: value,
-							ry: value
-						});
-						skipAttr = true;
-
-					// translation and text rotation
-					} else if (key === 'translateX' || key === 'translateY' || key === 'rotation' ||
-							key === 'verticalAlign' || key === 'scaleX' || key === 'scaleY') {
-						doTransform = true;
-						skipAttr = true;
-
-					// apply opacity as subnode (required by legacy WebKit and Batik)
-					} else if (key === 'stroke') {
-						value = renderer.color(value, element, key);
-
-					// emulate VML's dashstyle implementation
-					} else if (key === 'dashstyle') {
-						key = 'stroke-dasharray';
-						value = value && value.toLowerCase();
-						if (value === 'solid') {
-							value = NONE;
-						} else if (value) {
-							value = value
-								.replace('shortdashdotdot', '3,1,1,1,1,1,')
-								.replace('shortdashdot', '3,1,1,1')
-								.replace('shortdot', '1,1,')
-								.replace('shortdash', '3,1,')
-								.replace('longdash', '8,3,')
-								.replace(/dot/g, '1,3,')
-								.replace('dash', '4,3,')
-								.replace(/,$/, '')
-								.split(','); // ending comma
-
-							i = value.length;
-							while (i--) {
-								value[i] = pInt(value[i]) * pick(hash['stroke-width'], wrapper['stroke-width']);
-							}
-							value = value.join(',');
-						}
-
-					// IE9/MooTools combo: MooTools returns objects instead of numbers and IE9 Beta 2
-					// is unable to cast them. Test again with final IE9.
-					} else if (key === 'width') {
-						value = pInt(value);
-
-					// Text alignment
-					} else if (key === 'align') {
-						key = 'text-anchor';
-						value = { left: 'start', center: 'middle', right: 'end' }[value];
-
-					// Title requires a subnode, #431
-					} else if (key === 'title') {
-						titleNode = element.getElementsByTagName('title')[0];
-						if (!titleNode) {
-							titleNode = doc.createElementNS(SVG_NS, 'title');
-							element.appendChild(titleNode);
-						}
-						titleNode.textContent = value;
-					}
-
-					// jQuery animate changes case
-					if (key === 'strokeWidth') {
-						key = 'stroke-width';
-					}
-
-					// In Chrome/Win < 6 as well as Batik, the stroke attribute can't be set when the stroke-
-					// width is 0. #1369
-					if (key === 'stroke-width' || key === 'stroke') {
-						wrapper[key] = value;
-						// Only apply the stroke attribute if the stroke width is defined and larger than 0
-						if (wrapper.stroke && wrapper['stroke-width']) {
-							attr(element, 'stroke', wrapper.stroke);
-							attr(element, 'stroke-width', wrapper['stroke-width']);
-							wrapper.hasStroke = true;
-						} else if (key === 'stroke-width' && value === 0 && wrapper.hasStroke) {
-							element.removeAttribute('stroke');
-							wrapper.hasStroke = false;
-						}
-						skipAttr = true;
-					}
-
-					// symbols
-					if (wrapper.symbolName && /^(x|y|width|height|r|start|end|innerR|anchorX|anchorY)/.test(key)) {
-
-
-						if (!hasSetSymbolSize) {
-							wrapper.symbolAttr(hash);
-							hasSetSymbolSize = true;
-						}
-						skipAttr = true;
-					}
-
-					// let the shadow follow the main element
-					if (shadows && /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)) {
-						i = shadows.length;
-						while (i--) {
-							attr(
-								shadows[i],
-								key,
-								key === 'height' ?
-									mathMax(value - (shadows[i].cutHeight || 0), 0) :
-									value
-							);
-						}
-					}
-
-					// validate heights
-					if ((key === 'width' || key === 'height') && nodeName === 'rect' && value < 0) {
-						value = 0;
-					}
-
-					// Record for animation and quick access without polling the DOM
-					wrapper[key] = value;
-
-
-					if (key === 'text') {
-						if (value !== wrapper.textStr) {
-							
-							// Delete bBox memo when the text changes
-							delete wrapper.bBox;
-						
-							wrapper.textStr = value;
-							if (wrapper.added) {
-								renderer.buildText(wrapper);
-							}
-						}
-					} else if (!skipAttr) {
-						//attr(element, key, value);
-						if (value !== undefined) {
-							element.setAttribute(key, value);
-						}
-					}
-
-				}
-
-			}
-
-			// Update transform. Do this outside the loop to prevent redundant updating for batch setting
-			// of attributes.
-			if (doTransform) {
-				wrapper.updateTransform();
-			}
-
-		}
-
-		return ret;
-	},
-
 
 	/**
 	 * Add a class name to an element
@@ -2871,6 +2617,26 @@ SVGElement.prototype = {
 
 	},
 
+	xGetter: function (key) {
+		if (this.element.nodeName === 'circle') {
+			key = { x: 'cx', y: 'cy' }[key] || key;
+		}
+		return this._defaultGetter(key);
+	},
+
+	/** 
+	 * Get the current value of an attribute or pseudo attribute, used mainly
+	 * for animation.
+	 */
+	_defaultGetter: function (key) {
+		var ret = pick(this[key], this.element ? this.element.getAttribute(key) : null, 0);
+
+		if (/^[0-9\.]+$/.test(ret)) { // is numerical
+			ret = parseFloat(ret);
+		}
+		return ret;
+	},
+
 
 	dSetter: function (value, key, element) {
 		if (value && value.join) { // join path
@@ -2884,6 +2650,7 @@ SVGElement.prototype = {
 		this[key] = value;
 	},
 	dashstyleSetter: function (value) {
+		var i;
 		value = value && value.toLowerCase();
 		if (value) {
 			value = value
@@ -3062,6 +2829,9 @@ SVGElement.prototype = {
 		element.setAttribute(key, value);
 	}
 };
+
+// Some shared setters and getters
+SVGElement.prototype.yGetter = SVGElement.prototype.xGetter;
 SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter = 
 		SVGElement.prototype.rotationSetter = SVGElement.prototype.verticalAlignSetter = 
 		SVGElement.prototype.scaleXSetter = SVGElement.prototype.scaleYSetter = function (value, key) {
@@ -3069,9 +2839,11 @@ SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter =
 	this.doTransform = true;
 };
 
+
+
 // In Chrome/Win < 6 as well as Batik, the stroke attribute can't be set when the stroke-
 // width is 0. #1369
-SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter = function (value, key) {
+/*SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter = function (value, key) {
 	this[key] = value;
 	// Only apply the stroke attribute if the stroke width is defined and larger than 0
 	if (this.stroke && this['stroke-width']) {
@@ -3082,7 +2854,7 @@ SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter =
 		this.element.removeAttribute('stroke');
 		this.hasStroke = false;
 	}
-};
+};*/
 
 
 /**
@@ -3674,7 +3446,7 @@ SVGRenderer.prototype = {
 		}
 
 		if (r) {
-			attribs.rx = attribs.ry = r;
+			attribs.r = r;
 		}
 
 		wrapper.rSetter = function (value) {
@@ -4018,7 +3790,8 @@ SVGRenderer.prototype = {
 		if (!useHTML) {
 			wrapper.xSetter = function (value, key, element) {
 				var childNodes = element.childNodes,
-					child;
+					child,
+					i;
 				for (i = 1; i < childNodes.length; i++) {
 					child = childNodes[i];
 					// if the x values are equal, the tspan represents a linebreak
@@ -4227,8 +4000,10 @@ SVGRenderer.prototype = {
 		};
 
 		// apply these to the box and the text alike
-		wrapper.textSetter = function (value, key) {
-			text.textSetter(value);
+		wrapper.textSetter = function (value) {
+			if (value !== UNDEFINED) {
+				text.textSetter(value);
+			}
 			updateBoxSize();
 			updateTextPadding();
 		};
@@ -4831,231 +4606,6 @@ Highcharts.VMLElement = VMLElement = {
 	},
 
 	/**
-	 * Get or set attributes
-	 */
-	attr: function (hash, val) {
-		var wrapper = this,
-			key,
-			value,
-			i,
-			result,
-			element = wrapper.element || {},
-			elemStyle = element.style,
-			nodeName = element.nodeName,
-			renderer = wrapper.renderer,
-			symbolName = wrapper.symbolName,
-			hasSetSymbolSize,
-			shadows = wrapper.shadows,
-			skipAttr,
-			attrSetters = wrapper.attrSetters,
-			ret = wrapper;
-
-		// single key-value pair
-		if (isString(hash) && defined(val)) {
-			key = hash;
-			hash = {};
-			hash[key] = val;
-		}
-
-		// used as a getter, val is undefined
-		if (isString(hash)) {
-			key = hash;
-			if (key === 'strokeWidth' || key === 'stroke-width') {
-				ret = wrapper.strokeweight;
-			} else {
-				ret = wrapper[key];
-			}
-
-		// setter
-		} else {
-			for (key in hash) {
-				value = hash[key];
-				skipAttr = false;
-
-				// check for a specific attribute setter
-				result = attrSetters[key] && attrSetters[key].call(wrapper, value, key);
-
-				if (result !== false && value !== null) { // #620
-
-					if (result !== UNDEFINED) {
-						value = result; // the attribute setter has returned a new value to set
-					}
-
-
-					// prepare paths
-					// symbols
-					if (symbolName && /^(x|y|r|start|end|width|height|innerR|anchorX|anchorY)/.test(key)) {
-						// if one of the symbol size affecting parameters are changed,
-						// check all the others only once for each call to an element's
-						// .attr() method
-						if (!hasSetSymbolSize) {
-							wrapper.symbolAttr(hash);
-
-							hasSetSymbolSize = true;
-						}
-						skipAttr = true;
-
-					} else if (key === 'd') {
-						value = value || [];
-						wrapper.d = value.join(' '); // used in getter for animation
-
-						element.path = value = wrapper.pathToVML(value);
-
-						// update shadows
-						if (shadows) {
-							i = shadows.length;
-							while (i--) {
-								shadows[i].path = shadows[i].cutOff ? this.cutOffPath(value, shadows[i].cutOff) : value;
-							}
-						}
-						skipAttr = true;
-
-					// handle visibility
-					} else if (key === 'visibility') {
-
-						// Handle inherited visibility
-						if (value === 'inherit') {
-							value = VISIBLE;
-						}
-						
-						// Let the shadow follow the main element
-						if (shadows) {
-							i = shadows.length;
-							while (i--) {
-								shadows[i].style[key] = value;
-							}
-						}
-
-						// Instead of toggling the visibility CSS property, move the div out of the viewport.
-						// This works around #61 and #586
-						if (nodeName === 'DIV') {
-							value = value === HIDDEN ? '-999em' : 0;
-
-							// In order to redraw, IE7 needs the div to be visible when tucked away
-							// outside the viewport. So the visibility is actually opposite of
-							// the expected value. This applies to the tooltip only.
-							if (!docMode8) {
-								elemStyle[key] = value ? VISIBLE : HIDDEN;
-							}
-							key = 'top';
-						}
-						elemStyle[key] = value;
-						skipAttr = true;
-
-					// directly mapped to css
-					} else if (key === 'zIndex') {
-
-						if (value) {
-							elemStyle[key] = value;
-						}
-						skipAttr = true;
-
-					// x, y, width, height
-					} else if (inArray(key, ['x', 'y', 'width', 'height']) !== -1) {
-
-						wrapper[key] = value; // used in getter
-
-						if (key === 'x' || key === 'y') {
-							key = { x: 'left', y: 'top' }[key];
-						} else {
-							value = mathMax(0, value); // don't set width or height below zero (#311)
-						}
-
-						// clipping rectangle special
-						if (wrapper.updateClipping) {
-							wrapper[key] = value; // the key is now 'left' or 'top' for 'x' and 'y'
-							wrapper.updateClipping();
-						} else {
-							// normal
-							elemStyle[key] = value;
-						}
-
-						skipAttr = true;
-
-					// class name
-					} else if (key === 'class' && nodeName === 'DIV') {
-						// IE8 Standards mode has problems retrieving the className
-						element.className = value;
-
-					// stroke
-					} else if (key === 'stroke') {
-
-						value = renderer.color(value, element, key);
-
-						key = 'strokecolor';
-
-					// stroke width
-					} else if (key === 'stroke-width' || key === 'strokeWidth') {
-						element.stroked = value ? true : false;
-						key = 'strokeweight';
-						wrapper[key] = value; // used in getter, issue #113
-						if (isNumber(value)) {
-							value += PX;
-						}
-
-					// dashStyle
-					} else if (key === 'dashstyle') {
-						var strokeElem = element.getElementsByTagName('stroke')[0] ||
-							createElement(renderer.prepVML(['<stroke/>']), null, null, element);
-						strokeElem[key] = value || 'solid';
-						wrapper.dashstyle = value; /* because changing stroke-width will change the dash length
-							and cause an epileptic effect */
-						skipAttr = true;
-
-					// fill
-					} else if (key === 'fill') {
-
-						if (nodeName === 'SPAN') { // text color
-							elemStyle.color = value;
-						} else if (nodeName !== 'IMG') { // #1336
-							element.filled = value !== NONE ? true : false;
-
-							value = renderer.color(value, element, key, wrapper);
-
-							key = 'fillcolor';
-						}
-
-					// opacity: don't bother - animation is too slow and filters introduce artifacts
-					} else if (key === 'opacity') {
-						/*css(element, {
-							opacity: value
-						});*/
-						skipAttr = true;
-
-					// rotation on VML elements
-					} else if (nodeName === 'shape' && key === 'rotation') {
-
-						wrapper[key] = element.style[key] = value; // style is for #1873
-
-						// Correction for the 1x1 size of the shape container. Used in gauge needles.
-						element.style.left = -mathRound(mathSin(value * deg2rad) + 1) + PX;
-						element.style.top = mathRound(mathCos(value * deg2rad)) + PX;
-
-					// translation for animation
-					} else if (key === 'translateX' || key === 'translateY' || key === 'rotation') {
-						wrapper[key] = value;
-						wrapper.updateTransform();
-
-						skipAttr = true;
-
-					}
-
-
-					if (!skipAttr) {
-						if (docMode8) { // IE8 setAttribute bug
-							element[key] = value;
-						} else {
-							attr(element, key, value);
-						}
-					}
-
-				}
-			}
-		}
-		return ret;
-	},
-
-	/**
 	 * Set the element's clipping to a predefined rectangle
 	 *
 	 * @param {String} id The id of the clip rectangle
@@ -5216,9 +4766,134 @@ Highcharts.VMLElement = VMLElement = {
 		}
 		return this;
 
+	},
+	setAttr: function (key, value) {
+		if (docMode8) { // IE8 setAttribute bug
+			this.element[key] = value;
+		} else {
+			this.element.setAttribute(key, value);
+		}
+	},
+	classSetter: function (value) {
+		// IE8 Standards mode has problems retrieving the className unless set like this
+		this.element.className = value;
+	},
+	dashstyleSetter: function (value, key, element) {
+		var strokeElem = element.getElementsByTagName('stroke')[0] ||
+			createElement(this.renderer.prepVML(['<stroke/>']), null, null, element);
+		strokeElem[key] = value || 'solid';
+		this[key] = value; /* because changing stroke-width will change the dash length
+			and cause an epileptic effect */
+	},
+	dSetter: function (value, key, element) {
+		var i,
+			shadows = this.shadows;
+		value = value || [];
+		this.d = value.join(' '); // used in getter for animation
+
+		element.path = value = this.pathToVML(value);
+
+		// update shadows
+		if (shadows) {
+			i = shadows.length;
+			while (i--) {
+				shadows[i].path = shadows[i].cutOff ? this.cutOffPath(value, shadows[i].cutOff) : value;
+			}
+		}
+		this.setAttr(key, value);
+	},
+	fillSetter: function (value, key, element) {
+		var nodeName = element.nodeName;
+		if (nodeName === 'SPAN') { // text color
+			element.style.color = value;
+		} else if (nodeName !== 'IMG') { // #1336
+			element.filled = value !== NONE;
+			this.setAttr('fillcolor', this.renderer.color(value, element, key, this));
+		}
+	},
+	rotationSetter: function (value, key, element) {
+		var style = element.style;
+		this[key] = style[key] = value; // style is for #1873
+
+		// Correction for the 1x1 size of the shape container. Used in gauge needles.
+		style.left = -mathRound(mathSin(value * deg2rad) + 1) + PX;
+		style.top = mathRound(mathCos(value * deg2rad)) + PX;
+	},
+	strokeSetter: function (value, key, element) {
+		this.setAttr('strokecolor', this.renderer.color(value, element, key));
+	},
+	'stroke-widthSetter': function (value, key, element) {
+		element.stroked = !!value; // VML "stroked" attribute
+		this[key] = value; // used in getter, issue #113
+		if (isNumber(value)) {
+			value += PX;
+		}
+		this.setAttr('strokeweight', value);
+	},
+	titleSetter: function (value, key) {
+		this.setAttr(key, value);
+	},
+	visibilitySetter: function (value, key, element) {
+
+		// Handle inherited visibility
+		if (value === 'inherit') {
+			value = VISIBLE;
+		}
+		
+		// Let the shadow follow the main element
+		if (this.shadows) {
+			each(this.shadows, function (shadow) {
+				shadow.style[key] = value;
+			});
+		}
+
+		// Instead of toggling the visibility CSS property, move the div out of the viewport.
+		// This works around #61 and #586
+		if (element.nodeName === 'DIV') {
+			value = value === HIDDEN ? '-999em' : 0;
+
+			// In order to redraw, IE7 needs the div to be visible when tucked away
+			// outside the viewport. So the visibility is actually opposite of
+			// the expected value. This applies to the tooltip only.
+			if (!docMode8) {
+				element.style[key] = value ? VISIBLE : HIDDEN;
+			}
+			key = 'top';
+		}
+		element.style[key] = value;
+	},
+	xSetter: function (value, key, element) {
+		this[key] = value; // used in getter
+
+		if (key === 'x') {
+			key = 'left';
+		} else if (key === 'y') {
+			key = 'top';
+		}/* else {
+			value = mathMax(0, value); // don't set width or height below zero (#311)
+		}*/
+
+		// clipping rectangle special
+		if (this.updateClipping) {
+			this[key] = value; // the key is now 'left' or 'top' for 'x' and 'y'
+			this.updateClipping();
+		} else {
+			// normal
+			element.style[key] = value;
+		}
+	},
+	zIndexSetter: function (value, key, element) {
+		element.style[key] = value;
 	}
 };
 VMLElement = extendClass(SVGElement, VMLElement);
+
+// Some shared setters
+VMLElement.prototype.ySetter =
+	VMLElement.prototype.widthSetter = 
+	VMLElement.prototype.heightSetter = 
+	VMLElement.prototype.xSetter;
+
 
 /**
  * The VML renderer
@@ -10305,7 +9980,7 @@ Legend.prototype = {
 			symbolColor = visible ? (item.legendColor || item.color || '#CCC') : hiddenColor,
 			markerOptions = item.options && item.options.marker,
 			symbolAttr = {
-				stroke: symbolColor,
+				//stroke: symbolColor,
 				fill: symbolColor
 			},
 			key,

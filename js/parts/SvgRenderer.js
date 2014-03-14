@@ -50,6 +50,7 @@ SVGElement.prototype = {
 			}
 		}
 	},
+
 	/**
 	 * Set or get a given attribute
 	 * @param {Object|String} hash
@@ -59,16 +60,12 @@ SVGElement.prototype = {
 		var wrapper = this,
 			key,
 			value,
-			result,
 			i,
-			child,
 			element = wrapper.element,
-			nodeName,
-			titleNode,
-			//attrSetters = wrapper.attrSetters,
 			shadows = wrapper.shadows,
 			hasSetSymbolSize,
-			ret = wrapper;
+			ret = wrapper,
+			skipAttr;
 
 		// single key-value pair
 		if (typeof hash === 'string' && val !== UNDEFINED) {
@@ -79,23 +76,10 @@ SVGElement.prototype = {
 
 		// used as a getter: first argument is a string, second is undefined
 		if (typeof hash === 'string') {
-			key = hash;
-			if (element.nodeName === 'circle') {
-				key = { x: 'cx', y: 'cy' }[key] || key;
-			} else if (key === 'strokeWidth') {
-				key = 'stroke-width';
-			}
-			ret = attr(element, key) || wrapper[key] || 0;
-
-			if (/^[0-9\.]+$/.test(ret)) {
-				ret = parseFloat(ret);
-			}
-
+			ret = (this[hash + 'Getter'] || this._defaultGetter).call(this, hash, element);
+		
 		// setter
 		} else {
-
-				
-				
 
 			for (key in hash) {
 				value = hash[key];
@@ -188,244 +172,6 @@ SVGElement.prototype = {
 
 		return ret;
 	},
-
-	_attr: function (hash, val) {
-		var wrapper = this,
-			key,
-			value,
-			result,
-			i,
-			child,
-			element = wrapper.element,
-			nodeName = element.nodeName.toLowerCase(), // Android2 requires lower for "text"
-			renderer = wrapper.renderer,
-			skipAttr,
-			titleNode,
-			shadows = wrapper.shadows,
-			hasSetSymbolSize,
-			doTransform,
-			attrSetters = {},
-			ret = wrapper;
-
-		// single key-value pair
-		if (isString(hash) && defined(val)) {
-			key = hash;
-			hash = {};
-			hash[key] = val;
-		}
-
-		// used as a getter: first argument is a string, second is undefined
-		if (isString(hash)) {
-			key = hash;
-			if (nodeName === 'circle') {
-				key = { x: 'cx', y: 'cy' }[key] || key;
-			} else if (key === 'strokeWidth') {
-				key = 'stroke-width';
-			}
-			ret = attr(element, key) || wrapper[key] || 0;
-			if (key !== 'd' && key !== 'visibility' && key !== 'fill') { // 'd' is string in animation step
-				ret = parseFloat(ret);
-			}
-
-		// setter
-		} else {
-
-			for (key in hash) {
-				skipAttr = false; // reset
-				value = hash[key];
-
-				// check for a specific attribute setter
-				result = attrSetters[key] && attrSetters[key].call(wrapper, value, key);
-
-				if (result !== false) {
-					if (result !== UNDEFINED) {
-						value = result; // the attribute setter has returned a new value to set
-					}
-
-
-					// paths
-					if (key === 'd') {
-						if (value && value.join) { // join path
-							value = value.join(' ');
-						}
-						if (/(NaN| {2}|^$)/.test(value)) {
-							value = 'M 0 0';
-						}
-						//wrapper.d = value; // shortcut for animations
-
-					// update child tspans x values
-					} else if (key === 'x' && nodeName === 'text') {
-						for (i = 0; i < element.childNodes.length; i++) {
-							child = element.childNodes[i];
-							// if the x values are equal, the tspan represents a linebreak
-							if (attr(child, 'x') === attr(element, 'x')) {
-								//child.setAttribute('x', value);
-								attr(child, 'x', value);
-							}
-						}
-
-					} else if (wrapper.rotation && (key === 'x' || key === 'y')) {
-						doTransform = true;
-
-					// apply gradients
-					} else if (key === 'fill') {
-						value = renderer.color(value, element, key);
-
-					// circle x and y
-					} else if (nodeName === 'circle' && (key === 'x' || key === 'y')) {
-						key = { x: 'cx', y: 'cy' }[key] || key;
-
-					// rectangle border radius
-					} else if (nodeName === 'rect' && key === 'r') {
-						attr(element, {
-							rx: value,
-							ry: value
-						});
-						skipAttr = true;
-
-					// translation and text rotation
-					} else if (key === 'translateX' || key === 'translateY' || key === 'rotation' ||
-							key === 'verticalAlign' || key === 'scaleX' || key === 'scaleY') {
-						doTransform = true;
-						skipAttr = true;
-
-					// apply opacity as subnode (required by legacy WebKit and Batik)
-					} else if (key === 'stroke') {
-						value = renderer.color(value, element, key);
-
-					// emulate VML's dashstyle implementation
-					} else if (key === 'dashstyle') {
-						key = 'stroke-dasharray';
-						value = value && value.toLowerCase();
-						if (value === 'solid') {
-							value = NONE;
-						} else if (value) {
-							value = value
-								.replace('shortdashdotdot', '3,1,1,1,1,1,')
-								.replace('shortdashdot', '3,1,1,1')
-								.replace('shortdot', '1,1,')
-								.replace('shortdash', '3,1,')
-								.replace('longdash', '8,3,')
-								.replace(/dot/g, '1,3,')
-								.replace('dash', '4,3,')
-								.replace(/,$/, '')
-								.split(','); // ending comma
-
-							i = value.length;
-							while (i--) {
-								value[i] = pInt(value[i]) * pick(hash['stroke-width'], wrapper['stroke-width']);
-							}
-							value = value.join(',');
-						}
-
-					// IE9/MooTools combo: MooTools returns objects instead of numbers and IE9 Beta 2
-					// is unable to cast them. Test again with final IE9.
-					} else if (key === 'width') {
-						value = pInt(value);
-
-					// Text alignment
-					} else if (key === 'align') {
-						key = 'text-anchor';
-						value = { left: 'start', center: 'middle', right: 'end' }[value];
-
-					// Title requires a subnode, #431
-					} else if (key === 'title') {
-						titleNode = element.getElementsByTagName('title')[0];
-						if (!titleNode) {
-							titleNode = doc.createElementNS(SVG_NS, 'title');
-							element.appendChild(titleNode);
-						}
-						titleNode.textContent = value;
-					}
-
-					// jQuery animate changes case
-					if (key === 'strokeWidth') {
-						key = 'stroke-width';
-					}
-
-					// In Chrome/Win < 6 as well as Batik, the stroke attribute can't be set when the stroke-
-					// width is 0. #1369
-					if (key === 'stroke-width' || key === 'stroke') {
-						wrapper[key] = value;
-						// Only apply the stroke attribute if the stroke width is defined and larger than 0
-						if (wrapper.stroke && wrapper['stroke-width']) {
-							attr(element, 'stroke', wrapper.stroke);
-							attr(element, 'stroke-width', wrapper['stroke-width']);
-							wrapper.hasStroke = true;
-						} else if (key === 'stroke-width' && value === 0 && wrapper.hasStroke) {
-							element.removeAttribute('stroke');
-							wrapper.hasStroke = false;
-						}
-						skipAttr = true;
-					}
-
-					// symbols
-					if (wrapper.symbolName && /^(x|y|width|height|r|start|end|innerR|anchorX|anchorY)/.test(key)) {
-
-
-						if (!hasSetSymbolSize) {
-							wrapper.symbolAttr(hash);
-							hasSetSymbolSize = true;
-						}
-						skipAttr = true;
-					}
-
-					// let the shadow follow the main element
-					if (shadows && /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)) {
-						i = shadows.length;
-						while (i--) {
-							attr(
-								shadows[i],
-								key,
-								key === 'height' ?
-									mathMax(value - (shadows[i].cutHeight || 0), 0) :
-									value
-							);
-						}
-					}
-
-					// validate heights
-					if ((key === 'width' || key === 'height') && nodeName === 'rect' && value < 0) {
-						value = 0;
-					}
-
-					// Record for animation and quick access without polling the DOM
-					wrapper[key] = value;
-
-
-					if (key === 'text') {
-						if (value !== wrapper.textStr) {
-							
-							// Delete bBox memo when the text changes
-							delete wrapper.bBox;
-						
-							wrapper.textStr = value;
-							if (wrapper.added) {
-								renderer.buildText(wrapper);
-							}
-						}
-					} else if (!skipAttr) {
-						//attr(element, key, value);
-						if (value !== undefined) {
-							element.setAttribute(key, value);
-						}
-					}
-
-				}
-
-			}
-
-			// Update transform. Do this outside the loop to prevent redundant updating for batch setting
-			// of attributes.
-			if (doTransform) {
-				wrapper.updateTransform();
-			}
-
-		}
-
-		return ret;
-	},
-
 
 	/**
 	 * Add a class name to an element
@@ -1072,6 +818,26 @@ SVGElement.prototype = {
 
 	},
 
+	xGetter: function (key) {
+		if (this.element.nodeName === 'circle') {
+			key = { x: 'cx', y: 'cy' }[key] || key;
+		}
+		return this._defaultGetter(key);
+	},
+
+	/** 
+	 * Get the current value of an attribute or pseudo attribute, used mainly
+	 * for animation.
+	 */
+	_defaultGetter: function (key) {
+		var ret = pick(this[key], this.element ? this.element.getAttribute(key) : null, 0);
+
+		if (/^[0-9\.]+$/.test(ret)) { // is numerical
+			ret = parseFloat(ret);
+		}
+		return ret;
+	},
+
 
 	dSetter: function (value, key, element) {
 		if (value && value.join) { // join path
@@ -1085,6 +851,7 @@ SVGElement.prototype = {
 		this[key] = value;
 	},
 	dashstyleSetter: function (value) {
+		var i;
 		value = value && value.toLowerCase();
 		if (value) {
 			value = value
@@ -1263,12 +1030,17 @@ SVGElement.prototype = {
 		element.setAttribute(key, value);
 	}
 };
+
+// Some shared setters and getters
+SVGElement.prototype.yGetter = SVGElement.prototype.xGetter;
 SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter = 
 		SVGElement.prototype.rotationSetter = SVGElement.prototype.verticalAlignSetter = 
 		SVGElement.prototype.scaleXSetter = SVGElement.prototype.scaleYSetter = function (value, key) {
 	this[key] = value;
 	this.doTransform = true;
 };
+
+
 
 // In Chrome/Win < 6 as well as Batik, the stroke attribute can't be set when the stroke-
 // width is 0. #1369
@@ -1875,7 +1647,7 @@ SVGRenderer.prototype = {
 		}
 
 		if (r) {
-			attribs.rx = attribs.ry = r;
+			attribs.r = r;
 		}
 
 		wrapper.rSetter = function (value) {
@@ -2219,7 +1991,8 @@ SVGRenderer.prototype = {
 		if (!useHTML) {
 			wrapper.xSetter = function (value, key, element) {
 				var childNodes = element.childNodes,
-					child;
+					child,
+					i;
 				for (i = 1; i < childNodes.length; i++) {
 					child = childNodes[i];
 					// if the x values are equal, the tspan represents a linebreak
@@ -2428,8 +2201,10 @@ SVGRenderer.prototype = {
 		};
 
 		// apply these to the box and the text alike
-		wrapper.textSetter = function (value, key) {
-			text.textSetter(value);
+		wrapper.textSetter = function (value) {
+			if (value !== UNDEFINED) {
+				text.textSetter(value);
+			}
 			updateBoxSize();
 			updateTextPadding();
 		};
