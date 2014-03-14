@@ -1272,7 +1272,7 @@ SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter =
 
 // In Chrome/Win < 6 as well as Batik, the stroke attribute can't be set when the stroke-
 // width is 0. #1369
-SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter = function (value, key) {
+/*SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter = function (value, key) {
 	this[key] = value;
 	// Only apply the stroke attribute if the stroke width is defined and larger than 0
 	if (this.stroke && this['stroke-width']) {
@@ -1283,7 +1283,7 @@ SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter =
 		this.element.removeAttribute('stroke');
 		this.hasStroke = false;
 	}
-};
+};*/
 
 
 /**

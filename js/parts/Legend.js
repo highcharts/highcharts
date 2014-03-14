@@ -64,7 +64,7 @@ Legend.prototype = {
 			symbolColor = visible ? (item.legendColor || item.color || '#CCC') : hiddenColor,
 			markerOptions = item.options && item.options.marker,
 			symbolAttr = {
-				stroke: symbolColor,
+				//stroke: symbolColor,
 				fill: symbolColor
 			},
 			key,
