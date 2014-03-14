@@ -1,7 +1,7 @@
 /**
  * The class for stack items
  */
-function StackItem(axis, options, isNegative, x, stackOption, stacking) {
+function StackItem(axis, options, isNegative, x, stackOption) {
 	
 	var inverted = axis.chart.inverted;
 
@@ -24,7 +24,6 @@ function StackItem(axis, options, isNegative, x, stackOption, stacking) {
 
 	// Save the stack option on the series configuration object, and whether to treat it as percent
 	this.stack = stackOption;
-	this.percent = stacking === 'percent';
 
 	// The align options and text align varies on whether the stack is negative and
 	// if the chart is inverted or not.
@@ -60,7 +59,7 @@ StackItem.prototype = {
 		// Create new label
 		} else {
 			this.label =
-				this.axis.chart.renderer.text(str, 0, 0, options.useHTML)		// dummy positions, actual position updated with setOffset method in columnseries
+				this.axis.chart.renderer.text(str, null, null, options.useHTML)		// dummy positions, actual position updated with setOffset method in columnseries
 					.css(options.style)				// apply style
 					.attr({
 						align: this.textAlign,				// fix the text-anchor
@@ -80,7 +79,7 @@ StackItem.prototype = {
 			chart = axis.chart,
 			inverted = chart.inverted,
 			neg = this.isNegative,							// special treatment is needed for negative stacks
-			y = axis.translate(this.percent ? 100 : this.total, 0, 0, 0, 1), // stack value translated mapped to chart coordinates
+			y = axis.translate(axis.usePercentage ? 100 : this.total, 0, 0, 0, 1), // stack value translated mapped to chart coordinates
 			yZero = axis.translate(0),						// stack origin
 			h = mathAbs(y - yZero),							// stack height
 			x = chart.xAxis[0].translate(this.x) + xOffset,	// stack x position
@@ -219,7 +218,7 @@ Series.prototype.setStackedPoints = function () {
 				stacks[key][x] = oldStacks[key][x];
 				stacks[key][x].total = null;
 			} else {
-				stacks[key][x] = new StackItem(yAxis, yAxis.options.stackLabels, isNegative, x, stackOption, stacking);
+				stacks[key][x] = new StackItem(yAxis, yAxis.options.stackLabels, isNegative, x, stackOption);
 			}
 		}
 
