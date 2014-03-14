@@ -171,14 +171,16 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 	);
 
 
-	// Get the related axes based options.*Axis setting
+	// Get the related axes based options.*Axis setting #2810
 	axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
 	each(axes2, function (A) {
-		var a = (A.isXAxis ? 'yAxis' : 'xAxis'),
-			rax = (defined(A.options[a]) ? chart[a][A.options[a]] : chart[a][0]);			
+		if (defined(A.options.id) ? A.options.id.indexOf('navigator') === -1 : true) {
+			var a = (A.isXAxis ? 'yAxis' : 'xAxis'),
+				rax = (defined(A.options[a]) ? chart[a][A.options[a]] : chart[a][0]);	
 
-		if (axis === rax) {
-			axes.push(A);
+			if (axis === rax) {
+				axes.push(A);
+			}
 		}
 	});
 
