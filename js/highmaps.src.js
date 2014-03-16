@@ -2203,6 +2203,7 @@ SVGElement.prototype = {
 			scaleY = wrapper.scaleY,
 			inverted = wrapper.inverted,
 			rotation = wrapper.rotation,
+			element = wrapper.element,
 			transform;
 
 		// flipping affects translate as adjustment for flipping around the group's axis
@@ -2219,7 +2220,7 @@ SVGElement.prototype = {
 		if (inverted) {
 			transform.push('rotate(90) scale(-1,1)');
 		} else if (rotation) { // text rotation
-			transform.push('rotate(' + rotation + ' ' + (wrapper.element.getAttribute('x') || 0) + ' ' + (wrapper.element.getAttribute('y') || 0) + ')');
+			transform.push('rotate(' + rotation + ' ' + (element.getAttribute('x') || 0) + ' ' + (element.getAttribute('y') || 0) + ')');
 		}
 
 		// apply scale
@@ -2228,7 +2229,7 @@ SVGElement.prototype = {
 		}
 
 		if (transform.length) {
-			attr(wrapper.element, 'transform', transform.join(' '));
+			element.setAttribute('transform', transform.join(' '));
 		}
 	},
 	/**
@@ -2327,14 +2328,21 @@ SVGElement.prototype = {
 			styles = wrapper.styles,
 			rad = rotation * deg2rad,
 			textStr = wrapper.textStr,
-			numKey;
+			cacheKey;
 
 		// Since numbers are monospaced, and numerical labels appear a lot in a chart,
 		// we assume that a label of n characters has the same bounding box as others 
 		// of the same length.
 		if (textStr === '' || numRegex.test(textStr)) {
-			numKey = textStr.toString().length + (styles ? ('|' + styles.fontSize + '|' + styles.fontFamily) : '');
-			bBox = renderer.cache[numKey];
+			cacheKey = 'num.' + textStr.toString().length + (styles ? ('|' + styles.fontSize + '|' + styles.fontFamily) : '');
+
+		} else {
+			// Caching all strings reduces rendering time by 4-5%. 
+			// TODO: Check how this affects places where bBox is found on the element
+			cacheKey = textStr + (styles ? ('|' + styles.fontSize + '|' + styles.fontFamily) : '');
+		}
+		if (cacheKey) {
+			bBox = renderer.cache[cacheKey];
 		}
 
 		// No cache found
@@ -2389,8 +2397,8 @@ SVGElement.prototype = {
 
 			// Cache it
 			wrapper.bBox = bBox;
-			if (numKey) {
-				renderer.cache[numKey] = bBox;
+			if (cacheKey) {
+				renderer.cache[cacheKey] = bBox;
 			}
 		}
 		return bBox;
@@ -3897,7 +3905,7 @@ SVGRenderer.prototype = {
 
 				// apply the box attributes
 				if (!box.isImg) { // #1630
-					box.attr(merge({
+					box.attr(extend({
 						width: wrapper.width,
 						height: wrapper.height
 					}, deferredAttr));
