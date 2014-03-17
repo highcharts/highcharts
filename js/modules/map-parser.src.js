@@ -174,34 +174,39 @@ H.extend(H.Data.prototype, {
 			origSize,
 			transA;
 
+		fakeSeries = {
+			xAxis: {
+				//min: arr.minX,
+				//len: scale,
+				translate: Highcharts.Axis.prototype.translate,
+				options: {},
+				minPixelPadding: 0,
+				//transA: transA
+			}, 
+			yAxis: {
+				//min: (arr.minY + scale) / transA,
+				//len: scale,
+				translate: Highcharts.Axis.prototype.translate,
+				options: {},
+				minPixelPadding: 0,
+				//transA: transA
+			}
+		};
 		
 		// Borrow the map series type's getBox method
-		mapProto.getBox.call(arr, arr);
+		mapProto.getBox.call(fakeSeries, arr);
 
-		origSize = Math.max(arr.maxX - arr.minX, arr.maxY - arr.minY);
+		origSize = Math.max(fakeSeries.maxX - fakeSeries.minX, fakeSeries.maxY - fakeSeries.minY);
 		scale = scale || 1000;
 		transA = scale / origSize;
 
-		fakeSeries = {
-			xAxis: {
-				min: arr.minX,
-				len: scale,
-				translate: Highcharts.Axis.prototype.translate,
-				options: {},
-				minPixelPadding: 0,
-				transA: transA
-			}, 
-			yAxis: {
-				min: (arr.minY + scale) / transA,
-				len: scale,
-				translate: Highcharts.Axis.prototype.translate,
-				options: {},
-				minPixelPadding: 0,
-				transA: transA
-			}
-		};
+		fakeSeries.xAxis.transA = fakeSeries.yAxis.transA = transA;
+		fakeSeries.xAxis.len = fakeSeries.yAxis.len = scale;
+		fakeSeries.xAxis.min = fakeSeries.minX;
+		fakeSeries.yAxis.min = (fakeSeries.minY + scale) / transA;
 
 		each(arr, function (point) {
+
 			var i,
 				path;
 			point.path = path = mapProto.translatePath.call(fakeSeries, point.path, true);
