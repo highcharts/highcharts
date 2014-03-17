@@ -60,7 +60,6 @@ a, a:link, a:visited, a:hover, a:active {
 .run {
 	float: right;
 	height: 100%;
-	border-style: none;
 }
 
 .loaded {
