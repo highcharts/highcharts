@@ -91,6 +91,14 @@ H.extend(H.Data.prototype, {
 					isRelative = true;
 					path[i] = 'L';
 					path.splice(i + 1, 0, 0);
+				} else if (operator === 's') {
+					isRelative = true;
+					path[i] = 'L';
+					path.splice(i + 1, 2);
+				} else if (operator === 'S') {
+					isRelative = false;
+					path[i] = 'L';
+					path.splice(i + 1, 2);
 				} else if (operator === 'H' || operator === 'h') {
 					isRelative = false;
 					path[i] = 'L';
