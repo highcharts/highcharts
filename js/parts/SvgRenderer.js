@@ -52,6 +52,110 @@ SVGElement.prototype = {
 	},
 
 	/**
+	 * Build an SVG gradient out of a common JavaScript configuration object
+	 */
+	colorGradient: function (color, prop, elem) {
+		var renderer = this.renderer,
+			colorObject,
+			gradName,
+			gradAttr,
+			gradients,
+			gradientObject,
+			stops,
+			stopColor,
+			stopOpacity,
+			radialReference,
+			n,
+			id,
+			key = [];
+
+		// Apply linear or radial gradients
+		if (color.linearGradient) {
+			gradName = 'linearGradient';
+		} else if (color.radialGradient) {
+			gradName = 'radialGradient';
+		}
+
+		if (gradName) {
+			gradAttr = color[gradName];
+			gradients = renderer.gradients;
+			stops = color.stops;
+			radialReference = elem.radialReference;
+
+			// Keep < 2.2 kompatibility
+			if (isArray(gradAttr)) {
+				color[gradName] = gradAttr = {
+					x1: gradAttr[0],
+					y1: gradAttr[1],
+					x2: gradAttr[2],
+					y2: gradAttr[3],
+					gradientUnits: 'userSpaceOnUse'
+				};
+			}
+
+			// Correct the radial gradient for the radial reference system
+			if (gradName === 'radialGradient' && radialReference && !defined(gradAttr.gradientUnits)) {
+				gradAttr = merge(gradAttr, {
+					cx: (radialReference[0] - radialReference[2] / 2) + gradAttr.cx * radialReference[2],
+					cy: (radialReference[1] - radialReference[2] / 2) + gradAttr.cy * radialReference[2],
+					r: gradAttr.r * radialReference[2],
+					gradientUnits: 'userSpaceOnUse'
+				});
+			}
+
+			// Build the unique key to detect whether we need to create a new element (#1282)
+			for (n in gradAttr) {
+				if (n !== 'id') {
+					key.push(n, gradAttr[n]);
+				}
+			}
+			for (n in stops) {
+				key.push(stops[n]);
+			}
+			key = key.join(',');
+
+			// Check if a gradient object with the same config object is created within this renderer
+			if (gradients[key]) {
+				id = gradients[key].attr('id');
+
+			} else {
+
+				// Set the id and create the element
+				gradAttr.id = id = PREFIX + idCounter++;
+				gradients[key] = gradientObject = renderer.createElement(gradName)
+					.attr(gradAttr)
+					.add(renderer.defs);
+
+
+				// The gradient needs to keep a list of stops to be able to destroy them
+				gradientObject.stops = [];
+				each(stops, function (stop) {
+					var stopObject;
+					if (stop[1].indexOf('rgba') === 0) {
+						colorObject = Color(stop[1]);
+						stopColor = colorObject.get('rgb');
+						stopOpacity = colorObject.get('a');
+					} else {
+						stopColor = stop[1];
+						stopOpacity = 1;
+					}
+					stopObject = renderer.createElement('stop').attr({
+						offset: stop[0],
+						'stop-color': stopColor,
+						'stop-opacity': stopOpacity
+					}).add(gradientObject);
+
+					// Add the stop element to the gradient
+					gradientObject.stops.push(stopObject);
+				});
+			}
+
+			// Set the reference to the gradient object
+			elem.setAttribute(prop, 'url(' + renderer.url + '#' + id + ')');
+		} 
+	},
+
+	/**
 	 * Set or get a given attribute
 	 * @param {Object|String} hash
 	 * @param {Mixed|Undefined} val
@@ -903,132 +1007,13 @@ SVGElement.prototype = {
 			}
 		}
 	},
-	/**
-	 * Take a color and return it if it's a string, make it a gradient if it's a
-	 * gradient configuration object. Prior to Highstock, an array was used to define
-	 * a linear gradient with pixel positions relative to the SVG. In newer versions
-	 * we change the coordinates to apply relative to the shape, using coordinates
-	 * 0-1 within the shape. To preserve backwards compatibility, linearGradient
-	 * in this definition is an object of x1, y1, x2 and y2.
-	 *
-	 * @param {Object} color The color or config object
-	 */
-	fillSetter: function (color, prop, elem) {
-		var renderer = this.renderer,
-			colorObject,
-			gradName,
-			gradAttr,
-			gradients,
-			gradientObject,
-			stops,
-			stopColor,
-			stopOpacity,
-			radialReference,
-			n,
-			id,
-			key = [],
-			colAttr;
+	fillSetter: function (value, key, element) {
 
-		// Apply linear or radial gradients
-		if (color && color.linearGradient) {
-			gradName = 'linearGradient';
-		} else if (color && color.radialGradient) {
-			gradName = 'radialGradient';
+		if (typeof value === 'string') {
+			element.setAttribute(key, value);
+		} else if (value) {
+			this.colorGradient(value, key, element);
 		}
-
-		if (gradName) {
-			gradAttr = color[gradName];
-			gradients = renderer.gradients;
-			stops = color.stops;
-			radialReference = elem.radialReference;
-
-			// Keep < 2.2 kompatibility
-			if (isArray(gradAttr)) {
-				color[gradName] = gradAttr = {
-					x1: gradAttr[0],
-					y1: gradAttr[1],
-					x2: gradAttr[2],
-					y2: gradAttr[3],
-					gradientUnits: 'userSpaceOnUse'
-				};
-			}
-
-			// Correct the radial gradient for the radial reference system
-			if (gradName === 'radialGradient' && radialReference && !defined(gradAttr.gradientUnits)) {
-				gradAttr = merge(gradAttr, {
-					cx: (radialReference[0] - radialReference[2] / 2) + gradAttr.cx * radialReference[2],
-					cy: (radialReference[1] - radialReference[2] / 2) + gradAttr.cy * radialReference[2],
-					r: gradAttr.r * radialReference[2],
-					gradientUnits: 'userSpaceOnUse'
-				});
-			}
-
-			// Build the unique key to detect whether we need to create a new element (#1282)
-			for (n in gradAttr) {
-				if (n !== 'id') {
-					key.push(n, gradAttr[n]);
-				}
-			}
-			for (n in stops) {
-				key.push(stops[n]);
-			}
-			key = key.join(',');
-
-			// Check if a gradient object with the same config object is created within this renderer
-			if (gradients[key]) {
-				id = gradients[key].attr('id');
-
-			} else {
-
-				// Set the id and create the element
-				gradAttr.id = id = PREFIX + idCounter++;
-				gradients[key] = gradientObject = renderer.createElement(gradName)
-					.attr(gradAttr)
-					.add(renderer.defs);
-
-
-				// The gradient needs to keep a list of stops to be able to destroy them
-				gradientObject.stops = [];
-				each(stops, function (stop) {
-					var stopObject;
-					if (stop[1].indexOf('rgba') === 0) {
-						colorObject = Color(stop[1]);
-						stopColor = colorObject.get('rgb');
-						stopOpacity = colorObject.get('a');
-					} else {
-						stopColor = stop[1];
-						stopOpacity = 1;
-					}
-					stopObject = renderer.createElement('stop').attr({
-						offset: stop[0],
-						'stop-color': stopColor,
-						'stop-opacity': stopOpacity
-					}).add(gradientObject);
-
-					// Add the stop element to the gradient
-					gradientObject.stops.push(stopObject);
-				});
-			}
-
-			// Return the reference to the gradient object
-			colAttr = 'url(' + renderer.url + '#' + id + ')';
-
-		// Webkit and Batik can't show rgba.
-		} else if (color.indexOf('rgba') === 0) {
-			colorObject = Color(color);
-			attr(elem, prop + '-opacity', colorObject.get('a'));
-
-			colAttr = colorObject.get('rgb');
-
-
-		} else {
-			// Remove the opacity attribute added above. Does not throw if the attribute is not there.
-			elem.removeAttribute(prop + '-opacity');
-
-			colAttr = color;
-		}
-		elem.setAttribute(prop, colAttr);
-
 	},
 	zIndexSetter: function (value, key, element) {
 		element.setAttribute(key, value);
