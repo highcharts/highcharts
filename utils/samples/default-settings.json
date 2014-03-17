@@ -1,6 +1,6 @@
 {
 	"leftPath": "http://code.highcharts.com",
 	"rightPath": "http://code.highcharts.local",
-	"exportServer": "http://localhost:8080/export/",
+	"exportServer": "http://export.highcharts.com",
 	"jQueryPath": "http://www.highcharts.local/lib/jquery-1.7.2.js"
 }
