@@ -13965,7 +13965,7 @@ Series.prototype = {
 /**
  * The class for stack items
  */
-function StackItem(axis, options, isNegative, x, stackOption, stacking) {
+function StackItem(axis, options, isNegative, x, stackOption) {
 	
 	var inverted = axis.chart.inverted;
 
@@ -13988,7 +13988,6 @@ function StackItem(axis, options, isNegative, x, stackOption, stacking) {
 
 	// Save the stack option on the series configuration object, and whether to treat it as percent
 	this.stack = stackOption;
-	this.percent = stacking === 'percent';
 
 	// The align options and text align varies on whether the stack is negative and
 	// if the chart is inverted or not.
@@ -14024,7 +14023,7 @@ StackItem.prototype = {
 		// Create new label
 		} else {
 			this.label =
-				this.axis.chart.renderer.text(str, 0, 0, options.useHTML)		// dummy positions, actual position updated with setOffset method in columnseries
+				this.axis.chart.renderer.text(str, null, null, options.useHTML)		// dummy positions, actual position updated with setOffset method in columnseries
 					.css(options.style)				// apply style
 					.attr({
 						align: this.textAlign,				// fix the text-anchor
@@ -14044,7 +14043,7 @@ StackItem.prototype = {
 			chart = axis.chart,
 			inverted = chart.inverted,
 			neg = this.isNegative,							// special treatment is needed for negative stacks
-			y = axis.translate(this.percent ? 100 : this.total, 0, 0, 0, 1), // stack value translated mapped to chart coordinates
+			y = axis.translate(axis.usePercentage ? 100 : this.total, 0, 0, 0, 1), // stack value translated mapped to chart coordinates
 			yZero = axis.translate(0),						// stack origin
 			h = mathAbs(y - yZero),							// stack height
 			x = chart.xAxis[0].translate(this.x) + xOffset,	// stack x position
@@ -14183,7 +14182,7 @@ Series.prototype.setStackedPoints = function () {
 				stacks[key][x] = oldStacks[key][x];
 				stacks[key][x].total = null;
 			} else {
-				stacks[key][x] = new StackItem(yAxis, yAxis.options.stackLabels, isNegative, x, stackOption, stacking);
+				stacks[key][x] = new StackItem(yAxis, yAxis.options.stackLabels, isNegative, x, stackOption);
 			}
 		}
 
@@ -21323,8 +21322,9 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 // Override getPlotLinePath to allow for multipane charts
 Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, translatedValue) {
 	var axis = this,
-		series = (this.isLinked ? this.linkedParent.series : this.series),
-		renderer = axis.chart.renderer,
+		series = (this.isLinked && !this.series ? this.linkedParent.series : this.series),
+		chart = axis.chart,
+		renderer = chart.renderer,
 		axisLeft = axis.left,
 		axisTop = axis.top,
 		x1,
@@ -21333,19 +21333,35 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 		y2,
 		result = [],
 		axes,
+		axes2,
 		uniqueAxes;
 
-	// Get the related axes.
-	axes = (this.isXAxis ? 
-		(defined(this.options.yAxis) ?
-			[this.chart.yAxis[this.options.yAxis]] : 
+	// Get the related axes based on series
+	axes = (axis.isXAxis ? 
+		(defined(axis.options.yAxis) ?
+			[chart.yAxis[axis.options.yAxis]] : 
 			map(series, function (S) { return S.yAxis; })
 		) :
-		(defined(this.options.xAxis) ?
-			[this.chart.xAxis[this.options.xAxis]] : 
+		(defined(axis.options.xAxis) ?
+			[chart.xAxis[axis.options.xAxis]] : 
 			map(series, function (S) { return S.xAxis; })
 		)
 	);
+
+
+	// Get the related axes based options.*Axis setting #2810
+	axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
+	each(axes2, function (A) {
+		if (defined(A.options.id) ? A.options.id.indexOf('navigator') === -1 : true) {
+			var a = (A.isXAxis ? 'yAxis' : 'xAxis'),
+				rax = (defined(A.options[a]) ? chart[a][A.options[a]] : chart[a][0]);	
+
+			if (axis === rax) {
+				axes.push(A);
+			}
+		}
+	});
+
 
 	// Remove duplicates in the axes array. If there are no axes in the axes array,
 	// we are adding an axis without data, so we need to populate this with grid

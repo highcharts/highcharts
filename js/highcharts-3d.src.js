@@ -498,9 +498,9 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'redraw', function (proceed) {
 ***/
 Highcharts.wrap(Highcharts.Axis.prototype, 'init', function (proceed) {
 	var args = arguments;
-	if (args[1].is3d) {
-		args[2].tickWidth = args[2].tickWidth || 0;
-		args[2].gridLineWidth = args[2].gridLineWidth || 1;
+	if (args[1].is3d()) {
+		args[2].tickWidth = Highcharts.pick(args[2].tickWidth, 0);
+		args[2].gridLineWidth = Highcharts.pick(args[2].gridLineWidth, 1);
 	}
 
 	proceed.apply(this, [].slice.call(arguments, 1));
@@ -551,7 +551,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 			origin: origin
 		};
 		if (!this.bottomFrame) {
-			this.bottomFrame = renderer.cuboid(bottomShape).attr({fill: fbottom.color, zIndex: -1}).add();
+			this.bottomFrame = renderer.cuboid(bottomShape).attr({fill: fbottom.color, zIndex: -1}).css({stroke: fbottom.color}).add();
 		} else {
 			this.bottomFrame.animate(bottomShape);
 		}
@@ -569,7 +569,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 			origin: origin
 		};
 		if (!this.backFrame) {
-			this.backFrame = renderer.cuboid(backShape).attr({fill: fback.color, zIndex: -3}).add();
+			this.backFrame = renderer.cuboid(backShape).attr({fill: fback.color, zIndex: -3}).css({stroke: fback.color}).add();
 		} else {
 			this.backFrame.animate(backShape);
 		}
@@ -589,7 +589,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 			origin: origin
 		};
 		if (!this.sideFrame) {
-			this.sideFrame = renderer.cuboid(sideShape).attr({fill: fside.color, zIndex: -2}).add();
+			this.sideFrame = renderer.cuboid(sideShape).attr({fill: fside.color, zIndex: -2}).css({stroke: fside.color}).add();
 		} else {
 			this.sideFrame.animate(sideShape);
 		}

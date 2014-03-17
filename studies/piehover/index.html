@@ -1,0 +1,70 @@
+<html>
+<head>
+<title>Pie Shaded Border</title>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script>
+
+$(function () { 
+    function showBorder () {
+        var point = this,
+            series = point.series,
+            options = series.options.hoverBorder,
+            shapeArgs = point.shapeArgs,
+            graphic = point.graphic,
+            renderer = graphic.renderer;
+
+        var newShapeArgs = {
+            x: shapeArgs.x,
+            y: shapeArgs.y,
+            r: shapeArgs.r + options.radius,
+            innerR: shapeArgs.r,
+            start: shapeArgs.start,
+            end: shapeArgs.end
+        };
+
+        var color = options.color || Highcharts.Color(point.color).setOpacity(options.opacity).get();
+        
+        if (!this.series.borderGraphic) {
+            this.series.borderGraphic = renderer.arc(newShapeArgs)
+                .attr({fill: color}).add(graphic.parentGroup);
+        }
+        else {
+            this.series.borderGraphic.attr({fill: color}).animate(newShapeArgs);
+        }
+    }
+    $('#container').highcharts(
+    {    
+        chart: {
+            type: 'pie'
+        },
+        plotOptions: {
+            pie: {
+                hoverBorder: {
+                    radius: 15,
+                    opacity: 0.5,
+                    //color: 'black'
+                },
+                point: {
+                    events: {
+                        mouseOver: showBorder
+                    }
+                }
+            }
+        },
+        series: [   
+        {
+            data: [1,2,3,2,3]
+
+        }                 
+        ]
+    });
+});
+</script>
+</head>
+
+<body>
+	<div id="container" style="height:400px; width:400px;"></div>
+</body>
+
+</html

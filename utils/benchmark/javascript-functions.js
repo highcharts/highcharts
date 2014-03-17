@@ -134,13 +134,25 @@ function getScripts(group, tests) {
 	function runChart(options, test) {
 
 		var total = 0,
-			start;
+			start,
+			series;
 
 		for (var i = 1; i <= rep; i++) {
 
 			if ($('#container').highcharts()) {
 				$('#container').highcharts().destroy();
 			}
+
+			// Highstock removes options.series on destruction, probably a bug, but we throw in a workaround
+			// here so we can test against older versions.
+			if (options._constructor === 'StockChart') {
+				if (options.series)	{
+					series = options.series;
+				} else if (series) {
+					options.series = series;
+				}
+			}
+			
 			
 			start = new Date();
 			new Highcharts[options._constructor || 'Chart'](options, function() { 

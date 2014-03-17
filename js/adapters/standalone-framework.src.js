@@ -88,6 +88,7 @@ function augment(obj) {
 				} else if (el.attachEvent) {
 					
 					wrappedFn = function (e) {
+						e.target = e.srcElement || window; // #2820
 						fn.call(el, e);
 					};
 
