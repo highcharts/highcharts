@@ -552,7 +552,6 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 		};
 		if (!this.bottomFrame) {
 			this.bottomFrame = renderer.cuboid(bottomShape).attr({fill: fbottom.color, zIndex: -1}).css({stroke: fbottom.color}).add();
-			console.log(this.bottomFrame);
 		} else {
 			this.bottomFrame.animate(bottomShape);
 		}
