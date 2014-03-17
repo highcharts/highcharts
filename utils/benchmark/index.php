@@ -3,6 +3,7 @@ session_start();
 ?><!DOCTYPE html>
 <html>
 	<head>
+		<title>Benchmark - Highcharts Utils</title>
 		<link rel="stylesheet" type="text/css" href="test-style.css">
 
 		<?php
@@ -19,6 +20,10 @@ session_start();
 				'http://code.highcharts.local/stock/highstock.js',
 				'http://code.highcharts.com/stock/highstock.js',
 				'http://github.highcharts.com/highstock.js'
+			);
+
+			$repetitions = array(
+				1, 5, 10
 			);
 
 			// Repetitions each chart is to be run within runChart();
@@ -144,7 +149,7 @@ session_start();
 			<h1>Highcharts Benchmarks</h1>
 
 
-			<form method="post" action="index.php">
+			<form method="post" action="index.php" id="setup">
 				<table>
 					<tr>
 						<td><label for="jquery">jQuery version</label></td>
@@ -172,10 +177,17 @@ session_start();
 					</tr>
 					<tr>
 						<td>Repeat each test</td>
-						<td><input type="text" name="repetitions" value="<?php echo $_SESSION['repetitions']; ?>"> times</td>
+						<td>
+							<select name="repetitions">
+								<?php
+									foreach ($repetitions as $rep) {
+										$selected = $rep == $_SESSION['repetitions'] ? 'selected' : '';
+										echo "<option value='$rep' $selected>$rep</option>";
+									}
+								?>
+							</select> times
 					</tr>
 				</table>
-				<input type="submit" name="submit" value="OK">
 			</form>
 			<hr>
 
@@ -186,13 +198,13 @@ session_start();
 				if (isset($_SESSION['allclicked']) && $_SESSION['browsername'] == 'msie' && $_SESSION['browserversion'] < 9) {
 					echo "<p id='warning'>Due to incompability issues with IE8, a new 'absolutely everything run' requires a browser restart. <br> Also make sure the session is destroyed (button below).</p>";
 				} else {
-					echo "<button id='all' onclick='buttonClick(this.id);'>Run absolutely everything</button>";
+					echo "<button id='all' onclick='buttonClick(this.id);'>Run all</button>";
 				}
 
 				// This code creates a reset results button by destroying the session.
 				if (isset($_POST['reset'])) {
 					session_destroy();
-					header("Location: index.php");
+					echo "<script>location.href = 'index.php';</script>";
 				} else {
 					echo "
 						<form method='post' action='index.php'>
@@ -214,12 +226,12 @@ session_start();
 								<li>
 									<a href='index.php?group=".$group."'>".$group."</a>
 									<button class=run id ='".$group."_all' onclick='buttonClick(this.id);'>Run</button>
-									<span class='result ".$group."Result'>(???)</span>
+									<span class='result ".$group."Result'>-</span>
 								</li>
 							";
 					}
 
-					echo "	<li class='total'> Total result: <span class='result' id='allResult'>(???)</span></li>
+					echo "	<li class='total'> Total result: <span class='result' id='allResult'>-</span></li>
 						</ul>";
 
 					echo "<script> resultUpdate(); </script>";
@@ -269,12 +281,12 @@ session_start();
 
 							// If there are no more groups to be run the user is redirected to index.php.
 							} else if ($_GET['run'] == 'all') {
-								header("Location: index.php");
+								echo "<script>location.href = 'index.php';</script>";
 
 							// If the run variable is not set to 'all' the user is redirected to the 
 							// last group/folder that ran.
 							} else {
-								header("Location: index.php?group=".$folders[$lastIndex]);
+								echo "<script>location.href = 'index.php?group=" . $folders[$lastIndex] . "';</script>";
 							}
 						}
 					}	
