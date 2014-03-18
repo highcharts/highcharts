@@ -46,7 +46,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 		}
 		var bottomShape = {
 			x: left,
-			y: top + height,
+			y: top + (chart.yAxis[0].reversed ? -fbottom.size : height),
 			z: 0,
 			width: width,
 			height: fbottom.size,
@@ -56,7 +56,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 			origin: origin
 		};
 		if (!this.bottomFrame) {
-			this.bottomFrame = renderer.cuboid(bottomShape).attr({fill: fbottom.color, zIndex: -1}).css({stroke: fbottom.color}).add();
+			this.bottomFrame = renderer.cuboid(bottomShape).attr({fill: fbottom.color, zIndex: (chart.yAxis[0].reversed ? 4 : -1)}).css({stroke: fbottom.color}).add();
 		} else {
 			this.bottomFrame.animate(bottomShape);
 		}
