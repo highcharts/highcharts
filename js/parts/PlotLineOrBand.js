@@ -192,12 +192,23 @@ AxisPlotLineOrBandExtension = {
 			path = this.getPlotLinePath(from);
 
 		if (path && toPath) {
-			path.push(
-				toPath[4],
-				toPath[5],
-				toPath[1],
-				toPath[2]
-			);
+			if (path.length === toPath.length && path.length > 6) { // support for multipane charts
+				for (var i = 0, j = 6; i < toPath.length; i += 6, j += 10) {
+					path.splice(j, 0,
+						toPath[i+4],
+						toPath[i+5],
+						toPath[i+1],
+						toPath[i+2]
+					);
+				}
+			} else {
+				path.push(
+					toPath[4],
+					toPath[5],
+					toPath[1],
+					toPath[2]
+				);
+			}
 		} else { // outside the axis area
 			path = null;
 		}
