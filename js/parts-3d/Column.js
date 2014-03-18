@@ -24,7 +24,7 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 			vd: options3d.viewDistance
 		},
 		alpha = options3d.alpha,
-		beta = options3d.beta;
+		beta = options3d.beta * (chart.yAxis[0].opposite ? -1 : 1);
 
 	var stack = typeOptions.stacking ? (this.options.stack || 0) : series._i; 
 	var z = stack * (depth + (typeOptions.groupZPadding || 1));

@@ -22,7 +22,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 		renderer = chart.renderer,
 		options3d = chart.options.chart.options3d,
 		alpha = options3d.alpha,
-		beta = options3d.beta,
+		beta = options3d.beta * (chart.yAxis[0].opposite ? -1 : 1),
 		frame = options3d.frame,
 		fbottom = frame.bottom,
 		fback = frame.back,
@@ -83,7 +83,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 			this.axisLine.hide();
 		}
 		var sideShape = {
-			x: left - fside.size,
+			x: (chart.yAxis[0].opposite ? width : 0) + left - fside.size,
 			y: top,
 			z: 0,
 			width: fside.size,
@@ -133,6 +133,8 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed)
 	var alpha = chart.options.inverted ? options3d.beta : options3d.alpha,
 		beta = chart.options.inverted ? options3d.alpha : options3d.beta;
 
+	beta *= (chart.yAxis[0].opposite ? -1 : 1);
+
 	pArr = perspective(pArr, alpha, beta, options3d.origin);
 	path = this.chart.renderer.toLinePath(pArr, false);
 
@@ -169,6 +171,8 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getMarkPath', function (proceed) {
 	var alpha = chart.inverted ? options3d.beta : options3d.alpha,
 		beta = chart.inverted ? options3d.alpha : options3d.beta;
 
+	beta *= (chart.yAxis[0].opposite ? -1 : 1);
+
 	pArr = perspective(pArr, alpha, beta, origin);
 	path = [
 		'M', pArr[0].x, pArr[0].y,
@@ -197,6 +201,8 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getLabelPosition', function (proceed
 	
 	var alpha = chart.inverted ? options3d.beta : options3d.alpha,
 		beta = chart.inverted ? options3d.alpha : options3d.beta;
+
+	beta *= (chart.yAxis[0].opposite ? -1 : 1);
 
 	pos = perspective([{x: pos.x, y: pos.y, z: 0}], alpha, beta, origin)[0];
 	return pos;
