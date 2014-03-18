@@ -13217,7 +13217,7 @@ Series.prototype = {
 			clipRect,
 			markerClipRect,
 			animation = series.options.animation,
-			clipBox = chart.clipBox,
+			clipBox = series.clipBox || chart.clipBox,
 			inverted = chart.inverted,
 			sharedClipKey;
 
@@ -13225,7 +13225,7 @@ Series.prototype = {
 		if (animation && !isObject(animation)) {
 			animation = defaultPlotOptions[series.type].animation;
 		}
-		sharedClipKey = '_sharedClip' + animation.duration + animation.easing;
+		sharedClipKey = ['_sharedClip', animation.duration, animation.easing, clipBox.height].join(',');
 
 		// Initialize the animation. Set up the clipping rectangle.
 		if (init) {
@@ -13263,7 +13263,7 @@ Series.prototype = {
 
 			// Delete this function to allow it only once
 			series.animate = null;
-
+ 
 			// Call the afterAnimate function on animation complete (but don't overwrite the animation.complete option
 			// which should be available to the user).
 			series.animationTimeout = setTimeout(function () {
@@ -13278,17 +13278,22 @@ Series.prototype = {
 	afterAnimate: function () {
 		var chart = this.chart,
 			sharedClipKey = this.sharedClipKey,
-			group = this.group;
+			group = this.group,
+			clipBox = this.clipBox;
 
 		if (group && this.options.clip !== false) {
-			group.clip(chart.clipRect);
+			if (!sharedClipKey || !clipBox) {
+				group.clip(clipBox ? chart.renderer.clipRect(clipBox) : chart.clipRect);
+			}
 			this.markerGroup.clip(); // no clip
 		}
 
 		// Remove the shared clipping rectancgle when all series are shown
 		setTimeout(function () {
 			if (sharedClipKey && chart[sharedClipKey]) {
-				chart[sharedClipKey] = chart[sharedClipKey].destroy();
+				if (!clipBox) {
+					chart[sharedClipKey] = chart[sharedClipKey].destroy();
+				}
 				chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
 			}
 		}, 100);
@@ -20314,7 +20319,6 @@ Scroller.prototype = {
 
 		// Merge the series options
 		mergedNavSeriesOptions = merge(baseOptions, navigatorSeriesOptions, {
-			clip: false,
 			enableMouseTracking: false,
 			group: 'nav', // for columns
 			padXAxis: false,
@@ -21752,6 +21756,16 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 /* ****************************************************************************
  * End value compare logic                                                    *
  *****************************************************************************/
+
+
+/**
+ * Extend the Series prototype to create a separate series clip box. This is related
+ * to using multiple panes, and a future pane logic should incorporate this feature.
+ */
+wrap(Series.prototype, 'render', function (proceed) {
+	this.clipBox = merge(this.chart.clipBox, { height: this.yAxis.len });
+	proceed.call(this);
+});
 
 // global variables
 extend(Highcharts, {

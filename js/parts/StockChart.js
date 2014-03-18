@@ -504,3 +504,13 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 /* ****************************************************************************
  * End value compare logic                                                    *
  *****************************************************************************/
+
+
+/**
+ * Extend the Series prototype to create a separate series clip box. This is related
+ * to using multiple panes, and a future pane logic should incorporate this feature.
+ */
+wrap(Series.prototype, 'render', function (proceed) {
+	this.clipBox = merge(this.chart.clipBox, { height: this.yAxis.len });
+	proceed.call(this);
+});
