@@ -2421,7 +2421,7 @@ SVGElement.prototype = {
 	/**
 	 * Get the bounding box (width, height, x and y) for the element
 	 */
-	getBBox: function () {
+	getBBox: function (noCache) {
 		var wrapper = this,
 			bBox = wrapper.bBox,
 			renderer = wrapper.renderer,
@@ -2440,11 +2440,11 @@ SVGElement.prototype = {
 		if (textStr === '' || numRegex.test(textStr)) {
 			cacheKey = 'num.' + textStr.toString().length + (styles ? ('|' + styles.fontSize + '|' + styles.fontFamily) : '');
 
-		} else {
+		} //else { // This code block made demo/waterfall fail, related to buildText
 			// Caching all strings reduces rendering time by 4-5%. 
 			// TODO: Check how this affects places where bBox is found on the element
-			cacheKey = textStr + (styles ? ('|' + styles.fontSize + '|' + styles.fontFamily) : '');
-		}
+			//cacheKey = textStr + (styles ? ('|' + styles.fontSize + '|' + styles.fontFamily) : '');
+		//}
 		if (cacheKey) {
 			bBox = renderer.cache[cacheKey];
 		}
@@ -3795,9 +3795,7 @@ SVGRenderer.prototype = {
 				element.setAttribute(key, value);
 			};
 		}
-
-		wrapper.x = x;
-		wrapper.y = y;
+		
 		return wrapper;
 	},
 
@@ -9348,8 +9346,8 @@ Pointer.prototype = {
 					originalEvent: e.originalEvent || e
 				},
 				selectionBox = this.selectionMarker,
-				selectionLeft = selectionBox.x,
-				selectionTop = selectionBox.y,
+				selectionLeft = selectionBox.attr('x'),
+				selectionTop = selectionBox.attr('y'),
 				runZoom;
 			// a selection has been made
 			if (this.hasDragged || hasPinched) {
@@ -9359,7 +9357,7 @@ Pointer.prototype = {
 					if (axis.zoomEnabled) {
 						var horiz = axis.horiz,
 							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop)),
-							selectionMax = axis.toValue((horiz ? selectionLeft + selectionBox.width : selectionTop + selectionBox.height));
+							selectionMax = axis.toValue((horiz ? selectionLeft + selectionBox.attr('width') : selectionTop + selectionBox.attr('height')));
 
 						if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
 							selectionData[axis.coll].push({
@@ -9972,10 +9970,7 @@ Legend.prototype = {
 			textColor = visible ? options.itemStyle.color : hiddenColor,
 			symbolColor = visible ? (item.legendColor || item.color || '#CCC') : hiddenColor,
 			markerOptions = item.options && item.options.marker,
-			symbolAttr = {
-				//stroke: symbolColor,
-				fill: symbolColor
-			},
+			symbolAttr = { fill: symbolColor },
 			key,
 			val;
 		
@@ -9990,6 +9985,7 @@ Legend.prototype = {
 			
 			// Apply marker options
 			if (markerOptions && legendSymbol.isMarker) { // #585
+				symbolAttr.stroke = symbolColor;
 				markerOptions = item.convertAttribs(markerOptions);
 				for (key in markerOptions) {
 					val = markerOptions[key];

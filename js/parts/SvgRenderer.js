@@ -622,7 +622,7 @@ SVGElement.prototype = {
 	/**
 	 * Get the bounding box (width, height, x and y) for the element
 	 */
-	getBBox: function () {
+	getBBox: function (noCache) {
 		var wrapper = this,
 			bBox = wrapper.bBox,
 			renderer = wrapper.renderer,
@@ -641,11 +641,11 @@ SVGElement.prototype = {
 		if (textStr === '' || numRegex.test(textStr)) {
 			cacheKey = 'num.' + textStr.toString().length + (styles ? ('|' + styles.fontSize + '|' + styles.fontFamily) : '');
 
-		} else {
+		} //else { // This code block made demo/waterfall fail, related to buildText
 			// Caching all strings reduces rendering time by 4-5%. 
 			// TODO: Check how this affects places where bBox is found on the element
-			cacheKey = textStr + (styles ? ('|' + styles.fontSize + '|' + styles.fontFamily) : '');
-		}
+			//cacheKey = textStr + (styles ? ('|' + styles.fontSize + '|' + styles.fontFamily) : '');
+		//}
 		if (cacheKey) {
 			bBox = renderer.cache[cacheKey];
 		}
@@ -1996,9 +1996,7 @@ SVGRenderer.prototype = {
 				element.setAttribute(key, value);
 			};
 		}
-
-		wrapper.x = x;
-		wrapper.y = y;
+		
 		return wrapper;
 	},
 

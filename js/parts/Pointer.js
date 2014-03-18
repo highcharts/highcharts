@@ -410,8 +410,8 @@ Pointer.prototype = {
 					originalEvent: e.originalEvent || e
 				},
 				selectionBox = this.selectionMarker,
-				selectionLeft = selectionBox.x,
-				selectionTop = selectionBox.y,
+				selectionLeft = selectionBox.attr('x'),
+				selectionTop = selectionBox.attr('y'),
 				runZoom;
 			// a selection has been made
 			if (this.hasDragged || hasPinched) {
@@ -421,7 +421,7 @@ Pointer.prototype = {
 					if (axis.zoomEnabled) {
 						var horiz = axis.horiz,
 							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop)),
-							selectionMax = axis.toValue((horiz ? selectionLeft + selectionBox.width : selectionTop + selectionBox.height));
+							selectionMax = axis.toValue((horiz ? selectionLeft + selectionBox.attr('width') : selectionTop + selectionBox.attr('height')));
 
 						if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
 							selectionData[axis.coll].push({
