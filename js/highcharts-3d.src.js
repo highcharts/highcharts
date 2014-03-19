@@ -551,7 +551,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 			origin: origin
 		};
 		if (!this.bottomFrame) {
-			this.bottomFrame = renderer.cuboid(bottomShape).attr({fill: fbottom.color, zIndex: (chart.yAxis[0].reversed ? 4 : -1)}).css({stroke: fbottom.color}).add();
+			this.bottomFrame = renderer.cuboid(bottomShape).attr({fill: fbottom.color, zIndex: (chart.yAxis[0].reversed && alpha > 0 ? 4 : -1)}).css({stroke: fbottom.color}).add();
 		} else {
 			this.bottomFrame.animate(bottomShape);
 		}
