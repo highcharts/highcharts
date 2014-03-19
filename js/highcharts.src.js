@@ -2787,6 +2787,14 @@ SVGElement.prototype = {
 	alignSetter: function (value) {
 		this.element.setAttribute('text-anchor', { left: 'start', center: 'middle', right: 'end' }[value]);
 	},
+	// In Chrome/Win < 6 as well as Batik and PhantomJS as of 1.9.7, the stroke attribute can't be set when the stroke-
+	// width is 0. #1369
+	'stroke-widthSetter': function (value, key, element) {
+		if (value === 0) {
+			value = 0.00001;
+		}
+		element.setAttribute(key, value);
+	},
 	titleSetter: function (value) {
 		var titleNode = this.element.getElementsByTagName('title')[0];
 		if (!titleNode) {
@@ -3947,7 +3955,7 @@ SVGRenderer.prototype = {
 		wrapper.onAdd = function () {
 			text.add(wrapper);
 			wrapper.attr({
-				text: str, // alignment is available now
+				text: str || '', // alignment is available now
 				x: x,
 				y: y
 			});

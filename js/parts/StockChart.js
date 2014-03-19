@@ -331,12 +331,12 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 
 	// show the label
 	crossLabel.attr({
+		text: formatOption ? format(formatOption, {value: point[axis]}) : options.formatter.call(this, point[axis]), 
 		x: posx, 
 		y: posy, 
-		text: formatOption ? format(formatOption, {value: point[axis]}) : options.formatter.call(this, point[axis]), 
 		visibility: VISIBLE
 	});
-	crossBox = crossLabel.box;
+	crossBox = crossLabel.getBBox();
 
 	// now it is placed we can correct its position
 	if (horiz) {
