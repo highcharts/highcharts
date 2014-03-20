@@ -1552,9 +1552,38 @@ if (seriesTypes.bubble) {
 	});
 }
 
+/**
+ * Extend the default options with map options
+ */
+defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
+	nullColor: '#F8F8F8',
+	dataLabels: {
+		format: '{point.value}',
+		verticalAlign: 'middle',
+		crop: false,
+		overflow: false,
+		style: {
+			color: 'white',
+			fontWeight: 'bold',
+			textShadow: '0 0 5px black'
+		}
+	},
+	tooltip: {
+		pointFormat: '{point.name}: {point.value}<br/>'
+	},
+	states: {
+		normal: {
+			animation: true
+		},
+		hover: {
+			brightness: 0.2
+		}
+	}
+});
 
 // The Heatmap series type
 seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
+	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
 	supportsDrilldown: true,
