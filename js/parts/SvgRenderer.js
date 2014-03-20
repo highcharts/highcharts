@@ -204,13 +204,13 @@ SVGElement.prototype = {
 				}
 
 
-				if (wrapper.symbolName && /^(x|y|width|height|r|start|end|innerR|anchorX|anchorY)/.test(key)) {
+				/*if (wrapper.symbolName && /^(x|y|width|height|r|start|end|innerR|anchorX|anchorY)/.test(key)) {
 					if (!hasSetSymbolSize) {
 						wrapper.symbolAttr(hash);
 						hasSetSymbolSize = true;
 					}
 					skipAttr = true;
-				}
+				}*/
 
 				if (wrapper.rotation && (key === 'x' || key === 'y')) {
 					this.doTransform = true;
@@ -306,22 +306,36 @@ SVGElement.prototype = {
 	 * @param {Object} hash
 	 */
 	symbolAttr: function (hash) {
-		var wrapper = this;
+		var wrapper = this,
+			newPath,
+			geometricProps = ['x', 'y', 'r', 'start', 'end', 'width', 'height', 'innerR', 'anchorX', 'anchorY'],
+			key,
+			attr = {};
 
-		each(['x', 'y', 'r', 'start', 'end', 'width', 'height', 'innerR', 'anchorX', 'anchorY'], function (key) {
-			wrapper[key] = pick(hash[key], wrapper[key]);
-		});
+		// Handle geometric properties
+		for (key in hash) {
+			if (inArray(key, geometricProps) !== -1) { // skip attribute, use it to build path
+				newPath = true;
+			} else { // pass it on to baseAttr
+				attr[key] = hash[key];
+			}
+			wrapper[key] = hash[key];				
+		}
 
-		wrapper.attr({
-			d: wrapper.renderer.symbols[wrapper.symbolName](
+		if (newPath) {
+			attr.d = wrapper.renderer.symbols[wrapper.symbolName](
 				wrapper.x,
 				wrapper.y,
 				wrapper.width,
 				wrapper.height,
 				wrapper
-			)
-		});
+			);
+		}
+
+		return wrapper.baseAttr(attr);
 	},
+
+	
 
 	/**
 	 * Apply a clipping path to this object
@@ -1771,6 +1785,8 @@ SVGRenderer.prototype = {
 			obj = this.path(path);
 			// expando properties for use in animate and attr
 			extend(obj, {
+				baseAttr: obj.attr,
+				attr: obj.symbolAttr,
 				symbolName: symbol,
 				x: x,
 				y: y,
