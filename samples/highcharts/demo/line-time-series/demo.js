@@ -1,8 +1,7 @@
 $(function () {
         $('#container').highcharts({
             chart: {
-                zoomType: 'x',
-                spacingRight: 20
+                zoomType: 'x'
             },
             title: {
                 text: 'USD to EUR exchange rate from 2006 through 2008'
@@ -14,10 +13,7 @@ $(function () {
             },
             xAxis: {
                 type: 'datetime',
-                maxZoom: 14 * 24 * 3600000, // fourteen days
-                title: {
-                    text: null
-                }
+                minRange: 14 * 24 * 3600000 // fourteen days
             },
             yAxis: {
                 title: {
@@ -39,11 +35,10 @@ $(function () {
                             [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
                         ]
                     },
-                    lineWidth: 1,
                     marker: {
-                        enabled: false
+                        radius: 2
                     },
-                    shadow: false,
+                    lineWidth: 1,
                     states: {
                         hover: {
                             lineWidth: 1

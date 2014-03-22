@@ -1404,7 +1404,7 @@ defaultOptions = {
 			//shadow: false,
 			// stacking: null,
 			marker: {
-				enabled: true,
+				//enabled: true,
 				//symbol: null,
 				lineWidth: 0,
 				radius: 4,
@@ -12410,7 +12410,10 @@ Series.prototype = {
 			i, // loop variable
 			options = series.options,
 			cropThreshold = options.cropThreshold,
-			isCartesian = series.isCartesian;
+			activePointCount = 0,
+			isCartesian = series.isCartesian,
+			min = xAxis.min,
+			max = xAxis.max;
 
 		// If the series data or axes haven't changed, don't go through this. Return false to pass
 		// the message on to override methods like in data grouping.
@@ -12421,10 +12424,7 @@ Series.prototype = {
 
 		// optionally filter out points outside the plot area
 		if (isCartesian && series.sorted && (!cropThreshold || dataLength > cropThreshold || series.forceCrop)) {
-			var min = xAxis.min,
-				max = xAxis.max;
-
-			// it's outside current extremes
+						// it's outside current extremes
 			if (processedXData[dataLength - 1] < min || processedXData[0] > max) {
 				processedXData = [];
 				processedYData = [];
@@ -12436,6 +12436,7 @@ Series.prototype = {
 				processedYData = croppedData.yData;
 				cropStart = croppedData.start;
 				cropped = true;
+				activePointCount = processedXData.length;
 			}
 		}
 
@@ -12443,6 +12444,10 @@ Series.prototype = {
 		// Find the closest distance between processed points
 		for (i = processedXData.length - 1; i >= 0; i--) {
 			distance = processedXData[i] - processedXData[i - 1];
+			
+			if (!cropped && processedXData[i] > min && processedXData[i] < max) {
+				activePointCount++;
+			}
 			if (distance > 0 && (closestPointRange === UNDEFINED || distance < closestPointRange)) {
 				closestPointRange = distance;
 
@@ -12458,6 +12463,7 @@ Series.prototype = {
 		series.cropStart = cropStart;
 		series.processedXData = processedXData;
 		series.processedYData = processedYData;
+		series.activePointCount = activePointCount;
 
 		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
 			series.pointRange = closestPointRange || 1;
@@ -12823,9 +12829,13 @@ Series.prototype = {
 			pointMarkerOptions,
 			enabled,
 			isInside,
-			markerGroup = series.markerGroup;
+			markerGroup = series.markerGroup,
+			globallyEnabled = pick(
+				seriesMarkerOptions.enabled, 
+				series.activePointCount < (0.5 * series.xAxis.len / seriesMarkerOptions.radius)
+			);
 
-		if (seriesMarkerOptions.enabled || series._hasPointMarkers) {
+		if (seriesMarkerOptions.enabled !== false || series._hasPointMarkers) {
 
 			i = points.length;
 			while (i--) {
@@ -12834,7 +12844,7 @@ Series.prototype = {
 				plotY = point.plotY;
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
-				enabled = (seriesMarkerOptions.enabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
+				enabled = (globallyEnabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
 				isInside = chart.isInsidePlot(mathRound(plotX), plotY, chart.inverted); // #1858
 
 				// only draw the point if y is defined
@@ -14031,7 +14041,7 @@ seriesTypes.line = LineSeries;
  */
 defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	borderColor: '#FFFFFF',
-	borderWidth: 1,
+	//borderWidth: 1,
 	borderRadius: 0,
 	//colorByPoint: undefined,
 	groupPadding: 0.2,
@@ -14069,7 +14079,6 @@ var ColumnSeries = extendClass(Series, {
 	type: 'column',
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
-		'stroke-width': 'borderWidth',
 		fill: 'color',
 		r: 'borderRadius'
 	},
@@ -14172,7 +14181,10 @@ var ColumnSeries = extendClass(Series, {
 		var series = this,
 			chart = series.chart,
 			options = series.options,
-			borderWidth = options.borderWidth,
+			borderWidth = series.borderWidth = pick(
+				options.borderWidth, 
+				series.activePointCount > 0.5 * series.xAxis.len ? 0 : 1
+			),
 			yAxis = series.yAxis,
 			threshold = options.threshold,
 			translatedThreshold = series.translatedThreshold = yAxis.getThreshold(threshold),
@@ -14278,7 +14290,9 @@ var ColumnSeries = extendClass(Series, {
 			options = series.options,
 			renderer = chart.renderer,
 			animationLimit = options.animationLimit || 250,
-			shapeArgs;
+			shapeArgs,
+			pointAttr,
+			borderAttr;
 
 		// draw the columns
 		each(series.points, function (point) {
@@ -14287,14 +14301,19 @@ var ColumnSeries = extendClass(Series, {
 
 			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
+				borderAttr = {
+					'stroke-width': series.borderWidth
+				};
+				pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE] || series.pointAttr[NORMAL_STATE];
 				
 				if (graphic) { // update
 					stop(graphic);
-					graphic[series.points.length < animationLimit ? 'animate' : 'attr'](merge(shapeArgs));
+					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs));
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
-						.attr(point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE])
+						.attr(pointAttr)
+						.attr(borderAttr)
 						.add(series.group)
 						.shadow(options.shadow, null, options.stacking && !options.borderRadius);
 				}
