@@ -134,6 +134,7 @@ Pointer.prototype = {
 			chart = pointer.chart,
 			series = chart.series,
 			tooltip = chart.tooltip,
+			followPointer,
 			point,
 			points,
 			hoverPoint = chart.hoverPoint,
@@ -176,8 +177,9 @@ Pointer.prototype = {
 			}
 		}
 
-		// separate tooltip and general mouse events
-		if (hoverSeries && hoverSeries.tracker && (!tooltip || !tooltip.followPointer)) { // only use for line-type series with common tracker and while not following the pointer #2584
+		// Separate tooltip and general mouse events
+		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
+		if (hoverSeries && hoverSeries.tracker && !followPointer) { // #2584, #2830
 
 			// get the point
 			point = hoverSeries.tooltipPoints[index];
@@ -190,7 +192,7 @@ Pointer.prototype = {
 
 			}
 			
-		} else if (tooltip && tooltip.followPointer && !tooltip.isHidden) {
+		} else if (tooltip && followPointer && !tooltip.isHidden) {
 			anchor = tooltip.getAnchor([{}], e);
 			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });
 		}

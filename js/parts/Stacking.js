@@ -1,7 +1,7 @@
 /**
  * The class for stack items
  */
-function StackItem(axis, options, isNegative, x, stackOption, stacking) {
+function StackItem(axis, options, isNegative, x, stackOption) {
 	
 	var inverted = axis.chart.inverted;
 
@@ -19,12 +19,11 @@ function StackItem(axis, options, isNegative, x, stackOption, stacking) {
 	// Initialize total value
 	this.total = null;
 
-	// This will keep each points' extremes stored by series.index
+	// This will keep each points' extremes stored by series.index and point index
 	this.points = {};
 
 	// Save the stack option on the series configuration object, and whether to treat it as percent
 	this.stack = stackOption;
-	this.percent = stacking === 'percent';
 
 	// The align options and text align varies on whether the stack is negative and
 	// if the chart is inverted or not.
@@ -60,7 +59,7 @@ StackItem.prototype = {
 		// Create new label
 		} else {
 			this.label =
-				this.axis.chart.renderer.text(str, 0, 0, options.useHTML)		// dummy positions, actual position updated with setOffset method in columnseries
+				this.axis.chart.renderer.text(str, null, null, options.useHTML)		// dummy positions, actual position updated with setOffset method in columnseries
 					.css(options.style)				// apply style
 					.attr({
 						align: this.textAlign,				// fix the text-anchor
@@ -80,7 +79,7 @@ StackItem.prototype = {
 			chart = axis.chart,
 			inverted = chart.inverted,
 			neg = this.isNegative,							// special treatment is needed for negative stacks
-			y = axis.translate(this.percent ? 100 : this.total, 0, 0, 0, 1), // stack value translated mapped to chart coordinates
+			y = axis.translate(axis.usePercentage ? 100 : this.total, 0, 0, 0, 1), // stack value translated mapped to chart coordinates
 			yZero = axis.translate(0),						// stack origin
 			h = mathAbs(y - yZero),							// stack height
 			x = chart.xAxis[0].translate(this.x) + xOffset,	// stack x position
@@ -192,6 +191,7 @@ Series.prototype.setStackedPoints = function () {
 		stack,
 		other,
 		key,
+		pointKey,
 		i,
 		x,
 		y;
@@ -200,6 +200,7 @@ Series.prototype.setStackedPoints = function () {
 	for (i = 0; i < yDataLength; i++) {
 		x = xData[i];
 		y = yData[i];
+		pointKey = series.index + ',' + i;
 
 		// Read stacked values into a stack based on the x value,
 		// the sign of y and the stack key. Stacking is also handled for null values (#739)
@@ -217,13 +218,13 @@ Series.prototype.setStackedPoints = function () {
 				stacks[key][x] = oldStacks[key][x];
 				stacks[key][x].total = null;
 			} else {
-				stacks[key][x] = new StackItem(yAxis, yAxis.options.stackLabels, isNegative, x, stackOption, stacking);
+				stacks[key][x] = new StackItem(yAxis, yAxis.options.stackLabels, isNegative, x, stackOption);
 			}
 		}
 
 		// If the StackItem doesn't exist, create it first
 		stack = stacks[key][x];
-		stack.points[series.index] = [stack.cum || 0];
+		stack.points[pointKey] = [stack.cum || 0];
 
 		// Add value to the stack total
 		if (stacking === 'percent') {
@@ -244,7 +245,7 @@ Series.prototype.setStackedPoints = function () {
 
 		stack.cum = (stack.cum || 0) + (y || 0);
 
-		stack.points[series.index].push(stack.cum);
+		stack.points[pointKey].push(stack.cum);
 		stackedYData[i] = stack.cum;
 
 	}
@@ -278,7 +279,7 @@ Series.prototype.setPercentStacks = function () {
 		while (i--) {
 			x = processedXData[i];
 			stack = stacks[key] && stacks[key][x];
-			pointExtremes = stack && stack.points[series.index];
+			pointExtremes = stack && stack.points[series.index + ',' + i];
 			if (pointExtremes) {
 				totalFactor = stack.total ? 100 / stack.total : 0;
 				pointExtremes[0] = correctFloat(pointExtremes[0] * totalFactor); // Y bottom value

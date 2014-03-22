@@ -16,14 +16,15 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 		typeOptions = options.plotOptions[type],		
 		options3d = options.chart.options3d,
 
-		depth = typeOptions.depth || 0,
+		depth = typeOptions.depth || 25,
 		origin = {
 			x: chart.plotWidth / 2,
 			y: chart.plotHeight / 2, 
-			z: options3d.depth
+			z: options3d.depth,
+			vd: options3d.viewDistance
 		},
 		alpha = options3d.alpha,
-		beta = options3d.beta;
+		beta = options3d.beta * (chart.yAxis[0].opposite ? -1 : 1);
 
 	var stack = typeOptions.stacking ? (this.options.stack || 0) : series._i; 
 	var z = stack * (depth + (typeOptions.groupZPadding || 1));
@@ -87,7 +88,8 @@ Highcharts.wrap(Highcharts.seriesTypes.cylinder.prototype, 'translate', function
 		origin = {
 			x: chart.inverted ? chart.plotHeight / 2 : chart.plotWidth / 2,
 			y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2, 
-			z: options3d.depth
+			z: options3d.depth,
+			vd: options3d.viewDistance
 		},
 		alpha = options3d.alpha;
 

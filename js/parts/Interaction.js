@@ -507,10 +507,11 @@ extend(Point.prototype, {
 			chart = series.chart,
 			radius,
 			newSymbol,
-			pointAttr = point.pointAttr;
+			pointAttr;
 
 		state = state || NORMAL_STATE; // empty string
 		move = move && stateMarkerGraphic;
+		pointAttr = point.pointAttr[state] || series.pointAttr[state];
 
 		if (
 				// already has this state
@@ -531,9 +532,9 @@ extend(Point.prototype, {
 
 		// apply hover styles to the existing point
 		if (point.graphic) {
-			radius = markerOptions && point.graphic.symbolName && pointAttr[state].r;
+			radius = markerOptions && point.graphic.symbolName && pointAttr.r;
 			point.graphic.attr(merge(
-				pointAttr[state],
+				pointAttr,
 				radius ? { // new symbol attributes (#507, #612)
 					x: plotX - radius,
 					y: plotY - radius,
@@ -563,7 +564,7 @@ extend(Point.prototype, {
 						2 * radius,
 						2 * radius
 					)
-					.attr(pointAttr[state])
+					.attr(pointAttr)
 					.add(series.markerGroup);
 					stateMarkerGraphic.currentSymbol = newSymbol;
 

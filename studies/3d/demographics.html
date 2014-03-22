@@ -1,0 +1,109 @@
+<html>
+<head>
+<title>Demographic Distribution</title>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://github.highcharts.com/highcharts-3d.src.js"></script>
+
+
+<script>
+$(function () {
+    var categories = ['0-10','11-20','21-30','31-40','41-50','51-60','61-70','71-80','80+']
+    var chart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'container',
+            type: 'column',
+            margin: 100,
+            options3d: {
+                enabled: true,
+                alpha: 25,
+                beta: 15,
+                depth: 25,
+                frame: {
+                    bottom: {
+                        size: 2,
+                        color: '#76758e'
+                    },
+                    back: {
+                        size: 2,
+                        color: '#76758e'
+                    },
+                    side: {
+                        size: 2,
+                        color: '#76758e'
+                    }
+                }
+            }
+        },
+        title: {
+            text: 'Demographic Distribution'
+        },
+        subtitle: {
+            text: 'by age and gender'
+        },
+        tooltip: {
+            shared: true,
+            useHTML: true,
+            formatter: function () {
+                var s = "<b>Age Range: " + this.x + "</b>";
+                Highcharts.each(this.points, function (point) {
+                    s += "<br/><span style='color: " + point.series.color + "''>" + point.series.name + "</span>&nbsp;" + Math.abs(point.y) + "%"; 
+                });
+                return s;
+            }
+        },
+        xAxis: [{
+            categories: categories,
+            labels: {
+                x: -5,
+                y: 20,
+                staggerLines: 1
+            },
+            title: {
+                text: 'Age Range'
+            },
+        }, { 
+            categories: categories,
+            opposite: true, 
+            linkedTo: 0, 
+            labels: {
+                y: -20,
+                x: 5,
+                staggerLines: 1
+            }
+        }],
+        yAxis: {
+            title: {
+                text: 'Percentage'
+            },
+            labels: {
+                formatter: function () { return Math.abs(this.value) + '%'; }
+            }
+        },
+        plotOptions: {
+            column: {
+                stacking: true,
+                depth: 25
+            }
+        },
+        series: [{
+            name: 'Males',
+            color: '#8085e8',
+            data: [7,8,10,16,16,17,13,8,5]            
+        },{
+            name: 'Females',
+            color: '#f45b5b',
+            data: [-7,-8,-10,-15,-15,-16,-14,-9,-6]
+        }]
+    });
+
+});
+</script>
+</head>
+
+<body>
+    <div id="container" style="height:400px; width:600px;"></div>
+</body>
+
+</html>

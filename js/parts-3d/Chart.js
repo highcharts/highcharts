@@ -22,7 +22,8 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 				enabled: false,
 				alpha: 0,
 				beta: 0,
-				depth: 0,
+				depth: 100,
+				viewDistance: 100,
 
 				frame: {
 					bottom: { size: 1, color: 'transparent' },

@@ -1140,7 +1140,7 @@ pathAnim = {
 				detachedType = 'detached' + type,
 				defaultPrevented;
 	
-			// Remove warnings in Chrome when accessing layerX and layerY. Although Highcharts
+			// Remove warnings in Chrome when accessing returnValue (#2790), layerX and layerY. Although Highcharts
 			// never uses these properties, Chrome includes them in the default click event and
 			// raises the warning when they are copied over in the extend statement below.
 			//
@@ -1149,6 +1149,7 @@ pathAnim = {
 			if (!isIE && eventArguments) {
 				delete eventArguments.layerX;
 				delete eventArguments.layerY;
+				delete eventArguments.returnValue;
 			}
 	
 			extend(event, eventArguments);
@@ -7125,7 +7126,7 @@ Axis.prototype = {
 
 			} else {
 				each(axis.series, function (series) {
-					var seriesPointRange = mathMax(axis.isXAxis ? series.pointRange : (axis.axisPointRange || 0), +hasCategories),
+					var seriesPointRange = hasCategories ? 1 : (axis.isXAxis ? series.pointRange : (axis.axisPointRange || 0)), // #2806
 						pointPlacement = series.options.pointPlacement,
 						seriesClosestPointRange = series.closestPointRange;
 
@@ -9144,6 +9145,7 @@ Pointer.prototype = {
 			chart = pointer.chart,
 			series = chart.series,
 			tooltip = chart.tooltip,
+			followPointer,
 			point,
 			points,
 			hoverPoint = chart.hoverPoint,
@@ -9186,8 +9188,9 @@ Pointer.prototype = {
 			}
 		}
 
-		// separate tooltip and general mouse events
-		if (hoverSeries && hoverSeries.tracker && (!tooltip || !tooltip.followPointer)) { // only use for line-type series with common tracker and while not following the pointer #2584
+		// Separate tooltip and general mouse events
+		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
+		if (hoverSeries && hoverSeries.tracker && !followPointer) { // #2584, #2830
 
 			// get the point
 			point = hoverSeries.tooltipPoints[index];
@@ -9200,7 +9203,7 @@ Pointer.prototype = {
 
 			}
 			
-		} else if (tooltip && tooltip.followPointer && !tooltip.isHidden) {
+		} else if (tooltip && followPointer && !tooltip.isHidden) {
 			anchor = tooltip.getAnchor([{}], e);
 			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });
 		}
@@ -13163,7 +13166,7 @@ Series.prototype = {
 			if (stacking && series.visible && stack && stack[xValue]) {
 
 				pointStack = stack[xValue];
-				stackValues = pointStack.points[series.index];
+				stackValues = pointStack.points[series.index + ',' + i];
 				yBottom = stackValues[0];
 				yValue = stackValues[1];
 
@@ -13225,7 +13228,7 @@ Series.prototype = {
 			clipRect,
 			markerClipRect,
 			animation = series.options.animation,
-			clipBox = chart.clipBox,
+			clipBox = series.clipBox || chart.clipBox,
 			inverted = chart.inverted,
 			sharedClipKey;
 
@@ -13233,7 +13236,7 @@ Series.prototype = {
 		if (animation && !isObject(animation)) {
 			animation = defaultPlotOptions[series.type].animation;
 		}
-		sharedClipKey = '_sharedClip' + animation.duration + animation.easing;
+		sharedClipKey = ['_sharedClip', animation.duration, animation.easing, clipBox.height].join(',');
 
 		// Initialize the animation. Set up the clipping rectangle.
 		if (init) {
@@ -13271,7 +13274,7 @@ Series.prototype = {
 
 			// Delete this function to allow it only once
 			series.animate = null;
-
+ 
 			// Call the afterAnimate function on animation complete (but don't overwrite the animation.complete option
 			// which should be available to the user).
 			series.animationTimeout = setTimeout(function () {
@@ -13286,17 +13289,22 @@ Series.prototype = {
 	afterAnimate: function () {
 		var chart = this.chart,
 			sharedClipKey = this.sharedClipKey,
-			group = this.group;
+			group = this.group,
+			clipBox = this.clipBox;
 
 		if (group && this.options.clip !== false) {
-			group.clip(chart.clipRect);
+			if (!sharedClipKey || !clipBox) {
+				group.clip(clipBox ? chart.renderer.clipRect(clipBox) : chart.clipRect);
+			}
 			this.markerGroup.clip(); // no clip
 		}
 
 		// Remove the shared clipping rectancgle when all series are shown
 		setTimeout(function () {
 			if (sharedClipKey && chart[sharedClipKey]) {
-				chart[sharedClipKey] = chart[sharedClipKey].destroy();
+				if (!clipBox) {
+					chart[sharedClipKey] = chart[sharedClipKey].destroy();
+				}
 				chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
 			}
 		}, 100);
@@ -14047,7 +14055,7 @@ Series.prototype = {
 /**
  * The class for stack items
  */
-function StackItem(axis, options, isNegative, x, stackOption, stacking) {
+function StackItem(axis, options, isNegative, x, stackOption) {
 	
 	var inverted = axis.chart.inverted;
 
@@ -14065,12 +14073,11 @@ function StackItem(axis, options, isNegative, x, stackOption, stacking) {
 	// Initialize total value
 	this.total = null;
 
-	// This will keep each points' extremes stored by series.index
+	// This will keep each points' extremes stored by series.index and point index
 	this.points = {};
 
 	// Save the stack option on the series configuration object, and whether to treat it as percent
 	this.stack = stackOption;
-	this.percent = stacking === 'percent';
 
 	// The align options and text align varies on whether the stack is negative and
 	// if the chart is inverted or not.
@@ -14106,7 +14113,7 @@ StackItem.prototype = {
 		// Create new label
 		} else {
 			this.label =
-				this.axis.chart.renderer.text(str, 0, 0, options.useHTML)		// dummy positions, actual position updated with setOffset method in columnseries
+				this.axis.chart.renderer.text(str, null, null, options.useHTML)		// dummy positions, actual position updated with setOffset method in columnseries
 					.css(options.style)				// apply style
 					.attr({
 						align: this.textAlign,				// fix the text-anchor
@@ -14126,7 +14133,7 @@ StackItem.prototype = {
 			chart = axis.chart,
 			inverted = chart.inverted,
 			neg = this.isNegative,							// special treatment is needed for negative stacks
-			y = axis.translate(this.percent ? 100 : this.total, 0, 0, 0, 1), // stack value translated mapped to chart coordinates
+			y = axis.translate(axis.usePercentage ? 100 : this.total, 0, 0, 0, 1), // stack value translated mapped to chart coordinates
 			yZero = axis.translate(0),						// stack origin
 			h = mathAbs(y - yZero),							// stack height
 			x = chart.xAxis[0].translate(this.x) + xOffset,	// stack x position
@@ -14238,6 +14245,7 @@ Series.prototype.setStackedPoints = function () {
 		stack,
 		other,
 		key,
+		pointKey,
 		i,
 		x,
 		y;
@@ -14246,6 +14254,7 @@ Series.prototype.setStackedPoints = function () {
 	for (i = 0; i < yDataLength; i++) {
 		x = xData[i];
 		y = yData[i];
+		pointKey = series.index + ',' + i;
 
 		// Read stacked values into a stack based on the x value,
 		// the sign of y and the stack key. Stacking is also handled for null values (#739)
@@ -14263,13 +14272,13 @@ Series.prototype.setStackedPoints = function () {
 				stacks[key][x] = oldStacks[key][x];
 				stacks[key][x].total = null;
 			} else {
-				stacks[key][x] = new StackItem(yAxis, yAxis.options.stackLabels, isNegative, x, stackOption, stacking);
+				stacks[key][x] = new StackItem(yAxis, yAxis.options.stackLabels, isNegative, x, stackOption);
 			}
 		}
 
 		// If the StackItem doesn't exist, create it first
 		stack = stacks[key][x];
-		stack.points[series.index] = [stack.cum || 0];
+		stack.points[pointKey] = [stack.cum || 0];
 
 		// Add value to the stack total
 		if (stacking === 'percent') {
@@ -14290,7 +14299,7 @@ Series.prototype.setStackedPoints = function () {
 
 		stack.cum = (stack.cum || 0) + (y || 0);
 
-		stack.points[series.index].push(stack.cum);
+		stack.points[pointKey].push(stack.cum);
 		stackedYData[i] = stack.cum;
 
 	}
@@ -14324,7 +14333,7 @@ Series.prototype.setPercentStacks = function () {
 		while (i--) {
 			x = processedXData[i];
 			stack = stacks[key] && stacks[key][x];
-			pointExtremes = stack && stack.points[series.index];
+			pointExtremes = stack && stack.points[series.index + ',' + i];
 			if (pointExtremes) {
 				totalFactor = stack.total ? 100 / stack.total : 0;
 				pointExtremes[0] = correctFloat(pointExtremes[0] * totalFactor); // Y bottom value
@@ -17217,10 +17226,11 @@ extend(Point.prototype, {
 			chart = series.chart,
 			radius,
 			newSymbol,
-			pointAttr = point.pointAttr;
+			pointAttr;
 
 		state = state || NORMAL_STATE; // empty string
 		move = move && stateMarkerGraphic;
+		pointAttr = point.pointAttr[state] || series.pointAttr[state];
 
 		if (
 				// already has this state
@@ -17241,9 +17251,9 @@ extend(Point.prototype, {
 
 		// apply hover styles to the existing point
 		if (point.graphic) {
-			radius = markerOptions && point.graphic.symbolName && pointAttr[state].r;
+			radius = markerOptions && point.graphic.symbolName && pointAttr.r;
 			point.graphic.attr(merge(
-				pointAttr[state],
+				pointAttr,
 				radius ? { // new symbol attributes (#507, #612)
 					x: plotX - radius,
 					y: plotY - radius,
@@ -17273,7 +17283,7 @@ extend(Point.prototype, {
 						2 * radius,
 						2 * radius
 					)
-					.attr(pointAttr[state])
+					.attr(pointAttr)
 					.add(series.markerGroup);
 					stateMarkerGraphic.currentSymbol = newSymbol;
 

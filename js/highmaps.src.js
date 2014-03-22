@@ -1140,7 +1140,7 @@ pathAnim = {
 				detachedType = 'detached' + type,
 				defaultPrevented;
 	
-			// Remove warnings in Chrome when accessing layerX and layerY. Although Highcharts
+			// Remove warnings in Chrome when accessing returnValue (#2790), layerX and layerY. Although Highcharts
 			// never uses these properties, Chrome includes them in the default click event and
 			// raises the warning when they are copied over in the extend statement below.
 			//
@@ -1149,6 +1149,7 @@ pathAnim = {
 			if (!isIE && eventArguments) {
 				delete eventArguments.layerX;
 				delete eventArguments.layerY;
+				delete eventArguments.returnValue;
 			}
 	
 			extend(event, eventArguments);
@@ -6864,7 +6865,7 @@ Axis.prototype = {
 
 			} else {
 				each(axis.series, function (series) {
-					var seriesPointRange = mathMax(axis.isXAxis ? series.pointRange : (axis.axisPointRange || 0), +hasCategories),
+					var seriesPointRange = hasCategories ? 1 : (axis.isXAxis ? series.pointRange : (axis.axisPointRange || 0)), // #2806
 						pointPlacement = series.options.pointPlacement,
 						seriesClosestPointRange = series.closestPointRange;
 
@@ -8683,6 +8684,7 @@ Pointer.prototype = {
 			chart = pointer.chart,
 			series = chart.series,
 			tooltip = chart.tooltip,
+			followPointer,
 			point,
 			points,
 			hoverPoint = chart.hoverPoint,
@@ -8725,8 +8727,9 @@ Pointer.prototype = {
 			}
 		}
 
-		// separate tooltip and general mouse events
-		if (hoverSeries && hoverSeries.tracker && (!tooltip || !tooltip.followPointer)) { // only use for line-type series with common tracker and while not following the pointer #2584
+		// Separate tooltip and general mouse events
+		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
+		if (hoverSeries && hoverSeries.tracker && !followPointer) { // #2584, #2830
 
 			// get the point
 			point = hoverSeries.tooltipPoints[index];
@@ -8739,7 +8742,7 @@ Pointer.prototype = {
 
 			}
 			
-		} else if (tooltip && tooltip.followPointer && !tooltip.isHidden) {
+		} else if (tooltip && followPointer && !tooltip.isHidden) {
 			anchor = tooltip.getAnchor([{}], e);
 			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });
 		}
@@ -12668,7 +12671,7 @@ Series.prototype = {
 			if (stacking && series.visible && stack && stack[xValue]) {
 
 				pointStack = stack[xValue];
-				stackValues = pointStack.points[series.index];
+				stackValues = pointStack.points[series.index + ',' + i];
 				yBottom = stackValues[0];
 				yValue = stackValues[1];
 
@@ -12730,7 +12733,7 @@ Series.prototype = {
 			clipRect,
 			markerClipRect,
 			animation = series.options.animation,
-			clipBox = chart.clipBox,
+			clipBox = series.clipBox || chart.clipBox,
 			inverted = chart.inverted,
 			sharedClipKey;
 
@@ -12738,7 +12741,7 @@ Series.prototype = {
 		if (animation && !isObject(animation)) {
 			animation = defaultPlotOptions[series.type].animation;
 		}
-		sharedClipKey = '_sharedClip' + animation.duration + animation.easing;
+		sharedClipKey = ['_sharedClip', animation.duration, animation.easing, clipBox.height].join(',');
 
 		// Initialize the animation. Set up the clipping rectangle.
 		if (init) {
@@ -12776,7 +12779,7 @@ Series.prototype = {
 
 			// Delete this function to allow it only once
 			series.animate = null;
-
+ 
 			// Call the afterAnimate function on animation complete (but don't overwrite the animation.complete option
 			// which should be available to the user).
 			series.animationTimeout = setTimeout(function () {
@@ -12791,17 +12794,22 @@ Series.prototype = {
 	afterAnimate: function () {
 		var chart = this.chart,
 			sharedClipKey = this.sharedClipKey,
-			group = this.group;
+			group = this.group,
+			clipBox = this.clipBox;
 
 		if (group && this.options.clip !== false) {
-			group.clip(chart.clipRect);
+			if (!sharedClipKey || !clipBox) {
+				group.clip(clipBox ? chart.renderer.clipRect(clipBox) : chart.clipRect);
+			}
 			this.markerGroup.clip(); // no clip
 		}
 
 		// Remove the shared clipping rectancgle when all series are shown
 		setTimeout(function () {
 			if (sharedClipKey && chart[sharedClipKey]) {
-				chart[sharedClipKey] = chart[sharedClipKey].destroy();
+				if (!clipBox) {
+					chart[sharedClipKey] = chart[sharedClipKey].destroy();
+				}
 				chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
 			}
 		}, 100);
@@ -17171,9 +17179,38 @@ Highcharts.Map = function (options, callback) {
 	return new Chart(options, callback);
 };
 
+/**
+ * Extend the default options with map options
+ */
+defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
+	nullColor: '#F8F8F8',
+	dataLabels: {
+		format: '{point.value}',
+		verticalAlign: 'middle',
+		crop: false,
+		overflow: false,
+		style: {
+			color: 'white',
+			fontWeight: 'bold',
+			textShadow: '0 0 5px black'
+		}
+	},
+	tooltip: {
+		pointFormat: '{point.name}: {point.value}<br/>'
+	},
+	states: {
+		normal: {
+			animation: true
+		},
+		hover: {
+			brightness: 0.2
+		}
+	}
+});
 
 // The Heatmap series type
 seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
+	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
 	supportsDrilldown: true,
@@ -17739,10 +17776,11 @@ extend(Point.prototype, {
 			chart = series.chart,
 			radius,
 			newSymbol,
-			pointAttr = point.pointAttr;
+			pointAttr;
 
 		state = state || NORMAL_STATE; // empty string
 		move = move && stateMarkerGraphic;
+		pointAttr = point.pointAttr[state] || series.pointAttr[state];
 
 		if (
 				// already has this state
@@ -17763,9 +17801,9 @@ extend(Point.prototype, {
 
 		// apply hover styles to the existing point
 		if (point.graphic) {
-			radius = markerOptions && point.graphic.symbolName && pointAttr[state].r;
+			radius = markerOptions && point.graphic.symbolName && pointAttr.r;
 			point.graphic.attr(merge(
-				pointAttr[state],
+				pointAttr,
 				radius ? { // new symbol attributes (#507, #612)
 					x: plotX - radius,
 					y: plotY - radius,
@@ -17795,7 +17833,7 @@ extend(Point.prototype, {
 						2 * radius,
 						2 * radius
 					)
-					.attr(pointAttr[state])
+					.attr(pointAttr)
 					.add(series.markerGroup);
 					stateMarkerGraphic.currentSymbol = newSymbol;
 
