@@ -1486,9 +1486,18 @@ Series.prototype = {
 	 * Get the translation and scale for the plot area of this series
 	 */
 	getPlotBox: function () {
+		var chart = this.chart,
+			xAxis = this.xAxis,
+			yAxis = this.yAxis;
+
+		// Swap axes for inverted (#2339)
+		if (chart.inverted) {
+			xAxis = yAxis;
+			yAxis = this.xAxis;
+		}
 		return {
-			translateX: this.xAxis ? this.xAxis.left : this.chart.plotLeft,
-			translateY: this.yAxis ? this.yAxis.top : this.chart.plotTop,
+			translateX: xAxis ? xAxis.left : chart.plotLeft,
+			translateY: yAxis ? yAxis.top : chart.plotTop,
 			scaleX: 1, // #1623
 			scaleY: 1
 		};
