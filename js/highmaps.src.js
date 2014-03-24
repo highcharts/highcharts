@@ -12809,7 +12809,9 @@ Series.prototype = {
 				if (!clipBox) {
 					chart[sharedClipKey] = chart[sharedClipKey].destroy();
 				}
-				chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
+				if (chart[sharedClipKey + 'm']) {
+					chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
+				}
 			}
 		}, 100);
 	},
