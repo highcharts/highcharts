@@ -12273,7 +12273,12 @@ Point.prototype = {
 		// If no x is set by now, get auto incremented value. All points must have an
 		// x value, however the y value can be null to create a gap in the series
 		if (point.x === UNDEFINED && series) {
-			point.x = x === UNDEFINED ? series.autoIncrement() : x;
+			if (x === UNDEFINED) {
+				point.x = series.autoIncrement();
+				point.autoX = true;
+			} else {
+				point.x = x;
+			}
 		}
 
 		return point;
@@ -12773,10 +12778,12 @@ Series.prototype = {
 			firstPoint = null,
 			xAxis = series.xAxis,
 			hasCategories = xAxis && !!xAxis.categories,
+			names = isArray(xAxis.categories) ? xAxis.categories : xAxis.names,
 			tooltipPoints = series.tooltipPoints,
 			i,
 			turboThreshold = options.turboThreshold,
 			pt,
+			nameX,
 			xData = this.xData,
 			yData = this.yData,
 			pointArrayMap = series.pointArrayMap,
@@ -12852,10 +12859,21 @@ Series.prototype = {
 					if (data[i] !== UNDEFINED) { // stray commas in oldIE
 						pt = { series: series };
 						series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
-						series.updateParallelArrays(pt, i);
+
+						// If the point has a name and the axis is of category type,
+						// search the names array for existing positions of the same name.
+						// If not found, add a position with that name (#2522).
 						if (hasCategories && pt.name) {
-							xAxis.names[pt.x] = pt.name; // #2046
+							series.requireSorting = false;
+							nameX = inArray(pt.name, names); // #2522
+							if (nameX === -1 || !pt.autoX) {
+								names[pt.x] = pt.name; // #2046
+							} else {
+								pt.x = nameX;
+							}
 						}
+						series.updateParallelArrays(pt, i);
+						
 					}
 				}
 			}
