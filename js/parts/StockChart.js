@@ -139,6 +139,7 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 	// Pinch status
 	this.pinchX = this.pinchHor = pinchType.indexOf('x') !== -1;
 	this.pinchY = this.pinchVert = pinchType.indexOf('y') !== -1;
+	this.hasZoom = this.hasZoom || this.pinchHor || this.pinchVert;
 });
 
 // Override getPlotLinePath to allow for multipane charts

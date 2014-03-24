@@ -845,9 +845,9 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 });
 
 // Extend the pinchTranslate method to preserve fixed ratio when zooming
-wrap(Pointer.prototype, 'pinchTranslate', function (proceed, zoomHor, zoomVert, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
+wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
 	var xBigger;
-	proceed.call(this, zoomHor, zoomVert, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
+	proceed.call(this, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 
 	// Keep ratio
 	if (this.chart.options.chart.type === 'map') {

@@ -36,6 +36,7 @@ Pointer.prototype = {
 		this.zoomY = zoomY = /y/.test(zoomType);
 		this.zoomHor = (zoomX && !inverted) || (zoomY && inverted);
 		this.zoomVert = (zoomY && !inverted) || (zoomX && inverted);
+		this.hasZoom = zoomX || zoomY;
 
 		// Do we need to handle click on a touch device?
 		this.runChartClick = chartEvents && !!chartEvents.click;
@@ -45,6 +46,7 @@ Pointer.prototype = {
 
 		if (Highcharts.Tooltip && options.tooltip.enabled) {
 			chart.tooltip = new Tooltip(chart, options.tooltip);
+			this.followTouchMove = options.tooltip.followTouchMove;
 		}
 
 		this.setDOMEvents();
