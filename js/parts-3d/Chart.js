@@ -63,3 +63,23 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'redraw', function (proceed) {
 	}
 	proceed.apply(this, [].slice.call(arguments, 1));	
 });
+
+Highcharts.Chart.prototype.retrieveStacks = function () {
+	var stacks = {},
+		type = this.options.chart.type,
+		typeOptions = this.options.plotOptions[type],
+		stacking = typeOptions.stacking,
+		grouping = typeOptions.grouping;
+
+	if (grouping || !stacking) { return this.series; }
+
+	Highcharts.each(this.series, function (S) {
+		if (!stacks[S.options.stack]) {
+			stacks[S.options.stack] = [S];
+		} else {
+			stacks[S.options.stack].push(S);
+		}
+	});
+	return stacks;
+};
+

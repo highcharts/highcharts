@@ -493,6 +493,26 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'redraw', function (proceed) {
 	}
 	proceed.apply(this, [].slice.call(arguments, 1));	
 });
+
+Highcharts.Chart.prototype.retrieveStacks = function () {
+	var stacks = {},
+		type = this.options.chart.type,
+		typeOptions = this.options.plotOptions[type],
+		stacking = typeOptions.stacking,
+		grouping = typeOptions.grouping;
+
+	if (grouping || !stacking) { return this.series; }
+
+	Highcharts.each(this.series, function (S) {
+		if (!stacks[S.options.stack]) {
+			stacks[S.options.stack] = [S];
+		} else {
+			stacks[S.options.stack].push(S);
+		}
+	});
+	return stacks;
+};
+
 /*** 
 	EXTENSION TO THE AXIS
 ***/
@@ -760,10 +780,31 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 	});	    
 });
 
+Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proceed) {
+	proceed.apply(this, [].slice.call(arguments, 1));
+
+	if (this.chart.is3d()) {
+	var grouping = this.chart.options.plotOptions.column.grouping,
+		stacking = this.chart.options.plotOptions.column.stacking,
+		z = this.options.zIndex;
+		if (!z) {		
+			if (!(grouping !== undefined && !grouping) && stacking) {
+				var stacks = this.chart.retrieveStacks();
+				z = 10 - stacks[this.options.stack].indexOf(this);
+				this.options.zIndex = z;
+			}
+		}
+	}
+});
+
 Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
 	// Do not do this if the chart is not 3D
-	if (this.chart.is3d()) {
-		this.group.attr({zIndex: this.group.zIndex * 10});
+	if (this.chart.is3d()) {		
+		var grouping = this.chart.options.plotOptions.column.grouping;
+		if (grouping !== undefined && !grouping) {			
+			this.group.attr({zIndex : (this.group.zIndex * 10)});
+		} 
+
 		// Set the border color to the fill color to provide a smooth edge
 		Highcharts.each(this.data, function (point) {
 			var c = point.options.borderColor || point.color || point.series.userOptions.borderColor || point.series.color;
