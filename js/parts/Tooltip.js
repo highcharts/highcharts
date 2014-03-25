@@ -78,14 +78,15 @@ Tooltip.prototype = {
 	move: function (x, y, anchorX, anchorY) {
 		var tooltip = this,
 			now = tooltip.now,
-			animate = tooltip.options.animation !== false && !tooltip.isHidden;
+			animate = tooltip.options.animation !== false && !tooltip.isHidden,
+			skipAnchor = tooltip.followPointer || tooltip.shared;
 
 		// get intermediate values for animation
 		extend(now, {
 			x: animate ? (2 * now.x + x) / 3 : x,
 			y: animate ? (now.y + y) / 2 : y,
-			anchorX: animate ? (2 * now.anchorX + anchorX) / 3 : anchorX,
-			anchorY: animate ? (now.anchorY + anchorY) / 2 : anchorY
+			anchorX: skipAnchor ? UNDEFINED : animate ? (2 * now.anchorX + anchorX) / 3 : anchorX,
+			anchorY: skipAnchor ? UNDEFINED : animate ? (now.anchorY + anchorY) / 2 : anchorY
 		});
 
 		// move to the intermediate value
@@ -199,10 +200,10 @@ Tooltip.prototype = {
 			plotTop = chart.plotTop,
 			plotWidth = chart.plotWidth,
 			plotHeight = chart.plotHeight,
-			distance = pick(this.options.distance, 12),
+			distance = this.distance,
 			pointX = point.plotX, //#2599
 			pointY = point.plotY,
-			preferTop = !chart.inverted,
+			preferTop = !chart.inverted && !this.shared,
 			alignedRight,
 			x,
 			y;
@@ -218,20 +219,18 @@ Tooltip.prototype = {
 
 		// It is too far to the left, adjust it
 		if (x < 7) {
-			x = plotLeft + mathMax(pointX, 0) + distance;
+			x = preferTop ? 1 : distance;
 		}
 	
 		// Test to see if the tooltip is too far to the right,
-		// if it is, move it back to be inside and then up to not cover the point.
+		// if it is, move it back to be inside
 		if ((x + boxWidth) > (plotLeft + plotWidth)) {
-			x -= (x + boxWidth) - (plotLeft + plotWidth);
-			y = pointY - boxHeight + plotTop - distance;
-			alignedRight = true;
+			x = plotLeft + plotWidth - boxWidth - (preferTop ? 1 : distance);
 		}
 	
 		// If it is now above the plot area, align it to the top of the plot area
 		if (y < plotTop + 5) {
-			y = plotTop + 5;
+			y = plotTop + distance;
 	
 			// If the tooltip is still covering the point, move it below instead
 			if ((alignedRight || preferTop) && plotTop + pointY >= y && plotTop + pointY <= (y + boxHeight)) {
@@ -335,6 +334,7 @@ Tooltip.prototype = {
 
 		// register the current series
 		currentSeries = point.series;
+		this.distance = pick(currentSeries.tooltipOptions.distance, 12);
 
 		// update the inner HTML
 		if (text === false) {

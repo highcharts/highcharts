@@ -487,8 +487,8 @@ Series.prototype = {
 			cropThreshold = options.cropThreshold,
 			activePointCount = 0,
 			isCartesian = series.isCartesian,
-			min = xAxis.min,
-			max = xAxis.max;
+			min,
+			max;
 
 		// If the series data or axes haven't changed, don't go through this. Return false to pass
 		// the message on to override methods like in data grouping.
@@ -499,7 +499,11 @@ Series.prototype = {
 
 		// optionally filter out points outside the plot area
 		if (isCartesian && series.sorted && (!cropThreshold || dataLength > cropThreshold || series.forceCrop)) {
-						// it's outside current extremes
+			
+			min = xAxis.min;
+			max = xAxis.max;
+
+			// it's outside current extremes
 			if (processedXData[dataLength - 1] < min || processedXData[0] > max) {
 				processedXData = [];
 				processedYData = [];

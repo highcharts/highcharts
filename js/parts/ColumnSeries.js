@@ -31,6 +31,9 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 		y: null
 	},
 	stickyTracking: false,
+	tooltip: {
+		distance: 6
+	},
 	threshold: 0
 });
 
@@ -193,7 +196,7 @@ var ColumnSeries = extendClass(Series, {
 			point.pointWidth = pointWidth;
 
 			// Fix the tooltip on center of grouped columns (#1216)
-			point.tooltipPos = [barX + barW / 2, plotY];
+			point.tooltipPos = chart.inverted ? [yAxis.len - plotY, series.xAxis.len - barX - barW / 2] : [barX + barW / 2, plotY];
 
 			// Round off to obtain crisp edges
 			fromLeft = mathAbs(barX) < 0.5;

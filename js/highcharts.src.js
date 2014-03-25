@@ -1327,7 +1327,7 @@ defaultOptions = {
 		//marginLeft: null,
 		borderColor: '#4572A7',
 		//borderWidth: 0,
-		borderRadius: 5,
+		borderRadius: 0,
 		defaultSeriesType: 'line',
 		ignoreHiddenSeries: true,
 		//inverted: false,
@@ -3570,6 +3570,7 @@ SVGRenderer.prototype = {
 			var arrowLength = 6,
 				halfDistance = 6,
 				r = mathMin((options && options.r) || 0, w, h),
+				safeDistance = r + halfDistance,
 				anchorX = options && options.anchorX,
 				anchorY = options && options.anchorY,
 				path = [
@@ -3584,28 +3585,28 @@ SVGRenderer.prototype = {
 					'C', x, y, x, y, x + r, y // top-right corner
 				];
 			
-			if (anchorX && anchorX > w) { // replace right side
+			if (anchorX && anchorX > w && anchorY > y + safeDistance && anchorY < y + h - safeDistance) { // replace right side
 				path.splice(13, 3,
 					'L', x + w, anchorY - halfDistance, 
 					x + w + arrowLength, anchorY,
 					x + w, anchorY + halfDistance,
 					x + w, y + h - r
 				);
-			} else if (anchorX && anchorX < 0) { // replace left side
+			} else if (anchorX && anchorX < 0 && anchorY > y + safeDistance && anchorY < y + h - safeDistance) { // replace left side
 				path.splice(33, 3, 
 					'L', x, anchorY + halfDistance, 
 					x - arrowLength, anchorY,
 					x, anchorY - halfDistance,
 					x, y + r
 				);
-			} else if (anchorY && anchorY > h) { // replace bottom
+			} else if (anchorY && anchorY > h && anchorX > x + safeDistance && anchorX < x + w - safeDistance) { // replace bottom
 				path.splice(23, 3,
 					'L', anchorX + halfDistance, y + h,
 					anchorX, y + h + arrowLength,
 					anchorX - halfDistance, y + h,
 					x + r, y + h
 				);
-			} else if (anchorY && anchorY < 0) { // replace top
+			} else if (anchorY && anchorY < 0 && anchorX > x + safeDistance && anchorX < x + w - safeDistance) { // replace top
 				path.splice(3, 3,
 					'L', anchorX - halfDistance, y,
 					anchorX, y - arrowLength,
@@ -8648,14 +8649,15 @@ Tooltip.prototype = {
 	move: function (x, y, anchorX, anchorY) {
 		var tooltip = this,
 			now = tooltip.now,
-			animate = tooltip.options.animation !== false && !tooltip.isHidden;
+			animate = tooltip.options.animation !== false && !tooltip.isHidden,
+			skipAnchor = tooltip.followPointer || tooltip.shared;
 
 		// get intermediate values for animation
 		extend(now, {
 			x: animate ? (2 * now.x + x) / 3 : x,
 			y: animate ? (now.y + y) / 2 : y,
-			anchorX: animate ? (2 * now.anchorX + anchorX) / 3 : anchorX,
-			anchorY: animate ? (now.anchorY + anchorY) / 2 : anchorY
+			anchorX: skipAnchor ? UNDEFINED : animate ? (2 * now.anchorX + anchorX) / 3 : anchorX,
+			anchorY: skipAnchor ? UNDEFINED : animate ? (now.anchorY + anchorY) / 2 : anchorY
 		});
 
 		// move to the intermediate value
@@ -8769,10 +8771,10 @@ Tooltip.prototype = {
 			plotTop = chart.plotTop,
 			plotWidth = chart.plotWidth,
 			plotHeight = chart.plotHeight,
-			distance = pick(this.options.distance, 12),
+			distance = this.distance,
 			pointX = point.plotX, //#2599
 			pointY = point.plotY,
-			preferTop = !chart.inverted,
+			preferTop = !chart.inverted && !this.shared,
 			alignedRight,
 			x,
 			y;
@@ -8788,20 +8790,18 @@ Tooltip.prototype = {
 
 		// It is too far to the left, adjust it
 		if (x < 7) {
-			x = plotLeft + mathMax(pointX, 0) + distance;
+			x = preferTop ? 1 : distance;
 		}
 	
 		// Test to see if the tooltip is too far to the right,
-		// if it is, move it back to be inside and then up to not cover the point.
+		// if it is, move it back to be inside
 		if ((x + boxWidth) > (plotLeft + plotWidth)) {
-			x -= (x + boxWidth) - (plotLeft + plotWidth);
-			y = pointY - boxHeight + plotTop - distance;
-			alignedRight = true;
+			x = plotLeft + plotWidth - boxWidth - (preferTop ? 1 : distance);
 		}
 	
 		// If it is now above the plot area, align it to the top of the plot area
 		if (y < plotTop + 5) {
-			y = plotTop + 5;
+			y = plotTop + distance;
 	
 			// If the tooltip is still covering the point, move it below instead
 			if ((alignedRight || preferTop) && plotTop + pointY >= y && plotTop + pointY <= (y + boxHeight)) {
@@ -8905,6 +8905,7 @@ Tooltip.prototype = {
 
 		// register the current series
 		currentSeries = point.series;
+		this.distance = pick(currentSeries.tooltipOptions.distance, 12);
 
 		// update the inner HTML
 		if (text === false) {
@@ -12910,8 +12911,8 @@ Series.prototype = {
 			cropThreshold = options.cropThreshold,
 			activePointCount = 0,
 			isCartesian = series.isCartesian,
-			min = xAxis.min,
-			max = xAxis.max;
+			min,
+			max;
 
 		// If the series data or axes haven't changed, don't go through this. Return false to pass
 		// the message on to override methods like in data grouping.
@@ -12922,7 +12923,11 @@ Series.prototype = {
 
 		// optionally filter out points outside the plot area
 		if (isCartesian && series.sorted && (!cropThreshold || dataLength > cropThreshold || series.forceCrop)) {
-						// it's outside current extremes
+			
+			min = xAxis.min;
+			max = xAxis.max;
+
+			// it's outside current extremes
 			if (processedXData[dataLength - 1] < min || processedXData[0] > max) {
 				processedXData = [];
 				processedYData = [];
@@ -15208,6 +15213,9 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 		y: null
 	},
 	stickyTracking: false,
+	tooltip: {
+		distance: 6
+	},
 	threshold: 0
 });
 
@@ -15370,7 +15378,7 @@ var ColumnSeries = extendClass(Series, {
 			point.pointWidth = pointWidth;
 
 			// Fix the tooltip on center of grouped columns (#1216)
-			point.tooltipPos = [barX + barW / 2, plotY];
+			point.tooltipPos = chart.inverted ? [yAxis.len - plotY, series.xAxis.len - barX - barW / 2] : [barX + barW / 2, plotY];
 
 			// Round off to obtain crisp edges
 			fromLeft = mathAbs(barX) < 0.5;
