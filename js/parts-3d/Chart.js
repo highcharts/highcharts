@@ -74,10 +74,10 @@ Highcharts.Chart.prototype.retrieveStacks = function () {
 	if (grouping || !stacking) { return this.series; }
 
 	Highcharts.each(this.series, function (S) {
-		if (!stacks[S.options.stack]) {
-			stacks[S.options.stack] = [S];
+		if (!stacks[S.options.stack || 0]) {
+			stacks[S.options.stack || 0] = [S];
 		} else {
-			stacks[S.options.stack].push(S);
+			stacks[S.options.stack || 0].push(S);
 		}
 	});
 	return stacks;

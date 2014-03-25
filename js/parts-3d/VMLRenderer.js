@@ -32,4 +32,18 @@ Highcharts.Chart.prototype.renderSeries = function () {
 	}
 };
 
+Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
+	proceed.apply(this, [].slice.call(arguments, 1));
+	// VML doesn't support a negative z-index
+	if (this.sideFrame) {
+		this.sideFrame.css({zIndex: 0});
+	}
+	if (this.bottomFrame) {
+		this.bottomFrame.css({zIndex: 1});
+	}	
+	if (this.backFrame) {
+		this.backFrame.css({zIndex: 0});
+	}		
+});
+
 }

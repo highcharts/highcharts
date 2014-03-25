@@ -53,8 +53,17 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proce
 		z = this.options.zIndex;
 		if (!z) {		
 			if (!(grouping !== undefined && !grouping) && stacking) {
-				var stacks = this.chart.retrieveStacks();
-				z = 10 - stacks[this.options.stack].indexOf(this);
+				var stacks = this.chart.retrieveStacks(),
+					stack = this.options.stack || 0,
+					i;
+				for (i = 0; i < stacks[stack].length; i++) {
+					if (stacks[stack][i] === this) {
+						break;
+					}
+				}
+				console.log(stacks[stack][i]);
+				z = 10 - i;
+				
 				this.options.zIndex = z;
 			}
 		}

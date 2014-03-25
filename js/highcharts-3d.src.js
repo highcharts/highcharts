@@ -504,10 +504,10 @@ Highcharts.Chart.prototype.retrieveStacks = function () {
 	if (grouping || !stacking) { return this.series; }
 
 	Highcharts.each(this.series, function (S) {
-		if (!stacks[S.options.stack]) {
-			stacks[S.options.stack] = [S];
+		if (!stacks[S.options.stack || 0]) {
+			stacks[S.options.stack || 0] = [S];
 		} else {
-			stacks[S.options.stack].push(S);
+			stacks[S.options.stack || 0].push(S);
 		}
 	});
 	return stacks;
@@ -789,8 +789,17 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proce
 		z = this.options.zIndex;
 		if (!z) {		
 			if (!(grouping !== undefined && !grouping) && stacking) {
-				var stacks = this.chart.retrieveStacks();
-				z = 10 - stacks[this.options.stack].indexOf(this);
+				var stacks = this.chart.retrieveStacks(),
+					stack = this.options.stack || 0,
+					i;
+				for (i = 0; i < stacks[stack].length; i++) {
+					if (stacks[stack][i] === this) {
+						break;
+					}
+				}
+				console.log(stacks[stack][i]);
+				z = 10 - i;
+				
 				this.options.zIndex = z;
 			}
 		}
@@ -1051,6 +1060,20 @@ Highcharts.Chart.prototype.renderSeries = function () {
 		serie.render();	
 	}
 };
+
+Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
+	proceed.apply(this, [].slice.call(arguments, 1));
+	// VML doesn't support a negative z-index
+	if (this.sideFrame) {
+		this.sideFrame.css({zIndex: 0});
+	}
+	if (this.bottomFrame) {
+		this.bottomFrame.css({zIndex: 1});
+	}	
+	if (this.backFrame) {
+		this.backFrame.css({zIndex: 0});
+	}		
+});
 
 }
 
