@@ -6713,6 +6713,11 @@ Axis.prototype = {
 			roundedMax = correctFloat(mathCeil(max / tickInterval) * tickInterval),
 			tickPositions = [];
 
+		// For single points, add a tick regardless of the relative position (#2662)
+		if (min === max) {
+			return [min];
+		}
+
 		// Populate the intermediate values
 		pos = roundedMin;
 		while (pos <= roundedMax) {
@@ -7127,7 +7132,7 @@ Axis.prototype = {
 			}
 
 			// When there is only one point, or all points have the same value on this axis, then min
-			// and max are equal and tickPositions.length is 1. In this case, add some padding
+			// and max are equal and tickPositions.length is 0 or 1. In this case, add some padding
 			// in order to center the point, but leave it with one tick. #1337.
 			if (tickPositions.length === 1) {
 				singlePad = mathAbs(axis.max || 1) * 0.001; // The lowest possible number to avoid extra padding on columns (#2619)
@@ -12283,7 +12288,7 @@ Series.prototype = {
 			firstPoint = null,
 			xAxis = series.xAxis,
 			hasCategories = xAxis && !!xAxis.categories,
-			names = isArray(xAxis.categories) ? xAxis.categories : xAxis.names,
+			names = xAxis && (isArray(xAxis.categories) ? xAxis.categories : xAxis.names),
 			tooltipPoints = series.tooltipPoints,
 			i,
 			turboThreshold = options.turboThreshold,
