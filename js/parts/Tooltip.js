@@ -334,7 +334,7 @@ Tooltip.prototype = {
 
 		// register the current series
 		currentSeries = point.series;
-		this.distance = pick(currentSeries.tooltipOptions.distance, 12);
+		this.distance = pick(currentSeries.tooltipOptions.distance, 16);
 
 		// update the inner HTML
 		if (text === false) {

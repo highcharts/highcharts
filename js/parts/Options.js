@@ -180,6 +180,10 @@ defaultOptions = {
 					marker: {
 						// lineWidth: base + 1,
 						// radius: base + 1
+					},
+					halo: {
+						size: 10,
+						opacity: 0.15
 					}
 				},
 				select: {

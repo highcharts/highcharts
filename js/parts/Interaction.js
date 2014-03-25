@@ -506,6 +506,8 @@ extend(Point.prototype, {
 			pointMarker = point.marker || {},
 			chart = series.chart,
 			radius,
+			halo = series.halo,
+			haloOptions,
 			newSymbol,
 			pointAttr;
 
@@ -582,7 +584,25 @@ extend(Point.prototype, {
 			}
 		}
 
+		// Show me your halo
+		haloOptions = stateOptions[state] && stateOptions[state].halo;
+		if (haloOptions && haloOptions.size) {
+			if (!halo) {
+				series.halo = halo = chart.renderer.path()
+					.add(series.markerGroup);
+			}
+			halo.attr({
+				d: point.haloPath(haloOptions.size),
+				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get('rgba')
+			});
+		} else if (halo) {
+			halo.attr({ d: 'M 0 0'});
+		}
+
 		point.state = state;
+	},
+	haloPath: function (size) {
+		return this.series.chart.renderer.symbols.circle(this.plotX - 10, this.plotY - 10, size * 2, size * 2);
 	}
 });
 

@@ -137,6 +137,16 @@ var PiePoint = extendClass(Point, {
 			point.shadowGroup.animate(translation);
 		}
 
+	},
+
+	haloPath: function (size) {
+		var shapeArgs = this.shapeArgs;
+
+		return this.series.chart.renderer.symbols.arc(shapeArgs.x, shapeArgs.y, shapeArgs.r + size, shapeArgs.r + size, {
+			innerR: this.shapeArgs.r,
+			start: shapeArgs.start,
+			end: shapeArgs.end
+		});
 	}
 });
 

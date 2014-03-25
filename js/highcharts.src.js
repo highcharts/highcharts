@@ -1453,6 +1453,10 @@ defaultOptions = {
 					marker: {
 						// lineWidth: base + 1,
 						// radius: base + 1
+					},
+					halo: {
+						size: 10,
+						opacity: 0.15
 					}
 				},
 				select: {
@@ -8905,7 +8909,7 @@ Tooltip.prototype = {
 
 		// register the current series
 		currentSeries = point.series;
-		this.distance = pick(currentSeries.tooltipOptions.distance, 12);
+		this.distance = pick(currentSeries.tooltipOptions.distance, 16);
 
 		// update the inner HTML
 		if (text === false) {
@@ -15199,7 +15203,8 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	states: {
 		hover: {
 			brightness: 0.1,
-			shadow: false
+			shadow: false,
+			halo: false
 		},
 		select: {
 			color: '#C0C0C0',
@@ -15712,6 +15717,16 @@ var PiePoint = extendClass(Point, {
 			point.shadowGroup.animate(translation);
 		}
 
+	},
+
+	haloPath: function (size) {
+		var shapeArgs = this.shapeArgs;
+
+		return this.series.chart.renderer.symbols.arc(shapeArgs.x, shapeArgs.y, shapeArgs.r + size, shapeArgs.r + size, {
+			innerR: this.shapeArgs.r,
+			start: shapeArgs.start,
+			end: shapeArgs.end
+		});
 	}
 });
 
@@ -17233,6 +17248,8 @@ extend(Point.prototype, {
 			pointMarker = point.marker || {},
 			chart = series.chart,
 			radius,
+			halo = series.halo,
+			haloOptions,
 			newSymbol,
 			pointAttr;
 
@@ -17309,7 +17326,25 @@ extend(Point.prototype, {
 			}
 		}
 
+		// Show me your halo
+		haloOptions = stateOptions[state] && stateOptions[state].halo;
+		if (haloOptions && haloOptions.size) {
+			if (!halo) {
+				series.halo = halo = chart.renderer.path()
+					.add(series.markerGroup);
+			}
+			halo.attr({
+				d: point.haloPath(haloOptions.size),
+				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get('rgba')
+			});
+		} else if (halo) {
+			halo.attr({ d: 'M 0 0'});
+		}
+
 		point.state = state;
+	},
+	haloPath: function (size) {
+		return this.series.chart.renderer.symbols.circle(this.plotX - 10, this.plotY - 10, size * 2, size * 2);
 	}
 });
 
