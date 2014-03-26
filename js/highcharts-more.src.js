@@ -444,7 +444,12 @@ var radialAxisMixin = {
 			}
 		// Concentric polygons 
 		} else {
-			xAxis = chart.xAxis[0];
+			// Find the X axis in the same pane
+			each(chart.xAxis, function (a) {
+				if (a.pane === axis.pane) {
+					xAxis = a;
+				}
+			});
 			ret = [];
 			value = axis.translate(value);
 			tickPositions = xAxis.tickPositions;
