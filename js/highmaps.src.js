@@ -16153,14 +16153,16 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		if (series.isDirtyData || renderer.isVML || !baseTrans) {
 
 			// Individual point actions	
-			each(series.points, function (point) {
+			if (chart.hasRendered && series.pointAttrToOptions.fill === 'color') {
+				each(series.points, function (point) {
 
-				// Reset color on update/redraw
-				if (chart.hasRendered && point.graphic) {
-					point.graphic.attr('fill', point.color);
-				}
+					// Reset color on update/redraw
+					if (point.graphic) {
+						point.graphic.attr('fill', point.color);
+					}
 
-			});
+				});
+			}
 
 			// Draw them in transformGroup
 			series.group = series.transformGroup;
