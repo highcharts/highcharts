@@ -54,6 +54,7 @@ var UNDEFINED,
 	timeUnits,
 	noop = function () {},
 	charts = [],
+	chartCount = 0,
 	PRODUCT = 'Highmaps',
 	VERSION = '1.0.0-beta-modified',
 
@@ -9191,8 +9192,9 @@ Pointer.prototype = {
 			pointer.onContainerClick(e);
 		};
 		addEvent(container, 'mouseleave', pointer.onContainerMouseLeave);
-		addEvent(doc, 'mouseup', pointer.onDocumentMouseUp);
-
+		if (chartCount === 1) {
+			addEvent(doc, 'mouseup', pointer.onDocumentMouseUp);
+		}
 		if (hasTouch) {
 			container.ontouchstart = function (e) {
 				pointer.onContainerTouchStart(e);
@@ -9200,7 +9202,9 @@ Pointer.prototype = {
 			container.ontouchmove = function (e) {
 				pointer.onContainerTouchMove(e);
 			};
-			addEvent(doc, 'touchend', pointer.onDocumentTouchEnd);
+			if (chartCount === 1) {
+				addEvent(doc, 'touchend', pointer.onDocumentTouchEnd);
+			}
 		}
 		
 	},
@@ -9212,9 +9216,11 @@ Pointer.prototype = {
 		var prop;
 
 		removeEvent(this.chart.container, 'mouseleave', this.onContainerMouseLeave);
-		removeEvent(doc, 'mouseup', this.onDocumentMouseUp);
-		removeEvent(doc, 'touchend', this.onDocumentTouchEnd);
-		
+		if (!chartCount) {
+			removeEvent(doc, 'mouseup', this.onDocumentMouseUp);
+			removeEvent(doc, 'touchend', this.onDocumentTouchEnd);
+		}
+
 		// memory and CPU leak
 		clearInterval(this.tooltipTimeout);
 
@@ -10363,6 +10369,7 @@ Chart.prototype = {
 		// Add the chart to the global lookup
 		chart.index = charts.length;
 		charts.push(chart);
+		chartCount++;
 
 		// Set up auto resize
 		if (optionsChart.reflow !== false) {
@@ -11571,6 +11578,7 @@ Chart.prototype = {
 		
 		// Delete the chart from charts lookup array
 		charts[chart.index] = UNDEFINED;
+		chartCount--;
 		chart.renderTo.removeAttribute('data-highcharts-chart');
 
 		// remove events
