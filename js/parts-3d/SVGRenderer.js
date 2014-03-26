@@ -67,6 +67,7 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 		this.top.attr({fill: c1});
 		this.side.attr({fill: c2});
 
+		this.color = color;
 		return this;
 	};
 

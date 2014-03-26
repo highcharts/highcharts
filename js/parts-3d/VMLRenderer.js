@@ -37,12 +37,15 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 	// VML doesn't support a negative z-index
 	if (this.sideFrame) {
 		this.sideFrame.css({zIndex: 0});
+		this.sideFrame.front.attr({fill: this.sideFrame.color});
 	}
 	if (this.bottomFrame) {
 		this.bottomFrame.css({zIndex: 1});
+		this.bottomFrame.front.attr({fill: this.bottomFrame.color});
 	}	
 	if (this.backFrame) {
 		this.backFrame.css({zIndex: 0});
+		this.backFrame.front.attr({fill: this.backFrame.color});
 	}		
 });
 

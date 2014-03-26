@@ -26,9 +26,9 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 				viewDistance: 100,
 
 				frame: {
-					bottom: { size: 1, color: 'transparent' },
-					side: { size: 1, color: 'transparent' },
-					back: { size: 1, color: 'transparent' }
+					bottom: { size: 1, color: 'rgba(255,255,255,0)' },
+					side: { size: 1, color: 'rgba(255,255,255,0)' },
+					back: { size: 1, color: 'rgba(255,255,255,0)' }
 				}
 			}
 		}
