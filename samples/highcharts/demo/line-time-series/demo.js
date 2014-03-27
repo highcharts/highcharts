@@ -20,9 +20,6 @@ $(function () {
                     text: 'Exchange rate'
                 }
             },
-            tooltip: {
-                shared: true
-            },
             legend: {
                 enabled: false
             },

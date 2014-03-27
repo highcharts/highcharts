@@ -13,15 +13,15 @@ defaultLabelOptions = {
 		return this.value;
 	},*/
 	style: {
-		color: '#666',
+		color: '#606060',
 		cursor: 'default',
 		fontSize: '11px'
 	}
 };
 
 defaultOptions = {
-	colors: ['#8085e8', '#252530', '#90ee7e', '#8d4654', '#2b908f', 
-		'#76758e', '#f6a45c', '#7eb5ee', '#f45b5b', '#9ff0cf'],
+	colors: ['#6c9acc', '#252530', '#90ee7e', '#8d4654', '#2b908f', 
+		'#76758e', '#f6a45c', '#8085e8', '#f45b5b', '#9ff0cf'],
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
 		loading: 'Loading...',
@@ -97,7 +97,7 @@ defaultOptions = {
 		// y: null,
 		style: {
 			color: '#274b6d',//#3E576F',
-			fontSize: '16px'
+			fontSize: '18px'
 		}
 
 	},
@@ -218,7 +218,7 @@ defaultOptions = {
 		labelFormatter: function () {
 			return this.name;
 		},
-		borderWidth: 1,
+		//borderWidth: 0,
 		borderColor: '#909090',
 		borderRadius: 5,
 		navigation: {
