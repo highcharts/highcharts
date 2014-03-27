@@ -598,7 +598,7 @@ extend(Point.prototype, {
 				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get('rgba')
 			});
 		} else if (halo) {
-			halo.attr({ d: 'M 0 0'});
+			halo.attr({ d: null });
 		}
 
 		point.state = state;
