@@ -207,14 +207,9 @@ var radialAxisMixin = {
 	 * from center
 	 */
 	getPosition: function (value, length) {
-		if (!this.isCircular) {
-			length = this.translate(value);
-			value = this.min;	
-		}
-		
 		return this.postTranslate(
-			this.translate(value),
-			pick(length, this.center[2] / 2) - this.offset
+			this.isCircular ? this.translate(value) : 0, // #2848
+			pick(this.isCircular ? length : this.translate(value), this.center[2] / 2) - this.offset
 		);		
 	},
 	
@@ -227,7 +222,7 @@ var radialAxisMixin = {
 			center = this.center;
 			
 		angle = this.startAngleRad + angle;
-		
+
 		return {
 			x: chart.plotLeft + center[0] + Math.cos(angle) * radius,
 			y: chart.plotTop + center[1] + Math.sin(angle) * radius
@@ -466,7 +461,7 @@ wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, label
 		ret,
 		align = labelOptions.align,
 		angle = ((axis.translate(this.pos) + axis.startAngleRad + Math.PI / 2) / Math.PI * 180) % 360;
-	
+
 	if (axis.isRadial) {
 		ret = axis.getPosition(this.pos, (axis.center[2] / 2) + pick(labelOptions.distance, -25));
 		
