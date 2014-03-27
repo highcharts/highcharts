@@ -1,5 +1,12 @@
 $(function () {
 
+    /**
+     * This plugin extends Highcharts in two ways:
+     * - Use HTML5 canvas instead of SVG for rendering of the heatmap squares. Canvas
+     *   outperforms SVG when it comes to thousands of single shapes.
+     * - Add a K-D-tree to find the nearest point on mouse move. Since we no longer have SVG shapes
+     *   to capture mouseovers, we need another way of detecting hover points for the tooltip.
+     */
     (function (H) {
         var wrap = H.wrap,
         seriesTypes = H.seriesTypes;
