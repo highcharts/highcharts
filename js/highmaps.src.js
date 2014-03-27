@@ -506,12 +506,14 @@ function formatSingle(format, val) {
 	if (floatRegex.test(format)) { // float
 		decimals = format.match(decRegex);
 		decimals = decimals ? decimals[1] : -1;
-		val = numberFormat(
-			val,
-			decimals,
-			lang.decimalPoint,
-			format.indexOf(',') > -1 ? lang.thousandsSep : ''
-		);
+		if (val !== null) {
+			val = numberFormat(
+				val,
+				decimals,
+				lang.decimalPoint,
+				format.indexOf(',') > -1 ? lang.thousandsSep : ''
+			);
+		}
 	} else {
 		val = dateFormat(format, val);
 	}
