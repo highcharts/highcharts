@@ -17299,16 +17299,18 @@ extend(Point.prototype, {
 
 				// Add a new state marker graphic
 				if (!stateMarkerGraphic) {
-					series.stateMarkerGraphic = stateMarkerGraphic = chart.renderer.symbol(
-						newSymbol,
-						plotX - radius,
-						plotY - radius,
-						2 * radius,
-						2 * radius
-					)
-					.attr(pointAttr)
-					.add(series.markerGroup);
-					stateMarkerGraphic.currentSymbol = newSymbol;
+					if (newSymbol) {
+						series.stateMarkerGraphic = stateMarkerGraphic = chart.renderer.symbol(
+							newSymbol,
+							plotX - radius,
+							plotY - radius,
+							2 * radius,
+							2 * radius
+						)
+						.attr(pointAttr)
+						.add(series.markerGroup);
+						stateMarkerGraphic.currentSymbol = newSymbol;
+					}
 
 				// Move the existing graphic
 				} else {

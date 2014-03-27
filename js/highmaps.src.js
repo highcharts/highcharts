@@ -17247,8 +17247,9 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				y1 = Math.round(yAxis.translate(point.y - yPad, 0, 1, 0, 1)),
 				y2 = Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 1));
 
-
-			point.plotY = 1; // Pass test in Column.drawPoints
+			// Set plotX and plotY for use in K-D-Tree and more
+			point.plotX = (x1 + x2) / 2;
+			point.plotY = (y1 + y2) / 2;
 
 			point.shapeType = 'rect';
 			point.shapeArgs = {
@@ -17839,16 +17840,18 @@ extend(Point.prototype, {
 
 				// Add a new state marker graphic
 				if (!stateMarkerGraphic) {
-					series.stateMarkerGraphic = stateMarkerGraphic = chart.renderer.symbol(
-						newSymbol,
-						plotX - radius,
-						plotY - radius,
-						2 * radius,
-						2 * radius
-					)
-					.attr(pointAttr)
-					.add(series.markerGroup);
-					stateMarkerGraphic.currentSymbol = newSymbol;
+					if (newSymbol) {
+						series.stateMarkerGraphic = stateMarkerGraphic = chart.renderer.symbol(
+							newSymbol,
+							plotX - radius,
+							plotY - radius,
+							2 * radius,
+							2 * radius
+						)
+						.attr(pointAttr)
+						.add(series.markerGroup);
+						stateMarkerGraphic.currentSymbol = newSymbol;
+					}
 
 				// Move the existing graphic
 				} else {
