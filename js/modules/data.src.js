@@ -583,10 +583,14 @@
 				complete: function (dataOptions) {
 					
 					// Merge series configs
-					if (userOptions.series) {
-						each(userOptions.series, function (series, i) {
-							userOptions.series[i] = Highcharts.merge(series, dataOptions.series[i]);
-						});
+					if (userOptions.hasOwnProperty('series')) {
+						if (typeof userOptions.series === 'object') {
+							each(userOptions.series, function (series, i) {
+								userOptions.series[i] = Highcharts.merge(series, dataOptions.series[i]);
+							});
+						} else { // Allow merging in dataOptions.series (#2856)
+							delete userOptions.series;
+						}
 					}
 
 					// Do the merge

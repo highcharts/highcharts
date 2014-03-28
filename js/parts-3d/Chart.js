@@ -26,9 +26,9 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 				viewDistance: 100,
 
 				frame: {
-					bottom: { size: 1, color: 'transparent' },
-					side: { size: 1, color: 'transparent' },
-					back: { size: 1, color: 'transparent' }
+					bottom: { size: 1, color: 'rgba(255,255,255,0)' },
+					side: { size: 1, color: 'rgba(255,255,255,0)' },
+					back: { size: 1, color: 'rgba(255,255,255,0)' }
 				}
 			}
 		}
@@ -63,3 +63,23 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'redraw', function (proceed) {
 	}
 	proceed.apply(this, [].slice.call(arguments, 1));	
 });
+
+Highcharts.Chart.prototype.retrieveStacks = function () {
+	var stacks = {},
+		type = this.options.chart.type,
+		typeOptions = this.options.plotOptions[type],
+		stacking = typeOptions.stacking,
+		grouping = typeOptions.grouping;
+
+	if (grouping || !stacking) { return this.series; }
+
+	Highcharts.each(this.series, function (S) {
+		if (!stacks[S.options.stack || 0]) {
+			stacks[S.options.stack || 0] = [S];
+		} else {
+			stacks[S.options.stack || 0].push(S);
+		}
+	});
+	return stacks;
+};
+

@@ -4,11 +4,11 @@ extend(Highcharts.Pointer.prototype, {
 	/**
 	 * Run translation operations
 	 */
-	pinchTranslate: function (zoomHor, zoomVert, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
-		if (zoomHor) {
+	pinchTranslate: function (pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
+		if (this.zoomHor) {
 			this.pinchTranslateDirection(true, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 		}
-		if (zoomVert) {
+		if (this.zoomVert) {
 			this.pinchTranslateDirection(false, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 		}
 	},
@@ -99,13 +99,11 @@ extend(Highcharts.Pointer.prototype, {
 		var self = this,
 			chart = self.chart,
 			pinchDown = self.pinchDown,
-			followTouchMove = chart.tooltip && chart.tooltip.options.followTouchMove,
+			followTouchMove = self.followTouchMove,
 			touches = e.touches,
 			touchesLength = touches.length,
 			lastValidTouch = self.lastValidTouch,
-			zoomHor = self.zoomHor || self.pinchHor,
-			zoomVert = self.zoomVert || self.pinchVert,
-			hasZoom = zoomHor || zoomVert,
+			hasZoom = self.hasZoom,
 			selectionMarker = self.selectionMarker,
 			transform = {},
 			fireClickEvent = touchesLength === 1 && ((self.inClass(e.target, PREFIX + 'tracker') && 
@@ -157,7 +155,7 @@ extend(Highcharts.Pointer.prototype, {
 				}, chart.plotBox);
 			}
 			
-			self.pinchTranslate(zoomHor, zoomVert, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
+			self.pinchTranslate(pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 
 			self.hasPinched = hasZoom;
 
@@ -209,7 +207,7 @@ extend(Highcharts.Pointer.prototype, {
 	},
 
 	onDocumentTouchEnd: function (e) {
-		if (defined(hoverChartIndex)) {
+		if (charts[hoverChartIndex]) {
 			charts[hoverChartIndex].pointer.drop(e);
 		}
 	}

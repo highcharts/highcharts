@@ -59,7 +59,7 @@ extend(ColorAxis.prototype, {
 			overflow: 'justify'
 		},
 		minColor: '#EFEFFF',
-		maxColor: '#003875' //#102d4c'
+		maxColor: '#003875'
 	},
 	init: function (chart, userOptions) {
 		var horiz = chart.options.legend.layout !== 'vertical',
@@ -86,6 +86,7 @@ extend(ColorAxis.prototype, {
 		if (userOptions.dataClasses) {
 			this.initDataClasses(userOptions);
 		}
+		this.initStops(userOptions);
 
 		// Override original axis properties
 		this.isXAxis = true;
@@ -136,6 +137,16 @@ extend(ColorAxis.prototype, {
 		});
 	},
 
+	initStops: function (userOptions) {
+		this.stops = userOptions.stops || [
+			[0, this.options.minColor],
+			[1, this.options.maxColor]
+		];
+		each(this.stops, function (stop) {
+			stop.color = Color(stop[1]);
+		});
+	},
+
 	/**
 	 * Extend the setOptions method to process extreme colors and color
 	 * stops.
@@ -144,14 +155,6 @@ extend(ColorAxis.prototype, {
 		Axis.prototype.setOptions.call(this, userOptions);
 
 		this.options.crosshair = this.options.marker;
-
-		this.stops = userOptions.stops || [
-			[0, this.options.minColor],
-			[1, this.options.maxColor]
-		];
-		each(this.stops, function (stop) {
-			stop.color = Color(stop[1]);
-		});
 		this.coll = 'colorAxis';
 	},
 

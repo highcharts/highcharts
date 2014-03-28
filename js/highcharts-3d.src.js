@@ -137,6 +137,7 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 		this.top.attr({fill: c1});
 		this.side.attr({fill: c2});
 
+		this.color = color;
 		return this;
 	};
 
@@ -456,9 +457,9 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 				viewDistance: 100,
 
 				frame: {
-					bottom: { size: 1, color: 'transparent' },
-					side: { size: 1, color: 'transparent' },
-					back: { size: 1, color: 'transparent' }
+					bottom: { size: 1, color: 'rgba(255,255,255,0)' },
+					side: { size: 1, color: 'rgba(255,255,255,0)' },
+					back: { size: 1, color: 'rgba(255,255,255,0)' }
 				}
 			}
 		}
@@ -493,6 +494,26 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'redraw', function (proceed) {
 	}
 	proceed.apply(this, [].slice.call(arguments, 1));	
 });
+
+Highcharts.Chart.prototype.retrieveStacks = function () {
+	var stacks = {},
+		type = this.options.chart.type,
+		typeOptions = this.options.plotOptions[type],
+		stacking = typeOptions.stacking,
+		grouping = typeOptions.grouping;
+
+	if (grouping || !stacking) { return this.series; }
+
+	Highcharts.each(this.series, function (S) {
+		if (!stacks[S.options.stack || 0]) {
+			stacks[S.options.stack || 0] = [S];
+		} else {
+			stacks[S.options.stack || 0].push(S);
+		}
+	});
+	return stacks;
+};
+
 /*** 
 	EXTENSION TO THE AXIS
 ***/
@@ -760,10 +781,40 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 	});	    
 });
 
+Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proceed) {
+	proceed.apply(this, [].slice.call(arguments, 1));
+
+	if (this.chart.is3d()) {
+	var grouping = this.chart.options.plotOptions.column.grouping,
+		stacking = this.chart.options.plotOptions.column.stacking,
+		z = this.options.zIndex;
+		if (!z) {		
+			if (!(grouping !== undefined && !grouping) && stacking) {
+				var stacks = this.chart.retrieveStacks(),
+					stack = this.options.stack || 0,
+					i;
+				for (i = 0; i < stacks[stack].length; i++) {
+					if (stacks[stack][i] === this) {
+						break;
+					}
+				}
+				console.log(stacks[stack][i]);
+				z = 10 - i;
+				
+				this.options.zIndex = z;
+			}
+		}
+	}
+});
+
 Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
 	// Do not do this if the chart is not 3D
-	if (this.chart.is3d()) {
-		this.group.attr({zIndex: this.group.zIndex * 10});
+	if (this.chart.is3d()) {		
+		var grouping = this.chart.options.plotOptions.column.grouping;
+		if (grouping !== undefined && !grouping) {			
+			this.group.attr({zIndex : (this.group.zIndex * 10)});
+		} 
+
 		// Set the border color to the fill color to provide a smooth edge
 		Highcharts.each(this.data, function (point) {
 			var c = point.options.borderColor || point.color || point.series.userOptions.borderColor || point.series.color;
@@ -1010,6 +1061,23 @@ Highcharts.Chart.prototype.renderSeries = function () {
 		serie.render();	
 	}
 };
+
+Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
+	proceed.apply(this, [].slice.call(arguments, 1));
+	// VML doesn't support a negative z-index
+	if (this.sideFrame) {
+		this.sideFrame.css({zIndex: 0});
+		this.sideFrame.front.attr({fill: this.sideFrame.color});
+	}
+	if (this.bottomFrame) {
+		this.bottomFrame.css({zIndex: 1});
+		this.bottomFrame.front.attr({fill: this.bottomFrame.color});
+	}	
+	if (this.backFrame) {
+		this.backFrame.css({zIndex: 0});
+		this.backFrame.front.attr({fill: this.backFrame.color});
+	}		
+});
 
 }
 

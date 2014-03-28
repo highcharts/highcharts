@@ -67,17 +67,21 @@ if (win.PointerEvent || win.MSPointerEvent) {
 
 	// Disable default IE actions for pinch and such on chart element
 	wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
-		css(chart.container, {
-			'-ms-touch-action': NONE,
-			'touch-action': NONE
-		});
 		proceed.call(this, chart, options);
+		if (this.hasZoom || this.followTouchMove) {
+			css(chart.container, {
+				'-ms-touch-action': NONE,
+				'touch-action': NONE
+			});
+		}
 	});
 
 	// Add IE specific touch events to chart
 	wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
 		proceed.apply(this);
-		this.batchMSEvents(addEvent);
+		if (this.hasZoom || this.followTouchMove) {
+			this.batchMSEvents(addEvent);
+		}
 	});
 	// Destroy MS events also
 	wrap(Pointer.prototype, 'destroy', function (proceed) {

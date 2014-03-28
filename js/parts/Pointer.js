@@ -36,6 +36,7 @@ Pointer.prototype = {
 		this.zoomY = zoomY = /y/.test(zoomType);
 		this.zoomHor = (zoomX && !inverted) || (zoomY && inverted);
 		this.zoomVert = (zoomY && !inverted) || (zoomX && inverted);
+		this.hasZoom = zoomX || zoomY;
 
 		// Do we need to handle click on a touch device?
 		this.runChartClick = chartEvents && !!chartEvents.click;
@@ -45,6 +46,7 @@ Pointer.prototype = {
 
 		if (Highcharts.Tooltip && options.tooltip.enabled) {
 			chart.tooltip = new Tooltip(chart, options.tooltip);
+			this.followTouchMove = options.tooltip.followTouchMove;
 		}
 
 		this.setDOMEvents();
@@ -200,7 +202,7 @@ Pointer.prototype = {
 		// Start the event listener to pick up the tooltip 
 		if (tooltip && !pointer._onDocumentMouseMove) {
 			pointer._onDocumentMouseMove = function (e) {
-				if (defined(hoverChartIndex)) {
+				if (charts[hoverChartIndex]) {
 					charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
 				}
 			};
@@ -474,7 +476,7 @@ Pointer.prototype = {
 	
 
 	onDocumentMouseUp: function (e) {
-		if (defined(hoverChartIndex)) {
+		if (charts[hoverChartIndex]) {
 			charts[hoverChartIndex].pointer.drop(e);
 		}
 	},
@@ -633,8 +635,9 @@ Pointer.prototype = {
 			pointer.onContainerClick(e);
 		};
 		addEvent(container, 'mouseleave', pointer.onContainerMouseLeave);
-		addEvent(doc, 'mouseup', pointer.onDocumentMouseUp);
-
+		if (chartCount === 1) {
+			addEvent(doc, 'mouseup', pointer.onDocumentMouseUp);
+		}
 		if (hasTouch) {
 			container.ontouchstart = function (e) {
 				pointer.onContainerTouchStart(e);
@@ -642,7 +645,9 @@ Pointer.prototype = {
 			container.ontouchmove = function (e) {
 				pointer.onContainerTouchMove(e);
 			};
-			addEvent(doc, 'touchend', pointer.onDocumentTouchEnd);
+			if (chartCount === 1) {
+				addEvent(doc, 'touchend', pointer.onDocumentTouchEnd);
+			}
 		}
 		
 	},
@@ -654,9 +659,11 @@ Pointer.prototype = {
 		var prop;
 
 		removeEvent(this.chart.container, 'mouseleave', this.onContainerMouseLeave);
-		removeEvent(doc, 'mouseup', this.onDocumentMouseUp);
-		removeEvent(doc, 'touchend', this.onDocumentTouchEnd);
-		
+		if (!chartCount) {
+			removeEvent(doc, 'mouseup', this.onDocumentMouseUp);
+			removeEvent(doc, 'touchend', this.onDocumentTouchEnd);
+		}
+
 		// memory and CPU leak
 		clearInterval(this.tooltipTimeout);
 

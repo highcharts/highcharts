@@ -139,6 +139,7 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 	// Pinch status
 	this.pinchX = this.pinchHor = pinchType.indexOf('x') !== -1;
 	this.pinchY = this.pinchVert = pinchType.indexOf('y') !== -1;
+	this.hasZoom = this.hasZoom || this.pinchHor || this.pinchVert;
 });
 
 // Override getPlotLinePath to allow for multipane charts
@@ -223,6 +224,25 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 	if (result.length > 0) {
 		return renderer.crispPolyLine(result, lineWidth || 1); 
 	}
+};
+
+// Override getPlotBandPath to allow for multipane charts
+Axis.prototype.getPlotBandPath = function (from, to) {		
+	var toPath = this.getPlotLinePath(to),
+		path = this.getPlotLinePath(from),
+		result = [],
+		i;
+
+	if (path && toPath) {
+		// Go over each subpath
+		for (i = 0; i < path.length; i += 6) {
+			result.push('M', path[i + 1], path[i + 2], 'L', path[i + 4], path[i + 5], 'L', toPath[i + 4], toPath[i + 5], 'L', toPath[i + 1], toPath[i + 2]);
+		}
+	} else { // outside the axis area
+		result = null;
+	}
+		
+	return result;
 };
 
 // Function to crisp a line with multiple segments

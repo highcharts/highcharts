@@ -54,10 +54,13 @@ $(function () {
         }]
     });
 
-    chart.seriesGroup.element.parentElement.onmousedown = function (e) {          
-        var line = this,
-            posX = e.pageX
-            posY = e.pageY;
+    Highcharts.addEvent(chart.container, 'mousedown', function (e) {          
+        // Normalize for cross browser support
+        e = chart.pointer.normalize(e);
+
+        var posX = e.chartX,
+            posY = e.chartY;
+
         $(document).bind({
             'mousemove.line': function (e) {
                 var alpha = chart.options.chart.options3d.alpha,
@@ -87,6 +90,6 @@ $(function () {
                 $(document).unbind('.line');
             },
         });
-    };
+    });
     
 });
