@@ -8770,7 +8770,7 @@ Pointer.prototype = {
 		// Start the event listener to pick up the tooltip 
 		if (tooltip && !pointer._onDocumentMouseMove) {
 			pointer._onDocumentMouseMove = function (e) {
-				if (defined(hoverChartIndex)) {
+				if (charts[hoverChartIndex]) {
 					charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
 				}
 			};
@@ -9044,7 +9044,7 @@ Pointer.prototype = {
 	
 
 	onDocumentMouseUp: function (e) {
-		if (defined(hoverChartIndex)) {
+		if (charts[hoverChartIndex]) {
 			charts[hoverChartIndex].pointer.drop(e);
 		}
 	},
@@ -9451,7 +9451,7 @@ extend(Highcharts.Pointer.prototype, {
 	},
 
 	onDocumentTouchEnd: function (e) {
-		if (defined(hoverChartIndex)) {
+		if (charts[hoverChartIndex]) {
 			charts[hoverChartIndex].pointer.drop(e);
 		}
 	}

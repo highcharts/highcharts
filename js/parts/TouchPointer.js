@@ -207,7 +207,7 @@ extend(Highcharts.Pointer.prototype, {
 	},
 
 	onDocumentTouchEnd: function (e) {
-		if (defined(hoverChartIndex)) {
+		if (charts[hoverChartIndex]) {
 			charts[hoverChartIndex].pointer.drop(e);
 		}
 	}
