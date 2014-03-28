@@ -119,17 +119,16 @@ $(function () {
             var canvas;
             if (!this.ctx) {
                 canvas = document.createElement('canvas');
-                canvas.setAttribute('width', this.chart.chartWidth);
-                canvas.setAttribute('height', this.chart.chartHeight);
+                canvas.setAttribute('width', this.chart.plotWidth);
+                canvas.setAttribute('height', this.chart.plotHeight);
                 canvas.style.position = 'absolute';
-                canvas.style.left = 0;
-                canvas.style.top = 0;
+                canvas.style.left = this.group.translateX + 'px';
+                canvas.style.top = this.group.translateY + 'px';
                 canvas.style.zIndex = 0;
                 canvas.style.cursor = 'crosshair';
                 this.chart.container.appendChild(canvas);
                 if (canvas.getContext) {
                     this.ctx = canvas.getContext('2d');
-                    this.ctx.translate(this.group.translateX, this.group.translateY)
                 }
             }
             return this.ctx;
@@ -141,29 +140,35 @@ $(function () {
          */
         H.wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function (proceed) {
 
-            var ctx = this.getContext();
-
-            if (ctx) {
-                
-                // draw the columns
-                H.each(this.points, function (point) {
-                    var plotY = point.plotY,
-                        shapeArgs;
-
-                    if (plotY !== undefined && !isNaN(plotY) && point.y !== null) {
-                        shapeArgs = point.shapeArgs;
-                        
-                        ctx.fillStyle = point.pointAttr[''].fill;
-                        ctx.fillRect(shapeArgs.x, shapeArgs.y, shapeArgs.width, shapeArgs.height);
-                    }
-                });
+            var ctx;
+            if (this.chart.renderer.forExport) {
+                // Run SVG shapes
+                proceed.call(this);
             
             } else {
-                this.chart.showLoading("Your browser doesn't support HTML5 canvas, <br>please use a modern browser");
                 
-                // Uncomment this to provide low-level (slow) support in oldIE. It will cause script errors on 
-                // charts with more than a few thousand points.
-                //proceed.call(this);
+                if (ctx = this.getContext()) {
+                    
+                    // draw the columns
+                    H.each(this.points, function (point) {
+                        var plotY = point.plotY,
+                            shapeArgs;
+
+                        if (plotY !== undefined && !isNaN(plotY) && point.y !== null) {
+                            shapeArgs = point.shapeArgs;
+                            
+                            ctx.fillStyle = point.pointAttr[''].fill;
+                            ctx.fillRect(shapeArgs.x, shapeArgs.y, shapeArgs.width, shapeArgs.height);
+                        }
+                    });
+                
+                } else {
+                    this.chart.showLoading("Your browser doesn't support HTML5 canvas, <br>please use a modern browser");
+                    
+                    // Uncomment this to provide low-level (slow) support in oldIE. It will cause script errors on 
+                    // charts with more than a few thousand points.
+                    //proceed.call(this);
+                }
             }
         });
     }(Highcharts));
