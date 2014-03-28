@@ -3100,19 +3100,13 @@ SVGRenderer.prototype = {
 
 		// Normal state - prepare the attributes
 		normalState = merge({
-			'stroke-width': 1,
 			stroke: '#CCCCCC',
-			fill: {
-				linearGradient: verticalGradient,
-				stops: [
-					[0, '#FEFEFE'],
-					[1, '#F6F6F6']
-				]
-			},
+			fill: '#f7f7f7',
 			r: 2,
 			padding: 5,
 			style: {
-				color: 'black'
+				color: '#444',
+				fontWeight: 'normal'
 			}
 		}, normalState);
 		normalStyle = normalState[STYLE];
@@ -3121,13 +3115,7 @@ SVGRenderer.prototype = {
 		// Hover state
 		hoverState = merge(normalState, {
 			stroke: '#68A',
-			fill: {
-				linearGradient: verticalGradient,
-				stops: [
-					[0, '#FFF'],
-					[1, '#ACF']
-				]
-			}
+			fill: '#e7e7e7'
 		}, hoverState);
 		hoverStyle = hoverState[STYLE];
 		delete hoverState[STYLE];
@@ -3135,12 +3123,10 @@ SVGRenderer.prototype = {
 		// Pressed state
 		pressedState = merge(normalState, {
 			stroke: '#68A',
-			fill: {
-				linearGradient: verticalGradient,
-				stops: [
-					[0, '#9BD'],
-					[1, '#CDF']
-				]
+			fill: '#e7f0f9',
+			style: {
+				color: 'black',
+				fontWeight: 'bold'
 			}
 		}, pressedState);
 		pressedStyle = pressedState[STYLE];
@@ -3149,7 +3135,8 @@ SVGRenderer.prototype = {
 		// Disabled state
 		disabledState = merge(normalState, {
 			style: {
-				color: '#CCC'
+				color: '#CCC',
+				fontWeight: 'normal'
 			}
 		}, disabledState);
 		disabledStyle = disabledState[STYLE];

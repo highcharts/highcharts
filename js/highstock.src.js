@@ -3100,19 +3100,13 @@ SVGRenderer.prototype = {
 
 		// Normal state - prepare the attributes
 		normalState = merge({
-			'stroke-width': 1,
 			stroke: '#CCCCCC',
-			fill: {
-				linearGradient: verticalGradient,
-				stops: [
-					[0, '#FEFEFE'],
-					[1, '#F6F6F6']
-				]
-			},
+			fill: '#f7f7f7',
 			r: 2,
 			padding: 5,
 			style: {
-				color: 'black'
+				color: '#444',
+				fontWeight: 'normal'
 			}
 		}, normalState);
 		normalStyle = normalState[STYLE];
@@ -3121,13 +3115,7 @@ SVGRenderer.prototype = {
 		// Hover state
 		hoverState = merge(normalState, {
 			stroke: '#68A',
-			fill: {
-				linearGradient: verticalGradient,
-				stops: [
-					[0, '#FFF'],
-					[1, '#ACF']
-				]
-			}
+			fill: '#e7e7e7'
 		}, hoverState);
 		hoverStyle = hoverState[STYLE];
 		delete hoverState[STYLE];
@@ -3135,12 +3123,10 @@ SVGRenderer.prototype = {
 		// Pressed state
 		pressedState = merge(normalState, {
 			stroke: '#68A',
-			fill: {
-				linearGradient: verticalGradient,
-				stops: [
-					[0, '#9BD'],
-					[1, '#CDF']
-				]
+			fill: '#e7f0f9',
+			style: {
+				color: 'black',
+				fontWeight: 'bold'
 			}
 		}, pressedState);
 		pressedStyle = pressedState[STYLE];
@@ -3149,7 +3135,8 @@ SVGRenderer.prototype = {
 		// Disabled state
 		disabledState = merge(normalState, {
 			style: {
-				color: '#CCC'
+				color: '#CCC',
+				fontWeight: 'normal'
 			}
 		}, disabledState);
 		disabledStyle = disabledState[STYLE];
@@ -19540,14 +19527,7 @@ if (Renderer === Highcharts.VMLRenderer) {
 /* ****************************************************************************
  * Start Scroller code														*
  *****************************************************************************/
-var buttonGradient = {
-		linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-		stops: [
-			[0, '#FFF'],
-			[1, '#CCC']
-		]
-	},
-	units = [].concat(defaultDataGroupingUnits), // copy
+var units = [].concat(defaultDataGroupingUnits), // copy
 	defaultSeriesType;
 // add more resolution to units
 units[4] = [DAY, [1, 2, 3, 4]]; // allow more days
@@ -19559,19 +19539,20 @@ extend(defaultOptions, {
 	navigator: {
 		//enabled: true,
 		handles: {
-			backgroundColor: '#FFF',
-			borderColor: '#666'
+			backgroundColor: '#ebe7e8', // docs
+			borderColor: '#b2b1b6' // docs
 		},
 		height: 40,
 		margin: 10,
-		maskFill: 'rgba(255, 255, 255, 0.75)',
-		outlineColor: '#444',
+		maskFill: 'rgba(128,179,236,0.3)', // docs
+		maskInside: true, // docs
+		outlineColor: '#b2b1b6', // docs
 		outlineWidth: 1,
 		series: {
 			type: defaultSeriesType,
 			color: '#4572A7',
 			compare: null,
-			fillOpacity: 0.4,
+			fillOpacity: 0.05, // docs
 			dataGrouping: {
 				approximation: 'average',
 				enabled: true,
@@ -19601,6 +19582,9 @@ extend(defaultOptions, {
 			tickPixelInterval: 200,
 			labels: {
 				align: 'left',
+				style: {
+					color: '#888' // docs
+				},
 				x: 3,
 				y: -4
 			},
@@ -19625,26 +19609,20 @@ extend(defaultOptions, {
 	scrollbar: {
 		//enabled: true
 		height: isTouchDevice ? 20 : 14,
-		barBackgroundColor: buttonGradient,
-		barBorderRadius: 2,
-		barBorderWidth: 1,
+		barBackgroundColor: '#bfc8d1', // docs
+		barBorderRadius: 0, // docs: new default
+		barBorderWidth: 0, // docs
 		barBorderColor: '#666',
 		buttonArrowColor: '#666',
-		buttonBackgroundColor: buttonGradient,
-		buttonBorderColor: '#666',
-		buttonBorderRadius: 2,
+		buttonBackgroundColor: '#ebe7e8', // docs
+		buttonBorderColor: '#bbb', // docs: new default
+		buttonBorderRadius: 0, // docs: new default
 		buttonBorderWidth: 1,
 		minWidth: 6,
 		rifleColor: '#666',
-		trackBackgroundColor: {
-			linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-			stops: [
-				[0, '#EEE'],
-				[1, '#FFF']
-			]
-		},
+		trackBackgroundColor: '#f4f4f4', // docs: new default
 		trackBorderColor: '#CCC',
-		trackBorderWidth: 1,
+		trackBorderWidth: 0, // docs: new default
 		// trackBorderRadius: 0
 		liveRedraw: hasSVG && !isTouchDevice
 	}
@@ -19712,7 +19690,7 @@ Scroller.prototype = {
 				.add();
 
 			// the rectangle
-			tempElem = renderer.rect(-4.5, 0, 9, 16, 3, 1)
+			tempElem = renderer.rect(-4.5, 0, 9, 16, 0, 1)
 				.attr(attr)
 				.add(handles[index]);
 			elementsToDestroy.push(tempElem);
@@ -19900,10 +19878,14 @@ Scroller.prototype = {
 					.attr({
 						fill: navigatorOptions.maskFill
 					}).add(navigatorGroup);
-				scroller.rightShade = renderer.rect()
-					.attr({
-						fill: navigatorOptions.maskFill
-					}).add(navigatorGroup);
+				if (!navigatorOptions.maskInside) {
+					scroller.rightShade = renderer.rect()
+						.attr({
+							fill: navigatorOptions.maskFill
+						}).add(navigatorGroup);
+				}
+
+
 				scroller.outline = renderer.path()
 					.attr({
 						'stroke-width': outlineWidth,
@@ -19954,18 +19936,26 @@ Scroller.prototype = {
 		verb = chart.isResizing ? 'animate' : 'attr';
 
 		if (navigatorEnabled) {
-			scroller.leftShade[verb]({
+			scroller.leftShade[verb](navigatorOptions.maskInside ? {
+				x: navigatorLeft + zoomedMin,
+				y: top,
+				width: zoomedMax - zoomedMin,
+				height: height
+			} : {
 				x: navigatorLeft,
 				y: top,
 				width: zoomedMin,
 				height: height
 			});
-			scroller.rightShade[verb]({
-				x: navigatorLeft + zoomedMax,
-				y: top,
-				width: navigatorWidth - zoomedMax,
-				height: height
-			});
+			if (scroller.rightShade) {
+				scroller.rightShade[verb]({
+					x: navigatorLeft + zoomedMax,
+					y: top,
+					width: navigatorWidth - zoomedMax,
+					height: height
+				});
+			}
+
 			scroller.outline[verb]({ d: [
 				M,
 				scrollerLeft, outlineTop, // left
@@ -20671,8 +20661,8 @@ extend(defaultOptions, {
 		// buttonSpacing: 0,
 		buttonTheme: {
 			width: 28,
-			height: 16,
-			padding: 1,
+			height: 18,
+			padding: 2,
 			r: 0,
 			stroke: '#68A',
 			zIndex: 7 // #484, #852
@@ -21201,7 +21191,7 @@ RangeSelector.prototype = {
 					.add();
 
 				// increase button position for the next button
-				buttonLeft += buttons[i].width + (options.buttonSpacing || 0);
+				buttonLeft += buttons[i].width + pick(options.buttonSpacing, 5);
 
 				if (rangeSelector.selected === i) {
 					buttons[i].setState(2);
@@ -21465,13 +21455,14 @@ Highcharts.StockChart = function (options, callback) {
 
 	// apply Y axis options to both single and multi y axes
 	options.yAxis = map(splat(options.yAxis || {}), function (yAxisOptions) {
-		opposite = yAxisOptions.opposite;
+		opposite = pick(yAxisOptions.opposite, true);
 		return merge({ // defaults
 			labels: {
 				align: opposite ? 'right' : 'left',
 				x: opposite ? -2 : 2,
 				y: -2
 			},
+			opposite: opposite,
 			showLastLabel: false,
 			title: {
 				text: null

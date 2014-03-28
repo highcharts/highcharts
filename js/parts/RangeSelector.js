@@ -8,8 +8,8 @@ extend(defaultOptions, {
 		// buttonSpacing: 0,
 		buttonTheme: {
 			width: 28,
-			height: 16,
-			padding: 1,
+			height: 18,
+			padding: 2,
 			r: 0,
 			stroke: '#68A',
 			zIndex: 7 // #484, #852
@@ -538,7 +538,7 @@ RangeSelector.prototype = {
 					.add();
 
 				// increase button position for the next button
-				buttonLeft += buttons[i].width + (options.buttonSpacing || 0);
+				buttonLeft += buttons[i].width + pick(options.buttonSpacing, 5);
 
 				if (rangeSelector.selected === i) {
 					buttons[i].setState(2);

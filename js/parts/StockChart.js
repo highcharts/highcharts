@@ -58,13 +58,14 @@ Highcharts.StockChart = function (options, callback) {
 
 	// apply Y axis options to both single and multi y axes
 	options.yAxis = map(splat(options.yAxis || {}), function (yAxisOptions) {
-		opposite = yAxisOptions.opposite;
+		opposite = pick(yAxisOptions.opposite, true);
 		return merge({ // defaults
 			labels: {
 				align: opposite ? 'right' : 'left',
 				x: opposite ? -2 : 2,
 				y: -2
 			},
+			opposite: opposite,
 			showLastLabel: false,
 			title: {
 				text: null
