@@ -8306,57 +8306,81 @@ Tooltip.prototype = {
 	 */
 	getPosition: function (boxWidth, boxHeight, point) {
 		
-		// Set up the variables
 		var chart = this.chart,
-			plotLeft = chart.plotLeft,
-			plotTop = chart.plotTop,
-			plotWidth = chart.plotWidth,
-			plotHeight = chart.plotHeight,
 			distance = this.distance,
-			pointX = point.plotX, //#2599
-			pointY = point.plotY,
-			preferTop = !chart.inverted && !this.shared,
-			alignedRight,
-			x,
-			y;
+			ret = {},
+			swapped,
+			first = ['y', chart.chartHeight, boxHeight, point.plotY + chart.plotTop],
+			second = ['x', chart.chartWidth, boxWidth, point.plotX + chart.plotLeft],
+			/**
+			 * Handle the preferred dimension. When the preferred dimension is tooltip
+			 * on top or bottom of the point, it will look for space there.
+			 */
+			firstDimension = function (dim, outerSize, innerSize, point) {
+				// Is there room above/left?
+				if (innerSize < point - distance) {
+					ret[dim] = point - distance - innerSize;
+				// Is there room below/right?
+				} else if (point + distance + innerSize < outerSize) {
+					ret[dim] = point + distance;
+				// Covering up the point, try the other dimension
+				} else {
+					return false;
+				}
+			},
+			/**
+			 * Handle the secondary dimension. If the preferred dimension is tooltip
+			 * on top or bottom of the point, the second dimension is to align the tooltip
+			 * above the point, trying to align center but allowing left or right
+			 * align within the chart box.
+			 */
+			secondDimension = function (dim, outerSize, innerSize, point) {
+				// Too close to the edge, return false and swap dimensions
+				if (point < distance || point > outerSize - distance) {
+					return false;
+				
+				// Align left/top
+				} else if (point < innerSize / 2) {
+					ret[dim] = 1;
+				// Align right/bottom
+				} else if (point > outerSize - innerSize / 2) {
+					ret[dim] = outerSize - innerSize - 2;
+				// Align center
+				} else {
+					ret[dim] = point - innerSize / 2;
+				}
+			},
+			/**
+			 * Swap the dimensions 
+			 */
+			swap = function (count) {
+				var temp = first;
+				first = second;
+				second = temp;
+				swapped = count;
+			},
+			run = function () {
+				if (firstDimension.apply(0, first) !== false) {
+					if (secondDimension.apply(0, second) === false && !swapped) {
+						swap(true);
+						run();
+					}
+				} else if (!swapped) {
+					swap(true);
+					run();
+				} else {
+					ret.x = ret.y = 0;
+				}
+			};
 
-		if (preferTop) {
-			x = plotLeft + pointX - boxWidth / 2;
-			y = plotTop + pointY - boxHeight - distance;
+		// Under these conditions, prefer the tooltip on the side of the point
+		if (chart.inverted || this.shared) {
+			swap();
+		}
+		run();
 
-		} else {
-			x = plotLeft + pointX + (chart.inverted ? distance : -boxWidth - distance);
-			y = plotTop + pointY - boxHeight / 2;
-		}
-
-		// It is too far to the left, adjust it
-		if (x < 7) {
-			x = preferTop ? 1 : distance;
-		}
+		return ret;
 	
-		// Test to see if the tooltip is too far to the right,
-		// if it is, move it back to be inside
-		if ((x + boxWidth) > (plotLeft + plotWidth)) {
-			x = plotLeft + plotWidth - boxWidth - (preferTop ? 1 : distance);
-		}
-	
-		// If it is now above the plot area, align it to the top of the plot area
-		if (y < plotTop + 5) {
-			y = plotTop + distance;
-	
-			// If the tooltip is still covering the point, move it below instead
-			if ((alignedRight || preferTop) && plotTop + pointY >= y && plotTop + pointY <= (y + boxHeight)) {
-				y = pointY + plotTop + distance; // below
-			}
-		} 
-	
-		// Now if the tooltip is below the chart, move it up. It's better to cover the
-		// point than to disappear outside the chart. #834.
-		if (y + boxHeight > plotTop + plotHeight) {
-			y = mathMax(plotTop, plotTop + plotHeight - boxHeight - distance); // below
-		}
-	
-		return {x: x, y: y};
 	},
 
 	/**
@@ -17879,7 +17903,7 @@ extend(Point.prototype, {
 				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get('rgba')
 			});
 		} else if (halo) {
-			halo.attr({ d: 'M 0 0'});
+			halo.attr({ d: [] });
 		}
 
 		point.state = state;
