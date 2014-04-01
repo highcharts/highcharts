@@ -108,7 +108,7 @@
 
 		// Record options for all current series
 		each(oldSeries.chart.series, function (series) {
-			if (series.xAxis === xAxis && series.yAxis === yAxis) {
+			if (series.xAxis === xAxis) {
 				levelSeries.push(series);
 				levelSeriesOptions.push(series.userOptions);
 				series.levelNumber = series.levelNumber || 0;
