@@ -252,10 +252,14 @@
 			if (level.levelNumber === levelNumber) {
 				drilldownLevels.pop();
 				
-				// Get the lower series by id (#2786)
-				while (seriesI-- && !oldSeries) {
-					if (chartSeries[seriesI].options.id === level.lowerSeriesOptions.id) {
-						oldSeries = chartSeries[seriesI];
+				// Get the lower series by reference or id
+				oldSeries = level.lowerSeries;
+				if (!oldSeries.chart) {  // #2786
+					while (seriesI--) {
+						if (chartSeries[seriesI].options.id === level.lowerSeriesOptions.id) {
+							oldSeries = chartSeries[seriesI];
+							break;
+						}
 					}
 				}
 
