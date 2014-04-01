@@ -873,6 +873,7 @@ Chart.prototype = {
 		chart.isDirtyLegend = true; // force legend redraw
 		chart.isDirtyBox = true; // force redraw of plot and chart border
 
+		chart.layOutTitles(); // #2857
 		chart.getMargins();
 
 		chart.redraw(animation);
