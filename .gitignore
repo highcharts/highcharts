@@ -36,4 +36,4 @@ export-access.log
 */.ebextensions/
 
 exporting-server/java/highcharts-export/highcharts-export-web/src/main/webapp/.ebextensions/java7.config
-/js/nbproject/
+*/nbproject/
