@@ -224,6 +224,7 @@ H.extend(H.Data.prototype, {
 					path[i] = Math.round(path[i]);
 				}
 			}
+			delete point._foundBox;
 
 		});
 
@@ -241,14 +242,23 @@ H.extend(H.Data.prototype, {
 
 		function getPathLikeChildren(parent) {
 			return Array.prototype.slice.call(parent.getElementsByTagName('path'))
-						.concat(Array.prototype.slice.call(parent.getElementsByTagName('polygon')));
+				.concat(Array.prototype.slice.call(parent.getElementsByTagName('polygon')))
+				.concat(Array.prototype.slice.call(parent.getElementsByTagName('rect')));
 		}
 
-		function getPathDefinition(path) {
-			if (path.nodeName === 'path') {
-				return path.getAttribute('d');
-			} else if (path.nodeName === 'polygon') {
-				return path.getAttribute('points');
+		function getPathDefinition(node) {
+			if (node.nodeName === 'path') {
+				return node.getAttribute('d');
+			} else if (node.nodeName === 'polygon') {
+				return node.getAttribute('points');
+			} else if (node.nodeName === 'rect') {
+				var x = +node.getAttribute('x'),
+					y = +node.getAttribute('y'),
+					w = +node.getAttribute('width'),
+					h = +node.getAttribute('height');
+
+				// Return polygon definition
+				return [x, y, x + w, y, x + w, y + h, x, y + h, x, y].join(' ');
 			}
 		}
 
