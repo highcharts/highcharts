@@ -39,7 +39,7 @@ function perspective(points, angle2, angle1, origin) {
 	
 	xe = origin.x;
 	ye = origin.y;
-	ze = (origin.z === 0 ? 0.0001 : origin.z) * (origin.vd || 100);
+	ze = (origin.z === 0 ? 0.0001 : origin.z) * (origin.vd || 25);
 
 	// some kind of minimum?
 
@@ -149,8 +149,8 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	};
 
 	result.attr = function (args) {
-		if (args.x && args.y) {
-			var paths = this.renderer.cuboidPath(args);
+		if (args.shapeArgs) {
+			var paths = this.renderer.cuboidPath(args.shapeArgs);
 			this.front.attr({d: paths[0], zIndex: paths[3]});
 			this.top.attr({d: paths[1], zIndex: paths[4]});
 			this.side.attr({d: paths[2], zIndex: paths[5]});			
@@ -454,7 +454,7 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 				alpha: 0,
 				beta: 0,
 				depth: 100,
-				viewDistance: 100,
+				viewDistance: 25,
 
 				frame: {
 					bottom: { size: 1, color: 'rgba(255,255,255,0)' },
@@ -781,6 +781,50 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 	});	    
 });
 
+Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'animate', function (proceed) {
+	if (!this.chart.is3d()) {
+		proceed.apply(this, [].slice.call(arguments, 1));
+	} else {
+		var args = arguments,
+			init = args[1],
+			yAxis = this.yAxis,
+			series = this,
+			reversed = this.yAxis.reversed;
+
+		if (Highcharts.svg) { // VML is too slow anyway
+			if (init) {
+				Highcharts.each(series.data, function (point) {
+					point.height = point.shapeArgs.height;					
+					point.shapeArgs.height = 1;
+					if (!reversed) {
+						if (point.stackY) {
+							point.shapeArgs.y = point.plotY + yAxis.translate(point.stackY);
+						} else {
+							point.shapeArgs.y = point.plotY + (point.negative ? -point.height : point.height);
+						}
+					}
+				});
+
+			} else { // run the animation				
+				Highcharts.each(series.data, function (point) {					
+					point.shapeArgs.height = point.height;
+					if (!reversed) {
+						point.shapeArgs.y = point.plotY - (point.negative ? point.height : 0);
+					}
+					// null value do not have a graphic
+					if (point.graphic) {
+						point.graphic.animate(point.shapeArgs, series.options.animation);					
+					}
+				});
+
+				// delete this function to allow it only once
+				series.animate = null;
+			}
+		}
+	}
+});
+
+
 Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
@@ -798,7 +842,6 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proce
 						break;
 					}
 				}
-				console.log(stacks[stack][i]);
 				z = 10 - i;
 				
 				this.options.zIndex = z;

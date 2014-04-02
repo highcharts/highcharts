@@ -1,0 +1,53 @@
+<html>
+<head>
+<title>Something Something</title>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<script src="http://code.highcharts.sv/highcharts.js"></script>
+<script src="http://code.highcharts.sv/highcharts-3d.src.js"></script>
+
+<script>
+$(function () {
+    $('#container').highcharts({
+        chart: {
+            type: 'column',
+            margin: [150, 50, 125, 50],
+            options3d: {
+                enabled: true,
+                alpha: 30,
+                beta: 30,
+                depth: 100              
+            }
+        },
+        xAxis: {
+            gridLineWidth: 0,
+            lineWidth: 0,
+            labels: {
+                enabled: false
+            },
+            tickLength: 0
+        },
+        yAxis: {
+            title: {
+                enabled: false
+            },
+            gridLineWidth: 0,
+            lineWidth: 0,
+            labels: {
+                enabled: false
+            },
+            tickLength: 0
+        },
+        series: [{
+            data: [1, 2, 4]
+        }]
+    });
+});
+</script>
+</head>
+
+<body>
+    <div id="container" style="height:500px; width:1000px;"></div>
+</body>
+
+</html>

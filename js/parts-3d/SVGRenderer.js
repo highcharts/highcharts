@@ -79,8 +79,8 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	};
 
 	result.attr = function (args) {
-		if (args.x && args.y) {
-			var paths = this.renderer.cuboidPath(args);
+		if (args.shapeArgs) {
+			var paths = this.renderer.cuboidPath(args.shapeArgs);
 			this.front.attr({d: paths[0], zIndex: paths[3]});
 			this.top.attr({d: paths[1], zIndex: paths[4]});
 			this.side.attr({d: paths[2], zIndex: paths[5]});			
