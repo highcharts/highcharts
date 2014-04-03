@@ -298,3 +298,27 @@ DataTest.prototype.testSeriesBuilderHasReader = function () {
 	assertFalse(builder.hasReader('meep'));
 };
 
+DataTest.prototype.testFailingDemoData = function () {
+	var data;
+
+	Highcharts.data({
+		csv: 'row,Tokyo,New York,Berlin,London\n' +
+			'1,7,-0.2,-0.9,3.9\n' +
+			'2,6.9,0.8,0.6,4.2\n' +
+			'3,9.5,5.7,3.5,5.7\n' +
+			'4,14.5,11.3,8.4,8.5\n' +
+			'5,18.2,17,13.5,11.9\n' +
+			'6,21.5,22,17,15.2\n' +
+			'7,25.2,24.8,18.6,17\n' +
+			'8,26.5,24.1,17.9,16.6\n' +
+			'9,23.3,20.1,14.3,14.2\n' +
+			'10,18.3,14.1,9,10.3\n' +
+			'11,13.9,8.6,3.9,6.6\n' +
+			'12,9.6,2.5,1,4.8',
+		complete: function (result) {
+			data = result;
+		}
+	});
+
+	assertEquals('Series length', 4, data.series.length);
+};
