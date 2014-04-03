@@ -223,7 +223,7 @@ Legend.prototype = {
 			itemStyle = legend.itemStyle,
 			itemHiddenStyle = legend.itemHiddenStyle,
 			padding = legend.padding,
-			itemDistance = horizontal ? pick(options.itemDistance, 8) : 0,
+			itemDistance = horizontal ? pick(options.itemDistance, 20) : 0, // docs
 			ltr = !options.rtl,
 			itemHeight,
 			widthOption = options.width,

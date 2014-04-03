@@ -70,7 +70,7 @@ Axis.prototype = {
 		startOnTick: false,
 		tickColor: '#C0D0E0',
 		//tickInterval: null,
-		tickLength: 5,
+		tickLength: 10,
 		tickmarkPlacement: 'between', // on or between
 		tickPixelInterval: 100,
 		tickPosition: 'outside',
@@ -158,7 +158,7 @@ Axis.prototype = {
 	defaultBottomAxisOptions: {
 		labels: {
 			x: 0,
-			y: 14
+			y: 20
 			// overflow: undefined,
 			// staggerLines: null
 		},
@@ -1502,7 +1502,7 @@ Axis.prototype = {
 		axis.axisTitleMargin =
 			pick(titleOffsetOption,
 				labelOffset + titleMargin +
-				(side !== 2 && labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x'])
+				(labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x'])
 			);
 
 		axisOffset[side] = mathMax(

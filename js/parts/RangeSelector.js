@@ -24,7 +24,7 @@ extend(defaultOptions, {
 		// inputDateFormat: '%b %e, %Y',
 		// inputEditDateFormat: '%Y-%m-%d',
 		// inputEnabled: true,
-		//inputStyle: {},
+		// inputStyle: {},
 		labelStyle: {
 			color: '#666'
 		}
@@ -234,7 +234,7 @@ RangeSelector.prototype = {
 		rangeSelector.options = options;
 		rangeSelector.buttons = [];
 		
-		chart.extraTopMargin = 25;
+		chart.extraTopMargin = 35;
 		rangeSelector.buttonOptions = buttonOptions;
 
 		addEvent(chart.container, 'mousedown', blurInputs);
@@ -512,7 +512,7 @@ RangeSelector.prototype = {
 
 		// create the elements
 		if (!rangeSelector.rendered) {
-			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, plotLeft, chart.plotTop - 10)
+			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, plotLeft, chart.plotTop - 20)
 				.css(options.labelStyle)
 				.add();
 
@@ -523,7 +523,7 @@ RangeSelector.prototype = {
 				buttons[i] = renderer.button(
 						rangeOptions.text,
 						buttonLeft,
-						chart.plotTop - 25,
+						chart.plotTop - 35,
 						function () {
 							rangeSelector.clickButton(i);
 							rangeSelector.isActive = true;
@@ -571,7 +571,7 @@ RangeSelector.prototype = {
 		if (inputEnabled) {
 		
 			// Update the alignment to the updated spacing box
-			yAlign = chart.plotTop - 35;		
+			yAlign = chart.plotTop - 45;		
 			inputGroup.align(extend({
 				y: yAlign,
 				width: inputGroup.offset,

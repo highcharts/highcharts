@@ -1411,7 +1411,7 @@ defaultOptions = {
 			//shadow: false,
 			// stacking: null,
 			marker: {
-				//enabled: true,
+				enabled: true,
 				//symbol: null,
 				lineWidth: 0,
 				radius: 4,
@@ -1499,7 +1499,7 @@ defaultOptions = {
 		},
 		//borderWidth: 0,
 		borderColor: '#909090',
-		borderRadius: 5,
+		borderRadius: 0, // docs
 		navigation: {
 			// animation: true,
 			activeColor: '#274b6d',
@@ -1507,7 +1507,7 @@ defaultOptions = {
 			inactiveColor: '#CCC'
 			// style: {} // text styles
 		},
-		// margin: 10,
+		// margin: 20,
 		// reversed: false,
 		shadow: false,
 		// backgroundColor: null,
@@ -6154,7 +6154,7 @@ Axis.prototype = {
 		startOnTick: false,
 		tickColor: '#C0D0E0',
 		//tickInterval: null,
-		tickLength: 5,
+		tickLength: 10,
 		tickmarkPlacement: 'between', // on or between
 		tickPixelInterval: 100,
 		tickPosition: 'outside',
@@ -6242,7 +6242,7 @@ Axis.prototype = {
 	defaultBottomAxisOptions: {
 		labels: {
 			x: 0,
-			y: 14
+			y: 20
 			// overflow: undefined,
 			// staggerLines: null
 		},
@@ -7586,7 +7586,7 @@ Axis.prototype = {
 		axis.axisTitleMargin =
 			pick(titleOffsetOption,
 				labelOffset + titleMargin +
-				(side !== 2 && labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x'])
+				(labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x'])
 			);
 
 		axisOffset[side] = mathMax(
@@ -8198,7 +8198,7 @@ Tooltip.prototype = {
 		var tooltip = this,
 			now = tooltip.now,
 			animate = tooltip.options.animation !== false && !tooltip.isHidden,
-			skipAnchor = tooltip.followPointer || tooltip.shared;
+			skipAnchor = tooltip.followPointer || tooltip.len > 1;
 
 		// get intermediate values for animation
 		extend(now, {
@@ -8381,7 +8381,7 @@ Tooltip.prototype = {
 			};
 
 		// Under these conditions, prefer the tooltip on the side of the point
-		if (chart.inverted || this.shared) {
+		if (chart.inverted || this.len > 1) {
 			swap();
 		}
 		run();
@@ -8467,6 +8467,7 @@ Tooltip.prototype = {
 				y: point[0].y
 			};
 			textConfig.points = pointConfig;
+			this.len = pointConfig.length;
 			point = point[0];
 
 		// single point tooltip
@@ -9789,7 +9790,7 @@ Legend.prototype = {
 			itemStyle = legend.itemStyle,
 			itemHiddenStyle = legend.itemHiddenStyle,
 			padding = legend.padding,
-			itemDistance = horizontal ? pick(options.itemDistance, 8) : 0,
+			itemDistance = horizontal ? pick(options.itemDistance, 20) : 0, // docs
 			ltr = !options.rtl,
 			itemHeight,
 			widthOption = options.width,
@@ -11001,7 +11002,7 @@ Chart.prototype = {
 			legend = chart.legend,
 			margin = chart.margin,
 			legendOptions = chart.options.legend,
-			legendMargin = pick(legendOptions.margin, 10),
+			legendMargin = pick(legendOptions.margin, 20),
 			legendX = legendOptions.x,
 			legendY = legendOptions.y,
 			align = legendOptions.align,

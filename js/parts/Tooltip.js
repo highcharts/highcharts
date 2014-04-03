@@ -79,7 +79,7 @@ Tooltip.prototype = {
 		var tooltip = this,
 			now = tooltip.now,
 			animate = tooltip.options.animation !== false && !tooltip.isHidden,
-			skipAnchor = tooltip.followPointer || tooltip.shared;
+			skipAnchor = tooltip.followPointer || tooltip.len > 1;
 
 		// get intermediate values for animation
 		extend(now, {
@@ -262,7 +262,7 @@ Tooltip.prototype = {
 			};
 
 		// Under these conditions, prefer the tooltip on the side of the point
-		if (chart.inverted || this.shared) {
+		if (chart.inverted || this.len > 1) {
 			swap();
 		}
 		run();
@@ -348,6 +348,7 @@ Tooltip.prototype = {
 				y: point[0].y
 			};
 			textConfig.points = pointConfig;
+			this.len = pointConfig.length;
 			point = point[0];
 
 		// single point tooltip

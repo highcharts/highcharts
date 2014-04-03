@@ -342,7 +342,7 @@ $(function () {
             .appendTo($container);
     
         var $masterContainer = $('<div id="master-container">')
-            .css({ position: 'absolute', top: 300, height: 80, width: '100%' })
+            .css({ position: 'absolute', top: 300, height: 100, width: '100%' })
             .appendTo($container);
     
         // create master and in its callback, create the detail chart

@@ -17,7 +17,7 @@ extend(defaultOptions, {
 			borderColor: '#b2b1b6' // docs
 		},
 		height: 40,
-		margin: 10,
+		margin: 25, // docs
 		maskFill: 'rgba(128,179,236,0.3)', // docs
 		maskInside: true, // docs
 		outlineColor: '#b2b1b6', // docs
@@ -52,6 +52,7 @@ extend(defaultOptions, {
 		xAxis: {
 			tickWidth: 0,
 			lineWidth: 0,
+			gridLineColor: '#EEE',
 			gridLineWidth: 1,
 			tickPixelInterval: 200,
 			labels: {
@@ -85,8 +86,8 @@ extend(defaultOptions, {
 		height: isTouchDevice ? 20 : 14,
 		barBackgroundColor: '#bfc8d1', // docs
 		barBorderRadius: 0, // docs: new default
-		barBorderWidth: 0, // docs
-		barBorderColor: '#666',
+		barBorderWidth: 1,
+		barBorderColor: '#bfc8d1', // docs
 		buttonArrowColor: '#666',
 		buttonBackgroundColor: '#ebe7e8', // docs
 		buttonBorderColor: '#bbb', // docs: new default

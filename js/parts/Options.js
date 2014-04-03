@@ -132,7 +132,7 @@ defaultOptions = {
 			//shadow: false,
 			// stacking: null,
 			marker: {
-				//enabled: true,
+				enabled: true,
 				//symbol: null,
 				lineWidth: 0,
 				radius: 4,
@@ -220,7 +220,7 @@ defaultOptions = {
 		},
 		//borderWidth: 0,
 		borderColor: '#909090',
-		borderRadius: 5,
+		borderRadius: 0, // docs
 		navigation: {
 			// animation: true,
 			activeColor: '#274b6d',
@@ -228,7 +228,7 @@ defaultOptions = {
 			inactiveColor: '#CCC'
 			// style: {} // text styles
 		},
-		// margin: 10,
+		// margin: 20,
 		// reversed: false,
 		shadow: false,
 		// backgroundColor: null,
