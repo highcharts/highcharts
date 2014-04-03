@@ -15525,7 +15525,6 @@ var ColumnSeries = extendClass(Series, {
 					'stroke-width': series.borderWidth
 				};
 				pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE] || series.pointAttr[NORMAL_STATE];
-				
 				if (graphic) { // update
 					stop(graphic);
 					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs));

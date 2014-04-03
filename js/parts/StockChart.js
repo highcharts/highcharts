@@ -14,13 +14,8 @@ Highcharts.StockChart = function (options, callback) {
 
 		lineOptions = {
 
-			marker: {
-				enabled: false,
-				states: {
-					hover: {
-						radius: 5
-					}
-				}
+			marker: { // docs: enabled auto
+				radius: 2
 			},
 			// gapSize: 0,
 			states: {

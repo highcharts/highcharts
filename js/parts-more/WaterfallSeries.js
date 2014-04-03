@@ -48,8 +48,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			y,
 			previousY,
 			stackPoint,
-			threshold = options.threshold,
-			crispCorr = (options.borderWidth % 2) / 2;
+			threshold = options.threshold;
 
 		// run column series translate
 		seriesTypes.column.prototype.translate.apply(this);
@@ -92,7 +91,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				shapeArgs.height *= -1;
 			}
 
-			point.plotY = shapeArgs.y = mathRound(shapeArgs.y) - crispCorr;
+			point.plotY = shapeArgs.y = mathRound(shapeArgs.y) - (series.borderWidth % 2) / 2;
 			shapeArgs.height = mathRound(shapeArgs.height);
 			point.yBottom = shapeArgs.y + shapeArgs.height;
 		}
