@@ -67,6 +67,7 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 		this.top.attr({fill: c1});
 		this.side.attr({fill: c2});
 
+		this.color = color;
 		return this;
 	};
 
@@ -78,8 +79,8 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	};
 
 	result.attr = function (args) {
-		if (args.x && args.y) {
-			var paths = this.renderer.cuboidPath(args);
+		if (args.shapeArgs) {
+			var paths = this.renderer.cuboidPath(args.shapeArgs);
 			this.front.attr({d: paths[0], zIndex: paths[3]});
 			this.top.attr({d: paths[1], zIndex: paths[4]});
 			this.side.attr({d: paths[2], zIndex: paths[5]});			
@@ -153,7 +154,7 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	var z1 = (pArr[0].z + pArr[1].z + pArr[2].z + pArr[3].z) / 4;
 
 	// top or bottom
-	var path2 = (beta > 0 ? 
+	var path2 = (alpha > 0 ? 
 		[
 		'M', pArr[0].x, pArr[0].y,
 		'L', pArr[7].x, pArr[7].y,
@@ -172,7 +173,7 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	var z2 = (beta > 0 ? (pArr[0].z + pArr[7].z + pArr[6].z + pArr[1].z) / 4 : (pArr[3].z + pArr[2].z + pArr[5].z + pArr[4].z) / 4);
 
 	// side
-	var path3 = (alpha > 0 ? 
+	var path3 = (beta > 0 ? 
 		[
 		'M', pArr[1].x, pArr[1].y,
 		'L', pArr[2].x, pArr[2].y,

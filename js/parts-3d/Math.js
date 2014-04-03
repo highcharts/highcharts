@@ -21,7 +21,7 @@ function perspective(points, angle2, angle1, origin) {
 	
 	xe = origin.x;
 	ye = origin.y;
-	ze = (origin.z === 0 ? 0.0001 : origin.z * 100);
+	ze = (origin.z === 0 ? 0.0001 : origin.z) * (origin.vd || 25);
 
 	// some kind of minimum?
 

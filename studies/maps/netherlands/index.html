@@ -1,0 +1,203 @@
+<html>
+<head>
+<title>HC4 Sample: Netherlands</title>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/modules/map.js"></script>
+
+<script src="map.js"></script>
+<script src="data.js"></script>
+
+<script>
+/*
+    Found in CSV but not in MAP
+        Boarnsterhim
+        Boskoop
+        Gaasterlân-Sleat
+        Haarlemmerliede CA
+        Kollumerland CA
+        Lemsterland
+        Nuenen CA
+        Rijnwoude
+        Skarsterlan
+
+    Found in MAP but not in CSV
+        Kollumerland en Nieuwkruisland
+        Haarlemmerliede en Spaarnwoude
+        Nuenen, Gerwen en Nederwetten
+        De Friese Meren 
+*/
+
+$(function () {
+    getData(function (allData) {
+        Highcharts.setOptions({
+            lang: {
+                thousandsSep: '.'
+            }
+        });
+
+        var mapChart = new Highcharts.Map({
+            chart: {
+                renderTo: 'mapdiv'
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                //text: 'Bevolking in 2013'
+            },
+            credits: {
+                enabled: false
+            },
+            tooltip: {
+                enabled: true
+            },
+            mapNavigation: {
+                enableTouchZoom: true,
+                enableMouseWheelZoom: true
+            },
+            legend: {
+                title: {
+                    text: 'Bevolking in 2013',
+                    style: {
+                        color: 'black',
+                        fontWeight: 'bold'
+                    }
+                },
+                backgroundColor: '#E0E0E0',
+                align: 'left',
+                verticalAlign: 'top',
+                layout: 'vertical',
+                floating: true,
+                valueDecimals: 0
+            },
+            plotOptions: {
+                map: {
+                    allAreas: true,
+                    color: '#EEEEEE',
+                    joinBy: 'code',
+                    borderColor: '#404040',
+                    showInLegend: true,
+                    mapData: Nederland,
+                },
+                series: {
+                    point: {
+                        events: {
+                            click: function () {
+                                selectProvince(this, this.options.color);
+                            }
+                        }
+                    }
+                }
+            },        
+            colorAxis: {
+                dataClasses: [{
+                    to: 50000,
+                    color: '#9ff0cf'
+                },{
+                    from: 50000,
+                    to: 100000,
+                    color: '#90ee7e'
+                },{
+                    from: 100000,
+                    to: 250000,
+                    color: '#7eb5ee'
+                },{
+                    from: 250000,
+                    to: 500000,
+                    color: '#f6a45c'
+                },{
+                    from: 500000,
+                    color: '#f45b5b'
+                },]
+            },
+            
+            series: [{
+                data: allData["2013"]
+            }]
+        });
+
+        var evoChart1 = new Highcharts.Chart({
+            chart: {
+                renderTo: 'evodiv1',
+                type: 'column'
+            },
+            legend: {
+                enabled: false
+            },
+            tooltip: {
+                shared: true,
+            },
+            yAxis: [{
+                title: {
+                    text: 'Absolute Cijfers'
+                },
+                height: 200
+            },{
+                title: {
+                    text: 'Bevolkingsgroei'
+                },
+                offset: 0,
+                top: 300,
+                height: 175
+            }],
+            xAxis: {
+                lineWidth: 0,
+                tickLength: 0,
+                labels: {
+                    style: {
+                        fontWeight: 'bold'
+                    }
+                },
+                type: 'category',
+                categories: [2009,2010,2011,2012,2013],
+                opposite: true,
+                top: 285
+            },
+            series: [
+                { 
+                    name: 'Bevolking',
+                    data: [0,0,0,0,0],
+                    type: 'column',
+                    threshold: null,
+                },
+                { 
+                    name: 'Groei',
+                    data: [0,0,0,0],
+                    pointPlacement: 'between',
+                    type: 'spline',
+                    yAxis: 1 
+                }
+            ]
+        });
+        function selectProvince (province, color) {
+            // Data
+            if (allData[province.code + "absoluut"] && allData[province.code + "absoluut"]) { 
+                evoChart1.series[0].setData(allData[province.code + "absoluut"].data, false);
+                evoChart1.series[0].update({color: color}, false);
+                evoChart1.series[1].setData(allData[province.code + "groei"].data, false);
+                evoChart1.series[1].update({color: color}, false);
+            } else {
+                evoChart1.series[0].setData([1,1,1,1,1], false);
+                evoChart1.series[1].setData([0,0,0,0], false);     
+            }
+
+            // Title
+            evoChart1.setTitle({text: province.code}, false);
+
+            // Redraw
+            evoChart1.redraw(false);
+        }
+        // Preselect Amsterdam
+        selectProvince ({ code: 'Amsterdam' }, '#f45b5b');
+    });
+});
+</script>
+</head>
+
+<body>
+    <div id="mapdiv" style="height:500px; width: 450px; float: left;"></div>
+    <div id="evodiv1" style="height: 500px; width: 300px; float: left;"></div>
+</body>
+
+</html

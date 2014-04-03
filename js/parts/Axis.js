@@ -616,6 +616,11 @@ Axis.prototype = {
 			roundedMax = correctFloat(mathCeil(max / tickInterval) * tickInterval),
 			tickPositions = [];
 
+		// For single points, add a tick regardless of the relative position (#2662)
+		if (min === max) {
+			return [min];
+		}
+
 		// Populate the intermediate values
 		pos = roundedMin;
 		while (pos <= roundedMax) {
@@ -779,7 +784,7 @@ Axis.prototype = {
 
 			} else {
 				each(axis.series, function (series) {
-					var seriesPointRange = mathMax(axis.isXAxis ? series.pointRange : (axis.axisPointRange || 0), +hasCategories),
+					var seriesPointRange = hasCategories ? 1 : (axis.isXAxis ? series.pointRange : (axis.axisPointRange || 0)), // #2806
 						pointPlacement = series.options.pointPlacement,
 						seriesClosestPointRange = series.closestPointRange;
 
@@ -1030,10 +1035,10 @@ Axis.prototype = {
 			}
 
 			// When there is only one point, or all points have the same value on this axis, then min
-			// and max are equal and tickPositions.length is 1. In this case, add some padding
+			// and max are equal and tickPositions.length is 0 or 1. In this case, add some padding
 			// in order to center the point, but leave it with one tick. #1337.
 			if (tickPositions.length === 1) {
-				singlePad = mathAbs(axis.max || 1) * 0.001; // The lowest possible number to avoid extra padding on columns (#2619)
+				singlePad = mathAbs(axis.max) > 10e12 ? 1 : 0.001; // The lowest possible number to avoid extra padding on columns (#2619, #2846)
 				axis.min -= singlePad;
 				axis.max += singlePad;
 			}
@@ -1249,16 +1254,25 @@ Axis.prototype = {
 			offsetLeft = options.offsetLeft || 0,
 			offsetRight = options.offsetRight || 0,
 			horiz = this.horiz,
-			width,
-			height,
-			top,
-			left;
+			width = pick(options.width, chart.plotWidth - offsetLeft + offsetRight),
+			height = pick(options.height, chart.plotHeight),
+			top = pick(options.top, chart.plotTop),
+			left = pick(options.left, chart.plotLeft + offsetLeft),
+			test = /%$/;
+
+		// Check for percentage based input values
+		if (test.test(height)) {
+			height = parseInt(height, 10) / 100 * chart.plotHeight;
+		}
+		if (test.test(top)) {
+			top = parseInt(top, 10) / 100 * chart.plotHeight + chart.plotTop;
+		}
 
 		// Expose basic values to use in Series object and navigator
-		this.left = left = pick(options.left, chart.plotLeft + offsetLeft);
-		this.top = top = pick(options.top, chart.plotTop);
-		this.width = width = pick(options.width, chart.plotWidth - offsetLeft + offsetRight);
-		this.height = height = pick(options.height, chart.plotHeight);
+		this.left = left;
+		this.top = top;
+		this.width = width;
+		this.height = height;
 		this.bottom = chart.chartHeight - height - top;
 		this.right = chart.chartWidth - width - left;
 

@@ -935,7 +935,6 @@ Scroller.prototype = {
 
 		// Merge the series options
 		mergedNavSeriesOptions = merge(baseOptions, navigatorSeriesOptions, {
-			clip: false,
 			enableMouseTracking: false,
 			group: 'nav', // for columns
 			padXAxis: false,

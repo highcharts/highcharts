@@ -91,6 +91,14 @@ H.extend(H.Data.prototype, {
 					isRelative = true;
 					path[i] = 'L';
 					path.splice(i + 1, 0, 0);
+				} else if (operator === 's') {
+					isRelative = true;
+					path[i] = 'L';
+					path.splice(i + 1, 2);
+				} else if (operator === 'S') {
+					isRelative = false;
+					path[i] = 'L';
+					path.splice(i + 1, 2);
 				} else if (operator === 'H' || operator === 'h') {
 					isRelative = false;
 					path[i] = 'L';
@@ -174,34 +182,39 @@ H.extend(H.Data.prototype, {
 			origSize,
 			transA;
 
+		fakeSeries = {
+			xAxis: {
+				//min: arr.minX,
+				//len: scale,
+				translate: Highcharts.Axis.prototype.translate,
+				options: {},
+				minPixelPadding: 0,
+				//transA: transA
+			}, 
+			yAxis: {
+				//min: (arr.minY + scale) / transA,
+				//len: scale,
+				translate: Highcharts.Axis.prototype.translate,
+				options: {},
+				minPixelPadding: 0,
+				//transA: transA
+			}
+		};
 		
 		// Borrow the map series type's getBox method
-		mapProto.getBox.call(arr, arr);
+		mapProto.getBox.call(fakeSeries, arr);
 
-		origSize = Math.max(arr.maxX - arr.minX, arr.maxY - arr.minY);
+		origSize = Math.max(fakeSeries.maxX - fakeSeries.minX, fakeSeries.maxY - fakeSeries.minY);
 		scale = scale || 1000;
 		transA = scale / origSize;
 
-		fakeSeries = {
-			xAxis: {
-				min: arr.minX,
-				len: scale,
-				translate: Highcharts.Axis.prototype.translate,
-				options: {},
-				minPixelPadding: 0,
-				transA: transA
-			}, 
-			yAxis: {
-				min: (arr.minY + scale) / transA,
-				len: scale,
-				translate: Highcharts.Axis.prototype.translate,
-				options: {},
-				minPixelPadding: 0,
-				transA: transA
-			}
-		};
+		fakeSeries.xAxis.transA = fakeSeries.yAxis.transA = transA;
+		fakeSeries.xAxis.len = fakeSeries.yAxis.len = scale;
+		fakeSeries.xAxis.min = fakeSeries.minX;
+		fakeSeries.yAxis.min = (fakeSeries.minY + scale) / transA;
 
 		each(arr, function (point) {
+
 			var i,
 				path;
 			point.path = path = mapProto.translatePath.call(fakeSeries, point.path, true);
@@ -211,6 +224,7 @@ H.extend(H.Data.prototype, {
 					path[i] = Math.round(path[i]);
 				}
 			}
+			delete point._foundBox;
 
 		});
 
@@ -228,14 +242,23 @@ H.extend(H.Data.prototype, {
 
 		function getPathLikeChildren(parent) {
 			return Array.prototype.slice.call(parent.getElementsByTagName('path'))
-						.concat(Array.prototype.slice.call(parent.getElementsByTagName('polygon')));
+				.concat(Array.prototype.slice.call(parent.getElementsByTagName('polygon')))
+				.concat(Array.prototype.slice.call(parent.getElementsByTagName('rect')));
 		}
 
-		function getPathDefinition(path) {
-			if (path.nodeName === 'path') {
-				return path.getAttribute('d');
-			} else if (path.nodeName === 'polygon') {
-				return path.getAttribute('points');
+		function getPathDefinition(node) {
+			if (node.nodeName === 'path') {
+				return node.getAttribute('d');
+			} else if (node.nodeName === 'polygon') {
+				return node.getAttribute('points');
+			} else if (node.nodeName === 'rect') {
+				var x = +node.getAttribute('x'),
+					y = +node.getAttribute('y'),
+					w = +node.getAttribute('width'),
+					h = +node.getAttribute('height');
+
+				// Return polygon definition
+				return [x, y, x + w, y, x + w, y + h, x, y + h, x, y].join(' ');
 			}
 		}
 

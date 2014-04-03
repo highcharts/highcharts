@@ -160,7 +160,7 @@ extend(ColorAxis.prototype, {
 			overflow: 'justify'
 		},
 		minColor: '#EFEFFF',
-		maxColor: '#003875' //#102d4c'
+		maxColor: '#003875'
 	},
 	init: function (chart, userOptions) {
 		var horiz = chart.options.legend.layout !== 'vertical',
@@ -187,6 +187,7 @@ extend(ColorAxis.prototype, {
 		if (userOptions.dataClasses) {
 			this.initDataClasses(userOptions);
 		}
+		this.initStops(userOptions);
 
 		// Override original axis properties
 		this.isXAxis = true;
@@ -237,6 +238,16 @@ extend(ColorAxis.prototype, {
 		});
 	},
 
+	initStops: function (userOptions) {
+		this.stops = userOptions.stops || [
+			[0, this.options.minColor],
+			[1, this.options.maxColor]
+		];
+		each(this.stops, function (stop) {
+			stop.color = Color(stop[1]);
+		});
+	},
+
 	/**
 	 * Extend the setOptions method to process extreme colors and color
 	 * stops.
@@ -245,14 +256,6 @@ extend(ColorAxis.prototype, {
 		Axis.prototype.setOptions.call(this, userOptions);
 
 		this.options.crosshair = this.options.marker;
-
-		this.stops = userOptions.stops || [
-			[0, this.options.minColor],
-			[1, this.options.maxColor]
-		];
-		each(this.stops, function (stop) {
-			stop.color = Color(stop[1]);
-		});
 		this.coll = 'colorAxis';
 	},
 
@@ -845,9 +848,9 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 });
 
 // Extend the pinchTranslate method to preserve fixed ratio when zooming
-wrap(Pointer.prototype, 'pinchTranslate', function (proceed, zoomHor, zoomVert, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
+wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
 	var xBigger;
-	proceed.call(this, zoomHor, zoomVert, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
+	proceed.call(this, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 
 	// Keep ratio
 	if (this.chart.options.chart.type === 'map') {
@@ -1311,14 +1314,16 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		if (series.isDirtyData || renderer.isVML || !baseTrans) {
 
 			// Individual point actions	
-			each(series.points, function (point) {
+			if (chart.hasRendered && series.pointAttrToOptions.fill === 'color') {
+				each(series.points, function (point) {
 
-				// Reset color on update/redraw
-				if (chart.hasRendered && point.graphic) {
-					point.graphic.attr('fill', point.color);
-				}
+					// Reset color on update/redraw
+					if (point.graphic) {
+						point.graphic.attr('fill', point.color);
+					}
 
-			});
+				});
+			}
 
 			// Draw them in transformGroup
 			series.group = series.transformGroup;
@@ -1552,9 +1557,38 @@ if (seriesTypes.bubble) {
 	});
 }
 
+/**
+ * Extend the default options with map options
+ */
+defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
+	nullColor: '#F8F8F8',
+	dataLabels: {
+		format: '{point.value}',
+		verticalAlign: 'middle',
+		crop: false,
+		overflow: false,
+		style: {
+			color: 'white',
+			fontWeight: 'bold',
+			textShadow: '0 0 5px black'
+		}
+	},
+	tooltip: {
+		pointFormat: '{point.name}: {point.value}<br/>'
+	},
+	states: {
+		normal: {
+			animation: true
+		},
+		hover: {
+			brightness: 0.2
+		}
+	}
+});
 
 // The Heatmap series type
 seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
+	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
 	supportsDrilldown: true,

@@ -139,38 +139,60 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 	// Pinch status
 	this.pinchX = this.pinchHor = pinchType.indexOf('x') !== -1;
 	this.pinchY = this.pinchVert = pinchType.indexOf('y') !== -1;
+	this.hasZoom = this.hasZoom || this.pinchHor || this.pinchVert;
 });
 
 // Override getPlotLinePath to allow for multipane charts
 Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, translatedValue) {
 	var axis = this,
-		series = (this.isLinked ? this.linkedParent.series : this.series),
-		renderer = axis.chart.renderer,
+		series = (this.isLinked && !this.series ? this.linkedParent.series : this.series),
+		chart = axis.chart,
+		renderer = chart.renderer,
 		axisLeft = axis.left,
 		axisTop = axis.top,
 		x1,
 		y1,
 		x2,
 		y2,
-		result = [];
+		result = [],
+		axes,
+		axes2,
+		uniqueAxes;
 
-	// Get the related axes.
-	var axes = (this.isXAxis ? 
-					(defined(this.options.yAxis) ?
-						[this.chart.yAxis[this.options.yAxis]] : 
-						map(series, function (S) { return S.yAxis; })
-					) :
-					(defined(this.options.xAxis) ?
-						[this.chart.xAxis[this.options.xAxis]] : 
-						map(series, function (S) { return S.xAxis; })
-					)
-				);
+	// Get the related axes based on series
+	axes = (axis.isXAxis ? 
+		(defined(axis.options.yAxis) ?
+			[chart.yAxis[axis.options.yAxis]] : 
+			map(series, function (S) { return S.yAxis; })
+		) :
+		(defined(axis.options.xAxis) ?
+			[chart.xAxis[axis.options.xAxis]] : 
+			map(series, function (S) { return S.xAxis; })
+		)
+	);
 
-	// remove duplicates in the axes array
-	var uAxes = [];
+
+	// Get the related axes based options.*Axis setting #2810
+	axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
+	each(axes2, function (A) {
+		if (defined(A.options.id) ? A.options.id.indexOf('navigator') === -1 : true) {
+			var a = (A.isXAxis ? 'yAxis' : 'xAxis'),
+				rax = (defined(A.options[a]) ? chart[a][A.options[a]] : chart[a][0]);	
+
+			if (axis === rax) {
+				axes.push(A);
+			}
+		}
+	});
+
+
+	// Remove duplicates in the axes array. If there are no axes in the axes array,
+	// we are adding an axis without data, so we need to populate this with grid
+	// lines (#2796).
+	uniqueAxes = axes.length ? [] : [axis];
 	each(axes, function (axis2) {
-		if (inArray(axis2, uAxes) === -1) {
-			uAxes.push(axis2);
+		if (inArray(axis2, uniqueAxes) === -1) {
+			uniqueAxes.push(axis2);
 		}
 	});
 	
@@ -178,7 +200,7 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 	
 	if (!isNaN(translatedValue)) {
 		if (axis.horiz) {
-			each(uAxes, function (axis2) {
+			each(uniqueAxes, function (axis2) {
 				y1 = axis2.top;
 				y2 = y1 + axis2.len;
 				x1 = x2 = mathRound(translatedValue + axis.transB);
@@ -188,7 +210,7 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 				}
 			});
 		} else {
-			each(uAxes, function (axis2) {
+			each(uniqueAxes, function (axis2) {
 				x1 = axis2.left;
 				x2 = x1 + axis2.width;
 				y1 = y2 = mathRound(axisTop + axis.height - translatedValue);
@@ -201,9 +223,26 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 	}
 	if (result.length > 0) {
 		return renderer.crispPolyLine(result, lineWidth || 1); 
-	} else {
-		return null;
 	}
+};
+
+// Override getPlotBandPath to allow for multipane charts
+Axis.prototype.getPlotBandPath = function (from, to) {		
+	var toPath = this.getPlotLinePath(to),
+		path = this.getPlotLinePath(from),
+		result = [],
+		i;
+
+	if (path && toPath) {
+		// Go over each subpath
+		for (i = 0; i < path.length; i += 6) {
+			result.push('M', path[i + 1], path[i + 2], 'L', path[i + 4], path[i + 5], 'L', toPath[i + 4], toPath[i + 5], 'L', toPath[i + 1], toPath[i + 2]);
+		}
+	} else { // outside the axis area
+		result = null;
+	}
+		
+	return result;
 };
 
 // Function to crisp a line with multiple segments
@@ -485,3 +524,13 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 /* ****************************************************************************
  * End value compare logic                                                    *
  *****************************************************************************/
+
+
+/**
+ * Extend the Series prototype to create a separate series clip box. This is related
+ * to using multiple panes, and a future pane logic should incorporate this feature.
+ */
+wrap(Series.prototype, 'render', function (proceed) {
+	this.clipBox = merge(this.chart.clipBox, { height: this.yAxis.len });
+	proceed.call(this);
+});

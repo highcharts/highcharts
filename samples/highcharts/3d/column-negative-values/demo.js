@@ -16,7 +16,7 @@ $(function () {
         plotOptions: {
             column: {
                 depth: 25,
-                negativeColor: 'red',
+                negativeColor: '#DD0000',
             }
         },
         series: [{

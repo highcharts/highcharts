@@ -39,6 +39,7 @@ var UNDEFINED,
 	timeUnits,
 	noop = function () {},
 	charts = [],
+	chartCount = 0,
 	PRODUCT = '@product.name@',
 	VERSION = '@product.version@',
 

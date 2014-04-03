@@ -135,27 +135,30 @@
 					ret,
 					chart;
 
-				if (isString(args[0])) {
-					constr = args[0];
-					args = Array.prototype.slice.call(args, 1); 
+				if (this[0]) {
+
+					if (isString(args[0])) {
+						constr = args[0];
+						args = Array.prototype.slice.call(args, 1); 
+					}
+					options = args[0];
+
+					// Create the chart
+					if (options !== UNDEFINED) {
+						/*jslint unused:false*/
+						options.chart = options.chart || {};
+						options.chart.renderTo = this[0];
+						chart = new Highcharts[constr](options, args[1]);
+						ret = this;
+						/*jslint unused:true*/
+					}
+
+					// When called without parameters or with the return argument, get a predefined chart
+					if (options === UNDEFINED) {
+						ret = charts[attr(this[0], 'data-highcharts-chart')];
+					}
 				}
-				options = args[0];
-
-				// Create the chart
-				if (options !== UNDEFINED) {
-					/*jslint unused:false*/
-					options.chart = options.chart || {};
-					options.chart.renderTo = this[0];
-					chart = new Highcharts[constr](options, args[1]);
-					ret = this;
-					/*jslint unused:true*/
-				}
-
-				// When called without parameters or with the return argument, get a predefined chart
-				if (options === UNDEFINED) {
-					ret = charts[attr(this[0], 'data-highcharts-chart')];
-				}	
-
+				
 				return ret;
 			};
 
@@ -251,7 +254,7 @@
 				detachedType = 'detached' + type,
 				defaultPrevented;
 	
-			// Remove warnings in Chrome when accessing layerX and layerY. Although Highcharts
+			// Remove warnings in Chrome when accessing returnValue (#2790), layerX and layerY. Although Highcharts
 			// never uses these properties, Chrome includes them in the default click event and
 			// raises the warning when they are copied over in the extend statement below.
 			//
@@ -260,6 +263,7 @@
 			if (!isIE && eventArguments) {
 				delete eventArguments.layerX;
 				delete eventArguments.layerY;
+				delete eventArguments.returnValue;
 			}
 	
 			extend(event, eventArguments);

@@ -345,10 +345,12 @@ Series.prototype = {
 			firstPoint = null,
 			xAxis = series.xAxis,
 			hasCategories = xAxis && !!xAxis.categories,
+			names = xAxis && (isArray(xAxis.categories) ? xAxis.categories : xAxis.names),
 			tooltipPoints = series.tooltipPoints,
 			i,
 			turboThreshold = options.turboThreshold,
 			pt,
+			nameX,
 			xData = this.xData,
 			yData = this.yData,
 			pointArrayMap = series.pointArrayMap,
@@ -424,10 +426,21 @@ Series.prototype = {
 					if (data[i] !== UNDEFINED) { // stray commas in oldIE
 						pt = { series: series };
 						series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
-						series.updateParallelArrays(pt, i);
+
+						// If the point has a name and the axis is of category type,
+						// search the names array for existing positions of the same name.
+						// If not found, add a position with that name (#2522).
 						if (hasCategories && pt.name) {
-							xAxis.names[pt.x] = pt.name; // #2046
+							series.requireSorting = false;
+							nameX = inArray(pt.name, names); // #2522
+							if (nameX === -1 || !pt.autoX) {
+								names[pt.x] = pt.name; // #2046
+							} else {
+								pt.x = nameX;
+							}
 						}
+						series.updateParallelArrays(pt, i);
+						
 					}
 				}
 			}
@@ -737,7 +750,7 @@ Series.prototype = {
 			if (stacking && series.visible && stack && stack[xValue]) {
 
 				pointStack = stack[xValue];
-				stackValues = pointStack.points[series.index];
+				stackValues = pointStack.points[series.index + ',' + i];
 				yBottom = stackValues[0];
 				yValue = stackValues[1];
 
@@ -799,7 +812,7 @@ Series.prototype = {
 			clipRect,
 			markerClipRect,
 			animation = series.options.animation,
-			clipBox = chart.clipBox,
+			clipBox = series.clipBox || chart.clipBox,
 			inverted = chart.inverted,
 			sharedClipKey;
 
@@ -807,7 +820,7 @@ Series.prototype = {
 		if (animation && !isObject(animation)) {
 			animation = defaultPlotOptions[series.type].animation;
 		}
-		sharedClipKey = '_sharedClip' + animation.duration + animation.easing;
+		sharedClipKey = ['_sharedClip', animation.duration, animation.easing, clipBox.height].join(',');
 
 		// Initialize the animation. Set up the clipping rectangle.
 		if (init) {
@@ -845,7 +858,7 @@ Series.prototype = {
 
 			// Delete this function to allow it only once
 			series.animate = null;
-
+ 
 			// Call the afterAnimate function on animation complete (but don't overwrite the animation.complete option
 			// which should be available to the user).
 			series.animationTimeout = setTimeout(function () {
@@ -860,18 +873,25 @@ Series.prototype = {
 	afterAnimate: function () {
 		var chart = this.chart,
 			sharedClipKey = this.sharedClipKey,
-			group = this.group;
+			group = this.group,
+			clipBox = this.clipBox;
 
 		if (group && this.options.clip !== false) {
-			group.clip(chart.clipRect);
+			if (!sharedClipKey || !clipBox) {
+				group.clip(clipBox ? chart.renderer.clipRect(clipBox) : chart.clipRect);
+			}
 			this.markerGroup.clip(); // no clip
 		}
 
 		// Remove the shared clipping rectancgle when all series are shown
 		setTimeout(function () {
 			if (sharedClipKey && chart[sharedClipKey]) {
-				chart[sharedClipKey] = chart[sharedClipKey].destroy();
-				chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
+				if (!clipBox) {
+					chart[sharedClipKey] = chart[sharedClipKey].destroy();
+				}
+				if (chart[sharedClipKey + 'm']) {
+					chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
+				}
 			}
 		}, 100);
 	},
@@ -1481,9 +1501,18 @@ Series.prototype = {
 	 * Get the translation and scale for the plot area of this series
 	 */
 	getPlotBox: function () {
+		var chart = this.chart,
+			xAxis = this.xAxis,
+			yAxis = this.yAxis;
+
+		// Swap axes for inverted (#2339)
+		if (chart.inverted) {
+			xAxis = yAxis;
+			yAxis = this.xAxis;
+		}
 		return {
-			translateX: this.xAxis ? this.xAxis.left : this.chart.plotLeft,
-			translateY: this.yAxis ? this.yAxis.top : this.chart.plotTop,
+			translateX: xAxis ? xAxis.left : chart.plotLeft,
+			translateY: yAxis ? yAxis.top : chart.plotTop,
 			scaleX: 1, // #1623
 			scaleY: 1
 		};

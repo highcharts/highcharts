@@ -78,6 +78,7 @@ Chart.prototype = {
 		// Add the chart to the global lookup
 		chart.index = charts.length;
 		charts.push(chart);
+		chartCount++;
 
 		// Set up auto resize
 		if (optionsChart.reflow !== false) {
@@ -872,6 +873,7 @@ Chart.prototype = {
 		chart.isDirtyLegend = true; // force legend redraw
 		chart.isDirtyBox = true; // force redraw of plot and chart border
 
+		chart.layOutTitles(); // #2857
 		chart.getMargins();
 
 		chart.redraw(animation);
@@ -1286,6 +1288,7 @@ Chart.prototype = {
 		
 		// Delete the chart from charts lookup array
 		charts[chart.index] = UNDEFINED;
+		chartCount--;
 		chart.renderTo.removeAttribute('data-highcharts-chart');
 
 		// remove events
