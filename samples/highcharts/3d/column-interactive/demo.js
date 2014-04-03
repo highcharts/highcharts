@@ -8,8 +8,15 @@ $(function () {
                 enabled: true,
                 alpha: 15,
                 beta: 15,
-                depth: 50
+                depth: 50,
+                viewDistance: 25
             }
+        },
+        title: {
+            text: 'Chart rotation demo'
+        },
+        subtitle: {
+            text: 'Test options by dragging the sliders below'
         },
         plotOptions: {
             column: {
@@ -26,6 +33,14 @@ $(function () {
     });
     $('#R1').on('change', function(){
         chart.options.chart.options3d.beta = this.value;
+        chart.redraw(false);
+    });
+    $('#R2').on('change', function() {
+        chart.options.chart.options3d.depth = this.value;
+        chart.redraw(false);
+    });
+    $('#R3').on('change', function() {
+        chart.options.chart.options3d.viewDistance = this.value;
         chart.redraw(false);
     });
 });
