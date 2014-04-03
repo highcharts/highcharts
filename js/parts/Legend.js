@@ -715,7 +715,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 		}
 		
 		// Draw the marker
-		if (markerOptions && markerOptions.enabled) {
+		if (markerOptions && markerOptions.enabled !== false) {
 			radius = markerOptions.radius;
 			this.legendSymbol = legendSymbol = renderer.symbol(
 				this.symbol,

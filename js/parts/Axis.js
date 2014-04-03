@@ -1369,7 +1369,8 @@ Axis.prototype = {
 			bBox,
 			x,
 			w,
-			lineNo;
+			lineNo,
+			lineHeightCorrection = side === 2 ? renderer.fontMetrics(labelOptions.style.fontSize).h : 0;
 
 		// For reuse in Axis.render
 		axis.hasData = hasData = (axis.hasVisibleSeries || (defined(axis.min) && defined(axis.max) && !!tickPositions));
@@ -1502,7 +1503,7 @@ Axis.prototype = {
 		axis.axisTitleMargin =
 			pick(titleOffsetOption,
 				labelOffset + titleMargin +
-				(labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x'])
+				(labelOffset && (directionFactor * options.labels[horiz ? 'y' : 'x'] - lineHeightCorrection))
 			);
 
 		axisOffset[side] = mathMax(

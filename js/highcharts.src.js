@@ -1411,7 +1411,7 @@ defaultOptions = {
 			//shadow: false,
 			// stacking: null,
 			marker: {
-				enabled: true,
+				//enabled: true,
 				//symbol: null,
 				lineWidth: 0,
 				radius: 4,
@@ -7714,7 +7714,8 @@ Axis.prototype = {
 			bBox,
 			x,
 			w,
-			lineNo;
+			lineNo,
+			lineHeightCorrection = side === 2 ? renderer.fontMetrics(labelOptions.style.fontSize).h : 0;
 
 		// For reuse in Axis.render
 		axis.hasData = hasData = (axis.hasVisibleSeries || (defined(axis.min) && defined(axis.max) && !!tickPositions));
@@ -7847,7 +7848,7 @@ Axis.prototype = {
 		axis.axisTitleMargin =
 			pick(titleOffsetOption,
 				labelOffset + titleMargin +
-				(labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x'])
+				(labelOffset && (directionFactor * options.labels[horiz ? 'y' : 'x'] - lineHeightCorrection))
 			);
 
 		axisOffset[side] = mathMax(
@@ -10743,7 +10744,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 		}
 		
 		// Draw the marker
-		if (markerOptions && markerOptions.enabled) {
+		if (markerOptions && markerOptions.enabled !== false) {
 			radius = markerOptions.radius;
 			this.legendSymbol = legendSymbol = renderer.symbol(
 				this.symbol,
