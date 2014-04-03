@@ -14,6 +14,7 @@ if (!preg_match('/^[a-z]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
 
 $i = (int)$_GET['i'];
 $next = $i + 1;
+$previous = $i - 1;
 
 $fullpath = dirname(__FILE__) . '/../../samples/' . $path;
 
@@ -76,6 +77,16 @@ function getResources() {
 		<?php echo getFramework(FRAMEWORK); ?>
 		<?php echo getResources(); ?>
 		<script>
+
+		function next() {
+			window.location.href =
+				window.parent.frames[0].document.getElementById('i<?php echo $next ?>').href;
+		}
+		function previous() {
+			window.location.href =
+				window.parent.frames[0].document.getElementById('i<?php echo $previous ?>').href;
+		}
+
 
 		/* Wrappers for recording mouse events in order to write automatic tests */
 		$(function () {
@@ -201,13 +212,9 @@ function getResources() {
 
 					// add the next button
 					if (contentDoc.getElementById('i<?php echo $next ?>')) {
-						function goNext () {
-							window.location.href =
-								window.parent.frames[0].document.getElementById('i<?php echo $next ?>').href;
-						}
-
+						
 						$('#next').click(function() {
-							goNext();
+							next();
 						});
 						$('#next')[0].disabled = false;
 					}
