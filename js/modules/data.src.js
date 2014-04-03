@@ -164,6 +164,7 @@
 		// the mapping options.
 		each((options && options.seriesMapping) || [], function (mapping) {
 			var builder = new SeriesBuilder(),
+				name,
 				numberOfValueColumnsNeeded = individualCounts[seriesIndex] || getValueCount(globalType),
 				seriesArr = (chartOptions && chartOptions.series) || [],
 				series = seriesArr[seriesIndex] || {},
@@ -174,7 +175,7 @@
 			builder.addXReader(mapping.x);
 
 			// Add all column mappings
-			for (var name in mapping) {
+			for (name in mapping) {
 				if (mapping.hasOwnProperty(name) && name !== 'x') {
 					builder.addColumnReader(mapping[name], name);
 				}
@@ -546,6 +547,7 @@
 			data,
 			i,
 			j,
+			r,
 			seriesIndex,
 			allSeriesBuilders = [],
 			builder;
@@ -605,7 +607,7 @@
 			if (type === 'category') {
 				for (seriesIndex = 0; seriesIndex < allSeriesBuilders.length; seriesIndex++) {
 					builder = allSeriesBuilders[seriesIndex];
-					for (var r = 0; r < builder.readers.length; r++) {
+					for (r = 0; r < builder.readers.length; r++) {
 						if (builder.readers[r].getConfigName() === 'x') {
 							builder.readers[r].setConfigName('name');
 						}
@@ -934,7 +936,7 @@
 	 * @param configName String
 	 */
 	ColumnReader.prototype.setConfigName = function (configName) {
-		this.configName = configName
+		this.configName = configName;
 	};
 
 	/**
@@ -964,6 +966,6 @@
 /*	// Exposed for testing
 	window.ColumnReader = ColumnReader;
 	window.ColumnCursor = ColumnCursor;
-	window.SeriesBuilder = SeriesBuilder;//*/
+	window.SeriesBuilder = SeriesBuilder;// */
 
 }(Highcharts));
