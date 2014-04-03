@@ -6479,6 +6479,7 @@ Axis.prototype = {
 			x: -8,
 			y: null
 		},
+		tickLength: 5,
 		title: {
 			rotation: 270
 		}
@@ -6492,6 +6493,7 @@ Axis.prototype = {
 			x: 8,
 			y: null
 		},
+		tickLength: 5,
 		title: {
 			rotation: 90
 		}
@@ -7715,7 +7717,7 @@ Axis.prototype = {
 			x,
 			w,
 			lineNo,
-			lineHeightCorrection = side === 2 ? renderer.fontMetrics(labelOptions.style.fontSize).h : 0;
+			lineHeightCorrection = side === 2 ? renderer.fontMetrics(labelOptions.style.fontSize).b : 0;
 
 		// For reuse in Axis.render
 		axis.hasData = hasData = (axis.hasVisibleSeries || (defined(axis.min) && defined(axis.max) && !!tickPositions));
@@ -11271,11 +11273,6 @@ Chart.prototype = {
 			
 			if (!titleOptions.floating && !titleOptions.verticalAlign) {
 				titleOffset = title.getBBox().height;
-
-				// Adjust for browser consistency + backwards compat after #776 fix
-				if (titleOffset >= 18 && titleOffset <= 25) {
-					titleOffset = 15; 
-				}
 			}
 		}
 		if (subtitle) {

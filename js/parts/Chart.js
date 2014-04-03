@@ -490,11 +490,6 @@ Chart.prototype = {
 			
 			if (!titleOptions.floating && !titleOptions.verticalAlign) {
 				titleOffset = title.getBBox().height;
-
-				// Adjust for browser consistency + backwards compat after #776 fix
-				if (titleOffset >= 18 && titleOffset <= 25) {
-					titleOffset = 15; 
-				}
 			}
 		}
 		if (subtitle) {
