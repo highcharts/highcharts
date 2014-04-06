@@ -65,8 +65,8 @@ $(function() {
 					title : 'C',
 					text : 'Shape: "flag"'
 				}],
-				color : '#5F86B3',
-				fillColor : '#5F86B3',
+				color : Highcharts.getOptions().colors[0], // same as onSeries
+				fillColor : Highcharts.getOptions().colors[0],
 				onSeries : 'dataseries',
 				width : 16,
 				style : {// text style

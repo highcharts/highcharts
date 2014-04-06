@@ -183,7 +183,7 @@ defaultOptions = {
 					},
 					halo: {
 						size: 10,
-						opacity: 0.15
+						opacity: 0.25
 					}
 				},
 				select: {

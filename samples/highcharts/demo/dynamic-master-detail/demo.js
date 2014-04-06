@@ -217,8 +217,8 @@ $(function () {
                         fillColor: {
                             linearGradient: [0, 0, 0, 70],
                             stops: [
-                                [0, '#4572A7'],
-                                [1, 'rgba(0,0,0,0)']
+                                [0, Highcharts.getOptions().colors[0]],
+                                [1, 'rgba(255,255,255,0)']
                             ]
                         },
                         lineWidth: 1,
