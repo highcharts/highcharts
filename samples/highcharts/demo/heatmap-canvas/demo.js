@@ -186,7 +186,7 @@ $(function () {
 
         chart: {
             type: 'heatmap',
-            margin: [50, 10, 80, 50]
+            margin: [60, 10, 80, 50]
         },
 
 

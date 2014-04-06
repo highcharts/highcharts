@@ -1,5 +1,5 @@
 /**
- * Dark theme for Highcharts JS
+ * Sand-Signika theme for Highcharts JS
  * @author Torstein Honsi
  */
 
@@ -14,7 +14,7 @@ Highcharts.createElement('link', {
 Highcharts.wrap(Highcharts.Chart.prototype, 'getContainer', function (proceed) {
 	proceed.call(this);
 	this.container.style.background = 'url(http://www.highcharts.com/demo/gfx/sand.png)';
-})
+});
 
 
 Highcharts.theme = {
@@ -33,13 +33,13 @@ Highcharts.theme = {
 			fontWeight: 'bold'
 		}
 	},
-	tooltip: {
-		borderWidth: 0
-	},
 	subtitle: {
 		style: {
 			color: 'black'
 		}
+	},
+	tooltip: {
+		borderWidth: 0
 	},
 	legend: {
 		itemStyle: {
@@ -54,7 +54,7 @@ Highcharts.theme = {
 			}
 		}
 	},
-	xAxis: {
+	yAxis: {
 		labels: {
 			style: {
 				color: '#6e6e70'
