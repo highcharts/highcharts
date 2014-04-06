@@ -1292,7 +1292,7 @@ SVGRenderer.prototype = {
 		normalState = merge({
 			stroke: '#CCCCCC',
 			fill: '#f7f7f7',
-			r: 2,
+			r: 0,
 			padding: 5,
 			style: {
 				color: '#444',

@@ -2,6 +2,7 @@ $(function () {
     var chart = new Highcharts.Chart({
         chart: {
             renderTo: 'container',
+            backgroundColor: 'white',
             events: {
                 load: function () {
                     
@@ -237,7 +238,10 @@ $(function () {
             }
         },
         title: {
-            text: 'Highcharts export server overview'
+            text: 'Highcharts export server overview',
+            style: {
+                color: 'black'
+            }
         }
             
     });

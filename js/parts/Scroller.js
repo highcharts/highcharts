@@ -96,8 +96,8 @@ extend(defaultOptions, {
 		minWidth: 6,
 		rifleColor: '#666',
 		trackBackgroundColor: '#f4f4f4', // docs: new default
-		trackBorderColor: '#CCC',
-		trackBorderWidth: 0, // docs: new default
+		trackBorderColor: '#f4f4f4', // docs: new default
+		trackBorderWidth: 1,
 		// trackBorderRadius: 0
 		liveRedraw: hasSVG && !isTouchDevice
 	}

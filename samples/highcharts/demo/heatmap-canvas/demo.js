@@ -209,7 +209,8 @@ $(function () {
             shadow: false,
             useHTML: true,
             style: {
-                padding: 0
+                padding: 0,
+                color: 'black'
             }
         },
 

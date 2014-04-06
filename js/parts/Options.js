@@ -286,7 +286,7 @@ defaultOptions = {
 		enabled: true,
 		animation: hasSVG,
 		//crosshairs: null,
-		backgroundColor: 'rgba(255, 255, 255, .85)',
+		backgroundColor: 'rgba(249, 249, 249, .85)',
 		borderWidth: 1,
 		borderRadius: 3,
 		dateTimeLabelFormats: { 

@@ -1565,7 +1565,7 @@ defaultOptions = {
 		enabled: true,
 		animation: hasSVG,
 		//crosshairs: null,
-		backgroundColor: 'rgba(255, 255, 255, .85)',
+		backgroundColor: 'rgba(249, 249, 249, .85)',
 		borderWidth: 1,
 		borderRadius: 3,
 		dateTimeLabelFormats: { 
@@ -3102,7 +3102,7 @@ SVGRenderer.prototype = {
 		normalState = merge({
 			stroke: '#CCCCCC',
 			fill: '#f7f7f7',
-			r: 2,
+			r: 0,
 			padding: 5,
 			style: {
 				color: '#444',
@@ -6476,7 +6476,7 @@ Axis.prototype = {
 	 */
 	defaultLeftAxisOptions: {
 		labels: {
-			x: -8,
+			x: -15,
 			y: null
 		},
 		tickLength: 5,
@@ -6490,7 +6490,7 @@ Axis.prototype = {
 	 */
 	defaultRightAxisOptions: {
 		labels: {
-			x: 8,
+			x: 15,
 			y: null
 		},
 		tickLength: 5,
@@ -19620,8 +19620,8 @@ extend(defaultOptions, {
 		minWidth: 6,
 		rifleColor: '#666',
 		trackBackgroundColor: '#f4f4f4', // docs: new default
-		trackBorderColor: '#CCC',
-		trackBorderWidth: 0, // docs: new default
+		trackBorderColor: '#f4f4f4', // docs: new default
+		trackBorderWidth: 1,
 		// trackBorderRadius: 0
 		liveRedraw: hasSVG && !isTouchDevice
 	}
