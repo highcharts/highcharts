@@ -172,16 +172,12 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	'L', pArr[4].x, pArr[4].y,
 	'Z'
 	];
-	if (alpha === 0) { 
-		if (y + h > origin.y) {
-			path2 = top;
-		} else {
-			path2 = bottom;
-		}
-	} else if (alpha > 0) {
-		path2 = top; 
-	} else {
+	if (pArr[7].y < pArr[1].y) {
+		path2 = top;
+	} else if (pArr[4].y > pArr[2].y) {
 		path2 = bottom;
+	} else {
+		path2 = [];
 	}
 	var z2 = (beta > 0 ? (pArr[0].z + pArr[7].z + pArr[6].z + pArr[1].z) / 4 : (pArr[3].z + pArr[2].z + pArr[5].z + pArr[4].z) / 4);
 
@@ -199,18 +195,14 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	'L', pArr[4].x, pArr[4].y,
 	'L', pArr[3].x, pArr[3].y,
 	'Z'
-	];
-	if (beta === 0) { 
-		if (x > origin.x) {
-			path3 = left;
-		} else {
-			path3 = right;
-		}
-	} else if (beta > 0) {
-		path3 = right; 
-	} else {
+	];	
+	if (pArr[5].x > pArr[2].x) {
+		path3 = right;
+	} else if (pArr[4].x < pArr[0].x) {
 		path3 = left;
-	}	
+	} else {
+		path3 = [];
+	}
 	var z3 = (alpha > 0 ? (pArr[1].z + pArr[2].z + pArr[5].z + pArr[6].z) / 4 : (pArr[0].z + pArr[7].z + pArr[4].z + pArr[3].z) / 4);
 
 	return [path1, path2, path3, z1, z2, z3];
