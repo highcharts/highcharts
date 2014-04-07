@@ -273,7 +273,7 @@
 					
 					group.attr(attribs);
 					if (markerGroup) {
-						markerGroup.attrSetters = group.attrSetters;
+						//markerGroup.attrSetters = group.attrSetters;
 						markerGroup.attr(attribs);
 					}
 				

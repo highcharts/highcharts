@@ -258,14 +258,14 @@ extend(SVGRenderer.prototype, {
 
 							// Set listeners to update the HTML div's position whenever the SVG group
 							// position is changed
-							extend(parentGroup.attrSetters, {
-								translateX: function (value) {
+							extend(parentGroup, {
+								translateXSetter: function (value) {
 									htmlGroupStyle.left = value + PX;
 								},
-								translateY: function (value) {
+								translateYSetter: function (value) {
 									htmlGroupStyle.top = value + PX;
 								},
-								visibility: function (value, key) {
+								visibilitySetter: function (value, key) {
 									htmlGroupStyle[key] = value;
 								}
 							});

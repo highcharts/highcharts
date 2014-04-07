@@ -128,7 +128,7 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	result.top = this.path(paths[1]).attr({zIndex: paths[4]}).add(result);
 	result.side = this.path(paths[2]).attr({zIndex: paths[5]}).add(result);
 
-	result.attrSetters.fill = function (color) {
+	result.fillSetter = function (color) {
 		var c0 = color,
 		c1 = Highcharts.Color(color).brighten(0.1).get(),
 		c2 = Highcharts.Color(color).brighten(-0.1).get();
@@ -141,7 +141,7 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 		return this;
 	};
 
-	result.attrSetters.opacity = function (opacity) {
+	result.opacitySetter = function (opacity) {
 		this.front.attr({opacity: opacity});
 		this.top.attr({opacity: opacity});
 		this.side.attr({opacity: opacity});
@@ -282,7 +282,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 	result.out = renderer.path(paths.out).attr({zIndex: paths.zOut}).add(result);
 	result.top = renderer.path(paths.top).attr({zIndex: paths.zTop}).add(result);
 
-	result.attrSetters.fill = function (color) {
+	result.fillSetter = function (color) {
 		this.color = color;
 
 		var c0 = color,
