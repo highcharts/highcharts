@@ -1072,6 +1072,63 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'addPoint', function (proc
 		// destroy (and rebuild) everything!!!
 		this.update();
 	}
+});
+
+Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'animate', function (proceed) {
+	if (!this.chart.is3d()) {
+		proceed.apply(this, [].slice.call(arguments, 1));
+	} else {
+		var args = arguments,
+			init = args[1],
+			animation = this.options.animation,
+			attribs,
+			center = this.center,
+			group = this.group,
+			markerGroup = this.markerGroup;
+
+		if (Highcharts.svg) { // VML is too slow anyway
+				
+				if (animation === true) {
+					animation = {};
+				}
+				// Initialize the animation
+				if (init) {
+				
+					// Scale down the group and place it in the center
+					this.oldtranslateX = group.translateX;
+					this.oldtranslateY = group.translateY;
+					attribs = {
+						translateX: center[0],
+						translateY: center[1],
+						scaleX: 0.001, // #1499
+						scaleY: 0.001
+					};
+					
+					group.attr(attribs);
+					if (markerGroup) {
+						markerGroup.attrSetters = group.attrSetters;
+						markerGroup.attr(attribs);
+					}
+				
+				// Run the animation
+				} else {
+					attribs = {
+						translateX: this.oldtranslateX,
+						translateY: this.oldtranslateY,
+						scaleX: 1,
+						scaleY: 1
+					};
+					group.animate(attribs, animation);
+					if (markerGroup) {
+						markerGroup.animate(attribs, animation);
+					}
+				
+					// Delete this function to allow it only once
+					this.animate = null;
+				}
+				
+		}
+	}
 });/*** 
 	EXTENSION FOR 3D SCATTER CHART
 ***/
