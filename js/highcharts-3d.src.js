@@ -1003,6 +1003,9 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 			point.options.borderColor = c;
 			point.borderColor = c;
 			point.pointAttr[''].stroke = c;
+			// same bordercolor on hover and select
+			point.pointAttr.hover.stroke = c;
+			point.pointAttr.select.stroke = c;
 		});	
 	}
 
