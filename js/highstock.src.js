@@ -54,6 +54,7 @@ var UNDEFINED,
 	timeUnits,
 	noop = function () {},
 	charts = [],
+	chartCount = 0,
 	PRODUCT = 'Highstock',
 	VERSION = '1.3.10-modified',
 
@@ -505,12 +506,14 @@ function formatSingle(format, val) {
 	if (floatRegex.test(format)) { // float
 		decimals = format.match(decRegex);
 		decimals = decimals ? decimals[1] : -1;
-		val = numberFormat(
-			val,
-			decimals,
-			lang.decimalPoint,
-			format.indexOf(',') > -1 ? lang.thousandsSep : ''
-		);
+		if (val !== null) {
+			val = numberFormat(
+				val,
+				decimals,
+				lang.decimalPoint,
+				format.indexOf(',') > -1 ? lang.thousandsSep : ''
+			);
+		}
 	} else {
 		val = dateFormat(format, val);
 	}
@@ -1024,27 +1027,30 @@ pathAnim = {
 					ret,
 					chart;
 
-				if (isString(args[0])) {
-					constr = args[0];
-					args = Array.prototype.slice.call(args, 1); 
+				if (this[0]) {
+
+					if (isString(args[0])) {
+						constr = args[0];
+						args = Array.prototype.slice.call(args, 1); 
+					}
+					options = args[0];
+
+					// Create the chart
+					if (options !== UNDEFINED) {
+						/*jslint unused:false*/
+						options.chart = options.chart || {};
+						options.chart.renderTo = this[0];
+						chart = new Highcharts[constr](options, args[1]);
+						ret = this;
+						/*jslint unused:true*/
+					}
+
+					// When called without parameters or with the return argument, get a predefined chart
+					if (options === UNDEFINED) {
+						ret = charts[attr(this[0], 'data-highcharts-chart')];
+					}
 				}
-				options = args[0];
-
-				// Create the chart
-				if (options !== UNDEFINED) {
-					/*jslint unused:false*/
-					options.chart = options.chart || {};
-					options.chart.renderTo = this[0];
-					chart = new Highcharts[constr](options, args[1]);
-					ret = this;
-					/*jslint unused:true*/
-				}
-
-				// When called without parameters or with the return argument, get a predefined chart
-				if (options === UNDEFINED) {
-					ret = charts[attr(this[0], 'data-highcharts-chart')];
-				}	
-
+				
 				return ret;
 			};
 
@@ -1140,7 +1146,7 @@ pathAnim = {
 				detachedType = 'detached' + type,
 				defaultPrevented;
 	
-			// Remove warnings in Chrome when accessing layerX and layerY. Although Highcharts
+			// Remove warnings in Chrome when accessing returnValue (#2790), layerX and layerY. Although Highcharts
 			// never uses these properties, Chrome includes them in the default click event and
 			// raises the warning when they are copied over in the extend statement below.
 			//
@@ -1149,6 +1155,7 @@ pathAnim = {
 			if (!isIE && eventArguments) {
 				delete eventArguments.layerX;
 				delete eventArguments.layerY;
+				delete eventArguments.returnValue;
 			}
 	
 			extend(event, eventArguments);
@@ -2512,7 +2519,9 @@ SVGElement.prototype = {
 	 * Show the element
 	 */
 	show: function (inherit) {
-		return this.attr({ visibility: inherit ? 'inherit' : VISIBLE });
+		// IE9-11 doesn't handle visibilty:inherit well, so we remove the attribute instead (#2881)
+		this.element[inherit ? 'removeAttribute' : 'setAttribute']('visibility', VISIBLE);
+		return this;
 	},
 
 	/**
@@ -6906,6 +6915,11 @@ Axis.prototype = {
 			roundedMax = correctFloat(mathCeil(max / tickInterval) * tickInterval),
 			tickPositions = [];
 
+		// For single points, add a tick regardless of the relative position (#2662)
+		if (min === max && isNumber(min)) {
+			return [min];
+		}
+
 		// Populate the intermediate values
 		pos = roundedMin;
 		while (pos <= roundedMax) {
@@ -7201,6 +7215,14 @@ Axis.prototype = {
 			}
 		}
 
+		// Stay within floor and ceiling
+		if (isNumber(options.floor)) {
+			axis.min = mathMax(axis.min, options.floor); // docs
+		}
+		if (isNumber(options.ceiling)) {
+			axis.max = mathMin(axis.max, options.ceiling); // docs
+		}
+
 		// get tickInterval
 		if (axis.min === axis.max || axis.min === undefined || axis.max === undefined) {
 			axis.tickInterval = 1;
@@ -7320,10 +7342,10 @@ Axis.prototype = {
 			}
 
 			// When there is only one point, or all points have the same value on this axis, then min
-			// and max are equal and tickPositions.length is 1. In this case, add some padding
+			// and max are equal and tickPositions.length is 0 or 1. In this case, add some padding
 			// in order to center the point, but leave it with one tick. #1337.
 			if (tickPositions.length === 1) {
-				singlePad = mathAbs(axis.max || 1) * 0.001; // The lowest possible number to avoid extra padding on columns (#2619)
+				singlePad = mathAbs(axis.max) > 10e12 ? 1 : 0.001; // The lowest possible number to avoid extra padding on columns (#2619, #2846)
 				axis.min -= singlePad;
 				axis.max += singlePad;
 			}
@@ -7539,16 +7561,25 @@ Axis.prototype = {
 			offsetLeft = options.offsetLeft || 0,
 			offsetRight = options.offsetRight || 0,
 			horiz = this.horiz,
-			width,
-			height,
-			top,
-			left;
+			width = pick(options.width, chart.plotWidth - offsetLeft + offsetRight),
+			height = pick(options.height, chart.plotHeight),
+			top = pick(options.top, chart.plotTop),
+			left = pick(options.left, chart.plotLeft + offsetLeft),
+			test = /%$/;
+
+		// Check for percentage based input values
+		if (test.test(height)) {
+			height = parseInt(height, 10) / 100 * chart.plotHeight;
+		}
+		if (test.test(top)) {
+			top = parseInt(top, 10) / 100 * chart.plotHeight + chart.plotTop;
+		}
 
 		// Expose basic values to use in Series object and navigator
-		this.left = left = pick(options.left, chart.plotLeft + offsetLeft);
-		this.top = top = pick(options.top, chart.plotTop);
-		this.width = width = pick(options.width, chart.plotWidth - offsetLeft + offsetRight);
-		this.height = height = pick(options.height, chart.plotHeight);
+		this.left = left;
+		this.top = top;
+		this.width = width;
+		this.height = height;
 		this.bottom = chart.chartHeight - height - top;
 		this.right = chart.chartWidth - width - left;
 
@@ -8980,6 +9011,7 @@ Pointer.prototype = {
 		this.zoomY = zoomY = /y/.test(zoomType);
 		this.zoomHor = (zoomX && !inverted) || (zoomY && inverted);
 		this.zoomVert = (zoomY && !inverted) || (zoomX && inverted);
+		this.hasZoom = zoomX || zoomY;
 
 		// Do we need to handle click on a touch device?
 		this.runChartClick = chartEvents && !!chartEvents.click;
@@ -8989,6 +9021,7 @@ Pointer.prototype = {
 
 		if (Highcharts.Tooltip && options.tooltip.enabled) {
 			chart.tooltip = new Tooltip(chart, options.tooltip);
+			this.followTouchMove = options.tooltip.followTouchMove;
 		}
 
 		this.setDOMEvents();
@@ -9004,7 +9037,7 @@ Pointer.prototype = {
 			ePos;
 
 		// common IE normalizing
-		e = e || win.event;
+		e = e || window.event;
 
 		// Framework specific normalizing (#1165)
 		e = washMouseEvent(e);
@@ -9014,8 +9047,8 @@ Pointer.prototype = {
 			e.target = e.srcElement;
 		}
 		
-		// iOS
-		ePos = e.touches ? e.touches.item(0) : e;
+		// iOS (#2757)
+		ePos = e.touches ?  (e.touches.length ? e.touches.item(0) : e.changedTouches[0]) : e;
 
 		// Get mouse position
 		if (!chartPosition) {
@@ -9078,6 +9111,7 @@ Pointer.prototype = {
 			chart = pointer.chart,
 			series = chart.series,
 			tooltip = chart.tooltip,
+			followPointer,
 			point,
 			points,
 			hoverPoint = chart.hoverPoint,
@@ -9120,8 +9154,9 @@ Pointer.prototype = {
 			}
 		}
 
-		// separate tooltip and general mouse events
-		if (hoverSeries && hoverSeries.tracker && (!tooltip || !tooltip.followPointer)) { // only use for line-type series with common tracker and while not following the pointer #2584
+		// Separate tooltip and general mouse events
+		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
+		if (hoverSeries && hoverSeries.tracker && !followPointer) { // #2584, #2830
 
 			// get the point
 			point = hoverSeries.tooltipPoints[index];
@@ -9134,7 +9169,7 @@ Pointer.prototype = {
 
 			}
 			
-		} else if (tooltip && tooltip.followPointer && !tooltip.isHidden) {
+		} else if (tooltip && followPointer && !tooltip.isHidden) {
 			anchor = tooltip.getAnchor([{}], e);
 			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });
 		}
@@ -9142,7 +9177,7 @@ Pointer.prototype = {
 		// Start the event listener to pick up the tooltip 
 		if (tooltip && !pointer._onDocumentMouseMove) {
 			pointer._onDocumentMouseMove = function (e) {
-				if (defined(hoverChartIndex)) {
+				if (charts[hoverChartIndex]) {
 					charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
 				}
 			};
@@ -9416,7 +9451,7 @@ Pointer.prototype = {
 	
 
 	onDocumentMouseUp: function (e) {
-		if (defined(hoverChartIndex)) {
+		if (charts[hoverChartIndex]) {
 			charts[hoverChartIndex].pointer.drop(e);
 		}
 	},
@@ -9575,8 +9610,9 @@ Pointer.prototype = {
 			pointer.onContainerClick(e);
 		};
 		addEvent(container, 'mouseleave', pointer.onContainerMouseLeave);
-		addEvent(doc, 'mouseup', pointer.onDocumentMouseUp);
-
+		if (chartCount === 1) {
+			addEvent(doc, 'mouseup', pointer.onDocumentMouseUp);
+		}
 		if (hasTouch) {
 			container.ontouchstart = function (e) {
 				pointer.onContainerTouchStart(e);
@@ -9584,7 +9620,9 @@ Pointer.prototype = {
 			container.ontouchmove = function (e) {
 				pointer.onContainerTouchMove(e);
 			};
-			addEvent(doc, 'touchend', pointer.onDocumentTouchEnd);
+			if (chartCount === 1) {
+				addEvent(doc, 'touchend', pointer.onDocumentTouchEnd);
+			}
 		}
 		
 	},
@@ -9596,9 +9634,11 @@ Pointer.prototype = {
 		var prop;
 
 		removeEvent(this.chart.container, 'mouseleave', this.onContainerMouseLeave);
-		removeEvent(doc, 'mouseup', this.onDocumentMouseUp);
-		removeEvent(doc, 'touchend', this.onDocumentTouchEnd);
-		
+		if (!chartCount) {
+			removeEvent(doc, 'mouseup', this.onDocumentMouseUp);
+			removeEvent(doc, 'touchend', this.onDocumentTouchEnd);
+		}
+
 		// memory and CPU leak
 		clearInterval(this.tooltipTimeout);
 
@@ -9615,11 +9655,11 @@ extend(Highcharts.Pointer.prototype, {
 	/**
 	 * Run translation operations
 	 */
-	pinchTranslate: function (zoomHor, zoomVert, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
-		if (zoomHor) {
+	pinchTranslate: function (pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
+		if (this.zoomHor) {
 			this.pinchTranslateDirection(true, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 		}
-		if (zoomVert) {
+		if (this.zoomVert) {
 			this.pinchTranslateDirection(false, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 		}
 	},
@@ -9710,13 +9750,11 @@ extend(Highcharts.Pointer.prototype, {
 		var self = this,
 			chart = self.chart,
 			pinchDown = self.pinchDown,
-			followTouchMove = chart.tooltip && chart.tooltip.options.followTouchMove,
+			followTouchMove = self.followTouchMove,
 			touches = e.touches,
 			touchesLength = touches.length,
 			lastValidTouch = self.lastValidTouch,
-			zoomHor = self.zoomHor || self.pinchHor,
-			zoomVert = self.zoomVert || self.pinchVert,
-			hasZoom = zoomHor || zoomVert,
+			hasZoom = self.hasZoom,
 			selectionMarker = self.selectionMarker,
 			transform = {},
 			fireClickEvent = touchesLength === 1 && ((self.inClass(e.target, PREFIX + 'tracker') && 
@@ -9768,7 +9806,7 @@ extend(Highcharts.Pointer.prototype, {
 				}, chart.plotBox);
 			}
 			
-			self.pinchTranslate(zoomHor, zoomVert, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
+			self.pinchTranslate(pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 
 			self.hasPinched = hasZoom;
 
@@ -9820,7 +9858,7 @@ extend(Highcharts.Pointer.prototype, {
 	},
 
 	onDocumentTouchEnd: function (e) {
-		if (defined(hoverChartIndex)) {
+		if (charts[hoverChartIndex]) {
 			charts[hoverChartIndex].pointer.drop(e);
 		}
 	}
@@ -9895,17 +9933,21 @@ if (win.PointerEvent || win.MSPointerEvent) {
 
 	// Disable default IE actions for pinch and such on chart element
 	wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
-		css(chart.container, {
-			'-ms-touch-action': NONE,
-			'touch-action': NONE
-		});
 		proceed.call(this, chart, options);
+		if (this.hasZoom || this.followTouchMove) {
+			css(chart.container, {
+				'-ms-touch-action': NONE,
+				'touch-action': NONE
+			});
+		}
 	});
 
 	// Add IE specific touch events to chart
 	wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
 		proceed.apply(this);
-		this.batchMSEvents(addEvent);
+		if (this.hasZoom || this.followTouchMove) {
+			this.batchMSEvents(addEvent);
+		}
 	});
 	// Destroy MS events also
 	wrap(Pointer.prototype, 'destroy', function (proceed) {
@@ -10743,6 +10785,7 @@ Chart.prototype = {
 		// Add the chart to the global lookup
 		chart.index = charts.length;
 		charts.push(chart);
+		chartCount++;
 
 		// Set up auto resize
 		if (optionsChart.reflow !== false) {
@@ -11537,6 +11580,7 @@ Chart.prototype = {
 		chart.isDirtyLegend = true; // force legend redraw
 		chart.isDirtyBox = true; // force redraw of plot and chart border
 
+		chart.layOutTitles(); // #2857
 		chart.getMargins();
 
 		chart.redraw(animation);
@@ -11951,6 +11995,7 @@ Chart.prototype = {
 		
 		// Delete the chart from charts lookup array
 		charts[chart.index] = UNDEFINED;
+		chartCount--;
 		chart.renderTo.removeAttribute('data-highcharts-chart');
 
 		// remove events
@@ -12197,7 +12242,12 @@ Point.prototype = {
 		// If no x is set by now, get auto incremented value. All points must have an
 		// x value, however the y value can be null to create a gap in the series
 		if (point.x === UNDEFINED && series) {
-			point.x = x === UNDEFINED ? series.autoIncrement() : x;
+			if (x === UNDEFINED) {
+				point.x = series.autoIncrement();
+				point.autoX = true;
+			} else {
+				point.x = x;
+			}
 		}
 
 		return point;
@@ -12697,10 +12747,12 @@ Series.prototype = {
 			firstPoint = null,
 			xAxis = series.xAxis,
 			hasCategories = xAxis && !!xAxis.categories,
+			names = xAxis && (isArray(xAxis.categories) ? xAxis.categories : xAxis.names),
 			tooltipPoints = series.tooltipPoints,
 			i,
 			turboThreshold = options.turboThreshold,
 			pt,
+			nameX,
 			xData = this.xData,
 			yData = this.yData,
 			pointArrayMap = series.pointArrayMap,
@@ -12776,10 +12828,21 @@ Series.prototype = {
 					if (data[i] !== UNDEFINED) { // stray commas in oldIE
 						pt = { series: series };
 						series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
-						series.updateParallelArrays(pt, i);
+
+						// If the point has a name and the axis is of category type,
+						// search the names array for existing positions of the same name.
+						// If not found, add a position with that name (#2522).
 						if (hasCategories && pt.name) {
-							xAxis.names[pt.x] = pt.name; // #2046
+							series.requireSorting = false;
+							nameX = inArray(pt.name, names); // #2522
+							if (nameX === -1 || !pt.autoX) {
+								names[pt.x] = pt.name; // #2046
+							} else {
+								pt.x = nameX;
+							}
 						}
+						series.updateParallelArrays(pt, i);
+						
 					}
 				}
 			}
@@ -13151,7 +13214,7 @@ Series.prototype = {
 			clipRect,
 			markerClipRect,
 			animation = series.options.animation,
-			clipBox = chart.clipBox,
+			clipBox = series.clipBox || chart.clipBox,
 			inverted = chart.inverted,
 			sharedClipKey;
 
@@ -13159,7 +13222,7 @@ Series.prototype = {
 		if (animation && !isObject(animation)) {
 			animation = defaultPlotOptions[series.type].animation;
 		}
-		sharedClipKey = '_sharedClip' + animation.duration + animation.easing;
+		sharedClipKey = ['_sharedClip', animation.duration, animation.easing, clipBox.height].join(',');
 
 		// Initialize the animation. Set up the clipping rectangle.
 		if (init) {
@@ -13197,7 +13260,7 @@ Series.prototype = {
 
 			// Delete this function to allow it only once
 			series.animate = null;
-
+ 
 			// Call the afterAnimate function on animation complete (but don't overwrite the animation.complete option
 			// which should be available to the user).
 			series.animationTimeout = setTimeout(function () {
@@ -13212,18 +13275,25 @@ Series.prototype = {
 	afterAnimate: function () {
 		var chart = this.chart,
 			sharedClipKey = this.sharedClipKey,
-			group = this.group;
+			group = this.group,
+			clipBox = this.clipBox;
 
 		if (group && this.options.clip !== false) {
-			group.clip(chart.clipRect);
+			if (!sharedClipKey || !clipBox) {
+				group.clip(clipBox ? chart.renderer.clipRect(clipBox) : chart.clipRect);
+			}
 			this.markerGroup.clip(); // no clip
 		}
 
 		// Remove the shared clipping rectancgle when all series are shown
 		setTimeout(function () {
 			if (sharedClipKey && chart[sharedClipKey]) {
-				chart[sharedClipKey] = chart[sharedClipKey].destroy();
-				chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
+				if (!clipBox) {
+					chart[sharedClipKey] = chart[sharedClipKey].destroy();
+				}
+				if (chart[sharedClipKey + 'm']) {
+					chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
+				}
 			}
 		}, 100);
 	},
@@ -13274,10 +13344,7 @@ Series.prototype = {
 					isImage = symbol.indexOf('url') === 0;
 
 					if (graphic) { // update
-						graphic
-							.attr({ // Since the marker group isn't clipped, each individual marker must be toggled
-								visibility: isInside ? 'inherit' : HIDDEN
-							})
+						graphic[isInside ? 'show' : 'hide'](true) // Since the marker group isn't clipped, each individual marker must be toggled
 							.animate(extend({
 								x: plotX - radius,
 								y: plotY - radius
@@ -13833,9 +13900,18 @@ Series.prototype = {
 	 * Get the translation and scale for the plot area of this series
 	 */
 	getPlotBox: function () {
+		var chart = this.chart,
+			xAxis = this.xAxis,
+			yAxis = this.yAxis;
+
+		// Swap axes for inverted (#2339)
+		if (chart.inverted) {
+			xAxis = yAxis;
+			yAxis = this.xAxis;
+		}
 		return {
-			translateX: this.xAxis ? this.xAxis.left : this.chart.plotLeft,
-			translateY: this.yAxis ? this.yAxis.top : this.chart.plotTop,
+			translateX: xAxis ? xAxis.left : chart.plotLeft,
+			translateY: yAxis ? yAxis.top : chart.plotTop,
 			scaleX: 1, // #1623
 			scaleY: 1
 		};
@@ -17128,10 +17204,11 @@ extend(Point.prototype, {
 			chart = series.chart,
 			radius,
 			newSymbol,
-			pointAttr = point.pointAttr;
+			pointAttr;
 
 		state = state || NORMAL_STATE; // empty string
 		move = move && stateMarkerGraphic;
+		pointAttr = point.pointAttr[state] || series.pointAttr[state];
 
 		if (
 				// already has this state
@@ -17152,9 +17229,9 @@ extend(Point.prototype, {
 
 		// apply hover styles to the existing point
 		if (point.graphic) {
-			radius = markerOptions && point.graphic.symbolName && pointAttr[state].r;
+			radius = markerOptions && point.graphic.symbolName && pointAttr.r;
 			point.graphic.attr(merge(
-				pointAttr[state],
+				pointAttr,
 				radius ? { // new symbol attributes (#507, #612)
 					x: plotX - radius,
 					y: plotY - radius,
@@ -17184,7 +17261,7 @@ extend(Point.prototype, {
 						2 * radius,
 						2 * radius
 					)
-					.attr(pointAttr[state])
+					.attr(pointAttr)
 					.add(series.markerGroup);
 					stateMarkerGraphic.currentSymbol = newSymbol;
 
@@ -20248,7 +20325,6 @@ Scroller.prototype = {
 
 		// Merge the series options
 		mergedNavSeriesOptions = merge(baseOptions, navigatorSeriesOptions, {
-			clip: false,
 			enableMouseTracking: false,
 			group: 'nav', // for columns
 			padXAxis: false,
@@ -21321,6 +21397,7 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 	// Pinch status
 	this.pinchX = this.pinchHor = pinchType.indexOf('x') !== -1;
 	this.pinchY = this.pinchVert = pinchType.indexOf('y') !== -1;
+	this.hasZoom = this.hasZoom || this.pinchHor || this.pinchVert;
 });
 
 // Override getPlotLinePath to allow for multipane charts
@@ -21405,6 +21482,25 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 	if (result.length > 0) {
 		return renderer.crispPolyLine(result, lineWidth || 1); 
 	}
+};
+
+// Override getPlotBandPath to allow for multipane charts
+Axis.prototype.getPlotBandPath = function (from, to) {		
+	var toPath = this.getPlotLinePath(to),
+		path = this.getPlotLinePath(from),
+		result = [],
+		i;
+
+	if (path && toPath) {
+		// Go over each subpath
+		for (i = 0; i < path.length; i += 6) {
+			result.push('M', path[i + 1], path[i + 2], 'L', path[i + 4], path[i + 5], toPath[i + 4], toPath[i + 5], toPath[i + 1], toPath[i + 2]);
+		}
+	} else { // outside the axis area
+		result = null;
+	}
+		
+	return result;
 };
 
 // Function to crisp a line with multiple segments
@@ -21686,6 +21782,20 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 /* ****************************************************************************
  * End value compare logic                                                    *
  *****************************************************************************/
+
+
+/**
+ * Extend the Series prototype to create a separate series clip box. This is related
+ * to using multiple panes, and a future pane logic should incorporate this feature.
+ */
+wrap(Series.prototype, 'render', function (proceed) {
+	if (this.isCartesian) {
+		this.clipBox = merge(this.chart.clipBox);
+		this.clipBox.width = this.xAxis.len;
+		this.clipBox.height = this.yAxis.len;
+	}
+	proceed.call(this);
+});
 
 // global variables
 extend(Highcharts, {

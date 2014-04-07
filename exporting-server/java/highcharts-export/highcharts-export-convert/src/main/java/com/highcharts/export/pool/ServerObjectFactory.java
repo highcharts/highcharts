@@ -14,15 +14,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Enumeration;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.ClassPathResource;
 
 public class ServerObjectFactory implements ObjectFactory<Server> {
 
@@ -164,36 +162,27 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 
 	@PostConstruct
 	public void afterBeanInit() {
-		String jarLocation = getClass().getProtectionDomain().getCodeSource().getLocation().getPath().split("!")[0].replace("file:/", "");
-		try {
-			jarLocation = URLDecoder.decode(jarLocation, "utf-8");
-			// get filesystem depend path
-			jarLocation = new File(jarLocation).getCanonicalPath();
-		} catch (UnsupportedEncodingException ueex) {
-			logger.error(ueex);
-		} catch (IOException ioex) {
-			logger.error(ioex);
-		}
+		
+		URL u = getClass().getProtectionDomain().getCodeSource().getLocation();
+		URLClassLoader jarLoader = new URLClassLoader(new URL[]{u}, Thread.currentThread().getContextClassLoader());
+		String filenames[] = new String[] {"highcharts-convert.js","highcharts.js","highstock.js","jquery.1.9.1.min.js","map.js","highcharts-3d.js","highcharts-more.js","data.js"};
+		
+		for (String filename : filenames) {
+		
+			ClassPathResource resource = new ClassPathResource("phantomjs/" + filename, jarLoader);
 
-		try {
-			JarFile jar = new JarFile(jarLocation);
-			for (Enumeration<JarEntry> entries = jar.entries(); entries.hasMoreElements();) {
-				JarEntry entry = entries.nextElement();
-				String name = entry.getName();
-				if (name.startsWith("phantomjs/")) {
-					Path path = Paths.get(TempDir.getTmpDir().toString(), name);
-					if (name.endsWith("/")) {
-						Files.createDirectories(path);
-					} else {
-						File file = Files.createFile(path).toFile();
-						InputStream in = jar.getInputStream(entry);
-						IOUtils.copy(in, new FileOutputStream(file));
-					}
-				}
+			Path path = Paths.get(TempDir.getPhantomJsDir().toString(), filename);
+			File file;
+			try {
+				file = Files.createFile(path).toFile();
+				file.deleteOnExit();
+				InputStream in = resource.getInputStream();
+				IOUtils.copy(in, new FileOutputStream(file));
+			} catch (IOException ioex) {
+				logger.error("Error while setting up phantomjs environment: " + ioex.getMessage());
 			}
-		} catch (IOException ioex) {
-			logger.error(ioex);
 		}
+		
 	}
 
 

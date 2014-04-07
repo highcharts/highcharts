@@ -18,6 +18,7 @@ public class TempDir {
 
 	public static Path tmpDir;
 	public static Path outputDir;
+	public static Path phantomJsDir;
 
 	public TempDir() throws IOException {
 		tmpDir = Files.createTempDirectory("export");
@@ -26,7 +27,9 @@ public class TempDir {
 		tmpDir.toFile().deleteOnExit();
 
 		outputDir = Files.createDirectory(Paths.get(tmpDir.toString(), "output"));
-		System.out.println("Running with " +TempDir.getTmpDir() + " = TEMP");
+		phantomJsDir = Files.createDirectory(Paths.get(tmpDir.toString(), "phantomjs"));
+
+		System.out.println("Highcharts Export Server using " +TempDir.getTmpDir() + " as TEMP folder.");
 	}
 
 	public static Path getTmpDir() {
@@ -35,6 +38,10 @@ public class TempDir {
 
 	public static Path getOutputDir() {
 		return outputDir;
+	}
+
+	public static Path getPhantomJsDir() {
+		return phantomJsDir;
 	}
 
 	public static String getDownloadLink(String filename) {
