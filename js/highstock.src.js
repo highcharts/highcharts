@@ -9109,8 +9109,8 @@ Pointer.prototype = {
 			e.target = e.srcElement;
 		}
 		
-		// iOS
-		ePos = e.touches ? e.touches.item(0) : e;
+		// iOS (#2757)
+		ePos = e.touches ?  (e.touches.length ? e.touches.item(0) : e.changedTouches[0]) : e;
 
 		// Get mouse position
 		if (!chartPosition) {
