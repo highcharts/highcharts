@@ -236,7 +236,7 @@ Axis.prototype.getPlotBandPath = function (from, to) {
 	if (path && toPath) {
 		// Go over each subpath
 		for (i = 0; i < path.length; i += 6) {
-			result.push('M', path[i + 1], path[i + 2], 'L', path[i + 4], path[i + 5], 'L', toPath[i + 4], toPath[i + 5], 'L', toPath[i + 1], toPath[i + 2]);
+			result.push('M', path[i + 1], path[i + 2], 'L', path[i + 4], path[i + 5], toPath[i + 4], toPath[i + 5], toPath[i + 1], toPath[i + 2]);
 		}
 	} else { // outside the axis area
 		result = null;
@@ -531,6 +531,10 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
  * to using multiple panes, and a future pane logic should incorporate this feature.
  */
 wrap(Series.prototype, 'render', function (proceed) {
-	this.clipBox = merge(this.chart.clipBox, { height: this.yAxis.len });
+	if (this.isCartesian) {
+		this.clipBox = merge(this.chart.clipBox);
+		this.clipBox.width = this.xAxis.len;
+		this.clipBox.height = this.yAxis.len;
+	}
 	proceed.call(this);
 });

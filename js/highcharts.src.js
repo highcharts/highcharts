@@ -6980,7 +6980,7 @@ Axis.prototype = {
 			tickPositions = [];
 
 		// For single points, add a tick regardless of the relative position (#2662)
-		if (min === max) {
+		if (min === max && isNumber(min)) {
 			return [min];
 		}
 
