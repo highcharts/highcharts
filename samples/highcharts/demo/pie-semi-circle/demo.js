@@ -40,7 +40,13 @@ $(function () {
                 ['Chrome', 12.8],
                 ['Safari',    8.5],
                 ['Opera',     6.2],
-                ['Others',   0.7]
+                {
+                    name: 'Others',
+                    y: 0.7,
+                    dataLabels: {
+                        enabled: false
+                    }
+                }
             ]
         }]
     });

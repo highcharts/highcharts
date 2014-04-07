@@ -13,7 +13,7 @@ Highcharts.createElement('link', {
 // Add the background image to the container
 Highcharts.wrap(Highcharts.Chart.prototype, 'getContainer', function (proceed) {
 	proceed.call(this);
-	this.container.style.background = 'url(http://www.highcharts.com/demo/gfx/sand.png)';
+	this.container.style.background = 'url(http://www.highcharts.com/samples/graphics/sand.png)';
 });
 
 
