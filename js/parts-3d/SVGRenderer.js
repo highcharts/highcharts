@@ -58,7 +58,7 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	result.top = this.path(paths[1]).attr({zIndex: paths[4]}).add(result);
 	result.side = this.path(paths[2]).attr({zIndex: paths[5]}).add(result);
 
-	result.attrSetters.fill = function (color) {
+	result.fillSetter = function (color) {
 		var c0 = color,
 		c1 = Highcharts.Color(color).brighten(0.1).get(),
 		c2 = Highcharts.Color(color).brighten(-0.1).get();
@@ -71,7 +71,7 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 		return this;
 	};
 
-	result.attrSetters.opacity = function (opacity) {
+	result.opacitySetter = function (opacity) {
 		this.front.attr({opacity: opacity});
 		this.top.attr({opacity: opacity});
 		this.side.attr({opacity: opacity});
@@ -79,8 +79,8 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	};
 
 	result.attr = function (args) {
-		if (args.x && args.y) {
-			var paths = this.renderer.cuboidPath(args);
+		if (args.shapeArgs) {
+			var paths = this.renderer.cuboidPath(args.shapeArgs);
 			this.front.attr({d: paths[0], zIndex: paths[3]});
 			this.top.attr({d: paths[1], zIndex: paths[4]});
 			this.side.attr({d: paths[2], zIndex: paths[5]});			
@@ -94,9 +94,9 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	result.animate = function (args, duration, complete) {
 		if (args.x && args.y) {
 			var paths = this.renderer.cuboidPath(args);
-			this.front.animate({d: paths[0], zIndex: paths[3]}, duration, complete);
-			this.top.animate({d: paths[1], zIndex: paths[4]}, duration, complete);
-			this.side.animate({d: paths[2], zIndex: paths[5]}, duration, complete);
+			this.front.attr({zIndex: paths[3]}).animate({d: paths[0]}, duration, complete);
+			this.top.attr({zIndex: paths[4]}).animate({d: paths[1]}, duration, complete);
+			this.side.attr({zIndex: paths[5]}).animate({d: paths[2]}, duration, complete);
 		} else if (args.opacity) {				
 				this.front.animate(args, duration, complete);
 				this.top.animate(args, duration, complete);
@@ -212,7 +212,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 	result.out = renderer.path(paths.out).attr({zIndex: paths.zOut}).add(result);
 	result.top = renderer.path(paths.top).attr({zIndex: paths.zTop}).add(result);
 
-	result.attrSetters.fill = function (color) {
+	result.fillSetter = function (color) {
 		this.color = color;
 
 		var c0 = color,

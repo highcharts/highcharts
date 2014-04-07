@@ -118,7 +118,7 @@ $(function() {
 
 			if (preset && preset.url) {
 				$('#load')[0].value = preset.url;
-				location.hash = '#' + preset.name;
+				location.hash = '#' + preset.url;
 				runChart();
 			} else if (!preset) { // local files
 				
@@ -148,12 +148,16 @@ $(function() {
 		
 		if (location.hash) {
 			for (var i = 0; i < presets.length; i++) {
-				if (location.hash === '#' + presets[i].name) {
+				if (location.hash === '#' + presets[i].url) {
 					runPreset(i);
 				}
 			}
+			if (i === presets.length) {
+				$('#load')[0].value = location.hash.replace(/^#/, '');
+				runChart('Online file');
+			}
 		}
-		$(location.hash ? location.hash + '_' : '#_World2_').click();
+		//$(location.hash ? location.hash + '_' : '#_World2_').click();
 		
 		$('#load-submit').click(runChart);
 	});

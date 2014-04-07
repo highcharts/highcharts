@@ -617,7 +617,7 @@ Axis.prototype = {
 			tickPositions = [];
 
 		// For single points, add a tick regardless of the relative position (#2662)
-		if (min === max) {
+		if (min === max && isNumber(min)) {
 			return [min];
 		}
 
@@ -914,6 +914,14 @@ Axis.prototype = {
 					axis.max += length * maxPadding;
 				}
 			}
+		}
+
+		// Stay within floor and ceiling
+		if (isNumber(options.floor)) {
+			axis.min = mathMax(axis.min, options.floor); // docs
+		}
+		if (isNumber(options.ceiling)) {
+			axis.max = mathMin(axis.max, options.ceiling); // docs
 		}
 
 		// get tickInterval

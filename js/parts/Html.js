@@ -177,28 +177,24 @@ extend(SVGRenderer.prototype, {
 	 */
 	html: function (str, x, y) {
 		var wrapper = this.createElement('span'),
-			attrSetters = wrapper.attrSetters,
 			element = wrapper.element,
 			renderer = wrapper.renderer;
 
 		// Text setter
-		attrSetters.text = function (value) {
+		wrapper.textSetter = function (value) {
 			if (value !== element.innerHTML) {
 				delete this.bBox;
 			}
 			element.innerHTML = this.textStr = value;
-			return false;
 		};
 
 		// Various setters which rely on update transform
-		attrSetters.x = attrSetters.y = attrSetters.align = attrSetters.rotation = function (value, key) {
+		wrapper.xSetter = wrapper.ySetter = wrapper.alignSetter = wrapper.rotationSetter = function (value, key) {
 			if (key === 'align') {
 				key = 'textAlign'; // Do not overwrite the SVGElement.align method. Same as VML.
 			}
 			wrapper[key] = value;
 			wrapper.htmlUpdateTransform();
-			
-			return false;
 		};
 
 		// Set the default attributes
@@ -262,14 +258,14 @@ extend(SVGRenderer.prototype, {
 
 							// Set listeners to update the HTML div's position whenever the SVG group
 							// position is changed
-							extend(parentGroup.attrSetters, {
-								translateX: function (value) {
+							extend(parentGroup, {
+								translateXSetter: function (value) {
 									htmlGroupStyle.left = value + PX;
 								},
-								translateY: function (value) {
+								translateYSetter: function (value) {
 									htmlGroupStyle.top = value + PX;
 								},
-								visibility: function (value, key) {
+								visibilitySetter: function (value, key) {
 									htmlGroupStyle[key] = value;
 								}
 							});

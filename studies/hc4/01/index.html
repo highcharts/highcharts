@@ -1,0 +1,86 @@
+<html>
+<head>
+<title>HC4 Sample</title>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="http://code.highcharts.sv/highcharts.js"></script>
+<script src="http://code.highcharts.com/modules/map.js"></script>
+
+<script src="map.js"></script>
+<script src="data.js"></script>
+<script>
+$(function () {
+    var mapChart = new Highcharts.Map({
+        chart: {
+            renderTo: 'mapdiv'
+        },
+        title: {
+            text: 'This is map chart'
+        },
+        subtitle: {
+            text: 'obviously'
+        },
+        credits: {
+            enabled: false
+        },
+        tooltip: {
+            shared: true
+        },
+        plotOptions: {
+            map: {
+                allAreas: true,
+                color: '#EEEEEE',
+                joinBy: 'code',
+                borderColor: '#404040',
+                showInLegend: true,
+                mapData: Belgium,
+            },
+        },        
+        colorAxis: {
+            min: 0,
+            minColor: '#237707',
+            max: 10,
+            maxColor: '#90ee7e'
+        },
+        
+        series: [{
+            allAreas: false,
+        }]
+    });    
+    var evoChart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'div1',
+            type: 'pie'
+        },
+        title: {
+            text: 'This is a Pie Chart'
+        },
+        plotOptions: {
+            series: {
+                point: {
+                    events: {
+                        mouseOver: function () {
+                            mapChart.colorAxis[0].update({
+                                minColor: this.color,
+                                maxColor: Highcharts.Color(this.color).brighten(0.3).get()
+                            }, false);
+                            mapChart.series[0].setData(MAPDATA[this.x], false);
+                            mapChart.redraw();
+                        }
+                    }
+                }
+            }
+        },
+        series: [{
+            data: PIEDATA
+        }]
+    });
+});
+</script>
+</head>
+
+<body>
+    <div id="mapdiv" style="height:400px; width: 400px; float: left;"></div>
+    <div id="div1" style="height: 400px; width: 600px; float: left;"></div>
+</body>
+
+</html

@@ -8,15 +8,15 @@
 		
 		
 		<script src="http://code.highcharts.com/maps/1.0.0-beta/highmaps.js"></script>
-		<script src="http://github.highcharts.com/ef7b905/modules/data.src.js"></script>
-		<script src="http://github.highcharts.com/ef7b905/modules/map-parser.src.js"></script>
+		<script src="http://github.highcharts.com/2f60977d/modules/data.src.js"></script>
+		<script src="http://github.highcharts.com/2f60977d/modules/map-parser.src.js"></script>
 		
-		<!-- 
-		<script src="http://code.highcharts.local/highcharts.js"></script>
-		<script src="http://code.highcharts.local/modules/map.src.js"></script>
+		<!--
+		<script src="http://code.highcharts.local/highmaps.js"></script>
 		<script src="http://code.highcharts.local/modules/data.src.js"></script>
 		<script src="http://code.highcharts.local/modules/map-parser.src.js"></script>
-		 -->
+		-->
+		
 		<!-- 3. Add the JavaScript to initialize the chart on document ready -->
 		<script src="map-from-svg.js"></script>
 		<script type="text/javascript">
@@ -42,6 +42,7 @@
 			}
 			
 			function drawMap(key, file) {
+				location.hash = '#' + file;
 				var start = +new Date();
 				if (chart) {
 					chart = chart.destroy();
@@ -232,8 +233,8 @@
 				<label for="preset">Load preset: </label>
 				<select id="preset"></select>
 				
-				<label>Online SVG URL:</label>
-				<input id="load" style="width: 100%" />
+				<label style="width: 100%">Online SVG URL or SVG markup:</label>
+				<textarea id="load" style="width: 100%" rows="10" ></textarea>
 
 				<div id="series-setup"></div>
 

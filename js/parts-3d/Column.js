@@ -44,6 +44,50 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 	});	    
 });
 
+Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'animate', function (proceed) {
+	if (!this.chart.is3d()) {
+		proceed.apply(this, [].slice.call(arguments, 1));
+	} else {
+		var args = arguments,
+			init = args[1],
+			yAxis = this.yAxis,
+			series = this,
+			reversed = this.yAxis.reversed;
+
+		if (Highcharts.svg) { // VML is too slow anyway
+			if (init) {
+				Highcharts.each(series.data, function (point) {
+					point.height = point.shapeArgs.height;					
+					point.shapeArgs.height = 1;
+					if (!reversed) {
+						if (point.stackY) {
+							point.shapeArgs.y = point.plotY + yAxis.translate(point.stackY);
+						} else {
+							point.shapeArgs.y = point.plotY + (point.negative ? -point.height : point.height);
+						}
+					}
+				});
+
+			} else { // run the animation				
+				Highcharts.each(series.data, function (point) {					
+					point.shapeArgs.height = point.height;
+					if (!reversed) {
+						point.shapeArgs.y = point.plotY - (point.negative ? point.height : 0);
+					}
+					// null value do not have a graphic
+					if (point.graphic) {
+						point.graphic.animate(point.shapeArgs, series.options.animation);					
+					}
+				});
+
+				// delete this function to allow it only once
+				series.animate = null;
+			}
+		}
+	}
+});
+
+
 Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
@@ -61,7 +105,6 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proce
 						break;
 					}
 				}
-				console.log(stacks[stack][i]);
 				z = 10 - i;
 				
 				this.options.zIndex = z;
@@ -69,6 +112,27 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proce
 		}
 	}
 });
+if (Highcharts.seriesTypes.columnrange) {
+	Highcharts.wrap(Highcharts.seriesTypes.columnrange.prototype, 'drawPoints', function (proceed) {
+		// Do not do this if the chart is not 3D
+		if (this.chart.is3d()) {		
+			var grouping = this.chart.options.plotOptions.column.grouping;
+			if (grouping !== undefined && !grouping) {			
+				this.group.attr({zIndex : (this.group.zIndex * 10)});
+			} 
+
+			// Set the border color to the fill color to provide a smooth edge
+			Highcharts.each(this.data, function (point) {
+				var c = point.options.borderColor || point.color || point.series.userOptions.borderColor || point.series.color;
+				point.options.borderColor = c;
+				point.borderColor = c;
+				point.pointAttr[''].stroke = c;
+			});	
+		}
+
+		proceed.apply(this, [].slice.call(arguments, 1));
+	});
+}
 
 Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
 	// Do not do this if the chart is not 3D
