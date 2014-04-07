@@ -182,19 +182,6 @@ SVGElement.prototype = {
 				value = hash[key];
 				skipAttr = false;
 
-				// let the shadow follow the main element
-				if (shadows && /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)) {
-					i = shadows.length;
-					while (i--) {
-						attr(
-							shadows[i],
-							key,
-							key === 'height' ?
-								mathMax(value - (shadows[i].cutHeight || 0), 0) :
-								value
-						);
-					}
-				}
 
 
 				if (wrapper.symbolName && /^(x|y|width|height|r|start|end|innerR|anchorX|anchorY)/.test(key)) {
@@ -213,6 +200,18 @@ SVGElement.prototype = {
 					(this[key + 'Setter'] || this._defaultSetter).call(this, value, key, element);
 				}
 
+				// let the shadow follow the main element
+				if (shadows && /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)) {
+					i = shadows.length;
+					while (i--) {
+						shadows[i].setAttribute(
+							key,
+							key === 'height' ?
+								mathMax(value - (shadows[i].cutHeight || 0), 0) :
+								key === 'd' ? wrapper.d : value
+						);
+					}
+				}
 
 
 				/*

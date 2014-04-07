@@ -277,15 +277,13 @@ function defined(obj) {
  */
 function attr(elem, prop, value) {
 	var key,
-		setAttribute = 'setAttribute',
 		ret;
 
 	// if the prop is a string
 	if (isString(prop)) {
 		// set the value
 		if (defined(value)) {
-
-			elem[setAttribute](prop, value);
+			elem.setAttribute(prop, value);
 
 		// get the value
 		} else if (elem && elem.getAttribute) { // elem not defined when printing pie demo...
@@ -295,7 +293,7 @@ function attr(elem, prop, value) {
 	// else if prop is defined, it is a hash of key/value pairs
 	} else if (defined(prop) && isObject(prop)) {
 		for (key in prop) {
-			elem[setAttribute](key, prop[key]);
+			elem.setAttribute(key, prop[key]);
 		}
 	}
 	return ret;
@@ -1992,19 +1990,6 @@ SVGElement.prototype = {
 				value = hash[key];
 				skipAttr = false;
 
-				// let the shadow follow the main element
-				if (shadows && /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)) {
-					i = shadows.length;
-					while (i--) {
-						attr(
-							shadows[i],
-							key,
-							key === 'height' ?
-								mathMax(value - (shadows[i].cutHeight || 0), 0) :
-								value
-						);
-					}
-				}
 
 
 				if (wrapper.symbolName && /^(x|y|width|height|r|start|end|innerR|anchorX|anchorY)/.test(key)) {
@@ -2023,6 +2008,18 @@ SVGElement.prototype = {
 					(this[key + 'Setter'] || this._defaultSetter).call(this, value, key, element);
 				}
 
+				// let the shadow follow the main element
+				if (shadows && /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)) {
+					i = shadows.length;
+					while (i--) {
+						shadows[i].setAttribute(
+							key,
+							key === 'height' ?
+								mathMax(value - (shadows[i].cutHeight || 0), 0) :
+								key === 'd' ? wrapper.d : value
+						);
+					}
+				}
 
 
 				/*
