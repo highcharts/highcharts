@@ -1660,16 +1660,16 @@
             <fileset dir="lib"/>
         </copy>      
         <!-- files for downloadbuilder -->            
-        <copy file="js/parts.js" tofile="${highcharts.site.dir}/templates/yoo_symphony/js/parts.js"/>
+        <copy file="js/parts.js" tofile="${highcharts.site.dir}/joomla/templates/highsoft_colorful/js/parts.js"/>
         <!-- copy the highstock partfiles , these include also highcharts partfiles -->
-        <copy todir="${highcharts.site.dir}/components/com_download/source/parts">
+        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source/parts">
             <filelist refid="highstock.files"/>
         </copy>
-        <copy todir="${highcharts.site.dir}/components/com_download/source/parts-more">
+        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source/parts-more">
             <filelist refid="highchartsmore.files"/>
         </copy>
-        <copy file="${standalone.src.file}" todir="${highcharts.site.dir}/components/com_download/source/adapters"/>
-        <copy todir="${highcharts.site.dir}/components/com_download/source/modules">
+        <copy file="${standalone.src.file}" todir="${highcharts.site.dir}/joomla/components/com_download/source/adapters"/>
+        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source/modules">
             <filelist refid="highcharts-modules.files"/>
         </copy>
     </target>
