@@ -48,6 +48,21 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 	});
 });
 
+Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
+	// Do not do this if the chart is not 3D
+	if (this.chart.is3d()) {
+		// Set the border color to the fill color to provide a smooth edge
+		Highcharts.each(this.data, function (point) {
+			var c = point.options.borderColor || point.color || point.series.userOptions.borderColor || point.series.color;
+			point.options.borderColor = c;
+			point.borderColor = c;
+			point.pointAttr[''].stroke = c;
+		});	
+	}
+
+	proceed.apply(this, [].slice.call(arguments, 1));
+});
+
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 	// Do not do this if the chart is not 3D

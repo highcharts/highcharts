@@ -112,6 +112,27 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proce
 		}
 	}
 });
+if (Highcharts.seriesTypes.columnrange) {
+	Highcharts.wrap(Highcharts.seriesTypes.columnrange.prototype, 'drawPoints', function (proceed) {
+		// Do not do this if the chart is not 3D
+		if (this.chart.is3d()) {		
+			var grouping = this.chart.options.plotOptions.column.grouping;
+			if (grouping !== undefined && !grouping) {			
+				this.group.attr({zIndex : (this.group.zIndex * 10)});
+			} 
+
+			// Set the border color to the fill color to provide a smooth edge
+			Highcharts.each(this.data, function (point) {
+				var c = point.options.borderColor || point.color || point.series.userOptions.borderColor || point.series.color;
+				point.options.borderColor = c;
+				point.borderColor = c;
+				point.pointAttr[''].stroke = c;
+			});	
+		}
+
+		proceed.apply(this, [].slice.call(arguments, 1));
+	});
+}
 
 Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
 	// Do not do this if the chart is not 3D
