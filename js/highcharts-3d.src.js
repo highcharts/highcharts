@@ -213,8 +213,12 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 
 	pArr = perspective(pArr, alpha, beta, origin);
 
-	// front
-	var path1 = [
+	var path1, // FRONT
+		path2, // TOP OR BOTTOM
+		path3; // LEFT OR RIGHT
+
+	// front	
+	path1 = [
 	'M', pArr[0].x, pArr[0].y,
 	'L', pArr[1].x, pArr[1].y,
 	'L', pArr[2].x, pArr[2].y,
@@ -224,40 +228,59 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	var z1 = (pArr[0].z + pArr[1].z + pArr[2].z + pArr[3].z) / 4;
 
 	// top or bottom
-	var path2 = (alpha > 0 ? 
-		[
-		'M', pArr[0].x, pArr[0].y,
-		'L', pArr[7].x, pArr[7].y,
-		'L', pArr[6].x, pArr[6].y,
-		'L', pArr[1].x, pArr[1].y,
-		'Z'
-		] :
-	// bottom
-	[
+	var top = [
+	'M', pArr[0].x, pArr[0].y,
+	'L', pArr[7].x, pArr[7].y,
+	'L', pArr[6].x, pArr[6].y,
+	'L', pArr[1].x, pArr[1].y,
+	'Z'
+	];
+	var bottom = [
 	'M', pArr[3].x, pArr[3].y,
 	'L', pArr[2].x, pArr[2].y,
 	'L', pArr[5].x, pArr[5].y,
 	'L', pArr[4].x, pArr[4].y,
 	'Z'
-	]);
+	];
+	if (alpha === 0) { 
+		if (y + h > origin.y) {
+			path2 = top;
+		} else {
+			path2 = bottom;
+		}
+	} else if (alpha > 0) {
+		path2 = top; 
+	} else {
+		path2 = bottom;
+	}
 	var z2 = (beta > 0 ? (pArr[0].z + pArr[7].z + pArr[6].z + pArr[1].z) / 4 : (pArr[3].z + pArr[2].z + pArr[5].z + pArr[4].z) / 4);
 
 	// side
-	var path3 = (beta > 0 ? 
-		[
-		'M', pArr[1].x, pArr[1].y,
-		'L', pArr[2].x, pArr[2].y,
-		'L', pArr[5].x, pArr[5].y,
-		'L', pArr[6].x, pArr[6].y,
-		'Z'
-		] : 
-		[
-		'M', pArr[0].x, pArr[0].y,
-		'L', pArr[7].x, pArr[7].y,
-		'L', pArr[4].x, pArr[4].y,
-		'L', pArr[3].x, pArr[3].y,
-		'Z'
-		]);
+	var right = [
+	'M', pArr[1].x, pArr[1].y,
+	'L', pArr[2].x, pArr[2].y,
+	'L', pArr[5].x, pArr[5].y,
+	'L', pArr[6].x, pArr[6].y,
+	'Z'
+	];
+	var left = [
+	'M', pArr[0].x, pArr[0].y,
+	'L', pArr[7].x, pArr[7].y,
+	'L', pArr[4].x, pArr[4].y,
+	'L', pArr[3].x, pArr[3].y,
+	'Z'
+	];
+	if (beta === 0) { 
+		if (x > origin.x) {
+			path3 = left;
+		} else {
+			path3 = right;
+		}
+	} else if (beta > 0) {
+		path3 = right; 
+	} else {
+		path3 = left;
+	}	
 	var z3 = (alpha > 0 ? (pArr[1].z + pArr[2].z + pArr[5].z + pArr[6].z) / 4 : (pArr[0].z + pArr[7].z + pArr[4].z + pArr[3].z) / 4);
 
 	return [path1, path2, path3, z1, z2, z3];
