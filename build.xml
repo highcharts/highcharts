@@ -393,6 +393,9 @@
         <mkdir dir="${dist.dir}/highstock/gfx"/>
         <mkdir dir="${dist.dir}/highstock/js/adapters"/>
         <mkdir dir="${dist.dir}/highstock/js/modules"/>
+        <mkdir dir="${dist.dir}/highmaps/gfx"/>
+        <mkdir dir="${dist.dir}/highmaps/js/adapters"/>
+        <mkdir dir="${dist.dir}/highmaps/js/modules"/>
         <mkdir dir="${testoutput.dir}"/>
         <mkdir dir="${coveragereport.dir}"/>
 
@@ -1642,7 +1645,7 @@
     </target>
 
     <!-- Copy the folders and content of /samples and /studies to higcharts.com.site -->
-    <target name="copy-to-site" depends="set.properties">
+    <target name="copy-to-site" depends="set.properties" description="copy files from this repo to repository highcharts.com.site">
         <property file="git-ignore-me.properties"/>
         <copy todir="${highcharts.site.dir}/samples">
             <fileset dir="samples"/>
@@ -1658,7 +1661,7 @@
         </copy>
         <copy todir="${highcharts.site.dir}/lib">
             <fileset dir="lib"/>
-        </copy>      
+        </copy>    
         <!-- files for downloadbuilder -->            
         <copy file="js/parts.js" tofile="${highcharts.site.dir}/joomla/templates/highsoft_colorful/js/parts.js"/>
         <!-- copy the highstock partfiles , these include also highcharts partfiles -->
@@ -1669,7 +1672,7 @@
             <filelist refid="highchartsmore.files"/>
         </copy>
         <copy file="${standalone.src.file}" todir="${highcharts.site.dir}/joomla/components/com_download/source/adapters"/>
-        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source/modules">
+        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source">
             <filelist refid="highcharts-modules.files"/>
         </copy>
     </target>
