@@ -8793,7 +8793,7 @@ Pointer.prototype = {
 
 		// Draw independent crosshairs
 		each(chart.axes, function (axis) {
-			axis.drawCrosshair(e, pick(hoverPoint, point));
+			axis.drawCrosshair(e, pick(point, hoverPoint));
 		});
 	},
 
