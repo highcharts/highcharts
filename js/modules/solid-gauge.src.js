@@ -197,11 +197,18 @@
                     d = shapeArgs.d;
                     graphic.attr({
                         fill: point.color
-                    }).animate(shapeArgs, {
-                        step: function (value, fx) {
-                            graphic.attr('fill', colorAxisMethods.tweenColors(Color(fromColor), Color(toColor), fx.pos));
-                        }
-                    })
+                    });
+
+                    // only animate if the chart is set to be animated
+                    if (series.chart.animation) {
+                        graphic.animate(shapeArgs, {
+                            step: function (value, fx) {
+                                graphic.attr('fill', colorAxisMethods.tweenColors(Color(fromColor), Color(toColor), fx.pos));
+                            }
+                        });
+                    } else {
+                        graphic.attr(shapeArgs);
+                    }
                     shapeArgs.d = d; // animate alters it
                 } else {
                     point.graphic = renderer.arc(shapeArgs)
