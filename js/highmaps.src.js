@@ -2528,8 +2528,12 @@ SVGElement.prototype = {
 	 */
 	show: function (inherit) {
 		// IE9-11 doesn't handle visibilty:inherit well, so we remove the attribute instead (#2881)
-		this.element[inherit ? 'removeAttribute' : 'setAttribute']('visibility', VISIBLE);
-		return this;
+		if (inherit && this.element.namespaceURI === SVG_NS) {
+			this.element.removeAttribute('visibility');
+			return this;
+		} else {
+			return this.attr({ visibility: inherit ? 'inherit' : VISIBLE });
+		}
 	},
 
 	/**
