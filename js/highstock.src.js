@@ -1963,14 +1963,11 @@ SVGElement.prototype = {
 	 * @param {Mixed|Undefined} val
 	 */
 	attr: function (hash, val) {
-		var wrapper = this,
-			key,
+		var key,
 			value,
-			i,
-			element = wrapper.element,
-			shadows = wrapper.shadows,
+			element = this.element,
 			hasSetSymbolSize,
-			ret = wrapper,
+			ret = this,
 			skipAttr;
 
 		// single key-value pair
@@ -1993,15 +1990,15 @@ SVGElement.prototype = {
 
 
 
-				if (wrapper.symbolName && /^(x|y|width|height|r|start|end|innerR|anchorX|anchorY)/.test(key)) {
+				if (this.symbolName && /^(x|y|width|height|r|start|end|innerR|anchorX|anchorY)/.test(key)) {
 					if (!hasSetSymbolSize) {
-						wrapper.symbolAttr(hash);
+						this.symbolAttr(hash);
 						hasSetSymbolSize = true;
 					}
 					skipAttr = true;
 				}
 
-				if (wrapper.rotation && (key === 'x' || key === 'y')) {
+				if (this.rotation && (key === 'x' || key === 'y')) {
 					this.doTransform = true;
 				}
 				
@@ -2009,61 +2006,10 @@ SVGElement.prototype = {
 					(this[key + 'Setter'] || this._defaultSetter).call(this, value, key, element);
 				}
 
-				// let the shadow follow the main element
-				if (shadows && /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)) {
-					i = shadows.length;
-					while (i--) {
-						shadows[i].setAttribute(
-							key,
-							key === 'height' ?
-								mathMax(value - (shadows[i].cutHeight || 0), 0) :
-								key === 'd' ? wrapper.d : value
-						);
-					}
+				// Let the shadow follow the main element
+				if (this.shadows && /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)) {
+					this.updateShadows(key, value);
 				}
-
-
-				/*
-					
-				if (result !== false) {
-					if (result !== UNDEFINED) {
-						value = result; // the attribute setter has returned a new value to set
-					} else {
-
-
-						// jQuery animate changes case
-						if (key === 'strokeWidth') {
-							key = 'stroke-width';
-						}
-
-						
-						
-						
-						// validate heights
-						if ((key === 'width' || key === 'height') && nodeName === 'rect' && value < 0) {
-							value = 0;
-						}
-						
-					}
-					
-
-					// Record for animation and quick access without polling the DOM
-					//wrapper[key] = value;
-
-					
-					if (key === 'text') {
-						
-					} else if (!this.skipAttr) {
-						//attr(element, key, value);
-						if (value !== undefined) {
-							element.setAttribute(key, value);
-						}
-					}
-					this.skipAttr = false;
-					
-				}
-				*/
-
 			}
 
 			// Update transform. Do this outside the loop to prevent redundant updating for batch setting
@@ -2076,6 +2022,19 @@ SVGElement.prototype = {
 		}
 
 		return ret;
+	},
+
+	updateShadows: function (key, value) {
+		var shadows = this.shadows,
+			i = shadows.length;
+		while (i--) {
+			shadows[i].setAttribute(
+				key,
+				key === 'height' ?
+					mathMax(value - (shadows[i].cutHeight || 0), 0) :
+					key === 'd' ? this.d : value
+			);
+		}
 	},
 
 	/**
@@ -4819,8 +4778,9 @@ Highcharts.VMLElement = VMLElement = {
 			this.shadows = shadows;
 		}
 		return this;
-
 	},
+	updateShadows: noop, // Used in SVG only
+
 	setAttr: function (key, value) {
 		if (docMode8) { // IE8 setAttribute bug
 			this.element[key] = value;
@@ -4865,6 +4825,7 @@ Highcharts.VMLElement = VMLElement = {
 			this.setAttr('fillcolor', this.renderer.color(value, element, key, this));
 		}
 	},
+	opacitySetter: noop, // Don't bother - animation is too slow and filters introduce artifacts
 	rotationSetter: function (value, key, element) {
 		var style = element.style;
 		this[key] = style[key] = value; // style is for #1873

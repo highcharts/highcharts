@@ -358,8 +358,9 @@ Highcharts.VMLElement = VMLElement = {
 			this.shadows = shadows;
 		}
 		return this;
-
 	},
+	updateShadows: noop, // Used in SVG only
+
 	setAttr: function (key, value) {
 		if (docMode8) { // IE8 setAttribute bug
 			this.element[key] = value;
@@ -404,6 +405,7 @@ Highcharts.VMLElement = VMLElement = {
 			this.setAttr('fillcolor', this.renderer.color(value, element, key, this));
 		}
 	},
+	opacitySetter: noop, // Don't bother - animation is too slow and filters introduce artifacts
 	rotationSetter: function (value, key, element) {
 		var style = element.style;
 		this[key] = style[key] = value; // style is for #1873
