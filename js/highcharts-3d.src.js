@@ -213,12 +213,8 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 
 	pArr = perspective(pArr, alpha, beta, origin);
 
-	var path1, // FRONT
-		path2, // TOP OR BOTTOM
-		path3; // LEFT OR RIGHT
-
-	// front	
-	path1 = [
+	// front
+	var path1 = [
 	'M', pArr[0].x, pArr[0].y,
 	'L', pArr[1].x, pArr[1].y,
 	'L', pArr[2].x, pArr[2].y,
@@ -228,51 +224,40 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	var z1 = (pArr[0].z + pArr[1].z + pArr[2].z + pArr[3].z) / 4;
 
 	// top or bottom
-	var top = [
-	'M', pArr[0].x, pArr[0].y,
-	'L', pArr[7].x, pArr[7].y,
-	'L', pArr[6].x, pArr[6].y,
-	'L', pArr[1].x, pArr[1].y,
-	'Z'
-	];
-	var bottom = [
+	var path2 = (alpha > 0 ? 
+		[
+		'M', pArr[0].x, pArr[0].y,
+		'L', pArr[7].x, pArr[7].y,
+		'L', pArr[6].x, pArr[6].y,
+		'L', pArr[1].x, pArr[1].y,
+		'Z'
+		] :
+	// bottom
+	[
 	'M', pArr[3].x, pArr[3].y,
 	'L', pArr[2].x, pArr[2].y,
 	'L', pArr[5].x, pArr[5].y,
 	'L', pArr[4].x, pArr[4].y,
 	'Z'
-	];
-	if (pArr[7].y < pArr[1].y) {
-		path2 = top;
-	} else if (pArr[4].y > pArr[2].y) {
-		path2 = bottom;
-	} else {
-		path2 = [];
-	}
+	]);
 	var z2 = (beta > 0 ? (pArr[0].z + pArr[7].z + pArr[6].z + pArr[1].z) / 4 : (pArr[3].z + pArr[2].z + pArr[5].z + pArr[4].z) / 4);
 
 	// side
-	var right = [
-	'M', pArr[1].x, pArr[1].y,
-	'L', pArr[2].x, pArr[2].y,
-	'L', pArr[5].x, pArr[5].y,
-	'L', pArr[6].x, pArr[6].y,
-	'Z'
-	];
-	var left = [
-	'M', pArr[0].x, pArr[0].y,
-	'L', pArr[7].x, pArr[7].y,
-	'L', pArr[4].x, pArr[4].y,
-	'L', pArr[3].x, pArr[3].y,
-	'Z'
-	];	
-	if (pArr[5].x > pArr[2].x) {
-		path3 = right;
-	} else if (pArr[4].x < pArr[0].x) {
-		path3 = left;
-	} else {
-		path3 = [];
-	}
+	var path3 = (beta > 0 ? 
+		[
+		'M', pArr[1].x, pArr[1].y,
+		'L', pArr[2].x, pArr[2].y,
+		'L', pArr[5].x, pArr[5].y,
+		'L', pArr[6].x, pArr[6].y,
+		'Z'
+		] : 
+		[
+		'M', pArr[0].x, pArr[0].y,
+		'L', pArr[7].x, pArr[7].y,
+		'L', pArr[4].x, pArr[4].y,
+		'L', pArr[3].x, pArr[3].y,
+		'Z'
+		]);
 	var z3 = (alpha > 0 ? (pArr[1].z + pArr[2].z + pArr[5].z + pArr[6].z) / 4 : (pArr[0].z + pArr[7].z + pArr[4].z + pArr[3].z) / 4);
 
 	return [path1, path2, path3, z1, z2, z3];
@@ -1063,63 +1048,6 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'addPoint', function (proc
 	if (this.chart.is3d()) {
 		// destroy (and rebuild) everything!!!
 		this.update();
-	}
-});
-
-Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'animate', function (proceed) {
-	if (!this.chart.is3d()) {
-		proceed.apply(this, [].slice.call(arguments, 1));
-	} else {
-		var args = arguments,
-			init = args[1],
-			animation = this.options.animation,
-			attribs,
-			center = this.center,
-			group = this.group,
-			markerGroup = this.markerGroup;
-
-		if (Highcharts.svg) { // VML is too slow anyway
-				
-				if (animation === true) {
-					animation = {};
-				}
-				// Initialize the animation
-				if (init) {
-				
-					// Scale down the group and place it in the center
-					this.oldtranslateX = group.translateX;
-					this.oldtranslateY = group.translateY;
-					attribs = {
-						translateX: center[0],
-						translateY: center[1],
-						scaleX: 0.001, // #1499
-						scaleY: 0.001
-					};
-					
-					group.attr(attribs);
-					if (markerGroup) {
-						markerGroup.attrSetters = group.attrSetters;
-						markerGroup.attr(attribs);
-					}
-				
-				// Run the animation
-				} else {
-					attribs = {
-						translateX: this.oldtranslateX,
-						translateY: this.oldtranslateY,
-						scaleX: 1,
-						scaleY: 1
-					};
-					group.animate(attribs, animation);
-					if (markerGroup) {
-						markerGroup.animate(attribs, animation);
-					}
-				
-					// Delete this function to allow it only once
-					this.animate = null;
-				}
-				
-		}
 	}
 });/*** 
 	EXTENSION FOR 3D SCATTER CHART

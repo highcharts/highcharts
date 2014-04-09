@@ -134,6 +134,7 @@ Axis.prototype = {
 			x: -15,
 			y: null
 		},
+		tickLength: 5,
 		title: {
 			rotation: 270
 		}
@@ -147,6 +148,7 @@ Axis.prototype = {
 			x: 15,
 			y: null
 		},
+		tickLength: 5,
 		title: {
 			rotation: 90
 		}

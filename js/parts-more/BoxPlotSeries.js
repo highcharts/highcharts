@@ -162,7 +162,8 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					'M',
 					crispX, q1Plot,
 					'L',
-					crispX, lowPlot
+					crispX, lowPlot,
+					'z'
 				];
 				
 				// The box
@@ -221,7 +222,8 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					medianPlot,
 					'L',
 					right, 
-					medianPlot
+					medianPlot,
+					'z'
 				];
 				
 				// Create or update the graphics

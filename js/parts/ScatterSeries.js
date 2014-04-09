@@ -5,7 +5,8 @@ defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 	lineWidth: 0,
 	tooltip: {
 		headerFormat: '<span style="font-size: 10px; color:{series.color}">{series.name}</span><br/>',
-		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
+		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>',
+		followPointer: true
 	},
 	stickyTracking: false
 });

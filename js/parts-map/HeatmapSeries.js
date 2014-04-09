@@ -3,8 +3,6 @@
  * Extend the default options with map options
  */
 defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
-	animation: false,
-	borderWidth: 0,
 	nullColor: '#F8F8F8',
 	dataLabels: {
 		format: '{point.value}',
@@ -17,9 +15,8 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 			textShadow: '0 0 5px black'
 		}
 	},
-	marker: null,
 	tooltip: {
-		pointFormat: '{point.x}, {point.y}: {point.value}<br/>'
+		pointFormat: '{point.name}: {point.value}<br/>'
 	},
 	states: {
 		normal: {

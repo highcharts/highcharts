@@ -275,7 +275,6 @@
 						oldSeries.animateDrillupFrom(level);
 					}
 				}
-				newSeries.levelNumber = levelNumber;
 				
 				oldSeries.remove(false);
 

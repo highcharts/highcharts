@@ -1432,7 +1432,6 @@ defaultOptions = {
 			},
 			dataLabels: merge(defaultLabelOptions, {
 				align: 'center',
-				//defer: true, // docs
 				enabled: false,
 				formatter: function () {
 					return this.y === null ? '' : numberFormat(this.y, -1);
@@ -2423,7 +2422,7 @@ SVGElement.prototype = {
 	/**
 	 * Get the bounding box (width, height, x and y) for the element
 	 */
-	getBBox: function () {
+	getBBox: function (noCache) {
 		var wrapper = this,
 			bBox = wrapper.bBox,
 			renderer = wrapper.renderer,
@@ -2515,12 +2514,8 @@ SVGElement.prototype = {
 	 */
 	show: function (inherit) {
 		// IE9-11 doesn't handle visibilty:inherit well, so we remove the attribute instead (#2881)
-		if (inherit && this.element.namespaceURI === SVG_NS) {
-			this.element.removeAttribute('visibility');
-			return this;
-		} else {
-			return this.attr({ visibility: inherit ? 'inherit' : VISIBLE });
-		}
+		this.element[inherit ? 'removeAttribute' : 'setAttribute']('visibility', VISIBLE);
+		return this;
 	},
 
 	/**
@@ -2794,10 +2789,6 @@ SVGElement.prototype = {
 	},
 	alignSetter: function (value) {
 		this.element.setAttribute('text-anchor', { left: 'start', center: 'middle', right: 'end' }[value]);
-	},
-	opacitySetter: function (value, key, element) {
-		this[key] = value;
-		element.setAttribute(key, value);
 	},
 	// In Chrome/Win < 6 as well as Batik and PhantomJS as of 1.9.7, the stroke attribute can't be set when the stroke-
 	// width is 0. #1369
@@ -3239,33 +3230,31 @@ SVGRenderer.prototype = {
 			normalStyle,
 			hoverStyle,
 			pressedStyle,
-			disabledStyle;
+			disabledStyle,
+			STYLE = 'style',
+			verticalGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
 
 		// Normal state - prepare the attributes
 		normalState = merge({
-			'stroke-width': 0,
 			stroke: '#CCCCCC',
-			fill: defaultOptions.colors[0],
-			r: 2,
-			padding: 8,
+			fill: '#f7f7f7',
+			r: 0,
+			padding: 5,
 			style: {
-				color: 'white',
+				color: '#444',
 				fontWeight: 'normal'
 			}
 		}, normalState);
-		normalStyle = normalState.style;
-		delete normalState.style;
+		normalStyle = normalState[STYLE];
+		delete normalState[STYLE];
 
 		// Hover state
 		hoverState = merge(normalState, {
 			stroke: '#68A',
-			fill: '#e7e7e7',
-			style: {
-				color: '#444'
-			}
+			fill: '#e7e7e7'
 		}, hoverState);
-		hoverStyle = hoverState.style;
-		delete hoverState.style;
+		hoverStyle = hoverState[STYLE];
+		delete hoverState[STYLE];
 
 		// Pressed state
 		pressedState = merge(normalState, {
@@ -3276,8 +3265,8 @@ SVGRenderer.prototype = {
 				fontWeight: 'bold'
 			}
 		}, pressedState);
-		pressedStyle = pressedState.style;
-		delete pressedState.style;
+		pressedStyle = pressedState[STYLE];
+		delete pressedState[STYLE];
 
 		// Disabled state
 		disabledState = merge(normalState, {
@@ -3286,8 +3275,8 @@ SVGRenderer.prototype = {
 				fontWeight: 'normal'
 			}
 		}, disabledState);
-		disabledStyle = disabledState.style;
-		delete disabledState.style;
+		disabledStyle = disabledState[STYLE];
+		delete disabledState[STYLE];
 
 		// Add the events. IE9 and IE10 need mouseover and mouseout to funciton (#667).
 		addEvent(label.element, isIE ? 'mouseover' : 'mouseenter', function () {
@@ -4425,15 +4414,11 @@ extend(SVGRenderer.prototype, {
 							// Set listeners to update the HTML div's position whenever the SVG group
 							// position is changed
 							extend(parentGroup, {
-								translateXSetter: function (value, key) {
+								translateXSetter: function (value) {
 									htmlGroupStyle.left = value + PX;
-									parentGroup[key] = value;
-									parentGroup.doTransform = true;
 								},
-								translateYSetter: function (value, key) {
+								translateYSetter: function (value) {
 									htmlGroupStyle.top = value + PX;
-									parentGroup[key] = value;
-									parentGroup.doTransform = true;
 								},
 								visibilitySetter: function (value, key) {
 									htmlGroupStyle[key] = value;
@@ -6421,6 +6406,7 @@ Axis.prototype = {
 			x: -15,
 			y: null
 		},
+		tickLength: 5,
 		title: {
 			rotation: 270
 		}
@@ -6434,6 +6420,7 @@ Axis.prototype = {
 			x: 15,
 			y: null
 		},
+		tickLength: 5,
 		title: {
 			rotation: 90
 		}
@@ -8731,26 +8718,18 @@ Tooltip.prototype = {
 			swapped,
 			first = ['y', chart.chartHeight, boxHeight, point.plotY + chart.plotTop],
 			second = ['x', chart.chartWidth, boxWidth, point.plotX + chart.plotLeft],
-			// The far side is right or bottom
-			preferFarSide = (chart.inverted && !point.negative) || (!chart.inverted && point.negative),
 			/**
 			 * Handle the preferred dimension. When the preferred dimension is tooltip
 			 * on top or bottom of the point, it will look for space there.
 			 */
 			firstDimension = function (dim, outerSize, innerSize, point) {
-				var roomLeft = innerSize < point - distance,
-					roomRight = point + distance + innerSize < outerSize,
-					alignedLeft = point - distance - innerSize,
-					alignedRight = point + distance;
-
-				if (preferFarSide && roomRight) {
-					ret[dim] = alignedRight;
-				} else if (!preferFarSide && roomLeft) {
-					ret[dim] = alignedLeft;
-				} else if (roomLeft) {
-					ret[dim] = alignedLeft;
-				} else if (roomRight) {
-					ret[dim] = alignedRight;
+				// Is there room above/left?
+				if (innerSize < point - distance) {
+					ret[dim] = point - distance - innerSize;
+				// Is there room below/right?
+				} else if (point + distance + innerSize < outerSize) {
+					ret[dim] = point + distance;
+				// Covering up the point, try the other dimension
 				} else {
 					return false;
 				}
@@ -8922,7 +8901,7 @@ Tooltip.prototype = {
 				stroke: borderColor
 			});
 			
-			tooltip.updatePosition({ plotX: x, plotY: y, negative: point.negative });
+			tooltip.updatePosition({ plotX: x, plotY: y });
 		
 			this.isHidden = false;
 		}
@@ -12267,7 +12246,12 @@ Point.prototype = {
 		// If no x is set by now, get auto incremented value. All points must have an
 		// x value, however the y value can be null to create a gap in the series
 		if (point.x === UNDEFINED && series) {
-			point.x = x === UNDEFINED ? series.autoIncrement() : x;
+			if (x === UNDEFINED) {
+				point.x = series.autoIncrement();
+				point.autoX = true;
+			} else {
+				point.x = x;
+			}
 		}
 
 		return point;
@@ -12767,10 +12751,12 @@ Series.prototype = {
 			firstPoint = null,
 			xAxis = series.xAxis,
 			hasCategories = xAxis && !!xAxis.categories,
+			names = xAxis && (isArray(xAxis.categories) ? xAxis.categories : xAxis.names),
 			tooltipPoints = series.tooltipPoints,
 			i,
 			turboThreshold = options.turboThreshold,
 			pt,
+			nameX,
 			xData = this.xData,
 			yData = this.yData,
 			pointArrayMap = series.pointArrayMap,
@@ -12846,10 +12832,21 @@ Series.prototype = {
 					if (data[i] !== UNDEFINED) { // stray commas in oldIE
 						pt = { series: series };
 						series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
-						series.updateParallelArrays(pt, i);
+
+						// If the point has a name and the axis is of category type,
+						// search the names array for existing positions of the same name.
+						// If not found, add a position with that name (#2522).
 						if (hasCategories && pt.name) {
-							xAxis.names[pt.x] = pt.name; // #2046
+							series.requireSorting = false;
+							nameX = inArray(pt.name, names); // #2522
+							if (nameX === -1 || !pt.autoX) {
+								names[pt.x] = pt.name; // #2046
+							} else {
+								pt.x = nameX;
+							}
 						}
+						series.updateParallelArrays(pt, i);
+						
 					}
 				}
 			}
@@ -13278,6 +13275,11 @@ Series.prototype = {
 			// Delete this function to allow it only once
 			series.animate = null;
  
+			// Call the afterAnimate function on animation complete (but don't overwrite the animation.complete option
+			// which should be available to the user).
+			series.animationTimeout = setTimeout(function () {
+				series.afterAnimate();
+			}, animation.duration);
 		}
 	},
 
@@ -13296,8 +13298,6 @@ Series.prototype = {
 			}
 			this.markerGroup.clip(); // no clip
 		}
-
-		fireEvent(this, 'afterAnimate');
 
 		// Remove the shared clipping rectancgle when all series are shown
 		setTimeout(function () {
@@ -13944,9 +13944,9 @@ Series.prototype = {
 			group,
 			options = series.options,
 			animation = options.animation,
-			// Animation doesn't work in IE8 quirks when the group div is hidden,
-			// and looks bad in other oldIE
-			animDuration = (animation && !!series.animate && chart.renderer.isSVG && pick(animation.duration, 500)) || 0,
+			doAnimation = animation && !!series.animate &&
+				chart.renderer.isSVG, // this animation doesn't work in IE8 quirks when the group div is hidden,
+				// and looks bad in other oldIE
 			visibility = series.visible ? VISIBLE : HIDDEN,
 			zIndex = options.zIndex,
 			hasRendered = series.hasRendered,
@@ -13970,7 +13970,7 @@ Series.prototype = {
 		);
 
 		// initiate the animation
-		if (animDuration) {
+		if (doAnimation) {
 			series.animate(true);
 		}
 
@@ -14013,20 +14013,10 @@ Series.prototype = {
 		}
 
 		// Run the animation
-		if (animDuration) {
+		if (doAnimation) {
 			series.animate();
-		} 
-
-		// Call the afterAnimate function on animation complete (but don't overwrite the animation.complete option
-		// which should be available to the user).
-		if (!hasRendered) {
-			if (animDuration) {
-				series.animationTimeout = setTimeout(function () {
-					series.afterAnimate();
-				}, animDuration);
-			} else {
-				series.afterAnimate();
-			}
+		} else if (!hasRendered) {
+			series.afterAnimate();
 		}
 
 		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
@@ -14783,7 +14773,7 @@ extend(Axis.prototype, {
 		newOptions = chart.options[this.coll][this.options.index] = merge(this.userOptions, newOptions);
 
 		this.destroy(true);
-		this._addedPlotLB = UNDEFINED; // #1611, #2887
+		this._addedPlotLB = this.userMin = this.userMax = UNDEFINED; // #1611, #2306
 
 		this.init(chart, extend(newOptions, { events: UNDEFINED }));
 
@@ -15462,7 +15452,7 @@ var ColumnSeries = extendClass(Series, {
 
 			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
-				borderAttr = defined(series.borderWidth) && {
+				borderAttr = {
 					'stroke-width': series.borderWidth
 				};
 				pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE] || series.pointAttr[NORMAL_STATE];
@@ -15560,7 +15550,8 @@ defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 	lineWidth: 0,
 	tooltip: {
 		headerFormat: '<span style="font-size: 10px; color:{series.color}">{series.name}</span><br/>',
-		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
+		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>',
+		followPointer: true
 	},
 	stickyTracking: false
 });
@@ -15601,7 +15592,9 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 		// connectorPadding: 5,
 		distance: 30,
 		enabled: true,
-		format: '{point.name}'
+		formatter: function () {
+			return this.point.name;
+		}
 		// softConnector: true,
 		//y: 0
 	},
@@ -16079,13 +16072,6 @@ Series.prototype.drawDataLabels = function () {
 			series.visible ? VISIBLE : HIDDEN,
 			options.zIndex || 6
 		);
-
-		if (pick(options.defer, true)) {
-			dataLabelsGroup.attr({ opacity: 0 });
-			addEvent(series, 'afterAnimate', function () { // docs: afterAnimate event
-				series.dataLabelsGroup[seriesOptions.animation ? 'animate' : 'attr']({ opacity: 1 }, { duration: 150 });
-			});
-		}
 
 		// Make the labels for each point
 		generalOptions = options;
@@ -16601,7 +16587,7 @@ if (seriesTypes.pie) {
 								visibility: visibility
 								//zIndex: 0 // #2722 (reversed)
 							})
-							.add(series.dataLabelsGroup);
+							.add(series.group);
 						}
 					} else if (connector) {
 						point.connector = connector.destroy();
@@ -17266,6 +17252,7 @@ extend(Point.prototype, {
 			pointAttr;
 
 		state = state || NORMAL_STATE; // empty string
+		move = move && stateMarkerGraphic;
 		pointAttr = point.pointAttr[state] || series.pointAttr[state];
 
 		if (
@@ -17284,6 +17271,7 @@ extend(Point.prototype, {
 			return;
 		}
 
+
 		// apply hover styles to the existing point
 		if (point.graphic) {
 			radius = markerOptions && point.graphic.symbolName && pointAttr.r;
@@ -17296,11 +17284,6 @@ extend(Point.prototype, {
 					height: 2 * radius
 				} : {}
 			));
-
-			// Zooming in from a range with no markers to a range with markers
-			if (stateMarkerGraphic) {
-				stateMarkerGraphic.hide();
-			}
 		} else {
 			// if a graphic is not applied to each point in the normal state, create a shared
 			// graphic for the hover state
@@ -17348,12 +17331,11 @@ extend(Point.prototype, {
 		if (haloOptions && haloOptions.size) {
 			if (!halo) {
 				series.halo = halo = chart.renderer.path()
-					.add(series.seriesGroup);
+					.add(series.markerGroup);
 			}
 			halo.attr({
+				d: point.haloPath(haloOptions.size),
 				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get('rgba')
-			})[move ? 'animate' : 'attr']({
-				d: point.haloPath(haloOptions.size)
 			});
 		} else if (halo) {
 			halo.attr({ d: [] });
@@ -17362,13 +17344,7 @@ extend(Point.prototype, {
 		point.state = state;
 	},
 	haloPath: function (size) {
-		var chart = this.series.chart;
-		return chart.renderer.symbols.circle(
-			chart.plotLeft + this.plotX - 10, 
-			chart.plotTop + this.plotY - 10, 
-			size * 2, 
-			size * 2
-		);
+		return this.series.chart.renderer.symbols.circle(this.plotX - 10, this.plotY - 10, size * 2, size * 2);
 	}
 });
 

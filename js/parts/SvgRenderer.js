@@ -614,7 +614,7 @@ SVGElement.prototype = {
 	/**
 	 * Get the bounding box (width, height, x and y) for the element
 	 */
-	getBBox: function () {
+	getBBox: function (noCache) {
 		var wrapper = this,
 			bBox = wrapper.bBox,
 			renderer = wrapper.renderer,
@@ -706,12 +706,8 @@ SVGElement.prototype = {
 	 */
 	show: function (inherit) {
 		// IE9-11 doesn't handle visibilty:inherit well, so we remove the attribute instead (#2881)
-		if (inherit && this.element.namespaceURI === SVG_NS) {
-			this.element.removeAttribute('visibility');
-			return this;
-		} else {
-			return this.attr({ visibility: inherit ? 'inherit' : VISIBLE });
-		}
+		this.element[inherit ? 'removeAttribute' : 'setAttribute']('visibility', VISIBLE);
+		return this;
 	},
 
 	/**
@@ -985,10 +981,6 @@ SVGElement.prototype = {
 	},
 	alignSetter: function (value) {
 		this.element.setAttribute('text-anchor', { left: 'start', center: 'middle', right: 'end' }[value]);
-	},
-	opacitySetter: function (value, key, element) {
-		this[key] = value;
-		element.setAttribute(key, value);
 	},
 	// In Chrome/Win < 6 as well as Batik and PhantomJS as of 1.9.7, the stroke attribute can't be set when the stroke-
 	// width is 0. #1369
@@ -1430,33 +1422,31 @@ SVGRenderer.prototype = {
 			normalStyle,
 			hoverStyle,
 			pressedStyle,
-			disabledStyle;
+			disabledStyle,
+			STYLE = 'style',
+			verticalGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
 
 		// Normal state - prepare the attributes
 		normalState = merge({
-			'stroke-width': 0,
 			stroke: '#CCCCCC',
-			fill: defaultOptions.colors[0],
-			r: 2,
-			padding: 8,
+			fill: '#f7f7f7',
+			r: 0,
+			padding: 5,
 			style: {
-				color: 'white',
+				color: '#444',
 				fontWeight: 'normal'
 			}
 		}, normalState);
-		normalStyle = normalState.style;
-		delete normalState.style;
+		normalStyle = normalState[STYLE];
+		delete normalState[STYLE];
 
 		// Hover state
 		hoverState = merge(normalState, {
 			stroke: '#68A',
-			fill: '#e7e7e7',
-			style: {
-				color: '#444'
-			}
+			fill: '#e7e7e7'
 		}, hoverState);
-		hoverStyle = hoverState.style;
-		delete hoverState.style;
+		hoverStyle = hoverState[STYLE];
+		delete hoverState[STYLE];
 
 		// Pressed state
 		pressedState = merge(normalState, {
@@ -1467,8 +1457,8 @@ SVGRenderer.prototype = {
 				fontWeight: 'bold'
 			}
 		}, pressedState);
-		pressedStyle = pressedState.style;
-		delete pressedState.style;
+		pressedStyle = pressedState[STYLE];
+		delete pressedState[STYLE];
 
 		// Disabled state
 		disabledState = merge(normalState, {
@@ -1477,8 +1467,8 @@ SVGRenderer.prototype = {
 				fontWeight: 'normal'
 			}
 		}, disabledState);
-		disabledStyle = disabledState.style;
-		delete disabledState.style;
+		disabledStyle = disabledState[STYLE];
+		delete disabledState[STYLE];
 
 		// Add the events. IE9 and IE10 need mouseover and mouseout to funciton (#667).
 		addEvent(label.element, isIE ? 'mouseover' : 'mouseenter', function () {

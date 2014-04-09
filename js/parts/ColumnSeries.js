@@ -267,7 +267,7 @@ var ColumnSeries = extendClass(Series, {
 
 			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
-				borderAttr = defined(series.borderWidth) && {
+				borderAttr = {
 					'stroke-width': series.borderWidth
 				};
 				pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE] || series.pointAttr[NORMAL_STATE];
