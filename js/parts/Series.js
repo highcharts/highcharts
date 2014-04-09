@@ -345,12 +345,10 @@ Series.prototype = {
 			firstPoint = null,
 			xAxis = series.xAxis,
 			hasCategories = xAxis && !!xAxis.categories,
-			names = xAxis && (isArray(xAxis.categories) ? xAxis.categories : xAxis.names),
 			tooltipPoints = series.tooltipPoints,
 			i,
 			turboThreshold = options.turboThreshold,
 			pt,
-			nameX,
 			xData = this.xData,
 			yData = this.yData,
 			pointArrayMap = series.pointArrayMap,
@@ -426,21 +424,10 @@ Series.prototype = {
 					if (data[i] !== UNDEFINED) { // stray commas in oldIE
 						pt = { series: series };
 						series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
-
-						// If the point has a name and the axis is of category type,
-						// search the names array for existing positions of the same name.
-						// If not found, add a position with that name (#2522).
-						if (hasCategories && pt.name) {
-							series.requireSorting = false;
-							nameX = inArray(pt.name, names); // #2522
-							if (nameX === -1 || !pt.autoX) {
-								names[pt.x] = pt.name; // #2046
-							} else {
-								pt.x = nameX;
-							}
-						}
 						series.updateParallelArrays(pt, i);
-						
+						if (hasCategories && pt.name) {
+							xAxis.names[pt.x] = pt.name; // #2046
+						}
 					}
 				}
 			}
@@ -869,11 +856,6 @@ Series.prototype = {
 			// Delete this function to allow it only once
 			series.animate = null;
  
-			// Call the afterAnimate function on animation complete (but don't overwrite the animation.complete option
-			// which should be available to the user).
-			series.animationTimeout = setTimeout(function () {
-				series.afterAnimate();
-			}, animation.duration);
 		}
 	},
 
@@ -892,6 +874,8 @@ Series.prototype = {
 			}
 			this.markerGroup.clip(); // no clip
 		}
+
+		fireEvent(this, 'afterAnimate');
 
 		// Remove the shared clipping rectancgle when all series are shown
 		setTimeout(function () {
@@ -1538,9 +1522,9 @@ Series.prototype = {
 			group,
 			options = series.options,
 			animation = options.animation,
-			doAnimation = animation && !!series.animate &&
-				chart.renderer.isSVG, // this animation doesn't work in IE8 quirks when the group div is hidden,
-				// and looks bad in other oldIE
+			// Animation doesn't work in IE8 quirks when the group div is hidden,
+			// and looks bad in other oldIE
+			animDuration = (animation && !!series.animate && chart.renderer.isSVG && pick(animation.duration, 500)) || 0,
 			visibility = series.visible ? VISIBLE : HIDDEN,
 			zIndex = options.zIndex,
 			hasRendered = series.hasRendered,
@@ -1564,7 +1548,7 @@ Series.prototype = {
 		);
 
 		// initiate the animation
-		if (doAnimation) {
+		if (animDuration) {
 			series.animate(true);
 		}
 
@@ -1607,10 +1591,20 @@ Series.prototype = {
 		}
 
 		// Run the animation
-		if (doAnimation) {
+		if (animDuration) {
 			series.animate();
-		} else if (!hasRendered) {
-			series.afterAnimate();
+		} 
+
+		// Call the afterAnimate function on animation complete (but don't overwrite the animation.complete option
+		// which should be available to the user).
+		if (!hasRendered) {
+			if (animDuration) {
+				series.animationTimeout = setTimeout(function () {
+					series.afterAnimate();
+				}, animDuration);
+			} else {
+				series.afterAnimate();
+			}
 		}
 
 		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see

@@ -14,9 +14,7 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 		// connectorPadding: 5,
 		distance: 30,
 		enabled: true,
-		formatter: function () {
-			return this.point.name;
-		}
+		format: '{point.name}'
 		// softConnector: true,
 		//y: 0
 	},

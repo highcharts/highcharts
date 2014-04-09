@@ -54,12 +54,7 @@ Point.prototype = {
 		// If no x is set by now, get auto incremented value. All points must have an
 		// x value, however the y value can be null to create a gap in the series
 		if (point.x === UNDEFINED && series) {
-			if (x === UNDEFINED) {
-				point.x = series.autoIncrement();
-				point.autoX = true;
-			} else {
-				point.x = x;
-			}
+			point.x = x === UNDEFINED ? series.autoIncrement() : x;
 		}
 
 		return point;

@@ -28,6 +28,13 @@ Series.prototype.drawDataLabels = function () {
 			options.zIndex || 6
 		);
 
+		if (pick(options.defer, true)) {
+			dataLabelsGroup.attr({ opacity: 0 });
+			addEvent(series, 'afterAnimate', function () { // docs: afterAnimate event
+				series.dataLabelsGroup[seriesOptions.animation ? 'animate' : 'attr']({ opacity: 1 }, { duration: 150 });
+			});
+		}
+
 		// Make the labels for each point
 		generalOptions = options;
 		each(points, function (point) {
@@ -542,7 +549,7 @@ if (seriesTypes.pie) {
 								visibility: visibility
 								//zIndex: 0 // #2722 (reversed)
 							})
-							.add(series.group);
+							.add(series.dataLabelsGroup);
 						}
 					} else if (connector) {
 						point.connector = connector.destroy();
