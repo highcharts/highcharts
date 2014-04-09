@@ -4,8 +4,14 @@ $(function () {
             type: 'pie',
             options3d: {
 				enabled: true,
-                alpha: 25
+                alpha: 45
             }
+        },
+        title: {
+            text: 'Contents of the weekly office fruit package'
+        },
+        subtitle: {
+            text: '3D donut in Highcharts'
         },
         plotOptions: {
             pie: {
@@ -14,7 +20,18 @@ $(function () {
             }
         },
         series: [{
-            data: [2, 4, 6, 1, 3]
+            name: 'Delivered amount',
+            data: [
+                ['Bananas', 8],
+                ['Kiwi', 3],
+                ['Mixed nuts', 1],
+                ['Oranges', 5],
+                ['Apples', 8],
+                ['Pears', 4], 
+                ['Clementines', 4],
+                ['Reddish (bag)', 1],
+                ['Grapes (bunch)', 1]
+            ]
         }]
     });
 });

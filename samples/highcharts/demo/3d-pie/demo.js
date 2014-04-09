@@ -8,13 +8,41 @@ $(function () {
                 beta: 0,
             }
         },
+        title: {
+            text: 'Browser market shares at a specific website, 2010'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
         plotOptions: {
             pie: {
-                depth: 25
+                allowPointSelect: true,
+                cursor: 'pointer',
+                depth: 35,
+                dataLabels: {
+                    enabled: true,
+                    color: '#000000',
+                    connectorColor: '#000000',
+                    format: '{point.name}'
+                }
             }
         },
         series: [{
-            data: [2, 4, 6, 1, 3]
+            type: 'pie',
+            name: 'Browser share',
+            data: [
+                ['Firefox',   45.0],
+                ['IE',       26.8],
+                {
+                    name: 'Chrome',
+                    y: 12.8,
+                    sliced: true,
+                    selected: true
+                },
+                ['Safari',    8.5],
+                ['Opera',     6.2],
+                ['Others',   0.7]
+            ]
         }]
     });
 });

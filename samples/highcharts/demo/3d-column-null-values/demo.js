@@ -5,9 +5,9 @@ $(function () {
             margin: 75,
             options3d: {
 				enabled: true,
-                alpha: 15,
-                beta: 15,
-                depth: 50
+                alpha: 10,
+                beta: 25,
+                depth: 70
             }
         },
         title: {
@@ -21,8 +21,15 @@ $(function () {
                 depth: 25
             }
         },
+        xAxis: {
+            categories: Highcharts.getOptions().lang.shortMonths
+        },
+        yAxis: {
+            opposite: true
+        },
         series: [{
-            data: [2, 3, null, 4, 0, 5]
+            name: 'Sales',
+            data: [2, 3, null, 4, 0, 5, 1, 4, 6, 3]
         }]
     });
 });

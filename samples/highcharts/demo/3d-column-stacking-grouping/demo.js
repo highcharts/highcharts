@@ -1,32 +1,65 @@
 $(function () {
     $('#container').highcharts({
+
         chart: {
             type: 'column',
-            margin: 75,
             options3d: {
-				enabled: true,
+                enabled: true,
                 alpha: 15,
                 beta: 15,
-                depth: 110
+                viewDistance: 15
+            },
+            marginTop: 80,
+            marginRight: 40
+        },
+
+        title: {
+            text: 'Total fruit consumtion, grouped by gender'
+        },
+
+        xAxis: {
+            categories: ['Apples', 'Oranges', 'Pears', 'Grapes', 'Bananas']
+        },
+
+        yAxis: {
+            allowDecimals: false,
+            min: 0,
+            title: {
+                text: 'Number of fruits'
             }
         },
+
+        tooltip: {
+            formatter: function() {
+                return '<b>'+ this.x +'</b><br/>'+
+                    this.series.name +': '+ this.y +'<br/>'+
+                    'Total: '+ this.point.stackTotal;
+            }
+        },
+
         plotOptions: {
             column: {
-                depth: 40,
-                stacking: true,
-                grouping: false,
-                groupZPadding: 10
+                stacking: 'normal'
             }
         },
+
         series: [{
-            data: [1, 2, 4],
-            stack: 0
+            name: 'John',
+            data: [5, 3, 4, 7, 2],
+            stack: 'male'
         }, {
-            data: [5, 6, 3],
-            stack: 0
+            name: 'Joe',
+            data: [3, 4, 4, 2, 5],
+            stack: 'male'
         }, {
-            data: [7, 9, 8],
-            stack: 1
+            name: 'Jane',
+            data: [2, 5, 6, 2, 1],
+            stack: 'female'
+        }, {
+            name: 'Janet',
+            data: [3, 0, 4, 4, 3],
+            stack: 'female'
         }]
     });
 });
+    
