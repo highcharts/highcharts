@@ -31,7 +31,7 @@ var HighchartsConfig = {
 			{name: 'Tooltip', component: 'Tooltip', group: 'Dynamics and Interaction', depends: { component: ["Interaction"]}, baseUrl: 'parts'},
 			{name: 'Pointer', component: 'Interaction', group: "Dynamics and Interaction", depends: { component: ['Core']}, baseUrl: 'parts'},
 			{name: 'TouchPointer', component: 'Touch', group: "Dynamics and Interaction", depends: { component: ['Interaction', 'Core']}, baseUrl: 'parts'},
-			{name: "MSPointer", component: "MS\ Touch", group: "Dynamics and Interaction", depends: { component: ['Touch']}, baseUrl: 'parts'},
+			{name: "MSPointer", component: "MS Touch", group: "Dynamics and Interaction", depends: { component: ['Touch']}, baseUrl: 'parts'},
 			{name: 'Legend', component: 'Core', group: "Core", baseUrl: 'parts'},
 			{name: 'Chart', component: 'Core', group: "Core", baseUrl: 'parts'},
 			{name: 'CenteredSeriesMixin', component: 'CenteredSeriesMixin', baseUrl: 'parts'},
@@ -89,9 +89,9 @@ var HighchartsConfig = {
 			'Chart and Serie types': { description: 'All the serie types available with Highcharts. Note: LineSeries is the base serie, required by the Core module'},
 			/*'Chart and Serie types': { description: 'This is the description for Chart and Serie types group'},*/
 			'Features': { description: 'Enable behaviours to the chart'},
-			'Renderers': { description: 'This is the description for the Renderers group'},
-			'Modules':  { description: 'This is the description for the Modules group'},
-			'Dynamics and Interaction': { description: 'The description for dynamics support'},
+			'Renderers': { description: 'Alternatives to standard SVG rendering'},
+			'Modules':  { description: ''},
+			'Dynamics and Interaction': { description: 'Leaving these out makes your chart completely static'},
 			'Adapters': { description: 'Choose your own library to run Highcharts. Use Highcharts standalone framework when you want minimum bandwidth use, web apps built on other frameworks, or just a simple website where you want to keep it clean.'}
 			},
 

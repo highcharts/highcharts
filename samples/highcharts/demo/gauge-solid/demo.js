@@ -11,15 +11,20 @@ $(function () {
 	    },
 	    
 	    pane: {
+	    	center: ['50%', '85%'],
+	    	size: '140%',
 	        startAngle: -90,
 	        endAngle: 90,
-            background: null
+            background: {
+                backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+                innerRadius: '60%',
+                outerRadius: '100%',
+                shape: 'arc'
+            }
 	    },
 	       
 	    // the value axis
 	    yAxis: {
-	        min: 0,
-	        max: 200,
 			stops: [
 				[0.1, '#55BF3B'], // green
 	        	[0.5, '#DDDF0D'], // yellow
@@ -34,13 +39,7 @@ $(function () {
 	        },
             labels: {
                 y: 16
-            },
-	        plotBands: [{
-                from: 0,
-                to: 200,
-                color: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
-                innerRadius: '60%'
-	        }]        
+            }        
 	    },
         
         plotOptions: {
@@ -48,39 +47,70 @@ $(function () {
                 dataLabels: {
                     y: -30,
                     borderWidth: 0,
-                    format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
-                    	((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' + 
-                    	'<span style="font-size:12px;color:silver">km/h</span></div>',
                     useHTML: true
                 }
             }
         }
     };
     
-    $('#container').highcharts(Highcharts.merge(gaugeOptions, {
-        pane: {
-	        center: ['50%', '60%']
-	    },
-	       
-	    yAxis: {
+    // The speed gauge
+    $('#container-speed').highcharts(Highcharts.merge(gaugeOptions, {
+        yAxis: {
+	        min: 0,
+	        max: 200,
 	        title: {
 	            text: 'Speed'
 	        }       
+	    },
+
+	    credits: {
+	    	enabled: false
 	    },
 	
 	    series: [{
 	        name: 'Speed',
 	        data: [80],
+	        dataLabels: {
+	        	format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
+                    ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y}</span><br/>' + 
+                   	'<span style="font-size:12px;color:silver">km/h</span></div>'
+	        },
 	        tooltip: {
 	            valueSuffix: ' km/h'
-	        }            
+	        }
+	    }]
+	
+	}));
+    
+    // The RPM gauge
+    $('#container-rpm').highcharts(Highcharts.merge(gaugeOptions, {
+        yAxis: {
+        	min: 0,
+        	max: 5,
+	        title: {
+	            text: 'RPM'
+	        }       
+	    },
+	
+	    series: [{
+	        name: 'RPM',
+	        data: [1],
+	        dataLabels: {
+	        	format: '<div style="text-align:center"><span style="font-size:25px;color:' + 
+                    ((Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black') + '">{y:.1f}</span><br/>' + 
+                   	'<span style="font-size:12px;color:silver">* 1000 / min</span></div>'
+	        },
+	        tooltip: {
+	            valueSuffix: ' revolutions/min'
+	        }      
 	    }]
 	
 	}));
                                
-    
+    // Bring life to the dials
     setInterval(function () {
-        var chart = $('#container').highcharts();
+    	// Speed
+        var chart = $('#container-speed').highcharts();
         if (chart) {
             var point = chart.series[0].points[0],
                 newVal,
@@ -88,6 +118,21 @@ $(function () {
             
             newVal = point.y + inc;
             if (newVal < 0 || newVal > 200) {
+                newVal = point.y - inc;
+            }
+            
+            point.update(newVal);
+        }
+
+        // RPM
+        chart = $('#container-rpm').highcharts();
+        if (chart) {
+            var point = chart.series[0].points[0],
+                newVal,
+                inc = Math.random() - 0.5;
+            
+            newVal = point.y + inc;
+            if (newVal < 0 || newVal > 5) {
                 newVal = point.y - inc;
             }
             

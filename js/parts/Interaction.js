@@ -512,7 +512,6 @@ extend(Point.prototype, {
 			pointAttr;
 
 		state = state || NORMAL_STATE; // empty string
-		move = move && stateMarkerGraphic;
 		pointAttr = point.pointAttr[state] || series.pointAttr[state];
 
 		if (
@@ -531,7 +530,6 @@ extend(Point.prototype, {
 			return;
 		}
 
-
 		// apply hover styles to the existing point
 		if (point.graphic) {
 			radius = markerOptions && point.graphic.symbolName && pointAttr.r;
@@ -544,6 +542,11 @@ extend(Point.prototype, {
 					height: 2 * radius
 				} : {}
 			));
+
+			// Zooming in from a range with no markers to a range with markers
+			if (stateMarkerGraphic) {
+				stateMarkerGraphic.hide();
+			}
 		} else {
 			// if a graphic is not applied to each point in the normal state, create a shared
 			// graphic for the hover state
@@ -591,11 +594,12 @@ extend(Point.prototype, {
 		if (haloOptions && haloOptions.size) {
 			if (!halo) {
 				series.halo = halo = chart.renderer.path()
-					.add(series.markerGroup);
+					.add(series.seriesGroup);
 			}
 			halo.attr({
-				d: point.haloPath(haloOptions.size),
 				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get('rgba')
+			})[move ? 'animate' : 'attr']({
+				d: point.haloPath(haloOptions.size)
 			});
 		} else if (halo) {
 			halo.attr({ d: [] });
@@ -604,7 +608,13 @@ extend(Point.prototype, {
 		point.state = state;
 	},
 	haloPath: function (size) {
-		return this.series.chart.renderer.symbols.circle(this.plotX - 10, this.plotY - 10, size * 2, size * 2);
+		var chart = this.series.chart;
+		return chart.renderer.symbols.circle(
+			chart.plotLeft + this.plotX - 10, 
+			chart.plotTop + this.plotY - 10, 
+			size * 2, 
+			size * 2
+		);
 	}
 });
 

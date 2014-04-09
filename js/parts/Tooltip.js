@@ -200,18 +200,26 @@ Tooltip.prototype = {
 			swapped,
 			first = ['y', chart.chartHeight, boxHeight, point.plotY + chart.plotTop],
 			second = ['x', chart.chartWidth, boxWidth, point.plotX + chart.plotLeft],
+			// The far side is right or bottom
+			preferFarSide = (chart.inverted && !point.negative) || (!chart.inverted && point.negative),
 			/**
 			 * Handle the preferred dimension. When the preferred dimension is tooltip
 			 * on top or bottom of the point, it will look for space there.
 			 */
 			firstDimension = function (dim, outerSize, innerSize, point) {
-				// Is there room above/left?
-				if (innerSize < point - distance) {
-					ret[dim] = point - distance - innerSize;
-				// Is there room below/right?
-				} else if (point + distance + innerSize < outerSize) {
-					ret[dim] = point + distance;
-				// Covering up the point, try the other dimension
+				var roomLeft = innerSize < point - distance,
+					roomRight = point + distance + innerSize < outerSize,
+					alignedLeft = point - distance - innerSize,
+					alignedRight = point + distance;
+
+				if (preferFarSide && roomRight) {
+					ret[dim] = alignedRight;
+				} else if (!preferFarSide && roomLeft) {
+					ret[dim] = alignedLeft;
+				} else if (roomLeft) {
+					ret[dim] = alignedLeft;
+				} else if (roomRight) {
+					ret[dim] = alignedRight;
 				} else {
 					return false;
 				}
@@ -383,7 +391,7 @@ Tooltip.prototype = {
 				stroke: borderColor
 			});
 			
-			tooltip.updatePosition({ plotX: x, plotY: y });
+			tooltip.updatePosition({ plotX: x, plotY: y, negative: point.negative });
 		
 			this.isHidden = false;
 		}

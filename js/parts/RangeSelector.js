@@ -9,9 +9,13 @@ extend(defaultOptions, {
 		buttonTheme: {
 			width: 28,
 			height: 18,
+			fill: '#f7f7f7',
 			padding: 2,
 			r: 0,
 			stroke: '#68A',
+			style: {
+				color: '#444'
+			},
 			zIndex: 7 // #484, #852
 		//	states: {
 		//		hover: {},

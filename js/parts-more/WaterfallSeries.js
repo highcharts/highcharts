@@ -187,7 +187,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 		var data = this.data,
 			length = data.length,
-			lineWidth = this.options.lineWidth + this.options.borderWidth,
+			lineWidth = this.options.lineWidth + this.borderWidth,
 			normalizer = mathRound(lineWidth) % 2 / 2,
 			path = [],
 			M = 'M',

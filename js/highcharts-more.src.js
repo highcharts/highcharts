@@ -1344,8 +1344,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					'M',
 					crispX, q1Plot,
 					'L',
-					crispX, lowPlot,
-					'z'
+					crispX, lowPlot
 				];
 				
 				// The box
@@ -1404,8 +1403,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					medianPlot,
 					'L',
 					right, 
-					medianPlot,
-					'z'
+					medianPlot
 				];
 				
 				// Create or update the graphics
@@ -1681,7 +1679,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 		var data = this.data,
 			length = data.length,
-			lineWidth = this.options.lineWidth + this.options.borderWidth,
+			lineWidth = this.options.lineWidth + this.borderWidth,
 			normalizer = mathRound(lineWidth) % 2 / 2,
 			path = [],
 			M = 'M',
