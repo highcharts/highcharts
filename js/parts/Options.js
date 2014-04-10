@@ -20,7 +20,7 @@ defaultLabelOptions = {
 };
 
 defaultOptions = {
-	colors: ['#6c9acc', '#252530', '#90ee7e', '#8d4654', '#2b908f', 
+	colors: ['#6c9acc', '#252530', '#6dd759', '#8d4654', '#2b908f', 
 		'#76758e', '#f6a45c', '#8085e8', '#f45b5b', '#9ff0cf'],
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
@@ -253,6 +253,7 @@ defaultOptions = {
 			height: '13px'
 		},
 		// itemWidth: undefined,
+		// symbolRadius: 0,
 		// symbolWidth: 16,
 		symbolPadding: 5,
 		verticalAlign: 'bottom',

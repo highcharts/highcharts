@@ -82,7 +82,7 @@ Axis.prototype = {
 			//rotation: 0,
 			//side: 'outside',
 			style: {
-				color: '#909090'
+				color: '#707070' // docs
 			}
 			//x: 0,
 			//y: 0
@@ -172,7 +172,7 @@ Axis.prototype = {
 	defaultTopAxisOptions: {
 		labels: {
 			x: 0,
-			y: -5
+			y: -15
 			// overflow: undefined
 			// staggerLines: null
 		},

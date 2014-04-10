@@ -28,7 +28,7 @@ Series.prototype.drawDataLabels = function () {
 			options.zIndex || 6
 		);
 
-		if (pick(options.defer, true)) {
+		if (!series.hasRendered && pick(options.defer, true)) {
 			dataLabelsGroup.attr({ opacity: 0 });
 			addEvent(series, 'afterAnimate', function () { // docs: afterAnimate event
 				series.dataLabelsGroup[seriesOptions.animation ? 'animate' : 'attr']({ opacity: 1 }, { duration: 150 });

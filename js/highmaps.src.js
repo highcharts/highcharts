@@ -1297,7 +1297,7 @@ defaultLabelOptions = {
 };
 
 defaultOptions = {
-	colors: ['#6c9acc', '#252530', '#90ee7e', '#8d4654', '#2b908f', 
+	colors: ['#6c9acc', '#252530', '#6dd759', '#8d4654', '#2b908f', 
 		'#76758e', '#f6a45c', '#8085e8', '#f45b5b', '#9ff0cf'],
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
@@ -1530,6 +1530,7 @@ defaultOptions = {
 			height: '13px'
 		},
 		// itemWidth: undefined,
+		// symbolRadius: 0,
 		// symbolWidth: 16,
 		symbolPadding: 5,
 		verticalAlign: 'bottom',
@@ -6078,7 +6079,7 @@ Axis.prototype = {
 			//rotation: 0,
 			//side: 'outside',
 			style: {
-				color: '#909090'
+				color: '#707070' // docs
 			}
 			//x: 0,
 			//y: 0
@@ -6168,7 +6169,7 @@ Axis.prototype = {
 	defaultTopAxisOptions: {
 		labels: {
 			x: 0,
-			y: -5
+			y: -15
 			// overflow: undefined
 			// staggerLines: null
 		},
@@ -10162,7 +10163,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 			legend.baseline - 5 - (symbolHeight / 2),
 			legend.symbolWidth,
 			symbolHeight,
-			pick(legend.options.symbolRadius, 2)
+			legend.options.symbolRadius || 0
 		).attr({
 			zIndex: 3
 		}).add(item.legendGroup);		
@@ -14441,7 +14442,7 @@ Series.prototype.drawDataLabels = function () {
 			options.zIndex || 6
 		);
 
-		if (pick(options.defer, true)) {
+		if (!series.hasRendered && pick(options.defer, true)) {
 			dataLabelsGroup.attr({ opacity: 0 });
 			addEvent(series, 'afterAnimate', function () { // docs: afterAnimate event
 				series.dataLabelsGroup[seriesOptions.animation ? 'animate' : 'attr']({ opacity: 1 }, { duration: 150 });

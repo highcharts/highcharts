@@ -666,7 +666,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 			legend.baseline - 5 - (symbolHeight / 2),
 			legend.symbolWidth,
 			symbolHeight,
-			pick(legend.options.symbolRadius, 2)
+			legend.options.symbolRadius || 0
 		).attr({
 			zIndex: 3
 		}).add(item.legendGroup);		
