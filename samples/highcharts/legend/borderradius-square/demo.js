@@ -1,9 +1,6 @@
 $(function () {
     $('#container').highcharts({
         
-        chart: {
-        },
-        
         legend: {
             borderRadius: 0,
             borderWidth: 1

@@ -1,9 +1,6 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
 	    
-	    chart: {
-	    },
-	    
 	    title: {
 	    	text: 'The title'
 	    },

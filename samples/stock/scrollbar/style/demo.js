@@ -1,9 +1,6 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
 	    
-	    chart: {
-	    },
-	    
 	    scrollbar: {
 			barBackgroundColor: 'gray',
 			barBorderRadius: 7,

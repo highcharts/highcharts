@@ -1,9 +1,6 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
 	    
-	    chart: {
-	    },
-	    
 	    xAxis: {
 	    	labels: {
 	    		staggerLines: 2

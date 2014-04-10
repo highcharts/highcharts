@@ -1,9 +1,6 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
 	    
-	    chart: {
-	    },
-	    
 	    tooltip: {
 	    	crosshairs: {
 	    		dashStyle: 'dash'

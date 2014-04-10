@@ -1,9 +1,6 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
 	    
-	    chart: {
-	    },
-	    
 	    xAxis: {
 	    	tickColor: 'green',
 	    	tickLength: 10,

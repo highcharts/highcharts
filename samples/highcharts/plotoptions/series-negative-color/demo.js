@@ -1,7 +1,5 @@
 $(function () {
     $('#container').highcharts({
-        chart: {
-        },
 
         title: {
             text: 'Monthly temperatures in a random cold place'

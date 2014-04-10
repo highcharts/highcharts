@@ -1,7 +1,5 @@
 $(function () {
     $('#container').highcharts({
-        chart: {
-        },
         xAxis: {
             minPadding: 0.05,
             maxPadding: 0.05

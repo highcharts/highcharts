@@ -1,7 +1,5 @@
 $(function () {
     $('#container').highcharts({
-        chart: {
-        },
         xAxis: {
             endOnTick: true,
             showFirstLabel: false,

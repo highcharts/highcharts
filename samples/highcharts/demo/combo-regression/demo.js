@@ -1,7 +1,5 @@
 $(function () {
         $('#container').highcharts({
-            chart: {
-            },
             xAxis: {
                 min: -0.5,
                 max: 5.5

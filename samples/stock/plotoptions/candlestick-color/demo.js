@@ -1,9 +1,6 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
 	    
-	    chart: {
-	    },
-	    
 	    plotOptions: {
 	    	candlestick: {
 	    		color: 'blue',

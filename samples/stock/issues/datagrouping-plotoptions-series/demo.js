@@ -1,9 +1,6 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
 	    
-	    chart: {
-	    },
-	    
 	    title: {
 	    	text: 'Data grouping on plotOptions.series. Should group to weeks'
 	    },

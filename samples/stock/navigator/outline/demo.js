@@ -1,9 +1,6 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
 	    
-	    chart: {
-	    },
-	    
 	    navigator: {
 	    	outlineColor: 'blue',
 	    	outlineWidth: 2

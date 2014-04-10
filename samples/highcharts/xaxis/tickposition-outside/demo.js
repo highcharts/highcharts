@@ -1,7 +1,5 @@
 $(function () {
     $('#container').highcharts({
-        chart: {
-        },
         xAxis: {
             //tickPosition: 'outside'       
         },

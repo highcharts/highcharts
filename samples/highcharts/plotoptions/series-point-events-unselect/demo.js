@@ -4,8 +4,6 @@ $(function () {
     
     // create the chart
     $('#container').highcharts({
-        chart: {
-        },
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
