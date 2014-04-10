@@ -7,7 +7,8 @@ $(function () {
                 enabled: true,
                 alpha: 15,
                 beta: 15,
-                viewDistance: 15
+                viewDistance: 25,
+                depth: 40
             },
             marginTop: 80,
             marginRight: 40
@@ -39,7 +40,8 @@ $(function () {
 
         plotOptions: {
             column: {
-                stacking: 'normal'
+                stacking: 'normal',
+                depth: 40
             }
         },
 

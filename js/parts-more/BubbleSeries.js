@@ -22,6 +22,13 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	maxSize: '20%',
 	// negativeColor: null,
 	// sizeBy: 'area'
+	states: {
+		hover: {
+			halo: {
+				size: 5 // docs
+			}
+		}
+	},
 	tooltip: {
 		pointFormat: '({point.x}, {point.y}), Size: {point.z}'
 	},
@@ -29,9 +36,16 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	zThreshold: 0
 });
 
+var BubblePoint = extendClass(Point, {
+	haloPath: function () {
+		return Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
+	}
+});
+
 // 2 - Create the series object
 seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	type: 'bubble',
+	pointClass: BubblePoint,
 	pointArrayMap: ['y', 'z'],
 	parallelArrays: ['x', 'y', 'z'],
 	trackerGroups: ['group', 'dataLabelsGroup'],

@@ -610,8 +610,8 @@ extend(Point.prototype, {
 	haloPath: function (size) {
 		var chart = this.series.chart;
 		return chart.renderer.symbols.circle(
-			chart.plotLeft + this.plotX - 10, 
-			chart.plotTop + this.plotY - 10, 
+			chart.plotLeft + this.plotX - size, 
+			chart.plotTop + this.plotY - size, 
 			size * 2, 
 			size * 2
 		);

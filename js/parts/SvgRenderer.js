@@ -955,6 +955,7 @@ SVGElement.prototype = {
 		if (value === 0) {
 			value = 0.00001;
 		}
+		this.strokeWidth = value; // read in symbol paths like 'callout'
 		element.setAttribute(key, value);
 	},
 	titleSetter: function (value) {
@@ -1874,6 +1875,9 @@ SVGRenderer.prototype = {
 			];
 		},
 
+		/**
+		 * Callout shape used for default tooltips, also used for rounded rectangles in VML
+		 */
 		callout: function (x, y, w, h, options) {
 			var arrowLength = 6,
 				halfDistance = 6,
@@ -1881,17 +1885,22 @@ SVGRenderer.prototype = {
 				safeDistance = r + halfDistance,
 				anchorX = options && options.anchorX,
 				anchorY = options && options.anchorY,
-				path = [
-					'M', x + r, y, 
-					'L', x + w - r, y, // top side
-					'C', x + w, y, x + w, y, x + w, y + r, // top-right corner
-					'L', x + w, y + h - r, // right side
-					'C', x + w, y + h, x + w, y + h, x + w - r, y + h, // bottom-right corner
-					'L', x + r, y + h, // bottom side
-					'C', x, y + h, x, y + h, x, y + h - r, // bottom-left corner
-					'L', x, y + r, // left side
-					'C', x, y, x, y, x + r, y // top-right corner
-				];
+				path,
+				normalizer = mathRound(options.strokeWidth || 0) % 2 / 2; // mathRound because strokeWidth can sometimes have roundoff errors;
+
+			x += normalizer;
+			y += normalizer;
+			path = [
+				'M', x + r, y, 
+				'L', x + w - r, y, // top side
+				'C', x + w, y, x + w, y, x + w, y + r, // top-right corner
+				'L', x + w, y + h - r, // right side
+				'C', x + w, y + h, x + w, y + h, x + w - r, y + h, // bottom-right corner
+				'L', x + r, y + h, // bottom side
+				'C', x, y + h, x, y + h, x, y + h - r, // bottom-left corner
+				'L', x, y + r, // left side
+				'C', x, y, x, y, x + r, y // top-right corner
+			];
 			
 			if (anchorX && anchorX > w && anchorY > y + safeDistance && anchorY < y + h - safeDistance) { // replace right side
 				path.splice(13, 3,
@@ -2099,8 +2108,8 @@ SVGRenderer.prototype = {
 				// apply the box attributes
 				if (!box.isImg) { // #1630
 					box.attr(extend({
-						width: wrapper.width,
-						height: wrapper.height
+						width: mathRound(wrapper.width),
+						height: mathRound(wrapper.height)
 					}, deferredAttr));
 				}
 				deferredAttr = null;
