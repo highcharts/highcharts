@@ -5,6 +5,7 @@ $(function () {
         },
         
         legend: {
+            borderWidth: 1
         },
         
         xAxis: {

@@ -4,6 +4,12 @@ $(function () {
             //ignoreHiddenSeries: true,
             type: 'line'
         },
+        title: {
+            text: 'Ignore hidden series is set to true'
+        },
+        subtitle: {
+            text: 'When hiding one of the series, it is ignored for axis layout, so the plot area redraws'
+        },
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },

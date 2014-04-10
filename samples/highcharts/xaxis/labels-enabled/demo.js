@@ -1,6 +1,7 @@
 $(function () {
     $('#container').highcharts({
-        chart: {
+        title: {
+            text: 'X axis labels are disabled'
         },
         xAxis: {
             

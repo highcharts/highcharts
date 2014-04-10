@@ -1,5 +1,14 @@
 $(function () {
     $('#container').highcharts({
+
+        title: {
+            text: 'Y axis showEmpty demo'
+        },
+
+        subtitle: {
+            text: 'Left axis shows even if Series 1 is hidden. Right axis does not show when Series 2 is hidden.'
+        },
+
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },

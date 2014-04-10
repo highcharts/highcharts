@@ -1,7 +1,7 @@
 $(function () {
     $('#container').highcharts({
         title: {
-            text: 'tootltip with, shadow: false'
+            text: 'Tootip with no shadow'
         },
         tooltip: {
             shadow: false

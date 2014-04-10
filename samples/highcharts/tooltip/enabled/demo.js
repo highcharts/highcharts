@@ -1,7 +1,7 @@
 $(function () {
     $('#container').highcharts({
         title: {
-            text: 'tooltip enabled is set to false'
+            text: 'Tooltip <em>enabled</em> is set to false'
         },
         tooltip: {
             enabled: false

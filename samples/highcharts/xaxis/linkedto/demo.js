@@ -3,6 +3,10 @@ $(function () {
         chart: {
             type: 'column'
         },
+
+        title: {
+            text: 'Linked axes'
+        },
         
         xAxis: [{ // master axis
             type: 'datetime',

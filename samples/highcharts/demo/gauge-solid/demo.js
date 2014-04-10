@@ -6,9 +6,7 @@ $(function () {
 	        type: 'solidgauge'
 	    },
 	    
-	    title: {
-	        text: null
-	    },
+	    title: null,
 	    
 	    pane: {
 	    	center: ['50%', '85%'],

@@ -217,7 +217,7 @@ function getResources() {
 							$(contentDoc.currentLi).addClass('visited');
 						}
 
-						$(contentDoc.body).animate({
+						$('html,body', contentDoc).animate({
 							scrollTop: $(li).offset().top - 300
 						},'slow');
 
