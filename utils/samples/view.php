@@ -28,7 +28,21 @@ $topDomain = $httpHost[sizeof($httpHost) - 1];
 $html = ob_get_clean();
 $html = str_replace('/code.highcharts.com/', "/code.highcharts.$topDomain/", $html);
 $html = str_replace('.js"', '.js?' . time() . '"', $html); // Force no-cache for debugging
-//$html .= "<script src='http://code.highcharts.local/themes/grid-light.js'></script>";
+
+
+// Handle themes
+if (isset($_POST['theme'])) {
+	$_SESSION['theme'] = $_POST['theme'];	
+}
+if ($_SESSION['theme']) {
+	$html .= "<script src='http://code.highcharts.local/themes/". $_SESSION['theme'] .".js'></script>";
+}
+$themes = array(
+	'' => 'Default theme',
+	'sand-signika' => 'Sand Signika',
+	'dark-unica' => 'Dark Unica',
+	'grid-light' => 'Grid Light'
+);
 
 
 
@@ -253,6 +267,15 @@ function getResources() {
 			<h2 style="margin: 0"><?php echo ($next - 1) ?>. <?php echo $path ?></h2>
 
 			<div style="text-align: center">
+				<form method="post" action="" style="display:inline">
+					<select name="theme" onchange="this.form.submit()">
+					<?php foreach ($themes as $theme => $themeName) : ?>
+						<option value="<?php echo $theme ?>" <?php if ($theme == $_SESSION['theme']) echo 'selected' ?>>
+							<?php echo $themeName ?>
+						</option>
+					<?php endforeach ?>
+					</select>
+				</form>
 				<button id="next" disabled="disabled">Next</button>
 				<button id="reload" style="margin-left: 1em" onclick="location.reload()">Reload</button>
 				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"

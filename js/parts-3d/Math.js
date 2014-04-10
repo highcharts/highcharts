@@ -35,7 +35,7 @@ function perspective(points, angle2, angle1, origin) {
 	Highcharts.each(points, function (point) {
 		x = point.x - xe;
 		y = point.y - ye;
-		z = point.z;
+		z = point.z || 0;
 
 		p = {
 			x: c1 * x - s1 * z,

@@ -21,8 +21,6 @@ $(function () {
                 depth: 35,
                 dataLabels: {
                     enabled: true,
-                    color: '#000000',
-                    connectorColor: '#000000',
                     format: '{point.name}'
                 }
             }

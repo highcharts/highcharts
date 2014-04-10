@@ -48,6 +48,10 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 	});
 });
 
+Highcharts.wrap(Highcharts.seriesTypes.pie.prototype.pointClass.prototype, 'haloPath', function (proceed) {
+	return this.series.chart.is3d() ? [] : proceed.call(this);
+});
+
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
 	// Do not do this if the chart is not 3D
 	if (this.chart.is3d()) {

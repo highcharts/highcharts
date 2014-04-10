@@ -53,7 +53,7 @@ function perspective(points, angle2, angle1, origin) {
 	Highcharts.each(points, function (point) {
 		x = point.x - xe;
 		y = point.y - ye;
-		z = point.z;
+		z = point.z || 0;
 
 		p = {
 			x: c1 * x - s1 * z,
@@ -786,13 +786,20 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 	z += (typeOptions.groupZPadding || 1);
 
 	Highcharts.each(series.data, function (point) {
-		var shapeArgs = point.shapeArgs;
+		var shapeArgs = point.shapeArgs,
+			tooltipPos = point.tooltipPos;
+
 		point.shapeType = 'cuboid';
 		shapeArgs.alpha = alpha;
 		shapeArgs.beta = beta; 
 		shapeArgs.z = z;
 		shapeArgs.origin = origin;
 		shapeArgs.depth = depth;
+
+		// Translate the tooltip position in 3d space
+		tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], alpha, beta, origin)[0];
+		point.tooltipPos = [tooltipPos.x, tooltipPos.y];
+
 	});	    
 });
 
@@ -864,29 +871,7 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proce
 		}
 	}
 });
-if (Highcharts.seriesTypes.columnrange) {
-	Highcharts.wrap(Highcharts.seriesTypes.columnrange.prototype, 'drawPoints', function (proceed) {
-		// Do not do this if the chart is not 3D
-		if (this.chart.is3d()) {		
-			var grouping = this.chart.options.plotOptions.column.grouping;
-			if (grouping !== undefined && !grouping) {			
-				this.group.attr({zIndex : (this.group.zIndex * 10)});
-			} 
-
-			// Set the border color to the fill color to provide a smooth edge
-			Highcharts.each(this.data, function (point) {
-				var c = point.options.borderColor || point.color || point.series.userOptions.borderColor || point.series.color;
-				point.options.borderColor = c;
-				point.borderColor = c;
-				point.pointAttr[''].stroke = c;
-			});	
-		}
-
-		proceed.apply(this, [].slice.call(arguments, 1));
-	});
-}
-
-Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
+function draw3DPoints(proceed) {
 	// Do not do this if the chart is not 3D
 	if (this.chart.is3d()) {		
 		var grouping = this.chart.options.plotOptions.column.grouping;
@@ -900,11 +885,19 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'drawPoints', function 
 			point.options.borderColor = c;
 			point.borderColor = c;
 			point.pointAttr[''].stroke = c;
+			// same bordercolor on hover and select
+			point.pointAttr.hover.stroke = c;
+			point.pointAttr.select.stroke = c;
 		});	
 	}
 
 	proceed.apply(this, [].slice.call(arguments, 1));
-});
+}
+if (Highcharts.seriesTypes.columnrange) {
+	Highcharts.wrap(Highcharts.seriesTypes.columnrange.prototype, 'drawPoints', draw3DPoints);
+}
+
+Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'drawPoints', draw3DPoints);
 
 /*** 
 	EXTENSION FOR 3D CYLINDRICAL COLUMNS
@@ -1007,6 +1000,10 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 			translateY : round(sin(angle) * series.options.slicedOffset * cos(alpha * deg2rad))
 		};
 	});
+});
+
+Highcharts.wrap(Highcharts.seriesTypes.pie.prototype.pointClass.prototype, 'haloPath', function (proceed) {
+	return this.series.chart.is3d() ? [] : proceed.call(this);
 });
 
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (proceed) {

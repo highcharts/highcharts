@@ -29,8 +29,9 @@ $(function () {
                 viewDistance: 5,
 
                 frame: {
-                    bottom: { size: 1, color: '#E0E0E0' },
-                    back: { size: 1, color: '#E0E0E0' }
+                    bottom: { size: 1, color: 'rgba(0,0,0,0.02)' },
+                    back: { size: 1, color: 'rgba(0,0,0,0.04)' },
+                    side: { size: 1, color: 'rgba(0,0,0,0.06)' }
                 }
             }
         },
@@ -94,7 +95,7 @@ $(function () {
 
                 // Run alpha
                 newAlpha = alpha + (e.pageY - posY) / sensitivity;
-                newAlpha = Math.min(90, Math.max(0, newAlpha));
+                newAlpha = Math.min(100, Math.max(-100, newAlpha));
                 chart.options.chart.options3d.alpha = newAlpha;
 
                 chart.redraw(false);

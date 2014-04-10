@@ -25,7 +25,7 @@ $(function () {
                 ['Bananas', 8],
                 ['Kiwi', 3],
                 ['Mixed nuts', 1],
-                ['Oranges', 5],
+                ['Oranges', 6],
                 ['Apples', 8],
                 ['Pears', 4], 
                 ['Clementines', 4],

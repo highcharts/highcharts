@@ -42,7 +42,7 @@ $(function() {
                      radialGradient: { cx: 0.4, cy: 0.3, r: 0.7 },
                      stops: [
                          [0, 'rgba(255,255,255,0.5)'],
-                         [1, 'rgba(69,114,167,0.5)']
+                         [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.5).get('rgba')]
                      ]
                  }
             }
@@ -68,7 +68,7 @@ $(function() {
                      radialGradient: { cx: 0.4, cy: 0.3, r: 0.7 },
                      stops: [
                          [0, 'rgba(255,255,255,0.5)'],
-                         [1, 'rgba(170,70,67,0.5)']
+                         [1, Highcharts.Color(Highcharts.getOptions().colors[1]).setOpacity(0.5).get('rgba')]
                      ]
                  }
             }
