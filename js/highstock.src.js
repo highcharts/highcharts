@@ -1373,7 +1373,7 @@ defaultOptions = {
 		// verticalAlign: 'top',
 		// y: null,
 		style: {
-			color: '#274b6d',//#3E576F',
+			color: '#333333', // docs
 			fontSize: '18px'
 		}
 
@@ -1514,8 +1514,9 @@ defaultOptions = {
 			padding: '5px'
 		},*/
 		itemStyle: {			
-			color: '#274b6d',
-			fontSize: '12px'
+			color: '#333333', // docs
+			fontSize: '12px',
+			fontWeight: 'bold' // docs
 		},
 		itemHoverStyle: {
 			//cursor: 'pointer', removed as of #601
@@ -6049,7 +6050,7 @@ Highcharts.PlotLineOrBand.prototype = {
 			color = options.color,
 			zIndex = options.zIndex,
 			events = options.events,
-			attribs,
+			attribs = {},
 			renderer = axis.chart.renderer;
 
 		// logarithmic conversion
@@ -6076,9 +6077,9 @@ Highcharts.PlotLineOrBand.prototype = {
 			to = mathMin(to, axis.max + halfPointRange);
 			
 			path = axis.getPlotBandPath(from, to, options);
-			attribs = {
-				fill: color
-			};
+			if (color) {
+				attribs.fill = color;
+			}
 			if (options.borderWidth) {
 				attribs.stroke = options.borderColor;
 				attribs['stroke-width'] = options.borderWidth;
@@ -6136,17 +6137,20 @@ Highcharts.PlotLineOrBand.prototype = {
 
 			// add the SVG element
 			if (!label) {
+				attribs = {
+					align: optionsLabel.textAlign || optionsLabel.align,
+					rotation: optionsLabel.rotation
+				};
+				if (defined(zIndex)) {
+					attribs.zIndex = zIndex;
+				}
 				plotLine.label = label = renderer.text(
 						optionsLabel.text,
 						0,
 						0,
 						optionsLabel.useHTML
 					)
-					.attr({
-						align: optionsLabel.textAlign || optionsLabel.align,
-						rotation: optionsLabel.rotation,
-						zIndex: zIndex
-					})
+					.attr(attribs)
 					.css(optionsLabel.style)
 					.add();
 			}
@@ -21361,7 +21365,8 @@ Highcharts.StockChart = function (options, callback) {
 
 		lineOptions = {
 
-			marker: { // docs: enabled auto
+			marker: {
+				enabled: false,
 				radius: 2
 			},
 			// gapSize: 0,

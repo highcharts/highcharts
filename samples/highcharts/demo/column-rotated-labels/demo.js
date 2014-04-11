@@ -1,35 +1,16 @@
 $(function () {
         $('#container').highcharts({
             chart: {
-                type: 'column',
-                margin: [ 50, 50, 100, 80]
+                type: 'column'
             },
             title: {
-                text: 'World\'s largest cities per 2008'
+                text: 'World\'s largest cities per 2014'
+            },
+            subtitle: {
+                text: 'Source: <a href="http://en.wikipedia.org/wiki/List_of_cities_proper_by_population">Wikipedia</a>'
             },
             xAxis: {
-                categories: [
-                    'Tokyo',
-                    'Jakarta',
-                    'New York',
-                    'Seoul',
-                    'Manila',
-                    'Mumbai',
-                    'Sao Paulo',
-                    'Mexico City',
-                    'Dehli',
-                    'Osaka',
-                    'Cairo',
-                    'Kolkata',
-                    'Los Angeles',
-                    'Shanghai',
-                    'Moscow',
-                    'Beijing',
-                    'Buenos Aires',
-                    'Guangzhou',
-                    'Shenzhen',
-                    'Istanbul'
-                ],
+                type: 'category',
                 labels: {
                     rotation: -45,
                     align: 'right',
@@ -53,9 +34,28 @@ $(function () {
             },
             series: [{
                 name: 'Population',
-                data: [34.4, 21.8, 20.1, 20, 19.6, 19.5, 19.1, 18.4, 18,
-                    17.3, 16.8, 15, 14.7, 14.5, 13.3, 12.8, 12.4, 11.8,
-                    11.7, 11.2],
+                data: [
+                    ['Shanghai', 23.7],
+                    ['Lagos', 16,1],
+                    ['Instanbul', 14.2],
+                    ['Karachi', 14.0],
+                    ['Mumbai', 12.5],
+                    ['Moscow', 12.1],
+                    ['São Paulo', 11.8],
+                    ['Beijing', 11.7],
+                    ['Guangzhou', 11.1],
+                    ['Delhi', 11.1],
+                    ['Shenzhen', 10.5],
+                    ['Seoul', 10.4],
+                    ['Jakarta', 10.0],
+                    ['Kinshasa', 9.3],
+                    ['Tianjin', 9.3],
+                    ['Tokyo', 9.0],
+                    ['Cairo', 8.9],
+                    ['Dhaka', 8.9],
+                    ['Mexico City', 8.9],
+                    ['Lima', 8.9]
+                ],
                 dataLabels: {
                     enabled: true,
                     rotation: -90,

@@ -5,6 +5,7 @@
 // 1 - set default options
 defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	dataLabels: {
+		format: '{point.z}', // docs?
 		inside: true,
 		style: {
 			color: 'white',

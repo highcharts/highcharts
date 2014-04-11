@@ -91,6 +91,46 @@ function getResources() {
 		<title>Highstock Example</title>
 		<?php echo getFramework(FRAMEWORK); ?>
 		<?php echo getResources(); ?>
+		
+
+		<script type="text/javascript">
+			$(function() {
+
+				$('#version').html(Highcharts.product + ' ' + Highcharts.version);
+
+				if (window.parent.frames[0]) {
+					var contentDoc = window.parent.frames[0].document;
+
+					// Highlight the current sample in the left
+					var li = contentDoc.getElementById('li<?php echo $i ?>');
+					if (li) {
+						// previous
+						if (contentDoc.currentLi) {
+							$(contentDoc.currentLi).removeClass('hilighted');
+							$(contentDoc.currentLi).addClass('visited');
+						}
+
+						$('html,body', contentDoc).animate({
+							scrollTop: $(li).offset().top - 300
+						},'slow');
+
+						contentDoc.currentLi = li;
+						$(li).addClass('hilighted');
+					}
+
+					// add the next button
+					if (contentDoc.getElementById('i<?php echo $next ?>')) {
+						
+						$('#next').click(function() {
+							next();
+						});
+						$('#next')[0].disabled = false;
+					}
+
+				}
+
+			});
+		</script>
 		<script>
 
 		function next() {
@@ -199,45 +239,6 @@ function getResources() {
 		<style type="text/css">
 			<?php @include("$fullpath/demo.css"); ?>
 		</style>
-
-		<script type="text/javascript">
-			$(function() {
-
-				$('#version').html(Highcharts.product + ' ' + Highcharts.version);
-
-				if (window.parent.frames[0]) {
-					var contentDoc = window.parent.frames[0].document;
-
-					// Highlight the current sample in the left
-					var li = contentDoc.getElementById('li<?php echo $i ?>');
-					if (li) {
-						// previous
-						if (contentDoc.currentLi) {
-							$(contentDoc.currentLi).removeClass('hilighted');
-							$(contentDoc.currentLi).addClass('visited');
-						}
-
-						$('html,body', contentDoc).animate({
-							scrollTop: $(li).offset().top - 300
-						},'slow');
-
-						contentDoc.currentLi = li;
-						$(li).addClass('hilighted');
-					}
-
-					// add the next button
-					if (contentDoc.getElementById('i<?php echo $next ?>')) {
-						
-						$('#next').click(function() {
-							next();
-						});
-						$('#next')[0].disabled = false;
-					}
-
-				}
-
-			});
-		</script>
 
 		<style type="text/css">
 			.top-bar {

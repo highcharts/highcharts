@@ -1373,7 +1373,7 @@ defaultOptions = {
 		// verticalAlign: 'top',
 		// y: null,
 		style: {
-			color: '#274b6d',//#3E576F',
+			color: '#333333', // docs
 			fontSize: '18px'
 		}
 
@@ -1514,8 +1514,9 @@ defaultOptions = {
 			padding: '5px'
 		},*/
 		itemStyle: {			
-			color: '#274b6d',
-			fontSize: '12px'
+			color: '#333333', // docs
+			fontSize: '12px',
+			fontWeight: 'bold' // docs
 		},
 		itemHoverStyle: {
 			//cursor: 'pointer', removed as of #601
@@ -16630,6 +16631,7 @@ seriesTypes.mappoint = extendClass(seriesTypes.scatter, {
 // 1 - set default options
 defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	dataLabels: {
+		format: '{point.z}', // docs?
 		inside: true,
 		style: {
 			color: 'white',

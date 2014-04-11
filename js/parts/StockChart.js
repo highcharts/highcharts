@@ -14,7 +14,8 @@ Highcharts.StockChart = function (options, callback) {
 
 		lineOptions = {
 
-			marker: { // docs: enabled auto
+			marker: {
+				enabled: false,
 				radius: 2
 			},
 			// gapSize: 0,

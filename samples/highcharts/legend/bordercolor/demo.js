@@ -3,7 +3,8 @@ $(function () {
         
         legend: {
             backgroundColor: '#FCFFC5',
-            borderColor: '#C98657'
+            borderColor: '#C98657',
+            borderWidth: 1
         },
         
         xAxis: {
