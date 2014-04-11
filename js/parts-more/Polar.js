@@ -370,7 +370,10 @@
 							}
 						)
 					};
-					this.toXY(point); // provide correct plotX, plotY for tooltip
+					// Provide correct plotX, plotY for tooltip
+					this.toXY(point); 
+					point.tooltipPos = [point.plotX, point.plotY];
+					point.ttBelow = point.plotY > center[1];
 				}
 			}
 		});
