@@ -21403,8 +21403,6 @@ Highcharts.StockChart = function (options, callback) {
 		opposite = pick(yAxisOptions.opposite, true);
 		return merge({ // defaults
 			labels: {
-				align: opposite ? 'right' : 'left',
-				x: opposite ? -2 : 2,
 				y: -2
 			},
 			opposite: opposite,
@@ -21483,6 +21481,20 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 	this.pinchX = this.pinchHor = pinchType.indexOf('x') !== -1;
 	this.pinchY = this.pinchVert = pinchType.indexOf('y') !== -1;
 	this.hasZoom = this.hasZoom || this.pinchHor || this.pinchVert;
+});
+
+// Override the automatic label alignment so that the first Y axis' labels
+// are drawn on top of the grid line, and subsequent axes are drawn outside
+wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
+	if (this.chart.options._stock && this.coll === 'yAxis') {
+		if (inArray(this, this.chart.yAxis) === 0) {
+			if (this.options.labels.x === 15) { // default
+				this.options.labels.x = 0;
+			}
+			return 'right';
+		}
+	}
+	return proceed.call(this);
 });
 
 // Override getPlotLinePath to allow for multipane charts
