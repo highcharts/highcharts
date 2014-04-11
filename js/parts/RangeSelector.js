@@ -12,15 +12,24 @@ extend(defaultOptions, {
 			fill: '#f7f7f7',
 			padding: 2,
 			r: 0,
-			stroke: '#68A',
+			'stroke-width': 0,
 			style: {
-				color: '#444'
+				color: '#444',
+				fontWeight: 'normal'
 			},
-			zIndex: 7 // #484, #852
-		//	states: {
-		//		hover: {},
-		//		select: {}
-		// }
+			zIndex: 7, // #484, #852
+			states: {
+				hover: {
+					fill: '#e7e7e7'
+				},
+				select: {
+					fill: '#e7f0f9',
+					style: {
+						color: 'black',
+						fontWeight: 'bold'
+					}
+				}
+			}
 		},
 		inputPosition: {
 			align: 'right'
@@ -371,7 +380,7 @@ RangeSelector.prototype = {
 		// Create the text label
 		this[name + 'Label'] = label = renderer.label(lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'], this.inputGroup.offset)
 			.attr({
-				padding: 1
+				padding: 2
 			})
 			.css(merge(chartStyle, options.labelStyle))
 			.add(inputGroup);
@@ -381,14 +390,15 @@ RangeSelector.prototype = {
 		// bring in the HTML input.
 		this[name + 'DateBox'] = dateBox = renderer.label('', inputGroup.offset)
 			.attr({
-				padding: 1,
+				padding: 2,
 				width: options.inputBoxWidth || 90,
-				height: options.inputBoxHeight || 16,
+				height: options.inputBoxHeight || 17, // docs
 				stroke: options.inputBoxBorderColor || 'silver',
 				'stroke-width': 1
 			})
 			.css(merge({
-				textAlign: 'center'
+				textAlign: 'center',
+				color: '#444'
 			}, chartStyle, options.inputStyle))
 			.on('click', function () {
 				rangeSelector[name + 'Input'].focus();

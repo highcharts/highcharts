@@ -3200,18 +3200,24 @@ SVGRenderer.prototype = {
 			normalStyle,
 			hoverStyle,
 			pressedStyle,
-			disabledStyle;
+			disabledStyle,
+			verticalGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
 
 		// Normal state - prepare the attributes
 		normalState = merge({
-			'stroke-width': 0,
+			'stroke-width': 1,
 			stroke: '#CCCCCC',
-			fill: defaultOptions.colors[0],
+			fill: {
+				linearGradient: verticalGradient,
+				stops: [
+					[0, '#FEFEFE'],
+					[1, '#F6F6F6']
+				]
+			},
 			r: 2,
-			padding: 8,
+			padding: 5,
 			style: {
-				color: 'white',
-				fontWeight: 'normal'
+				color: 'black'
 			}
 		}, normalState);
 		normalStyle = normalState.style;
@@ -3220,9 +3226,12 @@ SVGRenderer.prototype = {
 		// Hover state
 		hoverState = merge(normalState, {
 			stroke: '#68A',
-			fill: '#e7e7e7',
-			style: {
-				color: '#444'
+			fill: {
+				linearGradient: verticalGradient,
+				stops: [
+					[0, '#FFF'],
+					[1, '#ACF']
+				]
 			}
 		}, hoverState);
 		hoverStyle = hoverState.style;
@@ -3231,10 +3240,12 @@ SVGRenderer.prototype = {
 		// Pressed state
 		pressedState = merge(normalState, {
 			stroke: '#68A',
-			fill: '#e7f0f9',
-			style: {
-				color: 'black',
-				fontWeight: 'bold'
+			fill: {
+				linearGradient: verticalGradient,
+				stops: [
+					[0, '#9BD'],
+					[1, '#CDF']
+				]
 			}
 		}, pressedState);
 		pressedStyle = pressedState.style;
@@ -3243,8 +3254,7 @@ SVGRenderer.prototype = {
 		// Disabled state
 		disabledState = merge(normalState, {
 			style: {
-				color: '#CCC',
-				fontWeight: 'normal'
+				color: '#CCC'
 			}
 		}, disabledState);
 		disabledStyle = disabledState.style;
@@ -20591,15 +20601,24 @@ extend(defaultOptions, {
 			fill: '#f7f7f7',
 			padding: 2,
 			r: 0,
-			stroke: '#68A',
+			'stroke-width': 0,
 			style: {
-				color: '#444'
+				color: '#444',
+				fontWeight: 'normal'
 			},
-			zIndex: 7 // #484, #852
-		//	states: {
-		//		hover: {},
-		//		select: {}
-		// }
+			zIndex: 7, // #484, #852
+			states: {
+				hover: {
+					fill: '#e7e7e7'
+				},
+				select: {
+					fill: '#e7f0f9',
+					style: {
+						color: 'black',
+						fontWeight: 'bold'
+					}
+				}
+			}
 		},
 		inputPosition: {
 			align: 'right'
@@ -20950,7 +20969,7 @@ RangeSelector.prototype = {
 		// Create the text label
 		this[name + 'Label'] = label = renderer.label(lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'], this.inputGroup.offset)
 			.attr({
-				padding: 1
+				padding: 2
 			})
 			.css(merge(chartStyle, options.labelStyle))
 			.add(inputGroup);
@@ -20960,14 +20979,15 @@ RangeSelector.prototype = {
 		// bring in the HTML input.
 		this[name + 'DateBox'] = dateBox = renderer.label('', inputGroup.offset)
 			.attr({
-				padding: 1,
+				padding: 2,
 				width: options.inputBoxWidth || 90,
-				height: options.inputBoxHeight || 16,
+				height: options.inputBoxHeight || 17, // docs
 				stroke: options.inputBoxBorderColor || 'silver',
 				'stroke-width': 1
 			})
 			.css(merge({
-				textAlign: 'center'
+				textAlign: 'center',
+				color: '#444'
 			}, chartStyle, options.inputStyle))
 			.on('click', function () {
 				rangeSelector[name + 'Input'].focus();
