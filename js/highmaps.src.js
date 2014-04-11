@@ -17827,7 +17827,7 @@ extend(Point.prototype, {
 				// series' state options is disabled
 				(stateOptions[state] && stateOptions[state].enabled === false) ||
 				// general point marker's state options is disabled
-				(state && (stateDisabled || (normalDisabled && !markerStateOptions.enabled))) ||
+				(state && (stateDisabled || (normalDisabled && markerStateOptions.enabled === false))) ||
 				// individual point marker's state options is disabled
 				(state && pointMarker.states && pointMarker.states[state] && pointMarker.states[state].enabled === false) // #1610
 
