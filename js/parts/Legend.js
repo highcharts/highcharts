@@ -741,10 +741,10 @@ if (/Trident\/7\.0/.test(userAgent) || isFirefox) {
 				}
 			};
 
-		if (legend.chart.renderer.forExport) {
-			runPositionItem();
-		} else {
-			setTimeout(runPositionItem);
-		}
+		// Do it now, for export and to get checkbox placement
+		runPositionItem();
+		
+		// Do it after to work around the core issue
+		setTimeout(runPositionItem);
 	});
 }
