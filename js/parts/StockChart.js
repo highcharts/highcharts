@@ -528,9 +528,19 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
  */
 wrap(Series.prototype, 'render', function (proceed) {
 	if (this.isCartesian) {
-		this.clipBox = merge(this.chart.clipBox);
-		this.clipBox.width = this.xAxis.len;
-		this.clipBox.height = this.yAxis.len;
+		// First render, initial clip box
+		if (!this.clipBox) {
+			this.clipBox = merge(this.chart.clipBox);
+			this.clipBox.width = this.xAxis.len;
+			this.clipBox.height = this.yAxis.len;
+
+		// On redrawing, resizing etc, update the clip rectangle
+		} else if (this.chart[this.sharedClipKey]) {
+			this.chart[this.sharedClipKey].attr({
+				width: this.xAxis.len,
+				height: this.yAxis.len
+			});
+		}
 	}
 	proceed.call(this);
 });
