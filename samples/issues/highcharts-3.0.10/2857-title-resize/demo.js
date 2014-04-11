@@ -1,7 +1,7 @@
 $(function () {
     $('#container').highcharts({
         title: {
-            text: 'Browser market shares at a specific website, 2010Browser market shares at a specific website, 2010Browser market shares at a specific website, 2010Browser market shares at a specific website, 2010Browser market shares at a specific website, 2010'
+            text: 'Browser market shares at a specific website, 2014Browser market shares at a specific website, 2014Browser market shares at a specific website, 2014Browser market shares at a specific website, 2014Browser market shares at a specific website, 2014'
         },
         series: [{
             type: 'pie',

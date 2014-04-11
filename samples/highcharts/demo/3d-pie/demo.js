@@ -9,7 +9,7 @@ $(function () {
             }
         },
         title: {
-            text: 'Browser market shares at a specific website, 2010'
+            text: 'Browser market shares at a specific website, 2014'
         },
         tooltip: {
             pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
