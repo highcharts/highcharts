@@ -1,6 +1,8 @@
 $(function () {
     $('#container').highcharts({
-        
+        chart: {
+            marginTop: 5
+        },
         title: {
             text: 'Flats sold per month'
         },
