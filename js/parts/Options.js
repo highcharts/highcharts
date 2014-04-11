@@ -109,7 +109,7 @@ defaultOptions = {
 		// verticalAlign: 'top',
 		// y: null,
 		style: {
-			color: '#4d759e'
+			color: '#555555' // docs
 		}
 	},
 

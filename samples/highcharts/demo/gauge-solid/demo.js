@@ -20,6 +20,10 @@ $(function () {
                 shape: 'arc'
             }
 	    },
+
+	    tooltip: {
+	    	enabled: false
+	    },
 	       
 	    // the value axis
 	    yAxis: {

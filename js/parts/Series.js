@@ -848,6 +848,8 @@ Series.prototype = {
 				clipRect.animate({
 					width: chart.plotSizeX
 				}, animation);
+			}
+			if (chart[sharedClipKey + 'm']) {
 				chart[sharedClipKey + 'm'].animate({
 					width: chart.plotSizeX + 99
 				}, animation);

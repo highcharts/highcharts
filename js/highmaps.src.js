@@ -1386,7 +1386,7 @@ defaultOptions = {
 		// verticalAlign: 'top',
 		// y: null,
 		style: {
-			color: '#4d759e'
+			color: '#555555' // docs
 		}
 	},
 
@@ -5050,7 +5050,9 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			// used in attr and animation to update the clipping of all members
 			updateClipping: function () {
 				each(clipRect.members, function (member) {
-					member.css(clipRect.getCSS(member));
+					if (member.element) { // Deleted series, like in stock/members/series-remove demo. Should be removed from members, but this will do.
+						member.css(clipRect.getCSS(member));
+					}
 				});
 			}
 		});
@@ -12757,6 +12759,8 @@ Series.prototype = {
 				clipRect.animate({
 					width: chart.plotSizeX
 				}, animation);
+			}
+			if (chart[sharedClipKey + 'm']) {
 				chart[sharedClipKey + 'm'].animate({
 					width: chart.plotSizeX + 99
 				}, animation);

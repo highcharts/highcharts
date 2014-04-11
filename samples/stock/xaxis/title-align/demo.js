@@ -11,7 +11,8 @@ $(function() {
 	    yAxis: {
 	    	title: {
 	    		text: 'USD to EUR',
-	    		align: 'high'
+	    		align: 'high',
+	    		textAlign: 'left'
 	    	}
 	    },
 	    

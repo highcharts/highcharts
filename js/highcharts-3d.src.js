@@ -893,6 +893,7 @@ function draw3DPoints(proceed) {
 
 	proceed.apply(this, [].slice.call(arguments, 1));
 }
+
 if (Highcharts.seriesTypes.columnrange) {
 	Highcharts.wrap(Highcharts.seriesTypes.columnrange.prototype, 'drawPoints', draw3DPoints);
 }

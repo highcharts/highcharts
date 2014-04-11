@@ -609,7 +609,9 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			// used in attr and animation to update the clipping of all members
 			updateClipping: function () {
 				each(clipRect.members, function (member) {
-					member.css(clipRect.getCSS(member));
+					if (member.element) { // Deleted series, like in stock/members/series-remove demo. Should be removed from members, but this will do.
+						member.css(clipRect.getCSS(member));
+					}
 				});
 			}
 		});
