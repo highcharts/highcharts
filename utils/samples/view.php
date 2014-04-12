@@ -91,7 +91,8 @@ function getResources() {
 		<title>Highstock Example</title>
 		<?php echo getFramework(FRAMEWORK); ?>
 		<?php echo getResources(); ?>
-		
+		<link rel="stylesheet" type="text/css" href="style.css"/>
+
 
 		<script type="text/javascript">
 			$(function() {
@@ -126,8 +127,39 @@ function getResources() {
 						});
 						$('#next')[0].disabled = false;
 					}
-
 				}
+
+				// Activate view source button
+				$('#view-source').bind('change', function () {
+					var checked = $(this).attr('checked');
+					
+					$('#source-box').css({
+						width: checked ? '50%' : 'auto',
+						'float': checked ? 'left' : 'none'
+					});
+					$('#main-content').css({
+						width: checked ? '50%' : 'auto',
+						'float': checked ? 'right' : 'none'
+					});
+					$.each(Highcharts.charts, function () {
+						this.reflow();
+					});
+
+					if (checked) {
+						$('<iframe>').appendTo('#source-box')
+							.attr({
+								src: 'view-source.php?path=<?php echo $path ?>'
+							})
+							.css({
+								width: '100%',
+								border: 'none',
+								borderRight: '1px solid gray',
+								height: $(document).height() - 80
+							});
+					} else {
+						$('#source-box').html('');
+					}
+				});
 
 			});
 		</script>
@@ -246,10 +278,8 @@ function getResources() {
 				font-family: Arial, sans-serif;
 				font-size: 0.8em;
 				padding: 0.5em;
-				height: 3.5em;
-				background: #57544A;
-				background: -webkit-linear-gradient(top, #57544A, #37342A);
-				background: -moz-linear-gradient(top, #57544A, #37342A);
+				height: 50px;
+				background: #34343e;
 				box-shadow: 0px 0px 8px #888;
 			}
 			li, a, p, div {
@@ -279,6 +309,8 @@ function getResources() {
 				</form>
 				<button id="next" disabled="disabled">Next</button>
 				<button id="reload" style="margin-left: 1em" onclick="location.reload()">Reload</button>
+				<input id="view-source" type="checkbox" />
+				<label for="view-source">View source</label>
 				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
 					href="compare-view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>">Compare</a>
 				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
@@ -293,17 +325,18 @@ function getResources() {
 				<label for="record" title="Record calls to Pointer mouse events that can be added to test.js for automatic testing of tooltip and other mouse operations">Record mouse</label>
 			</div>
 		</div>
+		<div id="source-box"></div>
+		<div id="main-content">
+			<div style="margin: 1em">
 
-		<div style="margin: 1em">
-
-		<?php echo $html ?>
+			<?php echo $html ?>
+			</div>
+			<hr/>
+			<ul>
+				<li>Mobile testing: <a href="http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft">http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft</a></li>
+			</ul>
+			<pre id="recording" style="padding: 1em"></pre>
 		</div>
-		<hr/>
-		<ul>
-			<li>Mobile testing: <a href="http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft">http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft</a></li>
-		</ul>
-		<pre id="recording" style="padding: 1em"></pre>
-
 	</body>
 </html>
 <?php

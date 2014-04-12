@@ -17,6 +17,8 @@
 		
 		<script src="http://code.jquery.com/jquery-1.7.js"></script>
 		<script src="http://ejohn.org/files/jsdiff.js"></script>
+		<link rel="stylesheet" type="text/css" href="style.css"/>
+
 		
 		<script type="text/javascript">
 			$(function() {
@@ -350,9 +352,7 @@
 				font-size: 0.8em; 
 				padding: 0.5em; 
 				height: 3.5em;
-				background: #57544A;
-				background: -webkit-linear-gradient(top, #57544A, #37342A); 
-				background: -moz-linear-gradient(top, #57544A, #37342A);
+				background: #34343e;
 				box-shadow: 0px 0px 8px #888;
 			}
 			
