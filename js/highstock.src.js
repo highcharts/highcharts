@@ -19564,8 +19564,8 @@ extend(defaultOptions, {
 		buttonBorderWidth: 1,
 		minWidth: 6,
 		rifleColor: '#666',
-		trackBackgroundColor: '#f4f4f4', // docs: new default
-		trackBorderColor: '#f4f4f4', // docs: new default
+		trackBackgroundColor: '#eeeeee', // docs: new default
+		trackBorderColor: '#eeeeee', // docs: new default
 		trackBorderWidth: 1,
 		// trackBorderRadius: 0
 		liveRedraw: hasSVG && !isTouchDevice
@@ -19905,13 +19905,18 @@ Scroller.prototype = {
 				scrollerLeft, outlineTop, // left
 				L,
 				navigatorLeft + zoomedMin + halfOutline, outlineTop, // upper left of zoomed range
-				navigatorLeft + zoomedMin + halfOutline, outlineTop + outlineHeight - scrollbarHeight, // lower left of z.r.
-				M,
-				navigatorLeft + zoomedMax - halfOutline, outlineTop + outlineHeight - scrollbarHeight, // lower right of z.r.
+				navigatorLeft + zoomedMin + halfOutline, outlineTop + outlineHeight, // lower left of z.r.
+				L,
+				navigatorLeft + zoomedMax - halfOutline, outlineTop + outlineHeight, // lower right of z.r.
 				L,
 				navigatorLeft + zoomedMax - halfOutline, outlineTop, // upper right of z.r.
 				scrollerLeft + scrollerWidth, outlineTop // right
-			]});
+			].concat(navigatorOptions.maskInside ? [
+				M,
+				navigatorLeft + zoomedMin + halfOutline, outlineTop, // upper left of zoomed range
+				L,
+				navigatorLeft + zoomedMax - halfOutline, outlineTop // upper right of z.r.
+			] : [])});
 			// draw handles
 			scroller.drawHandle(zoomedMin + halfOutline, 0);
 			scroller.drawHandle(zoomedMax + halfOutline, 1);
@@ -21440,7 +21445,10 @@ Highcharts.StockChart = function (options, callback) {
 			enabled: true
 		},
 		title: {
-			text: null
+			text: null,
+			style: {
+				fontSize: '16px' // docs
+			}
 		},
 		tooltip: {
 			shared: true,
