@@ -1646,7 +1646,7 @@
     </target>
 
     <!-- Copy the folders and content of /samples and /studies to higcharts.com.site -->
-    <target name="copy-to-site" depends="set.properties" description="copy files from this repo to repository highcharts.com.site">
+    <target name="copy-to-site" depends="set.properties" description="Copy files from this repo to repository highcharts.com.site">
         <property file="git-ignore-me.properties"/>
         <copy todir="${highcharts.site.dir}/samples">
             <fileset dir="samples"/>
@@ -1662,7 +1662,10 @@
         </copy>
         <copy todir="${highcharts.site.dir}/lib">
             <fileset dir="lib"/>
-        </copy>    
+        </copy>
+    </target>
+
+    <target name="copy-to-download-builder" depends="set.properties" description="Copy parts files from this repo to repository highcharts.com.site">
         <!-- files for downloadbuilder -->            
         <copy file="js/parts.js" tofile="${highcharts.site.dir}/joomla/templates/highsoft_colorful/js/parts.js"/>
         <!-- copy the highstock partfiles , these include also highcharts partfiles -->
