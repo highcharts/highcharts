@@ -23,7 +23,8 @@ Highcharts.theme = {
 		},
 		style: {
 			fontFamily: "'Unica One', sans-serif"
-		}
+		},
+		plotBorderColor: '#606063'
 	},
 	title: {
 		style: {
