@@ -1,25 +1,130 @@
-/*
-TODO before publish:
-- Consider smoothing of the temperature graph
-- Check VML
-*/
 
 
 var chart;
+
+// Parallel arrays for the chart data, these are populated as the XML/JSON file 
+// is loaded
+var symbols = [],
+	precipitations = [],
+	windDirections = [],
+	windDirectionNames = [],
+	windSpeeds = [],
+	windSpeedNames = [],
+	temperatures = [],
+	pressures = [];
+
+/**
+ * Create wind speed symbols for the Beaufort wind scale. The symbols are rotated
+ * around the zero centerpoint.
+ */
+function windArrow (name) {
+	var level, 
+		path;
+
+	// The stem and the arrow head
+	path = [
+		'M', 0, 7, // base of arrow
+		'L', -1.5, 7,
+		0, 10,
+		1.5, 7,
+		0, 7,
+		0, -10 // top
+	];
+
+	level = $.inArray(name, ['Calm', 'Light air', 'Light breeze', 'Gentle breeze', 'Moderate breeze',
+		'Fresh breeze', 'Strong breeze', 'Near gale', 'Gale', 'Strong gale', 'Storm',
+		'Violent storm', 'Hurricane']);
+
+	if (level === 0) {
+		path = []; // TODO: circle
+	}
+
+	if (level == 2) {
+		path.push('M', 0, -8, 'L', 4, -8); // short line
+	} else if (level >= 3) {
+		path.push(0, -10, 7, -10); // long line
+	}
+
+	if (level == 4) {
+		path.push('M', 0, -7, 'L', 4, -7);
+	} else if (level >= 5) {
+		path.push('M', 0, -7, 'L', 7, -7);
+	}
+
+	if (level == 5) {
+		path.push('M', 0, -4, 'L', 4, -4);
+	} else if (level >= 6) {
+		path.push('M', 0, -4, 'L', 7, -4);
+	}
+
+	if (level == 7) {
+		path.push('M', 0, -1, 'L', 4, -1);
+	} else if (level >= 8) {
+		path.push('M', 0, -1, 'L', 7, -1);
+	}
+
+	return path;
+}
+
+/**
+ * Function to smooth the temperature line. The original data provides only whole degrees,
+ * which makes the line graph look jagged. So we apply a running mean on it, but preserve
+ * the unaltered value in the tooltip.
+ */
+function smoothLine (data) {
+	var i = data.length,
+		sum,
+		value;
+
+	while (i--) {
+		data[i].value = value = data[i].y; // preserve value for tooltip
+
+		// Set the smoothed value to the average of the closest points, but don't allow
+		// it to differ more than 0.5 degrees from the given value
+		sum = (data[i - 1] || data[i]).y + value + (data[i + 1] || data[i]).y;
+		data[i].y = Math.max(value - 0.5, Math.min(sum / 3, value + 0.5));
+	}
+}
+
+/**
+ * Callback function that is called from Highcharts on hovering each point and returns
+ * HTML for the tooltip.
+ */
+function tooltipFormatter() {
+
+	// Create the header with reference to the time interval
+	var index = this.points[0].point.index,
+		ret = '<small>' + Highcharts.dateFormat('%A, %b %e, %H:%M', this.x) + '-' +
+			Highcharts.dateFormat('%H:%M', this.x + 36e5) + '</small>';
+
+	ret += '<table>';
+
+	// Add all series
+	Highcharts.each(this.points, function (point) {
+		var series = point.series;
+		ret += '<tr><td style="color:'+ series.color + '">' + series.name +
+			': </td><td style="white-space:nowrap">' + Highcharts.pick(point.point.value, point.y) + 
+			series.options.tooltip.valueSuffix + '</td></tr>';
+	});
+
+	// Add wind
+	ret += '<tr><td style="vertical-align: top">Wind</td><td style="white-space:nowrap">' + windDirectionNames[index] +
+		'<br>' + windSpeedNames[index] + ' (' + 
+		Highcharts.numberFormat(windSpeeds[index], 1) + ' m/s)</td></tr>';
+
+	// Close
+	ret += '</table>';
+
+
+	return ret;
+}
+
+
 $(function() {
-	// Parallel arrays for the chart data
-	var symbols = [],
-		precipitations = [],
-		windDirections = [],
-		windSpeeds = [],
-		windSpeedNames = [],
-		temperatures = [],
-		pressures = [];
+	
 		
 	// Other data
-	var locationName,
-		locationCountry,
-		pointStart,
+	var pointStart,
 		tooltips;
 		
 	// Sprites as laid out at http://om.yr.no/forklaring/symbol/
@@ -67,7 +172,7 @@ $(function() {
 		},
 		'05n': {
 			x: symbolSize,
-			y: 4 * symbolSize,
+			y: 4 * symbolSize
 		},
 		'18': {
 			x: 2 * symbolSize,
@@ -163,63 +268,12 @@ $(function() {
 		}
 	};
 
-	/**
-	 * Create wind speed symbols for the Beaufort wind scale. The symbols are rotated
-	 * around the x, y centerpoint.
-	 */
-	function windArrow (x, y, name) {
-		var level, 
-			path;
-
-		// The stem and the arrow head
-		path = [
-			'M', x, y + 7, // base of arrow
-			x - 1.5, y + 7,
-			x, y + 10,
-			x + 1.5, y + 7,
-			x, y + 7,
-			x, y - 10, // top
-		];
-
-		level = $.inArray(name, ['Calm', 'Light air', 'Light breeze', 'Gentle breeze', 'Moderate breeze',
-			'Fresh breeze', 'Strong breeze', 'Near gale', 'Gale', 'Strong gale', 'Storm',
-			'Violent storm', 'Hurricane']);
-
-		if (level === 0) {
-			path = []; // TODO: circle
-		}
-
-		if (level == 2) {
-			path.push('M', x, y - 8, x + 4, y - 8); // short line
-		} else if (level >= 3) {
-			path.push(x, y - 10, x + 7, y - 10); // long line
-		}
-
-		if (level == 4) {
-			path.push('M', x, y - 7, x + 4, y - 7);
-		} else if (level >= 5) {
-			path.push('M', x, y - 7, x + 7, y - 7);
-		}
-
-		if (level == 5) {
-			path.push('M', x, y - 4, x + 4, y - 4);
-		} else if (level >= 6) {
-			path.push('M', x, y - 4, x + 7, y - 4);
-		}
-
-		if (level == 7) {
-			path.push('M', x, y - 1, x + 4, y - 1);
-		} else if (level >= 8) {
-			path.push('M', x, y - 1, x + 7, y - 1);
-		}
-
-		return path;
-	}
+	
 	
 	/**
 	 * Create the chart. This function is called when the data file is loaded and parsed.
 	 */
-	function createChart() {
+	function createChart(xml) {
 		chart = new Highcharts.Chart({
     
             chart: {
@@ -227,16 +281,19 @@ $(function() {
                 marginBottom: 70,
                 marginRight: 40,
                 marginTop: 50,
-				plotBorderWidth: 1
+				plotBorderWidth: 1,
+				width: 800,
+				height: 310
             },
 			
 			title: {
-				text: 'Meteogram for '+ locationName +', '+ locationCountry,
+				text: 'Meteogram for '+ xml.location.name +', '+ xml.location.country,
 				align: 'left'
 			},
 			
 			credits: {
 				text: 'Forecast from <a href="http://yr.no">yr.no</a>',
+				href: xml.credit.link['@attributes'].url,
 				position: {
 					x: -40
 				}
@@ -245,32 +302,7 @@ $(function() {
 			tooltip: {
 				shared: true,
 				useHTML: true,
-				formatter: function () {
-
-					// Create the header with reference to the time interval
-					var index = this.points[0].point.index,
-						ret = '<small>' + Highcharts.dateFormat('%A, %b %e, %H:%M', this.x) + '-' +
-							Highcharts.dateFormat('%H:%M', this.x + 36e5) + '</small>';
-
-					ret += '<table>';
-
-					// Add all series
-					Highcharts.each(this.points, function (point) {
-						var series = point.series;
-						ret += '<tr><td style="color:'+ series.color + '">' + series.name +
-							': </td><td>' + point.y + series.options.tooltip.valueSuffix + '</td></tr>';
-					});
-
-					// Add wind
-					ret += '<tr><td>Wind speed</td><td>' + windSpeedNames[index] + ' (' + 
-						Highcharts.numberFormat(windSpeeds[index], 1) + ' m/s)</td></tr>';
-
-					// Close
-					ret += '</table>';
-
-
-					return ret;
-				}
+				formatter: tooltipFormatter
 			},
 			
             xAxis: [{ // Bottom X axis
@@ -444,7 +476,7 @@ $(function() {
         // Post-process the chart from the callback function
         function (chart) {
 			$.each(chart.series[0].data, function(i, point) {
-				var sprite;
+				var sprite, arrow, x, y;
 				
 				if (i % 2 === 0) {
 					// Draw the weather symbols on the temperature graph
@@ -458,8 +490,8 @@ $(function() {
 							570
 						)
 						.clip(chart.renderer.clipRect(
-							point.plotX + chart.plotLeft - 15 + sprite.x,
-							point.plotY + chart.plotTop - 30 + sprite.y,
+							Highcharts.svg ? point.plotX + chart.plotLeft - 15 + sprite.x : sprite.x,
+							Highcharts.svg ? point.plotY + chart.plotTop - 30 + sprite.y : sprite.y,
 							30,
 							30
 						))
@@ -472,13 +504,22 @@ $(function() {
 					
 					
 					// Draw the wind arrows
-					chart.renderer.path(
-						windArrow(point.plotX + chart.plotLeft + 7,	255, windSpeedNames[i])
-					)
-					.attr({
-						rotation: parseInt(windDirections[i], 10),
-						x: point.plotX + chart.plotLeft + 7, // rotation center
-						y: 255, // rotation center
+					x = point.plotX + chart.plotLeft + 7;
+					y = 255;
+					if (windSpeedNames[i] === 'Calm') {
+						arrow = chart.renderer.circle(x, y, 10).attr({
+							fill: 'none'
+						});
+					} else {
+						arrow = chart.renderer.path(
+							windArrow(windSpeedNames[i])
+						).attr({
+							rotation: parseInt(windDirections[i], 10),
+							translateX: x, // rotation center
+							translateY: y // rotation center
+						});
+					}
+					arrow.attr({
 						stroke: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black',
 						'stroke-width': 1.5,
 						zIndex: 5
@@ -529,43 +570,54 @@ $(function() {
 	* specific data format                           *
 	*************************************************/
 	if (!location.hash) {
-		//location.hash = 'http://www.yr.no/place/Norway/Sogn_og_Fjordane/Selje/Stadlandet//forecast_hour_by_hour.xml';
 		//location.hash = 'http://www.yr.no/place/Norway/Sogn_og_Fjordane/Vik/Voll/forecast_hour_by_hour.xml';
 		location.hash = 'http://www.yr.no/place/United_Kingdom/England/London/forecast_hour_by_hour.xml';
+
 	}
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?url=' + location.hash.substr(1) + '&callback=?', function (xml) {
+
+    	if (!xml || !xml.forecast) {
+    		$('#loading').html('<i class="fa fa-frown-o"></i> Failed loading data, please try again later');
+    		return;
+    	}
 
     	// The returned xml variable is a JavaScript representation of the provided XML, 
     	// generated on the server by running PHP simple_load_xml and converting it to 
     	// JavaScript by json_encode.
     	$.each(xml.forecast.tabular.time, function(i, time) {
 			// Get the times - only Safari can't parse ISO8601 so we need to do some replacements 
-			var from = time['@attributes'].from +' UTC';
+			var from = time['@attributes'].from +' UTC',
+				to = time['@attributes'].to +' UTC',
+				middle;
+
 			from = from.replace(/-/g, '/').replace('T', ' ');
 			from = Date.parse(from);
-			var to = time['@attributes'].to +' UTC';
 			to = to.replace(/-/g, '/').replace('T', ' ');
 			to = Date.parse(to);
-			var middle = (from + to) / 2;
+			middle = (from + to) / 2;
 			
 			if (to > pointStart + 4 * 24 * 3600 * 1000) {
 				return;
 			}
 			
 			// Populate the parallel arrays
-			symbols.push(time.symbol['@attributes'].var.match(/[0-9]{2}[dnm]?/)[0]);
+			symbols.push(time.symbol['@attributes']['var'].match(/[0-9]{2}[dnm]?/)[0]);
+
 			temperatures.push({
 				x: from,
 				y: parseInt(time.temperature['@attributes'].value),
-				index: i
+				index: i // custom option used in tooltip formatter
 			});
+
 			precipitations.push({
 				x: from,
 				y: parseFloat(time.precipitation['@attributes'].value)
 			});
 			windDirections.push(parseFloat(time.windDirection['@attributes'].deg));
+			windDirectionNames.push(time.windDirection['@attributes'].name);
 			windSpeeds.push(parseFloat(time.windSpeed['@attributes'].mps));
 			windSpeedNames.push(time.windSpeed['@attributes'].name);
+
 			pressures.push({
 				x: from,
 				y: parseFloat(time.pressure['@attributes'].value)
@@ -575,13 +627,12 @@ $(function() {
 				pointStart = middle;
 			}	
 		});
+
+		// Smooth the line
+		smoothLine(temperatures);
 		
-		// populate other data
-		locationName = xml.location.name;
-		locationCountry = xml.location.country;
-		
-		// create the chart when the data is loaded
-		createChart();
+		// Create the chart when the data is loaded
+		createChart(xml);
     });
     
     
