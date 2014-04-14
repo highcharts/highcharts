@@ -1297,8 +1297,8 @@ defaultLabelOptions = {
 };
 
 defaultOptions = {
-	colors: ['#6c9acc', '#252530', '#6dd759', '#8d4654', '#2b908f', 
-		'#76758e', '#f6a45c', '#8085e8', '#f45b5b', '#9ff0cf'],
+	colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', 
+		    '#8085e9', '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'],
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
 		loading: 'Loading...',
