@@ -596,9 +596,9 @@ extend(Point.prototype, {
 				series.halo = halo = chart.renderer.path()
 					.add(series.seriesGroup);
 			}
-			halo.attr({
-				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get('rgba')
-			})[move ? 'animate' : 'attr']({
+			halo.attr(extend({
+				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
+			}, haloOptions.attributes))[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
 			});
 		} else if (halo) {

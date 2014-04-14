@@ -916,10 +916,10 @@ Axis.prototype = {
 
 		// Stay within floor and ceiling
 		if (isNumber(options.floor)) {
-			axis.min = mathMax(axis.min, options.floor); // docs
+			axis.min = mathMax(axis.min, options.floor);
 		}
 		if (isNumber(options.ceiling)) {
-			axis.max = mathMin(axis.max, options.ceiling); // docs
+			axis.max = mathMin(axis.max, options.ceiling);
 		}
 
 		// get tickInterval

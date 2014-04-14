@@ -1432,7 +1432,7 @@ defaultOptions = {
 			},
 			dataLabels: merge(defaultLabelOptions, {
 				align: 'center',
-				//defer: true, // docs
+				//defer: true,
 				enabled: false,
 				formatter: function () {
 					return this.y === null ? '' : numberFormat(this.y, -1);
@@ -6926,10 +6926,10 @@ Axis.prototype = {
 
 		// Stay within floor and ceiling
 		if (isNumber(options.floor)) {
-			axis.min = mathMax(axis.min, options.floor); // docs
+			axis.min = mathMax(axis.min, options.floor);
 		}
 		if (isNumber(options.ceiling)) {
-			axis.max = mathMin(axis.max, options.ceiling); // docs
+			axis.max = mathMin(axis.max, options.ceiling);
 		}
 
 		// get tickInterval
@@ -14459,7 +14459,7 @@ Series.prototype.drawDataLabels = function () {
 
 		if (!series.hasRendered && pick(options.defer, true)) {
 			dataLabelsGroup.attr({ opacity: 0 });
-			addEvent(series, 'afterAnimate', function () { // docs: afterAnimate event
+			addEvent(series, 'afterAnimate', function () {
 				series.dataLabelsGroup[seriesOptions.animation ? 'animate' : 'attr']({ opacity: 1 }, { duration: 150 });
 			});
 		}
@@ -17907,9 +17907,9 @@ extend(Point.prototype, {
 				series.halo = halo = chart.renderer.path()
 					.add(series.seriesGroup);
 			}
-			halo.attr({
-				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get('rgba')
-			})[move ? 'animate' : 'attr']({
+			halo.attr(extend({
+				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
+			}, haloOptions.attributes))[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
 			});
 		} else if (halo) {
