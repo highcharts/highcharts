@@ -1,15 +1,18 @@
 $(function () {
     	
-    	// Radialize the colors
-		Highcharts.getOptions().colors = Highcharts.map(Highcharts.getOptions().colors, function(color) {
-		    return {
-		        radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
-		        stops: [
-		            [0, color],
-		            [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
-		        ]
-		    };
-		});
+    	// Make monochrome colors and set them as default for all pies
+		Highcharts.getOptions().plotOptions.pie.colors = (function () {
+            var colors = [],
+                base = Highcharts.getOptions().colors[0],
+                i
+
+            for (i = 0; i < 10; i++) {
+                // Start out with a darkened base color (negative brighten), and end
+                // up with a much brighter color
+                colors.push(Highcharts.Color(base).brighten((i - 3) / 7).get());
+            }
+            return colors;
+		}());
 		
 		// Build the chart
         $('#container').highcharts({
@@ -33,8 +36,7 @@ $(function () {
                         format: '<b>{point.name}</b>: {point.percentage:.1f} %',
                         style: {
                             color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                        },
-                        connectorColor: 'silver'
+                        }
                     }
                 }
             },
