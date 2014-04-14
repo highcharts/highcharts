@@ -1678,17 +1678,19 @@
     </target>
 
     <target name="copy-to-download-builder" depends="set.properties" description="Copy parts files from this repo to repository highcharts.com.site">
+        <property file="git-ignore-me.properties"/>
+        
         <!-- files for downloadbuilder -->            
-        <copy file="js/parts.js" tofile="${highcharts.site.dir}/joomla/templates/highsoft_colorful/js/parts.js"/>
+        <copy file="js/parts.js" tofile="${highcharts.site.dir}/joomla/templates/highsoft_colorful/js/parts.js" overwrite="true"/>
         <!-- copy the highstock partfiles , these include also highcharts partfiles -->
-        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source/parts">
+        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source/parts" overwrite="true">
             <filelist refid="highstock.files"/>
         </copy>
-        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source/parts-more">
+        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source/parts-more" overwrite="true">
             <filelist refid="highchartsmore.files"/>
         </copy>
-        <copy file="${standalone.src.file}" todir="${highcharts.site.dir}/joomla/components/com_download/source/adapters"/>
-        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source">
+        <copy file="${standalone.src.file}" todir="${highcharts.site.dir}/joomla/components/com_download/source/adapters" overwrite="true"/>
+        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source" overwrite="true">
             <filelist refid="highcharts-modules.files"/>
         </copy>
     </target>
