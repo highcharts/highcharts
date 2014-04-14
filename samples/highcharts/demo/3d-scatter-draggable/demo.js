@@ -10,7 +10,7 @@ $(function () {
             },
             stops: [
                 [0, color],
-                [1, Highcharts.Color(color).brighten(-0.5).get('rgb')]
+                [1, Highcharts.Color(color).brighten(-0.2).get('rgb')]
             ]
         };
     });
@@ -74,7 +74,7 @@ $(function () {
 
 
     // Add mouse events for rotation
-    Highcharts.addEvent(chart.container, 'mousedown', function (e) {          
+    $(chart.container).bind('mousedown.hc touchstart.hc', function (e) {
         e = chart.pointer.normalize(e);
 
         var posX = e.pageX,
@@ -86,7 +86,7 @@ $(function () {
             sensitivity = 5; // lower is more sensitive
 
         $(document).bind({
-            'mousemove.line': function (e) {
+            'mousemove.hc touchdrag.hc': function (e) {
                 // Run beta
                 newBeta = beta + (posX - e.pageX) / sensitivity;
                 newBeta = Math.min(100, Math.max(-100, newBeta));
@@ -99,8 +99,8 @@ $(function () {
 
                 chart.redraw(false);
             },                            
-            'mouseup.line': function () { 
-                $(document).unbind('.line');
+            'mouseup touchend': function () { 
+                $(document).unbind('.hc');
             }
         });
     });

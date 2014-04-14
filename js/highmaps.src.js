@@ -1298,7 +1298,7 @@ defaultLabelOptions = {
 
 defaultOptions = {
 	colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', 
-		    '#8085e9', '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'],
+		    '#8085e9', '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'], // docs
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
 		loading: 'Loading...',
@@ -8942,9 +8942,12 @@ Pointer.prototype = {
 					originalEvent: e.originalEvent || e
 				},
 				selectionBox = this.selectionMarker,
-				selectionLeft = selectionBox.attr('x'),
-				selectionTop = selectionBox.attr('y'),
+				selectionLeft = selectionBox.attr ? selectionBox.attr('x') : selectionBox.x,
+				selectionTop = selectionBox.attr ? selectionBox.attr('y') : selectionBox.y,
+				selectionWidth = selectionBox.attr ? selectionBox.attr('width') : selectionBox.width,
+				selectionHeight = selectionBox.attr ? selectionBox.attr('height') : selectionBox.height,
 				runZoom;
+
 			// a selection has been made
 			if (this.hasDragged || hasPinched) {
 
@@ -8953,7 +8956,7 @@ Pointer.prototype = {
 					if (axis.zoomEnabled) {
 						var horiz = axis.horiz,
 							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop)),
-							selectionMax = axis.toValue((horiz ? selectionLeft + selectionBox.attr('width') : selectionTop + selectionBox.attr('height')));
+							selectionMax = axis.toValue((horiz ? selectionLeft + selectionWidth : selectionTop + selectionHeight));
 
 						if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
 							selectionData[axis.coll].push({
@@ -9209,10 +9212,10 @@ extend(Highcharts.Pointer.prototype, {
 	 * Run translation operations
 	 */
 	pinchTranslate: function (pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
-		if (this.zoomHor) {
+		if (this.zoomHor || this.pinchHor) {
 			this.pinchTranslateDirection(true, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 		}
-		if (this.zoomVert) {
+		if (this.zoomVert || this.pinchVert) {
 			this.pinchTranslateDirection(false, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 		}
 	},
@@ -9384,11 +9387,6 @@ extend(Highcharts.Pointer.prototype, {
 
 			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
 
-				// Prevent the click pseudo event from firing unless it is set in the options
-				/*if (!chart.runChartClick) {
-					e.preventDefault();
-				}*/
-			
 				// Run mouse events and display tooltip etc
 				this.runPointActions(e);
 

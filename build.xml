@@ -367,7 +367,7 @@
             <file name="js/adapters/${standalone.minified.name}"/>
             <file name="highcharts/js/${highcharts.minified.name}"/>
             <file name="highcharts/js/${highchartsmore.minified.name}"/>
-            <!-- file name="highcharts/js/${highcharts3d.minified.name}"/ -->
+            <file name="highcharts/js/${highcharts3d.minified.name}"/>
             <file name="js/modules/${exporting.minified.name}"/>
             <file name="js/modules/${data.minified.name}"/>
         </filelist>
@@ -663,14 +663,14 @@
             <param name="param.src" value="${highchartsmore.src.file}"/>
             <param name="param.out" value="${dist.dir}/highstock/js/${highchartsmore.minified.name}"/>
         </antcall>
-        <!-- antcall target="compile">
+        <antcall target="compile">
             <param name="param.src" value="${highcharts3d.src.file}"/>
             <param name="param.out" value="${dist.dir}/highcharts/js/${highcharts3d.minified.name}"/>
         </antcall>
         <antcall target="compile">
             <param name="param.src" value="${highcharts3d.src.file}"/>
             <param name="param.out" value="${dist.dir}/highstock/js/${highcharts3d.minified.name}"/>
-        </antcall -->
+        </antcall>
         <!--antcall target="compile">
             <param name="param.src" value="${mootools.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/adapters/${mootools.minified.name}"/>
@@ -826,10 +826,10 @@
 
         <copy file="${highchartsmore.src.file}" todir="${dist.dir}/highcharts/js"><filterset refid="highcharts.filter"/></copy>
         <copy file="${highchartsmore.src.file}" todir="${dist.dir}/highstock/js"><filterset refid="highcharts.filter"/></copy>
-        <!--
+        
         <copy file="${highcharts3d.src.file}" todir="${dist.dir}/highcharts/js"><filterset refid="highcharts.filter"/></copy>
         <copy file="${highcharts3d.src.file}" todir="${dist.dir}/highstock/js"><filterset refid="highcharts.filter"/></copy>
-        -->
+        
 
         <!--copy file="${mootools.src.file}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/adapters/${mootools.minified.name}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
@@ -891,14 +891,14 @@
         <copy file="${map.src.file}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${map.minified.name}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
 
-        <!--
+        
         <copy file="${heatmap.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${heatmap.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${heatmap.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${heatmap.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${heatmap.src.file}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${heatmap.minified.name}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
-        -->
+        
         <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="build/canvas-tools.js" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
@@ -955,8 +955,7 @@
             </replacefilter>
             <include name="**/index.htm"/>
         </replace>
-        <!-- Copy the analytics.tsv file to example -->
-        <copy file="samples/highcharts/demo/line-ajax/analytics.tsv" todir="${dist.dir}/highcharts/examples/line-ajax/"/>
+        
         <!-- Copy index files -->
         <copy file="samples/highcharts/demo/index.htm" todir="${dist.dir}/highcharts/"/>
         <copy file="samples/stock/demo/index.htm" todir="${dist.dir}/highstock/"/>

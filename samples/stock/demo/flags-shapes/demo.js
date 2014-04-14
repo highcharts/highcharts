@@ -30,7 +30,7 @@ $(function() {
 			}, {
 				type : 'flags',
 				data : [{
-					x : Date.UTC(2011, 1, 14),
+					x : Date.UTC(2011, 1, 22),
 					title : 'A',
 					text : 'Shape: "squarepin"'
 				}, {

@@ -8,7 +8,7 @@ $(function () {
             }
         },
         title: {
-            text: 'Contents of the weekly office fruit package'
+            text: 'Contents of Highsoft\'s weekly fruit delivery'
         },
         subtitle: {
             text: '3D donut in Highcharts'

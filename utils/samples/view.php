@@ -35,7 +35,7 @@ if (isset($_POST['theme'])) {
 	$_SESSION['theme'] = $_POST['theme'];	
 }
 if ($_SESSION['theme']) {
-	$html .= "<script src='http://code.highcharts.local/themes/". $_SESSION['theme'] .".js'></script>";
+	$html .= "<script src='http://code.highcharts.$topDomain/themes/". $_SESSION['theme'] .".js'></script>";
 }
 $themes = array(
 	'' => 'Default theme',
