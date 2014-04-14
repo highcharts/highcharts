@@ -6766,7 +6766,7 @@ Axis.prototype = {
 		}
 
 		if (ret === UNDEFINED) {
-			if (value >= 10000) { // add thousands separators
+			if (mathAbs(value) >= 10000) { // add thousands separators
 				ret = numberFormat(value, 0);
 
 			} else { // small numbers
