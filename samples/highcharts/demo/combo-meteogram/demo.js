@@ -214,35 +214,39 @@ function tooltipFormatter() {
  * file, defined in the getSymbolSprites function above.
  */
 function drawWeatherSymbols(chart) {
-	var sprite, 
-		arrow, 
-		x, 
-		y,
-		symbolSprites = getSymbolSprites(30);
+	var symbolSprites = getSymbolSprites(30);
 
 	$.each(chart.series[0].data, function(i, point) {
+		var sprite, 
+			arrow, 
+			x, 
+			y,
+			group;
+		
 		if (i % 2 === 0) {
-			// Draw the weather symbols on the temperature graph
+			
 			sprite = symbolSprites[symbols[i]];
 			if (sprite) {
+
+				// Create a group element that is positioned and clipped at 30 pixels width and height
+				group = chart.renderer.g()
+					.attr({
+						translateX: point.plotX + chart.plotLeft - 15,
+						translateY: point.plotY + chart.plotTop - 30,
+						zIndex: 5
+					})
+					.clip(chart.renderer.clipRect(0, 0, 30, 30))
+					.add();
+
+				// Position the image inside it at the sprite position
 				chart.renderer.image(
 					'http://www.highcharts.com/samples/graphics/meteogram-symbols-30px.png',
-					point.plotX + chart.plotLeft - 15,
-					point.plotY + chart.plotTop - 30,
+					-sprite.x,
+					-sprite.y,
 					90,
 					570
 				)
-				.clip(chart.renderer.clipRect(
-					Highcharts.svg ? point.plotX + chart.plotLeft - 15 + sprite.x : sprite.x,
-					Highcharts.svg ? point.plotY + chart.plotTop - 30 + sprite.y : sprite.y,
-					30,
-					30
-				))
-				.translate(-sprite.x, -sprite.y)
-				.attr({
-					zIndex: 5
-				})
-				.add();
+				.add(group);
 			}
 		}
 	});
