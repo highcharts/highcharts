@@ -47,6 +47,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @RequestMapping("/")
@@ -155,6 +156,38 @@ public class ExportController extends HttpServlet {
 
 	}
 
+	@RequestMapping(value="/bypass/{name}.{ext}", method = RequestMethod.POST)
+	public HttpEntity<byte[]> direct(
+		@PathVariable("name") String name,
+		@PathVariable("ext") String extension,
+		@RequestBody String requestBody) throws SVGConverterException, TimeoutException, NoSuchElementException, PoolException {
+
+		String tempFilename;
+		tempFilename = null;
+		String json = requestBody;
+		MimeType mime = getMime(extension);
+
+		// add outfile parameter to the json with a simple string replace
+		if (MimeType.PDF.equals(mime)) {
+			tempFilename = createUniqueFileName(mime.name().toLowerCase());
+			int ind = json.lastIndexOf("}");
+			json = new StringBuilder(json).replace(ind, ind+1,",\"outfile\":\"" + tempFilename).toString() + "\"}";
+		}
+		
+
+		String result = converter.requestServer(json);
+		ByteArrayOutputStream bos = ouputToStream(result, mime, tempFilename);
+		HttpHeaders headers = new HttpHeaders();
+
+		headers.add("Content-Type", mime.getType() + "; charset=utf-8");
+		headers.add("Content-Disposition",
+                   "attachment; filename=" + name + "." + extension);
+		headers.setContentLength(bos.size());
+
+		return new HttpEntity<byte[]>(bos.toByteArray(), headers);
+	}
+	
+
 	@ExceptionHandler(IOException.class)
 	public ModelAndView handleIOException(Exception ex, HttpServletResponse response) {
 		ModelAndView modelAndView = new ModelAndView();
@@ -248,7 +281,7 @@ public class ExportController extends HttpServlet {
 				svg = sanitize(svg);
 				if (svg == null) {
 					throw new ServletException(
-							"The manadatory svg POST parameter is undefined.");
+							"The mandatory svg POST parameter is undefined.");
 				}
 				convertSvg = true;
 				input = svg;
@@ -278,10 +311,10 @@ public class ExportController extends HttpServlet {
 	}
 
 	private static String sanitize(String parameter) {
-		if (parameter != null && !parameter.trim().isEmpty() && !(parameter.compareToIgnoreCase("undefined") == 0)) {
-			return parameter.trim();
+		if (parameter == null || parameter.trim().isEmpty() || parameter.compareToIgnoreCase("undefined") == 0 || parameter.compareTo("null") == 0 || parameter.compareTo("{}") == 0) {
+			return null;
 		}
-		return null;
+		return parameter.trim();
 	}
 
 	private static Float widthToFloat(String width) {
