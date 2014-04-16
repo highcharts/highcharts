@@ -29,6 +29,7 @@ function Meteogram(xml, container) {
     // Parallel arrays for the chart data, these are populated as the XML/JSON file 
     // is loaded
     this.symbols = [];
+    this.symbolNames = [];
     this.precipitations = [];
     this.windDirections = [];
     this.windDirectionNames = [];
@@ -218,20 +219,23 @@ Meteogram.prototype.tooltipFormatter = function (tooltip) {
     // Create the header with reference to the time interval
     var index = tooltip.points[0].point.index,
         ret = '<small>' + Highcharts.dateFormat('%A, %b %e, %H:%M', tooltip.x) + '-' +
-            Highcharts.dateFormat('%H:%M', this.x + 36e5) + '</small>';
+            Highcharts.dateFormat('%H:%M', tooltip.points[0].point.to) + '</small><br>';
+
+    // Symbol text
+    ret += '<b>' + this.symbolNames[index] + '</b>';
 
     ret += '<table>';
 
     // Add all series
     Highcharts.each(tooltip.points, function (point) {
         var series = point.series;
-        ret += '<tr><td style="color:' + series.color + '">' + series.name +
+        ret += '<tr><td><span style="color:' + series.color + '">\u25CF</span> ' + series.name +
             ': </td><td style="white-space:nowrap">' + Highcharts.pick(point.point.value, point.y) +
             series.options.tooltip.valueSuffix + '</td></tr>';
     });
 
     // Add wind
-    ret += '<tr><td style="vertical-align: top">Wind</td><td style="white-space:nowrap">' + this.windDirectionNames[index] +
+    ret += '<tr><td style="vertical-align: top">\u25CF Wind</td><td style="white-space:nowrap">' + this.windDirectionNames[index] +
         '<br>' + this.windSpeedNames[index] + ' (' +
         Highcharts.numberFormat(this.windSpeeds[index], 1) + ' m/s)</td></tr>';
 
@@ -254,7 +258,7 @@ Meteogram.prototype.drawWeatherSymbols = function (chart) {
         var sprite,
             group;
 
-        if (i % 2 === 0) {
+        if (meteogram.resolution > 36e5 || i % 2 === 0) {
 
             sprite = symbolSprites[meteogram.symbols[i]];
             if (sprite) {
@@ -345,7 +349,7 @@ Meteogram.prototype.drawWindArrows = function (chart) {
     $.each(chart.series[0].data, function(i, point) {
         var sprite, arrow, x, y;
         
-        if (i % 2 === 0) {
+        if (meteogram.resolution > 36e5 || i % 2 === 0) {
             
             // Draw the wind arrows
             x = point.plotX + chart.plotLeft + 7;
@@ -393,7 +397,11 @@ Meteogram.prototype.drawBlocksForWindArrows = function (chart) {
         x = Math.round(xAxis.toPixels(pos)) + (isLast ? 0.5 : -0.5);
         
         // Draw the vertical dividers and ticks
-        isLong = i % 2 === 0;
+        if (this.resolution > 36e5) {
+            isLong = pos % this.resolution === 0;
+        } else {
+            isLong = i % 2 === 0;
+        }
         chart.renderer.path(['M', x, chart.plotTop + chart.plotHeight + (isLong ? 0 : 28),
             'L', x, chart.plotTop + chart.plotHeight + 32, 'Z'])
             .attr({
@@ -452,7 +460,6 @@ Meteogram.prototype.getChartOptions = function () {
         xAxis: [{ // Bottom X axis
             type: 'datetime',
             tickInterval: 2 * 36e5, // two hours
-            tickPosition: 'inside',
             minorTickInterval: 36e5, // one hour
             tickLength: 0,
             gridLineWidth: 1,
@@ -674,17 +681,25 @@ Meteogram.prototype.parseYrData = function () {
         to = to.replace(/-/g, '/').replace('T', ' ');
         to = Date.parse(to);
         
-        if (to > pointStart + 4 * 24 * 3600 * 1000) {
+        if (to > pointStart + 4 * 24 * 36e5) {
             return;
         }
         
+        // If it is more than an hour between points, show all symbols
+        if (i === 0) {
+            meteogram.resolution = to - from;
+        }
+
         // Populate the parallel arrays
         meteogram.symbols.push(time.symbol['@attributes']['var'].match(/[0-9]{2}[dnm]?/)[0]);
+        meteogram.symbolNames.push(time.symbol['@attributes'].name);
 
         meteogram.temperatures.push({
             x: from,
             y: parseInt(time.temperature['@attributes'].value),
-            index: i // custom option used in tooltip formatter
+            // custom options used in the tooltip formatter
+            to: to,
+            index: i
         });
 
         meteogram.precipitations.push({
@@ -720,8 +735,12 @@ $(function() { // On DOM ready...
     
     // Set the hash to the yr.no URL we want to parse
     if (!location.hash) {
-        //location.hash = 'http://www.yr.no/place/Norway/Sogn_og_Fjordane/Vik/Målset/forecast_hour_by_hour.xml';
-        location.hash = 'http://www.yr.no/place/United_Kingdom/England/London/forecast_hour_by_hour.xml';
+        var place = 'United_Kingdom/England/London';
+        //place = 'France/Rhône-Alpes/Val_d\'Isère~2971074';
+        //place = 'Norway/Sogn_og_Fjordane/Vik/Målset';
+        //place = 'United_States/California/San_Francisco';
+        //place = 'United_States/Minnesota/Minneapolis';
+        location.hash = 'http://www.yr.no/place/' + place + '/forecast_hour_by_hour.xml';
 
     }
 
