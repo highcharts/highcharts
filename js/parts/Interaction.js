@@ -170,7 +170,7 @@ if (seriesTypes.scatter) {
 }
 
 if (seriesTypes.gauge) {
-	seriesTypes.gauge.prototype.drawTracker: TrackerMixin.drawTrackerPoint;
+	seriesTypes.gauge.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
 /* 

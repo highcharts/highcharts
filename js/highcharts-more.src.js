@@ -30,7 +30,6 @@ var arrayMin = Highcharts.arrayMin,
 	Tick = Highcharts.Tick,
 	Point = Highcharts.Point,
 	Pointer = Highcharts.Pointer,
-	TrackerMixin = Highcharts.TrackerMixin,
 	CenteredSeriesMixin = Highcharts.CenteredSeriesMixin,
 	Series = Highcharts.Series,
 	math = Math,
@@ -1176,8 +1175,7 @@ var GaugeSeries = {
 		if (pick(redraw, true)) {
 			this.chart.redraw();
 		}
-	},
-	drawTracker: TrackerMixin.drawTrackerPoint
+	}
 };
 seriesTypes.gauge = extendClass(seriesTypes.line, GaugeSeries);
 
