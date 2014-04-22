@@ -15449,9 +15449,9 @@ var ColumnSeries = extendClass(Series, {
 
 			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
-				borderAttr = defined(series.borderWidth) && {
+				borderAttr = defined(series.borderWidth) ? {
 					'stroke-width': series.borderWidth
-				};
+				} : {};
 				pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE] || series.pointAttr[NORMAL_STATE];
 				if (graphic) { // update
 					stop(graphic);
@@ -16064,14 +16064,14 @@ Series.prototype.drawDataLabels = function () {
 		dataLabelsGroup = series.plotGroup(
 			'dataLabelsGroup',
 			'data-labels',
-			series.visible ? VISIBLE : HIDDEN,
+			HIDDEN,
 			options.zIndex || 6
 		);
 
 		if (!series.hasRendered && pick(options.defer, true)) {
 			dataLabelsGroup.attr({ opacity: 0 });
 			addEvent(series, 'afterAnimate', function () {
-				series.dataLabelsGroup[seriesOptions.animation ? 'animate' : 'attr']({ opacity: 1 }, { duration: 150 });
+				series.dataLabelsGroup.show()[seriesOptions.animation ? 'animate' : 'attr']({ opacity: 1 }, { duration: 200 });
 			});
 		}
 
