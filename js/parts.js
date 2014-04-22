@@ -38,7 +38,7 @@ var HighchartsConfig = {
 			{name: 'Point', component: 'Core', group: 'Core', baseUrl: 'parts'},
 			{name: 'Series', component: 'Core', group: "Core", baseUrl: 'parts'},
 			{name: 'Stacking', component: 'Stacking', group: "Features", baseUrl: 'parts'},
-			{name: 'Dynamics', component: 'Dynamics', group: 'Dynamics and Interaction', depends: {component: ['Core']}},
+			{name: 'Dynamics', component: 'Dynamics', group: 'Dynamics and Interaction', depends: {component: ['Core']}, baseUrl: 'parts'},
 			{name: 'LineSeries', component: 'LineSeries', group: "Chart and Serie types", depends: {component: ['Core']}, baseUrl: 'parts'},
 			{name: 'AreaSeries', component: 'AreaSeries', group: "Chart and Serie types", depends: {component: ['Core']}, baseUrl: 'parts'},
 			{name: 'SplineSeries', component: 'SplineSeries', group: "Chart and Serie types", depends: {component: ['Core']}, baseUrl: 'parts'},
@@ -80,7 +80,8 @@ var HighchartsConfig = {
 			{name: 'exporting.src', component: 'Exporting', group: "Modules", depends: {component: ['Core']}, baseUrl: 'modules'},
 			{name: 'data.src', component: 'Data', group: "Modules", depends: {component: ['Core']}, baseUrl: 'modules'},
 			{name: 'no-data-to-display.src', component: 'No-data-to-display', group: "Modules", depends: {component: ['Core']}, baseUrl: 'modules'},
-			{name: 'drilldown.src', component: 'Drilldown', group: "Modules", depends: {component: ['Core']}, baseUrl: 'modules'}
+			{name: 'drilldown.src', component: 'Drilldown', group: "Modules", depends: {component: ['Core']}, baseUrl: 'modules'},
+			{name: 'solid-gauge.src', component: 'Solid Gauge', group: "Modules", depends: {component: ['Gauge']}, baseUrl: 'modules'}
 		],
 
 		groups: {
@@ -111,8 +112,8 @@ var HighchartsConfig = {
 			'Plotlines or bands': {description: 'Enable drawing plotlines and -bands on your chart.'},
 			'Logarithmic Axis': {description: 'Enable logarithmic axis. On a logarithmic axis the numbers along the axis increase logarithmically and the axis adjusts itself to the data series present in the chart.'},
 			'Stacking': { description: 'Stack the data in your series on top of each other instead of overlapping.'},
-			'DataLabels': { description: 'Data labels display each point\'s value or other information related to the point' },
-			'Polar': { description: 'For turning the regular chart  into a polar (radar) chart.'},
+			'DataLabels': { description: 'Data labels display each point\'s value or other information related to the point'},
+			'Polar': { description: 'For turning the regular chart  into a polar chart.'},
 			'MS Touch': { description: 'Optimised touch support for Microsoft touch devices'},
 			'Dynamics': { description: 'Adds support for creating more dynamic charts, by adding API methods for adding series, points, etc.'},
 			'LineSeries': { description:  ''},
@@ -138,6 +139,7 @@ var HighchartsConfig = {
 			'Exporting': {description: 'For saving the chart to an image'},
 			'Data': {description: 'Intended to ease the common process of loading data from CSV, HTML tables and even Google Spreadsheets'},
 			'No-data-to-display': {description: 'When there\'s no data to display, the chart is showing a message'},
-			'Drilldown': {description: 'Add drill down features, allowing point click to show detailed data series related to each point.'}
+			'Drilldown': {description: 'Add drill down features, allowing point click to show detailed data series related to each point.'},
+			'Solid Gauge': {description: 'Display your data in a solid gauge'}
 		}
 	};
