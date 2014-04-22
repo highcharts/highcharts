@@ -81,7 +81,14 @@ var HighchartsConfig = {
 			{name: 'data.src', component: 'Data', group: "Modules", depends: {component: ['Core']}, baseUrl: 'modules'},
 			{name: 'no-data-to-display.src', component: 'No-data-to-display', group: "Modules", depends: {component: ['Core']}, baseUrl: 'modules'},
 			{name: 'drilldown.src', component: 'Drilldown', group: "Modules", depends: {component: ['Core']}, baseUrl: 'modules'},
-			{name: 'solid-gauge.src', component: 'Solid Gauge', group: "Modules", depends: {component: ['Gauge']}, baseUrl: 'modules'}
+			{name: 'solid-gauge.src', component: 'Solid Gauge', group: "Modules", depends: {component: ['Gauge']}, baseUrl: 'modules'},
+			{name: 'Intro', component: 'Heatmap', group: "Modules", depends: {component: ['Core', 'ColumnSeries', 'ScatterSeries']}, baseUrl: 'parts-map'},
+			{name: 'HeatmapGlobals', component: 'Heatmap', group: "Modules", depends: {component: []}, baseUrl: 'parts-map'},
+			{name: 'ColorAxis', component: 'Heatmap', group: "Modules", depends: {component: []}, baseUrl: 'parts-map'},
+			{name: 'ColorSeriesMixin', component: 'Heatmap', group: "Modules", depends: {component: []}, baseUrl: 'parts-map'},
+			{name: 'HeatmapSeries', component: 'Heatmap', group: "Modules", depends: {component: []}, baseUrl: 'parts-map'},
+			{name: 'Outro', component: 'Heatmap', group: "Modules", depends: {component: []}, baseUrl: 'parts-map'}
+
 		],
 
 		groups: {
@@ -140,6 +147,7 @@ var HighchartsConfig = {
 			'Data': {description: 'Intended to ease the common process of loading data from CSV, HTML tables and even Google Spreadsheets'},
 			'No-data-to-display': {description: 'When there\'s no data to display, the chart is showing a message'},
 			'Drilldown': {description: 'Add drill down features, allowing point click to show detailed data series related to each point.'},
-			'Solid Gauge': {description: 'Display your data in a solid gauge'}
+			'Solid Gauge': {description: 'Display your data in a solid gauge'},
+			'Heatmap': {description: 'Make heatmap out of your data'}
 		}
 	};

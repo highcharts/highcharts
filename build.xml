@@ -267,7 +267,7 @@
 
         <!-- This is the list of files for the maps module -->
         <filelist id="maps.files" dir="${basedir}/js">
-            <file name="parts-map/Intro.txt"/>
+            <file name="parts-map/Intro.js"/>
             <file name="parts-map/Globals.js"/>
             <file name="parts-map/MapAxis.js"/>
             <file name="parts-map/ColorAxis.js"/>
@@ -281,13 +281,13 @@
             <file name="parts-map/HeatmapSeries.js"/>
             <file name="parts-map/GeoJSON.js"/>
             <file name="parts-map/Map.js"/>
-            <file name="parts-map/Outro.txt"/>
+            <file name="parts-map/Outro.js"/>
         </filelist>
 
 
         <!-- This is the list of files for the heatmap module -->
         <filelist id="heatmap.files" dir="${basedir}/js">
-            <file name="parts-map/Intro.txt"/>
+            <file name="parts-map/Intro.js"/>
             <file name="parts-map/HeatmapGlobals.js"/>
             <!-- file name="parts-map/MapAxis.js"/ -->
             <file name="parts-map/ColorAxis.js"/>
@@ -300,7 +300,7 @@
             <!-- file name="parts-map/MapBubbleSeries.js"/ -->
             <file name="parts-map/HeatmapSeries.js"/>
             <!-- file name="parts-map/Map.js"/ -->
-            <file name="parts-map/Outro.txt"/>
+            <file name="parts-map/Outro.js"/>
         </filelist>
 
 
@@ -1692,6 +1692,9 @@
         <copy file="${standalone.src.file}" todir="${highcharts.site.dir}/joomla/components/com_download/source/adapters" overwrite="true"/>
         <copy todir="${highcharts.site.dir}/joomla/components/com_download/source" overwrite="true">
             <filelist refid="highcharts-modules.files"/>
+        </copy>
+        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source" overwrite="true">
+            <filelist refid="heatmap.files"/>
         </copy>
     </target>
 
