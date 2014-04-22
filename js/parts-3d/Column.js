@@ -112,7 +112,7 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proce
 						break;
 					}
 				}
-				z = 10 - i;
+				z = 100 - 10 * i + this.index;
 				
 				this.options.zIndex = z;
 			}

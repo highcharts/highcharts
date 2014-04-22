@@ -116,6 +116,9 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 		return null;
 	};
 
+	// Apply the Z index to the cuboid group
+	result.attr({ zIndex: paths[3] });
+
 	return result;
 };
 
