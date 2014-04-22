@@ -206,5 +206,33 @@ Point.prototype = {
 			point: this,
 			series: this.series
 		});
+	},
+
+	/**
+	 * Fire an event on the Point object. Must not be renamed to fireEvent, as this
+	 * causes a name clash in MooTools
+	 * @param {String} eventType
+	 * @param {Object} eventArgs Additional event arguments
+	 * @param {Function} defaultFunction Default event handler
+	 */
+	firePointEvent: function (eventType, eventArgs, defaultFunction) {
+		var point = this,
+			series = this.series,
+			seriesOptions = series.options;
+
+		// load event handlers on demand to save time on mouseover/out
+		if (seriesOptions.point.events[eventType] || (point.options && point.options.events && point.options.events[eventType])) {
+			this.importEvents();
+		}
+
+		// add default handler if in selection mode
+		if (eventType === 'click' && seriesOptions.allowPointSelect) {
+			defaultFunction = function (event) {
+				// Control key is for Windows, meta (= Cmd key) for Mac, Shift for Opera
+				point.select(null, event.ctrlKey || event.metaKey || event.shiftKey);
+			};
+		}
+
+		fireEvent(this, eventType, eventArgs, defaultFunction);
 	}
 };
