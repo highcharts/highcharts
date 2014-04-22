@@ -262,6 +262,7 @@
 						}
 					}
 				}
+				oldSeries.xData = []; // Overcome problems with minRange (#2898)
 
 				each(level.levelSeriesOptions, addSeries);
 				
