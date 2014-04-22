@@ -1641,7 +1641,9 @@ Series.prototype = {
 		}
 
 		series.translate();
-		series.setTooltipPoints(true);
+		if (series.setTooltipPoints) {
+			series.setTooltipPoints(true);
+		}
 		series.render();
 
 		if (wasDirtyData) {
