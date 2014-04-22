@@ -46,7 +46,7 @@ function perspective(points, angle2, angle1, origin) {
 		p.x = p.x * ((ze - p.z) / ze) + xe;
 		p.y = p.y * ((ze - p.z) / ze) + ye;
 
-		result.push(p);
+		result.push({x: round(p.x), y: round(p.y), z: round(p.z)});
 	});
 	return result;
 }
