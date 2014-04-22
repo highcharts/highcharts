@@ -49,9 +49,9 @@ $(function () {
             }
         },
         yAxis: {
-            //opposite: true,
             min: 0,
-            max: 10
+            max: 10,
+            title: null
         },
         xAxis: {
             min: 0,
