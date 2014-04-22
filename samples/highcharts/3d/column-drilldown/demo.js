@@ -11,12 +11,12 @@ $(function () {
             }
         },
         xAxis: {
-            type: 'category',
+            type: 'category'
         },
         plotOptions: {
             column: {
-                depth: 35,
-            },
+                depth: 35
+            }
         },
         series: [{
             colorByPoint: true,
@@ -34,7 +34,7 @@ $(function () {
                 y: 12,
                 drilldown: 'fruits'
             }],
-            stack: 0,
+            stack: 0
         }],
         drilldown: {
             series: [{

@@ -3,8 +3,6 @@ $(function() {
 		
 		// Create the chart
 		$('#container').highcharts('StockChart', {
-		    chart: {
-		    },
 
 		    rangeSelector: {
 				inputEnabled: $('#container').width() > 480,
@@ -32,7 +30,7 @@ $(function() {
 		        type: 'flags',
 		        name: 'Flags on series',
 		        data: [{
-					x: Date.UTC(2011, 1, 14),
+					x: Date.UTC(2011, 1, 22),
 					title: 'On series'
 				}, {
 					x: Date.UTC(2011, 3, 28),

@@ -1,7 +1,14 @@
 $(function () {
     $('#container').highcharts({
-        chart: {
+        title: {
+            text: 'Chart reflow is set to true'
         },
+
+        subtitle: {
+            text: 'When resizing the window or the frame, the chart should resize'
+        },
+        
+        
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },

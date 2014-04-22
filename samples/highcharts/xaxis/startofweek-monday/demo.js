@@ -1,7 +1,5 @@
 $(function () {
     $('#container').highcharts({
-        chart: {
-        },
         xAxis: {
             //startOfWeek: 1,
             type: 'datetime',

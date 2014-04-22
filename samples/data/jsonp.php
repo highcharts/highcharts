@@ -24,7 +24,7 @@ if (preg_match('/^[a-zA-Z\-\.]+\.csv$/', $filename)) {
  */
 @$url = $_GET['url'];
 if ($url) {
-	if (preg_match('/^(http|https):\/\/[\/\w \.-]*\.xml$/', $url)) {
+	if (preg_match('/^(http|https):\/\/[\w\W]*\.xml$/', $url)) {
 		$xml = simplexml_load_file($url);
 		$json = json_encode($xml);
 	} else if (preg_match('/^(http|https):\/\/[\/\w \.-]*\.csv$/', $url)) {

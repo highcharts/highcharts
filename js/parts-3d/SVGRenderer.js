@@ -54,11 +54,11 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	var result = this.g(),
 	paths = this.cuboidPath(shapeArgs);
 
-	result.front = this.path(paths[0]).attr({zIndex: paths[3]}).add(result);
-	result.top = this.path(paths[1]).attr({zIndex: paths[4]}).add(result);
-	result.side = this.path(paths[2]).attr({zIndex: paths[5]}).add(result);
+	result.front = this.path(paths[0]).attr({zIndex: paths[3], 'stroke-linejoin': 'round'}).add(result);
+	result.top = this.path(paths[1]).attr({zIndex: paths[4], 'stroke-linejoin': 'round'}).add(result);
+	result.side = this.path(paths[2]).attr({zIndex: paths[5], 'stroke-linejoin': 'round'}).add(result);
 
-	result.attrSetters.fill = function (color) {
+	result.fillSetter = function (color) {
 		var c0 = color,
 		c1 = Highcharts.Color(color).brighten(0.1).get(),
 		c2 = Highcharts.Color(color).brighten(-0.1).get();
@@ -71,7 +71,7 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 		return this;
 	};
 
-	result.attrSetters.opacity = function (opacity) {
+	result.opacitySetter = function (opacity) {
 		this.front.attr({opacity: opacity});
 		this.top.attr({opacity: opacity});
 		this.side.attr({opacity: opacity});
@@ -79,8 +79,9 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	};
 
 	result.attr = function (args) {
-		if (args.shapeArgs) {
-			var paths = this.renderer.cuboidPath(args.shapeArgs);
+		if (args.shapeArgs || args.x) {
+			var shapeArgs = args.shapeArgs || args;
+			var paths = this.renderer.cuboidPath(shapeArgs);
 			this.front.attr({d: paths[0], zIndex: paths[3]});
 			this.top.attr({d: paths[1], zIndex: paths[4]});
 			this.side.attr({d: paths[2], zIndex: paths[5]});			
@@ -114,6 +115,9 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 
 		return null;
 	};
+
+	// Apply the Z index to the cuboid group
+	result.attr({ zIndex: paths[3] });
 
 	return result;
 };
@@ -196,9 +200,9 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	'L', pArr[3].x, pArr[3].y,
 	'Z'
 	];	
-	if (pArr[5].x > pArr[2].x) {
+	if (pArr[6].x > pArr[1].x) {
 		path3 = right;
-	} else if (pArr[4].x < pArr[0].x) {
+	} else if (pArr[7].x < pArr[0].x) {
 		path3 = left;
 	} else {
 		path3 = [];
@@ -227,7 +231,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 	result.out = renderer.path(paths.out).attr({zIndex: paths.zOut}).add(result);
 	result.top = renderer.path(paths.top).attr({zIndex: paths.zTop}).add(result);
 
-	result.attrSetters.fill = function (color) {
+	result.fillSetter = function (color) {
 		this.color = color;
 
 		var c0 = color,

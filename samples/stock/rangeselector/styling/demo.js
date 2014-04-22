@@ -1,9 +1,6 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
 	    
-	    chart: {
-	    },
-	    
 	    rangeSelector: {
 	    	buttonTheme: { // styles for the buttons
 	    		fill: 'none',

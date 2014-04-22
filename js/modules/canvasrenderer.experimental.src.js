@@ -31,12 +31,9 @@ Highcharts.extend(Highcharts.SVGElement.prototype, {
             }
         };
         this.renderer = renderer;
-        this.attrSetters = {
-            d: function (value, key) {
-                value.join = false; // don't join
-                return value;
-            }
-
+        this.dSetter = function (value, key) {
+            value.join = false; // don't join
+            return value;
         };
     }, 
     getBBox: function () {

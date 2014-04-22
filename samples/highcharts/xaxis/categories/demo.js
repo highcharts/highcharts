@@ -1,7 +1,7 @@
 $(function () {
     $('#container').highcharts({
     	title: {
-    			text: 'Chart without categories'
+    		text: 'Chart without categories, falls back to numbers'
     	},
     	xAxis: {
         },

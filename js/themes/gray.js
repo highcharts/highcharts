@@ -247,7 +247,7 @@ Highcharts.theme = {
 
 	// special colors for some of the demo examples
 	legendBackgroundColor: 'rgba(48, 48, 48, 0.8)',
-	legendBackgroundColorSolid: 'rgb(70, 70, 70)',
+	background2: 'rgb(70, 70, 70)',
 	dataLabelsColor: '#444',
 	textColor: '#E0E0E0',
 	maskColor: 'rgba(255,255,255,0.3)'

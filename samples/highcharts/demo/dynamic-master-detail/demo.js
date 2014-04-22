@@ -217,8 +217,8 @@ $(function () {
                         fillColor: {
                             linearGradient: [0, 0, 0, 70],
                             stops: [
-                                [0, '#4572A7'],
-                                [1, 'rgba(0,0,0,0)']
+                                [0, Highcharts.getOptions().colors[0]],
+                                [1, 'rgba(255,255,255,0)']
                             ]
                         },
                         lineWidth: 1,
@@ -342,7 +342,7 @@ $(function () {
             .appendTo($container);
     
         var $masterContainer = $('<div id="master-container">')
-            .css({ position: 'absolute', top: 300, height: 80, width: '100%' })
+            .css({ position: 'absolute', top: 300, height: 100, width: '100%' })
             .appendTo($container);
     
         // create master and in its callback, create the detail chart

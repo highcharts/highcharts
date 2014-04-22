@@ -11,6 +11,7 @@ $(function () {
                     'thebulletin.metapress.com</a>'
             },
             xAxis: {
+                allowDecimals: false,
                 labels: {
                     formatter: function() {
                         return this.value; // clean, unformatted number for year

@@ -1,8 +1,5 @@
 $(function () {
     $('#container').highcharts({
-    
-        chart: {
-        },
         
         title: {
             text: 'Data labels box options'

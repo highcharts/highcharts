@@ -1,7 +1,12 @@
 $(function () {
     $('#container').highcharts({
     
-        chart: {
+        title: {
+            text: 'Tooltip footer format demo'
+        },
+
+        subtitle: {
+            text: 'The tooltip should provide a HTML table where the table is closed in the footerFormat'
         },
     
         xAxis: {

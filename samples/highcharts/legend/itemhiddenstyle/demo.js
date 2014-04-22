@@ -1,12 +1,17 @@
 $(function () {
     $('#container').highcharts({
-        
-        chart: {
+
+        title: {
+            text: 'Legend <em>itemHiddenStyle</em> demo'
+        },
+
+        subtitle: {
+            text: 'When clicking the legend to hide the series, the series name should become green.'
         },
         
         legend: {
             itemHiddenStyle: {
-                color: '#333'
+                color: 'green'
             }
         },
         

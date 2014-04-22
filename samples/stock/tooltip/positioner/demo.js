@@ -1,9 +1,6 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
 	    
-	    chart: {
-	    },
-	    
 	    tooltip: {
 	    	backgroundColor: 'white',
 	    	borderWidth: 0,

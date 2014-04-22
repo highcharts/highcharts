@@ -7,12 +7,17 @@ $(function () {
             width: 500
         },
 
+        title: {
+            text: 'Legend width aligned to plot area'
+        },
+
         legend: {
-            width: 300,
+            width: 400,
             floating: true,
             align: 'left',
             x: 70, // = marginLeft - default spacingLeft
-            itemWidth: 70
+            itemWidth: 70,
+            borderWidth: 1
         },
 
         series: [{

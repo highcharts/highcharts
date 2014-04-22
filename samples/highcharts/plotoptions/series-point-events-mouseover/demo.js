@@ -2,12 +2,13 @@ $(function () {
     var $reporting = $('#reporting');
     
     $('#container').highcharts({
-        chart: {
-        },
         
-        xAxis: {
+        title: {
+            text: 'Mouse events demo'
         },
-        
+        subtitle: {
+            text: 'On point mouse over or mouse out, the values should be reported in top right'
+        },
         plotOptions: {
             series: {
                 point: {

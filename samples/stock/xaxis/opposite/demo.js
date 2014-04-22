@@ -1,13 +1,13 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
 	    
-	    chart: {
+	    title: {
+	    	text: 'Y axis is not opposite, renders on the left'
 	    },
 	    
-	    yAxis: [{}, {
-	    	linkedTo: 0,
-	    	opposite: true
-	    }],
+	    yAxis: {
+	    	opposite: false
+	    },
 	    
 	    rangeSelector: {
 	    	selected: 1

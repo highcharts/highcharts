@@ -3,6 +3,8 @@
  */
 if (Highcharts.VMLRenderer) {
 
+Highcharts.setOptions({animate: false});
+
 Highcharts.VMLRenderer.prototype.cuboid = Highcharts.SVGRenderer.prototype.cuboid;
 Highcharts.VMLRenderer.prototype.cuboidPath = Highcharts.SVGRenderer.prototype.cuboidPath;
 

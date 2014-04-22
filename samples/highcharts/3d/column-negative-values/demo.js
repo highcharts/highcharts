@@ -7,7 +7,7 @@ $(function () {
 				enabled: true,
                 alpha: 15,
                 beta: 15,
-                depth: 50,
+                depth: 50
             }
         },
         xAxis: {
@@ -16,11 +16,11 @@ $(function () {
         plotOptions: {
             column: {
                 depth: 25,
-                negativeColor: '#DD0000',
+                negativeColor: '#DD0000'
             }
         },
         series: [{
-            data: [-1, 3, -3, -2, 1, 0],
+            data: [-1, 3, -3, -2, 1, 0]
         }]
     });
 });

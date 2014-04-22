@@ -9,10 +9,11 @@ $(function () {
                 alpha: 20,
                 beta: 30,
                 depth: 200,
+                viewDistance: 10,
                 frame: {
                     bottom: {
                         size: 1,
-                        color: '#C0C0C0'
+                        color: 'rgba(0,0,0,0.05)'
                     }
                 }
             }

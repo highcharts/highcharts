@@ -14,7 +14,7 @@ $(function () {
                 dataLabels: {
                     enabled: true,
                     format: '<b>{point.name}</b> ({point.y:,.0f})',
-                    color: 'black',
+                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black',
                     softConnector: true
                 }
             }

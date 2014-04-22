@@ -2,6 +2,11 @@ $(function () {
     $('#container').highcharts({
     
         chart: {
+            type: 'column'
+        },
+
+        title: {
+            text: 'Legend index demonstrated'
         },
     
         xAxis: {

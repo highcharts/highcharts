@@ -12,8 +12,8 @@ $(function () {
                 fillColor: {
                     linearGradient: [0, 0, 0, 300],
                     stops: [
-                        [0, 'rgb(69, 114, 167)'],
-                        [1, 'rgba(2,0,0,0)']
+                        [0, Highcharts.getOptions().colors[0]],
+                        [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
                     ]
                 }
             }

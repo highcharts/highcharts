@@ -33,7 +33,10 @@ $(function() {
 						x2: 0, 
 						y2: 0
 					},
-					stops : [[0, Highcharts.getOptions().colors[0]], [1, 'rgba(0,0,0,0)']]
+					stops : [
+						[0, Highcharts.getOptions().colors[0]], 
+						[1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+					]
 				},
 				tooltip: {
 					valueDecimals: 2

@@ -24,9 +24,16 @@ Series.prototype.drawDataLabels = function () {
 		dataLabelsGroup = series.plotGroup(
 			'dataLabelsGroup',
 			'data-labels',
-			series.visible ? VISIBLE : HIDDEN,
+			HIDDEN,
 			options.zIndex || 6
 		);
+
+		if (!series.hasRendered && pick(options.defer, true)) {
+			dataLabelsGroup.attr({ opacity: 0 });
+			addEvent(series, 'afterAnimate', function () {
+				series.dataLabelsGroup.show()[seriesOptions.animation ? 'animate' : 'attr']({ opacity: 1 }, { duration: 200 });
+			});
+		}
 
 		// Make the labels for each point
 		generalOptions = options;
@@ -542,7 +549,7 @@ if (seriesTypes.pie) {
 								visibility: visibility
 								//zIndex: 0 // #2722 (reversed)
 							})
-							.add(series.group);
+							.add(series.dataLabelsGroup);
 						}
 					} else if (connector) {
 						point.connector = connector.destroy();

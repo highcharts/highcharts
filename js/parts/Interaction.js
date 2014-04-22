@@ -169,6 +169,10 @@ if (seriesTypes.scatter) {
 	ScatterSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
+if (seriesTypes.gauge) {
+	seriesTypes.gauge.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
+}
+
 /* 
  * Extend Legend for item events 
  */ 
@@ -441,33 +445,6 @@ extend(Point.prototype, {
 	},
 
 	/**
-	 * Fire an event on the Point object. Must not be renamed to fireEvent, as this
-	 * causes a name clash in MooTools
-	 * @param {String} eventType
-	 * @param {Object} eventArgs Additional event arguments
-	 * @param {Function} defaultFunction Default event handler
-	 */
-	firePointEvent: function (eventType, eventArgs, defaultFunction) {
-		var point = this,
-			series = this.series,
-			seriesOptions = series.options;
-
-		// load event handlers on demand to save time on mouseover/out
-		if (seriesOptions.point.events[eventType] || (point.options && point.options.events && point.options.events[eventType])) {
-			this.importEvents();
-		}
-
-		// add default handler if in selection mode
-		if (eventType === 'click' && seriesOptions.allowPointSelect) {
-			defaultFunction = function (event) {
-				// Control key is for Windows, meta (= Cmd key) for Mac, Shift for Opera
-				point.select(null, event.ctrlKey || event.metaKey || event.shiftKey);
-			};
-		}
-
-		fireEvent(this, eventType, eventArgs, defaultFunction);
-	},
-	/**
 	 * Import events from the series' and point's options. Only do it on
 	 * demand, to save processing time on hovering.
 	 */
@@ -506,11 +483,12 @@ extend(Point.prototype, {
 			pointMarker = point.marker || {},
 			chart = series.chart,
 			radius,
+			halo = series.halo,
+			haloOptions,
 			newSymbol,
 			pointAttr;
 
 		state = state || NORMAL_STATE; // empty string
-		move = move && stateMarkerGraphic;
 		pointAttr = point.pointAttr[state] || series.pointAttr[state];
 
 		if (
@@ -521,14 +499,13 @@ extend(Point.prototype, {
 				// series' state options is disabled
 				(stateOptions[state] && stateOptions[state].enabled === false) ||
 				// general point marker's state options is disabled
-				(state && (stateDisabled || (normalDisabled && !markerStateOptions.enabled))) ||
+				(state && (stateDisabled || (normalDisabled && markerStateOptions.enabled === false))) ||
 				// individual point marker's state options is disabled
 				(state && pointMarker.states && pointMarker.states[state] && pointMarker.states[state].enabled === false) // #1610
 
 			) {
 			return;
 		}
-
 
 		// apply hover styles to the existing point
 		if (point.graphic) {
@@ -542,6 +519,11 @@ extend(Point.prototype, {
 					height: 2 * radius
 				} : {}
 			));
+
+			// Zooming in from a range with no markers to a range with markers
+			if (stateMarkerGraphic) {
+				stateMarkerGraphic.hide();
+			}
 		} else {
 			// if a graphic is not applied to each point in the normal state, create a shared
 			// graphic for the hover state
@@ -557,16 +539,18 @@ extend(Point.prototype, {
 
 				// Add a new state marker graphic
 				if (!stateMarkerGraphic) {
-					series.stateMarkerGraphic = stateMarkerGraphic = chart.renderer.symbol(
-						newSymbol,
-						plotX - radius,
-						plotY - radius,
-						2 * radius,
-						2 * radius
-					)
-					.attr(pointAttr)
-					.add(series.markerGroup);
-					stateMarkerGraphic.currentSymbol = newSymbol;
+					if (newSymbol) {
+						series.stateMarkerGraphic = stateMarkerGraphic = chart.renderer.symbol(
+							newSymbol,
+							plotX - radius,
+							plotY - radius,
+							2 * radius,
+							2 * radius
+						)
+						.attr(pointAttr)
+						.add(series.markerGroup);
+						stateMarkerGraphic.currentSymbol = newSymbol;
+					}
 
 				// Move the existing graphic
 				} else {
@@ -582,7 +566,32 @@ extend(Point.prototype, {
 			}
 		}
 
+		// Show me your halo
+		haloOptions = stateOptions[state] && stateOptions[state].halo;
+		if (haloOptions && haloOptions.size) {
+			if (!halo) {
+				series.halo = halo = chart.renderer.path()
+					.add(series.seriesGroup);
+			}
+			halo.attr(extend({
+				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
+			}, haloOptions.attributes))[move ? 'animate' : 'attr']({
+				d: point.haloPath(haloOptions.size)
+			});
+		} else if (halo) {
+			halo.attr({ d: [] });
+		}
+
 		point.state = state;
+	},
+	haloPath: function (size) {
+		var chart = this.series.chart;
+		return chart.renderer.symbols.circle(
+			chart.plotLeft + this.plotX - size, 
+			chart.plotTop + this.plotY - size, 
+			size * 2, 
+			size * 2
+		);
 	}
 });
 

@@ -1,9 +1,6 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
 
-	    chart: {
-	    },
-
 	    xAxis: {
 	    	title: {
 	    		text: 'This is a Date/time axis'

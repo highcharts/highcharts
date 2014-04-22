@@ -9,7 +9,8 @@ $(function () {
         yAxis: {
             stackLabels: {
                 style: {
-                    color: 'black'
+                    color: 'white',
+                    fontWeight: 'bold'
                 },
                 enabled: true,
                 verticalAlign: 'bottom'
@@ -21,7 +22,7 @@ $(function () {
                 pointPadding: 0,
                 groupPadding: 0,
                 dataLabels: {
-                    enabled: false,
+                    enabled: false
                 }
             }
         },
