@@ -233,6 +233,15 @@ var GaugeSeries = {
 		if (pick(redraw, true)) {
 			this.chart.redraw();
 		}
+	},
+
+	/**
+	 * If the tracking module is loaded, add the point tracker
+	 */
+	drawTracker: function () {
+		if (TrackerMixin) {
+			TrackerMixin.drawTrackerPoint.call(this);
+		}
 	}
 };
 seriesTypes.gauge = extendClass(seriesTypes.line, GaugeSeries);

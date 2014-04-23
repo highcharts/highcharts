@@ -16927,10 +16927,6 @@ if (seriesTypes.scatter) {
 	ScatterSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
-if (seriesTypes.gauge) {
-	seriesTypes.gauge.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
-}
-
 /* 
  * Extend Legend for item events 
  */ 

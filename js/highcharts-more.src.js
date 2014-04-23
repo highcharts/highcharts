@@ -31,6 +31,7 @@ var arrayMin = Highcharts.arrayMin,
 	Point = Highcharts.Point,
 	Pointer = Highcharts.Pointer,
 	CenteredSeriesMixin = Highcharts.CenteredSeriesMixin,
+	TrackerMixin = Highcharts.TrackerMixin,
 	Series = Highcharts.Series,
 	math = Math,
 	mathRound = math.round,
@@ -1174,6 +1175,15 @@ var GaugeSeries = {
 		this.generatePoints();
 		if (pick(redraw, true)) {
 			this.chart.redraw();
+		}
+	},
+
+	/**
+	 * If the tracking module is loaded, add the point tracker
+	 */
+	drawTracker: function () {
+		if (TrackerMixin) {
+			TrackerMixin.drawTrackerPoint.call(this);
 		}
 	}
 };
