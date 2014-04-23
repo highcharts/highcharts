@@ -82,7 +82,7 @@ Axis.prototype = {
 			//rotation: 0,
 			//side: 'outside',
 			style: {
-				color: '#707070' // docs
+				color: '#707070'
 			}
 			//x: 0,
 			//y: 0

@@ -6093,7 +6093,7 @@ Axis.prototype = {
 			//rotation: 0,
 			//side: 'outside',
 			style: {
-				color: '#707070' // docs
+				color: '#707070'
 			}
 			//x: 0,
 			//y: 0
@@ -16649,7 +16649,7 @@ seriesTypes.mappoint = extendClass(seriesTypes.scatter, {
 // 1 - set default options
 defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	dataLabels: {
-		format: '{point.z}', // docs?
+		format: '{point.z}',
 		inside: true,
 		style: {
 			color: 'white',
@@ -16670,7 +16670,7 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	states: {
 		hover: {
 			halo: {
-				size: 5 // docs
+				size: 5
 			}
 		}
 	},

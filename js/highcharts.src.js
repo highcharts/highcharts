@@ -6357,7 +6357,7 @@ Axis.prototype = {
 			//rotation: 0,
 			//side: 'outside',
 			style: {
-				color: '#707070' // docs
+				color: '#707070'
 			}
 			//x: 0,
 			//y: 0
@@ -15604,7 +15604,9 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 		// connectorPadding: 5,
 		distance: 30,
 		enabled: true,
-		format: '{point.name}'
+		formatter: function () {
+			return this.point.name;
+		}
 		// softConnector: true,
 		//y: 0
 	},
