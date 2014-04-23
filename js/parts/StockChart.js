@@ -543,7 +543,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
  * to using multiple panes, and a future pane logic should incorporate this feature.
  */
 wrap(Series.prototype, 'render', function (proceed) {
-	if (this.isCartesian) {
+	if (this.isCartesian && this.chart.options._stock) { // #2939
 		// First render, initial clip box
 		if (!this.clipBox) {
 			this.clipBox = merge(this.chart.clipBox);

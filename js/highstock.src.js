@@ -16200,8 +16200,8 @@ Series.prototype.drawDataLabels = function () {
  */
 Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, isNew) {
 	var chart = this.chart,
-		plotX = pick(point.invX, -999),
-		plotY = pick(point.invY, -999),
+		plotX = pick(point.invX, point.plotX, -999),
+		plotY = pick(point.invY, point.plotY, -999),
 		bBox = dataLabel.getBBox(),
 		// Math.round for rounding errors (#2683), alignTo to allow column labels (#2700)
 		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, mathRound(plotY)) ||
@@ -21890,7 +21890,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
  * to using multiple panes, and a future pane logic should incorporate this feature.
  */
 wrap(Series.prototype, 'render', function (proceed) {
-	if (this.isCartesian) {
+	if (this.isCartesian && this.chart.options._stock) { // #2939
 		// First render, initial clip box
 		if (!this.clipBox) {
 			this.clipBox = merge(this.chart.clipBox);
