@@ -569,11 +569,7 @@ Pointer.prototype = {
 		var chart = this.chart,
 			hoverPoint = chart.hoverPoint, 
 			plotLeft = chart.plotLeft,
-			plotTop = chart.plotTop,
-			inverted = chart.inverted,
-			chartPosition,
-			plotX,
-			plotY;
+			plotTop = chart.plotTop;
 		
 		e = this.normalize(e);
 		e.cancelBubble = true; // IE specific
@@ -582,18 +578,7 @@ Pointer.prototype = {
 			
 			// On tracker click, fire the series and point events. #783, #1583
 			if (hoverPoint && this.inClass(e.target, PREFIX + 'tracker')) {
-				chartPosition = this.chartPosition;
-				plotX = hoverPoint.plotX;
-				plotY = hoverPoint.plotY;
 
-				// add page position info
-				extend(hoverPoint, {
-					pageX: chartPosition.left + plotLeft +
-						(inverted ? chart.plotWidth - plotY : plotX),
-					pageY: chartPosition.top + plotTop +
-						(inverted ? chart.plotHeight - plotX : plotY)
-				});
-			
 				// the series click event
 				fireEvent(hoverPoint.series, 'click', extend(e, {
 					point: hoverPoint

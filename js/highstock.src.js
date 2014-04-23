@@ -9561,11 +9561,7 @@ Pointer.prototype = {
 		var chart = this.chart,
 			hoverPoint = chart.hoverPoint, 
 			plotLeft = chart.plotLeft,
-			plotTop = chart.plotTop,
-			inverted = chart.inverted,
-			chartPosition,
-			plotX,
-			plotY;
+			plotTop = chart.plotTop;
 		
 		e = this.normalize(e);
 		e.cancelBubble = true; // IE specific
@@ -9574,18 +9570,7 @@ Pointer.prototype = {
 			
 			// On tracker click, fire the series and point events. #783, #1583
 			if (hoverPoint && this.inClass(e.target, PREFIX + 'tracker')) {
-				chartPosition = this.chartPosition;
-				plotX = hoverPoint.plotX;
-				plotY = hoverPoint.plotY;
 
-				// add page position info
-				extend(hoverPoint, {
-					pageX: chartPosition.left + plotLeft +
-						(inverted ? chart.plotWidth - plotY : plotX),
-					pageY: chartPosition.top + plotTop +
-						(inverted ? chart.plotHeight - plotX : plotY)
-				});
-			
 				// the series click event
 				fireEvent(hoverPoint.series, 'click', extend(e, {
 					point: hoverPoint
@@ -10855,10 +10840,7 @@ Chart.prototype = {
 	 * @param {Number} plotY Pixel y relative to the plot area
 	 * @param {Boolean} inverted Whether the chart is inverted
 	 */
-	isInsidePlot: function (plotX, plotY, inverted) {
-		var x = inverted ? plotY : plotX,
-			y = inverted ? plotX : plotY;
-			
+	isInsidePlot: function (x, y) {
 		return x >= 0 &&
 			x <= this.plotWidth &&
 			y >= 0 &&
@@ -13147,6 +13129,7 @@ Series.prototype = {
 		}
 		this.generatePoints();
 		var series = this,
+			inverted = series.chart.inverted,
 			options = series.options,
 			stacking = options.stacking,
 			xAxis = series.xAxis,
@@ -13228,6 +13211,9 @@ Series.prototype = {
 			point.category = categories && categories[point.x] !== UNDEFINED ?
 				categories[point.x] : point.x;
 
+			// Get true plot pixel position regardless of inversion
+			point.invX = inverted ? yAxis.len - point.plotY : point.plotX;
+			point.invY = inverted ? xAxis.len - point.plotX : point.plotY;
 
 		}
 
@@ -13366,7 +13352,7 @@ Series.prototype = {
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
 				enabled = (globallyEnabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
-				isInside = chart.isInsidePlot(mathRound(plotX), plotY, chart.inverted); // #1858
+				isInside = chart.isInsidePlot(point.invX, point.invY); // #1858
 
 				// only draw the point if y is defined
 				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
@@ -16214,21 +16200,20 @@ Series.prototype.drawDataLabels = function () {
  */
 Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, isNew) {
 	var chart = this.chart,
-		inverted = chart.inverted,
-		plotX = pick(point.plotX, -999),
-		plotY = pick(point.plotY, -999),
+		plotX = pick(point.invX, -999),
+		plotY = pick(point.invY, -999),
 		bBox = dataLabel.getBBox(),
 		// Math.round for rounding errors (#2683), alignTo to allow column labels (#2700)
-		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, mathRound(plotY), inverted) ||
-			(alignTo && chart.isInsidePlot(plotX, inverted ? alignTo.x + 1 : alignTo.y + alignTo.height - 1, inverted))),
+		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, mathRound(plotY)) ||
+			(alignTo && chart.isInsidePlot(plotX, alignTo.y + alignTo.height - 1))),
 		alignAttr; // the final position;
 
 	if (visible) {
 
 		// The alignment box is a singular point
 		alignTo = extend({
-			x: inverted ? chart.plotWidth - plotY : plotX,
-			y: mathRound(inverted ? chart.plotHeight - plotX : plotY),
+			x: plotX,
+			y: plotY,
 			width: 0,
 			height: 0
 		}, alignTo);
@@ -17335,7 +17320,7 @@ extend(Point.prototype, {
 			}
 
 			if (stateMarkerGraphic) {
-				stateMarkerGraphic[state && chart.isInsidePlot(plotX, plotY, chart.inverted) ? 'show' : 'hide'](); // #2450
+				stateMarkerGraphic[state && chart.isInsidePlot(point.invX, point.invY) ? 'show' : 'hide'](); // #2450
 			}
 		}
 
@@ -17358,10 +17343,10 @@ extend(Point.prototype, {
 		point.state = state;
 	},
 	haloPath: function (size) {
-		var chart = this.series.chart;
-		return chart.renderer.symbols.circle(
-			chart.plotLeft + this.plotX - size, 
-			chart.plotTop + this.plotY - size, 
+		var plotBox = this.series.getPlotBox();
+		return this.series.chart.renderer.symbols.circle(
+			plotBox.translateX + this.invX - size, 
+			plotBox.translateY + this.invY - size, 
 			size * 2, 
 			size * 2
 		);

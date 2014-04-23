@@ -562,7 +562,7 @@ extend(Point.prototype, {
 			}
 
 			if (stateMarkerGraphic) {
-				stateMarkerGraphic[state && chart.isInsidePlot(plotX, plotY, chart.inverted) ? 'show' : 'hide'](); // #2450
+				stateMarkerGraphic[state && chart.isInsidePlot(point.invX, point.invY) ? 'show' : 'hide'](); // #2450
 			}
 		}
 
@@ -585,10 +585,10 @@ extend(Point.prototype, {
 		point.state = state;
 	},
 	haloPath: function (size) {
-		var chart = this.series.chart;
-		return chart.renderer.symbols.circle(
-			chart.plotLeft + this.plotX - size, 
-			chart.plotTop + this.plotY - size, 
+		var plotBox = this.series.getPlotBox();
+		return this.series.chart.renderer.symbols.circle(
+			plotBox.translateX + this.invX - size, 
+			plotBox.translateY + this.invY - size, 
 			size * 2, 
 			size * 2
 		);

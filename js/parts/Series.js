@@ -711,6 +711,7 @@ Series.prototype = {
 		}
 		this.generatePoints();
 		var series = this,
+			inverted = series.chart.inverted,
 			options = series.options,
 			stacking = options.stacking,
 			xAxis = series.xAxis,
@@ -792,6 +793,9 @@ Series.prototype = {
 			point.category = categories && categories[point.x] !== UNDEFINED ?
 				categories[point.x] : point.x;
 
+			// Get true plot pixel position regardless of inversion
+			point.invX = inverted ? yAxis.len - point.plotY : point.plotX;
+			point.invY = inverted ? xAxis.len - point.plotX : point.plotY;
 
 		}
 
@@ -930,7 +934,7 @@ Series.prototype = {
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
 				enabled = (globallyEnabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
-				isInside = chart.isInsidePlot(mathRound(plotX), plotY, chart.inverted); // #1858
+				isInside = chart.isInsidePlot(point.invX, point.invY); // #1858
 
 				// only draw the point if y is defined
 				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
