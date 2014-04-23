@@ -1,18 +1,14 @@
 $(function () {
     $('#container').highcharts({
     
-        chart: {
-        },
-    
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
         
         legend: {
             layout: 'vertical',
-            itemStyle: {
-                paddingBottom: '10px'
-            }
+            itemMarginTop: 10,
+            itemMarginBottom: 10
         },
     
         series: [{

@@ -4,6 +4,12 @@
 		<title>Highcharts examples quick view</title>
 		<script>
 		function keyDown(e) {
+			if (e.keyCode === 39) {
+				window.frames['main'].next();
+			}
+			if (e.keyCode === 37) {
+				window.frames['main'].previous();
+			}
 			if (e.ctrlKey && e.keyCode === 13) {
 				window.frames['main'].location.reload();
 				return false;

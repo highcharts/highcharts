@@ -8,7 +8,7 @@ $(function () {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
         title: {
-            text: 'My custom title',
+            text: 'Title aligned left',
             align: 'left',
             x: 70
         },

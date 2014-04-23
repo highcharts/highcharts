@@ -22,6 +22,7 @@ var defaultOptions = Highcharts.getOptions(),
 
 // set default options
 defaultPlotOptions.funnel = merge(defaultPlotOptions.pie, {
+	animation: false,
 	center: ['50%', '50%'],
 	width: '90%',
 	neckWidth: '30%',

@@ -1,9 +1,6 @@
 $(function () {
     $('#container').highcharts({
         
-        chart: {
-        },
-        
         legend: {
             enabled: false
         },

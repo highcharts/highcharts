@@ -3,6 +3,8 @@
  * Extend the default options with map options
  */
 defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
+	animation: false,
+	borderWidth: 0,
 	nullColor: '#F8F8F8',
 	dataLabels: {
 		format: '{point.value}',
@@ -15,8 +17,9 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 			textShadow: '0 0 5px black'
 		}
 	},
+	marker: null,
 	tooltip: {
-		pointFormat: '{point.name}: {point.value}<br/>'
+		pointFormat: '{point.x}, {point.y}: {point.value}<br/>'
 	},
 	states: {
 		normal: {
@@ -56,8 +59,9 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				y1 = Math.round(yAxis.translate(point.y - yPad, 0, 1, 0, 1)),
 				y2 = Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 1));
 
-
-			point.plotY = 1; // Pass test in Column.drawPoints
+			// Set plotX and plotY for use in K-D-Tree and more
+			point.plotX = (x1 + x2) / 2;
+			point.plotY = (y1 + y2) / 2;
 
 			point.shapeType = 'rect';
 			point.shapeArgs = {

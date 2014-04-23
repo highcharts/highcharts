@@ -1,9 +1,6 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
 
-	    chart: {
-	    },
-
 	    rangeSelector: {
 	    	selected: 1
 	    },

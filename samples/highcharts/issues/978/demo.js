@@ -1,8 +1,5 @@
 $(function() {
     $('#container').highcharts({
-
-	    chart: {
-	    },
 	
 	    yAxis: {
 	        type: 'logarithmic',

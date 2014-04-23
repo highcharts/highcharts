@@ -14,6 +14,7 @@ if (!preg_match('/^[a-z]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
 
 $i = (int)$_GET['i'];
 $next = $i + 1;
+$previous = $i - 1;
 
 $fullpath = dirname(__FILE__) . '/../../samples/' . $path;
 
@@ -27,6 +28,21 @@ $topDomain = $httpHost[sizeof($httpHost) - 1];
 $html = ob_get_clean();
 $html = str_replace('/code.highcharts.com/', "/code.highcharts.$topDomain/", $html);
 $html = str_replace('.js"', '.js?' . time() . '"', $html); // Force no-cache for debugging
+
+
+// Handle themes
+if (isset($_POST['theme'])) {
+	$_SESSION['theme'] = $_POST['theme'];	
+}
+if ($_SESSION['theme']) {
+	$html .= "<script src='http://code.highcharts.$topDomain/themes/". $_SESSION['theme'] .".js'></script>";
+}
+$themes = array(
+	'' => 'Default theme',
+	'sand-signika' => 'Sand Signika',
+	'dark-unica' => 'Dark Unica',
+	'grid-light' => 'Grid Light'
+);
 
 
 
@@ -75,7 +91,89 @@ function getResources() {
 		<title>Highstock Example</title>
 		<?php echo getFramework(FRAMEWORK); ?>
 		<?php echo getResources(); ?>
+		<link rel="stylesheet" type="text/css" href="style.css"/>
+
+
+		<script type="text/javascript">
+			$(function() {
+
+				$('#version').html(Highcharts.product + ' ' + Highcharts.version);
+
+				if (window.parent.frames[0]) {
+					var contentDoc = window.parent.frames[0].document;
+
+					// Highlight the current sample in the left
+					var li = contentDoc.getElementById('li<?php echo $i ?>');
+					if (li) {
+						// previous
+						if (contentDoc.currentLi) {
+							$(contentDoc.currentLi).removeClass('hilighted');
+							$(contentDoc.currentLi).addClass('visited');
+						}
+
+						$('html,body', contentDoc).animate({
+							scrollTop: $(li).offset().top - 300
+						},'slow');
+
+						contentDoc.currentLi = li;
+						$(li).addClass('hilighted');
+					}
+
+					// add the next button
+					if (contentDoc.getElementById('i<?php echo $next ?>')) {
+						
+						$('#next').click(function() {
+							next();
+						});
+						$('#next')[0].disabled = false;
+					}
+				}
+
+				// Activate view source button
+				$('#view-source').bind('change', function () {
+					var checked = $(this).attr('checked');
+					
+					$('#source-box').css({
+						width: checked ? '50%' : 'auto',
+						'float': checked ? 'left' : 'none'
+					});
+					$('#main-content').css({
+						width: checked ? '50%' : 'auto',
+						'float': checked ? 'right' : 'none'
+					});
+					$.each(Highcharts.charts, function () {
+						this.reflow();
+					});
+
+					if (checked) {
+						$('<iframe>').appendTo('#source-box')
+							.attr({
+								src: 'view-source.php?path=<?php echo $path ?>'
+							})
+							.css({
+								width: '100%',
+								border: 'none',
+								borderRight: '1px solid gray',
+								height: $(document).height() - 80
+							});
+					} else {
+						$('#source-box').html('');
+					}
+				});
+
+			});
+		</script>
 		<script>
+
+		function next() {
+			window.location.href =
+				window.parent.frames[0].document.getElementById('i<?php echo $next ?>').href;
+		}
+		function previous() {
+			window.location.href =
+				window.parent.frames[0].document.getElementById('i<?php echo $previous ?>').href;
+		}
+
 
 		/* Wrappers for recording mouse events in order to write automatic tests */
 		$(function () {
@@ -174,59 +272,14 @@ function getResources() {
 			<?php @include("$fullpath/demo.css"); ?>
 		</style>
 
-		<script type="text/javascript">
-			$(function() {
-
-				$('#version').html(Highcharts.product + ' ' + Highcharts.version);
-
-				if (window.parent.frames[0]) {
-					var contentDoc = window.parent.frames[0].document;
-
-					// Highlight the current sample in the left
-					var li = contentDoc.getElementById('li<?php echo $i ?>');
-					if (li) {
-						// previous
-						if (contentDoc.currentLi) {
-							$(contentDoc.currentLi).removeClass('hilighted');
-							$(contentDoc.currentLi).addClass('visited');
-						}
-
-						$(contentDoc.body).animate({
-							scrollTop: $(li).offset().top - 300
-						},'slow');
-
-						contentDoc.currentLi = li;
-						$(li).addClass('hilighted');
-					}
-
-					// add the next button
-					if (contentDoc.getElementById('i<?php echo $next ?>')) {
-						function goNext () {
-							window.location.href =
-								window.parent.frames[0].document.getElementById('i<?php echo $next ?>').href;
-						}
-
-						$('#next').click(function() {
-							goNext();
-						});
-						$('#next')[0].disabled = false;
-					}
-
-				}
-
-			});
-		</script>
-
 		<style type="text/css">
 			.top-bar {
 				color: white;
 				font-family: Arial, sans-serif;
 				font-size: 0.8em;
 				padding: 0.5em;
-				height: 3.5em;
-				background: #57544A;
-				background: -webkit-linear-gradient(top, #57544A, #37342A);
-				background: -moz-linear-gradient(top, #57544A, #37342A);
+				height: 50px;
+				background: #34343e;
 				box-shadow: 0px 0px 8px #888;
 			}
 			li, a, p, div {
@@ -245,8 +298,19 @@ function getResources() {
 			<h2 style="margin: 0"><?php echo ($next - 1) ?>. <?php echo $path ?></h2>
 
 			<div style="text-align: center">
+				<form method="post" action="" style="display:inline">
+					<select name="theme" onchange="this.form.submit()">
+					<?php foreach ($themes as $theme => $themeName) : ?>
+						<option value="<?php echo $theme ?>" <?php if ($theme == $_SESSION['theme']) echo 'selected' ?>>
+							<?php echo $themeName ?>
+						</option>
+					<?php endforeach ?>
+					</select>
+				</form>
 				<button id="next" disabled="disabled">Next</button>
 				<button id="reload" style="margin-left: 1em" onclick="location.reload()">Reload</button>
+				<input id="view-source" type="checkbox" />
+				<label for="view-source">View source</label>
 				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
 					href="compare-view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>">Compare</a>
 				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
@@ -261,17 +325,18 @@ function getResources() {
 				<label for="record" title="Record calls to Pointer mouse events that can be added to test.js for automatic testing of tooltip and other mouse operations">Record mouse</label>
 			</div>
 		</div>
+		<div id="source-box"></div>
+		<div id="main-content">
+			<div style="margin: 1em">
 
-		<div style="margin: 1em">
-
-		<?php echo $html ?>
+			<?php echo $html ?>
+			</div>
+			<hr/>
+			<ul>
+				<li>Mobile testing: <a href="http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft">http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft</a></li>
+			</ul>
+			<pre id="recording" style="padding: 1em"></pre>
 		</div>
-		<hr/>
-		<ul>
-			<li>Mobile testing: <a href="http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft">http://<?php echo $_SERVER['SERVER_NAME'] ?>/draft</a></li>
-		</ul>
-		<pre id="recording" style="padding: 1em"></pre>
-
 	</body>
 </html>
 <?php

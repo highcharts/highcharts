@@ -1,9 +1,6 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
 	    
-	    chart: {
-	    },
-	    
 	    yAxis: {
 	    	reversed: true,
 	    	showFirstLabel: false,

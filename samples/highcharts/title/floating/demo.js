@@ -1,9 +1,8 @@
 $(function () {
     $('#container').highcharts({
-        chart: {
-        },
         
         title: {
+            text: 'Title floating left',
             floating: true,
             align: 'left',
             x: 100,

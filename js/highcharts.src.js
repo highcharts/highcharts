@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v3.0.10-modified ()
+ * @license Highcharts JS v4.0.0-modified ()
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -56,7 +56,7 @@ var UNDEFINED,
 	charts = [],
 	chartCount = 0,
 	PRODUCT = 'Highcharts',
-	VERSION = '3.0.10-modified',
+	VERSION = '4.0.0-modified',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -277,15 +277,13 @@ function defined(obj) {
  */
 function attr(elem, prop, value) {
 	var key,
-		setAttribute = 'setAttribute',
 		ret;
 
 	// if the prop is a string
 	if (isString(prop)) {
 		// set the value
 		if (defined(value)) {
-
-			elem[setAttribute](prop, value);
+			elem.setAttribute(prop, value);
 
 		// get the value
 		} else if (elem && elem.getAttribute) { // elem not defined when printing pie demo...
@@ -295,7 +293,7 @@ function attr(elem, prop, value) {
 	// else if prop is defined, it is a hash of key/value pairs
 	} else if (defined(prop) && isObject(prop)) {
 		for (key in prop) {
-			elem[setAttribute](key, prop[key]);
+			elem.setAttribute(key, prop[key]);
 		}
 	}
 	return ret;
@@ -1292,16 +1290,15 @@ defaultLabelOptions = {
 		return this.value;
 	},*/
 	style: {
-		color: '#666',
+		color: '#606060',
 		cursor: 'default',
 		fontSize: '11px'
 	}
 };
 
 defaultOptions = {
-	colors: ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970',
-		'#f28f43', '#77a1e5', '#c42525', '#a6c96a'],
-	//colors: ['#8085e8', '#252530', '#90ee7e', '#8d4654', '#2b908f', '#76758e', '#f6a45c', '#7eb5ee', '#f45b5b', '#9ff0cf'],
+	colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', 
+		    '#8085e9', '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'], // docs
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
 		loading: 'Loading...',
@@ -1318,8 +1315,8 @@ defaultOptions = {
 	global: {
 		useUTC: true,
 		//timezoneOffset: 0,
-		canvasToolsURL: 'http://code.highcharts.com/3.0.10-modified/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/3.0.10-modified/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/4.0.0-modified/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/4.0.0-modified/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -1334,7 +1331,7 @@ defaultOptions = {
 		//marginLeft: null,
 		borderColor: '#4572A7',
 		//borderWidth: 0,
-		borderRadius: 5,
+		borderRadius: 0,
 		defaultSeriesType: 'line',
 		ignoreHiddenSeries: true,
 		//inverted: false,
@@ -1376,8 +1373,8 @@ defaultOptions = {
 		// verticalAlign: 'top',
 		// y: null,
 		style: {
-			color: '#274b6d',//#3E576F',
-			fontSize: '16px'
+			color: '#333333', // docs
+			fontSize: '18px'
 		}
 
 	},
@@ -1389,7 +1386,7 @@ defaultOptions = {
 		// verticalAlign: 'top',
 		// y: null,
 		style: {
-			color: '#4d759e'
+			color: '#555555' // docs
 		}
 	},
 
@@ -1412,7 +1409,7 @@ defaultOptions = {
 			//shadow: false,
 			// stacking: null,
 			marker: {
-				enabled: true,
+				//enabled: true,
 				//symbol: null,
 				lineWidth: 0,
 				radius: 4,
@@ -1435,6 +1432,7 @@ defaultOptions = {
 			},
 			dataLabels: merge(defaultLabelOptions, {
 				align: 'center',
+				//defer: true,
 				enabled: false,
 				formatter: function () {
 					return this.y === null ? '' : numberFormat(this.y, -1);
@@ -1460,6 +1458,10 @@ defaultOptions = {
 					marker: {
 						// lineWidth: base + 1,
 						// radius: base + 1
+					},
+					halo: {
+						size: 10,
+						opacity: 0.25
 					}
 				},
 				select: {
@@ -1468,7 +1470,7 @@ defaultOptions = {
 			},
 			stickyTracking: true,
 			//tooltip: {
-				//pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b>'
+				//pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y}</b>'
 				//valueDecimals: null,
 				//xDateFormat: '%A, %b %e, %Y',
 				//valuePrefix: '',
@@ -1494,9 +1496,9 @@ defaultOptions = {
 		labelFormatter: function () {
 			return this.name;
 		},
-		borderWidth: 1,
+		//borderWidth: 0,
 		borderColor: '#909090',
-		borderRadius: 5,
+		borderRadius: 0, // docs
 		navigation: {
 			// animation: true,
 			activeColor: '#274b6d',
@@ -1504,7 +1506,7 @@ defaultOptions = {
 			inactiveColor: '#CCC'
 			// style: {} // text styles
 		},
-		// margin: 10,
+		// margin: 20,
 		// reversed: false,
 		shadow: false,
 		// backgroundColor: null,
@@ -1512,8 +1514,9 @@ defaultOptions = {
 			padding: '5px'
 		},*/
 		itemStyle: {			
-			color: '#274b6d',
-			fontSize: '12px'
+			color: '#333333', // docs
+			fontSize: '12px',
+			fontWeight: 'bold' // docs
 		},
 		itemHoverStyle: {
 			//cursor: 'pointer', removed as of #601
@@ -1528,6 +1531,7 @@ defaultOptions = {
 			height: '13px'
 		},
 		// itemWidth: undefined,
+		// symbolRadius: 0,
 		// symbolWidth: 16,
 		symbolPadding: 5,
 		verticalAlign: 'bottom',
@@ -1562,7 +1566,7 @@ defaultOptions = {
 		enabled: true,
 		animation: hasSVG,
 		//crosshairs: null,
-		backgroundColor: 'rgba(255, 255, 255, .85)',
+		backgroundColor: 'rgba(249, 249, 249, .85)',
 		borderWidth: 1,
 		borderRadius: 3,
 		dateTimeLabelFormats: { 
@@ -1577,8 +1581,9 @@ defaultOptions = {
 		},
 		//formatter: defaultFormatter,
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
-		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
+		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>', // docs
 		shadow: true,
+		//shape: 'calout',
 		//shared: false,
 		snap: isTouchDevice ? 25 : 10,
 		style: {
@@ -1822,13 +1827,6 @@ SVGElement.prototype = {
 			createElement(nodeName) :
 			doc.createElementNS(SVG_NS, nodeName);
 		wrapper.renderer = renderer;
-		/**
-		 * A collection of attribute setters. These methods, if defined, are called right before a certain
-		 * attribute is set on an element wrapper. Returning false prevents the default attribute
-		 * setter to run. Returning a value causes the default setter to set that value. Used in
-		 * Renderer.label.
-		 */
-		wrapper.attrSetters = {};
 	},
 	/**
 	 * Default base for animation
@@ -1856,241 +1854,171 @@ SVGElement.prototype = {
 			}
 		}
 	},
+
+	/**
+	 * Build an SVG gradient out of a common JavaScript configuration object
+	 */
+	colorGradient: function (color, prop, elem) {
+		var renderer = this.renderer,
+			colorObject,
+			gradName,
+			gradAttr,
+			gradients,
+			gradientObject,
+			stops,
+			stopColor,
+			stopOpacity,
+			radialReference,
+			n,
+			id,
+			key = [];
+
+		// Apply linear or radial gradients
+		if (color.linearGradient) {
+			gradName = 'linearGradient';
+		} else if (color.radialGradient) {
+			gradName = 'radialGradient';
+		}
+
+		if (gradName) {
+			gradAttr = color[gradName];
+			gradients = renderer.gradients;
+			stops = color.stops;
+			radialReference = elem.radialReference;
+
+			// Keep < 2.2 kompatibility
+			if (isArray(gradAttr)) {
+				color[gradName] = gradAttr = {
+					x1: gradAttr[0],
+					y1: gradAttr[1],
+					x2: gradAttr[2],
+					y2: gradAttr[3],
+					gradientUnits: 'userSpaceOnUse'
+				};
+			}
+
+			// Correct the radial gradient for the radial reference system
+			if (gradName === 'radialGradient' && radialReference && !defined(gradAttr.gradientUnits)) {
+				gradAttr = merge(gradAttr, {
+					cx: (radialReference[0] - radialReference[2] / 2) + gradAttr.cx * radialReference[2],
+					cy: (radialReference[1] - radialReference[2] / 2) + gradAttr.cy * radialReference[2],
+					r: gradAttr.r * radialReference[2],
+					gradientUnits: 'userSpaceOnUse'
+				});
+			}
+
+			// Build the unique key to detect whether we need to create a new element (#1282)
+			for (n in gradAttr) {
+				if (n !== 'id') {
+					key.push(n, gradAttr[n]);
+				}
+			}
+			for (n in stops) {
+				key.push(stops[n]);
+			}
+			key = key.join(',');
+
+			// Check if a gradient object with the same config object is created within this renderer
+			if (gradients[key]) {
+				id = gradients[key].attr('id');
+
+			} else {
+
+				// Set the id and create the element
+				gradAttr.id = id = PREFIX + idCounter++;
+				gradients[key] = gradientObject = renderer.createElement(gradName)
+					.attr(gradAttr)
+					.add(renderer.defs);
+
+
+				// The gradient needs to keep a list of stops to be able to destroy them
+				gradientObject.stops = [];
+				each(stops, function (stop) {
+					var stopObject;
+					if (stop[1].indexOf('rgba') === 0) {
+						colorObject = Color(stop[1]);
+						stopColor = colorObject.get('rgb');
+						stopOpacity = colorObject.get('a');
+					} else {
+						stopColor = stop[1];
+						stopOpacity = 1;
+					}
+					stopObject = renderer.createElement('stop').attr({
+						offset: stop[0],
+						'stop-color': stopColor,
+						'stop-opacity': stopOpacity
+					}).add(gradientObject);
+
+					// Add the stop element to the gradient
+					gradientObject.stops.push(stopObject);
+				});
+			}
+
+			// Set the reference to the gradient object
+			elem.setAttribute(prop, 'url(' + renderer.url + '#' + id + ')');
+		} 
+	},
+
 	/**
 	 * Set or get a given attribute
 	 * @param {Object|String} hash
 	 * @param {Mixed|Undefined} val
 	 */
 	attr: function (hash, val) {
-		var wrapper = this,
-			key,
+		var key,
 			value,
-			result,
-			i,
-			child,
-			element = wrapper.element,
-			nodeName = element.nodeName.toLowerCase(), // Android2 requires lower for "text"
-			renderer = wrapper.renderer,
-			skipAttr,
-			titleNode,
-			attrSetters = wrapper.attrSetters,
-			shadows = wrapper.shadows,
+			element = this.element,
 			hasSetSymbolSize,
-			doTransform,
-			ret = wrapper;
+			ret = this,
+			skipAttr;
 
 		// single key-value pair
-		if (isString(hash) && defined(val)) {
+		if (typeof hash === 'string' && val !== UNDEFINED) {
 			key = hash;
 			hash = {};
 			hash[key] = val;
 		}
 
 		// used as a getter: first argument is a string, second is undefined
-		if (isString(hash)) {
-			key = hash;
-			if (nodeName === 'circle') {
-				key = { x: 'cx', y: 'cy' }[key] || key;
-			} else if (key === 'strokeWidth') {
-				key = 'stroke-width';
-			}
-			ret = attr(element, key) || wrapper[key] || 0;
-			if (key !== 'd' && key !== 'visibility' && key !== 'fill') { // 'd' is string in animation step
-				ret = parseFloat(ret);
-			}
-
+		if (typeof hash === 'string') {
+			ret = (this[hash + 'Getter'] || this._defaultGetter).call(this, hash, element);
+		
 		// setter
 		} else {
 
 			for (key in hash) {
-				skipAttr = false; // reset
 				value = hash[key];
+				skipAttr = false;
 
-				// check for a specific attribute setter
-				result = attrSetters[key] && attrSetters[key].call(wrapper, value, key);
 
-				if (result !== false) {
-					if (result !== UNDEFINED) {
-						value = result; // the attribute setter has returned a new value to set
+
+				if (this.symbolName && /^(x|y|width|height|r|start|end|innerR|anchorX|anchorY)/.test(key)) {
+					if (!hasSetSymbolSize) {
+						this.symbolAttr(hash);
+						hasSetSymbolSize = true;
 					}
-
-
-					// paths
-					if (key === 'd') {
-						if (value && value.join) { // join path
-							value = value.join(' ');
-						}
-						if (/(NaN| {2}|^$)/.test(value)) {
-							value = 'M 0 0';
-						}
-						//wrapper.d = value; // shortcut for animations
-
-					// update child tspans x values
-					} else if (key === 'x' && nodeName === 'text') {
-						for (i = 0; i < element.childNodes.length; i++) {
-							child = element.childNodes[i];
-							// if the x values are equal, the tspan represents a linebreak
-							if (attr(child, 'x') === attr(element, 'x')) {
-								//child.setAttribute('x', value);
-								attr(child, 'x', value);
-							}
-						}
-
-					} else if (wrapper.rotation && (key === 'x' || key === 'y')) {
-						doTransform = true;
-
-					// apply gradients
-					} else if (key === 'fill') {
-						value = renderer.color(value, element, key);
-
-					// circle x and y
-					} else if (nodeName === 'circle' && (key === 'x' || key === 'y')) {
-						key = { x: 'cx', y: 'cy' }[key] || key;
-
-					// rectangle border radius
-					} else if (nodeName === 'rect' && key === 'r') {
-						attr(element, {
-							rx: value,
-							ry: value
-						});
-						skipAttr = true;
-
-					// translation and text rotation
-					} else if (key === 'translateX' || key === 'translateY' || key === 'rotation' ||
-							key === 'verticalAlign' || key === 'scaleX' || key === 'scaleY') {
-						doTransform = true;
-						skipAttr = true;
-
-					// apply opacity as subnode (required by legacy WebKit and Batik)
-					} else if (key === 'stroke') {
-						value = renderer.color(value, element, key);
-
-					// emulate VML's dashstyle implementation
-					} else if (key === 'dashstyle') {
-						key = 'stroke-dasharray';
-						value = value && value.toLowerCase();
-						if (value === 'solid') {
-							value = NONE;
-						} else if (value) {
-							value = value
-								.replace('shortdashdotdot', '3,1,1,1,1,1,')
-								.replace('shortdashdot', '3,1,1,1')
-								.replace('shortdot', '1,1,')
-								.replace('shortdash', '3,1,')
-								.replace('longdash', '8,3,')
-								.replace(/dot/g, '1,3,')
-								.replace('dash', '4,3,')
-								.replace(/,$/, '')
-								.split(','); // ending comma
-
-							i = value.length;
-							while (i--) {
-								value[i] = pInt(value[i]) * pick(hash['stroke-width'], wrapper['stroke-width']);
-							}
-							value = value.join(',');
-						}
-
-					// IE9/MooTools combo: MooTools returns objects instead of numbers and IE9 Beta 2
-					// is unable to cast them. Test again with final IE9.
-					} else if (key === 'width') {
-						value = pInt(value);
-
-					// Text alignment
-					} else if (key === 'align') {
-						key = 'text-anchor';
-						value = { left: 'start', center: 'middle', right: 'end' }[value];
-
-					// Title requires a subnode, #431
-					} else if (key === 'title') {
-						titleNode = element.getElementsByTagName('title')[0];
-						if (!titleNode) {
-							titleNode = doc.createElementNS(SVG_NS, 'title');
-							element.appendChild(titleNode);
-						}
-						titleNode.textContent = value;
-					}
-
-					// jQuery animate changes case
-					if (key === 'strokeWidth') {
-						key = 'stroke-width';
-					}
-
-					// In Chrome/Win < 6 as well as Batik, the stroke attribute can't be set when the stroke-
-					// width is 0. #1369
-					if (key === 'stroke-width' || key === 'stroke') {
-						wrapper[key] = value;
-						// Only apply the stroke attribute if the stroke width is defined and larger than 0
-						if (wrapper.stroke && wrapper['stroke-width']) {
-							attr(element, 'stroke', wrapper.stroke);
-							attr(element, 'stroke-width', wrapper['stroke-width']);
-							wrapper.hasStroke = true;
-						} else if (key === 'stroke-width' && value === 0 && wrapper.hasStroke) {
-							element.removeAttribute('stroke');
-							wrapper.hasStroke = false;
-						}
-						skipAttr = true;
-					}
-
-					// symbols
-					if (wrapper.symbolName && /^(x|y|width|height|r|start|end|innerR|anchorX|anchorY)/.test(key)) {
-
-
-						if (!hasSetSymbolSize) {
-							wrapper.symbolAttr(hash);
-							hasSetSymbolSize = true;
-						}
-						skipAttr = true;
-					}
-
-					// let the shadow follow the main element
-					if (shadows && /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)) {
-						i = shadows.length;
-						while (i--) {
-							attr(
-								shadows[i],
-								key,
-								key === 'height' ?
-									mathMax(value - (shadows[i].cutHeight || 0), 0) :
-									value
-							);
-						}
-					}
-
-					// validate heights
-					if ((key === 'width' || key === 'height') && nodeName === 'rect' && value < 0) {
-						value = 0;
-					}
-
-					// Record for animation and quick access without polling the DOM
-					wrapper[key] = value;
-
-
-					if (key === 'text') {
-						if (value !== wrapper.textStr) {
-							
-							// Delete bBox memo when the text changes
-							delete wrapper.bBox;
-						
-							wrapper.textStr = value;
-							if (wrapper.added) {
-								renderer.buildText(wrapper);
-							}
-						}
-					} else if (!skipAttr) {
-						//attr(element, key, value);
-						if (value !== undefined) {
-							element.setAttribute(key, value);
-						}
-					}
-
+					skipAttr = true;
 				}
 
+				if (this.rotation && (key === 'x' || key === 'y')) {
+					this.doTransform = true;
+				}
+				
+				if (!skipAttr) {
+					(this[key + 'Setter'] || this._defaultSetter).call(this, value, key, element);
+				}
+
+				// Let the shadow follow the main element
+				if (this.shadows && /^(width|height|visibility|x|y|d|transform|cx|cy|r)$/.test(key)) {
+					this.updateShadows(key, value);
+				}
 			}
 
 			// Update transform. Do this outside the loop to prevent redundant updating for batch setting
 			// of attributes.
-			if (doTransform) {
-				wrapper.updateTransform();
+			if (this.doTransform) {
+				this.updateTransform();
+				this.doTransform = false;
 			}
 
 		}
@@ -2098,6 +2026,18 @@ SVGElement.prototype = {
 		return ret;
 	},
 
+	updateShadows: function (key, value) {
+		var shadows = this.shadows,
+			i = shadows.length;
+		while (i--) {
+			shadows[i].setAttribute(
+				key,
+				key === 'height' ?
+					mathMax(value - (shadows[i].cutHeight || 0), 0) :
+					key === 'd' ? this.d : value
+			);
+		}
+	},
 
 	/**
 	 * Add a class name to an element
@@ -2330,6 +2270,7 @@ SVGElement.prototype = {
 			scaleY = wrapper.scaleY,
 			inverted = wrapper.inverted,
 			rotation = wrapper.rotation,
+			element = wrapper.element,
 			transform;
 
 		// flipping affects translate as adjustment for flipping around the group's axis
@@ -2346,7 +2287,7 @@ SVGElement.prototype = {
 		if (inverted) {
 			transform.push('rotate(90) scale(-1,1)');
 		} else if (rotation) { // text rotation
-			transform.push('rotate(' + rotation + ' ' + (wrapper.x || 0) + ' ' + (wrapper.y || 0) + ')');
+			transform.push('rotate(' + rotation + ' ' + (element.getAttribute('x') || 0) + ' ' + (element.getAttribute('y') || 0) + ')');
 		}
 
 		// apply scale
@@ -2355,7 +2296,7 @@ SVGElement.prototype = {
 		}
 
 		if (transform.length) {
-			attr(wrapper.element, 'transform', transform.join(' '));
+			element.setAttribute('transform', transform.join(' '));
 		}
 	},
 	/**
@@ -2454,14 +2395,21 @@ SVGElement.prototype = {
 			styles = wrapper.styles,
 			rad = rotation * deg2rad,
 			textStr = wrapper.textStr,
-			numKey;
+			cacheKey;
 
 		// Since numbers are monospaced, and numerical labels appear a lot in a chart,
 		// we assume that a label of n characters has the same bounding box as others 
 		// of the same length.
 		if (textStr === '' || numRegex.test(textStr)) {
-			numKey = textStr.toString().length + (styles ? ('|' + styles.fontSize + '|' + styles.fontFamily) : '');
-			bBox = renderer.cache[numKey];
+			cacheKey = 'num.' + textStr.toString().length + (styles ? ('|' + styles.fontSize + '|' + styles.fontFamily) : '');
+
+		} //else { // This code block made demo/waterfall fail, related to buildText
+			// Caching all strings reduces rendering time by 4-5%. 
+			// TODO: Check how this affects places where bBox is found on the element
+			//cacheKey = textStr + (styles ? ('|' + styles.fontSize + '|' + styles.fontFamily) : '');
+		//}
+		if (cacheKey) {
+			bBox = renderer.cache[cacheKey];
 		}
 
 		// No cache found
@@ -2516,8 +2464,8 @@ SVGElement.prototype = {
 
 			// Cache it
 			wrapper.bBox = bBox;
-			if (numKey) {
-				renderer.cache[numKey] = bBox;
+			if (cacheKey) {
+				renderer.cache[cacheKey] = bBox;
 			}
 		}
 		return bBox;
@@ -2527,7 +2475,13 @@ SVGElement.prototype = {
 	 * Show the element
 	 */
 	show: function (inherit) {
-		return this.attr({ visibility: inherit ? 'inherit' : VISIBLE });
+		// IE9-11 doesn't handle visibilty:inherit well, so we remove the attribute instead (#2881)
+		if (inherit && this.element.namespaceURI === SVG_NS) {
+			this.element.removeAttribute('visibility');
+			return this;
+		} else {
+			return this.attr({ visibility: inherit ? 'inherit' : VISIBLE });
+		}
 	},
 
 	/**
@@ -2742,8 +2696,141 @@ SVGElement.prototype = {
 		}
 		return this;
 
+	},
+
+	xGetter: function (key) {
+		if (this.element.nodeName === 'circle') {
+			key = { x: 'cx', y: 'cy' }[key] || key;
+		}
+		return this._defaultGetter(key);
+	},
+
+	/** 
+	 * Get the current value of an attribute or pseudo attribute, used mainly
+	 * for animation.
+	 */
+	_defaultGetter: function (key) {
+		var ret = pick(this[key], this.element ? this.element.getAttribute(key) : null, 0);
+
+		if (/^[0-9\.]+$/.test(ret)) { // is numerical
+			ret = parseFloat(ret);
+		}
+		return ret;
+	},
+
+
+	dSetter: function (value, key, element) {
+		if (value && value.join) { // join path
+			value = value.join(' ');
+		}
+		if (/(NaN| {2}|^$)/.test(value)) {
+			value = 'M 0 0';
+		}
+		element.setAttribute(key, value);
+
+		this[key] = value;
+	},
+	dashstyleSetter: function (value) {
+		var i;
+		value = value && value.toLowerCase();
+		if (value) {
+			value = value
+				.replace('shortdashdotdot', '3,1,1,1,1,1,')
+				.replace('shortdashdot', '3,1,1,1')
+				.replace('shortdot', '1,1,')
+				.replace('shortdash', '3,1,')
+				.replace('longdash', '8,3,')
+				.replace(/dot/g, '1,3,')
+				.replace('dash', '4,3,')
+				.replace(/,$/, '')
+				.split(','); // ending comma
+
+			i = value.length;
+			while (i--) {
+				value[i] = pInt(value[i]) * this.element.getAttribute('stroke-width');
+			}
+			value = value.join(',');
+			this.element.setAttribute('stroke-dasharray', value);
+		}
+	},
+	alignSetter: function (value) {
+		this.element.setAttribute('text-anchor', { left: 'start', center: 'middle', right: 'end' }[value]);
+	},
+	opacitySetter: function (value, key, element) {
+		this[key] = value;
+		element.setAttribute(key, value);
+	},
+	// In Chrome/Win < 6 as well as Batik and PhantomJS as of 1.9.7, the stroke attribute can't be set when the stroke-
+	// width is 0. #1369
+	'stroke-widthSetter': function (value, key, element) {
+		if (value === 0) {
+			value = 0.00001;
+		}
+		this.strokeWidth = value; // read in symbol paths like 'callout'
+		element.setAttribute(key, value);
+	},
+	titleSetter: function (value) {
+		var titleNode = this.element.getElementsByTagName('title')[0];
+		if (!titleNode) {
+			titleNode = doc.createElementNS(SVG_NS, 'title');
+			this.element.appendChild(titleNode);
+		}
+		titleNode.textContent = value;
+	},
+	textSetter: function (value) {
+		if (value !== this.textStr) {
+			// Delete bBox memo when the text changes
+			delete this.bBox;
+		
+			this.textStr = value;
+			if (this.added) {
+				this.renderer.buildText(this);
+			}
+		}
+	},
+	fillSetter: function (value, key, element) {
+
+		if (typeof value === 'string') {
+			element.setAttribute(key, value);
+		} else if (value) {
+			this.colorGradient(value, key, element);
+		}
+	},
+	zIndexSetter: function (value, key, element) {
+		element.setAttribute(key, value);
+		this[key] = value;
+	},
+	_defaultSetter: function (value, key, element) {
+		element.setAttribute(key, value);
 	}
 };
+
+// Some shared setters and getters
+SVGElement.prototype.yGetter = SVGElement.prototype.xGetter;
+SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter = 
+		SVGElement.prototype.rotationSetter = SVGElement.prototype.verticalAlignSetter = 
+		SVGElement.prototype.scaleXSetter = SVGElement.prototype.scaleYSetter = function (value, key) {
+	this[key] = value;
+	this.doTransform = true;
+};
+SVGElement.prototype.strokeSetter = SVGElement.prototype.fillSetter;
+
+
+
+// In Chrome/Win < 6 as well as Batik, the stroke attribute can't be set when the stroke-
+// width is 0. #1369
+/*SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter = function (value, key) {
+	this[key] = value;
+	// Only apply the stroke attribute if the stroke width is defined and larger than 0
+	if (this.stroke && this['stroke-width']) {
+		this.element.setAttribute('stroke', this.stroke);
+		this.element.setAttribute('stroke-width', this['stroke-width']);
+		this.hasStroke = true;
+	} else if (key === 'stroke-width' && value === 0 && this.hasStroke) {
+		this.element.removeAttribute('stroke');
+		this.hasStroke = false;
+	}
+};*/
 
 
 /**
@@ -2837,7 +2924,7 @@ SVGRenderer.prototype = {
 
 	getStyle: function (style) {
 		return (this.style = extend({
-			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
+			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif', // default font
 			fontSize: '12px'
 		}, style));
 	},
@@ -2905,15 +2992,12 @@ SVGRenderer.prototype = {
 		var textNode = wrapper.element,
 			renderer = this,
 			forExport = renderer.forExport,
-			lines = pick(wrapper.textStr, '').toString()
-				.replace(/<(b|strong)>/g, '<span style="font-weight:bold">')
-				.replace(/<(i|em)>/g, '<span style="font-style:italic">')
-				.replace(/<a/g, '<span')
-				.replace(/<\/(b|strong|i|em|a)>/g, '</span>')
-				.split(/<br.*?>/g),
+			textStr = pick(wrapper.textStr, '').toString(),
+			hasMarkup = textStr.indexOf('<') !== -1,
+			lines,
 			childNodes = textNode.childNodes,
-			styleRegex = /<.*style="([^"]+)".*>/,
-			hrefRegex = /<.*href="(http[^"]+)".*>/,
+			styleRegex,
+			hrefRegex,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
 			width = wrapper.textWidth,
@@ -2934,142 +3018,170 @@ SVGRenderer.prototype = {
 			textNode.removeChild(childNodes[i]);
 		}
 
-		if (width && !wrapper.added) {
-			this.box.appendChild(textNode); // attach it to the DOM to read offset width
-		}
+		// Skip tspans, add text directly to text node
+		if (!hasMarkup && textStr.indexOf(' ') === -1) {
+			textNode.appendChild(doc.createTextNode(textStr));
+			return;
 
-		// remove empty line at end
-		if (lines[lines.length - 1] === '') {
-			lines.pop();
-		}
+		// Complex strings, add more logic
+		} else {
 
-		// build the lines
-		each(lines, function (line, lineNo) {
-			var spans, spanNo = 0;
+			styleRegex = /<.*style="([^"]+)".*>/;
+			hrefRegex = /<.*href="(http[^"]+)".*>/;
 
-			line = line.replace(/<span/g, '|||<span').replace(/<\/span>/g, '</span>|||');
-			spans = line.split('|||');
+			if (width && !wrapper.added) {
+				this.box.appendChild(textNode); // attach it to the DOM to read offset width
+			}
 
-			each(spans, function (span) {
-				if (span !== '' || spans.length === 1) {
-					var attributes = {},
-						tspan = doc.createElementNS(SVG_NS, 'tspan'),
-						spanStyle; // #390
-					if (styleRegex.test(span)) {
-						spanStyle = span.match(styleRegex)[1].replace(/(;| |^)color([ :])/, '$1fill$2');
-						attr(tspan, 'style', spanStyle);
-					}
-					if (hrefRegex.test(span) && !forExport) { // Not for export - #1529
-						attr(tspan, 'onclick', 'location.href=\"' + span.match(hrefRegex)[1] + '\"');
-						css(tspan, { cursor: 'pointer' });
-					}
+			if (hasMarkup) {
+				lines = textStr
+					.replace(/<(b|strong)>/g, '<span style="font-weight:bold">')
+					.replace(/<(i|em)>/g, '<span style="font-style:italic">')
+					.replace(/<a/g, '<span')
+					.replace(/<\/(b|strong|i|em|a)>/g, '</span>')
+					.split(/<br.*?>/g);
 
-					span = (span.replace(/<(.|\n)*?>/g, '') || ' ')
-						.replace(/&lt;/g, '<')
-						.replace(/&gt;/g, '>');
+			} else {
+				lines = [textStr];
+			}
 
-					// Nested tags aren't supported, and cause crash in Safari (#1596)
-					if (span !== ' ') {
 
-						// add the text node
-						tspan.appendChild(doc.createTextNode(span));
+			// remove empty line at end
+			if (lines[lines.length - 1] === '') {
+				lines.pop();
+			}
 
-						if (!spanNo) { // first span in a line, align it to the left
-							attributes.x = parentX;
-						} else {
-							attributes.dx = 0; // #16
+			
+			// build the lines
+			each(lines, function (line, lineNo) {
+				var spans, spanNo = 0;
+
+				line = line.replace(/<span/g, '|||<span').replace(/<\/span>/g, '</span>|||');
+				spans = line.split('|||');
+
+				each(spans, function (span) {
+					if (span !== '' || spans.length === 1) {
+						var attributes = {},
+							tspan = doc.createElementNS(SVG_NS, 'tspan'),
+							spanStyle; // #390
+						if (styleRegex.test(span)) {
+							spanStyle = span.match(styleRegex)[1].replace(/(;| |^)color([ :])/, '$1fill$2');
+							attr(tspan, 'style', spanStyle);
+						}
+						if (hrefRegex.test(span) && !forExport) { // Not for export - #1529
+							attr(tspan, 'onclick', 'location.href=\"' + span.match(hrefRegex)[1] + '\"');
+							css(tspan, { cursor: 'pointer' });
 						}
 
-						// add attributes
-						attr(tspan, attributes);
+						span = (span.replace(/<(.|\n)*?>/g, '') || ' ')
+							.replace(/&lt;/g, '<')
+							.replace(/&gt;/g, '>');
 
-						// first span on subsequent line, add the line height
-						if (!spanNo && lineNo) {
+						// Nested tags aren't supported, and cause crash in Safari (#1596)
+						if (span !== ' ') {
 
-							// allow getting the right offset height in exporting in IE
-							if (!hasSVG && forExport) {
-								css(tspan, { display: 'block' });
+							// add the text node
+							tspan.appendChild(doc.createTextNode(span));
+
+							if (!spanNo) { // first span in a line, align it to the left
+								if (lineNo && parentX !== null) {
+									attributes.x = parentX;
+								}
+							} else {
+								attributes.dx = 0; // #16
 							}
 
-							// Set the line height based on the font size of either
-							// the text element or the tspan element
-							attr(
-								tspan,
-								'dy',
-								getLineHeight(tspan),
-								// Safari 6.0.2 - too optimized for its own good (#1539)
-								// TODO: revisit this with future versions of Safari
-								isWebKit && tspan.offsetHeight
-							);
-						}
+							// add attributes
+							attr(tspan, attributes);
 
-						// Append it
-						textNode.appendChild(tspan);
+							// first span on subsequent line, add the line height
+							if (!spanNo && lineNo) {
 
-						spanNo++;
-
-						// check width and apply soft breaks
-						if (width) {
-							var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
-								hasWhiteSpace = words.length > 1 && textStyles.whiteSpace !== 'nowrap',
-								tooLong,
-								actualWidth,
-								clipHeight = wrapper._clipHeight,
-								rest = [],
-								dy = getLineHeight(),
-								softLineNo = 1,
-								bBox;
-
-							while (hasWhiteSpace && (words.length || rest.length)) {
-								delete wrapper.bBox; // delete cache
-								bBox = wrapper.getBBox();
-								actualWidth = bBox.width;
-
-								// Old IE cannot measure the actualWidth for SVG elements (#2314)
-								if (!hasSVG && renderer.forExport) {
-									actualWidth = renderer.measureSpanWidth(tspan.firstChild.data, wrapper.styles);
+								// allow getting the right offset height in exporting in IE
+								if (!hasSVG && forExport) {
+									css(tspan, { display: 'block' });
 								}
 
-								tooLong = actualWidth > width;
-								if (!tooLong || words.length === 1) { // new line needed
-									words = rest;
-									rest = [];
-									if (words.length) {
-										softLineNo++;
+								// Set the line height based on the font size of either
+								// the text element or the tspan element
+								attr(
+									tspan,
+									'dy',
+									getLineHeight(tspan),
+									// Safari 6.0.2 - too optimized for its own good (#1539)
+									// TODO: revisit this with future versions of Safari
+									isWebKit && tspan.offsetHeight
+								);
+							}
 
-										if (clipHeight && softLineNo * dy > clipHeight) {
-											words = ['...'];
-											wrapper.attr('title', wrapper.textStr);
-										} else {
+							// Append it
+							textNode.appendChild(tspan);
 
-											tspan = doc.createElementNS(SVG_NS, 'tspan');
-											attr(tspan, {
-												dy: dy,
-												x: parentX
-											});
-											if (spanStyle) { // #390
-												attr(tspan, 'style', spanStyle);
-											}
-											textNode.appendChild(tspan);
+							spanNo++;
 
-											if (actualWidth > width) { // a single word is pressing it out
-												width = actualWidth;
+							// check width and apply soft breaks
+							if (width) {
+								var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
+									hasWhiteSpace = words.length > 1 && textStyles.whiteSpace !== 'nowrap',
+									tooLong,
+									actualWidth,
+									clipHeight = wrapper._clipHeight,
+									rest = [],
+									dy = getLineHeight(),
+									softLineNo = 1,
+									bBox;
+
+								while (hasWhiteSpace && (words.length || rest.length)) {
+									delete wrapper.bBox; // delete cache
+									bBox = wrapper.getBBox();
+									actualWidth = bBox.width;
+
+									// Old IE cannot measure the actualWidth for SVG elements (#2314)
+									if (!hasSVG && renderer.forExport) {
+										actualWidth = renderer.measureSpanWidth(tspan.firstChild.data, wrapper.styles);
+									}
+
+									tooLong = actualWidth > width;
+									if (!tooLong || words.length === 1) { // new line needed
+										words = rest;
+										rest = [];
+										if (words.length) {
+											softLineNo++;
+
+											if (clipHeight && softLineNo * dy > clipHeight) {
+												words = ['...'];
+												wrapper.attr('title', wrapper.textStr);
+											} else {
+
+												tspan = doc.createElementNS(SVG_NS, 'tspan');
+												attr(tspan, {
+													dy: dy,
+													x: parentX
+												});
+												if (spanStyle) { // #390
+													attr(tspan, 'style', spanStyle);
+												}
+												textNode.appendChild(tspan);
+
+												if (actualWidth > width) { // a single word is pressing it out
+													width = actualWidth;
+												}
 											}
 										}
+									} else { // append to existing line tspan
+										tspan.removeChild(tspan.firstChild);
+										rest.unshift(words.pop());
 									}
-								} else { // append to existing line tspan
-									tspan.removeChild(tspan.firstChild);
-									rest.unshift(words.pop());
-								}
-								if (words.length) {
-									tspan.appendChild(doc.createTextNode(words.join(' ').replace(/- /g, '-')));
+									if (words.length) {
+										tspan.appendChild(doc.createTextNode(words.join(' ').replace(/- /g, '-')));
+									}
 								}
 							}
 						}
 					}
-				}
+				});
 			});
-		});
+		}
 	},
 
 	/**
@@ -3091,7 +3203,6 @@ SVGRenderer.prototype = {
 			hoverStyle,
 			pressedStyle,
 			disabledStyle,
-			STYLE = 'style',
 			verticalGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
 
 		// Normal state - prepare the attributes
@@ -3111,8 +3222,8 @@ SVGRenderer.prototype = {
 				color: 'black'
 			}
 		}, normalState);
-		normalStyle = normalState[STYLE];
-		delete normalState[STYLE];
+		normalStyle = normalState.style;
+		delete normalState.style;
 
 		// Hover state
 		hoverState = merge(normalState, {
@@ -3125,8 +3236,8 @@ SVGRenderer.prototype = {
 				]
 			}
 		}, hoverState);
-		hoverStyle = hoverState[STYLE];
-		delete hoverState[STYLE];
+		hoverStyle = hoverState.style;
+		delete hoverState.style;
 
 		// Pressed state
 		pressedState = merge(normalState, {
@@ -3139,8 +3250,8 @@ SVGRenderer.prototype = {
 				]
 			}
 		}, pressedState);
-		pressedStyle = pressedState[STYLE];
-		delete pressedState[STYLE];
+		pressedStyle = pressedState.style;
+		delete pressedState.style;
 
 		// Disabled state
 		disabledState = merge(normalState, {
@@ -3148,8 +3259,8 @@ SVGRenderer.prototype = {
 				color: '#CCC'
 			}
 		}, disabledState);
-		disabledStyle = disabledState[STYLE];
-		delete disabledState[STYLE];
+		disabledStyle = disabledState.style;
+		delete disabledState.style;
 
 		// Add the events. IE9 and IE10 need mouseover and mouseout to funciton (#667).
 		addEvent(label.element, isIE ? 'mouseover' : 'mouseenter', function () {
@@ -3239,9 +3350,16 @@ SVGRenderer.prototype = {
 				x: x,
 				y: y,
 				r: r
-			};
+			},
+			wrapper = this.createElement('circle');
 
-		return this.createElement('circle').attr(attr);
+		wrapper.xSetter = function (value) {
+			this.element.setAttribute('cx', value);
+		};
+		wrapper.ySetter = function (value) {
+			this.element.setAttribute('cy', value);
+		};
+		return wrapper.attr(attr);
 	},
 
 	/**
@@ -3290,7 +3408,7 @@ SVGRenderer.prototype = {
 		r = isObject(x) ? x.r : r;
 
 		var wrapper = this.createElement('rect'),
-			attr = isObject(x) ? x : x === UNDEFINED ? {} : {
+			attribs = isObject(x) ? x : x === UNDEFINED ? {} : {
 				x: x,
 				y: y,
 				width: mathMax(width, 0),
@@ -3298,15 +3416,22 @@ SVGRenderer.prototype = {
 			};
 
 		if (strokeWidth !== UNDEFINED) {
-			attr.strokeWidth = strokeWidth;
-			attr = wrapper.crisp(attr);
+			attribs.strokeWidth = strokeWidth;
+			attribs = wrapper.crisp(attribs);
 		}
 
 		if (r) {
-			attr.r = r;
-		}		
+			attribs.r = r;
+		}
+
+		wrapper.rSetter = function (value) {
+			attr(this.element, {
+				rx: value,
+				ry: value
+			});
+		};
 		
-		return wrapper.attr(attr);
+		return wrapper.attr(attribs);
 	},
 
 	/**
@@ -3570,6 +3695,65 @@ SVGRenderer.prototype = {
 
 				open ? '' : 'Z' // close
 			];
+		},
+
+		/**
+		 * Callout shape used for default tooltips, also used for rounded rectangles in VML
+		 */
+		callout: function (x, y, w, h, options) {
+			var arrowLength = 6,
+				halfDistance = 6,
+				r = mathMin((options && options.r) || 0, w, h),
+				safeDistance = r + halfDistance,
+				anchorX = options && options.anchorX,
+				anchorY = options && options.anchorY,
+				path,
+				normalizer = mathRound(options.strokeWidth || 0) % 2 / 2; // mathRound because strokeWidth can sometimes have roundoff errors;
+
+			x += normalizer;
+			y += normalizer;
+			path = [
+				'M', x + r, y, 
+				'L', x + w - r, y, // top side
+				'C', x + w, y, x + w, y, x + w, y + r, // top-right corner
+				'L', x + w, y + h - r, // right side
+				'C', x + w, y + h, x + w, y + h, x + w - r, y + h, // bottom-right corner
+				'L', x + r, y + h, // bottom side
+				'C', x, y + h, x, y + h, x, y + h - r, // bottom-left corner
+				'L', x, y + r, // left side
+				'C', x, y, x, y, x + r, y // top-right corner
+			];
+			
+			if (anchorX && anchorX > w && anchorY > y + safeDistance && anchorY < y + h - safeDistance) { // replace right side
+				path.splice(13, 3,
+					'L', x + w, anchorY - halfDistance, 
+					x + w + arrowLength, anchorY,
+					x + w, anchorY + halfDistance,
+					x + w, y + h - r
+				);
+			} else if (anchorX && anchorX < 0 && anchorY > y + safeDistance && anchorY < y + h - safeDistance) { // replace left side
+				path.splice(33, 3, 
+					'L', x, anchorY + halfDistance, 
+					x - arrowLength, anchorY,
+					x, anchorY - halfDistance,
+					x, y + r
+				);
+			} else if (anchorY && anchorY > h && anchorX > x + safeDistance && anchorX < x + w - safeDistance) { // replace bottom
+				path.splice(23, 3,
+					'L', anchorX + halfDistance, y + h,
+					anchorX, y + h + arrowLength,
+					anchorX - halfDistance, y + h,
+					x + r, y + h
+				);
+			} else if (anchorY && anchorY < 0 && anchorX > x + safeDistance && anchorX < x + w - safeDistance) { // replace top
+				path.splice(3, 3,
+					'L', anchorX - halfDistance, y,
+					anchorX, y - arrowLength,
+					anchorX + halfDistance, y,
+					w - r, y
+				);
+			}
+			return path;
 		}
 	},
 
@@ -3597,132 +3781,7 @@ SVGRenderer.prototype = {
 	},
 
 
-	/**
-	 * Take a color and return it if it's a string, make it a gradient if it's a
-	 * gradient configuration object. Prior to Highstock, an array was used to define
-	 * a linear gradient with pixel positions relative to the SVG. In newer versions
-	 * we change the coordinates to apply relative to the shape, using coordinates
-	 * 0-1 within the shape. To preserve backwards compatibility, linearGradient
-	 * in this definition is an object of x1, y1, x2 and y2.
-	 *
-	 * @param {Object} color The color or config object
-	 */
-	color: function (color, elem, prop) {
-		var renderer = this,
-			colorObject,
-			regexRgba = /^rgba/,
-			gradName,
-			gradAttr,
-			gradients,
-			gradientObject,
-			stops,
-			stopColor,
-			stopOpacity,
-			radialReference,
-			n,
-			id,
-			key = [];
-
-		// Apply linear or radial gradients
-		if (color && color.linearGradient) {
-			gradName = 'linearGradient';
-		} else if (color && color.radialGradient) {
-			gradName = 'radialGradient';
-		}
-
-		if (gradName) {
-			gradAttr = color[gradName];
-			gradients = renderer.gradients;
-			stops = color.stops;
-			radialReference = elem.radialReference;
-
-			// Keep < 2.2 kompatibility
-			if (isArray(gradAttr)) {
-				color[gradName] = gradAttr = {
-					x1: gradAttr[0],
-					y1: gradAttr[1],
-					x2: gradAttr[2],
-					y2: gradAttr[3],
-					gradientUnits: 'userSpaceOnUse'
-				};
-			}
-
-			// Correct the radial gradient for the radial reference system
-			if (gradName === 'radialGradient' && radialReference && !defined(gradAttr.gradientUnits)) {
-				gradAttr = merge(gradAttr, {
-					cx: (radialReference[0] - radialReference[2] / 2) + gradAttr.cx * radialReference[2],
-					cy: (radialReference[1] - radialReference[2] / 2) + gradAttr.cy * radialReference[2],
-					r: gradAttr.r * radialReference[2],
-					gradientUnits: 'userSpaceOnUse'
-				});
-			}
-
-			// Build the unique key to detect whether we need to create a new element (#1282)
-			for (n in gradAttr) {
-				if (n !== 'id') {
-					key.push(n, gradAttr[n]);
-				}
-			}
-			for (n in stops) {
-				key.push(stops[n]);
-			}
-			key = key.join(',');
-
-			// Check if a gradient object with the same config object is created within this renderer
-			if (gradients[key]) {
-				id = gradients[key].id;
-
-			} else {
-
-				// Set the id and create the element
-				gradAttr.id = id = PREFIX + idCounter++;
-				gradients[key] = gradientObject = renderer.createElement(gradName)
-					.attr(gradAttr)
-					.add(renderer.defs);
-
-
-				// The gradient needs to keep a list of stops to be able to destroy them
-				gradientObject.stops = [];
-				each(stops, function (stop) {
-					var stopObject;
-					if (regexRgba.test(stop[1])) {
-						colorObject = Color(stop[1]);
-						stopColor = colorObject.get('rgb');
-						stopOpacity = colorObject.get('a');
-					} else {
-						stopColor = stop[1];
-						stopOpacity = 1;
-					}
-					stopObject = renderer.createElement('stop').attr({
-						offset: stop[0],
-						'stop-color': stopColor,
-						'stop-opacity': stopOpacity
-					}).add(gradientObject);
-
-					// Add the stop element to the gradient
-					gradientObject.stops.push(stopObject);
-				});
-			}
-
-			// Return the reference to the gradient object
-			return 'url(' + renderer.url + '#' + id + ')';
-
-		// Webkit and Batik can't show rgba.
-		} else if (regexRgba.test(color)) {
-			colorObject = Color(color);
-			attr(elem, prop + '-opacity', colorObject.get('a'));
-
-			return colorObject.get('rgb');
-
-
-		} else {
-			// Remove the opacity attribute added above. Does not throw if the attribute is not there.
-			elem.removeAttribute(prop + '-opacity');
-
-			return color;
-		}
-
-	},
+	
 
 
 	/**
@@ -3737,21 +3796,23 @@ SVGRenderer.prototype = {
 		// declare variables
 		var renderer = this,
 			fakeSVG = useCanVG || (!hasSVG && renderer.forExport),
-			wrapper;
+			wrapper,
+			attr = {};
 
 		if (useHTML && !renderer.forExport) {
 			return renderer.html(str, x, y);
 		}
 
-		x = mathRound(pick(x, 0));
-		y = mathRound(pick(y, 0));
+		attr.x = Math.round(x || 0); // X is always needed for line-wrap logic
+		if (y) {
+			attr.y = Math.round(y);
+		}
+		if (str || str === 0) {
+			attr.text = str;
+		}
 
 		wrapper = renderer.createElement('text')
-			.attr({
-				x: x,
-				y: y,
-				text: str
-			});
+			.attr(attr);
 
 		// Prevent wrapping from creating false offsetWidths in export in legacy IE (#1079, #1063)
 		if (fakeSVG) {
@@ -3760,8 +3821,22 @@ SVGRenderer.prototype = {
 			});
 		}
 
-		wrapper.x = x;
-		wrapper.y = y;
+		if (!useHTML) {
+			wrapper.xSetter = function (value, key, element) {
+				var childNodes = element.childNodes,
+					child,
+					i;
+				for (i = 1; i < childNodes.length; i++) {
+					child = childNodes[i];
+					// if the x values are equal, the tspan represents a linebreak
+					if (child.getAttribute('x') === element.getAttribute('x')) {
+						child.setAttribute('x', value);
+					}
+				}
+				element.setAttribute(key, value);
+			};
+		}
+		
 		return wrapper;
 	},
 
@@ -3818,7 +3893,6 @@ SVGRenderer.prototype = {
 			crispAdjust = 0,
 			deferredAttr = {},
 			baselineOffset,
-			attrSetters = wrapper.attrSetters,
 			needsBox;
 
 		/**
@@ -3839,6 +3913,7 @@ SVGRenderer.prototype = {
 			// update the label-scoped y offset
 			baselineOffset = padding + renderer.fontMetrics(style && style.fontSize).b;
 
+			
 			if (needsBox) {
 
 				// create the border box if it is not already present
@@ -3854,9 +3929,9 @@ SVGRenderer.prototype = {
 
 				// apply the box attributes
 				if (!box.isImg) { // #1630
-					box.attr(merge({
-						width: wrapper.width,
-						height: wrapper.height
+					box.attr(extend({
+						width: mathRound(wrapper.width),
+						height: mathRound(wrapper.height)
 					}, deferredAttr));
 				}
 				deferredAttr = null;
@@ -3882,10 +3957,10 @@ SVGRenderer.prototype = {
 
 			// update if anything changed
 			if (x !== text.x || y !== text.y) {
-				text.attr({
-					x: x,
-					y: y
-				});
+				text.attr('x', x);
+				if (y !== UNDEFINED) {
+					text.attr('y', y);
+				}
 			}
 
 			// record current values
@@ -3913,7 +3988,7 @@ SVGRenderer.prototype = {
 		wrapper.onAdd = function () {
 			text.add(wrapper);
 			wrapper.attr({
-				text: str, // alignment is available now
+				text: str || '', // alignment is available now
 				x: x,
 				y: y
 			});
@@ -3931,84 +4006,75 @@ SVGRenderer.prototype = {
 		 */
 
 		// only change local variables
-		attrSetters.width = function (value) {
+		wrapper.widthSetter = function (value) {
 			width = value;
-			return false;
 		};
-		attrSetters.height = function (value) {
+		wrapper.heightSetter = function (value) {
 			height = value;
-			return false;
 		};
-		attrSetters.padding =  function (value) {
+		wrapper.paddingSetter =  function (value) {
 			if (defined(value) && value !== padding) {
 				padding = value;
 				updateTextPadding();
 			}
-			return false;
 		};
-		attrSetters.paddingLeft =  function (value) {
+		wrapper.paddingLeftSetter =  function (value) {
 			if (defined(value) && value !== paddingLeft) {
 				paddingLeft = value;
 				updateTextPadding();
 			}
-			return false;
 		};
 
 
-		// change local variable and set attribue as well
-		attrSetters.align = function (value) {
+		// change local variable and prevent setting attribute on the group
+		wrapper.alignSetter = function (value) {
 			alignFactor = { left: 0, center: 0.5, right: 1 }[value];
-			return false; // prevent setting text-anchor on the group
 		};
 
 		// apply these to the box and the text alike
-		attrSetters.text = function (value, key) {
-			text.attr(key, value);
+		wrapper.textSetter = function (value) {
+			if (value !== UNDEFINED) {
+				text.textSetter(value);
+			}
 			updateBoxSize();
 			updateTextPadding();
-			return false;
 		};
 
 		// apply these to the box but not to the text
-		attrSetters[STROKE_WIDTH] = function (value, key) {
+		wrapper['stroke-widthSetter'] = function (value, key) {
 			if (value) {
 				needsBox = true;
 			}
 			crispAdjust = value % 2 / 2;
 			boxAttr(key, value);
-			return false;
 		};
-		attrSetters.stroke = attrSetters.fill = attrSetters.r = function (value, key) {
+		wrapper.strokeSetter = wrapper.fillSetter = wrapper.rSetter = function (value, key) {
 			if (key === 'fill' && value) {
 				needsBox = true;
 			}
 			boxAttr(key, value);
-			return false;
 		};
-		attrSetters.anchorX = function (value, key) {
+		wrapper.anchorXSetter = function (value, key) {
 			anchorX = value;
 			boxAttr(key, value + crispAdjust - wrapperX);
-			return false;
 		};
-		attrSetters.anchorY = function (value, key) {
+		wrapper.anchorYSetter = function (value, key) {
 			anchorY = value;
 			boxAttr(key, value - wrapperY);
-			return false;
 		};
 
 		// rename attributes
-		attrSetters.x = function (value) {
+		wrapper.xSetter = function (value) {
 			wrapper.x = value; // for animation getter
-			value -= alignFactor * ((width || bBox.width) + padding);
+			if (alignFactor) {
+				value -= alignFactor * ((width || bBox.width) + padding);
+			}
 			wrapperX = mathRound(value);
-
 			wrapper.attr('translateX', wrapperX);
-			return false;
 		};
-		attrSetters.y = function (value) {
+		wrapper.ySetter = function (value) {
 			wrapperY = wrapper.y = mathRound(value);
 			wrapper.attr('translateY', wrapperY);
-			return false;
 		};
 
 		// Redirect certain methods to either the box or the text
@@ -4258,28 +4324,24 @@ extend(SVGRenderer.prototype, {
 	 */
 	html: function (str, x, y) {
 		var wrapper = this.createElement('span'),
-			attrSetters = wrapper.attrSetters,
 			element = wrapper.element,
 			renderer = wrapper.renderer;
 
 		// Text setter
-		attrSetters.text = function (value) {
+		wrapper.textSetter = function (value) {
 			if (value !== element.innerHTML) {
 				delete this.bBox;
 			}
 			element.innerHTML = this.textStr = value;
-			return false;
 		};
 
 		// Various setters which rely on update transform
-		attrSetters.x = attrSetters.y = attrSetters.align = attrSetters.rotation = function (value, key) {
+		wrapper.xSetter = wrapper.ySetter = wrapper.alignSetter = wrapper.rotationSetter = function (value, key) {
 			if (key === 'align') {
 				key = 'textAlign'; // Do not overwrite the SVGElement.align method. Same as VML.
 			}
 			wrapper[key] = value;
 			wrapper.htmlUpdateTransform();
-			
-			return false;
 		};
 
 		// Set the default attributes
@@ -4343,14 +4405,18 @@ extend(SVGRenderer.prototype, {
 
 							// Set listeners to update the HTML div's position whenever the SVG group
 							// position is changed
-							extend(parentGroup.attrSetters, {
-								translateX: function (value) {
+							extend(parentGroup, {
+								translateXSetter: function (value, key) {
 									htmlGroupStyle.left = value + PX;
+									parentGroup[key] = value;
+									parentGroup.doTransform = true;
 								},
-								translateY: function (value) {
+								translateYSetter: function (value, key) {
 									htmlGroupStyle.top = value + PX;
+									parentGroup[key] = value;
+									parentGroup.doTransform = true;
 								},
-								visibility: function (value, key) {
+								visibilitySetter: function (value, key) {
 									htmlGroupStyle[key] = value;
 								}
 							});
@@ -4425,7 +4491,6 @@ Highcharts.VMLElement = VMLElement = {
 		}
 
 		wrapper.renderer = renderer;
-		wrapper.attrSetters = {};
 	},
 
 	/**
@@ -4573,231 +4638,6 @@ Highcharts.VMLElement = VMLElement = {
 			}
 		}*/
 		return path.join(' ') || 'x';
-	},
-
-	/**
-	 * Get or set attributes
-	 */
-	attr: function (hash, val) {
-		var wrapper = this,
-			key,
-			value,
-			i,
-			result,
-			element = wrapper.element || {},
-			elemStyle = element.style,
-			nodeName = element.nodeName,
-			renderer = wrapper.renderer,
-			symbolName = wrapper.symbolName,
-			hasSetSymbolSize,
-			shadows = wrapper.shadows,
-			skipAttr,
-			attrSetters = wrapper.attrSetters,
-			ret = wrapper;
-
-		// single key-value pair
-		if (isString(hash) && defined(val)) {
-			key = hash;
-			hash = {};
-			hash[key] = val;
-		}
-
-		// used as a getter, val is undefined
-		if (isString(hash)) {
-			key = hash;
-			if (key === 'strokeWidth' || key === 'stroke-width') {
-				ret = wrapper.strokeweight;
-			} else {
-				ret = wrapper[key];
-			}
-
-		// setter
-		} else {
-			for (key in hash) {
-				value = hash[key];
-				skipAttr = false;
-
-				// check for a specific attribute setter
-				result = attrSetters[key] && attrSetters[key].call(wrapper, value, key);
-
-				if (result !== false && value !== null) { // #620
-
-					if (result !== UNDEFINED) {
-						value = result; // the attribute setter has returned a new value to set
-					}
-
-
-					// prepare paths
-					// symbols
-					if (symbolName && /^(x|y|r|start|end|width|height|innerR|anchorX|anchorY)/.test(key)) {
-						// if one of the symbol size affecting parameters are changed,
-						// check all the others only once for each call to an element's
-						// .attr() method
-						if (!hasSetSymbolSize) {
-							wrapper.symbolAttr(hash);
-
-							hasSetSymbolSize = true;
-						}
-						skipAttr = true;
-
-					} else if (key === 'd') {
-						value = value || [];
-						wrapper.d = value.join(' '); // used in getter for animation
-
-						element.path = value = wrapper.pathToVML(value);
-
-						// update shadows
-						if (shadows) {
-							i = shadows.length;
-							while (i--) {
-								shadows[i].path = shadows[i].cutOff ? this.cutOffPath(value, shadows[i].cutOff) : value;
-							}
-						}
-						skipAttr = true;
-
-					// handle visibility
-					} else if (key === 'visibility') {
-
-						// Handle inherited visibility
-						if (value === 'inherit') {
-							value = VISIBLE;
-						}
-						
-						// Let the shadow follow the main element
-						if (shadows) {
-							i = shadows.length;
-							while (i--) {
-								shadows[i].style[key] = value;
-							}
-						}
-
-						// Instead of toggling the visibility CSS property, move the div out of the viewport.
-						// This works around #61 and #586
-						if (nodeName === 'DIV') {
-							value = value === HIDDEN ? '-999em' : 0;
-
-							// In order to redraw, IE7 needs the div to be visible when tucked away
-							// outside the viewport. So the visibility is actually opposite of
-							// the expected value. This applies to the tooltip only.
-							if (!docMode8) {
-								elemStyle[key] = value ? VISIBLE : HIDDEN;
-							}
-							key = 'top';
-						}
-						elemStyle[key] = value;
-						skipAttr = true;
-
-					// directly mapped to css
-					} else if (key === 'zIndex') {
-
-						if (value) {
-							elemStyle[key] = value;
-						}
-						skipAttr = true;
-
-					// x, y, width, height
-					} else if (inArray(key, ['x', 'y', 'width', 'height']) !== -1) {
-
-						wrapper[key] = value; // used in getter
-
-						if (key === 'x' || key === 'y') {
-							key = { x: 'left', y: 'top' }[key];
-						} else {
-							value = mathMax(0, value); // don't set width or height below zero (#311)
-						}
-
-						// clipping rectangle special
-						if (wrapper.updateClipping) {
-							wrapper[key] = value; // the key is now 'left' or 'top' for 'x' and 'y'
-							wrapper.updateClipping();
-						} else {
-							// normal
-							elemStyle[key] = value;
-						}
-
-						skipAttr = true;
-
-					// class name
-					} else if (key === 'class' && nodeName === 'DIV') {
-						// IE8 Standards mode has problems retrieving the className
-						element.className = value;
-
-					// stroke
-					} else if (key === 'stroke') {
-
-						value = renderer.color(value, element, key);
-
-						key = 'strokecolor';
-
-					// stroke width
-					} else if (key === 'stroke-width' || key === 'strokeWidth') {
-						element.stroked = value ? true : false;
-						key = 'strokeweight';
-						wrapper[key] = value; // used in getter, issue #113
-						if (isNumber(value)) {
-							value += PX;
-						}
-
-					// dashStyle
-					} else if (key === 'dashstyle') {
-						var strokeElem = element.getElementsByTagName('stroke')[0] ||
-							createElement(renderer.prepVML(['<stroke/>']), null, null, element);
-						strokeElem[key] = value || 'solid';
-						wrapper.dashstyle = value; /* because changing stroke-width will change the dash length
-							and cause an epileptic effect */
-						skipAttr = true;
-
-					// fill
-					} else if (key === 'fill') {
-
-						if (nodeName === 'SPAN') { // text color
-							elemStyle.color = value;
-						} else if (nodeName !== 'IMG') { // #1336
-							element.filled = value !== NONE ? true : false;
-
-							value = renderer.color(value, element, key, wrapper);
-
-							key = 'fillcolor';
-						}
-
-					// opacity: don't bother - animation is too slow and filters introduce artifacts
-					} else if (key === 'opacity') {
-						/*css(element, {
-							opacity: value
-						});*/
-						skipAttr = true;
-
-					// rotation on VML elements
-					} else if (nodeName === 'shape' && key === 'rotation') {
-
-						wrapper[key] = element.style[key] = value; // style is for #1873
-
-						// Correction for the 1x1 size of the shape container. Used in gauge needles.
-						element.style.left = -mathRound(mathSin(value * deg2rad) + 1) + PX;
-						element.style.top = mathRound(mathCos(value * deg2rad)) + PX;
-
-					// translation for animation
-					} else if (key === 'translateX' || key === 'translateY' || key === 'rotation') {
-						wrapper[key] = value;
-						wrapper.updateTransform();
-
-						skipAttr = true;
-
-					}
-
-
-					if (!skipAttr) {
-						if (docMode8) { // IE8 setAttribute bug
-							element[key] = value;
-						} else {
-							attr(element, key, value);
-						}
-					}
-
-				}
-			}
-		}
-		return ret;
 	},
 
 	/**
@@ -4960,10 +4800,137 @@ Highcharts.VMLElement = VMLElement = {
 			this.shadows = shadows;
 		}
 		return this;
+	},
+	updateShadows: noop, // Used in SVG only
 
+	setAttr: function (key, value) {
+		if (docMode8) { // IE8 setAttribute bug
+			this.element[key] = value;
+		} else {
+			this.element.setAttribute(key, value);
+		}
+	},
+	classSetter: function (value) {
+		// IE8 Standards mode has problems retrieving the className unless set like this
+		this.element.className = value;
+	},
+	dashstyleSetter: function (value, key, element) {
+		var strokeElem = element.getElementsByTagName('stroke')[0] ||
+			createElement(this.renderer.prepVML(['<stroke/>']), null, null, element);
+		strokeElem[key] = value || 'solid';
+		this[key] = value; /* because changing stroke-width will change the dash length
+			and cause an epileptic effect */
+	},
+	dSetter: function (value, key, element) {
+		var i,
+			shadows = this.shadows;
+		value = value || [];
+		this.d = value.join(' '); // used in getter for animation
+
+		element.path = value = this.pathToVML(value);
+
+		// update shadows
+		if (shadows) {
+			i = shadows.length;
+			while (i--) {
+				shadows[i].path = shadows[i].cutOff ? this.cutOffPath(value, shadows[i].cutOff) : value;
+			}
+		}
+		this.setAttr(key, value);
+	},
+	fillSetter: function (value, key, element) {
+		var nodeName = element.nodeName;
+		if (nodeName === 'SPAN') { // text color
+			element.style.color = value;
+		} else if (nodeName !== 'IMG') { // #1336
+			element.filled = value !== NONE;
+			this.setAttr('fillcolor', this.renderer.color(value, element, key, this));
+		}
+	},
+	opacitySetter: noop, // Don't bother - animation is too slow and filters introduce artifacts
+	rotationSetter: function (value, key, element) {
+		var style = element.style;
+		this[key] = style[key] = value; // style is for #1873
+
+		// Correction for the 1x1 size of the shape container. Used in gauge needles.
+		style.left = -mathRound(mathSin(value * deg2rad) + 1) + PX;
+		style.top = mathRound(mathCos(value * deg2rad)) + PX;
+	},
+	strokeSetter: function (value, key, element) {
+		this.setAttr('strokecolor', this.renderer.color(value, element, key));
+	},
+	'stroke-widthSetter': function (value, key, element) {
+		element.stroked = !!value; // VML "stroked" attribute
+		this[key] = value; // used in getter, issue #113
+		if (isNumber(value)) {
+			value += PX;
+		}
+		this.setAttr('strokeweight', value);
+	},
+	titleSetter: function (value, key) {
+		this.setAttr(key, value);
+	},
+	visibilitySetter: function (value, key, element) {
+
+		// Handle inherited visibility
+		if (value === 'inherit') {
+			value = VISIBLE;
+		}
+		
+		// Let the shadow follow the main element
+		if (this.shadows) {
+			each(this.shadows, function (shadow) {
+				shadow.style[key] = value;
+			});
+		}
+
+		// Instead of toggling the visibility CSS property, move the div out of the viewport.
+		// This works around #61 and #586
+		if (element.nodeName === 'DIV') {
+			value = value === HIDDEN ? '-999em' : 0;
+
+			// In order to redraw, IE7 needs the div to be visible when tucked away
+			// outside the viewport. So the visibility is actually opposite of
+			// the expected value. This applies to the tooltip only.
+			if (!docMode8) {
+				element.style[key] = value ? VISIBLE : HIDDEN;
+			}
+			key = 'top';
+		}
+		element.style[key] = value;
+	},
+	xSetter: function (value, key, element) {
+		this[key] = value; // used in getter
+
+		if (key === 'x') {
+			key = 'left';
+		} else if (key === 'y') {
+			key = 'top';
+		}/* else {
+			value = mathMax(0, value); // don't set width or height below zero (#311)
+		}*/
+
+		// clipping rectangle special
+		if (this.updateClipping) {
+			this[key] = value; // the key is now 'left' or 'top' for 'x' and 'y'
+			this.updateClipping();
+		} else {
+			// normal
+			element.style[key] = value;
+		}
+	},
+	zIndexSetter: function (value, key, element) {
+		element.style[key] = value;
 	}
 };
 VMLElement = extendClass(SVGElement, VMLElement);
+
+// Some shared setters
+VMLElement.prototype.ySetter =
+	VMLElement.prototype.widthSetter = 
+	VMLElement.prototype.heightSetter = 
+	VMLElement.prototype.xSetter;
+
 
 /**
  * The VML renderer
@@ -5084,7 +5051,9 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			// used in attr and animation to update the clipping of all members
 			updateClipping: function () {
 				each(clipRect.members, function (member) {
-					member.css(clipRect.getCSS(member));
+					if (member.element) { // Deleted series, like in stock/members/series-remove demo. Should be removed from members, but this will do.
+						member.css(clipRect.getCSS(member));
+					}
 				});
 			}
 		});
@@ -5500,71 +5469,13 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		},
 		/**
 		 * Add rectangle symbol path which eases rotation and omits arcsize problems
-		 * compared to the built-in VML roundrect shape
-		 *
-		 * @param {Number} left Left position
-		 * @param {Number} top Top position
-		 * @param {Number} r Border radius
-		 * @param {Object} options Width and height
+		 * compared to the built-in VML roundrect shape. When borders are not rounded,
+		 * use the simpler square path, else use the callout path without the arrow.
 		 */
-
-		rect: function (left, top, width, height, options) {
-
-			var right = left + width,
-				bottom = top + height,
-				ret,
-				r;
-
-			// No radius, return the more lightweight square
-			if (!defined(options) || !options.r) {
-				ret = SVGRenderer.prototype.symbols.square.apply(0, arguments);
-
-			// Has radius add arcs for the corners
-			} else {
-
-				r = mathMin(options.r, width, height);
-				ret = [
-					M,
-					left + r, top,
-
-					L,
-					right - r, top,
-					'wa',
-					right - 2 * r, top,
-					right, top + 2 * r,
-					right - r, top,
-					right, top + r,
-
-					L,
-					right, bottom - r,
-					'wa',
-					right - 2 * r, bottom - 2 * r,
-					right, bottom,
-					right, bottom - r,
-					right - r, bottom,
-
-					L,
-					left + r, bottom,
-					'wa',
-					left, bottom - 2 * r,
-					left + 2 * r, bottom,
-					left + r, bottom,
-					left, bottom - r,
-
-					L,
-					left, top + r,
-					'wa',
-					left, top,
-					left + 2 * r, top + 2 * r,
-					left, top + r,
-					left + r, top,
-
-
-					'x',
-					'e'
-				];
-			}
-			return ret;
+		rect: function (x, y, w, h, options) {
+			return SVGRenderer.prototype.symbols[
+				!defined(options) || !options.r ? 'square' : 'callout'
+			].call(0, x, y, w, h, options);
 		}
 	}
 };
@@ -6142,7 +6053,7 @@ Highcharts.PlotLineOrBand.prototype = {
 			color = options.color,
 			zIndex = options.zIndex,
 			events = options.events,
-			attribs,
+			attribs = {},
 			renderer = axis.chart.renderer;
 
 		// logarithmic conversion
@@ -6169,9 +6080,9 @@ Highcharts.PlotLineOrBand.prototype = {
 			to = mathMin(to, axis.max + halfPointRange);
 			
 			path = axis.getPlotBandPath(from, to, options);
-			attribs = {
-				fill: color
-			};
+			if (color) {
+				attribs.fill = color;
+			}
 			if (options.borderWidth) {
 				attribs.stroke = options.borderColor;
 				attribs['stroke-width'] = options.borderWidth;
@@ -6229,17 +6140,20 @@ Highcharts.PlotLineOrBand.prototype = {
 
 			// add the SVG element
 			if (!label) {
+				attribs = {
+					align: optionsLabel.textAlign || optionsLabel.align,
+					rotation: optionsLabel.rotation
+				};
+				if (defined(zIndex)) {
+					attribs.zIndex = zIndex;
+				}
 				plotLine.label = label = renderer.text(
 						optionsLabel.text,
 						0,
 						0,
 						optionsLabel.useHTML
 					)
-					.attr({
-						align: optionsLabel.textAlign || optionsLabel.align,
-						rotation: optionsLabel.rotation,
-						zIndex: zIndex
-					})
+					.attr(attribs)
 					.css(optionsLabel.style)
 					.add();
 			}
@@ -6431,7 +6345,7 @@ Axis.prototype = {
 		startOnTick: false,
 		tickColor: '#C0D0E0',
 		//tickInterval: null,
-		tickLength: 5,
+		tickLength: 10,
 		tickmarkPlacement: 'between', // on or between
 		tickPixelInterval: 100,
 		tickPosition: 'outside',
@@ -6443,9 +6357,7 @@ Axis.prototype = {
 			//rotation: 0,
 			//side: 'outside',
 			style: {
-				color: '#4d759e',
-				//font: defaultFont.replace('normal', 'bold')
-				fontWeight: 'bold'
+				color: '#707070' // docs
 			}
 			//x: 0,
 			//y: 0
@@ -6494,7 +6406,7 @@ Axis.prototype = {
 	 */
 	defaultLeftAxisOptions: {
 		labels: {
-			x: -8,
+			x: -15,
 			y: null
 		},
 		title: {
@@ -6507,7 +6419,7 @@ Axis.prototype = {
 	 */
 	defaultRightAxisOptions: {
 		labels: {
-			x: 8,
+			x: 15,
 			y: null
 		},
 		title: {
@@ -6521,7 +6433,7 @@ Axis.prototype = {
 	defaultBottomAxisOptions: {
 		labels: {
 			x: 0,
-			y: 14
+			y: 20
 			// overflow: undefined,
 			// staggerLines: null
 		},
@@ -6535,7 +6447,7 @@ Axis.prototype = {
 	defaultTopAxisOptions: {
 		labels: {
 			x: 0,
-			y: -5
+			y: -15
 			// overflow: undefined
 			// staggerLines: null
 		},
@@ -6760,7 +6672,7 @@ Axis.prototype = {
 		}
 
 		if (ret === UNDEFINED) {
-			if (value >= 10000) { // add thousands separators
+			if (mathAbs(value) >= 10000) { // add thousands separators
 				ret = numberFormat(value, 0);
 
 			} else { // small numbers
@@ -6978,7 +6890,7 @@ Axis.prototype = {
 			tickPositions = [];
 
 		// For single points, add a tick regardless of the relative position (#2662)
-		if (min === max) {
+		if (min === max && isNumber(min)) {
 			return [min];
 		}
 
@@ -7279,10 +7191,10 @@ Axis.prototype = {
 
 		// Stay within floor and ceiling
 		if (isNumber(options.floor)) {
-			axis.min = mathMax(axis.min, options.floor); // docs
+			axis.min = mathMax(axis.min, options.floor);
 		}
 		if (isNumber(options.ceiling)) {
-			axis.max = mathMin(axis.max, options.ceiling); // docs
+			axis.max = mathMin(axis.max, options.ceiling);
 		}
 
 		// get tickInterval
@@ -7627,13 +7539,13 @@ Axis.prototype = {
 			height = pick(options.height, chart.plotHeight),
 			top = pick(options.top, chart.plotTop),
 			left = pick(options.left, chart.plotLeft + offsetLeft),
-			test = /%$/;
+			percentRegex = /%$/; // docs
 
 		// Check for percentage based input values
-		if (test.test(height)) {
+		if (percentRegex.test(height)) {
 			height = parseInt(height, 10) / 100 * chart.plotHeight;
 		}
-		if (test.test(top)) {
+		if (percentRegex.test(top)) {
 			top = parseInt(top, 10) / 100 * chart.plotHeight + chart.plotTop;
 		}
 
@@ -7740,7 +7652,8 @@ Axis.prototype = {
 			bBox,
 			x,
 			w,
-			lineNo;
+			lineNo,
+			lineHeightCorrection = side === 2 ? renderer.fontMetrics(labelOptions.style.fontSize).b : 0;
 
 		// For reuse in Axis.render
 		axis.hasData = hasData = (axis.hasVisibleSeries || (defined(axis.min) && defined(axis.max) && !!tickPositions));
@@ -7873,7 +7786,7 @@ Axis.prototype = {
 		axis.axisTitleMargin =
 			pick(titleOffsetOption,
 				labelOffset + titleMargin +
-				(side !== 2 && labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x'])
+				(labelOffset && (directionFactor * options.labels[horiz ? 'y' : 'x'] - lineHeightCorrection))
 			);
 
 		axisOffset[side] = mathMax(
@@ -8639,7 +8552,7 @@ Tooltip.prototype = {
 
 
 		// create the label
-		this.label = chart.renderer.label('', 0, 0, options.shape, null, null, options.useHTML, null, 'tooltip')
+		this.label = chart.renderer.label('', 0, 0, options.shape || 'callout', null, null, options.useHTML, null, 'tooltip')
 			.attr({
 				padding: padding,
 				fill: options.backgroundColor,
@@ -8684,14 +8597,15 @@ Tooltip.prototype = {
 	move: function (x, y, anchorX, anchorY) {
 		var tooltip = this,
 			now = tooltip.now,
-			animate = tooltip.options.animation !== false && !tooltip.isHidden;
+			animate = tooltip.options.animation !== false && !tooltip.isHidden,
+			skipAnchor = tooltip.followPointer || tooltip.len > 1;
 
 		// get intermediate values for animation
 		extend(now, {
 			x: animate ? (2 * now.x + x) / 3 : x,
 			y: animate ? (now.y + y) / 2 : y,
-			anchorX: animate ? (2 * now.anchorX + anchorX) / 3 : anchorX,
-			anchorY: animate ? (now.anchorY + anchorY) / 2 : anchorY
+			anchorX: skipAnchor ? UNDEFINED : animate ? (2 * now.anchorX + anchorX) / 3 : anchorX,
+			anchorY: skipAnchor ? UNDEFINED : animate ? (now.anchorY + anchorY) / 2 : anchorY
 		});
 
 		// move to the intermediate value
@@ -8799,49 +8713,89 @@ Tooltip.prototype = {
 	 */
 	getPosition: function (boxWidth, boxHeight, point) {
 		
-		// Set up the variables
 		var chart = this.chart,
-			plotLeft = chart.plotLeft,
-			plotTop = chart.plotTop,
-			plotWidth = chart.plotWidth,
-			plotHeight = chart.plotHeight,
-			distance = pick(this.options.distance, 12),
-			pointX = (isNaN(point.plotX) ? 0 : point.plotX), //#2599
-			pointY = point.plotY,
-			x = pointX + plotLeft + (chart.inverted ? distance : -boxWidth - distance),
-			y = pointY - boxHeight + plotTop + 15, // 15 means the point is 15 pixels up from the bottom of the tooltip
-			alignedRight;
+			distance = this.distance,
+			ret = {},
+			swapped,
+			first = ['y', chart.chartHeight, boxHeight, point.plotY + chart.plotTop],
+			second = ['x', chart.chartWidth, boxWidth, point.plotX + chart.plotLeft],
+			// The far side is right or bottom
+			preferFarSide = point.ttBelow || (chart.inverted && !point.negative) || (!chart.inverted && point.negative),
+			/**
+			 * Handle the preferred dimension. When the preferred dimension is tooltip
+			 * on top or bottom of the point, it will look for space there.
+			 */
+			firstDimension = function (dim, outerSize, innerSize, point) {
+				var roomLeft = innerSize < point - distance,
+					roomRight = point + distance + innerSize < outerSize,
+					alignedLeft = point - distance - innerSize,
+					alignedRight = point + distance;
 
-		// It is too far to the left, adjust it
-		if (x < 7) {
-			x = plotLeft + mathMax(pointX, 0) + distance;
+				if (preferFarSide && roomRight) {
+					ret[dim] = alignedRight;
+				} else if (!preferFarSide && roomLeft) {
+					ret[dim] = alignedLeft;
+				} else if (roomLeft) {
+					ret[dim] = alignedLeft;
+				} else if (roomRight) {
+					ret[dim] = alignedRight;
+				} else {
+					return false;
+				}
+			},
+			/**
+			 * Handle the secondary dimension. If the preferred dimension is tooltip
+			 * on top or bottom of the point, the second dimension is to align the tooltip
+			 * above the point, trying to align center but allowing left or right
+			 * align within the chart box.
+			 */
+			secondDimension = function (dim, outerSize, innerSize, point) {
+				// Too close to the edge, return false and swap dimensions
+				if (point < distance || point > outerSize - distance) {
+					return false;
+				
+				// Align left/top
+				} else if (point < innerSize / 2) {
+					ret[dim] = 1;
+				// Align right/bottom
+				} else if (point > outerSize - innerSize / 2) {
+					ret[dim] = outerSize - innerSize - 2;
+				// Align center
+				} else {
+					ret[dim] = point - innerSize / 2;
+				}
+			},
+			/**
+			 * Swap the dimensions 
+			 */
+			swap = function (count) {
+				var temp = first;
+				first = second;
+				second = temp;
+				swapped = count;
+			},
+			run = function () {
+				if (firstDimension.apply(0, first) !== false) {
+					if (secondDimension.apply(0, second) === false && !swapped) {
+						swap(true);
+						run();
+					}
+				} else if (!swapped) {
+					swap(true);
+					run();
+				} else {
+					ret.x = ret.y = 0;
+				}
+			};
+
+		// Under these conditions, prefer the tooltip on the side of the point
+		if (chart.inverted || this.len > 1) {
+			swap();
 		}
+		run();
+
+		return ret;
 	
-		// Test to see if the tooltip is too far to the right,
-		// if it is, move it back to be inside and then up to not cover the point.
-		if ((x + boxWidth) > (plotLeft + plotWidth)) {
-			x -= (x + boxWidth) - (plotLeft + plotWidth);
-			y = pointY - boxHeight + plotTop - distance;
-			alignedRight = true;
-		}
-	
-		// If it is now above the plot area, align it to the top of the plot area
-		if (y < plotTop + 5) {
-			y = plotTop + 5;
-	
-			// If the tooltip is still covering the point, move it below instead
-			if (alignedRight && pointY >= y && pointY <= (y + boxHeight)) {
-				y = pointY + plotTop + distance; // below
-			}
-		} 
-	
-		// Now if the tooltip is below the chart, move it up. It's better to cover the
-		// point than to disappear outside the chart. #834.
-		if (y + boxHeight > plotTop + plotHeight) {
-			y = mathMax(plotTop, plotTop + plotHeight - boxHeight - distance); // below
-		}
-	
-		return {x: x, y: y};
 	},
 
 	/**
@@ -8921,6 +8875,7 @@ Tooltip.prototype = {
 				y: point[0].y
 			};
 			textConfig.points = pointConfig;
+			this.len = pointConfig.length;
 			point = point[0];
 
 		// single point tooltip
@@ -8931,6 +8886,7 @@ Tooltip.prototype = {
 
 		// register the current series
 		currentSeries = point.series;
+		this.distance = pick(currentSeries.tooltipOptions.distance, 16);
 
 		// update the inner HTML
 		if (text === false) {
@@ -8954,7 +8910,7 @@ Tooltip.prototype = {
 				stroke: borderColor
 			});
 			
-			tooltip.updatePosition({ plotX: x, plotY: y });
+			tooltip.updatePosition({ plotX: x, plotY: y, negative: point.negative, ttBelow: point.ttBelow });
 		
 			this.isHidden = false;
 		}
@@ -9099,7 +9055,7 @@ Pointer.prototype = {
 			ePos;
 
 		// common IE normalizing
-		e = e || win.event;
+		e = e || window.event;
 
 		// Framework specific normalizing (#1165)
 		e = washMouseEvent(e);
@@ -9109,8 +9065,8 @@ Pointer.prototype = {
 			e.target = e.srcElement;
 		}
 		
-		// iOS
-		ePos = e.touches ? e.touches.item(0) : e;
+		// iOS (#2757)
+		ePos = e.touches ?  (e.touches.length ? e.touches.item(0) : e.changedTouches[0]) : e;
 
 		// Get mouse position
 		if (!chartPosition) {
@@ -9451,9 +9407,12 @@ Pointer.prototype = {
 					originalEvent: e.originalEvent || e
 				},
 				selectionBox = this.selectionMarker,
-				selectionLeft = selectionBox.x,
-				selectionTop = selectionBox.y,
+				selectionLeft = selectionBox.attr ? selectionBox.attr('x') : selectionBox.x,
+				selectionTop = selectionBox.attr ? selectionBox.attr('y') : selectionBox.y,
+				selectionWidth = selectionBox.attr ? selectionBox.attr('width') : selectionBox.width,
+				selectionHeight = selectionBox.attr ? selectionBox.attr('height') : selectionBox.height,
 				runZoom;
+
 			// a selection has been made
 			if (this.hasDragged || hasPinched) {
 
@@ -9462,7 +9421,7 @@ Pointer.prototype = {
 					if (axis.zoomEnabled) {
 						var horiz = axis.horiz,
 							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop)),
-							selectionMax = axis.toValue((horiz ? selectionLeft + selectionBox.width : selectionTop + selectionBox.height));
+							selectionMax = axis.toValue((horiz ? selectionLeft + selectionWidth : selectionTop + selectionHeight));
 
 						if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
 							selectionData[axis.coll].push({
@@ -9603,11 +9562,7 @@ Pointer.prototype = {
 		var chart = this.chart,
 			hoverPoint = chart.hoverPoint, 
 			plotLeft = chart.plotLeft,
-			plotTop = chart.plotTop,
-			inverted = chart.inverted,
-			chartPosition,
-			plotX,
-			plotY;
+			plotTop = chart.plotTop;
 		
 		e = this.normalize(e);
 		e.cancelBubble = true; // IE specific
@@ -9616,18 +9571,7 @@ Pointer.prototype = {
 			
 			// On tracker click, fire the series and point events. #783, #1583
 			if (hoverPoint && this.inClass(e.target, PREFIX + 'tracker')) {
-				chartPosition = this.chartPosition;
-				plotX = hoverPoint.plotX;
-				plotY = hoverPoint.plotY;
 
-				// add page position info
-				extend(hoverPoint, {
-					pageX: chartPosition.left + plotLeft +
-						(inverted ? chart.plotWidth - plotY : plotX),
-					pageY: chartPosition.top + plotTop +
-						(inverted ? chart.plotHeight - plotX : plotY)
-				});
-			
 				// the series click event
 				fireEvent(hoverPoint.series, 'click', extend(e, {
 					point: hoverPoint
@@ -9718,10 +9662,10 @@ extend(Highcharts.Pointer.prototype, {
 	 * Run translation operations
 	 */
 	pinchTranslate: function (pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
-		if (this.zoomHor) {
+		if (this.zoomHor || this.pinchHor) {
 			this.pinchTranslateDirection(true, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 		}
-		if (this.zoomVert) {
+		if (this.zoomVert || this.pinchVert) {
 			this.pinchTranslateDirection(false, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 		}
 	},
@@ -9893,11 +9837,6 @@ extend(Highcharts.Pointer.prototype, {
 
 			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
 
-				// Prevent the click pseudo event from firing unless it is set in the options
-				/*if (!chart.runChartClick) {
-					e.preventDefault();
-				}*/
-			
 				// Run mouse events and display tooltip etc
 				this.runPointActions(e);
 
@@ -10082,10 +10021,7 @@ Legend.prototype = {
 			textColor = visible ? options.itemStyle.color : hiddenColor,
 			symbolColor = visible ? (item.legendColor || item.color || '#CCC') : hiddenColor,
 			markerOptions = item.options && item.options.marker,
-			symbolAttr = {
-				stroke: symbolColor,
-				fill: symbolColor
-			},
+			symbolAttr = { fill: symbolColor },
 			key,
 			val;
 		
@@ -10100,6 +10036,7 @@ Legend.prototype = {
 			
 			// Apply marker options
 			if (markerOptions && legendSymbol.isMarker) { // #585
+				symbolAttr.stroke = symbolColor;
 				markerOptions = item.convertAttribs(markerOptions);
 				for (key in markerOptions) {
 					val = markerOptions[key];
@@ -10193,7 +10130,7 @@ Legend.prototype = {
 				if (checkbox) {
 					top = (translateY + checkbox.y + (scrollOffset || 0) + 3);
 					css(checkbox, {
-						left: (alignAttr.translateX + item.legendItemWidth + checkbox.x - 20) + PX,
+						left: (alignAttr.translateX + item.checkboxOffset + checkbox.x - 20) + PX,
 						top: top + PX,
 						display: top > translateY - 6 && top < translateY + clipHeight - 6 ? '' : NONE
 					});
@@ -10242,7 +10179,7 @@ Legend.prototype = {
 			itemStyle = legend.itemStyle,
 			itemHiddenStyle = legend.itemHiddenStyle,
 			padding = legend.padding,
-			itemDistance = horizontal ? pick(options.itemDistance, 8) : 0,
+			itemDistance = horizontal ? pick(options.itemDistance, 20) : 0, // docs
 			ltr = !options.rtl,
 			itemHeight,
 			widthOption = options.width,
@@ -10298,9 +10235,10 @@ Legend.prototype = {
 		// calculate the positions for the next line
 		bBox = li.getBBox();
 
-		itemWidth = item.legendItemWidth = 
-			options.itemWidth || item.legendItemWidth || symbolWidth + symbolPadding + bBox.width + itemDistance +
-			(showCheckbox ? 20 : 0);
+		itemWidth = item.checkboxOffset = 
+			options.itemWidth || 
+			item.legendItemWidth || 
+			symbolWidth + symbolPadding + bBox.width + itemDistance + (showCheckbox ? 20 : 0);
 		legend.itemHeight = itemHeight = mathRound(item.legendItemHeight || bBox.height);
 
 		// if the item exceeds the width, start a new line
@@ -10687,7 +10625,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 			legend.baseline - 5 - (symbolHeight / 2),
 			legend.symbolWidth,
 			symbolHeight,
-			pick(legend.options.symbolRadius, 2)
+			legend.options.symbolRadius || 0
 		).attr({
 			zIndex: 3
 		}).add(item.legendGroup);		
@@ -10734,7 +10672,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 		}
 		
 		// Draw the marker
-		if (markerOptions && markerOptions.enabled) {
+		if (markerOptions && markerOptions.enabled !== false) {
 			radius = markerOptions.radius;
 			this.legendSymbol = legendSymbol = renderer.symbol(
 				this.symbol,
@@ -10762,11 +10700,11 @@ if (/Trident\/7\.0/.test(userAgent) || isFirefox) {
 				}
 			};
 
-		if (legend.chart.renderer.forExport) {
-			runPositionItem();
-		} else {
-			setTimeout(runPositionItem);
-		}
+		// Do it now, for export and to get checkbox placement
+		runPositionItem();
+		
+		// Do it after to work around the core issue
+		setTimeout(runPositionItem);
 	});
 }
 /**
@@ -10903,10 +10841,7 @@ Chart.prototype = {
 	 * @param {Number} plotY Pixel y relative to the plot area
 	 * @param {Boolean} inverted Whether the chart is inverted
 	 */
-	isInsidePlot: function (plotX, plotY, inverted) {
-		var x = inverted ? plotY : plotX,
-			y = inverted ? plotX : plotY;
-			
+	isInsidePlot: function (x, y) {
 		return x >= 0 &&
 			x <= this.plotWidth &&
 			y >= 0 &&
@@ -11261,11 +11196,6 @@ Chart.prototype = {
 			
 			if (!titleOptions.floating && !titleOptions.verticalAlign) {
 				titleOffset = title.getBBox().height;
-
-				// Adjust for browser consistency + backwards compat after #776 fix
-				if (titleOffset >= 18 && titleOffset <= 25) {
-					titleOffset = 15; 
-				}
 			}
 		}
 		if (subtitle) {
@@ -11454,7 +11384,7 @@ Chart.prototype = {
 			legend = chart.legend,
 			margin = chart.margin,
 			legendOptions = chart.options.legend,
-			legendMargin = pick(legendOptions.margin, 10),
+			legendMargin = pick(legendOptions.margin, 20),
 			legendX = legendOptions.x,
 			legendY = legendOptions.y,
 			align = legendOptions.align,
@@ -12306,12 +12236,7 @@ Point.prototype = {
 		// If no x is set by now, get auto incremented value. All points must have an
 		// x value, however the y value can be null to create a gap in the series
 		if (point.x === UNDEFINED && series) {
-			if (x === UNDEFINED) {
-				point.x = series.autoIncrement();
-				point.autoX = true;
-			} else {
-				point.x = x;
-			}
+			point.x = x === UNDEFINED ? series.autoIncrement() : x;
 		}
 
 		return point;
@@ -12463,6 +12388,34 @@ Point.prototype = {
 			point: this,
 			series: this.series
 		});
+	},
+
+	/**
+	 * Fire an event on the Point object. Must not be renamed to fireEvent, as this
+	 * causes a name clash in MooTools
+	 * @param {String} eventType
+	 * @param {Object} eventArgs Additional event arguments
+	 * @param {Function} defaultFunction Default event handler
+	 */
+	firePointEvent: function (eventType, eventArgs, defaultFunction) {
+		var point = this,
+			series = this.series,
+			seriesOptions = series.options;
+
+		// load event handlers on demand to save time on mouseover/out
+		if (seriesOptions.point.events[eventType] || (point.options && point.options.events && point.options.events[eventType])) {
+			this.importEvents();
+		}
+
+		// add default handler if in selection mode
+		if (eventType === 'click' && seriesOptions.allowPointSelect) {
+			defaultFunction = function (event) {
+				// Control key is for Windows, meta (= Cmd key) for Mac, Shift for Opera
+				point.select(null, event.ctrlKey || event.metaKey || event.shiftKey);
+			};
+		}
+
+		fireEvent(this, eventType, eventArgs, defaultFunction);
 	}
 };/**
  * @classDescription The base function which all other series types inherit from. The data in the series is stored
@@ -12811,12 +12764,10 @@ Series.prototype = {
 			firstPoint = null,
 			xAxis = series.xAxis,
 			hasCategories = xAxis && !!xAxis.categories,
-			names = xAxis && (isArray(xAxis.categories) ? xAxis.categories : xAxis.names),
 			tooltipPoints = series.tooltipPoints,
 			i,
 			turboThreshold = options.turboThreshold,
 			pt,
-			nameX,
 			xData = this.xData,
 			yData = this.yData,
 			pointArrayMap = series.pointArrayMap,
@@ -12892,21 +12843,10 @@ Series.prototype = {
 					if (data[i] !== UNDEFINED) { // stray commas in oldIE
 						pt = { series: series };
 						series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
-
-						// If the point has a name and the axis is of category type,
-						// search the names array for existing positions of the same name.
-						// If not found, add a position with that name (#2522).
-						if (hasCategories && pt.name) {
-							series.requireSorting = false;
-							nameX = inArray(pt.name, names); // #2522
-							if (nameX === -1 || !pt.autoX) {
-								names[pt.x] = pt.name; // #2046
-							} else {
-								pt.x = nameX;
-							}
-						}
 						series.updateParallelArrays(pt, i);
-						
+						if (hasCategories && pt.name) {
+							xAxis.names[pt.x] = pt.name; // #2046
+						}
 					}
 				}
 			}
@@ -12964,7 +12904,10 @@ Series.prototype = {
 			i, // loop variable
 			options = series.options,
 			cropThreshold = options.cropThreshold,
-			isCartesian = series.isCartesian;
+			activePointCount = 0,
+			isCartesian = series.isCartesian,
+			min,
+			max;
 
 		// If the series data or axes haven't changed, don't go through this. Return false to pass
 		// the message on to override methods like in data grouping.
@@ -12975,8 +12918,9 @@ Series.prototype = {
 
 		// optionally filter out points outside the plot area
 		if (isCartesian && series.sorted && (!cropThreshold || dataLength > cropThreshold || series.forceCrop)) {
-			var min = xAxis.min,
-				max = xAxis.max;
+			
+			min = xAxis.min;
+			max = xAxis.max;
 
 			// it's outside current extremes
 			if (processedXData[dataLength - 1] < min || processedXData[0] > max) {
@@ -12990,6 +12934,7 @@ Series.prototype = {
 				processedYData = croppedData.yData;
 				cropStart = croppedData.start;
 				cropped = true;
+				activePointCount = processedXData.length;
 			}
 		}
 
@@ -12997,6 +12942,10 @@ Series.prototype = {
 		// Find the closest distance between processed points
 		for (i = processedXData.length - 1; i >= 0; i--) {
 			distance = processedXData[i] - processedXData[i - 1];
+			
+			if (!cropped && processedXData[i] > min && processedXData[i] < max) {
+				activePointCount++;
+			}
 			if (distance > 0 && (closestPointRange === UNDEFINED || distance < closestPointRange)) {
 				closestPointRange = distance;
 
@@ -13012,6 +12961,7 @@ Series.prototype = {
 		series.cropStart = cropStart;
 		series.processedXData = processedXData;
 		series.processedYData = processedYData;
+		series.activePointCount = activePointCount;
 
 		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
 			series.pointRange = closestPointRange || 1;
@@ -13180,6 +13130,7 @@ Series.prototype = {
 		}
 		this.generatePoints();
 		var series = this,
+			inverted = series.chart.inverted,
 			options = series.options,
 			stacking = options.stacking,
 			xAxis = series.xAxis,
@@ -13261,6 +13212,9 @@ Series.prototype = {
 			point.category = categories && categories[point.x] !== UNDEFINED ?
 				categories[point.x] : point.x;
 
+			// Get true plot pixel position regardless of inversion
+			point.invX = inverted ? yAxis.len - point.plotY : point.plotX;
+			point.invY = inverted ? xAxis.len - point.plotX : point.plotY;
 
 		}
 
@@ -13317,6 +13271,8 @@ Series.prototype = {
 				clipRect.animate({
 					width: chart.plotSizeX
 				}, animation);
+			}
+			if (chart[sharedClipKey + 'm']) {
 				chart[sharedClipKey + 'm'].animate({
 					width: chart.plotSizeX + 99
 				}, animation);
@@ -13325,11 +13281,6 @@ Series.prototype = {
 			// Delete this function to allow it only once
 			series.animate = null;
  
-			// Call the afterAnimate function on animation complete (but don't overwrite the animation.complete option
-			// which should be available to the user).
-			series.animationTimeout = setTimeout(function () {
-				series.afterAnimate();
-			}, animation.duration);
 		}
 	},
 
@@ -13348,6 +13299,8 @@ Series.prototype = {
 			}
 			this.markerGroup.clip(); // no clip
 		}
+
+		fireEvent(this, 'afterAnimate');
 
 		// Remove the shared clipping rectancgle when all series are shown
 		setTimeout(function () {
@@ -13384,9 +13337,13 @@ Series.prototype = {
 			pointMarkerOptions,
 			enabled,
 			isInside,
-			markerGroup = series.markerGroup;
+			markerGroup = series.markerGroup,
+			globallyEnabled = pick(
+				seriesMarkerOptions.enabled, 
+				series.activePointCount < (0.5 * series.xAxis.len / seriesMarkerOptions.radius)
+			);
 
-		if (seriesMarkerOptions.enabled || series._hasPointMarkers) {
+		if (seriesMarkerOptions.enabled !== false || series._hasPointMarkers) {
 
 			i = points.length;
 			while (i--) {
@@ -13395,8 +13352,8 @@ Series.prototype = {
 				plotY = point.plotY;
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
-				enabled = (seriesMarkerOptions.enabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
-				isInside = chart.isInsidePlot(mathRound(plotX), plotY, chart.inverted); // #1858
+				enabled = (globallyEnabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
+				isInside = chart.isInsidePlot(point.invX, point.invY); // #1858
 
 				// only draw the point if y is defined
 				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
@@ -13408,10 +13365,7 @@ Series.prototype = {
 					isImage = symbol.indexOf('url') === 0;
 
 					if (graphic) { // update
-						graphic
-							.attr({ // Since the marker group isn't clipped, each individual marker must be toggled
-								visibility: isInside ? 'inherit' : HIDDEN
-							})
+						graphic[isInside ? 'show' : 'hide'](true) // Since the marker group isn't clipped, each individual marker must be toggled
 							.animate(extend({
 								x: plotX - radius,
 								y: plotY - radius
@@ -13993,9 +13947,9 @@ Series.prototype = {
 			group,
 			options = series.options,
 			animation = options.animation,
-			doAnimation = animation && !!series.animate &&
-				chart.renderer.isSVG, // this animation doesn't work in IE8 quirks when the group div is hidden,
-				// and looks bad in other oldIE
+			// Animation doesn't work in IE8 quirks when the group div is hidden,
+			// and looks bad in other oldIE
+			animDuration = (animation && !!series.animate && chart.renderer.isSVG && pick(animation.duration, 500)) || 0,
 			visibility = series.visible ? VISIBLE : HIDDEN,
 			zIndex = options.zIndex,
 			hasRendered = series.hasRendered,
@@ -14019,7 +13973,7 @@ Series.prototype = {
 		);
 
 		// initiate the animation
-		if (doAnimation) {
+		if (animDuration) {
 			series.animate(true);
 		}
 
@@ -14062,10 +14016,20 @@ Series.prototype = {
 		}
 
 		// Run the animation
-		if (doAnimation) {
+		if (animDuration) {
 			series.animate();
-		} else if (!hasRendered) {
-			series.afterAnimate();
+		} 
+
+		// Call the afterAnimate function on animation complete (but don't overwrite the animation.complete option
+		// which should be available to the user).
+		if (!hasRendered) {
+			if (animDuration) {
+				series.animationTimeout = setTimeout(function () {
+					series.afterAnimate();
+				}, animDuration);
+			} else {
+				series.afterAnimate();
+			}
 		}
 
 		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
@@ -14100,7 +14064,9 @@ Series.prototype = {
 		}
 
 		series.translate();
-		series.setTooltipPoints(true);
+		if (series.setTooltipPoints) {
+			series.setTooltipPoints(true);
+		}
 		series.render();
 
 		if (wasDirtyData) {
@@ -14822,7 +14788,7 @@ extend(Axis.prototype, {
 		newOptions = chart.options[this.coll][this.options.index] = merge(this.userOptions, newOptions);
 
 		this.destroy(true);
-		this._addedPlotLB = this.userMin = this.userMax = UNDEFINED; // #1611, #2306
+		this._addedPlotLB = UNDEFINED; // #1611, #2887
 
 		this.init(chart, extend(newOptions, { events: UNDEFINED }));
 
@@ -15237,7 +15203,7 @@ seriesTypes.areaspline = AreaSplineSeries;
  */
 defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	borderColor: '#FFFFFF',
-	borderWidth: 1,
+	//borderWidth: 1,
 	borderRadius: 0,
 	//colorByPoint: undefined,
 	groupPadding: 0.2,
@@ -15251,7 +15217,8 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	states: {
 		hover: {
 			brightness: 0.1,
-			shadow: false
+			shadow: false,
+			halo: false
 		},
 		select: {
 			color: '#C0C0C0',
@@ -15265,6 +15232,9 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 		y: null
 	},
 	stickyTracking: false,
+	tooltip: {
+		distance: 6
+	},
 	threshold: 0
 });
 
@@ -15275,7 +15245,6 @@ var ColumnSeries = extendClass(Series, {
 	type: 'column',
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
-		'stroke-width': 'borderWidth',
 		fill: 'color',
 		r: 'borderRadius'
 	},
@@ -15378,7 +15347,10 @@ var ColumnSeries = extendClass(Series, {
 		var series = this,
 			chart = series.chart,
 			options = series.options,
-			borderWidth = options.borderWidth,
+			borderWidth = series.borderWidth = pick(
+				options.borderWidth, 
+				series.activePointCount > 0.5 * series.xAxis.len ? 0 : 1
+			),
 			yAxis = series.yAxis,
 			threshold = options.threshold,
 			translatedThreshold = series.translatedThreshold = yAxis.getThreshold(threshold),
@@ -15423,6 +15395,9 @@ var ColumnSeries = extendClass(Series, {
 			// Cache for access in polar
 			point.barX = barX;
 			point.pointWidth = pointWidth;
+
+			// Fix the tooltip on center of grouped columns (#1216)
+			point.tooltipPos = chart.inverted ? [yAxis.len - plotY, series.xAxis.len - barX - barW / 2] : [barX + barW / 2, plotY];
 
 			// Round off to obtain crisp edges
 			fromLeft = mathAbs(barX) < 0.5;
@@ -15481,7 +15456,9 @@ var ColumnSeries = extendClass(Series, {
 			options = series.options,
 			renderer = chart.renderer,
 			animationLimit = options.animationLimit || 250,
-			shapeArgs;
+			shapeArgs,
+			pointAttr,
+			borderAttr;
 
 		// draw the columns
 		each(series.points, function (point) {
@@ -15490,14 +15467,18 @@ var ColumnSeries = extendClass(Series, {
 
 			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
-				
+				borderAttr = defined(series.borderWidth) ? {
+					'stroke-width': series.borderWidth
+				} : {};
+				pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE] || series.pointAttr[NORMAL_STATE];
 				if (graphic) { // update
 					stop(graphic);
-					graphic[series.points.length < animationLimit ? 'animate' : 'attr'](merge(shapeArgs));
+					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs));
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
-						.attr(point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE])
+						.attr(pointAttr)
+						.attr(borderAttr)
 						.add(series.group)
 						.shadow(options.shadow, null, options.stacking && !options.borderRadius);
 				}
@@ -15583,9 +15564,8 @@ seriesTypes.bar = BarSeries;
 defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 	lineWidth: 0,
 	tooltip: {
-		headerFormat: '<span style="font-size: 10px; color:{series.color}">{series.name}</span><br/>',
-		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>',
-		followPointer: true
+		headerFormat: '<span style="color:{series.color}">\u25CF</span> <span style="font-size: 10px;"> {series.name}</span><br/>', // docs
+		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
 	},
 	stickyTracking: false
 });
@@ -15626,9 +15606,7 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 		// connectorPadding: 5,
 		distance: 30,
 		enabled: true,
-		formatter: function () {
-			return this.point.name;
-		}
+		format: '{point.name}'
 		// softConnector: true,
 		//y: 0
 	},
@@ -15749,6 +15727,17 @@ var PiePoint = extendClass(Point, {
 			point.shadowGroup.animate(translation);
 		}
 
+	},
+
+	haloPath: function (size) {
+		var shapeArgs = this.shapeArgs,
+			chart = this.series.chart;
+
+		return this.series.chart.renderer.symbols.arc(chart.plotLeft + shapeArgs.x, chart.plotTop + shapeArgs.y, shapeArgs.r + size, shapeArgs.r + size, {
+			innerR: this.shapeArgs.r,
+			start: shapeArgs.start,
+			end: shapeArgs.end
+		});
 	}
 });
 
@@ -16093,9 +16082,16 @@ Series.prototype.drawDataLabels = function () {
 		dataLabelsGroup = series.plotGroup(
 			'dataLabelsGroup',
 			'data-labels',
-			series.visible ? VISIBLE : HIDDEN,
+			HIDDEN,
 			options.zIndex || 6
 		);
+
+		if (!series.hasRendered && pick(options.defer, true)) {
+			dataLabelsGroup.attr({ opacity: 0 });
+			addEvent(series, 'afterAnimate', function () {
+				series.dataLabelsGroup.show()[seriesOptions.animation ? 'animate' : 'attr']({ opacity: 1 }, { duration: 200 });
+			});
+		}
 
 		// Make the labels for each point
 		generalOptions = options;
@@ -16205,21 +16201,20 @@ Series.prototype.drawDataLabels = function () {
  */
 Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, isNew) {
 	var chart = this.chart,
-		inverted = chart.inverted,
-		plotX = pick(point.plotX, -999),
-		plotY = pick(point.plotY, -999),
+		plotX = pick(point.invX, point.plotX, -999),
+		plotY = pick(point.invY, point.plotY, -999),
 		bBox = dataLabel.getBBox(),
 		// Math.round for rounding errors (#2683), alignTo to allow column labels (#2700)
-		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, mathRound(plotY), inverted) ||
-			(alignTo && chart.isInsidePlot(plotX, inverted ? alignTo.x + 1 : alignTo.y + alignTo.height - 1, inverted))),
+		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, mathRound(plotY)) ||
+			(alignTo && chart.isInsidePlot(plotX, alignTo.y + alignTo.height - 1))),
 		alignAttr; // the final position;
 
 	if (visible) {
 
 		// The alignment box is a singular point
 		alignTo = extend({
-			x: inverted ? chart.plotWidth - plotY : plotX,
-			y: mathRound(inverted ? chart.plotHeight - plotX : plotY),
+			x: plotX,
+			y: plotY,
 			width: 0,
 			height: 0
 		}, alignTo);
@@ -16611,7 +16606,7 @@ if (seriesTypes.pie) {
 								visibility: visibility
 								//zIndex: 0 // #2722 (reversed)
 							})
-							.add(series.group);
+							.add(series.dataLabelsGroup);
 						}
 					} else if (connector) {
 						point.connector = connector.destroy();
@@ -17205,33 +17200,6 @@ extend(Point.prototype, {
 	},
 
 	/**
-	 * Fire an event on the Point object. Must not be renamed to fireEvent, as this
-	 * causes a name clash in MooTools
-	 * @param {String} eventType
-	 * @param {Object} eventArgs Additional event arguments
-	 * @param {Function} defaultFunction Default event handler
-	 */
-	firePointEvent: function (eventType, eventArgs, defaultFunction) {
-		var point = this,
-			series = this.series,
-			seriesOptions = series.options;
-
-		// load event handlers on demand to save time on mouseover/out
-		if (seriesOptions.point.events[eventType] || (point.options && point.options.events && point.options.events[eventType])) {
-			this.importEvents();
-		}
-
-		// add default handler if in selection mode
-		if (eventType === 'click' && seriesOptions.allowPointSelect) {
-			defaultFunction = function (event) {
-				// Control key is for Windows, meta (= Cmd key) for Mac, Shift for Opera
-				point.select(null, event.ctrlKey || event.metaKey || event.shiftKey);
-			};
-		}
-
-		fireEvent(this, eventType, eventArgs, defaultFunction);
-	},
-	/**
 	 * Import events from the series' and point's options. Only do it on
 	 * demand, to save processing time on hovering.
 	 */
@@ -17270,11 +17238,12 @@ extend(Point.prototype, {
 			pointMarker = point.marker || {},
 			chart = series.chart,
 			radius,
+			halo = series.halo,
+			haloOptions,
 			newSymbol,
 			pointAttr;
 
 		state = state || NORMAL_STATE; // empty string
-		move = move && stateMarkerGraphic;
 		pointAttr = point.pointAttr[state] || series.pointAttr[state];
 
 		if (
@@ -17285,14 +17254,13 @@ extend(Point.prototype, {
 				// series' state options is disabled
 				(stateOptions[state] && stateOptions[state].enabled === false) ||
 				// general point marker's state options is disabled
-				(state && (stateDisabled || (normalDisabled && !markerStateOptions.enabled))) ||
+				(state && (stateDisabled || (normalDisabled && markerStateOptions.enabled === false))) ||
 				// individual point marker's state options is disabled
 				(state && pointMarker.states && pointMarker.states[state] && pointMarker.states[state].enabled === false) // #1610
 
 			) {
 			return;
 		}
-
 
 		// apply hover styles to the existing point
 		if (point.graphic) {
@@ -17306,6 +17274,11 @@ extend(Point.prototype, {
 					height: 2 * radius
 				} : {}
 			));
+
+			// Zooming in from a range with no markers to a range with markers
+			if (stateMarkerGraphic) {
+				stateMarkerGraphic.hide();
+			}
 		} else {
 			// if a graphic is not applied to each point in the normal state, create a shared
 			// graphic for the hover state
@@ -17321,16 +17294,18 @@ extend(Point.prototype, {
 
 				// Add a new state marker graphic
 				if (!stateMarkerGraphic) {
-					series.stateMarkerGraphic = stateMarkerGraphic = chart.renderer.symbol(
-						newSymbol,
-						plotX - radius,
-						plotY - radius,
-						2 * radius,
-						2 * radius
-					)
-					.attr(pointAttr)
-					.add(series.markerGroup);
-					stateMarkerGraphic.currentSymbol = newSymbol;
+					if (newSymbol) {
+						series.stateMarkerGraphic = stateMarkerGraphic = chart.renderer.symbol(
+							newSymbol,
+							plotX - radius,
+							plotY - radius,
+							2 * radius,
+							2 * radius
+						)
+						.attr(pointAttr)
+						.add(series.markerGroup);
+						stateMarkerGraphic.currentSymbol = newSymbol;
+					}
 
 				// Move the existing graphic
 				} else {
@@ -17342,11 +17317,36 @@ extend(Point.prototype, {
 			}
 
 			if (stateMarkerGraphic) {
-				stateMarkerGraphic[state && chart.isInsidePlot(plotX, plotY, chart.inverted) ? 'show' : 'hide'](); // #2450
+				stateMarkerGraphic[state && chart.isInsidePlot(point.invX, point.invY) ? 'show' : 'hide'](); // #2450
 			}
 		}
 
+		// Show me your halo
+		haloOptions = stateOptions[state] && stateOptions[state].halo;
+		if (haloOptions && haloOptions.size) {
+			if (!halo) {
+				series.halo = halo = chart.renderer.path()
+					.add(series.seriesGroup);
+			}
+			halo.attr(extend({
+				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
+			}, haloOptions.attributes))[move ? 'animate' : 'attr']({
+				d: point.haloPath(haloOptions.size)
+			});
+		} else if (halo) {
+			halo.attr({ d: [] });
+		}
+
 		point.state = state;
+	},
+	haloPath: function (size) {
+		var plotBox = this.series.getPlotBox();
+		return this.series.chart.renderer.symbols.circle(
+			plotBox.translateX + this.invX - size, 
+			plotBox.translateY + this.invY - size, 
+			size * 2, 
+			size * 2
+		);
 	}
 });
 

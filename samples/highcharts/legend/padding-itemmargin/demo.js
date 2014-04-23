@@ -1,9 +1,6 @@
 $(function () {
     $('#container').highcharts({
         
-        chart: {
-        },
-        
         title: {
         	text: 'Padding and item margins demonstrated'
         },

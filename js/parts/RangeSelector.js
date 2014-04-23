@@ -8,15 +8,28 @@ extend(defaultOptions, {
 		// buttonSpacing: 0,
 		buttonTheme: {
 			width: 28,
-			height: 16,
-			padding: 1,
+			height: 18,
+			fill: '#f7f7f7',
+			padding: 2,
 			r: 0,
-			stroke: '#68A',
-			zIndex: 7 // #484, #852
-		//	states: {
-		//		hover: {},
-		//		select: {}
-		// }
+			'stroke-width': 0,
+			style: {
+				color: '#444',
+				fontWeight: 'normal'
+			},
+			zIndex: 7, // #484, #852
+			states: {
+				hover: {
+					fill: '#e7e7e7'
+				},
+				select: {
+					fill: '#e7f0f9',
+					style: {
+						color: 'black',
+						fontWeight: 'bold'
+					}
+				}
+			}
 		},
 		inputPosition: {
 			align: 'right'
@@ -24,7 +37,7 @@ extend(defaultOptions, {
 		// inputDateFormat: '%b %e, %Y',
 		// inputEditDateFormat: '%Y-%m-%d',
 		// inputEnabled: true,
-		//inputStyle: {},
+		// inputStyle: {},
 		labelStyle: {
 			color: '#666'
 		}
@@ -234,7 +247,7 @@ RangeSelector.prototype = {
 		rangeSelector.options = options;
 		rangeSelector.buttons = [];
 		
-		chart.extraTopMargin = 25;
+		chart.extraTopMargin = 35;
 		rangeSelector.buttonOptions = buttonOptions;
 
 		addEvent(chart.container, 'mousedown', blurInputs);
@@ -367,7 +380,7 @@ RangeSelector.prototype = {
 		// Create the text label
 		this[name + 'Label'] = label = renderer.label(lang[isMin ? 'rangeSelectorFrom' : 'rangeSelectorTo'], this.inputGroup.offset)
 			.attr({
-				padding: 1
+				padding: 2
 			})
 			.css(merge(chartStyle, options.labelStyle))
 			.add(inputGroup);
@@ -377,14 +390,15 @@ RangeSelector.prototype = {
 		// bring in the HTML input.
 		this[name + 'DateBox'] = dateBox = renderer.label('', inputGroup.offset)
 			.attr({
-				padding: 1,
+				padding: 2,
 				width: options.inputBoxWidth || 90,
-				height: options.inputBoxHeight || 16,
+				height: options.inputBoxHeight || 17, // docs
 				stroke: options.inputBoxBorderColor || 'silver',
 				'stroke-width': 1
 			})
 			.css(merge({
-				textAlign: 'center'
+				textAlign: 'center',
+				color: '#444'
 			}, chartStyle, options.inputStyle))
 			.on('click', function () {
 				rangeSelector[name + 'Input'].focus();
@@ -512,7 +526,7 @@ RangeSelector.prototype = {
 
 		// create the elements
 		if (!rangeSelector.rendered) {
-			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, plotLeft, chart.plotTop - 10)
+			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, plotLeft, chart.plotTop - 20)
 				.css(options.labelStyle)
 				.add();
 
@@ -523,7 +537,7 @@ RangeSelector.prototype = {
 				buttons[i] = renderer.button(
 						rangeOptions.text,
 						buttonLeft,
-						chart.plotTop - 25,
+						chart.plotTop - 35,
 						function () {
 							rangeSelector.clickButton(i);
 							rangeSelector.isActive = true;
@@ -538,7 +552,7 @@ RangeSelector.prototype = {
 					.add();
 
 				// increase button position for the next button
-				buttonLeft += buttons[i].width + (options.buttonSpacing || 0);
+				buttonLeft += buttons[i].width + pick(options.buttonSpacing, 5);
 
 				if (rangeSelector.selected === i) {
 					buttons[i].setState(2);
@@ -571,7 +585,7 @@ RangeSelector.prototype = {
 		if (inputEnabled) {
 		
 			// Update the alignment to the updated spacing box
-			yAlign = chart.plotTop - 35;		
+			yAlign = chart.plotTop - 45;		
 			inputGroup.align(extend({
 				y: yAlign,
 				width: inputGroup.offset,

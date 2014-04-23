@@ -1,7 +1,5 @@
 $(function () {
 	$('#container').highcharts({
-	    chart: {
-	    },
 	    
 	    title: {
 	        margin: 50

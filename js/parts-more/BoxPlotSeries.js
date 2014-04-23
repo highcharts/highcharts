@@ -18,7 +18,7 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 	//stemWidth: null,
 	threshold: null,
 	tooltip: {
-		pointFormat: '<span style="color:{series.color};font-weight:bold">{series.name}</span><br/>' +
+		pointFormat: '<span style="color:{series.color}">\u25CF</span> <b> {series.name}</b><br/>' + // docs
 			'Maximum: {point.high}<br/>' +
 			'Upper quartile: {point.q3}<br/>' +
 			'Median: {point.median}<br/>' +
@@ -162,8 +162,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					'M',
 					crispX, q1Plot,
 					'L',
-					crispX, lowPlot,
-					'z'
+					crispX, lowPlot
 				];
 				
 				// The box
@@ -222,8 +221,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					medianPlot,
 					'L',
 					right, 
-					medianPlot,
-					'z'
+					medianPlot
 				];
 				
 				// Create or update the graphics

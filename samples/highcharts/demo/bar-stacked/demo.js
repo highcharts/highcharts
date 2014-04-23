@@ -16,7 +16,6 @@ $(function () {
                 }
             },
             legend: {
-                backgroundColor: '#FFFFFF',
                 reversed: true
             },
             plotOptions: {

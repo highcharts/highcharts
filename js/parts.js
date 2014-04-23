@@ -31,14 +31,14 @@ var HighchartsConfig = {
 			{name: 'Tooltip', component: 'Tooltip', group: 'Dynamics and Interaction', depends: { component: ["Interaction"]}, baseUrl: 'parts'},
 			{name: 'Pointer', component: 'Interaction', group: "Dynamics and Interaction", depends: { component: ['Core']}, baseUrl: 'parts'},
 			{name: 'TouchPointer', component: 'Touch', group: "Dynamics and Interaction", depends: { component: ['Interaction', 'Core']}, baseUrl: 'parts'},
-			{name: "MSPointer", component: "MS\ Touch", group: "Dynamics and Interaction", depends: { component: ['Touch']}, baseUrl: 'parts'},
+			{name: "MSPointer", component: "MS Touch", group: "Dynamics and Interaction", depends: { component: ['Touch']}, baseUrl: 'parts'},
 			{name: 'Legend', component: 'Core', group: "Core", baseUrl: 'parts'},
 			{name: 'Chart', component: 'Core', group: "Core", baseUrl: 'parts'},
 			{name: 'CenteredSeriesMixin', component: 'CenteredSeriesMixin', baseUrl: 'parts'},
 			{name: 'Point', component: 'Core', group: 'Core', baseUrl: 'parts'},
 			{name: 'Series', component: 'Core', group: "Core", baseUrl: 'parts'},
 			{name: 'Stacking', component: 'Stacking', group: "Features", baseUrl: 'parts'},
-			{name: 'Dynamics', component: 'Dynamics', group: 'Dynamics and Interaction', depends: {component: ['Core']}},
+			{name: 'Dynamics', component: 'Dynamics', group: 'Dynamics and Interaction', depends: {component: ['Core']}, baseUrl: 'parts'},
 			{name: 'LineSeries', component: 'LineSeries', group: "Chart and Serie types", depends: {component: ['Core']}, baseUrl: 'parts'},
 			{name: 'AreaSeries', component: 'AreaSeries', group: "Chart and Serie types", depends: {component: ['Core']}, baseUrl: 'parts'},
 			{name: 'SplineSeries', component: 'SplineSeries', group: "Chart and Serie types", depends: {component: ['Core']}, baseUrl: 'parts'},
@@ -80,7 +80,15 @@ var HighchartsConfig = {
 			{name: 'exporting.src', component: 'Exporting', group: "Modules", depends: {component: ['Core']}, baseUrl: 'modules'},
 			{name: 'data.src', component: 'Data', group: "Modules", depends: {component: ['Core']}, baseUrl: 'modules'},
 			{name: 'no-data-to-display.src', component: 'No-data-to-display', group: "Modules", depends: {component: ['Core']}, baseUrl: 'modules'},
-			{name: 'drilldown.src', component: 'Drilldown', group: "Modules", depends: {component: ['Core']}, baseUrl: 'modules'}
+			{name: 'drilldown.src', component: 'Drilldown', group: "Modules", depends: {component: ['Core']}, baseUrl: 'modules'},
+			{name: 'solid-gauge.src', component: 'Solid Gauge', group: "Modules", depends: {component: ['Gauge']}, baseUrl: 'modules'},
+			{name: 'Intro', component: 'Heatmap', group: "Modules", depends: {component: ['Core', 'ColumnSeries', 'ScatterSeries']}, baseUrl: 'parts-map'},
+			{name: 'HeatmapGlobals', component: 'Heatmap', group: "Modules", depends: {component: []}, baseUrl: 'parts-map'},
+			{name: 'ColorAxis', component: 'Heatmap', group: "Modules", depends: {component: []}, baseUrl: 'parts-map'},
+			{name: 'ColorSeriesMixin', component: 'Heatmap', group: "Modules", depends: {component: []}, baseUrl: 'parts-map'},
+			{name: 'HeatmapSeries', component: 'Heatmap', group: "Modules", depends: {component: []}, baseUrl: 'parts-map'},
+			{name: 'Outro', component: 'Heatmap', group: "Modules", depends: {component: []}, baseUrl: 'parts-map'}
+
 		],
 
 		groups: {
@@ -89,9 +97,9 @@ var HighchartsConfig = {
 			'Chart and Serie types': { description: 'All the serie types available with Highcharts. Note: LineSeries is the base serie, required by the Core module'},
 			/*'Chart and Serie types': { description: 'This is the description for Chart and Serie types group'},*/
 			'Features': { description: 'Enable behaviours to the chart'},
-			'Renderers': { description: 'This is the description for the Renderers group'},
-			'Modules':  { description: 'This is the description for the Modules group'},
-			'Dynamics and Interaction': { description: 'The description for dynamics support'},
+			'Renderers': { description: 'Alternatives to standard SVG rendering'},
+			'Modules':  { description: ''},
+			'Dynamics and Interaction': { description: 'Leaving these out makes your chart completely static'},
 			'Adapters': { description: 'Choose your own library to run Highcharts. Use Highcharts standalone framework when you want minimum bandwidth use, web apps built on other frameworks, or just a simple website where you want to keep it clean.'}
 			},
 
@@ -111,7 +119,7 @@ var HighchartsConfig = {
 			'Plotlines or bands': {description: 'Enable drawing plotlines and -bands on your chart.'},
 			'Logarithmic Axis': {description: 'Enable logarithmic axis. On a logarithmic axis the numbers along the axis increase logarithmically and the axis adjusts itself to the data series present in the chart.'},
 			'Stacking': { description: 'Stack the data in your series on top of each other instead of overlapping.'},
-			'DataLabels': { description: 'Enable datalabels for the values in your data series'},
+			'DataLabels': { description: 'Data labels display each point\'s value or other information related to the point'},
 			'Polar': { description: 'For turning the regular chart  into a polar chart.'},
 			'MS Touch': { description: 'Optimised touch support for Microsoft touch devices'},
 			'Dynamics': { description: 'Adds support for creating more dynamic charts, by adding API methods for adding series, points, etc.'},
@@ -130,7 +138,7 @@ var HighchartsConfig = {
 			'BoxPlotSeries': {description: 'A box plot, or box-and-whiskers chart, displays groups of data by their five point summaries: minimum, lower quartile, median, upper quartile and maximum. '},
 			'BubbleSeries': {description: 'Bubble charts allow three dimensional data to be plotted in an X/Y diagram with sized bubbles.'},
 			'WaterfallSeries': { description: 'Waterfall charts display the cumulative effects of income and expences, or other similar data. In Highcharts, a point can either be positive or negative, an intermediate sum or the total sum.'},
-			'Funnel': {description: 'DEPS NOT TESTED ...A funnel is a chart type mainly used by sales personnel to monitor the stages of the sales cycle, from first interest to the closed sale.'},
+			'Funnel': {description: 'A funnel is a chart type mainly used by sales personnel to monitor the stages of the sales cycle, from first interest to the closed sale.'},
 			'ErrorBarSeries': {description: 'An error bar series is a secondary series that lies on top of a parent series and displays the possible error range of each parent point.'}, 
 			'OHLC': {description: 'The Open-High-Low-Close chart is typically used to illustrate movements in the price over time'},
 			'Candlestick': {description: 'Like the OHLC chart, using columns to represent the range of price movement.'},
@@ -138,6 +146,8 @@ var HighchartsConfig = {
 			'Exporting': {description: 'For saving the chart to an image'},
 			'Data': {description: 'Intended to ease the common process of loading data from CSV, HTML tables and even Google Spreadsheets'},
 			'No-data-to-display': {description: 'When there\'s no data to display, the chart is showing a message'},
-			'Drilldown': {description: 'Module to drilldown your data'}
+			'Drilldown': {description: 'Add drill down features, allowing point click to show detailed data series related to each point.'},
+			'Solid Gauge': {description: 'Display your data in a solid gauge'},
+			'Heatmap': {description: 'Make heatmap out of your data'}
 		}
 	};

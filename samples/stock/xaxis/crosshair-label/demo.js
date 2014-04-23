@@ -14,6 +14,15 @@ $(function() {
 			title : {
 				text : 'AAPL Stock Price'
 			},
+
+			xAxis: {
+				crosshair: {
+                    label: {
+                        enabled: true,
+                        padding: 8
+                    }
+                }
+			},
             
             yAxis: {
                 opposite: true,

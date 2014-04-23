@@ -132,10 +132,7 @@ Chart.prototype = {
 	 * @param {Number} plotY Pixel y relative to the plot area
 	 * @param {Boolean} inverted Whether the chart is inverted
 	 */
-	isInsidePlot: function (plotX, plotY, inverted) {
-		var x = inverted ? plotY : plotX,
-			y = inverted ? plotX : plotY;
-			
+	isInsidePlot: function (x, y) {
 		return x >= 0 &&
 			x <= this.plotWidth &&
 			y >= 0 &&
@@ -490,11 +487,6 @@ Chart.prototype = {
 			
 			if (!titleOptions.floating && !titleOptions.verticalAlign) {
 				titleOffset = title.getBBox().height;
-
-				// Adjust for browser consistency + backwards compat after #776 fix
-				if (titleOffset >= 18 && titleOffset <= 25) {
-					titleOffset = 15; 
-				}
 			}
 		}
 		if (subtitle) {
@@ -683,7 +675,7 @@ Chart.prototype = {
 			legend = chart.legend,
 			margin = chart.margin,
 			legendOptions = chart.options.legend,
-			legendMargin = pick(legendOptions.margin, 10),
+			legendMargin = pick(legendOptions.margin, 20),
 			legendX = legendOptions.x,
 			legendY = legendOptions.y,
 			align = legendOptions.align,

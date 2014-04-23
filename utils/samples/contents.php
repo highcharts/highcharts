@@ -7,6 +7,7 @@
 		<script type='text/javascript' src='//code.jquery.com/jquery-1.9.1.js'></script>
   		<script type="text/javascript" src="//code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
   		<link rel="stylesheet" type="text/css" href="//code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css"/>
+  		<link rel="stylesheet" type="text/css" href="style.css"/>
 
 		<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 		
@@ -136,11 +137,9 @@
 			#top-nav {
 				color: white; 
 				font-family: Arial, sans-serif; 
-				padding: 0.5em; 
+				padding: 10px; 
 				height: 6.5em;
-				background: #57544A;
-				background: -webkit-linear-gradient(top, #57544A, #37342A); 
-				background: -moz-linear-gradient(top, #57544A, #37342A);
+				background: #34343e;
 				box-shadow: 0px 0px 8px #888;
 				position: fixed;
 				top: 0;
@@ -156,23 +155,7 @@
 			.dissimilarity-index {
 				float: right;
 			}
-			.buttons a, a.button {
-				border: 1px solid silver;
-				border-radius: 5px;
-				background: #628e01;
-				padding: 5px;
-				color: white;
-				text-shadow: 0 -1px 1px #000000;
-				text-decoration: none;
-				font-size: 12px;
-				white-space: nowrap;
-				line-height: 30px;
-				cursor: pointer;
-				margin: 0 3px;
-			}
-			.buttons a:hover, a.button:hover {
-				background: #729e11;
-			}
+
 		</style>
 		
 		

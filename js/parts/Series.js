@@ -345,12 +345,10 @@ Series.prototype = {
 			firstPoint = null,
 			xAxis = series.xAxis,
 			hasCategories = xAxis && !!xAxis.categories,
-			names = xAxis && (isArray(xAxis.categories) ? xAxis.categories : xAxis.names),
 			tooltipPoints = series.tooltipPoints,
 			i,
 			turboThreshold = options.turboThreshold,
 			pt,
-			nameX,
 			xData = this.xData,
 			yData = this.yData,
 			pointArrayMap = series.pointArrayMap,
@@ -426,21 +424,10 @@ Series.prototype = {
 					if (data[i] !== UNDEFINED) { // stray commas in oldIE
 						pt = { series: series };
 						series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
-
-						// If the point has a name and the axis is of category type,
-						// search the names array for existing positions of the same name.
-						// If not found, add a position with that name (#2522).
-						if (hasCategories && pt.name) {
-							series.requireSorting = false;
-							nameX = inArray(pt.name, names); // #2522
-							if (nameX === -1 || !pt.autoX) {
-								names[pt.x] = pt.name; // #2046
-							} else {
-								pt.x = nameX;
-							}
-						}
 						series.updateParallelArrays(pt, i);
-						
+						if (hasCategories && pt.name) {
+							xAxis.names[pt.x] = pt.name; // #2046
+						}
 					}
 				}
 			}
@@ -498,7 +485,10 @@ Series.prototype = {
 			i, // loop variable
 			options = series.options,
 			cropThreshold = options.cropThreshold,
-			isCartesian = series.isCartesian;
+			activePointCount = 0,
+			isCartesian = series.isCartesian,
+			min,
+			max;
 
 		// If the series data or axes haven't changed, don't go through this. Return false to pass
 		// the message on to override methods like in data grouping.
@@ -509,8 +499,9 @@ Series.prototype = {
 
 		// optionally filter out points outside the plot area
 		if (isCartesian && series.sorted && (!cropThreshold || dataLength > cropThreshold || series.forceCrop)) {
-			var min = xAxis.min,
-				max = xAxis.max;
+			
+			min = xAxis.min;
+			max = xAxis.max;
 
 			// it's outside current extremes
 			if (processedXData[dataLength - 1] < min || processedXData[0] > max) {
@@ -524,6 +515,7 @@ Series.prototype = {
 				processedYData = croppedData.yData;
 				cropStart = croppedData.start;
 				cropped = true;
+				activePointCount = processedXData.length;
 			}
 		}
 
@@ -531,6 +523,10 @@ Series.prototype = {
 		// Find the closest distance between processed points
 		for (i = processedXData.length - 1; i >= 0; i--) {
 			distance = processedXData[i] - processedXData[i - 1];
+			
+			if (!cropped && processedXData[i] > min && processedXData[i] < max) {
+				activePointCount++;
+			}
 			if (distance > 0 && (closestPointRange === UNDEFINED || distance < closestPointRange)) {
 				closestPointRange = distance;
 
@@ -546,6 +542,7 @@ Series.prototype = {
 		series.cropStart = cropStart;
 		series.processedXData = processedXData;
 		series.processedYData = processedYData;
+		series.activePointCount = activePointCount;
 
 		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
 			series.pointRange = closestPointRange || 1;
@@ -714,6 +711,7 @@ Series.prototype = {
 		}
 		this.generatePoints();
 		var series = this,
+			inverted = series.chart.inverted,
 			options = series.options,
 			stacking = options.stacking,
 			xAxis = series.xAxis,
@@ -795,6 +793,9 @@ Series.prototype = {
 			point.category = categories && categories[point.x] !== UNDEFINED ?
 				categories[point.x] : point.x;
 
+			// Get true plot pixel position regardless of inversion
+			point.invX = inverted ? yAxis.len - point.plotY : point.plotX;
+			point.invY = inverted ? xAxis.len - point.plotX : point.plotY;
 
 		}
 
@@ -851,6 +852,8 @@ Series.prototype = {
 				clipRect.animate({
 					width: chart.plotSizeX
 				}, animation);
+			}
+			if (chart[sharedClipKey + 'm']) {
 				chart[sharedClipKey + 'm'].animate({
 					width: chart.plotSizeX + 99
 				}, animation);
@@ -859,11 +862,6 @@ Series.prototype = {
 			// Delete this function to allow it only once
 			series.animate = null;
  
-			// Call the afterAnimate function on animation complete (but don't overwrite the animation.complete option
-			// which should be available to the user).
-			series.animationTimeout = setTimeout(function () {
-				series.afterAnimate();
-			}, animation.duration);
 		}
 	},
 
@@ -882,6 +880,8 @@ Series.prototype = {
 			}
 			this.markerGroup.clip(); // no clip
 		}
+
+		fireEvent(this, 'afterAnimate');
 
 		// Remove the shared clipping rectancgle when all series are shown
 		setTimeout(function () {
@@ -918,9 +918,13 @@ Series.prototype = {
 			pointMarkerOptions,
 			enabled,
 			isInside,
-			markerGroup = series.markerGroup;
+			markerGroup = series.markerGroup,
+			globallyEnabled = pick(
+				seriesMarkerOptions.enabled, 
+				series.activePointCount < (0.5 * series.xAxis.len / seriesMarkerOptions.radius)
+			);
 
-		if (seriesMarkerOptions.enabled || series._hasPointMarkers) {
+		if (seriesMarkerOptions.enabled !== false || series._hasPointMarkers) {
 
 			i = points.length;
 			while (i--) {
@@ -929,8 +933,8 @@ Series.prototype = {
 				plotY = point.plotY;
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
-				enabled = (seriesMarkerOptions.enabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
-				isInside = chart.isInsidePlot(mathRound(plotX), plotY, chart.inverted); // #1858
+				enabled = (globallyEnabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
+				isInside = chart.isInsidePlot(point.invX, point.invY); // #1858
 
 				// only draw the point if y is defined
 				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
@@ -942,10 +946,7 @@ Series.prototype = {
 					isImage = symbol.indexOf('url') === 0;
 
 					if (graphic) { // update
-						graphic
-							.attr({ // Since the marker group isn't clipped, each individual marker must be toggled
-								visibility: isInside ? 'inherit' : HIDDEN
-							})
+						graphic[isInside ? 'show' : 'hide'](true) // Since the marker group isn't clipped, each individual marker must be toggled
 							.animate(extend({
 								x: plotX - radius,
 								y: plotY - radius
@@ -1527,9 +1528,9 @@ Series.prototype = {
 			group,
 			options = series.options,
 			animation = options.animation,
-			doAnimation = animation && !!series.animate &&
-				chart.renderer.isSVG, // this animation doesn't work in IE8 quirks when the group div is hidden,
-				// and looks bad in other oldIE
+			// Animation doesn't work in IE8 quirks when the group div is hidden,
+			// and looks bad in other oldIE
+			animDuration = (animation && !!series.animate && chart.renderer.isSVG && pick(animation.duration, 500)) || 0,
 			visibility = series.visible ? VISIBLE : HIDDEN,
 			zIndex = options.zIndex,
 			hasRendered = series.hasRendered,
@@ -1553,7 +1554,7 @@ Series.prototype = {
 		);
 
 		// initiate the animation
-		if (doAnimation) {
+		if (animDuration) {
 			series.animate(true);
 		}
 
@@ -1596,10 +1597,20 @@ Series.prototype = {
 		}
 
 		// Run the animation
-		if (doAnimation) {
+		if (animDuration) {
 			series.animate();
-		} else if (!hasRendered) {
-			series.afterAnimate();
+		} 
+
+		// Call the afterAnimate function on animation complete (but don't overwrite the animation.complete option
+		// which should be available to the user).
+		if (!hasRendered) {
+			if (animDuration) {
+				series.animationTimeout = setTimeout(function () {
+					series.afterAnimate();
+				}, animDuration);
+			} else {
+				series.afterAnimate();
+			}
 		}
 
 		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
@@ -1634,7 +1645,9 @@ Series.prototype = {
 		}
 
 		series.translate();
-		series.setTooltipPoints(true);
+		if (series.setTooltipPoints) {
+			series.setTooltipPoints(true);
+		}
 		series.render();
 
 		if (wasDirtyData) {

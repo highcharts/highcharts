@@ -24,9 +24,16 @@ Series.prototype.drawDataLabels = function () {
 		dataLabelsGroup = series.plotGroup(
 			'dataLabelsGroup',
 			'data-labels',
-			series.visible ? VISIBLE : HIDDEN,
+			HIDDEN,
 			options.zIndex || 6
 		);
+
+		if (!series.hasRendered && pick(options.defer, true)) {
+			dataLabelsGroup.attr({ opacity: 0 });
+			addEvent(series, 'afterAnimate', function () {
+				series.dataLabelsGroup.show()[seriesOptions.animation ? 'animate' : 'attr']({ opacity: 1 }, { duration: 200 });
+			});
+		}
 
 		// Make the labels for each point
 		generalOptions = options;
@@ -136,21 +143,20 @@ Series.prototype.drawDataLabels = function () {
  */
 Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, isNew) {
 	var chart = this.chart,
-		inverted = chart.inverted,
-		plotX = pick(point.plotX, -999),
-		plotY = pick(point.plotY, -999),
+		plotX = pick(point.invX, point.plotX, -999),
+		plotY = pick(point.invY, point.plotY, -999),
 		bBox = dataLabel.getBBox(),
 		// Math.round for rounding errors (#2683), alignTo to allow column labels (#2700)
-		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, mathRound(plotY), inverted) ||
-			(alignTo && chart.isInsidePlot(plotX, inverted ? alignTo.x + 1 : alignTo.y + alignTo.height - 1, inverted))),
+		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, mathRound(plotY)) ||
+			(alignTo && chart.isInsidePlot(plotX, alignTo.y + alignTo.height - 1))),
 		alignAttr; // the final position;
 
 	if (visible) {
 
 		// The alignment box is a singular point
 		alignTo = extend({
-			x: inverted ? chart.plotWidth - plotY : plotX,
-			y: mathRound(inverted ? chart.plotHeight - plotX : plotY),
+			x: plotX,
+			y: plotY,
 			width: 0,
 			height: 0
 		}, alignTo);
@@ -542,7 +548,7 @@ if (seriesTypes.pie) {
 								visibility: visibility
 								//zIndex: 0 // #2722 (reversed)
 							})
-							.add(series.group);
+							.add(series.dataLabelsGroup);
 						}
 					} else if (connector) {
 						point.connector = connector.destroy();

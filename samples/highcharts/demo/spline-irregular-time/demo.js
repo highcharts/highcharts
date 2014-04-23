@@ -14,6 +14,9 @@ $(function () {
                 dateTimeLabelFormats: { // don't display the dummy year
                     month: '%e. %b',
                     year: '%b'
+                },
+                title: {
+                    text: 'Date'
                 }
             },
             yAxis: {
@@ -23,12 +26,10 @@ $(function () {
                 min: 0
             },
             tooltip: {
-                formatter: function() {
-                        return '<b>'+ this.series.name +'</b><br/>'+
-                        Highcharts.dateFormat('%e. %b', this.x) +': '+ this.y +' m';
-                }
+                headerFormat: '<b>{series.name}</b><br>',
+                pointFormat: '{point.x:%e. %b}: {point.y:.2f} m'
             },
-            
+
             series: [{
                 name: 'Winter 2007-2008',
                 // Define the data points. All series have a dummy year

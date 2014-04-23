@@ -64,6 +64,10 @@ $(function() {
 				minRange: 3600 * 1000 // one hour
 			},
 
+			yAxis: {
+				floor: 0
+			},
+
 			series : [{
 				data : data,
 				dataGrouping: {

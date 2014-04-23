@@ -59,10 +59,6 @@ $(function() {
 					x : Date.UTC(2011, 4, 6),
 					title : 'C',
 					text : 'US Dollar: Is This the Long-Awaited Recovery or a Temporary Bounce?'
-				}, {
-					x : Date.UTC(2011, 4, 9),
-					title : 'B',
-					text : 'EURUSD: Bearish Trend Change on Tap?'
 				}],
 				onSeries : 'dataseries',
 				shape : 'circlepin',

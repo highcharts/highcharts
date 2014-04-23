@@ -2,7 +2,7 @@ $(function() {
 	$('#container').highcharts('StockChart', {
 
 	    title: {
-	    	text: 'plotOptions: {ohlc: {lineWidth: 3}}'
+	    	text: 'OHLC series with line width 3'
 	    },
 
 	    plotOptions: {

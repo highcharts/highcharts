@@ -28,7 +28,7 @@ $(function () {
                 verticalAlign: 'top',
                 y: 20,
                 floating: true,
-                backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColorSolid) || 'white',
+                backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
                 borderColor: '#CCC',
                 borderWidth: 1,
                 shadow: false

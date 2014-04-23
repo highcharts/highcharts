@@ -30,6 +30,9 @@ $(function () {
                 ['November',   95.6],
                 ['December',   54.4]
             ],
+            marker: {
+                enabled: false
+            },
             showInLegend: true
         }]
     });
@@ -57,7 +60,7 @@ $(function () {
     });
 
     // Toggle point markers
-    var enableMarkers = false;
+    var enableMarkers = true;
     $('#markers').click(function() {
         chart.series[0].update({
             marker: {

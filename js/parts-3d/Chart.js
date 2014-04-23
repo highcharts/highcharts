@@ -69,17 +69,20 @@ Highcharts.Chart.prototype.retrieveStacks = function () {
 		type = this.options.chart.type,
 		typeOptions = this.options.plotOptions[type],
 		stacking = typeOptions.stacking,
-		grouping = typeOptions.grouping;
+		grouping = typeOptions.grouping,
+		i = 1;
 
 	if (grouping || !stacking) { return this.series; }
 
 	Highcharts.each(this.series, function (S) {
 		if (!stacks[S.options.stack || 0]) {
-			stacks[S.options.stack || 0] = [S];
+			stacks[S.options.stack || 0] = { series: [S], position: i};
+			i++;
 		} else {
-			stacks[S.options.stack || 0].push(S);
+			stacks[S.options.stack || 0].series.push(S);
 		}
 	});
+	stacks.totalStacks = i + 1;
 	return stacks;
 };
 

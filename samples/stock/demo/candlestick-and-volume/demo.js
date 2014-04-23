@@ -43,17 +43,25 @@ $(function() {
 		    },
 
 		    yAxis: [{
+		        labels: {
+		    		align: 'right',
+		    		x: -3
+		    	},
 		        title: {
 		            text: 'OHLC'
 		        },
-		        height: 160,
+		        height: '60%',
 		        lineWidth: 2
 		    }, {
+		    	labels: {
+		    		align: 'right',
+		    		x: -3
+		    	},
 		        title: {
 		            text: 'Volume'
 		        },
-		        top: 248,
-		        height: 60,
+		        top: '65%',
+		        height: '35%',
 		        offset: 0,
 		        lineWidth: 2
 		    }],

@@ -97,8 +97,6 @@ $(function () {
     
     // create the chart
     $('#container').highcharts({
-        chart: {
-        },
         
         xAxis: {
             type: 'datetime'

@@ -33,6 +33,7 @@
 					height,
 					y;
 
+				point.tooltipPos = null; // don't inherit from column
 				point.plotHigh = plotHigh = yAxis.translate(point.high, 0, 1, 0, 1);
 				point.plotLow = point.plotY;
 

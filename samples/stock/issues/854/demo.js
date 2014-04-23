@@ -1,7 +1,5 @@
 $(function () {
     $('#container').highcharts('StockChart', {
-        chart: {
-        },
         rangeSelector: {
             enabled: false
         },

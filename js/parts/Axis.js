@@ -70,7 +70,7 @@ Axis.prototype = {
 		startOnTick: false,
 		tickColor: '#C0D0E0',
 		//tickInterval: null,
-		tickLength: 5,
+		tickLength: 10,
 		tickmarkPlacement: 'between', // on or between
 		tickPixelInterval: 100,
 		tickPosition: 'outside',
@@ -82,9 +82,7 @@ Axis.prototype = {
 			//rotation: 0,
 			//side: 'outside',
 			style: {
-				color: '#4d759e',
-				//font: defaultFont.replace('normal', 'bold')
-				fontWeight: 'bold'
+				color: '#707070' // docs
 			}
 			//x: 0,
 			//y: 0
@@ -133,7 +131,7 @@ Axis.prototype = {
 	 */
 	defaultLeftAxisOptions: {
 		labels: {
-			x: -8,
+			x: -15,
 			y: null
 		},
 		title: {
@@ -146,7 +144,7 @@ Axis.prototype = {
 	 */
 	defaultRightAxisOptions: {
 		labels: {
-			x: 8,
+			x: 15,
 			y: null
 		},
 		title: {
@@ -160,7 +158,7 @@ Axis.prototype = {
 	defaultBottomAxisOptions: {
 		labels: {
 			x: 0,
-			y: 14
+			y: 20
 			// overflow: undefined,
 			// staggerLines: null
 		},
@@ -174,7 +172,7 @@ Axis.prototype = {
 	defaultTopAxisOptions: {
 		labels: {
 			x: 0,
-			y: -5
+			y: -15
 			// overflow: undefined
 			// staggerLines: null
 		},
@@ -399,7 +397,7 @@ Axis.prototype = {
 		}
 
 		if (ret === UNDEFINED) {
-			if (value >= 10000) { // add thousands separators
+			if (mathAbs(value) >= 10000) { // add thousands separators
 				ret = numberFormat(value, 0);
 
 			} else { // small numbers
@@ -617,7 +615,7 @@ Axis.prototype = {
 			tickPositions = [];
 
 		// For single points, add a tick regardless of the relative position (#2662)
-		if (min === max) {
+		if (min === max && isNumber(min)) {
 			return [min];
 		}
 
@@ -918,10 +916,10 @@ Axis.prototype = {
 
 		// Stay within floor and ceiling
 		if (isNumber(options.floor)) {
-			axis.min = mathMax(axis.min, options.floor); // docs
+			axis.min = mathMax(axis.min, options.floor);
 		}
 		if (isNumber(options.ceiling)) {
-			axis.max = mathMin(axis.max, options.ceiling); // docs
+			axis.max = mathMin(axis.max, options.ceiling);
 		}
 
 		// get tickInterval
@@ -1266,13 +1264,13 @@ Axis.prototype = {
 			height = pick(options.height, chart.plotHeight),
 			top = pick(options.top, chart.plotTop),
 			left = pick(options.left, chart.plotLeft + offsetLeft),
-			test = /%$/;
+			percentRegex = /%$/; // docs
 
 		// Check for percentage based input values
-		if (test.test(height)) {
+		if (percentRegex.test(height)) {
 			height = parseInt(height, 10) / 100 * chart.plotHeight;
 		}
-		if (test.test(top)) {
+		if (percentRegex.test(top)) {
 			top = parseInt(top, 10) / 100 * chart.plotHeight + chart.plotTop;
 		}
 
@@ -1379,7 +1377,8 @@ Axis.prototype = {
 			bBox,
 			x,
 			w,
-			lineNo;
+			lineNo,
+			lineHeightCorrection = side === 2 ? renderer.fontMetrics(labelOptions.style.fontSize).b : 0;
 
 		// For reuse in Axis.render
 		axis.hasData = hasData = (axis.hasVisibleSeries || (defined(axis.min) && defined(axis.max) && !!tickPositions));
@@ -1512,7 +1511,7 @@ Axis.prototype = {
 		axis.axisTitleMargin =
 			pick(titleOffsetOption,
 				labelOffset + titleMargin +
-				(side !== 2 && labelOffset && directionFactor * options.labels[horiz ? 'y' : 'x'])
+				(labelOffset && (directionFactor * options.labels[horiz ? 'y' : 'x'] - lineHeightCorrection))
 			);
 
 		axisOffset[side] = mathMax(

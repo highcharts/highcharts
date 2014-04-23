@@ -11,7 +11,7 @@ $(function () {
                 frame: {
                     bottom: {
                         size: 20,
-                        color: '#2f7ed8'
+                        color: Highcharts.getOptions().colors[0]
                     }
                 }
             }

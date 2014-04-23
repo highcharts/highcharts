@@ -62,7 +62,7 @@ Pointer.prototype = {
 			ePos;
 
 		// common IE normalizing
-		e = e || win.event;
+		e = e || window.event;
 
 		// Framework specific normalizing (#1165)
 		e = washMouseEvent(e);
@@ -72,8 +72,8 @@ Pointer.prototype = {
 			e.target = e.srcElement;
 		}
 		
-		// iOS
-		ePos = e.touches ? e.touches.item(0) : e;
+		// iOS (#2757)
+		ePos = e.touches ?  (e.touches.length ? e.touches.item(0) : e.changedTouches[0]) : e;
 
 		// Get mouse position
 		if (!chartPosition) {
@@ -414,9 +414,12 @@ Pointer.prototype = {
 					originalEvent: e.originalEvent || e
 				},
 				selectionBox = this.selectionMarker,
-				selectionLeft = selectionBox.x,
-				selectionTop = selectionBox.y,
+				selectionLeft = selectionBox.attr ? selectionBox.attr('x') : selectionBox.x,
+				selectionTop = selectionBox.attr ? selectionBox.attr('y') : selectionBox.y,
+				selectionWidth = selectionBox.attr ? selectionBox.attr('width') : selectionBox.width,
+				selectionHeight = selectionBox.attr ? selectionBox.attr('height') : selectionBox.height,
 				runZoom;
+
 			// a selection has been made
 			if (this.hasDragged || hasPinched) {
 
@@ -425,7 +428,7 @@ Pointer.prototype = {
 					if (axis.zoomEnabled) {
 						var horiz = axis.horiz,
 							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop)),
-							selectionMax = axis.toValue((horiz ? selectionLeft + selectionBox.width : selectionTop + selectionBox.height));
+							selectionMax = axis.toValue((horiz ? selectionLeft + selectionWidth : selectionTop + selectionHeight));
 
 						if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
 							selectionData[axis.coll].push({
@@ -566,11 +569,7 @@ Pointer.prototype = {
 		var chart = this.chart,
 			hoverPoint = chart.hoverPoint, 
 			plotLeft = chart.plotLeft,
-			plotTop = chart.plotTop,
-			inverted = chart.inverted,
-			chartPosition,
-			plotX,
-			plotY;
+			plotTop = chart.plotTop;
 		
 		e = this.normalize(e);
 		e.cancelBubble = true; // IE specific
@@ -579,18 +578,7 @@ Pointer.prototype = {
 			
 			// On tracker click, fire the series and point events. #783, #1583
 			if (hoverPoint && this.inClass(e.target, PREFIX + 'tracker')) {
-				chartPosition = this.chartPosition;
-				plotX = hoverPoint.plotX;
-				plotY = hoverPoint.plotY;
 
-				// add page position info
-				extend(hoverPoint, {
-					pageX: chartPosition.left + plotLeft +
-						(inverted ? chart.plotWidth - plotY : plotX),
-					pageY: chartPosition.top + plotTop +
-						(inverted ? chart.plotHeight - plotX : plotY)
-				});
-			
 				// the series click event
 				fireEvent(hoverPoint.series, 'click', extend(e, {
 					point: hoverPoint

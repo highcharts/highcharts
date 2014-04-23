@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v3.0.10-modified ()
+ * @license Highcharts JS v4.0.0-modified ()
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -30,8 +30,8 @@ var arrayMin = Highcharts.arrayMin,
 	Tick = Highcharts.Tick,
 	Point = Highcharts.Point,
 	Pointer = Highcharts.Pointer,
-	TrackerMixin = Highcharts.TrackerMixin,
 	CenteredSeriesMixin = Highcharts.CenteredSeriesMixin,
+	TrackerMixin = Highcharts.TrackerMixin,
 	Series = Highcharts.Series,
 	math = Math,
 	mathRound = math.round,
@@ -654,7 +654,7 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 	marker: null,
 	threshold: null,
 	tooltip: {
-		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.low}</b> - <b>{point.high}</b><br/>' 
+		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>' // docs
 	},
 	trackByArea: true,
 	dataLabels: {
@@ -663,6 +663,11 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 		xHigh: 0,
 		yLow: 0,
 		yHigh: 0	
+	},
+	states: {
+		hover: {
+			halo: false
+		}
 	}
 });
 
@@ -909,6 +914,7 @@ seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
 					height,
 					y;
 
+				point.tooltipPos = null; // don't inherit from column
 				point.plotHigh = plotHigh = yAxis.translate(point.high, 0, 1, 0, 1);
 				point.plotLow = point.plotY;
 
@@ -947,6 +953,7 @@ seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
 defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 	dataLabels: {
 		enabled: true,
+		defer: false,
 		y: 15,
 		borderWidth: 1,
 		borderColor: 'silver',
@@ -1170,7 +1177,15 @@ var GaugeSeries = {
 			this.chart.redraw();
 		}
 	},
-	drawTracker: TrackerMixin.drawTrackerPoint
+
+	/**
+	 * If the tracking module is loaded, add the point tracker
+	 */
+	drawTracker: function () {
+		if (TrackerMixin) {
+			TrackerMixin.drawTrackerPoint.call(this);
+		}
+	}
 };
 seriesTypes.gauge = extendClass(seriesTypes.line, GaugeSeries);
 
@@ -1194,7 +1209,7 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 	//stemWidth: null,
 	threshold: null,
 	tooltip: {
-		pointFormat: '<span style="color:{series.color};font-weight:bold">{series.name}</span><br/>' +
+		pointFormat: '<span style="color:{series.color}">\u25CF</span> <b> {series.name}</b><br/>' + // docs
 			'Maximum: {point.high}<br/>' +
 			'Upper quartile: {point.q3}<br/>' +
 			'Median: {point.median}<br/>' +
@@ -1338,8 +1353,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					'M',
 					crispX, q1Plot,
 					'L',
-					crispX, lowPlot,
-					'z'
+					crispX, lowPlot
 				];
 				
 				// The box
@@ -1398,8 +1412,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					medianPlot,
 					'L',
 					right, 
-					medianPlot,
-					'z'
+					medianPlot
 				];
 				
 				// Create or update the graphics
@@ -1457,7 +1470,7 @@ defaultPlotOptions.errorbar = merge(defaultPlotOptions.boxplot, {
 	grouping: false,
 	linkedTo: ':previous',
 	tooltip: {
-		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.low}</b> - <b>{point.high}</b><br/>' 
+		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
 	},
 	whiskerWidth: null
 });
@@ -1536,8 +1549,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			y,
 			previousY,
 			stackPoint,
-			threshold = options.threshold,
-			crispCorr = (options.borderWidth % 2) / 2;
+			threshold = options.threshold;
 
 		// run column series translate
 		seriesTypes.column.prototype.translate.apply(this);
@@ -1580,7 +1592,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				shapeArgs.height *= -1;
 			}
 
-			point.plotY = shapeArgs.y = mathRound(shapeArgs.y) - crispCorr;
+			point.plotY = shapeArgs.y = mathRound(shapeArgs.y) - (series.borderWidth % 2) / 2;
 			shapeArgs.height = mathRound(shapeArgs.height);
 			point.yBottom = shapeArgs.y + shapeArgs.height;
 		}
@@ -1676,7 +1688,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 		var data = this.data,
 			length = data.length,
-			lineWidth = this.options.lineWidth + this.options.borderWidth,
+			lineWidth = this.options.lineWidth + this.borderWidth,
 			normalizer = mathRound(lineWidth) % 2 / 2,
 			path = [],
 			M = 'M',
@@ -1741,6 +1753,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 // 1 - set default options
 defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	dataLabels: {
+		format: '{point.z}', // docs?
 		inside: true,
 		style: {
 			color: 'white',
@@ -1758,6 +1771,13 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	maxSize: '20%',
 	// negativeColor: null,
 	// sizeBy: 'area'
+	states: {
+		hover: {
+			halo: {
+				size: 5 // docs
+			}
+		}
+	},
 	tooltip: {
 		pointFormat: '({point.x}, {point.y}), Size: {point.z}'
 	},
@@ -1765,9 +1785,16 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	zThreshold: 0
 });
 
+var BubblePoint = extendClass(Point, {
+	haloPath: function () {
+		return Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
+	}
+});
+
 // 2 - Create the series object
 seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	type: 'bubble',
+	pointClass: BubblePoint,
 	pointArrayMap: ['y', 'z'],
 	parallelArrays: ['x', 'y', 'z'],
 	trackerGroups: ['group', 'dataLabelsGroup'],
@@ -2309,7 +2336,7 @@ Axis.prototype.beforePadding = function () {
 					
 					group.attr(attribs);
 					if (markerGroup) {
-						markerGroup.attrSetters = group.attrSetters;
+						//markerGroup.attrSetters = group.attrSetters;
 						markerGroup.attr(attribs);
 					}
 				
@@ -2406,7 +2433,10 @@ Axis.prototype.beforePadding = function () {
 							}
 						)
 					};
-					this.toXY(point); // provide correct plotX, plotY for tooltip
+					// Provide correct plotX, plotY for tooltip
+					this.toXY(point); 
+					point.tooltipPos = [point.plotX, point.plotY];
+					point.ttBelow = point.plotY > center[1];
 				}
 			}
 		});

@@ -16,11 +16,7 @@ Highcharts.StockChart = function (options, callback) {
 
 			marker: {
 				enabled: false,
-				states: {
-					hover: {
-						radius: 5
-					}
-				}
+				radius: 2
 			},
 			// gapSize: 0,
 			states: {
@@ -58,13 +54,12 @@ Highcharts.StockChart = function (options, callback) {
 
 	// apply Y axis options to both single and multi y axes
 	options.yAxis = map(splat(options.yAxis || {}), function (yAxisOptions) {
-		opposite = yAxisOptions.opposite;
+		opposite = pick(yAxisOptions.opposite, true);
 		return merge({ // defaults
 			labels: {
-				align: opposite ? 'right' : 'left',
-				x: opposite ? -2 : 2,
 				y: -2
 			},
+			opposite: opposite,
 			showLastLabel: false,
 			title: {
 				text: null
@@ -90,7 +85,10 @@ Highcharts.StockChart = function (options, callback) {
 			enabled: true
 		},
 		title: {
-			text: null
+			text: null,
+			style: {
+				fontSize: '16px' // docs
+			}
 		},
 		tooltip: {
 			shared: true,
@@ -140,6 +138,20 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 	this.pinchX = this.pinchHor = pinchType.indexOf('x') !== -1;
 	this.pinchY = this.pinchVert = pinchType.indexOf('y') !== -1;
 	this.hasZoom = this.hasZoom || this.pinchHor || this.pinchVert;
+});
+
+// Override the automatic label alignment so that the first Y axis' labels
+// are drawn on top of the grid line, and subsequent axes are drawn outside
+wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
+	if (this.chart.options._stock && this.coll === 'yAxis') {
+		if (inArray(this, this.chart.yAxis) === 0) {
+			if (this.options.labels.x === 15) { // default
+				this.options.labels.x = 0;
+			}
+			return 'right';
+		}
+	}
+	return proceed.call(this);
 });
 
 // Override getPlotLinePath to allow for multipane charts
@@ -236,7 +248,7 @@ Axis.prototype.getPlotBandPath = function (from, to) {
 	if (path && toPath) {
 		// Go over each subpath
 		for (i = 0; i < path.length; i += 6) {
-			result.push('M', path[i + 1], path[i + 2], 'L', path[i + 4], path[i + 5], 'L', toPath[i + 4], toPath[i + 5], 'L', toPath[i + 1], toPath[i + 2]);
+			result.push('M', path[i + 1], path[i + 2], 'L', path[i + 4], path[i + 5], toPath[i + 4], toPath[i + 5], toPath[i + 1], toPath[i + 2]);
 		}
 	} else { // outside the axis area
 		result = null;
@@ -351,12 +363,12 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 
 	// show the label
 	crossLabel.attr({
+		text: formatOption ? format(formatOption, {value: point[axis]}) : options.formatter.call(this, point[axis]), 
 		x: posx, 
 		y: posy, 
-		text: formatOption ? format(formatOption, {value: point[axis]}) : options.formatter.call(this, point[axis]), 
 		visibility: VISIBLE
 	});
-	crossBox = crossLabel.box;
+	crossBox = crossLabel.getBBox();
 
 	// now it is placed we can correct its position
 	if (horiz) {
@@ -531,6 +543,20 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
  * to using multiple panes, and a future pane logic should incorporate this feature.
  */
 wrap(Series.prototype, 'render', function (proceed) {
-	this.clipBox = merge(this.chart.clipBox, { height: this.yAxis.len });
+	if (this.isCartesian && this.chart.options._stock) { // #2939
+		// First render, initial clip box
+		if (!this.clipBox) {
+			this.clipBox = merge(this.chart.clipBox);
+			this.clipBox.width = this.xAxis.len;
+			this.clipBox.height = this.yAxis.len;
+
+		// On redrawing, resizing etc, update the clip rectangle
+		} else if (this.chart[this.sharedClipKey]) {
+			this.chart[this.sharedClipKey].attr({
+				width: this.xAxis.len,
+				height: this.yAxis.len
+			});
+		}
+	}
 	proceed.call(this);
 });

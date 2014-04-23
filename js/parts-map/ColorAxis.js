@@ -28,7 +28,8 @@ extend(ColorAxis.prototype, {
 			overflow: 'justify'
 		},
 		minColor: '#EFEFFF',
-		maxColor: '#003875'
+		maxColor: '#003875',
+		tickLength: 5
 	},
 	init: function (chart, userOptions) {
 		var horiz = chart.options.legend.layout !== 'vertical',
@@ -129,18 +130,22 @@ extend(ColorAxis.prototype, {
 
 	setAxisSize: function () {
 		var symbol = this.legendSymbol,
-			chart = this.chart;
+			chart = this.chart,
+			x,
+			y,
+			width,
+			height;
 
 		if (symbol) {
-			this.left = symbol.x;
-			this.top = symbol.y;
-			this.width = symbol.width;
-			this.height = symbol.height;
-			this.right = chart.chartWidth - this.left - this.width;
-			this.bottom = chart.chartHeight - this.top - this.height;
+			this.left = x = symbol.attr('x');
+			this.top = y = symbol.attr('y');
+			this.width = width = symbol.attr('width');
+			this.height = height = symbol.attr('height');
+			this.right = chart.chartWidth - x - width;
+			this.bottom = chart.chartHeight - y - height;
 
-			this.len = this.horiz ? this.width : this.height;
-			this.pos = this.horiz ? this.left : this.top;
+			this.len = this.horiz ? width : height;
+			this.pos = this.horiz ? x : y;
 		}
 	},
 

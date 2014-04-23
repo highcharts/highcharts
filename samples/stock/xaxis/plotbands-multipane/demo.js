@@ -9,11 +9,11 @@ $(function() {
 	    },
 	    yAxis: [
 	        {
-	            height: 140
+	            height: '50%'
 	        },
 	        {
-	            height: 140,
-	            top: 194,
+	            height: '45%',
+	            top: '55%',
 	            offset: 0
 	        }
 	    ],

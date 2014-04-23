@@ -48,6 +48,28 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 	});
 });
 
+Highcharts.wrap(Highcharts.seriesTypes.pie.prototype.pointClass.prototype, 'haloPath', function (proceed) {
+	return this.series.chart.is3d() ? [] : proceed.call(this);
+});
+
+Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
+	// Do not do this if the chart is not 3D
+	if (this.chart.is3d()) {
+		// Set the border color to the fill color to provide a smooth edge
+		Highcharts.each(this.data, function (point) {
+			var c = point.options.borderColor || point.color || point.series.userOptions.borderColor || point.series.color;
+			point.options.borderColor = c;
+			point.borderColor = c;
+			point.pointAttr[''].stroke = c;
+			// same bordercolor on hover and select
+			point.pointAttr.hover.stroke = c;
+			point.pointAttr.select.stroke = c;
+		});	
+	}
+
+	proceed.apply(this, [].slice.call(arguments, 1));
+});
+
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 	// Do not do this if the chart is not 3D
@@ -84,5 +106,62 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'addPoint', function (proc
 	if (this.chart.is3d()) {
 		// destroy (and rebuild) everything!!!
 		this.update();
+	}
+});
+
+Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'animate', function (proceed) {
+	if (!this.chart.is3d()) {
+		proceed.apply(this, [].slice.call(arguments, 1));
+	} else {
+		var args = arguments,
+			init = args[1],
+			animation = this.options.animation,
+			attribs,
+			center = this.center,
+			group = this.group,
+			markerGroup = this.markerGroup;
+
+		if (Highcharts.svg) { // VML is too slow anyway
+				
+				if (animation === true) {
+					animation = {};
+				}
+				// Initialize the animation
+				if (init) {
+				
+					// Scale down the group and place it in the center
+					this.oldtranslateX = group.translateX;
+					this.oldtranslateY = group.translateY;
+					attribs = {
+						translateX: center[0],
+						translateY: center[1],
+						scaleX: 0.001, // #1499
+						scaleY: 0.001
+					};
+					
+					group.attr(attribs);
+					if (markerGroup) {
+						markerGroup.attrSetters = group.attrSetters;
+						markerGroup.attr(attribs);
+					}
+				
+				// Run the animation
+				} else {
+					attribs = {
+						translateX: this.oldtranslateX,
+						translateY: this.oldtranslateY,
+						scaleX: 1,
+						scaleY: 1
+					};
+					group.animate(attribs, animation);
+					if (markerGroup) {
+						markerGroup.animate(attribs, animation);
+					}
+				
+					// Delete this function to allow it only once
+					this.animate = null;
+				}
+				
+		}
 	}
 });

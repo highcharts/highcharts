@@ -53,8 +53,7 @@ $(function () {
 	    },
 	    
 	    tooltip: {
-	    	valueSuffix: '%',
-	    	followPointer: true
+	    	valueSuffix: '%'
 	    },
 	        
 	    plotOptions: {

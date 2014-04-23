@@ -5,10 +5,10 @@ extend(Highcharts.Pointer.prototype, {
 	 * Run translation operations
 	 */
 	pinchTranslate: function (pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
-		if (this.zoomHor) {
+		if (this.zoomHor || this.pinchHor) {
 			this.pinchTranslateDirection(true, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 		}
-		if (this.zoomVert) {
+		if (this.zoomVert || this.pinchVert) {
 			this.pinchTranslateDirection(false, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 		}
 	},
@@ -180,11 +180,6 @@ extend(Highcharts.Pointer.prototype, {
 
 			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
 
-				// Prevent the click pseudo event from firing unless it is set in the options
-				/*if (!chart.runChartClick) {
-					e.preventDefault();
-				}*/
-			
 				// Run mouse events and display tooltip etc
 				this.runPointActions(e);
 

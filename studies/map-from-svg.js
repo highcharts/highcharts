@@ -66,42 +66,6 @@ var presets = [{
 	name: 'Sogn-og-Fjordane-Norway',
 	url: 'http://upload.wikimedia.org/wikipedia/commons/4/4f/NO_1417_Vik.svg'
 }];
-/*
-var defaultSeriesSetup = [{
-	name: 'Areas',
-	type: 'map',
-	enableMouseTracking: true,
-	showInLegend: true,
-	rules: [{
-		key: 'fill',
-		operator: 'is-not',
-		value: 'none'
-	}]
-}, {
-	name: 'Lines',
-	type: 'mapline',
-	enableMouseTracking: false,
-	showInLegend: false,
-	rules: [{
-		key: 'fill',
-		operator: 'is',
-		value: 'none'
-	}]
-}];
-
-function showSeriesSetup(setup) {
-	$.each(setup, function (i, series) {
-		var $div = $('<div>').appendTo($('#series-setup'));
-		$('<input>')
-			.attr({
-				name: i + '-name',
-				value: series.name
-			})
-			.appendTo($div);
-	})
-}	
-*/
-
 
 $(function() {
 	$.getJSON('/maps/list.json.php', function (localFiles) {
@@ -157,7 +121,6 @@ $(function() {
 				runChart('Online file');
 			}
 		}
-		//$(location.hash ? location.hash + '_' : '#_World2_').click();
 		
 		$('#load-submit').click(runChart);
 	});

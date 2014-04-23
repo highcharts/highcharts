@@ -13,7 +13,7 @@ $(function () {
         plotOptions: {
             column: {
                 depth: 40,
-                stacking: true,
+                stacking: true
             }
         },
         series: [{

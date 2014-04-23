@@ -262,6 +262,7 @@
 						}
 					}
 				}
+				oldSeries.xData = []; // Overcome problems with minRange (#2898)
 
 				each(level.levelSeriesOptions, addSeries);
 				
@@ -275,6 +276,7 @@
 						oldSeries.animateDrillupFrom(level);
 					}
 				}
+				newSeries.levelNumber = levelNumber;
 				
 				oldSeries.remove(false);
 

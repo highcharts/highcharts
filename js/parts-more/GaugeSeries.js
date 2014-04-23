@@ -10,6 +10,7 @@
 defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 	dataLabels: {
 		enabled: true,
+		defer: false,
 		y: 15,
 		borderWidth: 1,
 		borderColor: 'silver',
@@ -233,7 +234,15 @@ var GaugeSeries = {
 			this.chart.redraw();
 		}
 	},
-	drawTracker: TrackerMixin.drawTrackerPoint
+
+	/**
+	 * If the tracking module is loaded, add the point tracker
+	 */
+	drawTracker: function () {
+		if (TrackerMixin) {
+			TrackerMixin.drawTrackerPoint.call(this);
+		}
+	}
 };
 seriesTypes.gauge = extendClass(seriesTypes.line, GaugeSeries);
 

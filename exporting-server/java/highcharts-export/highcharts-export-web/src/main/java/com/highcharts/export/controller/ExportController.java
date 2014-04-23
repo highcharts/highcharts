@@ -156,62 +156,68 @@ public class ExportController extends HttpServlet {
 	}
 
 	@ExceptionHandler(IOException.class)
-	public ModelAndView handleIOException(Exception ex) {
+	public ModelAndView handleIOException(Exception ex, HttpServletResponse response) {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("error");
 		modelAndView.addObject("message", ex.getMessage());
+		response.setStatus(500);
 		return modelAndView;
 	}
 
 	@ExceptionHandler(TimeoutException.class)
-	public ModelAndView handleTimeoutException(Exception ex) {
+	public ModelAndView handleTimeoutException(Exception ex, HttpServletResponse response) {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("error");
 		modelAndView
 				.addObject(
 						"message",
 						"Timeout converting SVG, is your file this big, or maybe you have a syntax error in the javascript callback?");
+		response.setStatus(500);
 		return modelAndView;
 	}
 
 	@ExceptionHandler(PoolException.class)
-	public ModelAndView handleServerPoolException(Exception ex) {
+	public ModelAndView handleServerPoolException(Exception ex, HttpServletResponse response) {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("error");
 		modelAndView
 				.addObject(
 						"message",
 						"Sorry, the server is handling too many requests at the moment. Please try again.");
+		response.setStatus(500);
 		return modelAndView;
 	}
 
 	@ExceptionHandler(SVGConverterException.class)
-	public ModelAndView handleSVGRasterizeException(Exception ex) {
+	public ModelAndView handleSVGRasterizeException(Exception ex, HttpServletResponse response) {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("error");
 		modelAndView
 				.addObject(
 						"message",
 						"Something went wrong while converting. " + ex.getMessage());
+		response.setStatus(500);
 		return modelAndView;
 	}
 
 	@ExceptionHandler(InterruptedException.class)
-	public ModelAndView handleInterruptedException(Exception ex) {
+	public ModelAndView handleInterruptedException(Exception ex, HttpServletResponse response) {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("error");
 		modelAndView
 				.addObject(
 						"message",
 						"It took too long time to process the options, no SVG is created. Make sure your javascript is correct");
+		response.setStatus(500);
 		return modelAndView;
 	}
 
 	@ExceptionHandler(ServletException.class)
-	public ModelAndView handleServletException(Exception ex) {
+	public ModelAndView handleServletException(Exception ex, HttpServletResponse response) {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("error");
 		modelAndView.addObject("message", ex.getMessage());
+		response.setStatus(500);
 		return modelAndView;
 	}
 

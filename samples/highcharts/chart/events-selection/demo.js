@@ -15,7 +15,11 @@ $(function () {
             },
             zoomType: 'x'
         },
-        xAxis: {
+        title: {
+            text: 'Chart selection demo'
+        },
+        subtitle: {
+            text: 'Click and drag the plot area to draw a selection'
         },
 
         series: [{
