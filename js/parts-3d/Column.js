@@ -106,13 +106,13 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proce
 			if (!(grouping !== undefined && !grouping) && stacking) {
 				var stacks = this.chart.retrieveStacks(),
 					stack = this.options.stack || 0,
-					i;
-				for (i = 0; i < stacks[stack].length; i++) {
-					if (stacks[stack][i] === this) {
+					i; // position within the stack
+				for (i = 0; i < stacks[stack].series.length; i++) {
+					if (stacks[stack].series[i] === this) {
 						break;
 					}
 				}
-				z = 100 - 10 * i + this.index;
+				z = (stacks.totalStacks * 10) - (10 * (stacks.totalStacks - stacks[stack].position)) - i;
 				
 				this.options.zIndex = z;
 			}
