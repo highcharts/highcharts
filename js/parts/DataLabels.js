@@ -143,20 +143,21 @@ Series.prototype.drawDataLabels = function () {
  */
 Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, isNew) {
 	var chart = this.chart,
-		plotX = pick(point.invX, point.plotX, -999),
-		plotY = pick(point.invY, point.plotY, -999),
+		inverted = chart.inverted,
+		plotX = pick(point.plotX, -999),
+		plotY = pick(point.plotY, -999),
 		bBox = dataLabel.getBBox(),
 		// Math.round for rounding errors (#2683), alignTo to allow column labels (#2700)
-		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, mathRound(plotY)) ||
-			(alignTo && chart.isInsidePlot(plotX, alignTo.y + alignTo.height - 1))),
+		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, mathRound(plotY), inverted) ||
+			(alignTo && chart.isInsidePlot(plotX, inverted ? alignTo.x + 1 : alignTo.y + alignTo.height - 1, inverted))),
 		alignAttr; // the final position;
 
 	if (visible) {
 
 		// The alignment box is a singular point
 		alignTo = extend({
-			x: plotX,
-			y: plotY,
+			x: inverted ? chart.plotWidth - plotY : plotX,
+			y: mathRound(inverted ? chart.plotHeight - plotX : plotY),
 			width: 0,
 			height: 0
 		}, alignTo);
