@@ -2813,6 +2813,7 @@ SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter =
 	this[key] = value;
 	this.doTransform = true;
 };
+SVGElement.prototype.strokeSetter = SVGElement.prototype.fillSetter;
 
 
 
