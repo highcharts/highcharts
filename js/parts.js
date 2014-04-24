@@ -70,7 +70,7 @@ var HighchartsConfig = {
 			{name: 'GaugeSeries', component: 'Gauge', group: 'Chart and Serie types', depends: {component: ['Core','Line'], name: ['RadialAxis', 'Pane', 'PlotLineOrBand']}, baseUrl: 'parts-more'},
 			{name: 'BoxPlotSeries', component: 'Boxplot', group: "Chart and Serie types", depends: {component: ['Column']}, baseUrl: 'parts-more'},
 			{name: 'ErrorBarSeries', component: 'Errorbar', group: "Chart and Serie types", depends: {component: ['Boxplot']}, baseUrl: 'parts-more'},
-			{name: 'WaterfallSeries', component: 'Waterfall', group: "Chart and Serie types", depends: {component: ['Column']}, baseUrl: 'parts-more'},
+			{name: 'WaterfallSeries', component: 'Waterfall', group: "Chart and Serie types", depends: {component: ['Column', 'Stacking']}, baseUrl: 'parts-more'},
 			{name: 'BubbleSeries', component: 'Bubble', group: "Chart and Serie types", depends: {component: ['Core', 'Scatter' ]}, baseUrl: 'parts-more'},
 			{name: 'Polar', component: 'Polar', group: 'Features', depends: {component: ['Core'], name: ['RadialAxis', 'Pane', 'Column', 'Area']}, baseUrl: 'parts-more'},
 			{name: 'Facade', component: 'Core', group: "Core", baseUrl: 'parts'},
