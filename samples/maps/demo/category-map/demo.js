@@ -1,6 +1,6 @@
 $(function () {
 
-    $.getJSON('http://www.highcharts.local/samples/data/jsonp.php?filename=europe.geo.json&callback=?', function (geojson) {
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=europe.geo.json&callback=?', function (geojson) {
         
         // Instanciate the map
         $('#container').highcharts('Map', {
