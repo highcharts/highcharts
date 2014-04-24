@@ -1181,11 +1181,7 @@ var GaugeSeries = {
 	/**
 	 * If the tracking module is loaded, add the point tracker
 	 */
-	drawTracker: function () {
-		if (TrackerMixin) {
-			TrackerMixin.drawTrackerPoint.call(this);
-		}
-	}
+	drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint
 };
 seriesTypes.gauge = extendClass(seriesTypes.line, GaugeSeries);
 
