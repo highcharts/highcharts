@@ -13299,7 +13299,7 @@ Series.prototype = {
 			this.markerGroup.clip(); // no clip
 		}
 
-		fireEvent(this, 'afterAnimate');
+		fireEvent(this, 'afterAnimate'); // docs
 
 		// Remove the shared clipping rectancgle when all series are shown
 		setTimeout(function () {
@@ -16083,7 +16083,7 @@ Series.prototype.drawDataLabels = function () {
 		dataLabelsGroup = series.plotGroup(
 			'dataLabelsGroup',
 			'data-labels',
-			HIDDEN,
+			options.defer ? HIDDEN : VISIBLE,
 			options.zIndex || 6
 		);
 

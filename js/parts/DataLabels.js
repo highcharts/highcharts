@@ -24,7 +24,7 @@ Series.prototype.drawDataLabels = function () {
 		dataLabelsGroup = series.plotGroup(
 			'dataLabelsGroup',
 			'data-labels',
-			HIDDEN,
+			options.defer ? HIDDEN : VISIBLE,
 			options.zIndex || 6
 		);
 
