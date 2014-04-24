@@ -20611,6 +20611,7 @@ extend(defaultOptions, {
 			'stroke-width': 0,
 			style: {
 				color: '#444',
+				cursor: 'pointer',
 				fontWeight: 'normal'
 			},
 			zIndex: 7, // #484, #852
