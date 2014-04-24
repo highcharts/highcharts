@@ -18924,7 +18924,7 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 			if (point.plotY !== UNDEFINED) {
 
 				graphic = point.graphic;
-				pointAttr = point.pointAttr[point.selected ? 'selected' : ''];
+				pointAttr = point.pointAttr[point.selected ? 'selected' : ''] || series.pointAttr[NORMAL_STATE];
 
 				// crisp vector coordinates
 				crispCorr = (pointAttr['stroke-width'] % 2) / 2;
