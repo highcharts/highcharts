@@ -563,7 +563,7 @@
 
     <!-- This target is only run if there are unused variables. -->
     <target name="lint" depends="do-lint" if="lint.variable.error">
-        <echo message="Warning: undefined or unused variables exist. Run 'start build/lintreport.html'."/>
+        <echo message="Warning: undefined or unused variables exist. Open 'build/lintreport.html' and search for 'Undefined variable' and 'Unused variable'."/>
     </target>
 
     <!-- Runs jslint on parts in order to make it easier to find the error by file and line number. -->
