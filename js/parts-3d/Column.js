@@ -64,7 +64,8 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'animate', function (pr
 		if (Highcharts.svg) { // VML is too slow anyway
 			if (init) {
 				Highcharts.each(series.data, function (point) {
-					point.height = point.shapeArgs.height;					
+					point.height = point.shapeArgs.height;
+					point.shapey = point.shapeArgs.y;	//#2968				
 					point.shapeArgs.height = 1;
 					if (!reversed) {
 						if (point.stackY) {
@@ -78,9 +79,7 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'animate', function (pr
 			} else { // run the animation				
 				Highcharts.each(series.data, function (point) {					
 					point.shapeArgs.height = point.height;
-					if (!reversed) {
-						point.shapeArgs.y = point.plotY - (point.negative ? point.height : 0);
-					}
+					point.shapeArgs.y = point.shapey;	//#2968
 					// null value do not have a graphic
 					if (point.graphic) {
 						point.graphic.animate(point.shapeArgs, series.options.animation);					
