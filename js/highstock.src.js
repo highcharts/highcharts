@@ -2764,7 +2764,7 @@ SVGElement.prototype = {
 	// width is 0. #1369
 	'stroke-widthSetter': function (value, key, element) {
 		if (value === 0) {
-			value = 0.00001;
+			value = 0.01; // #2963
 		}
 		this.strokeWidth = value; // read in symbol paths like 'callout'
 		element.setAttribute(key, value);
