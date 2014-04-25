@@ -87,7 +87,7 @@ Highcharts.StockChart = function (options, callback) {
 		title: {
 			text: null,
 			style: {
-				fontSize: '16px' // docs
+				fontSize: '16px'
 			}
 		},
 		tooltip: {

@@ -17,7 +17,7 @@ extend(ColorAxis.prototype, {
 		startOnTick: true,
 		endOnTick: true,
 		offset: 0,
-		marker: { // docs: use another name?
+		marker: {
 			animation: {
 				duration: 50
 			},

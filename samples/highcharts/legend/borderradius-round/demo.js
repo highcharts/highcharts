@@ -2,10 +2,11 @@ $(function () {
     $('#container').highcharts({
 
         title: {
-            text: 'Legend with square border by default'
+            text: 'Legend with rounded border'
         },
         
         legend: {
+            borderRadius: 5,
             borderWidth: 1
         },
         

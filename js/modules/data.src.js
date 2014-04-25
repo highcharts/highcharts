@@ -84,7 +84,7 @@
 // JSLint options:
 /*global jQuery */
 
-(function (Highcharts) {	
+(function (Highcharts) { // docs
 	
 	// Utilities
 	var each = Highcharts.each;

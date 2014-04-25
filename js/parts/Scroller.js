@@ -13,20 +13,20 @@ extend(defaultOptions, {
 	navigator: {
 		//enabled: true,
 		handles: {
-			backgroundColor: '#ebe7e8', // docs
-			borderColor: '#b2b1b6' // docs
+			backgroundColor: '#ebe7e8',
+			borderColor: '#b2b1b6'
 		},
 		height: 40,
-		margin: 25, // docs
-		maskFill: 'rgba(128,179,236,0.3)', // docs
-		maskInside: true, // docs
-		outlineColor: '#b2b1b6', // docs
+		margin: 25,
+		maskFill: 'rgba(128,179,236,0.3)',
+		maskInside: true,
+		outlineColor: '#b2b1b6',
 		outlineWidth: 1,
 		series: {
 			type: defaultSeriesType,
 			color: '#4572A7',
 			compare: null,
-			fillOpacity: 0.05, // docs
+			fillOpacity: 0.05,
 			dataGrouping: {
 				approximation: 'average',
 				enabled: true,
@@ -58,7 +58,7 @@ extend(defaultOptions, {
 			labels: {
 				align: 'left',
 				style: {
-					color: '#888' // docs
+					color: '#888'
 				},
 				x: 3,
 				y: -4
@@ -84,19 +84,19 @@ extend(defaultOptions, {
 	scrollbar: {
 		//enabled: true
 		height: isTouchDevice ? 20 : 14,
-		barBackgroundColor: '#bfc8d1', // docs
-		barBorderRadius: 0, // docs: new default
+		barBackgroundColor: '#bfc8d1',
+		barBorderRadius: 0,
 		barBorderWidth: 1,
-		barBorderColor: '#bfc8d1', // docs
+		barBorderColor: '#bfc8d1',
 		buttonArrowColor: '#666',
-		buttonBackgroundColor: '#ebe7e8', // docs
-		buttonBorderColor: '#bbb', // docs: new default
-		buttonBorderRadius: 0, // docs: new default
+		buttonBackgroundColor: '#ebe7e8',
+		buttonBorderColor: '#bbb',
+		buttonBorderRadius: 0,
 		buttonBorderWidth: 1,
 		minWidth: 6,
 		rifleColor: '#666',
-		trackBackgroundColor: '#eeeeee', // docs: new default
-		trackBorderColor: '#eeeeee', // docs: new default
+		trackBackgroundColor: '#eeeeee',
+		trackBorderColor: '#eeeeee',
 		trackBorderWidth: 1,
 		// trackBorderRadius: 0
 		liveRedraw: hasSVG && !isTouchDevice

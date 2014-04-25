@@ -1298,7 +1298,7 @@ defaultLabelOptions = {
 
 defaultOptions = {
 	colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', 
-		    '#8085e9', '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'], // docs
+		    '#8085e9', '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'],
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
 		loading: 'Loading...',
@@ -1373,7 +1373,7 @@ defaultOptions = {
 		// verticalAlign: 'top',
 		// y: null,
 		style: {
-			color: '#333333', // docs
+			color: '#333333',
 			fontSize: '18px'
 		}
 
@@ -1386,7 +1386,7 @@ defaultOptions = {
 		// verticalAlign: 'top',
 		// y: null,
 		style: {
-			color: '#555555' // docs
+			color: '#555555'
 		}
 	},
 
@@ -1498,7 +1498,7 @@ defaultOptions = {
 		},
 		//borderWidth: 0,
 		borderColor: '#909090',
-		borderRadius: 0, // docs
+		borderRadius: 0,
 		navigation: {
 			// animation: true,
 			activeColor: '#274b6d',
@@ -1514,9 +1514,9 @@ defaultOptions = {
 			padding: '5px'
 		},*/
 		itemStyle: {			
-			color: '#333333', // docs
+			color: '#333333',
 			fontSize: '12px',
-			fontWeight: 'bold' // docs
+			fontWeight: 'bold'
 		},
 		itemHoverStyle: {
 			//cursor: 'pointer', removed as of #601
@@ -1581,9 +1581,9 @@ defaultOptions = {
 		},
 		//formatter: defaultFormatter,
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
-		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>', // docs
+		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 		shadow: true,
-		//shape: 'calout',
+		//shape: 'callout',
 		//shared: false,
 		snap: isTouchDevice ? 25 : 10,
 		style: {
@@ -7540,7 +7540,7 @@ Axis.prototype = {
 			height = pick(options.height, chart.plotHeight),
 			top = pick(options.top, chart.plotTop),
 			left = pick(options.left, chart.plotLeft + offsetLeft),
-			percentRegex = /%$/; // docs
+			percentRegex = /%$/;
 
 		// Check for percentage based input values
 		if (percentRegex.test(height)) {
@@ -10180,7 +10180,7 @@ Legend.prototype = {
 			itemStyle = legend.itemStyle,
 			itemHiddenStyle = legend.itemHiddenStyle,
 			padding = legend.padding,
-			itemDistance = horizontal ? pick(options.itemDistance, 20) : 0, // docs
+			itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
 			ltr = !options.rtl,
 			itemHeight,
 			widthOption = options.width,
@@ -13299,7 +13299,7 @@ Series.prototype = {
 			this.markerGroup.clip(); // no clip
 		}
 
-		fireEvent(this, 'afterAnimate'); // docs
+		fireEvent(this, 'afterAnimate');
 
 		// Remove the shared clipping rectancgle when all series are shown
 		setTimeout(function () {
@@ -15563,7 +15563,7 @@ seriesTypes.bar = BarSeries;
 defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 	lineWidth: 0,
 	tooltip: {
-		headerFormat: '<span style="color:{series.color}">\u25CF</span> <span style="font-size: 10px;"> {series.name}</span><br/>', // docs
+		headerFormat: '<span style="color:{series.color}">\u25CF</span> <span style="font-size: 10px;"> {series.name}</span><br/>',
 		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
 	},
 	stickyTracking: false
@@ -19477,20 +19477,20 @@ extend(defaultOptions, {
 	navigator: {
 		//enabled: true,
 		handles: {
-			backgroundColor: '#ebe7e8', // docs
-			borderColor: '#b2b1b6' // docs
+			backgroundColor: '#ebe7e8',
+			borderColor: '#b2b1b6'
 		},
 		height: 40,
-		margin: 25, // docs
-		maskFill: 'rgba(128,179,236,0.3)', // docs
-		maskInside: true, // docs
-		outlineColor: '#b2b1b6', // docs
+		margin: 25,
+		maskFill: 'rgba(128,179,236,0.3)',
+		maskInside: true,
+		outlineColor: '#b2b1b6',
 		outlineWidth: 1,
 		series: {
 			type: defaultSeriesType,
 			color: '#4572A7',
 			compare: null,
-			fillOpacity: 0.05, // docs
+			fillOpacity: 0.05,
 			dataGrouping: {
 				approximation: 'average',
 				enabled: true,
@@ -19522,7 +19522,7 @@ extend(defaultOptions, {
 			labels: {
 				align: 'left',
 				style: {
-					color: '#888' // docs
+					color: '#888'
 				},
 				x: 3,
 				y: -4
@@ -19548,19 +19548,19 @@ extend(defaultOptions, {
 	scrollbar: {
 		//enabled: true
 		height: isTouchDevice ? 20 : 14,
-		barBackgroundColor: '#bfc8d1', // docs
-		barBorderRadius: 0, // docs: new default
+		barBackgroundColor: '#bfc8d1',
+		barBorderRadius: 0,
 		barBorderWidth: 1,
-		barBorderColor: '#bfc8d1', // docs
+		barBorderColor: '#bfc8d1',
 		buttonArrowColor: '#666',
-		buttonBackgroundColor: '#ebe7e8', // docs
-		buttonBorderColor: '#bbb', // docs: new default
-		buttonBorderRadius: 0, // docs: new default
+		buttonBackgroundColor: '#ebe7e8',
+		buttonBorderColor: '#bbb',
+		buttonBorderRadius: 0,
 		buttonBorderWidth: 1,
 		minWidth: 6,
 		rifleColor: '#666',
-		trackBackgroundColor: '#eeeeee', // docs: new default
-		trackBorderColor: '#eeeeee', // docs: new default
+		trackBackgroundColor: '#eeeeee',
+		trackBorderColor: '#eeeeee',
 		trackBorderWidth: 1,
 		// trackBorderRadius: 0
 		liveRedraw: hasSVG && !isTouchDevice
@@ -20990,7 +20990,7 @@ RangeSelector.prototype = {
 			.attr({
 				padding: 2,
 				width: options.inputBoxWidth || 90,
-				height: options.inputBoxHeight || 17, // docs
+				height: options.inputBoxHeight || 17,
 				stroke: options.inputBoxBorderColor || 'silver',
 				'stroke-width': 1
 			})
@@ -21443,7 +21443,7 @@ Highcharts.StockChart = function (options, callback) {
 		title: {
 			text: null,
 			style: {
-				fontSize: '16px' // docs
+				fontSize: '16px'
 			}
 		},
 		tooltip: {

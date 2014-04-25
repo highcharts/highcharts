@@ -1298,7 +1298,7 @@ defaultLabelOptions = {
 
 defaultOptions = {
 	colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', 
-		    '#8085e9', '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'], // docs
+		    '#8085e9', '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'],
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
 		loading: 'Loading...',
@@ -1373,7 +1373,7 @@ defaultOptions = {
 		// verticalAlign: 'top',
 		// y: null,
 		style: {
-			color: '#333333', // docs
+			color: '#333333',
 			fontSize: '18px'
 		}
 
@@ -1386,7 +1386,7 @@ defaultOptions = {
 		// verticalAlign: 'top',
 		// y: null,
 		style: {
-			color: '#555555' // docs
+			color: '#555555'
 		}
 	},
 
@@ -1498,7 +1498,7 @@ defaultOptions = {
 		},
 		//borderWidth: 0,
 		borderColor: '#909090',
-		borderRadius: 0, // docs
+		borderRadius: 0,
 		navigation: {
 			// animation: true,
 			activeColor: '#274b6d',
@@ -1514,9 +1514,9 @@ defaultOptions = {
 			padding: '5px'
 		},*/
 		itemStyle: {			
-			color: '#333333', // docs
+			color: '#333333',
 			fontSize: '12px',
-			fontWeight: 'bold' // docs
+			fontWeight: 'bold'
 		},
 		itemHoverStyle: {
 			//cursor: 'pointer', removed as of #601
@@ -1581,9 +1581,9 @@ defaultOptions = {
 		},
 		//formatter: defaultFormatter,
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
-		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>', // docs
+		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 		shadow: true,
-		//shape: 'calout',
+		//shape: 'callout',
 		//shared: false,
 		snap: isTouchDevice ? 25 : 10,
 		style: {
@@ -7276,7 +7276,7 @@ Axis.prototype = {
 			height = pick(options.height, chart.plotHeight),
 			top = pick(options.top, chart.plotTop),
 			left = pick(options.left, chart.plotLeft + offsetLeft),
-			percentRegex = /%$/; // docs
+			percentRegex = /%$/;
 
 		// Check for percentage based input values
 		if (percentRegex.test(height)) {
@@ -9716,7 +9716,7 @@ Legend.prototype = {
 			itemStyle = legend.itemStyle,
 			itemHiddenStyle = legend.itemHiddenStyle,
 			padding = legend.padding,
-			itemDistance = horizontal ? pick(options.itemDistance, 20) : 0, // docs
+			itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
 			ltr = !options.rtl,
 			itemHeight,
 			widthOption = options.width,
@@ -12801,7 +12801,7 @@ Series.prototype = {
 			this.markerGroup.clip(); // no clip
 		}
 
-		fireEvent(this, 'afterAnimate'); // docs
+		fireEvent(this, 'afterAnimate');
 
 		// Remove the shared clipping rectancgle when all series are shown
 		setTimeout(function () {
@@ -14416,7 +14416,7 @@ seriesTypes.column = ColumnSeries;
 defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 	lineWidth: 0,
 	tooltip: {
-		headerFormat: '<span style="color:{series.color}">\u25CF</span> <span style="font-size: 10px;"> {series.name}</span><br/>', // docs
+		headerFormat: '<span style="color:{series.color}">\u25CF</span> <span style="font-size: 10px;"> {series.name}</span><br/>',
 		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
 	},
 	stickyTracking: false
@@ -15257,7 +15257,7 @@ extend(ColorAxis.prototype, {
 		startOnTick: true,
 		endOnTick: true,
 		offset: 0,
-		marker: { // docs: use another name?
+		marker: {
 			animation: {
 				duration: 50
 			},

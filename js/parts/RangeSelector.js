@@ -393,7 +393,7 @@ RangeSelector.prototype = {
 			.attr({
 				padding: 2,
 				width: options.inputBoxWidth || 90,
-				height: options.inputBoxHeight || 17, // docs
+				height: options.inputBoxHeight || 17,
 				stroke: options.inputBoxBorderColor || 'silver',
 				'stroke-width': 1
 			})

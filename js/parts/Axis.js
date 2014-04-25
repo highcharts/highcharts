@@ -1264,7 +1264,7 @@ Axis.prototype = {
 			height = pick(options.height, chart.plotHeight),
 			top = pick(options.top, chart.plotTop),
 			left = pick(options.left, chart.plotLeft + offsetLeft),
-			percentRegex = /%$/; // docs
+			percentRegex = /%$/;
 
 		// Check for percentage based input values
 		if (percentRegex.test(height)) {
