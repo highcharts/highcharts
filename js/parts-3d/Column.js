@@ -86,6 +86,9 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'animate', function (pr
 					}
 				});
 
+				// redraw datalabels to the correct position
+				this.drawDataLabels();
+
 				// delete this function to allow it only once
 				series.animate = null;
 			}
