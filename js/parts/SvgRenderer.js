@@ -5,6 +5,13 @@
 function SVGElement() {}
 
 SVGElement.prototype = {
+	
+	// Default base for animation
+	opacity: 1,
+	// For labels, these CSS properties are applied to the <text> node directly
+	textProps: ['fontSize', 'fontWeight', 'fontFamily', 'color', 
+		'lineHeight', 'width', 'textDecoration', 'textShadow'],
+	
 	/**
 	 * Initialize the SVG renderer
 	 * @param {Object} renderer
@@ -17,10 +24,7 @@ SVGElement.prototype = {
 			doc.createElementNS(SVG_NS, nodeName);
 		wrapper.renderer = renderer;
 	},
-	/**
-	 * Default base for animation
-	 */
-	opacity: 1,
+	
 	/**
 	 * Animate a given attribute
 	 * @param {Object} params
@@ -1207,8 +1211,9 @@ SVGRenderer.prototype = {
 			textNode.removeChild(childNodes[i]);
 		}
 
-		// Skip tspans, add text directly to text node
-		if (!hasMarkup && textStr.indexOf(' ') === -1) {
+		// Skip tspans, add text directly to text node. The forceTSpan is a hook 
+		// used in text outline hack.
+		if (!hasMarkup && !wrapper.forceTSpan && textStr.indexOf(' ') === -1) {
 			textNode.appendChild(doc.createTextNode(textStr));
 			return;
 
@@ -2012,14 +2017,15 @@ SVGRenderer.prototype = {
 
 		if (!useHTML) {
 			wrapper.xSetter = function (value, key, element) {
-				var childNodes = element.childNodes,
-					child,
+				var tspans = element.getElementsByTagName('tspan'),
+					tspan,
+					parentVal = element.getAttribute(key),
 					i;
-				for (i = 1; i < childNodes.length; i++) {
-					child = childNodes[i];
-					// if the x values are equal, the tspan represents a linebreak
-					if (child.getAttribute('x') === element.getAttribute('x')) {
-						child.setAttribute('x', value);
+				for (i = 0; i < tspans.length; i++) {
+					tspan = tspans[i];
+					// If the x values are equal, the tspan represents a linebreak
+					if (tspan.getAttribute(key) === parentVal) {
+						tspan.setAttribute(key, value);
 					}
 				}
 				element.setAttribute(key, value);
@@ -2276,7 +2282,7 @@ SVGRenderer.prototype = {
 				if (styles) {
 					var textStyles = {};
 					styles = merge(styles); // create a copy to avoid altering the original object (#537)
-					each(['fontSize', 'fontWeight', 'fontFamily', 'color', 'lineHeight', 'width', 'textDecoration', 'textShadow'], function (prop) {
+					each(wrapper.textProps, function (prop) {
 						if (styles[prop] !== UNDEFINED) {
 							textStyles[prop] = styles[prop];
 							delete styles[prop];
