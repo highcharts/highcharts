@@ -156,8 +156,8 @@ public class ExportController extends HttpServlet {
 
 	}
 
-	@RequestMapping(value="/bypass/{name}.{ext}", method = RequestMethod.POST)
-	public HttpEntity<byte[]> direct(
+	@RequestMapping(value="/json/{name}.{ext}", method = RequestMethod.POST)
+	public HttpEntity<byte[]> exportFromJson(
 		@PathVariable("name") String name,
 		@PathVariable("ext") String extension,
 		@RequestBody String requestBody) throws SVGConverterException, TimeoutException, NoSuchElementException, PoolException {
