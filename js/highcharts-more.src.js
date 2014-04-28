@@ -862,7 +862,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 		seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
 	},
 	
-	getSymbol: seriesTypes.column.prototype.getSymbol,
+	getSymbol: noop,
 	
 	drawPoints: noop
 });/**

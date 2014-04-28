@@ -12645,54 +12645,43 @@ Series.prototype = {
 		return options;
 
 	},
+
+	getCyclic: function (prop, value, defaults) {
+		var i,
+			userOptions = this.userOptions,
+			indexName = '_' + prop + 'Index',
+			counterName = prop + 'Counter';
+
+		if (!value) {
+			if (defined(userOptions[indexName])) { // after Series.update()
+				i = userOptions[indexName];
+			} else {
+				userOptions[indexName] = i = this.chart[counterName] % defaults.length;
+				this.chart[counterName] += 1;
+			}
+			value = defaults[i];
+		}
+		this[prop] = value;
+	},
+
 	/**
 	 * Get the series' color
 	 */
 	getColor: function () {
-		var options = this.options,
-			userOptions = this.userOptions,
-			defaultColors = this.chart.options.colors,
-			color,
-			colorIndex;
-
-		color = options.color || defaultPlotOptions[this.type].color;
-
-		if (!color && !options.colorByPoint) {
-			if (defined(userOptions._colorIndex)) { // after Series.update()
-				colorIndex = userOptions._colorIndex;
-			} else {
-				userOptions._colorIndex = colorIndex = this.chart.colorCounter % defaultColors.length;
-				this.chart.colorCounter += 1;
-			}
-			color = defaultColors[colorIndex];
+		if (!this.options.colorByPoint) {
+			this.getCyclic('color', this.options.color || defaultPlotOptions[this.type].color, this.chart.options.colors);
 		}
-
-		this.color = color;
 	},
 	/**
 	 * Get the series' symbol
 	 */
 	getSymbol: function () {
-		var series = this,
-			userOptions = series.userOptions,
-			seriesMarkerOption = series.options.marker,
-			chart = series.chart,
-			defaultSymbols = chart.options.symbols,
-			symbolIndex;
+		var seriesMarkerOption = this.options.marker;
 
-		series.symbol = seriesMarkerOption.symbol;
-		if (!series.symbol) {
-			if (defined(userOptions._symbolIndex)) { // after Series.update()
-				symbolIndex = userOptions._symbolIndex;
-			} else {
-				userOptions._symbolIndex = symbolIndex = this.chart.symbolCounter % defaultSymbols.length;
-				this.chart.symbolCounter += 1;
-			}
-			series.symbol = defaultSymbols[symbolIndex];
-		}
+		this.getCyclic('symbol', seriesMarkerOption.symbol, this.chart.options.symbols);
 
 		// don't substract radius in image symbols (#604)
-		if (/^url/.test(series.symbol)) {
+		if (/^url/.test(this.symbol)) {
 			seriesMarkerOption.radius = 0;
 		}
 	},
