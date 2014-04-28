@@ -11384,6 +11384,34 @@ Chart.prototype = {
 			serie.render();
 		});
 	},
+        
+        /**
+         * Render labels for the chart
+         */
+        renderLabels: function() {
+                var labels = options.labels;
+		if (labels.items) {
+                        each(labels.items, function (label) {
+                                var style = extend(labels.style, label.style),
+                                        x = pInt(style.left) + chart.plotLeft,
+                                        y = pInt(style.top) + chart.plotTop + 12;
+
+                                // delete to prevent rewriting in IE
+                                delete style.left;
+                                delete style.top;
+
+                                renderer.text(
+                                        label.html,
+                                        x,
+                                        y
+                                )
+                                .attr({ zIndex: 2 })
+                                .css(style)
+                                .add();
+
+                        });
+		}
+        }
 
 	/**
 	 * Render all graphics for the chart
@@ -11394,8 +11422,7 @@ Chart.prototype = {
 			renderer = chart.renderer,
 			options = chart.options;
 
-		var labels = options.labels,
-			credits = options.credits,
+		var credits = options.credits,
 			creditsHref;
 
 		// Title
@@ -11442,29 +11469,9 @@ Chart.prototype = {
 				.add();
 		}
 		chart.renderSeries();
-
+                
 		// Labels
-		if (labels.items) {
-			each(labels.items, function (label) {
-				var style = extend(labels.style, label.style),
-					x = pInt(style.left) + chart.plotLeft,
-					y = pInt(style.top) + chart.plotTop + 12;
-
-				// delete to prevent rewriting in IE
-				delete style.left;
-				delete style.top;
-
-				renderer.text(
-					label.html,
-					x,
-					y
-				)
-				.attr({ zIndex: 2 })
-				.css(style)
-				.add();
-
-			});
-		}
+                chart.renderLabels();
 
 		// Credits
 		if (credits.enabled && !chart.credits) {
