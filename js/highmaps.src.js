@@ -595,35 +595,6 @@ function normalizeTickInterval(interval, multiples, magnitude, options) {
 
 
 /**
- * Helper class that contains variuos counters that are local to the chart.
- */
-function ChartCounters() {
-	this.color = 0;
-	this.symbol = 0;
-}
-
-ChartCounters.prototype =  {
-	/**
-	 * Wraps the color counter if it reaches the specified length.
-	 */
-	wrapColor: function (length) {
-		if (this.color >= length) {
-			this.color = 0;
-		}
-	},
-
-	/**
-	 * Wraps the symbol counter if it reaches the specified length.
-	 */
-	wrapSymbol: function (length) {
-		if (this.symbol >= length) {
-			this.symbol = 0;
-		}
-	}
-};
-
-
-/**
  * Utility method that sorts an object array and keeping the order of equal items.
  * ECMA script standard does not specify the behaviour when items are equal.
  */
@@ -10325,8 +10296,7 @@ Chart.prototype = {
 
 		// Expose methods and variables
 		chart.animation = useCanVG ? false : pick(optionsChart.animation, true);
-		chart.pointCount = 0;
-		chart.counters = new ChartCounters();
+		chart.pointCount = chart.colorCounter = chart.symbolCounter = 0;
 
 		chart.firstRender();
 	},
@@ -12184,7 +12154,6 @@ Series.prototype = {
 		var options = this.options,
 			userOptions = this.userOptions,
 			defaultColors = this.chart.options.colors,
-			counters = this.chart.counters,
 			color,
 			colorIndex;
 
@@ -12194,14 +12163,13 @@ Series.prototype = {
 			if (defined(userOptions._colorIndex)) { // after Series.update()
 				colorIndex = userOptions._colorIndex;
 			} else {
-				userOptions._colorIndex = counters.color;
-				colorIndex = counters.color++;
+				userOptions._colorIndex = colorIndex = this.chart.colorCounter % defaultColors.length;
+				this.chart.colorCounter += 1;
 			}
 			color = defaultColors[colorIndex];
 		}
 
 		this.color = color;
-		counters.wrapColor(defaultColors.length);
 	},
 	/**
 	 * Get the series' symbol
@@ -12212,7 +12180,6 @@ Series.prototype = {
 			seriesMarkerOption = series.options.marker,
 			chart = series.chart,
 			defaultSymbols = chart.options.symbols,
-			counters = chart.counters,
 			symbolIndex;
 
 		series.symbol = seriesMarkerOption.symbol;
@@ -12220,8 +12187,8 @@ Series.prototype = {
 			if (defined(userOptions._symbolIndex)) { // after Series.update()
 				symbolIndex = userOptions._symbolIndex;
 			} else {
-				userOptions._symbolIndex = counters.symbol;
-				symbolIndex = counters.symbol++;
+				userOptions._symbolIndex = symbolIndex = this.chart.symbolCounter % defaultSymbols.length;
+				this.chart.symbolCounter += 1;
 			}
 			series.symbol = defaultSymbols[symbolIndex];
 		}
@@ -12230,7 +12197,6 @@ Series.prototype = {
 		if (/^url/.test(series.symbol)) {
 			seriesMarkerOption.radius = 0;
 		}
-		counters.wrapSymbol(defaultSymbols.length);
 	},
 
 	drawLegendSymbol: LegendSymbolMixin.drawLineMarker,

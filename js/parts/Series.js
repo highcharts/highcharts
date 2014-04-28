@@ -279,7 +279,6 @@ Series.prototype = {
 		var options = this.options,
 			userOptions = this.userOptions,
 			defaultColors = this.chart.options.colors,
-			counters = this.chart.counters,
 			color,
 			colorIndex;
 
@@ -289,14 +288,13 @@ Series.prototype = {
 			if (defined(userOptions._colorIndex)) { // after Series.update()
 				colorIndex = userOptions._colorIndex;
 			} else {
-				userOptions._colorIndex = counters.color;
-				colorIndex = counters.color++;
+				userOptions._colorIndex = colorIndex = this.chart.colorCounter % defaultColors.length;
+				this.chart.colorCounter += 1;
 			}
 			color = defaultColors[colorIndex];
 		}
 
 		this.color = color;
-		counters.wrapColor(defaultColors.length);
 	},
 	/**
 	 * Get the series' symbol
@@ -307,7 +305,6 @@ Series.prototype = {
 			seriesMarkerOption = series.options.marker,
 			chart = series.chart,
 			defaultSymbols = chart.options.symbols,
-			counters = chart.counters,
 			symbolIndex;
 
 		series.symbol = seriesMarkerOption.symbol;
@@ -315,8 +312,8 @@ Series.prototype = {
 			if (defined(userOptions._symbolIndex)) { // after Series.update()
 				symbolIndex = userOptions._symbolIndex;
 			} else {
-				userOptions._symbolIndex = counters.symbol;
-				symbolIndex = counters.symbol++;
+				userOptions._symbolIndex = symbolIndex = this.chart.symbolCounter % defaultSymbols.length;
+				this.chart.symbolCounter += 1;
 			}
 			series.symbol = defaultSymbols[symbolIndex];
 		}
@@ -325,7 +322,6 @@ Series.prototype = {
 		if (/^url/.test(series.symbol)) {
 			seriesMarkerOption.radius = 0;
 		}
-		counters.wrapSymbol(defaultSymbols.length);
 	},
 
 	drawLegendSymbol: LegendSymbolMixin.drawLineMarker,
