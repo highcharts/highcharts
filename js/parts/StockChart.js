@@ -543,9 +543,12 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
  * to using multiple panes, and a future pane logic should incorporate this feature.
  */
 wrap(Series.prototype, 'render', function (proceed) {
-	if (this.isCartesian && this.chart.options._stock) { // #2939
+	// Only do this on stock charts (#2939), and only if the series type handles clipping
+	// in the animate method (#2975).
+	if (this.chart.options._stock) {
+
 		// First render, initial clip box
-		if (!this.clipBox) {
+		if (!this.clipBox && this.animate && this.animate.toString().indexOf('sharedClip') !== -1) {
 			this.clipBox = merge(this.chart.clipBox);
 			this.clipBox.width = this.xAxis.len;
 			this.clipBox.height = this.yAxis.len;
