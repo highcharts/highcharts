@@ -173,7 +173,7 @@ public class ExportController extends HttpServlet {
 			int ind = json.lastIndexOf("}");
 			json = new StringBuilder(json).replace(ind, ind+1,",\"outfile\":\"" + tempFilename).toString() + "\"}";
 		}
-		
+
 
 		String result = converter.requestServer(json);
 		ByteArrayOutputStream bos = ouputToStream(result, mime, tempFilename);
