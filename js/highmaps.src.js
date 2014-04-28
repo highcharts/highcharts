@@ -73,14 +73,6 @@ var UNDEFINED,
 	NORMAL_STATE = '',
 	HOVER_STATE = 'hover',
 	SELECT_STATE = 'select',
-	MILLISECOND = 'millisecond',
-	SECOND = 'second',
-	MINUTE = 'minute',
-	HOUR = 'hour',
-	DAY = 'day',
-	WEEK = 'week',
-	MONTH = 'month',
-	YEAR = 'year',
 	
 	// Object for extending Axis
 	AxisPlotLineOrBandExtension,
@@ -177,22 +169,6 @@ function merge() {
 	}
 
 	return ret;
-}
-
-/**
- * Take an array and turn into a hash with even number arguments as keys and odd numbers as
- * values. Allows creating constants for commonly used style properties, attributes etc.
- * Avoid it in performance critical situations like looping
- */
-function hash() {
-	var i = 0,
-		args = arguments,
-		length = args.length,
-		obj = {};
-	for (; i < length; i++) {
-		obj[args[i++]] = args[i];
-	}
-	return obj;
 }
 
 /**
@@ -780,18 +756,16 @@ function setAnimation(animation, chart) {
 /**
  * The time unit lookup
  */
-/*jslint white: true*/
-timeUnits = hash(
-	MILLISECOND, 1,
-	SECOND, 1000,
-	MINUTE, 60000,
-	HOUR, 3600000,
-	DAY, 24 * 3600000,
-	WEEK, 7 * 24 * 3600000,
-	MONTH, 31 * 24 * 3600000,
-	YEAR, 31556952000
-);
-/*jslint white: false*/
+timeUnits = {
+	millisecond: 1,
+	second: 1000,
+	minute: 60000,
+	hour: 3600000,
+	day: 24 * 3600000,
+	week: 7 * 24 * 3600000,
+	month: 31 * 24 * 3600000,
+	year: 31556952000
+};
 /**
  * Path interpolation algorithm used across adapters
  */
@@ -8510,7 +8484,7 @@ Tooltip.prototype = {
 							// If the point is placed every day at 23:59, we need to show
 							// the minutes as well. This logic only works for time units less than 
 							// a day, since all higher time units are dividable by those. #2637.
-							(timeUnits[n] <= timeUnits[DAY] && point.key % timeUnits[n] > 0)) {
+							(timeUnits[n] <= timeUnits.day && point.key % timeUnits[n] > 0)) {
 						xDateFormat = dateTimeLabelFormats[n];
 						break;
 					}

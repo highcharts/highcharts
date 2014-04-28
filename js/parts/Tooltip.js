@@ -448,7 +448,7 @@ Tooltip.prototype = {
 							// If the point is placed every day at 23:59, we need to show
 							// the minutes as well. This logic only works for time units less than 
 							// a day, since all higher time units are dividable by those. #2637.
-							(timeUnits[n] <= timeUnits[DAY] && point.key % timeUnits[n] > 0)) {
+							(timeUnits[n] <= timeUnits.day && point.key % timeUnits[n] > 0)) {
 						xDateFormat = dateTimeLabelFormats[n];
 						break;
 					}

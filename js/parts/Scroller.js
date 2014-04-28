@@ -4,8 +4,8 @@
 var units = [].concat(defaultDataGroupingUnits), // copy
 	defaultSeriesType;
 // add more resolution to units
-units[4] = [DAY, [1, 2, 3, 4]]; // allow more days
-units[5] = [WEEK, [1, 2, 3]]; // allow more weeks
+units[4] = ['day', [1, 2, 3, 4]]; // allow more days
+units[5] = ['week', [1, 2, 3]]; // allow more weeks
 
 defaultSeriesType = seriesTypes.areaspline === UNDEFINED ? 'line' : 'areaspline';
 

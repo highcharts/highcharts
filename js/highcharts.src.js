@@ -73,14 +73,6 @@ var UNDEFINED,
 	NORMAL_STATE = '',
 	HOVER_STATE = 'hover',
 	SELECT_STATE = 'select',
-	MILLISECOND = 'millisecond',
-	SECOND = 'second',
-	MINUTE = 'minute',
-	HOUR = 'hour',
-	DAY = 'day',
-	WEEK = 'week',
-	MONTH = 'month',
-	YEAR = 'year',
 	
 	// Object for extending Axis
 	AxisPlotLineOrBandExtension,
@@ -177,22 +169,6 @@ function merge() {
 	}
 
 	return ret;
-}
-
-/**
- * Take an array and turn into a hash with even number arguments as keys and odd numbers as
- * values. Allows creating constants for commonly used style properties, attributes etc.
- * Avoid it in performance critical situations like looping
- */
-function hash() {
-	var i = 0,
-		args = arguments,
-		length = args.length,
-		obj = {};
-	for (; i < length; i++) {
-		obj[args[i++]] = args[i];
-	}
-	return obj;
 }
 
 /**
@@ -780,18 +756,16 @@ function setAnimation(animation, chart) {
 /**
  * The time unit lookup
  */
-/*jslint white: true*/
-timeUnits = hash(
-	MILLISECOND, 1,
-	SECOND, 1000,
-	MINUTE, 60000,
-	HOUR, 3600000,
-	DAY, 24 * 3600000,
-	WEEK, 7 * 24 * 3600000,
-	MONTH, 31 * 24 * 3600000,
-	YEAR, 31556952000
-);
-/*jslint white: false*/
+timeUnits = {
+	millisecond: 1,
+	second: 1000,
+	minute: 60000,
+	hour: 3600000,
+	day: 24 * 3600000,
+	week: 7 * 24 * 3600000,
+	month: 31 * 24 * 3600000,
+	year: 31556952000
+};
 /**
  * Path interpolation algorithm used across adapters
  */
@@ -8247,40 +8221,40 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		count = normalizedInterval.count;
 
 	if (defined(min)) { // #1300
-		if (interval >= timeUnits[SECOND]) { // second
+		if (interval >= timeUnits.second) { // second
 			minDate.setMilliseconds(0);
-			minDate.setSeconds(interval >= timeUnits[MINUTE] ? 0 :
+			minDate.setSeconds(interval >= timeUnits.minute ? 0 :
 				count * mathFloor(minDate.getSeconds() / count));
 		}
 	
-		if (interval >= timeUnits[MINUTE]) { // minute
-			minDate[setMinutes](interval >= timeUnits[HOUR] ? 0 :
+		if (interval >= timeUnits.minute) { // minute
+			minDate[setMinutes](interval >= timeUnits.hour ? 0 :
 				count * mathFloor(minDate[getMinutes]() / count));
 		}
 	
-		if (interval >= timeUnits[HOUR]) { // hour
-			minDate[setHours](interval >= timeUnits[DAY] ? 0 :
+		if (interval >= timeUnits.hour) { // hour
+			minDate[setHours](interval >= timeUnits.day ? 0 :
 				count * mathFloor(minDate[getHours]() / count));
 		}
 	
-		if (interval >= timeUnits[DAY]) { // day
-			minDate[setDate](interval >= timeUnits[MONTH] ? 1 :
+		if (interval >= timeUnits.day) { // day
+			minDate[setDate](interval >= timeUnits.month ? 1 :
 				count * mathFloor(minDate[getDate]() / count));
 		}
 	
-		if (interval >= timeUnits[MONTH]) { // month
-			minDate[setMonth](interval >= timeUnits[YEAR] ? 0 :
+		if (interval >= timeUnits.month) { // month
+			minDate[setMonth](interval >= timeUnits.year ? 0 :
 				count * mathFloor(minDate[getMonth]() / count));
 			minYear = minDate[getFullYear]();
 		}
 	
-		if (interval >= timeUnits[YEAR]) { // year
+		if (interval >= timeUnits.year) { // year
 			minYear -= minYear % count;
 			minDate[setFullYear](minYear);
 		}
 	
 		// week is a special case that runs outside the hierarchy
-		if (interval === timeUnits[WEEK]) {
+		if (interval === timeUnits.week) {
 			// get start of current week, independent of count
 			minDate[setDate](minDate[getDate]() - minDate[getDay]() +
 				pick(startOfWeek, 1));
@@ -8305,18 +8279,18 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 			tickPositions.push(time);
 	
 			// if the interval is years, use Date.UTC to increase years
-			if (interval === timeUnits[YEAR]) {
+			if (interval === timeUnits.year) {
 				time = makeTime(minYear + i * count, 0);
 	
 			// if the interval is months, use Date.UTC to increase months
-			} else if (interval === timeUnits[MONTH]) {
+			} else if (interval === timeUnits.month) {
 				time = makeTime(minYear, minMonth + i * count);
 	
 			// if we're using global time, the interval is not fixed as it jumps
 			// one hour at the DST crossover
-			} else if (!useUTC && (interval === timeUnits[DAY] || interval === timeUnits[WEEK])) {
+			} else if (!useUTC && (interval === timeUnits.day || interval === timeUnits.week)) {
 				time = makeTime(minYear, minMonth, minDateDate +
-					i * count * (interval === timeUnits[DAY] ? 1 : 7));
+					i * count * (interval === timeUnits.day ? 1 : 7));
 	
 			// else, the interval is fixed and we use simple addition
 			} else {
@@ -8332,9 +8306,9 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 
 		// mark new days if the time is dividible by day (#1649, #1760)
 		each(grep(tickPositions, function (time) {
-			return interval <= timeUnits[HOUR] && time % timeUnits[DAY] === localTimezoneOffset;
+			return interval <= timeUnits.hour && time % timeUnits.day === localTimezoneOffset;
 		}), function (time) {
-			higherRanks[time] = DAY;
+			higherRanks[time] = 'day';
 		});
 	}
 
@@ -8358,28 +8332,28 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
  */
 Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) {
 	var units = unitsOption || [[
-				MILLISECOND, // unit name
+				'millisecond', // unit name
 				[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
 			], [
-				SECOND,
+				'second',
 				[1, 2, 5, 10, 15, 30]
 			], [
-				MINUTE,
+				'minute',
 				[1, 2, 5, 10, 15, 30]
 			], [
-				HOUR,
+				'hour',
 				[1, 2, 3, 4, 6, 8, 12]
 			], [
-				DAY,
+				'day',
 				[1, 2]
 			], [
-				WEEK,
+				'week',
 				[1, 2]
 			], [
-				MONTH,
+				'month',
 				[1, 2, 3, 4, 6]
 			], [
-				YEAR,
+				'year',
 				null
 			]],
 		unit = units[units.length - 1], // default unit is years
@@ -8408,7 +8382,7 @@ Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) 
 	}
 
 	// prevent 2.5 years intervals, though 25, 250 etc. are allowed
-	if (interval === timeUnits[YEAR] && tickInterval < 5 * interval) {
+	if (interval === timeUnits.year && tickInterval < 5 * interval) {
 		multiples = [1, 2, 5];
 	}
 
@@ -8416,7 +8390,7 @@ Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) 
 	count = normalizeTickInterval(
 		tickInterval / interval, 
 		multiples,
-		unit[0] === YEAR ? mathMax(getMagnitude(tickInterval / interval), 1) : 1 // #1913, #2360
+		unit[0] === 'year' ? mathMax(getMagnitude(tickInterval / interval), 1) : 1 // #1913, #2360
 	);
 	
 	return {
@@ -8974,7 +8948,7 @@ Tooltip.prototype = {
 							// If the point is placed every day at 23:59, we need to show
 							// the minutes as well. This logic only works for time units less than 
 							// a day, since all higher time units are dividable by those. #2637.
-							(timeUnits[n] <= timeUnits[DAY] && point.key % timeUnits[n] > 0)) {
+							(timeUnits[n] <= timeUnits.day && point.key % timeUnits[n] > 0)) {
 						xDateFormat = dateTimeLabelFormats[n];
 						break;
 					}
