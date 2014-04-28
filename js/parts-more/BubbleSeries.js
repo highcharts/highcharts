@@ -267,14 +267,14 @@ Axis.prototype.beforePadding = function () {
 					// Find the min and max Z
 					zData = series.zData;
 					if (zData.length) { // #1735
-						zMin = math.min(
+						zMin = pick(seriesOptions.zMin, math.min( // docs: zMin, zMax (plotoptions/bubble-zmin-zmax)
 							zMin,
 							math.max(
 								arrayMin(zData), 
 								seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
 							)
-						);
-						zMax = math.max(zMax, arrayMax(zData));
+						));
+						zMax = pick(seriesOptions.zMax, math.max(zMax, arrayMax(zData)));
 					}
 				}
 			}
