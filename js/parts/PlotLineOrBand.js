@@ -209,11 +209,11 @@ AxisPlotLineOrBandExtension = {
 	},
 
 	addPlotBand: function (options) {
-		this.addPlotBandOrLine(options, 'plotBands');
+		return this.addPlotBandOrLine(options, 'plotBands');
 	},
 	
 	addPlotLine: function (options) {
-			this.addPlotBandOrLine(options, 'plotLines');
+		return this.addPlotBandOrLine(options, 'plotLines');
 	},
 
 	/**
