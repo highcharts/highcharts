@@ -18,7 +18,7 @@ if (!hasSVG && !useCanVG) {
 /**
  * The VML element wrapper.
  */
-Highcharts.VMLElement = VMLElement = {
+VMLElement = {
 
 	/**
 	 * Initialize a new VML element wrapper. It builds the markup as a string
@@ -481,7 +481,7 @@ Highcharts.VMLElement = VMLElement = {
 		element.style[key] = value;
 	}
 };
-VMLElement = extendClass(SVGElement, VMLElement);
+Highcharts.VMLElement = VMLElement = extendClass(SVGElement, VMLElement);
 
 // Some shared setters
 VMLElement.prototype.ySetter =

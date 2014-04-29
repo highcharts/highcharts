@@ -81,11 +81,11 @@ $(function () {
                     cursor: 'pointer',
                     point: {
                         events: {
-                            click: function() {
+                            click: function (e) {
                                 hs.htmlExpand(null, {
                                     pageOrigin: {
-                                        x: this.pageX,
-                                        y: this.pageY
+                                        x: e.pageX,
+                                        y: e.pageY
                                     },
                                     headingText: this.series.name,
                                     maincontentText: Highcharts.dateFormat('%A, %b %e, %Y', this.x) +':<br/> '+
