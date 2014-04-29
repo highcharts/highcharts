@@ -13,7 +13,9 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 	marker: null,
 	stickyTracking: false,
 	dataLabels: {
-		format: '{point.value}',
+		formatter: function () { // #2945
+			return this.point.value;
+		},
 		verticalAlign: 'middle',
 		crop: false,
 		overflow: false,

@@ -888,7 +888,9 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 	marker: null,
 	stickyTracking: false,
 	dataLabels: {
-		format: '{point.value}',
+		formatter: function () { // #2945
+			return this.point.value;
+		},
 		verticalAlign: 'middle',
 		crop: false,
 		overflow: false,
@@ -1523,7 +1525,9 @@ seriesTypes.mapline = extendClass(seriesTypes.map, {
 defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 	dataLabels: {
 		enabled: true,
-		format: '{point.name}',
+		formatter: function () { // #2945
+			return this.point.name; 
+		},
 		color: 'black',
 		crop: false,
 		overflow: false,
@@ -1570,7 +1574,9 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 	borderWidth: 0,
 	nullColor: '#F8F8F8',
 	dataLabels: {
-		format: '{point.value}',
+		formatter: function () { // #2945
+			return this.point.value;
+		},
 		verticalAlign: 'middle',
 		crop: false,
 		overflow: false,

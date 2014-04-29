@@ -15540,7 +15540,7 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 		// connectorPadding: 5,
 		distance: 30,
 		enabled: true,
-		formatter: function () {
+		formatter: function () { // #2945
 			return this.point.name;
 		}
 		// softConnector: true,

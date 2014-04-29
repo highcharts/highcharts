@@ -5,7 +5,9 @@
 // 1 - set default options
 defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	dataLabels: {
-		format: '{point.z}',
+		formatter: function () { // #2945
+			return this.point.z;
+		},
 		inside: true,
 		style: {
 			color: 'white',
