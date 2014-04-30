@@ -43,7 +43,7 @@ public class MonitorService {
 		// reset after hour	
 		long elapsedMinutes = (System.currentTimeMillis() - start)/60000;
 		long rate = 1; // prevent dividing by zero
-		if (this.getCount() > 0) {
+		if (this.getCount() > 0 && elapsedMinutes > 0) {
 			rate = this.getCount() / elapsedMinutes;
 		}
 
