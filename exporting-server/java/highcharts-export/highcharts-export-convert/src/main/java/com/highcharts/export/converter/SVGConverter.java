@@ -92,7 +92,7 @@ public class SVGConverter {
 
 			// check first for errors
 			if (output.length() > 5 && output.substring(0,5).equalsIgnoreCase("error")) {
-				logger.error("recveived error from phantomjs: " + output + " while using parameters: " + json);
+				logger.error("recveived error from phantomjs: " + output + "  -- parameters used: " + json);
 				throw new SVGConverterException("recveived error from phantomjs:" + output);
 			}
 
