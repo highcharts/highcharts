@@ -38,7 +38,7 @@ public class MonitorService {
 		return error.get();
 	}
 
-	@Scheduled(initialDelay = 10000, fixedRate = 15000)
+	@Scheduled(initialDelay = 60000, fixedRate = 15000)
 	public void reporter() {
 		// reset after hour	
 		long elapsedMinutes = (System.currentTimeMillis() - start)/60000;
