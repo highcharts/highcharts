@@ -19,10 +19,19 @@
 
 	var config = {
 			/* define locations of mandatory javascript files */
-			HIGHCHARTS: 'highstock.js',
-			HIGHCHARTS_MORE: 'highcharts-more.js',
-			HIGHCHARTS_DATA: 'data.js',
-			JQUERY: 'jquery.1.9.1.min.js',
+			files: { 
+				JQUERY: 'jquery.1.9.1.min.js',
+				HIGHCHARTS: 'highstock.js',
+				HIGHCHARTS_MORE: 'highcharts-more.js',
+				HIGHCHARTS_DATA: 'data.js',
+				HIGHCHARTS_DRILLDOWN: 'drilldown.js',
+				HIGHCHARTS_FUNNEL: 'funnel.js',
+				HIGHCHARTS_HEATMAP: 'heatmap.js',
+				HIGHCHARTS_3D: 'highcharts-3d.js',
+				HIGHCHARTS_NODATA: 'no-data-to-display.js',
+				/*HIGHCHARTS_MAP: 'map.js',*/
+				HIGHCHARTS_SOLID_GAUGE: 'solid-gauge.js'
+			},
 			TIMEOUT: 2000 /* 2 seconds timout for loading images */
 		},
 		mapCLArguments,
@@ -477,7 +486,8 @@
 				var svg,
 					globalOptions = params.globaloptions,
 					dataOptions = params.dataoptions,
-					customCode = 'function customCode(options) {\n' + params.customcode + '}\n';
+					customCode = 'function customCode(options) {\n' + params.customcode + '}\n',
+					jsfile;
 
 				/* Decide if we have to generate a svg first before rendering */
 				if (input.substring(0, 4).toLowerCase() === "<svg" || input.substring(0, 5).toLowerCase() === "<?xml"
@@ -490,10 +500,11 @@
 					// We have a js file, let highcharts create the chart first and grab the svg
 
 					// load necessary libraries
-					page.injectJs(config.JQUERY);
-					page.injectJs(config.HIGHCHARTS);
-					page.injectJs(config.HIGHCHARTS_MORE);
-					page.injectJs(config.HIGHCHARTS_DATA);
+					for (jsfile in config.files) {
+						if (config.files.hasOwnProperty(jsfile)) {
+							page.injectJs(config.files[jsfile]);	
+						}
+					}
 
 					// load chart in page and return svg height and width
 					svg = page.evaluate(createChart, width, constr, input, globalOptions, dataOptions, customCode, outType, callback, messages);
