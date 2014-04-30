@@ -165,7 +165,7 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 		
 		URL u = getClass().getProtectionDomain().getCodeSource().getLocation();
 		URLClassLoader jarLoader = new URLClassLoader(new URL[]{u}, Thread.currentThread().getContextClassLoader());
-		String filenames[] = new String[] {"highcharts-convert.js","highcharts.js","highstock.js","jquery.1.9.1.min.js","map.js","highcharts-3d.js","highcharts-more.js", "data.js", "drilldown.js", "funnel.js", "heatmap.js", "highcharts-3d.js", "no-data-to-display.js", "maps.js", "solid-gauge.js"};
+		String filenames[] = new String[] {"highcharts-convert.js","highcharts.js","highstock.js","jquery.1.9.1.min.js","map.js","highcharts-more.js", "data.js", "drilldown.js", "funnel.js", "heatmap.js", "highcharts-3d.js", "no-data-to-display.js", "maps.js", "solid-gauge.js"};
 		
 		for (String filename : filenames) {
 		
