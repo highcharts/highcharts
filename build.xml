@@ -981,7 +981,7 @@
             <exclude name="exporting*"/>
         </fileset>
 
-        <!-- update highcharts export-server with newest js -->
+        <!-- update the highcharts export-server (GitHub) with newest js from the files in the dist -->
         <copy file="${dist.dir}/highcharts/js/highcharts.js" todir="exporting-server/phantomjs/"/>
         <copy file="${dist.dir}/highstock/js/highstock.js" todir="exporting-server/phantomjs/"/>
         <copy file="${dist.dir}/highcharts/js/highcharts-more.js" todir="exporting-server/phantomjs/"/>
@@ -990,7 +990,7 @@
             <fileset refid="export.module.files"/>
         </copy>
 
-        <!-- copy files from phantomjs to java export server -->
+        <!-- copy files from phantomjs to java export server (GitHub)-->
         <delete includeemptydirs="true">
             <fileset dir="exporting-server/java/highcharts-export/highcharts-export-convert/src/main/resources/phantomjs" includes="**/*"/>
         </delete>
@@ -1000,10 +1000,12 @@
                 <exclude name="tmp"/>
             </fileset>
         </copy>
-        <!-- copy highcharts export-server to the distribution folder-->
+
+        <!-- finally copy highcharts export-server (GitHub) to the distribution folder-->
         <copy todir="${dist.dir}/highcharts/exporting-server">
             <fileset dir="exporting-server"/>
         </copy>
+
         <delete file="${dist.dir}/highcharts/exporting-server/phantomjs/highstock.js" />
         <replace file="${dist.dir}/highcharts/exporting-server/phantomjs/highcharts-convert.js" token="HIGHCHARTS: &apos;highstock.js&apos;" value="HIGHCHARTS: &apos;highcharts.js&apos;"/>
         <delete file="${dist.dir}/highcharts/exporting-server/java/highcharts-export/highcharts-export-convert/src/main/resources/phantomjs/highstock.js" />
