@@ -330,28 +330,40 @@ public class ExportController extends HttpServlet {
 		return parameter.trim();
 	}
 
-	private static Float widthToFloat(String width) {
+	private static Float widthToFloat(String width) throws SVGConverterException {
 		width = sanitize(width);
 		if (width != null) {
-			Float parsedWidth = Float.valueOf(width);
-			if (parsedWidth.compareTo(MAX_WIDTH) > 0) {
-				return MAX_WIDTH;
+			width = width.replace("px", "");
+			try {
+				Float parsedWidth = Float.valueOf(width);
+				if (parsedWidth.compareTo(MAX_WIDTH) > 0) {
+					return MAX_WIDTH;
+				}
+				if (parsedWidth.compareTo(0.0F) > 0) {
+					return parsedWidth;
+				}
+			} catch (NumberFormatException nfe) {
+				logger.error("Parameter width is wrong for value: " + width, nfe.fillInStackTrace());
+				throw new SVGConverterException("Parameter width is wrong for value: " + width);
 			}
-			if (parsedWidth.compareTo(0.0F) > 0) {
-				return parsedWidth;
-			}
+			
 		}
 		return null;
 	}
 
-	private static Float scaleToFloat(String scale) {
+	private static Float scaleToFloat(String scale) throws SVGConverterException {
 		scale = sanitize(scale);
 		if (scale != null) {
-			Float parsedScale = Float.valueOf(scale);
-			if (parsedScale.compareTo(MAX_SCALE) > 0) {
-				return MAX_SCALE;
-			} else if (parsedScale.compareTo(0.0F) > 0) {
-				return parsedScale;
+			try {
+				Float parsedScale = Float.valueOf(scale);
+				if (parsedScale.compareTo(MAX_SCALE) > 0) {
+					return MAX_SCALE;
+				} else if (parsedScale.compareTo(0.0F) > 0) {
+					return parsedScale;
+				}
+			} catch (NumberFormatException nfe) {
+				logger.error("Parameter scale is wrong for value: " + scale, nfe.fillInStackTrace());
+				throw new SVGConverterException("Parameter scale is wrong for value: " + scale);
 			}
 		}
 		return null;
