@@ -33,7 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.highcharts.export.converter.SVGConverter;
 import com.highcharts.export.converter.SVGConverterException;
 import com.highcharts.export.pool.PoolException;
-import com.highcharts.export.service.StatisticsService;
+import com.highcharts.export.service.MonitorService;
 import com.highcharts.export.util.MimeType;
 import com.highcharts.export.util.TempDir;
 import java.io.File;
@@ -62,7 +62,7 @@ public class ExportController extends HttpServlet {
 	private SVGConverter converter;
 
 	@Autowired
-	private StatisticsService statistics;
+	private MonitorService monitor;
 
 	/* catch all GET requests and redirect those */
 	@RequestMapping(method = RequestMethod.GET)
@@ -100,7 +100,7 @@ public class ExportController extends HttpServlet {
 		HttpSession session) throws ServletException, InterruptedException, SVGConverterException, NoSuchElementException, PoolException, TimeoutException, IOException {
 
 		// count requests
-		statistics.add();
+		monitor.add();
 
 		MimeType mime = getMime(type);
 		String tempFilename = null;
@@ -197,7 +197,7 @@ public class ExportController extends HttpServlet {
 
 	@ExceptionHandler(IOException.class)
 	public ModelAndView handleIOException(Exception ex, HttpServletResponse response) {
-		statistics.addError();
+		monitor.addError();
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("error");
 		modelAndView.addObject("message", ex.getMessage());
@@ -207,7 +207,7 @@ public class ExportController extends HttpServlet {
 
 	@ExceptionHandler(TimeoutException.class)
 	public ModelAndView handleTimeoutException(Exception ex, HttpServletResponse response) {
-		statistics.addError();
+		monitor.addError();
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("error");
 		modelAndView
@@ -220,7 +220,7 @@ public class ExportController extends HttpServlet {
 
 	@ExceptionHandler(PoolException.class)
 	public ModelAndView handleServerPoolException(Exception ex, HttpServletResponse response) {
-		statistics.addError();
+		monitor.addError();
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("error");
 		modelAndView
@@ -233,7 +233,7 @@ public class ExportController extends HttpServlet {
 
 	@ExceptionHandler(SVGConverterException.class)
 	public ModelAndView handleSVGRasterizeException(Exception ex, HttpServletResponse response) {
-		statistics.addError();
+		monitor.addError();
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("error");
 		modelAndView
@@ -246,7 +246,7 @@ public class ExportController extends HttpServlet {
 
 	@ExceptionHandler(InterruptedException.class)
 	public ModelAndView handleInterruptedException(Exception ex, HttpServletResponse response) {
-		statistics.addError();
+		monitor.addError();
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("error");
 		modelAndView
@@ -259,7 +259,7 @@ public class ExportController extends HttpServlet {
 
 	@ExceptionHandler(ServletException.class)
 	public ModelAndView handleServletException(Exception ex, HttpServletResponse response) {
-		statistics.addError();
+		monitor.addError();
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("error");
 		modelAndView.addObject("message", ex.getMessage());

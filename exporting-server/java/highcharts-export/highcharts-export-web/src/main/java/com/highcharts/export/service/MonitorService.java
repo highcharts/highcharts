@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
  * @author gert
  */
 @Service
-public class StatisticsService {
+public class MonitorService {
 
 	private AtomicInteger count = new AtomicInteger(0);
 	private AtomicInteger error = new AtomicInteger(0);
@@ -38,15 +38,24 @@ public class StatisticsService {
 		return error.get();
 	}
 
-	@Scheduled(initialDelay = 10000, fixedRate = 60000)
+	@Scheduled(initialDelay = 10000, fixedRate = 15000)
 	public void reporter() {
-		// reset after hour
-		logger.log(Level.INFO, "request count: {0} Error count: {1}", new Object[]{this.getCount(), this.getCountError()});		
-		long elapsed = System.currentTimeMillis() - start;
-		if (elapsed > 3600000) {		
+		// reset after hour	
+		long elapsedMinutes = (System.currentTimeMillis() - start)/60000;
+		long rate = 1; // prevent dividing by zero
+		if (this.getCount() > 0) {
+			rate = this.getCount() / elapsedMinutes;
+		}
+
+		logger.log(Level.INFO, "request count: {0}, Error count: {1}, Elapsed time (min): {2}, Rate: {3}", new Object[]{this.getCount(), this.getCountError(), elapsedMinutes, rate});
+
+		// report hourly and reset counters
+		if (elapsedMinutes > 60) {
 			logger.log(Level.INFO, "##### HOURLY REPORT request count: {0} Error count: {1} #####", new Object[]{this.getCount(), this.getCountError()});
+			// resetting
 			count.set(0);
 			error.set(0);
+			start = System.currentTimeMillis();
 		}
 	}
 }
