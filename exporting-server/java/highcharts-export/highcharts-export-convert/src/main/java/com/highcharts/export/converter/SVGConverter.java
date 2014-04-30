@@ -92,7 +92,7 @@ public class SVGConverter {
 
 			// check first for errors
 			if (output.length() > 5 && output.substring(0,5).equalsIgnoreCase("error")) {
-				logger.debug("recveived error from phantomjs: " + output);
+				logger.error("recveived error from phantomjs: " + output + "  -- parameters used: " + json);
 				throw new SVGConverterException("recveived error from phantomjs:" + output);
 			}
 
@@ -130,14 +130,19 @@ public class SVGConverter {
 
 			return response;
 		} catch (SocketTimeoutException ste) {
+			logger.error("error with using parameters: " + params);
+			logger.error(ste);
 			throw new TimeoutException(ste.getMessage());
 		} catch (TimeoutException te) {
+			logger.error("error with using parameters: " + params);
+			logger.error(te);
 			throw new TimeoutException(te.getMessage());
 		} catch (PoolException nse) {
 				logger.error("POOL EXHAUSTED!!");
 				throw new PoolException(nse.getMessage());
 		} catch (Exception e) {
-			logger.debug(e.getMessage());
+			logger.error("error with using parameters: " + params);
+			logger.error(e);
 			throw new SVGConverterException("Error converting SVG" + e.getMessage());
 		} finally {
 			try {

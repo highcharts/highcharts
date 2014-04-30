@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeoutException;
 
-import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.highcharts.export.converter.SVGConverter;
 import com.highcharts.export.converter.SVGConverterException;
 import com.highcharts.export.pool.PoolException;
+import com.highcharts.export.service.MonitorService;
 import com.highcharts.export.util.MimeType;
 import com.highcharts.export.util.TempDir;
 import java.io.File;
@@ -45,6 +45,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -57,8 +58,11 @@ public class ExportController extends HttpServlet {
 	private static final Float MAX_SCALE = 4.0F;
 	protected static Logger logger = Logger.getLogger("exporter");
 
-	@Resource(name = "svgConverter")
+	@Autowired
 	private SVGConverter converter;
+
+	@Autowired
+	private MonitorService monitor;
 
 	/* catch all GET requests and redirect those */
 	@RequestMapping(method = RequestMethod.GET)
@@ -94,6 +98,9 @@ public class ExportController extends HttpServlet {
 		@RequestParam(value = "async", required = false, defaultValue = "false")  Boolean async,
 		HttpServletRequest request,
 		HttpSession session) throws ServletException, InterruptedException, SVGConverterException, NoSuchElementException, PoolException, TimeoutException, IOException {
+
+		// count requests
+		monitor.add();
 
 		MimeType mime = getMime(type);
 		String tempFilename = null;
@@ -190,6 +197,7 @@ public class ExportController extends HttpServlet {
 
 	@ExceptionHandler(IOException.class)
 	public ModelAndView handleIOException(Exception ex, HttpServletResponse response) {
+		monitor.addError();
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("error");
 		modelAndView.addObject("message", ex.getMessage());
@@ -199,6 +207,7 @@ public class ExportController extends HttpServlet {
 
 	@ExceptionHandler(TimeoutException.class)
 	public ModelAndView handleTimeoutException(Exception ex, HttpServletResponse response) {
+		monitor.addError();
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("error");
 		modelAndView
@@ -211,6 +220,7 @@ public class ExportController extends HttpServlet {
 
 	@ExceptionHandler(PoolException.class)
 	public ModelAndView handleServerPoolException(Exception ex, HttpServletResponse response) {
+		monitor.addError();
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("error");
 		modelAndView
@@ -223,6 +233,7 @@ public class ExportController extends HttpServlet {
 
 	@ExceptionHandler(SVGConverterException.class)
 	public ModelAndView handleSVGRasterizeException(Exception ex, HttpServletResponse response) {
+		monitor.addError();
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("error");
 		modelAndView
@@ -235,6 +246,7 @@ public class ExportController extends HttpServlet {
 
 	@ExceptionHandler(InterruptedException.class)
 	public ModelAndView handleInterruptedException(Exception ex, HttpServletResponse response) {
+		monitor.addError();
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("error");
 		modelAndView
@@ -247,6 +259,7 @@ public class ExportController extends HttpServlet {
 
 	@ExceptionHandler(ServletException.class)
 	public ModelAndView handleServletException(Exception ex, HttpServletResponse response) {
+		monitor.addError();
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("error");
 		modelAndView.addObject("message", ex.getMessage());
