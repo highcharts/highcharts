@@ -537,29 +537,6 @@ Highcharts.Chart.prototype.retrieveStacks = function () {
 	return stacks;
 };
 
-Highcharts.wrap(Highcharts.Series.prototype, 'alignDataLabel', function (proceed) {
-	proceed.apply(this, [].slice.call(arguments, 1));
-	if (this.chart.is3d()) {
-		var args = arguments,
-			dataLabel = args[2],
-			chart = this.chart;
-
-		var options3d = chart.options.chart.options3d,
-			origin = {
-				x: chart.plotWidth / 2,
-				y: chart.plotHeight / 2, 
-				z: options3d.depth,
-				vd: options3d.viewDistance
-			},
-			alpha = options3d.alpha,
-			beta = options3d.beta * (chart.yAxis[0].opposite ? -1 : 1);
-
-		var pos = [{x: dataLabel.x, y: dataLabel.y, z: dataLabel.z}];
-		pos = perspective(pos, alpha, beta, origin);
-
-		dataLabel.attr({x: pos[0].x, y: pos[0].y});
-	} 
-});
 /*** 
 	EXTENSION TO THE AXIS
 ***/
@@ -879,7 +856,6 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'animate', function (pr
 	}
 });
 
-
 Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
@@ -929,6 +905,35 @@ function draw3DPoints(proceed) {
 
 	proceed.apply(this, [].slice.call(arguments, 1));
 }
+
+Highcharts.wrap(Highcharts.Series.prototype, 'alignDataLabel', function (proceed) {
+	
+	// Only do this for 3D columns and columnranges
+	if (this.chart.is3d() && (this.type === 'column' || this.type === 'columnrange')) {
+		var series = this,
+			chart = series.chart,
+			options = chart.options,		
+			options3d = options.chart.options3d,
+			origin = {
+				x: chart.plotWidth / 2,
+				y: chart.plotHeight / 2, 
+				z: options3d.depth,
+				vd: options3d.viewDistance
+			},
+			alpha = options3d.alpha,
+			beta = options3d.beta * (chart.yAxis[0].opposite ? -1 : 1);
+
+		var args = arguments,
+			alignTo = args[4];
+		
+		var pos = ({x: alignTo.x, y: alignTo.y, z: 0});
+		pos = perspective([pos], alpha, beta, origin)[0];
+		alignTo.x = pos.x;
+		alignTo.y = pos.y;
+	}
+
+	proceed.apply(this, [].slice.call(arguments, 1));
+});
 
 if (Highcharts.seriesTypes.columnrange) {
 	Highcharts.wrap(Highcharts.seriesTypes.columnrange.prototype, 'drawPoints', draw3DPoints);
