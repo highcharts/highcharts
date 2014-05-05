@@ -33,18 +33,22 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 		point.shapeType = 'arc3d';
 		var shapeArgs = point.shapeArgs;
 
-		shapeArgs.z = z;
-		shapeArgs.depth = depth * 0.75;
-		shapeArgs.origin = origin;
-		shapeArgs.alpha = alpha;
-		shapeArgs.beta = beta;
-	
-		var angle = (shapeArgs.end + shapeArgs.start) / 2;
+		if (point.y) { // will be false if null or 0 #3006
+			shapeArgs.z = z;
+			shapeArgs.depth = depth * 0.75;
+			shapeArgs.origin = origin;
+			shapeArgs.alpha = alpha;
+			shapeArgs.beta = beta;
+		
+			var angle = (shapeArgs.end + shapeArgs.start) / 2;
 
-		point.slicedTranslation = {
-			translateX : round(cos(angle) * series.options.slicedOffset * cos(alpha * deg2rad)),
-			translateY : round(sin(angle) * series.options.slicedOffset * cos(alpha * deg2rad))
-		};
+			point.slicedTranslation = {
+				translateX : round(cos(angle) * series.options.slicedOffset * cos(alpha * deg2rad)),
+				translateY : round(sin(angle) * series.options.slicedOffset * cos(alpha * deg2rad))
+			};
+		} else {
+			shapeArgs = null;
+		}
 	});
 });
 
