@@ -1,0 +1,498 @@
+<html>
+<head>
+<title>Dashboard Example</title>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="http://code.highcharts.com/highcharts.src.js"></script>
+<script src="http://code.highcharts.com/highcharts-more.src.js"></script>
+
+<script>
+$(function () {
+    /** 
+     * CHART DEFINITIONS
+     */
+    
+    // Declare the chart variables for later use
+    var chart1, chart2, chart3, chart4;
+
+    // GENERAL SETTINGS
+    Highcharts.setOptions({ 
+        chart: { 
+            animation: false
+        },
+        credits: {
+            enabled: false
+        },
+        legend: {
+            enabled: false
+        },
+        tooltip: { 
+            enabled: false
+        }
+    });
+
+    // CHART 1 : GAUGE CHART
+    chart1 = new Highcharts.Chart({
+        chart: {
+            renderTo: 'cchart1',
+            type: 'gauge',
+            borderWidth: 1,
+            borderRadius: 10            
+        },
+        title: { text: 'Speed of Data Aquisition' },
+        subtitle: { text: 'Number of measurements per cycle' },
+        pane: { 
+            startAngle: -70,
+            endAngle: 70,
+            size: 125,
+            center: ['50%', '100%'],
+            background: null
+        },
+        plotOptions: {
+            gauge: {                
+                dial: {
+                    radius: '95%',
+                    baseWidth: 2                    
+                },
+                pivot: {
+                    radius: 2
+                },
+                dataLabels: {
+                    y: -30,
+                }
+            }
+        },        
+        yAxis: {
+            min: 0,
+            max: 100,
+            tickPosition: 'outside',
+            minorTickPosition: 'outside',
+            tickLength: 8,
+            minorTickLength: 5,
+            labels: {
+                distance: 20
+            },
+            plotBands: [{
+                from: 0,
+                to: 20,
+                color: '#FF0000'   
+            },{
+                from: 20,
+                to: 80,
+                color: '#FFFF00'   
+            },{
+                from: 80,
+                to: 100,
+                color: '#00FF00'   
+            }]
+        },
+        series: [
+            { data: [] }
+        ]
+    });
+
+    // CHART 2 : LINE & AREA CHART
+    chart2 = new Highcharts.Chart({
+        chart: {
+            renderTo: 'cchart2',
+            type: 'spline',
+            marginRight: 60
+        },
+        title: { text: 'Measured Data Points' },
+        subtitle: { text: 'Last 100 measurements' },
+        xAxis: { 
+            labels: { enabled: false},
+            maxPadding: 0,
+            minPadding: 0          
+        },
+        yAxis: [{
+            opposite: true,
+            title: { enabled: false  },
+            max: 1000,
+            min: 0,
+            plotLines: [ 
+            { 
+                value: 900, 
+                color: '#FF0000', 
+                width: 2, 
+                label: { 
+                    text: 'Warning Threshold ' + '900', 
+                    style: { 
+                        cursor: 'default',
+                        color: 'red', 
+                        fontSize: '10px'
+                    }, 
+                    x: 0, 
+                    y: -5
+                },
+                zIndex: 3,
+                events: {
+                    mousedown: function (e) {                        
+                        var line = this;
+                        $(document).bind({
+                            'mousemove.line': function (e) {
+                                var nv = line.axis.toValue(e.pageY - line.axis.chart.spacing[0]);
+                                if (nv > 1000) { nv = 1000; }
+                                if (nv < 0) { nv = 0; }
+                                line.options.value = nv;
+                                line.label.attr({text: 'Warning Threshold ' + Math.floor(line.options.value) });
+                                if (!switches[2]) { line.axis.redraw(); }
+                            },                            
+                            'mouseup.line': function () { 
+                                $(document).unbind('.line');
+                            },
+                        });
+                    }
+                }
+            }
+            ],
+        }, {
+            title: { enabled: false },
+            gridLineWidth: 1,
+            minorGridLineWidth: 1,
+            minorTickInterval: 5,
+            top: 320,
+            height: 65,
+            min: 0,
+            max: 25,
+            plotBands: [{
+                from: 0,
+                to: 25,
+                color: '#FCFFC5'
+            }
+            ]
+        }
+        ],
+        plotOptions: {
+            spline: {
+                marker: { enabled: false },
+                states: {
+                    hover: { enabled: false }
+                },
+                dashStyle: 'solid'
+            },
+            area: {
+                marker: { enabled: false }, 
+                states: {
+                    hover: { enabled: false }
+                },               
+            },
+            scatter: {
+                marker: {
+                    allowPointSelect: false,
+                    symbol: 'triangle-down',
+                    radius: 5
+                },
+                dataLabels: {
+                    enabled: true,
+                    align: 'right',
+                    verticalAlign: 'bottom',
+                    formatter: function () {
+                        return '+' + this.point.change;
+                    },
+                    style: {
+                        fontWeight: 'bold'
+                    }
+                },         
+                point: {
+                    events: {
+                        remove: function() {
+                            if (this.y !== null) {
+                                removeOccurence(this.series.options.linkedTo);
+                            }
+                            return true;
+                        }
+                    } 
+                } 
+            }
+        },
+        series: [
+            // The Channels
+            { id: 'channel1', zIndex: 2, data: [] },
+            { id: 'channel2', zIndex: 1, data: [] },
+            { id: 'channel3', zIndex: 0, data: [], yAxis: 1, type: 'area' },
+            { id: 'anomalies1', zIndex: 2, data: [], type: 'scatter',  linkedTo: 'channel1' },
+            { id: 'anomalies2', zIndex: 1, data: [], type: 'scatter',  linkedTo: 'channel2' }
+        ]
+    });
+
+    // CHART 3 : COLUMN CHART
+    chart3 = new Highcharts.Chart({
+        chart: {
+            renderTo: 'cchart3',
+            type: 'column',
+            borderWidth: 1,
+            borderRadius: 10
+        },
+        title: { text: 'Noise Levels' },
+        xAxis: {
+            categories: ['Channel 1', 'Channel 2', 'Environment'],
+        },
+        yAxis: {
+            title: { enabled: false },
+            min: 0,
+            max: 10,
+        },
+        series: [ 
+            { 
+                colorByPoint: true,
+                data: [0, 0, 0],
+            }
+        ]
+    });
+
+    // CHART 4 : PIE CHART
+    chart4 = new Highcharts.Chart({
+        chart: {
+            renderTo: 'cchart4',
+            type: 'pie',
+            events: {
+                load: function() { 
+                    var center = this.series[0].center;
+                    this.renderer.arc(this.plotLeft + center[0], this.plotTop + center[1], center[2]/2, center[3]/2, 0 , Math.PI * 2)
+                            .attr({ fill: '#C0C0C0', strokeWidth: 0})
+                            .add();
+                }
+            }
+        },
+        credits: { enabled: true },
+        plotOptions: {
+            pie: {
+                size: '100%',
+                innerSize: 100,
+                dataLabels: { enabled: false }
+            }
+        },
+        title: { text: 'Detected Anomalies' },
+        subtitle: { text: 'Relative occurence per channel'},
+        series: [ 
+            {
+                data: [0,0] 
+            }
+        ]
+    });
+
+    /**
+     *  AESTEHETICS
+     */
+
+    // A label on the side of chart 2 that points at the last added value
+    Highcharts.wrap(Highcharts.Series.prototype, 'addPoint', function (proceed) {
+        proceed.apply(this, [].slice.call(arguments, 1));
+        // only do this for spline charts
+        if (this.type === 'spline') {
+            this.yAxis.setSideLabel(this, arguments[1]);
+        }
+    });
+    Highcharts.Axis.prototype.setSideLabel = function (series, value) {
+        if (this.sideLabels === undefined) { this.sideLabels = []; }
+
+        var axis = this,
+            label = axis.sideLabels[series._i];
+
+        if (!label) {
+            label = this.sideLabels[series._i] = axis.chart.renderer.label(value)
+                                        .attr({
+                                            stroke: series.color,
+                                            strokeWidth: 1,
+                                            zIndex: 8
+                                        })
+                                        .add();
+
+            axis.chart.renderer.path(['M', -5, 11, 'L', 5, 5, 'L', 30, 5, 'L', 30, 18, 'L', 5, 18, 'Z'])
+                                        .attr({
+                                            stroke: series.color,
+                                            fill: Highcharts.Color(series.color).brighten(0.3).get(),
+                                            strokeWidth: 1
+                                        }).add(label);
+        }
+
+        label.attr({translateX: axis.left + axis.width + 5, translateY: this.top + this.height - axis.translate(value) - 11, text: value });
+    }
+
+    // The Warning Sign
+    var renderer = chart2.renderer;
+    var warningSign = renderer.g().add().attr({translateX: 775, translateY: 5}).hide();
+    renderer.path(['M', 0, 0, 'L', 20, 45, 'L', -20, 45, 'Z']).attr({fill: 'red', stroke: 'black', 'stroke-width':1}).add(warningSign);
+    renderer.rect(-2,15,4,18).attr({fill: 'yellow'}).add(warningSign);
+    renderer.rect(-2,35,4,4).attr({fill: 'yellow'}).add(warningSign);
+
+    /**
+     *  DATA FUNCTIONS
+     */
+
+    // Variables
+    var updateSpeed = 75,
+    oldData = {
+        data: [500,500,0],
+        response: [true, true, true]
+    };
+
+    var speedSeries = chart1.series[0],
+        channel1Series = chart2.get('channel1'),
+        channel2Series = chart2.get('channel2'),
+        channel3Series = chart2.get('channel3'),
+        channel1Anomalies = chart2.get('anomalies1'),
+        channel2Anomalies = chart2.get('anomalies2');
+
+    var anomalies = {
+        channel1: chart4.series[0].points[0],
+        channel2: chart4.series[0].points[1]
+    }
+
+    // Shorthand function to generate random values
+    function random (val) { return (Math.random() * val);  }
+
+    // Generate new data based on the olddata and the switches
+    function getData(OLDDATA, switches) {
+        // This switch turns the whole system on and off
+        if (!switches[2]) { return false; }
+
+
+        // Emulate a loss of signal.
+        if (random(100) <= 45) { return false; }
+
+        // Get new values for each of the channels
+        var val1 = Math.floor(readChannel(0, 999, OLDDATA.data[0], 1, -5, { chance: 2, value: function() { return random(100) + 150 } }, switches[0]));
+        var val2 = Math.floor(readChannel(0, 999, OLDDATA.data[1], 1, -5, { chance: 2, value: function() { return random(100) + 150 } }, switches[1]));
+        var val3 = readChannel(0, 25, OLDDATA.data[2], 20, 0, { chance: 0, value: null }, true);
+
+        // Return the new data
+        return {
+            data: [val1, val2, val3],
+            response: [
+                switches[0] ? random(10) : 0, 
+                switches[1] ? random(10) : 0, 
+                random(10)
+                ]
+        };
+    }
+
+    // Emulate a channel reading, the new value is always based on the previous value
+    function readChannel(min, max, oldval, factor, bias, spike, enabled) {
+        // Check if the channel is turned on
+        if (!enabled) { return oldval; }
+
+        var result = oldval + ((random(100) - 50 + bias) / factor);
+
+        // There is a chance that the values suddenly go up, this will be considered an anomaly further down
+        if (random(100) < spike.chance) { result = oldval + spike.value(); }
+
+        // Keep the values within certain bounds
+        if (result > max) result = max;
+        if (result < min) result = min;
+
+        return result;
+    }
+
+    // Two methods to keep track of anomaly occurances
+    function addOccurence(i) {
+        anomalies[i].update({y: anomalies[i].y + 1}, false);
+    }
+    function removeOccurence(i) {
+        anomalies[i].update({y: anomalies[i].y - 1}, false);
+    }
+
+    // The main Data - Loop
+    function dataLoop() {
+        var result = getData(oldData, switches);
+
+        // Speed
+        updateSpeed = updateSpeed + (result ? 1 : -1);
+        if (updateSpeed > 100) updateSpeed = 100;
+        if (updateSpeed < 0) updateSpeed = 0;
+        speedSeries.setData([updateSpeed]);
+
+        if (result) {
+            // Response Chart
+            chart3.series[0].setData(result.response);
+            
+            // Data & Anomalies Chart       
+            var shift = (channel1Series.data.length >= 100),
+            ndata = result.data,
+            odata = oldData.data;
+
+            channel1Series.addPoint(ndata[0], false, shift);
+            channel2Series.addPoint(ndata[1], false, shift);
+            channel3Series.addPoint(ndata[2], false, shift);
+
+            if (Math.abs(odata[0] - ndata[0]) > 100) {
+                addOccurence('channel1');
+                channel1Anomalies.addPoint({y: ndata[0], change: Math.abs(odata[0] - ndata[0])}, false, shift);
+            } else {
+                channel1Anomalies.addPoint(null, false, shift);
+            }
+
+
+            if (Math.abs(odata[1] - ndata[1]) > 100) {
+                addOccurence('channel2');
+                channel2Anomalies.addPoint({y: ndata[1], change: Math.abs(odata[1] - ndata[1])}, false, shift);
+            } else {
+                channel2Anomalies.addPoint(null, false, shift);
+            }
+
+            // Warning System
+            if ((ndata[0] > chart2.yAxis[0].plotLinesAndBands[0].options.value) || (ndata[1] > chart2.yAxis[0].plotLinesAndBands[0].options.value)) {
+                if (warningSign.visibility !== 'visible') { warningSign.show(); }
+            } else {
+                if (warningSign.visibility === 'visible') { warningSign.hide(); }
+            }
+
+            chart2.redraw();
+            chart4.redraw();
+
+            oldData = result;
+        }
+
+        setTimeout(dataLoop, 10);
+    }
+
+    // Start the loop
+    dataLoop();
+
+
+
+});
+
+/**
+ *  BUTTON FUNCTIONALITY
+ */
+var switches = [true, true, true];
+function switchPanel (e) {
+    switches[e] = !switches[e];
+}
+
+</script>
+
+<style>
+button {
+    background-color: #2f7ed8;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    height: 30px;
+    width: 95px;
+}
+</style>
+
+</head>
+
+<body>
+<table>
+    <tr>
+        <td><div id="cchart1" style="height: 150px; width: 300px;"></div></td>
+        <td rowspan="3"><div id="cchart2" style="height: 400px; width: 1000px;"></div> </td>
+        <td rowspan="3"><div id="cchart4" style="height: 400px; width: 300px;"></div> </td>
+    </tr>
+    <tr>
+        <td><div id="cchart3" style="height: 200px; width: 300px;"></div></td>
+    </tr>
+    <tr>
+        <td align = 'center'>
+            <button onclick='switchPanel(0)'>Channel 1</button>
+            <button onclick='switchPanel(1)'>Channel 2</button>
+            <button onclick='switchPanel(2)'>Start/Stop</button>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
