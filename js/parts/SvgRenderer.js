@@ -5,13 +5,13 @@
 function SVGElement() {}
 
 SVGElement.prototype = {
-	
+
 	// Default base for animation
 	opacity: 1,
 	// For labels, these CSS properties are applied to the <text> node directly
-	textProps: ['fontSize', 'fontWeight', 'fontFamily', 'color', 
+	textProps: ['fontSize', 'fontWeight', 'fontFamily', 'color',
 		'lineHeight', 'width', 'textDecoration', 'textShadow'],
-	
+
 	/**
 	 * Initialize the SVG renderer
 	 * @param {Object} renderer
@@ -24,7 +24,7 @@ SVGElement.prototype = {
 			doc.createElementNS(SVG_NS, nodeName);
 		wrapper.renderer = renderer;
 	},
-	
+
 	/**
 	 * Animate a given attribute
 	 * @param {Object} params
@@ -149,7 +149,7 @@ SVGElement.prototype = {
 
 			// Set the reference to the gradient object
 			elem.setAttribute(prop, 'url(' + renderer.url + '#' + id + ')');
-		} 
+		}
 	},
 
 	/**
@@ -175,7 +175,7 @@ SVGElement.prototype = {
 		// used as a getter: first argument is a string, second is undefined
 		if (typeof hash === 'string') {
 			ret = (this[hash + 'Getter'] || this._defaultGetter).call(this, hash, element);
-		
+
 		// setter
 		} else {
 
@@ -196,7 +196,7 @@ SVGElement.prototype = {
 				if (this.rotation && (key === 'x' || key === 'y')) {
 					this.doTransform = true;
 				}
-				
+
 				if (!skipAttr) {
 					(this[key + 'Setter'] || this._defaultSetter).call(this, value, key, element);
 				}
@@ -359,7 +359,7 @@ SVGElement.prototype = {
 					oldStyles,
 					newStyles
 				);
-			}		
+			}
 
 			// store object
 			elemWrapper.styles = styles;
@@ -399,19 +399,19 @@ SVGElement.prototype = {
 	on: function (eventType, handler) {
 		var svgElement = this,
 			element = svgElement.element;
-		
+
 		// touch
 		if (hasTouch && eventType === 'click') {
-			element.ontouchstart = function (e) {			
-				svgElement.touchEventFired = Date.now();				
+			element.ontouchstart = function (e) {
+				svgElement.touchEventFired = Date.now();
 				e.preventDefault();
 				handler.call(element, e);
 			};
-			element.onclick = function (e) {												
+			element.onclick = function (e) {
 				if (userAgent.indexOf('Android') === -1 || Date.now() - (svgElement.touchEventFired || 0) > 1100) { // #2269
 					handler.call(element, e);
 				}
-			};			
+			};
 		} else {
 			// simplest possible event model for internal use
 			element['on' + eventType] = handler;
@@ -591,13 +591,13 @@ SVGElement.prototype = {
 			cacheKey;
 
 		// Since numbers are monospaced, and numerical labels appear a lot in a chart,
-		// we assume that a label of n characters has the same bounding box as others 
+		// we assume that a label of n characters has the same bounding box as others
 		// of the same length.
 		if (textStr === '' || numRegex.test(textStr)) {
 			cacheKey = 'num.' + textStr.toString().length + (styles ? ('|' + styles.fontSize + '|' + styles.fontFamily) : '');
 
 		} //else { // This code block made demo/waterfall fail, related to buildText
-			// Caching all strings reduces rendering time by 4-5%. 
+			// Caching all strings reduces rendering time by 4-5%.
 			// TODO: Check how this affects places where bBox is found on the element
 			//cacheKey = textStr + (styles ? ('|' + styles.fontSize + '|' + styles.fontFamily) : '');
 		//}
@@ -898,7 +898,7 @@ SVGElement.prototype = {
 		return this._defaultGetter(key);
 	},
 
-	/** 
+	/**
 	 * Get the current value of an attribute or pseudo attribute, used mainly
 	 * for animation.
 	 */
@@ -919,9 +919,10 @@ SVGElement.prototype = {
 		if (/(NaN| {2}|^$)/.test(value)) {
 			value = 'M 0 0';
 		}
-		element.setAttribute(key, value);
-
-		this[key] = value;
+		if(value) {
+			element.setAttribute(key, value);
+			this[key] = value;
+		}
 	},
 	dashstyleSetter: function (value) {
 		var i;
@@ -974,7 +975,7 @@ SVGElement.prototype = {
 		if (value !== this.textStr) {
 			// Delete bBox memo when the text changes
 			delete this.bBox;
-		
+
 			this.textStr = value;
 			if (this.added) {
 				this.renderer.buildText(this);
@@ -1000,8 +1001,8 @@ SVGElement.prototype = {
 
 // Some shared setters and getters
 SVGElement.prototype.yGetter = SVGElement.prototype.xGetter;
-SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter = 
-		SVGElement.prototype.rotationSetter = SVGElement.prototype.verticalAlignSetter = 
+SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter =
+		SVGElement.prototype.rotationSetter = SVGElement.prototype.verticalAlignSetter =
 		SVGElement.prototype.scaleXSetter = SVGElement.prototype.scaleYSetter = function (value, key) {
 	this[key] = value;
 	this.doTransform = true;
@@ -1197,7 +1198,7 @@ SVGRenderer.prototype = {
 			textLineHeight = textStyles && textStyles.lineHeight,
 			i = childNodes.length,
 			getLineHeight = function (tspan) {
-				return textLineHeight ? 
+				return textLineHeight ?
 					pInt(textLineHeight) :
 					renderer.fontMetrics(
 						/(px|em)$/.test(tspan && tspan.style.fontSize) ?
@@ -1211,7 +1212,7 @@ SVGRenderer.prototype = {
 			textNode.removeChild(childNodes[i]);
 		}
 
-		// Skip tspans, add text directly to text node. The forceTSpan is a hook 
+		// Skip tspans, add text directly to text node. The forceTSpan is a hook
 		// used in text outline hack.
 		if (!hasMarkup && !wrapper.forceTSpan && textStr.indexOf(' ') === -1) {
 			textNode.appendChild(doc.createTextNode(textStr));
@@ -1245,7 +1246,7 @@ SVGRenderer.prototype = {
 				lines.pop();
 			}
 
-			
+
 			// build the lines
 			each(lines, function (line, lineNo) {
 				var spans, spanNo = 0;
@@ -1624,7 +1625,7 @@ SVGRenderer.prototype = {
 				ry: value
 			});
 		};
-		
+
 		return wrapper.attr(attribs);
 	},
 
@@ -1907,7 +1908,7 @@ SVGRenderer.prototype = {
 			x += normalizer;
 			y += normalizer;
 			path = [
-				'M', x + r, y, 
+				'M', x + r, y,
 				'L', x + w - r, y, // top side
 				'C', x + w, y, x + w, y, x + w, y + r, // top-right corner
 				'L', x + w, y + h - r, // right side
@@ -1917,17 +1918,17 @@ SVGRenderer.prototype = {
 				'L', x, y + r, // left side
 				'C', x, y, x, y, x + r, y // top-right corner
 			];
-			
+
 			if (anchorX && anchorX > w && anchorY > y + safeDistance && anchorY < y + h - safeDistance) { // replace right side
 				path.splice(13, 3,
-					'L', x + w, anchorY - halfDistance, 
+					'L', x + w, anchorY - halfDistance,
 					x + w + arrowLength, anchorY,
 					x + w, anchorY + halfDistance,
 					x + w, y + h - r
 				);
 			} else if (anchorX && anchorX < 0 && anchorY > y + safeDistance && anchorY < y + h - safeDistance) { // replace left side
-				path.splice(33, 3, 
-					'L', x, anchorY + halfDistance, 
+				path.splice(33, 3,
+					'L', x, anchorY + halfDistance,
 					x - arrowLength, anchorY,
 					x, anchorY - halfDistance,
 					x, y + r
@@ -1975,7 +1976,7 @@ SVGRenderer.prototype = {
 	},
 
 
-	
+
 
 
 	/**
@@ -2031,7 +2032,7 @@ SVGRenderer.prototype = {
 				element.setAttribute(key, value);
 			};
 		}
-		
+
 		return wrapper;
 	},
 
@@ -2100,7 +2101,7 @@ SVGRenderer.prototype = {
 				boxY,
 				style = text.element.style;
 
-			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && text.textStr && 
+			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && text.textStr &&
 				text.getBBox();
 			wrapper.width = (width || bBox.width || 0) + 2 * padding + paddingLeft;
 			wrapper.height = (height || bBox.height || 0) + 2 * padding;
@@ -2108,7 +2109,7 @@ SVGRenderer.prototype = {
 			// update the label-scoped y offset
 			baselineOffset = padding + renderer.fontMetrics(style && style.fontSize).b;
 
-			
+
 			if (needsBox) {
 
 				// create the border box if it is not already present
