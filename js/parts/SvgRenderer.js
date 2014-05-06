@@ -922,6 +922,9 @@ SVGElement.prototype = {
 		if(value) {
 			element.setAttribute(key, value);
 			this[key] = value;
+		} else {
+			element.removeAttribute(key);
+			delete this[key];
 		}
 	},
 	dashstyleSetter: function (value) {
