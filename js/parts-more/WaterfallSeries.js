@@ -38,7 +38,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	translate: function () {
 		var series = this,
 			options = series.options,
-			axis = series.yAxis,
+			yAxis = series.yAxis,
 			len,
 			i,
 			points,
@@ -48,7 +48,8 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			y,
 			previousY,
 			stackPoint,
-			threshold = options.threshold;
+			threshold = options.threshold,
+			tooltipY;
 
 		// run column series translate
 		seriesTypes.column.prototype.translate.apply(this);
@@ -72,13 +73,13 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 			// up points
 			y = mathMax(previousY, previousY + point.y) + stackPoint[0];
-			shapeArgs.y = axis.translate(y, 0, 1);
+			shapeArgs.y = yAxis.translate(y, 0, 1);
 
 
 			// sum points
 			if (point.isSum || point.isIntermediateSum) {
-				shapeArgs.y = axis.translate(stackPoint[1], 0, 1);
-				shapeArgs.height = axis.translate(stackPoint[0], 0, 1) - shapeArgs.y;
+				shapeArgs.y = yAxis.translate(stackPoint[1], 0, 1);
+				shapeArgs.height = yAxis.translate(stackPoint[0], 0, 1) - shapeArgs.y;
 
 			// if it's not the sum point, update previous stack end position
 			} else {
@@ -94,6 +95,15 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			point.plotY = shapeArgs.y = mathRound(shapeArgs.y) - (series.borderWidth % 2) / 2;
 			shapeArgs.height = mathRound(shapeArgs.height);
 			point.yBottom = shapeArgs.y + shapeArgs.height;
+
+			// Correct tooltip placement (#3014)
+			tooltipY = point.plotY + (point.negative ? shapeArgs.height : 0);
+			if (series.chart.inverted) {
+				point.tooltipPos[0] = yAxis.len - tooltipY;
+			} else {
+				point.tooltipPos[1] = tooltipY;
+			}
+
 		}
 	},
 
