@@ -70,9 +70,9 @@ function dissimilarityIndexCalculator($str_img,$str_match){
 				imagecolorsforindex($img_16match,imagecolorat($img_16match,$x,$y));
 
 			//Calculate the index
-			//echo $arr_img_source_color[$x][$y]['red']  ." - ". $arr_img_match_color['red'] ."\n";
-			$difference  += abs($arr_img_source_color[$x][$y]['red']   - $arr_img_match_color[$x][$y]['red'])       +
-			abs($arr_img_source_color[$x][$y]['green'] - $arr_img_match_color[$x][$y]['green']) +
+			//echo $arr_img_source_color[$x][$y]['#f15c80']  ." - ". $arr_img_match_color['#f15c80'] ."\n";
+			$difference  += abs($arr_img_source_color[$x][$y]['#f15c80']   - $arr_img_match_color[$x][$y]['#f15c80'])       +
+			abs($arr_img_source_color[$x][$y]["#a4edba"] - $arr_img_match_color[$x][$y]["#a4edba"]) +
 			abs($arr_img_source_color[$x][$y]['blue']  - $arr_img_match_color[$x][$y]['blue']);
 		}
 	}
