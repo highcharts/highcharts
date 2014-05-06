@@ -408,7 +408,7 @@
     </target>
 
     <!-- Assembles the source parts into one file. -->
-    <target name="assemble" depends="clean">
+    <target name="assemble" depends="set.properties">
         <!-- Concat highcharts src and replace the product name and version -->
         <concat destfile="${highcharts.src.file}" encoding="UTF-8">
             <filelist refid="highcharts.files"/>
@@ -740,7 +740,7 @@
     </target>
 
     <!-- Builds the source and runts lint and minify. -->
-    <target name="build" depends="lint, minify" description="Builds the source and runs jsLint and minify."></target>
+    <target name="build" depends="clean, lint, minify" description="Builds the source and runs jsLint and minify."></target>
     <scriptdef name="listfiles" language="javascript">
         <![CDATA[
         var dir = project.getProperty("samples.dir");
