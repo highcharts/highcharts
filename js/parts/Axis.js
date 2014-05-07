@@ -1363,6 +1363,7 @@ Axis.prototype = {
 			axisTitleOptions = options.title,
 			labelOptions = options.labels,
 			labelOffset = 0, // reset
+			labelOffsetPadded,
 			axisOffset = chart.axisOffset,
 			clipOffset = chart.clipOffset,
 			directionFactor = [-1, 1, 1, -1][side],
@@ -1497,8 +1498,8 @@ Axis.prototype = {
 
 			if (showAxis) {
 				titleOffset = axis.axisTitle.getBBox()[horiz ? 'height' : 'width'];
-				titleMargin = pick(axisTitleOptions.margin, horiz ? 5 : 10);
 				titleOffsetOption = axisTitleOptions.offset;
+				titleMargin = defined(titleOffsetOption) ? 0 : pick(axisTitleOptions.margin, horiz ? 5 : 10);
 			}
 
 			// hide or show the title depending on whether showEmpty is set
@@ -1508,15 +1509,14 @@ Axis.prototype = {
 		// handle automatic or user set offset
 		axis.offset = directionFactor * pick(options.offset, axisOffset[side]);
 
-		axis.axisTitleMargin =
-			pick(titleOffsetOption,
-				labelOffset + titleMargin +
-				(labelOffset && (directionFactor * options.labels[horiz ? 'y' : 'x'] - lineHeightCorrection))
-			);
+		labelOffsetPadded = labelOffset + titleMargin +
+			(labelOffset && (directionFactor * options.labels[horiz ? 'y' : 'x'] - lineHeightCorrection));
+		axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);
 
 		axisOffset[side] = mathMax(
 			axisOffset[side],
-			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset
+			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset,
+			labelOffsetPadded // #3027
 		);
 		clipOffset[invertedSide] = mathMax(clipOffset[invertedSide], mathFloor(options.lineWidth / 2) * 2);
 	},
