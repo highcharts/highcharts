@@ -82,18 +82,18 @@ public class ExportController extends HttpServlet {
 		HttpServletRequest request,
 		HttpSession session) throws ServletException, InterruptedException, SVGConverterException, NoSuchElementException, PoolException, TimeoutException, IOException, ZeroRequestParameterException {
 
-		// count requests
-		monitor.add();
-
 		MimeType mime = getMime(type);
 		String randomFilename = null;
 		String jsonpCallback = "";
 		boolean isAndroid = request.getHeader("user-agent") != null && request.getHeader("user-agent").contains("Android");
 
 		// check for visitors who don't know this domain is really only for the exporting service ;)
-		 if (request.getParameterMap().isEmpty()) {
+		if (request.getParameterMap().isEmpty()) {
 			 throw new ZeroRequestParameterException();
-         }
+        }
+
+		// count requests
+		monitor.add();
 
 
 		if ("GET".equalsIgnoreCase(request.getMethod())) {
