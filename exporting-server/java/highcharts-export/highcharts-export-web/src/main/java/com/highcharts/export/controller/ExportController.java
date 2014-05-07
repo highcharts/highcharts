@@ -19,9 +19,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,7 +37,6 @@ import com.highcharts.export.util.TempDir;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.logging.Level;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
@@ -64,28 +61,12 @@ public class ExportController extends HttpServlet {
 	@Autowired
 	private MonitorService monitor;
 
-	/* catch all GET requests and redirect those */
-	@RequestMapping(method = RequestMethod.GET)
-	public String getAll(HttpSession session) {
-
-		String tempFile = (String) session.getAttribute("tempFile");
-		session.removeAttribute("tempFile");
-
-		if (tempFile != null && !tempFile.isEmpty()) {
-			// redirect to file download
-			return "redirect:" + TempDir.getDownloadLink(tempFile);
-		}
-		// redirect to demo page
-		return "redirect:demo";
-	}
-
-
 	@RequestMapping(value = "/demo", method = RequestMethod.GET)
 	public String demo() {
 		return "demo";
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(method = {RequestMethod.POST, RequestMethod.GET})
 	public HttpEntity<byte[]> exporter(
 		@RequestParam(value = "svg", required = false) String svg,
 		@RequestParam(value = "type", required = false) String type,
@@ -95,72 +76,119 @@ public class ExportController extends HttpServlet {
 		@RequestParam(value = "options", required = false) String options,
 		@RequestParam(value = "constr", required = false) String constructor,
 		@RequestParam(value = "callback", required = false) String callback,
+		@RequestParam(value = "callbackHC", required = false) String callbackHC,
 		@RequestParam(value = "async", required = false, defaultValue = "false")  Boolean async,
+		@RequestParam(value = "jsonp", required = false, defaultValue = "false") Boolean jsonp,
 		HttpServletRequest request,
-		HttpSession session) throws ServletException, InterruptedException, SVGConverterException, NoSuchElementException, PoolException, TimeoutException, IOException {
+		HttpSession session) throws ServletException, InterruptedException, SVGConverterException, NoSuchElementException, PoolException, TimeoutException, IOException, ZeroRequestParameterException {
 
 		// count requests
 		monitor.add();
 
 		MimeType mime = getMime(type);
-		String tempFilename = null;
-
+		String randomFilename = null;
+		String jsonpCallback = "";
 		boolean isAndroid = request.getHeader("user-agent") != null && request.getHeader("user-agent").contains("Android");
 
+		// check for visitors who don't know this domain is really only for the exporting service ;)
+		 if (request.getParameterMap().isEmpty()) {
+			 throw new ZeroRequestParameterException();
+         }
+
+
+		if ("GET".equalsIgnoreCase(request.getMethod())) {
+
+            // Handle redirect downloads for Android devices
+            String tempFile = (String) session.getAttribute("tempFile");
+            session.removeAttribute("tempFile");
+
+            if (tempFile != null && !tempFile.isEmpty()) {
+				logger.debug("filename stored in session, read and stream from filesystem");				
+				String basename = FilenameUtils.getBaseName(tempFile);
+				String extension = FilenameUtils.getExtension(tempFile);
+
+				return getFile(basename, extension);
+
+            }
+        }
+
+		/* Most JSONP implementations use the 'callback' request parameter and this overwrites
+		 * the original callback parameter for chart creation with Highcharts. If JSONP is
+		 * used we recommend using the requestparameter callbackHC as the callback for Highcharts.
+		 * store the callback method name and reset the callback parameter,
+		 * otherwise it will be used when creation charts
+		 */
+		if (jsonp) {
+			async = true;
+			jsonpCallback = callback;
+			callback = null;
+
+			if (callbackHC != null) {
+				callback = callbackHC;
+			}
+        }
+       
 		if (isAndroid || MimeType.PDF.equals(mime) || async) {
-			tempFilename = createUniqueFileName(mime.name().toLowerCase());
+			randomFilename = createRandomFileName(mime.name().toLowerCase());
 		}
 
-		String output = processRequest(svg, mime, width, scale, options, constructor, callback, tempFilename);
+		/* If randomFilename is not null, then we want to save the filename in session, in case of GET is used later on*/
+        if (isAndroid) {
+            logger.debug("storing randomfile in session: " +  FilenameUtils.getName(randomFilename));
+            session.setAttribute("tempFile", FilenameUtils.getName(randomFilename));
+        }
+
+		String output = convert(svg, mime, width, scale, options, constructor, callback, randomFilename);
 		ByteArrayOutputStream stream;
 
+		HttpHeaders headers = new HttpHeaders();
+
 		if (async) {
-			String link = TempDir.getDownloadLink(tempFilename);
-			// write to stream
-			stream = new ByteArrayOutputStream();
-			stream.write(link.getBytes("utf-8"));
+			String link = TempDir.getDownloadLink(randomFilename);
+            stream = new ByteArrayOutputStream();
+            if (jsonp) {
+                StringBuilder sb = new StringBuilder(jsonpCallback);
+                sb.append("('");
+                sb.append(link);
+                sb.append("')");
+                stream.write(sb.toString().getBytes("utf-8"));
+                headers.add("Content-Type", "text/javascript; charset=utf-8");
+            } else {
+                stream.write(link.getBytes("utf-8"));
+                headers.add("Content-Type", "text/html; charset=UTF-8");
+            }
 		} else {
-			stream = ouputToStream(output, mime, tempFilename);
-		}
-
-		/* If tempFilename is not null, then we want to save the filename in session, in case of GET is used later on*/
-		if (isAndroid) {
-			session.setAttribute("tempFile", FilenameUtils.getName(tempFilename));
-		}
-
-		filename = getFilename(filename);
-
-	    HttpHeaders headers = new HttpHeaders();
-		headers.add("Content-Type", mime.getType() + "; charset=utf-8");
-		headers.add("Content-Disposition",
+			headers.add("Content-Type", mime.getType() + "; charset=utf-8");
+			if (randomFilename != null && randomFilename.equals(output)) {
+				stream = writeFileToStream(randomFilename);
+			} else {
+				boolean base64 = !mime.getExtension().equals("svg");
+				stream = outputToStream(output, base64);
+			}
+			filename = getFilename(filename);
+			headers.add("Content-Disposition",
                    "attachment; filename=" + filename.replace(" ", "_") + "." + mime.name().toLowerCase());
+		}
+
 		headers.setContentLength(stream.size());
 
 		return new HttpEntity<byte[]>(stream.toByteArray(), headers);
 	}
 
 	@RequestMapping(value = "/files/{name}.{ext}", method = RequestMethod.GET)
-	public void getFile(@PathVariable("name") String name, @PathVariable("ext") String ext, HttpServletResponse response) throws SVGConverterException, IOException {
-		Path path = Paths.get(TempDir.getOutputDir().toString(), name + "." + ext);
+	public HttpEntity<byte[]> getFile(@PathVariable("name") String name, @PathVariable("ext") String extension) throws SVGConverterException, IOException {
+		
+		Path path = Paths.get(TempDir.getOutputDir().toString(), name + "." + extension);
+		String filename = path.toString();
+		MimeType mime = getMime(extension);
 
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		try {
-			stream.write(FileUtils.readFileToByteArray(new File(path.toString())));
-		} catch (IOException ioex) {
-			logger.error("Tried to read file from filesystem: " + ioex.getMessage());
-			throw new SVGConverterException("IOException: cannot find your file to download...");
-		}
+		ByteArrayOutputStream stream = writeFileToStream(filename);
 
-		MimeType mime = MimeType.valueOf(ext.toUpperCase());
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Content-Type", mime.getType() + "; charset=utf-8");
+		headers.setContentLength(stream.size());
 
-		response.reset();
-		response.setCharacterEncoding("utf-8");
-		response.setContentLength(stream.size());
-		response.setContentType(mime.getType());
-		response.setStatus(HttpStatus.OK.value());
-		IOUtils.write(stream.toByteArray(), response.getOutputStream());
-		response.flushBuffer();
-
+		return new HttpEntity<byte[]>(stream.toByteArray(), headers);
 	}
 
 	@RequestMapping(value="/json/{name}.{ext}", method = RequestMethod.POST)
@@ -169,109 +197,42 @@ public class ExportController extends HttpServlet {
 		@PathVariable("ext") String extension,
 		@RequestBody String requestBody) throws SVGConverterException, TimeoutException, NoSuchElementException, PoolException {
 
-		String tempFilename;
-		tempFilename = null;
+		String randomFilename;
+		randomFilename = null;
 		String json = requestBody;
 		MimeType mime = getMime(extension);
 
 		// add outfile parameter to the json with a simple string replace
 		if (MimeType.PDF.equals(mime)) {
-			tempFilename = createUniqueFileName(mime.name().toLowerCase());
+			randomFilename = createRandomFileName(mime.name().toLowerCase());
 			int ind = json.lastIndexOf("}");
-			json = new StringBuilder(json).replace(ind, ind+1,",\"outfile\":\"" + tempFilename).toString() + "\"}";
+			json = new StringBuilder(json).replace(ind, ind+1,",\"outfile\":\"" + randomFilename).toString() + "\"}";
 		}
 
-
 		String result = converter.requestServer(json);
-		ByteArrayOutputStream bos = ouputToStream(result, mime, tempFilename);
+		ByteArrayOutputStream stream;
+		if (randomFilename != null && randomFilename.equals(result)) {
+			stream = writeFileToStream(randomFilename);
+		} else {
+			boolean base64 = !mime.getExtension().equals("svg");
+			stream = outputToStream(result, base64);
+		}
+
 		HttpHeaders headers = new HttpHeaders();
 
 		headers.add("Content-Type", mime.getType() + "; charset=utf-8");
 		headers.add("Content-Disposition",
                    "attachment; filename=" + name + "." + extension);
-		headers.setContentLength(bos.size());
+		headers.setContentLength(stream.size());
 
-		return new HttpEntity<byte[]>(bos.toByteArray(), headers);
+		return new HttpEntity<byte[]>(stream.toByteArray(), headers);
 	}
 	
-
-	@ExceptionHandler(IOException.class)
-	public ModelAndView handleIOException(Exception ex, HttpServletResponse response) {
-		monitor.addError();
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("error");
-		modelAndView.addObject("message", ex.getMessage());
-		response.setStatus(500);
-		return modelAndView;
-	}
-
-	@ExceptionHandler(TimeoutException.class)
-	public ModelAndView handleTimeoutException(Exception ex, HttpServletResponse response) {
-		monitor.addError();
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("error");
-		modelAndView
-				.addObject(
-						"message",
-						"Timeout converting SVG, is your file this big, or maybe you have a syntax error in the javascript callback?");
-		response.setStatus(500);
-		return modelAndView;
-	}
-
-	@ExceptionHandler(PoolException.class)
-	public ModelAndView handleServerPoolException(Exception ex, HttpServletResponse response) {
-		monitor.addError();
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("error");
-		modelAndView
-				.addObject(
-						"message",
-						"Sorry, the server is handling too many requests at the moment. Please try again.");
-		response.setStatus(500);
-		return modelAndView;
-	}
-
-	@ExceptionHandler(SVGConverterException.class)
-	public ModelAndView handleSVGRasterizeException(Exception ex, HttpServletResponse response) {
-		monitor.addError();
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("error");
-		modelAndView
-				.addObject(
-						"message",
-						"Something went wrong while converting. " + ex.getMessage());
-		response.setStatus(500);
-		return modelAndView;
-	}
-
-	@ExceptionHandler(InterruptedException.class)
-	public ModelAndView handleInterruptedException(Exception ex, HttpServletResponse response) {
-		monitor.addError();
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("error");
-		modelAndView
-				.addObject(
-						"message",
-						"It took too long time to process the options, no SVG is created. Make sure your javascript is correct");
-		response.setStatus(500);
-		return modelAndView;
-	}
-
-	@ExceptionHandler(ServletException.class)
-	public ModelAndView handleServletException(Exception ex, HttpServletResponse response) {
-		monitor.addError();
-		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.setViewName("error");
-		modelAndView.addObject("message", ex.getMessage());
-		response.setStatus(500);
-		return modelAndView;
-	}
-
 	/*
-	 * UTILS METHODS
+	 * INSTANCE METHODS
 	 */
 
-	private String processRequest(String svg, MimeType mime, String width, String scale, String options, String constructor, String callback, String filename) throws SVGConverterException, PoolException, NoSuchElementException, TimeoutException, ServletException {
+	private String convert(String svg, MimeType mime, String width, String scale, String options, String constructor, String callback, String filename) throws SVGConverterException, PoolException, NoSuchElementException, TimeoutException, ServletException {
 
 		Float parsedWidth = widthToFloat(width);
 		Float parsedScale = scaleToFloat(scale);
@@ -287,15 +248,12 @@ public class ExportController extends HttpServlet {
 			callback = sanitize(callback);
 		} else {
 			// assume SVG conversion
+			svg = sanitize(svg);
 			if (svg == null) {
+				logger.error("The mandatory 'svg' or 'options' POST parameter is undefined.");
 				throw new ServletException(
-						"The manadatory svg POST parameter is undefined.");
-			} else {
-				svg = sanitize(svg);
-				if (svg == null) {
-					throw new ServletException(
-							"The mandatory svg POST parameter is undefined.");
-				}
+						"The mandatory 'svg' or 'options' POST parameter is undefined.");
+			} else {				
 				convertSvg = true;
 				input = svg;
 			}
@@ -369,32 +327,120 @@ public class ExportController extends HttpServlet {
 		return null;
 	}
 
-	public String createUniqueFileName(String extension) {
+	public String createRandomFileName(String extension) {
 		Path path = Paths.get(TempDir.outputDir.toString(), RandomStringUtils.randomAlphanumeric(8) + "." + extension);
 		return path.toString();
 	}
 
-	private ByteArrayOutputStream ouputToStream(String output, MimeType mime, String filename) {
+	private ByteArrayOutputStream outputToStream(String output, boolean base64) throws SVGConverterException {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		try {
-			// for example with PDF files or async download
-			if (output.equalsIgnoreCase(filename)) {
-				stream.write(FileUtils.readFileToByteArray(new File(filename)));
-			}
-
-			if (filename == null) {
-				if (mime.getExtension().equals("svg")) {
-					stream.write(output.getBytes());
-				} else {
-					//decode the base64 string
-					stream.write(Base64.decodeBase64(output));
-				}
+			if (base64) {
+				 //decode the base64 string
+				stream.write(Base64.decodeBase64(output));
+			} else {
+				stream.write(output.getBytes());
 			}
 		} catch (IOException ex) {
-			java.util.logging.Logger.getLogger(ExportController.class.getName()).log(Level.SEVERE, null, ex);
+			logger.error("Error in outputToStream: " + ex.getMessage());
+			throw new SVGConverterException("Error while converting");
 		}
 
 		return stream;
 	}
 
+	private ByteArrayOutputStream writeFileToStream(String filename) throws SVGConverterException {
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+		try {
+			stream.write(FileUtils.readFileToByteArray(new File(filename)));
+		} catch (IOException ioex) {
+			logger.error("Tried to read file from filesystem: " + ioex.getMessage());
+			throw new SVGConverterException("IOException: cannot find your file to download...");
+		}
+
+		return stream;
+	}
+
+	/* EXCEPTION HANDLERS */
+
+	@ExceptionHandler(ZeroRequestParameterException.class)
+	public ModelAndView handleZeroRequestParameterException(Exception ex, HttpServletResponse response) {
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("demo");
+		response.setStatus(302);
+		return modelAndView;
+	}
+
+	@ExceptionHandler(IOException.class)
+	public ModelAndView handleIOException(Exception ex, HttpServletResponse response) {
+		monitor.addError();
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("error");
+		modelAndView.addObject("message", ex.getMessage());
+		response.setStatus(500);
+		return modelAndView;
+	}
+
+	@ExceptionHandler(TimeoutException.class)
+	public ModelAndView handleTimeoutException(Exception ex, HttpServletResponse response) {
+		monitor.addError();
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("error");
+		modelAndView
+				.addObject(
+						"message",
+						"Timeout converting SVG, is your file this big, or maybe you have a syntax error in the javascript callback?");
+		response.setStatus(500);
+		return modelAndView;
+	}
+
+	@ExceptionHandler(PoolException.class)
+	public ModelAndView handleServerPoolException(Exception ex, HttpServletResponse response) {
+		monitor.addError();
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("error");
+		modelAndView
+				.addObject(
+						"message",
+						"Sorry, the server is handling too many requests at the moment. Please try again.");
+		response.setStatus(500);
+		return modelAndView;
+	}
+
+	@ExceptionHandler(SVGConverterException.class)
+	public ModelAndView handleSVGRasterizeException(Exception ex, HttpServletResponse response) {
+		monitor.addError();
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("error");
+		modelAndView
+				.addObject(
+						"message",
+						"Something went wrong while converting. " + ex.getMessage());
+		response.setStatus(500);
+		return modelAndView;
+	}
+
+	@ExceptionHandler(InterruptedException.class)
+	public ModelAndView handleInterruptedException(Exception ex, HttpServletResponse response) {
+		monitor.addError();
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("error");
+		modelAndView
+				.addObject(
+						"message",
+						"It took too long time to process the options, no SVG is created. Make sure your javascript is correct");
+		response.setStatus(500);
+		return modelAndView;
+	}
+
+	@ExceptionHandler(ServletException.class)
+	public ModelAndView handleServletException(Exception ex, HttpServletResponse response) {
+		monitor.addError();
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("error");
+		modelAndView.addObject("message", ex.getMessage());
+		response.setStatus(500);
+		return modelAndView;
+	}
 }
