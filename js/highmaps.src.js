@@ -14419,9 +14419,10 @@ Series.prototype.drawDataLabels = function () {
 		if (!series.hasRendered && pick(options.defer, true)) {
 			dataLabelsGroup.attr({ opacity: 0 });
 			addEvent(series, 'afterAnimate', function () {
-				if (series.visible) { // #3023
-					series.dataLabelsGroup.show()[seriesOptions.animation ? 'animate' : 'attr']({ opacity: 1 }, { duration: 200 });
+				if (series.visible) { // #3023, #3024
+					dataLabelsGroup.show();
 				}
+				dataLabelsGroup[seriesOptions.animation ? 'animate' : 'attr']({ opacity: 1 }, { duration: 200 });
 			});
 		}
 
