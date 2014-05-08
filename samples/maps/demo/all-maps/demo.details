@@ -3,6 +3,6 @@
  authors:
    - Torstein Hønsi
  resources: 
-   - http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.js
-   - http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css
+   - http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.js
+   - http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css
 ...

@@ -1,37 +1,27 @@
 #pageWrapperOuter {
     width: 1000px;
-    float: right;
-    right: 50%;
-    position: relative;
+    margin: 0 auto;
+    height: 500px;
 }
 #pageWrapperInner {
-    float: right;
-    right: -50%;
-    position: relative;
 }
 #mapBox {
     float: left;
+    border-right: 1px solid silver;
 }
 #container {
     height: 500px;
-    width: 600px;
+    width: 700px;
 }
 #sideBox {
-    float: right;    
+    float: right;
+    width: 270px;   
     margin: 0 10px;    
 }
 #chkDataLabels {
     margin-top: 10px;    
 }
 #infoBox {
-    margin-top: 10px;    
-    padding: 5px;
-    border: 1px solid black;    
-}
-.dropdownLabel {
-    width: 100%;
-    text-align: center;
-    display: block;
     margin-top: 10px;
 }
 .combobox {
@@ -41,4 +31,28 @@
     margin-top: 10em;
     text-align: center;
     color: gray;
+}
+.option-group {
+    font-weight: bold;
+    font-style: italic;
+}
+input.ui-widget {
+    font-size: 12px;
+    border-radius: 0;
+    height: 18px;
+    line-height: 18px;
+    display: inline-block;
+    background: white;
+}
+.ui-button-icon-only .ui-button-text {
+    height: 18px;
+    padding: 0;
+    line-height: 18px;
+    background: white;
+}
+.prev-next {
+    line-height: 12px;
+    background: white;
+    font-weight: bold;
+    color: #999;
 }

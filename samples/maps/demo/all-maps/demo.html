@@ -1,29 +1,30 @@
 <script src="http://code.highcharts.com/maps/highmaps.js"></script>
-<script src="http://code.highcharts.com/maps/modules/exporting.js"></script>
 <script src="http://code.highcharts.com/mapdata/1.0.0/index.js"></script>
+<script src="http://www.highcharts.local/samples/maps/demo/all-maps/jquery.combobox.js"></script>
+
 <div id="pageWrapperOuter">
     <div id="pageWrapperInner">
         <div id="mapBox">
             <div id="container"></div> 
         </div>
         <div id="sideBox">
+            <!--
             <label class="dropdownLabel">Choose category</label>
             <div class="selector">
                 <button id="btnPrevCat">Prev</button>
                 <select id="catDropdown" class="ui-widget combobox"></select>
                 <button id="btnNextCat">Next</button>
             </div>
-            <label class="dropdownLabel">Choose map</label>
+        -->
             <div class="selector">
-                <button id="btnPrevMap">Prev</button>
+                <button id="btn-prev-map" class="prev-next">&lt;</button>
                 <select id="mapDropdown" class="ui-widget combobox"></select>
-                <button id="btnNextMap">Next</button>
+                <button id="btn-next-map" class="prev-next">&gt;</button>
             </div>
             <input type="checkbox" id="chkDataLabels" checked='checked'>Data labels</input>
             <div id="infoBox">
                 <div class="infoText">Download or link to this map:</div>
                 <div id="download"></div>
-                <div class="infoText">To edit our maps, check out <a href="http://www.qgis.org" target="_blank">QGIS</a>
                 </div>
             </div>
         </div>
