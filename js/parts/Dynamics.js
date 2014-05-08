@@ -401,6 +401,7 @@ extend(Series.prototype, {
 
 
 		this.init(chart, newOptions);
+		chart.linkSeries(); // Links are lost in this.remove (#3028)
 		if (pick(redraw, true)) {
 			chart.redraw(false);
 		}
