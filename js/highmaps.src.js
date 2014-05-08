@@ -8815,7 +8815,8 @@ Pointer.prototype = {
 			clickedInside,
 			size,
 			mouseDownX = this.mouseDownX,
-			mouseDownY = this.mouseDownY;
+			mouseDownY = this.mouseDownY,
+			panKey = chartOptions.panKey && e[chartOptions.panKey + 'Key']; // docs
 
 		// If the mouse is outside the plot area, adjust to cooordinates
 		// inside to prevent the selection marker from going outside
@@ -8841,7 +8842,7 @@ Pointer.prototype = {
 			clickedInside = chart.isInsidePlot(mouseDownX - plotLeft, mouseDownY - plotTop);
 
 			// make a selection
-			if (chart.hasCartesianSeries && (this.zoomX || this.zoomY) && clickedInside) {
+			if (chart.hasCartesianSeries && (this.zoomX || this.zoomY) && clickedInside && !panKey) {
 				if (!this.selectionMarker) {
 					this.selectionMarker = chart.renderer.rect(
 						plotLeft,
