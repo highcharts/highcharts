@@ -392,6 +392,13 @@
 
 			// disable animations
 			Highcharts.SVGRenderer.prototype.Element.prototype.animate = Highcharts.SVGRenderer.prototype.Element.prototype.attr;
+			Highcharts.setOptions({ 
+				plotOptions: {
+					series: {
+						animation: false
+					}
+				}
+			});
 
 			if (!options.chart) {
 				options.chart = {};
@@ -510,11 +517,11 @@
 					svg = page.evaluate(createChart, width, constr, input, globalOptions, dataOptions, customCode, outType, callback, messages);
 
 					if (!window.optionsParsed) {
-						exit('ERROR: the options variable was not available, contains the infile an syntax error? see' + input);
+						exit('ERROR: the options variable was not available or couldn\'t be parsed, does the infile contain an syntax error? Input used:' + input);
 					}
 
 					if (callback !== undefined && !window.callbackParsed) {
-						exit('ERROR: the callback variable was not available, contains the callbackfile an syntax error? see' + callback);
+						exit('ERROR: the callback variable was not available, does the callback contain an syntax error? Callback used: ' + callback);
 					}
 					renderSVG(svg);
 				}
@@ -574,7 +581,7 @@
 		try{
 			fs.makeDirectory(config.tmpDir);
 		} catch (e) {
-			console.log('ERROR: Cannot make temp directory');
+			console.log('ERROR: Cannot create temp directory for ' + config.tmpDir);
 		}
 	}
 

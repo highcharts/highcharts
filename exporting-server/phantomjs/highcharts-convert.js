@@ -392,6 +392,13 @@
 
 			// disable animations
 			Highcharts.SVGRenderer.prototype.Element.prototype.animate = Highcharts.SVGRenderer.prototype.Element.prototype.attr;
+			Highcharts.setOptions({ 
+				plotOptions: {
+					series: {
+						animation: false
+					}
+				}
+			});
 
 			if (!options.chart) {
 				options.chart = {};
