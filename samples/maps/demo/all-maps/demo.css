@@ -1,0 +1,44 @@
+#pageWrapperOuter {
+    width: 1000px;
+    float: right;
+    right: 50%;
+    position: relative;
+}
+#pageWrapperInner {
+    float: right;
+    right: -50%;
+    position: relative;
+}
+#mapBox {
+    float: left;
+}
+#container {
+    height: 500px;
+    width: 600px;
+}
+#sideBox {
+    float: right;    
+    margin: 0 10px;    
+}
+#chkDataLabels {
+    margin-top: 10px;    
+}
+#infoBox {
+    margin-top: 10px;    
+    padding: 5px;
+    border: 1px solid black;    
+}
+.dropdownLabel {
+    width: 100%;
+    text-align: center;
+    display: block;
+    margin-top: 10px;
+}
+.combobox {
+    margin: 5px;
+}
+.loading {
+    margin-top: 10em;
+    text-align: center;
+    color: gray;
+}
