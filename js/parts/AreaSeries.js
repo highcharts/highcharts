@@ -162,14 +162,14 @@ var AreaSeries = extendClass(Series, {
 		var series = this,
 			areaPath = this.areaPath,
 			options = this.options,
-			negativeColor = options.negativeColor,
-			negativeFillColor = options.negativeFillColor,
+			colorThresholds = options.colorThresholds,
 			props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
 		
-		if (negativeColor || negativeFillColor) {
-			props.push(['areaNeg', negativeColor, negativeFillColor]);
+		if (colorThresholds) {
+			Highcharts.each(colorThresholds, function (threshold, i) {
+				props.push(['colorArea' + i, threshold.color || series.color, threshold.fillColor || options.fillColor]);
+			});
 		}
-		
 		each(props, function (prop) {
 			var areaKey = prop[0],
 				area = series[areaKey];

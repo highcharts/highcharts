@@ -12652,6 +12652,17 @@ Series.prototype = {
 			delete options.marker;
 		}
 
+		if ((options.negativeColor || options.negativeFillColor) && !options.colorThresholds) {
+			options.colorThresholds = [{
+				to: options.threshold || 0,
+				color: options.negativeColor,
+				fillColor: options.negativeFillColor
+			}, {
+				from: options.threshold || 0,
+				color: options.color,
+				fillColor: options.fillColor
+			}];
+		}
 		return options;
 
 	},
@@ -13388,7 +13399,6 @@ Series.prototype = {
 			pointAttr,
 			pointAttrToOptions = series.pointAttrToOptions,
 			hasPointSpecificOptions = series.hasPointSpecificOptions,
-			negativeColor = seriesOptions.negativeColor,
 			defaultLineColor = normalOptions.lineColor,
 			defaultFillColor = normalOptions.fillColor,
 			turboThreshold = seriesOptions.turboThreshold,
@@ -13435,8 +13445,15 @@ Series.prototype = {
 					normalOptions.radius = 0;
 				}
 
-				if (point.negative && negativeColor) {
-					point.color = point.fillColor = negativeColor;
+				if (series.options.colorThresholds) {
+					var thresholdColor,
+						threshold, 
+						j = 0;						
+					do {
+						threshold = series.options.colorThresholds[j++];
+						thresholdColor = threshold.color;
+					} while (!((point.y >= pick(threshold.from, -Number.MAX_VALUE)) && (point.y <= pick(threshold.to, Number.MAX_VALUE))));
+					point.color = point.fillColor = thresholdColor;
 				}
 
 				hasPointSpecificOptions = seriesOptions.colorByPoint || point.color; // #868
@@ -13671,17 +13688,17 @@ Series.prototype = {
 	drawGraph: function () {
 		var series = this,
 			options = this.options,
-			props = [['graph', options.lineColor || this.color]],
+			props = [['graph', options.lineColor || this.color, options.dashStyle]],
 			lineWidth = options.lineWidth,
-			dashStyle =  options.dashStyle,
 			roundCap = options.linecap !== 'square',
 			graphPath = this.getGraphPath(),
-			negativeColor = options.negativeColor;
+			colorThresholds = options.colorThresholds;
 
-		if (negativeColor) {
-			props.push(['graphNeg', negativeColor]);
+		if (colorThresholds) {
+			Highcharts.each(colorThresholds, function (threshold, i) {
+				props.push(['colorGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
+			});
 		}
-
 		// draw the graph
 		each(props, function (prop, i) {
 			var graphKey = prop[0],
@@ -13699,8 +13716,8 @@ Series.prototype = {
 					fill: NONE,
 					zIndex: 1 // #1069
 				};
-				if (dashStyle) {
-					attribs.dashstyle = dashStyle;
+				if (prop[2]) {
+					attribs.dashstyle = prop[2];
 				} else if (roundCap) {
 					attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
 				}
@@ -13717,87 +13734,53 @@ Series.prototype = {
 	 * Clip the graphs into the positive and negative coloured graphs
 	 */
 	clipNeg: function () {
-		var options = this.options,
+		var series = this,
+			options = this.options,
 			chart = this.chart,
 			renderer = chart.renderer,
-			negativeColor = options.negativeColor || options.negativeFillColor,
-			translatedThreshold,
-			posAttr,
-			negAttr,
+			colorThresholds = options.colorThresholds,
+			translatedFrom,
+			translatedTo,
+			clips = this.clips || [],
+			clipAttr,
 			graph = this.graph,
 			area = this.area,
-			posClip = this.posClip,
-			negClip = this.negClip,
-			chartWidth = chart.chartWidth,
-			chartHeight = chart.chartHeight,
-			chartSizeMax = mathMax(chartWidth, chartHeight),
+			chartSizeMax = mathMax(chart.chartWidth, chart.chartHeight),
 			yAxis = this.yAxis,
-			above,
-			below;
+			reversed = yAxis.reversed;
 
-		if (negativeColor && (graph || area)) {
-			translatedThreshold = mathRound(yAxis.toPixels(options.threshold || 0, true));
-			if (translatedThreshold < 0) {
-				chartSizeMax -= translatedThreshold; // #2534
-			}
-			above = {
-				x: 0,
-				y: 0,
-				width: chartSizeMax,
-				height: translatedThreshold
-			};
-			below = {
-				x: 0,
-				y: translatedThreshold,
-				width: chartSizeMax,
-				height: chartSizeMax
-			};
+		if (colorThresholds && (graph || area)) {
+			// The use of the Color Threshold assumes there are no gaps
+			// so it is safe to hide the original graph and area
+			graph.hide();
+			if (area) { area.hide(); }
 
-			if (chart.inverted) {
+			// Create the Clips
+			Highcharts.each(colorThresholds, function (threshold, i) {
+				translatedFrom = mathRound(yAxis.toPixels(pick(threshold.from, yAxis.min), true));
+				translatedTo = mathRound(yAxis.toPixels(pick(threshold.to, yAxis.max), true));
 
-				above.height = below.y = chart.plotWidth - translatedThreshold;
-				if (renderer.isVML) {
-					above = {
-						x: chart.plotWidth - translatedThreshold - chart.plotLeft,
-						y: 0,
-						width: chartWidth,
-						height: chartHeight
-					};
-					below = {
-						x: translatedThreshold + chart.plotLeft - chartWidth,
-						y: 0,
-						width: chart.plotLeft + translatedThreshold,
-						height: chartWidth
-					};
+				clipAttr = {
+					x: 0,
+					y: reversed ? translatedFrom : translatedTo,
+					width: chartSizeMax,
+					height: Math.abs(translatedFrom - translatedTo)
+				};
+
+				if (clips[i]) {
+					clips[i].animate(clipAttr);
+				} else {
+					clips[i] = renderer.clipRect(clipAttr);
+
+					graph.clip(clips[i]);	
+					series['colorGraph' + i].clip(clips[i]);
+
+					if (area) {
+						area.clip(clips[i]);
+						series['colorArea' + i].clip(clips[i]);
+					}
 				}
-			}
-
-			if (yAxis.reversed) {
-				posAttr = below;
-				negAttr = above;
-			} else {
-				posAttr = above;
-				negAttr = below;
-			}
-
-			if (posClip) { // update
-				posClip.animate(posAttr);
-				negClip.animate(negAttr);
-			} else {
-
-				this.posClip = posClip = renderer.clipRect(posAttr);
-				this.negClip = negClip = renderer.clipRect(negAttr);
-
-				if (graph && this.graphNeg) {
-					graph.clip(posClip);
-					this.graphNeg.clip(negClip);
-				}
-
-				if (area) {
-					area.clip(posClip);
-					this.areaNeg.clip(negClip);
-				}
-			}
+			});
 		}
 	},
 
@@ -14963,14 +14946,14 @@ var AreaSeries = extendClass(Series, {
 		var series = this,
 			areaPath = this.areaPath,
 			options = this.options,
-			negativeColor = options.negativeColor,
-			negativeFillColor = options.negativeFillColor,
+			colorThresholds = options.colorThresholds,
 			props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
 		
-		if (negativeColor || negativeFillColor) {
-			props.push(['areaNeg', negativeColor, negativeFillColor]);
+		if (colorThresholds) {
+			Highcharts.each(colorThresholds, function (threshold, i) {
+				props.push(['colorArea' + i, threshold.color || series.color, threshold.fillColor || options.fillColor]);
+			});
 		}
-		
 		each(props, function (prop) {
 			var areaKey = prop[0],
 				area = series[areaKey];
