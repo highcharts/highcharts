@@ -12627,7 +12627,8 @@ Series.prototype = {
 			userOptions = chart.userOptions || {},
 			userPlotOptions = userOptions.plotOptions || {},
 			typeOptions = plotOptions[this.type],
-			options;
+			options,
+			colorThresholds;
 
 		this.userOptions = itemOptions;
 
@@ -12652,17 +12653,24 @@ Series.prototype = {
 			delete options.marker;
 		}
 
-		if ((options.negativeColor || options.negativeFillColor) && !options.colorThresholds) {
-			options.colorThresholds = [{
-				to: options.threshold || 0,
+		colorThresholds = options.colorThresholds;		
+		if ((options.negativeColor || options.negativeFillColor) && !colorThresholds) {
+			colorThresholds = [{
+				value: options.threshold || 0,
 				color: options.negativeColor,
 				fillColor: options.negativeFillColor
-			}, {
-				from: options.threshold || 0,
-				color: options.color,
-				fillColor: options.fillColor
 			}];
 		}
+		if (colorThresholds) {
+			if (defined(colorThresholds[colorThresholds.length - 1].value)) {
+				colorThresholds.push({
+					color: this.color,
+					fillColor: this.fillColor
+				});
+			}
+		}
+		options.colorThresholds = colorThresholds;
+		
 		return options;
 
 	},
@@ -13446,14 +13454,12 @@ Series.prototype = {
 				}
 
 				if (series.options.colorThresholds) {
-					var thresholdColor,
-						threshold, 
-						j = 0;						
-					do {
-						threshold = series.options.colorThresholds[j++];
-						thresholdColor = threshold.color;
-					} while (!((point.y >= pick(threshold.from, -Number.MAX_VALUE)) && (point.y <= pick(threshold.to, Number.MAX_VALUE))));
-					point.color = point.fillColor = thresholdColor;
+					var j = 0,
+						threshold = series.options.colorThresholds[j];
+					while (point.y > threshold.value) {				
+						threshold = series.options.colorThresholds[++j];
+					}
+					point.color = point.fillColor = threshold.color;
 				}
 
 				hasPointSpecificOptions = seriesOptions.colorByPoint || point.color; // #868
@@ -13757,9 +13763,8 @@ Series.prototype = {
 
 			// Create the Clips
 			Highcharts.each(colorThresholds, function (threshold, i) {
-				translatedFrom = mathRound(yAxis.toPixels(pick(threshold.from, yAxis.min), true));
-				translatedTo = mathRound(yAxis.toPixels(pick(threshold.to, yAxis.max), true));
-
+				translatedFrom = pick(translatedTo, mathRound(yAxis.toPixels(yAxis.min)), true);
+				translatedTo = mathRound(yAxis.toPixels(pick(threshold.value, yAxis.max), true));
 				clipAttr = {
 					x: 0,
 					y: reversed ? translatedFrom : translatedTo,

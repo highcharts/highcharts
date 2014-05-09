@@ -1,0 +1,53 @@
+<html>
+<head>
+<title>Color Thresholds</title>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="http://code.highcharts.sv/highcharts.js"></script>
+<script>
+$(function () {
+    var DATA = [],
+        count = 180;
+
+    for (var i = 0; i < count; i++) {
+        DATA.push(Math.floor(Math.sin(i / 60 * Math.PI)*100));
+    }
+
+    $('#container').highcharts(
+    {    
+        chart: {
+            type: 'areaspline'
+        },
+        plotOptions: {
+            series: {
+                marker: {
+                    enabled: false,
+                }
+            }
+        },
+        series: [{
+            data: DATA,        
+            negativeColor: 'red'
+            /*    
+            colorThresholds: [{
+                value: -50,
+                dashStyle: 'dot',
+                color: 'red',
+                fillColor: 'pink'
+            }, { 
+                value: 50,
+                color: 'green'
+            }]*/
+            
+        }]
+    });
+});
+</script>
+</head>
+
+<body>
+    <div>
+	   <div id="container" style="height:400px; width:600px; float: left"></div>
+    </div>
+</body>
+
+</html
