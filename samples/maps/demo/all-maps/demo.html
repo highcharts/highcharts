@@ -1,26 +1,20 @@
 <script src="http://code.highcharts.com/maps/highmaps.js"></script>
 <script src="http://code.highcharts.com/mapdata/1.0.0/index.js"></script>
 <script src="http://www.highcharts.local/samples/maps/demo/all-maps/jquery.combobox.js"></script>
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
-<div id="pageWrapperOuter">
-    <div id="pageWrapperInner">
+    <div id="demo-wrapper">
         <div id="mapBox">
+            <div id="up"></div>
+            <div class="selector">
+                <button id="btn-prev-map" class="prev-next"><i class="fa fa-angle-left"></i></button>
+                <select id="mapDropdown" class="ui-widget combobox"></select>
+                <button id="btn-next-map" class="prev-next"><i class="fa fa-angle-right"></i></button>
+            </div>
             <div id="container"></div> 
         </div>
         <div id="sideBox">
-            <!--
-            <label class="dropdownLabel">Choose category</label>
-            <div class="selector">
-                <button id="btnPrevCat">Prev</button>
-                <select id="catDropdown" class="ui-widget combobox"></select>
-                <button id="btnNextCat">Next</button>
-            </div>
-        -->
-            <div class="selector">
-                <button id="btn-prev-map" class="prev-next">&lt;</button>
-                <select id="mapDropdown" class="ui-widget combobox"></select>
-                <button id="btn-next-map" class="prev-next">&gt;</button>
-            </div>
+            
             <input type="checkbox" id="chkDataLabels" checked='checked'>Data labels</input>
             <div id="infoBox">
                 <div class="infoText">Download or link to this map:</div>
@@ -29,4 +23,3 @@
             </div>
         </div>
     </div>
-</div>

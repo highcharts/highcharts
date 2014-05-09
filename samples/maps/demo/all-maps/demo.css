@@ -1,22 +1,22 @@
-#pageWrapperOuter {
+#demo-wrapper {
     width: 1000px;
     margin: 0 auto;
-    height: 500px;
-}
-#pageWrapperInner {
+    height: 560px;
 }
 #mapBox {
     float: left;
-    border-right: 1px solid silver;
 }
 #container {
     height: 500px;
-    width: 700px;
+    width: 800px;
 }
 #sideBox {
     float: right;
-    width: 270px;   
-    margin: 0 10px;    
+    width: 160px;   
+    margin: 100px 10px 0 10px;
+    padding-left: 10px;
+    border-left: 1px solid silver;
+    display: none;
 }
 #chkDataLabels {
     margin-top: 10px;    
@@ -24,35 +24,74 @@
 #infoBox {
     margin-top: 10px;
 }
-.combobox {
-    margin: 5px;
+#up {
+    height: 20px;
+    margin-top: 10px;
+    margin-left: 240px;
+}
+#up a {
+    cursor: pointer;
+}
+.selector {
+    height: 40px;
+    width: 400px;
+    margin: 0 auto;
+    position: relative;
+}
+.selector .prev-next {
+    position: absolute;
+    padding: 0 10px;
+    font-size: 30px;
+    line-height: 20px;
+    background: white;
+    font-weight: bold;
+    color: #999;
+    top: -2px;
+    display: none;
+}
+.selector .custom-combobox {
+    display: block;
+    position: absolute;
+    left: 40px;
+}
+.selector .custom-combobox .custom-combobox-input {
+    position: absolute;
+    font-size: 14px;
+    color: silver;
+    border-radius: 0;
+    height: 24px;
+    display: block;
+    background: url(http://api.highcharts.com/resources/images/search.png) 5px 5px no-repeat white;
+    padding: 1px 5px 1px 30px;
+    width: 290px;
+}
+.selector .custom-combobox .ui-autocomplete-input:focus {
+    color: black;
+}
+.selector .custom-combobox .ui-autocomplete-input.valid {
+    color: black;
+}
+.selector .custom-combobox-toggle {
+    position: absolute;
+    display: block;
+    left: 326px;
+    border-radius: 0;
+}
+
+.selector #btn-next-map {
+    left: 405px;
+}
+.ui-autocomplete {
+    max-height: 500px;
+    overflow: auto;
 }
 .loading {
     margin-top: 10em;
     text-align: center;
     color: gray;
 }
-.option-group {
-    font-weight: bold;
-    font-style: italic;
-}
-input.ui-widget {
-    font-size: 12px;
-    border-radius: 0;
-    height: 18px;
-    line-height: 18px;
-    display: inline-block;
-    background: white;
-}
 .ui-button-icon-only .ui-button-text {
-    height: 18px;
+    height: 26px;
     padding: 0;
-    line-height: 18px;
     background: white;
-}
-.prev-next {
-    line-height: 12px;
-    background: white;
-    font-weight: bold;
-    color: #999;
 }
