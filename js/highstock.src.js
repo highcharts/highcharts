@@ -48,6 +48,7 @@ var UNDEFINED,
 	idCounter = 0,
 	garbageBin,
 	defaultOptions,
+	userDefaultOptions={}, // store user default options by Highchart.setOptions()
 	dateFormat, // function
 	globalAnimation,
 	pathAnim,
@@ -1614,6 +1615,9 @@ function setTimeMethods() {
  * @param {Object} options The new custom options
  */
 function setOptions(options) {
+    
+	// copy in the user default options
+	userDefaultOptions = merge(userDefaultOptions,options);
 	
 	// Copy in the default options
 	defaultOptions = merge(true, defaultOptions, options);
@@ -21310,130 +21314,126 @@ Chart.prototype.callbacks.push(function (chart) {
 /**
  * A wrapper for Chart with all the default values for a Stock chart
  */
-Highcharts.StockChart = function (options, callback) {
-	var seriesOptions = options.series, // to increase performance, don't merge the data 
-		opposite,
+Highcharts.StockChart = function (userOption, callback) {
+    var _lineDefaultOptions = {
 
-		// Always disable startOnTick:true on the main axis when the navigator is enabled (#1090)
-		navigatorEnabled = pick(options.navigator && options.navigator.enabled, true),
-		disableStartOnTick = navigatorEnabled ? {
-			startOnTick: false,
-			endOnTick: false
-		} : null,
+            marker: {
+                enabled: false,
+                radius: 2
+            },
+            // gapSize: 0,
+            states: {
+                hover: {
+                    lineWidth: 2
+                }
+            }
+        },
+        _columnDefaultOptions = {
+            shadow: false,
+            borderWidth: 0
+        },
+        stockDefaultOption = {
+            chart: {
+                panning: true,
+                pinchType: 'x'
+            },
+            navigator: {
+                enabled: true
+            },
+            scrollbar: {
+                enabled: true
+            },
+            rangeSelector: {
+                enabled: true
+            },
+            title: {
+                text: null,
+                style: {
+                    fontSize: '16px' // docs
+                }
+            },
+            xAxis: {
+                minPadding: 0,
+                maxPadding: 0,
+                ordinal: true,
+                title: {
+                    text: null
+                },
+                labels: {
+                    overflow: 'justify'
+                },
+                showLastLabel: true
+            },
+            yAxis: {
+                labels: {
+                    y: -2
+                },
+                opposite: false,
+                showLastLabel: false,
+                title: {
+                    text: null
+                }
+            },
+            tooltip: {
+                shared: true,
+                crosshairs: true
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                line: _lineDefaultOptions,
+                spline: _lineDefaultOptions,
+                area: _lineDefaultOptions,
+                areaspline: _lineDefaultOptions,
+                arearange: _lineDefaultOptions,
+                areasplinerange: _lineDefaultOptions,
+                column: _columnDefaultOptions,
+                columnrange: _columnDefaultOptions,
+                candlestick: _columnDefaultOptions,
+                ohlc: _columnDefaultOptions
+            }
+        },
+        forcedOption = {
+            _stock: true, // internal flag
+            chart: {
+                inverted: false
+            }
+        },
+        forcedXAxisOption = {
+            type: 'datetime',
+            categories: null
+        },
+        series,
+        resultOption;
 
-		lineOptions = {
+    series = userOption.series;
+    userOption.series = null;
 
-			marker: {
-				enabled: false,
-				radius: 2
-			},
-			// gapSize: 0,
-			states: {
-				hover: {
-					lineWidth: 2
-				}
-			}
-		},
-		columnOptions = {
-			shadow: false,
-			borderWidth: 0
-		};
+    // merge.(Not care xAxis, yAxis)
+    resultOption = merge({}, stockDefaultOption, userDefaultOptions, userOption, forcedOption );
 
-	// apply X axis options to both single and multi y axes
-	options.xAxis = map(splat(options.xAxis || {}), function (xAxisOptions) {
-		return merge({ // defaults
-				minPadding: 0,
-				maxPadding: 0,
-				ordinal: true,
-				title: {
-					text: null
-				},
-				labels: {
-					overflow: 'justify'
-				},
-				showLastLabel: true
-			}, xAxisOptions, // user options 
-			{ // forced options
-				type: 'datetime',
-				categories: null
-			},
-			disableStartOnTick
-		);
-	});
+    // Always disable startOnTick:true on the main axis when the navigator is enabled (#1090)
+    if(resultOption.navigator.enabled){
+        forcedXAxisOption = merge(forcedXAxisOption, {
+            startOnTick: false,
+            endOnTick: false
+        });
+    }
 
-	// apply Y axis options to both single and multi y axes
-	options.yAxis = map(splat(options.yAxis || {}), function (yAxisOptions) {
-		opposite = pick(yAxisOptions.opposite, true);
-		return merge({ // defaults
-			labels: {
-				y: -2
-			},
-			opposite: opposite,
-			showLastLabel: false,
-			title: {
-				text: null
-			}
-		}, yAxisOptions // user options
-		);
-	});
+    // re-merge for xAxis
+    resultOption.xAxis = map(splat(userOption.xAxis || {}), function (o) {
+        return merge({}, stockDefaultOption.xAxis, userDefaultOptions.xAxis, o, forcedXAxisOption);
+    });
 
-	options.series = null;
+    // re-merge for xAxis
+    resultOption.yAxis = map(splat(userOption.yAxis|| {}), function (o) {
+        return merge({}, stockDefaultOption.yAxis, userDefaultOptions.yAxis, o);
+    });
 
-	options = merge({
-		chart: {
-			panning: true,
-			pinchType: 'x'
-		},
-		navigator: {
-			enabled: true
-		},
-		scrollbar: {
-			enabled: true
-		},
-		rangeSelector: {
-			enabled: true
-		},
-		title: {
-			text: null,
-			style: {
-				fontSize: '16px'
-			}
-		},
-		tooltip: {
-			shared: true,
-			crosshairs: true
-		},
-		legend: {
-			enabled: false
-		},
+    resultOption.series  = userOption.series = series;
 
-		plotOptions: {
-			line: lineOptions,
-			spline: lineOptions,
-			area: lineOptions,
-			areaspline: lineOptions,
-			arearange: lineOptions,
-			areasplinerange: lineOptions,
-			column: columnOptions,
-			columnrange: columnOptions,
-			candlestick: columnOptions,
-			ohlc: columnOptions
-		}
-
-	},
-	options, // user's options
-
-	{ // forced options
-		_stock: true, // internal flag
-		chart: {
-			inverted: false
-		}
-	});
-
-	options.series = seriesOptions;
-
-
-	return new Chart(options, callback);
+    return new Chart(resultOption, callback);
 };
 
 // Implement the pinchType option
