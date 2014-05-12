@@ -13753,7 +13753,8 @@ Series.prototype = {
 			area = this.area,
 			chartSizeMax = mathMax(chart.chartWidth, chart.chartHeight),
 			yAxis = this.yAxis,
-			reversed = yAxis.reversed;
+			reversed = yAxis.reversed,
+			inverted = chart.inverted;
 
 		if (colorThresholds && (graph || area)) {
 			// The use of the Color Threshold assumes there are no gaps
@@ -13763,25 +13764,39 @@ Series.prototype = {
 
 			// Create the Clips
 			Highcharts.each(colorThresholds, function (threshold, i) {
-				translatedFrom = pick(translatedTo, mathRound(yAxis.toPixels(yAxis.min)), true);
+				translatedFrom = pick(translatedTo, (inverted && reversed ? chart.plotWidth : 0));
 				translatedTo = mathRound(yAxis.toPixels(pick(threshold.value, yAxis.max), true));
+
 				clipAttr = {
 					x: 0,
 					y: reversed ? translatedFrom : translatedTo,
-					width: chartSizeMax,
+					width: chartSizeMax, 
 					height: Math.abs(translatedFrom - translatedTo)
 				};
+
+				if (inverted) {
+					clipAttr.y = chart.plotWidth - clipAttr.y;
+
+					if (renderer.isVML) {
+						clipAttr = {
+							x: chart.chartWidth - translatedFrom,
+							y: 0,
+							width: translatedTo - translatedFrom,
+							height: chart.chartHeight
+						};
+					}			
+				}
 
 				if (clips[i]) {
 					clips[i].animate(clipAttr);
 				} else {
 					clips[i] = renderer.clipRect(clipAttr);
 
-					graph.clip(clips[i]);	
+					//graph.clip(clips[i]);	
 					series['colorGraph' + i].clip(clips[i]);
 
 					if (area) {
-						area.clip(clips[i]);
+						//area.clip(clips[i]);
 						series['colorArea' + i].clip(clips[i]);
 					}
 				}
