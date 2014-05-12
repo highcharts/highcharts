@@ -18,7 +18,7 @@ $(function () {
 	// Populate dropdown menus and turn into jQuery UI widgets
 	$.each(Highcharts.mapDataIndex, function (mapGroup, maps) {
 
-		mapOptions += '<option>--- ' + mapGroup + ' ---</option>';
+		mapOptions += '<option class="option-header">' + mapGroup + '</option>';
 		$.each(maps, function (desc, path) {
             mapOptions += '<option value="' + path + '">' + desc + '</option>';
             mapCount++;
@@ -30,12 +30,13 @@ $(function () {
 
 	// Change map when item selected in dropdown 
 	$("#mapDropdown").change(function () {
-		var mapDesc = $("option:selected", this).text(),
+		var $selectedItem = $("option:selected", this),
+			mapDesc = $selectedItem.text(),
 			mapKey = this.value.slice(0, -3),
 			svgPath = baseMapPath + mapKey + '.svg',
 			geojsonPath = baseMapPath + mapKey + '.geo.json',
 			javascriptPath = baseMapPath + this.value,
-			isHeader = mapDesc.indexOf('---') === 0;
+			isHeader = $selectedItem.hasClass('option-header');
 
 		// Dim or highlight search box
 		if (mapDesc === searchText || isHeader) {
@@ -47,7 +48,7 @@ $(function () {
 		}
 
 		if (isHeader) {
-			return;
+			return false;
 		}
 
         // Show loading 

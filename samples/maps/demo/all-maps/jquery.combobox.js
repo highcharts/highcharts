@@ -22,6 +22,7 @@
 				.attr("title", "")
 				.addClass("custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left")
 				.autocomplete({
+					autoFocus: true,
 					delay: 0,
 					minLength: 0,
 					source: $.proxy(this, "_source")
@@ -29,6 +30,16 @@
 				.tooltip({
 					tooltipClass: "ui-state-highlight"
 				});
+
+			this.input.data('uiAutocomplete')._renderItem = function( ul, item ) {
+				return $( "<li>" )
+					.attr({
+						"data-value": item.value,
+						"class": item.option.className
+					})
+					.append( $( "<a>" ).text( item.label ) )
+					.appendTo( ul );
+			}
 
 			// Update input text if underlying select changes
 			this.element.change(function () {
@@ -42,6 +53,7 @@
 				},
 
 				autocompleteselect: function (event, ui) {
+
 					ui.item.option.selected = true;
 					this._trigger("select", event, {
 						item: ui.item.option

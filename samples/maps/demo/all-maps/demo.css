@@ -85,6 +85,14 @@
     max-height: 500px;
     overflow: auto;
 }
+.ui-autocomplete .option-header {
+    font-style: italic;
+    font-weight: bold;
+    margin: 5px 0;
+    font-size: 1.2em;
+    color: gray;
+}
+
 .loading {
     margin-top: 10em;
     text-align: center;
