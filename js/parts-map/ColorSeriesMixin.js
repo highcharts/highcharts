@@ -28,7 +28,7 @@ var colorSeriesMixin = {
 			var value = point.value,
 				color;
 
-			color = value === null ? nullColor : colorAxis ? colorAxis.toColor(value, point) : (point.color) || series.color;
+			color = value === null || value === undefined ? nullColor : colorAxis ? colorAxis.toColor(value, point) : point.color || series.color;
 
 			if (color) {
 				point.color = color;

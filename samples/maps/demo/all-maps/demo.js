@@ -1,5 +1,13 @@
 $(function () {
 
+	/*
+	TODO:
+	- Don't download cached maps
+	- Separators
+	- Set location.hash to allow refresh and sending URL
+
+	*/
+
 	// Base path to maps
 	var baseMapPath = "http://code.highcharts.com/mapdata/1.0.0/",
 		showDataLabels = true, // Switch for data labels enabled/disabled
@@ -32,8 +40,10 @@ $(function () {
 		// Dim or highlight search box
 		if (mapDesc === searchText || isHeader) {
 			$('.custom-combobox-input').removeClass('valid');
+			location.hash = '';
 		} else {
 			$('.custom-combobox-input').addClass('valid');
+			location.hash = mapKey;
 		}
 
 		if (isHeader) {
@@ -45,8 +55,9 @@ $(function () {
         	$("#container").highcharts().showLoading('<i class="fa fa-spinner fa-spin fa-2x"></i>');
         }
 
-		// Get map from server
-		$.getScript(javascriptPath, function () {
+
+        // When the map is loaded or ready from cache...
+        function mapReady () {
 
 			var mapGeoJSON = Highcharts.maps[mapKey],
 				data = [],
@@ -89,8 +100,11 @@ $(function () {
 			if (parent) {
 				$('#up').append(
 					$('<a><i class="fa fa-angle-up"></i> ' + parent.desc + '</a>')
+					.attr({
+						title: parent.key
+					})
 					.click(function () {
-						$('#mapDropdown').val(parent.key).change();
+						$('#mapDropdown').val(parent.key + '.js').change();
 					})
 				);
 			}
@@ -114,6 +128,18 @@ $(function () {
 					min: 0
 				},
 
+				legend: {
+					layout: 'vertical',
+					align: 'left',
+					verticalAlign: 'middle'
+				},
+
+				loading: {
+					labelStyle: {
+						top: '200px'
+					}
+				},
+
 				series: [{
 					data: data,
 					mapData: Highcharts.geojson(mapGeoJSON, 'map'),
@@ -128,12 +154,17 @@ $(function () {
 						enabled: showDataLabels,
 						formatter: function () {
 							var props = this.point.properties,
-                                bBox = this.point.graphic && this.point.graphic.getBBox();
+                                bBox = this.point.graphic && this.point.graphic.getBBox(),
+                                label;
 							
-                            if (props && bBox.width > 30 && bBox.height > 20) {
-                                /*return props['postal-code'] && props['postal-code'] !== 'NULL' ? props['postal-code'] :
-								    props.code;*/
-								return this.point.name && (this.point.name.substr(0, 3) + '.')
+                        	if (props && bBox.width > 20 && bBox.height > 20 && this.point.name) {
+                            	label = this.point.name.substr(0, bBox.width / 8);
+                                if (label.length === this.point.name.length - 1) {
+                                	label = this.point.name;
+                                } else  if (label !== this.point.name) {
+                                	label += '.';
+                                }
+	                            return label;
                             }
 						}
 					},
@@ -154,12 +185,20 @@ $(function () {
 					type: 'mapline',
 					name: "Separators",
 					data: Highcharts.geojson(mapGeoJSON, 'mapline'),
-					color: 'black',
+					nullColor: 'gray',
 					showInLegend: false,
 					enableMouseTracking: false
 				}]
 			});
-		});
+		}
+
+		// Check whether the map is already loaded, else load it and
+		// then show it async
+		if (Highcharts.maps[mapKey]) {
+			mapReady(); 
+		} else {
+			$.getScript(javascriptPath, mapReady);
+		}
 	});
 
 	// Toggle data labels - Note: Reloads map with new random data
@@ -179,6 +218,6 @@ $(function () {
 	});
 
 	// Trigger change event to load map on startup
-	$("#mapDropdown").change();
+	$("#mapDropdown").val(location.hash ? location.hash.substr(1) + '.js' : 0).change();
 
 });
