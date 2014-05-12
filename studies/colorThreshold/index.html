@@ -15,7 +15,11 @@ $(function () {
     $('#container').highcharts(
     {    
         chart: {
-            type: 'areaspline'
+            type: 'areaspline',
+            inverted: true
+        },
+        yAxis: {
+            reversed: true
         },
         plotOptions: {
             series: {
@@ -25,18 +29,17 @@ $(function () {
             }
         },
         series: [{
-            data: DATA,        
-            negativeColor: 'red'
-            /*    
+            data: DATA,
+            color: '#0220FF',        
+            negativeColor: 'red', 
+            
             colorThresholds: [{
                 value: -50,
-                dashStyle: 'dot',
-                color: 'red',
-                fillColor: 'pink'
+                color: '#FF0220',
             }, { 
                 value: 50,
-                color: 'green'
-            }]*/
+                color: '#02DD20',
+            }]
             
         }]
     });
@@ -50,4 +53,4 @@ $(function () {
     </div>
 </body>
 
-</html
+</html>

@@ -1396,12 +1396,12 @@ Series.prototype = {
 
 					if (renderer.isVML) {
 						clipAttr = {
-							x: chart.chartWidth - translatedFrom,
-							y: 0,
-							width: translatedTo - translatedFrom,
-							height: chart.chartHeight
+							x:  chart.plotWidth - chart.plotTop - clipAttr.y - clipAttr.height, // this puts the band in reverse order
+							y: clipAttr.x,
+							width: clipAttr.height,
+							height: clipAttr.width
 						};
-					}			
+					}		
 				}
 
 				if (clips[i]) {
