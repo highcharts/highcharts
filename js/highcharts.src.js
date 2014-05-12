@@ -3076,7 +3076,7 @@ SVGRenderer.prototype = {
 									hasWhiteSpace = words.length > 1 && textStyles.whiteSpace !== 'nowrap',
 									tooLong,
 									actualWidth,
-									clipHeight = wrapper._clipHeight,
+									hcHeight = textStyles.HcHeight,
 									rest = [],
 									dy = getLineHeight(),
 									softLineNo = 1,
@@ -3098,8 +3098,7 @@ SVGRenderer.prototype = {
 										rest = [];
 										if (words.length) {
 											softLineNo++;
-
-											if (clipHeight && softLineNo * dy > clipHeight) {
+											if (hcHeight && softLineNo * dy > hcHeight) {
 												words = ['...'];
 												wrapper.attr('title', wrapper.textStr);
 											} else {
@@ -5607,7 +5606,7 @@ Tick.prototype = {
 				attr.rotation = labelOptions.rotation;
 			}
 			if (width && labelOptions.ellipsis) {
-				attr._clipHeight = axis.len / tickPositions.length;
+				css.HcHeight = axis.len / tickPositions.length;
 			}
 
 			tick.label =

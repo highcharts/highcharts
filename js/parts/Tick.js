@@ -76,7 +76,7 @@ Tick.prototype = {
 				attr.rotation = labelOptions.rotation;
 			}
 			if (width && labelOptions.ellipsis) {
-				attr._clipHeight = axis.len / tickPositions.length;
+				css.HcHeight = axis.len / tickPositions.length;
 			}
 
 			tick.label =
