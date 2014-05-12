@@ -432,9 +432,9 @@ extend(Point.prototype, {
 		var chart = this.series.chart,
 			hoverPoints = chart.hoverPoints;
 
-		if (!hoverPoints || inArray(this, hoverPoints) === -1) { // #887
-			this.firePointEvent('mouseOut');
+		this.firePointEvent('mouseOut');
 
+		if (!hoverPoints || inArray(this, hoverPoints) === -1) { // #887, #2240
 			this.setState();
 			chart.hoverPoint = null;
 		}
