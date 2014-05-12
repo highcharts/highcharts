@@ -32,7 +32,7 @@
 				/*HIGHCHARTS_MAP: 'map.js',*/
 				HIGHCHARTS_SOLID_GAUGE: 'solid-gauge.js'
 			},
-			TIMEOUT: 2000 /* 2 seconds timout for loading images */
+			TIMEOUT: 5000 /* 5 seconds timout for loading images */
 		},
 		mapCLArguments,
 		render,
@@ -262,7 +262,7 @@
 							}
 						}, 50);
 
-						// we have a 3 second timeframe..
+						// we have a 5 second timeframe..
 						timer = window.setTimeout(function () {
 							clearInterval(interval);
 							exitCallback('ERROR: While rendering, there\'s is a timeout reached');
