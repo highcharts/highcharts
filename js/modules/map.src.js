@@ -611,6 +611,56 @@ var colorSeriesMixin = {
 		});
 	}
 };
+
+
+/**
+ * Wrap the buildText method and add the hook for add text stroke
+ * docs: On dataLabels.color and dataLabels.style, emphasize that a change in color should be accompanied by an opposite textStroke color
+ */
+wrap(SVGRenderer.prototype, 'buildText', function (proceed, wrapper) {
+
+	var textStroke = wrapper.styles && wrapper.styles.HcTextStroke;
+
+	proceed.call(this, wrapper);
+
+	// Apply the text stroke
+	if (textStroke && wrapper.applyTextStroke) {
+		wrapper.applyTextStroke(textStroke);
+	}
+});
+
+/**
+ * Apply an outside text stroke to data labels, based on the custom CSS property, HcTextStroke.
+ * Consider moving this to Highcharts core, also makes sense on stacked columns etc.
+ */
+SVGRenderer.prototype.Element.prototype.applyTextStroke = function (textStroke) {
+	var elem = this.element,
+		tspans,
+		firstChild;
+	
+	textStroke = textStroke.split(' ');
+	tspans = elem.children;
+	firstChild = elem.firstChild;
+	
+	// In order to get the right y position of the clones, 
+	// copy over the y setter
+	this.ySetter = this.xSetter;
+	
+	each([].slice.call(tspans), function (tspan, y) {
+		var clone;
+		if (y === 0) {
+			tspan.setAttribute('x', elem.getAttribute('x'));
+			if ((y = elem.getAttribute('y')) !== null) {
+				tspan.setAttribute('y', y);
+			}
+		}
+		clone = tspan.cloneNode(1);
+		clone.setAttribute('stroke', textStroke[1]);
+		clone.setAttribute('stroke-width', textStroke[0]);
+		clone.setAttribute('stroke-linejoin', 'round');
+		elem.insertBefore(clone, firstChild);
+	});
+};
 // Add events to the Chart object itself
 extend(Chart.prototype, {
 	renderMapNavigation: function () {
@@ -897,7 +947,8 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 		style: {
 			color: 'white',
 			fontWeight: 'bold',
-			textShadow: '0 0 5px black'
+			HcTextStroke: '3px black'
+
 		}
 	},
 	turboThreshold: 0,
@@ -1532,7 +1583,7 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 		crop: false,
 		overflow: false,
 		style: {
-			textShadow: '0 0 5px white'
+			HcTextStroke: '1px white' // docs
 		}
 	}
 });
@@ -1583,7 +1634,7 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 		style: {
 			color: 'white',
 			fontWeight: 'bold',
-			textShadow: '0 0 5px black'
+			HcTextStroke: '1px black' // docs: textShadow out, HcTextStroke in
 		}
 	},
 	marker: null,

@@ -46,8 +46,6 @@ $(function () {
                     color: 'white',
                     format: '{point.code}',
                     style: {
-                        fontWeight: 'bold',
-                        textShadow: '0 0 3px black',
                         textTransform: 'uppercase'
                     }
                 },

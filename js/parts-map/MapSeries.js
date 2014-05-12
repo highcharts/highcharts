@@ -22,7 +22,8 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 		style: {
 			color: 'white',
 			fontWeight: 'bold',
-			textShadow: '0 0 5px black'
+			HcTextStroke: '3px black'
+
 		}
 	},
 	turboThreshold: 0,

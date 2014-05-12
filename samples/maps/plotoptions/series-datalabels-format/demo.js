@@ -43,8 +43,6 @@ $(function () {
                     color: 'white',
                     format: '{point.value:.1f}',
                     style: {
-                        fontWeight: 'bold',
-                        textShadow: '0 0 3px black',
                         textTransform: 'uppercase'
                     }
                 },

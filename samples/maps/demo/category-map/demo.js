@@ -26,8 +26,7 @@ $(function () {
                         },
                         format: null,
                         style: {
-                            fontWeight: 'bold',
-                            textShadow: '0 0 3px black'
+                            fontWeight: 'bold'
                         }
                     },
                     mapData: Highcharts.geojson(geojson, 'map'),

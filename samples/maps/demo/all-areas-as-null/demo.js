@@ -45,11 +45,6 @@ $(function () {
                         if (this.point.value) {
                             return this.point.name;
                         }
-                    },
-                    format: null,
-                    style: {
-                        fontWeight: 'bold',
-                        textShadow: '0 0 3px black'
                     }
                 },
                 mapData: Highcharts.geojson(geojson, 'map'),

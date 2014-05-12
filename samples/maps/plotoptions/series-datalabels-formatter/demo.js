@@ -9,7 +9,7 @@ $(function () {
             },
             
             title : {
-                text : 'Data label formatter'
+                text : 'Data label formatter to show value conditionally'
             },
 
             legend: {
@@ -42,11 +42,11 @@ $(function () {
                     enabled: true,
                     color: 'white',
                     formatter: function () {
-                        return Highcharts.numberFormat(this.point.value, 1);
+                        if (this.point.graphic.getBBox().width > 30) {
+                            return Highcharts.numberFormat(this.point.value, 1);
+                        }
                     },
                     style: {
-                        fontWeight: 'bold',
-                        textShadow: '0 0 3px black',
                         textTransform: 'uppercase'
                     }
                 },

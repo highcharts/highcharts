@@ -52,7 +52,8 @@ $(function () {
                 enabled: true,
                 color: 'black',
                 style: {
-                    textShadow: 'none'
+                    textShadow: 'none',
+                    HcTextStroke: null
                 }
             }
         }]

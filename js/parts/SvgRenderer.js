@@ -10,7 +10,7 @@ SVGElement.prototype = {
 	opacity: 1,
 	// For labels, these CSS properties are applied to the <text> node directly
 	textProps: ['fontSize', 'fontWeight', 'fontFamily', 'color', 
-		'lineHeight', 'width', 'textDecoration', 'textShadow'],
+		'lineHeight', 'width', 'textDecoration', 'textShadow', 'HcTextStroke'],
 	
 	/**
 	 * Initialize the SVG renderer
@@ -1196,6 +1196,7 @@ SVGRenderer.prototype = {
 			textStyles = wrapper.styles,
 			width = wrapper.textWidth,
 			textLineHeight = textStyles && textStyles.lineHeight,
+			textStroke = textStyles && textStyles.HcTextStroke,
 			i = childNodes.length,
 			getLineHeight = function (tspan) {
 				return textLineHeight ? 
@@ -1214,7 +1215,7 @@ SVGRenderer.prototype = {
 
 		// Skip tspans, add text directly to text node. The forceTSpan is a hook 
 		// used in text outline hack.
-		if (!hasMarkup && !wrapper.forceTSpan && textStr.indexOf(' ') === -1) {
+		if (!hasMarkup && !textStroke && textStr.indexOf(' ') === -1) {
 			textNode.appendChild(doc.createTextNode(textStr));
 			return;
 

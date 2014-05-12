@@ -19,7 +19,7 @@ $(function () {
                 this.dataLabels = {
                     style: {
                         color: '#333333',
-                        textShadow: '0 0 2px white'
+                        HcTextStroke: '3px white'
                     }
                 }
             }

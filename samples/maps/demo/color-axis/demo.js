@@ -38,7 +38,9 @@ $(function () {
             },
             
             series : [{
-                animation: true,
+                animation: {
+                    duration: 1000
+                },
                 data : data,
                 mapData: Highcharts.maps.us,
                 joinBy: 'code',
@@ -47,8 +49,6 @@ $(function () {
                     color: 'white',
                     format: '{point.code}',
                     style: {
-                        fontWeight: 'bold',
-                        textShadow: '0 0 3px black',
                         textTransform: 'uppercase'
                     }
                 },
