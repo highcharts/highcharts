@@ -32,9 +32,15 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
 		
 		for (Map.Entry<String, String[]> entry : paramMap.entrySet()) {
 			sb.append(entry.getKey())
-				.append("=")
-				.append(entry.getValue())
-				.append(lineSeparator);
+				.append("=");
+                String[] values = entry.getValue();
+                for (int i = 0; i < values.length; i++) {
+                    sb.append(values[i]);
+                    if (i < values.length) {
+                        sb.append(", ");
+                    } 
+                }
+				sb.append(lineSeparator);
 		}
 		return sb.toString();
 	}
@@ -43,8 +49,7 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
 	public boolean preHandle(HttpServletRequest request,
             HttpServletResponse response, Object handler) throws Exception {
         long startTime = System.currentTimeMillis();
-        logger.log(Level.INFO, "Time={0} Referer={1} Request URL={2}{3}", new Object[]{ new Date().toString(), request.getHeader("referer"), request.getRequestURL().toString(), lineSeparator});
-		logger.log(Level.INFO, "Request parameters {0}", new Object[]{extractPostRequestBody(request)});
+        logger.log(Level.INFO, "Time={0} Referer={1} Request URL={2}{3} Request parameters {4}", new Object[]{ new Date().toString(), request.getHeader("referer"), request.getRequestURL().toString(), lineSeparator, extractPostRequestBody(request)});
 		request.setAttribute("startTime", startTime);
 		monitor.add();
         
@@ -60,11 +65,10 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
 		int httpStatus = response.getStatus();
 
 		if (httpStatus == 500) {
-			monito,r.addError();
+			monitor.addError();
 		}
         logger.log(Level.INFO, "Request URL::{0}:: Time Taken={1} :: HttpStatus: {2}", new Object[]{request.getRequestURL().toString(), System.currentTimeMillis() - startTime, httpStatus});
-
-		logger.log(Level.INFO, Integer.valueOf(monitor.getCount()).toString());
+        logger.log(Level.INFO, monitor.report());
 
 		
     }
