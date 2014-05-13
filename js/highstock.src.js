@@ -12628,7 +12628,7 @@ Series.prototype = {
 			userPlotOptions = userOptions.plotOptions || {},
 			typeOptions = plotOptions[this.type],
 			options,
-			colorThresholds;
+			zones;
 
 		this.userOptions = itemOptions;
 
@@ -12653,26 +12653,24 @@ Series.prototype = {
 			delete options.marker;
 		}
 
-		colorThresholds = options.colorThresholds;		
-		if ((options.negativeColor || options.negativeFillColor) && !colorThresholds) {
-			colorThresholds = [{
+		// Handle color zones
+		zones = this.zones = (options.zones || []).slice();
+		if ((options.negativeColor || options.negativeFillColor) && !options.zones) {
+			zones.push({
 				value: options.threshold || 0,
 				color: options.negativeColor,
 				fillColor: options.negativeFillColor
-			}];
+			});
 		}
-		if (colorThresholds) {
-			if (defined(colorThresholds[colorThresholds.length - 1].value)) {
-				colorThresholds.push({
+		if (zones) { // Push one extra zone for the rest
+			if (defined(zones[zones.length - 1].value)) {
+				zones.push({
 					color: this.color,
 					fillColor: this.fillColor
 				});
 			}
 		}
-		options.colorThresholds = colorThresholds;
-		
 		return options;
-
 	},
 
 	getCyclic: function (prop, value, defaults) {
@@ -13410,6 +13408,7 @@ Series.prototype = {
 			defaultLineColor = normalOptions.lineColor,
 			defaultFillColor = normalOptions.fillColor,
 			turboThreshold = seriesOptions.turboThreshold,
+			zones = series.zones,
 			attr,
 			key;
 
@@ -13453,11 +13452,11 @@ Series.prototype = {
 					normalOptions.radius = 0;
 				}
 
-				if (series.options.colorThresholds) {
+				if (zones.length) {
 					var j = 0,
-						threshold = series.options.colorThresholds[j];
+						threshold = zones[j];
 					while (point.y > threshold.value) {				
-						threshold = series.options.colorThresholds[++j];
+						threshold = zones[++j];
 					}
 					point.color = point.fillColor = threshold.color;
 				}
@@ -13698,14 +13697,13 @@ Series.prototype = {
 			lineWidth = options.lineWidth,
 			roundCap = options.linecap !== 'square',
 			graphPath = this.getGraphPath(),
-			colorThresholds = options.colorThresholds;
+			zones = this.zones;
 
-		if (colorThresholds) {
-			Highcharts.each(colorThresholds, function (threshold, i) {
-				props.push(['colorGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
-			});
-		}
-		// draw the graph
+		each(zones, function (threshold, i) {
+			props.push(['colorGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
+		});
+		
+		// Draw the graph
 		each(props, function (prop, i) {
 			var graphKey = prop[0],
 				graph = series[graphKey],
@@ -13739,12 +13737,11 @@ Series.prototype = {
 	/**
 	 * Clip the graphs into the positive and negative coloured graphs
 	 */
-	clipNeg: function () {
+	applyZones: function () {
 		var series = this,
-			options = this.options,
 			chart = this.chart,
 			renderer = chart.renderer,
-			colorThresholds = options.colorThresholds,
+			zones = this.zones,
 			translatedFrom,
 			translatedTo,
 			clips = this.clips || [],
@@ -13756,14 +13753,14 @@ Series.prototype = {
 			reversed = yAxis.reversed,
 			inverted = chart.inverted;
 
-		if (colorThresholds && (graph || area)) {
+		if (zones.length && (graph || area)) {
 			// The use of the Color Threshold assumes there are no gaps
 			// so it is safe to hide the original graph and area
 			graph.hide();
 			if (area) { area.hide(); }
 
-			// Create the Clips
-			Highcharts.each(colorThresholds, function (threshold, i) {
+			// Create the clips
+			each(zones, function (threshold, i) {
 				translatedFrom = pick(translatedTo, (inverted && reversed ? chart.plotWidth : 0));
 				translatedTo = mathRound(yAxis.toPixels(pick(threshold.value, yAxis.max), true));
 
@@ -13779,7 +13776,7 @@ Series.prototype = {
 
 					if (renderer.isVML) {
 						clipAttr = {
-							x:  chart.plotWidth - chart.plotTop - clipAttr.y - clipAttr.height, // this puts the band in reverse order
+							x:  chart.plotWidth - chart.plotTop - clipAttr.y - clipAttr.height,
 							y: clipAttr.x,
 							width: clipAttr.height,
 							height: clipAttr.width
@@ -13792,15 +13789,14 @@ Series.prototype = {
 				} else {
 					clips[i] = renderer.clipRect(clipAttr);
 
-					//graph.clip(clips[i]);	
 					series['colorGraph' + i].clip(clips[i]);
 
 					if (area) {
-						//area.clip(clips[i]);
 						series['colorArea' + i].clip(clips[i]);
 					}
 				}
 			});
+			this.clips = clips;
 		}
 	},
 
@@ -13933,7 +13929,7 @@ Series.prototype = {
 		// draw the graph if any
 		if (series.drawGraph) {
 			series.drawGraph();
-			series.clipNeg();
+			series.applyZones();
 		}
 
 		// draw the data labels (inn pies they go before the points)
@@ -14966,14 +14962,12 @@ var AreaSeries = extendClass(Series, {
 		var series = this,
 			areaPath = this.areaPath,
 			options = this.options,
-			colorThresholds = options.colorThresholds,
+			zones = this.zones,
 			props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
 		
-		if (colorThresholds) {
-			Highcharts.each(colorThresholds, function (threshold, i) {
-				props.push(['colorArea' + i, threshold.color || series.color, threshold.fillColor || options.fillColor]);
-			});
-		}
+		each(zones, function (threshold, i) {
+			props.push(['colorArea' + i, threshold.color || series.color, threshold.fillColor || options.fillColor]);
+		});
 		each(props, function (prop) {
 			var areaKey = prop[0],
 				area = series[areaKey];
