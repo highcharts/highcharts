@@ -12868,6 +12868,7 @@ Series.prototype = {
 			cropThreshold = options.cropThreshold,
 			activePointCount = 0,
 			isCartesian = series.isCartesian,
+			xExtremes,
 			min,
 			max;
 
@@ -12881,8 +12882,9 @@ Series.prototype = {
 		// optionally filter out points outside the plot area
 		if (isCartesian && series.sorted && (!cropThreshold || dataLength > cropThreshold || series.forceCrop)) {
 			
-			min = xAxis.min;
-			max = xAxis.max;
+			xExtremes = xAxis.getExtremes(); // corrected for log axis (#3053)
+			min = xExtremes.min;
+			max = xExtremes.max;
 
 			// it's outside current extremes
 			if (processedXData[dataLength - 1] < min || processedXData[0] > max) {
