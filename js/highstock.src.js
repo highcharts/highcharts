@@ -13761,7 +13761,7 @@ Series.prototype = {
 
 			// Create the clips
 			each(zones, function (threshold, i) {
-				translatedFrom = pick(translatedTo, (inverted && reversed ? chart.plotWidth : 0));
+				translatedFrom = pick(translatedTo, (reversed ? (inverted ? chart.plotWidth : 0) : yAxis.toPixels(yAxis.min)));
 				translatedTo = mathRound(yAxis.toPixels(pick(threshold.value, yAxis.max), true));
 
 				clipAttr = {
