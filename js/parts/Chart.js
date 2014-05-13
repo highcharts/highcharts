@@ -485,7 +485,9 @@ Chart.prototype = {
 		if (title) {
 			title
 				.css({ width: (titleOptions.width || autoWidth) + PX })
-				.align(extend({ y: 15 }, titleOptions), false, 'spacingBox');
+				.align(extend({ 
+					y: this.renderer.fontMetrics(titleOptions.style.fontSize, title).b - 3
+				}, titleOptions), false, 'spacingBox');
 			
 			if (!titleOptions.floating && !titleOptions.verticalAlign) {
 				titleOffset = title.getBBox().height;

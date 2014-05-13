@@ -158,7 +158,7 @@ Axis.prototype = {
 	defaultBottomAxisOptions: {
 		labels: {
 			x: 0,
-			y: 20
+			y: null // based on font size // docs
 			// overflow: undefined,
 			// staggerLines: null
 		},
@@ -1379,7 +1379,7 @@ Axis.prototype = {
 			x,
 			w,
 			lineNo,
-			lineHeightCorrection = side === 2 ? renderer.fontMetrics(labelOptions.style.fontSize).b : 0;
+			lineHeightCorrection;
 
 		// For reuse in Axis.render
 		axis.hasData = hasData = (axis.hasVisibleSeries || (defined(axis.min) && defined(axis.max) && !!tickPositions));
@@ -1460,8 +1460,8 @@ Axis.prototype = {
 						labelOffset
 					);
 				}
-
 			});
+
 			if (axis.staggerLines) {
 				labelOffset *= axis.staggerLines;
 				axis.labelOffset = labelOffset;
@@ -1509,8 +1509,9 @@ Axis.prototype = {
 		// handle automatic or user set offset
 		axis.offset = directionFactor * pick(options.offset, axisOffset[side]);
 
+		lineHeightCorrection = side === 2 ? axis.tickBaseline : 0;
 		labelOffsetPadded = labelOffset + titleMargin +
-			(labelOffset && (directionFactor * options.labels[horiz ? 'y' : 'x'] - lineHeightCorrection));
+			(labelOffset && (directionFactor * (horiz ? pick(labelOptions.y, axis.tickBaseline + 8) : labelOptions.x) - lineHeightCorrection));
 		axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);
 
 		axisOffset[side] = mathMax(

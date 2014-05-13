@@ -94,7 +94,7 @@ defaultOptions = {
 		margin: 15,
 		// x: 0,
 		// verticalAlign: 'top',
-		// y: null,
+		// y: null, // docs: since 4.0.2 it depends on the font size
 		style: {
 			color: '#333333',
 			fontSize: '18px'

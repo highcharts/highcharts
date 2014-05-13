@@ -13,7 +13,6 @@ $(function () {
                 type: 'category',
                 labels: {
                     rotation: -45,
-                    align: 'right',
                     style: {
                         fontSize: '13px',
                         fontFamily: 'Verdana, sans-serif'

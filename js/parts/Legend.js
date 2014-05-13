@@ -259,7 +259,7 @@ Legend.prototype = {
 
 			// Get the baseline for the first item - the font size is equal for all
 			if (!legend.baseline) {
-				legend.baseline = renderer.fontMetrics(itemStyle.fontSize, li.element).f + 3 + itemMarginTop;
+				legend.baseline = renderer.fontMetrics(itemStyle.fontSize, li).f + 3 + itemMarginTop;
 				li.attr('y', legend.baseline);
 			}
 
@@ -695,7 +695,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 			symbolWidth = legend.symbolWidth,
 			renderer = this.chart.renderer,
 			legendItemGroup = this.legendGroup,
-			verticalCenter = legend.baseline - mathRound(renderer.fontMetrics(legendOptions.itemStyle.fontSize, this.legendItem.element).b * 0.3),
+			verticalCenter = legend.baseline - mathRound(renderer.fontMetrics(legendOptions.itemStyle.fontSize, this.legendItem).b * 0.3),
 			attr;
 
 		// Draw the line

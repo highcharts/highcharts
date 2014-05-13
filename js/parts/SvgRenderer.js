@@ -2041,8 +2041,8 @@ SVGRenderer.prototype = {
 	 */
 	fontMetrics: function (fontSize, elem) {
 		fontSize = fontSize || this.style.fontSize;
-		if (elem && win.getComputedStyle) {
-			fontSize = win.getComputedStyle(elem, "").fontSize;
+		if (elem && elem.element && win.getComputedStyle) {
+			fontSize = win.getComputedStyle(elem.element, "").fontSize;
 		}
 		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
 

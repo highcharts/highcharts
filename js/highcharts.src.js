@@ -1316,7 +1316,7 @@ defaultOptions = {
 		margin: 15,
 		// x: 0,
 		// verticalAlign: 'top',
-		// y: null,
+		// y: null, // docs: since 4.0.2 it depends on the font size
 		style: {
 			color: '#333333',
 			fontSize: '18px'
@@ -3797,8 +3797,8 @@ SVGRenderer.prototype = {
 	 */
 	fontMetrics: function (fontSize, elem) {
 		fontSize = fontSize || this.style.fontSize;
-		if (elem && win.getComputedStyle) {
-			fontSize = win.getComputedStyle(elem, "").fontSize;
+		if (elem && elem.element && win.getComputedStyle) {
+			fontSize = win.getComputedStyle(elem.element, "").fontSize;
 		}
 		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
 
@@ -5561,6 +5561,7 @@ Tick.prototype = {
 			names = axis.names,
 			pos = tick.pos,
 			labelOptions = options.labels,
+			rotation = labelOptions.rotation,
 			str,
 			tickPositions = axis.tickPositions,
 			width = (horiz && categories &&
@@ -5607,14 +5608,14 @@ Tick.prototype = {
 			attr = {
 				align: axis.labelAlign
 			};
-			if (isNumber(labelOptions.rotation)) {
-				attr.rotation = labelOptions.rotation;
+			if (isNumber(rotation)) {
+				attr.rotation = rotation;
 			}
 			if (width && labelOptions.ellipsis) {
 				css.HcHeight = axis.len / tickPositions.length;
 			}
 
-			tick.label =
+			tick.label = label =
 				defined(str) && labelOptions.enabled ?
 					chart.renderer.text(
 							str,
@@ -5628,6 +5629,13 @@ Tick.prototype = {
 						.add(axis.labelGroup) :
 					null;
 
+			// Set the tick baseline and correct for rotation (#1764)
+			axis.tickBaseline = chart.renderer.fontMetrics(labelOptions.style.fontSize, label).b;
+			if (rotation && axis.side === 2) {
+				axis.tickBaseline *= mathCos(rotation * deg2rad);
+			}
+
+
 		// update
 		} else if (label) {
 			label.attr({
@@ -5635,6 +5643,7 @@ Tick.prototype = {
 				})
 				.css(css);
 		}
+		tick.yOffset = label ? pick(labelOptions.y, axis.tickBaseline + (axis.side === 2 ? 8 : -(label.getBBox().height / 2))) : 0;
 	},
 
 	/**
@@ -5776,24 +5785,12 @@ Tick.prototype = {
 		var axis = this.axis,
 			transA = axis.transA,
 			reversed = axis.reversed,
-			staggerLines = axis.staggerLines,
-			baseline = axis.chart.renderer.fontMetrics(labelOptions.style.fontSize).b,
-			rotation = labelOptions.rotation;
+			staggerLines = axis.staggerLines;
 
 		x = x + labelOptions.x - (tickmarkOffset && horiz ?
 			tickmarkOffset * transA * (reversed ? -1 : 1) : 0);
-		y = y + labelOptions.y - (tickmarkOffset && !horiz ?
+		y = y + this.yOffset - (tickmarkOffset && !horiz ?
 			tickmarkOffset * transA * (reversed ? 1 : -1) : 0);
-
-		// Correct for rotation (#1764)
-		if (rotation && axis.side === 2) {
-			y -= baseline - baseline * mathCos(rotation * deg2rad);
-		}
-
-		// Vertically centered
-		if (!defined(labelOptions.y) && !rotation) { // #1951
-			y += baseline - label.getBBox().height / 2;
-		}
 
 		// Correct for staggered labels
 		if (staggerLines) {
@@ -6391,7 +6388,7 @@ Axis.prototype = {
 	defaultBottomAxisOptions: {
 		labels: {
 			x: 0,
-			y: 20
+			y: null // based on font size // docs
 			// overflow: undefined,
 			// staggerLines: null
 		},
@@ -7612,7 +7609,7 @@ Axis.prototype = {
 			x,
 			w,
 			lineNo,
-			lineHeightCorrection = side === 2 ? renderer.fontMetrics(labelOptions.style.fontSize).b : 0;
+			lineHeightCorrection;
 
 		// For reuse in Axis.render
 		axis.hasData = hasData = (axis.hasVisibleSeries || (defined(axis.min) && defined(axis.max) && !!tickPositions));
@@ -7693,8 +7690,8 @@ Axis.prototype = {
 						labelOffset
 					);
 				}
-
 			});
+
 			if (axis.staggerLines) {
 				labelOffset *= axis.staggerLines;
 				axis.labelOffset = labelOffset;
@@ -7742,8 +7739,9 @@ Axis.prototype = {
 		// handle automatic or user set offset
 		axis.offset = directionFactor * pick(options.offset, axisOffset[side]);
 
+		lineHeightCorrection = side === 2 ? axis.tickBaseline : 0;
 		labelOffsetPadded = labelOffset + titleMargin +
-			(labelOffset && (directionFactor * options.labels[horiz ? 'y' : 'x'] - lineHeightCorrection));
+			(labelOffset && (directionFactor * (horiz ? pick(labelOptions.y, axis.tickBaseline + 8) : labelOptions.x) - lineHeightCorrection));
 		axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);
 
 		axisOffset[side] = mathMax(
@@ -10176,7 +10174,7 @@ Legend.prototype = {
 
 			// Get the baseline for the first item - the font size is equal for all
 			if (!legend.baseline) {
-				legend.baseline = renderer.fontMetrics(itemStyle.fontSize, li.element).f + 3 + itemMarginTop;
+				legend.baseline = renderer.fontMetrics(itemStyle.fontSize, li).f + 3 + itemMarginTop;
 				li.attr('y', legend.baseline);
 			}
 
@@ -10612,7 +10610,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 			symbolWidth = legend.symbolWidth,
 			renderer = this.chart.renderer,
 			legendItemGroup = this.legendGroup,
-			verticalCenter = legend.baseline - mathRound(renderer.fontMetrics(legendOptions.itemStyle.fontSize, this.legendItem.element).b * 0.3),
+			verticalCenter = legend.baseline - mathRound(renderer.fontMetrics(legendOptions.itemStyle.fontSize, this.legendItem).b * 0.3),
 			attr;
 
 		// Draw the line
@@ -11158,7 +11156,9 @@ Chart.prototype = {
 		if (title) {
 			title
 				.css({ width: (titleOptions.width || autoWidth) + PX })
-				.align(extend({ y: 15 }, titleOptions), false, 'spacingBox');
+				.align(extend({ 
+					y: this.renderer.fontMetrics(titleOptions.style.fontSize, title).b - 3
+				}, titleOptions), false, 'spacingBox');
 			
 			if (!titleOptions.floating && !titleOptions.verticalAlign) {
 				titleOffset = title.getBBox().height;
