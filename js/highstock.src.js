@@ -12654,6 +12654,7 @@ Series.prototype = {
 		}
 
 		// Handle color zones
+		this.zoneAxis = options.zoneAxis;
 		zones = this.zones = (options.zones || []).slice();
 		if ((options.negativeColor || options.negativeFillColor) && !options.zones) {
 			zones.push({
@@ -12662,7 +12663,7 @@ Series.prototype = {
 				fillColor: options.negativeFillColor
 			});
 		}
-		if (zones) { // Push one extra zone for the rest
+		if (zones.length) { // Push one extra zone for the rest
 			if (defined(zones[zones.length - 1].value)) {
 				zones.push({
 					color: this.color,
@@ -13409,6 +13410,7 @@ Series.prototype = {
 			defaultFillColor = normalOptions.fillColor,
 			turboThreshold = seriesOptions.turboThreshold,
 			zones = series.zones,
+			zoneAxis = series.zoneAxis || 'y',
 			attr,
 			key;
 
@@ -13455,9 +13457,10 @@ Series.prototype = {
 				if (zones.length) {
 					var j = 0,
 						threshold = zones[j];
-					while (point.y > threshold.value) {				
+					while (point[zoneAxis] > threshold.value) {				
 						threshold = zones[++j];
 					}
+					
 					point.color = point.fillColor = threshold.color;
 				}
 
@@ -13749,9 +13752,11 @@ Series.prototype = {
 			graph = this.graph,
 			area = this.area,
 			chartSizeMax = mathMax(chart.chartWidth, chart.chartHeight),
-			yAxis = this.yAxis,
-			reversed = yAxis.reversed,
-			inverted = chart.inverted;
+			zoneAxis = this.zoneAxis || 'y',
+			axis = this[zoneAxis + 'Axis'],
+			reversed = axis.reversed,
+			horiz = axis.horiz;
+			//inverted = axis.horiz; //chart.inverted;
 
 		if (zones.length && (graph || area)) {
 			// The use of the Color Threshold assumes there are no gaps
@@ -13761,28 +13766,30 @@ Series.prototype = {
 
 			// Create the clips
 			each(zones, function (threshold, i) {
-				translatedFrom = pick(translatedTo, (reversed ? (inverted ? chart.plotWidth : 0) : yAxis.toPixels(yAxis.min)));
-				translatedTo = mathRound(yAxis.toPixels(pick(threshold.value, yAxis.max), true));
+				translatedFrom = pick(translatedTo, (reversed ? (horiz ? chart.plotWidth : 0) : (horiz ? 0 : axis.toPixels(axis.min))));
+				translatedTo = mathRound(axis.toPixels(pick(threshold.value, axis.max), true));
 
-				clipAttr = {
-					x: 0,
-					y: reversed ? translatedFrom : translatedTo,
-					width: chartSizeMax, 
-					height: Math.abs(translatedFrom - translatedTo)
-				};
-
-				if (inverted) {
-					clipAttr.y = chart.plotWidth - clipAttr.y;
-
-					if (renderer.isVML) {
-						clipAttr = {
-							x:  chart.plotWidth - chart.plotTop - clipAttr.y - clipAttr.height,
-							y: clipAttr.x,
-							width: clipAttr.height,
-							height: clipAttr.width
-						};
-					}		
-				}
+				if (axis.isXAxis) {
+					clipAttr = {
+						x: reversed ? translatedTo : translatedFrom,
+						y: 0,
+						width: Math.abs(translatedFrom - translatedTo), 
+						height: chartSizeMax
+					};
+					if (!horiz) {
+						clipAttr.x = chart.plotHeight - clipAttr.x;
+					}
+				} else {
+					clipAttr = {
+						x: 0,
+						y: reversed ? translatedFrom : translatedTo,
+						width: chartSizeMax, 
+						height: Math.abs(translatedFrom - translatedTo)
+					};
+					if (horiz) {
+						clipAttr.y = chart.plotWidth - clipAttr.y;
+					}
+				} 
 
 				if (clips[i]) {
 					clips[i].animate(clipAttr);
