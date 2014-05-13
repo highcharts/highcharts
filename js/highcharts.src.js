@@ -13756,7 +13756,6 @@ Series.prototype = {
 			axis = this[zoneAxis + 'Axis'],
 			reversed = axis.reversed,
 			horiz = axis.horiz;
-			//inverted = axis.horiz; //chart.inverted;
 
 		if (zones.length && (graph || area)) {
 			// The use of the Color Threshold assumes there are no gaps
@@ -13791,6 +13790,26 @@ Series.prototype = {
 					}
 				} 
 
+				/// VML SUPPPORT
+				if (chart.inverted && renderer.isVML) {
+					if (axis.isXAxis) {			
+						clipAttr = {
+							x: 0,
+							y: reversed ? translatedFrom : translatedTo,
+							height: clipAttr.width,
+							width: chart.chartWidth
+						};		
+					} else {				
+						clipAttr = {
+							x: clipAttr.y - chart.plotLeft - chart.spacingBox.x,
+							y: 0,
+							width: clipAttr.height,
+							height: chart.chartHeight
+						};	
+					}				
+				}
+				/// END OF VML SUPPORT
+
 				if (clips[i]) {
 					clips[i].animate(clipAttr);
 				} else {
@@ -13803,7 +13822,7 @@ Series.prototype = {
 					}
 				}
 			});
-			this.clips = clips;
+			//this.clips = clips;
 		}
 	},
 
