@@ -5,9 +5,7 @@
 package com.highcharts.export.service;
 
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 /**
@@ -37,25 +35,24 @@ public class MonitorService {
 	public int getCountError() {
 		return error.get();
 	}
-
-	@Scheduled(initialDelay = 60000, fixedRate = 15000)
-	public void reporter() {
-		// reset after hour	
-		long elapsedMinutes = (System.currentTimeMillis() - start)/60000;
-		long rate = 1; // prevent dividing by zero
+    
+    private long calculateRatePerMinute() {
+        long rate = 1; // prevent dividing by zero
+        long elapsedMinutes = calculateElapsedMinutes();
 		if (this.getCount() > 0 && elapsedMinutes > 0) {
 			rate = this.getCount() / elapsedMinutes;
 		}
-
-		logger.log(Level.INFO, "request count: {0}, Error count: {1}, Elapsed time (min): {2}, Rate: {3}", new Object[]{this.getCount(), this.getCountError(), elapsedMinutes, rate});
-
-		// report hourly and reset counters
-		if (elapsedMinutes > 60) {
-			logger.log(Level.INFO, "##### HOURLY REPORT request count: {0} Error count: {1} #####", new Object[]{this.getCount(), this.getCountError()});
-			// resetting
-			count.set(0);
-			error.set(0);
-			start = System.currentTimeMillis();
-		}
-	}
+        return rate;
+    }
+    
+    private long calculateElapsedMinutes() {
+        return (System.currentTimeMillis() - start)/60000;
+    }
+    
+    public String report() {
+        long elapsedMin = calculateElapsedMinutes();
+        //if (elapsedMinutes > 60) {
+        return String.format("request count: %d, Error count: %d, Elapsed time (min): %d, Rate: %d",
+                this.getCount(), this.getCountError(), elapsedMin, calculateRatePerMinute());
+    }
 }
