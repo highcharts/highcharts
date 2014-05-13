@@ -2039,8 +2039,11 @@ SVGRenderer.prototype = {
 	/**
 	 * Utility to return the baseline offset and total line height from the font size
 	 */
-	fontMetrics: function (fontSize) {
+	fontMetrics: function (fontSize, elem) {
 		fontSize = fontSize || this.style.fontSize;
+		if (elem && win.getComputedStyle) {
+			fontSize = win.getComputedStyle(elem, "").fontSize;
+		}
 		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
 
 		// Empirical values found by comparing font size and bounding box height.
@@ -2050,7 +2053,8 @@ SVGRenderer.prototype = {
 
 		return {
 			h: lineHeight,
-			b: baseline
+			b: baseline,
+			f: fontSize
 		};
 	},
 
