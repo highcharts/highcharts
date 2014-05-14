@@ -30,7 +30,8 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
 		StringBuilder sb = new StringBuilder();
 		Map<String, String[]> paramMap = request.getParameterMap();
 		
-		for (Map.Entry<String, String[]> entry : paramMap.entrySet()) {
+		for (Map.Entry<String, String[]> entry : paramMap.entrySet()) {            
+            sb.append("\t");
 			sb.append(entry.getKey())
 				.append("=");
                 String[] values = entry.getValue();
@@ -47,10 +48,8 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
 
 	@Override
 	public boolean preHandle(HttpServletRequest request,
-            HttpServletResponse response, Object handler) throws Exception {
-        long startTime = System.currentTimeMillis();
-        logger.log(Level.INFO, "Time={0} Referer={1} Request URL={2}{3} Request parameters {4}", new Object[]{ new Date().toString(), request.getHeader("referer"), request.getRequestURL().toString(), lineSeparator, extractPostRequestBody(request)});
-		request.setAttribute("startTime", startTime);
+            HttpServletResponse response, Object handler) throws Exception {        
+		request.setAttribute("startTime", System.currentTimeMillis());
 		monitor.add();
         
         return true;
@@ -66,11 +65,22 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
 
 		if (httpStatus == 500) {
 			monitor.addError();
-		}
-        logger.log(Level.INFO, "Request URL::{0}:: Time Taken={1} :: HttpStatus: {2}", new Object[]{request.getRequestURL().toString(), System.currentTimeMillis() - startTime, httpStatus});
-        logger.log(Level.INFO, monitor.report());
+            logger.log(Level.INFO, "Time={0} :: Time taken {1}{3} :: Referer={2}{3} :: Request parameters {4}", 
+                new Object[]{ new Date().toString(), //0
+                    System.currentTimeMillis() - startTime, //1
+                    request.getHeader("referer"), //2
+                    lineSeparator, //3
+                    extractPostRequestBody(request)}); //4
+		} else {
+            logger.log(Level.INFO, "Time={0} :: Time taken {1}{3} :: Referer={2}", 
+                new Object[]{ new Date().toString(), //0
+                    System.currentTimeMillis() - startTime, //1
+                    request.getHeader("referer"), //2
+                    lineSeparator}); //3
+        }
+        
 
-		
+        logger.log(Level.INFO, monitor.report());
     }
 
 }

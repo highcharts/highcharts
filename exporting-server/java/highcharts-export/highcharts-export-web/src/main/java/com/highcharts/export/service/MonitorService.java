@@ -50,9 +50,20 @@ public class MonitorService {
     }
     
     public String report() {
-        long elapsedMin = calculateElapsedMinutes();
-        //if (elapsedMinutes > 60) {
-        return String.format("request count: %d, Error count: %d, Elapsed time (min): %d, Rate: %d",
-                this.getCount(), this.getCountError(), elapsedMin, calculateRatePerMinute());
+        long elapsedMinutes = calculateElapsedMinutes();
+        String report;
+        
+        if (elapsedMinutes > 60) {
+			report = String.format("##### HOURLY REPORT request count: %d Error count: %d #####", this.getCount(), this.getCountError());
+			// resetting
+			count.set(0);
+			error.set(0);
+			start = System.currentTimeMillis();
+		} else {
+            report = String.format("request count: %d, Error count: %d, Elapsed time (min): %d, Rate: %d",
+                this.getCount(), this.getCountError(), elapsedMinutes, calculateRatePerMinute());
+        }
+        
+        return report;
     }
 }
