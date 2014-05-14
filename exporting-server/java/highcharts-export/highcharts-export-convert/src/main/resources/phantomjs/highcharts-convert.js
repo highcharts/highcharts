@@ -32,7 +32,7 @@
 				/*HIGHCHARTS_MAP: 'map.js',*/
 				HIGHCHARTS_SOLID_GAUGE: 'solid-gauge.js'
 			},
-			TIMEOUT: 2000 /* 2 seconds timout for loading images */
+			TIMEOUT: 5000 /* 5 seconds timout for loading images */
 		},
 		mapCLArguments,
 		render,
@@ -232,7 +232,7 @@
             }
             
 			try {
-				if (outType.toLowerCase() === 'svg'&& false) {
+				if (outType.toLowerCase() === 'svg') {
 					// output svg
 					svg = svg.html.replace(/<svg /, '<svg xmlns:xlink="http://www.w3.org/1999/xlink" ').replace(/ href=/g, ' xlink:href=').replace(/<\/svg>.*?$/, '</svg>');
 					// add xml doc type
@@ -262,7 +262,7 @@
 							}
 						}, 50);
 
-						// we have a 3 second timeframe..
+						// we have a 5 second timeframe..
 						timer = window.setTimeout(function () {
 							clearInterval(interval);
 							exitCallback('ERROR: While rendering, there\'s is a timeout reached');
