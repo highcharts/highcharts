@@ -16,6 +16,8 @@ Highcharts.geojson = function (geojson, hType) {
 				path.push(polygon[i][0], -polygon[i][1]);
 			}
 		};
+
+	hType = hType || 'map'; // default // docs
 	
 	each(geojson.features, function (feature) {
 

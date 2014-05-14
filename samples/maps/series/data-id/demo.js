@@ -62,8 +62,7 @@ $(function () {
                 format: '{point.name}',
                 style: {
                     color: 'black',
-                    fontWeight: 'bold',
-                    textShadow: '0 0 3px white'
+                    HcTextStroke: '3px rgba(255,255,255,0.7)'
                 }
             },
             states: {
