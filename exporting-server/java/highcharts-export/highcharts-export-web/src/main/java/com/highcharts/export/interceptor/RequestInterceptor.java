@@ -65,22 +65,27 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
 
 		if (httpStatus == 500) {
 			monitor.addError();
-            logger.log(Level.INFO, "Time={0} :: Time taken {1}{3} :: Referer={2}{3} :: Request parameters {4}", 
+            logger.log(Level.INFO, "Time={0} :: Time taken(ms) {1}{3} :: RequestMethod {5} :: Status {6} :: Referer={2}{3} :: Request parameters {4}", 
                 new Object[]{ new Date().toString(), //0
                     System.currentTimeMillis() - startTime, //1
                     request.getHeader("referer"), //2
                     lineSeparator, //3
-                    extractPostRequestBody(request)}); //4
+                    extractPostRequestBody(request), //4
+                    request.getMethod(), //5
+                    response.getStatus()}); //6
+                    
 		} else {
-            logger.log(Level.INFO, "Time={0} :: Time taken {1}{3} :: Referer={2}", 
+            logger.log(Level.INFO, "Time={0} :: Time taken(ms) {1}{3} :: RequestMethod {4} :: Status {5} :: Referer={2}", 
                 new Object[]{ new Date().toString(), //0
                     System.currentTimeMillis() - startTime, //1
                     request.getHeader("referer"), //2
-                    lineSeparator}); //3
+                    lineSeparator, //3
+                    request.getMethod(), //4
+                    response.getStatus()}); //5
         }
         
 
-        logger.log(Level.INFO, monitor.report());
+        //logger.log(Level.INFO, monitor.report());
     }
 
 }
