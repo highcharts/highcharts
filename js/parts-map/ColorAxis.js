@@ -86,6 +86,7 @@ extend(ColorAxis.prototype, {
 			colorCounter = 0,
 			options = this.options;
 		this.dataClasses = dataClasses = [];
+		this.legendItems = [];
 
 		each(userOptions.dataClasses, function (dataClass, i) {
 			var colors;
@@ -341,56 +342,58 @@ extend(ColorAxis.prototype, {
 	getDataClassLegendSymbols: function () {
 		var axis = this,
 			chart = this.chart,
-			legendItems = [],
+			legendItems = this.legendItems,
 			legendOptions = chart.options.legend,
 			valueDecimals = legendOptions.valueDecimals,
 			valueSuffix = legendOptions.valueSuffix || '',
 			name;
 
-		each(this.dataClasses, function (dataClass, i) {
-			var vis = true,
-				from = dataClass.from,
-				to = dataClass.to;
-			
-			// Assemble the default name. This can be overridden by legend.options.labelFormatter
-			name = '';
-			if (from === UNDEFINED) {
-				name = '< ';
-			} else if (to === UNDEFINED) {
-				name = '> ';
-			}
-			if (from !== UNDEFINED) {
-				name += numberFormat(from, valueDecimals) + valueSuffix;
-			}
-			if (from !== UNDEFINED && to !== UNDEFINED) {
-				name += ' - ';
-			}
-			if (to !== UNDEFINED) {
-				name += numberFormat(to, valueDecimals) + valueSuffix;
-			}
-			
-			// Add a mock object to the legend items
-			legendItems.push(extend({
-				chart: chart,
-				name: name,
-				options: {},
-				drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-				visible: true,
-				setState: noop,
-				setVisible: function () {
-					vis = this.visible = !vis;
-					each(axis.series, function (series) {
-						each(series.points, function (point) {
-							if (point.dataClass === i) {
-								point.setVisible(vis);
-							}
-						});
-					});
-					
-					chart.legend.colorizeItem(this, vis);
+		if (!legendItems.length) {
+			each(this.dataClasses, function (dataClass, i) {
+				var vis = true,
+					from = dataClass.from,
+					to = dataClass.to;
+				
+				// Assemble the default name. This can be overridden by legend.options.labelFormatter
+				name = '';
+				if (from === UNDEFINED) {
+					name = '< ';
+				} else if (to === UNDEFINED) {
+					name = '> ';
 				}
-			}, dataClass));
-		});
+				if (from !== UNDEFINED) {
+					name += numberFormat(from, valueDecimals) + valueSuffix;
+				}
+				if (from !== UNDEFINED && to !== UNDEFINED) {
+					name += ' - ';
+				}
+				if (to !== UNDEFINED) {
+					name += numberFormat(to, valueDecimals) + valueSuffix;
+				}
+				
+				// Add a mock object to the legend items
+				legendItems.push(extend({
+					chart: chart,
+					name: name,
+					options: {},
+					drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+					visible: true,
+					setState: noop,
+					setVisible: function () {
+						vis = this.visible = !vis;
+						each(axis.series, function (series) {
+							each(series.points, function (point) {
+								if (point.dataClass === i) {
+									point.setVisible(vis);
+								}
+							});
+						});
+						
+						chart.legend.colorizeItem(this, vis);
+					}
+				}, dataClass));
+			});
+		}
 		return legendItems;
 	},
 	name: '' // Prevents 'undefined' in legend in IE8

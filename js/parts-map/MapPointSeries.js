@@ -11,7 +11,7 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 		crop: false,
 		overflow: false,
 		style: {
-			HcTextStroke: '1px white' // docs
+			HcTextStroke: '3px rgba(255,255,255,0.5)' // docs
 		}
 	}
 });
