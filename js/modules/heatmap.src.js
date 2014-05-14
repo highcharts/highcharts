@@ -637,6 +637,13 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		});
 		
 		series.translateColors();
+
+		// Make sure colors are updated on colorAxis update (#2893)
+		if (this.chart.hasRendered) {
+			each(series.points, function (point) {
+				point.shapeArgs.fill = point.color;
+			});
+		}
 	},
 	drawPoints: seriesTypes.column.prototype.drawPoints,
 	animate: noop,
