@@ -13604,9 +13604,18 @@ extend(Chart.prototype, {
 	showLoading: function (str) {
 		var chart = this,
 			options = chart.options,
-			loadingDiv = chart.loadingDiv;
-
-		var loadingOptions = options.loading;
+			loadingDiv = chart.loadingDiv,
+			loadingOptions = options.loading,
+			setLoadingSize = function () {
+				if (loadingDiv) {
+					css(loadingDiv, {
+						left: chart.plotLeft + PX,
+						top: chart.plotTop + PX,
+						width: chart.plotWidth + PX,
+						height: chart.plotHeight + PX
+					});
+				}
+			};
 
 		// create the layer at the first call
 		if (!loadingDiv) {
@@ -13623,7 +13632,7 @@ extend(Chart.prototype, {
 				loadingOptions.labelStyle,
 				loadingDiv
 			);
-
+			addEvent(chart, 'redraw', setLoadingSize); // #1080
 		}
 
 		// update text
@@ -13633,11 +13642,7 @@ extend(Chart.prototype, {
 		if (!chart.loadingShown) {
 			css(loadingDiv, {
 				opacity: 0,
-				display: '',
-				left: chart.plotLeft + PX,
-				top: chart.plotTop + PX,
-				width: chart.plotWidth + PX,
-				height: chart.plotHeight + PX
+				display: ''				
 			});
 			animate(loadingDiv, {
 				opacity: loadingOptions.style.opacity
@@ -13646,6 +13651,7 @@ extend(Chart.prototype, {
 			});
 			chart.loadingShown = true;
 		}
+		setLoadingSize();
 	},
 
 	/**
