@@ -5720,7 +5720,7 @@ Tick.prototype = {
 			do {
 				index += (isFirst ? 1 : -1);
 				neighbour = axis.ticks[tickPositions[index]];
-			} while (tickPositions[index] && (!neighbour || neighbour.label.line !== line));
+			} while (tickPositions[index] && (!neighbour || !neighbour.label || neighbour.label.line !== line)); // #3044
 
 			neighbourEdge = neighbour && neighbour.label.xy && neighbour.label.xy.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
 
