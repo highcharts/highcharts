@@ -13,8 +13,8 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 	var series = this,
 		chart = series.chart,
 		options = chart.options,
-		pieOptions = options.plotOptions.pie,
-		depth = pieOptions.depth || 0,
+		seriesOptions = series.options,
+		depth = seriesOptions.depth || 0,
 		options3d = options.chart.options3d,
 		origin = {
 			x: chart.plotWidth / 2,
@@ -24,10 +24,10 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 		alpha = options3d.alpha,
 		beta = options3d.beta;
 
-	var z = pieOptions.stacking ? (this.options.stack || 0) * depth : series._i * depth;
+	var z = seriesOptions.stacking ? (seriesOptions.stack || 0) * depth : series._i * depth;
 	z += depth / 2;
 
-	if (pieOptions.grouping !== false) { z = 0; }
+	if (seriesOptions.grouping !== false) { z = 0; }
 
 	Highcharts.each(series.data, function (point) {
 		point.shapeType = 'arc3d';
@@ -61,7 +61,7 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 	if (this.chart.is3d()) {
 		// Set the border color to the fill color to provide a smooth edge
 		Highcharts.each(this.data, function (point) {
-			var c = point.options.borderColor || point.series.chart.userOptions.plotOptions.pie.borderColor || point.color || point.series.userOptions.borderColor || point.series.color;
+			var c = point.options.borderColor || point.series.chart.options.plotOptions.pie.borderColor || point.color || point.series.userOptions.borderColor || point.series.color;
 			point.options.borderColor = c;
 			point.borderColor = c;
 			point.pointAttr[''].stroke = c;

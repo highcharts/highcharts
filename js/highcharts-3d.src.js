@@ -798,14 +798,13 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 		return;
 	}	
 
-	var type = this.chart.options.chart.type,
-		series = this,
+	var series = this,
 		chart = series.chart,
 		options = chart.options,
-		typeOptions = options.plotOptions[type],		
+		seriesOptions = series.options,		
 		options3d = options.chart.options3d,
 
-		depth = typeOptions.depth || 25,
+		depth = seriesOptions.depth || 25,
 		origin = {
 			x: chart.plotWidth / 2,
 			y: chart.plotHeight / 2, 
@@ -815,12 +814,12 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 		alpha = options3d.alpha,
 		beta = options3d.beta * (chart.yAxis[0].opposite ? -1 : 1);
 
-	var stack = typeOptions.stacking ? (this.options.stack || 0) : series._i; 
-	var z = stack * (depth + (typeOptions.groupZPadding || 1));
+	var stack = seriesOptions.stacking ? (seriesOptions.stack || 0) : series._i; 
+	var z = stack * (depth + (seriesOptions.groupZPadding || 1));
 
-	if (typeOptions.grouping !== false) { z = 0; }
+	if (seriesOptions.grouping !== false) { z = 0; }
 
-	z += (typeOptions.groupZPadding || 1);
+	z += (seriesOptions.groupZPadding || 1);
 
 	Highcharts.each(series.data, function (point) {
 		var shapeArgs = point.shapeArgs,
@@ -889,13 +888,14 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proce
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (this.chart.is3d()) {
-	var grouping = this.chart.options.plotOptions.column.grouping,
-		stacking = this.chart.options.plotOptions.column.stacking,
-		z = this.options.zIndex;
+		var seriesOptions = this.options,	
+			grouping = seriesOptions.grouping,
+			stacking = seriesOptions.stacking,
+			z = seriesOptions.zIndex;
 		if (!z) {		
 			if (!(grouping !== undefined && !grouping) && stacking) {
 				var stacks = this.chart.retrieveStacks(),
-					stack = this.options.stack || 0,
+					stack = seriesOptions.stack || 0,
 					i; // position within the stack
 				for (i = 0; i < stacks[stack].series.length; i++) {
 					if (stacks[stack].series[i] === this) {
@@ -904,7 +904,7 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proce
 				}
 				z = (stacks.totalStacks * 10) - (10 * (stacks.totalStacks - stacks[stack].position)) - i;
 				
-				this.options.zIndex = z;
+				seriesOptions.zIndex = z;
 			}
 		}
 	}
@@ -1038,8 +1038,8 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 	var series = this,
 		chart = series.chart,
 		options = chart.options,
-		pieOptions = options.plotOptions.pie,
-		depth = pieOptions.depth || 0,
+		seriesOptions = series.options,
+		depth = seriesOptions.depth || 0,
 		options3d = options.chart.options3d,
 		origin = {
 			x: chart.plotWidth / 2,
@@ -1049,10 +1049,10 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 		alpha = options3d.alpha,
 		beta = options3d.beta;
 
-	var z = pieOptions.stacking ? (this.options.stack || 0) * depth : series._i * depth;
+	var z = seriesOptions.stacking ? (seriesOptions.stack || 0) * depth : series._i * depth;
 	z += depth / 2;
 
-	if (pieOptions.grouping !== false) { z = 0; }
+	if (seriesOptions.grouping !== false) { z = 0; }
 
 	Highcharts.each(series.data, function (point) {
 		point.shapeType = 'arc3d';
@@ -1086,7 +1086,7 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 	if (this.chart.is3d()) {
 		// Set the border color to the fill color to provide a smooth edge
 		Highcharts.each(this.data, function (point) {
-			var c = point.options.borderColor || point.series.chart.userOptions.plotOptions.pie.borderColor || point.color || point.series.userOptions.borderColor || point.series.color;
+			var c = point.options.borderColor || point.series.chart.options.plotOptions.pie.borderColor || point.color || point.series.userOptions.borderColor || point.series.color;
 			point.options.borderColor = c;
 			point.borderColor = c;
 			point.pointAttr[''].stroke = c;
