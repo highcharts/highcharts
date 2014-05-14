@@ -214,7 +214,7 @@ extend(ColorAxis.prototype, {
 			if (this.isLog) {
 				value = this.val2lin(value);
 			}
-			pos = 1 - ((this.max - value) / (this.max - this.min));
+			pos = 1 - ((this.max - value) / ((this.max - this.min) || 1));
 			i = stops.length;
 			while (i--) {
 				if (pos > stops[i][0]) {
@@ -226,7 +226,7 @@ extend(ColorAxis.prototype, {
 
 			// The position within the gradient
 			pos = 1 - (to[0] - pos) / ((to[0] - from[0]) || 1);
-			
+
 			color = this.tweenColors(
 				from.color, 
 				to.color,

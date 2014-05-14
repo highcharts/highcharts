@@ -496,7 +496,7 @@ seriesProto.processData = function () {
  * Modify series extremes
  */
 wrap(seriesProto, 'getExtremes', function (proceed) {
-	proceed.call(this);
+	proceed.call(this, [].slice.call(arguments, 1));
 
 	if (this.modifyValue) {
 		this.dataMax = this.modifyValue(this.dataMax);
