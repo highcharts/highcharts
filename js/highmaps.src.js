@@ -15781,7 +15781,8 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 			animation: true
 		},
 		hover: {
-			brightness: 0.2
+			brightness: 0.2,
+			halo: null
 		}
 	}
 });
