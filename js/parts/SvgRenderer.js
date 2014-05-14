@@ -1322,7 +1322,7 @@ SVGRenderer.prototype = {
 									actualWidth,
 									hcHeight = textStyles.HcHeight,
 									rest = [],
-									dy = getLineHeight(),
+									dy = getLineHeight(tspan),
 									softLineNo = 1,
 									bBox;
 
