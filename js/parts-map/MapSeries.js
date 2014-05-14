@@ -94,7 +94,9 @@ var MapAreaPoint = extendClass(Point, {
 	 */
 	onMouseOver: function (e) {
 		clearTimeout(this.colorInterval);
-		Point.prototype.onMouseOver.call(this, e);
+		if (this.value !== null) {
+			Point.prototype.onMouseOver.call(this, e);
+		}
 	},
 	/**
 	 * Custom animation for tweening out the colors. Animation reduces blinking when hovering
