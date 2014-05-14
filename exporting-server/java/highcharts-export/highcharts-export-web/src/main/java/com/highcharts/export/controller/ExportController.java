@@ -83,14 +83,9 @@ public class ExportController extends HttpServlet {
 		String jsonpCallback = "";
 		boolean isAndroid = request.getHeader("user-agent") != null && request.getHeader("user-agent").contains("Android");
 
-		// check for visitors who don't know this domain is really only for the exporting service ;)
-		if (request.getParameterMap().isEmpty()) {
-			 throw new ZeroRequestParameterException();
-        }
-
 		if ("GET".equalsIgnoreCase(request.getMethod())) {
 
-            // Handle redirect downloads for Android devices
+            // Handle redirect downloads for Android devices, these come in without request parameters
             String tempFile = (String) session.getAttribute("tempFile");
             session.removeAttribute("tempFile");
 
@@ -102,6 +97,11 @@ public class ExportController extends HttpServlet {
 				return getFile(basename, extension);
 
             }
+        }
+
+        // check for visitors who don't know this domain is really only for the exporting service ;)
+		if (request.getParameterMap().isEmpty()) {
+			 throw new ZeroRequestParameterException();
         }
 
 		/* Most JSONP implementations use the 'callback' request parameter and this overwrites
