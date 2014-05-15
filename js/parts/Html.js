@@ -182,6 +182,7 @@ extend(SVGRenderer.prototype, {
 
 		// Text setter
 		wrapper.textSetter = function (value) {
+			value = value.replace(/&(?!amp;)/g, '&amp;'); // fix legacy IE issue with ampersands
 			if (value !== element.innerHTML) {
 				delete this.bBox;
 			}
