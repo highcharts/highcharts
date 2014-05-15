@@ -85,7 +85,7 @@ public class RequestInterceptor extends HandlerInterceptorAdapter {
         }
         
 
-        //logger.log(Level.INFO, monitor.report());
+        logger.log(Level.INFO, monitor.report());
     }
 
 }
