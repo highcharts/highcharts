@@ -384,9 +384,6 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 	top = top.concat(curveTo(cx, cy, irx, iry, end, start, 0, 0));
 	top = top.concat(['Z']);
 
-	var midAngle = ((shapeArgs.start + shapeArgs.end) / 2);
-	var zIndex = ((sin(beta) * cos(midAngle)) + (sin(-alpha) * sin(-midAngle)));
-
 	// OUTSIDE
 	var b = (beta > 0 ? PI / 2 : 0),
 		a = (alpha > 0 ? 0 : PI / 2);
@@ -427,13 +424,15 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 		'Z'
 	];
 
-	var mr = ir + ((r - ir) / 2);
+	var mr = ir + ((r - ir) / 2),
+		Ks = ((sin(beta) * cos(start)) + (sin(-alpha) * sin(-start))),
+		Ke = ((sin(beta) * cos(end)) + (sin(-alpha) * sin(-end)));
 
-	var zTop = Math.abs(zIndex * 2 * mr),
-		zOut = zIndex * r,
-		zInn = zIndex * ir,
-		zSide1 = ((sin(beta) * cos(start)) + (sin(-alpha) * sin(-start))) * mr,
-		zSide2 = ((sin(beta) * cos(end)) + (sin(-alpha) * sin(-end))) * mr;
+	var zOut = Math.max(Ke, Ks) * r,
+		zInn = Ke * ir,
+		zSide1 = Ks * mr,
+		zSide2 =  Ke * mr,
+		zTop = Math.max(zOut, zInn, zSide1, zSide2);
 
 	return {
 		top: top,
@@ -446,7 +445,7 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 		zSide1: zSide1 * 100,
 		side2: side2,
 		zSide2: zSide2 * 100,
-		zAll: zIndex
+		zAll: zTop * 100
 	};
 };
 /*** 
