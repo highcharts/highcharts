@@ -12978,12 +12978,11 @@ Series.prototype = {
 
 					// Handle colors for column and pies
 					if (!seriesOptions.marker) { // column, bar, point
-						// If no hover color is given, brighten the normal color. #1619, #2579, #2802
-						pointStateOptionsHover.color = pointStateOptionsHover.color || 
-							(point.color && Color(point.color)
+						// If no hover color is given, brighten the normal color. #1619, #2579
+						pointStateOptionsHover.color = pointStateOptionsHover.color || (!point.options.color && stateOptionsHover.color) ||
+							Color(point.color)
 								.brighten(pointStateOptionsHover.brightness || stateOptionsHover.brightness)
-								.get()) || 
-							stateOptionsHover.color;							
+								.get();
 					}
 
 					// normal point state inherits series wide normal state
@@ -14734,13 +14733,6 @@ if (seriesTypes.pie) {
 			}
 		});
 
-		// assume equal label heights
-		i = 0;
-		while (!labelHeight && data[i]) { // #1569
-			labelHeight = data[i] && data[i].dataLabel && (data[i].dataLabel.getBBox().height || 21); // 21 is for #968
-			i++;
-		}
-
 		/* Loop over the points in each half, starting from the top and bottom
 		 * of the pie to detect overlapping labels.
 		 */
@@ -14758,6 +14750,13 @@ if (seriesTypes.pie) {
 			// Sort by angle
 			series.sortByAngle(points, i - 0.5);
 
+			// Assume equal label heights on either hemisphere (#2630)
+			j = labelHeight = 0;
+			while (!labelHeight && points[j]) { // #1569
+				labelHeight = points[j] && points[j].dataLabel && (points[j].dataLabel.getBBox().height || 21); // 21 is for #968
+				j++;
+			}
+
 			// Only do anti-collision when we are outside the pie and have connectors (#856)
 			if (distanceOption > 0) {
 
@@ -14773,7 +14772,8 @@ if (seriesTypes.pie) {
 						chart.renderer.rect(slotX, slotY - 7, 100, labelHeight, 1)
 							.attr({
 								'stroke-width': 1,
-								stroke: 'silver'
+								stroke: 'silver',
+								fill: 'rgba(0,0,255,0.1)'
 							})
 							.add();
 						chart.renderer.text('Slot '+ (slots.length - 1), slotX, slotY + 4)
@@ -17037,6 +17037,8 @@ Highcharts.geojson = function (geojson, hType) {
 				path.push(polygon[i][0], -polygon[i][1]);
 			}
 		};
+
+	hType = hType || 'map'; // default // docs
 	
 	each(geojson.features, function (feature) {
 
