@@ -6,11 +6,6 @@ Highcharts JS is a JavaScript charting library based on SVG and VML rendering.
 * Licensing: [www.highcharts.com/license](http://www.highcharts.com/license)
 * Support: [www.highcharts.com/support](http://www.highcharts.com/support)
 
-## Current branches
-**master**: As of 2013-03-06, the master branch holds the candidate for Highcharts 3.0 and Highstock 1.3.
-
-**rambera**: This branch contained the candidate for Highcharts 3.0 and Highstock 1.3 until 2013-03-16. After this date, this branch is abandoned and work will continue on the master branch.
-
 ## Reporting issues
 We use GitHub Issues as our official bug tracker. We strive to keep this a clean, maintainable and searchable record of our open and closed bugs, therefore we kindly ask you to obey some rules before reporting an issue:
 
