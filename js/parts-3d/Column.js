@@ -102,22 +102,21 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proce
 		var seriesOptions = this.options,	
 			grouping = seriesOptions.grouping,
 			stacking = seriesOptions.stacking,
-			z = seriesOptions.zIndex;
-		if (!z) {		
-			if (!(grouping !== undefined && !grouping) && stacking) {
-				var stacks = this.chart.retrieveStacks(),
-					stack = seriesOptions.stack || 0,
-					i; // position within the stack
-				for (i = 0; i < stacks[stack].series.length; i++) {
-					if (stacks[stack].series[i] === this) {
-						break;
-					}
+			z = 0;	
+		
+		if (!(grouping !== undefined && !grouping) && stacking) {
+			var stacks = this.chart.retrieveStacks(grouping, stacking),
+				stack = seriesOptions.stack || 0,
+				i; // position within the stack
+			for (i = 0; i < stacks[stack].series.length; i++) {
+				if (stacks[stack].series[i] === this) {
+					break;
 				}
-				z = (stacks.totalStacks * 10) - (10 * (stacks.totalStacks - stacks[stack].position)) - i;
-				
-				seriesOptions.zIndex = z;
 			}
+			z = (stacks.totalStacks * 10) - (10 * (stacks.totalStacks - stacks[stack].position)) - i;
 		}
+				
+		seriesOptions.zIndex = z;
 	}
 });
 function draw3DPoints(proceed) {
