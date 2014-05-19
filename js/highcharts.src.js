@@ -15443,7 +15443,7 @@ var ColumnSeries = extendClass(Series, {
 					borderAttr = {
 						'stroke-width': series.borderWidth
 					};
-				} else {
+				} else if (!pointAttr['stroke-width']) {
 					delete pointAttr.stroke;
 				}
 				
