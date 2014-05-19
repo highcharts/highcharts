@@ -1496,7 +1496,7 @@ defaultOptions = {
 		labelStyle: {
 			fontWeight: 'bold',
 			position: RELATIVE,
-			top: '1em'
+			top: '45%' // docs
 		},
 		// showDuration: 0,
 		style: {
