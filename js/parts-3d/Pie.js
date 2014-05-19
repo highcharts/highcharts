@@ -72,6 +72,11 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 	}
 
 	proceed.apply(this, [].slice.call(arguments, 1));
+
+	if (this.chart.is3d()) {
+		this.chart.seriesGroup.toFront();
+		this.chart.tooltip.label.toFront();
+	}
 });
 
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
