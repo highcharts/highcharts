@@ -15954,7 +15954,8 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					pointMaxX = -MAX_VALUE, 
 					pointMinX =  MAX_VALUE, 
 					pointMaxY = -MAX_VALUE, 
-					pointMinY =  MAX_VALUE;
+					pointMinY =  MAX_VALUE,
+					properties = point.properties;
 
 				// The first time a map point is used, analyze its box
 				if (!point._foundBox) {
@@ -15971,8 +15972,10 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 						}
 					}
 					// Cache point bounding box for use to position data labels, bubbles etc
-					point._midX = pointMinX + (pointMaxX - pointMinX) * (point.middleX || 0.5); // pick is slower and very marginally needed
-					point._midY = pointMinY + (pointMaxY - pointMinY) * (point.middleY || 0.5);
+					point._midX = pointMinX + (pointMaxX - pointMinX) * 
+						(point.middleX || (properties && properties['hc-middle-x']) || 0.5); // pick is slower and very marginally needed
+					point._midY = pointMinY + (pointMaxY - pointMinY) * 
+						(point.middleY || (properties && properties['hc-middle-y']) || 0.5);
 					point._maxX = pointMaxX;
 					point._minX = pointMinX;
 					point._maxY = pointMaxY;
@@ -16004,7 +16007,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			if (yAxis.options.minRange === undefined) {
 				yAxis.minRange = Math.min(5 * minRange, (this.maxY - this.minY) / 5, yAxis.minRange || MAX_VALUE);
 			}
-
 		}
 	},
 	
