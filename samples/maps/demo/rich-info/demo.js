@@ -202,7 +202,7 @@ $(function () {
 
             series : [{
                 data : data,
-                mapData: Highcharts.maps.world,
+                mapData: Highcharts.geojson(Highcharts.maps['custom/world']),
                 joinBy: 'code3',
                 name: 'Current population',
                 allowPointSelect: true,

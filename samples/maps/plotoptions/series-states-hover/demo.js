@@ -9,6 +9,10 @@ $(function () {
                 text : 'Population density by country (/km²)'
             },
 
+            subtitle: {
+                text: 'Darker border on hover'
+            },
+
             mapNavigation: {
                 enabled: true,
                 buttonOptions: {
