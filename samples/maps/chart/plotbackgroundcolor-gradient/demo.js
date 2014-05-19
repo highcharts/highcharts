@@ -55,8 +55,8 @@ $(function () {
             // The map series
             series : [{
                 data : data,
-                mapData: Highcharts.maps.world,
-                joinBy: 'code',
+                mapData: Highcharts.geojson(Highcharts.maps['custom/world']),
+                joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
                 borderColor: '#555',
                 borderWidth: 0.5,

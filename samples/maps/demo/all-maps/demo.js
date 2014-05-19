@@ -156,13 +156,14 @@ $(function () {
 						formatter: function () {
 							var props = this.point.properties,
                                 bBox = this.point.graphic && this.point.graphic.getBBox(),
-                                label;
+                                label,
+                                name = this.point.name;
 							
-                        	if (props && bBox.width > 20 && bBox.height > 20 && this.point.name) {
-                            	label = this.point.name.substr(0, bBox.width / 8);
-                                if (label.length === this.point.name.length - 1) {
+                        	if (props && bBox.width > 20 && bBox.height > 20 && name) {
+                            	label = name.substr(0, bBox.width / 8);
+                                if (label.length === name.length - 1) {
                                 	label = this.point.name;
-                                } else  if (label !== this.point.name) {
+                                } else  if (label !== name) {
                                 	label += '.';
                                 }
 	                            return label;
