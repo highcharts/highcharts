@@ -35,13 +35,6 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 	}, args[1]);
 
 	proceed.apply(this, [].slice.call(args, 1));
-
-	var chart = this;
-	if (chart.is3d && chart.series[0].type == 'pie') {
-		Highcharts.each(chart.series[0].points, function (point) {
-			point.update({});
-		}); 
-	}
 });
 
 Highcharts.wrap(Highcharts.Chart.prototype, 'setChartSize', function (proceed) {

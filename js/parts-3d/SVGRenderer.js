@@ -226,10 +226,10 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 	result.shapeArgs = shapeArgs;	// Store for later use
 
 	result.top = renderer.path(paths.top).attr({zIndex: paths.zTop}).add(result);
-	result.side1 = renderer.path(paths.side2).attr({zIndex: paths.zSide2}).add(result.parentGroup);
-	result.side2 = renderer.path(paths.side1).attr({zIndex: paths.zSide1}).add(result.parentGroup);
-	result.inn = renderer.path(paths.inn).attr({zIndex: paths.zInn}).add(result.parentGroup);
-	result.out = renderer.path(paths.out).attr({zIndex: paths.zOut}).add(result.parentGroup);
+	result.side1 = renderer.path(paths.side2).attr({zIndex: paths.zSide2});
+	result.side2 = renderer.path(paths.side1).attr({zIndex: paths.zSide1});
+	result.inn = renderer.path(paths.inn).attr({zIndex: paths.zInn});
+	result.out = renderer.path(paths.out).attr({zIndex: paths.zOut});
 
 	result.fillSetter = function (color) {
 		this.color = color;
@@ -244,31 +244,20 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		this.top.attr({fill: c0});
 		return this;
 	};
-
+	
 	result.translateXSetter = function (value) {
-		var value2 = value;
-		if (this.parentGroup) {
-			value2 += this.parentGroup.translateX;
-		} 
-
-		this.out.attr({translateX: value2});
-		this.inn.attr({translateX: value2});
-		this.side1.attr({translateX: value2});
-		this.side2.attr({translateX: value2});
-
+		this.out.attr({translateX: value});
+		this.inn.attr({translateX: value});
+		this.side1.attr({translateX: value});
+		this.side2.attr({translateX: value});
 		this.top.attr({translateX: value});
 	};
+	
 	result.translateYSetter = function (value) {
-		var value2 = value;
-		if (this.parentGroup) {
-			 value2 += this.parentGroup.translateY;
-		}
-
-		this.out.attr({translateY: value2});
-		this.inn.attr({translateY: value2});
-		this.side1.attr({translateY: value2});
-		this.side2.attr({translateY: value2});
-
+		this.out.attr({translateY: value});
+		this.inn.attr({translateY: value});
+		this.side1.attr({translateY: value});
+		this.side2.attr({translateY: value});
 		this.top.attr({translateY: value});
 	};
 
@@ -295,8 +284,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 
 			result.attr({fill: result.color});
 			result.attr({zIndex: paths.zTop * 100});
-		}
-		
+		}		
 		return this;
 	};
 
@@ -398,7 +386,6 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 		side1: side1,
 		zSide1: zSide1,
 		side2: side2,
-		zSide2: zSide2,
-		//zAll: zTop * 100
+		zSide2: zSide2
 	};
 };

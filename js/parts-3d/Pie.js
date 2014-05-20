@@ -73,9 +73,14 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 
 	proceed.apply(this, [].slice.call(arguments, 1));
 
-	if (this.chart.is3d()) {
-		this.chart.seriesGroup.toFront();
-		this.chart.tooltip.label.toFront();
+	if (this.chart.is3d()) {		
+		var seriesGroup = this.group;
+		Highcharts.each(this.points, function (point) {
+			point.graphic.out.add(seriesGroup);
+			point.graphic.inn.add(seriesGroup);
+			point.graphic.side1.add(seriesGroup);
+			point.graphic.side2.add(seriesGroup);
+		});		
 	}
 });
 
@@ -139,8 +144,8 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'animate', function (proce
 				if (init) {
 				
 					// Scale down the group and place it in the center
-					this.oldtranslateX = group.translateX;
-					this.oldtranslateY = group.translateY;
+					group.oldtranslateX = group.translateX;
+					group.oldtranslateY = group.translateY;
 					attribs = {
 						translateX: center[0],
 						translateY: center[1],
@@ -157,12 +162,13 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'animate', function (proce
 				// Run the animation
 				} else {
 					attribs = {
-						translateX: this.oldtranslateX,
-						translateY: this.oldtranslateY,
+						translateX: group.oldtranslateX,
+						translateY: group.oldtranslateY,
 						scaleX: 1,
 						scaleY: 1
 					};
 					group.animate(attribs, animation);
+
 					if (markerGroup) {
 						markerGroup.animate(attribs, animation);
 					}
