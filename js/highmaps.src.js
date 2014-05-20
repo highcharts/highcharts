@@ -8921,8 +8921,9 @@ Pointer.prototype = {
 				each(chart.axes, function (axis) {
 					if (axis.zoomEnabled) {
 						var horiz = axis.horiz,
-							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop)),
-							selectionMax = axis.toValue((horiz ? selectionLeft + selectionWidth : selectionTop + selectionHeight));
+							minPixelPadding = e.type === 'touchend' ? axis.minPixelPadding: 0, // #1207, #3075
+							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop) + minPixelPadding),
+							selectionMax = axis.toValue((horiz ? selectionLeft + selectionWidth : selectionTop + selectionHeight) - minPixelPadding);
 
 						if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
 							selectionData[axis.coll].push({
