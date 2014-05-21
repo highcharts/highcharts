@@ -157,16 +157,20 @@ $(function () {
 							var props = this.point.properties,
                                 bBox = this.point.graphic && this.point.graphic.getBBox(),
                                 label,
-                                name = this.point.name;
+                                name = this.point.properties && this.point.properties['hc-key'];
 							
                         	if (props && bBox.width > 20 && bBox.height > 20 && name) {
-                            	label = name.substr(0, bBox.width / 8);
+                        		name = name.split('.');
+                        		name = name[name.length - 1];
+                        		return name;
+                            	/*label = name.substr(0, bBox.width / 8);
                                 if (label.length === name.length - 1) {
                                 	label = this.point.name;
                                 } else  if (label !== name) {
                                 	label += '.';
                                 }
 	                            return label;
+	                            */
                             }
 						}
 					},
