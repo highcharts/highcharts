@@ -71,10 +71,12 @@ $(function () {
                 year: year
             });
         }
+        
         // Add lower case codes to the data set for inclusion in the tooltip.pointFormat
-        $.each(Highcharts.maps.world, function () {
-            this.flag = this.code.replace('UK', 'GB').toLowerCase();
-            this.id = this.code; // for Chart.get()
+        var mapData = Highcharts.geojson(Highcharts.maps['custom/world']);
+        $.each(mapData, function () {
+            this.id = this.properties['hc-key']; // for Chart.get()
+            this.flag = this.id.replace('UK', 'GB').toLowerCase();
         });
 
         // Wrap point.select to get to the total selected points
@@ -202,8 +204,8 @@ $(function () {
 
             series : [{
                 data : data,
-                mapData: Highcharts.geojson(Highcharts.maps['custom/world']),
-                joinBy: 'code3',
+                mapData: mapData,
+                joinBy: ['iso-a3', 'code3'],
                 name: 'Current population',
                 allowPointSelect: true,
                 cursor: 'pointer',

@@ -338,7 +338,9 @@ extend(ColorAxis.prototype, {
 	},
 
 	getOffset: function () {
-		var group = this.legendGroup;
+		var group = this.legendGroup,
+			sideOffset = this.chart.axisOffset[this.side];
+		
 		if (group) {
 
 			Axis.prototype.getOffset.call(this);
@@ -352,6 +354,8 @@ extend(ColorAxis.prototype, {
 
 				this.added = true;
 			}
+			// Reset it to avoid color axis reserving space
+			this.chart.axisOffset[this.side] = sideOffset;
 		}
 	},
 
