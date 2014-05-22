@@ -31,6 +31,11 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 					back: { size: 1, color: 'rgba(255,255,255,0)' }
 				}
 			}
+		},
+		plotOptions: {
+			pie: {
+				borderColor: undefined
+			}
 		}
 	}, args[1]);
 

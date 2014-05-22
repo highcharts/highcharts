@@ -493,6 +493,11 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 					back: { size: 1, color: 'rgba(255,255,255,0)' }
 				}
 			}
+		},
+		plotOptions: {
+			pie: {
+				borderColor: undefined
+			}
 		}
 	}, args[1]);
 
@@ -1093,7 +1098,7 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 	if (this.chart.is3d()) {
 		// Set the border color to the fill color to provide a smooth edge
 		Highcharts.each(this.data, function (point) {
-			var c = point.options.borderColor || point.series.chart.options.plotOptions.pie.borderColor || point.color || point.series.userOptions.borderColor || point.series.color;
+			var c = point.options.borderColor || point.series.options.borderColor || point.color || point.series.color;
 			point.options.borderColor = c;
 			point.borderColor = c;
 			point.pointAttr[''].stroke = c;
