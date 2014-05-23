@@ -64,12 +64,9 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'redraw', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));	
 });
 
-Highcharts.Chart.prototype.retrieveStacks = function () {
+Highcharts.Chart.prototype.retrieveStacks = function (grouping, stacking) {
+
 	var stacks = {},
-		type = this.options.chart.type,
-		typeOptions = this.options.plotOptions[type],
-		stacking = typeOptions.stacking,
-		grouping = typeOptions.grouping,
 		i = 1;
 
 	if (grouping || !stacking) { return this.series; }

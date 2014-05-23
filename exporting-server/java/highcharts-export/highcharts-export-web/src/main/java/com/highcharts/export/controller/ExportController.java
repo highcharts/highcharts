@@ -70,6 +70,7 @@ public class ExportController extends HttpServlet {
 		@RequestParam(value = "width", required = false) String width,
 		@RequestParam(value = "scale", required = false) String scale,
 		@RequestParam(value = "options", required = false) String options,
+        @RequestParam(value = "globaloptions", required = false) String globalOptions,
 		@RequestParam(value = "constr", required = false) String constructor,
 		@RequestParam(value = "callback", required = false) String callback,
 		@RequestParam(value = "callbackHC", required = false) String callbackHC,
@@ -130,7 +131,7 @@ public class ExportController extends HttpServlet {
             session.setAttribute("tempFile", FilenameUtils.getName(randomFilename));
         }
 
-		String output = convert(svg, mime, width, scale, options, constructor, callback, randomFilename);
+		String output = convert(svg, mime, width, scale, options, constructor, callback, globalOptions, randomFilename);
 		ByteArrayOutputStream stream;
 
 		HttpHeaders headers = new HttpHeaders();
@@ -224,7 +225,7 @@ public class ExportController extends HttpServlet {
 	 * INSTANCE METHODS
 	 */
 
-	private String convert(String svg, MimeType mime, String width, String scale, String options, String constructor, String callback, String filename) throws SVGConverterException, PoolException, NoSuchElementException, TimeoutException, ServletException {
+	private String convert(String svg, MimeType mime, String width, String scale, String options, String constructor, String callback, String globalOptions, String filename) throws SVGConverterException, PoolException, NoSuchElementException, TimeoutException, ServletException {
 
 		Float parsedWidth = widthToFloat(width);
 		Float parsedScale = scaleToFloat(scale);
@@ -238,6 +239,7 @@ public class ExportController extends HttpServlet {
 			// create a svg file out of the options
 			input = options;
 			callback = sanitize(callback);
+            globalOptions = sanitize(globalOptions);
 		} else {
 			// assume SVG conversion
 			svg = sanitize(svg);
@@ -254,7 +256,7 @@ public class ExportController extends HttpServlet {
 		if (convertSvg && mime.equals(MimeType.SVG)) {
 				output = converter.redirectSVG(input, filename);
 		} else {
-			output = converter.convert(input, mime, constructor, callback, parsedWidth, parsedScale, filename);
+			output = converter.convert(input, mime, constructor, callback, globalOptions, parsedWidth, parsedScale, filename);
 		}
 
 		return output;

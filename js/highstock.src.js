@@ -11,7 +11,7 @@
 
 // JSLint options:
 /*global Highcharts, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console, each, grep */
-
+/*jslint ass: true, sloppy: true, forin: true, plusplus: true, nomen: true, vars: true, regexp: true, newcap: true, browser: true, continue: true, white: true */
 (function () {
 // encapsulated variables
 var UNDEFINED,
@@ -52,7 +52,8 @@ var UNDEFINED,
 	globalAnimation,
 	pathAnim,
 	timeUnits,
-	noop = function () {},
+	error,
+	noop = function () { return UNDEFINED; },
 	charts = [],
 	chartCount = 0,
 	PRODUCT = 'Highstock',
@@ -97,11 +98,15 @@ var UNDEFINED,
 
 
 	// lookup over the types and the associated classes
-	seriesTypes = {};
+	seriesTypes = {},
+	Highcharts;
 
 // The Highcharts namespace
-var Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : {};
-
+if (win.Highcharts) {
+	error(16, true);
+} else {
+	Highcharts = win.Highcharts = {};
+}
 /**
  * Extend an object with the members of another
  * @param {Object} a The object to be extended
@@ -293,7 +298,7 @@ function pick() {
 		length = args.length;
 	for (i = 0; i < length; i++) {
 		arg = args[i];
-		if (typeof arg !== 'undefined' && arg !== null) {
+		if (arg !== UNDEFINED && arg !== null) {
 			return arg;
 		}
 	}
@@ -344,7 +349,7 @@ function createElement(tag, attribs, styles, parent, nopad) {
  * @param {Object} members
  */
 function extendClass(parent, members) {
-	var object = function () {};
+	var object = function () { return UNDEFINED; };
 	object.prototype = new parent();
 	extend(object.prototype, members);
 	return object;
@@ -695,14 +700,16 @@ function discardElement(element) {
 /**
  * Provide error messages for debugging, with links to online explanation 
  */
-function error(code, stop) {
+error = function (code, stop) {
 	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
 	if (stop) {
 		throw msg;
-	} else if (win.console) {
+	}
+	// else ...
+	if (win.console) {
 		console.log(msg);
 	}
-}
+};
 
 /**
  * Fix JS round off float errors
@@ -951,9 +958,9 @@ pathAnim = {
 					
 				} : 
 				function (arr, fn) { // legacy
-					var i = 0, 
+					var i, 
 						len = arr.length;
-					for (; i < len; i++) {
+					for (i = 0; i < len; i++) {
 						if (fn.call(arr[i], arr[i], i, arr) === false) {
 							return i;
 						}
@@ -1496,7 +1503,7 @@ defaultOptions = {
 		labelStyle: {
 			fontWeight: 'bold',
 			position: RELATIVE,
-			top: '1em'
+			top: '45%' // docs
 		},
 		// showDuration: 0,
 		style: {
@@ -9379,8 +9386,9 @@ Pointer.prototype = {
 				each(chart.axes, function (axis) {
 					if (axis.zoomEnabled) {
 						var horiz = axis.horiz,
-							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop)),
-							selectionMax = axis.toValue((horiz ? selectionLeft + selectionWidth : selectionTop + selectionHeight));
+							minPixelPadding = e.type === 'touchend' ? axis.minPixelPadding: 0, // #1207, #3075
+							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop) + minPixelPadding),
+							selectionMax = axis.toValue((horiz ? selectionLeft + selectionWidth : selectionTop + selectionHeight) - minPixelPadding);
 
 						if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
 							selectionData[axis.coll].push({
@@ -10435,7 +10443,7 @@ Legend.prototype = {
 		pages.length = 0;
 		if (legendHeight > spaceHeight && !options.useHTML) {
 
-			this.clipHeight = clipHeight = spaceHeight - 20 - this.titleHeight - this.padding;
+			this.clipHeight = clipHeight = mathMax(spaceHeight - 20 - this.titleHeight - this.padding, 0);
 			this.currentPage = pick(this.currentPage, 1);
 			this.fullHeight = legendHeight;
 			
@@ -13477,12 +13485,11 @@ Series.prototype = {
 
 					// Handle colors for column and pies
 					if (!seriesOptions.marker) { // column, bar, point
-						// If no hover color is given, brighten the normal color. #1619, #2579, #2802
-						pointStateOptionsHover.color = pointStateOptionsHover.color || 
-							(point.color && Color(point.color)
+						// If no hover color is given, brighten the normal color. #1619, #2579
+						pointStateOptionsHover.color = pointStateOptionsHover.color || (!point.options.color && stateOptionsHover.color) ||
+							Color(point.color)
 								.brighten(pointStateOptionsHover.brightness || stateOptionsHover.brightness)
-								.get()) || 
-							stateOptionsHover.color;							
+								.get();
 					}
 
 					// normal point state inherits series wide normal state
@@ -15426,20 +15433,29 @@ var ColumnSeries = extendClass(Series, {
 			renderer = chart.renderer,
 			animationLimit = options.animationLimit || 250,
 			shapeArgs,
-			pointAttr,
-			borderAttr;
+			pointAttr;
 
 		// draw the columns
 		each(series.points, function (point) {
 			var plotY = point.plotY,
-				graphic = point.graphic;
+				graphic = point.graphic,
+				borderAttr;
 
 			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
-				borderAttr = defined(series.borderWidth) ? {
-					'stroke-width': series.borderWidth
-				} : {};
+
 				pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE] || series.pointAttr[NORMAL_STATE];
+				
+				// If there is no border width, also remove the stroke to prevent artefacts in Chrome (#1270, #3065)
+				if (series.borderWidth) {
+					borderAttr = {
+						'stroke-width': series.borderWidth
+					};
+				} else if (!pointAttr['stroke-width']) {
+					delete pointAttr.stroke;
+				}
+				
+
 				if (graphic) { // update
 					stop(graphic);
 					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs));
@@ -16350,13 +16366,6 @@ if (seriesTypes.pie) {
 			}
 		});
 
-		// assume equal label heights
-		i = 0;
-		while (!labelHeight && data[i]) { // #1569
-			labelHeight = data[i] && data[i].dataLabel && (data[i].dataLabel.getBBox().height || 21); // 21 is for #968
-			i++;
-		}
-
 		/* Loop over the points in each half, starting from the top and bottom
 		 * of the pie to detect overlapping labels.
 		 */
@@ -16374,6 +16383,13 @@ if (seriesTypes.pie) {
 			// Sort by angle
 			series.sortByAngle(points, i - 0.5);
 
+			// Assume equal label heights on either hemisphere (#2630)
+			j = labelHeight = 0;
+			while (!labelHeight && points[j]) { // #1569
+				labelHeight = points[j] && points[j].dataLabel && (points[j].dataLabel.getBBox().height || 21); // 21 is for #968
+				j++;
+			}
+
 			// Only do anti-collision when we are outside the pie and have connectors (#856)
 			if (distanceOption > 0) {
 
@@ -16389,7 +16405,8 @@ if (seriesTypes.pie) {
 						chart.renderer.rect(slotX, slotY - 7, 100, labelHeight, 1)
 							.attr({
 								'stroke-width': 1,
-								stroke: 'silver'
+								stroke: 'silver',
+								fill: 'rgba(0,0,255,0.1)'
 							})
 							.add();
 						chart.renderer.text('Slot '+ (slots.length - 1), slotX, slotY + 4)

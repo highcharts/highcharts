@@ -250,6 +250,7 @@ extend(Chart.prototype, {
 		each(chart.series, function (serie) {
 			seriesOptions = merge(serie.options, {
 				animation: false, // turn off animation
+				enableMouseTracking: false,
 				showCheckbox: false,
 				visible: serie.visible
 			});

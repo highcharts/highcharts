@@ -1,6 +1,11 @@
 $(function () {
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=us-population-density.json&callback=?', function (data) {
+
+        // Make codes uppercase to match the map data
+        $.each(data, function () {
+            this.code = this.code.toUpperCase();
+        });
     
         // Instanciate the map
         $('#container').highcharts('Map', {
@@ -42,15 +47,12 @@ $(function () {
                     duration: 1000
                 },
                 data : data,
-                mapData: Highcharts.maps.us,
-                joinBy: 'code',
+                mapData: Highcharts.geojson(Highcharts.maps['countries/usa/usa-all']),
+                joinBy: ['postal-code', 'code'],
                 dataLabels: {
                     enabled: true,
                     color: 'white',
-                    format: '{point.code}',
-                    style: {
-                        textTransform: 'uppercase'
-                    }
+                    format: '{point.code}'
                 },
                 name: 'Population density',
                 tooltip: {

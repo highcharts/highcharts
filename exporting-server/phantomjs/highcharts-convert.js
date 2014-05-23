@@ -102,7 +102,8 @@
 			convert,
 			exit,
 			interval,
-            counter;
+            counter,
+            imagesLoaded = false;
 
 		messages.optionsParsed = 'Highcharts.options.parsed';
 		messages.callbackParsed = 'Highcharts.cb.parsed';
@@ -202,8 +203,8 @@
         
         function decrementImgCounter() {
             counter -= 1;
-            if (counter < 1) {                
-                window.imagesLoaded = true;
+            if (counter < 1) {
+                imagesLoaded = true;
             }
         }
         
@@ -228,7 +229,7 @@
                 loadImages(svg.imgUrls);
             } else  {
                  // no images present, no loading, no waiting
-                window.imagesLoaded = true;
+                imagesLoaded = true;
             }
             
 			try {
@@ -251,11 +252,10 @@
 
 				} else {
 					// output binary images or pdf
-					if (!window.imagesLoaded) {
+					if (!imagesLoaded) {
 						// render with interval, waiting for all images loaded
 						interval = window.setInterval(function () {
-							
-							if (window.imagesLoaded) {
+							if (imagesLoaded) {
 								clearTimeout(timer);
 								clearInterval(interval);
 								convert(svg);

@@ -37,7 +37,8 @@ var UNDEFINED,
 	globalAnimation,
 	pathAnim,
 	timeUnits,
-	noop = function () {},
+	error,
+	noop = function () { return UNDEFINED; },
 	charts = [],
 	chartCount = 0,
 	PRODUCT = '@product.name@',
@@ -82,7 +83,12 @@ var UNDEFINED,
 
 
 	// lookup over the types and the associated classes
-	seriesTypes = {};
+	seriesTypes = {},
+	Highcharts;
 
 // The Highcharts namespace
-var Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : {};
+if (win.Highcharts) {
+	error(16, true);
+} else {
+	Highcharts = win.Highcharts = {};
+}
