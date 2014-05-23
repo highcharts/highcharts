@@ -347,11 +347,11 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 
 			result.shapeArgs = shapeArgs;	// Store for later use
 
-			result.inn.attr({d: paths.inn, zIndex: paths.zInn});
-			result.out.attr({d: paths.out, zIndex: paths.zOut});
-			result.side1.attr({d: paths.side1, zIndex: paths.zSide2});
-			result.side2.attr({d: paths.side2, zIndex: paths.zSide1});
-			result.top.attr({d: paths.top, zIndex: paths.zTop});
+			result.inn.animate({d: paths.inn, zIndex: paths.zInn});
+			result.out.animate({d: paths.out, zIndex: paths.zOut});
+			result.side1.animate({d: paths.side1, zIndex: paths.zSide2});
+			result.side2.animate({d: paths.side2, zIndex: paths.zSide1});
+			result.top.animate({d: paths.top, zIndex: paths.zTop});
 
 			result.attr({fill: result.color});
 			result.attr({zIndex: paths.zTop * 100});
@@ -359,6 +359,30 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		return this;
 	};
 
+	result.destroy = function () {
+		this.top.destroy();
+		this.out.destroy();
+		this.inn.destroy();
+		this.side1.destroy();
+		this.side2.destroy();
+
+		Highcharts.SVGElement.prototype.destroy.call(this);
+	};
+	result.hide = function () {
+		this.top.hide();
+		this.out.hide();
+		this.inn.hide();
+		this.side1.hide();
+		this.side2.hide();
+	};
+	result.show = function () {
+		this.top.show();
+		this.out.show();
+		this.inn.show();
+		this.side1.show();
+		this.side2.show();
+	};
+	
 	result.zIndex = zIndex;
 	result.attr({zIndex: zIndex});
 	return result;
