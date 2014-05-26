@@ -20290,16 +20290,17 @@ Scroller.prototype = {
 		} else {
 			scroller.xAxis = xAxis = {
 				translate: function (value, reverse) {
-					var ext = chart.xAxis[0].getExtremes(),
+					var axis = chart.xAxis[0],
+						ext = axis.getExtremes(),
 						scrollTrackWidth = chart.plotWidth - 2 * scrollbarHeight,
-						dataMin = ext.dataMin,
-						valueRange = ext.dataMax - dataMin;
+						min = pick(axis.options.min, ext.dataMin),
+						valueRange = pick(axis.options.max, ext.dataMax) - min;
 
 					return reverse ?
 						// from pixel to value
-						(value * valueRange / scrollTrackWidth) + dataMin :
+						(value * valueRange / scrollTrackWidth) + min :
 						// from value to pixel
-						scrollTrackWidth * (value - dataMin) / valueRange;
+						scrollTrackWidth * (value - min) / valueRange;
 				},
 				toFixedRange: Axis.prototype.toFixedRange
 			};
@@ -20343,16 +20344,19 @@ Scroller.prototype = {
 	getUnionExtremes: function (returnFalseOnNoBaseSeries) {
 		var baseAxis = this.chart.xAxis[0],
 			navAxis = this.xAxis,
-			navAxisOptions = navAxis.options;
+			navAxisOptions = navAxis.options,
+			baseAxisOptions = baseAxis.options;
 
 		if (!returnFalseOnNoBaseSeries || baseAxis.dataMin !== null) {
 			return {
 				dataMin: pick(
 					navAxisOptions && navAxisOptions.min,
+					baseAxisOptions.min,
 					((defined(baseAxis.dataMin) && defined(navAxis.dataMin)) ? mathMin : pick)(baseAxis.dataMin, navAxis.dataMin)
 				),
 				dataMax: pick(
 					navAxisOptions && navAxisOptions.max,
+					baseAxisOptions.max,
 					((defined(baseAxis.dataMax) && defined(navAxis.dataMax)) ? mathMax : pick)(baseAxis.dataMax, navAxis.dataMax)
 				)
 			};
