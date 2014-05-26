@@ -351,27 +351,40 @@ if (seriesTypes.pie) {
 				// build the slots
 				for (pos = centerY - radius - distanceOption; pos <= centerY + radius + distanceOption; pos += labelHeight) {
 					slots.push(pos);
+				}
+				slotsLength = slots.length;
 
-					// visualize the slot
-					/*
+
+				/* visualize the slota
+				if (!series.slotElements) {
+					series.slotElements = [];
+				}
+				if (i === 1) {
+					series.slotElements.forEach(function (elem) {
+						elem.destroy();
+					});
+					series.slotElements.length = 0;
+				}
+					
+				slots.forEach(function (pos, no) {
 					var slotX = series.getX(pos, i) + chart.plotLeft - (i ? 100 : 0),
 						slotY = pos + chart.plotTop;
+					
 					if (!isNaN(slotX)) {
-						chart.renderer.rect(slotX, slotY - 7, 100, labelHeight, 1)
+						series.slotElements.push(chart.renderer.rect(slotX, slotY - 7, 100, labelHeight, 1)
 							.attr({
 								'stroke-width': 1,
 								stroke: 'silver',
 								fill: 'rgba(0,0,255,0.1)'
 							})
-							.add();
-						chart.renderer.text('Slot '+ (slots.length - 1), slotX, slotY + 4)
+							.add());
+						series.slotElements.push(chart.renderer.text('Slot '+ no, slotX, slotY + 4)
 							.attr({
 								fill: 'silver'
-							}).add();
+							}).add());
 					}
-					*/
-				}
-				slotsLength = slots.length;
+				});
+				// */
 
 				// if there are more values than available slots, remove lowest values
 				if (length > slotsLength) {
