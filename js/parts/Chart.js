@@ -168,6 +168,7 @@ Chart.prototype = {
 			redrawLegend = chart.isDirtyLegend,
 			hasStackedSeries,
 			hasDirtyStacks,
+			hasCartesianSeries = chart.hasCartesianSeries,
 			isDirtyBox = chart.isDirtyBox, // todo: check if it has actually changed?
 			seriesLength = series.length,
 			i = seriesLength,
@@ -231,7 +232,7 @@ Chart.prototype = {
 		}
 
 
-		if (chart.hasCartesianSeries) {
+		if (hasCartesianSeries) {
 			if (!chart.isResizing) {
 
 				// reset maxTicks
@@ -244,8 +245,11 @@ Chart.prototype = {
 			}
 
 			chart.adjustTickAmounts();
-			chart.getMargins();
+		}
 
+		chart.getMargins(); // #3098
+
+		if (hasCartesianSeries) {
 			// If one axis is dirty, all axes must be redrawn (#792, #2169)
 			each(axes, function (axis) {
 				if (axis.isDirty) {
@@ -269,9 +273,8 @@ Chart.prototype = {
 					axis.redraw();
 				}
 			});
-
-
 		}
+		
 		// the plot areas size has changed
 		if (isDirtyBox) {
 			chart.drawChartBox();
