@@ -19113,8 +19113,7 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 					'M',
 					crispX, bottomBox,
 					'L',
-					crispX, hasBottomWhisker ? mathRound(point.yBottom) : bottomBox, // #460, #2094
-					'Z'
+					crispX, hasBottomWhisker ? mathRound(point.yBottom) : bottomBox // #460, #2094
 				];
 
 				if (graphic) {
