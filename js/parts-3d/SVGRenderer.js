@@ -261,30 +261,41 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		this.top.attr({translateY: value});
 	};
 
-	result.animate = function (args, duration, complete) {	
-		Highcharts.SVGElement.prototype.animate.call(this, args, duration, complete);
-		if (args.x && args.y) {
-			// Recreate
-			var result = this,
-				renderer = this.renderer,
-				shapeArgs = Highcharts.splat(args)[0];
+	result.animate = function (args, duration, complete) {
+		if (args.end || args.start) {
+			this._shapeArgs = this.shapeArgs;
 
-			shapeArgs.alpha *= deg2rad;
-			shapeArgs.beta *= deg2rad;
+			Highcharts.SVGElement.prototype.animate.call(this, {
+				_args: args	
+			}, {
+				duration: duration,
+				step: function () {
+					var args = arguments,
+						fx = args[1],
+						result = fx.elem,						
+						start = result._shapeArgs,
+						end = fx.end,
+						pos = fx.pos,
+						sA = Highcharts.merge(start, {
+							start: start.start + ((end.start - start.start) * pos),
+							end: start.end + ((end.end - start.end) * pos)
+						});
 
-			var paths = renderer.arc3dPath(shapeArgs);
+					var paths = result.renderer.arc3dPath(sA);
 
-			result.shapeArgs = shapeArgs;	// Store for later use
+					result.shapeArgs = sA;
 
-			result.inn.animate({d: paths.inn, zIndex: paths.zInn});
-			result.out.animate({d: paths.out, zIndex: paths.zOut});
-			result.side1.animate({d: paths.side1, zIndex: paths.zSide2});
-			result.side2.animate({d: paths.side2, zIndex: paths.zSide1});
-			result.top.animate({d: paths.top, zIndex: paths.zTop});
+					result.top.attr({d: paths.top, zIndex: paths.zTop});
+					result.inn.attr({d: paths.inn, zIndex: paths.zInn});
+					result.out.attr({d: paths.out, zIndex: paths.zOut});
+					result.side1.attr({d: paths.side1, zIndex: paths.zSide1});
+					result.side2.attr({d: paths.side2, zIndex: paths.zSide2});
 
-			result.attr({fill: result.color});
-			result.attr({zIndex: paths.zTop * 100});
-		}		
+				}
+			}, complete);
+		} else {			
+			Highcharts.SVGElement.prototype.animate.call(this, args, duration, complete);
+		}
 		return this;
 	};
 
@@ -390,26 +401,20 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 		'Z'
 	];
 
-	var mr = ir + ((r - ir) / 2),
-		Ks = ((sin(beta) * cos(start)) + (sin(-alpha) * sin(-start))),
-		Ke = ((sin(beta) * cos(end)) + (sin(-alpha) * sin(-end)));
-
-	var zOut = Math.max(Ke, Ks) * r,
-		zInn = Ke * ir,
-		zSide1 = Ks * mr,
-		zSide2 =  Ke * mr,
-		zTop = Math.max(zOut, zInn, zSide1, zSide2) + 25;
+	var a1 = sin((start + end) / 2),
+		a2 = sin(start),
+		a3 = sin(end);
 
 	return {
 		top: top,
-		zTop: zTop,
+		zTop: r,
 		out: out,
-		zOut: zOut,
+		zOut: Math.max(a1, a2, a3) * r,
 		inn: inn,
-		zInn: zInn,
+		zInn: Math.max(a1, a2, a3) * r,
 		side1: side1,
-		zSide1: zSide1,
+		zSide1: a2 * (r * 0.99),
 		side2: side2,
-		zSide2: zSide2
+		zSide2: a3 * (r * 0.99)
 	};
 };
