@@ -13378,7 +13378,7 @@ Series.prototype = {
 			this[prop] = group = this.chart.renderer.g(name)
 				.attr({
 					visibility: visibility,
-					zIndex: zIndex || 0.1 // IE8 needs this
+					zIndex: pick(zIndex, this.index)
 				})
 				.add(parent);
 		}
