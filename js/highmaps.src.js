@@ -9291,8 +9291,8 @@ extend(Highcharts.Pointer.prototype, {
 				if (axis.zoomEnabled) {
 					var bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
 						minPixelPadding = axis.minPixelPadding,
-						min = axis.toPixels(axis.dataMin),
-						max = axis.toPixels(axis.dataMax),
+						min = axis.toPixels(pick(axis.options.min, axis.dataMin)),
+						max = axis.toPixels(pick(axis.options.max, axis.dataMax)),
 						absMin = mathMin(min, max),
 						absMax = mathMax(min, max);
 
