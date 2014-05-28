@@ -1598,6 +1598,8 @@ Series.prototype = {
 		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 		// (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 		series.hasRendered = true;
+
+		series.buildKDTree();
 	},
 
 	/**
@@ -1635,6 +1637,105 @@ Series.prototype = {
 		if (wasDirtyData) {
 			fireEvent(series, 'updatedData');
 		}
-	}
+	},
+
+	/**
+	 * KD Tree Implementation
+	 */
+
+	KDDimensions: 1,
+	KDTree: null,
+
+	buildKDTree: function () {
+		// Internal function
+		function _kdtree(points, depth, dimensions) {
+			var axis, median, length = points && points.length;
+
+            if (length) {
+
+                // alternate between the axis
+                axis = ['plotX', 'plotY'][depth % dimensions];
+
+                // sort point array
+                points.sort(function(a, b) {
+                    return a[axis] - b[axis];
+                });
+               
+                median = Math.floor(length / 2);
+                
+                // build and return node
+                return {
+                    point: points[median],
+                    left: _kdtree(points.slice(0, median), depth + 1, dimensions),
+                    right: _kdtree(points.slice(median + 1), depth + 1, dimensions)
+                };
+            
+            }
+		};
+
+		var series = this,
+			dimensions = series.KDDimensions,
+			tree = series.KDTree;
+
+        tree = null;
+        setTimeout(function () {
+            series.KDTree = _kdtree(series.points, dimensions, dimensions);            
+        });
+     },
+
+	searchKDTree: function (point) {
+		// Internal function
+		function _search(search, tree, depth, dimensions) {
+            var point = tree.point,
+                axis = ['plotX', 'plotY'][depth % dimensions],
+                tdist,
+                sideA,
+                sideB,
+                ret = point,
+                nPoint1,
+                nPoint2;
+            
+            // Get distance
+            var powX = Math.pow(search.plotX - point.plotX, 2) || Infinity,
+            	powY = Math.pow(search.plotY - point.plotY, 2) || Infinity;
+
+            point.dist = powX + (dimensions === 2 ? powY : 0);
+            point.rdist = powX + powY;
+
+            if (!defined(point.y)) point.dist = Infinity;
+            
+            // Pick side based on distance to splitting point
+            tdist = search[axis] - point[axis];
+            sideA = tdist < 0 ? 'left' : 'right';
+
+            // End of tree
+            if (tree[sideA]) {
+                nPoint1 =_search(search, tree[sideA], depth + 1, dimensions);
+
+                ret = (nPoint1.dist < ret.dist ? nPoint1 : point);
+
+                sideB = tdist < 0 ? 'right' : 'left';
+                if (tree[sideB]) {
+                    // compare distance to current best to splitting point to decide wether to check side B or not
+                    if (Math.abs(tdist) < ret.dist) {
+                        nPoint2 = _search(search, tree[sideB], depth + 1, dimensions);
+                        ret = (nPoint2.dist < ret.dist ? nPoint2 : ret);
+                    }
+                }
+            }
+            return ret;
+        };
+
+        if (this.KDTree) {
+            return _search({
+            	plotX: point.chartX - this.chart.plotLeft,
+            	plotY: point.chartY - this.chart.plotTop
+            	}, 
+            	this.KDTree, this.KDDimensions, this.KDDimensions);
+        } else {
+        	return null;
+        }
+	},
+
 }; // end Series prototype
 

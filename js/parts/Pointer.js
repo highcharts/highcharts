@@ -132,6 +132,7 @@ Pointer.prototype = {
 	 * Run Point.onMouseOver and display tooltip for the point or points.
 	 */
 	runPointActions: function (e) {
+
 		var pointer = this,
 			chart = pointer.chart,
 			series = chart.series,
@@ -145,8 +146,60 @@ Pointer.prototype = {
 			j,
 			distance = chart.chartWidth,
 			index = pointer.getIndex(e),
-			anchor;
+			anchor,
 
+			kdpoints = [],
+			kdpoint;
+
+		// Find nearest points on all series
+		each(series, function (S) {
+			// Skip hidden series
+			if (S.visible) {
+				kdpoints.push(S.searchKDTree(e));
+			}
+		});
+		
+		// Find absolute nearest point
+		each(kdpoints, function (P) {
+			if (P.plotX && P.plotY) {
+				P.rdist = Math.sqrt(P.rdist);
+				if (P.rdist < distance) {
+					distance = P.rdist;
+					kdpoint = P;
+				}
+			}
+		});
+
+		// Crosshair
+		each(chart.axes, function (axis) {
+			axis.drawCrosshair(e, kdpoint);
+		});		
+
+		// Tooltip
+		if (tooltip && kdpoint != hoverPoint) {
+
+			// Draw tooltip if necessary
+			if (tooltip.shared && !kdpoint.series.noSharedTooltip && kdpoints.length > 1) {
+				i = kdpoints.length;
+				while (i--) {
+					if (kdpoints[i].x !== kdpoint.x || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
+						kdpoints.splice(i, 1);
+					}
+				}
+				tooltip.refresh(kdpoints, e);
+			} else {
+				tooltip.refresh([kdpoint], e);
+			}
+		}
+
+		// Hover Series
+		if (kdpoint != hoverPoint) {
+			// set new hoverPoint and hoverSeries
+			chart.hoverPoint = kdpoint;
+			chart.hoverSeries = kdpoint.series;	
+		}
+
+		/*
 		// shared tooltip
 		if (tooltip && pointer.options.tooltip.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
 			points = [];
@@ -213,6 +266,7 @@ Pointer.prototype = {
 		each(chart.axes, function (axis) {
 			axis.drawCrosshair(e, pick(point, hoverPoint));
 		});
+		*/
 	},
 
 
