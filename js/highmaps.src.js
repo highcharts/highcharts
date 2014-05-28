@@ -15839,9 +15839,7 @@ var MapAreaPoint = extendClass(Point, {
 			mapPoint;
 
 		if (seriesOptions.mapData) {
-			mapPoint = joinBy[0] ? 
-				series.getMapData(joinBy[0], point[joinBy[1]]) : // Join by a string
-				seriesOptions.mapData[point.x]; // Use array position (faster)
+			mapPoint = series.getMapData(joinBy[0], point[joinBy[1]]);
 			if (mapPoint) {
 				// This applies only to bubbles
 				if (series.xyFromShape) {
@@ -16122,8 +16120,14 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 			// Add those map points that don't correspond to data, which will be drawn as null points
 			dataUsed = '|' + dataUsed.join('|') + '|'; // String search is faster than array.indexOf 
+
 			each(mapData, function (mapPoint) {
-				if (!joinBy[0] || dataUsed.indexOf('|' + (mapPoint[joinBy[0]] || (mapPoint.properties && mapPoint.properties[joinBy[0]])) + '|') === -1) {
+				var props = mapPoint.properties;
+				// Copy the property over to root for faster access
+				if (joinBy[0] && props && props[joinBy[0]]) {
+					mapPoint[joinBy[0]] = props[joinBy[0]];
+				}
+				if (!joinBy[0] || dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1) {
 					data.push(merge(mapPoint, { value: null }));
 				}
 			});
@@ -16145,14 +16149,19 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		if (!mapMap) {
 			mapMap = this.mapMap = {};
 		}
-		if (mapMap[value] !== undefined) {
-			return mapData[mapMap[value]];
+		
+		if (mapMap[value]) {
+			return mapMap[value];
 
 		} else if (value !== undefined) {
+
+			// This loop must remain highly optimized. For a map with n points, the loop runs
+			// n*n/2 times. A map with 1000 points means the loop runs 500 000 times.
 			while (i--) {
 				mapPoint = mapData[i];
-				if (mapPoint[key] === value || (mapPoint.properties && mapPoint.properties[key] === value)) {
-					mapMap[value] = i; // cache it
+				if (mapPoint[key] === value) {
+					mapMap[value] = mapPoint; // cache it
+					mapData.slice(i, 1);
 					return mapPoint;
 				}
 			}
