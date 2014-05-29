@@ -2,9 +2,6 @@ $(function () {
     // create the chart
     $('#container').highcharts({
         
-        chart: {    
-        },
-        
         labels: {
             items: [{
                 html: "My custom label",

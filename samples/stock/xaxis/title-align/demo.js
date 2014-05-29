@@ -1,9 +1,6 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
 	    
-	    chart: {
-	    },
-	    
 	    xAxis: {
 	    	title: {
 	    		text: 'Date/time',
@@ -14,7 +11,8 @@ $(function() {
 	    yAxis: {
 	    	title: {
 	    		text: 'USD to EUR',
-	    		align: 'high'
+	    		align: 'high',
+	    		textAlign: 'left'
 	    	}
 	    },
 	    

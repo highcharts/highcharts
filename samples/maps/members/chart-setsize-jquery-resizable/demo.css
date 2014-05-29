@@ -1,0 +1,14 @@
+#resizer {
+    border: 1px solid silver;   
+}
+#inner-resizer { /* make room for the resize handle */
+    padding: 10px;
+}
+#container {
+	height: 500px;
+}
+.loading {
+	margin-top: 10em;
+	text-align: center;
+	color: gray;
+}

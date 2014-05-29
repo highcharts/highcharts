@@ -1,14 +1,12 @@
 $(function () {
     $('#container').highcharts({
-        chart: {
-        },
         xAxis: {        
             tickInterval: 24 * 3600 * 1000, // one day
             type: 'datetime'
         },
         
         yAxis: {
-            plotBands: [{
+            plotLines: [{
                 color: 'red',
                 width: 2,
                 value: 100,

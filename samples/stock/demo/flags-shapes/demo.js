@@ -6,6 +6,7 @@ $(function() {
 			
 
 			rangeSelector : {
+				inputEnabled: $('#container').width() > 480,
 				selected : 1
 			},
 
@@ -29,7 +30,7 @@ $(function() {
 			}, {
 				type : 'flags',
 				data : [{
-					x : Date.UTC(2011, 1, 14),
+					x : Date.UTC(2011, 1, 22),
 					title : 'A',
 					text : 'Shape: "squarepin"'
 				}, {
@@ -64,8 +65,8 @@ $(function() {
 					title : 'C',
 					text : 'Shape: "flag"'
 				}],
-				color : '#5F86B3',
-				fillColor : '#5F86B3',
+				color : Highcharts.getOptions().colors[0], // same as onSeries
+				fillColor : Highcharts.getOptions().colors[0],
 				onSeries : 'dataseries',
 				width : 16,
 				style : {// text style

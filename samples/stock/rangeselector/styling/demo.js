@@ -1,9 +1,6 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
 	    
-	    chart: {
-	    },
-	    
 	    rangeSelector: {
 	    	buttonTheme: { // styles for the buttons
 	    		fill: 'none',
@@ -25,6 +22,9 @@ $(function() {
 	    			}
 	    		}
 	    	},
+	    	inputBoxBorderColor: 'gray',
+	    	inputBoxWidth: 120,
+	    	inputBoxHeight: 18,
 	    	inputStyle: {
 	    		color: '#039',
 	    		fontWeight: 'bold'

@@ -6,8 +6,6 @@ $(function () {
     };
     
     $('#container').highcharts({
-        chart: {
-        },
         
         xAxis: {
             categories: ['Foo', 'Bar', 'Foobar'],

@@ -1,11 +1,9 @@
 $(function () {
     $('#container').highcharts({
-        chart: {
-        },
         xAxis: {        
             tickInterval: 24 * 3600 * 1000, // one day
             type: 'datetime',
-            plotBands: [{
+            plotLines: [{
                 color: 'red',
                 width: 2,
                 value: Date.UTC(2010, 0, 6),

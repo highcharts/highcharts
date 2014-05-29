@@ -5,7 +5,7 @@ $(function () {
 	        type: 'arearange'
 	    },
 	    title: {
-	    	text: 'Text for null in low and high positions'
+	    	text: 'Test for null in low and high positions'
 	    },
 	    subtitle: {
 	    	text: 'Chart should show four separate blocks.'

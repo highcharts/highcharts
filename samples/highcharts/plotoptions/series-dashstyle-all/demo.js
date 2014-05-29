@@ -25,9 +25,9 @@ $(function () {
     
         renderer.path(['M', 10, 30 * i + 23 , 'L', 390, 30 * i + 23])
             .attr({
-                dashstyle: dashStyle,
                 'stroke-width': 2,
-                stroke: 'black'
+                stroke: 'black',
+                dashstyle: dashStyle
             })
             .add();
     });

@@ -1,7 +1,6 @@
 $(function () {
     $('#container').highcharts({
-        chart: {
-        },
+        
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
@@ -9,12 +8,7 @@ $(function () {
         plotOptions: {
             series: {
                 marker: {
-                    enabled: false,
-                    states: {
-                        hover: {
-                            enabled: true
-                        }
-                    }
+                    enabled: false
                 }
             }
         },

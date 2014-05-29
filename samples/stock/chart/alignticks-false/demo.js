@@ -13,8 +13,7 @@ $(function() {
 	        title: {
 	            text: 'MSFT'
 	        },
-	        gridLineWidth: 0,
-	        opposite: true
+	        gridLineWidth: 0
 	    }],
 	    
 	    rangeSelector: {

@@ -14,7 +14,9 @@ var areaProto = AreaSeries.prototype,
 		// Mix in methods from the area series
 		getSegmentPath: areaProto.getSegmentPath,
 		closeSegment: areaProto.closeSegment,
-		drawGraph: areaProto.drawGraph
+		drawGraph: areaProto.drawGraph,
+		drawLegendSymbol: LegendSymbolMixin.drawRectangle
 	});
+
 seriesTypes.areaspline = AreaSplineSeries;
 

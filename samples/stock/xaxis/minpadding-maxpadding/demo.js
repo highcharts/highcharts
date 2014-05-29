@@ -1,9 +1,6 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
 	    
-	    chart: {
-	    },
-	    
 	    yAxis: {
 	    	minPadding: 0.5,
 	    	maxPadding: 0.5

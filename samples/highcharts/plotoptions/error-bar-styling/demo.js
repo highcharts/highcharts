@@ -12,9 +12,7 @@ $(function() {
 		}],
 		yAxis: {
 			labels: {
-				formatter: function() {
-					return this.value + '°C';
-				}
+				format: '{value}°C'
 			},
 			title: {
 				text: 'Temperature'

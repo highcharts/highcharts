@@ -1,10 +1,13 @@
 $(function () {
     $('#container').highcharts({
-        
-        chart: {
+
+        title: {
+            text: 'Legend with horizontal layout and itemDistance = 20'
         },
         
         legend: {
+            // layout: 'horizontal', // default
+            itemDistance: 20
         },
         
         xAxis: {

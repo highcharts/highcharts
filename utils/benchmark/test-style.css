@@ -1,0 +1,67 @@
+* {
+	font-family: Arial, Verdana, sans-serif;
+}
+#testOverview {
+	float: left;
+	width: 20%;
+	height: 100%;
+}
+
+
+#rightList {
+	float: left;
+	width: 20%;
+}
+
+input[type="text"] {
+	width: 50px;
+}
+
+li {
+	height: 3%;
+}
+
+ul {
+	list-style-type: none;
+}
+
+a, a:link, a:visited, a:hover, a:active {
+	text-decoration: none;
+}
+
+.total {
+	font-weight: bold;
+}
+
+
+.sub {
+	text-align: left;
+	font-style: normal;
+}
+
+.result {
+	font-weight: bold;
+	text-align: right;
+	float: right;
+	margin-right: 5%;
+}
+
+#globalOptions {
+	float: left;
+}
+
+#container {
+	float: left;
+	height: 300px; 
+	width: 600px; 
+	margin: 1em
+}
+
+.run {
+	float: right;
+	height: 100%;
+}
+
+.loaded {
+	font-style: italic;
+}

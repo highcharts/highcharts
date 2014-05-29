@@ -1,0 +1,17 @@
+
+.buttons a, a.button, button {
+	border: none;
+	border-radius: 3px;
+	background: #a4edba;
+	padding: 5px;
+	color: black;
+	text-decoration: none;
+	font-size: 12px;
+	white-space: nowrap;
+	cursor: pointer;
+	margin: 0 3px;
+}
+.buttons a:hover, a.button:hover, button:hover {
+	background: #40818b;
+	color: white;
+}

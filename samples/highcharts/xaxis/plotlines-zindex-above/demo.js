@@ -1,7 +1,7 @@
 $(function () {
     $('#container').highcharts({
         xAxis: {
-            plotBands: [{
+            plotLines: [{
                 color: 'red',
                 width: 2,
                 value: Date.UTC(2010, 0, 4),

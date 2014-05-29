@@ -3,6 +3,10 @@
  * Handle color operations. The object methods are chainable.
  * @param {String} input The input color in either rbga or hex format
  */
+var rgbaRegEx = /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
+	hexRegEx = /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/,
+	rgbRegEx = /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/;
+
 var Color = function (input) {
 	// declare variables
 	var rgba = [], result, stops;
@@ -22,17 +26,17 @@ var Color = function (input) {
 		// Solid colors
 		} else {
 			// rgba
-			result = /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/.exec(input);
+			result = rgbaRegEx.exec(input);
 			if (result) {
 				rgba = [pInt(result[1]), pInt(result[2]), pInt(result[3]), parseFloat(result[4], 10)];
 			} else { 
 				// hex
-				result = /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/.exec(input);
+				result = hexRegEx.exec(input);
 				if (result) {
 					rgba = [pInt(result[1], 16), pInt(result[2], 16), pInt(result[3], 16), 1];
 				} else {
 					// rgb
-					result = /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/.exec(input);
+					result = rgbRegEx.exec(input);
 					if (result) {
 						rgba = [pInt(result[1]), pInt(result[2]), pInt(result[3]), 1];
 					}

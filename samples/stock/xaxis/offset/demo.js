@@ -1,9 +1,6 @@
 $(function() {
 	$('#container').highcharts('StockChart', {
 	    
-	    chart: {
-	    },
-	    
 	    yAxis: {
 	    	lineWidth: 2,
 	    	offset: 70,

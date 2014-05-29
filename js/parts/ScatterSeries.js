@@ -4,9 +4,8 @@
 defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 	lineWidth: 0,
 	tooltip: {
-		headerFormat: '<span style="font-size: 10px; color:{series.color}">{series.name}</span><br/>',
-		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>',
-		followPointer: true
+		headerFormat: '<span style="color:{series.color}">\u25CF</span> <span style="font-size: 10px;"> {series.name}</span><br/>', // docs
+		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
 	},
 	stickyTracking: false
 });
@@ -20,10 +19,14 @@ var ScatterSeries = extendClass(Series, {
 	requireSorting: false,
 	noSharedTooltip: true,
 	trackerGroups: ['markerGroup'],
-
-	drawTracker: ColumnSeries.prototype.drawTracker,
-	
-	setTooltipPoints: noop
+	takeOrdinalPosition: false, // #2342
+	singularTooltips: true,
+	drawGraph: function () {
+		if (this.options.lineWidth) {
+			Series.prototype.drawGraph.call(this);
+		}
+	}
 });
+
 seriesTypes.scatter = ScatterSeries;
 

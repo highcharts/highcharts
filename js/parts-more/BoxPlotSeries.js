@@ -18,12 +18,13 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 	//stemWidth: null,
 	threshold: null,
 	tooltip: {
-		pointFormat: '<span style="color:{series.color};font-weight:bold">{series.name}</span><br/>' +
-			'Minimum: {point.low}<br/>' +
-			'Lower quartile: {point.q1}<br/>' +
+		pointFormat: '<span style="color:{series.color}">\u25CF</span> <b> {series.name}</b><br/>' +
+			'Maximum: {point.high}<br/>' +
+			'Upper quartile: {point.q3}<br/>' +
 			'Median: {point.median}<br/>' +
-			'Higher quartile: {point.q3}<br/>' +
-			'Maximum: {point.high}<br/>'
+			'Lower quartile: {point.q1}<br/>' +
+			'Minimum: {point.low}<br/>'
+			
 	},
 	//whiskerColor: null,
 	whiskerLength: '50%',
@@ -134,16 +135,17 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				
 				// Stem attributes
 				stemAttr.stroke = point.stemColor || options.stemColor || color;
-				stemAttr['stroke-width'] = point.stemWidth || options.stemWidth || options.lineWidth;
+				stemAttr['stroke-width'] = pick(point.stemWidth, options.stemWidth, options.lineWidth);
 				stemAttr.dashstyle = point.stemDashStyle || options.stemDashStyle;
 				
 				// Whiskers attributes
 				whiskersAttr.stroke = point.whiskerColor || options.whiskerColor || color;
-				whiskersAttr['stroke-width'] = point.whiskerWidth || options.whiskerWidth || options.lineWidth;
+				whiskersAttr['stroke-width'] = pick(point.whiskerWidth, options.whiskerWidth, options.lineWidth);
 				
 				// Median attributes
 				medianAttr.stroke = point.medianColor || options.medianColor || color;
-				medianAttr['stroke-width'] = point.medianWidth || options.medianWidth || options.lineWidth;
+				medianAttr['stroke-width'] = pick(point.medianWidth, options.medianWidth, options.lineWidth);
+				medianAttr['stroke-linecap'] = 'round'; // #1638
 				
 				
 				// The stem
@@ -160,8 +162,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					'M',
 					crispX, q1Plot,
 					'L',
-					crispX, lowPlot,
-					'z'
+					crispX, lowPlot
 				];
 				
 				// The box
@@ -220,8 +221,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					medianPlot,
 					'L',
 					right, 
-					medianPlot,
-					'z'
+					medianPlot
 				];
 				
 				// Create or update the graphics

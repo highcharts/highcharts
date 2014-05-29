@@ -31,7 +31,7 @@ $(function() {
 
         $('#container').highcharts('StockChart', {
             title: {
-                text: 'plotOptions: {series: {compare: \'percent\'}}'
+                text: 'Series compare by <em>percent</em>'
             },
             subtitle: {
                 text: 'Compare the values of the series against the first value in the visible range'

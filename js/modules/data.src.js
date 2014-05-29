@@ -1,8 +1,7 @@
 /**
  * @license Data plugin for Highcharts
  *
- * (c) 2012-2013 Torstein Hønsi
- * Last revision 2012-11-27
+ * (c) 2012-2014 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
@@ -50,7 +49,8 @@
  * https://spreadsheets.google.com/feeds/worksheets/{key}/public/basic
  *
  * - itemDelimiter : String
- * Item or cell delimiter for parsing CSV. Defaults to ",".
+ * Item or cell delimiter for parsing CSV. Defaults to the tab character "\t" if a tab character
+ * is found in the CSV string, if not it defaults to ",".
  *
  * - lineDelimiter : String
  * Line delimiter for parsing CSV. Defaults to "\n".
@@ -72,6 +72,10 @@
  * - startRow : Integer
  * In tabular input data, the first row (indexed by 0) to use.
  *
+ * - switchRowsAndColumns : Boolean
+ * Switch rows and columns of the input data, so that this.columns effectively becomes the
+ * rows of the data set, and the rows are interpreted as series.
+ *
  * - table : String|HTMLElement
  * A HTML table or the id of such to be parsed as input data. Related options ara startRow,
  * endRow, startColumn and endColumn to delimit what part of the table is used.
@@ -87,8 +91,8 @@
 	
 	
 	// The Data constructor
-	var Data = function (options) {
-		this.init(options);
+	var Data = function (dataOptions, chartOptions) {
+		this.init(dataOptions, chartOptions);
 	};
 	
 	// Set the prototype properties
@@ -97,8 +101,9 @@
 	/**
 	 * Initialize the Data object with the given options
 	 */
-	init: function (options) {
+	init: function (options, chartOptions) {
 		this.options = options;
+		this.chartOptions = chartOptions;
 		this.columns = options.columns || this.rowsToColumns(options.rows) || [];
 
 		// No need to parse or interpret anything
@@ -120,7 +125,39 @@
 
 	},
 
+	/**
+	 * Get the column distribution. For example, a line series takes a single column for 
+	 * Y values. A range series takes two columns for low and high values respectively,
+	 * and an OHLC series takes four columns.
+	 */
+	getColumnDistribution: function () {
+		var chartOptions = this.chartOptions,
+			getValueCount = function (type) {
+				return (Highcharts.seriesTypes[type || 'line'].prototype.pointArrayMap || [0]).length;
+			},
+			globalType = chartOptions && chartOptions.chart && chartOptions.chart.type,
+			individualCounts = [];
+
+		each((chartOptions && chartOptions.series) || [], function (series) {
+			individualCounts.push(getValueCount(series.type || globalType));
+		});
+
+		this.valueCount = {
+			global: getValueCount(globalType),
+			individual: individualCounts
+		};
+	},
+
+	/**
+	 * When the data is parsed into columns, either by CSV, table, GS or direct input,
+	 * continue with other operations.
+	 */
 	dataFound: function () {
+		
+		if (this.options.switchRowsAndColumns) {
+			this.columns = this.rowsToColumns(this.columns);
+		}
+
 		// Interpret the values into right types
 		this.parseTypes();
 		
@@ -147,6 +184,7 @@
 			endRow = options.endRow || Number.MAX_VALUE,
 			startColumn = options.startColumn || 0,
 			endColumn = options.endColumn || Number.MAX_VALUE,
+			itemDelimiter,
 			lines,
 			activeRowNo = 0;
 			
@@ -156,6 +194,8 @@
 				.replace(/\r\n/g, "\n") // Unix
 				.replace(/\r/g, "\n") // Mac
 				.split(options.lineDelimiter || "\n");
+
+			itemDelimiter = options.itemDelimiter || (csv.indexOf('\t') !== -1 ? '\t' : ',');
 			
 			each(lines, function (line, rowNo) {
 				var trimmed = self.trim(line),
@@ -164,7 +204,7 @@
 					items;
 				
 				if (rowNo >= startRow && rowNo <= endRow && !isComment && !isBlank) {
-					items = line.split(options.itemDelimiter || ',');
+					items = line.split(itemDelimiter);
 					each(items, function (item, colNo) {
 						if (colNo >= startColumn && colNo <= endColumn) {
 							if (!columns[colNo - startColumn]) {
@@ -192,9 +232,8 @@
 			startRow = options.startRow || 0,
 			endRow = options.endRow || Number.MAX_VALUE,
 			startColumn = options.startColumn || 0,
-			endColumn = options.endColumn || Number.MAX_VALUE,
-			colNo;
-			
+			endColumn = options.endColumn || Number.MAX_VALUE;
+
 		if (table) {
 			
 			if (typeof table === 'string') {
@@ -202,16 +241,14 @@
 			}
 			
 			each(table.getElementsByTagName('tr'), function (tr, rowNo) {
-				colNo = 0; 
 				if (rowNo >= startRow && rowNo <= endRow) {
-					each(tr.childNodes, function (item) {
+					each(tr.children, function (item, colNo) {
 						if ((item.tagName === 'TD' || item.tagName === 'TH') && colNo >= startColumn && colNo <= endColumn) {
-							if (!columns[colNo]) {
-								columns[colNo] = [];					
+							if (!columns[colNo - startColumn]) {
+								columns[colNo - startColumn] = [];					
 							}
-							columns[colNo][rowNo - startRow] = item.innerHTML;
 							
-							colNo += 1;
+							columns[colNo - startColumn][rowNo - startRow] = item.innerHTML;
 						}
 					});
 				}
@@ -222,8 +259,6 @@
 	},
 
 	/**
-	 * TODO: 
-	 * - switchRowsAndColumns
 	 */
 	parseGoogleSpreadsheet: function () {
 		var self = this,
@@ -238,53 +273,56 @@
 			gc; // google column
 
 		if (googleSpreadsheetKey) {
-			jQuery.getJSON('https://spreadsheets.google.com/feeds/cells/' + 
+			jQuery.ajax({
+				dataType: 'json', 
+				url: 'https://spreadsheets.google.com/feeds/cells/' + 
 				  googleSpreadsheetKey + '/' + (options.googleSpreadsheetWorksheet || 'od6') +
 					  '/public/values?alt=json-in-script&callback=?',
-					  function (json) {
-					
-				// Prepare the data from the spreadsheat
-				var cells = json.feed.entry,
-					cell,
-					cellCount = cells.length,
-					colCount = 0,
-					rowCount = 0,
-					i;
-			
-				// First, find the total number of columns and rows that 
-				// are actually filled with data
-				for (i = 0; i < cellCount; i++) {
-					cell = cells[i];
-					colCount = Math.max(colCount, cell.gs$cell.col);
-					rowCount = Math.max(rowCount, cell.gs$cell.row);			
-				}
-			
-				// Set up arrays containing the column data
-				for (i = 0; i < colCount; i++) {
-					if (i >= startColumn && i <= endColumn) {
-						// Create new columns with the length of either end-start or rowCount
-						columns[i - startColumn] = [];
-
-						// Setting the length to avoid jslint warning
-						columns[i - startColumn].length = Math.min(rowCount, endRow - startRow);
-					}
-				}
+				error: options.error,
+				success: function (json) {
+					// Prepare the data from the spreadsheat
+					var cells = json.feed.entry,
+						cell,
+						cellCount = cells.length,
+						colCount = 0,
+						rowCount = 0,
+						i;
 				
-				// Loop over the cells and assign the value to the right
-				// place in the column arrays
-				for (i = 0; i < cellCount; i++) {
-					cell = cells[i];
-					gr = cell.gs$cell.row - 1; // rows start at 1
-					gc = cell.gs$cell.col - 1; // columns start at 1
-
-					// If both row and col falls inside start and end
-					// set the transposed cell value in the newly created columns
-					if (gc >= startColumn && gc <= endColumn &&
-						gr >= startRow && gr <= endRow) {
-						columns[gc - startColumn][gr - startRow] = cell.content.$t;
+					// First, find the total number of columns and rows that 
+					// are actually filled with data
+					for (i = 0; i < cellCount; i++) {
+						cell = cells[i];
+						colCount = Math.max(colCount, cell.gs$cell.col);
+						rowCount = Math.max(rowCount, cell.gs$cell.row);			
 					}
+				
+					// Set up arrays containing the column data
+					for (i = 0; i < colCount; i++) {
+						if (i >= startColumn && i <= endColumn) {
+							// Create new columns with the length of either end-start or rowCount
+							columns[i - startColumn] = [];
+
+							// Setting the length to avoid jslint warning
+							columns[i - startColumn].length = Math.min(rowCount, endRow - startRow);
+						}
+					}
+					
+					// Loop over the cells and assign the value to the right
+					// place in the column arrays
+					for (i = 0; i < cellCount; i++) {
+						cell = cells[i];
+						gr = cell.gs$cell.row - 1; // rows start at 1
+						gc = cell.gs$cell.col - 1; // columns start at 1
+
+						// If both row and col falls inside start and end
+						// set the transposed cell value in the newly created columns
+						if (gc >= startColumn && gc <= endColumn &&
+							gr >= startRow && gr <= endRow) {
+							columns[gc - startColumn][gr - startRow] = cell.content.$t;
+						}
+					}
+					self.dataFound();
 				}
-				self.dataFound();
 			});
 		}
 	},
@@ -313,7 +351,6 @@
 	
 	/**
 	 * Parse numeric cells in to number types and date types in to true dates.
-	 * @param {Object} columns
 	 */
 	parseTypes: function () {
 		var columns = this.columns,
@@ -358,7 +395,11 @@
 			}
 		}
 	},
-	//*
+	
+	/**
+	 * A collection of available date formats, extendable from the outside to support
+	 * custom date formats.
+	 */
 	dateFormats: {
 		'YYYY-mm-dd': {
 			regex: '^([0-9]{4})-([0-9]{2})-([0-9]{2})$',
@@ -367,7 +408,7 @@
 			}
 		}
 	},
-	// */
+	
 	/**
 	 * Parse a date and return it as a number. Overridable through options.parseDate.
 	 */
@@ -436,19 +477,20 @@
 	complete: function () {
 		
 		var columns = this.columns,
-			hasXData,
-			categories,
 			firstCol,
 			type,
 			options = this.options,
+			valueCount,
 			series,
 			data,
-			name,
 			i,
-			j;
+			j,
+			seriesIndex;
 			
 		
 		if (options.complete) {
+
+			this.getColumnDistribution();
 			
 			// Use first column for X data or categories?
 			if (columns.length > 1) {
@@ -457,42 +499,66 @@
 					firstCol.shift(); // remove the first cell
 				}
 				
-				// Use the first column for categories or X values
-				hasXData = firstCol.isNumeric || firstCol.isDatetime;
-				if (!hasXData) { // means type is neither datetime nor linear
-					categories = firstCol;
-				}
 				
 				if (firstCol.isDatetime) {
 					type = 'datetime';
+				} else if (!firstCol.isNumeric) {
+					type = 'category';
+				}
+			}
+
+			// Get the names and shift the top row
+			for (i = 0; i < columns.length; i++) {
+				if (this.headerRow === 0) {
+					columns[i].name = columns[i].shift();
 				}
 			}
 			
 			// Use the next columns for series
 			series = [];
-			for (i = 0; i < columns.length; i++) {
-				if (this.headerRow === 0) {
-					name = columns[i].shift();
-				}
+			for (i = 0, seriesIndex = 0; i < columns.length; seriesIndex++) {
+
+				// This series' value count
+				valueCount = Highcharts.pick(this.valueCount.individual[seriesIndex], this.valueCount.global);
+				
+				// Iterate down the cells of each column and add data to the series
 				data = [];
-				for (j = 0; j < columns[i].length; j++) {
-					data[j] = columns[i][j] !== undefined ?
-						(hasXData ?
-							[firstCol[j], columns[i][j]] :
-							columns[i][j]
-						) :
-						null;
+
+				// Only loop and fill the data series if there are columns available.
+				// We need this check to avoid reading outside the array bounds.
+				if (i + valueCount <= columns.length) {
+					for (j = 0; j < columns[i].length; j++) {
+						data[j] = [
+							firstCol[j],
+							columns[i][j] !== undefined ? columns[i][j] : null
+						];
+						if (valueCount > 1) {
+							data[j].push(columns[i + 1][j] !== undefined ? columns[i + 1][j] : null);
+						}
+						if (valueCount > 2) {
+							data[j].push(columns[i + 2][j] !== undefined ? columns[i + 2][j] : null);
+						}
+						if (valueCount > 3) {
+							data[j].push(columns[i + 3][j] !== undefined ? columns[i + 3][j] : null);
+						}
+						if (valueCount > 4) {
+							data[j].push(columns[i + 4][j] !== undefined ? columns[i + 4][j] : null);
+						}
+					}
 				}
-				series[i] = {
-					name: name,
+
+				// Add the series
+				series[seriesIndex] = {
+					name: columns[i].name,
 					data: data
 				};
+
+				i += valueCount;
 			}
 			
 			// Do the callback
 			options.complete({
 				xAxis: {
-					categories: categories,
 					type: type
 				},
 				series: series
@@ -503,8 +569,8 @@
 	
 	// Register the Data prototype and data function on Highcharts
 	Highcharts.Data = Data;
-	Highcharts.data = function (options) {
-		return new Data(options);
+	Highcharts.data = function (options, chartOptions) {
+		return new Data(options, chartOptions);
 	};
 
 	// Extend Chart.init so that the Chart constructor accepts a new configuration
@@ -517,10 +583,14 @@
 				complete: function (dataOptions) {
 					
 					// Merge series configs
-					if (userOptions.series) {
-						each(userOptions.series, function (series, i) {
-							userOptions.series[i] = Highcharts.merge(series, dataOptions.series[i]);
-						});
+					if (userOptions.hasOwnProperty('series')) {
+						if (typeof userOptions.series === 'object') {
+							each(userOptions.series, function (series, i) {
+								userOptions.series[i] = Highcharts.merge(series, dataOptions.series[i]);
+							});
+						} else { // Allow merging in dataOptions.series (#2856)
+							delete userOptions.series;
+						}
 					}
 
 					// Do the merge
@@ -528,7 +598,7 @@
 
 					proceed.call(chart, userOptions, callback);
 				}
-			}));
+			}), userOptions);
 		} else {
 			proceed.call(chart, userOptions, callback);
 		}

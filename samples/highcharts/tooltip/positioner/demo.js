@@ -1,12 +1,16 @@
 $(function () {
     $('#container').highcharts({
-        chart: {
+        title: {
+            text: 'Fixed tooltip'
         },
         
         tooltip: {
             positioner: function () {
             	return { x: 80, y: 50 };
-            }
+            },
+            shadow: false,
+            borderWidth: 0,
+            backgroundColor: 'rgba(255,255,255,0.8)'
         },
         
         xAxis: {

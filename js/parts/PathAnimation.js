@@ -38,7 +38,7 @@ pathAnim = {
 		}
 
 		// if shifting points, prepend a dummy point to the end path
-		if (shift <= end.length / numParams) {
+		if (shift <= end.length / numParams && start.length === end.length) {
 			while (shift--) {
 				end = [].concat(end).splice(0, numParams).concat(end);
 			}

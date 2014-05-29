@@ -5,6 +5,7 @@
 // 1 - set default options
 defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	dataLabels: {
+		format: '{point.z}',
 		inside: true,
 		style: {
 			color: 'white',
@@ -21,17 +22,35 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	minSize: 8,
 	maxSize: '20%',
 	// negativeColor: null,
+	// sizeBy: 'area'
+	states: {
+		hover: {
+			halo: {
+				size: 5
+			}
+		}
+	},
 	tooltip: {
 		pointFormat: '({point.x}, {point.y}), Size: {point.z}'
 	},
+	turboThreshold: 0,
 	zThreshold: 0
+});
+
+var BubblePoint = extendClass(Point, {
+	haloPath: function () {
+		return Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
+	}
 });
 
 // 2 - Create the series object
 seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	type: 'bubble',
+	pointClass: BubblePoint,
 	pointArrayMap: ['y', 'z'],
+	parallelArrays: ['x', 'y', 'z'],
 	trackerGroups: ['group', 'dataLabelsGroup'],
+	bubblePadding: true,
 	
 	/**
 	 * Mapping between SVG attributes and the corresponding options
@@ -53,7 +72,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		fill = fill || markerOptions.fillColor || this.color; 
 		
 		if (fillOpacity !== 1) {
-			fill = Highcharts.Color(fill).setOpacity(fillOpacity).get('rgba');
+			fill = Color(fill).setOpacity(fillOpacity).get('rgba');
 		}
 		return fill;
 	},
@@ -80,6 +99,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			pos,
 			zData = this.zData,
 			radii = [],
+			sizeByArea = this.options.sizeBy !== 'width',
 			zRange;
 		
 		// Set the shape type and arguments to be picked up in drawPoints
@@ -88,6 +108,9 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			pos = zRange > 0 ? // relative size, a number between 0 and 1
 				(zData[i] - zMin) / (zMax - zMin) : 
 				0.5;
+			if (sizeByArea && pos >= 0) {
+				pos = Math.sqrt(pos);
+			}
 			radii.push(math.ceil(minSize + pos * (maxSize - minSize)) / 2);
 		}
 		this.radii = radii;
@@ -181,7 +204,8 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			radius
 		).attr({
 			zIndex: 3
-		}).add(item.legendGroup);		
+		}).add(item.legendGroup);
+		item.legendSymbol.isMarker = true;	
 		
 	},
 	
@@ -194,7 +218,8 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
  * necessary to avoid the bubbles to overflow.
  */
 Axis.prototype.beforePadding = function () {
-	var axisLength = this.len,
+	var axis = this,
+		axisLength = this.len,
 		chart = this.chart,
 		pxMin = 0, 
 		pxMax = axisLength,
@@ -209,9 +234,6 @@ Axis.prototype.beforePadding = function () {
 		transA = axisLength / range,
 		activeSeries = [];
 
-	// Correction for #1673
-	this.allowZoomOutside = true;
-
 	// Handle padding on the second pass, or on redraw
 	if (this.tickPositions) {
 		each(this.series, function (series) {
@@ -219,7 +241,10 @@ Axis.prototype.beforePadding = function () {
 			var seriesOptions = series.options,
 				zData;
 
-			if (series.type === 'bubble' && series.visible) {
+			if (series.bubblePadding && (series.visible || !chart.options.chart.ignoreHiddenSeries)) {
+
+				// Correction for #1673
+				axis.allowZoomOutside = true;
 
 				// Cache it
 				activeSeries.push(series);
@@ -267,14 +292,16 @@ Axis.prototype.beforePadding = function () {
 			
 			if (range > 0) {
 				while (i--) {
-					radius = series.radii[i];
-					pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
-					pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
+					if (typeof data[i] === 'number') {
+						radius = series.radii[i];
+						pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
+						pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
+					}
 				}
 			}
 		});
 		
-		if (range > 0 && pick(this.options.min, this.userMin) === UNDEFINED && pick(this.options.max, this.userMax) === UNDEFINED) {
+		if (activeSeries.length && range > 0 && pick(this.options.min, this.userMin) === UNDEFINED && pick(this.options.max, this.userMax) === UNDEFINED) {
 			pxMax -= axisLength;
 			transA *= (axisLength + pxMin - pxMax) / axisLength;
 			this.min += pxMin / transA;

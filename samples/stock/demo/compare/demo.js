@@ -30,10 +30,9 @@ $(function() {
 	function createChart() {
 
 		$('#container').highcharts('StockChart', {
-		    chart: {
-		    },
 
 		    rangeSelector: {
+				inputEnabled: $('#container').width() > 480,
 		        selected: 4
 		    },
 

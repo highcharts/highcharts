@@ -1,9 +1,6 @@
 $(function () {
     $('#container').highcharts({
         
-        chart: {
-        },
-        
         plotOptions: {
             series: {
                 showCheckbox: true

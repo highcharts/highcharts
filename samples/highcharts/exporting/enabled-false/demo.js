@@ -1,7 +1,7 @@
 $(function () {
     $('#container').highcharts({
         title: {
-            text: 'enabled is set to false'
+            text: 'Exporting is loaded but <em>enabled</em> is false'
         },
         credits: {
             enabled: false

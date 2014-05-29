@@ -1,71 +1,48 @@
-	<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Highcharts Map</title>
-		<!-- 1. Add these JavaScript inclusions in the head of your page -->
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
-		<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" />
-		
-		<script type="text/javascript" src="http://github.highcharts.com/c07441d/highcharts.src.js"></script>
-		<script type="text/javascript" src="http://github.highcharts.com/c07441d/modules/map.src.js"></script>
-		<script type="text/javascript" src="http://github.highcharts.com/c07441d/modules/data.src.js"></script>
+		<script src="http://code.jquery.com/jquery-1.10.1.js"></script>
 		
 		
+		<script src="http://code.highcharts.com/maps/1.0.0-beta/highmaps.js"></script>
+		<script src="http://github.highcharts.com/2f60977d/modules/data.src.js"></script>
+		<script src="http://github.highcharts.com/2f60977d/modules/map-parser.src.js"></script>
+		
+		<!--
+		<script src="http://code.highcharts.local/highmaps.js"></script>
+		<script src="http://code.highcharts.local/modules/data.src.js"></script>
+		<script src="http://code.highcharts.local/modules/map-parser.src.js"></script>
+		-->
 		
 		<!-- 3. Add the JavaScript to initialize the chart on document ready -->
+		<script src="map-from-svg.js"></script>
 		<script type="text/javascript">
-			
 			var chart,
 				file,
 				$current;
 				
-			var maps = {
-				
-				// Finished
-				'World1': 'http://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg',
-				'World2': 'http://upload.wikimedia.org/wikipedia/commons/7/76/World_V2.0.svg',
-				'Canada': 'http://upload.wikimedia.org/wikipedia/commons/3/38/Canada_blank_map.svg',
-				'Germany': 'http://upload.wikimedia.org/wikipedia/commons/2/2c/Karte_Bundesrepublik_Deutschland.svg',
-				'Netherlands': 'http://upload.wikimedia.org/wikipedia/commons/b/bb/Carte_des_Pays-Bas_%28netherlands%29_without_names.svg',
-				'Norway': 'http://upload.wikimedia.org/wikipedia/commons/8/87/Norwegian_parliamentary_election_2009_map_KrF_reps.svg',
-				'Australia': 'http://upload.wikimedia.org/wikipedia/commons/c/c2/Australia_states_blank.svg',
-				'Europe': 'http://upload.wikimedia.org/wikipedia/commons/2/25/BlankMap-Europe.svg',
-				'Africa': 'http://upload.wikimedia.org/wikipedia/commons/f/f9/BlankMap-Africa.svg',
-				'South-America': 'http://upload.wikimedia.org/wikipedia/commons/b/b0/Southamerica_blank.svg',
-				'USA': 'http://upload.wikimedia.org/wikipedia/commons/3/32/Blank_US_Map.svg',
-				'France': 'http://upload.wikimedia.org/wikipedia/commons/3/3c/Carte_vierge_d%C3%A9partements_fran%C3%A7ais_avec_DOM.svg',
-				'Spain': 'http://upload.wikimedia.org/wikipedia/commons/5/5a/Provinces_of_Spain.svg',
-				'Sogn-og-Fjordane-Norway': 'http://upload.wikimedia.org/wikipedia/commons/4/4f/NO_1417_Vik.svg'
-				
-			};
-			
 			// Some maps, like USA and France, have separator lines in between paths. We want to 
 			// identify those and assign to a separate series
 			function identifyLines(data, key) {
 				var lines = [],
-					lineNames = {
-						'France': ['path2408', 'path3387', 'path5327'],
-						'Spain': ['path3682'], 
-						'USA': ['path57']
-					}[key],
 					i,
 					point;
 				
-				if (lineNames) {
-					for (i = 0; i < data.length; i++) {
-						point = data[i];
-						if ($.inArray(point.name, lineNames) !== -1) {
-							lines.push(data.splice(i, 1)[0]);
-							i -= 1;
-						}
+				for (i = 0; i < data.length; i++) {
+					point = data[i];
+					if (!point.hasFill) {
+						lines.push(data.splice(i, 1)[0]);
+						i -= 1;
 					}
-					return lines;
 				}
+				return lines;
 			}
 			
 			function drawMap(key, file) {
+				location.hash = '#' + file;
+				var start = +new Date();
 				if (chart) {
 					chart = chart.destroy();
 				}
@@ -74,13 +51,21 @@
 				Highcharts.data({
 					svg: '/maps/file.php?file=' + file,
 					complete: function (options) {
-						
+
+						console.log('Loading and parsing map:', new Date() - start, 'ms');
+						start = +new Date();
+
 						var data = options.series[0].data,
 							lines = identifyLines(data, key);
 							
 						// For the sake of the demo, add some random values
 						$.each(data, function (i, point) {
-							point.y = Math.round(Math.random() * 100);
+							data[i] = {
+								y: Math.round(Math.random() * 100),
+								path: point.path,
+								name: point.name,
+								hasFill: point.hasFill
+							};
 						});
 						
 						// Merge the options from the Data module with our own settings
@@ -88,7 +73,11 @@
 							chart : {
 								renderTo : 'container',
 								borderWidth : 1,
-								zoomType: 'xy'
+								events: {
+									load: function () {
+										console.log('Generating chart:', new Date() - start, 'ms');
+									}
+								}
 							},
 							
 							title: {
@@ -98,7 +87,11 @@
 							legend: {
 								enabled: false
 							},
-							
+
+							mapNavigation: {
+								enabled: true
+							},
+						
 							plotOptions: {
 								map: {
 									name: 'Random',
@@ -116,7 +109,7 @@
 									},
 									states: {
 										hover: {
-											color: '#FF7F00' // orange
+											color: '#bada55'
 										}
 									}
 								}
@@ -124,33 +117,58 @@
 						});
 						
 						// Add separator lines
-						if (lines) {
-							options.series.splice(0, 0, {
-								color: 'none',
-								borderColor: 'gray',
+						if (lines && lines.length) {
+							options.series.push({
+								type: 'mapline',
 								enableMouseTracking: false,
 								showInLegend: false,
 								data: lines
 							});	
 						}
 						
-						// Create the map
-						chart = new Highcharts.Map(options);
 						
 						
 						// View data
-						var strData = JSON.stringify(data);
+						var mapData = [];
+						$.each(options.series, function (i, series) {
+							var data = [];
+
+							mapData[i] = {};
+
+							$.each(series.data, function (j, point) {
+								if (!mapData[i].type) {
+									if (point.hasFill) {
+										mapData[i].type = 'map';
+									} else {
+										mapData[i].type = 'mapline';
+									}
+										
+								}
+								data[j] = {
+									name: point.name,
+									path: point.path
+								};
+							});
+							mapData[i].data = Highcharts.Data.prototype.pathToString(data)
+						});
+						
+						mapData = JSON.stringify(mapData, null, "\t");
 						$('#view-data')
-							.html('View data (' + Highcharts.numberFormat(strData.length / 1024, 1, '.') + ' kB)')
+							.html('View data (' + Highcharts.numberFormat(mapData.length / 1024, 1, '.') + ' kB)')
 							.click(function () {
 								if (chart) {
 									chart = chart.destroy();
 								}
 								$('#container').html(
-									'<div style="font-family:courier new;font-size: 0.8em; color: green">' + 
-										strData + '</div>'
+									'<div style="font-family:courier new;font-size: 0.8em; color: green;"><pre>' + 
+										mapData + '</pre></div>'
 								);
 							});
+
+
+
+						// Create the map
+						chart = new Highcharts.Map(options);
 					}
 				});
 				
@@ -171,24 +189,7 @@
 				
 			}
 				
-			$(function() {
-				var $links = $('#links');
-				
-				// Build the links
-				for (var n in maps) {;
-					var $a = $('<a id="' + n + '_" href="#' + n + '">' + n + '</a>')
-						.click(function () {
-							drawMap(this.innerHTML);
-						})
-						.appendTo($links);
-				}
-				
-				$(location.hash ? location.hash + '_' : '#_World2_').click();
-				
-				$('#load-submit').click(function () {
-					drawMap('Online SVG', $('#load')[0].value);
-				});
-			});
+			
 
 		</script>
 		
@@ -214,21 +215,32 @@
 				background: #bada55;
 			}
 			
-			.buttons {
+			label {
+				width: 45%;
+				display: inline-block;
+			}
+			input, select {
+				width: 45%;
 			}
 		</style>
 	</head>
 	<body>
 		<h1 style="text-align:center">Highcharts maps from SVG sources</h1>
-		<div style="width: 1000px; margin: auto">
-			<div style="width: 170px;margin-right: 10px;float: left">
-				<div id="links"></div>
+		<div style="width: 1200px; margin: auto">
+			<div style="width: 370px;margin-right: 10px;float: left">
 				
-				<div style="padding-left: 2px">
-					<label style="color: gray; font-size: 0.7em">.. or load an online SVG: </label>
-					<input type="text/javascript" id="load" style="width: 110px">
-					<input type="submit" value="Load" id="load-submit" />
-				</div>
+				<label for="preset">Load preset: </label>
+				<select id="preset"></select>
+				
+				<label style="width: 100%">Online SVG URL or SVG markup:</label>
+				<textarea id="load" style="width: 100%" rows="10" ></textarea>
+
+				<div id="series-setup"></div>
+
+
+				<input type="submit" value="Load" id="load-submit" />
+				
+
 				<hr/>
 				<div class="buttons">
 					<a id="view-svg" target="_blank">View SVG</a>

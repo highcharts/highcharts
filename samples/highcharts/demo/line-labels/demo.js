@@ -17,13 +17,6 @@ $(function () {
                     text: 'Temperature (°C)'
                 }
             },
-            tooltip: {
-                enabled: false,
-                formatter: function() {
-                    return '<b>'+ this.series.name +'</b><br/>'+
-                        this.x +': '+ this.y +'°C';
-                }
-            },
             plotOptions: {
                 line: {
                     dataLabels: {

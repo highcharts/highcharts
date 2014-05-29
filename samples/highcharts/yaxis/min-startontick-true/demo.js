@@ -1,10 +1,10 @@
 $(function () {
     $('#container').highcharts({
         title: {
-            text: 'Expect the yAxis being rounded down, due to startOnTick is true (default).'
+            text: 'Expect the Y axis being rounded down, due to startOnTick is true (default).'
         },
         subtitle: {
-            text: 'yAxis--min = -50'
+            text: 'yAxis.min = -50'
         },
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']

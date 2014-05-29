@@ -8,8 +8,14 @@ $partsDir = 'parts/';
 
 if ($target == 'highchartsmore') {
 	$partsDir = 'parts-more/';
+
+} else if ($target == 'highmaps') {
+	$partsDir = '';
 }
 
+if ($target == 'highcharts3d') {
+	$partsDir = 'parts-3d/';
+}
 
 $xml = simplexml_load_file('../build.xml');
 

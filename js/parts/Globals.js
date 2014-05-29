@@ -28,7 +28,7 @@ var UNDEFINED,
 	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
 	useCanVG = !hasSVG && !isIE && !!doc.createElement('canvas').getContext,
 	Renderer,
-	hasTouch = doc.documentElement.ontouchstart !== UNDEFINED,
+	hasTouch,
 	symbolSizes = {},
 	idCounter = 0,
 	garbageBin,
@@ -39,6 +39,7 @@ var UNDEFINED,
 	timeUnits,
 	noop = function () {},
 	charts = [],
+	chartCount = 0,
 	PRODUCT = '@product.name@',
 	VERSION = '@product.version@',
 
@@ -53,20 +54,7 @@ var UNDEFINED,
 	NONE = 'none',
 	M = 'M',
 	L = 'L',
-	/*
-	 * Empirical lowest possible opacities for TRACKER_FILL
-	 * IE6: 0.002
-	 * IE7: 0.002
-	 * IE8: 0.002
-	 * IE9: 0.00000000001 (unlimited)
-	 * IE10: 0.0001 (exporting only)
-	 * FF: 0.00000000001 (unlimited)
-	 * Chrome: 0.000001
-	 * Safari: 0.000001
-	 * Opera: 0.00000000001 (unlimited)
-	 */
-	TRACKER_FILL = 'rgba(192,192,192,' + (hasSVG ? 0.0001 : 0.002) + ')', // invisible but clickable
-	//TRACKER_FILL = 'rgba(192,192,192,0.5)',
+	numRegex = /^[0-9]+$/,
 	NORMAL_STATE = '',
 	HOVER_STATE = 'hover',
 	SELECT_STATE = 'select',
@@ -78,14 +66,16 @@ var UNDEFINED,
 	WEEK = 'week',
 	MONTH = 'month',
 	YEAR = 'year',
+	
+	// Object for extending Axis
+	AxisPlotLineOrBandExtension,
 
 	// constants for attributes
-	LINEAR_GRADIENT = 'linearGradient',
-	STOPS = 'stops',
 	STROKE_WIDTH = 'stroke-width',
 
 	// time methods, changed based on whether or not UTC is used
 	makeTime,
+	timezoneOffset,
 	getMinutes,
 	getHours,
 	getDay,
@@ -103,4 +93,4 @@ var UNDEFINED,
 	seriesTypes = {};
 
 // The Highcharts namespace
-win.Highcharts = win.Highcharts ? error(16, true) : {};
+var Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : {};

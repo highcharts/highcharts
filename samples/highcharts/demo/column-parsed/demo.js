@@ -18,7 +18,7 @@ $(function () {
         tooltip: {
             formatter: function() {
                 return '<b>'+ this.series.name +'</b><br/>'+
-                    this.y +' '+ this.x.toLowerCase();
+                    this.point.y +' '+ this.point.name.toLowerCase();
             }
         }
     });

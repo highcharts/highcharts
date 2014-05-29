@@ -1,8 +1,10 @@
 $(function () {
     $('#container').highcharts({
-        chart: {
+        title: {
+            text: 'Demo of the <em>showInLegend</em> option'
         },
-        xAxis: {
+        subtitle: {
+            text: 'The first series should show in the legend, the second series not'
         },
         
         series: [{

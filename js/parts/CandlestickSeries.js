@@ -14,6 +14,7 @@ defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
 	tooltip: defaultPlotOptions.ohlc.tooltip,
 	threshold: null,
 	upColor: 'white'
+	// upLineColor: null
 });
 
 // 2 - Create the CandlestickSeries object
@@ -31,6 +32,29 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 	upColorProp: 'fill',
 
 	/**
+	 * Postprocess mapping between options and SVG attributes
+	 */
+	getAttribs: function () {
+		seriesTypes.ohlc.prototype.getAttribs.apply(this, arguments);
+		var series = this,
+			options = series.options,
+			stateOptions = options.states,			
+			upLineColor = options.upLineColor || options.lineColor,
+			hoverStroke = stateOptions.hover.upLineColor || upLineColor, 
+			selectStroke = stateOptions.select.upLineColor || upLineColor;
+
+		// Add custom line color for points going up (close > open).
+		// Fill is handled by OHLCSeries' getAttribs.
+		each(series.points, function (point) {
+			if (point.open < point.close) {
+				point.pointAttr[''].stroke = upLineColor;
+				point.pointAttr.hover.stroke = hoverStroke;
+				point.pointAttr.select.stroke = selectStroke;
+			}
+		});
+	},
+
+	/**
 	 * Draw the data points
 	 */
 	drawPoints: function () {
@@ -38,10 +62,13 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 			points = series.points,
 			chart = series.chart,
 			pointAttr,
+			seriesPointAttr = series.pointAttr[''],
 			plotOpen,
 			plotClose,
 			topBox,
 			bottomBox,
+			hasTopWhisker,
+			hasBottomWhisker,
 			crispCorr,
 			crispX,
 			graphic,
@@ -54,16 +81,20 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 			graphic = point.graphic;
 			if (point.plotY !== UNDEFINED) {
 
-				pointAttr = point.pointAttr[point.selected ? 'selected' : ''];
+				pointAttr = point.pointAttr[point.selected ? 'selected' : ''] || seriesPointAttr;
 
 				// crisp vector coordinates
 				crispCorr = (pointAttr['stroke-width'] % 2) / 2;
-				crispX = mathRound(point.plotX) + crispCorr;
-				plotOpen = mathRound(point.plotOpen) + crispCorr;
-				plotClose = mathRound(point.plotClose) + crispCorr;
+				crispX = mathRound(point.plotX) - crispCorr; // #2596
+				plotOpen = point.plotOpen;
+				plotClose = point.plotClose;
 				topBox = math.min(plotOpen, plotClose);
 				bottomBox = math.max(plotOpen, plotClose);
 				halfWidth = mathRound(point.shapeArgs.width / 2);
+				hasTopWhisker = mathRound(topBox) !== mathRound(point.plotY);
+				hasBottomWhisker = bottomBox !== point.yBottom;
+				topBox = mathRound(topBox) + crispCorr;
+				bottomBox = mathRound(bottomBox) + crispCorr;
 
 				// create the path
 				path = [
@@ -75,16 +106,15 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 					crispX + halfWidth, topBox,
 					'L',
 					crispX + halfWidth, bottomBox,
-					'L',
-					crispX - halfWidth, bottomBox,
-					'M',
-					crispX, bottomBox,
-					'L',
-					crispX, mathRound(point.yBottom),
+					'Z', // Use a close statement to ensure a nice rectangle #2602
 					'M',
 					crispX, topBox,
 					'L',
-					crispX, mathRound(point.plotY),
+					crispX, hasTopWhisker ? mathRound(point.plotY) : topBox, // #460, #2094
+					'M',
+					crispX, bottomBox,
+					'L',
+					crispX, hasBottomWhisker ? mathRound(point.yBottom) : bottomBox, // #460, #2094
 					'Z'
 				];
 
@@ -93,7 +123,8 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 				} else {
 					point.graphic = chart.renderer.path(path)
 						.attr(pointAttr)
-						.add(series.group);
+						.add(series.group)
+						.shadow(series.options.shadow);
 				}
 
 			}

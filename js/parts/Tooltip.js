@@ -3,9 +3,9 @@
  * @param {Object} chart The chart instance
  * @param {Object} options Tooltip options
  */
-function Tooltip() {
+var Tooltip = Highcharts.Tooltip = function () {
 	this.init.apply(this, arguments);
-}
+};
 
 Tooltip.prototype = {
 
@@ -33,7 +33,7 @@ Tooltip.prototype = {
 
 
 		// create the label
-		this.label = chart.renderer.label('', 0, 0, options.shape, null, null, options.useHTML, null, 'tooltip')
+		this.label = chart.renderer.label('', 0, 0, options.shape || 'callout', null, null, options.useHTML, null, 'tooltip')
 			.attr({
 				padding: padding,
 				fill: options.backgroundColor,
@@ -43,8 +43,8 @@ Tooltip.prototype = {
 			})
 			.css(style)
 			.css({ padding: 0 }) // Remove it from VML, the padding is applied as an attribute instead (#1117)
-			.hide()
-			.add();
+			.add()
+			.attr({ y: -9999 }); // #2301, #2657
 
 		// When using canVG the shadow shows up as a gray circle
 		// even if the tooltip is hidden.
@@ -60,12 +60,6 @@ Tooltip.prototype = {
 	 * Destroy the tooltip and its elements.
 	 */
 	destroy: function () {
-		each(this.crosshairs, function (crosshair) {
-			if (crosshair) {
-				crosshair.destroy();
-			}
-		});
-
 		// Destroy and clear local variables
 		if (this.label) {
 			this.label = this.label.destroy();
@@ -84,14 +78,15 @@ Tooltip.prototype = {
 	move: function (x, y, anchorX, anchorY) {
 		var tooltip = this,
 			now = tooltip.now,
-			animate = tooltip.options.animation !== false && !tooltip.isHidden;
+			animate = tooltip.options.animation !== false && !tooltip.isHidden,
+			skipAnchor = tooltip.followPointer || tooltip.len > 1;
 
 		// get intermediate values for animation
 		extend(now, {
 			x: animate ? (2 * now.x + x) / 3 : x,
 			y: animate ? (now.y + y) / 2 : y,
-			anchorX: animate ? (2 * now.anchorX + anchorX) / 3 : anchorX,
-			anchorY: animate ? (now.anchorY + anchorY) / 2 : anchorY
+			anchorX: skipAnchor ? UNDEFINED : animate ? (2 * now.anchorX + anchorX) / 3 : anchorX,
+			anchorY: skipAnchor ? UNDEFINED : animate ? (now.anchorY + anchorY) / 2 : anchorY
 		});
 
 		// move to the intermediate value
@@ -140,17 +135,6 @@ Tooltip.prototype = {
 
 			this.chart.hoverPoints = null;
 		}
-	},
-
-	/**
-	 * Hide the crosshairs
-	 */
-	hideCrosshairs: function () {
-		each(this.crosshairs, function (crosshair) {
-			if (crosshair) {
-				crosshair.hide();
-			}
-		});
 	},
 	
 	/** 
@@ -210,49 +194,89 @@ Tooltip.prototype = {
 	 */
 	getPosition: function (boxWidth, boxHeight, point) {
 		
-		// Set up the variables
 		var chart = this.chart,
-			plotLeft = chart.plotLeft,
-			plotTop = chart.plotTop,
-			plotWidth = chart.plotWidth,
-			plotHeight = chart.plotHeight,
-			distance = pick(this.options.distance, 12),
-			pointX = point.plotX,
-			pointY = point.plotY,
-			x = pointX + plotLeft + (chart.inverted ? distance : -boxWidth - distance),
-			y = pointY - boxHeight + plotTop + 15, // 15 means the point is 15 pixels up from the bottom of the tooltip
-			alignedRight;
-	
-		// It is too far to the left, adjust it
-		if (x < 7) {
-			x = plotLeft + mathMax(pointX, 0) + distance;
+			distance = this.distance,
+			ret = {},
+			swapped,
+			first = ['y', chart.chartHeight, boxHeight, point.plotY + chart.plotTop],
+			second = ['x', chart.chartWidth, boxWidth, point.plotX + chart.plotLeft],
+			// The far side is right or bottom
+			preferFarSide = point.ttBelow || (chart.inverted && !point.negative) || (!chart.inverted && point.negative),
+			/**
+			 * Handle the preferred dimension. When the preferred dimension is tooltip
+			 * on top or bottom of the point, it will look for space there.
+			 */
+			firstDimension = function (dim, outerSize, innerSize, point) {
+				var roomLeft = innerSize < point - distance,
+					roomRight = point + distance + innerSize < outerSize,
+					alignedLeft = point - distance - innerSize,
+					alignedRight = point + distance;
+
+				if (preferFarSide && roomRight) {
+					ret[dim] = alignedRight;
+				} else if (!preferFarSide && roomLeft) {
+					ret[dim] = alignedLeft;
+				} else if (roomLeft) {
+					ret[dim] = alignedLeft;
+				} else if (roomRight) {
+					ret[dim] = alignedRight;
+				} else {
+					return false;
+				}
+			},
+			/**
+			 * Handle the secondary dimension. If the preferred dimension is tooltip
+			 * on top or bottom of the point, the second dimension is to align the tooltip
+			 * above the point, trying to align center but allowing left or right
+			 * align within the chart box.
+			 */
+			secondDimension = function (dim, outerSize, innerSize, point) {
+				// Too close to the edge, return false and swap dimensions
+				if (point < distance || point > outerSize - distance) {
+					return false;
+				
+				// Align left/top
+				} else if (point < innerSize / 2) {
+					ret[dim] = 1;
+				// Align right/bottom
+				} else if (point > outerSize - innerSize / 2) {
+					ret[dim] = outerSize - innerSize - 2;
+				// Align center
+				} else {
+					ret[dim] = point - innerSize / 2;
+				}
+			},
+			/**
+			 * Swap the dimensions 
+			 */
+			swap = function (count) {
+				var temp = first;
+				first = second;
+				second = temp;
+				swapped = count;
+			},
+			run = function () {
+				if (firstDimension.apply(0, first) !== false) {
+					if (secondDimension.apply(0, second) === false && !swapped) {
+						swap(true);
+						run();
+					}
+				} else if (!swapped) {
+					swap(true);
+					run();
+				} else {
+					ret.x = ret.y = 0;
+				}
+			};
+
+		// Under these conditions, prefer the tooltip on the side of the point
+		if (chart.inverted || this.len > 1) {
+			swap();
 		}
+		run();
+
+		return ret;
 	
-		// Test to see if the tooltip is too far to the right,
-		// if it is, move it back to be inside and then up to not cover the point.
-		if ((x + boxWidth) > (plotLeft + plotWidth)) {
-			x -= (x + boxWidth) - (plotLeft + plotWidth);
-			y = pointY - boxHeight + plotTop - distance;
-			alignedRight = true;
-		}
-	
-		// If it is now above the plot area, align it to the top of the plot area
-		if (y < plotTop + 5) {
-			y = plotTop + 5;
-	
-			// If the tooltip is still covering the point, move it below instead
-			if (alignedRight && pointY >= y && pointY <= (y + boxHeight)) {
-				y = pointY + plotTop + distance; // below
-			}
-		} 
-	
-		// Now if the tooltip is below the chart, move it up. It's better to cover the
-		// point than to disappear outside the chart. #834.
-		if (y + boxHeight > plotTop + plotHeight) {
-			y = mathMax(plotTop, plotTop + plotHeight - boxHeight - distance); // below
-		}
-	
-		return {x: x, y: y};
 	},
 
 	/**
@@ -265,7 +289,7 @@ Tooltip.prototype = {
 			s;
 
 		// build the header
-		s = [series.tooltipHeaderFormatter(items[0])];
+		s = [tooltip.tooltipHeaderFormatter(items[0])];
 
 		// build the values
 		each(items, function (item) {
@@ -291,7 +315,6 @@ Tooltip.prototype = {
 			options = tooltip.options,
 			x,
 			y,
-			show,
 			anchor,
 			textConfig = {},
 			text,
@@ -299,7 +322,6 @@ Tooltip.prototype = {
 			formatter = options.formatter || tooltip.defaultFormatter,
 			hoverPoints = chart.hoverPoints,
 			borderColor,
-			crosshairsOptions = options.crosshairs,
 			shared = tooltip.shared,
 			currentSeries;
 			
@@ -334,6 +356,7 @@ Tooltip.prototype = {
 				y: point[0].y
 			};
 			textConfig.points = pointConfig;
+			this.len = pointConfig.length;
 			point = point[0];
 
 		// single point tooltip
@@ -344,13 +367,10 @@ Tooltip.prototype = {
 
 		// register the current series
 		currentSeries = point.series;
-
-
-		// For line type series, hide tooltip if the point falls outside the plot
-		show = shared || !currentSeries.isCartesian || currentSeries.tooltipOutsidePlot || chart.isInsidePlot(x, y);
+		this.distance = pick(currentSeries.tooltipOptions.distance, 16);
 
 		// update the inner HTML
-		if (text === false || !show) {
+		if (text === false) {
 			this.hide();
 		} else {
 
@@ -371,51 +391,9 @@ Tooltip.prototype = {
 				stroke: borderColor
 			});
 			
-			tooltip.updatePosition({ plotX: x, plotY: y });
+			tooltip.updatePosition({ plotX: x, plotY: y, negative: point.negative, ttBelow: point.ttBelow });
 		
 			this.isHidden = false;
-		}
-
-		// crosshairs
-		if (crosshairsOptions) {
-			crosshairsOptions = splat(crosshairsOptions); // [x, y]
-
-			var path,
-				i = crosshairsOptions.length,
-				attribs,
-				axis,
-				val;
-
-			while (i--) {
-				axis = point.series[i ? 'yAxis' : 'xAxis'];
-				if (crosshairsOptions[i] && axis) {
-					val = i ? pick(point.stackY, point.y) : point.x; // #814
-					if (axis.isLog) { // #1671
-						val = log2lin(val);
-					}
-
-					path = axis.getPlotLinePath(
-						val,
-						1
-					);
-
-					if (tooltip.crosshairs[i]) {
-						tooltip.crosshairs[i].attr({ d: path, visibility: VISIBLE });
-					} else {
-						attribs = {
-							'stroke-width': crosshairsOptions[i].width || 1,
-							stroke: crosshairsOptions[i].color || '#C0C0C0',
-							zIndex: crosshairsOptions[i].zIndex || 2
-						};
-						if (crosshairsOptions[i].dashStyle) {
-							attribs.dashstyle = crosshairsOptions[i].dashStyle;
-						}
-						tooltip.crosshairs[i] = chart.renderer.path(path)
-							.attr(attribs)
-							.add();
-					}
-				}
-			}
 		}
 		fireEvent(chart, 'tooltipRefresh', {
 				text: text,
@@ -445,5 +423,52 @@ Tooltip.prototype = {
 			point.plotX + chart.plotLeft, 
 			point.plotY + chart.plotTop
 		);
+	},
+
+
+	/**
+	 * Format the header of the tooltip
+	 */
+	tooltipHeaderFormatter: function (point) {
+		var series = point.series,
+			tooltipOptions = series.tooltipOptions,
+			dateTimeLabelFormats = tooltipOptions.dateTimeLabelFormats,
+			xDateFormat = tooltipOptions.xDateFormat,
+			xAxis = series.xAxis,
+			isDateTime = xAxis && xAxis.options.type === 'datetime' && isNumber(point.key),
+			headerFormat = tooltipOptions.headerFormat,
+			closestPointRange = xAxis && xAxis.closestPointRange,
+			n;
+
+		// Guess the best date format based on the closest point distance (#568)
+		if (isDateTime && !xDateFormat) {
+			if (closestPointRange) {
+				for (n in timeUnits) {
+					if (timeUnits[n] >= closestPointRange || 
+							// If the point is placed every day at 23:59, we need to show
+							// the minutes as well. This logic only works for time units less than 
+							// a day, since all higher time units are dividable by those. #2637.
+							(timeUnits[n] <= timeUnits[DAY] && point.key % timeUnits[n] > 0)) {
+						xDateFormat = dateTimeLabelFormats[n];
+						break;
+					}
+				}
+			} else {
+				xDateFormat = dateTimeLabelFormats.day;
+			}
+
+			xDateFormat = xDateFormat || dateTimeLabelFormats.year; // #2546, 2581
+
+		}
+
+		// Insert the header date format if any
+		if (isDateTime && xDateFormat) {
+			headerFormat = headerFormat.replace('{point.key}', '{point.key:' + xDateFormat + '}');
+		}
+
+		return format(headerFormat, {
+			point: point,
+			series: series
+		});
 	}
 };
