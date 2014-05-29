@@ -149,7 +149,7 @@ extend(ColorAxis.prototype, {
 		startOnTick: true,
 		endOnTick: true,
 		offset: 0,
-		marker: { // docs: use another name?
+		marker: {
 			animation: {
 				duration: 50
 			},
@@ -218,6 +218,7 @@ extend(ColorAxis.prototype, {
 			colorCounter = 0,
 			options = this.options;
 		this.dataClasses = dataClasses = [];
+		this.legendItems = [];
 
 		each(userOptions.dataClasses, function (dataClass, i) {
 			var colors;
@@ -314,7 +315,7 @@ extend(ColorAxis.prototype, {
 			if (this.isLog) {
 				value = this.val2lin(value);
 			}
-			pos = 1 - ((this.max - value) / (this.max - this.min));
+			pos = 1 - ((this.max - value) / ((this.max - this.min) || 1));
 			i = stops.length;
 			while (i--) {
 				if (pos > stops[i][0]) {
@@ -326,7 +327,7 @@ extend(ColorAxis.prototype, {
 
 			// The position within the gradient
 			pos = 1 - (to[0] - pos) / ((to[0] - from[0]) || 1);
-			
+
 			color = this.tweenColors(
 				from.color, 
 				to.color,
@@ -337,7 +338,9 @@ extend(ColorAxis.prototype, {
 	},
 
 	getOffset: function () {
-		var group = this.legendGroup;
+		var group = this.legendGroup,
+			sideOffset = this.chart.axisOffset[this.side];
+		
 		if (group) {
 
 			Axis.prototype.getOffset.call(this);
@@ -351,6 +354,8 @@ extend(ColorAxis.prototype, {
 
 				this.added = true;
 			}
+			// Reset it to avoid color axis reserving space
+			this.chart.axisOffset[this.side] = sideOffset;
 		}
 	},
 
@@ -473,56 +478,58 @@ extend(ColorAxis.prototype, {
 	getDataClassLegendSymbols: function () {
 		var axis = this,
 			chart = this.chart,
-			legendItems = [],
+			legendItems = this.legendItems,
 			legendOptions = chart.options.legend,
 			valueDecimals = legendOptions.valueDecimals,
 			valueSuffix = legendOptions.valueSuffix || '',
 			name;
 
-		each(this.dataClasses, function (dataClass, i) {
-			var vis = true,
-				from = dataClass.from,
-				to = dataClass.to;
-			
-			// Assemble the default name. This can be overridden by legend.options.labelFormatter
-			name = '';
-			if (from === UNDEFINED) {
-				name = '< ';
-			} else if (to === UNDEFINED) {
-				name = '> ';
-			}
-			if (from !== UNDEFINED) {
-				name += numberFormat(from, valueDecimals) + valueSuffix;
-			}
-			if (from !== UNDEFINED && to !== UNDEFINED) {
-				name += ' - ';
-			}
-			if (to !== UNDEFINED) {
-				name += numberFormat(to, valueDecimals) + valueSuffix;
-			}
-			
-			// Add a mock object to the legend items
-			legendItems.push(extend({
-				chart: chart,
-				name: name,
-				options: {},
-				drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-				visible: true,
-				setState: noop,
-				setVisible: function () {
-					vis = this.visible = !vis;
-					each(axis.series, function (series) {
-						each(series.points, function (point) {
-							if (point.dataClass === i) {
-								point.setVisible(vis);
-							}
-						});
-					});
-					
-					chart.legend.colorizeItem(this, vis);
+		if (!legendItems.length) {
+			each(this.dataClasses, function (dataClass, i) {
+				var vis = true,
+					from = dataClass.from,
+					to = dataClass.to;
+				
+				// Assemble the default name. This can be overridden by legend.options.labelFormatter
+				name = '';
+				if (from === UNDEFINED) {
+					name = '< ';
+				} else if (to === UNDEFINED) {
+					name = '> ';
 				}
-			}, dataClass));
-		});
+				if (from !== UNDEFINED) {
+					name += numberFormat(from, valueDecimals) + valueSuffix;
+				}
+				if (from !== UNDEFINED && to !== UNDEFINED) {
+					name += ' - ';
+				}
+				if (to !== UNDEFINED) {
+					name += numberFormat(to, valueDecimals) + valueSuffix;
+				}
+				
+				// Add a mock object to the legend items
+				legendItems.push(extend({
+					chart: chart,
+					name: name,
+					options: {},
+					drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+					visible: true,
+					setState: noop,
+					setVisible: function () {
+						vis = this.visible = !vis;
+						each(axis.series, function (series) {
+							each(series.points, function (point) {
+								if (point.dataClass === i) {
+									point.setVisible(vis);
+								}
+							});
+						});
+						
+						chart.legend.colorizeItem(this, vis);
+					}
+				}, dataClass));
+			});
+		}
 		return legendItems;
 	},
 	name: '' // Prevents 'undefined' in legend in IE8
@@ -603,13 +610,63 @@ var colorSeriesMixin = {
 			var value = point.value,
 				color;
 
-			color = value === null ? nullColor : colorAxis ? colorAxis.toColor(value, point) : (point.color) || series.color;
+			color = value === null ? nullColor : (colorAxis && value !== undefined) ? colorAxis.toColor(value, point) : point.color || series.color;
 
 			if (color) {
 				point.color = color;
 			}
 		});
 	}
+};
+
+
+/**
+ * Wrap the buildText method and add the hook for add text stroke
+ * docs: On dataLabels.color and dataLabels.style, emphasize that a change in color should be accompanied by an opposite textStroke color
+ */
+wrap(SVGRenderer.prototype, 'buildText', function (proceed, wrapper) {
+
+	var textStroke = wrapper.styles && wrapper.styles.HcTextStroke;
+
+	proceed.call(this, wrapper);
+
+	// Apply the text stroke
+	if (textStroke && wrapper.applyTextStroke) {
+		wrapper.applyTextStroke(textStroke);
+	}
+});
+
+/**
+ * Apply an outside text stroke to data labels, based on the custom CSS property, HcTextStroke.
+ * Consider moving this to Highcharts core, also makes sense on stacked columns etc.
+ */
+SVGRenderer.prototype.Element.prototype.applyTextStroke = function (textStroke) {
+	var elem = this.element,
+		tspans,
+		firstChild;
+	
+	textStroke = textStroke.split(' ');
+	tspans = elem.children;
+	firstChild = elem.firstChild;
+	
+	// In order to get the right y position of the clones, 
+	// copy over the y setter
+	this.ySetter = this.xSetter;
+	
+	each([].slice.call(tspans), function (tspan, y) {
+		var clone;
+		if (y === 0) {
+			tspan.setAttribute('x', elem.getAttribute('x'));
+			if ((y = elem.getAttribute('y')) !== null) {
+				tspan.setAttribute('y', y);
+			}
+		}
+		clone = tspan.cloneNode(1);
+		clone.setAttribute('stroke', textStroke[1]);
+		clone.setAttribute('stroke-width', textStroke[0]);
+		clone.setAttribute('stroke-linejoin', 'round');
+		elem.insertBefore(clone, firstChild);
+	});
 };
 // Add events to the Chart object itself
 extend(Chart.prototype, {
@@ -888,14 +945,16 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 	marker: null,
 	stickyTracking: false,
 	dataLabels: {
-		format: '{point.value}',
+		formatter: function () { // #2945
+			return this.point.value;
+		},
 		verticalAlign: 'middle',
 		crop: false,
 		overflow: false,
 		style: {
 			color: 'white',
 			fontWeight: 'bold',
-			textShadow: '0 0 5px black'
+			HcTextStroke: '3px rgba(0,0,0,0.5)'
 		}
 	},
 	turboThreshold: 0,
@@ -908,7 +967,8 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 			animation: true
 		},
 		hover: {
-			brightness: 0.2
+			brightness: 0.2,
+			halo: null
 		}
 	}
 });
@@ -929,9 +989,7 @@ var MapAreaPoint = extendClass(Point, {
 			mapPoint;
 
 		if (seriesOptions.mapData) {
-			mapPoint = joinBy[0] ? 
-				series.getMapData(joinBy[0], point[joinBy[1]]) : // Join by a string
-				seriesOptions.mapData[point.x]; // Use array position (faster)
+			mapPoint = series.mapMap[point[joinBy[1]]];
 			if (mapPoint) {
 				// This applies only to bubbles
 				if (series.xyFromShape) {
@@ -967,7 +1025,9 @@ var MapAreaPoint = extendClass(Point, {
 	 */
 	onMouseOver: function (e) {
 		clearTimeout(this.colorInterval);
-		Point.prototype.onMouseOver.call(this, e);
+		if (this.value !== null) {
+			Point.prototype.onMouseOver.call(this, e);
+		}
 	},
 	/**
 	 * Custom animation for tweening out the colors. Animation reduces blinking when hovering
@@ -1069,7 +1129,8 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					pointMaxX = -MAX_VALUE, 
 					pointMinX =  MAX_VALUE, 
 					pointMaxY = -MAX_VALUE, 
-					pointMinY =  MAX_VALUE;
+					pointMinY =  MAX_VALUE,
+					properties = point.properties;
 
 				// The first time a map point is used, analyze its box
 				if (!point._foundBox) {
@@ -1086,8 +1147,10 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 						}
 					}
 					// Cache point bounding box for use to position data labels, bubbles etc
-					point._midX = pointMinX + (pointMaxX - pointMinX) * (point.middleX || 0.5); // pick is slower and very marginally needed
-					point._midY = pointMinY + (pointMaxY - pointMinY) * (point.middleY || 0.5);
+					point._midX = pointMinX + (pointMaxX - pointMinX) * 
+						(point.middleX || (properties && properties['hc-middle-x']) || 0.5); // pick is slower and very marginally needed
+					point._midY = pointMinY + (pointMaxY - pointMinY) * 
+						(point.middleY || (properties && properties['hc-middle-y']) || 0.5);
 					point._maxX = pointMaxX;
 					point._minX = pointMinX;
 					point._maxY = pointMaxY;
@@ -1119,7 +1182,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			if (yAxis.options.minRange === undefined) {
 				yAxis.minRange = Math.min(5 * minRange, (this.maxY - this.minY) / 5, yAxis.minRange || MAX_VALUE);
 			}
-
 		}
 	},
 	
@@ -1185,6 +1247,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	setData: function (data, redraw) {
 		var options = this.options,
 			mapData = options.mapData,
+			mapMap,
 			joinBy,
 			dataUsed = [];
 
@@ -1195,6 +1258,20 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 		this.getBox(data);
 		this.getBox(mapData);
+
+		if (mapData) {
+			this.mapMap = mapMap = {};
+			each(mapData, function (mapPoint) {
+				var props = mapPoint.properties;
+				// Copy the property over to root for faster access
+				if (joinBy[0] && props && props[joinBy[0]]) {
+					mapPoint[joinBy[0]] = props[joinBy[0]];
+				}
+
+				mapMap[mapPoint[joinBy[0]]] = mapPoint;
+			});
+		}
+
 		if (options.allAreas && mapData) {
 
 			data = data || [];
@@ -1208,8 +1285,9 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 			// Add those map points that don't correspond to data, which will be drawn as null points
 			dataUsed = '|' + dataUsed.join('|') + '|'; // String search is faster than array.indexOf 
+
 			each(mapData, function (mapPoint) {
-				if (!joinBy[0] || dataUsed.indexOf('|' + (mapPoint[joinBy[0]] || (mapPoint.properties && mapPoint.properties[joinBy[0]])) + '|') === -1) {
+				if (!joinBy[0] || dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1) {
 					data.push(merge(mapPoint, { value: null }));
 				}
 			});
@@ -1217,33 +1295,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		Series.prototype.setData.call(this, data, redraw);
 	},
 
-	/**
-	 * For each point, get the corresponding map data
-	 */
-	getMapData: function (key, value) {
-		var options = this.options,
-			mapData = options.mapData,
-			mapMap = this.mapMap,
-			mapPoint,
-			i = mapData.length;
-
-		// Create a cache for quicker lookup second time
-		if (!mapMap) {
-			mapMap = this.mapMap = {};
-		}
-		if (mapMap[value] !== undefined) {
-			return mapData[mapMap[value]];
-
-		} else if (value !== undefined) {
-			while (i--) {
-				mapPoint = mapData[i];
-				if (mapPoint[key] === value || (mapPoint.properties && mapPoint.properties[key] === value)) {
-					mapMap[value] = i; // cache it
-					return mapPoint;
-				}
-			}
-		}
-	},
 	
 	/**
 	 * No graph for the map series
@@ -1523,12 +1574,14 @@ seriesTypes.mapline = extendClass(seriesTypes.map, {
 defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 	dataLabels: {
 		enabled: true,
-		format: '{point.name}',
+		formatter: function () { // #2945
+			return this.point.name; 
+		},
 		color: 'black',
 		crop: false,
 		overflow: false,
 		style: {
-			textShadow: '0 0 5px white'
+			HcTextStroke: '3px rgba(255,255,255,0.5)' // docs
 		}
 	}
 });
@@ -1570,14 +1623,16 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 	borderWidth: 0,
 	nullColor: '#F8F8F8',
 	dataLabels: {
-		format: '{point.value}',
+		formatter: function () { // #2945
+			return this.point.value;
+		},
 		verticalAlign: 'middle',
 		crop: false,
 		overflow: false,
 		style: {
 			color: 'white',
 			fontWeight: 'bold',
-			textShadow: '0 0 5px black'
+			HcTextStroke: '1px rgba(0,0,0,0.5)' // docs: textShadow out, HcTextStroke in
 		}
 	},
 	marker: null,
@@ -1636,6 +1691,13 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		});
 		
 		series.translateColors();
+
+		// Make sure colors are updated on colorAxis update (#2893)
+		if (this.chart.hasRendered) {
+			each(series.points, function (point) {
+				point.shapeArgs.fill = point.color;
+			});
+		}
 	},
 	drawPoints: seriesTypes.column.prototype.drawPoints,
 	animate: noop,
@@ -1672,6 +1734,8 @@ Highcharts.geojson = function (geojson, hType) {
 				path.push(polygon[i][0], -polygon[i][1]);
 			}
 		};
+
+	hType = hType || 'map'; // default // docs
 	
 	each(geojson.features, function (feature) {
 

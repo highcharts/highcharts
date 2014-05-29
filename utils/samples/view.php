@@ -88,7 +88,7 @@ function getResources() {
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>Highstock Example</title>
+		<title>Sample viewer - Highcharts</title>
 		<?php echo getFramework(FRAMEWORK); ?>
 		<?php echo getResources(); ?>
 		<link rel="stylesheet" type="text/css" href="style.css"/>

@@ -1,14 +1,197 @@
+d093fb3|2014-05-08 09:37:15 +0200|Fixed #3028 causing the last series to become unlinked when calling Series.update on several linked series in succession.|6b96d39
+6b96d39|2014-05-08 07:42:20 +0200|Prepared for JSON parts file|c55a3b9
+c55a3b9|2014-05-07 15:56:43 +0200|Fixed #3027 causing truncation of axis labels when the axis title offset is set and the axis title is shorter than the labels.|af5b29e
+af5b29e|2014-05-07 14:06:19 +0200|Fixed #3024, dev branch issue with data labels of hidden series not becoming visible. Related to #3023.|54cad0d
+54cad0d|2014-05-07 10:24:28 +0200|Fixed #3023 causing defered data labels to show even if series was hidden in the meantime while animating.|76b172f
+76b172f|2014-05-07 09:56:40 +0200|Highstock: Added new option, rangeSelector.allButtonsEnabled to force auto-disabled buttons on inadequate range to be clickable. Closes #2418.|f881817
+f881817|2014-05-07 09:37:40 +0200|Fixed #3003 causing rotated data labels to be misaligned after redraw when using Standalone Framework.|61600b8
+61600b8|2014-05-07 09:09:49 +0200|Merge branch 'origin/bugfix'|5173418 fe6254f
+5173418|2014-05-07 09:08:51 +0200|Regression test for latest fix|b463c96
+b463c96|2014-05-07 09:03:00 +0200|Fixed #3017 causing centering of data labels on inverted range series not to work.|090b2f8
+fe6254f|2014-05-06 18:15:33 +0200|Merge branch 'bugfix' of https://github.com/highslide-software/highcharts.com into bugfix|42d0625 87401ce
+42d0625|2014-05-06 18:14:55 +0200|Issue #3007 with halo showing on invisible points in pies|efa80d8
+090b2f8|2014-05-06 17:12:20 +0200|Build: Do not clean repo unnecessarily|3d81c5e
+3d81c5e|2014-05-06 16:06:16 +0200|Formatting|b60c19b
+b60c19b|2014-05-06 15:57:00 +0200|Highstock: Fixed #3018 causing JS errors on negative height rectangle in low-height plot area.|8e3b123
+87401ce|2014-05-06 15:20:41 +0200|#3000 labels wrongly aligned on plotlines with multiple axes|efa80d8
+8e3b123|2014-05-06 14:39:49 +0200|Fixed flag in demo|58fac62
+58fac62|2014-05-06 14:34:29 +0200|Fixed missing flag in demo|efa80d8
+efa80d8|2014-05-06 13:38:48 +0200|Fixed #3016 causing halo on sliced pie series to diplay incorrectly.|cff42df
+cff42df|2014-05-06 12:39:37 +0200|Utils: GUI adjustments|319cedb
+319cedb|2014-05-06 12:39:37 +0200|Fixed #3014 causing wrong tooltip position in waterfall charts in Highcharts 4.|db45753
+db45753|2014-05-05 15:26:13 +0200|Added dashboard example to studies|7b05020
+7b05020|2014-05-05 13:58:44 +0200|Closes #3006: prevent null and 0 points from rendering in 3D Pies|31fbb9c
+31fbb9c|2014-05-05 10:55:12 +0200|Closes #3005: plotbands in 3D|8aebbb8
+8aebbb8|2014-05-03 20:02:12 +0200|Error in demo. Wrong exposing of VMLElement.|a08d601
+a08d601|2014-05-02 10:45:43 +0200|Closes #2976 Datalabels and 3D columns|d8c3043
+d8c3043|2014-05-02 08:31:34 +0200|Closes #2985: borders on 3d pie|51b948d
+51b948d|2014-05-01 00:22:28 +0200|Export: Improved exceptionhandling for false input for scale and width|89522ab
+89522ab|2014-05-01 00:21:29 +0200|Export: Fixed another divided by zero exception|4fdc0d6
+4fdc0d6|2014-05-01 00:04:47 +0200|Export: Prevent divided by zero error for first minute|11173dd
+11173dd|2014-04-30 23:32:33 +0200|Solved conflicts due to merging branch|02f8044 c3a4668
+c3a4668|2014-04-30 23:25:50 +0200|Export: Minor error logging correction|3a4faf5
+3a4faf5|2014-04-30 23:23:26 +0200|Export: Renamed classname and some reporting issues for monitoring exports|8246dd9
+02f8044|2014-04-30 19:36:05 +0200|Export: Updated Spring schemas in configuration files to version 3.2|945ae3b
+945ae3b|2014-04-30 19:36:05 +0200|Export: Remove double entry of the same file|d8d5aef
+d8d5aef|2014-04-30 19:36:05 +0200|Added missing highcharts modules, copying to temp location|8dac66f
+8dac66f|2014-04-30 19:36:05 +0200|Updated exporting server for missing modules|aa63d5f
+aa63d5f|2014-04-30 19:36:04 +0200|Updated comments|c895431
+c895431|2014-04-30 19:36:04 +0200|Automatically inject all scripts defined in the config variable|63c9aa6
+63c9aa6|2014-04-30 19:36:04 +0200|When release, copy Highcharts modules to the export-server|1f8f50e
+8246dd9|2014-04-30 13:56:37 +0200|Export: Added statistics and better error-logging|8fdcd35
+8fdcd35|2014-04-30 11:17:35 +0200|Added missing highcharts modules, copying to temp location|d4f9155
+d4f9155|2014-04-30 09:34:16 +0200|Updated exporting server for missing modules|6052b17
+6052b17|2014-04-30 09:01:09 +0200|Updated comments|78b2726
+78b2726|2014-04-30 08:52:13 +0200|Automatically inject all scripts defined in the config variable|d2ea2ef
+d2ea2ef|2014-04-30 08:48:29 +0200|When release, copy Highcharts modules to the export-server|181c814
+1f8f50e|2014-04-29 09:26:55 +0200|Cleaned up after pull request #2984.|a5ef17d
+a5ef17d|2014-04-29 09:17:27 +0200|Merge pull request #2984 from TetzPHP/master|89bf8bc 8eb5888
+89bf8bc|2014-04-29 09:15:46 +0200|Fixed #2982 by returning the added plot line or plot band object after Axis.addPlotLine or Axis.addPlotBand. Closes #2982.|f6c5b20
+f6c5b20|2014-04-29 08:49:00 +0200|Changed default dataLabel formats, related to #2945|bf0686d
+bf0686d|2014-04-28 21:17:15 +0200|Refactored getSymbol and getColor to share common logic, reducing file size.|c504ecb
+c504ecb|2014-04-28 20:00:09 +0200|Refactored color and symbol counters to get rid of the ineffective ChartCounter prototype|01defad
+8eb5888|2014-04-28 17:07:12 +0200|Seperate Labels Render to be able to wrap it without wrap Entire Chart Render (spirit of renderSeries|01defad
+01defad|2014-04-28 16:02:59 +0200|Optimized. Smaller compiled and gzipped code by removing local string variables.|181c814
+181c814|2014-04-28 15:57:40 +0200|Removed whitespace|f1f16d6
+f1f16d6|2014-04-28 15:57:40 +0200|Renamed REST url|49e6bf1
+49e6bf1|2014-04-28 15:57:40 +0200|Added controller method to send in JSON for export|67f29fd
+67f29fd|2014-04-28 13:07:31 +0200|Closes #2977 Set mimimum view point distance for 3D|967067d
+967067d|2014-04-28 12:54:44 +0200|Fixed #2975 with clipping not being updated on column series and derived series types after chart resize.|899f064
+899f064|2014-04-28 11:44:20 +0200|Added features zMin and zMax for bubble series, to set the Z value corresponding to minSize and maxSize independently from the data.|59a1806
+59a1806|2014-04-28 11:44:20 +0200|Prepared for hooking in text stroke on maps|39d0c5a
+39d0c5a|2014-04-25 15:23:04 +0200|Closes #2969 3D Datalabels|b17327a
+b17327a|2014-04-25 15:06:59 +0200|Renamed sample|f86676b
+f86676b|2014-04-25 15:06:41 +0200|Added demos for the data module|394e368
+394e368|2014-04-25 12:42:00 +0200|Closes #2968 3d columns not drawn correctly when equal to max|acdb220
+acdb220|2014-04-25 11:20:31 +0200|Removed comments, added some demos.|1ccc9b3
+1ccc9b3|2014-04-25 08:28:43 +0200|Fixed #2963 where columns were badly drawn in Chrome due to a rendering bug.|594d62b
+594d62b|2014-04-24 20:35:11 +0200|Added missing stacking dependency for Waterfall series|579824f
+579824f|2014-04-24 20:35:11 +0200|Added missing Solid Gauge module to the highcharts-modules.files configuration|e6e4129
+e6e4129|2014-04-24 20:35:11 +0200|Applied naming convention of components for download builder|660e9a4
+660e9a4|2014-04-24 15:51:28 +0200|Fixed #2962 causing data labels on gauges not to display unless defer is set to true.|49f722a
+49f722a|2014-04-24 14:35:14 +0200|Demo: Wrong file path|ef064b2
+ef064b2|2014-04-24 13:04:33 +0200|Fixed #2954 that caused invalid SVG attributes on animating in and out grid lines when running older jQuery versions or the Standalone Framework.|3e7b659
+3e7b659|2014-04-24 12:24:36 +0200|Cleaned up|a513db4
+a513db4|2014-04-24 10:39:06 +0200|--- Highcharts 4.0.1 / Highstock 2.0.1 official release ---|d01198a
+d01198a|2014-04-24 10:38:39 +0200|Demo: new Highslide paths.|fd22341
+fd22341|2014-04-24 10:21:10 +0200|Demo optimizing|dd61206
+dd61206|2014-04-24 09:50:26 +0200|Highstock: Added pointer cursor to the range selector buttons to signalize that they are clickable. Closes #2937.|d5e5d3c
+d5e5d3c|2014-04-24 09:47:46 +0200|Fixed #2951 causing JS error when updating a series from candlestick to OHLC.|e4e36fd
+e4e36fd|2014-04-24 08:04:51 +0200|Compacted fix for #2930|4d9e964
+4d9e964|2014-04-23 16:08:19 +0200|Fixed #2945, a regression causing pie data label formatter to be ignored unless the format option is set to null.|ec75a9c
+ec75a9c|2014-04-23 12:48:03 +0200|Better ratio for some demos|9f973cf
+9f973cf|2014-04-23 12:39:24 +0200|Better fix for #2928|c16e3da
+c16e3da|2014-04-23 12:38:02 +0200|Fixed bug causing columns to be z-sorted in the wrong direction.|b0e52cb
+b0e52cb|2014-04-23 12:03:21 +0200|Fixed #2940 causing gradient colors not to apply on strokes in Highcharts 4.|24bfc1b
+24bfc1b|2014-04-23 11:53:57 +0200|Fixed #2939 causing wrong clipping of 3D charts rendered with highstock.js.|4d591aa
+4d591aa|2014-04-23 10:51:22 +0200|Updated map parser study|e32ea39
+e32ea39|2014-04-23 10:51:22 +0200|Fixed #2930 causing all gauges not to update in Highcharts 4.0.|921c1bc
+921c1bc|2014-04-23 10:40:20 +0200|fixed z index issue on columns|0278331
+0278331|2014-04-23 09:59:59 +0200|Fixed #2928 causing the halo to be misplaced on multiple pane positions and inverted line charts.|9f57aa7
+9f57aa7|2014-04-23 08:50:15 +0200|Updated wrong paths in heatmap demos|9266091
+9266091|2014-04-22 14:11:48 +0200|Merge branch 'valanipa'|8061ce6 eb6541b
+8061ce6|2014-04-22 14:10:53 +0200|Comment|d47e458
+eb6541b|2014-04-22 14:09:14 +0200|Merge branch 'origin/master'|1fdc6c1 d47e458
+1fdc6c1|2014-04-22 14:02:01 +0200|Cleaned up after HC4 release|1aaa436
+1aaa436|2014-04-22 13:50:59 +0200|--- Highcharts 4.0.0 / Highstock 2.0.0 official release ---|a94aa36
+a94aa36|2014-04-22 12:56:59 +0200|Fix demo|9423cf5
+9423cf5|2014-04-22 12:53:54 +0200|Fixed 3d problem with white column borders showing in export|7242e25
+7242e25|2014-04-22 12:53:54 +0200|Fix wrong z index in VML cuboids|874d823
+874d823|2014-04-22 12:49:37 +0200|Added Heatmap as a feature to the download builder|f98936c
+f98936c|2014-04-22 11:42:00 +0200|Linted|51cdc8b
+51cdc8b|2014-04-22 11:26:03 +0200|A couple of issues for HC4 demo|b24b4b3
+b24b4b3|2014-04-22 11:22:29 +0200|Added Solid Gauge to the parts files configuration|0c6b270
+0c6b270|2014-04-22 11:09:45 +0200|Removed unwanted dependency call on tooltip feature|6faa788
+6faa788|2014-04-22 11:06:44 +0200|Moved firePointUpdate to PointPrototype for dependency reasons|e60fb3b
+e60fb3b|2014-04-22 11:01:26 +0200|Removed dependency on TrackerMixin from GaugeSeries|8c260bb
+8c260bb|2014-04-22 10:45:09 +0200|3D: minor corrections|215a11c
+215a11c|2014-04-16 09:29:50 +0200|Minor changes to meteogram demo|ecce345
+ecce345|2014-04-15 20:01:36 +0200|Structured and commented the meteogram study.|a0039c4
+a0039c4|2014-04-15 11:28:42 +0200|Demo: Worked around Chrome 34 image clip issue, also better VML consistency.|90ab88e
+90ab88e|2014-04-15 09:52:54 +0200|Organized combo-meteogram demo|22fc54e
+22fc54e|2014-04-14 20:01:50 +0200|Changes related to download builder|2d3055c
+2d3055c|2014-04-14 16:07:10 +0200|HC4: Prepared and tested zip packages|b1c4d86
+b1c4d86|2014-04-14 13:34:19 +0200|HC4: Documentation and demos|f741977
+f741977|2014-04-14 11:41:17 +0200|Added Y axis minColor and maxColor demo. Added solid-gauge to build. Linted.|4734b4e
+4734b4e|2014-04-14 10:58:36 +0200|Added demo of monochrome pie|5352b6e
+5352b6e|2014-04-14 10:39:34 +0200|New default colors|9441a15
+9441a15|2014-04-14 10:37:33 +0200|HC4: New default point formats add a bullet with the series color, improves readability on low-contrast series colors.|6985c6d
+d47e458|2014-04-14 08:45:57 +0200|Fixed #2901 causing thousands separators to be applied only to positive values.|d11eb5c
+6985c6d|2014-04-14 08:41:35 +0200|Added exporting to 3D demos|4368136
+4368136|2014-04-13 19:02:23 +0200|Moved meteogram into demos|37504c5
+37504c5|2014-04-13 18:59:59 +0200|Finalized meteogram demo|49d8f82
+49d8f82|2014-04-12 19:41:55 +0200|Modified build script|f604cf8
+f604cf8|2014-04-12 19:41:44 +0200|Prepared meteogram for official demo|3628b59
+3628b59|2014-04-12 08:49:34 +0200|Utils: Added view source. Styled.|304f313
+304f313|2014-04-12 07:27:10 +0200|HC4: Some design changes for the navigator|e9898ae
+e9898ae|2014-04-11 15:42:25 +0200|HC4 regression fixes and demos|a8b9cff
+a8b9cff|2014-04-11 14:34:17 +0200|HC4 regressions and demo modifications|8cb2d33
+8cb2d33|2014-04-11 13:58:44 +0200|Samples, force allow decimals to show|0fb5336
+0fb5336|2014-04-11 11:55:11 +0200|HC4: modified a couple of demos|b46d026
+b46d026|2014-04-11 11:24:14 +0200|HC4 regression: Secondary Y axis labels in Highstock overlapped with primary|cb7f0ff
+cb7f0ff|2014-04-11 11:24:14 +0200|HC4 regression: since auto markers.enabled, point select stopped displaying the selected point.|86c470e
+86c470e|2014-04-11 11:24:13 +0200|HC4 regression: Legend checkboxes missing in Firefox|9e5b8cb
+9e5b8cb|2014-04-11 11:14:55 +0200|Updated year in demo's|ae0daef
+ae0daef|2014-04-11 10:38:01 +0200|Solved conflict in .gitignore|eeeea1f
+eeeea1f|2014-04-11 10:34:38 +0200|HC regression: Tooltip position for polar columns|91fb75b
+91fb75b|2014-04-11 10:26:56 +0200|HC4 regression: Highstock clips not updating|876fe9e
+876fe9e|2014-04-11 10:15:24 +0200|HC4: Reverted to HC3 button looks for reset button and drilldown button.|652bc7c
+d11eb5c|2014-04-11 09:36:03 +0200|Fixed #2898 related to stuck minimum range in drilldown charts.|7ba91fe
+7ba91fe|2014-04-11 09:12:59 +0200|Added git ignore|e578a5f
+e578a5f|2014-04-11 09:12:41 +0200|Fixed #2900 causing legend not to resize following pie slice renaming.|5cbcaae
+652bc7c|2014-04-10 16:04:56 +0200|Removed redundant chart config in demos|50aead4
+50aead4|2014-04-10 15:53:39 +0200|Reviewed demos for HC4|1d0f10b
+1d0f10b|2014-04-10 15:53:19 +0200|HC4 minor regressions and design.|c0d5718
+c0d5718|2014-04-10 10:26:25 +0200|Regression fixes for HC4|ba25cf7
+ba25cf7|2014-04-10 08:45:56 +0200|Regression fixes for HC4|99f9c50
+99f9c50|2014-04-09 15:39:58 +0200|Prepared featured 3D demos|996f46b
+996f46b|2014-04-09 12:56:43 +0200|Moved selected 3D demos into the demo page structure|f419b42
+f419b42|2014-04-09 12:35:02 +0200|Fixed HC4 problems with IE8 quirks|7b3a97a
+7b3a97a|2014-04-09 11:34:52 +0200|Restored two days work after crash in valanipa branch. Individual commits are lost.|6236834
+6236834|2014-04-09 11:14:02 +0200|Revert "Restored two days work after crash in valanipa branch. Individual commits are lost."|062fb04
+062fb04|2014-04-09 11:00:45 +0200|Restored two days work after crash in valanipa branch. Individual commits are lost.|1d42f17
+5cbcaae|2014-04-09 10:18:09 +0200|Export server doesn't appropriate status code when conversion fails, closes #2740|2398533
+2398533|2014-04-08 14:30:54 +0200|Solid Gauge: fixed issue where animation was active with animation disabled|d99f678
+d99f678|2014-04-08 14:19:19 +0200|Revert "Fixed #2888: crosshair in multipane charts"|f8e9e6b
+f8e9e6b|2014-04-08 13:56:33 +0200|Fixed #2888: crosshair in multipane charts|c0bc736
+c0bc736|2014-04-08 13:12:47 +0200|Fixed #2882 causing stemDashStyle on box plots sometimes not to apply.|f163d4f
+f163d4f|2014-04-08 13:10:05 +0200|Additional fix to #2797, fixing drilldown between middle levels.|5ddf0aa
+5ddf0aa|2014-04-08 12:43:05 +0200|Additional fix for #2881, created regression in IE8|6d393c8
+6d393c8|2014-04-08 12:21:37 +0200|Fixed #2887 where zoom state is not preserved after running Axis.update. Reverts fix for #2306.|ac76bc1
+ac76bc1|2014-04-08 09:55:07 +0200|Updated descriptive text in the parts configuration|5b359be
+5b359be|2014-04-08 09:37:19 +0200|Removed reference to adapters Mootools and Prototype|325fd31
+325fd31|2014-04-08 09:30:39 +0200|Create missing Highmaps folder in distribution folder|5c46b1e
+5c46b1e|2014-04-07 16:23:50 +0200|Download builder: Copy files to new locations of the website|997319e
+1d42f17|2014-04-07 15:49:03 +0200|Fixed dev branch regression related to attrhooks|a4df2ea
+997319e|2014-04-07 15:16:10 +0200|3D: small correction on previous submit about rendering choices, updated sample|82f86cc
+a4df2ea|2014-04-07 15:09:39 +0200|Merge branch 'attrhooks'|1a29a5d ea41ab2
+82f86cc|2014-04-07 15:01:12 +0200|3D: animation on pie load|2a55f4a
+ea41ab2|2014-04-07 14:59:00 +0200|Regression fixes in attrhooks branch|7ea0c89
+2a55f4a|2014-04-07 14:28:15 +0200|3D: changed code concerning choosing which face to render on columns|f3366a6
+7ea0c89|2014-04-07 13:44:32 +0200|Merge branch 'origin/master'|650d537 f3366a6
+f3366a6|2014-04-07 13:40:54 +0200|Fixed regressions in master|a15434c
+a15434c|2014-04-07 13:22:00 +0200|3D: pie bordercolor on hover|a15d6b9
+a15d6b9|2014-04-07 12:51:33 +0200|3D: smoother edges on pies and columnrange|f7678af
 f7678af|2014-04-07 11:39:57 +0200|Fixed #2881 causing hidden points to capture mouse events in IE9-11.|1bca648
 1bca648|2014-04-07 10:38:50 +0200|Fixed #2757 causing JS errors on touchend on custom use of Pointer.normalize on iOS.|8803159
 8803159|2014-04-07 09:35:54 +0200|3D: fixed bug related to animating z-indices|97cece3
+1a29a5d|2014-04-07 09:31:52 +0200|Minor fix in demos and themes|e559476
+e559476|2014-04-06 15:02:36 +0200|Implemented the grid-light theme|e032446
+e032446|2014-04-06 14:01:05 +0200|Initial implementation of the sand-signika theme|3e8b74c
+3e8b74c|2014-04-06 12:10:11 +0200|Initial commit of the dark-unica theme using Unica One fonts.|a968c09
 97cece3|2014-04-04 14:35:01 +0200|Export: logging utility prevents PhantomJS processes from closing with Tomcat Shutdown, closes #2671|c272605
 c272605|2014-04-04 13:23:19 +0200|Various adjustments of demos|b2c7bc5
 b2c7bc5|2014-04-03 15:49:02 +0200|Samples: More experimental sliders to the column-interactive demo|1c2b388
 1c2b388|2014-04-03 15:28:40 +0200|Moved function series demo and applied code style.|ed7f3df
+a968c09|2014-04-03 14:15:02 +0200|Various HC4 visuals and fixes|b69cbd7
+b69cbd7|2014-04-03 13:44:35 +0200|HC4 visuals|bbd6e9d
 ed7f3df|2014-04-03 12:29:31 +0200|Maps: Addition to previous, use the latest map parser.|2f60977
 2f60977|2014-04-03 12:27:45 +0200|Maps: Fixed fail case in map parser.|5f5bd22
 5f5bd22|2014-04-03 11:09:55 +0200|Implemented new axis options, floor and ceiling.|77403bc
 77403bc|2014-04-03 11:09:55 +0200|Maps: Updated parser with a few error fixes.|584ca64
+bbd6e9d|2014-04-03 10:55:14 +0200|Design adjustments for HC4|3bda51b
+3bda51b|2014-04-03 08:24:40 +0200|Various adjustments to HC4 design|9c3c469
+9c3c469|2014-04-03 07:56:43 +0200|Utils: added keystroke listeners for next and previous in sample viewer|525dbf1
 584ca64|2014-04-02 14:49:43 +0200|Studies: Changed link from local webserver to CDN|fe65cbe
 fe65cbe|2014-04-02 14:46:43 +0200|3D: initial column animation and perspective change|e3f1f5b
 e3f1f5b|2014-04-02 13:49:21 +0200|Fixed issue with axis layout in map-from-svg. Added parsing of rectangles.|043e089
@@ -18,20 +201,30 @@ e3f1f5b|2014-04-02 13:49:21 +0200|Fixed issue with axis layout in map-from-svg. 
 ad78b84|2014-04-01 13:30:09 +0200|Fixed confusing samples where settings of plotBands and plotLines were intermixed, yet working. Closes #2867.|0c7e92f
 0c7e92f|2014-04-01 12:09:48 +0200|Fixed internal regression on drilling up from drilldowns with multiple series, introduced after fixing #2786.|90f24c5
 90f24c5|2014-04-01 09:33:24 +0200|Removed check in drilldown to limit drilling only to the same Y axis.|46569e4
+525dbf1|2014-03-28 15:57:24 +0100|Worked on HC4 design on Stock charts|9104c36
+9104c36|2014-03-28 14:50:42 +0100|Merge branch 'master'|c79809a 46569e4
 46569e4|2014-03-28 14:48:31 +0100|Finished the solidgauge series type and prepared demo.|c0e6097
 c0e6097|2014-03-28 12:31:38 +0100|Fixed #2845 causing JS errors related to mouse actions on a chart that has been destroyed.|9ed32db
 9ed32db|2014-03-28 12:17:26 +0100|Highstock: Fixed #2856 causing the Data module not to work without an empty series definition.|ed099cb
 ed099cb|2014-03-28 12:01:09 +0100|Don't display null values as 0 in number formats.|c592e7a
 c592e7a|2014-03-28 12:01:08 +0100|Fixed #2848 causing misaligned labels on reversed Y axis in polar charts.|4f64274
+c79809a|2014-03-28 09:18:51 +0100|More generic tooltip positioning logic|1d0b174
+1d0b174|2014-03-28 07:47:25 +0100|Adjustments to the heatmap-canvas demo|52aa38e
+52aa38e|2014-03-27 14:11:37 +0100|Heatmap-canvas demo|b947664
+b947664|2014-03-27 14:03:48 +0100|Fixed IE bug. Moved heatmap sample.|43a46dd
+43a46dd|2014-03-27 13:47:40 +0100|Set up extended heatmap demo with canvas and K-D-tree mouse hit testing.|3aa3546
 4f64274|2014-03-27 13:08:00 +0100|3D: Solved problem with demo 'draggabel scatter'|0b87d29
 0b87d29|2014-03-27 12:30:19 +0100|percentage based axis height and top|7c5563f
+3aa3546|2014-03-27 10:48:01 +0100|Some visual changes for v4|0513860
 7c5563f|2014-03-26 15:16:53 +0100|Highmaps: Fixed #2823 causing mapline points to be filled after changes in the series data.|1123a0c
 1123a0c|2014-03-26 14:52:39 +0100|3D: use rgba instead of 'transparent', fix for VML|f02d611
 f02d611|2014-03-26 12:32:12 +0100|Fixed #2847 causing polar grid lines to always render in the first pane when using gridLineInterpolation: polygon.|6e8a324
 6e8a324|2014-03-26 11:40:39 +0100|Fixed regression related to mouse handlers being destroyed for all charts when one chart was destroyed. Closes #2789. Closes #2815.|668a639
 668a639|2014-03-26 09:45:36 +0100|Fixed #2846, a regression from 3.0.10 causing grouped columns of the same X value to be too narrow and piling up in the center of the chart when plotted on a high X value like common dates.|11c98ef
 11c98ef|2014-03-25 15:11:07 +0100|Fixed #2827 Added support for multipane plotbands.|18ada75
+0513860|2014-03-25 14:36:27 +0100|Initial implementation of halos for hover points.|c380f06
 18ada75|2014-03-25 13:00:03 +0100|3D: fixed VML issues|f28023f
+c380f06|2014-03-25 12:16:05 +0100|Continued work on tooltip with calllout and positioning.|345b4cd
 f28023f|2014-03-25 09:09:35 +0100|Fixed #2662 causing single bubbles to become truncated when values were close to integral. Also makes single-value line series centered.|9839bef
 9839bef|2014-03-24 18:35:55 +0100|Attempt at fixing #2522 by inserting named points into previously defined names in categories.|6769110
 6769110|2014-03-24 17:47:00 +0100|Fixed error in development code|bc1b63d
@@ -41,25 +234,43 @@ bc1b63d|2014-03-24 14:42:43 +0100|Fixed #2838 that caused JS error when the jQue
 a268826|2014-03-24 11:16:26 +0100|Fixed #2339 causing Y axis left option not be be respected on inverted charts.|d134e73
 d134e73|2014-03-24 11:16:26 +0100|Fixed missing state marker graphic on series with more points than turboThreshold.|27ea609
 27ea609|2014-03-24 08:50:01 +0100|3D: z index layering issue with columns|bc50930
+345b4cd|2014-03-22 14:21:09 +0100|Merge branch 'master'|44e49a0 a383c3a
+44e49a0|2014-03-22 14:20:30 +0100|Implemented automatic enabling or disabling of markers on line type series depending on how many points are present in the series. Implemented the same logic for border width on columns to prevent only the borders being visible on very dense column charts.|88940b0
+a383c3a|2014-03-22 14:18:31 +0100|Fixed missing state marker graphic on series with more points than turboThreshold.|bc50930
+650d537|2014-03-20 14:56:09 +0100|Revert "Refactored symbol attribute setting to avoid check in general .attr method."|c8debb3
+c8debb3|2014-03-20 13:41:58 +0100|Refactored symbol attribute setting to avoid check in general .attr method.|7403d68
 bc50930|2014-03-20 11:44:49 +0100|Fixed dev branch issue of plotOptions for heatmap not being evaulated. Closes #2832.|3db1502
 3db1502|2014-03-20 11:44:49 +0100|Fixed #2830 causing the tooltip to disappear when moving from a series with followPointer to a series without it.|da64988
 da64988|2014-03-19 13:16:12 +0100|3D:  added example charts to studies|d9683aa
+7403d68|2014-03-19 09:11:22 +0100|Fixed dev branch regression after the attr setter refactoring|88dd510
+88dd510|2014-03-18 14:10:42 +0100|Fixed some issues after regression testing attribute setters.|a1f39cf
 d9683aa|2014-03-18 11:15:47 +0100|Fixed #2790 where Chrome throws warning about event.returnValue being deprecated.|a9ca29e
 a9ca29e|2014-03-18 11:01:04 +0100|Highstock: Fixed #2754 where navigator series and series in multiple panes were not clipped properly.|ce74a38
 ce74a38|2014-03-18 11:01:04 +0100|Utils: Fixed bugs in benchmarking tool.|8bc45ef
 8bc45ef|2014-03-18 11:01:04 +0100|Maps: Updated map-from-svg tool to use latest code.|dc61827
 dc61827|2014-03-18 09:42:10 +0100|3D: reversing yaxis now puts the bottom frame at the top|b14071b
 b14071b|2014-03-18 09:18:33 +0100|3D: Added support for opposite yaxis in column chart|ef7b905
+a1f39cf|2014-03-17 20:11:22 +0100|Merge branch 'master'|a3f6444 8dc6aed
+8dc6aed|2014-03-17 20:11:00 +0100|Utils: Fixed bugs in benchmarking tool.|e57aba2
+a3f6444|2014-03-17 19:11:17 +0100|Merge branch 'master'|21d63cf e57aba2
+e57aba2|2014-03-17 13:45:28 +0100|Maps: Updated map-from-svg tool to use latest code.|ef7b905
 ef7b905|2014-03-17 13:43:32 +0100|Maps: Updated parser to support S and s operators in path definitions.|0fcb50c
 0fcb50c|2014-03-17 13:43:32 +0100|Maps: Fixed map-parser to run with latest Highmaps code.|6d2ebdd
 6d2ebdd|2014-03-17 13:43:32 +0100|Utils: Added stock demos to benchmarks|3c9e4bb
 3c9e4bb|2014-03-17 13:02:23 +0100|3D: Added dragable scatter chart demo|3678ed2
 3678ed2|2014-03-17 11:29:53 +0100|3D: Added more examples and fixed border problem on the frame|33a2532
 33a2532|2014-03-17 10:57:33 +0100|Fixed #2820 where chart didn't reflow to reflect resized window, due to event.target not being set.|5c61233
+21d63cf|2014-03-17 09:46:48 +0100|Speed up color handling. Removed workaround for older WebKit and Batik engines that didn't support rgba colors.|2610625
+2610625|2014-03-16 19:45:38 +0100|Optimized getBBox, cached all boxes by string and font properties. Speeds up rendering by 4-5% in the standard benchmarks.|76b595b
+76b595b|2014-03-14 15:38:45 +0100|First implementation of attribute setter methods in VMLElement. Linted.|73c3a8e
+73c3a8e|2014-03-14 12:25:30 +0100|Utils: path for benchmarking|e98013f
+e98013f|2014-03-14 11:17:25 +0100|Minor bug fixing in attr hooks refactor branch.|ea38a1c
 5c61233|2014-03-14 09:59:05 +0100|Highstock: minor correction for #2810 fix from earlier|5bd36bc
 5bd36bc|2014-03-14 09:49:32 +0100|Fixed #2813 causing stack labels not to move when changing series stacking type.|02f5d9c
 02f5d9c|2014-03-14 09:49:32 +0100|Utils: More representative benchmark tests|fb9fa50
 fb9fa50|2014-03-14 08:50:44 +0100|Highstock: Fixed #2810 causing plotlines to not be drawn on axes without series.|2a97855
+ea38a1c|2014-03-13 15:57:14 +0100|Resolved most issues with new .attr model in SVGRenderer|085891b
+085891b|2014-03-13 12:47:59 +0100|Merge branch 'origin/master'|3c25f06 2a97855
 2a97855|2014-03-13 12:34:18 +0100|Highstock: Fixed #2796 causing grid lines not to render on dynamically added axes.|e56f2a5
 e56f2a5|2014-03-13 12:34:18 +0100|Fixed #2806 causing wrong category layout for charts with mixed distance between X values.|d6feb4a
 d6feb4a|2014-03-13 12:34:18 +0100|Allow stock charts in benchmark|b5ad5ed
@@ -72,6 +283,7 @@ b5ad5ed|2014-03-13 11:21:39 +0100|3D: modified negative values sample|23a7b1c
 deef061|2014-03-12 13:34:49 +0100|Fixed Highstock demo|8828031
 8828031|2014-03-12 10:02:21 +0100|Highstock: Made demos look and work better on mobile|d7b0d08
 d7b0d08|2014-03-12 09:41:25 +0100|Fixed #2799, Standalone Framework didn't play well with Firefox 3.6.|490cf8c
+88940b0|2014-03-11 20:10:47 +0100|Merge branch 'master'|0783a4a 490cf8c
 490cf8c|2014-03-11 15:28:49 +0100|Utils: bug|366ba73
 366ba73|2014-03-11 15:23:28 +0100|Fixed regression #2794 that caused text outside a chart element to fail when containing HTML tags.|05cf236
 05cf236|2014-03-11 11:18:37 +0100|Fixed #2784 where pie drilldown colors were not applied unless given in hex or rgba format.|fa3822e
@@ -92,3 +304,285 @@ e726d7c|2014-03-10 11:10:24 +0100|Created study file for geojson to simplify tes
 fbe79dc|2014-03-10 11:10:24 +0100|Fixed minor regressions after testing. The fix for #2637 made the test for #2546 fail, because the year isn't dividable by weeks.|305f5cd
 305f5cd|2014-03-10 11:10:24 +0100|Minor fixes after regression tests.|bc0b567
 bc0b567|2014-03-10 09:08:42 +0100|3D Added interactive Sample|860e31a
+0783a4a|2014-03-09 20:44:34 +0100|Fixed #1216 where tooltips were not centered around grouped columns.|cc39d6c
+cc39d6c|2014-03-09 10:09:31 +0100|Merge branch 'master'|4ab693a ab37799
+ab37799|2014-03-09 10:09:06 +0100|Reverted previous fix to #1216, failed with columnrange|2ffe294
+4ab693a|2014-03-09 10:04:17 +0100|Merge branch 'master'|b524dd8 2ffe294
+2ffe294|2014-03-09 10:03:07 +0100|Fixed #1216 where tooltips were not positioned close to each column in groups.|7f309a6
+b524dd8|2014-03-09 09:57:23 +0100|Applied Emilia's colors|74b1126
+74b1126|2014-03-09 09:53:53 +0100|Initialized tooltip placed on top with callout shape|162fbe7
+162fbe7|2014-03-08 20:34:26 +0100|Inital implementation of callout symbol path|7f309a6
+860e31a|2014-03-07 14:00:56 +0100|3D: VML support for Pie|d587575
+7f309a6|2014-03-06 20:33:21 +0100|Created study file for geojson to simplify testing from the file system.|44962df
+44962df|2014-03-06 20:33:21 +0100|Fixed minor regressions after testing. The fix for #2637 made the test for #2546 fail, because the year isn't dividable by weeks.|3d8bfd6
+3d8bfd6|2014-03-06 20:33:21 +0100|Minor fixes after regression tests.|d587575
+d587575|2014-03-06 15:34:19 +0100|Merge branch 'master' of https://github.com/highslide-software/highcharts.com|85f3ccd 0ddcb95
+85f3ccd|2014-03-06 15:33:30 +0100|Fixed issue with plotLines and linked axes|f18bbe7
+0ddcb95|2014-03-06 13:53:11 +0100|Fixed errors in dev branch in loading IE10, related to fixing memory leaks in Pointer.|f18bbe7
+f18bbe7|2014-03-06 11:04:11 +0100|Isolated renderseries function.|6e22ef9
+6e22ef9|2014-03-06 09:56:26 +0100|Typo in data-grouping demo|892ab16
+892ab16|2014-03-06 09:56:12 +0100|Added demo study, faster scatter chart with a k-d-tree for mouse tracking.|c844257
+c844257|2014-03-06 09:55:43 +0100|Fixed regressions after batch testing|64f9328
+64f9328|2014-03-06 08:39:58 +0100|Better fix for #2680|810ded3
+810ded3|2014-03-05 22:31:58 +0100|Fixed dev branch regression related to #2570, causing too dense ticks on circular axes.|67bc0be
+67bc0be|2014-03-05 14:08:49 +0100|Fixed data labels for pyramid series. Added demo.|7981454
+7981454|2014-03-05 11:35:45 +0100|Fixed errors in dev branch on rendering rectangles in Highstock.|c18556a
+c18556a|2014-03-05 10:24:54 +0100|Fixed #2755 where attributes in pseudo-HTML were applied outside elements.|e3a1615
+e3a1615|2014-03-05 10:24:54 +0100|Added demo for Highstock crosshair label. Fixed position.|08532a4
+3c25f06|2014-03-04 20:08:04 +0100|Addition to splitting attr|30e9b26
+08532a4|2014-03-04 14:40:09 +0100|Added 'pyramid' type of series|e757e4a
+e757e4a|2014-03-04 14:10:31 +0100|Added 'reversed' option to funnel series.|254371e
+254371e|2014-03-04 13:12:35 +0100|Fixed #2753 which caused errors and broken behaviour on drilldown containing null points.|f15d6c4
+f15d6c4|2014-03-04 12:18:11 +0100|Fixed #2770 where data labels on error bars were not displayed.|9ee490a
+9ee490a|2014-03-04 11:15:43 +0100|Fixed issue in dev related to labels in IE8.|091be06
+091be06|2014-03-04 10:45:45 +0100|Merge branch 'master' of https://github.com/highslide-software/highcharts.com|234864e 9bac191
+234864e|2014-03-04 10:45:39 +0100|Corrected 3D samples showing the wrong feature|c6abbba
+9bac191|2014-03-04 10:37:15 +0100|Fixed #2681 where the Pointer object leaked memory after chart.destroy.|c6abbba
+30e9b26|2014-03-04 08:11:05 +0100|Performance improvements in the SVG renderer|7c1623d
+c6abbba|2014-03-03 14:56:35 +0100|3D:  Changed samples|cc53b36
+cc53b36|2014-03-03 14:56:34 +0100|3D: Columns now take series color for the borders|93343ae
+93343ae|2014-03-03 12:26:49 +0100|Fixed #2763 where series on log axes would disappear alltogether when the axis became too short.|97e2c2e
+97e2c2e|2014-03-03 10:44:09 +0100|Fixed dev branch regression in getBBox|9134899
+9134899|2014-03-03 09:49:14 +0100|Performance optimation in colorTween. Experimented with light options and canvas.|da033f0
+da033f0|2014-02-28 23:50:26 +0100|Added some class names|32351ec
+32351ec|2014-02-28 15:46:52 +0100|Adjusted 3D demos|0435640
+0435640|2014-02-28 15:46:34 +0100|Reverted previous optimization|0159eab
+0159eab|2014-02-28 15:07:16 +0100|Prepared 3D samples|9fa6051
+9fa6051|2014-02-28 14:58:41 +0100|Removed annotation module from test cases|8ff6508
+8ff6508|2014-02-28 14:18:04 +0100|Fixed #2761 in Highmaps BETA where dashStyle was not applied for maplines.|ad238a4
+ad238a4|2014-02-28 13:47:17 +0100|Fixed #2760 where the ignoreHiddenSeries setting had no effect on bubble sizes.|42b2770
+42b2770|2014-02-28 13:22:35 +0100|Fixed pre-release issue with heatmaps where rectangles were clipped on the Y axis.|49e628c
+49e628c|2014-02-28 11:30:58 +0100|Minor optimization: Don't apply fill attribute to all paths|9b821d7
+9b821d7|2014-02-28 11:28:40 +0100|Dev branch: Fixed #2758 with no fill applied to plot border rectangle|65e3256
+65e3256|2014-02-28 11:23:10 +0100|Highmaps BETA: Fixed #2750 where a single area in a chart would me downsized because of minRange default setting.|b37c230
+b37c230|2014-02-28 11:23:10 +0100|More representative benchmark tests|636ba66
+636ba66|2014-02-28 09:36:52 +0100|3D Scatter Chart Sample|6c91987
+7c1623d|2014-02-28 08:54:05 +0100|Split up SVGElement.attr to specific attribute setters|6c91987
+6c91987|2014-02-27 17:15:53 +0100|Additional fix for previous commit|10e34ad
+10e34ad|2014-02-27 14:16:01 +0100|Extra samples for 3D columns, including columnrange|8c6a6cb
+8c6a6cb|2014-02-27 11:48:54 +0100|Demos|66df022
+66df022|2014-02-27 11:48:54 +0100|Performance improvements.|a49d6e6
+a49d6e6|2014-02-27 10:18:03 +0100|3D Pie Samples|f129d4f
+f129d4f|2014-02-27 09:33:11 +0100|Reveresed fix for #2722 due to conflict with 3D pie slices.|9e5af23
+9e5af23|2014-02-27 08:52:10 +0100|3D Column Samples|31203bc
+31203bc|2014-02-25 14:53:40 +0100|Merge branch 'highcharts-3d'|aa696f9 02b526d
+02b526d|2014-02-25 14:52:34 +0100|3D: post merge cleaning and testing|fd9e5d0
+aa696f9|2014-02-25 14:47:20 +0100|Fixed issue with Chart.setTitle not causing the chart to redraw to adapte changed size of the title. Closes #2719. Closes #2744.|6e43a5e
+fd9e5d0|2014-02-25 14:47:14 +0100|Merge master into 3D|a9f1efa 6e43a5e
+6e43a5e|2014-02-25 13:37:42 +0100|Fixed #2738 where legend navigation would add one page too many when the last page had two items.|30b8faa
+30b8faa|2014-02-25 11:41:17 +0100|Highstock: Fixed #2708 where panning on an ordinal axis containing candlesticks, OHLC or column series would cause the zoomed range to decrease.|3c47bf9
+3c47bf9|2014-02-25 09:24:37 +0100|Typo in errors. Closes #2736.|1a5c4a2
+1a5c4a2|2014-02-25 08:50:48 +0100|Added error message support in data module and Highmaps samples using Google Spreadsheets.|fdb000c
+fdb000c|2014-02-24 17:32:00 +0100|Highmaps Beta released|5a311f9
+5a311f9|2014-02-24 17:31:59 +0100|Maps: Prepared beta launch|903dfc1
+903dfc1|2014-02-24 13:42:35 +0100|Check if particular series type is loaded before relying on it.|b12e006
+b12e006|2014-02-24 13:42:35 +0100|Feature: Updating configuration files for download builder|4a6de7c
+a9f1efa|2014-02-24 12:43:38 +0100|3D: VML removed VML redundancy|dcb4e10
+dcb4e10|2014-02-24 09:07:02 +0100|3D: VML Support|8728222
+4a6de7c|2014-02-23 20:49:10 +0100|Maps: Minor issues after IE8 testing|1aa1918
+1aa1918|2014-02-22 20:06:16 +0100|Highstock: Error in development branch in IE8|eb31a70
+eb31a70|2014-02-22 20:02:20 +0100|Restored broken tooltip padding in IE8|84dcc9b
+84dcc9b|2014-02-21 21:32:27 +0100|Fixed zooming in heatmaps|4c7c0ca
+4c7c0ca|2014-02-21 21:04:56 +0100|Maps: Some regressions|7389626
+7389626|2014-02-21 20:31:38 +0100|Maps: Some minor changes. No tooltip background rectangle when border and background are not set.|63e16fc
+63e16fc|2014-02-21 15:39:09 +0100|Maps: Set up better drilldown demo|8976b64
+8976b64|2014-02-21 13:57:01 +0100|Maps: Prepared demos and build system|7f68b13
+7f68b13|2014-02-21 12:47:56 +0100|Maps: Prepared Highmaps build|bfe5918
+bfe5918|2014-02-21 09:21:14 +0100|Maps: Small adjustment to demo|ea8b524
+ea8b524|2014-02-21 09:21:14 +0100|Maps: Created geojson example with different geometry types.|96a104f
+96a104f|2014-02-21 09:21:14 +0100|Maps: Updated geojson support. Fixed zoom-out bug.|1fa1075
+1fa1075|2014-02-21 09:21:13 +0100|Maps: Made geojson support part of the API|c074454
+c074454|2014-02-21 09:21:13 +0100|Maps: Implemented default minRange of five times the size of the smallest map area, to prevent zooming too far into the map.|40621a2
+40621a2|2014-02-21 09:21:13 +0100|Maps: Tuned zooming speed with trackpad|00c95c9
+00c95c9|2014-02-21 09:21:13 +0100|Maps: Internal regression caused drill up to animate wrongly.|b669d7d
+b669d7d|2014-02-21 09:21:13 +0100|Redid fix for #2713 to avoid regression in maps|d824399
+d824399|2014-02-21 09:21:13 +0100|Maps: Fixed Y axis orientation for geojson interpretation. Fixed bounding box detection for negative coordinate system.|9ade3b8
+8728222|2014-02-20 12:42:47 +0100|3D: relinted|6c1b59e
+9ade3b8|2014-02-20 10:56:49 +0100|Export: Corrected typo in comment for batik-php, closes #2614|06a357c
+6c1b59e|2014-02-20 10:38:02 +0100|3D: Removed support for opposite axis|3dd6558
+3dd6558|2014-02-20 10:30:07 +0100|Revert "3D: opposite y axis for scatter charts"|93c67a6
+93c67a6|2014-02-19 15:21:17 +0100|3D: opposite y axis for scatter charts|27ca615
+27ca615|2014-02-19 14:53:28 +0100|3D: added support for opposite y-axis in columns|629de66
+06a357c|2014-02-19 11:11:12 +0100|Fixed #2722 where pie slice data label connectors would have the wrong Z index after hiding and showing the slice.|ac6aca8
+ac6aca8|2014-02-19 10:46:36 +0100|Made chart.style option take effect on chart instances, not only globally. Closes #2723.|3fa7f55
+629de66|2014-02-18 11:38:49 +0100|3D: refactoring, cleaning|5186346
+3fa7f55|2014-02-18 11:12:02 +0100|Maps: Added geojson demo. Support array for joinBy.|c97bef2
+5186346|2014-02-18 09:11:56 +0100|3D: linting issues|ffcf518
+c97bef2|2014-02-17 13:03:58 +0100|Fixed #2713 where series connected to a dynamically added X axis would fail.|dde0e84
+ffcf518|2014-02-17 12:49:23 +0100|3D: change pie rendering|e72118b
+dde0e84|2014-02-17 10:59:47 +0100|Experimenting with rendering on canvas|005bba9
+005bba9|2014-02-17 10:59:01 +0100|Performance improvements|25537b4
+e72118b|2014-02-17 10:02:48 +0100|3D: fixed a z-index issue|0d9889c
+25537b4|2014-02-14 09:42:44 +0100|Added smarter logic to setData, where instead of re-creating all the data points, existing points are updated. This allows animation, performs faster and is less prone to memory issues.|c6c44f3
+c6c44f3|2014-02-13 13:15:12 +0100|Added option, yAxis.reversedStacks, to choose whether to stack from the top down or from the bottom of the stack and up.|684d19d
+684d19d|2014-02-13 12:25:48 +0100|Fixed issue with horizontal axis labels being clipped instead of justified into chart area. Closes #2703.|312d997
+312d997|2014-02-13 09:26:34 +0100|Fixed #2700 causing data labels to not render inside columns if the actual value of the column was cropped.|e2fbae1
+e2fbae1|2014-02-12 12:26:35 +0100|Updated demos|0ac51d7
+0ac51d7|2014-02-12 09:43:41 +0100|Additional fix for #2604, drilldown failed on drilling up with three or more series.|ae1e15e
+ae1e15e|2014-02-12 09:00:42 +0100|Fixed #2693 with drilling up from drilldown caused interference between charts.|9fed49f
+9fed49f|2014-02-12 08:26:45 +0100|Optimized sparkline demo|8d50a8d
+8d50a8d|2014-02-11 15:58:00 +0100|Worked on sparkline demo.|1ce6e6a
+1ce6e6a|2014-02-11 15:57:44 +0100|Some speed optimizations for sparklines.|47e2b37
+47e2b37|2014-02-11 12:36:31 +0100|Linted|d37fc4e
+d37fc4e|2014-02-11 12:32:18 +0100|Created heatmap.src.js module file.|70e81d9
+70e81d9|2014-02-11 12:32:18 +0100|Initialized sparkline demo|58d01de
+0d9889c|2014-02-11 11:30:34 +0100|3D: scatter chart, 3d flag, animation|dfc40df
+58d01de|2014-02-11 11:21:18 +0100|Renamed File from StackItem.js to Stacking.js|88716ce
+88716ce|2014-02-11 11:09:37 +0100|Merge branch 'feature-based'|d9b6f55 71e93fc
+71e93fc|2014-02-11 10:31:44 +0100|Merge branch 'master' into feature-based|e3d4325 d9b6f55
+d9b6f55|2014-02-11 09:46:50 +0100|Highstock: Fixed #2696 where a single point outside the visible X range would be grouped within the first data group.|6c918b4
+6c918b4|2014-02-11 09:16:31 +0100|Whitespace|1997365
+1997365|2014-02-11 08:25:30 +0100|Additional fix for #2584. Errors were produced when tooltip was disabled.|0e4442d
+0e4442d|2014-02-10 14:43:36 +0100|Fixed error in Axis.id demo|54bd8f4
+54bd8f4|2014-02-10 13:27:55 +0100|Improved fix for #2570.|adb2d9c
+adb2d9c|2014-02-10 13:04:30 +0100|Better fix for #2645|d376af2
+d376af2|2014-02-10 12:43:33 +0100|Redid fix for #2683|c2f6f76
+c2f6f76|2014-02-10 12:25:22 +0100|Changed quoting style in MSPointer.js for consistency.|b77cd66
+b77cd66|2014-02-10 12:23:38 +0100|Fixed memory leaks in IE11 due to implementation of touch support. Closes #2691.|d97a077
+dfc40df|2014-02-10 10:39:31 +0100|3D: Basic support for scatter charts|7d1aaab
+d97a077|2014-02-10 10:31:21 +0100|Highstock: Fixed issue with data grouping not being reset when zooming in and multiple series were present. Closes #2692.|bfd9856
+e3d4325|2014-02-10 10:24:31 +0100|Merge branch 'master' into feature-based|995e956 bfd9856
+7d1aaab|2014-02-10 09:27:21 +0100|3D: moved depth to plotoptions|ea057e2
+bfd9856|2014-02-07 15:43:12 +0100|Split up maps into parts files. Created new file, highmaps.src.js to hold the clean Highmaps product, as well as modules/map.src.js to act as a plugin for Highcharts and Highstock.|1392477
+ea057e2|2014-02-07 14:27:50 +0100|Revert "3D: moved depth to plotoptions, introduced totaldepth"|3d8f3f0
+3d8f3f0|2014-02-07 14:24:24 +0100|3D: moved depth to plotoptions, introduced totaldepth|421141b
+1392477|2014-02-07 13:52:39 +0100|Export: Fixed jar location lookup on Windows, closes #2869|49e86b6
+49e86b6|2014-02-07 12:17:27 +0100|Highstock: Fixed issue with first point being left out in data grouping when grouped to an earlier time. Closes #2533.|a1485a1
+a1485a1|2014-02-07 10:27:55 +0100|Fixed issue with disappearing bar chart data labels in certain chart widths. Closes #2683.|5eafaee
+5eafaee|2014-02-07 09:02:58 +0100|Fixed issue with showLoading not displaying in IE9. Closes #2686.|dad207d
+dad207d|2014-02-07 08:34:48 +0100|Fixed issue with Axis.update not removing all associated series. Closes #2687.|d95341b
+d95341b|2014-02-06 16:01:43 +0100|Fixed failure in updating stacking from percent to normal. Closes #2682.|bb4747b
+bb4747b|2014-02-06 12:49:41 +0100|Fixed issue with misalignment of rotated axis labels with useHTML in IE11. Closes #2684.|f78f960
+f78f960|2014-02-06 09:52:22 +0100|Highstock: Fixed issue with percentage stacking in combination with data grouping. Closes #2445.|6de1c9c
+6de1c9c|2014-02-06 08:11:53 +0100|Fixed issue with wrapping horizontal legends not taking the x option into account. Closes #2680.|1a81913
+1a81913|2014-02-05 15:34:33 +0100|Added support for drilldown on multi-series column charts. Closes #2604.|e0807e3
+421141b|2014-02-05 11:21:24 +0100|3D: Changes and cleaning|6105b9e
+e0807e3|2014-02-05 10:18:09 +0100|Maps: Fixed issue with series hover color|16be8f5
+16be8f5|2014-02-05 09:49:31 +0100|Maps: Fixed wrong translation of zoomed heatmaps. Closes #2639.|1b5eab3
+1b5eab3|2014-02-05 08:51:02 +0100|Maps: Made data labels move better when zooming in and out on a map. Let the always zoom with the map, but clip them at the plot area.|f2d8ccb
+f2d8ccb|2014-02-05 08:27:45 +0100|Maps: Made animationLimit a series option.|1d410b6
+1d410b6|2014-02-05 08:15:50 +0100|Maps: Fixed centering when mousewheeling out from zoomed state.|889a82f
+889a82f|2014-02-04 20:35:27 +0100|Maps: Fixed transform translation issue for zooming in on areas.|aec6b83
+aec6b83|2014-02-04 20:31:45 +0100|Utils: Run samples by Ctrl+Enter|83eb471
+83eb471|2014-02-04 10:28:40 +0100|Fixed issue with JS errors on hovering chart when running IE11 in combination with the Standalone Framework. Closes #2672.|cc571ef
+cc571ef|2014-02-03 13:52:40 +0100|Fixed issue with wrong rotation of polar charts when X axis was reversed. Closes #2570.|8422a74
+8422a74|2014-02-03 13:51:33 +0100|Utils: Add compare link|7faf2f3
+7faf2f3|2014-02-03 09:20:39 +0100|Fixed issue with tooltip position and hover point on polar chart where startAngle was < 0. Closes #2665.|99fb0c7
+99fb0c7|2014-02-03 09:19:58 +0100|Utils: A small utility for mouse testing|357d4fb
+6105b9e|2014-02-03 09:06:33 +0100|3D: Drastic changes in how shapes are created|7189b13
+357d4fb|2014-01-31 15:51:25 +0100|Maps: Fixed bug with select color not being released after repeated mouseout.|c24ad8b
+c24ad8b|2014-01-31 14:00:06 +0100|Maps: Worked on demos|74146f4
+74146f4|2014-01-31 04:46:52 -0800|Merge pull request #2663 from svieira/master|b48502d aba04b2
+aba04b2|2014-01-30 11:50:31 -0500|Keep an internal reference to Highcharts|b48502d
+b48502d|2014-01-30 11:39:33 +0100|Samples: Added demos for full HTML tooltip|30afab0
+30afab0|2014-01-30 10:03:25 +0100|Fixed issue with empty tooltip boxes visible in tall pages in IE10.|c140471
+c140471|2014-01-30 09:58:55 +0100|Fixed issue with showLoading not working in Standalone Framework. Closes #2653.|d3683c2
+d3683c2|2014-01-30 09:17:36 +0100|Internal optimization after added support for visibility: inherit in the SVGRenderer.|cd6e186
+cd6e186|2014-01-30 09:13:39 +0100|Fixed issues with pie slices and data labels remaining visible after hiding the pie series itself. Closes #2315. Closes #2656.|bc0eb22
+bc0eb22|2014-01-29 16:09:55 +0100|Addition to the fix for #2642.|d1a2c3a
+d1a2c3a|2014-01-29 16:05:12 +0100|Fixed issue with automatic line height on labels with em font sizes. Closes #2651.|105a0a2
+105a0a2|2014-01-29 14:55:17 +0100|Changes to studies files|e1973aa
+e1973aa|2014-01-29 14:34:14 +0100|Fixed issue in 3.0.9 where wrong vertical axis labels would be skipped when they were of varying height. Closes #2642.|56c645c
+56c645c|2014-01-29 13:39:21 +0100|Provided reasonable default column width and group width for column charts with only one X value when minRange was set. Closes #2610.|8c2d545
+8c2d545|2014-01-29 11:16:58 +0100|Fixed issue with too many pages in the legend when using legend navigation. Closes #2617.|ac9d126
+ac9d126|2014-01-29 11:02:45 +0100|Fixed unexpected effects of zooming outside the data range. Closes #1734.|3cd634a
+3cd634a|2014-01-29 10:27:45 +0100|Highstock: Fixed issue with navigator not reflecting the limitations of the minRange. Closes #2618.|637e470
+637e470|2014-01-29 09:23:23 +0100|Fixed issue with line graphs not being vertically centered when there was only one value which exceeded the upper limit of 44bit values. Closes #2619.|93bf896
+93bf896|2014-01-29 09:07:03 +0100|Worked around Firefox 26 drawing issue where legend items would not redraw after resizing the chart. Closes #2580.|e49e175
+e49e175|2014-01-29 08:40:39 +0100|Fixed issue with mispositioned data label on single pie slice with certain pie sizes, caused by JavaScript rounding error. Closes #2650.|79b4548
+995e956|2014-01-28 15:05:16 +0100|Feature: Minor modifications on parts.js to change component names|adb73ba
+79b4548|2014-01-28 14:29:56 +0100|Fixed issue with text bounding boxes not being correctly computed when the chart was added to a container with display:none !important. Closes #2631.|bc72d1d
+bc72d1d|2014-01-28 14:11:12 +0100|Fixed issue with gauge pane background color not taking effect on multiple panes, or respecting  changes. Closes #2257. Closes #2649.|2ac4094
+adb73ba|2014-01-28 12:32:37 +0100|Check if stacking is loaded, before calling buildstacks in Axis.js|39e652b
+39e652b|2014-01-28 12:24:52 +0100|Feature: Restructured the parts configuration file|e92dbf5
+2ac4094|2014-01-28 10:57:34 +0100|Fixed issue with rendering plotlines in stockcharts|2cff357
+2cff357|2014-01-28 10:27:22 +0100|Fixed error in Standalone Framework where calling destroy on an animating element would result in endless error messages. Caused errors when a chart was destroyed while fading out the tooltip. Closes #2616.|40625bc
+40625bc|2014-01-28 08:09:27 +0100|Revert "Fixed issue with slicedOffset being considered where it was not required."|946bff9
+946bff9|2014-01-27 21:27:30 +0100|Fixed pie chart issue with messed up data labels with certain combinations of start and end angle. Closes #2645.|113a8fb
+113a8fb|2014-01-27 15:36:27 +0100|Fixed issue with pies ignoring endAngle when it was set to 0.|d735fce
+d735fce|2014-01-27 13:50:02 +0100|Performance improvement for updating tick labels. Closes #2640.|c3d29f3
+c3d29f3|2014-01-27 11:02:01 +0100|Utils: Added demo for gridZIndex|dda0ea7
+dda0ea7|2014-01-27 10:20:58 +0100|Fixed issue with tooltip header not displaying relevant time resolution when points where added at minute or hour resolution with a day between them. Closes #2637.|71da268
+e92dbf5|2014-01-24 12:29:34 +0100|Feature: Implemented Stacking as a feature, new indentation fro TouchPointer|294da1a
+71da268|2014-01-23 08:33:22 +0100|Fixed issue with slicedOffset being considered where it was not required.|061e2c2
+061e2c2|2014-01-22 11:16:20 +0100|Fixed error in animation.|6ff9a6f
+7189b13|2014-01-21 13:49:01 +0100|3D: changes in translation of sliced pieces|4c49f9a
+4c49f9a|2014-01-20 13:45:37 +0100|3D: some more glitches|40d63f8
+40d63f8|2014-01-20 12:09:06 +0100|3D: Fixed a bug with tick and axisline|f703d0e
+6ff9a6f|2014-01-20 12:02:48 +0100|Highstock: Fixed issue with scrollbar giving the wrong results in the chart when the axis was padded with axis.max. Closes #2611.|45541c8
+f703d0e|2014-01-20 09:49:54 +0100|3D: Pie translation on select|c89a328
+c89a328|2014-01-20 09:02:15 +0100|3D: Glitch correction on pie charts|0fc5143
+45541c8|2014-01-17 21:35:19 +0100|Fixed issue with wrong bounding box detection of numeric texts when they were of number type instead of strings. Closes #2316.|1fee052
+1fee052|2014-01-17 10:28:33 +0100|Added new option, plotOptions.gauge.overshoot, that takes a value in degrees for how much the dial should overshoot when the value is off the chart.|1cb2fc6
+1cb2fc6|2014-01-17 10:27:24 +0100|Built files from previous commits|be2d39d
+be2d39d|2014-01-17 09:13:01 +0100|Fixed issue with JS errors and failing to activate charts in pages that are saved to disk from the browser. Closes #2609.|00773b6
+00773b6|2014-01-17 09:13:01 +0100|Maps: Some minor changes.|26bb69f
+26bb69f|2014-01-16 14:07:52 +0100|Fixed issue with followPointer not working correctly for line charts|638b63c
+638b63c|2014-01-16 10:32:25 +0100|Fixed issue with numerical legend items crashing chart when navigation was enabled. Removed unsafe internal use of elemWrapper.bBox, used elemWrapper.getBBox() instead. Closes #2605.|1113258
+1113258|2014-01-16 10:06:29 +0100|Fixed regression with pie slice hover color becoming increasingly brightened after repeated redraws. Closes #1619.|56c6e66
+56c6e66|2014-01-16 09:26:13 +0100|Fixed tooltip formatter for column-parsed sample. Closes #2606.|b47148e
+b47148e|2014-01-16 09:24:43 +0100|Crosshairs: multi pane and navigator|ea00a2a
+ea00a2a|2014-01-16 08:15:35 +0100|Added check that tests that a specific series type have enough columns to read|b765cf1
+b765cf1|2014-01-15 15:19:57 +0100|Fixed wrong case in build.xml. Closes #2603.|a5f2c78
+a5f2c78|2014-01-15 15:15:50 +0100|Fixed issue with positioning of markers in oldIE in inverted charts. Closes #1111.|ff10acf
+ff10acf|2014-01-15 14:46:45 +0100|Fixed oldIE issue with box plots and error bars not showing in inverted charts. Closed #1680. Closed #1806.|48e24c8
+48e24c8|2014-01-15 14:46:45 +0100|Fixed missing stack percentage in normal stacks. Closes #2551.|9a0735e
+9a0735e|2014-01-15 14:46:45 +0100|Fixed issue in Standalone Framework with getting the right mouse position inside a scrollable div. Closes #2205.|35fdfb1
+35fdfb1|2014-01-15 13:12:41 +0100|Fixed issue with candlestick drawing|0849be9
+0849be9|2014-01-15 04:04:08 -0800|Merge pull request #2586 from jerkob/patch-1|ebb3fc9 8e124e4
+ebb3fc9|2014-01-15 12:48:50 +0100|Fixed JS error on hovering over a chart after running Chart.setData without redrawing. Closes #2594.|74dc387
+74dc387|2014-01-15 12:30:00 +0100|Highstock: Fixed issue with compare mode breaking down when at least one series had empty data. Closes #2601.|e9d306b
+e9d306b|2014-01-15 12:30:00 +0100|Cleaned up after 3.0.9 deployment.|434c18b
+434c18b|2014-01-15 12:29:01 +0100|Fixed issue with candlestick not aligning with crosshairs.|e35df37
+e35df37|2014-01-15 10:33:52 +0100|Merge branch 'master' of https://github.com/highslide-software/highcharts.com|9323842 96cf950
+9323842|2014-01-15 10:33:32 +0100|Fixed issue with tooltip position if data is NaN|8bdbb39
+96cf950|2014-01-15 09:14:10 +0100|--- Highcharts 3.0.9 / Highstock 1.3.9 official release ---|c4ef56e
+c4ef56e|2014-01-15 09:05:56 +0100|Moved regression test into existing sample|d1823e0
+d1823e0|2014-01-15 09:05:30 +0100|Utils: Small improvement|8f33ba9
+8f33ba9|2014-01-15 08:52:08 +0100|Added bower.json file. Closes #2244.|a791ece
+a791ece|2014-01-14 15:37:54 +0100|Fixed JS error on quickly moving the mouse out of a chart. Related to #2499.|8bdbb39
+8bdbb39|2014-01-14 12:32:49 +0100|Fixed issue with text positioning in modern IE when CSS line height was much smaller than font size. Closes #2444. Closes #2568. Closes #2569. Affects #2591.|19d511d
+19d511d|2014-01-14 12:32:49 +0100|Utils: Minor errors|cedfa19
+cedfa19|2014-01-14 12:32:48 +0100|Utils: Capture JS errors in compare mode.|e3c7368
+e3c7368|2014-01-14 11:29:58 +0100|Closes #2582|9dd022e
+9dd022e|2014-01-13 17:36:55 +0100|Fixed issue with categorized Y axis on gauges being positioned wrong. Closes #2593.|11bba83
+11bba83|2014-01-13 12:20:09 +0100|Reverted optimization that skipped individual handling of point attributes. Closes #2549. Closes #2587.|eedc0e6
+eedc0e6|2014-01-13 11:36:28 +0100|Fixed issue with adding a point in the middle of a line series failing. Issue #1109.|bee4243
+bee4243|2014-01-13 11:24:50 +0100|Fixed broken panning in Highstock 1.3.8. Closes #2590.|7daf249
+7daf249|2014-01-13 11:23:39 +0100|Added index file for listing samples.|5e98c57
+5e98c57|2014-01-13 10:35:56 +0100|Addition to previous|2640a2f
+2640a2f|2014-01-13 10:35:35 +0100|Micro optimizing previous commit|85a031b
+85a031b|2014-01-13 10:25:26 +0100|Fixed regression with datetime tooltip header format falling back to full years. Closes #2581.|c9bf879
+294da1a|2014-01-13 10:21:05 +0100|Feature: Added Adapters to parts.js configuration|9bbb83f
+c9bf879|2014-01-13 09:27:25 +0100|Fixed rounding error in stack labels. Closes #2576.|b0cc870
+0fc5143|2014-01-13 09:24:30 +0100|3D: Glitch corrections|9cb01c6
+b0cc870|2014-01-13 08:24:11 +0100|Changing to name 'type' in highcharts-convert.js + SVGConverter.java, it is the documented name of the parameter|d571b5c
+d571b5c|2014-01-12 11:20:25 +0100|Thinking this change was a typo because the param name in SVGConverter is called outtype.|ed3c1c6
+8e124e4|2014-01-11 20:15:03 -0500|Make startColumn option work in parseTable|ed3c1c6
+ed3c1c6|2014-01-10 16:44:30 +0100|Implemented new option, switchRowsAndColumns, in the data module.|4ea1359
+9bbb83f|2014-01-10 12:31:21 +0100|Feature: Collected all serietypes in one group called serietypes|c48785e
+4ea1359|2014-01-10 10:42:47 +0100|Fixed regression in 3.0.8 with hover color of columns having individual color option. Closes #2579.|8da6312
+c48785e|2014-01-10 10:41:46 +0100|Fixed merge conflicts|893bb71 8da6312
+8da6312|2014-01-10 09:33:04 +0100|Fixed issue with fillColor on box plots not honored when colorByPoint is true. Closes #2574.|31f9c1e
+31f9c1e|2014-01-10 09:27:03 +0100|Merge branch 'export-character-encoding-fix' Export: Improvements on character encoding and streamlined maven pom.xml files|6214096 3dd3241
+3dd3241|2014-01-10 09:26:05 +0100|Merge branch 'master' into export-character-encoding-fix|4127658 6214096
+6214096|2014-01-10 09:06:15 +0100|Highstock: Fixed regression with missing tooltip on flag series. Closes #2573.|6458e3a
+6458e3a|2014-01-09 16:13:11 +0100|Added axis.crosshair demo|ae33739
+ae33739|2014-01-09 15:40:59 +0100|Post-release changes|ad78598
+4127658|2014-01-09 14:00:46 +0100|Export: Make sure we're building strings with UTF-8 encoding|f63929c
+ad78598|2014-01-09 13:08:26 +0100|Samples: Added basic drilldown demo.|e2de177
+e2de177|2014-01-09 10:30:55 +0100|--- Highcharts 3.0.8 / Highstock 1.3.8 official release ---|d07be6b
+d07be6b|2014-01-09 10:03:00 +0100|Samples: Removed redundant drilldown samples|0681c45
+0681c45|2014-01-09 10:03:00 +0100|Minor fix after regression testing|f63929c
+f63929c|2014-01-08 17:56:50 +0100|Export: Streamlined and removed unnecessary properties in maven pom.xml|5501002
+5501002|2014-01-08 15:48:34 +0100|Utils: Minor fixes. Added checkboxes in the report to choose what browsers to include in the comparison.|cd91f5b
+cd91f5b|2014-01-08 15:47:33 +0100|Updated demos that can run automatically.|db37c3b
+db37c3b|2014-01-08 15:47:15 +0100|Minor changes after regression testing.|f425c2e
+f425c2e|2014-01-08 11:32:04 +0100|Utils: Added demo of custom marker symbol path.|c16d23f
+c16d23f|2014-01-08 10:06:49 +0100|Export: Cleaning up overlap in maven dependencies for java export server|8722de1
+8722de1|2014-01-08 09:51:36 +0100|Added handling of white-space: nowrap in styles for SVG text.|a7b5cba
+a7b5cba|2014-01-08 09:34:35 +0100|Utils: Adjustments to sample runner|456ab10
+456ab10|2014-01-08 09:34:35 +0100|Maps: Adjustment to map parser.|75bcddc
+75bcddc|2014-01-08 09:34:35 +0100|Some more changes after regression tests.|f188857
+f188857|2014-01-08 09:34:35 +0100|Utils: Better visual comparison of images by overlaying left and right on top of each other.|4fc7e14
+4fc7e14|2014-01-08 09:34:35 +0100|Fixed issues after first round of regression testing.|7377736

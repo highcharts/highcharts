@@ -22,8 +22,9 @@ function perspective(points, angle2, angle1, origin) {
 	xe = origin.x;
 	ye = origin.y;
 	ze = (origin.z === 0 ? 0.0001 : origin.z) * (origin.vd || 25);
-
+	
 	// some kind of minimum?
+	ze = Math.max(500, ze);
 
 	var s1 = sin(angle1),
 		c1 = cos(angle1),

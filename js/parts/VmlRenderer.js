@@ -18,7 +18,7 @@ if (!hasSVG && !useCanVG) {
 /**
  * The VML element wrapper.
  */
-Highcharts.VMLElement = VMLElement = {
+VMLElement = {
 
 	/**
 	 * Initialize a new VML element wrapper. It builds the markup as a string
@@ -383,7 +383,7 @@ Highcharts.VMLElement = VMLElement = {
 		var i,
 			shadows = this.shadows;
 		value = value || [];
-		this.d = value.join(' '); // used in getter for animation
+		this.d = value.join && value.join(' '); // used in getter for animation
 
 		element.path = value = this.pathToVML(value);
 
@@ -481,7 +481,7 @@ Highcharts.VMLElement = VMLElement = {
 		element.style[key] = value;
 	}
 };
-VMLElement = extendClass(SVGElement, VMLElement);
+Highcharts.VMLElement = VMLElement = extendClass(SVGElement, VMLElement);
 
 // Some shared setters
 VMLElement.prototype.ySetter =

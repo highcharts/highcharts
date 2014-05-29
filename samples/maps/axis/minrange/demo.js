@@ -23,11 +23,11 @@ $(function () {
             },
 
             xAxis: {
-                minRange: 1000
+                minRange: 300
             },
 
             yAxis: {
-                minRange: 1000
+                minRange: 300
             },
 
             legend: {
@@ -38,8 +38,8 @@ $(function () {
 
             series : [{
                 data : data,
-                mapData: Highcharts.maps.world,
-                joinBy: 'code',
+                mapData: Highcharts.geojson(Highcharts.maps['custom/world']),
+                joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
                 states: {
                     hover: {

@@ -5,6 +5,13 @@
 function SVGElement() {}
 
 SVGElement.prototype = {
+	
+	// Default base for animation
+	opacity: 1,
+	// For labels, these CSS properties are applied to the <text> node directly
+	textProps: ['fontSize', 'fontWeight', 'fontFamily', 'color', 
+		'lineHeight', 'width', 'textDecoration', 'textShadow', 'HcTextStroke'],
+	
 	/**
 	 * Initialize the SVG renderer
 	 * @param {Object} renderer
@@ -17,10 +24,7 @@ SVGElement.prototype = {
 			doc.createElementNS(SVG_NS, nodeName);
 		wrapper.renderer = renderer;
 	},
-	/**
-	 * Default base for animation
-	 */
-	opacity: 1,
+	
 	/**
 	 * Animate a given attribute
 	 * @param {Object} params
@@ -42,6 +46,7 @@ SVGElement.prototype = {
 				complete();
 			}
 		}
+		return this;
 	},
 
 	/**
@@ -901,7 +906,7 @@ SVGElement.prototype = {
 	_defaultGetter: function (key) {
 		var ret = pick(this[key], this.element ? this.element.getAttribute(key) : null, 0);
 
-		if (/^[0-9\.]+$/.test(ret)) { // is numerical
+		if (/^[\-0-9\.]+$/.test(ret)) { // is numerical
 			ret = parseFloat(ret);
 		}
 		return ret;
@@ -953,7 +958,7 @@ SVGElement.prototype = {
 	// width is 0. #1369
 	'stroke-widthSetter': function (value, key, element) {
 		if (value === 0) {
-			value = 0.00001;
+			value = 0.01; // #2963
 		}
 		this.strokeWidth = value; // read in symbol paths like 'callout'
 		element.setAttribute(key, value);
@@ -1191,6 +1196,7 @@ SVGRenderer.prototype = {
 			textStyles = wrapper.styles,
 			width = wrapper.textWidth,
 			textLineHeight = textStyles && textStyles.lineHeight,
+			textStroke = textStyles && textStyles.HcTextStroke,
 			i = childNodes.length,
 			getLineHeight = function (tspan) {
 				return textLineHeight ? 
@@ -1198,7 +1204,8 @@ SVGRenderer.prototype = {
 					renderer.fontMetrics(
 						/(px|em)$/.test(tspan && tspan.style.fontSize) ?
 							tspan.style.fontSize :
-							((textStyles && textStyles.fontSize) || renderer.style.fontSize || 12)
+							((textStyles && textStyles.fontSize) || renderer.style.fontSize || 12),
+						tspan
 					).h;
 			};
 
@@ -1207,8 +1214,9 @@ SVGRenderer.prototype = {
 			textNode.removeChild(childNodes[i]);
 		}
 
-		// Skip tspans, add text directly to text node
-		if (!hasMarkup && textStr.indexOf(' ') === -1) {
+		// Skip tspans, add text directly to text node. The forceTSpan is a hook 
+		// used in text outline hack.
+		if (!hasMarkup && !textStroke && textStr.indexOf(' ') === -1) {
 			textNode.appendChild(doc.createTextNode(textStr));
 			return;
 
@@ -1283,6 +1291,9 @@ SVGRenderer.prototype = {
 							// add attributes
 							attr(tspan, attributes);
 
+							// Append it
+							textNode.appendChild(tspan);
+
 							// first span on subsequent line, add the line height
 							if (!spanNo && lineNo) {
 
@@ -1296,15 +1307,10 @@ SVGRenderer.prototype = {
 								attr(
 									tspan,
 									'dy',
-									getLineHeight(tspan),
-									// Safari 6.0.2 - too optimized for its own good (#1539)
-									// TODO: revisit this with future versions of Safari
-									isWebKit && tspan.offsetHeight
+									getLineHeight(tspan)
 								);
 							}
 
-							// Append it
-							textNode.appendChild(tspan);
 
 							spanNo++;
 
@@ -1314,9 +1320,9 @@ SVGRenderer.prototype = {
 									hasWhiteSpace = words.length > 1 && textStyles.whiteSpace !== 'nowrap',
 									tooLong,
 									actualWidth,
-									clipHeight = wrapper._clipHeight,
+									hcHeight = textStyles.HcHeight,
 									rest = [],
-									dy = getLineHeight(),
+									dy = getLineHeight(tspan),
 									softLineNo = 1,
 									bBox;
 
@@ -1336,8 +1342,7 @@ SVGRenderer.prototype = {
 										rest = [];
 										if (words.length) {
 											softLineNo++;
-
-											if (clipHeight && softLineNo * dy > clipHeight) {
+											if (hcHeight && softLineNo * dy > hcHeight) {
 												words = ['...'];
 												wrapper.attr('title', wrapper.textStr);
 											} else {
@@ -1692,8 +1697,7 @@ SVGRenderer.prototype = {
 			// could be exporting in IE
 			// using href throws "not supported" in ie7 and under, requries regex shim to fix later
 			elemWrapper.element.setAttribute('hc-svg-href', src);
-	}
-
+		}
 		return elemWrapper;
 	},
 
@@ -2012,14 +2016,15 @@ SVGRenderer.prototype = {
 
 		if (!useHTML) {
 			wrapper.xSetter = function (value, key, element) {
-				var childNodes = element.childNodes,
-					child,
+				var tspans = element.getElementsByTagName('tspan'),
+					tspan,
+					parentVal = element.getAttribute(key),
 					i;
-				for (i = 1; i < childNodes.length; i++) {
-					child = childNodes[i];
-					// if the x values are equal, the tspan represents a linebreak
-					if (child.getAttribute('x') === element.getAttribute('x')) {
-						child.setAttribute('x', value);
+				for (i = 0; i < tspans.length; i++) {
+					tspan = tspans[i];
+					// If the x values are equal, the tspan represents a linebreak
+					if (tspan.getAttribute(key) === parentVal) {
+						tspan.setAttribute(key, value);
 					}
 				}
 				element.setAttribute(key, value);
@@ -2032,8 +2037,12 @@ SVGRenderer.prototype = {
 	/**
 	 * Utility to return the baseline offset and total line height from the font size
 	 */
-	fontMetrics: function (fontSize) {
+	fontMetrics: function (fontSize, elem) {
 		fontSize = fontSize || this.style.fontSize;
+		if (elem && win.getComputedStyle) {
+			elem = elem.element || elem; // SVGElement
+			fontSize = win.getComputedStyle(elem, "").fontSize;
+		}
 		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
 
 		// Empirical values found by comparing font size and bounding box height.
@@ -2043,7 +2052,8 @@ SVGRenderer.prototype = {
 
 		return {
 			h: lineHeight,
-			b: baseline
+			b: baseline,
+			f: fontSize
 		};
 	},
 
@@ -2100,7 +2110,7 @@ SVGRenderer.prototype = {
 			wrapper.height = (height || bBox.height || 0) + 2 * padding;
 
 			// update the label-scoped y offset
-			baselineOffset = padding + renderer.fontMetrics(style && style.fontSize).b;
+			baselineOffset = padding + renderer.fontMetrics(style && style.fontSize, text).b;
 
 			
 			if (needsBox) {
@@ -2276,7 +2286,7 @@ SVGRenderer.prototype = {
 				if (styles) {
 					var textStyles = {};
 					styles = merge(styles); // create a copy to avoid altering the original object (#537)
-					each(['fontSize', 'fontWeight', 'fontFamily', 'color', 'lineHeight', 'width', 'textDecoration', 'textShadow'], function (prop) {
+					each(wrapper.textProps, function (prop) {
 						if (styles[prop] !== UNDEFINED) {
 							textStyles[prop] = styles[prop];
 							delete styles[prop];

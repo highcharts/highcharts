@@ -78,10 +78,12 @@ Tooltip.prototype = {
 	move: function (x, y, anchorX, anchorY) {
 		var tooltip = this,
 			now = tooltip.now,
-			animate = tooltip.options.animation !== false && !tooltip.isHidden,
+			animate = tooltip.options.animation !== false && !tooltip.isHidden && 
+				// When we get close to the target position, abort animation and land on the right place (#3056)
+				(mathAbs(x - now.x) > 1 || mathAbs(y - now.y) > 1),
 			skipAnchor = tooltip.followPointer || tooltip.len > 1;
 
-		// get intermediate values for animation
+		// Get intermediate values for animation
 		extend(now, {
 			x: animate ? (2 * now.x + x) / 3 : x,
 			y: animate ? (now.y + y) / 2 : y,
@@ -89,17 +91,17 @@ Tooltip.prototype = {
 			anchorY: skipAnchor ? UNDEFINED : animate ? (now.anchorY + anchorY) / 2 : anchorY
 		});
 
-		// move to the intermediate value
+		// Move to the intermediate value
 		tooltip.label.attr(now);
 
 		
-		// run on next tick of the mouse tracker
-		if (animate && (mathAbs(x - now.x) > 1 || mathAbs(y - now.y) > 1)) {
+		// Run on next tick of the mouse tracker
+		if (animate) {
 		
-			// never allow two timeouts
+			// Never allow two timeouts
 			clearTimeout(this.tooltipTimeout);
 			
-			// set the fixed interval ticking for the smooth tooltip
+			// Set the fixed interval ticking for the smooth tooltip
 			this.tooltipTimeout = setTimeout(function () {
 				// The interval function may still be running during destroy, so check that the chart is really there before calling.
 				if (tooltip) {
@@ -448,7 +450,7 @@ Tooltip.prototype = {
 							// If the point is placed every day at 23:59, we need to show
 							// the minutes as well. This logic only works for time units less than 
 							// a day, since all higher time units are dividable by those. #2637.
-							(timeUnits[n] <= timeUnits[DAY] && point.key % timeUnits[n] > 0)) {
+							(timeUnits[n] <= timeUnits.day && point.key % timeUnits[n] > 0)) {
 						xDateFormat = dateTimeLabelFormats[n];
 						break;
 					}

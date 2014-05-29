@@ -13,14 +13,16 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 	marker: null,
 	stickyTracking: false,
 	dataLabels: {
-		format: '{point.value}',
+		formatter: function () { // #2945
+			return this.point.value;
+		},
 		verticalAlign: 'middle',
 		crop: false,
 		overflow: false,
 		style: {
 			color: 'white',
 			fontWeight: 'bold',
-			textShadow: '0 0 5px black'
+			HcTextStroke: '3px rgba(0,0,0,0.5)'
 		}
 	},
 	turboThreshold: 0,
@@ -33,7 +35,8 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 			animation: true
 		},
 		hover: {
-			brightness: 0.2
+			brightness: 0.2,
+			halo: null
 		}
 	}
 });
@@ -54,9 +57,7 @@ var MapAreaPoint = extendClass(Point, {
 			mapPoint;
 
 		if (seriesOptions.mapData) {
-			mapPoint = joinBy[0] ? 
-				series.getMapData(joinBy[0], point[joinBy[1]]) : // Join by a string
-				seriesOptions.mapData[point.x]; // Use array position (faster)
+			mapPoint = series.mapMap[point[joinBy[1]]];
 			if (mapPoint) {
 				// This applies only to bubbles
 				if (series.xyFromShape) {
@@ -92,7 +93,9 @@ var MapAreaPoint = extendClass(Point, {
 	 */
 	onMouseOver: function (e) {
 		clearTimeout(this.colorInterval);
-		Point.prototype.onMouseOver.call(this, e);
+		if (this.value !== null) {
+			Point.prototype.onMouseOver.call(this, e);
+		}
 	},
 	/**
 	 * Custom animation for tweening out the colors. Animation reduces blinking when hovering
@@ -194,7 +197,8 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					pointMaxX = -MAX_VALUE, 
 					pointMinX =  MAX_VALUE, 
 					pointMaxY = -MAX_VALUE, 
-					pointMinY =  MAX_VALUE;
+					pointMinY =  MAX_VALUE,
+					properties = point.properties;
 
 				// The first time a map point is used, analyze its box
 				if (!point._foundBox) {
@@ -211,8 +215,10 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 						}
 					}
 					// Cache point bounding box for use to position data labels, bubbles etc
-					point._midX = pointMinX + (pointMaxX - pointMinX) * (point.middleX || 0.5); // pick is slower and very marginally needed
-					point._midY = pointMinY + (pointMaxY - pointMinY) * (point.middleY || 0.5);
+					point._midX = pointMinX + (pointMaxX - pointMinX) * 
+						(point.middleX || (properties && properties['hc-middle-x']) || 0.5); // pick is slower and very marginally needed
+					point._midY = pointMinY + (pointMaxY - pointMinY) * 
+						(point.middleY || (properties && properties['hc-middle-y']) || 0.5);
 					point._maxX = pointMaxX;
 					point._minX = pointMinX;
 					point._maxY = pointMaxY;
@@ -244,7 +250,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			if (yAxis.options.minRange === undefined) {
 				yAxis.minRange = Math.min(5 * minRange, (this.maxY - this.minY) / 5, yAxis.minRange || MAX_VALUE);
 			}
-
 		}
 	},
 	
@@ -310,6 +315,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	setData: function (data, redraw) {
 		var options = this.options,
 			mapData = options.mapData,
+			mapMap,
 			joinBy,
 			dataUsed = [];
 
@@ -320,6 +326,20 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 		this.getBox(data);
 		this.getBox(mapData);
+
+		if (mapData) {
+			this.mapMap = mapMap = {};
+			each(mapData, function (mapPoint) {
+				var props = mapPoint.properties;
+				// Copy the property over to root for faster access
+				if (joinBy[0] && props && props[joinBy[0]]) {
+					mapPoint[joinBy[0]] = props[joinBy[0]];
+				}
+
+				mapMap[mapPoint[joinBy[0]]] = mapPoint;
+			});
+		}
+
 		if (options.allAreas && mapData) {
 
 			data = data || [];
@@ -333,8 +353,9 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 			// Add those map points that don't correspond to data, which will be drawn as null points
 			dataUsed = '|' + dataUsed.join('|') + '|'; // String search is faster than array.indexOf 
+
 			each(mapData, function (mapPoint) {
-				if (!joinBy[0] || dataUsed.indexOf('|' + (mapPoint[joinBy[0]] || (mapPoint.properties && mapPoint.properties[joinBy[0]])) + '|') === -1) {
+				if (!joinBy[0] || dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1) {
 					data.push(merge(mapPoint, { value: null }));
 				}
 			});
@@ -342,33 +363,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		Series.prototype.setData.call(this, data, redraw);
 	},
 
-	/**
-	 * For each point, get the corresponding map data
-	 */
-	getMapData: function (key, value) {
-		var options = this.options,
-			mapData = options.mapData,
-			mapMap = this.mapMap,
-			mapPoint,
-			i = mapData.length;
-
-		// Create a cache for quicker lookup second time
-		if (!mapMap) {
-			mapMap = this.mapMap = {};
-		}
-		if (mapMap[value] !== undefined) {
-			return mapData[mapMap[value]];
-
-		} else if (value !== undefined) {
-			while (i--) {
-				mapPoint = mapData[i];
-				if (mapPoint[key] === value || (mapPoint.properties && mapPoint.properties[key] === value)) {
-					mapMap[value] = i; // cache it
-					return mapPoint;
-				}
-			}
-		}
-	},
 	
 	/**
 	 * No graph for the map series

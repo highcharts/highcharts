@@ -92,13 +92,13 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 
 	// Optionally identify ticks with higher rank, for example when the ticks
 	// have crossed midnight.
-	if (findHigherRanks && info.unitRange <= timeUnits[HOUR]) {
+	if (findHigherRanks && info.unitRange <= timeUnits.hour) {
 		end = groupPositions.length - 1;
 
 		// Compare points two by two
 		for (start = 1; start < end; start++) {
 			if (new Date(groupPositions[start] - timezoneOffset)[getDate]() !== new Date(groupPositions[start - 1] - timezoneOffset)[getDate]()) {
-				higherRanks[groupPositions[start]] = DAY;
+				higherRanks[groupPositions[start]] = 'day';
 				hasCrossedHigherRank = true;
 			}
 		}
@@ -106,7 +106,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 		// If the complete array has crossed midnight, we want to mark the first
 		// positions also as higher rank
 		if (hasCrossedHigherRank) {
-			higherRanks[groupPositions[0]] = DAY;
+			higherRanks[groupPositions[0]] = 'day';
 		}
 		info.higherRanks = higherRanks;
 	}

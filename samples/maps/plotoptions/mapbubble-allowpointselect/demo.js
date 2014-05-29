@@ -28,16 +28,16 @@ $(function () {
 
             series : [{
                 name: 'Countries',
-                mapData: Highcharts.maps.world,
+                mapData: Highcharts.geojson(Highcharts.maps['custom/world']),
                 color: '#E0E0E0',
                 enableMouseTracking: false
             }, {
                 allowPointSelect: true,
                 cursor: 'pointer',
                 type: 'mapbubble',
-                mapData: Highcharts.maps.world,
+                mapData: Highcharts.geojson(Highcharts.maps['custom/world']),
                 name: 'Population 2010',
-                joinBy: 'code',
+                joinBy: ['iso-a2', 'code'],
                 data: data,
                 minSize: 4,
                 maxSize: '12%',

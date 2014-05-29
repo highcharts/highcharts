@@ -1,8 +1,12 @@
 $(function () {
     $('#container').highcharts({
+
+        title: {
+            text: 'Legend with rounded border'
+        },
         
         legend: {
-            borderRadius: 0,
+            borderRadius: 5,
             borderWidth: 1
         },
         

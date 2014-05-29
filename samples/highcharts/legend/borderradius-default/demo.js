@@ -1,5 +1,9 @@
 $(function () {
     $('#container').highcharts({
+
+        title: {
+            text: 'Legend with square border by default'
+        },
         
         legend: {
             borderWidth: 1

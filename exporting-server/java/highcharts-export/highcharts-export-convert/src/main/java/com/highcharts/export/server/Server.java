@@ -91,9 +91,11 @@ public class Server {
 		try {
 			URL url = new URL("http://" + host + ":"
 					+ port + "/");
-
-			// TEST sockettimeout
-			//url = new URL("http://" + host + ":7777/");
+			
+			// TEST with running a local phantom instance
+			// url = new URL("http://" + host + ":7777/");
+			// logger.log(Level.INFO, "requesting url: " + url.toString());
+			// logger.log(Level.INFO, "parameters: " +  params);
 
 			state = ServerState.BUSY;
 

@@ -110,13 +110,11 @@
 			}
 			
 			li.identical, li.identical a {
-				background: green;
-				color: white;
-				font-weight: bold;
+				background: #a4edba;
 			}
 			
 			li.different, li.different a {
-				background: red;
+				background: #f15c80;
 				color: white;
 				font-weight: bold;
 			}

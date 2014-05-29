@@ -29,3 +29,6 @@ RewriteRule (.*?)exporting.js $1exporting.src.js
 RewriteRule (.*?)funnel.js $1funnel.src.js
 RewriteRule (.*?)map.js $1map.src.js
 RewriteRule (.*?)no-data-to-display.js $1no-data-to-display.src.js
+
+# Map data
+ErrorDocument 404 /debug.php

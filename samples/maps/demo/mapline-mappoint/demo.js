@@ -159,7 +159,8 @@ $(function () {
     $('#container').highcharts('Map', {
         chart : {
             plotBorderWidth : 1,
-            plotBackgroundColor: '#f4e2ba'
+            plotBackgroundColor: '#f4e2ba',
+            ignoreHiddenSeries: false
         },
         
         title : {

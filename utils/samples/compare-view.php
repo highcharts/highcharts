@@ -74,7 +74,7 @@
 							if (difference.reference) {
 								diff += ' ('+ difference.reference.toFixed(2) + ')';
 								if (difference.dissimilarityIndex.toFixed(2) === difference.reference.toFixed(2)) {
-									background = 'green';
+									background = "#a4edba";
 								}
 							}
 							*/
@@ -256,13 +256,13 @@
 					if (rightSVG.indexOf('NaN') !== -1) {
 						report += "<br/>The generated SVG contains NaN"
 						$('#report').html(report)
-							.css('background', 'red');
+							.css('background', '#f15c80');
 						onDifferent('Error');
 
 					} else if (identical) {
 						report += "<br/>The generated SVG is identical"
 						$('#report').html(report)
-							.css('background', 'green');
+							.css('background', "#a4edba");
 
 					} else {
 						report += "<br/>The generated SVG is different, checking exported images...";
@@ -287,7 +287,9 @@
 									onIdentical();
 									
 								} else if (data.dissimilarityIndex === undefined) {
-									report += '<br/><b>Image export failed. Is the server responding?</b>';
+									report += '<br/><br/><b>Image export failed. Is the exporting server responding? If running local server, start it like this:</b>' +
+										'<pre>$ cd GitHub/highcharts.com/exporting-server/java/highcharts-export/highcharts-export-web\n' +
+										'$ mvn jetty:run</pre>'
 									onDifferent('Error');
 									
 								} else {
@@ -302,7 +304,7 @@
 								activateOverlayCompare();
 								
 								$('#report').html(report)
-									.css('background', identical ? 'green' : 'red');
+									.css('background', identical ? "#a4edba" : '#f15c80');
 							},
 							dataType: 'json'
 						});
@@ -319,7 +321,7 @@
 						'The innerHTML is different, testing generated SVG...';
 						
 					$('#report').html(report)
-						.css('background', identical ? 'green' : 'red');
+						.css('background', identical ? "#a4edba" : '#f15c80');
 						
 					if (!identical) {
 						// switch to image mode

@@ -141,6 +141,35 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed)
 	return path;
 });
 
+Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotBandPath', function (proceed) {
+	// Do not do this if the chart is not 3D
+	if (!this.chart.is3d()) {
+		return proceed.apply(this, [].slice.call(arguments, 1));
+	} else {
+		var args = arguments,
+			from = args[1],
+			to = args[2];
+	
+		var toPath = this.getPlotLinePath(to),
+			path = this.getPlotLinePath(from);
+
+		if (path && toPath) {
+			path.push(
+				toPath[7],	// These two do not exist in the regular getPlotLine
+				toPath[8],  // ---- # 3005
+				toPath[4],
+				toPath[5],
+				toPath[1],
+				toPath[2]
+			);
+		} else { // outside the axis area
+			path = null;
+		}
+		
+		return path;
+	}
+});
+
 /*** 
 	EXTENSION TO THE TICKS
 ***/
