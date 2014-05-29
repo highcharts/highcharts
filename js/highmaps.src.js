@@ -1394,6 +1394,7 @@ defaultOptions = {
 		line: { // base series options
 			allowPointSelect: false,
 			showCheckbox: false,
+			checkboxPosition: 'right',
 			animation: {
 				duration: 1000
 			},
@@ -9661,12 +9662,17 @@ Legend.prototype = {
 			translateY = alignAttr.translateY;
 			each(this.allItems, function (item) {
 				var checkbox = item.checkbox,
+					checkboxPosition = item.options.checkboxPosition,
+					left,
 					top;
 				
 				if (checkbox) {
+					left = checkboxPosition == 'left' ?
+						(alignAttr.translateX + checkbox.x - 20) :
+						(alignAttr.translateX + item.checkboxOffset + checkbox.x - 20);
 					top = (translateY + checkbox.y + (scrollOffset || 0) + 3);
 					css(checkbox, {
-						left: (alignAttr.translateX + item.checkboxOffset + checkbox.x - 20) + PX,
+						left: left + PX,
 						top: top + PX,
 						display: top > translateY - 6 && top < translateY + clipHeight - 6 ? '' : NONE
 					});
@@ -9728,6 +9734,7 @@ Legend.prototype = {
 			series = item.series && item.series.drawLegendSymbol ? item.series : item,
 			seriesOptions = series.options,
 			showCheckbox = legend.createCheckboxForItem && seriesOptions && seriesOptions.showCheckbox,
+			checkboxPosition = seriesOptions && seriesOptions.checkboxPosition,
 			useHTML = options.useHTML;
 
 		if (!li) { // generate it once, later move it
@@ -9859,12 +9866,20 @@ Legend.prototype = {
 			options = legend.options,
 			padding = legend.padding,
 			legendBorderWidth = options.borderWidth,
-			legendBackgroundColor = options.backgroundColor;
+			legendBackgroundColor = options.backgroundColor,
+			showCheckbox = chart.options.plotOptions.series.showCheckbox,
+			checkboxPosition = chart.options.plotOptions.series.checkboxPosition;
 
-		legend.itemX = legend.initialItemX;
+		legend.itemX = options.align == 'left' && showCheckbox ?
+			legend.initialItemX + parseInt(options.itemCheckboxStyle.width) :
+			legend.initialItemX;
 		legend.itemY = legend.initialItemY;
 		legend.offsetWidth = 0;
 		legend.lastItemY = 0;
+
+		if (options.align == 'right' && checkboxPosition == 'left' && showCheckbox) {
+			legend.itemX += 20;
+		}
 
 		if (!legendGroup) {
 			legend.group = legendGroup = renderer.g('legend')
