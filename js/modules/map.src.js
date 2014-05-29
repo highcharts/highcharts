@@ -989,7 +989,7 @@ var MapAreaPoint = extendClass(Point, {
 			mapPoint;
 
 		if (seriesOptions.mapData) {
-			mapPoint = series.getMapData(joinBy[0], point[joinBy[1]]);
+			mapPoint = series.mapMap[point[joinBy[1]]];
 			if (mapPoint) {
 				// This applies only to bubbles
 				if (series.xyFromShape) {
@@ -1247,6 +1247,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	setData: function (data, redraw) {
 		var options = this.options,
 			mapData = options.mapData,
+			mapMap,
 			joinBy,
 			dataUsed = [];
 
@@ -1257,6 +1258,20 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 		this.getBox(data);
 		this.getBox(mapData);
+
+		if (mapData) {
+			this.mapMap = mapMap = {};
+			each(mapData, function (mapPoint) {
+				var props = mapPoint.properties;
+				// Copy the property over to root for faster access
+				if (joinBy[0] && props && props[joinBy[0]]) {
+					mapPoint[joinBy[0]] = props[joinBy[0]];
+				}
+
+				mapMap[mapPoint[joinBy[0]]] = mapPoint;
+			});
+		}
+
 		if (options.allAreas && mapData) {
 
 			data = data || [];
@@ -1272,11 +1287,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			dataUsed = '|' + dataUsed.join('|') + '|'; // String search is faster than array.indexOf 
 
 			each(mapData, function (mapPoint) {
-				var props = mapPoint.properties;
-				// Copy the property over to root for faster access
-				if (joinBy[0] && props && props[joinBy[0]]) {
-					mapPoint[joinBy[0]] = props[joinBy[0]];
-				}
 				if (!joinBy[0] || dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1) {
 					data.push(merge(mapPoint, { value: null }));
 				}
@@ -1285,38 +1295,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		Series.prototype.setData.call(this, data, redraw);
 	},
 
-	/**
-	 * For each point, get the corresponding map data
-	 */
-	getMapData: function (key, value) {
-		var options = this.options,
-			mapData = options.mapData,
-			mapMap = this.mapMap,
-			mapPoint,
-			i = mapData.length;
-
-		// Create a cache for quicker lookup second time
-		if (!mapMap) {
-			mapMap = this.mapMap = {};
-		}
-		
-		if (mapMap[value]) {
-			return mapMap[value];
-
-		} else if (value !== undefined) {
-
-			// This loop must remain highly optimized. For a map with n points, the loop runs
-			// n*n/2 times. A map with 1000 points means the loop runs 500 000 times.
-			while (i--) {
-				mapPoint = mapData[i];
-				if (mapPoint[key] === value) {
-					mapMap[value] = mapPoint; // cache it
-					mapData.slice(i, 1);
-					return mapPoint;
-				}
-			}
-		}
-	},
 	
 	/**
 	 * No graph for the map series

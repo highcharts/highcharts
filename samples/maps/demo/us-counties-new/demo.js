@@ -14,6 +14,11 @@ $(function () {
         countiesMap = Highcharts.geojson(Highcharts.maps['countries/usa/usa-all-all']),
         lines = Highcharts.geojson(Highcharts.maps['countries/usa/usa-all-all'], 'mapline');
 
+    // Add state acronym for tooltip
+    Highcharts.each(countiesMap, function (mapPoint) {
+    	mapPoint.name = mapPoint.name + ', ' + mapPoint.properties['hc-key'].substr(3, 2);
+    });
+
     var options = {
         chart : {
             borderWidth : 1,
