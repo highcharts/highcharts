@@ -1671,7 +1671,7 @@ Series.prototype = {
                 };
             
             }
-		};
+		}
 
 		var series = this,
 			dimensions = series.KDDimensions,
@@ -1696,13 +1696,13 @@ Series.prototype = {
                 nPoint2;
             
             // Get distance
-            var powX = Math.pow(search.plotX - point.plotX, 2) || Infinity,
-            	powY = Math.pow(search.plotY - point.plotY, 2) || Infinity;
+			var powX = Math.pow(search.plotX - point.plotX, 2) || Infinity,
+				powY = Math.pow(search.plotY - point.plotY, 2) || Infinity;
 
             point.dist = powX + (dimensions === 2 ? powY : 0);
             point.rdist = powX + powY;
 
-            if (!defined(point.y)) point.dist = Infinity;
+            if (!defined(point.y)) { point.dist = Infinity; }
             
             // Pick side based on distance to splitting point
             tdist = search[axis] - point[axis];
@@ -1724,18 +1724,18 @@ Series.prototype = {
                 }
             }
             return ret;
-        };
+        }
 
         if (this.KDTree) {
             return _search({
-            	plotX: point.chartX - this.chart.plotLeft,
-            	plotY: point.chartY - this.chart.plotTop
-            	}, 
-            	this.KDTree, this.KDDimensions, this.KDDimensions);
+				plotX: point.chartX - this.chart.plotLeft,
+				plotY: point.chartY - this.chart.plotTop
+				}, 
+				this.KDTree, this.KDDimensions, this.KDDimensions);
         } else {
-        	return null;
+				return null;
         }
-	},
+	}
 
 }; // end Series prototype
 

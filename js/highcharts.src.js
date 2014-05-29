@@ -9090,21 +9090,81 @@ Pointer.prototype = {
 	 * Run Point.onMouseOver and display tooltip for the point or points.
 	 */
 	runPointActions: function (e) {
+
 		var pointer = this,
 			chart = pointer.chart,
 			series = chart.series,
 			tooltip = chart.tooltip,
-			followPointer,
-			point,
-			points,
+			//followPointer,
+			//point,
+			//points,
 			hoverPoint = chart.hoverPoint,
-			hoverSeries = chart.hoverSeries,
+			//hoverSeries = chart.hoverSeries,
 			i,
-			j,
+			//j,
 			distance = chart.chartWidth,
-			index = pointer.getIndex(e),
-			anchor;
+			rdistance = chart.chartWidth, 
+			//index = pointer.getIndex(e),
+			//anchor,
 
+			kdpoints = [],
+			kdpoints2 = [],
+			kdpoint;
+
+		// Find nearest points on all series
+		each(series, function (S) {
+			// Skip hidden series
+			if (S.visible && pick(S.options.enableMouseTracking, true)) {
+				kdpoints.push(S.searchKDTree(e));
+			}
+		});
+		
+		// Find absolute nearest point
+		each(kdpoints, function (P) {
+			if (P.plotX && P.plotY) {
+				P.dist = Math.sqrt(P.dist);
+				P.rdist = Math.sqrt(P.rdist);
+				if ((P.dist < distance) || (P.dist === distance && P.rdist < rdistance)) {
+					distance = P.dist;
+					rdistance = P.rdist;
+					kdpoint = P;
+				}
+			}
+		});
+
+		// Crosshair
+		each(chart.axes, function (axis) {
+			axis.drawCrosshair(e, kdpoint);
+		});		
+
+		// Without a closest point there is no sense to continue
+		if (!kdpoint) { return; }
+
+		// Tooltip
+		if (tooltip && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
+
+			// Draw tooltip if necessary
+			if (tooltip.shared && !kdpoint.series.noSharedTooltip && kdpoints.length > 1) {
+				i = kdpoints.length;
+				while (i--) {
+					if (kdpoints[i].x !== kdpoint.x || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
+						kdpoints.splice(i, 1);
+					}
+				}
+				tooltip.refresh(kdpoints, e);
+			} else {
+				tooltip.refresh(kdpoint, e);
+			}
+		}
+
+		// Hover Series
+		if (kdpoint !== hoverPoint) {
+			// set new hoverPoint and hoverSeries
+			chart.hoverPoint = kdpoint;
+			chart.hoverSeries = kdpoint.series;	
+		}
+
+		/*
 		// shared tooltip
 		if (tooltip && pointer.options.tooltip.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
 			points = [];
@@ -9171,6 +9231,7 @@ Pointer.prototype = {
 		each(chart.axes, function (axis) {
 			axis.drawCrosshair(e, pick(point, hoverPoint));
 		});
+		*/
 	},
 
 
@@ -14007,6 +14068,8 @@ Series.prototype = {
 		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 		// (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 		series.hasRendered = true;
+
+		series.buildKDTree();
 	},
 
 	/**
@@ -14044,7 +14107,106 @@ Series.prototype = {
 		if (wasDirtyData) {
 			fireEvent(series, 'updatedData');
 		}
+	},
+
+	/**
+	 * KD Tree Implementation
+	 */
+
+	KDDimensions: 1,
+	KDTree: null,
+
+	buildKDTree: function () {
+		// Internal function
+		function _kdtree(points, depth, dimensions) {
+			var axis, median, length = points && points.length;
+
+            if (length) {
+
+                // alternate between the axis
+                axis = ['plotX', 'plotY'][depth % dimensions];
+
+                // sort point array
+                points.sort(function(a, b) {
+                    return a[axis] - b[axis];
+                });
+               
+                median = Math.floor(length / 2);
+                
+                // build and return node
+                return {
+                    point: points[median],
+                    left: _kdtree(points.slice(0, median), depth + 1, dimensions),
+                    right: _kdtree(points.slice(median + 1), depth + 1, dimensions)
+                };
+            
+            }
+		}
+
+		var series = this,
+			dimensions = series.KDDimensions,
+			tree = series.KDTree;
+
+        tree = null;
+        setTimeout(function () {
+            series.KDTree = _kdtree(series.points, dimensions, dimensions);            
+        });
+     },
+
+	searchKDTree: function (point) {
+		// Internal function
+		function _search(search, tree, depth, dimensions) {
+            var point = tree.point,
+                axis = ['plotX', 'plotY'][depth % dimensions],
+                tdist,
+                sideA,
+                sideB,
+                ret = point,
+                nPoint1,
+                nPoint2;
+            
+            // Get distance
+			var powX = Math.pow(search.plotX - point.plotX, 2) || Infinity,
+				powY = Math.pow(search.plotY - point.plotY, 2) || Infinity;
+
+            point.dist = powX + (dimensions === 2 ? powY : 0);
+            point.rdist = powX + powY;
+
+            if (!defined(point.y)) { point.dist = Infinity; }
+            
+            // Pick side based on distance to splitting point
+            tdist = search[axis] - point[axis];
+            sideA = tdist < 0 ? 'left' : 'right';
+
+            // End of tree
+            if (tree[sideA]) {
+                nPoint1 =_search(search, tree[sideA], depth + 1, dimensions);
+
+                ret = (nPoint1.dist < ret.dist ? nPoint1 : point);
+
+                sideB = tdist < 0 ? 'right' : 'left';
+                if (tree[sideB]) {
+                    // compare distance to current best to splitting point to decide wether to check side B or not
+                    if (Math.abs(tdist) < ret.dist) {
+                        nPoint2 = _search(search, tree[sideB], depth + 1, dimensions);
+                        ret = (nPoint2.dist < ret.dist ? nPoint2 : ret);
+                    }
+                }
+            }
+            return ret;
+        }
+
+        if (this.KDTree) {
+            return _search({
+				plotX: point.chartX - this.chart.plotLeft,
+				plotY: point.chartY - this.chart.plotTop
+				}, 
+				this.KDTree, this.KDDimensions, this.KDDimensions);
+        } else {
+				return null;
+        }
 	}
+
 }; // end Series prototype
 
 /**

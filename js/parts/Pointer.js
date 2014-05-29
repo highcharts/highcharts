@@ -137,24 +137,26 @@ Pointer.prototype = {
 			chart = pointer.chart,
 			series = chart.series,
 			tooltip = chart.tooltip,
-			followPointer,
-			point,
-			points,
+			//followPointer,
+			//point,
+			//points,
 			hoverPoint = chart.hoverPoint,
-			hoverSeries = chart.hoverSeries,
+			//hoverSeries = chart.hoverSeries,
 			i,
-			j,
+			//j,
 			distance = chart.chartWidth,
-			index = pointer.getIndex(e),
-			anchor,
+			rdistance = chart.chartWidth, 
+			//index = pointer.getIndex(e),
+			//anchor,
 
 			kdpoints = [],
+			kdpoints2 = [],
 			kdpoint;
 
 		// Find nearest points on all series
 		each(series, function (S) {
 			// Skip hidden series
-			if (S.visible) {
+			if (S.visible && pick(S.options.enableMouseTracking, true)) {
 				kdpoints.push(S.searchKDTree(e));
 			}
 		});
@@ -162,9 +164,11 @@ Pointer.prototype = {
 		// Find absolute nearest point
 		each(kdpoints, function (P) {
 			if (P.plotX && P.plotY) {
+				P.dist = Math.sqrt(P.dist);
 				P.rdist = Math.sqrt(P.rdist);
-				if (P.rdist < distance) {
-					distance = P.rdist;
+				if ((P.dist < distance) || (P.dist === distance && P.rdist < rdistance)) {
+					distance = P.dist;
+					rdistance = P.rdist;
 					kdpoint = P;
 				}
 			}
@@ -175,8 +179,11 @@ Pointer.prototype = {
 			axis.drawCrosshair(e, kdpoint);
 		});		
 
+		// Without a closest point there is no sense to continue
+		if (!kdpoint) { return; }
+
 		// Tooltip
-		if (tooltip && kdpoint != hoverPoint) {
+		if (tooltip && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
 
 			// Draw tooltip if necessary
 			if (tooltip.shared && !kdpoint.series.noSharedTooltip && kdpoints.length > 1) {
@@ -188,12 +195,12 @@ Pointer.prototype = {
 				}
 				tooltip.refresh(kdpoints, e);
 			} else {
-				tooltip.refresh([kdpoint], e);
+				tooltip.refresh(kdpoint, e);
 			}
 		}
 
 		// Hover Series
-		if (kdpoint != hoverPoint) {
+		if (kdpoint !== hoverPoint) {
 			// set new hoverPoint and hoverSeries
 			chart.hoverPoint = kdpoint;
 			chart.hoverSeries = kdpoint.series;	
