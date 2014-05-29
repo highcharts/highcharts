@@ -172,7 +172,7 @@ Legend.prototype = {
 					top;
 				
 				if (checkbox) {
-					left = checkboxPosition == 'left' ?
+					left = checkboxPosition === 'left' ?
 						(alignAttr.translateX + checkbox.x - 20) :
 						(alignAttr.translateX + item.checkboxOffset + checkbox.x - 20);
 					top = (translateY + checkbox.y + (scrollOffset || 0) + 3);
@@ -375,14 +375,14 @@ Legend.prototype = {
 			showCheckbox = chart.options.plotOptions.series.showCheckbox,
 			checkboxPosition = chart.options.plotOptions.series.checkboxPosition;
 
-		legend.itemX = options.align == 'left' && showCheckbox ?
-			legend.initialItemX + parseInt(options.itemCheckboxStyle.width) :
+		legend.itemX = options.align === 'left' && showCheckbox ?
+			legend.initialItemX + parseInt(options.itemCheckboxStyle.width, 10) :
 			legend.initialItemX;
 		legend.itemY = legend.initialItemY;
 		legend.offsetWidth = 0;
 		legend.lastItemY = 0;
 
-		if (options.align == 'right' && checkboxPosition == 'left' && showCheckbox) {
+		if (options.align === 'right' && checkboxPosition === 'left' && showCheckbox) {
 			legend.itemX += 20;
 		}
 
