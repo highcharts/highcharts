@@ -12887,9 +12887,6 @@ Series.prototype = {
 			option = conversion[attr];
 			obj[attr] = pick(options[option], base1[attr], base2[attr], base3[attr]);
 		}
-		if (!obj['stroke-width']) { // Chrome bug. #3065, #3072
-			delete obj.stroke;
-		}
 		return obj;
 	},
 
@@ -14313,11 +14310,19 @@ var ColumnSeries = extendClass(Series, {
 
 			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
-				borderAttr = defined(series.borderWidth) ? {
-					'stroke-width': series.borderWidth
-				} : {};
+
 				pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE] || series.pointAttr[NORMAL_STATE];
 				
+				// If there is no border width, also remove the stroke to prevent artefacts in Chrome (#1270, #3065)
+				if (series.borderWidth) {
+					borderAttr = {
+						'stroke-width': series.borderWidth
+					};
+				} else if (!pointAttr['stroke-width']) {
+					delete pointAttr.stroke;
+				}
+				
+
 				if (graphic) { // update
 					stop(graphic);
 					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs));
