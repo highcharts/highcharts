@@ -155,11 +155,11 @@ Pointer.prototype = {
 		// Find nearest points on all series
 		each(series, function (s) {
 			// Skip hidden series
-			if (s.visible && pick(s.options.enableMouseTracking, true)) {
+			if (s.visible && pick(s.options.enableMouseTracking, true) && (s.tracker || tooltip.shared)) {
 				kdpoints.push(s.searchKDTree(e));
 			}
 		});
-		
+
 		// Find absolute nearest point
 
 		each(kdpoints, function (p) {
@@ -173,14 +173,13 @@ Pointer.prototype = {
 				}
 			}
 		});
-
 		// Crosshair
 		each(chart.axes, function (axis) {
-			axis.drawCrosshair(e, kdpoint);
+			axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
 		});		
 
 		// Without a closest point there is no sense to continue
-		if (!kdpoint) { console.log('lala'); return; }
+		if (!kdpoint) { return; }
 
 		// Tooltip
 		if (tooltip && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {

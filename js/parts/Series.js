@@ -1638,6 +1638,7 @@ Series.prototype = {
 
 	kdDimensions: 1,
 	kdTree: null,
+	kdAxisArray: ['plotX', 'plotY'],
 
 	buildKDTree: function () {
 		// Internal function
@@ -1720,10 +1721,12 @@ Series.prototype = {
 		}
 
 		if (this.kdTree) {
-			return _search({
-				plotX: point.chartX - this.chart.plotLeft,
-				plotY: point.chartY - this.chart.plotTop
-				}, 
+			var chart = this.chart,
+				s = {
+				plotX: this.chart.inverted ? chart.plotHeight - point.chartY + chart.plotTop : point.chartX - chart.plotLeft,
+				plotY: this.chart.inverted ? chart.chartWidth - point.chartX : point.chartY - chart.plotTop 
+				};
+			return _search(s, 
 				this.kdTree, this.kdDimensions, this.kdDimensions);
 		} else {
 				return null;
