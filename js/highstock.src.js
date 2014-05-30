@@ -19471,7 +19471,15 @@ if (Renderer === Highcharts.VMLRenderer) {
  * Start Scroller code														*
  *****************************************************************************/
 var units = [].concat(defaultDataGroupingUnits), // copy
-	defaultSeriesType;
+	defaultSeriesType,
+	
+	// Finding the min or max of a set of variables where we don't know if they are defined,
+	// is a pattern that is repeated several places in Highcharts. Consider making this
+	// a global utility method.
+	numExt = function (extreme) {
+		return Math[extreme].apply(0, grep(arguments, function (n) { return typeof n === 'number'; }));
+	};
+
 // add more resolution to units
 units[4] = ['day', [1, 2, 3, 4]]; // allow more days
 units[5] = ['week', [1, 2, 3]]; // allow more weeks
@@ -20307,8 +20315,8 @@ Scroller.prototype = {
 					var axis = chart.xAxis[0],
 						ext = axis.getExtremes(),
 						scrollTrackWidth = chart.plotWidth - 2 * scrollbarHeight,
-						min = pick(axis.options.min, ext.dataMin),
-						valueRange = pick(axis.options.max, ext.dataMax) - min;
+						min = numExt('min', axis.options.min, ext.dataMin),
+						valueRange = numExt('max', axis.options.max, ext.dataMax) - min;
 
 					return reverse ?
 						// from pixel to value
@@ -20363,19 +20371,22 @@ Scroller.prototype = {
 
 		if (!returnFalseOnNoBaseSeries || baseAxis.dataMin !== null) {
 			return {
-				dataMin: pick(
+				dataMin: numExt(
+					'min',
 					navAxisOptions && navAxisOptions.min,
 					baseAxisOptions.min,
-					((defined(baseAxis.dataMin) && defined(navAxis.dataMin)) ? mathMin : pick)(baseAxis.dataMin, navAxis.dataMin)
+					baseAxis.dataMin, 
+					navAxis.dataMin
 				),
-				dataMax: pick(
+				dataMax: numExt(
+					'max',
 					navAxisOptions && navAxisOptions.max,
 					baseAxisOptions.max,
-					((defined(baseAxis.dataMax) && defined(navAxis.dataMax)) ? mathMax : pick)(baseAxis.dataMax, navAxis.dataMax)
+					baseAxis.dataMax, 
+					navAxis.dataMax
 				)
 			};
 		}
-
 	},
 
 	/**
