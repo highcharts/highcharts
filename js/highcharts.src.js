@@ -9108,26 +9108,26 @@ Pointer.prototype = {
 			//anchor,
 
 			kdpoints = [],
-			kdpoints2 = [],
 			kdpoint;
 
 		// Find nearest points on all series
-		each(series, function (S) {
+		each(series, function (s) {
 			// Skip hidden series
-			if (S.visible && pick(S.options.enableMouseTracking, true)) {
-				kdpoints.push(S.searchKDTree(e));
+			if (s.visible && pick(s.options.enableMouseTracking, true)) {
+				kdpoints.push(s.searchKDTree(e));
 			}
 		});
 		
 		// Find absolute nearest point
-		each(kdpoints, function (P) {
-			if (P.plotX && P.plotY) {
-				P.dist = Math.sqrt(P.dist);
-				P.rdist = Math.sqrt(P.rdist);
-				if ((P.dist < distance) || (P.dist === distance && P.rdist < rdistance)) {
-					distance = P.dist;
-					rdistance = P.rdist;
-					kdpoint = P;
+
+		each(kdpoints, function (p) {
+			if (p.plotX && p.plotY) {
+				p.dist = Math.sqrt(p.dist);
+				p.rdist = Math.sqrt(p.rdist);
+				if ((p.dist < distance) || (p.dist === distance && p.rdist < rdistance)) {
+					distance = p.dist;
+					rdistance = p.rdist;
+					kdpoint = p;
 				}
 			}
 		});
@@ -9138,13 +9138,13 @@ Pointer.prototype = {
 		});		
 
 		// Without a closest point there is no sense to continue
-		if (!kdpoint) { return; }
+		if (!kdpoint) { console.log('lala'); return; }
 
 		// Tooltip
 		if (tooltip && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
 
 			// Draw tooltip if necessary
-			if (tooltip.shared && !kdpoint.series.noSharedTooltip && kdpoints.length > 1) {
+			if (tooltip.shared && !kdpoint.series.noSharedTooltip) {
 				i = kdpoints.length;
 				while (i--) {
 					if (kdpoints[i].x !== kdpoint.x || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
@@ -9163,75 +9163,6 @@ Pointer.prototype = {
 			chart.hoverPoint = kdpoint;
 			chart.hoverSeries = kdpoint.series;	
 		}
-
-		/*
-		// shared tooltip
-		if (tooltip && pointer.options.tooltip.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
-			points = [];
-
-			// loop over all series and find the ones with points closest to the mouse
-			i = series.length;
-			for (j = 0; j < i; j++) {
-				if (series[j].visible &&
-						series[j].options.enableMouseTracking !== false &&
-						!series[j].noSharedTooltip && series[j].singularTooltips !== true && series[j].tooltipPoints.length) {
-					point = series[j].tooltipPoints[index];
-					if (point && point.series) { // not a dummy point, #1544
-						point._dist = mathAbs(index - point.clientX);
-						distance = mathMin(distance, point._dist);
-						points.push(point);
-					}
-				}
-			}
-			// remove furthest points
-			i = points.length;
-			while (i--) {
-				if (points[i]._dist > distance) {
-					points.splice(i, 1);
-				}
-			}
-			// refresh the tooltip if necessary
-			if (points.length && (points[0].clientX !== pointer.hoverX)) {
-				tooltip.refresh(points, e);
-				pointer.hoverX = points[0].clientX;
-			}
-		}
-
-		// Separate tooltip and general mouse events
-		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
-		if (hoverSeries && hoverSeries.tracker && !followPointer) { // #2584, #2830
-
-			// get the point
-			point = hoverSeries.tooltipPoints[index];
-
-			// a new point is hovered, refresh the tooltip
-			if (point && point !== hoverPoint) {
-
-				// trigger the events
-				point.onMouseOver(e);
-
-			}
-			
-		} else if (tooltip && followPointer && !tooltip.isHidden) {
-			anchor = tooltip.getAnchor([{}], e);
-			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });
-		}
-
-		// Start the event listener to pick up the tooltip 
-		if (tooltip && !pointer._onDocumentMouseMove) {
-			pointer._onDocumentMouseMove = function (e) {
-				if (charts[hoverChartIndex]) {
-					charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
-				}
-			};
-			addEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
-		}
-
-		// Draw independent crosshairs
-		each(chart.axes, function (axis) {
-			axis.drawCrosshair(e, pick(point, hoverPoint));
-		});
-		*/
 	},
 
 
@@ -9246,20 +9177,18 @@ Pointer.prototype = {
 			chart = pointer.chart,
 			hoverSeries = chart.hoverSeries,
 			hoverPoint = chart.hoverPoint,
-			tooltip = chart.tooltip,
-			tooltipPoints = tooltip && tooltip.shared ? chart.hoverPoints : hoverPoint;
+			tooltip = chart.tooltip;
 			
 		// Narrow in allowMove
-		allowMove = allowMove && tooltip && tooltipPoints;
+		allowMove = allowMove && tooltip;
 			
 		// Check if the points have moved outside the plot area, #1003
-		if (allowMove && splat(tooltipPoints)[0].plotX === UNDEFINED) {
+		if (allowMove) {
 			allowMove = false;
 		}	
 
 		// Just move the tooltip, #349
 		if (allowMove) {
-			tooltip.refresh(tooltipPoints);
 			if (hoverPoint) { // #2500
 				hoverPoint.setState(hoverPoint.state, true);
 			}
@@ -11901,9 +11830,6 @@ Chart.prototype = {
 	renderSeries: function () {
 		each(this.series, function (serie) {
 			serie.translate();
-			if (serie.setTooltipPoints) {
-				serie.setTooltipPoints();
-			}
 			serie.render();
 		});
 	},
@@ -12800,7 +12726,6 @@ Series.prototype = {
 			firstPoint = null,
 			xAxis = series.xAxis,
 			hasCategories = xAxis && !!xAxis.categories,
-			tooltipPoints = series.tooltipPoints,
 			i,
 			turboThreshold = options.turboThreshold,
 			pt,
@@ -12902,9 +12827,6 @@ Series.prototype = {
 				if (oldData[i] && oldData[i].destroy) {
 					oldData[i].destroy();
 				}
-			}
-			if (tooltipPoints) { // #2594
-				tooltipPoints.length = 0;
 			}
 
 			// reset minRange (#878)
@@ -14099,9 +14021,6 @@ Series.prototype = {
 		}
 
 		series.translate();
-		if (series.setTooltipPoints) {
-			series.setTooltipPoints(true);
-		}
 		series.render();
 
 		if (wasDirtyData) {
@@ -14113,98 +14032,98 @@ Series.prototype = {
 	 * KD Tree Implementation
 	 */
 
-	KDDimensions: 1,
-	KDTree: null,
+	kdDimensions: 1,
+	kdTree: null,
 
 	buildKDTree: function () {
 		// Internal function
 		function _kdtree(points, depth, dimensions) {
 			var axis, median, length = points && points.length;
 
-            if (length) {
+			if (length) {
 
-                // alternate between the axis
-                axis = ['plotX', 'plotY'][depth % dimensions];
+				// alternate between the axis
+				axis = ['plotX', 'plotY'][depth % dimensions];
 
-                // sort point array
-                points.sort(function(a, b) {
-                    return a[axis] - b[axis];
-                });
-               
-                median = Math.floor(length / 2);
-                
-                // build and return node
-                return {
-                    point: points[median],
-                    left: _kdtree(points.slice(0, median), depth + 1, dimensions),
-                    right: _kdtree(points.slice(median + 1), depth + 1, dimensions)
-                };
-            
-            }
+				// sort point array
+				points.sort(function(a, b) {
+					return a[axis] - b[axis];
+				});
+			
+				median = Math.floor(length / 2);
+				
+				// build and return node
+				return {
+					point: points[median],
+					left: _kdtree(points.slice(0, median), depth + 1, dimensions),
+					right: _kdtree(points.slice(median + 1), depth + 1, dimensions)
+				};
+			
+			}
 		}
 
 		var series = this,
-			dimensions = series.KDDimensions,
-			tree = series.KDTree;
+			dimensions = series.kdDimensions,
+			tree = series.kdTree;
 
-        tree = null;
-        setTimeout(function () {
-            series.KDTree = _kdtree(series.points, dimensions, dimensions);            
-        });
-     },
+		tree = null;
+		setTimeout(function () {
+			series.kdTree = _kdtree(series.points, dimensions, dimensions);			
+		});
+	},
 
 	searchKDTree: function (point) {
 		// Internal function
 		function _search(search, tree, depth, dimensions) {
-            var point = tree.point,
-                axis = ['plotX', 'plotY'][depth % dimensions],
-                tdist,
-                sideA,
-                sideB,
-                ret = point,
-                nPoint1,
-                nPoint2;
-            
-            // Get distance
-			var powX = Math.pow(search.plotX - point.plotX, 2) || Infinity,
-				powY = Math.pow(search.plotY - point.plotY, 2) || Infinity;
+			var point = tree.point,
+				axis = ['plotX', 'plotY'][depth % dimensions],
+				tdist,
+				sideA,
+				sideB,
+				ret = point,
+				nPoint1,
+				nPoint2,
+			
+				// Get distance
+				powX = Math.pow(search.plotX - point.plotX, 2) || Number.MAX_VALUE,
+				powY = Math.pow(search.plotY - point.plotY, 2) || Number.MAX_VALUE;
 
-            point.dist = powX + (dimensions === 2 ? powY : 0);
-            point.rdist = powX + powY;
+			point.dist = powX + (dimensions === 2 ? powY : 0);
+			point.rdist = powX + powY;
 
-            if (!defined(point.y)) { point.dist = Infinity; }
-            
-            // Pick side based on distance to splitting point
-            tdist = search[axis] - point[axis];
-            sideA = tdist < 0 ? 'left' : 'right';
+			if (!defined(point.y)) { point.dist = Number.MAX_VALUE; }
+			
+			// Pick side based on distance to splitting point
+			tdist = search[axis] - point[axis];
+			sideA = tdist < 0 ? 'left' : 'right';
 
-            // End of tree
-            if (tree[sideA]) {
-                nPoint1 =_search(search, tree[sideA], depth + 1, dimensions);
+			// End of tree
+			if (tree[sideA]) {
+				nPoint1 =_search(search, tree[sideA], depth + 1, dimensions);
 
-                ret = (nPoint1.dist < ret.dist ? nPoint1 : point);
+				ret = (nPoint1.dist < ret.dist ? nPoint1 : point);
 
-                sideB = tdist < 0 ? 'right' : 'left';
-                if (tree[sideB]) {
-                    // compare distance to current best to splitting point to decide wether to check side B or not
-                    if (Math.abs(tdist) < ret.dist) {
-                        nPoint2 = _search(search, tree[sideB], depth + 1, dimensions);
-                        ret = (nPoint2.dist < ret.dist ? nPoint2 : ret);
-                    }
-                }
-            }
-            return ret;
-        }
+				sideB = tdist < 0 ? 'right' : 'left';
+				if (tree[sideB]) {
+					// compare distance to current best to splitting point to decide wether to check side B or not
+					if (Math.abs(tdist) < ret.dist) {
+						nPoint2 = _search(search, tree[sideB], depth + 1, dimensions);
+						ret = (nPoint2.dist < ret.dist ? nPoint2 : ret);
+					}
+				}
+			}
+			return ret;
+		}
 
-        if (this.KDTree) {
-            return _search({
+		if (this.kdTree) {
+			return _search({
 				plotX: point.chartX - this.chart.plotLeft,
 				plotY: point.chartY - this.chart.plotTop
 				}, 
-				this.KDTree, this.KDDimensions, this.KDDimensions);
-        } else {
+				this.kdTree, this.kdDimensions, this.kdDimensions);
+		} else {
 				return null;
-        }
+		}
 	}
 
 }; // end Series prototype
@@ -17688,73 +17607,7 @@ extend(Series.prototype, {
 		fireEvent(series, showOrHide);
 	},
 
-	/**
-	 * Memorize tooltip texts and positions
-	 */
-	setTooltipPoints: function (renew) {
-		var series = this,
-			points = [],
-			pointsLength,
-			low,
-			high,
-			xAxis = series.xAxis,
-			xExtremes = xAxis && xAxis.getExtremes(),
-			axisLength = xAxis ? (xAxis.tooltipLen || xAxis.len) : series.chart.plotSizeX, // tooltipLen and tooltipPosName used in polar
-			point,
-			pointX,
-			nextPoint,
-			i,
-			tooltipPoints = []; // a lookup array for each pixel in the x dimension
-
-		// don't waste resources if tracker is disabled
-		if (series.options.enableMouseTracking === false || series.singularTooltips) {
-			return;
-		}
-
-		// renew
-		if (renew) {
-			series.tooltipPoints = null;
-		}
-
-		// concat segments to overcome null values
-		each(series.segments || series.points, function (segment) {
-			points = points.concat(segment);
-		});
-
-		// Reverse the points in case the X axis is reversed
-		if (xAxis && xAxis.reversed) {
-			points = points.reverse();
-		}
-
-		// Polar needs additional shaping
-		if (series.orderTooltipPoints) {
-			series.orderTooltipPoints(points);
-		}
-
-		// Assign each pixel position to the nearest point
-		pointsLength = points.length;
-		for (i = 0; i < pointsLength; i++) {
-			point = points[i];
-			pointX = point.x;
-			if (pointX >= xExtremes.min && pointX <= xExtremes.max) { // #1149
-				nextPoint = points[i + 1];
-
-				// Set this range's low to the last range's high plus one
-				low = high === UNDEFINED ? 0 : high + 1;
-				// Now find the new high
-				high = points[i + 1] ?
-					mathMin(mathMax(0, mathFloor( // #2070
-						(point.clientX + (nextPoint ? (nextPoint.wrappedClientX || nextPoint.clientX) : axisLength)) / 2
-					)), axisLength) :
-					axisLength;
-
-				while (low >= 0 && low <= high) {
-					tooltipPoints[low++] = point;
-				}
-			}
-		}
-		series.tooltipPoints = tooltipPoints;
-	},
+	
 
 	/**
 	 * Show the graph

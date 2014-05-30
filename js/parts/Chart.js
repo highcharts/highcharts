@@ -1159,9 +1159,6 @@ Chart.prototype = {
 	renderSeries: function () {
 		each(this.series, function (serie) {
 			serie.translate();
-			if (serie.setTooltipPoints) {
-				serie.setTooltipPoints();
-			}
 			serie.render();
 		});
 	},

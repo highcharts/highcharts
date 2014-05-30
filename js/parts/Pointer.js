@@ -150,26 +150,26 @@ Pointer.prototype = {
 			//anchor,
 
 			kdpoints = [],
-			kdpoints2 = [],
 			kdpoint;
 
 		// Find nearest points on all series
-		each(series, function (S) {
+		each(series, function (s) {
 			// Skip hidden series
-			if (S.visible && pick(S.options.enableMouseTracking, true)) {
-				kdpoints.push(S.searchKDTree(e));
+			if (s.visible && pick(s.options.enableMouseTracking, true)) {
+				kdpoints.push(s.searchKDTree(e));
 			}
 		});
 		
 		// Find absolute nearest point
-		each(kdpoints, function (P) {
-			if (P.plotX && P.plotY) {
-				P.dist = Math.sqrt(P.dist);
-				P.rdist = Math.sqrt(P.rdist);
-				if ((P.dist < distance) || (P.dist === distance && P.rdist < rdistance)) {
-					distance = P.dist;
-					rdistance = P.rdist;
-					kdpoint = P;
+
+		each(kdpoints, function (p) {
+			if (p.plotX && p.plotY) {
+				p.dist = Math.sqrt(p.dist);
+				p.rdist = Math.sqrt(p.rdist);
+				if ((p.dist < distance) || (p.dist === distance && p.rdist < rdistance)) {
+					distance = p.dist;
+					rdistance = p.rdist;
+					kdpoint = p;
 				}
 			}
 		});
@@ -180,13 +180,13 @@ Pointer.prototype = {
 		});		
 
 		// Without a closest point there is no sense to continue
-		if (!kdpoint) { return; }
+		if (!kdpoint) { console.log('lala'); return; }
 
 		// Tooltip
 		if (tooltip && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
 
 			// Draw tooltip if necessary
-			if (tooltip.shared && !kdpoint.series.noSharedTooltip && kdpoints.length > 1) {
+			if (tooltip.shared && !kdpoint.series.noSharedTooltip) {
 				i = kdpoints.length;
 				while (i--) {
 					if (kdpoints[i].x !== kdpoint.x || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
@@ -205,75 +205,6 @@ Pointer.prototype = {
 			chart.hoverPoint = kdpoint;
 			chart.hoverSeries = kdpoint.series;	
 		}
-
-		/*
-		// shared tooltip
-		if (tooltip && pointer.options.tooltip.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
-			points = [];
-
-			// loop over all series and find the ones with points closest to the mouse
-			i = series.length;
-			for (j = 0; j < i; j++) {
-				if (series[j].visible &&
-						series[j].options.enableMouseTracking !== false &&
-						!series[j].noSharedTooltip && series[j].singularTooltips !== true && series[j].tooltipPoints.length) {
-					point = series[j].tooltipPoints[index];
-					if (point && point.series) { // not a dummy point, #1544
-						point._dist = mathAbs(index - point.clientX);
-						distance = mathMin(distance, point._dist);
-						points.push(point);
-					}
-				}
-			}
-			// remove furthest points
-			i = points.length;
-			while (i--) {
-				if (points[i]._dist > distance) {
-					points.splice(i, 1);
-				}
-			}
-			// refresh the tooltip if necessary
-			if (points.length && (points[0].clientX !== pointer.hoverX)) {
-				tooltip.refresh(points, e);
-				pointer.hoverX = points[0].clientX;
-			}
-		}
-
-		// Separate tooltip and general mouse events
-		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
-		if (hoverSeries && hoverSeries.tracker && !followPointer) { // #2584, #2830
-
-			// get the point
-			point = hoverSeries.tooltipPoints[index];
-
-			// a new point is hovered, refresh the tooltip
-			if (point && point !== hoverPoint) {
-
-				// trigger the events
-				point.onMouseOver(e);
-
-			}
-			
-		} else if (tooltip && followPointer && !tooltip.isHidden) {
-			anchor = tooltip.getAnchor([{}], e);
-			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });
-		}
-
-		// Start the event listener to pick up the tooltip 
-		if (tooltip && !pointer._onDocumentMouseMove) {
-			pointer._onDocumentMouseMove = function (e) {
-				if (charts[hoverChartIndex]) {
-					charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
-				}
-			};
-			addEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
-		}
-
-		// Draw independent crosshairs
-		each(chart.axes, function (axis) {
-			axis.drawCrosshair(e, pick(point, hoverPoint));
-		});
-		*/
 	},
 
 
@@ -288,20 +219,18 @@ Pointer.prototype = {
 			chart = pointer.chart,
 			hoverSeries = chart.hoverSeries,
 			hoverPoint = chart.hoverPoint,
-			tooltip = chart.tooltip,
-			tooltipPoints = tooltip && tooltip.shared ? chart.hoverPoints : hoverPoint;
+			tooltip = chart.tooltip;
 			
 		// Narrow in allowMove
-		allowMove = allowMove && tooltip && tooltipPoints;
+		allowMove = allowMove && tooltip;
 			
 		// Check if the points have moved outside the plot area, #1003
-		if (allowMove && splat(tooltipPoints)[0].plotX === UNDEFINED) {
+		if (allowMove) {
 			allowMove = false;
 		}	
 
 		// Just move the tooltip, #349
 		if (allowMove) {
-			tooltip.refresh(tooltipPoints);
 			if (hoverPoint) { // #2500
 				hoverPoint.setState(hoverPoint.state, true);
 			}
