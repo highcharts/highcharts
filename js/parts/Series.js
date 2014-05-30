@@ -978,6 +978,9 @@ Series.prototype = {
 			option = conversion[attr];
 			obj[attr] = pick(options[option], base1[attr], base2[attr], base3[attr]);
 		}
+		if (!obj['stroke-width']) { // Chrome bug. #3065, #3072
+			delete obj.stroke;
+		}
 		return obj;
 	},
 
