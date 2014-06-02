@@ -1204,9 +1204,6 @@ Chart.prototype = {
 			renderer = chart.renderer,
 			options = chart.options;
 
-		var credits = options.credits,
-			creditsHref;
-
 		// Title
 		chart.setTitle();
 
@@ -1256,16 +1253,26 @@ Chart.prototype = {
 		chart.renderLabels();
 
 		// Credits
-		if (credits.enabled && !chart.credits) {
-			creditsHref = credits.href;
-			chart.credits = renderer.text(
+		chart.showCredits(options.credits);
+
+		// Set flag
+		chart.hasRendered = true;
+
+	},
+
+	/**
+	 * Show chart credits based on config options
+	 */
+	showCredits: function (credits) {
+		if (credits.enabled && !this.credits) {
+			this.credits = this.renderer.text(
 				credits.text,
 				0,
 				0
 			)
 			.on('click', function () {
-				if (creditsHref) {
-					location.href = creditsHref;
+				if (credits.href) {
+					location.href = credits.href;
 				}
 			})
 			.attr({
@@ -1276,10 +1283,6 @@ Chart.prototype = {
 			.add()
 			.align(credits.position);
 		}
-
-		// Set flag
-		chart.hasRendered = true;
-
 	},
 
 	/**

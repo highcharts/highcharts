@@ -52,11 +52,10 @@ var MapAreaPoint = extendClass(Point, {
 
 		var point = Point.prototype.applyOptions.call(this, options, x),
 			series = this.series,
-			seriesOptions = series.options,
 			joinBy = series.joinBy,
 			mapPoint;
 
-		if (seriesOptions.mapData) {
+		if (series.mapData) {
 			mapPoint = series.mapMap[point[joinBy[1]]];
 			if (mapPoint) {
 				// This applies only to bubbles
@@ -325,9 +324,13 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		}
 
 		this.getBox(data);
-		this.getBox(mapData);
-
 		if (mapData) {
+			if (mapData.type === 'FeatureCollection') {
+				mapData = Highcharts.geojson(mapData, this.type, this);
+			}
+
+			this.getBox(mapData);
+			this.mapData = mapData;
 			this.mapMap = mapMap = {};
 			each(mapData, function (mapPoint) {
 				var props = mapPoint.properties;

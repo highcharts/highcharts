@@ -1811,20 +1811,17 @@ Axis.prototype = {
 	 * Redraw the axis to reflect changes in the data or axis extremes
 	 */
 	redraw: function () {
-		var axis = this,
-			chart = axis.chart,
-			pointer = chart.pointer;
-
+		
 		// render the axis
-		axis.render();
+		this.render();
 
 		// move plot lines and bands
-		each(axis.plotLinesAndBands, function (plotLine) {
+		each(this.plotLinesAndBands, function (plotLine) {
 			plotLine.render();
 		});
 
 		// mark associated series as dirty and ready for redraw
-		each(axis.series, function (series) {
+		each(this.series, function (series) {
 			series.isDirty = true;
 		});
 

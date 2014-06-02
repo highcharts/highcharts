@@ -984,11 +984,10 @@ var MapAreaPoint = extendClass(Point, {
 
 		var point = Point.prototype.applyOptions.call(this, options, x),
 			series = this.series,
-			seriesOptions = series.options,
 			joinBy = series.joinBy,
 			mapPoint;
 
-		if (seriesOptions.mapData) {
+		if (series.mapData) {
 			mapPoint = series.mapMap[point[joinBy[1]]];
 			if (mapPoint) {
 				// This applies only to bubbles
@@ -1257,9 +1256,13 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		}
 
 		this.getBox(data);
-		this.getBox(mapData);
-
 		if (mapData) {
+			if (mapData.type === 'FeatureCollection') {
+				mapData = Highcharts.geojson(mapData, this.type, this);
+			}
+
+			this.getBox(mapData);
+			this.mapData = mapData;
 			this.mapMap = mapMap = {};
 			each(mapData, function (mapPoint) {
 				var props = mapPoint.properties;
@@ -1579,6 +1582,7 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 		},
 		color: 'black',
 		crop: false,
+		defer: false,
 		overflow: false,
 		style: {
 			HcTextStroke: '3px rgba(255,255,255,0.5)' // docs
@@ -1720,7 +1724,7 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 /**
  * Convert a geojson object to map data of a given Highcharts type (map, mappoint or mapline).
  */
-Highcharts.geojson = function (geojson, hType) {
+Highcharts.geojson = function (geojson, hType, series) {
 	var mapData = [],
 		path = [],
 		polygonToPath = function (polygon) {
@@ -1790,8 +1794,28 @@ Highcharts.geojson = function (geojson, hType) {
 		}
 		
 	});
+
+	// Create a credits text that includes map source, to be picked up in Chart.showCredits
+	if (series) {
+		series.chart.mapCredits = '<a href="http://www.highcharts.com">Highcharts</a> \u00A9 ' +
+			'<a href="' + geojson.copyrightUrl + '">' + geojson.copyrightShort + '</a>';
+	}
+
 	return mapData;
 };
+
+/**
+ * Override showCredits to includ map source by default // docs
+ */
+wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
+
+	if (defaultOptions.credits.text === this.options.credits.text && this.mapCredits) { // default text and mapCredits is set
+		credits.text = this.mapCredits;
+		credits.href = null;
+	}
+
+	proceed.call(this, credits);
+});
 
 // Add language
 extend(defaultOptions.lang, {

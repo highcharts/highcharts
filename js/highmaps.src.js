@@ -7782,20 +7782,17 @@ Axis.prototype = {
 	 * Redraw the axis to reflect changes in the data or axis extremes
 	 */
 	redraw: function () {
-		var axis = this,
-			chart = axis.chart,
-			pointer = chart.pointer;
-
+		
 		// render the axis
-		axis.render();
+		this.render();
 
 		// move plot lines and bands
-		each(axis.plotLinesAndBands, function (plotLine) {
+		each(this.plotLinesAndBands, function (plotLine) {
 			plotLine.render();
 		});
 
 		// mark associated series as dirty and ready for redraw
-		each(axis.series, function (series) {
+		each(this.series, function (series) {
 			series.isDirty = true;
 		});
 
@@ -11413,9 +11410,6 @@ Chart.prototype = {
 			renderer = chart.renderer,
 			options = chart.options;
 
-		var credits = options.credits,
-			creditsHref;
-
 		// Title
 		chart.setTitle();
 
@@ -11465,16 +11459,26 @@ Chart.prototype = {
 		chart.renderLabels();
 
 		// Credits
-		if (credits.enabled && !chart.credits) {
-			creditsHref = credits.href;
-			chart.credits = renderer.text(
+		chart.showCredits(options.credits);
+
+		// Set flag
+		chart.hasRendered = true;
+
+	},
+
+	/**
+	 * Show chart credits based on config options
+	 */
+	showCredits: function (credits) {
+		if (credits.enabled && !this.credits) {
+			this.credits = this.renderer.text(
 				credits.text,
 				0,
 				0
 			)
 			.on('click', function () {
-				if (creditsHref) {
-					location.href = creditsHref;
+				if (credits.href) {
+					location.href = credits.href;
 				}
 			})
 			.attr({
@@ -11485,10 +11489,6 @@ Chart.prototype = {
 			.add()
 			.align(credits.position);
 		}
-
-		// Set flag
-		chart.hasRendered = true;
-
 	},
 
 	/**
@@ -15828,11 +15828,10 @@ var MapAreaPoint = extendClass(Point, {
 
 		var point = Point.prototype.applyOptions.call(this, options, x),
 			series = this.series,
-			seriesOptions = series.options,
 			joinBy = series.joinBy,
 			mapPoint;
 
-		if (seriesOptions.mapData) {
+		if (series.mapData) {
 			mapPoint = series.mapMap[point[joinBy[1]]];
 			if (mapPoint) {
 				// This applies only to bubbles
@@ -16101,9 +16100,13 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		}
 
 		this.getBox(data);
-		this.getBox(mapData);
-
 		if (mapData) {
+			if (mapData.type === 'FeatureCollection') {
+				mapData = Highcharts.geojson(mapData, this.type, this);
+			}
+
+			this.getBox(mapData);
+			this.mapData = mapData;
 			this.mapMap = mapMap = {};
 			each(mapData, function (mapPoint) {
 				var props = mapPoint.properties;
@@ -16686,6 +16689,7 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 		},
 		color: 'black',
 		crop: false,
+		defer: false,
 		overflow: false,
 		style: {
 			HcTextStroke: '3px rgba(255,255,255,0.5)' // docs
@@ -17042,7 +17046,7 @@ if (seriesTypes.bubble) {
 /**
  * Convert a geojson object to map data of a given Highcharts type (map, mappoint or mapline).
  */
-Highcharts.geojson = function (geojson, hType) {
+Highcharts.geojson = function (geojson, hType, series) {
 	var mapData = [],
 		path = [],
 		polygonToPath = function (polygon) {
@@ -17112,8 +17116,28 @@ Highcharts.geojson = function (geojson, hType) {
 		}
 		
 	});
+
+	// Create a credits text that includes map source, to be picked up in Chart.showCredits
+	if (series) {
+		series.chart.mapCredits = '<a href="http://www.highcharts.com">Highcharts</a> \u00A9 ' +
+			'<a href="' + geojson.copyrightUrl + '">' + geojson.copyrightShort + '</a>';
+	}
+
 	return mapData;
 };
+
+/**
+ * Override showCredits to includ map source by default // docs
+ */
+wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
+
+	if (defaultOptions.credits.text === this.options.credits.text && this.mapCredits) { // default text and mapCredits is set
+		credits.text = this.mapCredits;
+		credits.href = null;
+	}
+
+	proceed.call(this, credits);
+});
 
 // Add language
 extend(defaultOptions.lang, {

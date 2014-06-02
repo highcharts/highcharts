@@ -27,7 +27,14 @@ $httpHost = explode('.', $httpHost);
 $topDomain = $httpHost[sizeof($httpHost) - 1];
 $html = ob_get_clean();
 $html = str_replace('/code.highcharts.com/', "/code.highcharts.$topDomain/", $html);
-$html = str_replace('.js"', '.js?' . time() . '"', $html); // Force no-cache for debugging
+
+
+if (strstr($html, "/code.highcharts.$topDomain/mapdata")) {
+	$html = str_replace("/code.highcharts.$topDomain/mapdata", "/code.highcharts.com/mapdata", $html);
+} else {
+	$html = str_replace('.js"', '.js?' . time() . '"', $html); // Force no-cache for debugging
+}
+
 
 
 // Handle themes
