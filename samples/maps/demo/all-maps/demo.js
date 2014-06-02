@@ -143,7 +143,7 @@ $(function () {
 
 				series: [{
 					data: data,
-					mapData: Highcharts.geojson(mapGeoJSON, 'map'),
+					mapData: mapGeoJSON,
 					joinBy: 'code',
 					name: 'Random data',
 					states: {

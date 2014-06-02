@@ -48,7 +48,7 @@ $(function () {
 
             series : [{
                 name: 'Population',
-                mapData: Highcharts.geojson(Highcharts.maps['custom/world']),
+                mapData: Highcharts.maps['custom/world'],
                 data: data,
                 joinBy: ['iso-a2', 'code'],
                 tooltip: {

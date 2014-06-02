@@ -41,7 +41,7 @@ $(function () {
             
             series : [{
                 data : data,
-                mapData: Highcharts.geojson(Highcharts.maps['countries/usa/usa-all']),
+                mapData: Highcharts.maps['countries/usa/usa-all'],
                 joinBy: 'hasc',
                 dataLabels: {
                     enabled: true,

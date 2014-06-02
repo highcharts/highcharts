@@ -47,7 +47,7 @@ $(function () {
                     duration: 1000
                 },
                 data : data,
-                mapData: Highcharts.geojson(Highcharts.maps['countries/usa/usa-all']),
+                mapData: Highcharts.maps['countries/usa/usa-all'],
                 joinBy: ['postal-code', 'code'],
                 dataLabels: {
                     enabled: true,

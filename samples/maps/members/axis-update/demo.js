@@ -19,7 +19,7 @@ $(function () {
 
             series : [{
                 data : data,
-                mapData: Highcharts.geojson(Highcharts.maps['custom/world']),
+                mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
                 states: {
