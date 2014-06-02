@@ -95,6 +95,18 @@ function getResources() {
 
 
 		<script type="text/javascript">
+
+		(function () {
+			if (typeof $ === 'undefined') {
+				window.onload = function () {
+					document.getElementById('container').innerHTML = 
+						'<div style="margin-top: 150px; %text-align: center"><h3 style="font-size: 2em; color: red">' +
+						'jQuery is missing</h3><p>Check your settings in <code>default-settings.json</code>.</div>';
+				}
+				return;
+			}
+
+			
 			$(function() {
 
 				$('#version').html(Highcharts.product + ' ' + Highcharts.version);
@@ -162,6 +174,7 @@ function getResources() {
 				});
 
 			});
+		}());
 		</script>
 		<script>
 
