@@ -8654,18 +8654,16 @@ Pointer.prototype = {
 		});
 
 		// Find absolute nearest point
-
 		each(kdpoints, function (p) {
 			if (p.plotX && p.plotY) {
-				p.dist = Math.sqrt(p.dist);
-				p.rdist = Math.sqrt(p.rdist);
-				if ((p.dist < distance) || (p.dist === distance && p.rdist < rdistance)) {
-					distance = p.dist;
-					rdistance = p.rdist;
+				if ((p.dist.distX < distance) || (p.dist.distX === distance && p.dist.distR < rdistance)) {
+					distance = p.dist.distX;
+					rdistance = p.dist.distR;
 					kdpoint = p;
 				}
 			}
 		});
+
 		// Crosshair
 		each(chart.axes, function (axis) {
 			axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
@@ -8693,9 +8691,12 @@ Pointer.prototype = {
 
 		// Hover Series
 		if (kdpoint !== hoverPoint) {
+			// release old hovers
+
 			// set new hoverPoint and hoverSeries
 			chart.hoverPoint = kdpoint;
 			chart.hoverSeries = kdpoint.series;	
+
 		}
 	},
 
@@ -13535,8 +13536,13 @@ Series.prototype = {
 	kdDimensions: 1,
 	kdTree: null,
 	kdAxisArray: ['plotX', 'plotY'],
+	kdComparer: 'distX',
 
 	buildKDTree: function () {
+		var series = this,
+			dimensions = series.kdDimensions,
+			tree = series.kdTree;
+
 		// Internal function
 		function _kdtree(points, depth, dimensions) {
 			var axis, median, length = points && points.length;
@@ -13544,7 +13550,7 @@ Series.prototype = {
 			if (length) {
 
 				// alternate between the axis
-				axis = ['plotX', 'plotY'][depth % dimensions];
+				axis = series.kdAxisArray[depth % dimensions];
 
 				// sort point array
 				points.sort(function(a, b) {
@@ -13563,10 +13569,6 @@ Series.prototype = {
 			}
 		}
 
-		var series = this,
-			dimensions = series.kdDimensions,
-			tree = series.kdTree;
-
 		tree = null;
 		setTimeout(function () {
 			series.kdTree = _kdtree(series.points, dimensions, dimensions);			
@@ -13574,25 +13576,31 @@ Series.prototype = {
 	},
 
 	searchKDTree: function (point) {
+		var series = this,
+			kdComparer = this.kdComparer;
+
 		// Internal function
+		function _distance(p1, p2) {
+			var x = Math.pow(p1.plotX - p2.plotX, 2) || null, 
+				y = Math.pow(p1.plotY - p2.plotY, 2) || null,
+				r = x + y;
+			return {
+				distX: x ? Math.sqrt(x) : Number.MAX_VALUE,
+				distY: y ? Math.sqrt(y) : Number.MAX_VALUE,
+				distR: r ? Math.sqrt(r) : Number.MAX_VALUE
+			};
+		}
 		function _search(search, tree, depth, dimensions) {
 			var point = tree.point,
-				axis = ['plotX', 'plotY'][depth % dimensions],
+				axis = series.kdAxisArray[depth % dimensions],
 				tdist,
 				sideA,
 				sideB,
 				ret = point,
 				nPoint1,
-				nPoint2,
+				nPoint2;
 			
-				// Get distance
-				powX = Math.pow(search.plotX - point.plotX, 2) || Number.MAX_VALUE,
-				powY = Math.pow(search.plotY - point.plotY, 2) || Number.MAX_VALUE;
-
-			point.dist = powX + (dimensions === 2 ? powY : 0);
-			point.rdist = powX + powY;
-
-			if (!defined(point.y)) { point.dist = Number.MAX_VALUE; }
+			point.dist = _distance(search, point);
 			
 			// Pick side based on distance to splitting point
 			tdist = search[axis] - point[axis];
@@ -13602,14 +13610,14 @@ Series.prototype = {
 			if (tree[sideA]) {
 				nPoint1 =_search(search, tree[sideA], depth + 1, dimensions);
 
-				ret = (nPoint1.dist < ret.dist ? nPoint1 : point);
+				ret = (nPoint1.dist[kdComparer] < ret.dist[kdComparer] ? nPoint1 : point);
 
 				sideB = tdist < 0 ? 'right' : 'left';
 				if (tree[sideB]) {
 					// compare distance to current best to splitting point to decide wether to check side B or not
-					if (Math.abs(tdist) < ret.dist) {
+					if (Math.sqrt(tdist*tdist) < ret.dist[kdComparer]) {
 						nPoint2 = _search(search, tree[sideB], depth + 1, dimensions);
-						ret = (nPoint2.dist < ret.dist ? nPoint2 : ret);
+						ret = (nPoint2.dist[kdComparer] < ret.dist[kdComparer] ? nPoint2 : ret);
 					}
 				}
 			}
@@ -14504,6 +14512,8 @@ var ScatterSeries = extendClass(Series, {
 	trackerGroups: ['markerGroup'],
 	takeOrdinalPosition: false, // #2342
 	singularTooltips: true,
+	kdDimensions: 2,
+	kdComparer: 'distR',
 	drawGraph: function () {
 		if (this.options.lineWidth) {
 			Series.prototype.drawGraph.call(this);

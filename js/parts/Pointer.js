@@ -161,18 +161,16 @@ Pointer.prototype = {
 		});
 
 		// Find absolute nearest point
-
 		each(kdpoints, function (p) {
 			if (p.plotX && p.plotY) {
-				p.dist = Math.sqrt(p.dist);
-				p.rdist = Math.sqrt(p.rdist);
-				if ((p.dist < distance) || (p.dist === distance && p.rdist < rdistance)) {
-					distance = p.dist;
-					rdistance = p.rdist;
+				if ((p.dist.distX < distance) || (p.dist.distX === distance && p.dist.distR < rdistance)) {
+					distance = p.dist.distX;
+					rdistance = p.dist.distR;
 					kdpoint = p;
 				}
 			}
 		});
+
 		// Crosshair
 		each(chart.axes, function (axis) {
 			axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
@@ -200,9 +198,12 @@ Pointer.prototype = {
 
 		// Hover Series
 		if (kdpoint !== hoverPoint) {
+			// release old hovers
+
 			// set new hoverPoint and hoverSeries
 			chart.hoverPoint = kdpoint;
 			chart.hoverSeries = kdpoint.series;	
+
 		}
 	},
 

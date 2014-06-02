@@ -21,6 +21,8 @@ var ScatterSeries = extendClass(Series, {
 	trackerGroups: ['markerGroup'],
 	takeOrdinalPosition: false, // #2342
 	singularTooltips: true,
+	kdDimensions: 2,
+	kdComparer: 'distR',
 	drawGraph: function () {
 		if (this.options.lineWidth) {
 			Series.prototype.drawGraph.call(this);
