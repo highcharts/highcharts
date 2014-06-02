@@ -8051,11 +8051,6 @@ Axis.prototype = {
 			chart = axis.chart,
 			pointer = chart.pointer;
 
-		// hide tooltip and hover states
-		if (pointer) {
-			pointer.reset(true);
-		}
-
 		// render the axis
 		axis.render();
 
