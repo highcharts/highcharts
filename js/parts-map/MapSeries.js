@@ -338,7 +338,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				if (joinBy[0] && props && props[joinBy[0]]) {
 					mapPoint[joinBy[0]] = props[joinBy[0]];
 				}
-
 				mapMap[mapPoint[joinBy[0]]] = mapPoint;
 			});
 		}
