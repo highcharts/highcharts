@@ -15494,7 +15494,8 @@ extend(ColorAxis.prototype, {
 			box,
 			width = pick(legendOptions.symbolWidth, horiz ? 200 : 12),
 			height = pick(legendOptions.symbolHeight, horiz ? 12 : 200),
-			labelPadding = pick(legendOptions.labelPadding, horiz ? 10 : 30);
+			labelPadding = pick(legendOptions.labelPadding, horiz ? 16 : 30),
+			itemDistance = pick(legendOptions.itemDistance, 10);
 
 		this.setLegendColor();
 
@@ -15510,7 +15511,7 @@ extend(ColorAxis.prototype, {
 		box = item.legendSymbol.getBBox();
 
 		// Set how much space this legend item takes up
-		this.legendItemWidth = width + padding + (horiz ? 0 : labelPadding);
+		this.legendItemWidth = width + padding + (horiz ? itemDistance : labelPadding);
 		this.legendItemHeight = height + padding + (horiz ? labelPadding : 0);
 	},
 	/**
@@ -15832,7 +15833,7 @@ var MapAreaPoint = extendClass(Point, {
 			mapPoint;
 
 		if (series.mapData) {
-			mapPoint = series.mapMap[point[joinBy[1]]];
+			mapPoint = point[joinBy[1]] && series.mapMap[point[joinBy[1]]];
 			if (mapPoint) {
 				// This applies only to bubbles
 				if (series.xyFromShape) {
@@ -16114,7 +16115,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				if (joinBy[0] && props && props[joinBy[0]]) {
 					mapPoint[joinBy[0]] = props[joinBy[0]];
 				}
-
 				mapMap[mapPoint[joinBy[0]]] = mapPoint;
 			});
 		}
