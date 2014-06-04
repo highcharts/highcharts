@@ -679,7 +679,7 @@ extend(Series.prototype, {
 			}
 
 			if (state) {
-				lineWidth = stateOptions[state].lineWidth || lineWidth + 1;
+				lineWidth = stateOptions[state].lineWidth || lineWidth + (stateOptions[state].lineWidthPlus || 0); // docs
 			}
 
 			if (graph && !graph.dashstyle) { // hover is turned off for dashed lines in VML
