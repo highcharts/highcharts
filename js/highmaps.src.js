@@ -13375,7 +13375,7 @@ Series.prototype = {
 			this[prop] = group = this.chart.renderer.g(name)
 				.attr({
 					visibility: visibility,
-					zIndex: pick(zIndex, this.index) // #3094
+					zIndex: zIndex || 0.1 // IE8 needs this
 				})
 				.add(parent);
 		}
@@ -13925,13 +13925,21 @@ extend(Series.prototype, {
 	 * Update the series with a new set of options
 	 */
 	update: function (newOptions, redraw) {
-		var chart = this.chart,
+		var series = this,
+			chart = this.chart,
 			// must use user options when changing type because this.options is merged
 			// in with type specific plotOptions
 			oldOptions = this.userOptions,
 			oldType = this.type,
 			proto = seriesTypes[oldType].prototype,
+			preserve = ['group', 'markerGroup', 'dataLabelsGroup'],
 			n;
+
+		// Make sure groups are not destroyed (#3094)
+		each(preserve, function (prop) {
+			preserve[prop] = series[prop];
+			delete series[prop];
+		});
 
 		// Do the merge, with some forced options
 		newOptions = merge(oldOptions, {
@@ -13948,6 +13956,11 @@ extend(Series.prototype, {
 			}
 		}
 		extend(this, seriesTypes[newOptions.type || oldType].prototype);
+
+		// Re-register groups (#3094)
+		each(preserve, function (prop) {
+			series[prop] = preserve[prop];
+		});
 
 
 		this.init(chart, newOptions);
