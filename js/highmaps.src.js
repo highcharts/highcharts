@@ -14774,6 +14774,10 @@ if (seriesTypes.pie) {
 				length = points.length,
 				slotIndex;
 
+			if (!length) {
+				continue;
+			}
+
 			// Sort by angle
 			series.sortByAngle(points, i - 0.5);
 
