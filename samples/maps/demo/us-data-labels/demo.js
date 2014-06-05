@@ -89,6 +89,9 @@ $(function () {
                 enabled: true,
                 formatter: function () {
                     return this.point.properties['hc-key'].substr(3, 2);
+                },
+                style: {
+                    fontSize: '10px'
                 }
             },
             tooltip: {

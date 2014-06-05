@@ -2,7 +2,6 @@ $(function () {
 
     /*
     TODO:
-    - Alaska not loading
     - Check data labels after drilling. Label rank? New positions?
     - Not US Mainland text
     - Separators
