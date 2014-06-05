@@ -1439,7 +1439,7 @@ Series.prototype = {
 					}
 				}
 			});
-			//this.clips = clips;
+			this.clips = clips;
 		}
 	},
 
