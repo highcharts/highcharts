@@ -27,6 +27,7 @@ var UNDEFINED,
 	each = Highcharts.each,
 	extend = Highcharts.extend,
 	extendClass = Highcharts.extendClass,
+	map = Highcharts.map,
 	merge = Highcharts.merge,
 	pick = Highcharts.pick,
 	numberFormat = Highcharts.numberFormat,
@@ -1248,13 +1249,26 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		var options = this.options,
 			mapData = options.mapData,
 			mapMap,
-			joinBy,
+			joinBy = options.joinBy,
+			joinByNull = joinBy === null,
 			dataUsed = [];
 
-		joinBy = this.joinBy = Highcharts.splat(options.joinBy);
+		if (joinByNull) {
+			joinBy = '_i';
+		}
+		joinBy = this.joinBy = Highcharts.splat(joinBy);
 		if (!joinBy[1]) {
 			joinBy[1] = joinBy[0];
 		}
+
+		// Pick up numeric values
+		data = map(data, function (val) {
+			if (typeof val === 'number') {
+				return {
+					value: val
+				};
+			}
+		});
 
 		this.getBox(data);
 		if (mapData) {
@@ -1265,8 +1279,15 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			this.getBox(mapData);
 			this.mapData = mapData;
 			this.mapMap = mapMap = {};
-			each(mapData, function (mapPoint) {
+			if (joinByNull) {
+				each(data, function (point, i) {
+					point._i = i;
+				});
+			}
+			each(mapData, function (mapPoint, i) {
 				var props = mapPoint.properties;
+
+				mapPoint._i = i;
 				// Copy the property over to root for faster access
 				if (joinBy[0] && props && props[joinBy[0]]) {
 					mapPoint[joinBy[0]] = props[joinBy[0]];
