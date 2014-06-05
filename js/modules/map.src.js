@@ -29,6 +29,7 @@ var UNDEFINED,
 	extendClass = Highcharts.extendClass,
 	merge = Highcharts.merge,
 	pick = Highcharts.pick,
+	stop = Highcharts.stop,
 	numberFormat = Highcharts.numberFormat,
 	defaultOptions = Highcharts.getOptions(),
 	seriesTypes = Highcharts.seriesTypes,
@@ -952,6 +953,7 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 		verticalAlign: 'middle',
 		crop: false,
 		overflow: false,
+		padding: 0, // docs
 		style: {
 			color: 'white',
 			fontWeight: 'bold',
@@ -1155,6 +1157,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					point._minX = pointMinX;
 					point._maxY = pointMaxY;
 					point._minY = pointMinY;
+					point._area = (pointMaxX - pointMinX) * (pointMaxY - pointMinY);
 					point._foundBox = true;
 				}
 
@@ -1453,14 +1456,53 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 		}
 
+		this.drawMapDataLabels();
 		
-		// Now draw the data labels. Special for maps is the time that the data labels are drawn (after points),
-		// and the clipping of the dataLabelsGroup.
-		Series.prototype.drawDataLabels.call(series);
-		if (series.dataLabelsGroup) {
-			series.dataLabelsGroup.clip(chart.clipRect);
+		
+	},
+
+	/**
+	 * Draw the data labels. Special for maps is the time that the data labels are drawn (after points),
+	 * and the clipping of the dataLabelsGroup.
+	 */		
+	drawMapDataLabels: function () {
+
+		var points = this.points,
+			len = points.length,
+			i,
+			j,
+			label1,
+			label2,
+			intersectRect = function (pos1, pos2, size1, size2) {
+				return !(
+					pos2.x > pos1.x + size1.width ||
+					pos2.x + size2.width < pos1.x ||
+					pos2.y > pos1.y + size1.height ||
+					pos2.y + size2.height < pos1.y
+				);
+			},
+			hideMe;
+
+
+		Series.prototype.drawDataLabels.call(this);
+		if (this.dataLabelsGroup) {
+			this.dataLabelsGroup.clip(this.chart.clipRect);
 		}
-		
+
+		// Hide overlapping labels
+		for (i = 0; i < len - 1; ++i) {
+			label1 = points[i].dataLabel;
+
+			for (j = i + 1; j < len; ++j) {
+				label2 = points[j].dataLabel;
+				if (label1 && label2 && label1.y !== -999 && label2.y !== -999 && intersectRect(label1.alignAttr, label2.alignAttr, label1, label2)) {
+					hideMe = points[i]._area < points[j]._area ? label1 : label2;
+					stop(hideMe);
+					hideMe.attr({ y: -999 });
+					hideMe.placed = false; // don't animate back in
+				}
+			}
+		}
 	},
 
 	/**
