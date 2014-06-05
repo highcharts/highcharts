@@ -1389,6 +1389,18 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			seriesTypes.column.prototype.drawPoints.apply(series);
 			series.group = group; // Reset
 
+			// Add class names
+			each(series.points, function (point) {
+				if (point.graphic) {
+					if (point.name) {
+						point.graphic.addClass('highcharts-name-' + point.name.replace(' ', '-').toLowerCase());
+					}
+					if (point.properties && point.properties['hc-key']) {
+						point.graphic.addClass('highcharts-key-' + point.properties['hc-key'].toLowerCase());
+					}
+				}
+			});
+
 			// Set the base for later scale-zooming. The originX and originY properties are the 
 			// axis values in the plot area's upper left corner.
 			this.baseTrans = {
