@@ -14425,7 +14425,7 @@ var ScatterSeries = extendClass(Series, {
 	sorted: false,
 	requireSorting: false,
 	noSharedTooltip: true,
-	trackerGroups: ['markerGroup'],
+	trackerGroups: ['markerGroup', 'dataLabelsGroup'],
 	takeOrdinalPosition: false, // #2342
 	singularTooltips: true,
 	drawGraph: function () {
