@@ -27,7 +27,6 @@ var UNDEFINED,
 	each = Highcharts.each,
 	extend = Highcharts.extend,
 	extendClass = Highcharts.extendClass,
-	map = Highcharts.map,
 	merge = Highcharts.merge,
 	pick = Highcharts.pick,
 	numberFormat = Highcharts.numberFormat,
@@ -1261,12 +1260,15 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			joinBy[1] = joinBy[0];
 		}
 
-		// Pick up numeric values
-		data = map(data, function (val) {
+		// Pick up numeric values, add index
+		each(data, function (val, i) {
 			if (typeof val === 'number') {
-				return {
+				data[i] = {
 					value: val
 				};
+			}
+			if (joinByNull) {
+				data[i]._i = i;
 			}
 		});
 
@@ -1279,11 +1281,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			this.getBox(mapData);
 			this.mapData = mapData;
 			this.mapMap = mapMap = {};
-			if (joinByNull) {
-				each(data, function (point, i) {
-					point._i = i;
-				});
-			}
+			
 			each(mapData, function (mapPoint, i) {
 				var props = mapPoint.properties;
 
