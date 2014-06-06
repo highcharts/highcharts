@@ -1178,10 +1178,10 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 			// If no minRange option is set, set the default minimum zooming range to 5 times the 
 			// size of the smallest element
-			if (xAxis.options.minRange === undefined) {
+			if (xAxis && xAxis.options.minRange === undefined) {
 				xAxis.minRange = Math.min(5 * minRange, (this.maxX - this.minX) / 5, xAxis.minRange || MAX_VALUE);
 			}
-			if (yAxis.options.minRange === undefined) {
+			if (yAxis && yAxis.options.minRange === undefined) {
 				yAxis.minRange = Math.min(5 * minRange, (this.maxY - this.minY) / 5, yAxis.minRange || MAX_VALUE);
 			}
 		}

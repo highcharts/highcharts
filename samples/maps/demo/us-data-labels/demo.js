@@ -16,38 +16,27 @@ $(function () {
         }
     });
 
-    var mapData = Highcharts.geojson(Highcharts.maps['countries/usa/custom/usa-small']);
-    
-    // Y positions for small eastern states' data labels
-    var middleYs = {
-        'US.VT': 0.4,
-        'US.NH': 0.8,
-        'US.MA': 0.8,
-        'US.RI': 0.8,
-        'US.CT': 0.8,
-        'US.NJ': 0.8,
-        'US.DE': 0.8,
-        'US.MD': 0.8,
-        'US.DC': 0.8
-    };
+    // Get the map data and do some processing
+    var mapData = Highcharts.geojson(Highcharts.maps['countries/usa/custom/usa-small']);    
     $.each(mapData, function (i, point) {
-        if (middleYs.hasOwnProperty(point.properties['hc-key'])) {
-            point.middleY = middleYs[point.properties['hc-key']];
-            point.middleX = 1; // to the right
-            /*point.dataLabels = {
-                x: 3,
-                align: 'left',
-                color: 'black',
-                style: {
-                    HcTextStroke: 'none',
-                    fontWeight: 'normal'
-                }
-            }*/
-        }
+        var path = point.path,
+            copy = { path: path };
 
+        // This point has a square legend to the right
+        if (path[1] === 1730) {
+
+            // Identify the box
+            Highcharts.seriesTypes.map.prototype.getBox.call(0, [copy]);
+
+            // Place the center of the data label in the center of the point legend box
+            point.middleX = ((path[1] + path[4]) / 2 - copy._minX) / (copy._maxX - copy._minX);
+            point.middleY = ((path[2] + path[7]) / 2 - copy._minY) / (copy._maxY - copy._minY);
+
+        }
         // Tag it for joining
         point.ucName = point.name.toUpperCase();
     });
+
 
 
 
