@@ -1,12 +1,10 @@
 $(function () {
 
-	/*
-	TODO:
-	- Don't download cached maps
-	- Separators
-	- Set location.hash to allow refresh and sending URL
-
-	*/
+	/** 
+	 * This is a complicated demo of Highmaps, not intended to get you up to speed
+	 * quickly, but to show off some basic maps and features in one single place.
+	 * For the basic demo, check out http://www.highcharts.com/maps/demo/geojson instead.
+	 */
 
 	// Base path to maps
 	var baseMapPath = "http://code.highcharts.com/mapdata/1.0.0/",
