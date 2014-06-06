@@ -70,7 +70,7 @@ $(function () {
                     this.setTitle(null, { text: e.point.name });
                 },
                 drillup: function (e) {
-                    this.setTitle(null, { text: 'US Mainland' });
+                    this.setTitle(null, { text: 'USA' });
                 }
             }
         },
@@ -80,7 +80,7 @@ $(function () {
         },
 
         subtitle: {
-            text: 'US Mainland',
+            text: 'USA',
             floating: true,
             align: 'right',
             y: 50,
@@ -120,7 +120,7 @@ $(function () {
         
         series : [{
             data : data,
-            name: 'US Mainland',
+            name: 'USA',
             dataLabels: {
                 enabled: true,
                 format: '{point.properties.postal-code}'

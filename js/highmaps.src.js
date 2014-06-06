@@ -16328,6 +16328,20 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 */		
 	drawMapDataLabels: function () {
 
+		Series.prototype.drawDataLabels.call(this);
+		if (this.dataLabelsGroup) {
+			this.dataLabelsGroup.clip(this.chart.clipRect);
+		}
+
+		this.hideOverlappingDataLabels();
+	},
+
+	/**
+	 * Hide overlapping labels. Labels are moved and faded in and out on zoom to provide a smooth 
+	 * visual imression.
+	 */		
+	hideOverlappingDataLabels: function () {
+
 		var points = this.points,
 			len = points.length,
 			i,
@@ -16341,29 +16355,40 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					pos2.y > pos1.y + size1.height ||
 					pos2.y + size2.height < pos1.y
 				);
-			},
-			hideMe;
+			};
 
+		// Mark with initial opacity
+		each(points, function (point, label) {
+			label = point.dataLabel;
+			if (label) {
+				label.oldOpacity = label.opacity;
+				label.newOpacity = 1;
+			}
+		});
 
-		Series.prototype.drawDataLabels.call(this);
-		if (this.dataLabelsGroup) {
-			this.dataLabelsGroup.clip(this.chart.clipRect);
-		}
-
-		// Hide overlapping labels
+		// Detect overlapping labels
 		for (i = 0; i < len - 1; ++i) {
 			label1 = points[i].dataLabel;
 
 			for (j = i + 1; j < len; ++j) {
 				label2 = points[j].dataLabel;
-				if (label1 && label2 && label1.y !== -999 && label2.y !== -999 && intersectRect(label1.alignAttr, label2.alignAttr, label1, label2)) {
-					hideMe = points[i]._area < points[j]._area ? label1 : label2;
-					stop(hideMe);
-					hideMe.attr({ y: -999 });
-					hideMe.placed = false; // don't animate back in
+				if (label1 && label2 && label1.newOpacity !== 0 && label2.newOpacity !== 0 && 
+						intersectRect(label1.alignAttr, label2.alignAttr, label1, label2)) {
+					(points[i]._area < points[j]._area ? label1 : label2).newOpacity = 0;
 				}
 			}
 		}
+
+		// Hide or show
+		each(points, function (point, label) {
+			label = point.dataLabel;
+			if (label) {
+				if (label.oldOpacity !== label.newOpacity) {
+					label[label.isOld ? 'animate' : 'attr'](extend({ opacity: label.newOpacity }, label.alignAttr));
+				}
+				label.isOld = true;
+			}
+		});
 	},
 
 	/**
