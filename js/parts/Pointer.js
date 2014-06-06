@@ -137,6 +137,7 @@ Pointer.prototype = {
 			chart = pointer.chart,
 			series = chart.series,
 			tooltip = chart.tooltip,
+			shared = pick(tooltip.shared,false),
 			//followPointer,
 			//point,
 			//points,
@@ -155,7 +156,7 @@ Pointer.prototype = {
 		// Find nearest points on all series
 		each(series, function (s) {
 			// Skip hidden series
-			if (s.visible && pick(s.options.enableMouseTracking, true) && (s.tracker || tooltip.shared)) {
+			if (s.visible && pick(s.options.enableMouseTracking, true)) {
 				kdpoints.push(s.searchKDTree(e));
 			}
 		});
@@ -183,7 +184,7 @@ Pointer.prototype = {
 		if (tooltip && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
 
 			// Draw tooltip if necessary
-			if (tooltip.shared && !kdpoint.series.noSharedTooltip) {
+			if (shared && !kdpoint.series.noSharedTooltip) {
 				i = kdpoints.length;
 				while (i--) {
 					if (kdpoints[i].x !== kdpoint.x || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
