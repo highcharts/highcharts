@@ -16111,10 +16111,12 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	setData: function (data, redraw) {
 		var options = this.options,
 			mapData = options.mapData,
-			mapMap,
 			joinBy = options.joinBy,
 			joinByNull = joinBy === null,
-			dataUsed = [];
+			dataUsed = [],
+			mapPoint,
+			props,
+			i;
 
 		if (joinByNull) {
 			joinBy = '_i';
@@ -16144,39 +16146,40 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 			this.getBox(mapData);
 			this.mapData = mapData;
-			this.mapMap = mapMap = {};
+			this.mapMap = {};
 			
-			each(mapData, function (mapPoint, i) {
-				var props = mapPoint.properties;
+			for (i = 0; i < mapData.length; i++) {
+				mapPoint = mapData[i];
+				props = mapPoint.properties;
 
 				mapPoint._i = i;
 				// Copy the property over to root for faster access
 				if (joinBy[0] && props && props[joinBy[0]]) {
 					mapPoint[joinBy[0]] = props[joinBy[0]];
 				}
-				mapMap[mapPoint[joinBy[0]]] = mapPoint;
-			});
-		}
-
-		if (options.allAreas && mapData) {
-
-			data = data || [];
-
-			// Registered the point codes that actually hold data
-			if (joinBy[1]) {
-				each(data, function (point) {
-					dataUsed.push(point[joinBy[1]]);
-				});
+				this.mapMap[mapPoint[joinBy[0]]] = mapPoint;
 			}
 
-			// Add those map points that don't correspond to data, which will be drawn as null points
-			dataUsed = '|' + dataUsed.join('|') + '|'; // String search is faster than array.indexOf 
+			if (options.allAreas) {
 
-			each(mapData, function (mapPoint) {
-				if (!joinBy[0] || dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1) {
-					data.push(merge(mapPoint, { value: null }));
+				data = data || [];
+
+				// Registered the point codes that actually hold data
+				if (joinBy[1]) {
+					each(data, function (point) {
+						dataUsed.push(point[joinBy[1]]);
+					});
 				}
-			});
+
+				// Add those map points that don't correspond to data, which will be drawn as null points
+				dataUsed = '|' + dataUsed.join('|') + '|'; // String search is faster than array.indexOf 
+
+				each(mapData, function (mapPoint) {
+					if (!joinBy[0] || dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1) {
+						data.push(merge(mapPoint, { value: null }));
+					}
+				});
+			}
 		}
 		Series.prototype.setData.call(this, data, redraw);
 	},
