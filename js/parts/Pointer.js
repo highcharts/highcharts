@@ -191,8 +191,12 @@ Pointer.prototype = {
 					}
 				}
 				tooltip.refresh(kdpoints, e);
+				each(kdpoints, function (point) {
+					point.onMouseOver(e);
+				});
 			} else {
 				tooltip.refresh(kdpoint, e);
+				kdpoint.onMouseOver(e);
 			}
 		}
 
