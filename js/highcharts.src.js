@@ -3075,13 +3075,10 @@ SVGRenderer.prototype = {
 								);
 							}
 
-
-							spanNo++;
-
 							// check width and apply soft breaks
 							if (width) {
 								var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
-									hasWhiteSpace = words.length > 1 && textStyles.whiteSpace !== 'nowrap',
+									hasWhiteSpace = spanNo || (words.length > 1 && textStyles.whiteSpace !== 'nowrap'),
 									tooLong,
 									actualWidth,
 									hcHeight = textStyles.HcHeight,
@@ -3135,6 +3132,8 @@ SVGRenderer.prototype = {
 									}
 								}
 							}
+
+							spanNo++;
 						}
 					}
 				});
