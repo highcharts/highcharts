@@ -16017,7 +16017,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					point._minX = pointMinX;
 					point._maxY = pointMaxY;
 					point._minY = pointMinY;
-					point._area = (pointMaxX - pointMinX) * (pointMaxY - pointMinY);
+					point.labelrank = pick(point.labelrank, point.properties && point.properties.labelrank, (pointMaxX - pointMinX) * (pointMaxY - pointMinY)); // docs: labelrank
 					point._foundBox = true;
 				}
 
@@ -16378,7 +16378,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				label2 = points[j].dataLabel;
 				if (label1 && label2 && label1.newOpacity !== 0 && label2.newOpacity !== 0 && 
 						intersectRect(label1.alignAttr, label2.alignAttr, label1, label2)) {
-					(points[i]._area < points[j]._area ? label1 : label2).newOpacity = 0;
+					(points[i].labelrank < points[j].labelrank ? label1 : label2).newOpacity = 0;
 				}
 			}
 		}
