@@ -269,6 +269,7 @@ extend(Axis.prototype, {
 			} else {
 				axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = UNDEFINED;
 			}
+			axis.postTranslate = axis.useOrdinal;
 		}
 		axis.groupIntervalFactor = null; // reset for next run
 	},
