@@ -332,16 +332,18 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		}
 
 		// Pick up numeric values, add index
-		each(data, function (val, i) {
-			if (typeof val === 'number') {
-				data[i] = {
-					value: val
-				};
-			}
-			if (joinByNull) {
-				data[i]._i = i;
-			}
-		});
+		if (data) {
+			each(data, function (val, i) {
+				if (typeof val === 'number') {
+					data[i] = {
+						value: val
+					};
+				}
+				if (joinByNull) {
+					data[i]._i = i;
+				}
+			});
+		}
 
 		this.getBox(data);
 		if (mapData) {
