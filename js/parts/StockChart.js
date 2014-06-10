@@ -151,7 +151,7 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 			return 'right';
 		}
 	}
-	return proceed.call(this);
+	return proceed.call(this, [].slice.call(arguments, 1));
 });
 
 // Override getPlotLinePath to allow for multipane charts
