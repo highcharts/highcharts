@@ -6,7 +6,7 @@ $(function () {
         $('#container').highcharts('Map', {
             
             title : {
-                text : 'Axis minRange prevents zooming to far in'
+                text : 'Axis minRange prevents zooming in too far'
             },
 
             mapNavigation: {

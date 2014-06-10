@@ -29,7 +29,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 		
 		path = [];
 
-		if (hType === 'map') {
+		if (hType === 'map' || hType === 'mapbubble') {
 			if (type === 'Polygon') {
 				each(coordinates, polygonToPath);
 				path.push('Z');

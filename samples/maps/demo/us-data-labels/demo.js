@@ -17,7 +17,7 @@ $(function () {
     });
 
     // Get the map data and do some processing
-    var mapData = Highcharts.geojson(Highcharts.maps['countries/usa/custom/usa-small']);    
+    var mapData = Highcharts.geojson(Highcharts.maps['countries/us/custom/us-small']);    
     $.each(mapData, function (i, point) {
         var path = point.path,
             copy = { path: path };
@@ -77,7 +77,7 @@ $(function () {
             dataLabels: {
                 enabled: true,
                 formatter: function () {
-                    return this.point.properties['hc-key'].substr(3, 2);
+                    return this.point.properties['hc-a2'];
                 },
                 style: {
                     fontSize: '10px'
@@ -88,7 +88,7 @@ $(function () {
             }
         }, {
             type: 'mapline',
-            data: Highcharts.geojson(Highcharts.maps['countries/usa/custom/usa-small'], 'mapline'),
+            data: Highcharts.geojson(Highcharts.maps['countries/us/custom/us-small'], 'mapline'),
             color: 'silver'
         }]
     });

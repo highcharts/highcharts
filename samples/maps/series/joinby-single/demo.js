@@ -39,7 +39,7 @@ $(function () {
 
         series : [{
             data : data,
-            mapData: Highcharts.maps['custom/nordic-countries-no-greenland'],
+            mapData: Highcharts.maps['custom/nordic-countries-core'],
             joinBy: 'name',
             name: 'Random data',
             states: {

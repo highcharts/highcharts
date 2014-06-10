@@ -64,14 +64,17 @@ $(function () {
 				match;
 
 			// Update info box download links
-			$("#download").html('<a target="_blank" href="' + svgPath +
-				'">SVG</a> <a target="_blank" href="' + geojsonPath +
-				'">GeoJSON</a> <a target="_blank" href="' + javascriptPath + '">JavaScript</a>');
+			$("#download").html('<a class="button" target="_blank" href="http://www.highcharts.com/samples/maps-base.php?mapkey=' + mapKey + '">' +
+				'View clean demo</a><br>' +
+				'... or view as ' +
+				'<a target="_blank" href="' + svgPath + '">SVG</a>, ' + 
+				'<a target="_blank" href="' + geojsonPath + '">GeoJSON</a>, ' +
+				'<a target="_blank" href="' + javascriptPath + '">JavaScript</a>.');
 
 			// Generate non-random data for the map    
 			$.each(mapGeoJSON.features, function (index, feature) {
 				data.push({
-					code: feature.properties.code,
+					key: feature.properties['hc-key'],
 					value: index
 				});
 			});
@@ -84,12 +87,12 @@ $(function () {
 
 			
 			// Is there a layer above this?
-			if (/^countries\/[a-z]{3}\/[a-z]{3}-all$/.test(mapKey)) { // country
+			if (/^countries\/[a-z]{2}\/[a-z]{2}-all$/.test(mapKey)) { // country
 				parent = {
 					desc: 'World',
 					key: 'custom/world'
 				};
-			} else if (match = mapKey.match(/^(countries\/[a-z]{3}\/[a-z]{3})-[a-z0-9]+-all$/)) { // admin1
+			} else if (match = mapKey.match(/^(countries\/[a-z]{2}\/[a-z]{2})-[a-z0-9]+-all$/)) { // admin1
 				parent = {
 					desc: $('option[value="' + match[1] + '-all.js"]').text(),
 					key: match[1] + '-all'
@@ -142,7 +145,7 @@ $(function () {
 				series: [{
 					data: data,
 					mapData: mapGeoJSON,
-					joinBy: 'code',
+					joinBy: ['hc-key', 'key'],
 					name: 'Random data',
 					states: {
 						hover: {
@@ -152,16 +155,18 @@ $(function () {
 					dataLabels: {
 						enabled: showDataLabels,
 						formatter: function () {
-							return this.point.properties && this.point.properties['hc-a2'];
+							return mapKey === 'custom/world' || mapKey === 'countries/us/us-all' ?
+								(this.point.properties && this.point.properties['hc-a2']) :
+								this.point.name;
 						}
 					},
 					point: {
 						events: {
 							// On click, look for a detailed map
 							click: function () {
-								var code = this.code.toLowerCase();
+								var key = this.key;
 								$('#mapDropdown option').each(function (i) {
-									if (this.value === 'countries/' + code + '/' + code + '-all.js') {
+									if (this.value === 'countries/' + key.substr(0, 2) + '/' + key + '-all.js') {
 										$('#mapDropdown').val(this.value).change();
 									}
 								});

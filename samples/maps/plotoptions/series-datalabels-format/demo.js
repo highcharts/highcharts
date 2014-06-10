@@ -41,7 +41,7 @@ $(function () {
             
             series : [{
                 data : data,
-                mapData: Highcharts.maps['countries/usa/usa-all'],
+                mapData: Highcharts.maps['countries/us/us-all'],
                 joinBy: 'hasc',
                 dataLabels: {
                     enabled: true,

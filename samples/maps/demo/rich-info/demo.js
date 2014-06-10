@@ -222,6 +222,6 @@ $(function () {
         }).highcharts();
 
         // Pre-select a country
-        mapChart.get('US').select();
+        mapChart.get('us').select();
     });
 });

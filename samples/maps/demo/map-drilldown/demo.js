@@ -7,11 +7,11 @@ $(function () {
     - Separators
     */
 
-    var data = Highcharts.geojson(Highcharts.maps['countries/usa/usa-all']);
+    var data = Highcharts.geojson(Highcharts.maps['countries/us/us-all']);
 
     // Set drilldown pointers
     $.each(data, function (i) {
-        this.drilldown = 'usa-' + this.properties.fips.substr(2, 2);
+        this.drilldown = this.properties['hc-key'];
         this.value = i; // Non-random bogus data
     });
 
@@ -26,7 +26,7 @@ $(function () {
                     
                     if (!e.seriesOptions) {
                         var chart = this,
-                            mapKey = 'countries/usa/' + e.point.drilldown + '-all';
+                            mapKey = 'countries/us/' + e.point.drilldown + '-all';
 
                         // Show the spinner
                         chart.showLoading('<i class="icon-spinner icon-spin icon-3x"></i>'); // Font Awesome spinner
