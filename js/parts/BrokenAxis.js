@@ -11,9 +11,9 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 		this.postTranslate = true;
 
 		this.val2lin = function (val) {
-			var brk;
+			var brk, i;
 
-			for (var i = 0; i < breaks.length; i++) {
+			for (i = 0; i < breaks.length; i++) {
 				brk = breaks[i];
 				if (val >= brk.to) {
 					val -= brk.to - brk.from;
@@ -22,18 +22,18 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 				}
 			}
 			return val;
-		}
+		};
 
 		this.lin2val = function (val) {
 			return val;
-		}
+		};
 
 		// POC of increasing the translation slope to achieve the correct min and max
 		this.setAxisTranslation = function (saveOld) {
 			Axis.prototype.setAxisTranslation.call(this, saveOld);
 
 			this.transA *= 1.3;
-		}
+		};
 	}
 
 });

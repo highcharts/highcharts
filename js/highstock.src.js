@@ -6729,7 +6729,7 @@ Axis.prototype = {
 			localMin = old ? axis.oldMin : axis.min,
 			returnValue,
 			minPixelPadding = axis.minPixelPadding,
-			postTranslate = (axis.options.ordinal || (axis.isLog && handleLog)) && axis.lin2val;
+			postTranslate = (axis.postTranslate || (axis.isLog && handleLog)) && axis.lin2val;
 
 		if (!localA) {
 			localA = axis.transA;
@@ -17909,6 +17909,7 @@ extend(Axis.prototype, {
 			} else {
 				axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = UNDEFINED;
 			}
+			axis.postTranslate = axis.useOrdinal;
 		}
 		axis.groupIntervalFactor = null; // reset for next run
 	},
@@ -18287,7 +18288,45 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 /* ****************************************************************************
  * End ordinal axis logic                                                   *
  *****************************************************************************/
-/* ****************************************************************************
+wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
+
+	var breaks;
+
+	proceed.call(this, chart, userOptions);
+
+	breaks = this.options.breaks;
+	if (breaks) {
+
+		// Make the axis use val2lin and lin2val for post translation
+		this.postTranslate = true;
+
+		this.val2lin = function (val) {
+			var brk, i;
+
+			for (i = 0; i < breaks.length; i++) {
+				brk = breaks[i];
+				if (val >= brk.to) {
+					val -= brk.to - brk.from;
+				} else if (val >= brk.from) {
+					val -= val - brk.from;
+				}
+			}
+			return val;
+		};
+
+		this.lin2val = function (val) {
+			return val;
+		};
+
+		// POC of increasing the translation slope to achieve the correct min and max
+		this.setAxisTranslation = function (saveOld) {
+			Axis.prototype.setAxisTranslation.call(this, saveOld);
+
+			this.transA *= 1.3;
+		};
+	}
+
+});/* ****************************************************************************
  * Start data grouping module												 *
  ******************************************************************************/
 /*jslint white:true */
