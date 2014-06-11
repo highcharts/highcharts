@@ -198,7 +198,7 @@ function isString(s) {
  * @param {Object} obj
  */
 function isObject(obj) {
-	return typeof obj === 'object';
+	return obj && typeof obj === 'object';
 }
 
 /**
@@ -16017,7 +16017,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					point._minX = pointMinX;
 					point._maxY = pointMaxY;
 					point._minY = pointMinY;
-					point.labelrank = pick(point.labelrank, point.properties && point.properties.labelrank, (pointMaxX - pointMinX) * (pointMaxY - pointMinY)); // docs: labelrank
+					point.labelrank = pick(point.labelrank, (pointMaxX - pointMinX) * (pointMaxY - pointMinY)); // docs: labelrank
 					point._foundBox = true;
 				}
 
