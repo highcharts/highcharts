@@ -7,7 +7,7 @@ $(function () {
 	 */
 
 	// Base path to maps
-	var baseMapPath = "http://code.highcharts.com/mapdata/1.0.0/",
+	var baseMapPath = "http://code.highcharts.com/mapdata/",
 		showDataLabels = true, // Switch for data labels enabled/disabled
 		mapCount = 0,
 		searchText,

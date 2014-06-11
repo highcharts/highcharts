@@ -43,7 +43,7 @@ $(function () {
                         }, 3000);
                         
                         // Load the drilldown map
-                        $.getScript('http://code.highcharts.com/mapdata/1.0.0/' + mapKey + '.js', function () {
+                        $.getScript('http://code.highcharts.com/mapdata/' + mapKey + '.js', function () {
 
                             var data = Highcharts.geojson(Highcharts.maps[mapKey]);
                         

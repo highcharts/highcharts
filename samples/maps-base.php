@@ -3,7 +3,7 @@ $data = array();
 $separatorSeries = '';
 if ($mapkey = $_GET['mapkey']) {
 
-    if ($file = file_get_contents('http://code.highcharts.com/mapdata/1.0.0/'. $mapkey .'.geo.json')) {
+    if ($file = file_get_contents('http://code.highcharts.com/mapdata/'. $mapkey .'.geo.json')) {
         $shapes = json_decode($file);
 
         $i = 0;
@@ -60,7 +60,7 @@ if ($mapkey = $_GET['mapkey']) {
                     },
 
                     subtitle : {
-                        text : 'Source map: <a href="http://code.highcharts.com/mapdata/1.0.0/<?php echo $mapkey ?>.js"><?php echo $mapkey ?></a>'
+                        text : 'Source map: <a href="http://code.highcharts.com/mapdata/<?php echo $mapkey ?>.js"><?php echo $mapkey ?></a>'
                     },
 
                     mapNavigation: {
@@ -96,7 +96,7 @@ if ($mapkey = $_GET['mapkey']) {
     <body>
         <script src="http://code.highcharts.com/maps/highmaps.js"></script>
         <script src="http://code.highcharts.com/maps/modules/exporting.js"></script>
-        <script src="http://code.highcharts.com/mapdata/1.0.0/<?php echo $mapkey ?>.js"></script>
+        <script src="http://code.highcharts.com/mapdata/<?php echo $mapkey ?>.js"></script>
 
 
         <div id="container"></div>
