@@ -2738,7 +2738,6 @@ SVGElement.prototype = {
 		}
 	},
 	fillSetter: function (value, key, element) {
-
 		if (typeof value === 'string') {
 			element.setAttribute(key, value);
 		} else if (value) {
@@ -2769,7 +2768,7 @@ SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter =
 	this[key] = value;
 	// Only apply the stroke attribute if the stroke width is defined and larger than 0
 	if (this.stroke && this['stroke-width']) {
-		this.fillSetter(this.stroke, 'stroke', element);
+		SVGElement.prototype.fillSetter.call(this, this.stroke, 'stroke', element); // use prototype as instance may be overridden
 		element.setAttribute('stroke-width', this['stroke-width']);
 		this.hasStroke = true;
 	} else if (key === 'stroke-width' && value === 0 && this.hasStroke) {
