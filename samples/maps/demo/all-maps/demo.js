@@ -208,6 +208,10 @@ $(function () {
 	});
 
 	// Trigger change event to load map on startup
-	$("#mapDropdown").val(location.hash ? location.hash.substr(1) + '.js' : 0).change();
-
+	if (location.hash) {
+		$('#mapDropdown').val(location.hash.substr(1) + '.js');
+	} else { // for IE9
+		$($('#mapDropdown option')[0]).attr('selected', 'selected');
+	}
+	$('#mapDropdown').change();
 });
