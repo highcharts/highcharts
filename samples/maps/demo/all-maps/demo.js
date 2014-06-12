@@ -120,10 +120,7 @@ $(function () {
 				},
 
 				mapNavigation: {
-					enabled: true,
-					buttonOptions: {
-						verticalAlign: 'bottom'
-					}
+					enabled: true
 				},
 
 				colorAxis: {
@@ -133,7 +130,8 @@ $(function () {
 				legend: {
 					layout: 'vertical',
 					align: 'left',
-					verticalAlign: 'middle'
+					verticalAlign: 'top',
+					y: 60
 				},
 
 				loading: {
