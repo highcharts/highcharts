@@ -19,7 +19,7 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 		verticalAlign: 'middle',
 		crop: false,
 		overflow: false,
-		padding: 0, // docs
+		padding: 0,
 		style: {
 			color: 'white',
 			fontWeight: 'bold',
@@ -223,7 +223,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					point._minX = pointMinX;
 					point._maxY = pointMaxY;
 					point._minY = pointMinY;
-					point.labelrank = pick(point.labelrank, (pointMaxX - pointMinX) * (pointMaxY - pointMinY)); // docs: labelrank
+					point.labelrank = pick(point.labelrank, (pointMaxX - pointMinX) * (pointMaxY - pointMinY));
 					point._foundBox = true;
 				}
 

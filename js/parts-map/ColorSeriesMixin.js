@@ -40,7 +40,6 @@ var colorSeriesMixin = {
 
 /**
  * Wrap the buildText method and add the hook for add text stroke
- * docs: On dataLabels.color and dataLabels.style, emphasize that a change in color should be accompanied by an opposite textStroke color
  */
 wrap(SVGRenderer.prototype, 'buildText', function (proceed, wrapper) {
 

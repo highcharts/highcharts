@@ -9,6 +9,7 @@ $(function () {
     
         // Instanciate the map
         $('#container').highcharts('Map', {
+            
             chart : {
                 borderWidth : 1
             },

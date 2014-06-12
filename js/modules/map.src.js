@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.0.0-beta-modified ()
+ * @license Highmaps JS v1.0.1 (2014-06-12)
  * The map module version 1.0.x is compatible with Highcharts 4.0.x.
  *
  * (c) 2011-2014 Torstein Honsi
@@ -624,7 +624,6 @@ var colorSeriesMixin = {
 
 /**
  * Wrap the buildText method and add the hook for add text stroke
- * docs: On dataLabels.color and dataLabels.style, emphasize that a change in color should be accompanied by an opposite textStroke color
  */
 wrap(SVGRenderer.prototype, 'buildText', function (proceed, wrapper) {
 
@@ -953,7 +952,7 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 		verticalAlign: 'middle',
 		crop: false,
 		overflow: false,
-		padding: 0, // docs
+		padding: 0,
 		style: {
 			color: 'white',
 			fontWeight: 'bold',
@@ -1157,7 +1156,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					point._minX = pointMinX;
 					point._maxY = pointMaxY;
 					point._minY = pointMinY;
-					point.labelrank = pick(point.labelrank, (pointMaxX - pointMinX) * (pointMaxY - pointMinY)); // docs: labelrank
+					point.labelrank = pick(point.labelrank, (pointMaxX - pointMinX) * (pointMaxY - pointMinY));
 					point._foundBox = true;
 				}
 
@@ -1688,7 +1687,7 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 		defer: false,
 		overflow: false,
 		style: {
-			HcTextStroke: '3px rgba(255,255,255,0.5)' // docs
+			HcTextStroke: '3px rgba(255,255,255,0.5)'
 		}
 	}
 });
@@ -1739,7 +1738,7 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 		style: {
 			color: 'white',
 			fontWeight: 'bold',
-			HcTextStroke: '1px rgba(0,0,0,0.5)' // docs: textShadow out, HcTextStroke in
+			HcTextStroke: '1px rgba(0,0,0,0.5)'
 		}
 	},
 	marker: null,
@@ -1842,7 +1841,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 			}
 		};
 
-	hType = hType || 'map'; // default // docs
+	hType = hType || 'map';
 	
 	each(geojson.features, function (feature) {
 
@@ -1908,7 +1907,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 };
 
 /**
- * Override showCredits to includ map source by default // docs
+ * Override showCredits to include map source by default
  */
 wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
 

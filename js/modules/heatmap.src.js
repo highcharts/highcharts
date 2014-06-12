@@ -523,7 +523,6 @@ var colorSeriesMixin = {
 
 /**
  * Wrap the buildText method and add the hook for add text stroke
- * docs: On dataLabels.color and dataLabels.style, emphasize that a change in color should be accompanied by an opposite textStroke color
  */
 wrap(SVGRenderer.prototype, 'buildText', function (proceed, wrapper) {
 
@@ -586,7 +585,7 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 		style: {
 			color: 'white',
 			fontWeight: 'bold',
-			HcTextStroke: '1px rgba(0,0,0,0.5)' // docs: textShadow out, HcTextStroke in
+			HcTextStroke: '1px rgba(0,0,0,0.5)'
 		}
 	},
 	marker: null,

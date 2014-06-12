@@ -17,7 +17,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 			}
 		};
 
-	hType = hType || 'map'; // default // docs
+	hType = hType || 'map';
 	
 	each(geojson.features, function (feature) {
 
@@ -83,7 +83,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 };
 
 /**
- * Override showCredits to includ map source by default // docs
+ * Override showCredits to include map source by default
  */
 wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
 
