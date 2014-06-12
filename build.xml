@@ -272,7 +272,7 @@
 
         <!-- This is the list of files for the maps module -->
         <filelist id="maps.files" dir="${basedir}/js">
-            <file name="parts-map/Intro.js"/>
+            <file name="parts-map/IntroMapModule.js"/>
             <file name="parts-map/Globals.js"/>
             <file name="parts-map/MapAxis.js"/>
             <file name="parts-map/ColorAxis.js"/>

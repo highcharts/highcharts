@@ -91,6 +91,17 @@
 								})
 								.html(diff)
 								.appendTo(li);
+						} else {
+							$span = $('<a>')
+								.attr({
+									'class': 'dissimilarity-index',
+									href: location.href.replace(/continue=true/, ''),
+									target: 'main',
+									title: 'Compare'
+								})
+								.html('<i class="icon-columns"></i>')
+								.appendTo(li);
+
 						}
 						
 						if (_continue) {
