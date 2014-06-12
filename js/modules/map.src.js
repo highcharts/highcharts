@@ -647,7 +647,7 @@ SVGRenderer.prototype.Element.prototype.applyTextStroke = function (textStroke) 
 		firstChild;
 	
 	textStroke = textStroke.split(' ');
-	tspans = elem.children;
+	tspans = elem.getElementsByTagName('tspan');
 	firstChild = elem.firstChild;
 	
 	// In order to get the right y position of the clones, 
