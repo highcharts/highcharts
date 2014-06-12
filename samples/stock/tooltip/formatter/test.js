@@ -11,4 +11,8 @@ function test(chart) {
 		pageY: point.plotY + chart.plotTop + offset.top,
 		target: chart.container
 	});
+
+	chart.getSVG = function () {
+		return this.container.innerHTML;
+	};
 }

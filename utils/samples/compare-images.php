@@ -43,25 +43,26 @@ function dissimilarityIndexCalculator($str_img,$str_match){
 	$int_img_match_height = imagesy($img_match);
 
 	//Resample to 16px each
-	$img_16source = imagecreatetruecolor(16,16);
-	$img_16match  = imagecreatetruecolor(16,16);
+	$compareSize = 16;
+	$img_16source = imagecreatetruecolor($compareSize, $compareSize);
+	$img_16match  = imagecreatetruecolor($compareSize, $compareSize);
 
 	imagecopyresampled( $img_16source,
 		$img_source,
-		0, 0, 0, 0, 16, 16,
+		0, 0, 0, 0, $compareSize, $compareSize,
 		$int_img_source_width,
 		$int_img_source_width
 	);
 	imagecopyresampled( $img_16match,
 		$img_match,
-		0, 0, 0, 0, 16, 16,
+		0, 0, 0, 0, $compareSize, $compareSize,
 		$int_img_match_width,
 		$int_img_match_width
 	);
 
 	$difference = 0;
-	for($x=0;$x < 16;$x++){
-		for($y=0;$y < 16;$y++){
+	for($x=0;$x < $compareSize;$x++){
+		for($y=0;$y < $compareSize;$y++){
 
 			//Get the color of the resulting image
 			$arr_img_source_color[$x][$y] =
@@ -77,7 +78,8 @@ function dissimilarityIndexCalculator($str_img,$str_match){
 		}
 	}
 	
-	$difference = $difference/256;
+	$difference = $difference / 256;
+
 
 	//Return an array with the information
 	$arr_return = array( 
@@ -93,6 +95,12 @@ function dissimilarityIndexCalculator($str_img,$str_match){
 			//"colors"    => $arr_img_match_color
 		)
 	);
+
+	/*
+	imagepng($img_16source, "temp/left-{$compareSize}px.png");
+	imagepng($img_16match, "temp/right-{$compareSize}px.png");
+	*/
+
 	return $arr_return;
 	
 }

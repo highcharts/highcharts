@@ -279,7 +279,7 @@
 								path: "<?php echo $path ?>".replace(/\//g, '--')	
 							}, 
 							success: function (data) {
-								if (typeof data.dissimilarityIndex === 'number' && data.dissimilarityIndex < 0.01) {
+								if (data.dissimilarityIndex === 0) {
 									identical = true;
 									
 									report += '<br/>The exported images are identical'; 
