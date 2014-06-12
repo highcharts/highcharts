@@ -15145,7 +15145,7 @@ seriesTypes.areaspline = AreaSplineSeries;
  * Set the default options for column
  */
 defaultPlotOptions.column = merge(defaultSeriesOptions, {
-	borderColor: '#FFFFFF',
+	//borderColor: '#FFFFFF',
 	//borderWidth: 1,
 	borderRadius: 0,
 	//colorByPoint: undefined,
@@ -15410,9 +15410,11 @@ var ColumnSeries = extendClass(Series, {
 
 			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
-				borderAttr = defined(series.borderWidth) ? {
+				borderAttr = defined(series.borderWidth || point.borderWidth) ? {
+					'stroke': pick(point.borderColor, series.borderColor, '#FFFFFF'),
 					'stroke-width': series.borderWidth
 				} : {};
+				
 				pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE] || series.pointAttr[NORMAL_STATE];
 				if (graphic) { // update
 					stop(graphic);
@@ -15537,7 +15539,7 @@ seriesTypes.scatter = ScatterSeries;
  * Set the default options for pie
  */
 defaultPlotOptions.pie = merge(defaultSeriesOptions, {
-	borderColor: '#FFFFFF',
+	//borderColor: '#FFFFFF',
 	borderWidth: 1,
 	center: [null, null],
 	clip: false,
@@ -15916,7 +15918,8 @@ var PieSeries = {
 			//group,
 			shadow = series.options.shadow,
 			shadowGroup,
-			shapeArgs;
+			shapeArgs,
+			borderAttr;
 
 		if (shadow && !series.shadowGroup) {
 			series.shadowGroup = renderer.g('shadow')
@@ -15928,6 +15931,11 @@ var PieSeries = {
 			graphic = point.graphic;
 			shapeArgs = point.shapeArgs;
 			shadowGroup = point.shadowGroup;
+
+			borderAttr = defined(series.borderWidth || point.borderWidth) ? {
+				'stroke': pick(point.borderColor, series.borderColor, '#FFFFFF'),
+				'stroke-width': series.borderWidth
+			} : {};
 
 			// put the shadow behind all points
 			if (shadow && !shadowGroup) {
@@ -15955,10 +15963,7 @@ var PieSeries = {
 					.attr(
 						point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE]
 					)
-					.attr({ 
-						'stroke-linejoin': 'round'
-						//zIndex: 1 // #2722 (reversed)
-					})
+					.attr(borderAttr)
 					.attr(groupTranslation)
 					.add(series.group)
 					.shadow(shadow, shadowGroup);	
