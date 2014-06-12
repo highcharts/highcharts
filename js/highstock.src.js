@@ -2718,15 +2718,6 @@ SVGElement.prototype = {
 		this[key] = value;
 		element.setAttribute(key, value);
 	},
-	// In Chrome/Win < 6 as well as Batik and PhantomJS as of 1.9.7, the stroke attribute can't be set when the stroke-
-	// width is 0. #1369
-	'stroke-widthSetter': function (value, key, element) {
-		if (value === 0) {
-			value = 0.01; // #2963
-		}
-		this.strokeWidth = value; // read in symbol paths like 'callout'
-		element.setAttribute(key, value);
-	},
 	titleSetter: function (value) {
 		var titleNode = this.element.getElementsByTagName('title')[0];
 		if (!titleNode) {
@@ -2771,24 +2762,21 @@ SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter =
 	this[key] = value;
 	this.doTransform = true;
 };
-SVGElement.prototype.strokeSetter = SVGElement.prototype.fillSetter;
 
-
-
-// In Chrome/Win < 6 as well as Batik, the stroke attribute can't be set when the stroke-
-// width is 0. #1369
-/*SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter = function (value, key) {
+// WebKit and Batik have problems with a stroke-width of zero, so in this case we remove the 
+// stroke attribute altogether. #1270, #1369, #3065, #3072.
+SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter = function (value, key, element) {
 	this[key] = value;
 	// Only apply the stroke attribute if the stroke width is defined and larger than 0
 	if (this.stroke && this['stroke-width']) {
-		this.element.setAttribute('stroke', this.stroke);
-		this.element.setAttribute('stroke-width', this['stroke-width']);
+		this.fillSetter(this.stroke, 'stroke', element);
+		element.setAttribute('stroke-width', this['stroke-width']);
 		this.hasStroke = true;
 	} else if (key === 'stroke-width' && value === 0 && this.hasStroke) {
-		this.element.removeAttribute('stroke');
+		element.removeAttribute('stroke');
 		this.hasStroke = false;
 	}
-};*/
+};
 
 
 /**
@@ -15453,18 +15441,12 @@ var ColumnSeries = extendClass(Series, {
 			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
 
+				borderAttr = defined(series.borderWidth) ? {
+					'stroke-width': series.borderWidth
+				} : {};
+
 				pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE] || series.pointAttr[NORMAL_STATE];
 				
-				// If there is no border width, also remove the stroke to prevent artefacts in Chrome (#1270, #3065)
-				if (series.borderWidth) {
-					borderAttr = {
-						'stroke-width': series.borderWidth
-					};
-				} else if (!pointAttr['stroke-width']) {
-					delete pointAttr.stroke;
-				}
-				
-
 				if (graphic) { // update
 					stop(graphic);
 					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs));
