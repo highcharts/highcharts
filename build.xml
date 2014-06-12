@@ -31,6 +31,11 @@
             <filter token="product.version" value="${highmaps.product.version}"/>
             <filter token="product.date" value="${highmaps.product.date}"/>
         </filterset>
+        <filterset id="download.builder.filter">
+            <filter token="product.name" value="${highcharts.product.name} ${highcharts.product.version}"/>
+            <filter token="product.version" value="/${highstock.product.name} ${highstock.product.version}"/>
+            <filter token="product.date" value="${highcharts.product.date}"/>
+        </filterset>
 
         <!-- folder names -->
         <property name="tools.dir" value="${basedir}/tools"/>
@@ -1712,16 +1717,20 @@
         <!-- copy the highstock partfiles , these include also highcharts partfiles -->
         <copy todir="${highcharts.site.dir}/joomla/components/com_download/source/parts" overwrite="true">
             <filelist refid="highstock.files"/>
+            <filterset refid="download.builder.filter"/>
         </copy>
         <copy todir="${highcharts.site.dir}/joomla/components/com_download/source/parts-more" overwrite="true">
             <filelist refid="highchartsmore.files"/>
+            <filterset refid="download.builder.filter"/>
         </copy>
-        <copy file="${standalone.src.file}" todir="${highcharts.site.dir}/joomla/components/com_download/source/adapters" overwrite="true"/>
+        <copy file="${standalone.src.file}" todir="${highcharts.site.dir}/joomla/components/com_download/source/adapters" overwrite="true"><filterset refid="download.builder.filter"/></copy>
         <copy todir="${highcharts.site.dir}/joomla/components/com_download/source" overwrite="true">
             <filelist refid="highcharts-modules.files"/>
+            <filterset refid="download.builder.filter"/>
         </copy>
         <copy todir="${highcharts.site.dir}/joomla/components/com_download/source" overwrite="true">
             <filelist refid="heatmap.files"/>
+            <filterset refid="download.builder.filter"/>
         </copy>
     </target>
 
