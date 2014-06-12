@@ -302,7 +302,7 @@ SVGElement.prototype = {
 			key,
 			attribs = {},
 			normalizer,
-			strokeWidth = rect.strokeWidth || wrapper.strokeWidth || (wrapper.attr && wrapper.attr('stroke-width')) || 0;
+			strokeWidth = rect.strokeWidth || wrapper.strokeWidth || 0;
 
 		normalizer = mathRound(strokeWidth) % 2 / 2; // mathRound because strokeWidth can sometimes have roundoff errors
 
@@ -1004,6 +1004,7 @@ SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter =
 	this[key] = value;
 	// Only apply the stroke attribute if the stroke width is defined and larger than 0
 	if (this.stroke && this['stroke-width']) {
+		this.strokeWidth = this['stroke-width'];
 		SVGElement.prototype.fillSetter.call(this, this.stroke, 'stroke', element); // use prototype as instance may be overridden
 		element.setAttribute('stroke-width', this['stroke-width']);
 		this.hasStroke = true;
