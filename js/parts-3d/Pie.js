@@ -63,7 +63,6 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 			states = this.options.states;
 
 		// Set the border color to the fill color to provide a smooth edge
-		this.borderColor = options.borderColor = Highcharts.pick(options.edgeColor, this.color);
 		this.borderWidth = options.borderWidth = options.edgeWidth || 1;
 
 		states.hover.borderColor = Highcharts.pick(states.hover.edgeColor, this.borderColor);		
@@ -73,7 +72,7 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 
 		Highcharts.each(this.data, function (point) {
 			var pointAttr = point.pointAttr;
-			pointAttr[''].stroke = point.series.borderColor;
+			pointAttr[''].stroke = point.series.borderColor || point.color;
 			pointAttr['']['stroke-width'] = point.series.borderWidth;
 			pointAttr.hover.stroke = states.hover.borderColor;	
 			pointAttr.hover['stroke-width'] = states.hover.borderWidth;
