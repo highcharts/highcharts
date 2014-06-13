@@ -3066,7 +3066,7 @@ SVGRenderer.prototype = {
 							// check width and apply soft breaks
 							if (width) {
 								var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
-									hasWhiteSpace = spanNo || (words.length > 1 && textStyles.whiteSpace !== 'nowrap'),
+									hasWhiteSpace = spans.length > 1 || (words.length > 1 && textStyles.whiteSpace !== 'nowrap'),
 									tooLong,
 									actualWidth,
 									hcHeight = textStyles.HcHeight,
@@ -3105,11 +3105,10 @@ SVGRenderer.prototype = {
 													attr(tspan, 'style', spanStyle);
 												}
 												textNode.appendChild(tspan);
-
-												if (actualWidth > width) { // a single word is pressing it out
-													width = actualWidth;
-												}
 											}
+										}
+										if (actualWidth > width) { // a single word is pressing it out
+											width = actualWidth;
 										}
 									} else { // append to existing line tspan
 										tspan.removeChild(tspan.firstChild);

@@ -7,7 +7,7 @@ $(function () {
 					this.renderer.label('Foo: <b>bar</b>', 100, 100)
 						.attr({
 							'stroke-width': 1,
-							stroke: 'blue'
+							'fill': '#039'
 						})
 						.css({
 							width: '260px'
