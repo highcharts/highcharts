@@ -1,6 +1,6 @@
 /**
  * @license @product.name@ JS v@product.version@ (@product.date@)
- * The map module version 1.0.x is compatible with Highcharts 4.0.x.
+ * Highmaps as a plugin for Highcharts 4.0.1 or Highstock 2.0.1
  *
  * (c) 2011-2014 Torstein Honsi
  *
