@@ -14010,7 +14010,7 @@ seriesTypes.line = LineSeries;
  * Set the default options for column
  */
 defaultPlotOptions.column = merge(defaultSeriesOptions, {
-	//borderColor: '#FFFFFF',
+	borderColor: '#FFFFFF',
 	//borderWidth: 1,
 	borderRadius: 0,
 	//colorByPoint: undefined,
@@ -14275,11 +14275,9 @@ var ColumnSeries = extendClass(Series, {
 
 			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
-				borderAttr = defined(series.borderWidth || point.borderWidth) ? {
-					'stroke': pick(point.borderColor, series.borderColor, '#FFFFFF'),
+				borderAttr = defined(series.borderWidth) ? {
 					'stroke-width': series.borderWidth
 				} : {};
-				
 				pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE] || series.pointAttr[NORMAL_STATE];
 				if (graphic) { // update
 					stop(graphic);
