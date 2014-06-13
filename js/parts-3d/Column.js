@@ -127,12 +127,22 @@ function draw3DPoints(proceed) {
 			this.group.attr({zIndex : (this.group.zIndex * 10)});
 		} 
 
+		var options = this.options,
+			states = this.options.states;
+
 		// Set the border color to the fill color to provide a smooth edge
-		this.borderColor = this.options.borderColor = Highcharts.pick(this.options.edgeColor, this.color);
-		
+		this.borderColor = options.borderColor = Highcharts.pick(options.edgeColor, this.color);
+		this.borderWidth = options.borderWidth = options.edgeWidth || 1;
+
+		states.hover.borderColor = Highcharts.pick(states.hover.edgeColor, this.borderColor);		
+		states.select.borderColor = Highcharts.pick(states.select.edgeColor, this.borderColor);
+
 		Highcharts.each(this.data, function (point) {
-			point.pointAttr[''].stroke = point.series.borderColor;
-		});		
+			var pointAttr = point.pointAttr;
+			pointAttr[''].stroke = point.series.borderColor;
+			pointAttr.hover.stroke = states.hover.borderColor;
+			pointAttr.select.stroke = states.select.borderColor;
+		});
 	}
 
 	proceed.apply(this, [].slice.call(arguments, 1));
