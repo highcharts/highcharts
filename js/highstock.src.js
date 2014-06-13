@@ -18327,7 +18327,7 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 		this.setAxisTranslation = function (saveOld) {
 			Axis.prototype.setAxisTranslation.call(this, saveOld);
 
-			this.transA *= 1.3;
+			this.transA *= 1.5;
 		};
 	}
 });
@@ -18340,7 +18340,7 @@ wrap(Axis.prototype, 'setTickPositions', function (proceed) {
 		i;
 
 	for (i=0; i < tickPositions.length; i++) {
-		if (!axis.isInBreak(tickPositions[i], true)) {
+		if (!axis.isInBreak(tickPositions[i], false)) {
 			newPositions.push(tickPositions[i]);
 		}		
 	}
