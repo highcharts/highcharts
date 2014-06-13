@@ -1603,7 +1603,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			}
 
 			point.plotY = shapeArgs.y = mathRound(shapeArgs.y) - (series.borderWidth % 2) / 2;
-			shapeArgs.height = mathRound(shapeArgs.height);
+			shapeArgs.height = mathMax(mathRound(shapeArgs.height), 0.001); // #3151
 			point.yBottom = shapeArgs.y + shapeArgs.height;
 
 			// Correct tooltip placement (#3014)

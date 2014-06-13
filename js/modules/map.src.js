@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.0.1 (2014-06-12)
+ * @license Highmaps JS v1.0.1-modified ()
  * The map module version 1.0.x is compatible with Highcharts 4.0.x.
  *
  * (c) 2011-2014 Torstein Honsi
