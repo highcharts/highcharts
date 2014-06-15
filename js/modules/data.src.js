@@ -243,7 +243,7 @@
 				table = document.getElementById(table);
 			}
 			
-			each(table.getElementsByTagName('tr'), function (tr, rowNo) {
+			each(table.querySelectorAll('table>tr,thead>tr,tbody>tr'), function (tr, rowNo) {
 				if (rowNo >= startRow && rowNo <= endRow) {
 					each(tr.children, function (item, colNo) {
 						if ((item.tagName === 'TD' || item.tagName === 'TH') && colNo >= startColumn && colNo <= endColumn) {
