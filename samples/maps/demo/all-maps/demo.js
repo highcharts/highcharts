@@ -8,7 +8,7 @@ $(function () {
 
 	// Base path to maps
 	var baseMapPath = "http://code.highcharts.com/mapdata/",
-		showDataLabels = true, // Switch for data labels enabled/disabled
+		showDataLabels = false, // Switch for data labels enabled/disabled
 		mapCount = 0,
 		searchText,
 		mapOptions = '';
@@ -124,14 +124,18 @@ $(function () {
 				},
 
 				colorAxis: {
-					min: 0
+					min: 0,
+					stops: [
+						[0, '#EFEFFF'],
+						[0.5, Highcharts.getOptions().colors[0]],
+						[1, Highcharts.Color(Highcharts.getOptions().colors[0]).brighten(-0.5).get()]
+					]
 				},
 
 				legend: {
 					layout: 'vertical',
 					align: 'left',
-					verticalAlign: 'top',
-					y: 60
+					verticalAlign: 'bottom'
 				},
 
 				series: [{
@@ -141,7 +145,7 @@ $(function () {
 					name: 'Random data',
 					states: {
 						hover: {
-							color: '#BADA55'
+							color: Highcharts.getOptions().colors[2]
 						}
 					},
 					dataLabels: {
@@ -174,6 +178,9 @@ $(function () {
 					enableMouseTracking: false
 				}]
 			});
+
+			showDataLabels = $("#chkDataLabels").attr('checked');
+
 		}
 
 		// Check whether the map is already loaded, else load it and
@@ -187,7 +194,7 @@ $(function () {
 
 	// Toggle data labels - Note: Reloads map with new random data
 	$("#chkDataLabels").change(function () {
-		showDataLabels = !showDataLabels;
+		showDataLabels = $("#chkDataLabels").attr('checked');
 		$("#mapDropdown").change();
 	});
 
