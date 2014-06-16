@@ -18324,10 +18324,20 @@ wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 		};
 
 		// POC of increasing the translation slope to achieve the correct min and max
+		// based on the ratio of ticks removed
 		this.setAxisTranslation = function (saveOld) {
 			Axis.prototype.setAxisTranslation.call(this, saveOld);
+			if (this.tickPositions) {
+				var a = this.tickPositions.length,
+					c = 0;
 
-			this.transA *= 1.5;
+
+				Highcharts.each(this.breaks, function (brk) {
+					c += (brk.to - brk.from) - brk.breakWidth;
+				});
+
+				this.transA *= 1 + (c / a); 
+			}
 		};
 	}
 });
@@ -18342,11 +18352,10 @@ wrap(Axis.prototype, 'setTickPositions', function (proceed) {
 	for (i=0; i < tickPositions.length; i++) {
 		if (!axis.isInBreak(tickPositions[i], false)) {
 			newPositions.push(tickPositions[i]);
-		}		
+		}
 	}
-	/* 
-	 * ADD CODE TO EMSURE THE LAST TICK IS RENDERED
-
+	// ADD CODE TO EMSURE THE LAST TICK IS RENDERED
+	/*
 	if (axis.isInBreak(tickPositions[tickPositions.length-1])) {
 		// add a tick
 	}
@@ -18374,14 +18383,17 @@ extend(Axis.prototype, {
 					var size = brk.to - brk.from,
 						step = brk.repeat,
 						max = axis.max,
+						min = axis.min,
 						i = brk.from ;
 
 					while(i < max) {
-						breaks.push({
-							from: i,
-							to: (i + size > max ? max : i + size),
-							breakWidth: brk.breakWidth || 0
-						});
+						if (i > min) {
+							breaks.push({
+								from: i,
+								to: (i + size > max ? max : i + size),
+								breakWidth: brk.breakWidth || 0
+							});
+						}
 						i += step;
 					}
 				} else {
