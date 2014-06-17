@@ -473,25 +473,41 @@ dateFormat = function (format, timestamp, capitalize) {
 	return capitalize ? format.substr(0, 1).toUpperCase() + format.substr(1) : format;
 };
 
-/** 
+/**
  * Format a single variable. Similar to sprintf, without the % prefix.
  */
 function formatSingle(format, val) {
 	var floatRegex = /f$/,
+		kiloRegex = /Mf$/,
 		decRegex = /\.([0-9])/,
 		lang = defaultOptions.lang,
-		decimals;
+		decimals,
+		numericSymbols = defaultOptions.lang.numericSymbols,
+		i = numericSymbols && numericSymbols.length,
+		multi,
+		suffix;
 
 	if (floatRegex.test(format)) { // float
 		decimals = format.match(decRegex);
 		decimals = decimals ? decimals[1] : -1;
 		if (val !== null) {
+			if (i && val >= 1000 && kiloRegex.test(format)) {
+				// Decide whether we should add a numeric symbol like k (thousands) or M (millions).
+				while (i-- && suffix === UNDEFINED) {
+					multi = Math.pow(1000, i + 1);
+					if (val >= multi && numericSymbols[i] !== null) {
+						val /= multi;
+						suffix = numericSymbols[i];
+					}
+				}
+			}
+
 			val = numberFormat(
 				val,
 				decimals,
 				lang.decimalPoint,
 				format.indexOf(',') > -1 ? lang.thousandsSep : ''
-			);
+			) + (suffix || '');
 		}
 	} else {
 		val = dateFormat(format, val);
