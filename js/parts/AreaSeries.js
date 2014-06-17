@@ -32,7 +32,6 @@ var AreaSeries = extendClass(Series, {
 			plotY,
 			points = this.points,
 			connectNulls = this.options.connectNulls,
-			val,
 			i,
 			x;
 
