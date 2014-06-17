@@ -1557,6 +1557,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			stack,
 			y,
 			previousY,
+			previousIntermediate,
 			stackPoint,
 			threshold = options.threshold,
 			tooltipY;
@@ -1564,7 +1565,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		// run column series translate
 		seriesTypes.column.prototype.translate.apply(this);
 
-		previousY = threshold;
+		previousY = previousIntermediate = threshold;
 		points = series.points;
 
 		for (i = 0, len = points.length; i < len; i++) {
@@ -1587,9 +1588,14 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 
 			// sum points
-			if (point.isSum || point.isIntermediateSum) {
+			if (point.isSum) {
 				shapeArgs.y = yAxis.translate(stackPoint[1], 0, 1);
 				shapeArgs.height = yAxis.translate(stackPoint[0], 0, 1) - shapeArgs.y;
+
+			} else if (point.isIntermediateSum) {
+				shapeArgs.y = yAxis.translate(stackPoint[1], 0, 1);
+				shapeArgs.height = yAxis.translate(previousIntermediate, 0, 1) - shapeArgs.y;
+				previousIntermediate = stackPoint[1];
 
 			// if it's not the sum point, update previous stack end position
 			} else {
@@ -1645,7 +1651,6 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				yData[i] = sum;
 			} else if (y === "intermediateSum" || point.isIntermediateSum) {
 				yData[i] = subSum;
-				subSum = threshold;
 			} else {
 				sum += y;
 				subSum += y;
