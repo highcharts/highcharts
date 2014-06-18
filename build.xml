@@ -220,7 +220,6 @@
             <file name="Interaction.js"/>
             <!-- Stock -->
             <file name="OrdinalAxis.js"/>
-            <file name="BrokenAxis.js"/>
             <file name="DataGrouping.js"/>
             <file name="OHLCSeries.js"/>
             <file name="CandlestickSeries.js"/>
