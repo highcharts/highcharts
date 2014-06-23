@@ -18550,7 +18550,7 @@ seriesProto.processData = function () {
 		chart = series.chart,
 		options = series.options,
 		dataGroupingOptions = options[DATA_GROUPING],
-		groupingEnabled = dataGroupingOptions && pick(dataGroupingOptions.enabled, chart.options._stock),
+		groupingEnabled = series.allowDG !== false && dataGroupingOptions && pick(dataGroupingOptions.enabled, chart.options._stock),
 		hasGroupedData;
 
 	// run base method
@@ -19155,7 +19155,6 @@ var symbols = SVGRenderer.prototype.symbols;
 
 // 1 - set default options
 defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
-	dataGrouping: null,
 	fillColor: 'white',
 	lineWidth: 1,
 	pointRange: 0, // #673
@@ -19185,6 +19184,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	type: 'flags',
 	sorted: false,
 	noSharedTooltip: true,
+	allowDG: false,
 	takeOrdinalPosition: false, // #1074
 	trackerGroups: ['markerGroup'],
 	forceCrop: true,
