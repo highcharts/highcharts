@@ -35,7 +35,7 @@
 			while (i--) {
 				brk = breaks[i];
 				j = brk.repeat ? (val % brk.repeat) : val;
-				if ((inclusive ? j >= brk.from % brk.repeat : j > brk.from % brk.repeat) && j < brk.to % brk.repeat) {
+				if ((inclusive ? j >= brk.from % brk.repeat : j > brk.from % brk.repeat) && j < (brk.from % brk.repeat) + (brk.to - brk.from)) {
 					return true;
 				}
 			}
@@ -72,10 +72,9 @@
 
 		if (this.options.breaks) {
 			var axis = this;
-
 			axis.postTranslate = true;
 
-			this.val2lin = function (val) {
+			this.val2lin = function (val) {				
 				var nval = val,
 					breaks = axis.options.breaks,
 					i = breaks.length,
@@ -90,23 +89,31 @@
 			};
 
 			this.lin2val = function (val) {
-				return val;
+				var nval = val,
+					breaks = axis.options.breaks,
+					i = breaks.length,
+					brk;
+
+					while(i--) {
+						brk = breaks[i];
+						nval += floor((val - axis.min) / (brk.repeat - (brk.to - brk.from))) * (brk.to - brk.from); // Number of occurences * break width
+					}
+
+				return nval;
 			};
 
 			this.setAxisTranslation = function (saveOld) {
 				Axis.prototype.setAxisTranslation.call(this, saveOld);
-				if (this.tickPositions) {
-					var oldLen = axis.max - axis.min,
-						newLen = oldLen,
-						breaks = axis.options.breaks,
-						i = breaks.length,
-						brk;
-					while (i--) {
-						brk = breaks[i];
-						newLen -= floor(oldLen / brk.repeat) * (brk.to - brk.from); // Number of occurences * break width
-					}		
-					this.transA *= oldLen / newLen; 
-				}
+				var oldLen = axis.max - axis.min,
+					newLen = oldLen,
+					breaks = axis.options.breaks,
+					i = breaks.length,
+					brk;
+				while (i--) {
+					brk = breaks[i];
+					newLen -= floor(oldLen / brk.repeat) * (brk.to - brk.from); // Number of occurences * break width
+				}		
+				this.transA *= oldLen / newLen; 				
 			};
 		}
 	});
