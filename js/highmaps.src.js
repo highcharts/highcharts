@@ -14194,7 +14194,7 @@ var ColumnSeries = extendClass(Series, {
 			minPointLength = pick(options.minPointLength, 5),
 			metrics = series.getColumnMetrics(),
 			pointWidth = metrics.width,
-			seriesBarW = series.barW = mathCeil(mathMax(pointWidth, 1 + 2 * borderWidth)), // rounded and postprocessed for border width
+			seriesBarW = series.barW = mathMax(pointWidth, 1 + 2 * borderWidth), // rounded and postprocessed for border width
 			pointXOffset = series.pointXOffset = metrics.offset,
 			xCrisp = -(borderWidth % 2 ? 0.5 : 0),
 			yCrisp = borderWidth % 2 ? 0.5 : 1;
@@ -14215,7 +14215,6 @@ var ColumnSeries = extendClass(Series, {
 				right,
 				bottom,
 				fromTop,
-				fromLeft,
 				barH = mathMax(plotY, yBottom) - barY;
 
 			// Handle options.minPointLength
@@ -14236,8 +14235,7 @@ var ColumnSeries = extendClass(Series, {
 			// Fix the tooltip on center of grouped columns (#1216)
 			point.tooltipPos = chart.inverted ? [yAxis.len - plotY, series.xAxis.len - barX - barW / 2] : [barX + barW / 2, plotY];
 
-			// Round off to obtain crisp edges
-			fromLeft = mathAbs(barX) < 0.5;
+			// Round off to obtain crisp edges and avoid overlapping with neighbours (#2694)
 			right = mathRound(barX + barW) + xCrisp;
 			barX = mathRound(barX) + xCrisp;
 			barW = right - barX;
@@ -14247,11 +14245,7 @@ var ColumnSeries = extendClass(Series, {
 			barY = mathRound(barY) + yCrisp;
 			barH = bottom - barY;
 
-			// Top and left edges are exceptions
-			if (fromLeft) {
-				barX += 1;
-				barW -= 1;
-			}
+			// Top edges are exceptions
 			if (fromTop) {
 				barY -= 1;
 				barH += 1;
@@ -14265,6 +14259,7 @@ var ColumnSeries = extendClass(Series, {
 				width: barW,
 				height: barH
 			};
+
 		});
 
 	},
@@ -16311,7 +16306,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			});
 
 		}
-		console.log(this.baseTrans.originX, translateX)
 
 		this.drawMapDataLabels();
 		

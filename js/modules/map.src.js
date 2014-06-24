@@ -1467,7 +1467,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			});
 
 		}
-		console.log(this.baseTrans.originX, translateX)
 
 		this.drawMapDataLabels();
 		
