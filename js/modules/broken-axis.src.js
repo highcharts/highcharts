@@ -22,25 +22,28 @@
 		Series = H.Series;
 
 	extend(Axis.prototype, {	
-		isInBreak: function (val, inclusive) {			
+		isInBreak: function (val) {			
 			if (!this.options.breaks) { return false; }
 			
-			//console.log(val);
-
 			var breaks = this.options.breaks,
 				i = breaks.length,
 				j,
-				brk;
+				brk,
+				from, to;
 
 			while (i--) {
 				brk = breaks[i];
-				j = brk.repeat ? (val % brk.repeat) : val;
-				if ((inclusive ? j >= brk.from % brk.repeat : j > brk.from % brk.repeat) && j < (brk.from % brk.repeat) + (brk.to - brk.from)) {
+				j = val % brk.repeat;
+				from = brk.from % brk.repeat;
+				to = brk.to % brk.repeat;
+
+				if (from > to && (j > from || j < to)) {
+					return true;
+				} else if (j > from && j < to) {
 					return true;
 				}
 			}
-
-			return false;
+			return false
 		}
 	});
 
@@ -53,7 +56,7 @@
 			i;
 
 		for (i=0; i < tickPositions.length; i++) {
-			if (!axis.isInBreak(tickPositions[i], true)) {
+			if (!axis.isInBreak(tickPositions[i])) {
 				newPositions.push(tickPositions[i]);
 			}
 		}
@@ -131,13 +134,14 @@
 			point;
 
 		while (i < points.length) {
-			point = points[i];
+			point = points[i];			
 			if (!xAxis.isInBreak(point.x) && !yAxis.isInBreak(point.y)) {
 				newPoints.push(point);
 			}
 			i++;
 		}
 		this.points = newPoints;
+
 	});
 
 
