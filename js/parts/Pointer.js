@@ -137,7 +137,7 @@ Pointer.prototype = {
 			chart = pointer.chart,
 			series = chart.series,
 			tooltip = chart.tooltip,
-			shared = pick(tooltip.shared,false),
+			shared = tooltip ? tooltip.shared : false,
 			//followPointer,
 			//point,
 			//points,
