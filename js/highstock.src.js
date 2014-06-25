@@ -7069,6 +7069,8 @@ Axis.prototype = {
 		var axis = this,
 			chart = axis.chart,
 			options = axis.options,
+			startOnTick = options.startOnTick,
+			endOnTick = options.endOnTick,
 			isLog = axis.isLog,
 			isDatetimeAxis = axis.isDatetimeAxis,
 			isXAxis = axis.isXAxis,
@@ -7161,7 +7163,7 @@ Axis.prototype = {
 			);
 			// For squished axes, set only two ticks
 			if (!defined(tickIntervalOption) && axis.len < tickPixelIntervalOption && !this.isRadial &&
-					!this.isLog && !categories && options.startOnTick && options.endOnTick) {
+					!this.isLog && !categories && startOnTick && endOnTick) {
 				keepTwoTicksOnly = true;
 				axis.tickInterval /= 4; // tick extremes closer to the real values
 			}
@@ -7251,13 +7253,18 @@ Axis.prototype = {
 				minPointOffset = axis.minPointOffset || 0,
 				singlePad;
 
-			if (options.startOnTick) {
+			// Prevent all ticks from being removed (#3195)
+			if (!startOnTick && !endOnTick && tickPositions.length === 2) {
+				tickPositions.splice(1, 0, (roundedMax + roundedMin) / 2);
+			}
+
+			if (startOnTick) {
 				axis.min = roundedMin;
 			} else if (axis.min - minPointOffset > roundedMin) {
 				tickPositions.shift();
 			}
 
-			if (options.endOnTick) {
+			if (endOnTick) {
 				axis.max = roundedMax;
 			} else if (axis.max + minPointOffset < roundedMax) {
 				tickPositions.pop();
