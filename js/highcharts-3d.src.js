@@ -332,33 +332,68 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		this.top.attr({translateY: value});
 	};
 
-	result.animate = function (args, duration, complete) {	
-		Highcharts.SVGElement.prototype.animate.call(this, args, duration, complete);
-		if (args.x && args.y) {
-			// Recreate
-			var result = this,
-				renderer = this.renderer,
-				shapeArgs = Highcharts.splat(args)[0];
+	result.animate = function (args, duration, complete) {
+		if (args.end || args.start) {
+			this._shapeArgs = this.shapeArgs;
 
-			shapeArgs.alpha *= deg2rad;
-			shapeArgs.beta *= deg2rad;
+			Highcharts.SVGElement.prototype.animate.call(this, {
+				_args: args	
+			}, {
+				duration: duration,
+				step: function () {
+					var args = arguments,
+						fx = args[1],
+						result = fx.elem,						
+						start = result._shapeArgs,
+						end = fx.end,
+						pos = fx.pos,
+						sA = Highcharts.merge(start, {
+							start: start.start + ((end.start - start.start) * pos),
+							end: start.end + ((end.end - start.end) * pos)
+						});
 
-			var paths = renderer.arc3dPath(shapeArgs);
+					var paths = result.renderer.arc3dPath(sA);
 
-			result.shapeArgs = shapeArgs;	// Store for later use
+					result.shapeArgs = sA;
 
-			result.inn.attr({d: paths.inn, zIndex: paths.zInn});
-			result.out.attr({d: paths.out, zIndex: paths.zOut});
-			result.side1.attr({d: paths.side1, zIndex: paths.zSide2});
-			result.side2.attr({d: paths.side2, zIndex: paths.zSide1});
-			result.top.attr({d: paths.top, zIndex: paths.zTop});
+					result.top.attr({d: paths.top, zIndex: paths.zTop});
+					result.inn.attr({d: paths.inn, zIndex: paths.zInn});
+					result.out.attr({d: paths.out, zIndex: paths.zOut});
+					result.side1.attr({d: paths.side1, zIndex: paths.zSide1});
+					result.side2.attr({d: paths.side2, zIndex: paths.zSide2});
 
-			result.attr({fill: result.color});
-			result.attr({zIndex: paths.zTop * 100});
-		}		
+				}
+			}, complete);
+		} else {			
+			Highcharts.SVGElement.prototype.animate.call(this, args, duration, complete);
+		}
 		return this;
 	};
 
+	result.destroy = function () {
+		this.top.destroy();
+		this.out.destroy();
+		this.inn.destroy();
+		this.side1.destroy();
+		this.side2.destroy();
+
+		Highcharts.SVGElement.prototype.destroy.call(this);
+	};
+	result.hide = function () {
+		this.top.hide();
+		this.out.hide();
+		this.inn.hide();
+		this.side1.hide();
+		this.side2.hide();
+	};
+	result.show = function () {
+		this.top.show();
+		this.out.show();
+		this.inn.show();
+		this.side1.show();
+		this.side2.show();
+	};
+	
 	result.zIndex = zIndex;
 	result.attr({zIndex: zIndex});
 	return result;
@@ -437,27 +472,21 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 		'Z'
 	];
 
-	var mr = ir + ((r - ir) / 2),
-		Ks = ((sin(beta) * cos(start)) + (sin(-alpha) * sin(-start))),
-		Ke = ((sin(beta) * cos(end)) + (sin(-alpha) * sin(-end)));
-
-	var zOut = Math.max(Ke, Ks) * r,
-		zInn = Ke * ir,
-		zSide1 = Ks * mr,
-		zSide2 =  Ke * mr,
-		zTop = Math.max(zOut, zInn, zSide1, zSide2) + 25;
+	var a1 = sin((start + end) / 2),
+		a2 = sin(start),
+		a3 = sin(end);
 
 	return {
 		top: top,
-		zTop: zTop,
+		zTop: r,
 		out: out,
-		zOut: zOut,
+		zOut: Math.max(a1, a2, a3) * r,
 		inn: inn,
-		zInn: zInn,
+		zInn: Math.max(a1, a2, a3) * r,
 		side1: side1,
-		zSide1: zSide1,
+		zSide1: a2 * (r * 0.99),
 		side2: side2,
-		zSide2: zSide2
+		zSide2: a3 * (r * 0.99)
 	};
 };
 /*** 
@@ -476,28 +505,20 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'isInsidePlot', function (proceed) {
 	}
 });
 
-Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {	
-	var args = arguments;
-	args[1] = Highcharts.merge({ 
-		chart: {
-			options3d: {
-				enabled: false,
-				alpha: 0,
-				beta: 0,
-				depth: 100,
-				viewDistance: 25,
-
-				frame: {
-					bottom: { size: 1, color: 'rgba(255,255,255,0)' },
-					side: { size: 1, color: 'rgba(255,255,255,0)' },
-					back: { size: 1, color: 'rgba(255,255,255,0)' }
-				}
-			}
-		}
-	}, args[1]);
-
-	proceed.apply(this, [].slice.call(args, 1));
-});
+var defaultChartOptions = Highcharts.getOptions();
+defaultChartOptions.chart.options3d = {
+	enabled: false,
+	alpha: 0,
+	beta: 0,
+	depth: 100,
+	viewDistance: 25,
+	frame: {
+		bottom: { size: 1, color: 'rgba(255,255,255,0)' },
+		side: { size: 1, color: 'rgba(255,255,255,0)' },
+		back: { size: 1, color: 'rgba(255,255,255,0)' }
+	}
+};
+defaultChartOptions.plotOptions.pie.borderColor = undefined;
 
 Highcharts.wrap(Highcharts.Chart.prototype, 'setChartSize', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
@@ -923,20 +944,23 @@ function draw3DPoints(proceed) {
 		if (grouping !== undefined && !grouping && this.group.zIndex !== undefined) {
 			this.group.attr({zIndex : (this.group.zIndex * 10)});
 		} 
-		if (this.userOptions.borderColor === undefined) {
-			this.options.borderColor = this.color;
-		}
+
+		var options = this.options,
+			states = this.options.states;
 
 		// Set the border color to the fill color to provide a smooth edge
+		this.borderColor = options.borderColor = Highcharts.pick(options.edgeColor, this.color);
+		this.borderWidth = options.borderWidth = options.edgeWidth || 1;
+
+		states.hover.borderColor = Highcharts.pick(states.hover.edgeColor, this.borderColor);		
+		states.select.borderColor = Highcharts.pick(states.select.edgeColor, this.borderColor);
+
 		Highcharts.each(this.data, function (point) {
-			var c = point.options.borderColor || point.color || point.series.userOptions.borderColor;
-			point.options.borderColor = c;
-			point.borderColor = c;
-			point.pointAttr[''].stroke = c;
-			// same bordercolor on hover and select
-			point.pointAttr.hover.stroke = c;
-			point.pointAttr.select.stroke = c;
-		});	
+			var pointAttr = point.pointAttr;
+			pointAttr[''].stroke = point.series.borderColor;
+			pointAttr.hover.stroke = states.hover.borderColor;
+			pointAttr.select.stroke = states.select.borderColor;
+		});
 	}
 
 	proceed.apply(this, [].slice.call(arguments, 1));
@@ -1091,15 +1115,25 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype.pointClass.prototype, 'halo
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
 	// Do not do this if the chart is not 3D
 	if (this.chart.is3d()) {
+		var options = this.options,
+			states = this.options.states;
+
 		// Set the border color to the fill color to provide a smooth edge
+		this.borderWidth = options.borderWidth = options.edgeWidth || 1;
+
+		states.hover.borderColor = Highcharts.pick(states.hover.edgeColor, this.borderColor);		
+		states.hover.borderWidth = Highcharts.pick(states.hover.edgeWidth, this.borderWidth);	
+		states.select.borderColor = Highcharts.pick(states.select.edgeColor, this.borderColor);		
+		states.select.borderWidth = Highcharts.pick(states.select.edgeWidth, this.borderWidth);
+
 		Highcharts.each(this.data, function (point) {
-			var c = point.options.borderColor || point.series.chart.options.plotOptions.pie.borderColor || point.color || point.series.userOptions.borderColor || point.series.color;
-			point.options.borderColor = c;
-			point.borderColor = c;
-			point.pointAttr[''].stroke = c;
-			// same bordercolor on hover and select
-			point.pointAttr.hover.stroke = c;
-			point.pointAttr.select.stroke = c;
+			var pointAttr = point.pointAttr;
+			pointAttr[''].stroke = point.series.borderColor || point.color;
+			pointAttr['']['stroke-width'] = point.series.borderWidth;
+			pointAttr.hover.stroke = states.hover.borderColor;	
+			pointAttr.hover['stroke-width'] = states.hover.borderWidth;
+			pointAttr.select.stroke = states.select.borderColor;
+			pointAttr.select['stroke-width'] = states.select.borderWidth;
 		});	
 	}
 
@@ -1117,34 +1151,23 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 });
 
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
+	if (this.chart.is3d()) {
+		var series = this;
+		Highcharts.each(series.data, function (point) {
+			var shapeArgs = point.shapeArgs,
+				r = shapeArgs.r,
+				d = shapeArgs.depth,
+				a1 = shapeArgs.alpha * deg2rad,
+				a2 = (shapeArgs.start + shapeArgs.end) / 2,
+				labelPos = point.labelPos;
+
+			labelPos[1] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
+			labelPos[3] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
+			labelPos[5] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
+		});
+	} 
+
 	proceed.apply(this, [].slice.call(arguments, 1));
-	// Do not do this if the chart is not 3D
-	if (!this.chart.is3d()) {
-		return;
-	}	
-
-	var series = this;
-	Highcharts.each(series.data, function (point) {
-		var shapeArgs = point.shapeArgs;
-		var r = shapeArgs.r,
-			d = shapeArgs.depth,
-			a1 = shapeArgs.alpha * deg2rad,
-			b1 = shapeArgs.beta * deg2rad,
-			a2 = (shapeArgs.start + shapeArgs.end) / 2; 
-
-		if (point.connector) {
-			point.connector.translate(
-				(-r * (1 - cos(b1)) * cos(a2)) + (cos(a2) > 0 ? sin(b1) * d : 0),
-				(-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0)
-			);
-		}
-		if (point.dataLabel) {
-			point.dataLabel.attr({
-				x: point.dataLabel.connX + (-r * (1 - cos(b1)) * cos(a2)) + (cos(a2) > 0 ? cos(b1) * d : 0) - (point.dataLabel.width / 2),
-				y: point.dataLabel.connY + (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0) - (point.dataLabel.height / 2)
-			});
-		}
-	});
 });
 
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'addPoint', function (proceed) {
