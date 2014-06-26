@@ -150,6 +150,10 @@
 			#batch-stop {
 				display: none;
 			}
+			.comment {
+				position: absolute;
+				right: 3em;
+			}
 			.dissimilarity-index {
 				float: right;
 			}
@@ -241,9 +245,22 @@
 										<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main'><i class='icon-columns'></i></a>
 									";
 								}
+
+								// Comments
+								$comment = '';
+								if (isset($compare->$path->comment)) {
+									$comment = $compare->$path->comment;
+									$comment = "
+										<i class='icon-$comment->symbol' title='$comment->title'></i>
+									";
+								}
+
 								echo "
 								<li id='li$i' class='$compareClass'>$i. $suffix 
-									<a target='main' id='i$i' class='$batchClass' href='view.php?path=$path&amp;i=$i'>$innerFile</a> 
+									<a target='main' id='i$i' class='$batchClass' href='view.php?path=$path&amp;i=$i'>$innerFile</a>
+									<a class='comment' href='compare-comment.php?path=$path&amp;i=$i' target='main'>
+										$comment
+									</a>
 									$dissIndex
 								</li>
 								";
