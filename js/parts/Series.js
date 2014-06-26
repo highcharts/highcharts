@@ -1728,10 +1728,12 @@ Series.prototype = {
 		}
 
 		if (this.kdTree) {
-			var chart = this.chart,
+			var xAxis = series.xAxis,
+				yAxis = series.yAxis,
+				inverted = series.chart.inverted,
 				s = {
-				plotX: this.chart.inverted ? chart.plotHeight - point.chartY + chart.plotTop : point.chartX - chart.plotLeft,
-				plotY: this.chart.inverted ? chart.chartWidth - point.chartX : point.chartY - chart.plotTop 
+					plotX: inverted ? xAxis.len - point.chartY + xAxis.pos : point.chartX - xAxis.pos,
+					plotY: inverted ? yAxis.len - point.chartX + yAxis.pos : point.chartY - yAxis.pos 
 				};
 			return _search(s, 
 				this.kdTree, this.kdDimensions, this.kdDimensions);
