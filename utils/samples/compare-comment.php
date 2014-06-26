@@ -63,7 +63,8 @@ $symbols = array('check', 'exclamation-sign');
 				var contentDoc = window.parent.frames[0].document,
 					li = contentDoc.getElementById('li<?php echo $i ?>');
 
-				$('.comment', li).html("<i class='icon-<?php echo $comment->symbol ?>' title='<?php echo $comment->title ?>'></i>");
+				$('.comment', li).html("<i class='icon-<?php echo $comment->symbol ?>' title='<?php echo $comment->title ?>'></i>" + 
+					"<span class='comment-title'><?php echo $comment->title ?></span>");
 			}
 
 

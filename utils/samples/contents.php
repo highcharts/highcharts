@@ -154,6 +154,20 @@
 				position: absolute;
 				right: 3em;
 			}
+			.comment-title {
+				display: none;
+				position: absolute;
+				width: 200px;
+				background: white;
+				color: black;
+				padding: 20px;
+				right: -3em;
+				z-index: 2;
+				border: 1px solid silver;
+			}
+			.comment:hover .comment-title {
+				display: block;
+			}
 			.dissimilarity-index {
 				float: right;
 			}
@@ -247,11 +261,15 @@
 								}
 
 								// Comments
-								$comment = '';
 								if (isset($compare->$path->comment)) {
 									$comment = $compare->$path->comment;
 									$comment = "
 										<i class='icon-$comment->symbol' title='$comment->title'></i>
+										<span class='comment-title'>$comment->title</span>
+									";
+								} else {
+									$comment = "
+										<i class='icon-pencil' title='Add comment'></i>
 									";
 								}
 
