@@ -157,7 +157,7 @@ var ColumnSeries = extendClass(Series, {
 			minPointLength = pick(options.minPointLength, 5),
 			metrics = series.getColumnMetrics(),
 			pointWidth = metrics.width,
-			seriesBarW = series.barW = mathMax(pointWidth, 1 + 2 * borderWidth), // rounded and postprocessed for border width
+			seriesBarW = series.barW = mathMax(pointWidth, 1 + 2 * borderWidth), // postprocessed for border width
 			pointXOffset = series.pointXOffset = metrics.offset,
 			xCrisp = -(borderWidth % 2 ? 0.5 : 0),
 			yCrisp = borderWidth % 2 ? 0.5 : 1;
@@ -166,9 +166,16 @@ var ColumnSeries = extendClass(Series, {
 			yCrisp += 1;
 		}
 
+		// When the pointPadding is 0, we want the columns to be packed tightly, so we allow individual
+		// columns to have individual sizes. When pointPadding is greater, we strive for equal-width
+		// columns (#2694).
+		if (options.pointPadding) {
+			seriesBarW = mathCeil(seriesBarW);
+		}
+
 		Series.prototype.translate.apply(series);
 
-		// record the new values
+		// Record the new values
 		each(series.points, function (point) {
 			var yBottom = pick(point.yBottom, translatedThreshold),
 				plotY = mathMin(mathMax(-999 - yBottom, point.plotY), yAxis.len + 999 + yBottom), // Don't draw too far outside plot area (#1303, #2241)

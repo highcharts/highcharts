@@ -1031,7 +1031,7 @@ Axis.prototype = {
 				singlePad;
 
 			// Prevent all ticks from being removed (#3195)
-			if (!startOnTick && !endOnTick && tickPositions.length === 2) {
+			if (!startOnTick && !endOnTick && !categories && tickPositions.length === 2) {
 				tickPositions.splice(1, 0, (roundedMax + roundedMin) / 2);
 			}
 
