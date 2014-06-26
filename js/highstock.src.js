@@ -8127,6 +8127,12 @@ Axis.prototype = {
 			return;
 		}
 
+		// Do not draw the crosshair if this axis is not part of the point 
+		if (defined(point) && pick(this.crosshair.snap, true) && (point.series[this.isXAxis ? 'xAxis' : 'yAxis'] !== this)) {
+			this.hideCrosshair();
+			return;
+		}
+
 		var path,
 			options = this.crosshair,
 			animation = options.animation,
@@ -8142,9 +8148,9 @@ Axis.prototype = {
 		}
 
 		if (this.isRadial) {
-			path = this.getPlotLinePath(this.isXAxis ? point.x : pick(point.stackY, point.y));
+			path = this.getPlotLinePath(this.isXAxis ? point.x : pick(point.stackY, point.y)) || null; // #3189
 		} else {
-			path = this.getPlotLinePath(null, null, null, null, pos);
+			path = this.getPlotLinePath(null, null, null, null, pos) || null; // #3189
 		}
 
 		if (path === null) {
