@@ -15,12 +15,13 @@ $(function () {
 
 	// Populate dropdown menus and turn into jQuery UI widgets
 	$.each(Highcharts.mapDataIndex, function (mapGroup, maps) {
-
-		mapOptions += '<option class="option-header">' + mapGroup + '</option>';
-		$.each(maps, function (desc, path) {
-            mapOptions += '<option value="' + path + '">' + desc + '</option>';
-            mapCount++;
-		});
+		if (mapGroup !== "version") {  
+			mapOptions += '<option class="option-header">' + mapGroup + '</option>';
+			$.each(maps, function (desc, path) {
+	            mapOptions += '<option value="' + path + '">' + desc + '</option>';
+	            mapCount++;
+			});
+		}
 	});
 	searchText = 'Search ' + mapCount + ' maps';
 	mapOptions = '<option value="custom/world.js">' + searchText + '</option>' + mapOptions;
