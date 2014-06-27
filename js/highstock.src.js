@@ -2705,7 +2705,7 @@ SVGElement.prototype = {
 
 			i = value.length;
 			while (i--) {
-				value[i] = pInt(value[i]) * this.element.getAttribute('stroke-width');
+				value[i] = pInt(value[i]) * this['stroke-width'];
 			}
 			value = value.join(',');
 			this.element.setAttribute('stroke-dasharray', value);
