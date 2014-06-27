@@ -47,6 +47,45 @@
         return points;
     }
 
+    function sliceAndDice(series) {
+        //console.log(series);
+        var startX = 0,
+            startY = 0,
+            restW = series.chart.plotWidth,
+            restH = series.chart.plotHeight,
+            plotTotal = restW*restH,
+            totalValue = sumPointsValues(series.points),
+            direction = 0;
+        each(series.points, function (point) {
+            pointTotal = plotTotal * (point.y / totalValue);
+            if (direction) {
+                plotW = restW;
+                plotH = pointTotal/restW;
+                restH -= plotH;
+            } else {
+                plotW = pointTotal/restH;
+                plotH = restH;
+                restW -= plotW;
+            }
+            point.shapeType = 'rect';
+            point.shapeArgs = {
+                x: startX,
+                y: startY,
+                width: plotW,
+                height: plotH
+            };
+            point.plotX = point.shapeArgs.x + point.shapeArgs.width / 2;
+            point.plotY = point.shapeArgs.y + point.shapeArgs.height / 2;            
+            if (direction) {
+                startY += point.shapeArgs.height;
+            } else {
+                startX += point.shapeArgs.width;
+            }
+            direction = 1-direction;
+        });
+        return series.points;
+    }
+
     // Define default options
     plotOptions.treemap = merge(plotOptions.scatter, {
         marker: {
@@ -57,12 +96,13 @@
         dataLabels:{
             verticalAlign: 'middle'
         },
-        layoutAlgorithm: 'stripes'
+        layoutAlgorithm: 'sliceAndDice'
     });
 
     // The Treemap series type
     seriesTypes.treemap = extendClass(seriesTypes.scatter, {
         type: 'treemap',
+        trackerGroups: ['group', 'dataLabelsGroup'],
 
         translate: function () {
             var series = this,
@@ -71,8 +111,11 @@
                 yAxis = series.yAxis;
 
             H.Series.prototype.translate.call(this);
-            if(options.layoutAlgorithm === 'stripes')
+            if(options.layoutAlgorithm === 'stripes') {
                 series.points = stripes(series.points);
+            } else if (options.layoutAlgorithm === 'sliceAndDice') {
+                series.points = sliceAndDice(series);
+            }
         },
 
         drawPoints: seriesTypes.column.prototype.drawPoints
