@@ -2705,7 +2705,7 @@ SVGElement.prototype = {
 
 			i = value.length;
 			while (i--) {
-				value[i] = pInt(value[i]) * this.element.getAttribute('stroke-width');
+				value[i] = pInt(value[i]) * this['stroke-width'];
 			}
 			value = value.join(',');
 			this.element.setAttribute('stroke-dasharray', value);
@@ -7069,6 +7069,8 @@ Axis.prototype = {
 		var axis = this,
 			chart = axis.chart,
 			options = axis.options,
+			startOnTick = options.startOnTick,
+			endOnTick = options.endOnTick,
 			isLog = axis.isLog,
 			isDatetimeAxis = axis.isDatetimeAxis,
 			isXAxis = axis.isXAxis,
@@ -7161,7 +7163,7 @@ Axis.prototype = {
 			);
 			// For squished axes, set only two ticks
 			if (!defined(tickIntervalOption) && axis.len < tickPixelIntervalOption && !this.isRadial &&
-					!this.isLog && !categories && options.startOnTick && options.endOnTick) {
+					!this.isLog && !categories && startOnTick && endOnTick) {
 				keepTwoTicksOnly = true;
 				axis.tickInterval /= 4; // tick extremes closer to the real values
 			}
@@ -7251,13 +7253,18 @@ Axis.prototype = {
 				minPointOffset = axis.minPointOffset || 0,
 				singlePad;
 
-			if (options.startOnTick) {
+			// Prevent all ticks from being removed (#3195)
+			if (!startOnTick && !endOnTick && !categories && tickPositions.length === 2) {
+				tickPositions.splice(1, 0, (roundedMax + roundedMin) / 2);
+			}
+
+			if (startOnTick) {
 				axis.min = roundedMin;
 			} else if (axis.min - minPointOffset > roundedMin) {
 				tickPositions.shift();
 			}
 
-			if (options.endOnTick) {
+			if (endOnTick) {
 				axis.max = roundedMax;
 			} else if (axis.max + minPointOffset < roundedMax) {
 				tickPositions.pop();
@@ -12190,7 +12197,7 @@ Point.prototype = {
 	applyOptions: function (options, x) {
 		var point = this,
 			series = point.series,
-			pointValKey = series.pointValKey;
+			pointValKey = series.options.pointValKey || series.pointValKey;
 
 		options = Point.prototype.optionsToObject.call(this, options);
 
@@ -15342,7 +15349,7 @@ var ColumnSeries = extendClass(Series, {
 			minPointLength = pick(options.minPointLength, 5),
 			metrics = series.getColumnMetrics(),
 			pointWidth = metrics.width,
-			seriesBarW = series.barW = mathCeil(mathMax(pointWidth, 1 + 2 * borderWidth)), // rounded and postprocessed for border width
+			seriesBarW = series.barW = mathMax(pointWidth, 1 + 2 * borderWidth), // postprocessed for border width
 			pointXOffset = series.pointXOffset = metrics.offset,
 			xCrisp = -(borderWidth % 2 ? 0.5 : 0),
 			yCrisp = borderWidth % 2 ? 0.5 : 1;
@@ -15351,9 +15358,16 @@ var ColumnSeries = extendClass(Series, {
 			yCrisp += 1;
 		}
 
+		// When the pointPadding is 0, we want the columns to be packed tightly, so we allow individual
+		// columns to have individual sizes. When pointPadding is greater, we strive for equal-width
+		// columns (#2694).
+		if (options.pointPadding) {
+			seriesBarW = mathCeil(seriesBarW);
+		}
+
 		Series.prototype.translate.apply(series);
 
-		// record the new values
+		// Record the new values
 		each(series.points, function (point) {
 			var yBottom = pick(point.yBottom, translatedThreshold),
 				plotY = mathMin(mathMax(-999 - yBottom, point.plotY), yAxis.len + 999 + yBottom), // Don't draw too far outside plot area (#1303, #2241)
@@ -15363,7 +15377,6 @@ var ColumnSeries = extendClass(Series, {
 				right,
 				bottom,
 				fromTop,
-				fromLeft,
 				barH = mathMax(plotY, yBottom) - barY;
 
 			// Handle options.minPointLength
@@ -15384,8 +15397,7 @@ var ColumnSeries = extendClass(Series, {
 			// Fix the tooltip on center of grouped columns (#1216)
 			point.tooltipPos = chart.inverted ? [yAxis.len - plotY, series.xAxis.len - barX - barW / 2] : [barX + barW / 2, plotY];
 
-			// Round off to obtain crisp edges
-			fromLeft = mathAbs(barX) < 0.5;
+			// Round off to obtain crisp edges and avoid overlapping with neighbours (#2694)
 			right = mathRound(barX + barW) + xCrisp;
 			barX = mathRound(barX) + xCrisp;
 			barW = right - barX;
@@ -15395,11 +15407,7 @@ var ColumnSeries = extendClass(Series, {
 			barY = mathRound(barY) + yCrisp;
 			barH = bottom - barY;
 
-			// Top and left edges are exceptions
-			if (fromLeft) {
-				barX += 1;
-				barW -= 1;
-			}
+			// Top edges are exceptions
 			if (fromTop) {
 				barY -= 1;
 				barH += 1;
@@ -15413,6 +15421,7 @@ var ColumnSeries = extendClass(Series, {
 				width: barW,
 				height: barH
 			};
+
 		});
 
 	},

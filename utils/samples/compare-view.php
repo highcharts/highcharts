@@ -27,6 +27,10 @@
 					location.reload();
 				});
 
+				$('#comment').click(function () {
+					location.href = 'compare-comment.php?path=<?php echo $path ?>&i=<?php echo $i ?>';
+				});
+
 				$(window).bind('keydown', parent.keyDown);
 
 				$('#svg').click(function () {
@@ -414,6 +418,7 @@
 			<h2 style="margin: 0"><?php echo $path ?></h2> 
 			
 			<div style="text-align: right">
+				<button id="comment" style="margin-left: 1em"><i class="icon-comment"></i> Comment</button>
 				<button id="reload" style="margin-left: 1em">Reload</button>
 			</div>
 		</div>
