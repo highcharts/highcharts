@@ -15,7 +15,9 @@
         defaultOptions = H.getOptions(),
         plotOptions = defaultOptions.plotOptions,
         scatterOptions = plotOptions.scatter,
+        noop = function () {},
         each = H.each;
+
     function Area(x, y, w, h) {
         this.x = x;
         this.y = y;
@@ -71,7 +73,7 @@
     function sumPointsValues(points) {
         var totalValue = 0;
         each(points, function (point) {
-            totalValue += point.y
+            totalValue += point.value
         });    
         return totalValue;
     }
@@ -95,7 +97,7 @@
             point.shapeArgs = {
                 x: startX,
                 y: 0,
-                width: point.y / totalValue * point.series.chart.plotWidth,
+                width: point.value / totalValue * point.series.chart.plotWidth,
                 height: point.series.chart.plotHeight
             };
             point.plotX = point.shapeArgs.x + point.shapeArgs.width / 2;
@@ -113,13 +115,34 @@
             radius: 0
         },
         dataLabels:{
-            verticalAlign: 'middle'
+            verticalAlign: 'middle',
+            formatter: function () { // #2945
+                return this.point.value;
+            },
         },
         layoutAlgorithm: 'sliceAndDice'
     });
+    
+    // Stolen from heatmap
+    var colorSeriesMixin = {
+        // mapping between SVG attributes and the corresponding options
+        pointAttrToOptions: { 
+            stroke: 'borderColor',
+            'stroke-width': 'borderWidth',
+            fill: 'color',
+            dashstyle: 'dashStyle'
+        },
+        pointArrayMap: ['value'],
+        axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
+        optionalAxis: 'colorAxis',
+        getSymbol: noop,
+        parallelArrays: ['x', 'y', 'value'],
+        colorKey: 'colorValue', // Point color option key
+        translateColors: seriesTypes.heatmap.prototype.translateColors
+    }
 
     // The Treemap series type
-    seriesTypes.treemap = extendClass(seriesTypes.scatter, {
+    seriesTypes.treemap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
         type: 'treemap',
         trackerGroups: ['group', 'dataLabelsGroup'],
         handleLayout: function () {
@@ -129,7 +152,9 @@
             layoutAlgorithm = this[this.options.layoutAlgorithm];
 
             each(this.points, function (point) {
-                pointArea = layoutAlgorithm(seriesArea, point.y, direction);
+                var pointArea = layoutAlgorithm(seriesArea, point.value, direction);                
+                
+                console.log(pointArea)
 
                 // Set point values
                 point.shapeType = 'rect';
@@ -142,7 +167,7 @@
                 point.plotX = pointArea.centerX;
                 point.plotY = pointArea.centerY;
                 direction = 1 - direction;
-            });
+            });            
         },
         stripes: function () {
 
@@ -157,9 +182,21 @@
             return pointArea;
         },
         translate: function () {
-            H.Series.prototype.translate.call(this);
-            this.handleLayout();
+            var series = this;
+
+            H.Series.prototype.translate.call(series);
+            series.handleLayout();
+
+            series.translateColors();
+
+            // Make sure colors are updated on colorAxis update (#2893)
+            if (series.chart.hasRendered) {
+                each(series.points, function (point) {
+                    point.shapeArgs.fill = point.color;
+                });
+            }
         },
-        drawPoints: seriesTypes.column.prototype.drawPoints
-    });
+        drawPoints: seriesTypes.column.prototype.drawPoints,
+        drawLegendSymbol: H.LegendSymbolMixin.drawRectangle,
+    }));
 }(Highcharts));
