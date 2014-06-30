@@ -9,7 +9,6 @@
  */
 
 (function (H) { // docs
-
     var seriesTypes = H.seriesTypes,
         merge = H.merge,
         extendClass = H.extendClass,
@@ -17,6 +16,56 @@
         plotOptions = defaultOptions.plotOptions,
         scatterOptions = plotOptions.scatter,
         each = H.each;
+    function Area(x, y, w, h) {
+        this.x = x;
+        this.y = y;
+        this.width = w;
+        this.height = h;
+        this.centerX = this.x + (this.width/2);
+        this.centerY = this.y + (this.height/2);
+        this.totalArea = this.width * this.height;
+        this.totalValue = 0;
+        this._plotW = this.width;
+        this._plotH = this.height;
+        this._plotX = this.x;
+        this._plotY = this.y;
+        // Calculates plotting width for a child point
+        this.plotW = function (total, d) {
+            if (d == 0) {
+                val = total/this._plotH;
+                this._plotW -= val;
+            } else {
+                val = this._plotW;
+            }
+            return val;
+        }
+        // Calculates plotting height for a child point
+        this.plotH = function (total, d) {
+            if (d == 1) {
+                val = total/this._plotW;
+                this._plotH -= val;
+            } else {
+                val = this._plotH;
+            }
+            return val;
+        }
+        // Calculates x value for a child point
+        this.plotX = function (w, d) {
+            val = this._plotX;
+            if (d == 0) {
+                this._plotX += w;
+            }
+            return val;
+        }
+        // Calculates y value for a child point
+        this.plotY = function (h, d) {
+            val = this._plotY;
+            if (d == 1) {
+                this._plotY += h;
+            }
+            return val;
+        }
+    }
 
     // Compute sum of values in array of Points
     function sumPointsValues(points) {
@@ -25,6 +74,15 @@
             totalValue += point.y
         });    
         return totalValue;
+    }
+
+    function getSeriesArea(series) {
+        var numSeries = series.chart.series.length,
+            w = series.chart.plotWidth/numSeries,
+            x = w * series._i,
+            y = 0,
+            h = series.chart.plotHeight;
+        return seriesArea = new Area(x, y, w, h);
     }
     
     // Lay out tiles as stripes in one dimension
@@ -47,45 +105,6 @@
         return points;
     }
 
-    function sliceAndDice(series) {
-        //console.log(series);
-        var startX = 0,
-            startY = 0,
-            restW = series.chart.plotWidth,
-            restH = series.chart.plotHeight,
-            plotTotal = restW*restH,
-            totalValue = sumPointsValues(series.points),
-            direction = 0;
-        each(series.points, function (point) {
-            pointTotal = plotTotal * (point.y / totalValue);
-            if (direction) {
-                plotW = restW;
-                plotH = pointTotal/restW;
-                restH -= plotH;
-            } else {
-                plotW = pointTotal/restH;
-                plotH = restH;
-                restW -= plotW;
-            }
-            point.shapeType = 'rect';
-            point.shapeArgs = {
-                x: startX,
-                y: startY,
-                width: plotW,
-                height: plotH
-            };
-            point.plotX = point.shapeArgs.x + point.shapeArgs.width / 2;
-            point.plotY = point.shapeArgs.y + point.shapeArgs.height / 2;            
-            if (direction) {
-                startY += point.shapeArgs.height;
-            } else {
-                startX += point.shapeArgs.width;
-            }
-            direction = 1-direction;
-        });
-        return series.points;
-    }
-
     // Define default options
     plotOptions.treemap = merge(plotOptions.scatter, {
         marker: {
@@ -103,22 +122,44 @@
     seriesTypes.treemap = extendClass(seriesTypes.scatter, {
         type: 'treemap',
         trackerGroups: ['group', 'dataLabelsGroup'],
+        handleLayout: function () {
+            seriesArea = getSeriesArea(this);
+            seriesArea.totalValue = sumPointsValues(this.points);
+            direction = 0;
+            layoutAlgorithm = this[this.options.layoutAlgorithm];
 
-        translate: function () {
-            var series = this,
-                options = series.options,
-                xAxis = series.xAxis,
-                yAxis = series.yAxis;
+            each(this.points, function (point) {
+                pointArea = layoutAlgorithm(seriesArea, point.y, direction);
 
-            H.Series.prototype.translate.call(this);
-            if(options.layoutAlgorithm === 'stripes') {
-                series.points = stripes(series.points);
-            } else if (options.layoutAlgorithm === 'sliceAndDice') {
-                series.points = sliceAndDice(series);
-            }
+                // Set point values
+                point.shapeType = 'rect';
+                point.shapeArgs = {
+                    x: pointArea.x,
+                    y: pointArea.y,
+                    width: pointArea.width,
+                    height: pointArea.height
+                };
+                point.plotX = pointArea.centerX;
+                point.plotY = pointArea.centerY;
+                direction = 1 - direction;
+            });
         },
+        stripes: function () {
 
+        },
+        sliceAndDice: function (parent, value, direction) {
+            pointTotal = parent.totalArea * (value / parent.totalValue);
+            pointW = parent.plotW(pointTotal, direction);
+            pointH = parent.plotH(pointTotal, direction);
+            pointX = parent.plotX(pointW, direction);
+            pointY = parent.plotY(pointH, direction);
+            pointArea = new Area(pointX, pointY, pointW, pointH);
+            return pointArea;
+        },
+        translate: function () {
+            H.Series.prototype.translate.call(this);
+            this.handleLayout();
+        },
         drawPoints: seriesTypes.column.prototype.drawPoints
-
     });
 }(Highcharts));
