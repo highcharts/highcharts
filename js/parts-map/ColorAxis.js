@@ -316,7 +316,7 @@ extend(ColorAxis.prototype, {
 					.attr({
 						fill: this.crosshair.color
 					})
-					.add(this.labelGroup);
+					.add(this.legendGroup);
 			}
 		}
 	},

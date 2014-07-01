@@ -123,7 +123,7 @@
         layoutAlgorithm: 'sliceAndDice'
     });
     
-    // Stolen from heatmap
+    // Stolen from heatmap    
     var colorSeriesMixin = {
         // mapping between SVG attributes and the corresponding options
         pointAttrToOptions: { 
@@ -144,6 +144,7 @@
     // The Treemap series type
     seriesTypes.treemap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
         type: 'treemap',
+        isCartesian: false,    
         trackerGroups: ['group', 'dataLabelsGroup'],
         handleLayout: function () {
             seriesArea = getSeriesArea(this);
@@ -153,9 +154,7 @@
 
             each(this.points, function (point) {
                 var pointArea = layoutAlgorithm(seriesArea, point.value, direction);                
-                
-                console.log(pointArea)
-
+ 
                 // Set point values
                 point.shapeType = 'rect';
                 point.shapeArgs = {
@@ -195,7 +194,7 @@
                     point.shapeArgs.fill = point.color;
                 });
             }
-        },
+        },        
         drawPoints: seriesTypes.column.prototype.drawPoints,
         drawLegendSymbol: H.LegendSymbolMixin.drawRectangle,
     }));
