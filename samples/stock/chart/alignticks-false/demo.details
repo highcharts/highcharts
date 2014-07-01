@@ -1,5 +1,5 @@
 ---
- name: Highcharts Stock - chart.alignTicks: false
+ name: Highcharts Stock
  authors:
    - Torstein Hønsi
  ...

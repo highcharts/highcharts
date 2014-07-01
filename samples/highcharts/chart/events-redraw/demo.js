@@ -4,7 +4,21 @@ $(function () {
         chart: {
             events: {
                 redraw: function() {
-                    alert ('The chart was just redrawn');
+                    var label = this.renderer.label('The chart was just redrawn', 100, 120)
+                        .attr({
+                            fill: Highcharts.getOptions().colors[0],
+                            padding: 10,
+                            r: 5,
+                            zIndex: 8
+                        })
+                        .css({
+                            color: '#FFFFFF'
+                        })
+                        .add();
+
+                    setTimeout(function () {
+                        label.fadeOut();
+                    }, 1000);
                 }
             }
         },
