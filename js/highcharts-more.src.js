@@ -2041,7 +2041,7 @@ Axis.prototype.beforePadding = function () {
 					// Find the min and max Z
 					zData = series.zData;
 					if (zData.length) { // #1735
-						zMin = pick(seriesOptions.zMin, math.min( // docs: zMin, zMax (plotoptions/bubble-zmin-zmax)
+						zMin = pick(seriesOptions.zMin, math.min(
 							zMin,
 							math.max(
 								arrayMin(zData), 
