@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highmaps JS v1.0.2-modified ()
+ * @license Highmaps JS v1.0.3 (2014-07-03)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -57,7 +57,7 @@ var UNDEFINED,
 	charts = [],
 	chartCount = 0,
 	PRODUCT = 'Highmaps',
-	VERSION = '1.0.2-modified',
+	VERSION = '1.0.3',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -1267,8 +1267,8 @@ defaultOptions = {
 	global: {
 		useUTC: true,
 		//timezoneOffset: 0,
-		canvasToolsURL: 'http://code.highcharts.com/maps/1.0.2-modified/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/maps/1.0.2-modified/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/maps/1.0.3/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/maps/1.0.3/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,

@@ -1658,6 +1658,7 @@
     <target name="deploy-all">
         <antcall target="deploy-highcharts"></antcall>
         <antcall target="deploy-highstock"></antcall>
+        <antcall target="deploy-highmaps"></antcall>
     </target>
 
 
