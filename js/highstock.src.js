@@ -2701,7 +2701,7 @@ SVGElement.prototype = {
 				.replace(/dot/g, '1,3,')
 				.replace('dash', '4,3,')
 				.replace(/,$/, '')
-				.replace('solid', 1)
+				.replace('solid', 0) // #3226
 				.split(','); // ending comma
 
 			i = value.length;
