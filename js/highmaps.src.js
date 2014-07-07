@@ -15850,7 +15850,7 @@ var MapAreaPoint = extendClass(Point, {
 			mapPoint;
 
 		if (series.mapData) {
-			mapPoint = point[joinBy[1]] && series.mapMap[point[joinBy[1]]];
+			mapPoint = point[joinBy[1]] !== undefined && series.mapMap[point[joinBy[1]]];
 			if (mapPoint) {
 				// This applies only to bubbles
 				if (series.xyFromShape) {
