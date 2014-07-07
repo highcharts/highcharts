@@ -384,6 +384,7 @@
             <file name="modules/${drilldown.src.name}"/>
             <file name="modules/${nodata.src.name}"/>
             <file name="modules/${solidgauge.src.name}"/>
+            <file name="modules/${funnel.src.name}"/>
         </filelist>
     </target>
 
