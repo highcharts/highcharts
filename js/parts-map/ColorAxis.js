@@ -84,7 +84,8 @@ extend(ColorAxis.prototype, {
 			chart = this.chart,
 			dataClasses,
 			colorCounter = 0,
-			options = this.options;
+			options = this.options,
+			len = userOptions.dataClasses.length;
 		this.dataClasses = dataClasses = [];
 		this.legendItems = [];
 
@@ -102,7 +103,11 @@ extend(ColorAxis.prototype, {
 						colorCounter = 0;
 					}
 				} else {
-					dataClass.color = axis.tweenColors(Color(options.minColor), Color(options.maxColor), i / (userOptions.dataClasses.length - 1));
+					dataClass.color = axis.tweenColors(
+						Color(options.minColor), 
+						Color(options.maxColor), 
+						len < 2 ? 0.5 : i / (len - 1) // #3219
+					);
 				}
 			}
 		});
