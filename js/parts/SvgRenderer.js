@@ -937,14 +937,14 @@ SVGElement.prototype = {
 				.replace(/dot/g, '1,3,')
 				.replace('dash', '4,3,')
 				.replace(/,$/, '')
-				.replace('solid', 0) // #3226
 				.split(','); // ending comma
 
 			i = value.length;
 			while (i--) {
 				value[i] = pInt(value[i]) * this['stroke-width'];
 			}
-			value = value.join(',');
+			value = value.join(',')
+				.replace('NaN', 'none'); // #3226
 			this.element.setAttribute('stroke-dasharray', value);
 		}
 	},

@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.0.3 (2014-07-03)
+ * @license Highstock JS v2.0.3-modified ()
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -57,7 +57,7 @@ var UNDEFINED,
 	charts = [],
 	chartCount = 0,
 	PRODUCT = 'Highstock',
-	VERSION = '2.0.3',
+	VERSION = '2.0.3-modified',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -1267,8 +1267,8 @@ defaultOptions = {
 	global: {
 		useUTC: true,
 		//timezoneOffset: 0,
-		canvasToolsURL: 'http://code.highcharts.com/stock/2.0.3/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/stock/2.0.3/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/stock/2.0.3-modified/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/stock/2.0.3-modified/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -2701,14 +2701,14 @@ SVGElement.prototype = {
 				.replace(/dot/g, '1,3,')
 				.replace('dash', '4,3,')
 				.replace(/,$/, '')
-				.replace('solid', 0) // #3226
 				.split(','); // ending comma
 
 			i = value.length;
 			while (i--) {
 				value[i] = pInt(value[i]) * this['stroke-width'];
 			}
-			value = value.join(',');
+			value = value.join(',')
+				.replace('NaN', 'none'); // #3226
 			this.element.setAttribute('stroke-dasharray', value);
 		}
 	},
