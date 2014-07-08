@@ -3,7 +3,7 @@
  *****************************************************************************/
 extend(defaultOptions, {
 	rangeSelector: {
-		// allButtonsEnabled: false, // docs: /stock/rangeselector/allbuttonsenabled-true
+		// allButtonsEnabled: false,
 		// enabled: true,
 		// buttons: {Object}
 		// buttonSpacing: 0,

@@ -95,7 +95,7 @@ $(function () {
                     $('#info h2').html('Comparing countries');
 
                 }
-                $('#info .subheader').html('<h4>Historical population</h4><small>Shift + Click on map to compare countries</small>')
+                $('#info .subheader').html('<h4>Historical population</h4><small><em>Shift + Click on map to compare countries</em></small>')
 
                 if (!countryChart) {
                     countryChart = $('#country-chart').highcharts({
@@ -195,7 +195,9 @@ $(function () {
 
             colorAxis: {
                 type: 'logarithmic',
-                endOnTick: false
+                endOnTick: false,
+                startOnTick: false,
+                min: 50000
             },
 
             tooltip: {
@@ -211,7 +213,7 @@ $(function () {
                 cursor: 'pointer',
                 states: {
                     select: {
-                        color: '#BADA55',
+                        color: '#a4edba',
                         borderColor: 'black',
                         dashStyle: 'shortdot'
                     }
@@ -220,6 +222,6 @@ $(function () {
         }).highcharts();
 
         // Pre-select a country
-        mapChart.get('US').select();
+        mapChart.get('us').select();
     });
 });

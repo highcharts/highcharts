@@ -67,6 +67,9 @@ Highcharts.theme = {
 		},
 		candlestick: {
 			lineColor: '#404048'
+		},
+		map: {
+			shadow: false
 		}
 	},
 

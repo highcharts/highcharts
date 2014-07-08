@@ -8,7 +8,7 @@ $(function () {
         },
         
         series : [{
-            mapData: Highcharts.geojson(Highcharts.maps['custom/world']),
+            mapData: Highcharts.maps['custom/world'],
             name: 'World map'
         }]
     });

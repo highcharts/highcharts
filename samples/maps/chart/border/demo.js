@@ -20,7 +20,7 @@ $(function () {
             },
 
             title : {
-                text : 'Chart with a 1px silver border, radius radius 3 and shadow'
+                text : 'Chart with a 1px silver border,  radius 3 and shadow'
             },
 
             mapNavigation: {
@@ -46,7 +46,7 @@ $(function () {
 
             series : [{
                 data : data,
-                mapData: Highcharts.geojson(Highcharts.maps['custom/world']),
+                mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
                 states: {

@@ -9,6 +9,7 @@ $(function () {
     
         // Instanciate the map
         $('#container').highcharts('Map', {
+            
             chart : {
                 borderWidth : 1
             },
@@ -47,7 +48,7 @@ $(function () {
                     duration: 1000
                 },
                 data : data,
-                mapData: Highcharts.geojson(Highcharts.maps['countries/usa/usa-all']),
+                mapData: Highcharts.maps['countries/us/us-all'],
                 joinBy: ['postal-code', 'code'],
                 dataLabels: {
                     enabled: true,

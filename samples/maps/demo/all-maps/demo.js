@@ -1,28 +1,27 @@
 $(function () {
 
-	/*
-	TODO:
-	- Don't download cached maps
-	- Separators
-	- Set location.hash to allow refresh and sending URL
-
-	*/
+	/** 
+	 * This is a complicated demo of Highmaps, not intended to get you up to speed
+	 * quickly, but to show off some basic maps and features in one single place.
+	 * For the basic demo, check out http://www.highcharts.com/maps/demo/geojson instead.
+	 */
 
 	// Base path to maps
-	var baseMapPath = "http://code.highcharts.com/mapdata/1.0.0/",
-		showDataLabels = true, // Switch for data labels enabled/disabled
+	var baseMapPath = "http://code.highcharts.com/mapdata/",
+		showDataLabels = false, // Switch for data labels enabled/disabled
 		mapCount = 0,
 		searchText,
 		mapOptions = '';
 
 	// Populate dropdown menus and turn into jQuery UI widgets
 	$.each(Highcharts.mapDataIndex, function (mapGroup, maps) {
-
-		mapOptions += '<option class="option-header">' + mapGroup + '</option>';
-		$.each(maps, function (desc, path) {
-            mapOptions += '<option value="' + path + '">' + desc + '</option>';
-            mapCount++;
-		});
+		if (mapGroup !== "version") {  
+			mapOptions += '<option class="option-header">' + mapGroup + '</option>';
+			$.each(maps, function (desc, path) {
+	            mapOptions += '<option value="' + path + '">' + desc + '</option>';
+	            mapCount++;
+			});
+		}
 	});
 	searchText = 'Search ' + mapCount + ' maps';
 	mapOptions = '<option value="custom/world.js">' + searchText + '</option>' + mapOptions;
@@ -66,14 +65,17 @@ $(function () {
 				match;
 
 			// Update info box download links
-			$("#download").html('<a target="_blank" href="' + svgPath +
-				'">SVG</a> <a target="_blank" href="' + geojsonPath +
-				'">GeoJSON</a> <a target="_blank" href="' + javascriptPath + '">JavaScript</a>');
+			$("#download").html('<a class="button" target="_blank" href="http://www.highcharts.com/samples/maps-base.php?mapkey=' + mapKey + '">' +
+				'View clean demo</a>' +
+				'<div class="or-view-as">... or view as ' +
+				'<a target="_blank" href="' + svgPath + '">SVG</a>, ' + 
+				'<a target="_blank" href="' + geojsonPath + '">GeoJSON</a>, ' +
+				'<a target="_blank" href="' + javascriptPath + '">JavaScript</a>.</div>');
 
 			// Generate non-random data for the map    
 			$.each(mapGeoJSON.features, function (index, feature) {
 				data.push({
-					code: feature.properties.code,
+					key: feature.properties['hc-key'],
 					value: index
 				});
 			});
@@ -86,12 +88,12 @@ $(function () {
 
 			
 			// Is there a layer above this?
-			if (/^countries\/[a-z]{3}\/[a-z]{3}-all$/.test(mapKey)) { // country
+			if (/^countries\/[a-z]{2}\/[a-z]{2}-all$/.test(mapKey)) { // country
 				parent = {
 					desc: 'World',
 					key: 'custom/world'
 				};
-			} else if (match = mapKey.match(/^(countries\/[a-z]{3}\/[a-z]{3})-[a-z0-9]+-all$/)) { // admin1
+			} else if (match = mapKey.match(/^(countries\/[a-z]{2}\/[a-z]{2})-[a-z0-9]+-all$/)) { // admin1
 				parent = {
 					desc: $('option[value="' + match[1] + '-all.js"]').text(),
 					key: match[1] + '-all'
@@ -119,68 +121,49 @@ $(function () {
 				},
 
 				mapNavigation: {
-					enabled: true,
-					buttonOptions: {
-						verticalAlign: 'bottom'
-					}
+					enabled: true
 				},
 
 				colorAxis: {
-					min: 0
+					min: 0,
+					stops: [
+						[0, '#EFEFFF'],
+						[0.5, Highcharts.getOptions().colors[0]],
+						[1, Highcharts.Color(Highcharts.getOptions().colors[0]).brighten(-0.5).get()]
+					]
 				},
 
 				legend: {
 					layout: 'vertical',
 					align: 'left',
-					verticalAlign: 'middle'
-				},
-
-				loading: {
-					labelStyle: {
-						top: '200px'
-					}
+					verticalAlign: 'bottom'
 				},
 
 				series: [{
 					data: data,
-					mapData: Highcharts.geojson(mapGeoJSON, 'map'),
-					joinBy: 'code',
+					mapData: mapGeoJSON,
+					joinBy: ['hc-key', 'key'],
 					name: 'Random data',
 					states: {
 						hover: {
-							color: '#BADA55'
+							color: Highcharts.getOptions().colors[2]
 						}
 					},
 					dataLabels: {
 						enabled: showDataLabels,
 						formatter: function () {
-							var props = this.point.properties,
-                                bBox = this.point.graphic && this.point.graphic.getBBox(),
-                                label,
-                                name = this.point.properties && this.point.properties['hc-key'];
-							
-                        	if (props && bBox.width > 20 && bBox.height > 20 && name) {
-                        		name = name.split('.');
-                        		name = name[name.length - 1];
-                        		return name;
-                            	/*label = name.substr(0, bBox.width / 8);
-                                if (label.length === name.length - 1) {
-                                	label = this.point.name;
-                                } else  if (label !== name) {
-                                	label += '.';
-                                }
-	                            return label;
-	                            */
-                            }
+							return mapKey === 'custom/world' || mapKey === 'countries/us/us-all' ?
+								(this.point.properties && this.point.properties['hc-a2']) :
+								this.point.name;
 						}
 					},
 					point: {
 						events: {
 							// On click, look for a detailed map
 							click: function () {
-								var code = this.code.toLowerCase();
+								var key = this.key;
 								$('#mapDropdown option').each(function (i) {
-									if (this.value === 'countries/' + code + '/' + code + '-all.js') {
+									if (this.value === 'countries/' + key.substr(0, 2) + '/' + key + '-all.js') {
 										$('#mapDropdown').val(this.value).change();
 									}
 								});
@@ -196,6 +179,9 @@ $(function () {
 					enableMouseTracking: false
 				}]
 			});
+
+			showDataLabels = $("#chkDataLabels").attr('checked');
+
 		}
 
 		// Check whether the map is already loaded, else load it and
@@ -209,7 +195,7 @@ $(function () {
 
 	// Toggle data labels - Note: Reloads map with new random data
 	$("#chkDataLabels").change(function () {
-		showDataLabels = !showDataLabels;
+		showDataLabels = $("#chkDataLabels").attr('checked');
 		$("#mapDropdown").change();
 	});
 
@@ -224,6 +210,10 @@ $(function () {
 	});
 
 	// Trigger change event to load map on startup
-	$("#mapDropdown").val(location.hash ? location.hash.substr(1) + '.js' : 0).change();
-
+	if (location.hash) {
+		$('#mapDropdown').val(location.hash.substr(1) + '.js');
+	} else { // for IE9
+		$($('#mapDropdown option')[0]).attr('selected', 'selected');
+	}
+	$('#mapDropdown').change();
 });

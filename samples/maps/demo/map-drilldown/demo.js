@@ -2,17 +2,16 @@ $(function () {
 
     /*
     TODO:
-    - Alaska not loading
     - Check data labels after drilling. Label rank? New positions?
     - Not US Mainland text
     - Separators
     */
 
-    var data = Highcharts.geojson(Highcharts.maps['countries/usa/usa-all']);
+    var data = Highcharts.geojson(Highcharts.maps['countries/us/us-all']);
 
     // Set drilldown pointers
     $.each(data, function (i) {
-        this.drilldown = 'usa-' + this.properties.fips.substr(2, 2);
+        this.drilldown = this.properties['hc-key'];
         this.value = i; // Non-random bogus data
     });
 
@@ -27,7 +26,7 @@ $(function () {
                     
                     if (!e.seriesOptions) {
                         var chart = this,
-                            mapKey = 'countries/usa/' + e.point.drilldown + '-all';
+                            mapKey = 'countries/us/' + e.point.drilldown + '-all';
 
                         // Show the spinner
                         chart.showLoading('<i class="icon-spinner icon-spin icon-3x"></i>'); // Font Awesome spinner
@@ -44,7 +43,7 @@ $(function () {
                         }, 3000);
                         
                         // Load the drilldown map
-                        $.getScript('http://code.highcharts.com/mapdata/1.0.0/' + mapKey + '.js', function () {
+                        $.getScript('http://code.highcharts.com/mapdata/' + mapKey + '.js', function () {
 
                             var data = Highcharts.geojson(Highcharts.maps[mapKey]);
                         
@@ -71,7 +70,7 @@ $(function () {
                     this.setTitle(null, { text: e.point.name });
                 },
                 drillup: function (e) {
-                    this.setTitle(null, { text: 'US Mainland' });
+                    this.setTitle(null, { text: 'USA' });
                 }
             }
         },
@@ -81,7 +80,7 @@ $(function () {
         },
 
         subtitle: {
-            text: 'US Mainland',
+            text: 'USA',
             floating: true,
             align: 'right',
             y: 50,
@@ -121,7 +120,7 @@ $(function () {
         
         series : [{
             data : data,
-            name: 'US Mainland',
+            name: 'USA',
             dataLabels: {
                 enabled: true,
                 format: '{point.properties.postal-code}'

@@ -18,7 +18,7 @@ $(function () {
         
         series : [{
             name: 'Country',
-            mapData: Highcharts.geojson(Highcharts.maps['custom/europe']),
+            mapData: Highcharts.maps['custom/europe'],
             data: [{
                 code: 'IS',
                 value: 1

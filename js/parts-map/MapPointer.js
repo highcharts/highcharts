@@ -57,8 +57,7 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 
 	// Pinch status
 	if (pick(options.mapNavigation.enableTouchZoom, options.mapNavigation.enabled)) {
-		this.pinchX = this.pinchHor = 
-			this.pinchY = this.pinchVert = true;
+		this.pinchX = this.pinchHor = this.pinchY = this.pinchVert = this.hasZoom = true;
 	}
 });
 
@@ -68,7 +67,7 @@ wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches,
 	proceed.call(this, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 
 	// Keep ratio
-	if (this.chart.options.chart.type === 'map') {
+	if (this.chart.options.chart.type === 'map' && this.hasZoom) {
 		xBigger = transform.scaleX > transform.scaleY;
 		this.pinchTranslateDirection(
 			!xBigger, 
