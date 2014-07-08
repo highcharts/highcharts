@@ -4279,7 +4279,7 @@ extend(SVGRenderer.prototype, {
 
 		// Text setter
 		wrapper.textSetter = function (value) {
-			if (renderer.isVML) {
+			if (renderer.isVML && typeof value === 'string') {
 				value = value.replace(/&(?!#?[a-zA-Z0-9]+;)/g, '&amp;'); // fix legacy IE issue with ampersands
 			}
 			if (value !== element.innerHTML) {
