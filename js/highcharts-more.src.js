@@ -1671,11 +1671,10 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	 */
 	toYData: function (pt) {
 		if (pt.isSum) {
-			return "sum";
+			return (pt.x === 0 ? null : "sum"); //#3245 Error when first element is Sum or Intermediate Sum
 		} else if (pt.isIntermediateSum) {
-			return "intermediateSum";
+			return (pt.x === 0 ? null : "intermediateSum"); //#3245
 		}
-
 		return pt.y;
 	},
 
