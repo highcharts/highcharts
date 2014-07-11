@@ -268,7 +268,7 @@ function numberFormat(number, decimals, decPoint, thousandsSep) {
 		j = i.length > 3 ? i.length % 3 : 0;
 
 	return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
-		(c ? d + mathAbs(n - i).toFixed(c).slice(2) : "");
+		(c ? d + mathAbs(n - i).toFixed(c).toString().slice(2) : "");
 }
 
 /**
