@@ -3,13 +3,16 @@
 $compare = json_decode(file_get_contents('temp/compare.json'));
 
 $browsers = array();
+$comments = array();
 foreach ($compare as $path => $sample) {
 	$range = array();
-	foreach ($sample as $browser => $diff) {
-		if (!in_array($browser, $browsers)) {
-			$browsers[] = $browser;
+	foreach ($sample as $key => $diff) {
+		if ($key !== 'comment') {
+			if (!in_array($key, $browsers)) {
+				$browsers[] = $key;
+			}
+			$range[] = $diff;
 		}
-		$range[] = $diff;
 	}
 	//$sample->range = round(abs(max($range) - min($range)), 2);
 }
@@ -22,6 +25,7 @@ foreach ($compare as $path => $sample) {
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Comparison report :: Highcharts Utils</title>
 		<script src="http://code.jquery.com/jquery.js"></script>
+		<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 		<script>
 			function updateDiff() {
 				var $inputs = $('#compare-browsers').find('input'),
@@ -102,6 +106,7 @@ foreach ($compare as $path => $sample) {
 			}
 			th {
 				text-align: left;
+				background: #EEF;
 			}
 			td, th {
 				border: 1px solid silver;
@@ -164,6 +169,7 @@ foreach ($compare as $path => $sample) {
 									<th class='path'></th>
 									<th>" . join($browsers, '</th><th>') . "</th>
 									<th class='diff'>Diff</th>
+									<th class='comment'>Comment</th>
 								</tr>
 							";
 
@@ -177,9 +183,16 @@ foreach ($compare as $path => $sample) {
 							echo "<td class='value'>" . (isset($sample->$browser) ? round($sample->$browser, 2) : '-') . '</td>';
 						}
 
+
 						$range = isset($sample->range) ? $sample->range : '';
 						echo "<td class='diff'>$range</td>"; 
-						echo '</tr>';
+
+						echo "<td class='comment'>";
+						if ($sample->comment) {
+							echo "<i class='icon-" . $sample->comment->symbol . "'></i> " . $sample->comment->title;
+						}
+
+						echo '</td></tr>';
 						$i++;
 					}
 					?>

@@ -32,7 +32,7 @@
 				/*HIGHCHARTS_MAP: 'map.js',*/
 				HIGHCHARTS_SOLID_GAUGE: 'solid-gauge.js'
 			},
-			TIMEOUT: 2000 /* 2 seconds timout for loading images */
+			TIMEOUT: 5000 /* 5 seconds timout for loading images */
 		},
 		mapCLArguments,
 		render,
@@ -101,27 +101,25 @@
 			renderSVG,
 			convert,
 			exit,
-			interval;
+			interval,
+            counter,
+            imagesLoaded = false;
 
-		messages.imagesLoaded = 'Highcharts.images.loaded';
 		messages.optionsParsed = 'Highcharts.options.parsed';
 		messages.callbackParsed = 'Highcharts.cb.parsed';
-		window.imagesLoaded = false;
+		
 		window.optionsParsed = false;
 		window.callbackParsed = false;
-
+        
 		page.onConsoleMessage = function (msg) {
-			//console.log(msg);
-
+			console.log(msg);
+            
 			/*
 			 * Ugly hack, but only way to get messages out of the 'page.evaluate()'
 			 * sandbox. If any, please contribute with improvements on this!
 			 */
-
-			if (msg === messages.imagesLoaded) {
-				window.imagesLoaded = true;
-			}
-			/* more ugly hacks, to check options or callback are properly parsed */
+			
+			/* to check options or callback are properly parsed */
 			if (msg === messages.optionsParsed) {
 				window.optionsParsed = true;
 			}
@@ -202,10 +200,38 @@
 				exit(base64);
 			}
 		};
-
+        
+        function decrementImgCounter() {
+            counter -= 1;
+            if (counter < 1) {
+                imagesLoaded = true;
+            }
+        }
+        
+        function loadImages(imgUrls) {
+            var i, img;
+            counter = imgUrls.length;
+            for (i = 0; i < imgUrls.length; i += 1) {                    
+                img = new Image();                    
+                /* onload decrements the counter, also when error (perhaps 404), don't wait for this image to be loaded */
+                img.onload = img.onerror = decrementImgCounter;                    
+                /* force loading of images by setting the src attr.*/                    
+                img.src = imgUrls[i];
+            }
+        }
+        
 		renderSVG = function (svg) {
 			var svgFile;
-			// From this point we have loaded/or created a SVG
+			// From this point we have 'loaded' or 'created' a SVG
+            
+            // Do we have to load images?
+            if (svg.imgUrls.length > 0) {
+                loadImages(svg.imgUrls);
+            } else  {
+                 // no images present, no loading, no waiting
+                imagesLoaded = true;
+            }
+            
 			try {
 				if (outType.toLowerCase() === 'svg') {
 					// output svg
@@ -226,18 +252,17 @@
 
 				} else {
 					// output binary images or pdf
-					if (!window.imagesLoaded) {
+					if (!imagesLoaded) {
 						// render with interval, waiting for all images loaded
 						interval = window.setInterval(function () {
-							console.log('waiting');
-							if (window.imagesLoaded) {
+							if (imagesLoaded) {
 								clearTimeout(timer);
 								clearInterval(interval);
 								convert(svg);
 							}
 						}, 50);
 
-						// we have a 3 second timeframe..
+						// we have a 5 second timeframe..
 						timer = window.setTimeout(function () {
 							clearInterval(interval);
 							exitCallback('ERROR: While rendering, there\'s is a timeout reached');
@@ -252,44 +277,16 @@
 			}
 		};
 
-		loadChart = function (input, outputType, messages) {
-			var nodeIter, nodes, elem, opacity, counter, svgElem;
+		loadChart = function (input, outputType) {
+			var nodeIter, nodes, elem, opacity, svgElem, imgs, imgUrls, imgIndex;
 
 			document.body.style.margin = '0px';
 			document.body.innerHTML = input;
 
-			function decrementImgCounter() {
-				counter -= 1;
-				if (counter < 1) {
-					console.log(messages.imagesLoaded);
-				}
-			}
-
-			function loadImages() {
-				var images = document.getElementsByTagName('image'), i, img;
-
-				if (images.length > 0) {
-
-					counter = images.length;
-
-					for (i = 0; i < images.length; i += 1) {
-						img = new Image();
-						/* onload decremnts the counter, also when error (perhaps 404), then we wont wait for this image to be loaded */
-						img.onload = img.onerror = decrementImgCounter;
-						/* force loading of images by setting the src attr.*/
-						img.src = images[i].href.baseVal;
-					}
-				} else {
-					// no images set property to:imagesLoaded = true
-					console.log(messages.imagesLoaded);
-				}
-			}
-
 			if (outputType === 'jpeg') {
 				document.body.style.backgroundColor = 'white';
 			}
-
-
+            
 			nodes = document.querySelectorAll('*[stroke-opacity]');
 
 			for (nodeIter = 0; nodeIter < nodes.length; nodeIter += 1) {
@@ -299,56 +296,34 @@
 				elem.setAttribute('opacity', opacity);
 			}
 
-			// ensure all image are loaded
-			loadImages();
-
 			svgElem = document.getElementsByTagName('svg')[0];
-
+            
+            imgs = document.getElementsByTagName('image');
+            imgUrls = [];
+            
+            for (imgIndex = 0; imgIndex < imgs.length; imgIndex = imgIndex + 1) {
+                imgUrls.push(imgs[imgIndex].href.baseVal);
+            }           
+			
 			return {
 			    html: document.body.innerHTML,
 			    width: svgElem.getAttribute("width"),
-			    height: svgElem.getAttribute("height")
+			    height: svgElem.getAttribute("height"),
+                imgUrls: imgUrls
 			};
 		};
 
-		createChart = function (width, constr, input, globalOptionsArg, dataOptionsArg, customCodeArg, outputType, callback, messages) {
+		createChart = function (constr, input, globalOptionsArg, dataOptionsArg, customCodeArg, outputType, callback, messages) {
 
-			var $container, chart, nodes, nodeIter, elem, opacity, counter;
+			var $container, chart, nodes, nodeIter, elem, opacity, imgIndex, imgs, imgUrls;
 
-			// dynamic script insertion
+            // dynamic script insertion
 			function loadScript(varStr, codeStr) {
 				var $script = $('<script>').attr('type', 'text/javascript');
 				$script.html('var ' + varStr + ' = ' + codeStr);
 				document.getElementsByTagName("head")[0].appendChild($script[0]);
 				if (window[varStr] !== undefined) {
 					console.log('Highcharts.' + varStr + '.parsed');
-				}
-			}
-
-			function decrementImgCounter() {
-				counter -= 1;
-				if (counter < 1) {
-					console.log(messages.imagesLoaded);
-				}
-			}
-
-			function loadImages() {
-				var $images = $('svg image'), i, img;
-
-				if ($images.length > 0) {
-
-					counter = $images.length;
-
-					for (i = 0; i < $images.length; i += 1) {
-						img = new Image();
-						/* onload decremnts the counter, also when error (perhaps 404), then we wont wait for this image to be loaded */
-						img.onload = img.onerror = decrementImgCounter;
-						/* force loading of images by setting the src attr.*/
-						img.src = $images[i].getAttribute('href');
-					}
-				} else {
-					// no images set property to:imagesLoaded = true
-					console.log(messages.imagesLoaded);
 				}
 			}
 
@@ -392,6 +367,13 @@
 
 			// disable animations
 			Highcharts.SVGRenderer.prototype.Element.prototype.animate = Highcharts.SVGRenderer.prototype.Element.prototype.attr;
+			Highcharts.setOptions({ 
+				plotOptions: {
+					series: {
+						animation: false
+					}
+				}
+			});
 
 			if (!options.chart) {
 				options.chart = {};
@@ -432,14 +414,9 @@
 
 					chart = new Highcharts[constr](mergedOptions, cb);
 
-					// ensure images are all loaded
-					loadImages();
 				}, options, dataOptions);
 			} else {
-				chart = new Highcharts[constr](options, cb);
-
-				// ensure images are all loaded
-				loadImages();
+				chart = new Highcharts[constr](options, cb);				
 			}
 
 			/* remove stroke-opacity paths, used by mouse-trackers, they turn up as
@@ -453,12 +430,19 @@
 				elem.removeAttribute('stroke-opacity');
 				elem.setAttribute('opacity', opacity);
 			}
-
-			return {
-				//html: $container[0].firstChild.innerHTML,
+            
+            imgs = document.getElementsByTagName('image');
+            imgUrls = [];
+            
+            for (imgIndex = 0; imgIndex < imgs.length; imgIndex = imgIndex + 1) {
+                imgUrls.push(imgs[imgIndex].href.baseVal);
+            }
+            
+			return {				
 				html: $('div.highcharts-container')[0].innerHTML,
 				width: chart.chartWidth,
-				height: chart.chartHeight
+				height: chart.chartHeight,
+                imgUrls: imgUrls
 			};
 		};
 
@@ -493,7 +477,7 @@
 				if (input.substring(0, 4).toLowerCase() === "<svg" || input.substring(0, 5).toLowerCase() === "<?xml"
 					|| input.substring(0, 9).toLowerCase() === "<!doctype") {
 					//render page directly from svg file
-					svg = page.evaluate(loadChart, input, outType, messages);
+					svg = page.evaluate(loadChart, input, outType);
 					page.viewportSize = { width: svg.width, height: svg.height };
 					renderSVG(svg);
 				} else {
@@ -505,16 +489,16 @@
 							page.injectJs(config.files[jsfile]);	
 						}
 					}
-
+                    
 					// load chart in page and return svg height and width
-					svg = page.evaluate(createChart, width, constr, input, globalOptions, dataOptions, customCode, outType, callback, messages);
+					svg = page.evaluate(createChart, constr, input, globalOptions, dataOptions, customCode, outType, callback, messages);
 
 					if (!window.optionsParsed) {
-						exit('ERROR: the options variable was not available, contains the infile an syntax error? see' + input);
+						exit('ERROR: the options variable was not available or couldn\'t be parsed, does the infile contain an syntax error? Input used:' + input);
 					}
 
 					if (callback !== undefined && !window.callbackParsed) {
-						exit('ERROR: the callback variable was not available, contains the callbackfile an syntax error? see' + callback);
+						exit('ERROR: the callback variable was not available, does the callback contain an syntax error? Callback used: ' + callback);
 					}
 					renderSVG(svg);
 				}
@@ -574,7 +558,7 @@
 		try{
 			fs.makeDirectory(config.tmpDir);
 		} catch (e) {
-			console.log('ERROR: Cannot make temp directory');
+			console.log('ERROR: Cannot create temp directory for ' + config.tmpDir);
 		}
 	}
 

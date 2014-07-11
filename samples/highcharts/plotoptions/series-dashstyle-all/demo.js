@@ -1,3 +1,4 @@
+var renderer;
 $(function () {
     var dashStyles = [
         'Solid',
@@ -13,7 +14,7 @@ $(function () {
         'LongDashDotDot'
     ];
     
-    var renderer = new Highcharts.Renderer(
+    renderer = new Highcharts.Renderer(
         $('#container')[0],
         400, 
         400

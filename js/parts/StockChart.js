@@ -151,7 +151,7 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 			return 'right';
 		}
 	}
-	return proceed.call(this);
+	return proceed.call(this, [].slice.call(arguments, 1));
 });
 
 // Override getPlotLinePath to allow for multipane charts
@@ -496,7 +496,7 @@ seriesProto.processData = function () {
  * Modify series extremes
  */
 wrap(seriesProto, 'getExtremes', function (proceed) {
-	proceed.call(this);
+	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (this.modifyValue) {
 		this.dataMax = this.modifyValue(this.dataMax);

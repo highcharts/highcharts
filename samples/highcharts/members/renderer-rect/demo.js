@@ -1,5 +1,6 @@
+var renderer;
 $(function () {
-    var renderer = new Highcharts.Renderer(
+    renderer = new Highcharts.Renderer(
         $('#container')[0], 
         400,
         300

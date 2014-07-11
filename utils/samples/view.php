@@ -27,7 +27,14 @@ $httpHost = explode('.', $httpHost);
 $topDomain = $httpHost[sizeof($httpHost) - 1];
 $html = ob_get_clean();
 $html = str_replace('/code.highcharts.com/', "/code.highcharts.$topDomain/", $html);
-$html = str_replace('.js"', '.js?' . time() . '"', $html); // Force no-cache for debugging
+
+
+if (strstr($html, "/code.highcharts.$topDomain/mapdata")) {
+	$html = str_replace("/code.highcharts.$topDomain/mapdata", "/code.highcharts.com/mapdata", $html);
+} else {
+	$html = str_replace('.js"', '.js?' . time() . '"', $html); // Force no-cache for debugging
+}
+
 
 
 // Handle themes
@@ -88,13 +95,25 @@ function getResources() {
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>Highstock Example</title>
+		<title>Sample viewer - Highcharts</title>
 		<?php echo getFramework(FRAMEWORK); ?>
 		<?php echo getResources(); ?>
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 
 
 		<script type="text/javascript">
+
+		(function () {
+			if (typeof $ === 'undefined') {
+				window.onload = function () {
+					document.getElementById('container').innerHTML = 
+						'<div style="margin-top: 150px; %text-align: center"><h3 style="font-size: 2em; color: red">' +
+						'jQuery is missing</h3><p>Check your settings in <code>default-settings.json</code>.</div>';
+				}
+				return;
+			}
+
+			
 			$(function() {
 
 				$('#version').html(Highcharts.product + ' ' + Highcharts.version);
@@ -162,6 +181,7 @@ function getResources() {
 				});
 
 			});
+		}());
 		</script>
 		<script>
 

@@ -22,8 +22,8 @@ $(function () {
 
             series : [{
                 data : data,
-                mapData: Highcharts.maps.world,
-                joinBy: 'code',
+                mapData: Highcharts.maps['custom/world'],
+                joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
                 states: {
                     hover: {
@@ -40,8 +40,8 @@ $(function () {
     $('#setextremes').click(function () {
         var chart = $('#container').highcharts();
 
-        chart.xAxis[0].setExtremes(4000, 6200, false);
-        chart.yAxis[0].setExtremes(1400, 2400, false);
+        chart.xAxis[0].setExtremes(740, 1180, false);
+        chart.yAxis[0].setExtremes(-1730, -1470, false);
         chart.redraw();
     });
 });

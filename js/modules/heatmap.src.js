@@ -17,6 +17,7 @@ var UNDEFINED,
 	Legend = Highcharts.Legend,
 	LegendSymbolMixin = Highcharts.LegendSymbolMixin,
 	Series = Highcharts.Series,
+	SVGRenderer = Highcharts.SVGRenderer,
 	
 	defaultOptions = Highcharts.getOptions(),
 	each = Highcharts.each,
@@ -115,8 +116,10 @@ extend(ColorAxis.prototype, {
 			chart = this.chart,
 			dataClasses,
 			colorCounter = 0,
-			options = this.options;
+			options = this.options,
+			len = userOptions.dataClasses.length;
 		this.dataClasses = dataClasses = [];
+		this.legendItems = [];
 
 		each(userOptions.dataClasses, function (dataClass, i) {
 			var colors;
@@ -132,7 +135,11 @@ extend(ColorAxis.prototype, {
 						colorCounter = 0;
 					}
 				} else {
-					dataClass.color = axis.tweenColors(Color(options.minColor), Color(options.maxColor), i / (userOptions.dataClasses.length - 1));
+					dataClass.color = axis.tweenColors(
+						Color(options.minColor), 
+						Color(options.maxColor), 
+						len < 2 ? 0.5 : i / (len - 1) // #3219
+					);
 				}
 			}
 		});
@@ -213,7 +220,7 @@ extend(ColorAxis.prototype, {
 			if (this.isLog) {
 				value = this.val2lin(value);
 			}
-			pos = 1 - ((this.max - value) / (this.max - this.min));
+			pos = 1 - ((this.max - value) / ((this.max - this.min) || 1));
 			i = stops.length;
 			while (i--) {
 				if (pos > stops[i][0]) {
@@ -225,7 +232,7 @@ extend(ColorAxis.prototype, {
 
 			// The position within the gradient
 			pos = 1 - (to[0] - pos) / ((to[0] - from[0]) || 1);
-			
+
 			color = this.tweenColors(
 				from.color, 
 				to.color,
@@ -236,7 +243,9 @@ extend(ColorAxis.prototype, {
 	},
 
 	getOffset: function () {
-		var group = this.legendGroup;
+		var group = this.legendGroup,
+			sideOffset = this.chart.axisOffset[this.side];
+		
 		if (group) {
 
 			Axis.prototype.getOffset.call(this);
@@ -250,6 +259,8 @@ extend(ColorAxis.prototype, {
 
 				this.added = true;
 			}
+			// Reset it to avoid color axis reserving space
+			this.chart.axisOffset[this.side] = sideOffset;
 		}
 	},
 
@@ -281,7 +292,8 @@ extend(ColorAxis.prototype, {
 			box,
 			width = pick(legendOptions.symbolWidth, horiz ? 200 : 12),
 			height = pick(legendOptions.symbolHeight, horiz ? 12 : 200),
-			labelPadding = pick(legendOptions.labelPadding, horiz ? 10 : 30);
+			labelPadding = pick(legendOptions.labelPadding, horiz ? 16 : 30),
+			itemDistance = pick(legendOptions.itemDistance, 10);
 
 		this.setLegendColor();
 
@@ -297,7 +309,7 @@ extend(ColorAxis.prototype, {
 		box = item.legendSymbol.getBBox();
 
 		// Set how much space this legend item takes up
-		this.legendItemWidth = width + padding + (horiz ? 0 : labelPadding);
+		this.legendItemWidth = width + padding + (horiz ? itemDistance : labelPadding);
 		this.legendItemHeight = height + padding + (horiz ? labelPadding : 0);
 	},
 	/**
@@ -372,56 +384,58 @@ extend(ColorAxis.prototype, {
 	getDataClassLegendSymbols: function () {
 		var axis = this,
 			chart = this.chart,
-			legendItems = [],
+			legendItems = this.legendItems,
 			legendOptions = chart.options.legend,
 			valueDecimals = legendOptions.valueDecimals,
 			valueSuffix = legendOptions.valueSuffix || '',
 			name;
 
-		each(this.dataClasses, function (dataClass, i) {
-			var vis = true,
-				from = dataClass.from,
-				to = dataClass.to;
-			
-			// Assemble the default name. This can be overridden by legend.options.labelFormatter
-			name = '';
-			if (from === UNDEFINED) {
-				name = '< ';
-			} else if (to === UNDEFINED) {
-				name = '> ';
-			}
-			if (from !== UNDEFINED) {
-				name += numberFormat(from, valueDecimals) + valueSuffix;
-			}
-			if (from !== UNDEFINED && to !== UNDEFINED) {
-				name += ' - ';
-			}
-			if (to !== UNDEFINED) {
-				name += numberFormat(to, valueDecimals) + valueSuffix;
-			}
-			
-			// Add a mock object to the legend items
-			legendItems.push(extend({
-				chart: chart,
-				name: name,
-				options: {},
-				drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-				visible: true,
-				setState: noop,
-				setVisible: function () {
-					vis = this.visible = !vis;
-					each(axis.series, function (series) {
-						each(series.points, function (point) {
-							if (point.dataClass === i) {
-								point.setVisible(vis);
-							}
-						});
-					});
-					
-					chart.legend.colorizeItem(this, vis);
+		if (!legendItems.length) {
+			each(this.dataClasses, function (dataClass, i) {
+				var vis = true,
+					from = dataClass.from,
+					to = dataClass.to;
+				
+				// Assemble the default name. This can be overridden by legend.options.labelFormatter
+				name = '';
+				if (from === UNDEFINED) {
+					name = '< ';
+				} else if (to === UNDEFINED) {
+					name = '> ';
 				}
-			}, dataClass));
-		});
+				if (from !== UNDEFINED) {
+					name += numberFormat(from, valueDecimals) + valueSuffix;
+				}
+				if (from !== UNDEFINED && to !== UNDEFINED) {
+					name += ' - ';
+				}
+				if (to !== UNDEFINED) {
+					name += numberFormat(to, valueDecimals) + valueSuffix;
+				}
+				
+				// Add a mock object to the legend items
+				legendItems.push(extend({
+					chart: chart,
+					name: name,
+					options: {},
+					drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+					visible: true,
+					setState: noop,
+					setVisible: function () {
+						vis = this.visible = !vis;
+						each(axis.series, function (series) {
+							each(series.points, function (point) {
+								if (point.dataClass === i) {
+									point.setVisible(vis);
+								}
+							});
+						});
+						
+						chart.legend.colorizeItem(this, vis);
+					}
+				}, dataClass));
+			});
+		}
 		return legendItems;
 	},
 	name: '' // Prevents 'undefined' in legend in IE8
@@ -489,6 +503,7 @@ var colorSeriesMixin = {
 	trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
 	getSymbol: noop,
 	parallelArrays: ['x', 'y', 'value'],
+	colorKey: 'value',
 	
 	/**
 	 * In choropleth maps, the color is a result of the value, so this needs translation too
@@ -496,19 +511,69 @@ var colorSeriesMixin = {
 	translateColors: function () {
 		var series = this,
 			nullColor = this.options.nullColor,
-			colorAxis = this.colorAxis;
+			colorAxis = this.colorAxis,
+			colorKey = this.colorKey;
 
 		each(this.data, function (point) {
-			var value = point.value,
+			var value = point[colorKey],
 				color;
 
-			color = value === null ? nullColor : colorAxis ? colorAxis.toColor(value, point) : (point.color) || series.color;
+			color = value === null ? nullColor : (colorAxis && value !== undefined) ? colorAxis.toColor(value, point) : point.color || series.color;
 
 			if (color) {
 				point.color = color;
 			}
 		});
 	}
+};
+
+
+/**
+ * Wrap the buildText method and add the hook for add text stroke
+ */
+wrap(SVGRenderer.prototype, 'buildText', function (proceed, wrapper) {
+
+	var textStroke = wrapper.styles && wrapper.styles.HcTextStroke;
+
+	proceed.call(this, wrapper);
+
+	// Apply the text stroke
+	if (textStroke && wrapper.applyTextStroke) {
+		wrapper.applyTextStroke(textStroke);
+	}
+});
+
+/**
+ * Apply an outside text stroke to data labels, based on the custom CSS property, HcTextStroke.
+ * Consider moving this to Highcharts core, also makes sense on stacked columns etc.
+ */
+SVGRenderer.prototype.Element.prototype.applyTextStroke = function (textStroke) {
+	var elem = this.element,
+		tspans,
+		firstChild;
+	
+	textStroke = textStroke.split(' ');
+	tspans = elem.getElementsByTagName('tspan');
+	firstChild = elem.firstChild;
+	
+	// In order to get the right y position of the clones, 
+	// copy over the y setter
+	this.ySetter = this.xSetter;
+	
+	each([].slice.call(tspans), function (tspan, y) {
+		var clone;
+		if (y === 0) {
+			tspan.setAttribute('x', elem.getAttribute('x'));
+			if ((y = elem.getAttribute('y')) !== null) {
+				tspan.setAttribute('y', y);
+			}
+		}
+		clone = tspan.cloneNode(1);
+		clone.setAttribute('stroke', textStroke[1]);
+		clone.setAttribute('stroke-width', textStroke[0]);
+		clone.setAttribute('stroke-linejoin', 'round');
+		elem.insertBefore(clone, firstChild);
+	});
 };
 /**
  * Extend the default options with map options
@@ -527,7 +592,7 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 		style: {
 			color: 'white',
 			fontWeight: 'bold',
-			textShadow: '0 0 5px black'
+			HcTextStroke: '1px rgba(0,0,0,0.5)'
 		}
 	},
 	marker: null,
@@ -586,6 +651,13 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		});
 		
 		series.translateColors();
+
+		// Make sure colors are updated on colorAxis update (#2893)
+		if (this.chart.hasRendered) {
+			each(series.points, function (point) {
+				point.shapeArgs.fill = point.color;
+			});
+		}
 	},
 	drawPoints: seriesTypes.column.prototype.drawPoints,
 	animate: noop,

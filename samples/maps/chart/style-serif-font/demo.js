@@ -35,9 +35,15 @@ $(function () {
 
             series : [{
                 data : data,
-                mapData: Highcharts.maps.world,
-                joinBy: 'code',
+                mapData: Highcharts.maps['custom/world'],
+                joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
+                dataLabels: {
+                    enabled: true,
+                    formatter: function () {
+                        return this.point.properties && this.point.properties['hc-a2'];
+                    }
+                },
                 states: {
                     hover: {
                         color: '#BADA55'

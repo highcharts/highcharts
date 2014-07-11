@@ -2,7 +2,15 @@
  * Start Scroller code														*
  *****************************************************************************/
 var units = [].concat(defaultDataGroupingUnits), // copy
-	defaultSeriesType;
+	defaultSeriesType,
+	
+	// Finding the min or max of a set of variables where we don't know if they are defined,
+	// is a pattern that is repeated several places in Highcharts. Consider making this
+	// a global utility method.
+	numExt = function (extreme) {
+		return Math[extreme].apply(0, grep(arguments, function (n) { return typeof n === 'number'; }));
+	};
+
 // add more resolution to units
 units[4] = ['day', [1, 2, 3, 4]]; // allow more days
 units[5] = ['week', [1, 2, 3]]; // allow more weeks
@@ -835,16 +843,17 @@ Scroller.prototype = {
 		} else {
 			scroller.xAxis = xAxis = {
 				translate: function (value, reverse) {
-					var ext = chart.xAxis[0].getExtremes(),
+					var axis = chart.xAxis[0],
+						ext = axis.getExtremes(),
 						scrollTrackWidth = chart.plotWidth - 2 * scrollbarHeight,
-						dataMin = ext.dataMin,
-						valueRange = ext.dataMax - dataMin;
+						min = numExt('min', axis.options.min, ext.dataMin),
+						valueRange = numExt('max', axis.options.max, ext.dataMax) - min;
 
 					return reverse ?
 						// from pixel to value
-						(value * valueRange / scrollTrackWidth) + dataMin :
+						(value * valueRange / scrollTrackWidth) + min :
 						// from value to pixel
-						scrollTrackWidth * (value - dataMin) / valueRange;
+						scrollTrackWidth * (value - min) / valueRange;
 				},
 				toFixedRange: Axis.prototype.toFixedRange
 			};
@@ -888,21 +897,27 @@ Scroller.prototype = {
 	getUnionExtremes: function (returnFalseOnNoBaseSeries) {
 		var baseAxis = this.chart.xAxis[0],
 			navAxis = this.xAxis,
-			navAxisOptions = navAxis.options;
+			navAxisOptions = navAxis.options,
+			baseAxisOptions = baseAxis.options;
 
 		if (!returnFalseOnNoBaseSeries || baseAxis.dataMin !== null) {
 			return {
-				dataMin: pick(
+				dataMin: numExt(
+					'min',
 					navAxisOptions && navAxisOptions.min,
-					((defined(baseAxis.dataMin) && defined(navAxis.dataMin)) ? mathMin : pick)(baseAxis.dataMin, navAxis.dataMin)
+					baseAxisOptions.min,
+					baseAxis.dataMin, 
+					navAxis.dataMin
 				),
-				dataMax: pick(
+				dataMax: numExt(
+					'max',
 					navAxisOptions && navAxisOptions.max,
-					((defined(baseAxis.dataMax) && defined(navAxis.dataMax)) ? mathMax : pick)(baseAxis.dataMax, navAxis.dataMax)
+					baseAxisOptions.max,
+					baseAxis.dataMax, 
+					navAxis.dataMax
 				)
 			};
 		}
-
 	},
 
 	/**

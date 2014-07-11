@@ -89,7 +89,7 @@ $(function () {
 
             series : [{
                 data : data,
-                mapData: Highcharts.geojson(geojson, 'map'),
+                mapData: geojson,
                 joinBy: ['code_hasc', 'code'],
                 name: 'Random data',
                 states: {

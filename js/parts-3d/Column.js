@@ -129,19 +129,18 @@ function draw3DPoints(proceed) {
 
 		var options = this.options,
 			states = this.options.states;
-
-		// Set the border color to the fill color to provide a smooth edge
-		this.borderColor = options.borderColor = Highcharts.pick(options.edgeColor, this.color);
+			
 		this.borderWidth = options.borderWidth = options.edgeWidth || 1;
-
-		states.hover.borderColor = Highcharts.pick(states.hover.edgeColor, this.borderColor);		
-		states.select.borderColor = Highcharts.pick(states.select.edgeColor, this.borderColor);
 
 		Highcharts.each(this.data, function (point) {
 			var pointAttr = point.pointAttr;
-			pointAttr[''].stroke = point.series.borderColor;
-			pointAttr.hover.stroke = states.hover.borderColor;
-			pointAttr.select.stroke = states.select.borderColor;
+
+			// Set the border color to the fill color to provide a smooth edge
+			this.borderColor = Highcharts.pick(options.edgeColor, pointAttr[''].fill);
+
+			pointAttr[''].stroke = this.borderColor;
+			pointAttr.hover.stroke = Highcharts.pick(states.hover.edgeColor, this.borderColor);
+			pointAttr.select.stroke = Highcharts.pick(states.select.edgeColor, this.borderColor);
 		});
 	}
 

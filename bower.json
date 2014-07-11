@@ -1,0 +1,23 @@
+{
+    "name": "Highcharts Working Repo",
+    "main": "bower-info.js",
+    "ignore": [
+        "build",
+        "errors",
+        "exporting-server",
+        "gfx",
+        "js",
+        "lib",
+        "samples",
+        "studies",
+        "test",
+        "tools",
+        "utils",
+        ".gitignore",
+        "ant",
+        "build.md",
+        "build.properties",
+        "build.xml",
+        "readme.md"
+    ]
+}

@@ -71,10 +71,12 @@ $(function () {
                 year: year
             });
         }
+        
         // Add lower case codes to the data set for inclusion in the tooltip.pointFormat
-        $.each(Highcharts.maps.world, function () {
-            this.flag = this.code.toLowerCase();
-            this.id = this.code; // for Chart.get()
+        var mapData = Highcharts.geojson(Highcharts.maps['custom/world']);
+        $.each(mapData, function () {
+            this.id = this.properties['hc-key']; // for Chart.get()
+            this.flag = this.id.replace('UK', 'GB').toLowerCase();
         });
 
         // Wrap point.select to get to the total selected points
@@ -93,7 +95,7 @@ $(function () {
                     $('#info h2').html('Comparing countries');
 
                 }
-                $('#info .subheader').html('<h4>Historical population</h4><small>Shift + Click on map to compare countries</small>')
+                $('#info .subheader').html('<h4>Historical population</h4><small><em>Shift + Click on map to compare countries</em></small>')
 
                 if (!countryChart) {
                     countryChart = $('#country-chart').highcharts({
@@ -193,7 +195,9 @@ $(function () {
 
             colorAxis: {
                 type: 'logarithmic',
-                endOnTick: false
+                endOnTick: false,
+                startOnTick: false,
+                min: 50000
             },
 
             tooltip: {
@@ -202,14 +206,14 @@ $(function () {
 
             series : [{
                 data : data,
-                mapData: Highcharts.maps.world,
-                joinBy: 'code3',
+                mapData: mapData,
+                joinBy: ['iso-a3', 'code3'],
                 name: 'Current population',
                 allowPointSelect: true,
                 cursor: 'pointer',
                 states: {
                     select: {
-                        color: '#BADA55',
+                        color: '#a4edba',
                         borderColor: 'black',
                         dashStyle: 'shortdot'
                     }
@@ -218,6 +222,6 @@ $(function () {
         }).highcharts();
 
         // Pre-select a country
-        mapChart.get('US').select();
+        mapChart.get('us').select();
     });
 });

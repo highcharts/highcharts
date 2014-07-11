@@ -47,7 +47,7 @@ $(function () {
         plotOptions: {
             solidgauge: {
                 dataLabels: {
-                    y: -30,
+                    y: 5,
                     borderWidth: 0,
                     useHTML: true
                 }

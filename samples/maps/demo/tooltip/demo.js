@@ -4,7 +4,7 @@ $(function () {
 
         // Add lower case codes to the data set for inclusion in the tooltip.pointFormat
         $.each(data, function () {
-            this.flag = this.code.toLowerCase();
+            this.flag = this.code.replace('UK', 'GB').toLowerCase();
         });
         
         // Initiate the chart
@@ -51,8 +51,8 @@ $(function () {
 
             series : [{
                 data : data,
-                mapData: Highcharts.maps.world,
-                joinBy: 'code',
+                mapData: Highcharts.maps['custom/world'],
+                joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
                 states: {
                     hover: {

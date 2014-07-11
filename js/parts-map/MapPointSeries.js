@@ -9,9 +9,10 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 		},
 		color: 'black',
 		crop: false,
+		defer: false,
 		overflow: false,
 		style: {
-			textShadow: '0 0 5px white'
+			HcTextStroke: '3px rgba(255,255,255,0.5)'
 		}
 	}
 });

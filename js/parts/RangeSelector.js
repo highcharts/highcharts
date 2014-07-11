@@ -3,6 +3,7 @@
  *****************************************************************************/
 extend(defaultOptions, {
 	rangeSelector: {
+		// allButtonsEnabled: false,
 		// enabled: true,
 		// buttons: {Object}
 		// buttonSpacing: 0,
@@ -281,6 +282,7 @@ RangeSelector.prototype = {
 			dataMin = unionExtremes.dataMin,
 			dataMax = unionExtremes.dataMax,
 			selected = rangeSelector.selected,
+			allButtonsEnabled = rangeSelector.options.allButtonsEnabled,
 			buttons = rangeSelector.buttons;
 
 		if (updating && chart.fixedRange !== mathRound(baseAxis.max - baseAxis.min)) {
@@ -309,7 +311,7 @@ RangeSelector.prototype = {
 				rangeSelector.setSelected(i);
 				buttons[i].setState(2);
 			
-			} else if (isTooGreatRange || isTooSmallRange || isAllButAlreadyShowingAll || isYTDButNotAvailable) {
+			} else if (!allButtonsEnabled && (isTooGreatRange || isTooSmallRange || isAllButAlreadyShowingAll || isYTDButNotAvailable)) {
 				buttons[i].setState(3);
 
 			} else if (buttons[i].state === 3) {

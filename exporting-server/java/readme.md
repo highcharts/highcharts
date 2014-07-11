@@ -1,2 +1,2 @@
 #Steps to build the Highcharts Server application for Java#
-See http://docs.highcharts.com/#export-server-setup
+See http://www.highcharts.com/docs/export-module/setting-up-the-server

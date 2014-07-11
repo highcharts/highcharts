@@ -488,10 +488,11 @@
 			data,
 			i,
 			j,
-			seriesIndex;
+			seriesIndex,
+			chartOptions;
 			
 		
-		if (options.complete) {
+		if (options.complete || options.afterComplete) {
 
 			this.getColumnDistribution();
 			
@@ -560,12 +561,20 @@
 			}
 			
 			// Do the callback
-			options.complete({
+			chartOptions = {
 				xAxis: {
 					type: type
 				},
 				series: series
-			});
+			};
+			if (options.complete) {
+				options.complete(chartOptions);
+			}
+			// The afterComplete hook is used internally to avoid conflict with the externally
+			// available complete option.
+			if (options.afterComplete) {
+				options.afterComplete(chartOptions);
+			}
 		}
 	}
 	});
@@ -579,18 +588,12 @@
 	// Extend Chart.init so that the Chart constructor accepts a new configuration
 	// option group, data.
 	Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed, userOptions, callback) {
-		var chart = this,
-			completeOption;
+		var chart = this;
 
 		if (userOptions && userOptions.data) {
-			completeOption = userOptions.data.complete;
 			Highcharts.data(Highcharts.extend(userOptions.data, {
-				complete: function (dataOptions) {
+				afterComplete: function (dataOptions) {
 					var i, series;
-
-					if (completeOption) {
-						completeOption(dataOptions);
-					}
 					
 					// Merge series configs
 					if (userOptions.hasOwnProperty('series')) {

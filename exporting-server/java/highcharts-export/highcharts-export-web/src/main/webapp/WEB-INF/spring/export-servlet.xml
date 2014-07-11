@@ -26,6 +26,13 @@
 
 	<mvc:annotation-driven/>
 
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/" />
+			<bean class="com.highcharts.export.interceptor.RequestInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+
 	<!-- Declare a view resolver -->
 	<bean id="viewResolver"
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
@@ -35,4 +42,5 @@
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<property name="maxUploadSize" value="100000000" />
 	</bean>
+
 </beans>

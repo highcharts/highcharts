@@ -4,11 +4,23 @@ $(function () {
         chart: {
             events: {
                 load: function(event) {
-                    alert ('Chart loaded');
+                    var label = this.renderer.label('Chart loaded', 100, 120)
+                        .attr({
+                            fill: Highcharts.getOptions().colors[0],
+                            padding: 10,
+                            r: 5,
+                            zIndex: 8
+                        })
+                        .css({
+                            color: '#FFFFFF'
+                        })
+                        .add();
+
+                    setTimeout(function () {
+                        label.fadeOut();
+                    }, 1000);
                 }
             }        
-        },
-        xAxis: {
         },
         
         series: [{

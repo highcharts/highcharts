@@ -145,6 +145,8 @@ function getCompareTooltips() {
 					// To give Ajax some time to load, look for the chart every 50 ms for two seconds
 					interval = setInterval(function() {
 						chart = window.Highcharts && window.Highcharts.charts[0];
+
+						// Compare chart objects
 						if (chart) {
 
 							// Automatically click buttons with classname "autocompare"
@@ -153,6 +155,17 @@ function getCompareTooltips() {
 							window.parent.onLoadTest('<?php echo $_GET['which']; ?>', $(chart.container).html());
 							clearInterval(interval);
 							
+						// Compare renderers
+						} else if (window.renderer) {
+							// Create a mock chart object with a getSVG method
+							chart = {
+								getSVG: function () {
+									return window.renderer.box.parentNode.innerHTML;
+								}
+							};
+							window.parent.onLoadTest('<?php echo $_GET['which']; ?>', window.renderer.box.parentNode.innerHTML);
+							clearInterval(interval);
+
 						} else if (new Date() - start > 2000) {
 							clearInterval(interval);
 							window.parent.proceed();

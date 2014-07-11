@@ -27,6 +27,10 @@
 					location.reload();
 				});
 
+				$('#comment').click(function () {
+					location.href = 'compare-comment.php?path=<?php echo $path ?>&i=<?php echo $i ?>';
+				});
+
 				$(window).bind('keydown', parent.keyDown);
 
 				$('#svg').click(function () {
@@ -91,6 +95,17 @@
 								})
 								.html(diff)
 								.appendTo(li);
+						} else {
+							$span = $('<a>')
+								.attr({
+									'class': 'dissimilarity-index',
+									href: location.href.replace(/continue=true/, ''),
+									target: 'main',
+									title: 'Compare'
+								})
+								.html('<i class="icon-columns"></i>')
+								.appendTo(li);
+
 						}
 						
 						if (_continue) {
@@ -279,7 +294,7 @@
 								path: "<?php echo $path ?>".replace(/\//g, '--')	
 							}, 
 							success: function (data) {
-								if (typeof data.dissimilarityIndex === 'number' && data.dissimilarityIndex < 0.01) {
+								if (data.dissimilarityIndex === 0) {
 									identical = true;
 									
 									report += '<br/>The exported images are identical'; 
@@ -403,6 +418,7 @@
 			<h2 style="margin: 0"><?php echo $path ?></h2> 
 			
 			<div style="text-align: right">
+				<button id="comment" style="margin-left: 1em"><i class="icon-comment"></i> Comment</button>
 				<button id="reload" style="margin-left: 1em">Reload</button>
 			</div>
 		</div>

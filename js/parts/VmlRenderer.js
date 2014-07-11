@@ -383,7 +383,7 @@ VMLElement = {
 		var i,
 			shadows = this.shadows;
 		value = value || [];
-		this.d = value.join(' '); // used in getter for animation
+		this.d = value.join && value.join(' '); // used in getter for animation
 
 		element.path = value = this.pathToVML(value);
 
