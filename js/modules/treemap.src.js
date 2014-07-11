@@ -73,11 +73,10 @@
 	// Define default options
 	plotOptions.treemap = merge(plotOptions.scatter, {
 		legend: false,
-		marker: {
-			lineColor: "#000",
-			lineWidth: 0.5,
-			radius: 0
-		},
+		marker: false,
+		borderColor: '#FFFFFF',
+		borderWidth: 1,
+		radius: 0,
 		dataLabels: {
 			verticalAlign: 'middle',
 			formatter: function () { // #2945
@@ -97,7 +96,8 @@
 			stroke: 'borderColor',
 			'stroke-width': 'borderWidth',
 			fill: 'color',
-			dashstyle: 'dashStyle'
+			dashstyle: 'borderDashStyle',
+			r: 'borderRadius'
 		},
 		pointArrayMap: ['value'],
 		axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
