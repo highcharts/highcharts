@@ -25,9 +25,11 @@
 		isInBreak: function (brk, val) {
 			var	repeat = brk.repeat,
 				val = val % repeat,
+				val2 = val + repeat,
 				from = brk.from % repeat,
 				to = from + (brk.to - brk.from);
-				return (val > from && val < to);
+
+				return ((val > from && val < to) || (val2 > from && val2 < to));
 		},
 
 		isInAnyBreak: function (val) {			
@@ -74,8 +76,8 @@
 		if (this.options.breaks) {
 			var axis = this;
 			axis.postTranslate = true;
-
-			this.val2lin = function (val) {		
+			
+			this.val2lin = function (val) {	
 				var nval = val,
 					breaks = axis.options.breaks,
 					i = breaks.length,
@@ -84,13 +86,12 @@
 
 				while (i--) {
 					brk = breaks[i]; 
-					occ = Math.floor((val - brk.to) / brk.repeat) - Math.floor((axis.min - brk.to) / brk.repeat);
+					occ = Math.floor((val - axis.min + (axis.isInBreak(brk, axis.min) ? 0 : (axis.min % brk.repeat))) / brk.repeat);
 					nval -=  occ * (brk.to - brk.from); // Number of occurences * break width
 
-					
 					if (axis.isInBreak(brk, axis.min)) {
-						nval += Math.abs(brk.to - axis.min) % brk.repeat * 2;
-						//nval += (brk.from - axis.min) % brk.repeat;
+
+						nval -= ((brk.from % brk.repeat) - (brk.to - brk.from)) - (axis.min % brk.repeat);
 					} 
 					
 					//nval += axis.options.minPadding;
@@ -98,7 +99,7 @@
 
 				return nval;
 			};
-
+			
 			this._lin2val = function (val) {
 				var nval = val,
 					breaks = axis.options.breaks,
@@ -114,30 +115,29 @@
 
 				return nval;
 			};
-
+			/*
 			this.setAxisTranslation = function (saveOld) {
 				Axis.prototype.setAxisTranslation.call(this, saveOld);
 				var oldLen = axis.max - axis.min,
 					newLen = oldLen,
 					breaks = axis.options.breaks,
 					i = breaks.length,
+					j,
 					occ,
 					brk;
-				/*
+				
 				while (i--) {
 					brk = breaks[i];
-					occ = Math.floor((axis.max - (axis.min - (axis.min % brk.repeat))) / brk.repeat);
-					newLen -= occ * (brk.to - brk.from); // Number of occurences * break width
-
-					if (axis.isInBreak(brk, axis.max)) {
-						newLen -= ((axis.max % brk.repeat) - (brk.from % brk.repeat));
+					occ = 0;
+					for (j = axis.min; j < axis.max; j += brk.repeat) {
+						occ++;
 					}
 
+					newLen -= occ * (brk.to - brk.from); // Number of occurences * break width
 				}	
-				*/
-				//newLen *= 1 + axis.options.maxPadding + axis.options.minPadding; // add the padding
 				this.transA *= oldLen / newLen; 				
 			};
+			*/
 
 		}
 		
