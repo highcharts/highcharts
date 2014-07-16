@@ -337,8 +337,15 @@ extend(Chart.prototype, {
 		options = options || {};
 
 		var chart = this,
-			chartExportingOptions = chart.options.exporting,
-			svg = chart.getSVG(merge(
+			chartExportingOptions = chart.options.exporting || { chartOptions: { } };
+			
+		//merge axis options
+        	chartExportingOptions.xAxis = chartExportingOptions.xAxis ||[];
+        	chartExportingOptions.chartOptions.yAxis = chartExportingOptions.chartOptions.yAxis || [];
+        	chartExportingOptions.chartOptions.xAxis = merge(chart.options.xAxis, chartExportingOptions.chartOptions.xAxis);
+        	chartExportingOptions.chartOptions.yAxis = merge(chart.options.yAxis, chartExportingOptions.chartOptions.yAxis);	
+			
+		var svg = chart.getSVG(merge(
 				{ chart: { borderRadius: 0 } },
 				chartExportingOptions.chartOptions,
 				chartOptions,
