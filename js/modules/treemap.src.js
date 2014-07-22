@@ -6,7 +6,7 @@
  *
  * License: www.highcharts.com/license
  */
-(function (H) { // docs
+(function (H) {
 	var seriesTypes = H.seriesTypes,
 		merge = H.merge,
 		extendClass = H.extendClass,
@@ -21,53 +21,7 @@
 		this.y = y;
 		this.width = w;
 		this.height = h;
-		this.centerX = this.x + (w / 2);
-		this.centerY = this.y + (h / 2);
-		this.totalArea = w * h;
-		this.direction = 0;
-		this.totalValue = 0;
-		this._plotW = w;
-		this._plotH = h;
-		this._plotX = x;
-		this._plotY = y;	
-		// Calculates plotting width for a child point
-		this.plotW = function (total) {
-			var val = 0;
-			if (this.direction === 0) {
-				val = total / this._plotH;
-				this._plotW -= val;
-			} else {
-				val = this._plotW;
-			}
-			return val;
-		};
-		// Calculates plotting height for a child point
-		this.plotH = function (total) {
-			var val = 0;
-			if (this.direction === 1) {
-				val = total / this._plotW;
-				this._plotH -= val;
-			} else {
-				val = this._plotH;
-			}
-			return val;
-		};
-		// Calculates x value for a child point
-		this.plotX = function (w) {
-			var val = this._plotX;
-			if (this.direction === 0) {
-				this._plotX += w;
-			}
-			return val;
-		};
-		// Calculates y value for a child point
-		this.plotY = function (h) {
-			var val = this._plotY;
-			if (this.direction === 1) {
-				this._plotY += h;
-			}
-			return val;
-		};
+		this.val = 0;
 	}
 
 	// Define default options
@@ -76,6 +30,7 @@
 		marker: false,
 		borderColor: '#FFFFFF',
 		borderWidth: 1,
+		borderRadius: 0,
 		radius: 0,
 		dataLabels: {
 			verticalAlign: 'middle',
@@ -84,6 +39,7 @@
 			}
 		},
 		tooltip: {
+			headerFormat: '',
 			pointFormat: 'id: <b>{point.id}</b><br/>parent: <b>{point.parent}</b><br/>value: <b>{point.value}</b><br/>'
 		},
 		layoutAlgorithm: 'sliceAndDice'
@@ -115,14 +71,13 @@
 		trackerGroups: ['group', 'dataLabelsGroup'],
 		handleLayout: function () {
 		var tree = this.buildTree(),
-			seriesArea;
-			seriesArea = this.getSeriesArea(tree.totalValue);
-			this.calculateArea(seriesArea, tree);
+			seriesArea = this.getSeriesArea(tree.val);
+			this.calculateArea(tree, seriesArea);
 			this.setColorRecursive(tree, undefined);
 		},
 		buildTree: function () {
 			var tree,
-				index = 0,
+				i = 0,
 				parentList = [],
 				allIds = [],
 				key,
@@ -131,23 +86,23 @@
 						parentList[""].push(item);
 					});
 				},
-				getNodeTree = function (id, index, level, list, points) {
+				getNodeTree = function (id, i, level, list, points) {
 					var children = [],
 						sortedChildren = [],
-						totalValue = 0,
+						val = 0,
 						nodeTree,
 						node,
 						insertNode;
 					insertNode = function () {
-						var index = 0,
+						var i = 0,
 							inserted = false;
 						if (sortedChildren.length !== 0) {
-							each(sortedChildren, function (val) {
-								if (node.totalValue > val.totalValue && !inserted) {
-									sortedChildren.splice(index, 0, node);
+							each(sortedChildren, function (child) {
+								if (node.val > child.val && !inserted) {
+									sortedChildren.splice(i, 0, node);
 									inserted = true;
 								}
-								index = index + 1;					
+								i = i + 1;					
 							});
 						} 
 						if (!inserted) {
@@ -157,20 +112,20 @@
 
 					// Actions
 					if (list[id] !== undefined) {
-						each(list[id], function (index) {
-							node = getNodeTree(points[index].id, index, (level + 1), list, points);
-							totalValue += node.totalValue;
+						each(list[id], function (i) {
+							node = getNodeTree(points[i].id, i, (level + 1), list, points);
+							val += node.val;
 							insertNode();
 							children.push(node);
 						});
 					} else {
-						totalValue = points[index].value;
+						val = points[i].value;
 					}
 					nodeTree = {
 						id: id,
-						index: index,
+						i: i,
 						children: sortedChildren,
-						totalValue: totalValue,
+						val: val,
 						level: level
 					};
 					return nodeTree;
@@ -186,8 +141,8 @@
 				if (parentList[parent] === undefined) {
 					parentList[parent] = [];
 				}
-				parentList[parent].push(index);
-				index = index + 1;
+				parentList[parent].push(i);
+				i = i + 1;
 			});
 			/* 
 			*  Quality check:
@@ -207,76 +162,343 @@
 			tree = getNodeTree("", -1, 0, parentList, this.points);
 			return tree;
 		},
-		calculateArea: function (parentArea, node) {
-			var pointArea, point, series;
-			series = this;
-			pointArea = series[series.options.layoutAlgorithm](parentArea, node.totalValue);
-			// If node is not a leaf, then call this method recursively			 
-			if (node.children.length) {
-				each(node.children, function (childNode) {
-					series.calculateArea(pointArea, childNode);
-				});
-			} else {
-				if (node.totalValue > 0) {
-					point = series.points[node.index];
-					// Set point values
-					point.shapeType = 'rect';
-					point.shapeArgs = {
-						x: pointArea.x,
-						y: pointArea.y,
-						width: pointArea.width,
-						height: pointArea.height
-					};
-					point.plotX = pointArea.centerX;
-					point.plotY = pointArea.centerY;
+		calculateArea: function (node, area) {
+			var childrenValues = [],
+				childValues,
+				series = this,
+				i = 0,
+				setPointValues = function (node, values) {
+					var point;
+					if (node.val > 0) {
+						point = series.points[node.i];
+						// Set point values
+						point.shapeType = 'rect';
+						point.shapeArgs = {
+							x: values.x,
+							y: values.y,
+							width: values.width,
+							height: values.height
+						};
+						point.plotX = point.shapeArgs.x + (point.shapeArgs.width / 2);
+						point.plotY = point.shapeArgs.y + (point.shapeArgs.height / 2);
+					}
+				};
+			childrenValues = series[series.options.layoutAlgorithm](area, node.children);
+			each(node.children, function (child) {
+				childValues = childrenValues[i];
+				childValues.val = child.val;
+				// If node has children, then call method recursively
+				if (child.children.length) {
+					series.calculateArea(child, childValues);
+				} else {
+					setPointValues(child, childValues);
 				}
-			}
-			
+				i = i + 1;
+			});
 		},
-		getSeriesArea: function (totalValue) {
+		getSeriesArea: function (val) {
 			var w = this.chart.plotWidth,
 				x = w * this._i,
 				y = 0,
 				h = this.chart.plotHeight,
 				seriesArea = new Area(x, y, w, h);
-			seriesArea.totalValue = totalValue;
+			seriesArea.val = val;
 			return seriesArea;
 		},
 		setColorRecursive: function (node, color) {
 			var series = this,
-				point = series.points[node.index];
-			if (node.index !== -1) {
+				point = series.points[node.i];
+			if (node.i !== -1) {
 				if (point.color === undefined) {
 					if (color !== undefined) {
 						point.color = color;
+						point.options.color = color;
 					}
 				} else {
 					color = point.color;
 				}
 			}		
 			if (node.children.length) {
-				each(node.children, function (childNode) {
-					series.setColorRecursive(childNode, color);
+				each(node.children, function (child) {
+					series.setColorRecursive(child, color);
 				});
 			}
 		},
-		sliceAndDice: function (parent, value) {
-			var pointTotal = parent.totalArea * (value / parent.totalValue),
-				pointW = parent.plotW(pointTotal),
-				pointH = parent.plotH(pointTotal),
-				pointX = parent.plotX(pointW),
-				pointY = parent.plotY(pointH),
-				pointArea = new Area(pointX, pointY, pointW, pointH);
-			pointArea.totalValue = value;
-			parent.direction = 1 - parent.direction;
-			return pointArea;
+		strip: function (parent, children) {
+			var childrenArea = [],
+				pTot,
+				x = parent.x,
+				y = parent.y,
+				height = parent.height,
+				i = 0,
+				end = children.length - 1,
+				group = {
+					total: 0,
+					nW: 0,
+					lW: 0,
+					elArr: [],
+					lP: {
+						total: 0,
+						lH: 0,
+						nH: 0,
+						nR: 0,
+						lR: 0,
+						aspectRatio: function (w, h) {
+							return Math.max((w / h), (h / w));
+						}
+					},
+					addElement: function (el) {
+						this.lW = this.nW;
+						// Calculate last point old aspect ratio
+						this.lP.total = this.elArr[this.elArr.length - 1];
+						this.lP.lH = this.lP.total / this.nW;
+						this.lP.lR = this.lP.aspectRatio(this.lW, this.lP.lH);
+						// New total
+						this.total = this.total + el;
+						this.nW = this.total / height;
+						// Calculate last point new aspect ratio
+						this.lP.nH = this.lP.total / this.nW;
+						this.lP.nR = this.lP.aspectRatio(this.nW, this.lP.nH);
+						this.elArr.push(el);
+						
+					},
+					reset: function () {
+						this.nW = 0;
+						this.lW = 0;
+						this.elArr = [];
+						this.total = 0;
+					}
+				},
+				calculateGroupPoints = function (last) {
+					var pX,
+						pY,
+						pW,
+						pH,
+						gW = group.lW,
+						keep,
+						i = 0,
+						end = group.elArr.length - 1;
+					if (last) {
+						gW = group.nW;
+					} else {
+						keep = group.elArr[group.elArr.length - 1];
+					}
+					each(group.elArr, function (p) {
+						if (last || (i < end)) {
+							pX = x;
+							pY = y; 
+							pW = gW;
+							pH = p / pW;
+							childrenArea.push(new Area(pX, pY, pW, pH));
+							y = y + pH;
+						}
+						i = i + 1;
+					});
+					// Reset variables
+					group.reset();
+					y = parent.y;
+					x = x + gW;
+					// If not last, then add uncalculated element
+					if (!last) {
+						group.addElement(keep);
+					}
+				};
+			// Loop through and calculate all areas
+			each(children, function (child) {
+				pTot = (parent.width * parent.height) * (child.val / parent.val);
+				group.addElement(pTot);
+				if (group.lP.nR > group.lP.lR) {
+					calculateGroupPoints(false);
+				}
+				// If last child, then calculate all remaining areas
+				if (i === end) {
+					calculateGroupPoints(true);
+				}
+				i = i + 1;
+			});
+			return childrenArea;
 		},
-		stripes: function (parent, value) {
-			// Call sliceAndDice
-			var pointArea = this.sliceAndDice(parent, value);
-			// Reset direction
-			parent.direction = 0;
-			return pointArea;
+		squarified: function (parent, children) {
+			var childrenArea = [],
+				pTot,
+				x = parent.x,
+				y = parent.y,
+				height = parent.height,
+				width = parent.width,
+				i = 0,
+				direction = 0,
+				end = children.length - 1,
+				group = {
+					total: 0,
+					nW: 0,
+					lW: 0,
+					nH: 0,
+					lH: 0,
+					elArr: [],
+					lP: {
+						total: 0,
+						lH: 0,
+						nH: 0,
+						lW: 0,
+						nW: 0,
+						nR: 0,
+						lR: 0,
+						aspectRatio: function (w, h) {
+							return Math.max((w / h), (h / w));
+						}
+					},
+					addElement: function (el) {
+						this.lP.total = this.elArr[this.elArr.length - 1];
+						this.total = this.total + el;
+						if (direction === 0) {
+							// Calculate last point old aspect ratio
+							this.lW = this.nW;
+							this.lP.lH = this.lP.total / this.lW;
+							this.lP.lR = this.lP.aspectRatio(this.lW, this.lP.lH);
+							// Calculate last point new aspect ratio
+							this.nW = this.total / height;
+							this.lP.nH = this.lP.total / this.nW;
+							this.lP.nR = this.lP.aspectRatio(this.nW, this.lP.nH);
+						} else {
+							// Calculate last point old aspect ratio
+							this.lH = this.nH;
+							this.lP.lW = this.lP.total / this.lH;
+							this.lP.lR = this.lP.aspectRatio(this.lP.lW, this.lH);
+							// Calculate last point new aspect ratio
+							this.nH = this.total / width;
+							this.lP.nW = this.lP.total / this.nH;
+							this.lP.nR = this.lP.aspectRatio(this.lP.nW, this.nH);
+						}
+						this.elArr.push(el);						
+					},
+					reset: function () {
+						this.nW = 0;
+						this.lW = 0;
+						this.elArr = [];
+						this.total = 0;
+					}
+				},
+				calculateGroupPoints = function (last) {
+					var pX,
+						pY,
+						pW,
+						pH,
+						gW = group.lW,
+						gH = group.lH,
+						keep,
+						i = 0,
+						end = group.elArr.length - 1;
+					if (last) {
+						gW = group.nW;
+						gH = group.nH;
+					} else {
+						keep = group.elArr[group.elArr.length - 1];
+					}
+					each(group.elArr, function (p) {
+						if (last || (i < end)) {
+							if (direction === 0) {
+								pX = x;
+								pY = y; 
+								pW = gW;
+								pH = p / pW;
+							} else {
+								pX = x;
+								pY = y;
+								pH = gH;
+								pW = p / pH;
+							}
+							childrenArea.push(new Area(pX, pY, pW, pH));
+							if (direction === 0) {
+								y = y + pH;
+							} else {
+								x = x + pW;
+							}							
+						}
+						i = i + 1;
+					});
+					// Reset variables
+					group.reset();
+					if (direction === 0) {
+						width = width - gW;
+					} else {
+						height = height - gH;
+					}
+					y = parent.y + (parent.height - height);
+					x = parent.x + (parent.width - width);
+					direction = 1 - direction;
+					// If not last, then add uncalculated element
+					if (!last) {
+						group.addElement(keep);
+					}
+				};
+			// Loop through and calculate all areas
+			each(children, function (child) {
+				pTot = (parent.width * parent.height) * (child.val / parent.val);
+				group.addElement(pTot);
+				if (group.lP.nR > group.lP.lR) {
+					calculateGroupPoints(false);
+				}
+				// If last child, then calculate all remaining areas
+				if (i === end) {
+					calculateGroupPoints(true);
+				}
+				i = i + 1;
+			});
+			return childrenArea;
+		},
+		sliceAndDice: function (parent, children) {
+			var childrenArea = [],
+				pTot,
+				direction = 0,
+				x = parent.x,
+				y = parent.y,
+				width = parent.width,
+				height = parent.height,
+				pX,
+				pY,
+				pW,
+				pH;
+			each(children, function (child) {
+				pTot = (parent.width * parent.height) * (child.val / parent.val);
+				pX = x;
+				pY = y;
+				if (direction === 0) {
+					pH = height;
+					pW = pTot / pH;
+					width = width - pW;
+					x = x + pW;
+				} else {
+					pW = width;
+					pH = pTot / pW;
+					height = height - pH;
+					y = y + pH;
+				}
+				childrenArea.push(new Area(pX, pY, pW, pH));
+				direction = 1 - direction;
+			});
+			return childrenArea;
+		},
+		stripes: function (parent, children) {
+			var childrenArea = [],
+				pTot,
+				x = parent.x,
+				y = parent.y,
+				width = parent.width,
+				pX,
+				pY,
+				pW,
+				pH;
+			each(children, function (child) {
+				pTot = (parent.width * parent.height) * (child.val / parent.val);
+				pX = x;
+				pY = y;
+				pH = parent.height;
+				pW = pTot / pH;
+				width = width - pW;
+				x = x + pW;
+				childrenArea.push(new Area(pX, pY, pW, pH));
+			});
+			return childrenArea;
 		},
 		translate: function () {
 			H.Series.prototype.translate.call(this);
