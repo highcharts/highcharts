@@ -305,7 +305,7 @@ seriesProto.processData = function () {
 				xAxis.normalizeTimeTickInterval(interval, dataGroupingOptions.units || defaultDataGroupingUnits),
 				xMin,
 				xMax,
-				null,
+				xAxis.options.startOfWeek,
 				processedXData,
 				series.closestPointRange
 			),
