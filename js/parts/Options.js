@@ -159,7 +159,7 @@ defaultOptions = {
 				//defer: true,
 				enabled: false,
 				formatter: function () {
-					return this.y === null ? '' : numberFormat(this.y, -1);
+					return this.y === null ? '' : Highcharts.numberFormat(this.y, -1);
 				},
 				verticalAlign: 'bottom', // above singular point
 				y: 0

@@ -378,7 +378,7 @@ function formatSingle(format, val) {
 		decimals = format.match(decRegex);
 		decimals = decimals ? decimals[1] : -1;
 		if (val !== null) {
-			val = numberFormat(
+			val = Highcharts.numberFormat(
 				val,
 				decimals,
 				lang.decimalPoint,

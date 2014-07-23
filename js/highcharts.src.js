@@ -486,7 +486,7 @@ function formatSingle(format, val) {
 		decimals = format.match(decRegex);
 		decimals = decimals ? decimals[1] : -1;
 		if (val !== null) {
-			val = numberFormat(
+			val = Highcharts.numberFormat(
 				val,
 				decimals,
 				lang.decimalPoint,
@@ -1388,7 +1388,7 @@ defaultOptions = {
 				//defer: true,
 				enabled: false,
 				formatter: function () {
-					return this.y === null ? '' : numberFormat(this.y, -1);
+					return this.y === null ? '' : Highcharts.numberFormat(this.y, -1);
 				},
 				verticalAlign: 'bottom', // above singular point
 				y: 0
@@ -6344,7 +6344,7 @@ Axis.prototype = {
 			//textAlign: dynamic,
 			//rotation: 0,
 			formatter: function () {
-				return numberFormat(this.total, -1);
+				return Highcharts.numberFormat(this.total, -1);
 			},
 			style: defaultLabelOptions.style
 		}
@@ -6615,17 +6615,17 @@ Axis.prototype = {
 			while (i-- && ret === UNDEFINED) {
 				multi = Math.pow(1000, i + 1);
 				if (numericSymbolDetector >= multi && numericSymbols[i] !== null) {
-					ret = numberFormat(value / multi, -1) + numericSymbols[i];
+					ret = Highcharts.numberFormat(value / multi, -1) + numericSymbols[i];
 				}
 			}
 		}
 
 		if (ret === UNDEFINED) {
 			if (mathAbs(value) >= 10000) { // add thousands separators
-				ret = numberFormat(value, 0);
+				ret = Highcharts.numberFormat(value, 0);
 
 			} else { // small numbers
-				ret = numberFormat(value, -1, UNDEFINED, ''); // #2466
+				ret = Highcharts.numberFormat(value, -1, UNDEFINED, ''); // #2466
 			}
 		}
 
