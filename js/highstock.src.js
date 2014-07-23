@@ -11739,7 +11739,7 @@ Chart.prototype = {
 					.add();
 			} else {
 				plotBorder.animate(
-					plotBorder.crisp({ x: plotLeft, y: plotTop, width: plotWidth, height: plotHeight })
+					plotBorder.crisp({ x: plotLeft, y: plotTop, width: plotWidth, height: plotHeight, strokeWidth: -plotBorderWidth }) //#3282 plotBorder should be negative
 				);
 			}
 		}
