@@ -3938,7 +3938,7 @@ SVGRenderer.prototype = {
 		wrapper.onAdd = function () {
 			text.add(wrapper);
 			wrapper.attr({
-				text: str || '', // alignment is available now
+				text: (str || str === 0) ? str : '', // alignment is available now // #3295: 0 not rendered if given as a value
 				x: x,
 				y: y
 			});
