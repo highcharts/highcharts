@@ -510,9 +510,14 @@
 		
 		if (point.drilldown) {
 			
-			// Add the click event to the point label
-			H.addEvent(point, 'click', function () {
-				point.doDrilldown();
+			// Add the click event to the point 
+			wrap(point, 'importEvents', function (proceed) { // wrapping importEvents makes point.click event work
+				if (!this.hasImportedEvents) {
+					proceed.call(this);
+					H.addEvent(this, 'click', function () {
+						this.doDrilldown();
+					});
+				}
 			});
 			
 			// Make axis labels clickable
