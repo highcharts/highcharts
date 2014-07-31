@@ -363,7 +363,10 @@ function extendClass(parent, members) {
  * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
  */
 function numberFormat(number, decimals, decPoint, thousandsSep) {
-	var lang = defaultOptions.lang,
+	if(isNaN(number)){
+		return number;
+	}else{
+		var lang = defaultOptions.lang,
 		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
 		n = +number || 0,
 		c = decimals === -1 ?
@@ -375,8 +378,9 @@ function numberFormat(number, decimals, decPoint, thousandsSep) {
 		i = String(pInt(n = mathAbs(n).toFixed(c))),
 		j = i.length > 3 ? i.length % 3 : 0;
 
-	return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
-		(c ? d + mathAbs(n - i).toFixed(c).slice(2) : "");
+		return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + mathAbs(n - i).toFixed(c).slice(2) : "");
+	}
+
 }
 
 /**
