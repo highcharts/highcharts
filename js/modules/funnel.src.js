@@ -74,7 +74,7 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 			cumulative = 0, // start at top
 			center = options.center,
 			centerX = getLength(center[0], plotWidth),
-			centerY = getLength(center[0], plotHeight),
+			centerY = getLength(center[1], plotHeight),
 			width = getLength(options.width, plotWidth),
 			tempWidth,
 			getWidthAt,
