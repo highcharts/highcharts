@@ -2459,7 +2459,7 @@ SVGElement.prototype = {
 		}, {
 			duration: duration || 150,
 			complete: function () {
-				elemWrapper.hide();
+				elemWrapper.attr({ y: -9999 }); // #3088, assuming we're only using this for tooltips
 			}
 		});
 	},
