@@ -14439,6 +14439,7 @@ Series.prototype.drawDataLabels = function () {
 		points = series.points,
 		pointOptions,
 		generalOptions,
+		hasRendered = series.hasRendered || 0,
 		str,
 		dataLabelsGroup;
 
@@ -14457,14 +14458,16 @@ Series.prototype.drawDataLabels = function () {
 			options.zIndex || 6
 		);
 
-		if (!series.hasRendered && pick(options.defer, true)) {
-			dataLabelsGroup.attr({ opacity: 0 });
-			addEvent(series, 'afterAnimate', function () {
-				if (series.visible) { // #3023, #3024
-					dataLabelsGroup.show();
-				}
-				dataLabelsGroup[seriesOptions.animation ? 'animate' : 'attr']({ opacity: 1 }, { duration: 200 });
-			});
+		if (pick(options.defer, true)) {
+			dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
+			if (!hasRendered) {
+				addEvent(series, 'afterAnimate', function () {
+					if (series.visible) { // #3023, #3024
+						dataLabelsGroup.show();
+					}
+					dataLabelsGroup[seriesOptions.animation ? 'animate' : 'attr']({ opacity: 1 }, { duration: 200 });
+				});
+			}
 		}
 
 		// Make the labels for each point
