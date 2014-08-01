@@ -143,11 +143,17 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 // Override the automatic label alignment so that the first Y axis' labels
 // are drawn on top of the grid line, and subsequent axes are drawn outside
 wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
+	var chart = this.chart,
+		panes = chart._labelPanes = chart._labelPanes || {},
+		key;
 	if (this.chart.options._stock && this.coll === 'yAxis') {
-		if (inArray(this, this.chart.yAxis) === 0) {
+		key = this.pos + ',' + this.len;
+	
+		if (!panes[key]) { // do it only for the first Y axis of each pane
 			if (this.options.labels.x === 15) { // default
 				this.options.labels.x = 0;
 			}
+			panes[key] = 1;
 			return 'right';
 		}
 	}
