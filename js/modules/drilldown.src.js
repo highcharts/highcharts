@@ -112,10 +112,10 @@
 			if (series.xAxis === xAxis) {
 				levelSeries.push(series);
 				levelSeriesOptions.push(series.userOptions);
-				series.levelNumber = series.levelNumber || 0;
+				series.levelNumber = series.levelNumber || levelNumber; // #3182
 			}
 		});
-		
+
 		// Add a record of properties for each drilldown level
 		level = {
 			levelNumber: levelNumber,
@@ -511,15 +511,18 @@
 		if (point.drilldown) {
 			
 			// Add the click event to the point 
-			wrap(point, 'importEvents', function (proceed) { // wrapping importEvents makes point.click event work
+			H.addEvent(point, 'click', function () {
+				point.doDrilldown();
+			});
+			/*wrap(point, 'importEvents', function (proceed) { // wrapping importEvents makes point.click event work
 				if (!this.hasImportedEvents) {
 					proceed.call(this);
 					H.addEvent(this, 'click', function () {
 						this.doDrilldown();
 					});
 				}
-			});
-			
+			});*/
+
 			// Make axis labels clickable
 			if (tickLabel) {
 				if (!tickLabel._basicStyle) {
