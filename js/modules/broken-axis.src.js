@@ -86,15 +86,8 @@
 
 				while (i--) {
 					brk = breaks[i]; 
-					occ = Math.floor((val - axis.min + (axis.isInBreak(brk, axis.min) ? 0 : (axis.min % brk.repeat))) / brk.repeat);
+					occ = Math.floor((val - (axis.min - (axis.min % brk.repeat))) / brk.repeat);
 					nval -=  occ * (brk.to - brk.from); // Number of occurences * break width
-
-					if (axis.isInBreak(brk, axis.min)) {
-
-						nval -= ((brk.from % brk.repeat) - (brk.to - brk.from)) - (axis.min % brk.repeat);
-					} 
-					
-					//nval += axis.options.minPadding;
 				}				
 
 				return nval;
@@ -107,15 +100,9 @@
 					occ,
 					brk;
 
-					while(i--) {
-						brk = breaks[i];
-						occ = Math.floor((val - (axis.min + (axis.min % brk.repeat))) / brk.repeat) + 1;
-						nval += occ * (brk.to - brk.from); // Number of occurences * break width
-					}
-
 				return nval;
 			};
-			/*
+			
 			this.setAxisTranslation = function (saveOld) {
 				Axis.prototype.setAxisTranslation.call(this, saveOld);
 				var oldLen = axis.max - axis.min,
@@ -128,16 +115,22 @@
 				
 				while (i--) {
 					brk = breaks[i];
-					occ = 0;
-					for (j = axis.min; j < axis.max; j += brk.repeat) {
+					occ = 0, 
+					j = axis.min - (axis.min % brk.repeat);
+					for (j; j + brk.repeat <= axis.max; j += brk.repeat) {
 						occ++;
 					}
-
 					newLen -= occ * (brk.to - brk.from); // Number of occurences * break width
-				}	
+
+					if (axis.isInBreak(brk,axis.max)) {
+						newLen -= (axis.max % brk.repeat) - ((brk.from % brk.repeat) * (axis.max > 0 ? 1 : -1));
+					}					
+					if (axis.isInBreak(brk, axis.min)) {
+						//newLen -= ((brk.from % brk.repeat)+ (brk.to - brk.from)) - (axis.min % brk.repeat);
+					} 
+				}
 				this.transA *= oldLen / newLen; 				
 			};
-			*/
 
 		}
 		
