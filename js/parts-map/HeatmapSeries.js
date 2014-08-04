@@ -79,7 +79,7 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		// Make sure colors are updated on colorAxis update (#2893)
 		if (this.chart.hasRendered) {
 			each(series.points, function (point) {
-				point.shapeArgs.fill = point.color;
+				point.shapeArgs.fill = point.options.color || point.color; // #3311
 			});
 		}
 	},

@@ -10,7 +10,7 @@
  */
 
 // JSLint options:
-/*global Highcharts, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console, each, grep */
+/*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console, each, grep */
 /*jslint ass: true, sloppy: true, forin: true, plusplus: true, nomen: true, vars: true, regexp: true, newcap: true, browser: true, continue: true, white: true */
 (function () {
 // encapsulated variables
@@ -855,12 +855,7 @@ pathAnim = {
 		init: function (pathAnim) {
 			
 			// extend the animate function to allow SVG animations
-			var Fx = $.fx,
-				Step = Fx.step,
-				dSetter,
-				Tween = $.Tween,
-				propHooks = Tween && Tween.propHooks,
-				opacityHook = $.cssHooks.opacity;
+			var Fx = $.fx;
 			
 			/*jslint unparam: true*//* allow unused param x in this function */
 			$.extend($.easing, {
@@ -872,15 +867,15 @@ pathAnim = {
 		
 			// extend some methods to check for elem.attr, which means it is a Highcharts SVG object
 			$.each(['cur', '_default', 'width', 'height', 'opacity'], function (i, fn) {
-				var obj = Step,
+				var obj = Fx.step,
 					base;
 					
 				// Handle different parent objects
 				if (fn === 'cur') {
 					obj = Fx.prototype; // 'cur', the getter, relates to Fx.prototype
 				
-				} else if (fn === '_default' && Tween) { // jQuery 1.8 model
-					obj = propHooks[fn];
+				} else if (fn === '_default' && $.Tween) { // jQuery 1.8 model
+					obj = $.Tween.propHooks[fn];
 					fn = 'set';
 				}
 		
@@ -914,13 +909,12 @@ pathAnim = {
 			});
 
 			// Extend the opacity getter, needed for fading opacity with IE9 and jQuery 1.10+
-			wrap(opacityHook, 'get', function (proceed, elem, computed) {
+			wrap($.cssHooks.opacity, 'get', function (proceed, elem, computed) {
 				return elem.attr ? (elem.opacity || 0) : proceed.call(this, elem, computed);
 			});
 			
-			
 			// Define the setter function for d (path definitions)
-			dSetter = function (fx) {
+			this.addAnimSetter('d', function (fx) {
 				var elem = fx.elem,
 					ends;
 		
@@ -934,21 +928,9 @@ pathAnim = {
 					fx.started = true;
 				}
 		
-		
-				// interpolate each value of the path
+				// Interpolate each value of the path
 				elem.attr('d', pathAnim.step(fx.start, fx.end, fx.pos, elem.toD));
-			};
-			
-			// jQuery 1.8 style
-			if (Tween) {
-				propHooks.d = {
-					set: dSetter
-				};
-			// pre 1.8
-			} else {
-				// animate paths
-				Step.d = dSetter;
-			}
+			});
 			
 			/**
 			 * Utility for iterating over an array. Parameters are reversed compared to jQuery.
@@ -1009,6 +991,20 @@ pathAnim = {
 
 		},
 
+		/**
+		 * Add an animation setter for a specific property
+		 */
+		addAnimSetter: function (prop, setter) {
+			// jQuery 1.8 style
+			if ($.Tween) {
+				$.Tween.propHooks[prop] = {
+					set: setter
+				};
+			// pre 1.8
+			} else {
+				$.fx.step[prop] = setter;
+			}
+		},
 		
 		/**
 		 * Downloads a script and executes a callback when done.
@@ -15332,7 +15328,7 @@ extend(ColorAxis.prototype, {
 			Math.round(to.rgba[1] + (from.rgba[1] - to.rgba[1]) * (1 - pos)) + ',' + 
 			Math.round(to.rgba[2] + (from.rgba[2] - to.rgba[2]) * (1 - pos)) + 
 			(hasAlpha ? (',' + (to.rgba[3] + (from.rgba[3] - to.rgba[3]) * (1 - pos))) : '') + ')';
-		},
+	},
 
 	initDataClasses: function (userOptions) {
 		var axis = this,
@@ -15664,7 +15660,14 @@ extend(ColorAxis.prototype, {
 	name: '' // Prevents 'undefined' in legend in IE8
 });
 
-
+/**
+ * Handle animation of the color attributes directly
+ */
+each(['fill', 'stroke'], function (prop) {
+	HighchartsAdapter.addAnimSetter(prop, function (fx) {
+		fx.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(fx.start), Color(fx.end), fx.pos));
+	});
+});
 
 /**
  * Extend the chart getAxes method to also get the color axis
@@ -17524,7 +17527,7 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		// Make sure colors are updated on colorAxis update (#2893)
 		if (this.chart.hasRendered) {
 			each(series.points, function (point) {
-				point.shapeArgs.fill = point.color;
+				point.shapeArgs.fill = point.options.color || point.color; // #3311
 			});
 		}
 	},

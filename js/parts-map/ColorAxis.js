@@ -77,7 +77,7 @@ extend(ColorAxis.prototype, {
 			Math.round(to.rgba[1] + (from.rgba[1] - to.rgba[1]) * (1 - pos)) + ',' + 
 			Math.round(to.rgba[2] + (from.rgba[2] - to.rgba[2]) * (1 - pos)) + 
 			(hasAlpha ? (',' + (to.rgba[3] + (from.rgba[3] - to.rgba[3]) * (1 - pos))) : '') + ')';
-		},
+	},
 
 	initDataClasses: function (userOptions) {
 		var axis = this,
@@ -409,7 +409,14 @@ extend(ColorAxis.prototype, {
 	name: '' // Prevents 'undefined' in legend in IE8
 });
 
-
+/**
+ * Handle animation of the color attributes directly
+ */
+each(['fill', 'stroke'], function (prop) {
+	HighchartsAdapter.addAnimSetter(prop, function (fx) {
+		fx.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(fx.start), Color(fx.end), fx.pos));
+	});
+});
 
 /**
  * Extend the chart getAxes method to also get the color axis
