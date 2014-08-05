@@ -24,7 +24,8 @@
 		PieSeries = seriesTypes.pie,
 		ColumnSeries = seriesTypes.column,
 		fireEvent = HighchartsAdapter.fireEvent,
-		inArray = HighchartsAdapter.inArray;
+		inArray = HighchartsAdapter.inArray,
+		dupes = [];
 
 	// Utilities
 	function tweenColors(startColor, endColor, pos) {
@@ -300,6 +301,8 @@
 			})
 			.align();
 		}
+
+		dupes.length = []; // #3315
 	};
 
 
@@ -480,8 +483,9 @@
 			seriesOptions;
 		
 		while (i-- && !seriesOptions) {
-			if (drilldown.series[i].id === this.drilldown) {
+			if (drilldown.series[i].id === this.drilldown && inArray(this.drilldown, dupes) === -1) {
 				seriesOptions = drilldown.series[i];
+				dupes.push(this.drilldown);
 			}
 		}
 
