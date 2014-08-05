@@ -6990,11 +6990,6 @@ Axis.prototype = {
 				minPointOffset = axis.minPointOffset || 0,
 				singlePad;
 
-			// Prevent all ticks from being removed (#3195)
-			if (!startOnTick && !endOnTick && !categories && tickPositions.length === 2) {
-				tickPositions.splice(1, 0, (roundedMax + roundedMin) / 2);
-			}
-
 			if (startOnTick) {
 				axis.min = roundedMin;
 			} else if (axis.min - minPointOffset > roundedMin) {
@@ -7005,6 +7000,11 @@ Axis.prototype = {
 				axis.max = roundedMax;
 			} else if (axis.max + minPointOffset < roundedMax) {
 				tickPositions.pop();
+			}
+
+			// If no tick are left, set one tick in the middle (#3195) 
+			if (tickPositions.length === 0) {
+				tickPositions.splice(1, 0, (roundedMax + roundedMin) / 2);				
 			}
 
 			// When there is only one point, or all points have the same value on this axis, then min
