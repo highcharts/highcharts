@@ -14,19 +14,10 @@
 		plotOptions = defaultOptions.plotOptions,
 		noop = function () { return; },
 		each = H.each;
-	defaultOptions.legend = false;
-
-	function Area(x, y, w, h) {
-		this.x = x;
-		this.y = y;
-		this.width = w;
-		this.height = h;
-		this.val = 0;
-	}
 
 	// Define default options
 	plotOptions.treemap = merge(plotOptions.scatter, {
-		legend: false,
+		showInLegend: false,
 		marker: false,
 		borderColor: '#FFFFFF',
 		borderWidth: 1,
@@ -42,7 +33,13 @@
 			headerFormat: '',
 			pointFormat: 'id: <b>{point.id}</b><br/>parent: <b>{point.parent}</b><br/>value: <b>{point.value}</b><br/>'
 		},
-		layoutAlgorithm: 'sliceAndDice'
+		layoutAlgorithm: 'sliceAndDice',
+		directionalChange: false,
+		states: {
+			hover: {
+				enabled: false
+			}
+		}
 	});
 	
 	// Stolen from heatmap	
@@ -72,6 +69,7 @@
 		handleLayout: function () {
 		var tree = this.buildTree(),
 			seriesArea = this.getSeriesArea(tree.val);
+			this.levelMap = this.getLevels();
 			this.calculateArea(tree, seriesArea);
 			this.setColorRecursive(tree, undefined);
 		},
@@ -167,6 +165,9 @@
 				childValues,
 				series = this,
 				i = 0,
+				level,
+				algorithm = series.options.layoutAlgorithm,
+				directionalChange = series.options.directionalChange,
 				setPointValues = function (node, values) {
 					var point;
 					if (node.val > 0) {
@@ -183,10 +184,21 @@
 						point.plotY = point.shapeArgs.y + (point.shapeArgs.height / 2);
 					}
 				};
-			childrenValues = series[series.options.layoutAlgorithm](area, node.children);
+			// If layoutAlgorithm is set for the level of the children, then default is overwritten
+			if (this.levelMap[node.level + 1] !== undefined) {
+				level = this.levelMap[node.level + 1];
+				if (level.layoutAlgorithm !== undefined && series[level.layoutAlgorithm] !== undefined) {
+					algorithm = level.layoutAlgorithm;
+				}
+			}
+			childrenValues = series[algorithm](area, node.children);
 			each(node.children, function (child) {
 				childValues = childrenValues[i];
 				childValues.val = child.val;
+				childValues.direction = area.direction;
+				if (directionalChange) {
+					childValues.direction = 1 - childValues.direction;
+				}
 				// If node has children, then call method recursively
 				if (child.children.length) {
 					series.calculateArea(child, childValues);
@@ -201,13 +213,41 @@
 				x = w * this._i,
 				y = 0,
 				h = this.chart.plotHeight,
-				seriesArea = new Area(x, y, w, h);
-			seriesArea.val = val;
+				seriesArea = {
+					x: x,
+					y: y,
+					width: w,
+					height: h,
+					direction: 0,
+					val: val
+				};
 			return seriesArea;
+		},
+		getLevels: function () {
+			var map = [];
+			each(this.options.levels, function (level) {
+				if (level.level !== undefined) {
+					map[level.level] = {
+						level: level.level,
+						layoutAlgorithm: level.layoutAlgorithm,
+						color: level.color
+					};
+				}
+			});
+			return map;
 		},
 		setColorRecursive: function (node, color) {
 			var series = this,
-				point = series.points[node.i];
+				point = series.points[node.i],
+				level;
+			// Overwrite color if level specific color is set
+			if (this.levelMap[node.level] !== undefined) {
+				level = this.levelMap[node.level];
+				if (level.color !== undefined) {
+					color = level.color;
+				}
+			}
+			// If point color is not set, then give it inherited or level color
 			if (node.i !== -1) {
 				if (point.color === undefined) {
 					if (color !== undefined) {
@@ -217,239 +257,162 @@
 				} else {
 					color = point.color;
 				}
-			}		
+			}
+			// Do it all again with the children	
 			if (node.children.length) {
 				each(node.children, function (child) {
 					series.setColorRecursive(child, color);
 				});
 			}
 		},
-		strip: function (parent, children) {
+		alg_func_group: function (h, w, d, p) {
+			this.height = h;
+			this.width = w;
+			this.plot = p;
+			this.direction = d;
+			this.startDirection = d;
+			this.total = 0;
+			this.nW = 0;
+			this.lW = 0;
+			this.nH = 0;
+			this.lH = 0;
+			this.elArr = [];
+			this.lP = {
+				total: 0,
+				lH: 0,
+				nH: 0,
+				lW: 0,
+				nW: 0,
+				nR: 0,
+				lR: 0,
+				aspectRatio: function (w, h) {
+					return Math.max((w / h), (h / w));
+				}
+			};
+			this.addElement = function (el) {
+				this.lP.total = this.elArr[this.elArr.length - 1];
+				this.total = this.total + el;
+				if (this.direction === 0) {
+					// Calculate last point old aspect ratio
+					this.lW = this.nW;
+					this.lP.lH = this.lP.total / this.lW;
+					this.lP.lR = this.lP.aspectRatio(this.lW, this.lP.lH);
+					// Calculate last point new aspect ratio
+					this.nW = this.total / this.height;
+					this.lP.nH = this.lP.total / this.nW;
+					this.lP.nR = this.lP.aspectRatio(this.nW, this.lP.nH);
+				} else {
+					// Calculate last point old aspect ratio
+					this.lH = this.nH;
+					this.lP.lW = this.lP.total / this.lH;
+					this.lP.lR = this.lP.aspectRatio(this.lP.lW, this.lH);
+					// Calculate last point new aspect ratio
+					this.nH = this.total / this.width;
+					this.lP.nW = this.lP.total / this.nH;
+					this.lP.nR = this.lP.aspectRatio(this.lP.nW, this.nH);
+				}
+				this.elArr.push(el);						
+			};
+			this.reset = function () {
+				this.nW = 0;
+				this.lW = 0;
+				this.elArr = [];
+				this.total = 0;
+			};
+		},
+		alg_func_calcPoints: function (directionChange, last, group, childrenArea) {
+			var pX,
+				pY,
+				pW,
+				pH,
+				gW = group.lW,
+				gH = group.lH,
+				plot = group.plot,
+				keep,
+				i = 0,
+				end = group.elArr.length - 1;
+			if (last) {
+				gW = group.nW;
+				gH = group.nH;
+			} else {
+				keep = group.elArr[group.elArr.length - 1];
+			}
+			each(group.elArr, function (p) {
+				if (last || (i < end)) {
+					if (group.direction === 0) {
+						pX = plot.x;
+						pY = plot.y; 
+						pW = gW;
+						pH = p / pW;
+					} else {
+						pX = plot.x;
+						pY = plot.y;
+						pH = gH;
+						pW = p / pH;
+					}
+					childrenArea.push({
+						x: pX,
+						y: pY,
+						width: pW,
+						height: pH
+					});
+					if (group.direction === 0) {
+						plot.y = plot.y + pH;
+					} else {
+						plot.x = plot.x + pW;
+					}						
+				}
+				i = i + 1;
+			});
+			// Reset variables
+			group.reset();
+			if (group.direction === 0) {
+				group.width = group.width - gW;
+			} else {
+				group.height = group.height - gH;
+			}
+			plot.y = plot.parent.y + (plot.parent.height - group.height);
+			plot.x = plot.parent.x + (plot.parent.width - group.width);
+			if (directionChange) {
+				group.direction = 1 - group.direction;
+			}
+			// If not last, then add uncalculated element
+			if (!last) {
+				group.addElement(keep);
+			}
+		},
+		alg_func_lowAspectRatio: function (directionChange, parent, children) {
 			var childrenArea = [],
+				series = this,
 				pTot,
-				x = parent.x,
-				y = parent.y,
-				height = parent.height,
+				plot = {
+					x: parent.x,
+					y: parent.y,
+					parent: parent
+				},
+				direction = parent.direction,
 				i = 0,
 				end = children.length - 1,
-				group = {
-					total: 0,
-					nW: 0,
-					lW: 0,
-					elArr: [],
-					lP: {
-						total: 0,
-						lH: 0,
-						nH: 0,
-						nR: 0,
-						lR: 0,
-						aspectRatio: function (w, h) {
-							return Math.max((w / h), (h / w));
-						}
-					},
-					addElement: function (el) {
-						this.lW = this.nW;
-						// Calculate last point old aspect ratio
-						this.lP.total = this.elArr[this.elArr.length - 1];
-						this.lP.lH = this.lP.total / this.nW;
-						this.lP.lR = this.lP.aspectRatio(this.lW, this.lP.lH);
-						// New total
-						this.total = this.total + el;
-						this.nW = this.total / height;
-						// Calculate last point new aspect ratio
-						this.lP.nH = this.lP.total / this.nW;
-						this.lP.nR = this.lP.aspectRatio(this.nW, this.lP.nH);
-						this.elArr.push(el);
-						
-					},
-					reset: function () {
-						this.nW = 0;
-						this.lW = 0;
-						this.elArr = [];
-						this.total = 0;
-					}
-				},
-				calculateGroupPoints = function (last) {
-					var pX,
-						pY,
-						pW,
-						pH,
-						gW = group.lW,
-						keep,
-						i = 0,
-						end = group.elArr.length - 1;
-					if (last) {
-						gW = group.nW;
-					} else {
-						keep = group.elArr[group.elArr.length - 1];
-					}
-					each(group.elArr, function (p) {
-						if (last || (i < end)) {
-							pX = x;
-							pY = y; 
-							pW = gW;
-							pH = p / pW;
-							childrenArea.push(new Area(pX, pY, pW, pH));
-							y = y + pH;
-						}
-						i = i + 1;
-					});
-					// Reset variables
-					group.reset();
-					y = parent.y;
-					x = x + gW;
-					// If not last, then add uncalculated element
-					if (!last) {
-						group.addElement(keep);
-					}
-				};
+				group = new this.alg_func_group(parent.height, parent.width, direction, plot);
 			// Loop through and calculate all areas
 			each(children, function (child) {
 				pTot = (parent.width * parent.height) * (child.val / parent.val);
 				group.addElement(pTot);
 				if (group.lP.nR > group.lP.lR) {
-					calculateGroupPoints(false);
+					series.alg_func_calcPoints(directionChange, false, group, childrenArea, plot);
 				}
 				// If last child, then calculate all remaining areas
 				if (i === end) {
-					calculateGroupPoints(true);
+					series.alg_func_calcPoints(directionChange, true, group, childrenArea, plot);
 				}
 				i = i + 1;
 			});
 			return childrenArea;
 		},
-		squarified: function (parent, children) {
+		alg_func_fill: function (directionChange, parent, children) {
 			var childrenArea = [],
 				pTot,
-				x = parent.x,
-				y = parent.y,
-				height = parent.height,
-				width = parent.width,
-				i = 0,
-				direction = 0,
-				end = children.length - 1,
-				group = {
-					total: 0,
-					nW: 0,
-					lW: 0,
-					nH: 0,
-					lH: 0,
-					elArr: [],
-					lP: {
-						total: 0,
-						lH: 0,
-						nH: 0,
-						lW: 0,
-						nW: 0,
-						nR: 0,
-						lR: 0,
-						aspectRatio: function (w, h) {
-							return Math.max((w / h), (h / w));
-						}
-					},
-					addElement: function (el) {
-						this.lP.total = this.elArr[this.elArr.length - 1];
-						this.total = this.total + el;
-						if (direction === 0) {
-							// Calculate last point old aspect ratio
-							this.lW = this.nW;
-							this.lP.lH = this.lP.total / this.lW;
-							this.lP.lR = this.lP.aspectRatio(this.lW, this.lP.lH);
-							// Calculate last point new aspect ratio
-							this.nW = this.total / height;
-							this.lP.nH = this.lP.total / this.nW;
-							this.lP.nR = this.lP.aspectRatio(this.nW, this.lP.nH);
-						} else {
-							// Calculate last point old aspect ratio
-							this.lH = this.nH;
-							this.lP.lW = this.lP.total / this.lH;
-							this.lP.lR = this.lP.aspectRatio(this.lP.lW, this.lH);
-							// Calculate last point new aspect ratio
-							this.nH = this.total / width;
-							this.lP.nW = this.lP.total / this.nH;
-							this.lP.nR = this.lP.aspectRatio(this.lP.nW, this.nH);
-						}
-						this.elArr.push(el);						
-					},
-					reset: function () {
-						this.nW = 0;
-						this.lW = 0;
-						this.elArr = [];
-						this.total = 0;
-					}
-				},
-				calculateGroupPoints = function (last) {
-					var pX,
-						pY,
-						pW,
-						pH,
-						gW = group.lW,
-						gH = group.lH,
-						keep,
-						i = 0,
-						end = group.elArr.length - 1;
-					if (last) {
-						gW = group.nW;
-						gH = group.nH;
-					} else {
-						keep = group.elArr[group.elArr.length - 1];
-					}
-					each(group.elArr, function (p) {
-						if (last || (i < end)) {
-							if (direction === 0) {
-								pX = x;
-								pY = y; 
-								pW = gW;
-								pH = p / pW;
-							} else {
-								pX = x;
-								pY = y;
-								pH = gH;
-								pW = p / pH;
-							}
-							childrenArea.push(new Area(pX, pY, pW, pH));
-							if (direction === 0) {
-								y = y + pH;
-							} else {
-								x = x + pW;
-							}							
-						}
-						i = i + 1;
-					});
-					// Reset variables
-					group.reset();
-					if (direction === 0) {
-						width = width - gW;
-					} else {
-						height = height - gH;
-					}
-					y = parent.y + (parent.height - height);
-					x = parent.x + (parent.width - width);
-					direction = 1 - direction;
-					// If not last, then add uncalculated element
-					if (!last) {
-						group.addElement(keep);
-					}
-				};
-			// Loop through and calculate all areas
-			each(children, function (child) {
-				pTot = (parent.width * parent.height) * (child.val / parent.val);
-				group.addElement(pTot);
-				if (group.lP.nR > group.lP.lR) {
-					calculateGroupPoints(false);
-				}
-				// If last child, then calculate all remaining areas
-				if (i === end) {
-					calculateGroupPoints(true);
-				}
-				i = i + 1;
-			});
-			return childrenArea;
-		},
-		sliceAndDice: function (parent, children) {
-			var childrenArea = [],
-				pTot,
-				direction = 0,
+				direction = parent.direction,
 				x = parent.x,
 				y = parent.y,
 				width = parent.width,
@@ -473,31 +436,49 @@
 					height = height - pH;
 					y = y + pH;
 				}
-				childrenArea.push(new Area(pX, pY, pW, pH));
-				direction = 1 - direction;
+				childrenArea.push({
+					x: pX,
+					y: pY,
+					width: pW,
+					height: pH
+				});
+				if (directionChange) {
+					direction = 1 - direction;
+				}
 			});
 			return childrenArea;
 		},
+		strip: function (parent, children) {
+			var childrenArea = this.alg_func_lowAspectRatio(false, parent, children);
+			return childrenArea;
+		},
+		squarified: function (parent, children) {
+			var childrenArea = this.alg_func_lowAspectRatio(true, parent, children);
+			return childrenArea;
+		},
+		sliceAndDice: function (parent, children) {
+			var childrenArea = this.alg_func_fill(true, parent, children);
+			return childrenArea;
+		},
 		stripes: function (parent, children) {
-			var childrenArea = [],
-				pTot,
-				x = parent.x,
-				y = parent.y,
-				width = parent.width,
-				pX,
-				pY,
-				pW,
-				pH;
-			each(children, function (child) {
-				pTot = (parent.width * parent.height) * (child.val / parent.val);
-				pX = x;
-				pY = y;
-				pH = parent.height;
-				pW = pTot / pH;
-				width = width - pW;
-				x = x + pW;
-				childrenArea.push(new Area(pX, pY, pW, pH));
-			});
+			var childrenArea = this.alg_func_fill(false, parent, children);
+			return childrenArea;
+		},
+		mixed: function (parent, children) {
+			var level,
+				algorithm = 'sliceAndDice',
+				childrenArea = [];
+			if (children.length) {
+				level = children[0].level - 1;
+			}
+			if (level === 0) {
+				if (children.length < 20) {
+					algorithm = 'strip';
+				} else {
+					algorithm = 'strip';
+				}
+			}
+			childrenArea = this[algorithm](parent, children);
 			return childrenArea;
 		},
 		translate: function () {
