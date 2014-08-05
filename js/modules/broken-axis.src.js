@@ -72,24 +72,26 @@
 		proceed.call(this, chart, userOptions);
 
 		var axis = this;
-
+		
 		if (this.options.breaks) {
 			var axis = this;
+			axis.dateCorrection = axis.options.type === 'datetime' ? 4 * 24 * 3600 * 1000 : 0; // Jan. 1st 1970 is a Thursday 
 			axis.postTranslate = true;
-			
+
 			this.val2lin = function (val) {	
 				var nval = val,
 					breaks = axis.options.breaks,
 					i = breaks.length,
 					brk,
 					occ;
-
+					
+					//console.log(axis);
 				while (i--) {
-					brk = breaks[i]; 
-					occ = Math.floor((val - (axis.min - (axis.min % brk.repeat))) / brk.repeat);
+					brk = breaks[i];
+					occ = Math.floor((val - (axis.min - Math.abs((axis.min - axis.dateCorrection) % brk.repeat))) / brk.repeat);
 					nval -=  occ * (brk.to - brk.from); // Number of occurences * break width
 				}				
-
+				
 				return nval;
 			};
 			
@@ -116,7 +118,7 @@
 				while (i--) {
 					brk = breaks[i];
 					occ = 0, 
-					j = axis.min - (axis.min % brk.repeat);
+					j = axis.min - Math.abs((axis.min - axis.dateCorrection) % brk.repeat);
 					for (j; j + brk.repeat <= axis.max; j += brk.repeat) {
 						occ++;
 					}
