@@ -124,7 +124,7 @@
 					occ = 0, 
 					j = axis.min - Math.abs((axis.min - axis.dateCorrection) % brk.repeat);
 					for (j; j + brk.repeat <= axis.max; j += brk.repeat) {
-						detectedBreaks.push({from: j + brk.repeat - (brk.to - brk.from), to: j + brk.repeat});
+						detectedBreaks.push({from: j + brk.repeat - (brk.to - brk.from), to: j + brk.repeat, ev: brk.callback});
 						occ++;
 					}
 					newLen -= occ * (brk.to - brk.from); // Number of occurences * break width
@@ -139,7 +139,7 @@
 				this.transA *= oldLen / newLen; 
 
 				for (i = 0; i < detectedBreaks.length; i ++) {
-					fireEvent(axis, 'breakDetected', detectedBreaks[i]);
+					detectedBreaks[i].ev.call(axis, detectedBreaks[i]);
 				}				
 			};
 
