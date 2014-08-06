@@ -85,11 +85,11 @@
 					brk,
 					occ;
 					
-					//console.log(axis);
 				while (i--) {
 					brk = breaks[i];
 					occ = Math.floor((val - (axis.min - Math.abs((axis.min - axis.dateCorrection) % brk.repeat))) / brk.repeat);
 					nval -=  occ * (brk.to - brk.from); // Number of occurences * break width
+					nval += occ * (brk.width || 0);
 				}				
 				
 				return nval;
@@ -102,7 +102,12 @@
 					occ,
 					brk;
 
-				console.log('pom');
+				while (i--) {
+					brk = breaks[i];
+					occ = Math.floor((val - (axis.min - Math.abs((axis.min - axis.dateCorrection) % brk.repeat))) / brk.repeat);
+					nval +=  occ * (brk.to - brk.from); // Number of occurences * break width
+					nval -= occ * (brk.width || 0);
+				}		
 
 				return nval;
 			};
@@ -128,6 +133,7 @@
 						occ++;
 					}
 					newLen -= occ * (brk.to - brk.from); // Number of occurences * break width
+					newLen += occ * (brk.width || 0);
 
 					if (axis.isInBreak(brk,axis.max)) {
 						newLen -= (axis.max % brk.repeat) - ((brk.from % brk.repeat) * (axis.max > 0 ? 1 : -1));
