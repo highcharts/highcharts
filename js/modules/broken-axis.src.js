@@ -18,6 +18,7 @@
 		pick = H.pick,
 		wrap = H.wrap,
 		extend = H.extend,
+ 		fireEvent = HighchartsAdapter.fireEvent,
 		Axis = H.Axis,
 		Series = H.Series;
 
@@ -61,7 +62,6 @@
 			}
 		}
 
-
 		this.tickPositions = newPositions;
 		this.tickPositions.info = info;
 	});
@@ -95,12 +95,14 @@
 				return nval;
 			};
 			
-			this._lin2val = function (val) {
+			this.lin2val = function (val) {
 				var nval = val,
 					breaks = axis.options.breaks,
 					i = breaks.length,
 					occ,
 					brk;
+
+				console.log('pom');
 
 				return nval;
 			};
@@ -114,12 +116,15 @@
 					j,
 					occ,
 					brk;
-				
+
+				var detectedBreaks = [];
+
 				while (i--) {
 					brk = breaks[i];
 					occ = 0, 
 					j = axis.min - Math.abs((axis.min - axis.dateCorrection) % brk.repeat);
 					for (j; j + brk.repeat <= axis.max; j += brk.repeat) {
+						detectedBreaks.push({from: j + brk.repeat - (brk.to - brk.from), to: j + brk.repeat});
 						occ++;
 					}
 					newLen -= occ * (brk.to - brk.from); // Number of occurences * break width
@@ -131,7 +136,11 @@
 						//newLen -= ((brk.from % brk.repeat)+ (brk.to - brk.from)) - (axis.min % brk.repeat);
 					} 
 				}
-				this.transA *= oldLen / newLen; 				
+				this.transA *= oldLen / newLen; 
+
+				for (i = 0; i < detectedBreaks.length; i ++) {
+					fireEvent(axis, 'breakDetected', detectedBreaks[i]);
+				}				
 			};
 
 		}
