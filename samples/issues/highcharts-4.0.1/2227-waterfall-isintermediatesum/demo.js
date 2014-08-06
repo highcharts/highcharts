@@ -42,7 +42,7 @@ $(function () {
                 name: 'Sum',
                 isSum: true
             }]
-            
+
         }]
     });
 });

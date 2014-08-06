@@ -1,6 +1,6 @@
 $(function () {
     $('#container').highcharts({
-        
+
         chart: {
             plotBackgroundColor: '#F8F8FF'
         },

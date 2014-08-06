@@ -3,7 +3,7 @@ $(function () {
 
         title: {
             text: 'Monthly temperatures in a random cold place'
-        }, 
+        },
         subtitle: {
             text: 'All series should be blue below zero'
         },

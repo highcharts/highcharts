@@ -1,9 +1,9 @@
 $(function () {
     $('#container').highcharts({
-    	title: {
-    			text: 'Non-snapped crosshair'
-    	},
-    	xAxis: {
+        title: {
+            text: 'Non-snapped crosshair'
+        },
+        xAxis: {
             crosshair: {
                 snap: false
             }

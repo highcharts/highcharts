@@ -1,7 +1,7 @@
 $(function () {
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
-        
+
         // Assign id's
         $.each(data, function () {
             this.id = this.code;
@@ -17,7 +17,7 @@ $(function () {
             subtitle: {
                 text: 'Click a country to zoom to it. Use buttons below map for selected tests.'
             },
-            
+
             legend: {
                 title: {
                     text: 'Population density per km²'

@@ -2,7 +2,7 @@ $(function () {
 
     // Initiate the chart
     $('#container').highcharts('Map', {
-        
+
         title : {
             text : 'Individually disabled data labels'
         },

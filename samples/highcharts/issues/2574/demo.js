@@ -4,26 +4,26 @@ $(function () {
         chart: {
             type: 'boxplot'
         },
-        
+
         title: {
             text: 'Issue in Highcharts <= 3.0.8 caused fillColor to be ignored'
         },
-        
+
         legend: {
             enabled: false
         },
-    
+
         xAxis: {
             categories: ['1', '2', '3', '4', '5'],
             title: {
                 text: 'Experiment No.'
             }
         },
-        
+
         yAxis: {
             title: {
                 text: 'Observations'
-            } 
+            }
         },
 
         plotOptions: {
@@ -39,10 +39,10 @@ $(function () {
                 stemWidth: 1,
                 whiskerColor: '#3D9200',
                 whiskerLength: '20%',
-                whiskerWidth: 3 
+                whiskerWidth: 3
             }
         },
-    
+
         series: [{
             name: 'Observations',
             data: [
@@ -53,6 +53,6 @@ $(function () {
                 [834, 836, 864, 882, 910]
             ]
         }]
-    
+
     });
 });

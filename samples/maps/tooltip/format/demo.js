@@ -1,14 +1,14 @@
 $(function () {
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
-        
+
         // Initiate the chart
         $('#container').highcharts('Map', {
 
             title: {
                 text: 'Tooltip format demo'
             },
-            
+
             legend: {
                 title: {
                     text: 'Population density per km²'

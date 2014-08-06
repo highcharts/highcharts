@@ -19,12 +19,12 @@ $(function () {
             }
         },
         plotOptions: {
-            column:{
+            column: {
                 stacking: 'normal',
                 pointPadding: 0,
                 groupPadding: 0,
                 dataLabels: {
-                    enabled: false,
+                    enabled: false
                 }
             }
         },

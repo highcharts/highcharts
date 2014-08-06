@@ -40,9 +40,9 @@ $(function () {
                     renderer;
 
                 if (useCanvas) {
-                    
+
                     ctx = this.getContext();
-                    
+
                     H.each(data, function (point) {
                         ctx.fillStyle = colorAxis.toColor(point[2]);
                         ctx.fillRect(
@@ -52,7 +52,7 @@ $(function () {
                             (series.options.row || 1) * transAY + 1
                         );
                     });
-                
+
                 } else {
                     renderer = series.chart.renderer;
                     H.each(data, function (point) {
@@ -72,10 +72,10 @@ $(function () {
         });
     }(Highcharts));
 
-    
+
     var start;
     $('#container').highcharts({
-        
+
         data: {
             csv: document.getElementById('csv').innerHTML,
             parsed: function () {

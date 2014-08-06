@@ -4,7 +4,7 @@ $(function () {
             series: {
                 point: {
                     events: {
-                        remove: function() {
+                        remove: function () {
                             if (!confirm('Do you really want to remove the first point?')) {
                                 return false;
                             }
@@ -19,7 +19,7 @@ $(function () {
     });
 
     // button handler
-    $('#button').click(function() {
+    $('#button').click(function () {
         var chart = $('#container').highcharts(),
             series = chart.series[0];
         if (series.data.length) {

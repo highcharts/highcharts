@@ -1,9 +1,9 @@
 $(function () {
 
-    
 
 
-    // Load the data from a Google Spreadsheet 
+
+    // Load the data from a Google Spreadsheet
     // https://docs.google.com/a/highsoft.com/spreadsheet/pub?hl=en_GB&hl=en_GB&key=0AoIaUO7wH1HwdFJHaFI4eUJDYlVna3k5TlpuXzZubHc&output=html
     Highcharts.data({
 
@@ -11,7 +11,7 @@ $(function () {
 
         // custom handler when the spreadsheet is parsed
         parsed: function (columns) {
-            
+
             // Read the columns into the data array
             var data = [];
             $.each(columns[0], function (i, code) {
@@ -19,10 +19,10 @@ $(function () {
                     code: code.toUpperCase(),
                     value: parseFloat(columns[2][i]),
                     name: columns[1][i]
-                })
+                });
             });
 
-            
+
             // Initiate the chart
             $('#container').highcharts('Map', {
                 chart : {
@@ -31,7 +31,7 @@ $(function () {
 
                 colors: ['rgba(19,64,117,0.05)', 'rgba(19,64,117,0.2)', 'rgba(19,64,117,0.4)',
                     'rgba(19,64,117,0.5)', 'rgba(19,64,117,0.6)', 'rgba(19,64,117,0.8)', 'rgba(19,64,117,1)'],
-                
+
                 title : {
                     text : 'Population density by country (/km²)'
                 },
@@ -39,7 +39,7 @@ $(function () {
                 mapNavigation: {
                     enabled: true
                 },
-                
+
                 legend: {
                     title: {
                         text: 'Individuals per km²',
@@ -62,16 +62,16 @@ $(function () {
                         to: 3
                     }, {
                         from: 3,
-                        to: 10 
+                        to: 10
                     }, {
                         from: 10,
-                        to: 30 
+                        to: 30
                     }, {
                         from: 30,
                         to: 100
                     }, {
                         from: 100,
-                        to: 300,
+                        to: 300
                     }, {
                         from: 300,
                         to: 1000
@@ -93,14 +93,14 @@ $(function () {
                     },
                     tooltip: {
                         valueSuffix: '/km²'
-                    },
+                    }
                 }]
             });
         },
         error: function () {
-            $('#container').html('<div class="loading">' + 
-                '<i class="icon-frown icon-large"></i> ' + 
-                'Error loading data from Google Spreadsheets' + 
+            $('#container').html('<div class="loading">' +
+                '<i class="icon-frown icon-large"></i> ' +
+                'Error loading data from Google Spreadsheets' +
                 '</div>');
         }
     });

@@ -9,7 +9,7 @@ $(function () {
                 brandsData = [],
                 versions = {},
                 drilldownSeries = [];
-            
+
             // Parse percentage strings
             columns[1] = $.map(columns[1], function (value) {
                 if (value.indexOf('%') === value.length - 1) {
@@ -49,12 +49,12 @@ $(function () {
                         versions[brand].push(['v' + version, columns[1][i]]);
                     }
                 }
-                
+
             });
 
             $.each(brands, function (name, y) {
-                brandsData.push({ 
-                    name: name, 
+                brandsData.push({
+                    name: name,
                     y: y,
                     drilldown: versions[name] ? name : null
                 });
@@ -102,7 +102,7 @@ $(function () {
                 tooltip: {
                     headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
                     pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
-                }, 
+                },
 
                 series: [{
                     name: 'Brands',
@@ -112,9 +112,8 @@ $(function () {
                 drilldown: {
                     series: drilldownSeries
                 }
-            })
-
+            });
         }
     });
 });
-    
+

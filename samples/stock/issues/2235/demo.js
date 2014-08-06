@@ -4,7 +4,7 @@ $(function () {
         title: {
             text: 'Regression since 3.0.3 caused gap not to apply'
         },
-        
+
         series: [{
             data: [
                 [Date.UTC(2013, 8, 1),1],
@@ -16,7 +16,7 @@ $(function () {
             gapSize: 1,
             type: 'area'
         }],
-        
+
         xAxis: {
             ordinal: false,
             type: 'datetime'

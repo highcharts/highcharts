@@ -1,14 +1,14 @@
 $(function () {
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
-        
+
         // Initiate the chart
         $('#container').highcharts('Map', {
 
             chart: {
                 backgroundColor: '#4b96af'
             },
-            
+
             title : {
                 text : 'Chart with a background color',
                 style: {

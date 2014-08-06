@@ -1,38 +1,38 @@
-$(function() {
-	$.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function(data) {
-		
-		// Create the chart
-		$('#container').highcharts('StockChart', {
+$(function () {
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
 
-		    rangeSelector: {
-				inputEnabled: $('#container').width() > 480,
-		        selected: 1
-		    },
+        // Create the chart
+        $('#container').highcharts('StockChart', {
 
-		    title: {
-		        text: 'AAPL Stock Price'
-		    },
+            rangeSelector: {
+                inputEnabled: $('#container').width() > 480,
+                selected: 1
+            },
 
-		    scrollbar: {
-				barBackgroundColor: 'gray',
-				barBorderRadius: 7,
-				barBorderWidth: 0,
-				buttonBackgroundColor: 'gray',
-				buttonBorderWidth: 0,
-				buttonBorderRadius: 7,
-				trackBackgroundColor: 'none',
-				trackBorderWidth: 1,
-				trackBorderRadius: 8,
-				trackBorderColor: '#CCC'
-		    },
+            title: {
+                text: 'AAPL Stock Price'
+            },
 
-		    series: [{
-		        name: 'AAPL Stock Price',
-		        data: data,
-		        tooltip: {
-		        	valueDecimals: 2
-		        }
-		    }]
-		});
-	});
+            scrollbar: {
+                barBackgroundColor: 'gray',
+                barBorderRadius: 7,
+                barBorderWidth: 0,
+                buttonBackgroundColor: 'gray',
+                buttonBorderWidth: 0,
+                buttonBorderRadius: 7,
+                trackBackgroundColor: 'none',
+                trackBorderWidth: 1,
+                trackBorderRadius: 8,
+                trackBorderColor: '#CCC'
+            },
+
+            series: [{
+                name: 'AAPL Stock Price',
+                data: data,
+                tooltip: {
+                    valueDecimals: 2
+                }
+            }]
+        });
+    });
 });

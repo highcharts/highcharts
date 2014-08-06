@@ -2,7 +2,7 @@ $(function () {
 
     // Get the CSV and create the chart
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=analytics.csv&callback=?', function (csv) {
-        
+
         $('#container').highcharts({
 
             data: {
@@ -88,8 +88,8 @@ $(function () {
                                         y: e.pageY
                                     },
                                     headingText: this.series.name,
-                                    maincontentText: Highcharts.dateFormat('%A, %b %e, %Y', this.x) +':<br/> '+
-                                        this.y +' visits',
+                                    maincontentText: Highcharts.dateFormat('%A, %b %e, %Y', this.x) + ':<br/> ' +
+                                        this.y + ' visits',
                                     width: 200
                                 });
                             }

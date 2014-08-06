@@ -1,7 +1,7 @@
 $(function () {
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
-        
+
         // Initiate the chart
         $('#container').highcharts('Map', {
 
@@ -10,7 +10,7 @@ $(function () {
                     duration: 2000
                 }
             },
-            
+
             title : {
                 text : 'Longer animation on updates. Click the Plus button or use mousewheel to test.'
             },

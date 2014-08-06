@@ -26,7 +26,7 @@ $(function () {
             data: [1,4,2,3]
         }]
     }, function (chart) {
-            
+
         chart.addAxis({
             id: 'secondary',
             offset: 0,
