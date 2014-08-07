@@ -26,8 +26,9 @@
 		dataLabels: {
 			verticalAlign: 'middle',
 			formatter: function () { // #2945
-				return this.point.id;
-			}
+				return this.point.name || this.point.id;
+			},
+			inside: true
 		},
 		tooltip: {
 			headerFormat: '',
@@ -66,6 +67,7 @@
 		type: 'treemap',
 		isCartesian: false,	
 		trackerGroups: ['group', 'dataLabelsGroup'],
+		forceDL: true,
 		handleLayout: function () {
 		var tree = this.buildTree(),
 			seriesArea = this.getSeriesArea(tree.val);
@@ -166,12 +168,14 @@
 				series = this,
 				i = 0,
 				level,
+				point,
 				algorithm = series.options.layoutAlgorithm,
 				directionalChange = series.options.directionalChange,
 				setPointValues = function (node, values) {
 					var point;
 					if (node.val > 0) {
 						point = series.points[node.i];
+						point.isLeaf = true;
 						// Set point values
 						point.shapeType = 'rect';
 						point.shapeArgs = {
@@ -185,14 +189,16 @@
 					}
 				};
 			// If layoutAlgorithm is set for the level of the children, then default is overwritten
-			if (this.levelMap[node.level + 1] !== undefined) {
+			if (this.levelMap[node.level + 1]) {
 				level = this.levelMap[node.level + 1];
-				if (level.layoutAlgorithm !== undefined && series[level.layoutAlgorithm] !== undefined) {
+				if (level.layoutAlgorithm && series[level.layoutAlgorithm]) {
 					algorithm = level.layoutAlgorithm;
 				}
 			}
 			childrenValues = series[algorithm](area, node.children);
 			each(node.children, function (child) {
+				point = series.points[child.i];
+				point.level = child.level;
 				childValues = childrenValues[i];
 				childValues.val = child.val;
 				childValues.direction = area.direction;
@@ -201,6 +207,8 @@
 				}
 				// If node has children, then call method recursively
 				if (child.children.length) {
+					// Create a dlBox
+					point.dlBox = childValues;
 					series.calculateArea(child, childValues);
 				} else {
 					setPointValues(child, childValues);
@@ -227,11 +235,7 @@
 			var map = [];
 			each(this.options.levels, function (level) {
 				if (level.level !== undefined) {
-					map[level.level] = {
-						level: level.level,
-						layoutAlgorithm: level.layoutAlgorithm,
-						color: level.color
-					};
+					map[level.level] = level;
 				}
 			});
 			return map;
@@ -449,25 +453,20 @@
 			return childrenArea;
 		},
 		strip: function (parent, children) {
-			var childrenArea = this.alg_func_lowAspectRatio(false, parent, children);
-			return childrenArea;
+			return this.alg_func_lowAspectRatio(false, parent, children);
 		},
 		squarified: function (parent, children) {
-			var childrenArea = this.alg_func_lowAspectRatio(true, parent, children);
-			return childrenArea;
+			return this.alg_func_lowAspectRatio(true, parent, children);
 		},
 		sliceAndDice: function (parent, children) {
-			var childrenArea = this.alg_func_fill(true, parent, children);
-			return childrenArea;
+			return this.alg_func_fill(true, parent, children);
 		},
 		stripes: function (parent, children) {
-			var childrenArea = this.alg_func_fill(false, parent, children);
-			return childrenArea;
+			return this.alg_func_fill(false, parent, children);
 		},
 		mixed: function (parent, children) {
 			var level,
-				algorithm = 'sliceAndDice',
-				childrenArea = [];
+				algorithm = 'sliceAndDice';
 			if (children.length) {
 				level = children[0].level - 1;
 			}
@@ -478,10 +477,10 @@
 					algorithm = 'strip';
 				}
 			}
-			childrenArea = this[algorithm](parent, children);
-			return childrenArea;
+			return this[algorithm](parent, children);
 		},
 		translate: function () {
+			// Call prototype function
 			H.Series.prototype.translate.call(this);
 			this.handleLayout();
 
@@ -493,7 +492,33 @@
 					point.shapeArgs.fill = point.color;
 				});
 			}
-		},		
+		},
+		drawDataLabels: function () {
+			var series = this,
+				points = series.points,
+				options,
+				level,
+				dataLabels;
+			each(points, function (point) {
+				level = series.levelMap[point.level];
+				options = series.options.dataLabels;
+				// If point has no shapeArgs set enabled to false
+				if (!point.isLeaf) {
+					// If not a leaf, then label should be disabled as default
+					options = merge(options, {enabled: false});
+				}
+				if (level) {
+					dataLabels = level.dataLabels;
+					if (dataLabels) {
+						options = merge(options, dataLabels);
+					}
+				}
+				options = merge(options, point.options.dataLabels);
+				point.options.dataLabels = options;
+			});
+			H.Series.prototype.drawDataLabels.call(this);
+		},
+		alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
 		drawPoints: seriesTypes.column.prototype.drawPoints,
 		drawLegendSymbol: H.LegendSymbolMixin.drawRectangle
 	}));
