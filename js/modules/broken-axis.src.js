@@ -20,7 +20,8 @@
 		extend = H.extend,
  		fireEvent = HighchartsAdapter.fireEvent,
 		Axis = H.Axis,
-		Series = H.Series;
+		Series = H.Series,
+		noop = function () {};
 
 	extend(Axis.prototype, {
 		isInBreak: function (brk, val) {
@@ -83,11 +84,13 @@
 					breaks = axis.options.breaks,
 					i = breaks.length,
 					brk,
-					occ;
+					occ,
+					corr;
 					
 				while (i--) {
 					brk = breaks[i];
-					occ = Math.floor((val - (axis.min - Math.abs((axis.min - axis.dateCorrection) % brk.repeat))) / brk.repeat);
+					corr = axis.dateCorrection + ((brk.to - axis.dateCorrection) % brk.repeat);
+					occ = Math.floor((val - (axis.min - Math.abs((axis.min - corr) % brk.repeat))) / brk.repeat);
 					nval -=  occ * (brk.to - brk.from); // Number of occurences * break width
 					nval += occ * (brk.width || 0);
 				}				
@@ -100,11 +103,13 @@
 					breaks = axis.options.breaks,
 					i = breaks.length,
 					occ,
-					brk;
+					brk,
+					corr;
 
 				while (i--) {
 					brk = breaks[i];
-					occ = Math.floor((val - (axis.min - Math.abs((axis.min - axis.dateCorrection) % brk.repeat))) / brk.repeat);
+					corr = axis.dateCorrection + ((brk.to - axis.dateCorrection) % brk.repeat);
+					occ = Math.floor((val - (axis.min - Math.abs((axis.min - corr) % brk.repeat))) / brk.repeat);
 					nval +=  occ * (brk.to - brk.from); // Number of occurences * break width
 					nval -= occ * (brk.width || 0);
 				}		
@@ -114,22 +119,27 @@
 			
 			this.setAxisTranslation = function (saveOld) {
 				Axis.prototype.setAxisTranslation.call(this, saveOld);
+
+				fireEvent(axis, 'beforeBreaks');	
+
 				var oldLen = axis.max - axis.min,
 					newLen = oldLen,
 					breaks = axis.options.breaks,
 					i = breaks.length,
 					j,
 					occ,
-					brk;
+					brk,
+					corr;
 
 				var detectedBreaks = [];
 
 				while (i--) {
 					brk = breaks[i];
 					occ = 0, 
-					j = axis.min - Math.abs((axis.min - axis.dateCorrection) % brk.repeat);
+					corr = axis.dateCorrection + ((brk.to - axis.dateCorrection) % brk.repeat),
+					j = axis.min - Math.abs((axis.min - corr) % brk.repeat);
 					for (j; j + brk.repeat <= axis.max; j += brk.repeat) {
-						detectedBreaks.push({from: j + brk.repeat - (brk.to - brk.from), to: j + brk.repeat, ev: brk.callback});
+						detectedBreaks.push({from: j + brk.repeat - (brk.to - brk.from), to: j + brk.repeat, brk: brk});
 						occ++;
 					}
 					newLen -= occ * (brk.to - brk.from); // Number of occurences * break width
@@ -145,8 +155,11 @@
 				this.transA *= oldLen / newLen; 
 
 				for (i = 0; i < detectedBreaks.length; i ++) {
-					detectedBreaks[i].ev.call(axis, detectedBreaks[i]);
-				}				
+					if (detectedBreaks[i].brk.callback) {
+						detectedBreaks[i].brk.callback.call(axis, detectedBreaks[i]);
+					}
+				}
+				fireEvent(axis, 'afterBreaks', {breaks: detectedBreaks});				
 			};
 
 		}
