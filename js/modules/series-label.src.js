@@ -8,7 +8,8 @@
  * - prefer position above for series ending higher than the rest, below for series ending lower
  * - avoid data labels
  * 
- * // http://jsfiddle.net/highcharts/y5A37/
+ * http://jsfiddle.net/highcharts/y5A37/
+ * http://jsfiddle.net/highcharts/264Nm/
  */
 
 /*global Highcharts */
@@ -16,7 +17,7 @@
 
     'use strict';
 
-    var labelDistance = 8,
+    var labelDistance = 5,
         wrap = H.wrap,
         each = H.each;
 
@@ -166,6 +167,28 @@
     });
 
 
+
+
+    H.Chart.prototype.buildTreeToAvoid = function () {
+        var points = [];
+
+        this.boxesToAvoid = [];
+
+        each(this.series, function (series) {
+            if (series.visible) {
+                points = points.concat(series.getPointsToAvoid());
+            }
+        });
+
+        // Borrow the kdTree method from series and run on the points to avoid
+        this.points = points;
+        this.kdDimensions = 2;
+        this.kdAxisArray = ['plotX', 'plotY'];
+        this.kdComparer = 'distR';
+        H.Series.prototype.buildKDTree.call(this);
+    };
+
+
     /**
      * Check whether a proposed label position is clear of other elements
      */
@@ -173,14 +196,34 @@
         var pointResults = [],
             labelX,
             labelY,
-            dist;
+            dist,
+            i;
+
+        function intersectRect(r1, r2) {
+            return !(r2.left > r1.right ||
+                r2.right < r1.left ||
+                r2.top > r1.bottom ||
+                r2.bottom < r1.top);
+        }
+
+        // First check for collision with existing labels
+        for (i = 0; i < this.boxesToAvoid.length; i += 1) {
+            if (intersectRect(this.boxesToAvoid[i], {
+                    left: x,
+                    right: x + bBox.width,
+                    top: y,
+                    bottom: y + bBox.height
+                })) {
+                return false;
+            }
+        }
 
         // For each possible position, make sure that all of the label is more than {distance}
         // away from the graph.
         for (labelX = 0; labelX <= bBox.width; labelX += labelDistance) {
             for (labelY = 0; labelY <= bBox.height; labelY += labelDistance) {
                 dist = H.Series.prototype.searchKDTree.call(this, { chartX: this.plotLeft + x + labelX, chartY: this.plotTop + y + labelY }).dist.distR;
-                if (dist < labelDistance) {
+                if (dist < labelDistance * 0.7) {
                     return false;
                 }
 
@@ -210,12 +253,11 @@
 
         proceed.call(this);
 
-        //console.time('labelBySeries');
+        console.time('labelBySeries');
 
         this.buildTreeToAvoid();
 
         each(this.series, function (series) {
-
             var chart = series.chart,
                 bBox,
                 x,
@@ -226,102 +268,112 @@
                 best,
                 points = series.points;
 
-            if (!series.labelBySeries) {
-                series.labelBySeries = chart.renderer.label(series.name, 0, -9999)
-                    .css({
-                        color: series.color,
-                        fontWeight: 'bold'
-                    })
-                    .add(series.group);
-            }
-
-            bBox = series.labelBySeries.getBBox();
-            bBox.width = Math.round(bBox.width);
-
-
-
-            // Ideal positions are centered above or below a point on right side of chart
-            for (i = points.length - 1; i > 0; i -= 1) {
-
-                // Try above
-                x = (points[i].plotX - bBox.width / 2);
-                y = points[i].plotY - bBox.height - labelDistance;
-                if (x <= chart.plotWidth - bBox.width && y >= 0) {
-                    best = chart.checkClearPoint(
-                        x,
-                        y,
-                        bBox
-                    );
-                }
-                if (best) {
-                    break;
+            if (series.visible) {
+                
+                if (!series.labelBySeries) {
+                    series.labelBySeries = chart.renderer.label(series.name, 0, -9999)
+                        .css({
+                            color: series.color,
+                            fontWeight: 'bold'
+                        })
+                        .add(series.group);
                 }
 
-                // Try below
-                x = (points[i].plotX - bBox.width / 2);
-                y = points[i].plotY + labelDistance;
-                if (x <= chart.plotWidth - bBox.width && y <= chart.plotHeight - bBox.height) {
-                    best = chart.checkClearPoint(
-                        x,
-                        y,
-                        bBox
-                    );
-                }
-                if (best) {
-                    break;
-                }
-            }
+                bBox = series.labelBySeries.getBBox();
+                bBox.width = Math.round(bBox.width);
 
+                console.log('-- ' + series.name + ' --');
 
-            // Brute force, try all positions on the chart in a 16x16 grid
-            // TODO: Instead of keeping all points and using the closest, keep all
-            // points between for instance 0.5 and 1.5 * labelDistance, and use the 
-            // one furthest to the right on the chart. A possibility to use points further
-            // away would be to add a connector. Also, a more fine grained grid could be
-            // scrutinized if this doesn't lead to success.
-            if (!best) {
-                for (x = chart.plotWidth - bBox.width; x >= 0; x -= 16) {
-                    for (y = 0; y < chart.plotHeight - bBox.height; y += 16) {
-                        clearPoint = chart.checkClearPoint(x, y, bBox);
-                        if (clearPoint) {
-                            results.push(clearPoint);
-                        }
+                // Ideal positions are centered above or below a point on right side of chart
+                for (i = points.length - 1; i > 0; i -= 1) {
+
+                    // Try to the right
+                    x = points[i].plotX + labelDistance * 1.5;
+                    y = points[i].plotY - bBox.height / 2;
+                    if (x <= chart.plotWidth - bBox.width && y >= 0 && y <= chart.plotHeight - bBox.height) {
+                        best = chart.checkClearPoint(
+                            x,
+                            y,
+                            bBox
+                        );
+                    }
+                    if (best) {
+                        break;
+                    }
+
+                    // Try above
+                    x = (points[i].plotX - bBox.width / 2);
+                    y = points[i].plotY - bBox.height - labelDistance;
+                    if (x <= chart.plotWidth - bBox.width && y >= 0) {
+                        best = chart.checkClearPoint(
+                            x,
+                            y,
+                            bBox
+                        );
+                    }
+                    if (best) {
+                        break;
+                    }
+
+                    // Try below
+                    x = (points[i].plotX - bBox.width / 2);
+                    y = points[i].plotY + labelDistance;
+                    if (x <= chart.plotWidth - bBox.width && y <= chart.plotHeight - bBox.height) {
+                        best = chart.checkClearPoint(
+                            x,
+                            y,
+                            bBox
+                        );
+                    }
+                    if (best) {
+                        break;
                     }
                 }
-                results.sort(function (a, b) {
-                    return a.dist - b.dist;
-                });
-                best = results[0];
-            }
+                console.log('foundClosePosition', !!best)
 
-            //
-            series.labelBySeries.attr({
-                x: best.x,
-                y: best.y
-            });
+
+                // Brute force, try all positions on the chart in a 16x16 grid
+                // TODO: Instead of keeping all points and using the closest, keep all
+                // points between for instance 0.5 and 1.5 * labelDistance, and use the 
+                // one furthest to the right on the chart. A possibility to use points further
+                // away would be to add a connector. Also, a more fine grained grid could be
+                // scrutinized if this doesn't lead to success.
+                // BUG: This logic now returns proximity to all graphs, not only the current series!
+                /*
+                if (!best) {
+                    for (x = chart.plotWidth - bBox.width; x >= 0; x -= 16) {
+                        for (y = 0; y < chart.plotHeight - bBox.height; y += 16) {
+                            clearPoint = chart.checkClearPoint(x, y, bBox);
+                            if (clearPoint) {
+                                results.push(clearPoint);
+                            }
+                        }
+                    }
+                    results.sort(function (a, b) {
+                        return a.dist - b.dist;
+                    });
+                    best = results[0];
+                }
+                */
+
+                if (best) {
+                    chart.boxesToAvoid.push({
+                        left: best.x,
+                        right: best.x + bBox.width,
+                        top: best.y,
+                        bottom: best.y + bBox.height
+                    });
+                    series.labelBySeries.animate({
+                        x: best.x,
+                        y: best.y
+                    });
+                }
+            }
         });
-        //console.timeEnd('labelBySeries');
+        console.timeEnd('labelBySeries');
 
     }
     wrap(H.Chart.prototype, 'render', drawLabels);
     wrap(H.Chart.prototype, 'redraw', drawLabels);
-
-    H.Chart.prototype.buildTreeToAvoid = function () {
-        var points = [];
-
-        each(this.series, function (series) {
-            points = points.concat(series.getPointsToAvoid());
-        });
-
-        // Borrow the kdTree method from series and run on the points to avoid
-        this.points = points;
-        this.kdDimensions = 2;
-        this.kdAxisArray = ['plotX', 'plotY'];
-        this.kdComparer = 'distR';
-        H.Series.prototype.buildKDTree.call(this);
-    };
-
-
-
 
 }(Highcharts));
