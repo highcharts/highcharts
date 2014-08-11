@@ -5,7 +5,8 @@
  * TODO:
  * - add column support (box collision detection, same as above)
  * - other series types, area etc.
- * - avoid data labels
+ * - possible spline interpolation?
+ * - avoid data labels, when data labels above, show series label below.
  * - optional connectors when labels are distant
  * 
  * http://jsfiddle.net/highcharts/y5A37/
@@ -17,7 +18,7 @@
 
     'use strict';
 
-    var labelDistance = 5,
+    var labelDistance = 3,
         wrap = H.wrap,
         each = H.each,
         Series = H.Series,
@@ -58,6 +59,7 @@
     Series.prototype.getPointsOnGraph = function () {
         var distance = 16,
             points = this.points,
+            point,
             interpolated = [],
             i,
             deltaX,
@@ -65,28 +67,46 @@
             delta,
             len,
             n,
-            j;
+            j,
+            node = this.graph.element;
 
-        len = points.length;
-        for (i = 0; i < len; i += 1) {
-
-            if (i > 0) {
-                deltaX = Math.abs(points[i].plotX - points[i - 1].plotX);
-                deltaY = Math.abs(points[i].plotY - points[i - 1].plotY);
-                delta = Math.max(deltaX, deltaY);
-                if (delta > distance) {
-                    n = Math.ceil(delta / distance);
-
-                    for (j = 1; j < n; j += 1) {
-                        interpolated.push({
-                            plotX: points[i - 1].plotX + (points[i].plotX - points[i - 1].plotX) * (j / n),
-                            plotY: points[i - 1].plotY + (points[i].plotY - points[i - 1].plotY) * (j / n)
-                        });
-                    }
-                }
+        // For splines, get the point at length (possible caveat: peaks are not correctly detected)
+        if (this.getPointSpline && node.getPointAtLength) {
+            len = node.getTotalLength();
+            for (i = 0; i < len; i += distance) {
+                point = node.getPointAtLength(i);
+                interpolated.push({
+                    plotX: point.x,
+                    plotY: point.y
+                });
             }
 
-            interpolated.push(points[i]);
+        // Interpolate
+        } else {
+            len = points.length;
+            for (i = 0; i < len; i += 1) {
+
+                if (i > 0) {
+                    deltaX = Math.abs(points[i].plotX - points[i - 1].plotX);
+                    deltaY = Math.abs(points[i].plotY - points[i - 1].plotY);
+                    delta = Math.max(deltaX, deltaY);
+                    if (delta > distance) {
+
+                        n = Math.ceil(delta / distance);
+
+                        for (j = 1; j < n; j += 1) {
+                            interpolated.push({
+                                plotX: points[i - 1].plotX + (points[i].plotX - points[i - 1].plotX) * (j / n),
+                                plotY: points[i - 1].plotY + (points[i].plotY - points[i - 1].plotY) * (j / n)
+                            });
+                        }
+                    }
+                }
+
+                if (typeof points[i].plotY === 'number') {
+                    interpolated.push(points[i]);
+                }
+            }
         }
         return interpolated;
     };
@@ -158,9 +178,11 @@
                         );
                     }
 
+                    // Find the squared distance from the center of the label
                     if (this !== series) {
                         distToOthersSquared = Math.min(
                             distToOthersSquared,
+                            Math.pow(x + bBox.width / 2 - points[j].plotX, 2) + Math.pow(y + bBox.height / 2 - points[j].plotY, 2),
                             Math.pow(x - points[j].plotX, 2) + Math.pow(y - points[j].plotY, 2),
                             Math.pow(x + bBox.width - points[j].plotX, 2) + Math.pow(y - points[j].plotY, 2),
                             Math.pow(x + bBox.width - points[j].plotX, 2) + Math.pow(y + bBox.height - points[j].plotY, 2),
@@ -170,6 +192,7 @@
                 }
             }
         }
+
         return !checkDistance || withinRange ? {
             x: x,
             y: y,
@@ -190,7 +213,9 @@
 
         // Build the interpolated points
         each(this.series, function (series) {
-            series.interpolatedPoints = series.getPointsOnGraph();
+            if (series.visible) {
+                series.interpolatedPoints = series.getPointsOnGraph();
+            }
         });
 
         each(this.series, function (series) {
@@ -212,6 +237,9 @@
                         .css({
                             color: series.color,
                             fontWeight: 'bold'
+                        })
+                        .attr({
+                            padding: 0
                         })
                         .add(series.group);
                     isNew = true;
@@ -309,13 +337,10 @@
                 if (results.length) {
 
                     results.sort(function (a, b) {
-                        return a.distToOthersSquared - b.distToOthersSquared;
+                        return b.distToOthersSquared - a.distToOthersSquared;
                     });
-                    results.reverse();
+                    //results = results.reverse();
                     best = results[0];
-
-                    // console.log(series.name, best.distToOthersSquared)
-
 
                     chart.boxesToAvoid.push({
                         left: best.x,
