@@ -6,6 +6,8 @@
  *
  * License: www.highcharts.com/license
  */
+
+/*global HighchartsAdapter */
 (function (H) {
 	var seriesTypes = H.seriesTypes,
 		merge = H.merge,
@@ -72,8 +74,8 @@
 		var tree = this.buildTree(),
 			seriesArea = this.getSeriesArea(tree.val);
 			this.levelMap = this.getLevels();
-			this.calculateArea(tree, seriesArea);
 			this.setColorRecursive(tree, undefined);
+			this.calculateArea(tree, seriesArea);
 		},
 		buildTree: function () {
 			var tree,
@@ -152,7 +154,7 @@
 			for (key in parentList) {
 				if (parentList.hasOwnProperty(key)) {
 					if (key !== "") {
-						if (allIds.indexOf(key) === -1) {
+						if (HighchartsAdapter.inArray(key, allIds) === -1) {
 							insertItem(key);
 							delete parentList[key];
 						}
@@ -171,18 +173,20 @@
 				point,
 				algorithm = series.options.layoutAlgorithm,
 				directionalChange = series.options.directionalChange,
-				setPointValues = function (node, values) {
-					var point;
+				setPointValues = function (node, values, isLeaf) {
+						point = series.points[node.i];
 					if (node.val > 0) {
 						point = series.points[node.i];
-						point.isLeaf = true;
+						point.isLeaf = isLeaf;
+						point.level = node.level;
 						// Set point values
 						point.shapeType = 'rect';
 						point.shapeArgs = {
 							x: values.x,
 							y: values.y,
 							width: values.width,
-							height: values.height
+							height: values.height,
+							zIndex: (1000 - point.level)
 						};
 						point.plotX = point.shapeArgs.x + (point.shapeArgs.width / 2);
 						point.plotY = point.shapeArgs.y + (point.shapeArgs.height / 2);
@@ -207,11 +211,10 @@
 				}
 				// If node has children, then call method recursively
 				if (child.children.length) {
-					// Create a dlBox
-					point.dlBox = childValues;
+					setPointValues(child, childValues, false);
 					series.calculateArea(child, childValues);
 				} else {
-					setPointValues(child, childValues);
+					setPointValues(child, childValues, true);
 				}
 				i = i + 1;
 			});
@@ -502,9 +505,8 @@
 			each(points, function (point) {
 				level = series.levelMap[point.level];
 				options = series.options.dataLabels;
-				// If point has no shapeArgs set enabled to false
+				// If not a leaf, then label should be disabled as default
 				if (!point.isLeaf) {
-					// If not a leaf, then label should be disabled as default
 					options = merge(options, {enabled: false});
 				}
 				if (level) {
@@ -519,7 +521,43 @@
 			H.Series.prototype.drawDataLabels.call(this);
 		},
 		alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
-		drawPoints: seriesTypes.column.prototype.drawPoints,
+		drawPoints: function () {
+			var series = this,
+				points = series.points,
+				seriesOptions = series.options,
+				attr,
+				level;
+			each(points, function (point) {
+				level = series.levelMap[point.level];
+				attr = {
+					stroke: seriesOptions.borderColor,
+					'stroke-width': seriesOptions.borderWidth,
+					dashstyle: seriesOptions.borderDashStyle,
+					r: 0, // borderRadius gives wrong size relations and should always be disabled
+					fill: series.color
+				};
+				// Overwrite standard series options with level options			
+				if (level) {
+					attr.stroke = level.borderColor || attr.stroke;
+					attr['stroke-width'] = level.borderWidth || attr['stroke-width'];
+					attr.dashstyle = level.borderDashStyle || attr.dashstyle;
+					attr.fill = level.color || attr.fill;
+				}
+				// Merge with point attributes
+				attr.stroke = point.borderColor || attr.stroke;
+				attr['stroke-width'] = point.borderWidth || attr['stroke-width'];
+				attr.dashstyle = point.borderDashStyle || attr.dashstyle;
+				attr.fill = point.color || attr.fill;
+				// If not a leaf, then remove fill
+				if (!point.isLeaf) {
+					attr.fill = 'none';
+				}
+				point.pointAttr[''] = merge(point.pointAttr[''], attr);
+			});
+
+			// Call standard drawPoints
+			seriesTypes.column.prototype.drawPoints.call(this);
+		},
 		drawLegendSymbol: H.LegendSymbolMixin.drawRectangle
 	}));
 }(Highcharts));
