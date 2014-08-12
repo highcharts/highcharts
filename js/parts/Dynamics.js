@@ -302,7 +302,7 @@ extend(Series.prototype, {
 		series.updateParallelArrays(point, 'splice', i, 0, 0); // insert undefined item
 		series.updateParallelArrays(point, i); // update it
 
-		if (names) {
+		if (names && point.name) {
 			names[x] = point.name;
 		}
 		dataOptions.splice(i, 0, options);
