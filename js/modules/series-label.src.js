@@ -68,10 +68,16 @@
             len,
             n,
             j,
+            d,
             node = this.graph.element;
 
         // For splines, get the point at length (possible caveat: peaks are not correctly detected)
         if (this.getPointSpline && node.getPointAtLength) {
+            // If it is animating towards a path definition, use that briefly, and reset
+            if (this.graph.toD) {
+                d = this.graph.attr('d');
+                this.graph.attr({ d: this.graph.toD });
+            }
             len = node.getTotalLength();
             for (i = 0; i < len; i += distance) {
                 point = node.getPointAtLength(i);
@@ -79,6 +85,9 @@
                     plotX: point.x,
                     plotY: point.y
                 });
+            }
+            if (d) {
+                this.graph.attr({ d: d });
             }
 
         // Interpolate
