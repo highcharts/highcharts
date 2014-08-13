@@ -529,8 +529,8 @@
 
 			// Make axis labels clickable
 			if (tickLabel) {
-				if (!tickLabel._basicStyle) {
-					tickLabel._basicStyle = tickLabel.element.getAttribute('style');
+				if (!tickLabel.basicStyles) {
+					tickLabel.basicStyles = H.merge(tickLabel.styles);
 				}
 				tickLabel
 					.addClass('highcharts-drilldown-axis-label')
@@ -549,8 +549,9 @@
 				tickLabel.ddPoints.push(point);
 					
 			}
-		} else if (tickLabel && tickLabel._basicStyle) {
-			tickLabel.element.setAttribute('style', tickLabel._basicStyle);
+		} else if (tickLabel && tickLabel.basicStyles) {
+			tickLabel.styles = {}; // reset for full overwrite of styles
+			tickLabel.css(tickLabel.basicStyles);
 		}
 		
 		return point;

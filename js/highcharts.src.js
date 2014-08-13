@@ -5599,8 +5599,7 @@ Tick.prototype = {
 
 		// prepare CSS
 		css = width && { width: mathMax(1, mathRound(width - 2 * (labelOptions.padding || 10))) + PX };
-		css = extend(css, labelOptions.style);
-
+		
 		// first call
 		if (!defined(label)) {
 			attr = {
@@ -5623,7 +5622,7 @@ Tick.prototype = {
 						)
 						.attr(attr)
 						// without position absolute, IE export sometimes is wrong
-						.css(css)
+						.css(extend(css, labelOptions.style))
 						.add(axis.labelGroup) :
 					null;
 
