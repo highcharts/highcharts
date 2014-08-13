@@ -2009,7 +2009,7 @@ SVGElement.prototype = {
 			currentClassName = attr(element, 'class') || '';
 
 		if (currentClassName.indexOf(className) === -1) {
-			attr(element, 'class', currentClassName + ' ' + className);
+			attr(element, 'class', currentClassName === "" ? className : currentClassName + ' ' + className);
 		}
 		return this;
 	},
