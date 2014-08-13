@@ -5697,13 +5697,14 @@ Tick.prototype = {
 			neighbour,
 			neighbourEdge,
 			line = this.label.line,
+			lineIndex = line || 0,
 			labelEdge = axis.labelEdge,
 			justifyLabel = axis.justifyLabels && (isFirst || isLast),
 			justifyToPlot;
 
 		// Hide it if it now overlaps the neighbour label
-		if (labelEdge[line] === UNDEFINED || pxPos + leftSide > labelEdge[line]) {
-			labelEdge[line] = pxPos + rightSide;
+		if (labelEdge[lineIndex] === UNDEFINED || pxPos + leftSide > labelEdge[lineIndex]) {
+			labelEdge[lineIndex] = pxPos + rightSide;
 
 		} else if (!justifyLabel) {
 			show = false;
