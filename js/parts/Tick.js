@@ -163,7 +163,7 @@ Tick.prototype = {
 			axisRight,
 			neighbour,
 			neighbourEdge,
-			line = this.label.line || 0,
+			line = this.label.line,
 			labelEdge = axis.labelEdge,
 			justifyLabel = axis.justifyLabels && (isFirst || isLast),
 			justifyToPlot;
