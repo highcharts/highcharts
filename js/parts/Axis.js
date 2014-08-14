@@ -417,8 +417,8 @@ Axis.prototype = {
 
 		axis.hasVisibleSeries = false;
 
-		// reset dataMin and dataMax in case we're redrawing
-		axis.dataMin = axis.dataMax = null;
+		// Reset properties in case we're redrawing (#3353)
+		axis.dataMin = axis.dataMax = axis.ignoreMinPadding = axis.ignoreMaxPadding = null;
 		
 		if (axis.buildStacks) {
 			axis.buildStacks();
@@ -467,7 +467,6 @@ Axis.prototype = {
 					}
 
 					// Adjust to threshold
-					axis.ignoreMinPadding = axis.ignoreMaxPadding = false; // #3353
 					if (defined(threshold)) {
 						if (axis.dataMin >= threshold) {
 							axis.dataMin = threshold;
