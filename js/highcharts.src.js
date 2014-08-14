@@ -6695,6 +6695,7 @@ Axis.prototype = {
 					}
 
 					// Adjust to threshold
+					axis.ignoreMinPadding = axis.ignoreMaxPadding = false; // #3353
 					if (defined(threshold)) {
 						if (axis.dataMin >= threshold) {
 							axis.dataMin = threshold;
