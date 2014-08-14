@@ -160,26 +160,33 @@
 
 	Chart.prototype.applyDrilldown = function () {
 		var drilldownLevels = this.drilldownLevels, 
-			levelToRemove = drilldownLevels[drilldownLevels.length - 1].levelNumber;
+			levelToRemove;
 		
-		each(this.drilldownLevels, function (level) {
-			if (level.levelNumber === levelToRemove) {
-				each(level.levelSeries, function (series) {
-					if (series.levelNumber === levelToRemove) { // Not removed, not added as part of a multi-series drilldown
-						series.remove(false);
-					}
-				});
-			}
-		});
+		if (drilldownLevels && drilldownLevels.length > 0) { // #3352, async loading
+			levelToRemove = drilldownLevels[drilldownLevels.length - 1].levelNumber;
+			each(this.drilldownLevels, function (level) {
+				if (level.levelNumber === levelToRemove) {
+					each(level.levelSeries, function (series) {
+						if (series.levelNumber === levelToRemove) { // Not removed, not added as part of a multi-series drilldown
+							series.remove(false);
+						}
+					});
+				}
+			});
+		}
 		
 		this.redraw();
 		this.showDrillUpButton();
 	};
 
 	Chart.prototype.getDrilldownBackText = function () {
-		var lastLevel = this.drilldownLevels[this.drilldownLevels.length - 1];
-		lastLevel.series = lastLevel.seriesOptions;
-		return format(this.options.lang.drillUpText, lastLevel);
+		var drilldownLevels = this.drilldownLevels,
+			lastLevel;
+		if (drilldownLevels && drilldownLevels.length > 0) { // #3352, async loading
+			lastLevel = drilldownLevels[drilldownLevels.length - 1];
+			lastLevel.series = lastLevel.seriesOptions;
+			return format(this.options.lang.drillUpText, lastLevel);
+		}
 
 	};
 
