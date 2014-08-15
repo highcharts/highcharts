@@ -32,6 +32,11 @@
  * A comma delimited string to be parsed. Related options are startRow, endRow, startColumn
  * and endColumn to delimit what part of the table is used. The lineDelimiter and 
  * itemDelimiter options define the CSV delimiter formats.
+ *
+ * - dateFormat: String
+ * Which of the predefined date formats in Date.prototype.dateFormats to use to parse date
+ * columns, for example "dd/mm/YYYY" or "YYYY-mm-dd". Defaults to a best guess based on
+ * what format gives valid dates, and prefers ordered dates.
  * 
  * - endColumn : Integer
  * In tabular input data, the first row (indexed by 0) to use. Defaults to the last 
@@ -82,6 +87,13 @@
  * - table : String|HTMLElement
  * A HTML table or the id of such to be parsed as input data. Related options ara startRow,
  * endRow, startColumn and endColumn to delimit what part of the table is used.
+ */
+
+/*
+ * TODO: 
+ * - Handle various date formats
+ *     - http://jsfiddle.net/highcharts/114wejdx/
+ *     - http://jsfiddle.net/highcharts/ryv67bkq/
  */
 
 // JSLint options:
@@ -342,7 +354,7 @@
 				headerRow = null;
 			}
 		});
-		this.headerRow = 0;
+		this.headerRow = headerRow;
 	},
 	
 	/**
@@ -362,12 +374,16 @@
 			val,
 			floatVal,
 			trimVal,
-			dateVal;
-			
+			dateVal,
+			descending,
+			backup = [],
+			diff,
+			hasHeaderRow;
+
 		while (col--) {
 			row = columns[col].length;
 			while (row--) {
-				val = columns[col][row];
+				val = backup[row] || columns[col][row];
 				floatVal = parseFloat(val);
 				trimVal = this.trim(val);
 
@@ -385,16 +401,41 @@
 				
 				} else { // string, continue to determine if it is a date string or really a string
 					dateVal = this.parseDate(val);
-					
+
 					if (col === 0 && typeof dateVal === 'number' && !isNaN(dateVal)) { // is date
+						backup[row] = val; 
 						columns[col][row] = dateVal;
 						columns[col].isDatetime = true;
+
+						// Check if the dates are uniformly descending or ascending. If they 
+						// are not, chances are that they are a different time format, so check
+						// for alternative.
+						if (columns[col][row + 1] !== undefined) {
+							diff = dateVal > columns[col][row + 1];
+							if (diff !== descending && descending !== undefined && this.alternativeFormat) {
+								this.dateFormat = this.alternativeFormat;
+								row = columns[col].length;
+								this.alternativeFormat = this.dateFormats[this.dateFormat].alternative;
+							}
+							descending = diff;
+						}
 					
 					} else { // string
 						columns[col][row] = trimVal === '' ? null : trimVal;
 					}
 				}
-				
+
+			}
+		}
+
+		// If the 0 column is date and descending, reverse all columns
+		if (columns[0].isDatetime && descending) {
+			hasHeaderRow = typeof columns[0][0] !== 'number';
+			for (col = 0; col < columns.length; col++) {
+				columns[col].reverse();
+				if (hasHeaderRow) {
+					columns[col].unshift(columns[col].pop());
+				}
 			}
 		}
 	},
@@ -405,9 +446,35 @@
 	 */
 	dateFormats: {
 		'YYYY-mm-dd': {
-			regex: '^([0-9]{4})-([0-9]{2})-([0-9]{2})$',
+			regex: /^([0-9]{4})[\-\/\.]([0-9]{2})[\-\/\.]([0-9]{2})$/,
 			parser: function (match) {
 				return Date.UTC(+match[1], match[2] - 1, +match[3]);
+			}
+		},
+		'dd/mm/YYYY': {
+			regex: /^([0-9]{2})[\-\/\.]([0-9]{2})[\-\/\.]([0-9]{4})$/,
+			parser: function (match) {
+				return Date.UTC(+match[3], match[2] - 1, +match[1]);
+			},
+			alternative: 'mm/dd/YYYY' // different format with the same regex
+		},
+		'mm/dd/YYYY': {
+			regex: /^([0-9]{2})[\-\/\.]([0-9]{2})[\-\/\.]([0-9]{4})$/,
+			parser: function (match) {
+				return Date.UTC(+match[3], match[1] - 1, +match[2]);
+			}
+		},
+		'dd/mm/YY': {
+			regex: /^([0-9]{2})[\-\/\.]([0-9]{2})[\-\/\.]([0-9]{2})$/,
+			parser: function (match) {
+				return Date.UTC(+match[3] + 2000, match[2] - 1, +match[1]);
+			},
+			alternative: 'mm/dd/YY' // different format with the same regex
+		},
+		'mm/dd/YY': {
+			regex: /^([0-9]{2})[\-\/\.]([0-9]{2})[\-\/\.]([0-9]{2})$/,
+			parser: function (match) {
+				return Date.UTC(+match[3] + 2000, match[1] - 1, +match[2]);
 			}
 		}
 	},
@@ -420,20 +487,43 @@
 			ret,
 			key,
 			format,
+			dateFormat = this.options.dateFormat || this.dateFormat,
 			match;
 
 		if (parseDate) {
 			ret = parseDate(val);
 		}
-			
+		
 		if (typeof val === 'string') {
-			for (key in this.dateFormats) {
-				format = this.dateFormats[key];
+			// Auto-detect the date format the first time
+			if (!dateFormat) {
+				for (key in this.dateFormats) {
+					format = this.dateFormats[key];
+					match = val.match(format.regex);
+					if (match) {
+						this.dateFormat = dateFormat = key;
+						this.alternativeFormat = format.alternative;
+						ret = format.parser(match);
+						break;
+					}
+				}
+			// Next time, use the one previously found
+			} else {
+				format = this.dateFormats[dateFormat];
 				match = val.match(format.regex);
 				if (match) {
 					ret = format.parser(match);
 				}
 			}
+			// Fall back to Date.parse
+			/*
+			if (!match) {
+				match = Date.parse(val);
+				if (typeof match === 'number' && !isNaN(match)) {
+					ret = match;
+				}
+			}
+			*/
 		}
 		return ret;
 	},

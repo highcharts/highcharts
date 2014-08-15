@@ -8,6 +8,7 @@
  * - possible spline interpolation?
  * - avoid data labels, when data labels above, show series label below.
  * - optional connectors when labels are distant
+ * - too slow here: http://jsfiddle.net/highcharts/114wejdx/
  * 
  * http://jsfiddle.net/highcharts/y5A37/
  * http://jsfiddle.net/highcharts/264Nm/
@@ -215,7 +216,7 @@
 
         proceed.call(this);
 
-        // console.time('labelBySeries');
+        console.time('labelBySeries');
 
         //this.buildTreeToAvoid();
         this.boxesToAvoid = [];
@@ -262,7 +263,7 @@
                 bBox = series.labelBySeries.getBBox();
                 bBox.width = Math.round(bBox.width);
 
-                // console.log('-- ' + series.name + ' --');
+                console.log('-- ' + series.name + ' --');
 
                 // Ideal positions are centered above or below a point on right side of chart
                 for (i = points.length - 1; i > 0; i -= 1) {
@@ -329,7 +330,7 @@
 
                 }
 
-                // console.log('foundClosePosition', results.length);
+                console.log('foundClosePosition', results.length);
 
                 // Brute force, try all positions on the chart in a 16x16 grid
                 if (!results.length) {
@@ -366,7 +367,7 @@
                 }
             }
         });
-        // console.timeEnd('labelBySeries');
+        console.timeEnd('labelBySeries');
 
     }
     wrap(Chart.prototype, 'render', drawLabels);
