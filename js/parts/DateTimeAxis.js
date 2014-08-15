@@ -70,9 +70,9 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		var time = minDate.getTime(),
 			minMonth = minDate[getMonth](),
 			minDateDate = minDate[getDate](),
-			localTimezoneOffset = useUTC ? 
-				timezoneOffset : 
-				(24 * 3600 * 1000 + minDate.getTimezoneOffset() * 60 * 1000) % (24 * 3600 * 1000); // #950
+			localTimezoneOffset = (timeUnits.day + 
+					(useUTC ? timezoneOffset : minDate.getTimezoneOffset() * 60 * 1000)
+				) % timeUnits.day; // #950, #3359
 	
 		// iterate and add tick positions at appropriate values
 		while (time < max) {
