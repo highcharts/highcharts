@@ -18,23 +18,23 @@ if (!preg_match('/^[a-zA-Z0-9_]+$/', $callback)) {
 	die('Invalid callback name');
 }
 
-$start = $_GET['start'];
+$start = @$_GET['start'];
 if ($start && !preg_match('/^[0-9]+$/', $start)) {
 	die("Invalid start parameter: $start");
 }
 
-$end = $_GET['end'];
+$end = @$_GET['end'];
 if ($end && !preg_match('/^[0-9]+$/', $end)) {
 	die("Invalid end parameter: $end");
 }
-if (!$end) $end = mktime() * 1000;
+if (!$end) $end = time() * 1000;
 
 
 
 // connect to MySQL
-require_once('../../configuration.php');
+require_once('../../joomla/configuration.php');
 $conf = new JConfig();
-mysql_connect($conf->host, $conf->user, $conf->password) or die(mysql_error());
+@mysql_connect($conf->host, $conf->user, $conf->password) or die(mysql_error());
 mysql_select_db($conf->db) or die(mysql_error());
 
 
