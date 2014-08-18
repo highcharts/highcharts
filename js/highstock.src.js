@@ -6477,7 +6477,8 @@ Axis.prototype = {
 		//axis.tickInterval = UNDEFINED;
 		//axis.minorTickInterval = UNDEFINED;
 
-		axis.tickmarkOffset = (axis.categories && options.tickmarkPlacement === 'between') ? 0.5 : 0;
+		axis.tickmarkOffset = (axis.categories && options.tickmarkPlacement === 'between' && 
+			pick(options.tickInterval, 1) === 1) ? 0.5 : 0; // #3202 // docs: new default behaviour when tickInteval !== 1
 
 		// Major ticks
 		axis.ticks = {};
