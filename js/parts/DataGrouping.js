@@ -18,16 +18,16 @@ var DATA_GROUPING = 'dataGrouping',
 		groupPixelWidth: 2,
 		// the first one is the point or start value, the second is the start value if we're dealing with range,
 		// the third one is the end value if dealing with a range
-		dateTimeLabelFormats: hash(
-			MILLISECOND, ['%A, %b %e, %H:%M:%S.%L', '%A, %b %e, %H:%M:%S.%L', '-%H:%M:%S.%L'],
-			SECOND, ['%A, %b %e, %H:%M:%S', '%A, %b %e, %H:%M:%S', '-%H:%M:%S'],
-			MINUTE, ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
-			HOUR, ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
-			DAY, ['%A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
-			WEEK, ['Week from %A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
-			MONTH, ['%B %Y', '%B', '-%B %Y'],
-			YEAR, ['%Y', '%Y', '-%Y']
-		)
+		dateTimeLabelFormats: {
+			millisecond: ['%A, %b %e, %H:%M:%S.%L', '%A, %b %e, %H:%M:%S.%L', '-%H:%M:%S.%L'],
+			second: ['%A, %b %e, %H:%M:%S', '%A, %b %e, %H:%M:%S', '-%H:%M:%S'],
+			minute: ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
+			hour: ['%A, %b %e, %H:%M', '%A, %b %e, %H:%M', '-%H:%M'],
+			day: ['%A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
+			week: ['Week from %A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
+			month: ['%B %Y', '%B', '-%B %Y'],
+			year: ['%Y', '%Y', '-%Y']
+		}
 		// smoothed = false, // enable this for navigator series only
 	},
 
@@ -62,28 +62,28 @@ var DATA_GROUPING = 'dataGrouping',
 
 	// units are defined in a separate array to allow complete overriding in case of a user option
 	defaultDataGroupingUnits = [[
-			MILLISECOND, // unit name
+			'millisecond', // unit name
 			[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
 		], [
-			SECOND,
+			'second',
 			[1, 2, 5, 10, 15, 30]
 		], [
-			MINUTE,
+			'minute',
 			[1, 2, 5, 10, 15, 30]
 		], [
-			HOUR,
+			'hour',
 			[1, 2, 3, 4, 6, 8, 12]
 		], [
-			DAY,
+			'day',
 			[1]
 		], [
-			WEEK,
+			'week',
 			[1]
 		], [
-			MONTH,
+			'month',
 			[1, 3, 6]
 		], [
-			YEAR,
+			'year',
 			null
 		]
 	],
@@ -265,7 +265,7 @@ seriesProto.processData = function () {
 		chart = series.chart,
 		options = series.options,
 		dataGroupingOptions = options[DATA_GROUPING],
-		groupingEnabled = dataGroupingOptions && pick(dataGroupingOptions.enabled, chart.options._stock),
+		groupingEnabled = series.allowDG !== false && dataGroupingOptions && pick(dataGroupingOptions.enabled, chart.options._stock),
 		hasGroupedData;
 
 	// run base method
@@ -305,7 +305,7 @@ seriesProto.processData = function () {
 				xAxis.normalizeTimeTickInterval(interval, dataGroupingOptions.units || defaultDataGroupingUnits),
 				xMin,
 				xMax,
-				null,
+				xAxis.options.startOfWeek,
 				processedXData,
 				series.closestPointRange
 			),
@@ -418,7 +418,7 @@ tooltipProto.tooltipHeaderFormatter = function (point) {
 						// If the point is placed every day at 23:59, we need to show
 						// the minutes as well. This logic only works for time units less than 
 						// a day, since all higher time units are dividable by those. #2637.
-						(timeUnits[n] <= timeUnits[DAY] && point.key % timeUnits[n] > 0)) {
+						(timeUnits[n] <= timeUnits.day && point.key % timeUnits[n] > 0)) {
 						
 					xDateFormat = dateTimeLabelFormats[n][0];
 					break;

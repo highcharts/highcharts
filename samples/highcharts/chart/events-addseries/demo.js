@@ -3,11 +3,26 @@ $(function () {
     $('#container').highcharts({
         chart: {
             events: {
-                addSeries: function() {
-                    alert ('A series was added, about to redraw chart');
+                addSeries: function () {
+                    var label = this.renderer.label('A series was added, about to redraw chart', 100, 120)
+                        .attr({
+                            fill: Highcharts.getOptions().colors[0],
+                            padding: 10,
+                            r: 5,
+                            zIndex: 8
+                        })
+                        .css({
+                            color: '#FFFFFF'
+                        })
+                        .add();
+
+                    setTimeout(function () {
+                        label.fadeOut();
+                    }, 1000);
                 }
             }
         },
+
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
@@ -19,7 +34,7 @@ $(function () {
 
 
     // activate the button
-    $('#button').click(function() {
+    $('#button').click(function () {
         var chart = $('#container').highcharts();
 
         chart.addSeries({

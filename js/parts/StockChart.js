@@ -87,7 +87,7 @@ Highcharts.StockChart = function (options, callback) {
 		title: {
 			text: null,
 			style: {
-				fontSize: '16px' // docs
+				fontSize: '16px'
 			}
 		},
 		tooltip: {
@@ -143,15 +143,21 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 // Override the automatic label alignment so that the first Y axis' labels
 // are drawn on top of the grid line, and subsequent axes are drawn outside
 wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
+	var chart = this.chart,
+		panes = chart._labelPanes = chart._labelPanes || {},
+		key;
 	if (this.chart.options._stock && this.coll === 'yAxis') {
-		if (inArray(this, this.chart.yAxis) === 0) {
+		key = this.pos + ',' + this.len;
+	
+		if (!panes[key]) { // do it only for the first Y axis of each pane
 			if (this.options.labels.x === 15) { // default
 				this.options.labels.x = 0;
 			}
+			panes[key] = 1;
 			return 'right';
 		}
 	}
-	return proceed.call(this);
+	return proceed.call(this, [].slice.call(arguments, 1));
 });
 
 // Override getPlotLinePath to allow for multipane charts
@@ -172,17 +178,18 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 		uniqueAxes;
 
 	// Get the related axes based on series
-	axes = (axis.isXAxis ? 
-		(defined(axis.options.yAxis) ?
-			[chart.yAxis[axis.options.yAxis]] : 
-			map(series, function (S) { return S.yAxis; })
-		) :
-		(defined(axis.options.xAxis) ?
-			[chart.xAxis[axis.options.xAxis]] : 
-			map(series, function (S) { return S.xAxis; })
-		)
-	);
-
+	if (axis.coll === 'xAxis' || axis.coll === 'yAxis') { //#3360 series should be ignored in case of color Axis
+		axes = (axis.isXAxis ? 
+			(defined(axis.options.yAxis) ?
+				[chart.yAxis[axis.options.yAxis]] : 
+				map(series, function (S) { return S.yAxis; })
+			) :
+			(defined(axis.options.xAxis) ?
+				[chart.xAxis[axis.options.xAxis]] : 
+				map(series, function (S) { return S.xAxis; })
+			)
+		);
+	}
 
 	// Get the related axes based options.*Axis setting #2810
 	axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
@@ -496,7 +503,7 @@ seriesProto.processData = function () {
  * Modify series extremes
  */
 wrap(seriesProto, 'getExtremes', function (proceed) {
-	proceed.call(this);
+	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (this.modifyValue) {
 		this.dataMax = this.modifyValue(this.dataMax);
@@ -543,9 +550,12 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
  * to using multiple panes, and a future pane logic should incorporate this feature.
  */
 wrap(Series.prototype, 'render', function (proceed) {
-	if (this.isCartesian && this.chart.options._stock) { // #2939
+	// Only do this on stock charts (#2939), and only if the series type handles clipping
+	// in the animate method (#2975).
+	if (this.chart.options._stock) {
+
 		// First render, initial clip box
-		if (!this.clipBox) {
+		if (!this.clipBox && this.animate && this.animate.toString().indexOf('sharedClip') !== -1) {
 			this.clipBox = merge(this.chart.clipBox);
 			this.clipBox.width = this.xAxis.len;
 			this.clipBox.height = this.yAxis.len;

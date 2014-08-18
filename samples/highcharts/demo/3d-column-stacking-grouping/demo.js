@@ -15,7 +15,7 @@ $(function () {
         },
 
         title: {
-            text: 'Total fruit consumtion, grouped by gender'
+            text: 'Total fruit consumption, grouped by gender'
         },
 
         xAxis: {
@@ -31,11 +31,8 @@ $(function () {
         },
 
         tooltip: {
-            formatter: function() {
-                return '<b>'+ this.x +'</b><br/>'+
-                    this.series.name +': '+ this.y +'<br/>'+
-                    'Total: '+ this.point.stackTotal;
-            }
+            headerFormat: '<b>{point.key}</b><br>',
+            pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: {point.y} / {point.stackTotal}'
         },
 
         plotOptions: {
@@ -64,4 +61,4 @@ $(function () {
         }]
     });
 });
-    
+

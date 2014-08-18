@@ -9,14 +9,13 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 		return;
 	}	
 
-	var type = this.chart.options.chart.type,
-		series = this,
+	var series = this,
 		chart = series.chart,
 		options = chart.options,
-		typeOptions = options.plotOptions[type],		
+		seriesOptions = series.options,		
 		options3d = options.chart.options3d,
 
-		depth = typeOptions.depth || 25,
+		depth = seriesOptions.depth || 25,
 		origin = {
 			x: chart.plotWidth / 2,
 			y: chart.plotHeight / 2, 
@@ -26,28 +25,29 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 		alpha = options3d.alpha,
 		beta = options3d.beta * (chart.yAxis[0].opposite ? -1 : 1);
 
-	var stack = typeOptions.stacking ? (this.options.stack || 0) : series._i; 
-	var z = stack * (depth + (typeOptions.groupZPadding || 1));
+	var stack = seriesOptions.stacking ? (seriesOptions.stack || 0) : series._i; 
+	var z = stack * (depth + (seriesOptions.groupZPadding || 1));
 
-	if (typeOptions.grouping !== false) { z = 0; }
+	if (seriesOptions.grouping !== false) { z = 0; }
 
-	z += (typeOptions.groupZPadding || 1);
+	z += (seriesOptions.groupZPadding || 1);
 
 	Highcharts.each(series.data, function (point) {
-		var shapeArgs = point.shapeArgs,
-			tooltipPos = point.tooltipPos;
+		if (point.y !== null) {
+			var shapeArgs = point.shapeArgs,
+				tooltipPos = point.tooltipPos;
 
-		point.shapeType = 'cuboid';
-		shapeArgs.alpha = alpha;
-		shapeArgs.beta = beta; 
-		shapeArgs.z = z;
-		shapeArgs.origin = origin;
-		shapeArgs.depth = depth;
+			point.shapeType = 'cuboid';
+			shapeArgs.alpha = alpha;
+			shapeArgs.beta = beta; 
+			shapeArgs.z = z;
+			shapeArgs.origin = origin;
+			shapeArgs.depth = depth;
 
-		// Translate the tooltip position in 3d space
-		tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], alpha, beta, origin)[0];
-		point.tooltipPos = [tooltipPos.x, tooltipPos.y];
-
+			// Translate the tooltip position in 3d space
+			tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], alpha, beta, origin)[0];
+			point.tooltipPos = [tooltipPos.x, tooltipPos.y];
+		}
 	});	    
 });
 
@@ -64,28 +64,34 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'animate', function (pr
 		if (Highcharts.svg) { // VML is too slow anyway
 			if (init) {
 				Highcharts.each(series.data, function (point) {
-					point.height = point.shapeArgs.height;					
-					point.shapeArgs.height = 1;
-					if (!reversed) {
-						if (point.stackY) {
-							point.shapeArgs.y = point.plotY + yAxis.translate(point.stackY);
-						} else {
-							point.shapeArgs.y = point.plotY + (point.negative ? -point.height : point.height);
+					if (point.y !== null) {
+						point.height = point.shapeArgs.height;
+						point.shapey = point.shapeArgs.y;	//#2968				
+						point.shapeArgs.height = 1;
+						if (!reversed) {
+							if (point.stackY) {
+								point.shapeArgs.y = point.plotY + yAxis.translate(point.stackY);
+							} else {
+								point.shapeArgs.y = point.plotY + (point.negative ? -point.height : point.height);
+							}
 						}
 					}
 				});
 
 			} else { // run the animation				
 				Highcharts.each(series.data, function (point) {					
-					point.shapeArgs.height = point.height;
-					if (!reversed) {
-						point.shapeArgs.y = point.plotY - (point.negative ? point.height : 0);
-					}
-					// null value do not have a graphic
-					if (point.graphic) {
-						point.graphic.animate(point.shapeArgs, series.options.animation);					
+					if (point.y !== null) {
+						point.shapeArgs.height = point.height;
+						point.shapeArgs.y = point.shapey;	//#2968
+						// null value do not have a graphic
+						if (point.graphic) {
+							point.graphic.animate(point.shapeArgs, series.options.animation);					
+						}
 					}
 				});
+
+				// redraw datalabels to the correct position
+				this.drawDataLabels();
 
 				// delete this function to allow it only once
 				series.animate = null;
@@ -94,29 +100,28 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'animate', function (pr
 	}
 });
 
-
 Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (this.chart.is3d()) {
-	var grouping = this.chart.options.plotOptions.column.grouping,
-		stacking = this.chart.options.plotOptions.column.stacking,
-		z = this.options.zIndex;
-		if (!z) {		
-			if (!(grouping !== undefined && !grouping) && stacking) {
-				var stacks = this.chart.retrieveStacks(),
-					stack = this.options.stack || 0,
-					i; // position within the stack
-				for (i = 0; i < stacks[stack].series.length; i++) {
-					if (stacks[stack].series[i] === this) {
-						break;
-					}
+		var seriesOptions = this.options,	
+			grouping = seriesOptions.grouping,
+			stacking = seriesOptions.stacking,
+			z = 0;	
+		
+		if (!(grouping !== undefined && !grouping) && stacking) {
+			var stacks = this.chart.retrieveStacks(grouping, stacking),
+				stack = seriesOptions.stack || 0,
+				i; // position within the stack
+			for (i = 0; i < stacks[stack].series.length; i++) {
+				if (stacks[stack].series[i] === this) {
+					break;
 				}
-				z = (stacks.totalStacks * 10) - (10 * (stacks.totalStacks - stacks[stack].position)) - i;
-				
-				this.options.zIndex = z;
 			}
+			z = (stacks.totalStacks * 10) - (10 * (stacks.totalStacks - stacks[stack].position)) - i;
 		}
+				
+		seriesOptions.zIndex = z;
 	}
 });
 function draw3DPoints(proceed) {
@@ -126,24 +131,57 @@ function draw3DPoints(proceed) {
 		if (grouping !== undefined && !grouping && this.group.zIndex !== undefined) {
 			this.group.attr({zIndex : (this.group.zIndex * 10)});
 		} 
-		if (this.userOptions.borderColor === undefined) {
-			this.options.borderColor = this.color;
-		}
 
-		// Set the border color to the fill color to provide a smooth edge
+		var options = this.options,
+			states = this.options.states;
+			
+		this.borderWidth = options.borderWidth = options.edgeWidth || 1;
+
 		Highcharts.each(this.data, function (point) {
-			var c = point.options.borderColor || point.color || point.series.userOptions.borderColor;
-			point.options.borderColor = c;
-			point.borderColor = c;
-			point.pointAttr[''].stroke = c;
-			// same bordercolor on hover and select
-			point.pointAttr.hover.stroke = c;
-			point.pointAttr.select.stroke = c;
-		});	
+			if (point.y !== null) {
+				var pointAttr = point.pointAttr;
+
+				// Set the border color to the fill color to provide a smooth edge
+				this.borderColor = Highcharts.pick(options.edgeColor, pointAttr[''].fill);
+
+				pointAttr[''].stroke = this.borderColor;
+				pointAttr.hover.stroke = Highcharts.pick(states.hover.edgeColor, this.borderColor);
+				pointAttr.select.stroke = Highcharts.pick(states.select.edgeColor, this.borderColor);
+			}
+		});
 	}
 
 	proceed.apply(this, [].slice.call(arguments, 1));
 }
+
+Highcharts.wrap(Highcharts.Series.prototype, 'alignDataLabel', function (proceed) {
+	
+	// Only do this for 3D columns and columnranges
+	if (this.chart.is3d() && (this.type === 'column' || this.type === 'columnrange')) {
+		var series = this,
+			chart = series.chart,
+			options = chart.options,		
+			options3d = options.chart.options3d,
+			origin = {
+				x: chart.plotWidth / 2,
+				y: chart.plotHeight / 2, 
+				z: options3d.depth,
+				vd: options3d.viewDistance
+			},
+			alpha = options3d.alpha,
+			beta = options3d.beta * (chart.yAxis[0].opposite ? -1 : 1);
+
+		var args = arguments,
+			alignTo = args[4];
+		
+		var pos = ({x: alignTo.x, y: alignTo.y, z: 0});
+		pos = perspective([pos], alpha, beta, origin)[0];
+		alignTo.x = pos.x;
+		alignTo.y = pos.y;
+	}
+
+	proceed.apply(this, [].slice.call(arguments, 1));
+});
 
 if (Highcharts.seriesTypes.columnrange) {
 	Highcharts.wrap(Highcharts.seriesTypes.columnrange.prototype, 'drawPoints', draw3DPoints);

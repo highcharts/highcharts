@@ -27,6 +27,10 @@
 					location.reload();
 				});
 
+				$('#comment').click(function () {
+					location.href = 'compare-comment.php?path=<?php echo $path ?>&i=<?php echo $i ?>';
+				});
+
 				$(window).bind('keydown', parent.keyDown);
 
 				$('#svg').click(function () {
@@ -74,7 +78,7 @@
 							if (difference.reference) {
 								diff += ' ('+ difference.reference.toFixed(2) + ')';
 								if (difference.dissimilarityIndex.toFixed(2) === difference.reference.toFixed(2)) {
-									background = 'green';
+									background = "#a4edba";
 								}
 							}
 							*/
@@ -91,6 +95,17 @@
 								})
 								.html(diff)
 								.appendTo(li);
+						} else {
+							$span = $('<a>')
+								.attr({
+									'class': 'dissimilarity-index',
+									href: location.href.replace(/continue=true/, ''),
+									target: 'main',
+									title: 'Compare'
+								})
+								.html('<i class="icon-columns"></i>')
+								.appendTo(li);
+
 						}
 						
 						if (_continue) {
@@ -256,13 +271,13 @@
 					if (rightSVG.indexOf('NaN') !== -1) {
 						report += "<br/>The generated SVG contains NaN"
 						$('#report').html(report)
-							.css('background', 'red');
+							.css('background', '#f15c80');
 						onDifferent('Error');
 
 					} else if (identical) {
 						report += "<br/>The generated SVG is identical"
 						$('#report').html(report)
-							.css('background', 'green');
+							.css('background', "#a4edba");
 
 					} else {
 						report += "<br/>The generated SVG is different, checking exported images...";
@@ -279,7 +294,7 @@
 								path: "<?php echo $path ?>".replace(/\//g, '--')	
 							}, 
 							success: function (data) {
-								if (typeof data.dissimilarityIndex === 'number' && data.dissimilarityIndex < 0.01) {
+								if (data.dissimilarityIndex === 0) {
 									identical = true;
 									
 									report += '<br/>The exported images are identical'; 
@@ -287,7 +302,9 @@
 									onIdentical();
 									
 								} else if (data.dissimilarityIndex === undefined) {
-									report += '<br/><b>Image export failed. Is the server responding?</b>';
+									report += '<br/><br/><b>Image export failed. Is the exporting server responding? If running local server, start it like this:</b>' +
+										'<pre>$ cd GitHub/highcharts.com/exporting-server/java/highcharts-export/highcharts-export-web\n' +
+										'$ mvn jetty:run</pre>'
 									onDifferent('Error');
 									
 								} else {
@@ -302,7 +319,7 @@
 								activateOverlayCompare();
 								
 								$('#report').html(report)
-									.css('background', identical ? 'green' : 'red');
+									.css('background', identical ? "#a4edba" : '#f15c80');
 							},
 							dataType: 'json'
 						});
@@ -319,7 +336,7 @@
 						'The innerHTML is different, testing generated SVG...';
 						
 					$('#report').html(report)
-						.css('background', identical ? 'green' : 'red');
+						.css('background', identical ? "#a4edba" : '#f15c80');
 						
 					if (!identical) {
 						// switch to image mode
@@ -401,6 +418,7 @@
 			<h2 style="margin: 0"><?php echo $path ?></h2> 
 			
 			<div style="text-align: right">
+				<button id="comment" style="margin-left: 1em"><i class="icon-comment"></i> Comment</button>
 				<button id="reload" style="margin-left: 1em">Reload</button>
 			</div>
 		</div>

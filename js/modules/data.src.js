@@ -24,13 +24,19 @@
  * - complete : Function(chartOptions)
  * The callback that is evaluated when the data is finished loading, optionally from an 
  * external source, and parsed. The first argument passed is a finished chart options
- * object, containing series and an xAxis with categories if applicable. Thise options
- * can be extended with additional options and passed directly to the chart constructor.
+ * object, containing the series. Thise options
+ * can be extended with additional options and passed directly to the chart constructor. This is 
+ * related to the parsed callback, that goes in at an earlier stage.
  *
  * - csv : String
  * A comma delimited string to be parsed. Related options are startRow, endRow, startColumn
  * and endColumn to delimit what part of the table is used. The lineDelimiter and 
  * itemDelimiter options define the CSV delimiter formats.
+ *
+ * - dateFormat: String
+ * Which of the predefined date formats in Date.prototype.dateFormats to use to parse date
+ * columns, for example "dd/mm/YYYY" or "YYYY-mm-dd". Defaults to a best guess based on
+ * what format gives valid dates, and prefers ordered dates.
  * 
  * - endColumn : Integer
  * In tabular input data, the first row (indexed by 0) to use. Defaults to the last 
@@ -57,7 +63,9 @@
  *
  * - parsed : Function
  * A callback function to access the parsed columns, the two-dimentional input data
- * array directly, before they are interpreted into series data and categories.
+ * array directly, before they are interpreted into series data and categories. See also
+ * the complete callback, that goes in on a later stage where the raw columns are interpreted
+ * into a Highcharts option structure.
  *
  * - parseDate : Function
  * A callback function to parse string representations of dates into JavaScript timestamps.
@@ -85,10 +93,17 @@
  * endRow, startColumn and endColumn to delimit what part of the table is used.
  */
 
+/*
+ * TODO: 
+ * - Handle various date formats
+ *     - http://jsfiddle.net/highcharts/114wejdx/
+ *     - http://jsfiddle.net/highcharts/ryv67bkq/
+ */
+
 // JSLint options:
 /*global jQuery, HighchartsAdapter */
 
-(function (Highcharts) {	
+(function (Highcharts) { // docs
 	
 	// Utilities
 	var each = Highcharts.each,
@@ -408,7 +423,7 @@
 				headerRow = null;
 			}
 		});
-		this.headerRow = 0;			
+		this.headerRow = headerRow;
 	},
 	
 	/**
@@ -429,12 +444,16 @@
 			floatVal,
 			trimVal,
 			isXColumn,
-			dateVal;
-			
+			dateVal,
+			descending,
+			backup = [],
+			diff,
+			hasHeaderRow;
+
 		while (col--) {
 			row = columns[col].length;
 			while (row--) {
-				val = columns[col][row];
+				val = backup[row] || columns[col][row];
 				floatVal = parseFloat(val);
 				trimVal = this.trim(val);
 
@@ -453,16 +472,41 @@
 				} else { // string, continue to determine if it is a date string or really a string
 					dateVal = this.parseDate(val);
 					// Only allow parsing of dates if this column is an x-column
-					isXColumn = this.valueCount.xColumns.indexOf(col) !== -1;
+					isXColumn = inArray(col, this.valueCount.xColumns) !== -1;
 					if (isXColumn && typeof dateVal === 'number' && !isNaN(dateVal)) { // is date
+						backup[row] = val; 
 						columns[col][row] = dateVal;
 						columns[col].isDatetime = true;
+
+						// Check if the dates are uniformly descending or ascending. If they 
+						// are not, chances are that they are a different time format, so check
+						// for alternative.
+						if (columns[col][row + 1] !== undefined) {
+							diff = dateVal > columns[col][row + 1];
+							if (diff !== descending && descending !== undefined && this.alternativeFormat) {
+								this.dateFormat = this.alternativeFormat;
+								row = columns[col].length;
+								this.alternativeFormat = this.dateFormats[this.dateFormat].alternative;
+							}
+							descending = diff;
+						}
 					
 					} else { // string
 						columns[col][row] = trimVal === '' ? null : trimVal;
 					}
 				}
-				
+
+			}
+		}
+
+		// If the 0 column is date and descending, reverse all columns
+		if (columns[0].isDatetime && descending) {
+			hasHeaderRow = typeof columns[0][0] !== 'number';
+			for (col = 0; col < columns.length; col++) {
+				columns[col].reverse();
+				if (hasHeaderRow) {
+					columns[col].unshift(columns[col].pop());
+				}
 			}
 		}
 	},
@@ -473,9 +517,35 @@
 	 */
 	dateFormats: {
 		'YYYY-mm-dd': {
-			regex: '^([0-9]{4})-([0-9]{2})-([0-9]{2})$',
+			regex: /^([0-9]{4})[\-\/\.]([0-9]{2})[\-\/\.]([0-9]{2})$/,
 			parser: function (match) {
 				return Date.UTC(+match[1], match[2] - 1, +match[3]);
+			}
+		},
+		'dd/mm/YYYY': {
+			regex: /^([0-9]{2})[\-\/\.]([0-9]{2})[\-\/\.]([0-9]{4})$/,
+			parser: function (match) {
+				return Date.UTC(+match[3], match[2] - 1, +match[1]);
+			},
+			alternative: 'mm/dd/YYYY' // different format with the same regex
+		},
+		'mm/dd/YYYY': {
+			regex: /^([0-9]{2})[\-\/\.]([0-9]{2})[\-\/\.]([0-9]{4})$/,
+			parser: function (match) {
+				return Date.UTC(+match[3], match[1] - 1, +match[2]);
+			}
+		},
+		'dd/mm/YY': {
+			regex: /^([0-9]{2})[\-\/\.]([0-9]{2})[\-\/\.]([0-9]{2})$/,
+			parser: function (match) {
+				return Date.UTC(+match[3] + 2000, match[2] - 1, +match[1]);
+			},
+			alternative: 'mm/dd/YY' // different format with the same regex
+		},
+		'mm/dd/YY': {
+			regex: /^([0-9]{2})[\-\/\.]([0-9]{2})[\-\/\.]([0-9]{2})$/,
+			parser: function (match) {
+				return Date.UTC(+match[3] + 2000, match[1] - 1, +match[2]);
 			}
 		}
 	},
@@ -488,20 +558,43 @@
 			ret,
 			key,
 			format,
+			dateFormat = this.options.dateFormat || this.dateFormat,
 			match;
 
 		if (parseDate) {
 			ret = parseDate(val);
 		}
-			
+		
 		if (typeof val === 'string') {
-			for (key in this.dateFormats) {
-				format = this.dateFormats[key];
+			// Auto-detect the date format the first time
+			if (!dateFormat) {
+				for (key in this.dateFormats) {
+					format = this.dateFormats[key];
+					match = val.match(format.regex);
+					if (match) {
+						this.dateFormat = dateFormat = key;
+						this.alternativeFormat = format.alternative;
+						ret = format.parser(match);
+						break;
+					}
+				}
+			// Next time, use the one previously found
+			} else {
+				format = this.dateFormats[dateFormat];
 				match = val.match(format.regex);
 				if (match) {
 					ret = format.parser(match);
 				}
 			}
+			// Fall back to Date.parse
+			/*
+			if (!match) {
+				match = Date.parse(val);
+				if (typeof match === 'number' && !isNaN(match)) {
+					ret = match;
+				}
+			}
+			*/
 		}
 		return ret;
 	},
@@ -588,6 +681,7 @@
 			j,
 			r,
 			seriesIndex,
+			chartOptions,
 			allSeriesBuilders = [],
 			builder,
 			freeIndexes,
@@ -595,7 +689,7 @@
 			index;
 			
 		xColumns.length = columns.length;
-		if (options.complete) {
+		if (options.complete || options.afterComplete) {
 
 			// Get the names and shift the top row
 			for (i = 0; i < columns.length; i++) {
@@ -683,12 +777,21 @@
 
 
 			// Do the callback
-			options.complete({
+			chartOptions = {
 				xAxis: {
 					type: type
 				},
 				series: series
-			});
+			};
+			if (options.complete) {
+				options.complete(chartOptions);
+			}
+
+			// The afterComplete hook is used internally to avoid conflict with the externally
+			// available complete option.
+			if (options.afterComplete) {
+				options.afterComplete(chartOptions);
+			}
 		}
 	}
 	});
@@ -706,14 +809,17 @@
 
 		if (userOptions && userOptions.data) {
 			Highcharts.data(Highcharts.extend(userOptions.data, {
-				complete: function (dataOptions) {
+				afterComplete: function (dataOptions) {
+					var i, series;
 					
 					// Merge series configs
 					if (userOptions.hasOwnProperty('series')) {
 						if (typeof userOptions.series === 'object') {
-							each(userOptions.series, function (series, i) {
+							i = Math.max(userOptions.series.length, dataOptions.series.length);
+							while (i--) {
+								series = userOptions.series[i] || {};
 								userOptions.series[i] = Highcharts.merge(series, dataOptions.series[i]);
-							});
+							}
 						} else { // Allow merging in dataOptions.series (#2856)
 							delete userOptions.series;
 						}

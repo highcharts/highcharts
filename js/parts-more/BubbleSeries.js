@@ -5,7 +5,9 @@
 // 1 - set default options
 defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	dataLabels: {
-		format: '{point.z}', // docs?
+		formatter: function () { // #2945
+			return this.point.z;
+		},
 		inside: true,
 		style: {
 			color: 'white',
@@ -26,7 +28,7 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	states: {
 		hover: {
 			halo: {
-				size: 5 // docs
+				size: 5
 			}
 		}
 	},
@@ -267,14 +269,14 @@ Axis.prototype.beforePadding = function () {
 					// Find the min and max Z
 					zData = series.zData;
 					if (zData.length) { // #1735
-						zMin = math.min(
+						zMin = pick(seriesOptions.zMin, math.min(
 							zMin,
 							math.max(
 								arrayMin(zData), 
 								seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
 							)
-						);
-						zMax = math.max(zMax, arrayMax(zData));
+						));
+						zMax = pick(seriesOptions.zMax, math.max(zMax, arrayMax(zData)));
 					}
 				}
 			}

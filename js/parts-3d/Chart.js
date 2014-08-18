@@ -14,28 +14,20 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'isInsidePlot', function (proceed) {
 	}
 });
 
-Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {	
-	var args = arguments;
-	args[1] = Highcharts.merge({ 
-		chart: {
-			options3d: {
-				enabled: false,
-				alpha: 0,
-				beta: 0,
-				depth: 100,
-				viewDistance: 25,
-
-				frame: {
-					bottom: { size: 1, color: 'rgba(255,255,255,0)' },
-					side: { size: 1, color: 'rgba(255,255,255,0)' },
-					back: { size: 1, color: 'rgba(255,255,255,0)' }
-				}
-			}
-		}
-	}, args[1]);
-
-	proceed.apply(this, [].slice.call(args, 1));
-});
+var defaultChartOptions = Highcharts.getOptions();
+defaultChartOptions.chart.options3d = {
+	enabled: false,
+	alpha: 0,
+	beta: 0,
+	depth: 100,
+	viewDistance: 25,
+	frame: {
+		bottom: { size: 1, color: 'rgba(255,255,255,0)' },
+		side: { size: 1, color: 'rgba(255,255,255,0)' },
+		back: { size: 1, color: 'rgba(255,255,255,0)' }
+	}
+};
+defaultChartOptions.plotOptions.pie.borderColor = undefined;
 
 Highcharts.wrap(Highcharts.Chart.prototype, 'setChartSize', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
@@ -64,12 +56,9 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'redraw', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));	
 });
 
-Highcharts.Chart.prototype.retrieveStacks = function () {
+Highcharts.Chart.prototype.retrieveStacks = function (grouping, stacking) {
+
 	var stacks = {},
-		type = this.options.chart.type,
-		typeOptions = this.options.plotOptions[type],
-		stacking = typeOptions.stacking,
-		grouping = typeOptions.grouping,
 		i = 1;
 
 	if (grouping || !stacking) { return this.series; }

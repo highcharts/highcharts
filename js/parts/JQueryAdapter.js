@@ -10,12 +10,7 @@
 		init: function (pathAnim) {
 			
 			// extend the animate function to allow SVG animations
-			var Fx = $.fx,
-				Step = Fx.step,
-				dSetter,
-				Tween = $.Tween,
-				propHooks = Tween && Tween.propHooks,
-				opacityHook = $.cssHooks.opacity;
+			var Fx = $.fx;
 			
 			/*jslint unparam: true*//* allow unused param x in this function */
 			$.extend($.easing, {
@@ -27,15 +22,15 @@
 		
 			// extend some methods to check for elem.attr, which means it is a Highcharts SVG object
 			$.each(['cur', '_default', 'width', 'height', 'opacity'], function (i, fn) {
-				var obj = Step,
+				var obj = Fx.step,
 					base;
 					
 				// Handle different parent objects
 				if (fn === 'cur') {
 					obj = Fx.prototype; // 'cur', the getter, relates to Fx.prototype
 				
-				} else if (fn === '_default' && Tween) { // jQuery 1.8 model
-					obj = propHooks[fn];
+				} else if (fn === '_default' && $.Tween) { // jQuery 1.8 model
+					obj = $.Tween.propHooks[fn];
 					fn = 'set';
 				}
 		
@@ -69,13 +64,12 @@
 			});
 
 			// Extend the opacity getter, needed for fading opacity with IE9 and jQuery 1.10+
-			wrap(opacityHook, 'get', function (proceed, elem, computed) {
+			wrap($.cssHooks.opacity, 'get', function (proceed, elem, computed) {
 				return elem.attr ? (elem.opacity || 0) : proceed.call(this, elem, computed);
 			});
 			
-			
 			// Define the setter function for d (path definitions)
-			dSetter = function (fx) {
+			this.addAnimSetter('d', function (fx) {
 				var elem = fx.elem,
 					ends;
 		
@@ -89,21 +83,9 @@
 					fx.started = true;
 				}
 		
-		
-				// interpolate each value of the path
+				// Interpolate each value of the path
 				elem.attr('d', pathAnim.step(fx.start, fx.end, fx.pos, elem.toD));
-			};
-			
-			// jQuery 1.8 style
-			if (Tween) {
-				propHooks.d = {
-					set: dSetter
-				};
-			// pre 1.8
-			} else {
-				// animate paths
-				Step.d = dSetter;
-			}
+			});
 			
 			/**
 			 * Utility for iterating over an array. Parameters are reversed compared to jQuery.
@@ -116,9 +98,9 @@
 					
 				} : 
 				function (arr, fn) { // legacy
-					var i = 0, 
+					var i, 
 						len = arr.length;
-					for (; i < len; i++) {
+					for (i = 0; i < len; i++) {
 						if (fn.call(arr[i], arr[i], i, arr) === false) {
 							return i;
 						}
@@ -164,6 +146,20 @@
 
 		},
 
+		/**
+		 * Add an animation setter for a specific property
+		 */
+		addAnimSetter: function (prop, setter) {
+			// jQuery 1.8 style
+			if ($.Tween) {
+				$.Tween.propHooks[prop] = {
+					set: setter
+				};
+			// pre 1.8
+			} else {
+				$.fx.step[prop] = setter;
+			}
+		},
 		
 		/**
 		 * Downloads a script and executes a callback when done.
@@ -343,6 +339,7 @@
 			if (params.opacity !== UNDEFINED && el.attr) {
 				params.opacity += 'px'; // force jQuery to use same logic as width and height (#2161)
 			}
+			el.hasAnim = 1; // #3342
 			$el.animate(params, options);
 	
 		},
@@ -350,7 +347,9 @@
 		 * Stop running animation
 		 */
 		stop: function (el) {
-			$(el).stop();
+			if (el.hasAnim) { // #3342, memory leak on calling $(el) from destroy
+				$(el).stop();
+			}
 		}
 	});
 }(win.jQuery));

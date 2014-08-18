@@ -23,7 +23,6 @@ Legend.prototype = {
 			return;
 		}
 	
-		legend.baseline = pInt(itemStyle.fontSize) + 3 + itemMarginTop; // used in Series prototype
 		legend.itemStyle = itemStyle;
 		legend.itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle);
 		legend.itemMarginTop = itemMarginTop;
@@ -221,7 +220,7 @@ Legend.prototype = {
 			itemStyle = legend.itemStyle,
 			itemHiddenStyle = legend.itemHiddenStyle,
 			padding = legend.padding,
-			itemDistance = horizontal ? pick(options.itemDistance, 20) : 0, // docs
+			itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
 			ltr = !options.rtl,
 			itemHeight,
 			widthOption = options.width,
@@ -244,14 +243,11 @@ Legend.prototype = {
 				.attr({ zIndex: 1 })
 				.add(legend.scrollGroup);
 
-			// Draw the legend symbol inside the group box
-			series.drawLegendSymbol(legend, item);
-
 			// Generate the list item text and add it to the group
 			item.legendItem = li = renderer.text(
 					options.labelFormat ? format(options.labelFormat, item) : options.labelFormatter.call(item),
 					ltr ? symbolWidth + symbolPadding : -symbolPadding,
-					legend.baseline,
+					legend.baseline || 0,
 					useHTML
 				)
 				.css(merge(item.visible ? itemStyle : itemHiddenStyle)) // merge to prevent modifying original (#1021)
@@ -260,6 +256,15 @@ Legend.prototype = {
 					zIndex: 2
 				})
 				.add(item.legendGroup);
+
+			// Get the baseline for the first item - the font size is equal for all
+			if (!legend.baseline) {
+				legend.baseline = renderer.fontMetrics(itemStyle.fontSize, li).f + 3 + itemMarginTop;
+				li.attr('y', legend.baseline);
+			}
+
+			// Draw the legend symbol inside the group box
+			series.drawLegendSymbol(legend, item);
 
 			if (legend.setItemEvents) {
 				legend.setItemEvents(item, li, useHTML, itemStyle, itemHiddenStyle);
@@ -513,7 +518,7 @@ Legend.prototype = {
 		pages.length = 0;
 		if (legendHeight > spaceHeight && !options.useHTML) {
 
-			this.clipHeight = clipHeight = spaceHeight - 20 - this.titleHeight - this.padding;
+			this.clipHeight = clipHeight = mathMax(spaceHeight - 20 - this.titleHeight - this.padding, 0);
 			this.currentPage = pick(this.currentPage, 1);
 			this.fullHeight = legendHeight;
 			
@@ -690,9 +695,9 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 			symbolWidth = legend.symbolWidth,
 			renderer = this.chart.renderer,
 			legendItemGroup = this.legendGroup,
-			verticalCenter = legend.baseline - mathRound(renderer.fontMetrics(legendOptions.itemStyle.fontSize).b * 0.3),
+			verticalCenter = legend.baseline - mathRound(renderer.fontMetrics(legendOptions.itemStyle.fontSize, this.legendItem).b * 0.3),
 			attr;
-			
+
 		// Draw the line
 		if (options.lineWidth) {
 			attr = {

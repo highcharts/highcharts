@@ -1,4 +1,4 @@
-$(function () {    
+$(function () {
 
     // Create the chart
     $('#container').highcharts({
@@ -7,7 +7,7 @@ $(function () {
             events: {
                 drilldown: function (e) {
                     if (!e.seriesOptions) {
-                        
+
                         var chart = this,
                             drilldowns = {
                                 'Animals': {
@@ -35,7 +35,7 @@ $(function () {
                                 }
                             },
                             series = drilldowns[e.point.name];
-                        
+
                         // Show the loading label
                         chart.showLoading('Simulating Ajax ...');
 
@@ -63,7 +63,7 @@ $(function () {
             series: {
                 borderWidth: 0,
                 dataLabels: {
-                    enabled: true,
+                    enabled: true
                 }
             }
         },
@@ -89,6 +89,6 @@ $(function () {
         drilldown: {
             series: []
         }
-    })
+    });
 });
-    
+

@@ -13,8 +13,8 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 	var series = this,
 		chart = series.chart,
 		options = chart.options,
-		pieOptions = options.plotOptions.pie,
-		depth = pieOptions.depth || 0,
+		seriesOptions = series.options,
+		depth = seriesOptions.depth || 0,
 		options3d = options.chart.options3d,
 		origin = {
 			x: chart.plotWidth / 2,
@@ -24,27 +24,31 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 		alpha = options3d.alpha,
 		beta = options3d.beta;
 
-	var z = pieOptions.stacking ? (this.options.stack || 0) * depth : series._i * depth;
+	var z = seriesOptions.stacking ? (seriesOptions.stack || 0) * depth : series._i * depth;
 	z += depth / 2;
 
-	if (pieOptions.grouping !== false) { z = 0; }
+	if (seriesOptions.grouping !== false) { z = 0; }
 
 	Highcharts.each(series.data, function (point) {
 		point.shapeType = 'arc3d';
 		var shapeArgs = point.shapeArgs;
 
-		shapeArgs.z = z;
-		shapeArgs.depth = depth * 0.75;
-		shapeArgs.origin = origin;
-		shapeArgs.alpha = alpha;
-		shapeArgs.beta = beta;
-	
-		var angle = (shapeArgs.end + shapeArgs.start) / 2;
+		if (point.y) { // will be false if null or 0 #3006
+			shapeArgs.z = z;
+			shapeArgs.depth = depth * 0.75;
+			shapeArgs.origin = origin;
+			shapeArgs.alpha = alpha;
+			shapeArgs.beta = beta;
+		
+			var angle = (shapeArgs.end + shapeArgs.start) / 2;
 
-		point.slicedTranslation = {
-			translateX : round(cos(angle) * series.options.slicedOffset * cos(alpha * deg2rad)),
-			translateY : round(sin(angle) * series.options.slicedOffset * cos(alpha * deg2rad))
-		};
+			point.slicedTranslation = {
+				translateX : round(cos(angle) * series.options.slicedOffset * cos(alpha * deg2rad)),
+				translateY : round(sin(angle) * series.options.slicedOffset * cos(alpha * deg2rad))
+			};
+		} else {
+			shapeArgs = null;
+		}
 	});
 });
 
@@ -55,50 +59,59 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype.pointClass.prototype, 'halo
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
 	// Do not do this if the chart is not 3D
 	if (this.chart.is3d()) {
+		var options = this.options,
+			states = this.options.states;
+
 		// Set the border color to the fill color to provide a smooth edge
+		this.borderWidth = options.borderWidth = options.edgeWidth || 1;
+
+		states.hover.borderColor = Highcharts.pick(states.hover.edgeColor, this.borderColor);		
+		states.hover.borderWidth = Highcharts.pick(states.hover.edgeWidth, this.borderWidth);	
+		states.select.borderColor = Highcharts.pick(states.select.edgeColor, this.borderColor);		
+		states.select.borderWidth = Highcharts.pick(states.select.edgeWidth, this.borderWidth);
+
 		Highcharts.each(this.data, function (point) {
-			var c = point.options.borderColor || point.color || point.series.userOptions.borderColor || point.series.color;
-			point.options.borderColor = c;
-			point.borderColor = c;
-			point.pointAttr[''].stroke = c;
-			// same bordercolor on hover and select
-			point.pointAttr.hover.stroke = c;
-			point.pointAttr.select.stroke = c;
+			var pointAttr = point.pointAttr;
+			pointAttr[''].stroke = point.series.borderColor || point.color;
+			pointAttr['']['stroke-width'] = point.series.borderWidth;
+			pointAttr.hover.stroke = states.hover.borderColor;	
+			pointAttr.hover['stroke-width'] = states.hover.borderWidth;
+			pointAttr.select.stroke = states.select.borderColor;
+			pointAttr.select['stroke-width'] = states.select.borderWidth;
 		});	
 	}
 
 	proceed.apply(this, [].slice.call(arguments, 1));
+
+	if (this.chart.is3d()) {		
+		var seriesGroup = this.group;
+		Highcharts.each(this.points, function (point) {
+			point.graphic.out.add(seriesGroup);
+			point.graphic.inn.add(seriesGroup);
+			point.graphic.side1.add(seriesGroup);
+			point.graphic.side2.add(seriesGroup);
+		});		
+	}
 });
 
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
+	if (this.chart.is3d()) {
+		var series = this;
+		Highcharts.each(series.data, function (point) {
+			var shapeArgs = point.shapeArgs,
+				r = shapeArgs.r,
+				d = shapeArgs.depth,
+				a1 = shapeArgs.alpha * deg2rad,
+				a2 = (shapeArgs.start + shapeArgs.end) / 2,
+				labelPos = point.labelPos;
+
+			labelPos[1] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
+			labelPos[3] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
+			labelPos[5] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
+		});
+	} 
+
 	proceed.apply(this, [].slice.call(arguments, 1));
-	// Do not do this if the chart is not 3D
-	if (!this.chart.is3d()) {
-		return;
-	}	
-
-	var series = this;
-	Highcharts.each(series.data, function (point) {
-		var shapeArgs = point.shapeArgs;
-		var r = shapeArgs.r,
-			d = shapeArgs.depth,
-			a1 = shapeArgs.alpha * deg2rad,
-			b1 = shapeArgs.beta * deg2rad,
-			a2 = (shapeArgs.start + shapeArgs.end) / 2; 
-
-		if (point.connector) {
-			point.connector.translate(
-				(-r * (1 - cos(b1)) * cos(a2)) + (cos(a2) > 0 ? sin(b1) * d : 0),
-				(-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0)
-			);
-		}
-		if (point.dataLabel) {
-			point.dataLabel.attr({
-				x: point.dataLabel.connX + (-r * (1 - cos(b1)) * cos(a2)) + (cos(a2) > 0 ? cos(b1) * d : 0) - (point.dataLabel.width / 2),
-				y: point.dataLabel.connY + (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0) - (point.dataLabel.height / 2)
-			});
-		}
-	});
 });
 
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'addPoint', function (proceed) {
@@ -130,8 +143,8 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'animate', function (proce
 				if (init) {
 				
 					// Scale down the group and place it in the center
-					this.oldtranslateX = group.translateX;
-					this.oldtranslateY = group.translateY;
+					group.oldtranslateX = group.translateX;
+					group.oldtranslateY = group.translateY;
 					attribs = {
 						translateX: center[0],
 						translateY: center[1],
@@ -148,12 +161,13 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'animate', function (proce
 				// Run the animation
 				} else {
 					attribs = {
-						translateX: this.oldtranslateX,
-						translateY: this.oldtranslateY,
+						translateX: group.oldtranslateX,
+						translateY: group.oldtranslateY,
 						scaleX: 1,
 						scaleY: 1
 					};
 					group.animate(attribs, animation);
+
 					if (markerGroup) {
 						markerGroup.animate(attribs, animation);
 					}

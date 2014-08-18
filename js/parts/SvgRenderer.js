@@ -5,6 +5,13 @@
 function SVGElement() {}
 
 SVGElement.prototype = {
+	
+	// Default base for animation
+	opacity: 1,
+	// For labels, these CSS properties are applied to the <text> node directly
+	textProps: ['fontSize', 'fontWeight', 'fontFamily', 'color', 
+		'lineHeight', 'width', 'textDecoration', 'textShadow', 'HcTextStroke'],
+	
 	/**
 	 * Initialize the SVG renderer
 	 * @param {Object} renderer
@@ -17,10 +24,7 @@ SVGElement.prototype = {
 			doc.createElementNS(SVG_NS, nodeName);
 		wrapper.renderer = renderer;
 	},
-	/**
-	 * Default base for animation
-	 */
-	opacity: 1,
+	
 	/**
 	 * Animate a given attribute
 	 * @param {Object} params
@@ -42,6 +46,7 @@ SVGElement.prototype = {
 				complete();
 			}
 		}
+		return this;
 	},
 
 	/**
@@ -297,7 +302,7 @@ SVGElement.prototype = {
 			key,
 			attribs = {},
 			normalizer,
-			strokeWidth = rect.strokeWidth || wrapper.strokeWidth || (wrapper.attr && wrapper.attr('stroke-width')) || 0;
+			strokeWidth = rect.strokeWidth || wrapper.strokeWidth || 0;
 
 		normalizer = mathRound(strokeWidth) % 2 / 2; // mathRound because strokeWidth can sometimes have roundoff errors
 
@@ -667,10 +672,10 @@ SVGElement.prototype = {
 		// IE9-11 doesn't handle visibilty:inherit well, so we remove the attribute instead (#2881)
 		if (inherit && this.element.namespaceURI === SVG_NS) {
 			this.element.removeAttribute('visibility');
-			return this;
 		} else {
-			return this.attr({ visibility: inherit ? 'inherit' : VISIBLE });
+			this.attr({ visibility: inherit ? 'inherit' : VISIBLE });
 		}
+		return this;
 	},
 
 	/**
@@ -687,7 +692,7 @@ SVGElement.prototype = {
 		}, {
 			duration: duration || 150,
 			complete: function () {
-				elemWrapper.hide();
+				elemWrapper.attr({ y: -9999 }); // #3088, assuming we're only using this for tooltips
 			}
 		});
 	},
@@ -813,8 +818,8 @@ SVGElement.prototype = {
 			});
 		}
 
-		// In case of useHTML, clean up empty containers emulating SVG groups (#1960, #2393).
-		while (parentToClean && parentToClean.div.childNodes.length === 0) {
+		// In case of useHTML, clean up empty containers emulating SVG groups (#1960, #2393, #2697).
+		while (parentToClean && parentToClean.div && parentToClean.div.childNodes.length === 0) {
 			grandParent = parentToClean.parentGroup;
 			wrapper.safeRemoveChild(parentToClean.div);
 			delete parentToClean.div;
@@ -901,7 +906,7 @@ SVGElement.prototype = {
 	_defaultGetter: function (key) {
 		var ret = pick(this[key], this.element ? this.element.getAttribute(key) : null, 0);
 
-		if (/^[0-9\.]+$/.test(ret)) { // is numerical
+		if (/^[\-0-9\.]+$/.test(ret)) { // is numerical
 			ret = parseFloat(ret);
 		}
 		return ret;
@@ -936,9 +941,10 @@ SVGElement.prototype = {
 
 			i = value.length;
 			while (i--) {
-				value[i] = pInt(value[i]) * this.element.getAttribute('stroke-width');
+				value[i] = pInt(value[i]) * this['stroke-width'];
 			}
-			value = value.join(',');
+			value = value.join(',')
+				.replace('NaN', 'none'); // #3226
 			this.element.setAttribute('stroke-dasharray', value);
 		}
 	},
@@ -949,22 +955,13 @@ SVGElement.prototype = {
 		this[key] = value;
 		element.setAttribute(key, value);
 	},
-	// In Chrome/Win < 6 as well as Batik and PhantomJS as of 1.9.7, the stroke attribute can't be set when the stroke-
-	// width is 0. #1369
-	'stroke-widthSetter': function (value, key, element) {
-		if (value === 0) {
-			value = 0.00001;
-		}
-		this.strokeWidth = value; // read in symbol paths like 'callout'
-		element.setAttribute(key, value);
-	},
 	titleSetter: function (value) {
 		var titleNode = this.element.getElementsByTagName('title')[0];
 		if (!titleNode) {
 			titleNode = doc.createElementNS(SVG_NS, 'title');
 			this.element.appendChild(titleNode);
 		}
-		titleNode.textContent = value;
+		titleNode.textContent = value.replace(/<[^>]*>/g, ''); // #3276
 	},
 	textSetter: function (value) {
 		if (value !== this.textStr) {
@@ -978,7 +975,6 @@ SVGElement.prototype = {
 		}
 	},
 	fillSetter: function (value, key, element) {
-
 		if (typeof value === 'string') {
 			element.setAttribute(key, value);
 		} else if (value) {
@@ -1002,24 +998,22 @@ SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter =
 	this[key] = value;
 	this.doTransform = true;
 };
-SVGElement.prototype.strokeSetter = SVGElement.prototype.fillSetter;
 
-
-
-// In Chrome/Win < 6 as well as Batik, the stroke attribute can't be set when the stroke-
-// width is 0. #1369
-/*SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter = function (value, key) {
+// WebKit and Batik have problems with a stroke-width of zero, so in this case we remove the 
+// stroke attribute altogether. #1270, #1369, #3065, #3072.
+SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter = function (value, key, element) {
 	this[key] = value;
 	// Only apply the stroke attribute if the stroke width is defined and larger than 0
 	if (this.stroke && this['stroke-width']) {
-		this.element.setAttribute('stroke', this.stroke);
-		this.element.setAttribute('stroke-width', this['stroke-width']);
+		this.strokeWidth = this['stroke-width'];
+		SVGElement.prototype.fillSetter.call(this, this.stroke, 'stroke', element); // use prototype as instance may be overridden
+		element.setAttribute('stroke-width', this['stroke-width']);
 		this.hasStroke = true;
 	} else if (key === 'stroke-width' && value === 0 && this.hasStroke) {
-		this.element.removeAttribute('stroke');
+		element.removeAttribute('stroke');
 		this.hasStroke = false;
 	}
-};*/
+};
 
 
 /**
@@ -1191,6 +1185,7 @@ SVGRenderer.prototype = {
 			textStyles = wrapper.styles,
 			width = wrapper.textWidth,
 			textLineHeight = textStyles && textStyles.lineHeight,
+			textStroke = textStyles && textStyles.HcTextStroke,
 			i = childNodes.length,
 			getLineHeight = function (tspan) {
 				return textLineHeight ? 
@@ -1198,7 +1193,8 @@ SVGRenderer.prototype = {
 					renderer.fontMetrics(
 						/(px|em)$/.test(tspan && tspan.style.fontSize) ?
 							tspan.style.fontSize :
-							((textStyles && textStyles.fontSize) || renderer.style.fontSize || 12)
+							((textStyles && textStyles.fontSize) || renderer.style.fontSize || 12),
+						tspan
 					).h;
 			};
 
@@ -1207,8 +1203,9 @@ SVGRenderer.prototype = {
 			textNode.removeChild(childNodes[i]);
 		}
 
-		// Skip tspans, add text directly to text node
-		if (!hasMarkup && textStr.indexOf(' ') === -1) {
+		// Skip tspans, add text directly to text node. The forceTSpan is a hook 
+		// used in text outline hack.
+		if (!hasMarkup && !textStroke && textStr.indexOf(' ') === -1) {
 			textNode.appendChild(doc.createTextNode(textStr));
 			return;
 
@@ -1283,6 +1280,9 @@ SVGRenderer.prototype = {
 							// add attributes
 							attr(tspan, attributes);
 
+							// Append it
+							textNode.appendChild(tspan);
+
 							// first span on subsequent line, add the line height
 							if (!spanNo && lineNo) {
 
@@ -1296,27 +1296,19 @@ SVGRenderer.prototype = {
 								attr(
 									tspan,
 									'dy',
-									getLineHeight(tspan),
-									// Safari 6.0.2 - too optimized for its own good (#1539)
-									// TODO: revisit this with future versions of Safari
-									isWebKit && tspan.offsetHeight
+									getLineHeight(tspan)
 								);
 							}
-
-							// Append it
-							textNode.appendChild(tspan);
-
-							spanNo++;
 
 							// check width and apply soft breaks
 							if (width) {
 								var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
-									hasWhiteSpace = words.length > 1 && textStyles.whiteSpace !== 'nowrap',
+									hasWhiteSpace = spans.length > 1 || (words.length > 1 && textStyles.whiteSpace !== 'nowrap'),
 									tooLong,
 									actualWidth,
-									clipHeight = wrapper._clipHeight,
+									hcHeight = textStyles.HcHeight,
 									rest = [],
-									dy = getLineHeight(),
+									dy = getLineHeight(tspan),
 									softLineNo = 1,
 									bBox;
 
@@ -1336,8 +1328,7 @@ SVGRenderer.prototype = {
 										rest = [];
 										if (words.length) {
 											softLineNo++;
-
-											if (clipHeight && softLineNo * dy > clipHeight) {
+											if (hcHeight && softLineNo * dy > hcHeight) {
 												words = ['...'];
 												wrapper.attr('title', wrapper.textStr);
 											} else {
@@ -1351,11 +1342,10 @@ SVGRenderer.prototype = {
 													attr(tspan, 'style', spanStyle);
 												}
 												textNode.appendChild(tspan);
-
-												if (actualWidth > width) { // a single word is pressing it out
-													width = actualWidth;
-												}
 											}
+										}
+										if (actualWidth > width) { // a single word is pressing it out
+											width = actualWidth;
 										}
 									} else { // append to existing line tspan
 										tspan.removeChild(tspan.firstChild);
@@ -1366,6 +1356,8 @@ SVGRenderer.prototype = {
 									}
 								}
 							}
+
+							spanNo++;
 						}
 					}
 				});
@@ -1692,8 +1684,7 @@ SVGRenderer.prototype = {
 			// could be exporting in IE
 			// using href throws "not supported" in ie7 and under, requries regex shim to fix later
 			elemWrapper.element.setAttribute('hc-svg-href', src);
-	}
-
+		}
 		return elemWrapper;
 	},
 
@@ -2012,14 +2003,15 @@ SVGRenderer.prototype = {
 
 		if (!useHTML) {
 			wrapper.xSetter = function (value, key, element) {
-				var childNodes = element.childNodes,
-					child,
+				var tspans = element.getElementsByTagName('tspan'),
+					tspan,
+					parentVal = element.getAttribute(key),
 					i;
-				for (i = 1; i < childNodes.length; i++) {
-					child = childNodes[i];
-					// if the x values are equal, the tspan represents a linebreak
-					if (child.getAttribute('x') === element.getAttribute('x')) {
-						child.setAttribute('x', value);
+				for (i = 0; i < tspans.length; i++) {
+					tspan = tspans[i];
+					// If the x values are equal, the tspan represents a linebreak
+					if (tspan.getAttribute(key) === parentVal) {
+						tspan.setAttribute(key, value);
 					}
 				}
 				element.setAttribute(key, value);
@@ -2032,8 +2024,12 @@ SVGRenderer.prototype = {
 	/**
 	 * Utility to return the baseline offset and total line height from the font size
 	 */
-	fontMetrics: function (fontSize) {
+	fontMetrics: function (fontSize, elem) {
 		fontSize = fontSize || this.style.fontSize;
+		if (elem && win.getComputedStyle) {
+			elem = elem.element || elem; // SVGElement
+			fontSize = win.getComputedStyle(elem, "").fontSize;
+		}
 		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
 
 		// Empirical values found by comparing font size and bounding box height.
@@ -2043,7 +2039,8 @@ SVGRenderer.prototype = {
 
 		return {
 			h: lineHeight,
-			b: baseline
+			b: baseline,
+			f: fontSize
 		};
 	},
 
@@ -2100,7 +2097,7 @@ SVGRenderer.prototype = {
 			wrapper.height = (height || bBox.height || 0) + 2 * padding;
 
 			// update the label-scoped y offset
-			baselineOffset = padding + renderer.fontMetrics(style && style.fontSize).b;
+			baselineOffset = padding + renderer.fontMetrics(style && style.fontSize, text).b;
 
 			
 			if (needsBox) {
@@ -2177,7 +2174,7 @@ SVGRenderer.prototype = {
 		wrapper.onAdd = function () {
 			text.add(wrapper);
 			wrapper.attr({
-				text: str || '', // alignment is available now
+				text: (str || str === 0) ? str : '', // alignment is available now // #3295: 0 not rendered if given as a value
 				x: x,
 				y: y
 			});
@@ -2276,7 +2273,7 @@ SVGRenderer.prototype = {
 				if (styles) {
 					var textStyles = {};
 					styles = merge(styles); // create a copy to avoid altering the original object (#537)
-					each(['fontSize', 'fontWeight', 'fontFamily', 'color', 'lineHeight', 'width', 'textDecoration', 'textShadow'], function (prop) {
+					each(wrapper.textProps, function (prop) {
 						if (styles[prop] !== UNDEFINED) {
 							textStyles[prop] = styles[prop];
 							delete styles[prop];

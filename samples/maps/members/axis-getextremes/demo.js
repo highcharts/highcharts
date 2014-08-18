@@ -1,7 +1,7 @@
 $(function () {
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
-        
+
         // Initiate the chart
         $('#container').highcharts('Map', {
 
@@ -17,8 +17,8 @@ $(function () {
 
             series : [{
                 data : data,
-                mapData: Highcharts.maps.world,
-                joinBy: 'code',
+                mapData: Highcharts.maps['custom/world'],
+                joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
                 states: {
                     hover: {
@@ -39,13 +39,13 @@ $(function () {
             colorExt = chart.colorAxis[0].getExtremes();
 
         chart.setTitle(null, {
-            text: '<b>X axis</b><br>' + 
+            text: '<b>X axis</b><br>' +
                 'min: ' + xExt.min + ', max: ' + xExt.max + '<br>' +
                 'dataMin: ' + xExt.dataMin + ', dataMax: ' + xExt.dataMax + '<br>' +
-                '<b>Y axis</b><br>' + 
+                '<b>Y axis</b><br>' +
                 'min: ' + yExt.min + ', max: ' + yExt.max + '<br>' +
                 'dataMin: ' + yExt.dataMin + ', dataMax: ' + yExt.dataMax + '<br>' +
-                '<b>Color axis</b><br>' + 
+                '<b>Color axis</b><br>' +
                 'min: ' + colorExt.min + ', max: ' + colorExt.max + '<br>' +
                 'dataMin: ' + colorExt.dataMin + ', dataMax: ' + colorExt.dataMax + '<br>',
             align: 'left',

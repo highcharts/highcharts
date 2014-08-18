@@ -69,10 +69,10 @@ $(function () {
     ];
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=germany.geo.json&callback=?', function (geojson) {
-        
+
         // Initiate the chart
         $('#container').highcharts('Map', {
-            
+
             title : {
                 text : 'GeoJSON in Highmaps'
             },
@@ -89,7 +89,7 @@ $(function () {
 
             series : [{
                 data : data,
-                mapData: Highcharts.geojson(geojson, 'map'),
+                mapData: geojson,
                 joinBy: ['code_hasc', 'code'],
                 name: 'Random data',
                 states: {

@@ -6,20 +6,20 @@ $(function () {
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
-        
+
         plotOptions: {
             series: {
                 cursor: 'pointer',
                 point: {
                     events: {
-                        click: function() {
+                        click: function () {
                             location.href = this.options.url;
                         }
                     }
                 }
             }
         },
-        
+
         series: [{
             data: [{
                 y: 29.9,
@@ -30,7 +30,7 @@ $(function () {
             }, {
                 y: 106.4,
                 url: 'http://bing.com/search?q=foo+bar'
-            }]        
+            }]
         }]
     });
 });

@@ -6,14 +6,14 @@ $(function () {
         $.each(data, function () {
             this.flag = this.code.toLowerCase();
         });
-        
+
         // Initiate the chart
         $('#container').highcharts('Map', {
 
             title: {
                 text: 'Full HTML tooltip'
             },
-            
+
             legend: {
                 title: {
                     text: 'Population density per km²'
@@ -26,7 +26,7 @@ $(function () {
                     verticalAlign: 'bottom'
                 }
             },
-        
+
             tooltip: {
                 backgroundColor: null,
                 borderWidth: 0,
@@ -44,8 +44,8 @@ $(function () {
 
             series : [{
                 data : data,
-                mapData: Highcharts.maps.world,
-                joinBy: 'code',
+                mapData: Highcharts.maps['custom/world'],
+                joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
                 states: {
                     hover: {

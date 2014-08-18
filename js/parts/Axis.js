@@ -82,7 +82,7 @@ Axis.prototype = {
 			//rotation: 0,
 			//side: 'outside',
 			style: {
-				color: '#707070' // docs
+				color: '#707070'
 			}
 			//x: 0,
 			//y: 0
@@ -158,7 +158,7 @@ Axis.prototype = {
 	defaultBottomAxisOptions: {
 		labels: {
 			x: 0,
-			y: 20
+			y: null // based on font size
 			// overflow: undefined,
 			// staggerLines: null
 		},
@@ -249,7 +249,8 @@ Axis.prototype = {
 		//axis.tickInterval = UNDEFINED;
 		//axis.minorTickInterval = UNDEFINED;
 
-		axis.tickmarkOffset = (axis.categories && options.tickmarkPlacement === 'between') ? 0.5 : 0;
+		axis.tickmarkOffset = (axis.categories && options.tickmarkPlacement === 'between' && 
+			pick(options.tickInterval, 1) === 1) ? 0.5 : 0; // #3202 // docs: new default behaviour when tickInteval !== 1
 
 		// Major ticks
 		axis.ticks = {};
@@ -417,8 +418,8 @@ Axis.prototype = {
 
 		axis.hasVisibleSeries = false;
 
-		// reset dataMin and dataMax in case we're redrawing
-		axis.dataMin = axis.dataMax = null;
+		// Reset properties in case we're redrawing (#3353)
+		axis.dataMin = axis.dataMax = axis.ignoreMinPadding = axis.ignoreMaxPadding = null;
 		
 		if (axis.buildStacks) {
 			axis.buildStacks();
@@ -846,6 +847,8 @@ Axis.prototype = {
 		var axis = this,
 			chart = axis.chart,
 			options = axis.options,
+			startOnTick = options.startOnTick,
+			endOnTick = options.endOnTick,
 			isLog = axis.isLog,
 			isDatetimeAxis = axis.isDatetimeAxis,
 			isXAxis = axis.isXAxis,
@@ -938,7 +941,7 @@ Axis.prototype = {
 			);
 			// For squished axes, set only two ticks
 			if (!defined(tickIntervalOption) && axis.len < tickPixelIntervalOption && !this.isRadial &&
-					!this.isLog && !categories && options.startOnTick && options.endOnTick) {
+					!this.isLog && !categories && startOnTick && endOnTick) {
 				keepTwoTicksOnly = true;
 				axis.tickInterval /= 4; // tick extremes closer to the real values
 			}
@@ -978,7 +981,14 @@ Axis.prototype = {
 		// for linear axes, get magnitude and normalize the interval
 		if (!isDatetimeAxis && !isLog) { // linear
 			if (!tickIntervalOption) {
-				axis.tickInterval = normalizeTickInterval(axis.tickInterval, null, getMagnitude(axis.tickInterval), options);
+				axis.tickInterval = normalizeTickInterval(
+					axis.tickInterval, 
+					null, 
+					getMagnitude(axis.tickInterval), 
+					// If the tick interval is between 1 and 5 and the axis max is in the order of
+					// thousands, chances are we are dealing with years. Don't allow decimals. #3363. // docs
+					pick(options.allowDecimals, !(axis.tickInterval > 1 && axis.tickInterval < 5 && axis.max > 1000 && axis.max < 9999))
+				);
 			}
 		}
 
@@ -1028,16 +1038,21 @@ Axis.prototype = {
 				minPointOffset = axis.minPointOffset || 0,
 				singlePad;
 
-			if (options.startOnTick) {
+			if (startOnTick) {
 				axis.min = roundedMin;
 			} else if (axis.min - minPointOffset > roundedMin) {
 				tickPositions.shift();
 			}
 
-			if (options.endOnTick) {
+			if (endOnTick) {
 				axis.max = roundedMax;
 			} else if (axis.max + minPointOffset < roundedMax) {
 				tickPositions.pop();
+			}
+
+			// If no tick are left, set one tick in the middle (#3195) 
+			if (tickPositions.length === 0) {
+				tickPositions.splice(1, 0, (roundedMax + roundedMin) / 2);				
 			}
 
 			// When there is only one point, or all points have the same value on this axis, then min
@@ -1264,7 +1279,7 @@ Axis.prototype = {
 			height = pick(options.height, chart.plotHeight),
 			top = pick(options.top, chart.plotTop),
 			left = pick(options.left, chart.plotLeft + offsetLeft),
-			percentRegex = /%$/; // docs
+			percentRegex = /%$/;
 
 		// Check for percentage based input values
 		if (percentRegex.test(height)) {
@@ -1363,6 +1378,7 @@ Axis.prototype = {
 			axisTitleOptions = options.title,
 			labelOptions = options.labels,
 			labelOffset = 0, // reset
+			labelOffsetPadded,
 			axisOffset = chart.axisOffset,
 			clipOffset = chart.clipOffset,
 			directionFactor = [-1, 1, 1, -1][side],
@@ -1378,7 +1394,7 @@ Axis.prototype = {
 			x,
 			w,
 			lineNo,
-			lineHeightCorrection = side === 2 ? renderer.fontMetrics(labelOptions.style.fontSize).b : 0;
+			lineHeightCorrection;
 
 		// For reuse in Axis.render
 		axis.hasData = hasData = (axis.hasVisibleSeries || (defined(axis.min) && defined(axis.max) && !!tickPositions));
@@ -1459,8 +1475,8 @@ Axis.prototype = {
 						labelOffset
 					);
 				}
-
 			});
+
 			if (axis.staggerLines) {
 				labelOffset *= axis.staggerLines;
 				axis.labelOffset = labelOffset;
@@ -1497,8 +1513,8 @@ Axis.prototype = {
 
 			if (showAxis) {
 				titleOffset = axis.axisTitle.getBBox()[horiz ? 'height' : 'width'];
-				titleMargin = pick(axisTitleOptions.margin, horiz ? 5 : 10);
 				titleOffsetOption = axisTitleOptions.offset;
+				titleMargin = defined(titleOffsetOption) ? 0 : pick(axisTitleOptions.margin, horiz ? 5 : 10);
 			}
 
 			// hide or show the title depending on whether showEmpty is set
@@ -1508,15 +1524,15 @@ Axis.prototype = {
 		// handle automatic or user set offset
 		axis.offset = directionFactor * pick(options.offset, axisOffset[side]);
 
-		axis.axisTitleMargin =
-			pick(titleOffsetOption,
-				labelOffset + titleMargin +
-				(labelOffset && (directionFactor * options.labels[horiz ? 'y' : 'x'] - lineHeightCorrection))
-			);
+		lineHeightCorrection = side === 2 ? axis.tickBaseline : 0;
+		labelOffsetPadded = labelOffset + titleMargin +
+			(labelOffset && (directionFactor * (horiz ? pick(labelOptions.y, axis.tickBaseline + 8) : labelOptions.x) - lineHeightCorrection));
+		axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);
 
 		axisOffset[side] = mathMax(
 			axisOffset[side],
-			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset
+			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset,
+			labelOffsetPadded // #3027
 		);
 		clipOffset[invertedSide] = mathMax(clipOffset[invertedSide], mathFloor(options.lineWidth / 2) * 2);
 	},
@@ -1686,7 +1702,7 @@ Axis.prototype = {
 							ticks[pos].render(i, true, 0.1);
 						}
 
-						ticks[pos].render(i, false, 1);
+						ticks[pos].render(i);
 					}
 
 				});
@@ -1810,25 +1826,17 @@ Axis.prototype = {
 	 * Redraw the axis to reflect changes in the data or axis extremes
 	 */
 	redraw: function () {
-		var axis = this,
-			chart = axis.chart,
-			pointer = chart.pointer;
-
-		// hide tooltip and hover states
-		if (pointer) {
-			pointer.reset(true);
-		}
-
+		
 		// render the axis
-		axis.render();
+		this.render();
 
 		// move plot lines and bands
-		each(axis.plotLinesAndBands, function (plotLine) {
+		each(this.plotLinesAndBands, function (plotLine) {
 			plotLine.render();
 		});
 
 		// mark associated series as dirty and ready for redraw
-		each(axis.series, function (series) {
+		each(this.series, function (series) {
 			series.isDirty = true;
 		});
 

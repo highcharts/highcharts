@@ -148,8 +148,9 @@ Highcharts.PlotLineOrBand.prototype = {
 			}
 
 			// get the bounding box and align the label
-			xs = [path[1], path[4], pick(path[6], path[1])];
-			ys = [path[2], path[5], pick(path[7], path[2])];
+			// #3000 changed to better handle choice between plotband or plotline
+			xs = [path[1], path[4], (isBand ? path[6] : path[1])];
+			ys = [path[2], path[5], (isBand ? path[7] : path[2])];
 			x = arrayMin(xs);
 			y = arrayMin(ys);
 
@@ -209,11 +210,11 @@ AxisPlotLineOrBandExtension = {
 	},
 
 	addPlotBand: function (options) {
-		this.addPlotBandOrLine(options, 'plotBands');
+		return this.addPlotBandOrLine(options, 'plotBands');
 	},
 	
 	addPlotLine: function (options) {
-			this.addPlotBandOrLine(options, 'plotLines');
+		return this.addPlotBandOrLine(options, 'plotLines');
 	},
 
 	/**

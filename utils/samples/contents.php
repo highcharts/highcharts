@@ -110,13 +110,11 @@
 			}
 			
 			li.identical, li.identical a {
-				background: green;
-				color: white;
-				font-weight: bold;
+				background: #a4edba;
 			}
 			
 			li.different, li.different a {
-				background: red;
+				background: #f15c80;
 				color: white;
 				font-weight: bold;
 			}
@@ -151,6 +149,24 @@
 			}
 			#batch-stop {
 				display: none;
+			}
+			.comment {
+				position: absolute;
+				right: 3em;
+			}
+			.comment-title {
+				display: none;
+				position: absolute;
+				width: 200px;
+				background: white;
+				color: black;
+				padding: 20px;
+				right: -3em;
+				z-index: 2;
+				border: 1px solid silver;
+			}
+			.comment:hover .comment-title {
+				display: block;
 			}
 			.dissimilarity-index {
 				float: right;
@@ -243,9 +259,26 @@
 										<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main'><i class='icon-columns'></i></a>
 									";
 								}
+
+								// Comments
+								if (isset($compare->$path->comment)) {
+									$comment = $compare->$path->comment;
+									$comment = "
+										<i class='icon-$comment->symbol' title='$comment->title'></i>
+										<span class='comment-title'>$comment->title</span>
+									";
+								} else {
+									$comment = "
+										<i class='icon-pencil' title='Add comment'></i>
+									";
+								}
+
 								echo "
 								<li id='li$i' class='$compareClass'>$i. $suffix 
-									<a target='main' id='i$i' class='$batchClass' href='view.php?path=$path&amp;i=$i'>$innerFile</a> 
+									<a target='main' id='i$i' class='$batchClass' href='view.php?path=$path&amp;i=$i'>$innerFile</a>
+									<a class='comment' href='compare-comment.php?path=$path&amp;i=$i' target='main'>
+										$comment
+									</a>
 									$dissIndex
 								</li>
 								";

@@ -2,10 +2,18 @@
  * Start Scroller code														*
  *****************************************************************************/
 var units = [].concat(defaultDataGroupingUnits), // copy
-	defaultSeriesType;
+	defaultSeriesType,
+	
+	// Finding the min or max of a set of variables where we don't know if they are defined,
+	// is a pattern that is repeated several places in Highcharts. Consider making this
+	// a global utility method.
+	numExt = function (extreme) {
+		return Math[extreme].apply(0, grep(arguments, function (n) { return typeof n === 'number'; }));
+	};
+
 // add more resolution to units
-units[4] = [DAY, [1, 2, 3, 4]]; // allow more days
-units[5] = [WEEK, [1, 2, 3]]; // allow more weeks
+units[4] = ['day', [1, 2, 3, 4]]; // allow more days
+units[5] = ['week', [1, 2, 3]]; // allow more weeks
 
 defaultSeriesType = seriesTypes.areaspline === UNDEFINED ? 'line' : 'areaspline';
 
@@ -13,20 +21,20 @@ extend(defaultOptions, {
 	navigator: {
 		//enabled: true,
 		handles: {
-			backgroundColor: '#ebe7e8', // docs
-			borderColor: '#b2b1b6' // docs
+			backgroundColor: '#ebe7e8',
+			borderColor: '#b2b1b6'
 		},
 		height: 40,
-		margin: 25, // docs
-		maskFill: 'rgba(128,179,236,0.3)', // docs
-		maskInside: true, // docs
-		outlineColor: '#b2b1b6', // docs
+		margin: 25,
+		maskFill: 'rgba(128,179,236,0.3)',
+		maskInside: true,
+		outlineColor: '#b2b1b6',
 		outlineWidth: 1,
 		series: {
 			type: defaultSeriesType,
 			color: '#4572A7',
 			compare: null,
-			fillOpacity: 0.05, // docs
+			fillOpacity: 0.05,
 			dataGrouping: {
 				approximation: 'average',
 				enabled: true,
@@ -58,7 +66,7 @@ extend(defaultOptions, {
 			labels: {
 				align: 'left',
 				style: {
-					color: '#888' // docs
+					color: '#888'
 				},
 				x: 3,
 				y: -4
@@ -84,19 +92,19 @@ extend(defaultOptions, {
 	scrollbar: {
 		//enabled: true
 		height: isTouchDevice ? 20 : 14,
-		barBackgroundColor: '#bfc8d1', // docs
-		barBorderRadius: 0, // docs: new default
+		barBackgroundColor: '#bfc8d1',
+		barBorderRadius: 0,
 		barBorderWidth: 1,
-		barBorderColor: '#bfc8d1', // docs
+		barBorderColor: '#bfc8d1',
 		buttonArrowColor: '#666',
-		buttonBackgroundColor: '#ebe7e8', // docs
-		buttonBorderColor: '#bbb', // docs: new default
-		buttonBorderRadius: 0, // docs: new default
+		buttonBackgroundColor: '#ebe7e8',
+		buttonBorderColor: '#bbb',
+		buttonBorderRadius: 0,
 		buttonBorderWidth: 1,
 		minWidth: 6,
 		rifleColor: '#666',
-		trackBackgroundColor: '#eeeeee', // docs: new default
-		trackBorderColor: '#eeeeee', // docs: new default
+		trackBackgroundColor: '#eeeeee',
+		trackBorderColor: '#eeeeee',
 		trackBorderWidth: 1,
 		// trackBorderRadius: 0
 		liveRedraw: hasSVG && !isTouchDevice
@@ -835,16 +843,17 @@ Scroller.prototype = {
 		} else {
 			scroller.xAxis = xAxis = {
 				translate: function (value, reverse) {
-					var ext = chart.xAxis[0].getExtremes(),
+					var axis = chart.xAxis[0],
+						ext = axis.getExtremes(),
 						scrollTrackWidth = chart.plotWidth - 2 * scrollbarHeight,
-						dataMin = ext.dataMin,
-						valueRange = ext.dataMax - dataMin;
+						min = numExt('min', axis.options.min, ext.dataMin),
+						valueRange = numExt('max', axis.options.max, ext.dataMax) - min;
 
 					return reverse ?
 						// from pixel to value
-						(value * valueRange / scrollTrackWidth) + dataMin :
+						(value * valueRange / scrollTrackWidth) + min :
 						// from value to pixel
-						scrollTrackWidth * (value - dataMin) / valueRange;
+						scrollTrackWidth * (value - min) / valueRange;
 				},
 				toFixedRange: Axis.prototype.toFixedRange
 			};
@@ -888,21 +897,27 @@ Scroller.prototype = {
 	getUnionExtremes: function (returnFalseOnNoBaseSeries) {
 		var baseAxis = this.chart.xAxis[0],
 			navAxis = this.xAxis,
-			navAxisOptions = navAxis.options;
+			navAxisOptions = navAxis.options,
+			baseAxisOptions = baseAxis.options;
 
 		if (!returnFalseOnNoBaseSeries || baseAxis.dataMin !== null) {
 			return {
-				dataMin: pick(
+				dataMin: numExt(
+					'min',
 					navAxisOptions && navAxisOptions.min,
-					((defined(baseAxis.dataMin) && defined(navAxis.dataMin)) ? mathMin : pick)(baseAxis.dataMin, navAxis.dataMin)
+					baseAxisOptions.min,
+					baseAxis.dataMin, 
+					navAxis.dataMin
 				),
-				dataMax: pick(
+				dataMax: numExt(
+					'max',
 					navAxisOptions && navAxisOptions.max,
-					((defined(baseAxis.dataMax) && defined(navAxis.dataMax)) ? mathMax : pick)(baseAxis.dataMax, navAxis.dataMax)
+					baseAxisOptions.max,
+					baseAxis.dataMax, 
+					navAxis.dataMax
 				)
 			};
 		}
-
 	},
 
 	/**

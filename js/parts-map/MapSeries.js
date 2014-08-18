@@ -13,14 +13,17 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 	marker: null,
 	stickyTracking: false,
 	dataLabels: {
-		format: '{point.value}',
+		formatter: function () { // #2945
+			return this.point.value;
+		},
 		verticalAlign: 'middle',
 		crop: false,
 		overflow: false,
+		padding: 0,
 		style: {
 			color: 'white',
 			fontWeight: 'bold',
-			textShadow: '0 0 5px black'
+			HcTextStroke: '3px rgba(0,0,0,0.5)'
 		}
 	},
 	turboThreshold: 0,
@@ -33,7 +36,8 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 			animation: true
 		},
 		hover: {
-			brightness: 0.2
+			brightness: 0.2,
+			halo: null
 		}
 	}
 });
@@ -49,14 +53,11 @@ var MapAreaPoint = extendClass(Point, {
 
 		var point = Point.prototype.applyOptions.call(this, options, x),
 			series = this.series,
-			seriesOptions = series.options,
 			joinBy = series.joinBy,
 			mapPoint;
 
-		if (seriesOptions.mapData) {
-			mapPoint = joinBy[0] ? 
-				series.getMapData(joinBy[0], point[joinBy[1]]) : // Join by a string
-				seriesOptions.mapData[point.x]; // Use array position (faster)
+		if (series.mapData) {
+			mapPoint = point[joinBy[1]] !== undefined && series.mapMap[point[joinBy[1]]];
 			if (mapPoint) {
 				// This applies only to bubbles
 				if (series.xyFromShape) {
@@ -92,7 +93,9 @@ var MapAreaPoint = extendClass(Point, {
 	 */
 	onMouseOver: function (e) {
 		clearTimeout(this.colorInterval);
-		Point.prototype.onMouseOver.call(this, e);
+		if (this.value !== null) {
+			Point.prototype.onMouseOver.call(this, e);
+		}
 	},
 	/**
 	 * Custom animation for tweening out the colors. Animation reduces blinking when hovering
@@ -194,7 +197,8 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					pointMaxX = -MAX_VALUE, 
 					pointMinX =  MAX_VALUE, 
 					pointMaxY = -MAX_VALUE, 
-					pointMinY =  MAX_VALUE;
+					pointMinY =  MAX_VALUE,
+					properties = point.properties;
 
 				// The first time a map point is used, analyze its box
 				if (!point._foundBox) {
@@ -211,12 +215,15 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 						}
 					}
 					// Cache point bounding box for use to position data labels, bubbles etc
-					point._midX = pointMinX + (pointMaxX - pointMinX) * (point.middleX || 0.5); // pick is slower and very marginally needed
-					point._midY = pointMinY + (pointMaxY - pointMinY) * (point.middleY || 0.5);
+					point._midX = pointMinX + (pointMaxX - pointMinX) * 
+						(point.middleX || (properties && properties['hc-middle-x']) || 0.5); // pick is slower and very marginally needed
+					point._midY = pointMinY + (pointMaxY - pointMinY) * 
+						(point.middleY || (properties && properties['hc-middle-y']) || 0.5);
 					point._maxX = pointMaxX;
 					point._minX = pointMinX;
 					point._maxY = pointMaxY;
 					point._minY = pointMinY;
+					point.labelrank = pick(point.labelrank, (pointMaxX - pointMinX) * (pointMaxY - pointMinY));
 					point._foundBox = true;
 				}
 
@@ -238,13 +245,12 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 			// If no minRange option is set, set the default minimum zooming range to 5 times the 
 			// size of the smallest element
-			if (xAxis.options.minRange === undefined) {
+			if (xAxis && xAxis.options.minRange === undefined) {
 				xAxis.minRange = Math.min(5 * minRange, (this.maxX - this.minX) / 5, xAxis.minRange || MAX_VALUE);
 			}
-			if (yAxis.options.minRange === undefined) {
+			if (yAxis && yAxis.options.minRange === undefined) {
 				yAxis.minRange = Math.min(5 * minRange, (this.maxY - this.minY) / 5, yAxis.minRange || MAX_VALUE);
 			}
-
 		}
 	},
 	
@@ -310,65 +316,81 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	setData: function (data, redraw) {
 		var options = this.options,
 			mapData = options.mapData,
-			joinBy,
-			dataUsed = [];
+			joinBy = options.joinBy,
+			joinByNull = joinBy === null,
+			dataUsed = [],
+			mapPoint,
+			props,
+			i;
 
-		joinBy = this.joinBy = Highcharts.splat(options.joinBy);
+		if (joinByNull) {
+			joinBy = '_i';
+		}
+		joinBy = this.joinBy = Highcharts.splat(joinBy);
 		if (!joinBy[1]) {
 			joinBy[1] = joinBy[0];
 		}
 
-		this.getBox(data);
-		this.getBox(mapData);
-		if (options.allAreas && mapData) {
-
-			data = data || [];
-
-			// Registered the point codes that actually hold data
-			if (joinBy[1]) {
-				each(data, function (point) {
-					dataUsed.push(point[joinBy[1]]);
-				});
-			}
-
-			// Add those map points that don't correspond to data, which will be drawn as null points
-			dataUsed = '|' + dataUsed.join('|') + '|'; // String search is faster than array.indexOf 
-			each(mapData, function (mapPoint) {
-				if (!joinBy[0] || dataUsed.indexOf('|' + (mapPoint[joinBy[0]] || (mapPoint.properties && mapPoint.properties[joinBy[0]])) + '|') === -1) {
-					data.push(merge(mapPoint, { value: null }));
+		// Pick up numeric values, add index
+		if (data) {
+			each(data, function (val, i) {
+				if (typeof val === 'number') {
+					data[i] = {
+						value: val
+					};
+				}
+				if (joinByNull) {
+					data[i]._i = i;
 				}
 			});
+		}
+
+		this.getBox(data);
+		if (mapData) {
+			if (mapData.type === 'FeatureCollection') {
+				mapData = Highcharts.geojson(mapData, this.type, this);
+			}
+
+			this.getBox(mapData);
+			this.mapData = mapData;
+			this.mapMap = {};
+			
+			for (i = 0; i < mapData.length; i++) {
+				mapPoint = mapData[i];
+				props = mapPoint.properties;
+
+				mapPoint._i = i;
+				// Copy the property over to root for faster access
+				if (joinBy[0] && props && props[joinBy[0]]) {
+					mapPoint[joinBy[0]] = props[joinBy[0]];
+				}
+				this.mapMap[mapPoint[joinBy[0]]] = mapPoint;
+			}
+
+			if (options.allAreas) {
+
+				data = data || [];
+
+				// Registered the point codes that actually hold data
+				if (joinBy[1]) {
+					each(data, function (point) {
+						dataUsed.push(point[joinBy[1]]);
+					});
+				}
+
+				// Add those map points that don't correspond to data, which will be drawn as null points
+				dataUsed = '|' + dataUsed.join('|') + '|'; // String search is faster than array.indexOf 
+
+				each(mapData, function (mapPoint) {
+					if (!joinBy[0] || dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1) {
+						data.push(merge(mapPoint, { value: null }));
+					}
+				});
+			}
 		}
 		Series.prototype.setData.call(this, data, redraw);
 	},
 
-	/**
-	 * For each point, get the corresponding map data
-	 */
-	getMapData: function (key, value) {
-		var options = this.options,
-			mapData = options.mapData,
-			mapMap = this.mapMap,
-			mapPoint,
-			i = mapData.length;
-
-		// Create a cache for quicker lookup second time
-		if (!mapMap) {
-			mapMap = this.mapMap = {};
-		}
-		if (mapMap[value] !== undefined) {
-			return mapData[mapMap[value]];
-
-		} else if (value !== undefined) {
-			while (i--) {
-				mapPoint = mapData[i];
-				if (mapPoint[key] === value || (mapPoint.properties && mapPoint.properties[key] === value)) {
-					mapMap[value] = i; // cache it
-					return mapPoint;
-				}
-			}
-		}
-	},
 	
 	/**
 	 * No graph for the map series
@@ -380,6 +402,14 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * we skip it now and call it from drawPoints instead.
 	 */
 	drawDataLabels: noop,
+
+	/**
+	 * Allow a quick redraw by just translating the area group. Used for zooming and panning
+	 * in capable browsers.
+	 */
+	doFullTranslate: function () {
+		return this.isDirtyData || this.chart.renderer.isVML || !this.baseTrans;
+	},
 	
 	/**
 	 * Add the path option for data points. Find the max value for color calculation.
@@ -387,7 +417,8 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	translate: function () {
 		var series = this,
 			xAxis = series.xAxis,
-			yAxis = series.yAxis;
+			yAxis = series.yAxis,
+			doFullTranslate = series.doFullTranslate();
 
 		series.generatePoints();
 		
@@ -398,7 +429,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			point.plotX = xAxis.toPixels(point._midX, true);
 			point.plotY = yAxis.toPixels(point._midY, true);
 
-			if (series.isDirtyData || series.chart.renderer.isVML) {
+			if (doFullTranslate) {
 		
 				point.shapeType = 'path';
 				point.shapeArgs = {
@@ -441,7 +472,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		}
 		
 		// Draw the shapes again
-		if (series.isDirtyData || renderer.isVML || !baseTrans) {
+		if (series.doFullTranslate()) {
 
 			// Individual point actions	
 			if (chart.hasRendered && series.pointAttrToOptions.fill === 'color') {
@@ -459,6 +490,18 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			series.group = series.transformGroup;
 			seriesTypes.column.prototype.drawPoints.apply(series);
 			series.group = group; // Reset
+
+			// Add class names
+			each(series.points, function (point) {
+				if (point.graphic) {
+					if (point.name) {
+						point.graphic.addClass('highcharts-name-' + point.name.replace(' ', '-').toLowerCase());
+					}
+					if (point.properties && point.properties['hc-key']) {
+						point.graphic.addClass('highcharts-key-' + point.properties['hc-key'].toLowerCase());
+					}
+				}
+			});
 
 			// Set the base for later scale-zooming. The originX and originY properties are the 
 			// axis values in the plot area's upper left corner.
@@ -493,14 +536,78 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 		}
 
+		this.drawMapDataLabels();
 		
-		// Now draw the data labels. Special for maps is the time that the data labels are drawn (after points),
-		// and the clipping of the dataLabelsGroup.
-		Series.prototype.drawDataLabels.call(series);
-		if (series.dataLabelsGroup) {
-			series.dataLabelsGroup.clip(chart.clipRect);
+		
+	},
+
+	/**
+	 * Draw the data labels. Special for maps is the time that the data labels are drawn (after points),
+	 * and the clipping of the dataLabelsGroup.
+	 */		
+	drawMapDataLabels: function () {
+
+		Series.prototype.drawDataLabels.call(this);
+		if (this.dataLabelsGroup) {
+			this.dataLabelsGroup.clip(this.chart.clipRect);
 		}
-		
+
+		this.hideOverlappingDataLabels();
+	},
+
+	/**
+	 * Hide overlapping labels. Labels are moved and faded in and out on zoom to provide a smooth 
+	 * visual imression.
+	 */		
+	hideOverlappingDataLabels: function () {
+
+		var points = this.points,
+			len = points.length,
+			i,
+			j,
+			label1,
+			label2,
+			intersectRect = function (pos1, pos2, size1, size2) {
+				return !(
+					pos2.x > pos1.x + size1.width ||
+					pos2.x + size2.width < pos1.x ||
+					pos2.y > pos1.y + size1.height ||
+					pos2.y + size2.height < pos1.y
+				);
+			};
+
+		// Mark with initial opacity
+		each(points, function (point, label) {
+			label = point.dataLabel;
+			if (label) {
+				label.oldOpacity = label.opacity;
+				label.newOpacity = 1;
+			}
+		});
+
+		// Detect overlapping labels
+		for (i = 0; i < len - 1; ++i) {
+			label1 = points[i].dataLabel;
+
+			for (j = i + 1; j < len; ++j) {
+				label2 = points[j].dataLabel;
+				if (label1 && label2 && label1.newOpacity !== 0 && label2.newOpacity !== 0 && 
+						intersectRect(label1.alignAttr, label2.alignAttr, label1, label2)) {
+					(points[i].labelrank < points[j].labelrank ? label1 : label2).newOpacity = 0;
+				}
+			}
+		}
+
+		// Hide or show
+		each(points, function (point, label) {
+			label = point.dataLabel;
+			if (label) {
+				if (label.oldOpacity !== label.newOpacity) {
+					label[label.isOld ? 'animate' : 'attr'](extend({ opacity: label.newOpacity }, label.alignAttr));
+				}
+				label.isOld = true;
+			}
+		});
 	},
 
 	/**

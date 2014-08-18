@@ -1,11 +1,10 @@
 $(function () {
-    var chart = new Highcharts.Chart({
+    $('#container').highcharts({
         chart: {
-            renderTo: 'container',
             margin: [150, 75, 75, 75],
             type: 'scatter',
             options3d: {
-				enabled: true,
+                enabled: true,
                 alpha: 20,
                 beta: 30,
                 depth: 200,

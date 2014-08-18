@@ -185,13 +185,22 @@
 				}
 				rotation = rotation * 180 / Math.PI;
 
+				var angle1 = rotation / (180 / Math.PI),
+					angle2 = yAxis.startAngleRad,
+					minAngle = Math.min(angle1, angle2),
+					maxAngle = Math.max(angle1, angle2);
+
+				if (maxAngle - minAngle > 2 * Math.PI) {
+					maxAngle = minAngle + 2 * Math.PI;
+				}
+
 				shapeArgs = {
 					x: center[0],
 					y: center[1],
 					r: radius,
 					innerR: innerRadius,
-					start: yAxis.startAngleRad,
-					end: rotation / (180 / Math.PI)
+					start: minAngle,
+					end: maxAngle 
 				};
 
 				if (graphic) {
@@ -207,12 +216,13 @@
 					});
 					/*jslint unparam: false*/
 					shapeArgs.d = d; // animate alters it
-				} else {
+				} else {					
 					point.graphic = renderer.arc(shapeArgs)
 						.attr({
 							stroke: options.borderColor || 'none',
 							'stroke-width': options.borderWidth || 0,
-							fill: point.color
+							fill: point.color,
+							'sweep-flag': 0
 						})
 						.add(series.group);
 				}

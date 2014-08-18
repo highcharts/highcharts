@@ -11,10 +11,11 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 	marker: null,
 	threshold: null,
 	tooltip: {
-		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>' // docs
+		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
 	},
 	trackByArea: true,
 	dataLabels: {
+		align: null,
 		verticalAlign: null,
 		xLow: 0,
 		xHigh: 0,
@@ -152,6 +153,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			originalDataLabels = [],
 			seriesProto = Series.prototype,
 			dataLabelOptions = this.options.dataLabels,
+			align = dataLabelOptions.align,
 			point,
 			inverted = this.chart.inverted;
 			
@@ -175,7 +177,9 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 				// Set the default offset
 				point.below = false;
 				if (inverted) {
-					dataLabelOptions.align = 'left';
+					if (!align) {
+						dataLabelOptions.align = 'left';
+					}
 					dataLabelOptions.x = dataLabelOptions.xHigh;								
 				} else {
 					dataLabelOptions.y = dataLabelOptions.yHigh;
@@ -202,7 +206,9 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 				// Set the default offset
 				point.below = true;
 				if (inverted) {
-					dataLabelOptions.align = 'right';
+					if (!align) {
+						dataLabelOptions.align = 'right';
+					}
 					dataLabelOptions.x = dataLabelOptions.xLow;
 				} else {
 					dataLabelOptions.y = dataLabelOptions.yLow;
@@ -212,6 +218,8 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 				seriesProto.drawDataLabels.apply(this, arguments);
 			}
 		}
+
+		dataLabelOptions.align = align;
 	
 	},
 	
@@ -219,7 +227,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 		seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
 	},
 	
-	getSymbol: seriesTypes.column.prototype.getSymbol,
+	getSymbol: noop,
 	
 	drawPoints: noop
 });

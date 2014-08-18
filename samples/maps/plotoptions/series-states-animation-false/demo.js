@@ -1,12 +1,16 @@
 $(function () {
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
-        
+
         // Initiate the chart
         $('#container').highcharts('Map', {
-            
+
             title : {
                 text : 'Population density by country (/km²)'
+            },
+
+            subtitle: {
+                text: 'Animation on mouse out disabled. Notice the annoying flickering when hovering over Canadian arctic islands.'
             },
 
             mapNavigation: {
@@ -24,8 +28,8 @@ $(function () {
 
             series : [{
                 data : data,
-                mapData: Highcharts.maps.world,
-                joinBy: 'code',
+                mapData: Highcharts.maps['custom/world'],
+                joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
                 states: {
                     hover: {

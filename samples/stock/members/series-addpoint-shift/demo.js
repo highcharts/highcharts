@@ -1,31 +1,31 @@
-$(function() {
-	var data = usdeur.splice(0, 500);
+$(function () {
+    var data = usdeur.splice(0, 500);
 
-	$('#container').highcharts('StockChart', {
+    $('#container').highcharts('StockChart', {
 
-	    rangeSelector: {
-	    	selected: 1
-	    },
+        rangeSelector: {
+            selected: 1
+        },
 
-	    series: [{
-	        name: 'USD to EUR',
-	        data: data
-	    }]
-	});
+        series: [{
+            name: 'USD to EUR',
+            data: data
+        }]
+    });
 
-	$('#button').click(function() {
-		var chart = $('#container').highcharts(),
-        	i = 0,
-			series = chart.series[0];
-		data = usdeur.splice(0, 100);
+    $('#button').click(function () {
+        var chart = $('#container').highcharts(),
+            i = 0,
+            series = chart.series[0];
+        data = usdeur.splice(0, 100);
 
-		for (i; i < data.length; i++) {
-			series.addPoint(data[i], false, true);
-		}
-		chart.redraw();
+        for (i; i < data.length; i += 1) {
+            series.addPoint(data[i], false, true);
+        }
+        chart.redraw();
 
-		if (!usdeur.length) {
-			this.disabled = true;
-		}
-	});
+        if (!usdeur.length) {
+            this.disabled = true;
+        }
+    });
 });

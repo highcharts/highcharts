@@ -12,7 +12,7 @@ $(function () {
 
     // the button action
     var random = 0.5; // for first, automated test
-    $('#button').click(function() {
+    $('#button').click(function () {
         var chart = $('#container').highcharts();
         chart.series[0].addPoint([
             (random || Math.random()) * 12,

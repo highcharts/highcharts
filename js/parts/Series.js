@@ -272,60 +272,45 @@ Series.prototype = {
 		return options;
 
 	},
+
+	getCyclic: function (prop, value, defaults) {
+		var i,
+			userOptions = this.userOptions,
+			indexName = '_' + prop + 'Index',
+			counterName = prop + 'Counter';
+
+		if (!value) {
+			if (defined(userOptions[indexName])) { // after Series.update()
+				i = userOptions[indexName];
+			} else {
+				userOptions[indexName] = i = this.chart[counterName] % defaults.length;
+				this.chart[counterName] += 1;
+			}
+			value = defaults[i];
+		}
+		this[prop] = value;
+	},
+
 	/**
 	 * Get the series' color
 	 */
 	getColor: function () {
-		var options = this.options,
-			userOptions = this.userOptions,
-			defaultColors = this.chart.options.colors,
-			counters = this.chart.counters,
-			color,
-			colorIndex;
-
-		color = options.color || defaultPlotOptions[this.type].color;
-
-		if (!color && !options.colorByPoint) {
-			if (defined(userOptions._colorIndex)) { // after Series.update()
-				colorIndex = userOptions._colorIndex;
-			} else {
-				userOptions._colorIndex = counters.color;
-				colorIndex = counters.color++;
-			}
-			color = defaultColors[colorIndex];
+		if (!this.options.colorByPoint) {
+			this.getCyclic('color', this.options.color || defaultPlotOptions[this.type].color, this.chart.options.colors);
 		}
-
-		this.color = color;
-		counters.wrapColor(defaultColors.length);
 	},
 	/**
 	 * Get the series' symbol
 	 */
 	getSymbol: function () {
-		var series = this,
-			userOptions = series.userOptions,
-			seriesMarkerOption = series.options.marker,
-			chart = series.chart,
-			defaultSymbols = chart.options.symbols,
-			counters = chart.counters,
-			symbolIndex;
+		var seriesMarkerOption = this.options.marker;
 
-		series.symbol = seriesMarkerOption.symbol;
-		if (!series.symbol) {
-			if (defined(userOptions._symbolIndex)) { // after Series.update()
-				symbolIndex = userOptions._symbolIndex;
-			} else {
-				userOptions._symbolIndex = counters.symbol;
-				symbolIndex = counters.symbol++;
-			}
-			series.symbol = defaultSymbols[symbolIndex];
-		}
+		this.getCyclic('symbol', seriesMarkerOption.symbol, this.chart.options.symbols);
 
 		// don't substract radius in image symbols (#604)
-		if (/^url/.test(series.symbol)) {
+		if (/^url/.test(this.symbol)) {
 			seriesMarkerOption.radius = 0;
 		}
-		counters.wrapSymbol(defaultSymbols.length);
 	},
 
 	drawLegendSymbol: LegendSymbolMixin.drawLineMarker,
@@ -487,6 +472,7 @@ Series.prototype = {
 			cropThreshold = options.cropThreshold,
 			activePointCount = 0,
 			isCartesian = series.isCartesian,
+			xExtremes,
 			min,
 			max;
 
@@ -500,8 +486,9 @@ Series.prototype = {
 		// optionally filter out points outside the plot area
 		if (isCartesian && series.sorted && (!cropThreshold || dataLength > cropThreshold || series.forceCrop)) {
 			
-			min = xAxis.min;
-			max = xAxis.max;
+			xExtremes = xAxis.getExtremes(); // corrected for log axis (#3053)
+			min = xExtremes.min;
+			max = xExtremes.max;
 
 			// it's outside current extremes
 			if (processedXData[dataLength - 1] < min || processedXData[0] > max) {
@@ -711,7 +698,6 @@ Series.prototype = {
 		}
 		this.generatePoints();
 		var series = this,
-			inverted = series.chart.inverted,
 			options = series.options,
 			stacking = options.stacking,
 			xAxis = series.xAxis,
@@ -738,6 +724,7 @@ Series.prototype = {
 			// Discard disallowed y values for log axes
 			if (yAxis.isLog && yValue <= 0) {
 				point.y = yValue = null;
+				error(10);
 			}
 
 			// Get the plotX translation
@@ -792,10 +779,6 @@ Series.prototype = {
 			// some API data
 			point.category = categories && categories[point.x] !== UNDEFINED ?
 				categories[point.x] : point.x;
-
-			// Get true plot pixel position regardless of inversion
-			point.invX = inverted ? yAxis.len - point.plotY : point.plotX;
-			point.invY = inverted ? xAxis.len - point.plotX : point.plotY;
 
 		}
 
@@ -934,7 +917,7 @@ Series.prototype = {
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
 				enabled = (globallyEnabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
-				isInside = chart.isInsidePlot(point.invX, point.invY); // #1858
+				isInside = chart.isInsidePlot(mathRound(plotX), plotY, chart.inverted); // #1858
 
 				// only draw the point if y is defined
 				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
@@ -1036,8 +1019,8 @@ Series.prototype = {
 		if (seriesOptions.marker) { // line, spline, area, areaspline, scatter
 
 			// if no hover radius is given, default to normal radius + 2
-			stateOptionsHover.radius = stateOptionsHover.radius || normalOptions.radius + 2;
-			stateOptionsHover.lineWidth = stateOptionsHover.lineWidth || normalOptions.lineWidth + 1;
+			stateOptionsHover.radius = stateOptionsHover.radius || normalOptions.radius + stateOptionsHover.radiusPlus;
+			stateOptionsHover.lineWidth = stateOptionsHover.lineWidth || normalOptions.lineWidth + stateOptionsHover.lineWidthPlus;
 
 		} else { // column, bar, pie
 

@@ -4,12 +4,15 @@
 defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 	dataLabels: {
 		enabled: true,
-		format: '{point.name}',
+		formatter: function () { // #2945
+			return this.point.name; 
+		},
 		color: 'black',
 		crop: false,
+		defer: false,
 		overflow: false,
 		style: {
-			textShadow: '0 0 5px white'
+			HcTextStroke: '3px rgba(255,255,255,0.5)'
 		}
 	}
 });

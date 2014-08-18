@@ -70,7 +70,7 @@ var GaugeSeries = {
 	drawGraph: noop,
 	fixedBox: true,
 	forceDL: true,
-	trackerGroups: ['group', 'dataLabels'],
+	trackerGroups: ['group', 'dataLabelsGroup'],
 	
 	/**
 	 * Calculate paths etc
@@ -238,11 +238,7 @@ var GaugeSeries = {
 	/**
 	 * If the tracking module is loaded, add the point tracker
 	 */
-	drawTracker: function () {
-		if (TrackerMixin) {
-			TrackerMixin.drawTrackerPoint.call(this);
-		}
-	}
+	drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint
 };
 seriesTypes.gauge = extendClass(seriesTypes.line, GaugeSeries);
 

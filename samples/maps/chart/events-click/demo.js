@@ -1,7 +1,7 @@
 $(function () {
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
-        
+
         // Initiate the chart
         $('#container').highcharts('Map', {
 
@@ -9,7 +9,8 @@ $(function () {
                 events: {
                     click: function (e) {
                         var x = Math.round(e.xAxis[0].value),
-                            y = Math.round(e.yAxis[0].value)
+                            y = Math.round(e.yAxis[0].value);
+
                         this.get('clicks').addPoint({
                             x: x,
                             y: y,
@@ -18,8 +19,8 @@ $(function () {
                     }
                 }
             },
-            
-            title : {
+
+            title: {
                 text : 'Add points on chart click'
             },
 
@@ -36,10 +37,10 @@ $(function () {
                 type: 'logarithmic'
             },
 
-            series : [{
+            series: [{
                 data : data,
-                mapData: Highcharts.maps.world,
-                joinBy: 'code',
+                mapData: Highcharts.maps['custom/world'],
+                joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
                 states: {
                     hover: {

@@ -165,21 +165,24 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 		
 		URL u = getClass().getProtectionDomain().getCodeSource().getLocation();
 		URLClassLoader jarLoader = new URLClassLoader(new URL[]{u}, Thread.currentThread().getContextClassLoader());
-		String filenames[] = new String[] {"highcharts-convert.js","highcharts.js","highstock.js","jquery.1.9.1.min.js","map.js","highcharts-3d.js","highcharts-more.js","data.js"};
+		String filenames[] = new String[] {"highcharts-convert.js","highcharts.js","highstock.js","jquery.1.9.1.min.js","map.js","highcharts-more.js", "data.js", "drilldown.js", "funnel.js", "heatmap.js", "highcharts-3d.js", "no-data-to-display.js", "maps.js", "solid-gauge.js"};
 		
 		for (String filename : filenames) {
 		
 			ClassPathResource resource = new ClassPathResource("phantomjs/" + filename, jarLoader);
-
-			Path path = Paths.get(TempDir.getPhantomJsDir().toString(), filename);
-			File file;
-			try {
-				file = Files.createFile(path).toFile();
-				file.deleteOnExit();
-				InputStream in = resource.getInputStream();
-				IOUtils.copy(in, new FileOutputStream(file));
-			} catch (IOException ioex) {
-				logger.error("Error while setting up phantomjs environment: " + ioex.getMessage());
+			if (resource.exists()) {
+				Path path = Paths.get(TempDir.getPhantomJsDir().toString(), filename);
+				File file;
+				try {
+					file = Files.createFile(path).toFile();
+					file.deleteOnExit();
+					InputStream in = resource.getInputStream();
+					IOUtils.copy(in, new FileOutputStream(file));
+				} catch (IOException ioex) {
+					logger.error("Error while setting up phantomjs environment: " + ioex.getMessage());
+				}
+			} else {
+				logger.debug("Copy javascript file to temp folder, resource doesn't exist: " + filename);
 			}
 		}
 		

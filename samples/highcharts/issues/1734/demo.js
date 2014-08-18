@@ -9,7 +9,7 @@ $(function () {
         title: {
             text: 'Highcharts <= 3.0.9: Zooming outside the data range had unexpected effects.'
         },
-        
+
         xAxis: {
             min: 0,
             max: 20

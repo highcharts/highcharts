@@ -1,8 +1,8 @@
-$(function() {
+$(function () {
     $('#container').highcharts({
         chart: {
             type: 'column'
-            
+
         },
         legend: {
             width: 420,

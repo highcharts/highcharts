@@ -1,47 +1,47 @@
-$(function() {
-	$.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function(data) {
-		
-		// Create the chart
-		$('#container').highcharts('StockChart', {
-		    chart: {
-		        type: 'area'
-		    },
+$(function () {
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
 
-		    rangeSelector: {
-				inputEnabled: $('#container').width() > 480,
-		        selected: 1
-		    },
+        // Create the chart
+        $('#container').highcharts('StockChart', {
+            chart: {
+                type: 'area'
+            },
 
-		    title: {
-		        text: 'AAPL Stock Price'
-		    },
+            rangeSelector: {
+                inputEnabled: $('#container').width() > 480,
+                selected: 1
+            },
 
-		    yAxis: {
-		        reversed: true,
-		        showFirstLabel: false,
-		        showLastLabel: true
-		    },
+            title: {
+                text: 'AAPL Stock Price'
+            },
 
-		    series: [{
-		        name: 'AAPL Stock Price',
-		        data: data,
-		        threshold: null,
-		        fillColor : {
-					linearGradient : {
-						x1: 0, 
-						y1: 1, 
-						x2: 0, 
-						y2: 0
-					},
-					stops : [
-						[0, Highcharts.getOptions().colors[0]], 
-						[1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-					]
-				},
-				tooltip: {
-					valueDecimals: 2
-				}
-		    }]
-		});
-	});
+            yAxis: {
+                reversed: true,
+                showFirstLabel: false,
+                showLastLabel: true
+            },
+
+            series: [{
+                name: 'AAPL Stock Price',
+                data: data,
+                threshold: null,
+                fillColor : {
+                    linearGradient : {
+                        x1: 0,
+                        y1: 1,
+                        x2: 0,
+                        y2: 0
+                    },
+                    stops : [
+                        [0, Highcharts.getOptions().colors[0]],
+                        [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
+                    ]
+                },
+                tooltip: {
+                    valueDecimals: 2
+                }
+            }]
+        });
+    });
 });

@@ -432,9 +432,9 @@ extend(Point.prototype, {
 		var chart = this.series.chart,
 			hoverPoints = chart.hoverPoints;
 
-		if (!hoverPoints || inArray(this, hoverPoints) === -1) { // #887
-			this.firePointEvent('mouseOut');
+		this.firePointEvent('mouseOut');
 
+		if (!hoverPoints || inArray(this, hoverPoints) === -1) { // #887, #2240
 			this.setState();
 			chart.hoverPoint = null;
 		}
@@ -558,7 +558,7 @@ extend(Point.prototype, {
 			}
 
 			if (stateMarkerGraphic) {
-				stateMarkerGraphic[state && chart.isInsidePlot(point.invX, point.invY) ? 'show' : 'hide'](); // #2450
+				stateMarkerGraphic[state && chart.isInsidePlot(plotX, plotY, chart.inverted) ? 'show' : 'hide'](); // #2450
 			}
 		}
 
@@ -580,11 +580,16 @@ extend(Point.prototype, {
 
 		point.state = state;
 	},
+
 	haloPath: function (size) {
-		var plotBox = this.series.getPlotBox();
-		return this.series.chart.renderer.symbols.circle(
-			plotBox.translateX + this.invX - size, 
-			plotBox.translateY + this.invY - size, 
+		var series = this.series,
+			chart = series.chart,
+			plotBox = series.getPlotBox(),
+			inverted = chart.inverted;
+
+		return chart.renderer.symbols.circle(
+			plotBox.translateX + (inverted ? series.yAxis.len - this.plotY : this.plotX) - size, 
+			plotBox.translateY + (inverted ? series.xAxis.len - this.plotX : this.plotY) - size, 
 			size * 2, 
 			size * 2
 		);
@@ -674,7 +679,7 @@ extend(Series.prototype, {
 			}
 
 			if (state) {
-				lineWidth = stateOptions[state].lineWidth || lineWidth + 1;
+				lineWidth = stateOptions[state].lineWidth || lineWidth + (stateOptions[state].lineWidthPlus || 0);
 			}
 
 			if (graph && !graph.dashstyle) { // hover is turned off for dashed lines in VML

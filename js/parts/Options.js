@@ -21,7 +21,7 @@ defaultLabelOptions = {
 
 defaultOptions = {
 	colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', 
-		    '#8085e9', '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'], // docs
+		    '#8085e9', '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'],
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
 		loading: 'Loading...',
@@ -96,7 +96,7 @@ defaultOptions = {
 		// verticalAlign: 'top',
 		// y: null,
 		style: {
-			color: '#333333', // docs
+			color: '#333333',
 			fontSize: '18px'
 		}
 
@@ -109,7 +109,7 @@ defaultOptions = {
 		// verticalAlign: 'top',
 		// y: null,
 		style: {
-			color: '#555555' // docs
+			color: '#555555'
 		}
 	},
 
@@ -140,8 +140,9 @@ defaultOptions = {
 				//fillColor: null,
 				states: { // states for a single point
 					hover: {
-						enabled: true
-						//radius: base + 2
+						enabled: true,
+						lineWidthPlus: 1,
+						radiusPlus: 2
 					},
 					select: {
 						fillColor: '#FFFFFF',
@@ -177,7 +178,7 @@ defaultOptions = {
 			states: { // states for the entire series
 				hover: {
 					//enabled: false,
-					//lineWidth: base + 1,
+					lineWidthPlus: 1,
 					marker: {
 						// lineWidth: base + 1,
 						// radius: base + 1
@@ -221,7 +222,7 @@ defaultOptions = {
 		},
 		//borderWidth: 0,
 		borderColor: '#909090',
-		borderRadius: 0, // docs
+		borderRadius: 0,
 		navigation: {
 			// animation: true,
 			activeColor: '#274b6d',
@@ -237,9 +238,9 @@ defaultOptions = {
 			padding: '5px'
 		},*/
 		itemStyle: {			
-			color: '#333333', // docs
+			color: '#333333',
 			fontSize: '12px',
-			fontWeight: 'bold' // docs
+			fontWeight: 'bold'
 		},
 		itemHoverStyle: {
 			//cursor: 'pointer', removed as of #601
@@ -274,7 +275,7 @@ defaultOptions = {
 		labelStyle: {
 			fontWeight: 'bold',
 			position: RELATIVE,
-			top: '1em'
+			top: '45%'
 		},
 		// showDuration: 0,
 		style: {
@@ -304,9 +305,9 @@ defaultOptions = {
 		},
 		//formatter: defaultFormatter,
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
-		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>', // docs
+		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 		shadow: true,
-		//shape: 'calout',
+		//shape: 'callout',
 		//shared: false,
 		snap: isTouchDevice ? 25 : 10,
 		style: {
@@ -362,6 +363,7 @@ function setTimeMethods() {
 		SET = useUTC ? 'setUTC' : 'set';
 
 
+	Date = defaultOptions.global.Date || window.Date; // docs - demo and description at https://github.com/highslide-software/highcharts.com/pull/3313
 	timezoneOffset = ((useUTC && defaultOptions.global.timezoneOffset) || 0) * 60000;
 	makeTime = useUTC ? Date.UTC : function (year, month, date, hours, minutes, seconds) {
 		return new Date(

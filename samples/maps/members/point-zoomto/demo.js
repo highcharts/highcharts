@@ -1,7 +1,7 @@
 $(function () {
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
-        
+
         // Assign id's
         $.each(data, function () {
             this.id = this.code;
@@ -11,9 +11,13 @@ $(function () {
         $('#container').highcharts('Map', {
 
             title: {
-                text: 'Update point'
+                text: 'Zoom to point'
             },
-            
+
+            subtitle: {
+                text: 'Click a country to zoom to it. Use buttons below map for selected tests.'
+            },
+
             legend: {
                 title: {
                     text: 'Population density per km²'
@@ -25,13 +29,26 @@ $(function () {
                 max: 1000,
                 type: 'logarithmic'
             },
+
+            mapNavigation: {
+                enabled: true,
+                buttonOptions: {
+                    verticalAlign: 'bottom'
+                }
+            },
+
             series : [{
                 data : data,
-                mapData: Highcharts.maps.world,
-                joinBy: 'code',
+                mapData: Highcharts.maps['custom/world-highres'],
+                joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
                 allowPointSelect: true,
                 cursor: 'pointer',
+                events: {
+                    click: function (e) {
+                        e.point.zoomTo();
+                    }
+                },
                 states: {
                     hover: {
                         color: '#BADA55'

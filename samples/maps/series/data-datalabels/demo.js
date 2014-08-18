@@ -2,7 +2,7 @@ $(function () {
 
     // Initiate the chart
     $('#container').highcharts('Map', {
-        
+
         title : {
             text : 'Individually disabled data labels'
         },
@@ -64,13 +64,7 @@ $(function () {
             name: 'Random data',
             dataLabels: {
                 enabled: true,
-                format: '{point.name}: {point.value}',
-                backgroundColor: 'rgba(255,255,255,0.4)',
-                borderRadius: 8,
-                style: {
-                    color: 'black',
-                    fontWeight: 'bold'
-                }
+                format: '{point.name}: {point.value}'
             },
             states: {
                 hover: {

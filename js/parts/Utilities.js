@@ -69,22 +69,6 @@ function merge() {
 }
 
 /**
- * Take an array and turn into a hash with even number arguments as keys and odd numbers as
- * values. Allows creating constants for commonly used style properties, attributes etc.
- * Avoid it in performance critical situations like looping
- */
-function hash() {
-	var i = 0,
-		args = arguments,
-		length = args.length,
-		obj = {};
-	for (; i < length; i++) {
-		obj[args[i++]] = args[i];
-	}
-	return obj;
-}
-
-/**
  * Shortcut for parseInt
  * @param {Object} s
  * @param {Number} mag Magnitude
@@ -106,7 +90,7 @@ function isString(s) {
  * @param {Object} obj
  */
 function isObject(obj) {
-	return typeof obj === 'object';
+	return obj && typeof obj === 'object';
 }
 
 /**
@@ -206,7 +190,7 @@ function pick() {
 		length = args.length;
 	for (i = 0; i < length; i++) {
 		arg = args[i];
-		if (typeof arg !== 'undefined' && arg !== null) {
+		if (arg !== UNDEFINED && arg !== null) {
 			return arg;
 		}
 	}
@@ -257,7 +241,7 @@ function createElement(tag, attribs, styles, parent, nopad) {
  * @param {Object} members
  */
 function extendClass(parent, members) {
-	var object = function () {};
+	var object = function () { return UNDEFINED; };
 	object.prototype = new parent();
 	extend(object.prototype, members);
 	return object;
@@ -271,7 +255,8 @@ function extendClass(parent, members) {
  * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
  */
 function numberFormat(number, decimals, decPoint, thousandsSep) {
-	var lang = defaultOptions.lang,
+	var externalFn = Highcharts.numberFormat,
+		lang = defaultOptions.lang,
 		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
 		n = +number || 0,
 		c = decimals === -1 ?
@@ -283,8 +268,10 @@ function numberFormat(number, decimals, decPoint, thousandsSep) {
 		i = String(pInt(n = mathAbs(n).toFixed(c))),
 		j = i.length > 3 ? i.length % 3 : 0;
 
-	return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
-		(c ? d + mathAbs(n - i).toFixed(c).slice(2) : "");
+	return externalFn !== numberFormat ? 
+		externalFn(number, decimals, decPoint, thousandsSep) :
+		(s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
+			(c ? d + mathAbs(n - i).toFixed(c).slice(2) : ""));
 }
 
 /**
@@ -471,7 +458,7 @@ function getMagnitude(num) {
  * @param {Number} magnitude
  * @param {Object} options
  */
-function normalizeTickInterval(interval, multiples, magnitude, options) {
+function normalizeTickInterval(interval, multiples, magnitude, allowDecimals) {
 	var normalized, i;
 
 	// round to a tenfold of 1, 2, 2.5 or 5
@@ -483,7 +470,7 @@ function normalizeTickInterval(interval, multiples, magnitude, options) {
 		multiples = [1, 2, 2.5, 5, 10];
 
 		// the allowDecimals option
-		if (options && options.allowDecimals === false) {
+		if (allowDecimals === false) {
 			if (magnitude === 1) {
 				multiples = [1, 2, 5, 10];
 			} else if (magnitude <= 0.1) {
@@ -505,35 +492,6 @@ function normalizeTickInterval(interval, multiples, magnitude, options) {
 
 	return interval;
 }
-
-
-/**
- * Helper class that contains variuos counters that are local to the chart.
- */
-function ChartCounters() {
-	this.color = 0;
-	this.symbol = 0;
-}
-
-ChartCounters.prototype =  {
-	/**
-	 * Wraps the color counter if it reaches the specified length.
-	 */
-	wrapColor: function (length) {
-		if (this.color >= length) {
-			this.color = 0;
-		}
-	},
-
-	/**
-	 * Wraps the symbol counter if it reaches the specified length.
-	 */
-	wrapSymbol: function (length) {
-		if (this.symbol >= length) {
-			this.symbol = 0;
-		}
-	}
-};
 
 
 /**
@@ -637,14 +595,16 @@ function discardElement(element) {
 /**
  * Provide error messages for debugging, with links to online explanation 
  */
-function error(code, stop) {
+error = function (code, stop) {
 	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
 	if (stop) {
 		throw msg;
-	} else if (win.console) {
+	}
+	// else ...
+	if (win.console) {
 		console.log(msg);
 	}
-}
+};
 
 /**
  * Fix JS round off float errors
@@ -669,15 +629,13 @@ function setAnimation(animation, chart) {
 /**
  * The time unit lookup
  */
-/*jslint white: true*/
-timeUnits = hash(
-	MILLISECOND, 1,
-	SECOND, 1000,
-	MINUTE, 60000,
-	HOUR, 3600000,
-	DAY, 24 * 3600000,
-	WEEK, 7 * 24 * 3600000,
-	MONTH, 31 * 24 * 3600000,
-	YEAR, 31556952000
-);
-/*jslint white: false*/
+timeUnits = {
+	millisecond: 1,
+	second: 1000,
+	minute: 60000,
+	hour: 3600000,
+	day: 24 * 3600000,
+	week: 7 * 24 * 3600000,
+	month: 31 * 24 * 3600000,
+	year: 31556952000
+};

@@ -7,14 +7,16 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 	borderWidth: 0,
 	nullColor: '#F8F8F8',
 	dataLabels: {
-		format: '{point.value}',
+		formatter: function () { // #2945
+			return this.point.value;
+		},
 		verticalAlign: 'middle',
 		crop: false,
 		overflow: false,
 		style: {
 			color: 'white',
 			fontWeight: 'bold',
-			textShadow: '0 0 5px black'
+			HcTextStroke: '1px rgba(0,0,0,0.5)'
 		}
 	},
 	marker: null,
@@ -73,6 +75,13 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		});
 		
 		series.translateColors();
+
+		// Make sure colors are updated on colorAxis update (#2893)
+		if (this.chart.hasRendered) {
+			each(series.points, function (point) {
+				point.shapeArgs.fill = point.options.color || point.color; // #3311
+			});
+		}
 	},
 	drawPoints: seriesTypes.column.prototype.drawPoints,
 	animate: noop,

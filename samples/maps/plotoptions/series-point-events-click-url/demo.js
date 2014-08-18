@@ -1,10 +1,10 @@
 $(function () {
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
-        
+
         // Initiate the chart
         $('#container').highcharts('Map', {
-            
+
             title : {
                 text : 'Point click event test'
             },
@@ -20,7 +20,7 @@ $(function () {
                     point: {
                         events: {
                             click: function () {
-                                location.href = 'http://en.wikipedia.org/wiki/' + this.name
+                                location.href = 'http://en.wikipedia.org/wiki/' + this.name;
                             }
                         }
                     }
@@ -29,8 +29,8 @@ $(function () {
 
             series : [{
                 data : data,
-                mapData: Highcharts.maps.world,
-                joinBy: 'code',
+                mapData: Highcharts.maps['custom/world'],
+                joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
                 cursor: 'pointer',
                 states: {

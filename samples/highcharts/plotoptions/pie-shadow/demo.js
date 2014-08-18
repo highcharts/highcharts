@@ -3,14 +3,14 @@ $(function () {
         chart: {
             type: 'pie'
         },
-        
+
         plotOptions: {
             pie: {
                 allowPointSelect: true,
                 shadow: true
             }
         },
-        
+
         series: [{
             data: [
                 ['Firefox',   44.2],

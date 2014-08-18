@@ -19,13 +19,13 @@ $(function () {
                     tick = Math.floor(this.dataMin),
                     increment = Math.ceil((this.dataMax - this.dataMin) / 6);
 
-                for (; tick - increment <= this.dataMax; tick += increment) {
+                for (tick; tick - increment <= this.dataMax; tick += increment) {
                     positions.push(tick);
                 }
                 return positions;
             }
         },
-        
+
         series: [{
             data: [
                 [0, 1],
