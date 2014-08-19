@@ -15,20 +15,23 @@ var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
 			centerOption = options.center,
 			positions = [pick(centerOption[0], '50%'), pick(centerOption[1], '50%'), options.size || '100%', options.innerSize || 0],
 			smallestSize = mathMin(plotWidth, plotHeight),
-			isPercent;
-		
-		return map(positions, function (length, i) {
-			isPercent = /%$/.test(length);
+			isPercent,
+			i;
+
+		for (i = 0; i < 4; ++i) {
+			var value = positions[i];
+			isPercent = /%$/.test(value);
 			handleSlicingRoom = i < 2 || (i === 2 && isPercent);
-			return (isPercent ?
+			positions[i] = (isPercent ?
 				// i == 0: centerX, relative to width
 				// i == 1: centerY, relative to height
 				// i == 2: size, relative to smallestSize
-				// i == 4: innerSize, relative to smallestSize
-				[plotWidth, plotHeight, smallestSize, smallestSize][i] *
-					pInt(length) / 100 :
-				length) + (handleSlicingRoom ? slicingRoom : 0);
-		});
+				// i == 3: innerSize, relative to size
+				[plotWidth, plotHeight, smallestSize, positions[2]][i] *
+					pInt(value) / 100 :
+				value) + (handleSlicingRoom ? slicingRoom : 0);
+		}
+		return positions;
 	}
 };
 
