@@ -419,7 +419,7 @@
 	findHeaderRow: function () {
 		var headerRow = 0;
 		each(this.columns, function (column) {
-			if (typeof column[0] !== 'string') {
+			if (column.isNumeric && typeof column[0] !== 'string') {
 				headerRow = null;
 			}
 		});
@@ -687,7 +687,7 @@
 			freeIndexes,
 			typeCol,
 			index;
-			
+
 		xColumns.length = columns.length;
 		if (options.complete || options.afterComplete) {
 
@@ -769,9 +769,11 @@
 
 				// Add the series
 				series[seriesIndex] = {
-					name: builder.name,
 					data: data
 				};
+				if (builder.name) {
+					series[seriesIndex].name = builder.name;
+				}
 			}
 
 
