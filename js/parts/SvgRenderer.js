@@ -1,4 +1,3 @@
-
 /**
  * A wrapper object for SVG elements
  */
@@ -1697,7 +1696,7 @@ SVGRenderer.prototype = {
 	 * @param {Object} radius
 	 * @param {Object} options
 	 */
-	symbol: function (symbol, x, y, width, height, options) {
+	symbol: function (symbol, x, y, width, height, options, overrideWidth, overrideHeight) {
 
 		var obj,
 
@@ -1756,7 +1755,14 @@ SVGRenderer.prototype = {
 			};
 
 			imageSrc = symbol.match(imageRegex)[1];
-			imageSize = symbolSizes[imageSrc];
+			if (overrideWidth || overrideHeight) {
+				imageSize = [
+					overrideWidth  || overrideHeight,
+					overrideHeight || overrideWidth
+				];
+			} else {
+				imageSize = symbolSizes[imageSrc];
+			}
 
 			// Ireate the image synchronously, add attribs async
 			obj = this.image(imageSrc)
