@@ -25,13 +25,13 @@
 
 	extend(Axis.prototype, {
 		isInBreak: function (brk, val) {
-			var	repeat = brk.repeat,
+			var	repeat = brk.repeat || Infinity,
 				val = val % repeat,
 				val2 = val + repeat,
 				from = brk.from % repeat,
 				to = from + (brk.to - brk.from);
 
-				return ((val > from && val < to) || (val2 > from && val2 < to));
+			return ((val > from && val < to) || (val2 > from && val2 < to));
 		},
 
 		isInAnyBreak: function (val) {			
@@ -48,9 +48,10 @@
 			return false
 		}
 	});
-
+/*
 	wrap(Axis.prototype, 'setTickPositions', function (proceed) {
 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+		
 		var axis = this,
 			tickPositions = this.tickPositions,
 			info = this.tickPositions.info,
@@ -66,8 +67,8 @@
 		this.tickPositions = newPositions;
 		this.tickPositions.info = info;
 	});
-
-
+*/
+	
 	wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 
 		proceed.call(this, chart, userOptions);
@@ -76,116 +77,82 @@
 		
 		if (this.options.breaks) {
 			var axis = this;
-			axis.dateCorrection = axis.options.type === 'datetime' ? 4 * 24 * 3600 * 1000 : 0; // Jan. 1st 1970 is a Thursday 
 			axis.postTranslate = true;
 
-			this.val2lin = function (val) {	
-				var nval = val,
-					breaks = axis.options.breaks,
-					i = breaks.length,
-					brk,
-					occ,
-					corr;
-					
-				while (i--) {
-					brk = breaks[i];
-					corr = axis.dateCorrection + ((brk.to - axis.dateCorrection) % brk.repeat);
-					occ = Math.floor((val - (axis.min - Math.abs((axis.min - corr) % brk.repeat))) / brk.repeat);
-					nval -=  occ * (brk.to - brk.from); // Number of occurences * break width
-					nval += occ * (brk.width || 0);
-				}				
-				
-				return nval;
+			this.val2lin = function (val) {
+				return val - axis.shifts[val];
 			};
 			
 			this.lin2val = function (val) {
-				var nval = val,
-					breaks = axis.options.breaks,
-					i = breaks.length,
-					occ,
-					brk,
-					corr;
-
-				while (i--) {
-					brk = breaks[i];
-					corr = axis.dateCorrection + ((brk.to - axis.dateCorrection) % brk.repeat);
-					occ = Math.floor((val - (axis.min - Math.abs((axis.min - corr) % brk.repeat))) / brk.repeat);
-					nval +=  occ * (brk.to - brk.from); // Number of occurences * break width
-					nval -= occ * (brk.width || 0);
-				}		
-
-				return nval;
+				return val + axis.shifts[val];
 			};
 			
 			this.setAxisTranslation = function (saveOld) {
 				Axis.prototype.setAxisTranslation.call(this, saveOld);
+				
+				var breaks = axis.options.breaks,
+					brkPoints = axis.breakPoints = [],
+					shifts = axis.shifts = {},
+					min = Math.round(axis.userMin || axis.min),
+					max = Math.round(axis.userMax || axis.max),
+					shift = 0,
+					inbrk = false,
+					i;
 
-				fireEvent(axis, 'beforeBreaks');	
-
-				var oldLen = axis.max - axis.min,
-					newLen = oldLen,
-					breaks = axis.options.breaks,
-					i = breaks.length,
-					j,
-					occ,
-					brk,
-					corr;
-
-				var detectedBreaks = [];
-
-				while (i--) {
-					brk = breaks[i];
-					occ = 0, 
-					corr = axis.dateCorrection + ((brk.to - axis.dateCorrection) % brk.repeat),
-					j = axis.min - Math.abs((axis.min - corr) % brk.repeat);
-					for (j; j + brk.repeat <= axis.max; j += brk.repeat) {
-						detectedBreaks.push({from: j + brk.repeat - (brk.to - brk.from), to: j + brk.repeat, brk: brk});
-						occ++;
+				for (i = min; i <= max; i += axis.closestPointRange) {
+					if (axis.isInAnyBreak(i)) {
+						shift += axis.closestPointRange;
+						inbrk = true;
+					} else if (inbrk) { 
+						shift += axis.closestPointRange;
+						inbrk = false;
 					}
-					newLen -= occ * (brk.to - brk.from); // Number of occurences * break width
-					newLen += occ * (brk.width || 0);
-
-					if (axis.isInBreak(brk,axis.max)) {
-						newLen -= (axis.max % brk.repeat) - ((brk.from % brk.repeat) * (axis.max > 0 ? 1 : -1));
-					}					
-					if (axis.isInBreak(brk, axis.min)) {
-						//newLen -= ((brk.from % brk.repeat)+ (brk.to - brk.from)) - (axis.min % brk.repeat);
-					} 
+					shifts[i] = shift;
 				}
-				this.transA *= oldLen / newLen; 
 
-				for (i = 0; i < detectedBreaks.length; i ++) {
-					if (detectedBreaks[i].brk.callback) {
-						detectedBreaks[i].brk.callback.call(axis, detectedBreaks[i]);
+				var pre = null;
+				
+				inbrk = true;
+
+				for (i in shifts) {
+					if (shifts[i] == shifts[pre] && inbrk) {
+						brkPoints.push(pre);
+						inbrk = false;
+					} else if (shifts[i] !== shifts[pre] && !inbrk) {
+						 brkPoints.push(pre);
+						 inbrk = true;
 					}
+					pre = i;
 				}
-				fireEvent(axis, 'afterBreaks', {breaks: detectedBreaks});				
+
+				axis.transA *= (max - min) / (max - min - shift);
 			};
 
 		}
 		
 	});
-
+	
 	
 	wrap(Series.prototype, 'generatePoints', function (proceed) {
-		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-
 		var series = this,
-			points = series.points,
-			newPoints = [],
+			data = this.options.data,
+			ndata = [],
 			xAxis = this.xAxis,
-			yAxis = this.yAxis,
 			i = 0,
 			point;
 
-		while (i < points.length) {
-			point = points[i];			
-			if (!xAxis.isInAnyBreak(point.x) && !yAxis.isInAnyBreak(point.y)) {
-				newPoints.push(point);
-			}
+		while(i < data.length) {
+			point = data[i];
+			if (!xAxis.isInAnyBreak(point.x)) {
+				ndata.push(point);
+			} 
 			i++;
 		}
-		this.points = newPoints;
+
+		this.options.data = ndata;
+
+
+		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 
 	});
 
