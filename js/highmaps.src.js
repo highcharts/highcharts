@@ -8129,7 +8129,7 @@ Tooltip.prototype = {
 	/**
 	 * Hide the tooltip
 	 */
-	hide: function () {
+	hide: function (delay) {
 		var tooltip = this,
 			hoverPoints;
 		
@@ -8140,7 +8140,7 @@ Tooltip.prototype = {
 			this.hideTimer = setTimeout(function () {
 				tooltip.label.fadeOut();
 				tooltip.isHidden = true;
-			}, pick(this.options.hideDelay, 500));
+			}, pick(delay, this.options.hideDelay, 500));
 
 			// hide previous hoverPoints and set new
 			if (hoverPoints) {
@@ -8712,7 +8712,7 @@ Pointer.prototype = {
 	 * 
 	 * @param allowMove {Boolean} Instead of destroying the tooltip altogether, allow moving it if possible
 	 */
-	reset: function (allowMove) {
+	reset: function (allowMove, delay) {
 		var pointer = this,
 			chart = pointer.chart,
 			hoverSeries = chart.hoverSeries,
@@ -8747,7 +8747,7 @@ Pointer.prototype = {
 			}
 
 			if (tooltip) {
-				tooltip.hide();
+				tooltip.hide(delay);
 			}
 
 			if (pointer._onDocumentMouseMove) {
@@ -9299,6 +9299,7 @@ extend(Highcharts.Pointer.prototype, {
 					bounds.max = mathMax(axis.pos + axis.len, absMax + minPixelPadding);
 				}
 			});
+			self.res = true; // reset on next move
 		
 		// Event type is touchmove, handle panning and pinching
 		} else if (pinchDown.length) { // can be 0 when releasing, if touchend fires first
@@ -9321,6 +9322,9 @@ extend(Highcharts.Pointer.prototype, {
 			// Optionally move the tooltip on touchmove
 			if (!hasZoom && followTouchMove && touchesLength === 1) {
 				this.runPointActions(self.normalize(e));
+			} else if (self.res) {
+				self.res = false;
+				this.reset(false, 0);
 			}
 		}
 	},

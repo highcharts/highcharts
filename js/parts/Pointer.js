@@ -222,7 +222,7 @@ Pointer.prototype = {
 	 * 
 	 * @param allowMove {Boolean} Instead of destroying the tooltip altogether, allow moving it if possible
 	 */
-	reset: function (allowMove) {
+	reset: function (allowMove, delay) {
 		var pointer = this,
 			chart = pointer.chart,
 			hoverSeries = chart.hoverSeries,
@@ -257,7 +257,7 @@ Pointer.prototype = {
 			}
 
 			if (tooltip) {
-				tooltip.hide();
+				tooltip.hide(delay);
 			}
 
 			if (pointer._onDocumentMouseMove) {
