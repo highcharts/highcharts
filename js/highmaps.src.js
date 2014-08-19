@@ -3524,7 +3524,8 @@ SVGRenderer.prototype = {
 			};
 
 			imageSrc = symbol.match(imageRegex)[1];
-			imageSize = symbolSizes[imageSrc];
+			// docs: series-marker-width-height. Note that both width and height must be set
+			imageSize = symbolSizes[imageSrc] || (options && options.width && options.height && [options.width, options.height]);
 
 			// Ireate the image synchronously, add attribs async
 			obj = this.image(imageSrc)
@@ -3538,7 +3539,6 @@ SVGRenderer.prototype = {
 				centerImage(obj, imageSize);
 			} else {
 				// Initialize image to be 0 size so export will still function if there's no cached sizes.
-				//
 				obj.attr({ width: 0, height: 0 });
 
 				// Create a dummy JavaScript image to get the width and height. Due to a bug in IE < 8,
@@ -12809,6 +12809,7 @@ Series.prototype = {
 			seriesMarkerOptions = options.marker,
 			seriesPointAttr = series.pointAttr[''],
 			pointMarkerOptions,
+			hasPointMarker,
 			enabled,
 			isInside,
 			markerGroup = series.markerGroup,
@@ -12826,6 +12827,7 @@ Series.prototype = {
 				plotY = point.plotY;
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
+				hasPointMarker = !!point.marker;
 				enabled = (globallyEnabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
 				isInside = chart.isInsidePlot(mathRound(plotX), plotY, chart.inverted); // #1858
 
@@ -12853,7 +12855,8 @@ Series.prototype = {
 							plotX - radius,
 							plotY - radius,
 							2 * radius,
-							2 * radius
+							2 * radius,
+							hasPointMarker ? pointMarkerOptions : seriesMarkerOptions
 						)
 						.attr(pointAttr)
 						.add(markerGroup);

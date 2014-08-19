@@ -899,6 +899,7 @@ Series.prototype = {
 			seriesMarkerOptions = options.marker,
 			seriesPointAttr = series.pointAttr[''],
 			pointMarkerOptions,
+			hasPointMarker,
 			enabled,
 			isInside,
 			markerGroup = series.markerGroup,
@@ -916,6 +917,7 @@ Series.prototype = {
 				plotY = point.plotY;
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
+				hasPointMarker = !!point.marker;
 				enabled = (globallyEnabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
 				isInside = chart.isInsidePlot(mathRound(plotX), plotY, chart.inverted); // #1858
 
@@ -943,7 +945,8 @@ Series.prototype = {
 							plotX - radius,
 							plotY - radius,
 							2 * radius,
-							2 * radius
+							2 * radius,
+							hasPointMarker ? pointMarkerOptions : seriesMarkerOptions
 						)
 						.attr(pointAttr)
 						.add(markerGroup);
