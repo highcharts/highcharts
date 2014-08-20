@@ -95,6 +95,9 @@ Tick.prototype = {
 						.add(axis.labelGroup) :
 					null;
 
+			tick.labelLength = label.getBBox().width; // Un-rotated length
+			tick.rotation = 0; // Base value to detect change for new calls to getBBox
+
 			// Set the tick baseline and correct for rotation (#1764)
 			/*axis.tickBaseline = chart.renderer.fontMetrics(labelOptions.style.fontSize, label).b;
 			if (rotation && axis.side === 2) {
@@ -109,6 +112,7 @@ Tick.prototype = {
 				})
 				.css(css);
 		}
+		tick.slotWidth = width;
 		tick.yOffset = label ? pick(labelOptions.y, axis.tickBaseline + (axis.side === 2 ? 8 : -(label.getBBox().height / 2))) : 0;
 	},
 

@@ -5628,6 +5628,9 @@ Tick.prototype = {
 						.add(axis.labelGroup) :
 					null;
 
+			tick.labelLength = label.getBBox().width; // Un-rotated length
+			tick.rotation = 0; // Base value to detect change for new calls to getBBox
+
 			// Set the tick baseline and correct for rotation (#1764)
 			/*axis.tickBaseline = chart.renderer.fontMetrics(labelOptions.style.fontSize, label).b;
 			if (rotation && axis.side === 2) {
@@ -5642,6 +5645,7 @@ Tick.prototype = {
 				})
 				.css(css);
 		}
+		tick.slotWidth = width;
 		tick.yOffset = label ? pick(labelOptions.y, axis.tickBaseline + (axis.side === 2 ? 8 : -(label.getBBox().height / 2))) : 0;
 	},
 
@@ -7352,6 +7356,7 @@ Axis.prototype = {
 			sortedPositions,
 			lastRight,
 			overlap,
+			rotation,
 			pos,
 			bBox,
 			x,
@@ -7394,27 +7399,35 @@ Axis.prototype = {
 			var width;
 			
 
-			var attr = { rotation: 0 };
+			var attr = { rotation: 0 },
+				fontMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0].label);
+			
 			if (labelOptions.rotation) {
 				attr.rotation = labelOptions.rotation;
 			} else if (horiz) {
 				for (pos = 0; pos < tickPositions.length; pos++) {
-					width = ticks[pos].label.styles.width;
-					if (width && ticks[pos].label.getBBox().width > pInt(width)) {
-						axis.overlap = overlap = true;
-						break;
+					width = pInt(ticks[pos].label.styles.width);
+
+					if (ticks[pos].slotWidth) {
+						if (fontMetrics.h * 1.3 > ticks[pos].slotWidth) {
+							rotation = -90;
+							break;
+						} else if (ticks[pos].labelLength > pInt(ticks[pos].label.styles.width)) { // this width includes labelOptions.padding
+							rotation = -45;
+							break;
+						}
 					}
 				}
-				if (overlap) {
-					attr.rotation = -45;
+				if (rotation) {
+					attr.rotation = rotation;
 				}
 			}
 			// Set the explicit or automatic label alignment
 			axis.labelAlign = attr.align = labelOptions.align || axis.autoLabelAlign(attr.rotation);
 
 			each(tickPositions, function (pos) {
-				ticks[pos].label[ticks[pos].isNew ? 'attr' : 'animate'](attr);
-				if (defined(ticks[pos].rotation) && ticks[pos].rotation !== attr.rotation) {
+				ticks[pos].label.attr(attr);
+				if (ticks[pos].rotation !== attr.rotation) {
 					ticks[pos].label.bBox = null;
 				}
 				ticks[pos].rotation = attr.rotation;
@@ -7422,7 +7435,7 @@ Axis.prototype = {
 
 
 			// Set the tick baseline and correct for rotation (#1764)
-			axis.tickBaseline = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0].label).b;
+			axis.tickBaseline = fontMetrics.b;
 			if (axis.rotation && axis.side === 2) {
 				axis.tickBaseline *= mathCos(axis.rotation * deg2rad);
 			}
