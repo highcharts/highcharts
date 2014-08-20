@@ -1439,15 +1439,17 @@ Axis.prototype = {
 				attr.rotation = labelOptions.rotation;
 			} else if (horiz) {
 				for (pos = 0; pos < tickPositions.length; pos++) {
-					width = pInt(ticks[pos].label.styles.width);
+					if (ticks[pos]) {
+						width = pInt(ticks[pos].label.styles.width);
 
-					if (ticks[pos].slotWidth) {
-						if (fontMetrics.h * 1.3 > ticks[pos].slotWidth) {
-							rotation = -90;
-							break;
-						} else if (ticks[pos].labelLength > pInt(ticks[pos].label.styles.width)) { // this width includes labelOptions.padding
-							rotation = -45;
-							break;
+						if (ticks[pos].slotWidth) {
+							if (fontMetrics.h * 1.3 > ticks[pos].slotWidth) {
+								rotation = -90;
+								break;
+							} else if (ticks[pos].labelLength > pInt(ticks[pos].label.styles.width)) { // this width includes labelOptions.padding
+								rotation = -45;
+								break;
+							}
 						}
 					}
 				}
@@ -1460,6 +1462,7 @@ Axis.prototype = {
 
 			each(tickPositions, function (pos) {
 				ticks[pos].label.attr(attr);
+				//ticks[pos].label[ticks[pos].isNew ? 'attr' : 'animate'](attr);
 				if (ticks[pos].rotation !== attr.rotation) {
 					ticks[pos].label.bBox = null;
 				}
