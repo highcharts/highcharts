@@ -5602,12 +5602,14 @@ Tick.prototype = {
 		
 		// first call
 		if (!defined(label)) {
+			/*
 			attr = {
 				align: axis.labelAlign
 			};
 			if (isNumber(rotation)) {
 				attr.rotation = rotation;
 			}
+			*/
 			if (width && labelOptions.ellipsis) {
 				css.HcHeight = axis.len / tickPositions.length;
 			}
@@ -5620,17 +5622,17 @@ Tick.prototype = {
 							0,
 							labelOptions.useHTML
 						)
-						.attr(attr)
+						//.attr(attr)
 						// without position absolute, IE export sometimes is wrong
 						.css(extend(css, labelOptions.style))
 						.add(axis.labelGroup) :
 					null;
 
 			// Set the tick baseline and correct for rotation (#1764)
-			axis.tickBaseline = chart.renderer.fontMetrics(labelOptions.style.fontSize, label).b;
+			/*axis.tickBaseline = chart.renderer.fontMetrics(labelOptions.style.fontSize, label).b;
 			if (rotation && axis.side === 2) {
 				axis.tickBaseline *= mathCos(rotation * deg2rad);
-			}
+			}*/
 
 
 		// update
@@ -5647,10 +5649,8 @@ Tick.prototype = {
 	 * Get the offset height or width of the label
 	 */
 	getLabelSize: function () {
-		var label = this.label,
-			axis = this.axis;
-		return label ?
-			label.getBBox()[axis.horiz ? 'height' : 'width'] :
+		return this.label ?
+			this.label.getBBox()[this.axis.horiz ? 'height' : 'width'] :
 			0;
 	},
 
@@ -5705,7 +5705,7 @@ Tick.prototype = {
 		if (labelEdge[lineIndex] === UNDEFINED || pxPos + leftSide > labelEdge[lineIndex]) {
 			labelEdge[lineIndex] = pxPos + rightSide;
 
-		} else if (!justifyLabel) {
+		} else if (!justifyLabel && !this.rotation) {
 			show = false;
 		}
 
@@ -7646,10 +7646,7 @@ Axis.prototype = {
 		}
 
 		if (hasData || axis.isLinked) {
-
-			// Set the explicit or automatic label alignment
-			axis.labelAlign = pick(labelOptions.align || axis.autoLabelAlign(labelOptions.rotation));
-
+			
 			// Generate ticks
 			each(tickPositions, function (pos) {
 				if (!ticks[pos]) {
@@ -7659,8 +7656,45 @@ Axis.prototype = {
 				}
 			});
 
+			var width;
+			
+
+			var attr = { rotation: 0 };
+			if (labelOptions.rotation) {
+				attr.rotation = labelOptions.rotation;
+			} else if (horiz) {
+				for (pos = 0; pos < tickPositions.length; pos++) {
+					width = ticks[pos].label.styles.width;
+					if (width && ticks[pos].label.getBBox().width > pInt(width)) {
+						axis.overlap = overlap = true;
+						break;
+					}
+				}
+				if (overlap) {
+					attr.rotation = -45;
+				}
+			}
+			// Set the explicit or automatic label alignment
+			axis.labelAlign = attr.align = labelOptions.align || axis.autoLabelAlign(attr.rotation);
+
+			each(tickPositions, function (pos) {
+				ticks[pos].label[ticks[pos].isNew ? 'attr' : 'animate'](attr);
+				if (defined(ticks[pos].rotation) && ticks[pos].rotation !== attr.rotation) {
+					ticks[pos].label.bBox = null;
+				}
+				ticks[pos].rotation = attr.rotation;
+			});
+
+
+			// Set the tick baseline and correct for rotation (#1764)
+			axis.tickBaseline = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0].label).b;
+			if (axis.rotation && axis.side === 2) {
+				axis.tickBaseline *= mathCos(axis.rotation * deg2rad);
+			}
+
+
 			// Handle automatic stagger lines
-			if (axis.horiz && !axis.staggerLines && maxStaggerLines && !labelOptions.rotation) {
+			/*if (axis.horiz && !axis.staggerLines && maxStaggerLines && !labelOptions.rotation) {
 				sortedPositions = axis.reversed ? [].concat(tickPositions).reverse() : tickPositions;
 				while (autoStaggerLines < maxStaggerLines) {
 					lastRight = [];
@@ -7689,8 +7723,9 @@ Axis.prototype = {
 
 				if (autoStaggerLines > 1) {
 					axis.staggerLines = autoStaggerLines;
+					//labelOptions.rotation = -45;
 				}
-			}
+			}*/
 
 
 			each(tickPositions, function (pos) {
@@ -7873,6 +7908,7 @@ Axis.prototype = {
 		// Reset
 		axis.labelEdge.length = 0;
 		axis.justifyToPlot = overflow === 'justify';
+		axis.overlap = false;
 
 		// Mark all elements inActive before we go over and mark the active ones
 		each([ticks, minorTicks, alternateBands], function (coll) {

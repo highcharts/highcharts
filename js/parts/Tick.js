@@ -69,12 +69,14 @@ Tick.prototype = {
 		
 		// first call
 		if (!defined(label)) {
+			/*
 			attr = {
 				align: axis.labelAlign
 			};
 			if (isNumber(rotation)) {
 				attr.rotation = rotation;
 			}
+			*/
 			if (width && labelOptions.ellipsis) {
 				css.HcHeight = axis.len / tickPositions.length;
 			}
@@ -87,17 +89,17 @@ Tick.prototype = {
 							0,
 							labelOptions.useHTML
 						)
-						.attr(attr)
+						//.attr(attr)
 						// without position absolute, IE export sometimes is wrong
 						.css(extend(css, labelOptions.style))
 						.add(axis.labelGroup) :
 					null;
 
 			// Set the tick baseline and correct for rotation (#1764)
-			axis.tickBaseline = chart.renderer.fontMetrics(labelOptions.style.fontSize, label).b;
+			/*axis.tickBaseline = chart.renderer.fontMetrics(labelOptions.style.fontSize, label).b;
 			if (rotation && axis.side === 2) {
 				axis.tickBaseline *= mathCos(rotation * deg2rad);
-			}
+			}*/
 
 
 		// update
@@ -114,10 +116,8 @@ Tick.prototype = {
 	 * Get the offset height or width of the label
 	 */
 	getLabelSize: function () {
-		var label = this.label,
-			axis = this.axis;
-		return label ?
-			label.getBBox()[axis.horiz ? 'height' : 'width'] :
+		return this.label ?
+			this.label.getBBox()[this.axis.horiz ? 'height' : 'width'] :
 			0;
 	},
 
@@ -172,7 +172,7 @@ Tick.prototype = {
 		if (labelEdge[lineIndex] === UNDEFINED || pxPos + leftSide > labelEdge[lineIndex]) {
 			labelEdge[lineIndex] = pxPos + rightSide;
 
-		} else if (!justifyLabel) {
+		} else if (!justifyLabel && !this.rotation) {
 			show = false;
 		}
 
