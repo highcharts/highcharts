@@ -513,11 +513,6 @@
 			}
 		}
 
-		// If it is unsorted, something's fishy. Use the backup and treat it as categories.
-		if (columns[0].isDatetime && columns[0].unsorted) {
-			columns[0] = rawColumns[0];
-		}
-
 		// If the 0 column is date and descending, reverse all columns
 		if (columns[0].isDatetime && descending) {
 			hasHeaderRow = typeof columns[0][0] !== 'number';

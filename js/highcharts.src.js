@@ -2729,7 +2729,7 @@ SVGElement.prototype = {
 			titleNode = doc.createElementNS(SVG_NS, 'title');
 			this.element.appendChild(titleNode);
 		}
-		titleNode.textContent = value.replace(/<[^>]*>/g, ''); // #3276
+		titleNode.textContent = pick(value, '').replace(/<[^>]*>/g, ''); // #3276
 	},
 	textSetter: function (value) {
 		if (value !== this.textStr) {
@@ -7279,7 +7279,7 @@ Axis.prototype = {
 			}
 
 			// If no tick are left, set one tick in the middle (#3195) 
-			if (tickPositions.length === 0 && !options.tickPositions) {
+			if (tickPositions.length === 0 && defined(roundedMin)) {
 				tickPositions.push((roundedMax + roundedMin) / 2);
 			}
 
@@ -12895,9 +12895,11 @@ Series.prototype = {
 			return false;
 		}
 
-		xExtremes = xAxis.getExtremes(); // corrected for log axis (#3053)
-		min = xExtremes.min;
-		max = xExtremes.max;
+		if (xAxis) {
+			xExtremes = xAxis.getExtremes(); // corrected for log axis (#3053)
+			min = xExtremes.min;
+			max = xExtremes.max;
+		}
 
 		// optionally filter out points outside the plot area
 		if (isCartesian && series.sorted && (!cropThreshold || dataLength > cropThreshold || series.forceCrop)) {

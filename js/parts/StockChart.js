@@ -145,13 +145,16 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 	var chart = this.chart,
 		panes = chart._labelPanes = chart._labelPanes || {},
-		key;
+		key,
+		labelOptions = this.options.labels;
 	if (this.chart.options._stock && this.coll === 'yAxis') {
 		key = this.pos + ',' + this.len;
-	
-		if (!panes[key]) { // do it only for the first Y axis of each pane
-			if (this.options.labels.x === 15) { // default
-				this.options.labels.x = 0;
+		if (!panes[key] && labelOptions.enabled) { // do it only for the first Y axis of each pane
+			if (labelOptions.x === 15) { // default
+				labelOptions.x = 0;
+			}
+			if (labelOptions.align === undefined) {
+				labelOptions.align = 'right';
 			}
 			panes[key] = 1;
 			return 'right';

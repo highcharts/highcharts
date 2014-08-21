@@ -482,9 +482,11 @@ Series.prototype = {
 			return false;
 		}
 
-		xExtremes = xAxis.getExtremes(); // corrected for log axis (#3053)
-		min = xExtremes.min;
-		max = xExtremes.max;
+		if (xAxis) {
+			xExtremes = xAxis.getExtremes(); // corrected for log axis (#3053)
+			min = xExtremes.min;
+			max = xExtremes.max;
+		}
 
 		// optionally filter out points outside the plot area
 		if (isCartesian && series.sorted && (!cropThreshold || dataLength > cropThreshold || series.forceCrop)) {
