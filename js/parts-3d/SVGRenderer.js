@@ -282,6 +282,10 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 						end = fx.end,
 						pos = fx.pos,
 						sA = Highcharts.merge(start, {
+							x: start.x + ((end.x - start.x) * pos),
+							y: start.y + ((end.y - start.y) * pos),
+							r: start.r + ((end.r - start.r) * pos),
+							innerR: start.innerR + ((end.innerR - start.innerR) * pos),
 							start: start.start + ((end.start - start.start) * pos),
 							end: start.end + ((end.end - start.end) * pos)
 						});
