@@ -317,7 +317,7 @@ Tick.prototype = {
 			gridLinePath,
 			mark = tick.mark,
 			markPath,
-			step = labelOptions.step,
+			step = axis.labelStep || labelOptions.step,
 			attribs,
 			show = true,
 			tickmarkOffset = axis.tickmarkOffset,

@@ -5850,7 +5850,7 @@ Tick.prototype = {
 			gridLinePath,
 			mark = tick.mark,
 			markPath,
-			step = labelOptions.step,
+			step = axis.labelStep || labelOptions.step,
 			attribs,
 			show = true,
 			tickmarkOffset = axis.tickmarkOffset,
@@ -7661,37 +7661,42 @@ Axis.prototype = {
 				}
 			});
 
-			var width;
+			var width,
+				attr = { rotation: 0 },
+				fontMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
+				step,
+				labelStep;
 			
+			axis.autoRotation = horiz && !defined(labelOptions.rotation);
+			if (axis.autoRotation) {
+				each(tickPositions, function (pos) {
+					if (ticks[pos] && rotation === undefined) {
+						width = pInt(ticks[pos].label.styles.width);
 
-			var attr = { rotation: 0 },
-				fontMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0].label);
-			
-			if (labelOptions.rotation) {
-				attr.rotation = labelOptions.rotation;
-			} else if (horiz) {
-				for (pos = 0; pos < tickPositions.length; pos++) {
-					width = pInt(ticks[pos].label.styles.width);
-
-					if (ticks[pos].slotWidth) {
-						if (fontMetrics.h * 1.3 > ticks[pos].slotWidth) {
-							rotation = -90;
-							break;
-						} else if (ticks[pos].labelLength > pInt(ticks[pos].label.styles.width)) { // this width includes labelOptions.padding
-							rotation = -45;
-							break;
+						if (ticks[pos].slotWidth) {
+							step = (fontMetrics.h * 1.5) / ticks[pos].slotWidth;
+							if (step > 1) {
+								labelStep = mathFloor(step);
+								rotation = -90;
+							} else if (ticks[pos].labelLength > pInt(ticks[pos].label.styles.width)) { // this width includes labelOptions.padding
+								rotation = -45;
+							}
 						}
 					}
-				}
+				});
 				if (rotation) {
 					attr.rotation = rotation;
 				}
+			} else if (labelOptions.rotation) {
+				attr.rotation = labelOptions.rotation;
 			}
 			// Set the explicit or automatic label alignment
 			axis.labelAlign = attr.align = labelOptions.align || axis.autoLabelAlign(attr.rotation);
+			axis.labelStep = labelStep;
 
 			each(tickPositions, function (pos) {
 				ticks[pos].label.attr(attr);
+				//ticks[pos].label[ticks[pos].isNew ? 'attr' : 'animate'](attr);
 				if (ticks[pos].rotation !== attr.rotation) {
 					ticks[pos].label.bBox = null;
 				}
