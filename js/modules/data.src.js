@@ -65,7 +65,8 @@
  * A callback function to access the parsed columns, the two-dimentional input data
  * array directly, before they are interpreted into series data and categories. See also
  * the complete callback, that goes in on a later stage where the raw columns are interpreted
- * into a Highcharts option structure.
+ * into a Highcharts option structure. Return false to stop completion, or call this.complete()
+ * to continue async.
  *
  * - parseDate : Function
  * A callback function to parse string representations of dates into JavaScript timestamps.
@@ -126,6 +127,12 @@
 		this.options = options;
 		this.chartOptions = chartOptions;
 		this.columns = options.columns || this.rowsToColumns(options.rows) || [];
+
+		// This is a two-dimensional array holding the raw, trimmed string values
+		// with the same organisation as the columns array. It makes it possible
+		// for example to revert from interpreted timestamps to string-based
+		// categories.
+		this.rawColumns = [];
 
 		// No need to parse or interpret anything
 		if (this.columns.length) {
@@ -249,10 +256,11 @@
 		this.findHeaderRow();
 		
 		// Handle columns if a handleColumns callback is given
-		this.parsed();
+		if (this.parsed() !== false) {
 		
-		// Complete if a complete callback is given
-		this.complete();
+			// Complete if a complete callback is given
+			this.complete();
+		}
 		
 	},
 	
@@ -438,6 +446,7 @@
 	 */
 	parseTypes: function () {
 		var columns = this.columns,
+			rawColumns = this.rawColumns, 
 			col = columns.length, 
 			row,
 			val,
@@ -452,10 +461,11 @@
 
 		while (col--) {
 			row = columns[col].length;
+			rawColumns[col] = [];
 			while (row--) {
 				val = backup[row] || columns[col][row];
 				floatVal = parseFloat(val);
-				trimVal = this.trim(val);
+				trimVal = rawColumns[col][row] = this.trim(val);
 
 				/*jslint eqeq: true*/
 				if (trimVal == floatVal) { // is numeric
@@ -483,10 +493,14 @@
 						// for alternative.
 						if (columns[col][row + 1] !== undefined) {
 							diff = dateVal > columns[col][row + 1];
-							if (diff !== descending && descending !== undefined && this.alternativeFormat) {
-								this.dateFormat = this.alternativeFormat;
-								row = columns[col].length;
-								this.alternativeFormat = this.dateFormats[this.dateFormat].alternative;
+							if (diff !== descending && descending !== undefined) {
+								if (this.alternativeFormat) {
+									this.dateFormat = this.alternativeFormat;
+									row = columns[col].length;
+									this.alternativeFormat = this.dateFormats[this.dateFormat].alternative;
+								} else {
+									columns[col].unsorted = true;
+								}
 							}
 							descending = diff;
 						}
@@ -523,14 +537,14 @@
 			}
 		},
 		'dd/mm/YYYY': {
-			regex: /^([0-9]{2})[\-\/\.]([0-9]{2})[\-\/\.]([0-9]{4})$/,
+			regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{4})$/,
 			parser: function (match) {
 				return Date.UTC(+match[3], match[2] - 1, +match[1]);
 			},
 			alternative: 'mm/dd/YYYY' // different format with the same regex
 		},
 		'mm/dd/YYYY': {
-			regex: /^([0-9]{2})[\-\/\.]([0-9]{2})[\-\/\.]([0-9]{4})$/,
+			regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{4})$/,
 			parser: function (match) {
 				return Date.UTC(+match[3], match[1] - 1, +match[2]);
 			}
@@ -586,15 +600,19 @@
 					ret = format.parser(match);
 				}
 			}
-			// Fall back to Date.parse
-			/*
+			// Fall back to Date.parse		
 			if (!match) {
 				match = Date.parse(val);
-				if (typeof match === 'number' && !isNaN(match)) {
-					ret = match;
+				// External tools like Date.js and MooTools extend Date object and
+				// returns a date.
+				if (typeof match === 'object' && match !== null && match.getTime) {
+					ret = match.getTime() - match.getTimezoneOffset() * 60000;
+				
+				// Timestamp
+				} else if (typeof match === 'number' && !isNaN(match)) {
+					ret = match - (new Date(match)).getTimezoneOffset() * 60000;
 				}
 			}
-			*/
 		}
 		return ret;
 	},
@@ -630,7 +648,7 @@
 	 */
 	parsed: function () {
 		if (this.options.parsed) {
-			this.options.parsed.call(this, this.columns);
+			return this.options.parsed.call(this, this.columns);
 		}
 	},
 

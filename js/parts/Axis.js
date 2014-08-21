@@ -1051,8 +1051,8 @@ Axis.prototype = {
 			}
 
 			// If no tick are left, set one tick in the middle (#3195) 
-			if (tickPositions.length === 0) {
-				tickPositions.splice(1, 0, (roundedMax + roundedMin) / 2);				
+			if (tickPositions.length === 0 && defined(roundedMin)) {
+				tickPositions.push((roundedMax + roundedMin) / 2);
 			}
 
 			// When there is only one point, or all points have the same value on this axis, then min

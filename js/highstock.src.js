@@ -2729,7 +2729,7 @@ SVGElement.prototype = {
 			titleNode = doc.createElementNS(SVG_NS, 'title');
 			this.element.appendChild(titleNode);
 		}
-		titleNode.textContent = value.replace(/<[^>]*>/g, ''); // #3276
+		titleNode.textContent = pick(value, '').replace(/<[^>]*>/g, ''); // #3276
 	},
 	textSetter: function (value) {
 		if (value !== this.textStr) {
@@ -7283,8 +7283,8 @@ Axis.prototype = {
 			}
 
 			// If no tick are left, set one tick in the middle (#3195) 
-			if (tickPositions.length === 0) {
-				tickPositions.splice(1, 0, (roundedMax + roundedMin) / 2);				
+			if (tickPositions.length === 0 && defined(roundedMin)) {
+				tickPositions.push((roundedMax + roundedMin) / 2);
 			}
 
 			// When there is only one point, or all points have the same value on this axis, then min
@@ -12949,14 +12949,15 @@ Series.prototype = {
 			return false;
 		}
 
+		if (xAxis) {
+			xExtremes = xAxis.getExtremes(); // corrected for log axis (#3053)
+			min = xExtremes.min;
+			max = xExtremes.max;
+		}
 
 		// optionally filter out points outside the plot area
 		if (isCartesian && series.sorted && (!cropThreshold || dataLength > cropThreshold || series.forceCrop)) {
 			
-			xExtremes = xAxis.getExtremes(); // corrected for log axis (#3053)
-			min = xExtremes.min;
-			max = xExtremes.max;
-
 			// it's outside current extremes
 			if (processedXData[dataLength - 1] < min || processedXData[0] > max) {
 				processedXData = [];
@@ -12981,6 +12982,7 @@ Series.prototype = {
 			if (!cropped && processedXData[i] > min && processedXData[i] < max) {
 				activePointCount++;
 			}
+			
 			if (distance > 0 && (closestPointRange === UNDEFINED || distance < closestPointRange)) {
 				closestPointRange = distance;
 
@@ -21619,13 +21621,16 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 	var chart = this.chart,
 		panes = chart._labelPanes = chart._labelPanes || {},
-		key;
+		key,
+		labelOptions = this.options.labels;
 	if (this.chart.options._stock && this.coll === 'yAxis') {
 		key = this.pos + ',' + this.len;
-	
-		if (!panes[key]) { // do it only for the first Y axis of each pane
-			if (this.options.labels.x === 15) { // default
-				this.options.labels.x = 0;
+		if (!panes[key] && labelOptions.enabled) { // do it only for the first Y axis of each pane
+			if (labelOptions.x === 15) { // default
+				labelOptions.x = 0;
+			}
+			if (labelOptions.align === undefined) {
+				labelOptions.align = 'right';
 			}
 			panes[key] = 1;
 			return 'right';
