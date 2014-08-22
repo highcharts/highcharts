@@ -1435,7 +1435,7 @@ Axis.prototype = {
 					chart.plotWidth / tickPositions.length) ||
 					(!horiz && (chart.margin[3] || chart.chartWidth * 0.33)), // #1580, #1931,
 					attr = { rotation: 0 },
-				labelWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 10))),
+				css,
 				fontMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
 				step,
 				labelStep;
@@ -1449,8 +1449,14 @@ Axis.prototype = {
 							if (step > 1) {
 								labelStep = mathFloor(step);
 								rotation = -90;
-							} else if (ticks[pos].labelLength > labelWidth) { // this width includes labelOptions.padding
+							} else if (ticks[pos].labelLength > slotWidth) {
 								rotation = -45;
+							}
+							if (rotation) {
+								css = { 
+									width: (chart.chartHeight * 0.33) + PX,
+									textOverflow: 'ellipsis'
+								};
 							}
 						}
 					}
@@ -1460,7 +1466,11 @@ Axis.prototype = {
 				}
 			} else if (labelOptions.rotation) {
 				attr.rotation = labelOptions.rotation;
+			} else {
+				// For word-wrap or ellipsis
+				css = slotWidth && { width: mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 10))) + PX };
 			}
+
 			// Set the explicit or automatic label alignment
 			axis.labelAlign = attr.align = labelOptions.align || axis.autoLabelAlign(attr.rotation);
 			axis.labelStep = labelStep;
@@ -1469,8 +1479,8 @@ Axis.prototype = {
 				ticks[pos].label.attr(attr);
 				//ticks[pos].label[ticks[pos].isNew ? 'attr' : 'animate'](attr);
 
-				if (!axis.autoRotation && labelWidth) {
-					ticks[pos].label.css({ width: labelWidth });
+				if (css) {
+					ticks[pos].label.css(css);
 				}
 				if (ticks[pos].rotation !== attr.rotation) {
 					ticks[pos].label.bBox = null;
