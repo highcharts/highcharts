@@ -27,7 +27,20 @@ defaultChartOptions.chart.options3d = {
 		back: { size: 1, color: 'rgba(255,255,255,0)' }
 	}
 };
-defaultChartOptions.plotOptions.pie.borderColor = undefined;
+
+Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
+	var args = [].slice.call(arguments, 1),
+		plotOptions,
+		pieOptions;
+
+	if (args[0].chart.options3d && args[0].chart.options3d.enabled) {
+		plotOptions = args[0].plotOptions || {};
+		pieOptions = plotOptions.pie || {};
+
+		pieOptions.borderColor = Highcharts.pick(pieOptions.borderColor, undefined); 
+	}
+	proceed.apply(this, args);
+});
 
 Highcharts.wrap(Highcharts.Chart.prototype, 'setChartSize', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));

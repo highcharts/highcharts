@@ -527,7 +527,20 @@ defaultChartOptions.chart.options3d = {
 		back: { size: 1, color: 'rgba(255,255,255,0)' }
 	}
 };
-defaultChartOptions.plotOptions.pie.borderColor = undefined;
+
+Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
+	var args = [].slice.call(arguments, 1),
+		plotOptions,
+		pieOptions;
+
+	if (args[0].chart.options3d && args[0].chart.options3d.enabled) {
+		plotOptions = args[0].plotOptions || {};
+		pieOptions = plotOptions.pie || {};
+
+		pieOptions.borderColor = Highcharts.pick(pieOptions.borderColor, undefined); 
+	}
+	proceed.apply(this, args);
+});
 
 Highcharts.wrap(Highcharts.Chart.prototype, 'setChartSize', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
@@ -1124,7 +1137,8 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 });
 
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype.pointClass.prototype, 'haloPath', function (proceed) {
-	return this.series.chart.is3d() ? [] : proceed.call(this);
+	var args = arguments;
+	return this.series.chart.is3d() ? [] : proceed.call(this, args[1]);
 });
 
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
@@ -1135,6 +1149,7 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 
 		// Set the border color to the fill color to provide a smooth edge
 		this.borderWidth = options.borderWidth = options.edgeWidth || 1;
+		this.borderColor = options.edgeColor = Highcharts.pick(options.edgeColor, options.borderColor, undefined);
 
 		states.hover.borderColor = Highcharts.pick(states.hover.edgeColor, this.borderColor);		
 		states.hover.borderWidth = Highcharts.pick(states.hover.edgeWidth, this.borderWidth);	
