@@ -237,10 +237,10 @@ RangeSelector.prototype = {
 			blurInputs = rangeSelector.blurInputs = function () {
 				var minInput = rangeSelector.minInput,
 					maxInput = rangeSelector.maxInput;
-				if (minInput) {
+				if (minInput && minInput.blur) { //#3274 in some case blur is not defined
 					minInput.blur();
 				}
-				if (maxInput) {
+				if (maxInput && maxInput.blur) { //#3274 in some case blur is not defined
 					maxInput.blur();
 				}
 			};
