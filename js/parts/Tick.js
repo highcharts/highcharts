@@ -29,11 +29,6 @@ Tick.prototype = {
 			rotation = labelOptions.rotation,
 			str,
 			tickPositions = axis.tickPositions,
-			width = (horiz && categories &&
-				!labelOptions.step && !labelOptions.staggerLines &&
-				!labelOptions.rotation &&
-				chart.plotWidth / tickPositions.length) ||
-				(!horiz && (chart.margin[3] || chart.chartWidth * 0.33)), // #1580, #1931
 			isFirst = pos === tickPositions[0],
 			isLast = pos === tickPositions[tickPositions.length - 1],
 			css,
@@ -65,7 +60,7 @@ Tick.prototype = {
 		});
 
 		// prepare CSS
-		css = width && { width: mathMax(1, mathRound(width - 2 * (labelOptions.padding || 10))) + PX };
+		//css = width && { width: mathMax(1, mathRound(width - 2 * (labelOptions.padding || 10))) + PX };
 		
 		// first call
 		if (!defined(label)) {
@@ -77,9 +72,11 @@ Tick.prototype = {
 				attr.rotation = rotation;
 			}
 			*/
+			/*
 			if (width && labelOptions.ellipsis) {
 				css.HcHeight = axis.len / tickPositions.length;
 			}
+			*/
 
 			tick.label = label =
 				defined(str) && labelOptions.enabled ?
@@ -112,7 +109,7 @@ Tick.prototype = {
 				})
 				.css(css);
 		}
-		tick.slotWidth = width;
+		//tick.slotWidth = width;
 		tick.yOffset = label ? pick(labelOptions.y, axis.tickBaseline + (axis.side === 2 ? 8 : -(label.getBBox().height / 2))) : 0;
 	},
 

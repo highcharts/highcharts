@@ -5562,11 +5562,6 @@ Tick.prototype = {
 			rotation = labelOptions.rotation,
 			str,
 			tickPositions = axis.tickPositions,
-			width = (horiz && categories &&
-				!labelOptions.step && !labelOptions.staggerLines &&
-				!labelOptions.rotation &&
-				chart.plotWidth / tickPositions.length) ||
-				(!horiz && (chart.margin[3] || chart.chartWidth * 0.33)), // #1580, #1931
 			isFirst = pos === tickPositions[0],
 			isLast = pos === tickPositions[tickPositions.length - 1],
 			css,
@@ -5598,7 +5593,7 @@ Tick.prototype = {
 		});
 
 		// prepare CSS
-		css = width && { width: mathMax(1, mathRound(width - 2 * (labelOptions.padding || 10))) + PX };
+		//css = width && { width: mathMax(1, mathRound(width - 2 * (labelOptions.padding || 10))) + PX };
 		
 		// first call
 		if (!defined(label)) {
@@ -5610,9 +5605,11 @@ Tick.prototype = {
 				attr.rotation = rotation;
 			}
 			*/
+			/*
 			if (width && labelOptions.ellipsis) {
 				css.HcHeight = axis.len / tickPositions.length;
 			}
+			*/
 
 			tick.label = label =
 				defined(str) && labelOptions.enabled ?
@@ -5645,7 +5642,7 @@ Tick.prototype = {
 				})
 				.css(css);
 		}
-		tick.slotWidth = width;
+		//tick.slotWidth = width;
 		tick.yOffset = label ? pick(labelOptions.y, axis.tickBaseline + (axis.side === 2 ? 8 : -(label.getBBox().height / 2))) : 0;
 	},
 
@@ -7396,8 +7393,13 @@ Axis.prototype = {
 				}
 			});
 
-			var width,
-				attr = { rotation: 0 },
+			var slotWidth = (horiz && axis.categories &&
+					!labelOptions.step && !labelOptions.staggerLines &&
+					!labelOptions.rotation &&
+					chart.plotWidth / tickPositions.length) ||
+					(!horiz && (chart.margin[3] || chart.chartWidth * 0.33)), // #1580, #1931,
+					attr = { rotation: 0 },
+				labelWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 10))),
 				fontMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
 				step,
 				labelStep;
@@ -7406,14 +7408,12 @@ Axis.prototype = {
 			if (axis.autoRotation) {
 				each(tickPositions, function (pos) {
 					if (ticks[pos] && rotation === undefined) {
-						width = pInt(ticks[pos].label.styles.width);
-
-						if (ticks[pos].slotWidth) {
-							step = (fontMetrics.h * 1.5) / ticks[pos].slotWidth;
+						if (slotWidth) {
+							step = (fontMetrics.h * 1.5) / slotWidth;
 							if (step > 1) {
 								labelStep = mathFloor(step);
 								rotation = -90;
-							} else if (ticks[pos].labelLength > pInt(ticks[pos].label.styles.width)) { // this width includes labelOptions.padding
+							} else if (ticks[pos].labelLength > labelWidth) { // this width includes labelOptions.padding
 								rotation = -45;
 							}
 						}
@@ -7432,6 +7432,10 @@ Axis.prototype = {
 			each(tickPositions, function (pos) {
 				ticks[pos].label.attr(attr);
 				//ticks[pos].label[ticks[pos].isNew ? 'attr' : 'animate'](attr);
+
+				if (!axis.autoRotation && labelWidth) {
+					ticks[pos].label.css({ width: labelWidth });
+				}
 				if (ticks[pos].rotation !== attr.rotation) {
 					ticks[pos].label.bBox = null;
 				}
