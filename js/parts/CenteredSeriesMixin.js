@@ -16,10 +16,11 @@ var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
 			positions = [pick(centerOption[0], '50%'), pick(centerOption[1], '50%'), options.size || '100%', options.innerSize || 0],
 			smallestSize = mathMin(plotWidth, plotHeight),
 			isPercent,
-			i;
+			i,
+			value;
 
 		for (i = 0; i < 4; ++i) {
-			var value = positions[i];
+			value = positions[i];
 			isPercent = /%$/.test(value);
 			handleSlicingRoom = i < 2 || (i === 2 && isPercent);
 			positions[i] = (isPercent ?
