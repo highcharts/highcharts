@@ -67,8 +67,7 @@ session_start();
 
 		<script src="javascript-functions.js"></script>
 
-		<script>
-			<?php
+		<script><?php
 				// This code makes available folders a json variable.
 				// Similar code in dir-struct.php - but needed seperate for both php and js variables.
 
@@ -96,15 +95,14 @@ session_start();
 				}
 
 				// Sets the js variable as well.
-				echo "folders = ".json_encode($folders). ';';
+				echo "\nvar folders = ".json_encode($folders). ",\n";
 
 				// Updates js array result to current $_SESSION content. 
-				echo "results = ".json_encode($_SESSION).';';
+				echo "results = ".json_encode($_SESSION).",\n";
 
 				// Sets the "rep" variable.
-				echo "rep = ".json_encode($_SESSION['repetitions']).';';
-			?>
-		</script>
+				echo "rep = ".json_encode($_SESSION['repetitions']).";\n";
+			?></script>
 
 	</head>
 

@@ -5652,7 +5652,7 @@ Tick.prototype = {
 						.add(axis.labelGroup) :
 					null;
 
-			tick.labelLength = label.getBBox().width; // Un-rotated length
+			tick.labelLength = label && label.getBBox().width; // Un-rotated length
 			tick.rotation = 0; // Base value to detect change for new calls to getBBox
 
 			// Set the tick baseline and correct for rotation (#1764)
@@ -7467,16 +7467,18 @@ Axis.prototype = {
 			axis.labelStep = labelStep;
 
 			each(tickPositions, function (pos) {
-				ticks[pos].label.attr(attr);
-				//ticks[pos].label[ticks[pos].isNew ? 'attr' : 'animate'](attr);
+				if (ticks[pos] && ticks[pos].label) {
+					ticks[pos].label.attr(attr);
+					//ticks[pos].label[ticks[pos].isNew ? 'attr' : 'animate'](attr);
 
-				if (css) {
-					ticks[pos].label.css(css);
+					if (css) {
+						ticks[pos].label.css(css);
+					}
+					if (ticks[pos].rotation !== attr.rotation) {
+						ticks[pos].label.bBox = null;
+					}
+					ticks[pos].rotation = attr.rotation;
 				}
-				if (ticks[pos].rotation !== attr.rotation) {
-					ticks[pos].label.bBox = null;
-				}
-				ticks[pos].rotation = attr.rotation;
 			});
 
 

@@ -92,7 +92,7 @@ Tick.prototype = {
 						.add(axis.labelGroup) :
 					null;
 
-			tick.labelLength = label.getBBox().width; // Un-rotated length
+			tick.labelLength = label && label.getBBox().width; // Un-rotated length
 			tick.rotation = 0; // Base value to detect change for new calls to getBBox
 
 			// Set the tick baseline and correct for rotation (#1764)

@@ -1442,6 +1442,7 @@ Axis.prototype = {
 			
 			axis.autoRotation = horiz && !defined(labelOptions.rotation);
 			if (axis.autoRotation) {
+				// Todo: try looping ticks directly
 				each(tickPositions, function (pos) {
 					if (ticks[pos] && rotation === undefined) {
 						if (slotWidth) {
@@ -1476,16 +1477,18 @@ Axis.prototype = {
 			axis.labelStep = labelStep;
 
 			each(tickPositions, function (pos) {
-				ticks[pos].label.attr(attr);
-				//ticks[pos].label[ticks[pos].isNew ? 'attr' : 'animate'](attr);
+				if (ticks[pos] && ticks[pos].label) {
+					ticks[pos].label.attr(attr);
+					//ticks[pos].label[ticks[pos].isNew ? 'attr' : 'animate'](attr);
 
-				if (css) {
-					ticks[pos].label.css(css);
+					if (css) {
+						ticks[pos].label.css(css);
+					}
+					if (ticks[pos].rotation !== attr.rotation) {
+						ticks[pos].label.bBox = null;
+					}
+					ticks[pos].rotation = attr.rotation;
 				}
-				if (ticks[pos].rotation !== attr.rotation) {
-					ticks[pos].label.bBox = null;
-				}
-				ticks[pos].rotation = attr.rotation;
 			});
 
 
