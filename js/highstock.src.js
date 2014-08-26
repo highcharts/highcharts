@@ -3069,6 +3069,10 @@ SVGRenderer.prototype = {
 								);
 							}
 
+							/*if (width) {
+								renderer.breakText(wrapper, width);
+							}*/
+
 							// Check width and apply soft breaks or ellipsis
 							if (width) {
 								var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
@@ -3159,6 +3163,39 @@ SVGRenderer.prototype = {
 			});
 		}
 	},
+
+	/*
+	breakText: function (wrapper, width) {
+		var bBox = wrapper.getBBox(),
+			node = wrapper.element,
+			textLength = node.textContent.length,
+			pos = mathRound(width * textLength / bBox.width), // try this position first, based on average character width
+			increment = 0,
+			finalPos;
+
+		if (bBox.width > width) {
+			while (finalPos === undefined) {
+				textLength = node.getSubStringLength(0, pos);
+
+				if (textLength <= width) {
+					if (increment === -1) {
+						finalPos = pos;
+					} else {
+						increment = 1;
+					}
+				} else {
+					if (increment === 1) {
+						finalPos = pos - 1;
+					} else {
+						increment = -1;
+					}
+				}
+				pos += increment;
+			}
+		}
+		console.log(finalPos, node.getSubStringLength(0, finalPos))
+	},
+	*/
 
 	/**
 	 * Create a button with preset states
@@ -7698,6 +7735,7 @@ Axis.prototype = {
 			
 			axis.autoRotation = horiz && !defined(labelOptions.rotation);
 			if (axis.autoRotation) {
+				// Todo: try looping ticks directly
 				each(tickPositions, function (pos) {
 					if (ticks[pos] && rotation === undefined) {
 						if (slotWidth) {
