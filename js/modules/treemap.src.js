@@ -235,12 +235,15 @@
 			return seriesArea;
 		},
 		getLevels: function () {
-			var map = [];
-			each(this.options.levels, function (level) {
-				if (level.level !== undefined) {
-					map[level.level] = level;
-				}
-			});
+			var map = [],
+				levels = this.options.levels;
+			if (levels) {
+				each(levels, function (level) {
+					if (level.level !== undefined) {
+						map[level.level] = level;
+					}
+				});
+			}
 			return map;
 		},
 		setColorRecursive: function (node, color) {
