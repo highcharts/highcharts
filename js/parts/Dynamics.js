@@ -147,39 +147,40 @@ extend(Point.prototype, {
 	 *    configuration
 	 *
 	 */
-	update: function (options, redraw, animation) {
+	update: function (options, redraw, animation, runEvent) {
 		var point = this,
 			series = point.series,
 			graphic = point.graphic,
 			i,
-			data = series.data,
 			chart = series.chart,
 			seriesOptions = series.options;
 
 		redraw = pick(redraw, true);
 
-		// fire the event with a default handler of doing the update
-		point.firePointEvent('update', { options: options }, function () {
+		function update() {
 
 			point.applyOptions(options);
 
-			// update visuals
-			if (isObject(options)) {
-				series.getAttribs();
-				if (graphic) {
-					if (options && options.marker && options.marker.symbol) {
-						point.graphic = graphic.destroy();
-					} else {
-						graphic.attr(point.pointAttr[point.state || '']);
+			// Update visuals
+			if (isObject(options) && !isArray(options)) {
+				// Defer the actual redraw until getAttribs has been called (#3260)
+				point.redraw = function () {
+					if (graphic) {
+						if (options && options.marker && options.marker.symbol) {
+							point.graphic = graphic.destroy();
+						} else {
+							graphic.attr(point.pointAttr[point.state || '']);
+						}
 					}
-				}
-				if (options && options.dataLabels && point.dataLabel) { // #2468
-					point.dataLabel = point.dataLabel.destroy();
-				}
+					if (options && options.dataLabels && point.dataLabel) { // #2468
+						point.dataLabel = point.dataLabel.destroy();
+					}
+					point.redraw = null;
+				};
 			}
 
 			// record changes in the parallel arrays
-			i = inArray(point, data);
+			i = point.index;
 			series.updateParallelArrays(point, i);
 
 			seriesOptions.data[i] = point.options;
@@ -196,7 +197,14 @@ extend(Point.prototype, {
 			if (redraw) {
 				chart.redraw(animation);
 			}
-		});
+		}
+
+		// Fire the event with a default handler of doing the update
+		if (runEvent === false) { // When called from setData
+			update();
+		} else {
+			point.firePointEvent('update', { options: options }, update);
+		}
 	},
 
 	/**
