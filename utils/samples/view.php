@@ -179,6 +179,7 @@ function getResources() {
 						$('#source-box').html('');
 					}
 				});
+				contentDoc = null;
 
 			});
 		}());
@@ -195,7 +196,7 @@ function getResources() {
 		}
 
 
-		/* Wrappers for recording mouse events in order to write automatic tests */
+		// Wrappers for recording mouse events in order to write automatic tests 
 		$(function () {
 
 			$(window).bind('keydown', parent.keyDown);
