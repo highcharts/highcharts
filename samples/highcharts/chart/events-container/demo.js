@@ -18,12 +18,7 @@ $(function () {
 
 
     $('.chart-container').bind('mousedown', function () {
-        var $this = $(this);
-        if ($this.hasClass('modal')) {
-            $this.removeClass('modal');
-        } else {
-            $this.addClass('modal');
-        }
-        $('.chart', $this).highcharts().reflow();
+        $(this).toggleClass('modal');
+        $('.chart', this).highcharts().reflow();
     });
 });
