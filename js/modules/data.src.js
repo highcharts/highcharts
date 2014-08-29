@@ -109,6 +109,7 @@
 	// Utilities
 	var each = Highcharts.each,
 		inArray = HighchartsAdapter.inArray,
+		splat = Highcharts.splat,
 		SeriesBuilder;
 	
 	
@@ -457,18 +458,26 @@
 			descending,
 			backup = [],
 			diff,
-			hasHeaderRow;
+			hasHeaderRow,
+			forceCategory,
+			chartOptions = this.chartOptions;
 
 		while (col--) {
 			row = columns[col].length;
 			rawColumns[col] = [];
+			isXColumn = inArray(col, this.valueCount.xColumns) !== -1;
+			forceCategory = isXColumn && chartOptions && chartOptions.xAxis && splat(chartOptions.xAxis)[0].type === 'category';
 			while (row--) {
 				val = backup[row] || columns[col][row];
 				floatVal = parseFloat(val);
 				trimVal = rawColumns[col][row] = this.trim(val);
 
+				// Disable number or date parsing by setting the X axis type to category
+				if (forceCategory) {
+					columns[col][row] = trimVal;
+
 				/*jslint eqeq: true*/
-				if (trimVal == floatVal) { // is numeric
+				} else if (trimVal == floatVal) { // is numeric
 				/*jslint eqeq: false*/
 					columns[col][row] = floatVal;
 					
@@ -482,7 +491,6 @@
 				} else { // string, continue to determine if it is a date string or really a string
 					dateVal = this.parseDate(val);
 					// Only allow parsing of dates if this column is an x-column
-					isXColumn = inArray(col, this.valueCount.xColumns) !== -1;
 					if (isXColumn && typeof dateVal === 'number' && !isNaN(dateVal)) { // is date
 						backup[row] = val; 
 						columns[col][row] = dateVal;
@@ -507,13 +515,24 @@
 					
 					} else { // string
 						columns[col][row] = trimVal === '' ? null : trimVal;
+						if (row !== 0 && (columns[col].isDatetime || columns[col].isNumeric)) {
+							columns[col].mixed = true;
+						}
 					}
 				}
+			}
 
+			// If strings are intermixed with numbers or dates in a parsed column, it is an indication
+			// that parsing went wrong or the data was not intended to display as numbers or dates and 
+			// parsing is too aggressive. Fall back to categories. Demonstrated in the 
+			// highcharts/demo/column-drilldown sample.
+			if (isXColumn && columns[col].mixed) {
+				columns[col] = rawColumns[col];
 			}
 		}
 
-		// If the 0 column is date and descending, reverse all columns
+		// If the 0 column is date and descending, reverse all columns. 
+		// TODO: probably this should apply to xColumns, not 0 column alone.
 		if (columns[0].isDatetime && descending) {
 			hasHeaderRow = typeof columns[0][0] !== 'number';
 			for (col = 0; col < columns.length; col++) {
@@ -550,15 +569,16 @@
 			}
 		},
 		'dd/mm/YY': {
-			regex: /^([0-9]{2})[\-\/\.]([0-9]{2})[\-\/\.]([0-9]{2})$/,
+			regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/,
 			parser: function (match) {
 				return Date.UTC(+match[3] + 2000, match[2] - 1, +match[1]);
 			},
 			alternative: 'mm/dd/YY' // different format with the same regex
 		},
 		'mm/dd/YY': {
-			regex: /^([0-9]{2})[\-\/\.]([0-9]{2})[\-\/\.]([0-9]{2})$/,
+			regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/,
 			parser: function (match) {
+				console.log(match)
 				return Date.UTC(+match[3] + 2000, match[1] - 1, +match[2]);
 			}
 		}
@@ -829,6 +849,7 @@
 
 		if (userOptions && userOptions.data) {
 			Highcharts.data(Highcharts.extend(userOptions.data, {
+
 				afterComplete: function (dataOptions) {
 					var i, series;
 					

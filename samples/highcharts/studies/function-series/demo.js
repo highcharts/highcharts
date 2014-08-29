@@ -33,7 +33,7 @@ $(function () {
 
                 for (i = 0; i < points; i += 1) {
                     x = min + (i * ((max - min) / points));
-                    y = datafunction (x);
+                    y = dataFunction (x);
                     data.push([x, y]);
                 }
 

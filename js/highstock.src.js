@@ -13321,7 +13321,7 @@ Series.prototype = {
 			markerGroup = series.markerGroup,
 			globallyEnabled = pick(
 				seriesMarkerOptions.enabled, 
-				series.activePointCount < (0.5 * series.xAxis.len / seriesMarkerOptions.radius)
+				!series.requireSorting || series.activePointCount < (0.5 * series.xAxis.len / seriesMarkerOptions.radius)
 			);
 
 		if (seriesMarkerOptions.enabled !== false || series._hasPointMarkers) {
@@ -20914,10 +20914,10 @@ RangeSelector.prototype = {
 				var minInput = rangeSelector.minInput,
 					maxInput = rangeSelector.maxInput;
 				if (minInput && minInput.blur) { //#3274 in some case blur is not defined
-					fireEvent(minInput, 'blur');
+					fireEvent(minInput, 'blur'); //#3274
 				}
 				if (maxInput && maxInput.blur) { //#3274 in some case blur is not defined
-					fireEvent(maxInput, 'blur');
+					fireEvent(maxInput, 'blur'); //#3274
 				}
 			};
 

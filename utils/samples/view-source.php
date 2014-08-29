@@ -18,9 +18,9 @@ $fullpath = dirname(__FILE__) . '/../../samples/' . $path;
 
 
 // Get source
-$html = file_get_contents("$fullpath/demo.html");
-$css = file_get_contents("$fullpath/demo.css");
-$js = file_get_contents("$fullpath/demo.js");
+$html = @file_get_contents("$fullpath/demo.html");
+$css = @file_get_contents("$fullpath/demo.css");
+$js = @file_get_contents("$fullpath/demo.js");
 
 ?><html>
 <head>
