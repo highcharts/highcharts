@@ -20,4 +20,6 @@
 }
 .modal .chart {
     height: 90%;
+    width: 90%;
+    max-width: none;
 }
