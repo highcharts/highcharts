@@ -291,7 +291,7 @@ Tooltip.prototype = {
 			s;
 
 		// build the header
-		s = [tooltip.tooltipHeaderFormatter(items[0])];
+		s = [tooltip.tooltipFooterHeaderFormatter(items[0])]; //#3397: abstraction to enable formatting of footer and header
 
 		// build the values
 		each(items, function (item) {
@@ -301,7 +301,7 @@ Tooltip.prototype = {
 		});
 
 		// footer
-		s.push(tooltip.options.footerFormat || '');
+		s.push(tooltip.tooltipFooterHeaderFormatter(items[0], true)); //#3397: abstraction to enable formatting of footer and header
 
 		return s.join('');
 	},
@@ -427,18 +427,19 @@ Tooltip.prototype = {
 		);
 	},
 
-
 	/**
-	 * Format the header of the tooltip
+	 * Format the footer/header of the tooltip
+	 * #3397: abstraction to enable formatting of footer and header
 	 */
-	tooltipHeaderFormatter: function (point) {
-		var series = point.series,
+	tooltipFooterHeaderFormatter: function (point, isFooter) {
+		var footOrHead = isFooter ? 'footer' : 'header',
+			series = point.series,
 			tooltipOptions = series.tooltipOptions,
 			dateTimeLabelFormats = tooltipOptions.dateTimeLabelFormats,
 			xDateFormat = tooltipOptions.xDateFormat,
 			xAxis = series.xAxis,
 			isDateTime = xAxis && xAxis.options.type === 'datetime' && isNumber(point.key),
-			headerFormat = tooltipOptions.headerFormat,
+			formatString = tooltipOptions[footOrHead+'Format'],
 			closestPointRange = xAxis && xAxis.closestPointRange,
 			n;
 
@@ -463,14 +464,15 @@ Tooltip.prototype = {
 
 		}
 
-		// Insert the header date format if any
+		// Insert the footer date format if any
 		if (isDateTime && xDateFormat) {
-			headerFormat = headerFormat.replace('{point.key}', '{point.key:' + xDateFormat + '}');
+			formatString = formatString.replace('{point.key}', '{point.key:' + xDateFormat + '}');
 		}
 
-		return format(headerFormat, {
+		return format(formatString, {
 			point: point,
 			series: series
 		});
 	}
+
 };

@@ -8,7 +8,7 @@ var DATA_GROUPING = 'dataGrouping',
 	baseProcessData = seriesProto.processData,
 	baseGeneratePoints = seriesProto.generatePoints,
 	baseDestroy = seriesProto.destroy,
-	baseTooltipHeaderFormatter = tooltipProto.tooltipHeaderFormatter,
+	baseTooltipFooterHeaderFormatter = tooltipProto.tooltipFooterHeaderFormatter,
 	NUMBER = 'number',
 
 	commonOptions = {
@@ -377,7 +377,7 @@ seriesProto.generatePoints = function () {
 /**
  * Extend the original method, make the tooltip's header reflect the grouped range
  */
-tooltipProto.tooltipHeaderFormatter = function (point) {
+tooltipProto.tooltipFooterHeaderFormatter = function (point, isFooter) {
 	var tooltip = this,
 		series = point.series,
 		options = series.options,
@@ -433,11 +433,11 @@ tooltipProto.tooltipHeaderFormatter = function (point) {
 		}
 
 		// return the replaced format
-		ret = tooltipOptions.headerFormat.replace('{point.key}', formattedKey);
+		ret = tooltipOptions[(isFooter ? 'footer' : 'header') + 'Format'].replace('{point.key}', formattedKey);
 
 	// else, fall back to the regular formatter
 	} else {
-		ret = baseTooltipHeaderFormatter.call(tooltip, point);
+		ret = baseTooltipFooterHeaderFormatter.call(tooltip, point, isFooter);
 	}
 
 	return ret;

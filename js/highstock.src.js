@@ -1535,6 +1535,7 @@ defaultOptions = {
 			month: '%B %Y',
 			year: '%Y'
 		},
+		footerFormat: '',
 		//formatter: defaultFormatter,
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
 		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
@@ -8770,7 +8771,7 @@ Tooltip.prototype = {
 			s;
 
 		// build the header
-		s = [tooltip.tooltipHeaderFormatter(items[0])];
+		s = [tooltip.tooltipFooterHeaderFormatter(items[0])]; //#3397: abstraction to enable formatting of footer and header
 
 		// build the values
 		each(items, function (item) {
@@ -8780,7 +8781,7 @@ Tooltip.prototype = {
 		});
 
 		// footer
-		s.push(tooltip.options.footerFormat || '');
+		s.push(tooltip.tooltipFooterHeaderFormatter(items[0], true)); //#3397: abstraction to enable formatting of footer and header
 
 		return s.join('');
 	},
@@ -8906,18 +8907,19 @@ Tooltip.prototype = {
 		);
 	},
 
-
 	/**
-	 * Format the header of the tooltip
+	 * Format the footer/header of the tooltip
+	 * #3397: abstraction to enable formatting of footer and header
 	 */
-	tooltipHeaderFormatter: function (point) {
-		var series = point.series,
+	tooltipFooterHeaderFormatter: function (point, isFooter) {
+		var footOrHead = isFooter ? 'footer' : 'header',
+			series = point.series,
 			tooltipOptions = series.tooltipOptions,
 			dateTimeLabelFormats = tooltipOptions.dateTimeLabelFormats,
 			xDateFormat = tooltipOptions.xDateFormat,
 			xAxis = series.xAxis,
 			isDateTime = xAxis && xAxis.options.type === 'datetime' && isNumber(point.key),
-			headerFormat = tooltipOptions.headerFormat,
+			formatString = tooltipOptions[footOrHead+'Format'],
 			closestPointRange = xAxis && xAxis.closestPointRange,
 			n;
 
@@ -8942,16 +8944,17 @@ Tooltip.prototype = {
 
 		}
 
-		// Insert the header date format if any
+		// Insert the footer date format if any
 		if (isDateTime && xDateFormat) {
-			headerFormat = headerFormat.replace('{point.key}', '{point.key:' + xDateFormat + '}');
+			formatString = formatString.replace('{point.key}', '{point.key:' + xDateFormat + '}');
 		}
 
-		return format(headerFormat, {
+		return format(formatString, {
 			point: point,
 			series: series
 		});
 	}
+
 };
 
 var hoverChartIndex;
@@ -18345,7 +18348,7 @@ var DATA_GROUPING = 'dataGrouping',
 	baseProcessData = seriesProto.processData,
 	baseGeneratePoints = seriesProto.generatePoints,
 	baseDestroy = seriesProto.destroy,
-	baseTooltipHeaderFormatter = tooltipProto.tooltipHeaderFormatter,
+	baseTooltipFooterHeaderFormatter = tooltipProto.tooltipFooterHeaderFormatter,
 	NUMBER = 'number',
 
 	commonOptions = {
@@ -18714,7 +18717,7 @@ seriesProto.generatePoints = function () {
 /**
  * Extend the original method, make the tooltip's header reflect the grouped range
  */
-tooltipProto.tooltipHeaderFormatter = function (point) {
+tooltipProto.tooltipFooterHeaderFormatter = function (point, isFooter) {
 	var tooltip = this,
 		series = point.series,
 		options = series.options,
@@ -18770,11 +18773,11 @@ tooltipProto.tooltipHeaderFormatter = function (point) {
 		}
 
 		// return the replaced format
-		ret = tooltipOptions.headerFormat.replace('{point.key}', formattedKey);
+		ret = tooltipOptions[(isFooter ? 'footer' : 'header') + 'Format'].replace('{point.key}', formattedKey);
 
 	// else, fall back to the regular formatter
 	} else {
-		ret = baseTooltipHeaderFormatter.call(tooltip, point);
+		ret = baseTooltipFooterHeaderFormatter.call(tooltip, point, isFooter);
 	}
 
 	return ret;
