@@ -13,7 +13,8 @@
 	var seriesTypes = H.seriesTypes,
 		chartPrototype = H.Chart.prototype,
 		defaultOptions = H.getOptions(),
-		extend = H.extend;
+		extend = H.extend,
+		each = H.each;
 
 	// Add language option
 	extend(defaultOptions.lang, {
@@ -44,17 +45,11 @@
 		return !!this.points.length; /* != 0 */
 	}
 
-	if (seriesTypes.pie) {
-		seriesTypes.pie.prototype.hasData = hasDataPie;
-	}
-
-	if (seriesTypes.gauge) {
-		seriesTypes.gauge.prototype.hasData = hasDataPie;
-	}
-
-	if (seriesTypes.waterfall) {
-		seriesTypes.waterfall.prototype.hasData = hasDataPie;
-	}
+	each(['pie', 'gauge', 'waterfall', 'bubble'], function (type) {
+		if (seriesTypes[type]) {
+			seriesTypes[type].prototype.hasData = hasDataPie;
+		}
+	});
 
 	H.Series.prototype.hasData = function () {
 		return this.dataMax !== undefined && this.dataMin !== undefined;
