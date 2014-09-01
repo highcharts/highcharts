@@ -20,20 +20,6 @@ Highcharts.VMLRenderer.prototype.arc3d = function (shapeArgs) {
 
 Highcharts.VMLRenderer.prototype.arc3dPath = Highcharts.SVGRenderer.prototype.arc3dPath;
 
-// Draw the series in the reverse order
-Highcharts.Chart.prototype.renderSeries = function () {
-	var serie,
-		i = this.series.length;
-	while (i--) {		
-		serie = this.series[i];
-		serie.translate();
-		if (serie.setTooltipPoints) {
-			serie.setTooltipPoints();
-		}
-		serie.render();	
-	}
-};
-
 Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 	// VML doesn't support a negative z-index
