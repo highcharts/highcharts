@@ -21589,11 +21589,12 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 // are drawn on top of the grid line, and subsequent axes are drawn outside
 wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 	var chart = this.chart,
+		options = this.options,
 		panes = chart._labelPanes = chart._labelPanes || {},
 		key,
 		labelOptions = this.options.labels;
 	if (this.chart.options._stock && this.coll === 'yAxis') {
-		key = this.pos + ',' + this.len;
+		key = options.top + ',' + options.height;
 		if (!panes[key] && labelOptions.enabled) { // do it only for the first Y axis of each pane
 			if (labelOptions.x === 15) { // default
 				labelOptions.x = 0;
