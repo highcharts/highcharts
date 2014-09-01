@@ -532,7 +532,7 @@ RangeSelector.prototype = {
 
 		// create the elements
 		if (!rangeSelector.rendered) {
-			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, pick(buttonPosition.x, plotLeft), pick(buttonPosition.y + 15, chart.plotTop - 20))
+			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, pick(buttonPosition.x, plotLeft), pick(buttonPosition.y, chart.plotTop - 35) + 15)
 				.css(options.labelStyle)
 				.add();
 
