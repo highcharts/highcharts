@@ -578,7 +578,6 @@
 		'mm/dd/YY': {
 			regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/,
 			parser: function (match) {
-				console.log(match)
 				return Date.UTC(+match[3] + 2000, match[1] - 1, +match[2]);
 			}
 		}
