@@ -551,7 +551,8 @@ RangeSelector.prototype = {
 						},
 						buttonTheme,
 						states && states.hover,
-						states && states.select
+						states && states.select,
+						states && states.disabled
 					)
 					.css({
 						textAlign: 'center'
