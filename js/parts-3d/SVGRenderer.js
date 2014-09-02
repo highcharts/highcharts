@@ -231,8 +231,8 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 	result.shapeArgs = shapeArgs;	// Store for later use
 
 	result.top = renderer.path(paths.top).attr({zIndex: paths.zTop}).add(result);
-	result.side1 = renderer.path(paths.side2).attr({zIndex: paths.zSide2});
-	result.side2 = renderer.path(paths.side1).attr({zIndex: paths.zSide1});
+	result.side1 = renderer.path(paths.side2).attr({zIndex: paths.zSide1});
+	result.side2 = renderer.path(paths.side1).attr({zIndex: paths.zSide2});
 	result.inn = renderer.path(paths.inn).attr({zIndex: paths.zInn});
 	result.out = renderer.path(paths.out).attr({zIndex: paths.zOut});
 
