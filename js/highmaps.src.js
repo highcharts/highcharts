@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highmaps JS v1.0.3-modified ()
+ * @license Highmaps JS v1.0.4 (2014-09-02)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -57,7 +57,7 @@ var UNDEFINED,
 	charts = [],
 	chartCount = 0,
 	PRODUCT = 'Highmaps',
-	VERSION = '1.0.3-modified',
+	VERSION = '1.0.4',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -1270,8 +1270,8 @@ defaultOptions = {
 	global: {
 		useUTC: true,
 		//timezoneOffset: 0,
-		canvasToolsURL: 'http://code.highcharts.com/maps/1.0.3-modified/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/maps/1.0.3-modified/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/maps/1.0.4/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/maps/1.0.4/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -1596,7 +1596,7 @@ function setTimeMethods() {
 		SET = useUTC ? 'setUTC' : 'set';
 
 
-	Date = defaultOptions.global.Date || window.Date; // docs - demo and description at https://github.com/highslide-software/highcharts.com/pull/3313
+	Date = defaultOptions.global.Date || window.Date;
 	timezoneOffset = ((useUTC && defaultOptions.global.timezoneOffset) || 0) * 60000;
 	makeTime = useUTC ? Date.UTC : function (year, month, date, hours, minutes, seconds) {
 		return new Date(
@@ -3525,7 +3525,6 @@ SVGRenderer.prototype = {
 			};
 
 			imageSrc = symbol.match(imageRegex)[1];
-			// docs: series-marker-width-height. Note that both width and height must be set
 			imageSize = symbolSizes[imageSrc] || (options && options.width && options.height && [options.width, options.height]);
 
 			// Ireate the image synchronously, add attribs async
@@ -6214,7 +6213,7 @@ Axis.prototype = {
 		//axis.minorTickInterval = UNDEFINED;
 
 		axis.tickmarkOffset = (axis.categories && options.tickmarkPlacement === 'between' && 
-			pick(options.tickInterval, 1) === 1) ? 0.5 : 0; // #3202 // docs: new default behaviour when tickInteval !== 1
+			pick(options.tickInterval, 1) === 1) ? 0.5 : 0; // #3202
 
 		// Major ticks
 		axis.ticks = {};
@@ -6950,7 +6949,7 @@ Axis.prototype = {
 					null, 
 					getMagnitude(axis.tickInterval), 
 					// If the tick interval is between 1 and 5 and the axis max is in the order of
-					// thousands, chances are we are dealing with years. Don't allow decimals. #3363. // docs
+					// thousands, chances are we are dealing with years. Don't allow decimals. #3363.
 					pick(options.allowDecimals, !(axis.tickInterval > 1 && axis.tickInterval < 5 && axis.max > 1000 && axis.max < 9999))
 				);
 			}

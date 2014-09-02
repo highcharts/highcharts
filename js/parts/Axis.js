@@ -250,7 +250,7 @@ Axis.prototype = {
 		//axis.minorTickInterval = UNDEFINED;
 
 		axis.tickmarkOffset = (axis.categories && options.tickmarkPlacement === 'between' && 
-			pick(options.tickInterval, 1) === 1) ? 0.5 : 0; // #3202 // docs: new default behaviour when tickInteval !== 1
+			pick(options.tickInterval, 1) === 1) ? 0.5 : 0; // #3202
 
 		// Major ticks
 		axis.ticks = {};
@@ -986,7 +986,7 @@ Axis.prototype = {
 					null, 
 					getMagnitude(axis.tickInterval), 
 					// If the tick interval is between 1 and 5 and the axis max is in the order of
-					// thousands, chances are we are dealing with years. Don't allow decimals. #3363. // docs
+					// thousands, chances are we are dealing with years. Don't allow decimals. #3363.
 					pick(options.allowDecimals, !(axis.tickInterval > 1 && axis.tickInterval < 5 && axis.max > 1000 && axis.max < 9999))
 				);
 			}

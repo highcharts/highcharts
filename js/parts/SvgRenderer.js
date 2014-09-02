@@ -1756,7 +1756,6 @@ SVGRenderer.prototype = {
 			};
 
 			imageSrc = symbol.match(imageRegex)[1];
-			// docs: series-marker-width-height. Note that both width and height must be set
 			imageSize = symbolSizes[imageSrc] || (options && options.width && options.height && [options.width, options.height]);
 
 			// Ireate the image synchronously, add attribs async
