@@ -8,7 +8,7 @@
  * License: www.highcharts.com/license
  */
 
-(function (H) { // docs
+(function (H) {
 	
 	var seriesTypes = H.seriesTypes,
 		chartPrototype = H.Chart.prototype,
