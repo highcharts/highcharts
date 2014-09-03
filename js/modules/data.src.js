@@ -811,6 +811,9 @@
 				if (builder.name) {
 					series[seriesIndex].name = builder.name;
 				}
+				if (!builder.pointIsArray) {
+					series[seriesIndex].turboThreshold = Number.MAX_VALUE;
+				}
 			}
 
 
