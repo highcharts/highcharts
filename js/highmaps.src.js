@@ -13991,10 +13991,12 @@ extend(Series.prototype, {
 		extend(this, seriesTypes[newOptions.type || oldType].prototype);
 
 		// Re-register groups (#3094)
-		each(preserve, function (prop) {
-			series[prop] = preserve[prop];
-		});
-
+		// unless it's a new type (#3402)
+		if (!newOptions.type || (newOptions.type === oldType)) { 
+			each(preserve, function (prop) {
+				series[prop] = preserve[prop];
+			});
+		}
 
 		this.init(chart, newOptions);
 		chart.linkSeries(); // Links are lost in this.remove (#3028)
