@@ -6891,6 +6891,7 @@ Axis.prototype = {
 			tickPixelIntervalOption = options.tickPixelInterval,
 			tickPositions,
 			keepTwoTicksOnly,
+			factor19,
 			categories = axis.categories;
 
 		// linked axis gets the extremes from the parent axis
@@ -7020,6 +7021,13 @@ Axis.prototype = {
 			}
 		}
 
+		// Too many ticks. Previously this triggered error 19, but a more silent and forgiving
+		// failure is to reduce the amout of ticks drawn.
+		factor19 = ((axis.max - axis.min) / axis.tickInterval) / mathMax(axis.len / 5, 50);
+		if (!axis.ordinalPositions && factor19 > 1) {
+			axis.tickInterval = mathRound(factor19);
+		}
+
 		// get minorTickInterval
 		axis.minorTickInterval = options.minorTickInterval === 'auto' && axis.tickInterval ?
 				axis.tickInterval / 5 : options.minorTickInterval;
@@ -7029,11 +7037,6 @@ Axis.prototype = {
 			[].concat(options.tickPositions) : // Work on a copy (#1565)
 			(tickPositioner && tickPositioner.apply(axis, [axis.min, axis.max]));
 		if (!tickPositions) {
-
-			// Too many ticks
-			if (!axis.ordinalPositions && (axis.max - axis.min) / axis.tickInterval > mathMax(2 * axis.len, 200)) {
-				error(19, true);
-			}
 
 			if (isDatetimeAxis) {
 				tickPositions = axis.getTimeTicks(
