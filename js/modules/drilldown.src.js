@@ -325,7 +325,9 @@
 				level = newSeries.drilldownLevel;
 
 			each(this.points, function (point) {
-				point.graphic.hide();
+				if (point.graphic) { // #3407
+					point.graphic.hide();
+				}
 				if (point.dataLabel) {
 					point.dataLabel.hide();
 				}
@@ -342,7 +344,9 @@
 						// Fade in other points			  
 						var verb = i === (level && level.pointIndex) ? 'show' : 'fadeIn',
 							inherit = verb === 'show' ? true : undefined;
-						point.graphic[verb](inherit);
+						if (point.graphic) { // #3407
+							point.graphic[verb](inherit);
+						}
 						if (point.dataLabel) {
 							point.dataLabel[verb](inherit);
 						}
