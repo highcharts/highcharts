@@ -611,6 +611,7 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 			animation: true
 		},
 		hover: {
+			halo: false,  // #3406, halo is not required on heatmaps
 			brightness: 0.2
 		}
 	}
