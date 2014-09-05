@@ -8669,6 +8669,7 @@ Pointer.prototype = {
 				tooltip.refresh(points, e);
 				pointer.hoverX = points[0].clientX;
 			}
+			point = points[0];
 		}
 
 		// Separate tooltip and general mouse events
