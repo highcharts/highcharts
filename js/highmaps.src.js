@@ -13283,7 +13283,7 @@ Series.prototype = {
 			below;
 
 		if (negativeColor && (graph || area)) {
-			translatedThreshold = mathRound(yAxis.toPixels(options.threshold || 0, true));
+			translatedThreshold = mathMin(mathRound(yAxis.toPixels(options.threshold || 0, true)), chartSizeMax); // #3382
 			if (translatedThreshold < 0) {
 				chartSizeMax -= translatedThreshold; // #2534
 			}
