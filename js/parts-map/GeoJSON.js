@@ -77,6 +77,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 	if (series) {
 		series.chart.mapCredits = '<a href="http://www.highcharts.com">Highcharts</a> \u00A9 ' +
 			'<a href="' + geojson.copyrightUrl + '">' + geojson.copyrightShort + '</a>';
+		series.chart.mapCreditsFull = geojson.copyright;
 	}
 
 	return mapData;
@@ -93,4 +94,10 @@ wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
 	}
 
 	proceed.call(this, credits);
+
+	if (this.credits) { 
+		this.credits.attr({ 
+			title: this.mapCreditsFull
+		});
+	}
 });
