@@ -427,6 +427,39 @@ Tooltip.prototype = {
 		);
 	},
 
+	/** 
+	 * Get the best X date format based on the closest point range on the axis.
+	 */
+	getXDateFormat: function (point, options, closestPointRange) {
+		var xDateFormat,
+			dateTimeLabelFormats = options.dateTimeLabelFormats,
+			n,
+			lastN;
+
+		if (closestPointRange) {
+			for (n in timeUnits) {
+				if (timeUnits[n] > closestPointRange) {
+					n = lastN;
+					break;
+				
+				// If the point is placed every day at 23:59, we need to show
+				// the minutes as well. This logic only works for time units less than 
+				// a day, since all higher time units are dividable by those. #2637.
+				} else if (timeUnits[n] <= timeUnits.day && point.key % timeUnits[n] > 0) {
+					break;
+				}
+				lastN = n;
+			}
+			if (n) {
+				xDateFormat = dateTimeLabelFormats[n];
+			}
+		} else {
+			xDateFormat = dateTimeLabelFormats.day;
+		}
+
+		return xDateFormat || dateTimeLabelFormats.year; // #2546, 2581
+	},
+
 	/**
 	 * Format the footer/header of the tooltip
 	 * #3397: abstraction to enable formatting of footer and header
@@ -435,33 +468,14 @@ Tooltip.prototype = {
 		var footOrHead = isFooter ? 'footer' : 'header',
 			series = point.series,
 			tooltipOptions = series.tooltipOptions,
-			dateTimeLabelFormats = tooltipOptions.dateTimeLabelFormats,
 			xDateFormat = tooltipOptions.xDateFormat,
 			xAxis = series.xAxis,
 			isDateTime = xAxis && xAxis.options.type === 'datetime' && isNumber(point.key),
-			formatString = tooltipOptions[footOrHead+'Format'],
-			closestPointRange = xAxis && xAxis.closestPointRange,
-			n;
+			formatString = tooltipOptions[footOrHead+'Format'];
 
-		// Guess the best date format based on the closest point distance (#568)
+		// Guess the best date format based on the closest point distance (#568, #3418)
 		if (isDateTime && !xDateFormat) {
-			if (closestPointRange) {
-				for (n in timeUnits) {
-					if (timeUnits[n] >= closestPointRange || 
-							// If the point is placed every day at 23:59, we need to show
-							// the minutes as well. This logic only works for time units less than 
-							// a day, since all higher time units are dividable by those. #2637.
-							(timeUnits[n] <= timeUnits.day && point.key % timeUnits[n] > 0)) {
-						xDateFormat = dateTimeLabelFormats[n];
-						break;
-					}
-				}
-			} else {
-				xDateFormat = dateTimeLabelFormats.day;
-			}
-
-			xDateFormat = xDateFormat || dateTimeLabelFormats.year; // #2546, 2581
-
+			xDateFormat = this.getXDateFormat(point, tooltipOptions, xAxis && xAxis.closestPointRange);
 		}
 
 		// Insert the footer date format if any
