@@ -22,9 +22,9 @@ $(function () {
             x: 90
         },
         tooltip: {
-            formatter: function() {
-                return '<b>'+ this.series.name +'</b><br/>'+
-                    this.x +': '+ this.y;
+            formatter: function () {
+                return '<b>' + this.series.name + '</b><br/>' +
+                    this.x + ': ' + this.y;
             }
         },
         plotOptions: {

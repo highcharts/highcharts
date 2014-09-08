@@ -8,7 +8,7 @@ $(function () {
             title: {
                 text: 'Update series'
             },
-            
+
             legend: {
                 title: {
                     text: 'Population density per km²'

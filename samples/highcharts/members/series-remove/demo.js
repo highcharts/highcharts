@@ -9,7 +9,7 @@ $(function () {
     });
 
     // the button action
-    $('#button').click(function() {
+    $('#button').click(function () {
         var chart = $('#container').highcharts();
         if (chart.series.length) {
             chart.series[0].remove();

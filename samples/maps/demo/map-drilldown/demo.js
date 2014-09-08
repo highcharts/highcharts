@@ -7,7 +7,9 @@ $(function () {
     - Separators
     */
 
-    var data = Highcharts.geojson(Highcharts.maps['countries/us/us-all']);
+    var data = Highcharts.geojson(Highcharts.maps['countries/us/us-all']),
+        // Some responsiveness
+        small = $('#container').width() < 400;
 
     // Set drilldown pointers
     $.each(data, function (i) {
@@ -15,38 +17,34 @@ $(function () {
         this.value = i; // Non-random bogus data
     });
 
-    // Some responsiveness
-    var small = $('#container').width() < 400;
-
     // Instanciate the map
     $('#container').highcharts('Map', {
         chart : {
             events: {
                 drilldown: function (e) {
-                    
+
                     if (!e.seriesOptions) {
                         var chart = this,
-                            mapKey = 'countries/us/' + e.point.drilldown + '-all';
+                            mapKey = 'countries/us/' + e.point.drilldown + '-all',
+                            // Handle error, the timeout is cleared on success
+                            fail = setTimeout(function () {
+                                if (!Highcharts.maps[mapKey]) {
+                                    chart.showLoading('<i class="icon-frown"></i> Failed loading ' + e.point.name);
+
+                                    fail = setTimeout(function () {
+                                        chart.hideLoading();
+                                    }, 1000);
+                                }
+                            }, 3000);
 
                         // Show the spinner
                         chart.showLoading('<i class="icon-spinner icon-spin icon-3x"></i>'); // Font Awesome spinner
 
-                        // Handle error, the timeout is cleared on success
-                        var fail = setTimeout(function () {
-                            if (!Highcharts.maps[mapKey]) {
-                                chart.showLoading('<i class="icon-frown"></i> Failed loading ' + e.point.name);
-
-                                fail = setTimeout(function () {
-                                    chart.hideLoading();
-                                }, 1000);
-                            }
-                        }, 3000);
-                        
                         // Load the drilldown map
                         $.getScript('http://code.highcharts.com/mapdata/' + mapKey + '.js', function () {
 
-                            var data = Highcharts.geojson(Highcharts.maps[mapKey]);
-                        
+                            data = Highcharts.geojson(Highcharts.maps[mapKey]);
+
                             // Set a non-random bogus value
                             $.each(data, function (i) {
                                 this.value = i;
@@ -63,13 +61,13 @@ $(function () {
                                     format: '{point.name}'
                                 }
                             });
-                        })
+                        });
                     }
 
-                    
+
                     this.setTitle(null, { text: e.point.name });
                 },
-                drillup: function (e) {
+                drillup: function () {
                     this.setTitle(null, { text: 'USA' });
                 }
             }
@@ -100,7 +98,7 @@ $(function () {
             minColor: '#E6E7E8',
             maxColor: '#005645'
         },
-        
+
         mapNavigation: {
             enabled: true,
             buttonOptions: {
@@ -117,7 +115,7 @@ $(function () {
                 }
             }
         },
-        
+
         series : [{
             data : data,
             name: 'USA',
@@ -125,7 +123,7 @@ $(function () {
                 enabled: true,
                 format: '{point.properties.postal-code}'
             }
-        }], 
+        }],
 
         drilldown: {
             //series: drilldownSeries,

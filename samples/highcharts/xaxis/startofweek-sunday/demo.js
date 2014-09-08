@@ -5,7 +5,7 @@ $(function () {
             type: 'datetime',
 
             labels: {
-                formatter: function() {
+                formatter: function () {
                     return Highcharts.dateFormat('%a %e %b', this.value);
                 }
             }

@@ -347,7 +347,7 @@ Series.prototype = {
 		// cheaper, allows animation, and keeps references to points.
 		if (updatePoints !== false && dataLength && oldDataLength === dataLength && !series.cropped && !series.hasGroupedData) {
 			each(data, function (point, i) {
-				oldData[i].update(point, false);
+				oldData[i].update(point, false, null, false);
 			});
 
 		} else {
@@ -482,14 +482,15 @@ Series.prototype = {
 			return false;
 		}
 
+		if (xAxis) {
+			xExtremes = xAxis.getExtremes(); // corrected for log axis (#3053)
+			min = xExtremes.min;
+			max = xExtremes.max;
+		}
 
 		// optionally filter out points outside the plot area
 		if (isCartesian && series.sorted && (!cropThreshold || dataLength > cropThreshold || series.forceCrop)) {
 			
-			xExtremes = xAxis.getExtremes(); // corrected for log axis (#3053)
-			min = xExtremes.min;
-			max = xExtremes.max;
-
 			// it's outside current extremes
 			if (processedXData[dataLength - 1] < min || processedXData[0] > max) {
 				processedXData = [];
@@ -514,6 +515,7 @@ Series.prototype = {
 			if (!cropped && processedXData[i] > min && processedXData[i] < max) {
 				activePointCount++;
 			}
+			
 			if (distance > 0 && (closestPointRange === UNDEFINED || distance < closestPointRange)) {
 				closestPointRange = distance;
 
@@ -614,6 +616,7 @@ Series.prototype = {
 				// splat the y data in case of ohlc data array
 				points[i] = (new pointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
 			}
+			points[i].index = cursor; // For faster access in Point.update
 		}
 
 		// Hide cropped-away points - this only runs when the number of points is above cropThreshold, or when
@@ -724,6 +727,7 @@ Series.prototype = {
 			// Discard disallowed y values for log axes
 			if (yAxis.isLog && yValue <= 0) {
 				point.y = yValue = null;
+				error(10);
 			}
 
 			// Get the plotX translation
@@ -898,12 +902,13 @@ Series.prototype = {
 			seriesMarkerOptions = options.marker,
 			seriesPointAttr = series.pointAttr[''],
 			pointMarkerOptions,
+			hasPointMarker,
 			enabled,
 			isInside,
 			markerGroup = series.markerGroup,
 			globallyEnabled = pick(
 				seriesMarkerOptions.enabled, 
-				series.activePointCount < (0.5 * series.xAxis.len / seriesMarkerOptions.radius)
+				!series.requireSorting || series.activePointCount < (0.5 * series.xAxis.len / seriesMarkerOptions.radius)
 			);
 
 		if (seriesMarkerOptions.enabled !== false || series._hasPointMarkers) {
@@ -915,6 +920,7 @@ Series.prototype = {
 				plotY = point.plotY;
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
+				hasPointMarker = !!point.marker;
 				enabled = (globallyEnabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
 				isInside = chart.isInsidePlot(mathRound(plotX), plotY, chart.inverted); // #1858
 
@@ -942,7 +948,8 @@ Series.prototype = {
 							plotX - radius,
 							plotY - radius,
 							2 * radius,
-							2 * radius
+							2 * radius,
+							hasPointMarker ? pointMarkerOptions : seriesMarkerOptions
 						)
 						.attr(pointAttr)
 						.add(markerGroup);
@@ -1355,7 +1362,7 @@ Series.prototype = {
 			below;
 
 		if (negativeColor && (graph || area)) {
-			translatedThreshold = mathRound(yAxis.toPixels(options.threshold || 0, true));
+			translatedThreshold = mathMin(mathRound(yAxis.toPixels(options.threshold || 0, true)), chartSizeMax); // #3382
 			if (translatedThreshold < 0) {
 				chartSizeMax -= translatedThreshold; // #2534
 			}
@@ -1551,6 +1558,12 @@ Series.prototype = {
 			series.drawGraph();
 			series.clipNeg();
 		}
+
+		each(series.points, function (point) {
+			if (point.redraw) {
+				point.redraw();
+			}
+		});
 
 		// draw the data labels (inn pies they go before the points)
 		if (series.drawDataLabels) {

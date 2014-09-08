@@ -20,10 +20,10 @@ $(function () {
         value: 6
     }];
 
-        
+
     // Initiate the chart
     $('#container').highcharts('Map', {
-        
+
         title : {
             text : 'Data joined by <em>iso-a2</em> and <em>code</em>'
         },

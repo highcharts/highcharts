@@ -33,20 +33,21 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 	z += (seriesOptions.groupZPadding || 1);
 
 	Highcharts.each(series.data, function (point) {
-		var shapeArgs = point.shapeArgs,
-			tooltipPos = point.tooltipPos;
+		if (point.y !== null) {
+			var shapeArgs = point.shapeArgs,
+				tooltipPos = point.tooltipPos;
 
-		point.shapeType = 'cuboid';
-		shapeArgs.alpha = alpha;
-		shapeArgs.beta = beta; 
-		shapeArgs.z = z;
-		shapeArgs.origin = origin;
-		shapeArgs.depth = depth;
+			point.shapeType = 'cuboid';
+			shapeArgs.alpha = alpha;
+			shapeArgs.beta = beta; 
+			shapeArgs.z = z;
+			shapeArgs.origin = origin;
+			shapeArgs.depth = depth;
 
-		// Translate the tooltip position in 3d space
-		tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], alpha, beta, origin)[0];
-		point.tooltipPos = [tooltipPos.x, tooltipPos.y];
-
+			// Translate the tooltip position in 3d space
+			tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], alpha, beta, origin)[0];
+			point.tooltipPos = [tooltipPos.x, tooltipPos.y];
+		}
 	});	    
 });
 
@@ -63,25 +64,29 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'animate', function (pr
 		if (Highcharts.svg) { // VML is too slow anyway
 			if (init) {
 				Highcharts.each(series.data, function (point) {
-					point.height = point.shapeArgs.height;
-					point.shapey = point.shapeArgs.y;	//#2968				
-					point.shapeArgs.height = 1;
-					if (!reversed) {
-						if (point.stackY) {
-							point.shapeArgs.y = point.plotY + yAxis.translate(point.stackY);
-						} else {
-							point.shapeArgs.y = point.plotY + (point.negative ? -point.height : point.height);
+					if (point.y !== null) {
+						point.height = point.shapeArgs.height;
+						point.shapey = point.shapeArgs.y;	//#2968				
+						point.shapeArgs.height = 1;
+						if (!reversed) {
+							if (point.stackY) {
+								point.shapeArgs.y = point.plotY + yAxis.translate(point.stackY);
+							} else {
+								point.shapeArgs.y = point.plotY + (point.negative ? -point.height : point.height);
+							}
 						}
 					}
 				});
 
 			} else { // run the animation				
 				Highcharts.each(series.data, function (point) {					
-					point.shapeArgs.height = point.height;
-					point.shapeArgs.y = point.shapey;	//#2968
-					// null value do not have a graphic
-					if (point.graphic) {
-						point.graphic.animate(point.shapeArgs, series.options.animation);					
+					if (point.y !== null) {
+						point.shapeArgs.height = point.height;
+						point.shapeArgs.y = point.shapey;	//#2968
+						// null value do not have a graphic
+						if (point.graphic) {
+							point.graphic.animate(point.shapeArgs, series.options.animation);					
+						}
 					}
 				});
 
@@ -133,14 +138,16 @@ function draw3DPoints(proceed) {
 		this.borderWidth = options.borderWidth = options.edgeWidth || 1;
 
 		Highcharts.each(this.data, function (point) {
-			var pointAttr = point.pointAttr;
+			if (point.y !== null) {
+				var pointAttr = point.pointAttr;
 
-			// Set the border color to the fill color to provide a smooth edge
-			this.borderColor = Highcharts.pick(options.edgeColor, pointAttr[''].fill);
+				// Set the border color to the fill color to provide a smooth edge
+				this.borderColor = Highcharts.pick(options.edgeColor, pointAttr[''].fill);
 
-			pointAttr[''].stroke = this.borderColor;
-			pointAttr.hover.stroke = Highcharts.pick(states.hover.edgeColor, this.borderColor);
-			pointAttr.select.stroke = Highcharts.pick(states.select.edgeColor, this.borderColor);
+				pointAttr[''].stroke = this.borderColor;
+				pointAttr.hover.stroke = Highcharts.pick(states.hover.edgeColor, this.borderColor);
+				pointAttr.select.stroke = Highcharts.pick(states.select.edgeColor, this.borderColor);
+			}
 		});
 	}
 

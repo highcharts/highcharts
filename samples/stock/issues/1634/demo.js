@@ -624,7 +624,7 @@ $(function () {
             }
         },
         title: {
-        	text: 'Both series should have same data grouping'
+            text: 'Both series should have same data grouping'
         },
         series: [{
             data: data1,

@@ -3,12 +3,12 @@ $(function () {
         chart: {
             type: 'pie'
         },
-        
+
         plotOptions: {
             pie: {
                 point: {
                     events: {
-                        legendItemClick: function() {
+                        legendItemClick: function () {
                             if (!confirm('Do you want to toggle the visibility of this slice?')) {
                                 return false;
                             }
@@ -18,7 +18,7 @@ $(function () {
                 showInLegend: true
             }
         },
-        
+
         series: [{
             data: [
                 ['Firefox',   44.2],

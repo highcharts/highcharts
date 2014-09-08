@@ -9,10 +9,10 @@ $(function () {
      */
     (function (H) {
         var wrap = H.wrap,
-        seriesTypes = H.seriesTypes;
+            seriesTypes = H.seriesTypes;
 
         /**
-         * Recursively builds a K-D-tree 
+         * Recursively builds a K-D-tree
          */
         function KDTree(points, depth) {
             var axis, median, length = points && points.length;
@@ -23,19 +23,19 @@ $(function () {
                 axis = ['plotX', 'plotY'][depth % 2];
 
                 // sort point array
-                points.sort(function(a, b) {
+                points.sort(function (a, b) {
                     return a[axis] - b[axis];
                 });
-               
+
                 median = Math.floor(length / 2);
-                
+
                 // build and return node
                 return {
                     point: points[median],
                     left: KDTree(points.slice(0, median), depth + 1),
                     right: KDTree(points.slice(median + 1), depth + 1)
                 };
-            
+
             }
         }
 
@@ -51,11 +51,11 @@ $(function () {
                 ret = point,
                 nPoint1,
                 nPoint2;
-            
+
             // Get distance
-            point.dist = Math.pow(search.plotX - point.plotX, 2) + 
+            point.dist = Math.pow(search.plotX - point.plotX, 2) +
                 Math.pow(search.plotY - point.plotY, 2);
-            
+
             // Pick side based on distance to splitting point
             tdist = search[axis] - point[axis];
             sideA = tdist < 0 ? 'left' : 'right';
@@ -101,8 +101,8 @@ $(function () {
             H.each(chart.series, function (series) {
                 var point;
                 if (series.getNearest) {
-                    point = series.getNearest({ 
-                        plotX: e.chartX - chart.plotLeft, 
+                    point = series.getNearest({
+                        plotX: e.chartX - chart.plotLeft,
                         plotY: e.chartY - chart.plotTop
                     });
                     if (point) {
@@ -113,7 +113,7 @@ $(function () {
         });
 
         /**
-         * Get the canvas context for a series 
+         * Get the canvas context for a series
          */
         H.Series.prototype.getContext = function () {
             var canvas;
@@ -135,7 +135,7 @@ $(function () {
         }
 
         /**
-         * Wrap the drawPoints method to draw the points in canvas instead of the slower SVG, 
+         * Wrap the drawPoints method to draw the points in canvas instead of the slower SVG,
          * that requires one shape each point.
          */
         H.wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function (proceed) {
@@ -144,11 +144,11 @@ $(function () {
             if (this.chart.renderer.forExport) {
                 // Run SVG shapes
                 proceed.call(this);
-            
+
             } else {
-                
+
                 if (ctx = this.getContext()) {
-                    
+
                     // draw the columns
                     H.each(this.points, function (point) {
                         var plotY = point.plotY,
@@ -156,16 +156,16 @@ $(function () {
 
                         if (plotY !== undefined && !isNaN(plotY) && point.y !== null) {
                             shapeArgs = point.shapeArgs;
-                            
+
                             ctx.fillStyle = point.pointAttr[''].fill;
                             ctx.fillRect(shapeArgs.x, shapeArgs.y, shapeArgs.width, shapeArgs.height);
                         }
                     });
-                
+
                 } else {
                     this.chart.showLoading("Your browser doesn't support HTML5 canvas, <br>please use a modern browser");
-                    
-                    // Uncomment this to provide low-level (slow) support in oldIE. It will cause script errors on 
+
+                    // Uncomment this to provide low-level (slow) support in oldIE. It will cause script errors on
                     // charts with more than a few thousand points.
                     //proceed.call(this);
                 }
@@ -176,7 +176,7 @@ $(function () {
 
     var start;
     $('#container').highcharts({
-        
+
         data: {
             csv: document.getElementById('csv').innerHTML,
             parsed: function () {
@@ -267,7 +267,8 @@ $(function () {
             tooltip: {
                 headerFormat: 'Temperature<br/>',
                 pointFormat: '{point.x:%e %b, %Y} {point.y}:00: <b>{point.value} ℃</b>'
-            }
+            },
+            turboThreshold: Number.MAX_VALUE // #3404, remove after 4.0.5 release
         }]
 
     });

@@ -244,6 +244,7 @@ extend(Chart.prototype, {
 			height: sourceHeight
 		});
 		options.exporting.enabled = false; // hide buttons in print
+		delete options.data; // #3004
 
 		// prepare for replicating the chart
 		options.series = [];

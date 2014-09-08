@@ -1,11 +1,10 @@
 $(function () {
-    var chart,
-        categories = ['0-4', '5-9', '10-14', '15-19',
+    var categories = ['0-4', '5-9', '10-14', '15-19',
             '20-24', '25-29', '30-34', '35-39', '40-44',
             '45-49', '50-54', '55-59', '60-64', '65-69',
             '70-74', '75-79', '80-84', '85-89', '90-94',
-            '95-99', '100 +'];
-    $(document).ready(function() {
+            '95-99', '100 + '];
+    $(document).ready(function () {
         $('#container').highcharts({
             chart: {
                 type: 'bar'
@@ -36,27 +35,27 @@ $(function () {
                     text: null
                 },
                 labels: {
-                    formatter: function(){
+                    formatter: function () {
                         return (Math.abs(this.value) / 1000000) + 'M';
                     }
                 },
                 min: -4000000,
                 max: 4000000
             },
-    
+
             plotOptions: {
                 series: {
                     stacking: 'normal'
                 }
             },
-    
+
             tooltip: {
-                formatter: function(){
-                    return '<b>'+ this.series.name +', age '+ this.point.category +'</b><br/>'+
-                        'Population: '+ Highcharts.numberFormat(Math.abs(this.point.y), 0);
+                formatter: function () {
+                    return '<b>' + this.series.name + ', age ' + this.point.category + '</b><br/>' +
+                        'Population: ' + Highcharts.numberFormat(Math.abs(this.point.y), 0);
                 }
             },
-    
+
             series: [{
                 name: 'Male',
                 data: [-1746181, -1884428, -2089758, -2222362, -2537431, -2507081, -2443179,
@@ -70,5 +69,5 @@ $(function () {
             }]
         });
     });
-    
+
 });

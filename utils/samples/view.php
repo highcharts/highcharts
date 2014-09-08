@@ -41,7 +41,7 @@ if (strstr($html, "/code.highcharts.$topDomain/mapdata")) {
 if (isset($_POST['theme'])) {
 	$_SESSION['theme'] = $_POST['theme'];	
 }
-if ($_SESSION['theme']) {
+if (@$_SESSION['theme']) {
 	$html .= "<script src='http://code.highcharts.$topDomain/themes/". $_SESSION['theme'] .".js'></script>";
 }
 $themes = array(
@@ -179,6 +179,7 @@ function getResources() {
 						$('#source-box').html('');
 					}
 				});
+				contentDoc = null;
 
 			});
 		}());
@@ -195,7 +196,7 @@ function getResources() {
 		}
 
 
-		/* Wrappers for recording mouse events in order to write automatic tests */
+		// Wrappers for recording mouse events in order to write automatic tests 
 		$(function () {
 
 			$(window).bind('keydown', parent.keyDown);
@@ -321,7 +322,7 @@ function getResources() {
 				<form method="post" action="" style="display:inline">
 					<select name="theme" onchange="this.form.submit()">
 					<?php foreach ($themes as $theme => $themeName) : ?>
-						<option value="<?php echo $theme ?>" <?php if ($theme == $_SESSION['theme']) echo 'selected' ?>>
+						<option value="<?php echo $theme ?>" <?php if ($theme == @$_SESSION['theme']) echo 'selected' ?>>
 							<?php echo $themeName ?>
 						</option>
 					<?php endforeach ?>

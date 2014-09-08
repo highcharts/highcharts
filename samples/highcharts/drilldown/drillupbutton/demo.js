@@ -26,7 +26,7 @@ $(function () {
             series: {
                 borderWidth: 0,
                 dataLabels: {
-                    enabled: true,
+                    enabled: true
                 }
             }
         },
@@ -88,6 +88,6 @@ $(function () {
                 ]
             }]
         }
-    })
+    });
 });
-    
+

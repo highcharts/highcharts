@@ -6,7 +6,7 @@ $i = $_GET['i'];
 $updateContents = false;
 
 
-if (isset($_POST) && $_POST['submit'] == 'OK') {
+if (isset($_POST) && @$_POST['submit'] == 'OK') {
 	$compare->$path->comment = (object) $_POST;
 	file_put_contents('temp/compare.json', json_encode($compare));
 	$updateContents = true;
@@ -94,7 +94,7 @@ $symbols = array('check', 'exclamation-sign');
 							<select name="symbol">
 								<?php 
 								foreach ($symbols as $symbol) {
-									$selected = $symbol == $comment->symbol ? 'selected' : '';
+									$selected = $symbol == @$comment->symbol ? 'selected' : '';
 									echo "
 										<option name='symbol' $selected value='$symbol'>$symbol</option>
 									";
@@ -105,7 +105,7 @@ $symbols = array('check', 'exclamation-sign');
 					</tr>
 					<tr>
 						<td>Title</td>
-						<td><input type="text" id="title" name="title" value="<?php echo $comment->title ?>" /></td>
+						<td><input type="text" id="title" name="title" value="<?php echo @$comment->title ?>" /></td>
 					</tr>
 					<tr>
 						<td></td>

@@ -1,9 +1,9 @@
-$(function() {
-    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.json&callback=?', function(data) {
+$(function () {
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.json&callback=?', function (data) {
 
         // Create the chart
         $('#container').highcharts('StockChart', {
-            
+
 
             rangeSelector : {
                 selected : 1
@@ -12,14 +12,14 @@ $(function() {
             title : {
                 text : 'Issue in v1.3.6 caused last flag not to appear'
             },
-            
+
             tooltip: {
                 style: {
                     width: '200px'
                 },
                 valueDecimals: 4
             },
-            
+
             yAxis : {
                 title : {
                     text : 'Exchange rate'

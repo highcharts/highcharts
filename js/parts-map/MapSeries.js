@@ -57,7 +57,7 @@ var MapAreaPoint = extendClass(Point, {
 			mapPoint;
 
 		if (series.mapData) {
-			mapPoint = point[joinBy[1]] && series.mapMap[point[joinBy[1]]];
+			mapPoint = point[joinBy[1]] !== undefined && series.mapMap[point[joinBy[1]]];
 			if (mapPoint) {
 				// This applies only to bubbles
 				if (series.xyFromShape) {
@@ -95,6 +95,8 @@ var MapAreaPoint = extendClass(Point, {
 		clearTimeout(this.colorInterval);
 		if (this.value !== null) {
 			Point.prototype.onMouseOver.call(this, e);
+		} else { //#3401 Tooltip doesn't hide when hovering over null points
+			this.series.onMouseOut(e);
 		}
 	},
 	/**

@@ -177,6 +177,7 @@ Pointer.prototype = {
 				tooltip.refresh(points, e);
 				pointer.hoverX = points[0].clientX;
 			}
+			point = points[0];
 		}
 
 		// Separate tooltip and general mouse events
@@ -222,7 +223,7 @@ Pointer.prototype = {
 	 * 
 	 * @param allowMove {Boolean} Instead of destroying the tooltip altogether, allow moving it if possible
 	 */
-	reset: function (allowMove) {
+	reset: function (allowMove, delay) {
 		var pointer = this,
 			chart = pointer.chart,
 			hoverSeries = chart.hoverSeries,
@@ -257,7 +258,7 @@ Pointer.prototype = {
 			}
 
 			if (tooltip) {
-				tooltip.hide();
+				tooltip.hide(delay);
 			}
 
 			if (pointer._onDocumentMouseMove) {
@@ -334,7 +335,7 @@ Pointer.prototype = {
 			size,
 			mouseDownX = this.mouseDownX,
 			mouseDownY = this.mouseDownY,
-			panKey = chartOptions.panKey && e[chartOptions.panKey + 'Key']; // docs
+			panKey = chartOptions.panKey && e[chartOptions.panKey + 'Key'];
 
 		// If the mouse is outside the plot area, adjust to cooordinates
 		// inside to prevent the selection marker from going outside
@@ -522,8 +523,8 @@ Pointer.prototype = {
 
 		hoverChartIndex = chart.index;
 
-		// normalize
 		e = this.normalize(e);		
+		e.returnValue = false; // #2251, #3224
 		
 		if (chart.mouseIsDown === 'mousedown') {
 			this.drag(e);

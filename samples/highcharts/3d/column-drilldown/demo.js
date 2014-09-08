@@ -4,7 +4,7 @@ $(function () {
             margin: 75,
             type: 'column',
             options3d: {
-				enabled: true,
+                enabled: true,
                 alpha: 30,
                 beta: 10,
                 depth: 50
@@ -50,7 +50,7 @@ $(function () {
                     name: 'Squirrels',
                     y: 1
                 }]
-            },{
+            }, {
                 id: 'cars',
                 name: 'Cars',
                 data: [{
@@ -66,7 +66,7 @@ $(function () {
                     name: 'Subaru',
                     y: 6
                 }]
-            },{
+            }, {
                 id: 'fruits',
                 name: 'Fruits',
                 data: [{

@@ -8,7 +8,7 @@ $(function () {
             title: {
                 text: 'Set random data'
             },
-            
+
             legend: {
                 title: {
                     text: 'Population density per km²'

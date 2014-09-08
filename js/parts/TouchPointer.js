@@ -107,7 +107,7 @@ extend(Highcharts.Pointer.prototype, {
 			selectionMarker = self.selectionMarker,
 			transform = {},
 			fireClickEvent = touchesLength === 1 && ((self.inClass(e.target, PREFIX + 'tracker') && 
-				chart.runTrackerClick) || chart.runChartClick),
+				chart.runTrackerClick) || self.runChartClick),
 			clip = {};
 
 		// On touch devices, only proceed to trigger click if a handler is defined
@@ -143,6 +143,7 @@ extend(Highcharts.Pointer.prototype, {
 					bounds.max = mathMax(axis.pos + axis.len, absMax + minPixelPadding);
 				}
 			});
+			self.res = true; // reset on next move
 		
 		// Event type is touchmove, handle panning and pinching
 		} else if (pinchDown.length) { // can be 0 when releasing, if touchend fires first
@@ -165,6 +166,9 @@ extend(Highcharts.Pointer.prototype, {
 			// Optionally move the tooltip on touchmove
 			if (!hasZoom && followTouchMove && touchesLength === 1) {
 				this.runPointActions(self.normalize(e));
+			} else if (self.res) {
+				self.res = false;
+				this.reset(false, 0);
 			}
 		}
 	},

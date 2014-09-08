@@ -8,7 +8,7 @@ $(function () {
             data: [1]
         }]
     });
-    
+
     $('#small').click(function () {
         $('#container').highcharts().setSize(300);
     });

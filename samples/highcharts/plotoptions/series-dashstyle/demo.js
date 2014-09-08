@@ -3,17 +3,17 @@ $(function () {
         chart: {
             type: 'spline'
         },
-        
+
         legend: {
             symbolWidth: 80
         },
-        
+
         plotOptions: {
             series: {
                 color: 'black'
             }
         },
-    
+
         series: [{
             data: [1, 3, 2, 4, 5, 4, 6, 2, 3, 5, 6],
             dashStyle: 'longdash'

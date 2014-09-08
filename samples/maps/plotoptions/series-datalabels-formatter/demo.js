@@ -1,18 +1,18 @@
 $(function () {
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=us-population-density.json&callback=?', function (data) {
-    
+
         // Make it joinable
         $.each(data, function () {
             this.hasc = 'US.' + this.code.toUpperCase();
-        })
+        });
 
         // Instanciate the map
         $('#container').highcharts('Map', {
             chart : {
                 borderWidth : 1
             },
-            
+
             title : {
                 text : 'Data label formatter to show value conditionally'
             },
@@ -38,7 +38,7 @@ $(function () {
                     [1, '#000022']
                 ]
             },
-            
+
             series : [{
                 data : data,
                 mapData: Highcharts.maps['countries/us/us-all'],

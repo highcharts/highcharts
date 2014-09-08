@@ -264,6 +264,11 @@ function getCompareTooltips() {
 			});
 			
 			window.alert = function () {}
+
+			window.onbeforeunload = function(){
+				$(document).unbind().die();    //remove listeners on document
+				$(document).find('*').unbind().die(); //remove listeners on all nodes
+			}
 		</script>
 		
 		

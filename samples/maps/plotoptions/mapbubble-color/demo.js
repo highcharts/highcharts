@@ -10,7 +10,7 @@ $(function () {
             title: {
                 text: 'World population 2010 by country'
             },
-            
+
             subtitle : {
                 text : 'Map bubble color demo'
             },
@@ -38,7 +38,7 @@ $(function () {
                 joinBy: ['iso-a2', 'code'],
                 data: data,
                 name: 'Population 2010',
-                
+
                 minSize: 4,
                 maxSize: '12%',
                 tooltip: {

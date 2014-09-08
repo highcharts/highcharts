@@ -4,6 +4,11 @@
 ////// HELPER METHODS //////
 var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
 
+function defined(obj) {
+	return obj !== undefined && obj !== null;
+}
+
+
 function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
 	var result = [];
 	if ((end > start) && (end - start > PI / 2 + 0.0001)) {
@@ -79,7 +84,7 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	};
 
 	result.attr = function (args) {
-		if (args.shapeArgs || args.x) {
+		if (args.shapeArgs || defined(args.x)) {
 			var shapeArgs = args.shapeArgs || args;
 			var paths = this.renderer.cuboidPath(shapeArgs);
 			this.front.attr({d: paths[0], zIndex: paths[3]});
@@ -93,7 +98,7 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	};
 	
 	result.animate = function (args, duration, complete) {
-		if (args.x && args.y) {
+		if (defined(args.x) && defined(args.y)) {
 			var paths = this.renderer.cuboidPath(args);
 			this.front.attr({zIndex: paths[3]}).animate({d: paths[0]}, duration, complete);
 			this.top.attr({zIndex: paths[4]}).animate({d: paths[1]}, duration, complete);
@@ -226,8 +231,8 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 	result.shapeArgs = shapeArgs;	// Store for later use
 
 	result.top = renderer.path(paths.top).attr({zIndex: paths.zTop}).add(result);
-	result.side1 = renderer.path(paths.side2).attr({zIndex: paths.zSide2});
-	result.side2 = renderer.path(paths.side1).attr({zIndex: paths.zSide1});
+	result.side1 = renderer.path(paths.side2).attr({zIndex: paths.zSide1});
+	result.side2 = renderer.path(paths.side1).attr({zIndex: paths.zSide2});
 	result.inn = renderer.path(paths.inn).attr({zIndex: paths.zInn});
 	result.out = renderer.path(paths.out).attr({zIndex: paths.zOut});
 
@@ -262,7 +267,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 	};
 
 	result.animate = function (args, duration, complete) {
-		if (args.end || args.start) {
+		if (defined(args.end) || defined(args.start)) {
 			this._shapeArgs = this.shapeArgs;
 
 			Highcharts.SVGElement.prototype.animate.call(this, {
@@ -277,6 +282,10 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 						end = fx.end,
 						pos = fx.pos,
 						sA = Highcharts.merge(start, {
+							x: start.x + ((end.x - start.x) * pos),
+							y: start.y + ((end.y - start.y) * pos),
+							r: start.r + ((end.r - start.r) * pos),
+							innerR: start.innerR + ((end.innerR - start.innerR) * pos),
 							start: start.start + ((end.start - start.start) * pos),
 							end: start.end + ((end.end - start.end) * pos)
 						});

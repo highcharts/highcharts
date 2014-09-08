@@ -3,7 +3,7 @@
  *****************************************************************************/
 extend(defaultOptions, {
 	rangeSelector: {
-		// allButtonsEnabled: false, // docs: /stock/rangeselector/allbuttonsenabled-true
+		// allButtonsEnabled: false,
 		// enabled: true,
 		// buttons: {Object}
 		// buttonSpacing: 0,
@@ -237,11 +237,11 @@ RangeSelector.prototype = {
 			blurInputs = rangeSelector.blurInputs = function () {
 				var minInput = rangeSelector.minInput,
 					maxInput = rangeSelector.maxInput;
-				if (minInput) {
-					minInput.blur();
+				if (minInput && minInput.blur) { //#3274 in some case blur is not defined
+					fireEvent(minInput, 'blur'); //#3274
 				}
-				if (maxInput) {
-					maxInput.blur();
+				if (maxInput && maxInput.blur) { //#3274 in some case blur is not defined
+					fireEvent(maxInput, 'blur'); //#3274
 				}
 			};
 
@@ -521,33 +521,38 @@ RangeSelector.prototype = {
 			div = rangeSelector.div,
 			inputGroup = rangeSelector.inputGroup,
 			buttonTheme = options.buttonTheme,
+			buttonPosition = options.buttonPosition || {},
 			inputEnabled = options.inputEnabled !== false,
 			states = buttonTheme && buttonTheme.states,
 			plotLeft = chart.plotLeft,
 			yAlign,
-			buttonLeft;
+			buttonLeft,
+			buttonTop;
+
 
 		// create the elements
 		if (!rangeSelector.rendered) {
-			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, plotLeft, chart.plotTop - 20)
+			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, pick(buttonPosition.x, plotLeft), pick(buttonPosition.y, chart.plotTop - 35) + 15)
 				.css(options.labelStyle)
 				.add();
 
 			// button starting position
-			buttonLeft = plotLeft + rangeSelector.zoomText.getBBox().width + 5;
+			buttonLeft = pick(buttonPosition.x, plotLeft) + rangeSelector.zoomText.getBBox().width + 5;
+			buttonTop = pick(buttonPosition.y, chart.plotTop - 35);
 
 			each(rangeSelector.buttonOptions, function (rangeOptions, i) {
 				buttons[i] = renderer.button(
 						rangeOptions.text,
 						buttonLeft,
-						chart.plotTop - 35,
+						buttonTop,
 						function () {
 							rangeSelector.clickButton(i);
 							rangeSelector.isActive = true;
 						},
 						buttonTheme,
 						states && states.hover,
-						states && states.select
+						states && states.select,
+						states && states.disabled
 					)
 					.css({
 						textAlign: 'center'

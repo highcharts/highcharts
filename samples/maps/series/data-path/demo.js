@@ -2,7 +2,7 @@ $(function () {
 
     // Initiate the chart
     $('#container').highcharts('Map', {
-        
+
         title : {
             text : 'Map with inline point paths'
         },

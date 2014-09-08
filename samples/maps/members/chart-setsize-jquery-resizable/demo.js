@@ -1,10 +1,10 @@
 $(function () {
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
-        
+
         // Initiate the chart
         $('#container').highcharts('Map', {
-            
+
             title : {
                 text : 'Set chart size by dragging handle'
             },
@@ -38,7 +38,7 @@ $(function () {
             }]
         });
 
-        
+
 
         var chart = $('#container').highcharts();
         $('#resizer').resizable({
@@ -46,7 +46,7 @@ $(function () {
             // resizer minus padding. If your chart has a lot of data or other
             // content, the redrawing might be slow. In that case, we recommend
             // that you use the 'stop' event instead of 'resize'.
-            resize: function() {
+            resize: function () {
                 chart.setSize(
                     this.offsetWidth - 20,
                     this.offsetHeight - 20,

@@ -2,7 +2,7 @@ $(function () {
 
     // Initiate the chart
     $('#container').highcharts('Map', {
-        
+
         title : {
             text : 'Select point by id'
         },

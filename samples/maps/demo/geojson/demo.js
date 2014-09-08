@@ -69,10 +69,10 @@ $(function () {
     ];
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=germany.geo.json&callback=?', function (geojson) {
-        
+
         // Initiate the chart
         $('#container').highcharts('Map', {
-            
+
             title : {
                 text : 'GeoJSON in Highmaps'
             },

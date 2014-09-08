@@ -11,8 +11,8 @@ $(function () {
             series: {
                 point: {
                     events: {
-                        update: function(event) {
-                            if (!confirm('Do you want to set the point\'s value to '+ event.options +'?')) {
+                        update: function (event) {
+                            if (!confirm('Do you want to set the point\'s value to ' + event.options + '?')) {
                                 return false;
                             }
                         }
@@ -27,7 +27,7 @@ $(function () {
     });
 
     // button handler
-    $('#button').click(function() {
+    $('#button').click(function () {
         var chart = $('#container').highcharts();
         chart.series[0].data[0].update(150);
     });

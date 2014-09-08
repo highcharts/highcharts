@@ -143,11 +143,21 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 // Override the automatic label alignment so that the first Y axis' labels
 // are drawn on top of the grid line, and subsequent axes are drawn outside
 wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
+	var chart = this.chart,
+		options = this.options,
+		panes = chart._labelPanes = chart._labelPanes || {},
+		key,
+		labelOptions = this.options.labels;
 	if (this.chart.options._stock && this.coll === 'yAxis') {
-		if (inArray(this, this.chart.yAxis) === 0) {
-			if (this.options.labels.x === 15) { // default
-				this.options.labels.x = 0;
+		key = options.top + ',' + options.height;
+		if (!panes[key] && labelOptions.enabled) { // do it only for the first Y axis of each pane
+			if (labelOptions.x === 15) { // default
+				labelOptions.x = 0;
 			}
+			if (labelOptions.align === undefined) {
+				labelOptions.align = 'right';
+			}
+			panes[key] = 1;
 			return 'right';
 		}
 	}
@@ -172,17 +182,18 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 		uniqueAxes;
 
 	// Get the related axes based on series
-	axes = (axis.isXAxis ? 
-		(defined(axis.options.yAxis) ?
-			[chart.yAxis[axis.options.yAxis]] : 
-			map(series, function (S) { return S.yAxis; })
-		) :
-		(defined(axis.options.xAxis) ?
-			[chart.xAxis[axis.options.xAxis]] : 
-			map(series, function (S) { return S.xAxis; })
-		)
-	);
-
+	if (axis.coll === 'xAxis' || axis.coll === 'yAxis') { //#3360 series should be ignored in case of color Axis
+		axes = (axis.isXAxis ? 
+			(defined(axis.options.yAxis) ?
+				[chart.yAxis[axis.options.yAxis]] : 
+				map(series, function (S) { return S.yAxis; })
+			) :
+			(defined(axis.options.xAxis) ?
+				[chart.xAxis[axis.options.xAxis]] : 
+				map(series, function (S) { return S.xAxis; })
+			)
+		);
+	}
 
 	// Get the related axes based options.*Axis setting #2810
 	axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);

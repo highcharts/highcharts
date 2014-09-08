@@ -45,7 +45,12 @@ function dissimilarityIndexCalculator($str_img,$str_match){
 	//Resample to 16px each
 	$compareSize = 16;
 	$img_16source = imagecreatetruecolor($compareSize, $compareSize);
+	$bg = imagecolorallocate($img_16source, 96, 96, 96);
+	imagefilledrectangle($img_16source, 0, 0, $compareSize, $compareSize, $bg);
 	$img_16match  = imagecreatetruecolor($compareSize, $compareSize);
+	$bg = imagecolorallocate($img_16match, 96, 96, 96);
+	imagefilledrectangle($img_16match, 0, 0, $compareSize, $compareSize, $bg);
+	
 
 	imagecopyresampled( $img_16source,
 		$img_source,
@@ -71,10 +76,12 @@ function dissimilarityIndexCalculator($str_img,$str_match){
 				imagecolorsforindex($img_16match,imagecolorat($img_16match,$x,$y));
 
 			//Calculate the index
-			//echo $arr_img_source_color[$x][$y]['#f15c80']  ." - ". $arr_img_match_color['#f15c80'] ."\n";
-			$difference  += abs($arr_img_source_color[$x][$y]['#f15c80']   - $arr_img_match_color[$x][$y]['#f15c80'])       +
-			abs($arr_img_source_color[$x][$y]["#a4edba"] - $arr_img_match_color[$x][$y]["#a4edba"]) +
-			abs($arr_img_source_color[$x][$y]['blue']  - $arr_img_match_color[$x][$y]['blue']);
+			$difference  += abs($arr_img_source_color[$x][$y]['red']   - $arr_img_match_color[$x][$y]['red'])       +
+			abs($arr_img_source_color[$x][$y]['green'] - $arr_img_match_color[$x][$y]['green']) +
+			abs($arr_img_source_color[$x][$y]['blue']  - $arr_img_match_color[$x][$y]['blue']) +
+			abs($arr_img_source_color[$x][$y]['alpha']  - $arr_img_match_color[$x][$y]['alpha']);
+			
+			//error_log("[$x,$y], " . $arr_img_source_color[$x][$y]['red'] . ', ' . $arr_img_match_color[$x][$y]['red']);
 		}
 	}
 	
@@ -99,7 +106,7 @@ function dissimilarityIndexCalculator($str_img,$str_match){
 	/*
 	imagepng($img_16source, "temp/left-{$compareSize}px.png");
 	imagepng($img_16match, "temp/right-{$compareSize}px.png");
-	*/
+	// */
 
 	return $arr_return;
 	

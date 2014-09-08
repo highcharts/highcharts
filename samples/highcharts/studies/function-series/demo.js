@@ -11,9 +11,9 @@ $(function () {
             each = Highcharts.each;
 
         defaultPlotOptions.functionseries = merge(defaultPlotOptions.line, {
-            marker: { 
+            marker: {
                 enabled: false
-            }   
+            }
         });
 
         seriesTypes.functionseries = Highcharts.extendClass(Highcharts.Series, {
@@ -31,9 +31,9 @@ $(function () {
                     y,
                     i;
 
-                for (i = 0; i < points; i++) {
+                for (i = 0; i < points; i += 1) {
                     x = min + (i * ((max - min) / points));
-                    y = dataFunction(x);
+                    y = dataFunction (x);
                     data.push([x, y]);
                 }
 
@@ -51,18 +51,18 @@ $(function () {
                     series.setData([]);
                 };
             }
-            
+
         });
 
         Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
             proceed.apply(this, [].slice.call(arguments, 1));
-            
+
             each(this.series, function (serie) {
                 if (serie.type === 'functionseries') {
                     serie.setData([]);
                 }
             });
-            
+
         });
     }(Highcharts));
     /// END OF FUNCTION SERIES
@@ -70,12 +70,12 @@ $(function () {
     var scatterData = [],
         i;
 
-    for (i=0; i < 100; i+=0.1) {
+    for (i = 0; i < 100; i += 0.1) {
         scatterData.push([i, Math.sin(i/10) + Math.random() - 0.5]);
     }
 
     var chart = new Highcharts.Chart(
-    {   
+    {
         chart: {
             renderTo: 'container',
             zoomType: 'x'
@@ -93,12 +93,12 @@ $(function () {
             marker: {
                 radius: 1
             }
-        }, {         
+        }, {
             type: 'functionseries',
             name: 'Expected',
             min: 0,
-            max: 100,    
-            dataFunction: function (x) { 
+            max: 100,
+            dataFunction: function (x) {
                 return Math.sin(x/10);
             }
         }]

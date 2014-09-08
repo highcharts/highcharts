@@ -7,7 +7,7 @@ $(function () {
             type: 'column',
             animation: false
         },
-        
+
         title: {
             text: 'Drill up failed on top level'
         },
@@ -15,7 +15,7 @@ $(function () {
         xAxis: {
             categories: true
         },
-        
+
         drilldown: {
             animation: false,
             series: [{
@@ -31,7 +31,7 @@ $(function () {
                 id: 'cars',
                 name: 'Cars',
                 data: [{
-                    name: 'Toyota', 
+                    name: 'Toyota',
                     y: 4,
                     drilldown: 'toyota'
                 },
@@ -49,7 +49,7 @@ $(function () {
                 ]
             }]
         },
-        
+
         series: [{
             name: 'Overview',
             colorByPoint: true,

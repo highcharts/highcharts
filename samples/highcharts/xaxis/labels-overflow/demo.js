@@ -3,44 +3,44 @@ $(function () {
         chart: {
             plotBorderWidth: 1
         },
-        
+
         title: {
-        	text: null
+            text: null
         },
-        
+
         xAxis: [{
             type: 'datetime',
             labels: {
-            	overflow: 'justify'
+                overflow: 'justify'
             },
             title: {
-            	text: 'Justified labels'
+                text: 'Justified labels'
             }
         }, {
-        	type: 'datetime',
-        	linkedTo: 0,
-        	opposite: true,
-        	title: {
-        		text: 'Non-justified labels'
-        	}
+            type: 'datetime',
+            linkedTo: 0,
+            opposite: true,
+            title: {
+                text: 'Non-justified labels'
+            }
         }],
-        
-        
-        
+
+
+
         yAxis: {
-        	title: {
-        		text: null
-        	},
-        	labels: {
-        		enabled: false
-        	}
+            title: {
+                text: null
+            },
+            labels: {
+                enabled: false
+            }
         },
-        
+
         series: [{
             data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6],
             pointStart: (new Date()).setUTCHours(0),
             pointInterval: 24 * 3600 * 1000,
-            showInLegend: false   
+            showInLegend: false
         }]
     });
 });
