@@ -7087,7 +7087,7 @@ Axis.prototype = {
 			length,
 			linkedParentExtremes,
 			tickIntervalOption = options.tickInterval,
-			minTickIntervalOption = options.minTickInterval,
+			minTickInterval,
 			tickPixelIntervalOption = options.tickPixelInterval,
 			tickPositions,
 			keepTwoTicksOnly,
@@ -7202,8 +7202,10 @@ Axis.prototype = {
 		}
 
 		// Before normalizing the tick interval, handle minimum tick interval. This applies only if tickInterval is not defined.
-		if (!tickIntervalOption && axis.tickInterval < minTickIntervalOption) {
-			axis.tickInterval = minTickIntervalOption;
+		// docs: defaults to closest point range on datetime axis
+		minTickInterval = pick(options.minTickInterval, axis.isDatetimeAxis && axis.closestPointRange);
+		if (!tickIntervalOption && axis.tickInterval < minTickInterval) {
+			axis.tickInterval = minTickInterval;
 		}
 
 		// for linear axes, get magnitude and normalize the interval
