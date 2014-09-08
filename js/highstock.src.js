@@ -17605,6 +17605,7 @@ extend(Series.prototype, {
 			low,
 			high,
 			xAxis = series.xAxis,
+			halfPointRange = (xAxis.pointRange || 0) / 2,
 			xExtremes = xAxis && xAxis.getExtremes(),
 			axisLength = xAxis ? (xAxis.tooltipLen || xAxis.len) : series.chart.plotSizeX, // tooltipLen and tooltipPosName used in polar
 			point,
@@ -17643,7 +17644,7 @@ extend(Series.prototype, {
 		for (i = 0; i < pointsLength; i++) {
 			point = points[i];
 			pointX = point.x;
-			if (pointX >= xExtremes.min && pointX <= xExtremes.max) { // #1149
+			if (pointX >= xExtremes.min - halfPointRange && pointX <= xExtremes.max + halfPointRange) { // #1149, #3152
 				nextPoint = points[i + 1];
 
 				// Set this range's low to the last range's high plus one
