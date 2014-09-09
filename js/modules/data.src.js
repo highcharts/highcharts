@@ -438,8 +438,16 @@
 	/**
 	 * Trim a string from whitespace
 	 */
-	trim: function (str) {
-		return typeof str === 'string' ? str.replace(/^\s+|\s+$/g, '') : str;
+	trim: function (str, inside) {
+		if (typeof str === 'string') {
+			str = str.replace(/^\s+|\s+$/g, '');
+
+			// Clear white space insdie the string, like thousands separators
+			if (inside && /^[0-9\s]+$/.test(str)) { 
+				str = str.replace(/\s/g, '');
+			}
+		}
+		return str;
 	},
 	
 	/**
@@ -453,6 +461,7 @@
 			val,
 			floatVal,
 			trimVal,
+			trimInsideVal,
 			isXColumn,
 			dateVal,
 			descending,
@@ -466,18 +475,21 @@
 			row = columns[col].length;
 			rawColumns[col] = [];
 			isXColumn = inArray(col, this.valueCount.xColumns) !== -1;
-			forceCategory = isXColumn && chartOptions && chartOptions.xAxis && splat(chartOptions.xAxis)[0].type === 'category';
+			forceCategory = isXColumn && ((chartOptions && chartOptions.xAxis && splat(chartOptions.xAxis)[0].type === 'category') || this.options.forceCategory);
 			while (row--) {
 				val = backup[row] || columns[col][row];
-				floatVal = parseFloat(val);
-				trimVal = rawColumns[col][row] = this.trim(val);
 
+				
+				trimVal = rawColumns[col][row] = this.trim(val);
+				trimInsideVal = this.trim(val, true);
+				floatVal = parseFloat(trimInsideVal);
+				
 				// Disable number or date parsing by setting the X axis type to category
 				if (forceCategory) {
 					columns[col][row] = trimVal;
 
 				/*jslint eqeq: true*/
-				} else if (trimVal == floatVal) { // is numeric
+				} else if (trimInsideVal == floatVal) { // is numeric
 				/*jslint eqeq: false*/
 					columns[col][row] = floatVal;
 					
@@ -810,9 +822,6 @@
 				};
 				if (builder.name) {
 					series[seriesIndex].name = builder.name;
-				}
-				if (!builder.pointIsArray) {
-					series[seriesIndex].turboThreshold = Number.MAX_VALUE;
 				}
 			}
 
