@@ -441,6 +441,7 @@ dateFormat = function (format, timestamp, capitalize) {
 			'A': langWeekdays[day], // Long weekday, like 'Monday'
 			'd': pad(dayOfMonth), // Two digit day of the month, 01 to 31
 			'e': dayOfMonth, // Day of the month, 1 through 31
+			'w': day,
 
 			// Week (none implemented)
 			//'W': weekNumber(),
@@ -745,8 +746,8 @@ timeUnits = {
 	hour: 3600000,
 	day: 24 * 3600000,
 	week: 7 * 24 * 3600000,
-	month: 31 * 24 * 3600000,
-	year: 31556952000
+	month: 28 * 24 * 3600000,
+	year: 364 * 24 * 3600000
 };
 /**
  * Path interpolation algorithm used across adapters
@@ -8915,26 +8916,49 @@ Tooltip.prototype = {
 	/** 
 	 * Get the best X date format based on the closest point range on the axis.
 	 */
-	getXDateFormat: function (point, options, closestPointRange) {
+	getXDateFormat: function (point, options, xAxis) {
 		var xDateFormat,
 			dateTimeLabelFormats = options.dateTimeLabelFormats,
+			closestPointRange = xAxis && xAxis.closestPointRange,
 			n,
+			blank = '01-01 00:00:00.000',
+			strpos = {
+				millisecond: 15,
+				second: 12,
+				minute: 9,
+				hour: 6,
+				day: 3
+			},
+			date,
 			lastN;
 
 		if (closestPointRange) {
+			date = dateFormat('%m-%d %H:%M:%S.%L', point.x);
 			for (n in timeUnits) {
-				if (timeUnits[n] > closestPointRange) {
+
+				// If the range is exactly one week and we're looking at a Sunday/Monday, go for the week format
+				if (closestPointRange === timeUnits.week && +dateFormat('%w', point.x) === xAxis.options.startOfWeek && 
+						date.substr(6) === blank.substr(6)) {
+					n = 'week';
+					break;
+
+				// The first format that is too great for the range
+				} else if (timeUnits[n] > closestPointRange) {
 					n = lastN;
 					break;
 				
 				// If the point is placed every day at 23:59, we need to show
-				// the minutes as well. This logic only works for time units less than 
-				// a day, since all higher time units are dividable by those. #2637.
-				} else if (timeUnits[n] <= timeUnits.day && point.key % timeUnits[n] > 0) {
+				// the minutes as well. #2637.
+				} else if (strpos[n] && date.substr(strpos[n]) !== blank.substr(strpos[n])) {
 					break;
 				}
-				lastN = n;
+
+				// Weeks are outside the hierarchy, only apply them on Mondays/Sundays like in the first condition
+				if (n !== 'week') {
+					lastN = n;
+				}
 			}
+			
 			if (n) {
 				xDateFormat = dateTimeLabelFormats[n];
 			}
@@ -8960,7 +8984,7 @@ Tooltip.prototype = {
 
 		// Guess the best date format based on the closest point distance (#568, #3418)
 		if (isDateTime && !xDateFormat) {
-			xDateFormat = this.getXDateFormat(point, tooltipOptions, xAxis && xAxis.closestPointRange);
+			xDateFormat = this.getXDateFormat(point, tooltipOptions, xAxis);
 		}
 
 		// Insert the footer date format if any

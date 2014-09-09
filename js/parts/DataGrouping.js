@@ -412,7 +412,7 @@ tooltipProto.tooltipFooterHeaderFormatter = function (point, isFooter) {
 		// so if the least distance between points is one minute, show it, but if the
 		// least distance is one day, skip hours and minutes etc.
 		} else if (!xDateFormat && dateTimeLabelFormats) {
-			xDateFormat = tooltip.getXDateFormat(point, tooltipOptions, xAxis.closestPointRange);
+			xDateFormat = tooltip.getXDateFormat(point, tooltipOptions, xAxis);
 		}
 
 		// now format the key
