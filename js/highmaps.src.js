@@ -17345,7 +17345,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 	});
 
 	// Create a credits text that includes map source, to be picked up in Chart.showCredits
-	if (series) {
+	if (series && geojson.copyrightShort) {
 		series.chart.mapCredits = '<a href="http://www.highcharts.com">Highcharts</a> \u00A9 ' +
 			'<a href="' + geojson.copyrightUrl + '">' + geojson.copyrightShort + '</a>';
 		series.chart.mapCreditsFull = geojson.copyright;
