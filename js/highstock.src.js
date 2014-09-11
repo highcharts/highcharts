@@ -17809,7 +17809,7 @@ extend(Series.prototype, {
 			low,
 			high,
 			xAxis = series.xAxis,
-			halfPointRange = (xAxis.pointRange || 0) / 2,
+			halfPointRange = ((xAxis && xAxis.pointRange) || 0) / 2,
 			xExtremes = xAxis && xAxis.getExtremes(),
 			axisLength = xAxis ? (xAxis.tooltipLen || xAxis.len) : series.chart.plotSizeX, // tooltipLen and tooltipPosName used in polar
 			point,
