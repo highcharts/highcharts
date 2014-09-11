@@ -596,7 +596,7 @@ function discardElement(element) {
 /**
  * Provide error messages for debugging, with links to online explanation 
  */
-error = function (code, stop) {
+function error(code, stop) {
 	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
 	if (stop) {
 		throw msg;
