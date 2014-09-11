@@ -157,6 +157,7 @@ Axis.prototype = {
 	 */
 	defaultBottomAxisOptions: {
 		labels: {
+			autoRotation: [-45], // docs
 			x: 0,
 			y: null // based on font size
 			// overflow: undefined,
@@ -171,6 +172,7 @@ Axis.prototype = {
 	 */
 	defaultTopAxisOptions: {
 		labels: {
+			autoRotation: [-45], // docs
 			x: 0,
 			y: -15
 			// overflow: undefined
@@ -1446,31 +1448,49 @@ Axis.prototype = {
 				attr = { rotation: 0 },
 				css,
 				fontMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
-				step,
-				labelStep;
+				horizontalSpaceNeeded,
+				labelStep,
+				labelLength = 0,
+				label,
+				bestScore = Number.MAX_VALUE;
 			
-			axis.autoRotation = horiz && !defined(labelOptions.rotation);
+			axis.autoRotation = horiz && !defined(labelOptions.rotation) && labelOptions.autoRotation;
 			if (axis.autoRotation) {
+
+				// Get the longest label length
 				each(tickPositions, function (pos) {
-					if (ticks[pos] && rotation === undefined) {
-						if (slotWidth) {
-							step = (fontMetrics.h * 1.5) / slotWidth;
-							if (step > 1) {
-								labelStep = mathFloor(step);
-								rotation = -90;
-							} else if (ticks[pos].labelLength > slotWidth) {
-								rotation = -45;
-							}
-							if (rotation) {
-								css = { 
-									width: (chart.chartHeight * 0.33) + PX,
-									textOverflow: 'ellipsis'
-								};
-							}
-						}
+					if (ticks[pos] && ticks[pos].labelLength > labelLength) {
+						labelLength = ticks[pos].labelLength;
 					}
 				});
+				
+				// Loop over the given autoRotation options, and determine which gives the best score. The 
+				// best score is that with the lowest number of steps and a rotation closest to horizontal.
+				if (slotWidth && labelLength > slotWidth) {
+					each(axis.autoRotation, function (rot) {
+						var step,
+							score;
+
+						horizontalSpaceNeeded = mathMin(mathAbs(fontMetrics.h / mathSin(deg2rad * rot)), labelLength);
+						step = horizontalSpaceNeeded / slotWidth;
+						
+						step = step > 1 ? mathCeil(step) : 1;
+
+						score = step + mathAbs(rot / 360);
+
+						if (score < bestScore) {
+							bestScore = score;
+							rotation = rot;
+							labelStep = step;
+						}
+					});
+				}
+
 				if (rotation) {
+					css = { 
+						width: (chart.chartHeight * 0.33) + PX,
+						textOverflow: 'ellipsis'
+					};
 					attr.rotation = rotation;
 				}
 			} else if (labelOptions.rotation) {
@@ -1483,8 +1503,9 @@ Axis.prototype = {
 				i = tickPositions.length;
 				while (!horiz && i--) {
 					pos = tickPositions[i];
-					if (axis.len / tickPositions.length - 4 < ticks[pos].label.getBBox().height) {
-						ticks[pos].label.css({ width: css.width, textOverflow: 'ellipsis' });
+					label = ticks[pos].label;
+					if (label && axis.len / tickPositions.length - 4 < label.getBBox().height) {
+						label.css({ width: css.width, textOverflow: 'ellipsis' });
 					}
 				}
 			}
