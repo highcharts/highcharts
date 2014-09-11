@@ -4,9 +4,20 @@
 	$i = $_GET['i'];
 	$continue = @$_GET['continue'];
 
+	
+	
+
+
 	if (!get_browser(null, true)) {
 		$warning = 'Unable to get the browser info. Make sure a php_browscap.ini file extists, see ' .
 		'<a href="http://php.net/manual/en/function.get-browser.php">get_browser</a>.';
+	} else {
+		$browser = get_browser(null, true);
+		$browserKey = @$browser['parent'];
+		if (!$browserKey) {
+			$warning = 'Unable to get the browser info. Make sure php_browscap.ini is updated, see ' .
+			'<a target="_blank" href="http://php.net/manual/en/function.get-browser.php">get_browser</a>.';
+		}
 	}
 
 ?><!DOCTYPE HTML>

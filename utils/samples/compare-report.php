@@ -83,6 +83,12 @@ foreach ($compare as $path => $sample) {
 		</script>
 		
 		<style type="text/css">
+			* {
+				font-family: Arial, sans-serif;
+			}
+			body {
+				font-size: 0.8em;
+			}
 			.top-bar {
 				color: white;
 				font-family: Arial, sans-serif; 
@@ -94,6 +100,7 @@ foreach ($compare as $path => $sample) {
 				background: -moz-linear-gradient(top, #57544A, #37342A);
 				box-shadow: 0px 0px 8px #888;
 			}
+
 			
 			.top-bar a {
 				color: white;
@@ -177,7 +184,7 @@ foreach ($compare as $path => $sample) {
 
 
 
-						echo "<tr><th class='path'>$path</th>";
+						echo "<tr><th class='path'>$i. <a href='compare-view.php?path=$path&amp;i=$i'>$path</a></th>";
 						
 						foreach ($browsers as $browser) {
 							echo "<td class='value'>" . (isset($sample->$browser) ? round($sample->$browser, 2) : '-') . '</td>';
@@ -188,7 +195,7 @@ foreach ($compare as $path => $sample) {
 						echo "<td class='diff'>$range</td>"; 
 
 						echo "<td class='comment'>";
-						if ($sample->comment) {
+						if (isset($sample->comment)) {
 							echo "<i class='icon-" . $sample->comment->symbol . "'></i> " . $sample->comment->title;
 						}
 

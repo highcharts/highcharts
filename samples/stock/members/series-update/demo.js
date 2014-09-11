@@ -60,7 +60,8 @@ $(function () {
         });
 
         // Set type
-        $.each(['line', 'spline', 'area', 'areaspline', 'arearange', 'columnrange', 'candlestick', 'ohlc'], function (type) {
+        $.each(['line', 'spline', 'area', 'areaspline', 'arearange', 'columnrange', 'candlestick', 'ohlc'], function () {
+            var type = this.toString();
             $('#' + type).click(function () {
                 chart.series[0].update({
                     type: type
