@@ -1437,7 +1437,7 @@ Axis.prototype = {
 					!labelOptions.rotation &&
 					chart.plotWidth / tickPositions.length) ||
 					(!horiz && (chart.margin[3] || chart.chartWidth * 0.33)), // #1580, #1931,
-					attr = { rotation: 0 },
+				attr = { rotation: 0 },
 				css,
 				fontMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
 				step,
@@ -1445,7 +1445,6 @@ Axis.prototype = {
 			
 			axis.autoRotation = horiz && !defined(labelOptions.rotation);
 			if (axis.autoRotation) {
-				// Todo: try looping ticks directly
 				each(tickPositions, function (pos) {
 					if (ticks[pos] && rotation === undefined) {
 						if (slotWidth) {
@@ -1470,9 +1469,18 @@ Axis.prototype = {
 				}
 			} else if (labelOptions.rotation) {
 				attr.rotation = labelOptions.rotation;
-			} else {
+			} else if (slotWidth) {
 				// For word-wrap or ellipsis
-				css = slotWidth && { width: mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 10))) + PX };
+				css = { width: mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 10))) + PX };
+
+				// On vertical axis, only allow word wrap if there is room for more lines.
+				i = tickPositions.length;
+				while (!horiz && i--) {
+					pos = tickPositions[i];
+					if (axis.len / tickPositions.length - 4 < ticks[pos].label.getBBox().height) {
+						ticks[pos].label.css({ width: css.width, textOverflow: 'ellipsis' });
+					}
+				}
 			}
 
 			// Set the explicit or automatic label alignment
