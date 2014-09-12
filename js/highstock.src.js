@@ -2956,7 +2956,7 @@ SVGRenderer.prototype = {
 			width = wrapper.textWidth,
 			textLineHeight = textStyles && textStyles.lineHeight,
 			textStroke = textStyles && textStyles.HcTextStroke,
-			ellipsis = textStyles.textOverflow === 'ellipsis',
+			ellipsis = textStyles && textStyles.textOverflow === 'ellipsis',
 			i = childNodes.length,
 			getLineHeight = function (tspan) {
 				return textLineHeight ? 
@@ -7663,6 +7663,113 @@ Axis.prototype = {
 		return ret;
 	},
 
+	handleAutoRotation: function () {
+		var chart = this.chart,
+			tickPositions = this.tickPositions,
+			ticks = this.ticks,
+			labelOptions = this.options.labels,
+			horiz = this.horiz,
+			slotWidth = (horiz && this.categories &&
+				!labelOptions.step && !labelOptions.staggerLines &&
+				!labelOptions.rotation &&
+				chart.plotWidth / tickPositions.length) ||
+				(!horiz && (chart.margin[3] || chart.chartWidth * 0.33)), // #1580, #1931,
+			attr = { rotation: 0 },
+			css,
+			fontMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
+			horizontalSpaceNeeded,
+			labelStep,
+			labelLength = 0,
+			label,
+			bestScore = Number.MAX_VALUE;
+		
+		this.autoRotation = horiz && !defined(labelOptions.rotation) && labelOptions.autoRotation;
+		if (this.autoRotation) {
+
+			// Get the longest label length
+			each(tickPositions, function (tick) {
+				tick = ticks[tick];
+				if (tick && tick.labelLength > labelLength) {
+					labelLength = tick.labelLength;
+				}
+			});
+			
+			// Loop over the given autoRotation options, and determine which gives the best score. The 
+			// best score is that with the lowest number of steps and a rotation closest to horizontal.
+			if (slotWidth && labelLength > slotWidth) {
+				each(this.autoRotation, function (rot) {
+					var step,
+						score;
+
+					horizontalSpaceNeeded = mathMin(mathAbs(fontMetrics.h / mathSin(deg2rad * rot)), labelLength);
+					step = horizontalSpaceNeeded / slotWidth;
+					
+					step = step > 1 ? mathCeil(step) : 1;
+
+					score = step + mathAbs(rot / 360);
+
+					if (score < bestScore) {
+						bestScore = score;
+						rotation = rot;
+						labelStep = step;
+					}
+				});
+			}
+
+			if (rotation) {
+				// Add ellipsis if the label length is significantly longer than ideal
+				if (labelLength > chart.chartHeight * 0.5) {
+					css = { 
+						width: (chart.chartHeight * 0.33) + PX,
+						textOverflow: 'ellipsis'
+					};
+				}
+				attr.rotation = rotation;
+			}
+		} else if (labelOptions.rotation) {
+			attr.rotation = labelOptions.rotation;
+		} else if (slotWidth) {
+			// For word-wrap or ellipsis
+			css = { width: mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 10))) + PX };
+
+			// On vertical axis, only allow word wrap if there is room for more lines.
+			i = tickPositions.length;
+			while (!horiz && i--) {
+				pos = tickPositions[i];
+				label = ticks[pos].label;
+				if (label && this.len / tickPositions.length - 4 < label.getBBox().height) {
+					label.css({ width: css.width, textOverflow: 'ellipsis' });
+				}
+			}
+		}
+
+		// Set the explicit or automatic label alignment
+		this.labelAlign = attr.align = labelOptions.align || this.autoLabelAlign(attr.rotation);
+		this.labelStep = labelStep;
+
+		each(tickPositions, function (tick) {
+			tick = ticks[tick];
+			if (tick && tick.label) {
+				tick.label.attr(attr);
+				//ticks[pos].label[ticks[pos].isNew ? 'attr' : 'animate'](attr);
+
+				if (css) {
+					tick.label.css(css);
+				}
+				if (tick.rotation !== attr.rotation) {
+					tick.label.bBox = null;
+				}
+				tick.rotation = attr.rotation;
+			}
+		});
+
+		// Set the tick baseline and correct for rotation (#1764)
+		this.tickBaseline = fontMetrics.b;
+		if (this.rotation && this.side === 2) {
+			this.tickBaseline *= mathCos(this.rotation * deg2rad);
+		}
+	},
+
 	/**
 	 * Render the tick labels to a preliminary position to get their sizes
 	 */
@@ -7701,6 +7808,7 @@ Axis.prototype = {
 			x,
 			w,
 			lineNo,
+			css,
 			lineHeightCorrection;
 
 		// For reuse in Axis.render
@@ -7735,100 +7843,12 @@ Axis.prototype = {
 				}
 			});
 
-			var slotWidth = (horiz && axis.categories &&
-					!labelOptions.step && !labelOptions.staggerLines &&
-					!labelOptions.rotation &&
-					chart.plotWidth / tickPositions.length) ||
-					(!horiz && (chart.margin[3] || chart.chartWidth * 0.33)), // #1580, #1931,
-				attr = { rotation: 0 },
-				css,
-				fontMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
-				horizontalSpaceNeeded,
-				labelStep,
-				labelLength = 0,
-				bestScore = Number.MAX_VALUE;
+			axis.handleAutoRotation();
+
 			
-			axis.autoRotation = horiz && !defined(labelOptions.rotation) && labelOptions.autoRotation;
-			if (axis.autoRotation) {
-
-				// Get the longest label length
-				each(tickPositions, function (pos) {
-					if (ticks[pos] && ticks[pos].labelLength > labelLength) {
-						labelLength = ticks[pos].labelLength;
-					}
-				});
-				
-				// Loop over the given autoRotation options, and determine which gives the best score. The 
-				// best score is that with the lowest number of steps and a rotation closest to horizontal.
-				if (slotWidth && labelLength > slotWidth) {
-					each(axis.autoRotation, function (rot) {
-						var step,
-							score;
-
-						horizontalSpaceNeeded = mathMin(mathAbs(fontMetrics.h / mathSin(deg2rad * rot)), labelLength);
-						step = horizontalSpaceNeeded / slotWidth;
-						
-						step = step > 1 ? mathCeil(step) : 1;
-
-						score = step + mathAbs(rot / 360);
-
-						if (score < bestScore) {
-							bestScore = score;
-							rotation = rot;
-							labelStep = step;
-						}
-					});
-				}
-
-				if (rotation) {
-					css = { 
-						width: (chart.chartHeight * 0.33) + PX,
-						textOverflow: 'ellipsis'
-					};
-					attr.rotation = rotation;
-				}
-			} else if (labelOptions.rotation) {
-				attr.rotation = labelOptions.rotation;
-			} else if (slotWidth) {
-				// For word-wrap or ellipsis
-				css = { width: mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 10))) + PX };
-
-				// On vertical axis, only allow word wrap if there is room for more lines.
-				i = tickPositions.length;
-				while (!horiz && i--) {
-					pos = tickPositions[i];
-					if (axis.len / tickPositions.length - 4 < ticks[pos].label.getBBox().height) {
-						ticks[pos].label.css({ width: css.width, textOverflow: 'ellipsis' });
-					}
-				}
-			}
-
-			// Set the explicit or automatic label alignment
-			axis.labelAlign = attr.align = labelOptions.align || axis.autoLabelAlign(attr.rotation);
-			axis.labelStep = labelStep;
-
-			each(tickPositions, function (pos) {
-				if (ticks[pos] && ticks[pos].label) {
-					ticks[pos].label.attr(attr);
-					//ticks[pos].label[ticks[pos].isNew ? 'attr' : 'animate'](attr);
-
-					if (css) {
-						ticks[pos].label.css(css);
-					}
-					if (ticks[pos].rotation !== attr.rotation) {
-						ticks[pos].label.bBox = null;
-					}
-					ticks[pos].rotation = attr.rotation;
-				}
-			});
 
 
-			// Set the tick baseline and correct for rotation (#1764)
-			axis.tickBaseline = fontMetrics.b;
-			if (axis.rotation && axis.side === 2) {
-				axis.tickBaseline *= mathCos(axis.rotation * deg2rad);
-			}
-
+			
 
 			// Handle automatic stagger lines
 			/*if (axis.horiz && !axis.staggerLines && maxStaggerLines && !labelOptions.rotation) {

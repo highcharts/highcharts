@@ -1186,7 +1186,7 @@ SVGRenderer.prototype = {
 			width = wrapper.textWidth,
 			textLineHeight = textStyles && textStyles.lineHeight,
 			textStroke = textStyles && textStyles.HcTextStroke,
-			ellipsis = textStyles.textOverflow === 'ellipsis',
+			ellipsis = textStyles && textStyles.textOverflow === 'ellipsis',
 			i = childNodes.length,
 			getLineHeight = function (tspan) {
 				return textLineHeight ? 
