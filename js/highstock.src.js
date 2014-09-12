@@ -368,9 +368,9 @@ function numberFormat(number, decimals, decPoint, thousandsSep) {
 		lang = defaultOptions.lang,
 		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
 		n = +number || 0,
-		c = decimals === -1 ?
+		c = Math.min(decimals === -1 ?
 			(n.toString().split('.')[1] || '').length : // preserve decimals
-			(isNaN(decimals = mathAbs(decimals)) ? 2 : decimals),
+			(isNaN(decimals = mathAbs(decimals)) ? 2 : decimals), 20),
 		d = decPoint === undefined ? lang.decimalPoint : decPoint,
 		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
 		s = n < 0 ? "-" : "",
