@@ -482,6 +482,9 @@ SVGElement.prototype = {
 			transform.push('rotate(90) scale(-1,1)');
 		} else if (rotation) { // text rotation
 			transform.push('rotate(' + rotation + ' ' + (element.getAttribute('x') || 0) + ' ' + (element.getAttribute('y') || 0) + ')');
+			
+			// Delete bBox memo when the rotation changes
+			//delete wrapper.bBox;
 		}
 
 		// apply scale
@@ -578,9 +581,9 @@ SVGElement.prototype = {
 	/**
 	 * Get the bounding box (width, height, x and y) for the element
 	 */
-	getBBox: function () {
+	getBBox: function (reload) {
 		var wrapper = this,
-			bBox = wrapper.bBox,
+			bBox,// = wrapper.bBox,
 			renderer = wrapper.renderer,
 			width,
 			height,
@@ -595,14 +598,14 @@ SVGElement.prototype = {
 		// we assume that a label of n characters has the same bounding box as others 
 		// of the same length.
 		if (textStr === '' || numRegex.test(textStr)) {
-			cacheKey = 'num.' + textStr.toString().length + (styles ? ('|' + styles.fontSize + '|' + styles.fontFamily) : '');
+			cacheKey = 'num.' + textStr.toString().length + '|' + (styles && styles.fontSize);
 
-		} //else { // This code block made demo/waterfall fail, related to buildText
+		} else { // This code block made demo/waterfall fail, related to buildText
 			// Caching all strings reduces rendering time by 4-5%. 
 			// TODO: Check how this affects places where bBox is found on the element
-			//cacheKey = textStr + (styles ? ('|' + styles.fontSize + '|' + styles.fontFamily) : '');
-		//}
-		if (cacheKey) {
+			cacheKey = [textStr, rotation || 0, styles && styles.fontSize, styles && styles.width].join(',');
+		}
+		if (!reload) {
 			bBox = renderer.cache[cacheKey];
 		}
 
@@ -657,10 +660,8 @@ SVGElement.prototype = {
 			}
 
 			// Cache it
-			wrapper.bBox = bBox;
-			if (cacheKey) {
-				renderer.cache[cacheKey] = bBox;
-			}
+			//wrapper.bBox = bBox;
+			renderer.cache[cacheKey] = bBox;
 		}
 		return bBox;
 	},
@@ -1321,9 +1322,8 @@ SVGRenderer.prototype = {
 									bBox;
 
 								while ((hasWhiteSpace || ellipsis) && (words.length || rest.length)) {
-									delete wrapper.bBox; // delete cache
 									wrapper.rotation = 0; // discard rotation when computing box
-									bBox = wrapper.getBBox();
+									bBox = wrapper.getBBox(true);
 									actualWidth = bBox.width;
 
 									// Old IE cannot measure the actualWidth for SVG elements (#2314)

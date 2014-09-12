@@ -2252,6 +2252,9 @@ SVGElement.prototype = {
 			transform.push('rotate(90) scale(-1,1)');
 		} else if (rotation) { // text rotation
 			transform.push('rotate(' + rotation + ' ' + (element.getAttribute('x') || 0) + ' ' + (element.getAttribute('y') || 0) + ')');
+			
+			// Delete bBox memo when the rotation changes
+			//delete wrapper.bBox;
 		}
 
 		// apply scale
@@ -2348,9 +2351,9 @@ SVGElement.prototype = {
 	/**
 	 * Get the bounding box (width, height, x and y) for the element
 	 */
-	getBBox: function () {
+	getBBox: function (reload) {
 		var wrapper = this,
-			bBox = wrapper.bBox,
+			bBox,// = wrapper.bBox,
 			renderer = wrapper.renderer,
 			width,
 			height,
@@ -2365,14 +2368,14 @@ SVGElement.prototype = {
 		// we assume that a label of n characters has the same bounding box as others 
 		// of the same length.
 		if (textStr === '' || numRegex.test(textStr)) {
-			cacheKey = 'num.' + textStr.toString().length + (styles ? ('|' + styles.fontSize + '|' + styles.fontFamily) : '');
+			cacheKey = 'num.' + textStr.toString().length + '|' + (styles && styles.fontSize);
 
-		} //else { // This code block made demo/waterfall fail, related to buildText
+		} else { // This code block made demo/waterfall fail, related to buildText
 			// Caching all strings reduces rendering time by 4-5%. 
 			// TODO: Check how this affects places where bBox is found on the element
-			//cacheKey = textStr + (styles ? ('|' + styles.fontSize + '|' + styles.fontFamily) : '');
-		//}
-		if (cacheKey) {
+			cacheKey = [textStr, rotation || 0, styles && styles.fontSize, styles && styles.width].join(',');
+		}
+		if (!reload) {
 			bBox = renderer.cache[cacheKey];
 		}
 
@@ -2427,10 +2430,8 @@ SVGElement.prototype = {
 			}
 
 			// Cache it
-			wrapper.bBox = bBox;
-			if (cacheKey) {
-				renderer.cache[cacheKey] = bBox;
-			}
+			//wrapper.bBox = bBox;
+			renderer.cache[cacheKey] = bBox;
 		}
 		return bBox;
 	},
@@ -3091,9 +3092,8 @@ SVGRenderer.prototype = {
 									bBox;
 
 								while ((hasWhiteSpace || ellipsis) && (words.length || rest.length)) {
-									delete wrapper.bBox; // delete cache
 									wrapper.rotation = 0; // discard rotation when computing box
-									bBox = wrapper.getBBox();
+									bBox = wrapper.getBBox(true);
 									actualWidth = bBox.width;
 
 									// Old IE cannot measure the actualWidth for SVG elements (#2314)
@@ -5619,18 +5619,15 @@ Tick.prototype = {
 			axis = tick.axis,
 			options = axis.options,
 			chart = axis.chart,
-			horiz = axis.horiz,
 			categories = axis.categories,
 			names = axis.names,
 			pos = tick.pos,
 			labelOptions = options.labels,
-			rotation = labelOptions.rotation,
 			str,
 			tickPositions = axis.tickPositions,
 			isFirst = pos === tickPositions[0],
 			isLast = pos === tickPositions[tickPositions.length - 1],
 			css,
-			attr,
 			value = categories ?
 				pick(categories[pos], names[pos], pos) :
 				pos,
@@ -5913,7 +5910,7 @@ Tick.prototype = {
 			gridLinePath,
 			mark = tick.mark,
 			markPath,
-			step = axis.labelStep || labelOptions.step,
+			step = /*axis.labelStep || */labelOptions.step,
 			attribs,
 			show = true,
 			tickmarkOffset = axis.tickmarkOffset,
@@ -6281,9 +6278,7 @@ Axis.prototype = {
 		//axis.tickInterval = UNDEFINED;
 		//axis.minorTickInterval = UNDEFINED;
 
-		axis.tickmarkOffset = (axis.categories && options.tickmarkPlacement === 'between' && 
-			pick(options.tickInterval, 1) === 1) ? 0.5 : 0; // #3202
-
+		
 		// Major ticks
 		axis.ticks = {};
 		axis.labelEdge = [];
@@ -6895,7 +6890,6 @@ Axis.prototype = {
 			tickPixelIntervalOption = options.tickPixelInterval,
 			tickPositions,
 			keepTwoTicksOnly,
-			factor19,
 			categories = axis.categories;
 
 		// linked axis gets the extremes from the parent axis
@@ -7027,12 +7021,15 @@ Axis.prototype = {
 			}
 		}
 
-		// Too many ticks. Previously this triggered error 19, but a more silent and forgiving
-		// failure is to reduce the amout of ticks drawn.
-		factor19 = ((axis.max - axis.min) / axis.tickInterval) / mathMax(axis.len / 5, 50);
-		if (!axis.ordinalPositions && factor19 > 1) {
-			axis.tickInterval = mathRound(factor19);
+		// Prevent ticks from getting so close that we can't draw the labels
+		if (categories) {
+			axis.tickInterval = axis.noSquish();
 		}
+
+		// Set the tickmarkOffset
+		axis.tickmarkOffset = (categories && options.tickmarkPlacement === 'between' && 
+			axis.tickInterval === 1) ? 0.5 : 0; // #3202
+
 
 		// get minorTickInterval
 		axis.minorTickInterval = options.minorTickInterval === 'auto' && axis.tickInterval ?
@@ -7398,6 +7395,63 @@ Axis.prototype = {
 		return ret;
 	},
 
+	/**
+	 * Prevent the ticks from getting so close we can't draw the labels. On a horizontal
+	 * axis, this is handled by rotating the labels, removing ticks and adding ellipsis. 
+	 * On a vertical axis remove ticks and add ellipsis.
+	 */
+	noSquish: function () {
+		var chart = this.chart,
+			ticks = this.ticks,
+			labelOptions = this.options.labels,
+			horiz = this.horiz,
+			tickInterval = this.tickInterval,
+			slotSize = this.len / ((this.max - this.min) / tickInterval),
+			//attr = { rotation: 0 },
+			rotation,
+			fontMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
+			spaceNeeded,
+			step,
+			//labelLength = 0,
+			bestScore = Number.MAX_VALUE;
+		
+		if (horiz) {
+			this.autoRotation = !defined(labelOptions.rotation) && labelOptions.autoRotation;
+			if (this.autoRotation) {
+
+				// Loop over the given autoRotation options, and determine which gives the best score. The 
+				// best score is that with the lowest number of steps and a rotation closest to horizontal.
+				if (slotSize) {
+					each(this.autoRotation, function (rot) {
+						var score;
+
+						spaceNeeded = mathAbs(fontMetrics.h / mathSin(deg2rad * rot));
+						step = spaceNeeded / slotSize;
+						
+						step = step > 1 ? mathCeil(step) : 1;
+
+						score = step + mathAbs(rot / 360);
+
+						if (score < bestScore) {
+							bestScore = score;
+							rotation = rot;
+							tickInterval = step;
+						}
+					});
+				}
+			}
+			this.labelRotation = rotation;
+
+		} else {
+			step = fontMetrics.h / slotSize;
+			if (step > 1) {
+				tickInterval = mathCeil(step);
+			}
+		}
+
+		return tickInterval;
+	},
+
 	handleAutoRotation: function () {
 		var chart = this.chart,
 			tickPositions = this.tickPositions,
@@ -7409,16 +7463,16 @@ Axis.prototype = {
 				!labelOptions.rotation &&
 				chart.plotWidth / tickPositions.length) ||
 				(!horiz && (chart.margin[3] || chart.chartWidth * 0.33)), // #1580, #1931,
-			attr = { rotation: 0 },
+			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))), // docs: padding new default
+			attr = { rotation: labelOptions.rotation },
 			css,
 			fontMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
-			horizontalSpaceNeeded,
-			labelStep,
 			labelLength = 0,
 			label,
-			bestScore = Number.MAX_VALUE;
+			i,
+			pos;
 		
-		this.autoRotation = horiz && !defined(labelOptions.rotation) && labelOptions.autoRotation;
+		//this.autoRotation = horiz && !defined(labelOptions.rotation) && labelOptions.autoRotation;
 		if (this.autoRotation) {
 
 			// Get the longest label length
@@ -7431,7 +7485,7 @@ Axis.prototype = {
 			
 			// Loop over the given autoRotation options, and determine which gives the best score. The 
 			// best score is that with the lowest number of steps and a rotation closest to horizontal.
-			if (slotWidth && labelLength > slotWidth) {
+			/*if (slotWidth && labelLength > slotWidth) {
 				each(this.autoRotation, function (rot) {
 					var step,
 						score;
@@ -7446,26 +7500,18 @@ Axis.prototype = {
 					if (score < bestScore) {
 						bestScore = score;
 						rotation = rot;
-						labelStep = step;
+						//labelStep = step;
 					}
 				});
+			}*/
+			if (labelLength > innerWidth) {
+				attr.rotation = this.labelRotation;
 			}
 
-			if (rotation) {
-				// Add ellipsis if the label length is significantly longer than ideal
-				if (labelLength > chart.chartHeight * 0.5) {
-					css = { 
-						width: (chart.chartHeight * 0.33) + PX,
-						textOverflow: 'ellipsis'
-					};
-				}
-				attr.rotation = rotation;
-			}
-		} else if (labelOptions.rotation) {
-			attr.rotation = labelOptions.rotation;
+			
 		} else if (slotWidth) {
 			// For word-wrap or ellipsis
-			css = { width: mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 10))) + PX };
+			css = { width: innerWidth + PX };
 
 			// On vertical axis, only allow word wrap if there is room for more lines.
 			i = tickPositions.length;
@@ -7478,9 +7524,20 @@ Axis.prototype = {
 			}
 		}
 
+
+		if (attr.rotation) {
+			// Add ellipsis if the label length is significantly longer than ideal
+			if (labelLength > chart.chartHeight * 0.5) {
+				css = { 
+					width: (chart.chartHeight * 0.33) + PX,
+					textOverflow: 'ellipsis'
+				};
+			}
+		}
+//console.log(labelStep)
 		// Set the explicit or automatic label alignment
 		this.labelAlign = attr.align = labelOptions.align || this.autoLabelAlign(attr.rotation);
-		this.labelStep = labelStep;
+		//this.labelStep = labelStep;
 
 		each(tickPositions, function (tick) {
 			tick = ticks[tick];
@@ -7491,9 +7548,10 @@ Axis.prototype = {
 				if (css) {
 					tick.label.css(css);
 				}
-				if (tick.rotation !== attr.rotation) {
+				/*if (tick.rotation !== attr.rotation) {
 					tick.label.bBox = null;
 				}
+				*/
 				tick.rotation = attr.rotation;
 			}
 		});
@@ -7531,19 +7589,6 @@ Axis.prototype = {
 			clipOffset = chart.clipOffset,
 			directionFactor = [-1, 1, 1, -1][side],
 			n,
-			i,
-			autoStaggerLines = 1,
-			maxStaggerLines = pick(labelOptions.maxStaggerLines, 5),
-			sortedPositions,
-			lastRight,
-			overlap,
-			rotation,
-			pos,
-			bBox,
-			x,
-			w,
-			lineNo,
-			css,
 			lineHeightCorrection;
 
 		// For reuse in Axis.render
@@ -7618,7 +7663,6 @@ Axis.prototype = {
 					//labelOptions.rotation = -45;
 				}
 			}*/
-
 
 			each(tickPositions, function (pos) {
 				// left side must be align: right and right side must have align: left for labels
