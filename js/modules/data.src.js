@@ -455,8 +455,7 @@
 	 */
 	parseTypes: function () {
 		var columns = this.columns,
-			col = columns.length,
-			hasHeaderRow;
+			col = columns.length;
 
 		while (col--) {
 			this.parseColumn(columns[col], col);
@@ -475,6 +474,7 @@
 			floatVal,
 			trimVal,
 			trimInsideVal,
+			hasHeaderRow,
 			isXColumn = inArray(col, this.valueCount.xColumns) !== -1,
 			dateVal,
 			backup = [],
@@ -495,7 +495,7 @@
 			if (forceCategory) {
 				column[row] = trimVal;
 
-			} else if (+trimInsideVal == floatVal) { // is numeric
+			} else if (+trimInsideVal === floatVal) { // is numeric
 			
 				column[row] = floatVal;
 				
