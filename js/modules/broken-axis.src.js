@@ -23,32 +23,52 @@
 		Series = H.Series,
 		noop = function () {};
 
+	function stripArguments() {
+		return Array.prototype.slice.call(arguments, 1);
+	}
+
 	extend(Axis.prototype, {
 		isInBreak: function (brk, val) {
 			var	repeat = brk.repeat || Infinity,
-				val = val % repeat,
-				val2 = val + repeat,
-				from = brk.from % repeat,
-				to = from + (brk.to - brk.from);
+				val = val,
+				from = brk.from,
+				length = brk.to - brk.from,
+				test = (val >= from ? (val - from) % repeat :  repeat - ((from - val) % repeat));
 
-			return ((val > from && val < to) || (val2 > from && val2 < to));
+			if (!brk.inclusive) {
+				return (test < length && test != 0);
+			} else {
+				return (test <= length);
+			} 			
 		},
 
-		isInAnyBreak: function (val) {			
+		isInAnyBreak: function (val, testKeep) {
+			// Sanity Check			
 			if (!this.options.breaks) { return false; }
-			
+
 			var breaks = this.options.breaks,
-				i = breaks.length;
+				i = breaks.length,
+				inbrk = false,
+				keep = false;
+
 
 			while (i--) {
 				if (this.isInBreak(breaks[i], val)) {
-					return true;
+					inbrk = true;
+					if (!keep) {
+						keep = pick(breaks[i].showPoints, this.isXAxis ? false : true);
+					}
 				}
 			}
-			return false
+
+			if (inbrk && testKeep) {
+				return inbrk && !keep;
+			} else {
+				return inbrk;
+			}
 		}
 	});
-/*
+
 	wrap(Axis.prototype, 'setTickPositions', function (proceed) {
 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 		
@@ -67,93 +87,160 @@
 		this.tickPositions = newPositions;
 		this.tickPositions.info = info;
 	});
-*/
-	
+
 	wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 
 		proceed.call(this, chart, userOptions);
 
-		var axis = this;
-		
-		if (this.options.breaks) {
+		if(this.options.breaks) {
+
 			var axis = this;
+			
 			axis.postTranslate = true;
 
 			this.val2lin = function (val) {
-				return val - axis.shifts[val];
+				var nval = val,
+					brk,
+					i;
+
+				for(i = 0; i < axis.breakArray.length; i++) {
+					brk = axis.breakArray[i];
+					if (brk.to <= val) {
+						nval -= (brk.len);
+					} else if (brk.from >= val) {
+						break;
+					} else if (axis.isInBreak(brk, val)) {
+						nval -= (val - brk.from);
+						break;
+					}
+				}
+
+				return nval;
 			};
 			
 			this.lin2val = function (val) {
-				return val + axis.shifts[val];
+				return val;
 			};
-			
-			this.setAxisTranslation = function (saveOld) {
+
+			this.setAxisTranslation = function (saveOld) {				
 				Axis.prototype.setAxisTranslation.call(this, saveOld);
-				
+
 				var breaks = axis.options.breaks,
-					brkPoints = axis.breakPoints = [],
-					shifts = axis.shifts = {},
-					min = Math.round(axis.userMin || axis.min),
-					max = Math.round(axis.userMax || axis.max),
-					shift = 0,
-					inbrk = false,
-					i;
+					breakArrayT = [],	// Temporary one
+					breakArray = [],
+					length = 0, 
+					inBrk,
+					repeat,
+					brk,
+					min = axis.userMin || axis.min,
+					max = axis.userMax || axis.max,
+					start,
+					i,
+					j;
 
-				for (i = min; i <= max; i += axis.closestPointRange) {
-					if (axis.isInAnyBreak(i)) {
-						shift += axis.closestPointRange;
-						inbrk = true;
-					} else if (inbrk) { 
-						shift += axis.closestPointRange;
-						inbrk = false;
+				console.log(max, min);
+				// Construct an array holding all breaks in the axis
+				for (i in breaks) {
+					brk = breaks[i];
+					start = brk.from;
+					repeat = brk.repeat || Infinity;
+
+					while (start - repeat > min) {
+						start -= repeat;
 					}
-					shifts[i] = shift;
+					while (start < min) {
+						start += repeat;
+					}
+
+					for (j = start; j < max; j += repeat) {
+						breakArrayT.push({
+							value: j,
+							move: 'in',
+						});
+						breakArrayT.push({
+							value: j + (brk.to - brk.from),
+							move: 'out',
+							size: brk.breakSize
+						});
+					}
 				}
 
-				var pre = null;
+				breakArrayT.sort(function (a, b) {
+					if (a.value == b.value) {
+						return (a.move === 'in' ? 0 : 1) - (b.move === 'in' ? 0 : 1);
+					} else {
+						return a.value - b.value;
+					}
+				});
 				
-				inbrk = true;
+				// Simplify the breaks
+				inBrk = 0;
+				start = min;
 
-				for (i in shifts) {
-					if (shifts[i] == shifts[pre] && inbrk) {
-						brkPoints.push(pre);
-						inbrk = false;
-					} else if (shifts[i] !== shifts[pre] && !inbrk) {
-						 brkPoints.push(pre);
-						 inbrk = true;
+				for (i in breakArrayT) {
+					brk = breakArrayT[i];
+					inBrk += (brk.move === 'in' ? 1 : -1);
+
+					if (inBrk === 1 && brk.move === 'in') {
+						start = brk.value;
+					} 
+					if (inBrk === 0) {
+						breakArray.push({
+							from: start,
+							to: brk.value,
+							len: brk.value - start - (brk.size || 0)
+						});
+						length += brk.value - start - (brk.size || 0);					
 					}
-					pre = i;
 				}
 
-				axis.transA *= (max - min) / (max - min - shift);
+				axis.breakArray = breakArray;
+
+				fireEvent(axis, 'afterBreaks');
+
+				axis.transA *= (max - min) / (max - min - length);
+
 			};
-
 		}
-		
 	});
-	
-	
-	wrap(Series.prototype, 'generatePoints', function (proceed) {
+
+	wrap(Series.prototype, 'generatePoints', function (proceed) {	
+
+		proceed.apply(this, stripArguments(arguments));
+
 		var series = this,
-			data = this.options.data,
-			ndata = [],
-			xAxis = this.xAxis,
+			points = series.oldPoints || series.points,
+			npoints = [],
+			xAxis = series.xAxis,
+			yAxis = series.yAxis,
 			i = 0,
-			point;
+			point,
+			x,
+			y;
 
-		while(i < data.length) {
-			point = data[i];
-			if (!xAxis.isInAnyBreak(point.x)) {
-				ndata.push(point);
-			} 
-			i++;
+		if (xAxis.options.breaks || yAxis.options.breaks) {
+			// Register old data && points
+			series.oldPoints = points.slice();
+
+			// Create a filtered points Array
+			while (i < points.length) {
+				point = points[i];
+
+				x = point.x ? point.x : (i * (series.options.pointInterval || 1)) + (series.options.pointStart || 0);
+				y = point.y ? point.y : point;
+
+				if(!(xAxis.isInAnyBreak(x, true) || yAxis.isInAnyBreak(y, true))) {
+					npoints.push(point);
+				} else {
+					//npoints.push(null);
+				}
+				
+				i++;
+			}
+
+			// Register new points
+			series.points = npoints;
 		}
-
-		this.options.data = ndata;
-
-
-		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
-
 	});
 
 
