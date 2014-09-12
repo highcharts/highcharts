@@ -7022,9 +7022,7 @@ Axis.prototype = {
 		}
 
 		// Prevent ticks from getting so close that we can't draw the labels
-		if (categories) {
-			axis.tickInterval = axis.noSquish();
-		}
+		axis.tickInterval = axis.unsquish();
 
 		// Set the tickmarkOffset
 		axis.tickmarkOffset = (categories && options.tickmarkPlacement === 'between' && 
@@ -7400,23 +7398,26 @@ Axis.prototype = {
 	 * axis, this is handled by rotating the labels, removing ticks and adding ellipsis. 
 	 * On a vertical axis remove ticks and add ellipsis.
 	 */
-	noSquish: function () {
+	unsquish: function () {
 		var chart = this.chart,
 			ticks = this.ticks,
 			labelOptions = this.options.labels,
 			horiz = this.horiz,
-			tickInterval = this.tickInterval,
+			tickInterval = this.tickInterval, // docs: from 4.1, tickInterval can not be smaller than labels
 			slotSize = this.len / ((this.max - this.min) / tickInterval),
-			//attr = { rotation: 0 },
 			rotation,
 			fontMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
-			spaceNeeded,
 			step,
-			//labelLength = 0,
-			bestScore = Number.MAX_VALUE;
+			bestScore = Number.MAX_VALUE,
+			// Return the multiple of tickInterval that is needed to avoid collision
+			getStep = function (spaceNeeded) {
+				var step = spaceNeeded / slotSize;
+				step = step > 1 ? mathCeil(step) : 1;
+				return step * tickInterval;
+			};
 		
 		if (horiz) {
-			this.autoRotation = !defined(labelOptions.rotation) && labelOptions.autoRotation;
+			this.autoRotation = !defined(labelOptions.rotation) && !labelOptions.staggerLines && labelOptions.autoRotation;
 			if (this.autoRotation) {
 
 				// Loop over the given autoRotation options, and determine which gives the best score. The 
@@ -7425,10 +7426,7 @@ Axis.prototype = {
 					each(this.autoRotation, function (rot) {
 						var score;
 
-						spaceNeeded = mathAbs(fontMetrics.h / mathSin(deg2rad * rot));
-						step = spaceNeeded / slotSize;
-						
-						step = step > 1 ? mathCeil(step) : 1;
+						step = getStep(mathAbs(fontMetrics.h / mathSin(deg2rad * rot)));
 
 						score = step + mathAbs(rot / 360);
 
@@ -7443,23 +7441,19 @@ Axis.prototype = {
 			this.labelRotation = rotation;
 
 		} else {
-			step = fontMetrics.h / slotSize;
-			if (step > 1) {
-				tickInterval = mathCeil(step);
-			}
+			tickInterval = getStep(fontMetrics.h);
 		}
 
 		return tickInterval;
 	},
 
-	handleAutoRotation: function () {
+	renderUnsquish: function () {
 		var chart = this.chart,
 			tickPositions = this.tickPositions,
 			ticks = this.ticks,
 			labelOptions = this.options.labels,
 			horiz = this.horiz,
-			slotWidth = (horiz && this.categories &&
-				!labelOptions.step && !labelOptions.staggerLines &&
+			slotWidth = (horiz && !labelOptions.step && !labelOptions.staggerLines &&
 				!labelOptions.rotation &&
 				chart.plotWidth / tickPositions.length) ||
 				(!horiz && (chart.margin[3] || chart.chartWidth * 0.33)), // #1580, #1931,
@@ -7472,7 +7466,7 @@ Axis.prototype = {
 			i,
 			pos;
 		
-		//this.autoRotation = horiz && !defined(labelOptions.rotation) && labelOptions.autoRotation;
+		// Handle auto rotation on horizontal axis
 		if (this.autoRotation) {
 
 			// Get the longest label length
@@ -7483,32 +7477,11 @@ Axis.prototype = {
 				}
 			});
 			
-			// Loop over the given autoRotation options, and determine which gives the best score. The 
-			// best score is that with the lowest number of steps and a rotation closest to horizontal.
-			/*if (slotWidth && labelLength > slotWidth) {
-				each(this.autoRotation, function (rot) {
-					var step,
-						score;
-
-					horizontalSpaceNeeded = mathMin(mathAbs(fontMetrics.h / mathSin(deg2rad * rot)), labelLength);
-					step = horizontalSpaceNeeded / slotWidth;
-					
-					step = step > 1 ? mathCeil(step) : 1;
-
-					score = step + mathAbs(rot / 360);
-
-					if (score < bestScore) {
-						bestScore = score;
-						rotation = rot;
-						//labelStep = step;
-					}
-				});
-			}*/
 			if (labelLength > innerWidth) {
 				attr.rotation = this.labelRotation;
 			}
 
-			
+		// Handle word-wrap or ellipsis on vertical axis
 		} else if (slotWidth) {
 			// For word-wrap or ellipsis
 			css = { width: innerWidth + PX };
@@ -7534,10 +7507,9 @@ Axis.prototype = {
 				};
 			}
 		}
-//console.log(labelStep)
+
 		// Set the explicit or automatic label alignment
 		this.labelAlign = attr.align = labelOptions.align || this.autoLabelAlign(attr.rotation);
-		//this.labelStep = labelStep;
 
 		each(tickPositions, function (tick) {
 			tick = ticks[tick];
@@ -7623,46 +7595,7 @@ Axis.prototype = {
 				}
 			});
 
-			axis.handleAutoRotation();
-
-			
-
-
-			
-
-			// Handle automatic stagger lines
-			/*if (axis.horiz && !axis.staggerLines && maxStaggerLines && !labelOptions.rotation) {
-				sortedPositions = axis.reversed ? [].concat(tickPositions).reverse() : tickPositions;
-				while (autoStaggerLines < maxStaggerLines) {
-					lastRight = [];
-					overlap = false;
-
-					for (i = 0; i < sortedPositions.length; i++) {
-						pos = sortedPositions[i];
-						bBox = ticks[pos].label && ticks[pos].label.getBBox();
-						w = bBox ? bBox.width : 0;
-						lineNo = i % autoStaggerLines;
-
-						if (w) {
-							x = axis.translate(pos); // don't handle log
-							if (lastRight[lineNo] !== UNDEFINED && x < lastRight[lineNo]) {
-								overlap = true;
-							}
-							lastRight[lineNo] = x + w;
-						}
-					}
-					if (overlap) {
-						autoStaggerLines++;
-					} else {
-						break;
-					}
-				}
-
-				if (autoStaggerLines > 1) {
-					axis.staggerLines = autoStaggerLines;
-					//labelOptions.rotation = -45;
-				}
-			}*/
+			axis.renderUnsquish();
 
 			each(tickPositions, function (pos) {
 				// left side must be align: right and right side must have align: left for labels
