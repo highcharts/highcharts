@@ -21693,12 +21693,14 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 	// Remove duplicates in the axes array. If there are no axes in the axes array,
 	// we are adding an axis without data, so we need to populate this with grid
 	// lines (#2796).
-	uniqueAxes = axes.length ? [] : [axis];
-	each(axes, function (axis2) {
-		if (inArray(axis2, uniqueAxes) === -1) {
-			uniqueAxes.push(axis2);
-		}
-	});
+	uniqueAxes = axes && axes.length ? [] : [axis];
+	if (axes) {
+		each(axes, function (axis2) {
+			if (inArray(axis2, uniqueAxes) === -1) {
+				uniqueAxes.push(axis2);
+			}
+		});
+	}
 	
 	translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
 	
