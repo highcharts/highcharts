@@ -7411,7 +7411,7 @@ Axis.prototype = {
 			bestScore = Number.MAX_VALUE,
 			// Return the multiple of tickInterval that is needed to avoid collision
 			getStep = function (spaceNeeded) {
-				var step = spaceNeeded / slotSize;
+				var step = spaceNeeded / (slotSize || 1);
 				step = step > 1 ? mathCeil(step) : 1;
 				return step * tickInterval;
 			};
@@ -7422,21 +7422,19 @@ Axis.prototype = {
 
 				// Loop over the given autoRotation options, and determine which gives the best score. The 
 				// best score is that with the lowest number of steps and a rotation closest to horizontal.
-				if (slotSize) {
-					each(this.autoRotation, function (rot) {
-						var score;
+				each(this.autoRotation, function (rot) {
+					var score;
 
-						step = getStep(mathAbs(fontMetrics.h / mathSin(deg2rad * rot)));
+					step = getStep(mathAbs(fontMetrics.h / mathSin(deg2rad * rot)));
 
-						score = step + mathAbs(rot / 360);
+					score = step + mathAbs(rot / 360);
 
-						if (score < bestScore) {
-							bestScore = score;
-							rotation = rot;
-							tickInterval = step;
-						}
-					});
-				}
+					if (score < bestScore) {
+						bestScore = score;
+						rotation = rot;
+						tickInterval = step;
+					}
+				});
 			}
 			this.labelRotation = rotation;
 
