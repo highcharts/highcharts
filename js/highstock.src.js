@@ -7669,11 +7669,12 @@ Axis.prototype = {
 			labelOptions = this.options.labels,
 			horiz = this.horiz,
 			tickInterval = this.tickInterval, // docs: from 4.1, tickInterval can not be smaller than labels
-			slotSize = this.len / ((this.max - this.min) / tickInterval),
+			slotSize = this.len / (((this.categories ? 1 : 0) + this.max - this.min) / tickInterval),
 			rotation,
 			fontMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
 			step,
 			bestScore = Number.MAX_VALUE,
+			autoRotation,
 			// Return the multiple of tickInterval that is needed to avoid collision
 			getStep = function (spaceNeeded) {
 				var step = spaceNeeded / (slotSize || 1);
@@ -7682,12 +7683,12 @@ Axis.prototype = {
 			};
 		
 		if (horiz) {
-			this.autoRotation = !defined(labelOptions.rotation) && !labelOptions.staggerLines && labelOptions.autoRotation;
-			if (this.autoRotation) {
+			autoRotation = slotSize < 80 && !defined(labelOptions.rotation) && !labelOptions.staggerLines && labelOptions.autoRotation;
+			if (autoRotation) {
 
 				// Loop over the given autoRotation options, and determine which gives the best score. The 
 				// best score is that with the lowest number of steps and a rotation closest to horizontal.
-				each(this.autoRotation, function (rot) {
+				each(autoRotation, function (rot) {
 					var score;
 
 					step = getStep(mathAbs(fontMetrics.h / mathSin(deg2rad * rot)));
@@ -7701,11 +7702,13 @@ Axis.prototype = {
 					}
 				});
 			}
-			this.labelRotation = rotation;
 
 		} else {
 			tickInterval = getStep(fontMetrics.h);
 		}
+
+		this.autoRotation = autoRotation;
+		this.labelRotation = rotation;
 
 		return tickInterval;
 	},
@@ -7720,7 +7723,7 @@ Axis.prototype = {
 				!labelOptions.rotation &&
 				chart.plotWidth / tickPositions.length) ||
 				(!horiz && (chart.margin[3] || chart.chartWidth * 0.33)), // #1580, #1931,
-			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))), // docs: padding new default
+			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 8))), // docs: padding new default
 			attr = { rotation: labelOptions.rotation },
 			css,
 			fontMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
@@ -7747,7 +7750,7 @@ Axis.prototype = {
 		// Handle word-wrap or ellipsis on vertical axis
 		} else if (slotWidth) {
 			// For word-wrap or ellipsis
-			css = { width: innerWidth + PX };
+			css = { width: innerWidth + PX, textOverflow: 'initial' };
 
 			// On vertical axis, only allow word wrap if there is room for more lines.
 			i = tickPositions.length;
