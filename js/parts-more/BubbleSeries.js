@@ -237,78 +237,76 @@ Axis.prototype.beforePadding = function () {
 		activeSeries = [];
 
 	// Handle padding on the second pass, or on redraw
-	if (this.tickPositions) {
-		each(this.series, function (series) {
+	each(this.series, function (series) {
 
-			var seriesOptions = series.options,
-				zData;
+		var seriesOptions = series.options,
+			zData;
 
-			if (series.bubblePadding && (series.visible || !chart.options.chart.ignoreHiddenSeries)) {
+		if (series.bubblePadding && (series.visible || !chart.options.chart.ignoreHiddenSeries)) {
 
-				// Correction for #1673
-				axis.allowZoomOutside = true;
+			// Correction for #1673
+			axis.allowZoomOutside = true;
 
-				// Cache it
-				activeSeries.push(series);
+			// Cache it
+			activeSeries.push(series);
 
-				if (isXAxis) { // because X axis is evaluated first
-				
-					// For each series, translate the size extremes to pixel values
-					each(['minSize', 'maxSize'], function (prop) {
-						var length = seriesOptions[prop],
-							isPercent = /%$/.test(length);
-						
-						length = pInt(length);
-						extremes[prop] = isPercent ?
-							smallestSize * length / 100 :
-							length;
-						
-					});
-					series.minPxSize = extremes.minSize;
-					
-					// Find the min and max Z
-					zData = series.zData;
-					if (zData.length) { // #1735
-						zMin = pick(seriesOptions.zMin, math.min(
-							zMin,
-							math.max(
-								arrayMin(zData), 
-								seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
-							)
-						));
-						zMax = pick(seriesOptions.zMax, math.max(zMax, arrayMax(zData)));
-					}
-				}
-			}
-		});
-
-		each(activeSeries, function (series) {
-
-			var data = series[dataKey],
-				i = data.length,
-				radius;
-
-			if (isXAxis) {
-				series.getRadii(zMin, zMax, extremes.minSize, extremes.maxSize);
-			}
+			if (isXAxis) { // because X axis is evaluated first
 			
-			if (range > 0) {
-				while (i--) {
-					if (typeof data[i] === 'number') {
-						radius = series.radii[i];
-						pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
-						pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
-					}
+				// For each series, translate the size extremes to pixel values
+				each(['minSize', 'maxSize'], function (prop) {
+					var length = seriesOptions[prop],
+						isPercent = /%$/.test(length);
+					
+					length = pInt(length);
+					extremes[prop] = isPercent ?
+						smallestSize * length / 100 :
+						length;
+					
+				});
+				series.minPxSize = extremes.minSize;
+				
+				// Find the min and max Z
+				zData = series.zData;
+				if (zData.length) { // #1735
+					zMin = pick(seriesOptions.zMin, math.min(
+						zMin,
+						math.max(
+							arrayMin(zData), 
+							seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
+						)
+					));
+					zMax = pick(seriesOptions.zMax, math.max(zMax, arrayMax(zData)));
 				}
 			}
-		});
-		
-		if (activeSeries.length && range > 0 && pick(this.options.min, this.userMin) === UNDEFINED && pick(this.options.max, this.userMax) === UNDEFINED) {
-			pxMax -= axisLength;
-			transA *= (axisLength + pxMin - pxMax) / axisLength;
-			this.min += pxMin / transA;
-			this.max += pxMax / transA;
 		}
+	});
+
+	each(activeSeries, function (series) {
+
+		var data = series[dataKey],
+			i = data.length,
+			radius;
+
+		if (isXAxis) {
+			series.getRadii(zMin, zMax, extremes.minSize, extremes.maxSize);
+		}
+		
+		if (range > 0) {
+			while (i--) {
+				if (typeof data[i] === 'number') {
+					radius = series.radii[i];
+					pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
+					pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
+				}
+			}
+		}
+	});
+	
+	if (activeSeries.length && range > 0 && pick(this.options.min, this.userMin) === UNDEFINED && pick(this.options.max, this.userMax) === UNDEFINED) {
+		pxMax -= axisLength;
+		transA *= (axisLength + pxMin - pxMax) / axisLength;
+		this.min += pxMin / transA;
+		this.max += pxMax / transA;
 	}
 };
 

@@ -7458,7 +7458,7 @@ Axis.prototype = {
 				!labelOptions.rotation &&
 				chart.plotWidth / tickPositions.length) ||
 				(!horiz && (chart.margin[3] || chart.chartWidth * 0.33)), // #1580, #1931,
-			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 8))), // docs: padding new default
+			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))), // docs: padding new default
 			attr = { rotation: labelOptions.rotation },
 			css,
 			fontMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
@@ -11106,10 +11106,9 @@ Chart.prototype = {
 	 * subtitle and legend have already been rendered at this stage, but will be
 	 * moved into their final positions
 	 */
-	getMargins: function () {
+	getMargins: function (skipAxes) {
 		var chart = this,
 			spacing = chart.spacing,
-			axisOffset,
 			legend = chart.legend,
 			margin = chart.margin,
 			legendOptions = chart.options.legend,
@@ -11121,7 +11120,6 @@ Chart.prototype = {
 			titleOffset = chart.titleOffset;
 
 		chart.resetMargins();
-		axisOffset = chart.axisOffset;
 
 		// Adjust for title and subtitle
 		if (titleOffset && !defined(margin[0])) {
@@ -11170,7 +11168,17 @@ Chart.prototype = {
 		if (chart.extraTopMargin) {
 			chart.plotTop += chart.extraTopMargin;
 		}
+		if (!skipAxes) {
+			this.getAxisMargins();
+		}
+	},
 
+	getAxisMargins: function () {
+
+		var chart = this,
+			axisOffset = chart.axisOffset,
+			margin = chart.margin;
+		
 		// pre-render axes to get labels offset width
 		if (chart.hasCartesianSeries) {
 			each(chart.axes, function (axis) {
@@ -11630,7 +11638,11 @@ Chart.prototype = {
 		var chart = this,
 			axes = chart.axes,
 			renderer = chart.renderer,
-			options = chart.options;
+			options = chart.options,
+			tempWidth,
+			tempHeight,
+			redoHorizontal,
+			redoVertical;
 
 		// Title
 		chart.setTitle();
@@ -11641,22 +11653,36 @@ Chart.prototype = {
 
 		chart.getStacks(); // render stacks
 
+		// Get chart margins
+		chart.getMargins(true);
+		chart.setChartSize();
+
+		// Record preliminary dimensions for later comparison
+		tempWidth = chart.plotWidth;
+		tempHeight = chart.plotHeight = chart.plotHeight - 13; // 13 is the most common height of X axis labels
+
 		// Get margins by pre-rendering axes
-		// set axes scales
 		each(axes, function (axis) {
 			axis.setScale();
 		});
+		chart.getAxisMargins();
 
-		chart.getMargins();
+		// If the plot area size has changed significantly, calculate tick positions again
+		redoHorizontal = tempWidth / chart.plotWidth > 1.2;
+		redoVertical = tempHeight / chart.plotHeight > 1.1;
 
-		chart.maxTicks = null; // reset for second pass
-		each(axes, function (axis) {
-			axis.setTickPositions(true); // update to reflect the new margins
-			axis.setMaxTicks();
-		});
-		chart.adjustTickAmounts();
-		chart.getMargins(); // second pass to check for new labels
+		if (redoHorizontal || redoVertical) {
 
+			chart.maxTicks = null; // reset for second pass
+			each(axes, function (axis) {
+				if ((axis.horiz && redoHorizontal) || (!axis.horiz && redoVertical)) {
+					axis.setTickPositions(true); // update to reflect the new margins
+					axis.setMaxTicks();
+				}
+			});
+			chart.adjustTickAmounts();
+			chart.getMargins(); // second pass to check for new labels
+		}
 
 		// Draw the borders and backgrounds
 		chart.drawChartBox();		
@@ -17329,78 +17355,76 @@ Axis.prototype.beforePadding = function () {
 		activeSeries = [];
 
 	// Handle padding on the second pass, or on redraw
-	if (this.tickPositions) {
-		each(this.series, function (series) {
+	each(this.series, function (series) {
 
-			var seriesOptions = series.options,
-				zData;
+		var seriesOptions = series.options,
+			zData;
 
-			if (series.bubblePadding && (series.visible || !chart.options.chart.ignoreHiddenSeries)) {
+		if (series.bubblePadding && (series.visible || !chart.options.chart.ignoreHiddenSeries)) {
 
-				// Correction for #1673
-				axis.allowZoomOutside = true;
+			// Correction for #1673
+			axis.allowZoomOutside = true;
 
-				// Cache it
-				activeSeries.push(series);
+			// Cache it
+			activeSeries.push(series);
 
-				if (isXAxis) { // because X axis is evaluated first
-				
-					// For each series, translate the size extremes to pixel values
-					each(['minSize', 'maxSize'], function (prop) {
-						var length = seriesOptions[prop],
-							isPercent = /%$/.test(length);
-						
-						length = pInt(length);
-						extremes[prop] = isPercent ?
-							smallestSize * length / 100 :
-							length;
-						
-					});
-					series.minPxSize = extremes.minSize;
-					
-					// Find the min and max Z
-					zData = series.zData;
-					if (zData.length) { // #1735
-						zMin = pick(seriesOptions.zMin, math.min(
-							zMin,
-							math.max(
-								arrayMin(zData), 
-								seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
-							)
-						));
-						zMax = pick(seriesOptions.zMax, math.max(zMax, arrayMax(zData)));
-					}
-				}
-			}
-		});
-
-		each(activeSeries, function (series) {
-
-			var data = series[dataKey],
-				i = data.length,
-				radius;
-
-			if (isXAxis) {
-				series.getRadii(zMin, zMax, extremes.minSize, extremes.maxSize);
-			}
+			if (isXAxis) { // because X axis is evaluated first
 			
-			if (range > 0) {
-				while (i--) {
-					if (typeof data[i] === 'number') {
-						radius = series.radii[i];
-						pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
-						pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
-					}
+				// For each series, translate the size extremes to pixel values
+				each(['minSize', 'maxSize'], function (prop) {
+					var length = seriesOptions[prop],
+						isPercent = /%$/.test(length);
+					
+					length = pInt(length);
+					extremes[prop] = isPercent ?
+						smallestSize * length / 100 :
+						length;
+					
+				});
+				series.minPxSize = extremes.minSize;
+				
+				// Find the min and max Z
+				zData = series.zData;
+				if (zData.length) { // #1735
+					zMin = pick(seriesOptions.zMin, math.min(
+						zMin,
+						math.max(
+							arrayMin(zData), 
+							seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
+						)
+					));
+					zMax = pick(seriesOptions.zMax, math.max(zMax, arrayMax(zData)));
 				}
 			}
-		});
-		
-		if (activeSeries.length && range > 0 && pick(this.options.min, this.userMin) === UNDEFINED && pick(this.options.max, this.userMax) === UNDEFINED) {
-			pxMax -= axisLength;
-			transA *= (axisLength + pxMin - pxMax) / axisLength;
-			this.min += pxMin / transA;
-			this.max += pxMax / transA;
 		}
+	});
+
+	each(activeSeries, function (series) {
+
+		var data = series[dataKey],
+			i = data.length,
+			radius;
+
+		if (isXAxis) {
+			series.getRadii(zMin, zMax, extremes.minSize, extremes.maxSize);
+		}
+		
+		if (range > 0) {
+			while (i--) {
+				if (typeof data[i] === 'number') {
+					radius = series.radii[i];
+					pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
+					pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
+				}
+			}
+		}
+	});
+	
+	if (activeSeries.length && range > 0 && pick(this.options.min, this.userMin) === UNDEFINED && pick(this.options.max, this.userMax) === UNDEFINED) {
+		pxMax -= axisLength;
+		transA *= (axisLength + pxMin - pxMax) / axisLength;
+		this.min += pxMin / transA;
+		this.max += pxMax / transA;
 	}
 };
 

@@ -7,6 +7,7 @@ $(function () {
             categories: ['In Highcharts <= 3.0.8, line height was too small'],
             labels: {
                 maxStaggerLines: 1,
+                rotation: 0,
                 style: {
                     color: 'red',
                     fontSize: '20px'

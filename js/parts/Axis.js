@@ -1431,7 +1431,7 @@ Axis.prototype = {
 				!labelOptions.rotation &&
 				chart.plotWidth / tickPositions.length) ||
 				(!horiz && (chart.margin[3] || chart.chartWidth * 0.33)), // #1580, #1931,
-			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 8))), // docs: padding new default
+			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))), // docs: padding new default
 			attr = { rotation: labelOptions.rotation },
 			css,
 			fontMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
