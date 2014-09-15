@@ -14013,6 +14013,11 @@ extend(Series.prototype, {
 			preserve = ['group', 'markerGroup', 'dataLabelsGroup'],
 			n;
 
+		// If we're changing type or zIndex, create new groups (#3380, #3404)
+		if ((newOptions.type && newOptions.type !== oldType) || newOptions.zIndex !== undefined) {
+			preserve.length = 0;
+		}
+
 		// Make sure groups are not destroyed (#3094)
 		each(preserve, function (prop) {
 			preserve[prop] = series[prop];
@@ -14036,12 +14041,9 @@ extend(Series.prototype, {
 		extend(this, seriesTypes[newOptions.type || oldType].prototype);
 
 		// Re-register groups (#3094)
-		// unless it's a new type (#3402)
-		if (!newOptions.type || (newOptions.type === oldType)) { 
-			each(preserve, function (prop) {
-				series[prop] = preserve[prop];
-			});
-		}
+		each(preserve, function (prop) {
+			series[prop] = preserve[prop];
+		});
 
 		this.init(chart, newOptions);
 		chart.linkSeries(); // Links are lost in this.remove (#3028)
