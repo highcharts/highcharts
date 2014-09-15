@@ -836,6 +836,12 @@
 					type: type
 				};
 			}
+			if (typeCol.name) {
+				chartOptions.title = {
+					text: typeCol.name
+				};
+			}
+			
 			if (options.complete) {
 				options.complete(chartOptions);
 			}
