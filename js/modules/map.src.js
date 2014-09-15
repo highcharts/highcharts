@@ -30,7 +30,6 @@ var UNDEFINED,
 	extendClass = Highcharts.extendClass,
 	merge = Highcharts.merge,
 	pick = Highcharts.pick,
-	numberFormat = Highcharts.numberFormat,
 	defaultOptions = Highcharts.getOptions(),
 	seriesTypes = Highcharts.seriesTypes,
 	defaultPlotOptions = defaultOptions.plotOptions,
@@ -506,13 +505,13 @@ extend(ColorAxis.prototype, {
 					name = '> ';
 				}
 				if (from !== UNDEFINED) {
-					name += numberFormat(from, valueDecimals) + valueSuffix;
+					name += Highcharts.numberFormat(from, valueDecimals) + valueSuffix;
 				}
 				if (from !== UNDEFINED && to !== UNDEFINED) {
 					name += ' - ';
 				}
 				if (to !== UNDEFINED) {
-					name += numberFormat(to, valueDecimals) + valueSuffix;
+					name += Highcharts.numberFormat(to, valueDecimals) + valueSuffix;
 				}
 				
 				// Add a mock object to the legend items

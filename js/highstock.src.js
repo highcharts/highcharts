@@ -357,33 +357,6 @@ function extendClass(parent, members) {
 }
 
 /**
- * Format a number and return a string based on input settings
- * @param {Number} number The input number to format
- * @param {Number} decimals The amount of decimals
- * @param {String} decPoint The decimal point, defaults to the one given in the lang options
- * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
- */
-function numberFormat(number, decimals, decPoint, thousandsSep) {
-	var externalFn = Highcharts.numberFormat,
-		lang = defaultOptions.lang,
-		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
-		n = +number || 0,
-		c = decimals === -1 ?
-			(n.toString().split('.')[1] || '').length : // preserve decimals
-			(isNaN(decimals = mathAbs(decimals)) ? 2 : decimals),
-		d = decPoint === undefined ? lang.decimalPoint : decPoint,
-		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
-		s = n < 0 ? "-" : "",
-		i = String(pInt(n = mathAbs(n).toFixed(c))),
-		j = i.length > 3 ? i.length % 3 : 0;
-
-	return externalFn !== numberFormat ? 
-		externalFn(number, decimals, decPoint, thousandsSep) :
-		(s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
-			(c ? d + mathAbs(n - i).toFixed(c).slice(2) : ""));
-}
-
-/**
  * Pad a string to a given length by adding 0 to the beginning
  * @param {Number} number
  * @param {Number} length
@@ -491,7 +464,7 @@ function formatSingle(format, val) {
 		decimals = format.match(decRegex);
 		decimals = decimals ? decimals[1] : -1;
 		if (val !== null) {
-			val = numberFormat(
+			val = Highcharts.numberFormat(
 				val,
 				decimals,
 				lang.decimalPoint,
@@ -748,6 +721,32 @@ timeUnits = {
 	week: 7 * 24 * 3600000,
 	month: 28 * 24 * 3600000,
 	year: 364 * 24 * 3600000
+};
+
+
+/**
+ * Format a number and return a string based on input settings
+ * @param {Number} number The input number to format
+ * @param {Number} decimals The amount of decimals
+ * @param {String} decPoint The decimal point, defaults to the one given in the lang options
+ * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
+ */
+// docs: Overridable by wrap. Demo at /members/highcharts-numberformat
+Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
+	var lang = defaultOptions.lang,
+		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
+		n = +number || 0,
+		c = decimals === -1 ?
+			(n.toString().split('.')[1] || '').length : // preserve decimals
+			(isNaN(decimals = mathAbs(decimals)) ? 2 : decimals),
+		d = decPoint === undefined ? lang.decimalPoint : decPoint,
+		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
+		s = n < 0 ? "-" : "",
+		i = String(pInt(n = mathAbs(n).toFixed(c))),
+		j = i.length > 3 ? i.length % 3 : 0;
+
+	return (s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
+			(c ? d + mathAbs(n - i).toFixed(c).slice(2) : ""));
 };
 /**
  * Path interpolation algorithm used across adapters
@@ -1392,7 +1391,7 @@ defaultOptions = {
 				//defer: true,
 				enabled: false,
 				formatter: function () {
-					return this.y === null ? '' : numberFormat(this.y, -1);
+					return this.y === null ? '' : Highcharts.numberFormat(this.y, -1);
 				},
 				verticalAlign: 'bottom', // above singular point
 				y: 0
@@ -6349,7 +6348,7 @@ Axis.prototype = {
 			//textAlign: dynamic,
 			//rotation: 0,
 			formatter: function () {
-				return numberFormat(this.total, -1);
+				return Highcharts.numberFormat(this.total, -1);
 			},
 			style: defaultLabelOptions.style
 		}
@@ -6621,17 +6620,17 @@ Axis.prototype = {
 			while (i-- && ret === UNDEFINED) {
 				multi = Math.pow(1000, i + 1);
 				if (numericSymbolDetector >= multi && numericSymbols[i] !== null) {
-					ret = numberFormat(value / multi, -1) + numericSymbols[i];
+					ret = Highcharts.numberFormat(value / multi, -1) + numericSymbols[i];
 				}
 			}
 		}
 
 		if (ret === UNDEFINED) {
 			if (mathAbs(value) >= 10000) { // add thousands separators
-				ret = numberFormat(value, 0);
+				ret = Highcharts.numberFormat(value, 0);
 
 			} else { // small numbers
-				ret = numberFormat(value, -1, UNDEFINED, ''); // #2466
+				ret = Highcharts.numberFormat(value, -1, UNDEFINED, ''); // #2466
 			}
 		}
 
@@ -22021,7 +22020,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 	
 	pointFormat = pointFormat.replace(
 		'{point.change}',
-		(point.change > 0 ? '+' : '') + numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
+		(point.change > 0 ? '+' : '') + Highcharts.numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
 	); 
 	
 	return pointTooltipFormatter.apply(this, [pointFormat]);
@@ -22082,7 +22081,6 @@ extend(Highcharts, {
 	getOptions: getOptions,
 	hasBidiBug: hasBidiBug,
 	isTouchDevice: isTouchDevice,
-	numberFormat: numberFormat,
 	seriesTypes: seriesTypes,
 	setOptions: setOptions,
 	addEvent: addEvent,

@@ -23,7 +23,6 @@ extend(Highcharts, {
 	getOptions: getOptions,
 	hasBidiBug: hasBidiBug,
 	isTouchDevice: isTouchDevice,
-	numberFormat: numberFormat,
 	seriesTypes: seriesTypes,
 	setOptions: setOptions,
 	addEvent: addEvent,
