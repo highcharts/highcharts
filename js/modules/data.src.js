@@ -426,13 +426,7 @@
 	 * numbers.
 	 */
 	findHeaderRow: function () {
-		var headerRow = 0;
-		each(this.columns, function (column) {
-			if (column.isNumeric && typeof column[0] !== 'string') {
-				headerRow = null;
-			}
-		});
-		this.headerRow = headerRow;
+		this.headerRow = 0;
 	},
 	
 	/**
@@ -835,11 +829,13 @@
 
 			// Do the callback
 			chartOptions = {
-				xAxis: {
-					type: type
-				},
 				series: series
 			};
+			if (type) {
+				chartOptions.xAxis = {
+					type: type
+				};
+			}
 			if (options.complete) {
 				options.complete(chartOptions);
 			}
