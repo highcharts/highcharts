@@ -42,6 +42,13 @@
 			hover: {
 				enabled: false
 			}
+		},
+		drillUpButton: {
+			position: { 
+				align: 'left',
+				x: 10,
+				y: -50
+			}
 		}
 	});
 	
@@ -69,16 +76,33 @@
 		type: 'treemap',
 		isCartesian: false,	
 		trackerGroups: ['group', 'dataLabelsGroup'],
-		forceDL: true,
 		handleLayout: function () {
-		var tree = this.buildTree(),
-			seriesArea = this.getSeriesArea(tree.val);
+		var series = this,
+			id = this.rootNode,
+			tree,
+			root,
+			seriesArea;
+			// Do some mapping
+			this.nodeMap = [];
+			tree = this.buildTree();
+			root = tree;
 			this.levelMap = this.getLevels();
-			this.setColorRecursive(tree, undefined);
-			this.calculateArea(tree, seriesArea);
+			if (id) {
+				root = series.nodeMap[id];
+			}
+			each(series.points, function (point) {
+				// Reset visibility
+				delete point.plotX;
+				delete point.plotY;
+				point.inDisplay = false;
+			});
+			seriesArea = this.getSeriesArea(root.val);
+			this.setColorRecursive(root, undefined);
+			this.calculateArea(root, seriesArea);
 		},
 		buildTree: function () {
 			var tree,
+				series = this,
 				i = 0,
 				parentList = [],
 				allIds = [],
@@ -88,13 +112,15 @@
 						parentList[""].push(item);
 					});
 				},
-				getNodeTree = function (id, i, level, list, points) {
+				getNodeTree = function (id, i, level, list, points, parent) {
 					var children = [],
 						sortedChildren = [],
 						val = 0,
+						point = points[i],
 						nodeTree,
 						node,
-						insertNode;
+						insertNode,
+						name;
 					insertNode = function () {
 						var i = 0,
 							inserted = false;
@@ -113,9 +139,12 @@
 					};
 
 					// Actions
+					if (point) {
+						name = point.name || "";
+					}
 					if (list[id] !== undefined) {
 						each(list[id], function (i) {
-							node = getNodeTree(points[i].id, i, (level + 1), list, points);
+							node = getNodeTree(points[i].id, i, (level + 1), list, points, id);
 							val += node.val;
 							insertNode();
 							children.push(node);
@@ -128,8 +157,11 @@
 						i: i,
 						children: sortedChildren,
 						val: val,
-						level: level
+						level: level,
+						parent: parent,
+						name: name
 					};
+					series.nodeMap[nodeTree.id] = nodeTree;
 					return nodeTree;
 				};
 			// Actions
@@ -161,7 +193,7 @@
 					}
 				}
 			}
-			tree = getNodeTree("", -1, 0, parentList, this.points);
+			tree = getNodeTree("", -1, 0, parentList, this.points, null);
 			return tree;
 		},
 		calculateArea: function (node, area) {
@@ -177,6 +209,7 @@
 						point = series.points[node.i];
 					if (node.val > 0) {
 						point = series.points[node.i];
+						point.inDisplay = true;
 						point.isLeaf = isLeaf;
 						point.level = node.level;
 						// Set point values
@@ -185,8 +218,7 @@
 							x: values.x,
 							y: values.y,
 							width: values.width,
-							height: values.height,
-							zIndex: (1000 - point.level)
+							height: values.height
 						};
 						point.plotX = point.shapeArgs.x + (point.shapeArgs.width / 2);
 						point.plotY = point.shapeArgs.y + (point.shapeArgs.height / 2);
@@ -516,6 +548,7 @@
 					dataLabels = level.dataLabels;
 					if (dataLabels) {
 						options = merge(options, dataLabels);
+						series._hasPointLabels = true;
 					}
 				}
 				options = merge(options, point.options.dataLabels);
@@ -551,15 +584,100 @@
 				attr['stroke-width'] = point.borderWidth || attr['stroke-width'];
 				attr.dashstyle = point.borderDashStyle || attr.dashstyle;
 				attr.fill = point.color || attr.fill;
+				attr.zIndex = (1000 - point.level);
 				// If not a leaf, then remove fill
 				if (!point.isLeaf) {
 					attr.fill = 'none';
 				}
 				point.pointAttr[''] = merge(point.pointAttr[''], attr);
-			});
 
+				if (series.options.allowDrillToNode) {
+					H.removeEvent(point, 'click');
+					H.addEvent(point, 'click', function () {
+						series.drillCloser(point);
+					});
+				}
+			});
 			// Call standard drawPoints
 			seriesTypes.column.prototype.drawPoints.call(this);
+		},
+		drillCloser: function (point) {
+			var points = this.points,
+				drillNode = this.nodeMap[point.id],
+				parent,
+				valid = true;
+			while (valid) {
+				parent = this.nodeMap[drillNode.parent];
+				valid = (parent.parent !== null) && (points[parent.i].inDisplay);
+				if (valid) {
+					drillNode = parent;
+				}
+			}
+			// If it is not the same point, then drill to it
+			if (drillNode.id !== point.id) {
+				this.drillToNode(drillNode.id);
+				this.showDrillUpButton((parent.name || parent.id));
+			}
+		},
+		drillUp: function () {
+			var drillPoint = null,
+				node,
+				parent;
+			if (this.rootNode) {
+				node = this.nodeMap[this.rootNode];
+				if (node.parent !== null) {
+					drillPoint = this.nodeMap[node.parent];
+				}
+			}
+
+			if (drillPoint !== null) {
+				this.drillToNode(drillPoint.id);
+				if (drillPoint.id === "") {
+					this.drillUpButton = this.drillUpButton.destroy();
+				} else {
+					parent = this.nodeMap[drillPoint.parent];
+					this.showDrillUpButton((parent.name || parent.id));
+				}
+			} 
+		},
+		drillToNode: function (id) {
+			this.rootNode = id;
+			this.redraw();
+		},
+		showDrillUpButton: function (name) {
+			var series = this,
+				backText = 'Back to: ' + (name || 'Top'),
+				buttonOptions = series.options.drillUpButton,
+				attr,
+				states;
+
+			if (!this.drillUpButton) {
+				attr = buttonOptions.theme;
+				states = attr && attr.states;
+							
+				this.drillUpButton = this.chart.renderer.button(
+					backText,
+					null,
+					null,
+					function () {
+						series.drillUp(); 
+					},
+					attr, 
+					states && states.hover,
+					states && states.select
+				)
+				.attr({
+					align: buttonOptions.position.align,
+					zIndex: 9
+				})
+				.add()
+				.align(buttonOptions.position, false, buttonOptions.relativeTo || 'plotBox');
+			} else {
+				this.drillUpButton.attr({
+					text: backText
+				})
+				.align();
+			}
 		},
 		drawLegendSymbol: H.LegendSymbolMixin.drawRectangle
 	}));
