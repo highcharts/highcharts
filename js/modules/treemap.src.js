@@ -502,21 +502,6 @@
 		stripes: function (parent, children) {
 			return this.alg_func_fill(false, parent, children);
 		},
-		mixed: function (parent, children) {
-			var level,
-				algorithm = 'sliceAndDice';
-			if (children.length) {
-				level = children[0].level - 1;
-			}
-			if (level === 0) {
-				if (children.length < 20) {
-					algorithm = 'strip';
-				} else {
-					algorithm = 'strip';
-				}
-			}
-			return this[algorithm](parent, children);
-		},
 		translate: function () {
 			// Call prototype function
 			H.Series.prototype.translate.call(this);
