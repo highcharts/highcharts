@@ -82,8 +82,14 @@
 			tree,
 			root,
 			seriesArea;
-			// Do some mapping
+			// Modify series
 			this.nodeMap = [];
+			this.xAxis.dataMin = 0;
+			this.xAxis.dataMax = 100;
+			this.yAxis.dataMin = 0;
+			this.yAxis.dataMax = 100;
+
+			// Assign variables
 			tree = this.buildTree();
 			root = tree;
 			this.levelMap = this.getLevels();
