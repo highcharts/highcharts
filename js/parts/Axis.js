@@ -1500,11 +1500,21 @@ Axis.prototype = {
 			}
 		});
 
-		// Set the tick baseline and correct for rotation (#1764)
-		this.tickBaseline = fontMetrics.b;
-		if (this.rotation && this.side === 2) {
-			this.tickBaseline *= mathCos(this.rotation * deg2rad);
+		this.rotCorr(fontMetrics.b, attr.rotation || 0);
+	},
+
+	/**
+	 * Set the tick baseline and correct for rotation (#1764)
+	 */
+	rotCorr: function (baseline, rotation) {
+		var y = baseline;
+		if (rotation && this.side === 2) {
+			y = mathMax(y * mathCos(rotation * deg2rad), 4);
 		}
+		this.tickRotCorr = {
+			x: (-baseline / 4) * mathSin(rotation * deg2rad),
+			y: y
+		};			
 	},
 
 	/**
@@ -1628,9 +1638,9 @@ Axis.prototype = {
 		// handle automatic or user set offset
 		axis.offset = directionFactor * pick(options.offset, axisOffset[side]);
 
-		lineHeightCorrection = side === 2 ? axis.tickBaseline : 0;
+		lineHeightCorrection = side === 2 ? axis.tickRotCorr.y : 0;
 		labelOffsetPadded = labelOffset + titleMargin +
-			(labelOffset && (directionFactor * (horiz ? pick(labelOptions.y, axis.tickBaseline + 8) : labelOptions.x) - lineHeightCorrection));
+			(labelOffset && (directionFactor * (horiz ? pick(labelOptions.y, axis.tickRotCorr.y + 8) : labelOptions.x) - lineHeightCorrection));
 		axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);
 
 		axisOffset[side] = mathMax(
