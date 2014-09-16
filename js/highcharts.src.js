@@ -5627,7 +5627,6 @@ Tick.prototype = {
 			tickPositions = axis.tickPositions,
 			isFirst = pos === tickPositions[0],
 			isLast = pos === tickPositions[tickPositions.length - 1],
-			css,
 			value = categories ?
 				pick(categories[pos], names[pos], pos) :
 				pos,
@@ -5683,10 +5682,9 @@ Tick.prototype = {
 						)
 						//.attr(attr)
 						// without position absolute, IE export sometimes is wrong
-						.css(extend(css, labelOptions.style))
+						.css(merge(labelOptions.style))
 						.add(axis.labelGroup) :
 					null;
-
 			tick.labelLength = label && label.getBBox().width; // Un-rotated length
 			tick.rotation = 0; // Base value to detect change for new calls to getBBox
 
@@ -5701,8 +5699,7 @@ Tick.prototype = {
 		} else if (label) {
 			label.attr({
 					text: str
-				})
-				.css(css);
+				});
 		}
 		//tick.slotWidth = width;
 		//tick.yOffset = label ? pick(labelOptions.y, axis.tickBaseline + (axis.side === 2 ? 8 : -(label.getBBox().height / 2))) : 0;
@@ -7764,14 +7761,12 @@ Axis.prototype = {
 		}
 
 
+		// Add ellipsis if the label length is significantly longer than ideal
 		if (attr.rotation) {
-			// Add ellipsis if the label length is significantly longer than ideal
-			if (labelLength > chart.chartHeight * 0.5) {
-				css = { 
-					width: (chart.chartHeight * 0.33) + PX,
-					textOverflow: 'ellipsis'
-				};
-			}
+			css = { 
+				width: (labelLength > chart.chartHeight * 0.5 ? chart.chartHeight * 0.33 : chart.chartHeight) + PX,
+				textOverflow: 'ellipsis'
+			};
 		}
 
 		// Set the explicit or automatic label alignment

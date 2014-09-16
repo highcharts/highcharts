@@ -1472,14 +1472,12 @@ Axis.prototype = {
 		}
 
 
+		// Add ellipsis if the label length is significantly longer than ideal
 		if (attr.rotation) {
-			// Add ellipsis if the label length is significantly longer than ideal
-			if (labelLength > chart.chartHeight * 0.5) {
-				css = { 
-					width: (chart.chartHeight * 0.33) + PX,
-					textOverflow: 'ellipsis'
-				};
-			}
+			css = { 
+				width: (labelLength > chart.chartHeight * 0.5 ? chart.chartHeight * 0.33 : chart.chartHeight) + PX,
+				textOverflow: 'ellipsis'
+			};
 		}
 
 		// Set the explicit or automatic label alignment
