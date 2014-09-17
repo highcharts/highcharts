@@ -7873,7 +7873,9 @@ Axis.prototype = {
 				}
 			});
 
-			axis.renderUnsquish();
+			if (!axis.isCircular) {
+				axis.renderUnsquish();
+			}
 
 			each(tickPositions, function (pos) {
 				// left side must be align: right and right side must have align: left for labels
