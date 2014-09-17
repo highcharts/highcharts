@@ -264,8 +264,8 @@
 				// Get the lower series by reference or id
 				oldSeries = level.lowerSeries;
 				if (!oldSeries.chart) {  // #2786
-					while (seriesI--) {
-						if (chartSeries[seriesI].options.id === level.lowerSeriesOptions.id) {
+					while (seriesI-- && seriesI >= 0) {
+						if (chartSeries[seriesI] && chartSeries[seriesI].options.id === level.lowerSeriesOptions.id) {
 							oldSeries = chartSeries[seriesI];
 							break;
 						}
@@ -281,13 +281,15 @@
 					newSeries.drilldownLevel = level;
 					newSeries.options.animation = chart.options.drilldown.animation;
 
-					if (oldSeries.animateDrillupFrom) {
+					if (oldSeries.animateDrillupFrom && oldSeries.chart) { // #2919
 						oldSeries.animateDrillupFrom(level);
 					}
 				}
 				newSeries.levelNumber = levelNumber;
 				
-				oldSeries.remove(false);
+				if (oldSeries.chart) { // #2919
+					oldSeries.remove(false);
+				}
 
 				// Reset the zoom level of the upper series
 				if (newSeries.xAxis) {
@@ -367,7 +369,8 @@
 		var series = this,
 			drilldownLevels = this.chart.drilldownLevels,
 			animateFrom = this.chart.drilldownLevels[this.chart.drilldownLevels.length - 1].shapeArgs,
-			animationOptions = this.chart.options.drilldown.animation;
+			animationOptions = this.chart.options.drilldown.animation,
+			xAxis = this.xAxis;
 			
 		if (!init) {
 			each(drilldownLevels, function (level) {
@@ -376,7 +379,7 @@
 				}
 			});
 
-			animateFrom.x += (this.xAxis.oldPos - this.xAxis.pos);
+			animateFrom.x += (pick(xAxis.oldPos, xAxis.pos) - xAxis.pos);
 	
 			each(this.points, function (point) {
 				if (point.graphic) {
