@@ -7412,7 +7412,7 @@ Axis.prototype = {
 			bestScore = Number.MAX_VALUE,
 			autoRotation,
 			// Return the multiple of tickInterval that is needed to avoid collision
-			getStep = function (spaceNeeded) {
+			getStep = function (spaceNeeded, tickInterval) {
 				var step = spaceNeeded / (slotSize || 1);
 				step = step > 1 ? mathCeil(step) : 1;
 				return step * tickInterval;
@@ -7429,7 +7429,7 @@ Axis.prototype = {
 
 					if (rot && rot >= -90 && rot <= 90) {
 					
-						step = getStep(mathAbs(fontMetrics.h / mathSin(deg2rad * rot)));
+						step = getStep(mathAbs(fontMetrics.h / mathSin(deg2rad * rot)), 1);
 
 						score = step + mathAbs(rot / 360);
 
@@ -7443,7 +7443,7 @@ Axis.prototype = {
 			}
 
 		} else {
-			tickInterval = getStep(fontMetrics.h);
+			tickInterval = getStep(fontMetrics.h, tickInterval);
 		}
 
 		this.autoRotation = autoRotation;
