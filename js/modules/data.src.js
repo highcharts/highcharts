@@ -498,7 +498,11 @@
 					column.isDatetime = true;
 				} else {
 					column.isNumeric = true;
-				}					
+				}
+
+				if (column[row + 1] !== undefined) {
+					descending = floatVal > column[row + 1];
+				}
 			
 			// String, continue to determine if it is a date string or really a string
 			} else {
@@ -543,9 +547,8 @@
 			columns[col] = rawColumns[col];
 		}
 
-		// If the 0 column is date and descending, reverse all columns. 
-		// TODO: probably this should apply to xColumns, not 0 column alone.
-		if (isXColumn && column.isDatetime && descending) {
+		// If the 0 column is date or number and descending, reverse all columns. 
+		if (isXColumn && descending && this.options.sort) {
 			hasHeaderRow = typeof columns[0][0] !== 'number';
 			for (col = 0; col < columns.length; col++) {
 				columns[col].reverse();
