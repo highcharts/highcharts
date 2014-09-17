@@ -1493,7 +1493,7 @@ Axis.prototype = {
 				//ticks[pos].label[ticks[pos].isNew ? 'attr' : 'animate'](attr);
 
 				if (css) {
-					tick.label.css(css);
+					tick.label.css(merge(css));
 				}
 				/*if (tick.rotation !== attr.rotation) {
 					tick.label.bBox = null;

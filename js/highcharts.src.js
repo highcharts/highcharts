@@ -2373,7 +2373,7 @@ SVGElement.prototype = {
 		} else { // This code block made demo/waterfall fail, related to buildText
 			// Caching all strings reduces rendering time by 4-5%. 
 			// TODO: Check how this affects places where bBox is found on the element
-			cacheKey = [textStr, rotation || 0, styles && styles.fontSize, styles && styles.width].join(',');
+			cacheKey = [textStr, rotation || 0, styles && styles.fontSize, this.textWidth].join(',');
 		}
 		if (!reload) {
 			bBox = renderer.cache[cacheKey];
@@ -4180,7 +4180,10 @@ extend(SVGElement.prototype, {
 			wrapper.textWidth = textWidth;
 			wrapper.updateTransform();
 		}
-
+		if (styles && styles.textOverflow === 'ellipsis') {
+			styles.whiteSpace = 'nowrap';
+			styles.overflow = 'hidden';
+		}
 		wrapper.styles = extend(wrapper.styles, styles);
 		css(wrapper.element, styles);
 
@@ -4280,8 +4283,8 @@ extend(SVGElement.prototype, {
 				if (width > textWidth && /[ \-]/.test(elem.textContent || elem.innerText)) { // #983, #1254
 					css(elem, {
 						width: textWidth + PX,
-						display: 'block',
-						whiteSpace: 'normal'
+						display: 'block'
+						//whiteSpace: 'normal'
 					});
 					width = textWidth;
 				}
@@ -7781,7 +7784,7 @@ Axis.prototype = {
 				//ticks[pos].label[ticks[pos].isNew ? 'attr' : 'animate'](attr);
 
 				if (css) {
-					tick.label.css(css);
+					tick.label.css(merge(css));
 				}
 				/*if (tick.rotation !== attr.rotation) {
 					tick.label.bBox = null;

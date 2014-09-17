@@ -603,7 +603,7 @@ SVGElement.prototype = {
 		} else { // This code block made demo/waterfall fail, related to buildText
 			// Caching all strings reduces rendering time by 4-5%. 
 			// TODO: Check how this affects places where bBox is found on the element
-			cacheKey = [textStr, rotation || 0, styles && styles.fontSize, styles && styles.width].join(',');
+			cacheKey = [textStr, rotation || 0, styles && styles.fontSize, this.textWidth].join(',');
 		}
 		if (!reload) {
 			bBox = renderer.cache[cacheKey];
