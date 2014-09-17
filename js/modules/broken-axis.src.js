@@ -118,8 +118,23 @@
 				return nval;
 			};
 			
-			this.lin2val = function (val) {
-				return val;
+			this.lin2val = function (val) {				
+				var nval = val,
+					brk,
+					i;
+
+				for (i = 0; i < axis.breakArray.length; i++) {
+					brk = axis.breakArray[i];
+					if (brk.from >= nval) {
+						break;
+					} else if (brk.to < nval) {
+						nval += (brk.to - brk.from);
+					} else if (axis.isInBreak(brk, nval)) {
+						nval += (brk.to - brk.from);
+					} 
+				}
+
+				return nval;
 			};
 
 			this.setAxisTranslation = function (saveOld) {				
@@ -138,7 +153,6 @@
 					i,
 					j;
 
-				console.log(max, min);
 				// Construct an array holding all breaks in the axis
 				for (i in breaks) {
 					brk = breaks[i];
