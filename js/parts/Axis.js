@@ -1461,7 +1461,7 @@ Axis.prototype = {
 		// Handle word-wrap or ellipsis on vertical axis
 		} else if (slotWidth) {
 			// For word-wrap or ellipsis
-			css = { width: innerWidth + PX, textOverflow: 'initial' };
+			css = { width: innerWidth + PX, textOverflow: 'clip' };
 
 			// On vertical axis, only allow word wrap if there is room for more lines.
 			i = tickPositions.length;

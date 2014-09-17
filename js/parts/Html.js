@@ -31,25 +31,20 @@ extend(SVGElement.prototype, {
 
 	htmlGetBBox: function () {
 		var wrapper = this,
-			element = wrapper.element,
-			bBox = wrapper.bBox;
+			element = wrapper.element;
 
 		// faking getBBox in exported SVG in legacy IE
-		if (!bBox) {
-			// faking getBBox in exported SVG in legacy IE (is this a duplicate of the fix for #1079?)
-			if (element.nodeName === 'text') {
-				element.style.position = ABSOLUTE;
-			}
-
-			bBox = wrapper.bBox = {
-				x: element.offsetLeft,
-				y: element.offsetTop,
-				width: element.offsetWidth,
-				height: element.offsetHeight
-			};
+		// faking getBBox in exported SVG in legacy IE (is this a duplicate of the fix for #1079?)
+		if (element.nodeName === 'text') {
+			element.style.position = ABSOLUTE;
 		}
 
-		return bBox;
+		return {
+			x: element.offsetLeft,
+			y: element.offsetTop,
+			width: element.offsetWidth,
+			height: element.offsetHeight
+		};
 	},
 
 	/**
