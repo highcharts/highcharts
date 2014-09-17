@@ -486,7 +486,7 @@
 			floatVal = parseFloat(trimInsideVal);
 			
 			// Disable number or date parsing by setting the X axis type to category
-			if (forceCategory) {
+			if (forceCategory || row === 0) {
 				column[row] = trimVal;
 
 			} else if (+trimInsideVal === floatVal) { // is numeric
