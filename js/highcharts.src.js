@@ -7692,14 +7692,17 @@ Axis.prototype = {
 				each(autoRotation, function (rot) {
 					var score;
 
-					step = getStep(mathAbs(fontMetrics.h / mathSin(deg2rad * rot)));
+					if (rot && rot >= -90 && rot <= 90) {
+					
+						step = getStep(mathAbs(fontMetrics.h / mathSin(deg2rad * rot)));
 
-					score = step + mathAbs(rot / 360);
+						score = step + mathAbs(rot / 360);
 
-					if (score < bestScore) {
-						bestScore = score;
-						rotation = rot;
-						tickInterval = step;
+						if (score < bestScore) {
+							bestScore = score;
+							rotation = rot;
+							tickInterval = step;
+						}
 					}
 				});
 			}
