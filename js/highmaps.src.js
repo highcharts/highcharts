@@ -5751,15 +5751,16 @@ Tick.prototype = {
 			sides = this.getLabelSides(),
 			leftSide = sides[0],
 			rightSide = sides[1],
-			axisLeft,
-			axisRight,
+			axisLeft = axis.pos,
+			axisRight = axisLeft + axis.len,
+			chartWidth = axis.chart.chartWidth,
 			neighbour,
 			neighbourEdge,
 			line = this.label.line,
 			lineIndex = line || 0,
 			labelEdge = axis.labelEdge,
 			justifyLabel = axis.justifyLabels && (isFirst || isLast),
-			justifyToPlot;
+			rotation = this.rotation;
 
 		// Hide it if it now overlaps the neighbour label
 		if (labelEdge[lineIndex] === UNDEFINED || pxPos + leftSide > labelEdge[lineIndex]) {
@@ -5769,23 +5770,26 @@ Tick.prototype = {
 			show = false;
 		}
 
+		// Add ellipsis to prevent rotated labels to be clipped against the edge of the chart
+		if (rotation < 0 && pxPos + leftSide < 0) {
+			this.label.css({
+				width: mathRound(pxPos / mathCos(rotation * deg2rad) - 10) + PX
+			});
+		} else if (rotation > 0 && pxPos + rightSide > chartWidth) {
+			this.label.css({
+				width: mathRound((chartWidth - pxPos) / mathCos(rotation * deg2rad) - 10) + PX
+			});
+		}
+		
+
 		if (justifyLabel) {
-			justifyToPlot = axis.justifyToPlot;
-			axisLeft = justifyToPlot ? axis.pos : 0;
-			axisRight = justifyToPlot ? axisLeft + axis.len : axis.chart.chartWidth;
-
-			// Find the firsth neighbour on the same line
-			do {
-				index += (isFirst ? 1 : -1);
-				neighbour = axis.ticks[tickPositions[index]];
-			} while (tickPositions[index] && (!neighbour || !neighbour.label || neighbour.label.line !== line)); // #3044
-
+			neighbour = axis.ticks[tickPositions[index + (isFirst ? 1 : -1)]];
 			neighbourEdge = neighbour && neighbour.label.xy && neighbour.label.xy.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
 
 			if ((isFirst && !reversed) || (isLast && reversed)) {
 				// Is the label spilling out to the left of the plot area?
 				if (pxPos + leftSide < axisLeft) {
-
+					
 					// Align it to plot left
 					pxPos = axisLeft - leftSide;
 
@@ -7776,13 +7780,14 @@ Axis.prototype = {
 			hasData = axis.hasData,
 			showAxis = axis.showAxis,
 			from,
-			overflow = options.labels.overflow,
-			justifyLabels = axis.justifyLabels = horiz && overflow !== false,
+			//overflow = options.labels.overflow,
+			//justifyLabels = axis.justifyLabels = horiz && overflow !== false,
+			justifyLabels = axis.justifyLabels = axis.horiz && !axis.staggerLines && !axis.autoRotation,
 			to;
 
 		// Reset
 		axis.labelEdge.length = 0;
-		axis.justifyToPlot = overflow === 'justify';
+		//axis.justifyToPlot = overflow === 'justify';
 		axis.overlap = false;
 
 		// Mark all elements inActive before we go over and mark the active ones

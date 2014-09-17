@@ -1752,13 +1752,14 @@ Axis.prototype = {
 			hasData = axis.hasData,
 			showAxis = axis.showAxis,
 			from,
-			overflow = options.labels.overflow,
-			justifyLabels = axis.justifyLabels = horiz && overflow !== false,
+			//overflow = options.labels.overflow,
+			//justifyLabels = axis.justifyLabels = horiz && overflow !== false,
+			justifyLabels = axis.justifyLabels = axis.horiz && !axis.staggerLines && !axis.autoRotation,
 			to;
 
 		// Reset
 		axis.labelEdge.length = 0;
-		axis.justifyToPlot = overflow === 'justify';
+		//axis.justifyToPlot = overflow === 'justify';
 		axis.overlap = false;
 
 		// Mark all elements inActive before we go over and mark the active ones
