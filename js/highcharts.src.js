@@ -2368,13 +2368,13 @@ SVGElement.prototype = {
 		// we assume that a label of n characters has the same bounding box as others 
 		// of the same length.
 		if (textStr === '' || numRegex.test(textStr)) {
-			cacheKey = 'num.' + textStr.toString().length + '|' + (styles && styles.fontSize);
+			cacheKey = 'num:' + textStr.toString().length + '|' + (styles && styles.fontSize);
 
-		} else { // This code block made demo/waterfall fail, related to buildText
-			// Caching all strings reduces rendering time by 4-5%. 
-			// TODO: Check how this affects places where bBox is found on the element
-			cacheKey = [textStr, rotation || 0, styles && styles.fontSize, this.textWidth].join(',');
+		// Caching all strings reduces rendering time by 4-5%.
+		} else {
+			cacheKey = [textStr, rotation || 0, styles && styles.fontSize, element.style.width].join(',');
 		}
+
 		if (!reload) {
 			bBox = renderer.cache[cacheKey];
 		}
@@ -2977,7 +2977,7 @@ SVGRenderer.prototype = {
 
 		// Skip tspans, add text directly to text node. The forceTSpan is a hook 
 		// used in text outline hack.
-		if (!hasMarkup && !textStroke && !ellipsis && textStr.indexOf(' ') === -1) {
+		if (!hasMarkup && !textStroke && !ellipsis && !/[ \-]/.test(textStr)) {
 			textNode.appendChild(doc.createTextNode(textStr));
 			return;
 
@@ -4283,8 +4283,8 @@ extend(SVGElement.prototype, {
 				if (width > textWidth && /[ \-]/.test(elem.textContent || elem.innerText)) { // #983, #1254
 					css(elem, {
 						width: textWidth + PX,
-						display: 'block'
-						//whiteSpace: 'normal'
+						display: 'block',
+						whiteSpace: 'normal'
 					});
 					width = textWidth;
 				}
@@ -5846,9 +5846,10 @@ Tick.prototype = {
 			transA = axis.transA,
 			reversed = axis.reversed,
 			staggerLines = axis.staggerLines,
-			yOffset = pick(labelOptions.y, axis.tickRotCorr.y + (axis.side === 2 ? 8 : -(label.getBBox().height / 2)));
+			rotCorr = axis.tickRotCorr || { x: 0, y: 0 },
+			yOffset = pick(labelOptions.y, rotCorr.y + (axis.side === 2 ? 8 : -(label.getBBox().height / 2)));
 
-		x = x + labelOptions.x + axis.tickRotCorr.x - (tickmarkOffset && horiz ?
+		x = x + labelOptions.x + rotCorr.x - (tickmarkOffset && horiz ?
 			tickmarkOffset * transA * (reversed ? -1 : 1) : 0);
 		y = y + yOffset - (tickmarkOffset && !horiz ?
 			tickmarkOffset * transA * (reversed ? 1 : -1) : 0);
@@ -7672,6 +7673,7 @@ Axis.prototype = {
 			rotation,
 			fontMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
 			step,
+			categories = this.categories,
 			bestScore = Number.MAX_VALUE,
 			autoRotation,
 			// Return the multiple of tickInterval that is needed to avoid collision
@@ -7692,7 +7694,7 @@ Axis.prototype = {
 
 					if (rot && rot >= -90 && rot <= 90) {
 					
-						step = getStep(mathAbs(fontMetrics.h / mathSin(deg2rad * rot)), 1);
+						step = getStep(mathAbs(fontMetrics.h / mathSin(deg2rad * rot)), categories ? 1 : tickInterval);
 
 						score = step + mathAbs(rot / 360);
 
@@ -7780,20 +7782,15 @@ Axis.prototype = {
 		each(tickPositions, function (tick) {
 			tick = ticks[tick];
 			if (tick && tick.label) {
-				tick.label.attr(attr);
-				//ticks[pos].label[ticks[pos].isNew ? 'attr' : 'animate'](attr);
-
 				if (css) {
 					tick.label.css(merge(css));
 				}
-				/*if (tick.rotation !== attr.rotation) {
-					tick.label.bBox = null;
-				}
-				*/
+				tick.label.attr(attr);
 				tick.rotation = attr.rotation;
 			}
 		});
 
+		// TODO: Why not part of getLabelPosition?
 		this.rotCorr(fontMetrics.b, attr.rotation || 0);
 	},
 
@@ -7934,6 +7931,7 @@ Axis.prototype = {
 		// handle automatic or user set offset
 		axis.offset = directionFactor * pick(options.offset, axisOffset[side]);
 
+		axis.tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 }; // polar
 		lineHeightCorrection = side === 2 ? axis.tickRotCorr.y : 0;
 		labelOffsetPadded = labelOffset + titleMargin +
 			(labelOffset && (directionFactor * (horiz ? pick(labelOptions.y, axis.tickRotCorr.y + 8) : labelOptions.x) - lineHeightCorrection));

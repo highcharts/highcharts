@@ -1381,6 +1381,7 @@ Axis.prototype = {
 			rotation,
 			fontMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
 			step,
+			categories = this.categories,
 			bestScore = Number.MAX_VALUE,
 			autoRotation,
 			// Return the multiple of tickInterval that is needed to avoid collision
@@ -1401,7 +1402,7 @@ Axis.prototype = {
 
 					if (rot && rot >= -90 && rot <= 90) {
 					
-						step = getStep(mathAbs(fontMetrics.h / mathSin(deg2rad * rot)), 1);
+						step = getStep(mathAbs(fontMetrics.h / mathSin(deg2rad * rot)), categories ? 1 : tickInterval);
 
 						score = step + mathAbs(rot / 360);
 
@@ -1489,20 +1490,15 @@ Axis.prototype = {
 		each(tickPositions, function (tick) {
 			tick = ticks[tick];
 			if (tick && tick.label) {
-				tick.label.attr(attr);
-				//ticks[pos].label[ticks[pos].isNew ? 'attr' : 'animate'](attr);
-
 				if (css) {
 					tick.label.css(merge(css));
 				}
-				/*if (tick.rotation !== attr.rotation) {
-					tick.label.bBox = null;
-				}
-				*/
+				tick.label.attr(attr);
 				tick.rotation = attr.rotation;
 			}
 		});
 
+		// TODO: Why not part of getLabelPosition?
 		this.rotCorr(fontMetrics.b, attr.rotation || 0);
 	},
 
@@ -1643,6 +1639,7 @@ Axis.prototype = {
 		// handle automatic or user set offset
 		axis.offset = directionFactor * pick(options.offset, axisOffset[side]);
 
+		axis.tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 }; // polar
 		lineHeightCorrection = side === 2 ? axis.tickRotCorr.y : 0;
 		labelOffsetPadded = labelOffset + titleMargin +
 			(labelOffset && (directionFactor * (horiz ? pick(labelOptions.y, axis.tickRotCorr.y + 8) : labelOptions.x) - lineHeightCorrection));

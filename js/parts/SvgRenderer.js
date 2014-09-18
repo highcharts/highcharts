@@ -598,13 +598,13 @@ SVGElement.prototype = {
 		// we assume that a label of n characters has the same bounding box as others 
 		// of the same length.
 		if (textStr === '' || numRegex.test(textStr)) {
-			cacheKey = 'num.' + textStr.toString().length + '|' + (styles && styles.fontSize);
+			cacheKey = 'num:' + textStr.toString().length + '|' + (styles && styles.fontSize);
 
-		} else { // This code block made demo/waterfall fail, related to buildText
-			// Caching all strings reduces rendering time by 4-5%. 
-			// TODO: Check how this affects places where bBox is found on the element
-			cacheKey = [textStr, rotation || 0, styles && styles.fontSize, this.textWidth].join(',');
+		// Caching all strings reduces rendering time by 4-5%.
+		} else {
+			cacheKey = [textStr, rotation || 0, styles && styles.fontSize, element.style.width].join(',');
 		}
+
 		if (!reload) {
 			bBox = renderer.cache[cacheKey];
 		}
@@ -1207,7 +1207,7 @@ SVGRenderer.prototype = {
 
 		// Skip tspans, add text directly to text node. The forceTSpan is a hook 
 		// used in text outline hack.
-		if (!hasMarkup && !textStroke && !ellipsis && textStr.indexOf(' ') === -1) {
+		if (!hasMarkup && !textStroke && !ellipsis && !/[ \-]/.test(textStr)) {
 			textNode.appendChild(doc.createTextNode(textStr));
 			return;
 

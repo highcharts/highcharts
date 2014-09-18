@@ -250,9 +250,10 @@ Tick.prototype = {
 			transA = axis.transA,
 			reversed = axis.reversed,
 			staggerLines = axis.staggerLines,
-			yOffset = pick(labelOptions.y, axis.tickRotCorr.y + (axis.side === 2 ? 8 : -(label.getBBox().height / 2)));
+			rotCorr = axis.tickRotCorr || { x: 0, y: 0 },
+			yOffset = pick(labelOptions.y, rotCorr.y + (axis.side === 2 ? 8 : -(label.getBBox().height / 2)));
 
-		x = x + labelOptions.x + axis.tickRotCorr.x - (tickmarkOffset && horiz ?
+		x = x + labelOptions.x + rotCorr.x - (tickmarkOffset && horiz ?
 			tickmarkOffset * transA * (reversed ? -1 : 1) : 0);
 		y = y + yOffset - (tickmarkOffset && !horiz ?
 			tickmarkOffset * transA * (reversed ? 1 : -1) : 0);

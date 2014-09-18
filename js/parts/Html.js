@@ -117,8 +117,8 @@ extend(SVGElement.prototype, {
 				if (width > textWidth && /[ \-]/.test(elem.textContent || elem.innerText)) { // #983, #1254
 					css(elem, {
 						width: textWidth + PX,
-						display: 'block'
-						//whiteSpace: 'normal'
+						display: 'block',
+						whiteSpace: 'normal'
 					});
 					width = textWidth;
 				}
