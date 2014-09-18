@@ -3110,7 +3110,7 @@ SVGRenderer.prototype = {
 									if (ellipsis && wasTooLong) {
 										cursor /= 2;
 
-										if (!tooLong && cursor < 0.5) {
+										if (wordStr === '' || (!tooLong && cursor < 0.5)) {
 											words = []; // All ok, break out
 										} else {
 											if (tooLong) {
@@ -3120,7 +3120,6 @@ SVGRenderer.prototype = {
 											words = [wordStr + '\u2026'];
 											tspan.removeChild(tspan.firstChild);
 										}
-									
 
 									// Looping down, this is the first word sequence that is not too long,
 									// so we can move on to build the next line.
