@@ -1377,15 +1377,15 @@ Axis.prototype = {
 			labelOptions = this.options.labels,
 			horiz = this.horiz,
 			tickInterval = this.tickInterval, // docs: from 4.1, tickInterval can not be smaller than labels
+			newTickInterval = tickInterval,
 			slotSize = this.len / (((this.categories ? 1 : 0) + this.max - this.min) / tickInterval),
 			rotation,
 			fontMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
 			step,
-			categories = this.categories,
 			bestScore = Number.MAX_VALUE,
 			autoRotation,
 			// Return the multiple of tickInterval that is needed to avoid collision
-			getStep = function (spaceNeeded, tickInterval) {
+			getStep = function (spaceNeeded) {
 				var step = spaceNeeded / (slotSize || 1);
 				step = step > 1 ? mathCeil(step) : 1;
 				return step * tickInterval;
@@ -1402,27 +1402,27 @@ Axis.prototype = {
 
 					if (rot && rot >= -90 && rot <= 90) {
 					
-						step = getStep(mathAbs(fontMetrics.h / mathSin(deg2rad * rot)), categories ? 1 : tickInterval);
+						step = getStep(mathAbs(fontMetrics.h / mathSin(deg2rad * rot)));
 
 						score = step + mathAbs(rot / 360);
 
 						if (score < bestScore) {
 							bestScore = score;
 							rotation = rot;
-							tickInterval = step;
+							newTickInterval = step;
 						}
 					}
 				});
 			}
 
 		} else {
-			tickInterval = getStep(fontMetrics.h, tickInterval);
+			newTickInterval = getStep(fontMetrics.h);
 		}
 
 		this.autoRotation = autoRotation;
 		this.labelRotation = rotation;
 
-		return tickInterval;
+		return newTickInterval;
 	},
 
 	renderUnsquish: function () {
