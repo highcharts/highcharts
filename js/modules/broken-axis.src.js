@@ -218,13 +218,13 @@
 		}
 	});
 
-	wrap(Series.prototype, 'generatePoints', function (proceed) {	
-
-		proceed.apply(this, stripArguments(arguments));
+	wrap(Series.prototype, 'generatePoints', function (proceed) {		
 
 		var series = this,
-			points = series.oldPoints || series.points,
-			npoints = [],
+			data = series.preBreakData || series.options.data,
+			ndata = [],
+			//points = series.oldPoints || series.points,
+			//npoints = [],
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
 			i = 0,
@@ -234,17 +234,25 @@
 
 		if (xAxis.options.breaks || yAxis.options.breaks) {
 			// Register old data && points
-			series.oldPoints = points.slice();
+			series.preBreakData = data.slice();
 
 			// Create a filtered points Array
-			while (i < points.length) {
-				point = points[i];
+			while (i < data.length) {
+				point = data[i];
 
 				x = point.x ? point.x : (i * (series.options.pointInterval || 1)) + (series.options.pointStart || 0);
 				y = point.y ? point.y : point;
 
 				if(!(xAxis.isInAnyBreak(x, true) || yAxis.isInAnyBreak(y, true))) {
-					npoints.push(point);
+					if (point.x) {
+						ndata.push(point);
+					} else {
+						ndata.push({
+							x: x,
+							y: y
+						});
+					}
+					//ndata.push(point);
 				} else {
 					//npoints.push(null);
 				}
@@ -253,8 +261,10 @@
 			}
 
 			// Register new points
-			series.points = npoints;
+			series.options.data = ndata;
 		}
+
+		proceed.apply(this, stripArguments(arguments));
 	});
 
 
