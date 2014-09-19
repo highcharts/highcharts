@@ -251,7 +251,9 @@ function getCompareTooltips() {
 						try {
 							test(chart);
 						} catch (e) {
-							console.error('HIGHCHARTS UTILS CAUGHT ERROR:', e.message);
+							e = 'ERROR in test.js (<?php echo $_GET['which'] ?> frame): ' + e.message;
+							console.error(e);
+							parent.window.error = e;
 							parent.window.onDifferent('Error');
 						}
 

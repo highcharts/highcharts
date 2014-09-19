@@ -57,6 +57,7 @@
 				rightSVG,
 				leftVersion,
 				rightVersion,
+				error,
 				mode = '<?php echo $mode ?>',
 				i = '<?php echo $i ?>'
 				_continue = '<?php echo $continue ?>';
@@ -261,6 +262,14 @@
 
 				var out,
 					identical;
+
+				if (error) {
+					report += "<br/>" + error;
+					$('#report').html(report)
+						.css('background', '#f15c80');
+					onDifferent('Error');
+					return;
+				}
 				
 				// remove identifier for each iframe
 				if (leftSVG && rightSVG) {
@@ -280,13 +289,13 @@
 
 				if (mode === 'images') {
 					if (rightSVG.indexOf('NaN') !== -1) {
-						report += "<br/>The generated SVG contains NaN"
+						report += "<br/>The generated SVG contains NaN";
 						$('#report').html(report)
 							.css('background', '#f15c80');
 						onDifferent('Error');
 
 					} else if (identical) {
-						report += "<br/>The generated SVG is identical"
+						report += "<br/>The generated SVG is identical";
 						$('#report').html(report)
 							.css('background', "#a4edba");
 
