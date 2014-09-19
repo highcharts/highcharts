@@ -109,6 +109,7 @@
 				point.inDisplay = false;
 			});
 			seriesArea = this.getSeriesArea(tree.val);
+			this.nodeMap[""].values = seriesArea;
 			this.setColorRecursive(tree, undefined);
 			this.calculateArea(tree, seriesArea);
 		},
