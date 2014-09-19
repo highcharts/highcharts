@@ -17,6 +17,14 @@
 		noop = function () { return; },
 		each = H.each;
 
+	defaultOptions.xAxis = merge(defaultOptions.xAxis, {
+		min: 0,
+		max: 100
+	});
+	defaultOptions.yAxis = merge(defaultOptions.yAxis, {
+		min: 0,
+		max: 100
+	});
 	// Define default options
 	plotOptions.treemap = merge(plotOptions.scatter, {
 		showInLegend: false,
@@ -206,13 +214,24 @@
 			var childrenValues = [],
 				childValues,
 				series = this,
+				options = series.options,
+				xAxis = series.xAxis,
+				yAxis = series.yAxis,				
+				algorithm = options.layoutAlgorithm,
+				directionalChange = options.directionalChange,							
 				i = 0,
 				level,
 				point,
-				algorithm = series.options.layoutAlgorithm,
-				directionalChange = series.options.directionalChange,
+				x1,
+				x2,
+				y1,
+				y2,
 				setPointValues = function (node, values, isLeaf) {
 						point = series.points[node.i];
+						x1 = Math.round(xAxis.len - xAxis.translate(values.x, 0, 0, 0, 1));
+						x2 = Math.round(xAxis.len - xAxis.translate(values.x + values.width, 0, 0, 0, 1));
+						y1 = Math.round(yAxis.translate(values.y, 0, 1, 0, 1));
+						y2 = Math.round(yAxis.translate(values.y + values.height, 0, 1, 0, 1));
 					if (node.val > 0) {
 						point = series.points[node.i];
 						point.inDisplay = true;
@@ -221,10 +240,10 @@
 						// Set point values
 						point.shapeType = 'rect';
 						point.shapeArgs = {
-							x: values.x,
-							y: values.y,
-							width: values.width,
-							height: values.height
+							x: Math.min(x1, x2),
+							y: Math.min(y1, y2),
+							width: Math.abs(x2 - x1),
+							height: Math.abs(y2 - y1)
 						};
 						point.plotX = point.shapeArgs.x + (point.shapeArgs.width / 2);
 						point.plotY = point.shapeArgs.y + (point.shapeArgs.height / 2);
@@ -258,10 +277,10 @@
 			});
 		},
 		getSeriesArea: function (val) {
-			var w = this.chart.plotWidth,
-				x = w * this._i,
-				y = 0,
-				h = this.chart.plotHeight,
+			var w = this.xAxis.dataMax,
+				x = this.xAxis.dataMin,
+				y = this.yAxis.dataMin,
+				h = this.yAxis.dataMax,
 				seriesArea = {
 					x: x,
 					y: y,
