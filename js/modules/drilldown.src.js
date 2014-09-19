@@ -233,7 +233,7 @@
 			levelNumber = drilldownLevels[drilldownLevels.length - 1].levelNumber,
 			i = drilldownLevels.length,
 			chartSeries = chart.series,
-			seriesI = chartSeries.length,
+			seriesI,
 			level,
 			oldSeries,
 			newSeries,
@@ -254,7 +254,7 @@
 					newSeries = addedSeries;
 				}
 			};
-		
+
 		while (i--) {
 
 			level = drilldownLevels[i];
@@ -264,8 +264,9 @@
 				// Get the lower series by reference or id
 				oldSeries = level.lowerSeries;
 				if (!oldSeries.chart) {  // #2786
-					while (seriesI-- && seriesI >= 0) {
-						if (chartSeries[seriesI] && chartSeries[seriesI].options.id === level.lowerSeriesOptions.id) {
+					seriesI = chartSeries.length; // #2919
+					while (seriesI--) {
+						if (chartSeries[seriesI].options.id === level.lowerSeriesOptions.id) {
 							oldSeries = chartSeries[seriesI];
 							break;
 						}
@@ -287,9 +288,7 @@
 				}
 				newSeries.levelNumber = levelNumber;
 				
-				if (oldSeries.chart) { // #2919
-					oldSeries.remove(false);
-				}
+				oldSeries.remove(false);
 
 				// Reset the zoom level of the upper series
 				if (newSeries.xAxis) {
