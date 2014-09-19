@@ -25,6 +25,17 @@
             <filter token="product.version" value="${highstock.product.version}"/>
             <filter token="product.date" value="${highstock.product.date}"/>
         </filterset>
+        <filterset id="highmaps.filter">
+            <filter token="product.name" value="${highmaps.product.name}"/>
+            <filter token="product.cdnpath" value="${highmaps.product.cdnpath}"/>
+            <filter token="product.version" value="${highmaps.product.version}"/>
+            <filter token="product.date" value="${highmaps.product.date}"/>
+        </filterset>
+        <filterset id="download.builder.filter">
+            <filter token="product.name" value="${highcharts.product.name} ${highcharts.product.version}"/>
+            <filter token="product.version" value="/${highstock.product.name} ${highstock.product.version}"/>
+            <filter token="product.date" value="${highcharts.product.date}"/>
+        </filterset>
 
         <!-- folder names -->
         <property name="tools.dir" value="${basedir}/tools"/>
@@ -37,6 +48,7 @@
         <!-- highcharts/highstock src -->
         <property name="highcharts.parts.dir" location="${basedir}/js/parts"/>
         <property name="highchartsmore.parts.dir" location="${basedir}/js/parts-more"/>
+        <property name="highcharts3d.parts.dir" location="${basedir}/js/parts-3d"/>
 
         <property name="highcharts.src.name" value="highcharts.src.js"/>
         <property name="highcharts.src.file" value="${basedir}/js/${highcharts.src.name}"/>
@@ -44,42 +56,52 @@
         <property name="highstock.src.name" value="highstock.src.js"/>
         <property name="highstock.src.file" value="${basedir}/js/${highstock.src.name}"/>
         <property name="highstock.minified.name" value="highstock.js"/>
+        <property name="highmaps.src.name" value="highmaps.src.js"/>
+        <property name="highmaps.src.file" value="${basedir}/js/${highmaps.src.name}"/>
+        <property name="highmaps.minified.name" value="highmaps.js"/>
         <property name="highchartsmore.src.name" value="highcharts-more.src.js"/>
         <property name="highchartsmore.src.file" value="${basedir}/js/${highchartsmore.src.name}"/>
         <property name="highchartsmore.minified.name" value="highcharts-more.js"/>
-        <property name="mootools.src.name" value="mootools-adapter.src.js"/>
-        <property name="prototype.src.name" value="prototype-adapter.src.js"/>
+        <property name="highcharts3d.src.name" value="highcharts-3d.src.js"/>
+        <property name="highcharts3d.src.file" value="${basedir}/js/${highcharts3d.src.name}"/>
+        <property name="highcharts3d.minified.name" value="highcharts-3d.js"/>
+        <!--property name="mootools.src.name" value="mootools-adapter.src.js"/>
+        <property name="prototype.src.name" value="prototype-adapter.src.js"/-->
         <property name="standalone.src.name" value="standalone-framework.src.js"/>
         <property name="exporting.src.name" value="exporting.src.js"/>
         <property name="data.src.name" value="data.src.js"/>
         <property name="drilldown.src.name" value="drilldown.src.js"/>
         <property name="funnel.src.name" value="funnel.src.js"/>
+        <property name="solidgauge.src.name" value="solid-gauge.src.js"/>
         <property name="nodata.src.name" value="no-data-to-display.src.js"/>
         <property name="map.src.name" value="map.src.js"/>
         <property name="heatmap.src.name" value="heatmap.src.js"/>
         <property name="annotations.src.name" value="annotations.src.js"/>
-        <property name="mootools.minified.name" value="mootools-adapter.js"/>
-        <property name="prototype.minified.name" value="prototype-adapter.js"/>
+        <!--property name="mootools.minified.name" value="mootools-adapter.js"/>
+        <property name="prototype.minified.name" value="prototype-adapter.js"/-->
         <property name="standalone.minified.name" value="standalone-framework.js"/>
         <property name="exporting.minified.name" value="exporting.js"/>
         <property name="data.minified.name" value="data.js"/>
         <property name="drilldown.minified.name" value="drilldown.js"/>
         <property name="funnel.minified.name" value="funnel.js"/>
+        <property name="solidgauge.minified.name" value="solid-gauge.js"/>
         <property name="nodata.minified.name" value="no-data-to-display.js"/>
         <property name="map.minified.name" value="map.js"/>
         <property name="heatmap.minified.name" value="heatmap.js"/>
         <property name="annotations.minified.name" value="annotations.js"/>
-        <property name="mootools.src.file" value="${basedir}/js/adapters/${mootools.src.name}"/>
-        <property name="prototype.src.file" value="${basedir}/js/adapters/${prototype.src.name}"/>
+        <!--property name="mootools.src.file" value="${basedir}/js/adapters/${mootools.src.name}"/>
+        <property name="prototype.src.file" value="${basedir}/js/adapters/${prototype.src.name}"/-->
         <property name="standalone.src.file" value="${basedir}/js/adapters/${standalone.src.name}"/>
         <property name="exporting.src.file" value="${basedir}/js/modules/${exporting.src.name}"/>
         <property name="data.src.file" value="${basedir}/js/modules/${data.src.name}"/>
         <property name="drilldown.src.file" value="${basedir}/js/modules/${drilldown.src.name}"/>
         <property name="funnel.src.file" value="${basedir}/js/modules/${funnel.src.name}"/>
+        <property name="solidgauge.src.file" value="${basedir}/js/modules/${solidgauge.src.name}"/>
         <property name="nodata.src.file" value="${basedir}/js/modules/${nodata.src.name}"/>
         <property name="map.src.file" value="${basedir}/js/modules/${map.src.name}"/>
         <property name="heatmap.src.file" value="${basedir}/js/modules/${heatmap.src.name}"/>
         <property name="annotations.src.file" value="${basedir}/js/modules/${annotations.src.name}"/>
+        <property name="highcharts-all.minified.name" value="highcharts-all.js"/>
 
         <!-- jsLint -->
         <property name="jslint4java.dir" value="${tools.dir}/jslint4java"/>
@@ -128,17 +150,25 @@
             <file name="Options.js"/>
             <file name="Color.js"/>
             <file name="SvgRenderer.js"/>
+            <file name="Html.js"/>
             <file name="VmlRenderer.js"/>
             <file name="CanVGRenderer.js"/>
             <file name="Tick.js"/>
             <file name="PlotLineOrBand.js"/>
-            <file name="StackItem.js"/>
             <file name="Axis.js"/>
+            <file name="DateTimeAxis.js"/>
+            <file name="LogarithmicAxis.js"/> 
             <file name="Tooltip.js"/>
             <file name="Pointer.js"/>
+            <file name="TouchPointer.js"/>
+            <file name="MSPointer.js"/>
             <file name="Legend.js"/>
             <file name="Chart.js"/>
+            <file name="CenteredSeriesMixin.js"/>
+			<file name="Point.js"/>
             <file name="Series.js"/>
+            <file name="Stacking.js"/>
+            <file name="Dynamics.js"/>
             <file name="LineSeries.js"/>
             <file name="AreaSeries.js"/>
             <file name="SplineSeries.js"/>
@@ -147,6 +177,8 @@
             <file name="BarSeries.js"/>
             <file name="ScatterSeries.js"/>
             <file name="PieSeries.js"/>
+            <file name="DataLabels.js"/>
+            <file name="Interaction.js"/>
             <file name="Facade.js"/>
             <file name="Outro.js"/>
         </filelist>
@@ -162,17 +194,25 @@
             <file name="Options.js"/>
             <file name="Color.js"/>
             <file name="SvgRenderer.js"/>
+            <file name="Html.js"/>
             <file name="VmlRenderer.js"/>
             <file name="CanVGRenderer.js"/>
             <file name="Tick.js"/>
             <file name="PlotLineOrBand.js"/>
-            <file name="StackItem.js"/>
             <file name="Axis.js"/>
+            <file name="DateTimeAxis.js"/>
+            <file name="LogarithmicAxis.js"/>
             <file name="Tooltip.js"/>
             <file name="Pointer.js"/>
+            <file name="TouchPointer.js"/>
+            <file name="MSPointer.js"/>
             <file name="Legend.js"/>
             <file name="Chart.js"/>
+            <file name="CenteredSeriesMixin.js"/>
+            <file name="Point.js"/>
             <file name="Series.js"/>
+            <file name="Stacking.js"/>
+            <file name="Dynamics.js"/>
             <file name="LineSeries.js"/>
             <file name="AreaSeries.js"/>
             <file name="SplineSeries.js"/>
@@ -181,6 +221,10 @@
             <file name="BarSeries.js"/>
             <file name="ScatterSeries.js"/>
             <file name="PieSeries.js"/>
+            <file name="DataLabels.js"/>
+            <file name="Interaction.js"/>
+            <!-- Stock -->
+            <file name="OrdinalAxis.js"/>
             <file name="DataGrouping.js"/>
             <file name="OHLCSeries.js"/>
             <file name="CandlestickSeries.js"/>
@@ -189,7 +233,6 @@
             <file name="RangeSelector.js"/>
             <file name="StockNavigation.js"/>
             <file name="StockChart.js"/>
-            <file name="OrdinalAxis.js"/>
             <file name="Facade.js"/>
             <file name="Outro.js"/>
         </filelist>
@@ -211,6 +254,138 @@
             <file name="Polar.js"/>
             <file name="Outro.js"/>
         </filelist>
+
+        <!-- This is the list of files for highcharts-3d -->
+        <filelist id="highcharts3d.files" dir="${highcharts3d.parts.dir}">
+            <file name="Intro.js"/>
+            <file name="Globals.js"/>
+            <file name="Math.js"/>
+            <file name="SVGRenderer.js"/>
+            <file name="Chart.js"/>
+            <file name="Axis.js"/>
+            <file name="Column.js"/>
+            <file name="Pie.js"/>
+            <file name="Scatter.js"/>
+            <file name="VMLRenderer.js"/>
+            <file name="Outro.js"/>
+        </filelist>
+
+        <!-- This is the list of files for the maps module -->
+        <filelist id="maps.files" dir="${basedir}/js">
+            <file name="parts-map/IntroMapModule.js"/>
+            <file name="parts-map/Globals.js"/>
+            <file name="parts-map/MapAxis.js"/>
+            <file name="parts-map/ColorAxis.js"/>
+            <file name="parts-map/ColorSeriesMixin.js"/>
+            <file name="parts-map/MapNavigation.js"/>
+            <file name="parts-map/MapPointer.js"/>
+            <file name="parts-map/MapSeries.js"/>
+            <file name="parts-map/MapLineSeries.js"/>
+            <file name="parts-map/MapPointSeries.js"/>
+            <file name="parts-map/MapBubbleSeries.js"/>
+            <file name="parts-map/HeatmapSeries.js"/>
+            <file name="parts-map/GeoJSON.js"/>
+            <file name="parts-map/Map.js"/>
+            <file name="parts-map/Outro.js"/>
+        </filelist>
+
+
+        <!-- This is the list of files for the heatmap module -->
+        <filelist id="heatmap.files" dir="${basedir}/js">
+            <file name="parts-map/Intro.js"/>
+            <file name="parts-map/HeatmapGlobals.js"/>
+            <!-- file name="parts-map/MapAxis.js"/ -->
+            <file name="parts-map/ColorAxis.js"/>
+            <!-- file name="parts-map/MapNavigation.js"/ -->
+            <!-- file name="parts-map/MapPointer.js"/ -->
+            <file name="parts-map/ColorSeriesMixin.js"/>
+            <!-- file name="parts-map/MapSeries.js"/ -->
+            <!-- file name="parts-map/MapLineSeries.js"/ -->
+            <!-- file name="parts-map/MapPointSeries.js"/ -->
+            <!-- file name="parts-map/MapBubbleSeries.js"/ -->
+            <file name="parts-map/HeatmapSeries.js"/>
+            <!-- file name="parts-map/Map.js"/ -->
+            <file name="parts-map/Outro.js"/>
+        </filelist>
+
+
+        <!-- This is the list of files for Highmaps -->
+        <filelist id="highmaps.files" dir="${basedir}/js">
+            <file name="parts/Intro.js"/>
+            <file name="parts/Globals.js"/>
+            <file name="parts/Utilities.js"/>
+            <file name="parts/PathAnimation.js"/>
+            <file name="parts/JQueryAdapter.js"/>
+            <file name="parts/Adapters.js"/>
+            <file name="parts/Options.js"/>
+            <file name="parts/Color.js"/>
+            <file name="parts/SvgRenderer.js"/>
+            <file name="parts/Html.js"/>
+            <file name="parts/VmlRenderer.js"/>
+            <file name="parts/CanVGRenderer.js"/>
+            <file name="parts/Tick.js"/>
+            <!-- file name="parts/Stacking.js"/ -->
+            <!-- file name="parts/PlotLineOrBand.js"/ -->
+            <file name="parts/Axis.js"/>
+            <!-- file name="parts/DateTimeAxis.js"/ -->
+            <file name="parts/LogarithmicAxis.js"/>
+            <file name="parts/Tooltip.js"/>
+            <file name="parts/Pointer.js"/>
+            <file name="parts/TouchPointer.js"/>
+            <file name="parts/MSPointer.js"/>
+            <file name="parts/Legend.js"/>
+            <file name="parts/Chart.js"/>
+            <!-- file name="parts/CenteredSeriesMixin.js"/ -->
+            <file name="parts/Point.js"/>
+            <file name="parts/Series.js"/>
+            <file name="parts/Dynamics.js"/>
+            <file name="parts/LineSeries.js"/>
+            <!-- file name="parts/AreaSeries.js"/ -->
+            <!-- file name="parts/SplineSeries.js"/ -->
+            <!-- file name="parts/AreaSplineSeries.js"/ -->
+            <file name="parts/ColumnSeries.js"/>
+            <!-- file name="parts/BarSeries.js"/ -->
+            <file name="parts/ScatterSeries.js"/>
+            <!-- file name="parts/PieSeries.js"/ -->
+            <file name="parts/DataLabels.js"/>
+            <!-- Maps -->
+            <file name="parts-map/MapAxis.js"/>
+            <file name="parts-map/ColorAxis.js"/>
+            <file name="parts-map/ColorSeriesMixin.js"/>
+            <file name="parts-map/MapSeries.js"/>
+            <file name="parts-map/MapNavigation.js"/>
+            <file name="parts-map/MapPointer.js"/>
+            <file name="parts-map/MapLineSeries.js"/>
+            <file name="parts-map/MapPointSeries.js"/>
+            <file name="parts-more/BubbleSeries.js"/>
+            <file name="parts-map/MapBubbleSeries.js"/>
+            <file name="parts-map/GeoJSON.js"/>
+            <file name="parts-map/Map.js"/>
+            <file name="parts-map/HeatmapSeries.js"/>
+            <file name="parts/Interaction.js"/>
+            <!-- Outro -->
+            <file name="parts/Facade.js"/>
+            <file name="parts/Outro.js"/>
+        </filelist>
+
+        <filelist id="highcharts-all.files" dir="${dist.dir}">
+            <file name="js/adapters/${standalone.minified.name}"/>
+            <file name="highcharts/js/${highcharts.minified.name}"/>
+            <file name="highcharts/js/${highchartsmore.minified.name}"/>
+            <file name="highcharts/js/${highcharts3d.minified.name}"/>
+            <file name="js/modules/${exporting.minified.name}"/>
+            <file name="js/modules/${data.minified.name}"/>
+        </filelist>
+
+        <!-- Convenience list for modules, used in download builder  -->
+        <filelist id="highcharts-modules.files" dir="${basedir}/js">
+            <file name="modules/${exporting.src.name}"/>
+            <file name="modules/${data.src.name}"/>
+            <file name="modules/${drilldown.src.name}"/>
+            <file name="modules/${nodata.src.name}"/>
+            <file name="modules/${solidgauge.src.name}"/>
+            <file name="modules/${funnel.src.name}"/>
+        </filelist>
     </target>
 
     <!-- Set up a clean build folder. -->
@@ -228,6 +403,9 @@
         <mkdir dir="${dist.dir}/highstock/gfx"/>
         <mkdir dir="${dist.dir}/highstock/js/adapters"/>
         <mkdir dir="${dist.dir}/highstock/js/modules"/>
+        <mkdir dir="${dist.dir}/highmaps/gfx"/>
+        <mkdir dir="${dist.dir}/highmaps/js/adapters"/>
+        <mkdir dir="${dist.dir}/highmaps/js/modules"/>
         <mkdir dir="${testoutput.dir}"/>
         <mkdir dir="${coveragereport.dir}"/>
 
@@ -236,7 +414,7 @@
     </target>
 
     <!-- Assembles the source parts into one file. -->
-    <target name="assemble" depends="clean">
+    <target name="assemble" depends="set.properties">
         <!-- Concat highcharts src and replace the product name and version -->
         <concat destfile="${highcharts.src.file}" encoding="UTF-8">
             <filelist refid="highcharts.files"/>
@@ -263,6 +441,45 @@
             </filterchain>
         </concat>
 
+        <!-- Concat highmaps src and replace the product name and version -->
+        <concat destfile="${basedir}/js/highmaps.src.js" encoding="UTF-8">
+            <filelist refid="highmaps.files"/>
+            <filterchain>
+                <replacetokens>
+                    <token key="product.name" value="${highmaps.product.name}"/>
+                    <token key="product.cdnpath" value="${highmaps.product.cdnpath}"/>
+                    <token key="product.version" value="${highmaps.product.version}"/>
+                    <token key="product.date" value="${highmaps.product.date}"/>
+                </replacetokens>
+            </filterchain>
+        </concat>
+
+        <!-- Concat maps.src.js and replace the product name and version -->
+        <concat destfile="${basedir}/js/modules/map.src.js" encoding="UTF-8">
+            <filelist refid="maps.files"/>
+            <filterchain>
+                <replacetokens>
+                    <token key="product.name" value="${highmaps.product.name}"/>
+                    <token key="product.cdnpath" value="${highmaps.product.cdnpath}"/>
+                    <token key="product.version" value="${highmaps.product.version}"/>
+                    <token key="product.date" value="${highmaps.product.date}"/>
+                </replacetokens>
+            </filterchain>
+        </concat>
+
+        <!-- Concat heatmap.src.js and replace the product name and version -->
+        <concat destfile="${basedir}/js/modules/heatmap.src.js" encoding="UTF-8">
+            <filelist refid="heatmap.files"/>
+            <!-- filterchain>
+                <replacetokens>
+                    <token key="product.name" value="${highcharts.product.name}"/>
+                    <token key="product.cdnpath" value="${highcharts.product.cdnpath}"/>
+                    <token key="product.version" value="${highcharts.product.version}"/>
+                    <token key="product.date" value="${highcharts.product.date}"/>
+                </replacetokens>
+            </filterchain -->
+        </concat>
+
         <!-- Concat highcharts-more src and replace the product name and version -->
         <concat destfile="${highchartsmore.src.file}" encoding="UTF-8">
             <filelist refid="highchartsmore.files"/>
@@ -276,6 +493,19 @@
             </filterchain>
         </concat>
 
+        <!-- Concat highcharts-3d src and replace the product name and version -->
+        <concat destfile="${highcharts3d.src.file}" encoding="UTF-8">
+            <filelist refid="highcharts3d.files"/>
+            <filterchain>
+                <replacetokens>
+                    <token key="product.name" value="${highcharts.product.name}"/>
+                    <token key="product.cdnpath" value="${highcharts.product.cdnpath}"/>
+                    <token key="product.version" value="${highcharts.product.version}"/>
+                    <token key="product.date" value="${highcharts.product.date}"/>
+                </replacetokens>
+            </filterchain>
+        </concat>
+        
         <!-- Concat canvg library together with rgbcolor script -->
         <concat destfile="build/canvas-tools.src.js">
             <filelist dir="lib/canvg-1.1/" files="rgbcolor.js, canvg.js"/>
@@ -308,7 +538,9 @@
             <formatter type="plain"/>
             <formatter type="report" destfile="${build.dir}/lintreport.html"/>
             <fileset file="${highstock.src.file}"/>
+            <fileset file="${highmaps.src.file}"/>
             <fileset file="${highchartsmore.src.file}"/>
+            <fileset file="${highcharts3d.src.file}"/>
             <fileset file="${mootools.src.file}"/>
             <fileset file="${prototype.src.file}"/>
             <fileset file="${standalone.src.file}"/>
@@ -316,6 +548,7 @@
             <fileset file="${data.src.file}"/>
             <fileset file="${drilldown.src.file}"/>
             <fileset file="${funnel.src.file}"/>
+            <fileset file="${solidgauge.src.file}"/>
             <fileset file="${nodata.src.file}"/>
             <fileset file="${map.src.file}"/>
             <fileset file="${heatmap.src.file}"/>
@@ -336,7 +569,7 @@
 
     <!-- This target is only run if there are unused variables. -->
     <target name="lint" depends="do-lint" if="lint.variable.error">
-        <echo message="Warning: undefined or unused variables exist. Run 'start build/lintreport.html'."/>
+        <echo message="Warning: undefined or unused variables exist. Open 'build/lintreport.html' and search for 'Undefined variable' and 'Unused variable'."/>
     </target>
 
     <!-- Runs jslint on parts in order to make it easier to find the error by file and line number. -->
@@ -350,6 +583,11 @@
                 <exclude name="Outro.js"/>
             </fileset>
             <fileset dir="${highchartsmore.parts.dir}">
+                <include name="*.js"/>
+                <exclude name="Intro.js"/>
+                <exclude name="Outro.js"/>
+            </fileset>
+            <fileset dir="${highcharts3d.parts.dir}">
                 <include name="*.js"/>
                 <exclude name="Intro.js"/>
                 <exclude name="Outro.js"/>
@@ -421,6 +659,10 @@
             <param name="param.out" value="${dist.dir}/highstock/js/${highstock.minified.name}"/>
         </antcall>
         <antcall target="compile">
+            <param name="param.src" value="${highmaps.src.file}"/>
+            <param name="param.out" value="${dist.dir}/highmaps/js/${highmaps.minified.name}"/>
+        </antcall>
+        <antcall target="compile">
             <param name="param.src" value="${highchartsmore.src.file}"/>
             <param name="param.out" value="${dist.dir}/highcharts/js/${highchartsmore.minified.name}"/>
         </antcall>
@@ -429,13 +671,21 @@
             <param name="param.out" value="${dist.dir}/highstock/js/${highchartsmore.minified.name}"/>
         </antcall>
         <antcall target="compile">
+            <param name="param.src" value="${highcharts3d.src.file}"/>
+            <param name="param.out" value="${dist.dir}/highcharts/js/${highcharts3d.minified.name}"/>
+        </antcall>
+        <antcall target="compile">
+            <param name="param.src" value="${highcharts3d.src.file}"/>
+            <param name="param.out" value="${dist.dir}/highstock/js/${highcharts3d.minified.name}"/>
+        </antcall>
+        <!--antcall target="compile">
             <param name="param.src" value="${mootools.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/adapters/${mootools.minified.name}"/>
         </antcall>
         <antcall target="compile">
             <param name="param.src" value="${prototype.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/adapters/${prototype.minified.name}"/>
-        </antcall>
+        </antcall-->
         <antcall target="compile">
             <param name="param.src" value="${standalone.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/adapters/${standalone.minified.name}"/>
@@ -457,9 +707,13 @@
             <param name="param.out" value="${dist.dir}/js/modules/${funnel.minified.name}"/>
         </antcall>
         <antcall target="compile">
+            <param name="param.src" value="${solidgauge.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/modules/${solidgauge.minified.name}"/>
+        </antcall>
+        <antcall target="compile">
             <param name="param.src" value="${nodata.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/${nodata.minified.name}"/>
-        </antcall>        
+        </antcall>
         <antcall target="compile">
             <param name="param.src" value="${map.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/${map.minified.name}"/>
@@ -476,10 +730,23 @@
             <param name="param.src" value="build/canvas-tools.src.js"/>
             <param name="param.out" value="build/canvas-tools.js"/>
         </antcall>
+        <!-- Concatenate a single file with minified standalone adapter and highcharts sources -->
+        <!-- for faster download from cloud.highcharts.com -->
+        <concat destfile="${dist.dir}/highcharts/js/${highcharts-all.minified.name}">
+            <filelist refid="highcharts-all.files"/>
+            <filterchain>
+                <replacetokens>
+                    <token key="product.name" value="${highcharts.product.name}"/>
+                    <token key="product.cdnpath" value="${highcharts.product.cdnpath}"/>
+                    <token key="product.version" value="${highcharts.product.version}"/>
+                    <token key="product.date" value="${highcharts.product.date}"/>
+                </replacetokens>
+            </filterchain>
+        </concat>
     </target>
 
     <!-- Builds the source and runts lint and minify. -->
-    <target name="build" depends="lint, minify" description="Builds the source and runs jsLint and minify."></target>
+    <target name="build" depends="clean, lint, minify" description="Builds the source and runs jsLint and minify."></target>
     <scriptdef name="listfiles" language="javascript">
         <![CDATA[
         var dir = project.getProperty("samples.dir");
@@ -500,6 +767,7 @@
             project.setProperty('demo.name', file.getParentFile().getName());
             project.setProperty('demo.html.name', file.getParent() + '/demo.html');
             project.setProperty('demo.js.name', file.getParent() + '/demo.js');
+            project.setProperty('demo.css.name', file.getParent() + '/demo.css');
             project.executeTarget('create-sample');
         }
         ]]>
@@ -512,6 +780,7 @@
     <target name="create-sample-param">
         <!-- Load the two demo files into properties -->
         <loadfile property="demo.js" srcFile="${demo.js.name}"/>
+        <loadfile property="demo.css" quiet="true" srcFile="${demo.css.name}"/>
         <loadfile property="demo.html" srcFile="${demo.html.name}"/>
 
         <!-- Copy the template file and replace the properties -->
@@ -520,6 +789,7 @@
                 <replacetokens>
                     <token key="demo.title" value="${demo.title}"/>
                     <token key="demo.js" value="${demo.js}"/>
+                    <token key="demo.css" value="${demo.css}"/>
                     <token key="demo.html" value="${demo.html}"/>
                 </replacetokens>
             </filterchain>
@@ -537,6 +807,7 @@
         <echo message=""/>
         <echo message=" ${highcharts.product.name} - ${highcharts.product.version} (${highcharts.product.date})"/>
         <echo message=" ${highstock.product.name} - ${highstock.product.version} (${highstock.product.date})"/>
+        <echo message=" ${highmaps.product.name} - ${highmaps.product.version} (${highmaps.product.date})"/>
         <echo message=""/>
 
         <!-- 1. Check for any console statements -->
@@ -557,81 +828,122 @@
             </condition>
         </fail -->
 
-        <echo file="${dist.dir}/products.js" append="false">var products = {'Highcharts': {date: '${highcharts.product.date}', nr: '${highcharts.product.version}'},'Highstock': {date: '${highstock.product.date}', nr: '${highstock.product.version}'}};</echo>
+        <echo file="${dist.dir}/products.js" append="false">
+            var products = {
+                Highcharts: {
+                    date: '${highcharts.product.date}', 
+                    nr: '${highcharts.product.version}'
+                },
+                Highstock: {
+                    date: '${highstock.product.date}',
+                    nr: '${highstock.product.version}'
+                },
+                Highmaps: {
+                    date: '${highmaps.product.date}',
+                    nr: '${highmaps.product.version}'
+                }
+            };
+        </echo>
         <!-- 2. Copy highcharts source and minified versions, adapters, modules, themes. Replace product and version at the same time -->
         <copy file="${highcharts.src.file}" todir="${dist.dir}/highcharts/js"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${highcharts.src.file}" todir="${dist.dir}/highmaps/js"><filterset refid="highmaps.filter"/></copy>
+        <copy file="${dist.dir}/highcharts/js/highcharts.js" todir="${dist.dir}/highmaps/js"><filterset refid="highmaps.filter"/></copy>
         <copy file="${highstock.src.file}" todir="${dist.dir}/highstock/js"><filterset refid="highstock.filter"/></copy>
+        <copy file="${highmaps.src.file}" todir="${dist.dir}/highmaps/js"><filterset refid="highmaps.filter"/></copy>
 
         <copy file="${highchartsmore.src.file}" todir="${dist.dir}/highcharts/js"><filterset refid="highcharts.filter"/></copy>
         <copy file="${highchartsmore.src.file}" todir="${dist.dir}/highstock/js"><filterset refid="highcharts.filter"/></copy>
+        
+        <copy file="${highcharts3d.src.file}" todir="${dist.dir}/highcharts/js"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${highcharts3d.src.file}" todir="${dist.dir}/highstock/js"><filterset refid="highcharts.filter"/></copy>
+        
 
-        <copy file="${mootools.src.file}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
+        <!--copy file="${mootools.src.file}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/adapters/${mootools.minified.name}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
         <copy file="${mootools.src.file}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/adapters/${mootools.minified.name}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
+        <copy file="${mootools.src.file}" todir="${dist.dir}/highmaps/js/adapters"><filterset refid="highmaps.filter"/></copy>
+        <copy file="${dist.dir}/js/adapters/${mootools.minified.name}" todir="${dist.dir}/highmaps/js/adapters"><filterset refid="highstock.filter"/></copy>
 
         <copy file="${prototype.src.file}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/adapters/${prototype.minified.name}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
         <copy file="${prototype.src.file}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/adapters/${prototype.minified.name}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
+        <copy file="${prototype.src.file}" todir="${dist.dir}/highmaps/js/adapters"><filterset refid="highmaps.filter"/></copy>
+        <copy file="${dist.dir}/js/adapters/${prototype.minified.name}" todir="${dist.dir}/highmaps/js/adapters"><filterset refid="highmaps.filter"/></copy-->
 
         <copy file="${standalone.src.file}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/adapters/${standalone.minified.name}" todir="${dist.dir}/highcharts/js/adapters"><filterset refid="highcharts.filter"/></copy>
         <copy file="${standalone.src.file}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/adapters/${standalone.minified.name}" todir="${dist.dir}/highstock/js/adapters"><filterset refid="highstock.filter"/></copy>
+        <copy file="${standalone.src.file}" todir="${dist.dir}/highmaps/js/adapters"><filterset refid="highmaps.filter"/></copy>
+        <copy file="${dist.dir}/js/adapters/${standalone.minified.name}" todir="${dist.dir}/highmaps/js/adapters"><filterset refid="highstock.filter"/></copy>
 
         <copy file="${exporting.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${exporting.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${exporting.src.file}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
 
         <copy file="${data.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${data.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${data.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${data.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${data.src.file}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${data.minified.name}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
 
         <copy file="${drilldown.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${drilldown.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${drilldown.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${drilldown.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${drilldown.src.file}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${drilldown.minified.name}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
 
         <copy file="${funnel.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${funnel.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${funnel.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${funnel.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
 
+        <copy file="${solidgauge.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${solidgauge.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${solidgauge.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${solidgauge.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+
         <copy file="${nodata.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${nodata.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${nodata.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${nodata.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
 
-        <copy file="${map.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
-        <copy file="${dist.dir}/js/modules/${map.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
-        <copy file="${map.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
-        <copy file="${dist.dir}/js/modules/${map.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${map.src.file}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${map.minified.name}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
 
+        
         <copy file="${heatmap.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${heatmap.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${heatmap.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${heatmap.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
-
-        <copy file="${annotations.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
-        <copy file="${dist.dir}/js/modules/${annotations.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
-        <copy file="${annotations.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
-        <copy file="${dist.dir}/js/modules/${annotations.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
-
+        <copy file="${heatmap.src.file}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${heatmap.minified.name}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
+        
         <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="build/canvas-tools.js" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="build/canvas-tools.js" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
+        <copy file="build/canvas-tools.js" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
 
 		<copy file="gfx/vml-radial-gradient.png" todir="${dist.dir}/highcharts/gfx"></copy>
 		<copy file="gfx/vml-radial-gradient.png" todir="${dist.dir}/highstock/gfx"></copy>
+        <copy file="gfx/vml-radial-gradient.png" todir="${dist.dir}/highmaps/gfx"></copy>
 
         <copy todir="${dist.dir}/highcharts/js/themes">
             <fileset dir="${themes.dir}"/>
         </copy>
         <copy todir="${dist.dir}/highstock/js/themes">
+            <fileset dir="${themes.dir}"/>
+        </copy>
+        <copy todir="${dist.dir}/highmaps/js/themes">
             <fileset dir="${themes.dir}"/>
         </copy>
 
@@ -647,6 +959,11 @@
             <param name="samples.dir" value="samples/stock/demo"/>
             <param name="samples.dist.dir" value="${dist.dir}/highstock/"/>
         </antcall>
+        <antcall target="create-samples">
+            <param name="demo.title" value="Highmaps"/>
+            <param name="samples.dir" value="samples/maps/demo"/>
+            <param name="samples.dist.dir" value="${dist.dir}/highmaps/"/>
+        </antcall>
         <sleep seconds="1"/>
         <!-- The demos are checked in with references to highcharts.com to be able to run them from jsfiddle -->
         <!-- replace these references with local paths here -->
@@ -656,16 +973,25 @@
                 <replacevalue><![CDATA[<script src="../../js/]]></replacevalue>
             </replacefilter>
             <replacefilter>
+                <replacetoken><![CDATA[<script src="http://code.highcharts.com/maps/]]></replacetoken>
+                <replacevalue><![CDATA[<script src="../../js/]]></replacevalue>
+            </replacefilter>
+            <replacefilter>
                 <replacetoken><![CDATA[<script src="http://code.highcharts.com/]]></replacetoken>
                 <replacevalue><![CDATA[<script src="../../js/]]></replacevalue>
             </replacefilter>
+            <!-- replace back mapdata -->
+            <replacefilter>
+                <replacetoken><![CDATA[<script src="../../js/mapdata]]></replacetoken>
+                <replacevalue><![CDATA[<script src="http://code.highcharts.com/mapdata]]></replacevalue>
+            </replacefilter>
             <include name="**/index.htm"/>
         </replace>
-        <!-- Copy the analytics.tsv file to example -->
-        <copy file="samples/highcharts/demo/line-ajax/analytics.tsv" todir="${dist.dir}/highcharts/examples/line-ajax/"/>
+        
         <!-- Copy index files -->
         <copy file="samples/highcharts/demo/index.htm" todir="${dist.dir}/highcharts/"/>
         <copy file="samples/stock/demo/index.htm" todir="${dist.dir}/highstock/"/>
+        <copy file="samples/maps/demo/index.htm" todir="${dist.dir}/highmaps/"/>
         <!-- Copy graphic files -->
         <copy todir="${dist.dir}/highcharts/graphics">
             <fileset dir="samples/graphics"/>
@@ -673,29 +999,50 @@
         <copy todir="${dist.dir}/highstock/graphics">
             <fileset dir="samples/graphics"/>
         </copy>
+        <copy todir="${dist.dir}/highmaps/graphics">
+            <fileset dir="samples/graphics"/>
+        </copy>
 
         <!-- 4. Copy export server -->
-        <!-- update highcharts export-server with newest js -->
+        <fileset id="export.module.files" dir="${dist.dir}/highcharts/js/modules/">
+            <exclude name="**/*.src.js"/>
+            <exclude name="canv*"/>
+            <exclude name="map.js"/>
+            <exclude name="map-parser.js"/>
+            <exclude name="exporting*"/>
+        </fileset>
+
+        <!-- update the highcharts export-server (GitHub) with newest js from the files in the dist -->
         <copy file="${dist.dir}/highcharts/js/highcharts.js" todir="exporting-server/phantomjs/"/>
         <copy file="${dist.dir}/highstock/js/highstock.js" todir="exporting-server/phantomjs/"/>
         <copy file="${dist.dir}/highcharts/js/highcharts-more.js" todir="exporting-server/phantomjs/"/>
-        <copy file="${dist.dir}/highcharts/js/modules/data.js" todir="exporting-server/phantomjs/"/>
-        
-        <!-- copy files from phantomjs to java export server -->
+        <copy file="${dist.dir}/highcharts/js/highcharts-3d.js" todir="exporting-server/phantomjs/"/>      
+        <copy todir="exporting-server/phantomjs/">
+            <fileset refid="export.module.files"/>
+        </copy>
+
+        <!-- copy files from phantomjs to java export server (GitHub)-->
+        <delete includeemptydirs="true">
+            <fileset dir="exporting-server/java/highcharts-export/highcharts-export-convert/src/main/resources/phantomjs" includes="**/*"/>
+        </delete>
         <copy todir="exporting-server/java/highcharts-export/highcharts-export-convert/src/main/resources/phantomjs">
             <fileset dir="exporting-server/phantomjs/">
                 <exclude name="*.md"/>
-            </fileset>    
+                <exclude name="tmp"/>
+            </fileset>
         </copy>
-        <!-- copy highcharts export-server -->
+
+        <!-- finally copy highcharts export-server (GitHub) to the distribution folder-->
         <copy todir="${dist.dir}/highcharts/exporting-server">
             <fileset dir="exporting-server"/>
         </copy>
+
         <delete file="${dist.dir}/highcharts/exporting-server/phantomjs/highstock.js" />
+        <replace file="${dist.dir}/highcharts/exporting-server/phantomjs/highcharts-convert.js" token="HIGHCHARTS: &apos;highstock.js&apos;" value="HIGHCHARTS: &apos;highcharts.js&apos;"/>
         <delete file="${dist.dir}/highcharts/exporting-server/java/highcharts-export/highcharts-export-convert/src/main/resources/phantomjs/highstock.js" />
         <replace file="${dist.dir}/highcharts/exporting-server/java/highcharts-export/highcharts-export-convert/src/main/resources/phantomjs/highcharts-convert.js" token="HIGHCHARTS: &apos;highstock.js&apos;" value="HIGHCHARTS: &apos;highcharts.js&apos;"/>
 
-        <!-- copy highstock export-server -->
+        <!-- copy highstock export-server to distribution folder -->
         <copy todir="${dist.dir}/highstock/exporting-server">
             <fileset dir="exporting-server"/>
         </copy>
@@ -707,6 +1054,7 @@
         <!-- 5. Create zip files -->
         <zip destfile="${dist.dir}/${highcharts.product.name}-${highcharts.product.version}.zip" basedir="${dist.dir}/highcharts"/>
         <zip destfile="${dist.dir}/${highstock.product.name}-${highstock.product.version}.zip" basedir="${dist.dir}/highstock"/>
+        <zip destfile="${dist.dir}/${highmaps.product.name}-${highmaps.product.version}.zip" basedir="${dist.dir}/highmaps"/>
 
     </target>
 
@@ -766,9 +1114,9 @@
             <param name="testrun.name" value="standalone"/>
             <param name="required.adapter" value="js/adapters/standalone-framework.src.js"/>
         </antcall>
-        
+
         <!-- mootools versions -->
-        <antcall target="test-specific-lib">
+        <!--antcall target="test-specific-lib">
             <param name="testrun.type" value="unit"/>
             <param name="testrun.name" value="mootools-1.4.5"/>
             <param name="required.lib" value="mootools-core-1.4.5-full-nocompat.js"/>
@@ -785,15 +1133,15 @@
             <param name="testrun.name" value="mootools-1.2.5"/>
             <param name="required.lib" value="mootools-1.2.5-core-nc.js"/>
             <param name="required.adapter" value="js/adapters/mootools-adapter.src.js"/>
-        </antcall>
+        </antcall-->
 
         <!-- prototype versions -->
-        <antcall target="test-specific-lib">
+        <!--antcall target="test-specific-lib">
             <param name="testrun.type" value="unit"/>
             <param name="testrun.name" value="prototype-1.7.0.0"/>
             <param name="required.lib" value="prototype-1.7.0.0.js"/>
             <param name="required.adapter" value="js/adapters/prototype-adapter.src.js"/>
-        </antcall>
+        </antcall-->
     </target>
 
     <target name="test" description="Runs the unit tests using latest jquery. The server must be running (i.e. 'server').">
@@ -917,7 +1265,7 @@
         <exec executable="${browser}" spawn="true">
             <arg value="${file}"/>
         </exec>
-    </target>     
+    </target>
     <!-- gzip javascript files in folder -->
     <target name="gzip-js" description="gzip all javascript versions for upload to Amazon S3" depends="set.properties">
         <property name="gzip.dir" value="${js.dir}/../js-gzip"/>
@@ -1046,13 +1394,13 @@
         <antcall target="put-file-to-S3">
             <param name="local" value="${basedir}/build/dist/Highcharts-${highcharts.product.version}.zip"/>
             <param name="remote" value="${amazon.s3.bucketname}/zips"/>
-            <param name="s3cmdDir" value="${s3cmd.dir}"/>           
+            <param name="s3cmdDir" value="${s3cmd.dir}"/>
         </antcall>
         <!-- upload product.js to S3 -->
         <antcall target="put-file-to-S3">
             <param name="local" value="${basedir}/build/dist/products.js"/>
             <param name="remote" value="${amazon.s3.bucketname}"/>
-            <param name="s3cmdDir" value="${s3cmd.dir}"/>            
+            <param name="s3cmdDir" value="${s3cmd.dir}"/>
         </antcall>
         <antcall target="gzip-js">
             <param name="js.dir" value="${basedir}/build/dist/highcharts/js/"/>
@@ -1146,7 +1494,7 @@
             <param name="local" value="${basedir}/build/dist/Highstock-${highstock.product.version}.zip"/>
             <param name="remote" value="${amazon.s3.bucketname}/zips"/>
             <param name="s3cmdDir" value="${s3cmd.dir}"/>
-            <param name="s3cmdDir" value="${s3cmd.dir}"/>            
+            <param name="s3cmdDir" value="${s3cmd.dir}"/>
         </antcall>
         <antcall target="gzip-js">
             <param name="js.dir" value="${basedir}/build/dist/highstock/js/"/>
@@ -1230,9 +1578,103 @@
         <!-- delete dir="${basedir}/build/dist/highstock/js-gzip"/ -->
     </target>
 
+
+
+    <!-- Deploy Highmaps to S3 -->
+    <target name="deploy-highmaps" depends="set.properties" description="Deploy Highmaps distribution to Amazon S3">
+        <property file="git-ignore-me.properties"/>
+        <copy file="${basedir}/build/dist/Highmaps-${highmaps.product.version}.zip" tofile="${basedir}/build/dist/Highmaps-${highmaps.product.version}.zip"/>
+        <antcall target="put-file-to-S3">
+            <param name="local" value="${basedir}/build/dist/Highmaps-${highmaps.product.version}.zip"/>
+            <param name="remote" value="${amazon.s3.bucketname}/zips"/>
+            <param name="s3cmdDir" value="${s3cmd.dir}"/>
+            <param name="s3cmdDir" value="${s3cmd.dir}"/>
+        </antcall>
+        <antcall target="gzip-js">
+            <param name="js.dir" value="${basedir}/build/dist/highmaps/js/"/>
+        </antcall>
+        <ac:var name="path.var" value=""/>
+        <ac:for list="${highmaps.product.version}" delimiter="." param="val">
+            <sequential>
+                <ac:if>
+                    <length string="${path.var}" length="0"/>
+                    <then>
+                        <ac:var name="path.var" value="@{val}"/>
+                        <!-- this will be used later to do a remote copy on S3 -->
+                        <property name="copy.version" value="@{val}"/>
+                        <!-- Copy zipped js/* to Root on S3 -->
+                        <antcall target="put-gzipped-files-to-S3">
+                            <param name="local" value="${basedir}/build/dist/highmaps/js-gzip/"/>
+                            <param name="remote" value="${amazon.s3.bucketname}/maps"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
+                            <param name="http.expires" value="${http.expires.one.day}"/>
+                            <param name="max.age" value="${max.age.one.day}"/>
+                        </antcall>
+                        <!-- copy gfx folder to Root -->
+                        <antcall target="put-files-to-S3">
+                            <param name="local" value="${basedir}/build/dist/hithmaps/gfx"/>
+                            <param name="remote" value="${amazon.s3.bucketname}/maps"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
+                            <param name="http.expires" value="${http.expires.one.day}"/>
+                            <param name="max.age" value="${max.age.one.day}"/>
+                        </antcall>
+                        <!-- Copy to js/* version [= ${path.var} ] on S3 -->
+                        <antcall target="put-gzipped-files-to-S3">
+                            <param name="local" value="${basedir}/build/dist/highmaps/js-gzip/"/>
+                            <param name="remote" value="${amazon.s3.bucketname}/maps/${path.var}"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
+                            <param name="http.expires" value="${http.expires.one.day}"/>
+                            <param name="max.age" value="${max.age.one.day}"/>
+                        </antcall>
+                        <!-- copy gfx folder to version folder on S3-->
+                        <antcall target="put-files-to-S3">
+                            <param name="local" value="${basedir}/build/dist/highmaps/gfx"/>
+                            <param name="remote" value="${amazon.s3.bucketname}/maps/${path.var}"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
+                            <param name="http.expires" value="${http.expires.one.day}"/>
+                            <param name="max.age" value="${max.age.one.day}"/>
+                        </antcall>
+                    </then>
+                    <elseif>
+                        <length string="${path.var}" length="3"/>
+                        <then>
+                            <ac:var name="path.var" value="${path.var}.@{val}"/>
+                            <!-- Copy to js/* version [= ${path.var} ] on S3 -->
+                            <antcall target="put-gzipped-files-to-S3">
+                                <param name="local" value="${basedir}/build/dist/highmaps/js-gzip/"/>
+                                <param name="remote" value="${amazon.s3.bucketname}/maps/${path.var}"/>
+                                <param name="s3cmdDir" value="${s3cmd.dir}"/>
+                                <param name="http.expires" value="${http.expires.five.years}"/>
+                                <param name="max.age" value="${max.age.five.years}"/>
+                            </antcall>
+                            <!-- copy gfx folder to version folder on S3-->
+                            <antcall target="put-files-to-S3">
+                                <param name="local" value="${basedir}/build/dist/highmaps/gfx"/>
+                                <param name="remote" value="${amazon.s3.bucketname}/maps/${path.var}"/>
+                                <param name="s3cmdDir" value="${s3cmd.dir}"/>
+                                <param name="http.expires" value="${http.expires.five.years}"/>
+                                <param name="max.age" value="${max.age.five.years}"/>
+                            </antcall>
+                        </then>
+                    </elseif>
+                    <else>
+                        <!-- concatenate version name and assign to path.var-->
+                        <ac:var name="path.var" value="${path.var}.@{val}"/>
+                        <antcall target="copy-folder-on-S3">
+                            <param name="from.s3" value="${amazon.s3.bucketname}/maps/${copy.version}/"/>
+                            <param name="to.s3" value="${amazon.s3.bucketname}/maps/${path.var}"/>
+                            <param name="s3cmdDir" value="${s3cmd.dir}"/>
+                        </antcall>
+                    </else>
+                </ac:if>
+            </sequential>
+        </ac:for>
+    </target>
+
     <target name="deploy-all">
         <antcall target="deploy-highcharts"></antcall>
         <antcall target="deploy-highstock"></antcall>
+        <antcall target="deploy-highmaps"></antcall>
     </target>
 
 
@@ -1265,7 +1707,7 @@
     </target>
 
     <!-- Copy the folders and content of /samples and /studies to higcharts.com.site -->
-    <target name="copy-to-site">
+    <target name="copy-to-site" depends="set.properties" description="Copy files from this repo to repository highcharts.com.site">
         <property file="git-ignore-me.properties"/>
         <copy todir="${highcharts.site.dir}/samples">
             <fileset dir="samples"/>
@@ -1281,6 +1723,31 @@
         </copy>
         <copy todir="${highcharts.site.dir}/lib">
             <fileset dir="lib"/>
+        </copy>
+    </target>
+
+    <target name="copy-to-download-builder" depends="set.properties" description="Copy parts files from this repo to repository highcharts.com.site">
+        <property file="git-ignore-me.properties"/>
+        
+        <!-- files for downloadbuilder -->            
+        <copy file="js/parts.js" tofile="${highcharts.site.dir}/joomla/templates/highsoft_colorful/js/parts.js" overwrite="true"/>
+        <!-- copy the highstock partfiles , these include also highcharts partfiles -->
+        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source/parts" overwrite="true">
+            <filelist refid="highstock.files"/>
+            <filterset refid="download.builder.filter"/>
+        </copy>
+        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source/parts-more" overwrite="true">
+            <filelist refid="highchartsmore.files"/>
+            <filterset refid="download.builder.filter"/>
+        </copy>
+        <copy file="${standalone.src.file}" todir="${highcharts.site.dir}/joomla/components/com_download/source/adapters" overwrite="true"><filterset refid="download.builder.filter"/></copy>
+        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source" overwrite="true">
+            <filelist refid="highcharts-modules.files"/>
+            <filterset refid="download.builder.filter"/>
+        </copy>
+        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source" overwrite="true">
+            <filelist refid="heatmap.files"/>
+            <filterset refid="download.builder.filter"/>
         </copy>
     </target>
 

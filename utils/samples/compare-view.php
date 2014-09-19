@@ -1,30 +1,54 @@
 <?php 
 	$path = $_GET['path'];
-	$mode = $_GET['mode'];
+	$mode = @$_GET['mode'];
 	$i = $_GET['i'];
-	$continue = $_GET['continue'];
+	$continue = @$_GET['continue'];
+
+	
+	
+
 
 	if (!get_browser(null, true)) {
 		$warning = 'Unable to get the browser info. Make sure a php_browscap.ini file extists, see ' .
 		'<a href="http://php.net/manual/en/function.get-browser.php">get_browser</a>.';
+	} else {
+		$browser = get_browser(null, true);
+		$browserKey = @$browser['parent'];
+		if (!$browserKey) {
+			$warning = 'Unable to get the browser info. Make sure php_browscap.ini is updated, see ' .
+			'<a target="_blank" href="http://php.net/manual/en/function.get-browser.php">get_browser</a>.';
+		}
 	}
 
-	print_r($browser);
-	
 ?><!DOCTYPE HTML>
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Compare SVG</title>
 		
-		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.js"></script>
+		<script src="http://code.jquery.com/jquery-1.7.js"></script>
 		<script src="http://ejohn.org/files/jsdiff.js"></script>
+		<link rel="stylesheet" type="text/css" href="style.css"/>
+
 		
 		<script type="text/javascript">
 			$(function() {
 				// the reload button
 				$('#reload').click(function() {
 					location.reload();
+				});
+
+				$('#comment').click(function () {
+					location.href = 'compare-comment.php?path=<?php echo $path ?>&i=<?php echo $i ?>';
+				});
+
+				$(window).bind('keydown', parent.keyDown);
+
+				$('#svg').click(function () {
+					$(this).css({
+						height: 'auto',
+						cursor: 'default'
+					});
 				});
 				
 				hilightCurrent();
@@ -33,6 +57,7 @@
 				rightSVG,
 				leftVersion,
 				rightVersion,
+				error,
 				mode = '<?php echo $mode ?>',
 				i = '<?php echo $i ?>'
 				_continue = '<?php echo $continue ?>';
@@ -65,7 +90,7 @@
 							if (difference.reference) {
 								diff += ' ('+ difference.reference.toFixed(2) + ')';
 								if (difference.dissimilarityIndex.toFixed(2) === difference.reference.toFixed(2)) {
-									background = 'green';
+									background = "#a4edba";
 								}
 							}
 							*/
@@ -82,6 +107,17 @@
 								})
 								.html(diff)
 								.appendTo(li);
+						} else {
+							$span = $('<a>')
+								.attr({
+									'class': 'dissimilarity-index',
+									href: location.href.replace(/continue=true/, ''),
+									target: 'main',
+									title: 'Compare'
+								})
+								.html('<i class="icon-columns"></i>')
+								.appendTo(li);
+
 						}
 						
 						if (_continue) {
@@ -141,6 +177,7 @@
 			}
 				
 			function onIdentical() {
+				$.get('compare-update-report.php', { path: '<?php echo $path ?>', diff: 0 });
 				markList("identical");
 				proceed();
 			}
@@ -163,10 +200,61 @@
 
 			function wash(svg) {
 				if (typeof svg === "string") {
-					return svg.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+					return svg
+						.replace(/</g, '&lt;')
+						.replace(/>/g, '&gt;')
+						.replace(/&lt;del&gt;/g, '<del>')
+						.replace(/&lt;\/del&gt;/g, '</del>')
+						.replace(/&lt;ins&gt;/g, '<ins>')
+						.replace(/&lt;\/ins&gt;/g, '</ins>');
 				} else {
 					return "";
 				}
+			}
+
+			function activateOverlayCompare() {
+
+				var $button = $('button#overlay-compare'),
+					$leftImage = $('#left-image'),
+					$rightImage = $('#right-image'),
+					showingRight,
+					toggle = function () {
+
+						// Initiate
+						if (showingRight === undefined) {
+
+							$('#preview').css({ height: $('#preview').height() })
+
+							$leftImage.css('position', 'absolute');
+							$rightImage
+								.css({
+									left: 300,
+									position: 'absolute'
+								})
+								.animate({
+									left: 0
+								});
+							;
+							$button.html('Showing right. Click to show left');
+							showingRight = true;
+
+						// Show left
+						} else if (showingRight) {
+							$rightImage.hide();
+							$button.html('Showing left. Click to show right');
+							showingRight = false;
+						} else {
+							$rightImage.show();
+							$button.html('Showing right. Click to show left.');
+							showingRight = true;
+						}
+					};
+
+				$button
+					.css('display', '')
+					.click(toggle);
+				$leftImage.click(toggle);
+				$rightImage.click(toggle);
 			}
 			
 			var report = "";
@@ -174,11 +262,24 @@
 
 				var out,
 					identical;
-					
+
+				if (error) {
+					report += "<br/>" + error;
+					$('#report').html(report)
+						.css('background', '#f15c80');
+					onDifferent('Error');
+					return;
+				}
+				
 				// remove identifier for each iframe
-				if (mode !== 'images') {
-					leftSVG = leftSVG.replace(/which=left/g, "");
-					rightSVG = rightSVG.replace(/which=right/g, "");
+				if (leftSVG && rightSVG) {
+					leftSVG = leftSVG
+						.replace(/which=left/g, "")
+						.replace(/Created with [a-zA-Z0-9\.@ ]+/, "Created with ___");
+						
+					rightSVG = rightSVG
+						.replace(/which=right/g, "")
+						.replace(/Created with [a-zA-Z0-9\.@ ]+/, "Created with ___");
 				}
 
 				if (leftSVG === rightSVG) {
@@ -188,15 +289,15 @@
 
 				if (mode === 'images') {
 					if (rightSVG.indexOf('NaN') !== -1) {
-						report += "<br/>The generated SVG contains NaN"
+						report += "<br/>The generated SVG contains NaN";
 						$('#report').html(report)
-							.css('background', 'red');
+							.css('background', '#f15c80');
 						onDifferent('Error');
 
 					} else if (identical) {
-						report += "<br/>The generated SVG is identical"
+						report += "<br/>The generated SVG is identical";
 						$('#report').html(report)
-							.css('background', 'green');
+							.css('background', "#a4edba");
 
 					} else {
 						report += "<br/>The generated SVG is different, checking exported images...";
@@ -213,7 +314,7 @@
 								path: "<?php echo $path ?>".replace(/\//g, '--')	
 							}, 
 							success: function (data) {
-								if (typeof data.dissimilarityIndex === 'number' && data.dissimilarityIndex < 0.01) {
+								if (data.dissimilarityIndex === 0) {
 									identical = true;
 									
 									report += '<br/>The exported images are identical'; 
@@ -221,8 +322,10 @@
 									onIdentical();
 									
 								} else if (data.dissimilarityIndex === undefined) {
-									report += '<br/>Exporting one of the images failed';
-									onDifferent();
+									report += '<br/><br/><b>Image export failed. Is the exporting server responding? If running local server, start it like this:</b>' +
+										'<pre>$ cd GitHub/highcharts.com/exporting-server/java/highcharts-export/highcharts-export-web\n' +
+										'$ mvn jetty:run</pre>'
+									onDifferent('Error');
 									
 								} else {
 									report += '<br/>The exported images are different (dissimilarity index: '+ data.dissimilarityIndex.toFixed(2) +')';
@@ -230,11 +333,13 @@
 									onDifferent(data);
 								}
 								
-								$('#preview').html('<h4>Generated images:</h4><img src="'+ data.sourceImage.url +'?' + (+new Date()) + '"/>' +
-									'<img src="'+ data.matchImage.url + '?' + (+new Date()) + '"/>');
+								$('#preview').html('<h4>Generated images (click to compare)</h4><img id="left-image" src="'+ data.sourceImage.url +'?' + (+new Date()) + '"/>' +
+									'<img id="right-image" src="'+ data.matchImage.url + '?' + (+new Date()) + '"/>');
+
+								activateOverlayCompare();
 								
 								$('#report').html(report)
-									.css('background', identical ? 'green' : 'red');
+									.css('background', identical ? "#a4edba" : '#f15c80');
 							},
 							dataType: 'json'
 						});
@@ -251,15 +356,12 @@
 						'The innerHTML is different, testing generated SVG...';
 						
 					$('#report').html(report)
-						.css('background', 'gray');
+						.css('background', identical ? "#a4edba" : '#f15c80');
 						
 					if (!identical) {
 						// switch to image mode
 						leftSVG = rightSVG = undefined;
 						mode = 'images';
-						//location.href = 'view.php?<?php echo $_SERVER['QUERY_STRING'] ?>&mode=images';
-						//document.getElementByI\nd('iframe-left').src = "iframe.php?which=left&mode=images&path=<?php echo $path ?>";
-						//document.getElementById('iframe-right').src = "iframe.php?which=right&mode=images&path=<?php echo $path ?>";	
 						$("#iframe-left")[0].contentWindow.compareSVG();				
 						$("#iframe-right")[0].contentWindow.compareSVG();
 					}
@@ -267,8 +369,12 @@
 						
 				// Show the diff
 				if (!identical) {
-					out = diffString(wash(leftSVG), wash(rightSVG)).replace(/&gt;/g, '&gt;\n');
-					$("#preview").html(out);
+					//out = diffString(wash(leftSVG), wash(rightSVG)).replace(/&gt;/g, '&gt;\n');
+					out = diffString(
+						leftSVG.replace(/>/g, '>\n'),
+						rightSVG.replace(/>/g, '>\n')
+					)
+					$("#svg").html('<h4 style="margin:0 auto 1em 0">Generated SVG (click to view)</h4>' + wash(out));
 				}
 
 				/*report +=  '<br/>Left length: '+ leftSVG.length + '; right length: '+ rightSVG.length +
@@ -283,9 +389,7 @@
 				font-size: 0.8em; 
 				padding: 0.5em; 
 				height: 3.5em;
-				background: #57544A;
-				background: -webkit-linear-gradient(top, #57544A, #37342A); 
-				background: -moz-linear-gradient(top, #57544A, #37342A);
+				background: #34343e;
 				box-shadow: 0px 0px 8px #888;
 			}
 			
@@ -305,17 +409,36 @@
 				padding: 0.5em; 
 				
 			}
+
+			pre#svg {
+				padding: 1em;
+				border: 1px solid silver;
+				background-color: #F8F8F8;
+			}
+			del {
+				color: white;
+				background-color: red;
+				border-radius: 3px;
+				padding: 0 3px;
+			}
+			ins {
+				color: white;
+				background-color: green;
+				border-radius: 3px;
+				padding: 0 3px;
+			}
 		</style>
 		
 	</head>
 	<body style="margin: 0">
 		
-		<div><?php echo $warning ?></div>
+		<div><?php echo @$warning ?></div>
 		<div class="top-bar">
 			
 			<h2 style="margin: 0"><?php echo $path ?></h2> 
 			
 			<div style="text-align: right">
+				<button id="comment" style="margin-left: 1em"><i class="icon-comment"></i> Comment</button>
 				<button id="reload" style="margin-left: 1em">Reload</button>
 			</div>
 		</div>
@@ -333,7 +456,9 @@
 			</tr>
 			<tr>
 				<td colspan="2">
-					<pre style="overflow: auto; width: 1000px" id="preview"></pre>
+					<pre id="svg" style="overflow: hidden; width: 1000px; height: 10px; cursor: pointer;"></pre>
+					<div id="preview" style="overflow: auto; width: 1000px; position: relative"></div>
+					<button id="overlay-compare" style="display:none">Compare overlaid</button>
 				</td>
 			</tr>
 		</table>

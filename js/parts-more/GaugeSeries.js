@@ -10,10 +10,12 @@
 defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 	dataLabels: {
 		enabled: true,
+		defer: false,
 		y: 15,
 		borderWidth: 1,
 		borderColor: 'silver',
 		borderRadius: 3,
+		crop: false,
 		style: {
 			fontWeight: 'bold'
 		},
@@ -45,7 +47,7 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 /**
  * Extend the point object
  */
-var GaugePoint = Highcharts.extendClass(Highcharts.Point, {
+var GaugePoint = extendClass(Point, {
 	/**
 	 * Don't do any hover colors or anything
 	 */
@@ -66,7 +68,9 @@ var GaugeSeries = {
 	// be used on the axes
 	angular: true, 
 	drawGraph: noop,
-	trackerGroups: ['group', 'dataLabels'],
+	fixedBox: true,
+	forceDL: true,
+	trackerGroups: ['group', 'dataLabelsGroup'],
 	
 	/**
 	 * Calculate paths etc
@@ -88,12 +92,18 @@ var GaugeSeries = {
 				rearLength = (pInt(pick(dialOptions.rearLength, 10)) * radius) / 100,
 				baseWidth = dialOptions.baseWidth || 3,
 				topWidth = dialOptions.topWidth || 1,
+				overshoot = options.overshoot,
 				rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true);
 
-			// Handle the wrap option
-			if (options.wrap === false) {
+			// Handle the wrap and overshoot options
+			if (overshoot && typeof overshoot === 'number') {
+				overshoot = overshoot / 180 * Math.PI;
+				rotation = Math.max(yAxis.startAngleRad - overshoot, Math.min(yAxis.endAngleRad + overshoot, rotation));			
+			
+			} else if (options.wrap === false) {
 				rotation = Math.max(yAxis.startAngleRad, Math.min(yAxis.endAngleRad, rotation));
 			}
+
 			rotation = rotation * 180 / Math.PI;
 				
 			point.shapeType = 'path';
@@ -208,11 +218,27 @@ var GaugeSeries = {
 			this.options.zIndex, 
 			this.chart.seriesGroup
 		);
-		seriesTypes.pie.prototype.render.call(this);
+		Series.prototype.render.call(this);
 		this.group.clip(this.chart.clipRect);
 	},
 	
-	setData: seriesTypes.pie.prototype.setData,
-	drawTracker: seriesTypes.column.prototype.drawTracker
+	/**
+	 * Extend the basic setData method by running processData and generatePoints immediately,
+	 * in order to access the points from the legend.
+	 */
+	setData: function (data, redraw) {
+		Series.prototype.setData.call(this, data, false);
+		this.processData();
+		this.generatePoints();
+		if (pick(redraw, true)) {
+			this.chart.redraw();
+		}
+	},
+
+	/**
+	 * If the tracking module is loaded, add the point tracker
+	 */
+	drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint
 };
-seriesTypes.gauge = Highcharts.extendClass(seriesTypes.line, GaugeSeries);
+seriesTypes.gauge = extendClass(seriesTypes.line, GaugeSeries);
+

@@ -3,21 +3,19 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Highcharts Map</title>
-		<!-- 1. Add these JavaScript inclusions in the head of your page -->
 		<script src="http://code.jquery.com/jquery-1.10.1.js"></script>
 		
 		
-		<script src="http://code.highcharts.com/3.0.5/highcharts.js"></script>
-		<script src="http://github.highcharts.com/c30b2ea/modules/map.src.js"></script>
-		<script src="http://github.highcharts.com/c30b2ea/modules/data.src.js"></script>
-		<script src="http://github.highcharts.com/c30b2ea/modules/map-parser.src.js"></script>
+		<script src="http://code.highcharts.com/maps/1.0.0-beta/highmaps.js"></script>
+		<script src="http://github.highcharts.com/2f60977d/modules/data.src.js"></script>
+		<script src="http://github.highcharts.com/2f60977d/modules/map-parser.src.js"></script>
 		
 		<!--
-		<script src="http://code.highcharts.local/highcharts.js"></script>
-		<script src="http://code.highcharts.local/modules/map.src.js"></script>
+		<script src="http://code.highcharts.local/highmaps.js"></script>
 		<script src="http://code.highcharts.local/modules/data.src.js"></script>
 		<script src="http://code.highcharts.local/modules/map-parser.src.js"></script>
 		-->
+		
 		<!-- 3. Add the JavaScript to initialize the chart on document ready -->
 		<script src="map-from-svg.js"></script>
 		<script type="text/javascript">
@@ -43,6 +41,8 @@
 			}
 			
 			function drawMap(key, file) {
+				location.hash = '#' + file;
+				var start = +new Date();
 				if (chart) {
 					chart = chart.destroy();
 				}
@@ -51,12 +51,21 @@
 				Highcharts.data({
 					svg: '/maps/file.php?file=' + file,
 					complete: function (options) {
+
+						console.log('Loading and parsing map:', new Date() - start, 'ms');
+						start = +new Date();
+
 						var data = options.series[0].data,
 							lines = identifyLines(data, key);
 							
 						// For the sake of the demo, add some random values
 						$.each(data, function (i, point) {
-							point.y = Math.round(Math.random() * 100);
+							data[i] = {
+								y: Math.round(Math.random() * 100),
+								path: point.path,
+								name: point.name,
+								hasFill: point.hasFill
+							};
 						});
 						
 						// Merge the options from the Data module with our own settings
@@ -64,7 +73,11 @@
 							chart : {
 								renderTo : 'container',
 								borderWidth : 1,
-								zoomType: 'xy'
+								events: {
+									load: function () {
+										console.log('Generating chart:', new Date() - start, 'ms');
+									}
+								}
 							},
 							
 							title: {
@@ -74,7 +87,11 @@
 							legend: {
 								enabled: false
 							},
-							
+
+							mapNavigation: {
+								enabled: true
+							},
+						
 							plotOptions: {
 								map: {
 									name: 'Random',
@@ -100,10 +117,9 @@
 						});
 						
 						// Add separator lines
-						if (lines) {
+						if (lines && lines.length) {
 							options.series.push({
-								color: 'none',
-								borderColor: 'gray',
+								type: 'mapline',
 								enableMouseTracking: false,
 								showInLegend: false,
 								data: lines
@@ -122,7 +138,7 @@
 							$.each(series.data, function (j, point) {
 								if (!mapData[i].type) {
 									if (point.hasFill) {
-										mapData[i].type = 'maparea';
+										mapData[i].type = 'map';
 									} else {
 										mapData[i].type = 'mapline';
 									}
@@ -216,8 +232,8 @@
 				<label for="preset">Load preset: </label>
 				<select id="preset"></select>
 				
-				<label>Online SVG URL:</label>
-				<input id="load" style="width: 100%" />
+				<label style="width: 100%">Online SVG URL or SVG markup:</label>
+				<textarea id="load" style="width: 100%" rows="10" ></textarea>
 
 				<div id="series-setup"></div>
 

@@ -1,12 +1,12 @@
-<!DOCTYPE html>
+<?php 
+session_start();
+?><!DOCTYPE html>
 <html>
 	<head>
+		<title>Benchmark - Highcharts Utils</title>
 		<link rel="stylesheet" type="text/css" href="test-style.css">
 
 		<?php
-			if (!isset($_SESSION)){
-				session_start();
-			}
 
 			// Array of different jquery versions.
 			// index 0 being default.
@@ -17,9 +17,14 @@
 			// Array of different Highcharts versions.
 			// index 0 being default.
 			$highchartsVersions = array(
-				0 => 'http://code.highcharts.com/highcharts.js',
-				1 => 'http://code.highcharts.com/3.0.2/highcharts.js'
-				);
+				'http://code.highcharts.local/stock/highstock.js',
+				'http://code.highcharts.com/stock/highstock.js',
+				'http://github.highcharts.com/highstock.js'
+			);
+
+			$repetitions = array(
+				1, 5, 10
+			);
 
 			// Repetitions each chart is to be run within runChart();
 			// This takes longer time but results in a more accurate average.
@@ -47,7 +52,7 @@
 				echo "<script src='".$_SESSION['highcharts']."'></script>";
 
 			} else {
-				echo "<script src='".$highchartsVersios[0]."'></script>";
+				echo "<script src='".$highchartsVersions[0]."'></script>";
 				$_SESSION['highcharts'] = $highchartsVersions[0];
 			}
 
@@ -85,19 +90,19 @@
 
 				// Sort array properly
 				foreach ($tmpFolders as $folder) {
-					if (count(scandir('tests-js/'.$folder)) > 2) {
+					if (is_dir('tests-js/'.$folder) && count(scandir('tests-js/'.$folder)) > 2) {
 						$folders[] = $folder;
 					}
 				}
 
 				// Sets the js variable as well.
-				echo "folders =".json_encode($folders).',';
+				echo "folders = ".json_encode($folders). ';';
 
 				// Updates js array result to current $_SESSION content. 
-				echo "results =".json_encode($_SESSION).';';
+				echo "results = ".json_encode($_SESSION).';';
 
 				// Sets the "rep" variable.
-				echo "rep =".json_encode($_SESSION['repetitions']).';';
+				echo "rep = ".json_encode($_SESSION['repetitions']).';';
 			?>
 		</script>
 
@@ -141,42 +146,50 @@
 		?>
 
 		<div id="topMenu">
-			<h3> testsuite </h3>
-			<?php
-				echo 	'<h4>The Highcharts version currently loaded is: 
-							<span class="loaded">'.$_SESSION['highcharts'].'</span>
-						</h4>';
-				echo 	'<h4>The javascript version currently loaded is: 
-							<span class="loaded">'.$_SESSION['jquery'].'</span>
-						</h4>';
-				echo 	'<h4>The number of repetitions per indivudual test is set to: <span class="loaded">'.$_SESSION['repetitions'].'</span>
-						</h4>';
-			?>
+			<h1>Highcharts Benchmarks</h1>
 
-			<form method="post" action="index.php">
-				<select name="jquery">
-					<?php
-						foreach ($jqueryVersions as $jquery) {
-							$selected = $jquery == $_SESSION['jquery'] ? 'selected' : '';
-							echo "<option value='".$jquery."' ".$selected.">".$jquery."</option>";
-						}
-					?>
-				</select>
-				<select name="highcharts">
-					<?php
-						foreach ($highchartsVersions as $highcharts) {
-							$selected = $highcharts == $_SESSION['highcharts'] ? 'selected' : '';
-							echo "<option value='".$highcharts."' ".$selected.">".$highcharts."</option>";
-						}
-					?>
-				</select>
-				<input type="submit" name="submit"> 
+
+			<form method="post" action="index.php" id="setup">
+				<table>
+					<tr>
+						<td><label for="jquery">jQuery version</label></td>
+						<td><select name="jquery" id="jquery">
+							<?php
+								foreach ($jqueryVersions as $jquery) {
+									$selected = $jquery == $_SESSION['jquery'] ? 'selected' : '';
+									echo "<option value='".$jquery."' ".$selected.">".$jquery."</option>";
+								}
+							?>
+						</select></td>
+					</tr>
+					<tr>
+						<td><label for="highcharts">Highcharts version</label></td>
+						<td>
+							<select name="highcharts">
+								<?php
+									foreach ($highchartsVersions as $highcharts) {
+										$selected = $highcharts == $_SESSION['highcharts'] ? 'selected' : '';
+										echo "<option value='".$highcharts."' ".$selected.">".$highcharts."</option>";
+									}
+								?>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>Repeat each test</td>
+						<td>
+							<select name="repetitions">
+								<?php
+									foreach ($repetitions as $rep) {
+										$selected = $rep == $_SESSION['repetitions'] ? 'selected' : '';
+										echo "<option value='$rep' $selected>$rep</option>";
+									}
+								?>
+							</select> times
+					</tr>
+				</table>
 			</form>
-			<br>
-			<form method="post" action="index.php">
-				Repeat each test: <input type="text" name="repetitions">
-				<input type="submit" name="submit">
-			</form>
+			<hr>
 
 			<?php 
 				// IE8 makes the runChart() function work in mysterious ways the second time the 
@@ -185,17 +198,17 @@
 				if (isset($_SESSION['allclicked']) && $_SESSION['browsername'] == 'msie' && $_SESSION['browserversion'] < 9) {
 					echo "<p id='warning'>Due to incompability issues with IE8, a new 'absolutely everything run' requires a browser restart. <br> Also make sure the session is destroyed (button below).</p>";
 				} else {
-					echo "<button id='all' onclick='buttonClick(this.id);'>Run absolutely everything</button>";
+					echo "<button id='all' onclick='buttonClick(this.id);'>Run all</button>";
 				}
 
 				// This code creates a reset results button by destroying the session.
 				if (isset($_POST['reset'])) {
 					session_destroy();
-					header("Location: index.php");
+					echo "<script>location.href = 'index.php';</script>";
 				} else {
 					echo "
 						<form method='post' action='index.php'>
-							<button name='reset' value='reset'>Reset results ($_SESSION)</button>
+							<button name='reset' value='reset'>Reset results</button>
 						</form>
 						";
 				}
@@ -213,12 +226,12 @@
 								<li>
 									<a href='index.php?group=".$group."'>".$group."</a>
 									<button class=run id ='".$group."_all' onclick='buttonClick(this.id);'>Run</button>
-									<span class='result ".$group."Result'>(???)</span>
+									<span class='result ".$group."Result'>-</span>
 								</li>
 							";
 					}
 
-					echo "	<li class='total'> Total result: <span class='result' id='allResult'>(???)</span></li>
+					echo "	<li class='total'> Total result: <span class='result' id='allResult'>-</span></li>
 						</ul>";
 
 					echo "<script> resultUpdate(); </script>";
@@ -268,12 +281,12 @@
 
 							// If there are no more groups to be run the user is redirected to index.php.
 							} else if ($_GET['run'] == 'all') {
-								header("Location: index.php");
+								echo "<script>location.href = 'index.php';</script>";
 
 							// If the run variable is not set to 'all' the user is redirected to the 
 							// last group/folder that ran.
 							} else {
-								header("Location: index.php?group=".$folders[$lastIndex]);
+								echo "<script>location.href = 'index.php?group=" . $folders[$lastIndex] . "';</script>";
 							}
 						}
 					}	

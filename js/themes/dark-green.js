@@ -1,6 +1,6 @@
 /**
  * Dark blue theme for Highcharts JS
- * @author Torstein Hønsi
+ * @author Torstein Honsi
  */
 
 Highcharts.theme = {
@@ -245,7 +245,7 @@ Highcharts.theme = {
 
 	// special colors for some of the
 	legendBackgroundColor: 'rgba(0, 0, 0, 0.5)',
-	legendBackgroundColorSolid: 'rgb(35, 35, 70)',
+	background2: 'rgb(35, 35, 70)',
 	dataLabelsColor: '#444',
 	textColor: '#C0C0C0',
 	maskColor: 'rgba(255,255,255,0.3)'

@@ -13,14 +13,7 @@
 	<organization>
 		<name>Highsoft</name>
 		<url>http://highcharts.com</url>
-	</organization>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.version>3.2.0.RELEASE</spring.version>
-		<cglib.version>2.2.2</cglib.version>
-		<java.version>1.6</java.version>
-		<maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
-	</properties>
+	</organization>	
 	<dependencies>
 		<dependency>
 			<groupId>com.highcharts.export</groupId>
@@ -40,6 +33,21 @@
 			<version>${spring.version}</version>
 			<type>jar</type>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.7</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>taglibs</groupId>
@@ -73,18 +81,11 @@
 						</resource>
 					</webResources>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<configuration>
-					<wtpapplicationxml>true</wtpapplicationxml>
-					<wtpversion>2.0</wtpversion>
-				</configuration>
-			</plugin>
+			</plugin>			
 			<plugin>
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
+				<version>8.1.15.v20140411</version>
 				<configuration>
 					<webApp>
 						<contextPath>/export</contextPath>

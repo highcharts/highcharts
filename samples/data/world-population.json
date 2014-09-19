@@ -1,0 +1,688 @@
+[{
+    code: "AF",
+    z: 31412
+}, {
+    code: "AL",
+    z: 3204
+}, {
+    code: "DZ",
+    z: 35468
+}, {
+    code: "AS",
+    z: 68
+}, {
+    code: "AD",
+    z: 85
+}, {
+    code: "AO",
+    z: 19082
+}, {
+    code: "AI",
+    z: 15
+}, {
+    code: "AG",
+    z: 89
+}, {
+    code: "AR",
+    z: 40412
+}, {
+    code: "AM",
+    z: 3092
+}, {
+    code: "AW",
+    z: 107
+}, {
+    code: "AU",
+    z: 22268
+}, {
+    code: "AT",
+    z: 8394
+}, {
+    code: "AZ",
+    z: 9188
+}, {
+    code: "BS",
+    z: 343
+}, {
+    code: "BH",
+    z: 1262
+}, {
+    code: "BD",
+    z: 148692
+}, {
+    code: "BB",
+    z: 273
+}, {
+    code: "BY",
+    z: 9595
+}, {
+    code: "BE",
+    z: 10712
+}, {
+    code: "BZ",
+    z: 312
+}, {
+    code: "BJ",
+    z: 8850
+}, {
+    code: "BM",
+    z: 65
+}, {
+    code: "BT",
+    z: 726
+}, {
+    code: "BO",
+    z: 9930
+}, {
+    code: "BA",
+    z: 3760
+}, {
+    code: "BW",
+    z: 2007
+}, {
+    code: "BR",
+    z: 194946
+}, {
+    code: "VG",
+    z: 23
+}, {
+    code: "BN",
+    z: 399
+}, {
+    code: "BG",
+    z: 7494
+}, {
+    code: "BF",
+    z: 16469
+}, {
+    code: "BI",
+    z: 8383
+}, {
+    code: "KH",
+    z: 14138
+}, {
+    code: "CM",
+    z: 19599
+}, {
+    code: "CA",
+    z: 34017
+}, {
+    code: "CV",
+    z: 496
+}, {
+    code: "KY",
+    z: 56
+}, {
+    code: "CF",
+    z: 4401
+}, {
+    code: "TD",
+    z: 11227
+}, {
+    code: "GB",
+    z: 153
+}, {
+    code: "CL",
+    z: 17114
+}, {
+    code: "CN",
+    z: 1341335
+}, {
+    code: "CO",
+    z: 46295
+}, {
+    code: "KM",
+    z: 735
+}, {
+    code: "CG",
+    z: 4043
+}, {
+    code: "CD",
+    z: 65966
+}, {
+    code: "CK",
+    z: 20
+}, {
+    code: "CR",
+    z: 4659
+}, {
+    code: "CI",
+    z: 19738
+}, {
+    code: "HR",
+    z: 4403
+}, {
+    code: "CU",
+    z: 11258
+}, {
+    code: "CY",
+    z: 1104
+}, {
+    code: "CZ",
+    z: 10493
+}, {
+    code: "DK",
+    z: 5550
+}, {
+    code: "DJ",
+    z: 889
+}, {
+    code: "DM",
+    z: 68
+}, {
+    code: "DO",
+    z: 9927
+}, {
+    code: "EC",
+    z: 14465
+}, {
+    code: "EG",
+    z: 81121
+}, {
+    code: "SV",
+    z: 6193
+}, {
+    code: "GQ",
+    z: 700
+}, {
+    code: "ER",
+    z: 5254
+}, {
+    code: "EE",
+    z: 1341
+}, {
+    code: "ET",
+    z: 82950
+}, {
+    code: "FO",
+    z: 49
+}, {
+    code: "FK",
+    z: 3
+}, {
+    code: "FJ",
+    z: 861
+}, {
+    code: "FI",
+    z: 5365
+}, {
+    code: "FR",
+    z: 62787
+}, {
+    code: "GF",
+    z: 231
+}, {
+    code: "PF",
+    z: 271
+}, {
+    code: "GA",
+    z: 1505
+}, {
+    code: "GM",
+    z: 1728
+}, {
+    code: "GE",
+    z: 4352
+}, {
+    code: "DE",
+    z: 82302
+}, {
+    code: "GH",
+    z: 24392
+}, {
+    code: "GI",
+    z: 29
+}, {
+    code: "GR",
+    z: 11359
+}, {
+    code: "GL",
+    z: 57
+}, {
+    code: "GD",
+    z: 104
+}, {
+    code: "GP",
+    z: 461
+}, {
+    code: "GU",
+    z: 180
+}, {
+    code: "GT",
+    z: 14389
+}, {
+    code: "GN",
+    z: 9982
+}, {
+    code: "GW",
+    z: 1515
+}, {
+    code: "GY",
+    z: 754
+}, {
+    code: "HT",
+    z: 9993
+}, {
+    code: "HN",
+    z: 7601
+}, {
+    code: "HK",
+    z: 7053
+}, {
+    code: "HU",
+    z: 9984
+}, {
+    code: "IS",
+    z: 320
+}, {
+    code: "IN",
+    z: 1224614
+}, {
+    code: "ID",
+    z: 239871
+}, {
+    code: "IR",
+    z: 73974
+}, {
+    code: "IQ",
+    z: 31672
+}, {
+    code: "IE",
+    z: 4470
+}, {
+    code: "IM",
+    z: 83
+}, {
+    code: "IL",
+    z: 7418
+}, {
+    code: "IT",
+    z: 60551
+}, {
+    code: "JM",
+    z: 2741
+}, {
+    code: "JP",
+    z: 126536
+}, {
+    code: "JO",
+    z: 6187
+}, {
+    code: "KZ",
+    z: 16026
+}, {
+    code: "KE",
+    z: 40513
+}, {
+    code: "KI",
+    z: 100
+}, {
+    code: "KP",
+    z: 24346
+}, {
+    code: "KR",
+    z: 48184
+}, {
+    code: "KW",
+    z: 2737
+}, {
+    code: "KG",
+    z: 5334
+}, {
+    code: "LA",
+    z: 6201
+}, {
+    code: "LV",
+    z: 2252
+}, {
+    code: "LB",
+    z: 4228
+}, {
+    code: "LS",
+    z: 2171
+}, {
+    code: "LR",
+    z: 3994
+}, {
+    code: "LY",
+    z: 6355
+}, {
+    code: "LI",
+    z: 36
+}, {
+    code: "LT",
+    z: 3324
+}, {
+    code: "LU",
+    z: 507
+}, {
+    code: "MO",
+    z: 544
+}, {
+    code: "MK",
+    z: 2061
+}, {
+    code: "MG",
+    z: 20714
+}, {
+    code: "MW",
+    z: 14901
+}, {
+    code: "MY",
+    z: 28401
+}, {
+    code: "MV",
+    z: 316
+}, {
+    code: "ML",
+    z: 15370
+}, {
+    code: "MT",
+    z: 417
+}, {
+    code: "MH",
+    z: 54
+}, {
+    code: "MQ",
+    z: 406
+}, {
+    code: "MR",
+    z: 3460
+}, {
+    code: "MU",
+    z: 1299
+}, {
+    code: "YT",
+    z: 204
+}, {
+    code: "MX",
+    z: 113423
+}, {
+    code: "FM",
+    z: 111
+}, {
+    code: "MD",
+    z: 3573
+}, {
+    code: "MC",
+    z: 35
+}, {
+    code: "MN",
+    z: 2756
+}, {
+    code: "ME",
+    z: 631
+}, {
+    code: "MS",
+    z: 6
+}, {
+    code: "MA",
+    z: 31951
+}, {
+    code: "MZ",
+    z: 23391
+}, {
+    code: "MM",
+    z: 47963
+}, {
+    code: "NA",
+    z: 2283
+}, {
+    code: "NR",
+    z: 10
+}, {
+    code: "NP",
+    z: 29959
+}, {
+    code: "NL",
+    z: 16613
+}, {
+    code: "AN",
+    z: 201
+}, {
+    code: "NC",
+    z: 251
+}, {
+    code: "NZ",
+    z: 4368
+}, {
+    code: "NI",
+    z: 5788
+}, {
+    code: "NE",
+    z: 15512
+}, {
+    code: "NG",
+    z: 158423
+}, {
+    code: "NU",
+    z: 1
+}, {
+    code: "MP",
+    z: 61
+}, {
+    code: "NO",
+    z: 4883
+}, {
+    code: "OM",
+    z: 2782
+}, {
+    code: "PK",
+    z: 173593
+}, {
+    code: "PW",
+    z: 20
+}, {
+    code: "PS",
+    z: 4039
+}, {
+    code: "PA",
+    z: 3517
+}, {
+    code: "PG",
+    z: 6858
+}, {
+    code: "PY",
+    z: 6455
+}, {
+    code: "PE",
+    z: 29077
+}, {
+    code: "PH",
+    z: 93261
+}, {
+    code: "PL",
+    z: 38277
+}, {
+    code: "PT",
+    z: 10676
+}, {
+    code: "PR",
+    z: 3749
+}, {
+    code: "QA",
+    z: 1759
+}, {
+    code: "RE",
+    z: 846
+}, {
+    code: "RO",
+    z: 21486
+}, {
+    code: "RU",
+    z: 142958
+}, {
+    code: "RW",
+    z: 10624
+}, {
+    code: "SH",
+    z: 4
+}, {
+    code: "KN",
+    z: 52
+}, {
+    code: "LC",
+    z: 174
+}, {
+    code: "PM",
+    z: 6
+}, {
+    code: "VC",
+    z: 109
+}, {
+    code: "WS",
+    z: 183
+}, {
+    code: "SM",
+    z: 32
+}, {
+    code: "ST",
+    z: 165
+}, {
+    code: "SA",
+    z: 27448
+}, {
+    code: "SN",
+    z: 12434
+}, {
+    code: "RS",
+    z: 9856
+}, {
+    code: "SC",
+    z: 87
+}, {
+    code: "SL",
+    z: 5868
+}, {
+    code: "SG",
+    z: 5086
+}, {
+    code: "SK",
+    z: 5462
+}, {
+    code: "SI",
+    z: 2030
+}, {
+    code: "SB",
+    z: 538
+}, {
+    code: "SO",
+    z: 9331
+}, {
+    code: "ZA",
+    z: 50133
+}, {
+    code: "ES",
+    z: 46077
+}, {
+    code: "LK",
+    z: 20860
+}, {
+    code: "SD",
+    z: 43552
+}, {
+    code: "SR",
+    z: 525
+}, {
+    code: "SZ",
+    z: 1186
+}, {
+    code: "SE",
+    z: 9380
+}, {
+    code: "CH",
+    z: 7664
+}, {
+    code: "SY",
+    z: 20411
+}, {
+    code: "TJ",
+    z: 6879
+}, {
+    code: "TZ",
+    z: 44841
+}, {
+    code: "TH",
+    z: 69122
+}, {
+    code: "TL",
+    z: 1124
+}, {
+    code: "TG",
+    z: 6028
+}, {
+    code: "TK",
+    z: 1
+}, {
+    code: "TO",
+    z: 104
+}, {
+    code: "TT",
+    z: 1341
+}, {
+    code: "TN",
+    z: 10481
+}, {
+    code: "TR",
+    z: 72752
+}, {
+    code: "TM",
+    z: 5042
+}, {
+    code: "TC",
+    z: 38
+}, {
+    code: "TV",
+    z: 10
+}, {
+    code: "UG",
+    z: 33425
+}, {
+    code: "UA",
+    z: 45448
+}, {
+    code: "AE",
+    z: 7512
+}, {
+    code: "UK",
+    z: 62036
+}, {
+    code: "US",
+    z: 310384
+}, {
+    code: "VI",
+    z: 109
+}, {
+    code: "UY",
+    z: 3369
+}, {
+    code: "UZ",
+    z: 27445
+}, {
+    code: "VU",
+    z: 240
+}, {
+    code: "VA",
+    z: 0
+}, {
+    code: "VE",
+    z: 28980
+}, {
+    code: "VN",
+    z: 87848
+}, {
+    code: "WF",
+    z: 14
+}, {
+    code: "EH",
+    z: 531
+}, {
+    code: "YE",
+    z: 24053
+}, {
+    code: "ZM",
+    z: 13089
+}, {
+    code: "ZW",
+    z: 12571
+}]

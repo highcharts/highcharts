@@ -2,14 +2,14 @@ $(function () {
     $('#container').highcharts({
         chart: {
             plotBackgroundColor: null,
-            plotBorderWidth: null,
+            plotBorderWidth: 1,//null,
             plotShadow: false
         },
         title: {
-            text: 'Browser market shares at a specific website, 2010'
+            text: 'Browser market shares at a specific website, 2014'
         },
         tooltip: {
-    	    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
         },
         plotOptions: {
             pie: {
@@ -17,9 +17,10 @@ $(function () {
                 cursor: 'pointer',
                 dataLabels: {
                     enabled: true,
-                    color: '#000000',
-                    connectorColor: '#000000',
-                    format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                    }
                 }
             }
         },
@@ -42,4 +43,4 @@ $(function () {
         }]
     });
 });
-    
+

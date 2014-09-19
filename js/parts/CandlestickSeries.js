@@ -14,7 +14,7 @@ defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
 	tooltip: defaultPlotOptions.ohlc.tooltip,
 	threshold: null,
 	upColor: 'white'
-	// upLineColor: 'black' // docs
+	// upLineColor: null
 });
 
 // 2 - Create the CandlestickSeries object
@@ -43,7 +43,6 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 			hoverStroke = stateOptions.hover.upLineColor || upLineColor, 
 			selectStroke = stateOptions.select.upLineColor || upLineColor;
 
-		// docs
 		// Add custom line color for points going up (close > open).
 		// Fill is handled by OHLCSeries' getAttribs.
 		each(series.points, function (point) {
@@ -63,6 +62,7 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 			points = series.points,
 			chart = series.chart,
 			pointAttr,
+			seriesPointAttr = series.pointAttr[''],
 			plotOpen,
 			plotClose,
 			topBox,
@@ -81,11 +81,11 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 			graphic = point.graphic;
 			if (point.plotY !== UNDEFINED) {
 
-				pointAttr = point.pointAttr[point.selected ? 'selected' : ''];
+				pointAttr = point.pointAttr[point.selected ? 'selected' : ''] || seriesPointAttr;
 
 				// crisp vector coordinates
 				crispCorr = (pointAttr['stroke-width'] % 2) / 2;
-				crispX = mathRound(point.plotX) + crispCorr;
+				crispX = mathRound(point.plotX) - crispCorr; // #2596
 				plotOpen = point.plotOpen;
 				plotClose = point.plotClose;
 				topBox = math.min(plotOpen, plotClose);
@@ -106,8 +106,7 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 					crispX + halfWidth, topBox,
 					'L',
 					crispX + halfWidth, bottomBox,
-					'L',
-					crispX - halfWidth, bottomBox,
+					'Z', // Use a close statement to ensure a nice rectangle #2602
 					'M',
 					crispX, topBox,
 					'L',
@@ -115,8 +114,7 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 					'M',
 					crispX, bottomBox,
 					'L',
-					crispX, hasBottomWhisker ? mathRound(point.yBottom) : bottomBox, // #460, #2094
-					'Z'
+					crispX, hasBottomWhisker ? mathRound(point.yBottom) : bottomBox // #460, #2094
 				];
 
 				if (graphic) {

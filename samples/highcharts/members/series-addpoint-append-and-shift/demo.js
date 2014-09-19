@@ -7,8 +7,10 @@ $(function () {
 
 
     // the button action
-    $('#button').click(function() {
+    var i = 0;
+    $('#button').click(function () {
         var chart = $('#container').highcharts();
-        chart.series[0].addPoint(Math.random() * 100, true, true);
+        chart.series[0].addPoint(50 * (i % 3), true, true);
+        i += 1;
     });
 });

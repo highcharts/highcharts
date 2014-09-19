@@ -1,17 +1,16 @@
-$(function() {
-	var chart = new Highcharts.Chart({
+$(function () {
+    window.chart = new Highcharts.StockChart({
+        chart: {
+            renderTo: 'container'
+        },
 
-		chart: {
-			renderTo: 'container'
-		},
+        rangeSelector: {
+            selected: 1
+        },
 
-	    rangeSelector: {
-	    	selected: 1
-	    },
-
-	    series: [{
-	        name: 'USD to EUR',
-	        data: usdeur
-	    }]
-	});
+        series: [{
+            name: 'USD to EUR',
+            data: usdeur
+        }]
+    });
 });

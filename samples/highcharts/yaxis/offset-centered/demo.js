@@ -1,13 +1,13 @@
 $(function () {
     $('#container').highcharts({
-    
+
         chart: {
             marginTop: 50,
             marginBottom: 50,
             marginLeft: 50,
             marginRight: 50
         },
-    
+
         xAxis: {
             gridLineWidth: 1,
             min: -5,
@@ -27,7 +27,7 @@ $(function () {
                 text: null
             }
         },
-    
+
         series: [{
             data: [
                 [-3, 3],
@@ -37,9 +37,9 @@ $(function () {
                 [1, 1],
                 [2, 2],
                 [3, 3]
-                
+
             ]
         }]
-    
+
     });
 });

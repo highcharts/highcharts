@@ -1,0 +1,24 @@
+#container {
+	height: 500px; 
+	min-width: 310px; 
+	max-width: 800px; 
+	margin: 0 auto; 
+}
+
+.highcharts-tooltip>span {
+	background: rgba(255,255,255,0.85);
+	border: 1px solid silver;
+	border-radius: 3px;
+	box-shadow: 1px 1px 2px #888;
+	padding: 8px;
+}
+
+.loading {
+	margin-top: 10em;
+	text-align: center;
+	color: gray;
+}
+
+.f32 .flag {
+	vertical-align: middle !important;
+}

@@ -1,21 +1,18 @@
 $(function () {
     $('#container').highcharts({
-    
-        chart: {
-        },
-        
+
         title: {
             text: 'Data labels box options'
         },
-        
+
         subtitle: {
             text: 'backgroundColor, borderColor, borderRadius, borderWidth, padding and shadow'
         },
-    
+
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
-        
+
         plotOptions: {
             series: {
                 dataLabels: {
@@ -28,7 +25,7 @@ $(function () {
                 }
             }
         },
-    
+
         series: [{
             data: [29.9, 71.5, 106.4, 129.2, 144.0, 178.0, 135.6, 148.5, {
                 y: 216.4,
@@ -43,6 +40,6 @@ $(function () {
                 }
             }, 194.1, 95.6, 54.4]
         }]
-    
+
     });
 });

@@ -3,8 +3,6 @@ $(function () {
 
     // create the chart
     $('#container').highcharts({
-        chart: {
-        },
 
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -16,19 +14,19 @@ $(function () {
     });
 
     var chart = $('#container').highcharts();
-    $('#button1').click(function() {
+    $('#button1').click(function () {
         chart.hideLoading();
         chart.showLoading('Loading AJAX...');
     });
-    $('#button2').click(function() {
+    $('#button2').click(function () {
         chart.hideLoading();
         chart.showLoading('Loading image...');
     });
-    $('#button3').click(function() {
+    $('#button3').click(function () {
         chart.hideLoading();
         chart.showLoading();
     });
-    $('#button4').click(function() {
+    $('#button4').click(function () {
         chart.hideLoading();
     });
 });

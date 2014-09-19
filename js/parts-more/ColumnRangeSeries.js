@@ -1,55 +1,62 @@
-/**
- * The ColumnRangeSeries class
- */
-defaultPlotOptions.columnrange = merge(defaultPlotOptions.column, defaultPlotOptions.arearange, {
-	lineWidth: 1,
-	pointRange: null
-});
+(function () {
+	
+	var colProto = seriesTypes.column.prototype;
 
-/**
- * ColumnRangeSeries object
- */
-seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
-	type: 'columnrange',
 	/**
-	 * Translate data points from raw values x and y to plotX and plotY
+	 * The ColumnRangeSeries class
 	 */
-	translate: function () {
-		var series = this,
-			yAxis = series.yAxis,
-			plotHigh;
+	defaultPlotOptions.columnrange = merge(defaultPlotOptions.column, defaultPlotOptions.arearange, {
+		lineWidth: 1,
+		pointRange: null
+	});
 
-		colProto.translate.apply(series);
+	/**
+	 * ColumnRangeSeries object
+	 */
+	seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
+		type: 'columnrange',
+		/**
+		 * Translate data points from raw values x and y to plotX and plotY
+		 */
+		translate: function () {
+			var series = this,
+				yAxis = series.yAxis,
+				plotHigh;
 
-		// Set plotLow and plotHigh
-		each(series.points, function (point) {
-			var shapeArgs = point.shapeArgs,
-				minPointLength = series.options.minPointLength,
-				heightDifference,
-				height,
-				y;
+			colProto.translate.apply(series);
 
-			point.plotHigh = plotHigh = yAxis.translate(point.high, 0, 1, 0, 1);
-			point.plotLow = point.plotY;
+			// Set plotLow and plotHigh
+			each(series.points, function (point) {
+				var shapeArgs = point.shapeArgs,
+					minPointLength = series.options.minPointLength,
+					heightDifference,
+					height,
+					y;
 
-			// adjust shape
-			y = plotHigh;
-			height = point.plotY - plotHigh;
+				point.tooltipPos = null; // don't inherit from column
+				point.plotHigh = plotHigh = yAxis.translate(point.high, 0, 1, 0, 1);
+				point.plotLow = point.plotY;
 
-			if (height < minPointLength) {
-				heightDifference = (minPointLength - height);
-				height += heightDifference;
-				y -= heightDifference / 2;
-			}
-			shapeArgs.height = height;
-			shapeArgs.y = y;
-		});
-	},
-	trackerGroups: ['group', 'dataLabels'],
-	drawGraph: noop,
-	pointAttrToOptions: colProto.pointAttrToOptions,
-	drawPoints: colProto.drawPoints,
-	drawTracker: colProto.drawTracker,
-	animate: colProto.animate,
-	getColumnMetrics: colProto.getColumnMetrics
-});
+				// adjust shape
+				y = plotHigh;
+				height = point.plotY - plotHigh;
+
+				if (height < minPointLength) {
+					heightDifference = (minPointLength - height);
+					height += heightDifference;
+					y -= heightDifference / 2;
+				}
+				shapeArgs.height = height;
+				shapeArgs.y = y;
+			});
+		},
+		trackerGroups: ['group', 'dataLabelsGroup'],
+		drawGraph: noop,
+		pointAttrToOptions: colProto.pointAttrToOptions,
+		drawPoints: colProto.drawPoints,
+		drawTracker: colProto.drawTracker,
+		animate: colProto.animate,
+		getColumnMetrics: colProto.getColumnMetrics
+	});
+}());
+

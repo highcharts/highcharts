@@ -1,0 +1,28 @@
+<script src="http://code.highcharts.com/maps/highmaps.js"></script>
+<script src="http://code.highcharts.com/mapdata/index.js?1"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.js"></script>
+<script src="http://www.highcharts.com/samples/maps/demo/all-maps/jquery.combobox.js"></script>
+
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" rel="stylesheet">
+<link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+<div id="demo-wrapper">
+    <div id="mapBox">
+        <div id="up"></div>
+        <div class="selector">
+            <button id="btn-prev-map" class="prev-next"><i class="fa fa-angle-left"></i></button>
+            <select id="mapDropdown" class="ui-widget combobox"></select>
+            <button id="btn-next-map" class="prev-next"><i class="fa fa-angle-right"></i></button>
+        </div>
+        <div id="container"></div> 
+    </div>
+    <div id="sideBox">
+        
+        <input type="checkbox" id="chkDataLabels" checked='checked' />
+        <label for="chkDataLabels" style="display: inline">Data labels</label>
+        <div id="infoBox">
+            <h4>This map</h4>
+            <div id="download"></div>
+        </div>
+    </div>
+</div>

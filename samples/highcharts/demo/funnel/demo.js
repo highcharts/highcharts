@@ -1,5 +1,5 @@
 $(function () {
-    
+
     $('#container').highcharts({
         chart: {
             type: 'funnel',
@@ -14,12 +14,12 @@ $(function () {
                 dataLabels: {
                     enabled: true,
                     format: '<b>{point.name}</b> ({point.y:,.0f})',
-                    color: 'black',
+                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black',
                     softConnector: true
                 },
                 neckWidth: '30%',
                 neckHeight: '25%'
-                
+
                 //-- Other available options
                 // height: pixels or percent
                 // width: pixels or percent

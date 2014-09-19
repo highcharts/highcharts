@@ -18,7 +18,7 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 	//stemWidth: null,
 	threshold: null,
 	tooltip: {
-		pointFormat: '<span style="color:{series.color};font-weight:bold">{series.name}</span><br/>' +
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
 			'Maximum: {point.high}<br/>' +
 			'Upper quartile: {point.q3}<br/>' +
 			'Median: {point.median}<br/>' +
@@ -146,7 +146,6 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				medianAttr.stroke = point.medianColor || options.medianColor || color;
 				medianAttr['stroke-width'] = pick(point.medianWidth, options.medianWidth, options.lineWidth);
 				
-				
 				// The stem
 				crispCorr = (stemAttr['stroke-width'] % 2) / 2;
 				crispX = left + halfWidth + crispCorr;				
@@ -161,8 +160,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					'M',
 					crispX, q1Plot,
 					'L',
-					crispX, lowPlot,
-					'z'
+					crispX, lowPlot
 				];
 				
 				// The box
@@ -221,8 +219,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					medianPlot,
 					'L',
 					right, 
-					medianPlot,
-					'z'
+					medianPlot
 				];
 				
 				// Create or update the graphics

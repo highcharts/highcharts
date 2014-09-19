@@ -1,8 +1,9 @@
 <?php
 ini_set('display_errors', 'on');
+session_start();
+$defaults = json_decode(file_get_contents('default-settings.json'));
 
-//define('EXPORT_SERVER', 'http://export.highcharts.com');
-define('EXPORT_SERVER', 'http://192.168.15.109:8080/export/');
+define('EXPORT_SERVER', isset($_SESSION['exportServer']) ? $_SESSION['exportServer'] : $defaults->exportServer);
 
 /**
  * Send a post request
@@ -42,25 +43,31 @@ function dissimilarityIndexCalculator($str_img,$str_match){
 	$int_img_match_height = imagesy($img_match);
 
 	//Resample to 16px each
-	$img_16source = imagecreatetruecolor(16,16);
-	$img_16match  = imagecreatetruecolor(16,16);
+	$compareSize = 16;
+	$img_16source = imagecreatetruecolor($compareSize, $compareSize);
+	$bg = imagecolorallocate($img_16source, 96, 96, 96);
+	imagefilledrectangle($img_16source, 0, 0, $compareSize, $compareSize, $bg);
+	$img_16match  = imagecreatetruecolor($compareSize, $compareSize);
+	$bg = imagecolorallocate($img_16match, 96, 96, 96);
+	imagefilledrectangle($img_16match, 0, 0, $compareSize, $compareSize, $bg);
+	
 
 	imagecopyresampled( $img_16source,
 		$img_source,
-		0, 0, 0, 0, 16, 16,
+		0, 0, 0, 0, $compareSize, $compareSize,
 		$int_img_source_width,
 		$int_img_source_width
 	);
 	imagecopyresampled( $img_16match,
 		$img_match,
-		0, 0, 0, 0, 16, 16,
+		0, 0, 0, 0, $compareSize, $compareSize,
 		$int_img_match_width,
 		$int_img_match_width
 	);
 
 	$difference = 0;
-	for($x=0;$x < 16;$x++){
-		for($y=0;$y < 16;$y++){
+	for($x=0;$x < $compareSize;$x++){
+		for($y=0;$y < $compareSize;$y++){
 
 			//Get the color of the resulting image
 			$arr_img_source_color[$x][$y] =
@@ -69,14 +76,17 @@ function dissimilarityIndexCalculator($str_img,$str_match){
 				imagecolorsforindex($img_16match,imagecolorat($img_16match,$x,$y));
 
 			//Calculate the index
-			//echo $arr_img_source_color[$x][$y]['red']  ." - ". $arr_img_match_color['red'] ."\n";
 			$difference  += abs($arr_img_source_color[$x][$y]['red']   - $arr_img_match_color[$x][$y]['red'])       +
 			abs($arr_img_source_color[$x][$y]['green'] - $arr_img_match_color[$x][$y]['green']) +
-			abs($arr_img_source_color[$x][$y]['blue']  - $arr_img_match_color[$x][$y]['blue']);
+			abs($arr_img_source_color[$x][$y]['blue']  - $arr_img_match_color[$x][$y]['blue']) +
+			abs($arr_img_source_color[$x][$y]['alpha']  - $arr_img_match_color[$x][$y]['alpha']);
+			
+			//error_log("[$x,$y], " . $arr_img_source_color[$x][$y]['red'] . ', ' . $arr_img_match_color[$x][$y]['red']);
 		}
 	}
 	
-	$difference = $difference/256;
+	$difference = $difference / 256;
+
 
 	//Return an array with the information
 	$arr_return = array( 
@@ -92,6 +102,12 @@ function dissimilarityIndexCalculator($str_img,$str_match){
 			//"colors"    => $arr_img_match_color
 		)
 	);
+
+	/*
+	imagepng($img_16source, "temp/left-{$compareSize}px.png");
+	imagepng($img_16match, "temp/right-{$compareSize}px.png");
+	// */
+
 	return $arr_return;
 	
 }
@@ -106,18 +122,24 @@ if (get_magic_quotes_gpc()) {
 }
 
 $leftImage = post(EXPORT_SERVER, array(
-	'width' => '300',
+	'width' => 500,
 	'type' => 'image/png',
 	'svg' => $leftSVG
 ));
 
 $rightImage = post(EXPORT_SERVER, array(
-	'width' => '300',
-	'type' => 'image/png',
+	'width' => 500,
+ 	'type' => 'image/png',
 	'svg' => $rightSVG
 ));
 
 $difference = dissimilarityIndexCalculator($leftImage, $rightImage);
+
+// Check if temp folder exists?
+if (!file_exists("temp")) {
+	mkdir("temp");
+}
+
 
 // Save on disk for viewing
 $filename = strftime('%Y-%m-%d-') . md5(rand());
@@ -128,17 +150,8 @@ $difference['matchImage']['url'] = "temp/right.png";
 
 // compare to reference
 $path = str_replace('--', '/', $_POST['path']);
-$tempFile = 'temp/compare.json';
-$compare = file_exists($tempFile) ? json_decode(file_get_contents($tempFile)) : new stdClass;
-$browser = get_browser(null, true);
-$key = $browser['parent'];
 
-if (isset($compare->$path->$key)) {  
-	$difference['reference'] = $compare->$path->$key;
-} elseif (isset($difference['dissimilarityIndex'])) {
-	$compare->$path->$key = $difference['dissimilarityIndex'];
-}
-file_put_contents($tempFile, json_encode($compare));
+require_once('compare-update-report.php');
 
 echo json_encode($difference);
 

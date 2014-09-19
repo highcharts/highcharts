@@ -44,7 +44,9 @@ var AreaSeries = extendClass(Series, {
 
 			// Sort the keys (#1651)
 			for (x in stack) {
-				keys.push(+x);
+				if (stack[x].total !== null) { // nulled after switching between grouping and not (#1651, #2336)
+					keys.push(+x);
+				}
 			}
 			keys.sort(function (a, b) {
 				return a - b;
@@ -344,26 +346,8 @@ var AreaSeries = extendClass(Series, {
 			}
 		});
 	},
-	
-	/**
-	 * Get the series' symbol in the legend
-	 * 
-	 * @param {Object} legend The legend object
-	 * @param {Object} item The series (this) or point
-	 */
-	drawLegendSymbol: function (legend, item) {
-		
-		item.legendSymbol = this.chart.renderer.rect(
-			0,
-			legend.baseline - 11,
-			legend.options.symbolWidth,
-			12,
-			2
-		).attr({
-			zIndex: 3
-		}).add(item.legendGroup);		
-		
-	}
+
+	drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
 
 seriesTypes.area = AreaSeries;

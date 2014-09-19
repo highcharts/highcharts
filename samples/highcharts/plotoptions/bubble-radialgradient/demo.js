@@ -1,4 +1,4 @@
-$(function() {
+$(function () {
     $('#container').highcharts({
 
         chart: {
@@ -38,13 +38,13 @@ $(function() {
                 [44, 83, 22]
             ],
             marker: {
-                 fillColor: {
-                     radialGradient: { cx: 0.4, cy: 0.3, r: 0.7 },
-                     stops: [
-                         [0, 'rgba(255,255,255,0.5)'],
-                         [1, 'rgba(69,114,167,0.5)']
-                     ]
-                 }
+                fillColor: {
+                    radialGradient: { cx: 0.4, cy: 0.3, r: 0.7 },
+                    stops: [
+                        [0, 'rgba(255,255,255,0.5)'],
+                        [1, 'rgba(69,114,167,0.5)']
+                    ]
+                }
             }
         }, {
             data: [
@@ -64,13 +64,13 @@ $(function() {
                 [45, 15, 98]
             ],
             marker: {
-                 fillColor: {
-                     radialGradient: { cx: 0.4, cy: 0.3, r: 0.7 },
-                     stops: [
-                         [0, 'rgba(255,255,255,0.5)'],
-                         [1, 'rgba(170,70,67,0.5)']
-                     ]
-                 }
+                fillColor: {
+                    radialGradient: { cx: 0.4, cy: 0.3, r: 0.7 },
+                    stops: [
+                        [0, 'rgba(255,255,255,0.5)'],
+                        [1, 'rgba(170,70,67,0.5)']
+                    ]
+                }
             }
         }]
 

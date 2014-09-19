@@ -4,12 +4,12 @@ $(function () {
         btnRemove = $('#remove'),
         btnAdd = $('#add');
 
-    btnAdd.click(function () {       
-        chart.series[0].addPoint(Math.floor(Math.random() * 10 + 1)); // Return random integer between 1 and 10. 
+    btnAdd.click(function () {
+        chart.series[0].addPoint(Math.floor(Math.random() * 10 + 1)); // Return random integer between 1 and 10.
     });
 
-    btnRemove.click(function () {     
-        if(chart.series[0].points[0]) {
+    btnRemove.click(function () {
+        if (chart.series[0].points[0]) {
             chart.series[0].points[0].remove();
         }
     });
@@ -25,11 +25,11 @@ $(function () {
         },
         series: [{
             type: 'pie',
-            name: 'Random data',  
-            data: []     
+            name: 'Random data',
+            data: []
         }]
     });
 
     chart = $('#container').highcharts();
 });
-    
+

@@ -1,24 +1,24 @@
-$(function() {
-	$('#container').highcharts('StockChart', {
+$(function () {
+    $('#container').highcharts('StockChart', {
 
-	    title: {
-	    	text: 'plotOptions: {ohlc: {lineWidth: 3}}'
-	    },
+        title: {
+            text: 'OHLC series with line width 3'
+        },
 
-	    plotOptions: {
-	    	ohlc: {
-	    		lineWidth: 3
-	    	}
-	    },
+        plotOptions: {
+            ohlc: {
+                lineWidth: 3
+            }
+        },
 
-	    rangeSelector: {
-	    	selected: 1
-	    },
+        rangeSelector: {
+            selected: 1
+        },
 
-	    series: [{
-	    	type: 'ohlc',
-	        name: 'USD to EUR',
-	        data: ohlcdata
-	    }]
-	});
+        series: [{
+            type: 'ohlc',
+            name: 'USD to EUR',
+            data: ohlcdata
+        }]
+    });
 });

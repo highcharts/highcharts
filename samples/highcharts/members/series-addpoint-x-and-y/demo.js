@@ -11,11 +11,13 @@ $(function () {
 
 
     // the button action
-    $('#button').click(function() {
+    var random = 0.5; // for first, automated test
+    $('#button').click(function () {
         var chart = $('#container').highcharts();
         chart.series[0].addPoint([
-            Math.random() * 12,
-            Math.random() * 200
+            (random || Math.random()) * 12,
+            (random || Math.random()) * 200
         ]);
+        random = null;
     });
 });

@@ -2,16 +2,16 @@
  * The object wrapper for plot lines and plot bands
  * @param {Object} options
  */
-function PlotLineOrBand(axis, options) {
+Highcharts.PlotLineOrBand = function (axis, options) {
 	this.axis = axis;
 
 	if (options) {
 		this.options = options;
 		this.id = options.id;
 	}
-}
+};
 
-PlotLineOrBand.prototype = {
+Highcharts.PlotLineOrBand.prototype = {
 	
 	/**
 	 * Render the plot line or plot band. If it is already existing,
@@ -42,7 +42,7 @@ PlotLineOrBand.prototype = {
 			color = options.color,
 			zIndex = options.zIndex,
 			events = options.events,
-			attribs,
+			attribs = {},
 			renderer = axis.chart.renderer;
 
 		// logarithmic conversion
@@ -69,9 +69,9 @@ PlotLineOrBand.prototype = {
 			to = mathMin(to, axis.max + halfPointRange);
 			
 			path = axis.getPlotBandPath(from, to, options);
-			attribs = {
-				fill: color
-			};
+			if (color) {
+				attribs.fill = color;
+			}
 			if (options.borderWidth) {
 				attribs.stroke = options.borderColor;
 				attribs['stroke-width'] = options.borderWidth;
@@ -95,6 +95,9 @@ PlotLineOrBand.prototype = {
 				svgElem.onGetPath = function () {
 					svgElem.show();
 				};
+				if (label) {
+					plotLine.label = label = label.destroy();
+				}
 			}
 		} else if (path && path.length) {
 			plotLine.svgElem = svgElem = renderer.path(path)
@@ -126,24 +129,28 @@ PlotLineOrBand.prototype = {
 
 			// add the SVG element
 			if (!label) {
+				attribs = {
+					align: optionsLabel.textAlign || optionsLabel.align,
+					rotation: optionsLabel.rotation
+				};
+				if (defined(zIndex)) {
+					attribs.zIndex = zIndex;
+				}
 				plotLine.label = label = renderer.text(
 						optionsLabel.text,
 						0,
 						0,
 						optionsLabel.useHTML
 					)
-					.attr({
-						align: optionsLabel.textAlign || optionsLabel.align,
-						rotation: optionsLabel.rotation,
-						zIndex: zIndex
-					})
+					.attr(attribs)
 					.css(optionsLabel.style)
 					.add();
 			}
 
 			// get the bounding box and align the label
-			xs = [path[1], path[4], pick(path[6], path[1])];
-			ys = [path[2], path[5], pick(path[7], path[2])];
+			// #3000 changed to better handle choice between plotband or plotline
+			xs = [path[1], path[4], (isBand ? path[6] : path[1])];
+			ys = [path[2], path[5], (isBand ? path[7] : path[2])];
 			x = arrayMin(xs);
 			y = arrayMin(ys);
 
@@ -174,3 +181,85 @@ PlotLineOrBand.prototype = {
 		destroyObjectProperties(this);
 	}
 };
+
+/**
+ * Object with members for extending the Axis prototype
+ */
+
+AxisPlotLineOrBandExtension = {
+
+	/**
+	 * Create the path for a plot band
+	 */ 
+	getPlotBandPath: function (from, to) {
+		var toPath = this.getPlotLinePath(to),
+			path = this.getPlotLinePath(from);
+
+		if (path && toPath) {
+			path.push(
+				toPath[4],
+				toPath[5],
+				toPath[1],
+				toPath[2]
+			);
+		} else { // outside the axis area
+			path = null;
+		}
+		
+		return path;
+	},
+
+	addPlotBand: function (options) {
+		return this.addPlotBandOrLine(options, 'plotBands');
+	},
+	
+	addPlotLine: function (options) {
+		return this.addPlotBandOrLine(options, 'plotLines');
+	},
+
+	/**
+	 * Add a plot band or plot line after render time
+	 *
+	 * @param options {Object} The plotBand or plotLine configuration object
+	 */
+	addPlotBandOrLine: function (options, coll) {
+		var obj = new Highcharts.PlotLineOrBand(this, options).render(),
+			userOptions = this.userOptions;
+
+		if (obj) { // #2189
+			// Add it to the user options for exporting and Axis.update
+			if (coll) {
+				userOptions[coll] = userOptions[coll] || [];
+				userOptions[coll].push(options); 
+			}
+			this.plotLinesAndBands.push(obj); 
+		}
+		
+		return obj;
+	},
+
+	/**
+	 * Remove a plot band or plot line from the chart by id
+	 * @param {Object} id
+	 */
+	removePlotBandOrLine: function (id) {
+		var plotLinesAndBands = this.plotLinesAndBands,
+			options = this.options,
+			userOptions = this.userOptions,
+			i = plotLinesAndBands.length;
+		while (i--) {
+			if (plotLinesAndBands[i].id === id) {
+				plotLinesAndBands[i].destroy();
+			}
+		}
+		each([options.plotLines || [], userOptions.plotLines || [], options.plotBands || [], userOptions.plotBands || []], function (arr) {
+			i = arr.length;
+			while (i--) {
+				if (arr[i].id === id) {
+					erase(arr, arr[i]);
+				}
+			}
+		});
+	}
+};
+

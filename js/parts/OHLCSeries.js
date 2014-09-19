@@ -6,7 +6,7 @@
 defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 	lineWidth: 1,
 	tooltip: {
-		pointFormat: '<span style="color:{series.color};font-weight:bold">{series.name}</span><br/>' +
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
 			'Open: {point.open}<br/>' +
 			'High: {point.high}<br/>' +
 			'Low: {point.low}<br/>' +
@@ -102,11 +102,11 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 			if (point.plotY !== UNDEFINED) {
 
 				graphic = point.graphic;
-				pointAttr = point.pointAttr[point.selected ? 'selected' : ''];
+				pointAttr = point.pointAttr[point.selected ? 'selected' : ''] || series.pointAttr[NORMAL_STATE];
 
 				// crisp vector coordinates
 				crispCorr = (pointAttr['stroke-width'] % 2) / 2;
-				crispX = mathRound(point.plotX) + crispCorr;
+				crispX = mathRound(point.plotX) - crispCorr;  // #2596
 				halfWidth = mathRound(point.shapeArgs.width / 2);
 
 				// the vertical stem

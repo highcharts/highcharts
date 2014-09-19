@@ -11,22 +11,28 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 	marker: null,
 	threshold: null,
 	tooltip: {
-		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.low}</b> - <b>{point.high}</b><br/>' 
+		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
 	},
 	trackByArea: true,
 	dataLabels: {
+		align: null,
 		verticalAlign: null,
 		xLow: 0,
 		xHigh: 0,
 		yLow: 0,
 		yHigh: 0	
+	},
+	states: {
+		hover: {
+			halo: false
+		}
 	}
 });
 
 /**
  * Add the series type
  */
-seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
+seriesTypes.arearange = extendClass(seriesTypes.area, {
 	type: 'arearange',
 	pointArrayMap: ['low', 'high'],
 	toYData: function (point) {
@@ -147,6 +153,7 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 			originalDataLabels = [],
 			seriesProto = Series.prototype,
 			dataLabelOptions = this.options.dataLabels,
+			align = dataLabelOptions.align,
 			point,
 			inverted = this.chart.inverted;
 			
@@ -159,6 +166,7 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 				
 				// Set preliminary values
 				point.y = point.high;
+				point._plotY = point.plotY;
 				point.plotY = point.plotHigh;
 				
 				// Store original data labels and set preliminary label objects to be picked up 
@@ -169,13 +177,18 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 				// Set the default offset
 				point.below = false;
 				if (inverted) {
-					dataLabelOptions.align = 'left';
+					if (!align) {
+						dataLabelOptions.align = 'left';
+					}
 					dataLabelOptions.x = dataLabelOptions.xHigh;								
 				} else {
 					dataLabelOptions.y = dataLabelOptions.yHigh;
 				}
 			}
-			seriesProto.drawDataLabels.apply(this, arguments); // #1209
+			
+			if (seriesProto.drawDataLabels) {
+				seriesProto.drawDataLabels.apply(this, arguments); // #1209
+			}
 			
 			// Step 2: reorganize and handle data labels for the lower values
 			i = length;
@@ -188,25 +201,33 @@ seriesTypes.arearange = Highcharts.extendClass(seriesTypes.area, {
 				
 				// Reset values
 				point.y = point.low;
-				point.plotY = point.plotLow;
+				point.plotY = point._plotY;
 				
 				// Set the default offset
 				point.below = true;
 				if (inverted) {
-					dataLabelOptions.align = 'right';
+					if (!align) {
+						dataLabelOptions.align = 'right';
+					}
 					dataLabelOptions.x = dataLabelOptions.xLow;
 				} else {
 					dataLabelOptions.y = dataLabelOptions.yLow;
 				}
 			}
-			seriesProto.drawDataLabels.apply(this, arguments);
+			if (seriesProto.drawDataLabels) {
+				seriesProto.drawDataLabels.apply(this, arguments);
+			}
 		}
+
+		dataLabelOptions.align = align;
 	
 	},
 	
-	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
+	alignDataLabel: function () {
+		seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
+	},
 	
-	getSymbol: seriesTypes.column.prototype.getSymbol,
+	getSymbol: noop,
 	
 	drawPoints: noop
 });

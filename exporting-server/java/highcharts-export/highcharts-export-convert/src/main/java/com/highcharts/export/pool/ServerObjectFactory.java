@@ -9,16 +9,18 @@ import org.apache.log4j.Logger;
 
 import com.highcharts.export.server.Server;
 import com.highcharts.export.server.ServerState;
+import com.highcharts.export.util.TempDir;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.Enumeration;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.ClassPathResource;
 
 public class ServerObjectFactory implements ObjectFactory<Server> {
 
@@ -29,7 +31,6 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 	private int readTimeout;
 	private int connectTimeout;
 	private int maxTimeout;
-	public static String tmpDir = System.getProperty("java.io.tmpdir");
 	private static HashMap<Integer, PortStatus> portUsage = new HashMap<Integer, PortStatus>();
 	protected static Logger logger = Logger.getLogger("pool");
 
@@ -42,8 +43,9 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 	public Server create() {
 		logger.debug("in makeObject, " + exec + ", " +  script + ", " +  host);
 		Integer port = this.getAvailablePort();
+        Server server = new Server(exec, script, host, port, connectTimeout, readTimeout, maxTimeout);
 		portUsage.put(port, PortStatus.BUSY);
-		return new Server(exec, script, host, port, connectTimeout, readTimeout, maxTimeout);
+		return server;
 	}
 
 	@Override
@@ -161,35 +163,30 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 
 	@PostConstruct
 	public void afterBeanInit() {
-		String jarLocation = getClass().getProtectionDomain().getCodeSource().getLocation().getPath();
-		try {
-			jarLocation = URLDecoder.decode(jarLocation, "utf-8");
-			// get filesystem depend path
-			jarLocation = new File(jarLocation).getCanonicalPath();
-		} catch (UnsupportedEncodingException ueex) {
-			logger.error(ueex);
-		} catch (IOException ioex) {
-			logger.error(ioex);
-		}
-
-		try {
-			JarFile jar = new JarFile(jarLocation);
-			for (Enumeration<JarEntry> entries = jar.entries(); entries.hasMoreElements();) {
-				JarEntry entry = entries.nextElement();
-				String name = entry.getName();
-				if (name.startsWith("phantomjs/")) {
-					File file = new File(tmpDir + "/" + name);
-					if (name.endsWith("/")) {
-						file.mkdir();
-					} else {
-						InputStream in = jar.getInputStream(entry);
-						IOUtils.copy(in, new FileOutputStream(file));
-					}
+		
+		URL u = getClass().getProtectionDomain().getCodeSource().getLocation();
+		URLClassLoader jarLoader = new URLClassLoader(new URL[]{u}, Thread.currentThread().getContextClassLoader());
+		String filenames[] = new String[] {"highcharts-convert.js","highcharts.js","highstock.js","jquery.1.9.1.min.js","map.js","highcharts-more.js", "data.js", "drilldown.js", "funnel.js", "heatmap.js", "highcharts-3d.js", "no-data-to-display.js", "maps.js", "solid-gauge.js"};
+		
+		for (String filename : filenames) {
+		
+			ClassPathResource resource = new ClassPathResource("phantomjs/" + filename, jarLoader);
+			if (resource.exists()) {
+				Path path = Paths.get(TempDir.getPhantomJsDir().toString(), filename);
+				File file;
+				try {
+					file = Files.createFile(path).toFile();
+					file.deleteOnExit();
+					InputStream in = resource.getInputStream();
+					IOUtils.copy(in, new FileOutputStream(file));
+				} catch (IOException ioex) {
+					logger.error("Error while setting up phantomjs environment: " + ioex.getMessage());
 				}
+			} else {
+				logger.debug("Copy javascript file to temp folder, resource doesn't exist: " + filename);
 			}
-		} catch (IOException ioex) {
-			logger.error(ioex);
 		}
+		
 	}
 
 

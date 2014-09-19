@@ -1,16 +1,9 @@
-
-#topMenu {
-	background: #4F4C46;
-	height: 40%;
-	width: 100%;
-	color: #6589B5;
+* {
+	font-family: Arial, Verdana, sans-serif;
 }
-
 #testOverview {
 	float: left;
-	background: #4F4C46;
 	width: 20%;
-	color: #6589B5;
 	height: 100%;
 }
 
@@ -34,12 +27,9 @@ ul {
 
 a, a:link, a:visited, a:hover, a:active {
 	text-decoration: none;
-	color: #6589B5;
 }
 
 .total {
-	background: #6589B5;
-	color: #4F4C46;
 	font-weight: bold;
 }
 
@@ -70,7 +60,6 @@ a, a:link, a:visited, a:hover, a:active {
 .run {
 	float: right;
 	height: 100%;
-	border-style: none;
 }
 
 .loaded {

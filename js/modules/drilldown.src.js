@@ -2,7 +2,6 @@
  * Highcharts Drilldown plugin
  * 
  * Author: Torstein Honsi
- * Last revision: 2013-02-18
  * License: MIT License
  *
  * Demo: http://jsfiddle.net/highcharts/Vf3yT/
@@ -17,12 +16,16 @@
 		defaultOptions = H.getOptions(),
 		each = H.each,
 		extend = H.extend,
+		format = H.format,
+		pick = H.pick,
 		wrap = H.wrap,
 		Chart = H.Chart,
 		seriesTypes = H.seriesTypes,
 		PieSeries = seriesTypes.pie,
 		ColumnSeries = seriesTypes.column,
-		fireEvent = HighchartsAdapter.fireEvent;
+		fireEvent = HighchartsAdapter.fireEvent,
+		inArray = HighchartsAdapter.inArray,
+		dupes = [];
 
 	// Utilities
 	function tweenColors(startColor, endColor, pos) {
@@ -42,13 +45,13 @@
 	defaultOptions.drilldown = {
 		activeAxisLabelStyle: {
 			cursor: 'pointer',
-			color: '#039',
+			color: '#0d233a',
 			fontWeight: 'bold',
 			textDecoration: 'underline'			
 		},
 		activeDataLabelStyle: {
 			cursor: 'pointer',
-			color: '#039',
+			color: '#0d233a',
 			fontWeight: 'bold',
 			textDecoration: 'underline'			
 		},
@@ -69,41 +72,61 @@
 	/**
 	 * A general fadeIn method
 	 */
-	H.SVGRenderer.prototype.Element.prototype.fadeIn = function () {
+	H.SVGRenderer.prototype.Element.prototype.fadeIn = function (animation) {
 		this
 		.attr({
 			opacity: 0.1,
-			visibility: 'visible'
+			visibility: 'inherit'
 		})
 		.animate({
-			opacity: 1
-		}, {
+			opacity: pick(this.newOpacity, 1) // newOpacity used in maps
+		}, animation || {
 			duration: 250
 		});
 	};
 
-	// Extend the Chart prototype
-	Chart.prototype.drilldownLevels = [];
-
 	Chart.prototype.addSeriesAsDrilldown = function (point, ddOptions) {
+		this.addSingleSeriesAsDrilldown(point, ddOptions);
+		this.applyDrilldown();
+	};
+	Chart.prototype.addSingleSeriesAsDrilldown = function (point, ddOptions) {
 		var oldSeries = point.series,
 			xAxis = oldSeries.xAxis,
 			yAxis = oldSeries.yAxis,
 			newSeries,
 			color = point.color || oldSeries.color,
 			pointIndex,
-			level;
+			levelSeries = [],
+			levelSeriesOptions = [],
+			level,
+			levelNumber;
+
+		levelNumber = oldSeries.levelNumber || 0;
 			
 		ddOptions = extend({
 			color: color
 		}, ddOptions);
-		pointIndex = HighchartsAdapter.inArray(this, oldSeries.points);
+		pointIndex = inArray(point, oldSeries.points);
+
+		// Record options for all current series
+		each(oldSeries.chart.series, function (series) {
+			if (series.xAxis === xAxis) {
+				levelSeries.push(series);
+				levelSeriesOptions.push(series.userOptions);
+				series.levelNumber = series.levelNumber || levelNumber; // #3182
+			}
+		});
+
+		// Add a record of properties for each drilldown level
 		level = {
+			levelNumber: levelNumber,
 			seriesOptions: oldSeries.userOptions,
+			levelSeriesOptions: levelSeriesOptions,
+			levelSeries: levelSeries,
 			shapeArgs: point.shapeArgs,
 			bBox: point.graphic.getBBox(),
 			color: color,
-			newSeries: ddOptions,
+			lowerSeriesOptions: ddOptions,
 			pointOptions: oldSeries.options.data[pointIndex],
 			pointIndex: pointIndex,
 			oldExtremes: {
@@ -114,9 +137,14 @@
 			}
 		};
 
+		// Generate and push it to a lookup array
+		if (!this.drilldownLevels) {
+			this.drilldownLevels = [];
+		}
 		this.drilldownLevels.push(level);
 
-		newSeries = this.addSeries(ddOptions, false);
+		newSeries = level.lowerSeries = this.addSeries(ddOptions, false);
+		newSeries.levelNumber = levelNumber + 1;
 		if (xAxis) {
 			xAxis.oldPos = xAxis.pos;
 			xAxis.userMin = xAxis.userMax = null;
@@ -128,39 +156,67 @@
 			newSeries.animate = newSeries.animateDrilldown || noop;
 			newSeries.options.animation = true;
 		}
+	};
+
+	Chart.prototype.applyDrilldown = function () {
+		var drilldownLevels = this.drilldownLevels, 
+			levelToRemove;
 		
-		oldSeries.remove(false);
+		if (drilldownLevels && drilldownLevels.length > 0) { // #3352, async loading
+			levelToRemove = drilldownLevels[drilldownLevels.length - 1].levelNumber;
+			each(this.drilldownLevels, function (level) {
+				if (level.levelNumber === levelToRemove) {
+					each(level.levelSeries, function (series) {
+						if (series.levelNumber === levelToRemove) { // Not removed, not added as part of a multi-series drilldown
+							series.remove(false);
+						}
+					});
+				}
+			});
+		}
 		
 		this.redraw();
 		this.showDrillUpButton();
 	};
 
 	Chart.prototype.getDrilldownBackText = function () {
-		var lastLevel = this.drilldownLevels[this.drilldownLevels.length - 1];
-
-		return this.options.lang.drillUpText.replace('{series.name}', lastLevel.seriesOptions.name);
+		var drilldownLevels = this.drilldownLevels,
+			lastLevel;
+		if (drilldownLevels && drilldownLevels.length > 0) { // #3352, async loading
+			lastLevel = drilldownLevels[drilldownLevels.length - 1];
+			lastLevel.series = lastLevel.seriesOptions;
+			return format(this.options.lang.drillUpText, lastLevel);
+		}
 
 	};
 
 	Chart.prototype.showDrillUpButton = function () {
 		var chart = this,
 			backText = this.getDrilldownBackText(),
-			buttonOptions = chart.options.drilldown.drillUpButton;
+			buttonOptions = chart.options.drilldown.drillUpButton,
+			attr,
+			states;
 			
 
 		if (!this.drillUpButton) {
+			attr = buttonOptions.theme;
+			states = attr && attr.states;
+						
 			this.drillUpButton = this.renderer.button(
 				backText,
 				null,
 				null,
 				function () {
 					chart.drillUp(); 
-				}
+				},
+				attr, 
+				states && states.hover,
+				states && states.select
 			)
-			.attr(extend({
+			.attr({
 				align: buttonOptions.position.align,
 				zIndex: 9
-			}, buttonOptions.theme))
+			})
 			.add()
 			.align(buttonOptions.position, false, buttonOptions.relativeTo || 'plotBox');
 		} else {
@@ -173,31 +229,75 @@
 
 	Chart.prototype.drillUp = function () {
 		var chart = this,
-			level = chart.drilldownLevels.pop(),
-			oldSeries = chart.series[0],
-			oldExtremes = level.oldExtremes,
-			newSeries = chart.addSeries(level.seriesOptions, false);
-		
-		fireEvent(chart, 'drillup', { seriesOptions: level.seriesOptions });
+			drilldownLevels = chart.drilldownLevels,
+			levelNumber = drilldownLevels[drilldownLevels.length - 1].levelNumber,
+			i = drilldownLevels.length,
+			chartSeries = chart.series,
+			seriesI,
+			level,
+			oldSeries,
+			newSeries,
+			oldExtremes,
+			addSeries = function (seriesOptions) {
+				var addedSeries;
+				each(chartSeries, function (series) {
+					if (series.userOptions === seriesOptions) {
+						addedSeries = series;
+					}
+				});
 
-		if (newSeries.type === oldSeries.type) {
-			newSeries.drilldownLevel = level;
-			newSeries.animate = newSeries.animateDrillupTo || noop;
-			newSeries.options.animation = true;
+				addedSeries = addedSeries || chart.addSeries(seriesOptions, false);
+				if (addedSeries.type === oldSeries.type && addedSeries.animateDrillupTo) {
+					addedSeries.animate = addedSeries.animateDrillupTo;
+				}
+				if (seriesOptions === level.seriesOptions) {
+					newSeries = addedSeries;
+				}
+			};
 
-			if (oldSeries.animateDrillupFrom) {
-				oldSeries.animateDrillupFrom(level);
+		while (i--) {
+
+			level = drilldownLevels[i];
+			if (level.levelNumber === levelNumber) {
+				drilldownLevels.pop();
+				
+				// Get the lower series by reference or id
+				oldSeries = level.lowerSeries;
+				if (!oldSeries.chart) {  // #2786
+					seriesI = chartSeries.length; // #2919
+					while (seriesI--) {
+						if (chartSeries[seriesI].options.id === level.lowerSeriesOptions.id) {
+							oldSeries = chartSeries[seriesI];
+							break;
+						}
+					}
+				}
+				oldSeries.xData = []; // Overcome problems with minRange (#2898)
+
+				each(level.levelSeriesOptions, addSeries);
+				
+				fireEvent(chart, 'drillup', { seriesOptions: level.seriesOptions });
+
+				if (newSeries.type === oldSeries.type) {
+					newSeries.drilldownLevel = level;
+					newSeries.options.animation = chart.options.drilldown.animation;
+
+					if (oldSeries.animateDrillupFrom && oldSeries.chart) { // #2919
+						oldSeries.animateDrillupFrom(level);
+					}
+				}
+				newSeries.levelNumber = levelNumber;
+				
+				oldSeries.remove(false);
+
+				// Reset the zoom level of the upper series
+				if (newSeries.xAxis) {
+					oldExtremes = level.oldExtremes;
+					newSeries.xAxis.setExtremes(oldExtremes.xMin, oldExtremes.xMax, false);
+					newSeries.yAxis.setExtremes(oldExtremes.yMin, oldExtremes.yMax, false);
+				}
 			}
 		}
-
-		oldSeries.remove(false);
-
-		// Reset the zoom level of the upper series
-		if (newSeries.xAxis) {
-			newSeries.xAxis.setExtremes(oldExtremes.xMin, oldExtremes.xMax, false);
-			newSeries.yAxis.setExtremes(oldExtremes.yMin, oldExtremes.yMax, false);
-		}
-
 
 		this.redraw();
 
@@ -209,54 +309,26 @@
 			})
 			.align();
 		}
-	};
 
-	PieSeries.prototype.animateDrilldown = function (init) {
-		var level = this.chart.drilldownLevels[this.chart.drilldownLevels.length - 1],
-			animationOptions = this.chart.options.drilldown.animation,
-			animateFrom = level.shapeArgs,
-			start = animateFrom.start,
-			angle = animateFrom.end - start,
-			startAngle = angle / this.points.length,
-			startColor = H.Color(level.color).rgba;
-
-		if (!init) {
-			each(this.points, function (point, i) {
-				var endColor = H.Color(point.color).rgba;
-
-				/*jslint unparam: true*/
-				point.graphic
-					.attr(H.merge(animateFrom, {
-						start: start + i * startAngle,
-						end: start + (i + 1) * startAngle
-					}))
-					.animate(point.shapeArgs, H.merge(animationOptions, {
-						step: function (val, fx) {
-							if (fx.prop === 'start') {
-								this.attr({
-									fill: tweenColors(startColor, endColor, fx.pos)
-								});
-							}
-						}
-					}));
-				/*jslint unparam: false*/
-			});
-		}
+		dupes.length = []; // #3315
 	};
 
 
+	ColumnSeries.prototype.supportsDrilldown = true;
+	
 	/**
 	 * When drilling up, keep the upper series invisible until the lower series has
 	 * moved into place
 	 */
-	PieSeries.prototype.animateDrillupTo = 
-			ColumnSeries.prototype.animateDrillupTo = function (init) {
+	ColumnSeries.prototype.animateDrillupTo = function (init) {
 		if (!init) {
 			var newSeries = this,
 				level = newSeries.drilldownLevel;
 
 			each(this.points, function (point) {
-				point.graphic.hide();
+				if (point.graphic) { // #3407
+					point.graphic.hide();
+				}
 				if (point.dataLabel) {
 					point.dataLabel.hide();
 				}
@@ -268,17 +340,22 @@
 
 			// Do dummy animation on first point to get to complete
 			setTimeout(function () {
-				each(newSeries.points, function (point, i) {  
-					// Fade in other points			  
-					var verb = i === level.pointIndex ? 'show' : 'fadeIn';
-					point.graphic[verb]();
-					if (point.dataLabel) {
-						point.dataLabel[verb]();
-					}
-					if (point.connector) {
-						point.connector[verb]();
-					}
-				});
+				if (newSeries.points) { // May be destroyed in the meantime, #3389
+					each(newSeries.points, function (point, i) {  
+						// Fade in other points			  
+						var verb = i === (level && level.pointIndex) ? 'show' : 'fadeIn',
+							inherit = verb === 'show' ? true : undefined;
+						if (point.graphic) { // #3407
+							point.graphic[verb](inherit);
+						}
+						if (point.dataLabel) {
+							point.dataLabel[verb](inherit);
+						}
+						if (point.connector) {
+							point.connector[verb](inherit);
+						}
+					});
+				}
 			}, Math.max(this.chart.options.drilldown.animation.duration - 50, 0));
 
 			// Reset
@@ -288,18 +365,32 @@
 	};
 	
 	ColumnSeries.prototype.animateDrilldown = function (init) {
-		var animateFrom = this.chart.drilldownLevels[this.chart.drilldownLevels.length - 1].shapeArgs,
-			animationOptions = this.chart.options.drilldown.animation;
+		var series = this,
+			drilldownLevels = this.chart.drilldownLevels,
+			animateFrom = this.chart.drilldownLevels[this.chart.drilldownLevels.length - 1].shapeArgs,
+			animationOptions = this.chart.options.drilldown.animation,
+			xAxis = this.xAxis;
 			
 		if (!init) {
+			each(drilldownLevels, function (level) {
+				if (series.userOptions === level.lowerSeriesOptions) {
+					animateFrom = level.shapeArgs;
+				}
+			});
 
-			animateFrom.x += (this.xAxis.oldPos - this.xAxis.pos);
+			animateFrom.x += (pick(xAxis.oldPos, xAxis.pos) - xAxis.pos);
 	
 			each(this.points, function (point) {
-				point.graphic
-					.attr(animateFrom)
-					.animate(point.shapeArgs, animationOptions);
+				if (point.graphic) {
+					point.graphic
+						.attr(animateFrom)
+						.animate(point.shapeArgs, animationOptions);
+				}
+				if (point.dataLabel) {
+					point.dataLabel.fadeIn(animationOptions);
+				}
 			});
+			this.animate = null;
 		}
 		
 	};
@@ -308,50 +399,108 @@
 	 * When drilling up, pull out the individual point graphics from the lower series
 	 * and animate them into the origin point in the upper series.
 	 */
-	ColumnSeries.prototype.animateDrillupFrom = 
-		PieSeries.prototype.animateDrillupFrom =
-	function (level) {
+	ColumnSeries.prototype.animateDrillupFrom = function (level) {
 		var animationOptions = this.chart.options.drilldown.animation,
-			group = this.group;
+			group = this.group,
+			series = this;
+
+		// Cancel mouse events on the series group (#2787)
+		each(series.trackerGroups, function (key) {
+			if (series[key]) { // we don't always have dataLabelsGroup
+				series[key].on('mouseover');
+			}
+		});
+			
 
 		delete this.group;
 		each(this.points, function (point) {
 			var graphic = point.graphic,
-				startColor = H.Color(point.color).rgba;
-
-			delete point.graphic;
-
-			/*jslint unparam: true*/
-			graphic.animate(level.shapeArgs, H.merge(animationOptions, {
-
-				step: function (val, fx) {
-					if (fx.prop === 'start') {
-						this.attr({
-							fill: tweenColors(startColor, H.Color(level.color).rgba, fx.pos)
-						});
-					}
-				},
-				complete: function () {
+				startColor = H.Color(point.color).rgba,
+				endColor = H.Color(level.color).rgba,
+				complete = function () {
 					graphic.destroy();
 					if (group) {
 						group = group.destroy();
 					}
+				};
+
+			if (graphic) {
+			
+				delete point.graphic;
+
+				if (animationOptions) {
+					/*jslint unparam: true*/
+					graphic.animate(level.shapeArgs, H.merge(animationOptions, {
+						step: function (val, fx) {
+							if (fx.prop === 'start' && startColor.length === 4 && endColor.length === 4) {
+								this.attr({
+									fill: tweenColors(startColor, endColor, fx.pos)
+								});
+							}
+						},
+						complete: complete
+					}));
+					/*jslint unparam: false*/
+				} else {
+					graphic.attr(level.shapeArgs);
+					complete();
 				}
-			}));
-			/*jslint unparam: false*/
+			}
 		});
 	};
+
+	if (PieSeries) {
+		extend(PieSeries.prototype, {
+			supportsDrilldown: true,
+			animateDrillupTo: ColumnSeries.prototype.animateDrillupTo,
+			animateDrillupFrom: ColumnSeries.prototype.animateDrillupFrom,
+
+			animateDrilldown: function (init) {
+				var level = this.chart.drilldownLevels[this.chart.drilldownLevels.length - 1],
+					animationOptions = this.chart.options.drilldown.animation,
+					animateFrom = level.shapeArgs,
+					start = animateFrom.start,
+					angle = animateFrom.end - start,
+					startAngle = angle / this.points.length,
+					startColor = H.Color(level.color).rgba;
+
+				if (!init) {
+					each(this.points, function (point, i) {
+						var endColor = H.Color(point.color).rgba;
+
+						/*jslint unparam: true*/
+						point.graphic
+							.attr(H.merge(animateFrom, {
+								start: start + i * startAngle,
+								end: start + (i + 1) * startAngle
+							}))[animationOptions ? 'animate' : 'attr'](point.shapeArgs, H.merge(animationOptions, {
+								step: function (val, fx) {
+									if (fx.prop === 'start' && startColor.length === 4 && endColor.length === 4) {
+										this.attr({
+											fill: tweenColors(startColor, endColor, fx.pos)
+										});
+									}
+								}
+							}));
+						/*jslint unparam: false*/
+					});
+					this.animate = null;
+				}
+			}
+		});
+	}
 	
-	H.Point.prototype.doDrilldown = function () {
+	H.Point.prototype.doDrilldown = function (_holdRedraw) {
 		var series = this.series,
 			chart = series.chart,
 			drilldown = chart.options.drilldown,
-			i = drilldown.series.length,
+			i = (drilldown.series || []).length,
 			seriesOptions;
 		
 		while (i-- && !seriesOptions) {
-			if (drilldown.series[i].id === this.drilldown) {
+			if (drilldown.series[i].id === this.drilldown && inArray(this.drilldown, dupes) === -1) {
 				seriesOptions = drilldown.series[i];
+				dupes.push(this.drilldown);
 			}
 		}
 
@@ -363,7 +512,11 @@
 		});
 		
 		if (seriesOptions) {
-			chart.addSeriesAsDrilldown(this, seriesOptions);
+			if (_holdRedraw) {
+				chart.addSingleSeriesAsDrilldown(this, seriesOptions);
+			} else {
+				chart.addSeriesAsDrilldown(this, seriesOptions);
+			}
 		}
 
 	};
@@ -376,28 +529,44 @@
 		
 		if (point.drilldown) {
 			
-			// Add the click event to the point label
+			// Add the click event to the point 
 			H.addEvent(point, 'click', function () {
 				point.doDrilldown();
 			});
-			
+			/*wrap(point, 'importEvents', function (proceed) { // wrapping importEvents makes point.click event work
+				if (!this.hasImportedEvents) {
+					proceed.call(this);
+					H.addEvent(this, 'click', function () {
+						this.doDrilldown();
+					});
+				}
+			});*/
+
 			// Make axis labels clickable
 			if (tickLabel) {
-				if (!tickLabel._basicStyle) {
-					tickLabel._basicStyle = tickLabel.element.getAttribute('style');
+				if (!tickLabel.basicStyles) {
+					tickLabel.basicStyles = H.merge(tickLabel.styles);
 				}
 				tickLabel
 					.addClass('highcharts-drilldown-axis-label')
 					.css(chart.options.drilldown.activeAxisLabelStyle)
 					.on('click', function () {
-						if (point.doDrilldown) {
-							point.doDrilldown();
-						}
+						each(tickLabel.ddPoints, function (point) {
+							if (point.doDrilldown) {
+								point.doDrilldown(true);
+							}
+						});
+						chart.applyDrilldown();
 					});
+				if (!tickLabel.ddPoints) {
+					tickLabel.ddPoints = [];
+				}
+				tickLabel.ddPoints.push(point);
 					
 			}
-		} else if (tickLabel && tickLabel._basicStyle) {
-			tickLabel.element.setAttribute('style', tickLabel._basicStyle);
+		} else if (tickLabel && tickLabel.basicStyles) {
+			tickLabel.styles = {}; // reset for full overwrite of styles
+			tickLabel.css(tickLabel.basicStyles);
 		}
 		
 		return point;
@@ -423,8 +592,6 @@
 	});
 
 	// Mark the trackers with a pointer 
-	ColumnSeries.prototype.supportsDrilldown = true;
-	PieSeries.prototype.supportsDrilldown = true;
 	var type, 
 		drawTrackerWrapper = function (proceed) {
 			proceed.call(this);

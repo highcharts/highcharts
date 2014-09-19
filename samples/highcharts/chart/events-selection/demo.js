@@ -1,21 +1,41 @@
 $(function () {
-    var $report = $('#report');
 
     // create the chart
     $('#container').highcharts({
         chart: {
             events: {
-                selection: function(event) {
+                selection: function (event) {
+                    var text,
+                        label;
                     if (event.xAxis) {
-                        $report.html('min: '+ event.xAxis[0].min +', max: '+ event.xAxis[0].max);
+                        text = 'min: ' + Highcharts.numberFormat(event.xAxis[0].min, 2) + ', max: ' + Highcharts.numberFormat(event.xAxis[0].max, 2);
                     } else {
-                        $report.html ('Selection reset');
+                        text = 'Selection reset';
                     }
+                    label = this.renderer.label(text, 100, 120)
+                        .attr({
+                            fill: Highcharts.getOptions().colors[0],
+                            padding: 10,
+                            r: 5,
+                            zIndex: 8
+                        })
+                        .css({
+                            color: '#FFFFFF'
+                        })
+                        .add();
+
+                    setTimeout(function () {
+                        label.fadeOut();
+                    }, 1000);
                 }
             },
             zoomType: 'x'
         },
-        xAxis: {
+        title: {
+            text: 'Chart selection demo'
+        },
+        subtitle: {
+            text: 'Click and drag the plot area to draw a selection'
         },
 
         series: [{

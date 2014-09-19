@@ -1,6 +1,6 @@
 $(function () {
     $('#container').highcharts({
-        
+
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
@@ -10,19 +10,20 @@ $(function () {
                 text: 'Temperature'
             },
             lineWidth: 2,
-            lineColor: '#F33'
+            lineColor: '#F33',
+            id: 'temperature-axis'
         },
-        
+
         series: [{
             name: 'Temperature',
             data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6],
-            color: '#F33'   
+            color: '#F33'
         }]
     });
-    
+
     // the button handlera
     var chart = $('#container').highcharts();
-    $('#add').click(function() {
+    $('#add').click(function () {
         chart.addAxis({ // Secondary yAxis
             id: 'rainfall-axis',
             title: {
@@ -42,8 +43,8 @@ $(function () {
         $(this).attr('disabled', true);
         $('#remove').attr('disabled', false);
     });
-    $('#remove').click(function() {
-        chart.get('rainfall-axis').remove();
+    $('#remove').click(function () {
+        chart.get('temperature-axis').remove();
 
         $(this).attr('disabled', true);
         $('#add').attr('disabled', false);

@@ -1,7 +1,5 @@
 $(function () {
     $('#container').highcharts({
-        chart: {
-        },
 
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -17,8 +15,8 @@ $(function () {
     var hasPlotLine = false,
         $button = $('#button'),
         chart = $('#container').highcharts();
-        
-    $button.click(function() {
+
+    $button.click(function () {
         if (!hasPlotLine) {
             chart.xAxis[0].addPlotLine({
                 value: 5.5,

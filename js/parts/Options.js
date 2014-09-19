@@ -13,16 +13,15 @@ defaultLabelOptions = {
 		return this.value;
 	},*/
 	style: {
-		color: '#666',
+		color: '#606060',
 		cursor: 'default',
-		fontSize: '11px',
-		lineHeight: '14px'
+		fontSize: '11px'
 	}
 };
 
 defaultOptions = {
-	colors: ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970',
-		'#f28f43', '#77a1e5', '#c42525', '#a6c96a'],
+	colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', 
+		    '#8085e9', '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'],
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
 		loading: 'Loading...',
@@ -38,6 +37,7 @@ defaultOptions = {
 	},
 	global: {
 		useUTC: true,
+		//timezoneOffset: 0,
 		canvasToolsURL: 'http://code.highcharts.com@product.cdnpath@/@product.version@/modules/canvas-tools.js',
 		VMLRadialGradientURL: 'http://code.highcharts.com@product.cdnpath@/@product.version@/gfx/vml-radial-gradient.png'
 	},
@@ -54,19 +54,20 @@ defaultOptions = {
 		//marginLeft: null,
 		borderColor: '#4572A7',
 		//borderWidth: 0,
-		borderRadius: 5,
+		borderRadius: 0,
 		defaultSeriesType: 'line',
 		ignoreHiddenSeries: true,
 		//inverted: false,
 		//shadow: false,
-		spacingTop: 10,
-		spacingRight: 10,
-		spacingBottom: 15,
-		spacingLeft: 10,
-		style: {
-			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
-			fontSize: '12px'
-		},
+		spacing: [10, 10, 15, 10],
+		//spacingTop: 10,
+		//spacingRight: 10,
+		//spacingBottom: 15,
+		//spacingLeft: 10,
+		//style: {
+		//	fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif', // default font
+		//	fontSize: '12px'
+		//},
 		backgroundColor: '#FFFFFF',
 		//plotBackgroundColor: null,
 		plotBorderColor: '#C0C0C0',
@@ -95,8 +96,8 @@ defaultOptions = {
 		// verticalAlign: 'top',
 		// y: null,
 		style: {
-			color: '#274b6d',//#3E576F',
-			fontSize: '16px'
+			color: '#333333',
+			fontSize: '18px'
 		}
 
 	},
@@ -108,7 +109,7 @@ defaultOptions = {
 		// verticalAlign: 'top',
 		// y: null,
 		style: {
-			color: '#4d759e'
+			color: '#555555'
 		}
 	},
 
@@ -126,11 +127,12 @@ defaultOptions = {
 			//enableMouseTracking: true,
 			events: {},
 			//legendIndex: 0,
+			//linecap: 'round',
 			lineWidth: 2,
 			//shadow: false,
 			// stacking: null,
 			marker: {
-				enabled: true,
+				//enabled: true,
 				//symbol: null,
 				lineWidth: 0,
 				radius: 4,
@@ -138,8 +140,9 @@ defaultOptions = {
 				//fillColor: null,
 				states: { // states for a single point
 					hover: {
-						enabled: true
-						//radius: base + 2
+						enabled: true,
+						lineWidthPlus: 1,
+						radiusPlus: 2
 					},
 					select: {
 						fillColor: '#FFFFFF',
@@ -153,9 +156,10 @@ defaultOptions = {
 			},
 			dataLabels: merge(defaultLabelOptions, {
 				align: 'center',
+				//defer: true,
 				enabled: false,
 				formatter: function () {
-					return this.y === null ? '' : numberFormat(this.y, -1);
+					return this.y === null ? '' : Highcharts.numberFormat(this.y, -1);
 				},
 				verticalAlign: 'bottom', // above singular point
 				y: 0
@@ -170,29 +174,33 @@ defaultOptions = {
 			pointRange: 0,
 			//pointStart: 0,
 			//pointInterval: 1,
-			showInLegend: true,
+			//showInLegend: null, // auto: true for standalone series, false for linked series
 			states: { // states for the entire series
 				hover: {
 					//enabled: false,
-					//lineWidth: base + 1,
+					lineWidthPlus: 1,
 					marker: {
 						// lineWidth: base + 1,
 						// radius: base + 1
+					},
+					halo: {
+						size: 10,
+						opacity: 0.25
 					}
 				},
 				select: {
 					marker: {}
 				}
 			},
-			stickyTracking: true
+			stickyTracking: true,
 			//tooltip: {
-				//pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b>'
+				//pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b>'
 				//valueDecimals: null,
 				//xDateFormat: '%A, %b %e, %Y',
 				//valuePrefix: '',
 				//ySuffix: ''				
 			//}
-			// turboThreshold: 1000
+			turboThreshold: 1000
 			// zIndex: null
 		}
 	},
@@ -212,9 +220,9 @@ defaultOptions = {
 		labelFormatter: function () {
 			return this.name;
 		},
-		borderWidth: 1,
+		//borderWidth: 0,
 		borderColor: '#909090',
-		borderRadius: 5,
+		borderRadius: 0,
 		navigation: {
 			// animation: true,
 			activeColor: '#274b6d',
@@ -222,17 +230,17 @@ defaultOptions = {
 			inactiveColor: '#CCC'
 			// style: {} // text styles
 		},
-		// margin: 10,
+		// margin: 20,
 		// reversed: false,
 		shadow: false,
 		// backgroundColor: null,
 		/*style: {
 			padding: '5px'
 		},*/
-		itemStyle: {
-			cursor: 'pointer',
-			color: '#274b6d',
-			fontSize: '12px'
+		itemStyle: {			
+			color: '#333333',
+			fontSize: '12px',
+			fontWeight: 'bold'
 		},
 		itemHoverStyle: {
 			//cursor: 'pointer', removed as of #601
@@ -247,7 +255,8 @@ defaultOptions = {
 			height: '13px'
 		},
 		// itemWidth: undefined,
-		symbolWidth: 16,
+		// symbolRadius: 0,
+		// symbolWidth: 16,
 		symbolPadding: 5,
 		verticalAlign: 'bottom',
 		// width: undefined,
@@ -266,7 +275,7 @@ defaultOptions = {
 		labelStyle: {
 			fontWeight: 'bold',
 			position: RELATIVE,
-			top: '1em'
+			top: '45%'
 		},
 		// showDuration: 0,
 		style: {
@@ -281,7 +290,7 @@ defaultOptions = {
 		enabled: true,
 		animation: hasSVG,
 		//crosshairs: null,
-		backgroundColor: 'rgba(255, 255, 255, .85)',
+		backgroundColor: 'rgba(249, 249, 249, .85)',
 		borderWidth: 1,
 		borderRadius: 3,
 		dateTimeLabelFormats: { 
@@ -294,10 +303,12 @@ defaultOptions = {
 			month: '%B %Y',
 			year: '%Y'
 		},
+		footerFormat: '',
 		//formatter: defaultFormatter,
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
-		pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 		shadow: true,
+		//shape: 'callout',
 		//shared: false,
 		snap: isTouchDevice ? 25 : 10,
 		style: {
@@ -352,6 +363,9 @@ function setTimeMethods() {
 		GET = useUTC ? 'getUTC' : 'get',
 		SET = useUTC ? 'setUTC' : 'set';
 
+
+	Date = defaultOptions.global.Date || window.Date;
+	timezoneOffset = ((useUTC && defaultOptions.global.timezoneOffset) || 0) * 60000;
 	makeTime = useUTC ? Date.UTC : function (year, month, date, hours, minutes, seconds) {
 		return new Date(
 			year,
@@ -382,13 +396,8 @@ function setTimeMethods() {
  */
 function setOptions(options) {
 	
-	// Pull out axis options and apply them to the respective default axis options 
-	/*defaultXAxisOptions = merge(defaultXAxisOptions, options.xAxis);
-	defaultYAxisOptions = merge(defaultYAxisOptions, options.yAxis);
-	options.xAxis = options.yAxis = UNDEFINED;*/
-	
-	// Merge in the default options
-	defaultOptions = merge(defaultOptions, options);
+	// Copy in the default options
+	defaultOptions = merge(true, defaultOptions, options);
 	
 	// Apply UTC
 	setTimeMethods();
@@ -397,8 +406,8 @@ function setOptions(options) {
 }
 
 /**
- * Get the updated default options. Merely exposing defaultOptions for outside modules
- * isn't enough because the setOptions method creates a new object.
+ * Get the updated default options. Until 3.0.7, merely exposing defaultOptions for outside modules
+ * wasn't enough because the setOptions method created a new object.
  */
 function getOptions() {
 	return defaultOptions;

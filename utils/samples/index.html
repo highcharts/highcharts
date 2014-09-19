@@ -1,12 +1,29 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 	<head>
-		<title>Highcharts examples quick view</title>
+		<title>Sample viewer - Highcharts</title>
+		<script>
+		function keyDown(e) {
+			if (e.keyCode === 39) {
+				window.frames['main'].next();
+			}
+			if (e.keyCode === 37) {
+				window.frames['main'].previous();
+			}
+			if (e.ctrlKey && e.keyCode === 13) {
+				window.frames['main'].location.reload();
+				return false;
+			}
+		}
+		window.onload = function () {
+			window.onkeydown = keyDown;
+		}
+		</script>
 	</head>	
 
 	<frameset cols="400, *">
 		<frame src="contents.php" name="contents">
-		<frame serc="view.php" name="main" id="main">
+		<frame src="view.php" name="main" id="main">
 	</frameset>
 
 </html>

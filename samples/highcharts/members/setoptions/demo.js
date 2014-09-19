@@ -9,21 +9,20 @@ $(function () {
                     [0, 'rgb(255, 255, 255)'],
                     [1, 'rgb(240, 240, 255)']
                 ]
-            }
-    ,
+            },
             borderWidth: 2,
             plotBackgroundColor: 'rgba(255, 255, 255, .9)',
             plotShadow: true,
             plotBorderWidth: 1
         },
         title: {
-            style: { 
+            style: {
                 color: '#000',
                 font: 'bold 16px "Trebuchet MS", Verdana, sans-serif'
             }
         },
         subtitle: {
-            style: { 
+            style: {
                 color: '#666666',
                 font: 'bold 12px "Trebuchet MS", Verdana, sans-serif'
             }
@@ -44,8 +43,8 @@ $(function () {
                     fontWeight: 'bold',
                     fontSize: '12px',
                     fontFamily: 'Trebuchet MS, Verdana, sans-serif'
-    
-                }                
+
+                }
             }
         },
         yAxis: {
@@ -67,14 +66,14 @@ $(function () {
                     fontWeight: 'bold',
                     fontSize: '12px',
                     fontFamily: 'Trebuchet MS, Verdana, sans-serif'
-                }                
+                }
             }
         },
         legend: {
-            itemStyle: {            
+            itemStyle: {
                 font: '9pt Trebuchet MS, Verdana, sans-serif',
                 color: 'black'
-    
+
             },
             itemHoverStyle: {
                 color: '#039'
@@ -94,16 +93,14 @@ $(function () {
             }
         }
     });
-    
+
     // create the chart
     $('#container').highcharts({
-        chart: {
-        },
-        
+
         xAxis: {
             type: 'datetime'
         },
-        
+
         series: [{
             data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
             pointStart: Date.UTC(2010, 0, 1),

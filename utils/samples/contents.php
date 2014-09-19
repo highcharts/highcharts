@@ -7,12 +7,16 @@
 		<script type='text/javascript' src='//code.jquery.com/jquery-1.9.1.js'></script>
   		<script type="text/javascript" src="//code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
   		<link rel="stylesheet" type="text/css" href="//code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css"/>
+  		<link rel="stylesheet" type="text/css" href="style.css"/>
 
 		<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 		
 		<script>
 			var diffThreshold = 0;
 			$(function () {
+
+				$(window).bind('keydown', parent.keyDown);
+
 				$("#batch-compare").click(function() {
 					var currentLi = document.currentLi || $('#li1')[0];
 					if (currentLi) {
@@ -106,13 +110,11 @@
 			}
 			
 			li.identical, li.identical a {
-				background: green;
-				color: white;
-				font-weight: bold;
+				background: #a4edba;
 			}
 			
 			li.different, li.different a {
-				background: red;
+				background: #f15c80;
 				color: white;
 				font-weight: bold;
 			}
@@ -133,11 +135,9 @@
 			#top-nav {
 				color: white; 
 				font-family: Arial, sans-serif; 
-				padding: 0.5em; 
+				padding: 10px; 
 				height: 6.5em;
-				background: #57544A;
-				background: -webkit-linear-gradient(top, #57544A, #37342A); 
-				background: -moz-linear-gradient(top, #57544A, #37342A);
+				background: #34343e;
 				box-shadow: 0px 0px 8px #888;
 				position: fixed;
 				top: 0;
@@ -150,26 +150,28 @@
 			#batch-stop {
 				display: none;
 			}
+			.comment {
+				position: absolute;
+				right: 3em;
+			}
+			.comment-title {
+				display: none;
+				position: absolute;
+				width: 200px;
+				background: white;
+				color: black;
+				padding: 20px;
+				right: -3em;
+				z-index: 2;
+				border: 1px solid silver;
+			}
+			.comment:hover .comment-title {
+				display: block;
+			}
 			.dissimilarity-index {
 				float: right;
 			}
-			.buttons a, a.button {
-				border: 1px solid silver;
-				border-radius: 5px;
-				background: #628e01;
-				padding: 5px;
-				color: white;
-				text-shadow: 0 -1px 1px #000000;
-				text-decoration: none;
-				font-size: 11pt;
-				white-space: nowrap;
-				line-height: 30px;
-				cursor: pointer;
-				margin: 0 3px;
-			}
-			.buttons a:hover, a.button:hover {
-				background: #729e11;
-			}
+
 		</style>
 		
 		
@@ -191,6 +193,10 @@
 			<i class="icon-refresh"></i>
 			Reload
 		</a>
+		<a class="button" id="settings" title="Settings" href="settings.php" target="main">
+			<i class="icon-cog"></i>
+			Settings
+		</a>
 
 		<div style="margin-top: 1em">
 			<div style="width: 45%; float:left">Diff limit: <span id="slider-value">0</span></div>
@@ -201,11 +207,11 @@
 
 	<div id="main-nav">
 	<?php
-	$products = array('highcharts', 'stock');
+	$products = array('highcharts', 'maps', 'stock', 'issues');
 	$samplesDir = dirname(__FILE__). '/../../samples/';
 	$browser = get_browser(null, true);
-	$browserKey = $browser['parent'];
-	$compare = json_decode(file_get_contents('temp/compare.json'));
+	$browserKey = @$browser['parent'];
+	$compare = @json_decode(file_get_contents('temp/compare.json'));
 
 	$i = 1;
 	foreach ($products as $dir) {
@@ -214,7 +220,7 @@
 			echo "<h2>$dir</h2>";
 			
 			while (false !== ($file = readdir($handle))) {
-				if (preg_match('/^[a-z\-]+$/', $file)) {
+				if (is_dir("$samplesDir/$dir/$file") && substr($file, 0, 1) != '.') {
 					echo "
 					<h4>$dir/$file</h4>
 					<ul>
@@ -227,7 +233,7 @@
 							$batchClass = 'batch';
 							$compareClass = '';
 							if (preg_match('/^[a-z0-9\-,]+$/', $innerFile)) {
-								$yaml = file_get_contents(($samplesDir ."/$dir/$file/$innerFile/demo.details"));
+								$yaml = @file_get_contents(($samplesDir ."/$dir/$file/$innerFile/demo.details"));
 								$path = "$dir/$file/$innerFile";
 								$suffix = '';
 								$dissIndex = '';
@@ -243,15 +249,36 @@
 										$diff = round($diff, 2);
 										$compareClass = 'different';
 										$dissIndex = "
-											<a class='dissimilarity-index' href='view.php?path=$path&amp;i=$i' target='main' data-diff='$diff'>$diff</a>
+											<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main' data-diff='$diff'>$diff</a>
 										";
 									} else {
 										$compareClass = 'identical';
 									}
+								} else {
+									$dissIndex = "
+										<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main'><i class='icon-columns'></i></a>
+									";
 								}
+
+								// Comments
+								if (isset($compare->$path->comment)) {
+									$comment = $compare->$path->comment;
+									$comment = "
+										<i class='icon-$comment->symbol' title='$comment->title'></i>
+										<span class='comment-title'>$comment->title</span>
+									";
+								} else {
+									$comment = "
+										<i class='icon-pencil' title='Add comment'></i>
+									";
+								}
+
 								echo "
 								<li id='li$i' class='$compareClass'>$i. $suffix 
-									<a target='main' id='i$i' class='$batchClass' href='view.php?path=$path&amp;i=$i'>$innerFile</a> 
+									<a target='main' id='i$i' class='$batchClass' href='view.php?path=$path&amp;i=$i'>$innerFile</a>
+									<a class='comment' href='compare-comment.php?path=$path&amp;i=$i' target='main'>
+										$comment
+									</a>
 									$dissIndex
 								</li>
 								";

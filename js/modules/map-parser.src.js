@@ -91,6 +91,14 @@ H.extend(H.Data.prototype, {
 					isRelative = true;
 					path[i] = 'L';
 					path.splice(i + 1, 0, 0);
+				} else if (operator === 's') {
+					isRelative = true;
+					path[i] = 'L';
+					path.splice(i + 1, 2);
+				} else if (operator === 'S') {
+					isRelative = false;
+					path[i] = 'L';
+					path.splice(i + 1, 2);
 				} else if (operator === 'H' || operator === 'h') {
 					isRelative = false;
 					path[i] = 'L';
@@ -118,8 +126,8 @@ H.extend(H.Data.prototype, {
 					}
 
 					// Add it
-					path[i - 1] = Math.round(path[i - 1] * 100) / 100; // x
-					path[i] = Math.round(path[i] * 100) / 100; // y
+					//path[i - 1] = Math.round(path[i - 1] * 100) / 100; // x
+					//path[i] = Math.round(path[i] * 100) / 100; // y
 				}	
 				
 				
@@ -174,35 +182,50 @@ H.extend(H.Data.prototype, {
 			origSize,
 			transA;
 
-		
-		// Borrow the map series type's getBox method
-		mapProto.getBox.call(arr, arr);
-
-		origSize = Math.max(arr.maxX - arr.minX, arr.maxY - arr.minY);
-		scale = scale || 999;
-		transA = scale / origSize;
-
 		fakeSeries = {
 			xAxis: {
-				min: arr.minX,
-				len: scale,//arr.maxX - arr.minX,
+				//min: arr.minX,
+				//len: scale,
 				translate: Highcharts.Axis.prototype.translate,
 				options: {},
 				minPixelPadding: 0,
-				transA: transA
+				//transA: transA
 			}, 
 			yAxis: {
-				min: (arr.minY + scale) / transA,
-				len: scale,//arr.maxY - arr.minY,
+				//min: (arr.minY + scale) / transA,
+				//len: scale,
 				translate: Highcharts.Axis.prototype.translate,
 				options: {},
 				minPixelPadding: 0,
-				transA: -transA
+				//transA: transA
 			}
 		};
+		
+		// Borrow the map series type's getBox method
+		mapProto.getBox.call(fakeSeries, arr);
+
+		origSize = Math.max(fakeSeries.maxX - fakeSeries.minX, fakeSeries.maxY - fakeSeries.minY);
+		scale = scale || 1000;
+		transA = scale / origSize;
+
+		fakeSeries.xAxis.transA = fakeSeries.yAxis.transA = transA;
+		fakeSeries.xAxis.len = fakeSeries.yAxis.len = scale;
+		fakeSeries.xAxis.min = fakeSeries.minX;
+		fakeSeries.yAxis.min = (fakeSeries.minY + scale) / transA;
 
 		each(arr, function (point) {
-			point.path = mapProto.translatePath.call(fakeSeries, point.path);
+
+			var i,
+				path;
+			point.path = path = mapProto.translatePath.call(fakeSeries, point.path, true);
+			i = path.length;
+			while (i--) {
+				if (typeof path[i] === 'number') {
+					path[i] = Math.round(path[i]);
+				}
+			}
+			delete point._foundBox;
+
 		});
 
 		return arr;
@@ -219,145 +242,168 @@ H.extend(H.Data.prototype, {
 
 		function getPathLikeChildren(parent) {
 			return Array.prototype.slice.call(parent.getElementsByTagName('path'))
-						.concat(Array.prototype.slice.call(parent.getElementsByTagName('polygon')));
+				.concat(Array.prototype.slice.call(parent.getElementsByTagName('polygon')))
+				.concat(Array.prototype.slice.call(parent.getElementsByTagName('rect')));
 		}
 
-		function getPathDefinition(path) {
-			if (path.nodeName === 'path') {
-				return path.getAttribute('d');
-			} else if (path.nodeName === 'polygon') {
-				return path.getAttribute('points');
+		function getPathDefinition(node) {
+			if (node.nodeName === 'path') {
+				return node.getAttribute('d');
+			} else if (node.nodeName === 'polygon') {
+				return node.getAttribute('points');
+			} else if (node.nodeName === 'rect') {
+				var x = +node.getAttribute('x'),
+					y = +node.getAttribute('y'),
+					w = +node.getAttribute('width'),
+					h = +node.getAttribute('height');
+
+				// Return polygon definition
+				return [x, y, x + w, y, x + w, y + h, x, y + h, x, y].join(' ');
 			}
 		}
 
 		function getTranslate(elem) {
-			return elem.getCTM();
+			var ctm = elem.getCTM();
+			if (!isNaN(ctm.f)) {
+				return ctm;
+			}
 		}
 
 		
 		function getName(elem) {
-			return elem.getAttribute('inkscape:label') || elem.getAttribute('id') || elem.getAttribute('class');
+			var desc = elem.getElementsByTagName('desc'),
+				nameTag = desc[0] && desc[0].getElementsByTagName('name'),
+				name = nameTag && nameTag[0] && nameTag[0].innerText;
+
+			return name || elem.getAttribute('inkscape:label') || elem.getAttribute('id') || elem.getAttribute('class');
 		}
 
 		function hasFill(elem) {
 			return !/fill[\s]?\:[\s]?none/.test(elem.getAttribute('style')) && elem.getAttribute('fill') !== 'none';
 		}
-		
-		jQuery.ajax({
-			url: options.svg,
-			dataType: 'text',
-			success: function (xml) {
 
-				var arr = [],
-					currentParent,
-					allPaths,
-					commonLineage,
-					lastCommonAncestor,
-					handleGroups,
-					defs,
-					clipPaths;
+		function handleSVG(xml) {
 
-				// Make a hidden frame where the SVG is rendered
-				data.$frame = data.$frame || $('<div>')
-					.hide()
-					.appendTo($(document.body));
-				data.$frame.html(xml);
-				xml = $('svg', data.$frame)[0];
-					
+			var arr = [],
+				currentParent,
+				allPaths,
+				commonLineage,
+				lastCommonAncestor,
+				handleGroups,
+				clipPaths;
 
-				allPaths = getPathLikeChildren(xml);
-				defs = xml.getElementsByTagName('defs')[0];
-					
-				// Skip clip paths
-				clipPaths = defs && defs.getElementsByTagName('path');
-				if (clipPaths) {
-					each(clipPaths, function (path) {
-						path.skip = true;
-					});
-				}
+			// Make a hidden frame where the SVG is rendered
+			data.$frame = data.$frame || $('<div>')
+				.hide()
+				.appendTo($(document.body));
+			data.$frame.html(xml);
+			xml = $('svg', data.$frame)[0];
+
+			xml.removeAttribute('viewBox');
 				
-				// If not all paths belong to the same group, handle groups
-				each(allPaths, function (path, i) {
-					if (!path.skip) {
-						var itemLineage = [],
-							parentNode,
-							j;
-						
-						if (i > 0 && path.parentNode !== currentParent) {
-							handleGroups = true;
-						}
-						currentParent = path.parentNode;
-						
-						// Handle common lineage
-						parentNode = path;
-						while (parentNode) {
-							itemLineage.push(parentNode);
-							parentNode = parentNode.parentNode;
-						}
-						itemLineage.reverse();
-						
-						if (!commonLineage) {
-							commonLineage = itemLineage; // first iteration
-						} else {
-							for (j = 0; j < commonLineage.length; j++) {
-								if (commonLineage[j] !== itemLineage[j]) {
-									commonLineage = commonLineage.slice(0, j);
-								}
+
+			allPaths = getPathLikeChildren(xml);
+				
+			// Skip clip paths
+			each(['defs', 'clipPath'], function (nodeName) {
+				each(xml.getElementsByTagName(nodeName), function (parent) {
+					each (parent.getElementsByTagName('path'), function (path) {
+						path.skip = true
+					});
+				});
+			});
+			
+			// If not all paths belong to the same group, handle groups
+			each(allPaths, function (path, i) {
+				if (!path.skip) {
+					var itemLineage = [],
+						parentNode,
+						j;
+					
+					if (i > 0 && path.parentNode !== currentParent) {
+						handleGroups = true;
+					}
+					currentParent = path.parentNode;
+					
+					// Handle common lineage
+					parentNode = path;
+					while (parentNode) {
+						itemLineage.push(parentNode);
+						parentNode = parentNode.parentNode;
+					}
+					itemLineage.reverse();
+					
+					if (!commonLineage) {
+						commonLineage = itemLineage; // first iteration
+					} else {
+						for (j = 0; j < commonLineage.length; j++) {
+							if (commonLineage[j] !== itemLineage[j]) {
+								commonLineage = commonLineage.slice(0, j);
 							}
 						}
 					}
-				});
-				lastCommonAncestor = commonLineage[commonLineage.length - 1];
-				
-				// Iterate groups to find sub paths
-				if (handleGroups) {
-					each(lastCommonAncestor.getElementsByTagName('g'), function (g) {
-						var groupPath = [],
-							pathHasFill;
-						
-						each(getPathLikeChildren(g), function (path) {
-							if (!path.skip) {
-								groupPath = groupPath.concat(
-									data.pathToArray(getPathDefinition(path), getTranslate(path))
-								);
-
-								if (hasFill(path)) {
-									pathHasFill = true;
-								}
-								
-								path.skip = true;
-							}
-						});
-						arr.push({
-							name: getName(g),
-							path: groupPath,
-							hasFill: pathHasFill
-						});
-					});
 				}
-				
-				// Iterate the remaining paths that are not parts of groups
-				each(allPaths, function (path) {
-					if (!path.skip) {
-						arr.push({
-							name: getName(path),
-							path: data.pathToArray(getPathDefinition(path), getTranslate(path)),
-							hasFill: hasFill(path)
-						});
-					}			
-				});
+			});
+			lastCommonAncestor = commonLineage[commonLineage.length - 1];
+			
+			// Iterate groups to find sub paths
+			if (handleGroups) {
+				each(lastCommonAncestor.getElementsByTagName('g'), function (g) {
+					var groupPath = [],
+						pathHasFill;
+					
+					each(getPathLikeChildren(g), function (path) {
+						if (!path.skip) {
+							groupPath = groupPath.concat(
+								data.pathToArray(getPathDefinition(path), getTranslate(path))
+							);
 
-				// Round off to compress
-				data.roundPaths(arr);
-				
-				// Do the callback
-				options.complete({
-					series: [{
-						data: arr
-					}]
+							if (hasFill(path)) {
+								pathHasFill = true;
+							}
+							
+							path.skip = true;
+						}
+					});
+					arr.push({
+						name: getName(g),
+						path: groupPath,
+						hasFill: pathHasFill
+					});
 				});
 			}
-		});
+			
+			// Iterate the remaining paths that are not parts of groups
+			each(allPaths, function (path) {
+				if (!path.skip) {
+					arr.push({
+						name: getName(path),
+						path: data.pathToArray(getPathDefinition(path), getTranslate(path)),
+						hasFill: hasFill(path)
+					});
+				}			
+			});
+
+			// Round off to compress
+			data.roundPaths(arr);
+			
+			// Do the callback
+			options.complete({
+				series: [{
+					data: arr
+				}]
+			});
+		}
+		
+		if (options.svg.indexOf('<svg') !== -1) {
+			handleSVG(options.svg);
+		} else {
+			jQuery.ajax({
+				url: options.svg,
+				dataType: 'text',
+				success: handleSVG
+			});
+		}
 	}
 });
 }(Highcharts));

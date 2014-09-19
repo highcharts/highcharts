@@ -10,12 +10,7 @@
 		init: function (pathAnim) {
 			
 			// extend the animate function to allow SVG animations
-			var Fx = $.fx,
-				Step = Fx.step,
-				dSetter,
-				Tween = $.Tween,
-				propHooks = Tween && Tween.propHooks,
-				opacityHook = $.cssHooks.opacity;
+			var Fx = $.fx;
 			
 			/*jslint unparam: true*//* allow unused param x in this function */
 			$.extend($.easing, {
@@ -27,16 +22,15 @@
 		
 			// extend some methods to check for elem.attr, which means it is a Highcharts SVG object
 			$.each(['cur', '_default', 'width', 'height', 'opacity'], function (i, fn) {
-				var obj = Step,
-					base,
-					elem;
+				var obj = Fx.step,
+					base;
 					
 				// Handle different parent objects
 				if (fn === 'cur') {
 					obj = Fx.prototype; // 'cur', the getter, relates to Fx.prototype
 				
-				} else if (fn === '_default' && Tween) { // jQuery 1.8 model
-					obj = propHooks[fn];
+				} else if (fn === '_default' && $.Tween) { // jQuery 1.8 model
+					obj = $.Tween.propHooks[fn];
 					fn = 'set';
 				}
 		
@@ -46,9 +40,16 @@
 		
 					// create the extended function replacement
 					obj[fn] = function (fx) {
-		
+
+						var elem;
+						
 						// Fx.prototype.cur does not use fx argument
 						fx = i ? fx : this;
+
+						// Don't run animations on textual properties like align (#1821)
+						if (fx.prop === 'align') {
+							return;
+						}
 		
 						// shortcut
 						elem = fx.elem;
@@ -63,13 +64,12 @@
 			});
 
 			// Extend the opacity getter, needed for fading opacity with IE9 and jQuery 1.10+
-			wrap(opacityHook, 'get', function (proceed, elem, computed) {
+			wrap($.cssHooks.opacity, 'get', function (proceed, elem, computed) {
 				return elem.attr ? (elem.opacity || 0) : proceed.call(this, elem, computed);
 			});
 			
-			
 			// Define the setter function for d (path definitions)
-			dSetter = function (fx) {
+			this.addAnimSetter('d', function (fx) {
 				var elem = fx.elem,
 					ends;
 		
@@ -83,21 +83,9 @@
 					fx.started = true;
 				}
 		
-		
-				// interpolate each value of the path
+				// Interpolate each value of the path
 				elem.attr('d', pathAnim.step(fx.start, fx.end, fx.pos, elem.toD));
-			};
-			
-			// jQuery 1.8 style
-			if (Tween) {
-				propHooks.d = {
-					set: dSetter
-				};
-			// pre 1.8
-			} else {
-				// animate paths
-				Step.d = dSetter;
-			}
+			});
 			
 			/**
 			 * Utility for iterating over an array. Parameters are reversed compared to jQuery.
@@ -110,9 +98,9 @@
 					
 				} : 
 				function (arr, fn) { // legacy
-					var i = 0, 
+					var i, 
 						len = arr.length;
-					for (; i < len; i++) {
+					for (i = 0; i < len; i++) {
 						if (fn.call(arr[i], arr[i], i, arr) === false) {
 							return i;
 						}
@@ -129,32 +117,49 @@
 					ret,
 					chart;
 
-				if (isString(args[0])) {
-					constr = args[0];
-					args = Array.prototype.slice.call(args, 1); 
+				if (this[0]) {
+
+					if (isString(args[0])) {
+						constr = args[0];
+						args = Array.prototype.slice.call(args, 1); 
+					}
+					options = args[0];
+
+					// Create the chart
+					if (options !== UNDEFINED) {
+						/*jslint unused:false*/
+						options.chart = options.chart || {};
+						options.chart.renderTo = this[0];
+						chart = new Highcharts[constr](options, args[1]);
+						ret = this;
+						/*jslint unused:true*/
+					}
+
+					// When called without parameters or with the return argument, get a predefined chart
+					if (options === UNDEFINED) {
+						ret = charts[attr(this[0], 'data-highcharts-chart')];
+					}
 				}
-				options = args[0];
-
-				// Create the chart
-				if (options !== UNDEFINED) {
-					/*jslint unused:false*/
-					options.chart = options.chart || {};
-					options.chart.renderTo = this[0];
-					chart = new Highcharts[constr](options, args[1]);
-					ret = this;
-					/*jslint unused:true*/
-				}
-
-				// When called without parameters or with the return argument, get a predefined chart
-				if (options === UNDEFINED) {
-					ret = charts[attr(this[0], 'data-highcharts-chart')];
-				}	
-
+				
 				return ret;
 			};
 
 		},
 
+		/**
+		 * Add an animation setter for a specific property
+		 */
+		addAnimSetter: function (prop, setter) {
+			// jQuery 1.8 style
+			if ($.Tween) {
+				$.Tween.propHooks[prop] = {
+					set: setter
+				};
+			// pre 1.8
+			} else {
+				$.fx.step[prop] = setter;
+			}
+		},
 		
 		/**
 		 * Downloads a script and executes a callback when done.
@@ -245,7 +250,7 @@
 				detachedType = 'detached' + type,
 				defaultPrevented;
 	
-			// Remove warnings in Chrome when accessing layerX and layerY. Although Highcharts
+			// Remove warnings in Chrome when accessing returnValue (#2790), layerX and layerY. Although Highcharts
 			// never uses these properties, Chrome includes them in the default click event and
 			// raises the warning when they are copied over in the extend statement below.
 			//
@@ -254,6 +259,7 @@
 			if (!isIE && eventArguments) {
 				delete eventArguments.layerX;
 				delete eventArguments.layerY;
+				delete eventArguments.returnValue;
 			}
 	
 			extend(event, eventArguments);
@@ -333,6 +339,7 @@
 			if (params.opacity !== UNDEFINED && el.attr) {
 				params.opacity += 'px'; // force jQuery to use same logic as width and height (#2161)
 			}
+			el.hasAnim = 1; // #3342
 			$el.animate(params, options);
 	
 		},
@@ -340,7 +347,9 @@
 		 * Stop running animation
 		 */
 		stop: function (el) {
-			$(el).stop();
+			if (el.hasAnim) { // #3342, memory leak on calling $(el) from destroy
+				$(el).stop();
+			}
 		}
 	});
 }(win.jQuery));

@@ -16,14 +16,16 @@ function extend(a, b) {
 }
 	
 /**
- * Deep merge two or more objects and return a third object.
+ * Deep merge two or more objects and return a third object. If the first argument is
+ * true, the contents of the second object is copied into the first object.
  * Previously this function redirected to jQuery.extend(true), but this had two limitations.
  * First, it deep merged arrays, which lead to workarounds in Highcharts. Second,
  * it copied properties from extended prototypes. 
  */
 function merge() {
 	var i,
-		len = arguments.length,
+		args = arguments,
+		len,
 		ret = {},
 		doCopy = function (copy, original) {
 			var value, key;
@@ -39,7 +41,7 @@ function merge() {
 
 					// Copy the contents of objects, but not arrays or DOM nodes
 					if (value && typeof value === 'object' && Object.prototype.toString.call(value) !== '[object Array]'
-							&& typeof value.nodeType !== 'number') {
+							&& key !== 'renderTo' && typeof value.nodeType !== 'number') {
 						copy[key] = doCopy(copy[key] || {}, value);
 				
 					// Primitives and arrays are copied over directly
@@ -51,28 +53,19 @@ function merge() {
 			return copy;
 		};
 
+	// If first argument is true, copy into the existing object. Used in setOptions.
+	if (args[0] === true) {
+		ret = args[1];
+		args = Array.prototype.slice.call(args, 2);
+	}
+
 	// For each argument, extend the return
+	len = args.length;
 	for (i = 0; i < len; i++) {
-		ret = doCopy(ret, arguments[i]);
+		ret = doCopy(ret, args[i]);
 	}
 
 	return ret;
-}
-
-/**
- * Take an array and turn into a hash with even number arguments as keys and odd numbers as
- * values. Allows creating constants for commonly used style properties, attributes etc.
- * Avoid it in performance critical situations like looping
- */
-function hash() {
-	var i = 0,
-		args = arguments,
-		length = args.length,
-		obj = {};
-	for (; i < length; i++) {
-		obj[args[i++]] = args[i];
-	}
-	return obj;
 }
 
 /**
@@ -97,7 +90,7 @@ function isString(s) {
  * @param {Object} obj
  */
 function isObject(obj) {
-	return typeof obj === 'object';
+	return obj && typeof obj === 'object';
 }
 
 /**
@@ -157,15 +150,13 @@ function defined(obj) {
  */
 function attr(elem, prop, value) {
 	var key,
-		setAttribute = 'setAttribute',
 		ret;
 
 	// if the prop is a string
 	if (isString(prop)) {
 		// set the value
 		if (defined(value)) {
-
-			elem[setAttribute](prop, value);
+			elem.setAttribute(prop, value);
 
 		// get the value
 		} else if (elem && elem.getAttribute) { // elem not defined when printing pie demo...
@@ -175,7 +166,7 @@ function attr(elem, prop, value) {
 	// else if prop is defined, it is a hash of key/value pairs
 	} else if (defined(prop) && isObject(prop)) {
 		for (key in prop) {
-			elem[setAttribute](key, prop[key]);
+			elem.setAttribute(key, prop[key]);
 		}
 	}
 	return ret;
@@ -199,7 +190,7 @@ function pick() {
 		length = args.length;
 	for (i = 0; i < length; i++) {
 		arg = args[i];
-		if (typeof arg !== 'undefined' && arg !== null) {
+		if (arg !== UNDEFINED && arg !== null) {
 			return arg;
 		}
 	}
@@ -211,7 +202,7 @@ function pick() {
  * @param {Object} styles Style object with camel case property names
  */
 function css(el, styles) {
-	if (isIE) {
+	if (isIE && !hasSVG) { // #2686
 		if (styles && styles.opacity !== UNDEFINED) {
 			styles.filter = 'alpha(opacity=' + (styles.opacity * 100) + ')';
 		}
@@ -250,34 +241,10 @@ function createElement(tag, attribs, styles, parent, nopad) {
  * @param {Object} members
  */
 function extendClass(parent, members) {
-	var object = function () {};
+	var object = function () { return UNDEFINED; };
 	object.prototype = new parent();
 	extend(object.prototype, members);
 	return object;
-}
-
-/**
- * Format a number and return a string based on input settings
- * @param {Number} number The input number to format
- * @param {Number} decimals The amount of decimals
- * @param {String} decPoint The decimal point, defaults to the one given in the lang options
- * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
- */
-function numberFormat(number, decimals, decPoint, thousandsSep) {
-	var lang = defaultOptions.lang,
-		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
-		n = +number || 0,
-		c = decimals === -1 ?
-			(n.toString().split('.')[1] || '').length : // preserve decimals
-			(isNaN(decimals = mathAbs(decimals)) ? 2 : decimals),
-		d = decPoint === undefined ? lang.decimalPoint : decPoint,
-		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
-		s = n < 0 ? "-" : "",
-		i = String(pInt(n = mathAbs(n).toFixed(c))),
-		j = i.length > 3 ? i.length % 3 : 0;
-
-	return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
-		(c ? d + mathAbs(n - i).toFixed(c).slice(2) : "");
 }
 
 /**
@@ -319,7 +286,7 @@ dateFormat = function (format, timestamp, capitalize) {
 	}
 	format = pick(format, '%Y-%m-%d %H:%M:%S');
 
-	var date = new Date(timestamp),
+	var date = new Date(timestamp - timezoneOffset),
 		key, // used in for constuct below
 		// get the basic time values
 		hours = date[getHours](),
@@ -338,6 +305,7 @@ dateFormat = function (format, timestamp, capitalize) {
 			'A': langWeekdays[day], // Long weekday, like 'Monday'
 			'd': pad(dayOfMonth), // Two digit day of the month, 01 to 31
 			'e': dayOfMonth, // Day of the month, 1 through 31
+			'w': day,
 
 			// Week (none implemented)
 			//'W': weekNumber(),
@@ -386,12 +354,14 @@ function formatSingle(format, val) {
 	if (floatRegex.test(format)) { // float
 		decimals = format.match(decRegex);
 		decimals = decimals ? decimals[1] : -1;
-		val = numberFormat(
-			val,
-			decimals,
-			lang.decimalPoint,
-			format.indexOf(',') > -1 ? lang.thousandsSep : ''
-		);
+		if (val !== null) {
+			val = Highcharts.numberFormat(
+				val,
+				decimals,
+				lang.decimalPoint,
+				format.indexOf(',') > -1 ? lang.thousandsSep : ''
+			);
+		}
 	} else {
 		val = dateFormat(format, val);
 	}
@@ -462,7 +432,7 @@ function getMagnitude(num) {
  * @param {Number} magnitude
  * @param {Object} options
  */
-function normalizeTickInterval(interval, multiples, magnitude, options) {
+function normalizeTickInterval(interval, multiples, magnitude, allowDecimals) {
 	var normalized, i;
 
 	// round to a tenfold of 1, 2, 2.5 or 5
@@ -474,7 +444,7 @@ function normalizeTickInterval(interval, multiples, magnitude, options) {
 		multiples = [1, 2, 2.5, 5, 10];
 
 		// the allowDecimals option
-		if (options && options.allowDecimals === false) {
+		if (allowDecimals === false) {
 			if (magnitude === 1) {
 				multiples = [1, 2, 5, 10];
 			} else if (magnitude <= 0.1) {
@@ -496,237 +466,6 @@ function normalizeTickInterval(interval, multiples, magnitude, options) {
 
 	return interval;
 }
-
-/**
- * Get a normalized tick interval for dates. Returns a configuration object with
- * unit range (interval), count and name. Used to prepare data for getTimeTicks. 
- * Previously this logic was part of getTimeTicks, but as getTimeTicks now runs
- * of segments in stock charts, the normalizing logic was extracted in order to 
- * prevent it for running over again for each segment having the same interval. 
- * #662, #697.
- */
-function normalizeTimeTickInterval(tickInterval, unitsOption) {
-	var units = unitsOption || [[
-				MILLISECOND, // unit name
-				[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
-			], [
-				SECOND,
-				[1, 2, 5, 10, 15, 30]
-			], [
-				MINUTE,
-				[1, 2, 5, 10, 15, 30]
-			], [
-				HOUR,
-				[1, 2, 3, 4, 6, 8, 12]
-			], [
-				DAY,
-				[1, 2]
-			], [
-				WEEK,
-				[1, 2]
-			], [
-				MONTH,
-				[1, 2, 3, 4, 6]
-			], [
-				YEAR,
-				null
-			]],
-		unit = units[units.length - 1], // default unit is years
-		interval = timeUnits[unit[0]],
-		multiples = unit[1],
-		count,
-		i;
-		
-	// loop through the units to find the one that best fits the tickInterval
-	for (i = 0; i < units.length; i++) {
-		unit = units[i];
-		interval = timeUnits[unit[0]];
-		multiples = unit[1];
-
-
-		if (units[i + 1]) {
-			// lessThan is in the middle between the highest multiple and the next unit.
-			var lessThan = (interval * multiples[multiples.length - 1] +
-						timeUnits[units[i + 1][0]]) / 2;
-
-			// break and keep the current unit
-			if (tickInterval <= lessThan) {
-				break;
-			}
-		}
-	}
-
-	// prevent 2.5 years intervals, though 25, 250 etc. are allowed
-	if (interval === timeUnits[YEAR] && tickInterval < 5 * interval) {
-		multiples = [1, 2, 5];
-	}
-	
-	// prevent 2.5 years intervals, though 25, 250 etc. are allowed
-	if (interval === timeUnits[YEAR] && tickInterval < 5 * interval) {
-		multiples = [1, 2, 5];
-	}
-
-	// get the count
-	count = normalizeTickInterval(
-		tickInterval / interval, 
-		multiples,
-		unit[0] === YEAR ? getMagnitude(tickInterval / interval) : 1 // #1913
-	);
-	
-	return {
-		unitRange: interval,
-		count: count,
-		unitName: unit[0]
-	};
-}
-
-/**
- * Set the tick positions to a time unit that makes sense, for example
- * on the first of each month or on every Monday. Return an array
- * with the time positions. Used in datetime axes as well as for grouping
- * data on a datetime axis.
- *
- * @param {Object} normalizedInterval The interval in axis values (ms) and the count
- * @param {Number} min The minimum in axis values
- * @param {Number} max The maximum in axis values
- * @param {Number} startOfWeek
- */
-function getTimeTicks(normalizedInterval, min, max, startOfWeek) {
-	var tickPositions = [],
-		i,
-		higherRanks = {},
-		useUTC = defaultOptions.global.useUTC,
-		minYear, // used in months and years as a basis for Date.UTC()
-		minDate = new Date(min),
-		interval = normalizedInterval.unitRange,
-		count = normalizedInterval.count;
-
-	if (defined(min)) { // #1300
-		if (interval >= timeUnits[SECOND]) { // second
-			minDate.setMilliseconds(0);
-			minDate.setSeconds(interval >= timeUnits[MINUTE] ? 0 :
-				count * mathFloor(minDate.getSeconds() / count));
-		}
-	
-		if (interval >= timeUnits[MINUTE]) { // minute
-			minDate[setMinutes](interval >= timeUnits[HOUR] ? 0 :
-				count * mathFloor(minDate[getMinutes]() / count));
-		}
-	
-		if (interval >= timeUnits[HOUR]) { // hour
-			minDate[setHours](interval >= timeUnits[DAY] ? 0 :
-				count * mathFloor(minDate[getHours]() / count));
-		}
-	
-		if (interval >= timeUnits[DAY]) { // day
-			minDate[setDate](interval >= timeUnits[MONTH] ? 1 :
-				count * mathFloor(minDate[getDate]() / count));
-		}
-	
-		if (interval >= timeUnits[MONTH]) { // month
-			minDate[setMonth](interval >= timeUnits[YEAR] ? 0 :
-				count * mathFloor(minDate[getMonth]() / count));
-			minYear = minDate[getFullYear]();
-		}
-	
-		if (interval >= timeUnits[YEAR]) { // year
-			minYear -= minYear % count;
-			minDate[setFullYear](minYear);
-		}
-	
-		// week is a special case that runs outside the hierarchy
-		if (interval === timeUnits[WEEK]) {
-			// get start of current week, independent of count
-			minDate[setDate](minDate[getDate]() - minDate[getDay]() +
-				pick(startOfWeek, 1));
-		}
-	
-	
-		// get tick positions
-		i = 1;
-		minYear = minDate[getFullYear]();
-		var time = minDate.getTime(),
-			minMonth = minDate[getMonth](),
-			minDateDate = minDate[getDate](),
-			timezoneOffset = useUTC ? 
-				0 : 
-				(24 * 3600 * 1000 + minDate.getTimezoneOffset() * 60 * 1000) % (24 * 3600 * 1000); // #950
-	
-		// iterate and add tick positions at appropriate values
-		while (time < max) {
-			tickPositions.push(time);
-	
-			// if the interval is years, use Date.UTC to increase years
-			if (interval === timeUnits[YEAR]) {
-				time = makeTime(minYear + i * count, 0);
-	
-			// if the interval is months, use Date.UTC to increase months
-			} else if (interval === timeUnits[MONTH]) {
-				time = makeTime(minYear, minMonth + i * count);
-	
-			// if we're using global time, the interval is not fixed as it jumps
-			// one hour at the DST crossover
-			} else if (!useUTC && (interval === timeUnits[DAY] || interval === timeUnits[WEEK])) {
-				time = makeTime(minYear, minMonth, minDateDate +
-					i * count * (interval === timeUnits[DAY] ? 1 : 7));
-	
-			// else, the interval is fixed and we use simple addition
-			} else {
-				time += interval * count;
-			}
-	
-			i++;
-		}
-	
-		// push the last time
-		tickPositions.push(time);
-
-
-		// mark new days if the time is dividible by day (#1649, #1760)
-		each(grep(tickPositions, function (time) {
-			return interval <= timeUnits[HOUR] && time % timeUnits[DAY] === timezoneOffset;
-		}), function (time) {
-			higherRanks[time] = DAY;
-		});
-	}
-
-
-	// record information on the chosen unit - for dynamic label formatter
-	tickPositions.info = extend(normalizedInterval, {
-		higherRanks: higherRanks,
-		totalRange: interval * count
-	});
-
-	return tickPositions;
-}
-
-/**
- * Helper class that contains variuos counters that are local to the chart.
- */
-function ChartCounters() {
-	this.color = 0;
-	this.symbol = 0;
-}
-
-ChartCounters.prototype =  {
-	/**
-	 * Wraps the color counter if it reaches the specified length.
-	 */
-	wrapColor: function (length) {
-		if (this.color >= length) {
-			this.color = 0;
-		}
-	},
-
-	/**
-	 * Wraps the symbol counter if it reaches the specified length.
-	 */
-	wrapSymbol: function (length) {
-		if (this.symbol >= length) {
-			this.symbol = 0;
-		}
-	}
-};
 
 
 /**
@@ -830,11 +569,13 @@ function discardElement(element) {
 /**
  * Provide error messages for debugging, with links to online explanation 
  */
-function error(code, stop) {
+function error (code, stop) {
 	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
 	if (stop) {
 		throw msg;
-	} else if (win.console) {
+	}
+	// else ...
+	if (win.console) {
 		console.log(msg);
 	}
 }
@@ -862,15 +603,39 @@ function setAnimation(animation, chart) {
 /**
  * The time unit lookup
  */
-/*jslint white: true*/
-timeUnits = hash(
-	MILLISECOND, 1,
-	SECOND, 1000,
-	MINUTE, 60000,
-	HOUR, 3600000,
-	DAY, 24 * 3600000,
-	WEEK, 7 * 24 * 3600000,
-	MONTH, 31 * 24 * 3600000,
-	YEAR, 31556952000
-);
-/*jslint white: false*/
+timeUnits = {
+	millisecond: 1,
+	second: 1000,
+	minute: 60000,
+	hour: 3600000,
+	day: 24 * 3600000,
+	week: 7 * 24 * 3600000,
+	month: 28 * 24 * 3600000,
+	year: 364 * 24 * 3600000
+};
+
+
+/**
+ * Format a number and return a string based on input settings
+ * @param {Number} number The input number to format
+ * @param {Number} decimals The amount of decimals
+ * @param {String} decPoint The decimal point, defaults to the one given in the lang options
+ * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
+ */
+// docs: Overridable by wrap. Demo at /members/highcharts-numberformat
+Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
+	var lang = defaultOptions.lang,
+		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
+		n = +number || 0,
+		c = decimals === -1 ?
+			(n.toString().split('.')[1] || '').length : // preserve decimals
+			(isNaN(decimals = mathAbs(decimals)) ? 2 : decimals),
+		d = decPoint === undefined ? lang.decimalPoint : decPoint,
+		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
+		s = n < 0 ? "-" : "",
+		i = String(pInt(n = mathAbs(n).toFixed(c))),
+		j = i.length > 3 ? i.length % 3 : 0;
+
+	return (s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
+			(c ? d + mathAbs(n - i).toFixed(c).slice(2) : ""));
+};

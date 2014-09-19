@@ -6,7 +6,7 @@ $(function () {
         },
 
         yAxis: {
-            plotBands: [{
+            plotLines: [{
                 color: 'red',
                 width: 2,
                 value: 100,

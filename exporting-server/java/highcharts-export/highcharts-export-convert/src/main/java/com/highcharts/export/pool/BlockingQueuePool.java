@@ -13,8 +13,8 @@ public class BlockingQueuePool<T> extends AbstractPool<T>{
 	 * @throws PoolException
 	 */
 
-	public BlockingQueuePool(ObjectFactory<T> factory, int number, int maxWait) throws PoolException {
-		super(factory, number, maxWait);
+	public BlockingQueuePool(ObjectFactory<T> factory, int number, int maxWait, long retentionTime) throws PoolException {
+		super(factory, number, maxWait, retentionTime);
 		queue = new LinkedBlockingQueue<T>();
 		linkQueue = (LinkedBlockingQueue<T>) queue;
 	}
@@ -22,7 +22,7 @@ public class BlockingQueuePool<T> extends AbstractPool<T>{
 
 	@Override
 	public T borrowObject() throws InterruptedException, PoolException {
-		T object = linkQueue.poll(2000, TimeUnit.MILLISECONDS);
+		T object = linkQueue.poll(maxWait, TimeUnit.MILLISECONDS);
 		if (object == null) {
 			throw new PoolException();
 		}

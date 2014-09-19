@@ -1,7 +1,5 @@
 $(function () {
     $('#container').highcharts({
-        chart: {
-        },
         xAxis: {
             plotBands: [{ // mark the weekend
                 color: '#FCFFC5',

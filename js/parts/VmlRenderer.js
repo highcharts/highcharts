@@ -18,7 +18,7 @@ if (!hasSVG && !useCanVG) {
 /**
  * The VML element wrapper.
  */
-Highcharts.VMLElement = VMLElement = {
+VMLElement = {
 
 	/**
 	 * Initialize a new VML element wrapper. It builds the markup as a string
@@ -37,7 +37,7 @@ Highcharts.VMLElement = VMLElement = {
 			style.push('left:0;top:0;width:1px;height:1px;');
 		}
 		style.push('visibility: ', isDiv ? HIDDEN : VISIBLE);
-		
+
 		markup.push(' style="', style.join(''), '"/>');
 
 		// create element with default attributes and style
@@ -49,7 +49,6 @@ Highcharts.VMLElement = VMLElement = {
 		}
 
 		wrapper.renderer = renderer;
-		wrapper.attrSetters = {};
 	},
 
 	/**
@@ -82,9 +81,11 @@ Highcharts.VMLElement = VMLElement = {
 		if (wrapper.alignOnAdd && !wrapper.deferUpdateTransform) {
 			wrapper.updateTransform();
 		}
-		
+
 		// fire an event for internal hooks
-		fireEvent(wrapper, 'add');
+		if (wrapper.onAdd) {
+			wrapper.onAdd();
+		}
 
 		return wrapper;
 	},
@@ -97,17 +98,53 @@ Highcharts.VMLElement = VMLElement = {
 	/**
 	 * Set the rotation of a span with oldIE's filter
 	 */
-	setSpanRotation: function (rotation, sintheta, costheta) {
+	setSpanRotation: function () {
 		// Adjust for alignment and rotation. Rotation of useHTML content is not yet implemented
 		// but it can probably be implemented for Firefox 3.5+ on user request. FF3.5+
 		// has support for CSS3 transform. The getBBox method also needs to be updated
 		// to compensate for the rotation, like it currently does for SVG.
-		// Test case: http://highcharts.com/tests/?file=text-rotation
+		// Test case: http://jsfiddle.net/highcharts/Ybt44/
+
+		var rotation = this.rotation,
+			costheta = mathCos(rotation * deg2rad),
+			sintheta = mathSin(rotation * deg2rad);
+					
 		css(this.element, {
 			filter: rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta,
 				', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
 				', sizingMethod=\'auto expand\')'].join('') : NONE
 		});
+	},
+
+	/**
+	 * Get the positioning correction for the span after rotating. 
+	 */
+	getSpanCorrection: function (width, baseline, alignCorrection, rotation, align) {
+
+		var costheta = rotation ? mathCos(rotation * deg2rad) : 1,
+			sintheta = rotation ? mathSin(rotation * deg2rad) : 0,
+			height = pick(this.elemHeight, this.element.offsetHeight),
+			quad,
+			nonLeft = align && align !== 'left';
+
+		// correct x and y
+		this.xCorr = costheta < 0 && -width;
+		this.yCorr = sintheta < 0 && -height;
+
+		// correct for baseline and corners spilling out after rotation
+		quad = costheta * sintheta < 0;
+		this.xCorr += sintheta * baseline * (quad ? 1 - alignCorrection : alignCorrection);
+		this.yCorr -= costheta * baseline * (rotation ? (quad ? alignCorrection : 1 - alignCorrection) : 1);
+		// correct for the length/height of the text
+		if (nonLeft) {
+			this.xCorr -= width * alignCorrection * (costheta < 0 ? -1 : 1);
+			if (rotation) {
+				this.yCorr -= height * alignCorrection * (sintheta < 0 ? -1 : 1);
+			}
+			css(this.element, {
+				textAlign: align
+			});
+		}
 	},
 
 	/**
@@ -117,9 +154,8 @@ Highcharts.VMLElement = VMLElement = {
 	pathToVML: function (value) {
 		// convert paths
 		var i = value.length,
-			path = [],
-			clockwise;
-		
+			path = [];
+
 		while (i--) {
 
 			// Multiply by 10 to allow subpixel precision.
@@ -133,20 +169,22 @@ Highcharts.VMLElement = VMLElement = {
 				path[i] = value[i];
 
 				// When the start X and end X coordinates of an arc are too close,
-				// they are rounded to the same value above. In this case, substract 1 from the end X
-				// position. #760, #1371. 
+				// they are rounded to the same value above. In this case, substract or 
+				// add 1 from the end X and Y positions. #186, #760, #1371, #1410.
 				if (value.isArc && (value[i] === 'wa' || value[i] === 'at')) {
-					clockwise = value[i] === 'wa' ? 1 : -1; // #1642
+					// Start and end X
 					if (path[i + 5] === path[i + 7]) {
-						path[i + 7] -= clockwise;
+						path[i + 7] += value[i + 7] > value[i + 5] ? 1 : -1;
 					}
-					// Start and end Y (#1410)
+					// Start and end Y
 					if (path[i + 6] === path[i + 8]) {
-						path[i + 8] -= clockwise;
+						path[i + 8] += value[i + 8] > value[i + 6] ? 1 : -1;
 					}
 				}
 			}
 		}
+
+		
 		// Loop up again to handle path shortcuts (#2132)
 		/*while (i++ < path.length) {
 			if (path[i] === 'H') { // horizontal line to
@@ -158,231 +196,6 @@ Highcharts.VMLElement = VMLElement = {
 			}
 		}*/
 		return path.join(' ') || 'x';
-	},
-
-	/**
-	 * Get or set attributes
-	 */
-	attr: function (hash, val) {
-		var wrapper = this,
-			key,
-			value,
-			i,
-			result,
-			element = wrapper.element || {},
-			elemStyle = element.style,
-			nodeName = element.nodeName,
-			renderer = wrapper.renderer,
-			symbolName = wrapper.symbolName,
-			hasSetSymbolSize,
-			shadows = wrapper.shadows,
-			skipAttr,
-			attrSetters = wrapper.attrSetters,
-			ret = wrapper;
-
-		// single key-value pair
-		if (isString(hash) && defined(val)) {
-			key = hash;
-			hash = {};
-			hash[key] = val;
-		}
-
-		// used as a getter, val is undefined
-		if (isString(hash)) {
-			key = hash;
-			if (key === 'strokeWidth' || key === 'stroke-width') {
-				ret = wrapper.strokeweight;
-			} else {
-				ret = wrapper[key];
-			}
-
-		// setter
-		} else {
-			for (key in hash) {
-				value = hash[key];
-				skipAttr = false;
-
-				// check for a specific attribute setter
-				result = attrSetters[key] && attrSetters[key].call(wrapper, value, key);
-
-				if (result !== false && value !== null) { // #620
-
-					if (result !== UNDEFINED) {
-						value = result; // the attribute setter has returned a new value to set
-					}
-
-
-					// prepare paths
-					// symbols
-					if (symbolName && /^(x|y|r|start|end|width|height|innerR|anchorX|anchorY)/.test(key)) {
-						// if one of the symbol size affecting parameters are changed,
-						// check all the others only once for each call to an element's
-						// .attr() method
-						if (!hasSetSymbolSize) {
-							wrapper.symbolAttr(hash);
-
-							hasSetSymbolSize = true;
-						}
-						skipAttr = true;
-
-					} else if (key === 'd') {
-						value = value || [];
-						wrapper.d = value.join(' '); // used in getter for animation
-
-						element.path = value = wrapper.pathToVML(value);
-
-						// update shadows
-						if (shadows) {
-							i = shadows.length;
-							while (i--) {
-								shadows[i].path = shadows[i].cutOff ? this.cutOffPath(value, shadows[i].cutOff) : value;
-							}
-						}
-						skipAttr = true;
-
-					// handle visibility
-					} else if (key === 'visibility') {
-
-						// let the shadow follow the main element
-						if (shadows) {
-							i = shadows.length;
-							while (i--) {
-								shadows[i].style[key] = value;
-							}
-						}
-						
-						// Instead of toggling the visibility CSS property, move the div out of the viewport. 
-						// This works around #61 and #586							
-						if (nodeName === 'DIV') {
-							value = value === HIDDEN ? '-999em' : 0;
-							
-							// In order to redraw, IE7 needs the div to be visible when tucked away
-							// outside the viewport. So the visibility is actually opposite of 
-							// the expected value. This applies to the tooltip only. 
-							if (!docMode8) {
-								elemStyle[key] = value ? VISIBLE : HIDDEN;
-							}
-							key = 'top';
-						}
-						elemStyle[key] = value;	
-						skipAttr = true;
-
-					// directly mapped to css
-					} else if (key === 'zIndex') {
-
-						if (value) {
-							elemStyle[key] = value;
-						}
-						skipAttr = true;
-
-					// x, y, width, height
-					} else if (inArray(key, ['x', 'y', 'width', 'height']) !== -1) {
-						
-						wrapper[key] = value; // used in getter
-						
-						if (key === 'x' || key === 'y') {
-							key = { x: 'left', y: 'top' }[key];
-						} else {
-							value = mathMax(0, value); // don't set width or height below zero (#311)
-						}
-						
-						// clipping rectangle special
-						if (wrapper.updateClipping) {
-							wrapper[key] = value; // the key is now 'left' or 'top' for 'x' and 'y'
-							wrapper.updateClipping();
-						} else {
-							// normal
-							elemStyle[key] = value;
-						}
-
-						skipAttr = true;						
-
-					// class name
-					} else if (key === 'class' && nodeName === 'DIV') {
-						// IE8 Standards mode has problems retrieving the className
-						element.className = value;						
-
-					// stroke
-					} else if (key === 'stroke') {
-
-						value = renderer.color(value, element, key);
-
-						key = 'strokecolor';
-
-					// stroke width
-					} else if (key === 'stroke-width' || key === 'strokeWidth') {
-						element.stroked = value ? true : false;
-						key = 'strokeweight';
-						wrapper[key] = value; // used in getter, issue #113
-						if (isNumber(value)) {
-							value += PX;
-						}
-
-					// dashStyle
-					} else if (key === 'dashstyle') {
-						var strokeElem = element.getElementsByTagName('stroke')[0] ||
-							createElement(renderer.prepVML(['<stroke/>']), null, null, element);
-						strokeElem[key] = value || 'solid';
-						wrapper.dashstyle = value; /* because changing stroke-width will change the dash length
-							and cause an epileptic effect */
-						skipAttr = true;
-
-					// fill
-					} else if (key === 'fill') {
-
-						if (nodeName === 'SPAN') { // text color
-							elemStyle.color = value;
-						} else if (nodeName !== 'IMG') { // #1336
-							element.filled = value !== NONE ? true : false;
-
-							value = renderer.color(value, element, key, wrapper);
-
-							key = 'fillcolor';
-						}
-
-					// opacity: don't bother - animation is too slow and filters introduce artifacts
-					} else if (key === 'opacity') {
-						/*css(element, {
-							opacity: value
-						});*/
-						skipAttr = true;
-						
-					// rotation on VML elements
-					} else if (nodeName === 'shape' && key === 'rotation') {
-						
-						wrapper[key] = element.style[key] = value; // style is for #1873
-
-						// Correction for the 1x1 size of the shape container. Used in gauge needles.
-						element.style.left = -mathRound(mathSin(value * deg2rad) + 1) + PX;
-						element.style.top = mathRound(mathCos(value * deg2rad)) + PX;
-
-					// translation for animation
-					} else if (key === 'translateX' || key === 'translateY' || key === 'rotation') {
-						wrapper[key] = value;
-						wrapper.updateTransform();
-
-						skipAttr = true;
-
-					// text for rotated and non-rotated elements
-					} else if (key === 'text') {
-						this.bBox = null;
-						element.innerHTML = value;
-						skipAttr = true;
-					} 
-
-
-					if (!skipAttr) {
-						if (docMode8) { // IE8 setAttribute bug
-							element[key] = value;
-						} else {
-							attr(element, key, value);
-						}
-					}
-
-				}
-			}
-		}
-		return ret;
 	},
 
 	/**
@@ -403,16 +216,16 @@ Highcharts.VMLElement = VMLElement = {
 				erase(clipMembers, wrapper);
 			};
 			cssRet = clipRect.getCSS(wrapper);
-			
+
 		} else {
 			if (wrapper.destroyClip) {
 				wrapper.destroyClip();
 			}
 			cssRet = { clip: docMode8 ? 'inherit' : 'rect(auto)' }; // #1214
 		}
-		
+
 		return wrapper.css(cssRet);
-			
+
 	},
 
 	/**
@@ -458,21 +271,21 @@ Highcharts.VMLElement = VMLElement = {
 		};
 		return this;
 	},
-	
+
 	/**
 	 * In stacked columns, cut off the shadows so that they don't overlap
 	 */
 	cutOffPath: function (path, length) {
-		
+
 		var len;
-		
+
 		path = path.split(/[ ,]/);
 		len = path.length;
-		
+
 		if (len === 9 || len === 11) {
 			path[len - 4] = path[len - 2] = pInt(path[len - 2]) - 10 * length;
 		}
-		return path.join(' ');		
+		return path.join(' ');
 	},
 
 	/**
@@ -503,18 +316,18 @@ Highcharts.VMLElement = VMLElement = {
 			shadowWidth = pick(shadowOptions.width, 3);
 			shadowElementOpacity = (shadowOptions.opacity || 0.15) / shadowWidth;
 			for (i = 1; i <= 3; i++) {
-				
+
 				strokeWidth = (shadowWidth * 2) + 1 - (2 * i);
-				
+
 				// Cut off shadows for stacked column items
 				if (cutOff) {
 					modifiedPath = this.cutOffPath(path.value, strokeWidth + 0.5);
 				}
-				
+
 				markup = ['<shape isShadow="true" strokeweight="', strokeWidth,
 					'" filled="false" path="', modifiedPath,
 					'" coordsize="10 10" style="', element.style.cssText, '" />'];
-				
+
 				shadow = createElement(renderer.prepVML(markup),
 					null, {
 						left: pInt(elemStyle.left) + pick(shadowOptions.offsetX, 1),
@@ -524,7 +337,7 @@ Highcharts.VMLElement = VMLElement = {
 				if (cutOff) {
 					shadow.cutOff = strokeWidth + 1;
 				}
-				
+
 				// apply the opacity
 				markup = ['<stroke color="', shadowOptions.color || 'black', '" opacity="', shadowElementOpacity * i, '"/>'];
 				createElement(renderer.prepVML(markup), null, null, shadow);
@@ -545,10 +358,137 @@ Highcharts.VMLElement = VMLElement = {
 			this.shadows = shadows;
 		}
 		return this;
+	},
+	updateShadows: noop, // Used in SVG only
 
+	setAttr: function (key, value) {
+		if (docMode8) { // IE8 setAttribute bug
+			this.element[key] = value;
+		} else {
+			this.element.setAttribute(key, value);
+		}
+	},
+	classSetter: function (value) {
+		// IE8 Standards mode has problems retrieving the className unless set like this
+		this.element.className = value;
+	},
+	dashstyleSetter: function (value, key, element) {
+		var strokeElem = element.getElementsByTagName('stroke')[0] ||
+			createElement(this.renderer.prepVML(['<stroke/>']), null, null, element);
+		strokeElem[key] = value || 'solid';
+		this[key] = value; /* because changing stroke-width will change the dash length
+			and cause an epileptic effect */
+	},
+	dSetter: function (value, key, element) {
+		var i,
+			shadows = this.shadows;
+		value = value || [];
+		this.d = value.join && value.join(' '); // used in getter for animation
+
+		element.path = value = this.pathToVML(value);
+
+		// update shadows
+		if (shadows) {
+			i = shadows.length;
+			while (i--) {
+				shadows[i].path = shadows[i].cutOff ? this.cutOffPath(value, shadows[i].cutOff) : value;
+			}
+		}
+		this.setAttr(key, value);
+	},
+	fillSetter: function (value, key, element) {
+		var nodeName = element.nodeName;
+		if (nodeName === 'SPAN') { // text color
+			element.style.color = value;
+		} else if (nodeName !== 'IMG') { // #1336
+			element.filled = value !== NONE;
+			this.setAttr('fillcolor', this.renderer.color(value, element, key, this));
+		}
+	},
+	opacitySetter: noop, // Don't bother - animation is too slow and filters introduce artifacts
+	rotationSetter: function (value, key, element) {
+		var style = element.style;
+		this[key] = style[key] = value; // style is for #1873
+
+		// Correction for the 1x1 size of the shape container. Used in gauge needles.
+		style.left = -mathRound(mathSin(value * deg2rad) + 1) + PX;
+		style.top = mathRound(mathCos(value * deg2rad)) + PX;
+	},
+	strokeSetter: function (value, key, element) {
+		this.setAttr('strokecolor', this.renderer.color(value, element, key));
+	},
+	'stroke-widthSetter': function (value, key, element) {
+		element.stroked = !!value; // VML "stroked" attribute
+		this[key] = value; // used in getter, issue #113
+		if (isNumber(value)) {
+			value += PX;
+		}
+		this.setAttr('strokeweight', value);
+	},
+	titleSetter: function (value, key) {
+		this.setAttr(key, value);
+	},
+	visibilitySetter: function (value, key, element) {
+
+		// Handle inherited visibility
+		if (value === 'inherit') {
+			value = VISIBLE;
+		}
+		
+		// Let the shadow follow the main element
+		if (this.shadows) {
+			each(this.shadows, function (shadow) {
+				shadow.style[key] = value;
+			});
+		}
+
+		// Instead of toggling the visibility CSS property, move the div out of the viewport.
+		// This works around #61 and #586
+		if (element.nodeName === 'DIV') {
+			value = value === HIDDEN ? '-999em' : 0;
+
+			// In order to redraw, IE7 needs the div to be visible when tucked away
+			// outside the viewport. So the visibility is actually opposite of
+			// the expected value. This applies to the tooltip only.
+			if (!docMode8) {
+				element.style[key] = value ? VISIBLE : HIDDEN;
+			}
+			key = 'top';
+		}
+		element.style[key] = value;
+	},
+	xSetter: function (value, key, element) {
+		this[key] = value; // used in getter
+
+		if (key === 'x') {
+			key = 'left';
+		} else if (key === 'y') {
+			key = 'top';
+		}/* else {
+			value = mathMax(0, value); // don't set width or height below zero (#311)
+		}*/
+
+		// clipping rectangle special
+		if (this.updateClipping) {
+			this[key] = value; // the key is now 'left' or 'top' for 'x' and 'y'
+			this.updateClipping();
+		} else {
+			// normal
+			element.style[key] = value;
+		}
+	},
+	zIndexSetter: function (value, key, element) {
+		element.style[key] = value;
 	}
 };
-VMLElement = extendClass(SVGElement, VMLElement);
+Highcharts.VMLElement = VMLElement = extendClass(SVGElement, VMLElement);
+
+// Some shared setters
+VMLElement.prototype.ySetter =
+	VMLElement.prototype.widthSetter = 
+	VMLElement.prototype.heightSetter = 
+	VMLElement.prototype.xSetter;
+
 
 /**
  * The VML renderer
@@ -565,16 +505,17 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 * @param {Number} width
 	 * @param {Number} height
 	 */
-	init: function (container, width, height) {
+	init: function (container, width, height, style) {
 		var renderer = this,
 			boxWrapper,
-			box;
+			box,
+			css;
 
 		renderer.alignedObjects = [];
 
-		boxWrapper = renderer.createElement(DIV);
+		boxWrapper = renderer.createElement(DIV)
+			.css(extend(this.getStyle(style), { position: RELATIVE}));
 		box = boxWrapper.element;
-		box.style.position = RELATIVE; // for freeform drawing using renderer directly
 		container.appendChild(boxWrapper.element);
 
 
@@ -582,6 +523,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		renderer.isVML = true;
 		renderer.box = box;
 		renderer.boxWrapper = boxWrapper;
+		renderer.cache = {};
 
 
 		renderer.setSize(width, height, false);
@@ -593,21 +535,25 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 			doc.namespaces.add('hcv', 'urn:schemas-microsoft-com:vml');
 
-			// Setup default CSS (#2153)
-			(doc.styleSheets.length ? doc.styleSheets[0] : doc.createStyleSheet()).cssText +=
-				'hcv\\:fill, hcv\\:path, hcv\\:shape, hcv\\:stroke' +
+			// Setup default CSS (#2153, #2368, #2384)
+			css = 'hcv\\:fill, hcv\\:path, hcv\\:shape, hcv\\:stroke' +
 				'{ behavior:url(#default#VML); display: inline-block; } ';
+			try {
+				doc.createStyleSheet().cssText = css;
+			} catch (e) {
+				doc.styleSheets[0].cssText += css;
+			}
 
 		}
 	},
-	
-	
+
+
 	/**
 	 * Detect whether the renderer is hidden. This happens when one of the parent elements
 	 * has display: none
 	 */
 	isHidden: function () {
-		return !this.box.offsetWidth;			
+		return !this.box.offsetWidth;
 	},
 
 	/**
@@ -624,7 +570,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		// create a dummy element
 		var clipRect = this.createElement(),
 			isObj = isObject(x);
-		
+
 		// mimic a rectangle with its style object for automatic updating in attr
 		return extend(clipRect, {
 			members: [],
@@ -663,7 +609,9 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			// used in attr and animation to update the clipping of all members
 			updateClipping: function () {
 				each(clipRect.members, function (member) {
-					member.css(clipRect.getCSS(member));
+					if (member.element) { // Deleted series, like in stock/members/series-remove demo. Should be removed from members, but this will do.
+						member.css(clipRect.getCSS(member));
+					}
 				});
 			}
 		});
@@ -691,15 +639,15 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		} else if (color && color.radialGradient) {
 			fillType = 'pattern';
 		}
-		
-		
+
+
 		if (fillType) {
 
 			var stopColor,
 				stopOpacity,
 				gradient = color.linearGradient || color.radialGradient,
 				x1,
-				y1, 
+				y1,
 				x2,
 				y2,
 				opacity1,
@@ -718,7 +666,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 						'" type="', fillType, '" ', fillAttr, 'focus="100%" method="any" />'];
 					createElement(renderer.prepVML(markup), null, null, elem);
 				};
-			
+
 			// Extend from 0 to 1
 			firstStop = stops[0];
 			lastStop = stops[stops.length - 1];
@@ -745,9 +693,9 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					stopColor = stop[1];
 					stopOpacity = 1;
 				}
-				
+
 				// Build the color attribute
-				colors.push((stop[0] * 100) + '% ' + stopColor); 
+				colors.push((stop[0] * 100) + '% ' + stopColor);
 
 				// Only start and end opacities are allowed, so we use the first and the last
 				if (!i) {
@@ -758,10 +706,10 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					color1 = stopColor;
 				}
 			});
-			
+
 			// Apply the gradient to fills only.
 			if (prop === 'fill') {
-				
+
 				// Handle linear gradient angle
 				if (fillType === 'gradient') {
 					x1 = gradient.x1 || gradient[0] || 0;
@@ -772,12 +720,12 @@ var VMLRendererExtension = { // inherit SVGRenderer
 						(y2 - y1) / // y vector
 						(x2 - x1) // x vector
 						) * 180 / mathPI) + '"';
-						
+
 					addFillNode();
-					
+
 				// Radial (circular) gradient
-				} else { 
-					
+				} else {
+
 					var r = gradient.r,
 						sizex = r * 2,
 						sizey = r * 2,
@@ -791,30 +739,30 @@ var VMLRendererExtension = { // inherit SVGRenderer
 								cx += (radialReference[0] - bBox.x) / bBox.width - 0.5;
 								cy += (radialReference[1] - bBox.y) / bBox.height - 0.5;
 								sizex *= radialReference[2] / bBox.width;
-								sizey *= radialReference[2] / bBox.height;							
+								sizey *= radialReference[2] / bBox.height;
 							}
 							fillAttr = 'src="' + defaultOptions.global.VMLRadialGradientURL + '" ' +
 								'size="' + sizex + ',' + sizey + '" ' +
 								'origin="0.5,0.5" ' +
 								'position="' + cx + ',' + cy + '" ' +
 								'color2="' + color2 + '" ';
-							
+
 							addFillNode();
 						};
-					
+
 					// Apply radial gradient
 					if (wrapper.added) {
 						applyRadialGradient();
 					} else {
 						// We need to know the bounding box to get the size and position right
-						addEvent(wrapper, 'add', applyRadialGradient);
+						wrapper.onAdd = applyRadialGradient;
 					}
-					
+
 					// The fill element's color attribute is broken in IE8 standards mode, so we
 					// need to set the parent shape's fillcolor attribute instead.
 					ret = color1;
 				}
-			
+
 			// Gradients are not supported for VML stroke, return the first color. #722.
 			} else {
 				ret = stopColor;
@@ -910,7 +858,8 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			x = x.x;
 		}
 		circle.isCircle = true; // Causes x and y to mean center (#1682)
-		return circle.attr({ x: x, y: y, width: 2 * r, height: 2 * r });
+		circle.r = r;
+		return circle.attr({ x: x, y: y });
 	},
 
 	/**
@@ -959,20 +908,10 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	},
 
 	/**
-	 * VML uses a shape for rect to overcome bugs and rotation problems
+	 * For rectangles, VML uses a shape for rect to overcome bugs and rotation problems
 	 */
-	rect: function (x, y, width, height, r, strokeWidth) {
-
-		var wrapper = this.symbol('rect');
-		wrapper.r = isObject(x) ? x.r : r;
-
-		//return wrapper.attr(wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0)));
-		return wrapper.attr(
-				isObject(x) ? 
-					x : 
-					// do not crispify when an object is passed in (as in column charts)
-					wrapper.crisp(strokeWidth, x, y, mathMax(width, 0), mathMax(height, 0))
-			);
+	createElement: function (nodeName) {
+		return nodeName === 'rect' ? this.symbol(nodeName) : SVGRenderer.prototype.createElement.call(this, nodeName);	
 	},
 
 	/**
@@ -981,12 +920,20 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 * @param {Object} parentNode
 	 */
 	invertChild: function (element, parentNode) {
-		var parentStyle = parentNode.style;
+		var ren = this,
+			parentStyle = parentNode.style,
+			imgStyle = element.tagName === 'IMG' && element.style; // #1111
+
 		css(element, {
 			flip: 'x',
-			left: pInt(parentStyle.width) - 1,
-			top: pInt(parentStyle.height) - 1,
+			left: pInt(parentStyle.width) - (imgStyle ? pInt(imgStyle.top) : 1),
+			top: pInt(parentStyle.height) - (imgStyle ? pInt(imgStyle.left) : 1),
 			rotation: -90
+		});
+
+		// Recursively invert child elements, needed for nested composite shapes like box plots and error bars. #1680, #1806.
+		each(element.childNodes, function (child) {
+			ren.invertChild(child, element);
 		});
 	},
 
@@ -1026,8 +973,8 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			if (options.open && !innerRadius) {
 				ret.push(
 					'e',
-					M, 
-					x,// - innerRadius, 
+					M,
+					x,// - innerRadius,
 					y// - innerRadius
 				);
 			}
@@ -1045,13 +992,18 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				'x', // finish path
 				'e' // close
 			);
-			
+
 			ret.isArc = true;
 			return ret;
 
 		},
 		// Add circle symbol path. This performs significantly faster than v:oval.
 		circle: function (x, y, w, h, wrapper) {
+
+			if (wrapper) {
+				w = h = 2 * wrapper.r;
+			}
+
 			// Center correction, #1682
 			if (wrapper && wrapper.isCircle) {
 				x -= w / 2;
@@ -1075,71 +1027,13 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		},
 		/**
 		 * Add rectangle symbol path which eases rotation and omits arcsize problems
-		 * compared to the built-in VML roundrect shape
-		 *
-		 * @param {Number} left Left position
-		 * @param {Number} top Top position
-		 * @param {Number} r Border radius
-		 * @param {Object} options Width and height
+		 * compared to the built-in VML roundrect shape. When borders are not rounded,
+		 * use the simpler square path, else use the callout path without the arrow.
 		 */
-
-		rect: function (left, top, width, height, options) {
-			
-			var right = left + width,
-				bottom = top + height,
-				ret,
-				r;
-
-			// No radius, return the more lightweight square
-			if (!defined(options) || !options.r) {
-				ret = SVGRenderer.prototype.symbols.square.apply(0, arguments);
-				
-			// Has radius add arcs for the corners
-			} else {
-			
-				r = mathMin(options.r, width, height);
-				ret = [
-					M,
-					left + r, top,
-	
-					L,
-					right - r, top,
-					'wa',
-					right - 2 * r, top,
-					right, top + 2 * r,
-					right - r, top,
-					right, top + r,
-	
-					L,
-					right, bottom - r,
-					'wa',
-					right - 2 * r, bottom - 2 * r,
-					right, bottom,
-					right, bottom - r,
-					right - r, bottom,
-	
-					L,
-					left + r, bottom,
-					'wa',
-					left, bottom - 2 * r,
-					left + 2 * r, bottom,
-					left + r, bottom,
-					left, bottom - r,
-	
-					L,
-					left, top + r,
-					'wa',
-					left, top,
-					left + 2 * r, top + 2 * r,
-					left, top + r,
-					left + r, top,
-	
-	
-					'x',
-					'e'
-				];
-			}
-			return ret;
+		rect: function (x, y, w, h, options) {
+			return SVGRenderer.prototype.symbols[
+				!defined(options) || !options.r ? 'square' : 'callout'
+			].call(0, x, y, w, h, options);
 		}
 	}
 };
@@ -1151,6 +1045,21 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
 	// general renderer
 	Renderer = VMLRenderer;
 }
+
+// This method is used with exporting in old IE, when emulating SVG (see #2314)
+SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
+	var measuringSpan = doc.createElement('span'),
+		offsetWidth,
+	textNode = doc.createTextNode(text);
+
+	measuringSpan.appendChild(textNode);
+	css(measuringSpan, styles);
+	this.box.appendChild(measuringSpan);
+	offsetWidth = measuringSpan.offsetWidth;
+	discardElement(measuringSpan); // #2463
+	return offsetWidth;
+};
+
 
 /* ****************************************************************************
  *                                                                            *

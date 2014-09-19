@@ -7,7 +7,15 @@ defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
 	lineWidth: 1,
 	lineColor: '#333',
 	dashStyle: 'dot',
-	borderColor: '#333'
+	borderColor: '#333',
+	dataLabels: {
+		inside: true
+	},
+	states: {
+		hover: {
+			lineWidthPlus: 0 // #3126
+		}
+	}
 });
 
 
@@ -22,23 +30,12 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	pointValKey: 'y',
 
 	/**
-	 * Init waterfall series, force stacking
-	 */
-	init: function (chart, options) {
-		// force stacking
-		options.stacking = true;
-
-		seriesTypes.column.prototype.init.call(this, chart, options);
-	},
-
-
-	/**
 	 * Translate data points from raw values
 	 */
 	translate: function () {
 		var series = this,
 			options = series.options,
-			axis = series.yAxis,
+			yAxis = series.yAxis,
 			len,
 			i,
 			points,
@@ -46,44 +43,55 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			shapeArgs,
 			stack,
 			y,
+			yValue,
 			previousY,
-			stackPoint,
+			previousIntermediate,
+			range,
 			threshold = options.threshold,
-			crispCorr = (options.borderWidth % 2) / 2;
+			stacking = options.stacking,
+			tooltipY;
 
 		// run column series translate
 		seriesTypes.column.prototype.translate.apply(this);
 
-		previousY = threshold;
+		previousY = previousIntermediate = threshold;
 		points = series.points;
 
 		for (i = 0, len = points.length; i < len; i++) {
 			// cache current point object
 			point = points[i];
+			yValue = this.processedYData[i];
 			shapeArgs = point.shapeArgs;
 
 			// get current stack
-			stack = series.getStack(i);
-			stackPoint = stack.points[series.index];
+			stack = stacking && yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey];
+			range = stack ? 
+				stack[point.x].points[series.index + ',' + i] :
+				[0, yValue];
 
 			// override point value for sums
 			if (isNaN(point.y)) {
-				point.y = series.yData[i];
+				point.y = yValue;
 			}
 
 			// up points
-			y = mathMax(previousY, previousY + point.y) + stackPoint[0];
-			shapeArgs.y = axis.translate(y, 0, 1);
+			y = mathMax(previousY, previousY + point.y) + range[0];
+			shapeArgs.y = yAxis.translate(y, 0, 1);
 
 
 			// sum points
-			if (point.isSum || point.isIntermediateSum) {
-				shapeArgs.y = axis.translate(stackPoint[1], 0, 1);
-				shapeArgs.height = axis.translate(stackPoint[0], 0, 1) - shapeArgs.y;
+			if (point.isSum) {
+				shapeArgs.y = yAxis.translate(range[1], 0, 1);
+				shapeArgs.height = yAxis.translate(range[0], 0, 1) - shapeArgs.y;
+
+			} else if (point.isIntermediateSum) {
+				shapeArgs.y = yAxis.translate(range[1], 0, 1);
+				shapeArgs.height = yAxis.translate(previousIntermediate, 0, 1) - shapeArgs.y;
+				previousIntermediate = range[1];
 
 			// if it's not the sum point, update previous stack end position
 			} else {
-				previousY += stack.total;
+				previousY += yValue;
 			}
 
 			// negative points
@@ -92,9 +100,18 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				shapeArgs.height *= -1;
 			}
 
-			point.plotY = shapeArgs.y = mathRound(shapeArgs.y) - crispCorr;
-			shapeArgs.height = mathRound(shapeArgs.height);
+			point.plotY = shapeArgs.y = mathRound(shapeArgs.y) - (series.borderWidth % 2) / 2;
+			shapeArgs.height = mathMax(mathRound(shapeArgs.height), 0.001); // #3151
 			point.yBottom = shapeArgs.y + shapeArgs.height;
+
+			// Correct tooltip placement (#3014)
+			tooltipY = point.plotY + (point.negative ? shapeArgs.height : 0);
+			if (series.chart.inverted) {
+				point.tooltipPos[0] = yAxis.len - tooltipY;
+			} else {
+				point.tooltipPos[1] = tooltipY;
+			}
+
 		}
 	},
 
@@ -126,7 +143,6 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				yData[i] = sum;
 			} else if (y === "intermediateSum" || point.isIntermediateSum) {
 				yData[i] = subSum;
-				subSum = threshold;
 			} else {
 				sum += y;
 				subSum += y;
@@ -147,11 +163,10 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	 */
 	toYData: function (pt) {
 		if (pt.isSum) {
-			return "sum";
+			return (pt.x === 0 ? null : "sum"); //#3245 Error when first element is Sum or Intermediate Sum
 		} else if (pt.isIntermediateSum) {
-			return "intermediateSum";
+			return (pt.x === 0 ? null : "intermediateSum"); //#3245
 		}
-
 		return pt.y;
 	},
 
@@ -188,7 +203,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 		var data = this.data,
 			length = data.length,
-			lineWidth = this.options.lineWidth + this.options.borderWidth,
+			lineWidth = this.options.lineWidth + this.borderWidth,
 			normalizer = mathRound(lineWidth) % 2 / 2,
 			path = [],
 			M = 'M',
@@ -224,21 +239,6 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	 * Extremes are recorded in processData
 	 */
 	getExtremes: noop,
-
-	/**
-	 * Return stack for given index
-	 */
-	getStack: function (i) {
-		var axis = this.yAxis,
-			stacks = axis.stacks,
-			key = this.stackKey;
-
-		if (this.processedYData[i] < this.options.threshold) {
-			key = '-' + key;
-		}
-
-		return stacks[key][i];
-	},
 
 	drawGraph: Series.prototype.drawGraph
 });
