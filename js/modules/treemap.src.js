@@ -82,13 +82,10 @@
 	// The Treemap series type
 	seriesTypes.treemap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		type: 'treemap',
-		isCartesian: false,	
 		trackerGroups: ['group', 'dataLabelsGroup'],
 		handleLayout: function () {
 		var series = this,
-			id = this.rootNode,
-			tree,
-			root,
+			tree = this.tree,
 			seriesArea;
 			// Modify series
 			this.nodeMap = [];
@@ -98,21 +95,22 @@
 			this.yAxis.dataMax = 100;
 
 			// Assign variables
-			tree = this.buildTree();
-			root = tree;
-			this.levelMap = this.getLevels();
-			if (id) {
-				root = series.nodeMap[id];
+			if (!tree) {
+				tree = this.buildTree();
 			}
+			if (!this.rootNode) {
+				this.rootNode = "";
+			}
+			this.levelMap = this.getLevels();
 			each(series.points, function (point) {
 				// Reset visibility
 				delete point.plotX;
 				delete point.plotY;
 				point.inDisplay = false;
 			});
-			seriesArea = this.getSeriesArea(root.val);
-			this.setColorRecursive(root, undefined);
-			this.calculateArea(root, seriesArea);
+			seriesArea = this.getSeriesArea(tree.val);
+			this.setColorRecursive(tree, undefined);
+			this.calculateArea(tree, seriesArea);
 		},
 		buildTree: function () {
 			var tree,
@@ -227,6 +225,7 @@
 				y1,
 				y2,
 				setPointValues = function (node, values, isLeaf) {
+						node.values = values;
 						point = series.points[node.i];
 						x1 = Math.round(xAxis.len - xAxis.translate(values.x, 0, 0, 0, 1));
 						x2 = Math.round(xAxis.len - xAxis.translate(values.x + values.width, 0, 0, 0, 1));
@@ -651,8 +650,12 @@
 			} 
 		},
 		drillToNode: function (id) {
+			var node = this.nodeMap[id],
+				val = node.values;
 			this.rootNode = id;
-			this.redraw();
+			this.xAxis.setExtremes(val.x, val.x + val.width, false);
+			this.yAxis.setExtremes(val.y, val.y + val.height, false);
+			this.chart.redraw();
 		},
 		showDrillUpButton: function (name) {
 			var series = this,
