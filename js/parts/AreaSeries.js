@@ -171,15 +171,27 @@ var AreaSeries = extendClass(Series, {
 				var stack = stacks && stacks[points[i].x],
 					otherPoint = points[otherI],
 					otherStack = stacks && otherPoint && stacks[otherPoint.x],
-					cliff;
+					cliff,
+					n,
+					pointKey;
 
 				if (otherStack && points[otherI].isNull) {
 					otherStack.hasNulls = true;
 				}
-				
+
 				if ((otherPoint && otherPoint.isNull) || (otherStack && (otherStack.hasNulls || stack[cliffName]))) {
-					
-					if (stacks && otherStack.points[seriesIndex]) {
+
+					// Get the point key (TODO: check if we can use a less rigid point key system, what issue did this pattern solve?)
+					if (stacks) {
+						for (n in otherStack.points) {
+							if (n.indexOf(seriesIndex + ',') === 0) {
+								pointKey = n;
+								break;
+							}
+						}
+					}
+
+					if (stacks && otherStack.points[pointKey]) {
 						cliff = stack[cliffName];
 					} else {
 						cliff = yBottom - plotY;
@@ -218,7 +230,7 @@ var AreaSeries = extendClass(Series, {
 
 				} else if (stacks && !otherStack) {
 					cliff = yBottom - plotY;
-					stack[cliffName] += cliff;					
+					stack[cliffName] += cliff;
 				}
 			};
 			// Get the series index of the previous valid point in the stack
@@ -237,7 +249,7 @@ var AreaSeries = extendClass(Series, {
 			for (i = 0; i < len; i++) {
 				//previousSeries = getPreviousSeries(points[i].x);
 				if (!points[i].isNull) {
-					plotYBottom[i] = yAxis.toPixels(stacks[points[i].x].points[seriesIndex][0], true);
+					plotYBottom[i] = yAxis.toPixels(stacks[points[i].x].points[seriesIndex + ',' + i][0], true);
 				}
 				
 				//if (previousSeries !== seriesIndex - 1) {

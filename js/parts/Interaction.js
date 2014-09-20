@@ -75,8 +75,6 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			tracker = series.tracker,
 			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
-			singlePoints = series.singlePoints,
-			singlePoint,
 			i,
 			onMouseOver = function () {
 				if (chart.hoverSeries !== series) {
@@ -112,11 +110,11 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 		}
 
 		// handle single points
-		for (i = 0; i < singlePoints.length; i++) {
+		/*for (i = 0; i < singlePoints.length; i++) {
 			singlePoint = singlePoints[i];
 			trackerPath.push(M, singlePoint.plotX - snap, singlePoint.plotY,
 			L, singlePoint.plotX + snap, singlePoint.plotY);
-		}
+		}*/
 
 		// draw the tracker
 		if (tracker) {
@@ -787,10 +785,8 @@ extend(Series.prototype, {
 			series.tooltipPoints = null;
 		}
 
-		// concat segments to overcome null values
-		each(series.segments || series.points, function (segment) {
-			points = points.concat(segment);
-		});
+		// Filter out null values
+		points = this.getValidPoints();
 
 		// Reverse the points in case the X axis is reversed
 		if (xAxis && xAxis.reversed) {

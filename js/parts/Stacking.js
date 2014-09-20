@@ -24,6 +24,8 @@ function StackItem(axis, options, isNegative, x, stackOption) {
 
 	// Save the stack option on the series configuration object, and whether to treat it as percent
 	this.stack = stackOption;
+	this.leftCliff = 0;
+	this.rightCliff = 0;
 
 	// The align options and text align varies on whether the stack is negative and
 	// if the chart is inverted or not.
@@ -224,7 +226,9 @@ Series.prototype.setStackedPoints = function () {
 
 		// If the StackItem doesn't exist, create it first
 		stack = stacks[key][x];
-		stack.points[pointKey] = [stack.cum || 0];
+		if (y !== null) {
+			stack.points[pointKey] = [stack.cum || 0];
+		}
 
 		// Add value to the stack total
 		if (stacking === 'percent') {
@@ -245,7 +249,9 @@ Series.prototype.setStackedPoints = function () {
 
 		stack.cum = (stack.cum || 0) + (y || 0);
 
-		stack.points[pointKey].push(stack.cum);
+		if (y !== null) {
+			stack.points[pointKey].push(stack.cum);
+		}
 		stackedYData[i] = stack.cum;
 
 	}

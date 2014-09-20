@@ -7122,7 +7122,7 @@ Axis.prototype = {
 				for (type in stacks) {
 					for (i in stacks[type]) {
 						stacks[type][i].total = null;
-						stacks[type][i].cum = 0;
+						stacks[type][i].cum = stacks[type][i].leftCliff = stacks[type][i].rightCliff = 0;
 					}
 				}
 			}
@@ -11771,6 +11771,7 @@ Point.prototype = {
 		if (pointValKey) {
 			point.y = point[pointValKey];
 		}
+		point.isNull = point.y === null;
 
 		// If no x is set by now, get auto incremented value. All points must have an
 		// x value, however the y value can be null to create a gap in the series
@@ -12146,51 +12147,7 @@ Series.prototype = {
 		series.xIncrement = xIncrement + series.pointInterval;
 		return xIncrement;
 	},
-
-	/**
-	 * Divide the series data into segments divided by null values.
-	 */
-	getSegments: function () {
-		var series = this,
-			lastNull = -1,
-			segments = [],
-			i,
-			points = series.points,
-			pointsLength = points.length;
-
-		if (pointsLength) { // no action required for []
-
-			// if connect nulls, just remove null points
-			if (series.options.connectNulls) {
-				i = pointsLength;
-				while (i--) {
-					if (points[i].y === null) {
-						points.splice(i, 1);
-					}
-				}
-				if (points.length) {
-					segments = [points];
-				}
-
-			// else, split on null points
-			} else {
-				each(points, function (point, i) {
-					if (point.y === null) {
-						if (i > lastNull + 1) {
-							segments.push(points.slice(lastNull + 1, i));
-						}
-						lastNull = i;
-					} else if (i === pointsLength - 1) { // last value
-						segments.push(points.slice(lastNull + 1, i + 1));
-					}
-				});
-			}
-		}
-
-		// register it
-		series.segments = segments;
-	},
-
+	
 	/**
 	 * Set the series options by merging from the options tree
 	 * @param {Object} itemOptions
@@ -12693,7 +12650,7 @@ Series.prototype = {
 
 
 			// Calculate the bottom y value for stacked series
-			if (stacking && series.visible && stack && stack[xValue]) {
+			if (stacking && series.visible && !point.isNull && stack && stack[xValue]) {
 
 				pointStack = stack[xValue];
 				stackValues = pointStack.points[series.index + ',' + i];
@@ -12742,9 +12699,15 @@ Series.prototype = {
 				categories[point.x] : point.x;
 
 		}
+	},
 
-		// now that we have the cropped data, build the segments
-		series.getSegments();
+	/**
+	 * Return the series points with null points filtered out
+	 */
+	getValidPoints: function () {
+		return grep(this.points, function (point) {
+			return !point.isNull;
+		});
 	},
 
 	/**
@@ -13161,88 +13124,84 @@ Series.prototype = {
 	},
 
 	/**
-	 * Return the graph path of a segment
-	 */
-	getSegmentPath: function (segment) {
-		var series = this,
-			segmentPath = [],
-			step = series.options.step;
-
-		// build the segment line
-		each(segment, function (point, i) {
-
-			var plotX = point.plotX,
-				plotY = point.plotY,
-				lastPoint;
-
-			if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
-				segmentPath.push.apply(segmentPath, series.getPointSpline(segment, point, i));
-
-			} else {
-
-				// moveTo or lineTo
-				segmentPath.push(i ? L : M);
-
-				// step line?
-				if (step && i) {
-					lastPoint = segment[i - 1];
-					if (step === 'right') {
-						segmentPath.push(
-							lastPoint.plotX,
-							plotY
-						);
-
-					} else if (step === 'center') {
-						segmentPath.push(
-							(lastPoint.plotX + plotX) / 2,
-							lastPoint.plotY,
-							(lastPoint.plotX + plotX) / 2,
-							plotY
-						);
-
-					} else {
-						segmentPath.push(
-							plotX,
-							lastPoint.plotY
-						);
-					}
-				}
-
-				// normal line to next point
-				segmentPath.push(
-					point.plotX,
-					point.plotY
-				);
-			}
-		});
-
-		return segmentPath;
-	},
-
-	/**
 	 * Get the graph path
 	 */
 	getGraphPath: function () {
 		var series = this,
+			points = series.points,
+			options = series.options,
+			step = options.step,
 			graphPath = [],
-			segmentPath,
-			singlePoints = []; // used in drawTracker
+			gap;
 
-		// Divide into segments and build graph and area paths
-		each(series.segments, function (segment) {
+		// If connect nulls, filter out null values
+		if (options.connectNulls) {
+			points = series.getValidPoints();
+		}
 
-			segmentPath = series.getSegmentPath(segment);
+		// Build the line
+		each(points, function (point, i) {
+			
+			var plotX = point.plotX,
+				plotY = point.plotY,
+				lastPoint,
+				pathToPoint; // the path to this point from the previous
 
-			// add the segment to the graph, or a single point for tracking
-			if (segment.length > 1) {
-				graphPath = graphPath.concat(segmentPath);
+			if (point.isNull) {
+				gap = true;
+
 			} else {
-				singlePoints.push(segment[0]);
+
+				if (i === 0 || gap) {
+					pathToPoint = [M, point.plotX, point.plotY];
+				
+				} else if (series.getPointSpline) { // generate the spline as defined in the SplineSeries object
+					
+					pathToPoint = series.getPointSpline(points, point, i);
+
+				} else if (step) {
+
+					lastPoint = points[i - 1];
+					if (step === 'right') {
+						pathToPoint = [
+							L,
+							lastPoint.plotX,
+							plotY
+						];
+						
+					} else if (step === 'center') {
+						pathToPoint = [
+							L,
+							(lastPoint.plotX + plotX) / 2,
+							lastPoint.plotY,
+							(lastPoint.plotX + plotX) / 2,
+							plotY
+						];
+						
+					} else {
+						pathToPoint = [
+							L,
+							plotX,
+							lastPoint.plotY
+						];
+					}
+					pathToPoint.push(L, plotX, plotY);
+
+				} else {
+					// normal line to next point
+					pathToPoint = [
+						L,
+						plotX,
+						plotY
+					];
+				}
+
+
+				graphPath.push.apply(graphPath, pathToPoint);
+				gap = false;
 			}
 		});
-
-		// Record it for use in drawGraph and drawTracker, and return graphPath
-		series.singlePoints = singlePoints;
+		
 		series.graphPath = graphPath;
 
 		return graphPath;
@@ -17724,8 +17683,6 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			tracker = series.tracker,
 			cursor = options.cursor,
 			css = cursor && { cursor: cursor },
-			singlePoints = series.singlePoints,
-			singlePoint,
 			i,
 			onMouseOver = function () {
 				if (chart.hoverSeries !== series) {
@@ -17761,11 +17718,11 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 		}
 
 		// handle single points
-		for (i = 0; i < singlePoints.length; i++) {
+		/*for (i = 0; i < singlePoints.length; i++) {
 			singlePoint = singlePoints[i];
 			trackerPath.push(M, singlePoint.plotX - snap, singlePoint.plotY,
 			L, singlePoint.plotX + snap, singlePoint.plotY);
-		}
+		}*/
 
 		// draw the tracker
 		if (tracker) {
@@ -18436,10 +18393,8 @@ extend(Series.prototype, {
 			series.tooltipPoints = null;
 		}
 
-		// concat segments to overcome null values
-		each(series.segments || series.points, function (segment) {
-			points = points.concat(segment);
-		});
+		// Filter out null values
+		points = this.getValidPoints();
 
 		// Reverse the points in case the X axis is reversed
 		if (xAxis && xAxis.reversed) {
