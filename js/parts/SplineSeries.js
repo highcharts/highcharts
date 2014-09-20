@@ -12,21 +12,21 @@ var SplineSeries = extendClass(Series, {
 	/**
 	 * Get the spline segment from a given point's previous neighbour to the given point
 	 */
-	getPointSpline: function (segment, point, i) {
+	getPointSpline: function (points, point, i) {
 		var smoothing = 1.5, // 1 means control points midway between points, 2 means 1/3 from the point, 3 is 1/4 etc
 			denom = smoothing + 1,
 			plotX = point.plotX,
 			plotY = point.plotY,
-			lastPoint = segment[i - 1],
-			nextPoint = segment[i + 1],
+			lastPoint = points[i - 1],
+			nextPoint = points[i + 1],
 			leftContX,
 			leftContY,
 			rightContX,
 			rightContY,
 			ret;
 
-		// find control points
-		if (lastPoint && !lastPoint.isNull && nextPoint && !nextPoint.isNull) {
+		// Find control points
+		if (lastPoint && !lastPoint.isNull && !lastPoint.isCliff && nextPoint && !nextPoint.isNull && !nextPoint.isCliff) {
 			var lastX = lastPoint.plotX,
 				lastY = lastPoint.plotY,
 				nextX = nextPoint.plotX,

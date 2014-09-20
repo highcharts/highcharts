@@ -14,135 +14,7 @@ defaultPlotOptions.area = merge(defaultSeriesOptions, {
  */
 var AreaSeries = extendClass(Series, {
 	type: 'area',
-	
-	/* *
-	 * For stacks, don't split segments on null values. Instead, draw null values with 
-	 * no marker. Also insert dummy points for any X position that exists in other series
-	 * in the stack.
-	 * / 
-	setAllStackPoints: function () {
-		var segment = [],
-			keys = [],
-			xAxis = this.xAxis,
-			yAxis = this.yAxis,
-			stack = yAxis.stacks[this.stackKey],
-			pointMap = {},
-			plotX,
-			plotY,
-			points = this.points,
-			connectNulls = this.options.connectNulls,
-			val,
-			seriesIndex = this.index,
-			i,
-			x;
 
-		if (this.options.stacking && !this.cropped) { // cropped causes artefacts in Stock, and perf issue
-			// Create a map where we can quickly look up the points by their X value.
-			for (i = 0; i < points.length; i++) {
-				pointMap[points[i].x] = points[i];
-			}
-
-			// Sort the keys (#1651)
-			for (x in stack) {
-				if (stack[x].total !== null) { // nulled after switching between grouping and not (#1651, #2336)
-					keys.push(+x);
-				}
-			}
-			keys.sort(function (a, b) {
-				return a - b;
-			});
-
-			each(keys, function (x) {
-				//if (connectNulls && (!pointMap[x] || pointMap[x].y === null)) { // #1836
-				//	return;
-
-				// The point exists, push it to the segment
-				//} else if (pointMap[x]) {
-				if (pointMap[x] && !pointMap[x].isNull) {
-					segment.push(pointMap[x]);
-
-				// There is no point for this X value in this series, so we 
-				// insert a dummy point in order for the areas to be drawn
-				// correctly.
-				} else {
-					/ *plotX = xAxis.translate(x);
-					val = stack[x].percent ? (stack[x].total ? stack[x].cum * 100 / stack[x].total : 0) : stack[x].cum; // #1991
-					plotY = yAxis.toPixels(val, true);
-					segment.push({ 
-						y: null, 
-						plotX: plotX,
-						clientX: plotX, 
-						plotY: plotY, 
-						yBottom: plotY,
-						onMouseOver: noop
-					});* /
-					segment.push({
-						isNull: true,
-						x: x
-					});
-					stack[x].nullFrom = seriesIndex;
-				}
-			});
-			this.stackPoints = segment;
-		}
-	},* /
-	
-	/ **
-	 * Extend the base Series getSegmentPath method by adding the path for the area.
-	 * This path is pushed to the series.areaPath property.
-	 * /
-	getSegmentPath: function (segment) {
-		
-		var segmentPath = Series.prototype.getSegmentPath.call(this, segment), // call base method
-			areaSegmentPath = [].concat(segmentPath), // work on a copy for the area path
-			i,
-			options = this.options,
-			segLength = segmentPath.length,
-			translatedThreshold = this.yAxis.getThreshold(options.threshold), // #2181
-			yBottom;
-		
-		if (segLength === 3) { // for animation from 1 to two points
-			areaSegmentPath.push(L, segmentPath[1], segmentPath[2]);
-		}
-		if (options.stacking && !this.closedStacks) {
-			
-			// Follow stack back. Todo: implement areaspline. A general solution could be to 
-			// reverse the entire graphPath of the previous series, though may be hard with
-			// splines and with series with different extremes
-			for (i = segment.length - 1; i >= 0; i--) {
-
-				yBottom = pick(segment[i].yBottom, translatedThreshold);
-			
-				// step line?
-				if (i < segment.length - 1 && options.step) {
-					areaSegmentPath.push(segment[i + 1].plotX, yBottom);
-				}
-				
-				areaSegmentPath.push(segment[i].plotX, yBottom);
-			}
-
-		} else { // follow zero line back
-			this.closeSegment(areaSegmentPath, segment, translatedThreshold);
-		}
-		this.areaPath = this.areaPath.concat(areaSegmentPath);
-		return segmentPath;
-	},
-	
-	/ **
-	 * Extendable method to close the segment path of an area. This is overridden in polar 
-	 * charts.
-	 * /
-	closeSegment: function (path, segment, translatedThreshold) {
-		path.push(
-			L,
-			segment[segment.length - 1].plotX,
-			translatedThreshold,
-			L,
-			segment[0].plotX,
-			translatedThreshold
-		);
-	},
-	*/
 	getGraphPath: function () {
 		var getGraphPath = Series.prototype.getGraphPath,
 			graphPath,
@@ -219,13 +91,15 @@ var AreaSeries = extendClass(Series, {
 						plotX: plotX,
 						plotY: points[otherI].isNull ? 
 							plotYNullTop[otherI] || translatedThreshold : 
-							plotY + cliff
+							plotY + cliff,
+						isCliff: true
 					});
 					bottomPoints.push({
 						plotX: plotX,
 						plotY: points[otherI].isNull ? 
 							plotYNullTop[otherI] || translatedThreshold : 
-							yBottom + cliff
+							yBottom + cliff,
+						isCliff: true
 					});
 
 				} else if (stacks && !otherStack) {
@@ -233,34 +107,12 @@ var AreaSeries = extendClass(Series, {
 					stack[cliffName] += cliff;
 				}
 			};
-			// Get the series index of the previous valid point in the stack
-			/*getPreviousSeries = function (x) {
-				var i = seriesIndex;
-				while (i--) {
-					if (stacks[x].points[i]) {
-						return i;
-					} else {
-						stacks[x].hasNulls = true;
-					}
-				}
-			};*/
 
 		if (stacking && seriesIndex > 0) {
 			for (i = 0; i < len; i++) {
-				//previousSeries = getPreviousSeries(points[i].x);
 				if (!points[i].isNull) {
 					plotYBottom[i] = yAxis.toPixels(stacks[points[i].x].points[seriesIndex + ',' + i][0], true);
 				}
-				
-				//if (previousSeries !== seriesIndex - 1) {
-					/*plotYNullBottom[i] = previousSeries !== undefined ?
-						yAxis.toPixels(stacks[points[i].x].points[previousSeries][0], true):
-						translatedThreshold;*/
-					/*plotYNullTop[i] = points[i].isNull ? 
-						translatedThreshold : 
-						points[i].plotY - plotYBottom[i] + plotYNullBottom[i];*/
-					
-				//}
 			}
 		}
 
