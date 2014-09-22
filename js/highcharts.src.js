@@ -13625,13 +13625,14 @@ Series.prototype = {
 	/**
 	 * Get the graph path
 	 */
-	getGraphPath: function () {
+	getGraphPath: function (points) {
 		var series = this,
-			points = series.points,
 			options = series.options,
 			step = options.step,
 			graphPath = [],
 			gap;
+
+		points = points || series.points;
 
 		// If connect nulls, filter out null values
 		if (options.connectNulls) {
@@ -13640,7 +13641,7 @@ Series.prototype = {
 
 		// Build the line
 		each(points, function (point, i) {
-			
+
 			var plotX = point.plotX,
 				plotY = point.plotY,
 				lastPoint,
@@ -15033,19 +15034,19 @@ var AreaSeries = extendClass(Series, {
 				});
 			}
 		}
-		this.points = topPoints;
-		topPath = getGraphPath.call(this);
-		this.points = bottomPoints.reverse();
-		bottomPath = getGraphPath.call(this);
+		//this.points = topPoints;
+		topPath = getGraphPath.call(this, topPoints);
+		//this.points = bottomPoints.reverse();
+		bottomPath = getGraphPath.call(this, bottomPoints.reverse());
 		if (bottomPath.length) {
 			bottomPath[0] = L;
 		}
 
 		areaPath = topPath.concat(bottomPath);
-		this.points = graphPoints;
+		//this.points = graphPoints;
 
-		graphPath = getGraphPath.call(this);
-		this.points = points;
+		graphPath = getGraphPath.call(this, graphPoints);
+		//this.points = points;
 
 		this.areaPath = areaPath;
 		return graphPath;
