@@ -219,7 +219,7 @@
 	});
 
 	wrap(Series.prototype, 'generatePoints', function (proceed) {		
-
+		/*
 		var series = this,
 			data = series.preBreakData || series.options.data,
 			ndata = [],
@@ -263,8 +263,27 @@
 			// Register new points
 			series.options.data = ndata;
 		}
-
+		*/
 		proceed.apply(this, stripArguments(arguments));
+
+		var series = this,
+			xAxis = series.xAxis,
+			yAxis = series.yAxis,
+			points = series.points,
+			point,
+			i = points.length;
+
+
+		if (xAxis.options.breaks || yAxis.options.breaks) {
+			while (i--) {
+				point = points[i];
+
+				if (xAxis.isInAnyBreak(point.x, true) || yAxis.isInAnyBreak(point.y, true)) {
+					points.splice(i, 1);
+				}
+			}
+		}
+
 	});
 
 
