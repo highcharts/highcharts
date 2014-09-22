@@ -14971,12 +14971,14 @@ var AreaSeries = extendClass(Series, {
 				var stack = stacks && stacks[points[i].x],
 					otherPoint = points[otherI],
 					cliff,
-					pointStack = stack.points[seriesIndex + ',' + i];
+					pointStack = stack && stack.points[seriesIndex + ',' + i];
 
-				if (pointStack[cliffName] !== undefined || (otherPoint && otherPoint.isNull)) {
-					cliff = pointStack[cliffName] || 0;
-					plotY = yAxis.toPixels(pointStack[1] - cliff, true);
-					
+				if ((pointStack && pointStack[cliffName] !== undefined) || (otherPoint && otherPoint.isNull)) {
+					cliff = pointStack && (pointStack[cliffName] || 0);
+
+					if (pointStack) {
+						plotY = yAxis.toPixels(pointStack[1] - cliff, true);
+					}
 
 					// Break the graph line
 					if (otherI > i) {
