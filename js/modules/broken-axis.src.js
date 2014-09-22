@@ -219,51 +219,7 @@
 	});
 
 	wrap(Series.prototype, 'generatePoints', function (proceed) {		
-		/*
-		var series = this,
-			data = series.preBreakData || series.options.data,
-			ndata = [],
-			//points = series.oldPoints || series.points,
-			//npoints = [],
-			xAxis = series.xAxis,
-			yAxis = series.yAxis,
-			i = 0,
-			point,
-			x,
-			y;
 
-		if (xAxis.options.breaks || yAxis.options.breaks) {
-			// Register old data && points
-			series.preBreakData = data.slice();
-
-			// Create a filtered points Array
-			while (i < data.length) {
-				point = data[i];
-
-				x = point.x ? point.x : (i * (series.options.pointInterval || 1)) + (series.options.pointStart || 0);
-				y = point.y ? point.y : point;
-
-				if(!(xAxis.isInAnyBreak(x, true) || yAxis.isInAnyBreak(y, true))) {
-					if (point.x) {
-						ndata.push(point);
-					} else {
-						ndata.push({
-							x: x,
-							y: y
-						});
-					}
-					//ndata.push(point);
-				} else {
-					//npoints.push(null);
-				}
-				
-				i++;
-			}
-
-			// Register new points
-			series.options.data = ndata;
-		}
-		*/
 		proceed.apply(this, stripArguments(arguments));
 
 		var series = this,
@@ -286,5 +242,39 @@
 
 	});
 
+	wrap(Highcharts.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
+		proceed.apply(this);
 
+		var series = this,
+			points = series.points,
+			yAxis = series.yAxis,
+			breaks = yAxis.options.breaks,
+			point,
+			brk,
+			mark,
+			sA,
+			i,
+			j;
+
+		for (i = 0; i < points.length; i++) {
+			point = points[i];
+			for (j = 0; j < breaks.length; j++) {
+				brk = breaks[j];
+				if (point.y < brk.from) {
+					break;
+				} else if (point.y > brk.to) {
+					mark = point.mark;
+					sA = point.shapeArgs;
+					if (!mark) {
+						point.mark = mark = series.chart.renderer.rect(sA.x + 1, yAxis.toPixels(brk.to) - yAxis.top + 1, sA.width - 2, yAxis.toPixels(brk.from) - yAxis.toPixels(brk.to) - 2)
+						.attr({
+							'stroke-width': 0,
+							fill: brk.fillColor || point.color
+						}).add(point.graphic.parentGroup);
+					}
+				}
+			}
+		}
+
+	});
 }(Highcharts));
