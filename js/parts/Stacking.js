@@ -227,7 +227,7 @@ Series.prototype.setStackedPoints = function () {
 		// If the StackItem doesn't exist, create it first
 		stack = stacks[key][x];
 		if (y !== null) {
-			stack.points[pointKey] = [stack.cum || 0];
+			stack.points[pointKey] = stack.points[series.index] = [stack.cum || 0];
 		}
 
 		// Add value to the stack total
@@ -258,6 +258,10 @@ Series.prototype.setStackedPoints = function () {
 
 	if (stacking === 'percent') {
 		yAxis.usePercentage = true;
+	}
+
+	if (this.setStackCliffs) {
+		this.setStackCliffs();
 	}
 
 	this.stackedYData = stackedYData; // To be used in getExtremes

@@ -15,6 +15,44 @@ defaultPlotOptions.area = merge(defaultSeriesOptions, {
 var AreaSeries = extendClass(Series, {
 	type: 'area',
 
+	setStackCliffs: function () {
+		var stacks = this.yAxis.stacks[this.stackKey],
+			xData = this.processedXData,
+			yData = this.processedYData,
+			seriesIndex = this.index,
+			i,
+			len = yData.length,
+
+			addCliffs = function (i, otherI, cliffName) {
+				var stack = stacks[xData[i]],
+					pointStack = stack.points[seriesIndex + ',' + i],
+					range = pointStack[1] - pointStack[0],
+					otherY = yData[otherI],
+					otherStack = stacks[xData[otherI]];
+
+				if (otherY === null || (otherStack && (otherY === null || stack[cliffName]))) {
+
+					if (stack[cliffName]) {
+						stack.points[seriesIndex][cliffName] = stack[cliffName];
+					}
+
+					if (stacks && !otherStack.points[seriesIndex]) {
+						stack[cliffName] += range;
+					}
+
+				} else if (stacks && !otherStack) {
+					stack[cliffName] += range;
+				}
+			};
+
+		for (i = 0; i < len; i++) {
+			if (yData[i] !== null) {
+				addCliffs(i, i - 1, 'leftCliff');
+				addCliffs(i, i + 1, 'rightCliff');
+			}
+		}
+	},
+
 	getGraphPath: function (points) {
 		var getGraphPath = Series.prototype.getGraphPath,
 			graphPath,
@@ -41,36 +79,15 @@ var AreaSeries = extendClass(Series, {
 			addDummyPoints = options.connectNulls ? noop : function (i, otherI, plotX, plotY, cliffName) {
 				var stack = stacks && stacks[points[i].x],
 					otherPoint = points[otherI],
-					otherStack = stacks && otherPoint && stacks[otherPoint.x],
 					cliff,
-					n,
-					pointKey;
+					pointStack = stack.points[seriesIndex + ',' + i];
 
-				if (otherStack && points[otherI].isNull) {
-					otherStack.hasNulls = true;
-				}
-
-				if ((otherPoint && otherPoint.isNull) || (otherStack && (otherStack.hasNulls || stack[cliffName]))) {
-
-					// Get the point key (TODO: check if we can use a less rigid point key system, what issue did this pattern solve?)
-					if (stacks) {
-						for (n in otherStack.points) {
-							if (n.indexOf(seriesIndex + ',') === 0) {
-								pointKey = n;
-								break;
-							}
-						}
-					}
-
-					if (stacks && otherStack.points[pointKey]) {
-						cliff = stack[cliffName];
-					} else {
-						cliff = yBottom - plotY;
-						if (stack) {
-							stack[cliffName] += cliff;
-						}
-					}
+				if (pointStack[cliffName] !== undefined || (otherPoint && otherPoint.isNull)) {
+					cliff = pointStack[cliffName] || 0;
+					plotY = yAxis.toPixels(pointStack[1] - cliff, true);
 					
+
+					// Break the graph line
 					if (otherI > i) {
 						graphPoints.push({
 							isNull: true
@@ -78,37 +95,35 @@ var AreaSeries = extendClass(Series, {
 					}
 					graphPoints.push({
 						plotX: plotX,
-						plotY: plotY + cliff
+						plotY: plotY
 					});
 					if (otherI < i) {
 						graphPoints.push({
 							isNull: true
 						});
 					}
-					
+
+					// Break the area's top and bottom line
 					topPoints.push({
 						plotX: plotX,
 						plotY: points[otherI].isNull ? 
 							plotYNullTop[otherI] || translatedThreshold : 
-							plotY + cliff,
+							plotY,
 						isCliff: true
 					});
 					bottomPoints.push({
 						plotX: plotX,
 						plotY: points[otherI].isNull ? 
 							plotYNullTop[otherI] || translatedThreshold : 
-							yBottom + cliff,
+							yAxis.toPixels(pointStack[0] - cliff, true),
 						isCliff: true
 					});
 
-				} else if (stacks && !otherStack) {
-					cliff = yBottom - plotY;
-					stack[cliffName] += cliff;
 				}
 			};
 
 		// Find what points to use
-		points = this.stackPoints || points || this.points;
+		points = points || this.points;
 		len = points.length;
 
 		if (stacking) {
