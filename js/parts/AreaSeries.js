@@ -108,7 +108,7 @@ var AreaSeries = extendClass(Series, {
 				}
 			};
 
-		if (stacking && seriesIndex > 0) {
+		if (stacking) {
 			for (i = 0; i < len; i++) {
 				if (!points[i].isNull) {
 					plotYBottom[i] = yAxis.toPixels(stacks[points[i].x].points[seriesIndex + ',' + i][0], true);
@@ -147,19 +147,15 @@ var AreaSeries = extendClass(Series, {
 				});
 			}
 		}
-		//this.points = topPoints;
+		
 		topPath = getGraphPath.call(this, topPoints);
-		//this.points = bottomPoints.reverse();
 		bottomPath = getGraphPath.call(this, bottomPoints.reverse());
 		if (bottomPath.length) {
 			bottomPath[0] = L;
 		}
 
 		areaPath = topPath.concat(bottomPath);
-		//this.points = graphPoints;
-
 		graphPath = getGraphPath.call(this, graphPoints);
-		//this.points = points;
 
 		this.areaPath = areaPath;
 		return graphPath;
