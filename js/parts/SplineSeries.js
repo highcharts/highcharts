@@ -26,7 +26,7 @@ var SplineSeries = extendClass(Series, {
 			ret;
 
 		// Find control points
-		if (lastPoint && !lastPoint.isNull && !lastPoint.isCliff && nextPoint && !nextPoint.isNull && !nextPoint.isCliff) {
+		if (!point.isCliff && lastPoint && !lastPoint.isNull && !lastPoint.isCliff && nextPoint && !nextPoint.isNull && !nextPoint.isCliff) {
 			var lastX = lastPoint.plotX,
 				lastY = lastPoint.plotY,
 				nextX = nextPoint.plotX,

@@ -15148,7 +15148,7 @@ var SplineSeries = extendClass(Series, {
 			ret;
 
 		// Find control points
-		if (lastPoint && !lastPoint.isNull && !lastPoint.isCliff && nextPoint && !nextPoint.isNull && !nextPoint.isCliff) {
+		if (!point.isCliff && lastPoint && !lastPoint.isNull && !lastPoint.isCliff && nextPoint && !nextPoint.isNull && !nextPoint.isCliff) {
 			var lastX = lastPoint.plotX,
 				lastY = lastPoint.plotY,
 				nextX = nextPoint.plotX,
@@ -15250,8 +15250,9 @@ defaultPlotOptions.areaspline = merge(defaultPlotOptions.area);
 var areaProto = AreaSeries.prototype,
 	AreaSplineSeries = extendClass(SplineSeries, {
 		type: 'areaspline',
-		closedStacks: true, // instead of following the previous graph back, follow the threshold back
+//		closedStacks: true, // instead of following the previous graph back, follow the threshold back
 		getGraphPath: areaProto.getGraphPath,
+		setStackCliffs: areaProto.setStackCliffs,
 		drawGraph: areaProto.drawGraph,
 		drawLegendSymbol: LegendSymbolMixin.drawRectangle
 	});
