@@ -610,38 +610,35 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
 
 
 /**
- * Extend getSegments by identifying gaps in the ordinal data so that we can draw a gap in the
+ * Extend getGraphPath by identifying gaps in the ordinal data so that we can draw a gap in the
  * line or area
  */
-wrap(Series.prototype, 'getSegments', function (proceed) {
+wrap(AreaSeries.prototype, 'getGraphPath', function (proceed, points) {
 
-	var series = this,
-		segments,
-		gapSize = series.options.gapSize,
-		xAxis = series.xAxis;
+	var gapSize = this.options.gapSize,
+		xAxis = this.xAxis,
+		i;
 
-	// call base method
-	proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+	points = (points || this.points).slice();
 
 	if (gapSize) {
 
-		// properties
-		segments = series.segments;
-
 		// extension for ordinal breaks
-		each(segments, function (segment, no) {
-			var i = segment.length - 1;
-			while (i--) {
-				if (segment[i + 1].x - segment[i].x > xAxis.closestPointRange * gapSize) {
-					segments.splice( // insert after this one
-						no + 1,
-						0,
-						segment.splice(i + 1, segment.length - i)
-					);
-				}
+		i = points.length - 1;
+		while (i--) {
+			if (points[i + 1].x - points[i].x > xAxis.closestPointRange * gapSize) {
+				points.splice( // insert after this one
+					i + 1,
+					0,
+					{ isNull: true }
+				);
 			}
-		});
+		}
 	}
+
+	// Call base method
+	return proceed.call(this, points);
+
 });
 
 /* ****************************************************************************

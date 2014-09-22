@@ -15,7 +15,7 @@ defaultPlotOptions.area = merge(defaultSeriesOptions, {
 var AreaSeries = extendClass(Series, {
 	type: 'area',
 
-	getGraphPath: function () {
+	getGraphPath: function (points) {
 		var getGraphPath = Series.prototype.getGraphPath,
 			graphPath,
 			options = this.options,
@@ -27,8 +27,7 @@ var AreaSeries = extendClass(Series, {
 			bottomPath,
 			bottomPoints = [],
 			graphPoints = [],
-			points = this.stackPoints || this.points,
-			len = points.length,
+			len,
 			seriesIndex = this.index,
 			i,
 			areaPath,
@@ -107,6 +106,10 @@ var AreaSeries = extendClass(Series, {
 					stack[cliffName] += cliff;
 				}
 			};
+
+		// Find what points to use
+		points = this.stackPoints || points || this.points;
+		len = points.length;
 
 		if (stacking) {
 			for (i = 0; i < len; i++) {
