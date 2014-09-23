@@ -129,8 +129,8 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 		linePath = [].concat(lowerPath, higherPath);
 		
 		// For the area path, we need to change the 'move' statement into 'lineTo' or 'curveTo'
-		higherPath[0] = 'L'; // this probably doesn't work for spline			
-		this.areaPath = this.areaPath.concat(lowerPath, higherAreaPath, 'z');
+		higherAreaPath[0] = 'L'; // this probably doesn't work for spline			
+		this.areaPath = this.areaPath.concat(lowerPath, higherAreaPath);
 		
 		return linePath;
 	},
