@@ -17,15 +17,14 @@ var AreaSeries = extendClass(Series, {
 
 	setStackCliffs: function () {
 		var stacks = this.yAxis.stacks[this.stackKey],
-			xData = this.processedXData,
-			yData = this.processedYData,
+			xData = [],
+			yData = [],
 			seriesIndex = this.index,
 			i,
-			len = yData.length,
 
 			addCliffs = function (i, otherI, cliffName) {
 				var stack = stacks[xData[i]],
-					pointStack = stack.points[seriesIndex + ',' + i],
+					pointStack = stack.points[seriesIndex],
 					range = pointStack[1] - pointStack[0],
 					otherY = yData[otherI],
 					otherStack = stacks[xData[otherI]];
@@ -45,7 +44,13 @@ var AreaSeries = extendClass(Series, {
 				}
 			};
 
-		for (i = 0; i < len; i++) {
+		// Include cliffs for missing points by reading in all stack X positions
+		for (i in stacks) {
+			xData.push(stacks[i].x);
+			yData.push(stacks[i].points[this.index] ? stacks[i].points[this.index][1] : null);
+		}
+		
+		for (i = 0; i < yData.length; i++) {
 			if (yData[i] !== null) {
 				addCliffs(i, i - 1, 'leftCliff');
 				addCliffs(i, i + 1, 'rightCliff');
@@ -65,7 +70,6 @@ var AreaSeries = extendClass(Series, {
 			bottomPath,
 			bottomPoints = [],
 			graphPoints = [],
-			len,
 			seriesIndex = this.index,
 			i,
 			areaPath,
@@ -76,6 +80,7 @@ var AreaSeries = extendClass(Series, {
 			plotYBottom = [],
 			plotYNullTop = [],
 			yBottom,
+			stackPoints = [], // Including missing points
 			addDummyPoints = options.connectNulls ? noop : function (i, otherI, plotX, plotY, cliffName) {
 				var stack = stacks && stacks[points[i].x],
 					otherPoint = points[otherI],
@@ -126,18 +131,23 @@ var AreaSeries = extendClass(Series, {
 
 		// Find what points to use
 		points = points || this.points;
-		len = points.length;
+
+		// Fill in missing points
+		for (i in stacks) {
+			stackPoints.push(stacks[i].points[seriesIndex] ? points[stacks[i].points[seriesIndex].pIndex] : { isNull: true });
+		}
 
 		if (stacking) {
-			for (i = 0; i < len; i++) {
+			points = stackPoints;
+			for (i = 0; i < points.length; i++) {
 				if (!points[i].isNull) {
-					plotYBottom[i] = yAxis.toPixels(stacks[points[i].x].points[seriesIndex + ',' + i][0], true);
+					plotYBottom[i] = yAxis.toPixels(stacks[points[i].x].points[seriesIndex][0], true);
 				}
 			}
 		}
 
-		for (i = 0; i < len; i++) {
-
+		for (i = 0; i < points.length; i++) {
+		
 			isNull = points[i].isNull;
 			plotX = points[i].plotX;
 			plotY = points[i].plotY;

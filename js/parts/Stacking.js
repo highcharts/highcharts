@@ -112,18 +112,29 @@ StackItem.prototype = {
  * Build the stacks from top down
  */
 Axis.prototype.buildStacks = function () {
-	var series = this.series,
+	var axisSeries = this.series,
+		series,
 		reversedStacks = pick(this.options.reversedStacks, true),
-		i = series.length;
+		len = axisSeries.length,
+		i;
 	if (!this.isXAxis) {
 		this.usePercentage = false;
+		i = len;
 		while (i--) {
-			series[reversedStacks ? i : series.length - i - 1].setStackedPoints();
+			axisSeries[reversedStacks ? i : len - i - 1].setStackedPoints();
+		}
+
+		i = len;
+		while (i--) {
+			series = axisSeries[reversedStacks ? i : len - i - 1];
+			if (series.setStackCliffs) {
+				series.setStackCliffs();
+			}
 		}
 		// Loop up again to compute percent stack
 		if (this.usePercentage) {
-			for (i = 0; i < series.length; i++) {
-				series[i].setPercentStacks();
+			for (i = 0; i < len; i++) {
+				axisSeries[i].setPercentStacks();
 			}
 		}
 	}
@@ -228,6 +239,7 @@ Series.prototype.setStackedPoints = function () {
 		stack = stacks[key][x];
 		if (y !== null) {
 			stack.points[pointKey] = stack.points[series.index] = [stack.cum || 0];
+			stack.points[pointKey].pIndex = i; // Point index, used to fill in undefined points in area stacks
 		}
 
 		// Add value to the stack total
@@ -258,10 +270,6 @@ Series.prototype.setStackedPoints = function () {
 
 	if (stacking === 'percent') {
 		yAxis.usePercentage = true;
-	}
-
-	if (this.setStackCliffs) {
-		this.setStackCliffs();
 	}
 
 	this.stackedYData = stackedYData; // To be used in getExtremes
