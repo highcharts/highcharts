@@ -239,7 +239,6 @@ Series.prototype.setStackedPoints = function () {
 		stack = stacks[key][x];
 		if (y !== null) {
 			stack.points[pointKey] = stack.points[series.index] = [stack.cum || 0];
-			stack.points[pointKey].pIndex = i; // Point index, used to fill in undefined points in area stacks
 		}
 
 		// Add value to the stack total

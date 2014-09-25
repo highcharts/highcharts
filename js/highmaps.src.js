@@ -13145,11 +13145,6 @@ Series.prototype = {
 
 		points = points || series.points;
 
-		// If connect nulls, filter out null values
-		if (options.connectNulls) {
-			points = series.getValidPoints();
-		}
-
 		// Build the line
 		each(points, function (point, i) {
 
