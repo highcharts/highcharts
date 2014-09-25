@@ -248,32 +248,29 @@
 		var series = this,
 			points = series.points,
 			yAxis = series.yAxis,
-			breaks = yAxis.options.breaks,
+			breaks = yAxis.breakArray,
 			point,
 			brk,
 			mark,
+			marks,
 			sA,
 			i,
-			j;
+			j,
+			y;
 
 		for (i = 0; i < points.length; i++) {
 			point = points[i];
+			y = point.stackY || point.y;
+			marks = point.marks || [];
 			for (j = 0; j < breaks.length; j++) {
 				brk = breaks[j];
-				if (point.y < brk.from) {
+				if (y < brk.from) {
 					break;
-				} else if (point.y > brk.to) {
-					mark = point.mark;
-					sA = point.shapeArgs;
-					if (!mark) {
-						point.mark = mark = series.chart.renderer.rect(sA.x + 1, yAxis.toPixels(brk.to) - yAxis.top + 1, sA.width - 2, yAxis.toPixels(brk.from) - yAxis.toPixels(brk.to) - 2)
-						.attr({
-							'stroke-width': 0,
-							fill: brk.fillColor || point.color
-						}).add(point.graphic.parentGroup);
-					}
+				} else if (y > brk.to) {
+					fireEvent(yAxis, 'pointBreak', {point: point, brk: brk});
 				}
 			}
+			point.marks = marks;
 		}
 
 	});
