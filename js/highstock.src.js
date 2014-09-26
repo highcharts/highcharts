@@ -21237,19 +21237,24 @@ RangeSelector.prototype = {
 			inputGroup = rangeSelector.inputGroup,
 			buttonTheme = options.buttonTheme,
 			buttonPosition = options.buttonPosition || {},
-			inputEnabled = options.inputEnabled !== false,
+			inputEnabled = options.inputEnabled,
 			states = buttonTheme && buttonTheme.states,
 			plotLeft = chart.plotLeft,
 			yAlign,
 			buttonLeft,
-			buttonTop;
+			buttonTop,
+			buttonGroup = rangeSelector.group,
+			buttonBBox;
 
 
 		// create the elements
 		if (!rangeSelector.rendered) {
+
+			rangeSelector.group = buttonGroup = renderer.g('range-selector-buttons').add();
+
 			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, pick(buttonPosition.x, plotLeft), pick(buttonPosition.y, chart.plotTop - 35) + 15)
 				.css(options.labelStyle)
-				.add();
+				.add(buttonGroup);
 
 			// button starting position
 			buttonLeft = pick(buttonPosition.x, plotLeft) + rangeSelector.zoomText.getBBox().width + 5;
@@ -21272,7 +21277,7 @@ RangeSelector.prototype = {
 					.css({
 						textAlign: 'center'
 					})
-					.add();
+					.add(buttonGroup);
 
 				// increase button position for the next button
 				buttonLeft += buttons[i].width + pick(options.buttonSpacing, 5);
@@ -21286,7 +21291,7 @@ RangeSelector.prototype = {
 
 			// first create a wrapper outside the container in order to make
 			// the inputs work and make export correct
-			if (inputEnabled) {
+			if (inputEnabled !== false) {
 				rangeSelector.div = div = createElement('div', null, {
 					position: 'relative',
 					height: 0,
@@ -21305,17 +21310,23 @@ RangeSelector.prototype = {
 			}
 		}
 		
-		if (inputEnabled) {
+		if (inputEnabled !== false) {
 		
 			// Update the alignment to the updated spacing box
 			yAlign = chart.plotTop - 45;		
 			inputGroup.align(extend({
 				y: yAlign,
 				width: inputGroup.offset,
-				// detect collision with the exporting buttons
+				// Detect collision with the exporting buttons
 				x: navButtonOptions && (yAlign < (navButtonOptions.y || 0) + navButtonOptions.height - chart.spacing[0]) ? 
 					-40 : 0
 			}, options.inputPosition), true, chart.spacingBox);
+
+			// Hide if overlapping - inputEnabled is null or undefined // docs
+			if (!defined(inputEnabled)) {
+				buttonBBox = buttonGroup.getBBox();
+				inputGroup[inputGroup.translateX < buttonBBox.x + buttonBBox.width + 10 ? 'hide' : 'show']();
+			}
 	
 			// Set or reset the input values
 			rangeSelector.setInputValue('min', min);

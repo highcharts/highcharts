@@ -9,7 +9,6 @@ $(function () {
 
             rangeSelector: {
                 allButtonsEnabled: true,
-                inputEnabled: $('#container').width() > 480,
                 selected: 2
             },
 
