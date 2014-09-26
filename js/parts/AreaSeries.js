@@ -29,7 +29,9 @@ var AreaSeries = extendClass(Series, {
 			pointMap = {},
 			points = this.points,
 			seriesIndex = series.index,
-			seriesLength = yAxis.series.length,
+			yAxisSeries = yAxis.series,
+			seriesLength = yAxisSeries.length,
+			visibleSeries,
 			upOrDown = pick(yAxis.options.reversedStacks, true) ? 1 : -1,
 			connectNulls = series.options.connectNulls,
 			i,
@@ -50,6 +52,10 @@ var AreaSeries = extendClass(Series, {
 			keys.sort(function (a, b) {
 				return a - b;
 			});
+
+			if (!connectNulls) {
+				visibleSeries = map(yAxisSeries, function () { return this.visible; });
+			}
 
 			each(keys, function (x, idx) {
 				var y = 0,
@@ -81,7 +87,7 @@ var AreaSeries = extendClass(Series, {
 										// If there are missing points in the next stack in any of the 
 										// series below this one, we need to substract the missing values
 										// and add a hiatus to the left or right.
-										} else {
+										} else if (visibleSeries[i]) {
 											stackedValues = stack[x].points[i];
 											if (stackedValues) {
 												cliff -= stackedValues[1] - stackedValues[0];
@@ -92,9 +98,7 @@ var AreaSeries = extendClass(Series, {
 									i += upOrDown; 
 								}					
 							}
-							if (cliff !== 0) {
-								pointMap[x][cliffName] = cliff;
-							}
+							pointMap[x][cliffName] = cliff;
 						});
 					}
 
@@ -149,16 +153,22 @@ var AreaSeries = extendClass(Series, {
 			plotX,
 			plotY,
 			stacks = yAxis.stacks[this.stackKey],
+			translatedThreshold = yAxis.toPixels(options.threshold, true),
 			isNull,
 			yBottom,
 			connectNulls = options.connectNulls,
-
+			/**
+			 * To display null points in underlying stacked series, this series graph must be 
+			 * broken, and the area also fall down to fill the gap left by the null point. #2069
+			 */
 			addDummyPoints = function (i, otherI, plotX, cliffName) {
 				var point = points[i],
 					stackedValues = stacks[point.x].points[seriesIndex],
 					nullName = i > otherI ? 'leftNull' : 'rightNull';
 
 
+				// Break the graph line itself. A null pseudo-point is added to provide a break in the 
+				// line, then a new point is added on the same x position to start the line again.
 				if (point[cliffName]) {
 
 					// Add to the graph
@@ -214,31 +224,24 @@ var AreaSeries = extendClass(Series, {
 			isNull = points[i].isNull;
 			plotX = points[i].plotX;
 			plotY = points[i].plotY;
-			yBottom = points[i].yBottom;
+			yBottom = pick(points[i].yBottom, translatedThreshold);
 
 			if (!isNull || connectNulls) {
 
-				if (!connectNulls) {
+				if (!connectNulls && stacking) {
 					addDummyPoints(i, i - 1, plotX, 'leftCliff');
 				}
 
-				graphPoints.push({
-					plotX: plotX,
-					plotY: plotY
-				});
-				topPoints.push({
-					plotX: plotX,
-					plotY: plotY
-				});
+				graphPoints.push(points[i]);
+				topPoints.push(points[i]);
 				bottomPoints.push({
 					plotX: plotX,
 					plotY: yBottom
 				});
 
-				if (!connectNulls) {
+				if (!connectNulls && stacking) {
 					addDummyPoints(i, i + 1, plotX, 'rightCliff');
 				}
-			
 			} else {
 				graphPoints.push({
 					isNull: true
