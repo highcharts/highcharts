@@ -551,7 +551,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 
 /**
  * Extend the Series prototype to create a separate series clip box. This is related
- * to using multiple panes, and a future pane logic should incorporate this feature.
+ * to using multiple panes, and a future pane logic should incorporate this feature (#2754).
  */
 wrap(Series.prototype, 'render', function (proceed) {
 	// Only do this on stock charts (#2939), and only if the series type handles clipping
