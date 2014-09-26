@@ -182,7 +182,7 @@ Pointer.prototype = {
 
 		// Separate tooltip and general mouse events
 		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
-		if (hoverSeries && hoverSeries.tracker && !followPointer) { // #2584, #2830
+		if (hoverSeries && hoverSeries.tracker) { // #2584, #2830, #2889, #3258
 
 			// get the point
 			point = hoverSeries.tooltipPoints[index];
@@ -195,7 +195,8 @@ Pointer.prototype = {
 
 			}
 			
-		} else if (tooltip && followPointer && !tooltip.isHidden) {
+		} 
+		if (tooltip && followPointer && !tooltip.isHidden) {
 			anchor = tooltip.getAnchor([{}], e);
 			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });
 		}
