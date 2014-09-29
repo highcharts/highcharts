@@ -685,6 +685,20 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 		return [point.low, point.high];
 	},
 	pointValKey: 'low',
+	deferTranslatePolar: true,
+
+	/**
+	 * Translate a point's plotHigh from the internal angle and radius measures to 
+	 * true plotHigh coordinates. This is an addition of the toXY method found in
+	 * Polar.js, because it runs too early for arearanges to be considered (#3419).
+	 */
+	highToXY: function (point) {
+		// Find the polar plotX and plotY
+		var chart = this.chart,
+			xy = this.xAxis.postTranslate(point.rectPlotX, this.yAxis.len - point.plotHigh);
+		point.plotHighX = xy.x - chart.plotLeft;
+		point.plotHigh = xy.y - chart.plotTop;
+	},
 	
 	/**
 	 * Extend getSegments to force null points if the higher value is null. #1703.
@@ -731,6 +745,13 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 				point.plotHigh = yAxis.translate(high, 0, 1, 0, 1);
 			}
 		});
+
+		// Postprocess plotHigh
+		if (this.chart.polar) {
+			each(this.points, function (point) {
+				series.highToXY(point);
+			});
+		}
 	},
 	
 	/**
@@ -760,7 +781,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			point = segment[i];
 			if (point.plotHigh !== null) {
 				highSegment.push({
-					plotX: point.plotX,
+					plotX: point.plotHighX || point.plotX, // plotHighX is for polar charts
 					plotY: point.plotHigh
 				});
 			}
@@ -781,7 +802,9 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 		linePath = [].concat(lowerPath, higherPath);
 		
 		// For the area path, we need to change the 'move' statement into 'lineTo' or 'curveTo'
-		higherPath[0] = 'L'; // this probably doesn't work for spline			
+		if (!this.chart.polar) {
+			higherPath[0] = 'L'; // this probably doesn't work for spline
+		}
 		this.areaPath = this.areaPath.concat(lowerPath, higherPath);
 		
 		return linePath;
