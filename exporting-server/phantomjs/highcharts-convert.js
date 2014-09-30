@@ -391,8 +391,8 @@
 			options.chart.height = (options.exporting && options.exporting.sourceHeight) || options.chart.height || 400;
 
 			// Load globalOptions
-			if (globalOptions) {
-				Highcharts.setOptions(globalOptions);
+			if (globalOptionsArg) {
+				Highcharts.setOptions(globalOptionsArg);
 			}
 
 			// Load data
