@@ -15776,6 +15776,11 @@ var PiePoint = extendClass(Point, {
 			}
 		});
 
+		// Make sure halo is hidden (#3391)
+		if (!vis) {
+			point.setState(NORMAL_STATE);
+		}
+
 		if (point.legendItem) {
 			chart.legend.colorizeItem(point, vis);
 		}
