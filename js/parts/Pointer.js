@@ -627,7 +627,7 @@ Pointer.prototype = {
 			pointer.onContainerClick(e);
 		};
 		addEvent(container, 'mouseleave', pointer.onContainerMouseLeave);
-		if (chartCount === 1) {
+		if (!pointerCount) {
 			addEvent(doc, 'mouseup', pointer.onDocumentMouseUp);
 		}
 		if (hasTouch) {
@@ -637,11 +637,11 @@ Pointer.prototype = {
 			container.ontouchmove = function (e) {
 				pointer.onContainerTouchMove(e);
 			};
-			if (chartCount === 1) {
+			if (!pointerCount) {
 				addEvent(doc, 'touchend', pointer.onDocumentTouchEnd);
 			}
 		}
-		
+		pointerCount++;
 	},
 
 	/**
@@ -651,7 +651,7 @@ Pointer.prototype = {
 		var prop;
 
 		removeEvent(this.chart.container, 'mouseleave', this.onContainerMouseLeave);
-		if (!chartCount) {
+		if (pointerCount === 1) {
 			removeEvent(doc, 'mouseup', this.onDocumentMouseUp);
 			removeEvent(doc, 'touchend', this.onDocumentTouchEnd);
 		}
@@ -662,6 +662,7 @@ Pointer.prototype = {
 		for (prop in this) {
 			this[prop] = null;
 		}
+		pointerCount--;
 	}
 };
 

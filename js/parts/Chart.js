@@ -78,7 +78,6 @@ Chart.prototype = {
 		// Add the chart to the global lookup
 		chart.index = charts.length;
 		charts.push(chart);
-		chartCount++;
 
 		// Set up auto resize
 		if (optionsChart.reflow !== false) {
@@ -1301,7 +1300,6 @@ Chart.prototype = {
 		
 		// Delete the chart from charts lookup array
 		charts[chart.index] = UNDEFINED;
-		chartCount--;
 		chart.renderTo.removeAttribute('data-highcharts-chart');
 
 		// remove events
