@@ -294,7 +294,10 @@ H.extend(H.Data.prototype, {
 
 			// Make a hidden frame where the SVG is rendered
 			data.$frame = data.$frame || $('<div>')
-				.hide()
+				.css({
+					position: 'absolute', // https://bugzilla.mozilla.org/show_bug.cgi?id=756985
+					top: '-9999em'
+				})
 				.appendTo($(document.body));
 			data.$frame.html(xml);
 			xml = $('svg', data.$frame)[0];

@@ -820,9 +820,11 @@ Series.prototype = {
 			chart[sharedClipKey] = clipRect = renderer.clipRect(clipBox);
 			
 		}
-		this.group.clip(animation || seriesClipBox ? clipRect : chart.clipRect);
-		this.markerGroup.clip(markerClipRect);
-		this.sharedClipKey = sharedClipKey;
+		if (this.options.clip !== false) {
+			this.group.clip(animation || seriesClipBox ? clipRect : chart.clipRect);
+			this.markerGroup.clip(markerClipRect);
+			this.sharedClipKey = sharedClipKey;
+		}
 
 		// Remove the shared clipping rectancgle when all series are shown
 		if (!animation) {
@@ -1590,11 +1592,6 @@ Series.prototype = {
 		// Handle inverted series and tracker groups
 		if (chart.inverted) {
 			series.invertGroups();
-		}
-
-		// Initial clipping, must be defined after inverting groups for VML
-		if (options.clip !== false && !series.sharedClipKey && !hasRendered) {
-			group.clip(chart.clipRect);
 		}
 
 		// Run the animation

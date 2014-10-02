@@ -13248,35 +13248,25 @@ Series.prototype = {
 	},
 
 	/**
-	 * Animate in the series
+	 * Set the clipping for the series. For animated series it is called twice, first to initiate
+	 * animating the clip then the second time without the animation to set the final clip.
 	 */
-	animate: function (init) {
-		var series = this,
-			chart = series.chart,
+	setClip: function (animation) {
+		var chart = this.chart,
 			renderer = chart.renderer,
-			clipRect,
-			markerClipRect,
-			animation = series.options.animation,
-			clipBox = series.clipBox || chart.clipBox,
 			inverted = chart.inverted,
-			sharedClipKey;
-
-		// Animation option is set to true
-		if (animation && !isObject(animation)) {
-			animation = defaultPlotOptions[series.type].animation;
-		}
-		sharedClipKey = ['_sharedClip', animation.duration, animation.easing, clipBox.height].join(',');
-
-		// Initialize the animation. Set up the clipping rectangle.
-		if (init) {
-
-			// If a clipping rectangle with the same properties is currently present in the chart, use that.
-			clipRect = chart[sharedClipKey];
+			seriesClipBox = this.clipBox,
+			clipBox = seriesClipBox || chart.clipBox,
+			sharedClipKey = this.sharedClipKey || ['_sharedClip', animation && animation.duration, animation && animation.easing, clipBox.height].join(','),
+			clipRect = chart[sharedClipKey],
 			markerClipRect = chart[sharedClipKey + 'm'];
-			if (!clipRect) {
-				chart[sharedClipKey] = clipRect = renderer.clipRect(
-					extend(clipBox, { width: 0 })
-				);
+
+		// If a clipping rectangle with the same properties is currently present in the chart, use that.
+		if (!clipRect) {
+
+			// When animation is set, prepare the initial positions
+			if (animation) { 
+				clipBox.width = 0;
 
 				chart[sharedClipKey + 'm'] = markerClipRect = renderer.clipRect(
 					-99, // include the width of the first marker
@@ -13285,12 +13275,53 @@ Series.prototype = {
 					inverted ? chart.chartWidth : chart.chartHeight
 				);
 			}
-			series.group.clip(clipRect);
-			series.markerGroup.clip(markerClipRect);
-			series.sharedClipKey = sharedClipKey;
+			chart[sharedClipKey] = clipRect = renderer.clipRect(clipBox);
+			
+		}
+		if (this.options.clip !== false) {
+			this.group.clip(animation || seriesClipBox ? clipRect : chart.clipRect);
+			this.markerGroup.clip(markerClipRect);
+			this.sharedClipKey = sharedClipKey;
+		}
+
+		// Remove the shared clipping rectancgle when all series are shown
+		if (!animation) {
+			setTimeout(function () {
+				if (sharedClipKey && chart[sharedClipKey]) {
+					if (!seriesClipBox) {
+						chart[sharedClipKey] = chart[sharedClipKey].destroy();
+					}
+					if (chart[sharedClipKey + 'm']) {
+						chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
+					}
+				}
+			}, 100);
+		}
+	},
+
+	/**
+	 * Animate in the series
+	 */
+	animate: function (init) {
+		var series = this,
+			chart = series.chart,
+			clipRect,
+			animation = series.options.animation,
+			sharedClipKey;
+
+		// Animation option is set to true
+		if (animation && !isObject(animation)) {
+			animation = defaultPlotOptions[series.type].animation;
+		}
+
+		// Initialize the animation. Set up the clipping rectangle.
+		if (init) {
+
+			series.setClip(animation);
 
 		// Run the animation
 		} else {
+			sharedClipKey = this.sharedClipKey;
 			clipRect = chart[sharedClipKey];
 			if (clipRect) {
 				clipRect.animate({
@@ -13313,31 +13344,8 @@ Series.prototype = {
 	 * This runs after animation to land on the final plot clipping
 	 */
 	afterAnimate: function () {
-		var chart = this.chart,
-			sharedClipKey = this.sharedClipKey,
-			group = this.group,
-			clipBox = this.clipBox;
-
-		if (group && this.options.clip !== false) {
-			if (!sharedClipKey || !clipBox) {
-				group.clip(clipBox ? chart.renderer.clipRect(clipBox) : chart.clipRect);
-			}
-			this.markerGroup.clip(); // no clip
-		}
-
+		this.setClip();
 		fireEvent(this, 'afterAnimate');
-
-		// Remove the shared clipping rectancgle when all series are shown
-		setTimeout(function () {
-			if (sharedClipKey && chart[sharedClipKey]) {
-				if (!clipBox) {
-					chart[sharedClipKey] = chart[sharedClipKey].destroy();
-				}
-				if (chart[sharedClipKey + 'm']) {
-					chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
-				}
-			}
-		}, 100);
 	},
 
 	/**
@@ -14042,11 +14050,6 @@ Series.prototype = {
 		// Handle inverted series and tracker groups
 		if (chart.inverted) {
 			series.invertGroups();
-		}
-
-		// Initial clipping, must be defined after inverting groups for VML
-		if (options.clip !== false && !series.sharedClipKey && !hasRendered) {
-			group.clip(chart.clipRect);
 		}
 
 		// Run the animation
@@ -15772,6 +15775,11 @@ var PiePoint = extendClass(Point, {
 				point[key][vis ? 'show' : 'hide'](true);
 			}
 		});
+
+		// Make sure halo is hidden (#3391)
+		if (!vis) {
+			point.setState(NORMAL_STATE);
+		}
 
 		if (point.legendItem) {
 			chart.legend.colorizeItem(point, vis);
@@ -22043,7 +22051,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 
 /**
  * Extend the Series prototype to create a separate series clip box. This is related
- * to using multiple panes, and a future pane logic should incorporate this feature.
+ * to using multiple panes, and a future pane logic should incorporate this feature (#2754).
  */
 wrap(Series.prototype, 'render', function (proceed) {
 	// Only do this on stock charts (#2939), and only if the series type handles clipping

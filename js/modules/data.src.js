@@ -475,7 +475,9 @@
 			diff,
 			chartOptions = this.chartOptions,
 			descending,
-			forceCategory = isXColumn && ((chartOptions && chartOptions.xAxis && splat(chartOptions.xAxis)[0].type === 'category') || this.options.forceCategory);
+			columnTypes = this.options.columnTypes || [],
+			columnType = columnTypes[col],
+			forceCategory = isXColumn && ((chartOptions && chartOptions.xAxis && splat(chartOptions.xAxis)[0].type === 'category') || columnType === 'string');
 		
 		rawColumns[col] = [];
 		while (row--) {
@@ -494,7 +496,7 @@
 				column[row] = floatVal;
 				
 				// If the number is greater than milliseconds in a year, assume datetime
-				if (floatVal > 365 * 24 * 3600 * 1000) {
+				if (floatVal > 365 * 24 * 3600 * 1000 && columnType !== 'float') {
 					column.isDatetime = true;
 				} else {
 					column.isNumeric = true;
@@ -508,7 +510,7 @@
 			} else {
 				dateVal = this.parseDate(val);
 				// Only allow parsing of dates if this column is an x-column
-				if (isXColumn && typeof dateVal === 'number' && !isNaN(dateVal)) { // is date
+				if (isXColumn && typeof dateVal === 'number' && !isNaN(dateVal) && columnType !== 'float') { // is date
 					backup[row] = val; 
 					column[row] = dateVal;
 					column.isDatetime = true;
@@ -837,11 +839,6 @@
 			if (type) {
 				chartOptions.xAxis = {
 					type: type
-				};
-			}
-			if (typeCol.name) {
-				chartOptions.title = {
-					text: typeCol.name
 				};
 			}
 			
