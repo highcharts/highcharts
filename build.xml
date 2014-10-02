@@ -828,6 +828,29 @@
             </condition>
         </fail -->
 
+        <echo message=""/>
+        <echo message="Building offline api for highcharts, be patient.." />
+        <echo message=""/>
+        <exec dir="./" executable="grunt" outputproperty="output">
+            <arg line="download-api:highcharts:${highcharts.product.version}" /> <!-- version number -->
+        </exec>
+        <echo message="${output}" />
+        <echo message=""/>
+        <echo message="Building offline api for highstock, be patient.." />
+        <echo message=""/>
+        <exec dir="./" executable="grunt" outputproperty="output">
+            <arg line="download-api:highstock:${highstock.product.version}" /> <!-- version number -->
+        </exec>
+        <echo message="${output}" />
+        <echo message=""/>
+        <echo message="Building offline api for highmaps, be patient.." />
+        <echo message=""/>
+        <exec dir="./" executable="grunt" outputproperty="output">
+            <arg line="download-api:highmaps:${highmaps.product.version}" /> <!-- version number -->
+        </exec>
+        <echo message="${output}" />
+
+
         <echo file="${dist.dir}/products.js" append="false">
             var products = {
                 Highcharts: {
