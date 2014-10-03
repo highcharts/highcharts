@@ -206,10 +206,12 @@ extend(SVGRenderer.prototype, {
 			})
 			.css({
 				position: ABSOLUTE,
-				whiteSpace: 'nowrap',
 				fontFamily: this.style.fontFamily,
 				fontSize: this.style.fontSize
 			});
+
+		// Keep the whiteSpace style outside the wrapper.styles collection
+		element.style.whiteSpace = 'nowrap';
 
 		// Use the HTML specific .css method
 		wrapper.css = wrapper.htmlCss;
