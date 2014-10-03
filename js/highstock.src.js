@@ -19583,7 +19583,10 @@ var units = [].concat(defaultDataGroupingUnits), // copy
 	// is a pattern that is repeated several places in Highcharts. Consider making this
 	// a global utility method.
 	numExt = function (extreme) {
-		return Math[extreme].apply(0, grep(arguments, function (n) { return typeof n === 'number'; }));
+		var numbers = grep(arguments, function (n) { return typeof n === 'number'; });
+		if (numbers.length) {
+			return Math[extreme].apply(0, numbers);
+		}
 	};
 
 // add more resolution to units
