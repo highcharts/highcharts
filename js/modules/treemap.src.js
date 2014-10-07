@@ -87,31 +87,33 @@
 		var series = this,
 			tree = this.tree,
 			seriesArea;
-			// Modify series
-			this.nodeMap = [];
-			this.xAxis.dataMin = 0;
-			this.xAxis.dataMax = 100;
-			this.yAxis.dataMin = 0;
-			this.yAxis.dataMax = 100;
+			if (this.points.length) {
+				// Modify series
+				this.nodeMap = [];
+				this.xAxis.dataMin = 0;
+				this.xAxis.dataMax = 100;
+				this.yAxis.dataMin = 0;
+				this.yAxis.dataMax = 100;
 
-			// Assign variables
-			if (!tree) {
-				tree = this.buildTree();
+				// Assign variables
+				if (!tree) {
+					tree = this.buildTree();
+				}
+				if (!this.rootNode) {
+					this.rootNode = "";
+				}
+				this.levelMap = this.getLevels();
+				each(series.points, function (point) {
+					// Reset visibility
+					delete point.plotX;
+					delete point.plotY;
+					point.inDisplay = false;
+				});
+				seriesArea = this.getSeriesArea(tree.val);
+				this.nodeMap[""].values = seriesArea;
+				this.setColorRecursive(tree, undefined);
+				this.calculateArea(tree, seriesArea);
 			}
-			if (!this.rootNode) {
-				this.rootNode = "";
-			}
-			this.levelMap = this.getLevels();
-			each(series.points, function (point) {
-				// Reset visibility
-				delete point.plotX;
-				delete point.plotY;
-				point.inDisplay = false;
-			});
-			seriesArea = this.getSeriesArea(tree.val);
-			this.nodeMap[""].values = seriesArea;
-			this.setColorRecursive(tree, undefined);
-			this.calculateArea(tree, seriesArea);
 		},
 		buildTree: function () {
 			var tree,
