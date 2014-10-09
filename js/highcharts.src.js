@@ -1595,15 +1595,17 @@ function setTimeMethods() {
 
 	Date = defaultOptions.global.Date || window.Date;
 	timezoneOffset = ((useUTC && defaultOptions.global.timezoneOffset) || 0) * 60000;
-	makeTime = useUTC ? Date.UTC : function (year, month, date, hours, minutes, seconds) {
-		return new Date(
-			year,
-			month,
-			pick(date, 1),
-			pick(hours, 0),
-			pick(minutes, 0),
-			pick(seconds, 0)
-		).getTime();
+	makeTime = function (year, month, date, hours, minutes, seconds) {
+		return useUTC ?
+			Date.UTC.apply(0, arguments) + timezoneOffset : // #3500
+			new Date(
+				year,
+				month,
+				pick(date, 1),
+				pick(hours, 0),
+				pick(minutes, 0),
+				pick(seconds, 0)
+			).getTime();
 	};
 	getMinutes =  GET + 'Minutes';
 	getHours =    GET + 'Hours';
