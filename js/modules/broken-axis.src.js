@@ -248,11 +248,9 @@
 		var series = this,
 			points = series.points,
 			yAxis = series.yAxis,
-			breaks = yAxis.breakArray,
+			breaks = yAxis.breakArray || [],
 			point,
 			brk,
-			mark,
-			marks,
 			sA,
 			i,
 			j,
@@ -261,16 +259,16 @@
 		for (i = 0; i < points.length; i++) {
 			point = points[i];
 			y = point.stackY || point.y;
-			marks = point.marks || [];
 			for (j = 0; j < breaks.length; j++) {
 				brk = breaks[j];
 				if (y < brk.from) {
 					break;
 				} else if (y > brk.to) {
 					fireEvent(yAxis, 'pointBreak', {point: point, brk: brk});
+				} else {
+					fireEvent(yAxis, 'pointInBreak', {point: point, brk: brk});
 				}
 			}
-			point.marks = marks;
 		}
 
 	});
