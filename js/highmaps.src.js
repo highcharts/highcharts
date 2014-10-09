@@ -6131,7 +6131,7 @@ Axis.prototype = {
 		}
 	},
 	/**
-	 * These options extend the defaultOptions for left axes
+	 * These options extend the defaultOptions for top axes
 	 */
 	defaultTopAxisOptions: {
 		labels: {
