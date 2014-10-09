@@ -353,6 +353,37 @@ Legend.prototype = {
 	},
 
 	/**
+	 * Adjust the chart margins by reserving space for the legend on only one side
+	 * of the chart. If the position is set to a corner, top or bottom is reserved
+	 * for horizontal legends and left or right for vertical ones.
+	 */
+	adjustMargins: function (margin, spacing) {
+		var chart = this.chart, 
+			options = this.options,
+			// Use the first letter of each alignment option in order to detect the side 
+			alignment = options.align[0] + options.verticalAlign[0] + options.layout[0];
+			
+		if (this.display && !options.floating) {
+
+			each([
+				/(lth|ct|rth)/,
+				/(rtv|rm|rbv)/,
+				/(rbh|cb|lbh)/,
+				/(lbv|lm|ltv)/
+			], function (alignments, side) {
+				if (alignments.test(alignment) && !defined(margin[side])) {
+					// Now we have detected on which side of the chart we should reserve space for the legend
+					chart[marginNames[side]] = mathMax(
+						chart[marginNames[side]],
+						chart.legend[(side + 1) % 2 ? 'legendHeight' : 'legendWidth'] - 
+							options[(side % 2) ? 'y' : 'x'] + pick(options.margin, 20) + spacing[1]
+					);
+				}
+			});
+		}
+	},
+
+	/**
 	 * Render the legend. This method can be called both before and after
 	 * chart.render. If called after, it will only rearrange items instead
 	 * of creating new ones.

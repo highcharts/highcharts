@@ -58,6 +58,7 @@ var UNDEFINED,
 	NORMAL_STATE = '',
 	HOVER_STATE = 'hover',
 	SELECT_STATE = 'select',
+	marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
 	
 	// Object for extending Axis
 	AxisPlotLineOrBandExtension,

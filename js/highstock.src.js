@@ -73,6 +73,7 @@ var UNDEFINED,
 	NORMAL_STATE = '',
 	HOVER_STATE = 'hover',
 	SELECT_STATE = 'select',
+	marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
 	
 	// Object for extending Axis
 	AxisPlotLineOrBandExtension,
@@ -10333,6 +10334,37 @@ Legend.prototype = {
 	},
 
 	/**
+	 * Adjust the chart margins by reserving space for the legend on only one side
+	 * of the chart. If the position is set to a corner, top or bottom is reserved
+	 * for horizontal legends and left or right for vertical ones.
+	 */
+	adjustMargins: function (margin, spacing) {
+		var chart = this.chart, 
+			options = this.options,
+			// Use the first letter of each alignment option in order to detect the side 
+			alignment = options.align[0] + options.verticalAlign[0] + options.layout[0];
+			
+		if (this.display && !options.floating) {
+
+			each([
+				/(lth|ct|rth)/,
+				/(rtv|rm|rbv)/,
+				/(rbh|cb|lbh)/,
+				/(lbv|lm|ltv)/
+			], function (alignments, side) {
+				if (alignments.test(alignment) && !defined(margin[side])) {
+					// Now we have detected on which side of the chart we should reserve space for the legend
+					chart[marginNames[side]] = mathMax(
+						chart[marginNames[side]],
+						chart.legend[(side + 1) % 2 ? 'legendHeight' : 'legendWidth'] - 
+							options[(side % 2) ? 'y' : 'x'] + pick(options.margin, 20) + spacing[1]
+					);
+				}
+			});
+		}
+	},
+
+	/**
 	 * Render the legend. This method can be called both before and after
 	 * chart.render. If called after, it will only rearrange items instead
 	 * of creating new ones.
@@ -11418,14 +11450,7 @@ Chart.prototype = {
 		var chart = this,
 			spacing = chart.spacing,
 			axisOffset,
-			legend = chart.legend,
 			margin = chart.margin,
-			legendOptions = chart.options.legend,
-			legendMargin = pick(legendOptions.margin, 20),
-			legendX = legendOptions.x,
-			legendY = legendOptions.y,
-			align = legendOptions.align,
-			verticalAlign = legendOptions.verticalAlign,
 			titleOffset = chart.titleOffset;
 
 		chart.resetMargins();
@@ -11437,39 +11462,7 @@ Chart.prototype = {
 		}
 		
 		// Adjust for legend
-		if (legend.display && !legendOptions.floating) {
-			if (align === 'right') { // horizontal alignment handled first
-				if (!defined(margin[1])) {
-					chart.marginRight = mathMax(
-						chart.marginRight,
-						legend.legendWidth - legendX + legendMargin + spacing[1]
-					);
-				}
-			} else if (align === 'left') {
-				if (!defined(margin[3])) {
-					chart.plotLeft = mathMax(
-						chart.plotLeft,
-						legend.legendWidth + legendX + legendMargin + spacing[3]
-					);
-				}
-
-			} else if (verticalAlign === 'top') {
-				if (!defined(margin[0])) {
-					chart.plotTop = mathMax(
-						chart.plotTop,
-						legend.legendHeight + legendY + legendMargin + spacing[0]
-					);
-				}
-
-			} else if (verticalAlign === 'bottom') {
-				if (!defined(margin[2])) {
-					chart.marginBottom = mathMax(
-						chart.marginBottom,
-						legend.legendHeight - legendY + legendMargin + spacing[2]
-					);
-				}
-			}
-		}
+		chart.legend.adjustMargins(margin, spacing);
 
 		// adjust for scroller
 		if (chart.extraBottomMargin) {
@@ -11485,19 +11478,13 @@ Chart.prototype = {
 				axis.getOffset();
 			});
 		}
-		
-		if (!defined(margin[3])) {
-			chart.plotLeft += axisOffset[3];
-		}
-		if (!defined(margin[0])) {
-			chart.plotTop += axisOffset[0];
-		}
-		if (!defined(margin[2])) {
-			chart.marginBottom += axisOffset[2];
-		}
-		if (!defined(margin[1])) {
-			chart.marginRight += axisOffset[1];
-		}
+
+		// Add the axis offsets
+		each(marginNames, function (m, side) {
+			if (!defined(margin[side])) {
+				chart[m] += axisOffset[side];
+			}		
+		});
 
 		chart.setChartSize();
 
@@ -11696,14 +11683,11 @@ Chart.prototype = {
 	 * Initial margins before auto size margins are applied
 	 */
 	resetMargins: function () {
-		var chart = this,
-			spacing = chart.spacing,
-			margin = chart.margin;
+		var chart = this;
 
-		chart.plotTop = pick(margin[0], spacing[0]);
-		chart.marginRight = pick(margin[1], spacing[1]);
-		chart.marginBottom = pick(margin[2], spacing[2]);
-		chart.plotLeft = pick(margin[3], spacing[3]);
+		each(marginNames, function (m, side) {
+			chart[m] = pick(chart.margin[side], chart.spacing[side]);
+		});
 		chart.axisOffset = [0, 0, 0, 0]; // top, right, bottom, left
 		chart.clipOffset = [0, 0, 0, 0];
 	},
