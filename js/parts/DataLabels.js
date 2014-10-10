@@ -77,7 +77,7 @@ Series.prototype.drawDataLabels = function () {
 
 				rotation = options.rotation;
 
-				// Get the string
+				// Get the string and update any options
 				labelConfig = point.getLabelConfig();
 				str = options.format ?
 					format(options.format, labelConfig) :
@@ -85,6 +85,36 @@ Series.prototype.drawDataLabels = function () {
 
 				// Determine the color
 				style.color = pick(options.color, style.color, series.color, 'black');
+
+				// Determine updated attributes
+				attr = {
+					//align: align,
+					fill: options.backgroundColor,
+					stroke: options.borderColor,
+					'stroke-width': options.borderWidth,
+					r: options.borderRadius || 0,
+					rotation: rotation,
+					padding: options.padding,
+					zIndex: 1
+				};
+
+				// Get automated contrast color
+				if (style.color === 'contrast') {
+				  moreStyle.color = options.inside || options.distance < 0 || !!seriesOptions.stacking ?
+				    renderer.getContrast(point.color || series.color) :
+				    '#000000';
+				}
+				if (cursor) {
+				  moreStyle.cursor = cursor;
+				}
+
+
+				// Remove unused attributes (#947)
+				for (name in attr) {
+					if (attr[name] === UNDEFINED) {
+						delete attr[name];
+					}
+				}
 
 
 				// update existing label
@@ -106,34 +136,6 @@ Series.prototype.drawDataLabels = function () {
 
 				// create new label
 				} else if (defined(str)) {
-					attr = {
-						//align: align,
-						fill: options.backgroundColor,
-						stroke: options.borderColor,
-						'stroke-width': options.borderWidth,
-						r: options.borderRadius || 0,
-						rotation: rotation,
-						padding: options.padding,
-						zIndex: 1
-					};
-					
-					// Get automated contrast color
-					if (style.color === 'contrast') {
-						moreStyle.color = options.inside || options.distance < 0 || !!seriesOptions.stacking ? 
-							renderer.getContrast(point.color || series.color) : 
-							'#000000';
-					}
-					if (cursor) {
-						moreStyle.cursor = cursor;
-					}
-					
-
-					// Remove unused attributes (#947)
-					for (name in attr) {
-						if (attr[name] === UNDEFINED) {
-							delete attr[name];
-						}
-					}
 
 					dataLabel = point.dataLabel = renderer[rotation ? 'text' : 'label']( // labels don't support rotation
 						str,
@@ -144,14 +146,16 @@ Series.prototype.drawDataLabels = function () {
 						null,
 						options.useHTML
 					)
+					.add(dataLabelsGroup);
+				}
+				if (dataLabel) {
+					// If the dataLabel hasn't been destroyed, apply or update all properties
+					dataLabel
 					.attr(attr)
 					.css(extend(style, moreStyle))
 					.add(dataLabelsGroup)
 					.shadow(options.shadow);
 
-				}
-
-				if (dataLabel) {
 					// Now the data label is created and placed at 0,0, so we need to align it
 					series.alignDataLabel(point, dataLabel, options, null, isNew);
 				}
@@ -403,11 +407,11 @@ if (seriesTypes.pie) {
 					});
 					series.slotElements.length = 0;
 				}
-					
+
 				slots.forEach(function (pos, no) {
 					var slotX = series.getX(pos, i) + chart.plotLeft - (i ? 100 : 0),
 						slotY = pos + chart.plotTop;
-					
+
 					if (!isNaN(slotX)) {
 						series.slotElements.push(chart.renderer.rect(slotX, slotY - 7, 100, labelHeight, 1)
 							.attr({
