@@ -352,7 +352,9 @@ SVGElement.prototype = {
 			}
 		}
 		if (hasNew) {
-			textWidth = elemWrapper.textWidth = styles && styles.width && elem.nodeName.toLowerCase() === 'text' && pInt(styles.width);
+			textWidth = elemWrapper.textWidth = 
+				(styles && styles.width && elem.nodeName.toLowerCase() === 'text' && pInt(styles.width)) || 
+				elemWrapper.textWidth; // #3501
 
 			// Merge the new styles with the old ones
 			if (oldStyles) {
