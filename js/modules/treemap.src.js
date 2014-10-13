@@ -34,6 +34,7 @@
 		borderRadius: 0,
 		radius: 0,
 		dataLabels: {
+			enabled: true,
 			verticalAlign: 'middle',
 			formatter: function () { // #2945
 				return this.point.name || this.point.id;
@@ -42,7 +43,7 @@
 		},
 		tooltip: {
 			headerFormat: '',
-			pointFormat: 'id: <b>{point.id}</b><br/>parent: <b>{point.parent}</b><br/>value: <b>{point.value}</b><br/>'
+			pointFormat: 'name: <b>{point.name}</b><br/>value: <b>{point.value}</b><br/>'
 		},
 		layoutAlgorithm: 'sliceAndDice',
 		directionalChange: false,
