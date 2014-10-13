@@ -26,7 +26,7 @@
 	function stripArguments() {
 		return Array.prototype.slice.call(arguments, 1);
 	}
-	
+
 	extend(Axis.prototype, {
 		isInBreak: function (brk, val) {
 			var	repeat = brk.repeat || Infinity,
@@ -157,6 +157,17 @@
 					i,
 					j;
 
+			 	// Min & Max Check
+			 	for (i in breaks) {
+			 		brk = breaks[i];
+			 		if (axis.isInBreak(brk, min)) {
+			 			min += (brk.to % brk.repeat) - (min % brk.repeat);
+			 		}
+			 		if (axis.isInBreak(brk, max)) {
+			 			max -= (max % brk.repeat) - (brk.from % brk.repeat);
+			 		}
+			 	}
+
 				// Construct an array holding all breaks in the axis
 				for (i in breaks) {
 					brk = breaks[i];
@@ -215,8 +226,11 @@
 				axis.breakArray = breakArray;
 
 				fireEvent(axis, 'afterBreaks');
+				
+				axis.transA *= ((max - axis.min) / (max - min - length));
 
-				axis.transA *= (max - min) / (max - min - length);
+			 	axis.min = min;
+			 	axis.max = max;
 
 			};
 		}
