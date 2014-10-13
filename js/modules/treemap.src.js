@@ -535,13 +535,6 @@
 			this.handleLayout();
 
 			this.translateColors();
-
-			// Make sure colors are updated on colorAxis update (#2893)
-			if (this.chart.hasRendered) {
-				each(this.points, function (point) {
-					point.shapeArgs.fill = point.color;
-				});
-			}
 		},
 		drawDataLabels: function () {
 			var series = this,
