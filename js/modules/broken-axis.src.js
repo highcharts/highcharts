@@ -26,7 +26,7 @@
 	function stripArguments() {
 		return Array.prototype.slice.call(arguments, 1);
 	}
-
+	
 	extend(Axis.prototype, {
 		isInBreak: function (brk, val) {
 			var	repeat = brk.repeat || Infinity,
@@ -77,6 +77,10 @@
 			info = this.tickPositions.info,
 			newPositions = [],
 			i;
+
+		if (info && info.unitRange > axis.closestPointRange) { 
+			return;
+		}
 
 		for (i=0; i < tickPositions.length; i++) {
 			if (!axis.isInAnyBreak(tickPositions[i])) {
