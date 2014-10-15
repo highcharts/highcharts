@@ -78,7 +78,7 @@
 			newPositions = [],
 			i;
 
-		if (info && info.unitRange > axis.closestPointRange) { 
+		if (info && info.totalRange >= axis.closestPointRange) { 
 			return;
 		}
 
@@ -91,7 +91,7 @@
 		this.tickPositions = newPositions;
 		this.tickPositions.info = info;
 	});
-
+	
 	wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 
 		proceed.call(this, chart, userOptions);
