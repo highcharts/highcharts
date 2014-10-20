@@ -3,91 +3,91 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "gt-ja",
+            "hc-key": "gt-qc",
             "value": 0
         },
         {
-            "hc-key": "gt-ju",
+            "hc-key": "gt-pe",
             "value": 1
         },
         {
-            "hc-key": "gt-za",
+            "hc-key": "gt-hu",
             "value": 2
         },
         {
-            "hc-key": "gt-qc",
+            "hc-key": "gt-qz",
             "value": 3
         },
         {
-            "hc-key": "gt-pe",
+            "hc-key": "gt-re",
             "value": 4
         },
         {
-            "hc-key": "gt-hu",
+            "hc-key": "gt-sm",
             "value": 5
         },
         {
-            "hc-key": "gt-qz",
+            "hc-key": "gt-bv",
             "value": 6
         },
         {
-            "hc-key": "gt-re",
+            "hc-key": "gt-av",
             "value": 7
         },
         {
-            "hc-key": "gt-sm",
+            "hc-key": "gt-es",
             "value": 8
         },
         {
-            "hc-key": "gt-bv",
+            "hc-key": "gt-cm",
             "value": 9
         },
         {
-            "hc-key": "gt-av",
+            "hc-key": "gt-gu",
             "value": 10
         },
         {
-            "hc-key": "gt-es",
+            "hc-key": "gt-su",
             "value": 11
         },
         {
-            "hc-key": "gt-cm",
+            "hc-key": "gt-sa",
             "value": 12
         },
         {
-            "hc-key": "gt-gu",
+            "hc-key": "gt-so",
             "value": 13
         },
         {
-            "hc-key": "gt-su",
+            "hc-key": "gt-to",
             "value": 14
         },
         {
-            "hc-key": "gt-sa",
+            "hc-key": "gt-pr",
             "value": 15
         },
         {
-            "hc-key": "gt-so",
+            "hc-key": "gt-sr",
             "value": 16
         },
         {
-            "hc-key": "gt-to",
+            "hc-key": "gt-iz",
             "value": 17
         },
         {
-            "hc-key": "gt-pr",
+            "hc-key": "gt-cq",
             "value": 18
         },
         {
-            "hc-key": "gt-sr",
+            "hc-key": "gt-ja",
             "value": 19
         },
         {
-            "hc-key": "gt-iz",
+            "hc-key": "gt-ju",
             "value": 20
         },
         {
-            "hc-key": "gt-cq",
+            "hc-key": "gt-za",
             "value": 21
         }
     ];

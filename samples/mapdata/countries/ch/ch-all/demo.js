@@ -7,103 +7,103 @@ $(function () {
             "value": 0
         },
         {
-            "hc-key": "ch-ge",
+            "hc-key": "ch-ne",
             "value": 1
         },
         {
-            "hc-key": "ch-ju",
+            "hc-key": "ch-ag",
             "value": 2
         },
         {
-            "hc-key": "ch-ne",
+            "hc-key": "ch-lu",
             "value": 3
         },
         {
-            "hc-key": "ch-ag",
+            "hc-key": "ch-7",
             "value": 4
         },
         {
-            "hc-key": "ch-lu",
+            "hc-key": "ch-vs",
             "value": 5
         },
         {
-            "hc-key": "ch-7",
+            "hc-key": "ch-sg",
             "value": 6
         },
         {
-            "hc-key": "ch-vs",
+            "hc-key": "ch-ar",
             "value": 7
         },
         {
-            "hc-key": "ch-sg",
+            "hc-key": "ch-ti",
             "value": 8
         },
         {
-            "hc-key": "ch-ar",
+            "hc-key": "ch-gl",
             "value": 9
         },
         {
-            "hc-key": "ch-ti",
+            "hc-key": "ch-gr",
             "value": 10
         },
         {
-            "hc-key": "ch-gl",
+            "hc-key": "ch-sz",
             "value": 11
         },
         {
-            "hc-key": "ch-gr",
+            "hc-key": "ch-tg",
             "value": 12
         },
         {
-            "hc-key": "ch-sz",
+            "hc-key": "ch-sh",
             "value": 13
         },
         {
-            "hc-key": "ch-tg",
+            "hc-key": "ch-ur",
             "value": 14
         },
         {
-            "hc-key": "ch-sh",
+            "hc-key": "ch-zh",
             "value": 15
         },
         {
-            "hc-key": "ch-ur",
+            "hc-key": "ch-zg",
             "value": 16
         },
         {
-            "hc-key": "ch-zh",
+            "hc-key": "ch-vd",
             "value": 17
         },
         {
-            "hc-key": "ch-zg",
+            "hc-key": "ch-3306",
             "value": 18
         },
         {
-            "hc-key": "ch-vd",
+            "hc-key": "ch-be",
             "value": 19
         },
         {
-            "hc-key": "ch-3306",
+            "hc-key": "ch-bs",
             "value": 20
         },
         {
-            "hc-key": "ch-be",
+            "hc-key": "ch-so",
             "value": 21
         },
         {
-            "hc-key": "ch-bs",
+            "hc-key": "ch-nw",
             "value": 22
         },
         {
-            "hc-key": "ch-so",
+            "hc-key": "ch-ai",
             "value": 23
         },
         {
-            "hc-key": "ch-nw",
+            "hc-key": "ch-ge",
             "value": 24
         },
         {
-            "hc-key": "ch-ai",
+            "hc-key": "ch-ju",
             "value": 25
         }
     ];

@@ -3,71 +3,71 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "sd-ks",
+            "hc-key": "sd-rs",
             "value": 0
         },
         {
-            "hc-key": "sd-sd",
+            "hc-key": "sd-711",
             "value": 1
         },
         {
-            "hc-key": "sd-ka",
+            "hc-key": "sd-7281",
             "value": 2
         },
         {
-            "hc-key": "sd-rs",
+            "hc-key": "sd-wd",
             "value": 3
         },
         {
-            "hc-key": "sd-bn",
+            "hc-key": "sd-kh",
             "value": 4
         },
         {
-            "hc-key": "sd-711",
+            "hc-key": "sd-gz",
             "value": 5
         },
         {
-            "hc-key": "sd-7281",
+            "hc-key": "sd-gd",
             "value": 6
         },
         {
-            "hc-key": "sd-wd",
+            "hc-key": "sd-rn",
             "value": 7
         },
         {
-            "hc-key": "sd-kh",
+            "hc-key": "sd-no",
             "value": 8
         },
         {
-            "hc-key": "sd-gz",
+            "hc-key": "sd-kn",
             "value": 9
         },
         {
-            "hc-key": "sd-gd",
+            "hc-key": "sd-wn",
             "value": 10
         },
         {
-            "hc-key": "sd-rn",
+            "hc-key": "sd-si",
             "value": 11
         },
         {
-            "hc-key": "sd-no",
+            "hc-key": "sd-nd",
             "value": 12
         },
         {
-            "hc-key": "sd-kn",
+            "hc-key": "sd-ks",
             "value": 13
         },
         {
-            "hc-key": "sd-wn",
+            "hc-key": "sd-sd",
             "value": 14
         },
         {
-            "hc-key": "sd-si",
+            "hc-key": "sd-ka",
             "value": 15
         },
         {
-            "hc-key": "sd-nd",
+            "hc-key": "sd-bn",
             "value": 16
         }
     ];

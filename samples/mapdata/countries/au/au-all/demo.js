@@ -11,11 +11,11 @@ $(function () {
             "value": 1
         },
         {
-            "hc-key": "au-sa",
+            "hc-key": "au-ct",
             "value": 2
         },
         {
-            "hc-key": "au-ct",
+            "hc-key": "au-sa",
             "value": 3
         },
         {

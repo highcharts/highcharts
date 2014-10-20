@@ -19,47 +19,47 @@ $(function () {
             "value": 3
         },
         {
-            "hc-key": "bw-kl",
+            "hc-key": "bw-kg",
             "value": 4
         },
         {
-            "hc-key": "bw-kw",
+            "hc-key": "bw-se",
             "value": 5
         },
         {
-            "hc-key": "bw-so",
+            "hc-key": "bw-ne",
             "value": 6
         },
         {
-            "hc-key": "bw-kg",
+            "hc-key": "bw-6962",
             "value": 7
         },
         {
-            "hc-key": "bw-se",
+            "hc-key": "bw-gh",
             "value": 8
         },
         {
-            "hc-key": "bw-ne",
+            "hc-key": "bw-nw",
             "value": 9
         },
         {
-            "hc-key": "bw-6962",
+            "hc-key": "bw-ce",
             "value": 10
         },
         {
-            "hc-key": "bw-6965",
+            "hc-key": "bw-kl",
             "value": 11
         },
         {
-            "hc-key": "bw-gh",
+            "hc-key": "bw-kw",
             "value": 12
         },
         {
-            "hc-key": "bw-nw",
+            "hc-key": "bw-6965",
             "value": 13
         },
         {
-            "hc-key": "bw-ce",
+            "hc-key": "bw-so",
             "value": 14
         }
     ];

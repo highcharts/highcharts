@@ -3,55 +3,55 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "na-ha",
+            "hc-key": "na-os",
             "value": 0
         },
         {
-            "hc-key": "na-ka",
+            "hc-key": "na-on",
             "value": 1
         },
         {
-            "hc-key": "na-kh",
+            "hc-key": "na-ow",
             "value": 2
         },
         {
-            "hc-key": "na-ku",
+            "hc-key": "na-ot",
             "value": 3
         },
         {
-            "hc-key": "na-er",
+            "hc-key": "na-oh",
             "value": 4
         },
         {
-            "hc-key": "na-od",
+            "hc-key": "na-ok",
             "value": 5
         },
         {
-            "hc-key": "na-os",
+            "hc-key": "na-ca",
             "value": 6
         },
         {
-            "hc-key": "na-on",
+            "hc-key": "na-ka",
             "value": 7
         },
         {
-            "hc-key": "na-ow",
+            "hc-key": "na-ha",
             "value": 8
         },
         {
-            "hc-key": "na-ot",
+            "hc-key": "na-kh",
             "value": 9
         },
         {
-            "hc-key": "na-oh",
+            "hc-key": "na-ku",
             "value": 10
         },
         {
-            "hc-key": "na-ok",
+            "hc-key": "na-er",
             "value": 11
         },
         {
-            "hc-key": "na-ca",
+            "hc-key": "na-od",
             "value": 12
         }
     ];

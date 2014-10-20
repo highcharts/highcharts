@@ -3,51 +3,51 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "bj-pl",
+            "hc-key": "bj-do",
             "value": 0
         },
         {
-            "hc-key": "bj-mo",
+            "hc-key": "bj-bo",
             "value": 1
         },
         {
-            "hc-key": "bj-ak",
+            "hc-key": "bj-al",
             "value": 2
         },
         {
-            "hc-key": "bj-do",
+            "hc-key": "bj-cl",
             "value": 3
         },
         {
-            "hc-key": "bj-bo",
+            "hc-key": "bj-aq",
             "value": 4
         },
         {
-            "hc-key": "bj-al",
+            "hc-key": "bj-li",
             "value": 5
         },
         {
-            "hc-key": "bj-cl",
+            "hc-key": "bj-cf",
             "value": 6
         },
         {
-            "hc-key": "bj-aq",
+            "hc-key": "bj-ou",
             "value": 7
         },
         {
-            "hc-key": "bj-li",
+            "hc-key": "bj-zo",
             "value": 8
         },
         {
-            "hc-key": "bj-cf",
+            "hc-key": "bj-pl",
             "value": 9
         },
         {
-            "hc-key": "bj-ou",
+            "hc-key": "bj-mo",
             "value": 10
         },
         {
-            "hc-key": "bj-zo",
+            "hc-key": "bj-ak",
             "value": 11
         }
     ];

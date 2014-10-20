@@ -23,43 +23,43 @@ $(function () {
             "value": 4
         },
         {
-            "hc-key": "mm-ba",
+            "hc-key": "mm-ch",
             "value": 5
         },
         {
-            "hc-key": "mm-md",
+            "hc-key": "mm-mg",
             "value": 6
         },
         {
-            "hc-key": "mm-ya",
+            "hc-key": "mm-kh",
             "value": 7
         },
         {
-            "hc-key": "mm-ch",
+            "hc-key": "mm-sh",
             "value": 8
         },
         {
-            "hc-key": "mm-mg",
+            "hc-key": "mm-kn",
             "value": 9
         },
         {
-            "hc-key": "mm-kh",
+            "hc-key": "mm-kc",
             "value": 10
         },
         {
-            "hc-key": "mm-sh",
+            "hc-key": "mm-sa",
             "value": 11
         },
         {
-            "hc-key": "mm-kn",
+            "hc-key": "mm-ba",
             "value": 12
         },
         {
-            "hc-key": "mm-kc",
+            "hc-key": "mm-md",
             "value": 13
         },
         {
-            "hc-key": "mm-sa",
+            "hc-key": "mm-ya",
             "value": 14
         }
     ];

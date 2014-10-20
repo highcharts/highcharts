@@ -39,39 +39,39 @@ $(function () {
             "value": 8
         },
         {
-            "hc-key": "pg-no",
+            "hc-key": "pg-ni",
             "value": 9
         },
         {
-            "hc-key": "pg-ni",
+            "hc-key": "pg-wn",
             "value": 10
         },
         {
-            "hc-key": "pg-wn",
+            "hc-key": "pg-eh",
             "value": 11
         },
         {
-            "hc-key": "pg-eh",
+            "hc-key": "pg-gu",
             "value": 12
         },
         {
-            "hc-key": "pg-gu",
+            "hc-key": "pg-eg",
             "value": 13
         },
         {
-            "hc-key": "pg-1041",
+            "hc-key": "pg-ch",
             "value": 14
         },
         {
-            "hc-key": "pg-ce",
+            "hc-key": "pg-1041",
             "value": 15
         },
         {
-            "hc-key": "pg-eg",
+            "hc-key": "pg-ce",
             "value": 16
         },
         {
-            "hc-key": "pg-ch",
+            "hc-key": "pg-no",
             "value": 17
         },
         {

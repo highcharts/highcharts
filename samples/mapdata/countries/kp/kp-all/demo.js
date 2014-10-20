@@ -15,39 +15,39 @@ $(function () {
             "value": 2
         },
         {
-            "hc-key": "kp-ch",
+            "hc-key": "kp-nj",
             "value": 3
         },
         {
-            "hc-key": "kp-hn",
+            "hc-key": "kp-wb",
             "value": 4
         },
         {
-            "hc-key": "kp-pn",
+            "hc-key": "kp-py",
             "value": 5
         },
         {
-            "hc-key": "kp-yg",
+            "hc-key": "kp-hg",
             "value": 6
         },
         {
-            "hc-key": "kp-nj",
+            "hc-key": "kp-kw",
             "value": 7
         },
         {
-            "hc-key": "kp-wb",
+            "hc-key": "kp-ch",
             "value": 8
         },
         {
-            "hc-key": "kp-py",
+            "hc-key": "kp-hn",
             "value": 9
         },
         {
-            "hc-key": "kp-hg",
+            "hc-key": "kp-pn",
             "value": 10
         },
         {
-            "hc-key": "kp-kw",
+            "hc-key": "kp-yg",
             "value": 11
         }
     ];

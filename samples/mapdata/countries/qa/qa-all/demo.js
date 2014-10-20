@@ -3,31 +3,31 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "qa-da",
+            "hc-key": "qa-ms",
             "value": 0
         },
         {
-            "hc-key": "qa-ra",
+            "hc-key": "qa-us",
             "value": 1
         },
         {
-            "hc-key": "qa-wa",
+            "hc-key": "qa-dy",
             "value": 2
         },
         {
-            "hc-key": "qa-kh",
+            "hc-key": "qa-da",
             "value": 3
         },
         {
-            "hc-key": "qa-ms",
+            "hc-key": "qa-ra",
             "value": 4
         },
         {
-            "hc-key": "qa-us",
+            "hc-key": "qa-wa",
             "value": 5
         },
         {
-            "hc-key": "qa-dy",
+            "hc-key": "qa-kh",
             "value": 6
         }
     ];

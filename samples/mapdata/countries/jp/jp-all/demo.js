@@ -47,39 +47,39 @@ $(function () {
             "value": 10
         },
         {
-            "hc-key": "jp-sg",
+            "hc-key": "jp-ib",
             "value": 11
         },
         {
-            "hc-key": "jp-fo",
+            "hc-key": "jp-st",
             "value": 12
         },
         {
-            "hc-key": "jp-ib",
+            "hc-key": "jp-sg",
             "value": 13
         },
         {
-            "hc-key": "jp-st",
+            "hc-key": "jp-yn",
             "value": 14
         },
         {
-            "hc-key": "jp-yn",
+            "hc-key": "jp-kn",
             "value": 15
         },
         {
-            "hc-key": "jp-kn",
+            "hc-key": "jp-fo",
             "value": 16
         },
         {
-            "hc-key": "jp-ts",
+            "hc-key": "jp-fs",
             "value": 17
         },
         {
-            "hc-key": "jp-fs",
+            "hc-key": "jp-3480",
             "value": 18
         },
         {
-            "hc-key": "jp-3480",
+            "hc-key": "jp-ts",
             "value": 19
         },
         {
@@ -119,59 +119,59 @@ $(function () {
             "value": 28
         },
         {
-            "hc-key": "jp-ty",
+            "hc-key": "jp-tt",
             "value": 29
         },
         {
-            "hc-key": "jp-ni",
+            "hc-key": "jp-hg",
             "value": 30
         },
         {
-            "hc-key": "jp-tt",
+            "hc-key": "jp-gf",
             "value": 31
         },
         {
-            "hc-key": "jp-hg",
+            "hc-key": "jp-nn",
             "value": 32
         },
         {
-            "hc-key": "jp-gf",
+            "hc-key": "jp-ty",
             "value": 33
         },
         {
-            "hc-key": "jp-nn",
+            "hc-key": "jp-ni",
             "value": 34
         },
         {
-            "hc-key": "jp-sz",
+            "hc-key": "jp-oy",
             "value": 35
         },
         {
-            "hc-key": "jp-fi",
+            "hc-key": "jp-ao",
             "value": 36
         },
         {
-            "hc-key": "jp-oy",
+            "hc-key": "jp-mz",
             "value": 37
         },
         {
-            "hc-key": "jp-mz",
+            "hc-key": "jp-iw",
             "value": 38
         },
         {
-            "hc-key": "jp-ao",
+            "hc-key": "jp-kc",
             "value": 39
         },
         {
-            "hc-key": "jp-kc",
+            "hc-key": "jp-ot",
             "value": 40
         },
         {
-            "hc-key": "jp-ot",
+            "hc-key": "jp-sz",
             "value": 41
         },
         {
-            "hc-key": "jp-iw",
+            "hc-key": "jp-fi",
             "value": 42
         },
         {

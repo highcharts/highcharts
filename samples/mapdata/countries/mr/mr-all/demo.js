@@ -43,19 +43,19 @@ $(function () {
             "value": 9
         },
         {
-            "hc-key": "mr-tz",
+            "hc-key": "mr-hc",
             "value": 10
         },
         {
-            "hc-key": "mr-hc",
+            "hc-key": "mr-hg",
             "value": 11
         },
         {
-            "hc-key": "mr-hg",
+            "hc-key": "mr-tg",
             "value": 12
         },
         {
-            "hc-key": "mr-tg",
+            "hc-key": "mr-tz",
             "value": 13
         }
     ];

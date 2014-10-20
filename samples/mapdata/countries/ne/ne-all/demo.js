@@ -7,31 +7,31 @@ $(function () {
             "value": 0
         },
         {
-            "hc-key": "ne-th",
+            "hc-key": "ne-tl",
             "value": 1
         },
         {
-            "hc-key": "ne-df",
+            "hc-key": "ne-ag",
             "value": 2
         },
         {
-            "hc-key": "ne-tl",
+            "hc-key": "ne-ma",
             "value": 3
         },
         {
-            "hc-key": "ne-ag",
+            "hc-key": "ne-zi",
             "value": 4
         },
         {
-            "hc-key": "ne-ma",
+            "hc-key": "ne-ds",
             "value": 5
         },
         {
-            "hc-key": "ne-zi",
+            "hc-key": "ne-th",
             "value": 6
         },
         {
-            "hc-key": "ne-ds",
+            "hc-key": "ne-df",
             "value": 7
         }
     ];

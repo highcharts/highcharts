@@ -19,47 +19,47 @@ $(function () {
             "value": 3
         },
         {
-            "hc-key": "us-nv",
+            "hc-key": "us-wi",
             "value": 4
         },
         {
-            "hc-key": "us-nm",
+            "hc-key": "us-me",
             "value": 5
         },
         {
-            "hc-key": "us-co",
+            "hc-key": "us-mi",
             "value": 6
         },
         {
-            "hc-key": "us-wy",
+            "hc-key": "us-nv",
             "value": 7
         },
         {
-            "hc-key": "us-wi",
+            "hc-key": "us-nm",
             "value": 8
         },
         {
-            "hc-key": "us-ks",
+            "hc-key": "us-co",
             "value": 9
         },
         {
-            "hc-key": "us-ne",
+            "hc-key": "us-wy",
             "value": 10
         },
         {
-            "hc-key": "us-me",
+            "hc-key": "us-ks",
             "value": 11
         },
         {
-            "hc-key": "us-ok",
+            "hc-key": "us-ne",
             "value": 12
         },
         {
-            "hc-key": "us-mo",
+            "hc-key": "us-ok",
             "value": 13
         },
         {
-            "hc-key": "us-mi",
+            "hc-key": "us-mo",
             "value": 14
         },
         {
@@ -87,59 +87,59 @@ $(function () {
             "value": 20
         },
         {
-            "hc-key": "us-id",
+            "hc-key": "us-ri",
             "value": 21
         },
         {
-            "hc-key": "us-ri",
+            "hc-key": "us-al",
             "value": 22
         },
         {
-            "hc-key": "us-al",
+            "hc-key": "us-ga",
             "value": 23
         },
         {
-            "hc-key": "us-ga",
+            "hc-key": "us-ms",
             "value": 24
         },
         {
-            "hc-key": "us-ms",
+            "hc-key": "us-sc",
             "value": 25
         },
         {
-            "hc-key": "us-sc",
+            "hc-key": "us-nc",
             "value": 26
         },
         {
-            "hc-key": "us-nc",
+            "hc-key": "us-va",
             "value": 27
         },
         {
-            "hc-key": "us-va",
+            "hc-key": "us-ia",
             "value": 28
         },
         {
-            "hc-key": "us-ia",
+            "hc-key": "us-md",
             "value": 29
         },
         {
-            "hc-key": "us-md",
+            "hc-key": "us-de",
             "value": 30
         },
         {
-            "hc-key": "us-de",
+            "hc-key": "us-nj",
             "value": 31
         },
         {
-            "hc-key": "us-nj",
+            "hc-key": "us-pa",
             "value": 32
         },
         {
-            "hc-key": "us-pa",
+            "hc-key": "us-ny",
             "value": 33
         },
         {
-            "hc-key": "us-ny",
+            "hc-key": "us-id",
             "value": 34
         },
         {
@@ -175,23 +175,23 @@ $(function () {
             "value": 42
         },
         {
-            "hc-key": "us-mn",
+            "hc-key": "us-la",
             "value": 43
         },
         {
-            "hc-key": "us-mt",
+            "hc-key": "us-fl",
             "value": 44
         },
         {
-            "hc-key": "us-la",
+            "hc-key": "us-mn",
             "value": 45
         },
         {
-            "hc-key": "us-nd",
+            "hc-key": "us-mt",
             "value": 46
         },
         {
-            "hc-key": "us-fl",
+            "hc-key": "us-nd",
             "value": 47
         },
         {

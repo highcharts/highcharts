@@ -3,59 +3,59 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "sa-tb",
+            "hc-key": "sa-4293",
             "value": 0
         },
         {
-            "hc-key": "sa-jz",
+            "hc-key": "sa-tb",
             "value": 1
         },
         {
-            "hc-key": "sa-4293",
+            "hc-key": "sa-jz",
             "value": 2
         },
         {
-            "hc-key": "sa-jf",
+            "hc-key": "sa-nj",
             "value": 3
         },
         {
-            "hc-key": "sa-ba",
+            "hc-key": "sa-ri",
             "value": 4
         },
         {
-            "hc-key": "sa-as",
+            "hc-key": "sa-md",
             "value": 5
         },
         {
-            "hc-key": "sa-mk",
+            "hc-key": "sa-ha",
             "value": 6
         },
         {
-            "hc-key": "sa-nj",
+            "hc-key": "sa-qs",
             "value": 7
         },
         {
-            "hc-key": "sa-ri",
+            "hc-key": "sa-hs",
             "value": 8
         },
         {
-            "hc-key": "sa-md",
+            "hc-key": "sa-jf",
             "value": 9
         },
         {
-            "hc-key": "sa-ha",
+            "hc-key": "sa-sh",
             "value": 10
         },
         {
-            "hc-key": "sa-qs",
+            "hc-key": "sa-ba",
             "value": 11
         },
         {
-            "hc-key": "sa-sh",
+            "hc-key": "sa-as",
             "value": 12
         },
         {
-            "hc-key": "sa-hs",
+            "hc-key": "sa-mk",
             "value": 13
         }
     ];

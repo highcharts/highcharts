@@ -3,139 +3,139 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "af-kd",
+            "hc-key": "af-kt",
             "value": 0
         },
         {
-            "hc-key": "af-zb",
+            "hc-key": "af-pk",
             "value": 1
         },
         {
-            "hc-key": "af-oz",
+            "hc-key": "af-gz",
             "value": 2
         },
         {
-            "hc-key": "af-gz",
+            "hc-key": "af-bd",
             "value": 3
         },
         {
-            "hc-key": "af-kt",
+            "hc-key": "af-nr",
             "value": 4
         },
         {
-            "hc-key": "af-pk",
+            "hc-key": "af-kr",
             "value": 5
         },
         {
-            "hc-key": "af-bd",
+            "hc-key": "af-kz",
             "value": 6
         },
         {
-            "hc-key": "af-nr",
+            "hc-key": "af-ng",
             "value": 7
         },
         {
-            "hc-key": "af-kr",
+            "hc-key": "af-tk",
             "value": 8
         },
         {
-            "hc-key": "af-kz",
+            "hc-key": "af-bl",
             "value": 9
         },
         {
-            "hc-key": "af-ng",
+            "hc-key": "af-kb",
             "value": 10
         },
         {
-            "hc-key": "af-tk",
+            "hc-key": "af-kp",
             "value": 11
         },
         {
-            "hc-key": "af-bl",
+            "hc-key": "af-2030",
             "value": 12
         },
         {
-            "hc-key": "af-kb",
+            "hc-key": "af-la",
             "value": 13
         },
         {
-            "hc-key": "af-kp",
+            "hc-key": "af-lw",
             "value": 14
         },
         {
-            "hc-key": "af-2030",
+            "hc-key": "af-pv",
             "value": 15
         },
         {
-            "hc-key": "af-la",
+            "hc-key": "af-sm",
             "value": 16
         },
         {
-            "hc-key": "af-lw",
+            "hc-key": "af-vr",
             "value": 17
         },
         {
-            "hc-key": "af-pv",
+            "hc-key": "af-pt",
             "value": 18
         },
         {
-            "hc-key": "af-sm",
+            "hc-key": "af-bg",
             "value": 19
         },
         {
-            "hc-key": "af-vr",
+            "hc-key": "af-hr",
             "value": 20
         },
         {
-            "hc-key": "af-pt",
+            "hc-key": "af-bk",
             "value": 21
         },
         {
-            "hc-key": "af-bg",
+            "hc-key": "af-jw",
             "value": 22
         },
         {
-            "hc-key": "af-hr",
+            "hc-key": "af-bm",
             "value": 23
         },
         {
-            "hc-key": "af-bk",
+            "hc-key": "af-gr",
             "value": 24
         },
         {
-            "hc-key": "af-jw",
+            "hc-key": "af-fb",
             "value": 25
         },
         {
-            "hc-key": "af-bm",
+            "hc-key": "af-sp",
             "value": 26
         },
         {
-            "hc-key": "af-gr",
+            "hc-key": "af-fh",
             "value": 27
         },
         {
-            "hc-key": "af-fb",
+            "hc-key": "af-hm",
             "value": 28
         },
         {
-            "hc-key": "af-sp",
+            "hc-key": "af-nm",
             "value": 29
         },
         {
-            "hc-key": "af-fh",
+            "hc-key": "af-2014",
             "value": 30
         },
         {
-            "hc-key": "af-hm",
+            "hc-key": "af-oz",
             "value": 31
         },
         {
-            "hc-key": "af-nm",
+            "hc-key": "af-kd",
             "value": 32
         },
         {
-            "hc-key": "af-2014",
+            "hc-key": "af-zb",
             "value": 33
         }
     ];

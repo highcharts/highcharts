@@ -7,35 +7,35 @@ $(function () {
             "value": 0
         },
         {
-            "hc-key": "ga-es",
+            "hc-key": "ga-mo",
             "value": 1
         },
         {
-            "hc-key": "ga-oi",
+            "hc-key": "ga-es",
             "value": 2
         },
         {
-            "hc-key": "ga-wn",
+            "hc-key": "ga-ng",
             "value": 3
         },
         {
-            "hc-key": "ga-mo",
+            "hc-key": "ga-ny",
             "value": 4
         },
         {
-            "hc-key": "ga-ng",
+            "hc-key": "ga-ho",
             "value": 5
         },
         {
-            "hc-key": "ga-ny",
+            "hc-key": "ga-ol",
             "value": 6
         },
         {
-            "hc-key": "ga-ho",
+            "hc-key": "ga-oi",
             "value": 7
         },
         {
-            "hc-key": "ga-ol",
+            "hc-key": "ga-wn",
             "value": 8
         }
     ];

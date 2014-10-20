@@ -35,75 +35,75 @@ $(function () {
             "value": 7
         },
         {
-            "hc-key": "mx-tl",
+            "hc-key": "mx-mx",
             "value": 8
         },
         {
-            "hc-key": "mx-mx",
+            "hc-key": "mx-mo",
             "value": 9
         },
         {
-            "hc-key": "mx-ch",
+            "hc-key": "mx-df",
             "value": 10
         },
         {
-            "hc-key": "mx-mo",
+            "hc-key": "mx-qt",
             "value": 11
         },
         {
-            "hc-key": "mx-gr",
+            "hc-key": "mx-tb",
             "value": 12
         },
         {
-            "hc-key": "mx-df",
+            "hc-key": "mx-cs",
             "value": 13
         },
         {
-            "hc-key": "mx-qt",
+            "hc-key": "mx-nl",
             "value": 14
         },
         {
-            "hc-key": "mx-tb",
+            "hc-key": "mx-si",
             "value": 15
         },
         {
-            "hc-key": "mx-cs",
+            "hc-key": "mx-ch",
             "value": 16
         },
         {
-            "hc-key": "mx-si",
+            "hc-key": "mx-ve",
             "value": 17
         },
         {
-            "hc-key": "mx-nl",
+            "hc-key": "mx-za",
             "value": 18
         },
         {
-            "hc-key": "mx-ve",
+            "hc-key": "mx-ag",
             "value": 19
         },
         {
-            "hc-key": "mx-za",
+            "hc-key": "mx-ja",
             "value": 20
         },
         {
-            "hc-key": "mx-ag",
+            "hc-key": "mx-mi",
             "value": 21
         },
         {
-            "hc-key": "mx-ja",
+            "hc-key": "mx-oa",
             "value": 22
         },
         {
-            "hc-key": "mx-mi",
+            "hc-key": "mx-pu",
             "value": 23
         },
         {
-            "hc-key": "mx-oa",
+            "hc-key": "mx-gr",
             "value": 24
         },
         {
-            "hc-key": "mx-pu",
+            "hc-key": "mx-tl",
             "value": 25
         },
         {
@@ -127,11 +127,11 @@ $(function () {
             "value": 30
         },
         {
-            "hc-key": "mx-hg",
+            "hc-key": "mx-sl",
             "value": 31
         },
         {
-            "hc-key": "mx-sl",
+            "hc-key": "mx-hg",
             "value": 32
         }
     ];

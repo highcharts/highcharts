@@ -11,87 +11,87 @@ $(function () {
             "value": 1
         },
         {
-            "hc-key": "ec-na",
+            "hc-key": "ec-cr",
             "value": 2
         },
         {
-            "hc-key": "ec-tu",
+            "hc-key": "ec-im",
             "value": 3
         },
         {
-            "hc-key": "ec-1076",
+            "hc-key": "ec-su",
             "value": 4
         },
         {
-            "hc-key": "ec-cr",
+            "hc-key": "ec-se",
             "value": 5
         },
         {
-            "hc-key": "ec-im",
+            "hc-key": "ec-sd",
             "value": 6
         },
         {
-            "hc-key": "ec-su",
+            "hc-key": "ec-az",
             "value": 7
         },
         {
-            "hc-key": "ec-se",
+            "hc-key": "ec-eo",
             "value": 8
         },
         {
-            "hc-key": "ec-sd",
+            "hc-key": "ec-lj",
             "value": 9
         },
         {
-            "hc-key": "ec-az",
+            "hc-key": "ec-zc",
             "value": 10
         },
         {
-            "hc-key": "ec-eo",
+            "hc-key": "ec-cn",
             "value": 11
         },
         {
-            "hc-key": "ec-lj",
+            "hc-key": "ec-bo",
             "value": 12
         },
         {
-            "hc-key": "ec-zc",
+            "hc-key": "ec-ct",
             "value": 13
         },
         {
-            "hc-key": "ec-cn",
+            "hc-key": "ec-lr",
             "value": 14
         },
         {
-            "hc-key": "ec-bo",
+            "hc-key": "ec-mn",
             "value": 15
         },
         {
-            "hc-key": "ec-ct",
+            "hc-key": "ec-cb",
             "value": 16
         },
         {
-            "hc-key": "ec-lr",
+            "hc-key": "ec-ms",
             "value": 17
         },
         {
-            "hc-key": "ec-mn",
+            "hc-key": "ec-pi",
             "value": 18
         },
         {
-            "hc-key": "ec-cb",
+            "hc-key": "ec-pa",
             "value": 19
         },
         {
-            "hc-key": "ec-ms",
+            "hc-key": "ec-1076",
             "value": 20
         },
         {
-            "hc-key": "ec-pi",
+            "hc-key": "ec-na",
             "value": 21
         },
         {
-            "hc-key": "ec-pa",
+            "hc-key": "ec-tu",
             "value": 22
         },
         {

@@ -35,23 +35,23 @@ $(function () {
             "value": 7
         },
         {
-            "hc-key": "tz-pn",
+            "hc-key": "tz-mt",
             "value": 8
         },
         {
-            "hc-key": "tz-ps",
+            "hc-key": "tz-rv",
             "value": 9
         },
         {
-            "hc-key": "tz-zn",
+            "hc-key": "tz-pn",
             "value": 10
         },
         {
-            "hc-key": "tz-mt",
+            "hc-key": "tz-ps",
             "value": 11
         },
         {
-            "hc-key": "tz-rv",
+            "hc-key": "tz-zn",
             "value": 12
         },
         {
@@ -95,15 +95,15 @@ $(function () {
             "value": 22
         },
         {
-            "hc-key": "tz-li",
+            "hc-key": "tz-tb",
             "value": 23
         },
         {
-            "hc-key": "tz-ge",
+            "hc-key": "tz-li",
             "value": 24
         },
         {
-            "hc-key": "tz-tb",
+            "hc-key": "tz-ge",
             "value": 25
         },
         {

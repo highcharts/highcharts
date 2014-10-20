@@ -175,143 +175,143 @@ $(function () {
             "value": 42
         },
         {
-            "hc-key": "mk-gt",
+            "hc-key": "mk-gp",
             "value": 43
         },
         {
-            "hc-key": "mk-gp",
+            "hc-key": "mk-kh",
             "value": 44
         },
         {
-            "hc-key": "mk-ug",
+            "hc-key": "mk-vh",
             "value": 45
         },
         {
-            "hc-key": "mk-db",
+            "hc-key": "mk-vj",
             "value": 46
         },
         {
-            "hc-key": "mk-dr",
+            "hc-key": "mk-et",
             "value": 47
         },
         {
-            "hc-key": "mk-kh",
+            "hc-key": "mk-bn",
             "value": 48
         },
         {
-            "hc-key": "mk-vh",
+            "hc-key": "mk-os",
             "value": 49
         },
         {
-            "hc-key": "mk-vj",
+            "hc-key": "mk-gt",
             "value": 50
         },
         {
-            "hc-key": "mk-et",
+            "hc-key": "mk-jg",
             "value": 51
         },
         {
-            "hc-key": "mk-bn",
+            "hc-key": "mk-ru",
             "value": 52
         },
         {
-            "hc-key": "mk-os",
+            "hc-key": "mk-va",
             "value": 53
         },
         {
-            "hc-key": "mk-jg",
+            "hc-key": "mk-bg",
             "value": 54
         },
         {
-            "hc-key": "mk-ru",
+            "hc-key": "mk-ni",
             "value": 55
         },
         {
-            "hc-key": "mk-va",
+            "hc-key": "mk-rv",
             "value": 56
         },
         {
-            "hc-key": "mk-bg",
+            "hc-key": "mk-dr",
             "value": 57
         },
         {
-            "hc-key": "mk-ni",
+            "hc-key": "mk-ug",
             "value": 58
         },
         {
-            "hc-key": "mk-rv",
+            "hc-key": "mk-db",
             "value": 59
         },
         {
-            "hc-key": "mk-ph",
+            "hc-key": "mk-re",
             "value": 60
         },
         {
-            "hc-key": "mk-re",
+            "hc-key": "mk-kz",
             "value": 61
         },
         {
-            "hc-key": "mk-kz",
+            "hc-key": "mk-ve",
             "value": 62
         },
         {
-            "hc-key": "mk-ve",
+            "hc-key": "mk-zk",
             "value": 63
         },
         {
-            "hc-key": "mk-zk",
+            "hc-key": "mk-de",
             "value": 64
         },
         {
-            "hc-key": "mk-de",
+            "hc-key": "mk-il",
             "value": 65
         },
         {
-            "hc-key": "mk-il",
+            "hc-key": "mk-kb",
             "value": 66
         },
         {
-            "hc-key": "mk-kb",
+            "hc-key": "mk-na",
             "value": 67
         },
         {
-            "hc-key": "mk-na",
+            "hc-key": "mk-mg",
             "value": 68
         },
         {
-            "hc-key": "mk-mg",
+            "hc-key": "mk-nv",
             "value": 69
         },
         {
-            "hc-key": "mk-nv",
+            "hc-key": "mk-mr",
             "value": 70
         },
         {
-            "hc-key": "mk-mr",
+            "hc-key": "mk-tr",
             "value": 71
         },
         {
-            "hc-key": "mk-tr",
+            "hc-key": "mk-gv",
             "value": 72
         },
         {
-            "hc-key": "mk-gv",
+            "hc-key": "mk-sd",
             "value": 73
         },
         {
-            "hc-key": "mk-sd",
+            "hc-key": "mk-dl",
             "value": 74
         },
         {
-            "hc-key": "mk-dl",
+            "hc-key": "mk-oc",
             "value": 75
         },
         {
-            "hc-key": "mk-oc",
+            "hc-key": "mk-mk",
             "value": 76
         },
         {
-            "hc-key": "mk-mk",
+            "hc-key": "mk-ph",
             "value": 77
         },
         {

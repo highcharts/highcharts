@@ -3,47 +3,47 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "bb-js",
+            "hc-key": "bb-mi",
             "value": 0
         },
         {
-            "hc-key": "bb-jn",
+            "hc-key": "bb-pe",
             "value": 1
         },
         {
-            "hc-key": "bb-lu",
+            "hc-key": "bb-an",
             "value": 2
         },
         {
-            "hc-key": "bb-mi",
+            "hc-key": "bb-ph",
             "value": 3
         },
         {
-            "hc-key": "bb-pe",
+            "hc-key": "bb-cc",
             "value": 4
         },
         {
-            "hc-key": "bb-an",
+            "hc-key": "bb-th",
             "value": 5
         },
         {
-            "hc-key": "bb-ph",
+            "hc-key": "bb-ge",
             "value": 6
         },
         {
-            "hc-key": "bb-cc",
+            "hc-key": "bb-jm",
             "value": 7
         },
         {
-            "hc-key": "bb-th",
+            "hc-key": "bb-jn",
             "value": 8
         },
         {
-            "hc-key": "bb-ge",
+            "hc-key": "bb-js",
             "value": 9
         },
         {
-            "hc-key": "bb-jm",
+            "hc-key": "bb-lu",
             "value": 10
         }
     ];

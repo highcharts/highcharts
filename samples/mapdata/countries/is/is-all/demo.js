@@ -11,31 +11,31 @@ $(function () {
             "value": 1
         },
         {
-            "hc-key": "is-nv",
+            "hc-key": "is-su",
             "value": 2
         },
         {
-            "hc-key": "is-su",
+            "hc-key": "is-ho",
             "value": 3
         },
         {
-            "hc-key": "is-ho",
+            "hc-key": "is-6642",
             "value": 4
         },
         {
-            "hc-key": "is-6642",
+            "hc-key": "is-vf",
             "value": 5
         },
         {
-            "hc-key": "is-vf",
+            "hc-key": "is-al",
             "value": 6
         },
         {
-            "hc-key": "is-al",
+            "hc-key": "is-vl",
             "value": 7
         },
         {
-            "hc-key": "is-vl",
+            "hc-key": "is-nv",
             "value": 8
         }
     ];

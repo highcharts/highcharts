@@ -67,11 +67,11 @@ $(function () {
             "value": 15
         },
         {
-            "hc-key": "ve-am",
+            "hc-key": "ve-fa",
             "value": 16
         },
         {
-            "hc-key": "ve-fa",
+            "hc-key": "ve-am",
             "value": 17
         },
         {

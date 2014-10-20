@@ -3,115 +3,115 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "bg-gb",
+            "hc-key": "bg-vt",
             "value": 0
         },
         {
-            "hc-key": "bg-lv",
+            "hc-key": "bg-mt",
             "value": 1
         },
         {
-            "hc-key": "bg-pv",
+            "hc-key": "bg-vr",
             "value": 2
         },
         {
-            "hc-key": "bg-vt",
+            "hc-key": "bg-ky",
             "value": 3
         },
         {
-            "hc-key": "bg-mt",
+            "hc-key": "bg-vd",
             "value": 4
         },
         {
-            "hc-key": "bg-vr",
+            "hc-key": "bg-br",
             "value": 5
         },
         {
-            "hc-key": "bg-ky",
+            "hc-key": "bg-ya",
             "value": 6
         },
         {
-            "hc-key": "bg-vd",
+            "hc-key": "bg-tu",
             "value": 7
         },
         {
-            "hc-key": "bg-br",
+            "hc-key": "bg-rg",
             "value": 8
         },
         {
-            "hc-key": "bg-ya",
+            "hc-key": "bg-sh",
             "value": 9
         },
         {
-            "hc-key": "bg-tu",
+            "hc-key": "bg-do",
             "value": 10
         },
         {
-            "hc-key": "bg-rg",
+            "hc-key": "bg-vn",
             "value": 11
         },
         {
-            "hc-key": "bg-sh",
+            "hc-key": "bg-si",
             "value": 12
         },
         {
-            "hc-key": "bg-do",
+            "hc-key": "bg-rs",
             "value": 13
         },
         {
-            "hc-key": "bg-vn",
+            "hc-key": "bg-bl",
             "value": 14
         },
         {
-            "hc-key": "bg-si",
+            "hc-key": "bg-sl",
             "value": 15
         },
         {
-            "hc-key": "bg-rs",
+            "hc-key": "bg-sz",
             "value": 16
         },
         {
-            "hc-key": "bg-bl",
+            "hc-key": "bg-kk",
             "value": 17
         },
         {
-            "hc-key": "bg-sl",
+            "hc-key": "bg-pd",
             "value": 18
         },
         {
-            "hc-key": "bg-sz",
+            "hc-key": "bg-pz",
             "value": 19
         },
         {
-            "hc-key": "bg-kk",
+            "hc-key": "bg-sm",
             "value": 20
         },
         {
-            "hc-key": "bg-pd",
+            "hc-key": "bg-kz",
             "value": 21
         },
         {
-            "hc-key": "bg-pz",
+            "hc-key": "bg-sf",
             "value": 22
         },
         {
-            "hc-key": "bg-sm",
+            "hc-key": "bg-sg",
             "value": 23
         },
         {
-            "hc-key": "bg-kz",
+            "hc-key": "bg-pn",
             "value": 24
         },
         {
-            "hc-key": "bg-sf",
+            "hc-key": "bg-gb",
             "value": 25
         },
         {
-            "hc-key": "bg-sg",
+            "hc-key": "bg-lv",
             "value": 26
         },
         {
-            "hc-key": "bg-pn",
+            "hc-key": "bg-pv",
             "value": 27
         }
     ];

@@ -3,7 +3,7 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "mp-ni-98",
+            "hc-key": "mp-sa-98",
             "value": 0
         }
     ];

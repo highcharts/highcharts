@@ -27,27 +27,27 @@ $(function () {
             "value": 5
         },
         {
-            "hc-key": "pa-cc",
+            "hc-key": "pa-cl",
             "value": 6
         },
         {
-            "hc-key": "pa-cl",
+            "hc-key": "pa-he",
             "value": 7
         },
         {
-            "hc-key": "pa-he",
+            "hc-key": "pa-ls",
             "value": 8
         },
         {
-            "hc-key": "pa-ls",
+            "hc-key": "pa-dr",
             "value": 9
         },
         {
-            "hc-key": "pa-dr",
+            "hc-key": "pa-1119",
             "value": 10
         },
         {
-            "hc-key": "pa-1119",
+            "hc-key": "pa-cc",
             "value": 11
         }
     ];

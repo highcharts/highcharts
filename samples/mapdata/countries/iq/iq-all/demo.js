@@ -3,75 +3,75 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "iq-da",
+            "hc-key": "iq-na",
             "value": 0
         },
         {
-            "hc-key": "iq-ni",
+            "hc-key": "iq-ka",
             "value": 1
         },
         {
-            "hc-key": "iq-ts",
+            "hc-key": "iq-ba",
             "value": 2
         },
         {
-            "hc-key": "iq-sd",
+            "hc-key": "iq-mu",
             "value": 3
         },
         {
-            "hc-key": "iq-na",
+            "hc-key": "iq-qa",
             "value": 4
         },
         {
-            "hc-key": "iq-ka",
+            "hc-key": "iq-dq",
             "value": 5
         },
         {
-            "hc-key": "iq-ba",
+            "hc-key": "iq-ma",
             "value": 6
         },
         {
-            "hc-key": "iq-mu",
+            "hc-key": "iq-wa",
             "value": 7
         },
         {
-            "hc-key": "iq-qa",
+            "hc-key": "iq-sd",
             "value": 8
         },
         {
-            "hc-key": "iq-dq",
+            "hc-key": "iq-su",
             "value": 9
         },
         {
-            "hc-key": "iq-ma",
+            "hc-key": "iq-di",
             "value": 10
         },
         {
-            "hc-key": "iq-wa",
+            "hc-key": "iq-bb",
             "value": 11
         },
         {
-            "hc-key": "iq-su",
+            "hc-key": "iq-bg",
             "value": 12
         },
         {
-            "hc-key": "iq-di",
+            "hc-key": "iq-an",
             "value": 13
         },
         {
-            "hc-key": "iq-bb",
+            "hc-key": "iq-ar",
             "value": 14
         },
         {
-            "hc-key": "iq-bg",
+            "hc-key": "iq-ts",
             "value": 15
         },
         {
-            "hc-key": "iq-an",
+            "hc-key": "iq-da",
             "value": 16
         },
         {
-            "hc-key": "iq-ar",
+            "hc-key": "iq-ni",
             "value": 17
         }
     ];

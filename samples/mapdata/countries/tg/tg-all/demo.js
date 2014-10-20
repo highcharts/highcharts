@@ -3,23 +3,23 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "tg-pl",
+            "hc-key": "tg-ma",
             "value": 0
         },
         {
-            "hc-key": "tg-ma",
+            "hc-key": "tg-ka",
             "value": 1
         },
         {
-            "hc-key": "tg-ka",
+            "hc-key": "tg-ce",
             "value": 2
         },
         {
-            "hc-key": "tg-ce",
+            "hc-key": "tg-sa",
             "value": 3
         },
         {
-            "hc-key": "tg-sa",
+            "hc-key": "tg-pl",
             "value": 4
         }
     ];

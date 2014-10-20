@@ -15,35 +15,35 @@ $(function () {
             "value": 2
         },
         {
-            "hc-key": "mz-ns",
+            "hc-key": "mz-za",
             "value": 3
         },
         {
-            "hc-key": "mz-ga",
+            "hc-key": "mz-7278",
             "value": 4
         },
         {
-            "hc-key": "mz-so",
+            "hc-key": "mz-te",
             "value": 5
         },
         {
-            "hc-key": "mz-za",
+            "hc-key": "mz-mn",
             "value": 6
         },
         {
-            "hc-key": "mz-7278",
+            "hc-key": "mz-cd",
             "value": 7
         },
         {
-            "hc-key": "mz-te",
+            "hc-key": "mz-ns",
             "value": 8
         },
         {
-            "hc-key": "mz-mn",
+            "hc-key": "mz-ga",
             "value": 9
         },
         {
-            "hc-key": "mz-cd",
+            "hc-key": "mz-so",
             "value": 10
         }
     ];
