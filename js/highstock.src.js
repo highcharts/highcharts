@@ -21729,7 +21729,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 		if (axis.horiz) {
 			each(uniqueAxes, function (axis2) {
 				y1 = axis2.top;
-				y2 = y1 + axis2.len;
+				y2 = y1 + axis2.height;
 				x1 = x2 = mathRound(translatedValue + axis.transB);
 
 				if ((x1 >= axisLeft && x1 <= axisLeft + axis.width) || force) {
