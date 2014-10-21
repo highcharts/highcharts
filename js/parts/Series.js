@@ -1310,7 +1310,8 @@ Series.prototype = {
 			dashStyle =  options.dashStyle,
 			roundCap = options.linecap !== 'square',
 			graphPath = this.getGraphPath(),
-			negativeColor = options.negativeColor;
+			negativeColor = options.negativeColor,
+			fillColor = (this.fillGraph && this.color) || NONE; // polygon series use filled graph
 
 		if (negativeColor) {
 			props.push(['graphNeg', negativeColor]);
@@ -1326,11 +1327,11 @@ Series.prototype = {
 				stop(graph); // cancel running animations, #459
 				graph.animate({ d: graphPath });
 
-			} else if (lineWidth && graphPath.length) { // #1487
+			} else if ((lineWidth || fillColor) && graphPath.length) { // #1487
 				attribs = {
 					stroke: prop[1],
 					'stroke-width': lineWidth,
-					fill: NONE,
+					fill: fillColor,
 					zIndex: 1 // #1069
 				};
 				if (dashStyle) {
