@@ -250,6 +250,7 @@
             <file name="BoxPlotSeries.js"/>
             <file name="ErrorBarSeries.js"/>
             <file name="WaterfallSeries.js"/>
+            <file name="PolygonSeries.js"/>
             <file name="BubbleSeries.js"/>
             <file name="Polar.js"/>
             <file name="Outro.js"/>
