@@ -659,7 +659,8 @@ wrap(SVGRenderer.prototype, 'buildText', function (proceed, wrapper) {
 SVGRenderer.prototype.Element.prototype.applyTextStroke = function (textStroke) {
 	var elem = this.element,
 		tspans,
-		firstChild;
+		firstChild,
+		rgba;
 	
 	textStroke = textStroke.split(' ');
 	tspans = elem.getElementsByTagName('tspan');
@@ -668,6 +669,12 @@ SVGRenderer.prototype.Element.prototype.applyTextStroke = function (textStroke) 
 	// In order to get the right y position of the clones, 
 	// copy over the y setter
 	this.ySetter = this.xSetter;
+
+	// When the text stroke color is set to auto, use dark stroke for light text and vice versa // docs: new defaults for all affected series
+	if (textStroke[1] === 'auto') {
+		rgba = Color(elem.style.fill).rgba;
+		textStroke[1] = rgba[0] + rgba[1] + rgba[2] > 384 ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.7)';
+	}
 	
 	each([].slice.call(tspans), function (tspan, y) {
 		var clone;
@@ -970,7 +977,7 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 		style: {
 			color: 'white',
 			fontWeight: 'bold',
-			HcTextStroke: '3px rgba(0,0,0,0.5)'
+			HcTextStroke: '3px auto'
 		}
 	},
 	turboThreshold: 0,
@@ -1712,7 +1719,7 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 		defer: false,
 		overflow: false,
 		style: {
-			HcTextStroke: '3px rgba(255,255,255,0.5)'
+			HcTextStroke: '3px auto'
 		}
 	}
 });
@@ -1763,7 +1770,7 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 		style: {
 			color: 'white',
 			fontWeight: 'bold',
-			HcTextStroke: '1px rgba(0,0,0,0.5)'
+			HcTextStroke: '1px auto'
 		}
 	},
 	marker: null,

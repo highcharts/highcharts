@@ -60,8 +60,7 @@ $(function () {
                 enabled: true,
                 format: '{point.name}',
                 style: {
-                    color: 'black',
-                    HcTextStroke: '3px white'
+                    color: '#000000'
                 }
             },
             states: {

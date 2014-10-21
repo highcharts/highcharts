@@ -45,11 +45,7 @@ $(function () {
                 joinBy: 'hasc',
                 dataLabels: {
                     enabled: true,
-                    color: 'white',
-                    format: '{point.value:.1f}',
-                    style: {
-                        textTransform: 'uppercase'
-                    }
+                    format: '{point.value:.1f}'
                 },
                 name: 'Population density',
                 tooltip: {

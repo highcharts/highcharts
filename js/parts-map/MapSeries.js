@@ -23,7 +23,7 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 		style: {
 			color: 'white',
 			fontWeight: 'bold',
-			HcTextStroke: '3px rgba(0,0,0,0.5)'
+			HcTextStroke: '3px auto'
 		}
 	},
 	turboThreshold: 0,

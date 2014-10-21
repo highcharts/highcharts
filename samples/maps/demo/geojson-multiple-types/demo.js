@@ -33,8 +33,7 @@ $(function () {
             if (this.properties.code_hasc === 'AU.TS') {
                 this.dataLabels = {
                     style: {
-                        color: '#333333',
-                        HcTextStroke: '3px white'
+                        color: '#333333'
                     }
                 };
             }
