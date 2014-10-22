@@ -10361,7 +10361,7 @@ Legend.prototype = {
 					chart[marginNames[side]] = mathMax(
 						chart[marginNames[side]],
 						chart.legend[(side + 1) % 2 ? 'legendHeight' : 'legendWidth'] - 
-							options[(side % 2) ? 'y' : 'x'] + pick(options.margin, 20) + spacing[1]
+							options[(side % 2) ? 'y' : 'x'] + pick(options.margin, 20) + spacing[side]
 					);
 				}
 			});
