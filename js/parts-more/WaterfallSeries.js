@@ -189,7 +189,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
 
 		each(series.points, function (point) {
-			if (point.y > 0 && !point.color) {
+			if (point.y > 0 && !point.options.color) {
 				point.pointAttr = seriesDownPointAttr;
 				point.color = upColor;
 			}
