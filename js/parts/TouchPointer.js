@@ -107,7 +107,7 @@ extend(Highcharts.Pointer.prototype, {
 			selectionMarker = self.selectionMarker,
 			transform = {},
 			fireClickEvent = touchesLength === 1 && ((self.inClass(e.target, PREFIX + 'tracker') && 
-				chart.runTrackerClick) || chart.runChartClick),
+				chart.runTrackerClick) || self.runChartClick),
 			clip = {};
 
 		// On touch devices, only proceed to trigger click if a handler is defined
@@ -133,8 +133,8 @@ extend(Highcharts.Pointer.prototype, {
 				if (axis.zoomEnabled) {
 					var bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
 						minPixelPadding = axis.minPixelPadding,
-						min = axis.toPixels(axis.dataMin),
-						max = axis.toPixels(axis.dataMax),
+						min = axis.toPixels(pick(axis.options.min, axis.dataMin)),
+						max = axis.toPixels(pick(axis.options.max, axis.dataMax)),
 						absMin = mathMin(min, max),
 						absMax = mathMax(min, max);
 
@@ -143,6 +143,7 @@ extend(Highcharts.Pointer.prototype, {
 					bounds.max = mathMax(axis.pos + axis.len, absMax + minPixelPadding);
 				}
 			});
+			self.res = true; // reset on next move
 		
 		// Event type is touchmove, handle panning and pinching
 		} else if (pinchDown.length) { // can be 0 when releasing, if touchend fires first
@@ -165,6 +166,9 @@ extend(Highcharts.Pointer.prototype, {
 			// Optionally move the tooltip on touchmove
 			if (!hasZoom && followTouchMove && touchesLength === 1) {
 				this.runPointActions(self.normalize(e));
+			} else if (self.res) {
+				self.res = false;
+				this.reset(false, 0);
 			}
 		}
 	},
@@ -178,7 +182,7 @@ extend(Highcharts.Pointer.prototype, {
 
 			e = this.normalize(e);
 
-			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
+			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop) && !chart.openMenu) {
 
 				// Run mouse events and display tooltip etc
 				this.runPointActions(e);

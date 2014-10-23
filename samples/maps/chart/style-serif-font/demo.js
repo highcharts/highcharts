@@ -1,7 +1,7 @@
 $(function () {
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
-        
+
         // Initiate the chart
         $('#container').highcharts('Map', {
             chart: {
@@ -35,9 +35,15 @@ $(function () {
 
             series : [{
                 data : data,
-                mapData: Highcharts.geojson(Highcharts.maps['custom/world']),
+                mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
+                dataLabels: {
+                    enabled: true,
+                    formatter: function () {
+                        return this.point.properties && this.point.properties['hc-a2'];
+                    }
+                },
                 states: {
                     hover: {
                         color: '#BADA55'

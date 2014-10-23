@@ -43,8 +43,13 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 	public Server create() {
 		logger.debug("in makeObject, " + exec + ", " +  script + ", " +  host);
 		Integer port = this.getAvailablePort();
+        if (script.isEmpty()) {
+            // use the bundled highcharts-convert.js script
+            script = TempDir.getPhantomJsDir().toAbsolutePath().toString() + "/highcharts-convert.js";
+        }
+        Server server = new Server(exec, script, host, port, connectTimeout, readTimeout, maxTimeout);
 		portUsage.put(port, PortStatus.BUSY);
-		return new Server(exec, script, host, port, connectTimeout, readTimeout, maxTimeout);
+		return server;
 	}
 
 	@Override

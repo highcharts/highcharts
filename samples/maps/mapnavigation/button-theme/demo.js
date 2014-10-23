@@ -1,13 +1,13 @@
 $(function () {
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
-    
+
         // Instanciate the map
         $('#container').highcharts('Map', {
             title: {
                 text: 'World population 2010 by country'
             },
-            
+
             subtitle : {
                 text : 'Demo of map button theming'
             },
@@ -48,7 +48,7 @@ $(function () {
 
             series : [{
                 name: 'Population',
-                mapData: Highcharts.geojson(Highcharts.maps['custom/world']),
+                mapData: Highcharts.maps['custom/world'],
                 data: data,
                 joinBy: ['iso-a2', 'code'],
                 tooltip: {

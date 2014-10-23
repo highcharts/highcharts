@@ -8,7 +8,7 @@ $(function () {
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
-        
+
         yAxis: {
             floor: 0,
             ceiling: 100,
@@ -16,9 +16,9 @@ $(function () {
                 text: 'Percentage'
             }
         },
-        
+
         series: [{
-            data: [0, 1, 0, 2, 3, 5, 8, 5, 15, 14, 25, 54]        
+            data: [0, 1, 0, 2, 3, 5, 8, 5, 15, 14, 25, 54]
         }]
     });
 });

@@ -94,7 +94,7 @@ defaultOptions = {
 		margin: 15,
 		// x: 0,
 		// verticalAlign: 'top',
-		// y: null, // docs: since 4.0.2 it depends on the font size
+		// y: null,
 		style: {
 			color: '#333333',
 			fontSize: '18px'
@@ -140,8 +140,9 @@ defaultOptions = {
 				//fillColor: null,
 				states: { // states for a single point
 					hover: {
-						enabled: true
-						//radius: base + 2
+						enabled: true,
+						lineWidthPlus: 1,
+						radiusPlus: 2
 					},
 					select: {
 						fillColor: '#FFFFFF',
@@ -158,7 +159,7 @@ defaultOptions = {
 				//defer: true,
 				enabled: false,
 				formatter: function () {
-					return this.y === null ? '' : numberFormat(this.y, -1);
+					return this.y === null ? '' : Highcharts.numberFormat(this.y, -1);
 				},
 				verticalAlign: 'bottom', // above singular point
 				y: 0
@@ -177,7 +178,7 @@ defaultOptions = {
 			states: { // states for the entire series
 				hover: {
 					//enabled: false,
-					//lineWidth: base + 1,
+					lineWidthPlus: 1,
 					marker: {
 						// lineWidth: base + 1,
 						// radius: base + 1
@@ -193,7 +194,7 @@ defaultOptions = {
 			},
 			stickyTracking: true,
 			//tooltip: {
-				//pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y}</b>'
+				//pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b>'
 				//valueDecimals: null,
 				//xDateFormat: '%A, %b %e, %Y',
 				//valuePrefix: '',
@@ -274,7 +275,7 @@ defaultOptions = {
 		labelStyle: {
 			fontWeight: 'bold',
 			position: RELATIVE,
-			top: '45%' // docs
+			top: '45%'
 		},
 		// showDuration: 0,
 		style: {
@@ -302,9 +303,10 @@ defaultOptions = {
 			month: '%B %Y',
 			year: '%Y'
 		},
+		footerFormat: '',
 		//formatter: defaultFormatter,
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
-		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 		shadow: true,
 		//shape: 'callout',
 		//shared: false,
@@ -362,16 +364,19 @@ function setTimeMethods() {
 		SET = useUTC ? 'setUTC' : 'set';
 
 
+	Date = defaultOptions.global.Date || window.Date;
 	timezoneOffset = ((useUTC && defaultOptions.global.timezoneOffset) || 0) * 60000;
-	makeTime = useUTC ? Date.UTC : function (year, month, date, hours, minutes, seconds) {
-		return new Date(
-			year,
-			month,
-			pick(date, 1),
-			pick(hours, 0),
-			pick(minutes, 0),
-			pick(seconds, 0)
-		).getTime();
+	makeTime = function (year, month, date, hours, minutes, seconds) {
+		return useUTC ?
+			Date.UTC.apply(0, arguments) + timezoneOffset : // #3500
+			new Date(
+				year,
+				month,
+				pick(date, 1),
+				pick(hours, 0),
+				pick(minutes, 0),
+				pick(seconds, 0)
+			).getTime();
 	};
 	getMinutes =  GET + 'Minutes';
 	getHours =    GET + 'Hours';

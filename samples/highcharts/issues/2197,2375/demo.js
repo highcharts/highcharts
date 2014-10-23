@@ -1,11 +1,11 @@
 $(function () {
-	$('#container').highcharts({
+    $('#container').highcharts({
         chart: {
             type: 'area'
         },
-        
+
         title: {
-        	text: 'Percent stack with negative values'
+            text: 'Percent stack with negative values'
         },
 
         plotOptions: {

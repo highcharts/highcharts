@@ -15,6 +15,7 @@ var colorSeriesMixin = {
 	trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
 	getSymbol: noop,
 	parallelArrays: ['x', 'y', 'value'],
+	colorKey: 'value',
 	
 	/**
 	 * In choropleth maps, the color is a result of the value, so this needs translation too
@@ -22,10 +23,11 @@ var colorSeriesMixin = {
 	translateColors: function () {
 		var series = this,
 			nullColor = this.options.nullColor,
-			colorAxis = this.colorAxis;
+			colorAxis = this.colorAxis,
+			colorKey = this.colorKey;
 
 		each(this.data, function (point) {
-			var value = point.value,
+			var value = point[colorKey],
 				color;
 
 			color = value === null ? nullColor : (colorAxis && value !== undefined) ? colorAxis.toColor(value, point) : point.color || series.color;
@@ -40,7 +42,6 @@ var colorSeriesMixin = {
 
 /**
  * Wrap the buildText method and add the hook for add text stroke
- * docs: On dataLabels.color and dataLabels.style, emphasize that a change in color should be accompanied by an opposite textStroke color
  */
 wrap(SVGRenderer.prototype, 'buildText', function (proceed, wrapper) {
 
@@ -64,7 +65,7 @@ SVGRenderer.prototype.Element.prototype.applyTextStroke = function (textStroke) 
 		firstChild;
 	
 	textStroke = textStroke.split(' ');
-	tspans = elem.children;
+	tspans = elem.getElementsByTagName('tspan');
 	firstChild = elem.firstChild;
 	
 	// In order to get the right y position of the clones, 

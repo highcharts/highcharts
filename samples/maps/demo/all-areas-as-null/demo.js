@@ -1,10 +1,10 @@
-$(function () {    
+$(function () {
     // Instanciate the map
     $('#container').highcharts('Map', {
         chart : {
             borderWidth : 1
         },
-        
+
         title : {
             text : 'Nordic countries'
         },
@@ -15,10 +15,10 @@ $(function () {
         legend: {
             enabled: false
         },
-        
+
         series : [{
             name: 'Country',
-            mapData: Highcharts.geojson(Highcharts.maps['custom/europe']),
+            mapData: Highcharts.maps['custom/europe'],
             data: [{
                 code: 'IS',
                 value: 1

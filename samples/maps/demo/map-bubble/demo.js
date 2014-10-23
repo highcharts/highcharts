@@ -4,6 +4,13 @@ $(function () {
 
         var mapData = Highcharts.geojson(Highcharts.maps['custom/world']);
 
+        // Correct UK to GB in data
+        $.each(data, function () {
+            if (this.code === 'UK') {
+                this.code = 'GB';
+            }
+        });
+
         $('#container').highcharts('Map', {
             chart : {
                 borderWidth : 1
@@ -12,7 +19,7 @@ $(function () {
             title: {
                 text: 'World population 2010 by country'
             },
-            
+
             subtitle : {
                 text : 'Demo of Highcharts map with bubbles'
             },

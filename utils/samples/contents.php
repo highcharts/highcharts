@@ -150,6 +150,24 @@
 			#batch-stop {
 				display: none;
 			}
+			.comment {
+				position: absolute;
+				right: 3em;
+			}
+			.comment-title {
+				display: none;
+				position: absolute;
+				width: 200px;
+				background: white;
+				color: black;
+				padding: 20px;
+				right: -3em;
+				z-index: 2;
+				border: 1px solid silver;
+			}
+			.comment:hover .comment-title {
+				display: block;
+			}
 			.dissimilarity-index {
 				float: right;
 			}
@@ -192,7 +210,7 @@
 	$products = array('highcharts', 'maps', 'stock', 'issues');
 	$samplesDir = dirname(__FILE__). '/../../samples/';
 	$browser = get_browser(null, true);
-	$browserKey = $browser['parent'];
+	$browserKey = @$browser['parent'];
 	$compare = @json_decode(file_get_contents('temp/compare.json'));
 
 	$i = 1;
@@ -241,9 +259,26 @@
 										<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main'><i class='icon-columns'></i></a>
 									";
 								}
+
+								// Comments
+								if (isset($compare->$path->comment)) {
+									$comment = $compare->$path->comment;
+									$comment = "
+										<i class='icon-$comment->symbol' title='$comment->title'></i>
+										<span class='comment-title'>$comment->title</span>
+									";
+								} else {
+									$comment = "
+										<i class='icon-pencil' title='Add comment'></i>
+									";
+								}
+
 								echo "
 								<li id='li$i' class='$compareClass'>$i. $suffix 
-									<a target='main' id='i$i' class='$batchClass' href='view.php?path=$path&amp;i=$i'>$innerFile</a> 
+									<a target='main' id='i$i' class='$batchClass' href='view.php?path=$path&amp;i=$i'>$innerFile</a>
+									<a class='comment' href='compare-comment.php?path=$path&amp;i=$i' target='main'>
+										$comment
+									</a>
 									$dissIndex
 								</li>
 								";

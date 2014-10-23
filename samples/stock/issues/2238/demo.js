@@ -13,5 +13,5 @@ $(function () {
         series: [{
             data: []
         }]
-    });   
+    });
 });

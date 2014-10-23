@@ -16,7 +16,7 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 		style: {
 			color: 'white',
 			fontWeight: 'bold',
-			HcTextStroke: '1px rgba(0,0,0,0.5)' // docs: textShadow out, HcTextStroke in
+			HcTextStroke: '1px rgba(0,0,0,0.5)'
 		}
 	},
 	marker: null,
@@ -28,6 +28,7 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 			animation: true
 		},
 		hover: {
+			halo: false,  // #3406, halo is not required on heatmaps
 			brightness: 0.2
 		}
 	}
@@ -79,7 +80,7 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		// Make sure colors are updated on colorAxis update (#2893)
 		if (this.chart.hasRendered) {
 			each(series.points, function (point) {
-				point.shapeArgs.fill = point.color;
+				point.shapeArgs.fill = point.options.color || point.color; // #3311
 			});
 		}
 	},

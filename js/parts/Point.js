@@ -14,6 +14,7 @@ Point.prototype = {
 		var point = this,
 			colors;
 		point.series = series;
+		point.color = series.color; // #3445
 		point.applyOptions(options, x);
 		point.pointAttr = {};
 
@@ -38,7 +39,7 @@ Point.prototype = {
 	applyOptions: function (options, x) {
 		var point = this,
 			series = point.series,
-			pointValKey = series.pointValKey;
+			pointValKey = series.options.pointValKey || series.pointValKey;
 
 		options = Point.prototype.optionsToObject.call(this, options);
 

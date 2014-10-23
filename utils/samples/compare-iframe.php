@@ -145,6 +145,8 @@ function getCompareTooltips() {
 					// To give Ajax some time to load, look for the chart every 50 ms for two seconds
 					interval = setInterval(function() {
 						chart = window.Highcharts && window.Highcharts.charts[0];
+
+						// Compare chart objects
 						if (chart) {
 
 							// Automatically click buttons with classname "autocompare"
@@ -153,6 +155,17 @@ function getCompareTooltips() {
 							window.parent.onLoadTest('<?php echo $_GET['which']; ?>', $(chart.container).html());
 							clearInterval(interval);
 							
+						// Compare renderers
+						} else if (window.renderer) {
+							// Create a mock chart object with a getSVG method
+							chart = {
+								getSVG: function () {
+									return window.renderer.box.parentNode.innerHTML;
+								}
+							};
+							window.parent.onLoadTest('<?php echo $_GET['which']; ?>', window.renderer.box.parentNode.innerHTML);
+							clearInterval(interval);
+
 						} else if (new Date() - start > 2000) {
 							clearInterval(interval);
 							window.parent.proceed();
@@ -173,11 +186,9 @@ function getCompareTooltips() {
 						return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 					}
 				} catch (e) {
-					console.error('HIGHCHARTS UTILS CAUGHT ERROR:', e.message);
-					if (parent.window.report) {
-						parent.window.report += '<br/>Broke on JS error (<?php echo $_GET['which']; ?>) ';
-					}
-					parent.window.$('#report').html(parent.window.report);
+					e = 'ERROR (<?php echo $_GET['which']; ?> frame): ' + e.message;
+					console.error(e);
+					parent.window.error = e;
 					parent.window.onDifferent('Error');
 
 				}
@@ -238,7 +249,9 @@ function getCompareTooltips() {
 						try {
 							test(chart);
 						} catch (e) {
-							console.error('HIGHCHARTS UTILS CAUGHT ERROR:', e.message);
+							e = 'ERROR in test.js (<?php echo $_GET['which'] ?> frame): ' + e.message;
+							console.error(e);
+							parent.window.error = e;
 							parent.window.onDifferent('Error');
 						}
 
@@ -251,6 +264,11 @@ function getCompareTooltips() {
 			});
 			
 			window.alert = function () {}
+
+			window.onbeforeunload = function(){
+				$(document).unbind().die();    //remove listeners on document
+				$(document).find('*').unbind().die(); //remove listeners on all nodes
+			}
 		</script>
 		
 		

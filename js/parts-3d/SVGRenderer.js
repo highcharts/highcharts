@@ -4,6 +4,11 @@
 ////// HELPER METHODS //////
 var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
 
+function defined(obj) {
+	return obj !== undefined && obj !== null;
+}
+
+
 function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
 	var result = [];
 	if ((end > start) && (end - start > PI / 2 + 0.0001)) {
@@ -79,7 +84,7 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	};
 
 	result.attr = function (args) {
-		if (args.shapeArgs || args.x) {
+		if (args.shapeArgs || defined(args.x)) {
 			var shapeArgs = args.shapeArgs || args;
 			var paths = this.renderer.cuboidPath(shapeArgs);
 			this.front.attr({d: paths[0], zIndex: paths[3]});
@@ -93,7 +98,7 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	};
 	
 	result.animate = function (args, duration, complete) {
-		if (args.x && args.y) {
+		if (defined(args.x) && defined(args.y)) {
 			var paths = this.renderer.cuboidPath(args);
 			this.front.attr({zIndex: paths[3]}).animate({d: paths[0]}, duration, complete);
 			this.top.attr({zIndex: paths[4]}).animate({d: paths[1]}, duration, complete);
@@ -226,8 +231,8 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 	result.shapeArgs = shapeArgs;	// Store for later use
 
 	result.top = renderer.path(paths.top).attr({zIndex: paths.zTop}).add(result);
-	result.side1 = renderer.path(paths.side2).attr({zIndex: paths.zSide2});
-	result.side2 = renderer.path(paths.side1).attr({zIndex: paths.zSide1});
+	result.side1 = renderer.path(paths.side2).attr({zIndex: paths.zSide1});
+	result.side2 = renderer.path(paths.side1).attr({zIndex: paths.zSide2});
 	result.inn = renderer.path(paths.inn).attr({zIndex: paths.zInn});
 	result.out = renderer.path(paths.out).attr({zIndex: paths.zOut});
 
@@ -261,33 +266,72 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		this.top.attr({translateY: value});
 	};
 
-	result.animate = function (args, duration, complete) {	
-		Highcharts.SVGElement.prototype.animate.call(this, args, duration, complete);
-		if (args.x && args.y) {
-			// Recreate
-			var result = this,
-				renderer = this.renderer,
-				shapeArgs = Highcharts.splat(args)[0];
+	result.animate = function (args, duration, complete) {
+		if (defined(args.end) || defined(args.start)) {
+			this._shapeArgs = this.shapeArgs;
 
-			shapeArgs.alpha *= deg2rad;
-			shapeArgs.beta *= deg2rad;
+			Highcharts.SVGElement.prototype.animate.call(this, {
+				_args: args	
+			}, {
+				duration: duration,
+				step: function () {
+					var args = arguments,
+						fx = args[1],
+						result = fx.elem,						
+						start = result._shapeArgs,
+						end = fx.end,
+						pos = fx.pos,
+						sA = Highcharts.merge(start, {
+							x: start.x + ((end.x - start.x) * pos),
+							y: start.y + ((end.y - start.y) * pos),
+							r: start.r + ((end.r - start.r) * pos),
+							innerR: start.innerR + ((end.innerR - start.innerR) * pos),
+							start: start.start + ((end.start - start.start) * pos),
+							end: start.end + ((end.end - start.end) * pos)
+						});
 
-			var paths = renderer.arc3dPath(shapeArgs);
+					var paths = result.renderer.arc3dPath(sA);
 
-			result.shapeArgs = shapeArgs;	// Store for later use
+					result.shapeArgs = sA;
 
-			result.inn.attr({d: paths.inn, zIndex: paths.zInn});
-			result.out.attr({d: paths.out, zIndex: paths.zOut});
-			result.side1.attr({d: paths.side1, zIndex: paths.zSide2});
-			result.side2.attr({d: paths.side2, zIndex: paths.zSide1});
-			result.top.attr({d: paths.top, zIndex: paths.zTop});
+					result.top.attr({d: paths.top, zIndex: paths.zTop});
+					result.inn.attr({d: paths.inn, zIndex: paths.zInn});
+					result.out.attr({d: paths.out, zIndex: paths.zOut});
+					result.side1.attr({d: paths.side1, zIndex: paths.zSide1});
+					result.side2.attr({d: paths.side2, zIndex: paths.zSide2});
 
-			result.attr({fill: result.color});
-			result.attr({zIndex: paths.zTop * 100});
-		}		
+				}
+			}, complete);
+		} else {			
+			Highcharts.SVGElement.prototype.animate.call(this, args, duration, complete);
+		}
 		return this;
 	};
 
+	result.destroy = function () {
+		this.top.destroy();
+		this.out.destroy();
+		this.inn.destroy();
+		this.side1.destroy();
+		this.side2.destroy();
+
+		Highcharts.SVGElement.prototype.destroy.call(this);
+	};
+	result.hide = function () {
+		this.top.hide();
+		this.out.hide();
+		this.inn.hide();
+		this.side1.hide();
+		this.side2.hide();
+	};
+	result.show = function () {
+		this.top.show();
+		this.out.show();
+		this.inn.show();
+		this.side1.show();
+		this.side2.show();
+	};
+	
 	result.zIndex = zIndex;
 	result.attr({zIndex: zIndex});
 	return result;
@@ -366,26 +410,20 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 		'Z'
 	];
 
-	var mr = ir + ((r - ir) / 2),
-		Ks = ((sin(beta) * cos(start)) + (sin(-alpha) * sin(-start))),
-		Ke = ((sin(beta) * cos(end)) + (sin(-alpha) * sin(-end)));
-
-	var zOut = Math.max(Ke, Ks) * r,
-		zInn = Ke * ir,
-		zSide1 = Ks * mr,
-		zSide2 =  Ke * mr,
-		zTop = Math.max(zOut, zInn, zSide1, zSide2) + 25;
+	var a1 = sin((start + end) / 2),
+		a2 = sin(start),
+		a3 = sin(end);
 
 	return {
 		top: top,
-		zTop: zTop,
+		zTop: r,
 		out: out,
-		zOut: zOut,
+		zOut: Math.max(a1, a2, a3) * r,
 		inn: inn,
-		zInn: zInn,
+		zInn: Math.max(a1, a2, a3) * r,
 		side1: side1,
-		zSide1: zSide1,
+		zSide1: a2 * (r * 0.99),
 		side2: side2,
-		zSide2: zSide2
+		zSide2: a3 * (r * 0.99)
 	};
 };

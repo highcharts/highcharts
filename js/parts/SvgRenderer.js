@@ -302,7 +302,7 @@ SVGElement.prototype = {
 			key,
 			attribs = {},
 			normalizer,
-			strokeWidth = rect.strokeWidth || wrapper.strokeWidth || (wrapper.attr && wrapper.attr('stroke-width')) || 0;
+			strokeWidth = rect.strokeWidth || wrapper.strokeWidth || 0;
 
 		normalizer = mathRound(strokeWidth) % 2 / 2; // mathRound because strokeWidth can sometimes have roundoff errors
 
@@ -352,7 +352,9 @@ SVGElement.prototype = {
 			}
 		}
 		if (hasNew) {
-			textWidth = elemWrapper.textWidth = styles && styles.width && elem.nodeName.toLowerCase() === 'text' && pInt(styles.width);
+			textWidth = elemWrapper.textWidth = 
+				(styles && styles.width && elem.nodeName.toLowerCase() === 'text' && pInt(styles.width)) || 
+				elemWrapper.textWidth; // #3501
 
 			// Merge the new styles with the old ones
 			if (oldStyles) {
@@ -672,10 +674,10 @@ SVGElement.prototype = {
 		// IE9-11 doesn't handle visibilty:inherit well, so we remove the attribute instead (#2881)
 		if (inherit && this.element.namespaceURI === SVG_NS) {
 			this.element.removeAttribute('visibility');
-			return this;
 		} else {
-			return this.attr({ visibility: inherit ? 'inherit' : VISIBLE });
+			this.attr({ visibility: inherit ? 'inherit' : VISIBLE });
 		}
+		return this;
 	},
 
 	/**
@@ -692,7 +694,7 @@ SVGElement.prototype = {
 		}, {
 			duration: duration || 150,
 			complete: function () {
-				elemWrapper.hide();
+				elemWrapper.attr({ y: -9999 }); // #3088, assuming we're only using this for tooltips
 			}
 		});
 	},
@@ -818,8 +820,8 @@ SVGElement.prototype = {
 			});
 		}
 
-		// In case of useHTML, clean up empty containers emulating SVG groups (#1960, #2393).
-		while (parentToClean && parentToClean.div.childNodes.length === 0) {
+		// In case of useHTML, clean up empty containers emulating SVG groups (#1960, #2393, #2697).
+		while (parentToClean && parentToClean.div && parentToClean.div.childNodes.length === 0) {
 			grandParent = parentToClean.parentGroup;
 			wrapper.safeRemoveChild(parentToClean.div);
 			delete parentToClean.div;
@@ -941,9 +943,10 @@ SVGElement.prototype = {
 
 			i = value.length;
 			while (i--) {
-				value[i] = pInt(value[i]) * this.element.getAttribute('stroke-width');
+				value[i] = pInt(value[i]) * this['stroke-width'];
 			}
-			value = value.join(',');
+			value = value.join(',')
+				.replace('NaN', 'none'); // #3226
 			this.element.setAttribute('stroke-dasharray', value);
 		}
 	},
@@ -954,22 +957,13 @@ SVGElement.prototype = {
 		this[key] = value;
 		element.setAttribute(key, value);
 	},
-	// In Chrome/Win < 6 as well as Batik and PhantomJS as of 1.9.7, the stroke attribute can't be set when the stroke-
-	// width is 0. #1369
-	'stroke-widthSetter': function (value, key, element) {
-		if (value === 0) {
-			value = 0.01; // #2963
-		}
-		this.strokeWidth = value; // read in symbol paths like 'callout'
-		element.setAttribute(key, value);
-	},
 	titleSetter: function (value) {
 		var titleNode = this.element.getElementsByTagName('title')[0];
 		if (!titleNode) {
 			titleNode = doc.createElementNS(SVG_NS, 'title');
 			this.element.appendChild(titleNode);
 		}
-		titleNode.textContent = value;
+		titleNode.textContent = pick(value, '').replace(/<[^>]*>/g, ''); // #3276
 	},
 	textSetter: function (value) {
 		if (value !== this.textStr) {
@@ -983,7 +977,6 @@ SVGElement.prototype = {
 		}
 	},
 	fillSetter: function (value, key, element) {
-
 		if (typeof value === 'string') {
 			element.setAttribute(key, value);
 		} else if (value) {
@@ -1007,24 +1000,22 @@ SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter =
 	this[key] = value;
 	this.doTransform = true;
 };
-SVGElement.prototype.strokeSetter = SVGElement.prototype.fillSetter;
 
-
-
-// In Chrome/Win < 6 as well as Batik, the stroke attribute can't be set when the stroke-
-// width is 0. #1369
-/*SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter = function (value, key) {
+// WebKit and Batik have problems with a stroke-width of zero, so in this case we remove the 
+// stroke attribute altogether. #1270, #1369, #3065, #3072.
+SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter = function (value, key, element) {
 	this[key] = value;
 	// Only apply the stroke attribute if the stroke width is defined and larger than 0
 	if (this.stroke && this['stroke-width']) {
-		this.element.setAttribute('stroke', this.stroke);
-		this.element.setAttribute('stroke-width', this['stroke-width']);
+		this.strokeWidth = this['stroke-width'];
+		SVGElement.prototype.fillSetter.call(this, this.stroke, 'stroke', element); // use prototype as instance may be overridden
+		element.setAttribute('stroke-width', this['stroke-width']);
 		this.hasStroke = true;
 	} else if (key === 'stroke-width' && value === 0 && this.hasStroke) {
-		this.element.removeAttribute('stroke');
+		element.removeAttribute('stroke');
 		this.hasStroke = false;
 	}
-};*/
+};
 
 
 /**
@@ -1207,6 +1198,9 @@ SVGRenderer.prototype = {
 							((textStyles && textStyles.fontSize) || renderer.style.fontSize || 12),
 						tspan
 					).h;
+			},
+			unescapeAngleBrackets = function (inputStr) {
+				return inputStr.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 			};
 
 		/// remove old text
@@ -1217,7 +1211,7 @@ SVGRenderer.prototype = {
 		// Skip tspans, add text directly to text node. The forceTSpan is a hook 
 		// used in text outline hack.
 		if (!hasMarkup && !textStroke && textStr.indexOf(' ') === -1) {
-			textNode.appendChild(doc.createTextNode(textStr));
+			textNode.appendChild(doc.createTextNode(unescapeAngleBrackets(textStr)));
 			return;
 
 		// Complex strings, add more logic
@@ -1270,9 +1264,7 @@ SVGRenderer.prototype = {
 							css(tspan, { cursor: 'pointer' });
 						}
 
-						span = (span.replace(/<(.|\n)*?>/g, '') || ' ')
-							.replace(/&lt;/g, '<')
-							.replace(/&gt;/g, '>');
+						span = unescapeAngleBrackets(span.replace(/<(.|\n)*?>/g, '') || ' ');
 
 						// Nested tags aren't supported, and cause crash in Safari (#1596)
 						if (span !== ' ') {
@@ -1311,13 +1303,10 @@ SVGRenderer.prototype = {
 								);
 							}
 
-
-							spanNo++;
-
 							// check width and apply soft breaks
 							if (width) {
 								var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
-									hasWhiteSpace = words.length > 1 && textStyles.whiteSpace !== 'nowrap',
+									hasWhiteSpace = spans.length > 1 || lineNo || (words.length > 1 && textStyles.whiteSpace !== 'nowrap'),
 									tooLong,
 									actualWidth,
 									hcHeight = textStyles.HcHeight,
@@ -1356,11 +1345,10 @@ SVGRenderer.prototype = {
 													attr(tspan, 'style', spanStyle);
 												}
 												textNode.appendChild(tspan);
-
-												if (actualWidth > width) { // a single word is pressing it out
-													width = actualWidth;
-												}
 											}
+										}
+										if (actualWidth > width) { // a single word is pressing it out
+											width = actualWidth;
 										}
 									} else { // append to existing line tspan
 										tspan.removeChild(tspan.firstChild);
@@ -1371,6 +1359,8 @@ SVGRenderer.prototype = {
 									}
 								}
 							}
+
+							spanNo++;
 						}
 					}
 				});
@@ -1697,8 +1687,7 @@ SVGRenderer.prototype = {
 			// could be exporting in IE
 			// using href throws "not supported" in ie7 and under, requries regex shim to fix later
 			elemWrapper.element.setAttribute('hc-svg-href', src);
-	}
-
+		}
 		return elemWrapper;
 	},
 
@@ -1770,7 +1759,7 @@ SVGRenderer.prototype = {
 			};
 
 			imageSrc = symbol.match(imageRegex)[1];
-			imageSize = symbolSizes[imageSrc];
+			imageSize = symbolSizes[imageSrc] || (options && options.width && options.height && [options.width, options.height]);
 
 			// Ireate the image synchronously, add attribs async
 			obj = this.image(imageSrc)
@@ -1784,7 +1773,6 @@ SVGRenderer.prototype = {
 				centerImage(obj, imageSize);
 			} else {
 				// Initialize image to be 0 size so export will still function if there's no cached sizes.
-				//
 				obj.attr({ width: 0, height: 0 });
 
 				// Create a dummy JavaScript image to get the width and height. Due to a bug in IE < 8,
@@ -2105,8 +2093,8 @@ SVGRenderer.prototype = {
 				boxY,
 				style = text.element.style;
 
-			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && text.textStr && 
-				text.getBBox();
+			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && defined(text.textStr) && 
+				text.getBBox(); //#3295 && 3514 box failure when string equals 0
 			wrapper.width = (width || bBox.width || 0) + 2 * padding + paddingLeft;
 			wrapper.height = (height || bBox.height || 0) + 2 * padding;
 
@@ -2188,7 +2176,7 @@ SVGRenderer.prototype = {
 		wrapper.onAdd = function () {
 			text.add(wrapper);
 			wrapper.attr({
-				text: str || '', // alignment is available now
+				text: (str || str === 0) ? str : '', // alignment is available now // #3295: 0 not rendered if given as a value
 				x: x,
 				y: y
 			});

@@ -1,12 +1,15 @@
 $(function () {
 
-        
+
     // Instanciate the map
     $('#container').highcharts('Map', {
+        chart: {
+            spacingBottom: 20
+        },
         title : {
             text : 'Europe time zones'
         },
-        
+
         legend: {
             enabled: true
         },
@@ -28,7 +31,7 @@ $(function () {
                         fontWeight: 'bold'
                     }
                 },
-                mapData: Highcharts.geojson(Highcharts.maps['custom/europe'], 'map'),
+                mapData: Highcharts.maps['custom/europe'],
                 tooltip: {
                     headerFormat: '',
                     pointFormat: '{point.name}: <b>{series.name}</b>'
@@ -36,7 +39,7 @@ $(function () {
 
             }
         },
-        
+
         series : [{
             name: 'UTC',
             data: $.map(['IE', 'IS', 'GB', 'PT'], function (code) {

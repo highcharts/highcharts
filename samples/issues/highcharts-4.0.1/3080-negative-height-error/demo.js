@@ -4,7 +4,7 @@ $(function () {
             height: 80
         },
         title: {
-        	text: 'JS error due to negative height in legend'
+            text: 'JS error due to negative height in legend'
         },
 
         xAxis: {

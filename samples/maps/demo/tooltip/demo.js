@@ -6,14 +6,14 @@ $(function () {
         $.each(data, function () {
             this.flag = this.code.replace('UK', 'GB').toLowerCase();
         });
-        
+
         // Initiate the chart
         $('#container').highcharts('Map', {
 
             title: {
                 text: 'Fixed tooltip with HTML'
             },
-            
+
             legend: {
                 title: {
                     text: 'Population density per km²',
@@ -29,7 +29,7 @@ $(function () {
                     verticalAlign: 'bottom'
                 }
             },
-        
+
             tooltip: {
                 backgroundColor: 'none',
                 borderWidth: 0,
@@ -39,7 +39,7 @@ $(function () {
                 pointFormat: '<span class="f32"><span class="flag {point.flag}"></span></span>'
                     + ' {point.name}: <b>{point.value}</b>/km²',
                 positioner: function () {
-                    return { x: 0, y: 250 }
+                    return { x: 0, y: 250 };
                 }
             },
 
@@ -51,7 +51,7 @@ $(function () {
 
             series : [{
                 data : data,
-                mapData: Highcharts.geojson(Highcharts.maps['custom/world']),
+                mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
                 states: {

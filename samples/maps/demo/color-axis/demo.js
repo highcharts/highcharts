@@ -6,13 +6,14 @@ $(function () {
         $.each(data, function () {
             this.code = this.code.toUpperCase();
         });
-    
+
         // Instanciate the map
         $('#container').highcharts('Map', {
+
             chart : {
                 borderWidth : 1
             },
-            
+
             title : {
                 text : 'US population density (/km²)'
             },
@@ -41,13 +42,13 @@ $(function () {
                     [1, '#000022']
                 ]
             },
-            
+
             series : [{
                 animation: {
                     duration: 1000
                 },
                 data : data,
-                mapData: Highcharts.geojson(Highcharts.maps['countries/usa/usa-all']),
+                mapData: Highcharts.maps['countries/us/us-all'],
                 joinBy: ['postal-code', 'code'],
                 dataLabels: {
                     enabled: true,

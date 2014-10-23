@@ -53,21 +53,33 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 });
 
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype.pointClass.prototype, 'haloPath', function (proceed) {
-	return this.series.chart.is3d() ? [] : proceed.call(this);
+	var args = arguments;
+	return this.series.chart.is3d() ? [] : proceed.call(this, args[1]);
 });
 
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
 	// Do not do this if the chart is not 3D
 	if (this.chart.is3d()) {
+		var options = this.options,
+			states = this.options.states;
+
 		// Set the border color to the fill color to provide a smooth edge
+		this.borderWidth = options.borderWidth = options.edgeWidth || 1;
+		this.borderColor = options.edgeColor = Highcharts.pick(options.edgeColor, options.borderColor, undefined);
+
+		states.hover.borderColor = Highcharts.pick(states.hover.edgeColor, this.borderColor);		
+		states.hover.borderWidth = Highcharts.pick(states.hover.edgeWidth, this.borderWidth);	
+		states.select.borderColor = Highcharts.pick(states.select.edgeColor, this.borderColor);		
+		states.select.borderWidth = Highcharts.pick(states.select.edgeWidth, this.borderWidth);
+
 		Highcharts.each(this.data, function (point) {
-			var c = point.options.borderColor || point.series.chart.options.plotOptions.pie.borderColor || point.color || point.series.userOptions.borderColor || point.series.color;
-			point.options.borderColor = c;
-			point.borderColor = c;
-			point.pointAttr[''].stroke = c;
-			// same bordercolor on hover and select
-			point.pointAttr.hover.stroke = c;
-			point.pointAttr.select.stroke = c;
+			var pointAttr = point.pointAttr;
+			pointAttr[''].stroke = point.series.borderColor || point.color;
+			pointAttr['']['stroke-width'] = point.series.borderWidth;
+			pointAttr.hover.stroke = states.hover.borderColor;	
+			pointAttr.hover['stroke-width'] = states.hover.borderWidth;
+			pointAttr.select.stroke = states.select.borderColor;
+			pointAttr.select['stroke-width'] = states.select.borderWidth;
 		});	
 	}
 
@@ -85,34 +97,24 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 });
 
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
+	if (this.chart.is3d()) {
+		var series = this;
+		Highcharts.each(series.data, function (point) {
+			var shapeArgs = point.shapeArgs,
+				r = shapeArgs.r,
+				d = shapeArgs.depth,
+				a1 = (shapeArgs.alpha || series.chart.options.chart.options3d.alpha) * deg2rad, //#3240 issue with datalabels for 0 and null values
+				a2 = (shapeArgs.start + shapeArgs.end) / 2,
+				labelPos = point.labelPos;
+
+			labelPos[1] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
+			labelPos[3] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
+			labelPos[5] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
+
+		});
+	} 
+
 	proceed.apply(this, [].slice.call(arguments, 1));
-	// Do not do this if the chart is not 3D
-	if (!this.chart.is3d()) {
-		return;
-	}	
-
-	var series = this;
-	Highcharts.each(series.data, function (point) {
-		var shapeArgs = point.shapeArgs;
-		var r = shapeArgs.r,
-			d = shapeArgs.depth,
-			a1 = shapeArgs.alpha * deg2rad,
-			b1 = shapeArgs.beta * deg2rad,
-			a2 = (shapeArgs.start + shapeArgs.end) / 2; 
-
-		if (point.connector) {
-			point.connector.translate(
-				(-r * (1 - cos(b1)) * cos(a2)) + (cos(a2) > 0 ? sin(b1) * d : 0),
-				(-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0)
-			);
-		}
-		if (point.dataLabel) {
-			point.dataLabel.attr({
-				x: point.dataLabel.connX + (-r * (1 - cos(b1)) * cos(a2)) + (cos(a2) > 0 ? cos(b1) * d : 0) - (point.dataLabel.width / 2),
-				y: point.dataLabel.connY + (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0) - (point.dataLabel.height / 2)
-			});
-		}
-	});
 });
 
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'addPoint', function (proceed) {

@@ -8,7 +8,7 @@ $(function () {
     (function (H) {
 
         /**
-         * Recursively builds a K-D-tree 
+         * Recursively builds a K-D-tree
          */
         function KDTree(points, depth) {
             var axis, median, length = points && points.length;
@@ -19,19 +19,19 @@ $(function () {
                 axis = ['plotX', 'plotY'][depth % 2];
 
                 // sort point array
-                points.sort(function(a, b) {
+                points.sort(function (a, b) {
                     return a[axis] - b[axis];
                 });
-               
+
                 median = Math.floor(length / 2);
-                
+
                 // build and return node
                 return {
                     point: points[median],
                     left: KDTree(points.slice(0, median), depth + 1),
                     right: KDTree(points.slice(median + 1), depth + 1)
                 };
-            
+
             }
         }
 
@@ -47,11 +47,11 @@ $(function () {
                 ret = point,
                 nPoint1,
                 nPoint2;
-            
+
             // Get distance
-            point.dist = Math.pow(search.plotX - point.plotX, 2) + 
+            point.dist = Math.pow(search.plotX - point.plotX, 2) +
                 Math.pow(search.plotY - point.plotY, 2);
-            
+
             // Pick side based on distance to splitting point
             tdist = search[axis] - point[axis];
             sideA = tdist < 0 ? 'left' : 'right';
@@ -90,15 +90,15 @@ $(function () {
                 renderer = this.chart.renderer,
                 radius = this.options.marker.radius,
                 stripes = [],
-                group, 
+                group,
                 i = data.length,
                 point,
                 layers = this.layers;
-            
+
             if (!layers) {
                 layers = this.layers = [];
             }
-        
+
             // Divide the points into stripes. Points within the same group won't overlap in the y
             // dimension
             while (i--) {
@@ -109,32 +109,32 @@ $(function () {
                 }
                 stripes[group].push(point);
             }
-        
+
             // Sort the members of each stripe by x value
             i = stripes.length;
             while (i--) {
                 if (stripes[i]) {
-                    stripes[i].sort(function(a, b) {
+                    stripes[i].sort(function (a, b) {
                         return a.plotX - b.plotX;
                     });
                 }
             }
-        
+
             // Loop over the members of each stripe and add them to a group if they don't overlap
             // in the x dimension.
             var groups = [],
                 oddOrEven = 0,
-                group, 
-                stripe, 
+                group,
+                stripe,
                 remaining = data.length,
                 x,
                 lastX,
                 j;
-        
+
             // first do even stripes, where points are guaranteed not to overlap with points in even stripes
             while (remaining) {
                 group = [];
-        
+
                 for (i = oddOrEven; i < stripes.length; i += 2) {
                     stripe = stripes[i];
                     if (stripe) {
@@ -151,16 +151,16 @@ $(function () {
                         }
                     }
                 }
-                
+
                 if (group.length) {
                     groups.push(group);
                 }
-        
+
                 if (!group.length && !oddOrEven) { // finished adding points to even stripes
                     oddOrEven = 1;
                 }
             }
-        
+
             i = groups.length;
             var paths = [];
             while (i--) {
@@ -169,17 +169,17 @@ $(function () {
                     size = radius * 2,
                     j,
                     x, y;
-        
-                for (j = 0; j < group.length; j++) {
+
+                for (j = 0; j < group.length; j += 1) {
                     // Math.round reduces rendering times by 20% in a 50,000 points chart
                     x = Math.round(group[j].plotX);
                     y = Math.round(group[j].plotY);
                     path.push('M', x - radius, y - radius, 'L', x + radius, y - radius, x + radius, y + radius, x - radius, y + radius);
-                    
+
                     /* Note: using the symbol prototype gives  higher
                     processing times. The rendering time is slightly higher for
                     complex paths like circles, and lower for simple paths like
-                    triangles. Tested in Chrome. Probably the best solution is to 
+                    triangles. Tested in Chrome. Probably the best solution is to
                     use a simplified shape calculation inline. */
                     /*
                     symbolPath = Highcharts.Renderer.prototype.symbols.circle(
@@ -189,18 +189,18 @@ $(function () {
                     size);
 
                     // faster than concat:
-                    for (var m = 0, len = symbolPath.length; m < len; m++)
+                    for (var m = 0, len = symbolPath.length; m < len; m += 1)
                     path.push(symbolPath[m]);
                     */
                 }
-                
+
                 paths.push(path);
-        
-                
+
+
             }
-            
+
             // render
-            for (i = 0; i < paths.length; i++) {
+            for (i = 0; i < paths.length; i += 1) {
                 if (!layers[i]) {
                     layers[i] = renderer.path(paths[i]).attr({
                         fill: this.pointAttr[''].fill
@@ -236,8 +236,8 @@ $(function () {
             H.each(chart.series, function (series) {
                 var point;
                 if (series.getNearest) {
-                    point = series.getNearest({ 
-                        plotX: e.chartX - chart.plotLeft, 
+                    point = series.getNearest({
+                        plotX: e.chartX - chart.plotLeft,
                         plotY: e.chartY - chart.plotTop
                     });
                     if (point) {
@@ -251,7 +251,7 @@ $(function () {
 
     // Prepare the data
     var data = [];
-    for (var i = 0; i < 50000; i++) {
+    for (var i = 0; i < 50000; i += 1) {
         data.push([
             Math.pow(Math.random(), 2) * 100,
             Math.pow(Math.random(), 2) * 100
@@ -261,7 +261,7 @@ $(function () {
     var start = +new Date();
     //console.profile('scatter');
     $('#container').highcharts({
-        
+
         xAxis: {
             gridLineWidth: 1
         },

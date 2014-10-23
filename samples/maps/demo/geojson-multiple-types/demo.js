@@ -5,7 +5,22 @@ $(function () {
         // Prepare the geojson
         var states = Highcharts.geojson(geojson, 'map'),
             rivers = Highcharts.geojson(geojson, 'mapline'),
-            cities = Highcharts.geojson(geojson, 'mappoint');
+            cities = Highcharts.geojson(geojson, 'mappoint'),
+            specialCityLabels = {
+                'Melbourne': {
+                    align: 'right'
+                },
+                'Canberra': {
+                    align: 'right',
+                    y: -5
+                },
+                'Wollongong': {
+                    y: 5
+                },
+                'Brisbane': {
+                    y: -5
+                }
+            };
 
         // Skip or move some labels to avoid collision
         $.each(states, function () {
@@ -21,7 +36,7 @@ $(function () {
                         color: '#333333',
                         HcTextStroke: '3px white'
                     }
-                }
+                };
             }
             // Move center for data label
             if (this.properties.code_hasc === 'AU.SA') {
@@ -33,21 +48,6 @@ $(function () {
 
         });
 
-        var specialCityLabels = {
-            'Melbourne': {
-                align: 'right'
-            },
-            'Canberra': {
-                align: 'right',
-                y: -5
-            },
-            'Wollongong': {
-                y: 5
-            },
-            'Brisbane': {
-                y: -5
-            }
-        };
         $.each(cities, function () {
             if (specialCityLabels[this.name]) {
                 this.dataLabels = specialCityLabels[this.name];
@@ -57,7 +57,7 @@ $(function () {
 
         // Initiate the chart
         $('#container').highcharts('Map', {
-            
+
             title : {
                 text : 'Highmaps from geojson with multiple geometry types'
             },
@@ -69,8 +69,8 @@ $(function () {
                 }
             },
 
-            
-            series : [{ 
+
+            series : [{
                 name: 'States and territories',
                 data: states,
                 color: Highcharts.getOptions().colors[2],
@@ -96,7 +96,7 @@ $(function () {
                 color: Highcharts.getOptions().colors[0],
                 tooltip: {
                     pointFormat: '{point.properties.NAME}'
-                }        
+                }
             }, {
                 name: 'Cities',
                 type: 'mappoint',

@@ -72,7 +72,8 @@ extend(SVGElement.prototype, {
 			y = wrapper.y || 0,
 			align = wrapper.textAlign || 'left',
 			alignCorrection = { left: 0, center: 0.5, right: 1 }[align],
-			shadows = wrapper.shadows;
+			shadows = wrapper.shadows,
+			styles = wrapper.styles;
 
 		// apply translate
 		css(elem, {
@@ -120,7 +121,7 @@ extend(SVGElement.prototype, {
 					css(elem, {
 						width: textWidth + PX,
 						display: 'block',
-						whiteSpace: 'normal'
+						whiteSpace: (styles && styles.whiteSpace) || 'normal' // #3331
 					});
 					width = textWidth;
 				}
@@ -205,10 +206,12 @@ extend(SVGRenderer.prototype, {
 			})
 			.css({
 				position: ABSOLUTE,
-				whiteSpace: 'nowrap',
 				fontFamily: this.style.fontFamily,
 				fontSize: this.style.fontSize
 			});
+
+		// Keep the whiteSpace style outside the wrapper.styles collection
+		element.style.whiteSpace = 'nowrap';
 
 		// Use the HTML specific .css method
 		wrapper.css = wrapper.htmlCss;

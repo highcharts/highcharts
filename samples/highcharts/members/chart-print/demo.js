@@ -31,7 +31,7 @@ $(function () {
     });
 
     // the button handler
-    $('#button').click(function() {
+    $('#button').click(function () {
         var chart = $('#container').highcharts();
         chart.print();
     });

@@ -260,7 +260,7 @@ extend(Axis.prototype, {
 				// This relies on the ordinalPositions being set. Use mathMax and mathMin to prevent
 				// padding on either sides of the data.
 				minIndex = axis.val2lin(mathMax(min, ordinalPositions[0]), true);
-				maxIndex = axis.val2lin(mathMin(max, ordinalPositions[ordinalPositions.length - 1]), true);
+				maxIndex = mathMax(axis.val2lin(mathMin(max, ordinalPositions[ordinalPositions.length - 1]), true), 1); // #3339
 
 				// Set the slope and offset of the values compared to the indices in the ordinal positions
 				axis.ordinalSlope = slope = (max - min) / (maxIndex - minIndex);

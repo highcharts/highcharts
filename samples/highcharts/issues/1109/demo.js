@@ -1,6 +1,6 @@
 $(function () {
     $('#container').highcharts({
-    
+
         chart: {
             events: {
                 load: function () {
@@ -28,7 +28,7 @@ $(function () {
         },
 
         xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
 

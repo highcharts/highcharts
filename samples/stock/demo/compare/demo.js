@@ -1,67 +1,60 @@
-$(function() {
-	var seriesOptions = [],
-		yAxisOptions = [],
-		seriesCounter = 0,
-		names = ['MSFT', 'AAPL', 'GOOG'],
-		colors = Highcharts.getOptions().colors;
+$(function () {
+    var seriesOptions = [],
+        seriesCounter = 0,
+        names = ['MSFT', 'AAPL', 'GOOG'],
+        // create the chart when all data is loaded
+        createChart = function () {
 
-	$.each(names, function(i, name) {
+            $('#container').highcharts('StockChart', {
 
-		$.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename='+ name.toLowerCase() +'-c.json&callback=?',	function(data) {
+                rangeSelector: {
+                    selected: 4
+                },
 
-			seriesOptions[i] = {
-				name: name,
-				data: data
-			};
+                yAxis: {
+                    labels: {
+                        formatter: function () {
+                            return (this.value > 0 ? ' + ' : '') + this.value + '%';
+                        }
+                    },
+                    plotLines: [{
+                        value: 0,
+                        width: 2,
+                        color: 'silver'
+                    }]
+                },
 
-			// As we're loading the data asynchronously, we don't know what order it will arrive. So
-			// we keep a counter and create the chart when all the data is loaded.
-			seriesCounter++;
+                plotOptions: {
+                    series: {
+                        compare: 'percent'
+                    }
+                },
 
-			if (seriesCounter == names.length) {
-				createChart();
-			}
-		});
-	});
+                tooltip: {
+                    pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
+                    valueDecimals: 2
+                },
 
+                series: seriesOptions
+            });
+        };
 
+    $.each(names, function (i, name) {
 
-	// create the chart when all data is loaded
-	function createChart() {
+        $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=' + name.toLowerCase() + '-c.json&callback=?',    function (data) {
 
-		$('#container').highcharts('StockChart', {
+            seriesOptions[i] = {
+                name: name,
+                data: data
+            };
 
-		    rangeSelector: {
-				inputEnabled: $('#container').width() > 480,
-		        selected: 4
-		    },
+            // As we're loading the data asynchronously, we don't know what order it will arrive. So
+            // we keep a counter and create the chart when all the data is loaded.
+            seriesCounter += 1;
 
-		    yAxis: {
-		    	labels: {
-		    		formatter: function() {
-		    			return (this.value > 0 ? '+' : '') + this.value + '%';
-		    		}
-		    	},
-		    	plotLines: [{
-		    		value: 0,
-		    		width: 2,
-		    		color: 'silver'
-		    	}]
-		    },
-		    
-		    plotOptions: {
-		    	series: {
-		    		compare: 'percent'
-		    	}
-		    },
-		    
-		    tooltip: {
-		    	pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
-		    	valueDecimals: 2
-		    },
-		    
-		    series: seriesOptions
-		});
-	}
-
+            if (seriesCounter === names.length) {
+                createChart();
+            }
+        });
+    });
 });

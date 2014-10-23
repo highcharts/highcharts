@@ -1,12 +1,12 @@
 $(function () {
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
-        
+
         // Initiate the chart
         $('#container').highcharts('Map', {
-            
+
             title : {
-                text : 'Axis minRange prevents zooming to far in'
+                text : 'Axis minRange prevents zooming in too far'
             },
 
             mapNavigation: {
@@ -38,7 +38,7 @@ $(function () {
 
             series : [{
                 data : data,
-                mapData: Highcharts.geojson(Highcharts.maps['custom/world']),
+                mapData: Highcharts.maps['custom/world'],
                 joinBy: ['iso-a2', 'code'],
                 name: 'Population density',
                 states: {

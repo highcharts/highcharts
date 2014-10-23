@@ -110,17 +110,95 @@ $(function () {
         0.7855, 0.7866, 0.7865, 0.7795, 0.7758, 0.7717, 0.761, 0.7497, 0.7471, 0.7473,
         0.7407, 0.7288, 0.7074, 0.6927, 0.7083, 0.7191, 0.719, 0.7153, 0.7156, 0.7158,
         0.714, 0.7119, 0.7129, 0.7129, 0.7049, 0.7095
-    ];
-    
-    var masterChart,
+    ],
         detailChart;
-    
-    $(document).ready(function() {
-    
-    
+
+    $(document).ready(function () {
+
+        // create the detail chart
+        function createDetail(masterChart) {
+
+            // prepare the detail chart
+            var detailData = [],
+                detailStart = Date.UTC(2008, 7, 1);
+
+            $.each(masterChart.series[0].data, function () {
+                if (this.x >= detailStart) {
+                    detailData.push(this.y);
+                }
+            });
+
+            // create a detail chart referenced by a global variable
+            detailChart = $('#detail-container').highcharts({
+                chart: {
+                    marginBottom: 120,
+                    reflow: false,
+                    marginLeft: 50,
+                    marginRight: 20,
+                    style: {
+                        position: 'absolute'
+                    }
+                },
+                credits: {
+                    enabled: false
+                },
+                title: {
+                    text: 'Historical USD to EUR Exchange Rate'
+                },
+                subtitle: {
+                    text: 'Select an area by dragging across the lower chart'
+                },
+                xAxis: {
+                    type: 'datetime'
+                },
+                yAxis: {
+                    title: {
+                        text: null
+                    },
+                    maxZoom: 0.1
+                },
+                tooltip: {
+                    formatter: function () {
+                        var point = this.points[0];
+                        return '<b>' + point.series.name + '</b><br/>' +
+                            Highcharts.dateFormat('%A %B %e %Y', this.x) + ':<br/>' +
+                            '1 USD = ' + Highcharts.numberFormat(point.y, 2) + ' EUR';
+                    },
+                    shared: true
+                },
+                legend: {
+                    enabled: false
+                },
+                plotOptions: {
+                    series: {
+                        marker: {
+                            enabled: false,
+                            states: {
+                                hover: {
+                                    enabled: true,
+                                    radius: 3
+                                }
+                            }
+                        }
+                    }
+                },
+                series: [{
+                    name: 'USD to EUR',
+                    pointStart: detailStart,
+                    pointInterval: 24 * 3600 * 1000,
+                    data: detailData
+                }],
+
+                exporting: {
+                    enabled: false
+                }
+
+            }).highcharts(); // return chart
+        }
+
         // create the master chart
         function createMaster() {
-            masterChart = $('#master-container').highcharts({
+            $('#master-container').highcharts({
                 chart: {
                     reflow: false,
                     borderWidth: 0,
@@ -129,26 +207,23 @@ $(function () {
                     marginRight: 20,
                     zoomType: 'x',
                     events: {
-    
+
                         // listen to the selection event on the master chart to update the
                         // extremes of the detail chart
-                        selection: function(event) {
+                        selection: function (event) {
                             var extremesObject = event.xAxis[0],
                                 min = extremesObject.min,
                                 max = extremesObject.max,
                                 detailData = [],
                                 xAxis = this.xAxis[0];
-    
+
                             // reverse engineer the last part of the data
-                            jQuery.each(this.series[0].data, function(i, point) {
-                                if (point.x > min && point.x < max) {
-                                    detailData.push({
-                                        x: point.x,
-                                        y: point.y
-                                    });
+                            $.each(this.series[0].data, function () {
+                                if (this.x > min && this.x < max) {
+                                    detailData.push([this.x, this.y]);
                                 }
                             });
-    
+
                             // move the plot bands to reflect the new detail span
                             xAxis.removePlotBand('mask-before');
                             xAxis.addPlotBand({
@@ -157,7 +232,7 @@ $(function () {
                                 to: min,
                                 color: 'rgba(0, 0, 0, 0.2)'
                             });
-    
+
                             xAxis.removePlotBand('mask-after');
                             xAxis.addPlotBand({
                                 id: 'mask-after',
@@ -165,10 +240,10 @@ $(function () {
                                 to: Date.UTC(2008, 11, 31),
                                 color: 'rgba(0, 0, 0, 0.2)'
                             });
-    
-    
+
+
                             detailChart.series[0].setData(detailData);
-    
+
                             return false;
                         }
                     }
@@ -202,7 +277,7 @@ $(function () {
                     showFirstLabel: false
                 },
                 tooltip: {
-                    formatter: function() {
+                    formatter: function () {
                         return false;
                     }
                 },
@@ -234,119 +309,38 @@ $(function () {
                         enableMouseTracking: false
                     }
                 },
-    
+
                 series: [{
                     type: 'area',
                     name: 'USD to EUR',
                     pointInterval: 24 * 3600 * 1000,
-                    pointStart: Date.UTC(2006, 0, 01),
+                    pointStart: Date.UTC(2006, 0, 1),
                     data: data
                 }],
-    
+
                 exporting: {
                     enabled: false
                 }
-    
-            }, function(masterChart) {
-                createDetail(masterChart)
+
+            }, function (masterChart) {
+                createDetail(masterChart);
             })
-            .highcharts(); // return chart instance
+                .highcharts(); // return chart instance
         }
-    
-        // create the detail chart
-        function createDetail(masterChart) {
-    
-            // prepare the detail chart
-            var detailData = [],
-                detailStart = Date.UTC(2008, 7, 1);
-    
-            jQuery.each(masterChart.series[0].data, function(i, point) {
-                if (point.x >= detailStart) {
-                    detailData.push(point.y);
-                }
-            });
-    
-            // create a detail chart referenced by a global variable
-            detailChart = $('#detail-container').highcharts({
-                chart: {
-                    marginBottom: 120,
-                    reflow: false,
-                    marginLeft: 50,
-                    marginRight: 20,
-                    style: {
-                        position: 'absolute'
-                    }
-                },
-                credits: {
-                    enabled: false
-                },
-                title: {
-                    text: 'Historical USD to EUR Exchange Rate'
-                },
-                subtitle: {
-                    text: 'Select an area by dragging across the lower chart'
-                },
-                xAxis: {
-                    type: 'datetime'
-                },
-                yAxis: {
-                    title: {
-                        text: null
-                    },
-                    maxZoom: 0.1
-                },
-                tooltip: {
-                    formatter: function() {
-                        var point = this.points[0];
-                        return '<b>'+ point.series.name +'</b><br/>'+
-                            Highcharts.dateFormat('%A %B %e %Y', this.x) + ':<br/>'+
-                            '1 USD = '+ Highcharts.numberFormat(point.y, 2) +' EUR';
-                    },
-                    shared: true
-                },
-                legend: {
-                    enabled: false
-                },
-                plotOptions: {
-                    series: {
-                        marker: {
-                            enabled: false,
-                            states: {
-                                hover: {
-                                    enabled: true,
-                                    radius: 3
-                                }
-                            }
-                        }
-                    }
-                },
-                series: [{
-                    name: 'USD to EUR',
-                    pointStart: detailStart,
-                    pointInterval: 24 * 3600 * 1000,
-                    data: detailData
-                }],
-    
-                exporting: {
-                    enabled: false
-                }
-    
-            }).highcharts(); // return chart
-        }
-    
+
         // make the container smaller and add a second container for the master chart
         var $container = $('#container')
             .css('position', 'relative');
-    
-        var $detailContainer = $('<div id="detail-container">')
+
+        $('<div id="detail-container">')
             .appendTo($container);
-    
-        var $masterContainer = $('<div id="master-container">')
+
+        $('<div id="master-container">')
             .css({ position: 'absolute', top: 300, height: 100, width: '100%' })
             .appendTo($container);
-    
+
         // create master and in its callback, create the detail chart
         createMaster();
     });
-    
+
 });

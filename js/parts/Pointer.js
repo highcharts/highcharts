@@ -170,41 +170,56 @@ Pointer.prototype = {
 					kdpoint = p;
 				}
 			}
+
+			// refresh the tooltip if necessary
+			if (points.length && (points[0].clientX !== pointer.hoverX)) {
+				tooltip.refresh(points, e);
+				pointer.hoverX = points[0].clientX;
+			}
+			point = points[0];
 		});
 
-		// Crosshair
-		each(chart.axes, function (axis) {
-			axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
-		});		
+		// Separate tooltip and general mouse events
+		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
+		if (hoverSeries && hoverSeries.tracker) { // #2584, #2830, #2889, #3258
 
-		// Without a closest point there is no sense to continue
-		if (!kdpoint) { return; }
+			// Crosshair
+			each(chart.axes, function (axis) {
+				axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
+			});		
 
-		// Tooltip
-		if (tooltip && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
+			// Without a closest point there is no sense to continue
+			if (!kdpoint) { return; }
 
-			// Draw tooltip if necessary
-			if (shared && !kdpoint.series.noSharedTooltip) {
-				i = kdpoints.length;
-				while (i--) {
-					if (kdpoints[i].x !== kdpoint.x || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
-						kdpoints.splice(i, 1);
+			// Tooltip
+			if (tooltip && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
+
+				// Draw tooltip if necessary
+				if (shared && !kdpoint.series.noSharedTooltip) {
+					i = kdpoints.length;
+					while (i--) {
+						if (kdpoints[i].x !== kdpoint.x || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
+							kdpoints.splice(i, 1);
+						}
 					}
+					tooltip.refresh(kdpoints, e);
+					each(kdpoints, function (point) {
+						point.onMouseOver(e);
+					});
+				} else {
+					tooltip.refresh(kdpoint, e);
+					kdpoint.onMouseOver(e);
 				}
-				tooltip.refresh(kdpoints, e);
-				each(kdpoints, function (point) {
-					point.onMouseOver(e);
-				});
-			} else {
-				tooltip.refresh(kdpoint, e);
-				kdpoint.onMouseOver(e);
 			}
+		}	 
+
+		if (tooltip && followPointer && !tooltip.isHidden) {
+			anchor = tooltip.getAnchor([{}], e);
+			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });			
 		}
 
 		// Hover Series
 		if (kdpoint !== hoverPoint) {
-			// release old hovers
-
 			// set new hoverPoint and hoverSeries
 			chart.hoverPoint = kdpoint;
 			chart.hoverSeries = kdpoint.series;	
@@ -219,7 +234,7 @@ Pointer.prototype = {
 	 * 
 	 * @param allowMove {Boolean} Instead of destroying the tooltip altogether, allow moving it if possible
 	 */
-	reset: function (allowMove) {
+	reset: function (allowMove, delay) {
 		var pointer = this,
 			chart = pointer.chart,
 			hoverSeries = chart.hoverSeries,
@@ -252,7 +267,7 @@ Pointer.prototype = {
 			}
 
 			if (tooltip) {
-				tooltip.hide();
+				tooltip.hide(delay);
 			}
 
 			if (pointer._onDocumentMouseMove) {
@@ -329,7 +344,7 @@ Pointer.prototype = {
 			size,
 			mouseDownX = this.mouseDownX,
 			mouseDownY = this.mouseDownY,
-			panKey = chartOptions.panKey && e[chartOptions.panKey + 'Key']; // docs
+			panKey = chartOptions.panKey && e[chartOptions.panKey + 'Key'];
 
 		// If the mouse is outside the plot area, adjust to cooordinates
 		// inside to prevent the selection marker from going outside
@@ -517,8 +532,8 @@ Pointer.prototype = {
 
 		hoverChartIndex = chart.index;
 
-		// normalize
 		e = this.normalize(e);		
+		e.returnValue = false; // #2251, #3224
 		
 		if (chart.mouseIsDown === 'mousedown') {
 			this.drag(e);

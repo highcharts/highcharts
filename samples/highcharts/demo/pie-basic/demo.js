@@ -2,14 +2,14 @@ $(function () {
     $('#container').highcharts({
         chart: {
             plotBackgroundColor: null,
-            plotBorderWidth: null,
+            plotBorderWidth: 1,//null,
             plotShadow: false
         },
         title: {
             text: 'Browser market shares at a specific website, 2014'
         },
         tooltip: {
-    	    pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
         },
         plotOptions: {
             pie: {
@@ -43,4 +43,4 @@ $(function () {
         }]
     });
 });
-    
+

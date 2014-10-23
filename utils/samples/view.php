@@ -27,14 +27,21 @@ $httpHost = explode('.', $httpHost);
 $topDomain = $httpHost[sizeof($httpHost) - 1];
 $html = ob_get_clean();
 $html = str_replace('/code.highcharts.com/', "/code.highcharts.$topDomain/", $html);
-$html = str_replace('.js"', '.js?' . time() . '"', $html); // Force no-cache for debugging
+
+
+if (strstr($html, "/code.highcharts.$topDomain/mapdata")) {
+	$html = str_replace("/code.highcharts.$topDomain/mapdata", "/code.highcharts.com/mapdata", $html);
+} else {
+	$html = str_replace('.js"', '.js?' . time() . '"', $html); // Force no-cache for debugging
+}
+
 
 
 // Handle themes
 if (isset($_POST['theme'])) {
 	$_SESSION['theme'] = $_POST['theme'];	
 }
-if ($_SESSION['theme']) {
+if (@$_SESSION['theme']) {
 	$html .= "<script src='http://code.highcharts.$topDomain/themes/". $_SESSION['theme'] .".js'></script>";
 }
 $themes = array(
@@ -95,6 +102,18 @@ function getResources() {
 
 
 		<script type="text/javascript">
+
+		(function () {
+			if (typeof $ === 'undefined') {
+				window.onload = function () {
+					document.getElementById('container').innerHTML = 
+						'<div style="margin-top: 150px; %text-align: center"><h3 style="font-size: 2em; color: red">' +
+						'jQuery is missing</h3><p>Check your settings in <code>default-settings.json</code>.</div>';
+				}
+				return;
+			}
+
+			
 			$(function() {
 
 				$('#version').html(Highcharts.product + ' ' + Highcharts.version);
@@ -160,8 +179,10 @@ function getResources() {
 						$('#source-box').html('');
 					}
 				});
+				contentDoc = null;
 
 			});
+		}());
 		</script>
 		<script>
 
@@ -175,7 +196,7 @@ function getResources() {
 		}
 
 
-		/* Wrappers for recording mouse events in order to write automatic tests */
+		// Wrappers for recording mouse events in order to write automatic tests 
 		$(function () {
 
 			$(window).bind('keydown', parent.keyDown);
@@ -301,7 +322,7 @@ function getResources() {
 				<form method="post" action="" style="display:inline">
 					<select name="theme" onchange="this.form.submit()">
 					<?php foreach ($themes as $theme => $themeName) : ?>
-						<option value="<?php echo $theme ?>" <?php if ($theme == $_SESSION['theme']) echo 'selected' ?>>
+						<option value="<?php echo $theme ?>" <?php if ($theme == @$_SESSION['theme']) echo 'selected' ?>>
 							<?php echo $themeName ?>
 						</option>
 					<?php endforeach ?>

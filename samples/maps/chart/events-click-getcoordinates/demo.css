@@ -1,0 +1,35 @@
+#outer {
+	min-width: 310px; 
+	max-width: 800px; 
+	margin: 0 auto;
+}
+#outer-container {
+	height: 500px;
+	overflow: hidden;
+}
+#container {
+	height: 500px;
+	transition: margin-top 500ms;
+}
+#code-container {
+	height: 500px;
+	overflow: auto;
+}
+.loading {
+	margin-top: 10em;
+	text-align: center;
+	color: gray;
+}
+.form {
+	border: 1px solid silver;
+	padding: 0 1em;
+}
+pre {
+	border: 1px solid green;
+	border-radius: 5px;
+	padding: 1em;
+	color: green;
+}
+#close {
+	float: right;
+}

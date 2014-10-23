@@ -20,7 +20,8 @@ var AreaSeries = extendClass(Series, {
 	 * in the stack.
 	 */ 
 	getSegments: function () {
-		var segments = [],
+		var series = this,
+			segments = [],
 			segment = [],
 			keys = [],
 			xAxis = this.xAxis,
@@ -31,7 +32,6 @@ var AreaSeries = extendClass(Series, {
 			plotY,
 			points = this.points,
 			connectNulls = this.options.connectNulls,
-			val,
 			i,
 			x;
 
@@ -52,6 +52,9 @@ var AreaSeries = extendClass(Series, {
 			});
 
 			each(keys, function (x) {
+				var y = 0,
+					stackPoint;
+
 				if (connectNulls && (!pointMap[x] || pointMap[x].y === null)) { // #1836
 					return;
 
@@ -63,9 +66,19 @@ var AreaSeries = extendClass(Series, {
 				// insert a dummy point in order for the areas to be drawn
 				// correctly.
 				} else {
+
+					// Loop down the stack to find the series below this one that has
+					// a value (#1991)
+					for (i = series.index; i <= yAxis.series.length; i++) {
+						stackPoint = stack[x].points[i + ',' + x];
+						if (stackPoint) {
+							y = stackPoint[1];
+							break;
+						}
+					}
+
 					plotX = xAxis.translate(x);
-					val = stack[x].percent ? (stack[x].total ? stack[x].cum * 100 / stack[x].total : 0) : stack[x].cum; // #1991
-					plotY = yAxis.toPixels(val, true);
+					plotY = yAxis.toPixels(y, true);
 					segment.push({ 
 						y: null, 
 						plotX: plotX,

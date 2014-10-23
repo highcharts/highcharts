@@ -1,40 +1,43 @@
+
+
 #demo-wrapper {
-    width: 1000px;
+    max-width: 1000px;
     margin: 0 auto;
     height: 560px;
 }
 #mapBox {
+    width: 80%;
     float: left;
 }
 #container {
     height: 500px;
-    width: 800px;
 }
 #sideBox {
     float: right;
-    width: 160px;   
-    margin: 100px 10px 0 10px;
-    padding-left: 10px;
+    width: 16%;   
+    margin: 100px 1% 0 1%;
+    padding-left: 1%;
     border-left: 1px solid silver;
     display: none;
-}
-#chkDataLabels {
-    margin-top: 10px;    
 }
 #infoBox {
     margin-top: 10px;
 }
+.or-view-as {
+    margin: 0.5em 0;
+}
 #up {
     height: 20px;
-    margin-top: 10px;
-    margin-left: 240px;
+    max-width: 400px;
+    margin: 0 auto;
 }
 #up a {
     cursor: pointer;
+    padding-left: 40px;
 }
 .selector {
     height: 40px;
-    width: 400px;
+    max-width: 400px;
     margin: 0 auto;
     position: relative;
 }
@@ -48,11 +51,13 @@
     color: #999;
     top: -2px;
     display: none;
+    border: none;
 }
 .selector .custom-combobox {
     display: block;
     position: absolute;
     left: 40px;
+    right: 110px;
 }
 .selector .custom-combobox .custom-combobox-input {
     position: absolute;
@@ -63,7 +68,7 @@
     display: block;
     background: url(http://api.highcharts.com/resources/images/search.png) 5px 5px no-repeat white;
     padding: 1px 5px 1px 30px;
-    width: 290px;
+    width: 100%;
 }
 .selector .custom-combobox .ui-autocomplete-input:focus {
     color: black;
@@ -74,12 +79,12 @@
 .selector .custom-combobox-toggle {
     position: absolute;
     display: block;
-    left: 326px;
+    right: -78px;
     border-radius: 0;
 }
 
 .selector #btn-next-map {
-    left: 405px;
+    right: -12px;
 }
 .ui-autocomplete {
     max-height: 500px;
@@ -100,6 +105,57 @@
 }
 .ui-button-icon-only .ui-button-text {
     height: 26px;
-    padding: 0;
+    padding: 0 !important;
     background: white;
 }
+#infoBox .button {
+    border: none;
+    border-radius: 3px;
+    background: #a4edba;
+    padding: 5px;
+    color: black;
+    text-decoration: none;
+    font-size: 12px;
+    white-space: nowrap;
+    cursor: pointer;
+    margin: 0 3px;
+    line-height: 30px;
+}
+
+@media (max-width: 768px) {
+    #demo-wrapper {
+        width: auto;
+        height: auto;
+    }
+    #mapBox {
+        width: auto;
+        float: none;
+    }
+    #container {
+        height: 310px;
+    }
+    #sideBox {
+        float: none;
+        width: auto;
+        margin-top: 0;
+        border-left: none;
+        border-top: 1px solid silver;
+    }
+    /*
+    .selector {
+        width: 300px;
+    }
+    .selector .custom-combobox .custom-combobox-input {
+        width: 190px;
+    }
+    .selector .custom-combobox-toggle {
+        left: 226px;
+    }
+    .selector #btn-next-map {
+        left: 310px;
+    }
+    */
+
+}
+
+

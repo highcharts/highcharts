@@ -3,7 +3,7 @@
  *****************************************************************************/
 extend(defaultOptions, {
 	rangeSelector: {
-		// allButtonsEnabled: false, // docs: /stock/rangeselector/allbuttonsenabled-true
+		// allButtonsEnabled: false,
 		// enabled: true,
 		// buttons: {Object}
 		// buttonSpacing: 0,
@@ -237,11 +237,11 @@ RangeSelector.prototype = {
 			blurInputs = rangeSelector.blurInputs = function () {
 				var minInput = rangeSelector.minInput,
 					maxInput = rangeSelector.maxInput;
-				if (minInput) {
-					minInput.blur();
+				if (minInput && minInput.blur) { //#3274 in some case blur is not defined
+					fireEvent(minInput, 'blur'); //#3274
 				}
-				if (maxInput) {
-					maxInput.blur();
+				if (maxInput && maxInput.blur) { //#3274 in some case blur is not defined
+					fireEvent(maxInput, 'blur'); //#3274
 				}
 			};
 
@@ -521,38 +521,48 @@ RangeSelector.prototype = {
 			div = rangeSelector.div,
 			inputGroup = rangeSelector.inputGroup,
 			buttonTheme = options.buttonTheme,
-			inputEnabled = options.inputEnabled !== false,
+			buttonPosition = options.buttonPosition || {},
+			inputEnabled = options.inputEnabled,
 			states = buttonTheme && buttonTheme.states,
 			plotLeft = chart.plotLeft,
 			yAlign,
-			buttonLeft;
+			buttonLeft,
+			buttonTop,
+			buttonGroup = rangeSelector.group,
+			buttonBBox;
+
 
 		// create the elements
 		if (!rangeSelector.rendered) {
-			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, plotLeft, chart.plotTop - 20)
+
+			rangeSelector.group = buttonGroup = renderer.g('range-selector-buttons').add();
+
+			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, pick(buttonPosition.x, plotLeft), pick(buttonPosition.y, chart.plotTop - 35) + 15)
 				.css(options.labelStyle)
-				.add();
+				.add(buttonGroup);
 
 			// button starting position
-			buttonLeft = plotLeft + rangeSelector.zoomText.getBBox().width + 5;
+			buttonLeft = pick(buttonPosition.x, plotLeft) + rangeSelector.zoomText.getBBox().width + 5;
+			buttonTop = pick(buttonPosition.y, chart.plotTop - 35);
 
 			each(rangeSelector.buttonOptions, function (rangeOptions, i) {
 				buttons[i] = renderer.button(
 						rangeOptions.text,
 						buttonLeft,
-						chart.plotTop - 35,
+						buttonTop,
 						function () {
 							rangeSelector.clickButton(i);
 							rangeSelector.isActive = true;
 						},
 						buttonTheme,
 						states && states.hover,
-						states && states.select
+						states && states.select,
+						states && states.disabled
 					)
 					.css({
 						textAlign: 'center'
 					})
-					.add();
+					.add(buttonGroup);
 
 				// increase button position for the next button
 				buttonLeft += buttons[i].width + pick(options.buttonSpacing, 5);
@@ -566,7 +576,7 @@ RangeSelector.prototype = {
 
 			// first create a wrapper outside the container in order to make
 			// the inputs work and make export correct
-			if (inputEnabled) {
+			if (inputEnabled !== false) {
 				rangeSelector.div = div = createElement('div', null, {
 					position: 'relative',
 					height: 0,
@@ -585,17 +595,23 @@ RangeSelector.prototype = {
 			}
 		}
 		
-		if (inputEnabled) {
+		if (inputEnabled !== false) {
 		
 			// Update the alignment to the updated spacing box
 			yAlign = chart.plotTop - 45;		
 			inputGroup.align(extend({
 				y: yAlign,
 				width: inputGroup.offset,
-				// detect collision with the exporting buttons
+				// Detect collision with the exporting buttons
 				x: navButtonOptions && (yAlign < (navButtonOptions.y || 0) + navButtonOptions.height - chart.spacing[0]) ? 
 					-40 : 0
 			}, options.inputPosition), true, chart.spacingBox);
+
+			// Hide if overlapping - inputEnabled is null or undefined // docs
+			if (!defined(inputEnabled)) {
+				buttonBBox = buttonGroup.getBBox();
+				inputGroup[inputGroup.translateX < buttonBBox.x + buttonBBox.width + 10 ? 'hide' : 'show']();
+			}
 	
 			// Set or reset the input values
 			rangeSelector.setInputValue('min', min);

@@ -19,10 +19,10 @@ $(function () {
     });
 
     // the button action
-    $('#button').click(function() {
+    $('#button').click(function () {
         var chart = $('#container').highcharts();
         chart.setTitle(null, {
-            text: 'The axis object: '+ chart.get('x-axis')
+            text: 'The axis object: ' + chart.get('x-axis')
         });
     });
 });

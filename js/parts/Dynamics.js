@@ -147,39 +147,40 @@ extend(Point.prototype, {
 	 *    configuration
 	 *
 	 */
-	update: function (options, redraw, animation) {
+	update: function (options, redraw, animation, runEvent) {
 		var point = this,
 			series = point.series,
 			graphic = point.graphic,
 			i,
-			data = series.data,
 			chart = series.chart,
 			seriesOptions = series.options;
 
 		redraw = pick(redraw, true);
 
-		// fire the event with a default handler of doing the update
-		point.firePointEvent('update', { options: options }, function () {
+		function update() {
 
 			point.applyOptions(options);
 
-			// update visuals
-			if (isObject(options)) {
-				series.getAttribs();
-				if (graphic) {
-					if (options && options.marker && options.marker.symbol) {
-						point.graphic = graphic.destroy();
-					} else {
-						graphic.attr(point.pointAttr[point.state || '']);
+			// Update visuals
+			if (isObject(options) && !isArray(options)) {
+				// Defer the actual redraw until getAttribs has been called (#3260)
+				point.redraw = function () {
+					if (graphic) {
+						if (options && options.marker && options.marker.symbol) {
+							point.graphic = graphic.destroy();
+						} else {
+							graphic.attr(point.pointAttr[point.state || '']);
+						}
 					}
-				}
-				if (options && options.dataLabels && point.dataLabel) { // #2468
-					point.dataLabel = point.dataLabel.destroy();
-				}
+					if (options && options.dataLabels && point.dataLabel) { // #2468
+						point.dataLabel = point.dataLabel.destroy();
+					}
+					point.redraw = null;
+				};
 			}
 
 			// record changes in the parallel arrays
-			i = inArray(point, data);
+			i = point.index;
 			series.updateParallelArrays(point, i);
 
 			seriesOptions.data[i] = point.options;
@@ -196,7 +197,14 @@ extend(Point.prototype, {
 			if (redraw) {
 				chart.redraw(animation);
 			}
-		});
+		}
+
+		// Fire the event with a default handler of doing the update
+		if (runEvent === false) { // When called from setData
+			update();
+		} else {
+			point.firePointEvent('update', { options: options }, update);
+		}
 	},
 
 	/**
@@ -302,7 +310,7 @@ extend(Series.prototype, {
 		series.updateParallelArrays(point, 'splice', i, 0, 0); // insert undefined item
 		series.updateParallelArrays(point, i); // update it
 
-		if (names) {
+		if (names && point.name) {
 			names[x] = point.name;
 		}
 		dataOptions.splice(i, 0, options);
@@ -381,13 +389,26 @@ extend(Series.prototype, {
 	 * Update the series with a new set of options
 	 */
 	update: function (newOptions, redraw) {
-		var chart = this.chart,
+		var series = this,
+			chart = this.chart,
 			// must use user options when changing type because this.options is merged
 			// in with type specific plotOptions
 			oldOptions = this.userOptions,
 			oldType = this.type,
 			proto = seriesTypes[oldType].prototype,
+			preserve = ['group', 'markerGroup', 'dataLabelsGroup'],
 			n;
+
+		// If we're changing type or zIndex, create new groups (#3380, #3404)
+		if ((newOptions.type && newOptions.type !== oldType) || newOptions.zIndex !== undefined) {
+			preserve.length = 0;
+		}
+
+		// Make sure groups are not destroyed (#3094)
+		each(preserve, function (prop) {
+			preserve[prop] = series[prop];
+			delete series[prop];
+		});
 
 		// Do the merge, with some forced options
 		newOptions = merge(oldOptions, {
@@ -405,6 +426,10 @@ extend(Series.prototype, {
 		}
 		extend(this, seriesTypes[newOptions.type || oldType].prototype);
 
+		// Re-register groups (#3094)
+		each(preserve, function (prop) {
+			series[prop] = preserve[prop];
+		});
 
 		this.init(chart, newOptions);
 		chart.linkSeries(); // Links are lost in this.remove (#3028)
