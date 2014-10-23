@@ -1958,6 +1958,7 @@ SVGRenderer.prototype = {
 		wrapper = this.rect(x, y, width, height, 0).add(clipPath);
 		wrapper.id = id;
 		wrapper.clipPath = clipPath;
+		wrapper.count = 0;
 
 		return wrapper;
 	},

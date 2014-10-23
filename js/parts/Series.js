@@ -820,6 +820,9 @@ Series.prototype = {
 			chart[sharedClipKey] = clipRect = renderer.clipRect(clipBox);
 			
 		}
+		if (animation) {
+			clipRect.count += 1;
+		}
 		if (this.options.clip !== false) {
 			this.group.clip(animation || seriesClipBox ? clipRect : chart.clipRect);
 			this.markerGroup.clip(markerClipRect);
@@ -828,16 +831,15 @@ Series.prototype = {
 
 		// Remove the shared clipping rectancgle when all series are shown
 		if (!animation) {
-			setTimeout(function () {
-				if (sharedClipKey && chart[sharedClipKey]) {
-					if (!seriesClipBox) {
-						chart[sharedClipKey] = chart[sharedClipKey].destroy();
-					}
-					if (chart[sharedClipKey + 'm']) {
-						chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
-					}
+			clipRect.count -= 1;
+			if (clipRect.count <= 0 && sharedClipKey && chart[sharedClipKey]) {
+				if (!seriesClipBox) {
+					chart[sharedClipKey] = chart[sharedClipKey].destroy();
 				}
-			}, 100);
+				if (chart[sharedClipKey + 'm']) {
+					chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
+				}
+			}
 		}
 	},
 
