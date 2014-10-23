@@ -6,7 +6,7 @@
 defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 	lineWidth: 1,
 	tooltip: {
-		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' + // docs
 			'Open: {point.open}<br/>' +
 			'High: {point.high}<br/>' +
 			'Low: {point.low}<br/>' +

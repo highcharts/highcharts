@@ -1423,7 +1423,7 @@ defaultOptions = {
 			},
 			stickyTracking: true,
 			//tooltip: {
-				//pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b>'
+				//pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b>' // docs
 				//valueDecimals: null,
 				//xDateFormat: '%A, %b %e, %Y',
 				//valuePrefix: '',
@@ -1535,7 +1535,7 @@ defaultOptions = {
 		footerFormat: '',
 		//formatter: defaultFormatter,
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
-		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>', // docs
 		shadow: true,
 		//shape: 'callout',
 		//shared: false,
@@ -10362,8 +10362,10 @@ Legend.prototype = {
 					// Now we have detected on which side of the chart we should reserve space for the legend
 					chart[marginNames[side]] = mathMax(
 						chart[marginNames[side]],
-						chart.legend[(side + 1) % 2 ? 'legendHeight' : 'legendWidth'] - 
-							options[(side % 2) ? 'y' : 'x'] + pick(options.margin, 20) + spacing[side]
+						chart.legend[(side + 1) % 2 ? 'legendHeight' : 'legendWidth'] + 
+							[1, -1, -1, 1][side] * options[(side % 2) ? 'x' : 'y'] + 
+							pick(options.margin, 20) + 
+							spacing[side]
 					);
 				}
 			});
@@ -13290,7 +13292,7 @@ Series.prototype = {
 		// Remove the shared clipping rectancgle when all series are shown
 		if (!animation) {
 			clipRect.count -= 1;
-			if (clipRect.count <= 0 && sharedClipKey && chart[sharedClipKey]) {
+			if (clipRect.count === 0 && sharedClipKey && chart[sharedClipKey]) {
 				if (!seriesClipBox) {
 					chart[sharedClipKey] = chart[sharedClipKey].destroy();
 				}
@@ -18944,7 +18946,7 @@ Axis.prototype.getGroupPixelWidth = function () {
 defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 	lineWidth: 1,
 	tooltip: {
-		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' + // docs
 			'Open: {point.open}<br/>' +
 			'High: {point.high}<br/>' +
 			'Low: {point.low}<br/>' +

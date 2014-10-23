@@ -18,7 +18,7 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 	//stemWidth: null,
 	threshold: null,
 	tooltip: {
-		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' + // docs
 			'Maximum: {point.high}<br/>' +
 			'Upper quartile: {point.q3}<br/>' +
 			'Median: {point.median}<br/>' +

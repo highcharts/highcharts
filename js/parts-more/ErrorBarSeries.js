@@ -8,7 +8,7 @@ defaultPlotOptions.errorbar = merge(defaultPlotOptions.boxplot, {
 	grouping: false,
 	linkedTo: ':previous',
 	tooltip: {
-		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>' // docs
 	},
 	whiskerWidth: null
 });
