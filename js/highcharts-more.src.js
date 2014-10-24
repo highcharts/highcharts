@@ -1239,7 +1239,7 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 	//stemWidth: null,
 	threshold: null,
 	tooltip: {
-		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' +
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' + // docs
 			'Maximum: {point.high}<br/>' +
 			'Upper quartile: {point.q3}<br/>' +
 			'Median: {point.median}<br/>' +
@@ -1498,7 +1498,7 @@ defaultPlotOptions.errorbar = merge(defaultPlotOptions.boxplot, {
 	grouping: false,
 	linkedTo: ':previous',
 	tooltip: {
-		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>'
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.low}</b> - <b>{point.high}</b><br/>' // docs
 	},
 	whiskerWidth: null
 });
@@ -1718,7 +1718,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
 
 		each(series.points, function (point) {
-			if (point.y > 0 && !point.color) {
+			if (point.y > 0 && !point.options.color) {
 				point.pointAttr = seriesDownPointAttr;
 				point.color = upColor;
 			}

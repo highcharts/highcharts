@@ -194,7 +194,7 @@ defaultOptions = {
 			},
 			stickyTracking: true,
 			//tooltip: {
-				//pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b>'
+				//pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b>' // docs
 				//valueDecimals: null,
 				//xDateFormat: '%A, %b %e, %Y',
 				//valuePrefix: '',
@@ -306,7 +306,7 @@ defaultOptions = {
 		footerFormat: '',
 		//formatter: defaultFormatter,
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
-		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>', // docs
 		shadow: true,
 		//shape: 'callout',
 		//shared: false,

@@ -375,8 +375,10 @@ Legend.prototype = {
 					// Now we have detected on which side of the chart we should reserve space for the legend
 					chart[marginNames[side]] = mathMax(
 						chart[marginNames[side]],
-						chart.legend[(side + 1) % 2 ? 'legendHeight' : 'legendWidth'] - 
-							options[(side % 2) ? 'y' : 'x'] + pick(options.margin, 20) + spacing[side]
+						chart.legend[(side + 1) % 2 ? 'legendHeight' : 'legendWidth'] + 
+							[1, -1, -1, 1][side] * options[(side % 2) ? 'x' : 'y'] + 
+							pick(options.margin, 20) + 
+							spacing[side]
 					);
 				}
 			});
