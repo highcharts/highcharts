@@ -25,7 +25,7 @@ $(function () {
             copy = { path: path };
 
         // This point has a square legend to the right
-        if (path[1] === 1730) {
+        if (path[1] === 9727) {
 
             // Identify the box
             Highcharts.seriesTypes.map.prototype.getBox.call(0, [copy]);
