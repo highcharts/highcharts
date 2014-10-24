@@ -512,11 +512,10 @@ Tooltip.prototype = {
      * abstracting this functionality allows to easily overwrite and extend it. 
 	 */
 	bodyFormatter: function (items) {
-		return map(items, function (item) {
-			var series = item.series;
-			 return ((series.tooltipFormatter && series.tooltipFormatter(item)) ||
-				item.point.tooltipFormatter(series.tooltipOptions.pointFormat));
-		});
-	}
-
+        return map(items, function (item) {
+            var tooltipOptions = item.series.tooltipOptions;
+            return (tooltipOptions.pointFormatter || item.point.tooltipFormatter).call(item.point, tooltipOptions.pointFormat); // docs
+        });
+    }
+    
 };
