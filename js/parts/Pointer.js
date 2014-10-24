@@ -142,7 +142,7 @@ Pointer.prototype = {
 			//point,
 			//points,
 			hoverPoint = chart.hoverPoint,
-			//hoverSeries = chart.hoverSeries,
+			hoverSeries = chart.hoverSeries,
 			i,
 			//j,
 			distance = chart.chartWidth,
@@ -170,13 +170,15 @@ Pointer.prototype = {
 					kdpoint = p;
 				}
 			}
-
+			/*
 			// refresh the tooltip if necessary
-			if (points.length && (points[0].clientX !== pointer.hoverX)) {
-				tooltip.refresh(points, e);
-				pointer.hoverX = points[0].clientX;
+			if (kdpoints.length && (kdpoints[0].clientX !== pointer.hoverX)) {
+				console.log(kdpoints);
+				tooltip.refresh(kdpoints, e);
+				pointer.hoverX = kdpoints[0].clientX;
 			}
-			point = points[0];
+			*/
+			point = kdpoints[0];
 		});
 
 		// Separate tooltip and general mouse events

@@ -631,6 +631,9 @@ Series.prototype = {
 
 		series.data = data;
 		series.points = points;
+
+		
+		series.buildKDTree();
 	},
 
 	/**
@@ -1611,8 +1614,6 @@ Series.prototype = {
 		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 		// (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 		series.hasRendered = true;
-
-		series.buildKDTree();
 	},
 
 	/**
@@ -1691,7 +1692,7 @@ Series.prototype = {
 
 		tree = null;
 		setTimeout(function () {
-			series.kdTree = _kdtree(series.points, dimensions, dimensions);			
+			series.kdTree = _kdtree(series.points, dimensions, dimensions);		
 		});
 	},
 

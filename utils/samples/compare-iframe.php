@@ -251,8 +251,8 @@ function getCompareTooltips() {
 						} catch (e) {
 							e = 'ERROR in test.js (<?php echo $_GET['which'] ?> frame): ' + e.message;
 							console.error(e);
-							parent.window.error = e;
-							parent.window.onDifferent('Error');
+							//parent.window.error = e;
+							//parent.window.onDifferent('Error');
 						}
 
 					});

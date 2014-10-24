@@ -8723,63 +8723,56 @@ Pointer.prototype = {
 					kdpoint = p;
 				}
 			}
-<<<<<<< HEAD
-		});
-=======
+
 			// refresh the tooltip if necessary
 			if (points.length && (points[0].clientX !== pointer.hoverX)) {
 				tooltip.refresh(points, e);
 				pointer.hoverX = points[0].clientX;
 			}
 			point = points[0];
-		}
+		});
 
 		// Separate tooltip and general mouse events
 		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
 		if (hoverSeries && hoverSeries.tracker) { // #2584, #2830, #2889, #3258
->>>>>>> origin/master
 
-		// Crosshair
-		each(chart.axes, function (axis) {
-			axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
-		});		
+			// Crosshair
+			each(chart.axes, function (axis) {
+				axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
+			});		
 
-		// Without a closest point there is no sense to continue
-		if (!kdpoint) { return; }
+			// Without a closest point there is no sense to continue
+			if (!kdpoint) { return; }
 
-		// Tooltip
-		if (tooltip && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
+			// Tooltip
+			if (tooltip && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
 
-			// Draw tooltip if necessary
-			if (shared && !kdpoint.series.noSharedTooltip) {
-				i = kdpoints.length;
-				while (i--) {
-					if (kdpoints[i].x !== kdpoint.x || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
-						kdpoints.splice(i, 1);
+				// Draw tooltip if necessary
+				if (shared && !kdpoint.series.noSharedTooltip) {
+					i = kdpoints.length;
+					while (i--) {
+						if (kdpoints[i].x !== kdpoint.x || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
+							kdpoints.splice(i, 1);
+						}
 					}
+					tooltip.refresh(kdpoints, e);
+					each(kdpoints, function (point) {
+						point.onMouseOver(e);
+					});
+				} else {
+					tooltip.refresh(kdpoint, e);
+					kdpoint.onMouseOver(e);
 				}
-				tooltip.refresh(kdpoints, e);
-				each(kdpoints, function (point) {
-					point.onMouseOver(e);
-				});
-			} else {
-				tooltip.refresh(kdpoint, e);
-				kdpoint.onMouseOver(e);
 			}
-<<<<<<< HEAD
-=======
-			
-		} 
+		}	 
+
 		if (tooltip && followPointer && !tooltip.isHidden) {
 			anchor = tooltip.getAnchor([{}], e);
-			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });
->>>>>>> origin/master
+			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });			
 		}
 
 		// Hover Series
 		if (kdpoint !== hoverPoint) {
-			// release old hovers
-
 			// set new hoverPoint and hoverSeries
 			chart.hoverPoint = kdpoint;
 			chart.hoverSeries = kdpoint.series;	
@@ -18536,9 +18529,6 @@ extend(Series.prototype, {
 		fireEvent(series, showOrHide);
 	},
 
-<<<<<<< HEAD
-	
-=======
 	/**
 	 * Memorize tooltip texts and positions
 	 */
@@ -18607,7 +18597,6 @@ extend(Series.prototype, {
 		}
 		series.tooltipPoints = tooltipPoints;
 	},
->>>>>>> origin/master
 
 	/**
 	 * Show the graph
