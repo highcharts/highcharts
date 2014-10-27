@@ -443,6 +443,9 @@ var PieSeries = {
 
 	},
 
+
+	buildKDTree: noop,
+
 	/**
 	 * Utility for sorting data labels
 	 */

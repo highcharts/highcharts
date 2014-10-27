@@ -1704,13 +1704,14 @@ Series.prototype = {
 
 		// Internal function
 		function _distance(p1, p2) {
-			var x = Math.pow(p1.plotX - p2.plotX, 2) || null, 
-				y = Math.pow(p1.plotY - p2.plotY, 2) || null,
+			var x = (defined(p1.plotX) && defined(p2.plotX)) ? Math.pow(p1.plotX - p2.plotX, 2) : null,
+				y = (defined(p1.plotY) && defined(p2.plotY)) ? Math.pow(p1.plotY - p2.plotY, 2) : null,
 				r = x + y;
+				
 			return {
-				distX: x ? Math.sqrt(x) : Number.MAX_VALUE,
-				distY: y ? Math.sqrt(y) : Number.MAX_VALUE,
-				distR: r ? Math.sqrt(r) : Number.MAX_VALUE
+				distX: defined(x) ? Math.sqrt(x) : Number.MAX_VALUE,
+				distY: defined(y) ? Math.sqrt(y) : Number.MAX_VALUE,
+				distR: defined(r) ? Math.sqrt(r) : Number.MAX_VALUE
 			};
 		}
 		function _search(search, tree, depth, dimensions) {
@@ -1724,9 +1725,10 @@ Series.prototype = {
 				nPoint2;
 			
 			point.dist = _distance(search, point);
-			
+
 			// Pick side based on distance to splitting point
 			tdist = search[axis] - point[axis];
+
 			sideA = tdist < 0 ? 'left' : 'right';
 
 			// End of tree
@@ -1755,10 +1757,11 @@ Series.prototype = {
 					plotX: inverted ? xAxis.len - point.chartY + xAxis.pos : point.chartX - xAxis.pos,
 					plotY: inverted ? yAxis.len - point.chartX + yAxis.pos : point.chartY - yAxis.pos 
 				};
+
 			return _search(s, 
 				this.kdTree, this.kdDimensions, this.kdDimensions);
 		} else {
-				return null;
+			return UNDEFINED;
 		}
 	}
 

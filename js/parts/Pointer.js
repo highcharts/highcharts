@@ -163,39 +163,29 @@ Pointer.prototype = {
 
 		// Find absolute nearest point
 		each(kdpoints, function (p) {
-			if (p.plotX && p.plotY) {
-				if ((p.dist.distX < distance) || (p.dist.distX === distance && p.dist.distR < rdistance)) {
+			if (p && defined(p.plotX) && defined(p.plotY)) {
+				if ((p.dist.distX < distance) || ((p.dist.distX === distance || p.series.kdDimensions > 1) && p.dist.distR < rdistance)) {
 					distance = p.dist.distX;
 					rdistance = p.dist.distR;
 					kdpoint = p;
 				}
 			}
-			/*
-			// refresh the tooltip if necessary
-			if (kdpoints.length && (kdpoints[0].clientX !== pointer.hoverX)) {
-				console.log(kdpoints);
-				tooltip.refresh(kdpoints, e);
-				pointer.hoverX = kdpoints[0].clientX;
-			}
-			*/
-			point = kdpoints[0];
+			//point = kdpoints[0];
 		});
+				
+		// Crosshair
+		each(chart.axes, function (axis) {
+			axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
+		});		
+
+		// Without a closest point there is no sense to continue
+		if (!kdpoint) { return; }
 
 		// Separate tooltip and general mouse events
 		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
-		if (hoverSeries && hoverSeries.tracker) { // #2584, #2830, #2889, #3258
-
-			// Crosshair
-			each(chart.axes, function (axis) {
-				axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
-			});		
-
-			// Without a closest point there is no sense to continue
-			if (!kdpoint) { return; }
-
+		//if (hoverSeries && hoverSeries.tracker) { // #2584, #2830, #2889, #3258
 			// Tooltip
 			if (tooltip && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
-
 				// Draw tooltip if necessary
 				if (shared && !kdpoint.series.noSharedTooltip) {
 					i = kdpoints.length;
@@ -213,8 +203,9 @@ Pointer.prototype = {
 					kdpoint.onMouseOver(e);
 				}
 			}
-		}	 
+		//}	 
 
+		
 		if (tooltip && followPointer && !tooltip.isHidden) {
 			anchor = tooltip.getAnchor([{}], e);
 			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });			
@@ -227,6 +218,7 @@ Pointer.prototype = {
 			chart.hoverSeries = kdpoint.series;	
 
 		}
+		
 	},
 
 
