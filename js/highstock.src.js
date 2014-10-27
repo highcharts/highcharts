@@ -15781,11 +15781,6 @@ var PiePoint = extendClass(Point, {
 			}
 		});
 
-		// Make sure halo is hidden (#3391)
-		if (!vis) {
-			point.setState(NORMAL_STATE);
-		}
-
 		if (point.legendItem) {
 			chart.legend.colorizeItem(point, vis);
 		}
@@ -17455,7 +17450,7 @@ extend(Point.prototype, {
 		if (haloOptions && haloOptions.size) {
 			if (!halo) {
 				series.halo = halo = chart.renderer.path()
-					.add(series.seriesGroup);
+					.add(chart.seriesGroup);
 			}
 			halo.attr(extend({
 				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
