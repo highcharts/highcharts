@@ -568,8 +568,10 @@ function getMagnitude(num) {
  * @param {Number} magnitude
  * @param {Object} options
  */
-function normalizeTickInterval(interval, multiples, magnitude, allowDecimals) {
-	var normalized, i;
+function normalizeTickInterval(interval, multiples, magnitude, allowDecimals, preventExceed) {
+	var normalized, 
+		i,
+		retInterval = interval;
 
 	// round to a tenfold of 1, 2, 2.5 or 5
 	magnitude = pick(magnitude, 1);
@@ -591,16 +593,17 @@ function normalizeTickInterval(interval, multiples, magnitude, allowDecimals) {
 
 	// normalize the interval to the nearest multiple
 	for (i = 0; i < multiples.length; i++) {
-		interval = multiples[i];
-		if (normalized <= (multiples[i] + (multiples[i + 1] || multiples[i])) / 2) {
+		retInterval = multiples[i];
+		if ((preventExceed && retInterval * magnitude >= interval) || // only allow tick amounts smaller than natural
+			(!preventExceed && (normalized <= (multiples[i] + (multiples[i + 1] || multiples[i])) / 2))) {
 			break;
 		}
 	}
 
 	// multiply back to the correct magnitude
-	interval *= magnitude;
-
-	return interval;
+	retInterval *= magnitude;
+	
+	return retInterval;
 }
 
 
@@ -6283,7 +6286,6 @@ Axis.prototype = {
 		axis.labelEdge = [];
 		// Minor ticks
 		axis.minorTicks = {};
-		//axis.tickAmount = UNDEFINED;
 
 		// List of plotLines/Bands
 		axis.plotLinesAndBands = [];
@@ -6891,6 +6893,8 @@ Axis.prototype = {
 			keepTwoTicksOnly,
 			categories = axis.categories;
 
+		this.getTickAmount();
+
 		// linked axis gets the extremes from the parent axis
 		if (isLinked) {
 			axis.linkedParent = chart[axis.coll][options.linkedTo];
@@ -6959,6 +6963,7 @@ Axis.prototype = {
 			axis.tickInterval = axis.linkedParent.tickInterval;
 		} else {
 			axis.tickInterval = pick(
+				this.tickAmount ? ((axis.max - axis.min) / mathMax(this.tickAmount - 1, 1)) : undefined,
 				tickIntervalOption,
 				categories ? // for categoried axis, 1 is default, for linear axis use tickPix
 					1 :
@@ -7015,13 +7020,16 @@ Axis.prototype = {
 					getMagnitude(axis.tickInterval), 
 					// If the tick interval is between 1 and 5 and the axis max is in the order of
 					// thousands, chances are we are dealing with years. Don't allow decimals. #3363.
-					pick(options.allowDecimals, !(axis.tickInterval > 1 && axis.tickInterval < 5 && axis.max > 1000 && axis.max < 9999))
+					pick(options.allowDecimals, !(axis.tickInterval > 1 && axis.tickInterval < 5 && axis.max > 1000 && axis.max < 9999)),
+					!!this.tickAmount
 				);
 			}
 		}
 
 		// Prevent ticks from getting so close that we can't draw the labels
-		axis.tickInterval = axis.unsquish();
+		if (!this.tickAmount) {
+			axis.tickInterval = axis.unsquish();
+		}
 
 		// Set the tickmarkOffset
 		axis.tickmarkOffset = (categories && options.tickmarkPlacement === 'between' && 
@@ -7094,23 +7102,45 @@ Axis.prototype = {
 				axis.min -= singlePad;
 				axis.max += singlePad;
 			}
+
+			this.adjustTickAmount();
 		}
 	},
 
 	/**
-	 * Set the max ticks of either the x and y axis collection
+	 * Get the total tick amount, either from the setting, or by detecting if there are other
+	 * axes in the same pane requiring alignment.
 	 */
-	setMaxTicks: function () {
+	getTickAmount: function () {
+		var others = {}, // Whether there is another axis to pair with this one
+			hasOther,
+			tickAmount;
 
-		var chart = this.chart,
-			maxTicks = chart.maxTicks || {},
-			tickPositions = this.tickPositions,
-			key = this._maxTicksKey = [this.coll, this.pos, this.len].join('-');
+		if (!this.isLinked && !this.isDatetimeAxis) {
 
-		if (!this.isLinked && !this.isDatetimeAxis && tickPositions && tickPositions.length > (maxTicks[key] || 0) && this.options.alignTicks !== false) {
-			maxTicks[key] = tickPositions.length;
+			tickAmount = this.options.tickAmount; // docs
+
+			if (!tickAmount && this.chart.options.chart.alignTicks !== false && this.options.alignTicks !== false) {
+				// Check if there are multiple axes in the same pane
+				each(this.chart[this.coll], function (axis) {
+					var options = axis.options,
+						horiz = axis.horiz,
+						key = [horiz ? options.left : options.top, horiz ? options.width : options.height].join(',');
+					
+
+					if (others[key]) {
+						hasOther = true;
+					} else {
+						others[key] = 1;
+					}
+				});
+
+				if (hasOther) {
+					tickAmount = mathCeil(this.len / this.options.tickPixelInterval);
+				}
+			}
 		}
-		chart.maxTicks = maxTicks;
+		this.tickAmount = tickAmount;
 	},
 
 	/**
@@ -7118,38 +7148,19 @@ Axis.prototype = {
 	 * number of ticks in that group
 	 */
 	adjustTickAmount: function () {
-		var axis = this,
-			chart = axis.chart,
-			key = axis._maxTicksKey,
-			tickPositions = axis.tickPositions,
-			maxTicks = chart.maxTicks;
+		var tickInterval = this.tickInterval,
+			tickPositions = this.tickPositions,
+			tickAmount = this.tickAmount,
+			currentTickAmount = tickPositions && tickPositions.length;
 
-		if (!tickPositions) { 
-			return; //#3411 if there are no ticks, the amount should not be adjusted
-		}
-
-		if (maxTicks && maxTicks[key] && !axis.isDatetimeAxis && !axis.categories && !axis.isLinked &&
-				axis.options.alignTicks !== false && this.min !== UNDEFINED) {
-			var oldTickAmount = axis.tickAmount,
-				calculatedTickAmount = tickPositions.length,
-				tickAmount;
-
-			// set the axis-level tickAmount to use below
-			axis.tickAmount = tickAmount = maxTicks[key];
-
-			if (calculatedTickAmount < tickAmount) {
-				while (tickPositions.length < tickAmount) {
-					tickPositions.push(correctFloat(
-						tickPositions[tickPositions.length - 1] + axis.tickInterval
-					));
-				}
-				axis.transA *= (calculatedTickAmount - 1) / (tickAmount - 1);
-				axis.max = tickPositions[tickPositions.length - 1];
-
+		if (currentTickAmount < tickAmount) { // TODO: Check #3411
+			while (tickPositions.length < tickAmount) {
+				tickPositions.push(correctFloat(
+					tickPositions[tickPositions.length - 1] + tickInterval
+				));
 			}
-			if (defined(oldTickAmount) && tickAmount !== oldTickAmount) {
-				axis.isDirty = true;
-			}
+			this.transA *= (currentTickAmount - 1) / (tickAmount - 1);
+			this.max = tickPositions[tickPositions.length - 1];
 		}
 	},
 
@@ -7224,9 +7235,6 @@ Axis.prototype = {
 				}
 			}
 		}
-
-		// Set the maximum tick amount
-		axis.setMaxTicks();
 	},
 
 	/**
@@ -10580,18 +10588,6 @@ Chart.prototype = {
 	},
 
 	/**
-	 * Adjust all axes tick amounts
-	 */
-	adjustTickAmounts: function () {
-		if (this.options.chart.alignTicks !== false) {
-			each(this.axes, function (axis) {
-				axis.adjustTickAmount();
-			});
-		}
-		this.maxTicks = null;
-	},
-
-	/**
 	 * Redraw legend, axes or series based on updated data
 	 *
 	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
@@ -10681,8 +10677,6 @@ Chart.prototype = {
 					axis.setScale();
 				});
 			}
-
-			chart.adjustTickAmounts();
 		}
 
 		chart.getMargins(); // #3098
@@ -10814,8 +10808,6 @@ Chart.prototype = {
 		each(optionsArray, function (axisOptions) {
 			axis = new Axis(chart, axisOptions);
 		});
-
-		chart.adjustTickAmounts();
 	},
 
 
@@ -11687,10 +11679,8 @@ Chart.prototype = {
 			each(axes, function (axis) {
 				if ((axis.horiz && redoHorizontal) || (!axis.horiz && redoVertical)) {
 					axis.setTickPositions(true); // update to reflect the new margins
-					axis.setMaxTicks();
 				}
 			});
-			chart.adjustTickAmounts();
 			chart.getMargins(); // second pass to check for new labels
 		}
 

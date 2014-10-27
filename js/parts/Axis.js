@@ -257,7 +257,6 @@ Axis.prototype = {
 		axis.labelEdge = [];
 		// Minor ticks
 		axis.minorTicks = {};
-		//axis.tickAmount = UNDEFINED;
 
 		// List of plotLines/Bands
 		axis.plotLinesAndBands = [];
@@ -865,6 +864,8 @@ Axis.prototype = {
 			keepTwoTicksOnly,
 			categories = axis.categories;
 
+		this.getTickAmount();
+
 		// linked axis gets the extremes from the parent axis
 		if (isLinked) {
 			axis.linkedParent = chart[axis.coll][options.linkedTo];
@@ -933,6 +934,7 @@ Axis.prototype = {
 			axis.tickInterval = axis.linkedParent.tickInterval;
 		} else {
 			axis.tickInterval = pick(
+				this.tickAmount ? ((axis.max - axis.min) / mathMax(this.tickAmount - 1, 1)) : undefined,
 				tickIntervalOption,
 				categories ? // for categoried axis, 1 is default, for linear axis use tickPix
 					1 :
@@ -989,13 +991,16 @@ Axis.prototype = {
 					getMagnitude(axis.tickInterval), 
 					// If the tick interval is between 1 and 5 and the axis max is in the order of
 					// thousands, chances are we are dealing with years. Don't allow decimals. #3363.
-					pick(options.allowDecimals, !(axis.tickInterval > 1 && axis.tickInterval < 5 && axis.max > 1000 && axis.max < 9999))
+					pick(options.allowDecimals, !(axis.tickInterval > 1 && axis.tickInterval < 5 && axis.max > 1000 && axis.max < 9999)),
+					!!this.tickAmount
 				);
 			}
 		}
 
 		// Prevent ticks from getting so close that we can't draw the labels
-		axis.tickInterval = axis.unsquish();
+		if (!this.tickAmount) {
+			axis.tickInterval = axis.unsquish();
+		}
 
 		// Set the tickmarkOffset
 		axis.tickmarkOffset = (categories && options.tickmarkPlacement === 'between' && 
@@ -1068,23 +1073,45 @@ Axis.prototype = {
 				axis.min -= singlePad;
 				axis.max += singlePad;
 			}
+
+			this.adjustTickAmount();
 		}
 	},
 
 	/**
-	 * Set the max ticks of either the x and y axis collection
+	 * Get the total tick amount, either from the setting, or by detecting if there are other
+	 * axes in the same pane requiring alignment.
 	 */
-	setMaxTicks: function () {
+	getTickAmount: function () {
+		var others = {}, // Whether there is another axis to pair with this one
+			hasOther,
+			tickAmount;
 
-		var chart = this.chart,
-			maxTicks = chart.maxTicks || {},
-			tickPositions = this.tickPositions,
-			key = this._maxTicksKey = [this.coll, this.pos, this.len].join('-');
+		if (!this.isLinked && !this.isDatetimeAxis) {
 
-		if (!this.isLinked && !this.isDatetimeAxis && tickPositions && tickPositions.length > (maxTicks[key] || 0) && this.options.alignTicks !== false) {
-			maxTicks[key] = tickPositions.length;
+			tickAmount = this.options.tickAmount; // docs
+
+			if (!tickAmount && this.chart.options.chart.alignTicks !== false && this.options.alignTicks !== false) {
+				// Check if there are multiple axes in the same pane
+				each(this.chart[this.coll], function (axis) {
+					var options = axis.options,
+						horiz = axis.horiz,
+						key = [horiz ? options.left : options.top, horiz ? options.width : options.height].join(',');
+					
+
+					if (others[key]) {
+						hasOther = true;
+					} else {
+						others[key] = 1;
+					}
+				});
+
+				if (hasOther) {
+					tickAmount = mathCeil(this.len / this.options.tickPixelInterval);
+				}
+			}
 		}
-		chart.maxTicks = maxTicks;
+		this.tickAmount = tickAmount;
 	},
 
 	/**
@@ -1092,38 +1119,19 @@ Axis.prototype = {
 	 * number of ticks in that group
 	 */
 	adjustTickAmount: function () {
-		var axis = this,
-			chart = axis.chart,
-			key = axis._maxTicksKey,
-			tickPositions = axis.tickPositions,
-			maxTicks = chart.maxTicks;
+		var tickInterval = this.tickInterval,
+			tickPositions = this.tickPositions,
+			tickAmount = this.tickAmount,
+			currentTickAmount = tickPositions && tickPositions.length;
 
-		if (!tickPositions) { 
-			return; //#3411 if there are no ticks, the amount should not be adjusted
-		}
-
-		if (maxTicks && maxTicks[key] && !axis.isDatetimeAxis && !axis.categories && !axis.isLinked &&
-				axis.options.alignTicks !== false && this.min !== UNDEFINED) {
-			var oldTickAmount = axis.tickAmount,
-				calculatedTickAmount = tickPositions.length,
-				tickAmount;
-
-			// set the axis-level tickAmount to use below
-			axis.tickAmount = tickAmount = maxTicks[key];
-
-			if (calculatedTickAmount < tickAmount) {
-				while (tickPositions.length < tickAmount) {
-					tickPositions.push(correctFloat(
-						tickPositions[tickPositions.length - 1] + axis.tickInterval
-					));
-				}
-				axis.transA *= (calculatedTickAmount - 1) / (tickAmount - 1);
-				axis.max = tickPositions[tickPositions.length - 1];
-
+		if (currentTickAmount < tickAmount) { // TODO: Check #3411
+			while (tickPositions.length < tickAmount) {
+				tickPositions.push(correctFloat(
+					tickPositions[tickPositions.length - 1] + tickInterval
+				));
 			}
-			if (defined(oldTickAmount) && tickAmount !== oldTickAmount) {
-				axis.isDirty = true;
-			}
+			this.transA *= (currentTickAmount - 1) / (tickAmount - 1);
+			this.max = tickPositions[tickPositions.length - 1];
 		}
 	},
 
@@ -1198,9 +1206,6 @@ Axis.prototype = {
 				}
 			}
 		}
-
-		// Set the maximum tick amount
-		axis.setMaxTicks();
 	},
 
 	/**

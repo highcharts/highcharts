@@ -142,18 +142,6 @@ Chart.prototype = {
 	},
 
 	/**
-	 * Adjust all axes tick amounts
-	 */
-	adjustTickAmounts: function () {
-		if (this.options.chart.alignTicks !== false) {
-			each(this.axes, function (axis) {
-				axis.adjustTickAmount();
-			});
-		}
-		this.maxTicks = null;
-	},
-
-	/**
 	 * Redraw legend, axes or series based on updated data
 	 *
 	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
@@ -243,8 +231,6 @@ Chart.prototype = {
 					axis.setScale();
 				});
 			}
-
-			chart.adjustTickAmounts();
 		}
 
 		chart.getMargins(); // #3098
@@ -376,8 +362,6 @@ Chart.prototype = {
 		each(optionsArray, function (axisOptions) {
 			axis = new Axis(chart, axisOptions);
 		});
-
-		chart.adjustTickAmounts();
 	},
 
 
@@ -1249,10 +1233,8 @@ Chart.prototype = {
 			each(axes, function (axis) {
 				if ((axis.horiz && redoHorizontal) || (!axis.horiz && redoVertical)) {
 					axis.setTickPositions(true); // update to reflect the new margins
-					axis.setMaxTicks();
 				}
 			});
-			chart.adjustTickAmounts();
 			chart.getMargins(); // second pass to check for new labels
 		}
 

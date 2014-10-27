@@ -459,8 +459,10 @@ function getMagnitude(num) {
  * @param {Number} magnitude
  * @param {Object} options
  */
-function normalizeTickInterval(interval, multiples, magnitude, allowDecimals) {
-	var normalized, i;
+function normalizeTickInterval(interval, multiples, magnitude, allowDecimals, preventExceed) {
+	var normalized, 
+		i,
+		retInterval = interval;
 
 	// round to a tenfold of 1, 2, 2.5 or 5
 	magnitude = pick(magnitude, 1);
@@ -482,16 +484,17 @@ function normalizeTickInterval(interval, multiples, magnitude, allowDecimals) {
 
 	// normalize the interval to the nearest multiple
 	for (i = 0; i < multiples.length; i++) {
-		interval = multiples[i];
-		if (normalized <= (multiples[i] + (multiples[i + 1] || multiples[i])) / 2) {
+		retInterval = multiples[i];
+		if ((preventExceed && retInterval * magnitude >= interval) || // only allow tick amounts smaller than natural
+			(!preventExceed && (normalized <= (multiples[i] + (multiples[i + 1] || multiples[i])) / 2))) {
 			break;
 		}
 	}
 
 	// multiply back to the correct magnitude
-	interval *= magnitude;
-
-	return interval;
+	retInterval *= magnitude;
+	
+	return retInterval;
 }
 
 
