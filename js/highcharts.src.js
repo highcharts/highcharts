@@ -17769,6 +17769,7 @@ extend(Highcharts, {
 	arrayMax: arrayMax,
 	charts: charts,
 	dateFormat: dateFormat,
+	error: error,
 	format: format,
 	pathAnim: pathAnim,
 	getOptions: getOptions,

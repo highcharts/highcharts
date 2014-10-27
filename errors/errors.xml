@@ -97,4 +97,13 @@
 				syntax, use the Array syntax.</p> 
 		</description>
 	</error>
+	
+	<error id="23">
+		<title>Unsupported color format used for color interpolation</title>
+		<description>
+			<p>Highcharts supports two color formats primarily: hex (<code>#FFFFFF</code>) and rgba (<code>rgba(255,255,255,1)</code>. If any other format,
+			like 3-digit colors (<code>#FFF</code>) or named colors (<code>white</code>), are used in for example a heatmap, Highcharts will fail to interpolate.
+			We have chosen to preserve this limitation in order to keep the weight of the implementation at a minimum.</p> 
+		</description>
+	</error>
 </errors>
