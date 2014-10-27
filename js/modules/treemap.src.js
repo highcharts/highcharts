@@ -17,14 +17,6 @@
 		noop = function () { return; },
 		each = H.each;
 
-	defaultOptions.xAxis = merge(defaultOptions.xAxis, {
-		min: 0,
-		max: 100
-	});
-	defaultOptions.yAxis = merge(defaultOptions.yAxis, {
-		min: 0,
-		max: 100
-	});
 	// Define default options
 	plotOptions.treemap = merge(plotOptions.scatter, {
 		showInLegend: false,
@@ -689,6 +681,23 @@
 				.align();
 			}
 		},
-		drawLegendSymbol: H.LegendSymbolMixin.drawRectangle
+		drawLegendSymbol: H.LegendSymbolMixin.drawRectangle,
+		bindAxes: function () {
+			var treeAxis = {
+				endOnTick: false,
+				gridLineWidth: 0,
+				lineWidth: 0,
+				min: 0,
+				minPadding: 0,
+				max: 100,
+				maxPadding: 0,
+				startOnTick: false,
+				title: null,
+				tickPositions: []
+			};
+			H.Series.prototype.bindAxes.call(this);
+			H.extend(this.xAxis.options, treeAxis);
+			H.extend(this.yAxis.options, treeAxis);
+		}
 	}));
 }(Highcharts));
