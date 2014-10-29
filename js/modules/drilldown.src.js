@@ -112,7 +112,7 @@
 		each(oldSeries.chart.series, function (series) {
 			if (series.xAxis === xAxis) {
 				levelSeries.push(series);
-				levelSeriesOptions.push(series.userOptions);
+				levelSeriesOptions.push(series.options);
 				series.levelNumber = series.levelNumber || levelNumber; // #3182
 			}
 		});
@@ -120,7 +120,7 @@
 		// Add a record of properties for each drilldown level
 		level = {
 			levelNumber: levelNumber,
-			seriesOptions: oldSeries.userOptions,
+			seriesOptions: oldSeries.options,
 			levelSeriesOptions: levelSeriesOptions,
 			levelSeries: levelSeries,
 			shapeArgs: point.shapeArgs,
@@ -241,7 +241,7 @@
 			addSeries = function (seriesOptions) {
 				var addedSeries;
 				each(chartSeries, function (series) {
-					if (series.userOptions === seriesOptions) {
+					if (series.options === seriesOptions) {
 						addedSeries = series;
 					}
 				});
@@ -373,7 +373,7 @@
 			
 		if (!init) {
 			each(drilldownLevels, function (level) {
-				if (series.userOptions === level.lowerSeriesOptions) {
+				if (series.options === level.lowerSeriesOptions) {
 					animateFrom = level.shapeArgs;
 				}
 			});
