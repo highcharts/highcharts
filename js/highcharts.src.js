@@ -6251,6 +6251,7 @@ Axis.prototype = {
 		// allowDecimals: null,
 		// alternateGridColor: null,
 		// categories: [],
+		additionalTicks: false,
 		dateTimeLabelFormats: {
 			millisecond: '%H:%M:%S.%L',
 			second: '%H:%M:%S',
@@ -7260,6 +7261,12 @@ Axis.prototype = {
 
 			if (keepTwoTicksOnly) {
 				tickPositions.splice(1, tickPositions.length - 2);
+			}
+			
+			if (options.additionalTicks)
+			{
+				tickPositions = tickPositions.concat(options.additionalTicks);
+				tickPositions.sort(function sortNumber(a,b) {return a - b;});
 			}
 
 			axis.tickPositions = tickPositions;
