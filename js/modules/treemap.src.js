@@ -41,7 +41,9 @@
 		directionalChange: false,
 		states: {
 			hover: {
-				enabled: false
+				borderColor: '#000000',
+				brightness: 0.1,
+				shadow: false,
 			}
 		},
 		drillUpButton: {
@@ -76,6 +78,14 @@
 	seriesTypes.treemap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		type: 'treemap',
 		trackerGroups: ['group', 'dataLabelsGroup'],
+		pointClass: extendClass(H.Point, {
+			setState: function (state, move) {
+				H.Point.prototype.setState.call(this, state, move);
+				if (state === 'hover') {
+					this.graphic.toFront();
+				}
+			}
+		}),
 		handleLayout: function () {
 		var series = this,
 			tree = this.tree,
@@ -586,6 +596,7 @@
 				// If not a leaf, then remove fill
 				if (!point.isLeaf) {
 					attr.fill = 'none';
+					delete point.pointAttr.hover.fill;
 				}
 				point.pointAttr[''] = merge(point.pointAttr[''], attr);
 
