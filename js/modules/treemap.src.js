@@ -43,7 +43,7 @@
 			hover: {
 				borderColor: '#000000',
 				brightness: 0.1,
-				shadow: false,
+				shadow: false
 			}
 		},
 		drillUpButton: {
@@ -233,10 +233,10 @@
 				setPointValues = function (node, values, isLeaf) {
 						node.values = values;
 						point = series.points[node.i];
-						x1 = Math.round(xAxis.len - xAxis.translate(values.x, 0, 0, 0, 1));
-						x2 = Math.round(xAxis.len - xAxis.translate(values.x + values.width, 0, 0, 0, 1));
-						y1 = Math.round(yAxis.translate(values.y, 0, 1, 0, 1));
-						y2 = Math.round(yAxis.translate(values.y + values.height, 0, 1, 0, 1));
+						x1 = Math.round(xAxis.translate(values.x, 0, 0, 0, 1));
+						x2 = Math.round(xAxis.translate(values.x + values.width, 0, 0, 0, 1));
+						y1 = Math.round(yAxis.translate(values.y, 0, 0, 0, 1));
+						y2 = Math.round(yAxis.translate(values.y + values.height, 0, 0, 0, 1));
 					if (node.val > 0) {
 						point = series.points[node.i];
 						point.inDisplay = true;
