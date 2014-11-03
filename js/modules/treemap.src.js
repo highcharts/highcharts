@@ -81,8 +81,12 @@
 		pointClass: extendClass(H.Point, {
 			setState: function (state, move) {
 				H.Point.prototype.setState.call(this, state, move);
-				if (state === 'hover') {
+				if (state === 'hover' && !this._nS) {
+					this._nS = this.graphic.element.nextSibling;
 					this.graphic.toFront();
+				} else if (state !== 'hover' && this._nS) {
+					this._nS.parentElement.insertBefore(this.graphic.element, this._nS);
+					delete this._nS;
 				}
 			}
 		}),
