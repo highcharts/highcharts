@@ -13,38 +13,68 @@ $(function () {
      */
     (function (Highcharts) {
 
+        // Paths for the canvg library and its dependency. These files are downloaded
+        // on requesting the first chart export. In order to avoid the latency on 
+        // downloading, the files can be preloaded simply by adding them to a script
+        // tag in your web page.
+        var rgbcolorPath = 'http://canvg.googlecode.com/svn/trunk/rgbcolor.js',
+            canvgPath = 'http://canvg.googlecode.com/svn/trunk/canvg.js';
+
         /**
          * Add a new method to the Chart object to invoice a local download
          */
         Highcharts.Chart.prototype.exportChartLocal = function (options) {
 
-            var svg = this.getSVG(), // Get the SVG
-                canvas = document.createElement('canvas'), // Create an empty canvas
+            var chart = this,
+                svg = this.getSVG(), // Get the SVG
+                canvas,
                 a,
                 href,
-                download;
-
-            // Render the SVG on the canvas
-            window.canvg(canvas, svg);
+                extension,
+                download = function () {
+                    a = document.createElement('a');
+                    a.href = href;
+                    a.download = 'chart.' + extension;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                },
+                prepareCanvas = function () {
+                    canvas = document.createElement('canvas'), // Create an empty canvas
+                    // Render the SVG on the canvas
+                    window.canvg(canvas, svg);
+                
+                    href = canvas.toDataURL('image/png');
+                    extension = 'png';
+                };
 
             // Add an anchor and apply the download to the button
             if (options && options.type === 'image/svg+xml') {
                 href = 'data:' + options.type + ',' + svg;
-                download = 'chart.svg';
+                extension = 'svg';
+                download();
 
             } else {
-                href = canvas.toDataURL('image/png');
-                download = 'chart.png';
+
+                // It's included in the page or preloaded, go ahead
+                if (window.canvg) {
+                    prepareCanvas();
+                    download();
+
+                // We need to load canvg before continuing
+                } else {
+                    this.showLoading();
+                    HighchartsAdapter.getScript(rgbcolorPath);
+                    HighchartsAdapter.getScript(canvgPath, function () {
+                        chart.hideLoading();
+                        prepareCanvas();
+                        download();
+                    });
+                }
             }
 
-            a = document.createElement('a');
-            a.href = href;
-            a.download = download;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-
         }
+
 
         // Extend the default options to use the local exporter logic
         Highcharts.getOptions().exporting.buttons.contextButton.menuItems = [{
