@@ -679,11 +679,14 @@
 		},
 		showDrillUpButton: function (name) {
 			var series = this,
-				backText = 'Back to: ' + (name || 'Top'),
+				backText = (name || '< Back'),
 				buttonOptions = series.options.drillUpButton,
 				attr,
 				states;
 
+			if (buttonOptions.text) {
+				backText = buttonOptions.text;
+			}
 			if (!this.drillUpButton) {
 				attr = buttonOptions.theme;
 				states = attr && attr.states;
