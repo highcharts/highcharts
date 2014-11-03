@@ -1,4 +1,7 @@
 
+// The vector-effect attribute is not supported in IE <= 11 (at least), so we need 
+// diffent logic (#3218)
+var supportsVectorEffect = document.documentElement.style.vectorEffect !== undefined;
 
 /**
  * Extend the default options with map options
@@ -440,10 +443,11 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		
 				point.shapeType = 'path';
 				point.shapeArgs = {
-					//d: display ? series.translatePath(point.path) : ''
-					d: series.translatePath(point.path),
-					'vector-effect': 'non-scaling-stroke'
+					d: series.translatePath(point.path)
 				};
+				if (supportsVectorEffect) {
+					point.shapeArgs['vector-effect'] = 'non-scaling-stroke';
+				}
 			}
 		});
 		
@@ -493,6 +497,18 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				});
 			}
 
+			// If vector-effect is not supported, we set the stroke-width on the group element
+			// and let all point graphics inherit. That way we don't have to iterate over all 
+			// points to update the stroke-width on zooming.
+			if (!supportsVectorEffect) {
+				each(series.points, function (point) {
+					var attr = point.pointAttr[''];
+					if (attr['stroke-width'] === series.pointAttr['']['stroke-width']) {
+						attr['stroke-width'] = 'inherit';
+					}
+				});
+			}
+
 			// Draw them in transformGroup
 			series.group = series.transformGroup;
 			seriesTypes.column.prototype.drawPoints.apply(series);
@@ -506,6 +522,10 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					}
 					if (point.properties && point.properties['hc-key']) {
 						point.graphic.addClass('highcharts-key-' + point.properties['hc-key'].toLowerCase());
+					}
+
+					if (!supportsVectorEffect) {
+						point.graphic['stroke-widthSetter'] = noop;
 					}
 				}
 			});
@@ -541,6 +561,10 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				scaleY: scaleY
 			});
 
+		}
+
+		if (!supportsVectorEffect) {
+			series.group.element.setAttribute('stroke-width', series.options.borderWidth / (scaleX || 1));
 		}
 
 		this.drawMapDataLabels();
