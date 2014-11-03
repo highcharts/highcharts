@@ -81,12 +81,16 @@
 		pointClass: extendClass(H.Point, {
 			setState: function (state, move) {
 				H.Point.prototype.setState.call(this, state, move);
-				if (state === 'hover' && !this._nS) {
-					this._nS = this.graphic.element.nextSibling;
-					this.graphic.toFront();
-				} else if (state !== 'hover' && this._nS) {
-					this._nS.parentElement.insertBefore(this.graphic.element, this._nS);
-					delete this._nS;
+				if (this.series.chart.renderer.isSVG) {
+					if (state === 'hover' && !this._nS) {
+						this._nS = this.graphic.element.nextSibling;
+						this.graphic.toFront();
+					} else if (state !== 'hover' && this._nS) {
+						if (this._nS.parentNode) {
+							this._nS.parentNode.insertBefore(this.graphic.element, this._nS);
+						}
+						delete this._nS;
+					}					
 				}
 			}
 		}),
@@ -597,6 +601,7 @@
 				attr.dashstyle = point.borderDashStyle || attr.dashstyle;
 				attr.fill = point.color || attr.fill;
 				attr.zIndex = (1000 - point.level);
+				point.pointAttr.hover.zIndex = 1001;
 				// If not a leaf, then remove fill
 				if (!point.isLeaf) {
 					attr.fill = 'none';
