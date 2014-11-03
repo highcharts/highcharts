@@ -572,7 +572,16 @@
 			});
 			H.Series.prototype.drawDataLabels.call(this);
 		},
-		alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
+		alignDataLabel: function (point, dataLabel) {
+			var bBox,
+				shapeArgs = point.shapeArgs;
+			seriesTypes.column.prototype.alignDataLabel.apply(this, [].slice.call(arguments));
+			bBox = dataLabel.getBBox();
+			if (bBox.height > shapeArgs.height || bBox.width > shapeArgs.width) {
+				dataLabel.attr({ y: -999 });
+				dataLabel.placed = false; // don't animate back in
+			}
+		},
 		drawPoints: function () {
 			var series = this,
 				points = series.points,
