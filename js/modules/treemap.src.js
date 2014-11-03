@@ -611,14 +611,15 @@
 						valid = true;
 					while (valid) {
 						parent = series.nodeMap[drillNode.parent];
-						valid = (parent.parent !== null) && (points[parent.i].inDisplay);
+						valid = (parent.parent !== null) && (parent.id !== series.rootNode);
 						if (valid) {
 							drillNode = parent;
 						}
 					}
+					H.removeEvent(point, 'click');
+					point.graphic.css({ cursor: 'default' });
 					// If it is not the same point, then drill to it
 					if (drillNode.id !== point.id) {
-						H.removeEvent(point, 'click');
 						H.addEvent(point, 'click', function () {
 							series.drillToNode(drillNode.id);
 							series.showDrillUpButton((parent.name || parent.id));
