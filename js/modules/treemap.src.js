@@ -599,16 +599,34 @@
 					delete point.pointAttr.hover.fill;
 				}
 				point.pointAttr[''] = merge(point.pointAttr[''], attr);
-
-				if (series.options.allowDrillToNode) {
-					H.removeEvent(point, 'click');
-					H.addEvent(point, 'click', function () {
-						series.drillCloser(point);
-					});
-				}
 			});
 			// Call standard drawPoints
 			seriesTypes.column.prototype.drawPoints.call(this);
+
+			// Set click events on points 
+			if (series.options.allowDrillToNode) {
+				each(points, function (point) {
+					var drillNode = series.nodeMap[point.id],
+						parent,
+						valid = true;
+					while (valid) {
+						parent = series.nodeMap[drillNode.parent];
+						valid = (parent.parent !== null) && (points[parent.i].inDisplay);
+						if (valid) {
+							drillNode = parent;
+						}
+					}
+					// If it is not the same point, then drill to it
+					if (drillNode.id !== point.id) {
+						H.removeEvent(point, 'click');
+						H.addEvent(point, 'click', function () {
+							series.drillToNode(drillNode.id);
+							series.showDrillUpButton((parent.name || parent.id));
+						});
+						point.graphic.css({ cursor: 'pointer' });
+					}
+				});
+			}
 		},
 		drillCloser: function (point) {
 			var points = this.points,
@@ -636,6 +654,8 @@
 				node = this.nodeMap[this.rootNode];
 				if (node.parent !== null) {
 					drillPoint = this.nodeMap[node.parent];
+				} else {
+					drillPoint = this.nodeMap[""];
 				}
 			}
 
