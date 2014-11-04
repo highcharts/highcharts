@@ -11178,7 +11178,7 @@ Chart.prototype = {
 	getAxisMargins: function () {
 
 		var chart = this,
-			axisOffset = chart.axisOffset,
+			axisOffset = chart.axisOffset = [0, 0, 0, 0], // top, right, bottom, left
 			margin = chart.margin;
 		
 		// pre-render axes to get labels offset width
@@ -11406,7 +11406,6 @@ Chart.prototype = {
 		chart.marginRight = pick(margin[1], spacing[1]);
 		chart.marginBottom = pick(margin[2], spacing[2]);
 		chart.plotLeft = pick(margin[3], spacing[3]);
-		chart.axisOffset = [0, 0, 0, 0]; // top, right, bottom, left
 		chart.clipOffset = [0, 0, 0, 0];
 	},
 
