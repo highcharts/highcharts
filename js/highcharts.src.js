@@ -14021,7 +14021,7 @@ Series.prototype = {
 		);
 
 		// initiate the animation
-		if (animDuration) {
+		if (animDuration && series.animate) {
 			series.animate(true);
 		}
 
