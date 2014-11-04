@@ -8,17 +8,31 @@ $(function () {
      * supported. See http://caniuse.com/#feat=download for current uptake.
      *
      * TODO:
-     * - Lazy load canvg to lower initial page weight.
      * - Add crossbrowser support by utilizing the Downloadify Flash library?
+     * - Option to fall back to online export server on missing support. Display human 
+     *   readable error if not.
      */
     (function (Highcharts) {
 
-        // Paths for the canvg library and its dependency. These files are downloaded
-        // on requesting the first chart export. In order to avoid the latency on 
-        // downloading, the files can be preloaded simply by adding them to a script
-        // tag in your web page.
-        var rgbcolorPath = 'http://canvg.googlecode.com/svn/trunk/rgbcolor.js',
-            canvgPath = 'http://canvg.googlecode.com/svn/trunk/canvg.js';
+        // Dummy object so we can reuse our canvas-tools.js without errors
+        Highcharts.CanVGRenderer = {};
+
+        /**
+         * Downloads a script and executes a callback when done.
+         * @param {String} scriptLocation
+         * @param {Function} callback
+         */
+        function getScript(scriptLocation, callback) {
+            // We cannot assume that Assets class from mootools-more is available so instead insert a script tag to download script.
+            var head = document.getElementsByTagName('head')[0],
+                script = document.createElement('script');
+
+            script.type = 'text/javascript';
+            script.src = scriptLocation;
+            script.onload = callback;
+
+            head.appendChild(script);
+        }
 
         /**
          * Add a new method to the Chart object to invoice a local download
@@ -40,10 +54,9 @@ $(function () {
                     a.remove();
                 },
                 prepareCanvas = function () {
-                    canvas = document.createElement('canvas'), // Create an empty canvas
-                    // Render the SVG on the canvas
-                    window.canvg(canvas, svg);
-                
+                    canvas = document.createElement('canvas'); // Create an empty canvas
+                    window.canvg(canvas, svg); // Render the SVG on the canvas
+
                     href = canvas.toDataURL('image/png');
                     extension = 'png';
                 };
@@ -64,16 +77,14 @@ $(function () {
                 // We need to load canvg before continuing
                 } else {
                     this.showLoading();
-                    HighchartsAdapter.getScript(rgbcolorPath);
-                    HighchartsAdapter.getScript(canvgPath, function () {
+                    getScript(Highcharts.getOptions().global.canvasToolsURL, function () {
                         chart.hideLoading();
                         prepareCanvas();
                         download();
                     });
                 }
             }
-
-        }
+        };
 
 
         // Extend the default options to use the local exporter logic
@@ -110,13 +121,13 @@ $(function () {
         subtitle: {
             text: 'Click the button to download as PNG'
         },
-        
+
         chart: {
             type: 'area'
         },
 
         xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
 
@@ -126,5 +137,4 @@ $(function () {
 
     });
 
-});  
-    
+});
