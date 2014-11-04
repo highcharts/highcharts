@@ -13236,9 +13236,10 @@ Series.prototype = {
 
 			// Set the the plotY value, reset it for redraws
 			point.plotY = (typeof yValue === 'number' && yValue !== Infinity) ?
-				//mathRound(yAxis.translate(yValue, 0, 1, 0, 1) * 10) / 10 : // Math.round fixes #591
 				yAxis.translate(yValue, 0, 1, 0, 1) :
 				UNDEFINED;
+			point.isInside = point.plotY !== UNDEFINED && point.plotY >= 0 && point.plotY <= yAxis.len; // #3519
+
 
 			// Set client related positions for mouse tracking
 			point.clientX = dynamicallyPlaced ? xAxis.translate(xValue, 0, 0, 0, 1) : point.plotX; // #1514
@@ -13398,7 +13399,7 @@ Series.prototype = {
 				pointMarkerOptions = point.marker || {};
 				hasPointMarker = !!point.marker;
 				enabled = (globallyEnabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
-				isInside = chart.isInsidePlot(mathRound(plotX), plotY, chart.inverted); // #1858
+				isInside = point.isInside;
 
 				// only draw the point if y is defined
 				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
@@ -20027,8 +20028,8 @@ Scroller.prototype = {
 				M,
 				scrollerLeft, outlineTop, // left
 				L,
-				navigatorLeft + zoomedMin + halfOutline, outlineTop, // upper left of zoomed range
-				navigatorLeft + zoomedMin + halfOutline, outlineTop + outlineHeight, // lower left of z.r.
+				navigatorLeft + zoomedMin - halfOutline, outlineTop, // upper left of zoomed range
+				navigatorLeft + zoomedMin - halfOutline, outlineTop + outlineHeight, // lower left of z.r.
 				L,
 				navigatorLeft + zoomedMax - halfOutline, outlineTop + outlineHeight, // lower right of z.r.
 				L,
