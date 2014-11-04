@@ -16163,7 +16163,7 @@ Series.prototype.drawDataLabels = function () {
 				isNew = true;
 
 			// Determine if each data label is enabled
-			pointOptions = point.options && point.options.dataLabels;
+			pointOptions = point.dlOptions || (point.options && point.options.dataLabels); // dlOptions is used in treemaps
 			enabled = pick(pointOptions && pointOptions.enabled, generalOptions.enabled); // #2282
 
 

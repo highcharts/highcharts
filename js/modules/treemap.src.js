@@ -15,7 +15,8 @@
 		defaultOptions = H.getOptions(),
 		plotOptions = defaultOptions.plotOptions,
 		noop = function () { return; },
-		each = H.each;
+		each = H.each,
+		Color = H.Color;
 
 	// Define default options
 	plotOptions.treemap = merge(plotOptions.scatter, {
@@ -230,7 +231,8 @@
 				xAxis = series.xAxis,
 				yAxis = series.yAxis,				
 				algorithm = options.layoutAlgorithm,
-				directionalChange = options.directionalChange,							
+				directionalChange = options.directionalChange,
+				levelRoot = this.nodeMap[this.rootNode].level,							
 				i = 0,
 				level,
 				point,
@@ -249,7 +251,7 @@
 						point = series.points[node.i];
 						point.inDisplay = true;
 						point.isLeaf = isLeaf;
-						point.level = node.level;
+						point.value = node.val;
 						// Set point values
 						point.shapeType = 'rect';
 						point.shapeArgs = {
@@ -263,8 +265,8 @@
 					}
 				};
 			// If layoutAlgorithm is set for the level of the children, then default is overwritten
-			if (this.levelMap[node.level + 1]) {
-				level = this.levelMap[node.level + 1];
+			if (this.levelMap[node.level - levelRoot + 1]) {
+				level = this.levelMap[node.level - levelRoot + 1];
 				if (level.layoutAlgorithm && series[level.layoutAlgorithm]) {
 					algorithm = level.layoutAlgorithm;
 				}
@@ -272,7 +274,7 @@
 			childrenValues = series[algorithm](area, node.children);
 			each(node.children, function (child) {
 				point = series.points[child.i];
-				point.level = child.level;
+				point.level = child.level - levelRoot;
 				childValues = childrenValues[i];
 				childValues.val = child.val;
 				childValues.direction = area.direction;
@@ -555,20 +557,24 @@
 				dataLabels;
 			each(points, function (point) {
 				level = series.levelMap[point.level];
-				options = series.options.dataLabels;
-				// If not a leaf, then label should be disabled as default
-				if (!point.isLeaf) {
-					options = merge(options, {enabled: false});
-				}
-				if (level) {
-					dataLabels = level.dataLabels;
-					if (dataLabels) {
-						options = merge(options, dataLabels);
-						series._hasPointLabels = true;
+				if (!point.isLeaf || level) {
+					options = undefined;
+					// If not a leaf, then label should be disabled as default
+					if (!point.isLeaf) {
+						options = {enabled: false};
 					}
+					if (level) {
+						dataLabels = level.dataLabels;
+						if (dataLabels) {
+							options = merge(options, dataLabels);
+							series._hasPointLabels = true;
+						}
+					}
+					options = merge(options, point.options.dataLabels);
+					point.dlOptions = options;
+				} else {
+					delete point.dlOptions;
 				}
-				options = merge(options, point.options.dataLabels);
-				point.options.dataLabels = options;
 			});
 			H.Series.prototype.drawDataLabels.call(this);
 		},
@@ -613,6 +619,14 @@
 				point.pointAttr.hover.zIndex = 1001;
 				// If not a leaf, then remove fill
 				if (!point.isLeaf) {
+					if (seriesOptions.allowDrillToNode) {
+						attr.fill = Color(point.color || attr.fill).setOpacity(0.15).get();
+					} else {
+						attr.fill = 'none';
+						delete point.pointAttr.hover.fill;
+					}
+				}
+				if (point.id === series.rootNode) {
 					attr.fill = 'none';
 					delete point.pointAttr.hover.fill;
 				}
@@ -622,27 +636,20 @@
 			seriesTypes.column.prototype.drawPoints.call(this);
 
 			// Set click events on points 
-			if (series.options.allowDrillToNode) {
+			if (seriesOptions.allowDrillToNode) {
 				each(points, function (point) {
-					var drillNode = series.nodeMap[point.id],
-						parent,
-						valid = true;
-					while (valid) {
-						parent = series.nodeMap[drillNode.parent];
-						valid = (parent.parent !== null) && (parent.id !== series.rootNode);
-						if (valid) {
-							drillNode = parent;
-						}
-					}
 					H.removeEvent(point, 'click');
-					point.graphic.css({ cursor: 'default' });
-					// If it is not the same point, then drill to it
-					if (drillNode.id !== point.id) {
+					if (point.graphic) {
+						point.graphic.css({ cursor: 'default' });
+					}
+					if (point.level === 1 && !point.isLeaf) {
+						if (point.graphic) {
+							point.graphic.css({ cursor: 'pointer' });
+						}
 						H.addEvent(point, 'click', function () {
-							series.drillToNode(drillNode.id);
-							series.showDrillUpButton((parent.name || parent.id));
+							series.drillToNode(point.id);
+							series.showDrillUpButton(series.nodeMap[point.id].parent);
 						});
-						point.graphic.css({ cursor: 'pointer' });
 					}
 				});
 			}
