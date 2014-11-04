@@ -23,7 +23,6 @@ $(function () {
          * @param {Function} callback
          */
         function getScript(scriptLocation, callback) {
-            // We cannot assume that Assets class from mootools-more is available so instead insert a script tag to download script.
             var head = document.getElementsByTagName('head')[0],
                 script = document.createElement('script');
 
