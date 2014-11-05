@@ -12166,7 +12166,7 @@ var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
 				// i == 3: innerSize, relative to size
 				[plotWidth, plotHeight, smallestSize, positions[2]][i] *
 					pInt(value) / 100 :
-				value) + (handleSlicingRoom ? slicingRoom : 0);
+				pInt(value)) + (handleSlicingRoom ? slicingRoom : 0);
 		}
 		return positions;
 	}
