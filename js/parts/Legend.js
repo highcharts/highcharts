@@ -138,6 +138,16 @@ Legend.prototype = {
 	},
 
 	/**
+	 * Destroy all items.
+	 */
+	clearItems: function () {
+		var legend = this;
+		each(legend.getAllItems(), function (item) {
+			legend.destroyItem(item); 
+		});		
+	},
+
+	/**
 	 * Destroys the legend.
 	 */
 	destroy: function () {

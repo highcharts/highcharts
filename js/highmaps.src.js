@@ -9583,6 +9583,16 @@ Legend.prototype = {
 	},
 
 	/**
+	 * Destroy all items.
+	 */
+	clearItems: function () {
+		var legend = this;
+		each(legend.getAllItems(), function (item) {
+			legend.destroyItem(item); 
+		});		
+	},
+
+	/**
 	 * Destroys the legend.
 	 */
 	destroy: function () {
@@ -13729,7 +13739,8 @@ extend(Point.prototype, {
 			}
 
 			if (seriesOptions.legendType === 'point') { // #1831, #1885
-				chart.legend.destroyItem(point);
+				series.updateTotals();
+				chart.legend.clearItems();
 			}
 			if (redraw) {
 				chart.redraw(animation);
