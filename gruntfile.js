@@ -45,7 +45,8 @@ module.exports = function(grunt) {
                         'location',
                         'clearTimeout',
                         'confirm',
-                        'hs'
+                        'hs',
+                        'moment'
                     ]
                 },
                 options: {
