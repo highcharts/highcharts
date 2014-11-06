@@ -85,6 +85,7 @@ var UNDEFINED,
 	Date,  // Allow using a different Date class
 	makeTime,
 	timezoneOffset,
+	getTimezoneOffset,
 	getMinutes,
 	getHours,
 	getDay,
@@ -392,7 +393,7 @@ dateFormat = function (format, timestamp, capitalize) {
 	}
 	format = pick(format, '%Y-%m-%d %H:%M:%S');
 
-	var date = new Date(timestamp - timezoneOffset),
+	var date = new Date(timestamp - getTZOffset(timestamp)),
 		key, // used in for constuct below
 		// get the basic time values
 		hours = date[getHours](),
@@ -1588,17 +1589,22 @@ setTimeMethods();
  * local time or UTC (default).
  */
 function setTimeMethods() {
-	var useUTC = defaultOptions.global.useUTC,
+	var globalOptions = defaultOptions.global,
+		useUTC = globalOptions.useUTC,
 		GET = useUTC ? 'getUTC' : 'get',
 		SET = useUTC ? 'setUTC' : 'set';
 
 
-	Date = defaultOptions.global.Date || window.Date;
-	timezoneOffset = ((useUTC && defaultOptions.global.timezoneOffset) || 0) * 60000;
+	Date = globalOptions.Date || window.Date;
+	timezoneOffset = useUTC && globalOptions.timezoneOffset;
+	getTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
 	makeTime = function (year, month, date, hours, minutes, seconds) {
-		return useUTC ?
-			Date.UTC.apply(0, arguments) + timezoneOffset : // #3500
-			new Date(
+		var d;
+		if (useUTC) {
+			d = Date.UTC.apply(0, arguments);
+			d += getTZOffset(d);
+		} else {
+			d = new Date(
 				year,
 				month,
 				pick(date, 1),
@@ -1606,6 +1612,8 @@ function setTimeMethods() {
 				pick(minutes, 0),
 				pick(seconds, 0)
 			).getTime();
+		}
+		return d;
 	};
 	getMinutes =  GET + 'Minutes';
 	getHours =    GET + 'Hours';
@@ -1619,6 +1627,10 @@ function setTimeMethods() {
 	setMonth =    SET + 'Month';
 	setFullYear = SET + 'FullYear';
 
+}
+
+function getTZOffset(timestamp) {
+	return ((getTimezoneOffset && getTimezoneOffset(timestamp)) || timezoneOffset || 0) * 60000;
 }
 
 /**
@@ -8215,7 +8227,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		higherRanks = {},
 		useUTC = defaultOptions.global.useUTC,
 		minYear, // used in months and years as a basis for Date.UTC()
-		minDate = new Date(min - timezoneOffset),
+		minDate = new Date(min - getTZOffset(min)),
 		interval = normalizedInterval.unitRange,
 		count = normalizedInterval.count;
 
@@ -8262,15 +8274,16 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 	
 		// get tick positions
 		i = 1;
-		if (timezoneOffset) {
-			minDate = new Date(minDate.getTime() + timezoneOffset);
+		if (timezoneOffset || getTimezoneOffset) {
+			minDate = minDate.getTime();
+			minDate = new Date(minDate + getTZOffset(minDate));
 		}
 		minYear = minDate[getFullYear]();
 		var time = minDate.getTime(),
 			minMonth = minDate[getMonth](),
 			minDateDate = minDate[getDate](),
 			localTimezoneOffset = (timeUnits.day + 
-					(useUTC ? timezoneOffset : minDate.getTimezoneOffset() * 60 * 1000)
+					(useUTC ? getTZOffset(minDate) : minDate.getTimezoneOffset() * 60 * 1000)
 				) % timeUnits.day; // #950, #3359
 	
 		// iterate and add tick positions at appropriate values
@@ -17850,7 +17863,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 
 		// Compare points two by two
 		for (start = 1; start < end; start++) {
-			if (new Date(groupPositions[start] - timezoneOffset)[getDate]() !== new Date(groupPositions[start - 1] - timezoneOffset)[getDate]()) {
+			if (dateFormat('%d', groupPositions[start]) !== dateFormat('%d', groupPositions[start - 1])) {
 				higherRanks[groupPositions[start]] = 'day';
 				hasCrossedHigherRank = true;
 			}
