@@ -7,7 +7,7 @@
  * License: www.highcharts.com/license
  */
 
-/*global Highcharts*/
+/*global Highcharts, HighchartsAdapter*/
 (function (H) {
 	"use strict";
 
@@ -136,6 +136,15 @@
 		}
 	};
 
+	/**
+	 * Handle animation of the color attributes directly
+	 */
+	each(['fill', 'stroke'], function (prop) {
+		HighchartsAdapter.addAnimSetter(prop, function (fx) {
+			fx.elem.attr(prop, colorAxisMethods.tweenColors(H.Color(fx.start), H.Color(fx.end), fx.pos));
+		});
+	});
+
 	// The series prototype
 	H.seriesTypes.solidgauge = H.extendClass(H.seriesTypes.gauge, {
 		type: 'solidgauge',
@@ -162,12 +171,12 @@
 				yAxis = series.yAxis,
 				center = yAxis.center,
 				options = series.options,
+				radius = series.radius = (pInt(pick(options.radius, 100)) * center[2]) / 200,
 				renderer = series.chart.renderer;
 
 			H.each(series.points, function (point) {
 				var graphic = point.graphic,
 					rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true),
-					radius = (pInt(pick(options.radius, 100)) * center[2]) / 200,
 					innerRadius = (pInt(pick(options.innerRadius, 60)) * center[2]) / 200,
 					shapeArgs,
 					d,
@@ -194,27 +203,19 @@
 					maxAngle = minAngle + 2 * Math.PI;
 				}
 
-				shapeArgs = {
+				point.shapeArgs = shapeArgs = {
 					x: center[0],
 					y: center[1],
 					r: radius,
 					innerR: innerRadius,
 					start: minAngle,
-					end: maxAngle 
+					end: maxAngle,
+					fill: toColor
 				};
 
 				if (graphic) {
 					d = shapeArgs.d;
-
-					/*jslint unparam: true*/
-					graphic.attr({
-						fill: point.color
-					}).animate(shapeArgs, {
-						step: function (value, fx) {
-							graphic.attr('fill', colorAxisMethods.tweenColors(H.Color(fromColor), H.Color(toColor), fx.pos));
-						}
-					});
-					/*jslint unparam: false*/
+					graphic.animate(shapeArgs);
 					shapeArgs.d = d; // animate alters it
 				} else {					
 					point.graphic = renderer.arc(shapeArgs)
@@ -228,7 +229,18 @@
 				}
 			});
 		},
-		animate: null
+
+		/**
+		 * Extend the pie slice animation by animating from start angle and up
+		 */
+		animate: function (init) {
+
+			this.center = this.yAxis.center;
+			this.center[3] = 2 * this.radius;
+			this.startAngleRad = this.yAxis.startAngleRad;
+
+			H.seriesTypes.pie.prototype.animate.call(this, init);
+		}
 	});
 
 }(Highcharts));
