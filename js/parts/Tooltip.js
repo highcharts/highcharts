@@ -136,6 +136,7 @@ Tooltip.prototype = {
 			}
 
 			this.chart.hoverPoints = null;
+			this.chart.hoverSeries = null;
 		}
 	},
 	

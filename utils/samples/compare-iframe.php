@@ -217,7 +217,8 @@ function getCompareTooltips() {
 								marker: {
 									lineWidth: 1
 								},
-								borderWidth: 1
+								borderWidth: 1,
+								kdWait: true
 							}
 						}
 							
@@ -227,8 +228,7 @@ function getCompareTooltips() {
 					//Highcharts.wrap(Highcharts, 'Chart', tryToRun);
 					//Highcharts.wrap(Highcharts, 'StockChart', tryToRun);
 					//Highcharts.wrap(Highcharts, 'Map', tryToRun);
-					Highcharts.wrap(Highcharts.Chart.prototype, 'init', tryToRun);
-
+					Highcharts.wrap(Highcharts.Chart.prototype, 'init', tryToRun);					
 
 					<?php if (getCompareTooltips()) : ?>
 					// Start with tooltip open 
@@ -242,12 +242,12 @@ function getCompareTooltips() {
 						}
 					});
 					<?php endif ?>
-
+					
 					<?php if (file_exists("$path/test.js")) : ?>
 					<?php include("$path/test.js"); ?>
 					Highcharts.Chart.prototype.callbacks.push(function (chart) {
 						try {
-							setTimeout(test(chart));
+							test(chart);
 						} catch (e) {
 							e = 'ERROR in test.js (<?php echo $_GET['which'] ?> frame): ' + e.message;
 							console.error(e);

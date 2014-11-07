@@ -177,15 +177,16 @@ Pointer.prototype = {
 		each(chart.axes, function (axis) {
 			axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
 		});		
-
 		// Without a closest point there is no sense to continue
 		if (!kdpoint) { return; }
-
+		
 		// Separate tooltip and general mouse events
 		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
+
 		//if (hoverSeries && hoverSeries.tracker) { // #2584, #2830, #2889, #3258
 			// Tooltip
-			if (tooltip && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
+
+			if (tooltip) { // && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
 				// Draw tooltip if necessary
 				if (shared && !kdpoint.series.noSharedTooltip) {
 					i = kdpoints.length;
@@ -210,7 +211,7 @@ Pointer.prototype = {
 			anchor = tooltip.getAnchor([{}], e);
 			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });			
 		}
-
+		/*
 		// Hover Series
 		if (kdpoint !== hoverPoint) {
 			// set new hoverPoint and hoverSeries
@@ -218,6 +219,7 @@ Pointer.prototype = {
 			chart.hoverSeries = kdpoint.series;	
 
 		}
+		*/
 		
 	},
 

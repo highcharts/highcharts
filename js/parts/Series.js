@@ -631,9 +631,6 @@ Series.prototype = {
 
 		series.data = data;
 		series.points = points;
-
-		
-		series.buildKDTree();
 	},
 
 	/**
@@ -1693,9 +1690,13 @@ Series.prototype = {
 		}
 
 		tree = null;
-		setTimeout(function () {
-			series.kdTree = _kdtree(series.points, dimensions, dimensions);		
-		});
+		if (this.options.kdWait) {
+			series.kdTree = _kdtree(series.points, dimensions, dimensions);	
+		} else {
+			setTimeout(function () {
+				series.kdTree = _kdtree(series.points, dimensions, dimensions);		
+			});
+		}
 	},
 
 	searchKDTree: function (point) {
@@ -1747,6 +1748,10 @@ Series.prototype = {
 				}
 			}
 			return ret;
+		}
+
+		if (!this.kdTree) {
+			this.buildKDTree();
 		}
 
 		if (this.kdTree) {
