@@ -407,7 +407,8 @@ Pointer.prototype = {
 	 * On mouse up or touch end across the entire document, drop the selection.
 	 */
 	drop: function (e) {
-		var chart = this.chart,
+		var pointer = this,
+			chart = this.chart,
 			hasPinched = this.hasPinched;
 
 		if (this.selectionMarker) {
@@ -428,20 +429,18 @@ Pointer.prototype = {
 
 				// record each axis' min and max
 				each(chart.axes, function (axis) {
-					if (axis.zoomEnabled) {
+					if (axis.zoomEnabled && defined(axis.min) && pointer[{ xAxis: 'zoomX', yAxis: 'zoomY' }[axis.coll]]) { // #859, #3569
 						var horiz = axis.horiz,
 							minPixelPadding = e.type === 'touchend' ? axis.minPixelPadding: 0, // #1207, #3075
 							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop) + minPixelPadding),
 							selectionMax = axis.toValue((horiz ? selectionLeft + selectionWidth : selectionTop + selectionHeight) - minPixelPadding);
 
-						if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
-							selectionData[axis.coll].push({
-								axis: axis,
-								min: mathMin(selectionMin, selectionMax), // for reversed axes,
-								max: mathMax(selectionMin, selectionMax)
-							});
-							runZoom = true;
-						}
+						selectionData[axis.coll].push({
+							axis: axis,
+							min: mathMin(selectionMin, selectionMax), // for reversed axes
+							max: mathMax(selectionMin, selectionMax)
+						});
+						runZoom = true;
 					}
 				});
 				if (runZoom) {
