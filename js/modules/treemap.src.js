@@ -70,9 +70,9 @@
 		axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
 		optionalAxis: 'colorAxis',
 		getSymbol: noop,
-		parallelArrays: ['x', 'y', 'value'],
+		parallelArrays: ['x', 'y', 'value', 'colorValue'],
 		colorKey: 'colorValue', // Point color option key
-		translateColors: seriesTypes.heatmap.prototype.translateColors
+		translateColors: seriesTypes.heatmap && seriesTypes.heatmap.prototype.translateColors
 	};
 
 	// The Treemap series type
@@ -109,7 +109,7 @@
 
 				// Assign variables
 				if (!tree) {
-					tree = this.buildTree();
+					tree = this.tree = this.buildTree();
 				}
 				if (!this.rootNode) {
 					this.rootNode = "";
@@ -123,7 +123,6 @@
 				});
 				seriesArea = this.getSeriesArea(tree.val);
 				this.nodeMap[""].values = seriesArea;
-				this.setColorRecursive(tree, undefined);
 				this.calculateArea(tree, seriesArea);
 			}
 		},
@@ -547,7 +546,12 @@
 			H.Series.prototype.translate.call(this);
 			this.handleLayout();
 
-			this.translateColors();
+			// If a colorAxis is defined
+			if (this.colorAxis) {
+				this.translateColors();
+			} else {
+				this.setColorRecursive(this.tree, undefined);
+			}
 		},
 		drawDataLabels: function () {
 			var series = this,
@@ -593,7 +597,8 @@
 				points = series.points,
 				seriesOptions = series.options,
 				attr,
-				level;
+				level,
+				nodeParent;
 			each(points, function (point) {
 				level = series.levelMap[point.level];
 				attr = {
@@ -621,12 +626,13 @@
 				if (!point.isLeaf) {
 					if (seriesOptions.allowDrillToNode) {
 						attr.fill = Color(point.color || attr.fill).setOpacity(0.15).get();
+						point.pointAttr.hover.fill = Color(point.color || attr.fill).setOpacity(0.75).get();
 					} else {
 						attr.fill = 'none';
 						delete point.pointAttr.hover.fill;
 					}
 				}
-				if (point.id === series.rootNode) {
+				if (point.level < 1) {
 					attr.fill = 'none';
 					delete point.pointAttr.hover.fill;
 				}
@@ -643,12 +649,13 @@
 						point.graphic.css({ cursor: 'default' });
 					}
 					if (point.level === 1 && !point.isLeaf) {
+						nodeParent = series.nodeMap[series.nodeMap[point.id].parent];
 						if (point.graphic) {
 							point.graphic.css({ cursor: 'pointer' });
 						}
 						H.addEvent(point, 'click', function () {
 							series.drillToNode(point.id);
-							series.showDrillUpButton(series.nodeMap[point.id].parent);
+							series.showDrillUpButton(nodeParent.name || nodeParent.id);
 						});
 					}
 				});
@@ -742,6 +749,7 @@
 			}
 		},
 		drawLegendSymbol: H.LegendSymbolMixin.drawRectangle,
+		getExtremes: H.seriesTypes.heatmap.prototype.getExtremes,
 		bindAxes: function () {
 			var treeAxis = {
 				endOnTick: false,
