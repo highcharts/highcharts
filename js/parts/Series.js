@@ -244,7 +244,8 @@ Series.prototype = {
 			userOptions = chart.userOptions || {},
 			userPlotOptions = userOptions.plotOptions || {},
 			typeOptions = plotOptions[this.type],
-			options;
+			options,
+			zones;
 
 		this.userOptions = itemOptions;
 
@@ -269,8 +270,25 @@ Series.prototype = {
 			delete options.marker;
 		}
 
+		// Handle color zones
+		this.zoneAxis = options.zoneAxis;
+		zones = this.zones = (options.zones || []).slice();
+		if ((options.negativeColor || options.negativeFillColor) && !options.zones) {
+			zones.push({
+				value: options.threshold || 0,
+				color: options.negativeColor,
+				fillColor: options.negativeFillColor
+			});
+		}
+		if (zones.length) { // Push one extra zone for the rest
+			if (defined(zones[zones.length - 1].value)) {
+				zones.push({
+					color: this.color,
+					fillColor: this.fillColor
+				});
+			}
+		}
 		return options;
-
 	},
 
 	getCyclic: function (prop, value, defaults) {
@@ -1020,10 +1038,11 @@ Series.prototype = {
 			pointAttr,
 			pointAttrToOptions = series.pointAttrToOptions,
 			hasPointSpecificOptions = series.hasPointSpecificOptions,
-			negativeColor = seriesOptions.negativeColor,
 			defaultLineColor = normalOptions.lineColor,
 			defaultFillColor = normalOptions.fillColor,
 			turboThreshold = seriesOptions.turboThreshold,
+			zones = series.zones,
+			zoneAxis = series.zoneAxis || 'y',
 			attr,
 			key;
 
@@ -1067,8 +1086,14 @@ Series.prototype = {
 					normalOptions.radius = 0;
 				}
 
-				if (point.negative && negativeColor) {
-					point.color = point.fillColor = negativeColor;
+				if (zones.length) {
+					var j = 0,
+						threshold = zones[j];
+					while (point[zoneAxis] > threshold.value) {				
+						threshold = zones[++j];
+					}
+					
+					point.color = point.fillColor = threshold.color;
 				}
 
 				hasPointSpecificOptions = seriesOptions.colorByPoint || point.color; // #868
@@ -1303,19 +1328,25 @@ Series.prototype = {
 	drawGraph: function () {
 		var series = this,
 			options = this.options,
-			props = [['graph', options.lineColor || this.color]],
+			props = [['graph', options.lineColor || this.color, options.dashStyle]],
 			lineWidth = options.lineWidth,
-			dashStyle =  options.dashStyle,
 			roundCap = options.linecap !== 'square',
 			graphPath = this.getGraphPath(),
+		/*
 			negativeColor = options.negativeColor,
 			fillColor = (this.fillGraph && this.color) || NONE; // polygon series use filled graph
 
 		if (negativeColor) {
 			props.push(['graphNeg', negativeColor]);
 		}
+		*/
+			zones = this.zones;
 
-		// draw the graph
+		each(zones, function (threshold, i) {
+			props.push(['colorGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
+		});
+		
+		// Draw the graph
 		each(props, function (prop, i) {
 			var graphKey = prop[0],
 				graph = series[graphKey],
@@ -1332,8 +1363,8 @@ Series.prototype = {
 					fill: fillColor,
 					zIndex: 1 // #1069
 				};
-				if (dashStyle) {
-					attribs.dashstyle = dashStyle;
+				if (prop[2]) {
+					attribs.dashstyle = prop[2];
 				} else if (roundCap) {
 					attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
 				}
@@ -1349,88 +1380,89 @@ Series.prototype = {
 	/**
 	 * Clip the graphs into the positive and negative coloured graphs
 	 */
-	clipNeg: function () {
-		var options = this.options,
+	applyZones: function () {
+		var series = this,
 			chart = this.chart,
 			renderer = chart.renderer,
-			negativeColor = options.negativeColor || options.negativeFillColor,
-			translatedThreshold,
-			posAttr,
-			negAttr,
+			zones = this.zones,
+			translatedFrom,
+			translatedTo,
+			clips = this.clips || [],
+			clipAttr,
 			graph = this.graph,
 			area = this.area,
-			posClip = this.posClip,
-			negClip = this.negClip,
-			chartWidth = chart.chartWidth,
-			chartHeight = chart.chartHeight,
-			chartSizeMax = mathMax(chartWidth, chartHeight),
-			yAxis = this.yAxis,
-			above,
-			below;
+			chartSizeMax = mathMax(chart.chartWidth, chart.chartHeight),
+			zoneAxis = this.zoneAxis || 'y',
+			axis = this[zoneAxis + 'Axis'],
+			reversed = axis.reversed,
+			horiz = axis.horiz;
 
-		if (negativeColor && (graph || area)) {
-			translatedThreshold = mathMin(mathRound(yAxis.toPixels(options.threshold || 0, true)), chartSizeMax); // #3382
-			if (translatedThreshold < 0) {
-				chartSizeMax -= translatedThreshold; // #2534
-			}
-			above = {
-				x: 0,
-				y: 0,
-				width: chartSizeMax,
-				height: translatedThreshold
-			};
-			below = {
-				x: 0,
-				y: translatedThreshold,
-				width: chartSizeMax,
-				height: chartSizeMax
-			};
+		if (zones.length && (graph || area)) {
+			// The use of the Color Threshold assumes there are no gaps
+			// so it is safe to hide the original graph and area
+			graph.hide();
+			if (area) { area.hide(); }
 
-			if (chart.inverted) {
+			// Create the clips
+			each(zones, function (threshold, i) {
+				translatedFrom = pick(translatedTo, (reversed ? (horiz ? chart.plotWidth : 0) : (horiz ? 0 : axis.toPixels(axis.min))));
+				translatedTo = mathRound(axis.toPixels(pick(threshold.value, axis.max), true));
 
-				above.height = below.y = chart.plotWidth - translatedThreshold;
-				if (renderer.isVML) {
-					above = {
-						x: chart.plotWidth - translatedThreshold - chart.plotLeft,
+				if (axis.isXAxis) {
+					clipAttr = {
+						x: reversed ? translatedTo : translatedFrom,
 						y: 0,
-						width: chartWidth,
-						height: chartHeight
+						width: Math.abs(translatedFrom - translatedTo), 
+						height: chartSizeMax
 					};
-					below = {
-						x: translatedThreshold + chart.plotLeft - chartWidth,
-						y: 0,
-						width: chart.plotLeft + translatedThreshold,
-						height: chartWidth
+					if (!horiz) {
+						clipAttr.x = chart.plotHeight - clipAttr.x;
+					}
+				} else {
+					clipAttr = {
+						x: 0,
+						y: reversed ? translatedFrom : translatedTo,
+						width: chartSizeMax, 
+						height: Math.abs(translatedFrom - translatedTo)
 					};
+					if (horiz) {
+						clipAttr.y = chart.plotWidth - clipAttr.y;
+					}
+				} 
+
+				/// VML SUPPPORT
+				if (chart.inverted && renderer.isVML) {
+					if (axis.isXAxis) {			
+						clipAttr = {
+							x: 0,
+							y: reversed ? translatedFrom : translatedTo,
+							height: clipAttr.width,
+							width: chart.chartWidth
+						};		
+					} else {				
+						clipAttr = {
+							x: clipAttr.y - chart.plotLeft - chart.spacingBox.x,
+							y: 0,
+							width: clipAttr.height,
+							height: chart.chartHeight
+						};	
+					}				
 				}
-			}
+				/// END OF VML SUPPORT
 
-			if (yAxis.reversed) {
-				posAttr = below;
-				negAttr = above;
-			} else {
-				posAttr = above;
-				negAttr = below;
-			}
+				if (clips[i]) {
+					clips[i].animate(clipAttr);
+				} else {
+					clips[i] = renderer.clipRect(clipAttr);
 
-			if (posClip) { // update
-				posClip.animate(posAttr);
-				negClip.animate(negAttr);
-			} else {
+					series['colorGraph' + i].clip(clips[i]);
 
-				this.posClip = posClip = renderer.clipRect(posAttr);
-				this.negClip = negClip = renderer.clipRect(negAttr);
-
-				if (graph && this.graphNeg) {
-					graph.clip(posClip);
-					this.graphNeg.clip(negClip);
+					if (area) {
+						series['colorArea' + i].clip(clips[i]);
+					}
 				}
-
-				if (area) {
-					area.clip(posClip);
-					this.areaNeg.clip(negClip);
-				}
-			}
+			});
+			this.clips = clips;
 		}
 	},
 
@@ -1563,7 +1595,7 @@ Series.prototype = {
 		// draw the graph if any
 		if (series.drawGraph) {
 			series.drawGraph();
-			series.clipNeg();
+			series.applyZones();
 		}
 
 		each(series.points, function (point) {
