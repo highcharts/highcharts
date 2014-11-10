@@ -5697,9 +5697,7 @@ Tick.prototype = {
 
 		// update
 		} else if (label) {
-			label.attr({
-					text: str
-				});
+			label.attr({ text: str });
 		}
 		//tick.slotWidth = width;
 		//tick.yOffset = label ? pick(labelOptions.y, axis.tickBaseline + (axis.side === 2 ? 8 : -(label.getBBox().height / 2))) : 0;
@@ -5715,109 +5713,60 @@ Tick.prototype = {
 	},
 
 	/**
-	 * Find how far the labels extend to the right and left of the tick's x position. Used for anti-collision
-	 * detection with overflow logic.
-	 */
-	getLabelSides: function () {
-		var bBox = this.label.getBBox(),
-			axis = this.axis,
-			horiz = axis.horiz,
-			options = axis.options,
-			labelOptions = options.labels,
-			size = horiz ? bBox.width : bBox.height,
-			leftSide = horiz ?
-				labelOptions.x - size * { left: 0, center: 0.5, right: 1 }[axis.labelAlign] :
-				0,
-			rightSide = horiz ?
-				size + leftSide :
-				size;
-
-		return [leftSide, rightSide];
-	},
-
-	/**
 	 * Handle the label overflow by adjusting the labels to the left and right edge, or
 	 * hide them if they collide into the neighbour label.
 	 */
-	handleOverflow: function (index, xy) {
-		var show = true,
-			axis = this.axis,
-			isFirst = this.isFirst,
-			isLast = this.isLast,
-			horiz = axis.horiz,
-			pxPos = horiz ? xy.x : xy.y,
-			reversed = axis.reversed,
-			tickPositions = axis.tickPositions,
-			sides = this.getLabelSides(),
-			leftSide = sides[0],
-			rightSide = sides[1],
-			axisLeft = axis.pos,
-			axisRight = axisLeft + axis.len,
+	handleOverflow: function (xy) {
+		var axis = this.axis,
+			pxPos = xy.x,
+			spacing = axis.chart.spacing,
+			label = this.label,
+			rotation = this.rotation,
+			factor = { left: 0, center: 0.5, right: 1 }[axis.labelAlign],
+			labelWidth = label.getBBox().width,
 			chartWidth = axis.chart.chartWidth,
-			neighbour,
-			neighbourEdge,
-			line = this.label.line,
-			lineIndex = line || 0,
-			labelEdge = axis.labelEdge,
-			justifyLabel = axis.justifyLabels && (isFirst || isLast),
-			rotation = this.rotation;
+			slotWidth = axis.slotWidth,
+			leftOvershoot,
+			rightOvershoot,
+			textWidth;
 
-		// Hide it if it now overlaps the neighbour label
-		if (labelEdge[lineIndex] === UNDEFINED || pxPos + leftSide > labelEdge[lineIndex]) {
-			labelEdge[lineIndex] = pxPos + rightSide;
+		// Check if the label overshoots the chart spacing box. If it does, move it.
+		// If it now overshoots the slotWidth, add ellipsis.
+		if (!rotation) {
+			leftOvershoot = pxPos - factor * labelWidth - spacing[3];
+			rightOvershoot = pxPos + factor * labelWidth + spacing[1] - chartWidth;
 
-		} else if (!justifyLabel && !this.rotation) {
-			show = false;
-		}
-
-		// Add ellipsis to prevent rotated labels to be clipped against the edge of the chart
-		if (rotation < 0 && pxPos + leftSide < 0) {
-			this.label.css({
-				width: mathRound(pxPos / mathCos(rotation * deg2rad) - 10) + PX
-			});
-		} else if (rotation > 0 && pxPos + rightSide > chartWidth) {
-			this.label.css({
-				width: mathRound((chartWidth - pxPos) / mathCos(rotation * deg2rad) - 10) + PX
-			});
-		}
-		
-
-		if (justifyLabel) {
-			neighbour = axis.ticks[tickPositions[index + (isFirst ? 1 : -1)]];
-			neighbourEdge = neighbour && neighbour.label.xy && neighbour.label.xy.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
-
-			if ((isFirst && !reversed) || (isLast && reversed)) {
-				// Is the label spilling out to the left of the plot area?
-				if (pxPos + leftSide < axisLeft) {
-					
-					// Align it to plot left
-					pxPos = axisLeft - leftSide;
-
-					// Hide it if it now overlaps the neighbour label
-					if (neighbour && pxPos + rightSide > neighbourEdge) {
-						show = false;
-					}
+			if (leftOvershoot < 0) {
+				slotWidth += leftOvershoot;
+				xy.x = spacing[3];
+				label.attr({ align: 'left' });
+				if (labelWidth > slotWidth) {
+					textWidth = slotWidth;
 				}
-
-			} else {
-				// Is the label spilling out to the right of the plot area?
-				if (pxPos + rightSide > axisRight) {
-
-					// Align it to plot right
-					pxPos = axisRight - rightSide;
-
-					// Hide it if it now overlaps the neighbour label
-					if (neighbour && pxPos + leftSide < neighbourEdge) {
-						show = false;
-					}
-
+				
+			} else if (rightOvershoot > 0) {
+				slotWidth -= rightOvershoot;
+				xy.x = chartWidth - spacing[1];
+				label.attr({ align: 'right' });
+				if (labelWidth > slotWidth) {
+					textWidth = slotWidth;
 				}
 			}
+		
 
-			// Set the modified x position of the label
-			xy.x = pxPos;
+		// Add ellipsis to prevent rotated labels to be clipped against the edge of the chart
+		} else if (rotation < 0 && pxPos - factor * labelWidth < spacing[3]) {
+			textWidth = mathRound(pxPos / mathCos(rotation * deg2rad) - spacing[3]);
+		} else if (rotation > 0 && pxPos + factor * labelWidth > chartWidth - spacing[1]) {
+			textWidth = mathRound((chartWidth - pxPos) / mathCos(rotation * deg2rad) - spacing[1]);
 		}
-		return show;
+
+		if (textWidth) {
+			label.css({
+				width: textWidth,
+				textOverflow: 'ellipsis'
+			});
+		}
 	},
 
 	/**
@@ -5849,7 +5798,8 @@ Tick.prototype = {
 			reversed = axis.reversed,
 			staggerLines = axis.staggerLines,
 			rotCorr = axis.tickRotCorr || { x: 0, y: 0 },
-			yOffset = pick(labelOptions.y, rotCorr.y + (axis.side === 2 ? 8 : -(label.getBBox().height / 2)));
+			yOffset = pick(labelOptions.y, rotCorr.y + (axis.side === 2 ? 8 : -(label.getBBox().height / 2))),
+			line;
 
 		x = x + labelOptions.x + rotCorr.x - (tickmarkOffset && horiz ?
 			tickmarkOffset * transA * (reversed ? -1 : 1) : 0);
@@ -5858,8 +5808,8 @@ Tick.prototype = {
 
 		// Correct for staggered labels
 		if (staggerLines) {
-			label.line = (index / (step || 1) % staggerLines);
-			y += label.line * (axis.labelOffset / staggerLines);
+			line = (index / (step || 1) % staggerLines);
+			y += line * (axis.labelOffset / staggerLines);
 		}
 
 		return {
@@ -5998,8 +5948,8 @@ Tick.prototype = {
 				show = false;
 
 			// Handle label overflow and show or hide accordingly
-			} else if (!axis.isRadial && !labelOptions.step && !labelOptions.rotation && !old && opacity !== 0) {
-				show = tick.handleOverflow(index, xy);
+			} else if (horiz && !axis.isRadial && !labelOptions.step && !labelOptions.rotation && !old && opacity !== 0) {
+				tick.handleOverflow(xy);
 			}
 
 			// apply step
@@ -6326,7 +6276,7 @@ Axis.prototype = {
 		// gridLineWidth: 0,
 		// reversed: false,
 
-		labels: defaultLabelOptions,
+		labels: defaultLabelOptions, // docs: overflow:justify is deprecated
 			// { step: null },
 		lineColor: '#C0D0E0',
 		lineWidth: 1,
@@ -7730,7 +7680,7 @@ Axis.prototype = {
 			ticks = this.ticks,
 			labelOptions = this.options.labels,
 			horiz = this.horiz,
-			slotWidth = (horiz && !labelOptions.step && !labelOptions.staggerLines &&
+			slotWidth = this.slotWidth = (horiz && !labelOptions.step && !labelOptions.staggerLines &&
 				!labelOptions.rotation &&
 				chart.plotWidth / tickPositions.length) ||
 				(!horiz && (chart.margin[3] || chart.chartWidth * 0.33)), // #1580, #1931,
@@ -8030,15 +7980,12 @@ Axis.prototype = {
 	 */
 	render: function () {
 		var axis = this,
-			horiz = axis.horiz,
-			reversed = axis.reversed,
 			chart = axis.chart,
 			renderer = chart.renderer,
 			options = axis.options,
 			isLog = axis.isLog,
 			isLinked = axis.isLinked,
 			tickPositions = axis.tickPositions,
-			sortedPositions,
 			axisTitle = axis.axisTitle,			
 			ticks = axis.ticks,
 			minorTicks = axis.minorTicks,
@@ -8053,9 +8000,6 @@ Axis.prototype = {
 			hasData = axis.hasData,
 			showAxis = axis.showAxis,
 			from,
-			//overflow = options.labels.overflow,
-			//justifyLabels = axis.justifyLabels = horiz && overflow !== false,
-			justifyLabels = axis.justifyLabels = axis.horiz && !axis.staggerLines && !axis.autoRotation,
 			to;
 
 		// Reset
@@ -8093,19 +8037,7 @@ Axis.prototype = {
 			// Major ticks. Pull out the first item and render it last so that
 			// we can get the position of the neighbour label. #808.
 			if (tickPositions.length) { // #1300
-				sortedPositions = tickPositions.slice();
-				if ((horiz && reversed) || (!horiz && !reversed)) {
-					sortedPositions.reverse();
-				}
-				if (justifyLabels) {
-					sortedPositions = sortedPositions.slice(1).concat([sortedPositions[0]]);
-				}
-				each(sortedPositions, function (pos, i) {
-
-					// Reorganize the indices
-					if (justifyLabels) {
-						i = (i === sortedPositions.length - 1) ? 0 : i + 1;
-					}
+				each(tickPositions, function (pos, i) {
 
 					// linked axes need an extra check to find out if
 					if (!isLinked || (pos >= axis.min && pos <= axis.max)) {

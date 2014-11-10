@@ -32,7 +32,7 @@ Axis.prototype = {
 		// gridLineWidth: 0,
 		// reversed: false,
 
-		labels: defaultLabelOptions,
+		labels: defaultLabelOptions, // docs: overflow:justify is deprecated
 			// { step: null },
 		lineColor: '#C0D0E0',
 		lineWidth: 1,
@@ -1436,7 +1436,7 @@ Axis.prototype = {
 			ticks = this.ticks,
 			labelOptions = this.options.labels,
 			horiz = this.horiz,
-			slotWidth = (horiz && !labelOptions.step && !labelOptions.staggerLines &&
+			slotWidth = this.slotWidth = (horiz && !labelOptions.step && !labelOptions.staggerLines &&
 				!labelOptions.rotation &&
 				chart.plotWidth / tickPositions.length) ||
 				(!horiz && (chart.margin[3] || chart.chartWidth * 0.33)), // #1580, #1931,
@@ -1736,15 +1736,12 @@ Axis.prototype = {
 	 */
 	render: function () {
 		var axis = this,
-			horiz = axis.horiz,
-			reversed = axis.reversed,
 			chart = axis.chart,
 			renderer = chart.renderer,
 			options = axis.options,
 			isLog = axis.isLog,
 			isLinked = axis.isLinked,
 			tickPositions = axis.tickPositions,
-			sortedPositions,
 			axisTitle = axis.axisTitle,			
 			ticks = axis.ticks,
 			minorTicks = axis.minorTicks,
@@ -1759,9 +1756,6 @@ Axis.prototype = {
 			hasData = axis.hasData,
 			showAxis = axis.showAxis,
 			from,
-			//overflow = options.labels.overflow,
-			//justifyLabels = axis.justifyLabels = horiz && overflow !== false,
-			justifyLabels = axis.justifyLabels = axis.horiz && !axis.staggerLines && !axis.autoRotation,
 			to;
 
 		// Reset
@@ -1799,19 +1793,7 @@ Axis.prototype = {
 			// Major ticks. Pull out the first item and render it last so that
 			// we can get the position of the neighbour label. #808.
 			if (tickPositions.length) { // #1300
-				sortedPositions = tickPositions.slice();
-				if ((horiz && reversed) || (!horiz && !reversed)) {
-					sortedPositions.reverse();
-				}
-				if (justifyLabels) {
-					sortedPositions = sortedPositions.slice(1).concat([sortedPositions[0]]);
-				}
-				each(sortedPositions, function (pos, i) {
-
-					// Reorganize the indices
-					if (justifyLabels) {
-						i = (i === sortedPositions.length - 1) ? 0 : i + 1;
-					}
+				each(tickPositions, function (pos, i) {
 
 					// linked axes need an extra check to find out if
 					if (!isLinked || (pos >= axis.min && pos <= axis.max)) {
