@@ -188,7 +188,7 @@
 		if (xColumns.length === 0) {
 			xColumns.push(0);
 		}
-debugger
+
 		// Loop all seriesMappings and constructs SeriesBuilders from
 		// the mapping options.
 		each((options && options.seriesMapping) || [], function (mapping) {
@@ -198,7 +198,7 @@ debugger
 				seriesArr = (chartOptions && chartOptions.series) || [],
 				series = seriesArr[seriesIndex] || {},
 				pointArrayMap = getPointArrayMap(series.type || globalType) || ['y'];
-debugger
+
 			// Add an x reader from the x property or from an undefined column
 			// if the property is not set. It will then be auto populated later.
 			builder.addColumnReader(mapping.x, 'x');
@@ -478,7 +478,7 @@ debugger
 			columnTypes = this.options.columnTypes || [],
 			columnType = columnTypes[col],
 			forceCategory = isXColumn && ((chartOptions && chartOptions.xAxis && splat(chartOptions.xAxis)[0].type === 'category') || columnType === 'string');
-debugger		
+
 		rawColumns[col] = [];
 		while (row--) {
 			val = backup[row] || column[row];
