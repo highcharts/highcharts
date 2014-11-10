@@ -749,7 +749,15 @@
 			}
 		},
 		drawLegendSymbol: H.LegendSymbolMixin.drawRectangle,
-		getExtremes: H.seriesTypes.heatmap.prototype.getExtremes,
+		getExtremes: function () {
+			// Get the extremes from the value data
+			H.Series.prototype.getExtremes.call(this, this.colorValueData);
+			this.valueMin = this.dataMin;
+			this.valueMax = this.dataMax;
+
+			// Get the extremes from the y data
+			H.Series.prototype.getExtremes.call(this);
+		},
 		bindAxes: function () {
 			var treeAxis = {
 				endOnTick: false,
