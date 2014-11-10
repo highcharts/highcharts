@@ -101,12 +101,6 @@
 			tree = this.tree,
 			seriesArea;
 			if (this.points.length) {
-				// Modify series
-				this.xAxis.dataMin = 0;
-				this.xAxis.dataMax = 100;
-				this.yAxis.dataMin = 0;
-				this.yAxis.dataMax = 100;
-
 				// Assign variables
 				if (!tree) {
 					this.nodeMap = [];
@@ -292,10 +286,10 @@
 			});
 		},
 		getSeriesArea: function (val) {
-			var w = this.xAxis.dataMax,
-				x = this.xAxis.dataMin,
-				y = this.yAxis.dataMin,
-				h = this.yAxis.dataMax,
+			var w = this.xAxis.options.dataMax,
+				x = this.xAxis.options.dataMin,
+				y = this.yAxis.options.dataMin,
+				h = this.yAxis.options.dataMax,
 				seriesArea = {
 					x: x,
 					y: y,
@@ -765,8 +759,10 @@
 				gridLineWidth: 0,
 				lineWidth: 0,
 				min: 0,
+				dataMin: 0,
 				minPadding: 0,
 				max: 100,
+				dataMax: 100,
 				maxPadding: 0,
 				startOnTick: false,
 				title: null,
