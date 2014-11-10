@@ -68,7 +68,7 @@
 			r: 'borderRadius'
 		},
 		pointArrayMap: ['value'],
-		axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
+		axisTypes: seriesTypes.heatmap ? ['xAxis', 'yAxis', 'colorAxis'] : ['xAxis', 'yAxis'],
 		optionalAxis: 'colorAxis',
 		getSymbol: noop,
 		parallelArrays: ['x', 'y', 'value', 'colorValue'],
