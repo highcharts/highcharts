@@ -102,7 +102,6 @@
 			seriesArea;
 			if (this.points.length) {
 				// Modify series
-				this.nodeMap = [];
 				this.xAxis.dataMin = 0;
 				this.xAxis.dataMax = 100;
 				this.yAxis.dataMin = 0;
@@ -110,6 +109,7 @@
 
 				// Assign variables
 				if (!tree) {
+					this.nodeMap = [];
 					tree = this.tree = this.buildTree();
 				}
 				if (!this.rootNode) {
