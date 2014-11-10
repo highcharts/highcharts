@@ -97,9 +97,9 @@
 			}
 		}),
 		handleLayout: function () {
-		var series = this,
-			tree = this.tree,
-			seriesArea;
+			var series = this,
+				tree = this.tree,
+				seriesArea;
 			if (this.points.length) {
 				// Assign variables
 				if (!tree) {
