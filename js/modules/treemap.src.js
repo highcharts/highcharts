@@ -16,6 +16,7 @@
 		plotOptions = defaultOptions.plotOptions,
 		noop = function () { return; },
 		each = H.each,
+		Series = H.Series,
 		Color = H.Color;
 
 	// Define default options
@@ -543,7 +544,7 @@
 		},
 		translate: function () {
 			// Call prototype function
-			H.Series.prototype.translate.call(this);
+			Series.prototype.translate.call(this);
 			this.handleLayout();
 
 			// If a colorAxis is defined
@@ -580,7 +581,7 @@
 					delete point.dlOptions;
 				}
 			});
-			H.Series.prototype.drawDataLabels.call(this);
+			Series.prototype.drawDataLabels.call(this);
 		},
 		alignDataLabel: function (point, dataLabel) {
 			var bBox,
@@ -751,12 +752,12 @@
 		drawLegendSymbol: H.LegendSymbolMixin.drawRectangle,
 		getExtremes: function () {
 			// Get the extremes from the value data
-			H.Series.prototype.getExtremes.call(this, this.colorValueData);
+			Series.prototype.getExtremes.call(this, this.colorValueData);
 			this.valueMin = this.dataMin;
 			this.valueMax = this.dataMax;
 
 			// Get the extremes from the y data
-			H.Series.prototype.getExtremes.call(this);
+			Series.prototype.getExtremes.call(this);
 		},
 		bindAxes: function () {
 			var treeAxis = {
@@ -771,7 +772,7 @@
 				title: null,
 				tickPositions: []
 			};
-			H.Series.prototype.bindAxes.call(this);
+			Series.prototype.bindAxes.call(this);
 			H.extend(this.xAxis.options, treeAxis);
 			H.extend(this.yAxis.options, treeAxis);
 		}
