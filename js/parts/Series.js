@@ -1089,7 +1089,7 @@ Series.prototype = {
 				if (zones.length) {
 					var j = 0,
 						threshold = zones[j];
-					while (point[zoneAxis] > threshold.value) {				
+					while (point[zoneAxis] >= threshold.value) {				
 						threshold = zones[++j];
 					}
 					
@@ -1332,14 +1332,7 @@ Series.prototype = {
 			lineWidth = options.lineWidth,
 			roundCap = options.linecap !== 'square',
 			graphPath = this.getGraphPath(),
-		/*
-			negativeColor = options.negativeColor,
-			fillColor = (this.fillGraph && this.color) || NONE; // polygon series use filled graph
-
-		if (negativeColor) {
-			props.push(['graphNeg', negativeColor]);
-		}
-		*/
+			fillColor = (this.fillGraph && this.color) || NONE, // polygon series use filled graph
 			zones = this.zones;
 
 		each(zones, function (threshold, i) {

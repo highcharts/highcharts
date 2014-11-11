@@ -8169,6 +8169,7 @@ Tooltip.prototype = {
 			}
 
 			this.chart.hoverPoints = null;
+			this.chart.hoverSeries = null;
 		}
 	},
 	
@@ -8545,13 +8546,12 @@ Tooltip.prototype = {
      * abstracting this functionality allows to easily overwrite and extend it. 
 	 */
 	bodyFormatter: function (items) {
-		return map(items, function (item) {
-			var series = item.series;
-			 return ((series.tooltipFormatter && series.tooltipFormatter(item)) ||
-				item.point.tooltipFormatter(series.tooltipOptions.pointFormat));
-		});
-	}
-
+        return map(items, function (item) {
+            var tooltipOptions = item.series.tooltipOptions;
+            return (tooltipOptions.pointFormatter || item.point.tooltipFormatter).call(item.point, tooltipOptions.pointFormat); // docs
+        });
+    }
+    
 };
 
 var hoverChartIndex;
@@ -8693,17 +8693,17 @@ Pointer.prototype = {
 			series = chart.series,
 			tooltip = chart.tooltip,
 			shared = tooltip ? tooltip.shared : false,
-			//followPointer,
+			followPointer,
 			//point,
 			//points,
 			hoverPoint = chart.hoverPoint,
-			//hoverSeries = chart.hoverSeries,
+			hoverSeries = chart.hoverSeries,
 			i,
 			//j,
 			distance = chart.chartWidth,
 			rdistance = chart.chartWidth, 
 			//index = pointer.getIndex(e),
-			//anchor,
+			anchor,
 
 			kdpoints = [],
 			kdpoint;
@@ -8718,37 +8718,30 @@ Pointer.prototype = {
 
 		// Find absolute nearest point
 		each(kdpoints, function (p) {
-			if (p.plotX && p.plotY) {
-				if ((p.dist.distX < distance) || (p.dist.distX === distance && p.dist.distR < rdistance)) {
+			if (p && defined(p.plotX) && defined(p.plotY)) {
+				if ((p.dist.distX < distance) || ((p.dist.distX === distance || p.series.kdDimensions > 1) && p.dist.distR < rdistance)) {
 					distance = p.dist.distX;
 					rdistance = p.dist.distR;
 					kdpoint = p;
 				}
 			}
-
-			// refresh the tooltip if necessary
-			if (points.length && (points[0].clientX !== pointer.hoverX)) {
-				tooltip.refresh(points, e);
-				pointer.hoverX = points[0].clientX;
-			}
-			point = points[0];
+			//point = kdpoints[0];
 		});
-
+				
+		// Crosshair
+		each(chart.axes, function (axis) {
+			axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
+		});		
+		// Without a closest point there is no sense to continue
+		if (!kdpoint) { return; }
+		
 		// Separate tooltip and general mouse events
 		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
-		if (hoverSeries && hoverSeries.tracker) { // #2584, #2830, #2889, #3258
 
-			// Crosshair
-			each(chart.axes, function (axis) {
-				axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
-			});		
-
-			// Without a closest point there is no sense to continue
-			if (!kdpoint) { return; }
-
+		//if (hoverSeries && hoverSeries.tracker) { // #2584, #2830, #2889, #3258
 			// Tooltip
-			if (tooltip && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
 
+			if (tooltip) { // && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
 				// Draw tooltip if necessary
 				if (shared && !kdpoint.series.noSharedTooltip) {
 					i = kdpoints.length;
@@ -8766,13 +8759,14 @@ Pointer.prototype = {
 					kdpoint.onMouseOver(e);
 				}
 			}
-		}	 
+		//}	 
 
+		
 		if (tooltip && followPointer && !tooltip.isHidden) {
 			anchor = tooltip.getAnchor([{}], e);
 			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });			
 		}
-
+		/*
 		// Hover Series
 		if (kdpoint !== hoverPoint) {
 			// set new hoverPoint and hoverSeries
@@ -8780,6 +8774,8 @@ Pointer.prototype = {
 			chart.hoverSeries = kdpoint.series;	
 
 		}
+		*/
+		
 	},
 
 
@@ -13061,7 +13057,7 @@ Series.prototype = {
 				if (zones.length) {
 					var j = 0,
 						threshold = zones[j];
-					while (point[zoneAxis] > threshold.value) {				
+					while (point[zoneAxis] >= threshold.value) {				
 						threshold = zones[++j];
 					}
 					
@@ -13304,16 +13300,8 @@ Series.prototype = {
 			lineWidth = options.lineWidth,
 			roundCap = options.linecap !== 'square',
 			graphPath = this.getGraphPath(),
-<<<<<<< HEAD
-			negativeColor = options.negativeColor,
-			fillColor = (this.fillGraph && this.color) || NONE; // polygon series use filled graph
-
-		if (negativeColor) {
-			props.push(['graphNeg', negativeColor]);
-		}
-=======
+			fillColor = (this.fillGraph && this.color) || NONE, // polygon series use filled graph
 			zones = this.zones;
->>>>>>> origin/colorThresholds
 
 		each(zones, function (threshold, i) {
 			props.push(['colorGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
@@ -13364,40 +13352,11 @@ Series.prototype = {
 			clipAttr,
 			graph = this.graph,
 			area = this.area,
-<<<<<<< HEAD
-			posClip = this.posClip,
-			negClip = this.negClip,
-			chartWidth = chart.chartWidth,
-			chartHeight = chart.chartHeight,
-			chartSizeMax = mathMax(chartWidth, chartHeight),
-			yAxis = this.yAxis,
-			above,
-			below;
-
-		if (negativeColor && (graph || area)) {
-			translatedThreshold = mathMin(mathRound(yAxis.toPixels(options.threshold || 0, true)), chartSizeMax); // #3382
-			if (translatedThreshold < 0) {
-				chartSizeMax -= translatedThreshold; // #2534
-			}
-			above = {
-				x: 0,
-				y: 0,
-				width: chartSizeMax,
-				height: translatedThreshold
-			};
-			below = {
-				x: 0,
-				y: translatedThreshold,
-				width: chartSizeMax,
-				height: chartSizeMax
-			};
-=======
 			chartSizeMax = mathMax(chart.chartWidth, chart.chartHeight),
 			zoneAxis = this.zoneAxis || 'y',
 			axis = this[zoneAxis + 'Axis'],
 			reversed = axis.reversed,
 			horiz = axis.horiz;
->>>>>>> origin/colorThresholds
 
 		if (zones.length && (graph || area)) {
 			// The use of the Color Threshold assumes there are no gaps
@@ -13464,7 +13423,7 @@ Series.prototype = {
 					}
 				}
 			});
-			//this.clips = clips;
+			this.clips = clips;
 		}
 	},
 
@@ -13647,8 +13606,6 @@ Series.prototype = {
 		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 		// (See #322) series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
 		series.hasRendered = true;
-
-		series.buildKDTree();
 	},
 
 	/**
@@ -13726,9 +13683,13 @@ Series.prototype = {
 		}
 
 		tree = null;
-		setTimeout(function () {
-			series.kdTree = _kdtree(series.points, dimensions, dimensions);			
-		});
+		if (this.options.kdWait) {
+			series.kdTree = _kdtree(series.points, dimensions, dimensions);	
+		} else {
+			setTimeout(function () {
+				series.kdTree = _kdtree(series.points, dimensions, dimensions);		
+			});
+		}
 	},
 
 	searchKDTree: function (point) {
@@ -13737,13 +13698,14 @@ Series.prototype = {
 
 		// Internal function
 		function _distance(p1, p2) {
-			var x = Math.pow(p1.plotX - p2.plotX, 2) || null, 
-				y = Math.pow(p1.plotY - p2.plotY, 2) || null,
+			var x = (defined(p1.plotX) && defined(p2.plotX)) ? Math.pow(p1.plotX - p2.plotX, 2) : null,
+				y = (defined(p1.plotY) && defined(p2.plotY)) ? Math.pow(p1.plotY - p2.plotY, 2) : null,
 				r = x + y;
+				
 			return {
-				distX: x ? Math.sqrt(x) : Number.MAX_VALUE,
-				distY: y ? Math.sqrt(y) : Number.MAX_VALUE,
-				distR: r ? Math.sqrt(r) : Number.MAX_VALUE
+				distX: defined(x) ? Math.sqrt(x) : Number.MAX_VALUE,
+				distY: defined(y) ? Math.sqrt(y) : Number.MAX_VALUE,
+				distR: defined(r) ? Math.sqrt(r) : Number.MAX_VALUE
 			};
 		}
 		function _search(search, tree, depth, dimensions) {
@@ -13757,9 +13719,10 @@ Series.prototype = {
 				nPoint2;
 			
 			point.dist = _distance(search, point);
-			
+
 			// Pick side based on distance to splitting point
 			tdist = search[axis] - point[axis];
+
 			sideA = tdist < 0 ? 'left' : 'right';
 
 			// End of tree
@@ -13780,6 +13743,10 @@ Series.prototype = {
 			return ret;
 		}
 
+		if (!this.kdTree) {
+			this.buildKDTree();
+		}
+
 		if (this.kdTree) {
 			var xAxis = series.xAxis,
 				yAxis = series.yAxis,
@@ -13788,10 +13755,11 @@ Series.prototype = {
 					plotX: inverted ? xAxis.len - point.chartY + xAxis.pos : point.chartX - xAxis.pos,
 					plotY: inverted ? yAxis.len - point.chartX + yAxis.pos : point.chartY - yAxis.pos 
 				};
+
 			return _search(s, 
 				this.kdTree, this.kdDimensions, this.kdDimensions);
 		} else {
-				return null;
+			return UNDEFINED;
 		}
 	}
 
@@ -17153,7 +17121,8 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 		pointFormat: '({point.x}, {point.y}), Size: {point.z}'
 	},
 	turboThreshold: 0,
-	zThreshold: 0
+	zThreshold: 0,
+	zoneAxis: 'z'
 });
 
 var BubblePoint = extendClass(Point, {
@@ -17170,6 +17139,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	parallelArrays: ['x', 'y', 'z'],
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	bubblePadding: true,
+	zoneAxis: 'z',
 	
 	/**
 	 * Mapping between SVG attributes and the corresponding options
@@ -17284,7 +17254,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			radius = radii ? radii[i] : 0; // #1737
 
 			// Flag for negativeColor to be applied in Series.js
-			point.negative = point.z < (this.options.zThreshold || 0);
+			//point.negative = point.z < (this.options.zThreshold || 0);
 			
 			if (radius >= this.minPxSize / 2) {
 				// Shape arguments
@@ -17327,9 +17297,11 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		item.legendSymbol.isMarker = true;	
 		
 	},
-	
+		
 	drawPoints: seriesTypes.column.prototype.drawPoints,
-	alignDataLabel: seriesTypes.column.prototype.alignDataLabel
+	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
+
+	applyZones: function () {}
 });
 
 /**

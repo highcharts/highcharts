@@ -138,7 +138,7 @@ Pointer.prototype = {
 			series = chart.series,
 			tooltip = chart.tooltip,
 			shared = tooltip ? tooltip.shared : false,
-			//followPointer,
+			followPointer,
 			//point,
 			//points,
 			hoverPoint = chart.hoverPoint,
@@ -148,7 +148,7 @@ Pointer.prototype = {
 			distance = chart.chartWidth,
 			rdistance = chart.chartWidth, 
 			//index = pointer.getIndex(e),
-			//anchor,
+			anchor,
 
 			kdpoints = [],
 			kdpoint;
