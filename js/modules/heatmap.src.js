@@ -193,6 +193,16 @@ extend(ColorAxis.prototype, {
 		}
 	},
 
+	/**
+	* Normalize a value into 0-1 range
+	*/
+	toRelativePosition: function(value) {
+		if (this.isLog) {
+			value = this.val2lin(value);
+		}
+		return (value - this.min) / ((this.max - this.min) || 1);
+        },
+       
 	/** 
 	 * Translate from a value to a color
 	 */
@@ -222,11 +232,7 @@ extend(ColorAxis.prototype, {
 			}
 
 		} else {
-
-			if (this.isLog) {
-				value = this.val2lin(value);
-			}
-			pos = 1 - ((this.max - value) / ((this.max - this.min) || 1));
+			pos = this.toRelativePosition(value);
 			i = stops.length;
 			while (i--) {
 				if (pos > stops[i][0]) {
