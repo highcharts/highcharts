@@ -25,7 +25,8 @@
 		ColumnSeries = seriesTypes.column,
 		fireEvent = HighchartsAdapter.fireEvent,
 		inArray = HighchartsAdapter.inArray,
-		dupes = [];
+		dupes = [],
+		ddSeriesId = 1;
 
 	// Utilities
 	function tweenColors(startColor, endColor, pos) {
@@ -112,6 +113,7 @@
 		each(oldSeries.chart.series, function (series) {
 			if (series.xAxis === xAxis) {
 				levelSeries.push(series);
+				series.options._ddSeriesId = series.options._ddSeriesId || ddSeriesId++;
 				levelSeriesOptions.push(series.options);
 				series.levelNumber = series.levelNumber || levelNumber; // #3182
 			}
@@ -241,7 +243,7 @@
 			addSeries = function (seriesOptions) {
 				var addedSeries;
 				each(chartSeries, function (series) {
-					if (series.options === seriesOptions) {
+					if (series.options._ddSeriesId === seriesOptions._ddSeriesId) {
 						addedSeries = series;
 					}
 				});
@@ -373,7 +375,7 @@
 			
 		if (!init) {
 			each(drilldownLevels, function (level) {
-				if (series.options === level.lowerSeriesOptions) {
+				if (series.options._ddSeriesId === level.lowerSeriesOptions._ddSeriesId) {
 					animateFrom = level.shapeArgs;
 				}
 			});
