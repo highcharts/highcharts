@@ -5658,19 +5658,6 @@ Tick.prototype = {
 		
 		// first call
 		if (!defined(label)) {
-			/*
-			attr = {
-				align: axis.labelAlign
-			};
-			if (isNumber(rotation)) {
-				attr.rotation = rotation;
-			}
-			*/
-			/*
-			if (width && labelOptions.ellipsis) {
-				css.HcHeight = axis.len / tickPositions.length;
-			}
-			*/
 
 			tick.label = label =
 				defined(str) && labelOptions.enabled ?
@@ -5688,19 +5675,10 @@ Tick.prototype = {
 			tick.labelLength = label && label.getBBox().width; // Un-rotated length
 			tick.rotation = 0; // Base value to detect change for new calls to getBBox
 
-			// Set the tick baseline and correct for rotation (#1764)
-			/*axis.tickBaseline = chart.renderer.fontMetrics(labelOptions.style.fontSize, label).b;
-			if (rotation && axis.side === 2) {
-				axis.tickBaseline *= mathCos(rotation * deg2rad);
-			}*/
-
-
 		// update
 		} else if (label) {
 			label.attr({ text: str });
 		}
-		//tick.slotWidth = width;
-		//tick.yOffset = label ? pick(labelOptions.y, axis.tickBaseline + (axis.side === 2 ? 8 : -(label.getBBox().height / 2))) : 0;
 	},
 
 	/**
@@ -5739,18 +5717,15 @@ Tick.prototype = {
 			if (leftOvershoot < 0) {
 				slotWidth += leftOvershoot;
 				xy.x = spacing[3];
-				label.attr({ align: 'left' });
-				if (labelWidth > slotWidth) {
-					textWidth = slotWidth;
-				}
-				
+				label.attr({ align: 'left' });				
 			} else if (rightOvershoot > 0) {
 				slotWidth -= rightOvershoot;
 				xy.x = chartWidth - spacing[1];
 				label.attr({ align: 'right' });
-				if (labelWidth > slotWidth) {
-					textWidth = slotWidth;
-				}
+			}
+
+			if (labelWidth > slotWidth) {
+				textWidth = slotWidth;
 			}
 		
 
