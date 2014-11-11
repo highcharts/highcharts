@@ -70,6 +70,7 @@ var UNDEFINED,
 	Date,  // Allow using a different Date class
 	makeTime,
 	timezoneOffset,
+	getTimezoneOffset,
 	getMinutes,
 	getHours,
 	getDay,

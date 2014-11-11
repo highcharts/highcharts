@@ -85,6 +85,7 @@ var UNDEFINED,
 	Date,  // Allow using a different Date class
 	makeTime,
 	timezoneOffset,
+	getTimezoneOffset,
 	getMinutes,
 	getHours,
 	getDay,
@@ -380,6 +381,11 @@ function wrap(obj, method, func) {
 	};
 }
 
+
+function getTZOffset(timestamp) {
+	return ((getTimezoneOffset && getTimezoneOffset(timestamp)) || timezoneOffset || 0) * 60000;
+}
+
 /**
  * Based on http://www.php.net/manual/en/function.strftime.php
  * @param {String} format
@@ -392,7 +398,7 @@ dateFormat = function (format, timestamp, capitalize) {
 	}
 	format = pick(format, '%Y-%m-%d %H:%M:%S');
 
-	var date = new Date(timestamp - timezoneOffset),
+	var date = new Date(timestamp - getTZOffset(timestamp)),
 		key, // used in for constuct below
 		// get the basic time values
 		hours = date[getHours](),
@@ -1588,17 +1594,22 @@ setTimeMethods();
  * local time or UTC (default).
  */
 function setTimeMethods() {
-	var useUTC = defaultOptions.global.useUTC,
+	var globalOptions = defaultOptions.global,
+		useUTC = globalOptions.useUTC,
 		GET = useUTC ? 'getUTC' : 'get',
 		SET = useUTC ? 'setUTC' : 'set';
 
 
-	Date = defaultOptions.global.Date || window.Date;
-	timezoneOffset = ((useUTC && defaultOptions.global.timezoneOffset) || 0) * 60000;
+	Date = globalOptions.Date || window.Date;
+	timezoneOffset = useUTC && globalOptions.timezoneOffset;
+	getTimezoneOffset = useUTC && globalOptions.getTimezoneOffset; // docs. Sample created.
 	makeTime = function (year, month, date, hours, minutes, seconds) {
-		return useUTC ?
-			Date.UTC.apply(0, arguments) + timezoneOffset : // #3500
-			new Date(
+		var d;
+		if (useUTC) {
+			d = Date.UTC.apply(0, arguments);
+			d += getTZOffset(d);
+		} else {
+			d = new Date(
 				year,
 				month,
 				pick(date, 1),
@@ -1606,6 +1617,8 @@ function setTimeMethods() {
 				pick(minutes, 0),
 				pick(seconds, 0)
 			).getTime();
+		}
+		return d;
 	};
 	getMinutes =  GET + 'Minutes';
 	getHours =    GET + 'Hours';
@@ -6762,20 +6775,22 @@ Axis.prototype = {
 					}
 					pointRange = mathMax(pointRange, seriesPointRange);
 
-					// minPointOffset is the value padding to the left of the axis in order to make
-					// room for points with a pointRange, typically columns. When the pointPlacement option
-					// is 'between' or 'on', this padding does not apply.
-					minPointOffset = mathMax(
-						minPointOffset,
-						isString(pointPlacement) ? 0 : seriesPointRange / 2
-					);
+					if (!axis.single) {
+						// minPointOffset is the value padding to the left of the axis in order to make
+						// room for points with a pointRange, typically columns. When the pointPlacement option
+						// is 'between' or 'on', this padding does not apply.
+						minPointOffset = mathMax(
+							minPointOffset,
+							isString(pointPlacement) ? 0 : seriesPointRange / 2
+						);
 
-					// Determine the total padding needed to the length of the axis to make room for the
-					// pointRange. If the series' pointPlacement is 'on', no padding is added.
-					pointRangePadding = mathMax(
-						pointRangePadding,
-						pointPlacement === 'on' ? 0 : seriesPointRange
-					);
+						// Determine the total padding needed to the length of the axis to make room for the
+						// pointRange. If the series' pointPlacement is 'on', no padding is added.
+						pointRangePadding = mathMax(
+							pointRangePadding,
+							pointPlacement === 'on' ? 0 : seriesPointRange
+						);
+					}
 
 					// Set the closestPointRange
 					if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
@@ -6968,10 +6983,8 @@ Axis.prototype = {
 		axis.minorTickInterval = options.minorTickInterval === 'auto' && axis.tickInterval ?
 				axis.tickInterval / 5 : options.minorTickInterval;
 
-		// find the tick positions
-		axis.tickPositions = tickPositions = options.tickPositions ?
-			[].concat(options.tickPositions) : // Work on a copy (#1565)
-			(tickPositioner && tickPositioner.apply(axis, [axis.min, axis.max]));
+		// Find the tick positions
+		axis.tickPositions = tickPositions = options.tickPositions && options.tickPositions.slice(); // Work on a copy (#1565)
 		if (!tickPositions) {
 
 			// Too many ticks
@@ -7000,6 +7013,10 @@ Axis.prototype = {
 			}
 
 			axis.tickPositions = tickPositions;
+			if (tickPositioner) { // docs: now runs default tick positioning, and allows modifying this
+				axis.tickPositions = tickPositions = tickPositioner.apply(axis, [axis.min, axis.max]);
+			}
+
 		}
 
 		if (!isLinked) {
@@ -7008,7 +7025,7 @@ Axis.prototype = {
 			var roundedMin = tickPositions[0],
 				roundedMax = tickPositions[tickPositions.length - 1],
 				minPointOffset = axis.minPointOffset || 0,
-				singlePad;
+				single;
 
 			if (startOnTick) {
 				axis.min = roundedMin;
@@ -7031,10 +7048,12 @@ Axis.prototype = {
 			// and max are equal and tickPositions.length is 0 or 1. In this case, add some padding
 			// in order to center the point, but leave it with one tick. #1337.
 			if (tickPositions.length === 1) {
-				singlePad = mathAbs(axis.max) > 10e12 ? 1 : 0.001; // The lowest possible number to avoid extra padding on columns (#2619, #2846)
-				axis.min -= singlePad;
-				axis.max += singlePad;
+				// Substract half a unit (#2619, #2846, #2515, #3390)
+				single = true;
+				axis.min -= 0.5;
+				axis.max += 0.5;
 			}
+			axis.single = single;
 		}
 	},
 
@@ -7684,7 +7703,7 @@ Axis.prototype = {
 				});
 				// In a categorized axis, the tick marks are displayed between labels. So
 				// we need to add a tick mark and grid line at the left edge of the X axis.
-				if (tickmarkOffset && axis.min === 0) {
+				if (tickmarkOffset && (axis.min === 0 || axis.single)) {
 					if (!ticks[-1]) {
 						ticks[-1] = new Tick(axis, -1, null, true);
 					}
@@ -8966,7 +8985,8 @@ Pointer.prototype = {
 	 * On mouse up or touch end across the entire document, drop the selection.
 	 */
 	drop: function (e) {
-		var chart = this.chart,
+		var pointer = this,
+			chart = this.chart,
 			hasPinched = this.hasPinched;
 
 		if (this.selectionMarker) {
@@ -8987,20 +9007,18 @@ Pointer.prototype = {
 
 				// record each axis' min and max
 				each(chart.axes, function (axis) {
-					if (axis.zoomEnabled) {
+					if (axis.zoomEnabled && defined(axis.min) && pointer[{ xAxis: 'zoomX', yAxis: 'zoomY' }[axis.coll]]) { // #859, #3569
 						var horiz = axis.horiz,
 							minPixelPadding = e.type === 'touchend' ? axis.minPixelPadding: 0, // #1207, #3075
 							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop) + minPixelPadding),
 							selectionMax = axis.toValue((horiz ? selectionLeft + selectionWidth : selectionTop + selectionHeight) - minPixelPadding);
 
-						if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
-							selectionData[axis.coll].push({
-								axis: axis,
-								min: mathMin(selectionMin, selectionMax), // for reversed axes,
-								max: mathMax(selectionMin, selectionMax)
-							});
-							runZoom = true;
-						}
+						selectionData[axis.coll].push({
+							axis: axis,
+							min: mathMin(selectionMin, selectionMax), // for reversed axes
+							max: mathMax(selectionMin, selectionMax)
+						});
+						runZoom = true;
 					}
 				});
 				if (runZoom) {
@@ -12752,9 +12770,10 @@ Series.prototype = {
 
 			// Set the the plotY value, reset it for redraws
 			point.plotY = (typeof yValue === 'number' && yValue !== Infinity) ?
-				//mathRound(yAxis.translate(yValue, 0, 1, 0, 1) * 10) / 10 : // Math.round fixes #591
 				yAxis.translate(yValue, 0, 1, 0, 1) :
 				UNDEFINED;
+			point.isInside = point.plotY !== UNDEFINED && point.plotY >= 0 && point.plotY <= yAxis.len; // #3519
+
 
 			// Set client related positions for mouse tracking
 			point.clientX = dynamicallyPlaced ? xAxis.translate(xValue, 0, 0, 0, 1) : point.plotX; // #1514
@@ -12914,7 +12933,7 @@ Series.prototype = {
 				pointMarkerOptions = point.marker || {};
 				hasPointMarker = !!point.marker;
 				enabled = (globallyEnabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
-				isInside = chart.isInsidePlot(mathRound(plotX), plotY, chart.inverted); // #1858
+				isInside = point.isInside;
 
 				// only draw the point if y is defined
 				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
@@ -15568,12 +15587,19 @@ extend(ColorAxis.prototype, {
 	tweenColors: function (from, to, pos) {
 		// Check for has alpha, because rgba colors perform worse due to lack of
 		// support in WebKit.
-		var hasAlpha = (to.rgba[3] !== 1 || from.rgba[3] !== 1);
+		var hasAlpha;
+
+		from = from.rgba;
+		to = to.rgba;
+		hasAlpha = (to[3] !== 1 || from[3] !== 1);
+		if (!to.length || !from.length) {
+			Highcharts.error(23);
+		}
 		return (hasAlpha ? 'rgba(' : 'rgb(') + 
-			Math.round(to.rgba[0] + (from.rgba[0] - to.rgba[0]) * (1 - pos)) + ',' + 
-			Math.round(to.rgba[1] + (from.rgba[1] - to.rgba[1]) * (1 - pos)) + ',' + 
-			Math.round(to.rgba[2] + (from.rgba[2] - to.rgba[2]) * (1 - pos)) + 
-			(hasAlpha ? (',' + (to.rgba[3] + (from.rgba[3] - to.rgba[3]) * (1 - pos))) : '') + ')';
+			Math.round(to[0] + (from[0] - to[0]) * (1 - pos)) + ',' + 
+			Math.round(to[1] + (from[1] - to[1]) * (1 - pos)) + ',' + 
+			Math.round(to[2] + (from[2] - to[2]) * (1 - pos)) + 
+			(hasAlpha ? (',' + (to[3] + (from[3] - to[3]) * (1 - pos))) : '') + ')';
 	},
 
 	initDataClasses: function (userOptions) {
@@ -16048,6 +16074,9 @@ SVGRenderer.prototype.Element.prototype.applyTextStroke = function (textStroke) 
 		elem.insertBefore(clone, firstChild);
 	});
 };
+// The vector-effect attribute is not supported in IE <= 11 (at least), so we need 
+// diffent logic (#3218)
+var supportsVectorEffect = document.documentElement.style.vectorEffect !== undefined;
 
 /**
  * Extend the default options with map options
@@ -16302,6 +16331,11 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			if (yAxis && yAxis.options.minRange === undefined) {
 				yAxis.minRange = Math.min(5 * minRange, (this.maxY - this.minY) / 5, yAxis.minRange || MAX_VALUE);
 			}
+		} else {
+			this.minY = UNDEFINED;
+			this.maxY = UNDEFINED;
+			this.minX = UNDEFINED;
+			this.maxX = UNDEFINED;
 		}
 	},
 	
@@ -16484,10 +16518,11 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		
 				point.shapeType = 'path';
 				point.shapeArgs = {
-					//d: display ? series.translatePath(point.path) : ''
-					d: series.translatePath(point.path),
-					'vector-effect': 'non-scaling-stroke'
+					d: series.translatePath(point.path)
 				};
+				if (supportsVectorEffect) {
+					point.shapeArgs['vector-effect'] = 'non-scaling-stroke';
+				}
 			}
 		});
 		
@@ -16537,6 +16572,18 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				});
 			}
 
+			// If vector-effect is not supported, we set the stroke-width on the group element
+			// and let all point graphics inherit. That way we don't have to iterate over all 
+			// points to update the stroke-width on zooming.
+			if (!supportsVectorEffect) {
+				each(series.points, function (point) {
+					var attr = point.pointAttr[''];
+					if (attr['stroke-width'] === series.pointAttr['']['stroke-width']) {
+						attr['stroke-width'] = 'inherit';
+					}
+				});
+			}
+
 			// Draw them in transformGroup
 			series.group = series.transformGroup;
 			seriesTypes.column.prototype.drawPoints.apply(series);
@@ -16550,6 +16597,10 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					}
 					if (point.properties && point.properties['hc-key']) {
 						point.graphic.addClass('highcharts-key-' + point.properties['hc-key'].toLowerCase());
+					}
+
+					if (!supportsVectorEffect) {
+						point.graphic['stroke-widthSetter'] = noop;
 					}
 				}
 			});
@@ -16585,6 +16636,10 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				scaleY: scaleY
 			});
 
+		}
+
+		if (!supportsVectorEffect) {
+			series.group.element.setAttribute('stroke-width', series.options.borderWidth / (scaleX || 1));
 		}
 
 		this.drawMapDataLabels();
@@ -18378,7 +18433,7 @@ extend(Point.prototype, {
 		if (haloOptions && haloOptions.size) {
 			if (!halo) {
 				series.halo = halo = chart.renderer.path()
-					.add(series.seriesGroup);
+					.add(chart.seriesGroup);
 			}
 			halo.attr(extend({
 				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
@@ -18692,6 +18747,7 @@ extend(Highcharts, {
 	arrayMax: arrayMax,
 	charts: charts,
 	dateFormat: dateFormat,
+	error: error,
 	format: format,
 	pathAnim: pathAnim,
 	getOptions: getOptions,

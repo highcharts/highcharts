@@ -85,6 +85,7 @@ var UNDEFINED,
 	Date,  // Allow using a different Date class
 	makeTime,
 	timezoneOffset,
+	getTimezoneOffset,
 	getMinutes,
 	getHours,
 	getDay,
@@ -380,6 +381,11 @@ function wrap(obj, method, func) {
 	};
 }
 
+
+function getTZOffset(timestamp) {
+	return ((getTimezoneOffset && getTimezoneOffset(timestamp)) || timezoneOffset || 0) * 60000;
+}
+
 /**
  * Based on http://www.php.net/manual/en/function.strftime.php
  * @param {String} format
@@ -392,7 +398,7 @@ dateFormat = function (format, timestamp, capitalize) {
 	}
 	format = pick(format, '%Y-%m-%d %H:%M:%S');
 
-	var date = new Date(timestamp - timezoneOffset),
+	var date = new Date(timestamp - getTZOffset(timestamp)),
 		key, // used in for constuct below
 		// get the basic time values
 		hours = date[getHours](),
@@ -1588,17 +1594,22 @@ setTimeMethods();
  * local time or UTC (default).
  */
 function setTimeMethods() {
-	var useUTC = defaultOptions.global.useUTC,
+	var globalOptions = defaultOptions.global,
+		useUTC = globalOptions.useUTC,
 		GET = useUTC ? 'getUTC' : 'get',
 		SET = useUTC ? 'setUTC' : 'set';
 
 
-	Date = defaultOptions.global.Date || window.Date;
-	timezoneOffset = ((useUTC && defaultOptions.global.timezoneOffset) || 0) * 60000;
+	Date = globalOptions.Date || window.Date;
+	timezoneOffset = useUTC && globalOptions.timezoneOffset;
+	getTimezoneOffset = useUTC && globalOptions.getTimezoneOffset; // docs. Sample created.
 	makeTime = function (year, month, date, hours, minutes, seconds) {
-		return useUTC ?
-			Date.UTC.apply(0, arguments) + timezoneOffset : // #3500
-			new Date(
+		var d;
+		if (useUTC) {
+			d = Date.UTC.apply(0, arguments);
+			d += getTZOffset(d);
+		} else {
+			d = new Date(
 				year,
 				month,
 				pick(date, 1),
@@ -1606,6 +1617,8 @@ function setTimeMethods() {
 				pick(minutes, 0),
 				pick(seconds, 0)
 			).getTime();
+		}
+		return d;
 	};
 	getMinutes =  GET + 'Minutes';
 	getHours =    GET + 'Hours';
@@ -7027,20 +7040,22 @@ Axis.prototype = {
 					}
 					pointRange = mathMax(pointRange, seriesPointRange);
 
-					// minPointOffset is the value padding to the left of the axis in order to make
-					// room for points with a pointRange, typically columns. When the pointPlacement option
-					// is 'between' or 'on', this padding does not apply.
-					minPointOffset = mathMax(
-						minPointOffset,
-						isString(pointPlacement) ? 0 : seriesPointRange / 2
-					);
+					if (!axis.single) {
+						// minPointOffset is the value padding to the left of the axis in order to make
+						// room for points with a pointRange, typically columns. When the pointPlacement option
+						// is 'between' or 'on', this padding does not apply.
+						minPointOffset = mathMax(
+							minPointOffset,
+							isString(pointPlacement) ? 0 : seriesPointRange / 2
+						);
 
-					// Determine the total padding needed to the length of the axis to make room for the
-					// pointRange. If the series' pointPlacement is 'on', no padding is added.
-					pointRangePadding = mathMax(
-						pointRangePadding,
-						pointPlacement === 'on' ? 0 : seriesPointRange
-					);
+						// Determine the total padding needed to the length of the axis to make room for the
+						// pointRange. If the series' pointPlacement is 'on', no padding is added.
+						pointRangePadding = mathMax(
+							pointRangePadding,
+							pointPlacement === 'on' ? 0 : seriesPointRange
+						);
+					}
 
 					// Set the closestPointRange
 					if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
@@ -7233,10 +7248,8 @@ Axis.prototype = {
 		axis.minorTickInterval = options.minorTickInterval === 'auto' && axis.tickInterval ?
 				axis.tickInterval / 5 : options.minorTickInterval;
 
-		// find the tick positions
-		axis.tickPositions = tickPositions = options.tickPositions ?
-			[].concat(options.tickPositions) : // Work on a copy (#1565)
-			(tickPositioner && tickPositioner.apply(axis, [axis.min, axis.max]));
+		// Find the tick positions
+		axis.tickPositions = tickPositions = options.tickPositions && options.tickPositions.slice(); // Work on a copy (#1565)
 		if (!tickPositions) {
 
 			// Too many ticks
@@ -7265,6 +7278,10 @@ Axis.prototype = {
 			}
 
 			axis.tickPositions = tickPositions;
+			if (tickPositioner) { // docs: now runs default tick positioning, and allows modifying this
+				axis.tickPositions = tickPositions = tickPositioner.apply(axis, [axis.min, axis.max]);
+			}
+
 		}
 
 		if (!isLinked) {
@@ -7273,7 +7290,7 @@ Axis.prototype = {
 			var roundedMin = tickPositions[0],
 				roundedMax = tickPositions[tickPositions.length - 1],
 				minPointOffset = axis.minPointOffset || 0,
-				singlePad;
+				single;
 
 			if (startOnTick) {
 				axis.min = roundedMin;
@@ -7296,10 +7313,12 @@ Axis.prototype = {
 			// and max are equal and tickPositions.length is 0 or 1. In this case, add some padding
 			// in order to center the point, but leave it with one tick. #1337.
 			if (tickPositions.length === 1) {
-				singlePad = mathAbs(axis.max) > 10e12 ? 1 : 0.001; // The lowest possible number to avoid extra padding on columns (#2619, #2846)
-				axis.min -= singlePad;
-				axis.max += singlePad;
+				// Substract half a unit (#2619, #2846, #2515, #3390)
+				single = true;
+				axis.min -= 0.5;
+				axis.max += 0.5;
 			}
+			axis.single = single;
 		}
 	},
 
@@ -7949,7 +7968,7 @@ Axis.prototype = {
 				});
 				// In a categorized axis, the tick marks are displayed between labels. So
 				// we need to add a tick mark and grid line at the left edge of the X axis.
-				if (tickmarkOffset && axis.min === 0) {
+				if (tickmarkOffset && (axis.min === 0 || axis.single)) {
 					if (!ticks[-1]) {
 						ticks[-1] = new Tick(axis, -1, null, true);
 					}
@@ -8215,7 +8234,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		higherRanks = {},
 		useUTC = defaultOptions.global.useUTC,
 		minYear, // used in months and years as a basis for Date.UTC()
-		minDate = new Date(min - timezoneOffset),
+		minDate = new Date(min - getTZOffset(min)),
 		interval = normalizedInterval.unitRange,
 		count = normalizedInterval.count;
 
@@ -8262,15 +8281,16 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 	
 		// get tick positions
 		i = 1;
-		if (timezoneOffset) {
-			minDate = new Date(minDate.getTime() + timezoneOffset);
+		if (timezoneOffset || getTimezoneOffset) {
+			minDate = minDate.getTime();
+			minDate = new Date(minDate + getTZOffset(minDate));
 		}
 		minYear = minDate[getFullYear]();
 		var time = minDate.getTime(),
 			minMonth = minDate[getMonth](),
 			minDateDate = minDate[getDate](),
 			localTimezoneOffset = (timeUnits.day + 
-					(useUTC ? timezoneOffset : minDate.getTimezoneOffset() * 60 * 1000)
+					(useUTC ? getTZOffset(minDate) : minDate.getTimezoneOffset() * 60 * 1000)
 				) % timeUnits.day; // #950, #3359
 	
 		// iterate and add tick positions at appropriate values
@@ -9431,7 +9451,8 @@ Pointer.prototype = {
 	 * On mouse up or touch end across the entire document, drop the selection.
 	 */
 	drop: function (e) {
-		var chart = this.chart,
+		var pointer = this,
+			chart = this.chart,
 			hasPinched = this.hasPinched;
 
 		if (this.selectionMarker) {
@@ -9452,20 +9473,18 @@ Pointer.prototype = {
 
 				// record each axis' min and max
 				each(chart.axes, function (axis) {
-					if (axis.zoomEnabled) {
+					if (axis.zoomEnabled && defined(axis.min) && pointer[{ xAxis: 'zoomX', yAxis: 'zoomY' }[axis.coll]]) { // #859, #3569
 						var horiz = axis.horiz,
 							minPixelPadding = e.type === 'touchend' ? axis.minPixelPadding: 0, // #1207, #3075
 							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop) + minPixelPadding),
 							selectionMax = axis.toValue((horiz ? selectionLeft + selectionWidth : selectionTop + selectionHeight) - minPixelPadding);
 
-						if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
-							selectionData[axis.coll].push({
-								axis: axis,
-								min: mathMin(selectionMin, selectionMax), // for reversed axes,
-								max: mathMax(selectionMin, selectionMax)
-							});
-							runZoom = true;
-						}
+						selectionData[axis.coll].push({
+							axis: axis,
+							min: mathMin(selectionMin, selectionMax), // for reversed axes
+							max: mathMax(selectionMin, selectionMax)
+						});
+						runZoom = true;
 					}
 				});
 				if (runZoom) {
@@ -13251,9 +13270,10 @@ Series.prototype = {
 
 			// Set the the plotY value, reset it for redraws
 			point.plotY = (typeof yValue === 'number' && yValue !== Infinity) ?
-				//mathRound(yAxis.translate(yValue, 0, 1, 0, 1) * 10) / 10 : // Math.round fixes #591
 				yAxis.translate(yValue, 0, 1, 0, 1) :
 				UNDEFINED;
+			point.isInside = point.plotY !== UNDEFINED && point.plotY >= 0 && point.plotY <= yAxis.len; // #3519
+
 
 			// Set client related positions for mouse tracking
 			point.clientX = dynamicallyPlaced ? xAxis.translate(xValue, 0, 0, 0, 1) : point.plotX; // #1514
@@ -13413,7 +13433,7 @@ Series.prototype = {
 				pointMarkerOptions = point.marker || {};
 				hasPointMarker = !!point.marker;
 				enabled = (globallyEnabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
-				isInside = chart.isInsidePlot(mathRound(plotX), plotY, chart.inverted); // #1858
+				isInside = point.isInside;
 
 				// only draw the point if y is defined
 				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
@@ -15928,11 +15948,6 @@ var PiePoint = extendClass(Point, {
 			}
 		});
 
-		// Make sure halo is hidden (#3391)
-		if (!vis) {
-			point.setState(NORMAL_STATE);
-		}
-
 		if (point.legendItem) {
 			chart.legend.colorizeItem(point, vis);
 		}
@@ -17605,7 +17620,7 @@ extend(Point.prototype, {
 		if (haloOptions && haloOptions.size) {
 			if (!halo) {
 				series.halo = halo = chart.renderer.path()
-					.add(series.seriesGroup);
+					.add(chart.seriesGroup);
 			}
 			halo.attr(extend({
 				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
@@ -17998,7 +18013,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 
 		// Compare points two by two
 		for (start = 1; start < end; start++) {
-			if (new Date(groupPositions[start] - timezoneOffset)[getDate]() !== new Date(groupPositions[start - 1] - timezoneOffset)[getDate]()) {
+			if (dateFormat('%d', groupPositions[start]) !== dateFormat('%d', groupPositions[start - 1])) {
 				higherRanks[groupPositions[start]] = 'day';
 				hasCrossedHigherRank = true;
 			}
@@ -20176,8 +20191,8 @@ Scroller.prototype = {
 				M,
 				scrollerLeft, outlineTop, // left
 				L,
-				navigatorLeft + zoomedMin + halfOutline, outlineTop, // upper left of zoomed range
-				navigatorLeft + zoomedMin + halfOutline, outlineTop + outlineHeight, // lower left of z.r.
+				navigatorLeft + zoomedMin - halfOutline, outlineTop, // upper left of zoomed range
+				navigatorLeft + zoomedMin - halfOutline, outlineTop + outlineHeight, // lower left of z.r.
 				L,
 				navigatorLeft + zoomedMax - halfOutline, outlineTop + outlineHeight, // lower right of z.r.
 				L,
@@ -22257,6 +22272,7 @@ extend(Highcharts, {
 	arrayMax: arrayMax,
 	charts: charts,
 	dateFormat: dateFormat,
+	error: error,
 	format: format,
 	pathAnim: pathAnim,
 	getOptions: getOptions,

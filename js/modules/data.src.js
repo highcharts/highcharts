@@ -172,7 +172,7 @@
 			globalType = chartOptions && chartOptions.chart && chartOptions.chart.type,
 			individualCounts = [],
 			seriesBuilders = [],
-			seriesIndex,
+			seriesIndex = 0,
 			i;
 
 		each((chartOptions && chartOptions.series) || [], function (series) {
@@ -478,7 +478,7 @@
 			columnTypes = this.options.columnTypes || [],
 			columnType = columnTypes[col],
 			forceCategory = isXColumn && ((chartOptions && chartOptions.xAxis && splat(chartOptions.xAxis)[0].type === 'category') || columnType === 'string');
-		
+
 		rawColumns[col] = [];
 		while (row--) {
 			val = backup[row] || column[row];
