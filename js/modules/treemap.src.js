@@ -652,6 +652,8 @@
 							point.graphic.css({ cursor: 'pointer' });
 						}
 						H.addEvent(point, 'click', function () {
+							// Remove hover
+							point.setState('');
 							series.drillToNode(point.id);
 							series.showDrillUpButton(nodeParent.name || nodeParent.id);
 						});
