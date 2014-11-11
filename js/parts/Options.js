@@ -399,10 +399,6 @@ function setTimeMethods() {
 
 }
 
-function getTZOffset(timestamp) {
-	return ((getTimezoneOffset && getTimezoneOffset(timestamp)) || timezoneOffset || 0) * 60000;
-}
-
 /**
  * Merge the default options with custom options and return the new options structure
  * @param {Object} options The new custom options
