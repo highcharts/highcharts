@@ -616,6 +616,9 @@
 				attr.dashstyle = point.borderDashStyle || attr.dashstyle;
 				attr.fill = point.color || attr.fill;
 				attr.zIndex = (1000 - point.level);
+
+				// Make a copy to prevent overwriting individual props
+				point.pointAttr = merge(point.pointAttr);
 				point.pointAttr.hover.zIndex = 1001;
 				// If not a leaf, then remove fill
 				if (!point.isLeaf) {
@@ -631,7 +634,7 @@
 					attr.fill = 'none';
 					delete point.pointAttr.hover.fill;
 				}
-				point.pointAttr[''] = merge(point.pointAttr[''], attr);
+				point.pointAttr[''] = H.extend(point.pointAttr[''], attr);
 			});
 			// Call standard drawPoints
 			seriesTypes.column.prototype.drawPoints.call(this);
