@@ -102,10 +102,11 @@
 			level,
 			levelNumber;
 
-		levelNumber = oldSeries.levelNumber || 0;
+		levelNumber = oldSeries.options._levelNumber || 0;
 			
 		ddOptions = extend({
-			color: color
+			color: color,
+			_ddSeriesId: ddSeriesId++
 		}, ddOptions);
 		pointIndex = inArray(point, oldSeries.points);
 
@@ -115,7 +116,7 @@
 				levelSeries.push(series);
 				series.options._ddSeriesId = series.options._ddSeriesId || ddSeriesId++;
 				levelSeriesOptions.push(series.options);
-				series.levelNumber = series.levelNumber || levelNumber; // #3182
+				series.options._levelNumber = series.options._levelNumber || levelNumber; // #3182
 			}
 		});
 
@@ -146,7 +147,7 @@
 		this.drilldownLevels.push(level);
 
 		newSeries = level.lowerSeries = this.addSeries(ddOptions, false);
-		newSeries.levelNumber = levelNumber + 1;
+		newSeries.options._levelNumber = levelNumber + 1;
 		if (xAxis) {
 			xAxis.oldPos = xAxis.pos;
 			xAxis.userMin = xAxis.userMax = null;
@@ -169,7 +170,7 @@
 			each(this.drilldownLevels, function (level) {
 				if (level.levelNumber === levelToRemove) {
 					each(level.levelSeries, function (series) {
-						if (series.levelNumber === levelToRemove) { // Not removed, not added as part of a multi-series drilldown
+						if (series.options && series.options._levelNumber === levelToRemove) { // Not removed, not added as part of a multi-series drilldown
 							series.remove(false);
 						}
 					});
@@ -288,7 +289,7 @@
 						oldSeries.animateDrillupFrom(level);
 					}
 				}
-				newSeries.levelNumber = levelNumber;
+				newSeries.options._levelNumber = levelNumber;
 				
 				oldSeries.remove(false);
 
@@ -369,7 +370,7 @@
 	ColumnSeries.prototype.animateDrilldown = function (init) {
 		var series = this,
 			drilldownLevels = this.chart.drilldownLevels,
-			animateFrom = this.chart.drilldownLevels[this.chart.drilldownLevels.length - 1].shapeArgs,
+			animateFrom,
 			animationOptions = this.chart.options.drilldown.animation,
 			xAxis = this.xAxis;
 			
