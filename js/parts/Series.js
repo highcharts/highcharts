@@ -275,7 +275,7 @@ Series.prototype = {
 		zones = this.zones = (options.zones || []).slice();
 		if ((options.negativeColor || options.negativeFillColor) && !options.zones) {
 			zones.push({
-				value: options.threshold || 0,
+				value: options[this.zoneAxis + 'Threshold'] || options.threshold || 0,
 				color: options.negativeColor,
 				fillColor: options.negativeFillColor
 			});
