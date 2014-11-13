@@ -85,7 +85,7 @@
 			<plugin>
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-				<version>9.2.3.v20140905</version>
+				<version>8.1.16.v20140903</version>
 				<configuration>
 					<webApp>
 						<contextPath>/export</contextPath>
