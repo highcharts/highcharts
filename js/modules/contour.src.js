@@ -39,6 +39,12 @@ seriesTypes.contour = extendClass(seriesTypes.heatmap, {
 	type: 'contour',
 	init: function () {
 		seriesTypes.heatmap.prototype.init.apply(this, arguments);
+		
+		//We don't want "padding" between our data points and the margin
+		this.pointRange = 0;
+		this.xAxis.axisPointRange = 0;
+		this.yAxis.axisPointRange = 0;
+		
 		//FIXME: I have no idea why, but it believes my chart is always hidden!
 		//This causes a _HUGE_ slowdown while the whole thing is copied over on chart.cloneRenderTo()
 		this.chart.renderer.isHidden = function() {
