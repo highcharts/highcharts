@@ -7695,7 +7695,7 @@ Axis.prototype = {
 				pos = tickPositions[i];
 				label = ticks[pos].label;
 				if (label && this.len / tickPositions.length - 4 < label.getBBox().height) {
-					label.css({ width: css.width, textOverflow: 'ellipsis' });
+					label.specCss = { textOverflow: 'ellipsis' };
 				}
 			}
 		}
@@ -7712,13 +7712,16 @@ Axis.prototype = {
 		// Set the explicit or automatic label alignment
 		this.labelAlign = attr.align = labelOptions.align || this.autoLabelAlign(attr.rotation);
 
-		each(tickPositions, function (tick) {
-			tick = ticks[tick];
-			if (tick && tick.label) {
+		// Apply general and specific CSS
+		each(tickPositions, function (pos) {
+			var tick = ticks[pos],
+				label = tick && tick.label;
+			if (label) {
 				if (css) {
-					tick.label.css(merge(css));
+					label.css(merge(css, label.specCss));
 				}
-				tick.label.attr(attr);
+				delete label.specCss;
+				label.attr(attr);
 				tick.rotation = attr.rotation;
 			}
 		});
