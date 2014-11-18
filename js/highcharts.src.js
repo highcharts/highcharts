@@ -7604,7 +7604,7 @@ Axis.prototype = {
 			newTickInterval = tickInterval,
 			slotSize = this.len / (((this.categories ? 1 : 0) + this.max - this.min) / tickInterval),
 			rotation,
-			fontMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
+			labelMetrics = this.labelMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
 			step,
 			bestScore = Number.MAX_VALUE,
 			autoRotation,
@@ -7626,7 +7626,7 @@ Axis.prototype = {
 
 					if (rot && rot >= -90 && rot <= 90) {
 					
-						step = getStep(mathAbs(fontMetrics.h / mathSin(deg2rad * rot)));
+						step = getStep(mathAbs(labelMetrics.h / mathSin(deg2rad * rot)));
 
 						score = step + mathAbs(rot / 360);
 
@@ -7640,7 +7640,7 @@ Axis.prototype = {
 			}
 
 		} else {
-			newTickInterval = getStep(fontMetrics.h);
+			newTickInterval = getStep(labelMetrics.h);
 		}
 
 		this.autoRotation = autoRotation;
@@ -7662,7 +7662,6 @@ Axis.prototype = {
 			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))), // docs: padding new default
 			attr = { rotation: labelOptions.rotation },
 			css,
-			fontMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
 			labelLength = 0,
 			label,
 			i,
@@ -7679,7 +7678,9 @@ Axis.prototype = {
 				}
 			});
 			
-			if (labelLength > innerWidth) {
+			// Apply rotation only if the label is too wide for the slot, and
+			// the label is wider than its height.
+			if (labelLength > innerWidth && labelLength > this.labelMetrics.h) {
 				attr.rotation = this.labelRotation;
 			}
 
@@ -7723,7 +7724,7 @@ Axis.prototype = {
 		});
 
 		// TODO: Why not part of getLabelPosition?
-		this.rotCorr(fontMetrics.b, attr.rotation || 0);
+		this.rotCorr(this.labelMetrics.b, attr.rotation || 0);
 	},
 
 	/**
