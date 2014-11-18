@@ -1385,7 +1385,7 @@ Axis.prototype = {
 			newTickInterval = tickInterval,
 			slotSize = this.len / (((this.categories ? 1 : 0) + this.max - this.min) / tickInterval),
 			rotation,
-			labelMetrics = this.labelMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
+			labelMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
 			step,
 			bestScore = Number.MAX_VALUE,
 			autoRotation,
@@ -1442,6 +1442,7 @@ Axis.prototype = {
 				(!horiz && (chart.margin[3] || chart.chartWidth * 0.33)), // #1580, #1931,
 			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))), // docs: padding new default
 			attr = { rotation: labelOptions.rotation },
+			labelMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
 			css,
 			labelLength = 0,
 			label,
@@ -1508,7 +1509,7 @@ Axis.prototype = {
 		});
 
 		// TODO: Why not part of getLabelPosition?
-		this.rotCorr(this.labelMetrics.b, attr.rotation || 0);
+		this.rotCorr(labelMetrics.b, attr.rotation || 0);
 	},
 
 	/**
