@@ -592,8 +592,7 @@
 				points = series.points,
 				seriesOptions = series.options,
 				attr,
-				level,
-				nodeParent;
+				level;
 			each(points, function (point) {
 				level = series.levelMap[point.level];
 				attr = {
@@ -641,43 +640,35 @@
 
 			// Set click events on points 
 			if (seriesOptions.allowDrillToNode) {
-				each(points, function (point) {
-					H.removeEvent(point, 'click');
-					if (point.graphic) {
-						point.graphic.css({ cursor: 'default' });
-					}
-					if (point.level === 1 && !point.isLeaf) {
-						nodeParent = series.nodeMap[series.nodeMap[point.id].parent];
-						if (point.graphic) {
-							point.graphic.css({ cursor: 'pointer' });
-						}
-						H.addEvent(point, 'click', function () {
-							// Remove hover
-							point.setState('');
-							series.drillToNode(point.id);
-							series.showDrillUpButton(nodeParent.name || nodeParent.id);
-						});
-					}
-				});
+				series.drillCloser();
 			}
 		},
-		drillCloser: function (point) {
-			var points = this.points,
-				drillNode = this.nodeMap[point.id],
-				parent,
-				valid = true;
-			while (valid) {
-				parent = this.nodeMap[drillNode.parent];
-				valid = (parent.parent !== null) && (points[parent.i].inDisplay);
-				if (valid) {
-					drillNode = parent;
+		/**
+		* Add drilling on the suitable points
+		* TODO: review and better naming
+		*/
+		drillCloser: function () {
+			var series = this,
+				points = series.points,
+				nodeParent;
+			each(points, function (point) {
+				H.removeEvent(point, 'click');
+				if (point.graphic) {
+					point.graphic.css({ cursor: 'default' });
 				}
-			}
-			// If it is not the same point, then drill to it
-			if (drillNode.id !== point.id) {
-				this.drillToNode(drillNode.id);
-				this.showDrillUpButton((parent.name || parent.id));
-			}
+				if (point.level === 1 && !point.isLeaf) {
+					nodeParent = series.nodeMap[series.nodeMap[point.id].parent];
+					if (point.graphic) {
+						point.graphic.css({ cursor: 'pointer' });
+					}
+					H.addEvent(point, 'click', function () {
+						// Remove hover
+						point.setState('');
+						series.drillToNode(point.id);
+						series.showDrillUpButton(nodeParent.name || nodeParent.id);
+					});
+				}
+			});
 		},
 		drillUp: function () {
 			var drillPoint = null,
