@@ -2481,13 +2481,7 @@ SVGElement.prototype = {
 		var renderer = this.renderer,
 			parentWrapper = parent || renderer,
 			parentNode = parentWrapper.element || renderer.box,
-			childNodes,
-			element = this.element,
-			zIndex = this.zIndex,
-			otherElement,
-			otherZIndex,
-			i,
-			inserted;
+			element = this.element;
 
 		if (parent) {
 			this.parentGroup = parent;
@@ -2501,39 +2495,18 @@ SVGElement.prototype = {
 			renderer.buildText(this);
 		}
 
-		// mark the container as having z indexed children
-		if (zIndex) {
-			parentWrapper.handleZ = true;
-			zIndex = pInt(zIndex);
+		// Mark as added
+		this.added = true;
+
+		// If other elements in the group have a z index, we need to handle it
+		if (parentWrapper.handleZ) {
+			this.zIndexSetter();
 		}
 
-		// insert according to this and other elements' zIndex
-		if (parentWrapper.handleZ) { // this element or any of its siblings has a z index
-			childNodes = parentNode.childNodes;
-			for (i = 0; i < childNodes.length; i++) {
-				otherElement = childNodes[i];
-				otherZIndex = attr(otherElement, 'zIndex');
-				if (otherElement !== element && (
-						// insert before the first element with a higher zIndex
-						pInt(otherZIndex) > zIndex ||
-						// if no zIndex given, insert before the first element with a zIndex
-						(!defined(zIndex) && defined(otherZIndex))
-
-						)) {
-					parentNode.insertBefore(element, otherElement);
-					inserted = true;
-					break;
-				}
-			}
-		}
-
-		// default: append at the end
-		if (!inserted) {
+		// If zIndex is not handled, append at the end
+		if (!element.parentNode) {
 			parentNode.appendChild(element);
 		}
-
-		// mark as added
-		this.added = true;
 
 		// fire an event for internal hooks
 		if (this.onAdd) {
@@ -2755,9 +2728,46 @@ SVGElement.prototype = {
 			this.colorGradient(value, key, element);
 		}
 	},
-	zIndexSetter: function (value, key, element) {
-		element.setAttribute(key, value);
-		this[key] = value;
+	zIndexSetter: function (value, key) {
+		var renderer = this.renderer,
+			parentWrapper = this.parentGroup || renderer,
+			parentNode = parentWrapper.element || renderer.box,
+			childNodes,
+			otherElement,
+			otherZIndex,
+			element = this.element,
+			i;
+
+		if (defined(value)) {
+
+			element.setAttribute(key, value); // So we can read it for other elements in the group
+			this[key] = +value;
+			
+			parentWrapper.handleZ = true;
+		}
+
+		// Insert according to this and other elements' zIndex. Before .add() is called,
+		// nothing is done. Then on add, or by later calls to zIndexSetter, the node
+		// is placed on the right place in the DOM.
+		if (this.added) {
+			value = this.zIndex;
+		
+			childNodes = parentNode.childNodes;
+			for (i = 0; i < childNodes.length; i++) {
+				otherElement = childNodes[i];
+				otherZIndex = attr(otherElement, 'zIndex');
+				if (otherElement !== element && (
+						// Insert before the first element with a higher zIndex
+						pInt(otherZIndex) > value ||
+						// If no zIndex given, insert before the first element with a zIndex
+						(!defined(value) && defined(otherZIndex))
+
+						)) {
+					parentNode.insertBefore(element, otherElement);
+					break;
+				}
+			}
+		}
 	},
 	_defaultSetter: function (value, key, element) {
 		element.setAttribute(key, value);
