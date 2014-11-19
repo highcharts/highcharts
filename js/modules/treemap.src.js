@@ -114,7 +114,6 @@
 					// Reset visibility
 					delete point.plotX;
 					delete point.plotY;
-					point.inDisplay = false;
 				});
 				seriesArea = this.getSeriesArea(tree.val);
 				this.nodeMap[""].values = seriesArea;
@@ -246,7 +245,6 @@
 						y2 = Math.round(yAxis.translate(values.y + values.height, 0, 0, 0, 1));
 					if (node.val > 0) {
 						point = series.points[node.i];
-						point.inDisplay = true;
 						point.isLeaf = isLeaf;
 						point.value = node.val;
 						// Set point values
