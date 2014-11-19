@@ -104,7 +104,7 @@
 				// Assign variables
 				if (!tree) {
 					this.nodeMap = [];
-					tree = this.tree = this.buildTree();
+					tree = this.tree = this.getTree();
 				}
 				if (!this.rootNode) {
 					this.rootNode = "";
@@ -121,7 +121,10 @@
 				this.calculateArea(tree, seriesArea);
 			}
 		},
-		buildTree: function () {
+		/**
+		* Creates a tree structured object from the series points
+		*/
+		getTree: function () {
 			var tree,
 				series = this,
 				i = 0,
