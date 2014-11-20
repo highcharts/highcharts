@@ -157,6 +157,10 @@ function getCompareTooltips() {
 							
 						// Compare renderers
 						} else if (window.renderer) {
+	
+							// Automatically click buttons with classname "autocompare"
+							$('.autocompare').click();
+
 							// Create a mock chart object with a getSVG method
 							chart = {
 								getSVG: function () {
