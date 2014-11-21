@@ -34,6 +34,16 @@ defaultOptions.plotOptions.contour = merge(defaultOptions.plotOptions.heatmap, {
 	})
 });
 
+/**
+* Normalize a value into 0-1 range
+*/
+Highcharts.ColorAxis.prototype.toRelativePosition = function(value) {
+    if (this.isLog) {
+        value = this.val2lin(value);
+    }
+    return (value - this.min) / ((this.max - this.min) || 1);
+};
+
 // The Heatmap series type
 seriesTypes.contour = extendClass(seriesTypes.heatmap, {
 	type: 'contour',
@@ -196,7 +206,6 @@ seriesTypes.contour = extendClass(seriesTypes.heatmap, {
 				}
 			});
 			this.base_gradient_id = /(#.*)[)]/.exec(fake_rect.attr('fill'))[1];
-			console.log(this.base_gradient_id);
 		}
 		
 		var group = series.surface_group;
