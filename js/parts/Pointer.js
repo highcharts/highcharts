@@ -144,6 +144,8 @@ Pointer.prototype = {
 			hoverPoint = chart.hoverPoint,
 			hoverSeries = chart.hoverSeries,
 			i,
+			trueXkd,
+			trueX,
 			//j,
 			distance = chart.chartWidth,
 			rdistance = chart.chartWidth, 
@@ -190,8 +192,10 @@ Pointer.prototype = {
 				// Draw tooltip if necessary
 				if (shared && !kdpoint.series.noSharedTooltip) {
 					i = kdpoints.length;
+					trueXkd = kdpoint.plotX + kdpoint.series.xAxis.left;
 					while (i--) {
-						if (kdpoints[i].x !== kdpoint.x || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
+						trueX = kdpoints[i].plotX + kdpoints[i].series.xAxis.left;
+						if (kdpoints[i].x !== kdpoint.x || trueX != trueXkd || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
 							kdpoints.splice(i, 1);
 						}
 					}
