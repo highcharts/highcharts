@@ -3,7 +3,21 @@ ini_set('display_errors', 'on');
 session_start();
 $defaults = json_decode(file_get_contents('default-settings.json'));
 
-define('EXPORT_SERVER', isset($_SESSION['exportServer']) ? $_SESSION['exportServer'] : $defaults->exportServer);
+$exportServer = isset($_SESSION['exportServer']) ? $_SESSION['exportServer'] : $defaults->exportServer;
+
+$fallBackToOnline = false;
+if ($exportServer !== 'http://export.highcharts.com/') {
+	$url = preg_replace('/^(http|https):\/\//', '', $exportServer);
+	$localServerStarted = @fsockopen($url, 80, $errno, $errstr, 30);
+
+	if (!$localServerStarted) {
+		$exportServer = 'http://export.highcharts.com/';
+		$fallBackToOnline = true;
+	}
+}
+
+
+
 
 /**
  * Send a post request
@@ -121,13 +135,13 @@ if (get_magic_quotes_gpc()) {
 	$rightSVG = stripslashes($rightSVG);
 }
 
-$leftImage = post(EXPORT_SERVER, array(
+$leftImage = post($exportServer, array(
 	'width' => 500,
 	'type' => 'image/png',
 	'svg' => $leftSVG
 ));
 
-$rightImage = post(EXPORT_SERVER, array(
+$rightImage = post($exportServer, array(
 	'width' => 500,
  	'type' => 'image/png',
 	'svg' => $rightSVG
@@ -147,6 +161,9 @@ file_put_contents("temp/left.png", $leftImage);
 file_put_contents("temp/right.png", $rightImage);
 $difference['sourceImage']['url'] = "temp/left.png";
 $difference['matchImage']['url'] = "temp/right.png";
+$difference['fallBackToOnline'] = $fallBackToOnline;
+
+
 
 // compare to reference
 $path = str_replace('--', '/', $_POST['path']);

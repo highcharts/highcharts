@@ -314,6 +314,11 @@
 								path: "<?php echo $path ?>".replace(/\//g, '--')	
 							}, 
 							success: function (data) {
+
+								if (data.fallBackToOnline) {
+									report += ' (Preferred export server not started, fell back to export.highcharts.com)';
+								}
+
 								if (data.dissimilarityIndex === 0) {
 									identical = true;
 									
