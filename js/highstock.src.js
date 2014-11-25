@@ -8550,7 +8550,7 @@ Tooltip.prototype = {
 		this.isHidden = true;
 
 
-		// create the label
+		// create the label		
 		this.label = chart.renderer.label('', 0, 0, options.shape || 'callout', null, null, options.useHTML, null, 'tooltip')
 			.attr({
 				padding: padding,
@@ -8667,9 +8667,11 @@ Tooltip.prototype = {
 			chart = this.chart,
 			inverted = chart.inverted,
 			plotTop = chart.plotTop,
+			plotLeft = chart.plotLeft,
 			plotX = 0,
 			plotY = 0,
-			yAxis;
+			yAxis,
+			xAxis;
 		
 		points = splat(points);
 		
@@ -8690,7 +8692,8 @@ Tooltip.prototype = {
 		if (!ret) {
 			each(points, function (point) {
 				yAxis = point.series.yAxis;
-				plotX += point.plotX;
+				xAxis = point.series.xAxis;
+				plotX += point.plotX  + (!inverted && xAxis ? xAxis.left - plotLeft : 0); 
 				plotY += (point.plotLow ? (point.plotLow + point.plotHigh) / 2 : point.plotY) +
 					(!inverted && yAxis ? yAxis.top - plotTop : 0); // #1151
 			});
@@ -9184,6 +9187,8 @@ Pointer.prototype = {
 			hoverPoint = chart.hoverPoint,
 			hoverSeries = chart.hoverSeries,
 			i,
+			trueXkd,
+			trueX,
 			//j,
 			distance = chart.chartWidth,
 			rdistance = chart.chartWidth, 
@@ -9230,8 +9235,10 @@ Pointer.prototype = {
 				// Draw tooltip if necessary
 				if (shared && !kdpoint.series.noSharedTooltip) {
 					i = kdpoints.length;
+					trueXkd = kdpoint.plotX + kdpoint.series.xAxis.left;
 					while (i--) {
-						if (kdpoints[i].x !== kdpoint.x || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
+						trueX = kdpoints[i].plotX + kdpoints[i].series.xAxis.left;
+						if (kdpoints[i].x !== kdpoint.x || trueX !== trueXkd || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
 							kdpoints.splice(i, 1);
 						}
 					}
@@ -12763,7 +12770,7 @@ Series.prototype = {
 		zones = this.zones = (options.zones || []).slice();
 		if ((options.negativeColor || options.negativeFillColor) && !options.zones) {
 			zones.push({
-				value: options.threshold || 0,
+				value: options[this.zoneAxis + 'Threshold'] || options.threshold || 0,
 				color: options.negativeColor,
 				fillColor: options.negativeFillColor
 			});
