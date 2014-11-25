@@ -1380,7 +1380,9 @@ Chart.prototype = {
 			callback.apply(chart, [chart]);
 		}
 		each(chart.callbacks, function (fn) {
-			fn.apply(chart, [chart]);
+			if (chart.index !== UNDEFINED) { // Chart destroyed in its own callback (#3600)
+				fn.apply(chart, [chart]);
+			}
 		});
 		
 		

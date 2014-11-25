@@ -12185,7 +12185,9 @@ Chart.prototype = {
 			callback.apply(chart, [chart]);
 		}
 		each(chart.callbacks, function (fn) {
-			fn.apply(chart, [chart]);
+			if (chart.index !== UNDEFINED) { // Chart destroyed in its own callback (#3600)
+				fn.apply(chart, [chart]);
+			}
 		});
 		
 		
@@ -14792,37 +14794,7 @@ extend(Point.prototype, {
 	 *    configuration
 	 */
 	remove: function (redraw, animation) {
-		var point = this,
-			series = point.series,
-			points = series.points,
-			chart = series.chart,
-			i,
-			data = series.data;
-
-		setAnimation(animation, chart);
-		redraw = pick(redraw, true);
-
-		// fire the event with a default handler of removing the point
-		point.firePointEvent('remove', null, function () {
-
-			// splice all the parallel arrays
-			i = inArray(point, data);
-			if (data.length === points.length) {
-				points.splice(i, 1);
-			}
-			data.splice(i, 1);
-			series.options.data.splice(i, 1);
-			series.updateParallelArrays(point, 'splice', i, 1);
-
-			point.destroy();
-
-			// redraw
-			series.isDirty = true;
-			series.isDirtyData = true;
-			if (redraw) {
-				chart.redraw();
-			}
-		});
+		this.series.removePoint(inArray(this, this.series.data), redraw, animation);
 	}
 });
 
@@ -14922,6 +14894,48 @@ extend(Series.prototype, {
 		if (redraw) {
 			series.getAttribs(); // #1937
 			chart.redraw();
+		}
+	},
+
+	/**
+	 * Remove a point (rendered or not), by index
+	 */
+	removePoint: function (i, redraw, animation) { // docs: new method on Series object. Sample created: series-removepoint
+
+		var series = this,
+			data = series.data,
+			point = data[i],
+			points = series.points,
+			chart = series.chart,
+			remove = function () {
+
+				if (data.length === points.length) {
+					points.splice(i, 1);
+				}
+				data.splice(i, 1);
+				series.options.data.splice(i, 1);
+				series.updateParallelArrays(point || { series: series }, 'splice', i, 1);
+
+				if (point) {
+					point.destroy();
+				}
+
+				// redraw
+				series.isDirty = true;
+				series.isDirtyData = true;
+				if (redraw) {
+					chart.redraw();
+				}
+			};
+
+		setAnimation(animation, chart);
+		redraw = pick(redraw, true);
+
+		// Fire the event with a default handler of removing the point
+		if (point) {
+			point.firePointEvent('remove', null, remove);
+		} else {
+			remove();
 		}
 	},
 

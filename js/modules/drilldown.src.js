@@ -7,7 +7,7 @@
  * Demo: http://jsfiddle.net/highcharts/Vf3yT/
  */
 
-/*global HighchartsAdapter*/
+/*global Highcharts,HighchartsAdapter*/
 (function (H) {
 
 	"use strict";
@@ -29,15 +29,35 @@
 		ddSeriesId = 1;
 
 	// Utilities
-	function tweenColors(startColor, endColor, pos) {
-		var rgba = [
-				Math.round(startColor[0] + (endColor[0] - startColor[0]) * pos),
-				Math.round(startColor[1] + (endColor[1] - startColor[1]) * pos),
-				Math.round(startColor[2] + (endColor[2] - startColor[2]) * pos),
-				startColor[3] + (endColor[3] - startColor[3]) * pos
-			];
-		return 'rgba(' + rgba.join(',') + ')';
+	/*
+	 * Return an intermediate color between two colors, according to pos where 0
+	 * is the from color and 1 is the to color
+	 */
+	function tweenColors(from, to, pos) {
+		// Check for has alpha, because rgba colors perform worse due to lack of
+		// support in WebKit.
+		var hasAlpha;
+
+		from = from.rgba;
+		to = to.rgba;
+		hasAlpha = (to[3] !== 1 || from[3] !== 1);
+		if (!to.length || !from.length) {
+			Highcharts.error(23);
+		}
+		return (hasAlpha ? 'rgba(' : 'rgb(') + 
+			Math.round(to[0] + (from[0] - to[0]) * (1 - pos)) + ',' + 
+			Math.round(to[1] + (from[1] - to[1]) * (1 - pos)) + ',' + 
+			Math.round(to[2] + (from[2] - to[2]) * (1 - pos)) + 
+			(hasAlpha ? (',' + (to[3] + (from[3] - to[3]) * (1 - pos))) : '') + ')';
 	}
+	/**
+	 * Handle animation of the color attributes directly
+	 */
+	each(['fill', 'stroke'], function (prop) {
+		HighchartsAdapter.addAnimSetter(prop, function (fx) {
+			fx.elem.attr(prop, tweenColors(H.Color(fx.start), H.Color(fx.end), fx.pos));
+		});
+	});
 
 	// Add language
 	extend(defaultOptions.lang, {
@@ -102,10 +122,11 @@
 			level,
 			levelNumber;
 
-		levelNumber = oldSeries.levelNumber || 0;
+		levelNumber = oldSeries.options._levelNumber || 0;
 			
 		ddOptions = extend({
-			color: color
+			color: color,
+			_ddSeriesId: ddSeriesId++
 		}, ddOptions);
 		pointIndex = inArray(point, oldSeries.points);
 
@@ -115,7 +136,7 @@
 				levelSeries.push(series);
 				series.options._ddSeriesId = series.options._ddSeriesId || ddSeriesId++;
 				levelSeriesOptions.push(series.options);
-				series.levelNumber = series.levelNumber || levelNumber; // #3182
+				series.options._levelNumber = series.options._levelNumber || levelNumber; // #3182
 			}
 		});
 
@@ -146,7 +167,7 @@
 		this.drilldownLevels.push(level);
 
 		newSeries = level.lowerSeries = this.addSeries(ddOptions, false);
-		newSeries.levelNumber = levelNumber + 1;
+		newSeries.options._levelNumber = levelNumber + 1;
 		if (xAxis) {
 			xAxis.oldPos = xAxis.pos;
 			xAxis.userMin = xAxis.userMax = null;
@@ -169,7 +190,7 @@
 			each(this.drilldownLevels, function (level) {
 				if (level.levelNumber === levelToRemove) {
 					each(level.levelSeries, function (series) {
-						if (series.levelNumber === levelToRemove) { // Not removed, not added as part of a multi-series drilldown
+						if (series.options && series.options._levelNumber === levelToRemove) { // Not removed, not added as part of a multi-series drilldown
 							series.remove(false);
 						}
 					});
@@ -288,7 +309,7 @@
 						oldSeries.animateDrillupFrom(level);
 					}
 				}
-				newSeries.levelNumber = levelNumber;
+				newSeries.options._levelNumber = levelNumber;
 				
 				oldSeries.remove(false);
 
@@ -369,7 +390,7 @@
 	ColumnSeries.prototype.animateDrilldown = function (init) {
 		var series = this,
 			drilldownLevels = this.chart.drilldownLevels,
-			animateFrom = this.chart.drilldownLevels[this.chart.drilldownLevels.length - 1].shapeArgs,
+			animateFrom,
 			animationOptions = this.chart.options.drilldown.animation,
 			xAxis = this.xAxis;
 			
@@ -377,16 +398,20 @@
 			each(drilldownLevels, function (level) {
 				if (series.options._ddSeriesId === level.lowerSeriesOptions._ddSeriesId) {
 					animateFrom = level.shapeArgs;
+					animateFrom.fill = level.color;
 				}
 			});
 
 			animateFrom.x += (pick(xAxis.oldPos, xAxis.pos) - xAxis.pos);
-	
+
 			each(this.points, function (point) {
 				if (point.graphic) {
 					point.graphic
 						.attr(animateFrom)
-						.animate(point.shapeArgs, animationOptions);
+						.animate(
+							extend(point.shapeArgs, { fill: point.color }), 
+							animationOptions
+						);
 				}
 				if (point.dataLabel) {
 					point.dataLabel.fadeIn(animationOptions);
@@ -417,8 +442,6 @@
 		delete this.group;
 		each(this.points, function (point) {
 			var graphic = point.graphic,
-				startColor = H.Color(point.color).rgba,
-				endColor = H.Color(level.color).rgba,
 				complete = function () {
 					graphic.destroy();
 					if (group) {
@@ -431,18 +454,10 @@
 				delete point.graphic;
 
 				if (animationOptions) {
-					/*jslint unparam: true*/
-					graphic.animate(level.shapeArgs, H.merge(animationOptions, {
-						step: function (val, fx) {
-							if (fx.prop === 'start' && startColor.length === 4 && endColor.length === 4) {
-								this.attr({
-									fill: tweenColors(startColor, endColor, fx.pos)
-								});
-							}
-						},
-						complete: complete
-					}));
-					/*jslint unparam: false*/
+					graphic.animate(
+						extend(level.shapeArgs, { fill: level.color }),
+						H.merge(animationOptions, { complete: complete })
+					);
 				} else {
 					graphic.attr(level.shapeArgs);
 					complete();
@@ -463,28 +478,19 @@
 					animateFrom = level.shapeArgs,
 					start = animateFrom.start,
 					angle = animateFrom.end - start,
-					startAngle = angle / this.points.length,
-					startColor = H.Color(level.color).rgba;
+					startAngle = angle / this.points.length;
 
 				if (!init) {
 					each(this.points, function (point, i) {
-						var endColor = H.Color(point.color).rgba;
-
-						/*jslint unparam: true*/
 						point.graphic
 							.attr(H.merge(animateFrom, {
 								start: start + i * startAngle,
-								end: start + (i + 1) * startAngle
-							}))[animationOptions ? 'animate' : 'attr'](point.shapeArgs, H.merge(animationOptions, {
-								step: function (val, fx) {
-									if (fx.prop === 'start' && startColor.length === 4 && endColor.length === 4) {
-										this.attr({
-											fill: tweenColors(startColor, endColor, fx.pos)
-										});
-									}
-								}
-							}));
-						/*jslint unparam: false*/
+								end: start + (i + 1) * startAngle,
+								fill: level.color
+							}))[animationOptions ? 'animate' : 'attr'](
+								extend(point.shapeArgs, { fill: point.color }), 
+								animationOptions
+							);
 					});
 					this.animate = null;
 				}

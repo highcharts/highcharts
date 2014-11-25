@@ -45,12 +45,34 @@ $(function () {
                 href,
                 extension,
                 download = function () {
-                    a = document.createElement('a');
-                    a.href = href;
-                    a.download = 'chart.' + extension;
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
+
+                    var blob;
+
+                    // IE specific
+                    if (navigator.msSaveOrOpenBlob) { 
+
+                        // Get PNG blob
+                        if (extension === 'png') {
+                            blob = canvas.msToBlob();
+
+                        // Get SVG blob
+                        } else {
+                            blob = new MSBlobBuilder;
+                            blob.append(svg);
+                            blob = blob.getBlob('image/svg+xml');
+                        }
+
+                        navigator.msSaveOrOpenBlob(blob, 'chart.' + extension);
+
+                    // HTML5 download attribute
+                    } else {
+                        a = document.createElement('a');
+                        a.href = href;
+                        a.download = 'chart.' + extension;
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                    }
                 },
                 prepareCanvas = function () {
                     canvas = document.createElement('canvas'); // Create an empty canvas
