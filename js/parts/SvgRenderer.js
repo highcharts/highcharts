@@ -706,8 +706,6 @@ SVGElement.prototype = {
 	add: function (parent) {
 
 		var renderer = this.renderer,
-			parentWrapper = parent || renderer,
-			parentNode = parentWrapper.element || renderer.box,
 			element = this.element;
 
 		if (parent) {
@@ -725,14 +723,15 @@ SVGElement.prototype = {
 		// Mark as added
 		this.added = true;
 
-		// If other elements in the group have a z index, we need to handle it
-		if (parentWrapper.handleZ) {
+		// If we're adding to renderer root, or other elements in the group 
+		// have a z index, we need to handle it
+		if (!parent || parent.handleZ || this.zIndex) {
 			this.zIndexSetter();
 		}
 
 		// If zIndex is not handled, append at the end
 		if (!element.parentNode) {
-			parentNode.appendChild(element);
+			(parent ? parent.element : renderer.box).appendChild(element);
 		}
 
 		// fire an event for internal hooks
@@ -957,20 +956,18 @@ SVGElement.prototype = {
 	},
 	zIndexSetter: function (value, key) {
 		var renderer = this.renderer,
-			parentWrapper = this.parentGroup || renderer,
+			parentGroup = this.parentGroup,
+			parentWrapper = parentGroup || renderer,
 			parentNode = parentWrapper.element || renderer.box,
 			childNodes,
 			otherElement,
 			otherZIndex,
 			element = this.element,
 			i;
-
+		
 		if (defined(value)) {
-
 			element.setAttribute(key, value); // So we can read it for other elements in the group
 			this[key] = +value;
-			
-			parentWrapper.handleZ = true;
 		}
 
 		// Insert according to this and other elements' zIndex. Before .add() is called,
@@ -978,6 +975,10 @@ SVGElement.prototype = {
 		// is placed on the right place in the DOM.
 		if (this.added) {
 			value = this.zIndex;
+
+			if (value && parentGroup) {
+				parentGroup.handleZ = true;
+			}
 		
 			childNodes = parentNode.childNodes;
 			for (i = 0; i < childNodes.length; i++) {
