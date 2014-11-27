@@ -80,22 +80,6 @@
 	seriesTypes.treemap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		type: 'treemap',
 		trackerGroups: ['group', 'dataLabelsGroup'],
-		pointClass: extendClass(H.Point, {
-			setState: function (state, move) {
-				H.Point.prototype.setState.call(this, state, move);
-				if (this.series.chart.renderer.isSVG) {
-					if (state === 'hover' && !this._nS) {
-						this._nS = this.graphic.element.nextSibling;
-						this.graphic.toFront();
-					} else if (state !== 'hover' && this._nS) {
-						if (this._nS.parentNode) {
-							this._nS.parentNode.insertBefore(this.graphic.element, this._nS);
-						}
-						delete this._nS;
-					}					
-				}
-			}
-		}),
 		handleLayout: function () {
 			var series = this,
 				tree = this.tree,
