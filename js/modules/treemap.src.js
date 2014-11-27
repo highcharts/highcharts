@@ -566,10 +566,12 @@
 			var bBox,
 				shapeArgs = point.shapeArgs;
 			seriesTypes.column.prototype.alignDataLabel.apply(this, [].slice.call(arguments));
+			if (shapeArgs) {
 			bBox = dataLabel.getBBox();
-			if (bBox.height > shapeArgs.height || bBox.width > shapeArgs.width) {
-				dataLabel.attr({ y: -999 });
-				dataLabel.placed = false; // don't animate back in
+				if (bBox.height > shapeArgs.height || bBox.width > shapeArgs.width) {
+					dataLabel.attr({ y: -999 });
+					dataLabel.placed = false; // don't animate back in
+				}
 			}
 		},
 		drawPoints: function () {
