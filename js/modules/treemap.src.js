@@ -618,12 +618,19 @@
 				}
 				if (point.level < 1) {
 					attr.fill = 'none';
+					attr.zIndex = 0;
 					delete point.pointAttr.hover.fill;
 				}
 				point.pointAttr[''] = H.extend(point.pointAttr[''], attr);
 			});
 			// Call standard drawPoints
 			seriesTypes.column.prototype.drawPoints.call(this);
+
+			each(points, function (point) {
+				if (point.graphic) {
+					point.graphic.attr(point.pointAttr['']);
+				}
+			});
 
 			// Set click events on points 
 			if (seriesOptions.allowDrillToNode) {
