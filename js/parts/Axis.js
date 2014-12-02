@@ -1107,7 +1107,8 @@ Axis.prototype = {
 				});
 
 				if (hasOther) {
-					tickAmount = mathCeil(this.len / this.options.tickPixelInterval);
+					// Add 1 because 4 tick intervals require 5 ticks (including first and last)
+					tickAmount = mathCeil(this.len / this.options.tickPixelInterval) + 1;
 				}
 			}
 		}
@@ -1462,7 +1463,7 @@ Axis.prototype = {
 			
 			// Apply rotation only if the label is too wide for the slot, and
 			// the label is wider than its height.
-			if (labelLength > innerWidth && labelLength > this.labelMetrics.h) {
+			if (labelLength > innerWidth && labelLength > labelMetrics.h) {
 				attr.rotation = this.labelRotation;
 			}
 
