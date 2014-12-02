@@ -533,6 +533,9 @@
 				this.setColorRecursive(this.tree, undefined);
 			}
 		},
+		/**
+		* Extend drawDataLabels with logic to handle the levels option
+		*/
 		drawDataLabels: function () {
 			var series = this,
 				points = series.points,
@@ -562,6 +565,9 @@
 			});
 			Series.prototype.drawDataLabels.call(this);
 		},
+		/**
+		* If the dataLabel need more space than the point shape, then remove it.
+		*/
 		alignDataLabel: function (point, dataLabel) {
 			var bBox,
 				shapeArgs = point.shapeArgs;
@@ -574,6 +580,9 @@
 				}
 			}
 		},
+		/**
+		* Extending ColumnSeries drawPoints
+		*/
 		drawPoints: function () {
 			var series = this,
 				points = series.points,
