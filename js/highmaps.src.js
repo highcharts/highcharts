@@ -16358,7 +16358,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * in capable browsers.
 	 */
 	doFullTranslate: function () {
-		return this.isDirtyData || this.chart.renderer.isVML || !this.baseTrans;
+		return this.isDirtyData || this.chart.isResizing || this.chart.renderer.isVML || !this.baseTrans;
 	},
 	
 	/**
