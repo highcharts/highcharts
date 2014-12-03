@@ -877,16 +877,18 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 			var shapeArgs = point.shapeArgs,
 				tooltipPos = point.tooltipPos;
 
+			// Translate the tooltip position in 3d space
+			tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1] - (point.y < series.yAxis.min ? shapeArgs.height : 0), z: z }], alpha, beta, origin)[0];
+			point.tooltipPos = [tooltipPos.x, tooltipPos.y];
+
 			point.shapeType = 'cuboid';
 			shapeArgs.alpha = alpha;
 			shapeArgs.beta = beta; 
 			shapeArgs.z = z;
 			shapeArgs.origin = origin;
 			shapeArgs.depth = depth;
+			shapeArgs.height = (point.y < series.yAxis.min ? 0 : shapeArgs.height);
 
-			// Translate the tooltip position in 3d space
-			tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], alpha, beta, origin)[0];
-			point.tooltipPos = [tooltipPos.x, tooltipPos.y];
 		}
 	});	    
 });
