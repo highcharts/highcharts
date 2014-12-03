@@ -6807,17 +6807,14 @@ Axis.prototype = {
 	 * Set the tick positions to round values and optionally extend the extremes
 	 * to the nearest tick
 	 */
-	setTickPositions: function (secondPass) {
+	setTickInterval: function (secondPass) {
 		var axis = this,
 			chart = axis.chart,
 			options = axis.options,
-			startOnTick = options.startOnTick,
-			endOnTick = options.endOnTick,
 			isLog = axis.isLog,
 			isDatetimeAxis = axis.isDatetimeAxis,
 			isXAxis = axis.isXAxis,
 			isLinked = axis.isLinked,
-			tickPositioner = axis.options.tickPositioner,
 			maxPadding = options.maxPadding,
 			minPadding = options.minPadding,
 			length,
@@ -6825,8 +6822,6 @@ Axis.prototype = {
 			tickIntervalOption = options.tickInterval,
 			minTickInterval,
 			tickPixelIntervalOption = options.tickPixelInterval,
-			tickPositions,
-			keepTwoTicksOnly,
 			categories = axis.categories;
 
 		this.getTickAmount();
@@ -6906,12 +6901,6 @@ Axis.prototype = {
 					// don't let it be more than the data range
 					(axis.max - axis.min) * tickPixelIntervalOption / mathMax(axis.len, tickPixelIntervalOption)
 			);
-			// For squished axes, set only two ticks
-			if (!defined(tickIntervalOption) && axis.len < tickPixelIntervalOption && !this.isRadial &&
-					!this.isLog && !categories && startOnTick && endOnTick) {
-				keepTwoTicksOnly = true;
-				axis.tickInterval /= 4; // tick extremes closer to the real values
-			}
 		}
 
 		// Now we're finished detecting min and max, crop and group series data. This
@@ -6967,61 +6956,73 @@ Axis.prototype = {
 			axis.tickInterval = axis.unsquish();
 		}
 
+		this.setTickPositions();
+	},
+
+	/**
+	 * Now we have computed the normalized tickInterval, get the tick positions
+	 */
+	setTickPositions: function () {
+
+		var options = this.options,
+			tickPositions,
+			tickPositioner = options.tickPositioner,
+			startOnTick = options.startOnTick,
+			minPointOffset = this.minPointOffset || 0,
+			endOnTick = options.endOnTick,
+			roundedMin,
+			roundedMax,
+			singlePad;
+
 		// Set the tickmarkOffset
-		axis.tickmarkOffset = (categories && options.tickmarkPlacement === 'between' && 
-			axis.tickInterval === 1) ? 0.5 : 0; // #3202
+		this.tickmarkOffset = (this.categories && options.tickmarkPlacement === 'between' && 
+			this.tickInterval === 1) ? 0.5 : 0; // #3202
 
 
 		// get minorTickInterval
-		axis.minorTickInterval = options.minorTickInterval === 'auto' && axis.tickInterval ?
-				axis.tickInterval / 5 : options.minorTickInterval;
+		this.minorTickInterval = options.minorTickInterval === 'auto' && this.tickInterval ?
+			this.tickInterval / 5 : options.minorTickInterval;
 
 		// find the tick positions
-		axis.tickPositions = tickPositions = options.tickPositions ?
+		this.tickPositions = tickPositions = options.tickPositions ?
 			[].concat(options.tickPositions) : // Work on a copy (#1565)
-			(tickPositioner && tickPositioner.apply(axis, [axis.min, axis.max]));
+			(tickPositioner && tickPositioner.apply(this, [this.min, this.max]));
 		if (!tickPositions) {
 
-			if (isDatetimeAxis) {
-				tickPositions = axis.getTimeTicks(
-					axis.normalizeTimeTickInterval(axis.tickInterval, options.units),
-					axis.min,
-					axis.max,
+			if (this.isDatetimeAxis) {
+				tickPositions = this.getTimeTicks(
+					this.normalizeTimeTickInterval(this.tickInterval, options.units),
+					this.min,
+					this.max,
 					options.startOfWeek,
-					axis.ordinalPositions,
-					axis.closestPointRange,
+					this.ordinalPositions,
+					this.closestPointRange,
 					true
 				);
-			} else if (isLog) {
-				tickPositions = axis.getLogTickPositions(axis.tickInterval, axis.min, axis.max);
+			} else if (this.isLog) {
+				tickPositions = this.getLogTickPositions(this.tickInterval, this.min, this.max);
 			} else {
-				tickPositions = axis.getLinearTickPositions(axis.tickInterval, axis.min, axis.max);
+				tickPositions = this.getLinearTickPositions(this.tickInterval, this.min, this.max);
 			}
 
-			if (keepTwoTicksOnly) {
-				tickPositions.splice(1, tickPositions.length - 2);
-			}
-
-			axis.tickPositions = tickPositions;
+			this.tickPositions = tickPositions;
 		}
 
-		if (!isLinked) {
+		if (!this.isLinked) {
 
-			// reset min/max or remove extremes based on start/end on tick
-			var roundedMin = tickPositions[0],
-				roundedMax = tickPositions[tickPositions.length - 1],
-				minPointOffset = axis.minPointOffset || 0,
-				singlePad;
+			// Reset min/max or remove extremes based on start/end on tick
+			roundedMin = tickPositions[0];
+			roundedMax = tickPositions[tickPositions.length - 1];
 
 			if (startOnTick) {
-				axis.min = roundedMin;
-			} else if (axis.min - minPointOffset > roundedMin) {
+				this.min = roundedMin;
+			} else if (this.min - minPointOffset > roundedMin) {
 				tickPositions.shift();
 			}
 
 			if (endOnTick) {
-				axis.max = roundedMax;
-			} else if (axis.max + minPointOffset < roundedMax) {
+				this.max = roundedMax;
+			} else if (this.max + minPointOffset < roundedMax) {
 				tickPositions.pop();
 			}
 
@@ -7034,9 +7035,9 @@ Axis.prototype = {
 			// and max are equal and tickPositions.length is 0 or 1. In this case, add some padding
 			// in order to center the point, but leave it with one tick. #1337.
 			if (tickPositions.length === 1) {
-				singlePad = mathAbs(axis.max) > 10e12 ? 1 : 0.001; // The lowest possible number to avoid extra padding on columns (#2619, #2846)
-				axis.min -= singlePad;
-				axis.max += singlePad;
+				singlePad = mathAbs(this.max) > 10e12 ? 1 : 0.001; // The lowest possible number to avoid extra padding on columns (#2619, #2846)
+				this.min -= singlePad;
+				this.max += singlePad;
 			}
 
 			this.adjustTickAmount();
@@ -7050,13 +7051,20 @@ Axis.prototype = {
 	getTickAmount: function () {
 		var others = {}, // Whether there is another axis to pair with this one
 			hasOther,
-			tickAmount;
+			tickAmount,
+			options = this.options,
+			tickPixelInterval = options.tickPixelInterval;
 
 		if (!this.isLinked && !this.isDatetimeAxis) {
 
-			tickAmount = this.options.tickAmount; // docs
+			tickAmount = options.tickAmount; // docs
 
-			if (!tickAmount && this.chart.options.chart.alignTicks !== false && this.options.alignTicks !== false) {
+			if (!defined(options.tickInterval) && this.len < tickPixelInterval && !this.isRadial &&
+					!this.isLog && !this.categories && options.startOnTick && options.endOnTick) {
+				tickAmount = 2;
+			}
+
+			if (!tickAmount && this.chart.options.chart.alignTicks !== false && options.alignTicks !== false) {
 				// Check if there are multiple axes in the same pane
 				each(this.chart[this.coll], function (axis) {
 					var options = axis.options,
@@ -7073,8 +7081,15 @@ Axis.prototype = {
 
 				if (hasOther) {
 					// Add 1 because 4 tick intervals require 5 ticks (including first and last)
-					tickAmount = mathCeil(this.len / this.options.tickPixelInterval) + 1;
+					tickAmount = mathCeil(this.len / tickPixelInterval) + 1;
 				}
+			}
+
+			// For tick amounts of 2 and 3, compute five ticks and remove the intermediate ones. This
+			// prevents the axis from adding ticks that are too far away from the data extremes.
+			if (tickAmount < 4) {
+				this.finalTickAmt = tickAmount;
+				tickAmount = 5;
 			}
 		}
 		this.tickAmount = tickAmount;
@@ -7088,7 +7103,10 @@ Axis.prototype = {
 		var tickInterval = this.tickInterval,
 			tickPositions = this.tickPositions,
 			tickAmount = this.tickAmount,
-			currentTickAmount = tickPositions && tickPositions.length;
+			finalTickAmt = this.finalTickAmt,
+			currentTickAmount = tickPositions && tickPositions.length,
+			i,
+			len;
 
 		if (currentTickAmount < tickAmount) { // TODO: Check #3411
 			while (tickPositions.length < tickAmount) {
@@ -7098,6 +7116,25 @@ Axis.prototype = {
 			}
 			this.transA *= (currentTickAmount - 1) / (tickAmount - 1);
 			this.max = tickPositions[tickPositions.length - 1];
+
+		// We have too many ticks, run second pass to try to reduce ticks
+		} else if (currentTickAmount > tickAmount) {
+			this.tickInterval *= 2;
+			this.setTickPositions();
+		}
+
+		// The finalTickAmt property is set in getTickAmount
+		if (defined(finalTickAmt)) {
+			i = len = tickPositions.length;
+			while (i--) {
+				if (
+					(finalTickAmt === 3 && i % 2 === 1) || // Remove every other tick
+					(finalTickAmt <= 2 && i > 0 && i < len - 1) // Remove all but first and last
+				) {
+					tickPositions.splice(i, 1);
+				}	
+			}
+			this.finalTickAmt = UNDEFINED;
 		}
 	},
 
@@ -7150,7 +7187,7 @@ Axis.prototype = {
 			axis.getSeriesExtremes();
 
 			// get fixed positions based on tickInterval
-			axis.setTickPositions();
+			axis.setTickInterval();
 
 			// record old values to decide whether a rescale is necessary later on (#540)
 			axis.oldUserMin = axis.userMin;
@@ -11601,7 +11638,7 @@ Chart.prototype = {
 			chart.maxTicks = null; // reset for second pass
 			each(axes, function (axis) {
 				if ((axis.horiz && redoHorizontal) || (!axis.horiz && redoVertical)) {
-					axis.setTickPositions(true); // update to reflect the new margins
+					axis.setTickInterval(true); // update to reflect the new margins
 				}
 			});
 			chart.getMargins(); // second pass to check for new labels

@@ -1231,7 +1231,7 @@ Chart.prototype = {
 			chart.maxTicks = null; // reset for second pass
 			each(axes, function (axis) {
 				if ((axis.horiz && redoHorizontal) || (!axis.horiz && redoVertical)) {
-					axis.setTickPositions(true); // update to reflect the new margins
+					axis.setTickInterval(true); // update to reflect the new margins
 				}
 			});
 			chart.getMargins(); // second pass to check for new labels
