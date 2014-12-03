@@ -355,13 +355,13 @@ extend(Chart.prototype, {
 		options = merge(chart.options.exporting, options);
 
 		// do the post
-		Highcharts.post(options.url, {
-			filename: options.filename || 'chart',
-			type: options.type,
-			width: options.width || 0, // IE8 fails to post undefined correctly, so use 0
-			scale: options.scale || 2,
-			svg: svg
-		}, options.formAttributes);
+		Highcharts.post(options.url, merge({
+      filename: options.filename || 'chart',
+      type: options.type,
+      width: options.width || 0, // IE8 fails to post undefined correctly, so use 0
+      scale: options.scale || 2,
+      svg: svg
+    }, options.data), options.formAttributes);
 
 	},
 
