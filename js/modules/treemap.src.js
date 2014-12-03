@@ -29,6 +29,7 @@
 		radius: 0,
 		dataLabels: {
 			enabled: true,
+			defer: false,
 			verticalAlign: 'middle',
 			formatter: function () { // #2945
 				return this.point.name || this.point.id;
@@ -80,6 +81,20 @@
 	seriesTypes.treemap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		type: 'treemap',
 		trackerGroups: ['group', 'dataLabelsGroup'],
+		pointClass: extendClass(H.Point, {
+			setState: function (state, move) {
+				H.Point.prototype.setState.call(this, state, move);
+				if (state === 'hover') {
+					if (this.dataLabel) {
+						this.dataLabel.attr({ zIndex: 1002 });
+					}
+				} else {
+					if (this.dataLabel) {
+						this.dataLabel.attr({ zIndex: (this.pointAttr[''].zIndex + 1) });
+					}
+				}
+			}
+		}),
 		handleLayout: function () {
 			var series = this,
 				tree = this.tree,
@@ -541,6 +556,7 @@
 				points = series.points,
 				options,
 				level,
+				dataLabelsGroup = this.dataLabelsGroup,
 				dataLabels;
 			each(points, function (point) {
 				level = series.levelMap[point.level];
@@ -563,7 +579,9 @@
 					delete point.dlOptions;
 				}
 			});
+			this.dataLabelsGroup = this.group;
 			Series.prototype.drawDataLabels.call(this);
+			this.dataLabelsGroup = dataLabelsGroup;
 		},
 		/**
 		* If the dataLabel need more space than the point shape, then remove it.
@@ -610,7 +628,7 @@
 				attr['stroke-width'] = point.borderWidth || attr['stroke-width'];
 				attr.dashstyle = point.borderDashStyle || attr.dashstyle;
 				attr.fill = point.color || attr.fill;
-				attr.zIndex = (1000 - point.level);
+				attr.zIndex = (1000 - (point.level * 2));
 
 				// Make a copy to prevent overwriting individual props
 				point.pointAttr = merge(point.pointAttr);
@@ -631,6 +649,9 @@
 					delete point.pointAttr.hover.fill;
 				}
 				point.pointAttr[''] = H.extend(point.pointAttr[''], attr);
+				if (point.dataLabel) {
+					point.dataLabel.attr({ zIndex: (point.pointAttr[''].zIndex + 1) });
+				}
 			});
 			// Call standard drawPoints
 			seriesTypes.column.prototype.drawPoints.call(this);
