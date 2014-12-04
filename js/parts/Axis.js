@@ -929,8 +929,8 @@ Axis.prototype = {
 			axis.tickInterval = axis.linkedParent.tickInterval;
 		} else {
 			axis.tickInterval = pick(
-				this.tickAmount ? ((axis.max - axis.min) / mathMax(this.tickAmount - 1, 1)) : undefined,
 				tickIntervalOption,
+				this.tickAmount ? ((axis.max - axis.min) / mathMax(this.tickAmount - 1, 1)) : undefined,
 				categories ? // for categoried axis, 1 is default, for linear axis use tickPix
 					1 :
 					// don't let it be more than the data range
@@ -1001,6 +1001,7 @@ Axis.prototype = {
 
 		var options = this.options,
 			tickPositions,
+			tickPositionsOption = options.tickPositions,
 			tickPositioner = options.tickPositioner,
 			startOnTick = options.startOnTick,
 			minPointOffset = this.minPointOffset || 0,
@@ -1019,8 +1020,8 @@ Axis.prototype = {
 			this.tickInterval / 5 : options.minorTickInterval;
 
 		// find the tick positions
-		this.tickPositions = tickPositions = options.tickPositions ?
-			[].concat(options.tickPositions) : // Work on a copy (#1565)
+		this.tickPositions = tickPositions = tickPositionsOption ?
+			[].concat(tickPositionsOption) : // Work on a copy (#1565)
 			(tickPositioner && tickPositioner.apply(this, [this.min, this.max]));
 		if (!tickPositions) {
 
@@ -1075,7 +1076,9 @@ Axis.prototype = {
 				this.max += singlePad;
 			}
 
-			this.adjustTickAmount();
+			if (!tickPositionsOption && !tickPositioner) {
+				this.adjustTickAmount();
+			}
 		}
 	},
 
