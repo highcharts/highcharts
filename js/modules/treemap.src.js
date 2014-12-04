@@ -606,6 +606,7 @@
 				points = series.points,
 				seriesOptions = series.options,
 				attr,
+				hover,
 				level;
 			each(points, function (point) {
 				level = series.levelMap[point.level];
@@ -632,21 +633,23 @@
 
 				// Make a copy to prevent overwriting individual props
 				point.pointAttr = merge(point.pointAttr);
-				point.pointAttr.hover.zIndex = 1001;
+				hover = point.pointAttr.hover;
+				hover.zIndex = 1001;
 				// If not a leaf, then remove fill
 				if (!point.isLeaf) {
 					if (seriesOptions.allowDrillToNode) {
+						// TODO: let users set the opacity
 						attr.fill = Color(point.color || attr.fill).setOpacity(0.15).get();
-						point.pointAttr.hover.fill = Color(point.color || attr.fill).setOpacity(0.75).get();
+						hover.fill = Color(hover.fill || attr.fill).setOpacity(0.75).get();
 					} else {
 						attr.fill = 'none';
-						delete point.pointAttr.hover.fill;
+						delete hover.fill;
 					}
 				}
 				if (point.level < 1) {
 					attr.fill = 'none';
 					attr.zIndex = 0;
-					delete point.pointAttr.hover.fill;
+					delete hover.fill;
 				}
 				point.pointAttr[''] = H.extend(point.pointAttr[''], attr);
 				if (point.dataLabel) {
