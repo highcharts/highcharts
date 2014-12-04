@@ -962,6 +962,7 @@ SVGElement.prototype = {
 			otherElement,
 			otherZIndex,
 			element = this.element,
+			hasInserted,
 			i;
 		
 		if (defined(value)) {
@@ -991,8 +992,12 @@ SVGElement.prototype = {
 
 						)) {
 					parentNode.insertBefore(element, otherElement);
+					hasInserted = true;
 					break;
 				}
+			}
+			if (!hasInserted) {
+				parentNode.appendChild(element);
 			}
 		}
 	},
