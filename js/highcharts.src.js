@@ -15773,12 +15773,6 @@ var PiePoint = extendClass(Point, {
 		var point = this,
 			toggleSlice;
 
-		// Disallow negative values (#1530)
-		if (point.y < 0) {
-			point.y = null;
-		}
-
-		//visible: options.visible !== false,
 		extend(point, {
 			visible: point.visible !== false,
 			name: pick(point.name, 'Slice')
@@ -15962,6 +15956,12 @@ var PieSeries = {
 		// Get the total sum
 		for (i = 0; i < len; i++) {
 			point = points[i];
+
+			// Disallow negative values (#1530, #3623)
+			if (point.y < 0) {
+				point.y = null;
+			}
+			
 			total += (ignoreHiddenPoint && !point.visible) ? 0 : point.y;
 		}
 		this.total = total;
