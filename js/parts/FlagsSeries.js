@@ -120,6 +120,8 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 
 		// Add plotY position and handle stacking
 		each(points, function (point, i) {
+
+			var stackIndex;
 			
 			// Undefined plotY means the point is either on axis, outside series range or hidden series.
 			// If the series is outside the range of the x axis it should fall through with 
@@ -137,9 +139,9 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 				if (lastPoint.stackIndex === UNDEFINED) {
 					lastPoint.stackIndex = 0;
 				}
-				point.stackIndex = lastPoint.stackIndex + 1;
+				stackIndex = lastPoint.stackIndex + 1;
 			}
-					
+			point.stackIndex = stackIndex; // #3639		
 		});
 
 
