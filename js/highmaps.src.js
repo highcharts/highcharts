@@ -13023,6 +13023,7 @@ Series.prototype = {
 			stateOptionsHover = stateOptions[HOVER_STATE],
 			pointStateOptionsHover,
 			seriesColor = series.color,
+			seriesNegativeColor = series.options.negativeColor,
 			normalDefaults = {
 				stroke: seriesColor,
 				fill: seriesColor
@@ -13054,6 +13055,11 @@ Series.prototype = {
 			// if no hover color is given, brighten the normal color
 			stateOptionsHover.color = stateOptionsHover.color ||
 				Color(stateOptionsHover.color || seriesColor)
+					.brighten(stateOptionsHover.brightness).get();
+
+			// if no hover negativeColor is given, brighten the normal negativeColor
+			stateOptionsHover.negativeColor = stateOptionsHover.negativeColor ||
+				Color(stateOptionsHover.negativeColor || seriesNegativeColor)
 					.brighten(stateOptionsHover.brightness).get();
 		}
 
@@ -13114,7 +13120,7 @@ Series.prototype = {
 					// Handle colors for column and pies
 					if (!seriesOptions.marker) { // column, bar, point
 						// If no hover color is given, brighten the normal color. #1619, #2579
-						pointStateOptionsHover.color = pointStateOptionsHover.color || (!point.options.color && stateOptionsHover.color) ||
+						pointStateOptionsHover.color = pointStateOptionsHover.color || (!point.options.color && stateOptionsHover[(point.negative && seriesNegativeColor ? 'negativeColor' : 'color')]) ||
 							Color(point.color)
 								.brighten(pointStateOptionsHover.brightness || stateOptionsHover.brightness)
 								.get();
