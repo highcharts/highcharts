@@ -149,7 +149,7 @@ var ColumnSeries = extendClass(Series, {
 			options = series.options,
 			borderWidth = series.borderWidth = pick(
 				options.borderWidth, 
-				series.activePointCount > 0.5 * series.xAxis.len ? 0 : 1
+				series.closestPointRange * series.xAxis.transA < 2 ? 0 : 1 // #3635
 			),
 			yAxis = series.yAxis,
 			threshold = options.threshold,

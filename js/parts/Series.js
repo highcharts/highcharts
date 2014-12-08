@@ -470,7 +470,6 @@ Series.prototype = {
 			i, // loop variable
 			options = series.options,
 			cropThreshold = options.cropThreshold,
-			activePointCount = 0,
 			isCartesian = series.isCartesian,
 			xExtremes,
 			min,
@@ -503,7 +502,6 @@ Series.prototype = {
 				processedYData = croppedData.yData;
 				cropStart = croppedData.start;
 				cropped = true;
-				activePointCount = processedXData.length;
 			}
 		}
 
@@ -511,10 +509,6 @@ Series.prototype = {
 		// Find the closest distance between processed points
 		for (i = processedXData.length - 1; i >= 0; i--) {
 			distance = processedXData[i] - processedXData[i - 1];
-			
-			if (!cropped && processedXData[i] > min && processedXData[i] < max) {
-				activePointCount++;
-			}
 			
 			if (distance > 0 && (closestPointRange === UNDEFINED || distance < closestPointRange)) {
 				closestPointRange = distance;
@@ -531,7 +525,6 @@ Series.prototype = {
 		series.cropStart = cropStart;
 		series.processedXData = processedXData;
 		series.processedYData = processedYData;
-		series.activePointCount = activePointCount;
 
 		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
 			series.pointRange = closestPointRange || 1;
@@ -919,7 +912,7 @@ Series.prototype = {
 			markerGroup = series.markerGroup,
 			globallyEnabled = pick(
 				seriesMarkerOptions.enabled, 
-				!series.requireSorting || series.activePointCount < (0.5 * series.xAxis.len / seriesMarkerOptions.radius)
+				!series.requireSorting || series.closestPointRange * series.xAxis.transA > 2 * seriesMarkerOptions.radius // #3635
 			);
 
 		if (seriesMarkerOptions.enabled !== false || series._hasPointMarkers) {
