@@ -21,7 +21,6 @@ Highcharts.PlotLineOrBand.prototype = {
 		var plotLine = this,
 			axis = plotLine.axis,
 			horiz = axis.horiz,
-			halfPointRange = (axis.pointRange || 0) / 2,
 			options = plotLine.options,
 			optionsLabel = options.label,
 			label = plotLine.label,
@@ -63,11 +62,7 @@ Highcharts.PlotLineOrBand.prototype = {
 				attribs.dashstyle = dashStyle;
 			}
 		} else if (isBand) { // plot band
-			
-			// keep within plot area
-			from = mathMax(from, axis.min - halfPointRange);
-			to = mathMin(to, axis.max + halfPointRange);
-			
+
 			path = axis.getPlotBandPath(from, to, options);
 			if (color) {
 				attribs.fill = color;
@@ -192,8 +187,8 @@ AxisPlotLineOrBandExtension = {
 	 * Create the path for a plot band
 	 */ 
 	getPlotBandPath: function (from, to) {
-		var toPath = this.getPlotLinePath(to),
-			path = this.getPlotLinePath(from);
+		var toPath = this.getPlotLinePath(to, null, null, true),
+			path = this.getPlotLinePath(from, null, null, true);
 
 		if (path && toPath) {
 			path.push(

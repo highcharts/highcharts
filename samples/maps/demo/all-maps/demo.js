@@ -66,7 +66,7 @@ $(function () {
 
             // Update info box download links
             $("#download").html(
-                '<a class="button" target="_blank" href="http://jsfiddle.net/gh/get/jquery/1.x/' +
+                '<a class="button" target="_blank" href="http://jsfiddle.net/gh/get/jquery/1.11.0/' +
                 'highslide-software/highcharts.com/tree/master/samples/mapdata/' + mapKey + '">' +
                 'View clean demo</a>' +
                 '<div class="or-view-as">... or view as ' +

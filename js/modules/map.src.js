@@ -1371,7 +1371,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * in capable browsers.
 	 */
 	doFullTranslate: function () {
-		return this.isDirtyData || this.chart.renderer.isVML || !this.baseTrans;
+		return this.isDirtyData || this.chart.isResizing || this.chart.renderer.isVML || !this.baseTrans;
 	},
 	
 	/**
@@ -1516,6 +1516,9 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 		}
 
+		// Set the stroke-width directly on the group element so the children inherit it. We need to use 
+		// setAttribute directly, because the stroke-widthSetter method expects a stroke color also to be 
+		// set.
 		if (!supportsVectorEffect) {
 			series.group.element.setAttribute('stroke-width', series.options.borderWidth / (scaleX || 1));
 		}

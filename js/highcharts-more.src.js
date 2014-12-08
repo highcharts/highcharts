@@ -406,8 +406,8 @@ var radialAxisMixin = {
 				radii[0],
 				radii[0],
 				{
-					start: start,
-					end: end,
+					start: Math.min(start, end), // Math is for reversed yAxis (#3606)
+					end: Math.max(start, end),
 					innerR: pick(radii[1], radii[0] - radii[2]),
 					open: open
 				}
