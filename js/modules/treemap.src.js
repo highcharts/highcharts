@@ -117,6 +117,7 @@
 				seriesArea = this.getSeriesArea(tree.val);
 				this.nodeMap[""].values = seriesArea;
 				this.calculateArea(tree, seriesArea);
+				this.setPointValues();
 			}
 		},
 		/**
@@ -226,41 +227,12 @@
 				childValues,
 				series = this,
 				options = series.options,
-				xAxis = series.xAxis,
-				yAxis = series.yAxis,				
 				algorithm = options.layoutAlgorithm,
 				directionalChange = options.directionalChange,
 				levelRoot = this.nodeMap[this.rootNode].level,							
 				i = 0,
 				level,
-				point,
-				x1,
-				x2,
-				y1,
-				y2,
-				setPointValues = function (node, values, isLeaf) {
-						node.values = values;
-						point = series.points[node.i];
-						x1 = Math.round(xAxis.translate(values.x, 0, 0, 0, 1));
-						x2 = Math.round(xAxis.translate(values.x + values.width, 0, 0, 0, 1));
-						y1 = Math.round(yAxis.translate(values.y, 0, 0, 0, 1));
-						y2 = Math.round(yAxis.translate(values.y + values.height, 0, 0, 0, 1));
-					if (node.val > 0) {
-						point = series.points[node.i];
-						point.isLeaf = isLeaf;
-						point.value = node.val;
-						// Set point values
-						point.shapeType = 'rect';
-						point.shapeArgs = {
-							x: Math.min(x1, x2),
-							y: Math.min(y1, y2),
-							width: Math.abs(x2 - x1),
-							height: Math.abs(y2 - y1)
-						};
-						point.plotX = point.shapeArgs.x + (point.shapeArgs.width / 2);
-						point.plotY = point.shapeArgs.y + (point.shapeArgs.height / 2);
-					}
-				};
+				point;
 			// If layoutAlgorithm is set for the level of the children, then default is overwritten
 			if (this.levelMap[node.level - levelRoot + 1]) {
 				level = this.levelMap[node.level - levelRoot + 1];
@@ -278,21 +250,61 @@
 				if (directionalChange) {
 					childValues.direction = 1 - childValues.direction;
 				}
+				child.values = childValues;
+				point.node = child;
+				point.value = child.val;
+				point.isLeaf = true;
 				// If node has children, then call method recursively
 				if (child.children.length) {
-					setPointValues(child, childValues, false);
+					point.isLeaf = false;
 					series.calculateArea(child, childValues);
-				} else {
-					setPointValues(child, childValues, true);
 				}
 				i = i + 1;
 			});
 		},
+		setPointValues: function () {
+			var series = this,
+				xAxis = series.xAxis,
+				yAxis = series.yAxis;
+			series.nodeMap[""].values = {
+				x: 0,
+				y: 0,
+				width: 100,
+				height: 100
+			};
+			each(series.points, function (point) {
+				var node = point.node,
+					values = node.values,
+					x1,
+					x2,
+					y1,
+					y2;
+				values.x = values.x / series.axisRatio;
+				values.width = values.width / series.axisRatio;
+				x1 = Math.round(xAxis.translate(values.x, 0, 0, 0, 1));
+				x2 = Math.round(xAxis.translate(values.x + values.width, 0, 0, 0, 1));
+				y1 = Math.round(yAxis.translate(values.y, 0, 0, 0, 1));
+				y2 = Math.round(yAxis.translate(values.y + values.height, 0, 0, 0, 1));
+				if (point.value > 0) {
+					// Set point values
+					point.shapeType = 'rect';
+					point.shapeArgs = {
+						x: Math.min(x1, x2),
+						y: Math.min(y1, y2),
+						width: Math.abs(x2 - x1),
+						height: Math.abs(y2 - y1)
+					};
+					point.plotX = point.shapeArgs.x + (point.shapeArgs.width / 2);
+					point.plotY = point.shapeArgs.y + (point.shapeArgs.height / 2);
+				}
+			});
+		},
 		getSeriesArea: function (val) {
-			var w = this.xAxis.options.dataMax,
-				x = this.xAxis.options.dataMin,
-				y = this.yAxis.options.dataMin,
-				h = this.yAxis.options.dataMax,
+			var x = 0,
+				y = 0,
+				h = 100,
+				r = this.axisRatio = (this.xAxis.len / this.yAxis.len),
+				w = 100 * r,
 				seriesArea = {
 					x: x,
 					y: y,
@@ -799,7 +811,6 @@
 			};
 			Series.prototype.bindAxes.call(this);
 			H.extend(this.yAxis.options, treeAxis);
-			treeAxis.dataMax = treeAxis.max = treeAxis.dataMax * (this.chart.plotWidth / this.chart.plotHeight);
 			H.extend(this.xAxis.options, treeAxis);
 		}
 	}));
