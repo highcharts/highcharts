@@ -173,6 +173,9 @@
 						});
 					} else {
 						val = points[i].value;
+						if (val === undefined) {
+							val = 0;
+						}
 					}
 					nodeTree = {
 						id: id,
@@ -314,31 +317,34 @@
 		},
 		setColorRecursive: function (node, color) {
 			var series = this,
-				point = series.points[node.i],
+				point,
 				level;
-			// Overwrite color if level specific color is set
-			if (this.levelMap[node.level] !== undefined) {
-				level = this.levelMap[node.level];
-				if (level.color !== undefined) {
-					color = level.color;
-				}
-			}
-			// If point color is not set, then give it inherited or level color
-			if (node.i !== -1) {
-				if (point.color === undefined) {
-					if (color !== undefined) {
-						point.color = color;
-						point.options.color = color;
+			if (node) {
+				point = series.points[node.i];
+				// Overwrite color if level specific color is set
+				if (this.levelMap[node.level] !== undefined) {
+					level = this.levelMap[node.level];
+					if (level.color !== undefined) {
+						color = level.color;
 					}
-				} else {
-					color = point.color;
 				}
-			}
-			// Do it all again with the children	
-			if (node.children.length) {
-				each(node.children, function (child) {
-					series.setColorRecursive(child, color);
-				});
+				// If point color is not set, then give it inherited or level color
+				if (node.i !== -1) {
+					if (point.color === undefined) {
+						if (color !== undefined) {
+							point.color = color;
+							point.options.color = color;
+						}
+					} else {
+						color = point.color;
+					}
+				}
+				// Do it all again with the children	
+				if (node.children.length) {
+					each(node.children, function (child) {
+						series.setColorRecursive(child, color);
+					});
+				}
 			}
 		},
 		alg_func_group: function (h, w, d, p) {
