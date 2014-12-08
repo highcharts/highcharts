@@ -798,8 +798,9 @@
 				tickPositions: []
 			};
 			Series.prototype.bindAxes.call(this);
-			H.extend(this.xAxis.options, treeAxis);
 			H.extend(this.yAxis.options, treeAxis);
+			treeAxis.dataMax = treeAxis.max = treeAxis.dataMax * (this.chart.plotWidth / this.chart.plotHeight);
+			H.extend(this.xAxis.options, treeAxis);
 		}
 	}));
 }(Highcharts));
