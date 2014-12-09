@@ -7089,7 +7089,9 @@ Axis.prototype = {
 			tickPixelIntervalOption = options.tickPixelInterval,
 			categories = axis.categories;
 
-		this.getTickAmount();
+		if (!isDatetimeAxis && !categories && !isLinked) {
+			this.getTickAmount();
+		}
 
 		// linked axis gets the extremes from the parent axis
 		if (isLinked) {
@@ -7319,47 +7321,43 @@ Axis.prototype = {
 	getTickAmount: function () {
 		var others = {}, // Whether there is another axis to pair with this one
 			hasOther,
-			tickAmount,
 			options = this.options,
+			tickAmount = options.tickAmount, // docs
 			tickPixelInterval = options.tickPixelInterval;
 
-		if (!this.isLinked && !this.isDatetimeAxis) {
+		if (!defined(options.tickInterval) && this.len < tickPixelInterval && !this.isRadial &&
+				!this.isLog && options.startOnTick && options.endOnTick) {
+			tickAmount = 2;
+		}
 
-			tickAmount = options.tickAmount; // docs
+		if (!tickAmount && this.chart.options.chart.alignTicks !== false && options.alignTicks !== false) {
+			// Check if there are multiple axes in the same pane
+			each(this.chart[this.coll], function (axis) {
+				var options = axis.options,
+					horiz = axis.horiz,
+					key = [horiz ? options.left : options.top, horiz ? options.width : options.height].join(',');
+				
 
-			if (!defined(options.tickInterval) && this.len < tickPixelInterval && !this.isRadial &&
-					!this.isLog && !this.categories && options.startOnTick && options.endOnTick) {
-				tickAmount = 2;
-			}
-
-			if (!tickAmount && this.chart.options.chart.alignTicks !== false && options.alignTicks !== false) {
-				// Check if there are multiple axes in the same pane
-				each(this.chart[this.coll], function (axis) {
-					var options = axis.options,
-						horiz = axis.horiz,
-						key = [horiz ? options.left : options.top, horiz ? options.width : options.height].join(',');
-					
-
-					if (others[key]) {
-						hasOther = true;
-					} else {
-						others[key] = 1;
-					}
-				});
-
-				if (hasOther) {
-					// Add 1 because 4 tick intervals require 5 ticks (including first and last)
-					tickAmount = mathCeil(this.len / tickPixelInterval) + 1;
+				if (others[key]) {
+					hasOther = true;
+				} else {
+					others[key] = 1;
 				}
-			}
+			});
 
-			// For tick amounts of 2 and 3, compute five ticks and remove the intermediate ones. This
-			// prevents the axis from adding ticks that are too far away from the data extremes.
-			if (tickAmount < 4) {
-				this.finalTickAmt = tickAmount;
-				tickAmount = 5;
+			if (hasOther) {
+				// Add 1 because 4 tick intervals require 5 ticks (including first and last)
+				tickAmount = mathCeil(this.len / tickPixelInterval) + 1;
 			}
 		}
+
+		// For tick amounts of 2 and 3, compute five ticks and remove the intermediate ones. This
+		// prevents the axis from adding ticks that are too far away from the data extremes.
+		if (tickAmount < 4) {
+			this.finalTickAmt = tickAmount;
+			tickAmount = 5;
+		}
+		
 		this.tickAmount = tickAmount;
 	},
 
