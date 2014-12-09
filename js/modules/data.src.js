@@ -835,6 +835,9 @@
 				if (builder.name) {
 					series[seriesIndex].name = builder.name;
 				}
+				if (type === 'category') {
+					series[seriesIndex].turboThreshold = 0;
+				}
 			}
 
 
