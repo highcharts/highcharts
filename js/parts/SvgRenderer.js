@@ -1200,6 +1200,7 @@ SVGRenderer.prototype = {
 			textStroke = textStyles && textStyles.HcTextStroke,
 			ellipsis = textStyles && textStyles.textOverflow === 'ellipsis',
 			i = childNodes.length,
+			tempParent = width && !wrapper.added && this.box,
 			getLineHeight = function (tspan) {
 				return textLineHeight ? 
 					pInt(textLineHeight) :
@@ -1228,8 +1229,8 @@ SVGRenderer.prototype = {
 			styleRegex = /<.*style="([^"]+)".*>/;
 			hrefRegex = /<.*href="(http[^"]+)".*>/;
 
-			if (width && !wrapper.added) {
-				this.box.appendChild(textNode); // attach it to the DOM to read offset width
+			if (tempParent) {
+				tempParent.appendChild(textNode); // attach it to the DOM to read offset width
 			}
 
 			if (hasMarkup) {
@@ -1403,6 +1404,9 @@ SVGRenderer.prototype = {
 					}
 				});
 			});
+			if (tempParent) {
+				tempParent.removeChild(textNode); // attach it to the DOM to read offset width
+			}
 		}
 	},
 
