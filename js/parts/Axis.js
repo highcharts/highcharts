@@ -1477,10 +1477,11 @@ Axis.prototype = {
 			ticks = this.ticks,
 			labelOptions = this.options.labels,
 			horiz = this.horiz,
+			margin = chart.margin,
 			slotWidth = this.slotWidth = (horiz && !labelOptions.step && !labelOptions.staggerLines &&
 				!labelOptions.rotation &&
 				chart.plotWidth / tickPositions.length) ||
-				(!horiz && (chart.margin[3] || chart.chartWidth * 0.33)), // #1580, #1931,
+				(!horiz && ((margin[3] && (margin[3] - chart.spacing[3])) || chart.chartWidth * 0.33)), // #1580, #1931,
 			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))), // docs: padding new default
 			attr = { rotation: labelOptions.rotation },
 			labelMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
@@ -1517,6 +1518,7 @@ Axis.prototype = {
 			while (!horiz && i--) {
 				pos = tickPositions[i];
 				label = ticks[pos].label;
+				label.css({ width: innerWidth + PX });
 				if (label && this.len / tickPositions.length - 4 < label.getBBox().height) {
 					label.specCss = { textOverflow: 'ellipsis' };
 				}
