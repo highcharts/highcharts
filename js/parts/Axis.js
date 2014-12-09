@@ -1518,9 +1518,11 @@ Axis.prototype = {
 			while (!horiz && i--) {
 				pos = tickPositions[i];
 				label = ticks[pos].label;
-				label.css({ width: innerWidth + PX });
-				if (label && this.len / tickPositions.length - 4 < label.getBBox().height) {
-					label.specCss = { textOverflow: 'ellipsis' };
+				if (label) {
+					label.css({ width: innerWidth + PX });
+					if (this.len / tickPositions.length - 4 < label.getBBox().height) {
+						label.specCss = { textOverflow: 'ellipsis' };
+					}
 				}
 			}
 		}
@@ -1629,9 +1631,7 @@ Axis.prototype = {
 				}
 			});
 
-			if (!axis.isCircular) {
-				axis.renderUnsquish();
-			}
+			axis.renderUnsquish();
 
 			each(tickPositions, function (pos) {
 				// left side must be align: right and right side must have align: left for labels

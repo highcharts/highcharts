@@ -114,7 +114,7 @@ Tick.prototype = {
 		// If it now overshoots the slotWidth, add ellipsis.
 		if (!rotation) {
 			leftOvershoot = pxPos - factor * labelWidth - spacing[3];
-			rightOvershoot = pxPos + factor * labelWidth + spacing[1] - chartWidth;
+			rightOvershoot = pxPos + factor * labelWidth /*+ spacing[1]*/ - chartWidth;
 
 			if (leftOvershoot < 0) {
 				slotWidth += leftOvershoot;
@@ -122,7 +122,7 @@ Tick.prototype = {
 				label.attr({ align: 'left' });				
 			} else if (rightOvershoot > 0) {
 				slotWidth -= rightOvershoot;
-				xy.x = chartWidth - spacing[1];
+				xy.x = chartWidth/* - spacing[1]*/;
 				label.attr({ align: 'right' });
 			}
 
