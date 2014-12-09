@@ -428,7 +428,7 @@
 	findHeaderRow: function () {
 		this.headerRow = 0;
 	},
-	
+
 	/**
 	 * Trim a string from whitespace
 	 */
@@ -478,14 +478,21 @@
 			columnTypes = this.options.columnTypes || [],
 			columnType = columnTypes[col],
 			forceCategory = isXColumn && ((chartOptions && chartOptions.xAxis && splat(chartOptions.xAxis)[0].type === 'category') || columnType === 'string');
-
-		rawColumns[col] = [];
+		
+		if (!rawColumns[col]) {
+			rawColumns[col] = [];
+		}
 		while (row--) {
 			val = backup[row] || column[row];
 			
-			trimVal = rawColumns[col][row] = this.trim(val);
+			trimVal = this.trim(val);
 			trimInsideVal = this.trim(val, true);
 			floatVal = parseFloat(trimInsideVal);
+
+			// Set it the first time
+			if (rawColumns[col][row] === undefined) {
+				rawColumns[col][row] = trimVal;
+			}
 			
 			// Disable number or date parsing by setting the X axis type to category
 			if (forceCategory || row === 0) {
