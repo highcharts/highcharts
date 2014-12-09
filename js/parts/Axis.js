@@ -1517,7 +1517,6 @@ Axis.prototype = {
 				pos = tickPositions[i];
 				label = ticks[pos].label;
 				if (label) {
-					label.css({ width: innerWidth + PX });
 					if (this.len / tickPositions.length - 4 < label.getBBox().height) {
 						label.specCss = { textOverflow: 'ellipsis' };
 					}
