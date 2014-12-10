@@ -16,7 +16,7 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 		style: {
 			color: 'white',
 			fontWeight: 'bold',
-			HcTextStroke: '1px auto'
+			textShadow: '0 0 4px contrast, 0 0 2px contrast'
 		}
 	},
 	marker: null,

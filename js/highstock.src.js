@@ -33,7 +33,7 @@ var UNDEFINED,
 	// some variables
 	userAgent = navigator.userAgent,
 	isOpera = win.opera,
-	isIE = /msie/i.test(userAgent) && !isOpera,
+	isIE = /(msie|trident)/i.test(userAgent) && !isOpera,
 	docMode8 = doc.documentMode === 8,
 	isWebKit = /AppleWebKit/.test(userAgent),
 	isFirefox = /Firefox/.test(userAgent),
@@ -1783,7 +1783,7 @@ SVGElement.prototype = {
 	opacity: 1,
 	// For labels, these CSS properties are applied to the <text> node directly
 	textProps: ['fontSize', 'fontWeight', 'fontFamily', 'color', 
-		'lineHeight', 'width', 'textDecoration', 'textShadow', 'HcTextStroke'],
+		'lineHeight', 'width', 'textDecoration', 'textShadow'],
 	
 	/**
 	 * Initialize the SVG renderer
@@ -1924,6 +1924,89 @@ SVGElement.prototype = {
 			// Set the reference to the gradient object
 			elem.setAttribute(prop, 'url(' + renderer.url + '#' + id + ')');
 		} 
+	},
+
+	/**
+	 * Apply a polyfill to the text-stroke CSS property, by copying the text element
+	 * and apply strokes to the copy.
+	 *
+	 * docs: update default, document the polyfill and the limitations on hex colors and pixel values, document contrast pseudo-color
+	 * TODO: 
+	 * - update defaults
+	 */
+	applyTextShadow: function (textShadow) {
+		var elem = this.element,
+			tspans,
+			hasContrast = textShadow.indexOf('contrast') !== -1,
+			rgba,
+			// IE10 and IE11 report textShadow in elem.style even though it doesn't work. Check
+			// this again with new IE release.
+			supports = elem.style.textShadow !== UNDEFINED && !isIE;
+
+		// When the text shadow is set to contrast, use dark stroke for light text and vice versa // docs: new defaults for all affected series
+		if (hasContrast) {
+			rgba = Color(elem.style.fill).rgba;
+			textShadow = textShadow.replace(/contrast/g, rgba[0] + rgba[1] + rgba[2] > 384 ? '#000' : '#FFF');
+		}
+
+		/* Selective side-by-side testing in supported browser (http://jsfiddle.net/highcharts/73L1ptrh/)
+		if (elem.textContent.indexOf('2.') === 0) {
+			elem.style['text-shadow'] = 'none';
+			supports = false;
+		}
+		// */
+
+		// No reason to polyfill, we've got native support
+		if (supports) {
+			if (hasContrast) { // Apply the altered style
+				css(elem, {
+					textShadow: textShadow
+				});
+			}
+		} else {
+
+			// In order to get the right y position of the clones, 
+			// copy over the y setter
+			this.ySetter = this.xSetter;
+
+			tspans = [].slice.call(elem.getElementsByTagName('tspan'));
+			each(textShadow.split(/\s?,\s?/g), function (textShadow) {
+				var firstChild = elem.firstChild,
+					color,
+					strokeWidth;
+				
+				textShadow = textShadow.split(' ');
+				color = textShadow[textShadow.length - 1];
+
+				// Approximately tune the settings to the text-shadow behaviour
+				strokeWidth = textShadow[textShadow.length - 2];
+
+				each(tspans, function (tspan, y) {
+					var clone;
+
+					// Let the first line start at the correct X position
+					if (y === 0) {
+						tspan.setAttribute('x', elem.getAttribute('x'));
+						y = elem.getAttribute('y');
+						tspan.setAttribute('y', y || 0);
+						if (y === null) {
+							elem.setAttribute('y', 0);
+						}
+					}
+
+					// Create the clone and apply shadow properties
+					clone = tspan.cloneNode(1);
+					attr(clone, {
+						'stroke': color,
+						'stroke-opacity': 1 / mathMax(pInt(strokeWidth), 3),
+						'fill': color,
+						'stroke-width': strokeWidth,
+						'stroke-linejoin': 'round'
+					});
+					elem.insertBefore(clone, firstChild);
+				});
+			});
+		}
 	},
 
 	/**
@@ -2286,9 +2369,9 @@ SVGElement.prototype = {
 	 * @param {Object} alignOptions
 	 * @param {Boolean} alignByTranslate
 	 * @param {String[Object} box The box to align to, needs a width and height. When the
-	 *        box is a string, it refers to an object in the Renderer. For example, when
-	 *        box is 'spacingBox', it refers to Renderer.spacingBox which holds width, height
-	 *        x and y properties.
+	 *		box is a string, it refers to an object in the Renderer. For example, when
+	 *		box is 'spacingBox', it refers to Renderer.spacingBox which holds width, height
+	 *		x and y properties.
 	 *
 	 */
 	align: function (alignOptions, alignByTranslate, box) {
@@ -2474,7 +2557,7 @@ SVGElement.prototype = {
 	/**
 	 * Add the element
 	 * @param {Object|Undefined} parent Can be an element, an element wrapper or undefined
-	 *    to append the element to the renderer.box.
+	 *	to append the element to the renderer.box.
 	 */
 	add: function (parent) {
 
@@ -2970,7 +3053,7 @@ SVGRenderer.prototype = {
 			textStyles = wrapper.styles,
 			width = wrapper.textWidth,
 			textLineHeight = textStyles && textStyles.lineHeight,
-			textStroke = textStyles && textStyles.HcTextStroke,
+			textShadow = textStyles && textStyles.textShadow,
 			ellipsis = textStyles && textStyles.textOverflow === 'ellipsis',
 			i = childNodes.length,
 			tempParent = width && !wrapper.added && this.box,
@@ -2992,7 +3075,7 @@ SVGRenderer.prototype = {
 
 		// Skip tspans, add text directly to text node. The forceTSpan is a hook 
 		// used in text outline hack.
-		if (!hasMarkup && !textStroke && !ellipsis && !/[ \-]/.test(textStr)) {
+		if (!hasMarkup && !textShadow && !ellipsis && !/[ \-]/.test(textStr)) {
 			textNode.appendChild(doc.createTextNode(textStr));
 			return;
 
@@ -3180,8 +3263,15 @@ SVGRenderer.prototype = {
 			if (tempParent) {
 				tempParent.removeChild(textNode); // attach it to the DOM to read offset width
 			}
+
+			// Apply the text shadow
+			if (textShadow && wrapper.applyTextShadow) {
+				wrapper.applyTextShadow(textShadow);
+			}
 		}
 	},
+
+	
 
 	/*
 	breakText: function (wrapper, width) {
@@ -3494,7 +3584,7 @@ SVGRenderer.prototype = {
 	/**
 	 * Create a group
 	 * @param {String} name The group will be given a class name of 'highcharts-{name}'.
-	 *     This can be used for styling and scripting.
+	 *	 This can be used for styling and scripting.
 	 */
 	g: function (name) {
 		var elem = this.createElement('g');
@@ -3902,10 +3992,10 @@ SVGRenderer.prototype = {
 	 * @param {Number} y
 	 * @param {String} shape
 	 * @param {Number} anchorX In case the shape has a pointer, like a flag, this is the
-	 *    coordinates it should be pinned to
+	 *	coordinates it should be pinned to
 	 * @param {Number} anchorY
 	 * @param {Boolean} baseline Whether to position the label relative to the text baseline,
-	 *    like renderer.text, or to the upper border of the rectangle.
+	 *	like renderer.text, or to the upper border of the rectangle.
 	 * @param {String} className Class name for the group
 	 */
 	label: function (str, x, y, shape, anchorX, anchorY, useHTML, baseline, className) {

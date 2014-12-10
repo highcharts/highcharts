@@ -12,7 +12,7 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 		defer: false,
 		overflow: false,
 		style: {
-			HcTextStroke: '3px auto'
+			textShadow: '0 0 4px contrast, 0 0 2px contrast'
 		}
 	}
 });
