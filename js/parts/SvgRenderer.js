@@ -165,15 +165,13 @@ SVGElement.prototype = {
 		var elem = this.element,
 			tspans,
 			hasContrast = textShadow.indexOf('contrast') !== -1,
-			rgba,
 			// IE10 and IE11 report textShadow in elem.style even though it doesn't work. Check
 			// this again with new IE release.
 			supports = elem.style.textShadow !== UNDEFINED && !isIE;
 
 		// When the text shadow is set to contrast, use dark stroke for light text and vice versa // docs: new defaults for all affected series
 		if (hasContrast) {
-			rgba = Color(elem.style.fill).rgba;
-			textShadow = textShadow.replace(/contrast/g, rgba[0] + rgba[1] + rgba[2] > 384 ? '#000' : '#FFF');
+			textShadow = textShadow.replace(/contrast/g, this.renderer.getContrast(elem.style.fill));
 		}
 
 		/* Selective side-by-side testing in supported browser (http://jsfiddle.net/highcharts/73L1ptrh/)
@@ -1532,6 +1530,14 @@ SVGRenderer.prototype = {
 		console.log(finalPos, node.getSubStringLength(0, finalPos))
 	},
 	*/
+
+	/** 
+	 * Returns white for dark colors and black for bright colors
+	 */
+	getContrast: function (color) {
+		color = Color(color).rgba;
+		return color[0] + color[1] + color[2] > 384 ? '#000' : '#FFF';
+	},
 
 	/**
 	 * Create a button with preset states

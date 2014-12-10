@@ -1938,15 +1938,13 @@ SVGElement.prototype = {
 		var elem = this.element,
 			tspans,
 			hasContrast = textShadow.indexOf('contrast') !== -1,
-			rgba,
 			// IE10 and IE11 report textShadow in elem.style even though it doesn't work. Check
 			// this again with new IE release.
 			supports = elem.style.textShadow !== UNDEFINED && !isIE;
 
 		// When the text shadow is set to contrast, use dark stroke for light text and vice versa // docs: new defaults for all affected series
 		if (hasContrast) {
-			rgba = Color(elem.style.fill).rgba;
-			textShadow = textShadow.replace(/contrast/g, rgba[0] + rgba[1] + rgba[2] > 384 ? '#000' : '#FFF');
+			textShadow = textShadow.replace(/contrast/g, this.renderer.getContrast(elem.style.fill));
 		}
 
 		/* Selective side-by-side testing in supported browser (http://jsfiddle.net/highcharts/73L1ptrh/)
@@ -3305,6 +3303,14 @@ SVGRenderer.prototype = {
 		console.log(finalPos, node.getSubStringLength(0, finalPos))
 	},
 	*/
+
+	/** 
+	 * Returns white for dark colors and black for bright colors
+	 */
+	getContrast: function (color) {
+		color = Color(color).rgba;
+		return color[0] + color[1] + color[2] > 384 ? '#000' : '#FFF';
+	},
 
 	/**
 	 * Create a button with preset states
@@ -14775,7 +14781,8 @@ Series.prototype.drawDataLabels = function () {
 		generalOptions,
 		hasRendered = series.hasRendered || 0,
 		str,
-		dataLabelsGroup;
+		dataLabelsGroup,
+		renderer = series.chart.renderer;
 
 	if (options.enabled || series._hasPointLabels) {
 
@@ -14815,7 +14822,9 @@ Series.prototype.drawDataLabels = function () {
 				name,
 				rotation,
 				connector = point.connector,
-				isNew = true;
+				isNew = true,
+				style,
+				moreStyle = {};
 
 			// Determine if each data label is enabled
 			pointOptions = point.options && point.options.dataLabels;
@@ -14833,6 +14842,7 @@ Series.prototype.drawDataLabels = function () {
 				// Create individual options structure that can be extended without
 				// affecting others
 				options = merge(generalOptions, pointOptions);
+				style = options.style;
 
 				rotation = options.rotation;
 
@@ -14843,7 +14853,7 @@ Series.prototype.drawDataLabels = function () {
 					options.formatter.call(labelConfig, options);
 
 				// Determine the color
-				options.style.color = pick(options.color, options.style.color, series.color, 'black');
+				style.color = pick(options.color, style.color, series.color, 'black');
 
 
 				// update existing label
@@ -14875,6 +14885,16 @@ Series.prototype.drawDataLabels = function () {
 						padding: options.padding,
 						zIndex: 1
 					};
+					
+					// Get automated contrast color
+					if (style.color === 'contrast') {
+						moreStyle.color = renderer.getContrast(point.color || series.color);
+					}
+					if (cursor) {
+						moreStyle.cursor = cursor;
+					}
+					
+
 					// Remove unused attributes (#947)
 					for (name in attr) {
 						if (attr[name] === UNDEFINED) {
@@ -14882,7 +14902,7 @@ Series.prototype.drawDataLabels = function () {
 						}
 					}
 
-					dataLabel = point.dataLabel = series.chart.renderer[rotation ? 'text' : 'label']( // labels don't support rotation
+					dataLabel = point.dataLabel = renderer[rotation ? 'text' : 'label']( // labels don't support rotation
 						str,
 						0,
 						-999,
@@ -14892,7 +14912,7 @@ Series.prototype.drawDataLabels = function () {
 						options.useHTML
 					)
 					.attr(attr)
-					.css(extend(options.style, cursor && { cursor: cursor }))
+					.css(extend(style, moreStyle))
 					.add(dataLabelsGroup)
 					.shadow(options.shadow);
 
