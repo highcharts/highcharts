@@ -239,20 +239,29 @@ Pointer.prototype = {
 			chart = pointer.chart,
 			hoverSeries = chart.hoverSeries,
 			hoverPoint = chart.hoverPoint,
-			tooltip = chart.tooltip;
+			tooltip = chart.tooltip,
+			tooltipPoints = tooltip && tooltip.shared ? chart.hoverPoints : hoverPoint;
 			
 		// Narrow in allowMove
-		allowMove = allowMove && tooltip;
+		allowMove = allowMove && tooltip && tooltipPoints;
 			
-		// Check if the points have moved outside the plot area, #1003
-		if (allowMove) {
+		// Check if the points have moved outside the plot area, #1003		
+		if (allowMove  && splat(tooltipPoints)[0].plotX === UNDEFINED) {
 			allowMove = false;
 		}	
-
 		// Just move the tooltip, #349
 		if (allowMove) {
+			tooltip.refresh(tooltipPoints);
 			if (hoverPoint) { // #2500
 				hoverPoint.setState(hoverPoint.state, true);
+				each(chart.axes, function (axis) {
+					if (pick(axis.options.crosshair && axis.options.crosshair.snap, true)) {
+						axis.drawCrosshair(null, allowMove);
+					}  else {
+						axis.hideCrosshair();
+					}
+				});
+				
 			}
 
 		// Full reset
