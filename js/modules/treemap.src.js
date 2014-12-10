@@ -697,12 +697,14 @@
 				points = series.points,
 				nodeParent;
 			each(points, function (point) {
+				var nodeParentName;
 				H.removeEvent(point, 'click');
 				if (point.graphic) {
 					point.graphic.css({ cursor: 'default' });
 				}
 				if (point.level === 1 && !point.isLeaf) {
 					nodeParent = series.nodeMap[series.nodeMap[point.id].parent];
+					nodeParentName = nodeParent.name || nodeParent.id;
 					if (point.graphic) {
 						point.graphic.css({ cursor: 'pointer' });
 					}
@@ -710,7 +712,7 @@
 						// Remove hover
 						point.setState('');
 						series.drillToNode(point.id);
-						series.showDrillUpButton(nodeParent.name || nodeParent.id);
+						series.showDrillUpButton(nodeParentName);
 					});
 				}
 			});
