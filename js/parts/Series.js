@@ -912,7 +912,7 @@ Series.prototype = {
 			markerGroup = series.markerGroup,
 			globallyEnabled = pick(
 				seriesMarkerOptions.enabled, 
-				!series.requireSorting || series.closestPointRange * series.xAxis.transA > 2 * seriesMarkerOptions.radius // #3635
+				series.closestPointRange * series.xAxis.transA > 2 * seriesMarkerOptions.radius // #3635
 			);
 
 		if (seriesMarkerOptions.enabled !== false || series._hasPointMarkers) {
