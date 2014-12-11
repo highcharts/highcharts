@@ -13739,12 +13739,14 @@ Series.prototype = {
 
 	searchKDTree: function (point) {
 		var series = this,
-			kdComparer = this.kdComparer;
+			kdComparer = this.kdComparer,
+			kdX = this.kdXValue || 'plotX',
+			kdY = this.kdYValue || 'plotY';
 
 		// Internal function
 		function _distance(p1, p2) {
-			var x = (defined(p1.plotX) && defined(p2.plotX)) ? Math.pow(p1.plotX - p2.plotX, 2) : null,
-				y = (defined(p1.plotY) && defined(p2.plotY)) ? Math.pow(p1.plotY - p2.plotY, 2) : null,
+			var x = (defined(p1[kdX]) && defined(p2[kdX])) ? Math.pow(p1[kdX] - p2[kdX], 2) : null,
+				y = (defined(p1[kdY]) && defined(p2[kdY])) ? Math.pow(p1[kdY] - p2[kdY], 2) : null,
 				r = x + y;
 				
 			return {
@@ -14391,6 +14393,7 @@ var ColumnSeries = extendClass(Series, {
 		fill: 'color',
 		r: 'borderRadius'
 	},
+	kdXValue: 'barX',
 	cropShoulder: 0,
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	negStacks: true, // use separate negative stacks, unlike area stacks where a negative 
