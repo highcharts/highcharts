@@ -233,6 +233,7 @@
 				i = 0,
 				level,
 				point;
+			node.isVisible = (node.id === this.rootNode) || !!(this.nodeMap[node.parent] && this.nodeMap[node.parent].isVisible);
 			// If layoutAlgorithm is set for the level of the children, then default is overwritten
 			if (this.levelMap[node.level - levelRoot + 1]) {
 				level = this.levelMap[node.level - levelRoot + 1];
@@ -251,6 +252,7 @@
 					childValues.direction = 1 - childValues.direction;
 				}
 				child.values = childValues;
+				child.isVisible = node.isVisible;
 				point.node = child;
 				point.value = child.val;
 				point.isLeaf = true;
@@ -577,24 +579,26 @@
 				dataLabelsGroup = this.dataLabelsGroup,
 				dataLabels;
 			each(points, function (point) {
-				level = series.levelMap[point.level];
-				if (!point.isLeaf || level) {
-					options = undefined;
-					// If not a leaf, then label should be disabled as default
-					if (!point.isLeaf) {
-						options = {enabled: false};
-					}
-					if (level) {
-						dataLabels = level.dataLabels;
-						if (dataLabels) {
-							options = merge(options, dataLabels);
-							series._hasPointLabels = true;
+				if (point.node.isVisible) {
+					level = series.levelMap[point.level];
+					if (!point.isLeaf || level) {
+						options = undefined;
+						// If not a leaf, then label should be disabled as default
+						if (!point.isLeaf) {
+							options = {enabled: false};
 						}
+						if (level) {
+							dataLabels = level.dataLabels;
+							if (dataLabels) {
+								options = merge(options, dataLabels);
+								series._hasPointLabels = true;
+							}
+						}
+						options = merge(options, point.options.dataLabels);
+						point.dlOptions = options;
+					} else {
+						delete point.dlOptions;
 					}
-					options = merge(options, point.options.dataLabels);
-					point.dlOptions = options;
-				} else {
-					delete point.dlOptions;
 				}
 			});
 			this.dataLabelsGroup = this.group;
@@ -627,51 +631,53 @@
 				hover,
 				level;
 			each(points, function (point) {
-				level = series.levelMap[point.level];
-				attr = {
-					stroke: seriesOptions.borderColor,
-					'stroke-width': seriesOptions.borderWidth,
-					dashstyle: seriesOptions.borderDashStyle,
-					r: 0, // borderRadius gives wrong size relations and should always be disabled
-					fill: series.color
-				};
-				// Overwrite standard series options with level options			
-				if (level) {
-					attr.stroke = level.borderColor || attr.stroke;
-					attr['stroke-width'] = level.borderWidth || attr['stroke-width'];
-					attr.dashstyle = level.borderDashStyle || attr.dashstyle;
-					attr.fill = level.color || attr.fill;
-				}
-				// Merge with point attributes
-				attr.stroke = point.borderColor || attr.stroke;
-				attr['stroke-width'] = point.borderWidth || attr['stroke-width'];
-				attr.dashstyle = point.borderDashStyle || attr.dashstyle;
-				attr.fill = point.color || attr.fill;
-				attr.zIndex = (1000 - (point.level * 2));
+				if (point.node.isVisible) {
+					level = series.levelMap[point.level];
+					attr = {
+						stroke: seriesOptions.borderColor,
+						'stroke-width': seriesOptions.borderWidth,
+						dashstyle: seriesOptions.borderDashStyle,
+						r: 0, // borderRadius gives wrong size relations and should always be disabled
+						fill: series.color
+					};
+					// Overwrite standard series options with level options			
+					if (level) {
+						attr.stroke = level.borderColor || attr.stroke;
+						attr['stroke-width'] = level.borderWidth || attr['stroke-width'];
+						attr.dashstyle = level.borderDashStyle || attr.dashstyle;
+						attr.fill = level.color || attr.fill;
+					}
+					// Merge with point attributes
+					attr.stroke = point.borderColor || attr.stroke;
+					attr['stroke-width'] = point.borderWidth || attr['stroke-width'];
+					attr.dashstyle = point.borderDashStyle || attr.dashstyle;
+					attr.fill = point.color || attr.fill;
+					attr.zIndex = (1000 - (point.level * 2));
 
-				// Make a copy to prevent overwriting individual props
-				point.pointAttr = merge(point.pointAttr);
-				hover = point.pointAttr.hover;
-				hover.zIndex = 1001;
-				// If not a leaf, then remove fill
-				if (!point.isLeaf) {
-					if (seriesOptions.allowDrillToNode) {
-						// TODO: let users set the opacity
-						attr.fill = Color(point.color || attr.fill).setOpacity(0.15).get();
-						hover.fill = Color(hover.fill || attr.fill).setOpacity(0.75).get();
-					} else {
+					// Make a copy to prevent overwriting individual props
+					point.pointAttr = merge(point.pointAttr);
+					hover = point.pointAttr.hover;
+					hover.zIndex = 1001;
+					// If not a leaf, then remove fill
+					if (!point.isLeaf) {
+						if (seriesOptions.allowDrillToNode) {
+							// TODO: let users set the opacity
+							attr.fill = Color(point.color || attr.fill).setOpacity(0.15).get();
+							hover.fill = Color(hover.fill || attr.fill).setOpacity(0.75).get();
+						} else {
+							attr.fill = 'none';
+							delete hover.fill;
+						}
+					}
+					if (point.level < 1) {
 						attr.fill = 'none';
+						attr.zIndex = 0;
 						delete hover.fill;
 					}
-				}
-				if (point.level < 1) {
-					attr.fill = 'none';
-					attr.zIndex = 0;
-					delete hover.fill;
-				}
-				point.pointAttr[''] = H.extend(point.pointAttr[''], attr);
-				if (point.dataLabel) {
-					point.dataLabel.attr({ zIndex: (point.pointAttr[''].zIndex + 1) });
+					point.pointAttr[''] = H.extend(point.pointAttr[''], attr);
+					if (point.dataLabel) {
+						point.dataLabel.attr({ zIndex: (point.pointAttr[''].zIndex + 1) });
+					}
 				}
 			});
 			// Call standard drawPoints
@@ -698,22 +704,24 @@
 				nodeParent;
 			each(points, function (point) {
 				var nodeParentName;
-				H.removeEvent(point, 'click');
-				if (point.graphic) {
-					point.graphic.css({ cursor: 'default' });
-				}
-				if (point.level === 1 && !point.isLeaf) {
-					nodeParent = series.nodeMap[series.nodeMap[point.id].parent];
-					nodeParentName = nodeParent.name || nodeParent.id;
+				if (point.node.isVisible) {
+					H.removeEvent(point, 'click');
 					if (point.graphic) {
-						point.graphic.css({ cursor: 'pointer' });
+						point.graphic.css({ cursor: 'default' });
 					}
-					H.addEvent(point, 'click', function () {
-						// Remove hover
-						point.setState('');
-						series.drillToNode(point.id);
-						series.showDrillUpButton(nodeParentName);
-					});
+					if (point.level === 1 && !point.isLeaf) {
+						nodeParent = series.nodeMap[series.nodeMap[point.id].parent];
+						nodeParentName = nodeParent.name || nodeParent.id;
+						if (point.graphic) {
+							point.graphic.css({ cursor: 'pointer' });
+						}
+						H.addEvent(point, 'click', function () {
+							// Remove hover
+							point.setState('');
+							series.drillToNode(point.id);
+							series.showDrillUpButton(nodeParentName);
+						});
+					}
 				}
 			});
 		},
