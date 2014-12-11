@@ -14,6 +14,7 @@
 <script src="resources/lib/codemirror/codemirror.js"></script>
 <script src="resources/lib/codemirror/mode/javascript/javascript.js"></script>
 <script src="resources/lib/codemirror/mode/xml/xml.js"></script>
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,700,400italic" type="text/css" />
 <script>
 	$(document).ready(function() {
 
@@ -40,6 +41,11 @@
 				});
 			}
 		};
+
+		$('#preview').click(function () {
+			runPOST();
+			return false;
+		});
 
 		// attach eventhandler to radio fields
 		$('input[type="radio"]').change(function() {
@@ -77,65 +83,139 @@
 		});
 
 	});
+
+	/**
+	 * Preview an async generated image
+	 */
+	function preview (filename) {
+		if ($('#type').val() === 'application/pdf') {
+
+    		$('#container').html('<iframe style="width:600px;height:400px" src="./' + filename + '"></iframe>')
+    	} else {
+    		$('#container').html('<img src="./' + filename + '"/>');
+    	}
+	}
+
+	/**
+	 * Run a post and receive back an image URL async
+	 */
+    function runPOST() {
+
+    	var dataString = 'async=true',
+    		xdr;
+
+    	$('#container').html('Loading....');
+
+    	$.each($('#exportForm').serializeArray(), function (i, pair) {
+    		dataString += '&' + pair.name + '=' + pair.value;
+    	});
+
+    	if (window.XDomainRequest) {
+            xdr = new XDomainRequest();
+            xdr.open("post", './?' + dataString);
+            xdr.onload = function () {
+                preview(xdr.responseText);
+            };
+            xdr.send();
+        } else {
+            $.ajax({
+                type: 'POST',
+                data: dataString,
+                url: './',
+                success: function (data) {
+                	preview(data);
+                },
+                error: function (err) {
+                    $('#container').html('Error: ' + err.statusText);
+                }
+            });
+        }
+
+    }
 </script>
 </head>
 <body>
 	<div id="top">
 		<a href="http://www.highcharts.com" title="Highcharts Home Page"
 			id="logo"><img alt="Highcharts Home Page"
-			src="resources/Highcharts-icon-160px.png" border="0"></a>
-		<h1>Highcharts Export Server</h1>
+			src="http://www.highcharts.com/templates/highsoft_colorful/images/logo.svg" border="0"></a>
 	</div>
+
 	<div id="wrap">
 		<form id="exportForm" action="./" method="POST">
-			<p>Use this page to experiment with the different options.</p>
 
-			<input id="options" title="Highcharts config object" type="radio"
-				name="content" value="options"> <label for="options"
-				class="radio">Highcharts config object (JSON)</label> <input
-				id="svg" title="svg xml content" type="radio" name="content"
-				value="svg"> <label for="svg" class="radio">SVG
-				(XML) </label>
+			<h1>Highcharts Export Server</h1>
+		
+			<p>This page allows you to experiment with different options for the export server.</p>
+
+			<div>
+				<input id="options" title="Highcharts config object" type="radio"
+					name="content" value="options"> 
+				<label for="options"
+					class="radio">Highcharts config object (JSON)</label> 
+			</div>
+
+			<div>
+				<input id="svg" title="svg xml content" type="radio" name="content"
+					value="svg"> 
+				<label for="svg" class="radio">SVG
+					(XML) </label>
+			</div>
 
 			<div id="options">
 				<label id="options" for="options">Options</label>
-				<div id="oneline" class="info">Specify here your Highcharts
+				<div class="info">Your Highcharts
 					configuration object.</div>
 				<textarea id="options" name="options" rows="12" cols="30"><%@include
 						file="/WEB-INF/jspf/config.js"%></textarea>
 			</div>
 			<div id="svg"></div>
-			<label for="type">Image file format</label> <select name="type">
+			<label for="type">Image file format</label> 
+			<select name="type" id="type">
 				<option value="image/png">image/png</option>
 				<option value="image/jpeg">image/jpeg</option>
 				<option value="image/svg+xml">image/svg+xml</option>
 				<option value="application/pdf">application/pdf</option>
-			</select> <br /> <label for="width">Width</label>
-			<div class="info">The exact pixelwidth of the exported image.
-				Defaults to chart.width or 600px. Maximum width is set to 2000px</div>
-			<input id="width" name="width" type="text" value="" /> <br/> <label
-				for="scales">Scale</label> <input id="scale" name="scale"
-				type="text" value="" />
-			<div class="info">Give in a scaling factor for a higher image
+			</select>
+
+			<label for="width">Width</label>
+			<div class="info">The exact pixel width of the exported image.
+				Defaults to <code>chart.width</code> or <code>600px</code>. Maximum width is <code>2000px</code>.</div>
+			
+			<input id="width" name="width" type="text" value="" /> <br/> 
+
+			<label for="scale">Scale</label>
+			<div class="info">A scaling factor for a higher image
 				resolution. Maximum scaling is set to 4x. Remember that the width parameter has a higher
 				precedence over scaling.</div>
-			<br /> <label for="constructor">Constructor</label>
+			<input id="scale" name="scale" 	type="text" value="" />
+
+			
+			
+			<label for="constructor">Constructor</label>
 			<div class="info">
-				This will be either 'Chart' or 'StockChart' depending on if <br />you
-				want a Highcharts or an HighStock chart.
+				Either <code>Chart</code> or <code>StockChart</code> depending on what product you use.
 			</div>
 			<select name="constr">
 				<option value="Chart">Chart</option>
 				<option value="StockChart">StockChart</option>
 			</select> </br> <br /> <label for="callback">Callback</label>
-			<div id="oneline" class="info">The callback will be fired after
+			<div class="info">The callback will be fired after
 				the chart is created.</div>
 			<textarea id="callback" name="callback" rows="12" cols="30" /><%@include
 					file="/WEB-INF/jspf/callback.js"%>
 			</textarea>
-			<input id="submit" type="submit" value="Generate Image">
+
+
+			<input id="submit" type="submit" value="Download">
+			<input id="preview" type="submit" value="Preview" />
 		</form>
 	</div>
+	<div id="result">
+		<h4>Preview</h4>
+		<div id="container"></div>
+	</div>
+
 	<div id="toggle">
 		<label id="svg" for="svg">Svg Content</label>
 		<div id="oneline" class="info">Paste in 'raw' svg markup.</div>
