@@ -16,6 +16,7 @@
 		plotOptions = defaultOptions.plotOptions,
 		noop = function () { return; },
 		each = H.each,
+		pick = H.pick,
 		Series = H.Series,
 		Color = H.Color;
 
@@ -138,7 +139,8 @@
 				getNodeTree = function (id, i, level, list, points, parent) {
 					var children = [],
 						sortedChildren = [],
-						val = 0,
+						childrenTotal = 0,
+						val,
 						point = points[i],
 						nodeTree,
 						node,
@@ -168,20 +170,17 @@
 					if (list[id] !== undefined) {
 						each(list[id], function (i) {
 							node = getNodeTree(points[i].id, i, (level + 1), list, points, id);
-							val += node.val;
+							childrenTotal += node.val;
 							insertNode();
 							children.push(node);
 						});
-					} else {
-						val = points[i].value;
-						if (val === undefined) {
-							val = 0;
-						}
 					}
+					val = pick((points[i] && points[i].value), childrenTotal, 0);
 					nodeTree = {
 						id: id,
 						i: i,
 						children: sortedChildren,
+						childrenTotal: childrenTotal,
 						val: val,
 						level: level,
 						parent: parent,
@@ -246,7 +245,7 @@
 				point = series.points[child.i];
 				point.level = child.level - levelRoot;
 				childValues = childrenValues[i];
-				childValues.val = child.val;
+				childValues.val = child.childrenTotal;
 				childValues.direction = area.direction;
 				if (directionalChange) {
 					childValues.direction = 1 - childValues.direction;
