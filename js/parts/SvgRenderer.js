@@ -206,30 +206,31 @@ SVGElement.prototype = {
 				// Approximately tune the settings to the text-shadow behaviour
 				strokeWidth = textShadow[textShadow.length - 2];
 
-				each(tspans, function (tspan, y) {
-					var clone;
+				if (strokeWidth) {
+					each(tspans, function (tspan, y) {
+						var clone;
 
-					// Let the first line start at the correct X position
-					if (y === 0) {
-						tspan.setAttribute('x', elem.getAttribute('x'));
-						y = elem.getAttribute('y');
-						tspan.setAttribute('y', y || 0);
-						if (y === null) {
-							elem.setAttribute('y', 0);
+						// Let the first line start at the correct X position
+						if (y === 0) {
+							tspan.setAttribute('x', elem.getAttribute('x'));
+							y = elem.getAttribute('y');
+							tspan.setAttribute('y', y || 0);
+							if (y === null) {
+								elem.setAttribute('y', 0);
+							}
 						}
-					}
 
-					// Create the clone and apply shadow properties
-					clone = tspan.cloneNode(1);
-					attr(clone, {
-						'stroke': color,
-						'stroke-opacity': 1 / mathMax(pInt(strokeWidth), 3),
-						'fill': color,
-						'stroke-width': strokeWidth,
-						'stroke-linejoin': 'round'
+						// Create the clone and apply shadow properties
+						clone = tspan.cloneNode(1);
+						attr(clone, {
+							'stroke': color,
+							'stroke-opacity': 1 / mathMax(pInt(strokeWidth), 3),
+							'stroke-width': strokeWidth,
+							'stroke-linejoin': 'round'
+						});
+						elem.insertBefore(clone, firstChild);
 					});
-					elem.insertBefore(clone, firstChild);
-				});
+				}
 			});
 		}
 	},
