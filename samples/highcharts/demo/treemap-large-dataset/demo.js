@@ -875,6 +875,7 @@ $(function () {
 	};
 	var points = [],
 		region_p,
+		region_val,
 		region_i,
 		country_p,
 		country_i,
@@ -886,12 +887,12 @@ $(function () {
 	cause_name['Injuries'] = 'Injuries';
 	region_i = 0;
 	for (var region in data) {
+		region_val = 0;
 		region_p = {
 			id: "id_" + region_i,
 			name: region,
 			color: Highcharts.getOptions().colors[region_i]
 		};
-		points.push(region_p);
 		country_i = 0;
 		for (var country in data[region]) {
 			country_p = {
@@ -908,11 +909,14 @@ $(function () {
 					parent: country_p.id,
 					value: Math.round(+data[region][country][cause])
 				};
+				region_val += cause_p.value;
 				points.push(cause_p);
 				cause_i++;
 			}
 			country_i++;
 		}
+		region_p.value = Math.round(region_val / country_i);
+		points.push(region_p);
 		region_i++;
 	}
 	var chart = new Highcharts.Chart({
@@ -946,7 +950,7 @@ $(function () {
 			align: 'right'
 		},
 		title: {
-			text: 'Global Mortality Rate 2012'
+			text: 'Global Mortality Rate 2012, per 100 000 population'
 		}
 	});
 });
