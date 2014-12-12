@@ -13248,7 +13248,7 @@ Series.prototype = {
 
 			// Set the the plotY value, reset it for redraws
 			point.plotY = (typeof yValue === 'number' && yValue !== Infinity) ?
-				yAxis.translate(yValue, 0, 1, 0, 1) :
+				mathMin(mathMax(-1e5, yAxis.translate(yValue, 0, 1, 0, 1)), 1e5) : // #3201
 				UNDEFINED;
 			point.isInside = point.plotY !== UNDEFINED && point.plotY >= 0 && point.plotY <= yAxis.len; // #3519
 
@@ -14784,7 +14784,7 @@ extend(Series.prototype, {
 		// Fire the event with a default handler of removing the point
 		if (point) {
 			point.firePointEvent('remove', null, remove);
-		} else {
+		} else {
 			remove();
 		}
 	},
