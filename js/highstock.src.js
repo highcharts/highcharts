@@ -372,14 +372,14 @@ function pad(number, length) {
  * as the original function, except that the original function is unshifted and passed as the first 
  * argument. 
  */
-function wrap(obj, method, func) {
+var wrap = Highcharts.wrap = function (obj, method, func) {
 	var proceed = obj[method];
 	obj[method] = function () {
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift(proceed);
 		return func.apply(this, args);
 	};
-}
+};
 
 
 function getTZOffset(timestamp) {
@@ -12502,7 +12502,7 @@ Point.prototype = {
  * @param {Object} chart
  * @param {Object} options
  */
-var Series = function () {};
+var Series = Highcharts.Series = function () {};
 
 Series.prototype = {
 
@@ -22130,7 +22130,6 @@ extend(Highcharts, {
 	Point: Point,
 	Tick: Tick,	
 	Renderer: Renderer,
-	Series: Series,
 	SVGElement: SVGElement,
 	SVGRenderer: SVGRenderer,
 	
@@ -22160,7 +22159,6 @@ extend(Highcharts, {
 	splat: splat,
 	extendClass: extendClass,
 	pInt: pInt,
-	wrap: wrap,
 	svg: hasSVG,
 	canvas: useCanVG,
 	vml: !hasSVG && !useCanVG,

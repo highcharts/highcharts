@@ -27,6 +27,7 @@ RewriteRule (.*?)data.js $1data.src.js
 RewriteRule (.*?)drilldown.js $1drilldown.src.js
 RewriteRule (.*?)exporting.js $1exporting.src.js
 RewriteRule (.*?)funnel.js $1funnel.src.js
+RewriteRule (.*?)overlapping-datalabels.js $1overlapping-datalabels.src.js
 RewriteRule (.*?)map.js $1map.src.js
 RewriteRule (.*?)no-data-to-display.js $1no-data-to-display.src.js
 

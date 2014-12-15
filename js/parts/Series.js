@@ -17,7 +17,7 @@
  * @param {Object} chart
  * @param {Object} options
  */
-var Series = function () {};
+var Series = Highcharts.Series = function () {};
 
 Series.prototype = {
 
