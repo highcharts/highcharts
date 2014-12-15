@@ -6924,9 +6924,7 @@ Axis.prototype = {
 					options.startOfWeek
 				)
 			);
-			if (minorTickPositions[0] < axis.min) {
-				minorTickPositions.shift();
-			}
+			axis.trimTicks(minorTickPositions); // #3652
 		} else {
 			for (pos = axis.min + (tickPositions[0] - axis.min) % minorTickInterval; pos <= axis.max; pos += minorTickInterval) {
 				minorTickPositions.push(pos);
@@ -7117,7 +7115,8 @@ Axis.prototype = {
 			tickPixelIntervalOption = options.tickPixelInterval,
 			tickPositions,
 			keepTwoTicksOnly,
-			categories = axis.categories;
+			categories = axis.categories,
+			single;
 
 		// linked axis gets the extremes from the parent axis
 		if (isLinked) {
@@ -7291,27 +7290,7 @@ Axis.prototype = {
 		if (!isLinked) {
 
 			// reset min/max or remove extremes based on start/end on tick
-			var roundedMin = tickPositions[0],
-				roundedMax = tickPositions[tickPositions.length - 1],
-				minPointOffset = axis.minPointOffset || 0,
-				single;
-
-			if (startOnTick) {
-				axis.min = roundedMin;
-			} else if (axis.min - minPointOffset > roundedMin) {
-				tickPositions.shift();
-			}
-
-			if (endOnTick) {
-				axis.max = roundedMax;
-			} else if (axis.max + minPointOffset < roundedMax) {
-				tickPositions.pop();
-			}
-
-			// If no tick are left, set one tick in the middle (#3195) 
-			if (tickPositions.length === 0 && defined(roundedMin)) {
-				tickPositions.push((roundedMax + roundedMin) / 2);
-			}
+			this.trimTicks(tickPositions, startOnTick, endOnTick);
 
 			// When there is only one point, or all points have the same value on this axis, then min
 			// and max are equal and tickPositions.length is 0 or 1. In this case, add some padding
@@ -7324,6 +7303,32 @@ Axis.prototype = {
 			}
 			axis.single = single;
 		}
+	},
+
+	/**
+	 * Handle startOnTick and endOnTick by either adapting to padding min/max or rounded min/max
+	 */
+	trimTicks: function (tickPositions, startOnTick, endOnTick) {
+		var roundedMin = tickPositions[0],
+			roundedMax = tickPositions[tickPositions.length - 1],
+			minPointOffset = this.minPointOffset || 0;
+			
+		if (startOnTick) {
+			this.min = roundedMin;
+		} else if (this.min - minPointOffset > roundedMin) {
+			tickPositions.shift();
+		}
+
+		if (endOnTick) {
+			this.max = roundedMax;
+		} else if (this.max + minPointOffset < roundedMax) {
+			tickPositions.pop();
+		}
+
+		// If no tick are left, set one tick in the middle (#3195) 
+		if (tickPositions.length === 0 && defined(roundedMin)) {
+			tickPositions.push((roundedMax + roundedMin) / 2);
+		}		
 	},
 
 	/**
