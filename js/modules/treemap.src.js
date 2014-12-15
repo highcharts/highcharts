@@ -26,8 +26,6 @@
 		marker: false,
 		borderColor: '#FFFFFF',
 		borderWidth: 1,
-		borderRadius: 0,
-		radius: 0,
 		dataLabels: {
 			enabled: true,
 			defer: false,
@@ -66,8 +64,7 @@
 			stroke: 'borderColor',
 			'stroke-width': 'borderWidth',
 			fill: 'color',
-			dashstyle: 'borderDashStyle',
-			r: 'borderRadius'
+			dashstyle: 'borderDashStyle'
 		},
 		pointArrayMap: ['value'],
 		axisTypes: seriesTypes.heatmap ? ['xAxis', 'yAxis', 'colorAxis'] : ['xAxis', 'yAxis'],
