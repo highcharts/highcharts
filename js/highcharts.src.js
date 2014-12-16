@@ -16873,10 +16873,10 @@ if (seriesTypes.column) {
 	 * Override the basic data label alignment by adjusting for the position of the column
 	 */
 	seriesTypes.column.prototype.alignDataLabel = function (point, dataLabel, options,  alignTo, isNew) {
-		var chart = this.chart,
-			inverted = chart.inverted,
+		var inverted = this.chart.inverted,
+			series = point.series,
 			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
-			below = point.below || (point.plotY > pick(this.translatedThreshold, chart.plotSizeY)),
+			below = point.below || (point.plotY > pick(this.translatedThreshold, series.yAxis.len)),
 			inside = pick(options.inside, !!this.options.stacking); // draw it inside the box?
 
 		// Align to the column itself, or the top of it
@@ -16885,8 +16885,8 @@ if (seriesTypes.column) {
 
 			if (inverted) {
 				alignTo = {
-					x: chart.plotWidth - alignTo.y - alignTo.height,
-					y: chart.plotHeight - alignTo.x - alignTo.width,
+					x: series.yAxis.len - alignTo.y - alignTo.height,
+					y: series.xAxis.len - alignTo.x - alignTo.width,
 					width: alignTo.height,
 					height: alignTo.width
 				};
