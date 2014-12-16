@@ -16316,6 +16316,14 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				transAY: yAxis.transA
 			};
 
+			// Reset transformations
+			this.transformGroup.attr({
+				scaleX: 1,
+				scaleY: 1,
+				translateX: 0,
+				translateY: 0
+			});
+
 		// Just update the scale and transform for better performance
 		} else {
 			scaleX = xAxis.transA / baseTrans.transAX;
