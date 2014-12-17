@@ -79,6 +79,26 @@ function defined(obj) {
 	return obj !== undefined && obj !== null;
 }
 
+//Shoelace algorithm -- http://en.wikipedia.org/wiki/Shoelace_formula
+function shapeArea(vertexes) {
+	var area = 0,
+		i,
+		j;
+	for (i = 0; i < vertexes.length; i++) {
+		j = (i + 1) % vertexes.length;
+		area += vertexes[i].x * vertexes[j].y - vertexes[j].x * vertexes[i].y;
+	}
+	return area / 2;
+}
+
+function averageZ(vertexes) {
+	var z = 0,
+		i;
+	for (i = 0; i < vertexes.length; i++) {
+		z += vertexes[i].z;
+	}
+	return z / vertexes.length;
+}
 
 function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
 	var result = [];
@@ -113,12 +133,14 @@ Highcharts.SVGRenderer.prototype.toLinePath = function (points, closed) {
 		result.push('L', point.x, point.y);
 	});
 
-	// Set the first element to M
-	result[0] = 'M';
+	if (points.length) {
+		// Set the first element to M
+		result[0] = 'M';
 
-	// If it is a closed line, add Z
-	if (closed) {
-		result.push('Z');
+		// If it is a closed line, add Z
+		if (closed) {
+			result.push('Z');
+		}
 	}
 	
 	return result;
@@ -223,69 +245,34 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 
 	pArr = perspective(pArr, alpha, beta, origin);
 
-	var path1, // FRONT
-		path2, // TOP OR BOTTOM
-		path3; // LEFT OR RIGHT
+	var pickShape = function (path1, path2) {
+		path1 = path1.map(function (i) { return pArr[i]; });
+		path2 = path2.map(function (i) { return pArr[i]; });
+		if (shapeArea(path1) < 0) {
+			return path1;
+		} else if (shapeArea(path2) < 0) {
+			return path2;
+		} else {
+			return [];
+		}
+	};
 
-	// front	
-	path1 = [
-	'M', pArr[0].x, pArr[0].y,
-	'L', pArr[1].x, pArr[1].y,
-	'L', pArr[2].x, pArr[2].y,
-	'L', pArr[3].x, pArr[3].y,
-	'Z'
-	];
-	var z1 = (pArr[0].z + pArr[1].z + pArr[2].z + pArr[3].z) / 4;
+	// front or back
+	var front = [3, 2, 1, 0];
+	var back = [7, 6, 5, 4];
+	var path1 = pickShape(front, back);
 
 	// top or bottom
-	var top = [
-	'M', pArr[0].x, pArr[0].y,
-	'L', pArr[7].x, pArr[7].y,
-	'L', pArr[6].x, pArr[6].y,
-	'L', pArr[1].x, pArr[1].y,
-	'Z'
-	];
-	var bottom = [
-	'M', pArr[3].x, pArr[3].y,
-	'L', pArr[2].x, pArr[2].y,
-	'L', pArr[5].x, pArr[5].y,
-	'L', pArr[4].x, pArr[4].y,
-	'Z'
-	];
-	if (pArr[7].y < pArr[1].y) {
-		path2 = top;
-	} else if (pArr[4].y > pArr[2].y) {
-		path2 = bottom;
-	} else {
-		path2 = [];
-	}
-	var z2 = (beta > 0 ? (pArr[0].z + pArr[7].z + pArr[6].z + pArr[1].z) / 4 : (pArr[3].z + pArr[2].z + pArr[5].z + pArr[4].z) / 4);
+	var top = [1, 6, 7, 0];
+	var bottom = [4, 5, 2, 3];
+	var path2 = pickShape(top, bottom);
 
 	// side
-	var right = [
-	'M', pArr[1].x, pArr[1].y,
-	'L', pArr[2].x, pArr[2].y,
-	'L', pArr[5].x, pArr[5].y,
-	'L', pArr[6].x, pArr[6].y,
-	'Z'
-	];
-	var left = [
-	'M', pArr[0].x, pArr[0].y,
-	'L', pArr[7].x, pArr[7].y,
-	'L', pArr[4].x, pArr[4].y,
-	'L', pArr[3].x, pArr[3].y,
-	'Z'
-	];	
-	if (pArr[6].x > pArr[1].x) {
-		path3 = right;
-	} else if (pArr[7].x < pArr[0].x) {
-		path3 = left;
-	} else {
-		path3 = [];
-	}
-	var z3 = (alpha > 0 ? (pArr[1].z + pArr[2].z + pArr[5].z + pArr[6].z) / 4 : (pArr[0].z + pArr[7].z + pArr[4].z + pArr[3].z) / 4);
+	var right = [1, 2, 5, 6];
+	var left = [0, 7, 4, 3];
+	var path3 = pickShape(right, left);
 
-	return [path1, path2, path3, z1, z2, z3];
+	return [this.toLinePath(path1, true), this.toLinePath(path2, true), this.toLinePath(path3, true), averageZ(path1), averageZ(path2), averageZ(path3)];
 };
 
 ////// SECTORS //////
