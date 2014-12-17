@@ -27,10 +27,6 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 			var shapeArgs = point.shapeArgs,
 				tooltipPos = point.tooltipPos;
 
-			// Translate the tooltip position in 3d space
-			tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1] - (point.y < series.yAxis.min ? shapeArgs.height : 0), z: z }], alpha, beta, origin)[0];
-			point.tooltipPos = [tooltipPos.x, tooltipPos.y];
-
 			point.shapeType = 'cuboid';
 			shapeArgs.z = z;
 			shapeArgs.depth = depth;
