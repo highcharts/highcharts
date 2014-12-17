@@ -44,7 +44,7 @@
 		states: {
 			hover: {
 				borderColor: '#000000',
-				brightness: 0.1,
+				brightness: seriesTypes.heatmap ? 0 : 0.1,
 				shadow: false
 			}
 		},
@@ -331,23 +331,11 @@
 				level;
 			if (node) {
 				point = series.points[node.i];
-				// Overwrite color if level specific color is set
-				if (this.levelMap[node.level] !== undefined) {
-					level = this.levelMap[node.level];
-					if (level.color !== undefined) {
-						color = level.color;
-					}
-				}
-				// If point color is not set, then give it inherited or level color
-				if (node.i !== -1) {
-					if (point.color === undefined) {
-						if (color !== undefined) {
-							point.color = color;
-							point.options.color = color;
-						}
-					} else {
-						color = point.color;
-					}
+				level = series.levelMap[node.level];
+				// Select either point color, level color or inherited color.
+				color = pick(point && point.options.color, level && level.color, color);
+				if (point) {
+					point.color = color;
 				}
 				// Do it all again with the children	
 				if (node.children.length) {
@@ -620,32 +608,31 @@
 						'stroke-width': seriesOptions.borderWidth,
 						dashstyle: seriesOptions.borderDashStyle,
 						r: 0, // borderRadius gives wrong size relations and should always be disabled
-						fill: series.color
+						fill: pick(point.color, series.color)
 					};
 					// Overwrite standard series options with level options			
 					if (level) {
 						attr.stroke = level.borderColor || attr.stroke;
 						attr['stroke-width'] = level.borderWidth || attr['stroke-width'];
 						attr.dashstyle = level.borderDashStyle || attr.dashstyle;
-						attr.fill = level.color || attr.fill;
 					}
 					// Merge with point attributes
 					attr.stroke = point.borderColor || attr.stroke;
 					attr['stroke-width'] = point.borderWidth || attr['stroke-width'];
 					attr.dashstyle = point.borderDashStyle || attr.dashstyle;
-					attr.fill = point.color || attr.fill;
 					attr.zIndex = (1000 - (point.level * 2));
 
 					// Make a copy to prevent overwriting individual props
 					point.pointAttr = merge(point.pointAttr);
 					hover = point.pointAttr.hover;
 					hover.zIndex = 1001;
+					hover.fill = Color(attr.fill).brighten(seriesOptions.states.hover.brightness).get();
 					// If not a leaf, then remove fill
 					if (!point.isLeaf) {
 						if (seriesOptions.allowDrillToNode) {
 							// TODO: let users set the opacity
-							attr.fill = Color(point.color || attr.fill).setOpacity(0.15).get();
-							hover.fill = Color(hover.fill || attr.fill).setOpacity(0.75).get();
+							attr.fill = Color(attr.fill).setOpacity(0.15).get();
+							hover.fill = Color(hover.fill).setOpacity(0.75).get();
 						} else {
 							attr.fill = 'none';
 							delete hover.fill;
