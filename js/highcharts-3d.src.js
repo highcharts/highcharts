@@ -249,8 +249,8 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 		z = shapeArgs.z,
 		h = shapeArgs.height,
 		w = shapeArgs.width,
-		d = shapeArgs.depth,
-		chart = Highcharts.charts[this.box.parentElement.parentElement.getAttribute("data-highcharts-chart")],
+		d = shapeArgs.depth,		
+		chart = Highcharts.charts[this.chartIndex],
 		alpha = chart.options.chart.options3d.alpha,
 		beta = chart.options.chart.options3d.beta;
 
