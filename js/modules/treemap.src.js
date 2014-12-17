@@ -776,6 +776,7 @@
 				.align();
 			}
 		},
+		buildKDTree: noop,
 		drawLegendSymbol: H.LegendSymbolMixin.drawRectangle,
 		getExtremes: function () {
 			// Get the extremes from the value data
