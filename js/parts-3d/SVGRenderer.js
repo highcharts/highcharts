@@ -157,9 +157,9 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 		h = shapeArgs.height,
 		w = shapeArgs.width,
 		d = shapeArgs.depth,
-		alpha = shapeArgs.alpha,
-		beta = shapeArgs.beta,
-		origin = shapeArgs.origin;
+		chart = Highcharts.charts[this.box.parentElement.parentElement.getAttribute("data-highcharts-chart")],
+		alpha = chart.options.chart.options3d.alpha,
+		beta = chart.options.chart.options3d.beta;
 
 	var pArr = [
 		{x: x, y: y, z: z},
@@ -172,7 +172,7 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 		{x: x, y: y, z: z + d}
 	];
 
-	pArr = perspective(pArr, alpha, beta, origin);
+	pArr = perspective(pArr, chart, shapeArgs.insidePlotArea);
 
 	var pickShape = function (path1, path2) {
 		path1 = path1.map(function (i) { return pArr[i]; });
