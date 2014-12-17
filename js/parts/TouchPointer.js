@@ -182,7 +182,7 @@ extend(Highcharts.Pointer.prototype, {
 
 			e = this.normalize(e);
 
-			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
+			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop) && !chart.openMenu) {
 
 				// Run mouse events and display tooltip etc
 				this.runPointActions(e);

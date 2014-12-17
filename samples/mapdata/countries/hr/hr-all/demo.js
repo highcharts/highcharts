@@ -3,35 +3,35 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "hr-ka",
+            "hc-key": "hr-kz",
             "value": 0
         },
         {
-            "hc-key": "hr-zg",
+            "hc-key": "hr-gz",
             "value": 1
         },
         {
-            "hc-key": "hr-kz",
+            "hc-key": "hr-5926",
             "value": 2
         },
         {
-            "hc-key": "hr-gz",
+            "hc-key": "hr-sb",
             "value": 3
         },
         {
-            "hc-key": "hr-5926",
+            "hc-key": "hr-zd",
             "value": 4
         },
         {
-            "hc-key": "hr-sb",
+            "hc-key": "hr-pg",
             "value": 5
         },
         {
-            "hc-key": "hr-zd",
+            "hc-key": "hr-ka",
             "value": 6
         },
         {
-            "hc-key": "hr-pg",
+            "hc-key": "hr-zg",
             "value": 7
         },
         {
@@ -47,15 +47,15 @@ $(function () {
             "value": 10
         },
         {
-            "hc-key": "hr-sm",
+            "hc-key": "hr-is",
             "value": 11
         },
         {
-            "hc-key": "hr-is",
+            "hc-key": "hr-ob",
             "value": 12
         },
         {
-            "hc-key": "hr-ob",
+            "hc-key": "hr-vp",
             "value": 13
         },
         {
@@ -63,7 +63,7 @@ $(function () {
             "value": 14
         },
         {
-            "hc-key": "hr-vp",
+            "hc-key": "hr-bb",
             "value": 15
         },
         {
@@ -87,7 +87,7 @@ $(function () {
             "value": 20
         },
         {
-            "hc-key": "hr-bb",
+            "hc-key": "hr-sm",
             "value": 21
         }
     ];

@@ -30,7 +30,6 @@ var UNDEFINED,
 	extendClass = Highcharts.extendClass,
 	merge = Highcharts.merge,
 	pick = Highcharts.pick,
-	numberFormat = Highcharts.numberFormat,
 	defaultOptions = Highcharts.getOptions(),
 	seriesTypes = Highcharts.seriesTypes,
 	defaultPlotOptions = defaultOptions.plotOptions,
@@ -64,7 +63,7 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 	// Run extremes logic for map and mapline
 	if (isXAxis) {
 		dataMin = pick(this.dataMin, Number.MAX_VALUE);
-		dataMax = pick(this.dataMax, Number.MIN_VALUE);
+		dataMax = pick(this.dataMax, -Number.MAX_VALUE);
 		each(this.series, function (series, i) {
 			if (series.useMapGeometry) {
 				dataMin = Math.min(dataMin, pick(series.minX, dataMin));
@@ -204,12 +203,19 @@ extend(ColorAxis.prototype, {
 	tweenColors: function (from, to, pos) {
 		// Check for has alpha, because rgba colors perform worse due to lack of
 		// support in WebKit.
-		var hasAlpha = (to.rgba[3] !== 1 || from.rgba[3] !== 1);
+		var hasAlpha;
+
+		from = from.rgba;
+		to = to.rgba;
+		hasAlpha = (to[3] !== 1 || from[3] !== 1);
+		if (!to.length || !from.length) {
+			Highcharts.error(23);
+		}
 		return (hasAlpha ? 'rgba(' : 'rgb(') + 
-			Math.round(to.rgba[0] + (from.rgba[0] - to.rgba[0]) * (1 - pos)) + ',' + 
-			Math.round(to.rgba[1] + (from.rgba[1] - to.rgba[1]) * (1 - pos)) + ',' + 
-			Math.round(to.rgba[2] + (from.rgba[2] - to.rgba[2]) * (1 - pos)) + 
-			(hasAlpha ? (',' + (to.rgba[3] + (from.rgba[3] - to.rgba[3]) * (1 - pos))) : '') + ')';
+			Math.round(to[0] + (from[0] - to[0]) * (1 - pos)) + ',' + 
+			Math.round(to[1] + (from[1] - to[1]) * (1 - pos)) + ',' + 
+			Math.round(to[2] + (from[2] - to[2]) * (1 - pos)) + 
+			(hasAlpha ? (',' + (to[3] + (from[3] - to[3]) * (1 - pos))) : '') + ')';
 	},
 
 	initDataClasses: function (userOptions) {
@@ -371,9 +377,10 @@ extend(ColorAxis.prototype, {
 	setLegendColor: function () {
 		var grad,
 			horiz = this.horiz,
-			options = this.options;
+			options = this.options,
+			reversed = this.reversed;
 
-		grad = horiz ? [0, 0, 1, 0] : [0, 0, 0, 1]; 
+		grad = horiz ? [+reversed, 0, +!reversed, 0] : [0, +!reversed, 0, +reversed]; // #3190
 		this.legendColor = {
 			linearGradient: { x1: grad[0], y1: grad[1], x2: grad[2], y2: grad[3] },
 			stops: options.stops || [
@@ -505,13 +512,13 @@ extend(ColorAxis.prototype, {
 					name = '> ';
 				}
 				if (from !== UNDEFINED) {
-					name += numberFormat(from, valueDecimals) + valueSuffix;
+					name += Highcharts.numberFormat(from, valueDecimals) + valueSuffix;
 				}
 				if (from !== UNDEFINED && to !== UNDEFINED) {
 					name += ' - ';
 				}
 				if (to !== UNDEFINED) {
-					name += numberFormat(to, valueDecimals) + valueSuffix;
+					name += Highcharts.numberFormat(to, valueDecimals) + valueSuffix;
 				}
 				
 				// Add a mock object to the legend items
@@ -945,6 +952,9 @@ wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches,
 });
 
 
+// The vector-effect attribute is not supported in IE <= 11 (at least), so we need 
+// diffent logic (#3218)
+var supportsVectorEffect = document.documentElement.style.vectorEffect !== undefined;
 
 /**
  * Extend the default options with map options
@@ -1199,6 +1209,11 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			if (yAxis && yAxis.options.minRange === undefined) {
 				yAxis.minRange = Math.min(5 * minRange, (this.maxY - this.minY) / 5, yAxis.minRange || MAX_VALUE);
 			}
+		} else {
+			this.minY = UNDEFINED;
+			this.maxY = UNDEFINED;
+			this.minX = UNDEFINED;
+			this.maxX = UNDEFINED;
 		}
 	},
 	
@@ -1356,7 +1371,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * in capable browsers.
 	 */
 	doFullTranslate: function () {
-		return this.isDirtyData || this.chart.renderer.isVML || !this.baseTrans;
+		return this.isDirtyData || this.chart.isResizing || this.chart.renderer.isVML || !this.baseTrans;
 	},
 	
 	/**
@@ -1381,10 +1396,11 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		
 				point.shapeType = 'path';
 				point.shapeArgs = {
-					//d: display ? series.translatePath(point.path) : ''
-					d: series.translatePath(point.path),
-					'vector-effect': 'non-scaling-stroke'
+					d: series.translatePath(point.path)
 				};
+				if (supportsVectorEffect) {
+					point.shapeArgs['vector-effect'] = 'non-scaling-stroke';
+				}
 			}
 		});
 		
@@ -1434,6 +1450,18 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				});
 			}
 
+			// If vector-effect is not supported, we set the stroke-width on the group element
+			// and let all point graphics inherit. That way we don't have to iterate over all 
+			// points to update the stroke-width on zooming.
+			if (!supportsVectorEffect) {
+				each(series.points, function (point) {
+					var attr = point.pointAttr[''];
+					if (attr['stroke-width'] === series.pointAttr['']['stroke-width']) {
+						attr['stroke-width'] = 'inherit';
+					}
+				});
+			}
+
 			// Draw them in transformGroup
 			series.group = series.transformGroup;
 			seriesTypes.column.prototype.drawPoints.apply(series);
@@ -1447,6 +1475,10 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					}
 					if (point.properties && point.properties['hc-key']) {
 						point.graphic.addClass('highcharts-key-' + point.properties['hc-key'].toLowerCase());
+					}
+
+					if (!supportsVectorEffect) {
+						point.graphic['stroke-widthSetter'] = noop;
 					}
 				}
 			});
@@ -1482,6 +1514,13 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				scaleY: scaleY
 			});
 
+		}
+
+		// Set the stroke-width directly on the group element so the children inherit it. We need to use 
+		// setAttribute directly, because the stroke-widthSetter method expects a stroke color also to be 
+		// set.
+		if (!supportsVectorEffect) {
+			series.group.element.setAttribute('stroke-width', series.options.borderWidth / (scaleX || 1));
 		}
 
 		this.drawMapDataLabels();
@@ -1923,9 +1962,10 @@ Highcharts.geojson = function (geojson, hType, series) {
 	});
 
 	// Create a credits text that includes map source, to be picked up in Chart.showCredits
-	if (series) {
+	if (series && geojson.copyrightShort) {
 		series.chart.mapCredits = '<a href="http://www.highcharts.com">Highcharts</a> \u00A9 ' +
 			'<a href="' + geojson.copyrightUrl + '">' + geojson.copyrightShort + '</a>';
+		series.chart.mapCreditsFull = geojson.copyright;
 	}
 
 	return mapData;
@@ -1942,6 +1982,12 @@ wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
 	}
 
 	proceed.call(this, credits);
+
+	if (this.credits) { 
+		this.credits.attr({ 
+			title: this.mapCreditsFull
+		});
+	}
 });
 
 // Add language

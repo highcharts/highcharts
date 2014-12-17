@@ -19,11 +19,11 @@ $(function () {
             "value": 3
         },
         {
-            "hc-key": "gl-3298",
+            "hc-key": "gl-3282",
             "value": 4
         },
         {
-            "hc-key": "gl-3282",
+            "hc-key": "gl-3298",
             "value": 5
         }
     ];

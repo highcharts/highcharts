@@ -48,6 +48,7 @@ var ColumnSeries = extendClass(Series, {
 		fill: 'color',
 		r: 'borderRadius'
 	},
+	kdXValue: 'barX',
 	cropShoulder: 0,
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	negStacks: true, // use separate negative stacks, unlike area stacks where a negative 
@@ -149,7 +150,7 @@ var ColumnSeries = extendClass(Series, {
 			options = series.options,
 			borderWidth = series.borderWidth = pick(
 				options.borderWidth, 
-				series.activePointCount > 0.5 * series.xAxis.len ? 0 : 1
+				series.closestPointRange * series.xAxis.transA < 2 ? 0 : 1 // #3635
 			),
 			yAxis = series.yAxis,
 			threshold = options.threshold,
@@ -213,7 +214,7 @@ var ColumnSeries = extendClass(Series, {
 			barW = right - barX;
 
 			fromTop = mathAbs(barY) < 0.5;
-			bottom = mathRound(barY + barH) + yCrisp;
+			bottom = mathMin(mathRound(barY + barH) + yCrisp, 9e4); // #3575
 			barY = mathRound(barY) + yCrisp;
 			barH = bottom - barY;
 
@@ -284,8 +285,8 @@ var ColumnSeries = extendClass(Series, {
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
-						.attr(pointAttr)
 						.attr(borderAttr)
+						.attr(pointAttr)
 						.add(series.group)
 						.shadow(options.shadow, null, options.stacking && !options.borderRadius);
 				}

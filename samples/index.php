@@ -31,7 +31,9 @@ foreach ($products as $dir) {
 							
 							echo "
 							<li>
-								<a href='http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/$path/'>$innerFile</a> 
+								$innerFile
+								(<a href='view.php?path=$path'>view</a>,
+								<a href='http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/$path/'>fiddle</a>)
 							</li>
 							";
 						}

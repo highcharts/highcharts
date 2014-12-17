@@ -19,15 +19,15 @@ $(function () {
             "value": 3
         },
         {
-            "hc-key": "bd-rp",
+            "hc-key": "bd-sy",
             "value": 4
         },
         {
-            "hc-key": "bd-sy",
+            "hc-key": "bd-rj",
             "value": 5
         },
         {
-            "hc-key": "bd-rj",
+            "hc-key": "bd-rp",
             "value": 6
         }
     ];

@@ -186,11 +186,9 @@ function getCompareTooltips() {
 						return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 					}
 				} catch (e) {
-					console.error('HIGHCHARTS UTILS CAUGHT ERROR:', e.message);
-					if (parent.window.report) {
-						parent.window.report += '<br/>Broke on JS error (<?php echo $_GET['which']; ?>) ';
-					}
-					parent.window.$('#report').html(parent.window.report);
+					e = 'ERROR (<?php echo $_GET['which']; ?> frame): ' + e.message;
+					console.error(e);
+					parent.window.error = e;
 					parent.window.onDifferent('Error');
 
 				}
@@ -219,7 +217,8 @@ function getCompareTooltips() {
 								marker: {
 									lineWidth: 1
 								},
-								borderWidth: 1
+								borderWidth: 1,
+								kdWait: true
 							}
 						}
 							
@@ -229,8 +228,7 @@ function getCompareTooltips() {
 					//Highcharts.wrap(Highcharts, 'Chart', tryToRun);
 					//Highcharts.wrap(Highcharts, 'StockChart', tryToRun);
 					//Highcharts.wrap(Highcharts, 'Map', tryToRun);
-					Highcharts.wrap(Highcharts.Chart.prototype, 'init', tryToRun);
-
+					Highcharts.wrap(Highcharts.Chart.prototype, 'init', tryToRun);					
 
 					<?php if (getCompareTooltips()) : ?>
 					// Start with tooltip open 
@@ -244,14 +242,16 @@ function getCompareTooltips() {
 						}
 					});
 					<?php endif ?>
-
+					
 					<?php if (file_exists("$path/test.js")) : ?>
 					<?php include("$path/test.js"); ?>
 					Highcharts.Chart.prototype.callbacks.push(function (chart) {
 						try {
 							test(chart);
 						} catch (e) {
-							console.error('HIGHCHARTS UTILS CAUGHT ERROR:', e.message);
+							e = 'ERROR in test.js (<?php echo $_GET['which'] ?> frame): ' + e.message;
+							console.error(e);
+							parent.window.error = e;
 							parent.window.onDifferent('Error');
 						}
 

@@ -3,43 +3,43 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "dm-go",
+            "hc-key": "dm-lu",
             "value": 0
         },
         {
-            "hc-key": "dm-jn",
+            "hc-key": "dm-ma",
             "value": 1
         },
         {
-            "hc-key": "dm-an",
+            "hc-key": "dm-pk",
             "value": 2
         },
         {
-            "hc-key": "dm-jh",
+            "hc-key": "dm-da",
             "value": 3
         },
         {
-            "hc-key": "dm-lu",
+            "hc-key": "dm-pl",
             "value": 4
         },
         {
-            "hc-key": "dm-ma",
+            "hc-key": "dm-pr",
             "value": 5
         },
         {
-            "hc-key": "dm-pk",
+            "hc-key": "dm-an",
             "value": 6
         },
         {
-            "hc-key": "dm-da",
+            "hc-key": "dm-go",
             "value": 7
         },
         {
-            "hc-key": "dm-pl",
+            "hc-key": "dm-jn",
             "value": 8
         },
         {
-            "hc-key": "dm-pr",
+            "hc-key": "dm-jh",
             "value": 9
         }
     ];

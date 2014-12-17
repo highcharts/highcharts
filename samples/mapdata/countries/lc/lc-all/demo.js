@@ -3,47 +3,47 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "lc-6593",
+            "hc-key": "lc-6591",
             "value": 0
         },
         {
-            "hc-key": "lc-6594",
+            "hc-key": "lc-6585",
             "value": 1
         },
         {
-            "hc-key": "lc-6591",
+            "hc-key": "lc-6586",
             "value": 2
         },
         {
-            "hc-key": "lc-6585",
+            "hc-key": "lc-3607",
             "value": 3
         },
         {
-            "hc-key": "lc-6586",
+            "hc-key": "lc-6590",
             "value": 4
         },
         {
-            "hc-key": "lc-3607",
+            "hc-key": "lc-6588",
             "value": 5
         },
         {
-            "hc-key": "lc-6590",
+            "hc-key": "lc-6587",
             "value": 6
         },
         {
-            "hc-key": "lc-6588",
+            "hc-key": "lc-6592",
             "value": 7
         },
         {
-            "hc-key": "lc-6587",
+            "hc-key": "lc-6589",
             "value": 8
         },
         {
-            "hc-key": "lc-6592",
+            "hc-key": "lc-6593",
             "value": 9
         },
         {
-            "hc-key": "lc-6589",
+            "hc-key": "lc-6594",
             "value": 10
         }
     ];

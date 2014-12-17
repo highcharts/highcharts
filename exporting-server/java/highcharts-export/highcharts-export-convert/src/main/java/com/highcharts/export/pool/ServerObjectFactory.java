@@ -19,6 +19,8 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.TreeMap;
+
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
 
@@ -29,9 +31,10 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 	private String host;
 	private int basePort;
 	private int readTimeout;
+	private int poolSize;
 	private int connectTimeout;
 	private int maxTimeout;
-	private static HashMap<Integer, PortStatus> portUsage = new HashMap<Integer, PortStatus>();
+	private static TreeMap<Integer, PortStatus> portUsage = new TreeMap<>();
 	protected static Logger logger = Logger.getLogger("pool");
 
 	private enum PortStatus {
@@ -43,8 +46,13 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 	public Server create() {
 		logger.debug("in makeObject, " + exec + ", " +  script + ", " +  host);
 		Integer port = this.getAvailablePort();
+        if (script.isEmpty()) {
+            // use the bundled highcharts-convert.js script
+            script = TempDir.getPhantomJsDir().toAbsolutePath().toString() + "/highcharts-convert.js";
+        }
+        Server server = new Server(exec, script, host, port, connectTimeout, readTimeout, maxTimeout);
 		portUsage.put(port, PortStatus.BUSY);
-		return new Server(exec, script, host, port, connectTimeout, readTimeout, maxTimeout);
+		return server;
 	}
 
 	@Override
@@ -90,16 +98,27 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 	}
 
 	public Integer getAvailablePort() {
-		for (Map.Entry<Integer, PortStatus> entry : portUsage.entrySet()) {
-		   if (PortStatus.FREE == entry.getValue()) {
-			   // return available port
-			   logger.debug("Portusage " + portUsage.toString());
-			   return entry.getKey();
-		   }
+
+		/* first we check within the defined port range from baseport
+		* up to baseport + poolsize
+		*/
+		int port = basePort;
+		for (; port < basePort + poolSize; port++) {
+
+			if (portUsage.containsKey(port)) {
+				if (portUsage.get(port) == PortStatus.FREE) {
+					return port;
+				}
+			} else {
+				// doesn't exist any longer, but is within the valid port range
+				return port;
+			}
+
 		}
-		// if no port is free
+
+		// at this point there is no free port, we have to look outside of the valid port range
 		logger.debug("Nothing free in Portusage " + portUsage.toString());
-		return basePort + portUsage.size();
+		return portUsage.lastKey() + 1;
 	}
 
 	/*Getters and Setters*/
@@ -158,6 +177,14 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 
 	public void setMaxTimeout(int maxTimeout) {
 		this.maxTimeout = maxTimeout;
+	}
+
+	public int getPoolSize() {
+		return poolSize;
+	}
+
+	public void setPoolSize(int poolSize) {
+		this.poolSize = poolSize;
 	}
 
 	@PostConstruct

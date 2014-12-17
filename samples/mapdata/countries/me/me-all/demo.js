@@ -7,83 +7,83 @@ $(function () {
             "value": 0
         },
         {
-            "hc-key": "me-pv",
+            "hc-key": "me-be",
             "value": 1
         },
         {
-            "hc-key": "me-hn",
+            "hc-key": "me-bp",
             "value": 2
         },
         {
-            "hc-key": "me-kt",
+            "hc-key": "me-kl",
             "value": 3
         },
         {
-            "hc-key": "me-be",
+            "hc-key": "me-da",
             "value": 4
         },
         {
-            "hc-key": "me-bp",
+            "hc-key": "me-mk",
             "value": 5
         },
         {
-            "hc-key": "me-kl",
+            "hc-key": "me-nk",
             "value": 6
         },
         {
-            "hc-key": "me-da",
+            "hc-key": "me-pu",
             "value": 7
         },
         {
-            "hc-key": "me-mk",
+            "hc-key": "me-pl",
             "value": 8
         },
         {
-            "hc-key": "me-nk",
+            "hc-key": "me-pg",
             "value": 9
         },
         {
-            "hc-key": "me-pu",
+            "hc-key": "me-ti",
             "value": 10
         },
         {
-            "hc-key": "me-pl",
+            "hc-key": "me-sa",
             "value": 11
         },
         {
-            "hc-key": "me-pg",
+            "hc-key": "me-za",
             "value": 12
         },
         {
-            "hc-key": "me-ti",
+            "hc-key": "me-ba",
             "value": 13
         },
         {
-            "hc-key": "me-sa",
+            "hc-key": "me-ce",
             "value": 14
         },
         {
-            "hc-key": "me-za",
+            "hc-key": "me-bu",
             "value": 15
         },
         {
-            "hc-key": "me-ba",
+            "hc-key": "me-ul",
             "value": 16
         },
         {
-            "hc-key": "me-ce",
+            "hc-key": "me-ro",
             "value": 17
         },
         {
-            "hc-key": "me-bu",
+            "hc-key": "me-pv",
             "value": 18
         },
         {
-            "hc-key": "me-ul",
+            "hc-key": "me-hn",
             "value": 19
         },
         {
-            "hc-key": "me-ro",
+            "hc-key": "me-kt",
             "value": 20
         }
     ];

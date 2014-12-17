@@ -37,7 +37,6 @@ var UNDEFINED,
 	globalAnimation,
 	pathAnim,
 	timeUnits,
-	error,
 	noop = function () { return UNDEFINED; },
 	charts = [],
 	chartCount = 0,
@@ -59,6 +58,7 @@ var UNDEFINED,
 	NORMAL_STATE = '',
 	HOVER_STATE = 'hover',
 	SELECT_STATE = 'select',
+	marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
 	
 	// Object for extending Axis
 	AxisPlotLineOrBandExtension,
@@ -70,6 +70,7 @@ var UNDEFINED,
 	Date,  // Allow using a different Date class
 	makeTime,
 	timezoneOffset,
+	getTimezoneOffset,
 	getMinutes,
 	getHours,
 	getDay,
@@ -88,8 +89,4 @@ var UNDEFINED,
 	Highcharts;
 
 // The Highcharts namespace
-if (win.Highcharts) {
-	error(16, true);
-} else {
-	Highcharts = win.Highcharts = {};
-}
+Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : {};

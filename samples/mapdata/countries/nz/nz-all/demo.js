@@ -35,47 +35,47 @@ $(function () {
             "value": 7
         },
         {
-            "hc-key": "nz-3315",
+            "hc-key": "nz-ca",
             "value": 8
         },
         {
-            "hc-key": "nz-3316",
+            "hc-key": "nz-ot",
             "value": 9
         },
         {
-            "hc-key": "nz-no",
+            "hc-key": "nz-mw",
             "value": 10
         },
         {
-            "hc-key": "nz-tk",
+            "hc-key": "nz-gi",
             "value": 11
         },
         {
-            "hc-key": "nz-wc",
+            "hc-key": "nz-hb",
             "value": 12
         },
         {
-            "hc-key": "nz-ca",
+            "hc-key": "nz-bp",
             "value": 13
         },
         {
-            "hc-key": "nz-ot",
+            "hc-key": "nz-3315",
             "value": 14
         },
         {
-            "hc-key": "nz-mw",
+            "hc-key": "nz-3316",
             "value": 15
         },
         {
-            "hc-key": "nz-gi",
+            "hc-key": "nz-no",
             "value": 16
         },
         {
-            "hc-key": "nz-hb",
+            "hc-key": "nz-tk",
             "value": 17
         },
         {
-            "hc-key": "nz-bp",
+            "hc-key": "nz-wc",
             "value": 18
         }
     ];

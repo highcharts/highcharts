@@ -1,0 +1,375 @@
+From 06fea98c500094cae098d02429c1393979326424 Mon Sep 17 00:00:00 2001
+From: Taha Jahangir <mtjahangir@gmail.com>
+Date: Wed, 23 Jul 2014 10:55:26 +0430
+Subject: [PATCH] Always use `numberFormat` function via
+ `Highcharts.numberFormat` to allow overriding `numberFormat` completely
+
+---
+ js/highcharts.src.js           | 12 ++++++------
+ js/highmaps.src.js             | 16 ++++++++--------
+ js/highstock.src.js            | 14 +++++++-------
+ js/modules/heatmap.src.js      |  5 ++---
+ js/modules/map.src.js          |  5 ++---
+ js/parts-map/ColorAxis.js      |  4 ++--
+ js/parts-map/Globals.js        |  1 -
+ js/parts-map/HeatmapGlobals.js |  1 -
+ js/parts/Axis.js               |  8 ++++----
+ js/parts/Options.js            |  2 +-
+ js/parts/StockChart.js         |  2 +-
+ js/parts/Utilities.js          |  2 +-
+ 12 files changed, 34 insertions(+), 38 deletions(-)
+
+diff --git a/js/highcharts.src.js b/js/highcharts.src.js
+index 9cc84be..a170051 100644
+--- a/js/highcharts.src.js
++++ b/js/highcharts.src.js
+@@ -486,7 +486,7 @@ function formatSingle(format, val) {
+ 		decimals = format.match(decRegex);
+ 		decimals = decimals ? decimals[1] : -1;
+ 		if (val !== null) {
+-			val = numberFormat(
++			val = Highcharts.numberFormat(
+ 				val,
+ 				decimals,
+ 				lang.decimalPoint,
+@@ -1388,7 +1388,7 @@ defaultOptions = {
+ 				//defer: true,
+ 				enabled: false,
+ 				formatter: function () {
+-					return this.y === null ? '' : numberFormat(this.y, -1);
++					return this.y === null ? '' : Highcharts.numberFormat(this.y, -1);
+ 				},
+ 				verticalAlign: 'bottom', // above singular point
+ 				y: 0
+@@ -6344,7 +6344,7 @@ Axis.prototype = {
+ 			//textAlign: dynamic,
+ 			//rotation: 0,
+ 			formatter: function () {
+-				return numberFormat(this.total, -1);
++				return Highcharts.numberFormat(this.total, -1);
+ 			},
+ 			style: defaultLabelOptions.style
+ 		}
+@@ -6615,17 +6615,17 @@ Axis.prototype = {
+ 			while (i-- && ret === UNDEFINED) {
+ 				multi = Math.pow(1000, i + 1);
+ 				if (numericSymbolDetector >= multi && numericSymbols[i] !== null) {
+-					ret = numberFormat(value / multi, -1) + numericSymbols[i];
++					ret = Highcharts.numberFormat(value / multi, -1) + numericSymbols[i];
+ 				}
+ 			}
+ 		}
+ 
+ 		if (ret === UNDEFINED) {
+ 			if (mathAbs(value) >= 10000) { // add thousands separators
+-				ret = numberFormat(value, 0);
++				ret = Highcharts.numberFormat(value, 0);
+ 
+ 			} else { // small numbers
+-				ret = numberFormat(value, -1, UNDEFINED, ''); // #2466
++				ret = Highcharts.numberFormat(value, -1, UNDEFINED, ''); // #2466
+ 			}
+ 		}
+ 
+diff --git a/js/highmaps.src.js b/js/highmaps.src.js
+index 71ebc1e..72ada82 100644
+--- a/js/highmaps.src.js
++++ b/js/highmaps.src.js
+@@ -486,7 +486,7 @@ function formatSingle(format, val) {
+ 		decimals = format.match(decRegex);
+ 		decimals = decimals ? decimals[1] : -1;
+ 		if (val !== null) {
+-			val = numberFormat(
++			val = Highcharts.numberFormat(
+ 				val,
+ 				decimals,
+ 				lang.decimalPoint,
+@@ -1388,7 +1388,7 @@ defaultOptions = {
+ 				//defer: true,
+ 				enabled: false,
+ 				formatter: function () {
+-					return this.y === null ? '' : numberFormat(this.y, -1);
++					return this.y === null ? '' : Highcharts.numberFormat(this.y, -1);
+ 				},
+ 				verticalAlign: 'bottom', // above singular point
+ 				y: 0
+@@ -6079,7 +6079,7 @@ Axis.prototype = {
+ 			//textAlign: dynamic,
+ 			//rotation: 0,
+ 			formatter: function () {
+-				return numberFormat(this.total, -1);
++				return Highcharts.numberFormat(this.total, -1);
+ 			},
+ 			style: defaultLabelOptions.style
+ 		}
+@@ -6350,17 +6350,17 @@ Axis.prototype = {
+ 			while (i-- && ret === UNDEFINED) {
+ 				multi = Math.pow(1000, i + 1);
+ 				if (numericSymbolDetector >= multi && numericSymbols[i] !== null) {
+-					ret = numberFormat(value / multi, -1) + numericSymbols[i];
++					ret = Highcharts.numberFormat(value / multi, -1) + numericSymbols[i];
+ 				}
+ 			}
+ 		}
+ 
+ 		if (ret === UNDEFINED) {
+ 			if (mathAbs(value) >= 10000) { // add thousands separators
+-				ret = numberFormat(value, 0);
++				ret = Highcharts.numberFormat(value, 0);
+ 
+ 			} else { // small numbers
+-				ret = numberFormat(value, -1, UNDEFINED, ''); // #2466
++				ret = Highcharts.numberFormat(value, -1, UNDEFINED, ''); // #2466
+ 			}
+ 		}
+ 
+@@ -15621,13 +15621,13 @@ extend(ColorAxis.prototype, {
+ 					name = '> ';
+ 				}
+ 				if (from !== UNDEFINED) {
+-					name += numberFormat(from, valueDecimals) + valueSuffix;
++					name += Highcharts.numberFormat(from, valueDecimals) + valueSuffix;
+ 				}
+ 				if (from !== UNDEFINED && to !== UNDEFINED) {
+ 					name += ' - ';
+ 				}
+ 				if (to !== UNDEFINED) {
+-					name += numberFormat(to, valueDecimals) + valueSuffix;
++					name += Highcharts.numberFormat(to, valueDecimals) + valueSuffix;
+ 				}
+ 				
+ 				// Add a mock object to the legend items
+diff --git a/js/highstock.src.js b/js/highstock.src.js
+index ded4e54..bf497ac 100644
+--- a/js/highstock.src.js
++++ b/js/highstock.src.js
+@@ -486,7 +486,7 @@ function formatSingle(format, val) {
+ 		decimals = format.match(decRegex);
+ 		decimals = decimals ? decimals[1] : -1;
+ 		if (val !== null) {
+-			val = numberFormat(
++			val = Highcharts.numberFormat(
+ 				val,
+ 				decimals,
+ 				lang.decimalPoint,
+@@ -1388,7 +1388,7 @@ defaultOptions = {
+ 				//defer: true,
+ 				enabled: false,
+ 				formatter: function () {
+-					return this.y === null ? '' : numberFormat(this.y, -1);
++					return this.y === null ? '' : Highcharts.numberFormat(this.y, -1);
+ 				},
+ 				verticalAlign: 'bottom', // above singular point
+ 				y: 0
+@@ -6344,7 +6344,7 @@ Axis.prototype = {
+ 			//textAlign: dynamic,
+ 			//rotation: 0,
+ 			formatter: function () {
+-				return numberFormat(this.total, -1);
++				return Highcharts.numberFormat(this.total, -1);
+ 			},
+ 			style: defaultLabelOptions.style
+ 		}
+@@ -6615,17 +6615,17 @@ Axis.prototype = {
+ 			while (i-- && ret === UNDEFINED) {
+ 				multi = Math.pow(1000, i + 1);
+ 				if (numericSymbolDetector >= multi && numericSymbols[i] !== null) {
+-					ret = numberFormat(value / multi, -1) + numericSymbols[i];
++					ret = Highcharts.numberFormat(value / multi, -1) + numericSymbols[i];
+ 				}
+ 			}
+ 		}
+ 
+ 		if (ret === UNDEFINED) {
+ 			if (mathAbs(value) >= 10000) { // add thousands separators
+-				ret = numberFormat(value, 0);
++				ret = Highcharts.numberFormat(value, 0);
+ 
+ 			} else { // small numbers
+-				ret = numberFormat(value, -1, UNDEFINED, ''); // #2466
++				ret = Highcharts.numberFormat(value, -1, UNDEFINED, ''); // #2466
+ 			}
+ 		}
+ 
+@@ -21922,7 +21922,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
+ 	
+ 	pointFormat = pointFormat.replace(
+ 		'{point.change}',
+-		(point.change > 0 ? '+' : '') + numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
++		(point.change > 0 ? '+' : '') + Highcharts.numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
+ 	); 
+ 	
+ 	return pointTooltipFormatter.apply(this, [pointFormat]);
+diff --git a/js/modules/heatmap.src.js b/js/modules/heatmap.src.js
+index 921c71e..a2411c0 100644
+--- a/js/modules/heatmap.src.js
++++ b/js/modules/heatmap.src.js
+@@ -25,7 +25,6 @@ var UNDEFINED,
+ 	extendClass = Highcharts.extendClass,
+ 	merge = Highcharts.merge,
+ 	pick = Highcharts.pick,
+-	numberFormat = Highcharts.numberFormat,
+ 	seriesTypes = Highcharts.seriesTypes,
+ 	wrap = Highcharts.wrap,
+ 	noop = function () {};
+@@ -404,13 +403,13 @@ extend(ColorAxis.prototype, {
+ 					name = '> ';
+ 				}
+ 				if (from !== UNDEFINED) {
+-					name += numberFormat(from, valueDecimals) + valueSuffix;
++					name += Highcharts.numberFormat(from, valueDecimals) + valueSuffix;
+ 				}
+ 				if (from !== UNDEFINED && to !== UNDEFINED) {
+ 					name += ' - ';
+ 				}
+ 				if (to !== UNDEFINED) {
+-					name += numberFormat(to, valueDecimals) + valueSuffix;
++					name += Highcharts.numberFormat(to, valueDecimals) + valueSuffix;
+ 				}
+ 				
+ 				// Add a mock object to the legend items
+diff --git a/js/modules/map.src.js b/js/modules/map.src.js
+index 040667c..07c4ef6 100644
+--- a/js/modules/map.src.js
++++ b/js/modules/map.src.js
+@@ -30,7 +30,6 @@ var UNDEFINED,
+ 	extendClass = Highcharts.extendClass,
+ 	merge = Highcharts.merge,
+ 	pick = Highcharts.pick,
+-	numberFormat = Highcharts.numberFormat,
+ 	defaultOptions = Highcharts.getOptions(),
+ 	seriesTypes = Highcharts.seriesTypes,
+ 	defaultPlotOptions = defaultOptions.plotOptions,
+@@ -505,13 +504,13 @@ extend(ColorAxis.prototype, {
+ 					name = '> ';
+ 				}
+ 				if (from !== UNDEFINED) {
+-					name += numberFormat(from, valueDecimals) + valueSuffix;
++					name += Highcharts.numberFormat(from, valueDecimals) + valueSuffix;
+ 				}
+ 				if (from !== UNDEFINED && to !== UNDEFINED) {
+ 					name += ' - ';
+ 				}
+ 				if (to !== UNDEFINED) {
+-					name += numberFormat(to, valueDecimals) + valueSuffix;
++					name += Highcharts.numberFormat(to, valueDecimals) + valueSuffix;
+ 				}
+ 				
+ 				// Add a mock object to the legend items
+diff --git a/js/parts-map/ColorAxis.js b/js/parts-map/ColorAxis.js
+index f332546..55b48aa 100644
+--- a/js/parts-map/ColorAxis.js
++++ b/js/parts-map/ColorAxis.js
+@@ -372,13 +372,13 @@ extend(ColorAxis.prototype, {
+ 					name = '> ';
+ 				}
+ 				if (from !== UNDEFINED) {
+-					name += numberFormat(from, valueDecimals) + valueSuffix;
++					name += Highcharts.numberFormat(from, valueDecimals) + valueSuffix;
+ 				}
+ 				if (from !== UNDEFINED && to !== UNDEFINED) {
+ 					name += ' - ';
+ 				}
+ 				if (to !== UNDEFINED) {
+-					name += numberFormat(to, valueDecimals) + valueSuffix;
++					name += Highcharts.numberFormat(to, valueDecimals) + valueSuffix;
+ 				}
+ 				
+ 				// Add a mock object to the legend items
+diff --git a/js/parts-map/Globals.js b/js/parts-map/Globals.js
+index e5037e2..ea8a28c 100644
+--- a/js/parts-map/Globals.js
++++ b/js/parts-map/Globals.js
+@@ -18,7 +18,6 @@ var UNDEFINED,
+ 	extendClass = Highcharts.extendClass,
+ 	merge = Highcharts.merge,
+ 	pick = Highcharts.pick,
+-	numberFormat = Highcharts.numberFormat,
+ 	defaultOptions = Highcharts.getOptions(),
+ 	seriesTypes = Highcharts.seriesTypes,
+ 	defaultPlotOptions = defaultOptions.plotOptions,
+diff --git a/js/parts-map/HeatmapGlobals.js b/js/parts-map/HeatmapGlobals.js
+index 18ea5fe..9953a92 100644
+--- a/js/parts-map/HeatmapGlobals.js
++++ b/js/parts-map/HeatmapGlobals.js
+@@ -14,7 +14,6 @@ var UNDEFINED,
+ 	extendClass = Highcharts.extendClass,
+ 	merge = Highcharts.merge,
+ 	pick = Highcharts.pick,
+-	numberFormat = Highcharts.numberFormat,
+ 	seriesTypes = Highcharts.seriesTypes,
+ 	wrap = Highcharts.wrap,
+ 	noop = function () {};
+diff --git a/js/parts/Axis.js b/js/parts/Axis.js
+index 45f7a6b..de6c67c 100644
+--- a/js/parts/Axis.js
++++ b/js/parts/Axis.js
+@@ -120,7 +120,7 @@ Axis.prototype = {
+ 			//textAlign: dynamic,
+ 			//rotation: 0,
+ 			formatter: function () {
+-				return numberFormat(this.total, -1);
++				return Highcharts.numberFormat(this.total, -1);
+ 			},
+ 			style: defaultLabelOptions.style
+ 		}
+@@ -391,17 +391,17 @@ Axis.prototype = {
+ 			while (i-- && ret === UNDEFINED) {
+ 				multi = Math.pow(1000, i + 1);
+ 				if (numericSymbolDetector >= multi && numericSymbols[i] !== null) {
+-					ret = numberFormat(value / multi, -1) + numericSymbols[i];
++					ret = Highcharts.numberFormat(value / multi, -1) + numericSymbols[i];
+ 				}
+ 			}
+ 		}
+ 
+ 		if (ret === UNDEFINED) {
+ 			if (mathAbs(value) >= 10000) { // add thousands separators
+-				ret = numberFormat(value, 0);
++				ret = Highcharts.numberFormat(value, 0);
+ 
+ 			} else { // small numbers
+-				ret = numberFormat(value, -1, UNDEFINED, ''); // #2466
++				ret = Highcharts.numberFormat(value, -1, UNDEFINED, ''); // #2466
+ 			}
+ 		}
+ 
+diff --git a/js/parts/Options.js b/js/parts/Options.js
+index 7a74c58..5778555 100644
+--- a/js/parts/Options.js
++++ b/js/parts/Options.js
+@@ -159,7 +159,7 @@ defaultOptions = {
+ 				//defer: true,
+ 				enabled: false,
+ 				formatter: function () {
+-					return this.y === null ? '' : numberFormat(this.y, -1);
++					return this.y === null ? '' : Highcharts.numberFormat(this.y, -1);
+ 				},
+ 				verticalAlign: 'bottom', // above singular point
+ 				y: 0
+diff --git a/js/parts/StockChart.js b/js/parts/StockChart.js
+index c5293f6..8893a75 100644
+--- a/js/parts/StockChart.js
++++ b/js/parts/StockChart.js
+@@ -527,7 +527,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
+ 	
+ 	pointFormat = pointFormat.replace(
+ 		'{point.change}',
+-		(point.change > 0 ? '+' : '') + numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
++		(point.change > 0 ? '+' : '') + Highcharts.numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
+ 	); 
+ 	
+ 	return pointTooltipFormatter.apply(this, [pointFormat]);
+diff --git a/js/parts/Utilities.js b/js/parts/Utilities.js
+index c36f889..8466277 100644
+--- a/js/parts/Utilities.js
++++ b/js/parts/Utilities.js
+@@ -378,7 +378,7 @@ function formatSingle(format, val) {
+ 		decimals = format.match(decRegex);
+ 		decimals = decimals ? decimals[1] : -1;
+ 		if (val !== null) {
+-			val = numberFormat(
++			val = Highcharts.numberFormat(
+ 				val,
+ 				decimals,
+ 				lang.decimalPoint,

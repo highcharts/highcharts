@@ -23,11 +23,11 @@ $(function () {
             "value": 4
         },
         {
-            "hc-key": "us-al",
+            "hc-key": "us-nv",
             "value": 5
         },
         {
-            "hc-key": "us-nv",
+            "hc-key": "us-al",
             "value": 6
         },
         {
@@ -51,11 +51,11 @@ $(function () {
             "value": 11
         },
         {
-            "hc-key": "us-mi",
+            "hc-key": "us-ok",
             "value": 12
         },
         {
-            "hc-key": "us-ok",
+            "hc-key": "us-mi",
             "value": 13
         },
         {
@@ -95,11 +95,11 @@ $(function () {
             "value": 22
         },
         {
-            "hc-key": "us-wa",
+            "hc-key": "us-mn",
             "value": 23
         },
         {
-            "hc-key": "us-mn",
+            "hc-key": "us-wa",
             "value": 24
         },
         {
@@ -111,19 +111,19 @@ $(function () {
             "value": 26
         },
         {
-            "hc-key": "us-id",
+            "hc-key": "us-ri",
             "value": 27
         },
         {
-            "hc-key": "us-ri",
+            "hc-key": "us-fl",
             "value": 28
         },
         {
-            "hc-key": "us-fl",
+            "hc-key": "us-ms",
             "value": 29
         },
         {
-            "hc-key": "us-ms",
+            "hc-key": "us-ut",
             "value": 30
         },
         {
@@ -135,31 +135,31 @@ $(function () {
             "value": 32
         },
         {
-            "hc-key": "us-ut",
+            "hc-key": "us-va",
             "value": 33
         },
         {
-            "hc-key": "us-va",
+            "hc-key": "us-tn",
             "value": 34
         },
         {
-            "hc-key": "us-tn",
+            "hc-key": "us-ia",
             "value": 35
         },
         {
-            "hc-key": "us-ia",
+            "hc-key": "us-wi",
             "value": 36
         },
         {
-            "hc-key": "us-wi",
+            "hc-key": "us-md",
             "value": 37
         },
         {
-            "hc-key": "us-md",
+            "hc-key": "us-de",
             "value": 38
         },
         {
-            "hc-key": "us-de",
+            "hc-key": "us-mo",
             "value": 39
         },
         {
@@ -175,7 +175,7 @@ $(function () {
             "value": 42
         },
         {
-            "hc-key": "us-mo",
+            "hc-key": "us-la",
             "value": 43
         },
         {
@@ -187,35 +187,35 @@ $(function () {
             "value": 45
         },
         {
-            "hc-key": "us-la",
+            "hc-key": "us-sd",
             "value": 46
         },
         {
-            "hc-key": "us-sd",
+            "hc-key": "us-ct",
             "value": 47
         },
         {
-            "hc-key": "us-ct",
+            "hc-key": "us-il",
             "value": 48
         },
         {
-            "hc-key": "us-il",
+            "hc-key": "us-in",
             "value": 49
         },
         {
-            "hc-key": "us-in",
+            "hc-key": "us-ky",
             "value": 50
         },
         {
-            "hc-key": "us-ky",
+            "hc-key": "us-wv",
             "value": 51
         },
         {
-            "hc-key": "us-wv",
+            "hc-key": "us-dc",
             "value": 52
         },
         {
-            "hc-key": "us-dc",
+            "hc-key": "us-id",
             "value": 53
         },
         {
@@ -223,19 +223,19 @@ $(function () {
             "value": 54
         },
         {
-            "hc-key": "ca-nl",
+            "hc-key": "ca-qc",
             "value": 55
         },
         {
-            "hc-key": "ca-qc",
+            "hc-key": "ca-nb",
             "value": 56
         },
         {
-            "hc-key": "ca-nb",
+            "hc-key": "ca-ns",
             "value": 57
         },
         {
-            "hc-key": "ca-ns",
+            "hc-key": "ca-nl",
             "value": 58
         },
         {

@@ -65,12 +65,15 @@ $(function () {
                 match;
 
             // Update info box download links
-            $("#download").html('<a class="button" target="_blank" href="http://www.highcharts.com/samples/maps-base.php?mapkey=' + mapKey + '">' +
+            $("#download").html(
+                '<a class="button" target="_blank" href="http://jsfiddle.net/gh/get/jquery/1.11.0/' +
+                'highslide-software/highcharts.com/tree/master/samples/mapdata/' + mapKey + '">' +
                 'View clean demo</a>' +
                 '<div class="or-view-as">... or view as ' +
                 '<a target="_blank" href="' + svgPath + '">SVG</a>, ' +
                 '<a target="_blank" href="' + geojsonPath + '">GeoJSON</a>, ' +
-                '<a target="_blank" href="' + javascriptPath + '">JavaScript</a>.</div>');
+                '<a target="_blank" href="' + javascriptPath + '">JavaScript</a>.</div>'
+            );
 
             // Generate non-random data for the map
             $.each(mapGeoJSON.features, function (index, feature) {

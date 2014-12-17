@@ -4,7 +4,8 @@ $(function () {
         legend: {
             align: 'right',
             verticalAlign: 'top',
-            y: 60
+            y: 60,
+            layout: 'vertical'
         },
 
         xAxis: {

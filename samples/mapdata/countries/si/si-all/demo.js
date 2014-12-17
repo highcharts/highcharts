@@ -3,651 +3,651 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "si-440",
+            "hc-key": "si-1439",
             "value": 0
         },
         {
-            "hc-key": "si-1439",
+            "hc-key": "si-442",
             "value": 1
         },
         {
-            "hc-key": "si-442",
+            "hc-key": "si-457",
             "value": 2
         },
         {
-            "hc-key": "si-457",
+            "hc-key": "si-1395",
             "value": 3
         },
         {
-            "hc-key": "si-1395",
+            "hc-key": "si-1396",
             "value": 4
         },
         {
-            "hc-key": "si-1396",
+            "hc-key": "si-1451",
             "value": 5
         },
         {
-            "hc-key": "si-1451",
+            "hc-key": "si-1457",
             "value": 6
         },
         {
-            "hc-key": "si-1457",
+            "hc-key": "si-1416",
             "value": 7
         },
         {
-            "hc-key": "si-1416",
+            "hc-key": "si-1460",
             "value": 8
         },
         {
-            "hc-key": "si-1460",
+            "hc-key": "si-1476",
             "value": 9
         },
         {
-            "hc-key": "si-1476",
+            "hc-key": "si-1404",
             "value": 10
         },
         {
-            "hc-key": "si-1404",
+            "hc-key": "si-423",
             "value": 11
         },
         {
-            "hc-key": "si-423",
+            "hc-key": "si-425",
             "value": 12
         },
         {
-            "hc-key": "si-425",
+            "hc-key": "si-448",
             "value": 13
         },
         {
-            "hc-key": "si-448",
+            "hc-key": "si-426",
             "value": 14
         },
         {
-            "hc-key": "si-426",
+            "hc-key": "si-460",
             "value": 15
         },
         {
-            "hc-key": "si-460",
+            "hc-key": "si-430",
             "value": 16
         },
         {
-            "hc-key": "si-430",
+            "hc-key": "si-471",
             "value": 17
         },
         {
-            "hc-key": "si-471",
+            "hc-key": "si-436",
             "value": 18
         },
         {
-            "hc-key": "si-436",
+            "hc-key": "si-438",
             "value": 19
         },
         {
-            "hc-key": "si-438",
+            "hc-key": "si-440",
             "value": 20
         },
         {
-            "hc-key": "si-1421",
+            "hc-key": "si-443",
             "value": 21
         },
         {
-            "hc-key": "si-429",
+            "hc-key": "si-1441",
             "value": 22
         },
         {
-            "hc-key": "si-443",
+            "hc-key": "si-1405",
             "value": 23
         },
         {
-            "hc-key": "si-1441",
+            "hc-key": "si-1380",
             "value": 24
         },
         {
-            "hc-key": "si-1405",
+            "hc-key": "si-447",
             "value": 25
         },
         {
-            "hc-key": "si-1380",
+            "hc-key": "si-446",
             "value": 26
         },
         {
-            "hc-key": "si-445",
+            "hc-key": "si-449",
             "value": 27
         },
         {
-            "hc-key": "si-447",
+            "hc-key": "si-450",
             "value": 28
         },
         {
-            "hc-key": "si-446",
+            "hc-key": "si-452",
             "value": 29
         },
         {
-            "hc-key": "si-439",
+            "hc-key": "si-453",
             "value": 30
         },
         {
-            "hc-key": "si-437",
+            "hc-key": "si-475",
             "value": 31
         },
         {
-            "hc-key": "si-449",
+            "hc-key": "si-1390",
             "value": 32
         },
         {
-            "hc-key": "si-450",
+            "hc-key": "si-458",
             "value": 33
         },
         {
-            "hc-key": "si-452",
+            "hc-key": "si-456",
             "value": 34
         },
         {
-            "hc-key": "si-453",
+            "hc-key": "si-461",
             "value": 35
         },
         {
-            "hc-key": "si-475",
+            "hc-key": "si-462",
             "value": 36
         },
         {
-            "hc-key": "si-441",
+            "hc-key": "si-465",
             "value": 37
         },
         {
-            "hc-key": "si-1390",
+            "hc-key": "si-459",
             "value": 38
         },
         {
-            "hc-key": "si-458",
+            "hc-key": "si-455",
             "value": 39
         },
         {
-            "hc-key": "si-456",
+            "hc-key": "si-469",
             "value": 40
         },
         {
-            "hc-key": "si-461",
+            "hc-key": "si-427",
             "value": 41
         },
         {
-            "hc-key": "si-462",
+            "hc-key": "si-472",
             "value": 42
         },
         {
-            "hc-key": "si-465",
+            "hc-key": "si-473",
             "value": 43
         },
         {
-            "hc-key": "si-459",
+            "hc-key": "si-474",
             "value": 44
         },
         {
-            "hc-key": "si-455",
+            "hc-key": "si-1443",
             "value": 45
         },
         {
-            "hc-key": "si-469",
+            "hc-key": "si-479",
             "value": 46
         },
         {
-            "hc-key": "si-427",
+            "hc-key": "si-480",
             "value": 47
         },
         {
-            "hc-key": "si-472",
+            "hc-key": "si-481",
             "value": 48
         },
         {
-            "hc-key": "si-473",
+            "hc-key": "si-482",
             "value": 49
         },
         {
-            "hc-key": "si-474",
+            "hc-key": "si-484",
             "value": 50
         },
         {
-            "hc-key": "si-1443",
+            "hc-key": "si-485",
             "value": 51
         },
         {
-            "hc-key": "si-479",
+            "hc-key": "si-486",
             "value": 52
         },
         {
-            "hc-key": "si-480",
+            "hc-key": "si-487",
             "value": 53
         },
         {
-            "hc-key": "si-481",
+            "hc-key": "si-874",
             "value": 54
         },
         {
-            "hc-key": "si-482",
+            "hc-key": "si-416",
             "value": 55
         },
         {
-            "hc-key": "si-484",
+            "hc-key": "si-877",
             "value": 56
         },
         {
-            "hc-key": "si-485",
+            "hc-key": "si-878",
             "value": 57
         },
         {
-            "hc-key": "si-486",
+            "hc-key": "si-483",
             "value": 58
         },
         {
-            "hc-key": "si-487",
+            "hc-key": "si-1373",
             "value": 59
         },
         {
-            "hc-key": "si-874",
+            "hc-key": "si-1372",
             "value": 60
         },
         {
-            "hc-key": "si-416",
+            "hc-key": "si-1374",
             "value": 61
         },
         {
-            "hc-key": "si-877",
+            "hc-key": "si-415",
             "value": 62
         },
         {
-            "hc-key": "si-878",
+            "hc-key": "si-1379",
             "value": 63
         },
         {
-            "hc-key": "si-483",
+            "hc-key": "si-1375",
             "value": 64
         },
         {
-            "hc-key": "si-1373",
+            "hc-key": "si-1381",
             "value": 65
         },
         {
-            "hc-key": "si-1372",
+            "hc-key": "si-1402",
             "value": 66
         },
         {
-            "hc-key": "si-1374",
+            "hc-key": "si-451",
             "value": 67
         },
         {
-            "hc-key": "si-415",
+            "hc-key": "si-1382",
             "value": 68
         },
         {
-            "hc-key": "si-1379",
+            "hc-key": "si-1385",
             "value": 69
         },
         {
-            "hc-key": "si-1375",
+            "hc-key": "si-1386",
             "value": 70
         },
         {
-            "hc-key": "si-1381",
+            "hc-key": "si-445",
             "value": 71
         },
         {
-            "hc-key": "si-1402",
+            "hc-key": "si-1394",
             "value": 72
         },
         {
-            "hc-key": "si-451",
+            "hc-key": "si-1377",
             "value": 73
         },
         {
-            "hc-key": "si-1382",
+            "hc-key": "si-470",
             "value": 74
         },
         {
-            "hc-key": "si-1385",
+            "hc-key": "si-1398",
             "value": 75
         },
         {
-            "hc-key": "si-1386",
+            "hc-key": "si-7300",
             "value": 76
         },
         {
-            "hc-key": "si-1394",
+            "hc-key": "si-1400",
             "value": 77
         },
         {
-            "hc-key": "si-1377",
+            "hc-key": "si-1393",
             "value": 78
         },
         {
-            "hc-key": "si-470",
+            "hc-key": "si-1401",
             "value": 79
         },
         {
-            "hc-key": "si-1398",
+            "hc-key": "si-1403",
             "value": 80
         },
         {
-            "hc-key": "si-7300",
+            "hc-key": "si-454",
             "value": 81
         },
         {
-            "hc-key": "si-1400",
+            "hc-key": "si-1406",
             "value": 82
         },
         {
-            "hc-key": "si-1393",
+            "hc-key": "si-1408",
             "value": 83
         },
         {
-            "hc-key": "si-1401",
+            "hc-key": "si-1409",
             "value": 84
         },
         {
-            "hc-key": "si-1403",
+            "hc-key": "si-1411",
             "value": 85
         },
         {
-            "hc-key": "si-454",
+            "hc-key": "si-1387",
             "value": 86
         },
         {
-            "hc-key": "si-1406",
+            "hc-key": "si-1412",
             "value": 87
         },
         {
-            "hc-key": "si-1408",
+            "hc-key": "si-1413",
             "value": 88
         },
         {
-            "hc-key": "si-1409",
+            "hc-key": "si-1417",
             "value": 89
         },
         {
-            "hc-key": "si-1411",
+            "hc-key": "si-1418",
             "value": 90
         },
         {
-            "hc-key": "si-1387",
+            "hc-key": "si-1419",
             "value": 91
         },
         {
-            "hc-key": "si-1412",
+            "hc-key": "si-429",
             "value": 92
         },
         {
-            "hc-key": "si-1413",
+            "hc-key": "si-1420",
             "value": 93
         },
         {
-            "hc-key": "si-1417",
+            "hc-key": "si-1423",
             "value": 94
         },
         {
-            "hc-key": "si-1418",
+            "hc-key": "si-7301",
             "value": 95
         },
         {
-            "hc-key": "si-1419",
+            "hc-key": "si-1424",
             "value": 96
         },
         {
-            "hc-key": "si-1420",
+            "hc-key": "si-1427",
             "value": 97
         },
         {
-            "hc-key": "si-1423",
+            "hc-key": "si-1429",
             "value": 98
         },
         {
-            "hc-key": "si-7301",
+            "hc-key": "si-1430",
             "value": 99
         },
         {
-            "hc-key": "si-1424",
+            "hc-key": "si-1431",
             "value": 100
         },
         {
-            "hc-key": "si-1427",
+            "hc-key": "si-1432",
             "value": 101
         },
         {
-            "hc-key": "si-1429",
+            "hc-key": "si-1434",
             "value": 102
         },
         {
-            "hc-key": "si-1430",
+            "hc-key": "si-1440",
             "value": 103
         },
         {
-            "hc-key": "si-1431",
+            "hc-key": "si-1445",
             "value": 104
         },
         {
-            "hc-key": "si-1432",
+            "hc-key": "si-444",
             "value": 105
         },
         {
-            "hc-key": "si-1434",
+            "hc-key": "si-477",
             "value": 106
         },
         {
-            "hc-key": "si-1440",
+            "hc-key": "si-1446",
             "value": 107
         },
         {
-            "hc-key": "si-1445",
+            "hc-key": "si-478",
             "value": 108
         },
         {
-            "hc-key": "si-444",
+            "hc-key": "si-1450",
             "value": 109
         },
         {
-            "hc-key": "si-477",
+            "hc-key": "si-1447",
             "value": 110
         },
         {
-            "hc-key": "si-1446",
+            "hc-key": "si-1452",
             "value": 111
         },
         {
-            "hc-key": "si-478",
+            "hc-key": "si-476",
             "value": 112
         },
         {
-            "hc-key": "si-1450",
+            "hc-key": "si-1453",
             "value": 113
         },
         {
-            "hc-key": "si-1447",
+            "hc-key": "si-1456",
             "value": 114
         },
         {
-            "hc-key": "si-1452",
+            "hc-key": "si-1458",
             "value": 115
         },
         {
-            "hc-key": "si-476",
+            "hc-key": "si-1462",
             "value": 116
         },
         {
-            "hc-key": "si-1453",
+            "hc-key": "si-1392",
             "value": 117
         },
         {
-            "hc-key": "si-1456",
+            "hc-key": "si-1463",
             "value": 118
         },
         {
-            "hc-key": "si-1458",
+            "hc-key": "si-1465",
             "value": 119
         },
         {
-            "hc-key": "si-1462",
+            "hc-key": "si-1467",
             "value": 120
         },
         {
-            "hc-key": "si-1392",
+            "hc-key": "si-1471",
             "value": 121
         },
         {
-            "hc-key": "si-1463",
+            "hc-key": "si-1469",
             "value": 122
         },
         {
-            "hc-key": "si-1465",
+            "hc-key": "si-1470",
             "value": 123
         },
         {
-            "hc-key": "si-1467",
+            "hc-key": "si-1464",
             "value": 124
         },
         {
-            "hc-key": "si-1471",
+            "hc-key": "si-1472",
             "value": 125
         },
         {
-            "hc-key": "si-1469",
+            "hc-key": "si-1473",
             "value": 126
         },
         {
-            "hc-key": "si-1470",
+            "hc-key": "si-1468",
             "value": 127
         },
         {
-            "hc-key": "si-1464",
+            "hc-key": "si-875",
             "value": 128
         },
         {
-            "hc-key": "si-1472",
+            "hc-key": "si-1475",
             "value": 129
         },
         {
-            "hc-key": "si-1473",
+            "hc-key": "si-1478",
             "value": 130
         },
         {
-            "hc-key": "si-1468",
+            "hc-key": "si-1479",
             "value": 131
         },
         {
-            "hc-key": "si-875",
+            "hc-key": "si-1474",
             "value": 132
         },
         {
-            "hc-key": "si-1475",
+            "hc-key": "si-1477",
             "value": 133
         },
         {
-            "hc-key": "si-1478",
+            "hc-key": "si-1482",
             "value": 134
         },
         {
-            "hc-key": "si-1479",
+            "hc-key": "si-1483",
             "value": 135
         },
         {
-            "hc-key": "si-1474",
+            "hc-key": "si-1484",
             "value": 136
         },
         {
-            "hc-key": "si-1477",
+            "hc-key": "si-1485",
             "value": 137
         },
         {
-            "hc-key": "si-1482",
+            "hc-key": "si-414",
             "value": 138
         },
         {
-            "hc-key": "si-1483",
+            "hc-key": "si-417",
             "value": 139
         },
         {
-            "hc-key": "si-1484",
+            "hc-key": "si-418",
             "value": 140
         },
         {
-            "hc-key": "si-1485",
+            "hc-key": "si-419",
             "value": 141
         },
         {
-            "hc-key": "si-414",
+            "hc-key": "si-420",
             "value": 142
         },
         {
-            "hc-key": "si-417",
+            "hc-key": "si-421",
             "value": 143
         },
         {
-            "hc-key": "si-418",
+            "hc-key": "si-1442",
             "value": 144
         },
         {
-            "hc-key": "si-419",
+            "hc-key": "si-422",
             "value": 145
         },
         {
-            "hc-key": "si-420",
+            "hc-key": "si-424",
             "value": 146
         },
         {
-            "hc-key": "si-421",
+            "hc-key": "si-1444",
             "value": 147
         },
         {
-            "hc-key": "si-1442",
+            "hc-key": "si-1410",
             "value": 148
         },
         {
-            "hc-key": "si-422",
+            "hc-key": "si-428",
             "value": 149
         },
         {
-            "hc-key": "si-424",
+            "hc-key": "si-431",
             "value": 150
         },
         {
-            "hc-key": "si-1444",
+            "hc-key": "si-433",
             "value": 151
         },
         {
-            "hc-key": "si-1410",
+            "hc-key": "si-434",
             "value": 152
         },
         {
-            "hc-key": "si-428",
+            "hc-key": "si-435",
             "value": 153
         },
         {
-            "hc-key": "si-431",
+            "hc-key": "si-466",
             "value": 154
         },
         {
-            "hc-key": "si-433",
+            "hc-key": "si-1438",
             "value": 155
         },
         {
-            "hc-key": "si-434",
+            "hc-key": "si-1428",
             "value": 156
         },
         {
-            "hc-key": "si-435",
+            "hc-key": "si-1426",
             "value": 157
         },
         {
-            "hc-key": "si-466",
+            "hc-key": "si-1421",
             "value": 158
         },
         {
-            "hc-key": "si-1438",
+            "hc-key": "si-439",
             "value": 159
         },
         {
-            "hc-key": "si-1428",
+            "hc-key": "si-437",
             "value": 160
         },
         {
-            "hc-key": "si-1426",
+            "hc-key": "si-441",
             "value": 161
         },
         {

@@ -342,9 +342,12 @@ extend(Chart.prototype, {
 				halfPointRange = (axis.pointRange || 0) / 2,
 				extremes = axis.getExtremes(),
 				newMin = axis.toValue(startPos - mousePos, true) + halfPointRange,
-				newMax = axis.toValue(startPos + chart[isX ? 'plotWidth' : 'plotHeight'] - mousePos, true) - halfPointRange;
+				newMax = axis.toValue(startPos + chart[isX ? 'plotWidth' : 'plotHeight'] - mousePos, true) - halfPointRange,
+				goingLeft = startPos > mousePos; // #3613
 
-			if (axis.series.length && newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
+			if (axis.series.length && 
+					(goingLeft || newMin > mathMin(extremes.dataMin, extremes.min)) && 
+					(!goingLeft || newMax < mathMax(extremes.dataMax, extremes.max))) {
 				axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
 				doRedraw = true;
 			}
@@ -567,7 +570,7 @@ extend(Point.prototype, {
 		if (haloOptions && haloOptions.size) {
 			if (!halo) {
 				series.halo = halo = chart.renderer.path()
-					.add(series.seriesGroup);
+					.add(chart.seriesGroup);
 			}
 			halo.attr(extend({
 				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
@@ -768,6 +771,7 @@ extend(Series.prototype, {
 			low,
 			high,
 			xAxis = series.xAxis,
+			halfPointRange = ((xAxis && xAxis.pointRange) || 0) / 2,
 			xExtremes = xAxis && xAxis.getExtremes(),
 			axisLength = xAxis ? (xAxis.tooltipLen || xAxis.len) : series.chart.plotSizeX, // tooltipLen and tooltipPosName used in polar
 			point,
@@ -806,7 +810,7 @@ extend(Series.prototype, {
 		for (i = 0; i < pointsLength; i++) {
 			point = points[i];
 			pointX = point.x;
-			if (pointX >= xExtremes.min && pointX <= xExtremes.max) { // #1149
+			if (pointX >= xExtremes.min - halfPointRange && pointX <= xExtremes.max + halfPointRange) { // #1149, #3152
 				nextPoint = points[i + 1];
 
 				// Set this range's low to the last range's high plus one

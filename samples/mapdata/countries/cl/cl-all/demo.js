@@ -27,39 +27,39 @@ $(function () {
             "value": 5
         },
         {
-            "hc-key": "cl-2740",
+            "hc-key": "cl-at",
             "value": 6
         },
         {
-            "hc-key": "cl-bi",
+            "hc-key": "cl-co",
             "value": 7
         },
         {
-            "hc-key": "cl-an",
+            "hc-key": "cl-bi",
             "value": 8
         },
         {
-            "hc-key": "cl-at",
+            "hc-key": "cl-rm",
             "value": 9
         },
         {
-            "hc-key": "cl-co",
+            "hc-key": "cl-ar",
             "value": 10
         },
         {
-            "hc-key": "cl-rm",
+            "hc-key": "cl-ml",
             "value": 11
         },
         {
-            "hc-key": "cl-ar",
+            "hc-key": "cl-ta",
             "value": 12
         },
         {
-            "hc-key": "cl-ml",
+            "hc-key": "cl-2740",
             "value": 13
         },
         {
-            "hc-key": "cl-ta",
+            "hc-key": "cl-an",
             "value": 14
         }
     ];

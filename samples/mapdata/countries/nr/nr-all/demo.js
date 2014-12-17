@@ -3,59 +3,59 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "nr-6489",
+            "hc-key": "nr-6494",
             "value": 0
         },
         {
-            "hc-key": "nr-6490",
+            "hc-key": "nr-6495",
             "value": 1
         },
         {
-            "hc-key": "nr-6491",
+            "hc-key": "nr-6496",
             "value": 2
         },
         {
-            "hc-key": "nr-6492",
+            "hc-key": "nr-6497",
             "value": 3
         },
         {
-            "hc-key": "nr-6493",
+            "hc-key": "nr-6498",
             "value": 4
         },
         {
-            "hc-key": "nr-6494",
+            "hc-key": "nr-6499",
             "value": 5
         },
         {
-            "hc-key": "nr-6495",
+            "hc-key": "nr-6487",
             "value": 6
         },
         {
-            "hc-key": "nr-6496",
+            "hc-key": "nr-3591",
             "value": 7
         },
         {
-            "hc-key": "nr-6497",
+            "hc-key": "nr-6488",
             "value": 8
         },
         {
-            "hc-key": "nr-6498",
+            "hc-key": "nr-6489",
             "value": 9
         },
         {
-            "hc-key": "nr-6499",
+            "hc-key": "nr-6490",
             "value": 10
         },
         {
-            "hc-key": "nr-6487",
+            "hc-key": "nr-6491",
             "value": 11
         },
         {
-            "hc-key": "nr-3591",
+            "hc-key": "nr-6492",
             "value": 12
         },
         {
-            "hc-key": "nr-6488",
+            "hc-key": "nr-6493",
             "value": 13
         }
     ];

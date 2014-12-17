@@ -214,37 +214,7 @@ extend(Point.prototype, {
 	 *    configuration
 	 */
 	remove: function (redraw, animation) {
-		var point = this,
-			series = point.series,
-			points = series.points,
-			chart = series.chart,
-			i,
-			data = series.data;
-
-		setAnimation(animation, chart);
-		redraw = pick(redraw, true);
-
-		// fire the event with a default handler of removing the point
-		point.firePointEvent('remove', null, function () {
-
-			// splice all the parallel arrays
-			i = inArray(point, data);
-			if (data.length === points.length) {
-				points.splice(i, 1);
-			}
-			data.splice(i, 1);
-			series.options.data.splice(i, 1);
-			series.updateParallelArrays(point, 'splice', i, 1);
-
-			point.destroy();
-
-			// redraw
-			series.isDirty = true;
-			series.isDirtyData = true;
-			if (redraw) {
-				chart.redraw();
-			}
-		});
+		this.series.removePoint(inArray(this, this.series.data), redraw, animation);
 	}
 });
 
@@ -348,6 +318,48 @@ extend(Series.prototype, {
 	},
 
 	/**
+	 * Remove a point (rendered or not), by index
+	 */
+	removePoint: function (i, redraw, animation) { // docs: new method on Series object. Sample created: series-removepoint
+
+		var series = this,
+			data = series.data,
+			point = data[i],
+			points = series.points,
+			chart = series.chart,
+			remove = function () {
+
+				if (data.length === points.length) {
+					points.splice(i, 1);
+				}
+				data.splice(i, 1);
+				series.options.data.splice(i, 1);
+				series.updateParallelArrays(point || { series: series }, 'splice', i, 1);
+
+				if (point) {
+					point.destroy();
+				}
+
+				// redraw
+				series.isDirty = true;
+				series.isDirtyData = true;
+				if (redraw) {
+					chart.redraw();
+				}
+			};
+
+		setAnimation(animation, chart);
+		redraw = pick(redraw, true);
+
+		// Fire the event with a default handler of removing the point
+		if (point) {
+			point.firePointEvent('remove', null, remove);
+		} else {
+			remove();
+		}
+	},
+
+	/**
 	 * Remove a series and optionally redraw the chart
 	 *
 	 * @param {Boolean} redraw Whether to redraw the chart or wait for an explicit call
@@ -399,6 +411,11 @@ extend(Series.prototype, {
 			preserve = ['group', 'markerGroup', 'dataLabelsGroup'],
 			n;
 
+		// If we're changing type or zIndex, create new groups (#3380, #3404)
+		if ((newOptions.type && newOptions.type !== oldType) || newOptions.zIndex !== undefined) {
+			preserve.length = 0;
+		}
+
 		// Make sure groups are not destroyed (#3094)
 		each(preserve, function (prop) {
 			preserve[prop] = series[prop];
@@ -422,12 +439,9 @@ extend(Series.prototype, {
 		extend(this, seriesTypes[newOptions.type || oldType].prototype);
 
 		// Re-register groups (#3094)
-		// unless it's a new type (#3402)
-		if (!newOptions.type || (newOptions.type === oldType)) { 
-			each(preserve, function (prop) {
-				series[prop] = preserve[prop];
-			});
-		}
+		each(preserve, function (prop) {
+			series[prop] = preserve[prop];
+		});
 
 		this.init(chart, newOptions);
 		chart.linkSeries(); // Links are lost in this.remove (#3028)

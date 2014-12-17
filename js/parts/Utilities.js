@@ -248,33 +248,6 @@ function extendClass(parent, members) {
 }
 
 /**
- * Format a number and return a string based on input settings
- * @param {Number} number The input number to format
- * @param {Number} decimals The amount of decimals
- * @param {String} decPoint The decimal point, defaults to the one given in the lang options
- * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
- */
-function numberFormat(number, decimals, decPoint, thousandsSep) {
-	var externalFn = Highcharts.numberFormat,
-		lang = defaultOptions.lang,
-		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
-		n = +number || 0,
-		c = decimals === -1 ?
-			(n.toString().split('.')[1] || '').length : // preserve decimals
-			(isNaN(decimals = mathAbs(decimals)) ? 2 : decimals),
-		d = decPoint === undefined ? lang.decimalPoint : decPoint,
-		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
-		s = n < 0 ? "-" : "",
-		i = String(pInt(n = mathAbs(n).toFixed(c))),
-		j = i.length > 3 ? i.length % 3 : 0;
-
-	return externalFn !== numberFormat ? 
-		externalFn(number, decimals, decPoint, thousandsSep) :
-		(s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
-			(c ? d + mathAbs(n - i).toFixed(c).slice(2) : ""));
-}
-
-/**
  * Pad a string to a given length by adding 0 to the beginning
  * @param {Number} number
  * @param {Number} length
@@ -301,6 +274,11 @@ function wrap(obj, method, func) {
 	};
 }
 
+
+function getTZOffset(timestamp) {
+	return ((getTimezoneOffset && getTimezoneOffset(timestamp)) || timezoneOffset || 0) * 60000;
+}
+
 /**
  * Based on http://www.php.net/manual/en/function.strftime.php
  * @param {String} format
@@ -313,7 +291,7 @@ dateFormat = function (format, timestamp, capitalize) {
 	}
 	format = pick(format, '%Y-%m-%d %H:%M:%S');
 
-	var date = new Date(timestamp - timezoneOffset),
+	var date = new Date(timestamp - getTZOffset(timestamp)),
 		key, // used in for constuct below
 		// get the basic time values
 		hours = date[getHours](),
@@ -332,6 +310,7 @@ dateFormat = function (format, timestamp, capitalize) {
 			'A': langWeekdays[day], // Long weekday, like 'Monday'
 			'd': pad(dayOfMonth), // Two digit day of the month, 01 to 31
 			'e': dayOfMonth, // Day of the month, 1 through 31
+			'w': day,
 
 			// Week (none implemented)
 			//'W': weekNumber(),
@@ -381,7 +360,7 @@ function formatSingle(format, val) {
 		decimals = format.match(decRegex);
 		decimals = decimals ? decimals[1] : -1;
 		if (val !== null) {
-			val = numberFormat(
+			val = Highcharts.numberFormat(
 				val,
 				decimals,
 				lang.decimalPoint,
@@ -595,7 +574,7 @@ function discardElement(element) {
 /**
  * Provide error messages for debugging, with links to online explanation 
  */
-error = function (code, stop) {
+function error (code, stop) {
 	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
 	if (stop) {
 		throw msg;
@@ -604,7 +583,7 @@ error = function (code, stop) {
 	if (win.console) {
 		console.log(msg);
 	}
-};
+}
 
 /**
  * Fix JS round off float errors
@@ -636,6 +615,32 @@ timeUnits = {
 	hour: 3600000,
 	day: 24 * 3600000,
 	week: 7 * 24 * 3600000,
-	month: 31 * 24 * 3600000,
-	year: 31556952000
+	month: 28 * 24 * 3600000,
+	year: 364 * 24 * 3600000
+};
+
+
+/**
+ * Format a number and return a string based on input settings
+ * @param {Number} number The input number to format
+ * @param {Number} decimals The amount of decimals
+ * @param {String} decPoint The decimal point, defaults to the one given in the lang options
+ * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
+ */
+// docs: Overridable by wrap. Demo at /members/highcharts-numberformat
+Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
+	var lang = defaultOptions.lang,
+		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
+		n = +number || 0,
+		c = decimals === -1 ?
+			(n.toString().split('.')[1] || '').length : // preserve decimals
+			(isNaN(decimals = mathAbs(decimals)) ? 2 : decimals),
+		d = decPoint === undefined ? lang.decimalPoint : decPoint,
+		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
+		s = n < 0 ? "-" : "",
+		i = String(pInt(n = mathAbs(n).toFixed(c))),
+		j = i.length > 3 ? i.length % 3 : 0;
+
+	return (s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
+			(c ? d + mathAbs(n - i).toFixed(c).slice(2) : ""));
 };

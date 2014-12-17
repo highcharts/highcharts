@@ -3,43 +3,43 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "ls-qn",
+            "hc-key": "ls-be",
             "value": 0
         },
         {
-            "hc-key": "ls-tt",
+            "hc-key": "ls-ms",
             "value": 1
         },
         {
-            "hc-key": "ls-mf",
+            "hc-key": "ls-mh",
             "value": 2
         },
         {
-            "hc-key": "ls-be",
+            "hc-key": "ls-qt",
             "value": 3
         },
         {
-            "hc-key": "ls-ms",
+            "hc-key": "ls-le",
             "value": 4
         },
         {
-            "hc-key": "ls-mh",
+            "hc-key": "ls-bb",
             "value": 5
         },
         {
-            "hc-key": "ls-qt",
+            "hc-key": "ls-mk",
             "value": 6
         },
         {
-            "hc-key": "ls-le",
+            "hc-key": "ls-qn",
             "value": 7
         },
         {
-            "hc-key": "ls-bb",
+            "hc-key": "ls-tt",
             "value": 8
         },
         {
-            "hc-key": "ls-mk",
+            "hc-key": "ls-mf",
             "value": 9
         }
     ];

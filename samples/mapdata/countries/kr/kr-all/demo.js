@@ -15,43 +15,43 @@ $(function () {
             "value": 2
         },
         {
-            "hc-key": "kr-gb",
+            "hc-key": "kr-kn",
             "value": 3
         },
         {
-            "hc-key": "kr-gn",
+            "hc-key": "kr-2685",
             "value": 4
         },
         {
-            "hc-key": "kr-kn",
+            "hc-key": "kr-pu",
             "value": 5
         },
         {
-            "hc-key": "kr-2685",
+            "hc-key": "kr-gn",
             "value": 6
         },
         {
-            "hc-key": "kr-pu",
+            "hc-key": "kr-gb",
             "value": 7
         },
         {
-            "hc-key": "kr-tj",
+            "hc-key": "kr-2688",
             "value": 8
         },
         {
-            "hc-key": "kr-sj",
+            "hc-key": "kr-tj",
             "value": 9
         },
         {
-            "hc-key": "kr-2688",
+            "hc-key": "kr-sj",
             "value": 10
         },
         {
-            "hc-key": "kr-in",
+            "hc-key": "kr-ul",
             "value": 11
         },
         {
-            "hc-key": "kr-ul",
+            "hc-key": "kr-in",
             "value": 12
         },
         {

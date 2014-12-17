@@ -3,39 +3,39 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "no-no",
+            "hc-key": "no-mr",
             "value": 0
         },
         {
-            "hc-key": "no-bu",
+            "hc-key": "no-st",
             "value": 1
         },
         {
-            "hc-key": "no-tr",
+            "hc-key": "no-ho",
             "value": 2
         },
         {
-            "hc-key": "no-mr",
+            "hc-key": "no-sf",
             "value": 3
         },
         {
-            "hc-key": "no-st",
+            "hc-key": "no-va",
             "value": 4
         },
         {
-            "hc-key": "no-ho",
+            "hc-key": "no-of",
             "value": 5
         },
         {
-            "hc-key": "no-ro",
+            "hc-key": "no-nt",
             "value": 6
         },
         {
-            "hc-key": "no-sf",
+            "hc-key": "no-ro",
             "value": 7
         },
         {
-            "hc-key": "no-va",
+            "hc-key": "no-bu",
             "value": 8
         },
         {
@@ -43,35 +43,35 @@ $(function () {
             "value": 9
         },
         {
-            "hc-key": "no-of",
+            "hc-key": "no-fi",
             "value": 10
         },
         {
-            "hc-key": "no-nt",
+            "hc-key": "no-no",
             "value": 11
         },
         {
-            "hc-key": "no-fi",
+            "hc-key": "no-tr",
             "value": 12
         },
         {
-            "hc-key": "no-op",
+            "hc-key": "no-ak",
             "value": 13
         },
         {
-            "hc-key": "no-os",
+            "hc-key": "no-op",
             "value": 14
         },
         {
-            "hc-key": "no-te",
+            "hc-key": "no-he",
             "value": 15
         },
         {
-            "hc-key": "no-ak",
+            "hc-key": "no-os",
             "value": 16
         },
         {
-            "hc-key": "no-he",
+            "hc-key": "no-te",
             "value": 17
         },
         {

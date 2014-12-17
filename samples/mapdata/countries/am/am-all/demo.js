@@ -7,43 +7,43 @@ $(function () {
             "value": 0
         },
         {
-            "hc-key": "am-ag",
+            "hc-key": "am-av",
             "value": 1
         },
         {
-            "hc-key": "am-av",
+            "hc-key": "am-sh",
             "value": 2
         },
         {
-            "hc-key": "am-sh",
+            "hc-key": "am-ar",
             "value": 3
         },
         {
-            "hc-key": "am-ar",
+            "hc-key": "am-tv",
             "value": 4
         },
         {
-            "hc-key": "am-tv",
+            "hc-key": "am-kt",
             "value": 5
         },
         {
-            "hc-key": "am-kt",
+            "hc-key": "am-lo",
             "value": 6
         },
         {
-            "hc-key": "am-lo",
+            "hc-key": "am-er",
             "value": 7
         },
         {
-            "hc-key": "am-er",
+            "hc-key": "am-su",
             "value": 8
         },
         {
-            "hc-key": "am-su",
+            "hc-key": "am-vd",
             "value": 9
         },
         {
-            "hc-key": "am-vd",
+            "hc-key": "am-ag",
             "value": 10
         }
     ];

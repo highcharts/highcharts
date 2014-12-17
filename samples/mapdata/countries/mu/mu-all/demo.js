@@ -3,59 +3,59 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "mu-6681",
+            "hc-key": "mu-6684",
             "value": 0
         },
         {
-            "hc-key": "mu-6684",
+            "hc-key": "mu-6682",
             "value": 1
         },
         {
-            "hc-key": "mu-6682",
+            "hc-key": "mu-6679",
             "value": 2
         },
         {
-            "hc-key": "mu-6679",
+            "hc-key": "mu-6683",
             "value": 3
         },
         {
-            "hc-key": "mu-6683",
+            "hc-key": "mu-6691",
             "value": 4
         },
         {
-            "hc-key": "mu-6691",
+            "hc-key": "mu-6690",
             "value": 5
         },
         {
-            "hc-key": "mu-6690",
+            "hc-key": "mu-90",
             "value": 6
         },
         {
-            "hc-key": "mu-90",
+            "hc-key": "mu-6689",
             "value": 7
         },
         {
-            "hc-key": "mu-6689",
+            "hc-key": "mu-6692",
             "value": 8
         },
         {
-            "hc-key": "mu-6692",
+            "hc-key": "mu-6680",
             "value": 9
         },
         {
-            "hc-key": "mu-6680",
+            "hc-key": "mu-6686",
             "value": 10
         },
         {
-            "hc-key": "mu-6686",
+            "hc-key": "mu-6685",
             "value": 11
         },
         {
-            "hc-key": "mu-6685",
+            "hc-key": "mu-6693",
             "value": 12
         },
         {
-            "hc-key": "mu-6693",
+            "hc-key": "mu-6681",
             "value": 13
         }
     ];

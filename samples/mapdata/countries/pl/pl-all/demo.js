@@ -3,67 +3,67 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "pl-zp",
+            "hc-key": "pl-ld",
             "value": 0
         },
         {
-            "hc-key": "pl-lb",
+            "hc-key": "pl-mz",
             "value": 1
         },
         {
-            "hc-key": "pl-wp",
+            "hc-key": "pl-sk",
             "value": 2
         },
         {
-            "hc-key": "pl-kp",
+            "hc-key": "pl-pd",
             "value": 3
         },
         {
-            "hc-key": "pl-sl",
+            "hc-key": "pl-lu",
             "value": 4
         },
         {
-            "hc-key": "pl-ld",
+            "hc-key": "pl-pk",
             "value": 5
         },
         {
-            "hc-key": "pl-mz",
+            "hc-key": "pl-op",
             "value": 6
         },
         {
-            "hc-key": "pl-sk",
+            "hc-key": "pl-ma",
             "value": 7
         },
         {
-            "hc-key": "pl-pd",
+            "hc-key": "pl-wn",
             "value": 8
         },
         {
-            "hc-key": "pl-lu",
+            "hc-key": "pl-pm",
             "value": 9
         },
         {
-            "hc-key": "pl-pk",
+            "hc-key": "pl-ds",
             "value": 10
         },
         {
-            "hc-key": "pl-op",
+            "hc-key": "pl-zp",
             "value": 11
         },
         {
-            "hc-key": "pl-ma",
+            "hc-key": "pl-lb",
             "value": 12
         },
         {
-            "hc-key": "pl-wn",
+            "hc-key": "pl-wp",
             "value": 13
         },
         {
-            "hc-key": "pl-pm",
+            "hc-key": "pl-kp",
             "value": 14
         },
         {
-            "hc-key": "pl-ds",
+            "hc-key": "pl-sl",
             "value": 15
         }
     ];

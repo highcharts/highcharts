@@ -159,7 +159,7 @@ defaultOptions = {
 				//defer: true,
 				enabled: false,
 				formatter: function () {
-					return this.y === null ? '' : numberFormat(this.y, -1);
+					return this.y === null ? '' : Highcharts.numberFormat(this.y, -1);
 				},
 				verticalAlign: 'bottom', // above singular point
 				y: 0
@@ -194,7 +194,7 @@ defaultOptions = {
 			},
 			stickyTracking: true,
 			//tooltip: {
-				//pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y}</b>'
+				//pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b>' // docs
 				//valueDecimals: null,
 				//xDateFormat: '%A, %b %e, %Y',
 				//valuePrefix: '',
@@ -306,7 +306,7 @@ defaultOptions = {
 		footerFormat: '',
 		//formatter: defaultFormatter,
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
-		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>', // docs
 		shadow: true,
 		//shape: 'callout',
 		//shared: false,
@@ -359,22 +359,31 @@ setTimeMethods();
  * local time or UTC (default).
  */
 function setTimeMethods() {
-	var useUTC = defaultOptions.global.useUTC,
+	var globalOptions = defaultOptions.global,
+		useUTC = globalOptions.useUTC,
 		GET = useUTC ? 'getUTC' : 'get',
 		SET = useUTC ? 'setUTC' : 'set';
 
 
-	Date = defaultOptions.global.Date || window.Date;
-	timezoneOffset = ((useUTC && defaultOptions.global.timezoneOffset) || 0) * 60000;
-	makeTime = useUTC ? Date.UTC : function (year, month, date, hours, minutes, seconds) {
-		return new Date(
-			year,
-			month,
-			pick(date, 1),
-			pick(hours, 0),
-			pick(minutes, 0),
-			pick(seconds, 0)
-		).getTime();
+	Date = globalOptions.Date || window.Date;
+	timezoneOffset = useUTC && globalOptions.timezoneOffset;
+	getTimezoneOffset = useUTC && globalOptions.getTimezoneOffset; // docs. Sample created.
+	makeTime = function (year, month, date, hours, minutes, seconds) {
+		var d;
+		if (useUTC) {
+			d = Date.UTC.apply(0, arguments);
+			d += getTZOffset(d);
+		} else {
+			d = new Date(
+				year,
+				month,
+				pick(date, 1),
+				pick(hours, 0),
+				pick(minutes, 0),
+				pick(seconds, 0)
+			).getTime();
+		}
+		return d;
 	};
 	getMinutes =  GET + 'Minutes';
 	getHours =    GET + 'Hours';

@@ -682,14 +682,7 @@ Chart.prototype = {
 		var chart = this,
 			spacing = chart.spacing,
 			axisOffset,
-			legend = chart.legend,
 			margin = chart.margin,
-			legendOptions = chart.options.legend,
-			legendMargin = pick(legendOptions.margin, 20),
-			legendX = legendOptions.x,
-			legendY = legendOptions.y,
-			align = legendOptions.align,
-			verticalAlign = legendOptions.verticalAlign,
 			titleOffset = chart.titleOffset;
 
 		chart.resetMargins();
@@ -701,39 +694,7 @@ Chart.prototype = {
 		}
 		
 		// Adjust for legend
-		if (legend.display && !legendOptions.floating) {
-			if (align === 'right') { // horizontal alignment handled first
-				if (!defined(margin[1])) {
-					chart.marginRight = mathMax(
-						chart.marginRight,
-						legend.legendWidth - legendX + legendMargin + spacing[1]
-					);
-				}
-			} else if (align === 'left') {
-				if (!defined(margin[3])) {
-					chart.plotLeft = mathMax(
-						chart.plotLeft,
-						legend.legendWidth + legendX + legendMargin + spacing[3]
-					);
-				}
-
-			} else if (verticalAlign === 'top') {
-				if (!defined(margin[0])) {
-					chart.plotTop = mathMax(
-						chart.plotTop,
-						legend.legendHeight + legendY + legendMargin + spacing[0]
-					);
-				}
-
-			} else if (verticalAlign === 'bottom') {
-				if (!defined(margin[2])) {
-					chart.marginBottom = mathMax(
-						chart.marginBottom,
-						legend.legendHeight - legendY + legendMargin + spacing[2]
-					);
-				}
-			}
-		}
+		chart.legend.adjustMargins(margin, spacing);
 
 		// adjust for scroller
 		if (chart.extraBottomMargin) {
@@ -749,19 +710,13 @@ Chart.prototype = {
 				axis.getOffset();
 			});
 		}
-		
-		if (!defined(margin[3])) {
-			chart.plotLeft += axisOffset[3];
-		}
-		if (!defined(margin[0])) {
-			chart.plotTop += axisOffset[0];
-		}
-		if (!defined(margin[2])) {
-			chart.marginBottom += axisOffset[2];
-		}
-		if (!defined(margin[1])) {
-			chart.marginRight += axisOffset[1];
-		}
+
+		// Add the axis offsets
+		each(marginNames, function (m, side) {
+			if (!defined(margin[side])) {
+				chart[m] += axisOffset[side];
+			}		
+		});
 
 		chart.setChartSize();
 
@@ -960,14 +915,11 @@ Chart.prototype = {
 	 * Initial margins before auto size margins are applied
 	 */
 	resetMargins: function () {
-		var chart = this,
-			spacing = chart.spacing,
-			margin = chart.margin;
+		var chart = this;
 
-		chart.plotTop = pick(margin[0], spacing[0]);
-		chart.marginRight = pick(margin[1], spacing[1]);
-		chart.marginBottom = pick(margin[2], spacing[2]);
-		chart.plotLeft = pick(margin[3], spacing[3]);
+		each(marginNames, function (m, side) {
+			chart[m] = pick(chart.margin[side], chart.spacing[side]);
+		});
 		chart.axisOffset = [0, 0, 0, 0]; // top, right, bottom, left
 		chart.clipOffset = [0, 0, 0, 0];
 	},
@@ -1159,9 +1111,6 @@ Chart.prototype = {
 	renderSeries: function () {
 		each(this.series, function (serie) {
 			serie.translate();
-			if (serie.setTooltipPoints) {
-				serie.setTooltipPoints();
-			}
 			serie.render();
 		});
 	},
@@ -1431,7 +1380,9 @@ Chart.prototype = {
 			callback.apply(chart, [chart]);
 		}
 		each(chart.callbacks, function (fn) {
-			fn.apply(chart, [chart]);
+			if (chart.index !== UNDEFINED) { // Chart destroyed in its own callback (#3600)
+				fn.apply(chart, [chart]);
+			}
 		});
 		
 		

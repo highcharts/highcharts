@@ -3,71 +3,71 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "la-xi",
+            "hc-key": "la-ou",
             "value": 0
         },
         {
-            "hc-key": "la-ho",
+            "hc-key": "la-ph",
             "value": 1
         },
         {
-            "hc-key": "la-lp",
+            "hc-key": "la-bl",
             "value": 2
         },
         {
-            "hc-key": "la-ou",
+            "hc-key": "la-kh",
             "value": 3
         },
         {
-            "hc-key": "la-ph",
+            "hc-key": "la-at",
             "value": 4
         },
         {
-            "hc-key": "la-bl",
+            "hc-key": "la-bk",
             "value": 5
         },
         {
-            "hc-key": "la-kh",
+            "hc-key": "la-xe",
             "value": 6
         },
         {
-            "hc-key": "la-at",
+            "hc-key": "la-lm",
             "value": 7
         },
         {
-            "hc-key": "la-bk",
+            "hc-key": "la-xa",
             "value": 8
         },
         {
-            "hc-key": "la-xe",
+            "hc-key": "la-ch",
             "value": 9
         },
         {
-            "hc-key": "la-lm",
+            "hc-key": "la-sl",
             "value": 10
         },
         {
-            "hc-key": "la-xa",
+            "hc-key": "la-sv",
             "value": 11
         },
         {
-            "hc-key": "la-ch",
+            "hc-key": "la-vt",
             "value": 12
         },
         {
-            "hc-key": "la-sl",
+            "hc-key": "la-vi",
             "value": 13
         },
         {
-            "hc-key": "la-sv",
+            "hc-key": "la-xi",
             "value": 14
         },
         {
-            "hc-key": "la-vt",
+            "hc-key": "la-ho",
             "value": 15
         },
         {
-            "hc-key": "la-vi",
+            "hc-key": "la-lp",
             "value": 16
         }
     ];

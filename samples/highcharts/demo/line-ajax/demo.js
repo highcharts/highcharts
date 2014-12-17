@@ -76,8 +76,8 @@ $(function () {
                             click: function (e) {
                                 hs.htmlExpand(null, {
                                     pageOrigin: {
-                                        x: e.pageX,
-                                        y: e.pageY
+                                        x: e.pageX || e.clientX,
+                                        y: e.pageY || e.clientY
                                     },
                                     headingText: this.series.name,
                                     maincontentText: Highcharts.dateFormat('%A, %b %e, %Y', this.x) + ':<br/> ' +

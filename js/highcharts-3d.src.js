@@ -877,16 +877,18 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 			var shapeArgs = point.shapeArgs,
 				tooltipPos = point.tooltipPos;
 
+			// Translate the tooltip position in 3d space
+			tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1] - (point.y < series.yAxis.min ? shapeArgs.height : 0), z: z }], alpha, beta, origin)[0];
+			point.tooltipPos = [tooltipPos.x, tooltipPos.y];
+
 			point.shapeType = 'cuboid';
 			shapeArgs.alpha = alpha;
 			shapeArgs.beta = beta; 
 			shapeArgs.z = z;
 			shapeArgs.origin = origin;
 			shapeArgs.depth = depth;
+			shapeArgs.height = (point.y < series.yAxis.min ? 0 : shapeArgs.height);
 
-			// Translate the tooltip position in 3d space
-			tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], alpha, beta, origin)[0];
-			point.tooltipPos = [tooltipPos.x, tooltipPos.y];
 		}
 	});	    
 });
@@ -1187,13 +1189,14 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawDataLabels', function
 			var shapeArgs = point.shapeArgs,
 				r = shapeArgs.r,
 				d = shapeArgs.depth,
-				a1 = shapeArgs.alpha * deg2rad,
+				a1 = (shapeArgs.alpha || series.chart.options.chart.options3d.alpha) * deg2rad, //#3240 issue with datalabels for 0 and null values
 				a2 = (shapeArgs.start + shapeArgs.end) / 2,
 				labelPos = point.labelPos;
 
 			labelPos[1] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
 			labelPos[3] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
 			labelPos[5] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
+
 		});
 	} 
 

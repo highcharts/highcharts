@@ -63,19 +63,19 @@ $(function () {
             "value": 14
         },
         {
-            "hc-key": "ar-ch",
+            "hc-key": "ar-fm",
             "value": 15
         },
         {
-            "hc-key": "ar-fm",
+            "hc-key": "ar-cn",
             "value": 16
         },
         {
-            "hc-key": "ar-cn",
+            "hc-key": "ar-er",
             "value": 17
         },
         {
-            "hc-key": "ar-er",
+            "hc-key": "ar-ch",
             "value": 18
         },
         {
@@ -91,11 +91,11 @@ $(function () {
             "value": 21
         },
         {
-            "hc-key": "ar-jy",
+            "hc-key": "ar-sc",
             "value": 22
         },
         {
-            "hc-key": "ar-sc",
+            "hc-key": "ar-jy",
             "value": 23
         }
     ];

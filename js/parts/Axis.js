@@ -120,7 +120,7 @@ Axis.prototype = {
 			//textAlign: dynamic,
 			//rotation: 0,
 			formatter: function () {
-				return numberFormat(this.total, -1);
+				return Highcharts.numberFormat(this.total, -1);
 			},
 			style: defaultLabelOptions.style
 		}
@@ -167,7 +167,7 @@ Axis.prototype = {
 		}
 	},
 	/**
-	 * These options extend the defaultOptions for left axes
+	 * These options extend the defaultOptions for top axes
 	 */
 	defaultTopAxisOptions: {
 		labels: {
@@ -392,17 +392,17 @@ Axis.prototype = {
 			while (i-- && ret === UNDEFINED) {
 				multi = Math.pow(1000, i + 1);
 				if (numericSymbolDetector >= multi && numericSymbols[i] !== null) {
-					ret = numberFormat(value / multi, -1) + numericSymbols[i];
+					ret = Highcharts.numberFormat(value / multi, -1) + numericSymbols[i];
 				}
 			}
 		}
 
 		if (ret === UNDEFINED) {
 			if (mathAbs(value) >= 10000) { // add thousands separators
-				ret = numberFormat(value, 0);
+				ret = Highcharts.numberFormat(value, 0);
 
 			} else { // small numbers
-				ret = numberFormat(value, -1, UNDEFINED, ''); // #2466
+				ret = Highcharts.numberFormat(value, -1, UNDEFINED, ''); // #2466
 			}
 		}
 
@@ -577,7 +577,21 @@ Axis.prototype = {
 			cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
 			cWidth = (old && chart.oldChartWidth) || chart.chartWidth,
 			skip,
-			transB = axis.transB;
+			transB = axis.transB,
+			/**
+			 * Check if x is between a and b. If not, either move to a/b or skip, 
+			 * depending on the force parameter.
+			 */
+			between = function (x, a, b) {
+				if (x < a || x > b) {
+					if (force) {
+						x = mathMin(mathMax(a, x), b);
+					} else {
+						skip = true;
+					}
+				}
+				return x;
+			};
 
 		translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
 		x1 = x2 = mathRound(translatedValue + transB);
@@ -589,16 +603,11 @@ Axis.prototype = {
 		} else if (axis.horiz) {
 			y1 = axisTop;
 			y2 = cHeight - axis.bottom;
-			if (x1 < axisLeft || x1 > axisLeft + axis.width) {
-				skip = true;
-			}
+			x1 = x2 = between(x1, axisLeft, axisLeft + axis.width);
 		} else {
 			x1 = axisLeft;
 			x2 = cWidth - axis.right;
-
-			if (y1 < axisTop || y1 > axisTop + axis.height) {
-				skip = true;
-			}
+			y1 = y2 = between(y1, axisTop, axisTop + axis.height);
 		}
 		return skip && !force ?
 			null :
@@ -792,20 +801,22 @@ Axis.prototype = {
 					}
 					pointRange = mathMax(pointRange, seriesPointRange);
 
-					// minPointOffset is the value padding to the left of the axis in order to make
-					// room for points with a pointRange, typically columns. When the pointPlacement option
-					// is 'between' or 'on', this padding does not apply.
-					minPointOffset = mathMax(
-						minPointOffset,
-						isString(pointPlacement) ? 0 : seriesPointRange / 2
-					);
+					if (!axis.single) {
+						// minPointOffset is the value padding to the left of the axis in order to make
+						// room for points with a pointRange, typically columns. When the pointPlacement option
+						// is 'between' or 'on', this padding does not apply.
+						minPointOffset = mathMax(
+							minPointOffset,
+							isString(pointPlacement) ? 0 : seriesPointRange / 2
+						);
 
-					// Determine the total padding needed to the length of the axis to make room for the
-					// pointRange. If the series' pointPlacement is 'on', no padding is added.
-					pointRangePadding = mathMax(
-						pointRangePadding,
-						pointPlacement === 'on' ? 0 : seriesPointRange
-					);
+						// Determine the total padding needed to the length of the axis to make room for the
+						// pointRange. If the series' pointPlacement is 'on', no padding is added.
+						pointRangePadding = mathMax(
+							pointRangePadding,
+							pointPlacement === 'on' ? 0 : seriesPointRange
+						);
+					}
 
 					// Set the closestPointRange
 					if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
@@ -998,10 +1009,8 @@ Axis.prototype = {
 		axis.minorTickInterval = options.minorTickInterval === 'auto' && axis.tickInterval ?
 				axis.tickInterval / 5 : options.minorTickInterval;
 
-		// find the tick positions
-		axis.tickPositions = tickPositions = options.tickPositions ?
-			[].concat(options.tickPositions) : // Work on a copy (#1565)
-			(tickPositioner && tickPositioner.apply(axis, [axis.min, axis.max]));
+		// Find the tick positions
+		axis.tickPositions = tickPositions = options.tickPositions && options.tickPositions.slice(); // Work on a copy (#1565)
 		if (!tickPositions) {
 
 			// Too many ticks
@@ -1030,6 +1039,10 @@ Axis.prototype = {
 			}
 
 			axis.tickPositions = tickPositions;
+			if (tickPositioner) { // docs: now runs default tick positioning, and allows modifying this
+				axis.tickPositions = tickPositions = tickPositioner.apply(axis, [axis.min, axis.max]);
+			}
+
 		}
 
 		if (!isLinked) {
@@ -1038,7 +1051,7 @@ Axis.prototype = {
 			var roundedMin = tickPositions[0],
 				roundedMax = tickPositions[tickPositions.length - 1],
 				minPointOffset = axis.minPointOffset || 0,
-				singlePad;
+				single;
 
 			if (startOnTick) {
 				axis.min = roundedMin;
@@ -1061,10 +1074,12 @@ Axis.prototype = {
 			// and max are equal and tickPositions.length is 0 or 1. In this case, add some padding
 			// in order to center the point, but leave it with one tick. #1337.
 			if (tickPositions.length === 1) {
-				singlePad = mathAbs(axis.max) > 10e12 ? 1 : 0.001; // The lowest possible number to avoid extra padding on columns (#2619, #2846)
-				axis.min -= singlePad;
-				axis.max += singlePad;
+				// Substract half a unit (#2619, #2846, #2515, #3390)
+				single = true;
+				axis.min -= 0.5;
+				axis.max += 0.5;
 			}
+			axis.single = single;
 		}
 	},
 
@@ -1289,10 +1304,10 @@ Axis.prototype = {
 
 		// Check for percentage based input values
 		if (percentRegex.test(height)) {
-			height = parseInt(height, 10) / 100 * chart.plotHeight;
+			height = parseFloat(height) / 100 * chart.plotHeight;
 		}
 		if (percentRegex.test(top)) {
-			top = parseInt(top, 10) / 100 * chart.plotHeight + chart.plotTop;
+			top = parseFloat(top) / 100 * chart.plotHeight + chart.plotTop;
 		}
 
 		// Expose basic values to use in Series object and navigator
@@ -1714,7 +1729,7 @@ Axis.prototype = {
 				});
 				// In a categorized axis, the tick marks are displayed between labels. So
 				// we need to add a tick mark and grid line at the left edge of the X axis.
-				if (tickmarkOffset && axis.min === 0) {
+				if (tickmarkOffset && (axis.min === 0 || axis.single)) {
 					if (!ticks[-1]) {
 						ticks[-1] = new Tick(axis, -1, null, true);
 					}
@@ -1903,6 +1918,12 @@ Axis.prototype = {
 			return;
 		}
 
+		// Do not draw the crosshair if this axis is not part of the point 
+		if (defined(point) && pick(this.crosshair.snap, true) && (point.series[this.isXAxis ? 'xAxis' : 'yAxis'] !== this)) {
+			this.hideCrosshair();
+			return;
+		}
+
 		var path,
 			options = this.crosshair,
 			animation = options.animation,
@@ -1918,9 +1939,9 @@ Axis.prototype = {
 		}
 
 		if (this.isRadial) {
-			path = this.getPlotLinePath(this.isXAxis ? point.x : pick(point.stackY, point.y));
+			path = this.getPlotLinePath(this.isXAxis ? point.x : pick(point.stackY, point.y)) || null; // #3189
 		} else {
-			path = this.getPlotLinePath(null, null, null, null, pos);
+			path = this.getPlotLinePath(null, null, null, null, pos) || null; // #3189
 		}
 
 		if (path === null) {

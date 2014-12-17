@@ -3,47 +3,47 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "li-6422",
+            "hc-key": "li-6425",
             "value": 0
         },
         {
-            "hc-key": "li-6423",
+            "hc-key": "li-6426",
             "value": 1
         },
         {
-            "hc-key": "li-6424",
+            "hc-key": "li-6427",
             "value": 2
         },
         {
-            "hc-key": "li-6425",
+            "hc-key": "li-6418",
             "value": 3
         },
         {
-            "hc-key": "li-6426",
+            "hc-key": "li-3644",
             "value": 4
         },
         {
-            "hc-key": "li-6427",
+            "hc-key": "li-6419",
             "value": 5
         },
         {
-            "hc-key": "li-6418",
+            "hc-key": "li-6420",
             "value": 6
         },
         {
-            "hc-key": "li-3644",
+            "hc-key": "li-6421",
             "value": 7
         },
         {
-            "hc-key": "li-6419",
+            "hc-key": "li-6422",
             "value": 8
         },
         {
-            "hc-key": "li-6420",
+            "hc-key": "li-6423",
             "value": 9
         },
         {
-            "hc-key": "li-6421",
+            "hc-key": "li-6424",
             "value": 10
         }
     ];

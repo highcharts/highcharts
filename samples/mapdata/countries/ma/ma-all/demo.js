@@ -3,67 +3,67 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "ma-gb",
+            "hc-key": "ma-rz",
             "value": 0
         },
         {
-            "hc-key": "ma-co",
+            "hc-key": "ma-mt",
             "value": 1
         },
         {
-            "hc-key": "ma-gc",
+            "hc-key": "ma-td",
             "value": 2
         },
         {
-            "hc-key": "ma-rz",
+            "hc-key": "ma-or",
             "value": 3
         },
         {
-            "hc-key": "ma-mt",
+            "hc-key": "ma-fb",
             "value": 4
         },
         {
-            "hc-key": "ma-td",
+            "hc-key": "ma-sm",
             "value": 5
         },
         {
-            "hc-key": "ma-or",
+            "hc-key": "ma-mk",
             "value": 6
         },
         {
-            "hc-key": "ma-fb",
+            "hc-key": "ma-da",
             "value": 7
         },
         {
-            "hc-key": "ma-sm",
+            "hc-key": "ma-ge",
             "value": 8
         },
         {
-            "hc-key": "ma-mk",
+            "hc-key": "ma-lb",
             "value": 9
         },
         {
-            "hc-key": "ma-da",
+            "hc-key": "ma-od",
             "value": 10
         },
         {
-            "hc-key": "ma-ge",
+            "hc-key": "ma-to",
             "value": 11
         },
         {
-            "hc-key": "ma-lb",
+            "hc-key": "ma-th",
             "value": 12
         },
         {
-            "hc-key": "ma-od",
+            "hc-key": "ma-gb",
             "value": 13
         },
         {
-            "hc-key": "ma-to",
+            "hc-key": "ma-co",
             "value": 14
         },
         {
-            "hc-key": "ma-th",
+            "hc-key": "ma-gc",
             "value": 15
         }
     ];

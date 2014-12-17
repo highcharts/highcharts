@@ -45,7 +45,8 @@ module.exports = function(grunt) {
                         'location',
                         'clearTimeout',
                         'confirm',
-                        'hs'
+                        'hs',
+                        'moment'
                     ]
                 },
                 options: {
@@ -58,4 +59,7 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('lint-samples', 'jslint');
+
+    // load other tasks in current directory
+    grunt.loadTasks('./grunt-tasks');
 };

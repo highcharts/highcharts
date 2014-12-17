@@ -11,63 +11,63 @@ $(function () {
             "value": 1
         },
         {
-            "hc-key": "ni-ns",
+            "hc-key": "ni-224",
             "value": 2
         },
         {
-            "hc-key": "ni-bo",
+            "hc-key": "ni-6330",
             "value": 3
         },
         {
-            "hc-key": "ni-co",
+            "hc-key": "ni-ca",
             "value": 4
         },
         {
-            "hc-key": "ni-224",
+            "hc-key": "ni-gr",
             "value": 5
         },
         {
-            "hc-key": "ni-6330",
+            "hc-key": "ni-ji",
             "value": 6
         },
         {
-            "hc-key": "ni-ca",
+            "hc-key": "ni-le",
             "value": 7
         },
         {
-            "hc-key": "ni-gr",
+            "hc-key": "ni-mn",
             "value": 8
         },
         {
-            "hc-key": "ni-ji",
+            "hc-key": "ni-ms",
             "value": 9
         },
         {
-            "hc-key": "ni-le",
+            "hc-key": "ni-ci",
             "value": 10
         },
         {
-            "hc-key": "ni-mn",
+            "hc-key": "ni-es",
             "value": 11
         },
         {
-            "hc-key": "ni-ms",
+            "hc-key": "ni-md",
             "value": 12
         },
         {
-            "hc-key": "ni-ci",
+            "hc-key": "ni-mt",
             "value": 13
         },
         {
-            "hc-key": "ni-es",
+            "hc-key": "ni-ns",
             "value": 14
         },
         {
-            "hc-key": "ni-md",
+            "hc-key": "ni-bo",
             "value": 15
         },
         {
-            "hc-key": "ni-mt",
+            "hc-key": "ni-co",
             "value": 16
         }
     ];

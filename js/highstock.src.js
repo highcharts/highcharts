@@ -52,7 +52,6 @@ var UNDEFINED,
 	globalAnimation,
 	pathAnim,
 	timeUnits,
-	error,
 	noop = function () { return UNDEFINED; },
 	charts = [],
 	chartCount = 0,
@@ -74,6 +73,7 @@ var UNDEFINED,
 	NORMAL_STATE = '',
 	HOVER_STATE = 'hover',
 	SELECT_STATE = 'select',
+	marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
 	
 	// Object for extending Axis
 	AxisPlotLineOrBandExtension,
@@ -85,6 +85,7 @@ var UNDEFINED,
 	Date,  // Allow using a different Date class
 	makeTime,
 	timezoneOffset,
+	getTimezoneOffset,
 	getMinutes,
 	getHours,
 	getDay,
@@ -103,11 +104,8 @@ var UNDEFINED,
 	Highcharts;
 
 // The Highcharts namespace
-if (win.Highcharts) {
-	error(16, true);
-} else {
-	Highcharts = win.Highcharts = {};
-}
+Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : {};
+
 /**
  * Extend an object with the members of another
  * @param {Object} a The object to be extended
@@ -357,33 +355,6 @@ function extendClass(parent, members) {
 }
 
 /**
- * Format a number and return a string based on input settings
- * @param {Number} number The input number to format
- * @param {Number} decimals The amount of decimals
- * @param {String} decPoint The decimal point, defaults to the one given in the lang options
- * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
- */
-function numberFormat(number, decimals, decPoint, thousandsSep) {
-	var externalFn = Highcharts.numberFormat,
-		lang = defaultOptions.lang,
-		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
-		n = +number || 0,
-		c = decimals === -1 ?
-			(n.toString().split('.')[1] || '').length : // preserve decimals
-			(isNaN(decimals = mathAbs(decimals)) ? 2 : decimals),
-		d = decPoint === undefined ? lang.decimalPoint : decPoint,
-		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
-		s = n < 0 ? "-" : "",
-		i = String(pInt(n = mathAbs(n).toFixed(c))),
-		j = i.length > 3 ? i.length % 3 : 0;
-
-	return externalFn !== numberFormat ? 
-		externalFn(number, decimals, decPoint, thousandsSep) :
-		(s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
-			(c ? d + mathAbs(n - i).toFixed(c).slice(2) : ""));
-}
-
-/**
  * Pad a string to a given length by adding 0 to the beginning
  * @param {Number} number
  * @param {Number} length
@@ -410,6 +381,11 @@ function wrap(obj, method, func) {
 	};
 }
 
+
+function getTZOffset(timestamp) {
+	return ((getTimezoneOffset && getTimezoneOffset(timestamp)) || timezoneOffset || 0) * 60000;
+}
+
 /**
  * Based on http://www.php.net/manual/en/function.strftime.php
  * @param {String} format
@@ -422,7 +398,7 @@ dateFormat = function (format, timestamp, capitalize) {
 	}
 	format = pick(format, '%Y-%m-%d %H:%M:%S');
 
-	var date = new Date(timestamp - timezoneOffset),
+	var date = new Date(timestamp - getTZOffset(timestamp)),
 		key, // used in for constuct below
 		// get the basic time values
 		hours = date[getHours](),
@@ -441,6 +417,7 @@ dateFormat = function (format, timestamp, capitalize) {
 			'A': langWeekdays[day], // Long weekday, like 'Monday'
 			'd': pad(dayOfMonth), // Two digit day of the month, 01 to 31
 			'e': dayOfMonth, // Day of the month, 1 through 31
+			'w': day,
 
 			// Week (none implemented)
 			//'W': weekNumber(),
@@ -490,7 +467,7 @@ function formatSingle(format, val) {
 		decimals = format.match(decRegex);
 		decimals = decimals ? decimals[1] : -1;
 		if (val !== null) {
-			val = numberFormat(
+			val = Highcharts.numberFormat(
 				val,
 				decimals,
 				lang.decimalPoint,
@@ -704,7 +681,7 @@ function discardElement(element) {
 /**
  * Provide error messages for debugging, with links to online explanation 
  */
-error = function (code, stop) {
+function error (code, stop) {
 	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
 	if (stop) {
 		throw msg;
@@ -713,7 +690,7 @@ error = function (code, stop) {
 	if (win.console) {
 		console.log(msg);
 	}
-};
+}
 
 /**
  * Fix JS round off float errors
@@ -745,8 +722,34 @@ timeUnits = {
 	hour: 3600000,
 	day: 24 * 3600000,
 	week: 7 * 24 * 3600000,
-	month: 31 * 24 * 3600000,
-	year: 31556952000
+	month: 28 * 24 * 3600000,
+	year: 364 * 24 * 3600000
+};
+
+
+/**
+ * Format a number and return a string based on input settings
+ * @param {Number} number The input number to format
+ * @param {Number} decimals The amount of decimals
+ * @param {String} decPoint The decimal point, defaults to the one given in the lang options
+ * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
+ */
+// docs: Overridable by wrap. Demo at /members/highcharts-numberformat
+Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
+	var lang = defaultOptions.lang,
+		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
+		n = +number || 0,
+		c = decimals === -1 ?
+			(n.toString().split('.')[1] || '').length : // preserve decimals
+			(isNaN(decimals = mathAbs(decimals)) ? 2 : decimals),
+		d = decPoint === undefined ? lang.decimalPoint : decPoint,
+		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
+		s = n < 0 ? "-" : "",
+		i = String(pInt(n = mathAbs(n).toFixed(c))),
+		j = i.length > 3 ? i.length % 3 : 0;
+
+	return (s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
+			(c ? d + mathAbs(n - i).toFixed(c).slice(2) : ""));
 };
 /**
  * Path interpolation algorithm used across adapters
@@ -1391,7 +1394,7 @@ defaultOptions = {
 				//defer: true,
 				enabled: false,
 				formatter: function () {
-					return this.y === null ? '' : numberFormat(this.y, -1);
+					return this.y === null ? '' : Highcharts.numberFormat(this.y, -1);
 				},
 				verticalAlign: 'bottom', // above singular point
 				y: 0
@@ -1426,7 +1429,7 @@ defaultOptions = {
 			},
 			stickyTracking: true,
 			//tooltip: {
-				//pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y}</b>'
+				//pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b>' // docs
 				//valueDecimals: null,
 				//xDateFormat: '%A, %b %e, %Y',
 				//valuePrefix: '',
@@ -1538,7 +1541,7 @@ defaultOptions = {
 		footerFormat: '',
 		//formatter: defaultFormatter,
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
-		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>', // docs
 		shadow: true,
 		//shape: 'callout',
 		//shared: false,
@@ -1591,22 +1594,31 @@ setTimeMethods();
  * local time or UTC (default).
  */
 function setTimeMethods() {
-	var useUTC = defaultOptions.global.useUTC,
+	var globalOptions = defaultOptions.global,
+		useUTC = globalOptions.useUTC,
 		GET = useUTC ? 'getUTC' : 'get',
 		SET = useUTC ? 'setUTC' : 'set';
 
 
-	Date = defaultOptions.global.Date || window.Date;
-	timezoneOffset = ((useUTC && defaultOptions.global.timezoneOffset) || 0) * 60000;
-	makeTime = useUTC ? Date.UTC : function (year, month, date, hours, minutes, seconds) {
-		return new Date(
-			year,
-			month,
-			pick(date, 1),
-			pick(hours, 0),
-			pick(minutes, 0),
-			pick(seconds, 0)
-		).getTime();
+	Date = globalOptions.Date || window.Date;
+	timezoneOffset = useUTC && globalOptions.timezoneOffset;
+	getTimezoneOffset = useUTC && globalOptions.getTimezoneOffset; // docs. Sample created.
+	makeTime = function (year, month, date, hours, minutes, seconds) {
+		var d;
+		if (useUTC) {
+			d = Date.UTC.apply(0, arguments);
+			d += getTZOffset(d);
+		} else {
+			d = new Date(
+				year,
+				month,
+				pick(date, 1),
+				pick(hours, 0),
+				pick(minutes, 0),
+				pick(seconds, 0)
+			).getTime();
+		}
+		return d;
 	};
 	getMinutes =  GET + 'Minutes';
 	getHours =    GET + 'Hours';
@@ -2121,7 +2133,9 @@ SVGElement.prototype = {
 			}
 		}
 		if (hasNew) {
-			textWidth = elemWrapper.textWidth = styles && styles.width && elem.nodeName.toLowerCase() === 'text' && pInt(styles.width);
+			textWidth = elemWrapper.textWidth = 
+				(styles && styles.width && elem.nodeName.toLowerCase() === 'text' && pInt(styles.width)) || 
+				elemWrapper.textWidth; // #3501
 
 			// Merge the new styles with the old ones
 			if (oldStyles) {
@@ -2981,6 +2995,9 @@ SVGRenderer.prototype = {
 							((textStyles && textStyles.fontSize) || renderer.style.fontSize || 12),
 						tspan
 					).h;
+			},
+			unescapeAngleBrackets = function (inputStr) {
+				return inputStr.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 			};
 
 		/// remove old text
@@ -2991,7 +3008,7 @@ SVGRenderer.prototype = {
 		// Skip tspans, add text directly to text node. The forceTSpan is a hook 
 		// used in text outline hack.
 		if (!hasMarkup && !textStroke && textStr.indexOf(' ') === -1) {
-			textNode.appendChild(doc.createTextNode(textStr));
+			textNode.appendChild(doc.createTextNode(unescapeAngleBrackets(textStr)));
 			return;
 
 		// Complex strings, add more logic
@@ -3044,9 +3061,7 @@ SVGRenderer.prototype = {
 							css(tspan, { cursor: 'pointer' });
 						}
 
-						span = (span.replace(/<(.|\n)*?>/g, '') || ' ')
-							.replace(/&lt;/g, '<')
-							.replace(/&gt;/g, '>');
+						span = unescapeAngleBrackets(span.replace(/<(.|\n)*?>/g, '') || ' ');
 
 						// Nested tags aren't supported, and cause crash in Safari (#1596)
 						if (span !== ' ') {
@@ -3088,7 +3103,7 @@ SVGRenderer.prototype = {
 							// check width and apply soft breaks
 							if (width) {
 								var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
-									hasWhiteSpace = spans.length > 1 || (words.length > 1 && textStyles.whiteSpace !== 'nowrap'),
+									hasWhiteSpace = spans.length > 1 || lineNo || (words.length > 1 && textStyles.whiteSpace !== 'nowrap'),
 									tooLong,
 									actualWidth,
 									hcHeight = textStyles.HcHeight,
@@ -3740,6 +3755,7 @@ SVGRenderer.prototype = {
 		wrapper = this.rect(x, y, width, height, 0).add(clipPath);
 		wrapper.id = id;
 		wrapper.clipPath = clipPath;
+		wrapper.count = 0;
 
 		return wrapper;
 	},
@@ -3875,8 +3891,8 @@ SVGRenderer.prototype = {
 				boxY,
 				style = text.element.style;
 
-			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && text.textStr && 
-				text.getBBox();
+			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && defined(text.textStr) && 
+				text.getBBox(); //#3295 && 3514 box failure when string equals 0
 			wrapper.width = (width || bBox.width || 0) + 2 * padding + paddingLeft;
 			wrapper.height = (height || bBox.height || 0) + 2 * padding;
 
@@ -4189,7 +4205,8 @@ extend(SVGElement.prototype, {
 			y = wrapper.y || 0,
 			align = wrapper.textAlign || 'left',
 			alignCorrection = { left: 0, center: 0.5, right: 1 }[align],
-			shadows = wrapper.shadows;
+			shadows = wrapper.shadows,
+			styles = wrapper.styles;
 
 		// apply translate
 		css(elem, {
@@ -4237,7 +4254,7 @@ extend(SVGElement.prototype, {
 					css(elem, {
 						width: textWidth + PX,
 						display: 'block',
-						whiteSpace: 'normal'
+						whiteSpace: (styles && styles.whiteSpace) || 'normal' // #3331
 					});
 					width = textWidth;
 				}
@@ -4322,10 +4339,12 @@ extend(SVGRenderer.prototype, {
 			})
 			.css({
 				position: ABSOLUTE,
-				whiteSpace: 'nowrap',
 				fontFamily: this.style.fontFamily,
 				fontSize: this.style.fontSize
 			});
+
+		// Keep the whiteSpace style outside the wrapper.styles collection
+		element.style.whiteSpace = 'nowrap';
 
 		// Use the HTML specific .css method
 		wrapper.css = wrapper.htmlCss;
@@ -4986,6 +5005,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		// mimic a rectangle with its style object for automatic updating in attr
 		return extend(clipRect, {
 			members: [],
+			count: 0,
 			left: (isObj ? x.x : x) + 1,
 			top: (isObj ? x.y : y) + 1,
 			width: (isObj ? x.width : width) - 1,
@@ -6000,7 +6020,6 @@ Highcharts.PlotLineOrBand.prototype = {
 		var plotLine = this,
 			axis = plotLine.axis,
 			horiz = axis.horiz,
-			halfPointRange = (axis.pointRange || 0) / 2,
 			options = plotLine.options,
 			optionsLabel = options.label,
 			label = plotLine.label,
@@ -6042,11 +6061,7 @@ Highcharts.PlotLineOrBand.prototype = {
 				attribs.dashstyle = dashStyle;
 			}
 		} else if (isBand) { // plot band
-			
-			// keep within plot area
-			from = mathMax(from, axis.min - halfPointRange);
-			to = mathMin(to, axis.max + halfPointRange);
-			
+
 			path = axis.getPlotBandPath(from, to, options);
 			if (color) {
 				attribs.fill = color;
@@ -6171,8 +6186,8 @@ AxisPlotLineOrBandExtension = {
 	 * Create the path for a plot band
 	 */ 
 	getPlotBandPath: function (from, to) {
-		var toPath = this.getPlotLinePath(to),
-			path = this.getPlotLinePath(from);
+		var toPath = this.getPlotLinePath(to, null, null, true),
+			path = this.getPlotLinePath(from, null, null, true);
 
 		if (path && toPath) {
 			path.push(
@@ -6364,7 +6379,7 @@ Axis.prototype = {
 			//textAlign: dynamic,
 			//rotation: 0,
 			formatter: function () {
-				return numberFormat(this.total, -1);
+				return Highcharts.numberFormat(this.total, -1);
 			},
 			style: defaultLabelOptions.style
 		}
@@ -6411,7 +6426,7 @@ Axis.prototype = {
 		}
 	},
 	/**
-	 * These options extend the defaultOptions for left axes
+	 * These options extend the defaultOptions for top axes
 	 */
 	defaultTopAxisOptions: {
 		labels: {
@@ -6636,17 +6651,17 @@ Axis.prototype = {
 			while (i-- && ret === UNDEFINED) {
 				multi = Math.pow(1000, i + 1);
 				if (numericSymbolDetector >= multi && numericSymbols[i] !== null) {
-					ret = numberFormat(value / multi, -1) + numericSymbols[i];
+					ret = Highcharts.numberFormat(value / multi, -1) + numericSymbols[i];
 				}
 			}
 		}
 
 		if (ret === UNDEFINED) {
 			if (mathAbs(value) >= 10000) { // add thousands separators
-				ret = numberFormat(value, 0);
+				ret = Highcharts.numberFormat(value, 0);
 
 			} else { // small numbers
-				ret = numberFormat(value, -1, UNDEFINED, ''); // #2466
+				ret = Highcharts.numberFormat(value, -1, UNDEFINED, ''); // #2466
 			}
 		}
 
@@ -6821,7 +6836,21 @@ Axis.prototype = {
 			cHeight = (old && chart.oldChartHeight) || chart.chartHeight,
 			cWidth = (old && chart.oldChartWidth) || chart.chartWidth,
 			skip,
-			transB = axis.transB;
+			transB = axis.transB,
+			/**
+			 * Check if x is between a and b. If not, either move to a/b or skip, 
+			 * depending on the force parameter.
+			 */
+			between = function (x, a, b) {
+				if (x < a || x > b) {
+					if (force) {
+						x = mathMin(mathMax(a, x), b);
+					} else {
+						skip = true;
+					}
+				}
+				return x;
+			};
 
 		translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
 		x1 = x2 = mathRound(translatedValue + transB);
@@ -6833,16 +6862,11 @@ Axis.prototype = {
 		} else if (axis.horiz) {
 			y1 = axisTop;
 			y2 = cHeight - axis.bottom;
-			if (x1 < axisLeft || x1 > axisLeft + axis.width) {
-				skip = true;
-			}
+			x1 = x2 = between(x1, axisLeft, axisLeft + axis.width);
 		} else {
 			x1 = axisLeft;
 			x2 = cWidth - axis.right;
-
-			if (y1 < axisTop || y1 > axisTop + axis.height) {
-				skip = true;
-			}
+			y1 = y2 = between(y1, axisTop, axisTop + axis.height);
 		}
 		return skip && !force ?
 			null :
@@ -7036,20 +7060,22 @@ Axis.prototype = {
 					}
 					pointRange = mathMax(pointRange, seriesPointRange);
 
-					// minPointOffset is the value padding to the left of the axis in order to make
-					// room for points with a pointRange, typically columns. When the pointPlacement option
-					// is 'between' or 'on', this padding does not apply.
-					minPointOffset = mathMax(
-						minPointOffset,
-						isString(pointPlacement) ? 0 : seriesPointRange / 2
-					);
+					if (!axis.single) {
+						// minPointOffset is the value padding to the left of the axis in order to make
+						// room for points with a pointRange, typically columns. When the pointPlacement option
+						// is 'between' or 'on', this padding does not apply.
+						minPointOffset = mathMax(
+							minPointOffset,
+							isString(pointPlacement) ? 0 : seriesPointRange / 2
+						);
 
-					// Determine the total padding needed to the length of the axis to make room for the
-					// pointRange. If the series' pointPlacement is 'on', no padding is added.
-					pointRangePadding = mathMax(
-						pointRangePadding,
-						pointPlacement === 'on' ? 0 : seriesPointRange
-					);
+						// Determine the total padding needed to the length of the axis to make room for the
+						// pointRange. If the series' pointPlacement is 'on', no padding is added.
+						pointRangePadding = mathMax(
+							pointRangePadding,
+							pointPlacement === 'on' ? 0 : seriesPointRange
+						);
+					}
 
 					// Set the closestPointRange
 					if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
@@ -7242,10 +7268,8 @@ Axis.prototype = {
 		axis.minorTickInterval = options.minorTickInterval === 'auto' && axis.tickInterval ?
 				axis.tickInterval / 5 : options.minorTickInterval;
 
-		// find the tick positions
-		axis.tickPositions = tickPositions = options.tickPositions ?
-			[].concat(options.tickPositions) : // Work on a copy (#1565)
-			(tickPositioner && tickPositioner.apply(axis, [axis.min, axis.max]));
+		// Find the tick positions
+		axis.tickPositions = tickPositions = options.tickPositions && options.tickPositions.slice(); // Work on a copy (#1565)
 		if (!tickPositions) {
 
 			// Too many ticks
@@ -7274,6 +7298,10 @@ Axis.prototype = {
 			}
 
 			axis.tickPositions = tickPositions;
+			if (tickPositioner) { // docs: now runs default tick positioning, and allows modifying this
+				axis.tickPositions = tickPositions = tickPositioner.apply(axis, [axis.min, axis.max]);
+			}
+
 		}
 
 		if (!isLinked) {
@@ -7282,7 +7310,7 @@ Axis.prototype = {
 			var roundedMin = tickPositions[0],
 				roundedMax = tickPositions[tickPositions.length - 1],
 				minPointOffset = axis.minPointOffset || 0,
-				singlePad;
+				single;
 
 			if (startOnTick) {
 				axis.min = roundedMin;
@@ -7305,10 +7333,12 @@ Axis.prototype = {
 			// and max are equal and tickPositions.length is 0 or 1. In this case, add some padding
 			// in order to center the point, but leave it with one tick. #1337.
 			if (tickPositions.length === 1) {
-				singlePad = mathAbs(axis.max) > 10e12 ? 1 : 0.001; // The lowest possible number to avoid extra padding on columns (#2619, #2846)
-				axis.min -= singlePad;
-				axis.max += singlePad;
+				// Substract half a unit (#2619, #2846, #2515, #3390)
+				single = true;
+				axis.min -= 0.5;
+				axis.max += 0.5;
 			}
+			axis.single = single;
 		}
 	},
 
@@ -7533,10 +7563,10 @@ Axis.prototype = {
 
 		// Check for percentage based input values
 		if (percentRegex.test(height)) {
-			height = parseInt(height, 10) / 100 * chart.plotHeight;
+			height = parseFloat(height) / 100 * chart.plotHeight;
 		}
 		if (percentRegex.test(top)) {
-			top = parseInt(top, 10) / 100 * chart.plotHeight + chart.plotTop;
+			top = parseFloat(top) / 100 * chart.plotHeight + chart.plotTop;
 		}
 
 		// Expose basic values to use in Series object and navigator
@@ -7958,7 +7988,7 @@ Axis.prototype = {
 				});
 				// In a categorized axis, the tick marks are displayed between labels. So
 				// we need to add a tick mark and grid line at the left edge of the X axis.
-				if (tickmarkOffset && axis.min === 0) {
+				if (tickmarkOffset && (axis.min === 0 || axis.single)) {
 					if (!ticks[-1]) {
 						ticks[-1] = new Tick(axis, -1, null, true);
 					}
@@ -8147,6 +8177,12 @@ Axis.prototype = {
 			return;
 		}
 
+		// Do not draw the crosshair if this axis is not part of the point 
+		if (defined(point) && pick(this.crosshair.snap, true) && (point.series[this.isXAxis ? 'xAxis' : 'yAxis'] !== this)) {
+			this.hideCrosshair();
+			return;
+		}
+
 		var path,
 			options = this.crosshair,
 			animation = options.animation,
@@ -8162,9 +8198,9 @@ Axis.prototype = {
 		}
 
 		if (this.isRadial) {
-			path = this.getPlotLinePath(this.isXAxis ? point.x : pick(point.stackY, point.y));
+			path = this.getPlotLinePath(this.isXAxis ? point.x : pick(point.stackY, point.y)) || null; // #3189
 		} else {
-			path = this.getPlotLinePath(null, null, null, null, pos);
+			path = this.getPlotLinePath(null, null, null, null, pos) || null; // #3189
 		}
 
 		if (path === null) {
@@ -8218,7 +8254,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		higherRanks = {},
 		useUTC = defaultOptions.global.useUTC,
 		minYear, // used in months and years as a basis for Date.UTC()
-		minDate = new Date(min - timezoneOffset),
+		minDate = new Date(min - getTZOffset(min)),
 		interval = normalizedInterval.unitRange,
 		count = normalizedInterval.count;
 
@@ -8265,15 +8301,16 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 	
 		// get tick positions
 		i = 1;
-		if (timezoneOffset) {
-			minDate = new Date(minDate.getTime() + timezoneOffset);
+		if (timezoneOffset || getTimezoneOffset) {
+			minDate = minDate.getTime();
+			minDate = new Date(minDate + getTZOffset(minDate));
 		}
 		minYear = minDate[getFullYear]();
 		var time = minDate.getTime(),
 			minMonth = minDate[getMonth](),
 			minDateDate = minDate[getDate](),
 			localTimezoneOffset = (timeUnits.day + 
-					(useUTC ? timezoneOffset : minDate.getTimezoneOffset() * 60 * 1000)
+					(useUTC ? getTZOffset(minDate) : minDate.getTimezoneOffset() * 60 * 1000)
 				) % timeUnits.day; // #950, #3359
 	
 		// iterate and add tick positions at appropriate values
@@ -8533,7 +8570,7 @@ Tooltip.prototype = {
 		this.isHidden = true;
 
 
-		// create the label
+		// create the label		
 		this.label = chart.renderer.label('', 0, 0, options.shape || 'callout', null, null, options.useHTML, null, 'tooltip')
 			.attr({
 				padding: padding,
@@ -8637,6 +8674,7 @@ Tooltip.prototype = {
 			}
 
 			this.chart.hoverPoints = null;
+			this.chart.hoverSeries = null;
 		}
 	},
 	
@@ -8649,9 +8687,11 @@ Tooltip.prototype = {
 			chart = this.chart,
 			inverted = chart.inverted,
 			plotTop = chart.plotTop,
+			plotLeft = chart.plotLeft,
 			plotX = 0,
 			plotY = 0,
-			yAxis;
+			yAxis,
+			xAxis;
 		
 		points = splat(points);
 		
@@ -8672,7 +8712,8 @@ Tooltip.prototype = {
 		if (!ret) {
 			each(points, function (point) {
 				yAxis = point.series.yAxis;
-				plotX += point.plotX;
+				xAxis = point.series.xAxis;
+				plotX += point.plotX  + (!inverted && xAxis ? xAxis.left - plotLeft : 0); 
 				plotY += (point.plotLow ? (point.plotLow + point.plotHigh) / 2 : point.plotY) +
 					(!inverted && yAxis ? yAxis.top - plotTop : 0); // #1151
 			});
@@ -8788,18 +8829,13 @@ Tooltip.prototype = {
 	 */
 	defaultFormatter: function (tooltip) {
 		var items = this.points || splat(this),
-			series = items[0].series,
 			s;
 
 		// build the header
 		s = [tooltip.tooltipFooterHeaderFormatter(items[0])]; //#3397: abstraction to enable formatting of footer and header
 
 		// build the values
-		each(items, function (item) {
-			series = item.series;
-			s.push((series.tooltipFormatter && series.tooltipFormatter(item)) ||
-				item.point.tooltipFormatter(series.tooltipOptions.pointFormat));
-		});
+		s = s.concat(tooltip.bodyFormatter(items));
 
 		// footer
 		s.push(tooltip.tooltipFooterHeaderFormatter(items[0], true)); //#3397: abstraction to enable formatting of footer and header
@@ -8928,6 +8964,62 @@ Tooltip.prototype = {
 		);
 	},
 
+	/** 
+	 * Get the best X date format based on the closest point range on the axis.
+	 */
+	getXDateFormat: function (point, options, xAxis) {
+		var xDateFormat,
+			dateTimeLabelFormats = options.dateTimeLabelFormats,
+			closestPointRange = xAxis && xAxis.closestPointRange,
+			n,
+			blank = '01-01 00:00:00.000',
+			strpos = {
+				millisecond: 15,
+				second: 12,
+				minute: 9,
+				hour: 6,
+				day: 3
+			},
+			date,
+			lastN;
+
+		if (closestPointRange) {
+			date = dateFormat('%m-%d %H:%M:%S.%L', point.x);
+			for (n in timeUnits) {
+
+				// If the range is exactly one week and we're looking at a Sunday/Monday, go for the week format
+				if (closestPointRange === timeUnits.week && +dateFormat('%w', point.x) === xAxis.options.startOfWeek && 
+						date.substr(6) === blank.substr(6)) {
+					n = 'week';
+					break;
+
+				// The first format that is too great for the range
+				} else if (timeUnits[n] > closestPointRange) {
+					n = lastN;
+					break;
+				
+				// If the point is placed every day at 23:59, we need to show
+				// the minutes as well. #2637.
+				} else if (strpos[n] && date.substr(strpos[n]) !== blank.substr(strpos[n])) {
+					break;
+				}
+
+				// Weeks are outside the hierarchy, only apply them on Mondays/Sundays like in the first condition
+				if (n !== 'week') {
+					lastN = n;
+				}
+			}
+			
+			if (n) {
+				xDateFormat = dateTimeLabelFormats[n];
+			}
+		} else {
+			xDateFormat = dateTimeLabelFormats.day;
+		}
+
+		return xDateFormat || dateTimeLabelFormats.year; // #2546, 2581
+	},
+
 	/**
 	 * Format the footer/header of the tooltip
 	 * #3397: abstraction to enable formatting of footer and header
@@ -8936,33 +9028,14 @@ Tooltip.prototype = {
 		var footOrHead = isFooter ? 'footer' : 'header',
 			series = point.series,
 			tooltipOptions = series.tooltipOptions,
-			dateTimeLabelFormats = tooltipOptions.dateTimeLabelFormats,
 			xDateFormat = tooltipOptions.xDateFormat,
 			xAxis = series.xAxis,
 			isDateTime = xAxis && xAxis.options.type === 'datetime' && isNumber(point.key),
-			formatString = tooltipOptions[footOrHead+'Format'],
-			closestPointRange = xAxis && xAxis.closestPointRange,
-			n;
+			formatString = tooltipOptions[footOrHead+'Format'];
 
-		// Guess the best date format based on the closest point distance (#568)
+		// Guess the best date format based on the closest point distance (#568, #3418)
 		if (isDateTime && !xDateFormat) {
-			if (closestPointRange) {
-				for (n in timeUnits) {
-					if (timeUnits[n] >= closestPointRange || 
-							// If the point is placed every day at 23:59, we need to show
-							// the minutes as well. This logic only works for time units less than 
-							// a day, since all higher time units are dividable by those. #2637.
-							(timeUnits[n] <= timeUnits.day && point.key % timeUnits[n] > 0)) {
-						xDateFormat = dateTimeLabelFormats[n];
-						break;
-					}
-				}
-			} else {
-				xDateFormat = dateTimeLabelFormats.day;
-			}
-
-			xDateFormat = xDateFormat || dateTimeLabelFormats.year; // #2546, 2581
-
+			xDateFormat = this.getXDateFormat(point, tooltipOptions, xAxis);
 		}
 
 		// Insert the footer date format if any
@@ -8974,8 +9047,19 @@ Tooltip.prototype = {
 			point: point,
 			series: series
 		});
-	}
+	},
 
+	/**
+     * Build the body (lines) of the tooltip by iterating over the items and returning one entry for each item,
+     * abstracting this functionality allows to easily overwrite and extend it. 
+	 */
+	bodyFormatter: function (items) {
+        return map(items, function (item) {
+            var tooltipOptions = item.series.tooltipOptions;
+            return (tooltipOptions.pointFormatter || item.point.tooltipFormatter).call(item.point, tooltipOptions.pointFormat); // docs
+        });
+    }
+    
 };
 
 var hoverChartIndex;
@@ -9111,88 +9195,99 @@ Pointer.prototype = {
 	 * Run Point.onMouseOver and display tooltip for the point or points.
 	 */
 	runPointActions: function (e) {
+
 		var pointer = this,
 			chart = pointer.chart,
 			series = chart.series,
 			tooltip = chart.tooltip,
+			shared = tooltip ? tooltip.shared : false,
 			followPointer,
-			point,
-			points,
+			//point,
+			//points,
 			hoverPoint = chart.hoverPoint,
 			hoverSeries = chart.hoverSeries,
 			i,
-			j,
+			trueXkd,
+			trueX,
+			//j,
 			distance = chart.chartWidth,
-			index = pointer.getIndex(e),
-			anchor;
+			rdistance = chart.chartWidth, 
+			//index = pointer.getIndex(e),
+			anchor,
 
-		// shared tooltip
-		if (tooltip && pointer.options.tooltip.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
-			points = [];
+			kdpoints = [],
+			kdpoint;
 
-			// loop over all series and find the ones with points closest to the mouse
-			i = series.length;
-			for (j = 0; j < i; j++) {
-				if (series[j].visible &&
-						series[j].options.enableMouseTracking !== false &&
-						!series[j].noSharedTooltip && series[j].singularTooltips !== true && series[j].tooltipPoints.length) {
-					point = series[j].tooltipPoints[index];
-					if (point && point.series) { // not a dummy point, #1544
-						point._dist = mathAbs(index - point.clientX);
-						distance = mathMin(distance, point._dist);
-						points.push(point);
-					}
+		// Find nearest points on all series
+		each(series, function (s) {
+			// Skip hidden series
+			if (s.visible && pick(s.options.enableMouseTracking, true)) {
+				kdpoints.push(s.searchKDTree(e));
+			}
+		});
+
+		// Find absolute nearest point
+		each(kdpoints, function (p) {
+			if (p && defined(p.plotX) && defined(p.plotY)) {
+				if ((p.dist.distX < distance) || ((p.dist.distX === distance || p.series.kdDimensions > 1) && p.dist.distR < rdistance)) {
+					distance = p.dist.distX;
+					rdistance = p.dist.distR;
+					kdpoint = p;
 				}
 			}
-			// remove furthest points
-			i = points.length;
-			while (i--) {
-				if (points[i]._dist > distance) {
-					points.splice(i, 1);
-				}
-			}
-			// refresh the tooltip if necessary
-			if (points.length && (points[0].clientX !== pointer.hoverX)) {
-				tooltip.refresh(points, e);
-				pointer.hoverX = points[0].clientX;
-			}
-			point = points[0];
-		}
-
+			//point = kdpoints[0];
+		});
+				
+		// Crosshair
+		each(chart.axes, function (axis) {
+			axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
+		});		
+		// Without a closest point there is no sense to continue
+		if (!kdpoint) { return; }
+		
 		// Separate tooltip and general mouse events
 		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
-		if (hoverSeries && hoverSeries.tracker && !followPointer) { // #2584, #2830
 
-			// get the point
-			point = hoverSeries.tooltipPoints[index];
+		//if (hoverSeries && hoverSeries.tracker) { // #2584, #2830, #2889, #3258
+			// Tooltip
 
-			// a new point is hovered, refresh the tooltip
-			if (point && point !== hoverPoint) {
-
-				// trigger the events
-				point.onMouseOver(e);
-
-			}
-			
-		} else if (tooltip && followPointer && !tooltip.isHidden) {
-			anchor = tooltip.getAnchor([{}], e);
-			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });
-		}
-
-		// Start the event listener to pick up the tooltip 
-		if (tooltip && !pointer._onDocumentMouseMove) {
-			pointer._onDocumentMouseMove = function (e) {
-				if (charts[hoverChartIndex]) {
-					charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
+			if (tooltip) { // && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
+				// Draw tooltip if necessary
+				if (shared && !kdpoint.series.noSharedTooltip) {
+					i = kdpoints.length;
+					trueXkd = kdpoint.plotX + kdpoint.series.xAxis.left;
+					while (i--) {
+						trueX = kdpoints[i].plotX + kdpoints[i].series.xAxis.left;
+						if (kdpoints[i].x !== kdpoint.x || trueX !== trueXkd || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
+							kdpoints.splice(i, 1);
+						}
+					}
+					tooltip.refresh(kdpoints, e);
+					each(kdpoints, function (point) {
+						point.onMouseOver(e);
+					});
+				} else {
+					tooltip.refresh(kdpoint, e);
+					kdpoint.onMouseOver(e);
 				}
-			};
-			addEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
-		}
+			}
+		//}	 
 
-		// Draw independent crosshairs
-		each(chart.axes, function (axis) {
-			axis.drawCrosshair(e, pick(point, hoverPoint));
-		});
+		
+		if (tooltip && followPointer && !tooltip.isHidden) {
+			anchor = tooltip.getAnchor([{}], e);
+			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });			
+		}
+		/*
+		// Hover Series
+		if (kdpoint !== hoverPoint) {
+			// set new hoverPoint and hoverSeries
+			chart.hoverPoint = kdpoint;
+			chart.hoverSeries = kdpoint.series;	
+
+		}
+		*/
+		
 	},
 
 
@@ -9213,16 +9308,23 @@ Pointer.prototype = {
 		// Narrow in allowMove
 		allowMove = allowMove && tooltip && tooltipPoints;
 			
-		// Check if the points have moved outside the plot area, #1003
-		if (allowMove && splat(tooltipPoints)[0].plotX === UNDEFINED) {
+		// Check if the points have moved outside the plot area, #1003		
+		if (allowMove  && splat(tooltipPoints)[0].plotX === UNDEFINED) {
 			allowMove = false;
 		}	
-
 		// Just move the tooltip, #349
 		if (allowMove) {
 			tooltip.refresh(tooltipPoints);
 			if (hoverPoint) { // #2500
 				hoverPoint.setState(hoverPoint.state, true);
+				each(chart.axes, function (axis) {
+					if (pick(axis.options.crosshair && axis.options.crosshair.snap, true)) {
+						axis.drawCrosshair(null, allowMove);
+					}  else {
+						axis.hideCrosshair();
+					}
+				});
+				
 			}
 
 		// Full reset
@@ -9385,7 +9487,8 @@ Pointer.prototype = {
 	 * On mouse up or touch end across the entire document, drop the selection.
 	 */
 	drop: function (e) {
-		var chart = this.chart,
+		var pointer = this,
+			chart = this.chart,
 			hasPinched = this.hasPinched;
 
 		if (this.selectionMarker) {
@@ -9406,20 +9509,18 @@ Pointer.prototype = {
 
 				// record each axis' min and max
 				each(chart.axes, function (axis) {
-					if (axis.zoomEnabled) {
+					if (axis.zoomEnabled && defined(axis.min) && pointer[{ xAxis: 'zoomX', yAxis: 'zoomY' }[axis.coll]]) { // #859, #3569
 						var horiz = axis.horiz,
 							minPixelPadding = e.type === 'touchend' ? axis.minPixelPadding: 0, // #1207, #3075
 							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop) + minPixelPadding),
 							selectionMax = axis.toValue((horiz ? selectionLeft + selectionWidth : selectionTop + selectionHeight) - minPixelPadding);
 
-						if (!isNaN(selectionMin) && !isNaN(selectionMax)) { // #859
-							selectionData[axis.coll].push({
-								axis: axis,
-								min: mathMin(selectionMin, selectionMax), // for reversed axes,
-								max: mathMax(selectionMin, selectionMax)
-							});
-							runZoom = true;
-						}
+						selectionData[axis.coll].push({
+							axis: axis,
+							min: mathMin(selectionMin, selectionMax), // for reversed axes
+							max: mathMax(selectionMin, selectionMax)
+						});
+						runZoom = true;
 					}
 				});
 				if (runZoom) {
@@ -9828,7 +9929,7 @@ extend(Highcharts.Pointer.prototype, {
 
 			e = this.normalize(e);
 
-			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
+			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop) && !chart.openMenu) {
 
 				// Run mouse events and display tooltip etc
 				this.runPointActions(e);
@@ -10301,6 +10402,39 @@ Legend.prototype = {
 			);
 		});
 		return allItems;
+	},
+
+	/**
+	 * Adjust the chart margins by reserving space for the legend on only one side
+	 * of the chart. If the position is set to a corner, top or bottom is reserved
+	 * for horizontal legends and left or right for vertical ones.
+	 */
+	adjustMargins: function (margin, spacing) {
+		var chart = this.chart, 
+			options = this.options,
+			// Use the first letter of each alignment option in order to detect the side 
+			alignment = options.align[0] + options.verticalAlign[0] + options.layout[0];
+			
+		if (this.display && !options.floating) {
+
+			each([
+				/(lth|ct|rth)/,
+				/(rtv|rm|rbv)/,
+				/(rbh|cb|lbh)/,
+				/(lbv|lm|ltv)/
+			], function (alignments, side) {
+				if (alignments.test(alignment) && !defined(margin[side])) {
+					// Now we have detected on which side of the chart we should reserve space for the legend
+					chart[marginNames[side]] = mathMax(
+						chart[marginNames[side]],
+						chart.legend[(side + 1) % 2 ? 'legendHeight' : 'legendWidth'] + 
+							[1, -1, -1, 1][side] * options[(side % 2) ? 'x' : 'y'] + 
+							pick(options.margin, 20) + 
+							spacing[side]
+					);
+				}
+			});
+		}
 	},
 
 	/**
@@ -11389,14 +11523,7 @@ Chart.prototype = {
 		var chart = this,
 			spacing = chart.spacing,
 			axisOffset,
-			legend = chart.legend,
 			margin = chart.margin,
-			legendOptions = chart.options.legend,
-			legendMargin = pick(legendOptions.margin, 20),
-			legendX = legendOptions.x,
-			legendY = legendOptions.y,
-			align = legendOptions.align,
-			verticalAlign = legendOptions.verticalAlign,
 			titleOffset = chart.titleOffset;
 
 		chart.resetMargins();
@@ -11408,39 +11535,7 @@ Chart.prototype = {
 		}
 		
 		// Adjust for legend
-		if (legend.display && !legendOptions.floating) {
-			if (align === 'right') { // horizontal alignment handled first
-				if (!defined(margin[1])) {
-					chart.marginRight = mathMax(
-						chart.marginRight,
-						legend.legendWidth - legendX + legendMargin + spacing[1]
-					);
-				}
-			} else if (align === 'left') {
-				if (!defined(margin[3])) {
-					chart.plotLeft = mathMax(
-						chart.plotLeft,
-						legend.legendWidth + legendX + legendMargin + spacing[3]
-					);
-				}
-
-			} else if (verticalAlign === 'top') {
-				if (!defined(margin[0])) {
-					chart.plotTop = mathMax(
-						chart.plotTop,
-						legend.legendHeight + legendY + legendMargin + spacing[0]
-					);
-				}
-
-			} else if (verticalAlign === 'bottom') {
-				if (!defined(margin[2])) {
-					chart.marginBottom = mathMax(
-						chart.marginBottom,
-						legend.legendHeight - legendY + legendMargin + spacing[2]
-					);
-				}
-			}
-		}
+		chart.legend.adjustMargins(margin, spacing);
 
 		// adjust for scroller
 		if (chart.extraBottomMargin) {
@@ -11456,19 +11551,13 @@ Chart.prototype = {
 				axis.getOffset();
 			});
 		}
-		
-		if (!defined(margin[3])) {
-			chart.plotLeft += axisOffset[3];
-		}
-		if (!defined(margin[0])) {
-			chart.plotTop += axisOffset[0];
-		}
-		if (!defined(margin[2])) {
-			chart.marginBottom += axisOffset[2];
-		}
-		if (!defined(margin[1])) {
-			chart.marginRight += axisOffset[1];
-		}
+
+		// Add the axis offsets
+		each(marginNames, function (m, side) {
+			if (!defined(margin[side])) {
+				chart[m] += axisOffset[side];
+			}		
+		});
 
 		chart.setChartSize();
 
@@ -11667,14 +11756,11 @@ Chart.prototype = {
 	 * Initial margins before auto size margins are applied
 	 */
 	resetMargins: function () {
-		var chart = this,
-			spacing = chart.spacing,
-			margin = chart.margin;
+		var chart = this;
 
-		chart.plotTop = pick(margin[0], spacing[0]);
-		chart.marginRight = pick(margin[1], spacing[1]);
-		chart.marginBottom = pick(margin[2], spacing[2]);
-		chart.plotLeft = pick(margin[3], spacing[3]);
+		each(marginNames, function (m, side) {
+			chart[m] = pick(chart.margin[side], chart.spacing[side]);
+		});
 		chart.axisOffset = [0, 0, 0, 0]; // top, right, bottom, left
 		chart.clipOffset = [0, 0, 0, 0];
 	},
@@ -11866,9 +11952,6 @@ Chart.prototype = {
 	renderSeries: function () {
 		each(this.series, function (serie) {
 			serie.translate();
-			if (serie.setTooltipPoints) {
-				serie.setTooltipPoints();
-			}
 			serie.render();
 		});
 	},
@@ -12138,7 +12221,9 @@ Chart.prototype = {
 			callback.apply(chart, [chart]);
 		}
 		each(chart.callbacks, function (fn) {
-			fn.apply(chart, [chart]);
+			if (chart.index !== UNDEFINED) { // Chart destroyed in its own callback (#3600)
+				fn.apply(chart, [chart]);
+			}
 		});
 		
 		
@@ -12215,6 +12300,7 @@ Point.prototype = {
 		var point = this,
 			colors;
 		point.series = series;
+		point.color = series.color; // #3445
 		point.applyOptions(options, x);
 		point.pointAttr = {};
 
@@ -12682,7 +12768,8 @@ Series.prototype = {
 			userOptions = chart.userOptions || {},
 			userPlotOptions = userOptions.plotOptions || {},
 			typeOptions = plotOptions[this.type],
-			options;
+			options,
+			zones;
 
 		this.userOptions = itemOptions;
 
@@ -12707,8 +12794,25 @@ Series.prototype = {
 			delete options.marker;
 		}
 
+		// Handle color zones
+		this.zoneAxis = options.zoneAxis;
+		zones = this.zones = (options.zones || []).slice();
+		if ((options.negativeColor || options.negativeFillColor) && !options.zones) {
+			zones.push({
+				value: options[this.zoneAxis + 'Threshold'] || options.threshold || 0,
+				color: options.negativeColor,
+				fillColor: options.negativeFillColor
+			});
+		}
+		if (zones.length) { // Push one extra zone for the rest
+			if (defined(zones[zones.length - 1].value)) {
+				zones.push({
+					color: this.color,
+					fillColor: this.fillColor
+				});
+			}
+		}
 		return options;
-
 	},
 
 	getCyclic: function (prop, value, defaults) {
@@ -12768,7 +12872,6 @@ Series.prototype = {
 			firstPoint = null,
 			xAxis = series.xAxis,
 			hasCategories = xAxis && !!xAxis.categories,
-			tooltipPoints = series.tooltipPoints,
 			i,
 			turboThreshold = options.turboThreshold,
 			pt,
@@ -12871,9 +12974,6 @@ Series.prototype = {
 					oldData[i].destroy();
 				}
 			}
-			if (tooltipPoints) { // #2594
-				tooltipPoints.length = 0;
-			}
 
 			// reset minRange (#878)
 			if (xAxis) {
@@ -12908,7 +13008,6 @@ Series.prototype = {
 			i, // loop variable
 			options = series.options,
 			cropThreshold = options.cropThreshold,
-			activePointCount = 0,
 			isCartesian = series.isCartesian,
 			xExtremes,
 			min,
@@ -12941,7 +13040,6 @@ Series.prototype = {
 				processedYData = croppedData.yData;
 				cropStart = croppedData.start;
 				cropped = true;
-				activePointCount = processedXData.length;
 			}
 		}
 
@@ -12949,10 +13047,6 @@ Series.prototype = {
 		// Find the closest distance between processed points
 		for (i = processedXData.length - 1; i >= 0; i--) {
 			distance = processedXData[i] - processedXData[i - 1];
-			
-			if (!cropped && processedXData[i] > min && processedXData[i] < max) {
-				activePointCount++;
-			}
 			
 			if (distance > 0 && (closestPointRange === UNDEFINED || distance < closestPointRange)) {
 				closestPointRange = distance;
@@ -12969,7 +13063,6 @@ Series.prototype = {
 		series.cropStart = cropStart;
 		series.processedXData = processedXData;
 		series.processedYData = processedYData;
-		series.activePointCount = activePointCount;
 
 		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
 			series.pointRange = closestPointRange || 1;
@@ -13162,8 +13255,8 @@ Series.prototype = {
 				pointStack,
 				stackValues;
 
-			// Discard disallowed y values for log axes
-			if (yAxis.isLog && yValue <= 0) {
+			// Discard disallowed y values for log axes (#3434)
+			if (yAxis.isLog && yValue !== null && yValue <= 0) {
 				point.y = yValue = null;
 				error(10);
 			}
@@ -13208,9 +13301,10 @@ Series.prototype = {
 
 			// Set the the plotY value, reset it for redraws
 			point.plotY = (typeof yValue === 'number' && yValue !== Infinity) ?
-				//mathRound(yAxis.translate(yValue, 0, 1, 0, 1) * 10) / 10 : // Math.round fixes #591
 				yAxis.translate(yValue, 0, 1, 0, 1) :
 				UNDEFINED;
+			point.isInside = point.plotY !== UNDEFINED && point.plotY >= 0 && point.plotY <= yAxis.len; // #3519
+
 
 			// Set client related positions for mouse tracking
 			point.clientX = dynamicallyPlaced ? xAxis.translate(xValue, 0, 0, 0, 1) : point.plotX; // #1514
@@ -13228,35 +13322,25 @@ Series.prototype = {
 	},
 
 	/**
-	 * Animate in the series
+	 * Set the clipping for the series. For animated series it is called twice, first to initiate
+	 * animating the clip then the second time without the animation to set the final clip.
 	 */
-	animate: function (init) {
-		var series = this,
-			chart = series.chart,
+	setClip: function (animation) {
+		var chart = this.chart,
 			renderer = chart.renderer,
-			clipRect,
-			markerClipRect,
-			animation = series.options.animation,
-			clipBox = series.clipBox || chart.clipBox,
 			inverted = chart.inverted,
-			sharedClipKey;
-
-		// Animation option is set to true
-		if (animation && !isObject(animation)) {
-			animation = defaultPlotOptions[series.type].animation;
-		}
-		sharedClipKey = ['_sharedClip', animation.duration, animation.easing, clipBox.height].join(',');
-
-		// Initialize the animation. Set up the clipping rectangle.
-		if (init) {
-
-			// If a clipping rectangle with the same properties is currently present in the chart, use that.
-			clipRect = chart[sharedClipKey];
+			seriesClipBox = this.clipBox,
+			clipBox = seriesClipBox || chart.clipBox,
+			sharedClipKey = this.sharedClipKey || ['_sharedClip', animation && animation.duration, animation && animation.easing, clipBox.height].join(','),
+			clipRect = chart[sharedClipKey],
 			markerClipRect = chart[sharedClipKey + 'm'];
-			if (!clipRect) {
-				chart[sharedClipKey] = clipRect = renderer.clipRect(
-					extend(clipBox, { width: 0 })
-				);
+
+		// If a clipping rectangle with the same properties is currently present in the chart, use that.
+		if (!clipRect) {
+
+			// When animation is set, prepare the initial positions
+			if (animation) { 
+				clipBox.width = 0;
 
 				chart[sharedClipKey + 'm'] = markerClipRect = renderer.clipRect(
 					-99, // include the width of the first marker
@@ -13265,12 +13349,55 @@ Series.prototype = {
 					inverted ? chart.chartWidth : chart.chartHeight
 				);
 			}
-			series.group.clip(clipRect);
-			series.markerGroup.clip(markerClipRect);
-			series.sharedClipKey = sharedClipKey;
+			chart[sharedClipKey] = clipRect = renderer.clipRect(clipBox);
+			
+		}
+		if (animation) {
+			clipRect.count += 1;
+		}
+		if (this.options.clip !== false) {
+			this.group.clip(animation || seriesClipBox ? clipRect : chart.clipRect);
+			this.markerGroup.clip(markerClipRect);
+			this.sharedClipKey = sharedClipKey;
+		}
+
+		// Remove the shared clipping rectancgle when all series are shown
+		if (!animation) {
+			clipRect.count -= 1;
+			if (clipRect.count === 0 && sharedClipKey && chart[sharedClipKey]) {
+				if (!seriesClipBox) {
+					chart[sharedClipKey] = chart[sharedClipKey].destroy();
+				}
+				if (chart[sharedClipKey + 'm']) {
+					chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
+				}
+			}
+		}
+	},
+
+	/**
+	 * Animate in the series
+	 */
+	animate: function (init) {
+		var series = this,
+			chart = series.chart,
+			clipRect,
+			animation = series.options.animation,
+			sharedClipKey;
+
+		// Animation option is set to true
+		if (animation && !isObject(animation)) {
+			animation = defaultPlotOptions[series.type].animation;
+		}
+
+		// Initialize the animation. Set up the clipping rectangle.
+		if (init) {
+
+			series.setClip(animation);
 
 		// Run the animation
 		} else {
+			sharedClipKey = this.sharedClipKey;
 			clipRect = chart[sharedClipKey];
 			if (clipRect) {
 				clipRect.animate({
@@ -13293,31 +13420,8 @@ Series.prototype = {
 	 * This runs after animation to land on the final plot clipping
 	 */
 	afterAnimate: function () {
-		var chart = this.chart,
-			sharedClipKey = this.sharedClipKey,
-			group = this.group,
-			clipBox = this.clipBox;
-
-		if (group && this.options.clip !== false) {
-			if (!sharedClipKey || !clipBox) {
-				group.clip(clipBox ? chart.renderer.clipRect(clipBox) : chart.clipRect);
-			}
-			this.markerGroup.clip(); // no clip
-		}
-
+		this.setClip();
 		fireEvent(this, 'afterAnimate');
-
-		// Remove the shared clipping rectancgle when all series are shown
-		setTimeout(function () {
-			if (sharedClipKey && chart[sharedClipKey]) {
-				if (!clipBox) {
-					chart[sharedClipKey] = chart[sharedClipKey].destroy();
-				}
-				if (chart[sharedClipKey + 'm']) {
-					chart[sharedClipKey + 'm'] = chart[sharedClipKey + 'm'].destroy();
-				}
-			}
-		}, 100);
 	},
 
 	/**
@@ -13346,7 +13450,7 @@ Series.prototype = {
 			markerGroup = series.markerGroup,
 			globallyEnabled = pick(
 				seriesMarkerOptions.enabled, 
-				!series.requireSorting || series.activePointCount < (0.5 * series.xAxis.len / seriesMarkerOptions.radius)
+				!series.requireSorting || series.closestPointRange * series.xAxis.transA > 2 * seriesMarkerOptions.radius // #3635
 			);
 
 		if (seriesMarkerOptions.enabled !== false || series._hasPointMarkers) {
@@ -13360,7 +13464,7 @@ Series.prototype = {
 				pointMarkerOptions = point.marker || {};
 				hasPointMarker = !!point.marker;
 				enabled = (globallyEnabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
-				isInside = chart.isInsidePlot(mathRound(plotX), plotY, chart.inverted); // #1858
+				isInside = point.isInside;
 
 				// only draw the point if y is defined
 				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
@@ -13441,6 +13545,7 @@ Series.prototype = {
 			stateOptionsHover = stateOptions[HOVER_STATE],
 			pointStateOptionsHover,
 			seriesColor = series.color,
+			seriesNegativeColor = series.options.negativeColor,
 			normalDefaults = {
 				stroke: seriesColor,
 				fill: seriesColor
@@ -13452,10 +13557,11 @@ Series.prototype = {
 			pointAttr,
 			pointAttrToOptions = series.pointAttrToOptions,
 			hasPointSpecificOptions = series.hasPointSpecificOptions,
-			negativeColor = seriesOptions.negativeColor,
 			defaultLineColor = normalOptions.lineColor,
 			defaultFillColor = normalOptions.fillColor,
 			turboThreshold = seriesOptions.turboThreshold,
+			zones = series.zones,
+			zoneAxis = series.zoneAxis || 'y',
 			attr,
 			key;
 
@@ -13471,6 +13577,11 @@ Series.prototype = {
 			// if no hover color is given, brighten the normal color
 			stateOptionsHover.color = stateOptionsHover.color ||
 				Color(stateOptionsHover.color || seriesColor)
+					.brighten(stateOptionsHover.brightness).get();
+
+			// if no hover negativeColor is given, brighten the normal negativeColor
+			stateOptionsHover.negativeColor = stateOptionsHover.negativeColor ||
+				Color(stateOptionsHover.negativeColor || seriesNegativeColor)
 					.brighten(stateOptionsHover.brightness).get();
 		}
 
@@ -13499,8 +13610,14 @@ Series.prototype = {
 					normalOptions.radius = 0;
 				}
 
-				if (point.negative && negativeColor) {
-					point.color = point.fillColor = negativeColor;
+				if (zones.length) {
+					var j = 0,
+						threshold = zones[j];
+					while (point[zoneAxis] >= threshold.value) {				
+						threshold = zones[++j];
+					}
+					
+					point.color = point.fillColor = threshold.color;
 				}
 
 				hasPointSpecificOptions = seriesOptions.colorByPoint || point.color; // #868
@@ -13525,7 +13642,7 @@ Series.prototype = {
 					// Handle colors for column and pies
 					if (!seriesOptions.marker) { // column, bar, point
 						// If no hover color is given, brighten the normal color. #1619, #2579
-						pointStateOptionsHover.color = pointStateOptionsHover.color || (!point.options.color && stateOptionsHover.color) ||
+						pointStateOptionsHover.color = pointStateOptionsHover.color || (!point.options.color && stateOptionsHover[(point.negative && seriesNegativeColor ? 'negativeColor' : 'color')]) ||
 							Color(point.color)
 								.brighten(pointStateOptionsHover.brightness || stateOptionsHover.brightness)
 								.get();
@@ -13735,18 +13852,18 @@ Series.prototype = {
 	drawGraph: function () {
 		var series = this,
 			options = this.options,
-			props = [['graph', options.lineColor || this.color]],
+			props = [['graph', options.lineColor || this.color, options.dashStyle]],
 			lineWidth = options.lineWidth,
-			dashStyle =  options.dashStyle,
 			roundCap = options.linecap !== 'square',
 			graphPath = this.getGraphPath(),
-			negativeColor = options.negativeColor;
+			fillColor = (this.fillGraph && this.color) || NONE, // polygon series use filled graph
+			zones = this.zones;
 
-		if (negativeColor) {
-			props.push(['graphNeg', negativeColor]);
-		}
-
-		// draw the graph
+		each(zones, function (threshold, i) {
+			props.push(['colorGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
+		});
+		
+		// Draw the graph
 		each(props, function (prop, i) {
 			var graphKey = prop[0],
 				graph = series[graphKey],
@@ -13756,15 +13873,15 @@ Series.prototype = {
 				stop(graph); // cancel running animations, #459
 				graph.animate({ d: graphPath });
 
-			} else if (lineWidth && graphPath.length) { // #1487
+			} else if ((lineWidth || fillColor) && graphPath.length) { // #1487
 				attribs = {
 					stroke: prop[1],
 					'stroke-width': lineWidth,
-					fill: NONE,
+					fill: fillColor,
 					zIndex: 1 // #1069
 				};
-				if (dashStyle) {
-					attribs.dashstyle = dashStyle;
+				if (prop[2]) {
+					attribs.dashstyle = prop[2];
 				} else if (roundCap) {
 					attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
 				}
@@ -13780,88 +13897,89 @@ Series.prototype = {
 	/**
 	 * Clip the graphs into the positive and negative coloured graphs
 	 */
-	clipNeg: function () {
-		var options = this.options,
+	applyZones: function () {
+		var series = this,
 			chart = this.chart,
 			renderer = chart.renderer,
-			negativeColor = options.negativeColor || options.negativeFillColor,
-			translatedThreshold,
-			posAttr,
-			negAttr,
+			zones = this.zones,
+			translatedFrom,
+			translatedTo,
+			clips = this.clips || [],
+			clipAttr,
 			graph = this.graph,
 			area = this.area,
-			posClip = this.posClip,
-			negClip = this.negClip,
-			chartWidth = chart.chartWidth,
-			chartHeight = chart.chartHeight,
-			chartSizeMax = mathMax(chartWidth, chartHeight),
-			yAxis = this.yAxis,
-			above,
-			below;
+			chartSizeMax = mathMax(chart.chartWidth, chart.chartHeight),
+			zoneAxis = this.zoneAxis || 'y',
+			axis = this[zoneAxis + 'Axis'],
+			reversed = axis.reversed,
+			horiz = axis.horiz;
 
-		if (negativeColor && (graph || area)) {
-			translatedThreshold = mathMin(mathRound(yAxis.toPixels(options.threshold || 0, true)), chartSizeMax); // #3382
-			if (translatedThreshold < 0) {
-				chartSizeMax -= translatedThreshold; // #2534
-			}
-			above = {
-				x: 0,
-				y: 0,
-				width: chartSizeMax,
-				height: translatedThreshold
-			};
-			below = {
-				x: 0,
-				y: translatedThreshold,
-				width: chartSizeMax,
-				height: chartSizeMax
-			};
+		if (zones.length && (graph || area)) {
+			// The use of the Color Threshold assumes there are no gaps
+			// so it is safe to hide the original graph and area
+			graph.hide();
+			if (area) { area.hide(); }
 
-			if (chart.inverted) {
+			// Create the clips
+			each(zones, function (threshold, i) {
+				translatedFrom = pick(translatedTo, (reversed ? (horiz ? chart.plotWidth : 0) : (horiz ? 0 : axis.toPixels(axis.min))));
+				translatedTo = mathRound(axis.toPixels(pick(threshold.value, axis.max), true));
 
-				above.height = below.y = chart.plotWidth - translatedThreshold;
-				if (renderer.isVML) {
-					above = {
-						x: chart.plotWidth - translatedThreshold - chart.plotLeft,
+				if (axis.isXAxis) {
+					clipAttr = {
+						x: reversed ? translatedTo : translatedFrom,
 						y: 0,
-						width: chartWidth,
-						height: chartHeight
+						width: Math.abs(translatedFrom - translatedTo), 
+						height: chartSizeMax
 					};
-					below = {
-						x: translatedThreshold + chart.plotLeft - chartWidth,
-						y: 0,
-						width: chart.plotLeft + translatedThreshold,
-						height: chartWidth
+					if (!horiz) {
+						clipAttr.x = chart.plotHeight - clipAttr.x;
+					}
+				} else {
+					clipAttr = {
+						x: 0,
+						y: reversed ? translatedFrom : translatedTo,
+						width: chartSizeMax, 
+						height: Math.abs(translatedFrom - translatedTo)
 					};
+					if (horiz) {
+						clipAttr.y = chart.plotWidth - clipAttr.y;
+					}
+				} 
+
+				/// VML SUPPPORT
+				if (chart.inverted && renderer.isVML) {
+					if (axis.isXAxis) {			
+						clipAttr = {
+							x: 0,
+							y: reversed ? translatedFrom : translatedTo,
+							height: clipAttr.width,
+							width: chart.chartWidth
+						};		
+					} else {				
+						clipAttr = {
+							x: clipAttr.y - chart.plotLeft - chart.spacingBox.x,
+							y: 0,
+							width: clipAttr.height,
+							height: chart.chartHeight
+						};	
+					}				
 				}
-			}
+				/// END OF VML SUPPORT
 
-			if (yAxis.reversed) {
-				posAttr = below;
-				negAttr = above;
-			} else {
-				posAttr = above;
-				negAttr = below;
-			}
+				if (clips[i]) {
+					clips[i].animate(clipAttr);
+				} else {
+					clips[i] = renderer.clipRect(clipAttr);
 
-			if (posClip) { // update
-				posClip.animate(posAttr);
-				negClip.animate(negAttr);
-			} else {
+					series['colorGraph' + i].clip(clips[i]);
 
-				this.posClip = posClip = renderer.clipRect(posAttr);
-				this.negClip = negClip = renderer.clipRect(negAttr);
-
-				if (graph && this.graphNeg) {
-					graph.clip(posClip);
-					this.graphNeg.clip(negClip);
+					if (area) {
+						series['colorArea' + i].clip(clips[i]);
+					}
 				}
-
-				if (area) {
-					area.clip(posClip);
-					this.areaNeg.clip(negClip);
-				}
-			}
+			});
+			this.clips = clips;
 		}
 	},
 
@@ -13994,7 +14112,7 @@ Series.prototype = {
 		// draw the graph if any
 		if (series.drawGraph) {
 			series.drawGraph();
-			series.clipNeg();
+			series.applyZones();
 		}
 
 		each(series.points, function (point) {
@@ -14022,11 +14140,6 @@ Series.prototype = {
 		// Handle inverted series and tracker groups
 		if (chart.inverted) {
 			series.invertGroups();
-		}
-
-		// Initial clipping, must be defined after inverting groups for VML
-		if (options.clip !== false && !series.sharedClipKey && !hasRendered) {
-			group.clip(chart.clipRect);
 		}
 
 		// Run the animation
@@ -14078,15 +14191,136 @@ Series.prototype = {
 		}
 
 		series.translate();
-		if (series.setTooltipPoints) {
-			series.setTooltipPoints(true);
-		}
 		series.render();
 
 		if (wasDirtyData) {
 			fireEvent(series, 'updatedData');
 		}
+	},
+
+	/**
+	 * KD Tree Implementation
+	 */
+
+	kdDimensions: 1,
+	kdTree: null,
+	kdAxisArray: ['plotX', 'plotY'],
+	kdComparer: 'distX',
+
+	buildKDTree: function () {
+		var series = this,
+			dimensions = series.kdDimensions,
+			tree = series.kdTree;
+
+		// Internal function
+		function _kdtree(points, depth, dimensions) {
+			var axis, median, length = points && points.length;
+
+			if (length) {
+
+				// alternate between the axis
+				axis = series.kdAxisArray[depth % dimensions];
+
+				// sort point array
+				points.sort(function(a, b) {
+					return a[axis] - b[axis];
+				});
+			
+				median = Math.floor(length / 2);
+				
+				// build and return node
+				return {
+					point: points[median],
+					left: _kdtree(points.slice(0, median), depth + 1, dimensions),
+					right: _kdtree(points.slice(median + 1), depth + 1, dimensions)
+				};
+			
+			}
+		}
+
+		tree = null;
+		if (this.options.kdWait) {
+			series.kdTree = _kdtree(series.points, dimensions, dimensions);	
+		} else {
+			setTimeout(function () {
+				series.kdTree = _kdtree(series.points, dimensions, dimensions);		
+			});
+		}
+	},
+
+	searchKDTree: function (point) {
+		var series = this,
+			kdComparer = this.kdComparer,
+			kdX = this.kdXValue || 'plotX',
+			kdY = this.kdYValue || 'plotY';
+
+		// Internal function
+		function _distance(p1, p2) {
+			var x = (defined(p1[kdX]) && defined(p2[kdX])) ? Math.pow(p1[kdX] - p2[kdX], 2) : null,
+				y = (defined(p1[kdY]) && defined(p2[kdY])) ? Math.pow(p1[kdY] - p2[kdY], 2) : null,
+				r = x + y;
+				
+			return {
+				distX: defined(x) ? Math.sqrt(x) : Number.MAX_VALUE,
+				distY: defined(y) ? Math.sqrt(y) : Number.MAX_VALUE,
+				distR: defined(r) ? Math.sqrt(r) : Number.MAX_VALUE
+			};
+		}
+		function _search(search, tree, depth, dimensions) {
+			var point = tree.point,
+				axis = series.kdAxisArray[depth % dimensions],
+				tdist,
+				sideA,
+				sideB,
+				ret = point,
+				nPoint1,
+				nPoint2;
+			
+			point.dist = _distance(search, point);
+
+			// Pick side based on distance to splitting point
+			tdist = search[axis] - point[axis];
+
+			sideA = tdist < 0 ? 'left' : 'right';
+
+			// End of tree
+			if (tree[sideA]) {
+				nPoint1 =_search(search, tree[sideA], depth + 1, dimensions);
+
+				ret = (nPoint1.dist[kdComparer] < ret.dist[kdComparer] ? nPoint1 : point);
+
+				sideB = tdist < 0 ? 'right' : 'left';
+				if (tree[sideB]) {
+					// compare distance to current best to splitting point to decide wether to check side B or not
+					if (Math.sqrt(tdist*tdist) < ret.dist[kdComparer]) {
+						nPoint2 = _search(search, tree[sideB], depth + 1, dimensions);
+						ret = (nPoint2.dist[kdComparer] < ret.dist[kdComparer] ? nPoint2 : ret);
+					}
+				}
+			}
+			return ret;
+		}
+
+		if (!this.kdTree) {
+			this.buildKDTree();
+		}
+
+		if (this.kdTree) {
+			var xAxis = series.xAxis,
+				yAxis = series.yAxis,
+				inverted = series.chart.inverted,
+				s = {
+					plotX: inverted ? xAxis.len - point.chartY + xAxis.pos : point.chartX - xAxis.pos,
+					plotY: inverted ? yAxis.len - point.chartX + yAxis.pos : point.chartY - yAxis.pos 
+				};
+
+			return _search(s, 
+				this.kdTree, this.kdDimensions, this.kdDimensions);
+		} else {
+			return UNDEFINED;
+		}
 	}
+
 }; // end Series prototype
 
 /**
@@ -14597,37 +14831,7 @@ extend(Point.prototype, {
 	 *    configuration
 	 */
 	remove: function (redraw, animation) {
-		var point = this,
-			series = point.series,
-			points = series.points,
-			chart = series.chart,
-			i,
-			data = series.data;
-
-		setAnimation(animation, chart);
-		redraw = pick(redraw, true);
-
-		// fire the event with a default handler of removing the point
-		point.firePointEvent('remove', null, function () {
-
-			// splice all the parallel arrays
-			i = inArray(point, data);
-			if (data.length === points.length) {
-				points.splice(i, 1);
-			}
-			data.splice(i, 1);
-			series.options.data.splice(i, 1);
-			series.updateParallelArrays(point, 'splice', i, 1);
-
-			point.destroy();
-
-			// redraw
-			series.isDirty = true;
-			series.isDirtyData = true;
-			if (redraw) {
-				chart.redraw();
-			}
-		});
+		this.series.removePoint(inArray(this, this.series.data), redraw, animation);
 	}
 });
 
@@ -14731,6 +14935,48 @@ extend(Series.prototype, {
 	},
 
 	/**
+	 * Remove a point (rendered or not), by index
+	 */
+	removePoint: function (i, redraw, animation) { // docs: new method on Series object. Sample created: series-removepoint
+
+		var series = this,
+			data = series.data,
+			point = data[i],
+			points = series.points,
+			chart = series.chart,
+			remove = function () {
+
+				if (data.length === points.length) {
+					points.splice(i, 1);
+				}
+				data.splice(i, 1);
+				series.options.data.splice(i, 1);
+				series.updateParallelArrays(point || { series: series }, 'splice', i, 1);
+
+				if (point) {
+					point.destroy();
+				}
+
+				// redraw
+				series.isDirty = true;
+				series.isDirtyData = true;
+				if (redraw) {
+					chart.redraw();
+				}
+			};
+
+		setAnimation(animation, chart);
+		redraw = pick(redraw, true);
+
+		// Fire the event with a default handler of removing the point
+		if (point) {
+			point.firePointEvent('remove', null, remove);
+		} else {
+			remove();
+		}
+	},
+
+	/**
 	 * Remove a series and optionally redraw the chart
 	 *
 	 * @param {Boolean} redraw Whether to redraw the chart or wait for an explicit call
@@ -14782,6 +15028,11 @@ extend(Series.prototype, {
 			preserve = ['group', 'markerGroup', 'dataLabelsGroup'],
 			n;
 
+		// If we're changing type or zIndex, create new groups (#3380, #3404)
+		if ((newOptions.type && newOptions.type !== oldType) || newOptions.zIndex !== undefined) {
+			preserve.length = 0;
+		}
+
 		// Make sure groups are not destroyed (#3094)
 		each(preserve, function (prop) {
 			preserve[prop] = series[prop];
@@ -14805,12 +15056,9 @@ extend(Series.prototype, {
 		extend(this, seriesTypes[newOptions.type || oldType].prototype);
 
 		// Re-register groups (#3094)
-		// unless it's a new type (#3402)
-		if (!newOptions.type || (newOptions.type === oldType)) { 
-			each(preserve, function (prop) {
-				series[prop] = preserve[prop];
-			});
-		}
+		each(preserve, function (prop) {
+			series[prop] = preserve[prop];
+		});
 
 		this.init(chart, newOptions);
 		chart.linkSeries(); // Links are lost in this.remove (#3028)
@@ -15075,14 +15323,12 @@ var AreaSeries = extendClass(Series, {
 		var series = this,
 			areaPath = this.areaPath,
 			options = this.options,
-			negativeColor = options.negativeColor,
-			negativeFillColor = options.negativeFillColor,
+			zones = this.zones,
 			props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
 		
-		if (negativeColor || negativeFillColor) {
-			props.push(['areaNeg', negativeColor, negativeFillColor]);
-		}
-		
+		each(zones, function (threshold, i) {
+			props.push(['colorArea' + i, threshold.color || series.color, threshold.fillColor || options.fillColor]);
+		});
 		each(props, function (prop) {
 			var areaKey = prop[0],
 				area = series[areaKey];
@@ -15305,6 +15551,7 @@ var ColumnSeries = extendClass(Series, {
 		fill: 'color',
 		r: 'borderRadius'
 	},
+	kdXValue: 'barX',
 	cropShoulder: 0,
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	negStacks: true, // use separate negative stacks, unlike area stacks where a negative 
@@ -15406,7 +15653,7 @@ var ColumnSeries = extendClass(Series, {
 			options = series.options,
 			borderWidth = series.borderWidth = pick(
 				options.borderWidth, 
-				series.activePointCount > 0.5 * series.xAxis.len ? 0 : 1
+				series.closestPointRange * series.xAxis.transA < 2 ? 0 : 1 // #3635
 			),
 			yAxis = series.yAxis,
 			threshold = options.threshold,
@@ -15470,7 +15717,7 @@ var ColumnSeries = extendClass(Series, {
 			barW = right - barX;
 
 			fromTop = mathAbs(barY) < 0.5;
-			bottom = mathRound(barY + barH) + yCrisp;
+			bottom = mathMin(mathRound(barY + barH) + yCrisp, 9e4); // #3575
 			barY = mathRound(barY) + yCrisp;
 			barH = bottom - barY;
 
@@ -15541,8 +15788,8 @@ var ColumnSeries = extendClass(Series, {
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
-						.attr(pointAttr)
 						.attr(borderAttr)
+						.attr(pointAttr)
 						.add(series.group)
 						.shadow(options.shadow, null, options.stacking && !options.borderRadius);
 				}
@@ -15642,9 +15889,11 @@ var ScatterSeries = extendClass(Series, {
 	sorted: false,
 	requireSorting: false,
 	noSharedTooltip: true,
-	trackerGroups: ['markerGroup', 'dataLabelsGroup'],
+	trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
 	takeOrdinalPosition: false, // #2342
 	singularTooltips: true,
+	kdDimensions: 2,
+	kdComparer: 'distR',
 	drawGraph: function () {
 		if (this.options.lineWidth) {
 			Series.prototype.drawGraph.call(this);
@@ -15709,12 +15958,6 @@ var PiePoint = extendClass(Point, {
 		var point = this,
 			toggleSlice;
 
-		// Disallow negative values (#1530)
-		if (point.y < 0) {
-			point.y = null;
-		}
-
-		//visible: options.visible !== false,
 		extend(point, {
 			visible: point.visible !== false,
 			name: pick(point.name, 'Slice')
@@ -15898,6 +16141,12 @@ var PieSeries = {
 		// Get the total sum
 		for (i = 0; i < len; i++) {
 			point = points[i];
+
+			// Disallow negative values (#1530, #3623)
+			if (point.y < 0) {
+				point.y = null;
+			}
+			
 			total += (ignoreHiddenPoint && !point.visible) ? 0 : point.y;
 		}
 		this.total = total;
@@ -16093,6 +16342,9 @@ var PieSeries = {
 		});
 
 	},
+
+
+	buildKDTree: noop,
 
 	/**
 	 * Utility for sorting data labels
@@ -17195,9 +17447,12 @@ extend(Chart.prototype, {
 				halfPointRange = (axis.pointRange || 0) / 2,
 				extremes = axis.getExtremes(),
 				newMin = axis.toValue(startPos - mousePos, true) + halfPointRange,
-				newMax = axis.toValue(startPos + chart[isX ? 'plotWidth' : 'plotHeight'] - mousePos, true) - halfPointRange;
+				newMax = axis.toValue(startPos + chart[isX ? 'plotWidth' : 'plotHeight'] - mousePos, true) - halfPointRange,
+				goingLeft = startPos > mousePos; // #3613
 
-			if (axis.series.length && newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
+			if (axis.series.length && 
+					(goingLeft || newMin > mathMin(extremes.dataMin, extremes.min)) && 
+					(!goingLeft || newMax < mathMax(extremes.dataMax, extremes.max))) {
 				axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
 				doRedraw = true;
 			}
@@ -17420,7 +17675,7 @@ extend(Point.prototype, {
 		if (haloOptions && haloOptions.size) {
 			if (!halo) {
 				series.halo = halo = chart.renderer.path()
-					.add(series.seriesGroup);
+					.add(chart.seriesGroup);
 			}
 			halo.attr(extend({
 				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
@@ -17621,6 +17876,7 @@ extend(Series.prototype, {
 			low,
 			high,
 			xAxis = series.xAxis,
+			halfPointRange = ((xAxis && xAxis.pointRange) || 0) / 2,
 			xExtremes = xAxis && xAxis.getExtremes(),
 			axisLength = xAxis ? (xAxis.tooltipLen || xAxis.len) : series.chart.plotSizeX, // tooltipLen and tooltipPosName used in polar
 			point,
@@ -17659,7 +17915,7 @@ extend(Series.prototype, {
 		for (i = 0; i < pointsLength; i++) {
 			point = points[i];
 			pointX = point.x;
-			if (pointX >= xExtremes.min && pointX <= xExtremes.max) { // #1149
+			if (pointX >= xExtremes.min - halfPointRange && pointX <= xExtremes.max + halfPointRange) { // #1149, #3152
 				nextPoint = points[i + 1];
 
 				// Set this range's low to the last range's high plus one
@@ -17812,7 +18068,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 
 		// Compare points two by two
 		for (start = 1; start < end; start++) {
-			if (new Date(groupPositions[start] - timezoneOffset)[getDate]() !== new Date(groupPositions[start - 1] - timezoneOffset)[getDate]()) {
+			if (dateFormat('%d', groupPositions[start]) !== dateFormat('%d', groupPositions[start - 1])) {
 				higherRanks[groupPositions[start]] = 'day';
 				hasCrossedHigherRank = true;
 			}
@@ -18754,7 +19010,6 @@ tooltipProto.tooltipFooterHeaderFormatter = function (point, isFooter) {
 		dateTimeLabelFormats,
 		labelFormats,
 		formattedKey,
-		n,
 		ret;
 
 	// apply only to grouped series
@@ -18777,17 +19032,7 @@ tooltipProto.tooltipFooterHeaderFormatter = function (point, isFooter) {
 		// so if the least distance between points is one minute, show it, but if the
 		// least distance is one day, skip hours and minutes etc.
 		} else if (!xDateFormat && dateTimeLabelFormats) {
-			for (n in timeUnits) {
-				if (timeUnits[n] >= xAxis.closestPointRange || 
-						// If the point is placed every day at 23:59, we need to show
-						// the minutes as well. This logic only works for time units less than 
-						// a day, since all higher time units are dividable by those. #2637.
-						(timeUnits[n] <= timeUnits.day && point.key % timeUnits[n] > 0)) {
-						
-					xDateFormat = dateTimeLabelFormats[n][0];
-					break;
-				}
-			}
+			xDateFormat = tooltip.getXDateFormat(point, tooltipOptions, xAxis);
 		}
 
 		// now format the key
@@ -18921,7 +19166,7 @@ Axis.prototype.getGroupPixelWidth = function () {
 defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 	lineWidth: 1,
 	tooltip: {
-		pointFormat: '<span style="color:{series.color}">\u25CF</span> <b> {series.name}</b><br/>' +
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' + // docs
 			'Open: {point.open}<br/>' +
 			'High: {point.high}<br/>' +
 			'Low: {point.low}<br/>' +
@@ -19348,6 +19593,8 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 
 		// Add plotY position and handle stacking
 		each(points, function (point, i) {
+
+			var stackIndex;
 			
 			// Undefined plotY means the point is either on axis, outside series range or hidden series.
 			// If the series is outside the range of the x axis it should fall through with 
@@ -19365,9 +19612,9 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 				if (lastPoint.stackIndex === UNDEFINED) {
 					lastPoint.stackIndex = 0;
 				}
-				point.stackIndex = lastPoint.stackIndex + 1;
+				stackIndex = lastPoint.stackIndex + 1;
 			}
-					
+			point.stackIndex = stackIndex; // #3639		
 		});
 
 
@@ -19563,7 +19810,10 @@ var units = [].concat(defaultDataGroupingUnits), // copy
 	// is a pattern that is repeated several places in Highcharts. Consider making this
 	// a global utility method.
 	numExt = function (extreme) {
-		return Math[extreme].apply(0, grep(arguments, function (n) { return typeof n === 'number'; }));
+		var numbers = grep(arguments, function (n) { return typeof n === 'number'; });
+		if (numbers.length) {
+			return Math[extreme].apply(0, numbers);
+		}
 	};
 
 // add more resolution to units
@@ -19998,8 +20248,8 @@ Scroller.prototype = {
 				M,
 				scrollerLeft, outlineTop, // left
 				L,
-				navigatorLeft + zoomedMin + halfOutline, outlineTop, // upper left of zoomed range
-				navigatorLeft + zoomedMin + halfOutline, outlineTop + outlineHeight, // lower left of z.r.
+				navigatorLeft + zoomedMin - halfOutline, outlineTop, // upper left of zoomed range
+				navigatorLeft + zoomedMin - halfOutline, outlineTop + outlineHeight, // lower left of z.r.
 				L,
 				navigatorLeft + zoomedMax - halfOutline, outlineTop + outlineHeight, // lower right of z.r.
 				L,
@@ -21225,19 +21475,24 @@ RangeSelector.prototype = {
 			inputGroup = rangeSelector.inputGroup,
 			buttonTheme = options.buttonTheme,
 			buttonPosition = options.buttonPosition || {},
-			inputEnabled = options.inputEnabled !== false,
+			inputEnabled = options.inputEnabled,
 			states = buttonTheme && buttonTheme.states,
 			plotLeft = chart.plotLeft,
 			yAlign,
 			buttonLeft,
-			buttonTop;
+			buttonTop,
+			buttonGroup = rangeSelector.group,
+			buttonBBox;
 
 
 		// create the elements
 		if (!rangeSelector.rendered) {
+
+			rangeSelector.group = buttonGroup = renderer.g('range-selector-buttons').add();
+
 			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, pick(buttonPosition.x, plotLeft), pick(buttonPosition.y, chart.plotTop - 35) + 15)
 				.css(options.labelStyle)
-				.add();
+				.add(buttonGroup);
 
 			// button starting position
 			buttonLeft = pick(buttonPosition.x, plotLeft) + rangeSelector.zoomText.getBBox().width + 5;
@@ -21260,7 +21515,7 @@ RangeSelector.prototype = {
 					.css({
 						textAlign: 'center'
 					})
-					.add();
+					.add(buttonGroup);
 
 				// increase button position for the next button
 				buttonLeft += buttons[i].width + pick(options.buttonSpacing, 5);
@@ -21274,7 +21529,7 @@ RangeSelector.prototype = {
 
 			// first create a wrapper outside the container in order to make
 			// the inputs work and make export correct
-			if (inputEnabled) {
+			if (inputEnabled !== false) {
 				rangeSelector.div = div = createElement('div', null, {
 					position: 'relative',
 					height: 0,
@@ -21293,17 +21548,23 @@ RangeSelector.prototype = {
 			}
 		}
 		
-		if (inputEnabled) {
+		if (inputEnabled !== false) {
 		
 			// Update the alignment to the updated spacing box
 			yAlign = chart.plotTop - 45;		
 			inputGroup.align(extend({
 				y: yAlign,
 				width: inputGroup.offset,
-				// detect collision with the exporting buttons
+				// Detect collision with the exporting buttons
 				x: navButtonOptions && (yAlign < (navButtonOptions.y || 0) + navButtonOptions.height - chart.spacing[0]) ? 
 					-40 : 0
 			}, options.inputPosition), true, chart.spacingBox);
+
+			// Hide if overlapping - inputEnabled is null or undefined // docs
+			if (!defined(inputEnabled)) {
+				buttonBBox = buttonGroup.getBBox();
+				inputGroup[inputGroup.translateX < buttonBBox.x + buttonBBox.width + 10 ? 'hide' : 'show']();
+			}
 	
 			// Set or reset the input values
 			rangeSelector.setInputValue('min', min);
@@ -21634,7 +21895,7 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 });
 
 // Override getPlotLinePath to allow for multipane charts
-Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, translatedValue) {
+wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old, force, translatedValue) {
 	var axis = this,
 		series = (this.isLinked && !this.series ? this.linkedParent.series : this.series),
 		chart = axis.chart,
@@ -21646,23 +21907,26 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 		x2,
 		y2,
 		result = [],
-		axes,
+		axes = [], //#3416 need a default array
 		axes2,
 		uniqueAxes;
 
-	// Get the related axes based on series
-	if (axis.coll === 'xAxis' || axis.coll === 'yAxis') { //#3360 series should be ignored in case of color Axis
-		axes = (axis.isXAxis ? 
-			(defined(axis.options.yAxis) ?
-				[chart.yAxis[axis.options.yAxis]] : 
-				map(series, function (S) { return S.yAxis; })
-			) :
-			(defined(axis.options.xAxis) ?
-				[chart.xAxis[axis.options.xAxis]] : 
-				map(series, function (S) { return S.xAxis; })
-			)
-		);
+	// Ignore in case of color Axis. #3360, #3524
+	if (axis.coll === 'colorAxis') {
+		return proceed.apply(this, [].slice.call(arguments, 1));
 	}
+
+	// Get the related axes based on series
+	axes = (axis.isXAxis ? 
+		(defined(axis.options.yAxis) ?
+			[chart.yAxis[axis.options.yAxis]] : 
+			map(series, function (S) { return S.yAxis; })
+		) :
+		(defined(axis.options.xAxis) ?
+			[chart.xAxis[axis.options.xAxis]] : 
+			map(series, function (S) { return S.xAxis; })
+		)
+	);
 
 	// Get the related axes based options.*Axis setting #2810
 	axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
@@ -21715,8 +21979,10 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 	}
 	if (result.length > 0) {
 		return renderer.crispPolyLine(result, lineWidth || 1); 
+	} else {
+		return null; //#3557 getPlotLinePath in regular Highcharts also returns null
 	}
-};
+});
 
 // Override getPlotBandPath to allow for multipane charts
 Axis.prototype.getPlotBandPath = function (from, to) {		
@@ -22007,7 +22273,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 	
 	pointFormat = pointFormat.replace(
 		'{point.change}',
-		(point.change > 0 ? '+' : '') + numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
+		(point.change > 0 ? '+' : '') + Highcharts.numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
 	); 
 	
 	return pointTooltipFormatter.apply(this, [pointFormat]);
@@ -22020,7 +22286,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 
 /**
  * Extend the Series prototype to create a separate series clip box. This is related
- * to using multiple panes, and a future pane logic should incorporate this feature.
+ * to using multiple panes, and a future pane logic should incorporate this feature (#2754).
  */
 wrap(Series.prototype, 'render', function (proceed) {
 	// Only do this on stock charts (#2939), and only if the series type handles clipping
@@ -22063,12 +22329,12 @@ extend(Highcharts, {
 	arrayMax: arrayMax,
 	charts: charts,
 	dateFormat: dateFormat,
+	error: error,
 	format: format,
 	pathAnim: pathAnim,
 	getOptions: getOptions,
 	hasBidiBug: hasBidiBug,
 	isTouchDevice: isTouchDevice,
-	numberFormat: numberFormat,
 	seriesTypes: seriesTypes,
 	setOptions: setOptions,
 	addEvent: addEvent,

@@ -11,31 +11,31 @@ $(function () {
             "value": 1
         },
         {
-            "hc-key": "gw-oi",
+            "hc-key": "gw-ga",
             "value": 2
         },
         {
-            "hc-key": "gw-qu",
+            "hc-key": "gw-to",
             "value": 3
         },
         {
-            "hc-key": "gw-ba",
+            "hc-key": "gw-bs",
             "value": 4
         },
         {
-            "hc-key": "gw-ga",
+            "hc-key": "gw-ca",
             "value": 5
         },
         {
-            "hc-key": "gw-to",
+            "hc-key": "gw-oi",
             "value": 6
         },
         {
-            "hc-key": "gw-bs",
+            "hc-key": "gw-qu",
             "value": 7
         },
         {
-            "hc-key": "gw-ca",
+            "hc-key": "gw-ba",
             "value": 8
         }
     ];
