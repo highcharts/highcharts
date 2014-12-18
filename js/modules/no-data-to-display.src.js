@@ -78,6 +78,10 @@
 				.add();
 			chart.noDataLabel.align(extend(chart.noDataLabel.getBBox(), noDataOptions.position), false, 'plotBox');
 		}
+		else
+		{
+			chart.noDataLabel.textSetter(text);
+		}
 	};
 
 	/**
