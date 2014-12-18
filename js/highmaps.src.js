@@ -8828,7 +8828,7 @@ Pointer.prototype = {
 
 		if (Highcharts.Tooltip && options.tooltip.enabled) {
 			chart.tooltip = new Tooltip(chart, options.tooltip);
-			this.followTouchMove = options.tooltip.followTouchMove;
+			this.followTouchMove = pick(options.tooltip.followTouchMove, true); // docs: true by default since 4.1
 		}
 
 		this.setDOMEvents();
@@ -9548,7 +9548,6 @@ extend(Highcharts.Pointer.prototype, {
 		var self = this,
 			chart = self.chart,
 			pinchDown = self.pinchDown,
-			followTouchMove = self.followTouchMove,
 			touches = e.touches,
 			touchesLength = touches.length,
 			lastValidTouch = self.lastValidTouch,
@@ -9560,7 +9559,7 @@ extend(Highcharts.Pointer.prototype, {
 			clip = {};
 
 		// On touch devices, only proceed to trigger click if a handler is defined
-		if ((hasZoom || followTouchMove) && !fireClickEvent) {
+		if (hasZoom && !fireClickEvent) {
 			e.preventDefault();
 		}
 		
@@ -9613,7 +9612,7 @@ extend(Highcharts.Pointer.prototype, {
 			self.scaleGroups(transform, clip);
 			
 			// Optionally move the tooltip on touchmove
-			if (!hasZoom && followTouchMove && touchesLength === 1) {
+			if (!hasZoom && self.followTouchMove && touchesLength === 1) {
 				this.runPointActions(self.normalize(e));
 			} else if (self.res) {
 				self.res = false;

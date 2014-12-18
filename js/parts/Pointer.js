@@ -46,7 +46,7 @@ Pointer.prototype = {
 
 		if (Highcharts.Tooltip && options.tooltip.enabled) {
 			chart.tooltip = new Tooltip(chart, options.tooltip);
-			this.followTouchMove = options.tooltip.followTouchMove;
+			this.followTouchMove = pick(options.tooltip.followTouchMove, true); // docs: true by default since 4.1
 		}
 
 		this.setDOMEvents();
