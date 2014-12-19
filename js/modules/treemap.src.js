@@ -41,6 +41,7 @@
 		},
 		layoutAlgorithm: 'sliceAndDice',
 		directionalChange: false,
+		levelIsConstant: true,
 		states: {
 			hover: {
 				borderColor: '#000000',
@@ -228,19 +229,22 @@
 				levelRoot = this.nodeMap[this.rootNode].level,							
 				i = 0,
 				level,
+				levelNr = options.levelIsConstant ? node.level : (node.level - levelRoot),
 				point;
 			node.isVisible = (node.id === this.rootNode) || !!(this.nodeMap[node.parent] && this.nodeMap[node.parent].isVisible);
+			levelNr = (levelNr > 0) ? levelNr : 0;
 			// If layoutAlgorithm is set for the level of the children, then default is overwritten
-			if (this.levelMap[node.level - levelRoot + 1]) {
-				level = this.levelMap[node.level - levelRoot + 1];
+			if (this.levelMap[levelNr + 1]) {
+				level = this.levelMap[levelNr + 1];
 				if (level.layoutAlgorithm && series[level.layoutAlgorithm]) {
 					algorithm = level.layoutAlgorithm;
 				}
 			}
 			childrenValues = series[algorithm](area, node.children);
 			each(node.children, function (child) {
+				levelNr = options.levelIsConstant ? child.level : (child.level - levelRoot);
 				point = series.points[child.i];
-				point.level = child.level - levelRoot;
+				point.level = levelNr;
 				childValues = childrenValues[i];
 				childValues.val = child.childrenTotal;
 				childValues.direction = area.direction;
@@ -638,7 +642,7 @@
 							delete hover.fill;
 						}
 					}
-					if (point.level < 1) {
+					if (point.node.level <= series.nodeMap[series.rootNode].level) {
 						attr.fill = 'none';
 						attr.zIndex = 0;
 						delete hover.fill;
@@ -678,7 +682,7 @@
 					if (point.graphic) {
 						point.graphic.css({ cursor: 'default' });
 					}
-					if (point.level === 1 && !point.isLeaf) {
+					if ((point.node.level - series.nodeMap[series.rootNode].level) === 1 && !point.isLeaf) {
 						nodeParent = series.nodeMap[series.nodeMap[point.id].parent];
 						nodeParentName = nodeParent.name || nodeParent.id;
 						if (point.graphic) {
