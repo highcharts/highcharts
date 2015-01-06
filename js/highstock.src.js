@@ -19032,11 +19032,31 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 		seriesDownPointAttr.hover[upColorProp] = stateOptions.hover.upColor || upColor;
 		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
 
+		//each(series.points, function (point) {
+		//	if (point.open < point.close) {
+		//		point.pointAttr = seriesDownPointAttr;
+		//	}
+		//});
 		each(series.points, function (point) {
-			if (point.open < point.close) {
-				point.pointAttr = seriesDownPointAttr;
+		    if (point.open < point.close) {
+
+		        if (point.upColor != "" && point.upColor != UNDEFINED) {
+
+		            point.pointAttr[''][upColorProp] = point.upColor;
+		            point.pointAttr.hover[upColorProp] = point.upColor;
+		            point.pointAttr.select[upColorProp] = point.upColor;
+
+		        }
+		        else {
+		            point.pointAttr = seriesDownPointAttr;
+		        }
+		       // point.pointAttr = seriesDownPointAttr;
 			}
 		});
+		
+		
+		
+		
 	},
 
 	/**
