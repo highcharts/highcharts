@@ -57,7 +57,7 @@
 	}
 
 	H.Series.prototype.hasData = function () {
-		return this.dataMax !== undefined && this.dataMin !== undefined;
+		return this.visible && this.dataMax !== undefined && this.dataMin !== undefined; // #3703
 	};
 	
 	/**
