@@ -1441,6 +1441,7 @@ Axis.prototype = {
 			newTickInterval = tickInterval,
 			slotSize = this.len / (((this.categories ? 1 : 0) + this.max - this.min) / tickInterval),
 			rotation,
+			rotationOption = labelOptions.rotation,
 			labelMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
 			step,
 			bestScore = Number.MAX_VALUE,
@@ -1453,7 +1454,10 @@ Axis.prototype = {
 			};
 		
 		if (horiz) {
-			autoRotation = slotSize < 80 && !defined(labelOptions.rotation) && !labelOptions.staggerLines && labelOptions.autoRotation;
+			autoRotation = defined(rotationOption) ? 
+				[rotationOption] :
+				slotSize < 80 && !labelOptions.staggerLines && labelOptions.autoRotation;
+
 			if (autoRotation) {
 
 				// Loop over the given autoRotation options, and determine which gives the best score. The 
