@@ -3,51 +3,51 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "nl-nh",
+            "hc-key": "nl-fr",
             "value": 0
         },
         {
-            "hc-key": "nl-fr",
+            "hc-key": "nl-gr",
             "value": 1
         },
         {
-            "hc-key": "nl-gr",
+            "hc-key": "nl-fl",
             "value": 2
         },
         {
-            "hc-key": "nl-fl",
+            "hc-key": "nl-ze",
             "value": 3
         },
         {
-            "hc-key": "nl-ze",
+            "hc-key": "nl-nh",
             "value": 4
         },
         {
-            "hc-key": "nl-nb",
+            "hc-key": "nl-zh",
             "value": 5
         },
         {
-            "hc-key": "nl-ut",
+            "hc-key": "nl-dr",
             "value": 6
         },
         {
-            "hc-key": "nl-zh",
+            "hc-key": "nl-ge",
             "value": 7
         },
         {
-            "hc-key": "nl-dr",
+            "hc-key": "nl-li",
             "value": 8
         },
         {
-            "hc-key": "nl-ge",
+            "hc-key": "nl-ov",
             "value": 9
         },
         {
-            "hc-key": "nl-li",
+            "hc-key": "nl-nb",
             "value": 10
         },
         {
-            "hc-key": "nl-ov",
+            "hc-key": "nl-ut",
             "value": 11
         }
     ];

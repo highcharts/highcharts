@@ -3,43 +3,43 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "cm-sw",
+            "hc-key": "cm-es",
             "value": 0
         },
         {
-            "hc-key": "cm-lt",
+            "hc-key": "cm-ad",
             "value": 1
         },
         {
-            "hc-key": "cm-en",
+            "hc-key": "cm-nw",
             "value": 2
         },
         {
-            "hc-key": "cm-su",
+            "hc-key": "cm-no",
             "value": 3
         },
         {
-            "hc-key": "cm-es",
+            "hc-key": "cm-ce",
             "value": 4
         },
         {
-            "hc-key": "cm-ad",
+            "hc-key": "cm-ou",
             "value": 5
         },
         {
-            "hc-key": "cm-nw",
+            "hc-key": "cm-en",
             "value": 6
         },
         {
-            "hc-key": "cm-no",
+            "hc-key": "cm-sw",
             "value": 7
         },
         {
-            "hc-key": "cm-ce",
+            "hc-key": "cm-lt",
             "value": 8
         },
         {
-            "hc-key": "cm-ou",
+            "hc-key": "cm-su",
             "value": 9
         }
     ];

@@ -30,7 +30,6 @@ var UNDEFINED,
 	extendClass = Highcharts.extendClass,
 	merge = Highcharts.merge,
 	pick = Highcharts.pick,
-	numberFormat = Highcharts.numberFormat,
 	defaultOptions = Highcharts.getOptions(),
 	seriesTypes = Highcharts.seriesTypes,
 	defaultPlotOptions = defaultOptions.plotOptions,
@@ -204,12 +203,19 @@ extend(ColorAxis.prototype, {
 	tweenColors: function (from, to, pos) {
 		// Check for has alpha, because rgba colors perform worse due to lack of
 		// support in WebKit.
-		var hasAlpha = (to.rgba[3] !== 1 || from.rgba[3] !== 1);
+		var hasAlpha;
+
+		from = from.rgba;
+		to = to.rgba;
+		hasAlpha = (to[3] !== 1 || from[3] !== 1);
+		if (!to.length || !from.length) {
+			Highcharts.error(23);
+		}
 		return (hasAlpha ? 'rgba(' : 'rgb(') + 
-			Math.round(to.rgba[0] + (from.rgba[0] - to.rgba[0]) * (1 - pos)) + ',' + 
-			Math.round(to.rgba[1] + (from.rgba[1] - to.rgba[1]) * (1 - pos)) + ',' + 
-			Math.round(to.rgba[2] + (from.rgba[2] - to.rgba[2]) * (1 - pos)) + 
-			(hasAlpha ? (',' + (to.rgba[3] + (from.rgba[3] - to.rgba[3]) * (1 - pos))) : '') + ')';
+			Math.round(to[0] + (from[0] - to[0]) * (1 - pos)) + ',' + 
+			Math.round(to[1] + (from[1] - to[1]) * (1 - pos)) + ',' + 
+			Math.round(to[2] + (from[2] - to[2]) * (1 - pos)) + 
+			(hasAlpha ? (',' + (to[3] + (from[3] - to[3]) * (1 - pos))) : '') + ')';
 	},
 
 	initDataClasses: function (userOptions) {
@@ -506,13 +512,13 @@ extend(ColorAxis.prototype, {
 					name = '> ';
 				}
 				if (from !== UNDEFINED) {
-					name += numberFormat(from, valueDecimals) + valueSuffix;
+					name += Highcharts.numberFormat(from, valueDecimals) + valueSuffix;
 				}
 				if (from !== UNDEFINED && to !== UNDEFINED) {
 					name += ' - ';
 				}
 				if (to !== UNDEFINED) {
-					name += numberFormat(to, valueDecimals) + valueSuffix;
+					name += Highcharts.numberFormat(to, valueDecimals) + valueSuffix;
 				}
 				
 				// Add a mock object to the legend items
@@ -897,6 +903,9 @@ wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches,
 });
 
 
+// The vector-effect attribute is not supported in IE <= 11 (at least), so we need 
+// diffent logic (#3218)
+var supportsVectorEffect = document.documentElement.style.vectorEffect !== undefined;
 
 /**
  * Extend the default options with map options
@@ -1151,6 +1160,11 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			if (yAxis && yAxis.options.minRange === undefined) {
 				yAxis.minRange = Math.min(5 * minRange, (this.maxY - this.minY) / 5, yAxis.minRange || MAX_VALUE);
 			}
+		} else {
+			this.minY = UNDEFINED;
+			this.maxY = UNDEFINED;
+			this.minX = UNDEFINED;
+			this.maxX = UNDEFINED;
 		}
 	},
 	
@@ -1308,7 +1322,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * in capable browsers.
 	 */
 	doFullTranslate: function () {
-		return this.isDirtyData || this.chart.renderer.isVML || !this.baseTrans;
+		return this.isDirtyData || this.chart.isResizing || this.chart.renderer.isVML || !this.baseTrans;
 	},
 	
 	/**
@@ -1333,10 +1347,11 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		
 				point.shapeType = 'path';
 				point.shapeArgs = {
-					//d: display ? series.translatePath(point.path) : ''
-					d: series.translatePath(point.path),
-					'vector-effect': 'non-scaling-stroke'
+					d: series.translatePath(point.path)
 				};
+				if (supportsVectorEffect) {
+					point.shapeArgs['vector-effect'] = 'non-scaling-stroke';
+				}
 			}
 		});
 		
@@ -1386,6 +1401,18 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				});
 			}
 
+			// If vector-effect is not supported, we set the stroke-width on the group element
+			// and let all point graphics inherit. That way we don't have to iterate over all 
+			// points to update the stroke-width on zooming.
+			if (!supportsVectorEffect) {
+				each(series.points, function (point) {
+					var attr = point.pointAttr[''];
+					if (attr['stroke-width'] === series.pointAttr['']['stroke-width']) {
+						attr['stroke-width'] = 'inherit';
+					}
+				});
+			}
+
 			// Draw them in transformGroup
 			series.group = series.transformGroup;
 			seriesTypes.column.prototype.drawPoints.apply(series);
@@ -1399,6 +1426,10 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					}
 					if (point.properties && point.properties['hc-key']) {
 						point.graphic.addClass('highcharts-key-' + point.properties['hc-key'].toLowerCase());
+					}
+
+					if (!supportsVectorEffect) {
+						point.graphic['stroke-widthSetter'] = noop;
 					}
 				}
 			});
@@ -1436,6 +1467,13 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 		}
 
+		// Set the stroke-width directly on the group element so the children inherit it. We need to use 
+		// setAttribute directly, because the stroke-widthSetter method expects a stroke color also to be 
+		// set.
+		if (!supportsVectorEffect) {
+			series.group.element.setAttribute('stroke-width', series.options.borderWidth / (scaleX || 1));
+		}
+
 		this.drawMapDataLabels();
 		
 		
@@ -1451,63 +1489,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		if (this.dataLabelsGroup) {
 			this.dataLabelsGroup.clip(this.chart.clipRect);
 		}
-
-		this.hideOverlappingDataLabels();
-	},
-
-	/**
-	 * Hide overlapping labels. Labels are moved and faded in and out on zoom to provide a smooth 
-	 * visual imression.
-	 */		
-	hideOverlappingDataLabels: function () {
-
-		var points = this.points,
-			len = points.length,
-			i,
-			j,
-			label1,
-			label2,
-			intersectRect = function (pos1, pos2, size1, size2) {
-				return !(
-					pos2.x > pos1.x + size1.width ||
-					pos2.x + size2.width < pos1.x ||
-					pos2.y > pos1.y + size1.height ||
-					pos2.y + size2.height < pos1.y
-				);
-			};
-
-		// Mark with initial opacity
-		each(points, function (point, label) {
-			label = point.dataLabel;
-			if (label) {
-				label.oldOpacity = label.opacity;
-				label.newOpacity = 1;
-			}
-		});
-
-		// Detect overlapping labels
-		for (i = 0; i < len - 1; ++i) {
-			label1 = points[i].dataLabel;
-
-			for (j = i + 1; j < len; ++j) {
-				label2 = points[j].dataLabel;
-				if (label1 && label2 && label1.newOpacity !== 0 && label2.newOpacity !== 0 && 
-						intersectRect(label1.alignAttr, label2.alignAttr, label1, label2)) {
-					(points[i].labelrank < points[j].labelrank ? label1 : label2).newOpacity = 0;
-				}
-			}
-		}
-
-		// Hide or show
-		each(points, function (point, label) {
-			label = point.dataLabel;
-			if (label) {
-				if (label.oldOpacity !== label.newOpacity) {
-					label[label.isOld ? 'animate' : 'attr'](extend({ opacity: label.newOpacity }, label.alignAttr));
-				}
-				label.isOld = true;
-			}
-		});
 	},
 
 	/**
@@ -1632,7 +1613,86 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	animateDrillupTo: function (init) {
 		seriesTypes.column.prototype.animateDrillupTo.call(this, init);
 	}
-}));
+}));/**
+ * @license Highmaps JS v1.0.4-modified ()
+ * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
+ *
+ * (c) 2010-2014 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+
+(function (H) {
+	var Series = H.Series,
+		wrap = H.wrap;
+
+	// Add the overlapping logic after drawing data labels
+	wrap(Series.prototype, 'drawDataLabels', function (proceed) {
+		proceed.call(this);
+		this.hideOverlappingDataLabels();
+	});
+
+	/**
+	 * Hide overlapping labels. Labels are moved and faded in and out on zoom to provide a smooth 
+	 * visual imression.
+	 */		
+	Series.prototype.hideOverlappingDataLabels = function () {
+
+		var points = this.points,
+			len = points.length,
+			point,
+			label,
+			i,
+			j,
+			label1,
+			label2,
+			intersectRect = function (pos1, pos2, size1, size2) {
+				return !(
+					pos2.x > pos1.x + size1.width ||
+					pos2.x + size2.width < pos1.x ||
+					pos2.y > pos1.y + size1.height ||
+					pos2.y + size2.height < pos1.y
+				);
+			};
+	
+		// Mark with initial opacity
+		for (i = 0; i < len; i++) {
+			point = points[i];
+			label = point.dataLabel;
+			if (label) {
+				label.oldOpacity = label.opacity;
+				label.newOpacity = 1;
+			}
+		}
+
+		// Detect overlapping labels
+		for (i = 0; i < len; i++) {
+			point = points[i];
+			label1 = point.dataLabel;
+
+			for (j = i + 1; j < len; ++j) {
+				label2 = points[j].dataLabel;
+				if (label1 && label2 && label1.placed && label2.placed && label1.newOpacity !== 0 && label2.newOpacity !== 0 && 
+						intersectRect(label1.alignAttr, label2.alignAttr, label1, label2)) {
+					(point.labelrank < points[j].labelrank ? label1 : label2).newOpacity = 0;
+				}
+			}
+		}
+
+		// Hide or show
+		for (i = 0; i < len; i++) {
+			label = points[i].dataLabel;
+			if (label) {
+				if (label.oldOpacity !== label.newOpacity && label.placed) {
+					label.alignAttr.opacity = label.newOpacity;
+					label[label.isOld ? 'animate' : 'attr'](label.alignAttr);
+				}
+				label.isOld = true;
+			}
+		}
+	};
+
+}(Highcharts));
 
 
 // The mapline series type

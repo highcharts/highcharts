@@ -2,5 +2,5 @@
 	"leftPath": "http://code.highcharts.com",
 	"rightPath": "http://code.highcharts.th",
 	"exportServer": "http://localhost:8080/export/",
-	"jQueryPath": "http://code.jquery.com/jquery-1.8.2.js"
+	"jQueryVersion": "1.8.0"
 }

@@ -3,15 +3,15 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "vi-6399",
+            "hc-key": "vi-3617",
             "value": 0
         },
         {
-            "hc-key": "vi-3617",
+            "hc-key": "vi-6398",
             "value": 1
         },
         {
-            "hc-key": "vi-6398",
+            "hc-key": "vi-6399",
             "value": 2
         }
     ];

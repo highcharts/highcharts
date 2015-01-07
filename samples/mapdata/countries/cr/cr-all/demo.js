@@ -7,27 +7,27 @@ $(function () {
             "value": 0
         },
         {
-            "hc-key": "cr-li",
+            "hc-key": "cr-sj",
             "value": 1
         },
         {
-            "hc-key": "cr-ca",
+            "hc-key": "cr-al",
             "value": 2
         },
         {
-            "hc-key": "cr-he",
+            "hc-key": "cr-gu",
             "value": 3
         },
         {
-            "hc-key": "cr-sj",
+            "hc-key": "cr-li",
             "value": 4
         },
         {
-            "hc-key": "cr-al",
+            "hc-key": "cr-ca",
             "value": 5
         },
         {
-            "hc-key": "cr-gu",
+            "hc-key": "cr-he",
             "value": 6
         }
     ];

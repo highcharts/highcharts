@@ -39,3 +39,6 @@ exporting-server/java/highcharts-export/highcharts-export-web/src/main/webapp/.e
 nbproject/
 *.DS_Store
 /node_modules/
+
+.idea/
+*.iml

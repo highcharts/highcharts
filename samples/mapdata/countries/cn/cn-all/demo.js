@@ -19,115 +19,115 @@ $(function () {
             "value": 3
         },
         {
-            "hc-key": "cn-yn",
+            "hc-key": "cn-xz",
             "value": 4
         },
         {
-            "hc-key": "cn-xz",
+            "hc-key": "cn-yn",
             "value": 5
         },
         {
-            "hc-key": "cn-xj",
+            "hc-key": "cn-ah",
             "value": 6
         },
         {
-            "hc-key": "cn-qh",
+            "hc-key": "cn-hu",
             "value": 7
         },
         {
-            "hc-key": "cn-gs",
+            "hc-key": "cn-sa",
             "value": 8
         },
         {
-            "hc-key": "cn-nx",
+            "hc-key": "cn-cq",
             "value": 9
         },
         {
-            "hc-key": "cn-sa",
+            "hc-key": "cn-gz",
             "value": 10
         },
         {
-            "hc-key": "cn-jl",
+            "hc-key": "cn-hn",
             "value": 11
         },
         {
-            "hc-key": "cn-ah",
+            "hc-key": "cn-sc",
             "value": 12
         },
         {
-            "hc-key": "cn-hu",
+            "hc-key": "cn-sx",
             "value": 13
         },
         {
-            "hc-key": "cn-cq",
+            "hc-key": "cn-he",
             "value": 14
         },
         {
-            "hc-key": "cn-gz",
+            "hc-key": "cn-jx",
             "value": 15
         },
         {
-            "hc-key": "cn-hn",
+            "hc-key": "cn-nm",
             "value": 16
         },
         {
-            "hc-key": "cn-sc",
+            "hc-key": "cn-gx",
             "value": 17
         },
         {
-            "hc-key": "cn-sx",
+            "hc-key": "cn-hl",
             "value": 18
         },
         {
-            "hc-key": "cn-gx",
+            "hc-key": "cn-fj",
             "value": 19
         },
         {
-            "hc-key": "cn-he",
+            "hc-key": "cn-gd",
             "value": 20
         },
         {
-            "hc-key": "cn-fj",
+            "hc-key": "cn-bj",
             "value": 21
         },
         {
-            "hc-key": "cn-jx",
+            "hc-key": "cn-hb",
             "value": 22
         },
         {
-            "hc-key": "cn-gd",
+            "hc-key": "cn-ln",
             "value": 23
         },
         {
-            "hc-key": "cn-nm",
+            "hc-key": "cn-sd",
             "value": 24
         },
         {
-            "hc-key": "cn-bj",
+            "hc-key": "cn-tj",
             "value": 25
         },
         {
-            "hc-key": "cn-hb",
+            "hc-key": "cn-js",
             "value": 26
         },
         {
-            "hc-key": "cn-hl",
+            "hc-key": "cn-qh",
             "value": 27
         },
         {
-            "hc-key": "cn-ln",
+            "hc-key": "cn-gs",
             "value": 28
         },
         {
-            "hc-key": "cn-sd",
+            "hc-key": "cn-xj",
             "value": 29
         },
         {
-            "hc-key": "cn-tj",
+            "hc-key": "cn-jl",
             "value": 30
         },
         {
-            "hc-key": "cn-js",
+            "hc-key": "cn-nx",
             "value": 31
         }
     ];

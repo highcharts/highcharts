@@ -26,6 +26,7 @@
 	<bean id="serverObjectFactory" class="com.highcharts.export.pool.ServerObjectFactory" depends-on="tempDir">
 		<property name="host" value="${host}"/>
 		<property name="basePort" value="${port}"/>
+		<property name="poolSize"  value="${poolSize}"/>
 		<property name="exec" value="${exec}"/>
 		<property name="script" value="${script}"/>
 		<property name="readTimeout" value="${readTimeout}"/>

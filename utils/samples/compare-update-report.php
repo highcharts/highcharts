@@ -1,7 +1,7 @@
 <?php
 
 $path = isset($_GET['path']) ? $_GET['path'] : $path;
-$diff = isset($_GET['diff']) ? $_GET['diff'] : $difference['dissimilarityIndex'];
+$diff = isset($_GET['diff']) ? $_GET['diff'] : @$difference['dissimilarityIndex'];
 
 $tempFile = 'temp/compare.json';
 $compare = file_exists($tempFile) ? json_decode(file_get_contents($tempFile)) : new stdClass;

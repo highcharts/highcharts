@@ -7,19 +7,19 @@ $(function () {
             "value": 0
         },
         {
-            "hc-key": "cy-li",
+            "hc-key": "cy-ni",
             "value": 1
         },
         {
-            "hc-key": "cy-ni",
+            "hc-key": "cy-pa",
             "value": 2
         },
         {
-            "hc-key": "cy-pa",
+            "hc-key": "cy-fa",
             "value": 3
         },
         {
-            "hc-key": "cy-fa",
+            "hc-key": "cy-li",
             "value": 4
         }
     ];

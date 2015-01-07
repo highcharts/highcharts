@@ -28,6 +28,7 @@ H.extend(H.Data.prototype, {
 			point,
 			positions,
 			fixedPoint = [0, 0],
+			startPoint = [0, 0],
 			isRelative,
 			isString,
 			operator,
@@ -73,6 +74,13 @@ H.extend(H.Data.prototype, {
 				if (operator === 'c' || operator === 'C') {
 					positions = 6;
 				}
+
+				// When moving after a closed subpath, start again from previous subpath's starting point
+				if (operator === 'm') {
+					startPoint = [parseFloat(path[i + 1]) + startPoint[0], parseFloat(path[i + 2]) + startPoint[1]];
+				} else if (operator === 'M') {
+					startPoint = [parseFloat(path[i + 1]), parseFloat(path[i + 2])];
+				}
 				
 				// Enter or exit relative mode
 				if (operator === 'm' || operator === 'l' || operator === 'c') {
@@ -107,6 +115,8 @@ H.extend(H.Data.prototype, {
 					isRelative = false;
 					path[i] = 'L';
 					path.splice(i + 1, 0, fixedPoint[0]);
+				} else if (operator === 'z' || operator === 'Z') {
+					fixedPoint = startPoint;
 				}
 			
 			// Handle numbers
@@ -294,7 +304,10 @@ H.extend(H.Data.prototype, {
 
 			// Make a hidden frame where the SVG is rendered
 			data.$frame = data.$frame || $('<div>')
-				.hide()
+				.css({
+					position: 'absolute', // https://bugzilla.mozilla.org/show_bug.cgi?id=756985
+					top: '-9999em'
+				})
 				.appendTo($(document.body));
 			data.$frame.html(xml);
 			xml = $('svg', data.$frame)[0];

@@ -19,7 +19,7 @@ $(function () {
             },
 
             rangeSelector: {
-                inputEnabled: $('#container').width() > 480,
+                
                 buttons: [{
                     type: 'day',
                     count: 3,

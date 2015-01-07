@@ -165,7 +165,7 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 });
 
 // Override getPlotLinePath to allow for multipane charts
-Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, translatedValue) {
+wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old, force, translatedValue) {
 	var axis = this,
 		series = (this.isLinked && !this.series ? this.linkedParent.series : this.series),
 		chart = axis.chart,
@@ -181,19 +181,22 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 		axes2,
 		uniqueAxes;
 
-	// Get the related axes based on series
-	if (axis.coll === 'xAxis' || axis.coll === 'yAxis') { //#3360 series should be ignored in case of color Axis
-		axes = (axis.isXAxis ? 
-			(defined(axis.options.yAxis) ?
-				[chart.yAxis[axis.options.yAxis]] : 
-				map(series, function (S) { return S.yAxis; })
-			) :
-			(defined(axis.options.xAxis) ?
-				[chart.xAxis[axis.options.xAxis]] : 
-				map(series, function (S) { return S.xAxis; })
-			)
-		);
+	// Ignore in case of color Axis. #3360, #3524
+	if (axis.coll === 'colorAxis') {
+		return proceed.apply(this, [].slice.call(arguments, 1));
 	}
+
+	// Get the related axes based on series
+	axes = (axis.isXAxis ? 
+		(defined(axis.options.yAxis) ?
+			[chart.yAxis[axis.options.yAxis]] : 
+			map(series, function (S) { return S.yAxis; })
+		) :
+		(defined(axis.options.xAxis) ?
+			[chart.xAxis[axis.options.xAxis]] : 
+			map(series, function (S) { return S.xAxis; })
+		)
+	);
 
 	// Get the related axes based options.*Axis setting #2810
 	axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
@@ -247,7 +250,7 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 	if (result.length > 0) {
 		return renderer.crispPolyLine(result, lineWidth || 1); 
 	}
-};
+});
 
 // Override getPlotBandPath to allow for multipane charts
 Axis.prototype.getPlotBandPath = function (from, to) {		
@@ -538,7 +541,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 	
 	pointFormat = pointFormat.replace(
 		'{point.change}',
-		(point.change > 0 ? '+' : '') + numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
+		(point.change > 0 ? '+' : '') + Highcharts.numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
 	); 
 	
 	return pointTooltipFormatter.apply(this, [pointFormat]);
@@ -551,7 +554,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 
 /**
  * Extend the Series prototype to create a separate series clip box. This is related
- * to using multiple panes, and a future pane logic should incorporate this feature.
+ * to using multiple panes, and a future pane logic should incorporate this feature (#2754).
  */
 wrap(Series.prototype, 'render', function (proceed) {
 	// Only do this on stock charts (#2939), and only if the series type handles clipping

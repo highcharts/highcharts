@@ -3,55 +3,55 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "tl-am",
+            "hc-key": "tl-dl",
             "value": 0
         },
         {
-            "hc-key": "tl-dl",
+            "hc-key": "tl-am",
             "value": 1
         },
         {
-            "hc-key": "tl-lq",
+            "hc-key": "tl-bb",
             "value": 2
         },
         {
-            "hc-key": "tl-al",
+            "hc-key": "tl-cl",
             "value": 3
         },
         {
-            "hc-key": "tl-an",
+            "hc-key": "tl-er",
             "value": 4
         },
         {
-            "hc-key": "tl-bc",
+            "hc-key": "tl-mt",
             "value": 5
         },
         {
-            "hc-key": "tl-bb",
+            "hc-key": "tl-mf",
             "value": 6
         },
         {
-            "hc-key": "tl-cl",
+            "hc-key": "tl-vq",
             "value": 7
         },
         {
-            "hc-key": "tl-er",
+            "hc-key": "tl-bt",
             "value": 8
         },
         {
-            "hc-key": "tl-mt",
+            "hc-key": "tl-lq",
             "value": 9
         },
         {
-            "hc-key": "tl-mf",
+            "hc-key": "tl-al",
             "value": 10
         },
         {
-            "hc-key": "tl-vq",
+            "hc-key": "tl-an",
             "value": 11
         },
         {
-            "hc-key": "tl-bt",
+            "hc-key": "tl-bc",
             "value": 12
         }
     ];

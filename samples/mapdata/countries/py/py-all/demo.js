@@ -3,75 +3,75 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "py-as",
+            "hc-key": "py-ag",
             "value": 0
         },
         {
-            "hc-key": "py-ag",
+            "hc-key": "py-bq",
             "value": 1
         },
         {
-            "hc-key": "py-bq",
+            "hc-key": "py-cn",
             "value": 2
         },
         {
-            "hc-key": "py-cn",
+            "hc-key": "py-ph",
             "value": 3
         },
         {
-            "hc-key": "py-ph",
+            "hc-key": "py-cr",
             "value": 4
         },
         {
-            "hc-key": "py-cr",
+            "hc-key": "py-sp",
             "value": 5
         },
         {
-            "hc-key": "py-sp",
+            "hc-key": "py-ce",
             "value": 6
         },
         {
-            "hc-key": "py-ce",
+            "hc-key": "py-mi",
             "value": 7
         },
         {
-            "hc-key": "py-mi",
+            "hc-key": "py-ne",
             "value": 8
         },
         {
-            "hc-key": "py-ne",
+            "hc-key": "py-gu",
             "value": 9
         },
         {
-            "hc-key": "py-gu",
+            "hc-key": "py-pg",
             "value": 10
         },
         {
-            "hc-key": "py-pg",
+            "hc-key": "py-am",
             "value": 11
         },
         {
-            "hc-key": "py-am",
+            "hc-key": "py-aa",
             "value": 12
         },
         {
-            "hc-key": "py-aa",
+            "hc-key": "py-cg",
             "value": 13
         },
         {
-            "hc-key": "py-cg",
+            "hc-key": "py-cz",
             "value": 14
         },
         {
-            "hc-key": "py-cz",
+            "hc-key": "py-cy",
             "value": 15
         },
         {
-            "hc-key": "py-cy",
+            "hc-key": "py-it",
             "value": 16
         },
         {
-            "hc-key": "py-it",
+            "hc-key": "py-as",
             "value": 17
         }
     ];

@@ -13,7 +13,6 @@ var UNDEFINED,
 	extendClass = Highcharts.extendClass,
 	merge = Highcharts.merge,
 	pick = Highcharts.pick,
-	numberFormat = Highcharts.numberFormat,
 	seriesTypes = Highcharts.seriesTypes,
 	wrap = Highcharts.wrap,
 	noop = function () {};

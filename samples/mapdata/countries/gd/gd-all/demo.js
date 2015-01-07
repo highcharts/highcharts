@@ -11,23 +11,23 @@ $(function () {
             "value": 1
         },
         {
-            "hc-key": "gd-6580",
+            "hc-key": "gd-6583",
             "value": 2
         },
         {
-            "hc-key": "gd-6579",
+            "hc-key": "gd-6582",
             "value": 3
         },
         {
-            "hc-key": "gd-6583",
+            "hc-key": "gd-6581",
             "value": 4
         },
         {
-            "hc-key": "gd-6582",
+            "hc-key": "gd-6580",
             "value": 5
         },
         {
-            "hc-key": "gd-6581",
+            "hc-key": "gd-6579",
             "value": 6
         }
     ];

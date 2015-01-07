@@ -139,7 +139,7 @@ public class SVGConverter {
 				throw new PoolException(nse.getMessage());
 		} catch (Exception e) {
 			logger.error(e);
-			throw new SVGConverterException("Error converting SVG" + e.getMessage());
+			throw new SVGConverterException("Error converting SVG: " + e.getMessage());
 		} finally {
 			try {
 				serverPool.returnObject(server, true);

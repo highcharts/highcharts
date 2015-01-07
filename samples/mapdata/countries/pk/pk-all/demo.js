@@ -3,35 +3,35 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "pk-ta",
+            "hc-key": "pk-sd",
             "value": 0
         },
         {
-            "hc-key": "pk-is",
+            "hc-key": "pk-ba",
             "value": 1
         },
         {
-            "hc-key": "pk-pb",
+            "hc-key": "pk-jk",
             "value": 2
         },
         {
-            "hc-key": "pk-nw",
+            "hc-key": "pk-na",
             "value": 3
         },
         {
-            "hc-key": "pk-jk",
+            "hc-key": "pk-nw",
             "value": 4
         },
         {
-            "hc-key": "pk-sd",
+            "hc-key": "pk-ta",
             "value": 5
         },
         {
-            "hc-key": "pk-ba",
+            "hc-key": "pk-is",
             "value": 6
         },
         {
-            "hc-key": "pk-na",
+            "hc-key": "pk-pb",
             "value": 7
         }
     ];

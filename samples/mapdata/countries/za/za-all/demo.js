@@ -7,35 +7,35 @@ $(function () {
             "value": 0
         },
         {
-            "hc-key": "za-nc",
+            "hc-key": "za-np",
             "value": 1
         },
         {
-            "hc-key": "za-nw",
+            "hc-key": "za-nl",
             "value": 2
         },
         {
-            "hc-key": "za-fs",
+            "hc-key": "za-wc",
             "value": 3
         },
         {
-            "hc-key": "za-gt",
+            "hc-key": "za-nc",
             "value": 4
         },
         {
-            "hc-key": "za-mp",
+            "hc-key": "za-nw",
             "value": 5
         },
         {
-            "hc-key": "za-np",
+            "hc-key": "za-fs",
             "value": 6
         },
         {
-            "hc-key": "za-nl",
+            "hc-key": "za-gt",
             "value": 7
         },
         {
-            "hc-key": "za-wc",
+            "hc-key": "za-mp",
             "value": 8
         }
     ];

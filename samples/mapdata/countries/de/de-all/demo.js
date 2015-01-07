@@ -7,63 +7,63 @@ $(function () {
             "value": 0
         },
         {
-            "hc-key": "de-hb",
+            "hc-key": "de-sh",
             "value": 1
         },
         {
-            "hc-key": "de-sh",
+            "hc-key": "de-be",
             "value": 2
         },
         {
-            "hc-key": "de-be",
+            "hc-key": "de-mv",
             "value": 3
         },
         {
-            "hc-key": "de-mv",
+            "hc-key": "de-hb",
             "value": 4
         },
         {
-            "hc-key": "de-hh",
+            "hc-key": "de-sl",
             "value": 5
         },
         {
-            "hc-key": "de-rp",
+            "hc-key": "de-by",
             "value": 6
         },
         {
-            "hc-key": "de-sl",
+            "hc-key": "de-th",
             "value": 7
         },
         {
-            "hc-key": "de-by",
+            "hc-key": "de-st",
             "value": 8
         },
         {
-            "hc-key": "de-th",
+            "hc-key": "de-sn",
             "value": 9
         },
         {
-            "hc-key": "de-st",
+            "hc-key": "de-bb",
             "value": 10
         },
         {
-            "hc-key": "de-sn",
+            "hc-key": "de-nw",
             "value": 11
         },
         {
-            "hc-key": "de-br",
+            "hc-key": "de-bw",
             "value": 12
         },
         {
-            "hc-key": "de-nw",
+            "hc-key": "de-he",
             "value": 13
         },
         {
-            "hc-key": "de-bw",
+            "hc-key": "de-hh",
             "value": 14
         },
         {
-            "hc-key": "de-he",
+            "hc-key": "de-rp",
             "value": 15
         }
     ];

@@ -3,59 +3,59 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "jm-cl",
+            "hc-key": "jm-ha",
             "value": 0
         },
         {
-            "hc-key": "jm-ha",
+            "hc-key": "jm-ma",
             "value": 1
         },
         {
-            "hc-key": "jm-ma",
+            "hc-key": "jm-se",
             "value": 2
         },
         {
-            "hc-key": "jm-se",
+            "hc-key": "jm-sj",
             "value": 3
         },
         {
-            "hc-key": "jm-sj",
+            "hc-key": "jm-tr",
             "value": 4
         },
         {
-            "hc-key": "jm-tr",
+            "hc-key": "jm-we",
             "value": 5
         },
         {
-            "hc-key": "jm-we",
+            "hc-key": "jm-ki",
             "value": 6
         },
         {
-            "hc-key": "jm-ki",
+            "hc-key": "jm-po",
             "value": 7
         },
         {
-            "hc-key": "jm-po",
+            "hc-key": "jm-sn",
             "value": 8
         },
         {
-            "hc-key": "jm-sn",
+            "hc-key": "jm-sc",
             "value": 9
         },
         {
-            "hc-key": "jm-sc",
+            "hc-key": "jm-sm",
             "value": 10
         },
         {
-            "hc-key": "jm-sm",
+            "hc-key": "jm-sd",
             "value": 11
         },
         {
-            "hc-key": "jm-sd",
+            "hc-key": "jm-st",
             "value": 12
         },
         {
-            "hc-key": "jm-st",
+            "hc-key": "jm-cl",
             "value": 13
         }
     ];

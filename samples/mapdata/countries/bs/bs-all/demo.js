@@ -27,15 +27,15 @@ $(function () {
             "value": 5
         },
         {
-            "hc-key": "bs-wg",
+            "hc-key": "bs-ce",
             "value": 6
         },
         {
-            "hc-key": "bs-eg",
+            "hc-key": "bs-wg",
             "value": 7
         },
         {
-            "hc-key": "bs-ce",
+            "hc-key": "bs-eg",
             "value": 8
         },
         {

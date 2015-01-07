@@ -7,111 +7,111 @@ $(function () {
             "value": 0
         },
         {
-            "hc-key": "mw-na",
+            "hc-key": "mw-ma",
             "value": 1
         },
         {
-            "hc-key": "mw-nk",
+            "hc-key": "mw-de",
             "value": 2
         },
         {
-            "hc-key": "mw-ru",
+            "hc-key": "mw-li",
             "value": 3
         },
         {
-            "hc-key": "mw-ma",
+            "hc-key": "mw-do",
             "value": 4
         },
         {
-            "hc-key": "mw-de",
+            "hc-key": "mw-mg",
             "value": 5
         },
         {
-            "hc-key": "mw-li",
+            "hc-key": "mw-mc",
             "value": 6
         },
         {
-            "hc-key": "mw-do",
+            "hc-key": "mw-nu",
             "value": 7
         },
         {
-            "hc-key": "mw-mg",
+            "hc-key": "mw-ni",
             "value": 8
         },
         {
-            "hc-key": "mw-mc",
+            "hc-key": "mw-sa",
             "value": 9
         },
         {
-            "hc-key": "mw-nu",
+            "hc-key": "mw-ba",
             "value": 10
         },
         {
-            "hc-key": "mw-ni",
+            "hc-key": "mw-ck",
             "value": 11
         },
         {
-            "hc-key": "mw-sa",
+            "hc-key": "mw-th",
             "value": 12
         },
         {
-            "hc-key": "mw-ba",
+            "hc-key": "mw-cr",
             "value": 13
         },
         {
-            "hc-key": "mw-ck",
+            "hc-key": "mw-ns",
             "value": 14
         },
         {
-            "hc-key": "mw-th",
+            "hc-key": "mw-zo",
             "value": 15
         },
         {
-            "hc-key": "mw-cr",
+            "hc-key": "mw-bl",
             "value": 16
         },
         {
-            "hc-key": "mw-ns",
+            "hc-key": "mw-1649",
             "value": 17
         },
         {
-            "hc-key": "mw-zo",
+            "hc-key": "mw-mj",
             "value": 18
         },
         {
-            "hc-key": "mw-bl",
+            "hc-key": "mw-ph",
             "value": 19
         },
         {
-            "hc-key": "mw-1649",
+            "hc-key": "mw-mw",
             "value": 20
         },
         {
-            "hc-key": "mw-mj",
+            "hc-key": "mw-1011",
             "value": 21
         },
         {
-            "hc-key": "mw-ph",
+            "hc-key": "mw-ct",
             "value": 22
         },
         {
-            "hc-key": "mw-mw",
+            "hc-key": "mw-ks",
             "value": 23
         },
         {
-            "hc-key": "mw-1011",
+            "hc-key": "mw-mz",
             "value": 24
         },
         {
-            "hc-key": "mw-ct",
+            "hc-key": "mw-na",
             "value": 25
         },
         {
-            "hc-key": "mw-ks",
+            "hc-key": "mw-nk",
             "value": 26
         },
         {
-            "hc-key": "mw-mz",
+            "hc-key": "mw-ru",
             "value": 27
         }
     ];

@@ -3,39 +3,39 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "sm-6410",
+            "hc-key": "sm-6415",
             "value": 0
         },
         {
-            "hc-key": "sm-6411",
+            "hc-key": "sm-6416",
             "value": 1
         },
         {
-            "hc-key": "sm-6412",
+            "hc-key": "sm-6417",
             "value": 2
         },
         {
-            "hc-key": "sm-6413",
+            "hc-key": "sm-3634",
             "value": 3
         },
         {
-            "hc-key": "sm-6414",
+            "hc-key": "sm-6410",
             "value": 4
         },
         {
-            "hc-key": "sm-6415",
+            "hc-key": "sm-6411",
             "value": 5
         },
         {
-            "hc-key": "sm-6416",
+            "hc-key": "sm-6412",
             "value": 6
         },
         {
-            "hc-key": "sm-6417",
+            "hc-key": "sm-6413",
             "value": 7
         },
         {
-            "hc-key": "sm-3634",
+            "hc-key": "sm-6414",
             "value": 8
         }
     ];

@@ -7,11 +7,11 @@ $(function () {
             "value": 0
         },
         {
-            "hc-key": "be-3532",
+            "hc-key": "be-3527",
             "value": 1
         },
         {
-            "hc-key": "be-489",
+            "hc-key": "be-3532",
             "value": 2
         },
         {
@@ -19,31 +19,31 @@ $(function () {
             "value": 3
         },
         {
-            "hc-key": "be-490",
+            "hc-key": "be-3534",
             "value": 4
         },
         {
-            "hc-key": "be-3526",
+            "hc-key": "be-3535",
             "value": 5
         },
         {
-            "hc-key": "be-3527",
+            "hc-key": "be-3528",
             "value": 6
         },
         {
-            "hc-key": "be-3534",
+            "hc-key": "be-3529",
             "value": 7
         },
         {
-            "hc-key": "be-3535",
+            "hc-key": "be-489",
             "value": 8
         },
         {
-            "hc-key": "be-3528",
+            "hc-key": "be-490",
             "value": 9
         },
         {
-            "hc-key": "be-3529",
+            "hc-key": "be-3526",
             "value": 10
         }
     ];

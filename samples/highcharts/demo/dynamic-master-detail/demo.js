@@ -220,10 +220,7 @@ $(function () {
                             // reverse engineer the last part of the data
                             $.each(this.series[0].data, function () {
                                 if (this.x > min && this.x < max) {
-                                    detailData.push({
-                                        x: this.x,
-                                        y: this.y
-                                    });
+                                    detailData.push([this.x, this.y]);
                                 }
                             });
 

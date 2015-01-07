@@ -9,6 +9,7 @@ $(function () {
         legend: {
             align: 'right',
             verticalAlign: 'top',
+            layout: 'vertical',
             y: 100
         },
 

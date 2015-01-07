@@ -8,6 +8,9 @@ defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
 	lineColor: '#333',
 	dashStyle: 'dot',
 	borderColor: '#333',
+	dataLabels: {
+		inside: true
+	},
 	states: {
 		hover: {
 			lineWidthPlus: 0 // #3126
@@ -27,17 +30,6 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	pointValKey: 'y',
 
 	/**
-	 * Init waterfall series, force stacking
-	 */
-	init: function (chart, options) {
-		// force stacking
-		options.stacking = true;
-
-		seriesTypes.column.prototype.init.call(this, chart, options);
-	},
-
-
-	/**
 	 * Translate data points from raw values
 	 */
 	translate: function () {
@@ -51,10 +43,12 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			shapeArgs,
 			stack,
 			y,
+			yValue,
 			previousY,
 			previousIntermediate,
-			stackPoint,
+			range,
 			threshold = options.threshold,
+			stacking = options.stacking,
 			tooltipY;
 
 		// run column series translate
@@ -66,35 +60,38 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		for (i = 0, len = points.length; i < len; i++) {
 			// cache current point object
 			point = points[i];
+			yValue = this.processedYData[i];
 			shapeArgs = point.shapeArgs;
 
 			// get current stack
-			stack = series.getStack(i);
-			stackPoint = stack.points[series.index + ',' + i];
+			stack = stacking && yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey];
+			range = stack ? 
+				stack[point.x].points[series.index + ',' + i] :
+				[0, yValue];
 
 			// override point value for sums
 			if (isNaN(point.y)) {
-				point.y = series.yData[i];
+				point.y = yValue;
 			}
 
 			// up points
-			y = mathMax(previousY, previousY + point.y) + stackPoint[0];
+			y = mathMax(previousY, previousY + point.y) + range[0];
 			shapeArgs.y = yAxis.translate(y, 0, 1);
 
 
 			// sum points
 			if (point.isSum) {
-				shapeArgs.y = yAxis.translate(stackPoint[1], 0, 1);
-				shapeArgs.height = yAxis.translate(stackPoint[0], 0, 1) - shapeArgs.y;
+				shapeArgs.y = yAxis.translate(range[1], 0, 1);
+				shapeArgs.height = yAxis.translate(range[0], 0, 1) - shapeArgs.y;
 
 			} else if (point.isIntermediateSum) {
-				shapeArgs.y = yAxis.translate(stackPoint[1], 0, 1);
+				shapeArgs.y = yAxis.translate(range[1], 0, 1);
 				shapeArgs.height = yAxis.translate(previousIntermediate, 0, 1) - shapeArgs.y;
-				previousIntermediate = stackPoint[1];
+				previousIntermediate = range[1];
 
 			// if it's not the sum point, update previous stack end position
 			} else {
-				previousY += stack.total;
+				previousY += yValue;
 			}
 
 			// negative points
@@ -192,7 +189,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
 
 		each(series.points, function (point) {
-			if (point.y > 0 && !point.color) {
+			if (point.y > 0 && !point.options.color) {
 				point.pointAttr = seriesDownPointAttr;
 				point.color = upColor;
 			}
@@ -242,21 +239,6 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	 * Extremes are recorded in processData
 	 */
 	getExtremes: noop,
-
-	/**
-	 * Return stack for given index
-	 */
-	getStack: function (i) {
-		var axis = this.yAxis,
-			stacks = axis.stacks,
-			key = this.stackKey;
-
-		if (this.processedYData[i] < this.options.threshold) {
-			key = '-' + key;
-		}
-
-		return stacks[key][i];
-	},
 
 	drawGraph: Series.prototype.drawGraph
 });
