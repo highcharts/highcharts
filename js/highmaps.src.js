@@ -6747,28 +6747,34 @@ Axis.prototype = {
 			minorTickPositions = [],
 			pos,
 			i,
+			min = axis.min,
+			max = axis.max,
 			len;
 
-		if (axis.isLog) {
-			len = tickPositions.length;
-			for (i = 1; i < len; i++) {
+		// If minor ticks get too dense, they are hard to read, and may cause long running script. So we don't draw them.
+		if ((max - min) / minorTickInterval < axis.len / 3) { // docs: Add note that minorTickInterval is ignored when too dense
+
+			if (axis.isLog) {
+				len = tickPositions.length;
+				for (i = 1; i < len; i++) {
+					minorTickPositions = minorTickPositions.concat(
+						axis.getLogTickPositions(minorTickInterval, tickPositions[i - 1], tickPositions[i], true)
+					);
+				}
+			} else if (axis.isDatetimeAxis && options.minorTickInterval === 'auto') { // #1314
 				minorTickPositions = minorTickPositions.concat(
-					axis.getLogTickPositions(minorTickInterval, tickPositions[i - 1], tickPositions[i], true)
+					axis.getTimeTicks(
+						axis.normalizeTimeTickInterval(minorTickInterval),
+						min,
+						max,
+						options.startOfWeek
+					)
 				);
-			}
-		} else if (axis.isDatetimeAxis && options.minorTickInterval === 'auto') { // #1314
-			minorTickPositions = minorTickPositions.concat(
-				axis.getTimeTicks(
-					axis.normalizeTimeTickInterval(minorTickInterval),
-					axis.min,
-					axis.max,
-					options.startOfWeek
-				)
-			);
-			axis.trimTicks(minorTickPositions); // #3652
-		} else {
-			for (pos = axis.min + (tickPositions[0] - axis.min) % minorTickInterval; pos <= axis.max; pos += minorTickInterval) {
-				minorTickPositions.push(pos);
+				axis.trimTicks(minorTickPositions); // #3652
+			} else {
+				for (pos = min + (tickPositions[0] - min) % minorTickInterval; pos <= max; pos += minorTickInterval) {
+					minorTickPositions.push(pos);
+				}
 			}
 		}
 		return minorTickPositions;
