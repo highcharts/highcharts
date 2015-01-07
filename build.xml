@@ -282,7 +282,7 @@
             <file name="parts-map/MapNavigation.js"/>
             <file name="parts-map/MapPointer.js"/>
             <file name="parts-map/MapSeries.js"/>
-            <file name="modules/overlapping-datalabels.src.js"/>
+            <file name="modules/overlapping-datalabels.js"/>
             <file name="parts-map/MapLineSeries.js"/>
             <file name="parts-map/MapPointSeries.js"/>
             <file name="parts-map/MapBubbleSeries.js"/>
@@ -356,7 +356,7 @@
             <file name="parts-map/ColorAxis.js"/>
             <file name="parts-map/ColorSeriesMixin.js"/>
             <file name="parts-map/MapSeries.js"/>
-            <file name="modules/overlapping-datalabels.src.js"/>
+            <file name="modules/overlapping-datalabels.js"/>
             <file name="parts-map/MapNavigation.js"/>
             <file name="parts-map/MapPointer.js"/>
             <file name="parts-map/MapLineSeries.js"/>
@@ -700,7 +700,7 @@
             <param name="param.out" value="${dist.dir}/js/modules/${exporting.minified.name}"/>
         </antcall>
         <antcall target="compile">
-            <param name="param.src" value="overlapping-datalabels.src.js"/>
+            <param name="param.src" value="${overlapping-datalabels.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/overlapping-datalabels.js"/>
         </antcall>
         <antcall target="compile">
