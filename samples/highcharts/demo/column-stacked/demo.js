@@ -24,9 +24,9 @@ $(function () {
         },
         legend: {
             align: 'right',
-            x: -70,
+            x: -30,
             verticalAlign: 'top',
-            y: 20,
+            y: 25,
             floating: true,
             backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || 'white',
             borderColor: '#CCC',
@@ -47,7 +47,7 @@ $(function () {
                     enabled: true,
                     color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
                     style: {
-                        textShadow: '0 0 3px black, 0 0 3px black'
+                        textShadow: '0 0 3px black'
                     }
                 }
             }

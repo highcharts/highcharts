@@ -96,12 +96,13 @@
         <property name="data.src.file" value="${basedir}/js/modules/${data.src.name}"/>
         <property name="drilldown.src.file" value="${basedir}/js/modules/${drilldown.src.name}"/>
         <property name="funnel.src.file" value="${basedir}/js/modules/${funnel.src.name}"/>
+        <property name="overlapping-datalabels.src.file" value="${basedir}/js/modules/overlapping-datalabels.src.js"/>
         <property name="solidgauge.src.file" value="${basedir}/js/modules/${solidgauge.src.name}"/>
         <property name="nodata.src.file" value="${basedir}/js/modules/${nodata.src.name}"/>
         <property name="map.src.file" value="${basedir}/js/modules/${map.src.name}"/>
         <property name="heatmap.src.file" value="${basedir}/js/modules/${heatmap.src.name}"/>
         <property name="annotations.src.file" value="${basedir}/js/modules/${annotations.src.name}"/>
-        <property name="highcharts-all.minified.name" value="highcharts-all.js"/>
+        <property name="highstock-all.minified.name" value="highstock-all.js"/>
 
         <!-- jsLint -->
         <property name="jslint4java.dir" value="${tools.dir}/jslint4java"/>
@@ -281,6 +282,7 @@
             <file name="parts-map/MapNavigation.js"/>
             <file name="parts-map/MapPointer.js"/>
             <file name="parts-map/MapSeries.js"/>
+            <file name="modules/overlapping-datalabels.src.js"/>
             <file name="parts-map/MapLineSeries.js"/>
             <file name="parts-map/MapPointSeries.js"/>
             <file name="parts-map/MapBubbleSeries.js"/>
@@ -354,6 +356,7 @@
             <file name="parts-map/ColorAxis.js"/>
             <file name="parts-map/ColorSeriesMixin.js"/>
             <file name="parts-map/MapSeries.js"/>
+            <file name="modules/overlapping-datalabels.src.js"/>
             <file name="parts-map/MapNavigation.js"/>
             <file name="parts-map/MapPointer.js"/>
             <file name="parts-map/MapLineSeries.js"/>
@@ -369,12 +372,16 @@
             <file name="parts/Outro.js"/>
         </filelist>
 
-        <filelist id="highcharts-all.files" dir="${dist.dir}">
+        <filelist id="highstock-all.files" dir="${dist.dir}">
             <file name="js/adapters/${standalone.minified.name}"/>
-            <file name="highcharts/js/${highcharts.minified.name}"/>
-            <file name="highcharts/js/${highchartsmore.minified.name}"/>
-            <file name="highcharts/js/${highcharts3d.minified.name}"/>
+            <file name="highstock/js/${highstock.minified.name}"/>
+            <file name="highstock/js/${highchartsmore.minified.name}"/>
+            <file name="highstock/js/${highcharts3d.minified.name}"/>
             <file name="js/modules/${exporting.minified.name}"/>
+            <file name="js/modules/${solidgauge.minified.name}"/>
+            <file name="js/modules/${funnel.minified.name}"/>
+            <file name="js/modules/${nodata.minified.name}"/>
+            <file name="js/modules/overlapping-datalabels.js"/>
             <file name="js/modules/${data.minified.name}"/>
         </filelist>
 
@@ -551,6 +558,7 @@
             <fileset file="${funnel.src.file}"/>
             <fileset file="${solidgauge.src.file}"/>
             <fileset file="${nodata.src.file}"/>
+            <fileset file="${overlapping-datalabels.src.file}"/>
             <fileset file="${map.src.file}"/>
             <fileset file="${heatmap.src.file}"/>
             <fileset file="${annotations.src.file}"/>
@@ -696,6 +704,10 @@
             <param name="param.out" value="${dist.dir}/js/modules/${exporting.minified.name}"/>
         </antcall>
         <antcall target="compile">
+            <param name="param.src" value="${overlapping-datalabels.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/modules/overlapping-datalabels.js"/>
+        </antcall>
+        <antcall target="compile">
             <param name="param.src" value="${data.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/${data.minified.name}"/>
         </antcall>
@@ -733,8 +745,8 @@
         </antcall>
         <!-- Concatenate a single file with minified standalone adapter and highcharts sources -->
         <!-- for faster download from cloud.highcharts.com -->
-        <concat destfile="${dist.dir}/highcharts/js/${highcharts-all.minified.name}">
-            <filelist refid="highcharts-all.files"/>
+        <concat destfile="${dist.dir}/highstock/js/${highstock-all.minified.name}">
+            <filelist refid="highstock-all.files"/>
             <filterchain>
                 <replacetokens>
                     <token key="product.name" value="${highcharts.product.name}"/>
