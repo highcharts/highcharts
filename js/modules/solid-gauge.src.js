@@ -183,6 +183,9 @@
 					toColor = yAxis.toColor(point.y, point),
 					fromColor;
 
+				if (toColor === 'none') { // #3708
+					toColor = point.color || series.color || 'none';
+				}
 				if (toColor !== 'none') {
 					fromColor = point.color;
 					point.color = toColor;
@@ -222,7 +225,7 @@
 						.attr({
 							stroke: options.borderColor || 'none',
 							'stroke-width': options.borderWidth || 0,
-							fill: point.color,
+							fill: toColor,
 							'sweep-flag': 0
 						})
 						.add(series.group);
