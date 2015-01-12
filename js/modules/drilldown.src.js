@@ -526,7 +526,18 @@
 				chart.addSeriesAsDrilldown(this, seriesOptions);
 			}
 		}
+	};
 
+	/**
+	 * Drill down to a given category. This is the same as clicking on an axis label.
+	 */
+	H.Axis.prototype.drilldownCategory = function (x) {
+		each(this.ticks[x].label.ddPoints, function (point) {
+			if (point.series && point.series.visible && point.doDrilldown) { // #3197
+				point.doDrilldown(true);
+			}
+		});
+		this.chart.applyDrilldown();
 	};
 	
 	wrap(H.Point.prototype, 'init', function (proceed, series, options, x) {
@@ -559,12 +570,7 @@
 					.addClass('highcharts-drilldown-axis-label')
 					.css(chart.options.drilldown.activeAxisLabelStyle)
 					.on('click', function () {
-						each(tickLabel.ddPoints, function (point) {
-							if (point.doDrilldown) {
-								point.doDrilldown(true);
-							}
-						});
-						chart.applyDrilldown();
+						series.xAxis.drilldownCategory(x);
 					});
 				if (!tickLabel.ddPoints) {
 					tickLabel.ddPoints = [];
