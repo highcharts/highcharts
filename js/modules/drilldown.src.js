@@ -135,6 +135,7 @@
 			if (series.xAxis === xAxis) {
 				levelSeries.push(series);
 				series.options._ddSeriesId = series.options._ddSeriesId || ddSeriesId++;
+				series.options._colorIndex = series.userOptions._colorIndex;
 				levelSeriesOptions.push(series.options);
 				series.options._levelNumber = series.options._levelNumber || levelNumber; // #3182
 			}
