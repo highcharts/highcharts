@@ -3,7 +3,7 @@ $(function () {
         series: [{
             type: "treemap",
             layoutAlgorithm: 'squarified',
-            directionalChange: true,
+            alternateStartingDirection: true,
             data: [{
                 id: "id_1",
                 name: 'A'

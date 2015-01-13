@@ -930,6 +930,7 @@ $(function () {
 			dataLabels: {
 				enabled: false
 			},
+			levelIsConstant: false,
 			levels: [{
 				level: 1,
 				dataLabels: {
