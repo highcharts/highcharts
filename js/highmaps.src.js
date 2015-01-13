@@ -7156,7 +7156,7 @@ Axis.prototype = {
 			// When there is only one point, or all points have the same value on this axis, then min
 			// and max are equal and tickPositions.length is 0 or 1. In this case, add some padding
 			// in order to center the point, but leave it with one tick. #1337.
-			if (tickPositions.length === 1 && !this.tickAmount) {
+			if (this.min === this.max && defined(this.min) && !this.tickAmount) {
 				// Substract half a unit (#2619, #2846, #2515, #3390)
 				single = true;
 				this.min -= 0.5;
@@ -13185,7 +13185,7 @@ Series.prototype = {
 			globallyEnabled = pick(
 				seriesMarkerOptions.enabled, 
 				xAxis.isRadial,
-				series.closestPointRange * xAxis.transA > 2 * seriesMarkerOptions.radius // #3635
+				(series.closestPointRange || xAxis.len) * xAxis.transA > 2 * seriesMarkerOptions.radius // #3635
 			);
 
 		if (seriesMarkerOptions.enabled !== false || series._hasPointMarkers) {
