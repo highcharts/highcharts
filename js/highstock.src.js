@@ -7473,9 +7473,8 @@ Axis.prototype = {
 			each(this.chart[this.coll], function (axis) {
 				var options = axis.options,
 					horiz = axis.horiz,
-					key = [horiz ? options.left : options.top, horiz ? options.width : options.height].join(',');
+					key = [horiz ? options.left : options.top, horiz ? options.width : options.height, options.pane].join(',');
 				
-
 				if (others[key]) {
 					hasOther = true;
 				} else {
@@ -7853,13 +7852,18 @@ Axis.prototype = {
 				chart.plotWidth / tickPositions.length) ||
 				(!horiz && ((margin[3] && (margin[3] - chart.spacing[3])) || chart.chartWidth * 0.33)), // #1580, #1931,
 			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))), // docs: padding new default
-			attr = { rotation: labelOptions.rotation },
+			attr = {},
 			labelMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
 			css,
 			labelLength = 0,
 			label,
 			i,
 			pos;
+
+		// Set rotation option unless it is "auto", like in gauges
+		if (isNumber(labelOptions.rotation)) {
+			attr.rotation = labelOptions.rotation;
+		}
 		
 		// Handle auto rotation on horizontal axis
 		if (this.autoRotation) {
