@@ -7601,6 +7601,7 @@ Axis.prototype = {
 			labelLength = 0,
 			label,
 			i,
+			actualRotation, // for second pass
 			pos;
 
 		// Set rotation option unless it is "auto", like in gauges
@@ -7617,12 +7618,17 @@ Axis.prototype = {
 				if (tick && tick.labelLength > labelLength) {
 					labelLength = tick.labelLength;
 				}
+				if (tick.label) {
+					actualRotation = tick.label.rotation;
+				}
 			});
 			
 			// Apply rotation only if the label is too wide for the slot, and
 			// the label is wider than its height.
 			if (labelLength > innerWidth && labelLength > labelMetrics.h) {
 				attr.rotation = this.labelRotation;
+			} else {
+				this.labelRotation = actualRotation;
 			}
 
 		// Handle word-wrap or ellipsis on vertical axis
@@ -7653,7 +7659,7 @@ Axis.prototype = {
 		}
 
 		// Set the explicit or automatic label alignment
-		this.labelAlign = attr.align = labelOptions.align || this.autoLabelAlign(attr.rotation);
+		this.labelAlign = attr.align = labelOptions.align || this.autoLabelAlign(this.labelRotation);
 
 		// Apply general and specific CSS
 		each(tickPositions, function (pos) {
@@ -7670,7 +7676,7 @@ Axis.prototype = {
 		});
 
 		// TODO: Why not part of getLabelPosition?
-		this.rotCorr(labelMetrics.b, attr.rotation || 0);
+		this.rotCorr(labelMetrics.b, this.labelRotation || 0);
 	},
 
 	/**
@@ -7684,7 +7690,7 @@ Axis.prototype = {
 		this.tickRotCorr = {
 			x: (-baseline / 4) * mathSin(rotation * deg2rad),
 			y: y
-		};			
+		};
 	},
 
 	/**
