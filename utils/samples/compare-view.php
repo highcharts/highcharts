@@ -454,9 +454,9 @@
 		
 		<table>
 			<tr>
-				<td><iframe id="iframe-left" src="compare-iframe.php?which=left&amp;<? echo $_SERVER['QUERY_STRING'] ?>" 
+				<td><iframe id="iframe-left" src="compare-iframe.php?which=left&amp;<?php echo $_SERVER['QUERY_STRING'] ?>" 
 					style="width: 500px; height: 400px; border: 1px dotted gray"></iframe></td>
-				<td><iframe id="iframe-right" src="compare-iframe.php?which=right&amp;<? echo $_SERVER['QUERY_STRING'] ?>" 
+				<td><iframe id="iframe-right" src="compare-iframe.php?which=right&amp;<?php echo $_SERVER['QUERY_STRING'] ?>" 
 					style="width: 500px; height: 400px; border: 1px dotted gray"></iframe></td>
 			</tr>
 			<tr>
