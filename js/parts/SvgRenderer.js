@@ -790,7 +790,8 @@ SVGElement.prototype = {
 	add: function (parent) {
 
 		var renderer = this.renderer,
-			element = this.element;
+			element = this.element,
+			inserted;
 
 		if (parent) {
 			this.parentGroup = parent;
@@ -810,11 +811,11 @@ SVGElement.prototype = {
 		// If we're adding to renderer root, or other elements in the group 
 		// have a z index, we need to handle it
 		if (!parent || parent.handleZ || this.zIndex) {
-			this.zIndexSetter();
+			inserted = this.zIndexSetter();
 		}
 
 		// If zIndex is not handled, append at the end
-		if (!element.parentNode) {
+		if (!inserted) {
 			(parent ? parent.element : renderer.box).appendChild(element);
 		}
 
@@ -1047,6 +1048,7 @@ SVGElement.prototype = {
 			otherElement,
 			otherZIndex,
 			element = this.element,
+			inserted,
 			i;
 		
 		if (defined(value)) {
@@ -1065,7 +1067,7 @@ SVGElement.prototype = {
 			}
 		
 			childNodes = parentNode.childNodes;
-			for (i = 0; i < childNodes.length; i++) {
+			for (i = 0; i < childNodes.length && !inserted; i++) {
 				otherElement = childNodes[i];
 				otherZIndex = attr(otherElement, 'zIndex');
 				if (otherElement !== element && (
@@ -1076,10 +1078,11 @@ SVGElement.prototype = {
 
 						)) {
 					parentNode.insertBefore(element, otherElement);
-					break;
+					inserted = true;
 				}
 			}
 		}
+		return inserted;
 	},
 	_defaultSetter: function (value, key, element) {
 		element.setAttribute(key, value);
