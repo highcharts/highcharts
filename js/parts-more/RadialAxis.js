@@ -255,6 +255,10 @@ var radialAxisMixin = {
 		
 		// Circular grid bands
 		} else {
+
+			// Keep within bounds
+			from = Math.max(from, this.min);
+			to = Math.min(to, this.max);
 			
 			// Plot bands on Y axis (radial axis) - inner and outer radius depend on to and from
 			if (!isCircular) {
@@ -294,7 +298,7 @@ var radialAxisMixin = {
 				}
 			);
 		}
-		 
+
 		return ret;
 	},
 	
