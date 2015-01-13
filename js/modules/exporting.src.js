@@ -505,7 +505,9 @@ extend(Chart.prototype, {
 							},
 							onclick: function () {
 								hide();
-								item.onclick.apply(chart, arguments);
+								if (item.onclick) {
+									item.onclick.apply(chart, arguments);
+								}
 							},
 							innerHTML: item.text || chart.options.lang[item.textKey]
 						}, extend({
