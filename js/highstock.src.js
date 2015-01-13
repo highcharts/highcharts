@@ -13403,9 +13403,11 @@ Series.prototype = {
 			enabled,
 			isInside,
 			markerGroup = series.markerGroup,
+			xAxis = series.xAxis,
 			globallyEnabled = pick(
 				seriesMarkerOptions.enabled, 
-				series.closestPointRange * series.xAxis.transA > 2 * seriesMarkerOptions.radius // #3635
+				xAxis.isRadial,
+				series.closestPointRange * xAxis.transA > 2 * seriesMarkerOptions.radius // #3635
 			);
 
 		if (seriesMarkerOptions.enabled !== false || series._hasPointMarkers) {
