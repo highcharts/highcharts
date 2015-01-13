@@ -1599,7 +1599,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				[0, yValue];
 
 			// override point value for sums
-			if (isNaN(point.y)) {
+			if (point.isSum || point.isIntermediateSum) { // #3710 Update point does not propagate to sum
 				point.y = yValue;
 			}
 
@@ -1651,7 +1651,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		var series = this,
 			options = series.options,
 			yData = series.yData,
-			points = series.points,
+			points = series.options.data, // #3710 Update point does not propagate to sum
 			point,
 			dataLength = yData.length,
 			threshold = options.threshold || 0,

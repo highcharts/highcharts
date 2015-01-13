@@ -135,6 +135,7 @@
 			if (series.xAxis === xAxis) {
 				levelSeries.push(series);
 				series.options._ddSeriesId = series.options._ddSeriesId || ddSeriesId++;
+				series.options._colorIndex = series.userOptions._colorIndex;
 				levelSeriesOptions.push(series.options);
 				series.options._levelNumber = series.options._levelNumber || levelNumber; // #3182
 			}
@@ -147,7 +148,7 @@
 			levelSeriesOptions: levelSeriesOptions,
 			levelSeries: levelSeries,
 			shapeArgs: point.shapeArgs,
-			bBox: point.graphic.getBBox(),
+			bBox: point.graphic ? point.graphic.getBBox() : {}, // no graphic in line series with markers disabled
 			color: color,
 			lowerSeriesOptions: ddOptions,
 			pointOptions: oldSeries.options.data[pointIndex],
@@ -526,7 +527,18 @@
 				chart.addSeriesAsDrilldown(this, seriesOptions);
 			}
 		}
+	};
 
+	/**
+	 * Drill down to a given category. This is the same as clicking on an axis label.
+	 */
+	H.Axis.prototype.drilldownCategory = function (x) {
+		each(this.ticks[x].label.ddPoints, function (point) {
+			if (point.series && point.series.visible && point.doDrilldown) { // #3197
+				point.doDrilldown(true);
+			}
+		});
+		this.chart.applyDrilldown();
 	};
 	
 	wrap(H.Point.prototype, 'init', function (proceed, series, options, x) {
@@ -559,12 +571,7 @@
 					.addClass('highcharts-drilldown-axis-label')
 					.css(chart.options.drilldown.activeAxisLabelStyle)
 					.on('click', function () {
-						each(tickLabel.ddPoints, function (point) {
-							if (point.doDrilldown) {
-								point.doDrilldown(true);
-							}
-						});
-						chart.applyDrilldown();
+						series.xAxis.drilldownCategory(x);
 					});
 				if (!tickLabel.ddPoints) {
 					tickLabel.ddPoints = [];
