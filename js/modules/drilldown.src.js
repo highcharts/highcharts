@@ -148,7 +148,7 @@
 			levelSeriesOptions: levelSeriesOptions,
 			levelSeries: levelSeries,
 			shapeArgs: point.shapeArgs,
-			bBox: point.graphic.getBBox(),
+			bBox: point.graphic ? point.graphic.getBBox() : {}, // no graphic in line series with markers disabled
 			color: color,
 			lowerSeriesOptions: ddOptions,
 			pointOptions: oldSeries.options.data[pointIndex],
