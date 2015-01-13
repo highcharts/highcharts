@@ -7,10 +7,11 @@ $exportServer = isset($_SESSION['exportServer']) ? $_SESSION['exportServer'] : $
 
 $fallBackToOnline = false;
 if ($exportServer !== 'http://export.highcharts.com/') {
-	$url = preg_replace('/^(http|https):\/\//', '', $exportServer);
-	$localServerStarted = @fsockopen($url, 80, $errno, $errstr, 30);
 
-	if (!$localServerStarted) {
+	$file = file_get_contents($exportServer);
+	$localServerStarted = strstr($file, 'Highcharts Export');
+	
+	if ($localServerStarted == false) {
 		$exportServer = 'http://export.highcharts.com/';
 		$fallBackToOnline = true;
 	}
