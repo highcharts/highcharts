@@ -40,7 +40,8 @@
 			pointFormat: 'name: <b>{point.name}</b><br/>value: <b>{point.value}</b><br/>'
 		},
 		layoutAlgorithm: 'sliceAndDice',
-		directionalChange: false,
+		layoutStartingDirection: 'vertical',
+		alternateStartingDirection: false,
 		levelIsConstant: true,
 		states: {
 			hover: {
@@ -225,7 +226,7 @@
 				series = this,
 				options = series.options,
 				algorithm = options.layoutAlgorithm,
-				directionalChange = options.directionalChange,
+				alternate = options.alternateStartingDirection,
 				levelRoot = this.nodeMap[this.rootNode].level,							
 				i = 0,
 				level,
@@ -239,6 +240,9 @@
 				if (level.layoutAlgorithm && series[level.layoutAlgorithm]) {
 					algorithm = level.layoutAlgorithm;
 				}
+				if (level.layoutStartingDirection) {
+					area.direction = level.layoutStartingDirection === 'vertical' ? 0 : 1;
+				}
 			}
 			childrenValues = series[algorithm](area, node.children);
 			each(node.children, function (child) {
@@ -248,7 +252,7 @@
 				childValues = childrenValues[i];
 				childValues.val = child.childrenTotal;
 				childValues.direction = area.direction;
-				if (directionalChange) {
+				if (alternate) {
 					childValues.direction = 1 - childValues.direction;
 				}
 				child.values = childValues;
@@ -307,12 +311,13 @@
 				h = 100,
 				r = this.axisRatio = (this.xAxis.len / this.yAxis.len),
 				w = 100 * r,
+				d = this.options.layoutStartingDirection === 'vertical' ? 0 : 1,
 				seriesArea = {
 					x: x,
 					y: y,
 					width: w,
 					height: h,
-					direction: 0,
+					direction: d,
 					val: val
 				};
 			return seriesArea;
