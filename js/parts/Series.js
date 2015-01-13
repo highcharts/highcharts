@@ -917,7 +917,7 @@ Series.prototype = {
 			globallyEnabled = pick(
 				seriesMarkerOptions.enabled, 
 				xAxis.isRadial,
-				series.closestPointRange * xAxis.transA > 2 * seriesMarkerOptions.radius // #3635
+				(series.closestPointRange || xAxis.len) * xAxis.transA > 2 * seriesMarkerOptions.radius // #3635
 			);
 
 		if (seriesMarkerOptions.enabled !== false || series._hasPointMarkers) {
