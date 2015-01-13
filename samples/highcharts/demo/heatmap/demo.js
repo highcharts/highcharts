@@ -5,7 +5,7 @@ $(function () {
         chart: {
             type: 'heatmap',
             marginTop: 40,
-            marginBottom: 40
+            marginBottom: 80
         },
 
 
@@ -34,7 +34,7 @@ $(function () {
             margin: 0,
             verticalAlign: 'top',
             y: 25,
-            symbolHeight: 320
+            symbolHeight: 280
         },
 
         tooltip: {

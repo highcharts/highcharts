@@ -1,5 +1,5 @@
-#container {
-    height: 500px;
+.container {
+    height: 350px;
     width: 500px;    
     margin: 0 auto;
 }
