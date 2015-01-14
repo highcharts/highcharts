@@ -872,7 +872,7 @@ Scroller.prototype = {
 			var legend = this.legend,
 				legendOptions = legend.options;
 
-			proceed.call(this);
+			proceed.apply(this, [].slice.call(arguments, 1));
 
 			// Compute the top position
 			scroller.top = top = scroller.navigatorOptions.top ||
