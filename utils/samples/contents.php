@@ -109,15 +109,19 @@
 				color: gray;
 			}
 			
-			li.identical, li.identical a {
-				background: #a4edba;
-			}
 			
 			li.different, li.different a {
 				background: #f15c80;
 				color: white;
 				font-weight: bold;
 			}
+
+			li.identical, li.identical a, li.approved, li.approved a {
+				background: #a4edba;
+				color: #039;
+				font-weight: normal;
+			}
+			
 			
 			li.hilighted {
 				border-color: silver;
@@ -263,10 +267,18 @@
 								// Comments
 								if (isset($compare->$path->comment)) {
 									$comment = $compare->$path->comment;
+									
+									// Sample is different but approved
+									if ($comment->symbol === 'check' && $comment->diff == $diff) {
+										$compareClass = 'approved';
+									}
+									
+									// Make it string
 									$comment = "
 										<i class='icon-$comment->symbol' title='$comment->title'></i>
-										<span class='comment-title'>$comment->title</span>
+										<span class='comment-title'>$comment->title<br>(Approved diff: $comment->diff)</span>
 									";
+									
 								} else {
 									$comment = "
 										<i class='icon-pencil' title='Add comment'></i>
@@ -276,7 +288,7 @@
 								echo "
 								<li id='li$i' class='$compareClass'>$i. $suffix 
 									<a target='main' id='i$i' class='$batchClass' href='view.php?path=$path&amp;i=$i'>$innerFile</a>
-									<a class='comment' href='compare-comment.php?path=$path&amp;i=$i' target='main'>
+									<a class='comment' href='compare-comment.php?path=$path&amp;i=$i&amp;diff=$diff' target='main'>
 										$comment
 									</a>
 									$dissIndex

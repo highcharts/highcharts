@@ -2,6 +2,7 @@
 
 $compare = json_decode(file_get_contents('temp/compare.json'));
 $path = $_GET['path'];
+$diff = $_GET['diff'];
 $i = $_GET['i'];
 $updateContents = false;
 
@@ -63,8 +64,15 @@ $symbols = array('check', 'exclamation-sign');
 				var contentDoc = window.parent.frames[0].document,
 					li = contentDoc.getElementById('li<?php echo $i ?>');
 
+				// Sample is different but approved
+				<?php if ($comment->symbol === 'check' && $comment->diff == $diff): ?>
+					$(li).addClass('approved');
+				<?php else: ?>
+					$(li).removeClass('approved');
+				<?php endif; ?>
+
 				$('.comment', li).html("<i class='icon-<?php echo $comment->symbol ?>' title='<?php echo $comment->title ?>'></i>" + 
-					"<span class='comment-title'><?php echo $comment->title ?></span>");
+					"<span class='comment-title'><?php echo $comment->title ?><br/>(Approved diff: <?php echo $comment->diff ?>)</span>");
 			}
 
 
@@ -102,6 +110,10 @@ $symbols = array('check', 'exclamation-sign');
 								?>
 							</select>
 						</td>
+					</tr>
+					<tr>
+						<td>Approved diff</td>
+						<td><input type="text" id="diff" name="diff" value="<?php echo (@$comment->diff ? $comment->diff : $diff) ?>" /></td>
 					</tr>
 					<tr>
 						<td>Title</td>
