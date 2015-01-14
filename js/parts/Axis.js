@@ -995,9 +995,9 @@ Axis.prototype = {
 					axis.tickInterval, 
 					null, 
 					getMagnitude(axis.tickInterval), 
-					// If the tick interval is between 1 and 5 and the axis max is in the order of
+					// If the tick interval is between 0.5 and 5 and the axis max is in the order of
 					// thousands, chances are we are dealing with years. Don't allow decimals. #3363.
-					pick(options.allowDecimals, !(axis.tickInterval > 1 && axis.tickInterval < 5 && axis.max > 1000 && axis.max < 9999)),
+					pick(options.allowDecimals, !(axis.tickInterval > 0.5 && axis.tickInterval < 5 && axis.max > 1000 && axis.max < 9999)),
 					!!this.tickAmount
 				);
 			}
