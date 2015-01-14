@@ -19062,6 +19062,9 @@ seriesProto.processData = function () {
 
 		// Make sure the X axis extends to show the first group (#2533)
 		if (defined(groupedXData[0]) && groupedXData[0] < xAxis.dataMin) {
+			if (xAxis.min === xAxis.dataMin) {
+				xAxis.min = groupedXData[0];
+			}
 			xAxis.dataMin = groupedXData[0];
 		}
 
