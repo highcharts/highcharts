@@ -354,7 +354,7 @@ extend(Series.prototype, {
 		// Fire the event with a default handler of removing the point
 		if (point) {
 			point.firePointEvent('remove', null, remove);
-		} else {
+		} else {
 			remove();
 		}
 	},

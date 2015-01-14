@@ -1,104 +1,10 @@
 /**
- * @license Data plugin for Highcharts
+ * @license @product.name@ JS v@product.version@ (@product.date@)
+ * Data module
  *
  * (c) 2012-2014 Torstein Honsi
  *
  * License: www.highcharts.com/license
- */
-
-/*
- * The Highcharts Data plugin is a utility to ease parsing of input sources like
- * CSV, HTML tables or grid views into basic configuration options for use 
- * directly in the Highcharts constructor.
- *
- * Demo: http://jsfiddle.net/highcharts/SnLFj/
- *
- * --- OPTIONS ---
- *
- * - columns : Array<Array<Mixed>>
- * A two-dimensional array representing the input data on tabular form. This input can
- * be used when the data is already parsed, for example from a grid view component.
- * Each cell can be a string or number. If not switchRowsAndColumns is set, the columns
- * are interpreted as series. See also the rows option.
- *
- * - complete : Function(chartOptions)
- * The callback that is evaluated when the data is finished loading, optionally from an 
- * external source, and parsed. The first argument passed is a finished chart options
- * object, containing the series. Thise options
- * can be extended with additional options and passed directly to the chart constructor. This is 
- * related to the parsed callback, that goes in at an earlier stage.
- *
- * - csv : String
- * A comma delimited string to be parsed. Related options are startRow, endRow, startColumn
- * and endColumn to delimit what part of the table is used. The lineDelimiter and 
- * itemDelimiter options define the CSV delimiter formats.
- *
- * - dateFormat: String
- * Which of the predefined date formats in Date.prototype.dateFormats to use to parse date
- * columns, for example "dd/mm/YYYY" or "YYYY-mm-dd". Defaults to a best guess based on
- * what format gives valid dates, and prefers ordered dates.
- * 
- * - endColumn : Integer
- * In tabular input data, the first row (indexed by 0) to use. Defaults to the last 
- * column containing data.
- *
- * - endRow : Integer
- * In tabular input data, the last row (indexed by 0) to use. Defaults to the last row
- * containing data.
- *
- * - googleSpreadsheetKey : String 
- * A Google Spreadsheet key. See https://developers.google.com/gdata/samples/spreadsheet_sample
- * for general information on GS.
- *
- * - googleSpreadsheetWorksheet : String 
- * The Google Spreadsheet worksheet. The available id's can be read from 
- * https://spreadsheets.google.com/feeds/worksheets/{key}/public/basic
- *
- * - itemDelimiter : String
- * Item or cell delimiter for parsing CSV. Defaults to the tab character "\t" if a tab character
- * is found in the CSV string, if not it defaults to ",".
- *
- * - lineDelimiter : String
- * Line delimiter for parsing CSV. Defaults to "\n".
- *
- * - parsed : Function
- * A callback function to access the parsed columns, the two-dimentional input data
- * array directly, before they are interpreted into series data and categories. See also
- * the complete callback, that goes in on a later stage where the raw columns are interpreted
- * into a Highcharts option structure. Return false to stop completion, or call this.complete()
- * to continue async.
- *
- * - parseDate : Function
- * A callback function to parse string representations of dates into JavaScript timestamps.
- * Return an integer on success.
- *
- * - rows : Array<Array<Mixed>>
- * The same as the columns input option, but defining rows intead of columns.
- *
- * - seriesMapping : Array<Object>
- * An array containing object with Point property names along with what column id the
- * property should be taken from.
- *
- * - startColumn : Integer
- * In tabular input data, the first column (indexed by 0) to use. 
- *
- * - startRow : Integer
- * In tabular input data, the first row (indexed by 0) to use.
- *
- * - switchRowsAndColumns : Boolean
- * Switch rows and columns of the input data, so that this.columns effectively becomes the
- * rows of the data set, and the rows are interpreted as series.
- *
- * - table : String|HTMLElement
- * A HTML table or the id of such to be parsed as input data. Related options ara startRow,
- * endRow, startColumn and endColumn to delimit what part of the table is used.
- */
-
-/*
- * TODO: 
- * - Handle various date formats
- *     - http://jsfiddle.net/highcharts/114wejdx/
- *     - http://jsfiddle.net/highcharts/ryv67bkq/
  */
 
 // JSLint options:
@@ -128,6 +34,7 @@
 		this.options = options;
 		this.chartOptions = chartOptions;
 		this.columns = options.columns || this.rowsToColumns(options.rows) || [];
+		this.decimalRegex = options.decimalPoint && new RegExp('^([0-9]+)' + options.decimalPoint + '([0-9]+)$');
 
 		// This is a two-dimensional array holding the raw, trimmed string values
 		// with the same organisation as the columns array. It makes it possible
@@ -428,7 +335,7 @@
 	findHeaderRow: function () {
 		this.headerRow = 0;
 	},
-	
+
 	/**
 	 * Trim a string from whitespace
 	 */
@@ -439,6 +346,10 @@
 			// Clear white space insdie the string, like thousands separators
 			if (inside && /^[0-9\s]+$/.test(str)) { 
 				str = str.replace(/\s/g, '');
+			}
+
+			if (this.decimalRegex) {
+				str = str.replace(this.decimalRegex, '$1.$2');
 			}
 		}
 		return str;
@@ -478,14 +389,21 @@
 			columnTypes = this.options.columnTypes || [],
 			columnType = columnTypes[col],
 			forceCategory = isXColumn && ((chartOptions && chartOptions.xAxis && splat(chartOptions.xAxis)[0].type === 'category') || columnType === 'string');
-
-		rawColumns[col] = [];
+		
+		if (!rawColumns[col]) {
+			rawColumns[col] = [];
+		}
 		while (row--) {
 			val = backup[row] || column[row];
 			
-			trimVal = rawColumns[col][row] = this.trim(val);
+			trimVal = this.trim(val);
 			trimInsideVal = this.trim(val, true);
 			floatVal = parseFloat(trimInsideVal);
+
+			// Set it the first time
+			if (rawColumns[col][row] === undefined) {
+				rawColumns[col][row] = trimVal;
+			}
 			
 			// Disable number or date parsing by setting the X axis type to category
 			if (forceCategory || row === 0) {
@@ -827,6 +745,9 @@
 				};
 				if (builder.name) {
 					series[seriesIndex].name = builder.name;
+				}
+				if (type === 'category') {
+					series[seriesIndex].turboThreshold = 0;
 				}
 			}
 

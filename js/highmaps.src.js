@@ -372,14 +372,14 @@ function pad(number, length) {
  * as the original function, except that the original function is unshifted and passed as the first 
  * argument. 
  */
-function wrap(obj, method, func) {
+var wrap = Highcharts.wrap = function (obj, method, func) {
 	var proceed = obj[method];
 	obj[method] = function () {
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift(proceed);
 		return func.apply(this, args);
 	};
-}
+};
 
 
 function getTZOffset(timestamp) {
@@ -6680,9 +6680,7 @@ Axis.prototype = {
 					options.startOfWeek
 				)
 			);
-			if (minorTickPositions[0] < axis.min) {
-				minorTickPositions.shift();
-			}
+			axis.trimTicks(minorTickPositions); // #3652
 		} else {
 			for (pos = axis.min + (tickPositions[0] - axis.min) % minorTickInterval; pos <= axis.max; pos += minorTickInterval) {
 				minorTickPositions.push(pos);
@@ -6873,7 +6871,8 @@ Axis.prototype = {
 			tickPixelIntervalOption = options.tickPixelInterval,
 			tickPositions,
 			keepTwoTicksOnly,
-			categories = axis.categories;
+			categories = axis.categories,
+			single;
 
 		// linked axis gets the extremes from the parent axis
 		if (isLinked) {
@@ -7047,27 +7046,7 @@ Axis.prototype = {
 		if (!isLinked) {
 
 			// reset min/max or remove extremes based on start/end on tick
-			var roundedMin = tickPositions[0],
-				roundedMax = tickPositions[tickPositions.length - 1],
-				minPointOffset = axis.minPointOffset || 0,
-				single;
-
-			if (startOnTick) {
-				axis.min = roundedMin;
-			} else if (axis.min - minPointOffset > roundedMin) {
-				tickPositions.shift();
-			}
-
-			if (endOnTick) {
-				axis.max = roundedMax;
-			} else if (axis.max + minPointOffset < roundedMax) {
-				tickPositions.pop();
-			}
-
-			// If no tick are left, set one tick in the middle (#3195) 
-			if (tickPositions.length === 0 && defined(roundedMin)) {
-				tickPositions.push((roundedMax + roundedMin) / 2);
-			}
+			this.trimTicks(tickPositions, startOnTick, endOnTick);
 
 			// When there is only one point, or all points have the same value on this axis, then min
 			// and max are equal and tickPositions.length is 0 or 1. In this case, add some padding
@@ -7080,6 +7059,32 @@ Axis.prototype = {
 			}
 			axis.single = single;
 		}
+	},
+
+	/**
+	 * Handle startOnTick and endOnTick by either adapting to padding min/max or rounded min/max
+	 */
+	trimTicks: function (tickPositions, startOnTick, endOnTick) {
+		var roundedMin = tickPositions[0],
+			roundedMax = tickPositions[tickPositions.length - 1],
+			minPointOffset = this.minPointOffset || 0;
+			
+		if (startOnTick) {
+			this.min = roundedMin;
+		} else if (this.min - minPointOffset > roundedMin) {
+			tickPositions.shift();
+		}
+
+		if (endOnTick) {
+			this.max = roundedMax;
+		} else if (this.max + minPointOffset < roundedMax) {
+			tickPositions.pop();
+		}
+
+		// If no tick are left, set one tick in the middle (#3195) 
+		if (tickPositions.length === 0 && defined(roundedMin)) {
+			tickPositions.push((roundedMax + roundedMin) / 2);
+		}		
 	},
 
 	/**
@@ -11051,6 +11056,8 @@ Chart.prototype = {
 			// to get the tracker for translating mouse events
 			chart.renderer.create(chart, container, chartWidth, chartHeight);
 		}
+		// Add a reference to the charts index
+		chart.renderer.chartIndex = chart.index;
 	},
 
 	/**
@@ -11765,11 +11772,11 @@ Chart.prototype = {
 			}
 		});
 		
+		// Fire the load event
+		fireEvent(chart, 'load');		
 		
-		// If the chart was rendered outside the top container, put it back in
+		// If the chart was rendered outside the top container, put it back in (#3679)
 		chart.cloneRenderTo(true);
-		
-		fireEvent(chart, 'load');
 
 	},
 
@@ -12046,7 +12053,7 @@ Point.prototype = {
  * @param {Object} chart
  * @param {Object} options
  */
-var Series = function () {};
+var Series = Highcharts.Series = function () {};
 
 Series.prototype = {
 
@@ -12391,7 +12398,7 @@ Series.prototype = {
 
 		// If the point count is the same as is was, just run Point.update which is
 		// cheaper, allows animation, and keeps references to points.
-		if (updatePoints !== false && dataLength && oldDataLength === dataLength && !series.cropped && !series.hasGroupedData) {
+		if (updatePoints !== false && dataLength && oldDataLength === dataLength && !series.cropped && !series.hasGroupedData && series.visible) {
 			each(data, function (point, i) {
 				oldData[i].update(point, false, null, false);
 			});
@@ -12748,7 +12755,9 @@ Series.prototype = {
 			i,
 			pointPlacement = options.pointPlacement,
 			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
-			threshold = options.threshold;
+			threshold = options.threshold,
+			plotX,
+			plotY;
 
 		// Translate each point
 		for (i = 0; i < dataLength; i++) {
@@ -12767,7 +12776,7 @@ Series.prototype = {
 			}
 
 			// Get the plotX translation
-			point.plotX = xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement, this.type === 'flags'); // Math.round fixes #591
+			point.plotX = plotX = xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement, this.type === 'flags'); // Math.round fixes #591
 
 
 			// Calculate the bottom y value for stacked series
@@ -12805,14 +12814,15 @@ Series.prototype = {
 			}
 
 			// Set the the plotY value, reset it for redraws
-			point.plotY = (typeof yValue === 'number' && yValue !== Infinity) ?
-				yAxis.translate(yValue, 0, 1, 0, 1) :
+			point.plotY = plotY = (typeof yValue === 'number' && yValue !== Infinity) ?
+				mathMin(mathMax(-1e5, yAxis.translate(yValue, 0, 1, 0, 1)), 1e5) : // #3201
 				UNDEFINED;
-			point.isInside = point.plotY !== UNDEFINED && point.plotY >= 0 && point.plotY <= yAxis.len; // #3519
+			point.isInside = plotY !== UNDEFINED && plotY >= 0 && plotY <= yAxis.len && // #3519
+				plotX >= 0 && plotX <= xAxis.len;
 
 
 			// Set client related positions for mouse tracking
-			point.clientX = dynamicallyPlaced ? xAxis.translate(xValue, 0, 0, 0, 1) : point.plotX; // #1514
+			point.clientX = dynamicallyPlaced ? xAxis.translate(xValue, 0, 0, 0, 1) : plotX; // #1514
 
 			point.negative = point.y < (threshold || 0);
 
@@ -12955,7 +12965,7 @@ Series.prototype = {
 			markerGroup = series.markerGroup,
 			globallyEnabled = pick(
 				seriesMarkerOptions.enabled, 
-				!series.requireSorting || series.closestPointRange * series.xAxis.transA > 2 * seriesMarkerOptions.radius // #3635
+				series.closestPointRange * series.xAxis.transA > 2 * seriesMarkerOptions.radius // #3635
 			);
 
 		if (seriesMarkerOptions.enabled !== false || series._hasPointMarkers) {
@@ -14184,7 +14194,7 @@ extend(Series.prototype, {
 		// Fire the event with a default handler of removing the point
 		if (point) {
 			point.firePointEvent('remove', null, remove);
-		} else {
+		} else {
 			remove();
 		}
 	},
@@ -14719,6 +14729,9 @@ seriesTypes.column = ColumnSeries;
  */
 defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 	lineWidth: 0,
+	marker: {
+		enabled: true // Overrides auto-enabling in line series (#3647)
+	},
 	tooltip: {
 		headerFormat: '<span style="color:{series.color}">\u25CF</span> <span style="font-size: 10px;"> {series.name}</span><br/>',
 		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
@@ -15427,10 +15440,10 @@ if (seriesTypes.column) {
 	 * Override the basic data label alignment by adjusting for the position of the column
 	 */
 	seriesTypes.column.prototype.alignDataLabel = function (point, dataLabel, options,  alignTo, isNew) {
-		var chart = this.chart,
-			inverted = chart.inverted,
+		var inverted = this.chart.inverted,
+			series = point.series,
 			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
-			below = point.below || (point.plotY > pick(this.translatedThreshold, chart.plotSizeY)),
+			below = point.below || (point.plotY > pick(this.translatedThreshold, series.yAxis.len)),
 			inside = pick(options.inside, !!this.options.stacking); // draw it inside the box?
 
 		// Align to the column itself, or the top of it
@@ -15439,8 +15452,8 @@ if (seriesTypes.column) {
 
 			if (inverted) {
 				alignTo = {
-					x: chart.plotWidth - alignTo.y - alignTo.height,
-					y: chart.plotHeight - alignTo.x - alignTo.width,
+					x: series.yAxis.len - alignTo.y - alignTo.height,
+					y: series.xAxis.len - alignTo.x - alignTo.width,
 					width: alignTo.height,
 					height: alignTo.width
 				};
@@ -16717,63 +16730,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		if (this.dataLabelsGroup) {
 			this.dataLabelsGroup.clip(this.chart.clipRect);
 		}
-
-		this.hideOverlappingDataLabels();
-	},
-
-	/**
-	 * Hide overlapping labels. Labels are moved and faded in and out on zoom to provide a smooth 
-	 * visual imression.
-	 */		
-	hideOverlappingDataLabels: function () {
-
-		var points = this.points,
-			len = points.length,
-			i,
-			j,
-			label1,
-			label2,
-			intersectRect = function (pos1, pos2, size1, size2) {
-				return !(
-					pos2.x > pos1.x + size1.width ||
-					pos2.x + size2.width < pos1.x ||
-					pos2.y > pos1.y + size1.height ||
-					pos2.y + size2.height < pos1.y
-				);
-			};
-
-		// Mark with initial opacity
-		each(points, function (point, label) {
-			label = point.dataLabel;
-			if (label) {
-				label.oldOpacity = label.opacity;
-				label.newOpacity = 1;
-			}
-		});
-
-		// Detect overlapping labels
-		for (i = 0; i < len - 1; ++i) {
-			label1 = points[i].dataLabel;
-
-			for (j = i + 1; j < len; ++j) {
-				label2 = points[j].dataLabel;
-				if (label1 && label2 && label1.newOpacity !== 0 && label2.newOpacity !== 0 && 
-						intersectRect(label1.alignAttr, label2.alignAttr, label1, label2)) {
-					(points[i].labelrank < points[j].labelrank ? label1 : label2).newOpacity = 0;
-				}
-			}
-		}
-
-		// Hide or show
-		each(points, function (point, label) {
-			label = point.dataLabel;
-			if (label) {
-				if (label.oldOpacity !== label.newOpacity) {
-					label[label.isOld ? 'animate' : 'attr'](extend({ opacity: label.newOpacity }, label.alignAttr));
-				}
-				label.isOld = true;
-			}
-		});
 	},
 
 	/**
@@ -16898,7 +16854,86 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	animateDrillupTo: function (init) {
 		seriesTypes.column.prototype.animateDrillupTo.call(this, init);
 	}
-}));
+}));/**
+ * @license Highmaps JS v1.0.4-modified ()
+ * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
+ *
+ * (c) 2010-2014 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+
+(function (H) {
+	var Series = H.Series,
+		wrap = H.wrap;
+
+	// Add the overlapping logic after drawing data labels
+	wrap(Series.prototype, 'drawDataLabels', function (proceed) {
+		proceed.call(this);
+		this.hideOverlappingDataLabels();
+	});
+
+	/**
+	 * Hide overlapping labels. Labels are moved and faded in and out on zoom to provide a smooth 
+	 * visual imression.
+	 */		
+	Series.prototype.hideOverlappingDataLabels = function () {
+
+		var points = this.points,
+			len = points.length,
+			point,
+			label,
+			i,
+			j,
+			label1,
+			label2,
+			intersectRect = function (pos1, pos2, size1, size2) {
+				return !(
+					pos2.x > pos1.x + size1.width ||
+					pos2.x + size2.width < pos1.x ||
+					pos2.y > pos1.y + size1.height ||
+					pos2.y + size2.height < pos1.y
+				);
+			};
+	
+		// Mark with initial opacity
+		for (i = 0; i < len; i++) {
+			point = points[i];
+			label = point.dataLabel;
+			if (label) {
+				label.oldOpacity = label.opacity;
+				label.newOpacity = 1;
+			}
+		}
+
+		// Detect overlapping labels
+		for (i = 0; i < len; i++) {
+			point = points[i];
+			label1 = point.dataLabel;
+
+			for (j = i + 1; j < len; ++j) {
+				label2 = points[j].dataLabel;
+				if (label1 && label2 && label1.placed && label2.placed && label1.newOpacity !== 0 && label2.newOpacity !== 0 && 
+						intersectRect(label1.alignAttr, label2.alignAttr, label1, label2)) {
+					(point.labelrank < points[j].labelrank ? label1 : label2).newOpacity = 0;
+				}
+			}
+		}
+
+		// Hide or show
+		for (i = 0; i < len; i++) {
+			label = points[i].dataLabel;
+			if (label) {
+				if (label.oldOpacity !== label.newOpacity && label.placed) {
+					label.alignAttr.opacity = label.newOpacity;
+					label[label.isOld ? 'animate' : 'attr'](label.alignAttr);
+				}
+				label.isOld = true;
+			}
+		}
+	};
+
+}(Highcharts));
 // Add events to the Chart object itself
 extend(Chart.prototype, {
 	renderMapNavigation: function () {
@@ -18801,7 +18836,6 @@ extend(Highcharts, {
 	Point: Point,
 	Tick: Tick,	
 	Renderer: Renderer,
-	Series: Series,
 	SVGElement: SVGElement,
 	SVGRenderer: SVGRenderer,
 	
@@ -18831,7 +18865,6 @@ extend(Highcharts, {
 	splat: splat,
 	extendClass: extendClass,
 	pInt: pInt,
-	wrap: wrap,
 	svg: hasSVG,
 	canvas: useCanVG,
 	vml: !hasSVG && !useCanVG,

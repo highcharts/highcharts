@@ -9,7 +9,6 @@ extend(Highcharts, {
 	Point: Point,
 	Tick: Tick,	
 	Renderer: Renderer,
-	Series: Series,
 	SVGElement: SVGElement,
 	SVGRenderer: SVGRenderer,
 	
@@ -39,7 +38,6 @@ extend(Highcharts, {
 	splat: splat,
 	extendClass: extendClass,
 	pInt: pInt,
-	wrap: wrap,
 	svg: hasSVG,
 	canvas: useCanVG,
 	vml: !hasSVG && !useCanVG,

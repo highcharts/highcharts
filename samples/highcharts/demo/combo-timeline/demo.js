@@ -57,8 +57,9 @@ function onChartLoad() {
         })
         .css({
             color: 'white',
-            fontSize: '120px',
-            fontFamily: "'Brush Script MT', cursive"
+            fontSize: '100px',
+            fontStyle: 'italic',
+            fontFamily: "'Brush Script MT', sans-serif"
         })
         .add();
     big5.attr({ 

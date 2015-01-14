@@ -53,7 +53,7 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
 
 		each(series.points, function (point) {
-			if (point.open < point.close) {
+			if (point.open < point.close && !point.options.color) {
 				point.pointAttr = seriesDownPointAttr;
 			}
 		});

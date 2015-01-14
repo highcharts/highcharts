@@ -49,13 +49,13 @@ function getFramework($framework) {
 	} else {
 		$file = '../../lib/jquery-' . JQUERY_VERSION . '.js';
 		if (file_exists($file)) {
-			copy($file, 'temp/jquery' . JQUERY_VERSION . '.js');
+			copy($file, '../draft/jquery-' . JQUERY_VERSION . '.js');
 			return '
-				<script src="temp/jquery' . JQUERY_VERSION . '.js"></script>
+				<script src="../draft/jquery-' . JQUERY_VERSION . '.js"></script>
 			';
 		} else {
 			return '
-				<script src="http://code.jquery.com/jquery' . JQUERY_VERSION . '.js"></script>
+				<script src="http://code.jquery.com/jquery-' . JQUERY_VERSION . '.js"></script>
 			';
 		}
 	}
