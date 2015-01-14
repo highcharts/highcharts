@@ -3,7 +3,7 @@ $(function () {
 		series: [{
 			type: "treemap",
             layoutAlgorithm: 'stripes',
-            directionalChange: true,
+            alternateStartingDirection: true,
             levels: [{
                 level: 1,
                 layoutAlgorithm: 'sliceAndDice',
