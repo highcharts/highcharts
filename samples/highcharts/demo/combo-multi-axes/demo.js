@@ -65,9 +65,9 @@ $(function () {
         legend: {
             layout: 'vertical',
             align: 'left',
-            x: 120,
+            x: 80,
             verticalAlign: 'top',
-            y: 80,
+            y: 55,
             floating: true,
             backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'
         },

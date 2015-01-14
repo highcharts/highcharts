@@ -32,6 +32,7 @@
 
 		
 		<script type="text/javascript">
+			var diff;
 			$(function() {
 				// the reload button
 				$('#reload').click(function() {
@@ -39,7 +40,7 @@
 				});
 
 				$('#comment').click(function () {
-					location.href = 'compare-comment.php?path=<?php echo $path ?>&i=<?php echo $i ?>';
+					location.href = 'compare-comment.php?path=<?php echo $path ?>&i=<?php echo $i ?>&diff=' + diff;
 				});
 
 				$(window).bind('keydown', parent.keyDown);
@@ -66,7 +67,6 @@
 				if (window.parent.frames[0]) {
 					var contentDoc = window.parent.frames[0].document,
 						li = contentDoc.getElementById('li<?php echo $i ?>'),
-						diff,
 						background = 'none';
 					
 					if (li) {

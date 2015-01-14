@@ -124,14 +124,8 @@
 			
 			
 			li.hilighted {
-				border-color: silver;
-				font-weight: bold;
-				background: black !important;
-				color: white;
-			}
-			li.hilighted a {
-				color: white;
-				background: black;
+				border-color: black;
+				border-left-width: 1em;
 			}
 			body {
 				margin: 0;
