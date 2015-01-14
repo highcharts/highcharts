@@ -1514,7 +1514,8 @@ Axis.prototype = {
 			label,
 			i,
 			actualRotation, // for second pass
-			pos;
+			pos,
+			labelAlign;
 
 		// Set rotation option unless it is "auto", like in gauges
 		if (isNumber(labelOptions.rotation)) {
@@ -1571,7 +1572,7 @@ Axis.prototype = {
 		}
 
 		// Set the explicit or automatic label alignment
-		this.labelAlign = attr.align = labelOptions.align || this.autoLabelAlign(this.labelRotation);
+		this.labelAlign = labelAlign = labelOptions.align || this.autoLabelAlign(this.labelRotation);
 
 		// Apply general and specific CSS
 		each(tickPositions, function (pos) {
@@ -1580,6 +1581,9 @@ Axis.prototype = {
 			if (label) {
 				if (css) {
 					label.css(merge(css, label.specCss));
+				}
+				if (!label.attr('align')) {
+					attr.align = labelAlign;
 				}
 				delete label.specCss;
 				label.attr(attr);
