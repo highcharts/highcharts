@@ -13470,7 +13470,9 @@ Series.prototype = {
 			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
 			threshold = options.threshold,
 			plotX,
-			plotY;
+			plotY,
+			lastPlotX,
+			closestPointRangePx = Number.MAX_VALUE;
 
 		// Translate each point
 		for (i = 0; i < dataLength; i++) {
@@ -13543,7 +13545,15 @@ Series.prototype = {
 			point.category = categories && categories[point.x] !== UNDEFINED ?
 				categories[point.x] : point.x;
 
+			// Determine auto enabling of markers (#3635)
+			if (i) {
+				closestPointRangePx = mathMin(closestPointRangePx, mathAbs(plotX - lastPlotX));
+			}				
+			lastPlotX = plotX;
+
 		}
+
+		series.closestPointRangePx = closestPointRangePx;
 
 		// now that we have the cropped data, build the segments
 		series.getSegments();
@@ -13680,7 +13690,7 @@ Series.prototype = {
 			globallyEnabled = pick(
 				seriesMarkerOptions.enabled, 
 				xAxis.isRadial,
-				(series.closestPointRange || xAxis.len) * xAxis.transA > 2 * seriesMarkerOptions.radius // #3635
+				series.closestPointRangePx > 2 * seriesMarkerOptions.radius
 			);
 
 		if (seriesMarkerOptions.enabled !== false || series._hasPointMarkers) {
