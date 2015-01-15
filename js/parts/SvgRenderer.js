@@ -949,9 +949,7 @@ SVGElement.prototype = {
 		return this;
 
 	},
-	alignGetter: function () {
-		return this._align;
-	},
+
 	xGetter: function (key) {
 		if (this.element.nodeName === 'circle') {
 			key = { x: 'cx', y: 'cy' }[key] || key;
@@ -1009,7 +1007,6 @@ SVGElement.prototype = {
 		}
 	},
 	alignSetter: function (value) {
-		this._align = value;
 		this.element.setAttribute('text-anchor', { left: 'start', center: 'middle', right: 'end' }[value]);
 	},
 	opacitySetter: function (value, key, element) {

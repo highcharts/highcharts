@@ -2733,9 +2733,7 @@ SVGElement.prototype = {
 		return this;
 
 	},
-	alignGetter: function () {
-		return this._align;
-	},
+
 	xGetter: function (key) {
 		if (this.element.nodeName === 'circle') {
 			key = { x: 'cx', y: 'cy' }[key] || key;
@@ -2793,7 +2791,6 @@ SVGElement.prototype = {
 		}
 	},
 	alignSetter: function (value) {
-		this._align = value;
 		this.element.setAttribute('text-anchor', { left: 'start', center: 'middle', right: 'end' }[value]);
 	},
 	opacitySetter: function (value, key, element) {
@@ -7605,8 +7602,7 @@ Axis.prototype = {
 			label,
 			i,
 			actualRotation, // for second pass
-			pos,
-			labelAlign;
+			pos;
 
 		// Set rotation option unless it is "auto", like in gauges
 		if (isNumber(labelOptions.rotation)) {
@@ -7663,7 +7659,7 @@ Axis.prototype = {
 		}
 
 		// Set the explicit or automatic label alignment
-		this.labelAlign = labelAlign = labelOptions.align || this.autoLabelAlign(this.labelRotation);
+		this.labelAlign = attr.align = labelOptions.align || this.autoLabelAlign(this.labelRotation);
 
 		// Apply general and specific CSS
 		each(tickPositions, function (pos) {
@@ -7672,9 +7668,6 @@ Axis.prototype = {
 			if (label) {
 				if (css) {
 					label.css(merge(css, label.specCss));
-				}
-				if (!label.attr('align')) {
-					attr.align = labelAlign;
 				}
 				delete label.specCss;
 				label.attr(attr);
