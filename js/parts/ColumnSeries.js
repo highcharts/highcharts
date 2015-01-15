@@ -202,9 +202,9 @@ var ColumnSeries = extendClass(Series, {
 			point.barX = barX;
 			point.pointWidth = pointWidth;
 
-			// Fix the tooltip on center of grouped columns (#1216, #424)
+			// Fix the tooltip on center of grouped columns (#1216, #424, #3648)
 			point.tooltipPos = chart.inverted ? 
-				[yAxis.len - plotY, series.xAxis.len - barX - barW / 2] : 
+				[yAxis.len + yAxis.pos - chart.plotLeft - plotY, series.xAxis.len - barX - barW / 2] : 
 				[barX + barW / 2, plotY + yAxis.pos - chart.plotTop];
 
 			// Round off to obtain crisp edges and avoid overlapping with neighbours (#2694)
