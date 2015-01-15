@@ -7282,7 +7282,10 @@ Axis.prototype = {
 
 			axis.tickPositions = tickPositions;
 			if (tickPositioner) { // docs: now runs default tick positioning, and allows modifying this
-				axis.tickPositions = tickPositions = tickPositioner.apply(axis, [axis.min, axis.max]);
+				tickPositioner = tickPositioner.apply(axis, [axis.min, axis.max]);
+				if (tickPositioner) {
+					axis.tickPositions = tickPositions = tickPositioner;
+				}
 			}
 
 		}
