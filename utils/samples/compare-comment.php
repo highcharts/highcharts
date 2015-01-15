@@ -34,9 +34,7 @@ $symbols = array('check', 'exclamation-sign');
 				font-size: 0.8em; 
 				padding: 0.5em; 
 				height: 3.5em;
-				background: #57544A;
-				background: -webkit-linear-gradient(top, #57544A, #37342A); 
-				background: -moz-linear-gradient(top, #57544A, #37342A);
+				background: #34343e;
 				box-shadow: 0px 0px 8px #888;
 			}
 			
@@ -46,7 +44,12 @@ $symbols = array('check', 'exclamation-sign');
 				font-weight: bold;
 			}
 			input[type=text] {
-				width: 400px;
+				min-width: 200px;
+			}
+			textarea {
+				vertical-align: top;
+				min-width: 200px;
+				height: 5em;
 			}
 			input[type=submit] {
 				float: right;
@@ -61,7 +64,7 @@ $symbols = array('check', 'exclamation-sign');
 		
 		<?php if ($updateContents) : ?>
 			if (window.parent.frames[0]) {
-				var contentDoc = window.parent.frames[0].document,
+				var contentDoc = (window.parent.parent || window.parent).frames[0].document,
 					li = contentDoc.getElementById('li<?php echo $i ?>');
 
 				// Sample is different but approved
@@ -93,6 +96,8 @@ $symbols = array('check', 'exclamation-sign');
 		</div>
 
 		<div style="margin: 10px">
+
+			<small>If the symbol is "check" and the approved diff equals the reported diff, it will appear green in the list on the left.</small>
 			<form action="" method="post">
 
 				<table>
@@ -117,7 +122,7 @@ $symbols = array('check', 'exclamation-sign');
 					</tr>
 					<tr>
 						<td>Title</td>
-						<td><input type="text" id="title" name="title" value="<?php echo @$comment->title ?>" /></td>
+						<td><textarea type="text" id="title" name="title"><?php echo @$comment->title ?></textarea></td>
 					</tr>
 					<tr>
 						<td></td>

@@ -32,7 +32,8 @@
 
 		
 		<script type="text/javascript">
-			var diff;
+			var diff,
+				commentHref = 'compare-comment.php?path=<?php echo $path ?>&i=<?php echo $i ?>&diff=';
 			$(function() {
 				// the reload button
 				$('#reload').click(function() {
@@ -40,7 +41,7 @@
 				});
 
 				$('#comment').click(function () {
-					location.href = 'compare-comment.php?path=<?php echo $path ?>&i=<?php echo $i ?>&diff=' + diff;
+					location.href = commentHref;
 				});
 
 				$(window).bind('keydown', parent.keyDown);
@@ -107,6 +108,17 @@
 								})
 								.html(diff)
 								.appendTo(li);
+
+
+							commentHref = commentHref.replace('diff=', 'diff=' + diff);
+							$('<iframe>')
+								.attr({
+									id: 'comment-iframe',
+									src: commentHref
+								})
+								.appendTo('#comment-placeholder');
+
+
 						} else {
 							$span = $('<a>')
 								.attr({
@@ -414,6 +426,11 @@
 				padding: 0.5em; 
 				
 			}
+			#comment-iframe {
+				height: 400px;
+				border: 1px solid silver;
+				position: fixed;
+			}
 
 			pre#svg {
 				padding: 1em;
@@ -458,6 +475,7 @@
 					style="width: 500px; height: 400px; border: 1px dotted gray"></iframe></td>
 				<td><iframe id="iframe-right" src="compare-iframe.php?which=right&amp;<?php echo $_SERVER['QUERY_STRING'] ?>" 
 					style="width: 500px; height: 400px; border: 1px dotted gray"></iframe></td>
+				<td id="comment-placeholder"></id>
 			</tr>
 			<tr>
 				<td colspan="2">

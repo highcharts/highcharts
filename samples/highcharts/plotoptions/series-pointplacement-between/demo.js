@@ -4,7 +4,8 @@ $(function () {
             tickmarkPlacement: 'on',
             type: 'datetime',
             labels: {
-                align: 'left'
+                align: 'left',
+                rotation: 0
             },
             gridLineWidth: 1,
             tickInterval: 24 * 3600 * 1000
