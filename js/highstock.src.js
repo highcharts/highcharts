@@ -9234,7 +9234,7 @@ Pointer.prototype = {
 			point = hoverSeries.tooltipPoints[index];
 
 			// a new point is hovered, refresh the tooltip
-			if (point && point !== hoverPoint) {
+			if (point && point !== hoverPoint && point.onMouseOver) { // #3724
 
 				// trigger the events
 				point.onMouseOver(e);
