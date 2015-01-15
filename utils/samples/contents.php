@@ -140,6 +140,7 @@
 				position: fixed;
 				top: 0;
 				width: 100%;
+				z-index: 10;
 			}
 			#main-nav {
 				margin-top: 100px;

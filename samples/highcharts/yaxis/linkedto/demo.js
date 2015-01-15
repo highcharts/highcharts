@@ -1,8 +1,7 @@
 $(function () {
     $('#container').highcharts({
         chart: {
-            type: 'column',
-            rightMargin: 80
+            type: 'column'
         },
 
         xAxis: {
