@@ -7403,7 +7403,10 @@ Axis.prototype = {
 
 			this.tickPositions = tickPositions;
 			if (tickPositioner) { // docs: now runs default tick positioning, and allows modifying this
-				this.tickPositions = tickPositions = tickPositioner.apply(this, [this.min, this.max]);
+				tickPositioner = tickPositioner.apply(this, [this.min, this.max]);
+				if (tickPositioner) {
+					this.tickPositions = tickPositions = tickPositioner;
+				}
 			}
 
 		}
