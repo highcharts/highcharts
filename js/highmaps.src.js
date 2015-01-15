@@ -13808,7 +13808,8 @@ extend(Point.prototype, {
 			graphic = point.graphic,
 			i,
 			chart = series.chart,
-			seriesOptions = series.options;
+			seriesOptions = series.options,
+			names = series.xAxis.names;
 
 		redraw = pick(redraw, true);
 
@@ -13837,6 +13838,9 @@ extend(Point.prototype, {
 			// record changes in the parallel arrays
 			i = point.index;
 			series.updateParallelArrays(point, i);
+			if (names && point.name) {
+				names[point.x] = point.name;
+			}
 
 			seriesOptions.data[i] = point.options;
 
