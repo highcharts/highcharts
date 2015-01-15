@@ -98,7 +98,8 @@ defaultOptions.exporting = {
 	type: 'image/png',
 	url: 'http://export.highcharts.com/',
 	//width: undefined,
-	//scale: 2
+	//scale: 2,
+        //printWidth: undefined
 	buttons: {
 		contextButton: {
 			menuClassName: PREFIX + 'contextmenu',
@@ -382,6 +383,12 @@ extend(Chart.prototype, {
 		}
 
 		chart.isPrinting = true;
+		
+		if(chart.options.exporting.printWidth !== undefined) {
+                	chart._screenMediaWidth = chart.chartWidth;
+                	chart._hasUserSize = chart.hasUserSize;
+                	chart.setSize(chart.options.exporting.printWidth, chart.chartHeight, false);
+        	}
 
 		// hide all body content
 		each(childNodes, function (node, i) {
@@ -410,7 +417,11 @@ extend(Chart.prototype, {
 					node.style.display = origDisplay[i];
 				}
 			});
-
+			
+			if(chart.options.exporting.printWidth !== undefined) {
+	                    chart.setSize(chart._screenMediaWidth, chart.chartHeight, false);
+	                    chart.hasUserSize = chart._hasUserSize;
+	                }
 			chart.isPrinting = false;
 
 		}, 1000);
