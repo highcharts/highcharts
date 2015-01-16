@@ -4,7 +4,8 @@
 	$i = $_GET['i'];
 	$continue = @$_GET['continue'];
 
-	
+	$compare = json_decode(file_get_contents('temp/compare.json'));
+	$comment = @$compare->$path->comment;
 	
 
 
@@ -73,6 +74,7 @@
 					if (li) {
 						$(li).removeClass("identical");
 						$(li).removeClass("different");
+						$(li).removeClass("approved");
 						$(li).addClass(className);
 						
 						
@@ -82,9 +84,16 @@
 						if (difference !== undefined) {
 							if (typeof difference === 'object') {
 								diff = difference.dissimilarityIndex.toFixed(2);
+
 							} else {
 								diff = difference;
 							}
+
+							<?php if ($comment->symbol == 'check') : ?>
+							if (diff.toString() === '<?php echo $comment->diff ?>') {
+								$(li).addClass('approved');
+							}
+							<?php endif; ?>
 							
 							// Compare to reference
 							/*

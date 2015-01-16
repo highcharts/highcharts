@@ -266,6 +266,8 @@
 									// Sample is different but approved
 									if ($comment->symbol === 'check' && $comment->diff == $diff) {
 										$compareClass = 'approved';
+									} else if ($comment->symbol === 'exclamation-sign') {
+										$compareClass = 'different';
 									}
 									
 									// Make it string
