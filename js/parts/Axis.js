@@ -1004,7 +1004,7 @@ Axis.prototype = {
 		}
 
 		// Prevent ticks from getting so close that we can't draw the labels
-		if (!this.tickAmount) {
+		if (!this.tickAmount && this.len) { // Color axis with disabled legend has no length
 			axis.tickInterval = axis.unsquish();
 		}
 
