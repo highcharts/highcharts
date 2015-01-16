@@ -113,7 +113,7 @@ Tick.prototype = {
 		// Check if the label overshoots the chart spacing box. If it does, move it.
 		// If it now overshoots the slotWidth, add ellipsis.
 		if (!rotation) {
-			leftOvershoot = pxPos - factor * labelWidth - spacing[3];
+			leftOvershoot = pxPos - factor * labelWidth /*- spacing[3]*/;
 			rightOvershoot = pxPos + factor * labelWidth /*+ spacing[1]*/ - chartWidth;
 
 			if (leftOvershoot < 0) {
