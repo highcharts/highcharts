@@ -20,7 +20,9 @@ $(function () {
                 align: 'left',
                 verticalAlign: 'middle',
                 y: 100,
-                floating: true
+                floating: true,
+                borderWidth: 1,
+                backgroundColor: 'white'
             },
 
             mapNavigation: {

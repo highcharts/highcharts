@@ -99,30 +99,32 @@ Tick.prototype = {
 	handleOverflow: function (xy) {
 		var axis = this.axis,
 			pxPos = xy.x,
+			chartWidth = axis.chart.chartWidth,
 			spacing = axis.chart.spacing,
+			leftBound = pick(axis.labelLeft, spacing[3]),
+			rightBound = pick(axis.labelRight, chartWidth - spacing[1]),
 			label = this.label,
 			rotation = this.rotation,
 			factor = { left: 0, center: 0.5, right: 1 }[axis.labelAlign],
 			labelWidth = label.getBBox().width,
-			chartWidth = axis.chart.chartWidth,
 			slotWidth = axis.slotWidth,
-			leftOvershoot,
-			rightOvershoot,
+			leftPos,
+			rightPos,
 			textWidth;
 
 		// Check if the label overshoots the chart spacing box. If it does, move it.
 		// If it now overshoots the slotWidth, add ellipsis.
 		if (!rotation) {
-			leftOvershoot = pxPos - factor * labelWidth /*- spacing[3]*/;
-			rightOvershoot = pxPos + factor * labelWidth /*+ spacing[1]*/ - chartWidth;
+			leftPos = pxPos - factor * labelWidth;
+			rightPos = pxPos + factor * labelWidth;
 
-			if (leftOvershoot < 0) {
-				slotWidth += leftOvershoot;
-				xy.x = spacing[3];
+			if (leftPos < leftBound) {
+				slotWidth -= leftBound - leftPos;
+				xy.x = leftBound;
 				label.attr({ align: 'left' });				
-			} else if (rightOvershoot > 0) {
-				slotWidth -= rightOvershoot;
-				xy.x = chartWidth/* - spacing[1]*/;
+			} else if (rightPos > rightBound) {
+				slotWidth -= rightPos - rightBound;
+				xy.x = rightBound;
 				label.attr({ align: 'right' });
 			}
 
@@ -132,10 +134,10 @@ Tick.prototype = {
 		
 
 		// Add ellipsis to prevent rotated labels to be clipped against the edge of the chart
-		} else if (rotation < 0 && pxPos - factor * labelWidth < spacing[3]) {
-			textWidth = mathRound(pxPos / mathCos(rotation * deg2rad) - spacing[3]);
-		} else if (rotation > 0 && pxPos + factor * labelWidth > chartWidth - spacing[1]) {
-			textWidth = mathRound((chartWidth - pxPos) / mathCos(rotation * deg2rad) - spacing[1]);
+		} else if (rotation < 0 && pxPos - factor * labelWidth < leftBound) {
+			textWidth = mathRound(pxPos / mathCos(rotation * deg2rad) - leftBound);
+		} else if (rotation > 0 && pxPos + factor * labelWidth > rightBound) {
+			textWidth = mathRound((chartWidth - pxPos) / mathCos(rotation * deg2rad));
 		}
 
 		if (textWidth) {

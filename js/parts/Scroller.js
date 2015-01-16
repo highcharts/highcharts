@@ -441,7 +441,7 @@ Scroller.prototype = {
 					height: height
 				});
 			}
-
+	
 			scroller.outline[verb]({ d: [
 				M,
 				scrollerLeft, outlineTop, // left
