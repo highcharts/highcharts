@@ -3,7 +3,7 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "no-os-301",
+            "hc-key": "gu-3605",
             "value": 0
         }
     ];
@@ -16,7 +16,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/no/no-os-all.js">Oslo</a>'
+            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/gu/gu-all.js">Guam</a>'
         },
 
         mapNavigation: {
@@ -32,7 +32,7 @@ $(function () {
 
         series : [{
             data : data,
-            mapData: Highcharts.maps['countries/no/no-os-all'],
+            mapData: Highcharts.maps['countries/gu/gu-all'],
             joinBy: 'hc-key',
             name: 'Random data',
             states: {

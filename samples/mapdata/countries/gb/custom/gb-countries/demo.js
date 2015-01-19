@@ -3,8 +3,20 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "no-os-301",
+            "hc-key": "gb-eng",
             "value": 0
+        },
+        {
+            "hc-key": "gb-wls",
+            "value": 1
+        },
+        {
+            "hc-key": "gb-sct",
+            "value": 2
+        },
+        {
+            "hc-key": "gb-nir",
+            "value": 3
         }
     ];
 
@@ -16,7 +28,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/no/no-os-all.js">Oslo</a>'
+            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/gb/custom/gb-countries.js">United Kingdom countries</a>'
         },
 
         mapNavigation: {
@@ -32,7 +44,7 @@ $(function () {
 
         series : [{
             data : data,
-            mapData: Highcharts.maps['countries/no/no-os-all'],
+            mapData: Highcharts.maps['countries/gb/custom/gb-countries'],
             joinBy: 'hc-key',
             name: 'Random data',
             states: {
