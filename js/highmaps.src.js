@@ -16929,23 +16929,30 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 (function (H) {
 	var Series = H.Series,
+		each = H.each,
 		wrap = H.wrap;
 
 	// Add the overlapping logic after drawing data labels
 	wrap(Series.prototype, 'drawDataLabels', function (proceed) {
+		var labels = [];
 		proceed.call(this);
-		this.hideOverlappingDataLabels();
+
+		each(this.points, function (point) { 
+			if (point.dataLabel) {
+				point.dataLabel.labelrank = point.labelrank;
+				labels.push(point.dataLabel);
+			}
+		});
+		this.hideOverlappingLabels(labels);
 	});
 
 	/**
 	 * Hide overlapping labels. Labels are moved and faded in and out on zoom to provide a smooth 
 	 * visual imression.
 	 */		
-	Series.prototype.hideOverlappingDataLabels = function () {
+	Series.prototype.hideOverlappingLabels = function (labels) {
 
-		var points = this.points,
-			len = points.length,
-			point,
+		var len = labels.length,
 			label,
 			i,
 			j,
@@ -16962,8 +16969,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	
 		// Mark with initial opacity
 		for (i = 0; i < len; i++) {
-			point = points[i];
-			label = point.dataLabel;
+			label = labels[i];
 			if (label) {
 				label.oldOpacity = label.opacity;
 				label.newOpacity = 1;
@@ -16972,21 +16978,20 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 		// Detect overlapping labels
 		for (i = 0; i < len; i++) {
-			point = points[i];
-			label1 = point.dataLabel;
+			label1 = labels[i];
 
 			for (j = i + 1; j < len; ++j) {
-				label2 = points[j].dataLabel;
+				label2 = labels[j];
 				if (label1 && label2 && label1.placed && label2.placed && label1.newOpacity !== 0 && label2.newOpacity !== 0 && 
 						intersectRect(label1.alignAttr, label2.alignAttr, label1, label2)) {
-					(point.labelrank < points[j].labelrank ? label1 : label2).newOpacity = 0;
+					(label1.labelrank < label2.labelrank ? label1 : label2).newOpacity = 0;
 				}
 			}
 		}
 
 		// Hide or show
 		for (i = 0; i < len; i++) {
-			label = points[i].dataLabel;
+			label = labels[i];
 			if (label) {
 				if (label.oldOpacity !== label.newOpacity && label.placed) {
 					label.alignAttr.opacity = label.newOpacity;
