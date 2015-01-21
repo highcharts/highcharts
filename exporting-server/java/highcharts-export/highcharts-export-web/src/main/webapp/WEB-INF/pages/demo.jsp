@@ -8,19 +8,18 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <title>Highcharts export server</title>
 <link rel="stylesheet" type="text/css" href="resources/css/demo.css" />
-<link rel="stylesheet" type="text/css"
-	href="resources/lib/codemirror/codemirror.css" />
-<script src="resources/lib//jquery-1.11.0.min.js"></script>
-<script src="resources/lib/codemirror/codemirror.js"></script>
-<script src="resources/lib/codemirror/mode/javascript/javascript.js"></script>
-<script src="resources/lib/codemirror/mode/xml/xml.js"></script>
+<link rel="stylesheet" type="text/css" href="resources/css/codemirror.css" />
+<script src="resources/js//jquery-1.11.0.min.js"></script>
+<script src="resources/js/codemirror-compressed.js"></script>
 <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,700,400italic" type="text/css" />
 <script>
+	var editors = [];
+
 	$(document).ready(function() {
 
 		var enableEditor = function(id) {
 			if (id === 'options') {
-				CodeMirror.fromTextArea($('textarea#options')[0], {
+				editors[0] = CodeMirror.fromTextArea($('textarea#options')[0], {
 					lineNumbers : true,
 					matchBrackets : true,
 					tabMode : "indent",
@@ -29,7 +28,7 @@
 				});
 			} else {
 				// options for svg editor
-				CodeMirror.fromTextArea($('textarea#svg')[0], {
+				editors[1] = CodeMirror.fromTextArea($('textarea#svg')[0], {
 					lineNumbers : true,
 					mode : {
 						name : "xml",
@@ -71,9 +70,8 @@
 
 		enableEditor('options');
 
-		// syntax coloring, indent from codemirror
 		// callback editor
-		CodeMirror.fromTextArea($('textarea#callback')[0], {
+		editors[3] = CodeMirror.fromTextArea($('textarea#callback')[0], {
 			id : 'test',
 			lineNumbers : true,
 			matchBrackets : true,
@@ -102,11 +100,19 @@
     function runPOST() {
 
     	var dataString = 'async=true',
-    		xdr;
+    		xdr,
+			idx;
 
     	$('#container').html('Loading....');
 
-    	$.each($('#exportForm').serializeArray(), function (i, pair) {
+		for(idx = 0; idx < editors.length; idx++) {
+			// ensure saving to textarea before serializing the form
+			if(editors[idx]) {
+				editors[idx].save();
+			}
+		}
+
+		$.each($('#exportForm').serializeArray(), function (i, pair) {
     		dataString += '&' + pair.name + '=' + pair.value;
     	});
 
