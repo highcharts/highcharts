@@ -1837,7 +1837,7 @@ Axis.prototype = {
 			lineWidth = options.lineWidth,
 			linePath,
 			hasRendered = chart.hasRendered,
-			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
+			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin) && chart.isResizing, // #3726
 			hasData = axis.hasData,
 			showAxis = axis.showAxis,
 			from,

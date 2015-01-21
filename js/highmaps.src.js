@@ -7927,7 +7927,7 @@ Axis.prototype = {
 			lineWidth = options.lineWidth,
 			linePath,
 			hasRendered = chart.hasRendered,
-			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
+			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin) && chart.isResizing, // #3726
 			hasData = axis.hasData,
 			showAxis = axis.showAxis,
 			from,
@@ -9041,7 +9041,7 @@ Pointer.prototype = {
 			point = hoverSeries.tooltipPoints[index];
 
 			// a new point is hovered, refresh the tooltip
-			if (point && point !== hoverPoint) {
+			if (point && point !== hoverPoint && point.onMouseOver) { // #3724
 
 				// trigger the events
 				point.onMouseOver(e);
@@ -14093,7 +14093,8 @@ extend(Point.prototype, {
 			graphic = point.graphic,
 			i,
 			chart = series.chart,
-			seriesOptions = series.options;
+			seriesOptions = series.options,
+			names = series.xAxis.names;
 
 		redraw = pick(redraw, true);
 
@@ -14122,6 +14123,9 @@ extend(Point.prototype, {
 			// record changes in the parallel arrays
 			i = point.index;
 			series.updateParallelArrays(point, i);
+			if (names && point.name) {
+				names[point.x] = point.name;
+			}
 
 			seriesOptions.data[i] = point.options;
 
