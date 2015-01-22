@@ -256,7 +256,7 @@ public class ExportController extends HttpServlet {
 		if (convertSvg && mime.equals(MimeType.SVG)) {
 				output = converter.redirectSVG(input, filename);
 		} else {
-			output = converter.convert(input, mime, constructor, callback, globalOptions, parsedWidth, parsedScale, filename);
+				output = converter.convert(input, mime, constructor, callback, globalOptions, parsedWidth, parsedScale, filename);
 		}
 
 		return output;

@@ -6775,13 +6775,24 @@ Axis.prototype = {
 						options.startOfWeek
 					)
 				);
-				axis.trimTicks(minorTickPositions); // #3652
+			
+			} else if (axis.isDatetimeAxis && options.minorTickInterval === 'auto') { // #1314
+				minorTickPositions = minorTickPositions.concat(
+					axis.getTimeTicks(
+						axis.normalizeTimeTickInterval(minorTickInterval),
+						axis.min,
+						axis.max,
+						options.startOfWeek
+					)
+				);
 			} else {
-				for (pos = min + (tickPositions[0] - min) % minorTickInterval; pos <= max; pos += minorTickInterval) {
+				for (pos = axis.min + (tickPositions[0] - axis.min) % minorTickInterval; pos <= axis.max; pos += minorTickInterval) {
 					minorTickPositions.push(pos);
 				}
 			}
 		}
+
+		axis.trimTicks(minorTickPositions); // #3652 #3743
 		return minorTickPositions;
 	},
 
@@ -7927,7 +7938,7 @@ Axis.prototype = {
 			lineWidth = options.lineWidth,
 			linePath,
 			hasRendered = chart.hasRendered,
-			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin) && chart.isResizing, // #3726
+			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
 			hasData = axis.hasData,
 			showAxis = axis.showAxis,
 			from,
