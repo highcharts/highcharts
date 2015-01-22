@@ -6924,12 +6924,13 @@ Axis.prototype = {
 					options.startOfWeek
 				)
 			);
-			axis.trimTicks(minorTickPositions); // #3652
 		} else {
 			for (pos = axis.min + (tickPositions[0] - axis.min) % minorTickInterval; pos <= axis.max; pos += minorTickInterval) {
 				minorTickPositions.push(pos);
 			}
 		}
+
+		axis.trimTicks(minorTickPositions); // #3652 #3743
 		return minorTickPositions;
 	},
 
