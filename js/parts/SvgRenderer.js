@@ -678,18 +678,20 @@ SVGElement.prototype = {
 			textStr = wrapper.textStr,
 			cacheKey;
 
-		// Since numbers are monospaced, and numerical labels appear a lot in a chart,
-		// we assume that a label of n characters has the same bounding box as others 
-		// of the same length.
-		if (textStr === '' || numRegex.test(textStr)) {
-			cacheKey = 'num:' + textStr.toString().length + '|' + (styles && styles.fontSize);
+		if (textStr !== UNDEFINED) {
+			// Since numbers are monospaced, and numerical labels appear a lot in a chart,
+			// we assume that a label of n characters has the same bounding box as others 
+			// of the same length.
+			if (textStr === '' || numRegex.test(textStr)) {
+				cacheKey = 'num:' + textStr.toString().length + '|' + (styles && styles.fontSize);
 
-		// Caching all strings reduces rendering time by 4-5%.
-		} else {
-			cacheKey = [textStr, rotation || 0, styles && styles.fontSize, element.style.width].join(',');
+			// Caching all strings reduces rendering time by 4-5%.
+			} else {
+				cacheKey = [textStr, rotation || 0, styles && styles.fontSize, element.style.width].join(',');
+			}
 		}
 
-		if (!reload) {
+		if (cacheKey && !reload) {
 			bBox = renderer.cache[cacheKey];
 		}
 
