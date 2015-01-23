@@ -177,15 +177,27 @@ Series.prototype = {
 	 * This is only used if an x value is not given for the point that calls autoIncrement.
 	 */
 	autoIncrement: function () {
-		var series = this,
-			options = series.options,
-			xIncrement = series.xIncrement;
 
+		var options = this.options,
+			xIncrement = this.xIncrement,
+			date,
+			pointInterval,
+			pointIntervalUnit = options.pointIntervalUnit;
+		
 		xIncrement = pick(xIncrement, options.pointStart, 0);
-
-		series.pointInterval = pick(series.pointInterval, options.pointInterval, 1);
-
-		series.xIncrement = xIncrement + series.pointInterval;
+		
+		this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
+		
+		// Added code for pointInterval strings
+		if (pointIntervalUnit === 'month' || pointIntervalUnit === 'year') { // docs: samples at #3329
+			date = new Date(xIncrement);
+			date = (pointIntervalUnit === 'month') ?
+				+date[setMonth](date[getMonth]() + pointInterval) :
+				+date[setFullYear](date[getFullYear]() + pointInterval);
+			pointInterval = date - xIncrement;
+		}
+		
+		this.xIncrement = xIncrement + pointInterval;
 		return xIncrement;
 	},
 
