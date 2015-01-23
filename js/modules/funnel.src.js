@@ -50,7 +50,6 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 	
 	type: 'funnel',
 	animate: noop,
-	singularTooltips: true,
 
 	/**
 	 * Overrides the pie translate method
@@ -220,8 +219,7 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 		var series = this,
 			options = series.options,
 			chart = series.chart,
-			renderer = chart.renderer,
-			pointOptions;
+			renderer = chart.renderer;
 
 		each(series.data, function (point) {
 			var pointOptions = point.options,

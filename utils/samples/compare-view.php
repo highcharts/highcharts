@@ -4,7 +4,8 @@
 	$i = $_GET['i'];
 	$continue = @$_GET['continue'];
 
-	
+	$compare = json_decode(file_get_contents('temp/compare.json'));
+	$comment = @$compare->$path->comment;
 	
 
 
@@ -32,6 +33,8 @@
 
 		
 		<script type="text/javascript">
+			var diff,
+				commentHref = 'compare-comment.php?path=<?php echo $path ?>&i=<?php echo $i ?>&diff=';
 			$(function() {
 				// the reload button
 				$('#reload').click(function() {
@@ -39,7 +42,7 @@
 				});
 
 				$('#comment').click(function () {
-					location.href = 'compare-comment.php?path=<?php echo $path ?>&i=<?php echo $i ?>';
+					location.href = commentHref;
 				});
 
 				$(window).bind('keydown', parent.keyDown);
@@ -66,12 +69,12 @@
 				if (window.parent.frames[0]) {
 					var contentDoc = window.parent.frames[0].document,
 						li = contentDoc.getElementById('li<?php echo $i ?>'),
-						diff,
 						background = 'none';
 					
 					if (li) {
 						$(li).removeClass("identical");
 						$(li).removeClass("different");
+						$(li).removeClass("approved");
 						$(li).addClass(className);
 						
 						
@@ -81,9 +84,16 @@
 						if (difference !== undefined) {
 							if (typeof difference === 'object') {
 								diff = difference.dissimilarityIndex.toFixed(2);
+
 							} else {
 								diff = difference;
 							}
+
+							<?php if ($comment->symbol == 'check') : ?>
+							if (diff.toString() === '<?php echo $comment->diff ?>') {
+								$(li).addClass('approved');
+							}
+							<?php endif; ?>
 							
 							// Compare to reference
 							/*
@@ -107,6 +117,17 @@
 								})
 								.html(diff)
 								.appendTo(li);
+
+
+							commentHref = commentHref.replace('diff=', 'diff=' + diff);
+							$('<iframe>')
+								.attr({
+									id: 'comment-iframe',
+									src: commentHref
+								})
+								.appendTo('#comment-placeholder');
+
+
 						} else {
 							$span = $('<a>')
 								.attr({
@@ -414,6 +435,11 @@
 				padding: 0.5em; 
 				
 			}
+			#comment-iframe {
+				height: 400px;
+				border: 1px solid silver;
+				position: fixed;
+			}
 
 			pre#svg {
 				padding: 1em;
@@ -454,10 +480,11 @@
 		
 		<table>
 			<tr>
-				<td><iframe id="iframe-left" src="compare-iframe.php?which=left&amp;<? echo $_SERVER['QUERY_STRING'] ?>" 
+				<td><iframe id="iframe-left" src="compare-iframe.php?which=left&amp;<?php echo $_SERVER['QUERY_STRING'] ?>" 
 					style="width: 500px; height: 400px; border: 1px dotted gray"></iframe></td>
-				<td><iframe id="iframe-right" src="compare-iframe.php?which=right&amp;<? echo $_SERVER['QUERY_STRING'] ?>" 
+				<td><iframe id="iframe-right" src="compare-iframe.php?which=right&amp;<?php echo $_SERVER['QUERY_STRING'] ?>" 
 					style="width: 500px; height: 400px; border: 1px dotted gray"></iframe></td>
+				<td id="comment-placeholder"></id>
 			</tr>
 			<tr>
 				<td colspan="2">

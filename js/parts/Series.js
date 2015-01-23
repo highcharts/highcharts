@@ -177,15 +177,27 @@ Series.prototype = {
 	 * This is only used if an x value is not given for the point that calls autoIncrement.
 	 */
 	autoIncrement: function () {
-		var series = this,
-			options = series.options,
-			xIncrement = series.xIncrement;
 
+		var options = this.options,
+			xIncrement = this.xIncrement,
+			date,
+			pointInterval,
+			pointIntervalUnit = options.pointIntervalUnit;
+		
 		xIncrement = pick(xIncrement, options.pointStart, 0);
-
-		series.pointInterval = pick(series.pointInterval, options.pointInterval, 1);
-
-		series.xIncrement = xIncrement + series.pointInterval;
+		
+		this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
+		
+		// Added code for pointInterval strings
+		if (pointIntervalUnit === 'month' || pointIntervalUnit === 'year') { // docs: samples at #3329
+			date = new Date(xIncrement);
+			date = (pointIntervalUnit === 'month') ?
+				+date[setMonth](date[getMonth]() + pointInterval) :
+				+date[setFullYear](date[getFullYear]() + pointInterval);
+			pointInterval = date - xIncrement;
+		}
+		
+		this.xIncrement = xIncrement + pointInterval;
 		return xIncrement;
 	},
 
@@ -721,7 +733,9 @@ Series.prototype = {
 			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
 			threshold = options.threshold,
 			plotX,
-			plotY;
+			plotY,
+			lastPlotX,
+			closestPointRangePx = Number.MAX_VALUE;
 
 		// Translate each point
 		for (i = 0; i < dataLength; i++) {
@@ -794,7 +808,15 @@ Series.prototype = {
 			point.category = categories && categories[point.x] !== UNDEFINED ?
 				categories[point.x] : point.x;
 
+			// Determine auto enabling of markers (#3635)
+			if (i) {
+				closestPointRangePx = mathMin(closestPointRangePx, mathAbs(plotX - lastPlotX));
+			}
+			lastPlotX = plotX;
+
 		}
+
+		series.closestPointRangePx = closestPointRangePx;
 
 		// now that we have the cropped data, build the segments
 		series.getSegments();
@@ -831,9 +853,8 @@ Series.prototype = {
 			chart[sharedClipKey] = clipRect = renderer.clipRect(clipBox);
 			
 		}
-		if (animation) {
-			clipRect.count += 1;
-		}
+		clipRect.count += 1;
+
 		if (this.options.clip !== false) {
 			this.group.clip(animation || seriesClipBox ? clipRect : chart.clipRect);
 			this.markerGroup.clip(markerClipRect);
@@ -927,9 +948,11 @@ Series.prototype = {
 			enabled,
 			isInside,
 			markerGroup = series.markerGroup,
+			xAxis = series.xAxis,
 			globallyEnabled = pick(
 				seriesMarkerOptions.enabled, 
-				series.closestPointRange * series.xAxis.transA > 2 * seriesMarkerOptions.radius // #3635
+				xAxis.isRadial,
+				series.closestPointRangePx > 2 * seriesMarkerOptions.radius
 			);
 
 		if (seriesMarkerOptions.enabled !== false || series._hasPointMarkers) {

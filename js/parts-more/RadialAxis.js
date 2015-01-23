@@ -255,6 +255,10 @@ var radialAxisMixin = {
 		
 		// Circular grid bands
 		} else {
+
+			// Keep within bounds
+			from = Math.max(from, this.min);
+			to = Math.min(to, this.max);
 			
 			// Plot bands on Y axis (radial axis) - inner and outer radius depend on to and from
 			if (!isCircular) {
@@ -294,7 +298,7 @@ var radialAxisMixin = {
 				}
 			);
 		}
-		 
+
 		return ret;
 	},
 	
@@ -459,6 +463,7 @@ wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, label
 	var axis = this.axis,
 		optionsY = labelOptions.y,
 		ret,
+		centerSlot = 20, // 20 degrees to each side at the top and bottom
 		align = labelOptions.align,
 		angle = ((axis.translate(this.pos) + axis.startAngleRad + Math.PI / 2) / Math.PI * 180) % 360;
 
@@ -479,9 +484,12 @@ wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, label
 		// Automatic alignment
 		if (align === null) {
 			if (axis.isCircular) {
-				if (angle > 20 && angle < 160) {
+				if (this.label.getBBox().width > axis.len * axis.tickInterval / (axis.max - axis.min)) { // #3506
+					centerSlot = 0;
+				}
+				if (angle > centerSlot && angle < 180 - centerSlot) {
 					align = 'left'; // right hemisphere
-				} else if (angle > 200 && angle < 340) {
+				} else if (angle > 180 + centerSlot && angle < 360 - centerSlot) {
 					align = 'right'; // left hemisphere
 				} else {
 					align = 'center'; // top or bottom

@@ -10,7 +10,7 @@ SVGElement.prototype = {
 	opacity: 1,
 	// For labels, these CSS properties are applied to the <text> node directly
 	textProps: ['fontSize', 'fontWeight', 'fontFamily', 'color', 
-		'lineHeight', 'width', 'textDecoration', 'textShadow', 'HcTextStroke'],
+		'lineHeight', 'width', 'textDecoration', 'textShadow'],
 	
 	/**
 	 * Initialize the SVG renderer
@@ -151,6 +151,88 @@ SVGElement.prototype = {
 			// Set the reference to the gradient object
 			elem.setAttribute(prop, 'url(' + renderer.url + '#' + id + ')');
 		} 
+	},
+
+	/**
+	 * Apply a polyfill to the text-stroke CSS property, by copying the text element
+	 * and apply strokes to the copy.
+	 *
+	 * docs: update default, document the polyfill and the limitations on hex colors and pixel values, document contrast pseudo-color
+	 * TODO: 
+	 * - update defaults
+	 */
+	applyTextShadow: function (textShadow) {
+		var elem = this.element,
+			tspans,
+			hasContrast = textShadow.indexOf('contrast') !== -1,
+			// IE10 and IE11 report textShadow in elem.style even though it doesn't work. Check
+			// this again with new IE release.
+			supports = elem.style.textShadow !== UNDEFINED && !isIE;
+
+		// When the text shadow is set to contrast, use dark stroke for light text and vice versa // docs: new defaults for all affected series
+		if (hasContrast) {
+			textShadow = textShadow.replace(/contrast/g, this.renderer.getContrast(elem.style.fill));
+		}
+
+		/* Selective side-by-side testing in supported browser (http://jsfiddle.net/highcharts/73L1ptrh/)
+		if (elem.textContent.indexOf('2.') === 0) {
+			elem.style['text-shadow'] = 'none';
+			supports = false;
+		}
+		// */
+
+		// No reason to polyfill, we've got native support
+		if (supports) {
+			if (hasContrast) { // Apply the altered style
+				css(elem, {
+					textShadow: textShadow
+				});
+			}
+		} else {
+
+			// In order to get the right y position of the clones, 
+			// copy over the y setter
+			this.ySetter = this.xSetter;
+
+			tspans = [].slice.call(elem.getElementsByTagName('tspan'));
+			each(textShadow.split(/\s?,\s?/g), function (textShadow) {
+				var firstChild = elem.firstChild,
+					color,
+					strokeWidth;
+				
+				textShadow = textShadow.split(' ');
+				color = textShadow[textShadow.length - 1];
+
+				// Approximately tune the settings to the text-shadow behaviour
+				strokeWidth = textShadow[textShadow.length - 2];
+
+				if (strokeWidth) {
+					each(tspans, function (tspan, y) {
+						var clone;
+
+						// Let the first line start at the correct X position
+						if (y === 0) {
+							tspan.setAttribute('x', elem.getAttribute('x'));
+							y = elem.getAttribute('y');
+							tspan.setAttribute('y', y || 0);
+							if (y === null) {
+								elem.setAttribute('y', 0);
+							}
+						}
+
+						// Create the clone and apply shadow properties
+						clone = tspan.cloneNode(1);
+						attr(clone, {
+							'stroke': color,
+							'stroke-opacity': 1 / mathMax(pInt(strokeWidth), 3),
+							'stroke-width': strokeWidth,
+							'stroke-linejoin': 'round'
+						});
+						elem.insertBefore(clone, firstChild);
+					});
+				}
+			});
+		}
 	},
 
 	/**
@@ -484,6 +566,9 @@ SVGElement.prototype = {
 			transform.push('rotate(90) scale(-1,1)');
 		} else if (rotation) { // text rotation
 			transform.push('rotate(' + rotation + ' ' + (element.getAttribute('x') || 0) + ' ' + (element.getAttribute('y') || 0) + ')');
+			
+			// Delete bBox memo when the rotation changes
+			//delete wrapper.bBox;
 		}
 
 		// apply scale
@@ -512,9 +597,9 @@ SVGElement.prototype = {
 	 * @param {Object} alignOptions
 	 * @param {Boolean} alignByTranslate
 	 * @param {String[Object} box The box to align to, needs a width and height. When the
-	 *        box is a string, it refers to an object in the Renderer. For example, when
-	 *        box is 'spacingBox', it refers to Renderer.spacingBox which holds width, height
-	 *        x and y properties.
+	 *		box is a string, it refers to an object in the Renderer. For example, when
+	 *		box is 'spacingBox', it refers to Renderer.spacingBox which holds width, height
+	 *		x and y properties.
 	 *
 	 */
 	align: function (alignOptions, alignByTranslate, box) {
@@ -580,9 +665,9 @@ SVGElement.prototype = {
 	/**
 	 * Get the bounding box (width, height, x and y) for the element
 	 */
-	getBBox: function () {
+	getBBox: function (reload) {
 		var wrapper = this,
-			bBox = wrapper.bBox,
+			bBox,// = wrapper.bBox,
 			renderer = wrapper.renderer,
 			width,
 			height,
@@ -593,18 +678,20 @@ SVGElement.prototype = {
 			textStr = wrapper.textStr,
 			cacheKey;
 
-		// Since numbers are monospaced, and numerical labels appear a lot in a chart,
-		// we assume that a label of n characters has the same bounding box as others 
-		// of the same length.
-		if (textStr === '' || numRegex.test(textStr)) {
-			cacheKey = 'num.' + textStr.toString().length + (styles ? ('|' + styles.fontSize + '|' + styles.fontFamily) : '');
+		if (textStr !== UNDEFINED) {
+			// Since numbers are monospaced, and numerical labels appear a lot in a chart,
+			// we assume that a label of n characters has the same bounding box as others 
+			// of the same length.
+			if (textStr === '' || numRegex.test(textStr)) {
+				cacheKey = 'num:' + textStr.toString().length + '|' + (styles && styles.fontSize);
 
-		} //else { // This code block made demo/waterfall fail, related to buildText
-			// Caching all strings reduces rendering time by 4-5%. 
-			// TODO: Check how this affects places where bBox is found on the element
-			//cacheKey = textStr + (styles ? ('|' + styles.fontSize + '|' + styles.fontFamily) : '');
-		//}
-		if (cacheKey) {
+			// Caching all strings reduces rendering time by 4-5%.
+			} else {
+				cacheKey = [textStr, rotation || 0, styles && styles.fontSize, element.style.width].join(',');
+			}
+		}
+
+		if (cacheKey && !reload) {
 			bBox = renderer.cache[cacheKey];
 		}
 
@@ -659,10 +746,8 @@ SVGElement.prototype = {
 			}
 
 			// Cache it
-			wrapper.bBox = bBox;
-			if (cacheKey) {
-				renderer.cache[cacheKey] = bBox;
-			}
+			//wrapper.bBox = bBox;
+			renderer.cache[cacheKey] = bBox;
 		}
 		return bBox;
 	},
@@ -702,12 +787,13 @@ SVGElement.prototype = {
 	/**
 	 * Add the element
 	 * @param {Object|Undefined} parent Can be an element, an element wrapper or undefined
-	 *    to append the element to the renderer.box.
+	 *	to append the element to the renderer.box.
 	 */
 	add: function (parent) {
 
 		var renderer = this.renderer,
-			element = this.element;
+			element = this.element,
+			inserted;
 
 		if (parent) {
 			this.parentGroup = parent;
@@ -727,11 +813,11 @@ SVGElement.prototype = {
 		// If we're adding to renderer root, or other elements in the group 
 		// have a z index, we need to handle it
 		if (!parent || parent.handleZ || this.zIndex) {
-			this.zIndexSetter();
+			inserted = this.zIndexSetter();
 		}
 
 		// If zIndex is not handled, append at the end
-		if (!element.parentNode) {
+		if (!inserted) {
 			(parent ? parent.element : renderer.box).appendChild(element);
 		}
 
@@ -964,7 +1050,7 @@ SVGElement.prototype = {
 			otherElement,
 			otherZIndex,
 			element = this.element,
-			hasInserted,
+			inserted,
 			i;
 		
 		if (defined(value)) {
@@ -983,7 +1069,7 @@ SVGElement.prototype = {
 			}
 		
 			childNodes = parentNode.childNodes;
-			for (i = 0; i < childNodes.length; i++) {
+			for (i = 0; i < childNodes.length && !inserted; i++) {
 				otherElement = childNodes[i];
 				otherZIndex = attr(otherElement, 'zIndex');
 				if (otherElement !== element && (
@@ -994,14 +1080,11 @@ SVGElement.prototype = {
 
 						)) {
 					parentNode.insertBefore(element, otherElement);
-					hasInserted = true;
-					break;
+					inserted = true;
 				}
 			}
-			if (!hasInserted) {
-				parentNode.appendChild(element);
-			}
 		}
+		return inserted;
 	},
 	_defaultSetter: function (value, key, element) {
 		element.setAttribute(key, value);
@@ -1203,8 +1286,10 @@ SVGRenderer.prototype = {
 			textStyles = wrapper.styles,
 			width = wrapper.textWidth,
 			textLineHeight = textStyles && textStyles.lineHeight,
-			textStroke = textStyles && textStyles.HcTextStroke,
+			textShadow = textStyles && textStyles.textShadow,
+			ellipsis = textStyles && textStyles.textOverflow === 'ellipsis',
 			i = childNodes.length,
+			tempParent = width && !wrapper.added && this.box,
 			getLineHeight = function (tspan) {
 				return textLineHeight ? 
 					pInt(textLineHeight) :
@@ -1226,7 +1311,7 @@ SVGRenderer.prototype = {
 
 		// Skip tspans, add text directly to text node. The forceTSpan is a hook 
 		// used in text outline hack.
-		if (!hasMarkup && !textStroke && textStr.indexOf(' ') === -1) {
+		if (!hasMarkup && !textShadow && !ellipsis && textStr.indexOf(' ') === -1) {
 			textNode.appendChild(doc.createTextNode(unescapeAngleBrackets(textStr)));
 			return;
 
@@ -1236,8 +1321,8 @@ SVGRenderer.prototype = {
 			styleRegex = /<.*style="([^"]+)".*>/;
 			hrefRegex = /<.*href="(http[^"]+)".*>/;
 
-			if (width && !wrapper.added) {
-				this.box.appendChild(textNode); // attach it to the DOM to read offset width
+			if (tempParent) {
+				tempParent.appendChild(textNode); // attach it to the DOM to read offset width
 			}
 
 			if (hasMarkup) {
@@ -1319,21 +1404,28 @@ SVGRenderer.prototype = {
 								);
 							}
 
-							// check width and apply soft breaks
+							/*if (width) {
+								renderer.breakText(wrapper, width);
+							}*/
+
+							// Check width and apply soft breaks or ellipsis
 							if (width) {
 								var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
 									hasWhiteSpace = spans.length > 1 || lineNo || (words.length > 1 && textStyles.whiteSpace !== 'nowrap'),
 									tooLong,
+									wasTooLong,
 									actualWidth,
-									hcHeight = textStyles.HcHeight,
 									rest = [],
 									dy = getLineHeight(tspan),
 									softLineNo = 1,
+									rotation = wrapper.rotation,
+									wordStr = span, // for ellipsis
+									cursor = wordStr.length, // binary search cursor
 									bBox;
 
-								while (hasWhiteSpace && (words.length || rest.length)) {
-									delete wrapper.bBox; // delete cache
-									bBox = wrapper.getBBox();
+								while ((hasWhiteSpace || ellipsis) && (words.length || rest.length)) {
+									wrapper.rotation = 0; // discard rotation when computing box
+									bBox = wrapper.getBBox(true);
 									actualWidth = bBox.width;
 
 									// Old IE cannot measure the actualWidth for SVG elements (#2314)
@@ -1342,26 +1434,43 @@ SVGRenderer.prototype = {
 									}
 
 									tooLong = actualWidth > width;
-									if (!tooLong || words.length === 1) { // new line needed
+
+									// For ellipsis, do a binary search for the correct string length
+									if (wasTooLong === undefined) {
+										wasTooLong = tooLong; // First time
+									}
+									if (ellipsis && wasTooLong) {
+										cursor /= 2;
+
+										if (wordStr === '' || (!tooLong && cursor < 0.5)) {
+											words = []; // All ok, break out
+										} else {
+											if (tooLong) {
+												wasTooLong = true;
+											}
+											wordStr = span.substring(0, wordStr.length + (tooLong ? -1 : 1) * mathCeil(cursor));
+											words = [wordStr + '\u2026'];
+											tspan.removeChild(tspan.firstChild);
+										}
+
+									// Looping down, this is the first word sequence that is not too long,
+									// so we can move on to build the next line.
+									} else if (!tooLong || words.length === 1) {
 										words = rest;
 										rest = [];
+												
 										if (words.length) {
 											softLineNo++;
-											if (hcHeight && softLineNo * dy > hcHeight) {
-												words = ['...'];
-												wrapper.attr('title', wrapper.textStr);
-											} else {
-
-												tspan = doc.createElementNS(SVG_NS, 'tspan');
-												attr(tspan, {
-													dy: dy,
-													x: parentX
-												});
-												if (spanStyle) { // #390
-													attr(tspan, 'style', spanStyle);
-												}
-												textNode.appendChild(tspan);
+											
+											tspan = doc.createElementNS(SVG_NS, 'tspan');
+											attr(tspan, {
+												dy: dy,
+												x: parentX
+											});
+											if (spanStyle) { // #390
+												attr(tspan, 'style', spanStyle);
 											}
+											textNode.appendChild(tspan);
 										}
 										if (actualWidth > width) { // a single word is pressing it out
 											width = actualWidth;
@@ -1374,6 +1483,10 @@ SVGRenderer.prototype = {
 										tspan.appendChild(doc.createTextNode(words.join(' ').replace(/- /g, '-')));
 									}
 								}
+								if (wasTooLong) {
+									wrapper.attr('title', wrapper.textStr);
+								}
+								wrapper.rotation = rotation;
 							}
 
 							spanNo++;
@@ -1381,7 +1494,58 @@ SVGRenderer.prototype = {
 					}
 				});
 			});
+			if (tempParent) {
+				tempParent.removeChild(textNode); // attach it to the DOM to read offset width
+			}
+
+			// Apply the text shadow
+			if (textShadow && wrapper.applyTextShadow) {
+				wrapper.applyTextShadow(textShadow);
+			}
 		}
+	},
+
+	
+
+	/*
+	breakText: function (wrapper, width) {
+		var bBox = wrapper.getBBox(),
+			node = wrapper.element,
+			textLength = node.textContent.length,
+			pos = mathRound(width * textLength / bBox.width), // try this position first, based on average character width
+			increment = 0,
+			finalPos;
+
+		if (bBox.width > width) {
+			while (finalPos === undefined) {
+				textLength = node.getSubStringLength(0, pos);
+
+				if (textLength <= width) {
+					if (increment === -1) {
+						finalPos = pos;
+					} else {
+						increment = 1;
+					}
+				} else {
+					if (increment === 1) {
+						finalPos = pos - 1;
+					} else {
+						increment = -1;
+					}
+				}
+				pos += increment;
+			}
+		}
+		console.log(finalPos, node.getSubStringLength(0, finalPos))
+	},
+	*/
+
+	/** 
+	 * Returns white for dark colors and black for bright colors
+	 */
+	getContrast: function (color) {
+		color = Color(color).rgba;
+		return color[0] + color[1] + color[2] > 384 ? '#000' : '#FFF';
 	},
 
 	/**
@@ -1662,7 +1826,7 @@ SVGRenderer.prototype = {
 	/**
 	 * Create a group
 	 * @param {String} name The group will be given a class name of 'highcharts-{name}'.
-	 *     This can be used for styling and scripting.
+	 *	 This can be used for styling and scripting.
 	 */
 	g: function (name) {
 		var elem = this.createElement('g');
@@ -2071,10 +2235,10 @@ SVGRenderer.prototype = {
 	 * @param {Number} y
 	 * @param {String} shape
 	 * @param {Number} anchorX In case the shape has a pointer, like a flag, this is the
-	 *    coordinates it should be pinned to
+	 *	coordinates it should be pinned to
 	 * @param {Number} anchorY
 	 * @param {Boolean} baseline Whether to position the label relative to the text baseline,
-	 *    like renderer.text, or to the upper border of the rectangle.
+	 *	like renderer.text, or to the upper border of the rectangle.
 	 * @param {String} className Class name for the group
 	 */
 	label: function (str, x, y, shape, anchorX, anchorY, useHTML, baseline, className) {

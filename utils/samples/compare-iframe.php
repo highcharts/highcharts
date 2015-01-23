@@ -150,13 +150,21 @@ function getCompareTooltips() {
 						if (chart) {
 
 							// Automatically click buttons with classname "autocompare"
-							$('.autocompare').click();
+							tryToRun(function () {
+								$('.autocompare').click();
+							});
 
 							window.parent.onLoadTest('<?php echo $_GET['which']; ?>', $(chart.container).html());
 							clearInterval(interval);
 							
 						// Compare renderers
 						} else if (window.renderer) {
+	
+							// Automatically click buttons with classname "autocompare"
+							tryToRun(function () {
+								$('.autocompare').click();
+							});
+
 							// Create a mock chart object with a getSVG method
 							chart = {
 								getSVG: function () {

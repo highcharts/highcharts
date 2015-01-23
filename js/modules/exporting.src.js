@@ -8,7 +8,7 @@
  */
 
 // JSLint options:
-/*global Highcharts, document, window, Math, setTimeout */
+/*global Highcharts, HighchartsAdapter, document, window, Math, setTimeout */
 
 (function (Highcharts) { // encapsulate
 
@@ -16,6 +16,7 @@
 var Chart = Highcharts.Chart,
 	addEvent = Highcharts.addEvent,
 	removeEvent = Highcharts.removeEvent,
+	fireEvent = HighchartsAdapter.fireEvent,
 	createElement = Highcharts.createElement,
 	discardElement = Highcharts.discardElement,
 	css = Highcharts.css,
@@ -383,6 +384,8 @@ extend(Chart.prototype, {
 
 		chart.isPrinting = true;
 
+		fireEvent(chart, 'beforePrint'); // docs - http://jsfiddle.net/highcharts/8sgqe812/
+
 		// hide all body content
 		each(childNodes, function (node, i) {
 			if (node.nodeType === 1) {
@@ -412,6 +415,8 @@ extend(Chart.prototype, {
 			});
 
 			chart.isPrinting = false;
+
+			fireEvent(chart, 'afterPrint'); // docs
 
 		}, 1000);
 
@@ -505,7 +510,9 @@ extend(Chart.prototype, {
 							},
 							onclick: function () {
 								hide();
-								item.onclick.apply(chart, arguments);
+								if (item.onclick) {
+									item.onclick.apply(chart, arguments);
+								}
 							},
 							innerHTML: item.text || chart.options.lang[item.textKey]
 						}, extend({

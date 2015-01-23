@@ -365,6 +365,9 @@ extend(ColorAxis.prototype, {
 				this.labelGroup.add(group);
 
 				this.added = true;
+
+				this.labelLeft = 0;
+				this.labelRight = this.width;
 			}
 			// Reset it to avoid color axis reserving space
 			this.chart.axisOffset[this.side] = sideOffset;
@@ -640,55 +643,6 @@ var colorSeriesMixin = {
 			}
 		});
 	}
-};
-
-
-/**
- * Wrap the buildText method and add the hook for add text stroke
- */
-wrap(SVGRenderer.prototype, 'buildText', function (proceed, wrapper) {
-
-	var textStroke = wrapper.styles && wrapper.styles.HcTextStroke;
-
-	proceed.call(this, wrapper);
-
-	// Apply the text stroke
-	if (textStroke && wrapper.applyTextStroke) {
-		wrapper.applyTextStroke(textStroke);
-	}
-});
-
-/**
- * Apply an outside text stroke to data labels, based on the custom CSS property, HcTextStroke.
- * Consider moving this to Highcharts core, also makes sense on stacked columns etc.
- */
-SVGRenderer.prototype.Element.prototype.applyTextStroke = function (textStroke) {
-	var elem = this.element,
-		tspans,
-		firstChild;
-	
-	textStroke = textStroke.split(' ');
-	tspans = elem.getElementsByTagName('tspan');
-	firstChild = elem.firstChild;
-	
-	// In order to get the right y position of the clones, 
-	// copy over the y setter
-	this.ySetter = this.xSetter;
-	
-	each([].slice.call(tspans), function (tspan, y) {
-		var clone;
-		if (y === 0) {
-			tspan.setAttribute('x', elem.getAttribute('x'));
-			if ((y = elem.getAttribute('y')) !== null) {
-				tspan.setAttribute('y', y);
-			}
-		}
-		clone = tspan.cloneNode(1);
-		clone.setAttribute('stroke', textStroke[1]);
-		clone.setAttribute('stroke-width', textStroke[0]);
-		clone.setAttribute('stroke-linejoin', 'round');
-		elem.insertBefore(clone, firstChild);
-	});
 };
 // Add events to the Chart object itself
 extend(Chart.prototype, {
@@ -977,9 +931,9 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 		overflow: false,
 		padding: 0,
 		style: {
-			color: 'white',
+			color: '#FFFFFF', // docs
 			fontWeight: 'bold',
-			HcTextStroke: '3px rgba(0,0,0,0.5)'
+			textShadow: '0 0 4px contrast, 0 0 2px contrast'
 		}
 	},
 	turboThreshold: 0,
@@ -1673,23 +1627,30 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 (function (H) {
 	var Series = H.Series,
+		each = H.each,
 		wrap = H.wrap;
 
 	// Add the overlapping logic after drawing data labels
 	wrap(Series.prototype, 'drawDataLabels', function (proceed) {
+		var labels = [];
 		proceed.call(this);
-		this.hideOverlappingDataLabels();
+
+		each(this.points, function (point) { 
+			if (point.dataLabel) {
+				point.dataLabel.labelrank = point.labelrank;
+				labels.push(point.dataLabel);
+			}
+		});
+		this.hideOverlappingLabels(labels);
 	});
 
 	/**
 	 * Hide overlapping labels. Labels are moved and faded in and out on zoom to provide a smooth 
 	 * visual imression.
 	 */		
-	Series.prototype.hideOverlappingDataLabels = function () {
+	Series.prototype.hideOverlappingLabels = function (labels) {
 
-		var points = this.points,
-			len = points.length,
-			point,
+		var len = labels.length,
 			label,
 			i,
 			j,
@@ -1706,8 +1667,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	
 		// Mark with initial opacity
 		for (i = 0; i < len; i++) {
-			point = points[i];
-			label = point.dataLabel;
+			label = labels[i];
 			if (label) {
 				label.oldOpacity = label.opacity;
 				label.newOpacity = 1;
@@ -1716,21 +1676,20 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 		// Detect overlapping labels
 		for (i = 0; i < len; i++) {
-			point = points[i];
-			label1 = point.dataLabel;
+			label1 = labels[i];
 
 			for (j = i + 1; j < len; ++j) {
-				label2 = points[j].dataLabel;
+				label2 = labels[j];
 				if (label1 && label2 && label1.placed && label2.placed && label1.newOpacity !== 0 && label2.newOpacity !== 0 && 
 						intersectRect(label1.alignAttr, label2.alignAttr, label1, label2)) {
-					(point.labelrank < points[j].labelrank ? label1 : label2).newOpacity = 0;
+					(label1.labelrank < label2.labelrank ? label1 : label2).newOpacity = 0;
 				}
 			}
 		}
 
 		// Hide or show
 		for (i = 0; i < len; i++) {
-			label = points[i].dataLabel;
+			label = labels[i];
 			if (label) {
 				if (label.oldOpacity !== label.newOpacity && label.placed) {
 					label.alignAttr.opacity = label.newOpacity;
@@ -1772,7 +1731,7 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 		defer: false,
 		overflow: false,
 		style: {
-			HcTextStroke: '3px rgba(255,255,255,0.5)'
+			textShadow: '0 0 4px contrast, 0 0 2px contrast'
 		}
 	}
 });
@@ -1823,7 +1782,7 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 		style: {
 			color: 'white',
 			fontWeight: 'bold',
-			HcTextStroke: '1px rgba(0,0,0,0.5)'
+			textShadow: '0 0 4px contrast, 0 0 2px contrast'
 		}
 	},
 	marker: null,

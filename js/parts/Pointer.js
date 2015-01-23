@@ -46,7 +46,7 @@ Pointer.prototype = {
 
 		if (Highcharts.Tooltip && options.tooltip.enabled) {
 			chart.tooltip = new Tooltip(chart, options.tooltip);
-			this.followTouchMove = options.tooltip.followTouchMove;
+			this.followTouchMove = pick(options.tooltip.followTouchMove, true); // docs: true by default since 4.1
 		}
 
 		this.setDOMEvents();
@@ -185,46 +185,35 @@ Pointer.prototype = {
 		// Separate tooltip and general mouse events
 		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
 
-		//if (hoverSeries && hoverSeries.tracker) { // #2584, #2830, #2889, #3258
-			// Tooltip
+		// Tooltip
 
-			if (tooltip) { // && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
-				// Draw tooltip if necessary
-				if (shared && !kdpoint.series.noSharedTooltip) {
-					i = kdpoints.length;
-					trueXkd = kdpoint.plotX + kdpoint.series.xAxis.left;
-					while (i--) {
-						trueX = kdpoints[i].plotX + kdpoints[i].series.xAxis.left;
-						if (kdpoints[i].x !== kdpoint.x || trueX !== trueXkd || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
-							kdpoints.splice(i, 1);
-						}
+		if (tooltip) { // && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
+			// Draw tooltip if necessary
+			if (shared && !kdpoint.series.noSharedTooltip) {
+				i = kdpoints.length;
+				trueXkd = kdpoint.plotX + kdpoint.series.xAxis.left;
+				while (i--) {
+					trueX = kdpoints[i].plotX + kdpoints[i].series.xAxis.left;
+					if (kdpoints[i].x !== kdpoint.x || trueX !== trueXkd || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
+						kdpoints.splice(i, 1);
 					}
-					tooltip.refresh(kdpoints, e);
-					each(kdpoints, function (point) {
-						point.onMouseOver(e);
-					});
-				} else {
-					tooltip.refresh(kdpoint, e);
-					kdpoint.onMouseOver(e);
 				}
+				tooltip.refresh(kdpoints, e);
+				each(kdpoints, function (point) {
+					point.onMouseOver(e);
+				});
+			} else {
+				tooltip.refresh(kdpoint, e);
+				kdpoint.onMouseOver(e);
 			}
-		//}	 
-
+		}
+		
 		
 		if (tooltip && followPointer && !tooltip.isHidden) {
 			anchor = tooltip.getAnchor([{}], e);
 			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });			
 		}
-		/*
-		// Hover Series
-		if (kdpoint !== hoverPoint) {
-			// set new hoverPoint and hoverSeries
-			chart.hoverPoint = kdpoint;
-			chart.hoverSeries = kdpoint.series;	
-
-		}
-		*/
-		
+				
 	},
 
 

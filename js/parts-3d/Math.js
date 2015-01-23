@@ -10,7 +10,9 @@ var PI = Math.PI,
 
 function perspective(points, chart, insidePlotArea) {
 	var options3d = chart.options.chart.options3d,
-		inverted = false;
+		inverted = false,
+		origin;
+
 	if (insidePlotArea) {
 		inverted = chart.inverted;
 		origin = {
@@ -40,7 +42,7 @@ function perspective(points, chart, insidePlotArea) {
 		s2 = sin(angle2),
 		c2 = cos(angle2);
 
-	var x, y, z, px, py, pz, p;
+	var x, y, z, px, py, pz;
 
 	Highcharts.each(points, function (point) {
 		x = (inverted ? point.y : point.x) - xe;

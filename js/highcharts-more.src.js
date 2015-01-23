@@ -374,6 +374,10 @@ var radialAxisMixin = {
 		
 		// Circular grid bands
 		} else {
+
+			// Keep within bounds
+			from = Math.max(from, this.min);
+			to = Math.min(to, this.max);
 			
 			// Plot bands on Y axis (radial axis) - inner and outer radius depend on to and from
 			if (!isCircular) {
@@ -413,7 +417,7 @@ var radialAxisMixin = {
 				}
 			);
 		}
-		 
+
 		return ret;
 	},
 	
@@ -578,6 +582,7 @@ wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, label
 	var axis = this.axis,
 		optionsY = labelOptions.y,
 		ret,
+		centerSlot = 20, // 20 degrees to each side at the top and bottom
 		align = labelOptions.align,
 		angle = ((axis.translate(this.pos) + axis.startAngleRad + Math.PI / 2) / Math.PI * 180) % 360;
 
@@ -598,9 +603,12 @@ wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, label
 		// Automatic alignment
 		if (align === null) {
 			if (axis.isCircular) {
-				if (angle > 20 && angle < 160) {
+				if (this.label.getBBox().width > axis.len * axis.tickInterval / (axis.max - axis.min)) { // #3506
+					centerSlot = 0;
+				}
+				if (angle > centerSlot && angle < 180 - centerSlot) {
 					align = 'left'; // right hemisphere
-				} else if (angle > 200 && angle < 340) {
+				} else if (angle > 180 + centerSlot && angle < 360 - centerSlot) {
 					align = 'right'; // left hemisphere
 				} else {
 					align = 'center'; // top or bottom
@@ -1599,7 +1607,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				[0, yValue];
 
 			// override point value for sums
-			if (isNaN(point.y)) {
+			if (point.isSum || point.isIntermediateSum) { // #3710 Update point does not propagate to sum
 				point.y = yValue;
 			}
 
@@ -1651,7 +1659,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		var series = this,
 			options = series.options,
 			yData = series.yData,
-			points = series.points,
+			points = series.options.data, // #3710 Update point does not propagate to sum
 			point,
 			dataLength = yData.length,
 			threshold = options.threshold || 0,
@@ -1718,9 +1726,16 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
 
 		each(series.points, function (point) {
-			if (point.y > 0 && !point.options.color) {
-				point.pointAttr = seriesDownPointAttr;
-				point.color = upColor;
+			if (!point.options.color) {
+				// Up color
+				if (point.y > 0) {
+					point.pointAttr = seriesDownPointAttr;
+					point.color = upColor;
+
+				// Down color (#3710, update to negative)
+				} else {
+					point.pointAttr = series.pointAttr;
+				}
 			}
 		});
 	},
@@ -2040,78 +2055,76 @@ Axis.prototype.beforePadding = function () {
 		activeSeries = [];
 
 	// Handle padding on the second pass, or on redraw
-	if (this.tickPositions) {
-		each(this.series, function (series) {
+	each(this.series, function (series) {
 
-			var seriesOptions = series.options,
-				zData;
+		var seriesOptions = series.options,
+			zData;
 
-			if (series.bubblePadding && (series.visible || !chart.options.chart.ignoreHiddenSeries)) {
+		if (series.bubblePadding && (series.visible || !chart.options.chart.ignoreHiddenSeries)) {
 
-				// Correction for #1673
-				axis.allowZoomOutside = true;
+			// Correction for #1673
+			axis.allowZoomOutside = true;
 
-				// Cache it
-				activeSeries.push(series);
+			// Cache it
+			activeSeries.push(series);
 
-				if (isXAxis) { // because X axis is evaluated first
-				
-					// For each series, translate the size extremes to pixel values
-					each(['minSize', 'maxSize'], function (prop) {
-						var length = seriesOptions[prop],
-							isPercent = /%$/.test(length);
-						
-						length = pInt(length);
-						extremes[prop] = isPercent ?
-							smallestSize * length / 100 :
-							length;
-						
-					});
-					series.minPxSize = extremes.minSize;
-					
-					// Find the min and max Z
-					zData = series.zData;
-					if (zData.length) { // #1735
-						zMin = pick(seriesOptions.zMin, math.min(
-							zMin,
-							math.max(
-								arrayMin(zData), 
-								seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
-							)
-						));
-						zMax = pick(seriesOptions.zMax, math.max(zMax, arrayMax(zData)));
-					}
-				}
-			}
-		});
-
-		each(activeSeries, function (series) {
-
-			var data = series[dataKey],
-				i = data.length,
-				radius;
-
-			if (isXAxis) {
-				series.getRadii(zMin, zMax, extremes.minSize, extremes.maxSize);
-			}
+			if (isXAxis) { // because X axis is evaluated first
 			
-			if (range > 0) {
-				while (i--) {
-					if (typeof data[i] === 'number') {
-						radius = series.radii[i];
-						pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
-						pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
-					}
+				// For each series, translate the size extremes to pixel values
+				each(['minSize', 'maxSize'], function (prop) {
+					var length = seriesOptions[prop],
+						isPercent = /%$/.test(length);
+					
+					length = pInt(length);
+					extremes[prop] = isPercent ?
+						smallestSize * length / 100 :
+						length;
+					
+				});
+				series.minPxSize = extremes.minSize;
+				
+				// Find the min and max Z
+				zData = series.zData;
+				if (zData.length) { // #1735
+					zMin = pick(seriesOptions.zMin, math.min(
+						zMin,
+						math.max(
+							arrayMin(zData), 
+							seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
+						)
+					));
+					zMax = pick(seriesOptions.zMax, math.max(zMax, arrayMax(zData)));
 				}
 			}
-		});
-		
-		if (activeSeries.length && range > 0 && pick(this.options.min, this.userMin) === UNDEFINED && pick(this.options.max, this.userMax) === UNDEFINED) {
-			pxMax -= axisLength;
-			transA *= (axisLength + pxMin - pxMax) / axisLength;
-			this.min += pxMin / transA;
-			this.max += pxMax / transA;
 		}
+	});
+
+	each(activeSeries, function (series) {
+
+		var data = series[dataKey],
+			i = data.length,
+			radius;
+
+		if (isXAxis) {
+			series.getRadii(zMin, zMax, extremes.minSize, extremes.maxSize);
+		}
+		
+		if (range > 0) {
+			while (i--) {
+				if (typeof data[i] === 'number') {
+					radius = series.radii[i];
+					pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
+					pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
+				}
+			}
+		}
+	});
+	
+	if (activeSeries.length && range > 0 && pick(this.options.min, this.userMin) === UNDEFINED && pick(this.options.max, this.userMax) === UNDEFINED) {
+		pxMax -= axisLength;
+		transA *= (axisLength + pxMin - pxMax) / axisLength;
+		this.min += pxMin / transA;
+		this.max += pxMax / transA;
 	}
 };
 

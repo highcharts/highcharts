@@ -142,18 +142,6 @@ Chart.prototype = {
 	},
 
 	/**
-	 * Adjust all axes tick amounts
-	 */
-	adjustTickAmounts: function () {
-		if (this.options.chart.alignTicks !== false) {
-			each(this.axes, function (axis) {
-				axis.adjustTickAmount();
-			});
-		}
-		this.maxTicks = null;
-	},
-
-	/**
 	 * Redraw legend, axes or series based on updated data
 	 *
 	 * @param {Boolean|Object} animation Whether to apply animation, and optionally animation
@@ -243,8 +231,6 @@ Chart.prototype = {
 					axis.setScale();
 				});
 			}
-
-			chart.adjustTickAmounts();
 		}
 
 		chart.getMargins(); // #3098
@@ -376,8 +362,6 @@ Chart.prototype = {
 		each(optionsArray, function (axisOptions) {
 			axis = new Axis(chart, axisOptions);
 		});
-
-		chart.adjustTickAmounts();
 	},
 
 
@@ -680,15 +664,13 @@ Chart.prototype = {
 	 * subtitle and legend have already been rendered at this stage, but will be
 	 * moved into their final positions
 	 */
-	getMargins: function () {
+	getMargins: function (skipAxes) {
 		var chart = this,
 			spacing = chart.spacing,
-			axisOffset,
 			margin = chart.margin,
 			titleOffset = chart.titleOffset;
 
 		chart.resetMargins();
-		axisOffset = chart.axisOffset;
 
 		// Adjust for title and subtitle
 		if (titleOffset && !defined(margin[0])) {
@@ -705,7 +687,17 @@ Chart.prototype = {
 		if (chart.extraTopMargin) {
 			chart.plotTop += chart.extraTopMargin;
 		}
+		if (!skipAxes) {
+			this.getAxisMargins();
+		}
+	},
 
+	getAxisMargins: function () {
+
+		var chart = this,
+			axisOffset = chart.axisOffset = [0, 0, 0, 0], // top, right, bottom, left
+			margin = chart.margin;
+		
 		// pre-render axes to get labels offset width
 		if (chart.hasCartesianSeries) {
 			each(chart.axes, function (axis) {
@@ -1153,7 +1145,11 @@ Chart.prototype = {
 		var chart = this,
 			axes = chart.axes,
 			renderer = chart.renderer,
-			options = chart.options;
+			options = chart.options,
+			tempWidth,
+			tempHeight,
+			redoHorizontal,
+			redoVertical;
 
 		// Title
 		chart.setTitle();
@@ -1164,22 +1160,34 @@ Chart.prototype = {
 
 		chart.getStacks(); // render stacks
 
+		// Get chart margins
+		chart.getMargins(true);
+		chart.setChartSize();
+
+		// Record preliminary dimensions for later comparison
+		tempWidth = chart.plotWidth;
+		tempHeight = chart.plotHeight = chart.plotHeight - 13; // 13 is the most common height of X axis labels
+
 		// Get margins by pre-rendering axes
-		// set axes scales
 		each(axes, function (axis) {
 			axis.setScale();
 		});
+		chart.getAxisMargins();
 
-		chart.getMargins();
+		// If the plot area size has changed significantly, calculate tick positions again
+		redoHorizontal = tempWidth / chart.plotWidth > 1.2;
+		redoVertical = tempHeight / chart.plotHeight > 1.1;
 
-		chart.maxTicks = null; // reset for second pass
-		each(axes, function (axis) {
-			axis.setTickPositions(true); // update to reflect the new margins
-			axis.setMaxTicks();
-		});
-		chart.adjustTickAmounts();
-		chart.getMargins(); // second pass to check for new labels
+		if (redoHorizontal || redoVertical) {
 
+			chart.maxTicks = null; // reset for second pass
+			each(axes, function (axis) {
+				if ((axis.horiz && redoHorizontal) || (!axis.horiz && redoVertical)) {
+					axis.setTickInterval(true); // update to reflect the new margins
+				}
+			});
+			chart.getMargins(); // second pass to check for new labels
+		}
 
 		// Draw the borders and backgrounds
 		chart.drawChartBox();		

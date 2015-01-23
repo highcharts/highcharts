@@ -28,7 +28,9 @@ var PI = Math.PI,
 
 function perspective(points, chart, insidePlotArea) {
 	var options3d = chart.options.chart.options3d,
-		inverted = false;
+		inverted = false,
+		origin;
+
 	if (insidePlotArea) {
 		inverted = chart.inverted;
 		origin = {
@@ -58,7 +60,7 @@ function perspective(points, chart, insidePlotArea) {
 		s2 = sin(angle2),
 		c2 = cos(angle2);
 
-	var x, y, z, px, py, pz, p;
+	var x, y, z, px, py, pz;
 
 	Highcharts.each(points, function (point) {
 		x = (inverted ? point.y : point.x) - xe;
@@ -250,9 +252,7 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 		h = shapeArgs.height,
 		w = shapeArgs.width,
 		d = shapeArgs.depth,		
-		chart = Highcharts.charts[this.chartIndex],
-		alpha = chart.options.chart.options3d.alpha,
-		beta = chart.options.chart.options3d.beta;
+		chart = Highcharts.charts[this.chartIndex];
 
 	var pArr = [
 		{x: x, y: y, z: z},
@@ -805,7 +805,6 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 
 	var series = this,
 		chart = series.chart,
-		options = chart.options,
 		seriesOptions = series.options,
 		depth = seriesOptions.depth || 25;
 

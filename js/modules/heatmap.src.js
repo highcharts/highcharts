@@ -17,7 +17,6 @@ var UNDEFINED,
 	Legend = Highcharts.Legend,
 	LegendSymbolMixin = Highcharts.LegendSymbolMixin,
 	Series = Highcharts.Series,
-	SVGRenderer = Highcharts.SVGRenderer,
 	
 	defaultOptions = Highcharts.getOptions(),
 	each = Highcharts.each,
@@ -264,6 +263,9 @@ extend(ColorAxis.prototype, {
 				this.labelGroup.add(group);
 
 				this.added = true;
+
+				this.labelLeft = 0;
+				this.labelRight = this.width;
 			}
 			// Reset it to avoid color axis reserving space
 			this.chart.axisOffset[this.side] = sideOffset;
@@ -540,55 +542,6 @@ var colorSeriesMixin = {
 		});
 	}
 };
-
-
-/**
- * Wrap the buildText method and add the hook for add text stroke
- */
-wrap(SVGRenderer.prototype, 'buildText', function (proceed, wrapper) {
-
-	var textStroke = wrapper.styles && wrapper.styles.HcTextStroke;
-
-	proceed.call(this, wrapper);
-
-	// Apply the text stroke
-	if (textStroke && wrapper.applyTextStroke) {
-		wrapper.applyTextStroke(textStroke);
-	}
-});
-
-/**
- * Apply an outside text stroke to data labels, based on the custom CSS property, HcTextStroke.
- * Consider moving this to Highcharts core, also makes sense on stacked columns etc.
- */
-SVGRenderer.prototype.Element.prototype.applyTextStroke = function (textStroke) {
-	var elem = this.element,
-		tspans,
-		firstChild;
-	
-	textStroke = textStroke.split(' ');
-	tspans = elem.getElementsByTagName('tspan');
-	firstChild = elem.firstChild;
-	
-	// In order to get the right y position of the clones, 
-	// copy over the y setter
-	this.ySetter = this.xSetter;
-	
-	each([].slice.call(tspans), function (tspan, y) {
-		var clone;
-		if (y === 0) {
-			tspan.setAttribute('x', elem.getAttribute('x'));
-			if ((y = elem.getAttribute('y')) !== null) {
-				tspan.setAttribute('y', y);
-			}
-		}
-		clone = tspan.cloneNode(1);
-		clone.setAttribute('stroke', textStroke[1]);
-		clone.setAttribute('stroke-width', textStroke[0]);
-		clone.setAttribute('stroke-linejoin', 'round');
-		elem.insertBefore(clone, firstChild);
-	});
-};
 /**
  * Extend the default options with map options
  */
@@ -606,7 +559,7 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 		style: {
 			color: 'white',
 			fontWeight: 'bold',
-			HcTextStroke: '1px rgba(0,0,0,0.5)'
+			textShadow: '0 0 4px contrast, 0 0 2px contrast'
 		}
 	},
 	marker: null,

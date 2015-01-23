@@ -153,7 +153,8 @@ extend(Point.prototype, {
 			graphic = point.graphic,
 			i,
 			chart = series.chart,
-			seriesOptions = series.options;
+			seriesOptions = series.options,
+			names = series.xAxis.names;
 
 		redraw = pick(redraw, true);
 
@@ -182,6 +183,9 @@ extend(Point.prototype, {
 			// record changes in the parallel arrays
 			i = point.index;
 			series.updateParallelArrays(point, i);
+			if (names && point.name) {
+				names[point.x] = point.name;
+			}
 
 			seriesOptions.data[i] = point.options;
 
@@ -429,12 +433,11 @@ extend(Series.prototype, {
 			pointStart: this.xData[0] // when updating after addPoint
 		}, { data: this.options.data }, newOptions);
 
-		// Destroy the series and reinsert methods from the type prototype
+		// Destroy the series and delete all properties. Reinsert all methods 
+		// and properties from the new type prototype (#2270, #3719)
 		this.remove(false);
-		for (n in proto) { // Overwrite series-type specific methods (#2270)
-			if (proto.hasOwnProperty(n)) {
-				this[n] = UNDEFINED;
-			}
+		for (n in proto) {
+			this[n] = UNDEFINED;
 		}
 		extend(this, seriesTypes[newOptions.type || oldType].prototype);
 

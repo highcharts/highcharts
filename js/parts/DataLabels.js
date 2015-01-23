@@ -12,7 +12,8 @@ Series.prototype.drawDataLabels = function () {
 		generalOptions,
 		hasRendered = series.hasRendered || 0,
 		str,
-		dataLabelsGroup;
+		dataLabelsGroup,
+		renderer = series.chart.renderer;
 
 	if (options.enabled || series._hasPointLabels) {
 
@@ -52,7 +53,9 @@ Series.prototype.drawDataLabels = function () {
 				name,
 				rotation,
 				connector = point.connector,
-				isNew = true;
+				isNew = true,
+				style,
+				moreStyle = {};
 
 			// Determine if each data label is enabled
 			pointOptions = point.dlOptions || (point.options && point.options.dataLabels); // dlOptions is used in treemaps
@@ -70,6 +73,7 @@ Series.prototype.drawDataLabels = function () {
 				// Create individual options structure that can be extended without
 				// affecting others
 				options = merge(generalOptions, pointOptions);
+				style = options.style;
 
 				rotation = options.rotation;
 
@@ -80,7 +84,7 @@ Series.prototype.drawDataLabels = function () {
 					options.formatter.call(labelConfig, options);
 
 				// Determine the color
-				options.style.color = pick(options.color, options.style.color, series.color, 'black');
+				style.color = pick(options.color, style.color, series.color, 'black');
 
 
 				// update existing label
@@ -112,6 +116,16 @@ Series.prototype.drawDataLabels = function () {
 						padding: options.padding,
 						zIndex: 1
 					};
+					
+					// Get automated contrast color
+					if (style.color === 'contrast') {
+						moreStyle.color = renderer.getContrast(point.color || series.color);
+					}
+					if (cursor) {
+						moreStyle.cursor = cursor;
+					}
+					
+
 					// Remove unused attributes (#947)
 					for (name in attr) {
 						if (attr[name] === UNDEFINED) {
@@ -119,7 +133,7 @@ Series.prototype.drawDataLabels = function () {
 						}
 					}
 
-					dataLabel = point.dataLabel = series.chart.renderer[rotation ? 'text' : 'label']( // labels don't support rotation
+					dataLabel = point.dataLabel = renderer[rotation ? 'text' : 'label']( // labels don't support rotation
 						str,
 						0,
 						-999,
@@ -129,7 +143,7 @@ Series.prototype.drawDataLabels = function () {
 						options.useHTML
 					)
 					.attr(attr)
-					.css(extend(options.style, cursor && { cursor: cursor }))
+					.css(extend(style, moreStyle))
 					.add(dataLabelsGroup)
 					.shadow(options.shadow);
 

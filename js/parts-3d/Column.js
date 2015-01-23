@@ -11,7 +11,6 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 
 	var series = this,
 		chart = series.chart,
-		options = chart.options,
 		seriesOptions = series.options,
 		depth = seriesOptions.depth || 25;
 
