@@ -52,20 +52,30 @@ $js = @file_get_contents("$fullpath/demo.js");
 	<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.0.3/mode/htmlmixed/htmlmixed.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.0.3/mode/css/css.min.js"></script>
 	<script>
+
+		function jsSize() {
+			var el = document.querySelector('.js .CodeMirror');
+			el.style.height = (document.body.offsetHeight - el.offsetTop - 20) + 'px';
+		}
 		window.onload = function () {
   			CodeMirror.fromTextArea(document.getElementById('html'), {
     			mode: "htmlmixed",
     			readOnly: true
   			});
-			CodeMirror.fromTextArea(document.getElementById('css'), {
-    			mode: "css",
-    			readOnly: true
-  			});
+  			if (document.getElementById('css')) {
+				CodeMirror.fromTextArea(document.getElementById('css'), {
+	    			mode: "css",
+	    			readOnly: true
+	  			});
+			}
 			CodeMirror.fromTextArea(document.getElementById('js'), {
     			mode: "javascript",
     			readOnly: true
   			});
+
+  			jsSize();
 		}
+		window.resize = jsSize;
 
 	</script>
 </head>
@@ -75,10 +85,12 @@ $js = @file_get_contents("$fullpath/demo.js");
 		<textarea id="html"><?php echo $html; ?></textarea>
 	</div>
 
+	<?php if ($css) : ?>
 	<h4>CSS</h4>
 	<div class="css">
 		<textarea id="css"><?php echo $css; ?></textarea>
 	</div>
+	<?php endif ?>
 
 
 	<h4>JavaScript</h4>
