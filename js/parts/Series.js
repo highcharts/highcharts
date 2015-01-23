@@ -256,7 +256,8 @@ Series.prototype = {
 			userOptions = chart.userOptions || {},
 			userPlotOptions = userOptions.plotOptions || {},
 			typeOptions = plotOptions[this.type],
-			options;
+			options,
+			zones;
 
 		this.userOptions = itemOptions;
 
@@ -281,8 +282,25 @@ Series.prototype = {
 			delete options.marker;
 		}
 
+		// Handle color zones
+		this.zoneAxis = options.zoneAxis;
+		zones = this.zones = (options.zones || []).slice();
+		if ((options.negativeColor || options.negativeFillColor) && !options.zones) {
+			zones.push({
+				value: options[this.zoneAxis + 'Threshold'] || options.threshold || 0,
+				color: options.negativeColor,
+				fillColor: options.negativeFillColor
+			});
+		}
+		if (zones.length) { // Push one extra zone for the rest
+			if (defined(zones[zones.length - 1].value)) {
+				zones.push({
+					color: this.color,
+					fillColor: this.fillColor
+				});
+			}
+		}
 		return options;
-
 	},
 
 	getCyclic: function (prop, value, defaults) {
@@ -342,7 +360,6 @@ Series.prototype = {
 			firstPoint = null,
 			xAxis = series.xAxis,
 			hasCategories = xAxis && !!xAxis.categories,
-			tooltipPoints = series.tooltipPoints,
 			i,
 			turboThreshold = options.turboThreshold,
 			pt,
@@ -444,9 +461,6 @@ Series.prototype = {
 				if (oldData[i] && oldData[i].destroy) {
 					oldData[i].destroy();
 				}
-			}
-			if (tooltipPoints) { // #2594
-				tooltipPoints.length = 0;
 			}
 
 			// reset minRange (#878)
@@ -1033,6 +1047,7 @@ Series.prototype = {
 			stateOptionsHover = stateOptions[HOVER_STATE],
 			pointStateOptionsHover,
 			seriesColor = series.color,
+			seriesNegativeColor = series.options.negativeColor,
 			normalDefaults = {
 				stroke: seriesColor,
 				fill: seriesColor
@@ -1044,10 +1059,11 @@ Series.prototype = {
 			pointAttr,
 			pointAttrToOptions = series.pointAttrToOptions,
 			hasPointSpecificOptions = series.hasPointSpecificOptions,
-			negativeColor = seriesOptions.negativeColor,
 			defaultLineColor = normalOptions.lineColor,
 			defaultFillColor = normalOptions.fillColor,
 			turboThreshold = seriesOptions.turboThreshold,
+			zones = series.zones,
+			zoneAxis = series.zoneAxis || 'y',
 			attr,
 			key;
 
@@ -1063,6 +1079,11 @@ Series.prototype = {
 			// if no hover color is given, brighten the normal color
 			stateOptionsHover.color = stateOptionsHover.color ||
 				Color(stateOptionsHover.color || seriesColor)
+					.brighten(stateOptionsHover.brightness).get();
+
+			// if no hover negativeColor is given, brighten the normal negativeColor
+			stateOptionsHover.negativeColor = stateOptionsHover.negativeColor ||
+				Color(stateOptionsHover.negativeColor || seriesNegativeColor)
 					.brighten(stateOptionsHover.brightness).get();
 		}
 
@@ -1091,8 +1112,14 @@ Series.prototype = {
 					normalOptions.radius = 0;
 				}
 
-				if (point.negative && negativeColor) {
-					point.color = point.fillColor = negativeColor;
+				if (zones.length) {
+					var j = 0,
+						threshold = zones[j];
+					while (point[zoneAxis] >= threshold.value) {				
+						threshold = zones[++j];
+					}
+					
+					point.color = point.fillColor = threshold.color;
 				}
 
 				hasPointSpecificOptions = seriesOptions.colorByPoint || point.color; // #868
@@ -1117,7 +1144,7 @@ Series.prototype = {
 					// Handle colors for column and pies
 					if (!seriesOptions.marker) { // column, bar, point
 						// If no hover color is given, brighten the normal color. #1619, #2579
-						pointStateOptionsHover.color = pointStateOptionsHover.color || (!point.options.color && stateOptionsHover.color) ||
+						pointStateOptionsHover.color = pointStateOptionsHover.color || (!point.options.color && stateOptionsHover[(point.negative && seriesNegativeColor ? 'negativeColor' : 'color')]) ||
 							Color(point.color)
 								.brighten(pointStateOptionsHover.brightness || stateOptionsHover.brightness)
 								.get();
@@ -1327,19 +1354,18 @@ Series.prototype = {
 	drawGraph: function () {
 		var series = this,
 			options = this.options,
-			props = [['graph', options.lineColor || this.color]],
+			props = [['graph', options.lineColor || this.color, options.dashStyle]],
 			lineWidth = options.lineWidth,
-			dashStyle =  options.dashStyle,
 			roundCap = options.linecap !== 'square',
 			graphPath = this.getGraphPath(),
-			negativeColor = options.negativeColor,
-			fillColor = (this.fillGraph && this.color) || NONE; // polygon series use filled graph
+			fillColor = (this.fillGraph && this.color) || NONE, // polygon series use filled graph
+			zones = this.zones;
 
-		if (negativeColor) {
-			props.push(['graphNeg', negativeColor]);
-		}
-
-		// draw the graph
+		each(zones, function (threshold, i) {
+			props.push(['colorGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
+		});
+		
+		// Draw the graph
 		each(props, function (prop, i) {
 			var graphKey = prop[0],
 				graph = series[graphKey],
@@ -1356,8 +1382,8 @@ Series.prototype = {
 					fill: fillColor,
 					zIndex: 1 // #1069
 				};
-				if (dashStyle) {
-					attribs.dashstyle = dashStyle;
+				if (prop[2]) {
+					attribs.dashstyle = prop[2];
 				} else if (roundCap) {
 					attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
 				}
@@ -1373,88 +1399,89 @@ Series.prototype = {
 	/**
 	 * Clip the graphs into the positive and negative coloured graphs
 	 */
-	clipNeg: function () {
-		var options = this.options,
+	applyZones: function () {
+		var series = this,
 			chart = this.chart,
 			renderer = chart.renderer,
-			negativeColor = options.negativeColor || options.negativeFillColor,
-			translatedThreshold,
-			posAttr,
-			negAttr,
+			zones = this.zones,
+			translatedFrom,
+			translatedTo,
+			clips = this.clips || [],
+			clipAttr,
 			graph = this.graph,
 			area = this.area,
-			posClip = this.posClip,
-			negClip = this.negClip,
-			chartWidth = chart.chartWidth,
-			chartHeight = chart.chartHeight,
-			chartSizeMax = mathMax(chartWidth, chartHeight),
-			yAxis = this.yAxis,
-			above,
-			below;
+			chartSizeMax = mathMax(chart.chartWidth, chart.chartHeight),
+			zoneAxis = this.zoneAxis || 'y',
+			axis = this[zoneAxis + 'Axis'],
+			reversed = axis.reversed,
+			horiz = axis.horiz;
 
-		if (negativeColor && (graph || area)) {
-			translatedThreshold = mathMin(mathRound(yAxis.toPixels(options.threshold || 0, true)), chartSizeMax); // #3382
-			if (translatedThreshold < 0) {
-				chartSizeMax -= translatedThreshold; // #2534
-			}
-			above = {
-				x: 0,
-				y: 0,
-				width: chartSizeMax,
-				height: translatedThreshold
-			};
-			below = {
-				x: 0,
-				y: translatedThreshold,
-				width: chartSizeMax,
-				height: chartSizeMax
-			};
+		if (zones.length && (graph || area)) {
+			// The use of the Color Threshold assumes there are no gaps
+			// so it is safe to hide the original graph and area
+			graph.hide();
+			if (area) { area.hide(); }
 
-			if (chart.inverted) {
+			// Create the clips
+			each(zones, function (threshold, i) {
+				translatedFrom = pick(translatedTo, (reversed ? (horiz ? chart.plotWidth : 0) : (horiz ? 0 : axis.toPixels(axis.min))));
+				translatedTo = mathRound(axis.toPixels(pick(threshold.value, axis.max), true));
 
-				above.height = below.y = chart.plotWidth - translatedThreshold;
-				if (renderer.isVML) {
-					above = {
-						x: chart.plotWidth - translatedThreshold - chart.plotLeft,
+				if (axis.isXAxis) {
+					clipAttr = {
+						x: reversed ? translatedTo : translatedFrom,
 						y: 0,
-						width: chartWidth,
-						height: chartHeight
+						width: Math.abs(translatedFrom - translatedTo), 
+						height: chartSizeMax
 					};
-					below = {
-						x: translatedThreshold + chart.plotLeft - chartWidth,
-						y: 0,
-						width: chart.plotLeft + translatedThreshold,
-						height: chartWidth
+					if (!horiz) {
+						clipAttr.x = chart.plotHeight - clipAttr.x;
+					}
+				} else {
+					clipAttr = {
+						x: 0,
+						y: reversed ? translatedFrom : translatedTo,
+						width: chartSizeMax, 
+						height: Math.abs(translatedFrom - translatedTo)
 					};
+					if (horiz) {
+						clipAttr.y = chart.plotWidth - clipAttr.y;
+					}
+				} 
+
+				/// VML SUPPPORT
+				if (chart.inverted && renderer.isVML) {
+					if (axis.isXAxis) {			
+						clipAttr = {
+							x: 0,
+							y: reversed ? translatedFrom : translatedTo,
+							height: clipAttr.width,
+							width: chart.chartWidth
+						};		
+					} else {				
+						clipAttr = {
+							x: clipAttr.y - chart.plotLeft - chart.spacingBox.x,
+							y: 0,
+							width: clipAttr.height,
+							height: chart.chartHeight
+						};	
+					}				
 				}
-			}
+				/// END OF VML SUPPORT
 
-			if (yAxis.reversed) {
-				posAttr = below;
-				negAttr = above;
-			} else {
-				posAttr = above;
-				negAttr = below;
-			}
+				if (clips[i]) {
+					clips[i].animate(clipAttr);
+				} else {
+					clips[i] = renderer.clipRect(clipAttr);
 
-			if (posClip) { // update
-				posClip.animate(posAttr);
-				negClip.animate(negAttr);
-			} else {
+					series['colorGraph' + i].clip(clips[i]);
 
-				this.posClip = posClip = renderer.clipRect(posAttr);
-				this.negClip = negClip = renderer.clipRect(negAttr);
-
-				if (graph && this.graphNeg) {
-					graph.clip(posClip);
-					this.graphNeg.clip(negClip);
+					if (area) {
+						series['colorArea' + i].clip(clips[i]);
+					}
 				}
-
-				if (area) {
-					area.clip(posClip);
-					this.areaNeg.clip(negClip);
-				}
-			}
+			});
+			this.clips = clips;
 		}
 	},
 
@@ -1587,7 +1614,7 @@ Series.prototype = {
 		// draw the graph if any
 		if (series.drawGraph) {
 			series.drawGraph();
-			series.clipNeg();
+			series.applyZones();
 		}
 
 		each(series.points, function (point) {
@@ -1666,14 +1693,135 @@ Series.prototype = {
 		}
 
 		series.translate();
-		if (series.setTooltipPoints) {
-			series.setTooltipPoints(true);
-		}
 		series.render();
 
 		if (wasDirtyData) {
 			fireEvent(series, 'updatedData');
 		}
+	},
+
+	/**
+	 * KD Tree Implementation
+	 */
+
+	kdDimensions: 1,
+	kdTree: null,
+	kdAxisArray: ['plotX', 'plotY'],
+	kdComparer: 'distX',
+
+	buildKDTree: function () {
+		var series = this,
+			dimensions = series.kdDimensions,
+			tree = series.kdTree;
+
+		// Internal function
+		function _kdtree(points, depth, dimensions) {
+			var axis, median, length = points && points.length;
+
+			if (length) {
+
+				// alternate between the axis
+				axis = series.kdAxisArray[depth % dimensions];
+
+				// sort point array
+				points.sort(function(a, b) {
+					return a[axis] - b[axis];
+				});
+			
+				median = Math.floor(length / 2);
+				
+				// build and return node
+				return {
+					point: points[median],
+					left: _kdtree(points.slice(0, median), depth + 1, dimensions),
+					right: _kdtree(points.slice(median + 1), depth + 1, dimensions)
+				};
+			
+			}
+		}
+
+		tree = null;
+		if (this.options.kdWait) {
+			series.kdTree = _kdtree(series.points, dimensions, dimensions);	
+		} else {
+			setTimeout(function () {
+				series.kdTree = _kdtree(series.points, dimensions, dimensions);		
+			});
+		}
+	},
+
+	searchKDTree: function (point) {
+		var series = this,
+			kdComparer = this.kdComparer,
+			kdX = this.kdXValue || 'plotX',
+			kdY = this.kdYValue || 'plotY';
+
+		// Internal function
+		function _distance(p1, p2) {
+			var x = (defined(p1[kdX]) && defined(p2[kdX])) ? Math.pow(p1[kdX] - p2[kdX], 2) : null,
+				y = (defined(p1[kdY]) && defined(p2[kdY])) ? Math.pow(p1[kdY] - p2[kdY], 2) : null,
+				r = x + y;
+				
+			return {
+				distX: defined(x) ? Math.sqrt(x) : Number.MAX_VALUE,
+				distY: defined(y) ? Math.sqrt(y) : Number.MAX_VALUE,
+				distR: defined(r) ? Math.sqrt(r) : Number.MAX_VALUE
+			};
+		}
+		function _search(search, tree, depth, dimensions) {
+			var point = tree.point,
+				axis = series.kdAxisArray[depth % dimensions],
+				tdist,
+				sideA,
+				sideB,
+				ret = point,
+				nPoint1,
+				nPoint2;
+			
+			point.dist = _distance(search, point);
+
+			// Pick side based on distance to splitting point
+			tdist = search[axis] - point[axis];
+
+			sideA = tdist < 0 ? 'left' : 'right';
+
+			// End of tree
+			if (tree[sideA]) {
+				nPoint1 =_search(search, tree[sideA], depth + 1, dimensions);
+
+				ret = (nPoint1.dist[kdComparer] < ret.dist[kdComparer] ? nPoint1 : point);
+
+				sideB = tdist < 0 ? 'right' : 'left';
+				if (tree[sideB]) {
+					// compare distance to current best to splitting point to decide wether to check side B or not
+					if (Math.sqrt(tdist*tdist) < ret.dist[kdComparer]) {
+						nPoint2 = _search(search, tree[sideB], depth + 1, dimensions);
+						ret = (nPoint2.dist[kdComparer] < ret.dist[kdComparer] ? nPoint2 : ret);
+					}
+				}
+			}
+			return ret;
+		}
+
+		if (!this.kdTree) {
+			this.buildKDTree();
+		}
+
+		if (this.kdTree) {
+			var xAxis = series.xAxis,
+				yAxis = series.yAxis,
+				inverted = series.chart.inverted,
+				s = {
+					plotX: inverted ? xAxis.len - point.chartY + xAxis.pos : point.chartX - xAxis.pos,
+					plotY: inverted ? yAxis.len - point.chartX + yAxis.pos : point.chartY - yAxis.pos 
+				};
+
+			return _search(s, 
+				this.kdTree, this.kdDimensions, this.kdDimensions);
+		} else {
+			return UNDEFINED;
+		}
 	}
+
 }; // end Series prototype
 

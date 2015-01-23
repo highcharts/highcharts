@@ -132,89 +132,88 @@ Pointer.prototype = {
 	 * Run Point.onMouseOver and display tooltip for the point or points.
 	 */
 	runPointActions: function (e) {
+
 		var pointer = this,
 			chart = pointer.chart,
 			series = chart.series,
 			tooltip = chart.tooltip,
+			shared = tooltip ? tooltip.shared : false,
 			followPointer,
-			point,
-			points,
+			//point,
+			//points,
 			hoverPoint = chart.hoverPoint,
 			hoverSeries = chart.hoverSeries,
 			i,
-			j,
+			trueXkd,
+			trueX,
+			//j,
 			distance = chart.chartWidth,
-			index = pointer.getIndex(e),
-			anchor;
+			rdistance = chart.chartWidth, 
+			//index = pointer.getIndex(e),
+			anchor,
 
-		// shared tooltip
-		if (tooltip && pointer.options.tooltip.shared && !(hoverSeries && hoverSeries.noSharedTooltip)) {
-			points = [];
+			kdpoints = [],
+			kdpoint;
 
-			// loop over all series and find the ones with points closest to the mouse
-			i = series.length;
-			for (j = 0; j < i; j++) {
-				if (series[j].visible &&
-						series[j].options.enableMouseTracking !== false &&
-						!series[j].noSharedTooltip && series[j].singularTooltips !== true && series[j].tooltipPoints.length) {
-					point = series[j].tooltipPoints[index];
-					if (point && point.series) { // not a dummy point, #1544
-						point._dist = mathAbs(index - point.clientX);
-						distance = mathMin(distance, point._dist);
-						points.push(point);
-					}
+		// Find nearest points on all series
+		each(series, function (s) {
+			// Skip hidden series
+			if (s.visible && pick(s.options.enableMouseTracking, true)) {
+				kdpoints.push(s.searchKDTree(e));
+			}
+		});
+
+		// Find absolute nearest point
+		each(kdpoints, function (p) {
+			if (p && defined(p.plotX) && defined(p.plotY)) {
+				if ((p.dist.distX < distance) || ((p.dist.distX === distance || p.series.kdDimensions > 1) && p.dist.distR < rdistance)) {
+					distance = p.dist.distX;
+					rdistance = p.dist.distR;
+					kdpoint = p;
 				}
 			}
-			// remove furthest points
-			i = points.length;
-			while (i--) {
-				if (points[i]._dist > distance) {
-					points.splice(i, 1);
-				}
-			}
-			// refresh the tooltip if necessary
-			if (points.length && (points[0].clientX !== pointer.hoverX)) {
-				tooltip.refresh(points, e);
-				pointer.hoverX = points[0].clientX;
-			}
-			point = points[0];
-		}
-
+			//point = kdpoints[0];
+		});
+				
+		// Crosshair
+		each(chart.axes, function (axis) {
+			axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
+		});		
+		// Without a closest point there is no sense to continue
+		if (!kdpoint) { return; }
+		
 		// Separate tooltip and general mouse events
 		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
-		if (hoverSeries && hoverSeries.tracker) { // #2584, #2830, #2889, #3258
 
-			// get the point
-			point = hoverSeries.tooltipPoints[index];
+		// Tooltip
 
-			// a new point is hovered, refresh the tooltip
-			if (point && point !== hoverPoint && point.onMouseOver) { // #3724
-
-				// trigger the events
-				point.onMouseOver(e);
-
+		if (tooltip) { // && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
+			// Draw tooltip if necessary
+			if (shared && !kdpoint.series.noSharedTooltip) {
+				i = kdpoints.length;
+				trueXkd = kdpoint.plotX + kdpoint.series.xAxis.left;
+				while (i--) {
+					trueX = kdpoints[i].plotX + kdpoints[i].series.xAxis.left;
+					if (kdpoints[i].x !== kdpoint.x || trueX !== trueXkd || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
+						kdpoints.splice(i, 1);
+					}
+				}
+				tooltip.refresh(kdpoints, e);
+				each(kdpoints, function (point) {
+					point.onMouseOver(e);
+				});
+			} else {
+				tooltip.refresh(kdpoint, e);
+				kdpoint.onMouseOver(e);
 			}
-			
-		} 
+		}
+		
+		
 		if (tooltip && followPointer && !tooltip.isHidden) {
 			anchor = tooltip.getAnchor([{}], e);
-			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });
+			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });			
 		}
-
-		// Start the event listener to pick up the tooltip 
-		if (tooltip && !pointer._onDocumentMouseMove) {
-			pointer._onDocumentMouseMove = function (e) {
-				if (charts[hoverChartIndex]) {
-					charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
-				}
-			};
-			addEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
-		}
-
-		// Draw independent crosshairs
-		each(chart.axes, function (axis) {
-			axis.drawCrosshair(e, pick(point, hoverPoint));
-		});
+				
 	},
 
 
@@ -235,16 +234,23 @@ Pointer.prototype = {
 		// Narrow in allowMove
 		allowMove = allowMove && tooltip && tooltipPoints;
 			
-		// Check if the points have moved outside the plot area, #1003
-		if (allowMove && splat(tooltipPoints)[0].plotX === UNDEFINED) {
+		// Check if the points have moved outside the plot area, #1003		
+		if (allowMove  && splat(tooltipPoints)[0].plotX === UNDEFINED) {
 			allowMove = false;
 		}	
-
 		// Just move the tooltip, #349
 		if (allowMove) {
 			tooltip.refresh(tooltipPoints);
 			if (hoverPoint) { // #2500
 				hoverPoint.setState(hoverPoint.state, true);
+				each(chart.axes, function (axis) {
+					if (pick(axis.options.crosshair && axis.options.crosshair.snap, true)) {
+						axis.drawCrosshair(null, allowMove);
+					}  else {
+						axis.hideCrosshair();
+					}
+				});
+				
 			}
 
 		// Full reset

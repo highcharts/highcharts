@@ -36,7 +36,8 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 		pointFormat: '({point.x}, {point.y}), Size: {point.z}'
 	},
 	turboThreshold: 0,
-	zThreshold: 0
+	zThreshold: 0,
+	zoneAxis: 'z'
 });
 
 var BubblePoint = extendClass(Point, {
@@ -53,6 +54,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	parallelArrays: ['x', 'y', 'z'],
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	bubblePadding: true,
+	zoneAxis: 'z',
 	
 	/**
 	 * Mapping between SVG attributes and the corresponding options
@@ -167,7 +169,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			radius = radii ? radii[i] : 0; // #1737
 
 			// Flag for negativeColor to be applied in Series.js
-			point.negative = point.z < (this.options.zThreshold || 0);
+			//point.negative = point.z < (this.options.zThreshold || 0);
 			
 			if (radius >= this.minPxSize / 2) {
 				// Shape arguments
@@ -210,9 +212,11 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		item.legendSymbol.isMarker = true;	
 		
 	},
-	
+		
 	drawPoints: seriesTypes.column.prototype.drawPoints,
-	alignDataLabel: seriesTypes.column.prototype.alignDataLabel
+	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
+
+	applyZones: function () {}
 });
 
 /**

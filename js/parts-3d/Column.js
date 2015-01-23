@@ -1,4 +1,4 @@
-/*** 
+/***
 	EXTENSION FOR 3D COLUMNS
 ***/
 Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (proceed) {
@@ -11,21 +11,10 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 
 	var series = this,
 		chart = series.chart,
-		options = chart.options,
-		seriesOptions = series.options,		
-		options3d = options.chart.options3d,
+		seriesOptions = series.options,
+		depth = seriesOptions.depth || 25;
 
-		depth = seriesOptions.depth || 25,
-		origin = {
-			x: chart.plotWidth / 2,
-			y: chart.plotHeight / 2, 
-			z: options3d.depth,
-			vd: options3d.viewDistance
-		},
-		alpha = options3d.alpha,
-		beta = options3d.beta * (chart.yAxis[0].opposite ? -1 : 1);
-
-	var stack = seriesOptions.stacking ? (seriesOptions.stack || 0) : series._i; 
+	var stack = seriesOptions.stacking ? (seriesOptions.stack || 0) : series._i;
 	var z = stack * (depth + (seriesOptions.groupZPadding || 1));
 
 	if (seriesOptions.grouping !== false) { z = 0; }
@@ -38,14 +27,12 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 				tooltipPos = point.tooltipPos;
 
 			point.shapeType = 'cuboid';
-			shapeArgs.alpha = alpha;
-			shapeArgs.beta = beta; 
 			shapeArgs.z = z;
-			shapeArgs.origin = origin;
 			shapeArgs.depth = depth;
+			shapeArgs.insidePlotArea = true;
 
 			// Translate the tooltip position in 3d space
-			tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], alpha, beta, origin)[0];
+			tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], chart, false)[0];
 			point.tooltipPos = [tooltipPos.x, tooltipPos.y];
 		}
 	});	    
@@ -159,23 +146,13 @@ Highcharts.wrap(Highcharts.Series.prototype, 'alignDataLabel', function (proceed
 	// Only do this for 3D columns and columnranges
 	if (this.chart.is3d() && (this.type === 'column' || this.type === 'columnrange')) {
 		var series = this,
-			chart = series.chart,
-			options = chart.options,		
-			options3d = options.chart.options3d,
-			origin = {
-				x: chart.plotWidth / 2,
-				y: chart.plotHeight / 2, 
-				z: options3d.depth,
-				vd: options3d.viewDistance
-			},
-			alpha = options3d.alpha,
-			beta = options3d.beta * (chart.yAxis[0].opposite ? -1 : 1);
+			chart = series.chart;
 
 		var args = arguments,
 			alignTo = args[4];
 		
 		var pos = ({x: alignTo.x, y: alignTo.y, z: 0});
-		pos = perspective([pos], alpha, beta, origin)[0];
+		pos = perspective([pos], chart, true)[0];
 		alignTo.x = pos.x;
 		alignTo.y = pos.y;
 	}

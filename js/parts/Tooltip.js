@@ -32,7 +32,7 @@ Tooltip.prototype = {
 		this.isHidden = true;
 
 
-		// create the label
+		// create the label		
 		this.label = chart.renderer.label('', 0, 0, options.shape || 'callout', null, null, options.useHTML, null, 'tooltip')
 			.attr({
 				padding: padding,
@@ -136,6 +136,7 @@ Tooltip.prototype = {
 			}
 
 			this.chart.hoverPoints = null;
+			this.chart.hoverSeries = null;
 		}
 	},
 	
@@ -148,9 +149,11 @@ Tooltip.prototype = {
 			chart = this.chart,
 			inverted = chart.inverted,
 			plotTop = chart.plotTop,
+			plotLeft = chart.plotLeft,
 			plotX = 0,
 			plotY = 0,
-			yAxis;
+			yAxis,
+			xAxis;
 		
 		points = splat(points);
 		
@@ -171,7 +174,8 @@ Tooltip.prototype = {
 		if (!ret) {
 			each(points, function (point) {
 				yAxis = point.series.yAxis;
-				plotX += point.plotX;
+				xAxis = point.series.xAxis;
+				plotX += point.plotX  + (!inverted && xAxis ? xAxis.left - plotLeft : 0); 
 				plotY += (point.plotLow ? (point.plotLow + point.plotHigh) / 2 : point.plotY) +
 					(!inverted && yAxis ? yAxis.top - plotTop : 0); // #1151
 			});
@@ -512,11 +516,10 @@ Tooltip.prototype = {
      * abstracting this functionality allows to easily overwrite and extend it. 
 	 */
 	bodyFormatter: function (items) {
-		return map(items, function (item) {
-			var series = item.series;
-			 return ((series.tooltipFormatter && series.tooltipFormatter(item)) ||
-				item.point.tooltipFormatter(series.tooltipOptions.pointFormat));
-		});
-	}
-
+        return map(items, function (item) {
+            var tooltipOptions = item.series.tooltipOptions;
+            return (tooltipOptions.pointFormatter || item.point.tooltipFormatter).call(item.point, tooltipOptions.pointFormat); // docs
+        });
+    }
+    
 };

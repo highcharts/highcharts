@@ -563,6 +563,7 @@
             <fileset file="${heatmap.src.file}"/>
             <fileset file="${annotations.src.file}"/>
             <fileset dir="${themes.dir}"/>
+            <fileset file="js/modules/treemap.src.js"/>
             <fileset file="js/modules/canvgrenderer-extended.src.js"/>
         </jslint>
 

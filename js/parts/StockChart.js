@@ -249,6 +249,8 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 	}
 	if (result.length > 0) {
 		return renderer.crispPolyLine(result, lineWidth || 1); 
+	} else {
+		return null; //#3557 getPlotLinePath in regular Highcharts also returns null
 	}
 });
 
