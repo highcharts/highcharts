@@ -171,7 +171,7 @@ Scroller.prototype = {
 		if (!scroller.rendered) {
 			// the group
 			handles[index] = renderer.g('navigator-handle-' + ['left', 'right'][index])
-				.css({ cursor: 'e-resize' })
+				.css({ cursor: 'ew-resize' })
 				.attr({ zIndex: 4 - index }) // zIndex = 3 for right handle, 4 for left
 				.add();
 
@@ -364,7 +364,10 @@ Scroller.prototype = {
 					.attr({
 						fill: navigatorOptions.maskFill
 					}).add(navigatorGroup);
-				if (!navigatorOptions.maskInside) {
+				
+				if (navigatorOptions.maskInside) {
+					scroller.leftShade.css({ cursor: 'ew-resize '});
+				} else {
 					scroller.rightShade = renderer.rect()
 						.attr({
 							fill: navigatorOptions.maskFill
@@ -582,8 +585,6 @@ Scroller.prototype = {
 			top = scroller.top,
 			dragOffset,
 			hasDragged,
-			bodyStyle = document.body.style,
-			defaultBodyCursor,
 			baseSeries = scroller.baseSeries;
 
 		/**
@@ -632,13 +633,6 @@ Scroller.prototype = {
 				} else if (chartX > navigatorLeft + zoomedMin - scrollbarPad && chartX < navigatorLeft + zoomedMax + scrollbarPad) {
 					scroller.grabbedCenter = chartX;
 					scroller.fixedWidth = range;
-
-					// In SVG browsers, change the cursor. IE6 & 7 produce an error on changing the cursor,
-					// and IE8 isn't able to show it while dragging anyway.
-					if (chart.renderer.isSVG) {
-						defaultBodyCursor = bodyStyle.cursor;
-						bodyStyle.cursor = 'ew-resize';
-					}
 
 					dragOffset = chartX - zoomedMin;
 
@@ -781,7 +775,6 @@ Scroller.prototype = {
 			if (e.type !== 'mousemove') {
 				scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = scroller.fixedWidth =
 					scroller.fixedExtreme = scroller.otherHandlePos = hasDragged = dragOffset = null;
-				bodyStyle.cursor = defaultBodyCursor || '';
 			}
 
 		};
