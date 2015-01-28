@@ -1,5 +1,8 @@
 $(function () {
     $('#container').highcharts({
+        title: {
+            text: 'Filled color zones'
+        },
         yAxis: {
             min: -10
         },
@@ -16,7 +19,7 @@ $(function () {
                 color: '#7cb5ec'
             }, {
                 color: '#90ed7d'
-            }, ]
+            }]
         }]
     });
 });
