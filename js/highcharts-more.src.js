@@ -2029,8 +2029,8 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		
 	drawPoints: seriesTypes.column.prototype.drawPoints,
 	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
-
-	applyZones: function () {}
+	buildKDTree: noop,
+	applyZones: noop
 });
 
 /**

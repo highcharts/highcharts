@@ -13079,7 +13079,7 @@ Series.prototype = {
 			delete options.marker;
 		}
 
-		// Handle color zones
+		// Handle color zones // docs: API and docs
 		this.zoneAxis = options.zoneAxis;
 		zones = this.zones = (options.zones || []).slice();
 		if ((options.negativeColor || options.negativeFillColor) && !options.zones) {
