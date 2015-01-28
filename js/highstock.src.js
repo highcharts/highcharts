@@ -19732,6 +19732,7 @@ extend(defaultOptions, {
 		barBorderRadius: 0,
 		barBorderWidth: 1,
 		barBorderColor: '#bfc8d1',
+		showButtons: true,
 		buttonArrowColor: '#666',
 		buttonBackgroundColor: '#ebe7e8',
 		buttonBorderColor: '#bbb',
@@ -19804,7 +19805,7 @@ Scroller.prototype = {
 		if (!scroller.rendered) {
 			// the group
 			handles[index] = renderer.g('navigator-handle-' + ['left', 'right'][index])
-				.css({ cursor: 'e-resize' })
+				.css({ cursor: 'ew-resize' })
 				.attr({ zIndex: 4 - index }) // zIndex = 3 for right handle, 4 for left
 				.add();
 
@@ -19943,7 +19944,11 @@ Scroller.prototype = {
 		);
 		scroller.navigatorWidth = navigatorWidth = pick(xAxis.len, chart.plotWidth - 2 * scrollbarHeight);
 		scroller.scrollerLeft = scrollerLeft = navigatorLeft - scrollbarHeight;
-		scroller.scrollerWidth = scrollerWidth = scrollerWidth = navigatorWidth + 2 * scrollbarHeight;
+		if (scrollbarOptions.showButtons) {
+			scroller.scrollerWidth = scrollerWidth = scrollerWidth = navigatorWidth + 2 * scrollbarHeight;
+		} else {
+			scroller.scrollerWidth = scrollerWidth = scrollerWidth = navigatorWidth;
+		}
 
 		// Set the scroller x axis extremes to reflect the total. The navigator extremes
 		// should always be the extremes of the union of all series in the chart as
@@ -19997,7 +20002,10 @@ Scroller.prototype = {
 					.attr({
 						fill: navigatorOptions.maskFill
 					}).add(navigatorGroup);
-				if (!navigatorOptions.maskInside) {
+				
+				if (navigatorOptions.maskInside) {
+					scroller.leftShade.css({ cursor: 'ew-resize '});
+				} else {
 					scroller.rightShade = renderer.rect()
 						.attr({
 							fill: navigatorOptions.maskFill
@@ -20101,8 +20109,10 @@ Scroller.prototype = {
 		if (scrollbarEnabled && scrollbarGroup) {
 
 			// draw the buttons
-			scroller.drawScrollbarButton(0);
-			scroller.drawScrollbarButton(1);
+			if (scrollbarOptions.showButtons) {
+				scroller.drawScrollbarButton(0);
+				scroller.drawScrollbarButton(1);
+			}
 
 			scrollbarGroup[verb]({
 				translateX: scrollerLeft,
@@ -20113,8 +20123,12 @@ Scroller.prototype = {
 				width: scrollerWidth
 			});
 
-			// prevent the scrollbar from drawing to small (#1246)
-			scrX = scrollbarHeight + zoomedMin;
+			// prevent the scrollbar from drawing too small (#1246)
+			if (scrollbarOptions.showButtons) {
+				scrX = scrollbarHeight + zoomedMin;
+			} else {
+				scrX = zoomedMin;
+			}
 			scrWidth = range - scrollbarStrokeWidth;
 			if (scrWidth < scrollbarMinWidth) {
 				scrollbarPad = (scrollbarMinWidth - scrWidth) / 2;
@@ -20215,8 +20229,6 @@ Scroller.prototype = {
 			top = scroller.top,
 			dragOffset,
 			hasDragged,
-			bodyStyle = document.body.style,
-			defaultBodyCursor,
 			baseSeries = scroller.baseSeries;
 
 		/**
@@ -20265,13 +20277,6 @@ Scroller.prototype = {
 				} else if (chartX > navigatorLeft + zoomedMin - scrollbarPad && chartX < navigatorLeft + zoomedMax + scrollbarPad) {
 					scroller.grabbedCenter = chartX;
 					scroller.fixedWidth = range;
-
-					// In SVG browsers, change the cursor. IE6 & 7 produce an error on changing the cursor,
-					// and IE8 isn't able to show it while dragging anyway.
-					if (chart.renderer.isSVG) {
-						defaultBodyCursor = bodyStyle.cursor;
-						bodyStyle.cursor = 'ew-resize';
-					}
 
 					dragOffset = chartX - zoomedMin;
 
@@ -20414,7 +20419,6 @@ Scroller.prototype = {
 			if (e.type !== 'mousemove') {
 				scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = scroller.fixedWidth =
 					scroller.fixedExtreme = scroller.otherHandlePos = hasDragged = dragOffset = null;
-				bodyStyle.cursor = defaultBodyCursor || '';
 			}
 
 		};
