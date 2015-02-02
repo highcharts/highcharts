@@ -1709,7 +1709,7 @@ Series.prototype = {
 	kdAxisArray: ['plotX', 'plotY'],
 	kdComparer: 'distX',
 
-	searchPoint: function (index, e) {
+	searchPoint: function (e) {
 		var series = this,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
@@ -1718,8 +1718,7 @@ Series.prototype = {
 		e.plotX = inverted ? xAxis.len - e.chartY + xAxis.pos : e.chartX - xAxis.pos;
 		e.plotY = inverted ? yAxis.len - e.chartX + yAxis.pos : e.chartY - yAxis.pos;
 
-		var result = this.searchKDTree(e);
-		return result;
+		return this.searchKDTree(e);
 	},
 
 	buildKDTree: function () {

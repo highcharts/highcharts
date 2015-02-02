@@ -438,9 +438,7 @@ var PieSeries = {
 	},
 
 
-	searchPoint: function (index, e) {
-		return UNDEFINED;
-	},
+	searchPoint: noop,
 
 	/**
 	 * Utility for sorting data labels

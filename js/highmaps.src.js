@@ -9039,7 +9039,7 @@ Pointer.prototype = {
 			each(series, function (s) {
 				// Skip hidden series
 				if (s.visible && pick(s.options.enableMouseTracking, true)) {
-					kdpoints.push(s.searchPoint(index, e));
+					kdpoints.push(s.searchPoint(e, index));
 				}
 			});
 			// Find absolute nearest point
@@ -9058,7 +9058,7 @@ Pointer.prototype = {
 				axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
 			});		
 		} else {
-			kdpoint = hoverSeries ? hoverSeries.searchPoint(index, e) : UNDEFINED;
+			kdpoint = hoverSeries ? hoverSeries.searchPoint(e, index) : UNDEFINED;
 		}
 
 		// Without a closest point there is no sense to continue
@@ -14015,7 +14015,7 @@ Series.prototype = {
 	kdAxisArray: ['plotX', 'plotY'],
 	kdComparer: 'distX',
 
-	searchPoint: function (index, e) {
+	searchPoint: function (e) {
 		var series = this,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
@@ -14024,8 +14024,7 @@ Series.prototype = {
 		e.plotX = inverted ? xAxis.len - e.chartY + xAxis.pos : e.chartX - xAxis.pos;
 		e.plotY = inverted ? yAxis.len - e.chartX + yAxis.pos : e.chartY - yAxis.pos;
 
-		var result = this.searchKDTree(e);
-		return result;
+		return this.searchKDTree(e);
 	},
 
 	buildKDTree: function () {
@@ -15028,7 +15027,7 @@ var ColumnSeries = extendClass(Series, {
 	kdAxisArray: ['x'],
 	kdComparer: 'distR',
 	
-	searchPoint: function (index, e) {
+	searchPoint: function (e, index) {
 		var result = this.searchKDTree({x: this.xAxis.toValue(index, true) });
 		if (!result) { return result; }
 		

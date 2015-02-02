@@ -2144,7 +2144,7 @@ Axis.prototype.beforePadding = function () {
 		pointerProto = Pointer.prototype,
 		colProto;
 
-	seriesProto.searchPolarPoint = function (index, e) {
+	seriesProto.searchPolarPoint = function (e) {
 		var series = this,
 			chart = series.chart,
 			xAxis = series.xAxis,
@@ -2167,11 +2167,11 @@ Axis.prototype.beforePadding = function () {
 		proceed.apply(this);
 	});
 	
-	wrap(seriesProto, 'searchPoint', function (proceed, index, e) {
+	wrap(seriesProto, 'searchPoint', function (proceed, e, index) {
 		if (this.chart.polar) {
-			return this.searchPolarPoint(index, e);
+			return this.searchPolarPoint(e);
 		} else {
-			return proceed.apply(this, [index, e]);
+			return proceed.apply(this, [e, index]);
 		}
 	});
 	/**

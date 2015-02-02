@@ -358,7 +358,7 @@ var ColumnSeries = extendClass(Series, {
 	kdAxisArray: ['x'],
 	kdComparer: 'distR',
 	
-	searchPoint: function (index, e) {
+	searchPoint: function (e, index) {
 		var result = this.searchKDTree({x: this.xAxis.toValue(index, true) });
 		if (!result) { return result; }
 		

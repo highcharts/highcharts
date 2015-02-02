@@ -160,7 +160,7 @@ Pointer.prototype = {
 			each(series, function (s) {
 				// Skip hidden series
 				if (s.visible && pick(s.options.enableMouseTracking, true)) {
-					kdpoints.push(s.searchPoint(index, e));
+					kdpoints.push(s.searchPoint(e, index));
 				}
 			});
 			// Find absolute nearest point
@@ -179,7 +179,7 @@ Pointer.prototype = {
 				axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
 			});		
 		} else {
-			kdpoint = hoverSeries ? hoverSeries.searchPoint(index, e) : UNDEFINED;
+			kdpoint = hoverSeries ? hoverSeries.searchPoint(e, index) : UNDEFINED;
 		}
 
 		// Without a closest point there is no sense to continue
