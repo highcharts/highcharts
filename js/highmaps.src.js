@@ -8561,7 +8561,7 @@ Tooltip.prototype = {
 			first = ['y', chart.chartHeight, boxHeight, point.plotY + chart.plotTop],
 			second = ['x', chart.chartWidth, boxWidth, point.plotX + chart.plotLeft],
 			// The far side is right or bottom
-			preferFarSide = point.ttBelow || (chart.inverted && !point.negative) || (!chart.inverted && point.negative),
+			preferFarSide = pick(point.ttBelow, (chart.inverted && !point.negative) || (!chart.inverted && point.negative)),
 			/**
 			 * Handle the preferred dimension. When the preferred dimension is tooltip
 			 * on top or bottom of the point, it will look for space there.
@@ -17585,7 +17585,8 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 var BubblePoint = extendClass(Point, {
 	haloPath: function () {
 		return Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
-	}
+	},
+	ttBelow: false
 });
 
 // 2 - Create the series object
@@ -17709,9 +17710,6 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		while (i--) {
 			point = data[i];
 			radius = radii ? radii[i] : 0; // #1737
-
-			// Flag for negativeColor to be applied in Series.js
-			//point.negative = point.z < (this.options.zThreshold || 0);
 			
 			if (radius >= this.minPxSize / 2) {
 				// Shape arguments
@@ -17872,7 +17870,8 @@ if (seriesTypes.bubble) {
 	});
 	seriesTypes.mapbubble = extendClass(seriesTypes.bubble, {
 		pointClass: extendClass(Point, {
-			applyOptions: MapAreaPoint.prototype.applyOptions
+			applyOptions: MapAreaPoint.prototype.applyOptions,
+			ttBelow: false
 		}),
 		xyFromShape: true,
 		type: 'mapbubble',

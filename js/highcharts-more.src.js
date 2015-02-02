@@ -1857,7 +1857,8 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 var BubblePoint = extendClass(Point, {
 	haloPath: function () {
 		return Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
-	}
+	},
+	ttBelow: false
 });
 
 // 2 - Create the series object
@@ -1981,9 +1982,6 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		while (i--) {
 			point = data[i];
 			radius = radii ? radii[i] : 0; // #1737
-
-			// Flag for negativeColor to be applied in Series.js
-			//point.negative = point.z < (this.options.zThreshold || 0);
 			
 			if (radius >= this.minPxSize / 2) {
 				// Shape arguments

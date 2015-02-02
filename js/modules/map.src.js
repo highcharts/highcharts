@@ -1751,7 +1751,8 @@ if (seriesTypes.bubble) {
 	});
 	seriesTypes.mapbubble = extendClass(seriesTypes.bubble, {
 		pointClass: extendClass(Point, {
-			applyOptions: MapAreaPoint.prototype.applyOptions
+			applyOptions: MapAreaPoint.prototype.applyOptions,
+			ttBelow: false
 		}),
 		xyFromShape: true,
 		type: 'mapbubble',
