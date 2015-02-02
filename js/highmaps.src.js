@@ -2463,15 +2463,19 @@ SVGElement.prototype = {
 			cacheKey;
 
 		if (textStr !== UNDEFINED) {
+
+			// Properties that affect bounding box
+			cacheKey = ['', rotation || 0, styles && styles.fontSize, element.style.width].join(',');
+
 			// Since numbers are monospaced, and numerical labels appear a lot in a chart,
 			// we assume that a label of n characters has the same bounding box as others 
 			// of the same length.
 			if (textStr === '' || numRegex.test(textStr)) {
-				cacheKey = 'num:' + textStr.toString().length + '|' + (styles && styles.fontSize);
+				cacheKey = 'num:' + textStr.toString().length + cacheKey;
 
 			// Caching all strings reduces rendering time by 4-5%.
 			} else {
-				cacheKey = [textStr, rotation || 0, styles && styles.fontSize, element.style.width].join(',');
+				cacheKey = textStr + cacheKey;
 			}
 		}
 
