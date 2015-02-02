@@ -11,6 +11,36 @@
 		pointerProto = Pointer.prototype,
 		colProto;
 
+	seriesProto.searchPolarPoint = function (index, e) {
+		var series = this,
+			chart = series.chart,
+			xAxis = series.xAxis,
+			center = xAxis.pane.center,
+			plotX = e.chartX - center[0] - chart.plotLeft,
+			plotY = e.chartY - center[1] - chart.plotTop;
+
+		this.kdAxisArray = ['clientX'];
+		e = {
+			clientX: 180 + (Math.atan2(plotX, plotY) * (-180 / Math.PI)) - xAxis.pane.options.startAngle
+		};
+		return this.searchKDTree(e);
+
+	};
+	
+	wrap(seriesProto, 'buildKDTree', function (proceed) {
+		if (this.chart.polar) {
+			this.kdAxisArray = ['clientX'];
+		}
+		proceed.apply(this);
+	});
+	
+	wrap(seriesProto, 'searchPoint', function (proceed, index, e) {
+		if (this.chart.polar) {
+			return this.searchPolarPoint(index, e);
+		} else {
+			return proceed.apply(this, [index, e]);
+		}
+	});
 	/**
 	 * Translate a point's plotX and plotY from the internal angle and radius measures to 
 	 * true plotX, plotY coordinates
@@ -66,6 +96,7 @@
 		}
 	}
 
+ 
 	if (seriesTypes.area) {		
 		wrap(seriesTypes.area.prototype, 'init', initArea);	
 	}
@@ -190,7 +221,6 @@
 	
 		// Postprocess plot coordinates
 		if (this.chart.polar && !this.preventPostTranslate) {
-			this.kdDimensions = 2;
 			var points = this.points,
 				i = points.length;
 			while (i--) {

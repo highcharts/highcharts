@@ -48,7 +48,6 @@ var ColumnSeries = extendClass(Series, {
 		fill: 'color',
 		r: 'borderRadius'
 	},
-	kdXValue: 'barX',
 	cropShoulder: 0,
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	negStacks: true, // use separate negative stacks, unlike area stacks where a negative 
@@ -350,6 +349,44 @@ var ColumnSeries = extendClass(Series, {
 		}
 
 		Series.prototype.remove.apply(series, arguments);
+	},
+
+	/**
+	 * KD Tree && PointSearching Implementation
+	 */
+
+	kdAxisArray: ['x'],
+	kdComparer: 'distR',
+	
+	searchPoint: function (index, e) {
+		var result = this.searchKDTree({x: this.xAxis.toValue(index, true) });
+		if (!result) { return result; }
+		
+		var series = this,
+			xAxis = series.xAxis,
+			yAxis = series.yAxis,
+			inverted = series.chart.inverted;
+		
+		e.plotX = inverted ? xAxis.len - e.chartY + xAxis.pos : e.chartX - xAxis.pos;
+		e.plotY = inverted ? yAxis.len - e.chartX + yAxis.pos : e.chartY - yAxis.pos;
+
+		// if mouse on the column dist should be 0
+		if ((result.barX <= e.plotX) && (result.barX + result.pointWidth >= e.plotX) &&
+			(result.plotY <= e.plotY) && (result.plotY + result.shapeArgs.height >= e.plotY)) {
+			result.dist = {
+				distX: 0,
+				distY: 0,
+				distR: 0
+			};
+		} else {
+			result.dist = {
+				distX: Math.abs(result.plotX - e.plotX),
+				distY: Math.abs(result.plotY - e.plotY),
+				distR: Math.sqrt(Math.pow(result.plotX - e.plotX, 2) + Math.pow(result.plotY - e.plotY, 2))
+			};
+		}
+
+		return result;
 	}
 });
 seriesTypes.column = ColumnSeries;

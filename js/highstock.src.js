@@ -9487,39 +9487,42 @@ Pointer.prototype = {
 			//j,
 			distance = chart.chartWidth,
 			rdistance = chart.chartWidth, 
-			//index = pointer.getIndex(e),
+			index = pointer.getIndex(e),
 			anchor,
 
 			kdpoints = [],
 			kdpoint;
-
-		// Find nearest points on all series
-		each(series, function (s) {
-			// Skip hidden series
-			if (s.visible && pick(s.options.enableMouseTracking, true)) {
-				kdpoints.push(s.searchKDTree(e));
-			}
-		});
-
-		// Find absolute nearest point
-		each(kdpoints, function (p) {
-			if (p && defined(p.plotX) && defined(p.plotY)) {
-				if ((p.dist.distX < distance) || ((p.dist.distX === distance || p.series.kdDimensions > 1) && p.dist.distR < rdistance)) {
-					distance = p.dist.distX;
-					rdistance = p.dist.distR;
-					kdpoint = p;
+		
+		if (shared || !hoverSeries) {
+			// Find nearest points on all series
+			each(series, function (s) {
+				// Skip hidden series
+				if (s.visible && pick(s.options.enableMouseTracking, true)) {
+					kdpoints.push(s.searchPoint(index, e));
 				}
-			}
-			//point = kdpoints[0];
-		});
-				
-		// Crosshair
-		each(chart.axes, function (axis) {
-			axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
-		});		
+			});
+			// Find absolute nearest point
+			each(kdpoints, function (p) {
+				if (p && defined(p.plotX) && defined(p.plotY)) {
+					if ((p.dist.distX < distance) || ((p.dist.distX === distance || p.series.kdDimensions > 1) && p.dist.distR < rdistance)) {
+						distance = p.dist.distX;
+						rdistance = p.dist.distR;
+						kdpoint = p;
+					}
+				}
+				//point = kdpoints[0];
+			});	
+			// Crosshair
+			each(chart.axes, function (axis) {
+				axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
+			});		
+		} else {
+			kdpoint = hoverSeries ? hoverSeries.searchPoint(index, e) : UNDEFINED;
+		}
+
 		// Without a closest point there is no sense to continue
 		if (!kdpoint) { return; }
-		
+
 		// Separate tooltip and general mouse events
 		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
 
@@ -14498,13 +14501,26 @@ Series.prototype = {
 	},
 
 	/**
-	 * KD Tree Implementation
+	 * KD Tree && PointSearching Implementation
 	 */
 
 	kdDimensions: 1,
 	kdTree: null,
 	kdAxisArray: ['plotX', 'plotY'],
 	kdComparer: 'distX',
+
+	searchPoint: function (index, e) {
+		var series = this,
+			xAxis = series.xAxis,
+			yAxis = series.yAxis,
+			inverted = series.chart.inverted;
+		
+		e.plotX = inverted ? xAxis.len - e.chartY + xAxis.pos : e.chartX - xAxis.pos;
+		e.plotY = inverted ? yAxis.len - e.chartX + yAxis.pos : e.chartY - yAxis.pos;
+
+		var result = this.searchKDTree(e);
+		return result;
+	},
 
 	buildKDTree: function () {
 		var series = this,
@@ -14550,14 +14566,14 @@ Series.prototype = {
 	searchKDTree: function (point) {
 		var series = this,
 			kdComparer = this.kdComparer,
-			kdX = this.kdXValue || 'plotX',
-			kdY = this.kdYValue || 'plotY';
+			kdX = this.kdAxisArray[0],
+			kdY = this.kdAxisArray[1];
 
 		// Internal function
 		function _distance(p1, p2) {
 			var x = (defined(p1[kdX]) && defined(p2[kdX])) ? Math.pow(p1[kdX] - p2[kdX], 2) : null,
 				y = (defined(p1[kdY]) && defined(p2[kdY])) ? Math.pow(p1[kdY] - p2[kdY], 2) : null,
-				r = x + y;
+				r = (x || 0) + (y || 0);
 				
 			return {
 				distX: defined(x) ? Math.sqrt(x) : Number.MAX_VALUE,
@@ -14574,12 +14590,10 @@ Series.prototype = {
 				ret = point,
 				nPoint1,
 				nPoint2;
-			
 			point.dist = _distance(search, point);
 
 			// Pick side based on distance to splitting point
 			tdist = search[axis] - point[axis];
-
 			sideA = tdist < 0 ? 'left' : 'right';
 
 			// End of tree
@@ -14605,15 +14619,7 @@ Series.prototype = {
 		}
 
 		if (this.kdTree) {
-			var xAxis = series.xAxis,
-				yAxis = series.yAxis,
-				inverted = series.chart.inverted,
-				s = {
-					plotX: inverted ? xAxis.len - point.chartY + xAxis.pos : point.chartX - xAxis.pos,
-					plotY: inverted ? yAxis.len - point.chartX + yAxis.pos : point.chartY - yAxis.pos 
-				};
-
-			return _search(s, 
+			return _search(point, 
 				this.kdTree, this.kdDimensions, this.kdDimensions);
 		} else {
 			return UNDEFINED;
@@ -15853,7 +15859,6 @@ var ColumnSeries = extendClass(Series, {
 		fill: 'color',
 		r: 'borderRadius'
 	},
-	kdXValue: 'barX',
 	cropShoulder: 0,
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	negStacks: true, // use separate negative stacks, unlike area stacks where a negative 
@@ -16155,6 +16160,44 @@ var ColumnSeries = extendClass(Series, {
 		}
 
 		Series.prototype.remove.apply(series, arguments);
+	},
+
+	/**
+	 * KD Tree && PointSearching Implementation
+	 */
+
+	kdAxisArray: ['x'],
+	kdComparer: 'distR',
+	
+	searchPoint: function (index, e) {
+		var result = this.searchKDTree({x: this.xAxis.toValue(index, true) });
+		if (!result) { return result; }
+		
+		var series = this,
+			xAxis = series.xAxis,
+			yAxis = series.yAxis,
+			inverted = series.chart.inverted;
+		
+		e.plotX = inverted ? xAxis.len - e.chartY + xAxis.pos : e.chartX - xAxis.pos;
+		e.plotY = inverted ? yAxis.len - e.chartX + yAxis.pos : e.chartY - yAxis.pos;
+
+		// if mouse on the column dist should be 0
+		if ((result.barX <= e.plotX) && (result.barX + result.pointWidth >= e.plotX) &&
+			(result.plotY <= e.plotY) && (result.plotY + result.shapeArgs.height >= e.plotY)) {
+			result.dist = {
+				distX: 0,
+				distY: 0,
+				distR: 0
+			};
+		} else {
+			result.dist = {
+				distX: Math.abs(result.plotX - e.plotX),
+				distY: Math.abs(result.plotY - e.plotY),
+				distR: Math.sqrt(Math.pow(result.plotX - e.plotX, 2) + Math.pow(result.plotY - e.plotY, 2))
+			};
+		}
+
+		return result;
 	}
 });
 seriesTypes.column = ColumnSeries;
@@ -16647,7 +16690,9 @@ var PieSeries = {
 	},
 
 
-	buildKDTree: noop,
+	searchPoint: function (index, e) {
+		return UNDEFINED;
+	},
 
 	/**
 	 * Utility for sorting data labels

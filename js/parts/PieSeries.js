@@ -438,7 +438,9 @@ var PieSeries = {
 	},
 
 
-	buildKDTree: noop,
+	searchPoint: function (index, e) {
+		return UNDEFINED;
+	},
 
 	/**
 	 * Utility for sorting data labels

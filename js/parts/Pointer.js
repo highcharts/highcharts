@@ -149,39 +149,42 @@ Pointer.prototype = {
 			//j,
 			distance = chart.chartWidth,
 			rdistance = chart.chartWidth, 
-			//index = pointer.getIndex(e),
+			index = pointer.getIndex(e),
 			anchor,
 
 			kdpoints = [],
 			kdpoint;
-
-		// Find nearest points on all series
-		each(series, function (s) {
-			// Skip hidden series
-			if (s.visible && pick(s.options.enableMouseTracking, true)) {
-				kdpoints.push(s.searchKDTree(e));
-			}
-		});
-
-		// Find absolute nearest point
-		each(kdpoints, function (p) {
-			if (p && defined(p.plotX) && defined(p.plotY)) {
-				if ((p.dist.distX < distance) || ((p.dist.distX === distance || p.series.kdDimensions > 1) && p.dist.distR < rdistance)) {
-					distance = p.dist.distX;
-					rdistance = p.dist.distR;
-					kdpoint = p;
+		
+		if (shared || !hoverSeries) {
+			// Find nearest points on all series
+			each(series, function (s) {
+				// Skip hidden series
+				if (s.visible && pick(s.options.enableMouseTracking, true)) {
+					kdpoints.push(s.searchPoint(index, e));
 				}
-			}
-			//point = kdpoints[0];
-		});
-				
-		// Crosshair
-		each(chart.axes, function (axis) {
-			axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
-		});		
+			});
+			// Find absolute nearest point
+			each(kdpoints, function (p) {
+				if (p && defined(p.plotX) && defined(p.plotY)) {
+					if ((p.dist.distX < distance) || ((p.dist.distX === distance || p.series.kdDimensions > 1) && p.dist.distR < rdistance)) {
+						distance = p.dist.distX;
+						rdistance = p.dist.distR;
+						kdpoint = p;
+					}
+				}
+				//point = kdpoints[0];
+			});	
+			// Crosshair
+			each(chart.axes, function (axis) {
+				axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
+			});		
+		} else {
+			kdpoint = hoverSeries ? hoverSeries.searchPoint(index, e) : UNDEFINED;
+		}
+
 		// Without a closest point there is no sense to continue
 		if (!kdpoint) { return; }
-		
+
 		// Separate tooltip and general mouse events
 		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
 

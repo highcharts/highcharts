@@ -1701,13 +1701,26 @@ Series.prototype = {
 	},
 
 	/**
-	 * KD Tree Implementation
+	 * KD Tree && PointSearching Implementation
 	 */
 
 	kdDimensions: 1,
 	kdTree: null,
 	kdAxisArray: ['plotX', 'plotY'],
 	kdComparer: 'distX',
+
+	searchPoint: function (index, e) {
+		var series = this,
+			xAxis = series.xAxis,
+			yAxis = series.yAxis,
+			inverted = series.chart.inverted;
+		
+		e.plotX = inverted ? xAxis.len - e.chartY + xAxis.pos : e.chartX - xAxis.pos;
+		e.plotY = inverted ? yAxis.len - e.chartX + yAxis.pos : e.chartY - yAxis.pos;
+
+		var result = this.searchKDTree(e);
+		return result;
+	},
 
 	buildKDTree: function () {
 		var series = this,
@@ -1753,14 +1766,14 @@ Series.prototype = {
 	searchKDTree: function (point) {
 		var series = this,
 			kdComparer = this.kdComparer,
-			kdX = this.kdXValue || 'plotX',
-			kdY = this.kdYValue || 'plotY';
+			kdX = this.kdAxisArray[0],
+			kdY = this.kdAxisArray[1];
 
 		// Internal function
 		function _distance(p1, p2) {
 			var x = (defined(p1[kdX]) && defined(p2[kdX])) ? Math.pow(p1[kdX] - p2[kdX], 2) : null,
 				y = (defined(p1[kdY]) && defined(p2[kdY])) ? Math.pow(p1[kdY] - p2[kdY], 2) : null,
-				r = x + y;
+				r = (x || 0) + (y || 0);
 				
 			return {
 				distX: defined(x) ? Math.sqrt(x) : Number.MAX_VALUE,
@@ -1777,12 +1790,10 @@ Series.prototype = {
 				ret = point,
 				nPoint1,
 				nPoint2;
-			
 			point.dist = _distance(search, point);
 
 			// Pick side based on distance to splitting point
 			tdist = search[axis] - point[axis];
-
 			sideA = tdist < 0 ? 'left' : 'right';
 
 			// End of tree
@@ -1808,15 +1819,7 @@ Series.prototype = {
 		}
 
 		if (this.kdTree) {
-			var xAxis = series.xAxis,
-				yAxis = series.yAxis,
-				inverted = series.chart.inverted,
-				s = {
-					plotX: inverted ? xAxis.len - point.chartY + xAxis.pos : point.chartX - xAxis.pos,
-					plotY: inverted ? yAxis.len - point.chartX + yAxis.pos : point.chartY - yAxis.pos 
-				};
-
-			return _search(s, 
+			return _search(point, 
 				this.kdTree, this.kdDimensions, this.kdDimensions);
 		} else {
 			return UNDEFINED;
