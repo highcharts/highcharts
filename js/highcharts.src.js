@@ -10350,7 +10350,6 @@ Legend.prototype = {
 		legend.maxItemWidth = 0;
 		legend.chart = chart;
 		legend.itemHeight = 0;
-		legend.lastLineHeight = 0;
 		legend.symbolWidth = pick(options.symbolWidth, 16);
 		legend.pages = [];
 
@@ -10611,7 +10610,6 @@ Legend.prototype = {
 				(widthOption || (chart.chartWidth - 2 * padding - initialItemX - options.x))) {
 			legend.itemX = initialItemX;
 			legend.itemY += itemMarginTop + legend.lastLineHeight + itemMarginBottom;
-			legend.lastLineHeight = 0; // reset for next line
 		}
 
 		// If the item exceeds the height, start a new column
@@ -10758,6 +10756,7 @@ Legend.prototype = {
 		legend.display = display = !!allItems.length;
 
 		// render the items
+		legend.lastLineHeight = 0;
 		each(allItems, function (item) {
 			legend.renderItem(item); 
 		});
