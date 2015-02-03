@@ -333,7 +333,13 @@
 	 * numbers.
 	 */
 	findHeaderRow: function () {
-		this.headerRow = 0;
+		var headerRow = 0;
+		each(this.columns, function (column) {
+			if (column.isNumeric && /^[0-9\.]+$/.test(column[0])) {
+				headerRow = null;
+			}
+		});
+		this.headerRow = headerRow;
 	},
 
 	/**
@@ -379,7 +385,6 @@
 			floatVal,
 			trimVal,
 			trimInsideVal,
-			hasHeaderRow,
 			isXColumn = inArray(col, this.valueCount.xColumns) !== -1,
 			dateVal,
 			backup = [],
@@ -406,7 +411,7 @@
 			}
 			
 			// Disable number or date parsing by setting the X axis type to category
-			if (forceCategory || row === 0) {
+			if (forceCategory || row === this.headerRow) {
 				column[row] = trimVal;
 
 			} else if (+trimInsideVal === floatVal) { // is numeric
@@ -452,7 +457,7 @@
 				
 				} else { // string
 					column[row] = trimVal === '' ? null : trimVal;
-					if (row !== 0 && (column.isDatetime || column.isNumeric)) {
+					if (row !== this.headerRow && (column.isDatetime || column.isNumeric)) {
 						column.mixed = true;
 					}
 				}
@@ -469,10 +474,9 @@
 
 		// If the 0 column is date or number and descending, reverse all columns. 
 		if (isXColumn && descending && this.options.sort) {
-			hasHeaderRow = typeof columns[0][0] !== 'number';
 			for (col = 0; col < columns.length; col++) {
 				columns[col].reverse();
-				if (hasHeaderRow) {
+				if (this.headerRow === 0) {
 					columns[col].unshift(columns[col].pop());
 				}
 			}
