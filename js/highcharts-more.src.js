@@ -2165,11 +2165,11 @@ Axis.prototype.beforePadding = function () {
 		proceed.apply(this);
 	});
 	
-	wrap(seriesProto, 'searchPoint', function (proceed, e, index) {
+	wrap(seriesProto, 'searchPoint', function (proceed, e) {
 		if (this.chart.polar) {
 			return this.searchPolarPoint(e);
 		} else {
-			return proceed.apply(this, [e, index]);
+			return proceed.call(this, e);
 		}
 	});
 	/**

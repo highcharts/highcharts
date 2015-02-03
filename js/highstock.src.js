@@ -9478,8 +9478,7 @@ Pointer.prototype = {
 			trueX,
 			//j,
 			distance = chart.chartWidth,
-			rdistance = chart.chartWidth, 
-			index = pointer.getIndex(e),
+			rdistance = chart.chartWidth,
 			anchor,
 
 			kdpoints = [],
@@ -9500,7 +9499,7 @@ Pointer.prototype = {
 			each(series, function (s) {
 				// Skip hidden series
 				if (s.visible && pick(s.options.enableMouseTracking, true)) {
-					kdpoints.push(s.searchPoint(e, index));
+					kdpoints.push(s.searchPoint(e));
 				}
 			});
 			// Find absolute nearest point
@@ -9519,7 +9518,7 @@ Pointer.prototype = {
 				axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
 			});		
 		} else {
-			kdpoint = hoverSeries ? hoverSeries.searchPoint(e, index) : UNDEFINED;
+			kdpoint = hoverSeries ? hoverSeries.searchPoint(e) : UNDEFINED;
 		}
 
 		// Without a closest point there is no sense to continue
