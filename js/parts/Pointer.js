@@ -117,17 +117,6 @@ Pointer.prototype = {
 	},
 	
 	/**
-	 * Return the index in the tooltipPoints array, corresponding to pixel position in 
-	 * the plot area.
-	 */
-	getIndex: function (e) {
-		var chart = this.chart;
-		return chart.inverted ? 
-			chart.plotHeight + chart.plotTop - e.chartY : 
-			e.chartX - chart.plotLeft;
-	},
-
-	/**
 	 * With line type charts with a single tracker, get the point closest to the mouse.
 	 * Run Point.onMouseOver and display tooltip for the point or points.
 	 */
@@ -160,7 +149,7 @@ Pointer.prototype = {
 		if (!shared && !hoverSeries) {
 			for (i = 0; i < series.length; i++) {
 				if (series[i].directTouch) {
-					series.length = 0;
+					series = [];
 				}
 			}
 		}

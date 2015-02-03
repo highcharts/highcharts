@@ -2534,7 +2534,6 @@ SVGElement.prototype = {
 			}
 
 			// Cache it
-			//wrapper.bBox = bBox;
 			renderer.cache[cacheKey] = bBox;
 		}
 		return bBox;
@@ -8996,17 +8995,6 @@ Pointer.prototype = {
 	},
 	
 	/**
-	 * Return the index in the tooltipPoints array, corresponding to pixel position in 
-	 * the plot area.
-	 */
-	getIndex: function (e) {
-		var chart = this.chart;
-		return chart.inverted ? 
-			chart.plotHeight + chart.plotTop - e.chartY : 
-			e.chartX - chart.plotLeft;
-	},
-
-	/**
 	 * With line type charts with a single tracker, get the point closest to the mouse.
 	 * Run Point.onMouseOver and display tooltip for the point or points.
 	 */
@@ -9039,7 +9027,7 @@ Pointer.prototype = {
 		if (!shared && !hoverSeries) {
 			for (i = 0; i < series.length; i++) {
 				if (series[i].directTouch) {
-					series.length = 0;
+					series = [];
 				}
 			}
 		}
@@ -14039,8 +14027,7 @@ Series.prototype = {
 
 	buildKDTree: function () {
 		var series = this,
-			dimensions = series.kdDimensions,
-			tree = series.kdTree;
+			dimensions = series.kdDimensions;
 
 		// Internal function
 		function _kdtree(points, depth, dimensions) {
@@ -14068,14 +14055,11 @@ Series.prototype = {
 			}
 		}
 
-		tree = null;
-		if (this.options.kdWait) {
-			series.kdTree = _kdtree(series.points, dimensions, dimensions);	
-		} else {
-			setTimeout(function () {
-				series.kdTree = _kdtree(series.points, dimensions, dimensions);		
-			});
-		}
+		delete series.kdTree;
+		
+		setTimeout(function () {
+			series.kdTree = _kdtree(series.points, dimensions, dimensions);		
+		});
 	},
 
 	searchKDTree: function (point) {

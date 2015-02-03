@@ -1723,8 +1723,7 @@ Series.prototype = {
 
 	buildKDTree: function () {
 		var series = this,
-			dimensions = series.kdDimensions,
-			tree = series.kdTree;
+			dimensions = series.kdDimensions;
 
 		// Internal function
 		function _kdtree(points, depth, dimensions) {
@@ -1752,14 +1751,11 @@ Series.prototype = {
 			}
 		}
 
-		tree = null;
-		if (this.options.kdWait) {
-			series.kdTree = _kdtree(series.points, dimensions, dimensions);	
-		} else {
-			setTimeout(function () {
-				series.kdTree = _kdtree(series.points, dimensions, dimensions);		
-			});
-		}
+		delete series.kdTree;
+		
+		setTimeout(function () {
+			series.kdTree = _kdtree(series.points, dimensions, dimensions);		
+		});
 	},
 
 	searchKDTree: function (point) {

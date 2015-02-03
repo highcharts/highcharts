@@ -750,7 +750,6 @@ SVGElement.prototype = {
 			}
 
 			// Cache it
-			//wrapper.bBox = bBox;
 			renderer.cache[cacheKey] = bBox;
 		}
 		return bBox;

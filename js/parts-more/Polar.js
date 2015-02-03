@@ -416,33 +416,6 @@
 		});		
 	}
 
-
-	/**
-	 * Extend the mouse tracker to return the tooltip position index in terms of
-	 * degrees rather than pixels
-	 */
-	wrap(pointerProto, 'getIndex', function (proceed, e) {
-		var ret,
-			chart = this.chart,
-			center,
-			x,
-			y;
-	
-		if (chart.polar) {
-			center = chart.xAxis[0].center;
-			x = e.chartX - center[0] - chart.plotLeft;
-			y = e.chartY - center[1] - chart.plotTop;
-		
-			ret = 180 - Math.round(Math.atan2(x, y) / Math.PI * 180);
-	
-		} else {
-	
-			// Run uber method
-			ret = proceed.call(this, e);
-		}
-		return ret;
-	});
-
 	/**
 	 * Extend getCoordinates to prepare for polar axis values
 	 */
