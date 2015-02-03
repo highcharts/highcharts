@@ -154,6 +154,16 @@ Pointer.prototype = {
 
 			kdpoints = [],
 			kdpoint;
+
+		// For hovering over the empty parts of the plot area (hoverSeries is undefined). 
+		// If there is one series with point tracking (combo chart), don't go to nearest neighbour.
+		if (!shared && !hoverSeries) {
+			for (i = 0; i < series.length; i++) {
+				if (series[i].directTouch) {
+					series.length = 0;
+				}
+			}
+		}
 		
 		if (shared || !hoverSeries) {
 			// Find nearest points on all series
@@ -190,7 +200,7 @@ Pointer.prototype = {
 
 		// Tooltip
 
-		if (tooltip) { // && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
+		if (tooltip && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
 			// Draw tooltip if necessary
 			if (shared && !kdpoint.series.noSharedTooltip) {
 				i = kdpoints.length;

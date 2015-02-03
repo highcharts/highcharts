@@ -9496,6 +9496,16 @@ Pointer.prototype = {
 
 			kdpoints = [],
 			kdpoint;
+
+		// For hovering over the empty parts of the plot area (hoverSeries is undefined). 
+		// If there is one series with point tracking (combo chart), don't go to nearest neighbour.
+		if (!shared && !hoverSeries) {
+			for (i = 0; i < series.length; i++) {
+				if (series[i].directTouch) {
+					series.length = 0;
+				}
+			}
+		}
 		
 		if (shared || !hoverSeries) {
 			// Find nearest points on all series
@@ -9532,7 +9542,7 @@ Pointer.prototype = {
 
 		// Tooltip
 
-		if (tooltip) { // && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
+		if (tooltip && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
 			// Draw tooltip if necessary
 			if (shared && !kdpoint.series.noSharedTooltip) {
 				i = kdpoints.length;
@@ -15862,6 +15872,7 @@ var ColumnSeries = extendClass(Series, {
 		r: 'borderRadius'
 	},
 	cropShoulder: 0,
+	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	negStacks: true, // use separate negative stacks, unlike area stacks where a negative 
 		// point is substracted from previous (#1910)
@@ -16162,44 +16173,6 @@ var ColumnSeries = extendClass(Series, {
 		}
 
 		Series.prototype.remove.apply(series, arguments);
-	},
-
-	/**
-	 * KD Tree && PointSearching Implementation
-	 */
-
-	kdAxisArray: ['x'],
-	kdComparer: 'distR',
-	
-	searchPoint: function (e, index) {
-		var result = this.searchKDTree({x: this.xAxis.toValue(index, true) });
-		if (!result) { return result; }
-		
-		var series = this,
-			xAxis = series.xAxis,
-			yAxis = series.yAxis,
-			inverted = series.chart.inverted;
-		
-		e.plotX = inverted ? xAxis.len - e.chartY + xAxis.pos : e.chartX - xAxis.pos;
-		e.plotY = inverted ? yAxis.len - e.chartX + yAxis.pos : e.chartY - yAxis.pos;
-
-		// if mouse on the column dist should be 0
-		if ((result.barX <= e.plotX) && (result.barX + result.pointWidth >= e.plotX) &&
-			(result.plotY <= e.plotY) && (result.plotY + result.shapeArgs.height >= e.plotY)) {
-			result.dist = {
-				distX: 0,
-				distY: 0,
-				distR: 0
-			};
-		} else {
-			result.dist = {
-				distX: Math.abs(result.plotX - e.plotX),
-				distY: Math.abs(result.plotY - e.plotY),
-				distR: Math.sqrt(Math.pow(result.plotX - e.plotX, 2) + Math.pow(result.plotY - e.plotY, 2))
-			};
-		}
-
-		return result;
 	}
 });
 seriesTypes.column = ColumnSeries;
