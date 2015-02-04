@@ -215,6 +215,7 @@ $(function () {
         },
 
         xAxis: {
+            type: 'datetime',
             min: Date.UTC(2013, 0, 1),
             max: Date.UTC(2014, 0, 1),
             labels: {
