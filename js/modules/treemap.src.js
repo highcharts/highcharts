@@ -37,7 +37,7 @@
 		},
 		tooltip: {
 			headerFormat: '',
-			pointFormat: 'name: <b>{point.name}</b><br/>value: <b>{point.value}</b><br/>'
+			pointFormat: '<b>{point.name}</b>: {point.value}</b><br/>'
 		},
 		layoutAlgorithm: 'sliceAndDice',
 		layoutStartingDirection: 'vertical',
