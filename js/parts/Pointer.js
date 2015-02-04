@@ -147,7 +147,7 @@ Pointer.prototype = {
 		// If there is one series with point tracking (combo chart), don't go to nearest neighbour.
 		if (!shared && !hoverSeries) {
 			for (i = 0; i < series.length; i++) {
-				if (series[i].directTouch) {
+				if (series[i].directTouch || !series[i].options.stickyTracking) {
 					series = [];
 				}
 			}
