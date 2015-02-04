@@ -16576,6 +16576,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	getExtremesFromAll: true,
 	useMapGeometry: true, // get axis extremes from paths, not values
 	forceDL: true,
+	searchPoint: noop,
 	/**
 	 * Get the bounding box of all paths in the map combined.
 	 */
