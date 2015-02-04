@@ -172,10 +172,6 @@ Pointer.prototype = {
 				}
 				//point = kdpoints[0];
 			});	
-			// Crosshair
-			each(chart.axes, function (axis) {
-				axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
-			});		
 		} else {
 			kdpoint = hoverSeries ? hoverSeries.searchPoint(e) : UNDEFINED;
 		}
@@ -209,6 +205,11 @@ Pointer.prototype = {
 				tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });			
 			}
 		}
+		
+		// Crosshair
+		each(chart.axes, function (axis) {
+			axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
+		});	
 				
 	},
 
