@@ -393,6 +393,7 @@
 			descending,
 			columnTypes = this.options.columnTypes || [],
 			columnType = columnTypes[col],
+			hasHeaderRow,
 			forceCategory = isXColumn && ((chartOptions && chartOptions.xAxis && splat(chartOptions.xAxis)[0].type === 'category') || columnType === 'string');
 		
 		if (!rawColumns[col]) {
@@ -411,7 +412,7 @@
 			}
 			
 			// Disable number or date parsing by setting the X axis type to category
-			if (forceCategory || row === this.headerRow) {
+			if (forceCategory || row === 0) {
 				column[row] = trimVal;
 
 			} else if (+trimInsideVal === floatVal) { // is numeric
@@ -474,9 +475,10 @@
 
 		// If the 0 column is date or number and descending, reverse all columns. 
 		if (isXColumn && descending && this.options.sort) {
+			hasHeaderRow = typeof columns[0][0] !== 'number';
 			for (col = 0; col < columns.length; col++) {
 				columns[col].reverse();
-				if (this.headerRow === 0) {
+				if (hasHeaderRow) {
 					columns[col].unshift(columns[col].pop());
 				}
 			}
