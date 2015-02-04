@@ -934,21 +934,14 @@ $(function () {
 			levels: [{
 				level: 1,
 				dataLabels: {
-					enabled: true,
-					color: '#00000',
-					style: {
-						fontSize: "20px",
-						HcTextStroke: "3px rgba(255,255,255,0.5)"
-					}
+					enabled: true
 				},
-				borderColor: "#FFFFFF",
-				borderWidth: "3px"
+				borderWidth: 3
 			}],
 			data: points
 		}],
 		subtitle: {
-			text: 'Source: WHO (http://apps.who.int/gho/data/node.main.12?lang=en)',
-			align: 'right'
+			text: 'Click points to drill down. Source: <a href="http://apps.who.int/gho/data/node.main.12?lang=en">WHO</a>.'
 		},
 		title: {
 			text: 'Global Mortality Rate 2012, per 100 000 population'

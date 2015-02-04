@@ -2095,8 +2095,8 @@ Axis.prototype = {
 			options = this.crosshair,
 			animation = options.animation,
 			pos,
-			attribs;
-
+			attribs,
+			categorized;
 		
 		if (
 			// Disabled in options
@@ -2135,9 +2135,10 @@ Axis.prototype = {
 				this.cross
 					.attr({ visibility: VISIBLE })[animation ? 'animate' : 'attr']({ d: path }, animation);
 			} else {
+				categorized = this.categories && !this.isRadial;
 				attribs = {
-					'stroke-width': options.width || ((this.categories && !this.isRadial) ? this.transA : 1), // docs: category gets band unless width is set
-					stroke: options.color || 'rgba(155,200,255,0.2)', // docs: new color
+					'stroke-width': options.width || (categorized ? this.transA : 1), // docs: category gets band unless width is set
+					stroke: options.color || (categorized ? 'rgba(155,200,255,0.2)' : '#C0C0C0'), // docs: new color
 					zIndex: options.zIndex || 2
 				};
 				if (options.dashStyle) {

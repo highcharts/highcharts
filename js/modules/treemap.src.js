@@ -24,7 +24,7 @@
 	plotOptions.treemap = merge(plotOptions.scatter, {
 		showInLegend: false,
 		marker: false,
-		borderColor: '#FFFFFF',
+		borderColor: '#E0E0E0', // docs
 		borderWidth: 1,
 		dataLabels: {
 			enabled: true,
@@ -45,7 +45,7 @@
 		levelIsConstant: true,
 		states: {
 			hover: {
-				borderColor: '#000000',
+				borderColor: '#A0A0A0', // docs
 				brightness: seriesTypes.heatmap ? 0 : 0.1,
 				shadow: false
 			}
