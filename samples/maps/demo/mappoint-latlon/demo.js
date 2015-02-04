@@ -12,18 +12,16 @@ $(function () {
         },
         
         tooltip: {
-            // Use lat/lon instead of x/y in tooltip
-            formatter: function () {
-                return this.point.name + '<br>Lat: ' + this.point.lat + ' Lon: ' + this.point.lon;
-            },
+            headerFormat: '',
+            pointFormat: '<b>{point.name}</b><br>Lat: {point.lat}, Lon: {point.lon}'
         },
         
         series: [{
             // Use the gb-all map with no data as a basemap
             mapData: Highcharts.maps['countries/gb/gb-all'],
             name: 'Basemap',
-            borderColor: '#707070',
-            nullColor: Highcharts.getOptions().colors[0],
+            borderColor: '#A0A0A0',
+            nullColor: 'rgba(200, 200, 200, 0.3)',
             showInLegend: false
         }, {
             name: 'Separators',
