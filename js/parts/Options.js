@@ -161,6 +161,13 @@ defaultOptions = {
 				formatter: function () {
 					return this.y === null ? '' : Highcharts.numberFormat(this.y, -1);
 				},
+				/* Contrast preview. Also check if defaultLabels.style can be removed
+				style: {
+					color: 'contrast',
+					fontWeight: 'bold',
+					textShadow: '0 0 3px contrast',
+				},
+				// */
 				verticalAlign: 'bottom', // above singular point
 				y: 0
 				// backgroundColor: undefined,
