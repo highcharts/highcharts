@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -400,7 +401,7 @@ public class ExportController extends HttpServlet {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("error");
 		modelAndView.addObject("message",
-				"Something went wrong while converting. " + ex.getMessage());
+				"Something went wrong while converting. " + StringEscapeUtils.escapeHtml(ex.getMessage()));
 		response.setStatus(500);
 		return modelAndView;
 	}
@@ -418,7 +419,7 @@ public class ExportController extends HttpServlet {
 	@ExceptionHandler(ServletException.class)
 	public ModelAndView handleServletException(Exception ex, HttpServletResponse response) {
 		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("message", ex.getMessage());
+		modelAndView.addObject("message", StringEscapeUtils.escapeHtml(ex.getMessage()));
 		response.setStatus(500);
 		return modelAndView;
 	}
