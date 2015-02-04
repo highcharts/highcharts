@@ -100,7 +100,8 @@ public class XSSFilter implements Filter {
 		if (request.getParameterMap().isEmpty()) {
 			chain.doFilter(request, response);
 		} else {
-			chain.doFilter(new XssFilteredRequest((HttpServletRequest) request), response);
+			chain.doFilter(request, response);
+			//chain.doFilter(new XssFilteredRequest((HttpServletRequest) request), response);
 		}
 	}
 
