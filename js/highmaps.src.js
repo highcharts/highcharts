@@ -8185,59 +8185,64 @@ Axis.prototype = {
 	 * Draw the crosshair
 	 */
 	drawCrosshair: function (e, point) {
-		if (!this.crosshair) { return; }// Do not draw crosshairs if you don't have too.
-
-		if ((defined(point) || !pick(this.crosshair.snap, true)) === false) {
-			this.hideCrosshair();
-			return;
-		}
-
-		// Do not draw the crosshair if this axis is not part of the point 
-		if (defined(point) && pick(this.crosshair.snap, true) && (point.series[this.isXAxis ? 'xAxis' : 'yAxis'] !== this)) {
-			this.hideCrosshair();
-			return;
-		}
 
 		var path,
 			options = this.crosshair,
 			animation = options.animation,
-			pos;
+			pos,
+			attribs;
 
-		// Get the path
-		if (!pick(options.snap, true)) {
-			pos = (this.horiz ? e.chartX - this.pos : this.len - e.chartY + this.pos);
-		} else if (defined(point)) {
-			/*jslint eqeq: true*/
-			pos = (this.chart.inverted != this.horiz) ? point.plotX : this.len - point.plotY;
-			/*jslint eqeq: false*/
-		}
-
-		if (this.isRadial) {
-			path = this.getPlotLinePath(this.isXAxis ? point.x : pick(point.stackY, point.y)) || null; // #3189
-		} else {
-			path = this.getPlotLinePath(null, null, null, null, pos) || null; // #3189
-		}
-
-		if (path === null) {
+		
+		if (
+			// Disabled in options
+			!this.crosshair || 
+			// snap
+			((defined(point) || !pick(this.crosshair.snap, true)) === false) || 
+			// Do not draw the crosshair if this axis is not part of the point 
+			(defined(point) && pick(this.crosshair.snap, true) && (!point.series || point.series[this.isXAxis ? 'xAxis' : 'yAxis'] !== this))
+		) {
 			this.hideCrosshair();
-			return;
+		
+		} else {			
+
+			// Get the path
+			if (!pick(options.snap, true)) {
+				pos = (this.horiz ? e.chartX - this.pos : this.len - e.chartY + this.pos);
+			} else if (defined(point)) {
+				/*jslint eqeq: true*/
+				pos = (this.chart.inverted != this.horiz) ? point.plotX : this.len - point.plotY;
+				/*jslint eqeq: false*/
+			}
+
+			if (this.isRadial) {
+				path = this.getPlotLinePath(this.isXAxis ? point.x : pick(point.stackY, point.y)) || null; // #3189
+			} else {
+				path = this.getPlotLinePath(null, null, null, null, pos) || null; // #3189
+			}
+
+			if (path === null) {
+				this.hideCrosshair();
+				return;
+			}
+
+			// Draw the cross
+			if (this.cross) {
+				this.cross
+					.attr({ visibility: VISIBLE })[animation ? 'animate' : 'attr']({ d: path }, animation);
+			} else {
+				attribs = {
+					'stroke-width': options.width || ((this.categories && !this.isRadial) ? this.transA : 1), // docs: category gets band unless width is set
+					stroke: options.color || 'rgba(155,200,255,0.2)', // docs: new color
+					zIndex: options.zIndex || 2
+				};
+				if (options.dashStyle) {
+					attribs.dashstyle = options.dashStyle;
+				}
+				this.cross = this.chart.renderer.path(path).attr(attribs).add();
+			}
+
 		}
 
-		// Draw the cross
-		if (this.cross) {
-			this.cross
-				.attr({ visibility: VISIBLE })[animation ? 'animate' : 'attr']({ d: path }, animation);
-		} else {
-			var attribs = {
-				'stroke-width': options.width || ((this.categories && !this.isRadial) ? this.transA : 1), // docs: category gets band unless width is set
-				stroke: options.color || 'rgba(155,200,255,0.2)', // docs: new color
-				zIndex: options.zIndex || 2
-			};
-			if (options.dashStyle) {
-				attribs.dashstyle = options.dashStyle;
-			}
-			this.cross = this.chart.renderer.path(path).attr(attribs).add();
-		}
 	},
 
 	/**
@@ -9057,15 +9062,8 @@ Pointer.prototype = {
 			kdpoint = hoverSeries ? hoverSeries.searchPoint(e) : UNDEFINED;
 		}
 
-		// Without a closest point there is no sense to continue
-		if (!kdpoint) { return; }
-
-		// Separate tooltip and general mouse events
-		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
-
-		// Tooltip
-
-		if (tooltip && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
+		// Refresh tooltip for kdpoint
+		if (kdpoint && tooltip && kdpoint !== hoverPoint) {
 			// Draw tooltip if necessary
 			if (shared && !kdpoint.series.noSharedTooltip) {
 				i = kdpoints.length;
@@ -9084,12 +9082,14 @@ Pointer.prototype = {
 				tooltip.refresh(kdpoint, e);
 				kdpoint.onMouseOver(e);
 			}
-		}
 		
-		
-		if (tooltip && followPointer && !tooltip.isHidden) {
-			anchor = tooltip.getAnchor([{}], e);
-			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });			
+		// Update positions (regardless of kdpoint or hoverPoint)
+		} else {
+			followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
+			if (tooltip && followPointer && !tooltip.isHidden) {
+				anchor = tooltip.getAnchor([{}], e);
+				tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });			
+			}
 		}
 				
 	},

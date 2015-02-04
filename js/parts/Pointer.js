@@ -180,15 +180,8 @@ Pointer.prototype = {
 			kdpoint = hoverSeries ? hoverSeries.searchPoint(e) : UNDEFINED;
 		}
 
-		// Without a closest point there is no sense to continue
-		if (!kdpoint) { return; }
-
-		// Separate tooltip and general mouse events
-		followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
-
-		// Tooltip
-
-		if (tooltip && (kdpoint !== hoverPoint || kdpoint.series.tooltipOptions.followPointer)) {
+		// Refresh tooltip for kdpoint
+		if (kdpoint && tooltip && kdpoint !== hoverPoint) {
 			// Draw tooltip if necessary
 			if (shared && !kdpoint.series.noSharedTooltip) {
 				i = kdpoints.length;
@@ -207,12 +200,14 @@ Pointer.prototype = {
 				tooltip.refresh(kdpoint, e);
 				kdpoint.onMouseOver(e);
 			}
-		}
 		
-		
-		if (tooltip && followPointer && !tooltip.isHidden) {
-			anchor = tooltip.getAnchor([{}], e);
-			tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });			
+		// Update positions (regardless of kdpoint or hoverPoint)
+		} else {
+			followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
+			if (tooltip && followPointer && !tooltip.isHidden) {
+				anchor = tooltip.getAnchor([{}], e);
+				tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });			
+			}
 		}
 				
 	},
