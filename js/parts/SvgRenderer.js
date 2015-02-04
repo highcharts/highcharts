@@ -1086,6 +1086,9 @@ SVGElement.prototype = {
 					inserted = true;
 				}
 			}
+			if (!inserted) {
+				parentNode.appendChild(element);
+			}
 		}
 		return inserted;
 	},
