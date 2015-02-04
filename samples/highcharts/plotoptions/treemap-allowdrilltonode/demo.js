@@ -44,6 +44,9 @@ $(function () {
         }],
         title: {
             text: 'Highcharts Treemap'
+        },
+        subtitle: {
+            text: 'The A node has children (A1-A3) and allows drilling'
         }
     });
 });
