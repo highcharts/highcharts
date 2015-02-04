@@ -30,6 +30,7 @@ extend(Highcharts, {
 	createElement: createElement,
 	discardElement: discardElement,
 	css: css,
+	each: each,
 	extend: extend,
 	map: map,
 	merge: merge,

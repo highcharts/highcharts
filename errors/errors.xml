@@ -98,6 +98,22 @@
 		</description>
 	</error>
 	
+	<error id="21">
+		<title>Can't find Proj4js library</title>
+		<description>
+			<p>Using latitude/longitude functionality in Highmaps requires the <a href="http://proj4js.org">Proj4js</a> library to be loaded.</p> 
+		</description>
+	</error>
+
+	<error id="22">
+		<title>Map does not support latitude/longitude</title>
+		<description>
+			<p>The loaded map does not support latitude/longitude functionality. This is only supported with maps from the 
+				<a href="http://code.highcharts.com/mapdata">official Highmaps map collection</a> from version 1.1.0 onwards. If you are using a custom 
+				map, consider using the <a href="http://proj4js.org">Proj4js</a> library to convert between projections.</p>
+		</description>
+	</error>	
+
 	<error id="23">
 		<title>Unsupported color format used for color interpolation</title>
 		<description>

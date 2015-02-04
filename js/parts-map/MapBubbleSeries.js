@@ -11,7 +11,16 @@ if (seriesTypes.bubble) {
 	});
 	seriesTypes.mapbubble = extendClass(seriesTypes.bubble, {
 		pointClass: extendClass(Point, {
-			applyOptions: MapAreaPoint.prototype.applyOptions,
+			applyOptions: function (options, x) {
+				var point;
+				if (options.lat !== undefined && options.lon !== undefined) {
+					point = Point.prototype.applyOptions.call(this, options, x);
+					point = extend(point, this.series.chart.fromLatLonToPoint(point));
+				} else {
+					point = MapAreaPoint.prototype.applyOptions.call(this, options, x);
+				}
+				return point;
+			},
 			ttBelow: false
 		}),
 		xyFromShape: true,

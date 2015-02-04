@@ -26,6 +26,7 @@ var UNDEFINED,
 	
 	addEvent = Highcharts.addEvent,
 	each = Highcharts.each,
+	error = Highcharts.error,
 	extend = Highcharts.extend,
 	extendClass = Highcharts.extendClass,
 	merge = Highcharts.merge,
@@ -1238,6 +1239,8 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			joinByNull = joinBy === null,
 			dataUsed = [],
 			mapPoint,
+			transform,
+			mapTransforms,
 			props,
 			i;
 
@@ -1266,6 +1269,16 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		this.getBox(data);
 		if (mapData) {
 			if (mapData.type === 'FeatureCollection') {
+				if (mapData['hc-transform']) {
+					this.chart.mapTransforms = mapTransforms = mapData['hc-transform'];
+					// Cache cos/sin of transform rotation angle
+					for (transform in mapTransforms) {
+						if (mapTransforms.hasOwnProperty(transform) && transform.rotation) {							
+							transform.cosAngle = Math.cos(transform.rotation);
+							transform.sinAngle = Math.sin(transform.rotation);							
+						}
+					}
+				}
 				mapData = Highcharts.geojson(mapData, this.type, this);
 			}
 
@@ -1738,7 +1751,16 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 });
 seriesTypes.mappoint = extendClass(seriesTypes.scatter, {
 	type: 'mappoint',
-	forceDL: true
+	forceDL: true,
+	pointClass: extendClass(Point, {
+		applyOptions: function (options, x) {
+			var point = Point.prototype.applyOptions.call(this, options, x);
+			if (options.lat !== undefined && options.lon !== undefined) {
+				point = extend(point, this.series.chart.fromLatLonToPoint(point));
+			}
+			return point;
+		}
+	})
 });
 
 // The mapbubble series type
@@ -1752,7 +1774,16 @@ if (seriesTypes.bubble) {
 	});
 	seriesTypes.mapbubble = extendClass(seriesTypes.bubble, {
 		pointClass: extendClass(Point, {
-			applyOptions: MapAreaPoint.prototype.applyOptions,
+			applyOptions: function (options, x) {
+				var point;
+				if (options.lat !== undefined && options.lon !== undefined) {
+					point = Point.prototype.applyOptions.call(this, options, x);
+					point = extend(point, this.series.chart.fromLatLonToPoint(point));
+				} else {
+					point = MapAreaPoint.prototype.applyOptions.call(this, options, x);
+				}
+				return point;
+			},
 			ttBelow: false
 		}),
 		xyFromShape: true,
@@ -1870,6 +1901,115 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 }));
 
 
+/** 
+ * Test for point in polygon. Polygon defined as array of [x,y] points.
+ */
+function pointInPolygon(point, polygon) {
+	var i, j, rel1, rel2, c = false,
+		x = point.x,
+		y = point.y;
+
+	for (i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+		rel1 = polygon[i][1] > y;
+		rel2 = polygon[j][1] > y;
+		if (rel1 !== rel2 && (x < (polygon[j][0] - polygon[i][0]) * (y - polygon[i][1]) / (polygon[j][1] - polygon[i][1]) + polygon[i][0])) {
+			c = !c;
+		}
+	}
+
+	return c;
+}
+
+/**
+ * Get point from latLon using specified transform definition
+ */
+Chart.prototype.transformFromLatLon = function (latLon, transform) {
+	if (window.proj4 === undefined) {
+		error(21);
+		return {
+			x: 0,
+			y: null
+		};
+	}
+
+	var projected = window.proj4(transform.crs, [latLon.lon, latLon.lat]),
+		cosAngle = transform.cosAngle || (transform.rotation && Math.cos(transform.rotation)),
+		sinAngle = transform.sinAngle || (transform.rotation && Math.sin(transform.rotation)),
+		rotated = transform.rotation ? [projected[0] * cosAngle + projected[1] * sinAngle, -projected[0] * sinAngle + projected[1] * cosAngle] : projected;
+	
+	return {
+		x: ((rotated[0] - (transform.xoffset || 0)) * (transform.scale || 1) + (transform.xpan || 0)) * (transform.jsonres || 1) + (transform.jsonmarginX || 0),
+		y: (((transform.yoffset || 0) - rotated[1]) * (transform.scale || 1) + (transform.ypan || 0)) * (transform.jsonres || 1) - (transform.jsonmarginY || 0)
+	};
+};
+
+/**
+ * Get latLon from point using specified transform definition
+ */
+Chart.prototype.transformToLatLon = function (point, transform) {
+	if (window.proj4 === undefined) {
+		error(21);
+		return;
+	}
+
+	var normalized = {
+			x: ((point.x - (transform.jsonmarginX || 0)) / (transform.jsonres || 1) - (transform.xpan || 0)) / (transform.scale || 1) + (transform.xoffset || 0),
+			y: ((-point.y - (transform.jsonmarginY || 0)) / (transform.jsonres || 1) + (transform.ypan || 0)) / (transform.scale || 1) + (transform.yoffset || 0)
+		},
+		cosAngle = transform.cosAngle || (transform.rotation && Math.cos(transform.rotation)),
+		sinAngle = transform.sinAngle || (transform.rotation && Math.sin(transform.rotation)),
+		// Note: Inverted sinAngle to reverse rotation direction
+		projected = window.proj4(transform.crs, 'WGS84', transform.rotation ? {
+			x: normalized.x * cosAngle + normalized.y * -sinAngle,
+			y: normalized.x * sinAngle + normalized.y * cosAngle
+		} : normalized);
+
+	return {lat: projected.y, lon: projected.x};
+};
+
+Chart.prototype.fromPointToLatLon = function (point) {
+	var transforms = this.mapTransforms,
+		transform;
+
+	if (!transforms) {
+		error(22);
+		return;
+	}
+
+	for (transform in transforms) {
+		if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone && pointInPolygon({x: point.x, y: -point.y}, transforms[transform].hitZone.coordinates[0])) {
+			return this.transformToLatLon(point, transforms[transform]);
+		}
+	}
+
+	return this.transformToLatLon(point, transforms['default']);
+};
+
+Chart.prototype.fromLatLonToPoint = function (latLon) {
+	var transforms = this.mapTransforms,
+		transform,
+		coords;
+
+	if (!transforms) {
+		error(22);
+		return {
+			x: 0,
+			y: null
+		};
+	}
+
+	for (transform in transforms) {
+		if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone) {
+			coords = this.transformFromLatLon(latLon, transforms[transform]);
+			if (pointInPolygon({x: coords.x, y: -coords.y}, transforms[transform].hitZone.coordinates[0])) {
+				return coords;
+			}
+		}
+	}
+
+	return this.transformFromLatLon(latLon, transforms['default']);
+};
+
 /**
  * Convert a geojson object to map data of a given Highcharts type (map, mappoint or mapline).
  */
@@ -1941,7 +2081,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 				properties: properties
 			}));
 		}
-		
+
 	});
 
 	// Create a credits text that includes map source, to be picked up in Chart.showCredits

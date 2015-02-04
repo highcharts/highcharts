@@ -18,5 +18,14 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 });
 seriesTypes.mappoint = extendClass(seriesTypes.scatter, {
 	type: 'mappoint',
-	forceDL: true
+	forceDL: true,
+	pointClass: extendClass(Point, {
+		applyOptions: function (options, x) {
+			var point = Point.prototype.applyOptions.call(this, options, x);
+			if (options.lat !== undefined && options.lon !== undefined) {
+				point = extend(point, this.series.chart.fromLatLonToPoint(point));
+			}
+			return point;
+		}
+	})
 });

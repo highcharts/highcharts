@@ -331,6 +331,8 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			joinByNull = joinBy === null,
 			dataUsed = [],
 			mapPoint,
+			transform,
+			mapTransforms,
 			props,
 			i;
 
@@ -359,6 +361,16 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		this.getBox(data);
 		if (mapData) {
 			if (mapData.type === 'FeatureCollection') {
+				if (mapData['hc-transform']) {
+					this.chart.mapTransforms = mapTransforms = mapData['hc-transform'];
+					// Cache cos/sin of transform rotation angle
+					for (transform in mapTransforms) {
+						if (mapTransforms.hasOwnProperty(transform) && transform.rotation) {							
+							transform.cosAngle = Math.cos(transform.rotation);
+							transform.sinAngle = Math.sin(transform.rotation);							
+						}
+					}
+				}
 				mapData = Highcharts.geojson(mapData, this.type, this);
 			}
 
