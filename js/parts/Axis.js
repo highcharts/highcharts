@@ -1530,7 +1530,7 @@ Axis.prototype = {
 			pos;
 
 		// Set rotation option unless it is "auto", like in gauges
-		if (isNumber(labelOptions.rotation)) {
+		if (!isString(labelOptions.rotation)) {
 			attr.rotation = labelOptions.rotation;
 		}
 		
