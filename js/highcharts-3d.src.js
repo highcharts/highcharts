@@ -777,6 +777,8 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getLabelPosition', function (proceed
 	}	
 
 	pos = perspective([{x: pos.x, y: pos.y, z: 0}], this.axis.chart, false)[0];
+	pos.x = pos.x - (!this.axis.horiz && this.axis.opposite ? this.axis.transA : 0); //#3788
+
 	return pos;
 });
 
