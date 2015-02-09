@@ -169,6 +169,8 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		plotX = pick(point.plotX, -999),
 		plotY = pick(point.plotY, -999),
 		bBox = dataLabel.getBBox(),
+		baseline = chart.renderer.fontMetrics(options.style.fontSize).b,
+		rotCorr, // rotation correction
 		// Math.round for rounding errors (#2683), alignTo to allow column labels (#2700)
 		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, mathRound(plotY), inverted) ||
 			(alignTo && chart.isInsidePlot(plotX, inverted ? alignTo.x + 1 : alignTo.y + alignTo.height - 1, inverted))),
@@ -192,8 +194,9 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 
 		// Allow a hook for changing alignment in the last moment, then do the alignment
 		if (options.rotation) { // Fancy box alignment isn't supported for rotated text
+			rotCorr = chart.renderer.rotCorr(baseline, options.rotation); // #3723
 			dataLabel[isNew ? 'attr' : 'animate']({
-					x: alignTo.x + options.x + alignTo.width / 2,
+					x: alignTo.x + options.x + alignTo.width / 2 + rotCorr.x,
 					y: alignTo.y + options.y + alignTo.height / 2
 				})
 				.attr({ // #3003

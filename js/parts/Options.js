@@ -150,6 +150,7 @@ defaultOptions = {
 					textShadow: '0 0 6px contrast, 0 0 3px contrast'
 				},
 				verticalAlign: 'bottom', // above singular point
+				x: 0,
 				y: 0,
 				// backgroundColor: undefined,
 				// borderColor: undefined,

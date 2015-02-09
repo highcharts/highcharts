@@ -2223,13 +2223,27 @@ SVGRenderer.prototype = {
 
 		// Empirical values found by comparing font size and bounding box height.
 		// Applies to the default font family. http://jsfiddle.net/highcharts/7xvn7/
-		var lineHeight = fontSize < 24 ? fontSize + 4 : mathRound(fontSize * 1.2),
+		var lineHeight = fontSize < 24 ? fontSize + 3 : mathRound(fontSize * 1.2),
 			baseline = mathRound(lineHeight * 0.8);
 
 		return {
 			h: lineHeight,
 			b: baseline,
 			f: fontSize
+		};
+	},
+
+	/**
+	 * Correct X and Y positioning of a label for rotation (#1764)
+	 */
+	rotCorr: function (baseline, rotation, alterY) {
+		var y = baseline;
+		if (rotation && alterY) {
+			y = mathMax(y * mathCos(rotation * deg2rad), 4);
+		}
+		return {
+			x: (-baseline / 3) * mathSin(rotation * deg2rad),
+			y: y
 		};
 	},
 

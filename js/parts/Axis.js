@@ -1525,6 +1525,7 @@ Axis.prototype = {
 
 	renderUnsquish: function () {
 		var chart = this.chart,
+			renderer = chart.renderer,
 			tickPositions = this.tickPositions,
 			ticks = this.ticks,
 			labelOptions = this.options.labels,
@@ -1535,7 +1536,7 @@ Axis.prototype = {
 				(!horiz && ((margin[3] && (margin[3] - chart.spacing[3])) || chart.chartWidth * 0.33)), // #1580, #1931,
 			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))), // docs: padding new default
 			attr = {},
-			labelMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
+			labelMetrics = renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
 			css,
 			labelLength = 0,
 			label,
@@ -1615,21 +1616,7 @@ Axis.prototype = {
 		});
 
 		// TODO: Why not part of getLabelPosition?
-		this.rotCorr(labelMetrics.b, this.labelRotation || 0);
-	},
-
-	/**
-	 * Set the tick baseline and correct for rotation (#1764)
-	 */
-	rotCorr: function (baseline, rotation) {
-		var y = baseline;
-		if (rotation && this.side === 2) {
-			y = mathMax(y * mathCos(rotation * deg2rad), 4);
-		}
-		this.tickRotCorr = {
-			x: (-baseline / 4) * mathSin(rotation * deg2rad),
-			y: y
-		};
+		this.tickRotCorr = renderer.rotCorr(labelMetrics.b, this.labelRotation || 0, this.side === 2);
 	},
 
 	/**

@@ -1388,6 +1388,7 @@ defaultOptions = {
 					textShadow: '0 0 6px contrast, 0 0 3px contrast'
 				},
 				verticalAlign: 'bottom', // above singular point
+				x: 0,
 				y: 0,
 				// backgroundColor: undefined,
 				// borderColor: undefined,
@@ -3995,13 +3996,27 @@ SVGRenderer.prototype = {
 
 		// Empirical values found by comparing font size and bounding box height.
 		// Applies to the default font family. http://jsfiddle.net/highcharts/7xvn7/
-		var lineHeight = fontSize < 24 ? fontSize + 4 : mathRound(fontSize * 1.2),
+		var lineHeight = fontSize < 24 ? fontSize + 3 : mathRound(fontSize * 1.2),
 			baseline = mathRound(lineHeight * 0.8);
 
 		return {
 			h: lineHeight,
 			b: baseline,
 			f: fontSize
+		};
+	},
+
+	/**
+	 * Correct X and Y positioning of a label for rotation (#1764)
+	 */
+	rotCorr: function (baseline, rotation, alterY) {
+		var y = baseline;
+		if (rotation && alterY) {
+			y = mathMax(y * mathCos(rotation * deg2rad), 4);
+		}
+		return {
+			x: (-baseline / 3) * mathSin(rotation * deg2rad),
+			y: y
 		};
 	},
 
@@ -5921,7 +5936,7 @@ Tick.prototype = {
 
 		return {
 			x: x,
-			y: y
+			y: mathRound(y)
 		};
 	},
 
@@ -7871,6 +7886,7 @@ Axis.prototype = {
 
 	renderUnsquish: function () {
 		var chart = this.chart,
+			renderer = chart.renderer,
 			tickPositions = this.tickPositions,
 			ticks = this.ticks,
 			labelOptions = this.options.labels,
@@ -7881,7 +7897,7 @@ Axis.prototype = {
 				(!horiz && ((margin[3] && (margin[3] - chart.spacing[3])) || chart.chartWidth * 0.33)), // #1580, #1931,
 			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))), // docs: padding new default
 			attr = {},
-			labelMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
+			labelMetrics = renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
 			css,
 			labelLength = 0,
 			label,
@@ -7961,21 +7977,7 @@ Axis.prototype = {
 		});
 
 		// TODO: Why not part of getLabelPosition?
-		this.rotCorr(labelMetrics.b, this.labelRotation || 0);
-	},
-
-	/**
-	 * Set the tick baseline and correct for rotation (#1764)
-	 */
-	rotCorr: function (baseline, rotation) {
-		var y = baseline;
-		if (rotation && this.side === 2) {
-			y = mathMax(y * mathCos(rotation * deg2rad), 4);
-		}
-		this.tickRotCorr = {
-			x: (-baseline / 4) * mathSin(rotation * deg2rad),
-			y: y
-		};
+		this.tickRotCorr = renderer.rotCorr(labelMetrics.b, this.labelRotation || 0, this.side === 2);
 	},
 
 	/**
@@ -16853,6 +16855,8 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		plotX = pick(point.plotX, -999),
 		plotY = pick(point.plotY, -999),
 		bBox = dataLabel.getBBox(),
+		baseline = chart.renderer.fontMetrics(options.style.fontSize).b,
+		rotCorr, // rotation correction
 		// Math.round for rounding errors (#2683), alignTo to allow column labels (#2700)
 		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, mathRound(plotY), inverted) ||
 			(alignTo && chart.isInsidePlot(plotX, inverted ? alignTo.x + 1 : alignTo.y + alignTo.height - 1, inverted))),
@@ -16876,8 +16880,9 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 
 		// Allow a hook for changing alignment in the last moment, then do the alignment
 		if (options.rotation) { // Fancy box alignment isn't supported for rotated text
+			rotCorr = chart.renderer.rotCorr(baseline, options.rotation); // #3723
 			dataLabel[isNew ? 'attr' : 'animate']({
-					x: alignTo.x + options.x + alignTo.width / 2,
+					x: alignTo.x + options.x + alignTo.width / 2 + rotCorr.x,
 					y: alignTo.y + options.y + alignTo.height / 2
 				})
 				.attr({ // #3003

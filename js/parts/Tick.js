@@ -193,7 +193,7 @@ Tick.prototype = {
 
 		return {
 			x: x,
-			y: y
+			y: mathRound(y)
 		};
 	},
 
