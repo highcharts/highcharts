@@ -79,3 +79,7 @@ body {
 	div#toggle{
 		visibility: hidden;
 	}
+	.CodeMirror-wrap {
+		border: 1px solid #ddd
+	}
+
