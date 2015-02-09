@@ -150,12 +150,12 @@ defaultOptions = {
 					textShadow: '0 0 6px contrast, 0 0 3px contrast'
 				},
 				verticalAlign: 'bottom', // above singular point
-				y: 0
+				y: 0,
 				// backgroundColor: undefined,
 				// borderColor: undefined,
 				// borderRadius: undefined,
 				// borderWidth: undefined,
-				// padding: 3,
+				padding: 5 // docs
 				// shadow: false
 			},
 			cropThreshold: 300, // draw points outside the plot area when the number of points is less than this
