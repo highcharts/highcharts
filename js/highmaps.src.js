@@ -6113,7 +6113,7 @@ Axis.prototype = {
 			year: '%Y'
 		},
 		endOnTick: false,
-		gridLineColor: '#C0C0C0',
+		gridLineColor: '#D8D8D8', // docs
 		// gridLineDashStyle: 'solid',
 		// gridLineWidth: 0,
 		// reversed: false,
