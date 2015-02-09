@@ -10,14 +10,10 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 		formatter: function () { // #2945
 			return this.point.value;
 		},
+		inside: true,
 		verticalAlign: 'middle',
 		crop: false,
-		overflow: false,
-		style: {
-			color: 'white',
-			fontWeight: 'bold',
-			textShadow: '0 0 4px contrast, 0 0 2px contrast'
-		}
+		overflow: false
 	},
 	marker: null,
 	tooltip: {

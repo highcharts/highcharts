@@ -32,8 +32,22 @@ Axis.prototype = {
 		// gridLineWidth: 0,
 		// reversed: false,
 
-		labels: defaultLabelOptions, // docs: overflow:justify is deprecated
-			// { step: null },
+		labels: {
+			enabled: true,
+			// rotation: 0,
+			// align: 'center',
+			// step: null,
+			style: {
+				color: '#606060',
+				cursor: 'default',
+				fontSize: '11px'
+			},
+			x: 0,
+			y: 15
+			/*formatter: function () {
+				return this.value;
+			},*/
+		}, // docs: overflow:justify is deprecated
 		lineColor: '#C0D0E0',
 		lineWidth: 1,
 		//linkedTo: null,
@@ -122,7 +136,7 @@ Axis.prototype = {
 			formatter: function () {
 				return Highcharts.numberFormat(this.total, -1);
 			},
-			style: defaultLabelOptions.style
+			style: defaultPlotOptions.line.dataLabels.style
 		}
 	},
 

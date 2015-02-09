@@ -1239,24 +1239,6 @@ var adapterRun = adapter.adapterRun,
 /* ****************************************************************************
  * Handle the options                                                         *
  *****************************************************************************/
-var
-
-defaultLabelOptions = {
-	enabled: true,
-	// rotation: 0,
-	// align: 'center',
-	x: 0,
-	y: 15,
-	/*formatter: function () {
-		return this.value;
-	},*/
-	style: {
-		color: '#606060',
-		cursor: 'default',
-		fontSize: '11px'
-	}
-};
-
 defaultOptions = {
 	colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', 
 		    '#8085e9', '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'],
@@ -1392,20 +1374,19 @@ defaultOptions = {
 			point: {
 				events: {}
 			},
-			dataLabels: merge(defaultLabelOptions, {
+			dataLabels: {
 				align: 'center',
-				//defer: true,
-				enabled: false,
+				// defer: true,
+				// enabled: false,
 				formatter: function () {
 					return this.y === null ? '' : Highcharts.numberFormat(this.y, -1);
 				},
-				/* Contrast preview. Also check if defaultLabels.style can be removed
-				style: {
+				style: { // docs: new defaults
 					color: 'contrast',
+					fontSize: '11px',
 					fontWeight: 'bold',
-					textShadow: '0 0 3px contrast',
+					textShadow: '0 0 6px contrast, 0 0 3px contrast'
 				},
-				// */
 				verticalAlign: 'bottom', // above singular point
 				y: 0
 				// backgroundColor: undefined,
@@ -1414,7 +1395,7 @@ defaultOptions = {
 				// borderWidth: undefined,
 				// padding: 3,
 				// shadow: false
-			}),
+			},
 			cropThreshold: 300, // draw points outside the plot area when the number of points is less than this
 			pointRange: 0,
 			//pointStart: 0,
@@ -6137,8 +6118,22 @@ Axis.prototype = {
 		// gridLineWidth: 0,
 		// reversed: false,
 
-		labels: defaultLabelOptions, // docs: overflow:justify is deprecated
-			// { step: null },
+		labels: {
+			enabled: true,
+			// rotation: 0,
+			// align: 'center',
+			// step: null,
+			style: {
+				color: '#606060',
+				cursor: 'default',
+				fontSize: '11px'
+			},
+			x: 0,
+			y: 15
+			/*formatter: function () {
+				return this.value;
+			},*/
+		}, // docs: overflow:justify is deprecated
 		lineColor: '#C0D0E0',
 		lineWidth: 1,
 		//linkedTo: null,
@@ -6227,7 +6222,7 @@ Axis.prototype = {
 			formatter: function () {
 				return Highcharts.numberFormat(this.total, -1);
 			},
-			style: defaultLabelOptions.style
+			style: defaultPlotOptions.line.dataLabels.style
 		}
 	},
 
@@ -15180,7 +15175,9 @@ Series.prototype.drawDataLabels = function () {
 					
 					// Get automated contrast color
 					if (style.color === 'contrast') {
-						moreStyle.color = renderer.getContrast(point.color || series.color);
+						moreStyle.color = options.inside || options.distance < 0 ? 
+							renderer.getContrast(point.color || series.color) : 
+							'#000000';
 					}
 					if (cursor) {
 						moreStyle.cursor = cursor;
@@ -16430,15 +16427,11 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 		formatter: function () { // #2945
 			return this.point.value;
 		},
+		inside: true, // for the color
 		verticalAlign: 'middle',
 		crop: false,
 		overflow: false,
-		padding: 0,
-		style: {
-			color: '#FFFFFF', // docs
-			fontWeight: 'bold',
-			textShadow: '0 0 4px contrast, 0 0 2px contrast'
-		}
+		padding: 0
 	},
 	turboThreshold: 0,
 	tooltip: {
@@ -17505,12 +17498,11 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 		formatter: function () { // #2945
 			return this.point.name; 
 		},
-		color: 'black',
 		crop: false,
 		defer: false,
 		overflow: false,
 		style: {
-			textShadow: '0 0 4px contrast, 0 0 2px contrast'
+			color: '#000000'
 		}
 	}
 });
@@ -17537,10 +17529,6 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 			return this.point.z;
 		},
 		inside: true,
-		style: {
-			color: 'white',
-			textShadow: '0px 0px 3px black'
-		},
 		verticalAlign: 'middle'
 	},
 	// displayNegative: true,
@@ -18276,14 +18264,10 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 		formatter: function () { // #2945
 			return this.point.value;
 		},
+		inside: true,
 		verticalAlign: 'middle',
 		crop: false,
-		overflow: false,
-		style: {
-			color: 'white',
-			fontWeight: 'bold',
-			textShadow: '0 0 4px contrast, 0 0 2px contrast'
-		}
+		overflow: false
 	},
 	marker: null,
 	tooltip: {

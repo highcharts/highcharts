@@ -40,11 +40,7 @@ $(function () {
                 dataLabels: {
                     enabled: true,
                     yHigh: 20,
-                    yLow: -20,
-                    style: {
-                        color: 'white',
-                        textShadow: '0px 1px 2px black '
-                    }
+                    yLow: -20
                 }
             }]
 
