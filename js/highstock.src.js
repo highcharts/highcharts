@@ -1938,9 +1938,11 @@ SVGElement.prototype = {
 		var elem = this.element,
 			tspans,
 			hasContrast = textShadow.indexOf('contrast') !== -1,
+			// Safari suffers from the double display bug (#3648)
+			isSafari = userAgent.indexOf('Safari') > 0 && userAgent.indexOf('Chrome') === -1,
 			// IE10 and IE11 report textShadow in elem.style even though it doesn't work. Check
 			// this again with new IE release.
-			supports = elem.style.textShadow !== UNDEFINED && !isIE;
+			supports = elem.style.textShadow !== UNDEFINED && !isIE && !isSafari;
 
 		// When the text shadow is set to contrast, use dark stroke for light text and vice versa // docs: new defaults for all affected series
 		if (hasContrast) {
