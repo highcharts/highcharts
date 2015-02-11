@@ -15899,7 +15899,7 @@ if (seriesTypes.column) {
 			if (label) {
 				if (label.oldOpacity !== label.newOpacity && label.placed) {
 					label.alignAttr.opacity = label.newOpacity;
-					label[label.isOld ? 'animate' : 'attr'](label.alignAttr);
+					label[label.isOld && label.newOpacity ? 'animate' : 'attr'](label.alignAttr);
 				}
 				label.isOld = true;
 			}
@@ -17325,7 +17325,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			if (label) {
 				if (label.oldOpacity !== label.newOpacity && label.placed) {
 					label.alignAttr.opacity = label.newOpacity;
-					label[label.isOld ? 'animate' : 'attr'](label.alignAttr);
+					label[label.isOld && label.newOpacity ? 'animate' : 'attr'](label.alignAttr);
 				}
 				label.isOld = true;
 			}
