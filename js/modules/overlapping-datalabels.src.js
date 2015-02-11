@@ -7,10 +7,11 @@
  * License: www.highcharts.com/license
  */
 
+/*global Highcharts, HighchartsAdapter */
 (function (H) {
 	var Chart = H.Chart,
 		each = H.each,
-		addEvent = H.addEvent;
+		addEvent = HighchartsAdapter.addEvent;
 
 	// Collect potensial overlapping data labels. Stack labels probably don't need to be 
 	// considered because they are usually accompanied by data labels that lie inside the columns.
