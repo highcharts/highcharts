@@ -10,7 +10,7 @@
 // JSLint options:
 /*global jQuery, HighchartsAdapter */
 
-(function (Highcharts) { // docs
+(function (Highcharts) {
 	
 	// Utilities
 	var each = Highcharts.each,

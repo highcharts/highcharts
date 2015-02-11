@@ -24,7 +24,7 @@
 	plotOptions.treemap = merge(plotOptions.scatter, {
 		showInLegend: false,
 		marker: false,
-		borderColor: '#E0E0E0', // docs
+		borderColor: '#E0E0E0',
 		borderWidth: 1,
 		dataLabels: {
 			enabled: true,

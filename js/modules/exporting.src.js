@@ -386,7 +386,7 @@ extend(Chart.prototype, {
 
 		chart.isPrinting = true;
 
-		fireEvent(chart, 'beforePrint'); // docs - http://jsfiddle.net/highcharts/8sgqe812/
+		fireEvent(chart, 'beforePrint');
 
 		// hide all body content
 		each(childNodes, function (node, i) {
@@ -418,7 +418,7 @@ extend(Chart.prototype, {
 
 			chart.isPrinting = false;
 
-			fireEvent(chart, 'afterPrint'); // docs
+			fireEvent(chart, 'afterPrint');
 
 		}, 1000);
 

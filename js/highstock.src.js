@@ -6522,7 +6522,7 @@ Axis.prototype = {
 	 */
 	defaultBottomAxisOptions: {
 		labels: {
-			autoRotation: [-45], // docs
+			autoRotation: [-45],
 			x: 0,
 			y: null // based on font size
 			// overflow: undefined,
@@ -6537,7 +6537,7 @@ Axis.prototype = {
 	 */
 	defaultTopAxisOptions: {
 		labels: {
-			autoRotation: [-45], // docs
+			autoRotation: [-45],
 			x: 0,
 			y: -15
 			// overflow: undefined
