@@ -7631,7 +7631,6 @@ Axis.prototype = {
 			labelLength = 0,
 			label,
 			i,
-			actualRotation, // for second pass
 			pos;
 
 		// Set rotation option unless it is "auto", like in gauges
@@ -7648,9 +7647,6 @@ Axis.prototype = {
 				if (tick && tick.labelLength > labelLength) {
 					labelLength = tick.labelLength;
 				}
-				if (tick.label) {
-					actualRotation = tick.label.rotation;
-				}
 			});
 			
 			// Apply rotation only if the label is too wide for the slot, and
@@ -7658,7 +7654,7 @@ Axis.prototype = {
 			if (labelLength > innerWidth && labelLength > labelMetrics.h) {
 				attr.rotation = this.labelRotation;
 			} else {
-				this.labelRotation = actualRotation;
+				this.labelRotation = 0;
 			}
 
 		// Handle word-wrap or ellipsis on vertical axis
