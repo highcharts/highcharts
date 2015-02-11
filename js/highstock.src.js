@@ -4176,7 +4176,7 @@ SVGRenderer.prototype = {
 		};
 		wrapper.paddingSetter =  function (value) {
 			if (defined(value) && value !== padding) {
-				padding = value;
+				padding = wrapper.padding = value;
 				updateTextPadding();
 			}
 		};
@@ -16921,10 +16921,11 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
 		align = options.align,
 		verticalAlign = options.verticalAlign,
 		off,
-		justified;
+		justified,
+		padding = dataLabel.box ? 0 : (dataLabel.padding || 0);
 
 	// Off left
-	off = alignAttr.x;
+	off = alignAttr.x + padding;
 	if (off < 0) {
 		if (align === 'right') {
 			options.align = 'left';
@@ -16935,7 +16936,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
 	}
 
 	// Off right
-	off = alignAttr.x + bBox.width;
+	off = alignAttr.x + bBox.width - padding;
 	if (off > chart.plotWidth) {
 		if (align === 'left') {
 			options.align = 'right';
@@ -16946,7 +16947,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
 	}
 
 	// Off top
-	off = alignAttr.y;
+	off = alignAttr.y + padding;
 	if (off < 0) {
 		if (verticalAlign === 'bottom') {
 			options.verticalAlign = 'top';
@@ -16957,7 +16958,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
 	}
 
 	// Off bottom
-	off = alignAttr.y + bBox.height;
+	off = alignAttr.y + bBox.height - padding;
 	if (off > chart.plotHeight) {
 		if (verticalAlign === 'top') {
 			options.verticalAlign = 'bottom';

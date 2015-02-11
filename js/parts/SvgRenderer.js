@@ -2403,7 +2403,7 @@ SVGRenderer.prototype = {
 		};
 		wrapper.paddingSetter =  function (value) {
 			if (defined(value) && value !== padding) {
-				padding = value;
+				padding = wrapper.padding = value;
 				updateTextPadding();
 			}
 		};
