@@ -17457,12 +17457,15 @@ if (seriesTypes.column) {
 			var labels = [];
 
 			each(chart.series, function (series) {
-				each(series.points, function (point) { 
-					if (point.dataLabel) {
-						point.dataLabel.labelrank = point.labelrank;
-						labels.push(point.dataLabel);
-					}
-				});
+				var dlOptions = series.options.dataLabels;
+				if ((dlOptions.enabled || series._hasPointLabels) && !dlOptions.allowOverlap) { // docs
+					each(series.points, function (point) { 
+						if (point.dataLabel) {
+							point.dataLabel.labelrank = point.labelrank;
+							labels.push(point.dataLabel);
+						}
+					});
+				}
 			});
 			chart.hideOverlappingLabels(labels);
 		}
