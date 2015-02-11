@@ -119,7 +119,7 @@ Series.prototype.drawDataLabels = function () {
 					
 					// Get automated contrast color
 					if (style.color === 'contrast') {
-						moreStyle.color = options.inside || options.distance < 0 ? 
+						moreStyle.color = options.inside || options.distance < 0 || !!seriesOptions.stacking ? 
 							renderer.getContrast(point.color || series.color) : 
 							'#000000';
 					}

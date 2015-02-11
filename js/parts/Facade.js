@@ -4,7 +4,7 @@ extend(Highcharts, {
 	
 	// Constructors
 	Axis: Axis,
-	Chart: Chart,
+	//Chart: Chart,
 	Color: Color,
 	Point: Point,
 	Tick: Tick,	

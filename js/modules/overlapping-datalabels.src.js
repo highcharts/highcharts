@@ -8,29 +8,40 @@
  */
 
 (function (H) {
-	var Series = H.Series,
+	var Chart = H.Chart,
 		each = H.each,
-		wrap = H.wrap;
+		addEvent = H.addEvent;
 
-	// Add the overlapping logic after drawing data labels
-	wrap(Series.prototype, 'drawDataLabels', function (proceed) {
-		var labels = [];
-		proceed.call(this);
+	// Collect potensial overlapping data labels. Stack labels probably don't need to be 
+	// considered because they are usually accompanied by data labels that lie inside the columns.
+	Chart.prototype.callbacks.push(function (chart) {
+		function collectAndHide() {
+			var labels = [];
 
-		each(this.points, function (point) { 
-			if (point.dataLabel) {
-				point.dataLabel.labelrank = point.labelrank;
-				labels.push(point.dataLabel);
-			}
-		});
-		this.hideOverlappingLabels(labels);
+			each(chart.series, function (series) {
+				each(series.points, function (point) { 
+					if (point.dataLabel) {
+						point.dataLabel.labelrank = point.labelrank;
+						labels.push(point.dataLabel);
+					}
+				});
+			});
+			chart.hideOverlappingLabels(labels);
+		}
+
+		// Do it now ...
+		collectAndHide();
+
+		// ... and after each chart redraw
+		addEvent(chart, 'redraw', collectAndHide);
+
 	});
 
 	/**
 	 * Hide overlapping labels. Labels are moved and faded in and out on zoom to provide a smooth 
 	 * visual imression.
 	 */		
-	Series.prototype.hideOverlappingLabels = function (labels) {
+	Chart.prototype.hideOverlappingLabels = function (labels) {
 
 		var len = labels.length,
 			label,

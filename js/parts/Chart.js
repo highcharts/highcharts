@@ -3,11 +3,16 @@
  * @param {Object} options
  * @param {Function} callback Function to run when the chart has loaded
  */
-function Chart() {
+var Chart = Highcharts.Chart = function () {
 	this.init.apply(this, arguments);
-}
+};
 
 Chart.prototype = {
+
+	/**
+	 * Hook for modules
+	 */
+	callbacks: [],
 
 	/**
 	 * Initialize the chart
@@ -1416,6 +1421,3 @@ Chart.prototype = {
 				pick(options[target + 'Left'], tArray[3])];
 	}
 }; // end Chart
-
-// Hook for exporting module
-Chart.prototype.callbacks = [];
