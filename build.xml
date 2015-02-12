@@ -97,6 +97,7 @@
         <property name="drilldown.src.file" value="${basedir}/js/modules/${drilldown.src.name}"/>
         <property name="funnel.src.file" value="${basedir}/js/modules/${funnel.src.name}"/>
         <property name="overlapping-datalabels.src.file" value="${basedir}/js/modules/overlapping-datalabels.src.js"/>
+        <property name="broken-axis.src.file" value="${basedir}/js/modules/broken-axis.src.js"/>
         <property name="solidgauge.src.file" value="${basedir}/js/modules/${solidgauge.src.name}"/>
         <property name="nodata.src.file" value="${basedir}/js/modules/${nodata.src.name}"/>
         <property name="map.src.file" value="${basedir}/js/modules/${map.src.name}"/>
@@ -382,6 +383,7 @@
             <file name="js/modules/${funnel.minified.name}"/>
             <file name="js/modules/${nodata.minified.name}"/>
             <file name="js/modules/overlapping-datalabels.js"/>
+            <file name="js/modules/broken-axis.js"/>
             <file name="js/modules/${data.minified.name}"/>
         </filelist>
 
@@ -559,6 +561,7 @@
             <fileset file="${solidgauge.src.file}"/>
             <fileset file="${nodata.src.file}"/>
             <fileset file="${overlapping-datalabels.src.file}"/>
+            <fileset file="${broken-axis.src.file}"/>
             <fileset file="${map.src.file}"/>
             <fileset file="${heatmap.src.file}"/>
             <fileset file="${annotations.src.file}"/>
@@ -707,6 +710,10 @@
         <antcall target="compile">
             <param name="param.src" value="${overlapping-datalabels.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/overlapping-datalabels.js"/>
+        </antcall>
+        <antcall target="compile">
+            <param name="param.src" value="${broken-axis.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/modules/broken-axis.js"/>
         </antcall>
         <antcall target="compile">
             <param name="param.src" value="${data.src.file}"/>

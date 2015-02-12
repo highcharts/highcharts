@@ -18,10 +18,9 @@
 		pick = H.pick,
 		wrap = H.wrap,
 		extend = H.extend,
- 		fireEvent = HighchartsAdapter.fireEvent,
+		fireEvent = HighchartsAdapter.fireEvent,
 		Axis = H.Axis,
-		Series = H.Series,
-		noop = function () {};
+		Series = H.Series;
 
 	function stripArguments() {
 		return Array.prototype.slice.call(arguments, 1);
@@ -29,17 +28,16 @@
 
 	extend(Axis.prototype, {
 		isInBreak: function (brk, val) {
-			var	repeat = brk.repeat || Infinity,
-				val = val,
+			var repeat = brk.repeat || Infinity,
 				from = brk.from,
 				length = brk.to - brk.from,
 				test = (val >= from ? (val - from) % repeat :  repeat - ((from - val) % repeat));
 
 			if (!brk.inclusive) {
-				return (test < length && test != 0);
+				return (test < length && test !== 0);
 			} else {
 				return (test <= length);
-			} 			
+			}
 		},
 
 		isInAnyBreak: function (val, testKeep) {
@@ -82,7 +80,7 @@
 			return;
 		}
 
-		for (i=0; i < tickPositions.length; i++) {
+		for (i = 0; i < tickPositions.length; i++) {
 			if (!axis.isInAnyBreak(tickPositions[i])) {
 				newPositions.push(tickPositions[i]);
 			}
@@ -96,7 +94,7 @@
 
 		proceed.call(this, chart, userOptions);
 
-		if(this.options.breaks) {
+		if (this.options.breaks) {
 
 			var axis = this;
 			
@@ -107,7 +105,7 @@
 					brk,
 					i;
 
-				for(i = 0; i < axis.breakArray.length; i++) {
+				for (i = 0; i < axis.breakArray.length; i++) {
 					brk = axis.breakArray[i];
 					if (brk.to <= val) {
 						nval -= (brk.len);
@@ -122,7 +120,7 @@
 				return nval;
 			};
 			
-			this.lin2val = function (val) {				
+			this.lin2val = function (val) {
 				var nval = val,
 					brk,
 					i;
@@ -135,13 +133,13 @@
 						nval += (brk.to - brk.from);
 					} else if (axis.isInBreak(brk, nval)) {
 						nval += (brk.to - brk.from);
-					} 
+					}
 				}
 
 				return nval;
 			};
 
-			this.setAxisTranslation = function (saveOld) {				
+			this.setAxisTranslation = function (saveOld) {
 				Axis.prototype.setAxisTranslation.call(this, saveOld);
 
 				var breaks = axis.options.breaks,
@@ -157,16 +155,16 @@
 					i,
 					j;
 
-			 	// Min & Max Check
-			 	for (i in breaks) {
-			 		brk = breaks[i];
-			 		if (axis.isInBreak(brk, min)) {
-			 			min += (brk.to % brk.repeat) - (min % brk.repeat);
-			 		}
-			 		if (axis.isInBreak(brk, max)) {
-			 			max -= (max % brk.repeat) - (brk.from % brk.repeat);
-			 		}
-			 	}
+				// Min & Max Check
+				for (i in breaks) {
+					brk = breaks[i];
+					if (axis.isInBreak(brk, min)) {
+						min += (brk.to % brk.repeat) - (min % brk.repeat);
+					}
+					if (axis.isInBreak(brk, max)) {
+						max -= (max % brk.repeat) - (brk.from % brk.repeat);
+					}
+				}
 
 				// Construct an array holding all breaks in the axis
 				for (i in breaks) {
@@ -184,7 +182,7 @@
 					for (j = start; j < max; j += repeat) {
 						breakArrayT.push({
 							value: j,
-							move: 'in',
+							move: 'in'
 						});
 						breakArrayT.push({
 							value: j + (brk.to - brk.from),
@@ -195,7 +193,7 @@
 				}
 
 				breakArrayT.sort(function (a, b) {
-					if (a.value == b.value) {
+					if (a.value === b.value) {
 						return (a.move === 'in' ? 0 : 1) - (b.move === 'in' ? 0 : 1);
 					} else {
 						return a.value - b.value;
@@ -212,14 +210,14 @@
 
 					if (inBrk === 1 && brk.move === 'in') {
 						start = brk.value;
-					} 
+					}
 					if (inBrk === 0) {
 						breakArray.push({
 							from: start,
 							to: brk.value,
 							len: brk.value - start - (brk.size || 0)
 						});
-						length += brk.value - start - (brk.size || 0);					
+						length += brk.value - start - (brk.size || 0);
 					}
 				}
 
@@ -229,14 +227,14 @@
 				
 				axis.transA *= ((max - axis.min) / (max - min - length));
 
-			 	axis.min = min;
-			 	axis.max = max;
+				axis.min = min;
+				axis.max = max;
 
 			};
 		}
 	});
 
-	wrap(Series.prototype, 'generatePoints', function (proceed) {		
+	wrap(Series.prototype, 'generatePoints', function (proceed) {
 
 		proceed.apply(this, stripArguments(arguments));
 
@@ -260,7 +258,7 @@
 
 	});
 
-	wrap(Highcharts.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
+	wrap(H.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
 		proceed.apply(this);
 
 		var series = this,
