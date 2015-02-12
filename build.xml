@@ -373,6 +373,7 @@
             <file name="parts/Outro.js"/>
         </filelist>
 
+        <!-- Files for the Cloud -->
         <filelist id="highstock-all.files" dir="${dist.dir}">
             <file name="js/adapters/${standalone.minified.name}"/>
             <file name="highstock/js/${highstock.minified.name}"/>
@@ -383,7 +384,6 @@
             <file name="js/modules/${funnel.minified.name}"/>
             <file name="js/modules/${nodata.minified.name}"/>
             <file name="js/modules/overlapping-datalabels.js"/>
-            <file name="js/modules/broken-axis.js"/>
             <file name="js/modules/${data.minified.name}"/>
         </filelist>
 
