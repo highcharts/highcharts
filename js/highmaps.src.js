@@ -6598,7 +6598,7 @@ Axis.prototype = {
 			localMin = old ? axis.oldMin : axis.min,
 			returnValue,
 			minPixelPadding = axis.minPixelPadding,
-			postTranslate = (axis.options.ordinal || (axis.isLog && handleLog)) && axis.lin2val;
+			postTranslate = (axis.postTranslate || (axis.isLog && handleLog)) && axis.lin2val;
 
 		if (!localA) {
 			localA = axis.transA;
