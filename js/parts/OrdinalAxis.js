@@ -518,7 +518,7 @@ extend(Axis.prototype, {
 
 		if (ordinalSlope) {
 			if (!this.options.breaks) {
-				return 	tickInterval / (ordinalSlope / this.closestPointRange); 
+				return tickInterval / (ordinalSlope / this.closestPointRange); 
 			} else {
 				return this.closestPointRange;
 			}

@@ -2152,7 +2152,7 @@ Axis.prototype.beforePadding = function () {
 
 		this.kdAxisArray = ['clientX'];
 		e = {
-			clientX: 180 + (Math.atan2(plotX, plotY) * (-180 / Math.PI)) - xAxis.pane.options.startAngle
+			clientX: 180 + (Math.atan2(plotX, plotY) * (-180 / Math.PI))
 		};
 		return this.searchKDTree(e);
 
