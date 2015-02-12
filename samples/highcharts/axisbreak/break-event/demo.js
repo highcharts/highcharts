@@ -10,6 +10,10 @@ $('#container').highcharts({
         }],
         events: {
             afterBreaks: function () {
+                if (this.breakArray.length == 0) {
+                    return;
+                } 
+
                 var axis = this,
                     chart = axis.chart,
                     breakLine = axis.breakLine,
