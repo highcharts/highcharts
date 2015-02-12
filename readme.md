@@ -12,7 +12,7 @@ We use GitHub Issues as our official bug tracker. We strive to keep this a clean
 1. Make sure the report is accompanied by a reproducible demo. The ideal demo is created by forking [our standard jsFiddle](http://jsfiddle.net/highcharts/llexl/), adding your own code and stripping it down to an absolute minimum needed to demonstrate the bug.
 * Always add information on what browser it applies to, and other information needed for us to debug.
 * It may be that the bug is already fixed. Try your chart with our latest work from http://github.highcharts.com/master/highcharts.js before reporting.
-* For feature requests, tech support and general discussion, don't use GitHub Issues. See [www.highcharts.com/support](www.highcharts.com/support) for the appropriate channels.
+* For feature requests, tech support and general discussion, don't use GitHub Issues. See [www.highcharts.com/support](http://www.highcharts.com/support) for the appropriate channels.
 
 ## Apply a fix
 When an issue is resolved, we commit a fix and mark the issue closed. This doesn't mean that a new release is available with the fix applied, but that it is fixed in the development code and will be added to the next stable release. Stable versions are typically released every 1-3 months. To try out the fix immediately, you can run http://github.highcharts.com/highcharts.js or http://github.highcharts.com/highstock.js from any website, but do not use these URLs in production.
