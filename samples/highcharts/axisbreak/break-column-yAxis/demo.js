@@ -12,7 +12,7 @@ $(function () {
 			}]
 		},
 		series: [{
-type: 'column',
+			type: 'column',
 			data: [10, 15, 17, 120, 25, 18, 12]
 		}]
 	});
