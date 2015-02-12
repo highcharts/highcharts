@@ -1612,7 +1612,7 @@ function setTimeMethods() {
 
 	Date = globalOptions.Date || window.Date;
 	timezoneOffset = useUTC && globalOptions.timezoneOffset;
-	getTimezoneOffset = useUTC && globalOptions.getTimezoneOffset; // docs. Sample created.
+	getTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
 	makeTime = function (year, month, date, hours, minutes, seconds) {
 		var d;
 		if (useUTC) {
@@ -7234,7 +7234,7 @@ Axis.prototype = {
 		var others = {}, // Whether there is another axis to pair with this one
 			hasOther,
 			options = this.options,
-			tickAmount = options.tickAmount, // docs
+			tickAmount = options.tickAmount,
 			tickPixelInterval = options.tickPixelInterval;
 
 		if (!defined(options.tickInterval) && this.len < tickPixelInterval && !this.isRadial &&
@@ -12499,7 +12499,7 @@ Series.prototype = {
 		this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
 		
 		// Added code for pointInterval strings
-		if (pointIntervalUnit === 'month' || pointIntervalUnit === 'year') { // docs: samples at #3329
+		if (pointIntervalUnit === 'month' || pointIntervalUnit === 'year') {
 			date = new Date(xIncrement);
 			date = (pointIntervalUnit === 'month') ?
 				+date[setMonth](date[getMonth]() + pointInterval) :
@@ -14465,7 +14465,7 @@ extend(Series.prototype, {
 	/**
 	 * Remove a point (rendered or not), by index
 	 */
-	removePoint: function (i, redraw, animation) { // docs: new method on Series object. Sample created: series-removepoint
+	removePoint: function (i, redraw, animation) {
 
 		var series = this,
 			data = series.data,

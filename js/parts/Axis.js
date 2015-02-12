@@ -1129,7 +1129,7 @@ Axis.prototype = {
 		var others = {}, // Whether there is another axis to pair with this one
 			hasOther,
 			options = this.options,
-			tickAmount = options.tickAmount, // docs
+			tickAmount = options.tickAmount,
 			tickPixelInterval = options.tickPixelInterval;
 
 		if (!defined(options.tickInterval) && this.len < tickPixelInterval && !this.isRadial &&

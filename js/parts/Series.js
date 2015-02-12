@@ -189,7 +189,7 @@ Series.prototype = {
 		this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
 		
 		// Added code for pointInterval strings
-		if (pointIntervalUnit === 'month' || pointIntervalUnit === 'year') { // docs: samples at #3329
+		if (pointIntervalUnit === 'month' || pointIntervalUnit === 'year') {
 			date = new Date(xIncrement);
 			date = (pointIntervalUnit === 'month') ?
 				+date[setMonth](date[getMonth]() + pointInterval) :
