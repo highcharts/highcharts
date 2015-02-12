@@ -1751,11 +1751,17 @@ Series.prototype = {
 			}
 		}
 
+		function startRecursive() {
+			series.kdTree = _kdtree(series.points, dimensions, dimensions);		
+		}
+
 		delete series.kdTree;
 		
-		setTimeout(function () {
-			series.kdTree = _kdtree(series.points, dimensions, dimensions);		
-		});
+		if (series.options.kdSync) {  // For testing tooltips, don't build async
+			startRecursive();
+		} else {
+			setTimeout(startRecursive);
+		}
 	},
 
 	searchKDTree: function (point) {
