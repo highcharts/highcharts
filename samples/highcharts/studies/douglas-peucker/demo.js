@@ -1,85 +1,49 @@
 $(function () {
 
-    /**
-     * Javascript implementation of the Douglas Peucker path simplification algorithm
-     * By Adam Miller, https://gist.github.com/adammiller/826148#file-douglaspeucker-js
-     * License: http://unlicense.org/
-     */
-    var simplifyPath = function( points, tolerance ) {
-        console.time('DouglasPeucker');
-        // helper classes 
-        var Vector = function( x, y ) {
-            this.x = x;
-            this.y = y;
-            
-        };
-        var Line = function( p1, p2 ) {
-            this.p1 = p1;
-            this.p2 = p2;
-            
-            this.distanceToPoint = function( point ) {
-                // slope
-                var m = ( this.p2.y - this.p1.y ) / ( this.p2.x - this.p1.x ),
-                    // y offset
-                    b = this.p1.y - ( m * this.p1.x ),
-                    d = [];
-                // distance to the linear equation
-                d.push( Math.abs( point.y - ( m * point.x ) - b ) / Math.sqrt( Math.pow( m, 2 ) + 1 ) );
-                // distance to p1
-                d.push( Math.sqrt( Math.pow( ( point.x - this.p1.x ), 2 ) + Math.pow( ( point.y - this.p1.y ), 2 ) ) );
-                // distance to p2
-                d.push( Math.sqrt( Math.pow( ( point.x - this.p2.x ), 2 ) + Math.pow( ( point.y - this.p2.y ), 2 ) ) );
-                // return the smallest distance
-                return d.sort( function( a, b ) {
-                    return ( a - b ); //causes an array to be sorted numerically and ascending
-                } )[0];
-            };
-        };
-        
-        var douglasPeucker = function( points, tolerance ) {
-            if ( points.length <= 2 ) {
-                return [points[0]];
+function simplifyPath(data, epsilon) {
+    var DouglasPecker = function (data, epsilon) {
+        if (data.length <= 2) {
+            return [data[0]];
+        }
+        var result = [],
+            dmax = 0,
+            index = 0,
+            start = data[0],
+            end = data[data.length - 1],
+            point,
+            i;
+
+        // recurring factors
+        var m = (end.y - start.y) / (end.x - start.x),
+            b = start.y - (m * start.x);
+
+        // Find furthest point
+        for (i = 1; i <= data.length - 2; i++) {
+            point = data[i];
+            d = Math.abs(point.y - (m * point.x) - b) / Math.sqrt(Math.pow(m, 2) + 1);
+            if (d > dmax) {
+                dmax = d;
+                index = i;
             }
-            var returnPoints = [],
-                // make line from start to end 
-                line = new Line( points[0], points[points.length - 1] ),
-                // find the largest distance from intermediate poitns to this line
-                maxDistance = 0,
-                maxDistanceIndex = 0,
-                p;
-            for( var i = 1; i <= points.length - 2; i++ ) {
-                var distance = line.distanceToPoint( points[ i ] );
-                if( distance > maxDistance ) {
-                    maxDistance = distance;
-                    maxDistanceIndex = i;
-                }
-            }
-            // check if the max distance is greater than our tollerance allows 
-            if ( maxDistance >= tolerance ) {
-                p = points[maxDistanceIndex];
-                line.distanceToPoint( p, true );
-                // include this point in the output 
-                returnPoints = returnPoints.concat( douglasPeucker( points.slice( 0, maxDistanceIndex + 1 ), tolerance ) );
-                // returnPoints.push( points[maxDistanceIndex] );
-                returnPoints = returnPoints.concat( douglasPeucker( points.slice( maxDistanceIndex, points.length ), tolerance ) );
-            } else {
-                // ditching this point
-                p = points[maxDistanceIndex];
-                line.distanceToPoint( p, true );
-                returnPoints = [points[0]];
-            }
-            return returnPoints;
-        };
-        var arr = douglasPeucker( points, tolerance );
-        // always have to push the very last point on so it doesn't get left off
-        arr.push( points[points.length - 1 ] );
-        console.timeEnd('DouglasPeucker');
-        return arr;
-    };
+        }
+        // Evaluate
+        if (dmax >= epsilon) {
+            result = result.concat(DouglasPecker(data.slice(0, index + 1), epsilon));
+            result = result.concat(DouglasPecker(data.slice(index + 1, data.length), epsilon));
+        } else {
+            result = [start];
+        }
+        return result;
+    }
+    // CALL RDP Function
+    var arr = DouglasPecker(data, epsilon);
+    arr.push(data[data.length - 1]);
+    return arr;
+}
 
 
     function getData(n) {
-        var arr = [], 
+        var arr = [],
             i,
             a,
             b,

@@ -250,6 +250,8 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 		seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
 	},
 	
+	setStackedPoints: noop,
+	
 	getSymbol: noop,
 	
 	drawPoints: noop

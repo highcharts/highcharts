@@ -499,7 +499,7 @@
 		});
 	}
 	
-	H.Point.prototype.doDrilldown = function (_holdRedraw) {
+	H.Point.prototype.doDrilldown = function (_holdRedraw, category) {
 		var series = this.series,
 			chart = series.chart,
 			drilldown = chart.options.drilldown,
@@ -517,7 +517,8 @@
 		// seriesOptions, and call addSeriesAsDrilldown async if necessary.
 		fireEvent(chart, 'drilldown', { 
 			point: this,
-			seriesOptions: seriesOptions
+			seriesOptions: seriesOptions,
+			category: category // docs
 		});
 		
 		if (seriesOptions) {
@@ -535,7 +536,7 @@
 	H.Axis.prototype.drilldownCategory = function (x) {
 		each(this.ticks[x].label.ddPoints, function (point) {
 			if (point.series && point.series.visible && point.doDrilldown) { // #3197
-				point.doDrilldown(true);
+				point.doDrilldown(true, x);
 			}
 		});
 		this.chart.applyDrilldown();
