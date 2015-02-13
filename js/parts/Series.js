@@ -185,7 +185,14 @@ Series.prototype = {
 
 		series.pointInterval = pick(series.pointInterval, options.pointInterval, 1);
 
-		series.xIncrement = xIncrement + series.pointInterval;
+		if (series.pointInterval === 'monthly') {
+			var next = new Date(xIncrement);
+			next[setDate](1);
+			next[setMonth](next[getMonth]() + 1);
+			series.xIncrement = Date.parse(next);
+		} else {
+			series.xIncrement = xIncrement + series.pointInterval;
+		}
 		return xIncrement;
 	},
 
