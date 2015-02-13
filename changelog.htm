@@ -1,32 +1,88 @@
-<li>--- Highcharts 4.0.1 / Highstock 2.0.1 official release ---</li>
-<li>Demo: new Highslide paths.</li>
-<li>Demo optimizing</li>
-<li>Highstock: Added pointer cursor to the range selector buttons to signalize that they are clickable. Closes #2937.</li>
-<li>Fixed #2951 causing JS error when updating a series from candlestick to OHLC.</li>
-<li>Compacted fix for #2930</li>
-<li>Fixed #2945, a regression causing pie data label formatter to be ignored unless the format option is set to null.</li>
-<li>Better ratio for some demos</li>
-<li>Better fix for #2928</li>
-<li>Fixed bug causing columns to be z-sorted in the wrong direction.</li>
-<li>Fixed #2940 causing gradient colors not to apply on strokes in Highcharts 4.</li>
-<li>Fixed #2939 causing wrong clipping of 3D charts rendered with highstock.js.</li>
-<li>Updated map parser study</li>
-<li>Fixed #2930 causing all gauges not to update in Highcharts 4.0.</li>
-<li>fixed z index issue on columns</li>
-<li>Fixed #2928 causing the halo to be misplaced on multiple pane positions and inverted line charts.</li>
-<li>Updated wrong paths in heatmap demos</li>
-<li>Merge branch 'valanipa'</li>
-<li>Comment</li>
-<li>Merge branch 'origin/master'</li>
-<li>Cleaned up after HC4 release</li>
-<li>--- Highcharts 4.0.0 / Highstock 2.0.0 official release ---</li>
-<li>Fix demo</li>
-<li>Fixed 3d problem with white column borders showing in export</li>
-<li>Fix wrong z index in VML cuboids</li>
-<li>Added Heatmap as a feature to the download builder</li>
-<li>Linted</li>
-<li>A couple of issues for HC4 demo</li>
-<li>Added Solid Gauge to the parts files configuration</li>
-<li>Removed unwanted dependency call on tooltip feature</li>
-<li>Moved firePointUpdate to PointPrototype for dependency reasons</li>
-<li>Removed dependency on TrackerMixin from GaugeSeries</li>
+<li>Added <a href="http://api.highcharts.com/#plotOptions.polygon">polygon</a> series type</li>
+<li>Added <code>e.category</code> event argument in drilldown events to make it clear when a category is clicked. Related to #3771.</li>
+<li>Added new option to the data module, <a href="http://api.highcharts.com/#data.firstRowAsNames">firstRowAsNames</a>.</li>
+<li>Added new option, <a href="http://api.highcharts.com/#plotOptions.series.pointIntervalUnit">pointIntervalUnit</a>, in order to allow months and years as point intervals. Closes #3329.</li>
+<li>Added <a href="http://api.highcharts.com/#chart.events.beforePrint">beforePrint</a> and <a href="http://api.highcharts.com/#chart.events.afterPrint">afterPrint</a> events. Related to #2284 and #3729.</li>
+<li>Added new method, <a href="http://api.highcharts.com/#Series.removePoint">Series.removePoint</a>, to allow removing points that are not instanciated on demand.</li>
+<li>Added new option, global.getTimezoneOffset, to allow integration with third party timezone libraries like moment-timezone.js.</li>
+<li>Added new Axis option, <a href="http://api.highcharts.com/#yAxis.tickAmount">tickAmount</a>. Refactored alignTicks on multi-axis charts to first compute a tickAmount, then make all axes comply with that.</li>
+<li>Added new Axis option, <a href="http://api.highcharts.com/#xAxis.autoRotation">autoRotation</a> as an array of possible values.</li>
+<li>Added new callback option, <a href="http://api.highcharts.com/#tooltip.pointFormatter">tooltip.pointFormatter</a>.</li>
+<li>Added polar support for arearange. Issue #3419.</li>
+<li>In solid gauges, added support for initial animation as well as setting animation object for updates. Closes #3135.</li>
+<li>Made the entire numberFormat method settable and wrappable from the outside.</li>
+<li>Made tooltip.followTouchMove true by default, and allowed page scroll at the same time.</li>
+<li>Implemented support for "contrast" color setting in data labels. When the data label is inside a shape (like a column), this will ensure the best readability.</li>
+<li>On category axes, let the crosshair width cover the whole category like a band.</li>
+<li>Refactored zIndex handling on SVGElements so that the zIndex can also be modified after the element is first added.</li>
+<li>Changed the Axis.tickPositioner callback so that the default tick positioning logic runs first, to allow modification in the tick positioner instead of creating positions from scratch. Closes #3538.</li>
+<li>Made the legend draw below or above the plot area in cases where it is placed in a corner and the layout is horizontal.</li>
+<li>Implemented algorithm for setting precise tooltip xDateFormat when needed, but general format like year, month, day etc. when the time falls on midnight and the closest point range dictates it. Related to #3329.</li>
+<li>New default behaviour for the xAxis.minTickInterval option on datetime axis. It now goes to the closest point range by default.</li>
+<li>Implemented silent degradation instead of error 19 when user options dictate too many ticks on an axis.</li>
+<li>Removed overflow:justify logic. Instead, move labels and add ellipsis in case of overflow.</li>
+<li>Export server: Adapted to PhantomJS 2</li>
+<li>Export server: Implemented XSS filter</li>
+<li>Fixed #3778, redundant legend paging visible after redraw</li>
+<li>Fixed error on applying stacking to area range series.</li>
+<li>Fixed #3743, minor ticks rendered outside plot area</li>
+<li>Partly fixed #3506, overlapping axis labels on polar chart</li>
+<li>Fixed #3728, Point.update not updating category name.</li>
+<li>Fixed waterfall issue where the upColor stayed after updating point to negative. Related to #3710.</li>
+<li>Fixed #3724, JS error on preventing the selection event and running setExtremes immediately.</li>
+<li>Don't allow decimals on yearly X axis.</li>
+<li>Fixed #3197, drilldown with hidden series.</li>
+<li>Fixed #3719, updating areaspline to area failed</li>
+<li>Fixed #3703, show no-data message on hidden series also.</li>
+<li>Fixed #3679, no-data label not realigning after showing hidden container.</li>
+<li>Fixed #3710, update point did not update sum in waterfalls.</li>
+<li>Fixed #3712, checkboxClick not handled for pie charts.</li>
+<li>Fixed #3708, color disappearing on redraw of solid gauge.</li>
+<li>Fixed #3702, JS error when running setData on a hidden series</li>
+<li>Fixed #3670, funnel ignored point specific border settings on init.</li>
+<li>Fixed #3648, data label posision for column incorrect when using custom positioned Y axis in inverted chart.</li>
+<li>Fixed #3654, millisecond ticks not placed correctly</li>
+<li>Fixed #3652, minor grid lines sometimes rendering outside the plot area to the right.</li>
+<li>Fixed #3201, crashes when zooming too far in on a dashed series.</li>
+<li>Fixed data module issue with blank chart when using forced categories with data longer than turboThreshold.</li>
+<li>Fixed #3635, markers overlapping in cases where they should not, according to the default behaviour.</li>
+<li>Fixed #2361, plot bands disappearing under certain conditions when zooming in so that parts are clipped.</li>
+<li>Fixed #3636, negative colors not applied on hover.</li>
+<li>Fixed #3623, negative values in pies causing bad drawing after running setData.</li>
+<li>Fixed #3575, huge columns not rendering on Chrome.</li>
+<li>Fixed #3608, reversed Y axis in gauges causing arcs to be drawn inside out.</li>
+<li>Fixed #3600, errors raised in modules when a chart was destroyed in its own callback.</li>
+<li>Fixed #3346, tooltip failed for two Y axes side by side.</li>
+<li>Fixed #3579, mixed up levels in multidimensional drilldown.</li>
+<li>Fixed #3569, reset zoom button disappeared after multiple zoom operations in empty area.</li>
+<li>Fixed #3390, single heatmap point getting huge size and causing rendering defects. Better axis metrics for single points. Closes #2515.</li>
+<li>Fixed #3544, drilling up failed when top series data was added dynamically.</li>
+<li>Fixed #3536, implemented error message on wrong color definitions in heat maps.</li>
+<li>Fixed #3525, error 12 in master-detail demo.</li>
+<li>Fixed #3295 and #3514 label box not rendered correctly with 0 values.</li>
+<li>Fixed #3507, fixed width tooltip with a single word on the last line was clipped horizontally.</li>
+<li>Fixed #3501, long axis labels taking up too much space instead of wrapping in drilldown charts.</li>
+<li>Fixed #3500, monthly and yearly X axis ticks having the wrong distribution when using timezoneOffset.</li>
+<li>Fixed #3449, export menu not working on touch devices when zoomType was set.</li>
+<li>Fixed #3391, halo not hidden on hiding a pie slice from legend</li>
+<li>Fixed #2889, tooltip not displayed on line series when followPointer was true. Closes #3258.</li>
+<li>Fixed #3176, updating gauge axis caused background to disappear.</li>
+<li>Fixed #2919, errors and wrong behaviours on multi-level drilldown.</li>
+<li>Fixed #3445, pie charts showing wrong bullet color in tooltip.</li>
+<li>Fixed #2919, errors on drilldown with multiple axes.</li>
+<li>Fixed #2912, JS error on drawing hidden waterfall</li>
+<li>Fixed #3437, data module failing with numeric data in first column</li>
+<li>Fixed #3436 causing round linecaps on median lines in box plots. Reverted fix for #1638, a workaround for a Firefox bug regarding linecaps. Newer Firefox versions don't have the bug.</li>
+<li>Fixed #3431, regression causing error 16 not to be triggered.</li>
+<li>Fixed #3434, error 10 throwed with null values on logarithmic axis.</li>
+<li>Fixed #3380, a regression causing Series.update not to honour updated zIndex.</li>
+<li>Fixed #3240, 3d pie labels with 0 values</li>
+<li>Fixed #3418, wrong default tooltip header date format when passing points every two days, two months etc.</li>
+<li>Fixed #3416, broken tooltip on colorAxis</li>
+<li>Fixed #3152, tooltip didn't display on the far left of a zoomed axis with categories.</li>
+<li>Fixed #3382, line series disappering when a negativeColor was applied and the threshold was way beyond the chart.</li>
+<li>Fixed #3411, align ticks fails without ticks</li>
+<li>Fixed #3402, redundant halo on heatmap.</li>
+<li>Fixed #3404, regression causing canvas heatmap to white out.</li>
+<li>Fixed #3402, issue with updating bar to pie.</li>
+<li>Fixed #3389, JS error when drilling up multi-level too quickly.</li>
