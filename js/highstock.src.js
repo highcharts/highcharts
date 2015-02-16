@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.0 ()
+ * @license Highstock JS v2.1.0 (2015-02-16)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -17442,7 +17442,7 @@ if (seriesTypes.column) {
 
 
 /**
- * @license Highstock JS v2.1.0 ()
+ * @license Highstock JS v2.1.0 (2015-02-16)
  * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
  *
  * (c) 2010-2014 Torstein Honsi
