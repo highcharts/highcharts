@@ -27,7 +27,7 @@ Axis.prototype = {
 			year: '%Y'
 		},
 		endOnTick: false,
-		gridLineColor: '#D8D8D8', // docs
+		gridLineColor: '#D8D8D8',
 		// gridLineDashStyle: 'solid',
 		// gridLineWidth: 0,
 		// reversed: false,
@@ -47,7 +47,7 @@ Axis.prototype = {
 			/*formatter: function () {
 				return this.value;
 			},*/
-		}, // docs: overflow:justify is deprecated
+		},
 		lineColor: '#C0D0E0',
 		lineWidth: 1,
 		//linkedTo: null,
@@ -681,7 +681,7 @@ Axis.prototype = {
 			len;
 
 		// If minor ticks get too dense, they are hard to read, and may cause long running script. So we don't draw them.
-		if ((max - min) / minorTickInterval < axis.len / 3) { // docs: Add note that minorTickInterval is ignored when too dense
+		if ((max - min) / minorTickInterval < axis.len / 3) {
 
 			if (axis.isLog) {
 				len = tickPositions.length;
@@ -1007,7 +1007,6 @@ Axis.prototype = {
 		}
 
 		// Before normalizing the tick interval, handle minimum tick interval. This applies only if tickInterval is not defined.
-		// docs: defaults to closest point range on datetime axis
 		minTickInterval = pick(options.minTickInterval, axis.isDatetimeAxis && axis.closestPointRange);
 		if (!tickIntervalOption && axis.tickInterval < minTickInterval) {
 			axis.tickInterval = minTickInterval;
