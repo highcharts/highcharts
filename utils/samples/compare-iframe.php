@@ -226,7 +226,7 @@ function getCompareTooltips() {
 									lineWidth: 1
 								},
 								borderWidth: 1,
-								kdWait: true
+								kdSync: true
 							}
 						}
 							

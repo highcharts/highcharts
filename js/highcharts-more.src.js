@@ -904,6 +904,8 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 		seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
 	},
 	
+	setStackedPoints: noop,
+	
 	getSymbol: noop,
 	
 	drawPoints: noop
@@ -1790,7 +1792,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 /**
  * Set the default options for polygon
  */
-defaultPlotOptions.polygon = merge(defaultPlotOptions.scatter, { // docs: new series type
+defaultPlotOptions.polygon = merge(defaultPlotOptions.scatter, {
 	marker: {
 		enabled: false
 	}
@@ -2145,7 +2147,7 @@ Axis.prototype.beforePadding = function () {
 
 		this.kdAxisArray = ['clientX'];
 		e = {
-			clientX: 180 + (Math.atan2(plotX, plotY) * (-180 / Math.PI)) - xAxis.pane.options.startAngle
+			clientX: 180 + (Math.atan2(plotX, plotY) * (-180 / Math.PI))
 		};
 		return this.searchKDTree(e);
 

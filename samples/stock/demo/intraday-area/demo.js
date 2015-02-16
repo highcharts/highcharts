@@ -9,6 +9,10 @@ $(function () {
                 text: 'AAPL stock price by minute'
             },
 
+            subtitle: {
+                text: 'Using ordinal X axis'
+            },
+
             xAxis: {
                 gapGridLineWidth: 0
             },

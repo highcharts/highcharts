@@ -1456,20 +1456,28 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				transAY: yAxis.transA
 			};
 
+			// Reset transformation in case we're doing a full translate (#3789)
+			this.transformGroup.animate({
+				translateX: 0,
+				translateY: 0,
+				scaleX: 1,
+				scaleY: 1
+			});
+
 		// Just update the scale and transform for better performance
 		} else {
 			scaleX = xAxis.transA / baseTrans.transAX;
 			scaleY = yAxis.transA / baseTrans.transAY;
-			if (scaleX > 0.99 && scaleX < 1.01 && scaleY > 0.99 && scaleY < 1.01) { // rounding errors
-				translateX = 0;
-				translateY = 0;
+			translateX = xAxis.toPixels(baseTrans.originX, true);
+			translateY = yAxis.toPixels(baseTrans.originY, true);
+
+			// Handle rounding errors in normal view (#3789)
+			if (scaleX > 0.99 && scaleX < 1.01 && scaleY > 0.99 && scaleY < 1.01) {
 				scaleX = 1;
 				scaleY = 1;
-
-			} else {	
-				translateX = xAxis.toPixels(baseTrans.originX, true);
-				translateY = yAxis.toPixels(baseTrans.originY, true);
-			} 
+				translateX = Math.round(translateX);
+				translateY = Math.round(translateY);
+			}
 
 			this.transformGroup.animate({
 				translateX: translateX,

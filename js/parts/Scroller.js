@@ -790,7 +790,9 @@ Scroller.prototype = {
 		if (scroller.navigatorEnabled) {
 			// an x axis is required for scrollbar also
 			scroller.xAxis = xAxis = new Axis(chart, merge({
-				ordinal: baseSeries && baseSeries.xAxis.options.ordinal // inherit base xAxis' ordinal option
+				// inherit base xAxis' break and ordinal options
+				breaks: baseSeries && baseSeries.xAxis.options.breaks,
+				ordinal: baseSeries && baseSeries.xAxis.options.ordinal 
 			}, navigatorOptions.xAxis, {
 				id: 'navigator-x-axis',
 				isX: true,

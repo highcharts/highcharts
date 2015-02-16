@@ -13,6 +13,8 @@ if ($target == 'highchartsmore') {
 
 } else if ($target == 'highmaps') {
 	$partsDir = '';
+} else if ($target == 'highstock') {
+	$partsDir = '';
 }
 
 if ($target == 'highcharts3d') {

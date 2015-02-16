@@ -106,12 +106,14 @@ var UNDEFINED,
 // The Highcharts namespace
 Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : {};
 
+Highcharts.seriesTypes = seriesTypes;
+
 /**
  * Extend an object with the members of another
  * @param {Object} a The object to be extended
  * @param {Object} b The object to add to the first one
  */
-function extend(a, b) {
+var extend = Highcharts.extend = function (a, b) {
 	var n;
 	if (!a) {
 		a = {};
@@ -120,7 +122,7 @@ function extend(a, b) {
 		a[n] = b[n];
 	}
 	return a;
-}
+};
 	
 /**
  * Deep merge two or more objects and return a third object. If the first argument is
@@ -290,7 +292,7 @@ function splat(obj) {
 /**
  * Return the first value that is defined. Like MooTools' $.pick.
  */
-function pick() {
+var pick = Highcharts.pick = function () {
 	var args = arguments,
 		i,
 		arg,
@@ -301,7 +303,7 @@ function pick() {
 			return arg;
 		}
 	}
-}
+};
 
 /**
  * Set CSS on a given element
@@ -1594,7 +1596,7 @@ function setTimeMethods() {
 
 	Date = globalOptions.Date || window.Date;
 	timezoneOffset = useUTC && globalOptions.timezoneOffset;
-	getTimezoneOffset = useUTC && globalOptions.getTimezoneOffset; // docs. Sample created.
+	getTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
 	makeTime = function (year, month, date, hours, minutes, seconds) {
 		var d;
 		if (useUTC) {
@@ -1938,7 +1940,7 @@ SVGElement.prototype = {
 		var elem = this.element,
 			tspans,
 			hasContrast = textShadow.indexOf('contrast') !== -1,
-			// Safari suffers from the double display bug (#3648)
+			// Safari suffers from the double display bug (#3649)
 			isSafari = userAgent.indexOf('Safari') > 0 && userAgent.indexOf('Chrome') === -1,
 			// IE10 and IE11 report textShadow in elem.style even though it doesn't work. Check
 			// this again with new IE release.
@@ -6366,9 +6368,9 @@ AxisPlotLineOrBandExtension = {
  * @param {Object} chart
  * @param {Object} options
  */
-function Axis() {
+var Axis = Highcharts.Axis = function () {
 	this.init.apply(this, arguments);
-}
+};
 
 Axis.prototype = {
 
@@ -6534,7 +6536,7 @@ Axis.prototype = {
 	 */
 	defaultBottomAxisOptions: {
 		labels: {
-			autoRotation: [-45], // docs
+			autoRotation: [-45],
 			x: 0,
 			y: null // based on font size
 			// overflow: undefined,
@@ -6549,7 +6551,7 @@ Axis.prototype = {
 	 */
 	defaultTopAxisOptions: {
 		labels: {
-			autoRotation: [-45], // docs
+			autoRotation: [-45],
 			x: 0,
 			y: -15
 			// overflow: undefined
@@ -6870,7 +6872,7 @@ Axis.prototype = {
 			localMin = old ? axis.oldMin : axis.min,
 			returnValue,
 			minPixelPadding = axis.minPixelPadding,
-			postTranslate = (axis.options.ordinal || (axis.isLog && handleLog)) && axis.lin2val;
+			postTranslate = (axis.postTranslate || (axis.isLog && handleLog)) && axis.lin2val;
 
 		if (!localA) {
 			localA = axis.transA;
@@ -7506,7 +7508,7 @@ Axis.prototype = {
 		var others = {}, // Whether there is another axis to pair with this one
 			hasOther,
 			options = this.options,
-			tickAmount = options.tickAmount, // docs
+			tickAmount = options.tickAmount,
 			tickPixelInterval = options.tickPixelInterval;
 
 		if (!defined(options.tickInterval) && this.len < tickPixelInterval && !this.isRadial &&
@@ -7904,7 +7906,6 @@ Axis.prototype = {
 			labelLength = 0,
 			label,
 			i,
-			actualRotation, // for second pass
 			pos;
 
 		// Set rotation option unless it is "auto", like in gauges
@@ -7921,9 +7922,6 @@ Axis.prototype = {
 				if (tick && tick.labelLength > labelLength) {
 					labelLength = tick.labelLength;
 				}
-				if (tick.label) {
-					actualRotation = tick.label.rotation;
-				}
 			});
 			
 			// Apply rotation only if the label is too wide for the slot, and
@@ -7931,7 +7929,7 @@ Axis.prototype = {
 			if (labelLength > innerWidth && labelLength > labelMetrics.h) {
 				attr.rotation = this.labelRotation;
 			} else {
-				this.labelRotation = actualRotation;
+				this.labelRotation = 0;
 			}
 
 		// Handle word-wrap or ellipsis on vertical axis
@@ -12999,7 +12997,7 @@ Series.prototype = {
 		this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
 		
 		// Added code for pointInterval strings
-		if (pointIntervalUnit === 'month' || pointIntervalUnit === 'year') { // docs: samples at #3329
+		if (pointIntervalUnit === 'month' || pointIntervalUnit === 'year') {
 			date = new Date(xIncrement);
 			date = (pointIntervalUnit === 'month') ?
 				+date[setMonth](date[getMonth]() + pointInterval) :
@@ -14561,11 +14559,17 @@ Series.prototype = {
 			}
 		}
 
+		function startRecursive() {
+			series.kdTree = _kdtree(series.points, dimensions, dimensions);		
+		}
+
 		delete series.kdTree;
 		
-		setTimeout(function () {
-			series.kdTree = _kdtree(series.points, dimensions, dimensions);		
-		});
+		if (series.options.kdSync) {  // For testing tooltips, don't build async
+			startRecursive();
+		} else {
+			setTimeout(startRecursive);
+		}
 	},
 
 	searchKDTree: function (point) {
@@ -15251,7 +15255,7 @@ extend(Series.prototype, {
 	/**
 	 * Remove a point (rendered or not), by index
 	 */
-	removePoint: function (i, redraw, animation) { // docs: new method on Series object. Sample created: series-removepoint
+	removePoint: function (i, redraw, animation) {
 
 		var series = this,
 			data = series.data,
@@ -18379,7 +18383,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 
 	// The positions are not always defined, for example for ordinal positions when data
 	// has regular interval (#1557, #2090)
-	if (!this.options.ordinal || !positions || positions.length < 3 || min === UNDEFINED) {
+	if ((!this.options.ordinal && !this.options.breaks) || !positions || positions.length < 3 || min === UNDEFINED) {
 		return proceed.call(this, normalizedInterval, min, max, startOfWeek);
 	}
 
@@ -18387,6 +18391,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 	// the closest distance. The closest distance is already found at this point, so
 	// we reuse that instead of computing it again.
 	posLength = positions.length;
+
 	for (; end < posLength; end++) {
 
 		outsideMax = end && positions[end - 1] > max;
@@ -18537,11 +18542,11 @@ extend(Axis.prototype, {
 			i;
 
 		// apply the ordinal logic
-		if (axis.options.ordinal) {
+		if (axis.options.ordinal || axis.options.breaks) {
 
 			each(axis.series, function (series, i) {
 
-				if (series.visible !== false && series.takeOrdinalPosition !== false) {
+				if (series.visible !== false && (series.takeOrdinalPosition !== false || axis.options.breaks)) {
 
 					// concatenate the processed X data into the existing positions, or the empty array
 					ordinalPositions = ordinalPositions.concat(series.processedXData);
@@ -18604,6 +18609,9 @@ extend(Axis.prototype, {
 
 			} else {
 				axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = UNDEFINED;
+			}
+			if (axis.options.ordinal) {
+				axis.postTranslate = axis.useOrdinal;
 			}
 		}
 		axis.groupIntervalFactor = null; // reset for next run
@@ -18847,9 +18855,16 @@ extend(Axis.prototype, {
 		// thus the tick interval should not be altered
 		var ordinalSlope = this.ordinalSlope;
 
-		return ordinalSlope ?
-			tickInterval / (ordinalSlope / this.closestPointRange) :
-			tickInterval;
+
+		if (ordinalSlope) {
+			if (!this.options.breaks) {
+				return tickInterval / (ordinalSlope / this.closestPointRange); 
+			} else {
+				return this.closestPointRange;
+			}
+		} else {
+			return tickInterval;
+		}
 	}
 });
 
@@ -18983,6 +18998,296 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 /* ****************************************************************************
  * End ordinal axis logic                                                   *
  *****************************************************************************/
+/**
+ * Highcharts Broken Axis module
+ * 
+ * Author: Stephane Vanraes, Torstein Honsi
+ * License: www.highcharts.com/license
+ */
+
+/*global HighchartsAdapter*/
+(function (H) {	
+
+	"use strict";
+
+	var pick = H.pick,
+		wrap = H.wrap,
+		extend = H.extend,
+		fireEvent = HighchartsAdapter.fireEvent,
+		Axis = H.Axis,
+		Series = H.Series;
+
+	function stripArguments() {
+		return Array.prototype.slice.call(arguments, 1);
+	}
+
+	extend(Axis.prototype, {
+		isInBreak: function (brk, val) {
+			var repeat = brk.repeat || Infinity,
+				from = brk.from,
+				length = brk.to - brk.from,
+				test = (val >= from ? (val - from) % repeat :  repeat - ((from - val) % repeat));
+
+			if (!brk.inclusive) {
+				return (test < length && test !== 0);
+			} else {
+				return (test <= length);
+			}
+		},
+
+		isInAnyBreak: function (val, testKeep) {
+			// Sanity Check			
+			if (!this.options.breaks) { return false; }
+
+			var breaks = this.options.breaks,
+				i = breaks.length,
+				inbrk = false,
+				keep = false;
+
+
+			while (i--) {
+				if (this.isInBreak(breaks[i], val)) {
+					inbrk = true;
+					if (!keep) {
+						keep = pick(breaks[i].showPoints, this.isXAxis ? false : true);
+					}
+				}
+			}
+
+			if (inbrk && testKeep) {
+				return inbrk && !keep;
+			} else {
+				return inbrk;
+			}
+		}
+	});
+
+	wrap(Axis.prototype, 'setTickPositions', function (proceed) {
+		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+		
+		var axis = this,
+			tickPositions = this.tickPositions,
+			info = this.tickPositions.info,
+			newPositions = [],
+			i;
+
+		if (info && info.totalRange >= axis.closestPointRange) { 
+			return;
+		}
+
+		for (i = 0; i < tickPositions.length; i++) {
+			if (!axis.isInAnyBreak(tickPositions[i])) {
+				newPositions.push(tickPositions[i]);
+			}
+		}
+
+		this.tickPositions = newPositions;
+		this.tickPositions.info = info;
+	});
+	
+	wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
+
+		// Force Axis to be not-ordinal when breaks are defined
+		if (userOptions.breaks && userOptions.breaks.length) {
+			userOptions.ordinal = false;
+		}
+
+		proceed.call(this, chart, userOptions);
+
+		if (this.options.breaks) {
+
+			var axis = this;
+			
+			axis.postTranslate = true;
+
+			this.val2lin = function (val) {
+				var nval = val,
+					brk,
+					i;
+
+				for (i = 0; i < axis.breakArray.length; i++) {
+					brk = axis.breakArray[i];
+					if (brk.to <= val) {
+						nval -= (brk.len);
+					} else if (brk.from >= val) {
+						break;
+					} else if (axis.isInBreak(brk, val)) {
+						nval -= (val - brk.from);
+						break;
+					}
+				}
+
+				return nval;
+			};
+			
+			this.lin2val = function (val) {
+				var nval = val,
+					brk,
+					i;
+
+				for (i = 0; i < axis.breakArray.length; i++) {
+					brk = axis.breakArray[i];
+					if (brk.from >= nval) {
+						break;
+					} else if (brk.to < nval) {
+						nval += (brk.to - brk.from);
+					} else if (axis.isInBreak(brk, nval)) {
+						nval += (brk.to - brk.from);
+					}
+				}
+
+				return nval;
+			};
+
+			this.setAxisTranslation = function (saveOld) {
+				Axis.prototype.setAxisTranslation.call(this, saveOld);
+
+				var breaks = axis.options.breaks,
+					breakArrayT = [],	// Temporary one
+					breakArray = [],
+					length = 0, 
+					inBrk,
+					repeat,
+					brk,
+					min = axis.userMin || axis.min,
+					max = axis.userMax || axis.max,
+					start,
+					i,
+					j;
+
+				// Min & Max Check
+				for (i in breaks) {
+					brk = breaks[i];
+					if (axis.isInBreak(brk, min)) {
+						min += (brk.to % brk.repeat) - (min % brk.repeat);
+					}
+					if (axis.isInBreak(brk, max)) {
+						max -= (max % brk.repeat) - (brk.from % brk.repeat);
+					}
+				}
+
+				// Construct an array holding all breaks in the axis
+				for (i in breaks) {
+					brk = breaks[i];
+					start = brk.from;
+					repeat = brk.repeat || Infinity;
+
+					while (start - repeat > min) {
+						start -= repeat;
+					}
+					while (start < min) {
+						start += repeat;
+					}
+
+					for (j = start; j < max; j += repeat) {
+						breakArrayT.push({
+							value: j,
+							move: 'in'
+						});
+						breakArrayT.push({
+							value: j + (brk.to - brk.from),
+							move: 'out',
+							size: brk.breakSize
+						});
+					}
+				}
+
+				breakArrayT.sort(function (a, b) {
+					if (a.value === b.value) {
+						return (a.move === 'in' ? 0 : 1) - (b.move === 'in' ? 0 : 1);
+					} else {
+						return a.value - b.value;
+					}
+				});
+				
+				// Simplify the breaks
+				inBrk = 0;
+				start = min;
+
+				for (i in breakArrayT) {
+					brk = breakArrayT[i];
+					inBrk += (brk.move === 'in' ? 1 : -1);
+
+					if (inBrk === 1 && brk.move === 'in') {
+						start = brk.value;
+					}
+					if (inBrk === 0) {
+						breakArray.push({
+							from: start,
+							to: brk.value,
+							len: brk.value - start - (brk.size || 0)
+						});
+						length += brk.value - start - (brk.size || 0);
+					}
+				}
+
+				axis.breakArray = breakArray;
+
+				fireEvent(axis, 'afterBreaks');
+				
+				axis.transA *= ((max - axis.min) / (max - min - length));
+
+				axis.min = min;
+				axis.max = max;
+
+			};
+		}
+	});
+
+	wrap(Series.prototype, 'generatePoints', function (proceed) {
+
+		proceed.apply(this, stripArguments(arguments));
+
+		var series = this,
+			xAxis = series.xAxis,
+			yAxis = series.yAxis,
+			points = series.points,
+			point,
+			i = points.length;
+
+
+		if (xAxis.options.breaks || yAxis.options.breaks) {
+			while (i--) {
+				point = points[i];
+
+				if (xAxis.isInAnyBreak(point.x, true) || yAxis.isInAnyBreak(point.y, true)) {
+					points.splice(i, 1);
+				}
+			}
+		}
+
+	});
+
+	wrap(H.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
+		proceed.apply(this);
+
+		var series = this,
+			points = series.points,
+			yAxis = series.yAxis,
+			breaks = yAxis.breakArray || [],
+			point,
+			brk,
+			i,
+			j,
+			y;
+
+		for (i = 0; i < points.length; i++) {
+			point = points[i];
+			y = point.stackY || point.y;
+			for (j = 0; j < breaks.length; j++) {
+				brk = breaks[j];
+				if (y < brk.from) {
+					break;
+				} else if (y > brk.to) {
+					fireEvent(yAxis, 'pointBreak', {point: point, brk: brk});
+				} else {
+					fireEvent(yAxis, 'pointInBreak', {point: point, brk: brk});
+				}
+			}
+		}
+
+	});
+}(Highcharts));
 /* ****************************************************************************
  * Start data grouping module												 *
  ******************************************************************************/
@@ -20962,7 +21267,9 @@ Scroller.prototype = {
 		if (scroller.navigatorEnabled) {
 			// an x axis is required for scrollbar also
 			scroller.xAxis = xAxis = new Axis(chart, merge({
-				ordinal: baseSeries && baseSeries.xAxis.options.ordinal // inherit base xAxis' ordinal option
+				// inherit base xAxis' break and ordinal options
+				breaks: baseSeries && baseSeries.xAxis.options.breaks,
+				ordinal: baseSeries && baseSeries.xAxis.options.ordinal 
 			}, navigatorOptions.xAxis, {
 				id: 'navigator-x-axis',
 				isX: true,
@@ -22677,8 +22984,6 @@ wrap(Series.prototype, 'render', function (proceed) {
 extend(Highcharts, {
 	
 	// Constructors
-	Axis: Axis,
-	//Chart: Chart,
 	Color: Color,
 	Point: Point,
 	Tick: Tick,	
@@ -22697,7 +23002,6 @@ extend(Highcharts, {
 	getOptions: getOptions,
 	hasBidiBug: hasBidiBug,
 	isTouchDevice: isTouchDevice,
-	seriesTypes: seriesTypes,
 	setOptions: setOptions,
 	addEvent: addEvent,
 	removeEvent: removeEvent,
@@ -22705,10 +23009,8 @@ extend(Highcharts, {
 	discardElement: discardElement,
 	css: css,
 	each: each,
-	extend: extend,
 	map: map,
 	merge: merge,
-	pick: pick,
 	splat: splat,
 	extendClass: extendClass,
 	pInt: pInt,

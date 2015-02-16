@@ -300,7 +300,9 @@ extend(Chart.prototype, {
 			// Any HTML added to the container after the SVG (#894)
 			.replace(/<\/svg>.*?$/, '</svg>') 
 			// Batik doesn't support rgba fills and strokes (#3095)
-			.replace(/(fill|stroke)="rgba\(([ 0-9]+,[ 0-9]+,[ 0-9]+),([ 0-9\.]+)\)"/g, '$1="rgb($2)" $1-opacity="$3"') 
+			.replace(/(fill|stroke)="rgba\(([ 0-9]+,[ 0-9]+,[ 0-9]+),([ 0-9\.]+)\)"/g, '$1="rgb($2)" $1-opacity="$3"')
+			// An issue with PhantomJS as of 2015-01-11. Revisit with newer versions. (#3649)
+			.replace(/(text-shadow:[ 0-9a-z]+),[^"]+([;"])/g, '$1$2') 
 			/* This fails in IE < 8
 			.replace(/([0-9]+)\.([0-9]+)/g, function(s1, s2, s3) { // round off to save weight
 				return s2 +'.'+ s3[0];
@@ -384,7 +386,7 @@ extend(Chart.prototype, {
 
 		chart.isPrinting = true;
 
-		fireEvent(chart, 'beforePrint'); // docs - http://jsfiddle.net/highcharts/8sgqe812/
+		fireEvent(chart, 'beforePrint');
 
 		// hide all body content
 		each(childNodes, function (node, i) {
@@ -416,7 +418,7 @@ extend(Chart.prototype, {
 
 			chart.isPrinting = false;
 
-			fireEvent(chart, 'afterPrint'); // docs
+			fireEvent(chart, 'afterPrint');
 
 		}, 1000);
 

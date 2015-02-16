@@ -106,12 +106,14 @@ var UNDEFINED,
 // The Highcharts namespace
 Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : {};
 
+Highcharts.seriesTypes = seriesTypes;
+
 /**
  * Extend an object with the members of another
  * @param {Object} a The object to be extended
  * @param {Object} b The object to add to the first one
  */
-function extend(a, b) {
+var extend = Highcharts.extend = function (a, b) {
 	var n;
 	if (!a) {
 		a = {};
@@ -120,7 +122,7 @@ function extend(a, b) {
 		a[n] = b[n];
 	}
 	return a;
-}
+};
 	
 /**
  * Deep merge two or more objects and return a third object. If the first argument is
@@ -290,7 +292,7 @@ function splat(obj) {
 /**
  * Return the first value that is defined. Like MooTools' $.pick.
  */
-function pick() {
+var pick = Highcharts.pick = function () {
 	var args = arguments,
 		i,
 		arg,
@@ -301,7 +303,7 @@ function pick() {
 			return arg;
 		}
 	}
-}
+};
 
 /**
  * Set CSS on a given element
@@ -1594,7 +1596,7 @@ function setTimeMethods() {
 
 	Date = globalOptions.Date || window.Date;
 	timezoneOffset = useUTC && globalOptions.timezoneOffset;
-	getTimezoneOffset = useUTC && globalOptions.getTimezoneOffset; // docs. Sample created.
+	getTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
 	makeTime = function (year, month, date, hours, minutes, seconds) {
 		var d;
 		if (useUTC) {
@@ -1938,7 +1940,7 @@ SVGElement.prototype = {
 		var elem = this.element,
 			tspans,
 			hasContrast = textShadow.indexOf('contrast') !== -1,
-			// Safari suffers from the double display bug (#3648)
+			// Safari suffers from the double display bug (#3649)
 			isSafari = userAgent.indexOf('Safari') > 0 && userAgent.indexOf('Chrome') === -1,
 			// IE10 and IE11 report textShadow in elem.style even though it doesn't work. Check
 			// this again with new IE release.
@@ -6106,9 +6108,9 @@ Tick.prototype = {
  * @param {Object} chart
  * @param {Object} options
  */
-function Axis() {
+var Axis = Highcharts.Axis = function () {
 	this.init.apply(this, arguments);
-}
+};
 
 Axis.prototype = {
 
@@ -6274,7 +6276,7 @@ Axis.prototype = {
 	 */
 	defaultBottomAxisOptions: {
 		labels: {
-			autoRotation: [-45], // docs
+			autoRotation: [-45],
 			x: 0,
 			y: null // based on font size
 			// overflow: undefined,
@@ -6289,7 +6291,7 @@ Axis.prototype = {
 	 */
 	defaultTopAxisOptions: {
 		labels: {
-			autoRotation: [-45], // docs
+			autoRotation: [-45],
 			x: 0,
 			y: -15
 			// overflow: undefined
@@ -6610,7 +6612,7 @@ Axis.prototype = {
 			localMin = old ? axis.oldMin : axis.min,
 			returnValue,
 			minPixelPadding = axis.minPixelPadding,
-			postTranslate = (axis.options.ordinal || (axis.isLog && handleLog)) && axis.lin2val;
+			postTranslate = (axis.postTranslate || (axis.isLog && handleLog)) && axis.lin2val;
 
 		if (!localA) {
 			localA = axis.transA;
@@ -7246,7 +7248,7 @@ Axis.prototype = {
 		var others = {}, // Whether there is another axis to pair with this one
 			hasOther,
 			options = this.options,
-			tickAmount = options.tickAmount, // docs
+			tickAmount = options.tickAmount,
 			tickPixelInterval = options.tickPixelInterval;
 
 		if (!defined(options.tickInterval) && this.len < tickPixelInterval && !this.isRadial &&
@@ -7644,7 +7646,6 @@ Axis.prototype = {
 			labelLength = 0,
 			label,
 			i,
-			actualRotation, // for second pass
 			pos;
 
 		// Set rotation option unless it is "auto", like in gauges
@@ -7661,9 +7662,6 @@ Axis.prototype = {
 				if (tick && tick.labelLength > labelLength) {
 					labelLength = tick.labelLength;
 				}
-				if (tick.label) {
-					actualRotation = tick.label.rotation;
-				}
 			});
 			
 			// Apply rotation only if the label is too wide for the slot, and
@@ -7671,7 +7669,7 @@ Axis.prototype = {
 			if (labelLength > innerWidth && labelLength > labelMetrics.h) {
 				attr.rotation = this.labelRotation;
 			} else {
-				this.labelRotation = actualRotation;
+				this.labelRotation = 0;
 			}
 
 		// Handle word-wrap or ellipsis on vertical axis
@@ -12502,7 +12500,7 @@ Series.prototype = {
 		this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
 		
 		// Added code for pointInterval strings
-		if (pointIntervalUnit === 'month' || pointIntervalUnit === 'year') { // docs: samples at #3329
+		if (pointIntervalUnit === 'month' || pointIntervalUnit === 'year') {
 			date = new Date(xIncrement);
 			date = (pointIntervalUnit === 'month') ?
 				+date[setMonth](date[getMonth]() + pointInterval) :
@@ -14064,11 +14062,17 @@ Series.prototype = {
 			}
 		}
 
+		function startRecursive() {
+			series.kdTree = _kdtree(series.points, dimensions, dimensions);		
+		}
+
 		delete series.kdTree;
 		
-		setTimeout(function () {
-			series.kdTree = _kdtree(series.points, dimensions, dimensions);		
-		});
+		if (series.options.kdSync) {  // For testing tooltips, don't build async
+			startRecursive();
+		} else {
+			setTimeout(startRecursive);
+		}
 	},
 
 	searchKDTree: function (point) {
@@ -14462,7 +14466,7 @@ extend(Series.prototype, {
 	/**
 	 * Remove a point (rendered or not), by index
 	 */
-	removePoint: function (i, redraw, animation) { // docs: new method on Series object. Sample created: series-removepoint
+	removePoint: function (i, redraw, animation) {
 
 		var series = this,
 			data = series.data,
@@ -17065,20 +17069,28 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				transAY: yAxis.transA
 			};
 
+			// Reset transformation in case we're doing a full translate (#3789)
+			this.transformGroup.animate({
+				translateX: 0,
+				translateY: 0,
+				scaleX: 1,
+				scaleY: 1
+			});
+
 		// Just update the scale and transform for better performance
 		} else {
 			scaleX = xAxis.transA / baseTrans.transAX;
 			scaleY = yAxis.transA / baseTrans.transAY;
-			if (scaleX > 0.99 && scaleX < 1.01 && scaleY > 0.99 && scaleY < 1.01) { // rounding errors
-				translateX = 0;
-				translateY = 0;
+			translateX = xAxis.toPixels(baseTrans.originX, true);
+			translateY = yAxis.toPixels(baseTrans.originY, true);
+
+			// Handle rounding errors in normal view (#3789)
+			if (scaleX > 0.99 && scaleX < 1.01 && scaleY > 0.99 && scaleY < 1.01) {
 				scaleX = 1;
 				scaleY = 1;
-
-			} else {	
-				translateX = xAxis.toPixels(baseTrans.originX, true);
-				translateY = yAxis.toPixels(baseTrans.originY, true);
-			} 
+				translateX = Math.round(translateX);
+				translateY = Math.round(translateY);
+			}
 
 			this.transformGroup.animate({
 				translateX: translateX,
@@ -19278,8 +19290,6 @@ extend(Series.prototype, {
 extend(Highcharts, {
 	
 	// Constructors
-	Axis: Axis,
-	//Chart: Chart,
 	Color: Color,
 	Point: Point,
 	Tick: Tick,	
@@ -19298,7 +19308,6 @@ extend(Highcharts, {
 	getOptions: getOptions,
 	hasBidiBug: hasBidiBug,
 	isTouchDevice: isTouchDevice,
-	seriesTypes: seriesTypes,
 	setOptions: setOptions,
 	addEvent: addEvent,
 	removeEvent: removeEvent,
@@ -19306,10 +19315,8 @@ extend(Highcharts, {
 	discardElement: discardElement,
 	css: css,
 	each: each,
-	extend: extend,
 	map: map,
 	merge: merge,
-	pick: pick,
 	splat: splat,
 	extendClass: extendClass,
 	pInt: pInt,

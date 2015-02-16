@@ -515,7 +515,7 @@
 
 		server.listen(host + ':' + port,
 			function (request, response) {
-				var jsonStr = request.post,
+				var jsonStr = request.postRaw || request.post,
 					params,
 					msg;
 				try {

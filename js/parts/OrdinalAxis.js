@@ -43,7 +43,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 
 	// The positions are not always defined, for example for ordinal positions when data
 	// has regular interval (#1557, #2090)
-	if (!this.options.ordinal || !positions || positions.length < 3 || min === UNDEFINED) {
+	if ((!this.options.ordinal && !this.options.breaks) || !positions || positions.length < 3 || min === UNDEFINED) {
 		return proceed.call(this, normalizedInterval, min, max, startOfWeek);
 	}
 
@@ -51,6 +51,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 	// the closest distance. The closest distance is already found at this point, so
 	// we reuse that instead of computing it again.
 	posLength = positions.length;
+
 	for (; end < posLength; end++) {
 
 		outsideMax = end && positions[end - 1] > max;
@@ -201,11 +202,11 @@ extend(Axis.prototype, {
 			i;
 
 		// apply the ordinal logic
-		if (axis.options.ordinal) {
+		if (axis.options.ordinal || axis.options.breaks) {
 
 			each(axis.series, function (series, i) {
 
-				if (series.visible !== false && series.takeOrdinalPosition !== false) {
+				if (series.visible !== false && (series.takeOrdinalPosition !== false || axis.options.breaks)) {
 
 					// concatenate the processed X data into the existing positions, or the empty array
 					ordinalPositions = ordinalPositions.concat(series.processedXData);
@@ -268,6 +269,9 @@ extend(Axis.prototype, {
 
 			} else {
 				axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = UNDEFINED;
+			}
+			if (axis.options.ordinal) {
+				axis.postTranslate = axis.useOrdinal;
 			}
 		}
 		axis.groupIntervalFactor = null; // reset for next run
@@ -511,9 +515,16 @@ extend(Axis.prototype, {
 		// thus the tick interval should not be altered
 		var ordinalSlope = this.ordinalSlope;
 
-		return ordinalSlope ?
-			tickInterval / (ordinalSlope / this.closestPointRange) :
-			tickInterval;
+
+		if (ordinalSlope) {
+			if (!this.options.breaks) {
+				return tickInterval / (ordinalSlope / this.closestPointRange); 
+			} else {
+				return this.closestPointRange;
+			}
+		} else {
+			return tickInterval;
+		}
 	}
 });
 

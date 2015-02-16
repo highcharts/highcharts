@@ -189,7 +189,7 @@ Series.prototype = {
 		this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
 		
 		// Added code for pointInterval strings
-		if (pointIntervalUnit === 'month' || pointIntervalUnit === 'year') { // docs: samples at #3329
+		if (pointIntervalUnit === 'month' || pointIntervalUnit === 'year') {
 			date = new Date(xIncrement);
 			date = (pointIntervalUnit === 'month') ?
 				+date[setMonth](date[getMonth]() + pointInterval) :
@@ -1751,11 +1751,17 @@ Series.prototype = {
 			}
 		}
 
+		function startRecursive() {
+			series.kdTree = _kdtree(series.points, dimensions, dimensions);		
+		}
+
 		delete series.kdTree;
 		
-		setTimeout(function () {
-			series.kdTree = _kdtree(series.points, dimensions, dimensions);		
-		});
+		if (series.options.kdSync) {  // For testing tooltips, don't build async
+			startRecursive();
+		} else {
+			setTimeout(startRecursive);
+		}
 	},
 
 	searchKDTree: function (point) {

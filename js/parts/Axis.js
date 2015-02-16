@@ -3,9 +3,9 @@
  * @param {Object} chart
  * @param {Object} options
  */
-function Axis() {
+var Axis = Highcharts.Axis = function () {
 	this.init.apply(this, arguments);
-}
+};
 
 Axis.prototype = {
 
@@ -171,7 +171,7 @@ Axis.prototype = {
 	 */
 	defaultBottomAxisOptions: {
 		labels: {
-			autoRotation: [-45], // docs
+			autoRotation: [-45],
 			x: 0,
 			y: null // based on font size
 			// overflow: undefined,
@@ -186,7 +186,7 @@ Axis.prototype = {
 	 */
 	defaultTopAxisOptions: {
 		labels: {
-			autoRotation: [-45], // docs
+			autoRotation: [-45],
 			x: 0,
 			y: -15
 			// overflow: undefined
@@ -507,7 +507,7 @@ Axis.prototype = {
 			localMin = old ? axis.oldMin : axis.min,
 			returnValue,
 			minPixelPadding = axis.minPixelPadding,
-			postTranslate = (axis.options.ordinal || (axis.isLog && handleLog)) && axis.lin2val;
+			postTranslate = (axis.postTranslate || (axis.isLog && handleLog)) && axis.lin2val;
 
 		if (!localA) {
 			localA = axis.transA;
@@ -1143,7 +1143,7 @@ Axis.prototype = {
 		var others = {}, // Whether there is another axis to pair with this one
 			hasOther,
 			options = this.options,
-			tickAmount = options.tickAmount, // docs
+			tickAmount = options.tickAmount,
 			tickPixelInterval = options.tickPixelInterval;
 
 		if (!defined(options.tickInterval) && this.len < tickPixelInterval && !this.isRadial &&
@@ -1541,7 +1541,6 @@ Axis.prototype = {
 			labelLength = 0,
 			label,
 			i,
-			actualRotation, // for second pass
 			pos;
 
 		// Set rotation option unless it is "auto", like in gauges
@@ -1558,9 +1557,6 @@ Axis.prototype = {
 				if (tick && tick.labelLength > labelLength) {
 					labelLength = tick.labelLength;
 				}
-				if (tick.label) {
-					actualRotation = tick.label.rotation;
-				}
 			});
 			
 			// Apply rotation only if the label is too wide for the slot, and
@@ -1568,7 +1564,7 @@ Axis.prototype = {
 			if (labelLength > innerWidth && labelLength > labelMetrics.h) {
 				attr.rotation = this.labelRotation;
 			} else {
-				this.labelRotation = actualRotation;
+				this.labelRotation = 0;
 			}
 
 		// Handle word-wrap or ellipsis on vertical axis
