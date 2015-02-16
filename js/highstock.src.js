@@ -18982,6 +18982,11 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 	
 	wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
 
+		// Force Axis to be not-ordinal when breaks are defined
+		if (userOptions.breaks && userOptions.breaks.length) {
+			userOptions.ordinal = false;
+		}
+
 		proceed.call(this, chart, userOptions);
 
 		if (this.options.breaks) {

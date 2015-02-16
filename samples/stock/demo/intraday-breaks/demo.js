@@ -22,8 +22,7 @@ $(function () {
                     from: Date.UTC(2011, 9, 7, 16),
                     to: Date.UTC(2011, 9, 10, 8),
                     repeat: 7 * 24 * 36e5
-                }],
-                ordinal: false
+                }]
             },
 
             rangeSelector : {
