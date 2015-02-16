@@ -18,18 +18,8 @@ $('#container').highcharts({
                     chart = axis.chart,
                     breakLine = axis.breakLine,
                     breakPoint = axis.breakArray[0],
-                    posX = axis.transB + axis.pos + axis.translate(Math.round(breakPoint.to), false, true),
-                    height = chart.plotHeight,
-                    step = height/20,
-                    path = ['M', 0, height],
-                    i = height,
-                    k = 1;
-
-                while(i > 0) {
-                    i -= step;
-                    path.push('L', k * step/2, i);
-                    k *= -1;
-                }
+                    pos = breakPoint.to,
+                    path = axis.getPlotLinePath(pos, 2, false, true);
 
                 if (!breakLine) {
                     breakLine = this.breakLine = chart.renderer.path(path)
@@ -37,16 +27,16 @@ $('#container').highcharts({
                         stroke: 'red',
                             'stroke-width': 1,
                         zIndex: 10,
-                        translateX: posX,
-                        translateY: chart.plotTop
+                        translateX: axis.transB
                     }).add();
                 } else {
                     breakLine.attr({
                         d: path,
-                        translateX: posX,
-                        translateY: chart.plotTop
+                        translateX: axis.transB
                     });
                 }
+
+                console.log(axis);
             }
         }
     },
