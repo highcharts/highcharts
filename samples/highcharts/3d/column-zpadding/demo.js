@@ -24,6 +24,11 @@ $(function () {
                 groupZPadding: 50
             }
         },
+        yAxis: {
+            title: {
+                text: null
+            }
+        },
         series: [{
             data: [2, 3, null, 4, 0, 5]
         }, {
