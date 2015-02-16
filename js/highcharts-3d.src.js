@@ -121,7 +121,7 @@ function averageZ(vertexes) {
 	for (i = 0; i < vertexes.length; i++) {
 		z += vertexes[i].z;
 	}
-	return z / vertexes.length;
+	return vertexes.length ? z / vertexes.length : 0;
 }
 
 function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
