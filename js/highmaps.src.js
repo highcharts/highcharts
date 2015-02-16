@@ -106,12 +106,14 @@ var UNDEFINED,
 // The Highcharts namespace
 Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : {};
 
+Highcharts.seriesTypes = seriesTypes;
+
 /**
  * Extend an object with the members of another
  * @param {Object} a The object to be extended
  * @param {Object} b The object to add to the first one
  */
-function extend(a, b) {
+var extend = Highcharts.extend = function (a, b) {
 	var n;
 	if (!a) {
 		a = {};
@@ -120,7 +122,7 @@ function extend(a, b) {
 		a[n] = b[n];
 	}
 	return a;
-}
+};
 	
 /**
  * Deep merge two or more objects and return a third object. If the first argument is
@@ -290,7 +292,7 @@ function splat(obj) {
 /**
  * Return the first value that is defined. Like MooTools' $.pick.
  */
-function pick() {
+var pick = Highcharts.pick = function () {
 	var args = arguments,
 		i,
 		arg,
@@ -301,7 +303,7 @@ function pick() {
 			return arg;
 		}
 	}
-}
+};
 
 /**
  * Set CSS on a given element
@@ -6108,9 +6110,9 @@ Tick.prototype = {
  * @param {Object} chart
  * @param {Object} options
  */
-function Axis() {
+var Axis = Highcharts.Axis = function () {
 	this.init.apply(this, arguments);
-}
+};
 
 Axis.prototype = {
 
@@ -19182,7 +19184,6 @@ extend(Series.prototype, {
 extend(Highcharts, {
 	
 	// Constructors
-	Axis: Axis,
 	Chart: Chart,
 	Color: Color,
 	Point: Point,
@@ -19202,7 +19203,6 @@ extend(Highcharts, {
 	getOptions: getOptions,
 	hasBidiBug: hasBidiBug,
 	isTouchDevice: isTouchDevice,
-	seriesTypes: seriesTypes,
 	setOptions: setOptions,
 	addEvent: addEvent,
 	removeEvent: removeEvent,
@@ -19210,10 +19210,8 @@ extend(Highcharts, {
 	discardElement: discardElement,
 	css: css,
 	each: each,
-	extend: extend,
 	map: map,
 	merge: merge,
-	pick: pick,
 	splat: splat,
 	extendClass: extendClass,
 	pInt: pInt,

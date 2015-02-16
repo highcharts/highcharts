@@ -1,10 +1,8 @@
 /**
- * Highcharts Broken Axis plugin
+ * Highcharts Broken Axis module
  * 
- * Author: Torstein Honsi
- * License: MIT License
- *
- * Demo: http://jsfiddle.net/highcharts/Vf3yT/
+ * Author: Stephane Vanraes, Torstein Honsi
+ * License: www.highcharts.com/license
  */
 
 /*global HighchartsAdapter*/
@@ -12,10 +10,7 @@
 
 	"use strict";
 
-	var noop = function () {},
-		floor = Math.floor,
-		each = H.each,
-		pick = H.pick,
+	var pick = H.pick,
 		wrap = H.wrap,
 		extend = H.extend,
 		fireEvent = HighchartsAdapter.fireEvent,
@@ -267,7 +262,6 @@
 			breaks = yAxis.breakArray || [],
 			point,
 			brk,
-			sA,
 			i,
 			j,
 			y;

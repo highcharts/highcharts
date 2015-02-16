@@ -3,9 +3,9 @@
  * @param {Object} chart
  * @param {Object} options
  */
-function Axis() {
+var Axis = Highcharts.Axis = function () {
 	this.init.apply(this, arguments);
-}
+};
 
 Axis.prototype = {
 

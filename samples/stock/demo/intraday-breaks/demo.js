@@ -10,11 +10,20 @@ $(function () {
             },
 
             subtitle: {
-                text: 'Using ordinal X axis'
+                text: 'Using explicit breaks for nights and weekends'
             },
 
             xAxis: {
-                gapGridLineWidth: 0
+                breaks: [{ // Nights
+                    from: Date.UTC(2011, 9, 6, 16),
+                    to: Date.UTC(2011, 9, 7, 8),
+                    repeat: 24 * 36e5
+                }, { // Weekends
+                    from: Date.UTC(2011, 9, 7, 16),
+                    to: Date.UTC(2011, 9, 10, 8),
+                    repeat: 7 * 24 * 36e5
+                }],
+                ordinal: false
             },
 
             rangeSelector : {

@@ -90,3 +90,5 @@ var UNDEFINED,
 
 // The Highcharts namespace
 Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : {};
+
+Highcharts.seriesTypes = seriesTypes;

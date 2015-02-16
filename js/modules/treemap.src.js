@@ -42,7 +42,7 @@
 		layoutAlgorithm: 'sliceAndDice',
 		layoutStartingDirection: 'vertical',
 		alternateStartingDirection: false,
-		levelIsConstant: true,
+		levelIsConstant: true, // docs: missing?
 		states: {
 			hover: {
 				borderColor: '#A0A0A0', // docs
