@@ -252,7 +252,8 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 		h = shapeArgs.height,
 		w = shapeArgs.width,
 		d = shapeArgs.depth,		
-		chart = Highcharts.charts[this.chartIndex];
+		chart = Highcharts.charts[this.chartIndex],
+		map = Highcharts.map;
 
 	var pArr = [
 		{x: x, y: y, z: z},
@@ -268,8 +269,8 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	pArr = perspective(pArr, chart, shapeArgs.insidePlotArea);
 
 	var pickShape = function (path1, path2) {
-		path1 = path1.map(function (i) { return pArr[i]; });
-		path2 = path2.map(function (i) { return pArr[i]; });
+		path1 = map(path1, function (i) { return pArr[i]; });
+		path2 = map(path2, function (i) { return pArr[i]; });
 		if (shapeArea(path1) < 0) {
 			return path1;
 		} else if (shapeArea(path2) < 0) {
