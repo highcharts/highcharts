@@ -69,6 +69,7 @@
         <property name="prototype.src.name" value="prototype-adapter.src.js"/-->
         <property name="standalone.src.name" value="standalone-framework.src.js"/>
         <property name="exporting.src.name" value="exporting.src.js"/>
+        <property name="broken-axis.src.name" value="broken-axis.src.js"/>
         <property name="data.src.name" value="data.src.js"/>
         <property name="drilldown.src.name" value="drilldown.src.js"/>
         <property name="funnel.src.name" value="funnel.src.js"/>
@@ -82,6 +83,7 @@
         <property name="prototype.minified.name" value="prototype-adapter.js"/-->
         <property name="standalone.minified.name" value="standalone-framework.js"/>
         <property name="exporting.minified.name" value="exporting.js"/>
+        <property name="broken-axis.minified.name" value="broken-axis.js"/>
         <property name="data.minified.name" value="data.js"/>
         <property name="drilldown.minified.name" value="drilldown.js"/>
         <property name="funnel.minified.name" value="funnel.js"/>
@@ -95,11 +97,11 @@
         <property name="prototype.src.file" value="${basedir}/js/adapters/${prototype.src.name}"/-->
         <property name="standalone.src.file" value="${basedir}/js/adapters/${standalone.src.name}"/>
         <property name="exporting.src.file" value="${basedir}/js/modules/${exporting.src.name}"/>
+        <property name="broken-axis.src.file" value="${basedir}/js/modules/broken-axis.src.js"/>
         <property name="data.src.file" value="${basedir}/js/modules/${data.src.name}"/>
         <property name="drilldown.src.file" value="${basedir}/js/modules/${drilldown.src.name}"/>
         <property name="funnel.src.file" value="${basedir}/js/modules/${funnel.src.name}"/>
         <property name="overlapping-datalabels.src.file" value="${basedir}/js/modules/overlapping-datalabels.src.js"/>
-        <property name="broken-axis.src.file" value="${basedir}/js/modules/broken-axis.src.js"/>
         <property name="solidgauge.src.file" value="${basedir}/js/modules/${solidgauge.src.name}"/>
         <property name="nodata.src.file" value="${basedir}/js/modules/${nodata.src.name}"/>
         <property name="map.src.file" value="${basedir}/js/modules/${map.src.name}"/>
@@ -561,13 +563,13 @@
             <fileset file="${prototype.src.file}"/>
             <fileset file="${standalone.src.file}"/>
             <fileset file="${exporting.src.file}"/>
+            <fileset file="${broken-axis.src.file}"/>
             <fileset file="${data.src.file}"/>
             <fileset file="${drilldown.src.file}"/>
             <fileset file="${funnel.src.file}"/>
             <fileset file="${solidgauge.src.file}"/>
             <fileset file="${nodata.src.file}"/>
             <fileset file="${overlapping-datalabels.src.file}"/>
-            <fileset file="${broken-axis.src.file}"/>
             <fileset file="${map.src.file}"/>
             <fileset file="${heatmap.src.file}"/>
             <fileset file="${annotations.src.file}"/>
@@ -939,6 +941,10 @@
         <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${exporting.src.file}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
+
+        <copy file="${broken-axis.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${broken-axis.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        
 
         <copy file="${data.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${data.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
