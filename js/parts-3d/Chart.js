@@ -69,6 +69,17 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'redraw', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));	
 });
 
+// Draw the series in the reverse order (#3803)
+Highcharts.Chart.prototype.renderSeries = function () {
+	var serie,
+		i = this.series.length;
+	while (i--) {		
+		serie = this.series[i];
+		serie.translate();
+		serie.render();	
+	}
+};
+
 Highcharts.Chart.prototype.retrieveStacks = function (grouping, stacking) {
 
 	var stacks = {},

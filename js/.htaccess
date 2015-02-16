@@ -23,6 +23,7 @@ RewriteRule ^maps/(.*?) /$1
 RewriteRule ^master/(.*?) /$1
 
 # Source files
+RewriteRule (.*?)broken-axis.js $1broken-axis.src.js
 RewriteRule (.*?)data.js $1data.src.js
 RewriteRule (.*?)drilldown.js $1drilldown.src.js
 RewriteRule (.*?)exporting.js $1exporting.src.js

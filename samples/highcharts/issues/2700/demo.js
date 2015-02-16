@@ -19,9 +19,8 @@ $(function () {
                     enabled: true,
                     inside: true,
                     style: {
-                        color: 'white',
-                        fontWeight: 'bold',
-                        textShadow: '0 0 3px black, 0 0 3px black'
+                        color: '#FFFFFF',
+                        fontWeight: 'bold'
                     }
                 },
                 stacking: 'normal'

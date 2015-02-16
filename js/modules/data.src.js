@@ -10,10 +10,11 @@
 // JSLint options:
 /*global jQuery, HighchartsAdapter */
 
-(function (Highcharts) { // docs
+(function (Highcharts) {
 	
 	// Utilities
 	var each = Highcharts.each,
+		pick = Highcharts.pick,
 		inArray = HighchartsAdapter.inArray,
 		splat = Highcharts.splat,
 		SeriesBuilder;
@@ -34,6 +35,7 @@
 		this.options = options;
 		this.chartOptions = chartOptions;
 		this.columns = options.columns || this.rowsToColumns(options.rows) || [];
+		this.firstRowAsNames = pick(options.firstRowAsNames, true);
 		this.decimalRegex = options.decimalPoint && new RegExp('^([0-9]+)' + options.decimalPoint + '([0-9]+)$');
 
 		// This is a two-dimensional array holding the raw, trimmed string values
@@ -159,9 +161,6 @@
 
 		// Interpret the values into right types
 		this.parseTypes();
-		
-		// Use first row for series names?
-		this.findHeaderRow();
 		
 		// Handle columns if a handleColumns callback is given
 		if (this.parsed() !== false) {
@@ -328,15 +327,6 @@
 	},
 	
 	/**
-	 * Find the header row. For now, we just check whether the first row contains
-	 * numbers or strings. Later we could loop down and find the first row with 
-	 * numbers.
-	 */
-	findHeaderRow: function () {
-		this.headerRow = 0;
-	},
-
-	/**
 	 * Trim a string from whitespace
 	 */
 	trim: function (str, inside) {
@@ -379,7 +369,7 @@
 			floatVal,
 			trimVal,
 			trimInsideVal,
-			hasHeaderRow,
+			firstRowAsNames = this.firstRowAsNames,
 			isXColumn = inArray(col, this.valueCount.xColumns) !== -1,
 			dateVal,
 			backup = [],
@@ -406,7 +396,7 @@
 			}
 			
 			// Disable number or date parsing by setting the X axis type to category
-			if (forceCategory || row === 0) {
+			if (forceCategory || (row === 0 && firstRowAsNames)) {
 				column[row] = trimVal;
 
 			} else if (+trimInsideVal === floatVal) { // is numeric
@@ -469,10 +459,9 @@
 
 		// If the 0 column is date or number and descending, reverse all columns. 
 		if (isXColumn && descending && this.options.sort) {
-			hasHeaderRow = typeof columns[0][0] !== 'number';
 			for (col = 0; col < columns.length; col++) {
 				columns[col].reverse();
-				if (hasHeaderRow) {
+				if (firstRowAsNames) {
 					columns[col].unshift(columns[col].pop());
 				}
 			}
@@ -665,7 +654,7 @@
 
 			// Get the names and shift the top row
 			for (i = 0; i < columns.length; i++) {
-				if (this.headerRow === 0) {
+				if (this.firstRowAsNames) {
 					columns[i].name = columns[i].shift();
 				}
 			}

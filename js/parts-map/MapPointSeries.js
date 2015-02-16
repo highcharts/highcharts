@@ -7,16 +7,24 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 		formatter: function () { // #2945
 			return this.point.name; 
 		},
-		color: 'black',
 		crop: false,
 		defer: false,
 		overflow: false,
 		style: {
-			HcTextStroke: '3px rgba(255,255,255,0.5)'
+			color: '#000000'
 		}
 	}
 });
 seriesTypes.mappoint = extendClass(seriesTypes.scatter, {
 	type: 'mappoint',
-	forceDL: true
+	forceDL: true,
+	pointClass: extendClass(Point, {
+		applyOptions: function (options, x) {
+			var point = Point.prototype.applyOptions.call(this, options, x);
+			if (options.lat !== undefined && options.lon !== undefined) {
+				point = extend(point, this.series.chart.fromLatLonToPoint(point));
+			}
+			return point;
+		}
+	})
 });

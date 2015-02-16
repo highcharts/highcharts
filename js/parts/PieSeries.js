@@ -16,9 +16,10 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 		enabled: true,
 		formatter: function () { // #2945
 			return this.point.name;
-		}
+		},
 		// softConnector: true,
-		//y: 0
+		x: 0
+		// y: 0
 	},
 	ignoreHiddenPoint: true,
 	//innerSize: 0,
@@ -161,7 +162,6 @@ var PieSeries = {
 		'stroke-width': 'borderWidth',
 		fill: 'color'
 	},
-	singularTooltips: true,
 
 	/**
 	 * Pies have one color each point
@@ -437,6 +437,9 @@ var PieSeries = {
 		});
 
 	},
+
+
+	searchPoint: noop,
 
 	/**
 	 * Utility for sorting data labels

@@ -38,20 +38,31 @@ $(function () {
                     yMax = this.yAxis.max,
                     colorAxis = series.colorAxis,
                     ctx,
-                    renderer;
+                    renderer,
+                    c = 0;
 
                 ctx = this.getContext();
+                
 
-                ctx.beginPath();
                 H.each(data, function (point) {
+                    if (c === 0) {
+                        ctx.beginPath();
+                    }
+                    c++;
                     ctx.lineTo(
                         (point[0] - xMin) * transAX,
                         (yMax - point[1] + yMin) * transAY
                     );
+
+                    // We need to stroke the line for every 1000 pixels. It will crash the browser
+                    // my memory use if we stroke too infrequently.
+                    if (c === 1000) {
+                        ctx.strokeStyle = series.color;
+                        ctx.lineWidth = series.options.lineWidth;
+                        ctx.stroke();
+                        c = 0;
+                    }
                 });
-                ctx.strokeStyle = this.color;
-                ctx.lineWidth = this.options.lineWidth;
-                ctx.stroke();
 
             }
         });
@@ -59,9 +70,30 @@ $(function () {
 
     function getData(n) {
         var arr = [], 
-            i;
+            i,
+            a,
+            b,
+            c,
+            spike;
         for (i = 0; i < n; i++) {
-            arr.push([i, i]);
+            if (i % 100 === 0) {
+                a = 2 * Math.random();
+            }
+            if (i % 1000 === 0) {
+                b = 2 * Math.random();
+            }
+            if (i % 10000 === 0) {
+                c = 2 * Math.random();
+            }
+            if (i % 50000 === 0) {
+                spike = 10;
+            } else {
+                spike = 0;
+            }
+            arr.push([
+                i,
+                2 * Math.sin(i / 100) + a + b + c + spike + Math.random()
+            ]);
         }
         return arr;
     }
@@ -85,8 +117,8 @@ $(function () {
         },
 
         yAxis: {
-            min: 0,
-            max: 500000
+            min: -10,
+            max: 20
         },
 
         series: [{

@@ -9,8 +9,7 @@ defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 	tooltip: {
 		headerFormat: '<span style="color:{series.color}">\u25CF</span> <span style="font-size: 10px;"> {series.name}</span><br/>',
 		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
-	},
-	stickyTracking: false
+	}
 });
 
 /**
@@ -23,7 +22,8 @@ var ScatterSeries = extendClass(Series, {
 	noSharedTooltip: true,
 	trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
 	takeOrdinalPosition: false, // #2342
-	singularTooltips: true,
+	kdDimensions: 2,
+	kdComparer: 'distR',
 	drawGraph: function () {
 		if (this.options.lineWidth) {
 			Series.prototype.drawGraph.call(this);

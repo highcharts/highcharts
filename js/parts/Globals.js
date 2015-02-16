@@ -18,7 +18,7 @@ var UNDEFINED,
 	// some variables
 	userAgent = navigator.userAgent,
 	isOpera = win.opera,
-	isIE = /msie/i.test(userAgent) && !isOpera,
+	isIE = /(msie|trident)/i.test(userAgent) && !isOpera,
 	docMode8 = doc.documentMode === 8,
 	isWebKit = /AppleWebKit/.test(userAgent),
 	isFirefox = /Firefox/.test(userAgent),
@@ -90,3 +90,5 @@ var UNDEFINED,
 
 // The Highcharts namespace
 Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : {};
+
+Highcharts.seriesTypes = seriesTypes;

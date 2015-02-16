@@ -3,8 +3,6 @@
 extend(Highcharts, {
 	
 	// Constructors
-	Axis: Axis,
-	Chart: Chart,
 	Color: Color,
 	Point: Point,
 	Tick: Tick,	
@@ -23,7 +21,6 @@ extend(Highcharts, {
 	getOptions: getOptions,
 	hasBidiBug: hasBidiBug,
 	isTouchDevice: isTouchDevice,
-	seriesTypes: seriesTypes,
 	setOptions: setOptions,
 	addEvent: addEvent,
 	removeEvent: removeEvent,
@@ -31,10 +28,8 @@ extend(Highcharts, {
 	discardElement: discardElement,
 	css: css,
 	each: each,
-	extend: extend,
 	map: map,
 	merge: merge,
-	pick: pick,
 	splat: splat,
 	extendClass: extendClass,
 	pInt: pInt,

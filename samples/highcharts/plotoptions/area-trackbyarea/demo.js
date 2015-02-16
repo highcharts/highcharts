@@ -10,7 +10,8 @@ $(function () {
         plotOptions: {
             series: {
                 threshold: 100,
-                trackByArea: true
+                trackByArea: true,
+                stickyTracking: false // to show the difference in tracking
             }
         },
 

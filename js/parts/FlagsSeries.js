@@ -274,7 +274,9 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	/**
 	 * Disable animation
 	 */
-	animate: noop
+	animate: noop,
+	buildKDTree: noop,
+	setClip: noop
 
 });
 

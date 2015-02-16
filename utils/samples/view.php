@@ -153,12 +153,10 @@ function getResources() {
 					var checked = $(this).attr('checked');
 					
 					$('#source-box').css({
-						width: checked ? '50%' : 'auto',
-						'float': checked ? 'left' : 'none'
+						width: checked ? '50%' : 0
 					});
 					$('#main-content').css({
-						width: checked ? '50%' : 'auto',
-						'float': checked ? 'right' : 'none'
+						width: checked ? '50%' : '100%'
 					});
 					$.each(Highcharts.charts, function () {
 						this.reflow();
@@ -306,6 +304,16 @@ function getResources() {
 			li, a, p, div {
 				font-family: Arial, sans-serif;
 				font-size: 10pt;
+			}
+			#source-box {
+				width: 0;
+				float: left;
+				transition: width 500ms;
+			}
+			#main-content {
+				float: right;
+				width: 100%;
+				transition: width 500ms;
 			}
 		</style>
 

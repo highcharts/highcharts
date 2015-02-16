@@ -49,6 +49,7 @@ var ColumnSeries = extendClass(Series, {
 		r: 'borderRadius'
 	},
 	cropShoulder: 0,
+	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	negStacks: true, // use separate negative stacks, unlike area stacks where a negative 
 		// point is substracted from previous (#1910)

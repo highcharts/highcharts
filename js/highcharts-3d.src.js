@@ -23,52 +23,76 @@ var PI = Math.PI,
 	deg2rad = (PI / 180), // degrees to radians 
 	sin = Math.sin,
 	cos = Math.cos, 
-
+	pick = Highcharts.pick,
 	round = Math.round;
 
-function perspective(points, angle2, angle1, origin) {
-	angle1 *= deg2rad;
-	angle2 *= deg2rad;
+function perspective(points, chart, insidePlotArea) {
+	var options3d = chart.options.chart.options3d,
+		inverted = false,
+		origin;
+
+	if (insidePlotArea) {
+		inverted = chart.inverted;
+		origin = {
+			x: chart.plotWidth / 2,
+			y: chart.plotHeight / 2,
+			z: options3d.depth / 2,
+			vd: pick(options3d.depth, 1) * pick(options3d.viewDistance, 0)
+		};
+	} else {
+		origin = {
+			x: chart.plotLeft + (chart.plotWidth / 2),
+			y: chart.plotTop + (chart.plotHeight / 2),
+			z: options3d.depth / 2,
+			vd: pick(options3d.depth, 1) * pick(options3d.viewDistance, 0)
+		};
+	}
 
 	var result = [],
-		xe, 
-		ye, 
-		ze;
-
-	angle1 *= -1;
-	
-	xe = origin.x;
-	ye = origin.y;
-	ze = (origin.z === 0 ? 0.0001 : origin.z) * (origin.vd || 25);
-	
-	// some kind of minimum?
-	ze = Math.max(500, ze);
-
-	var s1 = sin(angle1),
+		xe = origin.x,
+		ye = origin.y,
+		ze = origin.z,
+		vd = origin.vd,
+		angle1 = deg2rad * (inverted ?  options3d.beta  : -options3d.beta),
+		angle2 = deg2rad * (inverted ? -options3d.alpha :  options3d.alpha),
+		s1 = sin(angle1),
 		c1 = cos(angle1),
 		s2 = sin(angle2),
 		c2 = cos(angle2);
 
-	var x, y, z, p;
+	var x, y, z, px, py, pz;
 
 	Highcharts.each(points, function (point) {
-		x = point.x - xe;
-		y = point.y - ye;
-		z = point.z || 0;
+		x = (inverted ? point.y : point.x) - xe;
+		y = (inverted ? point.x : point.y) - ye;
+		z = (point.z || 0) - ze;
 
-		p = {
-			x: c1 * x - s1 * z,
-			y: -s1 * s2 * x - c1 * s2 * z + c2 * y,		
-			z: s1 * c2 * x + c1 * c2 * z + s2 * y
-		};
+		//Apply 3-D rotation
+		px = c1 * x - s1 * z;
+		py = -s1 * s2 * x - c1 * s2 * z + c2 * y;
+		pz = s1 * c2 * x + c1 * c2 * z + s2 * y;
 
-		p.x = p.x * ((ze - p.z) / ze) + xe;
-		p.y = p.y * ((ze - p.z) / ze) + ye;
+		//Apply perspective
+		if ((vd > 0) && (vd < Number.POSITIVE_INFINITY)) {
+			px = px * (vd / (pz + ze + vd));
+			py = py * (vd / (pz + ze + vd));
+		}
 
-		result.push({x: round(p.x), y: round(p.y), z: round(p.z)});
+		//Apply translation
+		px = px + xe;
+		py = py + ye;
+		pz = pz + ze;
+
+		result.push({
+			x: (inverted ? py : px),
+			y: (inverted ? px : py),
+			z: pz
+		});
 	});
 	return result;
 }
+// Make function acessible to plugins
+Highcharts.perspective = perspective;
 /*** 
 	EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
 	***/
@@ -79,6 +103,26 @@ function defined(obj) {
 	return obj !== undefined && obj !== null;
 }
 
+//Shoelace algorithm -- http://en.wikipedia.org/wiki/Shoelace_formula
+function shapeArea(vertexes) {
+	var area = 0,
+		i,
+		j;
+	for (i = 0; i < vertexes.length; i++) {
+		j = (i + 1) % vertexes.length;
+		area += vertexes[i].x * vertexes[j].y - vertexes[j].x * vertexes[i].y;
+	}
+	return area / 2;
+}
+
+function averageZ(vertexes) {
+	var z = 0,
+		i;
+	for (i = 0; i < vertexes.length; i++) {
+		z += vertexes[i].z;
+	}
+	return vertexes.length ? z / vertexes.length : 0;
+}
 
 function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
 	var result = [];
@@ -113,12 +157,14 @@ Highcharts.SVGRenderer.prototype.toLinePath = function (points, closed) {
 		result.push('L', point.x, point.y);
 	});
 
-	// Set the first element to M
-	result[0] = 'M';
+	if (points.length) {
+		// Set the first element to M
+		result[0] = 'M';
 
-	// If it is a closed line, add Z
-	if (closed) {
-		result.push('Z');
+		// If it is a closed line, add Z
+		if (closed) {
+			result.push('Z');
+		}
 	}
 	
 	return result;
@@ -205,10 +251,9 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 		z = shapeArgs.z,
 		h = shapeArgs.height,
 		w = shapeArgs.width,
-		d = shapeArgs.depth,
-		alpha = shapeArgs.alpha,
-		beta = shapeArgs.beta,
-		origin = shapeArgs.origin;
+		d = shapeArgs.depth,		
+		chart = Highcharts.charts[this.chartIndex],
+		map = Highcharts.map;
 
 	var pArr = [
 		{x: x, y: y, z: z},
@@ -221,71 +266,36 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 		{x: x, y: y, z: z + d}
 	];
 
-	pArr = perspective(pArr, alpha, beta, origin);
+	pArr = perspective(pArr, chart, shapeArgs.insidePlotArea);
 
-	var path1, // FRONT
-		path2, // TOP OR BOTTOM
-		path3; // LEFT OR RIGHT
+	var pickShape = function (path1, path2) {
+		path1 = map(path1, function (i) { return pArr[i]; });
+		path2 = map(path2, function (i) { return pArr[i]; });
+		if (shapeArea(path1) < 0) {
+			return path1;
+		} else if (shapeArea(path2) < 0) {
+			return path2;
+		} else {
+			return [];
+		}
+	};
 
-	// front	
-	path1 = [
-	'M', pArr[0].x, pArr[0].y,
-	'L', pArr[1].x, pArr[1].y,
-	'L', pArr[2].x, pArr[2].y,
-	'L', pArr[3].x, pArr[3].y,
-	'Z'
-	];
-	var z1 = (pArr[0].z + pArr[1].z + pArr[2].z + pArr[3].z) / 4;
+	// front or back
+	var front = [3, 2, 1, 0];
+	var back = [7, 6, 5, 4];
+	var path1 = pickShape(front, back);
 
 	// top or bottom
-	var top = [
-	'M', pArr[0].x, pArr[0].y,
-	'L', pArr[7].x, pArr[7].y,
-	'L', pArr[6].x, pArr[6].y,
-	'L', pArr[1].x, pArr[1].y,
-	'Z'
-	];
-	var bottom = [
-	'M', pArr[3].x, pArr[3].y,
-	'L', pArr[2].x, pArr[2].y,
-	'L', pArr[5].x, pArr[5].y,
-	'L', pArr[4].x, pArr[4].y,
-	'Z'
-	];
-	if (pArr[7].y < pArr[1].y) {
-		path2 = top;
-	} else if (pArr[4].y > pArr[2].y) {
-		path2 = bottom;
-	} else {
-		path2 = [];
-	}
-	var z2 = (beta > 0 ? (pArr[0].z + pArr[7].z + pArr[6].z + pArr[1].z) / 4 : (pArr[3].z + pArr[2].z + pArr[5].z + pArr[4].z) / 4);
+	var top = [1, 6, 7, 0];
+	var bottom = [4, 5, 2, 3];
+	var path2 = pickShape(top, bottom);
 
 	// side
-	var right = [
-	'M', pArr[1].x, pArr[1].y,
-	'L', pArr[2].x, pArr[2].y,
-	'L', pArr[5].x, pArr[5].y,
-	'L', pArr[6].x, pArr[6].y,
-	'Z'
-	];
-	var left = [
-	'M', pArr[0].x, pArr[0].y,
-	'L', pArr[7].x, pArr[7].y,
-	'L', pArr[4].x, pArr[4].y,
-	'L', pArr[3].x, pArr[3].y,
-	'Z'
-	];	
-	if (pArr[6].x > pArr[1].x) {
-		path3 = right;
-	} else if (pArr[7].x < pArr[0].x) {
-		path3 = left;
-	} else {
-		path3 = [];
-	}
-	var z3 = (alpha > 0 ? (pArr[1].z + pArr[2].z + pArr[5].z + pArr[6].z) / 4 : (pArr[0].z + pArr[7].z + pArr[4].z + pArr[3].z) / 4);
+	var right = [1, 2, 5, 6];
+	var left = [0, 7, 4, 3];
+	var path3 = pickShape(right, left);
 
-	return [path1, path2, path3, z1, z2, z3];
+	return [this.toLinePath(path1, true), this.toLinePath(path2, true), this.toLinePath(path3, true), averageZ(path1), averageZ(path2), averageZ(path3)];
 };
 
 ////// SECTORS //////
@@ -569,6 +579,17 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'redraw', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));	
 });
 
+// Draw the series in the reverse order (#3803)
+Highcharts.Chart.prototype.renderSeries = function () {
+	var serie,
+		i = this.series.length;
+	while (i--) {		
+		serie = this.series[i];
+		serie.translate();
+		serie.render();	
+	}
+};
+
 Highcharts.Chart.prototype.retrieveStacks = function (grouping, stacking) {
 
 	var stacks = {},
@@ -588,7 +609,7 @@ Highcharts.Chart.prototype.retrieveStacks = function (grouping, stacking) {
 	return stacks;
 };
 
-/*** 
+/***
 	EXTENSION TO THE AXIS
 ***/
 Highcharts.wrap(Highcharts.Axis.prototype, 'init', function (proceed) {
@@ -611,8 +632,6 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 	var chart = this.chart,
 		renderer = chart.renderer,
 		options3d = chart.options.chart.options3d,
-		alpha = options3d.alpha,
-		beta = options3d.beta * (chart.yAxis[0].opposite ? -1 : 1),
 		frame = options3d.frame,
 		fbottom = frame.bottom,
 		fback = frame.back,
@@ -623,12 +642,6 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 		left = this.left,
 		top = this.top;
 
-	var origin = {
-		x: chart.plotLeft + (chart.plotWidth / 2),
-		y: chart.plotTop + (chart.plotHeight / 2),
-		z: depth,
-		vd: options3d.viewDistance
-	};
 	if (this.horiz) {
 		/// BOTTOM
 		if (this.axisLine) {
@@ -641,12 +654,10 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 			width: width,
 			height: fbottom.size,
 			depth: depth,
-			alpha: alpha,
-			beta: beta,
-			origin: origin
+			insidePlotArea: false
 		};
 		if (!this.bottomFrame) {
-			this.bottomFrame = renderer.cuboid(bottomShape).attr({fill: fbottom.color, zIndex: (chart.yAxis[0].reversed && alpha > 0 ? 4 : -1)}).css({stroke: fbottom.color}).add();
+			this.bottomFrame = renderer.cuboid(bottomShape).attr({fill: fbottom.color, zIndex: (chart.yAxis[0].reversed && options3d.alpha > 0 ? 4 : -1)}).css({stroke: fbottom.color}).add();
 		} else {
 			this.bottomFrame.animate(bottomShape);
 		}
@@ -659,9 +670,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 			width: width,
 			height: height + fbottom.size,
 			depth: fback.size,
-			alpha: alpha,
-			beta: beta,
-			origin: origin
+			insidePlotArea: false
 		};
 		if (!this.backFrame) {
 			this.backFrame = renderer.cuboid(backShape).attr({fill: fback.color, zIndex: -3}).css({stroke: fback.color}).add();
@@ -679,9 +688,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 			width: fside.size,
 			height: height + fbottom.size,
 			depth: depth + fback.size,
-			alpha: alpha,
-			beta: beta,
-			origin: origin
+			insidePlotArea: false
 		};
 		if (!this.sideFrame) {
 			this.sideFrame = renderer.cuboid(sideShape).attr({fill: fside.color, zIndex: -2}).css({stroke: fside.color}).add();
@@ -693,7 +700,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 
 Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed) {
 	var path = proceed.apply(this, [].slice.call(arguments, 1));
-	
+
 	// Do not do this if the chart is not 3D
 	if (!this.chart.is3d()) {
 		return path;
@@ -706,13 +713,6 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed)
 
 	var d = options3d.depth;
 
-	options3d.origin = {
-		x: chart.plotLeft + (chart.plotWidth / 2),
-		y: chart.plotTop + (chart.plotHeight / 2),
-		z: d,
-		vd: options3d.viewDistance
-	};
-
 	var pArr = [
 		{ x: path[1], y: path[2], z : (this.horiz || this.opposite ? d : 0)},
 		{ x: path[1], y: path[2], z : d },
@@ -720,12 +720,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed)
 		{ x: path[4], y: path[5], z : (this.horiz || this.opposite ? 0 : d)}
 	];
 
-	var alpha = chart.options.inverted ? options3d.beta : options3d.alpha,
-		beta = chart.options.inverted ? options3d.alpha : options3d.beta;
-
-	beta *= (chart.yAxis[0].opposite ? -1 : 1);
-
-	pArr = perspective(pArr, alpha, beta, options3d.origin);
+	pArr = perspective(pArr, this.chart, false);
 	path = this.chart.renderer.toLinePath(pArr, false);
 
 	return path;
@@ -772,27 +767,12 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getMarkPath', function (proceed) {
 		return path;
 	}
 
-	var chart = this.axis.chart,
-		options3d = chart.options.chart.options3d;
-
-	var origin = {
-		x: chart.plotLeft + (chart.plotWidth / 2),
-		y: chart.plotTop + (chart.plotHeight / 2),
-		z: options3d.depth,
-		vd: options3d.viewDistance
-	};
-
 	var pArr = [
 		{x: path[1], y: path[2], z: 0},
 		{x: path[4], y: path[5], z: 0}
 	];
-	
-	var alpha = chart.inverted ? options3d.beta : options3d.alpha,
-		beta = chart.inverted ? options3d.alpha : options3d.beta;
 
-	beta *= (chart.yAxis[0].opposite ? -1 : 1);
-
-	pArr = perspective(pArr, alpha, beta, origin);
+	pArr = perspective(pArr, this.axis.chart, false);
 	path = [
 		'M', pArr[0].x, pArr[0].y,
 		'L', pArr[1].x, pArr[1].y
@@ -808,22 +788,9 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getLabelPosition', function (proceed
 		return pos;
 	}	
 
-	var chart = this.axis.chart,
-		options3d = chart.options.chart.options3d;
+	pos = perspective([{x: pos.x, y: pos.y, z: 0}], this.axis.chart, false)[0];
+	pos.x = pos.x - (!this.axis.horiz && this.axis.opposite ? this.axis.transA : 0); //#3788
 
-	var origin = {
-		x: chart.plotLeft + (chart.plotWidth / 2),
-		y: chart.plotTop + (chart.plotHeight / 2),
-		z: options3d.depth,
-		vd: options3d.viewDistance
-	};
-	
-	var alpha = chart.inverted ? options3d.beta : options3d.alpha,
-		beta = chart.inverted ? options3d.alpha : options3d.beta;
-
-	beta *= (chart.yAxis[0].opposite ? -1 : 1);
-
-	pos = perspective([{x: pos.x, y: pos.y, z: 0}], alpha, beta, origin)[0];
 	return pos;
 });
 
@@ -838,7 +805,8 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'drawCrosshair', function (proceed) {
 		}
 	}
 	proceed.apply(this, [].slice.call(args, 1));
-});/*** 
+});
+/***
 	EXTENSION FOR 3D COLUMNS
 ***/
 Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (proceed) {
@@ -851,21 +819,10 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 
 	var series = this,
 		chart = series.chart,
-		options = chart.options,
-		seriesOptions = series.options,		
-		options3d = options.chart.options3d,
+		seriesOptions = series.options,
+		depth = seriesOptions.depth || 25;
 
-		depth = seriesOptions.depth || 25,
-		origin = {
-			x: chart.plotWidth / 2,
-			y: chart.plotHeight / 2, 
-			z: options3d.depth,
-			vd: options3d.viewDistance
-		},
-		alpha = options3d.alpha,
-		beta = options3d.beta * (chart.yAxis[0].opposite ? -1 : 1);
-
-	var stack = seriesOptions.stacking ? (seriesOptions.stack || 0) : series._i; 
+	var stack = seriesOptions.stacking ? (seriesOptions.stack || 0) : series._i;
 	var z = stack * (depth + (seriesOptions.groupZPadding || 1));
 
 	if (seriesOptions.grouping !== false) { z = 0; }
@@ -878,14 +835,12 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 				tooltipPos = point.tooltipPos;
 
 			point.shapeType = 'cuboid';
-			shapeArgs.alpha = alpha;
-			shapeArgs.beta = beta; 
 			shapeArgs.z = z;
-			shapeArgs.origin = origin;
 			shapeArgs.depth = depth;
+			shapeArgs.insidePlotArea = true;
 
 			// Translate the tooltip position in 3d space
-			tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], alpha, beta, origin)[0];
+			tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], chart, false)[0];
 			point.tooltipPos = [tooltipPos.x, tooltipPos.y];
 		}
 	});	    
@@ -999,23 +954,13 @@ Highcharts.wrap(Highcharts.Series.prototype, 'alignDataLabel', function (proceed
 	// Only do this for 3D columns and columnranges
 	if (this.chart.is3d() && (this.type === 'column' || this.type === 'columnrange')) {
 		var series = this,
-			chart = series.chart,
-			options = chart.options,		
-			options3d = options.chart.options3d,
-			origin = {
-				x: chart.plotWidth / 2,
-				y: chart.plotHeight / 2, 
-				z: options3d.depth,
-				vd: options3d.viewDistance
-			},
-			alpha = options3d.alpha,
-			beta = options3d.beta * (chart.yAxis[0].opposite ? -1 : 1);
+			chart = series.chart;
 
 		var args = arguments,
 			alignTo = args[4];
 		
 		var pos = ({x: alignTo.x, y: alignTo.y, z: 0});
-		pos = perspective([pos], alpha, beta, origin)[0];
+		pos = perspective([pos], chart, true)[0];
 		alignTo.x = pos.x;
 		alignTo.y = pos.y;
 	}
@@ -1278,36 +1223,38 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 
 	var series = this,
 		chart = series.chart,
-		options3d = series.chart.options.chart.options3d,
-		alpha = options3d.alpha,
-		beta = options3d.beta,
-		origin = {
-			x: chart.inverted ? chart.plotHeight / 2 : chart.plotWidth / 2,
-			y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2, 
-			z: options3d.depth,
-			vd: options3d.viewDistance
-		},
-		depth = options3d.depth,
+		depth = chart.options.chart.options3d.depth,
 		zAxis = chart.options.zAxis || { min : 0, max: depth };
-	
-	var rangeModifier = depth / (zAxis.max - zAxis.min);
-	
-	Highcharts.each(series.data, function (point) {
-		var pCo = { 
-			x: point.plotX,
-			y: point.plotY,
-			z: (point.z - zAxis.min) * rangeModifier
-		};
 
-		pCo = perspective([pCo], alpha, beta, origin)[0];		
+	var rangeModifier = depth / (zAxis.max - zAxis.min),
+		raw_points = [],
+		raw_point,
+		projected_points,
+		projected_point,
+		i;
 
-		point.plotXold = point.plotX;
-		point.plotYold = point.plotY;
-		
-		point.plotX = pCo.x;
-		point.plotY = pCo.y;
-		point.plotZ = pCo.z;
-	});	  
+	for (i = 0; i < series.data.length; i++) {
+		raw_point = series.data[i];
+		raw_points.push({
+			x: raw_point.plotX,
+			y: raw_point.plotY,
+			z: (raw_point.z - zAxis.min) * rangeModifier
+		});
+	}
+
+	projected_points = perspective(raw_points, chart, true);
+
+	for (i = 0; i < series.data.length; i++) {
+		raw_point = series.data[i];
+		projected_point = projected_points[i];
+
+		raw_point.plotXold = raw_point.plotX;
+		raw_point.plotYold = raw_point.plotY;
+
+		raw_point.plotX = projected_point.x;
+		raw_point.plotY = projected_point.y;
+		raw_point.plotZ = projected_point.z;
+	}
 });
 
 Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'init', function (proceed) {
@@ -1326,7 +1273,8 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'init', function (proc
 		}
 	}
 	return result;
-});/**
+});
+/**
  *	Extension to the VML Renderer
  */
 if (Highcharts.VMLRenderer) {

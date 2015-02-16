@@ -1,12 +1,28 @@
 $(function () {
     $('#container').highcharts({
 
+        title: {
+            text: 'Tooltip snap',
+            align: 'left'
+        },
+
+        subtitle: {
+            text: 'The stickyTracking option is false. Tooltip should display when hovering 50 pixels from the graphs',
+            align: 'left'
+        },
+
         tooltip: {
             snap: 50
         },
 
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        },
+
+        plotOptions: {
+            series: {
+                stickyTracking: false
+            }
         },
 
         series: [{

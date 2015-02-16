@@ -19,15 +19,11 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 		formatter: function () { // #2945
 			return this.point.value;
 		},
+		inside: true, // for the color
 		verticalAlign: 'middle',
 		crop: false,
 		overflow: false,
-		padding: 0,
-		style: {
-			color: 'white',
-			fontWeight: 'bold',
-			HcTextStroke: '3px rgba(0,0,0,0.5)'
-		}
+		padding: 0
 	},
 	turboThreshold: 0,
 	tooltip: {
@@ -174,6 +170,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	getExtremesFromAll: true,
 	useMapGeometry: true, // get axis extremes from paths, not values
 	forceDL: true,
+	searchPoint: noop,
 	/**
 	 * Get the bounding box of all paths in the map combined.
 	 */
@@ -330,6 +327,8 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			joinByNull = joinBy === null,
 			dataUsed = [],
 			mapPoint,
+			transform,
+			mapTransforms,
 			props,
 			i;
 
@@ -358,6 +357,16 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		this.getBox(data);
 		if (mapData) {
 			if (mapData.type === 'FeatureCollection') {
+				if (mapData['hc-transform']) {
+					this.chart.mapTransforms = mapTransforms = mapData['hc-transform'];
+					// Cache cos/sin of transform rotation angle
+					for (transform in mapTransforms) {
+						if (mapTransforms.hasOwnProperty(transform) && transform.rotation) {							
+							transform.cosAngle = Math.cos(transform.rotation);
+							transform.sinAngle = Math.sin(transform.rotation);							
+						}
+					}
+				}
 				mapData = Highcharts.geojson(mapData, this.type, this);
 			}
 

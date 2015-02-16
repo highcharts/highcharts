@@ -324,7 +324,7 @@ extend(Series.prototype, {
 	/**
 	 * Remove a point (rendered or not), by index
 	 */
-	removePoint: function (i, redraw, animation) { // docs: new method on Series object. Sample created: series-removepoint
+	removePoint: function (i, redraw, animation) {
 
 		var series = this,
 			data = series.data,

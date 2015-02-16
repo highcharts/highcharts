@@ -7,74 +7,6 @@ $(function () {
      */
     (function (H) {
 
-        /**
-         * Recursively builds a K-D-tree
-         */
-        function KDTree(points, depth) {
-            var axis, median, length = points && points.length;
-
-            if (length) {
-
-                // alternate between the axis
-                axis = ['plotX', 'plotY'][depth % 2];
-
-                // sort point array
-                points.sort(function (a, b) {
-                    return a[axis] - b[axis];
-                });
-
-                median = Math.floor(length / 2);
-
-                // build and return node
-                return {
-                    point: points[median],
-                    left: KDTree(points.slice(0, median), depth + 1),
-                    right: KDTree(points.slice(median + 1), depth + 1)
-                };
-
-            }
-        }
-
-        /**
-         * Recursively searches for the nearest neighbour using the given K-D-tree
-         */
-        function nearest(search, tree, depth) {
-            var point = tree.point,
-                axis = ['plotX', 'plotY'][depth % 2],
-                tdist,
-                sideA,
-                sideB,
-                ret = point,
-                nPoint1,
-                nPoint2;
-
-            // Get distance
-            point.dist = Math.pow(search.plotX - point.plotX, 2) +
-                Math.pow(search.plotY - point.plotY, 2);
-
-            // Pick side based on distance to splitting point
-            tdist = search[axis] - point[axis];
-            sideA = tdist < 0 ? 'left' : 'right';
-
-            // End of tree
-            if (tree[sideA]) {
-                nPoint1 = nearest(search, tree[sideA], depth + 1);
-
-                ret = (nPoint1.dist < ret.dist ? nPoint1 : point);
-
-                sideB = tdist < 0 ? 'right' : 'left';
-                if (tree[sideB]) {
-                    // compare distance to current best to splitting point to decide wether to check side B or not
-                    if (Math.abs(tdist) < ret.dist) {
-                        nPoint2 = nearest(search, tree[sideB], depth + 1);
-                        ret = (nPoint2.dist < ret.dist ? nPoint2 : ret);
-                    }
-                }
-            }
-            return ret;
-        }
-
-
         // Skip advanced options testing, assume all points are given as [x, y]
         H.seriesTypes.scatter.prototype.pointClass = H.extendClass(H.Point, {
             init: function (series, options) {
@@ -82,7 +14,8 @@ $(function () {
                 this.x = options[0];
                 this.y = options[1];
                 return this;
-            }
+            },
+            pointAttr: {}
         });
         // Draw points as composite shapes
         H.seriesTypes.scatter.prototype.drawPoints = function () {
@@ -213,39 +146,7 @@ $(function () {
             }
             layers.length = i;
         };
-        H.seriesTypes.scatter.prototype.setTooltipPoints = function () {
-            var series = this;
 
-            this.tree = null;
-            setTimeout(function () {
-                series.tree = KDTree(series.points, 0);
-            });
-        };
-        H.seriesTypes.scatter.prototype.getNearest = function (search) {
-            if (this.tree) {
-                return nearest(search, this.tree, 0);
-            }
-        };
-
-        H.wrap(H.Pointer.prototype, 'runPointActions', function (proceed, e) {
-            var chart = this.chart;
-            proceed.call(this, e);
-
-
-            // Draw independent tooltips
-            H.each(chart.series, function (series) {
-                var point;
-                if (series.getNearest) {
-                    point = series.getNearest({
-                        plotX: e.chartX - chart.plotLeft,
-                        plotY: e.chartY - chart.plotTop
-                    });
-                    if (point) {
-                        point.onMouseOver(e);
-                    }
-                }
-            })
-        });
     }(Highcharts));
     // End faster scatter mod
 

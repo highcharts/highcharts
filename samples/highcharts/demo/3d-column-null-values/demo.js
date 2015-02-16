@@ -25,7 +25,9 @@ $(function () {
             categories: Highcharts.getOptions().lang.shortMonths
         },
         yAxis: {
-            opposite: true
+            title: {
+                text: null
+            }
         },
         series: [{
             name: 'Sales',

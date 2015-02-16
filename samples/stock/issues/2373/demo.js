@@ -43,7 +43,8 @@ $(function () {
             },
 
             rangeSelector: {
-                selected: 5
+                selected: 5,
+                inputEnabled: false
             },
 
             yAxis: {

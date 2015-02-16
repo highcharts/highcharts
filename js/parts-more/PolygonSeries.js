@@ -1,7 +1,7 @@
 /**
  * Set the default options for polygon
  */
-defaultPlotOptions.polygon = merge(defaultPlotOptions.scatter, { // docs: new series type
+defaultPlotOptions.polygon = merge(defaultPlotOptions.scatter, {
 	marker: {
 		enabled: false
 	}

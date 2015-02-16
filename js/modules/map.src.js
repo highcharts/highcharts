@@ -26,6 +26,7 @@ var UNDEFINED,
 	
 	addEvent = Highcharts.addEvent,
 	each = Highcharts.each,
+	error = Highcharts.error,
 	extend = Highcharts.extend,
 	extendClass = Highcharts.extendClass,
 	merge = Highcharts.merge,
@@ -365,6 +366,9 @@ extend(ColorAxis.prototype, {
 				this.labelGroup.add(group);
 
 				this.added = true;
+
+				this.labelLeft = 0;
+				this.labelRight = this.width;
 			}
 			// Reset it to avoid color axis reserving space
 			this.chart.axisOffset[this.side] = sideOffset;
@@ -443,7 +447,7 @@ extend(ColorAxis.prototype, {
 			axisLen = this.len;
 		
 		if (point) {
-			crossPos = this.toPixels(point.value);
+			crossPos = this.toPixels(point[point.series.colorKey]);
 			if (crossPos < axisPos) {
 				crossPos = axisPos - 2;
 			} else if (crossPos > axisPos + axisLen) {
@@ -461,7 +465,7 @@ extend(ColorAxis.prototype, {
 					.attr({
 						fill: this.crosshair.color
 					})
-					.add(this.labelGroup);
+					.add(this.legendGroup);
 			}
 		}
 	},
@@ -640,55 +644,6 @@ var colorSeriesMixin = {
 			}
 		});
 	}
-};
-
-
-/**
- * Wrap the buildText method and add the hook for add text stroke
- */
-wrap(SVGRenderer.prototype, 'buildText', function (proceed, wrapper) {
-
-	var textStroke = wrapper.styles && wrapper.styles.HcTextStroke;
-
-	proceed.call(this, wrapper);
-
-	// Apply the text stroke
-	if (textStroke && wrapper.applyTextStroke) {
-		wrapper.applyTextStroke(textStroke);
-	}
-});
-
-/**
- * Apply an outside text stroke to data labels, based on the custom CSS property, HcTextStroke.
- * Consider moving this to Highcharts core, also makes sense on stacked columns etc.
- */
-SVGRenderer.prototype.Element.prototype.applyTextStroke = function (textStroke) {
-	var elem = this.element,
-		tspans,
-		firstChild;
-	
-	textStroke = textStroke.split(' ');
-	tspans = elem.getElementsByTagName('tspan');
-	firstChild = elem.firstChild;
-	
-	// In order to get the right y position of the clones, 
-	// copy over the y setter
-	this.ySetter = this.xSetter;
-	
-	each([].slice.call(tspans), function (tspan, y) {
-		var clone;
-		if (y === 0) {
-			tspan.setAttribute('x', elem.getAttribute('x'));
-			if ((y = elem.getAttribute('y')) !== null) {
-				tspan.setAttribute('y', y);
-			}
-		}
-		clone = tspan.cloneNode(1);
-		clone.setAttribute('stroke', textStroke[1]);
-		clone.setAttribute('stroke-width', textStroke[0]);
-		clone.setAttribute('stroke-linejoin', 'round');
-		elem.insertBefore(clone, firstChild);
-	});
 };
 // Add events to the Chart object itself
 extend(Chart.prototype, {
@@ -972,15 +927,11 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 		formatter: function () { // #2945
 			return this.point.value;
 		},
+		inside: true, // for the color
 		verticalAlign: 'middle',
 		crop: false,
 		overflow: false,
-		padding: 0,
-		style: {
-			color: 'white',
-			fontWeight: 'bold',
-			HcTextStroke: '3px rgba(0,0,0,0.5)'
-		}
+		padding: 0
 	},
 	turboThreshold: 0,
 	tooltip: {
@@ -1127,6 +1078,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	getExtremesFromAll: true,
 	useMapGeometry: true, // get axis extremes from paths, not values
 	forceDL: true,
+	searchPoint: noop,
 	/**
 	 * Get the bounding box of all paths in the map combined.
 	 */
@@ -1283,6 +1235,8 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			joinByNull = joinBy === null,
 			dataUsed = [],
 			mapPoint,
+			transform,
+			mapTransforms,
 			props,
 			i;
 
@@ -1311,6 +1265,16 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		this.getBox(data);
 		if (mapData) {
 			if (mapData.type === 'FeatureCollection') {
+				if (mapData['hc-transform']) {
+					this.chart.mapTransforms = mapTransforms = mapData['hc-transform'];
+					// Cache cos/sin of transform rotation angle
+					for (transform in mapTransforms) {
+						if (mapTransforms.hasOwnProperty(transform) && transform.rotation) {							
+							transform.cosAngle = Math.cos(transform.rotation);
+							transform.sinAngle = Math.sin(transform.rotation);							
+						}
+					}
+				}
 				mapData = Highcharts.geojson(mapData, this.type, this);
 			}
 
@@ -1670,86 +1634,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	animateDrillupTo: function (init) {
 		seriesTypes.column.prototype.animateDrillupTo.call(this, init);
 	}
-}));/**
- * @license Highmaps JS v1.0.4-modified ()
- * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
- *
- * (c) 2010-2014 Torstein Honsi
- *
- * License: www.highcharts.com/license
- */
-
-(function (H) {
-	var Series = H.Series,
-		wrap = H.wrap;
-
-	// Add the overlapping logic after drawing data labels
-	wrap(Series.prototype, 'drawDataLabels', function (proceed) {
-		proceed.call(this);
-		this.hideOverlappingDataLabels();
-	});
-
-	/**
-	 * Hide overlapping labels. Labels are moved and faded in and out on zoom to provide a smooth 
-	 * visual imression.
-	 */		
-	Series.prototype.hideOverlappingDataLabels = function () {
-
-		var points = this.points,
-			len = points.length,
-			point,
-			label,
-			i,
-			j,
-			label1,
-			label2,
-			intersectRect = function (pos1, pos2, size1, size2) {
-				return !(
-					pos2.x > pos1.x + size1.width ||
-					pos2.x + size2.width < pos1.x ||
-					pos2.y > pos1.y + size1.height ||
-					pos2.y + size2.height < pos1.y
-				);
-			};
-	
-		// Mark with initial opacity
-		for (i = 0; i < len; i++) {
-			point = points[i];
-			label = point.dataLabel;
-			if (label) {
-				label.oldOpacity = label.opacity;
-				label.newOpacity = 1;
-			}
-		}
-
-		// Detect overlapping labels
-		for (i = 0; i < len; i++) {
-			point = points[i];
-			label1 = point.dataLabel;
-
-			for (j = i + 1; j < len; ++j) {
-				label2 = points[j].dataLabel;
-				if (label1 && label2 && label1.placed && label2.placed && label1.newOpacity !== 0 && label2.newOpacity !== 0 && 
-						intersectRect(label1.alignAttr, label2.alignAttr, label1, label2)) {
-					(point.labelrank < points[j].labelrank ? label1 : label2).newOpacity = 0;
-				}
-			}
-		}
-
-		// Hide or show
-		for (i = 0; i < len; i++) {
-			label = points[i].dataLabel;
-			if (label) {
-				if (label.oldOpacity !== label.newOpacity && label.placed) {
-					label.alignAttr.opacity = label.newOpacity;
-					label[label.isOld ? 'animate' : 'attr'](label.alignAttr);
-				}
-				label.isOld = true;
-			}
-		}
-	};
-
-}(Highcharts));
+}));
 
 
 // The mapline series type
@@ -1775,18 +1660,26 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 		formatter: function () { // #2945
 			return this.point.name; 
 		},
-		color: 'black',
 		crop: false,
 		defer: false,
 		overflow: false,
 		style: {
-			HcTextStroke: '3px rgba(255,255,255,0.5)'
+			color: '#000000'
 		}
 	}
 });
 seriesTypes.mappoint = extendClass(seriesTypes.scatter, {
 	type: 'mappoint',
-	forceDL: true
+	forceDL: true,
+	pointClass: extendClass(Point, {
+		applyOptions: function (options, x) {
+			var point = Point.prototype.applyOptions.call(this, options, x);
+			if (options.lat !== undefined && options.lon !== undefined) {
+				point = extend(point, this.series.chart.fromLatLonToPoint(point));
+			}
+			return point;
+		}
+	})
 });
 
 // The mapbubble series type
@@ -1800,7 +1693,17 @@ if (seriesTypes.bubble) {
 	});
 	seriesTypes.mapbubble = extendClass(seriesTypes.bubble, {
 		pointClass: extendClass(Point, {
-			applyOptions: MapAreaPoint.prototype.applyOptions
+			applyOptions: function (options, x) {
+				var point;
+				if (options.lat !== undefined && options.lon !== undefined) {
+					point = Point.prototype.applyOptions.call(this, options, x);
+					point = extend(point, this.series.chart.fromLatLonToPoint(point));
+				} else {
+					point = MapAreaPoint.prototype.applyOptions.call(this, options, x);
+				}
+				return point;
+			},
+			ttBelow: false
 		}),
 		xyFromShape: true,
 		type: 'mapbubble',
@@ -1825,14 +1728,10 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 		formatter: function () { // #2945
 			return this.point.value;
 		},
+		inside: true,
 		verticalAlign: 'middle',
 		crop: false,
-		overflow: false,
-		style: {
-			color: 'white',
-			fontWeight: 'bold',
-			HcTextStroke: '1px rgba(0,0,0,0.5)'
-		}
+		overflow: false
 	},
 	marker: null,
 	tooltip: {
@@ -1917,6 +1816,115 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 }));
 
 
+/** 
+ * Test for point in polygon. Polygon defined as array of [x,y] points.
+ */
+function pointInPolygon(point, polygon) {
+	var i, j, rel1, rel2, c = false,
+		x = point.x,
+		y = point.y;
+
+	for (i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+		rel1 = polygon[i][1] > y;
+		rel2 = polygon[j][1] > y;
+		if (rel1 !== rel2 && (x < (polygon[j][0] - polygon[i][0]) * (y - polygon[i][1]) / (polygon[j][1] - polygon[i][1]) + polygon[i][0])) {
+			c = !c;
+		}
+	}
+
+	return c;
+}
+
+/**
+ * Get point from latLon using specified transform definition
+ */
+Chart.prototype.transformFromLatLon = function (latLon, transform) {
+	if (window.proj4 === undefined) {
+		error(21);
+		return {
+			x: 0,
+			y: null
+		};
+	}
+
+	var projected = window.proj4(transform.crs, [latLon.lon, latLon.lat]),
+		cosAngle = transform.cosAngle || (transform.rotation && Math.cos(transform.rotation)),
+		sinAngle = transform.sinAngle || (transform.rotation && Math.sin(transform.rotation)),
+		rotated = transform.rotation ? [projected[0] * cosAngle + projected[1] * sinAngle, -projected[0] * sinAngle + projected[1] * cosAngle] : projected;
+	
+	return {
+		x: ((rotated[0] - (transform.xoffset || 0)) * (transform.scale || 1) + (transform.xpan || 0)) * (transform.jsonres || 1) + (transform.jsonmarginX || 0),
+		y: (((transform.yoffset || 0) - rotated[1]) * (transform.scale || 1) + (transform.ypan || 0)) * (transform.jsonres || 1) - (transform.jsonmarginY || 0)
+	};
+};
+
+/**
+ * Get latLon from point using specified transform definition
+ */
+Chart.prototype.transformToLatLon = function (point, transform) {
+	if (window.proj4 === undefined) {
+		error(21);
+		return;
+	}
+
+	var normalized = {
+			x: ((point.x - (transform.jsonmarginX || 0)) / (transform.jsonres || 1) - (transform.xpan || 0)) / (transform.scale || 1) + (transform.xoffset || 0),
+			y: ((-point.y - (transform.jsonmarginY || 0)) / (transform.jsonres || 1) + (transform.ypan || 0)) / (transform.scale || 1) + (transform.yoffset || 0)
+		},
+		cosAngle = transform.cosAngle || (transform.rotation && Math.cos(transform.rotation)),
+		sinAngle = transform.sinAngle || (transform.rotation && Math.sin(transform.rotation)),
+		// Note: Inverted sinAngle to reverse rotation direction
+		projected = window.proj4(transform.crs, 'WGS84', transform.rotation ? {
+			x: normalized.x * cosAngle + normalized.y * -sinAngle,
+			y: normalized.x * sinAngle + normalized.y * cosAngle
+		} : normalized);
+
+	return {lat: projected.y, lon: projected.x};
+};
+
+Chart.prototype.fromPointToLatLon = function (point) {
+	var transforms = this.mapTransforms,
+		transform;
+
+	if (!transforms) {
+		error(22);
+		return;
+	}
+
+	for (transform in transforms) {
+		if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone && pointInPolygon({x: point.x, y: -point.y}, transforms[transform].hitZone.coordinates[0])) {
+			return this.transformToLatLon(point, transforms[transform]);
+		}
+	}
+
+	return this.transformToLatLon(point, transforms['default']);
+};
+
+Chart.prototype.fromLatLonToPoint = function (latLon) {
+	var transforms = this.mapTransforms,
+		transform,
+		coords;
+
+	if (!transforms) {
+		error(22);
+		return {
+			x: 0,
+			y: null
+		};
+	}
+
+	for (transform in transforms) {
+		if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone) {
+			coords = this.transformFromLatLon(latLon, transforms[transform]);
+			if (pointInPolygon({x: coords.x, y: -coords.y}, transforms[transform].hitZone.coordinates[0])) {
+				return coords;
+			}
+		}
+	}
+
+	return this.transformFromLatLon(latLon, transforms['default']);
+};
+
 /**
  * Convert a geojson object to map data of a given Highcharts type (map, mappoint or mapline).
  */
@@ -1988,7 +1996,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 				properties: properties
 			}));
 		}
-		
+
 	});
 
 	// Create a credits text that includes map source, to be picked up in Chart.showCredits

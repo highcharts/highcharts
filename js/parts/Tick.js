@@ -21,23 +21,14 @@ Tick.prototype = {
 			axis = tick.axis,
 			options = axis.options,
 			chart = axis.chart,
-			horiz = axis.horiz,
 			categories = axis.categories,
 			names = axis.names,
 			pos = tick.pos,
 			labelOptions = options.labels,
-			rotation = labelOptions.rotation,
 			str,
 			tickPositions = axis.tickPositions,
-			width = (horiz && categories &&
-				!labelOptions.step && !labelOptions.staggerLines &&
-				!labelOptions.rotation &&
-				chart.plotWidth / tickPositions.length) ||
-				(!horiz && (chart.margin[3] || chart.chartWidth * 0.33)), // #1580, #1931
 			isFirst = pos === tickPositions[0],
 			isLast = pos === tickPositions[tickPositions.length - 1],
-			css,
-			attr,
 			value = categories ?
 				pick(categories[pos], names[pos], pos) :
 				pos,
@@ -65,19 +56,10 @@ Tick.prototype = {
 		});
 
 		// prepare CSS
-		css = width && { width: mathMax(1, mathRound(width - 2 * (labelOptions.padding || 10))) + PX };
+		//css = width && { width: mathMax(1, mathRound(width - 2 * (labelOptions.padding || 10))) + PX };
 		
 		// first call
 		if (!defined(label)) {
-			attr = {
-				align: axis.labelAlign
-			};
-			if (isNumber(rotation)) {
-				attr.rotation = rotation;
-			}
-			if (width && labelOptions.ellipsis) {
-				css.HcHeight = axis.len / tickPositions.length;
-			}
 
 			tick.label = label =
 				defined(str) && labelOptions.enabled ?
@@ -87,140 +69,83 @@ Tick.prototype = {
 							0,
 							labelOptions.useHTML
 						)
-						.attr(attr)
+						//.attr(attr)
 						// without position absolute, IE export sometimes is wrong
-						.css(extend(css, labelOptions.style))
+						.css(merge(labelOptions.style))
 						.add(axis.labelGroup) :
 					null;
-
-			// Set the tick baseline and correct for rotation (#1764)
-			axis.tickBaseline = chart.renderer.fontMetrics(labelOptions.style.fontSize, label).b;
-			if (rotation && axis.side === 2) {
-				axis.tickBaseline *= mathCos(rotation * deg2rad);
-			}
-
+			tick.labelLength = label && label.getBBox().width; // Un-rotated length
+			tick.rotation = 0; // Base value to detect change for new calls to getBBox
 
 		// update
 		} else if (label) {
-			label.attr({
-					text: str
-				})
-				.css(css);
+			label.attr({ text: str });
 		}
-		tick.yOffset = label ? pick(labelOptions.y, axis.tickBaseline + (axis.side === 2 ? 8 : -(label.getBBox().height / 2))) : 0;
 	},
 
 	/**
 	 * Get the offset height or width of the label
 	 */
 	getLabelSize: function () {
-		var label = this.label,
-			axis = this.axis;
-		return label ?
-			label.getBBox()[axis.horiz ? 'height' : 'width'] :
+		return this.label ?
+			this.label.getBBox()[this.axis.horiz ? 'height' : 'width'] :
 			0;
-	},
-
-	/**
-	 * Find how far the labels extend to the right and left of the tick's x position. Used for anti-collision
-	 * detection with overflow logic.
-	 */
-	getLabelSides: function () {
-		var bBox = this.label.getBBox(),
-			axis = this.axis,
-			horiz = axis.horiz,
-			options = axis.options,
-			labelOptions = options.labels,
-			size = horiz ? bBox.width : bBox.height,
-			leftSide = horiz ?
-				labelOptions.x - size * { left: 0, center: 0.5, right: 1 }[axis.labelAlign] :
-				0,
-			rightSide = horiz ?
-				size + leftSide :
-				size;
-
-		return [leftSide, rightSide];
 	},
 
 	/**
 	 * Handle the label overflow by adjusting the labels to the left and right edge, or
 	 * hide them if they collide into the neighbour label.
 	 */
-	handleOverflow: function (index, xy) {
-		var show = true,
-			axis = this.axis,
-			isFirst = this.isFirst,
-			isLast = this.isLast,
-			horiz = axis.horiz,
-			pxPos = horiz ? xy.x : xy.y,
-			reversed = axis.reversed,
-			tickPositions = axis.tickPositions,
-			sides = this.getLabelSides(),
-			leftSide = sides[0],
-			rightSide = sides[1],
-			axisLeft,
-			axisRight,
-			neighbour,
-			neighbourEdge,
-			line = this.label.line,
-			lineIndex = line || 0,
-			labelEdge = axis.labelEdge,
-			justifyLabel = axis.justifyLabels && (isFirst || isLast),
-			justifyToPlot;
+	handleOverflow: function (xy) {
+		var axis = this.axis,
+			pxPos = xy.x,
+			chartWidth = axis.chart.chartWidth,
+			spacing = axis.chart.spacing,
+			leftBound = pick(axis.labelLeft, spacing[3]),
+			rightBound = pick(axis.labelRight, chartWidth - spacing[1]),
+			label = this.label,
+			rotation = this.rotation,
+			factor = { left: 0, center: 0.5, right: 1 }[axis.labelAlign],
+			labelWidth = label.getBBox().width,
+			slotWidth = axis.slotWidth,
+			leftPos,
+			rightPos,
+			textWidth;
 
-		// Hide it if it now overlaps the neighbour label
-		if (labelEdge[lineIndex] === UNDEFINED || pxPos + leftSide > labelEdge[lineIndex]) {
-			labelEdge[lineIndex] = pxPos + rightSide;
+		// Check if the label overshoots the chart spacing box. If it does, move it.
+		// If it now overshoots the slotWidth, add ellipsis.
+		if (!rotation) {
+			leftPos = pxPos - factor * labelWidth;
+			rightPos = pxPos + factor * labelWidth;
 
-		} else if (!justifyLabel) {
-			show = false;
-		}
-
-		if (justifyLabel) {
-			justifyToPlot = axis.justifyToPlot;
-			axisLeft = justifyToPlot ? axis.pos : 0;
-			axisRight = justifyToPlot ? axisLeft + axis.len : axis.chart.chartWidth;
-
-			// Find the firsth neighbour on the same line
-			do {
-				index += (isFirst ? 1 : -1);
-				neighbour = axis.ticks[tickPositions[index]];
-			} while (tickPositions[index] && (!neighbour || !neighbour.label || neighbour.label.line !== line)); // #3044
-
-			neighbourEdge = neighbour && neighbour.label.xy && neighbour.label.xy.x + neighbour.getLabelSides()[isFirst ? 0 : 1];
-
-			if ((isFirst && !reversed) || (isLast && reversed)) {
-				// Is the label spilling out to the left of the plot area?
-				if (pxPos + leftSide < axisLeft) {
-
-					// Align it to plot left
-					pxPos = axisLeft - leftSide;
-
-					// Hide it if it now overlaps the neighbour label
-					if (neighbour && pxPos + rightSide > neighbourEdge) {
-						show = false;
-					}
-				}
-
-			} else {
-				// Is the label spilling out to the right of the plot area?
-				if (pxPos + rightSide > axisRight) {
-
-					// Align it to plot right
-					pxPos = axisRight - rightSide;
-
-					// Hide it if it now overlaps the neighbour label
-					if (neighbour && pxPos + leftSide < neighbourEdge) {
-						show = false;
-					}
-
-				}
+			if (leftPos < leftBound) {
+				slotWidth -= leftBound - leftPos;
+				xy.x = leftBound;
+				label.attr({ align: 'left' });				
+			} else if (rightPos > rightBound) {
+				slotWidth -= rightPos - rightBound;
+				xy.x = rightBound;
+				label.attr({ align: 'right' });
 			}
 
-			// Set the modified x position of the label
-			xy.x = pxPos;
+			if (labelWidth > slotWidth) {
+				textWidth = slotWidth;
+			}
+		
+
+		// Add ellipsis to prevent rotated labels to be clipped against the edge of the chart
+		} else if (rotation < 0 && pxPos - factor * labelWidth < leftBound) {
+			textWidth = mathRound(pxPos / mathCos(rotation * deg2rad) - leftBound);
+		} else if (rotation > 0 && pxPos + factor * labelWidth > rightBound) {
+			textWidth = mathRound((chartWidth - pxPos) / mathCos(rotation * deg2rad));
 		}
-		return show;
+
+		if (textWidth) {
+			label.css({
+				width: textWidth,
+				textOverflow: 'ellipsis'
+			});
+		}
 	},
 
 	/**
@@ -250,22 +175,25 @@ Tick.prototype = {
 		var axis = this.axis,
 			transA = axis.transA,
 			reversed = axis.reversed,
-			staggerLines = axis.staggerLines;
+			staggerLines = axis.staggerLines,
+			rotCorr = axis.tickRotCorr || { x: 0, y: 0 },
+			yOffset = pick(labelOptions.y, rotCorr.y + (axis.side === 2 ? 8 : -(label.getBBox().height / 2))),
+			line;
 
-		x = x + labelOptions.x - (tickmarkOffset && horiz ?
+		x = x + labelOptions.x + rotCorr.x - (tickmarkOffset && horiz ?
 			tickmarkOffset * transA * (reversed ? -1 : 1) : 0);
-		y = y + this.yOffset - (tickmarkOffset && !horiz ?
+		y = y + yOffset - (tickmarkOffset && !horiz ?
 			tickmarkOffset * transA * (reversed ? 1 : -1) : 0);
 
 		// Correct for staggered labels
 		if (staggerLines) {
-			label.line = (index / (step || 1) % staggerLines);
-			y += label.line * (axis.labelOffset / staggerLines);
+			line = (index / (step || 1) % staggerLines);
+			y += line * (axis.labelOffset / staggerLines);
 		}
 
 		return {
 			x: x,
-			y: y
+			y: mathRound(y)
 		};
 	},
 
@@ -313,7 +241,7 @@ Tick.prototype = {
 			gridLinePath,
 			mark = tick.mark,
 			markPath,
-			step = labelOptions.step,
+			step = /*axis.labelStep || */labelOptions.step,
 			attribs,
 			show = true,
 			tickmarkOffset = axis.tickmarkOffset,
@@ -399,8 +327,8 @@ Tick.prototype = {
 				show = false;
 
 			// Handle label overflow and show or hide accordingly
-			} else if (!axis.isRadial && !labelOptions.step && !labelOptions.rotation && !old && opacity !== 0) {
-				show = tick.handleOverflow(index, xy);
+			} else if (horiz && !axis.isRadial && !labelOptions.step && !labelOptions.rotation && !old && opacity !== 0) {
+				tick.handleOverflow(xy);
 			}
 
 			// apply step

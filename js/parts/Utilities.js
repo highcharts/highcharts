@@ -4,7 +4,7 @@
  * @param {Object} a The object to be extended
  * @param {Object} b The object to add to the first one
  */
-function extend(a, b) {
+var extend = Highcharts.extend = function (a, b) {
 	var n;
 	if (!a) {
 		a = {};
@@ -13,7 +13,7 @@ function extend(a, b) {
 		a[n] = b[n];
 	}
 	return a;
-}
+};
 	
 /**
  * Deep merge two or more objects and return a third object. If the first argument is
@@ -183,7 +183,7 @@ function splat(obj) {
 /**
  * Return the first value that is defined. Like MooTools' $.pick.
  */
-function pick() {
+var pick = Highcharts.pick = function () {
 	var args = arguments,
 		i,
 		arg,
@@ -194,7 +194,7 @@ function pick() {
 			return arg;
 		}
 	}
-}
+};
 
 /**
  * Set CSS on a given element
@@ -437,8 +437,10 @@ function getMagnitude(num) {
  * @param {Number} magnitude
  * @param {Object} options
  */
-function normalizeTickInterval(interval, multiples, magnitude, allowDecimals) {
-	var normalized, i;
+function normalizeTickInterval(interval, multiples, magnitude, allowDecimals, preventExceed) {
+	var normalized, 
+		i,
+		retInterval = interval;
 
 	// round to a tenfold of 1, 2, 2.5 or 5
 	magnitude = pick(magnitude, 1);
@@ -460,16 +462,17 @@ function normalizeTickInterval(interval, multiples, magnitude, allowDecimals) {
 
 	// normalize the interval to the nearest multiple
 	for (i = 0; i < multiples.length; i++) {
-		interval = multiples[i];
-		if (normalized <= (multiples[i] + (multiples[i + 1] || multiples[i])) / 2) {
+		retInterval = multiples[i];
+		if ((preventExceed && retInterval * magnitude >= interval) || // only allow tick amounts smaller than natural
+			(!preventExceed && (normalized <= (multiples[i] + (multiples[i + 1] || multiples[i])) / 2))) {
 			break;
 		}
 	}
 
 	// multiply back to the correct magnitude
-	interval *= magnitude;
-
-	return interval;
+	retInterval *= magnitude;
+	
+	return retInterval;
 }
 
 
@@ -627,7 +630,6 @@ timeUnits = {
  * @param {String} decPoint The decimal point, defaults to the one given in the lang options
  * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
  */
-// docs: Overridable by wrap. Demo at /members/highcharts-numberformat
 Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
 	var lang = defaultOptions.lang,
 		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/

@@ -6,12 +6,14 @@ header('Content-Type: text/javascript');
  * This file concatenates the part files and returns the result based on the setup in /build.xml
  */
 $target = @$_GET['target'];
-$partsDir = 'parts/';
+$partsDir = '';
 
 if ($target == 'highchartsmore') {
 	$partsDir = 'parts-more/';
 
 } else if ($target == 'highmaps') {
+	$partsDir = '';
+} else if ($target == 'highstock') {
 	$partsDir = '';
 }
 

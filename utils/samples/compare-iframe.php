@@ -150,13 +150,21 @@ function getCompareTooltips() {
 						if (chart) {
 
 							// Automatically click buttons with classname "autocompare"
-							$('.autocompare').click();
+							tryToRun(function () {
+								$('.autocompare').click();
+							});
 
 							window.parent.onLoadTest('<?php echo $_GET['which']; ?>', $(chart.container).html());
 							clearInterval(interval);
 							
 						// Compare renderers
 						} else if (window.renderer) {
+	
+							// Automatically click buttons with classname "autocompare"
+							tryToRun(function () {
+								$('.autocompare').click();
+							});
+
 							// Create a mock chart object with a getSVG method
 							chart = {
 								getSVG: function () {
@@ -217,7 +225,8 @@ function getCompareTooltips() {
 								marker: {
 									lineWidth: 1
 								},
-								borderWidth: 1
+								borderWidth: 1,
+								kdSync: true
 							}
 						}
 							
@@ -227,8 +236,7 @@ function getCompareTooltips() {
 					//Highcharts.wrap(Highcharts, 'Chart', tryToRun);
 					//Highcharts.wrap(Highcharts, 'StockChart', tryToRun);
 					//Highcharts.wrap(Highcharts, 'Map', tryToRun);
-					Highcharts.wrap(Highcharts.Chart.prototype, 'init', tryToRun);
-
+					Highcharts.wrap(Highcharts.Chart.prototype, 'init', tryToRun);					
 
 					<?php if (getCompareTooltips()) : ?>
 					// Start with tooltip open 
@@ -242,7 +250,7 @@ function getCompareTooltips() {
 						}
 					});
 					<?php endif ?>
-
+					
 					<?php if (file_exists("$path/test.js")) : ?>
 					<?php include("$path/test.js"); ?>
 					Highcharts.Chart.prototype.callbacks.push(function (chart) {
