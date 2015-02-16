@@ -518,7 +518,7 @@ Tooltip.prototype = {
 	bodyFormatter: function (items) {
         return map(items, function (item) {
             var tooltipOptions = item.series.tooltipOptions;
-            return (tooltipOptions.pointFormatter || item.point.tooltipFormatter).call(item.point, tooltipOptions.pointFormat); // docs
+            return (tooltipOptions.pointFormatter || item.point.tooltipFormatter).call(item.point, tooltipOptions.pointFormat);
         });
     }
     

@@ -630,7 +630,6 @@ timeUnits = {
  * @param {String} decPoint The decimal point, defaults to the one given in the lang options
  * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
  */
-// docs: Overridable by wrap. Demo at /members/highcharts-numberformat
 Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
 	var lang = defaultOptions.lang,
 		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/

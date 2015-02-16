@@ -3,7 +3,7 @@
  *****************************************************************************/
 defaultOptions = {
 	colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', 
-		    '#8085e9', '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'], // docs: default colors
+		    '#8085e9', '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'],
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
 		loading: 'Loading...',
@@ -15,7 +15,7 @@ defaultOptions = {
 		numericSymbols: ['k', 'M', 'G', 'T', 'P', 'E'], // SI prefixes used in axis labels
 		resetZoom: 'Reset zoom',
 		resetZoomTitle: 'Reset zoom level 1:1',
-		thousandsSep: ' ' // docs
+		thousandsSep: ' '
 	},
 	global: {
 		useUTC: true,
@@ -143,7 +143,7 @@ defaultOptions = {
 				formatter: function () {
 					return this.y === null ? '' : Highcharts.numberFormat(this.y, -1);
 				},
-				style: { // docs: new defaults
+				style: {
 					color: 'contrast',
 					fontSize: '11px',
 					fontWeight: 'bold',
@@ -156,7 +156,7 @@ defaultOptions = {
 				// borderColor: undefined,
 				// borderRadius: undefined,
 				// borderWidth: undefined,
-				padding: 5 // docs
+				padding: 5
 				// shadow: false
 			},
 			cropThreshold: 300, // draw points outside the plot area when the number of points is less than this
@@ -183,7 +183,7 @@ defaultOptions = {
 			},
 			stickyTracking: true,
 			//tooltip: {
-				//pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b>' // docs
+				//pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b>'
 				//valueDecimals: null,
 				//xDateFormat: '%A, %b %e, %Y',
 				//valuePrefix: '',
@@ -295,7 +295,7 @@ defaultOptions = {
 		footerFormat: '',
 		//formatter: defaultFormatter,
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
-		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>', // docs
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 		shadow: true,
 		//shape: 'callout',
 		//shared: false,

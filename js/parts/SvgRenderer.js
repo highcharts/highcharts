@@ -171,7 +171,7 @@ SVGElement.prototype = {
 			// this again with new IE release.
 			supports = elem.style.textShadow !== UNDEFINED && !isIE && !isSafari;
 
-		// When the text shadow is set to contrast, use dark stroke for light text and vice versa // docs: new defaults for all affected series
+		// When the text shadow is set to contrast, use dark stroke for light text and vice versa
 		if (hasContrast) {
 			textShadow = textShadow.replace(/contrast/g, this.renderer.getContrast(elem.style.fill));
 		}
