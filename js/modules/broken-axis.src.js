@@ -247,7 +247,7 @@
 			i = points.length;
 
 
-		if (xAxis.options.breaks || yAxis.options.breaks) {
+		if (xAxis && yAxis && (xAxis.options.breaks || yAxis.options.breaks)) {
 			while (i--) {
 				point = points[i];
 

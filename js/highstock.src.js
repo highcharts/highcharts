@@ -19003,6 +19003,7 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
  * End ordinal axis logic                                                   *
  *****************************************************************************/
 /**
+ * @license Highstock JS v2.1.0-modified ()
  * Highcharts Broken Axis module
  * 
  * Author: Stephane Vanraes, Torstein Honsi
@@ -19250,7 +19251,7 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 			i = points.length;
 
 
-		if (xAxis.options.breaks || yAxis.options.breaks) {
+		if (xAxis && yAxis && (xAxis.options.breaks || yAxis.options.breaks)) {
 			while (i--) {
 				point = points[i];
 
