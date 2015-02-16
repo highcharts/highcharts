@@ -216,9 +216,9 @@ extend(Legend.prototype, {
 
 		addEvent(item.checkbox, 'click', function (event) {
 			var target = event.target;
-			fireEvent(item.series || item, 'checkboxClick', { // #3712 // docs: note that for pies the checkbox applies to each point, but the handler is on the series.
+			fireEvent(item.series || item, 'checkboxClick', { // #3712
 					checked: target.checked,
-					item: item // docs http://jsfiddle.net/highcharts/5c7w3xeh/
+					item: item
 				},
 				function () {
 					item.select();

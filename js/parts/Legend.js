@@ -375,7 +375,7 @@ Legend.prototype = {
 						chart[marginNames[side]],
 						chart.legend[(side + 1) % 2 ? 'legendHeight' : 'legendWidth'] + 
 							[1, -1, -1, 1][side] * options[(side % 2) ? 'x' : 'y'] + 
-							pick(options.margin, 12) + // docs: new default 
+							pick(options.margin, 12) +
 							spacing[side]
 					);
 				}

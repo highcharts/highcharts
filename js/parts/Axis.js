@@ -1078,7 +1078,9 @@ Axis.prototype = {
 			}
 
 			this.tickPositions = tickPositions;
-			if (tickPositioner) { // docs: now runs default tick positioning, and allows modifying this
+
+			// Run the tick positioner callback, that allows modifying auto tick positions.
+			if (tickPositioner) {
 				tickPositioner = tickPositioner.apply(this, [this.min, this.max]);
 				if (tickPositioner) {
 					this.tickPositions = tickPositions = tickPositioner;
@@ -1469,7 +1471,7 @@ Axis.prototype = {
 			ticks = this.ticks,
 			labelOptions = this.options.labels,
 			horiz = this.horiz,
-			tickInterval = this.tickInterval, // docs: from 4.1, tickInterval can not be smaller than labels
+			tickInterval = this.tickInterval,
 			newTickInterval = tickInterval,
 			slotSize = this.len / (((this.categories ? 1 : 0) + this.max - this.min) / tickInterval),
 			rotation,
@@ -1533,7 +1535,7 @@ Axis.prototype = {
 			slotWidth = this.slotWidth = (horiz && !labelOptions.step && !labelOptions.rotation &&
 				((this.staggerLines || 1) * chart.plotWidth) / tickPositions.length) ||
 				(!horiz && ((margin[3] && (margin[3] - chart.spacing[3])) || chart.chartWidth * 0.33)), // #1580, #1931,
-			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))), // docs: padding new default
+			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))),
 			attr = {},
 			labelMetrics = renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
 			css,
@@ -2085,7 +2087,7 @@ Axis.prototype = {
 	/**
 	 * Draw the crosshair
 	 */
-	drawCrosshair: function (e, point) {
+	drawCrosshair: function (e, point) { // docs: Missing docs for Axis.crosshair. Also for properties.
 
 		var path,
 			options = this.crosshair,
@@ -2133,8 +2135,8 @@ Axis.prototype = {
 			} else {
 				categorized = this.categories && !this.isRadial;
 				attribs = {
-					'stroke-width': options.width || (categorized ? this.transA : 1), // docs: category gets band unless width is set
-					stroke: options.color || (categorized ? 'rgba(155,200,255,0.2)' : '#C0C0C0'), // docs: new color
+					'stroke-width': options.width || (categorized ? this.transA : 1),
+					stroke: options.color || (categorized ? 'rgba(155,200,255,0.2)' : '#C0C0C0'),
 					zIndex: options.zIndex || 2
 				};
 				if (options.dashStyle) {
