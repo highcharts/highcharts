@@ -1314,6 +1314,10 @@ Axis.prototype = {
 
 		redraw = pick(redraw, true); // defaults to true
 
+		each(axis.series, function (serie) {
+			delete serie.kdTree;
+		});
+
 		// Extend the arguments with min and max
 		eventArguments = extend(eventArguments, {
 			min: newMin,

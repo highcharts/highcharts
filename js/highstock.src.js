@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.0 (2015-02-16)
+ * @license Highstock JS v2.1.0-modified ()
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -56,7 +56,7 @@ var UNDEFINED,
 	charts = [],
 	chartCount = 0,
 	PRODUCT = 'Highstock',
-	VERSION = '2.1.0',
+	VERSION = '2.1.0-modified',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -1259,8 +1259,8 @@ defaultOptions = {
 	global: {
 		useUTC: true,
 		//timezoneOffset: 0,
-		canvasToolsURL: 'http://code.highcharts.com/stock/2.1.0/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/stock/2.1.0/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/stock/2.1.0-modified/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/stock/2.1.0-modified/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -7677,6 +7677,10 @@ Axis.prototype = {
 			chart = axis.chart;
 
 		redraw = pick(redraw, true); // defaults to true
+
+		each(axis.series, function (serie) {
+			delete serie.kdTree;
+		});
 
 		// Extend the arguments with min and max
 		eventArguments = extend(eventArguments, {
@@ -17442,7 +17446,7 @@ if (seriesTypes.column) {
 
 
 /**
- * @license Highstock JS v2.1.0 (2015-02-16)
+ * @license Highstock JS v2.1.0-modified ()
  * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
  *
  * (c) 2010-2014 Torstein Honsi
