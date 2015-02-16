@@ -518,7 +518,7 @@
 		fireEvent(chart, 'drilldown', { 
 			point: this,
 			seriesOptions: seriesOptions,
-			category: category // docs
+			category: category
 		});
 		
 		if (seriesOptions) {

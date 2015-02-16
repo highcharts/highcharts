@@ -42,10 +42,10 @@
 		layoutAlgorithm: 'sliceAndDice',
 		layoutStartingDirection: 'vertical',
 		alternateStartingDirection: false,
-		levelIsConstant: true, // docs: missing?
+		levelIsConstant: true,
 		states: {
 			hover: {
-				borderColor: '#A0A0A0', // docs
+				borderColor: '#A0A0A0',
 				brightness: seriesTypes.heatmap ? 0 : 0.1,
 				shadow: false
 			}
