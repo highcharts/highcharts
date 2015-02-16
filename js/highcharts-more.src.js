@@ -1003,9 +1003,6 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 		borderColor: 'silver',
 		borderRadius: 3,
 		crop: false,
-		style: {
-			fontWeight: 'bold'
-		},
 		verticalAlign: 'top',
 		zIndex: 2
 	},
@@ -1825,10 +1822,6 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 			return this.point.z;
 		},
 		inside: true,
-		style: {
-			color: 'white',
-			textShadow: '0px 0px 3px black'
-		},
 		verticalAlign: 'middle'
 	},
 	// displayNegative: true,

@@ -7,12 +7,11 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 		formatter: function () { // #2945
 			return this.point.name; 
 		},
-		color: 'black',
 		crop: false,
 		defer: false,
 		overflow: false,
 		style: {
-			textShadow: '0 0 4px contrast, 0 0 2px contrast'
+			color: '#000000'
 		}
 	}
 });

@@ -14,7 +14,7 @@ Legend.prototype = {
 		
 		var legend = this,
 			itemStyle = options.itemStyle,
-			padding = pick(options.padding, 8),
+			padding,
 			itemMarginTop = options.itemMarginTop || 0;
 	
 		this.options = options;
@@ -26,7 +26,7 @@ Legend.prototype = {
 		legend.itemStyle = itemStyle;
 		legend.itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle);
 		legend.itemMarginTop = itemMarginTop;
-		legend.padding = padding;
+		legend.padding = padding = pick(options.padding, 8);
 		legend.initialItemX = padding;
 		legend.initialItemY = padding - 5; // 5 is the number of pixels above the text
 		legend.maxItemWidth = 0;
@@ -375,7 +375,7 @@ Legend.prototype = {
 						chart[marginNames[side]],
 						chart.legend[(side + 1) % 2 ? 'legendHeight' : 'legendWidth'] + 
 							[1, -1, -1, 1][side] * options[(side % 2) ? 'x' : 'y'] + 
-							pick(options.margin, 20) + 
+							pick(options.margin, 12) +
 							spacing[side]
 					);
 				}
@@ -443,16 +443,14 @@ Legend.prototype = {
 			legend.renderItem(item); 
 		});
 
-		// Draw the border
-		legendWidth = options.width || legend.offsetWidth;
+		// Get the box
+		legendWidth = (options.width || legend.offsetWidth) + padding;
 		legendHeight = legend.lastItemY + legend.lastLineHeight + legend.titleHeight;
-		
-		
 		legendHeight = legend.handleOverflow(legendHeight);
+		legendHeight += padding;
 
+		// Draw the border and/or background
 		if (legendBorderWidth || legendBackgroundColor) {
-			legendWidth += padding;
-			legendHeight += padding;
 
 			if (!box) {
 				legend.box = box = renderer.rect(

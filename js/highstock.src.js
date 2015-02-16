@@ -739,7 +739,6 @@ timeUnits = {
  * @param {String} decPoint The decimal point, defaults to the one given in the lang options
  * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
  */
-// docs: Overridable by wrap. Demo at /members/highcharts-numberformat
 Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
 	var lang = defaultOptions.lang,
 		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
@@ -1241,27 +1240,9 @@ var adapterRun = adapter.adapterRun,
 /* ****************************************************************************
  * Handle the options                                                         *
  *****************************************************************************/
-var
-
-defaultLabelOptions = {
-	enabled: true,
-	// rotation: 0,
-	// align: 'center',
-	x: 0,
-	y: 15,
-	/*formatter: function () {
-		return this.value;
-	},*/
-	style: {
-		color: '#606060',
-		cursor: 'default',
-		fontSize: '11px'
-	}
-};
-
 defaultOptions = {
 	colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', 
-		    '#8085e9', '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'],
+		    '#8085e9', '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'],
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
 		loading: 'Loading...',
@@ -1273,7 +1254,7 @@ defaultOptions = {
 		numericSymbols: ['k', 'M', 'G', 'T', 'P', 'E'], // SI prefixes used in axis labels
 		resetZoom: 'Reset zoom',
 		resetZoomTitle: 'Reset zoom level 1:1',
-		thousandsSep: ','
+		thousandsSep: ' '
 	},
 	global: {
 		useUTC: true,
@@ -1394,29 +1375,29 @@ defaultOptions = {
 			point: {
 				events: {}
 			},
-			dataLabels: merge(defaultLabelOptions, {
+			dataLabels: {
 				align: 'center',
-				//defer: true,
-				enabled: false,
+				// defer: true,
+				// enabled: false,
 				formatter: function () {
 					return this.y === null ? '' : Highcharts.numberFormat(this.y, -1);
 				},
-				/* Contrast preview. Also check if defaultLabels.style can be removed
 				style: {
 					color: 'contrast',
+					fontSize: '11px',
 					fontWeight: 'bold',
-					textShadow: '0 0 3px contrast',
+					textShadow: '0 0 6px contrast, 0 0 3px contrast'
 				},
-				// */
 				verticalAlign: 'bottom', // above singular point
-				y: 0
+				x: 0,
+				y: 0,
 				// backgroundColor: undefined,
 				// borderColor: undefined,
 				// borderRadius: undefined,
 				// borderWidth: undefined,
-				// padding: 3,
+				padding: 5
 				// shadow: false
-			}),
+			},
 			cropThreshold: 300, // draw points outside the plot area when the number of points is less than this
 			pointRange: 0,
 			//pointStart: 0,
@@ -1441,7 +1422,7 @@ defaultOptions = {
 			},
 			stickyTracking: true,
 			//tooltip: {
-				//pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b>' // docs
+				//pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b>'
 				//valueDecimals: null,
 				//xDateFormat: '%A, %b %e, %Y',
 				//valuePrefix: '',
@@ -1553,7 +1534,7 @@ defaultOptions = {
 		footerFormat: '',
 		//formatter: defaultFormatter,
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
-		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>', // docs
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 		shadow: true,
 		//shape: 'callout',
 		//shared: false,
@@ -1958,11 +1939,13 @@ SVGElement.prototype = {
 		var elem = this.element,
 			tspans,
 			hasContrast = textShadow.indexOf('contrast') !== -1,
+			// Safari suffers from the double display bug (#3649)
+			isSafari = userAgent.indexOf('Safari') > 0 && userAgent.indexOf('Chrome') === -1,
 			// IE10 and IE11 report textShadow in elem.style even though it doesn't work. Check
 			// this again with new IE release.
-			supports = elem.style.textShadow !== UNDEFINED && !isIE;
+			supports = elem.style.textShadow !== UNDEFINED && !isIE && !isSafari;
 
-		// When the text shadow is set to contrast, use dark stroke for light text and vice versa // docs: new defaults for all affected series
+		// When the text shadow is set to contrast, use dark stroke for light text and vice versa
 		if (hasContrast) {
 			textShadow = textShadow.replace(/contrast/g, this.renderer.getContrast(elem.style.fill));
 		}
@@ -4016,13 +3999,27 @@ SVGRenderer.prototype = {
 
 		// Empirical values found by comparing font size and bounding box height.
 		// Applies to the default font family. http://jsfiddle.net/highcharts/7xvn7/
-		var lineHeight = fontSize < 24 ? fontSize + 4 : mathRound(fontSize * 1.2),
+		var lineHeight = fontSize < 24 ? fontSize + 3 : mathRound(fontSize * 1.2),
 			baseline = mathRound(lineHeight * 0.8);
 
 		return {
 			h: lineHeight,
 			b: baseline,
 			f: fontSize
+		};
+	},
+
+	/**
+	 * Correct X and Y positioning of a label for rotation (#1764)
+	 */
+	rotCorr: function (baseline, rotation, alterY) {
+		var y = baseline;
+		if (rotation && alterY) {
+			y = mathMax(y * mathCos(rotation * deg2rad), 4);
+		}
+		return {
+			x: (-baseline / 3) * mathSin(rotation * deg2rad),
+			y: y
 		};
 	},
 
@@ -4182,7 +4179,7 @@ SVGRenderer.prototype = {
 		};
 		wrapper.paddingSetter =  function (value) {
 			if (defined(value) && value !== padding) {
-				padding = value;
+				padding = wrapper.padding = value;
 				updateTextPadding();
 			}
 		};
@@ -5942,7 +5939,7 @@ Tick.prototype = {
 
 		return {
 			x: x,
-			y: y
+			y: mathRound(y)
 		};
 	},
 
@@ -6394,13 +6391,27 @@ Axis.prototype = {
 			year: '%Y'
 		},
 		endOnTick: false,
-		gridLineColor: '#C0C0C0',
+		gridLineColor: '#D8D8D8',
 		// gridLineDashStyle: 'solid',
 		// gridLineWidth: 0,
 		// reversed: false,
 
-		labels: defaultLabelOptions, // docs: overflow:justify is deprecated
-			// { step: null },
+		labels: {
+			enabled: true,
+			// rotation: 0,
+			// align: 'center',
+			// step: null,
+			style: {
+				color: '#606060',
+				cursor: 'default',
+				fontSize: '11px'
+			},
+			x: 0,
+			y: 15
+			/*formatter: function () {
+				return this.value;
+			},*/
+		},
 		lineColor: '#C0D0E0',
 		lineWidth: 1,
 		//linkedTo: null,
@@ -6489,7 +6500,7 @@ Axis.prototype = {
 			formatter: function () {
 				return Highcharts.numberFormat(this.total, -1);
 			},
-			style: defaultLabelOptions.style
+			style: defaultPlotOptions.line.dataLabels.style
 		}
 	},
 
@@ -7034,7 +7045,7 @@ Axis.prototype = {
 			len;
 
 		// If minor ticks get too dense, they are hard to read, and may cause long running script. So we don't draw them.
-		if ((max - min) / minorTickInterval < axis.len / 3) { // docs: Add note that minorTickInterval is ignored when too dense
+		if ((max - min) / minorTickInterval < axis.len / 3) {
 
 			if (axis.isLog) {
 				len = tickPositions.length;
@@ -7360,7 +7371,6 @@ Axis.prototype = {
 		}
 
 		// Before normalizing the tick interval, handle minimum tick interval. This applies only if tickInterval is not defined.
-		// docs: defaults to closest point range on datetime axis
 		minTickInterval = pick(options.minTickInterval, axis.isDatetimeAxis && axis.closestPointRange);
 		if (!tickIntervalOption && axis.tickInterval < minTickInterval) {
 			axis.tickInterval = minTickInterval;
@@ -7432,7 +7442,9 @@ Axis.prototype = {
 			}
 
 			this.tickPositions = tickPositions;
-			if (tickPositioner) { // docs: now runs default tick positioning, and allows modifying this
+
+			// Run the tick positioner callback, that allows modifying auto tick positions.
+			if (tickPositioner) {
 				tickPositioner = tickPositioner.apply(this, [this.min, this.max]);
 				if (tickPositioner) {
 					this.tickPositions = tickPositions = tickPositioner;
@@ -7823,7 +7835,7 @@ Axis.prototype = {
 			ticks = this.ticks,
 			labelOptions = this.options.labels,
 			horiz = this.horiz,
-			tickInterval = this.tickInterval, // docs: from 4.1, tickInterval can not be smaller than labels
+			tickInterval = this.tickInterval,
 			newTickInterval = tickInterval,
 			slotSize = this.len / (((this.categories ? 1 : 0) + this.max - this.min) / tickInterval),
 			rotation,
@@ -7878,6 +7890,7 @@ Axis.prototype = {
 
 	renderUnsquish: function () {
 		var chart = this.chart,
+			renderer = chart.renderer,
 			tickPositions = this.tickPositions,
 			ticks = this.ticks,
 			labelOptions = this.options.labels,
@@ -7886,9 +7899,9 @@ Axis.prototype = {
 			slotWidth = this.slotWidth = (horiz && !labelOptions.step && !labelOptions.rotation &&
 				((this.staggerLines || 1) * chart.plotWidth) / tickPositions.length) ||
 				(!horiz && ((margin[3] && (margin[3] - chart.spacing[3])) || chart.chartWidth * 0.33)), // #1580, #1931,
-			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))), // docs: padding new default
+			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))),
 			attr = {},
-			labelMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
+			labelMetrics = renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
 			css,
 			labelLength = 0,
 			label,
@@ -7964,21 +7977,7 @@ Axis.prototype = {
 		});
 
 		// TODO: Why not part of getLabelPosition?
-		this.rotCorr(labelMetrics.b, this.labelRotation || 0);
-	},
-
-	/**
-	 * Set the tick baseline and correct for rotation (#1764)
-	 */
-	rotCorr: function (baseline, rotation) {
-		var y = baseline;
-		if (rotation && this.side === 2) {
-			y = mathMax(y * mathCos(rotation * deg2rad), 4);
-		}
-		this.tickRotCorr = {
-			x: (-baseline / 4) * mathSin(rotation * deg2rad),
-			y: y
-		};
+		this.tickRotCorr = renderer.rotCorr(labelMetrics.b, this.labelRotation || 0, this.side === 2);
 	},
 
 	/**
@@ -8452,7 +8451,7 @@ Axis.prototype = {
 	/**
 	 * Draw the crosshair
 	 */
-	drawCrosshair: function (e, point) {
+	drawCrosshair: function (e, point) { // docs: Missing docs for Axis.crosshair. Also for properties.
 
 		var path,
 			options = this.crosshair,
@@ -8500,8 +8499,8 @@ Axis.prototype = {
 			} else {
 				categorized = this.categories && !this.isRadial;
 				attribs = {
-					'stroke-width': options.width || (categorized ? this.transA : 1), // docs: category gets band unless width is set
-					stroke: options.color || (categorized ? 'rgba(155,200,255,0.2)' : '#C0C0C0'), // docs: new color
+					'stroke-width': options.width || (categorized ? this.transA : 1),
+					stroke: options.color || (categorized ? 'rgba(155,200,255,0.2)' : '#C0C0C0'),
 					zIndex: options.zIndex || 2
 				};
 				if (options.dashStyle) {
@@ -9347,7 +9346,7 @@ Tooltip.prototype = {
 	bodyFormatter: function (items) {
         return map(items, function (item) {
             var tooltipOptions = item.series.tooltipOptions;
-            return (tooltipOptions.pointFormatter || item.point.tooltipFormatter).call(item.point, tooltipOptions.pointFormat); // docs
+            return (tooltipOptions.pointFormatter || item.point.tooltipFormatter).call(item.point, tooltipOptions.pointFormat);
         });
     }
     
@@ -9400,7 +9399,7 @@ Pointer.prototype = {
 
 		if (Highcharts.Tooltip && options.tooltip.enabled) {
 			chart.tooltip = new Tooltip(chart, options.tooltip);
-			this.followTouchMove = pick(options.tooltip.followTouchMove, true); // docs: true by default since 4.1
+			this.followTouchMove = pick(options.tooltip.followTouchMove, true);
 		}
 
 		this.setDOMEvents();
@@ -10342,7 +10341,7 @@ Legend.prototype = {
 		
 		var legend = this,
 			itemStyle = options.itemStyle,
-			padding = pick(options.padding, 8),
+			padding,
 			itemMarginTop = options.itemMarginTop || 0;
 	
 		this.options = options;
@@ -10354,7 +10353,7 @@ Legend.prototype = {
 		legend.itemStyle = itemStyle;
 		legend.itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle);
 		legend.itemMarginTop = itemMarginTop;
-		legend.padding = padding;
+		legend.padding = padding = pick(options.padding, 8);
 		legend.initialItemX = padding;
 		legend.initialItemY = padding - 5; // 5 is the number of pixels above the text
 		legend.maxItemWidth = 0;
@@ -10703,7 +10702,7 @@ Legend.prototype = {
 						chart[marginNames[side]],
 						chart.legend[(side + 1) % 2 ? 'legendHeight' : 'legendWidth'] + 
 							[1, -1, -1, 1][side] * options[(side % 2) ? 'x' : 'y'] + 
-							pick(options.margin, 20) + 
+							pick(options.margin, 12) +
 							spacing[side]
 					);
 				}
@@ -10771,16 +10770,14 @@ Legend.prototype = {
 			legend.renderItem(item); 
 		});
 
-		// Draw the border
-		legendWidth = options.width || legend.offsetWidth;
+		// Get the box
+		legendWidth = (options.width || legend.offsetWidth) + padding;
 		legendHeight = legend.lastItemY + legend.lastLineHeight + legend.titleHeight;
-		
-		
 		legendHeight = legend.handleOverflow(legendHeight);
+		legendHeight += padding;
 
+		// Draw the border and/or background
 		if (legendBorderWidth || legendBackgroundColor) {
-			legendWidth += padding;
-			legendHeight += padding;
 
 			if (!box) {
 				legend.box = box = renderer.rect(
@@ -11119,11 +11116,16 @@ if (/Trident\/7\.0/.test(userAgent) || isFirefox) {
  * @param {Object} options
  * @param {Function} callback Function to run when the chart has loaded
  */
-function Chart() {
+var Chart = Highcharts.Chart = function () {
 	this.init.apply(this, arguments);
-}
+};
 
 Chart.prototype = {
+
+	/**
+	 * Hook for modules
+	 */
+	callbacks: [],
 
 	/**
 	 * Initialize the chart
@@ -12533,9 +12535,6 @@ Chart.prototype = {
 	}
 }; // end Chart
 
-// Hook for exporting module
-Chart.prototype.callbacks = [];
-
 var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
 	/**
 	 * Get the center of the pie based on the size and center options relative to the  
@@ -13091,7 +13090,7 @@ Series.prototype = {
 			delete options.marker;
 		}
 
-		// Handle color zones // docs: API and docs
+		// Handle color zones
 		this.zoneAxis = options.zoneAxis;
 		zones = this.zones = (options.zones || []).slice();
 		if ((options.negativeColor || options.negativeFillColor) && !options.zones) {
@@ -16240,9 +16239,10 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 		enabled: true,
 		formatter: function () { // #2945
 			return this.point.name;
-		}
+		},
 		// softConnector: true,
-		//y: 0
+		x: 0
+		// y: 0
 	},
 	ignoreHiddenPoint: true,
 	//innerSize: 0,
@@ -16813,7 +16813,9 @@ Series.prototype.drawDataLabels = function () {
 					
 					// Get automated contrast color
 					if (style.color === 'contrast') {
-						moreStyle.color = renderer.getContrast(point.color || series.color);
+						moreStyle.color = options.inside || options.distance < 0 || !!seriesOptions.stacking ? 
+							renderer.getContrast(point.color || series.color) : 
+							'#000000';
 					}
 					if (cursor) {
 						moreStyle.cursor = cursor;
@@ -16861,6 +16863,8 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		plotX = pick(point.plotX, -999),
 		plotY = pick(point.plotY, -999),
 		bBox = dataLabel.getBBox(),
+		baseline = chart.renderer.fontMetrics(options.style.fontSize).b,
+		rotCorr, // rotation correction
 		// Math.round for rounding errors (#2683), alignTo to allow column labels (#2700)
 		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, mathRound(plotY), inverted) ||
 			(alignTo && chart.isInsidePlot(plotX, inverted ? alignTo.x + 1 : alignTo.y + alignTo.height - 1, inverted))),
@@ -16884,8 +16888,9 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 
 		// Allow a hook for changing alignment in the last moment, then do the alignment
 		if (options.rotation) { // Fancy box alignment isn't supported for rotated text
+			rotCorr = chart.renderer.rotCorr(baseline, options.rotation); // #3723
 			dataLabel[isNew ? 'attr' : 'animate']({
-					x: alignTo.x + options.x + alignTo.width / 2,
+					x: alignTo.x + options.x + alignTo.width / 2 + rotCorr.x,
 					y: alignTo.y + options.y + alignTo.height / 2
 				})
 				.attr({ // #3003
@@ -16924,10 +16929,11 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
 		align = options.align,
 		verticalAlign = options.verticalAlign,
 		off,
-		justified;
+		justified,
+		padding = dataLabel.box ? 0 : (dataLabel.padding || 0);
 
 	// Off left
-	off = alignAttr.x;
+	off = alignAttr.x + padding;
 	if (off < 0) {
 		if (align === 'right') {
 			options.align = 'left';
@@ -16938,7 +16944,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
 	}
 
 	// Off right
-	off = alignAttr.x + bBox.width;
+	off = alignAttr.x + bBox.width - padding;
 	if (off > chart.plotWidth) {
 		if (align === 'left') {
 			options.align = 'right';
@@ -16949,7 +16955,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
 	}
 
 	// Off top
-	off = alignAttr.y;
+	off = alignAttr.y + padding;
 	if (off < 0) {
 		if (verticalAlign === 'bottom') {
 			options.verticalAlign = 'top';
@@ -16960,7 +16966,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
 	}
 
 	// Off bottom
-	off = alignAttr.y + bBox.height;
+	off = alignAttr.y + bBox.height - padding;
 	if (off > chart.plotHeight) {
 		if (verticalAlign === 'top') {
 			options.verticalAlign = 'bottom';
@@ -17436,6 +17442,105 @@ if (seriesTypes.column) {
 
 
 /**
+ * @license Highstock JS v2.0.4-modified ()
+ * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
+ *
+ * (c) 2010-2014 Torstein Honsi
+ *
+ * License: www.highcharts.com/license
+ */
+
+/*global Highcharts, HighchartsAdapter */
+(function (H) {
+	var Chart = H.Chart,
+		each = H.each,
+		addEvent = HighchartsAdapter.addEvent;
+
+	// Collect potensial overlapping data labels. Stack labels probably don't need to be 
+	// considered because they are usually accompanied by data labels that lie inside the columns.
+	Chart.prototype.callbacks.push(function (chart) {
+		function collectAndHide() {
+			var labels = [];
+
+			each(chart.series, function (series) {
+				var dlOptions = series.options.dataLabels;
+				if ((dlOptions.enabled || series._hasPointLabels) && !dlOptions.allowOverlap) {
+					each(series.points, function (point) { 
+						if (point.dataLabel) {
+							point.dataLabel.labelrank = point.labelrank;
+							labels.push(point.dataLabel);
+						}
+					});
+				}
+			});
+			chart.hideOverlappingLabels(labels);
+		}
+
+		// Do it now ...
+		collectAndHide();
+
+		// ... and after each chart redraw
+		addEvent(chart, 'redraw', collectAndHide);
+
+	});
+
+	/**
+	 * Hide overlapping labels. Labels are moved and faded in and out on zoom to provide a smooth 
+	 * visual imression.
+	 */		
+	Chart.prototype.hideOverlappingLabels = function (labels) {
+
+		var len = labels.length,
+			label,
+			i,
+			j,
+			label1,
+			label2,
+			intersectRect = function (pos1, pos2, size1, size2) {
+				return !(
+					pos2.x > pos1.x + size1.width ||
+					pos2.x + size2.width < pos1.x ||
+					pos2.y > pos1.y + size1.height ||
+					pos2.y + size2.height < pos1.y
+				);
+			};
+	
+		// Mark with initial opacity
+		for (i = 0; i < len; i++) {
+			label = labels[i];
+			if (label) {
+				label.oldOpacity = label.opacity;
+				label.newOpacity = 1;
+			}
+		}
+
+		// Detect overlapping labels
+		for (i = 0; i < len; i++) {
+			label1 = labels[i];
+
+			for (j = i + 1; j < len; ++j) {
+				label2 = labels[j];
+				if (label1 && label2 && label1.placed && label2.placed && label1.newOpacity !== 0 && label2.newOpacity !== 0 && 
+						intersectRect(label1.alignAttr, label2.alignAttr, label1, label2)) {
+					(label1.labelrank < label2.labelrank ? label1 : label2).newOpacity = 0;
+				}
+			}
+		}
+
+		// Hide or show
+		for (i = 0; i < len; i++) {
+			label = labels[i];
+			if (label) {
+				if (label.oldOpacity !== label.newOpacity && label.placed) {
+					label.alignAttr.opacity = label.newOpacity;
+					label[label.isOld && label.newOpacity ? 'animate' : 'attr'](label.alignAttr);
+				}
+				label.isOld = true;
+			}
+		}
+	};
+
+}(Highcharts));/**
  * TrackerMixin for points and graphs
  */
 
@@ -17653,9 +17758,9 @@ extend(Legend.prototype, {
 
 		addEvent(item.checkbox, 'click', function (event) {
 			var target = event.target;
-			fireEvent(item.series || item, 'checkboxClick', { // #3712 // docs: note that for pies the checkbox applies to each point, but the handler is on the series.
+			fireEvent(item.series || item, 'checkboxClick', { // #3712
 					checked: target.checked,
-					item: item // docs http://jsfiddle.net/highcharts/5c7w3xeh/
+					item: item
 				},
 				function () {
 					item.select();
@@ -22125,7 +22230,7 @@ RangeSelector.prototype = {
 					-40 : 0
 			}, options.inputPosition), true, chart.spacingBox);
 
-			// Hide if overlapping - inputEnabled is null or undefined // docs
+			// Hide if overlapping - inputEnabled is null or undefined
 			if (!defined(inputEnabled)) {
 				buttonBBox = buttonGroup.getBBox();
 				inputGroup[inputGroup.translateX < buttonBBox.x + buttonBBox.width + 10 ? 'hide' : 'show']();
@@ -22879,7 +22984,6 @@ wrap(Series.prototype, 'render', function (proceed) {
 extend(Highcharts, {
 	
 	// Constructors
-	Chart: Chart,
 	Color: Color,
 	Point: Point,
 	Tick: Tick,	

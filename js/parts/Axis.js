@@ -27,13 +27,27 @@ Axis.prototype = {
 			year: '%Y'
 		},
 		endOnTick: false,
-		gridLineColor: '#C0C0C0',
+		gridLineColor: '#D8D8D8',
 		// gridLineDashStyle: 'solid',
 		// gridLineWidth: 0,
 		// reversed: false,
 
-		labels: defaultLabelOptions, // docs: overflow:justify is deprecated
-			// { step: null },
+		labels: {
+			enabled: true,
+			// rotation: 0,
+			// align: 'center',
+			// step: null,
+			style: {
+				color: '#606060',
+				cursor: 'default',
+				fontSize: '11px'
+			},
+			x: 0,
+			y: 15
+			/*formatter: function () {
+				return this.value;
+			},*/
+		},
 		lineColor: '#C0D0E0',
 		lineWidth: 1,
 		//linkedTo: null,
@@ -122,7 +136,7 @@ Axis.prototype = {
 			formatter: function () {
 				return Highcharts.numberFormat(this.total, -1);
 			},
-			style: defaultLabelOptions.style
+			style: defaultPlotOptions.line.dataLabels.style
 		}
 	},
 
@@ -667,7 +681,7 @@ Axis.prototype = {
 			len;
 
 		// If minor ticks get too dense, they are hard to read, and may cause long running script. So we don't draw them.
-		if ((max - min) / minorTickInterval < axis.len / 3) { // docs: Add note that minorTickInterval is ignored when too dense
+		if ((max - min) / minorTickInterval < axis.len / 3) {
 
 			if (axis.isLog) {
 				len = tickPositions.length;
@@ -993,7 +1007,6 @@ Axis.prototype = {
 		}
 
 		// Before normalizing the tick interval, handle minimum tick interval. This applies only if tickInterval is not defined.
-		// docs: defaults to closest point range on datetime axis
 		minTickInterval = pick(options.minTickInterval, axis.isDatetimeAxis && axis.closestPointRange);
 		if (!tickIntervalOption && axis.tickInterval < minTickInterval) {
 			axis.tickInterval = minTickInterval;
@@ -1065,7 +1078,9 @@ Axis.prototype = {
 			}
 
 			this.tickPositions = tickPositions;
-			if (tickPositioner) { // docs: now runs default tick positioning, and allows modifying this
+
+			// Run the tick positioner callback, that allows modifying auto tick positions.
+			if (tickPositioner) {
 				tickPositioner = tickPositioner.apply(this, [this.min, this.max]);
 				if (tickPositioner) {
 					this.tickPositions = tickPositions = tickPositioner;
@@ -1456,7 +1471,7 @@ Axis.prototype = {
 			ticks = this.ticks,
 			labelOptions = this.options.labels,
 			horiz = this.horiz,
-			tickInterval = this.tickInterval, // docs: from 4.1, tickInterval can not be smaller than labels
+			tickInterval = this.tickInterval,
 			newTickInterval = tickInterval,
 			slotSize = this.len / (((this.categories ? 1 : 0) + this.max - this.min) / tickInterval),
 			rotation,
@@ -1511,6 +1526,7 @@ Axis.prototype = {
 
 	renderUnsquish: function () {
 		var chart = this.chart,
+			renderer = chart.renderer,
 			tickPositions = this.tickPositions,
 			ticks = this.ticks,
 			labelOptions = this.options.labels,
@@ -1519,9 +1535,9 @@ Axis.prototype = {
 			slotWidth = this.slotWidth = (horiz && !labelOptions.step && !labelOptions.rotation &&
 				((this.staggerLines || 1) * chart.plotWidth) / tickPositions.length) ||
 				(!horiz && ((margin[3] && (margin[3] - chart.spacing[3])) || chart.chartWidth * 0.33)), // #1580, #1931,
-			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))), // docs: padding new default
+			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))),
 			attr = {},
-			labelMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
+			labelMetrics = renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
 			css,
 			labelLength = 0,
 			label,
@@ -1597,21 +1613,7 @@ Axis.prototype = {
 		});
 
 		// TODO: Why not part of getLabelPosition?
-		this.rotCorr(labelMetrics.b, this.labelRotation || 0);
-	},
-
-	/**
-	 * Set the tick baseline and correct for rotation (#1764)
-	 */
-	rotCorr: function (baseline, rotation) {
-		var y = baseline;
-		if (rotation && this.side === 2) {
-			y = mathMax(y * mathCos(rotation * deg2rad), 4);
-		}
-		this.tickRotCorr = {
-			x: (-baseline / 4) * mathSin(rotation * deg2rad),
-			y: y
-		};
+		this.tickRotCorr = renderer.rotCorr(labelMetrics.b, this.labelRotation || 0, this.side === 2);
 	},
 
 	/**
@@ -2085,7 +2087,7 @@ Axis.prototype = {
 	/**
 	 * Draw the crosshair
 	 */
-	drawCrosshair: function (e, point) {
+	drawCrosshair: function (e, point) { // docs: Missing docs for Axis.crosshair. Also for properties.
 
 		var path,
 			options = this.crosshair,
@@ -2133,8 +2135,8 @@ Axis.prototype = {
 			} else {
 				categorized = this.categories && !this.isRadial;
 				attribs = {
-					'stroke-width': options.width || (categorized ? this.transA : 1), // docs: category gets band unless width is set
-					stroke: options.color || (categorized ? 'rgba(155,200,255,0.2)' : '#C0C0C0'), // docs: new color
+					'stroke-width': options.width || (categorized ? this.transA : 1),
+					stroke: options.color || (categorized ? 'rgba(155,200,255,0.2)' : '#C0C0C0'),
 					zIndex: options.zIndex || 2
 				};
 				if (options.dashStyle) {

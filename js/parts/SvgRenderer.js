@@ -165,11 +165,13 @@ SVGElement.prototype = {
 		var elem = this.element,
 			tspans,
 			hasContrast = textShadow.indexOf('contrast') !== -1,
+			// Safari suffers from the double display bug (#3649)
+			isSafari = userAgent.indexOf('Safari') > 0 && userAgent.indexOf('Chrome') === -1,
 			// IE10 and IE11 report textShadow in elem.style even though it doesn't work. Check
 			// this again with new IE release.
-			supports = elem.style.textShadow !== UNDEFINED && !isIE;
+			supports = elem.style.textShadow !== UNDEFINED && !isIE && !isSafari;
 
-		// When the text shadow is set to contrast, use dark stroke for light text and vice versa // docs: new defaults for all affected series
+		// When the text shadow is set to contrast, use dark stroke for light text and vice versa
 		if (hasContrast) {
 			textShadow = textShadow.replace(/contrast/g, this.renderer.getContrast(elem.style.fill));
 		}
@@ -2223,13 +2225,27 @@ SVGRenderer.prototype = {
 
 		// Empirical values found by comparing font size and bounding box height.
 		// Applies to the default font family. http://jsfiddle.net/highcharts/7xvn7/
-		var lineHeight = fontSize < 24 ? fontSize + 4 : mathRound(fontSize * 1.2),
+		var lineHeight = fontSize < 24 ? fontSize + 3 : mathRound(fontSize * 1.2),
 			baseline = mathRound(lineHeight * 0.8);
 
 		return {
 			h: lineHeight,
 			b: baseline,
 			f: fontSize
+		};
+	},
+
+	/**
+	 * Correct X and Y positioning of a label for rotation (#1764)
+	 */
+	rotCorr: function (baseline, rotation, alterY) {
+		var y = baseline;
+		if (rotation && alterY) {
+			y = mathMax(y * mathCos(rotation * deg2rad), 4);
+		}
+		return {
+			x: (-baseline / 3) * mathSin(rotation * deg2rad),
+			y: y
 		};
 	},
 
@@ -2389,7 +2405,7 @@ SVGRenderer.prototype = {
 		};
 		wrapper.paddingSetter =  function (value) {
 			if (defined(value) && value !== padding) {
-				padding = value;
+				padding = wrapper.padding = value;
 				updateTextPadding();
 			}
 		};

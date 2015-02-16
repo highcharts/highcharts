@@ -607,7 +607,7 @@ RangeSelector.prototype = {
 					-40 : 0
 			}, options.inputPosition), true, chart.spacingBox);
 
-			// Hide if overlapping - inputEnabled is null or undefined // docs
+			// Hide if overlapping - inputEnabled is null or undefined
 			if (!defined(inputEnabled)) {
 				buttonBBox = buttonGroup.getBBox();
 				inputGroup[inputGroup.translateX < buttonBBox.x + buttonBBox.width + 10 ? 'hide' : 'show']();

@@ -7,30 +7,45 @@
  * License: www.highcharts.com/license
  */
 
+/*global Highcharts, HighchartsAdapter */
 (function (H) {
-	var Series = H.Series,
+	var Chart = H.Chart,
 		each = H.each,
-		wrap = H.wrap;
+		addEvent = HighchartsAdapter.addEvent;
 
-	// Add the overlapping logic after drawing data labels
-	wrap(Series.prototype, 'drawDataLabels', function (proceed) {
-		var labels = [];
-		proceed.call(this);
+	// Collect potensial overlapping data labels. Stack labels probably don't need to be 
+	// considered because they are usually accompanied by data labels that lie inside the columns.
+	Chart.prototype.callbacks.push(function (chart) {
+		function collectAndHide() {
+			var labels = [];
 
-		each(this.points, function (point) { 
-			if (point.dataLabel) {
-				point.dataLabel.labelrank = point.labelrank;
-				labels.push(point.dataLabel);
-			}
-		});
-		this.hideOverlappingLabels(labels);
+			each(chart.series, function (series) {
+				var dlOptions = series.options.dataLabels;
+				if ((dlOptions.enabled || series._hasPointLabels) && !dlOptions.allowOverlap) {
+					each(series.points, function (point) { 
+						if (point.dataLabel) {
+							point.dataLabel.labelrank = point.labelrank;
+							labels.push(point.dataLabel);
+						}
+					});
+				}
+			});
+			chart.hideOverlappingLabels(labels);
+		}
+
+		// Do it now ...
+		collectAndHide();
+
+		// ... and after each chart redraw
+		addEvent(chart, 'redraw', collectAndHide);
+
 	});
 
 	/**
 	 * Hide overlapping labels. Labels are moved and faded in and out on zoom to provide a smooth 
 	 * visual imression.
 	 */		
-	Series.prototype.hideOverlappingLabels = function (labels) {
+	Chart.prototype.hideOverlappingLabels = function (labels) {
 
 		var len = labels.length,
 			label,
@@ -75,7 +90,7 @@
 			if (label) {
 				if (label.oldOpacity !== label.newOpacity && label.placed) {
 					label.alignAttr.opacity = label.newOpacity;
-					label[label.isOld ? 'animate' : 'attr'](label.alignAttr);
+					label[label.isOld && label.newOpacity ? 'animate' : 'attr'](label.alignAttr);
 				}
 				label.isOld = true;
 			}

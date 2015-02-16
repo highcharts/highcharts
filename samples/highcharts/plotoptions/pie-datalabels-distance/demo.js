@@ -7,8 +7,7 @@ $(function () {
         plotOptions: {
             pie: {
                 dataLabels: {
-                    distance: -30,
-                    color: 'white'
+                    distance: -30
                 }
             }
         },

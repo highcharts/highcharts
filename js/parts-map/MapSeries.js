@@ -19,15 +19,11 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 		formatter: function () { // #2945
 			return this.point.value;
 		},
+		inside: true, // for the color
 		verticalAlign: 'middle',
 		crop: false,
 		overflow: false,
-		padding: 0,
-		style: {
-			color: '#FFFFFF', // docs
-			fontWeight: 'bold',
-			textShadow: '0 0 4px contrast, 0 0 2px contrast'
-		}
+		padding: 0
 	},
 	turboThreshold: 0,
 	tooltip: {

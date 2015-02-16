@@ -3,7 +3,6 @@
 extend(Highcharts, {
 	
 	// Constructors
-	Chart: Chart,
 	Color: Color,
 	Point: Point,
 	Tick: Tick,	

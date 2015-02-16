@@ -119,7 +119,9 @@ Series.prototype.drawDataLabels = function () {
 					
 					// Get automated contrast color
 					if (style.color === 'contrast') {
-						moreStyle.color = renderer.getContrast(point.color || series.color);
+						moreStyle.color = options.inside || options.distance < 0 || !!seriesOptions.stacking ? 
+							renderer.getContrast(point.color || series.color) : 
+							'#000000';
 					}
 					if (cursor) {
 						moreStyle.cursor = cursor;
@@ -167,6 +169,8 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		plotX = pick(point.plotX, -999),
 		plotY = pick(point.plotY, -999),
 		bBox = dataLabel.getBBox(),
+		baseline = chart.renderer.fontMetrics(options.style.fontSize).b,
+		rotCorr, // rotation correction
 		// Math.round for rounding errors (#2683), alignTo to allow column labels (#2700)
 		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, mathRound(plotY), inverted) ||
 			(alignTo && chart.isInsidePlot(plotX, inverted ? alignTo.x + 1 : alignTo.y + alignTo.height - 1, inverted))),
@@ -190,8 +194,9 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 
 		// Allow a hook for changing alignment in the last moment, then do the alignment
 		if (options.rotation) { // Fancy box alignment isn't supported for rotated text
+			rotCorr = chart.renderer.rotCorr(baseline, options.rotation); // #3723
 			dataLabel[isNew ? 'attr' : 'animate']({
-					x: alignTo.x + options.x + alignTo.width / 2,
+					x: alignTo.x + options.x + alignTo.width / 2 + rotCorr.x,
 					y: alignTo.y + options.y + alignTo.height / 2
 				})
 				.attr({ // #3003
@@ -230,10 +235,11 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
 		align = options.align,
 		verticalAlign = options.verticalAlign,
 		off,
-		justified;
+		justified,
+		padding = dataLabel.box ? 0 : (dataLabel.padding || 0);
 
 	// Off left
-	off = alignAttr.x;
+	off = alignAttr.x + padding;
 	if (off < 0) {
 		if (align === 'right') {
 			options.align = 'left';
@@ -244,7 +250,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
 	}
 
 	// Off right
-	off = alignAttr.x + bBox.width;
+	off = alignAttr.x + bBox.width - padding;
 	if (off > chart.plotWidth) {
 		if (align === 'left') {
 			options.align = 'right';
@@ -255,7 +261,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
 	}
 
 	// Off top
-	off = alignAttr.y;
+	off = alignAttr.y + padding;
 	if (off < 0) {
 		if (verticalAlign === 'bottom') {
 			options.verticalAlign = 'top';
@@ -266,7 +272,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
 	}
 
 	// Off bottom
-	off = alignAttr.y + bBox.height;
+	off = alignAttr.y + bBox.height - padding;
 	if (off > chart.plotHeight) {
 		if (verticalAlign === 'top') {
 			options.verticalAlign = 'bottom';
