@@ -9859,7 +9859,7 @@ Pointer.prototype = {
 		e = this.normalize(e, chartPosition);
 
 		// If we're outside, hide the tooltip
-		if (chartPosition && hoverSeries && !this.inClass(e.target, 'highcharts-tracker') &&
+		if (chartPosition && !chart.tooltip.isHidden && !this.inClass(e.target, 'highcharts-tracker') &&
 				!chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
 			this.reset();
 		}
