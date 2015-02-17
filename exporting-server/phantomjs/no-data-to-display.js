@@ -1,5 +1,5 @@
 /*
- Highcharts JS v4.1.0 (2015-02-16)
+ Highcharts JS v4.1.1 (2015-02-17)
  Plugin for displaying a message when there is no data visible in chart.
 
  (c) 2010-2014 Highsoft AS
