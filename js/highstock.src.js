@@ -13666,7 +13666,9 @@ Series.prototype = {
 			chart[sharedClipKey] = clipRect = renderer.clipRect(clipBox);
 			
 		}
-		clipRect.count += 1;
+		if (animation) {
+			clipRect.count += 1;
+		}
 
 		if (this.options.clip !== false) {
 			this.group.clip(animation || seriesClipBox ? clipRect : chart.clipRect);
@@ -13677,7 +13679,7 @@ Series.prototype = {
 		// Remove the shared clipping rectancgle when all series are shown
 		if (!animation) {
 			clipRect.count -= 1;
-			if (clipRect.count === 0 && sharedClipKey && chart[sharedClipKey]) {
+			if (clipRect.count <= 0 && sharedClipKey && chart[sharedClipKey]) {
 				if (!seriesClipBox) {
 					chart[sharedClipKey] = chart[sharedClipKey].destroy();
 				}
