@@ -9509,12 +9509,12 @@ Pointer.prototype = {
 				}
 			}
 		}
-		
-		if (shared || !hoverSeries) {
+
+		if (!(hoverSeries && hoverSeries.noSharedTooltip) && (shared || !hoverSeries)) { // #3821 
 			// Find nearest points on all series
 			each(series, function (s) {
 				// Skip hidden series
-				if (s.visible && pick(s.options.enableMouseTracking, true)) {
+				if (s.visible && !s.noSharedTooltip && pick(s.options.enableMouseTracking, true)) { // #3821
 					kdpoints.push(s.searchPoint(e));
 				}
 			});

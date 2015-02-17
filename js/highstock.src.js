@@ -9509,12 +9509,12 @@ Pointer.prototype = {
 				}
 			}
 		}
-		
-		if (shared || !hoverSeries) {
+
+		if (!(hoverSeries && hoverSeries.noSharedTooltip) && (shared || !hoverSeries)) { // #3821 
 			// Find nearest points on all series
 			each(series, function (s) {
 				// Skip hidden series
-				if (s.visible && pick(s.options.enableMouseTracking, true)) {
+				if (s.visible && !s.noSharedTooltip && pick(s.options.enableMouseTracking, true)) { // #3821
 					kdpoints.push(s.searchPoint(e));
 				}
 			});
@@ -19072,24 +19072,26 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 	wrap(Axis.prototype, 'setTickPositions', function (proceed) {
 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 		
-		var axis = this,
-			tickPositions = this.tickPositions,
-			info = this.tickPositions.info,
-			newPositions = [],
-			i;
+		if (this.options.breaks) {
+			var axis = this,
+				tickPositions = this.tickPositions,
+				info = this.tickPositions.info,
+				newPositions = [],
+				i;
 
-		if (info && info.totalRange >= axis.closestPointRange) { 
-			return;
-		}
-
-		for (i = 0; i < tickPositions.length; i++) {
-			if (!axis.isInAnyBreak(tickPositions[i])) {
-				newPositions.push(tickPositions[i]);
+			if (info && info.totalRange >= axis.closestPointRange) { 
+				return;
 			}
-		}
 
-		this.tickPositions = newPositions;
-		this.tickPositions.info = info;
+			for (i = 0; i < tickPositions.length; i++) {
+				if (!axis.isInAnyBreak(tickPositions[i])) {
+					newPositions.push(tickPositions[i]);
+				}
+			}
+
+			this.tickPositions = newPositions;
+			this.tickPositions.info = info;
+		}
 	});
 	
 	wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
