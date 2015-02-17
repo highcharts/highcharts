@@ -9033,7 +9033,7 @@ Pointer.prototype = {
 			distance = chart.chartWidth,
 			rdistance = chart.chartWidth,
 			anchor,
-
+			noSharedTooltip,
 			kdpoints = [],
 			kdpoint;
 
@@ -9051,7 +9051,8 @@ Pointer.prototype = {
 			// Find nearest points on all series
 			each(series, function (s) {
 				// Skip hidden series
-				if (s.visible && !s.noSharedTooltip && pick(s.options.enableMouseTracking, true)) { // #3821
+				noSharedTooltip = s.noSharedTooltip && shared;
+				if (s.visible && !noSharedTooltip && pick(s.options.enableMouseTracking, true)) { // #3821
 					kdpoints.push(s.searchPoint(e));
 				}
 			});
@@ -14300,7 +14301,7 @@ extend(Point.prototype, {
 			i,
 			chart = series.chart,
 			seriesOptions = series.options,
-			names = series.xAxis.names;
+			names = series.xAxis && series.xAxis.names;
 
 		redraw = pick(redraw, true);
 

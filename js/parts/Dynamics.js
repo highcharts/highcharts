@@ -154,7 +154,7 @@ extend(Point.prototype, {
 			i,
 			chart = series.chart,
 			seriesOptions = series.options,
-			names = series.xAxis.names;
+			names = series.xAxis && series.xAxis.names;
 
 		redraw = pick(redraw, true);
 
