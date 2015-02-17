@@ -242,10 +242,15 @@
 								}
 
 								// Display diff from previous comparison
+								$dissIndex = "
+									<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main'><i class='icon-columns'></i></a>
+								";
 								if (isset($compare->$path->$browserKey)) {
 									$diff = $compare->$path->$browserKey;
-									if ($diff > 0) {
-										$diff = round($diff, 2);
+									if ($diff > 0 || $diff == 'Error') {
+										if ($diff != 'Error') {
+											$diff = round($diff, 2);
+										}
 										$compareClass = 'different';
 										$dissIndex = "
 											<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main' data-diff='$diff'>$diff</a>
@@ -253,11 +258,7 @@
 									} else {
 										$compareClass = 'identical';
 									}
-								} else {
-									$dissIndex = "
-										<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main'><i class='icon-columns'></i></a>
-									";
-								}
+								} 
 
 								// Comments
 								if (isset($compare->$path->comment)) {
