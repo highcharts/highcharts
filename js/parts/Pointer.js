@@ -141,7 +141,8 @@ Pointer.prototype = {
 			anchor,
 			noSharedTooltip,
 			kdpoints = [],
-			kdpoint;
+			kdpoint,
+			kdpointT;
 
 		// For hovering over the empty parts of the plot area (hoverSeries is undefined). 
 		// If there is one series with point tracking (combo chart), don't go to nearest neighbour.
@@ -159,7 +160,10 @@ Pointer.prototype = {
 				// Skip hidden series
 				noSharedTooltip = s.noSharedTooltip && shared;
 				if (s.visible && !noSharedTooltip && pick(s.options.enableMouseTracking, true)) { // #3821
-					kdpoints.push(s.searchPoint(e));
+					kdpointT = s.searchPoint(e); // #3828
+					if (kdpointT) {
+						kdpoints.push(kdpointT);
+					}
 				}
 			});
 			// Find absolute nearest point

@@ -1824,8 +1824,6 @@ Series.prototype = {
 		if (this.kdTree) {
 			return _search(point, 
 				this.kdTree, this.kdDimensions, this.kdDimensions);
-		} else {
-			return UNDEFINED;
 		}
 	}
 
