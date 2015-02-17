@@ -583,6 +583,7 @@
 		} else if (tickLabel && tickLabel.basicStyles) {
 			tickLabel.styles = {}; // reset for full overwrite of styles
 			tickLabel.css(tickLabel.basicStyles);
+			tickLabel.on('click', null); // #3806
 		}
 		
 		return point;
