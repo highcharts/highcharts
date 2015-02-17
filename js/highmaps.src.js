@@ -14459,6 +14459,7 @@ extend(Series.prototype, {
 		}
 
 		// redraw
+		delete series.kdTree; // #3816 kdTree has to be rebuild.
 		series.isDirty = true;
 		series.isDirtyData = true;
 		if (redraw) {
@@ -14491,6 +14492,7 @@ extend(Series.prototype, {
 				}
 
 				// redraw
+				delete series.kdTree; // #3816 kdTree has to be rebuild.
 				series.isDirty = true;
 				series.isDirtyData = true;
 				if (redraw) {
