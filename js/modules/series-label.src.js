@@ -5,10 +5,8 @@
  * TODO:
  * - add column support (box collision detection, same as above)
  * - other series types, area etc.
- * - possible spline interpolation?
  * - avoid data labels, when data labels above, show series label below.
  * - optional connectors when labels are distant
- * - too slow here: http://jsfiddle.net/highcharts/114wejdx/
  * 
  * http://jsfiddle.net/highcharts/y5A37/
  * http://jsfiddle.net/highcharts/264Nm/
@@ -66,6 +64,7 @@
             deltaX,
             deltaY,
             delta,
+            last,
             len,
             n,
             j,
@@ -96,6 +95,7 @@
             len = points.length;
             for (i = 0; i < len; i += 1) {
 
+                // Add interpolated points
                 if (i > 0) {
                     deltaX = Math.abs(points[i].plotX - points[i - 1].plotX);
                     deltaY = Math.abs(points[i].plotY - points[i - 1].plotY);
@@ -113,8 +113,18 @@
                     }
                 }
 
+                // Add the real point if not too close to the previous
                 if (typeof points[i].plotY === 'number') {
-                    interpolated.push(points[i]);
+                    last = interpolated[interpolated.length - 1];
+                    if (last) {
+                        delta = Math.max(
+                            Math.abs(points[i].plotX - last.plotX),
+                            Math.abs(points[i].plotY - last.plotY)
+                        );
+                    }
+                    if (!last || delta > distance / 2) {
+                        interpolated.push(points[i]);
+                    }
                 }
             }
         }
@@ -263,8 +273,6 @@
                 bBox = series.labelBySeries.getBBox();
                 bBox.width = Math.round(bBox.width);
 
-                console.log('-- ' + series.name + ' --');
-
                 // Ideal positions are centered above or below a point on right side of chart
                 for (i = points.length - 1; i > 0; i -= 1) {
 
@@ -329,8 +337,6 @@
                     }
 
                 }
-
-                console.log('foundClosePosition', results.length);
 
                 // Brute force, try all positions on the chart in a 16x16 grid
                 if (!results.length) {
