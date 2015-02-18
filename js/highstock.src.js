@@ -6294,7 +6294,7 @@ AxisPlotLineOrBandExtension = {
 		var toPath = this.getPlotLinePath(to, null, null, true),
 			path = this.getPlotLinePath(from, null, null, true);
 
-		if (path && toPath) {
+		if (path && toPath && path.toString() !== toPath.toString()) { // #3836
 			path.push(
 				toPath[4],
 				toPath[5],
