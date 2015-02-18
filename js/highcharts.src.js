@@ -744,7 +744,7 @@ Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
 		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
 		n = +number || 0,
 		c = decimals === -1 ?
-			(n.toString().split('.')[1] || '').length : // preserve decimals
+			mathMin((n.toString().split('.')[1] || '').length, 20) : // Preserve decimals. Not huge numbers (#3793).
 			(isNaN(decimals = mathAbs(decimals)) ? 2 : decimals),
 		d = decPoint === undefined ? lang.decimalPoint : decPoint,
 		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
