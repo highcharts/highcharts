@@ -10010,6 +10010,16 @@ Legend.prototype = {
 	},
 
 	/**
+	 * Destroy all items.
+	 */
+	clearItems: function () {
+		var legend = this;
+		each(legend.getAllItems(), function (item) {
+			legend.destroyItem(item); 
+		});		
+	},
+
+	/**
 	 * Destroys the legend.
 	 */
 	destroy: function () {
@@ -14352,7 +14362,8 @@ extend(Point.prototype, {
 			}
 
 			if (seriesOptions.legendType === 'point') { // #1831, #1885
-				chart.legend.destroyItem(point);
+				series.updateTotals();
+				chart.legend.clearItems();
 			}
 			if (redraw) {
 				chart.redraw(animation);
@@ -17383,6 +17394,7 @@ extend(Chart.prototype, {
 				if (buttons.hasOwnProperty(n)) {
 					buttonOptions = merge(options.buttonOptions, buttons[n]);
 					attr = buttonOptions.theme;
+					attr.style = merge(buttonOptions.theme.style, buttonOptions.style); // #3203
 					states = attr.states;
 					button = chart.renderer.button(
 							buttonOptions.text, 
@@ -17400,8 +17412,7 @@ extend(Chart.prototype, {
 							height: buttonOptions.height,
 							title: chart.options.lang[n],
 							zIndex: 5
-						})
-						.css(buttonOptions.style)
+						})					
 						.add();
 					button.handler = buttonOptions.onclick;
 					button.align(extend(buttonOptions, { width: button.width, height: 2 * button.height }), null, buttonOptions.alignTo);

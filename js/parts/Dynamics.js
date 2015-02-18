@@ -196,7 +196,8 @@ extend(Point.prototype, {
 			}
 
 			if (seriesOptions.legendType === 'point') { // #1831, #1885
-				chart.legend.destroyItem(point);
+				series.updateTotals();
+				chart.legend.clearItems();
 			}
 			if (redraw) {
 				chart.redraw(animation);
