@@ -21191,7 +21191,7 @@ Scroller.prototype = {
 						left = 0;
 					} else if (left + range >= navigatorWidth) {
 						left = navigatorWidth - range;
-						fixedMax = xAxis.dataMax; // #2293
+						fixedMax = scroller.getUnionExtremes().dataMax; // #2293, #3543
 					}
 					if (left !== zoomedMin) { // it has actually moved
 						scroller.fixedWidth = range; // #1370
