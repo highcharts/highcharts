@@ -80,7 +80,7 @@ Highcharts.Chart.prototype.renderSeries = function () {
 	}
 };
 
-Highcharts.Chart.prototype.retrieveStacks = function (grouping, stacking) {
+Highcharts.Chart.prototype.retrieveStacks = function (stacking) {
 	var stacks = {},
 		stackNumber,
 		i = 1;

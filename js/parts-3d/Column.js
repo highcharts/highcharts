@@ -97,7 +97,7 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proce
 			z = 0;	
 		
 		if (!(grouping !== undefined && !grouping)) {
-			var stacks = this.chart.retrieveStacks(grouping, stacking),
+			var stacks = this.chart.retrieveStacks(stacking),
 				stack = seriesOptions.stack || 0,
 				i; // position within the stack
 			for (i = 0; i < stacks[stack].series.length; i++) {
