@@ -8221,7 +8221,7 @@ Axis.prototype = {
 				pos = (this.horiz ? e.chartX - this.pos : this.len - e.chartY + this.pos);
 			} else if (defined(point)) {
 				/*jslint eqeq: true*/
-				pos = (this.chart.inverted != this.horiz) ? point.plotX : this.len - point.plotY;
+				pos = this.isXAxis ? point.plotX : this.len - point.plotY; // #3834
 				/*jslint eqeq: false*/
 			}
 
