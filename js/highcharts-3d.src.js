@@ -591,20 +591,20 @@ Highcharts.Chart.prototype.renderSeries = function () {
 };
 
 Highcharts.Chart.prototype.retrieveStacks = function (grouping, stacking) {
-
 	var stacks = {},
+		stackNumber,
 		i = 1;
 
-	if (grouping || !stacking) { return this.series; }
-
 	Highcharts.each(this.series, function (S) {
-		if (!stacks[S.options.stack || 0]) {
-			stacks[S.options.stack || 0] = { series: [S], position: i};
+		stackNumber = stacking ? (S.options.stack || 0) : S.index;
+		if (!stacks[stackNumber]) {
+			stacks[stackNumber] = { series: [S], position: i};
 			i++;
 		} else {
-			stacks[S.options.stack || 0].series.push(S);
+			stacks[stackNumber].series.push(S);
 		}
 	});
+
 	stacks.totalStacks = i + 1;
 	return stacks;
 };
@@ -904,7 +904,7 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proce
 			stacking = seriesOptions.stacking,
 			z = 0;	
 		
-		if (!(grouping !== undefined && !grouping) && stacking) {
+		if (!(grouping !== undefined && !grouping)) {
 			var stacks = this.chart.retrieveStacks(grouping, stacking),
 				stack = seriesOptions.stack || 0,
 				i; // position within the stack
