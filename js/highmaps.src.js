@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highmaps JS v1.0.4-modified ()
+ * @license Highmaps JS v1.1.1-modified ()
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -56,7 +56,7 @@ var UNDEFINED,
 	charts = [],
 	chartCount = 0,
 	PRODUCT = 'Highmaps',
-	VERSION = '1.0.4-modified',
+	VERSION = '1.1.1-modified',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -744,7 +744,7 @@ Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
 		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
 		n = +number || 0,
 		c = decimals === -1 ?
-			(n.toString().split('.')[1] || '').length : // preserve decimals
+			mathMin((n.toString().split('.')[1] || '').length, 20) : // Preserve decimals. Not huge numbers (#3793).
 			(isNaN(decimals = mathAbs(decimals)) ? 2 : decimals),
 		d = decPoint === undefined ? lang.decimalPoint : decPoint,
 		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
@@ -1259,8 +1259,8 @@ defaultOptions = {
 	global: {
 		useUTC: true,
 		//timezoneOffset: 0,
-		canvasToolsURL: 'http://code.highcharts.com/maps/1.0.4-modified/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/maps/1.0.4-modified/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/maps/1.1.1-modified/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/maps/1.1.1-modified/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -6346,7 +6346,7 @@ Axis.prototype = {
 
 		// Initial categories
 		axis.categories = options.categories || type === 'category';
-		axis.names = [];
+		axis.names = axis.names || []; // Preserve on update (#3830)
 
 		// Elements
 		//axis.axisGroup = UNDEFINED;
@@ -7418,6 +7418,10 @@ Axis.prototype = {
 
 		redraw = pick(redraw, true); // defaults to true
 
+		each(axis.series, function (serie) {
+			delete serie.kdTree;
+		});
+
 		// Extend the arguments with min and max
 		eventArguments = extend(eventArguments, {
 			min: newMin,
@@ -8217,7 +8221,7 @@ Axis.prototype = {
 				pos = (this.horiz ? e.chartX - this.pos : this.len - e.chartY + this.pos);
 			} else if (defined(point)) {
 				/*jslint eqeq: true*/
-				pos = (this.chart.inverted != this.horiz) ? point.plotX : this.len - point.plotY;
+				pos = this.isXAxis ? point.plotX : this.len - point.plotY; // #3834
 				/*jslint eqeq: false*/
 			}
 
@@ -9029,9 +9033,10 @@ Pointer.prototype = {
 			distance = chart.chartWidth,
 			rdistance = chart.chartWidth,
 			anchor,
-
+			noSharedTooltip,
 			kdpoints = [],
-			kdpoint;
+			kdpoint,
+			kdpointT;
 
 		// For hovering over the empty parts of the plot area (hoverSeries is undefined). 
 		// If there is one series with point tracking (combo chart), don't go to nearest neighbour.
@@ -9042,13 +9047,17 @@ Pointer.prototype = {
 				}
 			}
 		}
-		
-		if (shared || !hoverSeries) {
+
+		if (!(hoverSeries && hoverSeries.noSharedTooltip) && (shared || !hoverSeries)) { // #3821 
 			// Find nearest points on all series
 			each(series, function (s) {
 				// Skip hidden series
-				if (s.visible && pick(s.options.enableMouseTracking, true)) {
-					kdpoints.push(s.searchPoint(e));
+				noSharedTooltip = s.noSharedTooltip && shared;
+				if (s.visible && !noSharedTooltip && pick(s.options.enableMouseTracking, true)) { // #3821
+					kdpointT = s.searchPoint(e); // #3828
+					if (kdpointT) {
+						kdpoints.push(kdpointT);
+					}
 				}
 			});
 			// Find absolute nearest point
@@ -9998,6 +10007,16 @@ Legend.prototype = {
 		if (checkbox) {
 			discardElement(item.checkbox);
 		}
+	},
+
+	/**
+	 * Destroy all items.
+	 */
+	clearItems: function () {
+		var legend = this;
+		each(legend.getAllItems(), function (item) {
+			legend.destroyItem(item); 
+		});		
 	},
 
 	/**
@@ -13164,7 +13183,9 @@ Series.prototype = {
 			chart[sharedClipKey] = clipRect = renderer.clipRect(clipBox);
 			
 		}
-		clipRect.count += 1;
+		if (animation) {
+			clipRect.count += 1;
+		}
 
 		if (this.options.clip !== false) {
 			this.group.clip(animation || seriesClipBox ? clipRect : chart.clipRect);
@@ -13175,7 +13196,7 @@ Series.prototype = {
 		// Remove the shared clipping rectancgle when all series are shown
 		if (!animation) {
 			clipRect.count -= 1;
-			if (clipRect.count === 0 && sharedClipKey && chart[sharedClipKey]) {
+			if (clipRect.count <= 0 && sharedClipKey && chart[sharedClipKey]) {
 				if (!seriesClipBox) {
 					chart[sharedClipKey] = chart[sharedClipKey].destroy();
 				}
@@ -13955,6 +13976,11 @@ Series.prototype = {
 			series.invertGroups();
 		}
 
+		// Initial clipping, must be defined after inverting groups for VML. Applies to columns etc. (#3839).
+		if (options.clip !== false && !series.sharedClipKey && !hasRendered) {
+			group.clip(chart.clipRect);
+		}
+
 		// Run the animation
 		if (animDuration) {
 			series.animate();
@@ -14133,8 +14159,6 @@ Series.prototype = {
 		if (this.kdTree) {
 			return _search(point, 
 				this.kdTree, this.kdDimensions, this.kdDimensions);
-		} else {
-			return UNDEFINED;
 		}
 	}
 
@@ -14296,7 +14320,7 @@ extend(Point.prototype, {
 			i,
 			chart = series.chart,
 			seriesOptions = series.options,
-			names = series.xAxis.names;
+			names = series.xAxis && series.xAxis.names;
 
 		redraw = pick(redraw, true);
 
@@ -14338,7 +14362,8 @@ extend(Point.prototype, {
 			}
 
 			if (seriesOptions.legendType === 'point') { // #1831, #1885
-				chart.legend.destroyItem(point);
+				series.updateTotals();
+				chart.legend.clearItems();
 			}
 			if (redraw) {
 				chart.redraw(animation);
@@ -14455,6 +14480,7 @@ extend(Series.prototype, {
 		}
 
 		// redraw
+		delete series.kdTree; // #3816 kdTree has to be rebuild.
 		series.isDirty = true;
 		series.isDirtyData = true;
 		if (redraw) {
@@ -14487,6 +14513,7 @@ extend(Series.prototype, {
 				}
 
 				// redraw
+				delete series.kdTree; // #3816 kdTree has to be rebuild.
 				series.isDirty = true;
 				series.isDirtyData = true;
 				if (redraw) {
@@ -15814,7 +15841,7 @@ if (seriesTypes.column) {
 
 
 /**
- * @license Highmaps JS v1.0.4-modified ()
+ * Highmaps JS v1.1.1-modified ()
  * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
  *
  * (c) 2010-2014 Torstein Honsi
@@ -17248,7 +17275,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		seriesTypes.column.prototype.animateDrillupTo.call(this, init);
 	}
 }));/**
- * @license Highmaps JS v1.0.4-modified ()
+ * Highmaps JS v1.1.1-modified ()
  * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
  *
  * (c) 2010-2014 Torstein Honsi
@@ -17367,6 +17394,7 @@ extend(Chart.prototype, {
 				if (buttons.hasOwnProperty(n)) {
 					buttonOptions = merge(options.buttonOptions, buttons[n]);
 					attr = buttonOptions.theme;
+					attr.style = merge(buttonOptions.theme.style, buttonOptions.style); // #3203
 					states = attr.states;
 					button = chart.renderer.button(
 							buttonOptions.text, 
@@ -17384,8 +17412,7 @@ extend(Chart.prototype, {
 							height: buttonOptions.height,
 							title: chart.options.lang[n],
 							zIndex: 5
-						})
-						.css(buttonOptions.style)
+						})					
 						.add();
 					button.handler = buttonOptions.onclick;
 					button.align(extend(buttonOptions, { width: button.width, height: 2 * button.height }), null, buttonOptions.alignTo);
@@ -18403,7 +18430,8 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 		inside: true,
 		verticalAlign: 'middle',
 		crop: false,
-		overflow: false
+		overflow: false,
+		padding: 0 // #3837
 	},
 	marker: null,
 	tooltip: {

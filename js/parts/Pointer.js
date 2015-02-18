@@ -139,9 +139,10 @@ Pointer.prototype = {
 			distance = chart.chartWidth,
 			rdistance = chart.chartWidth,
 			anchor,
-
+			noSharedTooltip,
 			kdpoints = [],
-			kdpoint;
+			kdpoint,
+			kdpointT;
 
 		// For hovering over the empty parts of the plot area (hoverSeries is undefined). 
 		// If there is one series with point tracking (combo chart), don't go to nearest neighbour.
@@ -152,13 +153,17 @@ Pointer.prototype = {
 				}
 			}
 		}
-		
-		if (shared || !hoverSeries) {
+
+		if (!(hoverSeries && hoverSeries.noSharedTooltip) && (shared || !hoverSeries)) { // #3821 
 			// Find nearest points on all series
 			each(series, function (s) {
 				// Skip hidden series
-				if (s.visible && pick(s.options.enableMouseTracking, true)) {
-					kdpoints.push(s.searchPoint(e));
+				noSharedTooltip = s.noSharedTooltip && shared;
+				if (s.visible && !noSharedTooltip && pick(s.options.enableMouseTracking, true)) { // #3821
+					kdpointT = s.searchPoint(e); // #3828
+					if (kdpointT) {
+						kdpoints.push(kdpointT);
+					}
 				}
 			});
 			// Find absolute nearest point

@@ -154,7 +154,7 @@ extend(Point.prototype, {
 			i,
 			chart = series.chart,
 			seriesOptions = series.options,
-			names = series.xAxis.names;
+			names = series.xAxis && series.xAxis.names;
 
 		redraw = pick(redraw, true);
 
@@ -196,7 +196,8 @@ extend(Point.prototype, {
 			}
 
 			if (seriesOptions.legendType === 'point') { // #1831, #1885
-				chart.legend.destroyItem(point);
+				series.updateTotals();
+				chart.legend.clearItems();
 			}
 			if (redraw) {
 				chart.redraw(animation);
@@ -313,6 +314,7 @@ extend(Series.prototype, {
 		}
 
 		// redraw
+		delete series.kdTree; // #3816 kdTree has to be rebuild.
 		series.isDirty = true;
 		series.isDirtyData = true;
 		if (redraw) {
@@ -345,6 +347,7 @@ extend(Series.prototype, {
 				}
 
 				// redraw
+				delete series.kdTree; // #3816 kdTree has to be rebuild.
 				series.isDirty = true;
 				series.isDirtyData = true;
 				if (redraw) {

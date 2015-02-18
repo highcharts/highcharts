@@ -1,4 +1,5 @@
 /**
+ * @product.name@ JS v@product.version@ (@product.date@)
  * Highcharts Broken Axis module
  * 
  * Author: Stephane Vanraes, Torstein Honsi
@@ -65,24 +66,26 @@
 	wrap(Axis.prototype, 'setTickPositions', function (proceed) {
 		proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 		
-		var axis = this,
-			tickPositions = this.tickPositions,
-			info = this.tickPositions.info,
-			newPositions = [],
-			i;
+		if (this.options.breaks) {
+			var axis = this,
+				tickPositions = this.tickPositions,
+				info = this.tickPositions.info,
+				newPositions = [],
+				i;
 
-		if (info && info.totalRange >= axis.closestPointRange) { 
-			return;
-		}
-
-		for (i = 0; i < tickPositions.length; i++) {
-			if (!axis.isInAnyBreak(tickPositions[i])) {
-				newPositions.push(tickPositions[i]);
+			if (info && info.totalRange >= axis.closestPointRange) { 
+				return;
 			}
-		}
 
-		this.tickPositions = newPositions;
-		this.tickPositions.info = info;
+			for (i = 0; i < tickPositions.length; i++) {
+				if (!axis.isInAnyBreak(tickPositions[i])) {
+					newPositions.push(tickPositions[i]);
+				}
+			}
+
+			this.tickPositions = newPositions;
+			this.tickPositions.info = info;
+		}
 	});
 	
 	wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
@@ -246,7 +249,7 @@
 			i = points.length;
 
 
-		if (xAxis.options.breaks || yAxis.options.breaks) {
+		if (xAxis && yAxis && (xAxis.options.breaks || yAxis.options.breaks)) {
 			while (i--) {
 				point = points[i];
 

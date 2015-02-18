@@ -204,6 +204,9 @@
 			}
 			
 			function onDifferent(diff) {
+				if (diff === 'Error') { // Otherwise, it is saved from compare-iframe.php
+					$.get('compare-update-report.php', { path: '<?php echo $path ?>', diff: diff });
+				}
 				markList("different", diff);
 				proceed();
 			}

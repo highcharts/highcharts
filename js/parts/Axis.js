@@ -242,7 +242,7 @@ Axis.prototype = {
 
 		// Initial categories
 		axis.categories = options.categories || type === 'category';
-		axis.names = [];
+		axis.names = axis.names || []; // Preserve on update (#3830)
 
 		// Elements
 		//axis.axisGroup = UNDEFINED;
@@ -1314,6 +1314,10 @@ Axis.prototype = {
 
 		redraw = pick(redraw, true); // defaults to true
 
+		each(axis.series, function (serie) {
+			delete serie.kdTree;
+		});
+
 		// Extend the arguments with min and max
 		eventArguments = extend(eventArguments, {
 			min: newMin,
@@ -2113,7 +2117,7 @@ Axis.prototype = {
 				pos = (this.horiz ? e.chartX - this.pos : this.len - e.chartY + this.pos);
 			} else if (defined(point)) {
 				/*jslint eqeq: true*/
-				pos = (this.chart.inverted != this.horiz) ? point.plotX : this.len - point.plotY;
+				pos = this.isXAxis ? point.plotX : this.len - point.plotY; // #3834
 				/*jslint eqeq: false*/
 			}
 

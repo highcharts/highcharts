@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.0.4-modified ()
+ * @license Highcharts JS v4.1.1-modified ()
  *
  * (c) 2009-2013 Torstein Hønsi
  *
@@ -590,21 +590,21 @@ Highcharts.Chart.prototype.renderSeries = function () {
 	}
 };
 
-Highcharts.Chart.prototype.retrieveStacks = function (grouping, stacking) {
-
+Highcharts.Chart.prototype.retrieveStacks = function (stacking) {
 	var stacks = {},
+		stackNumber,
 		i = 1;
 
-	if (grouping || !stacking) { return this.series; }
-
 	Highcharts.each(this.series, function (S) {
-		if (!stacks[S.options.stack || 0]) {
-			stacks[S.options.stack || 0] = { series: [S], position: i};
+		stackNumber = stacking ? (S.options.stack || 0) : S.index;
+		if (!stacks[stackNumber]) {
+			stacks[stackNumber] = { series: [S], position: i};
 			i++;
 		} else {
-			stacks[S.options.stack || 0].series.push(S);
+			stacks[stackNumber].series.push(S);
 		}
 	});
+
 	stacks.totalStacks = i + 1;
 	return stacks;
 };
@@ -649,7 +649,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 		}
 		var bottomShape = {
 			x: left,
-			y: top + (chart.yAxis[0].reversed ? -fbottom.size : height),
+			y: top + (chart.xAxis[0].opposite ? -fbottom.size : height),
 			z: 0,
 			width: width,
 			height: fbottom.size,
@@ -664,10 +664,10 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 	} else {
 		// BACK
 		var backShape = {
-			x: left,
-			y: top,
-			z: depth + 1,
-			width: width,
+			x: left + (chart.yAxis[0].opposite ? 0 : -fside.size),
+			y: top + (chart.xAxis[0].opposite ? -fbottom.size : 0),
+			z: depth,
+			width: width + fside.size,
 			height: height + fbottom.size,
 			depth: fback.size,
 			insidePlotArea: false
@@ -682,12 +682,12 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 			this.axisLine.hide();
 		}
 		var sideShape = {
-			x: (chart.yAxis[0].opposite ? width : 0) + left - fside.size,
-			y: top,
+			x: left + (chart.yAxis[0].opposite ? width : -fside.size),
+			y: top + (chart.xAxis[0].opposite ? -fbottom.size : 0),
 			z: 0,
 			width: fside.size,
 			height: height + fbottom.size,
-			depth: depth + fback.size,
+			depth: depth,
 			insidePlotArea: false
 		};
 		if (!this.sideFrame) {
@@ -711,13 +711,16 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed)
 	var chart = this.chart,
 		options3d = chart.options.chart.options3d;
 
-	var d = options3d.depth;
-
+	var d = options3d.depth,
+		opposite = this.opposite;
+	if (this.horiz) {
+		opposite = !opposite;
+	}
 	var pArr = [
-		{ x: path[1], y: path[2], z : (this.horiz || this.opposite ? d : 0)},
-		{ x: path[1], y: path[2], z : d },
-		{ x: path[4], y: path[5], z : d },
-		{ x: path[4], y: path[5], z : (this.horiz || this.opposite ? 0 : d)}
+		this.swapZ({ x: path[1], y: path[2], z: (opposite ? d : 0)}),
+		this.swapZ({ x: path[1], y: path[2], z: d }),
+		this.swapZ({ x: path[4], y: path[5], z: d }),
+		this.swapZ({ x: path[4], y: path[5], z: (opposite ? 0 : d)})
 	];
 
 	pArr = perspective(pArr, this.chart, false);
@@ -768,29 +771,48 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getMarkPath', function (proceed) {
 	}
 
 	var pArr = [
-		{x: path[1], y: path[2], z: 0},
-		{x: path[4], y: path[5], z: 0}
+		this.axis.swapZ({x: path[1], y: path[2], z: 0}),
+		this.axis.swapZ({x: path[4], y: path[5], z: 0})
 	];
 
 	pArr = perspective(pArr, this.axis.chart, false);
 	path = [
 		'M', pArr[0].x, pArr[0].y,
 		'L', pArr[1].x, pArr[1].y
-		];
+	];
 	return path;
 });
 
 Highcharts.wrap(Highcharts.Tick.prototype, 'getLabelPosition', function (proceed) {
 	var pos = proceed.apply(this, [].slice.call(arguments, 1));
-	
+
 	// Do not do this if the chart is not 3D
 	if (!this.axis.chart.is3d()) {
 		return pos;
-	}	
+	}
 
-	pos = perspective([{x: pos.x, y: pos.y, z: 0}], this.axis.chart, false)[0];
-	pos.x = pos.x - (!this.axis.horiz && this.axis.opposite ? this.axis.transA : 0); //#3788
+	var new_pos = perspective([this.axis.swapZ({x: pos.x, y: pos.y, z: 0})], this.axis.chart, false)[0];
+	new_pos.x = new_pos.x - (!this.axis.horiz && this.axis.opposite ? this.axis.transA : 0); //#3788
+	new_pos.old = pos;
+	return new_pos;
+});
 
+Highcharts.wrap(Highcharts.Tick.prototype, 'handleOverflow', function (proceed, xy) {
+	if (this.axis.chart.is3d()) {
+		xy = xy.old;
+	}
+	return proceed.call(this, xy);
+});
+
+Highcharts.wrap(Highcharts.Axis.prototype, 'getTitlePosition', function (proceed) {
+	var pos = proceed.apply(this, [].slice.call(arguments, 1));
+
+	// Do not do this if the chart is not 3D
+	if (!this.chart.is3d()) {
+		return pos;
+	}
+
+	pos = perspective([{x: pos.x, y: pos.y, z: 0}], this.chart, false)[0];
 	return pos;
 });
 
@@ -805,6 +827,68 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'drawCrosshair', function (proceed) {
 		}
 	}
 	proceed.apply(this, [].slice.call(args, 1));
+});
+
+/***
+    Z-AXIS
+***/
+
+Highcharts.Axis.prototype.swapZ = function (p, insidePlotArea) {
+	if (this.isZAxis) {
+		var plotLeft = insidePlotArea ? 0 : this.chart.plotLeft;
+		var chart = this.chart;
+		return {
+			x: plotLeft + (chart.yAxis[0].opposite ? p.z : chart.xAxis[0].width - p.z),
+			y: p.y,
+			z: p.x - plotLeft
+		};
+	} else {
+		return p;
+	}
+};
+
+var ZAxis = Highcharts.ZAxis = function () {
+	this.isZAxis = true;
+	this.init.apply(this, arguments);
+};
+Highcharts.extend(ZAxis.prototype, Highcharts.Axis.prototype);
+Highcharts.extend(ZAxis.prototype, {
+	setOptions: function (userOptions) {
+		userOptions = Highcharts.merge({
+			offset: 0,
+			lineColor: null
+		}, userOptions);
+		Highcharts.Axis.prototype.setOptions.call(this, userOptions);
+		this.coll = 'zAxis';
+	},
+	setAxisSize: function () {
+		Highcharts.Axis.prototype.setAxisSize.call(this);
+		this.width = this.len = this.chart.options.chart.options3d.depth;
+		this.right = this.chart.chartWidth - this.width - this.left;
+	}
+});
+
+
+/**
+* Extend the chart getAxes method to also get the color axis
+*/
+Highcharts.wrap(Highcharts.Chart.prototype, 'getAxes', function (proceed) {
+	var chart = this,
+		options = this.options,
+		zAxisOptions = options.zAxis = Highcharts.splat(options.zAxis || {});
+
+	proceed.call(this);
+
+	if (!chart.is3d()) {
+		return;
+	}
+	this.zAxis = [];
+	Highcharts.each(zAxisOptions, function (axisOptions, i) {
+		axisOptions.index = i;
+		axisOptions.isX = true; //Z-Axis is shown horizontally, so it's kind of a X-Axis
+		var zAxis = new ZAxis(chart, axisOptions);
+		zAxis.setScale();
+	});
 });
 /***
 	EXTENSION FOR 3D COLUMNS
@@ -904,8 +988,8 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proce
 			stacking = seriesOptions.stacking,
 			z = 0;	
 		
-		if (!(grouping !== undefined && !grouping) && stacking) {
-			var stacks = this.chart.retrieveStacks(grouping, stacking),
+		if (!(grouping !== undefined && !grouping)) {
+			var stacks = this.chart.retrieveStacks(stacking),
 				stack = seriesOptions.stack || 0,
 				i; // position within the stack
 			for (i = 0; i < stacks[stack].series.length; i++) {

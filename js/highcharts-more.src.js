@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.0.4-modified ()
+ * @license Highcharts JS v4.1.1-modified ()
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -1606,10 +1606,12 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				[0, yValue];
 
 			// override point value for sums
-			if (point.isSum || point.isIntermediateSum) { // #3710 Update point does not propagate to sum
+			// #3710 Update point does not propagate to sum
+			if (point.isSum) {
 				point.y = yValue;
+			} else if (point.isIntermediateSum) {
+				point.y = yValue - previousIntermediate; // #3840
 			}
-
 			// up points
 			y = mathMax(previousY, previousY + point.y) + range[0];
 			shapeArgs.y = yAxis.translate(y, 0, 1);

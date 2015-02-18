@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.0.4-modified ()
+ * @license Highmaps JS v1.1.1-modified ()
  * Highmaps as a plugin for Highcharts 4.0.x or Highstock 2.0.x (x being the patch version of this file)
  *
  * (c) 2011-2014 Torstein Honsi
@@ -665,6 +665,7 @@ extend(Chart.prototype, {
 				if (buttons.hasOwnProperty(n)) {
 					buttonOptions = merge(options.buttonOptions, buttons[n]);
 					attr = buttonOptions.theme;
+					attr.style = merge(buttonOptions.theme.style, buttonOptions.style); // #3203
 					states = attr.states;
 					button = chart.renderer.button(
 							buttonOptions.text, 
@@ -682,8 +683,7 @@ extend(Chart.prototype, {
 							height: buttonOptions.height,
 							title: chart.options.lang[n],
 							zIndex: 5
-						})
-						.css(buttonOptions.style)
+						})					
 						.add();
 					button.handler = buttonOptions.onclick;
 					button.align(extend(buttonOptions, { width: button.width, height: 2 * button.height }), null, buttonOptions.alignTo);
@@ -1731,7 +1731,8 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 		inside: true,
 		verticalAlign: 'middle',
 		crop: false,
-		overflow: false
+		overflow: false,
+		padding: 0 // #3837
 	},
 	marker: null,
 	tooltip: {
