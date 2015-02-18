@@ -14463,6 +14463,11 @@ Series.prototype = {
 			series.invertGroups();
 		}
 
+		// Initial clipping, must be defined after inverting groups for VML. Applies to columns etc. (#3839).
+		if (options.clip !== false && !series.sharedClipKey && !hasRendered) {
+			group.clip(chart.clipRect);
+		}
+
 		// Run the animation
 		if (animDuration) {
 			series.animate();
