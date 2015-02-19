@@ -6,10 +6,14 @@
  * - add column support (box collision detection, same as above)
  * - other series types, area etc.
  * - avoid data labels, when data labels above, show series label below.
- * - optional connectors when labels are distant
+ * - add options (enabled, style, connector, format, formatter)
+ * - connectors: Make a separate shape with anchors to use as label
+ * - do labels in a timeout since they don't interfere with others
  * 
+ * http://jsfiddle.net/highcharts/L2u9rpwr/
  * http://jsfiddle.net/highcharts/y5A37/
  * http://jsfiddle.net/highcharts/264Nm/
+ * http://jsfiddle.net/highcharts/y5A37/
  */
 
 /*global Highcharts */
@@ -136,6 +140,10 @@
      */
     Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
         var distToOthersSquared = Number.MAX_VALUE, // distance to other graphs
+            distToPointSquared = Number.MAX_VALUE,
+            dist,
+            connectorPoint,
+            connectorEnabled = true, // make part of the options set
             chart = this.chart,
             series,
             points,
@@ -149,6 +157,15 @@
                 r2.right < r1.left ||
                 r2.top > r1.bottom ||
                 r2.bottom < r1.top);
+        }
+
+        /**
+         * Get the weight in order to determine the ideal position. Larger distance to
+         * other series gives more weight. Smaller distance to the actual point (connector points only)
+         * gives more weight.
+         */
+        function getWeight(distToOthersSquared, distToPointSquared) {
+            return distToOthersSquared - distToPointSquared;
         }
 
         // First check for collision with existing labels
@@ -210,13 +227,32 @@
                         );
                     }
                 }
+
+                // Do we need a connector? 
+                if (connectorEnabled && this === series && checkDistance && !withinRange) {
+                    for (j = 1; j < points.length; j += 1) {
+                        dist = Math.min(
+                            Math.pow(x + bBox.width / 2 - points[j].plotX, 2) + Math.pow(y + bBox.height / 2 - points[j].plotY, 2),
+                            Math.pow(x - points[j].plotX, 2) + Math.pow(y - points[j].plotY, 2),
+                            Math.pow(x + bBox.width - points[j].plotX, 2) + Math.pow(y - points[j].plotY, 2),
+                            Math.pow(x + bBox.width - points[j].plotX, 2) + Math.pow(y + bBox.height - points[j].plotY, 2),
+                            Math.pow(x - points[j].plotX, 2) + Math.pow(y + bBox.height - points[j].plotY, 2)
+                        );
+                        if (dist < distToPointSquared) {
+                            distToPointSquared = dist;
+                            connectorPoint = points[j];
+                        }
+                    }
+                    withinRange = true;
+                }
             }
         }
 
         return !checkDistance || withinRange ? {
             x: x,
             y: y,
-            distToOthersSquared: distToOthersSquared
+            weight: getWeight(distToOthersSquared, connectorPoint ? distToPointSquared : 0),
+            connectorPoint: connectorPoint
         } : false;
 
     };
@@ -353,7 +389,7 @@
                 if (results.length) {
 
                     results.sort(function (a, b) {
-                        return b.distToOthersSquared - a.distToOthersSquared;
+                        return b.weight - a.weight;
                     });
                     //results = results.reverse();
                     best = results[0];
