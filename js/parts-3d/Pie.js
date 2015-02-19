@@ -121,7 +121,7 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'addPoint', function (proc
 	proceed.apply(this, [].slice.call(arguments, 1));	
 	if (this.chart.is3d()) {
 		// destroy (and rebuild) everything!!!
-		this.update();
+		this.update(this.userOptions, true); // #3845 pass the old options
 	}
 });
 
