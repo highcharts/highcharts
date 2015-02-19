@@ -591,12 +591,13 @@ Highcharts.Chart.prototype.renderSeries = function () {
 };
 
 Highcharts.Chart.prototype.retrieveStacks = function (stacking) {
-	var stacks = {},
+	var series = this.series,
+		stacks = {},
 		stackNumber,
 		i = 1;
 
 	Highcharts.each(this.series, function (S) {
-		stackNumber = stacking ? (S.options.stack || 0) : S.index;
+		stackNumber = stacking ? (S.options.stack || 0) : series.length - 1 - S.index; // #3841
 		if (!stacks[stackNumber]) {
 			stacks[stackNumber] = { series: [S], position: i};
 			i++;
