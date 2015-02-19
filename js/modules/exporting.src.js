@@ -23,6 +23,7 @@ var Chart = Highcharts.Chart,
 	merge = Highcharts.merge,
 	each = Highcharts.each,
 	extend = Highcharts.extend,
+	splat = Highcharts.splat,
 	math = Math,
 	mathMax = math.max,
 	doc = document,
@@ -261,6 +262,15 @@ extend(Chart.prototype, {
 				options.series.push(seriesOptions);
 			}
 		});
+
+		// Axis options must be merged in one by one, since it may be an array or an object (#2022)
+		if (additionalOptions) {
+			each(['xAxis', 'yAxis'], function (axisType, i) {
+				each(splat(additionalOptions[axisType]), function (axisOptions) {
+					options[axisType][i] = merge(options[axisType][i], axisOptions);
+				});
+			});
+		}
 
 		// generate the chart copy
 		chartCopy = new Highcharts.Chart(options, chart.callback);
