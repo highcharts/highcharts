@@ -557,7 +557,7 @@
 			// If a colorAxis is defined
 			if (this.colorAxis) {
 				this.translateColors();
-			} else {
+			} else if (!this.options.colorByPoint) {
 				this.setColorRecursive(this.tree, undefined);
 			}
 		},
