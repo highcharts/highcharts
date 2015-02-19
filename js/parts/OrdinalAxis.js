@@ -271,7 +271,7 @@ extend(Axis.prototype, {
 				axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = UNDEFINED;
 			}
 			if (axis.options.ordinal) {
-				axis.postTranslate = useOrdinal; // #3818
+				axis.doPostTranslate = useOrdinal; // #3818
 			}
 		}
 		axis.groupIntervalFactor = null; // reset for next run

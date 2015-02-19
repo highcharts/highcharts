@@ -101,7 +101,7 @@
 
 			var axis = this;
 			
-			axis.postTranslate = true;
+			axis.doPostTranslate = true;
 
 			this.val2lin = function (val) {
 				var nval = val,

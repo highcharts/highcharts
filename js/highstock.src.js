@@ -6871,7 +6871,7 @@ Axis.prototype = {
 			localMin = old ? axis.oldMin : axis.min,
 			returnValue,
 			minPixelPadding = axis.minPixelPadding,
-			postTranslate = (axis.postTranslate || (axis.isLog && handleLog)) && axis.lin2val;
+			doPostTranslate = (axis.doPostTranslate || (axis.isLog && handleLog)) && axis.lin2val;
 
 		if (!localA) {
 			localA = axis.transA;
@@ -6896,13 +6896,13 @@ Axis.prototype = {
 			val = val * sign + cvsOffset;
 			val -= minPixelPadding;
 			returnValue = val / localA + localMin; // from chart pixel to value
-			if (postTranslate) { // log and ordinal axes
+			if (doPostTranslate) { // log and ordinal axes
 				returnValue = axis.lin2val(returnValue);
 			}
 
 		// From value to pixels
 		} else {
-			if (postTranslate) { // log and ordinal axes
+			if (doPostTranslate) { // log and ordinal axes
 				val = axis.val2lin(val);
 			}
 			if (pointPlacement === 'between') {
@@ -18665,7 +18665,7 @@ extend(Axis.prototype, {
 				axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = UNDEFINED;
 			}
 			if (axis.options.ordinal) {
-				axis.postTranslate = useOrdinal; // #3818
+				axis.doPostTranslate = useOrdinal; // #3818
 			}
 		}
 		axis.groupIntervalFactor = null; // reset for next run
@@ -19155,7 +19155,7 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 
 			var axis = this;
 			
-			axis.postTranslate = true;
+			axis.doPostTranslate = true;
 
 			this.val2lin = function (val) {
 				var nval = val,
