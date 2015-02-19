@@ -139,7 +139,7 @@ Series.prototype.drawDataLabels = function () {
 						str,
 						0,
 						-999,
-						null,
+						options.shape, // docs
 						null,
 						null,
 						options.useHTML
@@ -215,6 +215,15 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 				visible = chart.isInsidePlot(alignAttr.x, alignAttr.y) && chart.isInsidePlot(alignAttr.x + bBox.width, alignAttr.y + bBox.height);
 
 			}
+
+			// When we're using a shape, make it possible with a connector or an arrow pointing to thie point
+			if (options.shape) {
+				dataLabel.attr({
+					anchorX: point.plotX,
+					anchorY: point.plotY
+				});
+			}
+
 		}
 	}
 
