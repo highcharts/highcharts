@@ -9546,7 +9546,7 @@ Pointer.prototype = {
 				trueXkd = kdpoint.plotX + kdpoint.series.xAxis.left;
 				while (i--) {
 					trueX = kdpoints[i].plotX + kdpoints[i].series.xAxis.left;
-					if (kdpoints[i].x !== kdpoint.x || trueX !== trueXkd || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
+					if (kdpoints[i].x !== kdpoint.x || (trueX !== trueXkd && !kdpoints[i].series.xAxis.isRadial)|| !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
 						kdpoints.splice(i, 1);
 					}
 				}
@@ -9570,6 +9570,14 @@ Pointer.prototype = {
 				anchor = tooltip.getAnchor([{}], e);
 				tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });			
 			}
+		}
+
+		// Start the event listener to pick up the tooltip 
+		if (tooltip && !pointer._onDocumentMouseMove) {
+			pointer._onDocumentMouseMove = function (e) {
+				pointer.onDocumentMouseMove(e);
+			};
+			addEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
 		}
 		
 		// Crosshair

@@ -214,6 +214,14 @@ Pointer.prototype = {
 				tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });			
 			}
 		}
+
+		// Start the event listener to pick up the tooltip 
+		if (tooltip && !pointer._onDocumentMouseMove) {
+			pointer._onDocumentMouseMove = function (e) {
+				pointer.onDocumentMouseMove(e);
+			};
+			addEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
+		}
 		
 		// Crosshair
 		each(chart.axes, function (axis) {
