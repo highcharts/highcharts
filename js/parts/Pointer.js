@@ -513,13 +513,12 @@ Pointer.prototype = {
 	 */
 	onDocumentMouseMove: function (e) {
 		var chart = this.chart,
-			chartPosition = this.chartPosition,
-			hoverSeries = chart.hoverSeries;
+			chartPosition = this.chartPosition;
 
 		e = this.normalize(e, chartPosition);
 
 		// If we're outside, hide the tooltip
-		if (chartPosition && hoverSeries && !this.inClass(e.target, 'highcharts-tracker') &&
+		if (chartPosition && !this.inClass(e.target, 'highcharts-tracker') &&
 				!chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
 			this.reset();
 		}
