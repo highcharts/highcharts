@@ -9543,10 +9543,10 @@ Pointer.prototype = {
 			// Draw tooltip if necessary
 			if (shared && !kdpoint.series.noSharedTooltip) {
 				i = kdpoints.length;
-				trueXkd = kdpoint.plotX + kdpoint.series.xAxis.left;
+				trueXkd = kdpoint.clientX;
 				while (i--) {
-					trueX = kdpoints[i].plotX + kdpoints[i].series.xAxis.left;
-					if (kdpoints[i].x !== kdpoint.x || (trueX !== trueXkd && !kdpoints[i].series.xAxis.isRadial)|| !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
+					trueX = kdpoints[i].clientX;
+					if (kdpoints[i].x !== kdpoint.x || trueX !== trueXkd || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
 						kdpoints.splice(i, 1);
 					}
 				}
