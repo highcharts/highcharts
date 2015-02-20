@@ -726,7 +726,7 @@ extend(Series.prototype, {
 
 
 		// hide tooltip (#1361)
-		if (chart.hoverSeries === series) {
+		if (chart.hoverSeries === series || (chart.hoverPoint && chart.hoverPoint.series) === series) {
 			series.onMouseOut();
 		}
 
