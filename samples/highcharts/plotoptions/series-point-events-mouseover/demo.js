@@ -7,20 +7,39 @@ $(function () {
             text: 'Mouse events demo'
         },
         subtitle: {
-            text: 'On point mouse over or mouse out, the values should be reported in top right'
+            text: 'On point mouse over or mouse out, the values should be reported in top left'
         },
         plotOptions: {
             series: {
                 point: {
                     events: {
                         mouseOver: function () {
-                            $reporting.html('x: ' + this.x + ', y: ' + this.y);
+                            var chart = this.series.chart;
+                            if (!chart.lbl) {
+                                chart.lbl = chart.renderer.label('')
+                                    .attr({
+                                        padding: 10,
+                                        r: 10,
+                                        fill: Highcharts.getOptions().colors[1]
+                                    })
+                                    .css({
+                                        color: '#FFFFFF'
+                                    })
+                                    .add();
+                            }
+                            chart.lbl
+                                .show()
+                                .attr({ 
+                                    text: 'x: ' + this.x + ', y: ' + this.y 
+                                });
                         }
                     }
                 },
                 events: {
                     mouseOut: function () {
-                        $reporting.empty();
+                        if (this.chart.lbl) {
+                            this.chart.lbl.hide();
+                        }
                     }
                 }
             }

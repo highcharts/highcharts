@@ -9076,7 +9076,7 @@ Pointer.prototype = {
 		}
 
 		// Refresh tooltip for kdpoint
-		if (kdpoint && tooltip && kdpoint !== hoverPoint) {
+		if (kdpoint && kdpoint !== hoverPoint) {
 			// Draw tooltip if necessary
 			if (shared && !kdpoint.series.noSharedTooltip) {
 				i = kdpoints.length;
@@ -9087,12 +9087,16 @@ Pointer.prototype = {
 						kdpoints.splice(i, 1);
 					}
 				}
-				tooltip.refresh(kdpoints, e);
+				if (tooltip) {
+					tooltip.refresh(kdpoints, e);
+				}
 				each(kdpoints, function (point) {
 					point.onMouseOver(e);
 				});
 			} else {
-				tooltip.refresh(kdpoint, e);
+				if (tooltip) {
+					tooltip.refresh(kdpoint, e);
+				}
 				kdpoint.onMouseOver(e);
 			}
 		
