@@ -189,7 +189,7 @@ Pointer.prototype = {
 				trueXkd = kdpoint.plotX + kdpoint.series.xAxis.left;
 				while (i--) {
 					trueX = kdpoints[i].plotX + kdpoints[i].series.xAxis.left;
-					if (kdpoints[i].x !== kdpoint.x || trueX !== trueXkd || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
+					if (kdpoints[i].x !== kdpoint.x || (trueX !== trueXkd && !kdpoints[i].series.xAxis.isRadial)|| !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
 						kdpoints.splice(i, 1);
 					}
 				}
