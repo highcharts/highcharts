@@ -192,6 +192,49 @@ Highcharts.post = function (url, data, formAttributes) {
 extend(Chart.prototype, {
 
 	/**
+	 * A collection of regex fixes on the produces SVG to account for expando properties,
+	 * browser bugs, VML problems and other. Returns a cleaned SVG.
+	 */
+	sanitizeSVG: function (svg) {
+		return svg
+			.replace(/zIndex="[^"]+"/g, '')
+			.replace(/isShadow="[^"]+"/g, '')
+			.replace(/symbolName="[^"]+"/g, '')
+			.replace(/jQuery[0-9]+="[^"]+"/g, '')
+			.replace(/url\([^#]+#/g, 'url(#')
+			.replace(/<svg /, '<svg xmlns:xlink="http://www.w3.org/1999/xlink" ')
+			.replace(/ href=/g, ' xlink:href=')
+			.replace(/\n/, ' ')
+			// Any HTML added to the container after the SVG (#894)
+			.replace(/<\/svg>.*?$/, '</svg>') 
+			// Batik doesn't support rgba fills and strokes (#3095)
+			.replace(/(fill|stroke)="rgba\(([ 0-9]+,[ 0-9]+,[ 0-9]+),([ 0-9\.]+)\)"/g, '$1="rgb($2)" $1-opacity="$3"')
+			// An issue with PhantomJS as of 2015-01-11. Revisit with newer versions. (#3649)
+			.replace(/(text-shadow:[ 0-9a-z]+),[^"]+([;"])/g, '$1$2') 
+			/* This fails in IE < 8
+			.replace(/([0-9]+)\.([0-9]+)/g, function(s1, s2, s3) { // round off to save weight
+				return s2 +'.'+ s3[0];
+			})*/
+
+			// Replace HTML entities, issue #347
+			.replace(/&nbsp;/g, '\u00A0') // no-break space
+			.replace(/&shy;/g,  '\u00AD') // soft hyphen
+
+			// IE specific
+			.replace(/<IMG /g, '<image ')
+			.replace(/height=([^" ]+)/g, 'height="$1"')
+			.replace(/width=([^" ]+)/g, 'width="$1"')
+			.replace(/hc-svg-href="([^"]+)">/g, 'xlink:href="$1"/>')
+			.replace(/id=([^" >]+)/g, 'id="$1"')
+			.replace(/class=([^" >]+)/g, 'class="$1"')
+			.replace(/ transform /g, ' ')
+			.replace(/:(path|rect)/g, '$1')
+			.replace(/style="([^"]+)"/g, function (s) {
+				return s.toLowerCase();
+			});
+	},
+
+	/**
 	 * Return an SVG representation of the chart
 	 *
 	 * @param additionalOptions {Object} Additional chart options for the generated SVG representation
@@ -298,42 +341,7 @@ extend(Chart.prototype, {
 		discardElement(sandbox);
 
 		// sanitize
-		svg = svg
-			.replace(/zIndex="[^"]+"/g, '')
-			.replace(/isShadow="[^"]+"/g, '')
-			.replace(/symbolName="[^"]+"/g, '')
-			.replace(/jQuery[0-9]+="[^"]+"/g, '')
-			.replace(/url\([^#]+#/g, 'url(#')
-			.replace(/<svg /, '<svg xmlns:xlink="http://www.w3.org/1999/xlink" ')
-			.replace(/ href=/g, ' xlink:href=')
-			.replace(/\n/, ' ')
-			// Any HTML added to the container after the SVG (#894)
-			.replace(/<\/svg>.*?$/, '</svg>') 
-			// Batik doesn't support rgba fills and strokes (#3095)
-			.replace(/(fill|stroke)="rgba\(([ 0-9]+,[ 0-9]+,[ 0-9]+),([ 0-9\.]+)\)"/g, '$1="rgb($2)" $1-opacity="$3"')
-			// An issue with PhantomJS as of 2015-01-11. Revisit with newer versions. (#3649)
-			.replace(/(text-shadow:[ 0-9a-z]+),[^"]+([;"])/g, '$1$2') 
-			/* This fails in IE < 8
-			.replace(/([0-9]+)\.([0-9]+)/g, function(s1, s2, s3) { // round off to save weight
-				return s2 +'.'+ s3[0];
-			})*/
-
-			// Replace HTML entities, issue #347
-			.replace(/&nbsp;/g, '\u00A0') // no-break space
-			.replace(/&shy;/g,  '\u00AD') // soft hyphen
-
-			// IE specific
-			.replace(/<IMG /g, '<image ')
-			.replace(/height=([^" ]+)/g, 'height="$1"')
-			.replace(/width=([^" ]+)/g, 'width="$1"')
-			.replace(/hc-svg-href="([^"]+)">/g, 'xlink:href="$1"/>')
-			.replace(/id=([^" >]+)/g, 'id="$1"')
-			.replace(/class=([^" >]+)/g, 'class="$1"')
-			.replace(/ transform /g, ' ')
-			.replace(/:(path|rect)/g, '$1')
-			.replace(/style="([^"]+)"/g, function (s) {
-				return s.toLowerCase();
-			});
+		svg = this.sanitizeSVG(svg);
 
 		// IE9 beta bugs with innerHTML. Test again with final IE9.
 		svg = svg.replace(/(url\(#highcharts-[0-9]+)&quot;/g, '$1')
