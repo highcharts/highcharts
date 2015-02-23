@@ -15285,7 +15285,6 @@ extend(Series.prototype, {
 		}
 
 		// redraw
-		delete series.kdTree; // #3816 kdTree has to be rebuild.
 		series.isDirty = true;
 		series.isDirtyData = true;
 		if (redraw) {
@@ -15318,7 +15317,6 @@ extend(Series.prototype, {
 				}
 
 				// redraw
-				delete series.kdTree; // #3816 kdTree has to be rebuild.
 				series.isDirty = true;
 				series.isDirtyData = true;
 				if (redraw) {
@@ -19849,7 +19847,6 @@ wrap(Axis.prototype, 'setScale', function (proceed) {
 	proceed.call(this);
 	each(this.series, function (series) {
 		series.hasProcessed = false;
-		delete series.kdTree;
 	});
 });
 

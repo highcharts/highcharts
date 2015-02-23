@@ -490,7 +490,6 @@ wrap(Axis.prototype, 'setScale', function (proceed) {
 	proceed.call(this);
 	each(this.series, function (series) {
 		series.hasProcessed = false;
-		delete series.kdTree;
 	});
 });
 
