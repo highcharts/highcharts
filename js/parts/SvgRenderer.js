@@ -678,6 +678,8 @@ SVGElement.prototype = {
 			styles = wrapper.styles,
 			rad = rotation * deg2rad,
 			textStr = wrapper.textStr,
+			textShadow,
+			elemStyle = element.style,
 			cacheKey;
 
 		if (textStr !== UNDEFINED) {
@@ -708,6 +710,12 @@ SVGElement.prototype = {
 			if (element.namespaceURI === SVG_NS || renderer.forExport) {
 				try { // Fails in Firefox if the container has display: none.
 
+					// Workaround for #3842, Firefox reporting wrong bounding box for shadows
+					if (isFirefox && elemStyle.textShadow) {
+						textShadow = elemStyle.textShadow;
+						elemStyle.textShadow = '';
+					}
+
 					bBox = element.getBBox ?
 						// SVG: use extend because IE9 is not allowed to change width and height in case
 						// of rotation (below)
@@ -717,6 +725,11 @@ SVGElement.prototype = {
 							width: element.offsetWidth,
 							height: element.offsetHeight
 						};
+
+					// #3842
+					if (textShadow) {
+						elemStyle.textShadow = textShadow;
+					}
 				} catch (e) {}
 
 				// If the bBox is not set, the try-catch block above failed. The other condition
