@@ -471,12 +471,20 @@
 			}
 			iframe {
 				width: 500px;
-				height: 400px; 
+				height: 400px;
+				border: 1px dotted gray;
 			}
 			iframe.unit-iframe {
 				width: 1026px;
 				height: 600px;
+				border: none;
 			}
+
+			<?php if ($isUnitTest) : ?>
+			#report, #svg, #preview {
+				display: none;
+			}
+			<?php endif ?>;
 		</style>
 		
 	</head>
@@ -500,11 +508,14 @@
 		<table>
 			<tr>
 				<?php if (!$isUnitTest) : ?>
-				<td><iframe id="iframe-left" src="compare-iframe.php?which=left&amp;<?php echo $_SERVER['QUERY_STRING'] ?>" 
-					style="width: 500px; height: 400px; border: 1px dotted gray"></iframe></td>
+				<td>
+					<iframe id="iframe-left" src="compare-iframe.php?which=left&amp;<?php echo $_SERVER['QUERY_STRING'] ?>"></iframe>
+				</td>
 				<?php endif; ?>
-				<td><iframe id="iframe-right" src="compare-iframe.php?which=right&amp;<?php echo $_SERVER['QUERY_STRING'] ?>" 
-					style="border: 1px dotted gray" class="<?php echo ($isUnitTest ? 'unit-iframe' : ''); ?>"></iframe></td>
+				<td>
+					<iframe id="iframe-right" src="compare-iframe.php?which=right&amp;<?php echo $_SERVER['QUERY_STRING'] ?>" 
+					class="<?php echo ($isUnitTest ? 'unit-iframe' : ''); ?>"></iframe>
+				</td>
 				<td id="comment-placeholder"></id>
 			</tr>
 
