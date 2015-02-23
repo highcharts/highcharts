@@ -1942,8 +1942,8 @@ SVGElement.prototype = {
 			// Safari suffers from the double display bug (#3649)
 			isSafari = userAgent.indexOf('Safari') > 0 && userAgent.indexOf('Chrome') === -1,
 			// IE10 and IE11 report textShadow in elem.style even though it doesn't work. Check
-			// this again with new IE release.
-			supports = elem.style.textShadow !== UNDEFINED && !isIE && !isSafari;
+			// this again with new IE release. In exports, the rendering is passed to PhantomJS. 
+			supports = this.renderer.forExport || (elem.style.textShadow !== UNDEFINED && !isIE && !isSafari);
 
 		// When the text shadow is set to contrast, use dark stroke for light text and vice versa
 		if (hasContrast) {
