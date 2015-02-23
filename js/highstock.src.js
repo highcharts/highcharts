@@ -19319,6 +19319,7 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 
 				if (xAxis.isInAnyBreak(point.x, true) || yAxis.isInAnyBreak(point.y, true)) {
 					points.splice(i, 1);
+					this.data[i].destroyElements(); // removes the graphics for this point if they exist
 				}
 			}
 		}
