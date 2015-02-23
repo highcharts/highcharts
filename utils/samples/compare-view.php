@@ -6,6 +6,9 @@
 
 	$compare = json_decode(file_get_contents('temp/compare.json'));
 	$comment = @$compare->$path->comment;
+
+
+	$isUnitTest = strstr(file_get_contents("../../samples/$path/demo.details"), 'qunit') ? true : false;
 	
 
 
@@ -109,7 +112,12 @@
 									'class': 'dissimilarity-index',
 									href: location.href.replace(/continue=true/, ''),
 									target: 'main',
-									title: 'Difference between exported images. The number in parantheses is the reference diff, generated on the first run after clearing temp dir cache.' ,
+									<?php if ($isUnitTest) : ?>
+									title: 'How many unit tests passed out of the total' ,
+									<?php else : ?>
+									title: 'Difference between exported images. The number in parantheses is the reference diff, ' + 
+										'generated on the first run after clearing temp dir cache.' ,
+									<?php endif; ?>
 									'data-diff': diff
 								})
 								.css({
@@ -204,7 +212,7 @@
 			}
 			
 			function onDifferent(diff) {
-				if (diff === 'Error') { // Otherwise, it is saved from compare-iframe.php
+				if (diff === 'Error' || /^[0-9]+\/[0-9]+$/.test(diff)) { // Otherwise, it is saved from compare-iframe.php
 					$.get('compare-update-report.php', { path: '<?php echo $path ?>', diff: diff });
 				}
 				markList("different", diff);
@@ -461,6 +469,14 @@
 				border-radius: 3px;
 				padding: 0 3px;
 			}
+			iframe {
+				width: 500px;
+				height: 400px; 
+			}
+			iframe.unit-iframe {
+				width: 1026px;
+				height: 600px;
+			}
 		</style>
 		
 	</head>
@@ -483,12 +499,15 @@
 		
 		<table>
 			<tr>
+				<?php if (!$isUnitTest) : ?>
 				<td><iframe id="iframe-left" src="compare-iframe.php?which=left&amp;<?php echo $_SERVER['QUERY_STRING'] ?>" 
 					style="width: 500px; height: 400px; border: 1px dotted gray"></iframe></td>
+				<?php endif; ?>
 				<td><iframe id="iframe-right" src="compare-iframe.php?which=right&amp;<?php echo $_SERVER['QUERY_STRING'] ?>" 
-					style="width: 500px; height: 400px; border: 1px dotted gray"></iframe></td>
+					style="border: 1px dotted gray" class="<?php echo ($isUnitTest ? 'unit-iframe' : ''); ?>"></iframe></td>
 				<td id="comment-placeholder"></id>
 			</tr>
+
 			<tr>
 				<td colspan="2">
 					<pre id="svg" style="overflow: hidden; width: 1000px; height: 10px; cursor: pointer;"></pre>

@@ -180,7 +180,7 @@
 	<div id="top-nav">
 		<a class="button" id="batch-compare" title="Batch compare all samples">
 			<i class="icon-play"></i>
-			Compare
+			Run tests
 		</a>
 		<a class="button" id="batch-stop" title="Stop comparing">
 			<i class="icon-stop"></i>
@@ -206,7 +206,7 @@
 
 	<div id="main-nav">
 	<?php
-	$products = array('highcharts', 'maps', 'stock', 'issues');
+	$products = array('unit-tests', 'highcharts', 'maps', 'stock', 'issues');
 	$samplesDir = dirname(__FILE__). '/../../samples/';
 	$browser = get_browser(null, true);
 	$browserKey = @$browser['parent'];
@@ -248,7 +248,7 @@
 								if (isset($compare->$path->$browserKey)) {
 									$diff = $compare->$path->$browserKey;
 									if ($diff > 0 || $diff == 'Error') {
-										if ($diff != 'Error') {
+										if (strstr($diff, '.')) {
 											$diff = round($diff, 2);
 										}
 										$compareClass = 'different';

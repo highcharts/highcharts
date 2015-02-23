@@ -137,14 +137,30 @@ function getCompareTooltips() {
 			};
 
 			function compareHTML() {
-					var start = + new Date(),
-						interval;
+				var start = + new Date(),
+					interval,
+					QUnit = window.QUnit;
+			
+				window.parent.<?php echo $_GET['which']; ?>Version = Highcharts.version;
+
+				// If running QUnit, use the built-in callback
+				if (QUnit) {
+					QUnit.done(function (e) {
+						if (e.passed === e.total) {
+							window.parent.onIdentical();
+						} else {
+							window.parent.onDifferent(e.passed + '/' + e.total);
+						}
+					});
 				
-					window.parent.<?php echo $_GET['which']; ?>Version = Highcharts.version;
-					
+
+				// Else, prepare for async
+				} else {
+				
 					// To give Ajax some time to load, look for the chart every 50 ms for two seconds
 					interval = setInterval(function() {
-						chart = window.Highcharts && window.Highcharts.charts[0];
+						chart = window.Highcharts && window.Highcharts.charts[0],
+						QUnit = window.QUnit;
 
 						// Compare chart objects
 						if (chart) {
@@ -181,6 +197,7 @@ function getCompareTooltips() {
 						}
 						
 					}, 50);
+				}
 				
 			}
 
