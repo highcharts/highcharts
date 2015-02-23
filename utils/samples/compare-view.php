@@ -144,7 +144,7 @@
 									target: 'main',
 									title: 'Compare'
 								})
-								.html('<i class="icon-columns"></i>')
+								.html('<i class="<?php echo ($isUnitTest ? 'icon-puzzle-piece' : 'icon-columns'); ?>"></i>')
 								.appendTo(li);
 
 						}

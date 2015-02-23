@@ -236,14 +236,18 @@
 								$path = "$dir/$file/$innerFile";
 								$suffix = '';
 								$dissIndex = '';
+								$isUnitTest = strstr($yaml, 'qunit');
+
+
 								if (strstr($yaml, 'requiresManualTesting: true')) {
 									$batchClass = '';
 									$suffix = ' <acronym title="Requires manual testing">[m]</acronym>';
 								}
 
 								// Display diff from previous comparison
+								$compareIcon = $isUnitTest ? 'icon-puzzle-piece' : 'icon-columns';
 								$dissIndex = "
-									<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main'><i class='icon-columns'></i></a>
+									<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main'><i class='$compareIcon'></i></a>
 								";
 								if (isset($compare->$path->$browserKey)) {
 									$diff = $compare->$path->$browserKey;
