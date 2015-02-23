@@ -120,6 +120,25 @@ function getCompareTooltips() {
 		
 		<style type="text/css">
 			<?php @include("$path/demo.css"); ?>
+
+
+			body {
+				margin: 0;
+			}
+
+			/* QUnit, follow the theme */
+			#qunit-tests li li.fail {
+				border-left: 10px solid #f15c80;
+			}
+			#qunit-tests .fail {
+				background-color: #f15c80;
+			}
+			#qunit-tests .fail .test-actual { 
+				color: #f15c80; 
+			}
+			#qunit-banner.qunit-fail { 
+				background-color: #f15c80; 
+			}
 		</style>
 		
 		<script type="text/javascript">
@@ -309,7 +328,7 @@ function getCompareTooltips() {
 		</script>
 		
 	</head>
-	<body style="margin: 0">
+	<body>
 
 <?php echo getHTML($_GET['which']); ?>
 

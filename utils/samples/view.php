@@ -315,6 +315,20 @@ function getResources() {
 				width: 100%;
 				transition: width 500ms;
 			}
+
+			/* QUnit, follow the theme */
+			#qunit-tests li li.fail {
+				border-left: 10px solid #f15c80;
+			}
+			#qunit-tests .fail {
+				background-color: #f15c80;
+			}
+			#qunit-tests .fail .test-actual { 
+				color: #f15c80; 
+			}
+			#qunit-banner.qunit-fail { 
+				background-color: #f15c80; 
+			}
 		</style>
 
 	</head>
