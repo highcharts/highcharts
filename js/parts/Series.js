@@ -1703,6 +1703,7 @@ Series.prototype = {
 		series.render();
 
 		if (wasDirtyData) {
+			delete this.kdTree; // #3868 recalculate the kdtree with dirty data
 			fireEvent(series, 'updatedData');
 		}
 	},
