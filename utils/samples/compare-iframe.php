@@ -114,31 +114,12 @@ function getCompareTooltips() {
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Highcharts demo</title>
-		
 		<?php echo getFramework($_GET['which'] === 'left' ? $leftFramework : $rightFramework); ?>
 		<?php echo getResources(); ?>
 		
+		<link rel="stylesheet" type="text/css" href="style.css"/>
 		<style type="text/css">
 			<?php @include("$path/demo.css"); ?>
-
-
-			body {
-				margin: 0;
-			}
-
-			/* QUnit, follow the theme */
-			#qunit-tests li li.fail {
-				border-left: 10px solid #f15c80;
-			}
-			#qunit-tests .fail {
-				background-color: #f15c80;
-			}
-			#qunit-tests .fail .test-actual { 
-				color: #f15c80; 
-			}
-			#qunit-banner.qunit-fail { 
-				background-color: #f15c80; 
-			}
 		</style>
 		
 		<script type="text/javascript">

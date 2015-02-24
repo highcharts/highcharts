@@ -420,6 +420,11 @@
 			}
 		</script>
 		<style type="text/css">
+
+			body {
+				margin: 0;
+			}
+
 			.top-bar {
 				color: white;
 				font-family: Arial, sans-serif; 
@@ -446,16 +451,33 @@
 				padding: 0.5em; 
 				
 			}
+
+			#frame-row {
+				width: 1360px;
+			}
+			#comment-placeholder {
+				width: 300px;
+				display: inline-block;
+			}
 			#comment-iframe {
 				height: 400px;
+				width: calc(100% - 2px);
 				border: 1px solid silver;
-				position: fixed;
+			}
+			#preview {
+				overflow: auto; 
+				width: 1000px; 
+				position: relative
 			}
 
 			pre#svg {
 				padding: 1em;
 				border: 1px solid silver;
 				background-color: #F8F8F8;
+				overflow: hidden; 
+				width: 1000px; 
+				height: 10px; 
+				cursor: pointer;
 			}
 			del {
 				color: white;
@@ -469,26 +491,29 @@
 				border-radius: 3px;
 				padding: 0 3px;
 			}
-			iframe {
+			body.visual iframe {
+				display: inline-block;
 				width: 500px;
 				height: 400px;
 				border: 1px dotted gray;
 			}
-			iframe.unit-iframe {
-				width: 1026px;
+
+			body.unit #frame-row {
+				width: auto;
+			}
+			body.unit iframe {
+				width: 100%;
 				height: 600px;
 				border: none;
 			}
 
-			<?php if ($isUnitTest) : ?>
-			#report, #svg, #preview {
+			body.unit #report, body.unit #svg, body.unit #preview {
 				display: none;
 			}
-			<?php endif ?>;
 		</style>
 		
 	</head>
-	<body style="margin: 0">
+	<body class="<?php echo ($isUnitTest ? 'unit' : 'visual'); ?>">
 		
 		<div><?php echo @$warning ?></div>
 		<div class="top-bar">
@@ -503,31 +528,21 @@
 
 		<div style="margin: 1em">
 		
-		<div id="report"></div>
-		
-		<table>
-			<tr>
+			<div id="report"></div>
+			
+			<div id="frame-row">
 				<?php if (!$isUnitTest) : ?>
-				<td>
-					<iframe id="iframe-left" src="compare-iframe.php?which=left&amp;<?php echo $_SERVER['QUERY_STRING'] ?>"></iframe>
-				</td>
+				<iframe id="iframe-left" src="compare-iframe.php?which=left&amp;<?php echo $_SERVER['QUERY_STRING'] ?>"></iframe>
 				<?php endif; ?>
-				<td>
-					<iframe id="iframe-right" src="compare-iframe.php?which=right&amp;<?php echo $_SERVER['QUERY_STRING'] ?>" 
-					class="<?php echo ($isUnitTest ? 'unit-iframe' : ''); ?>"></iframe>
-				</td>
-				<td id="comment-placeholder"></id>
-			</tr>
-
-			<tr>
-				<td colspan="2">
-					<pre id="svg" style="overflow: hidden; width: 1000px; height: 10px; cursor: pointer;"></pre>
-					<div id="preview" style="overflow: auto; width: 1000px; position: relative"></div>
-					<button id="overlay-compare" style="display:none">Compare overlaid</button>
-				</td>
-			</tr>
-		</table>
-		
+				<iframe id="iframe-right" src="compare-iframe.php?which=right&amp;<?php echo $_SERVER['QUERY_STRING'] ?>"></iframe>
+				
+				<div id="comment-placeholder"></div>
+			</div>
+			
+			<pre id="svg"></pre>
+			
+			<div id="preview"></div>
+			<button id="overlay-compare" style="display:none">Compare overlaid</button>
 		
 		
 		</div>

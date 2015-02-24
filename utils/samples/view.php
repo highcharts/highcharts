@@ -291,46 +291,6 @@ function getResources() {
 			<?php @include("$fullpath/demo.css"); ?>
 		</style>
 
-		<style type="text/css">
-			.top-bar {
-				color: white;
-				font-family: Arial, sans-serif;
-				font-size: 0.8em;
-				padding: 0.5em;
-				height: 50px;
-				background: #34343e;
-				box-shadow: 0px 0px 8px #888;
-			}
-			li, a, p, div {
-				font-family: Arial, sans-serif;
-				font-size: 10pt;
-			}
-			#source-box {
-				width: 0;
-				float: left;
-				transition: width 500ms;
-			}
-			#main-content {
-				float: right;
-				width: 100%;
-				transition: width 500ms;
-			}
-
-			/* QUnit, follow the theme */
-			#qunit-tests li li.fail {
-				border-left: 10px solid #f15c80;
-			}
-			#qunit-tests .fail {
-				background-color: #f15c80;
-			}
-			#qunit-tests .fail .test-actual { 
-				color: #f15c80; 
-			}
-			#qunit-banner.qunit-fail { 
-				background-color: #f15c80; 
-			}
-		</style>
-
 	</head>
 	<body style="margin: 0">
 
