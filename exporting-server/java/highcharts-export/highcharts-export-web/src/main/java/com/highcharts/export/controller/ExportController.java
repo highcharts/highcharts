@@ -416,6 +416,19 @@ public class ExportController extends HttpServlet {
 		return modelAndView;
 	}
 
+	@ExceptionHandler(IllegalStateException.class)
+	public ModelAndView handleIllegalStateException(Exception ex, HttpServletResponse response) {
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("error");
+		String message = "Something went wrong while converting. " + StringEscapeUtils.escapeHtml(ex.getMessage());
+		if (ex.getMessage().contains("Form too large")) {
+			message = "Sorry, you have reached the data limit, you can POST to the export server";
+		}
+		modelAndView.addObject("message", message);
+		response.setStatus(500);
+		return modelAndView;
+	}
+
 	@ExceptionHandler(ServletException.class)
 	public ModelAndView handleServletException(Exception ex, HttpServletResponse response) {
 		ModelAndView modelAndView = new ModelAndView();
