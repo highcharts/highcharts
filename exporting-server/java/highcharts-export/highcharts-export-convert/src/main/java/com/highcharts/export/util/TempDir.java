@@ -27,7 +27,10 @@ public class TempDir {
 		tmpDir.toFile().deleteOnExit();
 
 		outputDir = Files.createDirectory(Paths.get(tmpDir.toString(), "output"));
+		outputDir.toFile().deleteOnExit();
+		
 		phantomJsDir = Files.createDirectory(Paths.get(tmpDir.toString(), "phantomjs"));
+		phantomJsDir.toFile().deleteOnExit();
 
 		System.out.println("Highcharts Export Server using " +TempDir.getTmpDir() + " as TEMP folder.");
 	}
