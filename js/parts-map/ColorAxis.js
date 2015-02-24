@@ -306,8 +306,7 @@ extend(ColorAxis.prototype, {
 		}
 	},
 	drawCrosshair: function (e, point) {
-		var newCross = !this.cross,
-			plotX = point && point.plotX,
+		var plotX = point && point.plotX,
 			plotY = point && point.plotY,
 			crossPos,
 			axisPos = this.pos,
@@ -327,7 +326,7 @@ extend(ColorAxis.prototype, {
 			point.plotX = plotX;
 			point.plotY = plotY;
 			
-			if (!newCross && this.cross) {
+			if (this.cross) {
 				this.cross
 					.attr({
 						fill: this.crosshair.color

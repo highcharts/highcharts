@@ -2094,10 +2094,8 @@ Axis.prototype = {
 		if (
 			// Disabled in options
 			!this.crosshair || 
-			// snap
-			((defined(point) || !pick(this.crosshair.snap, true)) === false) || 
-			// Do not draw the crosshair if this axis is not part of the point 
-			(defined(point) && pick(this.crosshair.snap, true) && (!point.series || point.series[this.isXAxis ? 'xAxis' : 'yAxis'] !== this))
+			// Snap
+			((defined(point) || !pick(this.crosshair.snap, true)) === false)
 		) {
 			this.hideCrosshair();
 		

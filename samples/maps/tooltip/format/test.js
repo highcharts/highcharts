@@ -1,14 +1,4 @@
 function test(chart) {
-	var point = chart.series[0].points[203]; // Uruguay
-
-	// First mouse over to set hoverPoint
-	point.onMouseOver();
-
-	// Now click it
-	chart.pointer.onContainerClick({
-		type: 'click',
-		target: point.graphic.element 
-	});
 
 	// Second point, in order to unselect the first
 	point = chart.series[0].points[202]; // USA
@@ -16,9 +6,15 @@ function test(chart) {
 	// First mouse over to set hoverPoint
 	point.onMouseOver();
 
-	// Now click it
-	chart.pointer.onContainerClick({
-		type: 'click',
-		target: point.graphic.element 
+	// Now hover it
+	chart.pointer.onContainerMouseMove({
+		type: 'mousemove',
+		pageX: 100,
+		pageY: 100,
+		target: chart.container
 	});
+
+	chart.getSVG = function () {
+		return this.container.innerHTML;
+	}
 };
