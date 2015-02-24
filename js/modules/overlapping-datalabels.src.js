@@ -21,7 +21,7 @@
 
 			each(chart.series, function (series) {
 				var dlOptions = series.options.dataLabels;
-				if ((dlOptions.enabled || series._hasPointLabels) && !dlOptions.allowOverlap) {
+				if ((dlOptions.enabled || series._hasPointLabels) && !dlOptions.allowOverlap && series.visible) { // #3866
 					each(series.points, function (point) { 
 						if (point.dataLabel) {
 							point.dataLabel.labelrank = point.labelrank;
