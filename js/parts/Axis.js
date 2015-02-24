@@ -678,10 +678,11 @@ Axis.prototype = {
 			i,
 			min = axis.min,
 			max = axis.max,
+			range = max - min,
 			len;
 
 		// If minor ticks get too dense, they are hard to read, and may cause long running script. So we don't draw them.
-		if ((max - min) / minorTickInterval < axis.len / 3) {
+		if (range && range / minorTickInterval < axis.len / 3) { // #3875
 
 			if (axis.isLog) {
 				len = tickPositions.length;
@@ -700,7 +701,7 @@ Axis.prototype = {
 					)
 				);
 			} else {
-				for (pos = axis.min + (tickPositions[0] - axis.min) % minorTickInterval; pos <= axis.max; pos += minorTickInterval) {
+				for (pos = min + (tickPositions[0] - min) % minorTickInterval; pos <= max; pos += minorTickInterval) {
 					minorTickPositions.push(pos);
 				}
 			}
