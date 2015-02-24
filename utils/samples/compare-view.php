@@ -289,7 +289,9 @@
 				$rightImage.click(toggle);
 			}
 			
-			var report = "";
+			var report = "",
+				startLocalServer = '<pre>$ cd GitHub/highcharts.com/exporting-server/java/highcharts-export/highcharts-export-web\n' +
+					'$ mvn jetty:run</pre>';
 			function onBothLoad() {
 
 				var out,
@@ -321,7 +323,7 @@
 
 				if (mode === 'images') {
 					if (rightSVG.indexOf('NaN') !== -1) {
-						report += "<br/>The generated SVG contains NaN";
+						report += "<div>The generated SVG contains NaN</div>";
 						$('#report').html(report)
 							.css('background', '#f15c80');
 						onDifferent('Error');
@@ -332,7 +334,7 @@
 							.css('background', "#a4edba");
 
 					} else {
-						report += "<br/>The generated SVG is different, checking exported images...";
+						report += "<div>The generated SVG is different, checking exported images...</div>";
 						
 						$('#report').html(report)
 							.css('background', 'gray');
@@ -348,24 +350,24 @@
 							success: function (data) {
 
 								if (data.fallBackToOnline) {
-									report += ' (Preferred export server not started, fell back to export.highcharts.com)';
+									report += '<div>Preferred export server not started, fell back to export.highcharts.com. ' +
+										'Start local server like this: ' + startLocalServer + '</div>';
 								}
 
 								if (data.dissimilarityIndex === 0) {
 									identical = true;
 									
-									report += '<br/>The exported images are identical'; 
+									report += '<div>The exported images are identical</div>'; 
 									
 									onIdentical();
 									
 								} else if (data.dissimilarityIndex === undefined) {
-									report += '<br/><br/><b>Image export failed. Is the exporting server responding? If running local server, start it like this:</b>' +
-										'<pre>$ cd GitHub/highcharts.com/exporting-server/java/highcharts-export/highcharts-export-web\n' +
-										'$ mvn jetty:run</pre>'
+									report += '<div><b>Image export failed. Is the exporting server responding? If running local server, start it like this:</b>' +
+										startLocalServer + '</div>'
 									onDifferent('Error');
 									
 								} else {
-									report += '<br/>The exported images are different (dissimilarity index: '+ data.dissimilarityIndex.toFixed(2) +')';
+									report += '<div>The exported images are different (dissimilarity index: '+ data.dissimilarityIndex.toFixed(2) +')</div>';
 									
 									onDifferent(data);
 								}
@@ -386,11 +388,11 @@
 						console.log("Warning: Left and right versions are equal.");
 					}
 					
-					report += 'Left version: '+ leftVersion +'; right version: '+ rightVersion +'<br/>';
+					report += '<div>Left version: '+ leftVersion +'; right version: '+ rightVersion +'</div>';
 					
 					report += identical ?
-						'The innerHTML is identical' :
-						'The innerHTML is different, testing generated SVG...';
+						'<div>The innerHTML is identical</div>' :
+						'<div>The innerHTML is different, testing generated SVG...</div>';
 						
 					$('#report').html(report)
 						.css('background', identical ? "#a4edba" : '#f15c80');
@@ -419,98 +421,6 @@
 				
 			}
 		</script>
-		<style type="text/css">
-
-			body {
-				margin: 0;
-			}
-
-			.top-bar {
-				color: white;
-				font-family: Arial, sans-serif; 
-				font-size: 0.8em; 
-				padding: 0.5em; 
-				height: 3.5em;
-				background: #34343e;
-				box-shadow: 0px 0px 8px #888;
-			}
-			
-			.top-bar a {
-				color: white;
-				text-decoration: none;
-				font-weight: bold;
-			}
-			
-			#report {
-				border-radius: 5px;
-				color: white;
-				margin-bottom: 0.5em;
-				border: 1px solid silver;
-				font-family: Arial, sans-serif; 
-				font-size: 0.8em; 
-				padding: 0.5em; 
-				
-			}
-
-			#frame-row {
-				width: 1360px;
-			}
-			#comment-placeholder {
-				width: 300px;
-				display: inline-block;
-			}
-			#comment-iframe {
-				height: 400px;
-				width: calc(100% - 2px);
-				border: 1px solid silver;
-			}
-			#preview {
-				overflow: auto; 
-				width: 1000px; 
-				position: relative
-			}
-
-			pre#svg {
-				padding: 1em;
-				border: 1px solid silver;
-				background-color: #F8F8F8;
-				overflow: hidden; 
-				width: 1000px; 
-				height: 10px; 
-				cursor: pointer;
-			}
-			del {
-				color: white;
-				background-color: red;
-				border-radius: 3px;
-				padding: 0 3px;
-			}
-			ins {
-				color: white;
-				background-color: green;
-				border-radius: 3px;
-				padding: 0 3px;
-			}
-			body.visual iframe {
-				display: inline-block;
-				width: 500px;
-				height: 400px;
-				border: 1px dotted gray;
-			}
-
-			body.unit #frame-row {
-				width: auto;
-			}
-			body.unit iframe {
-				width: 100%;
-				height: 600px;
-				border: none;
-			}
-
-			body.unit #report, body.unit #svg, body.unit #preview {
-				display: none;
-			}
-		</style>
 		
 	</head>
 	<body class="<?php echo ($isUnitTest ? 'unit' : 'visual'); ?>">
