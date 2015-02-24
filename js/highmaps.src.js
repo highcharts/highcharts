@@ -6816,16 +6816,6 @@ Axis.prototype = {
 						options.startOfWeek
 					)
 				);
-			
-			} else if (axis.isDatetimeAxis && options.minorTickInterval === 'auto') { // #1314
-				minorTickPositions = minorTickPositions.concat(
-					axis.getTimeTicks(
-						axis.normalizeTimeTickInterval(minorTickInterval),
-						axis.min,
-						axis.max,
-						options.startOfWeek
-					)
-				);
 			} else {
 				for (pos = axis.min + (tickPositions[0] - axis.min) % minorTickInterval; pos <= axis.max; pos += minorTickInterval) {
 					minorTickPositions.push(pos);
