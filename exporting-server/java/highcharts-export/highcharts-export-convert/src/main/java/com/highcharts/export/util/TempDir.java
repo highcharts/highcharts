@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -23,6 +24,9 @@ public class TempDir {
 	public static Path outputDir;
 	public static Path phantomJsDir;
 
+    protected static Logger logger = Logger.getLogger("tempdir");
+	
+	
 	public TempDir() throws IOException {
 		tmpDir = Files.createTempDirectory("export");
 
@@ -41,7 +45,7 @@ public class TempDir {
 		    }
 		});
 		
-		System.out.println("Highcharts Export Server using " +TempDir.getTmpDir() + " as TEMP folder.");
+		logger.debug("Highcharts Export Server using " +TempDir.getTmpDir() + " as TEMP folder.");
 	}
 
 	public static Path getTmpDir() {
