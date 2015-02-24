@@ -8,7 +8,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 
 /**
  *
@@ -32,6 +35,12 @@ public class TempDir {
 		phantomJsDir = Files.createDirectory(Paths.get(tmpDir.toString(), "phantomjs"));
 		phantomJsDir.toFile().deleteOnExit();
 
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+		    public void run() {
+		        FileUtils.deleteQuietly(tmpDir.toFile());
+		    }
+		});
+		
 		System.out.println("Highcharts Export Server using " +TempDir.getTmpDir() + " as TEMP folder.");
 	}
 
