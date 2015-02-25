@@ -12604,6 +12604,10 @@ Series.prototype = {
 
 		this.userOptions = itemOptions;
 
+		// General series options take precedence over type options because otherwise, default
+		// type options like column.animation would be overwritten by the general option.
+		// But issues have been raised here (#3881), and the solution may be to distinguish 
+		// between default option and userOptions like in the tooltip below.
 		options = merge(
 			typeOptions,
 			plotOptions.series,

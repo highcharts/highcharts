@@ -239,10 +239,6 @@ function getCompareTooltips() {
 						plotOptions: {
 							series: {
 								animation: false,
-								marker: {
-									lineWidth: 1
-								},
-								borderWidth: 1,
 								kdSync: true
 							}
 						}
