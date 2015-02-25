@@ -227,21 +227,39 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 	if (!isNaN(translatedValue)) {
 		if (axis.horiz) {
 			each(uniqueAxes, function (axis2) {
-				y1 = axis2.top;
+				var skip;
+
+				y1 = axis2.pos;
 				y2 = y1 + axis2.len;
 				x1 = x2 = mathRound(translatedValue + axis.transB);
 
-				if ((x1 >= axisLeft && x1 <= axisLeft + axis.width) || force) {
+				if (x1 < axisLeft || x1 > axisLeft + axis.width) { // outside plot area
+					if (force) {
+						x1 = x2 = mathMin(mathMax(axisLeft, x1), axisLeft + axis.width);
+					} else {
+						skip = true;
+					}
+				}
+				if (!skip) {
 					result.push('M', x1, y1, 'L', x2, y2);
 				}
 			});
 		} else {
 			each(uniqueAxes, function (axis2) {
-				x1 = axis2.left;
-				x2 = x1 + axis2.width;
+				var skip;
+
+				x1 = axis2.pos;
+				x2 = x1 + axis2.len;
 				y1 = y2 = mathRound(axisTop + axis.height - translatedValue);
 
-				if ((y1 >= axisTop && y1 <= axisTop + axis.height) || force) {
+				if (y1 < axisTop || y1 > axisTop + axis.height) { // outside plot area
+					if (force) {
+						y1 = y2 = mathMin(mathMax(axisTop, y1), axis.top + axis.height);
+					} else {
+						skip = true;
+					}
+				}
+				if (!skip) {
 					result.push('M', x1, y1, 'L', x2, y2);
 				}
 			});
@@ -256,8 +274,8 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 
 // Override getPlotBandPath to allow for multipane charts
 Axis.prototype.getPlotBandPath = function (from, to) {		
-	var toPath = this.getPlotLinePath(to),
-		path = this.getPlotLinePath(from),
+	var toPath = this.getPlotLinePath(to, null, null, true),
+		path = this.getPlotLinePath(from, null, null, true),
 		result = [],
 		i;
 
@@ -269,7 +287,7 @@ Axis.prototype.getPlotBandPath = function (from, to) {
 	} else { // outside the axis area
 		result = null;
 	}
-		
+
 	return result;
 };
 
