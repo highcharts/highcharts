@@ -638,13 +638,14 @@
 					hover.fill = Color(attr.fill).brighten(seriesOptions.states.hover.brightness).get();
 					// If not a leaf, then remove fill
 					if (!point.isLeaf) {
-						if (seriesOptions.allowDrillToNode) {
+						// interactByLeaf must be added to docs
+						if (pick(seriesOptions.interactByLeaf, !seriesOptions.allowDrillToNode)) {
+							attr.fill = 'none';
+							delete hover.fill;
+						} else {
 							// TODO: let users set the opacity
 							attr.fill = Color(attr.fill).setOpacity(0.15).get();
 							hover.fill = Color(hover.fill).setOpacity(0.75).get();
-						} else {
-							attr.fill = 'none';
-							delete hover.fill;
 						}
 					}
 					if (point.node.level <= series.nodeMap[series.rootNode].level) {
@@ -669,39 +670,80 @@
 
 			// Set click events on points 
 			if (seriesOptions.allowDrillToNode) {
-				series.drillCloser();
+				series.drillTo();
 			}
 		},
 		/**
 		* Add drilling on the suitable points
-		* TODO: review and better naming
 		*/
-		drillCloser: function () {
+		drillTo: function () {
 			var series = this,
-				points = series.points,
-				nodeParent;
+				points = series.points;
 			each(points, function (point) {
-				var nodeParentName;
+				var drillId,
+					drillName;
 				if (point.node.isVisible) {
 					H.removeEvent(point, 'click');
 					if (point.graphic) {
 						point.graphic.css({ cursor: 'default' });
 					}
-					if ((point.node.level - series.nodeMap[series.rootNode].level) === 1 && !point.isLeaf) {
-						nodeParent = series.nodeMap[series.nodeMap[point.id].parent];
-						nodeParentName = nodeParent.name || nodeParent.id;
+
+					// Get the drill to id
+					if (series.options.interactByLeaf) {
+						drillId = series.drillToByLeaf(point);
+					} else {
+						drillId = series.drillToByGroup(point);
+					}
+
+					// If a drill id is returned, add click event and cursor. 
+					if (drillId) {
+						drillName = series.nodeMap[series.rootNode].name || series.rootNode;
 						if (point.graphic) {
 							point.graphic.css({ cursor: 'pointer' });
 						}
 						H.addEvent(point, 'click', function () {
-							// Remove hover
-							point.setState('');
-							series.drillToNode(point.id);
-							series.showDrillUpButton(nodeParentName);
+							point.setState(''); // Remove hover
+							series.drillToNode(drillId);
+							series.showDrillUpButton(drillName);
 						});
 					}
 				}
 			});
+		},
+		/**
+		* Finds the drill id for a parent node.
+		* Returns false if point should not have a click event
+		* @param {Object} point
+		* @return {string || boolean} Drill to id or false when point should not have a click event
+		*/
+		drillToByGroup: function (point) {
+			var series = this,
+				drillId = false;
+			if ((point.node.level - series.nodeMap[series.rootNode].level) === 1 && !point.isLeaf) {
+				drillId = point.id;
+			}
+			return drillId;
+		},
+		/**
+		* Finds the drill id for a leaf node.
+		* Returns false if point should not have a click event
+		* @param {Object} point
+		* @return {string || boolean} Drill to id or false when point should not have a click event
+		*/
+		drillToByLeaf: function (point) {
+			var series = this,
+				drillId = false,
+				nodeParent;
+			if ((point.node.parent !== series.rootNode) && (point.isLeaf)) {
+				nodeParent = point.node;
+				while (!drillId) {
+					nodeParent = series.nodeMap[nodeParent.parent];
+					if (nodeParent.parent === series.rootNode) {
+						drillId = nodeParent.id;
+					}
+				}
+			}
+			return drillId;
 		},
 		drillUp: function () {
 			var drillPoint = null,
