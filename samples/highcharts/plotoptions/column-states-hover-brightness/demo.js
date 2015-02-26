@@ -11,7 +11,7 @@ $(function () {
             series: {
                 states: {
                     hover: {
-                        brightness: 0.5
+                        brightness: -0.3 // darken
                     }
                 }
             }
