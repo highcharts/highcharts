@@ -2,10 +2,11 @@
 	ini_set('display_errors', 'on');
 
 	session_start();
-
+	require_once('..\settings.php');
 	require_once('Git.php');
 
 	try {
+		Git::set_bin($git);
 		$repo = Git::open(dirname(__FILE__) . '/../../');
 		$branches = $repo->list_branches();
 	} catch (Exception $e) {
@@ -86,22 +87,22 @@
 		</script>
 		<? endif; ?>
 	</head>
-	
+
 	<body>
-		
-		
+
+
 <?php if ($commit) {
 	printf($html, $commit, $commit, $commit, $commit, $commit, $commit, $commit, $commit, $commit, $commit);
 
-		
-	echo "<script>$js</script>";	
+
+	echo "<script>$js</script>";
 	echo '<hr/><ul>';
 	echo "<li>View commit: <a target='_blank' href='https://github.com/highslide-software/highcharts.com/commit/$commit'>". substr($commit, 0, 8) ."</a></li>";
 	echo "<li>Mobile testing: <a href='http://" . $_SERVER['SERVER_NAME'] . "/draft'>http://" . $_SERVER['SERVER_NAME'] . "/draft</a>.";
 
 } else { ?>
 
-<?php if (@$error) { 
+<?php if (@$error) {
 	echo "<pre style='margin: 2em; padding: 2em; background: red; color: white; border-radius: 5px'>$error</pre>";
 } ?>
 
@@ -109,14 +110,14 @@
 <form method="post" action="main.php">
 <b>Paste HTML</b> here (including framework and Highcharts, use %s for commit):<br/>
 <textarea name="html" rows="6" style="width: 100%"><?php echo $html; ?></textarea>
-	
+
 <br/>
 <b>Paste JS</b> here:<br/>
 <textarea name="js" rows="30" style="width: 100%"><?php echo $js; ?></textarea><br/>
 
 Load commits in <b>branch</b>
 <select name="branch">
-<?php 
+<?php
 foreach ($branches as $branchOption) {
 	$selected = ($branchOption == $_SESSION['branch']) ? 'selected="selected"' : '';
 	echo "<option value='$branchOption' $selected>$branchOption</option>\n";
@@ -138,7 +139,7 @@ to
 	<br/>
 </form>
 <?php } ?>
-		
+
 	</body>
 </html>
 <?php
@@ -160,14 +161,14 @@ ob_start();
 		<?php printf($html, $commit, $commit, $commit, $commit, $commit, $commit, $commit, $commit, $commit, $commit); ?>
 		</div>
 
-		
+
 		<script>
 		<?php echo $js ?>
 		</script>
 
 	</body>
 </html>
-<?php 
+<?php
 file_put_contents('../draft/index.html', ob_get_clean());
 }
 ?>
