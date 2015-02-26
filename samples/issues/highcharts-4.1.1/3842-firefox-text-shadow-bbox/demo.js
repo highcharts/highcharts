@@ -7,9 +7,9 @@ $(function () {
             400
         );
 
-        var txt = ren.text('Firefox clean', 10, 30).add();
+        var txt = ren.text('Firefox/IE clean', 10, 30).add();
 
-        var txt2 = ren.text('Firefox shadow', 10, 60)
+        var txt2 = ren.text('Firefox/IE shadow', 10, 60)
             .css({
                 textShadow: '0 0 6px green, 0 0 3px green'
             })

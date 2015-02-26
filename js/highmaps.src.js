@@ -1939,11 +1939,9 @@ SVGElement.prototype = {
 		var elem = this.element,
 			tspans,
 			hasContrast = textShadow.indexOf('contrast') !== -1,
-			// Safari suffers from the double display bug (#3649)
-			isSafari = userAgent.indexOf('Safari') > 0 && userAgent.indexOf('Chrome') === -1,
 			// IE10 and IE11 report textShadow in elem.style even though it doesn't work. Check
 			// this again with new IE release. In exports, the rendering is passed to PhantomJS. 
-			supports = this.renderer.forExport || (elem.style.textShadow !== UNDEFINED && !isIE && !isSafari);
+			supports = this.renderer.forExport || (elem.style.textShadow !== UNDEFINED && !isIE);
 
 		// When the text shadow is set to contrast, use dark stroke for light text and vice versa
 		if (hasContrast) {
@@ -1965,6 +1963,8 @@ SVGElement.prototype = {
 				});
 			}
 		} else {
+
+			this.fakeTS = true; // Fake text shadow
 
 			// In order to get the right y position of the clones, 
 			// copy over the y setter
@@ -1999,6 +1999,8 @@ SVGElement.prototype = {
 						// Create the clone and apply shadow properties
 						clone = tspan.cloneNode(1);
 						attr(clone, {
+							'class': PREFIX + 'text-shadow',
+							'fill': color,
 							'stroke': color,
 							'stroke-opacity': 1 / mathMax(pInt(strokeWidth), 3),
 							'stroke-width': strokeWidth,
@@ -2454,6 +2456,7 @@ SVGElement.prototype = {
 			textStr = wrapper.textStr,
 			textShadow,
 			elemStyle = element.style,
+			toggleTextShadowShim,
 			cacheKey;
 
 		if (textStr !== UNDEFINED) {
@@ -2484,10 +2487,20 @@ SVGElement.prototype = {
 			if (element.namespaceURI === SVG_NS || renderer.forExport) {
 				try { // Fails in Firefox if the container has display: none.
 
+					// When the text shadow shim is used, we need to hide the fake shadows
+					// to get the correct bounding box (#3872)
+					toggleTextShadowShim = this.fakeTS && function (display) {
+						each(element.querySelectorAll('.' + PREFIX + 'text-shadow'), function (tspan) {
+							tspan.style.display = display;
+						});
+					};
+
 					// Workaround for #3842, Firefox reporting wrong bounding box for shadows
 					if (isFirefox && elemStyle.textShadow) {
 						textShadow = elemStyle.textShadow;
 						elemStyle.textShadow = '';
+					} else if (toggleTextShadowShim) {
+						toggleTextShadowShim(NONE);
 					}
 
 					bBox = element.getBBox ?
@@ -2503,6 +2516,8 @@ SVGElement.prototype = {
 					// #3842
 					if (textShadow) {
 						elemStyle.textShadow = textShadow;
+					} else if (toggleTextShadowShim) {
+						toggleTextShadowShim('');
 					}
 				} catch (e) {}
 
