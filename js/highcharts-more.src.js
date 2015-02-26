@@ -1627,15 +1627,15 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				shapeArgs.height = yAxis.translate(previousIntermediate, 0, 1) - shapeArgs.y;
 				previousIntermediate = range[1];
 
-			// if it's not the sum point, update previous stack end position
+			// If it's not the sum point, update previous stack end position and get 
+			// shape height (#3886)
 			} else {
+				if (previousY !== 0) { // Not the first point
+					shapeArgs.height = yValue > 0 ? 
+						yAxis.translate(previousY, 0, 1) - shapeArgs.y :
+						yAxis.translate(previousY, 0, 1) - yAxis.translate(previousY - yValue, 0, 1);
+				}
 				previousY += yValue;
-			}
-
-			// negative points
-			if (shapeArgs.height < 0) {
-				shapeArgs.y += shapeArgs.height;
-				shapeArgs.height *= -1;
 			}
 
 			point.plotY = shapeArgs.y = mathRound(shapeArgs.y) - (series.borderWidth % 2) / 2;
