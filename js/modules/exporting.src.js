@@ -203,7 +203,7 @@ extend(Chart.prototype, {
 			.replace(/jQuery[0-9]+="[^"]+"/g, '')
 			.replace(/url\([^#]+#/g, 'url(#')
 			.replace(/<svg /, '<svg xmlns:xlink="http://www.w3.org/1999/xlink" ')
-			.replace(/ href=/g, ' xlink:href=')
+			.replace(/ (NS[0-9]+\:)?href=/g, ' xlink:href=') // #3567
 			.replace(/\n/, ' ')
 			// Any HTML added to the container after the SVG (#894)
 			.replace(/<\/svg>.*?$/, '</svg>') 
