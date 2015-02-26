@@ -107,6 +107,15 @@ function getCompareTooltips() {
 
 	return strstr($yaml, 'compareTooltips: true');
 }
+function getExportInnerHTML() {
+	global $path;
+	// No idea why file_get_contents doesn't work here...
+	ob_start();
+	@include("$path/demo.details");
+	$yaml = ob_get_clean();
+
+	return strstr($yaml, 'exportInnerHTML: true');
+}
 
 
 ?><!DOCTYPE HTML>
@@ -265,6 +274,7 @@ function getCompareTooltips() {
 					<?php endif ?>
 					
 					<?php if (file_exists("$path/test.js")) : ?>
+
 					<?php include("$path/test.js"); ?>
 					Highcharts.Chart.prototype.callbacks.push(function (chart) {
 						try {
@@ -278,6 +288,14 @@ function getCompareTooltips() {
 
 					});
 					<?php endif ?>
+
+					<?php if (getExportInnerHTML()) : ?>
+					// Bypass the export module
+					Highcharts.Chart.prototype.getSVG = function () {
+						return this.container.innerHTML;
+					};
+					<?php endif ?>
+
 
 
 				}
