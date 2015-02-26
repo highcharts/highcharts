@@ -80,6 +80,10 @@
 				font-family: Arial, Verdana;
 			}
 
+			body {
+				background: #F6F6F6;
+			}
+
 			li, a, p, div, span {
 				font-size: 12px;
 			}
@@ -101,7 +105,8 @@
 				text-transform: uppercase;
 			}
 			li {
-				border: 1px solid white;
+				border: 1px solid #F6F6F6;
+				background: white;
 				border-radius: 5px;
 				padding: 2px;
 			}
