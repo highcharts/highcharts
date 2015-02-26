@@ -19,7 +19,22 @@ $(function () {
 
     // the button action
     $('#button').click(function () {
-        var selectedPoints = $('#container').highcharts().getSelectedPoints();
-        alert('You selected ' + selectedPoints.length + ' points');
+        var chart = $('#container').highcharts(),
+            selectedPoints = chart.getSelectedPoints();
+
+        if (chart.lbl) {
+            chart.lbl.destroy();
+        }
+        chart.lbl = chart.renderer.label('You selected ' + selectedPoints.length + ' points', 100, 60)
+            .attr({
+                padding: 10,
+                r: 5,
+                fill: Highcharts.getOptions().colors[1],
+                zIndex: 5
+            })
+            .css({
+                color: 'white'
+            })
+            .add();
     });
 });
