@@ -1,56 +1,49 @@
-/*global module*/
+/*global console, module*/
 (function () {
     "use strict";
 
     // TODO: 
-    // - Use the products object and loop over products and their versions
     // - Add procedure or task to commit, tag and push
 
     module.exports = function (grunt) {
 
-        var product = 'highmaps',
-            version = '1.1.3',
-            products;
+        grunt.registerTask('copy-release', 'Copy to shim repos', function () {
 
+            var product,
+                ucProduct,
+                products,
+                bower;
 
-        grunt.loadNpmTasks('grunt-contrib-copy');
-        grunt.loadNpmTasks('grunt-replace');
+            grunt.loadNpmTasks('grunt-contrib-copy');
+            grunt.loadNpmTasks('grunt-replace');
 
-        // Load the current products and versions
-        products = grunt.file.read('build/dist/products.js');
-        if (products) {
-            products = products.replace('var products = ', '');
-            products = JSON.parse(products);
-        }
+            // Load the current products and versions
+            products = grunt.file.read('build/dist/products.js');
+            if (products) {
+                products = products.replace('var products = ', '');
+                products = JSON.parse(products);
+            }
 
-        grunt.initConfig({
-            copy: {
+            for (ucProduct in products) {
+                
+                console.log('Copying ' + ucProduct + ' files...');
 
-                // Copy releases over the shim repos for Bower
-                release: {
-                    cwd: 'build/dist/' + product + '/js/',
-                    src: '**/*',
-                    dest: '../' + product + '-release/',
-                    expand: true
-                }
-            },
-            replace: {
-                release: {
-                    options: {
-                        patterns: [{
-                            match: /"version": "v[0-9\.]+"/g,
-                            replacement: '"version": "v' + version + '"'
-                        }]
-                    },
-                    files: [{
-                        src: ['../' + product + '-release/bower.json'],
-                        dest: '../' + product + '-release/'
-                    }]
-                }
+                product = ucProduct.toLowerCase();
+
+                // Copy the files over to shim repo
+                grunt.file.expand('build/dist/' + product + '/js/**/*.js').forEach(function (src) {
+                    grunt.file.copy(
+                        src,
+                        src.replace('build/dist/' + product + '/js', '../' + product + '-release')
+                    );
+                });
+
+                // Add version to bower.json
+                bower = grunt.file.read('../' + product + '-release/bower.json');
+                bower = bower.replace(/"version": "v[0-9\.]+"/g, '"version": "v' + products[ucProduct].nr + '"');
+                grunt.file.write('../' + product + '-release/bower.json', bower);
             }
         });
-
-        grunt.registerTask('copy-release', ['copy:release', 'replace:release']);
 
     };
 }());
