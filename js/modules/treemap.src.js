@@ -638,7 +638,6 @@
 					hover.fill = Color(attr.fill).brighten(seriesOptions.states.hover.brightness).get();
 					// If not a leaf, then remove fill
 					if (!point.isLeaf) {
-						// interactByLeaf must be added to docs
 						if (pick(seriesOptions.interactByLeaf, !seriesOptions.allowDrillToNode)) {
 							attr.fill = 'none';
 							delete hover.fill;
