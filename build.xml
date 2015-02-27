@@ -886,19 +886,19 @@
 
         <echo file="${dist.dir}/products.js" append="false">
             var products = {
-                Highcharts: {
-                    date: '${highcharts.product.date}', 
-                    nr: '${highcharts.product.version}'
+                "Highcharts": {
+                    "date": "${highcharts.product.date}", 
+                    "nr": "${highcharts.product.version}"
                 },
-                Highstock: {
-                    date: '${highstock.product.date}',
-                    nr: '${highstock.product.version}'
+                "Highstock": {
+                    "date": "${highstock.product.date}",
+                    "nr": "${highstock.product.version}"
                 },
-                Highmaps: {
-                    date: '${highmaps.product.date}',
-                    nr: '${highmaps.product.version}'
+                "Highmaps": {
+                    "date": "${highmaps.product.date}",
+                    "nr": "${highmaps.product.version}"
                 }
-            };
+            }
         </echo>
         <!-- 2. Copy highcharts source and minified versions, adapters, modules, themes. Replace product and version at the same time -->
         <copy file="${highcharts.src.file}" todir="${dist.dir}/highcharts/js"><filterset refid="highcharts.filter"/></copy>
