@@ -320,10 +320,10 @@ extend(Chart.prototype, {
 			}
 		});
 
-		// Axis options must be merged in one by one, since it may be an array or an object (#2022)
+		// Axis options must be merged in one by one, since it may be an array or an object (#2022, #3900)
 		if (additionalOptions) {
-			each(['xAxis', 'yAxis'], function (axisType, i) {
-				each(splat(additionalOptions[axisType]), function (axisOptions) {
+			each(['xAxis', 'yAxis'], function (axisType) {
+				each(splat(additionalOptions[axisType]), function (axisOptions, i) {
 					options[axisType][i] = merge(options[axisType][i], axisOptions);
 				});
 			});
