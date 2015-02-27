@@ -22,7 +22,7 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 		// y: 0
 	},
 	ignoreHiddenPoint: true,
-	//innerSize: 0,
+	//innerSize: 0, // docs: now relative to pie size
 	legendType: 'point',
 	marker: null, // point options are specified in the base options
 	size: null,
