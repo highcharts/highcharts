@@ -10,6 +10,7 @@
         grunt.registerTask('copy-release', 'Copy to shim repos', function () {
 
             var product,
+                version,
                 ucProduct,
                 products,
                 bower;
@@ -25,10 +26,11 @@
             }
 
             for (ucProduct in products) {
-                
+
                 console.log('Copying ' + ucProduct + ' files...');
 
                 product = ucProduct.toLowerCase();
+                version = products[ucProduct].nr;
 
                 // Copy the files over to shim repo
                 grunt.file.expand('build/dist/' + product + '/js/**/*.js').forEach(function (src) {
@@ -40,8 +42,16 @@
 
                 // Add version to bower.json
                 bower = grunt.file.read('../' + product + '-release/bower.json');
-                bower = bower.replace(/"version": "v[0-9\.]+"/g, '"version": "v' + products[ucProduct].nr + '"');
+                bower = bower.replace(/"version": "v[0-9\.]+"/g, '"version": "v' + version + '"');
                 grunt.file.write('../' + product + '-release/bower.json', bower);
+
+                // Propose Git commands to be copied to Terminal
+                console.log('--- Git commands (copy to Terminal and verify): ---');
+                console.log('cd ~/GitHub/' + product + '-release');
+                console.log('git commit -a -m "v' + version + '"');
+                console.log('git tag -a "v' + version + '" -m "Tagged ' + ucProduct + ' version ' + version + '"');
+                console.log('git push --tags');
+                console.log(); // empty line
             }
         });
 
