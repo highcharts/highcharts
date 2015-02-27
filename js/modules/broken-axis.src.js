@@ -89,7 +89,6 @@
 	});
 	
 	wrap(Axis.prototype, 'init', function (proceed, chart, userOptions) {
-
 		// Force Axis to be not-ordinal when breaks are defined
 		if (userOptions.breaks && userOptions.breaks.length) {
 			userOptions.ordinal = false;
@@ -140,6 +139,17 @@
 				}
 
 				return nval;
+			};
+
+			this.setExtremes = function (newMin, newMax, redraw, animation, eventArguments) {
+				// If trying to set extremes inside a break, extend it to before and after the break ( #3857 )
+				while (this.isInAnyBreak(newMin)) {
+					newMin -= this.closestPointRange;
+				}				
+				while (this.isInAnyBreak(newMax)) {
+					newMax -= this.closestPointRange;
+				}
+				Axis.prototype.setExtremes.call(this, newMin, newMax, redraw, animation, eventArguments);
 			};
 
 			this.setAxisTranslation = function (saveOld) {
