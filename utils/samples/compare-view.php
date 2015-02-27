@@ -438,7 +438,7 @@
 
 		<div style="margin: 1em">
 		
-			<div id="report"></div>
+			<div id="report" class="test-report"></div>
 			
 			<div id="frame-row">
 				<?php if (!$isUnitTest) : ?>

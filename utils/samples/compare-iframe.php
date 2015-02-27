@@ -250,8 +250,10 @@ function getExportInnerHTML() {
 								animation: false,
 								kdSync: true
 							}
+						},
+						tooltip: {
+							animation: false
 						}
-							
 					});
 
 					// Wrap constructors in order to catch JS errors
@@ -302,8 +304,8 @@ function getExportInnerHTML() {
 
 			});
 			
-			window.alert = function () {}
-
+			window.isComparing = true;
+			window.alert = function () {};
 			window.onbeforeunload = function(){
 				$(document).unbind().die();    //remove listeners on document
 				$(document).find('*').unbind().die(); //remove listeners on all nodes

@@ -43,7 +43,7 @@ li, a, p, div {
 	color: white;
 }
 
-#report {
+.test-report {
 	border-radius: 5px;
 	color: white;
 	margin-bottom: 0.5em;
@@ -51,7 +51,6 @@ li, a, p, div {
 	font-family: Arial, sans-serif; 
 	font-size: 0.8em; 
 	padding: 0.5em; 
-	
 }
 
 #frame-row {
