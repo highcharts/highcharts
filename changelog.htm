@@ -1,34 +1,3 @@
-<li>Added new option to tree maps: interactByLeaf</li>
-<li>Added new dataLabel option, shape, in order to allow callouts and connectors on data labels.</li>
-
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3567">#3567</a>, Safari failed at exporting charts with images.</li>
+<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3900">#3900</a>, duplicated Y axis in exported charts. Made export module more testable so it would have caught this error.</li>
 <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3898">#3898</a>, zones incorrectly applied if outside axis range.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3895">#3895</a>, JS error when setting element title to a non-string value.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3886">#3886</a>, wrong rendering of waterfall with a non-zero Y axis minimum.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3873">#3873</a>, series.points array order was modified when building the k-d tree.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3866">#3866</a>, data labels not re-appearing in remaining series after hiding another series.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3875">#3875</a>, eternal loop and crash in Chrome when using minorTickInterval on an axis with very close data points.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3842">#3842</a> and <a href="https://github.com/highslide-software/highcharts.com/issues/3872">#3872</a>, data labels with text shadow are mispositioned in Firefox and modern IE.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3849">#3849</a>, duplicated text on data labels in export. Closes <a href="https://github.com/highslide-software/highcharts.com/issues/3864">#3864</a>.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3868">#3868</a>, setData broke tooltip.</li>
-<li>Fixed issue with tooltip not hiding after hiding a series from a floating legend.</li>
-<li>Hide tooltip on mouse leaving the plot area, also when a hoverSeries is not defined.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3860">#3860</a>, a regression causing onMouseOver event not to work on line series.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3856">#3856</a>, shared tooltip in polar charts.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3863">#3863</a>, pointer with data grouping and addSeries.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3844">#3844</a>, colorByPoint not working on tree maps.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/2202">#2202</a>, chartOptions.xAxis options not added in export.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3852">#3852</a>, a regression causing logarithmic axis on gauges to fail.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3845">#3845</a>, problems with addPoint on 3D pies.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3841">#3841</a>, 3d column layering issue.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3793">#3793</a>, charts with huge numbers fail at Number.toFixed.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3841">#3841</a>, issue with multiple columns in 3d.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3830">#3830</a>, point names in category axis were lost after Axis.update.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3836">#3836</a>, a regression causing plot band labels to always be visible.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3840">#3840</a>, isIntermediateSum miscalculation.</li>
-<li>Fixed drilldown issue with labels having both drilldown and static points.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3839">#3839</a>, a regression causing columns not to be clipped while animating in.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3837">#3837</a>, too aggressive data label collision detection in heat maps.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3834">#3834</a>, crosshair drawn incorrectly on dynamically added yAxes.</li>
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3806">#3806</a>, JS errors on clicking on non-drillable axis label after drilldown.</li>
-
+<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3895">#3895</a>, error in title setter when setting a non-string value.</li>

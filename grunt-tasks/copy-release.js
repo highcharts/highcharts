@@ -5,7 +5,7 @@
     module.exports = function (grunt) {
 
         var product = 'highmaps',
-            version = '1.1.2';
+            version = '1.1.3';
 
 
         grunt.loadNpmTasks('grunt-contrib-copy');
