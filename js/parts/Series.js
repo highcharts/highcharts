@@ -1420,7 +1420,8 @@ Series.prototype = {
 			zoneAxis = this.zoneAxis || 'y',
 			axis = this[zoneAxis + 'Axis'],
 			reversed = axis.reversed,
-			horiz = axis.horiz;
+			horiz = axis.horiz,
+			ignoreZones = false;
 
 		if (zones.length && (graph || area)) {
 			// The use of the Color Threshold assumes there are no gaps
@@ -1432,6 +1433,10 @@ Series.prototype = {
 			each(zones, function (threshold, i) {
 				translatedFrom = pick(translatedTo, (reversed ? (horiz ? chart.plotWidth : 0) : (horiz ? 0 : axis.toPixels(axis.min))));
 				translatedTo = mathRound(axis.toPixels(pick(threshold.value, axis.max), true));
+
+				if (ignoreZones) {
+					translatedFrom = translatedTo = axis.toPixels(axis.max);
+				}
 
 				if (axis.isXAxis) {
 					clipAttr = {
@@ -1486,6 +1491,8 @@ Series.prototype = {
 						series['colorArea' + i].clip(clips[i]);
 					}
 				}
+				// if this zone extends out of the axis, ignore the others
+				ignoreZones = threshold.value > axis.max;
 			});
 			this.clips = clips;
 		}
