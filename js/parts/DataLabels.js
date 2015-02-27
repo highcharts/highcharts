@@ -139,7 +139,7 @@ Series.prototype.drawDataLabels = function () {
 						str,
 						0,
 						-999,
-						options.shape, // docs
+						options.shape,
 						null,
 						null,
 						options.useHTML

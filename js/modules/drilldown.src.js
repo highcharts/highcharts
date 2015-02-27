@@ -519,7 +519,7 @@
 			point: this,
 			seriesOptions: seriesOptions,
 			category: category,
-			points: category !== undefined && this.series.xAxis.ticks[category].label.ddPoints.slice(0) // docs: holds the points for a category drilldown
+			points: category !== undefined && this.series.xAxis.ticks[category].label.ddPoints.slice(0)
 		});
 		
 		if (seriesOptions) {
