@@ -364,30 +364,33 @@ extend(Chart.prototype, {
 		return svg;
 	},
 
+	getSVGForExport: function (options, chartOptions) {
+		var chartExportingOptions = this.options.exporting;
+
+		return this.getSVG(merge(
+			{ chart: { borderRadius: 0 } },
+			chartExportingOptions.chartOptions,
+			chartOptions,
+			{
+				exporting: {
+					sourceWidth: (options && options.sourceWidth) || chartExportingOptions.sourceWidth,
+					sourceHeight: (options && options.sourceHeight) || chartExportingOptions.sourceHeight
+				}
+			}
+		));
+	},
+
 	/**
 	 * Submit the SVG representation of the chart to the server
 	 * @param {Object} options Exporting options. Possible members are url, type, width and formAttributes.
 	 * @param {Object} chartOptions Additional chart options for the SVG representation of the chart
 	 */
 	exportChart: function (options, chartOptions) {
-		options = options || {};
-
-		var chart = this,
-			chartExportingOptions = chart.options.exporting,
-			svg = chart.getSVG(merge(
-				{ chart: { borderRadius: 0 } },
-				chartExportingOptions.chartOptions,
-				chartOptions,
-				{
-					exporting: {
-						sourceWidth: options.sourceWidth || chartExportingOptions.sourceWidth,
-						sourceHeight: options.sourceHeight || chartExportingOptions.sourceHeight
-					}
-				}
-			));
+		
+		var svg = this.getSVGForExport(options, chartOptions);
 
 		// merge the options
-		options = merge(chart.options.exporting, options);
+		options = merge(this.options.exporting, options);
 
 		// do the post
 		Highcharts.post(options.url, {

@@ -211,7 +211,7 @@ function getExportInnerHTML() {
 			}
 
 			function compareSVG() {
-				window.parent.onLoadTest('<?php echo $_GET['which']; ?>', chart.getSVG());
+				window.parent.onLoadTest('<?php echo $_GET['which']; ?>', (chart.getSVGForExport || chart.getSVG).call(chart));
 			}
 
 			function tryToRun(proceed) {
