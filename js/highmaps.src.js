@@ -6268,7 +6268,7 @@ Axis.prototype = {
 			formatter: function () {
 				return Highcharts.numberFormat(this.total, -1);
 			},
-			style: defaultPlotOptions.line.dataLabels.style
+			style: merge(defaultPlotOptions.line.dataLabels.style, { color: '#000000' }) // docs new default
 		}
 	},
 
