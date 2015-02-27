@@ -10,9 +10,11 @@ $(function () {
             chart: {
                 events: {
                     load: function () {
-                        this.setTitle(null, {
-                            text: 'Built chart in ' + (new Date() - start) + 'ms'
-                        });
+                        if (!window.isComparing) {
+                            this.setTitle(null, {
+                                text: 'Built chart in ' + (new Date() - start) + 'ms'
+                            });
+                        }
                     }
                 },
                 zoomType: 'x'
