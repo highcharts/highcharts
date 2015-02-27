@@ -1054,7 +1054,7 @@ SVGElement.prototype = {
 			titleNode = doc.createElementNS(SVG_NS, 'title');
 			this.element.appendChild(titleNode);
 		}
-		titleNode.textContent = pick(value, '').replace(/<[^>]*>/g, ''); // #3276
+		titleNode.textContent = (String(pick(value), '')).replace(/<[^>]*>/g, ''); // #3276 #3895
 	},
 	textSetter: function (value) {
 		if (value !== this.textStr) {
