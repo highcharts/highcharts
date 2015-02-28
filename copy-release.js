@@ -1,4 +1,4 @@
-/*global require, console, __dirname*/
+/*global require, console, __dirname, process*/
 
 /**
  * This node script copies contents over from dist packages to shim repos and
@@ -9,7 +9,7 @@
     'use strict';
     var
         // Set this to true after changes have been reviewed
-        performCommit = false,
+        push = process.argv[2] === '-push',
 
         fs = require('fs-extra'),
         sys = require('sys'),
@@ -55,7 +55,7 @@
         bower = bower.replace(/"version": "v[0-9\.]+"/g, '"version": "v1' + version + '"');
         fs.writeFileSync('../' + product + '-release/bower.json', bower);
 
-        if (performCommit) {
+        if (push) {
             runGit(product, version);
         }
     }
@@ -75,9 +75,9 @@
             }
         }
 
-        if (!performCommit) {
-            console.log('Please verify the changes in the release repos. Then set ' +
-                'performCommit to true in the copy-release.js file and run again.');
+        if (!push) {
+            console.log('Please verify the changes in the release repos. Then run again ' +
+                'with -push as an argument.');
         }
     });
 }());
