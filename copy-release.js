@@ -1,5 +1,6 @@
 /*jslint nomen: true*/
 /*global require, console, __dirname, process*/
+
 /**
  * This node script copies contents over from dist packages to shim repos and
  * optionally commits and pushes releases.
@@ -45,7 +46,7 @@
                 throw err;
             }
             bower = JSON.parse(bower);
-            bower.version = 'v1' + version;
+            bower.version = 'v' + version;
             bower = JSON.stringify(bower, null, '  ');
             fs.writeFile('../' + product + '-release/bower.json', bower, function (err) {
                 if (err) {
