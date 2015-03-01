@@ -1,1 +1,0 @@
-<li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3857">#3857</a>, issue with setExtremes and axis breaks causing Highstock scrolling not to work across breaks.</li>
