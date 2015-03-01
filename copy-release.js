@@ -1,5 +1,5 @@
+/*jslint nomen: true*/
 /*global require, console, __dirname, process*/
-
 /**
  * This node script copies contents over from dist packages to shim repos and
  * optionally commits and pushes releases.
@@ -13,15 +13,17 @@
 
         fs = require('fs-extra'),
         sys = require('sys'),
-        cmd = require('child_process'),
-        bower;
+        cmd = require('child_process');
 
     /**
      * Commit, tag and push 
      */
     function runGit(product, version) {
         var options = { cwd: __dirname.replace('/highcharts.com', '/' + product + '-release') },
-            puts = function (error, stdout, stderr) {
+            puts = function (err, stdout) {
+                if (err) {
+                    throw err;
+                }
                 sys.puts(stdout);
             };
 
@@ -32,37 +34,78 @@
     }
 
     /**
+     * Add the current version to the Bower file
+     */
+    function updateBowerFile(product, version, name) {
+
+        console.log('Updating bower.json for ' + name + '...');
+
+        fs.readFile('../' + product + '-release/bower.json', function (err, bower) {
+            if (err) {
+                throw err;
+            }
+            bower = JSON.parse(bower);
+            bower.version = 'v1' + version;
+            bower = JSON.stringify(bower, null, '  ');
+            fs.writeFile('../' + product + '-release/bower.json', bower, function (err) {
+                if (err) {
+                    throw err;
+                }
+                if (push) {
+                    runGit(product, version);
+                }
+            });
+        });
+    }
+
+    /**
+     * Copy the JavaScript files over
+     */
+    function copyFiles(product, name) {
+
+        console.log('Copying ' + name + ' files...');
+
+        // Copy the files over to shim repo
+        fs.readdir('build/dist/' + product + '/js/', function (err, files) {
+            if (err) {
+                throw err;
+            }
+
+            files.forEach(function (src) {
+                if (src.indexOf('.') !== 0) {
+                    fs.copy(
+                        'build/dist/' + product + '/js/' + src,
+                        '../' + product + '-release/' + src,
+                        function (err) {
+                            if (err) {
+                                throw err;
+                            }
+                        }
+                    );
+                }
+            });
+        });
+    }
+
+    /**
      * Run the procedure for each of Highcharts, Highstock and Highmaps
      */
     function runProduct(name, version) {
 
-        var product;
+        var product = name.toLowerCase();
 
-        console.log('Copying ' + name + ' files...');
+        copyFiles(product, name);
 
-        product = name.toLowerCase();
-
-        // Copy the files over to shim repo
-        fs.readdirSync('build/dist/' + product + '/js/').forEach(function (src) {
-            fs.copySync(
-                'build/dist/' + product + '/js/' + src,
-                '../' + product + '-release/' + src
-            );
-        });
-
-        // Add version to bower.json
-        bower = fs.readFileSync('../' + product + '-release/bower.json', 'utf8');
-        bower = bower.replace(/"version": "v[0-9\.]+"/g, '"version": "v1' + version + '"');
-        fs.writeFileSync('../' + product + '-release/bower.json', bower);
-
-        if (push) {
-            runGit(product, version);
-        }
+        updateBowerFile(product, version, name);
     }
 
     // Load the current products and versions
     fs.readFile('build/dist/products.js', 'utf8', function (err, products) {
         var name;
+
+        if (err) {
+            throw err;
+        }
 
         if (products) {
             products = products.replace('var products = ', '');
