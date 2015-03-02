@@ -4152,7 +4152,11 @@ SVGRenderer.prototype = {
 			if (x !== text.x || y !== text.y) {
 				text.attr('x', x);
 				if (y !== UNDEFINED) {
-					text.attr('y', y);
+					// As a workaround for #3649, use translation instead of y attribute. #3649
+					// is a rendering bug in WebKit for Retina (Mac, iOS, PhantomJS) that 
+					// results in duplicated text when an y attribute is used in combination 
+					// with a CSS text-style.
+					text.attr('translateY', y);
 				}
 			}
 

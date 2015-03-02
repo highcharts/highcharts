@@ -209,22 +209,6 @@ extend(Chart.prototype, {
 			.replace(/<\/svg>.*?$/, '</svg>') 
 			// Batik doesn't support rgba fills and strokes (#3095)
 			.replace(/(fill|stroke)="rgba\(([ 0-9]+,[ 0-9]+,[ 0-9]+),([ 0-9\.]+)\)"/g, '$1="rgb($2)" $1-opacity="$3"')
-			
-			// An issue with PhantomJS as of 2015-01-11. Revisit with newer versions. (#3649)
-			.replace(/(text-shadow:)([^;"]+)([;"])/g, function (s, $1, $2, $3) {
-				// Escape commas within rgb and rgba definitions
-				$2 = $2.replace(/\([^\)]+\)/g, function (s) {
-					return s.replace(/,/g, '|');
-				});
-				// Keep the first definition
-				$2 = $2.split(',')[0];
-				// Re-inert commas
-				$2 = $2.replace(/\([^\)]+\)/g, function (s) {
-					return s.replace(/\|/g, ',');
-				});
-				s = $1 + $2 + $3;
-				return s;
-			})
 			/* This fails in IE < 8
 			.replace(/([0-9]+)\.([0-9]+)/g, function(s1, s2, s3) { // round off to save weight
 				return s2 +'.'+ s3[0];
