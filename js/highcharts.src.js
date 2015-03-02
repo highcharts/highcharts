@@ -9971,6 +9971,7 @@ Pointer.prototype = {
 			plotTop = chart.plotTop;
 		
 		e = this.normalize(e);
+		e.originalEvent = e; // #3913
 		e.cancelBubble = true; // IE specific
 
 		if (!chart.cancelClick) {
