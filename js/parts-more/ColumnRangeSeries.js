@@ -50,6 +50,7 @@
 				shapeArgs.y = y;
 			});
 		},
+		directTouch: true,
 		trackerGroups: ['group', 'dataLabelsGroup'],
 		drawGraph: noop,
 		pointAttrToOptions: colProto.pointAttrToOptions,

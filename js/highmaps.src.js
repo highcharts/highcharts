@@ -9069,6 +9069,7 @@ Pointer.prototype = {
 			}
 		}
 
+		// Handle shared tooltip or cases where a series is not yet hovered
 		if (!(hoverSeries && hoverSeries.noSharedTooltip) && (shared || !hoverSeries)) { // #3821 
 			// Find nearest points on all series
 			each(series, function (s) {
@@ -9090,11 +9091,15 @@ Pointer.prototype = {
 						kdpoint = p;
 					}
 				}
-				//point = kdpoints[0];
 			});	
+
+		// Handle non-shared tooltips
 		} else {
-			kdpoint = hoverSeries ? hoverSeries.searchPoint(e) : UNDEFINED;
+			// If it has a hoverPoint and that series requires direct touch (like columns), use the hoverPoint (#3899).
+			// Otherwise, search the k-d tree (like scatter).
+			kdpoint = (hoverSeries.directTouch && hoverPoint) || (hoverSeries && hoverSeries.searchPoint(e));
 		}
+
 		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden
 		if (kdpoint && (kdpoint !== hoverPoint || tooltip.isHidden)) {
 			// Draw tooltip if necessary
