@@ -57,6 +57,11 @@
             }
         });
 
+        // Last release not found, abort
+        if (proceed === true) {
+            throw 'Last release not located, try setting an older start date.';
+        }
+
         // Sort alphabetically
         washed.sort();
 
