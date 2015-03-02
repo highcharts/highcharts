@@ -579,16 +579,21 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'redraw', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));	
 });
 
-// Draw the series in the reverse order (#3803)
-Highcharts.Chart.prototype.renderSeries = function () {
-	var serie,
+// Draw the series in the reverse order (#3803, #3917)
+Highcharts.wrap(Highcharts.Chart.prototype, 'renderSeries', function (proceed) {
+	var series,
 		i = this.series.length;
-	while (i--) {		
-		serie = this.series[i];
-		serie.translate();
-		serie.render();	
+	
+	if (this.is3d()) {
+		while (i--) {		
+			series = this.series[i];
+			series.translate();
+			series.render();	
+		}
+	} else {
+		proceed.call(this);
 	}
-};
+});
 
 Highcharts.Chart.prototype.retrieveStacks = function (stacking) {
 	var series = this.series,
