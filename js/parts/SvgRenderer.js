@@ -2378,7 +2378,7 @@ SVGRenderer.prototype = {
 			if (x !== text.x || y !== text.y) {
 				text.attr('x', x);
 				if (y !== UNDEFINED) {
-					text.attr('translateY', y); // #3649
+					text.attr('y', y);
 				}
 			}
 
