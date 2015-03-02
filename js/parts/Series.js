@@ -1772,7 +1772,10 @@ Series.prototype = {
 
 		// Start the recursive build process with a clone of the points array (#3873)
 		function startRecursive() {
-			series.kdTree = _kdtree(series.points.slice(), dimensions, dimensions);		
+			var points = series.points.filter(function (point) {
+				return point.y !== null;
+			});
+			series.kdTree = _kdtree(points.slice(), dimensions, dimensions);		
 		}
 
 		delete series.kdTree;

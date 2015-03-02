@@ -186,7 +186,7 @@ Pointer.prototype = {
 		}
 
 		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden
-		if (kdpoint && (kdpoint !== hoverPoint || tooltip.isHidden)) {
+		if (kdpoint && kdpoint !== hoverPoint) {
 			// Draw tooltip if necessary
 			if (shared && !kdpoint.series.noSharedTooltip) {
 				i = kdpoints.length;
@@ -197,20 +197,16 @@ Pointer.prototype = {
 						kdpoints.splice(i, 1);
 					}
 				}
-				if (kdpoints.length && tooltip) { // #3904 if all points have a 'null' value kdpoints would be empty
+				if (kdpoints.length && tooltip) {
 					tooltip.refresh(kdpoints, e);
-				} else {
-					tooltip.hide();
 				}
 
 				each(kdpoints, function (point) {
 					point.onMouseOver(e);
 				});
 			} else {
-				if (defined(kdpoint.y) && tooltip) { // #3901 do not show the tooltip if there is no y value
+				if (tooltip) { 
 					tooltip.refresh(kdpoint, e);
-				} else {
-					tooltip.hide();
 				}
 			}
 		
