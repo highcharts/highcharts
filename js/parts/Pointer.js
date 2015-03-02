@@ -182,11 +182,6 @@ Pointer.prototype = {
 		}
 		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden
 		if (kdpoint && (kdpoint !== hoverPoint || tooltip.isHidden)) {
-			// mouseout of previous hoverPoint
-			if (kdpoint !== hoverPoint) { 
-				hoverPoint.onMouseOut(); 
-			}
-
 			// Draw tooltip if necessary
 			if (shared && !kdpoint.series.noSharedTooltip) {
 				i = kdpoints.length;
