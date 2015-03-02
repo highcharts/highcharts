@@ -7886,7 +7886,7 @@ Axis.prototype = {
 				each(autoRotation, function (rot) {
 					var score;
 
-					if (rot && rot >= -90 && rot <= 90) {
+					if (rot === rotationOption || (rot && rot >= -90 && rot <= 90)) { // #3891
 					
 						step = getStep(mathAbs(labelMetrics.h / mathSin(deg2rad * rot)));
 
