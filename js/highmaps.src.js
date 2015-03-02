@@ -4152,7 +4152,7 @@ SVGRenderer.prototype = {
 			if (x !== text.x || y !== text.y) {
 				text.attr('x', x);
 				if (y !== UNDEFINED) {
-					text.attr('y', y);
+					text.attr('translateY', y); // #3649
 				}
 			}
 
@@ -9508,6 +9508,7 @@ Pointer.prototype = {
 			plotTop = chart.plotTop;
 		
 		e = this.normalize(e);
+		e.originalEvent = e; // #3913
 		e.cancelBubble = true; // IE specific
 
 		if (!chart.cancelClick) {
