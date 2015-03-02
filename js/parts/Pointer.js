@@ -193,9 +193,12 @@ Pointer.prototype = {
 						kdpoints.splice(i, 1);
 					}
 				}
-				if (tooltip) {
+				if (kdpoints.length && tooltip) { // #3904 if all points have a 'null' value kdpoints would be empty
 					tooltip.refresh(kdpoints, e);
+				} else {
+					tooltip.hide();
 				}
+				
 				each(kdpoints, function (point) {
 					point.onMouseOver(e);
 				});

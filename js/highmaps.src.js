@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highmaps JS v1.1.2 (2015-02-27)
+ * @license Highmaps JS v1.1.3-modified ()
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -56,7 +56,7 @@ var UNDEFINED,
 	charts = [],
 	chartCount = 0,
 	PRODUCT = 'Highmaps',
-	VERSION = '1.1.2',
+	VERSION = '1.1.3-modified',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -1259,8 +1259,8 @@ defaultOptions = {
 	global: {
 		useUTC: true,
 		//timezoneOffset: 0,
-		canvasToolsURL: 'http://code.highcharts.com/maps/1.1.2/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/maps/1.1.2/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/maps/1.1.3-modified/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/maps/1.1.3-modified/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -9104,9 +9104,12 @@ Pointer.prototype = {
 						kdpoints.splice(i, 1);
 					}
 				}
-				if (tooltip) {
+				if (kdpoints.length && tooltip) { // #3904 if all points have a 'null' value kdpoints would be empty
 					tooltip.refresh(kdpoints, e);
+				} else {
+					tooltip.hide();
 				}
+				
 				each(kdpoints, function (point) {
 					point.onMouseOver(e);
 				});
@@ -15889,7 +15892,7 @@ if (seriesTypes.column) {
 
 
 /**
- * Highmaps JS v1.1.2 (2015-02-27)
+ * Highmaps JS v1.1.3-modified ()
  * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
  *
  * (c) 2010-2014 Torstein Honsi
@@ -17322,7 +17325,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		seriesTypes.column.prototype.animateDrillupTo.call(this, init);
 	}
 }));/**
- * Highmaps JS v1.1.2 (2015-02-27)
+ * Highmaps JS v1.1.3-modified ()
  * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
  *
  * (c) 2010-2014 Torstein Honsi
