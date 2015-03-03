@@ -467,6 +467,8 @@ Series.prototype = {
 				}
 			}
 
+			delete series.kdTree;
+
 			// reset minRange (#878)
 			if (xAxis) {
 				xAxis.minRange = xAxis.userMinRange;
