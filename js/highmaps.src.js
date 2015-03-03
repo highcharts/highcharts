@@ -4156,7 +4156,7 @@ SVGRenderer.prototype = {
 					// is a rendering bug in WebKit for Retina (Mac, iOS, PhantomJS) that 
 					// results in duplicated text when an y attribute is used in combination 
 					// with a CSS text-style.
-					text.attr('translateY', y);
+					text.attr(text.element.nodeName === 'SPAN' ? 'y' : 'translateY', y);
 				}
 			}
 
