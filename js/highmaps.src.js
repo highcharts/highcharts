@@ -9116,9 +9116,13 @@ Pointer.prototype = {
 					tooltip.refresh(kdpoints, e);
 				}
 
+				// do mouseover on all points except the closest
 				each(kdpoints, function (point) {
-					point.onMouseOver(e);
-				});
+					if (point !== kdpoint) { 
+						point.onMouseOver(e);
+					}
+				});				
+				kdpoint.onMouseOver(e); // #3919 do mouseover on the closest point last to ensure it is the hoverpoint
 			} else {
 				if (tooltip) { 
 					tooltip.refresh(kdpoint, e);
