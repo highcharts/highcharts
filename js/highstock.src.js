@@ -9564,8 +9564,8 @@ Pointer.prototype = {
 			kdpoint = (hoverSeries.directTouch && hoverPoint) || (hoverSeries && hoverSeries.searchPoint(e));
 		}
 
-		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden
-		if (kdpoint && kdpoint !== hoverPoint) {
+		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926
+		if (kdpoint && (kdpoint !== hoverPoint || tooltip.isHidden)) {
 			// Draw tooltip if necessary
 			if (shared && !kdpoint.series.noSharedTooltip) {
 				i = kdpoints.length;
