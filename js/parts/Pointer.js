@@ -193,7 +193,7 @@ Pointer.prototype = {
 				trueXkd = kdpoint.clientX;
 				while (i--) {
 					trueX = kdpoints[i].clientX;
-					if (kdpoints[i].x !== kdpoint.x || trueX !== trueXkd || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
+					if (kdpoints[i].x !== kdpoint.x || trueX !== trueXkd || (kdpoints[i].series.noSharedTooltip || false)) {
 						kdpoints.splice(i, 1);
 					}
 				}
