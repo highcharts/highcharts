@@ -1768,7 +1768,8 @@ var Color = function (input) {
 		get: get,
 		brighten: brighten,
 		rgba: rgba,
-		setOpacity: setOpacity
+		setOpacity: setOpacity,
+		raw: input
 	};
 };
 
