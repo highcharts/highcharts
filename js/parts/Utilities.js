@@ -40,8 +40,8 @@ function merge() {
 					value = original[key];
 
 					// Copy the contents of objects, but not arrays or DOM nodes
-					if (value && typeof value === 'object' && Object.prototype.toString.call(value) !== '[object Array]'
-							&& key !== 'renderTo' && typeof value.nodeType !== 'number') {
+					if (value && typeof value === 'object' && Object.prototype.toString.call(value) !== '[object Array]' &&
+							key !== 'renderTo' && typeof value.nodeType !== 'number') {
 						copy[key] = doCopy(copy[key] || {}, value);
 				
 					// Primitives and arrays are copied over directly
