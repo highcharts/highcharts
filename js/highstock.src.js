@@ -9570,8 +9570,14 @@ Pointer.prototype = {
 				i = kdpoints.length;
 				trueXkd = kdpoint.clientX;
 				while (i--) {
-					trueX = kdpoints[i].clientX;
-					if (kdpoints[i].x !== kdpoint.x || trueX !== trueXkd || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
+					// correct hide series when change scrollbar's position to left when month button is clicked
+					if(kdpoints[i]){
+						trueX = kdpoints[i].clientX;
+						if (kdpoints[i].x !== kdpoint.x || trueX !== trueXkd || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
+							kdpoints.splice(i, 1);
+						}
+					}
+					else {
 						kdpoints.splice(i, 1);
 					}
 				}
@@ -21831,7 +21837,8 @@ RangeSelector.prototype = {
 			range = rangeOptions._range,
 			rangeMin,
 			year,
-			timeName;
+			timeName,
+			sbInverted = rangeOptions.inverted !== null ? rangeOptions.inverted : null;
 
 		if (dataMin === null || dataMax === null || // chart has no data, base series is removed
 				i === rangeSelector.selected) { // same button is clicked twice
@@ -21840,15 +21847,27 @@ RangeSelector.prototype = {
 
 		if (type === 'month' || type === 'year') {
 			timeName = { month: 'Month', year: 'FullYear'}[type];
-			date['set' + timeName](date['get' + timeName]() - count);
 
-			newMin = date.getTime();
-			dataMin = pick(dataMin, Number.MIN_VALUE);
-			if (isNaN(newMin) || newMin < dataMin) {
+			// change scrollbar's position to left when month button is clicked 
+			if(sbInverted === true && type == "month"){
+				var newDate = new Date(dataMin);
+				newDate['set' + timeName](newDate['get' + timeName]() + count);
+				
 				newMin = dataMin;
-				newMax = mathMin(newMin + range, dataMax);
-			} else {
+				newMax = mathMin(newDate, dataMax);
 				range = newMax - newMin;
+			}
+			else {
+				date['set' + timeName](date['get' + timeName]() - count);
+	
+				newMin = date.getTime();
+				dataMin = pick(dataMin, Number.MIN_VALUE);
+				if (isNaN(newMin) || newMin < dataMin) {
+					newMin = dataMin;
+					newMax = mathMin(newMin + range, dataMax);
+				} else {
+					range = newMax - newMin;
+				}
 			}
 
 		// Fixed times like minutes, hours, days
