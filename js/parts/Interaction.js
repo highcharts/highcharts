@@ -393,7 +393,7 @@ extend(Point.prototype, {
 					if (loopPoint.selected && loopPoint !== point) {
 						loopPoint.selected = loopPoint.options.selected = false;
 						series.options.data[inArray(loopPoint, series.data)] = loopPoint.options;
-						loopPoint.setState(NORMAL_STATE);
+						loopPoint.setState('');
 							loopPoint.firePointEvent('unselect');
 					}
 				});
@@ -488,7 +488,7 @@ extend(Point.prototype, {
 			newSymbol,
 			pointAttr;
 
-		state = state || NORMAL_STATE; // empty string
+		state = state || ''; // empty string
 		pointAttr = point.pointAttr[state] || series.pointAttr[state];
 
 		if (
@@ -673,7 +673,7 @@ extend(Series.prototype, {
 			lineWidth = options.lineWidth,
 			attribs;
 
-		state = state || NORMAL_STATE;
+		state = state || '';
 
 		if (series.state !== state) {
 			series.state = state;

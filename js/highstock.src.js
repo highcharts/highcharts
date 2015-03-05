@@ -60,7 +60,6 @@ var UNDEFINED,
 
 	// some constants for frequently used strings
 	numRegex = /^[0-9]+$/,
-	NORMAL_STATE = '',
 	HOVER_STATE = 'hover',
 	SELECT_STATE = 'select',
 	marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
@@ -12917,7 +12916,7 @@ Series.prototype = {
 		// set some variables
 		extend(series, {
 			name: options.name,
-			state: NORMAL_STATE,
+			state: '',
 			pointAttr: {},
 			visible: options.visible !== false, // true by default
 			selected: options.selected === true // false by default
@@ -13841,7 +13840,7 @@ Series.prototype = {
 				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 
 					// shortcuts
-					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE] || seriesPointAttr;
+					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : ''] || seriesPointAttr;
 					radius = pointAttr.r;
 					symbol = pick(pointMarkerOptions.symbol, series.symbol);
 					isImage = symbol.indexOf('url') === 0;
@@ -13957,12 +13956,12 @@ Series.prototype = {
 		}
 
 		// general point attributes for the series normal state
-		seriesPointAttr[NORMAL_STATE] = series.convertAttribs(normalOptions, normalDefaults);
+		seriesPointAttr[''] = series.convertAttribs(normalOptions, normalDefaults);
 
 		// HOVER_STATE and SELECT_STATE states inherit from normal state except the default radius
 		each([HOVER_STATE, SELECT_STATE], function (state) {
 			seriesPointAttr[state] =
-					series.convertAttribs(stateOptions[state], seriesPointAttr[NORMAL_STATE]);
+					series.convertAttribs(stateOptions[state], seriesPointAttr['']);
 		});
 
 		// set it
@@ -14027,20 +14026,20 @@ Series.prototype = {
 					if (!defaultLineColor) {
 						attr.lineColor = point.color; // Bubbles take point color, line markers use white
 					}
-					pointAttr[NORMAL_STATE] = series.convertAttribs(extend(attr, normalOptions), seriesPointAttr[NORMAL_STATE]);
+					pointAttr[''] = series.convertAttribs(extend(attr, normalOptions), seriesPointAttr['']);
 
 					// inherit from point normal and series hover
 					pointAttr[HOVER_STATE] = series.convertAttribs(
 						stateOptions[HOVER_STATE],
 						seriesPointAttr[HOVER_STATE],
-						pointAttr[NORMAL_STATE]
+						pointAttr['']
 					);
 
 					// inherit from point normal and series hover
 					pointAttr[SELECT_STATE] = series.convertAttribs(
 						stateOptions[SELECT_STATE],
 						seriesPointAttr[SELECT_STATE],
-						pointAttr[NORMAL_STATE]
+						pointAttr['']
 					);
 
 
@@ -16174,7 +16173,7 @@ var ColumnSeries = extendClass(Series, {
 					'stroke-width': series.borderWidth
 				} : {};
 
-				pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE] || series.pointAttr[NORMAL_STATE];
+				pointAttr = point.pointAttr[point.selected ? SELECT_STATE : ''] || series.pointAttr[''];
 				
 				if (graphic) { // update
 					stop(graphic);
@@ -16732,7 +16731,7 @@ var PieSeries = {
 				point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 					.setRadialReference(series.center)
 					.attr(
-						point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE]
+						point.pointAttr[point.selected ? SELECT_STATE : '']
 					)
 					.attr({ 
 						'stroke-linejoin': 'round'
@@ -18035,7 +18034,7 @@ extend(Point.prototype, {
 					if (loopPoint.selected && loopPoint !== point) {
 						loopPoint.selected = loopPoint.options.selected = false;
 						series.options.data[inArray(loopPoint, series.data)] = loopPoint.options;
-						loopPoint.setState(NORMAL_STATE);
+						loopPoint.setState('');
 							loopPoint.firePointEvent('unselect');
 					}
 				});
@@ -18130,7 +18129,7 @@ extend(Point.prototype, {
 			newSymbol,
 			pointAttr;
 
-		state = state || NORMAL_STATE; // empty string
+		state = state || ''; // empty string
 		pointAttr = point.pointAttr[state] || series.pointAttr[state];
 
 		if (
@@ -18315,7 +18314,7 @@ extend(Series.prototype, {
 			lineWidth = options.lineWidth,
 			attribs;
 
-		state = state || NORMAL_STATE;
+		state = state || '';
 
 		if (series.state !== state) {
 			series.state = state;
@@ -20049,7 +20048,7 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 			if (point.plotY !== UNDEFINED) {
 
 				graphic = point.graphic;
-				pointAttr = point.pointAttr[point.selected ? 'selected' : ''] || series.pointAttr[NORMAL_STATE];
+				pointAttr = point.pointAttr[point.selected ? 'selected' : ''] || series.pointAttr[''];
 
 				// crisp vector coordinates
 				crispCorr = (pointAttr['stroke-width'] % 2) / 2;
