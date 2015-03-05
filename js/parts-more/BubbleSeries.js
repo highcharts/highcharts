@@ -112,7 +112,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			if (sizeByArea && pos >= 0) {
 				pos = Math.sqrt(pos);
 			}
-			radii.push(math.ceil(minSize + pos * (maxSize - minSize)) / 2);
+			radii.push(Math.ceil(minSize + pos * (maxSize - minSize)) / 2);
 		}
 		this.radii = radii;
 	},
@@ -227,7 +227,7 @@ Axis.prototype.beforePadding = function () {
 		dataKey = isXAxis ? 'xData' : 'yData',
 		min = this.min,
 		extremes = {},
-		smallestSize = math.min(chart.plotWidth, chart.plotHeight),
+		smallestSize = Math.min(chart.plotWidth, chart.plotHeight),
 		zMin = Number.MAX_VALUE,
 		zMax = -Number.MAX_VALUE,
 		range = this.max - min,
@@ -266,14 +266,14 @@ Axis.prototype.beforePadding = function () {
 				// Find the min and max Z
 				zData = series.zData;
 				if (zData.length) { // #1735
-					zMin = pick(seriesOptions.zMin, math.min(
+					zMin = pick(seriesOptions.zMin, Math.min(
 						zMin,
-						math.max(
+						Math.max(
 							arrayMin(zData), 
 							seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
 						)
 					));
-					zMax = pick(seriesOptions.zMax, math.max(zMax, arrayMax(zData)));
+					zMax = pick(seriesOptions.zMax, Math.max(zMax, arrayMax(zData)));
 				}
 			}
 		}

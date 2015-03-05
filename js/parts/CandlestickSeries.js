@@ -88,8 +88,8 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 				crispX = mathRound(point.plotX) - crispCorr; // #2596
 				plotOpen = point.plotOpen;
 				plotClose = point.plotClose;
-				topBox = math.min(plotOpen, plotClose);
-				bottomBox = math.max(plotOpen, plotClose);
+				topBox = Math.min(plotOpen, plotClose);
+				bottomBox = Math.max(plotOpen, plotClose);
 				halfWidth = mathRound(point.shapeArgs.width / 2);
 				hasTopWhisker = mathRound(topBox) !== mathRound(point.plotY);
 				hasBottomWhisker = bottomBox !== point.yBottom;

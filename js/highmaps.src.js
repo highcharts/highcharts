@@ -17,16 +17,15 @@
 var UNDEFINED,
 	doc = document,
 	win = window,
-	math = Math,
-	mathRound = math.round,
-	mathFloor = math.floor,
-	mathCeil = math.ceil,
-	mathMax = math.max,
-	mathMin = math.min,
-	mathAbs = math.abs,
-	mathCos = math.cos,
-	mathSin = math.sin,
-	mathPI = math.PI,
+	mathRound = Math.round,
+	mathFloor = Math.floor,
+	mathCeil = Math.ceil,
+	mathMax = Math.max,
+	mathMin = Math.min,
+	mathAbs = Math.abs,
+	mathCos = Math.cos,
+	mathSin = Math.sin,
+	mathPI = Math.PI,
 	deg2rad = mathPI * 2 / 360,
 
 
@@ -201,10 +200,10 @@ function isNumber(n) {
 }
 
 function log2lin(num) {
-	return math.log(num) / math.LN10;
+	return Math.log(num) / Math.LN10;
 }
 function lin2log(num) {
-	return math.pow(10, num);
+	return Math.pow(10, num);
 }
 
 /**
@@ -518,7 +517,7 @@ function format(str, ctx) {
  * Get the magnitude of a number
  */
 function getMagnitude(num) {
-	return math.pow(10, mathFloor(math.log(num) / math.LN10));
+	return Math.pow(10, mathFloor(Math.log(num) / Math.LN10));
 }
 
 /**
@@ -5340,7 +5339,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					y1 = gradient.y1 || gradient[1] || 0;
 					x2 = gradient.x2 || gradient[2] || 0;
 					y2 = gradient.y2 || gradient[3] || 0;
-					fillAttr = 'angle="' + (90  - math.atan(
+					fillAttr = 'angle="' + (90  - Math.atan(
 						(y2 - y1) / // y vector
 						(x2 - x1) // x vector
 						) * 180 / mathPI) + '"';
@@ -17850,7 +17849,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			if (sizeByArea && pos >= 0) {
 				pos = Math.sqrt(pos);
 			}
-			radii.push(math.ceil(minSize + pos * (maxSize - minSize)) / 2);
+			radii.push(Math.ceil(minSize + pos * (maxSize - minSize)) / 2);
 		}
 		this.radii = radii;
 	},
@@ -17965,7 +17964,7 @@ Axis.prototype.beforePadding = function () {
 		dataKey = isXAxis ? 'xData' : 'yData',
 		min = this.min,
 		extremes = {},
-		smallestSize = math.min(chart.plotWidth, chart.plotHeight),
+		smallestSize = Math.min(chart.plotWidth, chart.plotHeight),
 		zMin = Number.MAX_VALUE,
 		zMax = -Number.MAX_VALUE,
 		range = this.max - min,
@@ -18004,14 +18003,14 @@ Axis.prototype.beforePadding = function () {
 				// Find the min and max Z
 				zData = series.zData;
 				if (zData.length) { // #1735
-					zMin = pick(seriesOptions.zMin, math.min(
+					zMin = pick(seriesOptions.zMin, Math.min(
 						zMin,
-						math.max(
+						Math.max(
 							arrayMin(zData), 
 							seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
 						)
 					));
-					zMax = pick(seriesOptions.zMax, math.max(zMax, arrayMax(zData)));
+					zMax = pick(seriesOptions.zMax, Math.max(zMax, arrayMax(zData)));
 				}
 			}
 		}

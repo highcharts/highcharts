@@ -110,10 +110,10 @@ function isNumber(n) {
 }
 
 function log2lin(num) {
-	return math.log(num) / math.LN10;
+	return Math.log(num) / Math.LN10;
 }
 function lin2log(num) {
-	return math.pow(10, num);
+	return Math.pow(10, num);
 }
 
 /**
@@ -427,7 +427,7 @@ function format(str, ctx) {
  * Get the magnitude of a number
  */
 function getMagnitude(num) {
-	return math.pow(10, mathFloor(math.log(num) / math.LN10));
+	return Math.pow(10, mathFloor(Math.log(num) / Math.LN10));
 }
 
 /**

@@ -17,16 +17,15 @@
 var UNDEFINED,
 	doc = document,
 	win = window,
-	math = Math,
-	mathRound = math.round,
-	mathFloor = math.floor,
-	mathCeil = math.ceil,
-	mathMax = math.max,
-	mathMin = math.min,
-	mathAbs = math.abs,
-	mathCos = math.cos,
-	mathSin = math.sin,
-	mathPI = math.PI,
+	mathRound = Math.round,
+	mathFloor = Math.floor,
+	mathCeil = Math.ceil,
+	mathMax = Math.max,
+	mathMin = Math.min,
+	mathAbs = Math.abs,
+	mathCos = Math.cos,
+	mathSin = Math.sin,
+	mathPI = Math.PI,
 	deg2rad = mathPI * 2 / 360,
 
 
@@ -201,10 +200,10 @@ function isNumber(n) {
 }
 
 function log2lin(num) {
-	return math.log(num) / math.LN10;
+	return Math.log(num) / Math.LN10;
 }
 function lin2log(num) {
-	return math.pow(10, num);
+	return Math.pow(10, num);
 }
 
 /**
@@ -518,7 +517,7 @@ function format(str, ctx) {
  * Get the magnitude of a number
  */
 function getMagnitude(num) {
-	return math.pow(10, mathFloor(math.log(num) / math.LN10));
+	return Math.pow(10, mathFloor(Math.log(num) / Math.LN10));
 }
 
 /**
@@ -5340,7 +5339,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					y1 = gradient.y1 || gradient[1] || 0;
 					x2 = gradient.x2 || gradient[2] || 0;
 					y2 = gradient.y2 || gradient[3] || 0;
-					fillAttr = 'angle="' + (90  - math.atan(
+					fillAttr = 'angle="' + (90  - Math.atan(
 						(y2 - y1) / // y vector
 						(x2 - x1) // x vector
 						) * 180 / mathPI) + '"';
@@ -16599,7 +16598,7 @@ var PieSeries = {
 		// utility for getting the x value from a given y, used for anticollision logic in data labels
 		series.getX = function (y, left) {
 
-			angle = math.asin(mathMin((y - positions[1]) / (positions[2] / 2 + labelDistance), 1));
+			angle = Math.asin(mathMin((y - positions[1]) / (positions[2] / 2 + labelDistance), 1));
 
 			return positions[0] +
 				(left ? -1 : 1) *

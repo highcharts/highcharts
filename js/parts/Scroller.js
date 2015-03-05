@@ -616,14 +616,14 @@ Scroller.prototype = {
 				isOnNavigator = !scroller.scrollbarEnabled || chartY < top + height;
 
 				// grab the left handle
-				if (isOnNavigator && math.abs(chartX - zoomedMin - navigatorLeft) < handleSensitivity) {
+				if (isOnNavigator && Math.abs(chartX - zoomedMin - navigatorLeft) < handleSensitivity) {
 					scroller.grabbedLeft = true;
 					scroller.otherHandlePos = zoomedMax;
 					scroller.fixedExtreme = baseXAxis.max;
 					chart.fixedRange = null;
 
 				// grab the right handle
-				} else if (isOnNavigator && math.abs(chartX - zoomedMax - navigatorLeft) < handleSensitivity) {
+				} else if (isOnNavigator && Math.abs(chartX - zoomedMax - navigatorLeft) < handleSensitivity) {
 					scroller.grabbedRight = true;
 					scroller.otherHandlePos = zoomedMin;
 					scroller.fixedExtreme = baseXAxis.min;
