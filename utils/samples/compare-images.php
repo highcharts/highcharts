@@ -45,10 +45,9 @@ function post($url, $data) {
 function dissimilarityIndexCalculator($str_img,$str_match){
 	
 	//Try to make images from the urls, on fail return false.
-	$img_source = @ImageCreateFromString($str_img);
-	$img_match  = @ImageCreateFromString($str_match);
-	if (!$img_source || !$img_match) return false;
-
+	$img_source = ImageCreateFromString($str_img);
+	$img_match  = ImageCreateFromString($str_match);
+	
 	//Get image sizes.
 	//list($int_img_source_width, $int_img_source_height)     = getimagesizefromstring ($str_img);
 	//list($int_img_match_width, $int_img_match_height)   = getimagesizefromstring ($str_match);
