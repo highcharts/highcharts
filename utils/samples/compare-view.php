@@ -37,7 +37,8 @@
 		
 		<script type="text/javascript">
 			var diff,
-				commentHref = 'compare-comment.php?path=<?php echo $path ?>&i=<?php echo $i ?>&diff=';
+				commentHref = 'compare-comment.php?path=<?php echo $path ?>&i=<?php echo $i ?>&diff=',
+				commentFrame;
 			$(function() {
 				// the reload button
 				$('#reload').click(function() {
@@ -127,14 +128,16 @@
 								.appendTo(li);
 
 
-							commentHref = commentHref.replace('diff=', 'diff=' + diff);
-							$('<iframe>')
-								.attr({
-									id: 'comment-iframe',
-									src: commentHref
-								})
-								.appendTo('#comment-placeholder');
-
+							commentHref = commentHref.replace('diff=', 'diff=' + diff + '&focus=false');
+							
+							if (!commentFrame) {
+								commentFrame = $('<iframe>')
+									.attr({
+										id: 'comment-iframe',
+										src: commentHref
+									})
+									.appendTo('#comment-placeholder');
+							}
 
 						} else {
 							$span = $('<a>')
