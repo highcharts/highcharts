@@ -774,8 +774,8 @@ SVGElement.prototype = {
 
 				// Adjust for rotated text
 				if (rotation) {
-					bBox.width = Math.abs(height * mathSin(rad)) + Math.abs(width * Math.cos(rad));
-					bBox.height = Math.abs(height * Math.cos(rad)) + Math.abs(width * mathSin(rad));
+					bBox.width = Math.abs(height * Math.sin(rad)) + Math.abs(width * Math.cos(rad));
+					bBox.height = Math.abs(height * Math.cos(rad)) + Math.abs(width * Math.sin(rad));
 				}
 			}
 
@@ -2062,9 +2062,9 @@ SVGRenderer.prototype = {
 				innerRadius = options.innerR,
 				open = options.open,
 				cosStart = Math.cos(start),
-				sinStart = mathSin(start),
+				sinStart = Math.sin(start),
 				cosEnd = Math.cos(end),
-				sinEnd = mathSin(end),
+				sinEnd = Math.sin(end),
 				longArc = options.end - start < mathPI ? 0 : 1;
 
 			return [
@@ -2272,7 +2272,7 @@ SVGRenderer.prototype = {
 			y = Math.max(y * Math.cos(rotation * deg2rad), 4);
 		}
 		return {
-			x: (-baseline / 3) * mathSin(rotation * deg2rad),
+			x: (-baseline / 3) * Math.sin(rotation * deg2rad),
 			y: y
 		};
 	},

@@ -107,7 +107,7 @@ VMLElement = {
 
 		var rotation = this.rotation,
 			costheta = Math.cos(rotation * deg2rad),
-			sintheta = mathSin(rotation * deg2rad);
+			sintheta = Math.sin(rotation * deg2rad);
 					
 		css(this.element, {
 			filter: rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta,
@@ -122,7 +122,7 @@ VMLElement = {
 	getSpanCorrection: function (width, baseline, alignCorrection, rotation, align) {
 
 		var costheta = rotation ? Math.cos(rotation * deg2rad) : 1,
-			sintheta = rotation ? mathSin(rotation * deg2rad) : 0,
+			sintheta = rotation ? Math.sin(rotation * deg2rad) : 0,
 			height = pick(this.elemHeight, this.element.offsetHeight),
 			quad,
 			nonLeft = align && align !== 'left';
@@ -411,7 +411,7 @@ VMLElement = {
 		this[key] = style[key] = value; // style is for #1873
 
 		// Correction for the 1x1 size of the shape container. Used in gauge needles.
-		style.left = -Math.round(mathSin(value * deg2rad) + 1) + 'px';
+		style.left = -Math.round(Math.sin(value * deg2rad) + 1) + 'px';
 		style.top = Math.round(Math.cos(value * deg2rad)) + 'px';
 	},
 	strokeSetter: function (value, key, element) {
@@ -950,9 +950,9 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				radius = options.r || w || h,
 				innerRadius = options.innerR,
 				cosStart = Math.cos(start),
-				sinStart = mathSin(start),
+				sinStart = Math.sin(start),
 				cosEnd = Math.cos(end),
-				sinEnd = mathSin(end),
+				sinEnd = Math.sin(end),
 				ret;
 
 			if (end - start === 0) { // no angle, don't show it.

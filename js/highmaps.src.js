@@ -17,7 +17,6 @@
 var UNDEFINED,
 	doc = document,
 	win = window,
-	mathSin = Math.sin,
 	mathPI = Math.PI,
 	deg2rad = mathPI * 2 / 360,
 
@@ -2523,8 +2522,8 @@ SVGElement.prototype = {
 
 				// Adjust for rotated text
 				if (rotation) {
-					bBox.width = Math.abs(height * mathSin(rad)) + Math.abs(width * Math.cos(rad));
-					bBox.height = Math.abs(height * Math.cos(rad)) + Math.abs(width * mathSin(rad));
+					bBox.width = Math.abs(height * Math.sin(rad)) + Math.abs(width * Math.cos(rad));
+					bBox.height = Math.abs(height * Math.cos(rad)) + Math.abs(width * Math.sin(rad));
 				}
 			}
 
@@ -3811,9 +3810,9 @@ SVGRenderer.prototype = {
 				innerRadius = options.innerR,
 				open = options.open,
 				cosStart = Math.cos(start),
-				sinStart = mathSin(start),
+				sinStart = Math.sin(start),
 				cosEnd = Math.cos(end),
-				sinEnd = mathSin(end),
+				sinEnd = Math.sin(end),
 				longArc = options.end - start < mathPI ? 0 : 1;
 
 			return [
@@ -4021,7 +4020,7 @@ SVGRenderer.prototype = {
 			y = Math.max(y * Math.cos(rotation * deg2rad), 4);
 		}
 		return {
-			x: (-baseline / 3) * mathSin(rotation * deg2rad),
+			x: (-baseline / 3) * Math.sin(rotation * deg2rad),
 			y: y
 		};
 	},
@@ -4722,7 +4721,7 @@ VMLElement = {
 
 		var rotation = this.rotation,
 			costheta = Math.cos(rotation * deg2rad),
-			sintheta = mathSin(rotation * deg2rad);
+			sintheta = Math.sin(rotation * deg2rad);
 					
 		css(this.element, {
 			filter: rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta,
@@ -4737,7 +4736,7 @@ VMLElement = {
 	getSpanCorrection: function (width, baseline, alignCorrection, rotation, align) {
 
 		var costheta = rotation ? Math.cos(rotation * deg2rad) : 1,
-			sintheta = rotation ? mathSin(rotation * deg2rad) : 0,
+			sintheta = rotation ? Math.sin(rotation * deg2rad) : 0,
 			height = pick(this.elemHeight, this.element.offsetHeight),
 			quad,
 			nonLeft = align && align !== 'left';
@@ -5026,7 +5025,7 @@ VMLElement = {
 		this[key] = style[key] = value; // style is for #1873
 
 		// Correction for the 1x1 size of the shape container. Used in gauge needles.
-		style.left = -Math.round(mathSin(value * deg2rad) + 1) + 'px';
+		style.left = -Math.round(Math.sin(value * deg2rad) + 1) + 'px';
 		style.top = Math.round(Math.cos(value * deg2rad)) + 'px';
 	},
 	strokeSetter: function (value, key, element) {
@@ -5565,9 +5564,9 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				radius = options.r || w || h,
 				innerRadius = options.innerR,
 				cosStart = Math.cos(start),
-				sinStart = mathSin(start),
+				sinStart = Math.sin(start),
 				cosEnd = Math.cos(end),
-				sinEnd = mathSin(end),
+				sinEnd = Math.sin(end),
 				ret;
 
 			if (end - start === 0) { // no angle, don't show it.
@@ -7607,7 +7606,7 @@ Axis.prototype = {
 
 					if (rot === rotationOption || (rot && rot >= -90 && rot <= 90)) { // #3891
 					
-						step = getStep(Math.abs(labelMetrics.h / mathSin(deg2rad * rot)));
+						step = getStep(Math.abs(labelMetrics.h / Math.sin(deg2rad * rot)));
 
 						score = step + Math.abs(rot / 360);
 

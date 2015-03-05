@@ -348,12 +348,12 @@ var PieSeries = {
 			// Center for the sliced out slice
 			point.slicedTranslation = {
 				translateX: Math.round(Math.cos(angle) * slicedOffset),
-				translateY: Math.round(mathSin(angle) * slicedOffset)
+				translateY: Math.round(Math.sin(angle) * slicedOffset)
 			};
 
 			// set the anchor point for tooltips
 			radiusX = Math.cos(angle) * positions[2] / 2;
-			radiusY = mathSin(angle) * positions[2] / 2;
+			radiusY = Math.sin(angle) * positions[2] / 2;
 			point.tooltipPos = [
 				positions[0] + radiusX * 0.7,
 				positions[1] + radiusY * 0.7
@@ -366,9 +366,9 @@ var PieSeries = {
 			connectorOffset = Math.min(connectorOffset, labelDistance / 2); // #1678
 			point.labelPos = [
 				positions[0] + radiusX + Math.cos(angle) * labelDistance, // first break of connector
-				positions[1] + radiusY + mathSin(angle) * labelDistance, // a/a
+				positions[1] + radiusY + Math.sin(angle) * labelDistance, // a/a
 				positions[0] + radiusX + Math.cos(angle) * connectorOffset, // second break, right outside pie
-				positions[1] + radiusY + mathSin(angle) * connectorOffset, // a/a
+				positions[1] + radiusY + Math.sin(angle) * connectorOffset, // a/a
 				positions[0] + radiusX, // landing point for connector
 				positions[1] + radiusY, // a/a
 				labelDistance < 0 ? // alignment

@@ -1496,7 +1496,7 @@ Axis.prototype = {
 
 					if (rot === rotationOption || (rot && rot >= -90 && rot <= 90)) { // #3891
 					
-						step = getStep(Math.abs(labelMetrics.h / mathSin(deg2rad * rot)));
+						step = getStep(Math.abs(labelMetrics.h / Math.sin(deg2rad * rot)));
 
 						score = step + Math.abs(rot / 360);
 
