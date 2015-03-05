@@ -60,7 +60,6 @@ var UNDEFINED,
 
 	// some constants for frequently used strings
 	numRegex = /^[0-9]+$/,
-	SELECT_STATE = 'select',
 	marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
 	
 	// Object for extending Axis
@@ -13338,7 +13337,7 @@ Series.prototype = {
 				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 
 					// shortcuts
-					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : ''] || seriesPointAttr;
+					pointAttr = point.pointAttr[point.selected ? 'select' : ''] || seriesPointAttr;
 					radius = pointAttr.r;
 					symbol = pick(pointMarkerOptions.symbol, series.symbol);
 					isImage = symbol.indexOf('url') === 0;
@@ -13456,8 +13455,8 @@ Series.prototype = {
 		// general point attributes for the series normal state
 		seriesPointAttr[''] = series.convertAttribs(normalOptions, normalDefaults);
 
-		// 'hover' and SELECT_STATE states inherit from normal state except the default radius
-		each(['hover', SELECT_STATE], function (state) {
+		// 'hover' and 'select' states inherit from normal state except the default radius
+		each(['hover', 'select'], function (state) {
 			seriesPointAttr[state] =
 					series.convertAttribs(stateOptions[state], seriesPointAttr['']);
 		});
@@ -13534,9 +13533,9 @@ Series.prototype = {
 					);
 
 					// inherit from point normal and series hover
-					pointAttr[SELECT_STATE] = series.convertAttribs(
-						stateOptions[SELECT_STATE],
-						seriesPointAttr[SELECT_STATE],
+					pointAttr.select = series.convertAttribs(
+						stateOptions.select,
+						seriesPointAttr.select,
 						pointAttr['']
 					);
 
@@ -15024,7 +15023,7 @@ var ColumnSeries = extendClass(Series, {
 					'stroke-width': series.borderWidth
 				} : {};
 
-				pointAttr = point.pointAttr[point.selected ? SELECT_STATE : ''] || series.pointAttr[''];
+				pointAttr = point.pointAttr[point.selected ? 'select' : ''] || series.pointAttr[''];
 				
 				if (graphic) { // update
 					stop(graphic);
@@ -18963,7 +18962,7 @@ extend(Point.prototype, {
 			point.selected = point.options.selected = selected;
 			series.options.data[inArray(point, series.data)] = point.options;
 
-			point.setState(selected && SELECT_STATE);
+			point.setState(selected && 'select');
 
 			// unselect all other points unless Ctrl or Cmd + click
 			if (!accumulate) {
@@ -19073,7 +19072,7 @@ extend(Point.prototype, {
 				// already has this state
 				(state === point.state && !move) ||
 				// selected points don't respond to hover
-				(point.selected && state !== SELECT_STATE) ||
+				(point.selected && state !== 'select') ||
 				// series' state options is disabled
 				(stateOptions[state] && stateOptions[state].enabled === false) ||
 				// general point marker's state options is disabled

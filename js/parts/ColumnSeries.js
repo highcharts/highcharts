@@ -277,7 +277,7 @@ var ColumnSeries = extendClass(Series, {
 					'stroke-width': series.borderWidth
 				} : {};
 
-				pointAttr = point.pointAttr[point.selected ? SELECT_STATE : ''] || series.pointAttr[''];
+				pointAttr = point.pointAttr[point.selected ? 'select' : ''] || series.pointAttr[''];
 				
 				if (graphic) { // update
 					stop(graphic);

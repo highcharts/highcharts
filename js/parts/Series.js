@@ -978,7 +978,7 @@ Series.prototype = {
 				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
 
 					// shortcuts
-					pointAttr = point.pointAttr[point.selected ? SELECT_STATE : ''] || seriesPointAttr;
+					pointAttr = point.pointAttr[point.selected ? 'select' : ''] || seriesPointAttr;
 					radius = pointAttr.r;
 					symbol = pick(pointMarkerOptions.symbol, series.symbol);
 					isImage = symbol.indexOf('url') === 0;
@@ -1096,8 +1096,8 @@ Series.prototype = {
 		// general point attributes for the series normal state
 		seriesPointAttr[''] = series.convertAttribs(normalOptions, normalDefaults);
 
-		// 'hover' and SELECT_STATE states inherit from normal state except the default radius
-		each(['hover', SELECT_STATE], function (state) {
+		// 'hover' and 'select' states inherit from normal state except the default radius
+		each(['hover', 'select'], function (state) {
 			seriesPointAttr[state] =
 					series.convertAttribs(stateOptions[state], seriesPointAttr['']);
 		});
@@ -1174,9 +1174,9 @@ Series.prototype = {
 					);
 
 					// inherit from point normal and series hover
-					pointAttr[SELECT_STATE] = series.convertAttribs(
-						stateOptions[SELECT_STATE],
-						seriesPointAttr[SELECT_STATE],
+					pointAttr.select = series.convertAttribs(
+						stateOptions.select,
+						seriesPointAttr.select,
 						pointAttr['']
 					);
 

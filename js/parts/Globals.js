@@ -45,7 +45,6 @@ var UNDEFINED,
 
 	// some constants for frequently used strings
 	numRegex = /^[0-9]+$/,
-	SELECT_STATE = 'select',
 	marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
 	
 	// Object for extending Axis

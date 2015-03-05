@@ -385,7 +385,7 @@ extend(Point.prototype, {
 			point.selected = point.options.selected = selected;
 			series.options.data[inArray(point, series.data)] = point.options;
 
-			point.setState(selected && SELECT_STATE);
+			point.setState(selected && 'select');
 
 			// unselect all other points unless Ctrl or Cmd + click
 			if (!accumulate) {
@@ -495,7 +495,7 @@ extend(Point.prototype, {
 				// already has this state
 				(state === point.state && !move) ||
 				// selected points don't respond to hover
-				(point.selected && state !== SELECT_STATE) ||
+				(point.selected && state !== 'select') ||
 				// series' state options is disabled
 				(stateOptions[state] && stateOptions[state].enabled === false) ||
 				// general point marker's state options is disabled
