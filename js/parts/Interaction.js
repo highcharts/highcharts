@@ -348,7 +348,7 @@ extend(Chart.prototype, {
 
 			if (axis.series.length && 
 					(goingLeft || newMin > mathMin(extremes.dataMin, extremes.min)) && 
-					(!goingLeft || newMax < mathMax(extremes.dataMax, extremes.max))) {
+					(!goingLeft || newMax < Math.max(extremes.dataMax, extremes.max))) {
 				axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
 				doRedraw = true;
 			}

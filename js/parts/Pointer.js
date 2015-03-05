@@ -82,7 +82,7 @@ Pointer.prototype = {
 
 		// chartX and chartY
 		if (ePos.pageX === UNDEFINED) { // IE < 9. #886.
-			chartX = mathMax(e.x, e.clientX - chartPosition.left); // #2005, #2129: the second case is 
+			chartX = Math.max(e.x, e.clientX - chartPosition.left); // #2005, #2129: the second case is 
 				// for IE10 quirks mode within framesets
 			chartY = e.y;
 		} else {
@@ -466,7 +466,7 @@ Pointer.prototype = {
 						selectionData[axis.coll].push({
 							axis: axis,
 							min: mathMin(selectionMin, selectionMax), // for reversed axes
-							max: mathMax(selectionMin, selectionMax)
+							max: Math.max(selectionMin, selectionMax)
 						});
 						runZoom = true;
 					}

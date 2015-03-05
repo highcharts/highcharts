@@ -312,9 +312,9 @@ Legend.prototype = {
 		}*/
 
 		// Set the edge positions
-		legend.maxItemWidth = mathMax(legend.maxItemWidth, itemWidth);
+		legend.maxItemWidth = Math.max(legend.maxItemWidth, itemWidth);
 		legend.lastItemY = itemMarginTop + legend.itemY + itemMarginBottom;
-		legend.lastLineHeight = mathMax(itemHeight, legend.lastLineHeight); // #915
+		legend.lastLineHeight = Math.max(itemHeight, legend.lastLineHeight); // #915
 
 		// cache the position of the newly generated or reordered items
 		item._legendItemPos = [legend.itemX, legend.itemY];
@@ -329,7 +329,7 @@ Legend.prototype = {
 		}
 
 		// the width of the widest item
-		legend.offsetWidth = widthOption || mathMax(
+		legend.offsetWidth = widthOption || Math.max(
 			(horizontal ? legend.itemX - initialItemX - itemDistance : itemWidth) + padding,
 			legend.offsetWidth
 		);
@@ -381,7 +381,7 @@ Legend.prototype = {
 			], function (alignments, side) {
 				if (alignments.test(alignment) && !defined(margin[side])) {
 					// Now we have detected on which side of the chart we should reserve space for the legend
-					chart[marginNames[side]] = mathMax(
+					chart[marginNames[side]] = Math.max(
 						chart[marginNames[side]],
 						chart.legend[(side + 1) % 2 ? 'legendHeight' : 'legendWidth'] + 
 							[1, -1, -1, 1][side] * options[(side % 2) ? 'x' : 'y'] + 
@@ -558,7 +558,7 @@ Legend.prototype = {
 		pages.length = 0;
 		if (legendHeight > spaceHeight && !options.useHTML) {
 
-			this.clipHeight = clipHeight = mathMax(spaceHeight - 20 - this.titleHeight - this.padding, 0);
+			this.clipHeight = clipHeight = Math.max(spaceHeight - 20 - this.titleHeight - this.padding, 0);
 			this.currentPage = pick(this.currentPage, 1);
 			this.fullHeight = legendHeight;
 			

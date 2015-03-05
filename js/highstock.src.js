@@ -17,7 +17,6 @@
 var UNDEFINED,
 	doc = document,
 	win = window,
-	mathMax = Math.max,
 	mathMin = Math.min,
 	mathAbs = Math.abs,
 	mathCos = Math.cos,
@@ -1981,7 +1980,7 @@ SVGElement.prototype = {
 							'class': 'highcharts-text-shadow',
 							'fill': color,
 							'stroke': color,
-							'stroke-opacity': 1 / mathMax(pInt(strokeWidth), 3),
+							'stroke-opacity': 1 / Math.max(pInt(strokeWidth), 3),
 							'stroke-width': strokeWidth,
 							'stroke-linejoin': 'round'
 						});
@@ -2066,7 +2065,7 @@ SVGElement.prototype = {
 			shadows[i].setAttribute(
 				key,
 				key === 'height' ?
-					mathMax(value - (shadows[i].cutHeight || 0), 0) :
+					Math.max(value - (shadows[i].cutHeight || 0), 0) :
 					key === 'd' ? this.d : value
 			);
 		}
@@ -2719,7 +2718,7 @@ SVGElement.prototype = {
 					'fill': 'none'
 				});
 				if (cutOff) {
-					attr(shadow, 'height', mathMax(attr(shadow, 'height') - strokeWidth, 0));
+					attr(shadow, 'height', Math.max(attr(shadow, 'height') - strokeWidth, 0));
 					shadow.cutHeight = strokeWidth;
 				}
 
@@ -3564,8 +3563,8 @@ SVGRenderer.prototype = {
 			attribs = isObject(x) ? x : x === UNDEFINED ? {} : {
 				x: x,
 				y: y,
-				width: mathMax(width, 0),
-				height: mathMax(height, 0)
+				width: Math.max(width, 0),
+				height: Math.max(height, 0)
 			};
 
 		if (strokeWidth !== UNDEFINED) {
@@ -4022,7 +4021,7 @@ SVGRenderer.prototype = {
 	rotCorr: function (baseline, rotation, alterY) {
 		var y = baseline;
 		if (rotation && alterY) {
-			y = mathMax(y * mathCos(rotation * deg2rad), 4);
+			y = Math.max(y * mathCos(rotation * deg2rad), 4);
 		}
 		return {
 			x: (-baseline / 3) * mathSin(rotation * deg2rad),
@@ -5084,7 +5083,7 @@ VMLElement = {
 		} else if (key === 'y') {
 			key = 'top';
 		}/* else {
-			value = mathMax(0, value); // don't set width or height below zero (#311)
+			value = Math.max(0, value); // don't set width or height below zero (#311)
 		}*/
 
 		// clipping rectangle special
@@ -5813,7 +5812,7 @@ Tick.prototype = {
 		});
 
 		// prepare CSS
-		//css = width && { width: mathMax(1, Math.round(width - 2 * (labelOptions.padding || 10))) + 'px' };
+		//css = width && { width: Math.max(1, Math.round(width - 2 * (labelOptions.padding || 10))) + 'px' };
 		
 		// first call
 		if (!defined(label)) {
@@ -6836,7 +6835,7 @@ Axis.prototype = {
 					xData = series.xData;
 					if (xData.length) {
 						axis.dataMin = mathMin(pick(axis.dataMin, xData[0]), arrayMin(xData));
-						axis.dataMax = mathMax(pick(axis.dataMax, xData[0]), arrayMax(xData));
+						axis.dataMax = Math.max(pick(axis.dataMax, xData[0]), arrayMax(xData));
 					}
 
 				// Get dataMin and dataMax for Y axes, as well as handle stacking and processed data
@@ -6852,7 +6851,7 @@ Axis.prototype = {
 					// doesn't have active y data, we continue with nulls
 					if (defined(seriesDataMin) && defined(seriesDataMax)) {
 						axis.dataMin = mathMin(pick(axis.dataMin, seriesDataMin), seriesDataMin);
-						axis.dataMax = mathMax(pick(axis.dataMax, seriesDataMax), seriesDataMax);
+						axis.dataMax = Math.max(pick(axis.dataMax, seriesDataMax), seriesDataMax);
 					}
 
 					// Adjust to threshold
@@ -6973,7 +6972,7 @@ Axis.prototype = {
 			between = function (x, a, b) {
 				if (x < a || x > b) {
 					if (force) {
-						x = mathMin(mathMax(a, x), b);
+						x = mathMin(Math.max(a, x), b);
 					} else {
 						skip = true;
 					}
@@ -7193,20 +7192,20 @@ Axis.prototype = {
 					if (seriesPointRange > range) { // #1446
 						seriesPointRange = 0;
 					}
-					pointRange = mathMax(pointRange, seriesPointRange);
+					pointRange = Math.max(pointRange, seriesPointRange);
 
 					if (!axis.single) {
 						// minPointOffset is the value padding to the left of the axis in order to make
 						// room for points with a pointRange, typically columns. When the pointPlacement option
 						// is 'between' or 'on', this padding does not apply.
-						minPointOffset = mathMax(
+						minPointOffset = Math.max(
 							minPointOffset,
 							isString(pointPlacement) ? 0 : seriesPointRange / 2
 						);
 
 						// Determine the total padding needed to the length of the axis to make room for the
 						// pointRange. If the series' pointPlacement is 'on', no padding is added.
-						pointRangePadding = mathMax(
+						pointRangePadding = Math.max(
 							pointRangePadding,
 							pointPlacement === 'on' ? 0 : seriesPointRange
 						);
@@ -7293,7 +7292,7 @@ Axis.prototype = {
 
 		// handle zoomed range
 		if (axis.range && defined(axis.max)) {
-			axis.userMin = axis.min = mathMax(axis.min, axis.max - axis.range); // #618
+			axis.userMin = axis.min = Math.max(axis.min, axis.max - axis.range); // #618
 			axis.userMax = axis.max;
 
 			axis.range = null;  // don't use it when running setExtremes
@@ -7323,7 +7322,7 @@ Axis.prototype = {
 
 		// Stay within floor and ceiling
 		if (isNumber(options.floor)) {
-			axis.min = mathMax(axis.min, options.floor);
+			axis.min = Math.max(axis.min, options.floor);
 		}
 		if (isNumber(options.ceiling)) {
 			axis.max = mathMin(axis.max, options.ceiling);
@@ -7338,11 +7337,11 @@ Axis.prototype = {
 		} else {
 			axis.tickInterval = pick(
 				tickIntervalOption,
-				this.tickAmount ? ((axis.max - axis.min) / mathMax(this.tickAmount - 1, 1)) : undefined,
+				this.tickAmount ? ((axis.max - axis.min) / Math.max(this.tickAmount - 1, 1)) : undefined,
 				categories ? // for categoried axis, 1 is default, for linear axis use tickPix
 					1 :
 					// don't let it be more than the data range
-					(axis.max - axis.min) * tickPixelIntervalOption / mathMax(axis.len, tickPixelIntervalOption)
+					(axis.max - axis.min) * tickPixelIntervalOption / Math.max(axis.len, tickPixelIntervalOption)
 			);
 		}
 
@@ -7369,7 +7368,7 @@ Axis.prototype = {
 
 		// In column-like charts, don't cramp in more ticks than there are points (#1943)
 		if (axis.pointRange) {
-			axis.tickInterval = mathMax(axis.pointRange, axis.tickInterval);
+			axis.tickInterval = Math.max(axis.pointRange, axis.tickInterval);
 		}
 
 		// Before normalizing the tick interval, handle minimum tick interval. This applies only if tickInterval is not defined.
@@ -7721,7 +7720,7 @@ Axis.prototype = {
 			if (defined(dataMin) && newMin <= mathMin(dataMin, pick(options.min, dataMin))) {
 				newMin = UNDEFINED;
 			}
-			if (defined(dataMax) && newMax >= mathMax(dataMax, pick(options.max, dataMax))) {
+			if (defined(dataMax) && newMax >= Math.max(dataMax, pick(options.max, dataMax))) {
 				newMax = UNDEFINED;
 			}
 		}
@@ -7772,7 +7771,7 @@ Axis.prototype = {
 		this.right = chart.chartWidth - width - left;
 
 		// Direction agnostic properties
-		this.len = mathMax(horiz ? width : height, 0); // mathMax fixes #905
+		this.len = Math.max(horiz ? width : height, 0); // Math.max fixes #905
 		this.pos = horiz ? left : top; // distance from SVG origin
 	},
 
@@ -7905,7 +7904,7 @@ Axis.prototype = {
 			slotWidth = this.slotWidth = (horiz && !labelOptions.step && !labelOptions.rotation &&
 				((this.staggerLines || 1) * chart.plotWidth) / tickPositions.length) ||
 				(!horiz && ((margin[3] && (margin[3] - chart.spacing[3])) || chart.chartWidth * 0.33)), // #1580, #1931,
-			innerWidth = mathMax(1, Math.round(slotWidth - 2 * (labelOptions.padding || 5))),
+			innerWidth = Math.max(1, Math.round(slotWidth - 2 * (labelOptions.padding || 5))),
 			attr = {},
 			labelMetrics = renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
 			css,
@@ -8053,7 +8052,7 @@ Axis.prototype = {
 				if (side === 0 || side === 2 || { 1: 'left', 3: 'right' }[side] === axis.labelAlign) {
 
 					// get the highest offset
-					labelOffset = mathMax(
+					labelOffset = Math.max(
 						ticks[pos].getLabelSize(),
 						labelOffset
 					);
@@ -8113,12 +8112,12 @@ Axis.prototype = {
 			(labelOffset && (directionFactor * (horiz ? pick(labelOptions.y, axis.tickRotCorr.y + 8) : labelOptions.x) - lineHeightCorrection));
 		axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);
 
-		axisOffset[side] = mathMax(
+		axisOffset[side] = Math.max(
 			axisOffset[side],
 			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset,
 			labelOffsetPadded // #3027
 		);
-		clipOffset[invertedSide] = mathMax(clipOffset[invertedSide], Math.floor(options.lineWidth / 2) * 2);
+		clipOffset[invertedSide] = Math.max(clipOffset[invertedSide], Math.floor(options.lineWidth / 2) * 2);
 	},
 
 	/**
@@ -8723,7 +8722,7 @@ Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) 
 	count = normalizeTickInterval(
 		tickInterval / interval, 
 		multiples,
-		unit[0] === 'year' ? mathMax(getMagnitude(tickInterval / interval), 1) : 1 // #1913, #2360
+		unit[0] === 'year' ? Math.max(getMagnitude(tickInterval / interval), 1) : 1 // #1913, #2360
 	);
 	
 	return {
@@ -9439,7 +9438,7 @@ Pointer.prototype = {
 
 		// chartX and chartY
 		if (ePos.pageX === UNDEFINED) { // IE < 9. #886.
-			chartX = mathMax(e.x, e.clientX - chartPosition.left); // #2005, #2129: the second case is 
+			chartX = Math.max(e.x, e.clientX - chartPosition.left); // #2005, #2129: the second case is 
 				// for IE10 quirks mode within framesets
 			chartY = e.y;
 		} else {
@@ -9823,7 +9822,7 @@ Pointer.prototype = {
 						selectionData[axis.coll].push({
 							axis: axis,
 							min: mathMin(selectionMin, selectionMax), // for reversed axes
-							max: mathMax(selectionMin, selectionMax)
+							max: Math.max(selectionMin, selectionMax)
 						});
 						runZoom = true;
 					}
@@ -10187,11 +10186,11 @@ extend(Highcharts.Pointer.prototype, {
 						min = axis.toPixels(pick(axis.options.min, axis.dataMin)),
 						max = axis.toPixels(pick(axis.options.max, axis.dataMax)),
 						absMin = mathMin(min, max),
-						absMax = mathMax(min, max);
+						absMax = Math.max(min, max);
 
 					// Store the bounds for use in the touchmove handler
 					bounds.min = mathMin(axis.pos, absMin - minPixelPadding);
-					bounds.max = mathMax(axis.pos + axis.len, absMax + minPixelPadding);
+					bounds.max = Math.max(axis.pos + axis.len, absMax + minPixelPadding);
 				}
 			});
 			self.res = true; // reset on next move
@@ -10668,9 +10667,9 @@ Legend.prototype = {
 		}*/
 
 		// Set the edge positions
-		legend.maxItemWidth = mathMax(legend.maxItemWidth, itemWidth);
+		legend.maxItemWidth = Math.max(legend.maxItemWidth, itemWidth);
 		legend.lastItemY = itemMarginTop + legend.itemY + itemMarginBottom;
-		legend.lastLineHeight = mathMax(itemHeight, legend.lastLineHeight); // #915
+		legend.lastLineHeight = Math.max(itemHeight, legend.lastLineHeight); // #915
 
 		// cache the position of the newly generated or reordered items
 		item._legendItemPos = [legend.itemX, legend.itemY];
@@ -10685,7 +10684,7 @@ Legend.prototype = {
 		}
 
 		// the width of the widest item
-		legend.offsetWidth = widthOption || mathMax(
+		legend.offsetWidth = widthOption || Math.max(
 			(horizontal ? legend.itemX - initialItemX - itemDistance : itemWidth) + padding,
 			legend.offsetWidth
 		);
@@ -10737,7 +10736,7 @@ Legend.prototype = {
 			], function (alignments, side) {
 				if (alignments.test(alignment) && !defined(margin[side])) {
 					// Now we have detected on which side of the chart we should reserve space for the legend
-					chart[marginNames[side]] = mathMax(
+					chart[marginNames[side]] = Math.max(
 						chart[marginNames[side]],
 						chart.legend[(side + 1) % 2 ? 'legendHeight' : 'legendWidth'] + 
 							[1, -1, -1, 1][side] * options[(side % 2) ? 'x' : 'y'] + 
@@ -10914,7 +10913,7 @@ Legend.prototype = {
 		pages.length = 0;
 		if (legendHeight > spaceHeight && !options.useHTML) {
 
-			this.clipHeight = clipHeight = mathMax(spaceHeight - 20 - this.titleHeight - this.padding, 0);
+			this.clipHeight = clipHeight = Math.max(spaceHeight - 20 - this.titleHeight - this.padding, 0);
 			this.currentPage = pick(this.currentPage, 1);
 			this.fullHeight = legendHeight;
 			
@@ -11680,8 +11679,8 @@ Chart.prototype = {
 			chart.containerHeight = adapterRun(renderTo, 'height');
 		}
 		
-		chart.chartWidth = mathMax(0, widthOption || chart.containerWidth || 600); // #1393, 1460
-		chart.chartHeight = mathMax(0, pick(heightOption,
+		chart.chartWidth = Math.max(0, widthOption || chart.containerWidth || 600); // #1393, 1460
+		chart.chartHeight = Math.max(0, pick(heightOption,
 			// the offsetHeight of an empty container is 0 in standard browsers, but 19 in IE7:
 			chart.containerHeight > 19 ? chart.containerHeight : 400));
 	},
@@ -11831,7 +11830,7 @@ Chart.prototype = {
 
 		// Adjust for title and subtitle
 		if (titleOffset && !defined(margin[0])) {
-			chart.plotTop = mathMax(chart.plotTop, titleOffset + chart.options.title.margin + spacing[0]);
+			chart.plotTop = Math.max(chart.plotTop, titleOffset + chart.options.title.margin + spacing[0]);
 		}
 		
 		// Adjust for legend
@@ -11950,11 +11949,11 @@ Chart.prototype = {
 		chart.oldChartHeight = chart.chartHeight;
 		chart.oldChartWidth = chart.chartWidth;
 		if (defined(width)) {
-			chart.chartWidth = chartWidth = mathMax(0, Math.round(width));
+			chart.chartWidth = chartWidth = Math.max(0, Math.round(width));
 			chart.hasUserSize = !!chartWidth;
 		}
 		if (defined(height)) {
-			chart.chartHeight = chartHeight = mathMax(0, Math.round(height));
+			chart.chartHeight = chartHeight = Math.max(0, Math.round(height));
 		}
 
 		// Resize the container with the global animation applied if enabled (#2503)
@@ -12022,8 +12021,8 @@ Chart.prototype = {
 
 		chart.plotLeft = plotLeft = Math.round(chart.plotLeft);
 		chart.plotTop = plotTop = Math.round(chart.plotTop);
-		chart.plotWidth = plotWidth = mathMax(0, Math.round(chartWidth - plotLeft - chart.marginRight));
-		chart.plotHeight = plotHeight = mathMax(0, Math.round(chartHeight - plotTop - chart.marginBottom));
+		chart.plotWidth = plotWidth = Math.max(0, Math.round(chartWidth - plotLeft - chart.marginRight));
+		chart.plotHeight = plotHeight = Math.max(0, Math.round(chartHeight - plotTop - chart.marginBottom));
 
 		chart.plotSizeX = inverted ? plotHeight : plotWidth;
 		chart.plotSizeY = inverted ? plotWidth : plotHeight;
@@ -12045,13 +12044,13 @@ Chart.prototype = {
 		};
 
 		plotBorderWidth = 2 * Math.floor(chart.plotBorderWidth / 2);
-		clipX = Math.ceil(mathMax(plotBorderWidth, clipOffset[3]) / 2);
-		clipY = Math.ceil(mathMax(plotBorderWidth, clipOffset[0]) / 2);
+		clipX = Math.ceil(Math.max(plotBorderWidth, clipOffset[3]) / 2);
+		clipY = Math.ceil(Math.max(plotBorderWidth, clipOffset[0]) / 2);
 		chart.clipBox = {
 			x: clipX, 
 			y: clipY, 
-			width: Math.floor(chart.plotSizeX - mathMax(plotBorderWidth, clipOffset[1]) / 2 - clipX), 
-			height: mathMax(0, Math.floor(chart.plotSizeY - mathMax(plotBorderWidth, clipOffset[2]) / 2 - clipY))
+			width: Math.floor(chart.plotSizeX - Math.max(plotBorderWidth, clipOffset[1]) / 2 - clipX), 
+			height: Math.max(0, Math.floor(chart.plotSizeY - Math.max(plotBorderWidth, clipOffset[2]) / 2 - clipY))
 		};
 
 		if (!skipAxes) {
@@ -13428,7 +13427,7 @@ Series.prototype = {
 		// iterate up to find slice start
 		for (i = 0; i < dataLength; i++) {
 			if (xData[i] >= min) {
-				cropStart = mathMax(0, i - cropShoulder);
+				cropStart = Math.max(0, i - cropShoulder);
 				break;
 			}
 		}
@@ -13648,7 +13647,7 @@ Series.prototype = {
 
 			// Set the the plotY value, reset it for redraws
 			point.plotY = plotY = (typeof yValue === 'number' && yValue !== Infinity) ?
-				mathMin(mathMax(-1e5, yAxis.translate(yValue, 0, 1, 0, 1)), 1e5) : // #3201
+				mathMin(Math.max(-1e5, yAxis.translate(yValue, 0, 1, 0, 1)), 1e5) : // #3201
 				UNDEFINED;
 			point.isInside = plotY !== UNDEFINED && plotY >= 0 && plotY <= yAxis.len && // #3519
 				plotX >= 0 && plotX <= xAxis.len;
@@ -14267,7 +14266,7 @@ Series.prototype = {
 			clipAttr,
 			graph = this.graph,
 			area = this.area,
-			chartSizeMax = mathMax(chart.chartWidth, chart.chartHeight),
+			chartSizeMax = Math.max(chart.chartWidth, chart.chartHeight),
 			zoneAxis = this.zoneAxis || 'y',
 			axis = this[zoneAxis + 'Axis'],
 			reversed = axis.reversed,
@@ -14936,7 +14935,7 @@ Series.prototype.setStackedPoints = function () {
 			other = isNegative ? stackKey : negKey;
 			if (negStacks && stacks[other] && stacks[other][x]) {
 				other = stacks[other][x];
-				stack.total = other.total = mathMax(other.total, stack.total) + mathAbs(y) || 0;
+				stack.total = other.total = Math.max(other.total, stack.total) + mathAbs(y) || 0;
 
 			// Percent stacked areas
 			} else {
@@ -15787,14 +15786,14 @@ var SplineSeries = extendClass(Series, {
 			// to prevent false extremes, check that control points are between
 			// neighbouring points' y values
 			if (leftContY > lastY && leftContY > plotY) {
-				leftContY = mathMax(lastY, plotY);
+				leftContY = Math.max(lastY, plotY);
 				rightContY = 2 * plotY - leftContY; // mirror of left control point
 			} else if (leftContY < lastY && leftContY < plotY) {
 				leftContY = mathMin(lastY, plotY);
 				rightContY = 2 * plotY - leftContY;
 			}
 			if (rightContY > nextY && rightContY > plotY) {
-				rightContY = mathMax(nextY, plotY);
+				rightContY = Math.max(nextY, plotY);
 				leftContY = 2 * plotY - rightContY;
 			} else if (rightContY < nextY && rightContY < plotY) {
 				rightContY = mathMin(nextY, plotY);
@@ -16043,7 +16042,7 @@ var ColumnSeries = extendClass(Series, {
 			minPointLength = pick(options.minPointLength, 5),
 			metrics = series.getColumnMetrics(),
 			pointWidth = metrics.width,
-			seriesBarW = series.barW = mathMax(pointWidth, 1 + 2 * borderWidth), // postprocessed for border width
+			seriesBarW = series.barW = Math.max(pointWidth, 1 + 2 * borderWidth), // postprocessed for border width
 			pointXOffset = series.pointXOffset = metrics.offset,
 			xCrisp = -(borderWidth % 2 ? 0.5 : 0),
 			yCrisp = borderWidth % 2 ? 0.5 : 1;
@@ -16064,14 +16063,14 @@ var ColumnSeries = extendClass(Series, {
 		// Record the new values
 		each(series.points, function (point) {
 			var yBottom = pick(point.yBottom, translatedThreshold),
-				plotY = mathMin(mathMax(-999 - yBottom, point.plotY), yAxis.len + 999 + yBottom), // Don't draw too far outside plot area (#1303, #2241)
+				plotY = mathMin(Math.max(-999 - yBottom, point.plotY), yAxis.len + 999 + yBottom), // Don't draw too far outside plot area (#1303, #2241)
 				barX = point.plotX + pointXOffset,
 				barW = seriesBarW,
 				barY = mathMin(plotY, yBottom),
 				right,
 				bottom,
 				fromTop,
-				barH = mathMax(plotY, yBottom) - barY;
+				barH = Math.max(plotY, yBottom) - barY;
 
 			// Handle options.minPointLength
 			if (mathAbs(barH) < minPointLength) {
@@ -16197,7 +16196,7 @@ var ColumnSeries = extendClass(Series, {
 		if (hasSVG) { // VML is too slow anyway
 			if (init) {
 				attr.scaleY = 0.001;
-				translatedThreshold = mathMin(yAxis.pos + yAxis.len, mathMax(yAxis.pos, yAxis.toPixels(options.threshold)));
+				translatedThreshold = mathMin(yAxis.pos + yAxis.len, Math.max(yAxis.pos, yAxis.toPixels(options.threshold)));
 				if (inverted) {
 					attr.translateX = translatedThreshold - yAxis.len;
 				} else {
@@ -17160,7 +17159,7 @@ if (seriesTypes.pie) {
 
 				// Build the slots
 				bottom = mathMin(centerY + radius + distanceOption, chart.plotHeight);
-				for (pos = mathMax(0, centerY - radius - distanceOption); pos <= bottom; pos += labelHeight) {
+				for (pos = Math.max(0, centerY - radius - distanceOption); pos <= bottom; pos += labelHeight) {
 					slots.push(pos);
 				}
 				slotsLength = slots.length;
@@ -17279,7 +17278,7 @@ if (seriesTypes.pie) {
 					y = slot.y;
 					if ((naturalY > y && slots[slotIndex + 1] !== null) ||
 							(naturalY < y &&  slots[slotIndex - 1] !== null)) {
-						y = mathMin(mathMax(0, naturalY), chart.plotHeight);
+						y = mathMin(Math.max(0, naturalY), chart.plotHeight);
 					}
 
 				} else {
@@ -17312,20 +17311,20 @@ if (seriesTypes.pie) {
 					dataLabelWidth = dataLabel.width;
 					// Overflow left
 					if (x - dataLabelWidth < connectorPadding) {
-						overflow[3] = mathMax(Math.round(dataLabelWidth - x + connectorPadding), overflow[3]);
+						overflow[3] = Math.max(Math.round(dataLabelWidth - x + connectorPadding), overflow[3]);
 
 					// Overflow right
 					} else if (x + dataLabelWidth > plotWidth - connectorPadding) {
-						overflow[1] = mathMax(Math.round(x + dataLabelWidth - plotWidth + connectorPadding), overflow[1]);
+						overflow[1] = Math.max(Math.round(x + dataLabelWidth - plotWidth + connectorPadding), overflow[1]);
 					}
 
 					// Overflow top
 					if (y - labelHeight / 2 < 0) {
-						overflow[0] = mathMax(Math.round(-y + labelHeight / 2), overflow[0]);
+						overflow[0] = Math.max(Math.round(-y + labelHeight / 2), overflow[0]);
 
 					// Overflow left
 					} else if (y + labelHeight / 2 > plotHeight) {
-						overflow[2] = mathMax(Math.round(y + labelHeight / 2 - plotHeight), overflow[2]);
+						overflow[2] = Math.max(Math.round(y + labelHeight / 2 - plotHeight), overflow[2]);
 					}
 				}
 			} // for each point
@@ -17427,10 +17426,10 @@ if (seriesTypes.pie) {
 
 		// Handle horizontal size and center
 		if (centerOption[0] !== null) { // Fixed center
-			newSize = mathMax(center[2] - mathMax(overflow[1], overflow[3]), minSize);
+			newSize = Math.max(center[2] - Math.max(overflow[1], overflow[3]), minSize);
 
 		} else { // Auto center
-			newSize = mathMax(
+			newSize = Math.max(
 				center[2] - overflow[1] - overflow[3], // horizontal overflow
 				minSize
 			);
@@ -17439,10 +17438,10 @@ if (seriesTypes.pie) {
 
 		// Handle vertical size and center
 		if (centerOption[1] !== null) { // Fixed center
-			newSize = mathMax(mathMin(newSize, center[2] - mathMax(overflow[0], overflow[2])), minSize);
+			newSize = Math.max(mathMin(newSize, center[2] - Math.max(overflow[0], overflow[2])), minSize);
 
 		} else { // Auto center
-			newSize = mathMax(
+			newSize = Math.max(
 				mathMin(
 					newSize,
 					center[2] - overflow[0] - overflow[2] // vertical overflow
@@ -17978,7 +17977,7 @@ extend(Chart.prototype, {
 
 			if (axis.series.length && 
 					(goingLeft || newMin > mathMin(extremes.dataMin, extremes.min)) && 
-					(!goingLeft || newMax < mathMax(extremes.dataMax, extremes.max))) {
+					(!goingLeft || newMax < Math.max(extremes.dataMax, extremes.max))) {
 				axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
 				doRedraw = true;
 			}
@@ -18686,10 +18685,10 @@ extend(Axis.prototype, {
 				// Register
 				axis.ordinalPositions = ordinalPositions;
 
-				// This relies on the ordinalPositions being set. Use mathMax and mathMin to prevent
+				// This relies on the ordinalPositions being set. Use Math.max and mathMin to prevent
 				// padding on either sides of the data.
-				minIndex = axis.val2lin(mathMax(min, ordinalPositions[0]), true);
-				maxIndex = mathMax(axis.val2lin(mathMin(max, ordinalPositions[ordinalPositions.length - 1]), true), 1); // #3339
+				minIndex = axis.val2lin(Math.max(min, ordinalPositions[0]), true);
+				maxIndex = Math.max(axis.val2lin(mathMin(max, ordinalPositions[ordinalPositions.length - 1]), true), 1); // #3339
 
 				// Set the slope and offset of the values compared to the indices in the ordinal positions
 				axis.ordinalSlope = slope = (max - min) / (maxIndex - minIndex);
@@ -18922,7 +18921,7 @@ extend(Axis.prototype, {
 			median = distances[Math.floor(len / 2)];
 
 			// Compensate for series that don't extend through the entire axis extent. #1675.
-			xMin = mathMax(xMin, processedXData[0]);
+			xMin = Math.max(xMin, processedXData[0]);
 			xMax = mathMin(xMax, processedXData[len - 1]);
 
 			this.groupIntervalFactor = groupIntervalFactor = (len * median) / (xMax - xMin);
@@ -19027,7 +19026,7 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
 			);
 
 			// Apply it if it is within the available data range
-			if (trimmedRange.min >= mathMin(extremes.dataMin, min) && trimmedRange.max <= mathMax(dataMax, max)) {
+			if (trimmedRange.min >= mathMin(extremes.dataMin, min) && trimmedRange.max <= Math.max(dataMax, max)) {
 				xAxis.setExtremes(trimmedRange.min, trimmedRange.max, true, false, { trigger: 'pan' });
 			}
 
@@ -19905,7 +19904,7 @@ Axis.prototype.getGroupPixelWidth = function () {
 	while (i--) {
 		dgOptions = series[i].options.dataGrouping;
 		if (dgOptions) {
-			groupPixelWidth = mathMax(groupPixelWidth, dgOptions.groupPixelWidth);
+			groupPixelWidth = Math.max(groupPixelWidth, dgOptions.groupPixelWidth);
 
 		}
 	}
@@ -20917,9 +20916,9 @@ Scroller.prototype = {
 
 
 		// handles are allowed to cross, but never exceed the plot area
-		scroller.zoomedMax = mathMin(mathMax(pxMin, pxMax), navigatorWidth);
+		scroller.zoomedMax = mathMin(Math.max(pxMin, pxMax), navigatorWidth);
 		scroller.zoomedMin = 
-			mathMax(scroller.fixedWidth ? scroller.zoomedMax - scroller.fixedWidth : mathMin(pxMin, pxMax), 0);
+			Math.max(scroller.fixedWidth ? scroller.zoomedMax - scroller.fixedWidth : mathMin(pxMin, pxMax), 0);
 		scroller.range = scroller.zoomedMax - scroller.zoomedMin;
 		zoomedMax = Math.round(scroller.zoomedMax);
 		zoomedMin = Math.round(scroller.zoomedMin);
@@ -21605,7 +21604,7 @@ Scroller.prototype = {
 		if (stickToMax) {
 			newMax = baseDataMax;
 			if (!stickToMin) { // if stickToMin is true, the new min value is set above
-				newMin = mathMax(newMax - range, navigatorSeries.xData[0]);
+				newMin = Math.max(newMax - range, navigatorSeries.xData[0]);
 			}
 		}
 
@@ -21622,7 +21621,7 @@ Scroller.prototype = {
 			}
 
 			scroller.render(
-				mathMax(baseMin, baseDataMin),
+				Math.max(baseMin, baseDataMin),
 				mathMin(baseMax, baseDataMax)
 			);
 		}
@@ -21836,7 +21835,7 @@ RangeSelector.prototype = {
 
 		// Fixed times like minutes, hours, days
 		} else if (range) {
-			newMin = mathMax(newMax - range, dataMin);
+			newMin = Math.max(newMax - range, dataMin);
 			newMax = mathMin(newMin + range, dataMax);
 		
 		} else if (type === 'ytd') {
@@ -21855,13 +21854,13 @@ RangeSelector.prototype = {
 					each(chart.series, function (series) {
 						var xData = series.xData; // reassign it to the last item
 						dataMin = mathMin(xData[0], dataMin);
-						dataMax = mathMax(xData[xData.length - 1], dataMax);
+						dataMax = Math.max(xData[xData.length - 1], dataMax);
 					});
 					redraw = false;
 				}
 				now = new Date(dataMax);
 				year = now.getFullYear();
-				newMin = rangeMin = mathMax(dataMin || 0, Date.UTC(year, 0, 1));
+				newMin = rangeMin = Math.max(dataMin || 0, Date.UTC(year, 0, 1));
 				now = now.getTime();
 				newMax = mathMin(dataMax || now, now);
 
@@ -22737,7 +22736,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 
 				if (x1 < axisLeft || x1 > axisLeft + axis.width) { // outside plot area
 					if (force) {
-						x1 = x2 = mathMin(mathMax(axisLeft, x1), axisLeft + axis.width);
+						x1 = x2 = mathMin(Math.max(axisLeft, x1), axisLeft + axis.width);
 					} else {
 						skip = true;
 					}
@@ -22756,7 +22755,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 
 				if (y1 < axisTop || y1 > axisTop + axis.height) { // outside plot area
 					if (force) {
-						y1 = y2 = mathMin(mathMax(axisTop, y1), axis.top + axis.height);
+						y1 = y2 = mathMin(Math.max(axisTop, y1), axis.top + axis.height);
 					} else {
 						skip = true;
 					}

@@ -2,7 +2,6 @@
 var UNDEFINED,
 	doc = document,
 	win = window,
-	mathMax = Math.max,
 	mathMin = Math.min,
 	mathAbs = Math.abs,
 	mathCos = Math.cos,

@@ -111,7 +111,7 @@ RangeSelector.prototype = {
 
 		// Fixed times like minutes, hours, days
 		} else if (range) {
-			newMin = mathMax(newMax - range, dataMin);
+			newMin = Math.max(newMax - range, dataMin);
 			newMax = mathMin(newMin + range, dataMax);
 		
 		} else if (type === 'ytd') {
@@ -130,13 +130,13 @@ RangeSelector.prototype = {
 					each(chart.series, function (series) {
 						var xData = series.xData; // reassign it to the last item
 						dataMin = mathMin(xData[0], dataMin);
-						dataMax = mathMax(xData[xData.length - 1], dataMax);
+						dataMax = Math.max(xData[xData.length - 1], dataMax);
 					});
 					redraw = false;
 				}
 				now = new Date(dataMax);
 				year = now.getFullYear();
-				newMin = rangeMin = mathMax(dataMin || 0, Date.UTC(year, 0, 1));
+				newMin = rangeMin = Math.max(dataMin || 0, Date.UTC(year, 0, 1));
 				now = now.getTime();
 				newMax = mathMin(dataMax || now, now);
 

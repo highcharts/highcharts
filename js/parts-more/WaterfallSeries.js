@@ -77,7 +77,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				point.y = yValue - previousIntermediate; // #3840
 			}
 			// up points
-			y = mathMax(previousY, previousY + point.y) + range[0];
+			y = Math.max(previousY, previousY + point.y) + range[0];
 			shapeArgs.y = yAxis.translate(y, 0, 1);
 
 
@@ -103,7 +103,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			}
 
 			point.plotY = shapeArgs.y = Math.round(shapeArgs.y) - (series.borderWidth % 2) / 2;
-			shapeArgs.height = mathMax(Math.round(shapeArgs.height), 0.001); // #3151
+			shapeArgs.height = Math.max(Math.round(shapeArgs.height), 0.001); // #3151
 			point.yBottom = shapeArgs.y + shapeArgs.height;
 
 			// Correct tooltip placement (#3014)

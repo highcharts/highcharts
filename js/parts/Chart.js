@@ -528,8 +528,8 @@ Chart.prototype = {
 			chart.containerHeight = adapterRun(renderTo, 'height');
 		}
 		
-		chart.chartWidth = mathMax(0, widthOption || chart.containerWidth || 600); // #1393, 1460
-		chart.chartHeight = mathMax(0, pick(heightOption,
+		chart.chartWidth = Math.max(0, widthOption || chart.containerWidth || 600); // #1393, 1460
+		chart.chartHeight = Math.max(0, pick(heightOption,
 			// the offsetHeight of an empty container is 0 in standard browsers, but 19 in IE7:
 			chart.containerHeight > 19 ? chart.containerHeight : 400));
 	},
@@ -679,7 +679,7 @@ Chart.prototype = {
 
 		// Adjust for title and subtitle
 		if (titleOffset && !defined(margin[0])) {
-			chart.plotTop = mathMax(chart.plotTop, titleOffset + chart.options.title.margin + spacing[0]);
+			chart.plotTop = Math.max(chart.plotTop, titleOffset + chart.options.title.margin + spacing[0]);
 		}
 		
 		// Adjust for legend
@@ -798,11 +798,11 @@ Chart.prototype = {
 		chart.oldChartHeight = chart.chartHeight;
 		chart.oldChartWidth = chart.chartWidth;
 		if (defined(width)) {
-			chart.chartWidth = chartWidth = mathMax(0, Math.round(width));
+			chart.chartWidth = chartWidth = Math.max(0, Math.round(width));
 			chart.hasUserSize = !!chartWidth;
 		}
 		if (defined(height)) {
-			chart.chartHeight = chartHeight = mathMax(0, Math.round(height));
+			chart.chartHeight = chartHeight = Math.max(0, Math.round(height));
 		}
 
 		// Resize the container with the global animation applied if enabled (#2503)
@@ -870,8 +870,8 @@ Chart.prototype = {
 
 		chart.plotLeft = plotLeft = Math.round(chart.plotLeft);
 		chart.plotTop = plotTop = Math.round(chart.plotTop);
-		chart.plotWidth = plotWidth = mathMax(0, Math.round(chartWidth - plotLeft - chart.marginRight));
-		chart.plotHeight = plotHeight = mathMax(0, Math.round(chartHeight - plotTop - chart.marginBottom));
+		chart.plotWidth = plotWidth = Math.max(0, Math.round(chartWidth - plotLeft - chart.marginRight));
+		chart.plotHeight = plotHeight = Math.max(0, Math.round(chartHeight - plotTop - chart.marginBottom));
 
 		chart.plotSizeX = inverted ? plotHeight : plotWidth;
 		chart.plotSizeY = inverted ? plotWidth : plotHeight;
@@ -893,13 +893,13 @@ Chart.prototype = {
 		};
 
 		plotBorderWidth = 2 * Math.floor(chart.plotBorderWidth / 2);
-		clipX = Math.ceil(mathMax(plotBorderWidth, clipOffset[3]) / 2);
-		clipY = Math.ceil(mathMax(plotBorderWidth, clipOffset[0]) / 2);
+		clipX = Math.ceil(Math.max(plotBorderWidth, clipOffset[3]) / 2);
+		clipY = Math.ceil(Math.max(plotBorderWidth, clipOffset[0]) / 2);
 		chart.clipBox = {
 			x: clipX, 
 			y: clipY, 
-			width: Math.floor(chart.plotSizeX - mathMax(plotBorderWidth, clipOffset[1]) / 2 - clipX), 
-			height: mathMax(0, Math.floor(chart.plotSizeY - mathMax(plotBorderWidth, clipOffset[2]) / 2 - clipY))
+			width: Math.floor(chart.plotSizeX - Math.max(plotBorderWidth, clipOffset[1]) / 2 - clipX), 
+			height: Math.max(0, Math.floor(chart.plotSizeY - Math.max(plotBorderWidth, clipOffset[2]) / 2 - clipY))
 		};
 
 		if (!skipAxes) {

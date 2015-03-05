@@ -465,7 +465,7 @@ VMLElement = {
 		} else if (key === 'y') {
 			key = 'top';
 		}/* else {
-			value = mathMax(0, value); // don't set width or height below zero (#311)
+			value = Math.max(0, value); // don't set width or height below zero (#311)
 		}*/
 
 		// clipping rectangle special

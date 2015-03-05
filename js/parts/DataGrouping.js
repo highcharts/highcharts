@@ -513,7 +513,7 @@ Axis.prototype.getGroupPixelWidth = function () {
 	while (i--) {
 		dgOptions = series[i].options.dataGrouping;
 		if (dgOptions) {
-			groupPixelWidth = mathMax(groupPixelWidth, dgOptions.groupPixelWidth);
+			groupPixelWidth = Math.max(groupPixelWidth, dgOptions.groupPixelWidth);
 
 		}
 	}

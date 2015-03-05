@@ -235,7 +235,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 
 				if (x1 < axisLeft || x1 > axisLeft + axis.width) { // outside plot area
 					if (force) {
-						x1 = x2 = mathMin(mathMax(axisLeft, x1), axisLeft + axis.width);
+						x1 = x2 = mathMin(Math.max(axisLeft, x1), axisLeft + axis.width);
 					} else {
 						skip = true;
 					}
@@ -254,7 +254,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 
 				if (y1 < axisTop || y1 > axisTop + axis.height) { // outside plot area
 					if (force) {
-						y1 = y2 = mathMin(mathMax(axisTop, y1), axis.top + axis.height);
+						y1 = y2 = mathMin(Math.max(axisTop, y1), axis.top + axis.height);
 					} else {
 						skip = true;
 					}

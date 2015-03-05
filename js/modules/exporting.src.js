@@ -24,7 +24,6 @@ var Chart = Highcharts.Chart,
 	each = Highcharts.each,
 	extend = Highcharts.extend,
 	splat = Highcharts.splat,
-	mathMax = Math.max,
 	doc = document,
 	win = window,
 	isTouchDevice = Highcharts.isTouchDevice,
@@ -452,7 +451,7 @@ extend(Chart.prototype, {
 			chartHeight = chart.chartHeight,
 			cacheName = 'cache-' + className,
 			menu = chart[cacheName],
-			menuPadding = mathMax(width, height), // for mouse leave detection
+			menuPadding = Math.max(width, height), // for mouse leave detection
 			boxShadow = '3px 3px 10px #888',
 			innerMenu,
 			hide,

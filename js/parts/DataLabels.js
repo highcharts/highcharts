@@ -387,7 +387,7 @@ if (seriesTypes.pie) {
 
 				// Build the slots
 				bottom = mathMin(centerY + radius + distanceOption, chart.plotHeight);
-				for (pos = mathMax(0, centerY - radius - distanceOption); pos <= bottom; pos += labelHeight) {
+				for (pos = Math.max(0, centerY - radius - distanceOption); pos <= bottom; pos += labelHeight) {
 					slots.push(pos);
 				}
 				slotsLength = slots.length;
@@ -506,7 +506,7 @@ if (seriesTypes.pie) {
 					y = slot.y;
 					if ((naturalY > y && slots[slotIndex + 1] !== null) ||
 							(naturalY < y &&  slots[slotIndex - 1] !== null)) {
-						y = mathMin(mathMax(0, naturalY), chart.plotHeight);
+						y = mathMin(Math.max(0, naturalY), chart.plotHeight);
 					}
 
 				} else {
@@ -539,20 +539,20 @@ if (seriesTypes.pie) {
 					dataLabelWidth = dataLabel.width;
 					// Overflow left
 					if (x - dataLabelWidth < connectorPadding) {
-						overflow[3] = mathMax(Math.round(dataLabelWidth - x + connectorPadding), overflow[3]);
+						overflow[3] = Math.max(Math.round(dataLabelWidth - x + connectorPadding), overflow[3]);
 
 					// Overflow right
 					} else if (x + dataLabelWidth > plotWidth - connectorPadding) {
-						overflow[1] = mathMax(Math.round(x + dataLabelWidth - plotWidth + connectorPadding), overflow[1]);
+						overflow[1] = Math.max(Math.round(x + dataLabelWidth - plotWidth + connectorPadding), overflow[1]);
 					}
 
 					// Overflow top
 					if (y - labelHeight / 2 < 0) {
-						overflow[0] = mathMax(Math.round(-y + labelHeight / 2), overflow[0]);
+						overflow[0] = Math.max(Math.round(-y + labelHeight / 2), overflow[0]);
 
 					// Overflow left
 					} else if (y + labelHeight / 2 > plotHeight) {
-						overflow[2] = mathMax(Math.round(y + labelHeight / 2 - plotHeight), overflow[2]);
+						overflow[2] = Math.max(Math.round(y + labelHeight / 2 - plotHeight), overflow[2]);
 					}
 				}
 			} // for each point
@@ -654,10 +654,10 @@ if (seriesTypes.pie) {
 
 		// Handle horizontal size and center
 		if (centerOption[0] !== null) { // Fixed center
-			newSize = mathMax(center[2] - mathMax(overflow[1], overflow[3]), minSize);
+			newSize = Math.max(center[2] - Math.max(overflow[1], overflow[3]), minSize);
 
 		} else { // Auto center
-			newSize = mathMax(
+			newSize = Math.max(
 				center[2] - overflow[1] - overflow[3], // horizontal overflow
 				minSize
 			);
@@ -666,10 +666,10 @@ if (seriesTypes.pie) {
 
 		// Handle vertical size and center
 		if (centerOption[1] !== null) { // Fixed center
-			newSize = mathMax(mathMin(newSize, center[2] - mathMax(overflow[0], overflow[2])), minSize);
+			newSize = Math.max(mathMin(newSize, center[2] - Math.max(overflow[0], overflow[2])), minSize);
 
 		} else { // Auto center
-			newSize = mathMax(
+			newSize = Math.max(
 				mathMin(
 					newSize,
 					center[2] - overflow[0] - overflow[2] // vertical overflow

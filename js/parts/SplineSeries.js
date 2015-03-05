@@ -49,14 +49,14 @@ var SplineSeries = extendClass(Series, {
 			// to prevent false extremes, check that control points are between
 			// neighbouring points' y values
 			if (leftContY > lastY && leftContY > plotY) {
-				leftContY = mathMax(lastY, plotY);
+				leftContY = Math.max(lastY, plotY);
 				rightContY = 2 * plotY - leftContY; // mirror of left control point
 			} else if (leftContY < lastY && leftContY < plotY) {
 				leftContY = mathMin(lastY, plotY);
 				rightContY = 2 * plotY - leftContY;
 			}
 			if (rightContY > nextY && rightContY > plotY) {
-				rightContY = mathMax(nextY, plotY);
+				rightContY = Math.max(nextY, plotY);
 				leftContY = 2 * plotY - rightContY;
 			} else if (rightContY < nextY && rightContY < plotY) {
 				rightContY = mathMin(nextY, plotY);

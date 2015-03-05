@@ -228,7 +228,7 @@ SVGElement.prototype = {
 							'class': 'highcharts-text-shadow',
 							'fill': color,
 							'stroke': color,
-							'stroke-opacity': 1 / mathMax(pInt(strokeWidth), 3),
+							'stroke-opacity': 1 / Math.max(pInt(strokeWidth), 3),
 							'stroke-width': strokeWidth,
 							'stroke-linejoin': 'round'
 						});
@@ -313,7 +313,7 @@ SVGElement.prototype = {
 			shadows[i].setAttribute(
 				key,
 				key === 'height' ?
-					mathMax(value - (shadows[i].cutHeight || 0), 0) :
+					Math.max(value - (shadows[i].cutHeight || 0), 0) :
 					key === 'd' ? this.d : value
 			);
 		}
@@ -966,7 +966,7 @@ SVGElement.prototype = {
 					'fill': 'none'
 				});
 				if (cutOff) {
-					attr(shadow, 'height', mathMax(attr(shadow, 'height') - strokeWidth, 0));
+					attr(shadow, 'height', Math.max(attr(shadow, 'height') - strokeWidth, 0));
 					shadow.cutHeight = strokeWidth;
 				}
 
@@ -1811,8 +1811,8 @@ SVGRenderer.prototype = {
 			attribs = isObject(x) ? x : x === UNDEFINED ? {} : {
 				x: x,
 				y: y,
-				width: mathMax(width, 0),
-				height: mathMax(height, 0)
+				width: Math.max(width, 0),
+				height: Math.max(height, 0)
 			};
 
 		if (strokeWidth !== UNDEFINED) {
@@ -2269,7 +2269,7 @@ SVGRenderer.prototype = {
 	rotCorr: function (baseline, rotation, alterY) {
 		var y = baseline;
 		if (rotation && alterY) {
-			y = mathMax(y * mathCos(rotation * deg2rad), 4);
+			y = Math.max(y * mathCos(rotation * deg2rad), 4);
 		}
 		return {
 			x: (-baseline / 3) * mathSin(rotation * deg2rad),

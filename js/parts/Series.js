@@ -577,7 +577,7 @@ Series.prototype = {
 		// iterate up to find slice start
 		for (i = 0; i < dataLength; i++) {
 			if (xData[i] >= min) {
-				cropStart = mathMax(0, i - cropShoulder);
+				cropStart = Math.max(0, i - cropShoulder);
 				break;
 			}
 		}
@@ -797,7 +797,7 @@ Series.prototype = {
 
 			// Set the the plotY value, reset it for redraws
 			point.plotY = plotY = (typeof yValue === 'number' && yValue !== Infinity) ?
-				mathMin(mathMax(-1e5, yAxis.translate(yValue, 0, 1, 0, 1)), 1e5) : // #3201
+				mathMin(Math.max(-1e5, yAxis.translate(yValue, 0, 1, 0, 1)), 1e5) : // #3201
 				UNDEFINED;
 			point.isInside = plotY !== UNDEFINED && plotY >= 0 && plotY <= yAxis.len && // #3519
 				plotX >= 0 && plotX <= xAxis.len;
@@ -1416,7 +1416,7 @@ Series.prototype = {
 			clipAttr,
 			graph = this.graph,
 			area = this.area,
-			chartSizeMax = mathMax(chart.chartWidth, chart.chartHeight),
+			chartSizeMax = Math.max(chart.chartWidth, chart.chartHeight),
 			zoneAxis = this.zoneAxis || 'y',
 			axis = this[zoneAxis + 'Axis'],
 			reversed = axis.reversed,

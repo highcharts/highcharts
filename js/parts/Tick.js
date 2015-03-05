@@ -56,7 +56,7 @@ Tick.prototype = {
 		});
 
 		// prepare CSS
-		//css = width && { width: mathMax(1, Math.round(width - 2 * (labelOptions.padding || 10))) + 'px' };
+		//css = width && { width: Math.max(1, Math.round(width - 2 * (labelOptions.padding || 10))) + 'px' };
 		
 		// first call
 		if (!defined(label)) {

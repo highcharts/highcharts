@@ -338,9 +338,9 @@ Scroller.prototype = {
 
 
 		// handles are allowed to cross, but never exceed the plot area
-		scroller.zoomedMax = mathMin(mathMax(pxMin, pxMax), navigatorWidth);
+		scroller.zoomedMax = mathMin(Math.max(pxMin, pxMax), navigatorWidth);
 		scroller.zoomedMin = 
-			mathMax(scroller.fixedWidth ? scroller.zoomedMax - scroller.fixedWidth : mathMin(pxMin, pxMax), 0);
+			Math.max(scroller.fixedWidth ? scroller.zoomedMax - scroller.fixedWidth : mathMin(pxMin, pxMax), 0);
 		scroller.range = scroller.zoomedMax - scroller.zoomedMin;
 		zoomedMax = Math.round(scroller.zoomedMax);
 		zoomedMin = Math.round(scroller.zoomedMin);
@@ -1026,7 +1026,7 @@ Scroller.prototype = {
 		if (stickToMax) {
 			newMax = baseDataMax;
 			if (!stickToMin) { // if stickToMin is true, the new min value is set above
-				newMin = mathMax(newMax - range, navigatorSeries.xData[0]);
+				newMin = Math.max(newMax - range, navigatorSeries.xData[0]);
 			}
 		}
 
@@ -1043,7 +1043,7 @@ Scroller.prototype = {
 			}
 
 			scroller.render(
-				mathMax(baseMin, baseDataMin),
+				Math.max(baseMin, baseDataMin),
 				mathMin(baseMax, baseDataMax)
 			);
 		}

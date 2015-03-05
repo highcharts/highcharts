@@ -461,7 +461,7 @@ Axis.prototype = {
 					xData = series.xData;
 					if (xData.length) {
 						axis.dataMin = mathMin(pick(axis.dataMin, xData[0]), arrayMin(xData));
-						axis.dataMax = mathMax(pick(axis.dataMax, xData[0]), arrayMax(xData));
+						axis.dataMax = Math.max(pick(axis.dataMax, xData[0]), arrayMax(xData));
 					}
 
 				// Get dataMin and dataMax for Y axes, as well as handle stacking and processed data
@@ -477,7 +477,7 @@ Axis.prototype = {
 					// doesn't have active y data, we continue with nulls
 					if (defined(seriesDataMin) && defined(seriesDataMax)) {
 						axis.dataMin = mathMin(pick(axis.dataMin, seriesDataMin), seriesDataMin);
-						axis.dataMax = mathMax(pick(axis.dataMax, seriesDataMax), seriesDataMax);
+						axis.dataMax = Math.max(pick(axis.dataMax, seriesDataMax), seriesDataMax);
 					}
 
 					// Adjust to threshold
@@ -598,7 +598,7 @@ Axis.prototype = {
 			between = function (x, a, b) {
 				if (x < a || x > b) {
 					if (force) {
-						x = mathMin(mathMax(a, x), b);
+						x = mathMin(Math.max(a, x), b);
 					} else {
 						skip = true;
 					}
@@ -818,20 +818,20 @@ Axis.prototype = {
 					if (seriesPointRange > range) { // #1446
 						seriesPointRange = 0;
 					}
-					pointRange = mathMax(pointRange, seriesPointRange);
+					pointRange = Math.max(pointRange, seriesPointRange);
 
 					if (!axis.single) {
 						// minPointOffset is the value padding to the left of the axis in order to make
 						// room for points with a pointRange, typically columns. When the pointPlacement option
 						// is 'between' or 'on', this padding does not apply.
-						minPointOffset = mathMax(
+						minPointOffset = Math.max(
 							minPointOffset,
 							isString(pointPlacement) ? 0 : seriesPointRange / 2
 						);
 
 						// Determine the total padding needed to the length of the axis to make room for the
 						// pointRange. If the series' pointPlacement is 'on', no padding is added.
-						pointRangePadding = mathMax(
+						pointRangePadding = Math.max(
 							pointRangePadding,
 							pointPlacement === 'on' ? 0 : seriesPointRange
 						);
@@ -918,7 +918,7 @@ Axis.prototype = {
 
 		// handle zoomed range
 		if (axis.range && defined(axis.max)) {
-			axis.userMin = axis.min = mathMax(axis.min, axis.max - axis.range); // #618
+			axis.userMin = axis.min = Math.max(axis.min, axis.max - axis.range); // #618
 			axis.userMax = axis.max;
 
 			axis.range = null;  // don't use it when running setExtremes
@@ -948,7 +948,7 @@ Axis.prototype = {
 
 		// Stay within floor and ceiling
 		if (isNumber(options.floor)) {
-			axis.min = mathMax(axis.min, options.floor);
+			axis.min = Math.max(axis.min, options.floor);
 		}
 		if (isNumber(options.ceiling)) {
 			axis.max = mathMin(axis.max, options.ceiling);
@@ -963,11 +963,11 @@ Axis.prototype = {
 		} else {
 			axis.tickInterval = pick(
 				tickIntervalOption,
-				this.tickAmount ? ((axis.max - axis.min) / mathMax(this.tickAmount - 1, 1)) : undefined,
+				this.tickAmount ? ((axis.max - axis.min) / Math.max(this.tickAmount - 1, 1)) : undefined,
 				categories ? // for categoried axis, 1 is default, for linear axis use tickPix
 					1 :
 					// don't let it be more than the data range
-					(axis.max - axis.min) * tickPixelIntervalOption / mathMax(axis.len, tickPixelIntervalOption)
+					(axis.max - axis.min) * tickPixelIntervalOption / Math.max(axis.len, tickPixelIntervalOption)
 			);
 		}
 
@@ -994,7 +994,7 @@ Axis.prototype = {
 
 		// In column-like charts, don't cramp in more ticks than there are points (#1943)
 		if (axis.pointRange) {
-			axis.tickInterval = mathMax(axis.pointRange, axis.tickInterval);
+			axis.tickInterval = Math.max(axis.pointRange, axis.tickInterval);
 		}
 
 		// Before normalizing the tick interval, handle minimum tick interval. This applies only if tickInterval is not defined.
@@ -1346,7 +1346,7 @@ Axis.prototype = {
 			if (defined(dataMin) && newMin <= mathMin(dataMin, pick(options.min, dataMin))) {
 				newMin = UNDEFINED;
 			}
-			if (defined(dataMax) && newMax >= mathMax(dataMax, pick(options.max, dataMax))) {
+			if (defined(dataMax) && newMax >= Math.max(dataMax, pick(options.max, dataMax))) {
 				newMax = UNDEFINED;
 			}
 		}
@@ -1397,7 +1397,7 @@ Axis.prototype = {
 		this.right = chart.chartWidth - width - left;
 
 		// Direction agnostic properties
-		this.len = mathMax(horiz ? width : height, 0); // mathMax fixes #905
+		this.len = Math.max(horiz ? width : height, 0); // Math.max fixes #905
 		this.pos = horiz ? left : top; // distance from SVG origin
 	},
 
@@ -1530,7 +1530,7 @@ Axis.prototype = {
 			slotWidth = this.slotWidth = (horiz && !labelOptions.step && !labelOptions.rotation &&
 				((this.staggerLines || 1) * chart.plotWidth) / tickPositions.length) ||
 				(!horiz && ((margin[3] && (margin[3] - chart.spacing[3])) || chart.chartWidth * 0.33)), // #1580, #1931,
-			innerWidth = mathMax(1, Math.round(slotWidth - 2 * (labelOptions.padding || 5))),
+			innerWidth = Math.max(1, Math.round(slotWidth - 2 * (labelOptions.padding || 5))),
 			attr = {},
 			labelMetrics = renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
 			css,
@@ -1678,7 +1678,7 @@ Axis.prototype = {
 				if (side === 0 || side === 2 || { 1: 'left', 3: 'right' }[side] === axis.labelAlign) {
 
 					// get the highest offset
-					labelOffset = mathMax(
+					labelOffset = Math.max(
 						ticks[pos].getLabelSize(),
 						labelOffset
 					);
@@ -1738,12 +1738,12 @@ Axis.prototype = {
 			(labelOffset && (directionFactor * (horiz ? pick(labelOptions.y, axis.tickRotCorr.y + 8) : labelOptions.x) - lineHeightCorrection));
 		axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);
 
-		axisOffset[side] = mathMax(
+		axisOffset[side] = Math.max(
 			axisOffset[side],
 			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset,
 			labelOffsetPadded // #3027
 		);
-		clipOffset[invertedSide] = mathMax(clipOffset[invertedSide], Math.floor(options.lineWidth / 2) * 2);
+		clipOffset[invertedSide] = Math.max(clipOffset[invertedSide], Math.floor(options.lineWidth / 2) * 2);
 	},
 
 	/**

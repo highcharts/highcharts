@@ -135,11 +135,11 @@ extend(Highcharts.Pointer.prototype, {
 						min = axis.toPixels(pick(axis.options.min, axis.dataMin)),
 						max = axis.toPixels(pick(axis.options.max, axis.dataMax)),
 						absMin = mathMin(min, max),
-						absMax = mathMax(min, max);
+						absMax = Math.max(min, max);
 
 					// Store the bounds for use in the touchmove handler
 					bounds.min = mathMin(axis.pos, absMin - minPixelPadding);
-					bounds.max = mathMax(axis.pos + axis.len, absMax + minPixelPadding);
+					bounds.max = Math.max(axis.pos + axis.len, absMax + minPixelPadding);
 				}
 			});
 			self.res = true; // reset on next move
