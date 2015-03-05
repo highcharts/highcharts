@@ -15,7 +15,6 @@
 (function () {
 // encapsulated variables
 var UNDEFINED,
-	doc = document,
 	deg2rad = Math.PI * 2 / 360,
 
 
@@ -23,14 +22,14 @@ var UNDEFINED,
 	userAgent = navigator.userAgent,
 	isOpera = window.opera,
 	isIE = /(msie|trident)/i.test(userAgent) && !isOpera,
-	docMode8 = doc.documentMode === 8,
+	docMode8 = document.documentMode === 8,
 	isWebKit = /AppleWebKit/.test(userAgent),
 	isFirefox = /Firefox/.test(userAgent),
 	isTouchDevice = /(Mobile|Android|Windows Phone)/.test(userAgent),
 	SVG_NS = 'http://www.w3.org/2000/svg',
-	hasSVG = !!doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
+	hasSVG = !!document.createElementNS && !!document.createElementNS(SVG_NS, 'svg').createSVGRect,
 	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
-	useCanVG = !hasSVG && !isIE && !!doc.createElement('canvas').getContext,
+	useCanVG = !hasSVG && !isIE && !!document.createElement('canvas').getContext,
 	Renderer,
 	hasTouch,
 	symbolSizes = {},
@@ -299,7 +298,7 @@ function css(el, styles) {
  * @param {Object} nopad
  */
 function createElement(tag, attribs, styles, parent, nopad) {
-	var el = doc.createElement(tag);
+	var el = document.createElement(tag);
 	if (attribs) {
 		extend(el, attribs);
 	}
@@ -1054,8 +1053,8 @@ pathAnim = {
 		removeEvent: function (el, eventType, handler) {
 			// workaround for jQuery issue with unbinding custom events:
 			// http://forum.jQuery.com/topic/javascript-error-when-unbinding-a-custom-event-using-jQuery-1-4-2
-			var func = doc.removeEventListener ? 'removeEventListener' : 'detachEvent';
-			if (doc[func] && el && !el[func]) {
+			var func = document.removeEventListener ? 'removeEventListener' : 'detachEvent';
+			if (document[func] && el && !el[func]) {
 				el[func] = function () {};
 			}
 	
@@ -1767,7 +1766,7 @@ SVGElement.prototype = {
 		var wrapper = this;
 		wrapper.element = nodeName === 'span' ?
 			createElement(nodeName) :
-			doc.createElementNS(SVG_NS, nodeName);
+			document.createElementNS(SVG_NS, nodeName);
 		wrapper.renderer = renderer;
 	},
 	
@@ -2797,7 +2796,7 @@ SVGElement.prototype = {
 	titleSetter: function (value) {
 		var titleNode = this.element.getElementsByTagName('title')[0];
 		if (!titleNode) {
-			titleNode = doc.createElementNS(SVG_NS, 'title');
+			titleNode = document.createElementNS(SVG_NS, 'title');
 			this.element.appendChild(titleNode);
 		}
 		titleNode.textContent = (String(pick(value), '')).replace(/<[^>]*>/g, ''); // #3276 #3895
@@ -2942,7 +2941,7 @@ SVGRenderer.prototype = {
 		renderer.alignedObjects = [];
 
 		// Page url used for internal references. #24, #672, #1070
-		renderer.url = (isFirefox || isWebKit) && doc.getElementsByTagName('base').length ?
+		renderer.url = (isFirefox || isWebKit) && document.getElementsByTagName('base').length ?
 			loc.href
 				.replace(/#.*?$/, '') // remove the hash
 				.replace(/([\('\)])/g, '\\$1') // escape parantheses and quotes
@@ -2951,7 +2950,7 @@ SVGRenderer.prototype = {
 
 		// Add description
 		desc = this.createElement('desc').add();
-		desc.element.appendChild(doc.createTextNode('Created with Highstock 2.1.3-modified'));
+		desc.element.appendChild(document.createTextNode('Created with Highstock 2.1.3-modified'));
 
 
 		renderer.defs = this.createElement('defs').add();
@@ -3094,7 +3093,7 @@ SVGRenderer.prototype = {
 		// Skip tspans, add text directly to text node. The forceTSpan is a hook 
 		// used in text outline hack.
 		if (!hasMarkup && !textShadow && !ellipsis && textStr.indexOf(' ') === -1) {
-			textNode.appendChild(doc.createTextNode(unescapeAngleBrackets(textStr)));
+			textNode.appendChild(document.createTextNode(unescapeAngleBrackets(textStr)));
 			return;
 
 		// Complex strings, add more logic
@@ -3136,7 +3135,7 @@ SVGRenderer.prototype = {
 				each(spans, function (span) {
 					if (span !== '' || spans.length === 1) {
 						var attributes = {},
-							tspan = doc.createElementNS(SVG_NS, 'tspan'),
+							tspan = document.createElementNS(SVG_NS, 'tspan'),
 							spanStyle; // #390
 						if (styleRegex.test(span)) {
 							spanStyle = span.match(styleRegex)[1].replace(/(;| |^)color([ :])/, '$1fill$2');
@@ -3153,7 +3152,7 @@ SVGRenderer.prototype = {
 						if (span !== ' ') {
 
 							// add the text node
-							tspan.appendChild(doc.createTextNode(span));
+							tspan.appendChild(document.createTextNode(span));
 
 							if (!spanNo) { // first span in a line, align it to the left
 								if (lineNo && parentX !== null) {
@@ -3244,7 +3243,7 @@ SVGRenderer.prototype = {
 										if (words.length) {
 											softLineNo++;
 											
-											tspan = doc.createElementNS(SVG_NS, 'tspan');
+											tspan = document.createElementNS(SVG_NS, 'tspan');
 											attr(tspan, {
 												dy: dy,
 												x: parentX
@@ -3262,7 +3261,7 @@ SVGRenderer.prototype = {
 										rest.unshift(words.pop());
 									}
 									if (words.length) {
-										tspan.appendChild(doc.createTextNode(words.join(' ').replace(/- /g, '-')));
+										tspan.appendChild(document.createTextNode(words.join(' ').replace(/- /g, '-')));
 									}
 								}
 								if (wasTooLong) {
@@ -5143,17 +5142,17 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		// The only way to make IE6 and IE7 print is to use a global namespace. However,
 		// with IE8 the only way to make the dynamic shapes visible in screen and print mode
 		// seems to be to add the xmlns attribute and the behaviour style inline.
-		if (!doc.namespaces.hcv) {
+		if (!document.namespaces.hcv) {
 
-			doc.namespaces.add('hcv', 'urn:schemas-microsoft-com:vml');
+			document.namespaces.add('hcv', 'urn:schemas-microsoft-com:vml');
 
 			// Setup default CSS (#2153, #2368, #2384)
 			css = 'hcv\\:fill, hcv\\:path, hcv\\:shape, hcv\\:stroke' +
 				'{ behavior:url(#default#VML); display: inline-block; } ';
 			try {
-				doc.createStyleSheet().cssText = css;
+				document.createStyleSheet().cssText = css;
 			} catch (e) {
-				doc.styleSheets[0].cssText += css;
+				document.styleSheets[0].cssText += css;
 			}
 
 		}
@@ -5661,9 +5660,9 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
 
 // This method is used with exporting in old IE, when emulating SVG (see #2314)
 SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
-	var measuringSpan = doc.createElement('span'),
+	var measuringSpan = document.createElement('span'),
 		offsetWidth,
-	textNode = doc.createTextNode(text);
+	textNode = document.createTextNode(text);
 
 	measuringSpan.appendChild(textNode);
 	css(measuringSpan, styles);
@@ -9352,7 +9351,7 @@ Tooltip.prototype = {
 var hoverChartIndex;
 
 // Global flag for touch support
-hasTouch = doc.documentElement.ontouchstart !== UNDEFINED;
+hasTouch = document.documentElement.ontouchstart !== UNDEFINED;
 
 /**
  * The mouse tracker object. All methods starting with "on" are primary DOM event handlers. 
@@ -9578,7 +9577,7 @@ Pointer.prototype = {
 			pointer._onDocumentMouseMove = function (e) {
 				pointer.onDocumentMouseMove(e);
 			};
-			addEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
+			addEvent(document, 'mousemove', pointer._onDocumentMouseMove);
 		}
 		
 		// Crosshair
@@ -9641,7 +9640,7 @@ Pointer.prototype = {
 			}
 
 			if (pointer._onDocumentMouseMove) {
-				removeEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
+				removeEvent(document, 'mousemove', pointer._onDocumentMouseMove);
 				pointer._onDocumentMouseMove = null;
 			}
 
@@ -10005,7 +10004,7 @@ Pointer.prototype = {
 		};
 		addEvent(container, 'mouseleave', pointer.onContainerMouseLeave);
 		if (chartCount === 1) {
-			addEvent(doc, 'mouseup', pointer.onDocumentMouseUp);
+			addEvent(document, 'mouseup', pointer.onDocumentMouseUp);
 		}
 		if (hasTouch) {
 			container.ontouchstart = function (e) {
@@ -10015,7 +10014,7 @@ Pointer.prototype = {
 				pointer.onContainerTouchMove(e);
 			};
 			if (chartCount === 1) {
-				addEvent(doc, 'touchend', pointer.onDocumentTouchEnd);
+				addEvent(document, 'touchend', pointer.onDocumentTouchEnd);
 			}
 		}
 		
@@ -10029,8 +10028,8 @@ Pointer.prototype = {
 
 		removeEvent(this.chart.container, 'mouseleave', this.onContainerMouseLeave);
 		if (!chartCount) {
-			removeEvent(doc, 'mouseup', this.onDocumentMouseUp);
-			removeEvent(doc, 'touchend', this.onDocumentTouchEnd);
+			removeEvent(document, 'mouseup', this.onDocumentMouseUp);
+			removeEvent(document, 'touchend', this.onDocumentTouchEnd);
 		}
 
 		// memory and CPU leak
@@ -10319,7 +10318,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 		batchMSEvents: function (fn) {
 			fn(this.chart.container, hasPointerEvent ? 'pointerdown' : 'MSPointerDown', this.onContainerPointerDown);
 			fn(this.chart.container, hasPointerEvent ? 'pointermove' : 'MSPointerMove', this.onContainerPointerMove);
-			fn(doc, hasPointerEvent ? 'pointerup' : 'MSPointerUp', this.onDocumentPointerUp);
+			fn(document, hasPointerEvent ? 'pointerup' : 'MSPointerUp', this.onDocumentPointerUp);
 		}
 	});
 
@@ -11709,7 +11708,7 @@ Chart.prototype = {
 			if (clone.style.setProperty) { // #2631
 				clone.style.setProperty('display', 'block', 'important');
 			}
-			doc.body.appendChild(clone);
+			document.body.appendChild(clone);
 			if (container) {
 				clone.appendChild(container);
 			}
@@ -11735,7 +11734,7 @@ Chart.prototype = {
 		containerId = 'highcharts-' + idCounter++;
 
 		if (isString(renderTo)) {
-			chart.renderTo = renderTo = doc.getElementById(renderTo);
+			chart.renderTo = renderTo = document.getElementById(renderTo);
 		}
 		
 		// Display an error if the renderTo is wrong
@@ -11883,9 +11882,9 @@ Chart.prototype = {
 				}
 			};
 			
-		// Width and height checks for display:none. Target is doc in IE8 and Opera,
+		// Width and height checks for display:none. Target is document in IE8 and Opera,
 		// window in Firefox, Chrome and IE9.
-		if (!chart.hasUserSize && !chart.isPrinting && width && height && (target === window || target === doc)) { // #1093
+		if (!chart.hasUserSize && !chart.isPrinting && width && height && (target === window || target === document)) { // #1093
 			if (width !== chart.containerWidth || height !== chart.containerHeight) {
 				clearTimeout(chart.reflowTimeout);
 				if (e) { // Called from window.resize
@@ -12467,15 +12466,15 @@ Chart.prototype = {
 
 		// Note: in spite of JSLint's complaints, window == window.top is required
 		/*jslint eqeq: true*/
-		if ((!hasSVG && (window == window.top && doc.readyState !== 'complete')) || (useCanVG && !window.canvg)) {
+		if ((!hasSVG && (window == window.top && document.readyState !== 'complete')) || (useCanVG && !window.canvg)) {
 		/*jslint eqeq: false*/
 			if (useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready
 				CanVGController.push(function () { chart.firstRender(); }, chart.options.global.canvasToolsURL);
 			} else {
-				doc.attachEvent('onreadystatechange', function () {
-					doc.detachEvent('onreadystatechange', chart.firstRender);
-					if (doc.readyState === 'complete') {
+				document.attachEvent('onreadystatechange', function () {
+					document.detachEvent('onreadystatechange', chart.firstRender);
+					if (document.readyState === 'complete') {
 						chart.firstRender();
 					}
 				});

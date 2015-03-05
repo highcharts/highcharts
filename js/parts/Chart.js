@@ -564,7 +564,7 @@ Chart.prototype = {
 			if (clone.style.setProperty) { // #2631
 				clone.style.setProperty('display', 'block', 'important');
 			}
-			doc.body.appendChild(clone);
+			document.body.appendChild(clone);
 			if (container) {
 				clone.appendChild(container);
 			}
@@ -590,7 +590,7 @@ Chart.prototype = {
 		containerId = 'highcharts-' + idCounter++;
 
 		if (isString(renderTo)) {
-			chart.renderTo = renderTo = doc.getElementById(renderTo);
+			chart.renderTo = renderTo = document.getElementById(renderTo);
 		}
 		
 		// Display an error if the renderTo is wrong
@@ -738,9 +738,9 @@ Chart.prototype = {
 				}
 			};
 			
-		// Width and height checks for display:none. Target is doc in IE8 and Opera,
+		// Width and height checks for display:none. Target is document in IE8 and Opera,
 		// window in Firefox, Chrome and IE9.
-		if (!chart.hasUserSize && !chart.isPrinting && width && height && (target === window || target === doc)) { // #1093
+		if (!chart.hasUserSize && !chart.isPrinting && width && height && (target === window || target === document)) { // #1093
 			if (width !== chart.containerWidth || height !== chart.containerHeight) {
 				clearTimeout(chart.reflowTimeout);
 				if (e) { // Called from window.resize
@@ -1322,15 +1322,15 @@ Chart.prototype = {
 
 		// Note: in spite of JSLint's complaints, window == window.top is required
 		/*jslint eqeq: true*/
-		if ((!hasSVG && (window == window.top && doc.readyState !== 'complete')) || (useCanVG && !window.canvg)) {
+		if ((!hasSVG && (window == window.top && document.readyState !== 'complete')) || (useCanVG && !window.canvg)) {
 		/*jslint eqeq: false*/
 			if (useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready
 				CanVGController.push(function () { chart.firstRender(); }, chart.options.global.canvasToolsURL);
 			} else {
-				doc.attachEvent('onreadystatechange', function () {
-					doc.detachEvent('onreadystatechange', chart.firstRender);
-					if (doc.readyState === 'complete') {
+				document.attachEvent('onreadystatechange', function () {
+					document.detachEvent('onreadystatechange', chart.firstRender);
+					if (document.readyState === 'complete') {
 						chart.firstRender();
 					}
 				});

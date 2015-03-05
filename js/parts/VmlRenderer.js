@@ -531,17 +531,17 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		// The only way to make IE6 and IE7 print is to use a global namespace. However,
 		// with IE8 the only way to make the dynamic shapes visible in screen and print mode
 		// seems to be to add the xmlns attribute and the behaviour style inline.
-		if (!doc.namespaces.hcv) {
+		if (!document.namespaces.hcv) {
 
-			doc.namespaces.add('hcv', 'urn:schemas-microsoft-com:vml');
+			document.namespaces.add('hcv', 'urn:schemas-microsoft-com:vml');
 
 			// Setup default CSS (#2153, #2368, #2384)
 			css = 'hcv\\:fill, hcv\\:path, hcv\\:shape, hcv\\:stroke' +
 				'{ behavior:url(#default#VML); display: inline-block; } ';
 			try {
-				doc.createStyleSheet().cssText = css;
+				document.createStyleSheet().cssText = css;
 			} catch (e) {
-				doc.styleSheets[0].cssText += css;
+				document.styleSheets[0].cssText += css;
 			}
 
 		}
@@ -1049,9 +1049,9 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
 
 // This method is used with exporting in old IE, when emulating SVG (see #2314)
 SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
-	var measuringSpan = doc.createElement('span'),
+	var measuringSpan = document.createElement('span'),
 		offsetWidth,
-	textNode = doc.createTextNode(text);
+	textNode = document.createTextNode(text);
 
 	measuringSpan.appendChild(textNode);
 	css(measuringSpan, styles);

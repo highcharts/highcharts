@@ -24,7 +24,6 @@ var Chart = Highcharts.Chart,
 	each = Highcharts.each,
 	extend = Highcharts.extend,
 	splat = Highcharts.splat,
-	doc = document,
 	isTouchDevice = Highcharts.isTouchDevice,
 	UNDEFINED,
 	symbols = Highcharts.Renderer.prototype.symbols,
@@ -140,7 +139,7 @@ defaultOptions.exporting = {
 						.replace(/</g, '\n&lt;')
 						.replace(/>/g, '&gt;');
 
-					doc.body.innerHTML = '<pre>' + svg + '</pre>';
+					document.body.innerHTML = '<pre>' + svg + '</pre>';
 				}
 			} // */
 			]
@@ -160,7 +159,7 @@ Highcharts.post = function (url, data, formAttributes) {
 		enctype: 'multipart/form-data'
 	}, formAttributes), {
 		display: 'none'
-	}, doc.body);
+	}, document.body);
 
 	// add the data
 	for (name in data) {
@@ -239,10 +238,10 @@ extend(Chart.prototype, {
 			options = merge(chart.options, additionalOptions); // copy the options and add extra options
 
 		// IE compatibility hack for generating SVG content that it doesn't really understand
-		if (!doc.createElementNS) {
+		if (!document.createElementNS) {
 			/*jslint unparam: true*//* allow unused parameter ns in function below */
-			doc.createElementNS = function (ns, tagName) {
-				return doc.createElement(tagName);
+			document.createElementNS = function (ns, tagName) {
+				return document.createElement(tagName);
 			};
 			/*jslint unparam: false*/
 		}
@@ -253,7 +252,7 @@ extend(Chart.prototype, {
 			top: '-9999em',
 			width: chart.chartWidth + 'px',
 			height: chart.chartHeight + 'px'
-		}, doc.body);
+		}, document.body);
 
 		// get the source size
 		cssWidth = chart.renderTo.style.width;
@@ -385,7 +384,7 @@ extend(Chart.prototype, {
 			container = chart.container,
 			origDisplay = [],
 			origParent = container.parentNode,
-			body = doc.body,
+			body = document.body,
 			childNodes = body.childNodes;
 
 		if (chart.isPrinting) { // block the button while in printing mode

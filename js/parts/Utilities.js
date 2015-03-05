@@ -219,7 +219,7 @@ function css(el, styles) {
  * @param {Object} nopad
  */
 function createElement(tag, attribs, styles, parent, nopad) {
-	var el = doc.createElement(tag);
+	var el = document.createElement(tag);
 	if (attribs) {
 		extend(el, attribs);
 	}

@@ -2,7 +2,7 @@
 var hoverChartIndex;
 
 // Global flag for touch support
-hasTouch = doc.documentElement.ontouchstart !== UNDEFINED;
+hasTouch = document.documentElement.ontouchstart !== UNDEFINED;
 
 /**
  * The mouse tracker object. All methods starting with "on" are primary DOM event handlers. 
@@ -228,7 +228,7 @@ Pointer.prototype = {
 			pointer._onDocumentMouseMove = function (e) {
 				pointer.onDocumentMouseMove(e);
 			};
-			addEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
+			addEvent(document, 'mousemove', pointer._onDocumentMouseMove);
 		}
 		
 		// Crosshair
@@ -291,7 +291,7 @@ Pointer.prototype = {
 			}
 
 			if (pointer._onDocumentMouseMove) {
-				removeEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
+				removeEvent(document, 'mousemove', pointer._onDocumentMouseMove);
 				pointer._onDocumentMouseMove = null;
 			}
 
@@ -655,7 +655,7 @@ Pointer.prototype = {
 		};
 		addEvent(container, 'mouseleave', pointer.onContainerMouseLeave);
 		if (chartCount === 1) {
-			addEvent(doc, 'mouseup', pointer.onDocumentMouseUp);
+			addEvent(document, 'mouseup', pointer.onDocumentMouseUp);
 		}
 		if (hasTouch) {
 			container.ontouchstart = function (e) {
@@ -665,7 +665,7 @@ Pointer.prototype = {
 				pointer.onContainerTouchMove(e);
 			};
 			if (chartCount === 1) {
-				addEvent(doc, 'touchend', pointer.onDocumentTouchEnd);
+				addEvent(document, 'touchend', pointer.onDocumentTouchEnd);
 			}
 		}
 		
@@ -679,8 +679,8 @@ Pointer.prototype = {
 
 		removeEvent(this.chart.container, 'mouseleave', this.onContainerMouseLeave);
 		if (!chartCount) {
-			removeEvent(doc, 'mouseup', this.onDocumentMouseUp);
-			removeEvent(doc, 'touchend', this.onDocumentTouchEnd);
+			removeEvent(document, 'mouseup', this.onDocumentMouseUp);
+			removeEvent(document, 'touchend', this.onDocumentTouchEnd);
 		}
 
 		// memory and CPU leak

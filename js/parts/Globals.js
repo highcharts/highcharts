@@ -1,6 +1,5 @@
 // encapsulated variables
 var UNDEFINED,
-	doc = document,
 	deg2rad = Math.PI * 2 / 360,
 
 
@@ -8,14 +7,14 @@ var UNDEFINED,
 	userAgent = navigator.userAgent,
 	isOpera = window.opera,
 	isIE = /(msie|trident)/i.test(userAgent) && !isOpera,
-	docMode8 = doc.documentMode === 8,
+	docMode8 = document.documentMode === 8,
 	isWebKit = /AppleWebKit/.test(userAgent),
 	isFirefox = /Firefox/.test(userAgent),
 	isTouchDevice = /(Mobile|Android|Windows Phone)/.test(userAgent),
 	SVG_NS = 'http://www.w3.org/2000/svg',
-	hasSVG = !!doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
+	hasSVG = !!document.createElementNS && !!document.createElementNS(SVG_NS, 'svg').createSVGRect,
 	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
-	useCanVG = !hasSVG && !isIE && !!doc.createElement('canvas').getContext,
+	useCanVG = !hasSVG && !isIE && !!document.createElement('canvas').getContext,
 	Renderer,
 	hasTouch,
 	symbolSizes = {},

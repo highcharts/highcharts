@@ -21,7 +21,7 @@ SVGElement.prototype = {
 		var wrapper = this;
 		wrapper.element = nodeName === 'span' ?
 			createElement(nodeName) :
-			doc.createElementNS(SVG_NS, nodeName);
+			document.createElementNS(SVG_NS, nodeName);
 		wrapper.renderer = renderer;
 	},
 	
@@ -1051,7 +1051,7 @@ SVGElement.prototype = {
 	titleSetter: function (value) {
 		var titleNode = this.element.getElementsByTagName('title')[0];
 		if (!titleNode) {
-			titleNode = doc.createElementNS(SVG_NS, 'title');
+			titleNode = document.createElementNS(SVG_NS, 'title');
 			this.element.appendChild(titleNode);
 		}
 		titleNode.textContent = (String(pick(value), '')).replace(/<[^>]*>/g, ''); // #3276 #3895
@@ -1196,7 +1196,7 @@ SVGRenderer.prototype = {
 		renderer.alignedObjects = [];
 
 		// Page url used for internal references. #24, #672, #1070
-		renderer.url = (isFirefox || isWebKit) && doc.getElementsByTagName('base').length ?
+		renderer.url = (isFirefox || isWebKit) && document.getElementsByTagName('base').length ?
 			loc.href
 				.replace(/#.*?$/, '') // remove the hash
 				.replace(/([\('\)])/g, '\\$1') // escape parantheses and quotes
@@ -1205,7 +1205,7 @@ SVGRenderer.prototype = {
 
 		// Add description
 		desc = this.createElement('desc').add();
-		desc.element.appendChild(doc.createTextNode('Created with @product.name@ @product.version@'));
+		desc.element.appendChild(document.createTextNode('Created with @product.name@ @product.version@'));
 
 
 		renderer.defs = this.createElement('defs').add();
@@ -1348,7 +1348,7 @@ SVGRenderer.prototype = {
 		// Skip tspans, add text directly to text node. The forceTSpan is a hook 
 		// used in text outline hack.
 		if (!hasMarkup && !textShadow && !ellipsis && textStr.indexOf(' ') === -1) {
-			textNode.appendChild(doc.createTextNode(unescapeAngleBrackets(textStr)));
+			textNode.appendChild(document.createTextNode(unescapeAngleBrackets(textStr)));
 			return;
 
 		// Complex strings, add more logic
@@ -1390,7 +1390,7 @@ SVGRenderer.prototype = {
 				each(spans, function (span) {
 					if (span !== '' || spans.length === 1) {
 						var attributes = {},
-							tspan = doc.createElementNS(SVG_NS, 'tspan'),
+							tspan = document.createElementNS(SVG_NS, 'tspan'),
 							spanStyle; // #390
 						if (styleRegex.test(span)) {
 							spanStyle = span.match(styleRegex)[1].replace(/(;| |^)color([ :])/, '$1fill$2');
@@ -1407,7 +1407,7 @@ SVGRenderer.prototype = {
 						if (span !== ' ') {
 
 							// add the text node
-							tspan.appendChild(doc.createTextNode(span));
+							tspan.appendChild(document.createTextNode(span));
 
 							if (!spanNo) { // first span in a line, align it to the left
 								if (lineNo && parentX !== null) {
@@ -1498,7 +1498,7 @@ SVGRenderer.prototype = {
 										if (words.length) {
 											softLineNo++;
 											
-											tspan = doc.createElementNS(SVG_NS, 'tspan');
+											tspan = document.createElementNS(SVG_NS, 'tspan');
 											attr(tspan, {
 												dy: dy,
 												x: parentX
@@ -1516,7 +1516,7 @@ SVGRenderer.prototype = {
 										rest.unshift(words.pop());
 									}
 									if (words.length) {
-										tspan.appendChild(doc.createTextNode(words.join(' ').replace(/- /g, '-')));
+										tspan.appendChild(document.createTextNode(words.join(' ').replace(/- /g, '-')));
 									}
 								}
 								if (wasTooLong) {

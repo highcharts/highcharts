@@ -12,7 +12,7 @@
 
 (function () {
 
-var doc = document,
+var document = document,
 	mooVersion = window.MooTools.version.substring(0, 3), // Get the first three characters of the version number
 	legacy = mooVersion === '1.2' || mooVersion === '1.1', // 1.1 && 1.2 considered legacy, 1.3 is not.
 	legacyEvent = legacy || mooVersion === '1.3', // In versions 1.1 - 1.3 the event class is named Event, in newer versions it is named DOMEvent.
@@ -89,8 +89,8 @@ window.HighchartsAdapter = {
 	 */
 	getScript: function (scriptLocation, callback) {
 		// We cannot assume that Assets class from mootools-more is available so instead insert a script tag to download script.
-		var head = doc.getElementsByTagName('head')[0];
-		var script = doc.createElement('script');
+		var head = document.getElementsByTagName('head')[0];
+		var script = document.createElement('script');
 
 		script.type = 'text/javascript';
 		script.src = scriptLocation;

@@ -11,7 +11,6 @@
 var HighchartsAdapter = (function () {
 
 var UNDEFINED,
-	doc = document,
 	emptyArray = [],
 	timers = [],
 	timerId,
@@ -195,7 +194,7 @@ return {
 		 * Compatibility section to add support for legacy IE. This can be removed if old IE 
 		 * support is not needed.
 		 */
-		if (!doc.defaultView) {
+		if (!document.defaultView) {
 			this._getStyle = function (el, prop) {
 				var val;
 				if (el.style[prop]) {
@@ -474,8 +473,8 @@ return {
 	 */
 	getScript: function (scriptLocation, callback) {
 		// We cannot assume that Assets class from mootools-more is available so instead insert a script tag to download script.
-		var head = doc.getElementsByTagName('head')[0],
-			script = doc.createElement('script');
+		var head = document.getElementsByTagName('head')[0],
+			script = document.createElement('script');
 
 		script.type = 'text/javascript';
 		script.src = scriptLocation;
@@ -552,8 +551,8 @@ return {
 	fireEvent: function (el, type, eventArguments, defaultFunction) {
 		var e;
 
-		if (doc.createEvent && (el.dispatchEvent || el.fireEvent)) {
-			e = doc.createEvent('Events');
+		if (document.createEvent && (el.dispatchEvent || el.fireEvent)) {
+			e = document.createEvent('Events');
 			e.initEvent(type, true, true);
 			e.target = el;
 
