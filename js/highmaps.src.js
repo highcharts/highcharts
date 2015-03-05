@@ -9128,6 +9128,7 @@ Pointer.prototype = {
 				if (tooltip) { 
 					tooltip.refresh(kdpoint, e);
 				}
+				kdpoint.onMouseOver(e); 
 			}
 		
 		// Update positions (regardless of kdpoint or hoverPoint)
