@@ -1397,7 +1397,7 @@ Series.prototype = {
 				series[graphKey] = series.chart.renderer.path(graphPath)
 					.attr(attribs)
 					.add(series.group)
-					.shadow(!i && options.shadow);
+					.shadow((i < 2) && options.shadow); // add shadow to normal series (0) or to first zone (1) #3932
 			}
 		});
 	},
