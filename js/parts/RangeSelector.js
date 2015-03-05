@@ -80,7 +80,7 @@ RangeSelector.prototype = {
 			dataMin = unionExtremes.dataMin,
 			dataMax = unionExtremes.dataMax,
 			newMin,
-			newMax = baseAxis && Math.round(mathMin(baseAxis.max, pick(dataMax, baseAxis.max))), // #1568
+			newMax = baseAxis && Math.round(Math.min(baseAxis.max, pick(dataMax, baseAxis.max))), // #1568
 			now,
 			date = new Date(newMax),
 			type = rangeOptions.type,
@@ -104,7 +104,7 @@ RangeSelector.prototype = {
 			dataMin = pick(dataMin, Number.MIN_VALUE);
 			if (isNaN(newMin) || newMin < dataMin) {
 				newMin = dataMin;
-				newMax = mathMin(newMin + range, dataMax);
+				newMax = Math.min(newMin + range, dataMax);
 			} else {
 				range = newMax - newMin;
 			}
@@ -112,7 +112,7 @@ RangeSelector.prototype = {
 		// Fixed times like minutes, hours, days
 		} else if (range) {
 			newMin = Math.max(newMax - range, dataMin);
-			newMax = mathMin(newMin + range, dataMax);
+			newMax = Math.min(newMin + range, dataMax);
 		
 		} else if (type === 'ytd') {
 
@@ -129,7 +129,7 @@ RangeSelector.prototype = {
 					dataMax = Number.MIN_VALUE;
 					each(chart.series, function (series) {
 						var xData = series.xData; // reassign it to the last item
-						dataMin = mathMin(xData[0], dataMin);
+						dataMin = Math.min(xData[0], dataMin);
 						dataMax = Math.max(xData[xData.length - 1], dataMax);
 					});
 					redraw = false;
@@ -138,7 +138,7 @@ RangeSelector.prototype = {
 				year = now.getFullYear();
 				newMin = rangeMin = Math.max(dataMin || 0, Date.UTC(year, 0, 1));
 				now = now.getTime();
-				newMax = mathMin(dataMax || now, now);
+				newMax = Math.min(dataMax || now, now);
 
 			// "ytd" is pre-selected. We don't yet have access to processed point and extremes data
 			// (things like pointStart and pointInterval are missing), so we delay the process (#942)

@@ -17,7 +17,6 @@
 var UNDEFINED,
 	doc = document,
 	win = window,
-	mathMin = Math.min,
 	mathAbs = Math.abs,
 	mathCos = Math.cos,
 	mathSin = Math.sin,
@@ -721,7 +720,7 @@ Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
 		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
 		n = +number || 0,
 		c = decimals === -1 ?
-			mathMin((n.toString().split('.')[1] || '').length, 20) : // Preserve decimals. Not huge numbers (#3793).
+			Math.min((n.toString().split('.')[1] || '').length, 20) : // Preserve decimals. Not huge numbers (#3793).
 			(isNaN(decimals = mathAbs(decimals)) ? 2 : decimals),
 		d = decPoint === undefined ? lang.decimalPoint : decPoint,
 		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
@@ -3853,7 +3852,7 @@ SVGRenderer.prototype = {
 		callout: function (x, y, w, h, options) {
 			var arrowLength = 6,
 				halfDistance = 6,
-				r = mathMin((options && options.r) || 0, w, h),
+				r = Math.min((options && options.r) || 0, w, h),
 				safeDistance = r + halfDistance,
 				anchorX = options && options.anchorX,
 				anchorY = options && options.anchorY,
@@ -6834,7 +6833,7 @@ Axis.prototype = {
 				if (axis.isXAxis) {
 					xData = series.xData;
 					if (xData.length) {
-						axis.dataMin = mathMin(pick(axis.dataMin, xData[0]), arrayMin(xData));
+						axis.dataMin = Math.min(pick(axis.dataMin, xData[0]), arrayMin(xData));
 						axis.dataMax = Math.max(pick(axis.dataMax, xData[0]), arrayMax(xData));
 					}
 
@@ -6850,7 +6849,7 @@ Axis.prototype = {
 					// always 0 and 100. If seriesDataMin and seriesDataMax is null, then series
 					// doesn't have active y data, we continue with nulls
 					if (defined(seriesDataMin) && defined(seriesDataMax)) {
-						axis.dataMin = mathMin(pick(axis.dataMin, seriesDataMin), seriesDataMin);
+						axis.dataMin = Math.min(pick(axis.dataMin, seriesDataMin), seriesDataMin);
 						axis.dataMax = Math.max(pick(axis.dataMax, seriesDataMax), seriesDataMax);
 					}
 
@@ -6972,7 +6971,7 @@ Axis.prototype = {
 			between = function (x, a, b) {
 				if (x < a || x > b) {
 					if (force) {
-						x = mathMin(Math.max(a, x), b);
+						x = Math.min(Math.max(a, x), b);
 					} else {
 						skip = true;
 					}
@@ -7126,7 +7125,7 @@ Axis.prototype = {
 						}
 					}
 				});
-				axis.minRange = mathMin(closestDataRange * 5, axis.dataMax - axis.dataMin);
+				axis.minRange = Math.min(closestDataRange * 5, axis.dataMax - axis.dataMin);
 			}
 		}
 
@@ -7214,7 +7213,7 @@ Axis.prototype = {
 					// Set the closestPointRange
 					if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
 						closestPointRange = defined(closestPointRange) ?
-							mathMin(closestPointRange, seriesClosestPointRange) :
+							Math.min(closestPointRange, seriesClosestPointRange) :
 							seriesClosestPointRange;
 					}
 				});
@@ -7226,7 +7225,7 @@ Axis.prototype = {
 			axis.pointRangePadding = pointRangePadding = pointRangePadding * ordinalCorrection;
 
 			// pointRange means the width reserved for each point, like in a column chart
-			axis.pointRange = mathMin(pointRange, range);
+			axis.pointRange = Math.min(pointRange, range);
 
 			// closestPointRange means the closest distance between points. In columns
 			// it is mostly equal to pointRange, but in lines pointRange is 0 while closestPointRange
@@ -7283,7 +7282,7 @@ Axis.prototype = {
 		}
 
 		if (isLog) {
-			if (!secondPass && mathMin(axis.min, pick(axis.dataMin, axis.min)) <= 0) { // #978
+			if (!secondPass && Math.min(axis.min, pick(axis.dataMin, axis.min)) <= 0) { // #978
 				error(10, 1); // Can't plot negative values on log axis
 			}
 			axis.min = correctFloat(log2lin(axis.min)); // correctFloat cures #934
@@ -7325,7 +7324,7 @@ Axis.prototype = {
 			axis.min = Math.max(axis.min, options.floor);
 		}
 		if (isNumber(options.ceiling)) {
-			axis.max = mathMin(axis.max, options.ceiling);
+			axis.max = Math.min(axis.max, options.ceiling);
 		}
 
 		// get tickInterval
@@ -7717,7 +7716,7 @@ Axis.prototype = {
 
 		// Prevent pinch zooming out of range. Check for defined is for #1946. #1734.
 		if (!this.allowZoomOutside) {
-			if (defined(dataMin) && newMin <= mathMin(dataMin, pick(options.min, dataMin))) {
+			if (defined(dataMin) && newMin <= Math.min(dataMin, pick(options.min, dataMin))) {
 				newMin = UNDEFINED;
 			}
 			if (defined(dataMax) && newMax >= Math.max(dataMax, pick(options.max, dataMax))) {
@@ -9821,7 +9820,7 @@ Pointer.prototype = {
 
 						selectionData[axis.coll].push({
 							axis: axis,
-							min: mathMin(selectionMin, selectionMax), // for reversed axes
+							min: Math.min(selectionMin, selectionMax), // for reversed axes
 							max: Math.max(selectionMin, selectionMax)
 						});
 						runZoom = true;
@@ -10185,11 +10184,11 @@ extend(Highcharts.Pointer.prototype, {
 						minPixelPadding = axis.minPixelPadding,
 						min = axis.toPixels(pick(axis.options.min, axis.dataMin)),
 						max = axis.toPixels(pick(axis.options.max, axis.dataMax)),
-						absMin = mathMin(min, max),
+						absMin = Math.min(min, max),
 						absMax = Math.max(min, max);
 
 					// Store the bounds for use in the touchmove handler
-					bounds.min = mathMin(axis.pos, absMin - minPixelPadding);
+					bounds.min = Math.min(axis.pos, absMin - minPixelPadding);
 					bounds.max = Math.max(axis.pos + axis.len, absMax + minPixelPadding);
 				}
 			});
@@ -10906,7 +10905,7 @@ Legend.prototype = {
 			spaceHeight /= 2;
 		}
 		if (maxHeight) {
-			spaceHeight = mathMin(spaceHeight, maxHeight);
+			spaceHeight = Math.min(spaceHeight, maxHeight);
 		}
 		
 		// Reset the legend height and adjust the clipping rectangle
@@ -12588,7 +12587,7 @@ var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
 			plotHeight = chart.plotHeight - 2 * slicingRoom,
 			centerOption = options.center,
 			positions = [pick(centerOption[0], '50%'), pick(centerOption[1], '50%'), options.size || '100%', options.innerSize || 0],
-			smallestSize = mathMin(plotWidth, plotHeight),
+			smallestSize = Math.min(plotWidth, plotHeight),
 			isPercent,
 			i,
 			value;
@@ -13647,7 +13646,7 @@ Series.prototype = {
 
 			// Set the the plotY value, reset it for redraws
 			point.plotY = plotY = (typeof yValue === 'number' && yValue !== Infinity) ?
-				mathMin(Math.max(-1e5, yAxis.translate(yValue, 0, 1, 0, 1)), 1e5) : // #3201
+				Math.min(Math.max(-1e5, yAxis.translate(yValue, 0, 1, 0, 1)), 1e5) : // #3201
 				UNDEFINED;
 			point.isInside = plotY !== UNDEFINED && plotY >= 0 && plotY <= yAxis.len && // #3519
 				plotX >= 0 && plotX <= xAxis.len;
@@ -13664,7 +13663,7 @@ Series.prototype = {
 
 			// Determine auto enabling of markers (#3635)
 			if (i) {
-				closestPointRangePx = mathMin(closestPointRangePx, mathAbs(plotX - lastPlotX));
+				closestPointRangePx = Math.min(closestPointRangePx, mathAbs(plotX - lastPlotX));
 			}
 			lastPlotX = plotX;
 
@@ -15789,14 +15788,14 @@ var SplineSeries = extendClass(Series, {
 				leftContY = Math.max(lastY, plotY);
 				rightContY = 2 * plotY - leftContY; // mirror of left control point
 			} else if (leftContY < lastY && leftContY < plotY) {
-				leftContY = mathMin(lastY, plotY);
+				leftContY = Math.min(lastY, plotY);
 				rightContY = 2 * plotY - leftContY;
 			}
 			if (rightContY > nextY && rightContY > plotY) {
 				rightContY = Math.max(nextY, plotY);
 				leftContY = 2 * plotY - rightContY;
 			} else if (rightContY < nextY && rightContY < plotY) {
-				rightContY = mathMin(nextY, plotY);
+				rightContY = Math.min(nextY, plotY);
 				leftContY = 2 * plotY - rightContY;
 			}
 
@@ -15999,7 +15998,7 @@ var ColumnSeries = extendClass(Series, {
 			});
 		}
 
-		var categoryWidth = mathMin(
+		var categoryWidth = Math.min(
 				mathAbs(xAxis.transA) * (xAxis.ordinalSlope || options.pointRange || xAxis.closestPointRange || xAxis.tickInterval || 1), // #2610
 				xAxis.len // #1535
 			),
@@ -16063,10 +16062,10 @@ var ColumnSeries = extendClass(Series, {
 		// Record the new values
 		each(series.points, function (point) {
 			var yBottom = pick(point.yBottom, translatedThreshold),
-				plotY = mathMin(Math.max(-999 - yBottom, point.plotY), yAxis.len + 999 + yBottom), // Don't draw too far outside plot area (#1303, #2241)
+				plotY = Math.min(Math.max(-999 - yBottom, point.plotY), yAxis.len + 999 + yBottom), // Don't draw too far outside plot area (#1303, #2241)
 				barX = point.plotX + pointXOffset,
 				barW = seriesBarW,
-				barY = mathMin(plotY, yBottom),
+				barY = Math.min(plotY, yBottom),
 				right,
 				bottom,
 				fromTop,
@@ -16098,7 +16097,7 @@ var ColumnSeries = extendClass(Series, {
 			barW = right - barX;
 
 			fromTop = mathAbs(barY) < 0.5;
-			bottom = mathMin(Math.round(barY + barH) + yCrisp, 9e4); // #3575
+			bottom = Math.min(Math.round(barY + barH) + yCrisp, 9e4); // #3575
 			barY = Math.round(barY) + yCrisp;
 			barH = bottom - barY;
 
@@ -16196,7 +16195,7 @@ var ColumnSeries = extendClass(Series, {
 		if (hasSVG) { // VML is too slow anyway
 			if (init) {
 				attr.scaleY = 0.001;
-				translatedThreshold = mathMin(yAxis.pos + yAxis.len, Math.max(yAxis.pos, yAxis.toPixels(options.threshold)));
+				translatedThreshold = Math.min(yAxis.pos + yAxis.len, Math.max(yAxis.pos, yAxis.toPixels(options.threshold)));
 				if (inverted) {
 					attr.translateX = translatedThreshold - yAxis.len;
 				} else {
@@ -16594,7 +16593,7 @@ var PieSeries = {
 		// utility for getting the x value from a given y, used for anticollision logic in data labels
 		series.getX = function (y, left) {
 
-			angle = Math.asin(mathMin((y - positions[1]) / (positions[2] / 2 + labelDistance), 1));
+			angle = Math.asin(Math.min((y - positions[1]) / (positions[2] / 2 + labelDistance), 1));
 
 			return positions[0] +
 				(left ? -1 : 1) *
@@ -16650,7 +16649,7 @@ var PieSeries = {
 			point.angle = angle;
 
 			// set the anchor point for data labels
-			connectorOffset = mathMin(connectorOffset, labelDistance / 2); // #1678
+			connectorOffset = Math.min(connectorOffset, labelDistance / 2); // #1678
 			point.labelPos = [
 				positions[0] + radiusX + mathCos(angle) * labelDistance, // first break of connector
 				positions[1] + radiusY + mathSin(angle) * labelDistance, // a/a
@@ -17158,7 +17157,7 @@ if (seriesTypes.pie) {
 			if (distanceOption > 0) {
 
 				// Build the slots
-				bottom = mathMin(centerY + radius + distanceOption, chart.plotHeight);
+				bottom = Math.min(centerY + radius + distanceOption, chart.plotHeight);
 				for (pos = Math.max(0, centerY - radius - distanceOption); pos <= bottom; pos += labelHeight) {
 					slots.push(pos);
 				}
@@ -17278,7 +17277,7 @@ if (seriesTypes.pie) {
 					y = slot.y;
 					if ((naturalY > y && slots[slotIndex + 1] !== null) ||
 							(naturalY < y &&  slots[slotIndex - 1] !== null)) {
-						y = mathMin(Math.max(0, naturalY), chart.plotHeight);
+						y = Math.min(Math.max(0, naturalY), chart.plotHeight);
 					}
 
 				} else {
@@ -17438,11 +17437,11 @@ if (seriesTypes.pie) {
 
 		// Handle vertical size and center
 		if (centerOption[1] !== null) { // Fixed center
-			newSize = Math.max(mathMin(newSize, center[2] - Math.max(overflow[0], overflow[2])), minSize);
+			newSize = Math.max(Math.min(newSize, center[2] - Math.max(overflow[0], overflow[2])), minSize);
 
 		} else { // Auto center
 			newSize = Math.max(
-				mathMin(
+				Math.min(
 					newSize,
 					center[2] - overflow[0] - overflow[2] // vertical overflow
 				),
@@ -17976,7 +17975,7 @@ extend(Chart.prototype, {
 				goingLeft = startPos > mousePos; // #3613
 
 			if (axis.series.length && 
-					(goingLeft || newMin > mathMin(extremes.dataMin, extremes.min)) && 
+					(goingLeft || newMin > Math.min(extremes.dataMin, extremes.min)) && 
 					(!goingLeft || newMax < Math.max(extremes.dataMax, extremes.max))) {
 				axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
 				doRedraw = true;

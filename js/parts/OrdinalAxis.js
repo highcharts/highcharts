@@ -258,10 +258,10 @@ extend(Axis.prototype, {
 				// Register
 				axis.ordinalPositions = ordinalPositions;
 
-				// This relies on the ordinalPositions being set. Use Math.max and mathMin to prevent
+				// This relies on the ordinalPositions being set. Use Math.max and Math.min to prevent
 				// padding on either sides of the data.
 				minIndex = axis.val2lin(Math.max(min, ordinalPositions[0]), true);
-				maxIndex = Math.max(axis.val2lin(mathMin(max, ordinalPositions[ordinalPositions.length - 1]), true), 1); // #3339
+				maxIndex = Math.max(axis.val2lin(Math.min(max, ordinalPositions[ordinalPositions.length - 1]), true), 1); // #3339
 
 				// Set the slope and offset of the values compared to the indices in the ordinal positions
 				axis.ordinalSlope = slope = (max - min) / (maxIndex - minIndex);
@@ -495,7 +495,7 @@ extend(Axis.prototype, {
 
 			// Compensate for series that don't extend through the entire axis extent. #1675.
 			xMin = Math.max(xMin, processedXData[0]);
-			xMax = mathMin(xMax, processedXData[len - 1]);
+			xMax = Math.min(xMax, processedXData[len - 1]);
 
 			this.groupIntervalFactor = groupIntervalFactor = (len * median) / (xMax - xMin);
 		}
@@ -599,7 +599,7 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
 			);
 
 			// Apply it if it is within the available data range
-			if (trimmedRange.min >= mathMin(extremes.dataMin, min) && trimmedRange.max <= Math.max(dataMax, max)) {
+			if (trimmedRange.min >= Math.min(extremes.dataMin, min) && trimmedRange.max <= Math.max(dataMax, max)) {
 				xAxis.setExtremes(trimmedRange.min, trimmedRange.max, true, false, { trigger: 'pan' });
 			}
 

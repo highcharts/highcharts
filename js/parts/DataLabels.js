@@ -386,7 +386,7 @@ if (seriesTypes.pie) {
 			if (distanceOption > 0) {
 
 				// Build the slots
-				bottom = mathMin(centerY + radius + distanceOption, chart.plotHeight);
+				bottom = Math.min(centerY + radius + distanceOption, chart.plotHeight);
 				for (pos = Math.max(0, centerY - radius - distanceOption); pos <= bottom; pos += labelHeight) {
 					slots.push(pos);
 				}
@@ -506,7 +506,7 @@ if (seriesTypes.pie) {
 					y = slot.y;
 					if ((naturalY > y && slots[slotIndex + 1] !== null) ||
 							(naturalY < y &&  slots[slotIndex - 1] !== null)) {
-						y = mathMin(Math.max(0, naturalY), chart.plotHeight);
+						y = Math.min(Math.max(0, naturalY), chart.plotHeight);
 					}
 
 				} else {
@@ -666,11 +666,11 @@ if (seriesTypes.pie) {
 
 		// Handle vertical size and center
 		if (centerOption[1] !== null) { // Fixed center
-			newSize = Math.max(mathMin(newSize, center[2] - Math.max(overflow[0], overflow[2])), minSize);
+			newSize = Math.max(Math.min(newSize, center[2] - Math.max(overflow[0], overflow[2])), minSize);
 
 		} else { // Auto center
 			newSize = Math.max(
-				mathMin(
+				Math.min(
 					newSize,
 					center[2] - overflow[0] - overflow[2] // vertical overflow
 				),

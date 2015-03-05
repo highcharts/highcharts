@@ -797,7 +797,7 @@ Series.prototype = {
 
 			// Set the the plotY value, reset it for redraws
 			point.plotY = plotY = (typeof yValue === 'number' && yValue !== Infinity) ?
-				mathMin(Math.max(-1e5, yAxis.translate(yValue, 0, 1, 0, 1)), 1e5) : // #3201
+				Math.min(Math.max(-1e5, yAxis.translate(yValue, 0, 1, 0, 1)), 1e5) : // #3201
 				UNDEFINED;
 			point.isInside = plotY !== UNDEFINED && plotY >= 0 && plotY <= yAxis.len && // #3519
 				plotX >= 0 && plotX <= xAxis.len;
@@ -814,7 +814,7 @@ Series.prototype = {
 
 			// Determine auto enabling of markers (#3635)
 			if (i) {
-				closestPointRangePx = mathMin(closestPointRangePx, mathAbs(plotX - lastPlotX));
+				closestPointRangePx = Math.min(closestPointRangePx, mathAbs(plotX - lastPlotX));
 			}
 			lastPlotX = plotX;
 

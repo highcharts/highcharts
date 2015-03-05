@@ -551,7 +551,7 @@ Legend.prototype = {
 			spaceHeight /= 2;
 		}
 		if (maxHeight) {
-			spaceHeight = mathMin(spaceHeight, maxHeight);
+			spaceHeight = Math.min(spaceHeight, maxHeight);
 		}
 		
 		// Reset the legend height and adjust the clipping rectangle

@@ -307,7 +307,7 @@ var PieSeries = {
 		// utility for getting the x value from a given y, used for anticollision logic in data labels
 		series.getX = function (y, left) {
 
-			angle = Math.asin(mathMin((y - positions[1]) / (positions[2] / 2 + labelDistance), 1));
+			angle = Math.asin(Math.min((y - positions[1]) / (positions[2] / 2 + labelDistance), 1));
 
 			return positions[0] +
 				(left ? -1 : 1) *
@@ -363,7 +363,7 @@ var PieSeries = {
 			point.angle = angle;
 
 			// set the anchor point for data labels
-			connectorOffset = mathMin(connectorOffset, labelDistance / 2); // #1678
+			connectorOffset = Math.min(connectorOffset, labelDistance / 2); // #1678
 			point.labelPos = [
 				positions[0] + radiusX + mathCos(angle) * labelDistance, // first break of connector
 				positions[1] + radiusY + mathSin(angle) * labelDistance, // a/a

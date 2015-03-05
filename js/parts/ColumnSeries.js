@@ -115,7 +115,7 @@ var ColumnSeries = extendClass(Series, {
 			});
 		}
 
-		var categoryWidth = mathMin(
+		var categoryWidth = Math.min(
 				mathAbs(xAxis.transA) * (xAxis.ordinalSlope || options.pointRange || xAxis.closestPointRange || xAxis.tickInterval || 1), // #2610
 				xAxis.len // #1535
 			),
@@ -179,10 +179,10 @@ var ColumnSeries = extendClass(Series, {
 		// Record the new values
 		each(series.points, function (point) {
 			var yBottom = pick(point.yBottom, translatedThreshold),
-				plotY = mathMin(Math.max(-999 - yBottom, point.plotY), yAxis.len + 999 + yBottom), // Don't draw too far outside plot area (#1303, #2241)
+				plotY = Math.min(Math.max(-999 - yBottom, point.plotY), yAxis.len + 999 + yBottom), // Don't draw too far outside plot area (#1303, #2241)
 				barX = point.plotX + pointXOffset,
 				barW = seriesBarW,
-				barY = mathMin(plotY, yBottom),
+				barY = Math.min(plotY, yBottom),
 				right,
 				bottom,
 				fromTop,
@@ -214,7 +214,7 @@ var ColumnSeries = extendClass(Series, {
 			barW = right - barX;
 
 			fromTop = mathAbs(barY) < 0.5;
-			bottom = mathMin(Math.round(barY + barH) + yCrisp, 9e4); // #3575
+			bottom = Math.min(Math.round(barY + barH) + yCrisp, 9e4); // #3575
 			barY = Math.round(barY) + yCrisp;
 			barH = bottom - barY;
 
@@ -312,7 +312,7 @@ var ColumnSeries = extendClass(Series, {
 		if (hasSVG) { // VML is too slow anyway
 			if (init) {
 				attr.scaleY = 0.001;
-				translatedThreshold = mathMin(yAxis.pos + yAxis.len, Math.max(yAxis.pos, yAxis.toPixels(options.threshold)));
+				translatedThreshold = Math.min(yAxis.pos + yAxis.len, Math.max(yAxis.pos, yAxis.toPixels(options.threshold)));
 				if (inverted) {
 					attr.translateX = translatedThreshold - yAxis.len;
 				} else {

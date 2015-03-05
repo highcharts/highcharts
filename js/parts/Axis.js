@@ -460,7 +460,7 @@ Axis.prototype = {
 				if (axis.isXAxis) {
 					xData = series.xData;
 					if (xData.length) {
-						axis.dataMin = mathMin(pick(axis.dataMin, xData[0]), arrayMin(xData));
+						axis.dataMin = Math.min(pick(axis.dataMin, xData[0]), arrayMin(xData));
 						axis.dataMax = Math.max(pick(axis.dataMax, xData[0]), arrayMax(xData));
 					}
 
@@ -476,7 +476,7 @@ Axis.prototype = {
 					// always 0 and 100. If seriesDataMin and seriesDataMax is null, then series
 					// doesn't have active y data, we continue with nulls
 					if (defined(seriesDataMin) && defined(seriesDataMax)) {
-						axis.dataMin = mathMin(pick(axis.dataMin, seriesDataMin), seriesDataMin);
+						axis.dataMin = Math.min(pick(axis.dataMin, seriesDataMin), seriesDataMin);
 						axis.dataMax = Math.max(pick(axis.dataMax, seriesDataMax), seriesDataMax);
 					}
 
@@ -598,7 +598,7 @@ Axis.prototype = {
 			between = function (x, a, b) {
 				if (x < a || x > b) {
 					if (force) {
-						x = mathMin(Math.max(a, x), b);
+						x = Math.min(Math.max(a, x), b);
 					} else {
 						skip = true;
 					}
@@ -752,7 +752,7 @@ Axis.prototype = {
 						}
 					}
 				});
-				axis.minRange = mathMin(closestDataRange * 5, axis.dataMax - axis.dataMin);
+				axis.minRange = Math.min(closestDataRange * 5, axis.dataMax - axis.dataMin);
 			}
 		}
 
@@ -840,7 +840,7 @@ Axis.prototype = {
 					// Set the closestPointRange
 					if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
 						closestPointRange = defined(closestPointRange) ?
-							mathMin(closestPointRange, seriesClosestPointRange) :
+							Math.min(closestPointRange, seriesClosestPointRange) :
 							seriesClosestPointRange;
 					}
 				});
@@ -852,7 +852,7 @@ Axis.prototype = {
 			axis.pointRangePadding = pointRangePadding = pointRangePadding * ordinalCorrection;
 
 			// pointRange means the width reserved for each point, like in a column chart
-			axis.pointRange = mathMin(pointRange, range);
+			axis.pointRange = Math.min(pointRange, range);
 
 			// closestPointRange means the closest distance between points. In columns
 			// it is mostly equal to pointRange, but in lines pointRange is 0 while closestPointRange
@@ -909,7 +909,7 @@ Axis.prototype = {
 		}
 
 		if (isLog) {
-			if (!secondPass && mathMin(axis.min, pick(axis.dataMin, axis.min)) <= 0) { // #978
+			if (!secondPass && Math.min(axis.min, pick(axis.dataMin, axis.min)) <= 0) { // #978
 				error(10, 1); // Can't plot negative values on log axis
 			}
 			axis.min = correctFloat(log2lin(axis.min)); // correctFloat cures #934
@@ -951,7 +951,7 @@ Axis.prototype = {
 			axis.min = Math.max(axis.min, options.floor);
 		}
 		if (isNumber(options.ceiling)) {
-			axis.max = mathMin(axis.max, options.ceiling);
+			axis.max = Math.min(axis.max, options.ceiling);
 		}
 
 		// get tickInterval
@@ -1343,7 +1343,7 @@ Axis.prototype = {
 
 		// Prevent pinch zooming out of range. Check for defined is for #1946. #1734.
 		if (!this.allowZoomOutside) {
-			if (defined(dataMin) && newMin <= mathMin(dataMin, pick(options.min, dataMin))) {
+			if (defined(dataMin) && newMin <= Math.min(dataMin, pick(options.min, dataMin))) {
 				newMin = UNDEFINED;
 			}
 			if (defined(dataMax) && newMax >= Math.max(dataMax, pick(options.max, dataMax))) {

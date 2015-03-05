@@ -465,7 +465,7 @@ Pointer.prototype = {
 
 						selectionData[axis.coll].push({
 							axis: axis,
-							min: mathMin(selectionMin, selectionMax), // for reversed axes
+							min: Math.min(selectionMin, selectionMax), // for reversed axes
 							max: Math.max(selectionMin, selectionMax)
 						});
 						runZoom = true;

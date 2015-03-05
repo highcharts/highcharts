@@ -2101,7 +2101,7 @@ SVGRenderer.prototype = {
 		callout: function (x, y, w, h, options) {
 			var arrowLength = 6,
 				halfDistance = 6,
-				r = mathMin((options && options.r) || 0, w, h),
+				r = Math.min((options && options.r) || 0, w, h),
 				safeDistance = r + halfDistance,
 				anchorX = options && options.anchorX,
 				anchorY = options && options.anchorY,

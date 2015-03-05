@@ -14,7 +14,7 @@ var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
 			plotHeight = chart.plotHeight - 2 * slicingRoom,
 			centerOption = options.center,
 			positions = [pick(centerOption[0], '50%'), pick(centerOption[1], '50%'), options.size || '100%', options.innerSize || 0],
-			smallestSize = mathMin(plotWidth, plotHeight),
+			smallestSize = Math.min(plotWidth, plotHeight),
 			isPercent,
 			i,
 			value;
