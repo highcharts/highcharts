@@ -44,7 +44,6 @@ var UNDEFINED,
 	VERSION = '@product.version@',
 
 	// some constants for frequently used strings
-	DIV = 'div',
 	ABSOLUTE = 'absolute',
 	RELATIVE = 'relative',
 	HIDDEN = 'hidden',

@@ -31,7 +31,6 @@ var Chart = Highcharts.Chart,
 	isTouchDevice = Highcharts.isTouchDevice,
 	M = 'M',
 	L = 'L',
-	DIV = 'div',
 	HIDDEN = 'hidden',
 	NONE = 'none',
 	PREFIX = 'highcharts-',
@@ -259,7 +258,7 @@ extend(Chart.prototype, {
 		}
 
 		// create a sandbox where a new chart will be generated
-		sandbox = createElement(DIV, null, {
+		sandbox = createElement('div', null, {
 			position: ABSOLUTE,
 			top: '-9999em',
 			width: chart.chartWidth + PX,
@@ -477,7 +476,7 @@ extend(Chart.prototype, {
 		if (!menu) {
 
 			// create a HTML element above the SVG
-			chart[cacheName] = menu = createElement(DIV, {
+			chart[cacheName] = menu = createElement('div', {
 				className: className
 			}, {
 				position: ABSOLUTE,
@@ -485,7 +484,7 @@ extend(Chart.prototype, {
 				padding: menuPadding + PX
 			}, chart.container);
 
-			innerMenu = createElement(DIV, null,
+			innerMenu = createElement('div', null,
 				extend({
 					MozBoxShadow: boxShadow,
 					WebkitBoxShadow: boxShadow,
@@ -522,7 +521,7 @@ extend(Chart.prototype, {
 				if (item) {
 					var element = item.separator ?
 						createElement('hr', null, null, innerMenu) :
-						createElement(DIV, {
+						createElement('div', {
 							onmouseover: function () {
 								css(this, navOptions.menuItemHoverStyle);
 							},

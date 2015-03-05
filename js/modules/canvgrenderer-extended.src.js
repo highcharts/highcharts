@@ -12,7 +12,6 @@
 
 (function (Highcharts) { // encapsulate
 	var UNDEFINED,
-		DIV = 'div',
 		ABSOLUTE = 'absolute',
 		RELATIVE = 'relative',
 		HIDDEN = 'hidden',
@@ -61,12 +60,12 @@
 
 			// Create the tooltip line and div, they are placed as siblings to
 			// the container (and as direct childs to the div specified in the html page)
-			this.ttLine = createElement(DIV, null, initialHiddenStyle, containerParent);
-			this.ttDiv = createElement(DIV, null, initialHiddenStyle, containerParent);
+			this.ttLine = createElement('div', null, initialHiddenStyle, containerParent);
+			this.ttDiv = createElement('div', null, initialHiddenStyle, containerParent);
 			this.ttTimer = UNDEFINED;
 
 			// Move away the svg node to a new div inside the container's parent so we can hide it.
-			var hiddenSvg = createElement(DIV, {
+			var hiddenSvg = createElement('div', {
 				width: containerOffsetWidth,
 				height: containerOffsetHeight
 			}, {

@@ -628,7 +628,7 @@ Chart.prototype = {
 		chartHeight = chart.chartHeight;
 
 		// create the inner container
-		chart.container = container = createElement(DIV, {
+		chart.container = container = createElement('div', {
 				className: PREFIX + 'container' +
 					(optionsChart.className ? ' ' + optionsChart.className : ''),
 				id: containerId

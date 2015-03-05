@@ -80,7 +80,7 @@ extend(Chart.prototype, {
 
 		// create the layer at the first call
 		if (!loadingDiv) {
-			chart.loadingDiv = loadingDiv = createElement(DIV, {
+			chart.loadingDiv = loadingDiv = createElement('div', {
 				className: PREFIX + 'loading'
 			}, extend(loadingOptions.style, {
 				zIndex: 10,

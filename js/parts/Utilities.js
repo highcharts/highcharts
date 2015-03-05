@@ -564,7 +564,7 @@ function destroyObjectProperties(obj, except) {
 function discardElement(element) {
 	// create a garbage bin element, not part of the DOM
 	if (!garbageBin) {
-		garbageBin = createElement(DIV);
+		garbageBin = createElement('div');
 	}
 
 	// move the node and empty bin

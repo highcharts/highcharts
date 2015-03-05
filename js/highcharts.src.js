@@ -59,7 +59,6 @@ var UNDEFINED,
 	VERSION = '4.1.3-modified',
 
 	// some constants for frequently used strings
-	DIV = 'div',
 	ABSOLUTE = 'absolute',
 	RELATIVE = 'relative',
 	HIDDEN = 'hidden',
@@ -673,7 +672,7 @@ function destroyObjectProperties(obj, except) {
 function discardElement(element) {
 	// create a garbage bin element, not part of the DOM
 	if (!garbageBin) {
-		garbageBin = createElement(DIV);
+		garbageBin = createElement('div');
 	}
 
 	// move the node and empty bin
@@ -4591,7 +4590,7 @@ extend(SVGRenderer.prototype, {
 
 							// Create a HTML div and append it to the parent div to emulate
 							// the SVG group structure
-							htmlGroup = parentGroup.div = parentGroup.div || createElement(DIV, {
+							htmlGroup = parentGroup.div = parentGroup.div || createElement('div', {
 								className: attr(parentGroup.element, 'class')
 							}, {
 								position: ABSOLUTE,
@@ -4671,7 +4670,7 @@ VMLElement = {
 		var wrapper = this,
 			markup =  ['<', nodeName, ' filled="f" stroked="f"'],
 			style = ['position: ', ABSOLUTE, ';'],
-			isDiv = nodeName === DIV;
+			isDiv = nodeName === 'div';
 
 		// divs and shapes need size
 		if (nodeName === 'shape' || isDiv) {
@@ -5154,7 +5153,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 		renderer.alignedObjects = [];
 
-		boxWrapper = renderer.createElement(DIV)
+		boxWrapper = renderer.createElement('div')
 			.css(extend(this.getStyle(style), { position: RELATIVE}));
 		box = boxWrapper.element;
 		container.appendChild(boxWrapper.element);
@@ -5521,7 +5520,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		}
 
 		// the div to hold HTML and clipping
-		wrapper = this.createElement(DIV).attr(attribs);
+		wrapper = this.createElement('div').attr(attribs);
 
 		return wrapper;
 	},
@@ -11802,7 +11801,7 @@ Chart.prototype = {
 		chartHeight = chart.chartHeight;
 
 		// create the inner container
-		chart.container = container = createElement(DIV, {
+		chart.container = container = createElement('div', {
 				className: PREFIX + 'container' +
 					(optionsChart.className ? ' ' + optionsChart.className : ''),
 				id: containerId
@@ -15097,7 +15096,7 @@ extend(Chart.prototype, {
 
 		// create the layer at the first call
 		if (!loadingDiv) {
-			chart.loadingDiv = loadingDiv = createElement(DIV, {
+			chart.loadingDiv = loadingDiv = createElement('div', {
 				className: PREFIX + 'loading'
 			}, extend(loadingOptions.style, {
 				zIndex: 10,

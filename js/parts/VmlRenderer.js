@@ -30,7 +30,7 @@ VMLElement = {
 		var wrapper = this,
 			markup =  ['<', nodeName, ' filled="f" stroked="f"'],
 			style = ['position: ', ABSOLUTE, ';'],
-			isDiv = nodeName === DIV;
+			isDiv = nodeName === 'div';
 
 		// divs and shapes need size
 		if (nodeName === 'shape' || isDiv) {
@@ -513,7 +513,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 		renderer.alignedObjects = [];
 
-		boxWrapper = renderer.createElement(DIV)
+		boxWrapper = renderer.createElement('div')
 			.css(extend(this.getStyle(style), { position: RELATIVE}));
 		box = boxWrapper.element;
 		container.appendChild(boxWrapper.element);
@@ -880,7 +880,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		}
 
 		// the div to hold HTML and clipping
-		wrapper = this.createElement(DIV).attr(attribs);
+		wrapper = this.createElement('div').attr(attribs);
 
 		return wrapper;
 	},
