@@ -56,7 +56,6 @@ var UNDEFINED,
 	charts = [],
 	chartCount = 0,
 	PRODUCT = 'Highmaps',
-	VERSION = '1.1.3-modified',
 
 	// some constants for frequently used strings
 	numRegex = /^[0-9]+$/,
@@ -2964,7 +2963,7 @@ SVGRenderer.prototype = {
 
 		// Add description
 		desc = this.createElement('desc').add();
-		desc.element.appendChild(doc.createTextNode('Created with ' + PRODUCT + ' ' + VERSION));
+		desc.element.appendChild(doc.createTextNode('Created with ' + PRODUCT + ' 1.1.3-modified'));
 
 
 		renderer.defs = this.createElement('defs').add();
@@ -19409,7 +19408,7 @@ extend(Highcharts, {
 	canvas: useCanVG,
 	vml: !hasSVG && !useCanVG,
 	product: PRODUCT,
-	version: VERSION
+	version: '1.1.3-modified'
 });
 
 }());

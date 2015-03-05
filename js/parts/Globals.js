@@ -41,7 +41,6 @@ var UNDEFINED,
 	charts = [],
 	chartCount = 0,
 	PRODUCT = '@product.name@',
-	VERSION = '@product.version@',
 
 	// some constants for frequently used strings
 	numRegex = /^[0-9]+$/,

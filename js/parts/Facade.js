@@ -37,5 +37,5 @@ extend(Highcharts, {
 	canvas: useCanVG,
 	vml: !hasSVG && !useCanVG,
 	product: PRODUCT,
-	version: VERSION
+	version: '@product.version@'
 });
