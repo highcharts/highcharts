@@ -3,8 +3,7 @@ var deg2rad = Math.PI * 2 / 360,
 
 
 	// some variables
-	isOpera = window.opera,
-	isIE = /(msie|trident)/i.test(navigator.userAgent) && !isOpera,
+	isIE = /(msie|trident)/i.test(navigator.userAgent) && !window.opera,
 	docMode8 = document.documentMode === 8,
 	isWebKit = /AppleWebKit/.test(navigator.userAgent),
 	isFirefox = /Firefox/.test(navigator.userAgent),
