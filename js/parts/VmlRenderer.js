@@ -36,7 +36,7 @@ VMLElement = {
 		if (nodeName === 'shape' || isDiv) {
 			style.push('left:0;top:0;width:1px;height:1px;');
 		}
-		style.push('visibility: ', isDiv ? HIDDEN : VISIBLE);
+		style.push('visibility: ', isDiv ? 'hidden' : VISIBLE);
 
 		markup.push(' style="', style.join(''), '"/>');
 
@@ -445,13 +445,13 @@ VMLElement = {
 		// Instead of toggling the visibility CSS property, move the div out of the viewport.
 		// This works around #61 and #586
 		if (element.nodeName === 'DIV') {
-			value = value === HIDDEN ? '-999em' : 0;
+			value = value === 'hidden' ? '-999em' : 0;
 
 			// In order to redraw, IE7 needs the div to be visible when tucked away
 			// outside the viewport. So the visibility is actually opposite of
 			// the expected value. This applies to the tooltip only.
 			if (!docMode8) {
-				element.style[key] = value ? VISIBLE : HIDDEN;
+				element.style[key] = value ? VISIBLE : 'hidden';
 			}
 			key = 'top';
 		}

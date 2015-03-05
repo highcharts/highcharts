@@ -59,7 +59,6 @@ var UNDEFINED,
 	VERSION = '1.1.3-modified',
 
 	// some constants for frequently used strings
-	HIDDEN = 'hidden',
 	PREFIX = 'highcharts-',
 	VISIBLE = 'visible',
 	PX = 'px',
@@ -2574,7 +2573,7 @@ SVGElement.prototype = {
 	 * Hide the element
 	 */
 	hide: function () {
-		return this.attr({ visibility: HIDDEN });
+		return this.attr({ visibility: 'hidden' });
 	},
 
 	fadeOut: function (duration) {
@@ -4674,7 +4673,7 @@ VMLElement = {
 		if (nodeName === 'shape' || isDiv) {
 			style.push('left:0;top:0;width:1px;height:1px;');
 		}
-		style.push('visibility: ', isDiv ? HIDDEN : VISIBLE);
+		style.push('visibility: ', isDiv ? 'hidden' : VISIBLE);
 
 		markup.push(' style="', style.join(''), '"/>');
 
@@ -5083,13 +5082,13 @@ VMLElement = {
 		// Instead of toggling the visibility CSS property, move the div out of the viewport.
 		// This works around #61 and #586
 		if (element.nodeName === 'DIV') {
-			value = value === HIDDEN ? '-999em' : 0;
+			value = value === 'hidden' ? '-999em' : 0;
 
 			// In order to redraw, IE7 needs the div to be visible when tucked away
 			// outside the viewport. So the visibility is actually opposite of
 			// the expected value. This applies to the tooltip only.
 			if (!docMode8) {
-				element.style[key] = value ? VISIBLE : HIDDEN;
+				element.style[key] = value ? VISIBLE : 'hidden';
 			}
 			key = 'top';
 		}
@@ -11342,7 +11341,7 @@ Chart.prototype = {
 				id: containerId
 			}, extend({
 				position: 'relative',
-				overflow: HIDDEN, // needed for context menu (avoid scrollbars) and
+				overflow: 'hidden', // needed for context menu (avoid scrollbars) and
 					// content overflow in IE
 				width: chartWidth + PX,
 				height: chartHeight + PX,
@@ -13960,7 +13959,7 @@ Series.prototype = {
 			// Animation doesn't work in IE8 quirks when the group div is hidden,
 			// and looks bad in other oldIE
 			animDuration = (animation && !!series.animate && chart.renderer.isSVG && pick(animation.duration, 500)) || 0,
-			visibility = series.visible ? VISIBLE : HIDDEN,
+			visibility = series.visible ? VISIBLE : 'hidden',
 			zIndex = options.zIndex,
 			hasRendered = series.hasRendered,
 			chartSeriesGroup = chart.seriesGroup;
@@ -15172,7 +15171,7 @@ Series.prototype.drawDataLabels = function () {
 		dataLabelsGroup = series.plotGroup(
 			'dataLabelsGroup',
 			'data-labels',
-			options.defer ? HIDDEN : VISIBLE,
+			options.defer ? 'hidden' : VISIBLE,
 			options.zIndex || 6
 		);
 
@@ -15640,7 +15639,7 @@ if (seriesTypes.pie) {
 				point = points[j];
 				labelPos = point.labelPos;
 				dataLabel = point.dataLabel;
-				visibility = point.visible === false ? HIDDEN : VISIBLE;
+				visibility = point.visible === false ? 'hidden' : VISIBLE;
 				naturalY = labelPos[1];
 
 				if (distanceOption > 0) {
@@ -18713,7 +18712,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			series.tracker = renderer.path(trackerPath)
 			.attr({
 				'stroke-linejoin': 'round', // #1225
-				visibility: series.visible ? VISIBLE : HIDDEN,
+				visibility: series.visible ? VISIBLE : 'hidden',
 				stroke: TRACKER_FILL,
 				fill: trackByArea ? TRACKER_FILL : NONE,
 				'stroke-width' : options.lineWidth + (trackByArea ? 0 : 2 * snap),

@@ -55,7 +55,7 @@ StackItem.prototype = {
 
 		// Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
 		if (this.label) {
-			this.label.attr({text: str, visibility: HIDDEN});
+			this.label.attr({text: str, visibility: 'hidden'});
 		// Create new label
 		} else {
 			this.label =
@@ -64,7 +64,7 @@ StackItem.prototype = {
 					.attr({
 						align: this.textAlign,				// fix the text-anchor
 						rotation: options.rotation,	// rotation
-						visibility: HIDDEN					// hidden until setOffset is called
+						visibility: 'hidden'					// hidden until setOffset is called
 					})				
 					.add(group);							// add to the labels-group
 		}

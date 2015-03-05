@@ -802,7 +802,7 @@ SVGElement.prototype = {
 	 * Hide the element
 	 */
 	hide: function () {
-		return this.attr({ visibility: HIDDEN });
+		return this.attr({ visibility: 'hidden' });
 	},
 
 	fadeOut: function (duration) {

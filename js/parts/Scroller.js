@@ -501,7 +501,7 @@ Scroller.prototype = {
 
 			scroller.scrollbarRifles
 				.attr({
-					visibility: range > 12 ? VISIBLE : HIDDEN
+					visibility: range > 12 ? VISIBLE : 'hidden'
 				})[verb]({
 					d: [
 						M,

@@ -12,7 +12,6 @@
 
 (function (Highcharts) { // encapsulate
 	var UNDEFINED,
-		HIDDEN = 'hidden',
 		VISIBLE = 'visible',
 		PX = 'px',
 		css = Highcharts.css,
@@ -41,7 +40,7 @@
 				containerOffsetWidth = container.offsetWidth,
 				containerOffsetHeight = container.offsetHeight,
 				canvas,
-				initialHiddenStyle = { visibility: HIDDEN, position: 'absolute' };
+				initialHiddenStyle = { visibility: 'hidden', position: 'absolute' };
 
 			this.init.apply(this, [container, chartWidth, chartHeight]);
 
@@ -67,7 +66,7 @@
 				width: containerOffsetWidth,
 				height: containerOffsetHeight
 			}, {
-				visibility: HIDDEN,
+				visibility: 'hidden',
 				left: containerLeft,
 				top: containerTop
 			}, containerParent);
@@ -146,8 +145,8 @@
 
 				// Start a new timer that hides tooltip and line
 				renderer.ttTimer = setTimeout(function () {
-					css(tooltipDiv, { visibility: HIDDEN });
-					css(tooltipLine, { visibility: HIDDEN });
+					css(tooltipDiv, { visibility: 'hidden' });
+					css(tooltipLine, { visibility: 'hidden' });
 				}, 3000);
 			});
 		},

@@ -31,7 +31,6 @@ var Chart = Highcharts.Chart,
 	isTouchDevice = Highcharts.isTouchDevice,
 	M = 'M',
 	L = 'L',
-	HIDDEN = 'hidden',
 	NONE = 'none',
 	PREFIX = 'highcharts-',
 	PX = 'px',
@@ -174,7 +173,7 @@ Highcharts.post = function (url, data, formAttributes) {
 	// add the data
 	for (name in data) {
 		createElement('input', {
-			type: HIDDEN,
+			type: 'hidden',
 			name: name,
 			value: data[name]
 		}, null, form);

@@ -634,7 +634,7 @@ Chart.prototype = {
 				id: containerId
 			}, extend({
 				position: 'relative',
-				overflow: HIDDEN, // needed for context menu (avoid scrollbars) and
+				overflow: 'hidden', // needed for context menu (avoid scrollbars) and
 					// content overflow in IE
 				width: chartWidth + PX,
 				height: chartHeight + PX,
