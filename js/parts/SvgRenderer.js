@@ -497,7 +497,7 @@ SVGElement.prototype = {
 				handler.call(element, e);
 			};
 			element.onclick = function (e) {												
-				if (userAgent.indexOf('Android') === -1 || Date.now() - (svgElement.touchEventFired || 0) > 1100) { // #2269
+				if (navigator.userAgent.indexOf('Android') === -1 || Date.now() - (svgElement.touchEventFired || 0) > 1100) { // #2269
 					handler.call(element, e);
 				}
 			};			

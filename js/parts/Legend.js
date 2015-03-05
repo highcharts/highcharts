@@ -778,7 +778,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 // and for #2580, a similar drawing flaw in Firefox 26.
 // TODO: Explore if there's a general cause for this. The problem may be related 
 // to nested group elements, as the legend item texts are within 4 group elements.
-if (/Trident\/7\.0/.test(userAgent) || isFirefox) {
+if (/Trident\/7\.0/.test(navigator.userAgent) || isFirefox) {
 	wrap(Legend.prototype, 'positionItem', function (proceed, item) {
 		var legend = this,
 			runPositionItem = function () { // If chart destroyed in sync, this is undefined (#2030)

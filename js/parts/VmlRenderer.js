@@ -496,7 +496,7 @@ VMLElement.prototype.ySetter =
 var VMLRendererExtension = { // inherit SVGRenderer
 
 	Element: VMLElement,
-	isIE8: userAgent.indexOf('MSIE 8.0') > -1,
+	isIE8: navigator.userAgent.indexOf('MSIE 8.0') > -1,
 
 
 	/**

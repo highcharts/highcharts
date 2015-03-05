@@ -3,16 +3,15 @@ var deg2rad = Math.PI * 2 / 360,
 
 
 	// some variables
-	userAgent = navigator.userAgent,
 	isOpera = window.opera,
-	isIE = /(msie|trident)/i.test(userAgent) && !isOpera,
+	isIE = /(msie|trident)/i.test(navigator.userAgent) && !isOpera,
 	docMode8 = document.documentMode === 8,
-	isWebKit = /AppleWebKit/.test(userAgent),
-	isFirefox = /Firefox/.test(userAgent),
-	isTouchDevice = /(Mobile|Android|Windows Phone)/.test(userAgent),
+	isWebKit = /AppleWebKit/.test(navigator.userAgent),
+	isFirefox = /Firefox/.test(navigator.userAgent),
+	isTouchDevice = /(Mobile|Android|Windows Phone)/.test(navigator.userAgent),
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	hasSVG = !!document.createElementNS && !!document.createElementNS(SVG_NS, 'svg').createSVGRect,
-	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
+	hasBidiBug = isFirefox && parseInt(navigator.userAgent.split('Firefox/')[1], 10) < 4, // issue #38
 	useCanVG = !hasSVG && !isIE && !!document.createElement('canvas').getContext,
 	Renderer,
 	hasTouch,

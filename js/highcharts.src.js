@@ -18,16 +18,15 @@ var deg2rad = Math.PI * 2 / 360,
 
 
 	// some variables
-	userAgent = navigator.userAgent,
 	isOpera = window.opera,
-	isIE = /(msie|trident)/i.test(userAgent) && !isOpera,
+	isIE = /(msie|trident)/i.test(navigator.userAgent) && !isOpera,
 	docMode8 = document.documentMode === 8,
-	isWebKit = /AppleWebKit/.test(userAgent),
-	isFirefox = /Firefox/.test(userAgent),
-	isTouchDevice = /(Mobile|Android|Windows Phone)/.test(userAgent),
+	isWebKit = /AppleWebKit/.test(navigator.userAgent),
+	isFirefox = /Firefox/.test(navigator.userAgent),
+	isTouchDevice = /(Mobile|Android|Windows Phone)/.test(navigator.userAgent),
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	hasSVG = !!document.createElementNS && !!document.createElementNS(SVG_NS, 'svg').createSVGRect,
-	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
+	hasBidiBug = isFirefox && parseInt(navigator.userAgent.split('Firefox/')[1], 10) < 4, // issue #38
 	useCanVG = !hasSVG && !isIE && !!document.createElement('canvas').getContext,
 	Renderer,
 	hasTouch,
@@ -2241,7 +2240,7 @@ SVGElement.prototype = {
 				handler.call(element, e);
 			};
 			element.onclick = function (e) {												
-				if (userAgent.indexOf('Android') === -1 || Date.now() - (svgElement.touchEventFired || 0) > 1100) { // #2269
+				if (navigator.userAgent.indexOf('Android') === -1 || Date.now() - (svgElement.touchEventFired || 0) > 1100) { // #2269
 					handler.call(element, e);
 				}
 			};			
@@ -5106,7 +5105,7 @@ VMLElement.prototype.ySetter =
 var VMLRendererExtension = { // inherit SVGRenderer
 
 	Element: VMLElement,
-	isIE8: userAgent.indexOf('MSIE 8.0') > -1,
+	isIE8: navigator.userAgent.indexOf('MSIE 8.0') > -1,
 
 
 	/**
@@ -11125,7 +11124,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 // and for #2580, a similar drawing flaw in Firefox 26.
 // TODO: Explore if there's a general cause for this. The problem may be related 
 // to nested group elements, as the legend item texts are within 4 group elements.
-if (/Trident\/7\.0/.test(userAgent) || isFirefox) {
+if (/Trident\/7\.0/.test(navigator.userAgent) || isFirefox) {
 	wrap(Legend.prototype, 'positionItem', function (proceed, item) {
 		var legend = this,
 			runPositionItem = function () { // If chart destroyed in sync, this is undefined (#2030)
@@ -14040,7 +14039,7 @@ Series.prototype = {
 	destroy: function () {
 		var series = this,
 			chart = series.chart,
-			issue134 = /AppleWebKit\/533/.test(userAgent),
+			issue134 = /AppleWebKit\/533/.test(navigator.userAgent),
 			destroy,
 			i,
 			data = series.data || [],
