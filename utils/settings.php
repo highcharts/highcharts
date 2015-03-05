@@ -1,6 +1,7 @@
 <?php
 	// Path to the Git Executable
-	$git = "C:\Git\bin\git";
+	//$git = "C:\Git\bin\git";
+	$git = '/usr/local/git/bin/git';
 
 	$leftPath = "http://code.highcharts.com";
 	$rightPath = "http://code.highcharts.local";
