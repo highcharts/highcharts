@@ -80,7 +80,7 @@ Tooltip.prototype = {
 			now = tooltip.now,
 			animate = tooltip.options.animation !== false && !tooltip.isHidden && 
 				// When we get close to the target position, abort animation and land on the right place (#3056)
-				(mathAbs(x - now.x) > 1 || mathAbs(y - now.y) > 1),
+				(Math.abs(x - now.x) > 1 || Math.abs(y - now.y) > 1),
 			skipAnchor = tooltip.followPointer || tooltip.len > 1;
 
 		// Get intermediate values for animation

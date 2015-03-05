@@ -774,8 +774,8 @@ SVGElement.prototype = {
 
 				// Adjust for rotated text
 				if (rotation) {
-					bBox.width = mathAbs(height * mathSin(rad)) + mathAbs(width * mathCos(rad));
-					bBox.height = mathAbs(height * mathCos(rad)) + mathAbs(width * mathSin(rad));
+					bBox.width = Math.abs(height * mathSin(rad)) + Math.abs(width * mathCos(rad));
+					bBox.height = Math.abs(height * mathCos(rad)) + Math.abs(width * mathSin(rad));
 				}
 			}
 

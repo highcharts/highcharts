@@ -2,7 +2,6 @@
 var UNDEFINED,
 	doc = document,
 	win = window,
-	mathAbs = Math.abs,
 	mathCos = Math.cos,
 	mathSin = Math.sin,
 	mathPI = Math.PI,

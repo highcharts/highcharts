@@ -411,7 +411,7 @@ Pointer.prototype = {
 			if (this.selectionMarker && zoomHor) {
 				size = chartX - mouseDownX;
 				this.selectionMarker.attr({
-					width: mathAbs(size),
+					width: Math.abs(size),
 					x: (size > 0 ? 0 : size) + mouseDownX
 				});
 			}
@@ -419,7 +419,7 @@ Pointer.prototype = {
 			if (this.selectionMarker && zoomVert) {
 				size = chartY - mouseDownY;
 				this.selectionMarker.attr({
-					height: mathAbs(size),
+					height: Math.abs(size),
 					y: (size > 0 ? 0 : size) + mouseDownY
 				});
 			}

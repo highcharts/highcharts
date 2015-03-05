@@ -455,7 +455,7 @@ if (seriesTypes.pie) {
 
 					// find the closest slot index
 					for (slotI = 0; slotI < slotsLength; slotI++) {
-						distance = mathAbs(slots[slotI] - labelPos[1]);
+						distance = Math.abs(slots[slotI] - labelPos[1]);
 						if (distance < closest) {
 							closest = distance;
 							slotIndex = slotI;

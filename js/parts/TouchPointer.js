@@ -38,8 +38,8 @@ extend(Highcharts.Pointer.prototype, {
 			transformScale,
 			scaleKey,
 			setScale = function () {
-				if (!singleTouch && mathAbs(touch0Start - touch1Start) > 20) { // Don't zoom if fingers are too close on this axis
-					scale = forcedScale || mathAbs(touch0Now - touch1Now) / mathAbs(touch0Start - touch1Start); 
+				if (!singleTouch && Math.abs(touch0Start - touch1Start) > 20) { // Don't zoom if fingers are too close on this axis
+					scale = forcedScale || Math.abs(touch0Now - touch1Now) / Math.abs(touch0Start - touch1Start); 
 				}
 				
 				clipXY = ((plotLeftTop - touch0Now) / scale) + touch0Start;

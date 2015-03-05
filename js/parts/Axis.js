@@ -411,7 +411,7 @@ Axis.prototype = {
 		}
 
 		if (ret === UNDEFINED) {
-			if (mathAbs(value) >= 10000) { // add thousands separators
+			if (Math.abs(value) >= 10000) { // add thousands separators
 				ret = Highcharts.numberFormat(value, 0);
 
 			} else { // small numbers
@@ -1496,9 +1496,9 @@ Axis.prototype = {
 
 					if (rot === rotationOption || (rot && rot >= -90 && rot <= 90)) { // #3891
 					
-						step = getStep(mathAbs(labelMetrics.h / mathSin(deg2rad * rot)));
+						step = getStep(Math.abs(labelMetrics.h / mathSin(deg2rad * rot)));
 
-						score = step + mathAbs(rot / 360);
+						score = step + Math.abs(rot / 360);
 
 						if (score < bestScore) {
 							bestScore = score;

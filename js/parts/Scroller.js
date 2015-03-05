@@ -326,7 +326,7 @@ Scroller.prototype = {
 		// Get the pixel position of the handles
 		pxMin = pick(pxMin, xAxis.translate(min));
 		pxMax = pick(pxMax, xAxis.translate(max));
-		if (isNaN(pxMin) || mathAbs(pxMin) === Infinity) { // Verify (#1851, #2238)
+		if (isNaN(pxMin) || Math.abs(pxMin) === Infinity) { // Verify (#1851, #2238)
 			pxMin = 0;
 			pxMax = scrollerWidth;
 		}

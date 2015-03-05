@@ -814,7 +814,7 @@ Series.prototype = {
 
 			// Determine auto enabling of markers (#3635)
 			if (i) {
-				closestPointRangePx = Math.min(closestPointRangePx, mathAbs(plotX - lastPlotX));
+				closestPointRangePx = Math.min(closestPointRangePx, Math.abs(plotX - lastPlotX));
 			}
 			lastPlotX = plotX;
 

@@ -17,7 +17,6 @@
 var UNDEFINED,
 	doc = document,
 	win = window,
-	mathAbs = Math.abs,
 	mathCos = Math.cos,
 	mathSin = Math.sin,
 	mathPI = Math.PI,
@@ -721,15 +720,15 @@ Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
 		n = +number || 0,
 		c = decimals === -1 ?
 			Math.min((n.toString().split('.')[1] || '').length, 20) : // Preserve decimals. Not huge numbers (#3793).
-			(isNaN(decimals = mathAbs(decimals)) ? 2 : decimals),
+			(isNaN(decimals = Math.abs(decimals)) ? 2 : decimals),
 		d = decPoint === undefined ? lang.decimalPoint : decPoint,
 		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
 		s = n < 0 ? "-" : "",
-		i = String(pInt(n = mathAbs(n).toFixed(c))),
+		i = String(pInt(n = Math.abs(n).toFixed(c))),
 		j = i.length > 3 ? i.length % 3 : 0;
 
 	return (s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
-			(c ? d + mathAbs(n - i).toFixed(c).slice(2) : ""));
+			(c ? d + Math.abs(n - i).toFixed(c).slice(2) : ""));
 };
 /**
  * Path interpolation algorithm used across adapters
@@ -2525,8 +2524,8 @@ SVGElement.prototype = {
 
 				// Adjust for rotated text
 				if (rotation) {
-					bBox.width = mathAbs(height * mathSin(rad)) + mathAbs(width * mathCos(rad));
-					bBox.height = mathAbs(height * mathCos(rad)) + mathAbs(width * mathSin(rad));
+					bBox.width = Math.abs(height * mathSin(rad)) + Math.abs(width * mathCos(rad));
+					bBox.height = Math.abs(height * mathCos(rad)) + Math.abs(width * mathSin(rad));
 				}
 			}
 
@@ -6784,7 +6783,7 @@ Axis.prototype = {
 		}
 
 		if (ret === UNDEFINED) {
-			if (mathAbs(value) >= 10000) { // add thousands separators
+			if (Math.abs(value) >= 10000) { // add thousands separators
 				ret = Highcharts.numberFormat(value, 0);
 
 			} else { // small numbers
@@ -7869,9 +7868,9 @@ Axis.prototype = {
 
 					if (rot === rotationOption || (rot && rot >= -90 && rot <= 90)) { // #3891
 					
-						step = getStep(mathAbs(labelMetrics.h / mathSin(deg2rad * rot)));
+						step = getStep(Math.abs(labelMetrics.h / mathSin(deg2rad * rot)));
 
-						score = step + mathAbs(rot / 360);
+						score = step + Math.abs(rot / 360);
 
 						if (score < bestScore) {
 							bestScore = score;
@@ -8910,7 +8909,7 @@ Tooltip.prototype = {
 			now = tooltip.now,
 			animate = tooltip.options.animation !== false && !tooltip.isHidden && 
 				// When we get close to the target position, abort animation and land on the right place (#3056)
-				(mathAbs(x - now.x) > 1 || mathAbs(y - now.y) > 1),
+				(Math.abs(x - now.x) > 1 || Math.abs(y - now.y) > 1),
 			skipAnchor = tooltip.followPointer || tooltip.len > 1;
 
 		// Get intermediate values for animation
@@ -9766,7 +9765,7 @@ Pointer.prototype = {
 			if (this.selectionMarker && zoomHor) {
 				size = chartX - mouseDownX;
 				this.selectionMarker.attr({
-					width: mathAbs(size),
+					width: Math.abs(size),
 					x: (size > 0 ? 0 : size) + mouseDownX
 				});
 			}
@@ -9774,7 +9773,7 @@ Pointer.prototype = {
 			if (this.selectionMarker && zoomVert) {
 				size = chartY - mouseDownY;
 				this.selectionMarker.attr({
-					height: mathAbs(size),
+					height: Math.abs(size),
 					y: (size > 0 ? 0 : size) + mouseDownY
 				});
 			}
@@ -10088,8 +10087,8 @@ extend(Highcharts.Pointer.prototype, {
 			transformScale,
 			scaleKey,
 			setScale = function () {
-				if (!singleTouch && mathAbs(touch0Start - touch1Start) > 20) { // Don't zoom if fingers are too close on this axis
-					scale = forcedScale || mathAbs(touch0Now - touch1Now) / mathAbs(touch0Start - touch1Start); 
+				if (!singleTouch && Math.abs(touch0Start - touch1Start) > 20) { // Don't zoom if fingers are too close on this axis
+					scale = forcedScale || Math.abs(touch0Now - touch1Now) / Math.abs(touch0Start - touch1Start); 
 				}
 				
 				clipXY = ((plotLeftTop - touch0Now) / scale) + touch0Start;
@@ -13663,7 +13662,7 @@ Series.prototype = {
 
 			// Determine auto enabling of markers (#3635)
 			if (i) {
-				closestPointRangePx = Math.min(closestPointRangePx, mathAbs(plotX - lastPlotX));
+				closestPointRangePx = Math.min(closestPointRangePx, Math.abs(plotX - lastPlotX));
 			}
 			lastPlotX = plotX;
 
@@ -14782,7 +14781,7 @@ StackItem.prototype = {
 			neg = this.isNegative,							// special treatment is needed for negative stacks
 			y = axis.translate(axis.usePercentage ? 100 : this.total, 0, 0, 0, 1), // stack value translated mapped to chart coordinates
 			yZero = axis.translate(0),						// stack origin
-			h = mathAbs(y - yZero),							// stack height
+			h = Math.abs(y - yZero),							// stack height
 			x = chart.xAxis[0].translate(this.x) + xOffset,	// stack x position
 			plotHeight = chart.plotHeight,
 			stackBox = {	// this is the box for the complete stack
@@ -14934,11 +14933,11 @@ Series.prototype.setStackedPoints = function () {
 			other = isNegative ? stackKey : negKey;
 			if (negStacks && stacks[other] && stacks[other][x]) {
 				other = stacks[other][x];
-				stack.total = other.total = Math.max(other.total, stack.total) + mathAbs(y) || 0;
+				stack.total = other.total = Math.max(other.total, stack.total) + Math.abs(y) || 0;
 
 			// Percent stacked areas
 			} else {
-				stack.total = correctFloat(stack.total + (mathAbs(y) || 0));
+				stack.total = correctFloat(stack.total + (Math.abs(y) || 0));
 			}
 		} else {
 			stack.total = correctFloat(stack.total + (y || 0));
@@ -15999,7 +15998,7 @@ var ColumnSeries = extendClass(Series, {
 		}
 
 		var categoryWidth = Math.min(
-				mathAbs(xAxis.transA) * (xAxis.ordinalSlope || options.pointRange || xAxis.closestPointRange || xAxis.tickInterval || 1), // #2610
+				Math.abs(xAxis.transA) * (xAxis.ordinalSlope || options.pointRange || xAxis.closestPointRange || xAxis.tickInterval || 1), // #2610
 				xAxis.len // #1535
 			),
 			groupPadding = categoryWidth * options.groupPadding,
@@ -16072,11 +16071,11 @@ var ColumnSeries = extendClass(Series, {
 				barH = Math.max(plotY, yBottom) - barY;
 
 			// Handle options.minPointLength
-			if (mathAbs(barH) < minPointLength) {
+			if (Math.abs(barH) < minPointLength) {
 				if (minPointLength) {
 					barH = minPointLength;
 					barY =
-						Math.round(mathAbs(barY - translatedThreshold) > minPointLength ? // stacked
+						Math.round(Math.abs(barY - translatedThreshold) > minPointLength ? // stacked
 							yBottom - minPointLength : // keep position
 							translatedThreshold - (yAxis.translate(point.y, 0, 1, 0, 1) <= translatedThreshold ? minPointLength : 0)); // use exact yAxis.translation (#1485)
 				}
@@ -16096,7 +16095,7 @@ var ColumnSeries = extendClass(Series, {
 			barX = Math.round(barX) + xCrisp;
 			barW = right - barX;
 
-			fromTop = mathAbs(barY) < 0.5;
+			fromTop = Math.abs(barY) < 0.5;
 			bottom = Math.min(Math.round(barY + barH) + yCrisp, 9e4); // #3575
 			barY = Math.round(barY) + yCrisp;
 			barH = bottom - barY;
@@ -17226,7 +17225,7 @@ if (seriesTypes.pie) {
 
 					// find the closest slot index
 					for (slotI = 0; slotI < slotsLength; slotI++) {
-						distance = mathAbs(slots[slotI] - labelPos[1]);
+						distance = Math.abs(slots[slotI] - labelPos[1]);
 						if (distance < closest) {
 							closest = distance;
 							slotIndex = slotI;
@@ -18983,7 +18982,7 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
 		if (!extendedAxis.ordinalPositions) { // we have an ordinal axis, but the data is equally spaced
 			runBase = true;
 
-		} else if (mathAbs(movedUnits) > 1) {
+		} else if (Math.abs(movedUnits) > 1) {
 
 			// Remove active points for shared tooltip
 			if (hoverPoints) {
@@ -20903,7 +20902,7 @@ Scroller.prototype = {
 		// Get the pixel position of the handles
 		pxMin = pick(pxMin, xAxis.translate(min));
 		pxMax = pick(pxMax, xAxis.translate(max));
-		if (isNaN(pxMin) || mathAbs(pxMin) === Infinity) { // Verify (#1851, #2238)
+		if (isNaN(pxMin) || Math.abs(pxMin) === Infinity) { // Verify (#1851, #2238)
 			pxMin = 0;
 			pxMax = scrollerWidth;
 		}

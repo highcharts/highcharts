@@ -116,7 +116,7 @@ var ColumnSeries = extendClass(Series, {
 		}
 
 		var categoryWidth = Math.min(
-				mathAbs(xAxis.transA) * (xAxis.ordinalSlope || options.pointRange || xAxis.closestPointRange || xAxis.tickInterval || 1), // #2610
+				Math.abs(xAxis.transA) * (xAxis.ordinalSlope || options.pointRange || xAxis.closestPointRange || xAxis.tickInterval || 1), // #2610
 				xAxis.len // #1535
 			),
 			groupPadding = categoryWidth * options.groupPadding,
@@ -189,11 +189,11 @@ var ColumnSeries = extendClass(Series, {
 				barH = Math.max(plotY, yBottom) - barY;
 
 			// Handle options.minPointLength
-			if (mathAbs(barH) < minPointLength) {
+			if (Math.abs(barH) < minPointLength) {
 				if (minPointLength) {
 					barH = minPointLength;
 					barY =
-						Math.round(mathAbs(barY - translatedThreshold) > minPointLength ? // stacked
+						Math.round(Math.abs(barY - translatedThreshold) > minPointLength ? // stacked
 							yBottom - minPointLength : // keep position
 							translatedThreshold - (yAxis.translate(point.y, 0, 1, 0, 1) <= translatedThreshold ? minPointLength : 0)); // use exact yAxis.translation (#1485)
 				}
@@ -213,7 +213,7 @@ var ColumnSeries = extendClass(Series, {
 			barX = Math.round(barX) + xCrisp;
 			barW = right - barX;
 
-			fromTop = mathAbs(barY) < 0.5;
+			fromTop = Math.abs(barY) < 0.5;
 			bottom = Math.min(Math.round(barY + barH) + yCrisp, 9e4); // #3575
 			barY = Math.round(barY) + yCrisp;
 			barH = bottom - barY;

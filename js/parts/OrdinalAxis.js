@@ -557,7 +557,7 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
 		if (!extendedAxis.ordinalPositions) { // we have an ordinal axis, but the data is equally spaced
 			runBase = true;
 
-		} else if (mathAbs(movedUnits) > 1) {
+		} else if (Math.abs(movedUnits) > 1) {
 
 			// Remove active points for shared tooltip
 			if (hoverPoints) {
