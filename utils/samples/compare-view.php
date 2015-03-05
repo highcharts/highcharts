@@ -347,6 +347,12 @@
 								rightSVG: rightSVG,
 								path: "<?php echo $path ?>".replace(/\//g, '--')	
 							}, 
+							error: function (xhr) {
+								report += '<div>' +	xhr.responseText + '</div>'
+								onDifferent('Error');
+								$('#report').html(report)
+									.css('background', identical ? "#a4edba" : '#f15c80');
+							},
 							success: function (data) {
 
 								if (data.fallBackToOnline) {
