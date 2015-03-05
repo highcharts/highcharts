@@ -34,7 +34,6 @@ var Chart = Highcharts.Chart,
 	HIDDEN = 'hidden',
 	NONE = 'none',
 	PREFIX = 'highcharts-',
-	ABSOLUTE = 'absolute',
 	PX = 'px',
 	UNDEFINED,
 	symbols = Highcharts.Renderer.prototype.symbols,
@@ -259,7 +258,7 @@ extend(Chart.prototype, {
 
 		// create a sandbox where a new chart will be generated
 		sandbox = createElement('div', null, {
-			position: ABSOLUTE,
+			position: 'absolute',
 			top: '-9999em',
 			width: chart.chartWidth + PX,
 			height: chart.chartHeight + PX
@@ -479,7 +478,7 @@ extend(Chart.prototype, {
 			chart[cacheName] = menu = createElement('div', {
 				className: className
 			}, {
-				position: ABSOLUTE,
+				position: 'absolute',
 				zIndex: 1000,
 				padding: menuPadding + PX
 			}, chart.container);

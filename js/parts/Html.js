@@ -39,7 +39,7 @@ extend(SVGElement.prototype, {
 		// faking getBBox in exported SVG in legacy IE
 		// faking getBBox in exported SVG in legacy IE (is this a duplicate of the fix for #1079?)
 		if (element.nodeName === 'text') {
-			element.style.position = ABSOLUTE;
+			element.style.position = 'absolute';
 		}
 
 		return {
@@ -203,7 +203,7 @@ extend(SVGRenderer.prototype, {
 				y: mathRound(y)
 			})
 			.css({
-				position: ABSOLUTE,
+				position: 'absolute',
 				fontFamily: this.style.fontFamily,
 				fontSize: this.style.fontSize
 			});
@@ -249,7 +249,7 @@ extend(SVGRenderer.prototype, {
 							htmlGroup = parentGroup.div = parentGroup.div || createElement('div', {
 								className: attr(parentGroup.element, 'class')
 							}, {
-								position: ABSOLUTE,
+								position: 'absolute',
 								left: (parentGroup.translateX || 0) + PX,
 								top: (parentGroup.translateY || 0) + PX
 							}, htmlGroup || container); // the top group is appended to container

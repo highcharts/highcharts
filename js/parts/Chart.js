@@ -557,7 +557,7 @@ Chart.prototype = {
 			}
 			this.renderToClone = clone = this.renderTo.cloneNode(0);
 			css(clone, {
-				position: ABSOLUTE,
+				position: 'absolute',
 				top: '-9999px',
 				display: 'block' // #833
 			});

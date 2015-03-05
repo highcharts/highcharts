@@ -59,7 +59,6 @@ var UNDEFINED,
 	VERSION = '4.1.3-modified',
 
 	// some constants for frequently used strings
-	ABSOLUTE = 'absolute',
 	RELATIVE = 'relative',
 	HIDDEN = 'hidden',
 	PREFIX = 'highcharts-',
@@ -1435,7 +1434,7 @@ defaultOptions = {
 		//items: [],
 		style: {
 			//font: defaultFont,
-			position: ABSOLUTE,
+			position: 'absolute',
 			color: '#3E576F'
 		}
 	},
@@ -1477,7 +1476,7 @@ defaultOptions = {
 			color: '#CCC'
 		},
 		itemCheckboxStyle: {
-			position: ABSOLUTE,
+			position: 'absolute',
 			width: '13px', // for IE precision
 			height: '13px'
 		},
@@ -1506,7 +1505,7 @@ defaultOptions = {
 		},
 		// showDuration: 0,
 		style: {
-			position: ABSOLUTE,
+			position: 'absolute',
 			backgroundColor: 'white',
 			opacity: 0.5,
 			textAlign: 'center'
@@ -3990,7 +3989,7 @@ SVGRenderer.prototype = {
 		// Prevent wrapping from creating false offsetWidths in export in legacy IE (#1079, #1063)
 		if (fakeSVG) {
 			wrapper.css({
-				position: ABSOLUTE
+				position: 'absolute'
 			});
 		}
 
@@ -4383,7 +4382,7 @@ extend(SVGElement.prototype, {
 		// faking getBBox in exported SVG in legacy IE
 		// faking getBBox in exported SVG in legacy IE (is this a duplicate of the fix for #1079?)
 		if (element.nodeName === 'text') {
-			element.style.position = ABSOLUTE;
+			element.style.position = 'absolute';
 		}
 
 		return {
@@ -4547,7 +4546,7 @@ extend(SVGRenderer.prototype, {
 				y: mathRound(y)
 			})
 			.css({
-				position: ABSOLUTE,
+				position: 'absolute',
 				fontFamily: this.style.fontFamily,
 				fontSize: this.style.fontSize
 			});
@@ -4593,7 +4592,7 @@ extend(SVGRenderer.prototype, {
 							htmlGroup = parentGroup.div = parentGroup.div || createElement('div', {
 								className: attr(parentGroup.element, 'class')
 							}, {
-								position: ABSOLUTE,
+								position: 'absolute',
 								left: (parentGroup.translateX || 0) + PX,
 								top: (parentGroup.translateY || 0) + PX
 							}, htmlGroup || container); // the top group is appended to container
@@ -4669,7 +4668,7 @@ VMLElement = {
 	init: function (renderer, nodeName) {
 		var wrapper = this,
 			markup =  ['<', nodeName, ' filled="f" stroked="f"'],
-			style = ['position: ', ABSOLUTE, ';'],
+			style = ['position: ', 'absolute', ';'],
 			isDiv = nodeName === 'div';
 
 		// divs and shapes need size
@@ -11730,7 +11729,7 @@ Chart.prototype = {
 			}
 			this.renderToClone = clone = this.renderTo.cloneNode(0);
 			css(clone, {
-				position: ABSOLUTE,
+				position: 'absolute',
 				top: '-9999px',
 				display: 'block' // #833
 			});

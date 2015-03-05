@@ -197,7 +197,7 @@ defaultOptions = {
 		//items: [],
 		style: {
 			//font: defaultFont,
-			position: ABSOLUTE,
+			position: 'absolute',
 			color: '#3E576F'
 		}
 	},
@@ -239,7 +239,7 @@ defaultOptions = {
 			color: '#CCC'
 		},
 		itemCheckboxStyle: {
-			position: ABSOLUTE,
+			position: 'absolute',
 			width: '13px', // for IE precision
 			height: '13px'
 		},
@@ -268,7 +268,7 @@ defaultOptions = {
 		},
 		// showDuration: 0,
 		style: {
-			position: ABSOLUTE,
+			position: 'absolute',
 			backgroundColor: 'white',
 			opacity: 0.5,
 			textAlign: 'center'

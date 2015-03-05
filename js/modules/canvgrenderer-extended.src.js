@@ -12,7 +12,6 @@
 
 (function (Highcharts) { // encapsulate
 	var UNDEFINED,
-		ABSOLUTE = 'absolute',
 		RELATIVE = 'relative',
 		HIDDEN = 'hidden',
 		VISIBLE = 'visible',
@@ -43,7 +42,7 @@
 				containerOffsetWidth = container.offsetWidth,
 				containerOffsetHeight = container.offsetHeight,
 				canvas,
-				initialHiddenStyle = { visibility: HIDDEN, position: ABSOLUTE };
+				initialHiddenStyle = { visibility: HIDDEN, position: 'absolute' };
 
 			this.init.apply(this, [container, chartWidth, chartHeight]);
 

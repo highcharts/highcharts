@@ -2216,7 +2216,7 @@ SVGRenderer.prototype = {
 		// Prevent wrapping from creating false offsetWidths in export in legacy IE (#1079, #1063)
 		if (fakeSVG) {
 			wrapper.css({
-				position: ABSOLUTE
+				position: 'absolute'
 			});
 		}
 

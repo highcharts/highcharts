@@ -417,7 +417,7 @@ RangeSelector.prototype = {
 			className: PREFIX + 'range-selector',
 			type: 'text'
 		}, extend({
-			position: ABSOLUTE,
+			position: 'absolute',
 			border: 0,
 			width: '1px', // Chrome needs a pixel to see it
 			height: '1px',

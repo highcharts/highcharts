@@ -29,7 +29,7 @@ VMLElement = {
 	init: function (renderer, nodeName) {
 		var wrapper = this,
 			markup =  ['<', nodeName, ' filled="f" stroked="f"'],
-			style = ['position: ', ABSOLUTE, ';'],
+			style = ['position: ', 'absolute', ';'],
 			isDiv = nodeName === 'div';
 
 		// divs and shapes need size
