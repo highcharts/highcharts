@@ -44,7 +44,6 @@ var UNDEFINED,
 	VERSION = '@product.version@',
 
 	// some constants for frequently used strings
-	RELATIVE = 'relative',
 	HIDDEN = 'hidden',
 	PREFIX = 'highcharts-',
 	VISIBLE = 'visible',

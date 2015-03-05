@@ -12,7 +12,6 @@
 
 (function (Highcharts) { // encapsulate
 	var UNDEFINED,
-		RELATIVE = 'relative',
 		HIDDEN = 'hidden',
 		VISIBLE = 'visible',
 		PX = 'px',
@@ -51,7 +50,7 @@
 				width: containerOffsetWidth,
 				height: containerOffsetHeight
 			}, {
-				position: RELATIVE,
+				position: 'relative',
 				left: containerLeft,
 				top: containerTop
 			}, container);

@@ -263,7 +263,7 @@ defaultOptions = {
 		// hideDuration: 100,
 		labelStyle: {
 			fontWeight: 'bold',
-			position: RELATIVE,
+			position: 'relative',
 			top: '45%'
 		},
 		// showDuration: 0,

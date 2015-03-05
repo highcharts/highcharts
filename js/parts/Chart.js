@@ -633,7 +633,7 @@ Chart.prototype = {
 					(optionsChart.className ? ' ' + optionsChart.className : ''),
 				id: containerId
 			}, extend({
-				position: RELATIVE,
+				position: 'relative',
 				overflow: HIDDEN, // needed for context menu (avoid scrollbars) and
 					// content overflow in IE
 				width: chartWidth + PX,

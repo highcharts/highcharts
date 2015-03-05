@@ -59,7 +59,6 @@ var UNDEFINED,
 	VERSION = '2.1.3-modified',
 
 	// some constants for frequently used strings
-	RELATIVE = 'relative',
 	HIDDEN = 'hidden',
 	PREFIX = 'highcharts-',
 	VISIBLE = 'visible',
@@ -1500,7 +1499,7 @@ defaultOptions = {
 		// hideDuration: 100,
 		labelStyle: {
 			fontWeight: 'bold',
-			position: RELATIVE,
+			position: 'relative',
 			top: '45%'
 		},
 		// showDuration: 0,
@@ -5153,7 +5152,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		renderer.alignedObjects = [];
 
 		boxWrapper = renderer.createElement('div')
-			.css(extend(this.getStyle(style), { position: RELATIVE}));
+			.css(extend(this.getStyle(style), { position: 'relative'}));
 		box = boxWrapper.element;
 		container.appendChild(boxWrapper.element);
 
@@ -11805,7 +11804,7 @@ Chart.prototype = {
 					(optionsChart.className ? ' ' + optionsChart.className : ''),
 				id: containerId
 			}, extend({
-				position: RELATIVE,
+				position: 'relative',
 				overflow: HIDDEN, // needed for context menu (avoid scrollbars) and
 					// content overflow in IE
 				width: chartWidth + PX,
