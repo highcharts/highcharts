@@ -60,7 +60,6 @@ var UNDEFINED,
 
 	// some constants for frequently used strings
 	numRegex = /^[0-9]+$/,
-	HOVER_STATE = 'hover',
 	SELECT_STATE = 'select',
 	marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
 	
@@ -8727,7 +8726,7 @@ Tooltip.prototype = {
 			}
 
 			each(point, function (item) {
-				item.setState(HOVER_STATE);
+				item.setState('hover');
 
 				pointConfig.push(item.getLabelConfig());
 			});
@@ -13411,7 +13410,7 @@ Series.prototype = {
 			seriesOptions = series.options,
 			normalOptions = defaultPlotOptions[series.type].marker ? seriesOptions.marker : seriesOptions,
 			stateOptions = normalOptions.states,
-			stateOptionsHover = stateOptions[HOVER_STATE],
+			stateOptionsHover = stateOptions.hover,
 			pointStateOptionsHover,
 			seriesColor = series.color,
 			seriesNegativeColor = series.options.negativeColor,
@@ -13457,8 +13456,8 @@ Series.prototype = {
 		// general point attributes for the series normal state
 		seriesPointAttr[''] = series.convertAttribs(normalOptions, normalDefaults);
 
-		// HOVER_STATE and SELECT_STATE states inherit from normal state except the default radius
-		each([HOVER_STATE, SELECT_STATE], function (state) {
+		// 'hover' and SELECT_STATE states inherit from normal state except the default radius
+		each(['hover', SELECT_STATE], function (state) {
 			seriesPointAttr[state] =
 					series.convertAttribs(stateOptions[state], seriesPointAttr['']);
 		});
@@ -13506,7 +13505,7 @@ Series.prototype = {
 					normalOptions = normalOptions || {};
 					pointAttr = [];
 					stateOptions = normalOptions.states || {}; // reassign for individual point
-					pointStateOptionsHover = stateOptions[HOVER_STATE] = stateOptions[HOVER_STATE] || {};
+					pointStateOptionsHover = stateOptions.hover = stateOptions.hover || {};
 
 					// Handle colors for column and pies
 					if (!seriesOptions.marker) { // column, bar, point
@@ -13528,9 +13527,9 @@ Series.prototype = {
 					pointAttr[''] = series.convertAttribs(extend(attr, normalOptions), seriesPointAttr['']);
 
 					// inherit from point normal and series hover
-					pointAttr[HOVER_STATE] = series.convertAttribs(
-						stateOptions[HOVER_STATE],
-						seriesPointAttr[HOVER_STATE],
+					pointAttr.hover = series.convertAttribs(
+						stateOptions.hover,
+						seriesPointAttr.hover,
 						pointAttr['']
 					);
 
@@ -18757,7 +18756,7 @@ extend(Legend.prototype, {
 	var legend = this;
 	// Set the events on the item group, or in case of useHTML, the item itself (#1249)
 	(useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
-			item.setState(HOVER_STATE);
+			item.setState('hover');
 			legendItem.css(legend.options.itemHoverStyle);
 		})
 		.on('mouseout', function () {
@@ -19004,7 +19003,7 @@ extend(Point.prototype, {
 		}
 
 		// hover this
-		point.setState(HOVER_STATE);
+		point.setState('hover');
 		chart.hoverPoint = point;
 	},
 
@@ -19204,7 +19203,7 @@ extend(Series.prototype, {
 		}
 
 		// hover this
-		series.setState(HOVER_STATE);
+		series.setState('hover');
 		chart.hoverSeries = series;
 	},
 

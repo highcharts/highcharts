@@ -347,7 +347,7 @@ Tooltip.prototype = {
 			}
 
 			each(point, function (item) {
-				item.setState(HOVER_STATE);
+				item.setState('hover');
 
 				pointConfig.push(item.getLabelConfig());
 			});

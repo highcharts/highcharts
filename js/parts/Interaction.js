@@ -178,7 +178,7 @@ extend(Legend.prototype, {
 	var legend = this;
 	// Set the events on the item group, or in case of useHTML, the item itself (#1249)
 	(useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
-			item.setState(HOVER_STATE);
+			item.setState('hover');
 			legendItem.css(legend.options.itemHoverStyle);
 		})
 		.on('mouseout', function () {
@@ -425,7 +425,7 @@ extend(Point.prototype, {
 		}
 
 		// hover this
-		point.setState(HOVER_STATE);
+		point.setState('hover');
 		chart.hoverPoint = point;
 	},
 
@@ -625,7 +625,7 @@ extend(Series.prototype, {
 		}
 
 		// hover this
-		series.setState(HOVER_STATE);
+		series.setState('hover');
 		chart.hoverSeries = series;
 	},
 

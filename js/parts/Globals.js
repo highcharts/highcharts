@@ -45,7 +45,6 @@ var UNDEFINED,
 
 	// some constants for frequently used strings
 	numRegex = /^[0-9]+$/,
-	HOVER_STATE = 'hover',
 	SELECT_STATE = 'select',
 	marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
 	
