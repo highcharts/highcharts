@@ -12,7 +12,6 @@
 
 (function (Highcharts) { // encapsulate
 	var UNDEFINED,
-		PX = 'px',
 		css = Highcharts.css,
 		CanVGRenderer = Highcharts.CanVGRenderer,
 		SVGRenderer = Highcharts.SVGRenderer,
@@ -87,11 +86,11 @@
 
 			// Add border styling from options to the style
 			tooltipDivStyle = merge(tooltipDivStyle, {
-				padding: padding + PX,
+				padding: padding + 'px',
 				'background-color': options.backgroundColor,
 				'border-style': 'solid',
-				'border-width': borderWidth + PX,
-				'border-radius': options.borderRadius + PX
+				'border-width': borderWidth + 'px',
+				'border-radius': options.borderRadius + 'px'
 			});
 
 			// Optionally add shadow
@@ -123,17 +122,17 @@
 
 				css(tooltipDiv, {
 					visibility: 'visible',
-					left: position.x + PX,
-					top: position.y + PX,
+					left: position.x + 'px',
+					top: position.y + 'px',
 					'border-color': args.borderColor
 				});
 
 				// Position the tooltip line
 				css(tooltipLine, {
 					visibility: 'visible',
-					left: offsetLeft + args.x + PX,
-					top: offsetTop + chart.plotTop + PX,
-					height: chart.plotHeight  + PX
+					left: offsetLeft + args.x + 'px',
+					top: offsetTop + chart.plotTop + 'px',
+					height: chart.plotHeight  + 'px'
 				});
 
 				// This timeout hides the tooltip after 3 seconds

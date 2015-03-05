@@ -32,7 +32,6 @@ var Chart = Highcharts.Chart,
 	M = 'M',
 	L = 'L',
 	NONE = 'none',
-	PX = 'px',
 	UNDEFINED,
 	symbols = Highcharts.Renderer.prototype.symbols,
 	defaultOptions = Highcharts.getOptions(),
@@ -258,8 +257,8 @@ extend(Chart.prototype, {
 		sandbox = createElement('div', null, {
 			position: 'absolute',
 			top: '-9999em',
-			width: chart.chartWidth + PX,
-			height: chart.chartHeight + PX
+			width: chart.chartWidth + 'px',
+			height: chart.chartHeight + 'px'
 		}, doc.body);
 
 		// get the source size
@@ -478,7 +477,7 @@ extend(Chart.prototype, {
 			}, {
 				position: 'absolute',
 				zIndex: 1000,
-				padding: menuPadding + PX
+				padding: menuPadding + 'px'
 			}, chart.container);
 
 			innerMenu = createElement('div', null,
@@ -553,15 +552,15 @@ extend(Chart.prototype, {
 
 		// if outside right, right align it
 		if (x + chart.exportMenuWidth > chartWidth) {
-			menuStyle.right = (chartWidth - x - width - menuPadding) + PX;
+			menuStyle.right = (chartWidth - x - width - menuPadding) + 'px';
 		} else {
-			menuStyle.left = (x - menuPadding) + PX;
+			menuStyle.left = (x - menuPadding) + 'px';
 		}
 		// if outside bottom, bottom align it
 		if (y + height + chart.exportMenuHeight > chartHeight && button.alignOptions.verticalAlign !== 'top') {
-			menuStyle.bottom = (chartHeight - y - menuPadding)  + PX;
+			menuStyle.bottom = (chartHeight - y - menuPadding)  + 'px';
 		} else {
-			menuStyle.top = (y + height - menuPadding) + PX;
+			menuStyle.top = (y + height - menuPadding) + 'px';
 		}
 
 		css(menu, menuStyle);

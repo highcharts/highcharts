@@ -425,16 +425,16 @@ RangeSelector.prototype = {
 			textAlign: 'center',
 			fontSize: chartStyle.fontSize,
 			fontFamily: chartStyle.fontFamily,
-			top: chart.plotTop + PX // prevent jump on focus in Firefox
+			top: chart.plotTop + 'px' // prevent jump on focus in Firefox
 		}, options.inputStyle), div);
 
 		// Blow up the input box
 		input.onfocus = function () {
 			css(this, {
-				left: (inputGroup.translateX + dateBox.x) + PX,
-				top: inputGroup.translateY + PX,
-				width: (dateBox.width - 2) + PX,
-				height: (dateBox.height - 2) + PX,
+				left: (inputGroup.translateX + dateBox.x) + 'px',
+				top: inputGroup.translateY + 'px',
+				width: (dateBox.width - 2) + 'px',
+				height: (dateBox.height - 2) + 'px',
 				border: '2px solid silver'
 			});
 		};

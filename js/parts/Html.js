@@ -117,7 +117,7 @@ extend(SVGElement.prototype, {
 				// Update textWidth
 				if (width > textWidth && /[ \-]/.test(elem.textContent || elem.innerText)) { // #983, #1254
 					css(elem, {
-						width: textWidth + PX,
+						width: textWidth + 'px',
 						display: 'block',
 						whiteSpace: (styles && styles.whiteSpace) || 'normal' // #3331
 					});
@@ -129,8 +129,8 @@ extend(SVGElement.prototype, {
 
 			// apply position with correction
 			css(elem, {
-				left: (x + (wrapper.xCorr || 0)) + PX,
-				top: (y + (wrapper.yCorr || 0)) + PX
+				left: (x + (wrapper.xCorr || 0)) + 'px',
+				top: (y + (wrapper.yCorr || 0)) + 'px'
 			});
 
 			// force reflow in webkit to apply the left and top on useHTML element (#1249)
@@ -250,8 +250,8 @@ extend(SVGRenderer.prototype, {
 								className: attr(parentGroup.element, 'class')
 							}, {
 								position: 'absolute',
-								left: (parentGroup.translateX || 0) + PX,
-								top: (parentGroup.translateY || 0) + PX
+								left: (parentGroup.translateX || 0) + 'px',
+								top: (parentGroup.translateY || 0) + 'px'
 							}, htmlGroup || container); // the top group is appended to container
 
 							// Shortcut
@@ -261,12 +261,12 @@ extend(SVGRenderer.prototype, {
 							// position is changed
 							extend(parentGroup, {
 								translateXSetter: function (value, key) {
-									htmlGroupStyle.left = value + PX;
+									htmlGroupStyle.left = value + 'px';
 									parentGroup[key] = value;
 									parentGroup.doTransform = true;
 								},
 								translateYSetter: function (value, key) {
-									htmlGroupStyle.top = value + PX;
+									htmlGroupStyle.top = value + 'px';
 									parentGroup[key] = value;
 									parentGroup.doTransform = true;
 								},

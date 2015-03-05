@@ -1229,8 +1229,8 @@ SVGRenderer.prototype = {
 				css(container, { left: 0, top: 0 });
 				rect = container.getBoundingClientRect();
 				css(container, {
-					left: (mathCeil(rect.left) - rect.left) + PX,
-					top: (mathCeil(rect.top) - rect.top) + PX
+					left: (mathCeil(rect.left) - rect.left) + 'px',
+					top: (mathCeil(rect.top) - rect.top) + 'px'
 				});
 			};
 

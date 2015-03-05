@@ -411,8 +411,8 @@ VMLElement = {
 		this[key] = style[key] = value; // style is for #1873
 
 		// Correction for the 1x1 size of the shape container. Used in gauge needles.
-		style.left = -mathRound(mathSin(value * deg2rad) + 1) + PX;
-		style.top = mathRound(mathCos(value * deg2rad)) + PX;
+		style.left = -mathRound(mathSin(value * deg2rad) + 1) + 'px';
+		style.top = mathRound(mathCos(value * deg2rad)) + 'px';
 	},
 	strokeSetter: function (value, key, element) {
 		this.setAttr('strokecolor', this.renderer.color(value, element, key));
@@ -421,7 +421,7 @@ VMLElement = {
 		element.stroked = !!value; // VML "stroked" attribute
 		this[key] = value; // used in getter, issue #113
 		if (isNumber(value)) {
-			value += PX;
+			value += 'px';
 		}
 		this.setAttr('strokeweight', value);
 	},
@@ -600,8 +600,8 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				// issue 74 workaround
 				if (!inverted && docMode8 && nodeName === 'DIV') {
 					extend(ret, {
-						width: right + PX,
-						height: bottom + PX
+						width: right + 'px',
+						height: bottom + 'px'
 					});
 				}
 				return ret;

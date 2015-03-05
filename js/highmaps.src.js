@@ -59,7 +59,6 @@ var UNDEFINED,
 	VERSION = '1.1.3-modified',
 
 	// some constants for frequently used strings
-	PX = 'px',
 	NONE = 'none',
 	M = 'M',
 	L = 'L',
@@ -2998,8 +2997,8 @@ SVGRenderer.prototype = {
 				css(container, { left: 0, top: 0 });
 				rect = container.getBoundingClientRect();
 				css(container, {
-					left: (mathCeil(rect.left) - rect.left) + PX,
-					top: (mathCeil(rect.top) - rect.top) + PX
+					left: (mathCeil(rect.left) - rect.left) + 'px',
+					top: (mathCeil(rect.top) - rect.top) + 'px'
 				});
 			};
 
@@ -4456,7 +4455,7 @@ extend(SVGElement.prototype, {
 				// Update textWidth
 				if (width > textWidth && /[ \-]/.test(elem.textContent || elem.innerText)) { // #983, #1254
 					css(elem, {
-						width: textWidth + PX,
+						width: textWidth + 'px',
 						display: 'block',
 						whiteSpace: (styles && styles.whiteSpace) || 'normal' // #3331
 					});
@@ -4468,8 +4467,8 @@ extend(SVGElement.prototype, {
 
 			// apply position with correction
 			css(elem, {
-				left: (x + (wrapper.xCorr || 0)) + PX,
-				top: (y + (wrapper.yCorr || 0)) + PX
+				left: (x + (wrapper.xCorr || 0)) + 'px',
+				top: (y + (wrapper.yCorr || 0)) + 'px'
 			});
 
 			// force reflow in webkit to apply the left and top on useHTML element (#1249)
@@ -4589,8 +4588,8 @@ extend(SVGRenderer.prototype, {
 								className: attr(parentGroup.element, 'class')
 							}, {
 								position: 'absolute',
-								left: (parentGroup.translateX || 0) + PX,
-								top: (parentGroup.translateY || 0) + PX
+								left: (parentGroup.translateX || 0) + 'px',
+								top: (parentGroup.translateY || 0) + 'px'
 							}, htmlGroup || container); // the top group is appended to container
 
 							// Shortcut
@@ -4600,12 +4599,12 @@ extend(SVGRenderer.prototype, {
 							// position is changed
 							extend(parentGroup, {
 								translateXSetter: function (value, key) {
-									htmlGroupStyle.left = value + PX;
+									htmlGroupStyle.left = value + 'px';
 									parentGroup[key] = value;
 									parentGroup.doTransform = true;
 								},
 								translateYSetter: function (value, key) {
-									htmlGroupStyle.top = value + PX;
+									htmlGroupStyle.top = value + 'px';
 									parentGroup[key] = value;
 									parentGroup.doTransform = true;
 								},
@@ -5046,8 +5045,8 @@ VMLElement = {
 		this[key] = style[key] = value; // style is for #1873
 
 		// Correction for the 1x1 size of the shape container. Used in gauge needles.
-		style.left = -mathRound(mathSin(value * deg2rad) + 1) + PX;
-		style.top = mathRound(mathCos(value * deg2rad)) + PX;
+		style.left = -mathRound(mathSin(value * deg2rad) + 1) + 'px';
+		style.top = mathRound(mathCos(value * deg2rad)) + 'px';
 	},
 	strokeSetter: function (value, key, element) {
 		this.setAttr('strokecolor', this.renderer.color(value, element, key));
@@ -5056,7 +5055,7 @@ VMLElement = {
 		element.stroked = !!value; // VML "stroked" attribute
 		this[key] = value; // used in getter, issue #113
 		if (isNumber(value)) {
-			value += PX;
+			value += 'px';
 		}
 		this.setAttr('strokeweight', value);
 	},
@@ -5235,8 +5234,8 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				// issue 74 workaround
 				if (!inverted && docMode8 && nodeName === 'DIV') {
 					extend(ret, {
-						width: right + PX,
-						height: bottom + PX
+						width: right + 'px',
+						height: bottom + 'px'
 					});
 				}
 				return ret;
@@ -5829,7 +5828,7 @@ Tick.prototype = {
 		});
 
 		// prepare CSS
-		//css = width && { width: mathMax(1, mathRound(width - 2 * (labelOptions.padding || 10))) + PX };
+		//css = width && { width: mathMax(1, mathRound(width - 2 * (labelOptions.padding || 10))) + 'px' };
 		
 		// first call
 		if (!defined(label)) {
@@ -7697,7 +7696,7 @@ Axis.prototype = {
 		// Handle word-wrap or ellipsis on vertical axis
 		} else if (slotWidth) {
 			// For word-wrap or ellipsis
-			css = { width: innerWidth + PX, textOverflow: 'clip' };
+			css = { width: innerWidth + 'px', textOverflow: 'clip' };
 
 			// On vertical axis, only allow word wrap if there is room for more lines.
 			i = tickPositions.length;
@@ -7716,7 +7715,7 @@ Axis.prototype = {
 		// Add ellipsis if the label length is significantly longer than ideal
 		if (attr.rotation) {
 			css = { 
-				width: (labelLength > chart.chartHeight * 0.5 ? chart.chartHeight * 0.33 : chart.chartHeight) + PX,
+				width: (labelLength > chart.chartHeight * 0.5 ? chart.chartHeight * 0.33 : chart.chartHeight) + 'px',
 				textOverflow: 'ellipsis'
 			};
 		}
@@ -10089,8 +10088,8 @@ Legend.prototype = {
 				if (checkbox) {
 					top = (translateY + checkbox.y + (scrollOffset || 0) + 3);
 					css(checkbox, {
-						left: (alignAttr.translateX + item.checkboxOffset + checkbox.x - 20) + PX,
-						top: top + PX,
+						left: (alignAttr.translateX + item.checkboxOffset + checkbox.x - 20) + 'px',
+						top: top + 'px',
 						display: top > translateY - 6 && top < translateY + clipHeight - 6 ? '' : NONE
 					});
 				}
@@ -11182,7 +11181,7 @@ Chart.prototype = {
 
 		if (title) {
 			title
-				.css({ width: (titleOptions.width || autoWidth) + PX })
+				.css({ width: (titleOptions.width || autoWidth) + 'px' })
 				.align(extend({ 
 					y: renderer.fontMetrics(titleOptions.style.fontSize, title).b - 3
 				}, titleOptions), false, 'spacingBox');
@@ -11193,7 +11192,7 @@ Chart.prototype = {
 		}
 		if (subtitle) {
 			subtitle
-				.css({ width: (subtitleOptions.width || autoWidth) + PX })
+				.css({ width: (subtitleOptions.width || autoWidth) + 'px' })
 				.align(extend({ 
 					y: titleOffset + (titleOptions.margin - 13) + renderer.fontMetrics(titleOptions.style.fontSize, subtitle).b 
 				}, subtitleOptions), false, 'spacingBox');
@@ -11341,8 +11340,8 @@ Chart.prototype = {
 				position: 'relative',
 				overflow: 'hidden', // needed for context menu (avoid scrollbars) and
 					// content overflow in IE
-				width: chartWidth + PX,
-				height: chartHeight + PX,
+				width: chartWidth + 'px',
+				height: chartHeight + 'px',
 				textAlign: 'left',
 				lineHeight: 'normal', // #427
 				zIndex: 0, // #1072
@@ -11512,8 +11511,8 @@ Chart.prototype = {
 
 		// Resize the container with the global animation applied if enabled (#2503)
 		(globalAnimation ? animate : css)(chart.container, {
-			width: chartWidth + PX,
-			height: chartHeight + PX
+			width: chartWidth + 'px',
+			height: chartHeight + 'px'
 		}, globalAnimation);
 
 		chart.setChartSize(true);
@@ -14288,10 +14287,10 @@ extend(Chart.prototype, {
 			setLoadingSize = function () {
 				if (loadingDiv) {
 					css(loadingDiv, {
-						left: chart.plotLeft + PX,
-						top: chart.plotTop + PX,
-						width: chart.plotWidth + PX,
-						height: chart.plotHeight + PX
+						left: chart.plotLeft + 'px',
+						top: chart.plotTop + 'px',
+						width: chart.plotWidth + 'px',
+						height: chart.plotHeight + 'px'
 					});
 				}
 			};

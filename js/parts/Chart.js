@@ -477,7 +477,7 @@ Chart.prototype = {
 
 		if (title) {
 			title
-				.css({ width: (titleOptions.width || autoWidth) + PX })
+				.css({ width: (titleOptions.width || autoWidth) + 'px' })
 				.align(extend({ 
 					y: renderer.fontMetrics(titleOptions.style.fontSize, title).b - 3
 				}, titleOptions), false, 'spacingBox');
@@ -488,7 +488,7 @@ Chart.prototype = {
 		}
 		if (subtitle) {
 			subtitle
-				.css({ width: (subtitleOptions.width || autoWidth) + PX })
+				.css({ width: (subtitleOptions.width || autoWidth) + 'px' })
 				.align(extend({ 
 					y: titleOffset + (titleOptions.margin - 13) + renderer.fontMetrics(titleOptions.style.fontSize, subtitle).b 
 				}, subtitleOptions), false, 'spacingBox');
@@ -636,8 +636,8 @@ Chart.prototype = {
 				position: 'relative',
 				overflow: 'hidden', // needed for context menu (avoid scrollbars) and
 					// content overflow in IE
-				width: chartWidth + PX,
-				height: chartHeight + PX,
+				width: chartWidth + 'px',
+				height: chartHeight + 'px',
 				textAlign: 'left',
 				lineHeight: 'normal', // #427
 				zIndex: 0, // #1072
@@ -807,8 +807,8 @@ Chart.prototype = {
 
 		// Resize the container with the global animation applied if enabled (#2503)
 		(globalAnimation ? animate : css)(chart.container, {
-			width: chartWidth + PX,
-			height: chartHeight + PX
+			width: chartWidth + 'px',
+			height: chartHeight + 'px'
 		}, globalAnimation);
 
 		chart.setChartSize(true);

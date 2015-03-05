@@ -180,8 +180,8 @@ Legend.prototype = {
 				if (checkbox) {
 					top = (translateY + checkbox.y + (scrollOffset || 0) + 3);
 					css(checkbox, {
-						left: (alignAttr.translateX + item.checkboxOffset + checkbox.x - 20) + PX,
-						top: top + PX,
+						left: (alignAttr.translateX + item.checkboxOffset + checkbox.x - 20) + 'px',
+						top: top + 'px',
 						display: top > translateY - 6 && top < translateY + clipHeight - 6 ? '' : NONE
 					});
 				}

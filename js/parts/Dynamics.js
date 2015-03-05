@@ -70,10 +70,10 @@ extend(Chart.prototype, {
 			setLoadingSize = function () {
 				if (loadingDiv) {
 					css(loadingDiv, {
-						left: chart.plotLeft + PX,
-						top: chart.plotTop + PX,
-						width: chart.plotWidth + PX,
-						height: chart.plotHeight + PX
+						left: chart.plotLeft + 'px',
+						top: chart.plotTop + 'px',
+						width: chart.plotWidth + 'px',
+						height: chart.plotHeight + 'px'
 					});
 				}
 			};
