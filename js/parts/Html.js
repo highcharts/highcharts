@@ -199,8 +199,8 @@ extend(SVGRenderer.prototype, {
 		// Set the default attributes
 		wrapper.attr({
 				text: str,
-				x: mathRound(x),
-				y: mathRound(y)
+				x: Math.round(x),
+				y: Math.round(y)
 			})
 			.css({
 				position: 'absolute',

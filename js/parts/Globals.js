@@ -2,7 +2,6 @@
 var UNDEFINED,
 	doc = document,
 	win = window,
-	mathRound = Math.round,
 	mathFloor = Math.floor,
 	mathCeil = Math.ceil,
 	mathMax = Math.max,

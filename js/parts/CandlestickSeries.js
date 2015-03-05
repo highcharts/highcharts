@@ -85,16 +85,16 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 
 				// crisp vector coordinates
 				crispCorr = (pointAttr['stroke-width'] % 2) / 2;
-				crispX = mathRound(point.plotX) - crispCorr; // #2596
+				crispX = Math.round(point.plotX) - crispCorr; // #2596
 				plotOpen = point.plotOpen;
 				plotClose = point.plotClose;
 				topBox = Math.min(plotOpen, plotClose);
 				bottomBox = Math.max(plotOpen, plotClose);
-				halfWidth = mathRound(point.shapeArgs.width / 2);
-				hasTopWhisker = mathRound(topBox) !== mathRound(point.plotY);
+				halfWidth = Math.round(point.shapeArgs.width / 2);
+				hasTopWhisker = Math.round(topBox) !== Math.round(point.plotY);
 				hasBottomWhisker = bottomBox !== point.yBottom;
-				topBox = mathRound(topBox) + crispCorr;
-				bottomBox = mathRound(bottomBox) + crispCorr;
+				topBox = Math.round(topBox) + crispCorr;
+				bottomBox = Math.round(bottomBox) + crispCorr;
 
 				// create the path
 				path = [
@@ -110,11 +110,11 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 					'M',
 					crispX, topBox,
 					'L',
-					crispX, hasTopWhisker ? mathRound(point.plotY) : topBox, // #460, #2094
+					crispX, hasTopWhisker ? Math.round(point.plotY) : topBox, // #460, #2094
 					'M',
 					crispX, bottomBox,
 					'L',
-					crispX, hasBottomWhisker ? mathRound(point.yBottom) : bottomBox // #460, #2094
+					crispX, hasBottomWhisker ? Math.round(point.yBottom) : bottomBox // #460, #2094
 				];
 
 				if (graphic) {

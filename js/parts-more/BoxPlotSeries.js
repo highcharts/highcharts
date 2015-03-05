@@ -126,8 +126,8 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				width = shapeArgs.width;
 				left = mathFloor(shapeArgs.x);
 				right = left + width;
-				halfWidth = mathRound(width / 2);
-				//crispX = mathRound(left + halfWidth) + crispCorr;
+				halfWidth = Math.round(width / 2);
+				//crispX = Math.round(left + halfWidth) + crispCorr;
 				q1Plot = mathFloor(doQuartiles ? point.q1Plot : point.lowPlot);// + crispCorr;
 				q3Plot = mathFloor(doQuartiles ? point.q3Plot : point.lowPlot);// + crispCorr;
 				highPlot = mathFloor(point.highPlot);// + crispCorr;
@@ -212,7 +212,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				
 				// The median
 				crispCorr = (medianAttr['stroke-width'] % 2) / 2;				
-				medianPlot = mathRound(point.medianPlot) + crispCorr;
+				medianPlot = Math.round(point.medianPlot) + crispCorr;
 				medianPath = [
 					'M',
 					left, 

@@ -162,7 +162,7 @@ VMLElement = {
 			// Substracting half a pixel seems to make the coordinates
 			// align with SVG, but this hasn't been tested thoroughly
 			if (isNumber(value[i])) {
-				path[i] = mathRound(value[i] * 10) - 5;
+				path[i] = Math.round(value[i] * 10) - 5;
 			} else if (value[i] === 'Z') { // close the path
 				path[i] = 'x';
 			} else {
@@ -411,8 +411,8 @@ VMLElement = {
 		this[key] = style[key] = value; // style is for #1873
 
 		// Correction for the 1x1 size of the shape container. Used in gauge needles.
-		style.left = -mathRound(mathSin(value * deg2rad) + 1) + 'px';
-		style.top = mathRound(mathCos(value * deg2rad)) + 'px';
+		style.left = -Math.round(mathSin(value * deg2rad) + 1) + 'px';
+		style.top = Math.round(mathCos(value * deg2rad)) + 'px';
 	},
 	strokeSetter: function (value, key, element) {
 		this.setAttr('strokecolor', this.renderer.color(value, element, key));
@@ -591,10 +591,10 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					bottom = top + rect.height,
 					ret = {
 						clip: 'rect(' +
-							mathRound(inverted ? left : top) + 'px,' +
-							mathRound(inverted ? bottom : right) + 'px,' +
-							mathRound(inverted ? right : bottom) + 'px,' +
-							mathRound(inverted ? top : left) + 'px)'
+							Math.round(inverted ? left : top) + 'px,' +
+							Math.round(inverted ? bottom : right) + 'px,' +
+							Math.round(inverted ? right : bottom) + 'px,' +
+							Math.round(inverted ? top : left) + 'px)'
 					};
 
 				// issue 74 workaround

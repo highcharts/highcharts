@@ -106,20 +106,20 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 
 				// crisp vector coordinates
 				crispCorr = (pointAttr['stroke-width'] % 2) / 2;
-				crispX = mathRound(point.plotX) - crispCorr;  // #2596
-				halfWidth = mathRound(point.shapeArgs.width / 2);
+				crispX = Math.round(point.plotX) - crispCorr;  // #2596
+				halfWidth = Math.round(point.shapeArgs.width / 2);
 
 				// the vertical stem
 				path = [
 					'M',
-					crispX, mathRound(point.yBottom),
+					crispX, Math.round(point.yBottom),
 					'L',
-					crispX, mathRound(point.plotY)
+					crispX, Math.round(point.plotY)
 				];
 
 				// open
 				if (point.open !== null) {
-					plotOpen = mathRound(point.plotOpen) + crispCorr;
+					plotOpen = Math.round(point.plotOpen) + crispCorr;
 					path.push(
 						'M',
 						crispX,
@@ -132,7 +132,7 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 
 				// close
 				if (point.close !== null) {
-					plotClose = mathRound(point.plotClose) + crispCorr;
+					plotClose = Math.round(point.plotClose) + crispCorr;
 					path.push(
 						'M',
 						crispX,

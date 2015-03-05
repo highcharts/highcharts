@@ -91,8 +91,8 @@ Pointer.prototype = {
 		}
 
 		return extend(e, {
-			chartX: mathRound(chartX),
-			chartY: mathRound(chartY)
+			chartX: Math.round(chartX),
+			chartY: Math.round(chartY)
 		});
 	},
 

@@ -80,7 +80,7 @@ RangeSelector.prototype = {
 			dataMin = unionExtremes.dataMin,
 			dataMax = unionExtremes.dataMax,
 			newMin,
-			newMax = baseAxis && mathRound(mathMin(baseAxis.max, pick(dataMax, baseAxis.max))), // #1568
+			newMax = baseAxis && Math.round(mathMin(baseAxis.max, pick(dataMax, baseAxis.max))), // #1568
 			now,
 			date = new Date(newMax),
 			type = rangeOptions.type,
@@ -285,7 +285,7 @@ RangeSelector.prototype = {
 			allButtonsEnabled = rangeSelector.options.allButtonsEnabled,
 			buttons = rangeSelector.buttons;
 
-		if (updating && chart.fixedRange !== mathRound(baseAxis.max - baseAxis.min)) {
+		if (updating && chart.fixedRange !== Math.round(baseAxis.max - baseAxis.min)) {
 			if (buttons[selected]) {
 				buttons[selected].setState(0);
 			}
@@ -307,7 +307,7 @@ RangeSelector.prototype = {
 			// The new zoom area happens to match the range for a button - mark it selected.
 			// This happens when scrolling across an ordinal gap. It can be seen in the intraday
 			// demos when selecting 1h and scroll across the night gap.
-			if (range === mathRound(baseAxis.max - baseAxis.min) && i !== selected) {
+			if (range === Math.round(baseAxis.max - baseAxis.min) && i !== selected) {
 				rangeSelector.setSelected(i);
 				buttons[i].setState(2);
 			

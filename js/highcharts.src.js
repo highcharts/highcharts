@@ -17,7 +17,6 @@
 var UNDEFINED,
 	doc = document,
 	win = window,
-	mathRound = Math.round,
 	mathFloor = Math.floor,
 	mathCeil = Math.ceil,
 	mathMax = Math.max,
@@ -422,7 +421,7 @@ dateFormat = function (format, timestamp, capitalize) {
 			'p': hours < 12 ? 'AM' : 'PM', // Upper case AM or PM
 			'P': hours < 12 ? 'am' : 'pm', // Lower case AM or PM
 			'S': pad(date.getSeconds()), // Two digits seconds, 00 through  59
-			'L': pad(mathRound(timestamp % 1000), 3) // Milliseconds (naming from Ruby)
+			'L': pad(Math.round(timestamp % 1000), 3) // Milliseconds (naming from Ruby)
 		}, Highcharts.dateFormats);
 
 
@@ -2146,7 +2145,7 @@ SVGElement.prototype = {
 			normalizer,
 			strokeWidth = rect.strokeWidth || wrapper.strokeWidth || 0;
 
-		normalizer = mathRound(strokeWidth) % 2 / 2; // mathRound because strokeWidth can sometimes have roundoff errors
+		normalizer = Math.round(strokeWidth) % 2 / 2; // Math.round because strokeWidth can sometimes have roundoff errors
 
 		// normalize for crisp edges
 		rect.x = mathFloor(rect.x || wrapper.x || 0) + normalizer;
@@ -2403,7 +2402,7 @@ SVGElement.prototype = {
 			x += (box.width - (alignOptions.width || 0)) /
 					{ right: 1, center: 2 }[align];
 		}
-		attribs[alignByTranslate ? 'translateX' : 'x'] = mathRound(x);
+		attribs[alignByTranslate ? 'translateX' : 'x'] = Math.round(x);
 
 
 		// Vertical align
@@ -2412,7 +2411,7 @@ SVGElement.prototype = {
 					({ bottom: 1, middle: 2 }[vAlign] || 1);
 
 		}
-		attribs[alignByTranslate ? 'translateY' : 'y'] = mathRound(y);
+		attribs[alignByTranslate ? 'translateY' : 'y'] = Math.round(y);
 
 		// Animate only if already placed
 		this[this.placed ? 'animate' : 'attr'](attribs);
@@ -3304,7 +3303,7 @@ SVGRenderer.prototype = {
 		var bBox = wrapper.getBBox(),
 			node = wrapper.element,
 			textLength = node.textContent.length,
-			pos = mathRound(width * textLength / bBox.width), // try this position first, based on average character width
+			pos = Math.round(width * textLength / bBox.width), // try this position first, based on average character width
 			increment = 0,
 			finalPos;
 
@@ -3468,10 +3467,10 @@ SVGRenderer.prototype = {
 		// normalize to a crisp line
 		if (points[1] === points[4]) {
 			// Substract due to #1129. Now bottom and left axis gridlines behave the same.
-			points[1] = points[4] = mathRound(points[1]) - (width % 2 / 2);
+			points[1] = points[4] = Math.round(points[1]) - (width % 2 / 2);
 		}
 		if (points[2] === points[5]) {
-			points[2] = points[5] = mathRound(points[2]) + (width % 2 / 2);
+			points[2] = points[5] = Math.round(points[2]) + (width % 2 / 2);
 		}
 		return points;
 	},
@@ -3681,8 +3680,8 @@ SVGRenderer.prototype = {
 
 			// check if there's a path defined for this symbol
 			path = symbolFn && symbolFn(
-				mathRound(x),
-				mathRound(y),
+				Math.round(x),
+				Math.round(y),
 				width,
 				height,
 				options
@@ -3723,8 +3722,8 @@ SVGRenderer.prototype = {
 
 					if (!img.alignByTranslate) { // #185
 						img.translate(
-							mathRound((width - size[0]) / 2), // #1378
-							mathRound((height - size[1]) / 2)
+							Math.round((width - size[0]) / 2), // #1378
+							Math.round((height - size[1]) / 2)
 						);
 					}
 				}
@@ -3862,7 +3861,7 @@ SVGRenderer.prototype = {
 				anchorX = options && options.anchorX,
 				anchorY = options && options.anchorY,
 				path,
-				normalizer = mathRound(options.strokeWidth || 0) % 2 / 2; // mathRound because strokeWidth can sometimes have roundoff errors;
+				normalizer = Math.round(options.strokeWidth || 0) % 2 / 2; // Math.round because strokeWidth can sometimes have roundoff errors;
 
 			x += normalizer;
 			y += normalizer;
@@ -4009,8 +4008,8 @@ SVGRenderer.prototype = {
 
 		// Empirical values found by comparing font size and bounding box height.
 		// Applies to the default font family. http://jsfiddle.net/highcharts/7xvn7/
-		var lineHeight = fontSize < 24 ? fontSize + 3 : mathRound(fontSize * 1.2),
-			baseline = mathRound(lineHeight * 0.8);
+		var lineHeight = fontSize < 24 ? fontSize + 3 : Math.round(fontSize * 1.2),
+			baseline = Math.round(lineHeight * 0.8);
 
 		return {
 			h: lineHeight,
@@ -4093,7 +4092,7 @@ SVGRenderer.prototype = {
 
 				// create the border box if it is not already present
 				if (!box) {
-					boxX = mathRound(-alignFactor * padding);
+					boxX = Math.round(-alignFactor * padding);
 					boxY = baseline ? -baselineOffset : 0;
 
 					wrapper.box = box = shape ?
@@ -4105,8 +4104,8 @@ SVGRenderer.prototype = {
 				// apply the box attributes
 				if (!box.isImg) { // #1630
 					box.attr(extend({
-						width: mathRound(wrapper.width),
-						height: mathRound(wrapper.height)
+						width: Math.round(wrapper.width),
+						height: Math.round(wrapper.height)
 					}, deferredAttr));
 				}
 				deferredAttr = null;
@@ -4248,11 +4247,11 @@ SVGRenderer.prototype = {
 			if (alignFactor) {
 				value -= alignFactor * ((width || bBox.width) + padding);
 			}
-			wrapperX = mathRound(value);
+			wrapperX = Math.round(value);
 			wrapper.attr('translateX', wrapperX);
 		};
 		wrapper.ySetter = function (value) {
-			wrapperY = wrapper.y = mathRound(value);
+			wrapperY = wrapper.y = Math.round(value);
 			wrapper.attr('translateY', wrapperY);
 		};
 
@@ -4525,8 +4524,8 @@ extend(SVGRenderer.prototype, {
 		// Set the default attributes
 		wrapper.attr({
 				text: str,
-				x: mathRound(x),
-				y: mathRound(y)
+				x: Math.round(x),
+				y: Math.round(y)
 			})
 			.css({
 				position: 'absolute',
@@ -4784,7 +4783,7 @@ VMLElement = {
 			// Substracting half a pixel seems to make the coordinates
 			// align with SVG, but this hasn't been tested thoroughly
 			if (isNumber(value[i])) {
-				path[i] = mathRound(value[i] * 10) - 5;
+				path[i] = Math.round(value[i] * 10) - 5;
 			} else if (value[i] === 'Z') { // close the path
 				path[i] = 'x';
 			} else {
@@ -5033,8 +5032,8 @@ VMLElement = {
 		this[key] = style[key] = value; // style is for #1873
 
 		// Correction for the 1x1 size of the shape container. Used in gauge needles.
-		style.left = -mathRound(mathSin(value * deg2rad) + 1) + 'px';
-		style.top = mathRound(mathCos(value * deg2rad)) + 'px';
+		style.left = -Math.round(mathSin(value * deg2rad) + 1) + 'px';
+		style.top = Math.round(mathCos(value * deg2rad)) + 'px';
 	},
 	strokeSetter: function (value, key, element) {
 		this.setAttr('strokecolor', this.renderer.color(value, element, key));
@@ -5213,10 +5212,10 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					bottom = top + rect.height,
 					ret = {
 						clip: 'rect(' +
-							mathRound(inverted ? left : top) + 'px,' +
-							mathRound(inverted ? bottom : right) + 'px,' +
-							mathRound(inverted ? right : bottom) + 'px,' +
-							mathRound(inverted ? top : left) + 'px)'
+							Math.round(inverted ? left : top) + 'px,' +
+							Math.round(inverted ? bottom : right) + 'px,' +
+							Math.round(inverted ? right : bottom) + 'px,' +
+							Math.round(inverted ? top : left) + 'px)'
 					};
 
 				// issue 74 workaround
@@ -5816,7 +5815,7 @@ Tick.prototype = {
 		});
 
 		// prepare CSS
-		//css = width && { width: mathMax(1, mathRound(width - 2 * (labelOptions.padding || 10))) + 'px' };
+		//css = width && { width: mathMax(1, Math.round(width - 2 * (labelOptions.padding || 10))) + 'px' };
 		
 		// first call
 		if (!defined(label)) {
@@ -5895,9 +5894,9 @@ Tick.prototype = {
 
 		// Add ellipsis to prevent rotated labels to be clipped against the edge of the chart
 		} else if (rotation < 0 && pxPos - factor * labelWidth < leftBound) {
-			textWidth = mathRound(pxPos / mathCos(rotation * deg2rad) - leftBound);
+			textWidth = Math.round(pxPos / mathCos(rotation * deg2rad) - leftBound);
 		} else if (rotation > 0 && pxPos + factor * labelWidth > rightBound) {
-			textWidth = mathRound((chartWidth - pxPos) / mathCos(rotation * deg2rad));
+			textWidth = Math.round((chartWidth - pxPos) / mathCos(rotation * deg2rad));
 		}
 
 		if (textWidth) {
@@ -5953,7 +5952,7 @@ Tick.prototype = {
 
 		return {
 			x: x,
-			y: mathRound(y)
+			y: Math.round(y)
 		};
 	},
 
@@ -6985,8 +6984,8 @@ Axis.prototype = {
 			};
 
 		translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
-		x1 = x2 = mathRound(translatedValue + transB);
-		y1 = y2 = mathRound(cHeight - translatedValue - transB);
+		x1 = x2 = Math.round(translatedValue + transB);
+		y1 = y2 = Math.round(cHeight - translatedValue - transB);
 
 		if (isNaN(translatedValue)) { // no min or max
 			skip = true;
@@ -7908,7 +7907,7 @@ Axis.prototype = {
 			slotWidth = this.slotWidth = (horiz && !labelOptions.step && !labelOptions.rotation &&
 				((this.staggerLines || 1) * chart.plotWidth) / tickPositions.length) ||
 				(!horiz && ((margin[3] && (margin[3] - chart.spacing[3])) || chart.chartWidth * 0.33)), // #1580, #1931,
-			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))),
+			innerWidth = mathMax(1, Math.round(slotWidth - 2 * (labelOptions.padding || 5))),
 			attr = {},
 			labelMetrics = renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
 			css,
@@ -8756,7 +8755,7 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 	
 	// First case: All ticks fall on whole logarithms: 1, 10, 100 etc.
 	if (interval >= 0.5) {
-		interval = mathRound(interval);
+		interval = Math.round(interval);
 		positions = axis.getLinearTickPositions(interval, min, max);
 		
 	// Second case: We need intermediary ticks. For example 
@@ -9026,7 +9025,7 @@ Tooltip.prototype = {
 			];
 		}
 
-		return map(ret, mathRound);
+		return map(ret, Math.round);
 	},
 	
 	/**
@@ -9254,8 +9253,8 @@ Tooltip.prototype = {
 
 		// do the move
 		this.move(
-			mathRound(pos.x), 
-			mathRound(pos.y), 
+			Math.round(pos.x), 
+			Math.round(pos.y), 
 			point.plotX + chart.plotLeft, 
 			point.plotY + chart.plotTop
 		);
@@ -9451,8 +9450,8 @@ Pointer.prototype = {
 		}
 
 		return extend(e, {
-			chartX: mathRound(chartX),
-			chartY: mathRound(chartY)
+			chartX: Math.round(chartX),
+			chartY: Math.round(chartY)
 		});
 	},
 
@@ -10654,7 +10653,7 @@ Legend.prototype = {
 			options.itemWidth || 
 			item.legendItemWidth || 
 			symbolWidth + symbolPadding + bBox.width + itemDistance + (showCheckbox ? 20 : 0);
-		legend.itemHeight = itemHeight = mathRound(item.legendItemHeight || bBox.height);
+		legend.itemHeight = itemHeight = Math.round(item.legendItemHeight || bBox.height);
 
 		// if the item exceeds the width, start a new line
 		if (horizontal && legend.itemX - initialItemX + itemWidth >
@@ -10925,7 +10924,7 @@ Legend.prototype = {
 			// the scroll top for each page (#2098)
 			each(allItems, function (item, i) {
 				var y = item._legendItemPos[1],
-					h = mathRound(item.legendItem.getBBox().height),
+					h = Math.round(item.legendItem.getBBox().height),
 					len = pages.length;
 				
 				if (!len || (y - pages[len - 1] > clipHeight && (lastY || y) !== pages[len - 1])) {
@@ -11094,7 +11093,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 			symbolWidth = legend.symbolWidth,
 			renderer = this.chart.renderer,
 			legendItemGroup = this.legendGroup,
-			verticalCenter = legend.baseline - mathRound(renderer.fontMetrics(legendOptions.itemStyle.fontSize, this.legendItem).b * 0.3),
+			verticalCenter = legend.baseline - Math.round(renderer.fontMetrics(legendOptions.itemStyle.fontSize, this.legendItem).b * 0.3),
 			attr;
 
 		// Draw the line
@@ -11953,11 +11952,11 @@ Chart.prototype = {
 		chart.oldChartHeight = chart.chartHeight;
 		chart.oldChartWidth = chart.chartWidth;
 		if (defined(width)) {
-			chart.chartWidth = chartWidth = mathMax(0, mathRound(width));
+			chart.chartWidth = chartWidth = mathMax(0, Math.round(width));
 			chart.hasUserSize = !!chartWidth;
 		}
 		if (defined(height)) {
-			chart.chartHeight = chartHeight = mathMax(0, mathRound(height));
+			chart.chartHeight = chartHeight = mathMax(0, Math.round(height));
 		}
 
 		// Resize the container with the global animation applied if enabled (#2503)
@@ -12023,10 +12022,10 @@ Chart.prototype = {
 			plotHeight,
 			plotBorderWidth;
 
-		chart.plotLeft = plotLeft = mathRound(chart.plotLeft);
-		chart.plotTop = plotTop = mathRound(chart.plotTop);
-		chart.plotWidth = plotWidth = mathMax(0, mathRound(chartWidth - plotLeft - chart.marginRight));
-		chart.plotHeight = plotHeight = mathMax(0, mathRound(chartHeight - plotTop - chart.marginBottom));
+		chart.plotLeft = plotLeft = Math.round(chart.plotLeft);
+		chart.plotTop = plotTop = Math.round(chart.plotTop);
+		chart.plotWidth = plotWidth = mathMax(0, Math.round(chartWidth - plotLeft - chart.marginRight));
+		chart.plotHeight = plotHeight = mathMax(0, Math.round(chartHeight - plotTop - chart.marginBottom));
 
 		chart.plotSizeX = inverted ? plotHeight : plotWidth;
 		chart.plotSizeY = inverted ? plotWidth : plotHeight;
@@ -14286,7 +14285,7 @@ Series.prototype = {
 			// Create the clips
 			each(zones, function (threshold, i) {
 				translatedFrom = pick(translatedTo, (reversed ? (horiz ? chart.plotWidth : 0) : (horiz ? 0 : axis.toPixels(axis.min))));
-				translatedTo = mathRound(axis.toPixels(pick(threshold.value, axis.max), true));
+				translatedTo = Math.round(axis.toPixels(pick(threshold.value, axis.max), true));
 
 				if (ignoreZones) {
 					translatedFrom = translatedTo = axis.toPixels(axis.max);
@@ -16081,7 +16080,7 @@ var ColumnSeries = extendClass(Series, {
 				if (minPointLength) {
 					barH = minPointLength;
 					barY =
-						mathRound(mathAbs(barY - translatedThreshold) > minPointLength ? // stacked
+						Math.round(mathAbs(barY - translatedThreshold) > minPointLength ? // stacked
 							yBottom - minPointLength : // keep position
 							translatedThreshold - (yAxis.translate(point.y, 0, 1, 0, 1) <= translatedThreshold ? minPointLength : 0)); // use exact yAxis.translation (#1485)
 				}
@@ -16097,13 +16096,13 @@ var ColumnSeries = extendClass(Series, {
 				[barX + barW / 2, plotY + yAxis.pos - chart.plotTop];
 
 			// Round off to obtain crisp edges and avoid overlapping with neighbours (#2694)
-			right = mathRound(barX + barW) + xCrisp;
-			barX = mathRound(barX) + xCrisp;
+			right = Math.round(barX + barW) + xCrisp;
+			barX = Math.round(barX) + xCrisp;
 			barW = right - barX;
 
 			fromTop = mathAbs(barY) < 0.5;
-			bottom = mathMin(mathRound(barY + barH) + yCrisp, 9e4); // #3575
-			barY = mathRound(barY) + yCrisp;
+			bottom = mathMin(Math.round(barY + barH) + yCrisp, 9e4); // #3575
+			barY = Math.round(barY) + yCrisp;
 			barH = bottom - barY;
 
 			// Top edges are exceptions
@@ -16624,8 +16623,8 @@ var PieSeries = {
 				y: positions[1],
 				r: positions[2] / 2,
 				innerR: positions[3] / 2,
-				start: mathRound(start * precision) / precision,
-				end: mathRound(end * precision) / precision
+				start: Math.round(start * precision) / precision,
+				end: Math.round(end * precision) / precision
 			};
 
 			// The angle must stay within -90 and 270 (#2645)
@@ -16638,8 +16637,8 @@ var PieSeries = {
 
 			// Center for the sliced out slice
 			point.slicedTranslation = {
-				translateX: mathRound(mathCos(angle) * slicedOffset),
-				translateY: mathRound(mathSin(angle) * slicedOffset)
+				translateX: Math.round(mathCos(angle) * slicedOffset),
+				translateY: Math.round(mathSin(angle) * slicedOffset)
 			};
 
 			// set the anchor point for tooltips
@@ -16948,7 +16947,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		baseline = chart.renderer.fontMetrics(options.style.fontSize).b,
 		rotCorr, // rotation correction
 		// Math.round for rounding errors (#2683), alignTo to allow column labels (#2700)
-		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, mathRound(plotY), inverted) ||
+		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, Math.round(plotY), inverted) ||
 			(alignTo && chart.isInsidePlot(plotX, inverted ? alignTo.x + 1 : alignTo.y + alignTo.height - 1, inverted))),
 		alignAttr; // the final position;
 
@@ -16957,7 +16956,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		// The alignment box is a singular point
 		alignTo = extend({
 			x: inverted ? chart.plotWidth - plotY : plotX,
-			y: mathRound(inverted ? chart.plotHeight - plotX : plotY),
+			y: Math.round(inverted ? chart.plotHeight - plotX : plotY),
 			width: 0,
 			height: 0
 		}, alignTo);
@@ -17315,20 +17314,20 @@ if (seriesTypes.pie) {
 					dataLabelWidth = dataLabel.width;
 					// Overflow left
 					if (x - dataLabelWidth < connectorPadding) {
-						overflow[3] = mathMax(mathRound(dataLabelWidth - x + connectorPadding), overflow[3]);
+						overflow[3] = mathMax(Math.round(dataLabelWidth - x + connectorPadding), overflow[3]);
 
 					// Overflow right
 					} else if (x + dataLabelWidth > plotWidth - connectorPadding) {
-						overflow[1] = mathMax(mathRound(x + dataLabelWidth - plotWidth + connectorPadding), overflow[1]);
+						overflow[1] = mathMax(Math.round(x + dataLabelWidth - plotWidth + connectorPadding), overflow[1]);
 					}
 
 					// Overflow top
 					if (y - labelHeight / 2 < 0) {
-						overflow[0] = mathMax(mathRound(-y + labelHeight / 2), overflow[0]);
+						overflow[0] = mathMax(Math.round(-y + labelHeight / 2), overflow[0]);
 
 					// Overflow left
 					} else if (y + labelHeight / 2 > plotHeight) {
-						overflow[2] = mathMax(mathRound(y + labelHeight / 2 - plotHeight), overflow[2]);
+						overflow[2] = mathMax(Math.round(y + labelHeight / 2 - plotHeight), overflow[2]);
 					}
 				}
 			} // for each point

@@ -1432,7 +1432,7 @@ Series.prototype = {
 			// Create the clips
 			each(zones, function (threshold, i) {
 				translatedFrom = pick(translatedTo, (reversed ? (horiz ? chart.plotWidth : 0) : (horiz ? 0 : axis.toPixels(axis.min))));
-				translatedTo = mathRound(axis.toPixels(pick(threshold.value, axis.max), true));
+				translatedTo = Math.round(axis.toPixels(pick(threshold.value, axis.max), true));
 
 				if (ignoreZones) {
 					translatedFrom = translatedTo = axis.toPixels(axis.max);

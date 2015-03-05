@@ -172,7 +172,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		baseline = chart.renderer.fontMetrics(options.style.fontSize).b,
 		rotCorr, // rotation correction
 		// Math.round for rounding errors (#2683), alignTo to allow column labels (#2700)
-		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, mathRound(plotY), inverted) ||
+		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, Math.round(plotY), inverted) ||
 			(alignTo && chart.isInsidePlot(plotX, inverted ? alignTo.x + 1 : alignTo.y + alignTo.height - 1, inverted))),
 		alignAttr; // the final position;
 
@@ -181,7 +181,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		// The alignment box is a singular point
 		alignTo = extend({
 			x: inverted ? chart.plotWidth - plotY : plotX,
-			y: mathRound(inverted ? chart.plotHeight - plotX : plotY),
+			y: Math.round(inverted ? chart.plotHeight - plotX : plotY),
 			width: 0,
 			height: 0
 		}, alignTo);
@@ -539,20 +539,20 @@ if (seriesTypes.pie) {
 					dataLabelWidth = dataLabel.width;
 					// Overflow left
 					if (x - dataLabelWidth < connectorPadding) {
-						overflow[3] = mathMax(mathRound(dataLabelWidth - x + connectorPadding), overflow[3]);
+						overflow[3] = mathMax(Math.round(dataLabelWidth - x + connectorPadding), overflow[3]);
 
 					// Overflow right
 					} else if (x + dataLabelWidth > plotWidth - connectorPadding) {
-						overflow[1] = mathMax(mathRound(x + dataLabelWidth - plotWidth + connectorPadding), overflow[1]);
+						overflow[1] = mathMax(Math.round(x + dataLabelWidth - plotWidth + connectorPadding), overflow[1]);
 					}
 
 					// Overflow top
 					if (y - labelHeight / 2 < 0) {
-						overflow[0] = mathMax(mathRound(-y + labelHeight / 2), overflow[0]);
+						overflow[0] = mathMax(Math.round(-y + labelHeight / 2), overflow[0]);
 
 					// Overflow left
 					} else if (y + labelHeight / 2 > plotHeight) {
-						overflow[2] = mathMax(mathRound(y + labelHeight / 2 - plotHeight), overflow[2]);
+						overflow[2] = mathMax(Math.round(y + labelHeight / 2 - plotHeight), overflow[2]);
 					}
 				}
 			} // for each point

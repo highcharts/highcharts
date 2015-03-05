@@ -193,7 +193,7 @@ var ColumnSeries = extendClass(Series, {
 				if (minPointLength) {
 					barH = minPointLength;
 					barY =
-						mathRound(mathAbs(barY - translatedThreshold) > minPointLength ? // stacked
+						Math.round(mathAbs(barY - translatedThreshold) > minPointLength ? // stacked
 							yBottom - minPointLength : // keep position
 							translatedThreshold - (yAxis.translate(point.y, 0, 1, 0, 1) <= translatedThreshold ? minPointLength : 0)); // use exact yAxis.translation (#1485)
 				}
@@ -209,13 +209,13 @@ var ColumnSeries = extendClass(Series, {
 				[barX + barW / 2, plotY + yAxis.pos - chart.plotTop];
 
 			// Round off to obtain crisp edges and avoid overlapping with neighbours (#2694)
-			right = mathRound(barX + barW) + xCrisp;
-			barX = mathRound(barX) + xCrisp;
+			right = Math.round(barX + barW) + xCrisp;
+			barX = Math.round(barX) + xCrisp;
 			barW = right - barX;
 
 			fromTop = mathAbs(barY) < 0.5;
-			bottom = mathMin(mathRound(barY + barH) + yCrisp, 9e4); // #3575
-			barY = mathRound(barY) + yCrisp;
+			bottom = mathMin(Math.round(barY + barH) + yCrisp, 9e4); // #3575
+			barY = Math.round(barY) + yCrisp;
 			barH = bottom - barY;
 
 			// Top edges are exceptions

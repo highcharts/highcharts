@@ -342,8 +342,8 @@ Scroller.prototype = {
 		scroller.zoomedMin = 
 			mathMax(scroller.fixedWidth ? scroller.zoomedMax - scroller.fixedWidth : mathMin(pxMin, pxMax), 0);
 		scroller.range = scroller.zoomedMax - scroller.zoomedMin;
-		zoomedMax = mathRound(scroller.zoomedMax);
-		zoomedMin = mathRound(scroller.zoomedMin);
+		zoomedMax = Math.round(scroller.zoomedMax);
+		zoomedMin = Math.round(scroller.zoomedMin);
 		range = zoomedMax - zoomedMin;
 
 
@@ -476,7 +476,7 @@ Scroller.prototype = {
 
 			scrollbarGroup[verb]({
 				translateX: scrollerLeft,
-				translateY: mathRound(outlineTop + height)
+				translateY: Math.round(outlineTop + height)
 			});
 
 			scrollbarTrack[verb]({

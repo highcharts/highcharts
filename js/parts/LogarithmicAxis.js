@@ -20,7 +20,7 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 	
 	// First case: All ticks fall on whole logarithms: 1, 10, 100 etc.
 	if (interval >= 0.5) {
-		interval = mathRound(interval);
+		interval = Math.round(interval);
 		positions = axis.getLinearTickPositions(interval, min, max);
 		
 	// Second case: We need intermediary ticks. For example 

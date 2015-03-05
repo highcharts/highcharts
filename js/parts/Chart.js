@@ -798,11 +798,11 @@ Chart.prototype = {
 		chart.oldChartHeight = chart.chartHeight;
 		chart.oldChartWidth = chart.chartWidth;
 		if (defined(width)) {
-			chart.chartWidth = chartWidth = mathMax(0, mathRound(width));
+			chart.chartWidth = chartWidth = mathMax(0, Math.round(width));
 			chart.hasUserSize = !!chartWidth;
 		}
 		if (defined(height)) {
-			chart.chartHeight = chartHeight = mathMax(0, mathRound(height));
+			chart.chartHeight = chartHeight = mathMax(0, Math.round(height));
 		}
 
 		// Resize the container with the global animation applied if enabled (#2503)
@@ -868,10 +868,10 @@ Chart.prototype = {
 			plotHeight,
 			plotBorderWidth;
 
-		chart.plotLeft = plotLeft = mathRound(chart.plotLeft);
-		chart.plotTop = plotTop = mathRound(chart.plotTop);
-		chart.plotWidth = plotWidth = mathMax(0, mathRound(chartWidth - plotLeft - chart.marginRight));
-		chart.plotHeight = plotHeight = mathMax(0, mathRound(chartHeight - plotTop - chart.marginBottom));
+		chart.plotLeft = plotLeft = Math.round(chart.plotLeft);
+		chart.plotTop = plotTop = Math.round(chart.plotTop);
+		chart.plotWidth = plotWidth = mathMax(0, Math.round(chartWidth - plotLeft - chart.marginRight));
+		chart.plotHeight = plotHeight = mathMax(0, Math.round(chartHeight - plotTop - chart.marginBottom));
 
 		chart.plotSizeX = inverted ? plotHeight : plotWidth;
 		chart.plotSizeY = inverted ? plotWidth : plotHeight;

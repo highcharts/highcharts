@@ -231,7 +231,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 
 				y1 = axis2.pos;
 				y2 = y1 + axis2.len;
-				x1 = x2 = mathRound(translatedValue + axis.transB);
+				x1 = x2 = Math.round(translatedValue + axis.transB);
 
 				if (x1 < axisLeft || x1 > axisLeft + axis.width) { // outside plot area
 					if (force) {
@@ -250,7 +250,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 
 				x1 = axis2.pos;
 				x2 = x1 + axis2.len;
-				y1 = y2 = mathRound(axisTop + axis.height - translatedValue);
+				y1 = y2 = Math.round(axisTop + axis.height - translatedValue);
 
 				if (y1 < axisTop || y1 > axisTop + axis.height) { // outside plot area
 					if (force) {
@@ -299,10 +299,10 @@ SVGRenderer.prototype.crispPolyLine = function (points, width) {
 	for (i = 0; i < points.length; i = i + 6) {
 		if (points[i + 1] === points[i + 4]) {
 			// Substract due to #1129. Now bottom and left axis gridlines behave the same.
-			points[i + 1] = points[i + 4] = mathRound(points[i + 1]) - (width % 2 / 2);
+			points[i + 1] = points[i + 4] = Math.round(points[i + 1]) - (width % 2 / 2);
 		}
 		if (points[i + 2] === points[i + 5]) {
-			points[i + 2] = points[i + 5] = mathRound(points[i + 2]) + (width % 2 / 2);
+			points[i + 2] = points[i + 5] = Math.round(points[i + 2]) + (width % 2 / 2);
 		}
 	}
 	return points;

@@ -56,7 +56,7 @@ Tick.prototype = {
 		});
 
 		// prepare CSS
-		//css = width && { width: mathMax(1, mathRound(width - 2 * (labelOptions.padding || 10))) + 'px' };
+		//css = width && { width: mathMax(1, Math.round(width - 2 * (labelOptions.padding || 10))) + 'px' };
 		
 		// first call
 		if (!defined(label)) {
@@ -135,9 +135,9 @@ Tick.prototype = {
 
 		// Add ellipsis to prevent rotated labels to be clipped against the edge of the chart
 		} else if (rotation < 0 && pxPos - factor * labelWidth < leftBound) {
-			textWidth = mathRound(pxPos / mathCos(rotation * deg2rad) - leftBound);
+			textWidth = Math.round(pxPos / mathCos(rotation * deg2rad) - leftBound);
 		} else if (rotation > 0 && pxPos + factor * labelWidth > rightBound) {
-			textWidth = mathRound((chartWidth - pxPos) / mathCos(rotation * deg2rad));
+			textWidth = Math.round((chartWidth - pxPos) / mathCos(rotation * deg2rad));
 		}
 
 		if (textWidth) {
@@ -193,7 +193,7 @@ Tick.prototype = {
 
 		return {
 			x: x,
-			y: mathRound(y)
+			y: Math.round(y)
 		};
 	},
 

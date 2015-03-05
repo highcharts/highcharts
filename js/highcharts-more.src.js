@@ -33,7 +33,6 @@ var arrayMin = Highcharts.arrayMin,
 	CenteredSeriesMixin = Highcharts.CenteredSeriesMixin,
 	TrackerMixin = Highcharts.TrackerMixin,
 	Series = Highcharts.Series,
-	mathRound = Math.round,
 	mathFloor = Math.floor,
 	mathMax = Math.max,
 	Color = Highcharts.Color,
@@ -1354,8 +1353,8 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				width = shapeArgs.width;
 				left = mathFloor(shapeArgs.x);
 				right = left + width;
-				halfWidth = mathRound(width / 2);
-				//crispX = mathRound(left + halfWidth) + crispCorr;
+				halfWidth = Math.round(width / 2);
+				//crispX = Math.round(left + halfWidth) + crispCorr;
 				q1Plot = mathFloor(doQuartiles ? point.q1Plot : point.lowPlot);// + crispCorr;
 				q3Plot = mathFloor(doQuartiles ? point.q3Plot : point.lowPlot);// + crispCorr;
 				highPlot = mathFloor(point.highPlot);// + crispCorr;
@@ -1440,7 +1439,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				
 				// The median
 				crispCorr = (medianAttr['stroke-width'] % 2) / 2;				
-				medianPlot = mathRound(point.medianPlot) + crispCorr;
+				medianPlot = Math.round(point.medianPlot) + crispCorr;
 				medianPath = [
 					'M',
 					left, 
@@ -1638,8 +1637,8 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				previousY += yValue;
 			}
 
-			point.plotY = shapeArgs.y = mathRound(shapeArgs.y) - (series.borderWidth % 2) / 2;
-			shapeArgs.height = mathMax(mathRound(shapeArgs.height), 0.001); // #3151
+			point.plotY = shapeArgs.y = Math.round(shapeArgs.y) - (series.borderWidth % 2) / 2;
+			shapeArgs.height = mathMax(Math.round(shapeArgs.height), 0.001); // #3151
 			point.yBottom = shapeArgs.y + shapeArgs.height;
 
 			// Correct tooltip placement (#3014)
@@ -1749,7 +1748,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		var data = this.data,
 			length = data.length,
 			lineWidth = this.options.lineWidth + this.borderWidth,
-			normalizer = mathRound(lineWidth) % 2 / 2,
+			normalizer = Math.round(lineWidth) % 2 / 2,
 			path = [],
 			prevArgs,
 			pointArgs,

@@ -295,7 +295,7 @@ Legend.prototype = {
 			options.itemWidth || 
 			item.legendItemWidth || 
 			symbolWidth + symbolPadding + bBox.width + itemDistance + (showCheckbox ? 20 : 0);
-		legend.itemHeight = itemHeight = mathRound(item.legendItemHeight || bBox.height);
+		legend.itemHeight = itemHeight = Math.round(item.legendItemHeight || bBox.height);
 
 		// if the item exceeds the width, start a new line
 		if (horizontal && legend.itemX - initialItemX + itemWidth >
@@ -566,7 +566,7 @@ Legend.prototype = {
 			// the scroll top for each page (#2098)
 			each(allItems, function (item, i) {
 				var y = item._legendItemPos[1],
-					h = mathRound(item.legendItem.getBBox().height),
+					h = Math.round(item.legendItem.getBBox().height),
 					len = pages.length;
 				
 				if (!len || (y - pages[len - 1] > clipHeight && (lastY || y) !== pages[len - 1])) {
@@ -735,7 +735,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 			symbolWidth = legend.symbolWidth,
 			renderer = this.chart.renderer,
 			legendItemGroup = this.legendGroup,
-			verticalCenter = legend.baseline - mathRound(renderer.fontMetrics(legendOptions.itemStyle.fontSize, this.legendItem).b * 0.3),
+			verticalCenter = legend.baseline - Math.round(renderer.fontMetrics(legendOptions.itemStyle.fontSize, this.legendItem).b * 0.3),
 			attr;
 
 		// Draw the line

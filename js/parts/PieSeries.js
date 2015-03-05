@@ -333,8 +333,8 @@ var PieSeries = {
 				y: positions[1],
 				r: positions[2] / 2,
 				innerR: positions[3] / 2,
-				start: mathRound(start * precision) / precision,
-				end: mathRound(end * precision) / precision
+				start: Math.round(start * precision) / precision,
+				end: Math.round(end * precision) / precision
 			};
 
 			// The angle must stay within -90 and 270 (#2645)
@@ -347,8 +347,8 @@ var PieSeries = {
 
 			// Center for the sliced out slice
 			point.slicedTranslation = {
-				translateX: mathRound(mathCos(angle) * slicedOffset),
-				translateY: mathRound(mathSin(angle) * slicedOffset)
+				translateX: Math.round(mathCos(angle) * slicedOffset),
+				translateY: Math.round(mathSin(angle) * slicedOffset)
 			};
 
 			// set the anchor point for tooltips

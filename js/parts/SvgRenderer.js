@@ -390,7 +390,7 @@ SVGElement.prototype = {
 			normalizer,
 			strokeWidth = rect.strokeWidth || wrapper.strokeWidth || 0;
 
-		normalizer = mathRound(strokeWidth) % 2 / 2; // mathRound because strokeWidth can sometimes have roundoff errors
+		normalizer = Math.round(strokeWidth) % 2 / 2; // Math.round because strokeWidth can sometimes have roundoff errors
 
 		// normalize for crisp edges
 		rect.x = mathFloor(rect.x || wrapper.x || 0) + normalizer;
@@ -647,7 +647,7 @@ SVGElement.prototype = {
 			x += (box.width - (alignOptions.width || 0)) /
 					{ right: 1, center: 2 }[align];
 		}
-		attribs[alignByTranslate ? 'translateX' : 'x'] = mathRound(x);
+		attribs[alignByTranslate ? 'translateX' : 'x'] = Math.round(x);
 
 
 		// Vertical align
@@ -656,7 +656,7 @@ SVGElement.prototype = {
 					({ bottom: 1, middle: 2 }[vAlign] || 1);
 
 		}
-		attribs[alignByTranslate ? 'translateY' : 'y'] = mathRound(y);
+		attribs[alignByTranslate ? 'translateY' : 'y'] = Math.round(y);
 
 		// Animate only if already placed
 		this[this.placed ? 'animate' : 'attr'](attribs);
@@ -1548,7 +1548,7 @@ SVGRenderer.prototype = {
 		var bBox = wrapper.getBBox(),
 			node = wrapper.element,
 			textLength = node.textContent.length,
-			pos = mathRound(width * textLength / bBox.width), // try this position first, based on average character width
+			pos = Math.round(width * textLength / bBox.width), // try this position first, based on average character width
 			increment = 0,
 			finalPos;
 
@@ -1712,10 +1712,10 @@ SVGRenderer.prototype = {
 		// normalize to a crisp line
 		if (points[1] === points[4]) {
 			// Substract due to #1129. Now bottom and left axis gridlines behave the same.
-			points[1] = points[4] = mathRound(points[1]) - (width % 2 / 2);
+			points[1] = points[4] = Math.round(points[1]) - (width % 2 / 2);
 		}
 		if (points[2] === points[5]) {
-			points[2] = points[5] = mathRound(points[2]) + (width % 2 / 2);
+			points[2] = points[5] = Math.round(points[2]) + (width % 2 / 2);
 		}
 		return points;
 	},
@@ -1925,8 +1925,8 @@ SVGRenderer.prototype = {
 
 			// check if there's a path defined for this symbol
 			path = symbolFn && symbolFn(
-				mathRound(x),
-				mathRound(y),
+				Math.round(x),
+				Math.round(y),
 				width,
 				height,
 				options
@@ -1967,8 +1967,8 @@ SVGRenderer.prototype = {
 
 					if (!img.alignByTranslate) { // #185
 						img.translate(
-							mathRound((width - size[0]) / 2), // #1378
-							mathRound((height - size[1]) / 2)
+							Math.round((width - size[0]) / 2), // #1378
+							Math.round((height - size[1]) / 2)
 						);
 					}
 				}
@@ -2106,7 +2106,7 @@ SVGRenderer.prototype = {
 				anchorX = options && options.anchorX,
 				anchorY = options && options.anchorY,
 				path,
-				normalizer = mathRound(options.strokeWidth || 0) % 2 / 2; // mathRound because strokeWidth can sometimes have roundoff errors;
+				normalizer = Math.round(options.strokeWidth || 0) % 2 / 2; // Math.round because strokeWidth can sometimes have roundoff errors;
 
 			x += normalizer;
 			y += normalizer;
@@ -2253,8 +2253,8 @@ SVGRenderer.prototype = {
 
 		// Empirical values found by comparing font size and bounding box height.
 		// Applies to the default font family. http://jsfiddle.net/highcharts/7xvn7/
-		var lineHeight = fontSize < 24 ? fontSize + 3 : mathRound(fontSize * 1.2),
-			baseline = mathRound(lineHeight * 0.8);
+		var lineHeight = fontSize < 24 ? fontSize + 3 : Math.round(fontSize * 1.2),
+			baseline = Math.round(lineHeight * 0.8);
 
 		return {
 			h: lineHeight,
@@ -2337,7 +2337,7 @@ SVGRenderer.prototype = {
 
 				// create the border box if it is not already present
 				if (!box) {
-					boxX = mathRound(-alignFactor * padding);
+					boxX = Math.round(-alignFactor * padding);
 					boxY = baseline ? -baselineOffset : 0;
 
 					wrapper.box = box = shape ?
@@ -2349,8 +2349,8 @@ SVGRenderer.prototype = {
 				// apply the box attributes
 				if (!box.isImg) { // #1630
 					box.attr(extend({
-						width: mathRound(wrapper.width),
-						height: mathRound(wrapper.height)
+						width: Math.round(wrapper.width),
+						height: Math.round(wrapper.height)
 					}, deferredAttr));
 				}
 				deferredAttr = null;
@@ -2492,11 +2492,11 @@ SVGRenderer.prototype = {
 			if (alignFactor) {
 				value -= alignFactor * ((width || bBox.width) + padding);
 			}
-			wrapperX = mathRound(value);
+			wrapperX = Math.round(value);
 			wrapper.attr('translateX', wrapperX);
 		};
 		wrapper.ySetter = function (value) {
-			wrapperY = wrapper.y = mathRound(value);
+			wrapperY = wrapper.y = Math.round(value);
 			wrapper.attr('translateY', wrapperY);
 		};
 

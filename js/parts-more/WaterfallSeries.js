@@ -102,8 +102,8 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				previousY += yValue;
 			}
 
-			point.plotY = shapeArgs.y = mathRound(shapeArgs.y) - (series.borderWidth % 2) / 2;
-			shapeArgs.height = mathMax(mathRound(shapeArgs.height), 0.001); // #3151
+			point.plotY = shapeArgs.y = Math.round(shapeArgs.y) - (series.borderWidth % 2) / 2;
+			shapeArgs.height = mathMax(Math.round(shapeArgs.height), 0.001); // #3151
 			point.yBottom = shapeArgs.y + shapeArgs.height;
 
 			// Correct tooltip placement (#3014)
@@ -213,7 +213,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		var data = this.data,
 			length = data.length,
 			lineWidth = this.options.lineWidth + this.borderWidth,
-			normalizer = mathRound(lineWidth) % 2 / 2,
+			normalizer = Math.round(lineWidth) % 2 / 2,
 			path = [],
 			prevArgs,
 			pointArgs,

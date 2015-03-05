@@ -191,7 +191,7 @@ Tooltip.prototype = {
 			];
 		}
 
-		return map(ret, mathRound);
+		return map(ret, Math.round);
 	},
 	
 	/**
@@ -419,8 +419,8 @@ Tooltip.prototype = {
 
 		// do the move
 		this.move(
-			mathRound(pos.x), 
-			mathRound(pos.y), 
+			Math.round(pos.x), 
+			Math.round(pos.y), 
 			point.plotX + chart.plotLeft, 
 			point.plotY + chart.plotTop
 		);
