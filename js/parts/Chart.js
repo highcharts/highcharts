@@ -451,7 +451,7 @@ Chart.prototype = {
 				)
 				.attr({
 					align: chartTitleOptions.align,
-					'class': PREFIX + name,
+					'class': 'highcharts-' + name,
 					zIndex: chartTitleOptions.zIndex || 4
 				})
 				.css(chartTitleOptions.style)
@@ -587,7 +587,7 @@ Chart.prototype = {
 			containerId;
 
 		chart.renderTo = renderTo = optionsChart.renderTo;
-		containerId = PREFIX + idCounter++;
+		containerId = 'highcharts-' + idCounter++;
 
 		if (isString(renderTo)) {
 			chart.renderTo = renderTo = doc.getElementById(renderTo);
@@ -629,7 +629,7 @@ Chart.prototype = {
 
 		// create the inner container
 		chart.container = container = createElement('div', {
-				className: PREFIX + 'container' +
+				className: 'highcharts-' + 'container' +
 					(optionsChart.className ? ' ' + optionsChart.className : ''),
 				id: containerId
 			}, extend({
@@ -967,7 +967,7 @@ Chart.prototype = {
 				chart.chartBackground = renderer.rect(mgn / 2, mgn / 2, chartWidth - mgn, chartHeight - mgn,
 						optionsChart.borderRadius, chartBorderWidth)
 					.attr(bgAttr)
-					.addClass(PREFIX + 'background')
+					.addClass('highcharts-' + 'background')
 					.add()
 					.shadow(optionsChart.shadow);
 

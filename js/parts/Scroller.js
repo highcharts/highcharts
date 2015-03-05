@@ -49,7 +49,7 @@ extend(defaultOptions, {
 				enabled: false,
 				zIndex: 2 // #1839
 			},
-			id: PREFIX + 'navigator-series',
+			id: 'highcharts-navigator-series',
 			lineColor: '#4572A7',
 			lineWidth: 1,
 			marker: {

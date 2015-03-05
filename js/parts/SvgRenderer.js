@@ -119,7 +119,7 @@ SVGElement.prototype = {
 			} else {
 
 				// Set the id and create the element
-				gradAttr.id = id = PREFIX + idCounter++;
+				gradAttr.id = id = 'highcharts-' + idCounter++;
 				gradients[key] = gradientObject = renderer.createElement(gradName)
 					.attr(gradAttr)
 					.add(renderer.defs);
@@ -225,7 +225,7 @@ SVGElement.prototype = {
 						// Create the clone and apply shadow properties
 						clone = tspan.cloneNode(1);
 						attr(clone, {
-							'class': PREFIX + 'text-shadow',
+							'class': 'highcharts-text-shadow',
 							'fill': color,
 							'stroke': color,
 							'stroke-opacity': 1 / mathMax(pInt(strokeWidth), 3),
@@ -716,7 +716,7 @@ SVGElement.prototype = {
 					// When the text shadow shim is used, we need to hide the fake shadows
 					// to get the correct bounding box (#3872)
 					toggleTextShadowShim = this.fakeTS && function (display) {
-						each(element.querySelectorAll('.' + PREFIX + 'text-shadow'), function (tspan) {
+						each(element.querySelectorAll('.' + 'highcharts-text-shadow'), function (tspan) {
 							tspan.style.display = display;
 						});
 					};
@@ -1866,7 +1866,7 @@ SVGRenderer.prototype = {
 	 */
 	g: function (name) {
 		var elem = this.createElement('g');
-		return defined(name) ? elem.attr({ 'class': PREFIX + name }) : elem;
+		return defined(name) ? elem.attr({ 'class': 'highcharts-' + name }) : elem;
 	},
 
 	/**
@@ -2165,7 +2165,7 @@ SVGRenderer.prototype = {
 	 */
 	clipRect: function (x, y, width, height) {
 		var wrapper,
-			id = PREFIX + idCounter++,
+			id = 'highcharts-' + idCounter++,
 
 			clipPath = this.createElement('clipPath').attr({
 				id: id

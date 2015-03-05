@@ -876,7 +876,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 		// set the class name
 		if (name) {
-			attribs = { 'className': PREFIX + name, 'class': PREFIX + name };
+			attribs = { 'className': 'highcharts-' + name, 'class': 'highcharts-' + name };
 		}
 
 		// the div to hold HTML and clipping

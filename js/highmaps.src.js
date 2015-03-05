@@ -59,7 +59,6 @@ var UNDEFINED,
 	VERSION = '1.1.3-modified',
 
 	// some constants for frequently used strings
-	PREFIX = 'highcharts-',
 	VISIBLE = 'visible',
 	PX = 'px',
 	NONE = 'none',
@@ -1890,7 +1889,7 @@ SVGElement.prototype = {
 			} else {
 
 				// Set the id and create the element
-				gradAttr.id = id = PREFIX + idCounter++;
+				gradAttr.id = id = 'highcharts-' + idCounter++;
 				gradients[key] = gradientObject = renderer.createElement(gradName)
 					.attr(gradAttr)
 					.add(renderer.defs);
@@ -1996,7 +1995,7 @@ SVGElement.prototype = {
 						// Create the clone and apply shadow properties
 						clone = tspan.cloneNode(1);
 						attr(clone, {
-							'class': PREFIX + 'text-shadow',
+							'class': 'highcharts-text-shadow',
 							'fill': color,
 							'stroke': color,
 							'stroke-opacity': 1 / mathMax(pInt(strokeWidth), 3),
@@ -2487,7 +2486,7 @@ SVGElement.prototype = {
 					// When the text shadow shim is used, we need to hide the fake shadows
 					// to get the correct bounding box (#3872)
 					toggleTextShadowShim = this.fakeTS && function (display) {
-						each(element.querySelectorAll('.' + PREFIX + 'text-shadow'), function (tspan) {
+						each(element.querySelectorAll('.' + 'highcharts-text-shadow'), function (tspan) {
 							tspan.style.display = display;
 						});
 					};
@@ -3637,7 +3636,7 @@ SVGRenderer.prototype = {
 	 */
 	g: function (name) {
 		var elem = this.createElement('g');
-		return defined(name) ? elem.attr({ 'class': PREFIX + name }) : elem;
+		return defined(name) ? elem.attr({ 'class': 'highcharts-' + name }) : elem;
 	},
 
 	/**
@@ -3936,7 +3935,7 @@ SVGRenderer.prototype = {
 	 */
 	clipRect: function (x, y, width, height) {
 		var wrapper,
-			id = PREFIX + idCounter++,
+			id = 'highcharts-' + idCounter++,
 
 			clipPath = this.createElement('clipPath').attr({
 				id: id
@@ -5513,7 +5512,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 		// set the class name
 		if (name) {
-			attribs = { 'className': PREFIX + name, 'class': PREFIX + name };
+			attribs = { 'className': 'highcharts-' + name, 'class': 'highcharts-' + name };
 		}
 
 		// the div to hold HTML and clipping
@@ -7789,7 +7788,7 @@ Axis.prototype = {
 				.add();
 			axis.labelGroup = renderer.g('axis-labels')
 				.attr({ zIndex: labelOptions.zIndex || 7 })
-				.addClass(PREFIX + axis.coll.toLowerCase() + '-labels')
+				.addClass('highcharts-' + axis.coll.toLowerCase() + '-labels')
 				.add();
 		}
 
@@ -7846,7 +7845,7 @@ Axis.prototype = {
 						axisTitleOptions.textAlign ||
 						{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
 				})
-				.addClass(PREFIX + this.coll.toLowerCase() + '-title')
+				.addClass('highcharts-' + this.coll.toLowerCase() + '-title')
 				.css(axisTitleOptions.style)
 				.add(axis.axisGroup);
 				axis.axisTitle.isNew = true;
@@ -9488,7 +9487,7 @@ Pointer.prototype = {
 			if (elemClassName) {
 				if (elemClassName.indexOf(className) !== -1) {
 					return true;
-				} else if (elemClassName.indexOf(PREFIX + 'container') !== -1) {
+				} else if (elemClassName.indexOf('highcharts-container') !== -1) {
 					return false;
 				}
 			}
@@ -9501,7 +9500,7 @@ Pointer.prototype = {
 			relatedTarget = e.relatedTarget || e.toElement,
 			relatedSeries = relatedTarget && relatedTarget.point && relatedTarget.point.series; // #2499
 		
-		if (series && !series.options.stickyTracking && !this.inClass(relatedTarget, PREFIX + 'tooltip') &&
+		if (series && !series.options.stickyTracking && !this.inClass(relatedTarget, 'highcharts-tooltip') &&
 				relatedSeries !== series) {
 			series.onMouseOut();
 		}
@@ -9520,7 +9519,7 @@ Pointer.prototype = {
 		if (!chart.cancelClick) {
 			
 			// On tracker click, fire the series and point events. #783, #1583
-			if (hoverPoint && this.inClass(e.target, PREFIX + 'tracker')) {
+			if (hoverPoint && this.inClass(e.target, 'highcharts-tracker')) {
 
 				// the series click event
 				fireEvent(hoverPoint.series, 'click', extend(e, {
@@ -9712,7 +9711,7 @@ extend(Highcharts.Pointer.prototype, {
 			hasZoom = self.hasZoom,
 			selectionMarker = self.selectionMarker,
 			transform = {},
-			fireClickEvent = touchesLength === 1 && ((self.inClass(e.target, PREFIX + 'tracker') && 
+			fireClickEvent = touchesLength === 1 && ((self.inClass(e.target, 'highcharts-tracker') && 
 				chart.runTrackerClick) || self.runChartClick),
 			clip = {};
 
@@ -11158,7 +11157,7 @@ Chart.prototype = {
 				)
 				.attr({
 					align: chartTitleOptions.align,
-					'class': PREFIX + name,
+					'class': 'highcharts-' + name,
 					zIndex: chartTitleOptions.zIndex || 4
 				})
 				.css(chartTitleOptions.style)
@@ -11294,7 +11293,7 @@ Chart.prototype = {
 			containerId;
 
 		chart.renderTo = renderTo = optionsChart.renderTo;
-		containerId = PREFIX + idCounter++;
+		containerId = 'highcharts-' + idCounter++;
 
 		if (isString(renderTo)) {
 			chart.renderTo = renderTo = doc.getElementById(renderTo);
@@ -11336,7 +11335,7 @@ Chart.prototype = {
 
 		// create the inner container
 		chart.container = container = createElement('div', {
-				className: PREFIX + 'container' +
+				className: 'highcharts-' + 'container' +
 					(optionsChart.className ? ' ' + optionsChart.className : ''),
 				id: containerId
 			}, extend({
@@ -11674,7 +11673,7 @@ Chart.prototype = {
 				chart.chartBackground = renderer.rect(mgn / 2, mgn / 2, chartWidth - mgn, chartHeight - mgn,
 						optionsChart.borderRadius, chartBorderWidth)
 					.attr(bgAttr)
-					.addClass(PREFIX + 'background')
+					.addClass('highcharts-' + 'background')
 					.add()
 					.shadow(optionsChart.shadow);
 
@@ -14301,7 +14300,7 @@ extend(Chart.prototype, {
 		// create the layer at the first call
 		if (!loadingDiv) {
 			chart.loadingDiv = loadingDiv = createElement('div', {
-				className: PREFIX + 'loading'
+				className: 'highcharts-loading'
 			}, extend(loadingOptions.style, {
 				zIndex: 10,
 				display: NONE
@@ -18629,7 +18628,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			each(series.trackerGroups, function (key) {
 				if (series[key]) { // we don't always have dataLabelsGroup
 					series[key]
-						.addClass(PREFIX + 'tracker')
+						.addClass('highcharts-tracker')
 						.on('mouseover', onMouseOver)
 						.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
 						.css(css);
@@ -18723,7 +18722,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			// The tracker is added to the series group, which is clipped, but is covered
 			// by the marker group. So the marker group also needs to capture events.
 			each([series.tracker, series.markerGroup], function (tracker) {
-				tracker.addClass(PREFIX + 'tracker')
+				tracker.addClass('highcharts-tracker')
 					.on('mouseover', onMouseOver)
 					.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
 					.css(css);

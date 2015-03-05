@@ -414,7 +414,7 @@ RangeSelector.prototype = {
 		// when focused.
 		this[name + 'Input'] = input = createElement('input', {
 			name: name,
-			className: PREFIX + 'range-selector',
+			className: 'highcharts-range-selector',
 			type: 'text'
 		}, extend({
 			position: 'absolute',

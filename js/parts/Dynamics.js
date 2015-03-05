@@ -81,7 +81,7 @@ extend(Chart.prototype, {
 		// create the layer at the first call
 		if (!loadingDiv) {
 			chart.loadingDiv = loadingDiv = createElement('div', {
-				className: PREFIX + 'loading'
+				className: 'highcharts-loading'
 			}, extend(loadingOptions.style, {
 				zIndex: 10,
 				display: NONE

@@ -43,7 +43,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			each(series.trackerGroups, function (key) {
 				if (series[key]) { // we don't always have dataLabelsGroup
 					series[key]
-						.addClass(PREFIX + 'tracker')
+						.addClass('highcharts-tracker')
 						.on('mouseover', onMouseOver)
 						.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
 						.css(css);
@@ -137,7 +137,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			// The tracker is added to the series group, which is clipped, but is covered
 			// by the marker group. So the marker group also needs to capture events.
 			each([series.tracker, series.markerGroup], function (tracker) {
-				tracker.addClass(PREFIX + 'tracker')
+				tracker.addClass('highcharts-tracker')
 					.on('mouseover', onMouseOver)
 					.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
 					.css(css);

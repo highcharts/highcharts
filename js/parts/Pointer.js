@@ -576,7 +576,7 @@ Pointer.prototype = {
 			if (elemClassName) {
 				if (elemClassName.indexOf(className) !== -1) {
 					return true;
-				} else if (elemClassName.indexOf(PREFIX + 'container') !== -1) {
+				} else if (elemClassName.indexOf('highcharts-container') !== -1) {
 					return false;
 				}
 			}
@@ -589,7 +589,7 @@ Pointer.prototype = {
 			relatedTarget = e.relatedTarget || e.toElement,
 			relatedSeries = relatedTarget && relatedTarget.point && relatedTarget.point.series; // #2499
 		
-		if (series && !series.options.stickyTracking && !this.inClass(relatedTarget, PREFIX + 'tooltip') &&
+		if (series && !series.options.stickyTracking && !this.inClass(relatedTarget, 'highcharts-tooltip') &&
 				relatedSeries !== series) {
 			series.onMouseOut();
 		}
@@ -608,7 +608,7 @@ Pointer.prototype = {
 		if (!chart.cancelClick) {
 			
 			// On tracker click, fire the series and point events. #783, #1583
-			if (hoverPoint && this.inClass(e.target, PREFIX + 'tracker')) {
+			if (hoverPoint && this.inClass(e.target, 'highcharts-tracker')) {
 
 				// the series click event
 				fireEvent(hoverPoint.series, 'click', extend(e, {

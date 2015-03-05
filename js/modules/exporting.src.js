@@ -32,7 +32,6 @@ var Chart = Highcharts.Chart,
 	M = 'M',
 	L = 'L',
 	NONE = 'none',
-	PREFIX = 'highcharts-',
 	PX = 'px',
 	UNDEFINED,
 	symbols = Highcharts.Renderer.prototype.symbols,
@@ -100,7 +99,7 @@ defaultOptions.exporting = {
 	//scale: 2
 	buttons: {
 		contextButton: {
-			menuClassName: PREFIX + 'contextmenu',
+			menuClassName: 'highcharts-' + 'contextmenu',
 			//x: -10,
 			symbol: 'menu',
 			_titleKey: 'contextButtonTitle',
@@ -645,7 +644,7 @@ extend(Chart.prototype, {
 				title: chart.options.lang[btnOptions._titleKey],
 				'stroke-linecap': 'round'
 			});
-		button.menuClassName = options.menuClassName || PREFIX + 'menu-' + chart.btnCount++;
+		button.menuClassName = options.menuClassName || 'highcharts-menu-' + chart.btnCount++;
 
 		if (btnOptions.symbol) {
 			symbol = renderer.symbol(
