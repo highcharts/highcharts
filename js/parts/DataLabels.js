@@ -26,7 +26,7 @@ Series.prototype.drawDataLabels = function () {
 		dataLabelsGroup = series.plotGroup(
 			'dataLabelsGroup',
 			'data-labels',
-			options.defer ? 'hidden' : VISIBLE,
+			options.defer ? 'hidden' : 'visible',
 			options.zIndex || 6
 		);
 
@@ -494,7 +494,7 @@ if (seriesTypes.pie) {
 				point = points[j];
 				labelPos = point.labelPos;
 				dataLabel = point.dataLabel;
-				visibility = point.visible === false ? 'hidden' : VISIBLE;
+				visibility = point.visible === false ? 'hidden' : 'visible';
 				naturalY = labelPos[1];
 
 				if (distanceOption > 0) {

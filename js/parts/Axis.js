@@ -2124,7 +2124,7 @@ Axis.prototype = {
 			// Draw the cross
 			if (this.cross) {
 				this.cross
-					.attr({ visibility: VISIBLE })[animation ? 'animate' : 'attr']({ d: path }, animation);
+					.attr({ visibility: 'visible' })[animation ? 'animate' : 'attr']({ d: path }, animation);
 			} else {
 				categorized = this.categories && !this.isRadial;
 				attribs = {

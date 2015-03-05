@@ -142,7 +142,7 @@ Axis.prototype.renderStackTotals = function () {
 		axis.stackTotalGroup = stackTotalGroup =
 			renderer.g('stack-labels')
 				.attr({
-					visibility: VISIBLE,
+					visibility: 'visible',
 					zIndex: 6
 				})
 				.add();

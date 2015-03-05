@@ -59,7 +59,6 @@ var UNDEFINED,
 	VERSION = '1.1.3-modified',
 
 	// some constants for frequently used strings
-	VISIBLE = 'visible',
 	PX = 'px',
 	NONE = 'none',
 	M = 'M',
@@ -2563,7 +2562,7 @@ SVGElement.prototype = {
 		if (inherit && this.element.namespaceURI === SVG_NS) {
 			this.element.removeAttribute('visibility');
 		} else {
-			this.attr({ visibility: inherit ? 'inherit' : VISIBLE });
+			this.attr({ visibility: inherit ? 'inherit' : 'visible' });
 		}
 		return this;
 	},
@@ -4672,7 +4671,7 @@ VMLElement = {
 		if (nodeName === 'shape' || isDiv) {
 			style.push('left:0;top:0;width:1px;height:1px;');
 		}
-		style.push('visibility: ', isDiv ? 'hidden' : VISIBLE);
+		style.push('visibility: ', isDiv ? 'hidden' : 'visible');
 
 		markup.push(' style="', style.join(''), '"/>');
 
@@ -5068,7 +5067,7 @@ VMLElement = {
 
 		// Handle inherited visibility
 		if (value === 'inherit') {
-			value = VISIBLE;
+			value = 'visible';
 		}
 		
 		// Let the shadow follow the main element
@@ -5087,7 +5086,7 @@ VMLElement = {
 			// outside the viewport. So the visibility is actually opposite of
 			// the expected value. This applies to the tooltip only.
 			if (!docMode8) {
-				element.style[key] = value ? VISIBLE : 'hidden';
+				element.style[key] = value ? 'visible' : 'hidden';
 			}
 			key = 'top';
 		}
@@ -8256,7 +8255,7 @@ Axis.prototype = {
 			// Draw the cross
 			if (this.cross) {
 				this.cross
-					.attr({ visibility: VISIBLE })[animation ? 'animate' : 'attr']({ d: path }, animation);
+					.attr({ visibility: 'visible' })[animation ? 'animate' : 'attr']({ d: path }, animation);
 			} else {
 				categorized = this.categories && !this.isRadial;
 				attribs = {
@@ -10569,7 +10568,7 @@ Legend.prototype = {
 			this.nav.attr({
 				translateX: padding,
 				translateY: clipHeight + this.padding + 7 + this.titleHeight,
-				visibility: VISIBLE
+				visibility: 'visible'
 			});
 			this.up.attr({
 					fill: currentPage === 1 ? inactiveColor : activeColor
@@ -13958,7 +13957,7 @@ Series.prototype = {
 			// Animation doesn't work in IE8 quirks when the group div is hidden,
 			// and looks bad in other oldIE
 			animDuration = (animation && !!series.animate && chart.renderer.isSVG && pick(animation.duration, 500)) || 0,
-			visibility = series.visible ? VISIBLE : 'hidden',
+			visibility = series.visible ? 'visible' : 'hidden',
 			zIndex = options.zIndex,
 			hasRendered = series.hasRendered,
 			chartSeriesGroup = chart.seriesGroup;
@@ -15170,7 +15169,7 @@ Series.prototype.drawDataLabels = function () {
 		dataLabelsGroup = series.plotGroup(
 			'dataLabelsGroup',
 			'data-labels',
-			options.defer ? 'hidden' : VISIBLE,
+			options.defer ? 'hidden' : 'visible',
 			options.zIndex || 6
 		);
 
@@ -15638,7 +15637,7 @@ if (seriesTypes.pie) {
 				point = points[j];
 				labelPos = point.labelPos;
 				dataLabel = point.dataLabel;
-				visibility = point.visible === false ? 'hidden' : VISIBLE;
+				visibility = point.visible === false ? 'hidden' : 'visible';
 				naturalY = labelPos[1];
 
 				if (distanceOption > 0) {
@@ -18711,7 +18710,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			series.tracker = renderer.path(trackerPath)
 			.attr({
 				'stroke-linejoin': 'round', // #1225
-				visibility: series.visible ? VISIBLE : 'hidden',
+				visibility: series.visible ? 'visible' : 'hidden',
 				stroke: TRACKER_FILL,
 				fill: trackByArea ? TRACKER_FILL : NONE,
 				'stroke-width' : options.lineWidth + (trackByArea ? 0 : 2 * snap),

@@ -659,7 +659,7 @@ Legend.prototype = {
 			this.nav.attr({
 				translateX: padding,
 				translateY: clipHeight + this.padding + 7 + this.titleHeight,
-				visibility: VISIBLE
+				visibility: 'visible'
 			});
 			this.up.attr({
 					fill: currentPage === 1 ? inactiveColor : activeColor

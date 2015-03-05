@@ -36,7 +36,7 @@ VMLElement = {
 		if (nodeName === 'shape' || isDiv) {
 			style.push('left:0;top:0;width:1px;height:1px;');
 		}
-		style.push('visibility: ', isDiv ? 'hidden' : VISIBLE);
+		style.push('visibility: ', isDiv ? 'hidden' : 'visible');
 
 		markup.push(' style="', style.join(''), '"/>');
 
@@ -432,7 +432,7 @@ VMLElement = {
 
 		// Handle inherited visibility
 		if (value === 'inherit') {
-			value = VISIBLE;
+			value = 'visible';
 		}
 		
 		// Let the shadow follow the main element
@@ -451,7 +451,7 @@ VMLElement = {
 			// outside the viewport. So the visibility is actually opposite of
 			// the expected value. This applies to the tooltip only.
 			if (!docMode8) {
-				element.style[key] = value ? VISIBLE : 'hidden';
+				element.style[key] = value ? 'visible' : 'hidden';
 			}
 			key = 'top';
 		}

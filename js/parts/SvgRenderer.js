@@ -793,7 +793,7 @@ SVGElement.prototype = {
 		if (inherit && this.element.namespaceURI === SVG_NS) {
 			this.element.removeAttribute('visibility');
 		} else {
-			this.attr({ visibility: inherit ? 'inherit' : VISIBLE });
+			this.attr({ visibility: inherit ? 'inherit' : 'visible' });
 		}
 		return this;
 	},

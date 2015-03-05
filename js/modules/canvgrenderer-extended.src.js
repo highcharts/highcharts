@@ -12,7 +12,6 @@
 
 (function (Highcharts) { // encapsulate
 	var UNDEFINED,
-		VISIBLE = 'visible',
 		PX = 'px',
 		css = Highcharts.css,
 		CanVGRenderer = Highcharts.CanVGRenderer,
@@ -123,7 +122,7 @@
 				position = chart.tooltip.getPosition(tooltipDiv.offsetWidth, tooltipDiv.offsetHeight, {plotX: args.x, plotY: args.y});
 
 				css(tooltipDiv, {
-					visibility: VISIBLE,
+					visibility: 'visible',
 					left: position.x + PX,
 					top: position.y + PX,
 					'border-color': args.borderColor
@@ -131,7 +130,7 @@
 
 				// Position the tooltip line
 				css(tooltipLine, {
-					visibility: VISIBLE,
+					visibility: 'visible',
 					left: offsetLeft + args.x + PX,
 					top: offsetTop + chart.plotTop + PX,
 					height: chart.plotHeight  + PX
