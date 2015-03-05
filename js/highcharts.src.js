@@ -16,13 +16,12 @@
 // encapsulated variables
 var UNDEFINED,
 	doc = document,
-	win = window,
 	deg2rad = Math.PI * 2 / 360,
 
 
 	// some variables
 	userAgent = navigator.userAgent,
-	isOpera = win.opera,
+	isOpera = window.opera,
 	isIE = /(msie|trident)/i.test(userAgent) && !isOpera,
 	docMode8 = doc.documentMode === 8,
 	isWebKit = /AppleWebKit/.test(userAgent),
@@ -76,7 +75,7 @@ var UNDEFINED,
 	Highcharts;
 
 // The Highcharts namespace
-Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : {};
+Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {};
 
 Highcharts.seriesTypes = seriesTypes;
 
@@ -664,7 +663,7 @@ function error (code, stop) {
 		throw msg;
 	}
 	// else ...
-	if (win.console) {
+	if (window.console) {
 		console.log(msg);
 	}
 }
@@ -827,7 +826,7 @@ pathAnim = {
 	/**
 	 * The default HighchartsAdapter for jQuery
 	 */
-	win.HighchartsAdapter = win.HighchartsAdapter || ($ && {
+	window.HighchartsAdapter = window.HighchartsAdapter || ($ && {
 		
 		/**
 		 * Initialize the adapter by applying some extensions to jQuery
@@ -1177,11 +1176,11 @@ pathAnim = {
 			}
 		}
 	});
-}(win.jQuery));
+}(window.jQuery));
 
 
 // check for a custom HighchartsAdapter defined prior to this file
-var globalAdapter = win.HighchartsAdapter,
+var globalAdapter = window.HighchartsAdapter,
 	adapter = globalAdapter || {};
 	
 // Initialize the adapter
@@ -2985,7 +2984,7 @@ SVGRenderer.prototype = {
 			subPixelFix();
 
 			// run it on resize
-			addEvent(win, 'resize', subPixelFix);
+			addEvent(window, 'resize', subPixelFix);
 		}
 	},
 
@@ -3027,7 +3026,7 @@ SVGRenderer.prototype = {
 		// We need to check that there is a handler, otherwise all functions that are registered for event 'resize' are removed
 		// See issue #982
 		if (renderer.subPixelFix) {
-			removeEvent(win, 'resize', renderer.subPixelFix);
+			removeEvent(window, 'resize', renderer.subPixelFix);
 		}
 
 		renderer.alignedObjects = null;
@@ -3992,9 +3991,9 @@ SVGRenderer.prototype = {
 	 */
 	fontMetrics: function (fontSize, elem) {
 		fontSize = fontSize || this.style.fontSize;
-		if (elem && win.getComputedStyle) {
+		if (elem && window.getComputedStyle) {
 			elem = elem.element || elem; // SVGElement
-			fontSize = win.getComputedStyle(elem, "").fontSize;
+			fontSize = window.getComputedStyle(elem, "").fontSize;
 		}
 		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
 
@@ -4878,7 +4877,7 @@ VMLElement = {
 	on: function (eventType, handler) {
 		// simplest possible event model for internal use
 		this.element['on' + eventType] = function () {
-			var evt = win.event;
+			var evt = window.event;
 			evt.target = evt.srcElement;
 			handler(evt);
 		};
@@ -10257,11 +10256,11 @@ extend(Highcharts.Pointer.prototype, {
 	}
 
 });
-if (win.PointerEvent || win.MSPointerEvent) {
+if (window.PointerEvent || window.MSPointerEvent) {
 	
 	// The touches object keeps track of the points being touched at all times
 	var touches = {},
-		hasPointerEvent = !!win.PointerEvent,
+		hasPointerEvent = !!window.PointerEvent,
 		getWebkitTouches = function () {
 			var key, fake = [];
 			fake.item = function (i) { return this[i]; };
@@ -11876,7 +11875,7 @@ Chart.prototype = {
 			renderTo = chart.renderTo,
 			width = optionsChart.width || adapterRun(renderTo, 'width'),
 			height = optionsChart.height || adapterRun(renderTo, 'height'),
-			target = e ? e.target : win, // #805 - MooTools doesn't supply e
+			target = e ? e.target : window, // #805 - MooTools doesn't supply e
 			doReflow = function () {
 				if (chart.container) { // It may have been destroyed in the meantime (#1257)
 					chart.setSize(width, height, false);
@@ -11885,8 +11884,8 @@ Chart.prototype = {
 			};
 			
 		// Width and height checks for display:none. Target is doc in IE8 and Opera,
-		// win in Firefox, Chrome and IE9.
-		if (!chart.hasUserSize && !chart.isPrinting && width && height && (target === win || target === doc)) { // #1093
+		// window in Firefox, Chrome and IE9.
+		if (!chart.hasUserSize && !chart.isPrinting && width && height && (target === window || target === doc)) { // #1093
 			if (width !== chart.containerWidth || height !== chart.containerHeight) {
 				clearTimeout(chart.reflowTimeout);
 				if (e) { // Called from window.resize
@@ -11910,9 +11909,9 @@ Chart.prototype = {
 			};
 			
 		
-		addEvent(win, 'resize', reflow);
+		addEvent(window, 'resize', reflow);
 		addEvent(chart, 'destroy', function () {
-			removeEvent(win, 'resize', reflow);
+			removeEvent(window, 'resize', reflow);
 		});
 	},
 
@@ -12466,9 +12465,9 @@ Chart.prototype = {
 	isReadyToRender: function () {
 		var chart = this;
 
-		// Note: in spite of JSLint's complaints, win == win.top is required
+		// Note: in spite of JSLint's complaints, window == window.top is required
 		/*jslint eqeq: true*/
-		if ((!hasSVG && (win == win.top && doc.readyState !== 'complete')) || (useCanVG && !win.canvg)) {
+		if ((!hasSVG && (window == window.top && doc.readyState !== 'complete')) || (useCanVG && !window.canvg)) {
 		/*jslint eqeq: false*/
 			if (useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready

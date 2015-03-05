@@ -2,7 +2,7 @@
 	/**
 	 * The default HighchartsAdapter for jQuery
 	 */
-	win.HighchartsAdapter = win.HighchartsAdapter || ($ && {
+	window.HighchartsAdapter = window.HighchartsAdapter || ($ && {
 		
 		/**
 		 * Initialize the adapter by applying some extensions to jQuery
@@ -352,4 +352,4 @@
 			}
 		}
 	});
-}(win.jQuery));
+}(window.jQuery));

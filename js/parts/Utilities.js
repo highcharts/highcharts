@@ -583,7 +583,7 @@ function error (code, stop) {
 		throw msg;
 	}
 	// else ...
-	if (win.console) {
+	if (window.console) {
 		console.log(msg);
 	}
 }

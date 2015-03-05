@@ -1,13 +1,12 @@
 // encapsulated variables
 var UNDEFINED,
 	doc = document,
-	win = window,
 	deg2rad = Math.PI * 2 / 360,
 
 
 	// some variables
 	userAgent = navigator.userAgent,
-	isOpera = win.opera,
+	isOpera = window.opera,
 	isIE = /(msie|trident)/i.test(userAgent) && !isOpera,
 	docMode8 = doc.documentMode === 8,
 	isWebKit = /AppleWebKit/.test(userAgent),
@@ -61,6 +60,6 @@ var UNDEFINED,
 	Highcharts;
 
 // The Highcharts namespace
-Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : {};
+Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {};
 
 Highcharts.seriesTypes = seriesTypes;

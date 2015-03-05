@@ -12,16 +12,15 @@
 
 (function () {
 
-var win = window,
-	doc = document,
-	mooVersion = win.MooTools.version.substring(0, 3), // Get the first three characters of the version number
+var doc = document,
+	mooVersion = window.MooTools.version.substring(0, 3), // Get the first three characters of the version number
 	legacy = mooVersion === '1.2' || mooVersion === '1.1', // 1.1 && 1.2 considered legacy, 1.3 is not.
 	legacyEvent = legacy || mooVersion === '1.3', // In versions 1.1 - 1.3 the event class is named Event, in newer versions it is named DOMEvent.
-	$extend = win.$extend || function () {
+	$extend = window.$extend || function () {
 		return Object.append.apply(Object, arguments);
 	};
 
-win.HighchartsAdapter = {
+window.HighchartsAdapter = {
 	/**
 	 * Initialize the adapter. This is run once as Highcharts is first run.
 	 * @param {Object} pathAnim The helper object to do animations across adapters.
@@ -126,7 +125,7 @@ win.HighchartsAdapter = {
 		}
 
 		// stop running animations
-		win.HighchartsAdapter.stop(el);
+		window.HighchartsAdapter.stop(el);
 
 		// define and run the effect
 		effect = new Fx.Morph(
@@ -232,7 +231,7 @@ win.HighchartsAdapter = {
 				type = 'beforeunload';
 			}
 
-			win.HighchartsAdapter.extendWithEvents(el);
+			window.HighchartsAdapter.extendWithEvents(el);
 
 			el.addEvent(type, fn);
 		}

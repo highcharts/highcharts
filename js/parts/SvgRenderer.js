@@ -1238,7 +1238,7 @@ SVGRenderer.prototype = {
 			subPixelFix();
 
 			// run it on resize
-			addEvent(win, 'resize', subPixelFix);
+			addEvent(window, 'resize', subPixelFix);
 		}
 	},
 
@@ -1280,7 +1280,7 @@ SVGRenderer.prototype = {
 		// We need to check that there is a handler, otherwise all functions that are registered for event 'resize' are removed
 		// See issue #982
 		if (renderer.subPixelFix) {
-			removeEvent(win, 'resize', renderer.subPixelFix);
+			removeEvent(window, 'resize', renderer.subPixelFix);
 		}
 
 		renderer.alignedObjects = null;
@@ -2245,9 +2245,9 @@ SVGRenderer.prototype = {
 	 */
 	fontMetrics: function (fontSize, elem) {
 		fontSize = fontSize || this.style.fontSize;
-		if (elem && win.getComputedStyle) {
+		if (elem && window.getComputedStyle) {
 			elem = elem.element || elem; // SVGElement
-			fontSize = win.getComputedStyle(elem, "").fontSize;
+			fontSize = window.getComputedStyle(elem, "").fontSize;
 		}
 		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
 

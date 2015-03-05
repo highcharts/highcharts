@@ -2,7 +2,7 @@
 
 
 // check for a custom HighchartsAdapter defined prior to this file
-var globalAdapter = win.HighchartsAdapter,
+var globalAdapter = window.HighchartsAdapter,
 	adapter = globalAdapter || {};
 	
 // Initialize the adapter

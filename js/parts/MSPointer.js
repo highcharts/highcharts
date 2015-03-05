@@ -1,8 +1,8 @@
-if (win.PointerEvent || win.MSPointerEvent) {
+if (window.PointerEvent || window.MSPointerEvent) {
 	
 	// The touches object keeps track of the points being touched at all times
 	var touches = {},
-		hasPointerEvent = !!win.PointerEvent,
+		hasPointerEvent = !!window.PointerEvent,
 		getWebkitTouches = function () {
 			var key, fake = [];
 			fake.item = function (i) { return this[i]; };

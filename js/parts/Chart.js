@@ -730,7 +730,7 @@ Chart.prototype = {
 			renderTo = chart.renderTo,
 			width = optionsChart.width || adapterRun(renderTo, 'width'),
 			height = optionsChart.height || adapterRun(renderTo, 'height'),
-			target = e ? e.target : win, // #805 - MooTools doesn't supply e
+			target = e ? e.target : window, // #805 - MooTools doesn't supply e
 			doReflow = function () {
 				if (chart.container) { // It may have been destroyed in the meantime (#1257)
 					chart.setSize(width, height, false);
@@ -739,8 +739,8 @@ Chart.prototype = {
 			};
 			
 		// Width and height checks for display:none. Target is doc in IE8 and Opera,
-		// win in Firefox, Chrome and IE9.
-		if (!chart.hasUserSize && !chart.isPrinting && width && height && (target === win || target === doc)) { // #1093
+		// window in Firefox, Chrome and IE9.
+		if (!chart.hasUserSize && !chart.isPrinting && width && height && (target === window || target === doc)) { // #1093
 			if (width !== chart.containerWidth || height !== chart.containerHeight) {
 				clearTimeout(chart.reflowTimeout);
 				if (e) { // Called from window.resize
@@ -764,9 +764,9 @@ Chart.prototype = {
 			};
 			
 		
-		addEvent(win, 'resize', reflow);
+		addEvent(window, 'resize', reflow);
 		addEvent(chart, 'destroy', function () {
-			removeEvent(win, 'resize', reflow);
+			removeEvent(window, 'resize', reflow);
 		});
 	},
 
@@ -1320,9 +1320,9 @@ Chart.prototype = {
 	isReadyToRender: function () {
 		var chart = this;
 
-		// Note: in spite of JSLint's complaints, win == win.top is required
+		// Note: in spite of JSLint's complaints, window == window.top is required
 		/*jslint eqeq: true*/
-		if ((!hasSVG && (win == win.top && doc.readyState !== 'complete')) || (useCanVG && !win.canvg)) {
+		if ((!hasSVG && (window == window.top && doc.readyState !== 'complete')) || (useCanVG && !window.canvg)) {
 		/*jslint eqeq: false*/
 			if (useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready

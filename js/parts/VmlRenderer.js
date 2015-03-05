@@ -265,7 +265,7 @@ VMLElement = {
 	on: function (eventType, handler) {
 		// simplest possible event model for internal use
 		this.element['on' + eventType] = function () {
-			var evt = win.event;
+			var evt = window.event;
 			evt.target = evt.srcElement;
 			handler(evt);
 		};

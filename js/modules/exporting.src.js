@@ -25,7 +25,6 @@ var Chart = Highcharts.Chart,
 	extend = Highcharts.extend,
 	splat = Highcharts.splat,
 	doc = document,
-	win = window,
 	isTouchDevice = Highcharts.isTouchDevice,
 	UNDEFINED,
 	symbols = Highcharts.Renderer.prototype.symbols,
@@ -409,8 +408,8 @@ extend(Chart.prototype, {
 		body.appendChild(container);
 
 		// print
-		win.focus(); // #1510
-		win.print();
+		window.focus(); // #1510
+		window.print();
 
 		// allow the browser to prepare before reverting
 		setTimeout(function () {
