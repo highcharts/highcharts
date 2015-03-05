@@ -24,7 +24,7 @@ var deg2rad = Math.PI * 2 / 360,
 	globalAnimation,
 	pathAnim,
 	timeUnits,
-	noop = function () { return undefined; },
+	noop = function () {},
 	charts = [],
 	chartCount = 0,
 

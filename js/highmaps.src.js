@@ -39,7 +39,7 @@ var deg2rad = Math.PI * 2 / 360,
 	globalAnimation,
 	pathAnim,
 	timeUnits,
-	noop = function () { return undefined; },
+	noop = function () {},
 	charts = [],
 	chartCount = 0,
 
@@ -319,7 +319,7 @@ function createElement(tag, attribs, styles, parent, nopad) {
  * @param {Object} members
  */
 function extendClass(parent, members) {
-	var object = function () { return undefined; };
+	var object = function () {};
 	object.prototype = new parent();
 	extend(object.prototype, members);
 	return object;

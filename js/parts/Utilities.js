@@ -241,7 +241,7 @@ function createElement(tag, attribs, styles, parent, nopad) {
  * @param {Object} members
  */
 function extendClass(parent, members) {
-	var object = function () { return undefined; };
+	var object = function () {};
 	object.prototype = new parent();
 	extend(object.prototype, members);
 	return object;
