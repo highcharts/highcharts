@@ -634,7 +634,7 @@ Axis.prototype = {
 		var pos,
 			lastPos,
 			roundedMin = correctFloat(Math.floor(min / tickInterval) * tickInterval),
-			roundedMax = correctFloat(mathCeil(max / tickInterval) * tickInterval),
+			roundedMax = correctFloat(Math.ceil(max / tickInterval) * tickInterval),
 			tickPositions = [];
 
 		// For single points, add a tick regardless of the relative position (#2662)
@@ -1159,7 +1159,7 @@ Axis.prototype = {
 
 			if (hasOther) {
 				// Add 1 because 4 tick intervals require 5 ticks (including first and last)
-				tickAmount = mathCeil(this.len / tickPixelInterval) + 1;
+				tickAmount = Math.ceil(this.len / tickPixelInterval) + 1;
 			}
 		}
 
@@ -1478,7 +1478,7 @@ Axis.prototype = {
 			// Return the multiple of tickInterval that is needed to avoid collision
 			getStep = function (spaceNeeded) {
 				var step = spaceNeeded / (slotSize || 1);
-				step = step > 1 ? mathCeil(step) : 1;
+				step = step > 1 ? Math.ceil(step) : 1;
 				return step * tickInterval;
 			};
 		

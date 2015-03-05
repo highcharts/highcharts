@@ -171,7 +171,7 @@ var ColumnSeries = extendClass(Series, {
 		// columns to have individual sizes. When pointPadding is greater, we strive for equal-width
 		// columns (#2694).
 		if (options.pointPadding) {
-			seriesBarW = mathCeil(seriesBarW);
+			seriesBarW = Math.ceil(seriesBarW);
 		}
 
 		Series.prototype.translate.apply(series);

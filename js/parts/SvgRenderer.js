@@ -1229,8 +1229,8 @@ SVGRenderer.prototype = {
 				css(container, { left: 0, top: 0 });
 				rect = container.getBoundingClientRect();
 				css(container, {
-					left: (mathCeil(rect.left) - rect.left) + 'px',
-					top: (mathCeil(rect.top) - rect.top) + 'px'
+					left: (Math.ceil(rect.left) - rect.left) + 'px',
+					top: (Math.ceil(rect.top) - rect.top) + 'px'
 				});
 			};
 
@@ -1484,7 +1484,7 @@ SVGRenderer.prototype = {
 											if (tooLong) {
 												wasTooLong = true;
 											}
-											wordStr = span.substring(0, wordStr.length + (tooLong ? -1 : 1) * mathCeil(cursor));
+											wordStr = span.substring(0, wordStr.length + (tooLong ? -1 : 1) * Math.ceil(cursor));
 											words = [wordStr + '\u2026'];
 											tspan.removeChild(tspan.firstChild);
 										}

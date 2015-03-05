@@ -494,7 +494,7 @@ Chart.prototype = {
 				}, subtitleOptions), false, 'spacingBox');
 			
 			if (!subtitleOptions.floating && !subtitleOptions.verticalAlign) {
-				titleOffset = mathCeil(titleOffset + subtitle.getBBox().height);
+				titleOffset = Math.ceil(titleOffset + subtitle.getBBox().height);
 			}
 		}
 
@@ -893,8 +893,8 @@ Chart.prototype = {
 		};
 
 		plotBorderWidth = 2 * Math.floor(chart.plotBorderWidth / 2);
-		clipX = mathCeil(mathMax(plotBorderWidth, clipOffset[3]) / 2);
-		clipY = mathCeil(mathMax(plotBorderWidth, clipOffset[0]) / 2);
+		clipX = Math.ceil(mathMax(plotBorderWidth, clipOffset[3]) / 2);
+		clipY = Math.ceil(mathMax(plotBorderWidth, clipOffset[0]) / 2);
 		chart.clipBox = {
 			x: clipX, 
 			y: clipY, 

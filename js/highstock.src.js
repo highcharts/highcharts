@@ -17,7 +17,6 @@
 var UNDEFINED,
 	doc = document,
 	win = window,
-	mathCeil = Math.ceil,
 	mathMax = Math.max,
 	mathMin = Math.min,
 	mathAbs = Math.abs,
@@ -2983,8 +2982,8 @@ SVGRenderer.prototype = {
 				css(container, { left: 0, top: 0 });
 				rect = container.getBoundingClientRect();
 				css(container, {
-					left: (mathCeil(rect.left) - rect.left) + 'px',
-					top: (mathCeil(rect.top) - rect.top) + 'px'
+					left: (Math.ceil(rect.left) - rect.left) + 'px',
+					top: (Math.ceil(rect.top) - rect.top) + 'px'
 				});
 			};
 
@@ -3238,7 +3237,7 @@ SVGRenderer.prototype = {
 											if (tooLong) {
 												wasTooLong = true;
 											}
-											wordStr = span.substring(0, wordStr.length + (tooLong ? -1 : 1) * mathCeil(cursor));
+											wordStr = span.substring(0, wordStr.length + (tooLong ? -1 : 1) * Math.ceil(cursor));
 											words = [wordStr + '\u2026'];
 											tspan.removeChild(tspan.firstChild);
 										}
@@ -7010,7 +7009,7 @@ Axis.prototype = {
 		var pos,
 			lastPos,
 			roundedMin = correctFloat(Math.floor(min / tickInterval) * tickInterval),
-			roundedMax = correctFloat(mathCeil(max / tickInterval) * tickInterval),
+			roundedMax = correctFloat(Math.ceil(max / tickInterval) * tickInterval),
 			tickPositions = [];
 
 		// For single points, add a tick regardless of the relative position (#2662)
@@ -7535,7 +7534,7 @@ Axis.prototype = {
 
 			if (hasOther) {
 				// Add 1 because 4 tick intervals require 5 ticks (including first and last)
-				tickAmount = mathCeil(this.len / tickPixelInterval) + 1;
+				tickAmount = Math.ceil(this.len / tickPixelInterval) + 1;
 			}
 		}
 
@@ -7854,7 +7853,7 @@ Axis.prototype = {
 			// Return the multiple of tickInterval that is needed to avoid collision
 			getStep = function (spaceNeeded) {
 				var step = spaceNeeded / (slotSize || 1);
-				step = step > 1 ? mathCeil(step) : 1;
+				step = step > 1 ? Math.ceil(step) : 1;
 				return step * tickInterval;
 			};
 		
@@ -11647,7 +11646,7 @@ Chart.prototype = {
 				}, subtitleOptions), false, 'spacingBox');
 			
 			if (!subtitleOptions.floating && !subtitleOptions.verticalAlign) {
-				titleOffset = mathCeil(titleOffset + subtitle.getBBox().height);
+				titleOffset = Math.ceil(titleOffset + subtitle.getBBox().height);
 			}
 		}
 
@@ -12046,8 +12045,8 @@ Chart.prototype = {
 		};
 
 		plotBorderWidth = 2 * Math.floor(chart.plotBorderWidth / 2);
-		clipX = mathCeil(mathMax(plotBorderWidth, clipOffset[3]) / 2);
-		clipY = mathCeil(mathMax(plotBorderWidth, clipOffset[0]) / 2);
+		clipX = Math.ceil(mathMax(plotBorderWidth, clipOffset[3]) / 2);
+		clipY = Math.ceil(mathMax(plotBorderWidth, clipOffset[0]) / 2);
 		chart.clipBox = {
 			x: clipX, 
 			y: clipY, 
@@ -16057,7 +16056,7 @@ var ColumnSeries = extendClass(Series, {
 		// columns to have individual sizes. When pointPadding is greater, we strive for equal-width
 		// columns (#2694).
 		if (options.pointPadding) {
-			seriesBarW = mathCeil(seriesBarW);
+			seriesBarW = Math.ceil(seriesBarW);
 		}
 
 		Series.prototype.translate.apply(series);
