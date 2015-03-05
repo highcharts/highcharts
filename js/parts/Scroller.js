@@ -493,7 +493,7 @@ Scroller.prototype = {
 			}
 			scroller.scrollbarPad = scrollbarPad;
 			scrollbar[verb]({
-				x: mathFloor(scrX) + (scrollbarStrokeWidth % 2 / 2),
+				x: Math.floor(scrX) + (scrollbarStrokeWidth % 2 / 2),
 				width: scrWidth
 			});
 

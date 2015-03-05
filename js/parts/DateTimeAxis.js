@@ -22,31 +22,31 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 
 	if (defined(min)) { // #1300
 		minDate.setMilliseconds(interval >= timeUnits.second ? 0 :
-			count * mathFloor(minDate.getMilliseconds() / count)); // #3652, #3654
+			count * Math.floor(minDate.getMilliseconds() / count)); // #3652, #3654
 
 		if (interval >= timeUnits.second) { // second
 			minDate.setSeconds(interval >= timeUnits.minute ? 0 :
-				count * mathFloor(minDate.getSeconds() / count));
+				count * Math.floor(minDate.getSeconds() / count));
 		}
 	
 		if (interval >= timeUnits.minute) { // minute
 			minDate[setMinutes](interval >= timeUnits.hour ? 0 :
-				count * mathFloor(minDate[getMinutes]() / count));
+				count * Math.floor(minDate[getMinutes]() / count));
 		}
 	
 		if (interval >= timeUnits.hour) { // hour
 			minDate[setHours](interval >= timeUnits.day ? 0 :
-				count * mathFloor(minDate[getHours]() / count));
+				count * Math.floor(minDate[getHours]() / count));
 		}
 	
 		if (interval >= timeUnits.day) { // day
 			minDate[setDate](interval >= timeUnits.month ? 1 :
-				count * mathFloor(minDate[getDate]() / count));
+				count * Math.floor(minDate[getDate]() / count));
 		}
 	
 		if (interval >= timeUnits.month) { // month
 			minDate[setMonth](interval >= timeUnits.year ? 0 :
-				count * mathFloor(minDate[getMonth]() / count));
+				count * Math.floor(minDate[getMonth]() / count));
 			minYear = minDate[getFullYear]();
 		}
 	

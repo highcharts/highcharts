@@ -633,7 +633,7 @@ Axis.prototype = {
 	getLinearTickPositions: function (tickInterval, min, max) {
 		var pos,
 			lastPos,
-			roundedMin = correctFloat(mathFloor(min / tickInterval) * tickInterval),
+			roundedMin = correctFloat(Math.floor(min / tickInterval) * tickInterval),
 			roundedMax = correctFloat(mathCeil(max / tickInterval) * tickInterval),
 			tickPositions = [];
 
@@ -1743,7 +1743,7 @@ Axis.prototype = {
 			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset,
 			labelOffsetPadded // #3027
 		);
-		clipOffset[invertedSide] = mathMax(clipOffset[invertedSide], mathFloor(options.lineWidth / 2) * 2);
+		clipOffset[invertedSide] = mathMax(clipOffset[invertedSide], Math.floor(options.lineWidth / 2) * 2);
 	},
 
 	/**

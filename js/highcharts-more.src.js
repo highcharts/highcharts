@@ -33,7 +33,6 @@ var arrayMin = Highcharts.arrayMin,
 	CenteredSeriesMixin = Highcharts.CenteredSeriesMixin,
 	TrackerMixin = Highcharts.TrackerMixin,
 	Series = Highcharts.Series,
-	mathFloor = Math.floor,
 	mathMax = Math.max,
 	Color = Highcharts.Color,
 	noop = function () {};/**
@@ -1351,14 +1350,14 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 
 				// crisp vector coordinates
 				width = shapeArgs.width;
-				left = mathFloor(shapeArgs.x);
+				left = Math.floor(shapeArgs.x);
 				right = left + width;
 				halfWidth = Math.round(width / 2);
 				//crispX = Math.round(left + halfWidth) + crispCorr;
-				q1Plot = mathFloor(doQuartiles ? point.q1Plot : point.lowPlot);// + crispCorr;
-				q3Plot = mathFloor(doQuartiles ? point.q3Plot : point.lowPlot);// + crispCorr;
-				highPlot = mathFloor(point.highPlot);// + crispCorr;
-				lowPlot = mathFloor(point.lowPlot);// + crispCorr;
+				q1Plot = Math.floor(doQuartiles ? point.q1Plot : point.lowPlot);// + crispCorr;
+				q3Plot = Math.floor(doQuartiles ? point.q3Plot : point.lowPlot);// + crispCorr;
+				highPlot = Math.floor(point.highPlot);// + crispCorr;
+				lowPlot = Math.floor(point.lowPlot);// + crispCorr;
 				
 				// Stem attributes
 				stemAttr.stroke = point.stemColor || options.stemColor || color;
@@ -1393,9 +1392,9 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				// The box
 				if (doQuartiles) {
 					crispCorr = (pointAttr['stroke-width'] % 2) / 2;
-					crispX = mathFloor(crispX) + crispCorr;
-					q1Plot = mathFloor(q1Plot) + crispCorr;
-					q3Plot = mathFloor(q3Plot) + crispCorr;
+					crispX = Math.floor(crispX) + crispCorr;
+					q1Plot = Math.floor(q1Plot) + crispCorr;
+					q3Plot = Math.floor(q3Plot) + crispCorr;
 					left += crispCorr;
 					right += crispCorr;
 					boxPath = [

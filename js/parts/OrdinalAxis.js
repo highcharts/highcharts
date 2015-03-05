@@ -141,7 +141,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 			translatedArr[i] = lastTranslated = translated;
 		}
 		distances.sort();
-		medianDistance = distances[mathFloor(distances.length / 2)];
+		medianDistance = distances[Math.floor(distances.length / 2)];
 		if (medianDistance < tickPixelIntervalOption * 0.6) {
 			medianDistance = null;
 		}
@@ -353,7 +353,7 @@ extend(Axis.prototype, {
 				} else if (val > i) { // out of range, panning to the right
 					val = ordinalPositions[i];
 				} else { // split it up
-					i = mathFloor(val);
+					i = Math.floor(val);
 					distance = val - i; // the decimal
 				}
 
@@ -491,7 +491,7 @@ extend(Axis.prototype, {
 			distances.sort(function (a, b) {
 					return a - b;
 			});
-			median = distances[mathFloor(len / 2)];
+			median = distances[Math.floor(len / 2)];
 
 			// Compensate for series that don't extend through the entire axis extent. #1675.
 			xMin = mathMax(xMin, processedXData[0]);

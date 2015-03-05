@@ -393,10 +393,10 @@ SVGElement.prototype = {
 		normalizer = Math.round(strokeWidth) % 2 / 2; // Math.round because strokeWidth can sometimes have roundoff errors
 
 		// normalize for crisp edges
-		rect.x = mathFloor(rect.x || wrapper.x || 0) + normalizer;
-		rect.y = mathFloor(rect.y || wrapper.y || 0) + normalizer;
-		rect.width = mathFloor((rect.width || wrapper.width || 0) - 2 * normalizer);
-		rect.height = mathFloor((rect.height || wrapper.height || 0) - 2 * normalizer);
+		rect.x = Math.floor(rect.x || wrapper.x || 0) + normalizer;
+		rect.y = Math.floor(rect.y || wrapper.y || 0) + normalizer;
+		rect.width = Math.floor((rect.width || wrapper.width || 0) - 2 * normalizer);
+		rect.height = Math.floor((rect.height || wrapper.height || 0) - 2 * normalizer);
 		rect.strokeWidth = strokeWidth;
 
 		for (key in rect) {

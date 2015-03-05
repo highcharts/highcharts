@@ -17,7 +17,6 @@
 var UNDEFINED,
 	doc = document,
 	win = window,
-	mathFloor = Math.floor,
 	mathCeil = Math.ceil,
 	mathMax = Math.max,
 	mathMin = Math.min,
@@ -516,7 +515,7 @@ function format(str, ctx) {
  * Get the magnitude of a number
  */
 function getMagnitude(num) {
-	return Math.pow(10, mathFloor(Math.log(num) / Math.LN10));
+	return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
 }
 
 /**
@@ -2148,10 +2147,10 @@ SVGElement.prototype = {
 		normalizer = Math.round(strokeWidth) % 2 / 2; // Math.round because strokeWidth can sometimes have roundoff errors
 
 		// normalize for crisp edges
-		rect.x = mathFloor(rect.x || wrapper.x || 0) + normalizer;
-		rect.y = mathFloor(rect.y || wrapper.y || 0) + normalizer;
-		rect.width = mathFloor((rect.width || wrapper.width || 0) - 2 * normalizer);
-		rect.height = mathFloor((rect.height || wrapper.height || 0) - 2 * normalizer);
+		rect.x = Math.floor(rect.x || wrapper.x || 0) + normalizer;
+		rect.y = Math.floor(rect.y || wrapper.y || 0) + normalizer;
+		rect.width = Math.floor((rect.width || wrapper.width || 0) - 2 * normalizer);
+		rect.height = Math.floor((rect.height || wrapper.height || 0) - 2 * normalizer);
 		rect.strokeWidth = strokeWidth;
 
 		for (key in rect) {
@@ -6750,7 +6749,7 @@ Axis.prototype = {
 	getLinearTickPositions: function (tickInterval, min, max) {
 		var pos,
 			lastPos,
-			roundedMin = correctFloat(mathFloor(min / tickInterval) * tickInterval),
+			roundedMin = correctFloat(Math.floor(min / tickInterval) * tickInterval),
 			roundedMax = correctFloat(mathCeil(max / tickInterval) * tickInterval),
 			tickPositions = [];
 
@@ -7860,7 +7859,7 @@ Axis.prototype = {
 			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset,
 			labelOffsetPadded // #3027
 		);
-		clipOffset[invertedSide] = mathMax(clipOffset[invertedSide], mathFloor(options.lineWidth / 2) * 2);
+		clipOffset[invertedSide] = mathMax(clipOffset[invertedSide], Math.floor(options.lineWidth / 2) * 2);
 	},
 
 	/**
@@ -8298,7 +8297,7 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 	// Second case: We need intermediary ticks. For example 
 	// 1, 2, 4, 6, 8, 10, 20, 40 etc. 
 	} else if (interval >= 0.08) {
-		var roundedMin = mathFloor(min),
+		var roundedMin = Math.floor(min),
 			intermediate,
 			i,
 			j,
@@ -11583,14 +11582,14 @@ Chart.prototype = {
 			height: plotHeight
 		};
 
-		plotBorderWidth = 2 * mathFloor(chart.plotBorderWidth / 2);
+		plotBorderWidth = 2 * Math.floor(chart.plotBorderWidth / 2);
 		clipX = mathCeil(mathMax(plotBorderWidth, clipOffset[3]) / 2);
 		clipY = mathCeil(mathMax(plotBorderWidth, clipOffset[0]) / 2);
 		chart.clipBox = {
 			x: clipX, 
 			y: clipY, 
-			width: mathFloor(chart.plotSizeX - mathMax(plotBorderWidth, clipOffset[1]) / 2 - clipX), 
-			height: mathMax(0, mathFloor(chart.plotSizeY - mathMax(plotBorderWidth, clipOffset[2]) / 2 - clipY))
+			width: Math.floor(chart.plotSizeX - mathMax(plotBorderWidth, clipOffset[1]) / 2 - clipX), 
+			height: mathMax(0, Math.floor(chart.plotSizeY - mathMax(plotBorderWidth, clipOffset[2]) / 2 - clipY))
 		};
 
 		if (!skipAxes) {
@@ -13318,7 +13317,7 @@ Series.prototype = {
 			i = points.length;
 			while (i--) {
 				point = points[i];
-				plotX = mathFloor(point.plotX); // #1843
+				plotX = Math.floor(point.plotX); // #1843
 				plotY = point.plotY;
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};

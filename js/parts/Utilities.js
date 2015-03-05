@@ -427,7 +427,7 @@ function format(str, ctx) {
  * Get the magnitude of a number
  */
 function getMagnitude(num) {
-	return Math.pow(10, mathFloor(Math.log(num) / Math.LN10));
+	return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
 }
 
 /**

@@ -26,7 +26,7 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 	// Second case: We need intermediary ticks. For example 
 	// 1, 2, 4, 6, 8, 10, 20, 40 etc. 
 	} else if (interval >= 0.08) {
-		var roundedMin = mathFloor(min),
+		var roundedMin = Math.floor(min),
 			intermediate,
 			i,
 			j,
