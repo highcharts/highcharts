@@ -6,7 +6,7 @@
 	require_once('Git.php');
 
 	try {
-		Git::set_bin($git);
+		Git::set_bin(Settings::$git);
 		$repo = Git::open(dirname(__FILE__) . '/../../');
 		$branches = $repo->list_branches();
 	} catch (Exception $e) {

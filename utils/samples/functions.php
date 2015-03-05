@@ -1,6 +1,5 @@
 <?php
-//define('JQUERY_PATH', isset($_SESSION['jQueryPath']) ? $_SESSION['jQueryPath'] : $defaults->jQueryPath);
-define('JQUERY_VERSION', isset($_SESSION['jQueryVersion']) ? $_SESSION['jQueryVersion'] : $defaults->jQueryVersion);
+define('JQUERY_VERSION', isset($_SESSION['jQueryVersion']) ? $_SESSION['jQueryVersion'] : Settings::$jQueryVersion);
 
 
 function getFramework($framework) {

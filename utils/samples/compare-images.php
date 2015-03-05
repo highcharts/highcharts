@@ -1,9 +1,9 @@
 <?php
 ini_set('display_errors', 'on');
 session_start();
-$defaults = json_decode(file_get_contents('default-settings.json'));
+require_once('../settings.php');
 
-$exportServer = isset($_SESSION['exportServer']) ? $_SESSION['exportServer'] : $defaults->exportServer;
+$exportServer = isset($_SESSION['exportServer']) ? $_SESSION['exportServer'] : Settings::$exportServer;
 
 $fallBackToOnline = false;
 if ($exportServer !== 'http://export.highcharts.com/') {
