@@ -14422,7 +14422,7 @@ extend(Point.prototype, {
 				chart.isDirtyBox = true;
 			}
 
-			if (seriesOptions.legendType === 'point') { // #1831, #1885
+			if (chart.legend.display && seriesOptions.legendType === 'point') { // #1831, #1885, #3934
 				series.updateTotals();
 				chart.legend.clearItems();
 			}
