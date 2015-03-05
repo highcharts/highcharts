@@ -2342,7 +2342,7 @@ SVGRenderer.prototype = {
 
 					wrapper.box = box = shape ?
 						renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height, deferredAttr) :
-						renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
+						renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr['stroke-width']);
 					box.attr('fill', 'none').add(wrapper);
 				}
 

@@ -50,9 +50,6 @@ var UNDEFINED,
 	// Object for extending Axis
 	AxisPlotLineOrBandExtension,
 
-	// constants for attributes
-	STROKE_WIDTH = 'stroke-width',
-
 	// time methods, changed based on whether or not UTC is used
 	Date,  // Allow using a different Date class
 	makeTime,
