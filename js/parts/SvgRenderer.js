@@ -1708,7 +1708,7 @@ SVGRenderer.prototype = {
 	 * @param {Number} width
 	 */
 	crispLine: function (points, width) {
-		// points format: [M, 0, 0, L, 100, 0]
+		// points format: ['M', 0, 0, L, 100, 0]
 		// normalize to a crisp line
 		if (points[1] === points[4]) {
 			// Substract due to #1129. Now bottom and left axis gridlines behave the same.
@@ -2012,7 +2012,7 @@ SVGRenderer.prototype = {
 		'circle': function (x, y, w, h) {
 			var cpw = 0.166 * w;
 			return [
-				M, x + w / 2, y,
+				'M', x + w / 2, y,
 				'C', x + w + cpw, y, x + w + cpw, y + h, x + w / 2, y + h,
 				'C', x - cpw, y + h, x - cpw, y, x + w / 2, y,
 				'Z'
@@ -2021,7 +2021,7 @@ SVGRenderer.prototype = {
 
 		'square': function (x, y, w, h) {
 			return [
-				M, x, y,
+				'M', x, y,
 				L, x + w, y,
 				x + w, y + h,
 				x, y + h,
@@ -2031,7 +2031,7 @@ SVGRenderer.prototype = {
 
 		'triangle': function (x, y, w, h) {
 			return [
-				M, x + w / 2, y,
+				'M', x + w / 2, y,
 				L, x + w, y + h,
 				x, y + h,
 				'Z'
@@ -2040,7 +2040,7 @@ SVGRenderer.prototype = {
 
 		'triangle-down': function (x, y, w, h) {
 			return [
-				M, x, y,
+				'M', x, y,
 				L, x + w, y,
 				x + w / 2, y + h,
 				'Z'
@@ -2048,7 +2048,7 @@ SVGRenderer.prototype = {
 		},
 		'diamond': function (x, y, w, h) {
 			return [
-				M, x + w / 2, y,
+				'M', x + w / 2, y,
 				L, x + w, y + h / 2,
 				x + w / 2, y + h,
 				x, y + h / 2,
@@ -2068,7 +2068,7 @@ SVGRenderer.prototype = {
 				longArc = options.end - start < mathPI ? 0 : 1;
 
 			return [
-				M,
+				'M',
 				x + radius * cosStart,
 				y + radius * sinStart,
 				'A', // arcTo
@@ -2079,7 +2079,7 @@ SVGRenderer.prototype = {
 				1, // clockwise
 				x + radius * cosEnd,
 				y + radius * sinEnd,
-				open ? M : L,
+				open ? 'M' : L,
 				x + innerRadius * cosEnd,
 				y + innerRadius * sinEnd,
 				'A', // arcTo

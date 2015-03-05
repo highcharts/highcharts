@@ -215,7 +215,6 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			lineWidth = this.options.lineWidth + this.borderWidth,
 			normalizer = mathRound(lineWidth) % 2 / 2,
 			path = [],
-			M = 'M',
 			L = 'L',
 			prevArgs,
 			pointArgs,
@@ -227,7 +226,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			prevArgs = data[i - 1].shapeArgs;
 
 			d = [
-				M,
+				'M',
 				prevArgs.x + prevArgs.width, prevArgs.y + normalizer,
 				L,
 				pointArgs.x, prevArgs.y + normalizer

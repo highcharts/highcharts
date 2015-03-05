@@ -974,7 +974,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			if (options.open && !innerRadius) {
 				ret.push(
 					'e',
-					M,
+					'M',
 					x,// - innerRadius,
 					y// - innerRadius
 				);

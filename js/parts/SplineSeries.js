@@ -105,7 +105,7 @@ var SplineSeries = extendClass(Series, {
 
 		// moveTo or lineTo
 		if (!i) {
-			ret = [M, plotX, plotY];
+			ret = ['M', plotX, plotY];
 		} else { // curve from last point to this
 			ret = [
 				'C',

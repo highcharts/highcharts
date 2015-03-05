@@ -202,7 +202,7 @@ Tick.prototype = {
 	 */
 	getMarkPath: function (x, y, tickLength, tickWidth, horiz, renderer) {
 		return renderer.crispLine([
-				M,
+				'M',
 				x,
 				y,
 				L,

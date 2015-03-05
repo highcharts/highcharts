@@ -624,7 +624,7 @@ Axis.prototype = {
 		}
 		return skip && !force ?
 			null :
-			chart.renderer.crispLine([M, x1, y1, L, x2, y2], lineWidth || 1);
+			chart.renderer.crispLine(['M', x1, y1, L, x2, y2], lineWidth || 1);
 	},
 
 	/**
@@ -1762,7 +1762,7 @@ Axis.prototype = {
 		}
 
 		return chart.renderer.crispLine([
-				M,
+				'M',
 				horiz ?
 					this.left :
 					lineLeft,

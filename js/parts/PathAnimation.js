@@ -20,7 +20,7 @@ pathAnim = {
 			sixify = function (arr) { // in splines make move points have six parameters like bezier curves
 				i = arr.length;
 				while (i--) {
-					if (arr[i] === M) {
+					if (arr[i] === 'M') {
 						arr.splice(i + 1, 0, arr[i + 1], arr[i + 2], arr[i + 1], arr[i + 2]);
 					}
 				}

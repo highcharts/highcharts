@@ -577,7 +577,7 @@ if (seriesTypes.pie) {
 						x = dataLabel.connX;
 						y = dataLabel.connY;
 						connectorPath = softConnector ? [
-							M,
+							'M',
 							x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
 							'C',
 							x, y, // first break, next to the label
@@ -586,7 +586,7 @@ if (seriesTypes.pie) {
 							L,
 							labelPos[4], labelPos[5] // base
 						] : [
-							M,
+							'M',
 							x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
 							L,
 							labelPos[2], labelPos[3], // second break

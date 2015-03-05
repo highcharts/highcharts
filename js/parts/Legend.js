@@ -747,7 +747,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 				attr.dashstyle = options.dashStyle;
 			}
 			this.legendLine = renderer.path([
-				M,
+				'M',
 				0,
 				verticalCenter,
 				L,

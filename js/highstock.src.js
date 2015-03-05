@@ -59,7 +59,6 @@ var UNDEFINED,
 	VERSION = '2.1.3-modified',
 
 	// some constants for frequently used strings
-	M = 'M',
 	L = 'L',
 	numRegex = /^[0-9]+$/,
 	NORMAL_STATE = '',
@@ -769,7 +768,7 @@ pathAnim = {
 			sixify = function (arr) { // in splines make move points have six parameters like bezier curves
 				i = arr.length;
 				while (i--) {
-					if (arr[i] === M) {
+					if (arr[i] === 'M') {
 						arr.splice(i + 1, 0, arr[i + 1], arr[i + 2], arr[i + 1], arr[i + 2]);
 					}
 				}
@@ -3475,7 +3474,7 @@ SVGRenderer.prototype = {
 	 * @param {Number} width
 	 */
 	crispLine: function (points, width) {
-		// points format: [M, 0, 0, L, 100, 0]
+		// points format: ['M', 0, 0, L, 100, 0]
 		// normalize to a crisp line
 		if (points[1] === points[4]) {
 			// Substract due to #1129. Now bottom and left axis gridlines behave the same.
@@ -3779,7 +3778,7 @@ SVGRenderer.prototype = {
 		'circle': function (x, y, w, h) {
 			var cpw = 0.166 * w;
 			return [
-				M, x + w / 2, y,
+				'M', x + w / 2, y,
 				'C', x + w + cpw, y, x + w + cpw, y + h, x + w / 2, y + h,
 				'C', x - cpw, y + h, x - cpw, y, x + w / 2, y,
 				'Z'
@@ -3788,7 +3787,7 @@ SVGRenderer.prototype = {
 
 		'square': function (x, y, w, h) {
 			return [
-				M, x, y,
+				'M', x, y,
 				L, x + w, y,
 				x + w, y + h,
 				x, y + h,
@@ -3798,7 +3797,7 @@ SVGRenderer.prototype = {
 
 		'triangle': function (x, y, w, h) {
 			return [
-				M, x + w / 2, y,
+				'M', x + w / 2, y,
 				L, x + w, y + h,
 				x, y + h,
 				'Z'
@@ -3807,7 +3806,7 @@ SVGRenderer.prototype = {
 
 		'triangle-down': function (x, y, w, h) {
 			return [
-				M, x, y,
+				'M', x, y,
 				L, x + w, y,
 				x + w / 2, y + h,
 				'Z'
@@ -3815,7 +3814,7 @@ SVGRenderer.prototype = {
 		},
 		'diamond': function (x, y, w, h) {
 			return [
-				M, x + w / 2, y,
+				'M', x + w / 2, y,
 				L, x + w, y + h / 2,
 				x + w / 2, y + h,
 				x, y + h / 2,
@@ -3835,7 +3834,7 @@ SVGRenderer.prototype = {
 				longArc = options.end - start < mathPI ? 0 : 1;
 
 			return [
-				M,
+				'M',
 				x + radius * cosStart,
 				y + radius * sinStart,
 				'A', // arcTo
@@ -3846,7 +3845,7 @@ SVGRenderer.prototype = {
 				1, // clockwise
 				x + radius * cosEnd,
 				y + radius * sinEnd,
-				open ? M : L,
+				open ? 'M' : L,
 				x + innerRadius * cosEnd,
 				y + innerRadius * sinEnd,
 				'A', // arcTo
@@ -5607,7 +5606,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			if (options.open && !innerRadius) {
 				ret.push(
 					'e',
-					M,
+					'M',
 					x,// - innerRadius,
 					y// - innerRadius
 				);
@@ -5973,7 +5972,7 @@ Tick.prototype = {
 	 */
 	getMarkPath: function (x, y, tickLength, tickWidth, horiz, renderer) {
 		return renderer.crispLine([
-				M,
+				'M',
 				x,
 				y,
 				L,
@@ -7013,7 +7012,7 @@ Axis.prototype = {
 		}
 		return skip && !force ?
 			null :
-			chart.renderer.crispLine([M, x1, y1, L, x2, y2], lineWidth || 1);
+			chart.renderer.crispLine(['M', x1, y1, L, x2, y2], lineWidth || 1);
 	},
 
 	/**
@@ -8151,7 +8150,7 @@ Axis.prototype = {
 		}
 
 		return chart.renderer.crispLine([
-				M,
+				'M',
 				horiz ?
 					this.left :
 					lineLeft,
@@ -11117,7 +11116,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 				attr.dashstyle = options.dashStyle;
 			}
 			this.legendLine = renderer.path([
-				M,
+				'M',
 				0,
 				verticalCenter,
 				L,
@@ -14151,7 +14150,7 @@ Series.prototype = {
 			} else {
 
 				// moveTo or lineTo
-				segmentPath.push(i ? L : M);
+				segmentPath.push(i ? L : 'M');
 
 				// step line?
 				if (step && i) {
@@ -15857,7 +15856,7 @@ var SplineSeries = extendClass(Series, {
 
 		// moveTo or lineTo
 		if (!i) {
-			ret = [M, plotX, plotY];
+			ret = ['M', plotX, plotY];
 		} else { // curve from last point to this
 			ret = [
 				'C',
@@ -17364,7 +17363,7 @@ if (seriesTypes.pie) {
 						x = dataLabel.connX;
 						y = dataLabel.connY;
 						connectorPath = softConnector ? [
-							M,
+							'M',
 							x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
 							'C',
 							x, y, // first break, next to the label
@@ -17373,7 +17372,7 @@ if (seriesTypes.pie) {
 							L,
 							labelPos[4], labelPos[5] // base
 						] : [
-							M,
+							'M',
 							x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
 							L,
 							labelPos[2], labelPos[3], // second break
@@ -17746,10 +17745,10 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 		if (trackerPathLength && !trackByArea) {
 			i = trackerPathLength + 1;
 			while (i--) {
-				if (trackerPath[i] === M) { // extend left side
+				if (trackerPath[i] === 'M') { // extend left side
 					trackerPath.splice(i + 1, 0, trackerPath[i + 1] - snap, trackerPath[i + 2], L);
 				}
-				if ((i && trackerPath[i] === M) || i === trackerPathLength) { // extend right side
+				if ((i && trackerPath[i] === 'M') || i === trackerPathLength) { // extend right side
 					trackerPath.splice(i, 0, L, trackerPath[i - 2] + snap, trackerPath[i - 1]);
 				}
 			}
@@ -17758,7 +17757,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 		// handle single points
 		for (i = 0; i < singlePoints.length; i++) {
 			singlePoint = singlePoints[i];
-			trackerPath.push(M, singlePoint.plotX - snap, singlePoint.plotY,
+			trackerPath.push('M', singlePoint.plotX - snap, singlePoint.plotY,
 			L, singlePoint.plotX + snap, singlePoint.plotY);
 		}
 
@@ -21039,7 +21038,7 @@ Scroller.prototype = {
 			}
 	
 			scroller.outline[verb]({ d: [
-				M,
+				'M',
 				scrollerLeft, outlineTop, // left
 				L,
 				navigatorLeft + zoomedMin - halfOutline, outlineTop, // upper left of zoomed range
@@ -21050,7 +21049,7 @@ Scroller.prototype = {
 				navigatorLeft + zoomedMax - halfOutline, outlineTop, // upper right of z.r.
 				scrollerLeft + scrollerWidth, outlineTop // right
 			].concat(navigatorOptions.maskInside ? [
-				M,
+				'M',
 				navigatorLeft + zoomedMin + halfOutline, outlineTop, // upper left of zoomed range
 				L,
 				navigatorLeft + zoomedMax - halfOutline, outlineTop // upper right of z.r.
@@ -21097,15 +21096,15 @@ Scroller.prototype = {
 					visibility: range > 12 ? 'visible' : 'hidden'
 				})[verb]({
 					d: [
-						M,
+						'M',
 						centerBarX - 3, scrollbarHeight / 4,
 						L,
 						centerBarX - 3, 2 * scrollbarHeight / 3,
-						M,
+						'M',
 						centerBarX, scrollbarHeight / 4,
 						L,
 						centerBarX, 2 * scrollbarHeight / 3,
-						M,
+						'M',
 						centerBarX + 3, scrollbarHeight / 4,
 						L,
 						centerBarX + 3, 2 * scrollbarHeight / 3
@@ -22809,7 +22808,7 @@ Axis.prototype.getPlotBandPath = function (from, to) {
 
 // Function to crisp a line with multiple segments
 SVGRenderer.prototype.crispPolyLine = function (points, width) {
-	// points format: [M, 0, 0, L, 100, 0]		
+	// points format: ['M', 0, 0, L, 100, 0]		
 	// normalize to a crisp line
 	var i;
 	for (i = 0; i < points.length; i = i + 6) {

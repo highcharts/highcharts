@@ -446,7 +446,7 @@ Scroller.prototype = {
 			}
 	
 			scroller.outline[verb]({ d: [
-				M,
+				'M',
 				scrollerLeft, outlineTop, // left
 				L,
 				navigatorLeft + zoomedMin - halfOutline, outlineTop, // upper left of zoomed range
@@ -457,7 +457,7 @@ Scroller.prototype = {
 				navigatorLeft + zoomedMax - halfOutline, outlineTop, // upper right of z.r.
 				scrollerLeft + scrollerWidth, outlineTop // right
 			].concat(navigatorOptions.maskInside ? [
-				M,
+				'M',
 				navigatorLeft + zoomedMin + halfOutline, outlineTop, // upper left of zoomed range
 				L,
 				navigatorLeft + zoomedMax - halfOutline, outlineTop // upper right of z.r.
@@ -504,15 +504,15 @@ Scroller.prototype = {
 					visibility: range > 12 ? 'visible' : 'hidden'
 				})[verb]({
 					d: [
-						M,
+						'M',
 						centerBarX - 3, scrollbarHeight / 4,
 						L,
 						centerBarX - 3, 2 * scrollbarHeight / 3,
-						M,
+						'M',
 						centerBarX, scrollbarHeight / 4,
 						L,
 						centerBarX, 2 * scrollbarHeight / 3,
-						M,
+						'M',
 						centerBarX + 3, scrollbarHeight / 4,
 						L,
 						centerBarX + 3, 2 * scrollbarHeight / 3
