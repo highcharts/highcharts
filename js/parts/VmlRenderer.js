@@ -720,7 +720,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					fillAttr = 'angle="' + (90  - Math.atan(
 						(y2 - y1) / // y vector
 						(x2 - x1) // x vector
-						) * 180 / mathPI) + '"';
+						) * 180 / Math.PI) + '"';
 
 					addFillNode();
 

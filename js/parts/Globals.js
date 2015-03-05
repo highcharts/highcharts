@@ -2,8 +2,7 @@
 var UNDEFINED,
 	doc = document,
 	win = window,
-	mathPI = Math.PI,
-	deg2rad = mathPI * 2 / 360,
+	deg2rad = Math.PI * 2 / 360,
 
 
 	// some variables

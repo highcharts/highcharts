@@ -2065,7 +2065,7 @@ SVGRenderer.prototype = {
 				sinStart = Math.sin(start),
 				cosEnd = Math.cos(end),
 				sinEnd = Math.sin(end),
-				longArc = options.end - start < mathPI ? 0 : 1;
+				longArc = options.end - start < Math.PI ? 0 : 1;
 
 			return [
 				'M',

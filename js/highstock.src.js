@@ -17,8 +17,7 @@
 var UNDEFINED,
 	doc = document,
 	win = window,
-	mathPI = Math.PI,
-	deg2rad = mathPI * 2 / 360,
+	deg2rad = Math.PI * 2 / 360,
 
 
 	// some variables
@@ -3813,7 +3812,7 @@ SVGRenderer.prototype = {
 				sinStart = Math.sin(start),
 				cosEnd = Math.cos(end),
 				sinEnd = Math.sin(end),
-				longArc = options.end - start < mathPI ? 0 : 1;
+				longArc = options.end - start < Math.PI ? 0 : 1;
 
 			return [
 				'M',
@@ -5334,7 +5333,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					fillAttr = 'angle="' + (90  - Math.atan(
 						(y2 - y1) / // y vector
 						(x2 - x1) // x vector
-						) * 180 / mathPI) + '"';
+						) * 180 / Math.PI) + '"';
 
 					addFillNode();
 
@@ -16568,9 +16567,9 @@ var PieSeries = {
 			end,
 			angle,
 			startAngle = options.startAngle || 0,
-			startAngleRad = series.startAngleRad = mathPI / 180 * (startAngle - 90),
-			endAngleRad = series.endAngleRad = mathPI / 180 * ((pick(options.endAngle, startAngle + 360)) - 90),
-			circ = endAngleRad - startAngleRad, //2 * mathPI,
+			startAngleRad = series.startAngleRad = Math.PI / 180 * (startAngle - 90),
+			endAngleRad = series.endAngleRad = Math.PI / 180 * ((pick(options.endAngle, startAngle + 360)) - 90),
+			circ = endAngleRad - startAngleRad, //2 * Math.PI,
 			points = series.points,
 			radiusX, // the x component of the radius vector for a given point
 			radiusY,
@@ -16622,10 +16621,10 @@ var PieSeries = {
 
 			// The angle must stay within -90 and 270 (#2645)
 			angle = (end + start) / 2;
-			if (angle > 1.5 * mathPI) {
-				angle -= 2 * mathPI;
-			} else if (angle < -mathPI / 2) {
-				angle += 2 * mathPI;
+			if (angle > 1.5 * Math.PI) {
+				angle -= 2 * Math.PI;
+			} else if (angle < -Math.PI / 2) {
+				angle += 2 * Math.PI;
 			}
 
 			// Center for the sliced out slice
@@ -16642,7 +16641,7 @@ var PieSeries = {
 				positions[1] + radiusY * 0.7
 			];
 			
-			point.half = angle < -mathPI / 2 || angle > mathPI / 2 ? 1 : 0;
+			point.half = angle < -Math.PI / 2 || angle > Math.PI / 2 ? 1 : 0;
 			point.angle = angle;
 
 			// set the anchor point for data labels

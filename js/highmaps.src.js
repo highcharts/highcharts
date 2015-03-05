@@ -17,8 +17,7 @@
 var UNDEFINED,
 	doc = document,
 	win = window,
-	mathPI = Math.PI,
-	deg2rad = mathPI * 2 / 360,
+	deg2rad = Math.PI * 2 / 360,
 
 
 	// some variables
@@ -3813,7 +3812,7 @@ SVGRenderer.prototype = {
 				sinStart = Math.sin(start),
 				cosEnd = Math.cos(end),
 				sinEnd = Math.sin(end),
-				longArc = options.end - start < mathPI ? 0 : 1;
+				longArc = options.end - start < Math.PI ? 0 : 1;
 
 			return [
 				'M',
@@ -5334,7 +5333,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					fillAttr = 'angle="' + (90  - Math.atan(
 						(y2 - y1) / // y vector
 						(x2 - x1) // x vector
-						) * 180 / mathPI) + '"';
+						) * 180 / Math.PI) + '"';
 
 					addFillNode();
 
