@@ -1,6 +1,5 @@
 
-var UNDEFINED,
-	Axis = Highcharts.Axis,
+var Axis = Highcharts.Axis,
 	Chart = Highcharts.Chart,
 	Color = Highcharts.Color,
 	Point = Highcharts.Point,

@@ -137,7 +137,7 @@ function erase(arr, item) {
  * @param {Object} obj
  */
 function defined(obj) {
-	return obj !== UNDEFINED && obj !== null;
+	return obj !== undefined && obj !== null;
 }
 
 /**
@@ -190,7 +190,7 @@ var pick = Highcharts.pick = function () {
 		length = args.length;
 	for (i = 0; i < length; i++) {
 		arg = args[i];
-		if (arg !== UNDEFINED && arg !== null) {
+		if (arg !== undefined && arg !== null) {
 			return arg;
 		}
 	}
@@ -203,7 +203,7 @@ var pick = Highcharts.pick = function () {
  */
 function css(el, styles) {
 	if (isIE && !hasSVG) { // #2686
-		if (styles && styles.opacity !== UNDEFINED) {
+		if (styles && styles.opacity !== undefined) {
 			styles.filter = 'alpha(opacity=' + (styles.opacity * 100) + ')';
 		}
 	}
@@ -241,7 +241,7 @@ function createElement(tag, attribs, styles, parent, nopad) {
  * @param {Object} members
  */
 function extendClass(parent, members) {
-	var object = function () { return UNDEFINED; };
+	var object = function () { return undefined; };
 	object.prototype = new parent();
 	extend(object.prototype, members);
 	return object;

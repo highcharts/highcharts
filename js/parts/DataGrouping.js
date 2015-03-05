@@ -128,16 +128,16 @@ var DATA_GROUPING = 'dataGrouping',
 			return ret;
 		},
 		open: function (arr) {
-			return arr.length ? arr[0] : (arr.hasNulls ? null : UNDEFINED);
+			return arr.length ? arr[0] : (arr.hasNulls ? null : undefined);
 		},
 		high: function (arr) {
-			return arr.length ? arrayMax(arr) : (arr.hasNulls ? null : UNDEFINED);
+			return arr.length ? arrayMax(arr) : (arr.hasNulls ? null : undefined);
 		},
 		low: function (arr) {
-			return arr.length ? arrayMin(arr) : (arr.hasNulls ? null : UNDEFINED);
+			return arr.length ? arrayMin(arr) : (arr.hasNulls ? null : undefined);
 		},
 		close: function (arr) {
-			return arr.length ? arr[arr.length - 1] : (arr.hasNulls ? null : UNDEFINED);
+			return arr.length ? arr[arr.length - 1] : (arr.hasNulls ? null : undefined);
 		},
 		// ohlc and range are special cases where a multidimensional array is input and an array is output
 		ohlc: function (open, high, low, close) {
@@ -195,7 +195,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 	for (; i <= dataLength; i++) {
 
 		// when a new group is entered, summarize and initiate the previous group
-		while ((groupPositions[1] !== UNDEFINED && xData[i] >= groupPositions[1]) ||
+		while ((groupPositions[1] !== undefined && xData[i] >= groupPositions[1]) ||
 				i === dataLength) { // get the last group
 
 			// get group x and y
@@ -203,7 +203,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 			groupedY = approximationFn.apply(0, values);
 
 			// push the grouped data
-			if (groupedY !== UNDEFINED) {
+			if (groupedY !== undefined) {
 				groupedXData.push(pointX);
 				groupedYData.push(groupedY);
 			}

@@ -1,7 +1,6 @@
 (function (Highcharts, HighchartsAdapter) {
 
-var UNDEFINED,
-	ALIGN_FACTOR,
+var ALIGN_FACTOR,
 	ALLOWED_SHAPES,
 	Chart = Highcharts.Chart,
 	extend = Highcharts.extend,
@@ -70,7 +69,7 @@ function isNumber(n) {
 }
 
 function defined(obj) {
-	return obj !== UNDEFINED && obj !== null;
+	return obj !== undefined && obj !== null;
 }
 
 function translatePath(d, xAxis, yAxis, xOffset, yOffset) {

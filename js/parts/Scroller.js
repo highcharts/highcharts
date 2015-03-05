@@ -18,7 +18,7 @@ var units = [].concat(defaultDataGroupingUnits), // copy
 units[4] = ['day', [1, 2, 3, 4]]; // allow more days
 units[5] = ['week', [1, 2, 3]]; // allow more weeks
 
-defaultSeriesType = seriesTypes.areaspline === UNDEFINED ? 'line' : 'areaspline';
+defaultSeriesType = seriesTypes.areaspline === undefined ? 'line' : 'areaspline';
 
 extend(defaultOptions, {
 	navigator: {
@@ -565,7 +565,7 @@ Scroller.prototype = {
 		each(this._events, function (args) {
 			removeEvent.apply(null, args);
 		});
-		this._events = UNDEFINED;
+		this._events = undefined;
 		if (this.navigatorEnabled && this.baseSeries) {
 			removeEvent(this.baseSeries, 'updatedData', this.updatedDataHandler);
 		}
@@ -1115,7 +1115,7 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 		}
 
 	}
-	return ret !== UNDEFINED ? ret : proceed.call(this, newMin, newMax);
+	return ret !== undefined ? ret : proceed.call(this, newMin, newMax);
 });
 
 // Initialize scroller for stock charts

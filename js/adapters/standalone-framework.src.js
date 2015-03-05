@@ -10,8 +10,7 @@
 /*global Highcharts */
 var HighchartsAdapter = (function () {
 
-var UNDEFINED,
-	emptyArray = [],
+var emptyArray = [],
 	timers = [],
 	timerId,
 	animSetters = {},
@@ -103,7 +102,7 @@ function augment(obj) {
 				}
 
 
-				if (events[name] === UNDEFINED) {
+				if (events[name] === undefined) {
 					events[name] = [];
 				}
 

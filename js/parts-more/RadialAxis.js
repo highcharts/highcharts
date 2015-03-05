@@ -437,7 +437,7 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		this.isCircular = isCircular;
 		
 		// Automatically connect grid lines?
-		if (isCircular && userOptions.max === UNDEFINED && endAngleRad - startAngleRad === 2 * Math.PI) {
+		if (isCircular && userOptions.max === undefined && endAngleRad - startAngleRad === 2 * Math.PI) {
 			this.autoConnect = true;
 		}
 	}

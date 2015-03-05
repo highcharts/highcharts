@@ -99,7 +99,7 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 
 
 		each(points, function (point) {
-			if (point.plotY !== UNDEFINED) {
+			if (point.plotY !== undefined) {
 
 				graphic = point.graphic;
 				pointAttr = point.pointAttr[point.selected ? 'selected' : ''] || series.pointAttr[''];

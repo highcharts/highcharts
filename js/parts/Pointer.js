@@ -2,7 +2,7 @@
 var hoverChartIndex;
 
 // Global flag for touch support
-hasTouch = document.documentElement.ontouchstart !== UNDEFINED;
+hasTouch = document.documentElement.ontouchstart !== undefined;
 
 /**
  * The mouse tracker object. All methods starting with "on" are primary DOM event handlers. 
@@ -81,7 +81,7 @@ Pointer.prototype = {
 		}
 
 		// chartX and chartY
-		if (ePos.pageX === UNDEFINED) { // IE < 9. #886.
+		if (ePos.pageX === undefined) { // IE < 9. #886.
 			chartX = Math.max(e.x, e.clientX - chartPosition.left); // #2005, #2129: the second case is 
 				// for IE10 quirks mode within framesets
 			chartY = e.y;
@@ -257,7 +257,7 @@ Pointer.prototype = {
 		allowMove = allowMove && tooltip && tooltipPoints;
 			
 		// Check if the points have moved outside the plot area, #1003		
-		if (allowMove  && splat(tooltipPoints)[0].plotX === UNDEFINED) {
+		if (allowMove  && splat(tooltipPoints)[0].plotX === undefined) {
 			allowMove = false;
 		}	
 		// Just move the tooltip, #349

@@ -127,8 +127,8 @@ Series.prototype = {
 				// apply if the series xAxis or yAxis option mathches the number of the
 				// axis, or if undefined, use the first axis
 				if ((seriesOptions[AXIS] === axisOptions.index) ||
-						(seriesOptions[AXIS] !== UNDEFINED && seriesOptions[AXIS] === axisOptions.id) ||
-						(seriesOptions[AXIS] === UNDEFINED && axisOptions.index === 0)) {
+						(seriesOptions[AXIS] !== undefined && seriesOptions[AXIS] === axisOptions.id) ||
+						(seriesOptions[AXIS] === undefined && axisOptions.index === 0)) {
 
 					// register this series in the axis.series lookup
 					axis.series.push(series);
@@ -439,7 +439,7 @@ Series.prototype = {
 				}
 			} else {
 				for (i = 0; i < dataLength; i++) {
-					if (data[i] !== UNDEFINED) { // stray commas in oldIE
+					if (data[i] !== undefined) { // stray commas in oldIE
 						pt = { series: series };
 						series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
 						series.updateParallelArrays(pt, i);
@@ -540,7 +540,7 @@ Series.prototype = {
 		for (i = processedXData.length - 1; i >= 0; i--) {
 			distance = processedXData[i] - processedXData[i - 1];
 			
-			if (distance > 0 && (closestPointRange === UNDEFINED || distance < closestPointRange)) {
+			if (distance > 0 && (closestPointRange === undefined || distance < closestPointRange)) {
 				closestPointRange = distance;
 
 			// Unsorted data is not supported by the line tooltip, as well as data grouping and
@@ -631,7 +631,7 @@ Series.prototype = {
 			if (!hasGroupedData) {
 				if (data[cursor]) {
 					point = data[cursor];
-				} else if (dataOptions[cursor] !== UNDEFINED) { // #970
+				} else if (dataOptions[cursor] !== undefined) { // #970
 					data[cursor] = point = (new pointClass()).init(series, dataOptions[cursor], processedXData[i]);
 				}
 				points[i] = point;
@@ -651,7 +651,7 @@ Series.prototype = {
 				}
 				if (data[i]) {
 					data[i].destroyElements();
-					data[i].plotX = UNDEFINED; // #1003
+					data[i].plotX = undefined; // #1003
 				}
 			}
 		}
@@ -692,7 +692,7 @@ Series.prototype = {
 
 			// For points within the visible range, including the first point outside the
 			// visible range, consider y extremes
-			validValue = y !== null && y !== UNDEFINED && (!yAxis.isLog || (y.length || y > 0));
+			validValue = y !== null && y !== undefined && (!yAxis.isLog || (y.length || y > 0));
 			withinRange = this.getExtremesFromAll || this.cropped || ((xData[i + 1] || x) >= xMin &&
 				(xData[i - 1] || x) <= xMax);
 
@@ -798,8 +798,8 @@ Series.prototype = {
 			// Set the the plotY value, reset it for redraws
 			point.plotY = plotY = (typeof yValue === 'number' && yValue !== Infinity) ?
 				Math.min(Math.max(-1e5, yAxis.translate(yValue, 0, 1, 0, 1)), 1e5) : // #3201
-				UNDEFINED;
-			point.isInside = plotY !== UNDEFINED && plotY >= 0 && plotY <= yAxis.len && // #3519
+				undefined;
+			point.isInside = plotY !== undefined && plotY >= 0 && plotY <= yAxis.len && // #3519
 				plotX >= 0 && plotX <= xAxis.len;
 
 
@@ -809,7 +809,7 @@ Series.prototype = {
 			point.negative = point.y < (threshold || 0);
 
 			// some API data
-			point.category = categories && categories[point.x] !== UNDEFINED ?
+			point.category = categories && categories[point.x] !== undefined ?
 				categories[point.x] : point.x;
 
 			// Determine auto enabling of markers (#3635)
@@ -971,11 +971,11 @@ Series.prototype = {
 				graphic = point.graphic;
 				pointMarkerOptions = point.marker || {};
 				hasPointMarker = !!point.marker;
-				enabled = (globallyEnabled && pointMarkerOptions.enabled === UNDEFINED) || pointMarkerOptions.enabled;
+				enabled = (globallyEnabled && pointMarkerOptions.enabled === undefined) || pointMarkerOptions.enabled;
 				isInside = point.isInside;
 
 				// only draw the point if y is defined
-				if (enabled && plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
+				if (enabled && plotY !== undefined && !isNaN(plotY) && point.y !== null) {
 
 					// shortcuts
 					pointAttr = point.pointAttr[point.selected ? 'select' : ''] || seriesPointAttr;

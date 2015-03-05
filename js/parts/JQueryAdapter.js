@@ -57,7 +57,7 @@
 						// Fx.prototype.cur returns the current value. The other ones are setters
 						// and returning a value has no effect.
 						return elem.attr ? // is SVG element wrapper
-							elem.attr(fx.prop, fn === 'cur' ? UNDEFINED : fx.now) : // apply the SVG wrapper's method
+							elem.attr(fx.prop, fn === 'cur' ? undefined : fx.now) : // apply the SVG wrapper's method
 							base.apply(this, arguments); // use jQuery's built-in method
 					};
 				}
@@ -126,7 +126,7 @@
 					options = args[0];
 
 					// Create the chart
-					if (options !== UNDEFINED) {
+					if (options !== undefined) {
 						/*jslint unused:false*/
 						options.chart = options.chart || {};
 						options.chart.renderTo = this[0];
@@ -136,7 +136,7 @@
 					}
 
 					// When called without parameters or with the return argument, get a predefined chart
-					if (options === UNDEFINED) {
+					if (options === undefined) {
 						ret = charts[attr(this[0], 'data-highcharts-chart')];
 					}
 				}
@@ -311,7 +311,7 @@
 			var ret = e.originalEvent || e;
 			
 			// computed by jQuery, needed by IE8
-			if (ret.pageX === UNDEFINED) { // #1236
+			if (ret.pageX === undefined) { // #1236
 				ret.pageX = e.pageX;
 				ret.pageY = e.pageY;
 			}
@@ -336,7 +336,7 @@
 			}
 	
 			$el.stop();
-			if (params.opacity !== UNDEFINED && el.attr) {
+			if (params.opacity !== undefined && el.attr) {
 				params.opacity += 'px'; // force jQuery to use same logic as width and height (#2161)
 			}
 			el.hasAnim = 1; // #3342

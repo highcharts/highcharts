@@ -23,7 +23,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 					target = target.parentNode;
 				}
 
-				if (point !== UNDEFINED && point !== chart.hoverPoint) { // undefined on graph in scatterchart
+				if (point !== undefined && point !== chart.hoverPoint) { // undefined on graph in scatterchart
 					point.onMouseOver(e);
 				}
 			};
@@ -702,7 +702,7 @@ extend(Series.prototype, {
 	/**
 	 * Set the visibility of the graph
 	 *
-	 * @param vis {Boolean} True to show the series, false to hide. If UNDEFINED,
+	 * @param vis {Boolean} True to show the series, false to hide. If undefined,
 	 *				the visibility is toggled.
 	 */
 	setVisible: function (vis, redraw) {
@@ -714,7 +714,7 @@ extend(Series.prototype, {
 			oldVisibility = series.visible;
 
 		// if called without an argument, toggle visibility
-		series.visible = vis = series.userOptions.visible = vis === UNDEFINED ? !oldVisibility : vis;
+		series.visible = vis = series.userOptions.visible = vis === undefined ? !oldVisibility : vis;
 		showOrHide = vis ? 'show' : 'hide';
 
 		// show or hide elements
@@ -781,12 +781,12 @@ extend(Series.prototype, {
 	 * Set the selected state of the graph
 	 *
 	 * @param selected {Boolean} True to select the series, false to unselect. If
-	 *				UNDEFINED, the selection state is toggled.
+	 *				undefined, the selection state is toggled.
 	 */
 	select: function (selected) {
 		var series = this;
 		// if called without an argument, toggle
-		series.selected = selected = (selected === UNDEFINED) ? !series.selected : selected;
+		series.selected = selected = (selected === undefined) ? !series.selected : selected;
 
 		if (series.checkbox) {
 			series.checkbox.checked = selected;

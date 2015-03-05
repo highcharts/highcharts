@@ -10,8 +10,7 @@
 (function (Highcharts) {
 
 
-var UNDEFINED,
-	Axis = Highcharts.Axis,
+var Axis = Highcharts.Axis,
 	Chart = Highcharts.Chart,
 	Color = Highcharts.Color,
 	Legend = Highcharts.Legend,
@@ -220,7 +219,7 @@ extend(ColorAxis.prototype, {
 				dataClass = dataClasses[i];
 				from = dataClass.from;
 				to = dataClass.to;
-				if ((from === UNDEFINED || value >= from) && (to === UNDEFINED || value <= to)) {
+				if ((from === undefined || value >= from) && (to === undefined || value <= to)) {
 					color = dataClass.color;
 					if (point) {
 						point.dataClass = i;
@@ -415,18 +414,18 @@ extend(ColorAxis.prototype, {
 				
 				// Assemble the default name. This can be overridden by legend.options.labelFormatter
 				name = '';
-				if (from === UNDEFINED) {
+				if (from === undefined) {
 					name = '< ';
-				} else if (to === UNDEFINED) {
+				} else if (to === undefined) {
 					name = '> ';
 				}
-				if (from !== UNDEFINED) {
+				if (from !== undefined) {
 					name += Highcharts.numberFormat(from, valueDecimals) + valueSuffix;
 				}
-				if (from !== UNDEFINED && to !== UNDEFINED) {
+				if (from !== undefined && to !== undefined) {
 					name += ' - ';
 				}
-				if (to !== UNDEFINED) {
+				if (to !== undefined) {
 					name += Highcharts.numberFormat(to, valueDecimals) + valueSuffix;
 				}
 				

@@ -80,7 +80,7 @@ Legend.prototype = {
 				markerOptions = item.convertAttribs(markerOptions);
 				for (key in markerOptions) {
 					val = markerOptions[key];
-					if (val !== UNDEFINED) {
+					if (val !== undefined) {
 						symbolAttr[key] = val;
 					}
 				}
@@ -345,7 +345,7 @@ Legend.prototype = {
 			var seriesOptions = series.options;
 
 			// Handle showInLegend. If the series is linked to another series, defaults to false.
-			if (!pick(seriesOptions.showInLegend, !defined(seriesOptions.linkedTo) ? UNDEFINED : false, true)) {
+			if (!pick(seriesOptions.showInLegend, !defined(seriesOptions.linkedTo) ? undefined : false, true)) {
 				return;
 			}
 
@@ -652,7 +652,7 @@ Legend.prototype = {
 		
 		if (currentPage > 0) {
 			
-			if (animation !== UNDEFINED) {
+			if (animation !== undefined) {
 				setAnimation(animation, this.chart);
 			}
 			

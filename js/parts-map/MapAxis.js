@@ -59,7 +59,7 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 	proceed.call(this);
 	
 	// On Y axis, handle both
-	if (chart.options.chart.preserveAspectRatio && this.coll === 'yAxis' && xAxis.transA !== UNDEFINED) {
+	if (chart.options.chart.preserveAspectRatio && this.coll === 'yAxis' && xAxis.transA !== undefined) {
 		
 		// Use the same translation for both axes
 		this.transA = xAxis.transA = Math.min(this.transA, xAxis.transA);

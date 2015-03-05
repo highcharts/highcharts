@@ -231,10 +231,10 @@ Axis.prototype = {
 		// Flag, stagger lines or not
 		axis.userOptions = userOptions;
 
-		//axis.axisTitleMargin = UNDEFINED,// = options.title.margin,
+		//axis.axisTitleMargin = undefined,// = options.title.margin,
 		axis.minPixelPadding = 0;
-		//axis.ignoreMinPadding = UNDEFINED; // can be set to true by a column or bar series
-		//axis.ignoreMaxPadding = UNDEFINED;
+		//axis.ignoreMinPadding = undefined; // can be set to true by a column or bar series
+		//axis.ignoreMaxPadding = undefined;
 
 		axis.chart = chart;
 		axis.reversed = options.reversed;
@@ -245,10 +245,10 @@ Axis.prototype = {
 		axis.names = axis.names || []; // Preserve on update (#3830)
 
 		// Elements
-		//axis.axisGroup = UNDEFINED;
-		//axis.gridGroup = UNDEFINED;
-		//axis.axisTitle = UNDEFINED;
-		//axis.axisLine = UNDEFINED;
+		//axis.axisGroup = undefined;
+		//axis.gridGroup = undefined;
+		//axis.axisTitle = undefined;
+		//axis.axisLine = undefined;
 
 		// Shorthand types
 		axis.isLog = type === 'logarithmic';
@@ -257,13 +257,13 @@ Axis.prototype = {
 		// Flag, if axis is linked to another axis
 		axis.isLinked = defined(options.linkedTo);
 		// Linked axis.
-		//axis.linkedParent = UNDEFINED;
+		//axis.linkedParent = undefined;
 
 		// Tick positions
-		//axis.tickPositions = UNDEFINED; // array containing predefined positions
+		//axis.tickPositions = undefined; // array containing predefined positions
 		// Tick intervals
-		//axis.tickInterval = UNDEFINED;
-		//axis.minorTickInterval = UNDEFINED;
+		//axis.tickInterval = undefined;
+		//axis.minorTickInterval = undefined;
 
 		
 		// Major ticks
@@ -279,21 +279,21 @@ Axis.prototype = {
 		axis.alternateBands = {};
 
 		// Axis metrics
-		//axis.left = UNDEFINED;
-		//axis.top = UNDEFINED;
-		//axis.width = UNDEFINED;
-		//axis.height = UNDEFINED;
-		//axis.bottom = UNDEFINED;
-		//axis.right = UNDEFINED;
-		//axis.transA = UNDEFINED;
-		//axis.transB = UNDEFINED;
-		//axis.oldTransA = UNDEFINED;
+		//axis.left = undefined;
+		//axis.top = undefined;
+		//axis.width = undefined;
+		//axis.height = undefined;
+		//axis.bottom = undefined;
+		//axis.right = undefined;
+		//axis.transA = undefined;
+		//axis.transB = undefined;
+		//axis.oldTransA = undefined;
 		axis.len = 0;
-		//axis.oldMin = UNDEFINED;
-		//axis.oldMax = UNDEFINED;
-		//axis.oldUserMin = UNDEFINED;
-		//axis.oldUserMax = UNDEFINED;
-		//axis.oldAxisLength = UNDEFINED;
+		//axis.oldMin = undefined;
+		//axis.oldMax = undefined;
+		//axis.oldUserMin = undefined;
+		//axis.oldUserMax = undefined;
+		//axis.oldAxisLength = undefined;
 		axis.minRange = axis.userMinRange = options.minRange || options.maxZoom;
 		axis.range = options.range;
 		axis.offset = options.offset || 0;
@@ -304,16 +304,16 @@ Axis.prototype = {
 		axis.oldStacks = {};
 		
 		// Min and max in the data
-		//axis.dataMin = UNDEFINED,
-		//axis.dataMax = UNDEFINED,
+		//axis.dataMin = undefined,
+		//axis.dataMax = undefined,
 
 		// The axis range
 		axis.max = null;
 		axis.min = null;
 
 		// User set min and max
-		//axis.userMin = UNDEFINED,
-		//axis.userMax = UNDEFINED,
+		//axis.userMin = undefined,
+		//axis.userMax = undefined,
 
 		// Crosshair options
 		axis.crosshair = pick(options.crosshair, splat(chart.options.tooltip.crosshairs)[isXAxis ? 0 : 1], false);
@@ -336,7 +336,7 @@ Axis.prototype = {
 		axis.series = axis.series || []; // populated by Series
 
 		// inverted charts have reversed xAxes as default
-		if (chart.inverted && isXAxis && axis.reversed === UNDEFINED) {
+		if (chart.inverted && isXAxis && axis.reversed === undefined) {
 			axis.reversed = true;
 		}
 
@@ -402,7 +402,7 @@ Axis.prototype = {
 			// Decide whether we should add a numeric symbol like k (thousands) or M (millions).
 			// If we are to enable this in tooltip or other places as well, we can move this
 			// logic to the numberFormatter and enable it by a parameter.
-			while (i-- && ret === UNDEFINED) {
+			while (i-- && ret === undefined) {
 				multi = Math.pow(1000, i + 1);
 				if (numericSymbolDetector >= multi && numericSymbols[i] !== null) {
 					ret = Highcharts.numberFormat(value / multi, -1) + numericSymbols[i];
@@ -410,12 +410,12 @@ Axis.prototype = {
 			}
 		}
 
-		if (ret === UNDEFINED) {
+		if (ret === undefined) {
 			if (Math.abs(value) >= 10000) { // add thousands separators
 				ret = Highcharts.numberFormat(value, 0);
 
 			} else { // small numbers
-				ret = Highcharts.numberFormat(value, -1, UNDEFINED, ''); // #2466
+				ret = Highcharts.numberFormat(value, -1, undefined, ''); // #2466
 			}
 		}
 
@@ -733,7 +733,7 @@ Axis.prototype = {
 			maxArgs;
 
 		// Set the automatic minimum range based on the closest point distance
-		if (axis.isXAxis && axis.minRange === UNDEFINED && !axis.isLog) {
+		if (axis.isXAxis && axis.minRange === undefined && !axis.isLog) {
 
 			if (defined(options.min) || defined(options.max)) {
 				axis.minRange = null; // don't do this again
@@ -747,7 +747,7 @@ Axis.prototype = {
 					loopLength = series.xIncrement ? 1 : xData.length - 1;
 					for (i = loopLength; i > 0; i--) {
 						distance = xData[i] - xData[i - 1];
-						if (closestDataRange === UNDEFINED || distance < closestDataRange) {
+						if (closestDataRange === undefined || distance < closestDataRange) {
 							closestDataRange = distance;
 						}
 					}
@@ -1212,7 +1212,7 @@ Axis.prototype = {
 					tickPositions.splice(i, 1);
 				}	
 			}
-			this.finalTickAmt = UNDEFINED;
+			this.finalTickAmt = undefined;
 		}
 	},
 
@@ -1344,22 +1344,22 @@ Axis.prototype = {
 		// Prevent pinch zooming out of range. Check for defined is for #1946. #1734.
 		if (!this.allowZoomOutside) {
 			if (defined(dataMin) && newMin <= Math.min(dataMin, pick(options.min, dataMin))) {
-				newMin = UNDEFINED;
+				newMin = undefined;
 			}
 			if (defined(dataMax) && newMax >= Math.max(dataMax, pick(options.max, dataMax))) {
-				newMax = UNDEFINED;
+				newMax = undefined;
 			}
 		}
 
 		// In full view, displaying the reset zoom button is not required
-		this.displayBtn = newMin !== UNDEFINED || newMax !== UNDEFINED;
+		this.displayBtn = newMin !== undefined || newMax !== undefined;
 
 		// Do it
 		this.setExtremes(
 			newMin,
 			newMax,
 			false,
-			UNDEFINED,
+			undefined,
 			{ trigger: 'zoom' }
 		);
 		return true;
@@ -1918,7 +1918,7 @@ Axis.prototype = {
 							alternateBands[pos] = new Highcharts.PlotLineOrBand(axis);
 						}
 						from = pos + tickmarkOffset; // #949
-						to = tickPositions[i + 1] !== UNDEFINED ? tickPositions[i + 1] + tickmarkOffset : axis.max;
+						to = tickPositions[i + 1] !== undefined ? tickPositions[i + 1] + tickmarkOffset : axis.max;
 						alternateBands[pos].options = {
 							from: isLog ? lin2log(from) : from,
 							to: isLog ? lin2log(to) : to,

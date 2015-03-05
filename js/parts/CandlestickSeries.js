@@ -79,7 +79,7 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 		each(points, function (point) {
 
 			graphic = point.graphic;
-			if (point.plotY !== UNDEFINED) {
+			if (point.plotY !== undefined) {
 
 				pointAttr = point.pointAttr[point.selected ? 'selected' : ''] || seriesPointAttr;
 

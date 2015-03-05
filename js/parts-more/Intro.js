@@ -12,4 +12,4 @@
 // JSLint options:
 /*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
 
-(function (Highcharts, UNDEFINED) {
+(function (Highcharts) {

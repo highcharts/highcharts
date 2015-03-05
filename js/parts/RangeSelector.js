@@ -124,7 +124,7 @@ RangeSelector.prototype = {
 				// is delayed and rerun in the beforeRender event (below). When the series
 				// are initialized, but before the chart is rendered, we have access to the xData
 				// array (#942).
-				if (dataMax === UNDEFINED) {
+				if (dataMax === undefined) {
 					dataMin = Number.MAX_VALUE;
 					dataMax = Number.MIN_VALUE;
 					each(chart.series, function (series) {
@@ -259,7 +259,7 @@ RangeSelector.prototype = {
 		each(buttonOptions, rangeSelector.computeButtonRange);
 
 		// zoomed range based on a pre-selected button index
-		if (selectedOption !== UNDEFINED && buttonOptions[selectedOption]) {
+		if (selectedOption !== undefined && buttonOptions[selectedOption]) {
 			this.clickButton(selectedOption, false);
 		}
 
@@ -474,25 +474,25 @@ RangeSelector.prototype = {
 				// actual data extreme (#2438).
 				if (isMin) {
 					if (value > rangeSelector.maxInput.HCTime) {
-						value = UNDEFINED;
+						value = undefined;
 					} else if (value < dataMin) {
 						value = dataMin;
 					}
 				} else {
 					if (value < rangeSelector.minInput.HCTime) {
-						value = UNDEFINED;
+						value = undefined;
 					} else if (value > dataMax) {
 						value = dataMax;
 					}
 				}
 
 				// Set the extremes
-				if (value !== UNDEFINED) {
+				if (value !== undefined) {
 					chart.xAxis[0].setExtremes(
 						isMin ? value : xAxis.min,
 						isMin ? xAxis.max : value,
-						UNDEFINED,
-						UNDEFINED,
+						undefined,
+						undefined,
 						{ trigger: 'rangeSelectorInput' }
 					);
 				}

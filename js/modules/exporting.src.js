@@ -25,7 +25,6 @@ var Chart = Highcharts.Chart,
 	extend = Highcharts.extend,
 	splat = Highcharts.splat,
 	isTouchDevice = Highcharts.isTouchDevice,
-	UNDEFINED,
 	symbols = Highcharts.Renderer.prototype.symbols,
 	defaultOptions = Highcharts.getOptions(),
 	buttonOffset;
@@ -312,7 +311,7 @@ extend(Chart.prototype, {
 					userMin = extremes.userMin,
 					userMax = extremes.userMax;
 
-				if (axisCopy && (userMin !== UNDEFINED || userMax !== UNDEFINED)) {
+				if (axisCopy && (userMin !== undefined || userMax !== undefined)) {
 					axisCopy.setExtremes(userMin, userMax, true, false);
 				}
 			});

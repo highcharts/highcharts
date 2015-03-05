@@ -12,7 +12,7 @@
 // JSLint options:
 /*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
 
-(function (Highcharts, UNDEFINED) {
+(function (Highcharts) {
 var arrayMin = Highcharts.arrayMin,
 	arrayMax = Highcharts.arrayMax,
 	each = Highcharts.each,
@@ -552,7 +552,7 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		this.isCircular = isCircular;
 		
 		// Automatically connect grid lines?
-		if (isCircular && userOptions.max === UNDEFINED && endAngleRad - startAngleRad === 2 * Math.PI) {
+		if (isCircular && userOptions.max === undefined && endAngleRad - startAngleRad === 2 * Math.PI) {
 			this.autoConnect = true;
 		}
 	}
@@ -1343,7 +1343,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			medianAttr = {};
 			color = point.color || series.color;
 			
-			if (point.plotY !== UNDEFINED) {
+			if (point.plotY !== undefined) {
 
 				pointAttr = point.pointAttr[point.selected ? 'selected' : ''];
 
@@ -1992,7 +1992,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 					height: 2 * radius
 				};
 			} else { // below zThreshold
-				point.shapeArgs = point.plotY = point.dlBox = UNDEFINED; // #1691
+				point.shapeArgs = point.plotY = point.dlBox = undefined; // #1691
 			}
 		}
 	},
@@ -2110,7 +2110,7 @@ Axis.prototype.beforePadding = function () {
 		}
 	});
 	
-	if (activeSeries.length && range > 0 && pick(this.options.min, this.userMin) === UNDEFINED && pick(this.options.max, this.userMax) === UNDEFINED) {
+	if (activeSeries.length && range > 0 && pick(this.options.min, this.userMin) === undefined && pick(this.options.max, this.userMax) === undefined) {
 		pxMax -= axisLength;
 		transA *= (axisLength + pxMin - pxMax) / axisLength;
 		this.min += pxMin / transA;

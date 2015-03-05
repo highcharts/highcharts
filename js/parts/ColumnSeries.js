@@ -103,7 +103,7 @@ var ColumnSeries = extendClass(Series, {
 						yAxis.len === otherYAxis.len && yAxis.pos === otherYAxis.pos) {  // #642, #2086
 					if (otherOptions.stacking) {
 						stackKey = otherSeries.stackKey;
-						if (stackGroups[stackKey] === UNDEFINED) {
+						if (stackGroups[stackKey] === undefined) {
 							stackGroups[stackKey] = columnCount++;
 						}
 						columnIndex = stackGroups[stackKey];
@@ -270,7 +270,7 @@ var ColumnSeries = extendClass(Series, {
 				graphic = point.graphic,
 				borderAttr;
 
-			if (plotY !== UNDEFINED && !isNaN(plotY) && point.y !== null) {
+			if (plotY !== undefined && !isNaN(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
 
 				borderAttr = defined(series.borderWidth) ? {

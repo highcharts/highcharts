@@ -358,7 +358,7 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		.attr({
 			align: options.align || (horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'left') : (this.labelAlign === 'left' ? 'left' : 'center')),
 			zIndex: 12,
-			height: horiz ? 16 : UNDEFINED,
+			height: horiz ? 16 : undefined,
 			fill: options.backgroundColor || (this.series[0] && this.series[0].color) || 'gray',
 			padding: pick(options.padding, 2),
 			stroke: options.borderColor || null,
@@ -471,7 +471,7 @@ seriesProto.setCompare = function (compare) {
 	this.modifyValue = (compare === 'value' || compare === 'percent') ? function (value, point) {
 		var compareValue = this.compareValue;
 		
-		if (value !== UNDEFINED) { // #2601
+		if (value !== undefined) { // #2601
 
 			// get the modified value
 			value = compare === 'value' ? 

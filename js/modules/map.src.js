@@ -11,8 +11,7 @@
 (function (Highcharts) {
 
 
-var UNDEFINED,
-	Axis = Highcharts.Axis,
+var Axis = Highcharts.Axis,
 	Chart = Highcharts.Chart,
 	Color = Highcharts.Color,
 	Point = Highcharts.Point,
@@ -98,7 +97,7 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 	proceed.call(this);
 	
 	// On Y axis, handle both
-	if (chart.options.chart.preserveAspectRatio && this.coll === 'yAxis' && xAxis.transA !== UNDEFINED) {
+	if (chart.options.chart.preserveAspectRatio && this.coll === 'yAxis' && xAxis.transA !== undefined) {
 		
 		// Use the same translation for both axes
 		this.transA = xAxis.transA = Math.min(this.transA, xAxis.transA);
@@ -323,7 +322,7 @@ extend(ColorAxis.prototype, {
 				dataClass = dataClasses[i];
 				from = dataClass.from;
 				to = dataClass.to;
-				if ((from === UNDEFINED || value >= from) && (to === UNDEFINED || value <= to)) {
+				if ((from === undefined || value >= from) && (to === undefined || value <= to)) {
 					color = dataClass.color;
 					if (point) {
 						point.dataClass = i;
@@ -518,18 +517,18 @@ extend(ColorAxis.prototype, {
 				
 				// Assemble the default name. This can be overridden by legend.options.labelFormatter
 				name = '';
-				if (from === UNDEFINED) {
+				if (from === undefined) {
 					name = '< ';
-				} else if (to === UNDEFINED) {
+				} else if (to === undefined) {
 					name = '> ';
 				}
-				if (from !== UNDEFINED) {
+				if (from !== undefined) {
 					name += Highcharts.numberFormat(from, valueDecimals) + valueSuffix;
 				}
-				if (from !== UNDEFINED && to !== UNDEFINED) {
+				if (from !== undefined && to !== undefined) {
 					name += ' - ';
 				}
-				if (to !== UNDEFINED) {
+				if (to !== undefined) {
 					name += Highcharts.numberFormat(to, valueDecimals) + valueSuffix;
 				}
 				
@@ -1170,10 +1169,10 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				yAxis.minRange = Math.min(5 * minRange, (this.maxY - this.minY) / 5, yAxis.minRange || MAX_VALUE);
 			}
 		} else {
-			this.minY = UNDEFINED;
-			this.maxY = UNDEFINED;
-			this.minX = UNDEFINED;
-			this.maxX = UNDEFINED;
+			this.minY = undefined;
+			this.maxY = undefined;
+			this.minX = undefined;
+			this.maxX = undefined;
 		}
 	},
 	

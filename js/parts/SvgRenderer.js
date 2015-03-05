@@ -167,7 +167,7 @@ SVGElement.prototype = {
 			hasContrast = textShadow.indexOf('contrast') !== -1,
 			// IE10 and IE11 report textShadow in elem.style even though it doesn't work. Check
 			// this again with new IE release. In exports, the rendering is passed to PhantomJS. 
-			supports = this.renderer.forExport || (elem.style.textShadow !== UNDEFINED && !isIE);
+			supports = this.renderer.forExport || (elem.style.textShadow !== undefined && !isIE);
 
 		// When the text shadow is set to contrast, use dark stroke for light text and vice versa
 		if (hasContrast) {
@@ -253,7 +253,7 @@ SVGElement.prototype = {
 			skipAttr;
 
 		// single key-value pair
-		if (typeof hash === 'string' && val !== UNDEFINED) {
+		if (typeof hash === 'string' && val !== undefined) {
 			key = hash;
 			hash = {};
 			hash[key] = val;
@@ -685,7 +685,7 @@ SVGElement.prototype = {
 			toggleTextShadowShim,
 			cacheKey;
 
-		if (textStr !== UNDEFINED) {
+		if (textStr !== undefined) {
 
 			// Properties that affect bounding box
 			cacheKey = ['', rotation || 0, styles && styles.fontSize, element.style.width].join(',');
@@ -1808,14 +1808,14 @@ SVGRenderer.prototype = {
 		r = isObject(x) ? x.r : r;
 
 		var wrapper = this.createElement('rect'),
-			attribs = isObject(x) ? x : x === UNDEFINED ? {} : {
+			attribs = isObject(x) ? x : x === undefined ? {} : {
 				x: x,
 				y: y,
 				width: Math.max(width, 0),
 				height: Math.max(height, 0)
 			};
 
-		if (strokeWidth !== UNDEFINED) {
+		if (strokeWidth !== undefined) {
 			attribs.strokeWidth = strokeWidth;
 			attribs = wrapper.crisp(attribs);
 		}
@@ -2377,7 +2377,7 @@ SVGRenderer.prototype = {
 			// update if anything changed
 			if (x !== text.x || y !== text.y) {
 				text.attr('x', x);
-				if (y !== UNDEFINED) {
+				if (y !== undefined) {
 					// As a workaround for #3649, use translation instead of y attribute. #3649
 					// is a rendering bug in WebKit for Retina (Mac, iOS, PhantomJS) that 
 					// results in duplicated text when an y attribute is used in combination 
@@ -2456,7 +2456,7 @@ SVGRenderer.prototype = {
 
 		// apply these to the box and the text alike
 		wrapper.textSetter = function (value) {
-			if (value !== UNDEFINED) {
+			if (value !== undefined) {
 				text.textSetter(value);
 			}
 			updateBoxSize();
@@ -2511,7 +2511,7 @@ SVGRenderer.prototype = {
 					var textStyles = {};
 					styles = merge(styles); // create a copy to avoid altering the original object (#537)
 					each(wrapper.textProps, function (prop) {
-						if (styles[prop] !== UNDEFINED) {
+						if (styles[prop] !== undefined) {
 							textStyles[prop] = styles[prop];
 							delete styles[prop];
 						}

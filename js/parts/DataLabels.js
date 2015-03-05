@@ -130,7 +130,7 @@ Series.prototype.drawDataLabels = function () {
 
 					// Remove unused attributes (#947)
 					for (name in attr) {
-						if (attr[name] === UNDEFINED) {
+						if (attr[name] === undefined) {
 							delete attr[name];
 						}
 					}

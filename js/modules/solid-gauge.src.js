@@ -15,8 +15,7 @@
 		pInt = H.pInt,
 		pick = H.pick,
 		each = H.each,
-		colorAxisMethods,
-		UNDEFINED;
+		colorAxisMethods;
 
 	// The default options
 	defaultPlotOptions.solidgauge = H.merge(defaultPlotOptions.gauge, {
@@ -85,7 +84,7 @@
 					dataClass = dataClasses[i];
 					from = dataClass.from;
 					to = dataClass.to;
-					if ((from === UNDEFINED || value >= from) && (to === UNDEFINED || value <= to)) {
+					if ((from === undefined || value >= from) && (to === undefined || value <= to)) {
 						color = dataClass.color;
 						if (point) {
 							point.dataClass = i;

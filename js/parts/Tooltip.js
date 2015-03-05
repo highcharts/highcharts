@@ -20,7 +20,7 @@ Tooltip.prototype = {
 		this.options = options;
 
 		// Keep track of the current series
-		//this.currentSeries = UNDEFINED;
+		//this.currentSeries = undefined;
 
 		// List of crosshairs
 		this.crosshairs = [];
@@ -87,8 +87,8 @@ Tooltip.prototype = {
 		extend(now, {
 			x: animate ? (2 * now.x + x) / 3 : x,
 			y: animate ? (now.y + y) / 2 : y,
-			anchorX: skipAnchor ? UNDEFINED : animate ? (2 * now.anchorX + anchorX) / 3 : anchorX,
-			anchorY: skipAnchor ? UNDEFINED : animate ? (now.anchorY + anchorY) / 2 : anchorY
+			anchorX: skipAnchor ? undefined : animate ? (2 * now.anchorX + anchorX) / 3 : anchorX,
+			anchorY: skipAnchor ? undefined : animate ? (now.anchorY + anchorY) / 2 : anchorY
 		});
 
 		// Move to the intermediate value
@@ -162,7 +162,7 @@ Tooltip.prototype = {
 		
 		// When tooltip follows mouse, relate the position to the mouse
 		if (this.followPointer && mouseEvent) {
-			if (mouseEvent.chartX === UNDEFINED) {
+			if (mouseEvent.chartX === undefined) {
 				mouseEvent = chart.pointer.normalize(mouseEvent);
 			}
 			ret = [

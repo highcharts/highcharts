@@ -94,7 +94,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 				point = points[cursor];
 				leftPoint = onData[i];
 				
-				if (leftPoint.x <= point.x && leftPoint.plotY !== UNDEFINED) {
+				if (leftPoint.x <= point.x && leftPoint.plotY !== undefined) {
 					if (point.x <= lastX) { // #803
 					
 						point.plotY = leftPoint.plotY;
@@ -102,7 +102,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 						// interpolate between points, #666
 						if (leftPoint.x < point.x && !step) { 
 							rightPoint = onData[i + 1];
-							if (rightPoint && rightPoint.plotY !== UNDEFINED) {
+							if (rightPoint && rightPoint.plotY !== undefined) {
 								point.plotY += 
 									((point.x - leftPoint.x) / (rightPoint.x - leftPoint.x)) * // the distance ratio, between 0 and 1 
 									(rightPoint.plotY - leftPoint.plotY); // the y distance
@@ -126,7 +126,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			// Undefined plotY means the point is either on axis, outside series range or hidden series.
 			// If the series is outside the range of the x axis it should fall through with 
 			// an undefined plotY, but then we must remove the shapeArgs (#847).
-			if (point.plotY === UNDEFINED) {
+			if (point.plotY === undefined) {
 				if (point.x >= xAxisExt.min && point.x <= xAxisExt.max) { // we're inside xAxis range
 					point.plotY = chart.chartHeight - xAxis.bottom - (xAxis.opposite ? xAxis.height : 0) + xAxis.offset - chart.plotTop;
 				} else {
@@ -136,7 +136,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			// if multiple flags appear at the same x, order them into a stack
 			lastPoint = points[i - 1];
 			if (lastPoint && lastPoint.plotX === point.plotX) {
-				if (lastPoint.stackIndex === UNDEFINED) {
+				if (lastPoint.stackIndex === undefined) {
 					lastPoint.stackIndex = 0;
 				}
 				stackIndex = lastPoint.stackIndex + 1;
@@ -179,16 +179,16 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			stackIndex = point.stackIndex;
 			shape = point.options.shape || options.shape;
 			plotY = point.plotY;
-			if (plotY !== UNDEFINED) {
-				plotY = point.plotY + optionsY + crisp - (stackIndex !== UNDEFINED && stackIndex * options.stackDistance);
+			if (plotY !== undefined) {
+				plotY = point.plotY + optionsY + crisp - (stackIndex !== undefined && stackIndex * options.stackDistance);
 			}
-			anchorX = stackIndex ? UNDEFINED : point.plotX + crisp; // skip connectors for higher level stacked points
-			anchorY = stackIndex ? UNDEFINED : point.plotY;
+			anchorX = stackIndex ? undefined : point.plotX + crisp; // skip connectors for higher level stacked points
+			anchorY = stackIndex ? undefined : point.plotY;
 
 			graphic = point.graphic;
 
 			// only draw the point if y is defined and the flag is within the visible area
-			if (plotY !== UNDEFINED && plotX >= 0 && !outsideRight) {
+			if (plotY !== undefined && plotX >= 0 && !outsideRight) {
 				// shortcuts
 				pointAttr = point.pointAttr[point.selected ? 'select' : ''] || seriesPointAttr;
 				if (graphic) { // update

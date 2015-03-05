@@ -257,7 +257,7 @@ Tick.prototype = {
 		if (gridLineWidth) {
 			gridLinePath = axis.getPlotLinePath(pos + tickmarkOffset, gridLineWidth * reverseCrisp, old, true);
 
-			if (gridLine === UNDEFINED) {
+			if (gridLine === undefined) {
 				attribs = {
 					stroke: gridLineColor,
 					'stroke-width': gridLineWidth

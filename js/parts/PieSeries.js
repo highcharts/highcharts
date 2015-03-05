@@ -81,7 +81,7 @@ var PiePoint = extendClass(Point, {
 			doRedraw = !series.isDirty && series.options.ignoreHiddenPoint;
 
 		// if called without an argument, toggle visibility
-		point.visible = point.options.visible = vis = vis === UNDEFINED ? !point.visible : vis;
+		point.visible = point.options.visible = vis = vis === undefined ? !point.visible : vis;
 		series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
 
 		// Show and hide associated elements

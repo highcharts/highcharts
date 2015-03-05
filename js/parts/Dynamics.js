@@ -438,7 +438,7 @@ extend(Series.prototype, {
 		// and properties from the new type prototype (#2270, #3719)
 		this.remove(false);
 		for (n in proto) {
-			this[n] = UNDEFINED;
+			this[n] = undefined;
 		}
 		extend(this, seriesTypes[newOptions.type || oldType].prototype);
 
@@ -467,9 +467,9 @@ extend(Axis.prototype, {
 		newOptions = chart.options[this.coll][this.options.index] = merge(this.userOptions, newOptions);
 
 		this.destroy(true);
-		this._addedPlotLB = UNDEFINED; // #1611, #2887
+		this._addedPlotLB = undefined; // #1611, #2887
 
-		this.init(chart, extend(newOptions, { events: UNDEFINED }));
+		this.init(chart, extend(newOptions, { events: undefined }));
 
 		chart.isDirtyBox = true;
 		if (pick(redraw, true)) {

@@ -182,7 +182,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 					height: 2 * radius
 				};
 			} else { // below zThreshold
-				point.shapeArgs = point.plotY = point.dlBox = UNDEFINED; // #1691
+				point.shapeArgs = point.plotY = point.dlBox = undefined; // #1691
 			}
 		}
 	},
@@ -300,7 +300,7 @@ Axis.prototype.beforePadding = function () {
 		}
 	});
 	
-	if (activeSeries.length && range > 0 && pick(this.options.min, this.userMin) === UNDEFINED && pick(this.options.max, this.userMax) === UNDEFINED) {
+	if (activeSeries.length && range > 0 && pick(this.options.min, this.userMin) === undefined && pick(this.options.max, this.userMax) === undefined) {
 		pxMax -= axisLength;
 		transA *= (axisLength + pxMin - pxMax) / axisLength;
 		this.min += pxMin / transA;

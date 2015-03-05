@@ -42,40 +42,40 @@ Chart.prototype = {
 		this.callback = callback;
 		this.isResizing = 0;
 		this.options = options;
-		//chartTitleOptions = UNDEFINED;
-		//chartSubtitleOptions = UNDEFINED;
+		//chartTitleOptions = undefined;
+		//chartSubtitleOptions = undefined;
 
 		this.axes = [];
 		this.series = [];
 		this.hasCartesianSeries = optionsChart.showAxes;
-		//this.axisOffset = UNDEFINED;
-		//this.maxTicks = UNDEFINED; // handle the greatest amount of ticks on grouped axes
-		//this.inverted = UNDEFINED;
-		//this.loadingShown = UNDEFINED;
-		//this.container = UNDEFINED;
-		//this.chartWidth = UNDEFINED;
-		//this.chartHeight = UNDEFINED;
-		//this.marginRight = UNDEFINED;
-		//this.marginBottom = UNDEFINED;
-		//this.containerWidth = UNDEFINED;
-		//this.containerHeight = UNDEFINED;
-		//this.oldChartWidth = UNDEFINED;
-		//this.oldChartHeight = UNDEFINED;
+		//this.axisOffset = undefined;
+		//this.maxTicks = undefined; // handle the greatest amount of ticks on grouped axes
+		//this.inverted = undefined;
+		//this.loadingShown = undefined;
+		//this.container = undefined;
+		//this.chartWidth = undefined;
+		//this.chartHeight = undefined;
+		//this.marginRight = undefined;
+		//this.marginBottom = undefined;
+		//this.containerWidth = undefined;
+		//this.containerHeight = undefined;
+		//this.oldChartWidth = undefined;
+		//this.oldChartHeight = undefined;
 
-		//this.renderTo = UNDEFINED;
-		//this.renderToClone = UNDEFINED;
+		//this.renderTo = undefined;
+		//this.renderToClone = undefined;
 
-		//this.spacingBox = UNDEFINED
+		//this.spacingBox = undefined
 
-		//this.legend = UNDEFINED;
+		//this.legend = undefined;
 
 		// Elements
-		//this.chartBackground = UNDEFINED;
-		//this.plotBackground = UNDEFINED;
-		//this.plotBGImage = UNDEFINED;
-		//this.plotBorder = UNDEFINED;
-		//this.loadingDiv = UNDEFINED;
-		//this.loadingSpan = UNDEFINED;
+		//this.chartBackground = undefined;
+		//this.plotBackground = undefined;
+		//this.plotBGImage = undefined;
+		//this.plotBorder = undefined;
+		//this.loadingDiv = undefined;
+		//this.loadingSpan = undefined;
 
 		var chart = this,
 			eventType;
@@ -1264,7 +1264,7 @@ Chart.prototype = {
 		fireEvent(chart, 'destroy');
 		
 		// Delete the chart from charts lookup array
-		charts[chart.index] = UNDEFINED;
+		charts[chart.index] = undefined;
 		chartCount--;
 		chart.renderTo.removeAttribute('data-highcharts-chart');
 
@@ -1395,7 +1395,7 @@ Chart.prototype = {
 			callback.apply(chart, [chart]);
 		}
 		each(chart.callbacks, function (fn) {
-			if (chart.index !== UNDEFINED) { // Chart destroyed in its own callback (#3600)
+			if (chart.index !== undefined) { // Chart destroyed in its own callback (#3600)
 				fn.apply(chart, [chart]);
 			}
 		});

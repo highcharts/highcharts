@@ -118,7 +118,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			medianAttr = {};
 			color = point.color || series.color;
 			
-			if (point.plotY !== UNDEFINED) {
+			if (point.plotY !== undefined) {
 
 				pointAttr = point.pointAttr[point.selected ? 'selected' : ''];
 

@@ -43,7 +43,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 
 	// The positions are not always defined, for example for ordinal positions when data
 	// has regular interval (#1557, #2090)
-	if ((!this.options.ordinal && !this.options.breaks) || !positions || positions.length < 3 || min === UNDEFINED) {
+	if ((!this.options.ordinal && !this.options.breaks) || !positions || positions.length < 3 || min === undefined) {
 		return proceed.call(this, normalizedInterval, min, max, startOfWeek);
 	}
 
@@ -268,7 +268,7 @@ extend(Axis.prototype, {
 				axis.ordinalOffset = min - (minIndex * slope);
 
 			} else {
-				axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = UNDEFINED;
+				axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = undefined;
 			}
 			if (axis.options.ordinal) {
 				axis.doPostTranslate = useOrdinal; // #3818
@@ -372,7 +372,7 @@ extend(Axis.prototype, {
 
 			// If the index is within the range of the ordinal positions, return the associated
 			// or interpolated value. If not, just return the value
-			return distance !== UNDEFINED && ordinalPositions[i] !== UNDEFINED ?
+			return distance !== undefined && ordinalPositions[i] !== undefined ?
 				ordinalPositions[i] + (distance ? distance * (ordinalPositions[i + 1] - ordinalPositions[i]) : 0) :
 				val;
 		}

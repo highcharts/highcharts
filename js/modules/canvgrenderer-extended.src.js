@@ -11,8 +11,7 @@
 /*global Highcharts */
 
 (function (Highcharts) { // encapsulate
-	var UNDEFINED,
-		css = Highcharts.css,
+	var css = Highcharts.css,
 		CanVGRenderer = Highcharts.CanVGRenderer,
 		SVGRenderer = Highcharts.SVGRenderer,
 		extend = Highcharts.extend,
@@ -57,7 +56,7 @@
 			// the container (and as direct childs to the div specified in the html page)
 			this.ttLine = createElement('div', null, initialHiddenStyle, containerParent);
 			this.ttDiv = createElement('div', null, initialHiddenStyle, containerParent);
-			this.ttTimer = UNDEFINED;
+			this.ttTimer = undefined;
 
 			// Move away the svg node to a new div inside the container's parent so we can hide it.
 			var hiddenSvg = createElement('div', {
@@ -137,7 +136,7 @@
 
 				// This timeout hides the tooltip after 3 seconds
 				// First clear any existing timer
-				if (renderer.ttTimer !== UNDEFINED) {
+				if (renderer.ttTimer !== undefined) {
 					clearTimeout(renderer.ttTimer);
 				}
 
@@ -159,7 +158,7 @@
 			discardElement(renderer.canvas);
 
 			// Kill the timer
-			if (renderer.ttTimer !== UNDEFINED) {
+			if (renderer.ttTimer !== undefined) {
 				clearTimeout(renderer.ttTimer);
 			}
 

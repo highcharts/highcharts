@@ -1,6 +1,5 @@
 // encapsulated variables
-var UNDEFINED,
-	deg2rad = Math.PI * 2 / 360,
+var deg2rad = Math.PI * 2 / 360,
 
 
 	// some variables
@@ -25,7 +24,7 @@ var UNDEFINED,
 	globalAnimation,
 	pathAnim,
 	timeUnits,
-	noop = function () { return UNDEFINED; },
+	noop = function () { return undefined; },
 	charts = [],
 	chartCount = 0,
 
