@@ -370,7 +370,7 @@ SVGElement.prototype = {
 	 * @param {String} id
 	 */
 	clip: function (clipRect) {
-		return this.attr('clip-path', clipRect ? 'url(' + this.renderer.url + '#' + clipRect.id + ')' : NONE);
+		return this.attr('clip-path', clipRect ? 'url(' + this.renderer.url + '#' + clipRect.id + ')' : 'none');
 	},
 
 	/**
@@ -726,7 +726,7 @@ SVGElement.prototype = {
 						textShadow = elemStyle.textShadow;
 						elemStyle.textShadow = '';
 					} else if (toggleTextShadowShim) {
-						toggleTextShadowShim(NONE);
+						toggleTextShadowShim('none');
 					}
 
 					bBox = element.getBBox ?
@@ -963,7 +963,7 @@ SVGElement.prototype = {
 					'stroke-opacity': shadowElementOpacity * i,
 					'stroke-width': strokeWidth,
 					'transform': 'translate' + transform,
-					'fill': NONE
+					'fill': 'none'
 				});
 				if (cutOff) {
 					attr(shadow, 'height', mathMax(attr(shadow, 'height') - strokeWidth, 0));
@@ -1727,7 +1727,7 @@ SVGRenderer.prototype = {
 	 */
 	path: function (path) {
 		var attr = {
-			fill: NONE
+			fill: 'none'
 		};
 		if (isArray(path)) {
 			attr.d = path;
@@ -1879,7 +1879,7 @@ SVGRenderer.prototype = {
 	 */
 	image: function (src, x, y, width, height) {
 		var attribs = {
-				preserveAspectRatio: NONE
+				preserveAspectRatio: 'none'
 			},
 			elemWrapper;
 
@@ -2343,7 +2343,7 @@ SVGRenderer.prototype = {
 					wrapper.box = box = shape ?
 						renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height, deferredAttr) :
 						renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
-					box.attr('fill', NONE).add(wrapper);
+					box.attr('fill', 'none').add(wrapper);
 				}
 
 				// apply the box attributes

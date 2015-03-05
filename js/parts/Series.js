@@ -1364,7 +1364,7 @@ Series.prototype = {
 			lineWidth = options.lineWidth,
 			roundCap = options.linecap !== 'square',
 			graphPath = this.getGraphPath(),
-			fillColor = (this.fillGraph && this.color) || NONE, // polygon series use filled graph
+			fillColor = (this.fillGraph && this.color) || 'none', // polygon series use filled graph
 			zones = this.zones;
 
 		each(zones, function (threshold, i) {

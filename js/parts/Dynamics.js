@@ -84,7 +84,7 @@ extend(Chart.prototype, {
 				className: 'highcharts-loading'
 			}, extend(loadingOptions.style, {
 				zIndex: 10,
-				display: NONE
+				display: 'none'
 			}), chart.container);
 
 			chart.loadingSpan = createElement(
@@ -128,7 +128,7 @@ extend(Chart.prototype, {
 			}, {
 				duration: options.loading.hideDuration || 100,
 				complete: function () {
-					css(loadingDiv, { display: NONE });
+					css(loadingDiv, { display: 'none' });
 				}
 			});
 		}

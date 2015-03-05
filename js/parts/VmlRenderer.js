@@ -112,7 +112,7 @@ VMLElement = {
 		css(this.element, {
 			filter: rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta,
 				', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
-				', sizingMethod=\'auto expand\')'].join('') : NONE
+				', sizingMethod=\'auto expand\')'].join('') : 'none'
 		});
 	},
 
@@ -401,7 +401,7 @@ VMLElement = {
 		if (nodeName === 'SPAN') { // text color
 			element.style.color = value;
 		} else if (nodeName !== 'IMG') { // #1336
-			element.filled = value !== NONE;
+			element.filled = value !== 'none';
 			this.setAttr('fillcolor', this.renderer.color(value, element, key, this));
 		}
 	},
@@ -632,7 +632,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			regexRgba = /^rgba/,
 			markup,
 			fillType,
-			ret = NONE;
+			ret = 'none';
 
 		// Check for linear or radial gradient
 		if (color && color.linearGradient) {

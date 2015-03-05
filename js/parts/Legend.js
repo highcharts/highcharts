@@ -182,7 +182,7 @@ Legend.prototype = {
 					css(checkbox, {
 						left: (alignAttr.translateX + item.checkboxOffset + checkbox.x - 20) + 'px',
 						top: top + 'px',
-						display: top > translateY - 6 && top < translateY + clipHeight - 6 ? '' : NONE
+						display: top > translateY - 6 && top < translateY + clipHeight - 6 ? '' : 'none'
 					});
 				}
 			});
@@ -473,7 +473,7 @@ Legend.prototype = {
 				).attr({
 					stroke: options.borderColor,
 					'stroke-width': legendBorderWidth || 0,
-					fill: legendBackgroundColor || NONE
+					fill: legendBackgroundColor || 'none'
 				})
 				.add(legendGroup)
 				.shadow(options.shadow);

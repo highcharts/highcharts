@@ -128,7 +128,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 				'stroke-linejoin': 'round', // #1225
 				visibility: series.visible ? 'visible' : 'hidden',
 				stroke: TRACKER_FILL,
-				fill: trackByArea ? TRACKER_FILL : NONE,
+				fill: trackByArea ? TRACKER_FILL : 'none',
 				'stroke-width' : options.lineWidth + (trackByArea ? 0 : 2 * snap),
 				zIndex: 2
 			})

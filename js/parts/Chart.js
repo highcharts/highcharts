@@ -958,7 +958,7 @@ Chart.prototype = {
 			if (!chartBackground) {
 				
 				bgAttr = {
-					fill: chartBackgroundColor || NONE
+					fill: chartBackgroundColor || 'none'
 				};
 				if (chartBorderWidth) { // #980
 					bgAttr.stroke = optionsChart.borderColor;
@@ -1018,7 +1018,7 @@ Chart.prototype = {
 					.attr({
 						stroke: optionsChart.plotBorderColor,
 						'stroke-width': plotBorderWidth,
-						fill: NONE,
+						fill: 'none',
 						zIndex: 1
 					})
 					.add();

@@ -59,7 +59,6 @@ var UNDEFINED,
 	VERSION = '2.1.3-modified',
 
 	// some constants for frequently used strings
-	NONE = 'none',
 	M = 'M',
 	L = 'L',
 	numRegex = /^[0-9]+$/,
@@ -326,7 +325,7 @@ function createElement(tag, attribs, styles, parent, nopad) {
 		extend(el, attribs);
 	}
 	if (nopad) {
-		css(el, {padding: 0, border: NONE, margin: 0});
+		css(el, {padding: 0, border: 'none', margin: 0});
 	}
 	if (styles) {
 		css(el, styles);
@@ -2138,7 +2137,7 @@ SVGElement.prototype = {
 	 * @param {String} id
 	 */
 	clip: function (clipRect) {
-		return this.attr('clip-path', clipRect ? 'url(' + this.renderer.url + '#' + clipRect.id + ')' : NONE);
+		return this.attr('clip-path', clipRect ? 'url(' + this.renderer.url + '#' + clipRect.id + ')' : 'none');
 	},
 
 	/**
@@ -2494,7 +2493,7 @@ SVGElement.prototype = {
 						textShadow = elemStyle.textShadow;
 						elemStyle.textShadow = '';
 					} else if (toggleTextShadowShim) {
-						toggleTextShadowShim(NONE);
+						toggleTextShadowShim('none');
 					}
 
 					bBox = element.getBBox ?
@@ -2731,7 +2730,7 @@ SVGElement.prototype = {
 					'stroke-opacity': shadowElementOpacity * i,
 					'stroke-width': strokeWidth,
 					'transform': 'translate' + transform,
-					'fill': NONE
+					'fill': 'none'
 				});
 				if (cutOff) {
 					attr(shadow, 'height', mathMax(attr(shadow, 'height') - strokeWidth, 0));
@@ -3495,7 +3494,7 @@ SVGRenderer.prototype = {
 	 */
 	path: function (path) {
 		var attr = {
-			fill: NONE
+			fill: 'none'
 		};
 		if (isArray(path)) {
 			attr.d = path;
@@ -3647,7 +3646,7 @@ SVGRenderer.prototype = {
 	 */
 	image: function (src, x, y, width, height) {
 		var attribs = {
-				preserveAspectRatio: NONE
+				preserveAspectRatio: 'none'
 			},
 			elemWrapper;
 
@@ -4111,7 +4110,7 @@ SVGRenderer.prototype = {
 					wrapper.box = box = shape ?
 						renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height, deferredAttr) :
 						renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
-					box.attr('fill', NONE).add(wrapper);
+					box.attr('fill', 'none').add(wrapper);
 				}
 
 				// apply the box attributes
@@ -4746,7 +4745,7 @@ VMLElement = {
 		css(this.element, {
 			filter: rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta,
 				', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
-				', sizingMethod=\'auto expand\')'].join('') : NONE
+				', sizingMethod=\'auto expand\')'].join('') : 'none'
 		});
 	},
 
@@ -5035,7 +5034,7 @@ VMLElement = {
 		if (nodeName === 'SPAN') { // text color
 			element.style.color = value;
 		} else if (nodeName !== 'IMG') { // #1336
-			element.filled = value !== NONE;
+			element.filled = value !== 'none';
 			this.setAttr('fillcolor', this.renderer.color(value, element, key, this));
 		}
 	},
@@ -5266,7 +5265,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			regexRgba = /^rgba/,
 			markup,
 			fillType,
-			ret = NONE;
+			ret = 'none';
 
 		// Check for linear or radial gradient
 		if (color && color.linearGradient) {
@@ -10350,8 +10349,8 @@ if (win.PointerEvent || win.MSPointerEvent) {
 		proceed.call(this, chart, options);
 		if (this.hasZoom || this.followTouchMove) {
 			css(chart.container, {
-				'-ms-touch-action': NONE,
-				'touch-action': NONE
+				'-ms-touch-action': 'none',
+				'touch-action': 'none'
 			});
 		}
 	});
@@ -10553,7 +10552,7 @@ Legend.prototype = {
 					css(checkbox, {
 						left: (alignAttr.translateX + item.checkboxOffset + checkbox.x - 20) + 'px',
 						top: top + 'px',
-						display: top > translateY - 6 && top < translateY + clipHeight - 6 ? '' : NONE
+						display: top > translateY - 6 && top < translateY + clipHeight - 6 ? '' : 'none'
 					});
 				}
 			});
@@ -10844,7 +10843,7 @@ Legend.prototype = {
 				).attr({
 					stroke: options.borderColor,
 					'stroke-width': legendBorderWidth || 0,
-					fill: legendBackgroundColor || NONE
+					fill: legendBackgroundColor || 'none'
 				})
 				.add(legendGroup)
 				.shadow(options.shadow);
@@ -12125,7 +12124,7 @@ Chart.prototype = {
 			if (!chartBackground) {
 				
 				bgAttr = {
-					fill: chartBackgroundColor || NONE
+					fill: chartBackgroundColor || 'none'
 				};
 				if (chartBorderWidth) { // #980
 					bgAttr.stroke = optionsChart.borderColor;
@@ -12185,7 +12184,7 @@ Chart.prototype = {
 					.attr({
 						stroke: optionsChart.plotBorderColor,
 						'stroke-width': plotBorderWidth,
-						fill: NONE,
+						fill: 'none',
 						zIndex: 1
 					})
 					.add();
@@ -14230,7 +14229,7 @@ Series.prototype = {
 			lineWidth = options.lineWidth,
 			roundCap = options.linecap !== 'square',
 			graphPath = this.getGraphPath(),
-			fillColor = (this.fillGraph && this.color) || NONE, // polygon series use filled graph
+			fillColor = (this.fillGraph && this.color) || 'none', // polygon series use filled graph
 			zones = this.zones;
 
 		each(zones, function (threshold, i) {
@@ -15094,7 +15093,7 @@ extend(Chart.prototype, {
 				className: 'highcharts-loading'
 			}, extend(loadingOptions.style, {
 				zIndex: 10,
-				display: NONE
+				display: 'none'
 			}), chart.container);
 
 			chart.loadingSpan = createElement(
@@ -15138,7 +15137,7 @@ extend(Chart.prototype, {
 			}, {
 				duration: options.loading.hideDuration || 100,
 				complete: function () {
-					css(loadingDiv, { display: NONE });
+					css(loadingDiv, { display: 'none' });
 				}
 			});
 		}
@@ -17773,7 +17772,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 				'stroke-linejoin': 'round', // #1225
 				visibility: series.visible ? 'visible' : 'hidden',
 				stroke: TRACKER_FILL,
-				fill: trackByArea ? TRACKER_FILL : NONE,
+				fill: trackByArea ? TRACKER_FILL : 'none',
 				'stroke-width' : options.lineWidth + (trackByArea ? 0 : 2 * snap),
 				zIndex: 2
 			})

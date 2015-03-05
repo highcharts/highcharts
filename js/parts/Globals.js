@@ -44,7 +44,6 @@ var UNDEFINED,
 	VERSION = '@product.version@',
 
 	// some constants for frequently used strings
-	NONE = 'none',
 	M = 'M',
 	L = 'L',
 	numRegex = /^[0-9]+$/,

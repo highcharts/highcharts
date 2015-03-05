@@ -31,7 +31,6 @@ var Chart = Highcharts.Chart,
 	isTouchDevice = Highcharts.isTouchDevice,
 	M = 'M',
 	L = 'L',
-	NONE = 'none',
 	UNDEFINED,
 	symbols = Highcharts.Renderer.prototype.symbols,
 	defaultOptions = Highcharts.getOptions(),
@@ -57,7 +56,7 @@ defaultOptions.navigation = {
 	},
 	menuItemStyle: {
 		padding: '0 10px',
-		background: NONE,
+		background: 'none',
 		color: '#303030',
 		fontSize: isTouchDevice ? '14px' : '11px'
 	},
@@ -165,7 +164,7 @@ Highcharts.post = function (url, data, formAttributes) {
 		action: url,
 		enctype: 'multipart/form-data'
 	}, formAttributes), {
-		display: NONE
+		display: 'none'
 	}, doc.body);
 
 	// add the data
@@ -406,7 +405,7 @@ extend(Chart.prototype, {
 		each(childNodes, function (node, i) {
 			if (node.nodeType === 1) {
 				origDisplay[i] = node.style.display;
-				node.style.display = NONE;
+				node.style.display = 'none';
 			}
 		});
 
@@ -489,7 +488,7 @@ extend(Chart.prototype, {
 
 			// hide on mouse out
 			hide = function () {
-				css(menu, { display: NONE });
+				css(menu, { display: 'none' });
 				if (button) {
 					button.setState(0);
 				}
