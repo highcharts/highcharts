@@ -774,8 +774,8 @@ SVGElement.prototype = {
 
 				// Adjust for rotated text
 				if (rotation) {
-					bBox.width = Math.abs(height * mathSin(rad)) + Math.abs(width * mathCos(rad));
-					bBox.height = Math.abs(height * mathCos(rad)) + Math.abs(width * mathSin(rad));
+					bBox.width = Math.abs(height * mathSin(rad)) + Math.abs(width * Math.cos(rad));
+					bBox.height = Math.abs(height * Math.cos(rad)) + Math.abs(width * mathSin(rad));
 				}
 			}
 
@@ -2061,9 +2061,9 @@ SVGRenderer.prototype = {
 				end = options.end - 0.001, // to prevent cos and sin of start and end from becoming equal on 360 arcs (related: #1561)
 				innerRadius = options.innerR,
 				open = options.open,
-				cosStart = mathCos(start),
+				cosStart = Math.cos(start),
 				sinStart = mathSin(start),
-				cosEnd = mathCos(end),
+				cosEnd = Math.cos(end),
 				sinEnd = mathSin(end),
 				longArc = options.end - start < mathPI ? 0 : 1;
 
@@ -2269,7 +2269,7 @@ SVGRenderer.prototype = {
 	rotCorr: function (baseline, rotation, alterY) {
 		var y = baseline;
 		if (rotation && alterY) {
-			y = Math.max(y * mathCos(rotation * deg2rad), 4);
+			y = Math.max(y * Math.cos(rotation * deg2rad), 4);
 		}
 		return {
 			x: (-baseline / 3) * mathSin(rotation * deg2rad),

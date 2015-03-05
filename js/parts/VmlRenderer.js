@@ -106,7 +106,7 @@ VMLElement = {
 		// Test case: http://jsfiddle.net/highcharts/Ybt44/
 
 		var rotation = this.rotation,
-			costheta = mathCos(rotation * deg2rad),
+			costheta = Math.cos(rotation * deg2rad),
 			sintheta = mathSin(rotation * deg2rad);
 					
 		css(this.element, {
@@ -121,7 +121,7 @@ VMLElement = {
 	 */
 	getSpanCorrection: function (width, baseline, alignCorrection, rotation, align) {
 
-		var costheta = rotation ? mathCos(rotation * deg2rad) : 1,
+		var costheta = rotation ? Math.cos(rotation * deg2rad) : 1,
 			sintheta = rotation ? mathSin(rotation * deg2rad) : 0,
 			height = pick(this.elemHeight, this.element.offsetHeight),
 			quad,
@@ -412,7 +412,7 @@ VMLElement = {
 
 		// Correction for the 1x1 size of the shape container. Used in gauge needles.
 		style.left = -Math.round(mathSin(value * deg2rad) + 1) + 'px';
-		style.top = Math.round(mathCos(value * deg2rad)) + 'px';
+		style.top = Math.round(Math.cos(value * deg2rad)) + 'px';
 	},
 	strokeSetter: function (value, key, element) {
 		this.setAttr('strokecolor', this.renderer.color(value, element, key));
@@ -949,9 +949,9 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				end = options.end,
 				radius = options.r || w || h,
 				innerRadius = options.innerR,
-				cosStart = mathCos(start),
+				cosStart = Math.cos(start),
 				sinStart = mathSin(start),
-				cosEnd = mathCos(end),
+				cosEnd = Math.cos(end),
 				sinEnd = mathSin(end),
 				ret;
 

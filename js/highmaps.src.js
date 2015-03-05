@@ -17,7 +17,6 @@
 var UNDEFINED,
 	doc = document,
 	win = window,
-	mathCos = Math.cos,
 	mathSin = Math.sin,
 	mathPI = Math.PI,
 	deg2rad = mathPI * 2 / 360,
@@ -2524,8 +2523,8 @@ SVGElement.prototype = {
 
 				// Adjust for rotated text
 				if (rotation) {
-					bBox.width = Math.abs(height * mathSin(rad)) + Math.abs(width * mathCos(rad));
-					bBox.height = Math.abs(height * mathCos(rad)) + Math.abs(width * mathSin(rad));
+					bBox.width = Math.abs(height * mathSin(rad)) + Math.abs(width * Math.cos(rad));
+					bBox.height = Math.abs(height * Math.cos(rad)) + Math.abs(width * mathSin(rad));
 				}
 			}
 
@@ -3811,9 +3810,9 @@ SVGRenderer.prototype = {
 				end = options.end - 0.001, // to prevent cos and sin of start and end from becoming equal on 360 arcs (related: #1561)
 				innerRadius = options.innerR,
 				open = options.open,
-				cosStart = mathCos(start),
+				cosStart = Math.cos(start),
 				sinStart = mathSin(start),
-				cosEnd = mathCos(end),
+				cosEnd = Math.cos(end),
 				sinEnd = mathSin(end),
 				longArc = options.end - start < mathPI ? 0 : 1;
 
@@ -4019,7 +4018,7 @@ SVGRenderer.prototype = {
 	rotCorr: function (baseline, rotation, alterY) {
 		var y = baseline;
 		if (rotation && alterY) {
-			y = Math.max(y * mathCos(rotation * deg2rad), 4);
+			y = Math.max(y * Math.cos(rotation * deg2rad), 4);
 		}
 		return {
 			x: (-baseline / 3) * mathSin(rotation * deg2rad),
@@ -4722,7 +4721,7 @@ VMLElement = {
 		// Test case: http://jsfiddle.net/highcharts/Ybt44/
 
 		var rotation = this.rotation,
-			costheta = mathCos(rotation * deg2rad),
+			costheta = Math.cos(rotation * deg2rad),
 			sintheta = mathSin(rotation * deg2rad);
 					
 		css(this.element, {
@@ -4737,7 +4736,7 @@ VMLElement = {
 	 */
 	getSpanCorrection: function (width, baseline, alignCorrection, rotation, align) {
 
-		var costheta = rotation ? mathCos(rotation * deg2rad) : 1,
+		var costheta = rotation ? Math.cos(rotation * deg2rad) : 1,
 			sintheta = rotation ? mathSin(rotation * deg2rad) : 0,
 			height = pick(this.elemHeight, this.element.offsetHeight),
 			quad,
@@ -5028,7 +5027,7 @@ VMLElement = {
 
 		// Correction for the 1x1 size of the shape container. Used in gauge needles.
 		style.left = -Math.round(mathSin(value * deg2rad) + 1) + 'px';
-		style.top = Math.round(mathCos(value * deg2rad)) + 'px';
+		style.top = Math.round(Math.cos(value * deg2rad)) + 'px';
 	},
 	strokeSetter: function (value, key, element) {
 		this.setAttr('strokecolor', this.renderer.color(value, element, key));
@@ -5565,9 +5564,9 @@ var VMLRendererExtension = { // inherit SVGRenderer
 				end = options.end,
 				radius = options.r || w || h,
 				innerRadius = options.innerR,
-				cosStart = mathCos(start),
+				cosStart = Math.cos(start),
 				sinStart = mathSin(start),
-				cosEnd = mathCos(end),
+				cosEnd = Math.cos(end),
 				sinEnd = mathSin(end),
 				ret;
 
@@ -5889,9 +5888,9 @@ Tick.prototype = {
 
 		// Add ellipsis to prevent rotated labels to be clipped against the edge of the chart
 		} else if (rotation < 0 && pxPos - factor * labelWidth < leftBound) {
-			textWidth = Math.round(pxPos / mathCos(rotation * deg2rad) - leftBound);
+			textWidth = Math.round(pxPos / Math.cos(rotation * deg2rad) - leftBound);
 		} else if (rotation > 0 && pxPos + factor * labelWidth > rightBound) {
-			textWidth = Math.round((chartWidth - pxPos) / mathCos(rotation * deg2rad));
+			textWidth = Math.round((chartWidth - pxPos) / Math.cos(rotation * deg2rad));
 		}
 
 		if (textWidth) {

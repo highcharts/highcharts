@@ -135,9 +135,9 @@ Tick.prototype = {
 
 		// Add ellipsis to prevent rotated labels to be clipped against the edge of the chart
 		} else if (rotation < 0 && pxPos - factor * labelWidth < leftBound) {
-			textWidth = Math.round(pxPos / mathCos(rotation * deg2rad) - leftBound);
+			textWidth = Math.round(pxPos / Math.cos(rotation * deg2rad) - leftBound);
 		} else if (rotation > 0 && pxPos + factor * labelWidth > rightBound) {
-			textWidth = Math.round((chartWidth - pxPos) / mathCos(rotation * deg2rad));
+			textWidth = Math.round((chartWidth - pxPos) / Math.cos(rotation * deg2rad));
 		}
 
 		if (textWidth) {
