@@ -117,7 +117,7 @@ var AreaSeries = extendClass(Series, {
 			yBottom;
 		
 		if (segLength === 3) { // for animation from 1 to two points
-			areaSegmentPath.push(L, segmentPath[1], segmentPath[2]);
+			areaSegmentPath.push('L', segmentPath[1], segmentPath[2]);
 		}
 		if (options.stacking && !this.closedStacks) {
 			
@@ -149,10 +149,10 @@ var AreaSeries = extendClass(Series, {
 	 */
 	closeSegment: function (path, segment, translatedThreshold) {
 		path.push(
-			L,
+			'L',
 			segment[segment.length - 1].plotX,
 			translatedThreshold,
-			L,
+			'L',
 			segment[0].plotX,
 			translatedThreshold
 		);

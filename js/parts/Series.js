@@ -1286,7 +1286,7 @@ Series.prototype = {
 			} else {
 
 				// moveTo or lineTo
-				segmentPath.push(i ? L : 'M');
+				segmentPath.push(i ? 'L' : 'M');
 
 				// step line?
 				if (step && i) {

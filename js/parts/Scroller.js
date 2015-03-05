@@ -448,18 +448,18 @@ Scroller.prototype = {
 			scroller.outline[verb]({ d: [
 				'M',
 				scrollerLeft, outlineTop, // left
-				L,
+				'L',
 				navigatorLeft + zoomedMin - halfOutline, outlineTop, // upper left of zoomed range
 				navigatorLeft + zoomedMin - halfOutline, outlineTop + outlineHeight, // lower left of z.r.
-				L,
+				'L',
 				navigatorLeft + zoomedMax - halfOutline, outlineTop + outlineHeight, // lower right of z.r.
-				L,
+				'L',
 				navigatorLeft + zoomedMax - halfOutline, outlineTop, // upper right of z.r.
 				scrollerLeft + scrollerWidth, outlineTop // right
 			].concat(navigatorOptions.maskInside ? [
 				'M',
 				navigatorLeft + zoomedMin + halfOutline, outlineTop, // upper left of zoomed range
-				L,
+				'L',
 				navigatorLeft + zoomedMax - halfOutline, outlineTop // upper right of z.r.
 			] : [])});
 			// draw handles
@@ -506,15 +506,15 @@ Scroller.prototype = {
 					d: [
 						'M',
 						centerBarX - 3, scrollbarHeight / 4,
-						L,
+						'L',
 						centerBarX - 3, 2 * scrollbarHeight / 3,
 						'M',
 						centerBarX, scrollbarHeight / 4,
-						L,
+						'L',
 						centerBarX, 2 * scrollbarHeight / 3,
 						'M',
 						centerBarX + 3, scrollbarHeight / 4,
-						L,
+						'L',
 						centerBarX + 3, 2 * scrollbarHeight / 3
 					]
 				});

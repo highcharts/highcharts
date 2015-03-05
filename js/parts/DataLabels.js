@@ -583,14 +583,14 @@ if (seriesTypes.pie) {
 							x, y, // first break, next to the label
 							2 * labelPos[2] - labelPos[4], 2 * labelPos[3] - labelPos[5],
 							labelPos[2], labelPos[3], // second break
-							L,
+							'L',
 							labelPos[4], labelPos[5] // base
 						] : [
 							'M',
 							x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
-							L,
+							'L',
 							labelPos[2], labelPos[3], // second break
-							L,
+							'L',
 							labelPos[4], labelPos[5] // base
 						];
 

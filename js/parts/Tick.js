@@ -205,7 +205,7 @@ Tick.prototype = {
 				'M',
 				x,
 				y,
-				L,
+				'L',
 				x + (horiz ? 0 : -tickLength),
 				y + (horiz ? tickLength : 0)
 			], tickWidth);

@@ -59,7 +59,6 @@ var UNDEFINED,
 	VERSION = '4.1.3-modified',
 
 	// some constants for frequently used strings
-	L = 'L',
 	numRegex = /^[0-9]+$/,
 	NORMAL_STATE = '',
 	HOVER_STATE = 'hover',
@@ -3474,7 +3473,7 @@ SVGRenderer.prototype = {
 	 * @param {Number} width
 	 */
 	crispLine: function (points, width) {
-		// points format: ['M', 0, 0, L, 100, 0]
+		// points format: ['M', 0, 0, 'L', 100, 0]
 		// normalize to a crisp line
 		if (points[1] === points[4]) {
 			// Substract due to #1129. Now bottom and left axis gridlines behave the same.
@@ -3788,7 +3787,7 @@ SVGRenderer.prototype = {
 		'square': function (x, y, w, h) {
 			return [
 				'M', x, y,
-				L, x + w, y,
+				'L', x + w, y,
 				x + w, y + h,
 				x, y + h,
 				'Z'
@@ -3798,7 +3797,7 @@ SVGRenderer.prototype = {
 		'triangle': function (x, y, w, h) {
 			return [
 				'M', x + w / 2, y,
-				L, x + w, y + h,
+				'L', x + w, y + h,
 				x, y + h,
 				'Z'
 			];
@@ -3807,7 +3806,7 @@ SVGRenderer.prototype = {
 		'triangle-down': function (x, y, w, h) {
 			return [
 				'M', x, y,
-				L, x + w, y,
+				'L', x + w, y,
 				x + w / 2, y + h,
 				'Z'
 			];
@@ -3815,7 +3814,7 @@ SVGRenderer.prototype = {
 		'diamond': function (x, y, w, h) {
 			return [
 				'M', x + w / 2, y,
-				L, x + w, y + h / 2,
+				'L', x + w, y + h / 2,
 				x + w / 2, y + h,
 				x, y + h / 2,
 				'Z'
@@ -3845,7 +3844,7 @@ SVGRenderer.prototype = {
 				1, // clockwise
 				x + radius * cosEnd,
 				y + radius * sinEnd,
-				open ? 'M' : L,
+				open ? 'M' : 'L',
 				x + innerRadius * cosEnd,
 				y + innerRadius * sinEnd,
 				'A', // arcTo
@@ -5975,7 +5974,7 @@ Tick.prototype = {
 				'M',
 				x,
 				y,
-				L,
+				'L',
 				x + (horiz ? 0 : -tickLength),
 				y + (horiz ? tickLength : 0)
 			], tickWidth);
@@ -7012,7 +7011,7 @@ Axis.prototype = {
 		}
 		return skip && !force ?
 			null :
-			chart.renderer.crispLine(['M', x1, y1, L, x2, y2], lineWidth || 1);
+			chart.renderer.crispLine(['M', x1, y1, 'L', x2, y2], lineWidth || 1);
 	},
 
 	/**
@@ -8157,7 +8156,7 @@ Axis.prototype = {
 				horiz ?
 					lineTop :
 					this.top,
-				L,
+				'L',
 				horiz ?
 					chart.chartWidth - this.right :
 					lineLeft,
@@ -11119,7 +11118,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 				'M',
 				0,
 				verticalCenter,
-				L,
+				'L',
 				symbolWidth,
 				verticalCenter
 			])
@@ -14150,7 +14149,7 @@ Series.prototype = {
 			} else {
 
 				// moveTo or lineTo
-				segmentPath.push(i ? L : 'M');
+				segmentPath.push(i ? 'L' : 'M');
 
 				// step line?
 				if (step && i) {
@@ -15660,7 +15659,7 @@ var AreaSeries = extendClass(Series, {
 			yBottom;
 		
 		if (segLength === 3) { // for animation from 1 to two points
-			areaSegmentPath.push(L, segmentPath[1], segmentPath[2]);
+			areaSegmentPath.push('L', segmentPath[1], segmentPath[2]);
 		}
 		if (options.stacking && !this.closedStacks) {
 			
@@ -15692,10 +15691,10 @@ var AreaSeries = extendClass(Series, {
 	 */
 	closeSegment: function (path, segment, translatedThreshold) {
 		path.push(
-			L,
+			'L',
 			segment[segment.length - 1].plotX,
 			translatedThreshold,
-			L,
+			'L',
 			segment[0].plotX,
 			translatedThreshold
 		);
@@ -17369,14 +17368,14 @@ if (seriesTypes.pie) {
 							x, y, // first break, next to the label
 							2 * labelPos[2] - labelPos[4], 2 * labelPos[3] - labelPos[5],
 							labelPos[2], labelPos[3], // second break
-							L,
+							'L',
 							labelPos[4], labelPos[5] // base
 						] : [
 							'M',
 							x + (labelPos[6] === 'left' ? 5 : -5), y, // end of the string at the label
-							L,
+							'L',
 							labelPos[2], labelPos[3], // second break
-							L,
+							'L',
 							labelPos[4], labelPos[5] // base
 						];
 
@@ -17746,10 +17745,10 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			i = trackerPathLength + 1;
 			while (i--) {
 				if (trackerPath[i] === 'M') { // extend left side
-					trackerPath.splice(i + 1, 0, trackerPath[i + 1] - snap, trackerPath[i + 2], L);
+					trackerPath.splice(i + 1, 0, trackerPath[i + 1] - snap, trackerPath[i + 2], 'L');
 				}
 				if ((i && trackerPath[i] === 'M') || i === trackerPathLength) { // extend right side
-					trackerPath.splice(i, 0, L, trackerPath[i - 2] + snap, trackerPath[i - 1]);
+					trackerPath.splice(i, 0, 'L', trackerPath[i - 2] + snap, trackerPath[i - 1]);
 				}
 			}
 		}
@@ -17758,7 +17757,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 		for (i = 0; i < singlePoints.length; i++) {
 			singlePoint = singlePoints[i];
 			trackerPath.push('M', singlePoint.plotX - snap, singlePoint.plotY,
-			L, singlePoint.plotX + snap, singlePoint.plotY);
+			'L', singlePoint.plotX + snap, singlePoint.plotY);
 		}
 
 		// draw the tracker

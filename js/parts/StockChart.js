@@ -293,7 +293,7 @@ Axis.prototype.getPlotBandPath = function (from, to) {
 
 // Function to crisp a line with multiple segments
 SVGRenderer.prototype.crispPolyLine = function (points, width) {
-	// points format: ['M', 0, 0, L, 100, 0]		
+	// points format: ['M', 0, 0, 'L', 100, 0]		
 	// normalize to a crisp line
 	var i;
 	for (i = 0; i < points.length; i = i + 6) {

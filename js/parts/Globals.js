@@ -44,7 +44,6 @@ var UNDEFINED,
 	VERSION = '@product.version@',
 
 	// some constants for frequently used strings
-	L = 'L',
 	numRegex = /^[0-9]+$/,
 	NORMAL_STATE = '',
 	HOVER_STATE = 'hover',

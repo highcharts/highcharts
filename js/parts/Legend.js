@@ -750,7 +750,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 				'M',
 				0,
 				verticalCenter,
-				L,
+				'L',
 				symbolWidth,
 				verticalCenter
 			])
