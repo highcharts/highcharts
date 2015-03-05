@@ -40,7 +40,6 @@ var UNDEFINED,
 	noop = function () { return UNDEFINED; },
 	charts = [],
 	chartCount = 0,
-	PRODUCT = '@product.name@',
 
 	// some constants for frequently used strings
 	numRegex = /^[0-9]+$/,

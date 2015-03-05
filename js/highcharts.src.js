@@ -55,7 +55,6 @@ var UNDEFINED,
 	noop = function () { return UNDEFINED; },
 	charts = [],
 	chartCount = 0,
-	PRODUCT = 'Highcharts',
 
 	// some constants for frequently used strings
 	numRegex = /^[0-9]+$/,
@@ -2963,7 +2962,7 @@ SVGRenderer.prototype = {
 
 		// Add description
 		desc = this.createElement('desc').add();
-		desc.element.appendChild(doc.createTextNode('Created with ' + PRODUCT + ' 4.1.3-modified'));
+		desc.element.appendChild(doc.createTextNode('Created with Highcharts 4.1.3-modified'));
 
 
 		renderer.defs = this.createElement('defs').add();
@@ -18469,7 +18468,7 @@ extend(Highcharts, {
 	svg: hasSVG,
 	canvas: useCanVG,
 	vml: !hasSVG && !useCanVG,
-	product: PRODUCT,
+	product: 'Highcharts',
 	version: '4.1.3-modified'
 });
 
