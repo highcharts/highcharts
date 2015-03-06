@@ -1,4 +1,6 @@
 <?php 
+
+	require_once('functions.php');
 	$path = $_GET['path'];
 	$mode = @$_GET['mode'];
 	$i = $_GET['i'];
@@ -10,19 +12,8 @@
 
 	$isUnitTest = strstr(file_get_contents("../../samples/$path/demo.details"), 'qunit') ? true : false;
 	
-
-
-	if (!get_browser(null, true)) {
-		$warning = 'Unable to get the browser info. Make sure a php_browscap.ini file extists, see ' .
-		'<a href="http://php.net/manual/en/function.get-browser.php">get_browser</a>.';
-	} else {
-		$browser = get_browser(null, true);
-		$browserKey = @$browser['parent'];
-		if (!$browserKey) {
-			$warning = 'Unable to get the browser info. Make sure php_browscap.ini is updated, see ' .
-			'<a target="_blank" href="http://php.net/manual/en/function.get-browser.php">get_browser</a>.';
-		}
-	}
+	$browser = getBrowser();
+	$browserKey = $browser['parent'];
 
 ?><!DOCTYPE HTML>
 <html>

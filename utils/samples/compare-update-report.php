@@ -1,11 +1,11 @@
 <?php
-
+require_once('functions.php');
 $path = isset($_GET['path']) ? $_GET['path'] : $path;
 $diff = isset($_GET['diff']) ? $_GET['diff'] : @$difference['dissimilarityIndex'];
 
 $tempFile = 'temp/compare.json';
 $compare = file_exists($tempFile) ? json_decode(file_get_contents($tempFile)) : new stdClass;
-$browser = get_browser(null, true);
+$browser = getBrowser();
 $key = isset($browser['parent']) ? $browser['parent'] : 'Unknown';
 
 
