@@ -801,17 +801,18 @@ Axis.prototype = {
 			linkedParent = axis.linkedParent,
 			ordinalCorrection,
 			hasCategories = !!axis.categories,
-			transA = axis.transA;
+			transA = axis.transA,
+			isXAxis = axis.isXAxis;
 
 		// Adjust translation for padding. Y axis with categories need to go through the same (#1784).
-		if (axis.isXAxis || hasCategories || pointRange) {
+		if (isXAxis || hasCategories || pointRange) {
 			if (linkedParent) {
 				minPointOffset = linkedParent.minPointOffset;
 				pointRangePadding = linkedParent.pointRangePadding;
 
 			} else {
 				each(axis.series, function (series) {
-					var seriesPointRange = hasCategories ? 1 : (axis.isXAxis ? series.pointRange : (axis.axisPointRange || 0)), // #2806
+					var seriesPointRange = hasCategories ? 1 : (isXAxis ? series.pointRange : (axis.axisPointRange || 0)), // #2806
 						pointPlacement = series.options.pointPlacement,
 						seriesClosestPointRange = series.closestPointRange;
 
@@ -857,7 +858,9 @@ Axis.prototype = {
 			// closestPointRange means the closest distance between points. In columns
 			// it is mostly equal to pointRange, but in lines pointRange is 0 while closestPointRange
 			// is some other value
-			axis.closestPointRange = closestPointRange;
+			if (isXAxis) {
+				axis.closestPointRange = closestPointRange;
+			}
 		}
 
 		// Secondary values
