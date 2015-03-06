@@ -18612,10 +18612,6 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 				var target = e.target,
 				point;
 
-				if (chart.hoverSeries !== series) {
-					series.onMouseOver();
-				}
-
 				while (target && !point) {
 					point = target.point;
 					target = target.parentNode;
@@ -19008,6 +19004,10 @@ extend(Point.prototype, {
 			chart = series.chart,
 			tooltip = chart.tooltip,
 			hoverPoint = chart.hoverPoint;
+
+		if (chart.hoverSeries !== series) {
+			series.onMouseOver();
+		}		
 
 		// set normal state to previous series
 		if (hoverPoint && hoverPoint !== point) {
