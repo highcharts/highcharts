@@ -12338,11 +12338,15 @@ Point.prototype = {
 
 		// Loop over the point array map and replace unformatted values with sprintf formatting markup
 		each(series.pointArrayMap || ['y'], function (key) {
-			key = '{point.' + key; // without the closing bracket
+			key = new RegExp('(({point.' + key + ')([^}])*})', 'g');
 			if (valuePrefix || valueSuffix) {
-				pointFormat = pointFormat.replace(key + '}', valuePrefix + key + '}' + valueSuffix);
+				pointFormat = pointFormat.replace(key, function ($1) {
+					return valuePrefix + $1 + valueSuffix;
+				});
 			}
-			pointFormat = pointFormat.replace(key + '}', key + ':,.' + valueDecimals + 'f}');
+			if (valueDecimals) { // Overrides format
+				pointFormat = pointFormat.replace(key,  '$2:,.' + valueDecimals + 'f}');
+			}
 		});
 
 		return format(pointFormat, {
