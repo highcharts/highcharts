@@ -32,6 +32,8 @@ VMLElement = {
 			style = ['position: ', 'absolute', ';'],
 			isDiv = nodeName === 'div';
 
+		wrapper.docMode8 = document.documentMode === 8;
+
 		// divs and shapes need size
 		if (nodeName === 'shape' || isDiv) {
 			style.push('left:0;top:0;width:1px;height:1px;');
@@ -221,7 +223,7 @@ VMLElement = {
 			if (wrapper.destroyClip) {
 				wrapper.destroyClip();
 			}
-			cssRet = { clip: docMode8 ? 'inherit' : 'rect(auto)' }; // #1214
+			cssRet = { clip: wrapper.docMode8 ? 'inherit' : 'rect(auto)' }; // #1214
 		}
 
 		return wrapper.css(cssRet);
@@ -362,7 +364,7 @@ VMLElement = {
 	updateShadows: noop, // Used in SVG only
 
 	setAttr: function (key, value) {
-		if (docMode8) { // IE8 setAttribute bug
+		if (this.docMode8) { // IE8 setAttribute bug
 			this.element[key] = value;
 		} else {
 			this.element.setAttribute(key, value);
@@ -450,7 +452,7 @@ VMLElement = {
 			// In order to redraw, IE7 needs the div to be visible when tucked away
 			// outside the viewport. So the visibility is actually opposite of
 			// the expected value. This applies to the tooltip only.
-			if (!docMode8) {
+			if (!this.docMode8) {
 				element.style[key] = value ? 'visible' : 'hidden';
 			}
 			key = 'top';
@@ -598,7 +600,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					};
 
 				// issue 74 workaround
-				if (!inverted && docMode8 && nodeName === 'DIV') {
+				if (!inverted && wrapper.docMode8 && nodeName === 'DIV') {
 					extend(ret, {
 						width: right + 'px',
 						height: bottom + 'px'
