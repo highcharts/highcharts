@@ -1,4 +1,6 @@
 <?php
+
+require_once('../settings.php');
 define('JQUERY_VERSION', isset($_SESSION['jQueryVersion']) ? $_SESSION['jQueryVersion'] : Settings::$jQueryVersion);
 
 
