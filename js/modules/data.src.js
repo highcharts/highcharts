@@ -522,7 +522,7 @@
 			ret = parseDate(val);
 		}
 		
-		if (typeof val === 'string') {
+		else if (typeof val === 'string') {
 			// Auto-detect the date format the first time
 			if (!dateFormat) {
 				for (key in this.dateFormats) {
