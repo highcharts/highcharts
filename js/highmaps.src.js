@@ -9110,7 +9110,7 @@ Pointer.prototype = {
 		}
 
 		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926
-		if (kdpoint && (kdpoint !== hoverPoint || tooltip.isHidden)) {
+		if (kdpoint && (kdpoint !== hoverPoint || (tooltip && tooltip.isHidden))) {
 			// Draw tooltip if necessary
 			if (shared && !kdpoint.series.noSharedTooltip) {
 				i = kdpoints.length;
