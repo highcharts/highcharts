@@ -10,10 +10,12 @@ import org.apache.log4j.Logger;
 import com.highcharts.export.server.Server;
 import com.highcharts.export.server.ServerState;
 import com.highcharts.export.util.TempDir;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
@@ -203,8 +205,11 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 				try {
 					file = Files.createFile(path).toFile();
 					file.deleteOnExit();
-					InputStream in = resource.getInputStream();
-					IOUtils.copy(in, new FileOutputStream(file));
+					try (InputStream in = resource.getInputStream();
+					     OutputStream out=new FileOutputStream(file);)
+			        {
+					    IOUtils.copy(in, out);
+			        }
 				} catch (IOException ioex) {
 					logger.error("Error while setting up phantomjs environment: " + ioex.getMessage());
 				}
