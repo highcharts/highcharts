@@ -3632,7 +3632,7 @@ SVGRenderer.prototype = {
 		renderer.boxWrapper[pick(animate, true) ? 'animate' : 'attr']({
 			width: width,
 			height: height
-		}).attr('viewBox', '0 0 ' + width + ' ' + height);
+		});
 
 		while (i--) {
 			alignedObjects[i].align();
