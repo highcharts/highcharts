@@ -12836,7 +12836,7 @@ Point.prototype = {
 		// Insert options for valueDecimals, valuePrefix, and valueSuffix
 		var series = this.series,
 			seriesTooltipOptions = series.tooltipOptions,
-			valueDecimals = pick(seriesTooltipOptions.valueDecimals, ''),
+			valueDecimals = seriesTooltipOptions.valueDecimals,
 			valuePrefix = seriesTooltipOptions.valuePrefix || '',
 			valueSuffix = seriesTooltipOptions.valueSuffix || '';
 
@@ -12848,7 +12848,7 @@ Point.prototype = {
 					return valuePrefix + $1 + valueSuffix;
 				});
 			}
-			if (valueDecimals) { // Overrides format
+			if (typeof valueDecimals === 'number') { // Overrides format
 				pointFormat = pointFormat.replace(key,  '$2:,.' + valueDecimals + 'f}');
 			}
 		});
