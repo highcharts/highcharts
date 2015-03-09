@@ -11,7 +11,6 @@ import java.nio.file.Paths;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -24,7 +23,7 @@ public class TempDir {
 	public static Path outputDir;
 	public static Path phantomJsDir;
 
-    protected static Logger logger = Logger.getLogger("tempdir");
+    protected static Logger logger = Logger.getLogger(TempDir.class.getName());
 	
 	
 	public TempDir() throws IOException {
@@ -40,6 +39,7 @@ public class TempDir {
 		phantomJsDir.toFile().deleteOnExit();
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
 		    public void run() {
 		        FileUtils.deleteQuietly(tmpDir.toFile());
 		    }
