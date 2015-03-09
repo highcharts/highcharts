@@ -39,7 +39,6 @@ $(function () {
             'Combined prefix and suffix with format'
         );
 
-        // Four value decimals
         point.series.tooltipOptions.valueDecimals = 4;
 
         assert.equal(
@@ -52,17 +51,7 @@ $(function () {
             Highcharts.Point.prototype.tooltipFormatter.call(point, '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y:.2f}</b><br/>'),
             '<span style="color:#00FF00">●</span> : <b>$100.0000 USD</b><br/>',
             'Value decimals with formatting'
-        );
-
-        // Zero valueDecimals
-        point.series.tooltipOptions.valueDecimals = 0;
-        assert.equal(
-            Highcharts.Point.prototype.tooltipFormatter.call(point, '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y:.2f}</b><br/>'),
-            '<span style="color:#00FF00">●</span> : <b>$100 USD</b><br/>',
-            'Zero value decimals'
-        );
-
-
+        )
     });
 
 });
