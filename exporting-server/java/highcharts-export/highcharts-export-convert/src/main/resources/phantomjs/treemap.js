@@ -1,5 +1,5 @@
 /*
- Highcharts JS v4.1.3 (2015-02-27)
+ Highcharts JS v4.1.4 (2015-03-10)
 
  (c) 2014 Highsoft AS
  Authors: Jon Arild Nygard / Oystein Moseng
