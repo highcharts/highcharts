@@ -17,6 +17,7 @@
      */
     function getLog(callback) {
         var after = '2015-02-20',
+            before = '2015-03-09',
             puts = function (err, stdout) {
                 if (err) {
                     throw err;
@@ -24,7 +25,7 @@
                 callback(stdout);
             };
 
-        cmd.exec('git log --after={' + after + '} --format="%s<br>"', null, puts);
+        cmd.exec('git log --after={' + after + '} --before={' + before + '} --format="%s<br>"', null, puts);
     }
 
     /**
@@ -77,15 +78,15 @@
             filename = 'changelog-' + name.toLowerCase() + '.htm';
 
         log = washLog(name, log);
-        log = '<li>' + log.join('</li>\n<li>') + '</li>\n';
+        log = '    <li>' + log.join('</li>\n    <li>') + '</li>\n';
         // Hyperlinked issue numbers
         log = log.replace(
-            /#([0-9]+)/,
+            /#([0-9]+)/g,
             '<a href="https://github.com/highslide-software/highcharts.com/issues/$1">#$1</a>'
         );
 
         if (name === 'Highstock' || name === 'Highmaps') {
-            seeAlso = '<li>Most changes listed under Highcharts ' + products.Highcharts.nr +
+            seeAlso = '    <li>Most changes listed under Highcharts ' + products.Highcharts.nr +
                 ' above also apply to ' + name + ' ' + version + '.</li>\n';
         }
 
