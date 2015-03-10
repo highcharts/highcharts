@@ -28,11 +28,12 @@
                 sys.puts(stdout);
             };
 
-        /* TODO: Add ampersands to run synchronously
+        /* TODO: Add ampersands to run synchronously. Safest, just console log the commands and run from command line.
         cmd.exec('git status', options, puts);
         cmd.exec('git add --all', options, puts);
         cmd.exec('git commit -m "v' + version + '"', options, puts);
         cmd.exec('git tag -a "v' + version + '" -m "Tagged ' + product + ' version ' + version + '"', options, puts);
+        cmd.exec('git push', options, puts);
         cmd.exec('git push --tags', options, puts);
         */
     }
