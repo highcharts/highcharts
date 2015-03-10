@@ -1772,12 +1772,12 @@ Series.prototype = {
 			}
 		}
 
-		// Start the recursive build process with a clone of the points array (#3873)
+		// Start the recursive build process with a clone of the points array and null points filtered out (#3873)
 		function startRecursive() {
-			var points = series.points.filter(function (point) {
+			var points = grep(series.points, function (point) {
 				return point.y !== null;
 			});
-			series.kdTree = _kdtree(points.slice(), dimensions, dimensions);		
+			series.kdTree = _kdtree(points, dimensions, dimensions);		
 		}
 
 		delete series.kdTree;
