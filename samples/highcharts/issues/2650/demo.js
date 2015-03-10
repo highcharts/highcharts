@@ -6,7 +6,7 @@ $(function () {
             "series": [{
             "type": "pie",
                 "dataLabels": {
-                "color": "white",
+                "color": "#FFFFFF",
                 "distance": -20,
                 backgroundColor: 'black'
             },

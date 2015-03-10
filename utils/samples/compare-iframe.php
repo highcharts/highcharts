@@ -238,6 +238,13 @@ function getExportInnerHTML() {
 			
 			// Disable animation
 			$(function () {
+
+				// Make sure getJSON content is not cached
+				$.ajaxSetup({
+					type: 'POST',
+					headers: { "cache-control": "no-cache" }
+				});
+
 				if (window.Highcharts) {
 					Highcharts.setOptions({
 						chart: {
