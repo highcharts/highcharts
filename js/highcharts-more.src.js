@@ -2154,7 +2154,6 @@ Axis.prototype.beforePadding = function () {
 			plotX = e.chartX - center[0] - chart.plotLeft,
 			plotY = e.chartY - center[1] - chart.plotTop;
 
-		this.kdAxisArray = ['clientX'];
 		e = {
 			clientX: 180 + (Math.atan2(plotX, plotY) * (-180 / Math.PI))
 		};
@@ -2163,9 +2162,6 @@ Axis.prototype.beforePadding = function () {
 	};
 	
 	wrap(seriesProto, 'buildKDTree', function (proceed) {
-		if (this.chart.polar) {
-			this.kdAxisArray = ['clientX'];
-		}
 		proceed.apply(this);
 	});
 	
