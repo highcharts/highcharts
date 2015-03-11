@@ -9065,6 +9065,7 @@ Tooltip.prototype = {
 		var chart = this.chart,
 			distance = this.distance,
 			ret = {},
+			h = point.h,
 			swapped,
 			first = ['y', chart.chartHeight, boxHeight, point.plotY + chart.plotTop],
 			second = ['x', chart.chartWidth, boxWidth, point.plotX + chart.plotLeft],
@@ -9085,9 +9086,9 @@ Tooltip.prototype = {
 				} else if (!preferFarSide && roomLeft) {
 					ret[dim] = alignedLeft;
 				} else if (roomLeft) {
-					ret[dim] = alignedLeft;
+					ret[dim] = alignedLeft - h < 0 ? alignedLeft : alignedLeft - h;
 				} else if (roomRight) {
-					ret[dim] = alignedRight;
+					ret[dim] = alignedRight + h + innerSize > outerSize ? alignedRight : alignedRight + h;
 				} else {
 					return false;
 				}
@@ -9253,8 +9254,13 @@ Tooltip.prototype = {
 			label.attr({
 				stroke: borderColor
 			});
-			
-			tooltip.updatePosition({ plotX: x, plotY: y, negative: point.negative, ttBelow: point.ttBelow });
+			tooltip.updatePosition({ 
+				plotX: x, 
+				plotY: y, 
+				negative: point.negative, 
+				ttBelow: point.ttBelow, 
+				h: (point.shapeArgs && point.shapeArgs.height) || 0
+			});
 		
 			this.isHidden = false;
 		}
