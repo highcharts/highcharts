@@ -84,7 +84,7 @@
 								diff = difference;
 							}
 
-							<?php if ($comment->symbol == 'check') : ?>
+							<?php if (isset($comment) && $comment->symbol == 'check') : ?>
 							if (diff.toString() === '<?php echo $comment->diff ?>') {
 								$(li).addClass('approved');
 							}
@@ -238,11 +238,12 @@
 				}
 			}
 
-			function activateOverlayCompare() {
+			function activateOverlayCompare(isCanvas) {
 
-				var $button = $('button#overlay-compare'),
-					$leftImage = $('#left-image'),
-					$rightImage = $('#right-image'),
+				var isCanvas = isCanvas || false,
+					$button = $('button#overlay-compare'),
+					$leftImage = isCanvas ? $('#cnvLeft') : $('#left-image'),
+					$rightImage = isCanvas ? $('#cnvRight') : $('#right-image'),
 					showingRight,
 					toggle = function () {
 
@@ -251,7 +252,7 @@
 
 							$('#preview').css({ height: $('#preview').height() })
 
-							$leftImage.css('position', 'absolute');
+							//$leftImage.css('position', 'absolute');
 							$rightImage
 								.css({
 									left: 300,
@@ -260,7 +261,16 @@
 								.animate({
 									left: 0
 								});
-							;
+							$leftImage
+								.css({
+									left: 300,
+									position: 'absolute'
+								})
+								.animate({
+									left: 0
+								});
+							
+							
 							$button.html('Showing right. Click to show left');
 							showingRight = true;
 
@@ -332,7 +342,86 @@
 						
 						$('#report').html(report)
 							.css('background', 'gray');
+						
+						/***
+							CANVAS BASED COMPARISON						
+						***/
+						(function canvasCompare(source1, canvas1, source2, canvas2, width, height) {
+							var converted = 0,
+								diff = 0,
+								canvasWidth = width || 400, 
+								canvasHeight = height || 300;;
+
+							/* converts the svg into canvas
+									- source: the svg string
+									- target: the id of the canvas element to render to
+									- callback: function to call after conversion
+							*/
+							function convert(source, target, callback) {
+								var context = document.getElementById(target).getContext('2d'),
+									domurl = window.URL || window.webkitURL || window,
+									blob = new Blob([source], { type: 'image/svg+xml;charset-utf-16'}),
+									svgurl = domurl.createObjectURL(blob),
+									image = new Image();
+								// this is fired after the image has been created
+								image.onload = function() {
+									context.drawImage(image, 0, 0, canvasWidth, canvasHeight);
+									domurl.revokeObjectURL(svgurl);
+									callback();
+								}
+								image.src = svgurl;
+							};				
 							
+							/* compares 2 canvas images */
+							function compare(c1, c2) {
+						    var data1 = document.getElementById(c1).getContext('2d').getImageData(0, 0, canvasWidth, canvasHeight).data,
+						        data2 = document.getElementById(c2).getContext('2d').getImageData(0, 0, canvasWidth, canvasHeight).data,
+						        i = data1.length,
+						        diff = 0;
+						    while (i--) {
+						        diff += Math.abs(data1[i] - data2[i]); // loops over all reds, greens, blues and alphas
+						    }
+						    return diff / 256;
+							}
+
+							/* called after converting svgs to canvases */
+							function startCompare() {
+								// only compare if both have been converted								
+								if (++converted == 2) {
+									var diff = compare(canvas1, canvas2);
+
+									if (diff === 0) {
+										identical = true;
+										report += '<div>The exported images are identical</div>'; 									
+										onIdentical();
+									} else if (diff === undefined) {
+										report += '<div>Canvas Comparison Failed</div>';
+										onDifferent('Error');
+									} else {
+										report += '<div>The exported images are different (dissimilarity index: '+ diff.toFixed(2) +')</div>';									
+										onDifferent();
+									}
+
+									// lower section to overlay images to visually compare the differences
+									activateOverlayCompare(true);
+									
+									$('#report').html(report).css('background', identical ? "#a4edba" : '#f15c80');
+								}
+							}
+						
+							// show the canvases
+							document.getElementById(canvas1).style.display = '';
+							document.getElementById(canvas2).style.display = '';
+							// start converting
+							convert(source1, canvas1, startCompare);
+							convert(source2, canvas2, startCompare);
+						})(leftSVG, 'cnvLeft', rightSVG, 'cnvRight', 400, 300);
+						
+						
+						/***
+							AJAX & PHP BASED COMPARISON
+						***/
+						/*
 						$.ajax({
 							type: 'POST', 
 							url: 'compare-images.php', 
@@ -382,6 +471,8 @@
 							},
 							dataType: 'json'
 						});
+						*/
+						
 					}
 				} else {
 					if (leftVersion === rightVersion) {
@@ -448,9 +539,10 @@
 				
 				<div id="comment-placeholder"></div>
 			</div>
-			
 			<pre id="svg"></pre>
 			
+			<canvas id="cnvLeft" width="400px" height="300px" style="display:none"></canvas>
+			<canvas id="cnvRight" width="400px" height="300px" style="display:none"></canvas>
 			<div id="preview"></div>
 			<button id="overlay-compare" style="display:none">Compare overlaid</button>
 		

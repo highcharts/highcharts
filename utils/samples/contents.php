@@ -246,6 +246,7 @@ require_once('functions.php');
 								$suffix = '';
 								$dissIndex = '';
 								$isUnitTest = strstr($yaml, 'qunit');
+								$diff = '';
 
 
 								if (strstr($yaml, 'requiresManualTesting: true')) {
