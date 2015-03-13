@@ -346,17 +346,18 @@
 						/***
 							CANVAS BASED COMPARISON						
 						***/
+						
 						(function canvasCompare(source1, canvas1, source2, canvas2, width, height) {
 							var converted = 0,
 								diff = 0,
 								canvasWidth = width || 400, 
 								canvasHeight = height || 300;;
 
-							/* converts the svg into canvas
-									- source: the svg string
-									- target: the id of the canvas element to render to
-									- callback: function to call after conversion
-							*/
+							// converts the svg into canvas
+							//		- source: the svg string
+							//		- target: the id of the canvas element to render to
+							//		- callback: function to call after conversion
+							//
 							function convert(source, target, callback) {
 								var context = document.getElementById(target).getContext('2d'),
 									domurl = window.URL || window.webkitURL || window,
@@ -372,7 +373,7 @@
 								image.src = svgurl;
 							};				
 							
-							/* compares 2 canvas images */
+							// compares 2 canvas images
 							function compare(c1, c2) {
 						    var data1 = document.getElementById(c1).getContext('2d').getImageData(0, 0, canvasWidth, canvasHeight).data,
 						        data2 = document.getElementById(c2).getContext('2d').getImageData(0, 0, canvasWidth, canvasHeight).data,
@@ -384,7 +385,7 @@
 						    return diff / 256;
 							}
 
-							/* called after converting svgs to canvases */
+							// called after converting svgs to canvases
 							function startCompare() {
 								// only compare if both have been converted								
 								if (++converted == 2) {
@@ -399,7 +400,7 @@
 										onDifferent('Error');
 									} else {
 										report += '<div>The exported images are different (dissimilarity index: '+ diff.toFixed(2) +')</div>';									
-										onDifferent();
+										onDifferent({dissimilarityIndex: diff});
 									}
 
 									// lower section to overlay images to visually compare the differences
@@ -437,7 +438,7 @@
 									.css('background', identical ? "#a4edba" : '#f15c80');
 							},
 							success: function (data) {
-
+								console.log(data);
 								if (data.fallBackToOnline) {
 									report += '<div>Preferred export server not started, fell back to export.highcharts.com. ' +
 										'Start local server like this: ' + startLocalServer + '</div>';
