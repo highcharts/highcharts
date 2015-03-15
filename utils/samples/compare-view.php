@@ -77,8 +77,8 @@
 						$('.dissimilarity-index', li).remove();
 						
 						if (difference !== undefined) {
-							if (typeof difference === 'object') {
-								diff = difference.dissimilarityIndex.toFixed(2);
+							if (typeof difference === 'number') {
+								diff = difference.toFixed(2);
 
 							} else {
 								diff = difference;
@@ -206,9 +206,8 @@
 			}
 			
 			function onDifferent(diff) {
-				if (diff === 'Error' || /^[0-9]+\/[0-9]+$/.test(diff)) { // Otherwise, it is saved from compare-iframe.php
-					$.get('compare-update-report.php', { path: '<?php echo $path ?>', diff: diff });
-				}
+				// Save it for refreshes
+				$.get('compare-update-report.php', { path: '<?php echo $path ?>', diff: diff });
 				markList("different", diff);
 				proceed();
 			}
@@ -395,7 +394,7 @@
 										onDifferent('Error');
 									} else {
 										report += '<div>The exported images are different (dissimilarity index: '+ diff.toFixed(2) +')</div>';									
-										onDifferent({dissimilarityIndex: diff});
+										onDifferent(diff);
 									}
 
 									// lower section to overlay images to visually compare the differences
