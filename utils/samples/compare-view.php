@@ -384,7 +384,6 @@
 									// a rectange of fill rgba(255, 255, 255, 1).
 									dividend = 4 * 255 * canvasWidth * canvasHeight / 100;
 								while (i--) {
-									if (i < 7) console.log(i, data1[i], data2[i])
 									diff += Math.abs(data1[i] - data2[i]); // loops over all reds, greens, blues and alphas
 								}
 								return diff / dividend;
