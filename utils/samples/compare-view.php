@@ -375,14 +375,19 @@
 							
 							// compares 2 canvas images
 							function compare(c1, c2) {
-						    var data1 = document.getElementById(c1).getContext('2d').getImageData(0, 0, canvasWidth, canvasHeight).data,
-						        data2 = document.getElementById(c2).getContext('2d').getImageData(0, 0, canvasWidth, canvasHeight).data,
-						        i = data1.length,
-						        diff = 0;
-						    while (i--) {
-						        diff += Math.abs(data1[i] - data2[i]); // loops over all reds, greens, blues and alphas
-						    }
-						    return diff / 256;
+								var data1 = document.getElementById(c1).getContext('2d').getImageData(0, 0, canvasWidth, canvasHeight).data,
+									data2 = document.getElementById(c2).getContext('2d').getImageData(0, 0, canvasWidth, canvasHeight).data,
+									i = data1.length,
+									diff = 0,
+									// Tune the diff so that identical = 0 and max difference is 100. The max
+									// diff can be tested by comparing a rectangle of fill rgba(0, 0, 0, 0) against
+									// a rectange of fill rgba(255, 255, 255, 1).
+									dividend = 4 * 255 * canvasWidth * canvasHeight / 100;
+								while (i--) {
+									if (i < 7) console.log(i, data1[i], data2[i])
+									diff += Math.abs(data1[i] - data2[i]); // loops over all reds, greens, blues and alphas
+								}
+								return diff / dividend;
 							}
 
 							// called after converting svgs to canvases
