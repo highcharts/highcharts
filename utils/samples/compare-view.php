@@ -252,24 +252,15 @@
 
 							$('#preview').css({ height: $('#preview').height() })
 
-							//$leftImage.css('position', 'absolute');
 							$rightImage
 								.css({
-									left: 300,
+									left: $rightImage.offset().left,
 									position: 'absolute'
 								})
 								.animate({
 									left: 0
 								});
-							$leftImage
-								.css({
-									left: 300,
-									position: 'absolute'
-								})
-								.animate({
-									left: 0
-								});
-							
+							$leftImage.css('position', 'absolute');
 							
 							$button.html('Showing right. Click to show left');
 							showingRight = true;
@@ -546,9 +537,10 @@
 			</div>
 			<pre id="svg"></pre>
 			
-			<canvas id="cnvLeft" width="400px" height="300px" style="display:none"></canvas>
-			<canvas id="cnvRight" width="400px" height="300px" style="display:none"></canvas>
-			<div id="preview"></div>
+			<div id="preview">
+				<canvas id="cnvLeft" width="400px" height="300px" style="display:none"></canvas>
+				<canvas id="cnvRight" width="400px" height="300px" style="display:none"></canvas>
+			</div>
 			<button id="overlay-compare" style="display:none">Compare overlaid</button>
 		
 		
