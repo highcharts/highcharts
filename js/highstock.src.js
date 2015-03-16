@@ -92,6 +92,8 @@ var UNDEFINED,
 	getDate,
 	getMonth,
 	getFullYear,
+	setMilliseconds,
+	setSeconds,
 	setMinutes,
 	setHours,
 	setDate,
@@ -1613,17 +1615,19 @@ function setTimeMethods() {
 		}
 		return d;
 	};
-	getMinutes =  GET + 'Minutes';
-	getHours =    GET + 'Hours';
-	getDay =      GET + 'Day';
-	getDate =     GET + 'Date';
-	getMonth =    GET + 'Month';
-	getFullYear = GET + 'FullYear';
-	setMinutes =  SET + 'Minutes';
-	setHours =    SET + 'Hours';
-	setDate =     SET + 'Date';
-	setMonth =    SET + 'Month';
-	setFullYear = SET + 'FullYear';
+	getMinutes =      GET + 'Minutes';
+	getHours =        GET + 'Hours';
+	getDay =          GET + 'Day';
+	getDate =         GET + 'Date';
+	getMonth =        GET + 'Month';
+	getFullYear =     GET + 'FullYear';
+	setMilliseconds = SET + 'Milliseconds';
+	setSeconds =      SET + 'Seconds';
+	setMinutes =      SET + 'Minutes';
+	setHours =        SET + 'Hours';
+	setDate =         SET + 'Date';
+	setMonth =        SET + 'Month';
+	setFullYear =     SET + 'FullYear';
 
 }
 
@@ -8581,11 +8585,11 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		count = normalizedInterval.count;
 
 	if (defined(min)) { // #1300
-		minDate.setMilliseconds(interval >= timeUnits.second ? 0 :
+		minDate[setMilliseconds](interval >= timeUnits.second ? 0 : // #3935
 			count * mathFloor(minDate.getMilliseconds() / count)); // #3652, #3654
 
 		if (interval >= timeUnits.second) { // second
-			minDate.setSeconds(interval >= timeUnits.minute ? 0 :
+			minDate[setSeconds](interval >= timeUnits.minute ? 0 : // #3935
 				count * mathFloor(minDate.getSeconds() / count));
 		}
 	

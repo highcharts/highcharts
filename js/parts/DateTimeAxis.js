@@ -21,11 +21,11 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		count = normalizedInterval.count;
 
 	if (defined(min)) { // #1300
-		minDate.setMilliseconds(interval >= timeUnits.second ? 0 :
+		minDate[setMilliseconds](interval >= timeUnits.second ? 0 : // #3935
 			count * mathFloor(minDate.getMilliseconds() / count)); // #3652, #3654
 
 		if (interval >= timeUnits.second) { // second
-			minDate.setSeconds(interval >= timeUnits.minute ? 0 :
+			minDate[setSeconds](interval >= timeUnits.minute ? 0 : // #3935
 				count * mathFloor(minDate.getSeconds() / count));
 		}
 	
