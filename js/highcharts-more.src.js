@@ -2146,7 +2146,10 @@ Axis.prototype.beforePadding = function () {
 		pointerProto = Pointer.prototype,
 		colProto;
 
-	seriesProto.searchPolarPoint = function (e) {
+	/**
+	 * Search a k-d tree by the point angle, used for shared tooltips in polar charts
+	 */
+	seriesProto.searchPointByAngle = function (e) {
 		var series = this,
 			chart = series.chart,
 			xAxis = series.xAxis,
@@ -2154,24 +2157,28 @@ Axis.prototype.beforePadding = function () {
 			plotX = e.chartX - center[0] - chart.plotLeft,
 			plotY = e.chartY - center[1] - chart.plotTop;
 
-		e = {
+		return this.searchKDTree({
 			clientX: 180 + (Math.atan2(plotX, plotY) * (-180 / Math.PI))
-		};
-		return this.searchKDTree(e);
+		});
 
 	};
 	
+	/**
+	 * Wrap the buildKDTree function so that it searches by angle (clientX) in case of shared tooltip,
+	 * and by two dimensional distance in case of non-shared.
+	 */
 	wrap(seriesProto, 'buildKDTree', function (proceed) {
+		if (this.chart.polar) {
+			if (this.kdByAngle) {
+				this.searchPoint = this.searchPointByAngle;
+			} else {
+				this.kdDimensions = 2;
+				this.kdComparer = 'distR';
+			}
+		}
 		proceed.apply(this);
 	});
-	
-	wrap(seriesProto, 'searchPoint', function (proceed, e) {
-		if (this.chart.polar) {
-			return this.searchPolarPoint(e);
-		} else {
-			return proceed.call(this, e);
-		}
-	});
+
 	/**
 	 * Translate a point's plotX and plotY from the internal angle and radius measures to 
 	 * true plotX, plotY coordinates
@@ -2187,18 +2194,22 @@ Axis.prototype.beforePadding = function () {
 		point.rectPlotX = plotX;
 		point.rectPlotY = plotY;
 	
-		// Record the angle in degrees for use in tooltip
-		clientX = ((plotX / Math.PI * 180) + this.xAxis.pane.options.startAngle) % 360;
-		if (clientX < 0) { // #2665
-			clientX += 360;
-		}
-		point.clientX = clientX;
-
-	
 		// Find the polar plotX and plotY
 		xy = this.xAxis.postTranslate(point.plotX, this.yAxis.len - plotY);
 		point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
 		point.plotY = point.polarPlotY = xy.y - chart.plotTop;
+
+		// If shared tooltip, record the angle in degrees in order to align X points. Otherwise,
+		// use a standard k-d tree to get the nearest point in two dimensions.
+		if (this.kdByAngle) {
+			clientX = ((plotX / Math.PI * 180) + this.xAxis.pane.options.startAngle) % 360;
+			if (clientX < 0) { // #2665
+				clientX += 360;
+			}
+			point.clientX = clientX;
+		} else {
+			point.clientX = point.plotX;
+		}
 	};
 
 	/**
@@ -2346,17 +2357,25 @@ Axis.prototype.beforePadding = function () {
 	 * center. 
 	 */
 	wrap(seriesProto, 'translate', function (proceed) {
-		
+		var chart = this.chart,
+			points,
+			i;
+
 		// Run uber method
 		proceed.call(this);
 	
 		// Postprocess plot coordinates
-		if (this.chart.polar && !this.preventPostTranslate) {
-			var points = this.points,
+		if (chart.polar) {
+			this.kdByAngle = chart.tooltip.shared;
+	
+			if (!this.preventPostTranslate) {
+				points = this.points;
 				i = points.length;
-			while (i--) {
-				// Translate plotX, plotY from angle and radius to true plot coordinates
-				this.toXY(points[i]);
+
+				while (i--) {
+					// Translate plotX, plotY from angle and radius to true plot coordinates
+					this.toXY(points[i]);
+				}
 			}
 		}
 	});

@@ -152,8 +152,13 @@ Pointer.prototype = {
 			}
 		}
 
+		// If it has a hoverPoint and that series requires direct touch (like columns), 
+		// use the hoverPoint (#3899). Otherwise, search the k-d tree.	
+		if (!shared && hoverSeries && hoverSeries.directTouch && hoverPoint) {
+			kdpoint = hoverPoint;
+
 		// Handle shared tooltip or cases where a series is not yet hovered
-		if (!(hoverSeries && hoverSeries.noSharedTooltip) && (shared || !hoverSeries)) { // #3821 
+		} else {
 			// Find nearest points on all series
 			each(series, function (s) {
 				// Skip hidden series
@@ -168,19 +173,14 @@ Pointer.prototype = {
 			// Find absolute nearest point
 			each(kdpoints, function (p) {
 				if (p && defined(p.plotX) && defined(p.plotY)) {
-					if ((p.dist.distX < distance) || ((p.dist.distX === distance || p.series.kdDimensions > 1) && p.dist.distR < rdistance)) {
+					if ((p.dist.distX < distance) || ((p.dist.distX === distance || p.series.kdDimensions > 1) && 
+							p.dist.distR < rdistance)) {
 						distance = p.dist.distX;
 						rdistance = p.dist.distR;
 						kdpoint = p;
 					}
 				}
-			});	
-
-		// Handle non-shared tooltips
-		} else {
-			// If it has a hoverPoint and that series requires direct touch (like columns), use the hoverPoint (#3899).
-			// Otherwise, search the k-d tree (like scatter).
-			kdpoint = (hoverSeries.directTouch && hoverPoint) || (hoverSeries && hoverSeries.searchPoint(e));
+			});
 		}
 
 		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926
@@ -189,7 +189,7 @@ Pointer.prototype = {
 			if (shared && !kdpoint.series.noSharedTooltip) {
 				i = kdpoints.length;
 				while (i--) {
-					if (kdpoints[i].clientX !== kdpoint.clientX || (kdpoints[i].series.noSharedTooltip || false)) {
+					if (kdpoints[i].clientX !== kdpoint.clientX || kdpoints[i].series.noSharedTooltip) {
 						kdpoints.splice(i, 1);
 					}
 				}
