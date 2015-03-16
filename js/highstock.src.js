@@ -9599,8 +9599,9 @@ Pointer.prototype = {
 					if (point !== kdpoint) { 
 						point.onMouseOver(e);
 					}
-				});				
-				kdpoint.onMouseOver(e); // #3919 do mouseover on the closest point last to ensure it is the hoverpoint
+				});	
+				// #3919, #3985 do mouseover on the closest point last to ensure it is the hoverpoint
+				((hoverSeries && hoverSeries.directTouch && hoverPoint) || kdpoint).onMouseOver(e); 
 			} else {
 				if (tooltip) { 
 					tooltip.refresh(kdpoint, e);
