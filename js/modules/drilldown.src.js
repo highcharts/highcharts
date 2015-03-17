@@ -25,7 +25,6 @@
 		ColumnSeries = seriesTypes.column,
 		fireEvent = HighchartsAdapter.fireEvent,
 		inArray = HighchartsAdapter.inArray,
-		dupes = [],
 		ddSeriesId = 1;
 
 	// Utilities
@@ -358,7 +357,7 @@
 			.align();
 		}
 
-		dupes.length = []; // #3315
+		this.ddDupes.length = []; // #3315
 	};
 
 
@@ -529,11 +528,15 @@
 			drilldown = chart.options.drilldown,
 			i = (drilldown.series || []).length,
 			seriesOptions;
+
+		if (!chart.ddDupes) {
+			chart.ddDupes = [];
+		}
 		
 		while (i-- && !seriesOptions) {
-			if (drilldown.series[i].id === this.drilldown && inArray(this.drilldown, dupes) === -1) {
+			if (drilldown.series[i].id === this.drilldown && inArray(this.drilldown, chart.ddDupes) === -1) {
 				seriesOptions = drilldown.series[i];
-				dupes.push(this.drilldown);
+				chart.ddDupes.push(this.drilldown);
 			}
 		}
 
