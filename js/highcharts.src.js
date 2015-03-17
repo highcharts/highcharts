@@ -14321,8 +14321,12 @@ Series.prototype = {
 		if (zones.length && (graph || area)) {
 			// The use of the Color Threshold assumes there are no gaps
 			// so it is safe to hide the original graph and area
-			graph.hide();
-			if (area) { area.hide(); }
+			if (graph) {
+				graph.hide();
+			}
+			if (area) { 
+				area.hide(); 
+			}
 
 			// Create the clips
 			each(zones, function (threshold, i) {
@@ -14380,7 +14384,9 @@ Series.prototype = {
 				} else {
 					clips[i] = renderer.clipRect(clipAttr);
 
-					series['colorGraph' + i].clip(clips[i]);
+					if (graph) {
+						series['colorGraph' + i].clip(clips[i]);
+					}
 
 					if (area) {
 						series['colorArea' + i].clip(clips[i]);
