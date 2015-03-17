@@ -5916,7 +5916,10 @@ Tick.prototype = {
 				label.attr({ align: 'right' });
 			}
 
-			if (labelWidth > slotWidth) {
+			// If the label width exceeds the available space, set a text width to be 
+			// picked up below. Also, if a width has been set before, we need to set a new
+			// one because the reported labelWidth will be limited by the box (#3938).
+			if (labelWidth > slotWidth || label.styles.width) {
 				textWidth = slotWidth;
 			}
 		
@@ -11910,7 +11913,7 @@ Chart.prototype = {
 		chart.getAxisMargins();
 
 		// If the plot area size has changed significantly, calculate tick positions again
-		redoHorizontal = tempWidth / chart.plotWidth > 1.2;
+		redoHorizontal = tempWidth / chart.plotWidth > 1.1;
 		redoVertical = tempHeight / chart.plotHeight > 1.1;
 
 		if (redoHorizontal || redoVertical) {

@@ -128,7 +128,10 @@ Tick.prototype = {
 				label.attr({ align: 'right' });
 			}
 
-			if (labelWidth > slotWidth) {
+			// If the label width exceeds the available space, set a text width to be 
+			// picked up below. Also, if a width has been set before, we need to set a new
+			// one because the reported labelWidth will be limited by the box (#3938).
+			if (labelWidth > slotWidth || label.styles.width) {
 				textWidth = slotWidth;
 			}
 		
