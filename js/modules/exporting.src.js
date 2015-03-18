@@ -223,7 +223,7 @@ extend(Chart.prototype, {
 			.replace(/height=([^" ]+)/g, 'height="$1"')
 			.replace(/width=([^" ]+)/g, 'width="$1"')
 			.replace(/hc-svg-href="([^"]+)">/g, 'xlink:href="$1"/>')
-			.replace(/id=([^" >]+)/g, 'id="$1"')
+			.replace(/ id=([^" >]+)/g, 'id="$1"') // #4003
 			.replace(/class=([^" >]+)/g, 'class="$1"')
 			.replace(/ transform /g, ' ')
 			.replace(/:(path|rect)/g, '$1')
