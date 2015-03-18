@@ -336,7 +336,7 @@
 						/***
 							CANVAS BASED COMPARISON						
 						***/						
-						(function canvasCompare(source1, canvas1, source2, canvas2, width, height) {
+						function canvasCompare(source1, canvas1, source2, canvas2, width, height) {
 							var converted = [],
 								diff = 0,
 								canvasWidth = width || 400, 
@@ -366,12 +366,6 @@
 							
 							// compares 2 canvas images
 							function compare(data1, data2) {
-								/*
-								var t = document.getElementById(c1).getContext('2d');
-								console.log(t)
-								var data1 = document.getElementById(c1).getContext('2d').getImageData(0, 0, canvasWidth, canvasHeight).data,
-									data2 = document.getElementById(c2).getContext('2d').getImageData(0, 0, canvasWidth, canvasHeight).data,
-								*/
 								var	i = data1.length,
 									diff = 0,
 									// Tune the diff so that identical = 0 and max difference is 100. The max
@@ -388,8 +382,8 @@
 							function startCompare(data) {
 								converted.push(data);
 								// only compare if both have been converted								
-								if (converted.length == 2) {
-									var diff = compare(data[0], data[1]);
+								if (converted.length == 2) {									
+									var diff = compare(converted[0], converted[1]);
 
 									if (diff === 0) {
 										identical = true;
@@ -416,63 +410,66 @@
 							// start converting
 							convert(source1, canvas1, startCompare);
 							convert(source2, canvas2, startCompare);
-						})(leftSVG, 'cnvLeft', rightSVG, 'cnvRight', 400, 300);
-						
+						}					
 						
 						/***
 							AJAX & PHP BASED COMPARISON
 						***/
-						/*
-						$.ajax({
-							type: 'POST', 
-							url: 'compare-images.php', 
-							data: {
-								leftSVG: leftSVG,
-								rightSVG: rightSVG,
-								path: "<?php echo $path ?>".replace(/\//g, '--')	
-							}, 
-							error: function (xhr) {
-								report += '<div>' +	xhr.responseText + '</div>'
-								onDifferent('Error');
-								$('#report').html(report)
-									.css('background', identical ? "#a4edba" : '#f15c80');
-							},
-							success: function (data) {
-								console.log(data);
-								if (data.fallBackToOnline) {
-									report += '<div>Preferred export server not started, fell back to export.highcharts.com. ' +
-										'Start local server like this: ' + startLocalServer + '</div>';
-								}
-
-								if (data.dissimilarityIndex === 0) {
-									identical = true;
-									
-									report += '<div>The exported images are identical</div>'; 
-									
-									onIdentical();
-									
-								} else if (data.dissimilarityIndex === undefined) {
-									report += '<div><b>Image export failed. Is the exporting server responding? If running local server, start it like this:</b>' +
-										startLocalServer + '</div>'
+						
+						function ajaxCompare() {
+							$.ajax({
+								type: 'POST', 
+								url: 'compare-images.php', 
+								data: {
+									leftSVG: leftSVG,
+									rightSVG: rightSVG,
+									path: "<?php echo $path ?>".replace(/\//g, '--')	
+								}, 
+								error: function (xhr) {
+									report += '<div>' +	xhr.responseText + '</div>'
 									onDifferent('Error');
-									
-								} else {
-									report += '<div>The exported images are different (dissimilarity index: '+ data.dissimilarityIndex.toFixed(2) +')</div>';
-									
-									onDifferent(data);
-								}
-								
-								$('#preview').html('<h4>Generated images (click to compare)</h4><img id="left-image" src="'+ data.sourceImage.url +'?' + (+new Date()) + '"/>' +
-									'<img id="right-image" src="'+ data.matchImage.url + '?' + (+new Date()) + '"/>');
+									$('#report').html(report)
+										.css('background', identical ? "#a4edba" : '#f15c80');
+								},
+								success: function (data) {
+									if (data.fallBackToOnline) {
+										report += '<div>Preferred export server not started, fell back to export.highcharts.com. ' +
+											'Start local server like this: ' + startLocalServer + '</div>';
+									}
 
-								activateOverlayCompare();
-								
-								$('#report').html(report)
-									.css('background', identical ? "#a4edba" : '#f15c80');
-							},
-							dataType: 'json'
-						});
-						*/
+									if (data.dissimilarityIndex === 0) {
+										identical = true;
+										
+										report += '<div>The exported images are identical</div>'; 
+										
+										onIdentical();
+										
+									} else if (data.dissimilarityIndex === undefined) {
+										report += '<div><b>Image export failed. Is the exporting server responding? If running local server, start it like this:</b>' +
+											startLocalServer + '</div>'
+										onDifferent('Error');
+										
+									} else {
+										report += '<div>The exported images are different (dissimilarity index: '+ data.dissimilarityIndex.toFixed(2) +')</div>';
+										
+										onDifferent(data);
+									}
+									
+									$('#preview').html('<h4>Generated images (click to compare)</h4><img id="left-image" src="'+ data.sourceImage.url +'?' + (+new Date()) + '"/>' +
+										'<img id="right-image" src="'+ data.matchImage.url + '?' + (+new Date()) + '"/>');
+
+									activateOverlayCompare();
+									
+									$('#report').html(report)
+										.css('background', identical ? "#a4edba" : '#f15c80');
+								},
+								dataType: 'json'
+							});
+						}
+
+						/// TODO : CHOOSE BETWEEN AJAX & CANVAS
+						ajaxCompare();
+						//canvasCompare(leftSVG, 'cnvLeft', rightSVG, 'cnvRight', 400, 300);
 						
 					}
 				} else {
