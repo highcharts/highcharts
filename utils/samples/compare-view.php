@@ -348,20 +348,34 @@
 							//		- callback: function to call after conversion
 							//
 							function convert(source, target, callback) {
-								var context = document.getElementById(target).getContext('2d'),
-									domurl = window.URL || window.webkitURL || window,
-									blob = new Blob([source], { type: 'image/svg+xml;charset-utf-16'}),
-									svgurl = domurl.createObjectURL(blob),
+								var useBlob = navigator.userAgent.indexOf('WebKit') === -1,
+									context = document.getElementById(target).getContext('2d'),
 									image = new Image(),
-									data;
-								// this is fired after the image has been created
+									data,
+									domurl,
+									blob,
+									svgurl;
+
+								// Firefox runs Blob. Safari requires the data: URL. Chrome accepts both
+								// but seems to be slightly faster with data: URL.
+								if (useBlob) {
+									domurl = window.URL || window.webkitURL || window;
+									blob = new Blob([source], { type: 'image/svg+xml;charset-utf-16'});
+									svgurl = domurl.createObjectURL(blob);
+								}
+
+								// This is fired after the image has been created
 								image.onload = function() {
 									context.drawImage(image, 0, 0, canvasWidth, canvasHeight);
 									data = context.getImageData(0, 0, canvasWidth, canvasHeight).data;
-									domurl.revokeObjectURL(svgurl);
+									if (useBlob) {
+										domurl.revokeObjectURL(svgurl);
+									}
 									callback(data);
 								}
-								image.src = svgurl;
+								image.src = useBlob ? 
+									svgurl :
+									'data:image/svg+xml,' + source;
 							};				
 							
 							// compares 2 canvas images
@@ -467,9 +481,12 @@
 							});
 						}
 
-						/// TODO : CHOOSE BETWEEN AJAX & CANVAS
-						ajaxCompare();
-						//canvasCompare(leftSVG, 'cnvLeft', rightSVG, 'cnvRight', 400, 300);
+						// Browser sniffing for compare capabilities
+						if (navigator.userAgent.indexOf('Trident') !== -1) {
+							ajaxCompare();
+						} else {
+							canvasCompare(leftSVG, 'cnvLeft', rightSVG, 'cnvRight', 400, 300);
+						}
 						
 					}
 				} else {
