@@ -17,6 +17,7 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 		padding: 0 // #3837
 	},
 	marker: null,
+	pointRange: null, // dynamically set to colsize by default
 	tooltip: {
 		pointFormat: '{point.x}, {point.y}: {point.value}<br/>'
 	},
@@ -38,10 +39,17 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	hasPointSpecificOptions: true,
 	supportsDrilldown: true,
 	getExtremesFromAll: true,
+
+	/**
+	 * Override the init method to add point ranges on both axes.
+	 */
 	init: function () {
+		var options;
 		seriesTypes.scatter.prototype.init.apply(this, arguments);
-		this.pointRange = this.options.colsize || 1;
-		this.yAxis.axisPointRange = this.options.rowsize || 1; // general point range
+
+		options = this.options;
+		this.pointRange = options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
+		this.yAxis.axisPointRange = options.rowsize || 1; // general point range
 	},
 	translate: function () {
 		var series = this,
