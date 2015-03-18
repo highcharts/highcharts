@@ -279,7 +279,7 @@ Axis.prototype.getPlotBandPath = function (from, to) {
 		result = [],
 		i;
 
-	if (path && toPath) {
+	if (path && toPath && path.toString() !== toPath.toString()) {
 		// Go over each subpath
 		for (i = 0; i < path.length; i += 6) {
 			result.push('M', path[i + 1], path[i + 2], 'L', path[i + 4], path[i + 5], toPath[i + 4], toPath[i + 5], toPath[i + 1], toPath[i + 2]);
