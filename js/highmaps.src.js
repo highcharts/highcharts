@@ -12223,7 +12223,7 @@ Point.prototype = {
 	optionsToObject: function (options) {
 		var ret = {},
 			series = this.series,
-			pointArrayMap = series.pointArrayMap || ['y'],
+			pointArrayMap = series.options.keys || series.pointArrayMap || ['y'], // docs: keys (http://jsfiddle.net/ch4v7n8v/1)
 			valueCount = pointArrayMap.length,
 			firstItemType,
 			i = 0,
