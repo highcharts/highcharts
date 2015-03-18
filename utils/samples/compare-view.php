@@ -23,6 +23,9 @@
 		
 		<script src="http://code.jquery.com/jquery-1.7.js"></script>
 		<script src="http://ejohn.org/files/jsdiff.js"></script>
+
+		<script src="http://www.highcharts.com/lib/canvg-1.1/rgbcolor.js"></script>
+		<script src="http://www.highcharts.com/lib/canvg-1.1/canvg.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 
 		
@@ -376,8 +379,8 @@
 								image.src = useBlob ? 
 									svgurl :
 									'data:image/svg+xml,' + source;
-							};				
-							
+							};
+
 							// compares 2 canvas images
 							function compare(data1, data2) {
 								var	i = data1.length,
@@ -421,15 +424,36 @@
 							// show the canvases
 							document.getElementById(canvas1).style.display = '';
 							document.getElementById(canvas2).style.display = '';
+							
 							// start converting
-							convert(source1, canvas1, startCompare);
-							convert(source2, canvas2, startCompare);
+							if (navigator.userAgent.indexOf('Trident') !== -1) {
+								try {
+									canvg(canvas1, source1, {
+										scaleWidth: canvasWidth,
+										scaleHeight: canvasHeight
+									});
+									startCompare(document.getElementById(canvas1).getContext('2d').getImageData(0, 0, canvasWidth, canvasHeight).data);
+									canvg(canvas2, source2, {
+										scaleWidth: canvasWidth,
+										scaleHeight: canvasHeight
+									});
+									startCompare(document.getElementById(canvas2).getContext('2d').getImageData(0, 0, canvasWidth, canvasHeight).data);
+								} catch (e) {
+									onDifferent('Error');
+									report += '<div>Error in canvg, try Chrome or Safari.</div>';
+									$('#report').html(report).css('background', '#f15c80');
+								}
+
+							} else {
+								convert(source1, canvas1, startCompare);
+								convert(source2, canvas2, startCompare);
+							}
 						}					
 						
 						/***
 							AJAX & PHP BASED COMPARISON
 						***/
-						
+						/*
 						function ajaxCompare() {
 							$.ajax({
 								type: 'POST', 
@@ -480,13 +504,15 @@
 								dataType: 'json'
 							});
 						}
-
+						*/
 						// Browser sniffing for compare capabilities
+						canvasCompare(leftSVG, 'cnvLeft', rightSVG, 'cnvRight', 400, 300);
+						/*
 						if (navigator.userAgent.indexOf('Trident') !== -1) {
 							ajaxCompare();
 						} else {
 							canvasCompare(leftSVG, 'cnvLeft', rightSVG, 'cnvRight', 400, 300);
-						}
+						}*/
 						
 					}
 				} else {
@@ -515,11 +541,15 @@
 				// Show the diff
 				if (!identical) {
 					//out = diffString(wash(leftSVG), wash(rightSVG)).replace(/&gt;/g, '&gt;\n');
-					out = diffString(
-						leftSVG.replace(/>/g, '>\n'),
-						rightSVG.replace(/>/g, '>\n')
-					)
-					$("#svg").html('<h4 style="margin:0 auto 1em 0">Generated SVG (click to view)</h4>' + wash(out));
+					try {
+						out = diffString(
+							leftSVG.replace(/>/g, '>\n'),
+							rightSVG.replace(/>/g, '>\n')
+						);
+						$("#svg").html('<h4 style="margin:0 auto 1em 0">Generated SVG (click to view)</h4>' + wash(out));
+					} catch (e) {
+						$("#svg").html('Error diffing SVG');
+					}
 				}
 
 				/*report +=  '<br/>Left length: '+ leftSVG.length + '; right length: '+ rightSVG.length +
