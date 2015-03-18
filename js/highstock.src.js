@@ -14333,6 +14333,8 @@ Series.prototype = {
 				translatedFrom = pick(translatedTo, (reversed ? (horiz ? chart.plotWidth : 0) : (horiz ? 0 : axis.toPixels(axis.min))));
 				translatedTo = mathRound(axis.toPixels(pick(threshold.value, axis.max), true));
 
+				translatedFrom = translatedFrom > translatedTo ? translatedTo : translatedFrom; //#4006 from should be less or equal then to
+				
 				if (ignoreZones) {
 					translatedFrom = translatedTo = axis.toPixels(axis.max);
 				}

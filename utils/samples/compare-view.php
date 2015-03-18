@@ -335,10 +335,9 @@
 						
 						/***
 							CANVAS BASED COMPARISON						
-						***/
-						
+						***/						
 						(function canvasCompare(source1, canvas1, source2, canvas2, width, height) {
-							var converted = 0,
+							var converted = [],
 								diff = 0,
 								canvasWidth = width || 400, 
 								canvasHeight = height || 300;;
@@ -353,21 +352,27 @@
 									domurl = window.URL || window.webkitURL || window,
 									blob = new Blob([source], { type: 'image/svg+xml;charset-utf-16'}),
 									svgurl = domurl.createObjectURL(blob),
-									image = new Image();
+									image = new Image(),
+									data;
 								// this is fired after the image has been created
 								image.onload = function() {
 									context.drawImage(image, 0, 0, canvasWidth, canvasHeight);
+									data = context.getImageData(0, 0, canvasWidth, canvasHeight).data;
 									domurl.revokeObjectURL(svgurl);
-									callback();
+									callback(data);
 								}
 								image.src = svgurl;
 							};				
 							
 							// compares 2 canvas images
-							function compare(c1, c2) {
+							function compare(data1, data2) {
+								/*
+								var t = document.getElementById(c1).getContext('2d');
+								console.log(t)
 								var data1 = document.getElementById(c1).getContext('2d').getImageData(0, 0, canvasWidth, canvasHeight).data,
 									data2 = document.getElementById(c2).getContext('2d').getImageData(0, 0, canvasWidth, canvasHeight).data,
-									i = data1.length,
+								*/
+								var	i = data1.length,
 									diff = 0,
 									// Tune the diff so that identical = 0 and max difference is 100. The max
 									// diff can be tested by comparing a rectangle of fill rgba(0, 0, 0, 0) against
@@ -380,10 +385,11 @@
 							}
 
 							// called after converting svgs to canvases
-							function startCompare() {
+							function startCompare(data) {
+								converted.push(data);
 								// only compare if both have been converted								
-								if (++converted == 2) {
-									var diff = compare(canvas1, canvas2);
+								if (converted.length == 2) {
+									var diff = compare(data[0], data[1]);
 
 									if (diff === 0) {
 										identical = true;
