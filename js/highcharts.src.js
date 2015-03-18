@@ -11109,7 +11109,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 		
 		item.legendSymbol = this.chart.renderer.rect(
 			0,
-			legend.baseline - 5 - (symbolHeight / 2),
+			legend.baseline - symbolHeight * 0.8 ,
 			legend.symbolWidth,
 			symbolHeight,
 			legend.options.symbolRadius || 0
