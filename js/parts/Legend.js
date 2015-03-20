@@ -707,10 +707,11 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 	 */
 	drawRectangle: function (legend, item) {
 		var symbolHeight = legend.options.symbolHeight || 12;
+		var fontSize = this.chart.renderer.fontMetrics(legend.itemStyle.fontSize).f;
 		
 		item.legendSymbol = this.chart.renderer.rect(
 			0,
-			legend.baseline - 5 - (symbolHeight / 2),
+			legend.baseline - symbolHeight - (fontSize / 1.6 - symbolHeight) / 2,
 			legend.symbolWidth,
 			symbolHeight,
 			legend.options.symbolRadius || 0
