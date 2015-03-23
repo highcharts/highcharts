@@ -163,8 +163,11 @@ var ColumnSeries = extendClass(Series, {
 			xCrisp = -(borderWidth % 2 ? 0.5 : 0),
 			yCrisp = borderWidth % 2 ? 0.5 : 1;
 
-		if (chart.renderer.isVML && chart.inverted) {
-			yCrisp += 1;
+		if (chart.inverted) {
+			translatedThreshold -= 0.5; // #3355
+			if (chart.renderer.isVML) {
+				yCrisp += 1;
+			}
 		}
 
 		// When the pointPadding is 0, we want the columns to be packed tightly, so we allow individual
