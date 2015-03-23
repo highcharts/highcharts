@@ -10667,7 +10667,8 @@ Legend.prototype = {
 
 			// Get the baseline for the first item - the font size is equal for all
 			if (!legend.baseline) {
-				legend.baseline = renderer.fontMetrics(itemStyle.fontSize, li).f + 3 + itemMarginTop;
+				legend.fontMetrics = renderer.fontMetrics(itemStyle.fontSize, li);
+				legend.baseline = legend.fontMetrics.f + 3 + itemMarginTop;
 				li.attr('y', legend.baseline);
 			}
 
@@ -11105,11 +11106,11 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 	 * @param {Object} item The series (this) or point
 	 */
 	drawRectangle: function (legend, item) {
-		var symbolHeight = legend.options.symbolHeight || 12;
-		
+		var symbolHeight = legend.options.symbolHeight || legend.fontMetrics.f; // docs: Now defaults to the font size
+
 		item.legendSymbol = this.chart.renderer.rect(
 			0,
-			legend.baseline - 5 - (symbolHeight / 2),
+			legend.baseline - symbolHeight + 1, // #3988
 			legend.symbolWidth,
 			symbolHeight,
 			legend.options.symbolRadius || 0
@@ -11130,12 +11131,11 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 		var options = this.options,
 			markerOptions = options.marker,
 			radius,
-			legendOptions = legend.options,
 			legendSymbol,
 			symbolWidth = legend.symbolWidth,
 			renderer = this.chart.renderer,
 			legendItemGroup = this.legendGroup,
-			verticalCenter = legend.baseline - mathRound(renderer.fontMetrics(legendOptions.itemStyle.fontSize, this.legendItem).b * 0.3),
+			verticalCenter = legend.baseline - mathRound(legend.fontMetrics.b * 0.3),
 			attr;
 
 		// Draw the line
