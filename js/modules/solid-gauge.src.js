@@ -120,19 +120,33 @@
 			}
 			return color;
 		},
+		/*
+		 * Return an intermediate color between two colors, according to pos where 0
+		 * is the from color and 1 is the to color.
+		 */
 		tweenColors: function (from, to, pos) {
 			// Check for has alpha, because rgba colors perform worse due to lack of
 			// support in WebKit.
-			var hasAlpha = (to.rgba[3] !== 1 || from.rgba[3] !== 1);
+			var hasAlpha,
+				ret;
 
-			if (from.rgba.length === 0 || to.rgba.length === 0) {
-				return 'none';
+			// Unsupported color, return to-color (#3920)
+			if (!to.rgba.length || !from.rgba.length) {
+				Highcharts.error(23);
+				ret = to.raw;
+
+			// Interpolate
+			} else {
+				from = from.rgba;
+				to = to.rgba;
+				hasAlpha = (to[3] !== 1 || from[3] !== 1);
+				ret = (hasAlpha ? 'rgba(' : 'rgb(') + 
+					Math.round(to[0] + (from[0] - to[0]) * (1 - pos)) + ',' + 
+					Math.round(to[1] + (from[1] - to[1]) * (1 - pos)) + ',' + 
+					Math.round(to[2] + (from[2] - to[2]) * (1 - pos)) + 
+					(hasAlpha ? (',' + (to[3] + (from[3] - to[3]) * (1 - pos))) : '') + ')';
 			}
-			return (hasAlpha ? 'rgba(' : 'rgb(') + 
-				Math.round(to.rgba[0] + (from.rgba[0] - to.rgba[0]) * (1 - pos)) + ',' + 
-				Math.round(to.rgba[1] + (from.rgba[1] - to.rgba[1]) * (1 - pos)) + ',' + 
-				Math.round(to.rgba[2] + (from.rgba[2] - to.rgba[2]) * (1 - pos)) + 
-				(hasAlpha ? (',' + (to.rgba[3] + (from.rgba[3] - to.rgba[3]) * (1 - pos))) : '') + ')';
+			return ret;
 		}
 	};
 

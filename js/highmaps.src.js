@@ -16200,7 +16200,7 @@ extend(ColorAxis.prototype, {
 	 * Return an intermediate color between two colors, according to pos where 0
 	 * is the from color and 1 is the to color. 
 	 * NOTE: Changes here should be copied
-	 * to the same function in drilldown.src.js.
+	 * to the same function in drilldown.src.js and solid-gauge-src.js.
 	 */
 	tweenColors: function (from, to, pos) {
 		// Check for has alpha, because rgba colors perform worse due to lack of
