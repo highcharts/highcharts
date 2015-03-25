@@ -675,6 +675,7 @@ SVGElement.prototype = {
 		var wrapper = this,
 			deg2rad = Highcharts.deg2rad,
 			isIE = Highcharts.isIE,
+			isFirefox = Highcharts.isFirefox,
 			bBox,// = wrapper.bBox,
 			renderer = wrapper.renderer,
 			width,
@@ -1178,6 +1179,7 @@ SVGRenderer.prototype = {
 			loc = location,
 			boxWrapper,
 			element,
+			isFirefox = Highcharts.isFirefox,
 			desc;
 
 		boxWrapper = renderer.createElement('svg')

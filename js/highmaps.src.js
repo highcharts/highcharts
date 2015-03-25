@@ -17,14 +17,14 @@
 var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	deg2rad: Math.PI * 2 / 360,
 	isIE: /(msie|trident)/i.test(navigator.userAgent) && !window.opera,
-	isWebKit: /AppleWebKit/.test(navigator.userAgent)
+	isWebKit: /AppleWebKit/.test(navigator.userAgent),
+	isFirefox: /Firefox/.test(navigator.userAgent)
 },
 	// some variables
-	isFirefox = /Firefox/.test(navigator.userAgent),
 	isTouchDevice = /(Mobile|Android|Windows Phone)/.test(navigator.userAgent),
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	hasSVG = !!document.createElementNS && !!document.createElementNS(SVG_NS, 'svg').createSVGRect,
-	hasBidiBug = isFirefox && parseInt(navigator.userAgent.split('Firefox/')[1], 10) < 4, // issue #38
+	hasBidiBug = Highcharts.isFirefox && parseInt(navigator.userAgent.split('Firefox/')[1], 10) < 4, // issue #38
 	useCanVG = !hasSVG && !Highcharts.isIE && !!document.createElement('canvas').getContext,
 	Renderer,
 	hasTouch,
@@ -2413,6 +2413,7 @@ SVGElement.prototype = {
 		var wrapper = this,
 			deg2rad = Highcharts.deg2rad,
 			isIE = Highcharts.isIE,
+			isFirefox = Highcharts.isFirefox,
 			bBox,// = wrapper.bBox,
 			renderer = wrapper.renderer,
 			width,
@@ -2916,6 +2917,7 @@ SVGRenderer.prototype = {
 			loc = location,
 			boxWrapper,
 			element,
+			isFirefox = Highcharts.isFirefox,
 			desc;
 
 		boxWrapper = renderer.createElement('svg')
@@ -4462,10 +4464,10 @@ extend(SVGElement.prototype, {
 	 */
 	setSpanRotation: function (rotation, alignCorrection, baseline) {
 		var rotationStyle = {},
-			cssTransformKey = Highcharts.isIE ? '-ms-transform' : Highcharts.isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : window.opera ? '-o-transform' : '';
+			cssTransformKey = Highcharts.isIE ? '-ms-transform' : Highcharts.isWebKit ? '-webkit-transform' : Highcharts.isFirefox ? 'MozTransform' : window.opera ? '-o-transform' : '';
 
 		rotationStyle[cssTransformKey] = rotationStyle.transform = 'rotate(' + rotation + 'deg)';
-		rotationStyle[cssTransformKey + (isFirefox ? 'Origin' : '-origin')] = rotationStyle.transformOrigin = (alignCorrection * 100) + '% ' + baseline + 'px';
+		rotationStyle[cssTransformKey + (Highcharts.isFirefox ? 'Origin' : '-origin')] = rotationStyle.transformOrigin = (alignCorrection * 100) + '% ' + baseline + 'px';
 		css(this.element, rotationStyle);
 	},
 
@@ -10669,7 +10671,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 // and for #2580, a similar drawing flaw in Firefox 26.
 // TODO: Explore if there's a general cause for this. The problem may be related 
 // to nested group elements, as the legend item texts are within 4 group elements.
-if (/Trident\/7\.0/.test(navigator.userAgent) || isFirefox) {
+if (/Trident\/7\.0/.test(navigator.userAgent) || Highcharts.isFirefox) {
 	wrap(Legend.prototype, 'positionItem', function (proceed, item) {
 		var legend = this,
 			runPositionItem = function () { // If chart destroyed in sync, this is undefined (#2030)

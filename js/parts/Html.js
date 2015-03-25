@@ -148,10 +148,10 @@ extend(SVGElement.prototype, {
 	 */
 	setSpanRotation: function (rotation, alignCorrection, baseline) {
 		var rotationStyle = {},
-			cssTransformKey = Highcharts.isIE ? '-ms-transform' : Highcharts.isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : window.opera ? '-o-transform' : '';
+			cssTransformKey = Highcharts.isIE ? '-ms-transform' : Highcharts.isWebKit ? '-webkit-transform' : Highcharts.isFirefox ? 'MozTransform' : window.opera ? '-o-transform' : '';
 
 		rotationStyle[cssTransformKey] = rotationStyle.transform = 'rotate(' + rotation + 'deg)';
-		rotationStyle[cssTransformKey + (isFirefox ? 'Origin' : '-origin')] = rotationStyle.transformOrigin = (alignCorrection * 100) + '% ' + baseline + 'px';
+		rotationStyle[cssTransformKey + (Highcharts.isFirefox ? 'Origin' : '-origin')] = rotationStyle.transformOrigin = (alignCorrection * 100) + '% ' + baseline + 'px';
 		css(this.element, rotationStyle);
 	},
 
