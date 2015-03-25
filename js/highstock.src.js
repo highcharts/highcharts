@@ -15,20 +15,17 @@
 (function () {
 // The Highcharts namespace
 var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
-	deg2rad: Math.PI * 2 / 360
+	deg2rad: Math.PI * 2 / 360,
+	isIE: /(msie|trident)/i.test(navigator.userAgent) && !window.opera
 },
-	// encapsulated variables
-
-
 	// some variables
-	isIE = /(msie|trident)/i.test(navigator.userAgent) && !window.opera,
 	isWebKit = /AppleWebKit/.test(navigator.userAgent),
 	isFirefox = /Firefox/.test(navigator.userAgent),
 	isTouchDevice = /(Mobile|Android|Windows Phone)/.test(navigator.userAgent),
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	hasSVG = !!document.createElementNS && !!document.createElementNS(SVG_NS, 'svg').createSVGRect,
 	hasBidiBug = isFirefox && parseInt(navigator.userAgent.split('Firefox/')[1], 10) < 4, // issue #38
-	useCanVG = !hasSVG && !isIE && !!document.createElement('canvas').getContext,
+	useCanVG = !hasSVG && !Highcharts.isIE && !!document.createElement('canvas').getContext,
 	Renderer,
 	hasTouch,
 	symbolSizes = {},
@@ -277,7 +274,7 @@ var pick = Highcharts.pick = function () {
  * @param {Object} styles Style object with camel case property names
  */
 function css(el, styles) {
-	if (isIE && !hasSVG) { // #2686
+	if (Highcharts.isIE && !hasSVG) { // #2686
 		if (styles && styles.opacity !== undefined) {
 			styles.filter = 'alpha(opacity=' + (styles.opacity * 100) + ')';
 		}
@@ -1075,7 +1072,7 @@ pathAnim = {
 			//
 			// To avoid problems in IE (see #1010) where we cannot delete the properties and avoid
 			// testing if they are there (warning in chrome) the only option is to test if running IE.
-			if (!isIE && eventArguments) {
+			if (!Highcharts.isIE && eventArguments) {
 				delete eventArguments.layerX;
 				delete eventArguments.layerY;
 				delete eventArguments.returnValue;
@@ -1907,7 +1904,8 @@ SVGElement.prototype = {
 			tspans,
 			hasContrast = textShadow.indexOf('contrast') !== -1,
 			// IE10 and IE11 report textShadow in elem.style even though it doesn't work. Check
-			// this again with new IE release. In exports, the rendering is passed to PhantomJS. 
+			// this again with new IE release. In exports, the rendering is passed to PhantomJS.
+			isIE = Highcharts.isIE, 
 			supports = this.renderer.forExport || (elem.style.textShadow !== undefined && !isIE);
 
 		// When the text shadow is set to contrast, use dark stroke for light text and vice versa
@@ -2162,6 +2160,7 @@ SVGElement.prototype = {
 			n,
 			serializedCss = '',
 			hyphenate,
+			isIE = Highcharts.isIE,
 			hasNew = !oldStyles;
 
 		// convert legacy
@@ -2413,6 +2412,7 @@ SVGElement.prototype = {
 	getBBox: function (reload) {
 		var wrapper = this,
 			deg2rad = Highcharts.deg2rad,
+			isIE = Highcharts.isIE,
 			bBox,// = wrapper.bBox,
 			renderer = wrapper.renderer,
 			width,
@@ -3345,6 +3345,7 @@ SVGRenderer.prototype = {
 			hoverStyle,
 			pressedStyle,
 			disabledStyle,
+			isIE = Highcharts.isIE,
 			verticalGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
 
 		// Normal state - prepare the attributes
@@ -4461,7 +4462,7 @@ extend(SVGElement.prototype, {
 	 */
 	setSpanRotation: function (rotation, alignCorrection, baseline) {
 		var rotationStyle = {},
-			cssTransformKey = isIE ? '-ms-transform' : isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : window.opera ? '-o-transform' : '';
+			cssTransformKey = Highcharts.isIE ? '-ms-transform' : isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : window.opera ? '-o-transform' : '';
 
 		rotationStyle[cssTransformKey] = rotationStyle.transform = 'rotate(' + rotation + 'deg)';
 		rotationStyle[cssTransformKey + (isFirefox ? 'Origin' : '-origin')] = rotationStyle.transformOrigin = (alignCorrection * 100) + '% ' + baseline + 'px';

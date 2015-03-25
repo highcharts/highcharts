@@ -166,7 +166,8 @@ SVGElement.prototype = {
 			tspans,
 			hasContrast = textShadow.indexOf('contrast') !== -1,
 			// IE10 and IE11 report textShadow in elem.style even though it doesn't work. Check
-			// this again with new IE release. In exports, the rendering is passed to PhantomJS. 
+			// this again with new IE release. In exports, the rendering is passed to PhantomJS.
+			isIE = Highcharts.isIE, 
 			supports = this.renderer.forExport || (elem.style.textShadow !== undefined && !isIE);
 
 		// When the text shadow is set to contrast, use dark stroke for light text and vice versa
@@ -421,6 +422,7 @@ SVGElement.prototype = {
 			n,
 			serializedCss = '',
 			hyphenate,
+			isIE = Highcharts.isIE,
 			hasNew = !oldStyles;
 
 		// convert legacy
@@ -672,6 +674,7 @@ SVGElement.prototype = {
 	getBBox: function (reload) {
 		var wrapper = this,
 			deg2rad = Highcharts.deg2rad,
+			isIE = Highcharts.isIE,
 			bBox,// = wrapper.bBox,
 			renderer = wrapper.renderer,
 			width,
@@ -1604,6 +1607,7 @@ SVGRenderer.prototype = {
 			hoverStyle,
 			pressedStyle,
 			disabledStyle,
+			isIE = Highcharts.isIE,
 			verticalGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
 
 		// Normal state - prepare the attributes

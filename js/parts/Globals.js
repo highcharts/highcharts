@@ -1,19 +1,16 @@
 // The Highcharts namespace
 var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
-	deg2rad: Math.PI * 2 / 360
+	deg2rad: Math.PI * 2 / 360,
+	isIE: /(msie|trident)/i.test(navigator.userAgent) && !window.opera
 },
-	// encapsulated variables
-
-
 	// some variables
-	isIE = /(msie|trident)/i.test(navigator.userAgent) && !window.opera,
 	isWebKit = /AppleWebKit/.test(navigator.userAgent),
 	isFirefox = /Firefox/.test(navigator.userAgent),
 	isTouchDevice = /(Mobile|Android|Windows Phone)/.test(navigator.userAgent),
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	hasSVG = !!document.createElementNS && !!document.createElementNS(SVG_NS, 'svg').createSVGRect,
 	hasBidiBug = isFirefox && parseInt(navigator.userAgent.split('Firefox/')[1], 10) < 4, // issue #38
-	useCanVG = !hasSVG && !isIE && !!document.createElement('canvas').getContext,
+	useCanVG = !hasSVG && !Highcharts.isIE && !!document.createElement('canvas').getContext,
 	Renderer,
 	hasTouch,
 	symbolSizes = {},
