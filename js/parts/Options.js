@@ -299,7 +299,7 @@ defaultOptions = {
 		shadow: true,
 		//shape: 'callout',
 		//shared: false,
-		snap: isTouchDevice ? 25 : 10,
+		snap: Highcharts.isTouchDevice ? 25 : 10,
 		style: {
 			color: '#333333',
 			cursor: 'default',

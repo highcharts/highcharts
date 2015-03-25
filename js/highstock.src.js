@@ -18,10 +18,10 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	deg2rad: Math.PI * 2 / 360,
 	isIE: /(msie|trident)/i.test(navigator.userAgent) && !window.opera,
 	isWebKit: /AppleWebKit/.test(navigator.userAgent),
-	isFirefox: /Firefox/.test(navigator.userAgent)
+	isFirefox: /Firefox/.test(navigator.userAgent),
+	isTouchDevice: /(Mobile|Android|Windows Phone)/.test(navigator.userAgent)
 },
 	// some variables
-	isTouchDevice = /(Mobile|Android|Windows Phone)/.test(navigator.userAgent),
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	hasSVG = !!document.createElementNS && !!document.createElementNS(SVG_NS, 'svg').createSVGRect,
 	hasBidiBug = Highcharts.isFirefox && parseInt(navigator.userAgent.split('Firefox/')[1], 10) < 4, // issue #38
@@ -1501,7 +1501,7 @@ defaultOptions = {
 		shadow: true,
 		//shape: 'callout',
 		//shared: false,
-		snap: isTouchDevice ? 25 : 10,
+		snap: Highcharts.isTouchDevice ? 25 : 10,
 		style: {
 			color: '#333333',
 			cursor: 'default',
@@ -20582,6 +20582,7 @@ if (Renderer === Highcharts.VMLRenderer) {
  *****************************************************************************/
 var units = [].concat(defaultDataGroupingUnits), // copy
 	defaultSeriesType,
+	isTouchDevice = Highcharts.isTouchDevice,
 	
 	// Finding the min or max of a set of variables where we don't know if they are defined,
 	// is a pattern that is repeated several places in Highcharts. Consider making this
@@ -23122,7 +23123,6 @@ extend(Highcharts, {
 	pathAnim: pathAnim,
 	getOptions: getOptions,
 	hasBidiBug: hasBidiBug,
-	isTouchDevice: isTouchDevice,
 	setOptions: setOptions,
 	addEvent: addEvent,
 	removeEvent: removeEvent,

@@ -3,6 +3,7 @@
  *****************************************************************************/
 var units = [].concat(defaultDataGroupingUnits), // copy
 	defaultSeriesType,
+	isTouchDevice = Highcharts.isTouchDevice,
 	
 	// Finding the min or max of a set of variables where we don't know if they are defined,
 	// is a pattern that is repeated several places in Highcharts. Consider making this

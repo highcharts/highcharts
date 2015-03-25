@@ -20,7 +20,6 @@ extend(Highcharts, {
 	pathAnim: pathAnim,
 	getOptions: getOptions,
 	hasBidiBug: hasBidiBug,
-	isTouchDevice: isTouchDevice,
 	setOptions: setOptions,
 	addEvent: addEvent,
 	removeEvent: removeEvent,
