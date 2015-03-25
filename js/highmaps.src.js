@@ -13,8 +13,11 @@
 /*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console, each, grep */
 /*jslint ass: true, sloppy: true, forin: true, plusplus: true, nomen: true, vars: true, regexp: true, newcap: true, browser: true, continue: true, white: true */
 (function () {
-// encapsulated variables
-var deg2rad = Math.PI * 2 / 360,
+// The Highcharts namespace
+var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
+	deg2rad: Math.PI * 2 / 360
+},
+	// encapsulated variables
 
 
 	// some variables
@@ -66,11 +69,8 @@ var deg2rad = Math.PI * 2 / 360,
 
 
 	// lookup over the types and the associated classes
-	seriesTypes = {},
-	Highcharts;
+	seriesTypes = {};
 
-// The Highcharts namespace
-Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {};
 
 Highcharts.seriesTypes = seriesTypes;
 
@@ -2412,6 +2412,7 @@ SVGElement.prototype = {
 	 */
 	getBBox: function (reload) {
 		var wrapper = this,
+			deg2rad = Highcharts.deg2rad,
 			bBox,// = wrapper.bBox,
 			renderer = wrapper.renderer,
 			width,
@@ -4008,7 +4009,8 @@ SVGRenderer.prototype = {
 	 * Correct X and Y positioning of a label for rotation (#1764)
 	 */
 	rotCorr: function (baseline, rotation, alterY) {
-		var y = baseline;
+		var y = baseline,
+			deg2rad = Highcharts.deg2rad;
 		if (rotation && alterY) {
 			y = Math.max(y * Math.cos(rotation * deg2rad), 4);
 		}
@@ -4715,6 +4717,7 @@ VMLElement = {
 		// Test case: http://jsfiddle.net/highcharts/Ybt44/
 
 		var rotation = this.rotation,
+			deg2rad = Highcharts.deg2rad,
 			costheta = Math.cos(rotation * deg2rad),
 			sintheta = Math.sin(rotation * deg2rad);
 					
@@ -4730,7 +4733,8 @@ VMLElement = {
 	 */
 	getSpanCorrection: function (width, baseline, alignCorrection, rotation, align) {
 
-		var costheta = rotation ? Math.cos(rotation * deg2rad) : 1,
+		var deg2rad = Highcharts.deg2rad,
+			costheta = rotation ? Math.cos(rotation * deg2rad) : 1,
 			sintheta = rotation ? Math.sin(rotation * deg2rad) : 0,
 			height = pick(this.elemHeight, this.element.offsetHeight),
 			quad,
@@ -5016,7 +5020,8 @@ VMLElement = {
 	},
 	opacitySetter: noop, // Don't bother - animation is too slow and filters introduce artifacts
 	rotationSetter: function (value, key, element) {
-		var style = element.style;
+		var style = element.style,
+			deg2rad = Highcharts.deg2rad;
 		this[key] = style[key] = value; // style is for #1873
 
 		// Correction for the 1x1 size of the shape container. Used in gauge needles.
@@ -5845,6 +5850,7 @@ Tick.prototype = {
 	 */
 	handleOverflow: function (xy) {
 		var axis = this.axis,
+			deg2rad = Highcharts.deg2rad,
 			pxPos = xy.x,
 			chartWidth = axis.chart.chartWidth,
 			spacing = axis.chart.spacing,
@@ -7580,6 +7586,7 @@ Axis.prototype = {
 			step,
 			bestScore = Number.MAX_VALUE,
 			autoRotation,
+			deg2rad = Highcharts.deg2rad,
 			// Return the multiple of tickInterval that is needed to avoid collision
 			getStep = function (spaceNeeded) {
 				var step = spaceNeeded / (slotSize || 1);

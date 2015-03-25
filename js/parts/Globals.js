@@ -1,7 +1,8 @@
 // The Highcharts namespace
-var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {},
+var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
+	deg2rad: Math.PI * 2 / 360
+},
 	// encapsulated variables
-	deg2rad = Math.PI * 2 / 360,
 
 
 	// some variables

@@ -301,8 +301,8 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 ////// SECTORS //////
 Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 
-	shapeArgs.alpha *= deg2rad;
-	shapeArgs.beta *= deg2rad;
+	shapeArgs.alpha *= Highcharts.deg2rad;
+	shapeArgs.beta *= Highcharts.deg2rad;
 	var result = this.g(),
 		paths = this.arc3dPath(shapeArgs),
 		renderer = result.renderer;
@@ -1019,7 +1019,8 @@ Highcharts.wrap(Highcharts.seriesTypes.cylinder.prototype, 'translate', function
 	if (cylOptions.grouping !== false) { z = 0; }
 
 	Highcharts.each(series.data, function (point) {
-		var shapeArgs = point.shapeArgs;
+		var shapeArgs = point.shapeArgs,
+			deg2rad = Highcharts.deg2rad;
 		point.shapeType = 'arc3d';
 		shapeArgs.x += depth / 2;
 		shapeArgs.z = z;
@@ -1066,7 +1067,8 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 
 	Highcharts.each(series.data, function (point) {
 		point.shapeType = 'arc3d';
-		var shapeArgs = point.shapeArgs;
+		var shapeArgs = point.shapeArgs,
+			deg2rad = Highcharts.deg2rad;
 
 		if (point.y) { // will be false if null or 0 #3006
 			shapeArgs.z = z;
@@ -1133,7 +1135,8 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
 	if (this.chart.is3d()) {
-		var series = this;
+		var series = this,
+			deg2rad = Highcharts.deg2rad;
 		Highcharts.each(series.data, function (point) {
 			var shapeArgs = point.shapeArgs,
 				r = shapeArgs.r,

@@ -671,6 +671,7 @@ SVGElement.prototype = {
 	 */
 	getBBox: function (reload) {
 		var wrapper = this,
+			deg2rad = Highcharts.deg2rad,
 			bBox,// = wrapper.bBox,
 			renderer = wrapper.renderer,
 			width,
@@ -2267,7 +2268,8 @@ SVGRenderer.prototype = {
 	 * Correct X and Y positioning of a label for rotation (#1764)
 	 */
 	rotCorr: function (baseline, rotation, alterY) {
-		var y = baseline;
+		var y = baseline,
+			deg2rad = Highcharts.deg2rad;
 		if (rotation && alterY) {
 			y = Math.max(y * Math.cos(rotation * deg2rad), 4);
 		}

@@ -1475,6 +1475,7 @@ Axis.prototype = {
 			step,
 			bestScore = Number.MAX_VALUE,
 			autoRotation,
+			deg2rad = Highcharts.deg2rad,
 			// Return the multiple of tickInterval that is needed to avoid collision
 			getStep = function (spaceNeeded) {
 				var step = spaceNeeded / (slotSize || 1);

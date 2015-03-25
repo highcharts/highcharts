@@ -205,7 +205,8 @@ Highcharts.wrap(Highcharts.seriesTypes.cylinder.prototype, 'translate', function
 	if (cylOptions.grouping !== false) { z = 0; }
 
 	Highcharts.each(series.data, function (point) {
-		var shapeArgs = point.shapeArgs;
+		var shapeArgs = point.shapeArgs,
+			deg2rad = Highcharts.deg2rad;
 		point.shapeType = 'arc3d';
 		shapeArgs.x += depth / 2;
 		shapeArgs.z = z;

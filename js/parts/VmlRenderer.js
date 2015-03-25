@@ -108,6 +108,7 @@ VMLElement = {
 		// Test case: http://jsfiddle.net/highcharts/Ybt44/
 
 		var rotation = this.rotation,
+			deg2rad = Highcharts.deg2rad,
 			costheta = Math.cos(rotation * deg2rad),
 			sintheta = Math.sin(rotation * deg2rad);
 					
@@ -123,7 +124,8 @@ VMLElement = {
 	 */
 	getSpanCorrection: function (width, baseline, alignCorrection, rotation, align) {
 
-		var costheta = rotation ? Math.cos(rotation * deg2rad) : 1,
+		var deg2rad = Highcharts.deg2rad,
+			costheta = rotation ? Math.cos(rotation * deg2rad) : 1,
 			sintheta = rotation ? Math.sin(rotation * deg2rad) : 0,
 			height = pick(this.elemHeight, this.element.offsetHeight),
 			quad,
@@ -409,7 +411,8 @@ VMLElement = {
 	},
 	opacitySetter: noop, // Don't bother - animation is too slow and filters introduce artifacts
 	rotationSetter: function (value, key, element) {
-		var style = element.style;
+		var style = element.style,
+			deg2rad = Highcharts.deg2rad;
 		this[key] = style[key] = value; // style is for #1873
 
 		// Correction for the 1x1 size of the shape container. Used in gauge needles.

@@ -98,6 +98,7 @@ Tick.prototype = {
 	 */
 	handleOverflow: function (xy) {
 		var axis = this.axis,
+			deg2rad = Highcharts.deg2rad,
 			pxPos = xy.x,
 			chartWidth = axis.chart.chartWidth,
 			spacing = axis.chart.spacing,

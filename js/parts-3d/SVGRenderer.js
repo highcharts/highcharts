@@ -206,8 +206,8 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 ////// SECTORS //////
 Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 
-	shapeArgs.alpha *= deg2rad;
-	shapeArgs.beta *= deg2rad;
+	shapeArgs.alpha *= Highcharts.deg2rad;
+	shapeArgs.beta *= Highcharts.deg2rad;
 	var result = this.g(),
 		paths = this.arc3dPath(shapeArgs),
 		renderer = result.renderer;

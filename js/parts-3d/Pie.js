@@ -31,7 +31,8 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 
 	Highcharts.each(series.data, function (point) {
 		point.shapeType = 'arc3d';
-		var shapeArgs = point.shapeArgs;
+		var shapeArgs = point.shapeArgs,
+			deg2rad = Highcharts.deg2rad;
 
 		if (point.y) { // will be false if null or 0 #3006
 			shapeArgs.z = z;
@@ -98,7 +99,8 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
 	if (this.chart.is3d()) {
-		var series = this;
+		var series = this,
+			deg2rad = Highcharts.deg2rad;
 		Highcharts.each(series.data, function (point) {
 			var shapeArgs = point.shapeArgs,
 				r = shapeArgs.r,
