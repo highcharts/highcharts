@@ -1,10 +1,10 @@
 // The Highcharts namespace
 var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	deg2rad: Math.PI * 2 / 360,
-	isIE: /(msie|trident)/i.test(navigator.userAgent) && !window.opera
+	isIE: /(msie|trident)/i.test(navigator.userAgent) && !window.opera,
+	isWebKit: /AppleWebKit/.test(navigator.userAgent)
 },
 	// some variables
-	isWebKit = /AppleWebKit/.test(navigator.userAgent),
 	isFirefox = /Firefox/.test(navigator.userAgent),
 	isTouchDevice = /(Mobile|Android|Windows Phone)/.test(navigator.userAgent),
 	SVG_NS = 'http://www.w3.org/2000/svg',

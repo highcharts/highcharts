@@ -16,10 +16,10 @@
 // The Highcharts namespace
 var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	deg2rad: Math.PI * 2 / 360,
-	isIE: /(msie|trident)/i.test(navigator.userAgent) && !window.opera
+	isIE: /(msie|trident)/i.test(navigator.userAgent) && !window.opera,
+	isWebKit: /AppleWebKit/.test(navigator.userAgent)
 },
 	// some variables
-	isWebKit = /AppleWebKit/.test(navigator.userAgent),
 	isFirefox = /Firefox/.test(navigator.userAgent),
 	isTouchDevice = /(Mobile|Android|Windows Phone)/.test(navigator.userAgent),
 	SVG_NS = 'http://www.w3.org/2000/svg',
@@ -2938,7 +2938,7 @@ SVGRenderer.prototype = {
 		renderer.alignedObjects = [];
 
 		// Page url used for internal references. #24, #672, #1070
-		renderer.url = (isFirefox || isWebKit) && document.getElementsByTagName('base').length ?
+		renderer.url = (isFirefox || Highcharts.isWebKit) && document.getElementsByTagName('base').length ?
 			loc.href
 				.replace(/#.*?$/, '') // remove the hash
 				.replace(/([\('\)])/g, '\\$1') // escape parantheses and quotes
@@ -4448,7 +4448,7 @@ extend(SVGElement.prototype, {
 			});
 
 			// force reflow in webkit to apply the left and top on useHTML element (#1249)
-			if (isWebKit) {
+			if (Highcharts.isWebKit) {
 				baseline = elem.offsetHeight; // assigned to baseline for JSLint purpose
 			}
 
@@ -4462,7 +4462,7 @@ extend(SVGElement.prototype, {
 	 */
 	setSpanRotation: function (rotation, alignCorrection, baseline) {
 		var rotationStyle = {},
-			cssTransformKey = Highcharts.isIE ? '-ms-transform' : isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : window.opera ? '-o-transform' : '';
+			cssTransformKey = Highcharts.isIE ? '-ms-transform' : Highcharts.isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : window.opera ? '-o-transform' : '';
 
 		rotationStyle[cssTransformKey] = rotationStyle.transform = 'rotate(' + rotation + 'deg)';
 		rotationStyle[cssTransformKey + (isFirefox ? 'Origin' : '-origin')] = rotationStyle.transformOrigin = (alignCorrection * 100) + '% ' + baseline + 'px';

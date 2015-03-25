@@ -134,7 +134,7 @@ extend(SVGElement.prototype, {
 			});
 
 			// force reflow in webkit to apply the left and top on useHTML element (#1249)
-			if (isWebKit) {
+			if (Highcharts.isWebKit) {
 				baseline = elem.offsetHeight; // assigned to baseline for JSLint purpose
 			}
 
@@ -148,7 +148,7 @@ extend(SVGElement.prototype, {
 	 */
 	setSpanRotation: function (rotation, alignCorrection, baseline) {
 		var rotationStyle = {},
-			cssTransformKey = Highcharts.isIE ? '-ms-transform' : isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : window.opera ? '-o-transform' : '';
+			cssTransformKey = Highcharts.isIE ? '-ms-transform' : Highcharts.isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : window.opera ? '-o-transform' : '';
 
 		rotationStyle[cssTransformKey] = rotationStyle.transform = 'rotate(' + rotation + 'deg)';
 		rotationStyle[cssTransformKey + (isFirefox ? 'Origin' : '-origin')] = rotationStyle.transformOrigin = (alignCorrection * 100) + '% ' + baseline + 'px';
