@@ -1,5 +1,7 @@
-// encapsulated variables
-var deg2rad = Math.PI * 2 / 360,
+// The Highcharts namespace
+var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {},
+	// encapsulated variables
+	deg2rad = Math.PI * 2 / 360,
 
 
 	// some variables
@@ -51,10 +53,7 @@ var deg2rad = Math.PI * 2 / 360,
 
 
 	// lookup over the types and the associated classes
-	seriesTypes = {},
-	Highcharts;
+	seriesTypes = {};
 
-// The Highcharts namespace
-Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {};
 
 Highcharts.seriesTypes = seriesTypes;
