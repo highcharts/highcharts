@@ -185,7 +185,6 @@
 				yAxis = series.yAxis,
 				center = yAxis.center,
 				options = series.options,
-				radius = series.radius = (pInt(pick(options.radius, 100)) * center[2]) / 200,
 				renderer = series.chart.renderer,
 				overshoot = options.overshoot,
 				overshootVal = overshoot && typeof overshoot === 'number' ? overshoot / 180 * Math.PI : 0;
@@ -193,7 +192,8 @@
 			H.each(series.points, function (point) {
 				var graphic = point.graphic,
 					rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true),
-					innerRadius = (pInt(pick(options.innerRadius, 60)) * center[2]) / 200,
+					radius = (pInt(pick(point.options.radius, options.radius, 100)) * center[2]) / 200, // docs: series<solidgauge>.data.radius http://jsfiddle.net/highcharts/7nwebu4b/
+					innerRadius = (pInt(pick(point.options.innerRadius, options.innerRadius, 60)) * center[2]) / 200, // docs: series<solidgauge>.data.innerRadius
 					shapeArgs,
 					d,
 					toColor = yAxis.toColor(point.y, point),
@@ -234,6 +234,7 @@
 					end: maxAngle,
 					fill: toColor
 				};
+				point.startR = radius; // For PieSeries.animate
 
 				if (graphic) {
 					d = shapeArgs.d;
@@ -257,11 +258,10 @@
 		 */
 		animate: function (init) {
 
-			this.center = this.yAxis.center;
-			this.center[3] = 2 * this.radius;
-			this.startAngleRad = this.yAxis.startAngleRad;
-
-			H.seriesTypes.pie.prototype.animate.call(this, init);
+			if (!init) {
+				this.startAngleRad = this.yAxis.startAngleRad;
+				H.seriesTypes.pie.prototype.animate.call(this, init);
+			}
 		}
 	});
 
