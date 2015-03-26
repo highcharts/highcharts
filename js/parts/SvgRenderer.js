@@ -8,6 +8,7 @@ SVGElement.prototype = {
 	
 	// Default base for animation
 	opacity: 1,
+	SVG_NS: Highcharts.SVG_NS,
 	// For labels, these CSS properties are applied to the <text> node directly
 	textProps: ['fontSize', 'fontWeight', 'fontFamily', 'color', 
 		'lineHeight', 'width', 'textDecoration', 'textShadow'],
@@ -21,7 +22,7 @@ SVGElement.prototype = {
 		var wrapper = this;
 		wrapper.element = nodeName === 'span' ?
 			createElement(nodeName) :
-			document.createElementNS(SVG_NS, nodeName);
+			document.createElementNS(wrapper.SVG_NS, nodeName);
 		wrapper.renderer = renderer;
 	},
 	
@@ -715,7 +716,7 @@ SVGElement.prototype = {
 		if (!bBox) {
 
 			// SVG elements
-			if (element.namespaceURI === SVG_NS || renderer.forExport) {
+			if (element.namespaceURI === wrapper.SVG_NS || renderer.forExport) {
 				try { // Fails in Firefox if the container has display: none.
 
 					// When the text shadow shim is used, we need to hide the fake shadows
@@ -795,7 +796,7 @@ SVGElement.prototype = {
 	 */
 	show: function (inherit) {
 		// IE9-11 doesn't handle visibilty:inherit well, so we remove the attribute instead (#2881)
-		if (inherit && this.element.namespaceURI === SVG_NS) {
+		if (inherit && this.element.namespaceURI === this.SVG_NS) {
 			this.element.removeAttribute('visibility');
 		} else {
 			this.attr({ visibility: inherit ? 'inherit' : 'visible' });
@@ -1056,7 +1057,7 @@ SVGElement.prototype = {
 	titleSetter: function (value) {
 		var titleNode = this.element.getElementsByTagName('title')[0];
 		if (!titleNode) {
-			titleNode = document.createElementNS(SVG_NS, 'title');
+			titleNode = document.createElementNS(this.SVG_NS, 'title');
 			this.element.appendChild(titleNode);
 		}
 		titleNode.textContent = (String(pick(value), '')).replace(/<[^>]*>/g, ''); // #3276 #3895
@@ -1166,7 +1167,7 @@ var SVGRenderer = function () {
 };
 SVGRenderer.prototype = {
 	Element: SVGElement,
-
+	SVG_NS: Highcharts.SVG_NS,
 	/**
 	 * Initialize the SVGRenderer
 	 * @param {Object} container
@@ -1192,7 +1193,7 @@ SVGRenderer.prototype = {
 
 		// For browsers other than IE, add the namespace attribute (#1978)
 		if (container.innerHTML.indexOf('xmlns') === -1) {
-			attr(element, 'xmlns', SVG_NS);
+			attr(element, 'xmlns', this.SVG_NS);
 		}
 
 		// object properties
@@ -1396,7 +1397,7 @@ SVGRenderer.prototype = {
 				each(spans, function (span) {
 					if (span !== '' || spans.length === 1) {
 						var attributes = {},
-							tspan = document.createElementNS(SVG_NS, 'tspan'),
+							tspan = document.createElementNS(renderer.SVG_NS, 'tspan'),
 							spanStyle; // #390
 						if (styleRegex.test(span)) {
 							spanStyle = span.match(styleRegex)[1].replace(/(;| |^)color([ :])/, '$1fill$2');
@@ -1504,7 +1505,7 @@ SVGRenderer.prototype = {
 										if (words.length) {
 											softLineNo++;
 											
-											tspan = document.createElementNS(SVG_NS, 'tspan');
+											tspan = document.createElementNS(renderer.SVG_NS, 'tspan');
 											attr(tspan, {
 												dy: dy,
 												x: parentX

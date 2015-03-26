@@ -4,11 +4,11 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	isIE: /(msie|trident)/i.test(navigator.userAgent) && !window.opera,
 	isWebKit: /AppleWebKit/.test(navigator.userAgent),
 	isFirefox: /Firefox/.test(navigator.userAgent),
-	isTouchDevice: /(Mobile|Android|Windows Phone)/.test(navigator.userAgent)
+	isTouchDevice: /(Mobile|Android|Windows Phone)/.test(navigator.userAgent),
+	SVG_NS: 'http://www.w3.org/2000/svg'
 },
 	// some variables
-	SVG_NS = 'http://www.w3.org/2000/svg',
-	hasSVG = !!document.createElementNS && !!document.createElementNS(SVG_NS, 'svg').createSVGRect,
+	hasSVG = !!document.createElementNS && !!document.createElementNS(Highcharts.SVG_NS, 'svg').createSVGRect,
 	hasBidiBug = Highcharts.isFirefox && parseInt(navigator.userAgent.split('Firefox/')[1], 10) < 4, // issue #38
 	useCanVG = !hasSVG && !Highcharts.isIE && !!document.createElement('canvas').getContext,
 	Renderer,

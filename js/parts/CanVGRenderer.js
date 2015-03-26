@@ -15,7 +15,7 @@ if (useCanVG) {
 	 */
 	Highcharts.CanVGRenderer = CanVGRenderer = function () {
 		// Override the global SVG namespace to fake SVG/HTML that accepts CSS
-		SVG_NS = 'http://www.w3.org/1999/xhtml';
+		Highcharts.SVG_NS = 'http://www.w3.org/1999/xhtml';
 	};
 
 	/**
