@@ -62,4 +62,35 @@ $(function () {
         );
     });
 
+    QUnit.test('Highstock hover:lineWidth and hover:lineWidthPlus', function (assert) {
+        var chart = new Highcharts.StockChart({
+            chart: {
+                renderTo: 'container'
+            },
+            series: [{
+                data: [1,3,2,4],
+                lineWidth: 3,
+                states: {
+                    hover: {
+                        lineWidthPlus: 3
+                    }
+                }
+            }]
+        });
+
+        assert.equal(
+            chart.series[0].graph.element.getAttribute('stroke-width'),     
+            '3',
+            'normal'
+        );
+
+        chart.series[0].points[0].onMouseOver();
+
+        assert.equal(
+            chart.series[0].graph.element.getAttribute('stroke-width'),     
+            '6',
+            'hover'
+        );
+    });
+
 });

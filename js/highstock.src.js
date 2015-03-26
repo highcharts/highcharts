@@ -22585,13 +22585,8 @@ Highcharts.StockChart = function (options, callback) {
 			marker: {
 				enabled: false,
 				radius: 2
-			},
-			// gapSize: 0,
-			states: {
-				hover: {
-					lineWidth: 2
-				}
 			}
+			// gapSize: 0
 		},
 		columnOptions = {
 			shadow: false,
