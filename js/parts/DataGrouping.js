@@ -273,8 +273,8 @@ seriesProto.processData = function () {
 	series.groupPixelWidth = null; // #2110
 	series.hasProcessed = true; // #2692
 
-	// skip if processData returns false or if grouping is disabled (in that order)
-	if (baseProcessData.apply(series, arguments) === false || !groupingEnabled) {
+	// Skip if series is not dirty (#4042), processData returns false or if grouping is disabled (in that order)
+	if (!series.isDirty || baseProcessData.apply(series, arguments) === false || !groupingEnabled) {
 		return;
 
 	} else {
