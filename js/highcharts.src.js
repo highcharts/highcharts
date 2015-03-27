@@ -13571,8 +13571,6 @@ Series.prototype = {
 			xMax = xExtremes.max,
 			validValue,
 			withinRange,
-			dataMin,
-			dataMax,
 			x,
 			y,
 			i,
@@ -13606,8 +13604,8 @@ Series.prototype = {
 				}
 			}
 		}
-		this.dataMin = pick(dataMin, arrayMin(activeYData));
-		this.dataMax = pick(dataMax, arrayMax(activeYData));
+		this.dataMin = arrayMin(activeYData);
+		this.dataMax = arrayMax(activeYData);
 	},
 
 	/**
