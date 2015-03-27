@@ -22151,6 +22151,30 @@ RangeSelector.prototype = {
 		this[name + 'DateBox'].attr({ text: dateFormat(options.inputDateFormat || '%b %e, %Y', this[name + 'Input'].HCTime) });
 	},
 
+	showInput: function (name) {
+		var inputGroup = this.inputGroup,
+			dateBox = this[name + 'DateBox'];
+
+		css(this[name + 'Input'], {
+			left: (inputGroup.translateX + dateBox.x) + PX,
+			top: inputGroup.translateY + PX,
+			width: (dateBox.width - 2) + PX,
+			height: (dateBox.height - 2) + PX,
+			border: '2px solid silver'
+		});
+	},
+
+	hideInput: function (name) {
+		if (document.activeElement === this[name + 'Input']) { // Prevent running again and again
+			css(this[name + 'Input'], {
+				border: 0,
+				width: '1px',
+				height: '1px'
+			});
+			this.setInputValue(name);
+		}
+	},
+
 	/**
 	 * Draw either the 'from' or the 'to' HTML input box of the range selector
 	 * @param {Object} name
@@ -22193,6 +22217,7 @@ RangeSelector.prototype = {
 				color: '#444'
 			}, chartStyle, options.inputStyle))
 			.on('click', function () {
+				rangeSelector.showInput(name); // If it is already focused, the onfocus event doesn't fire (#3713)
 				rangeSelector[name + 'Input'].focus();
 			})
 			.add(inputGroup);
@@ -22219,22 +22244,11 @@ RangeSelector.prototype = {
 
 		// Blow up the input box
 		input.onfocus = function () {
-			css(this, {
-				left: (inputGroup.translateX + dateBox.x) + PX,
-				top: inputGroup.translateY + PX,
-				width: (dateBox.width - 2) + PX,
-				height: (dateBox.height - 2) + PX,
-				border: '2px solid silver'
-			});
+			rangeSelector.showInput(name);
 		};
 		// Hide away the input box
 		input.onblur = function () {
-			css(this, {
-				border: 0,
-				width: '1px',
-				height: '1px'
-			});
-			rangeSelector.setInputValue(name);
+			rangeSelector.hideInput(name);
 		};
 
 		// handle changes in the input boxes
