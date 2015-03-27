@@ -111,7 +111,7 @@ extend(defaultOptions, {
 		trackBorderColor: '#eeeeee',
 		trackBorderWidth: 1,
 		// trackBorderRadius: 0
-		liveRedraw: hasSVG && !isTouchDevice
+		liveRedraw: Highcharts.hasSVG && !isTouchDevice
 	}
 });
 

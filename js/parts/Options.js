@@ -277,7 +277,7 @@ defaultOptions = {
 
 	tooltip: {
 		enabled: true,
-		animation: hasSVG,
+		animation: Highcharts.hasSVG,
 		//crosshairs: null,
 		backgroundColor: 'rgba(249, 249, 249, .85)',
 		borderWidth: 1,

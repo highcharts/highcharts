@@ -6,11 +6,17 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	isFirefox: /Firefox/.test(navigator.userAgent),
 	isTouchDevice: /(Mobile|Android|Windows Phone)/.test(navigator.userAgent),
 	SVG_NS: 'http://www.w3.org/2000/svg'
-},
+},	init = function () {
+		var H = Highcharts;
+		H.hasSVG = !!document.createElementNS && !!document.createElementNS(H.SVG_NS, 'svg').createSVGRect;
+	};
+
+	// Initialize some Highcharts variables
+	init();
+
 	// some variables
-	hasSVG = !!document.createElementNS && !!document.createElementNS(Highcharts.SVG_NS, 'svg').createSVGRect,
-	hasBidiBug = Highcharts.isFirefox && parseInt(navigator.userAgent.split('Firefox/')[1], 10) < 4, // issue #38
-	useCanVG = !hasSVG && !Highcharts.isIE && !!document.createElement('canvas').getContext,
+var hasBidiBug = Highcharts.isFirefox && parseInt(navigator.userAgent.split('Firefox/')[1], 10) < 4, // issue #38
+	useCanVG = !Highcharts.hasSVG && !Highcharts.isIE && !!document.createElement('canvas').getContext,
 	Renderer,
 	hasTouch,
 	symbolSizes = {},
@@ -54,6 +60,5 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 
 	// lookup over the types and the associated classes
 	seriesTypes = {};
-
 
 Highcharts.seriesTypes = seriesTypes;

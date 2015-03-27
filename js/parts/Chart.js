@@ -1322,7 +1322,7 @@ Chart.prototype = {
 
 		// Note: in spite of JSLint's complaints, window == window.top is required
 		/*jslint eqeq: true*/
-		if ((!hasSVG && (window == window.top && document.readyState !== 'complete')) || (useCanVG && !window.canvg)) {
+		if ((!Highcharts.hasSVG && (window == window.top && document.readyState !== 'complete')) || (useCanVG && !window.canvg)) {
 		/*jslint eqeq: false*/
 			if (useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready

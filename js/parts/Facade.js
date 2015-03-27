@@ -32,9 +32,9 @@ extend(Highcharts, {
 	splat: splat,
 	extendClass: extendClass,
 	pInt: pInt,
-	svg: hasSVG,
+	svg: Highcharts.hasSVG,
 	canvas: useCanVG,
-	vml: !hasSVG && !useCanVG,
+	vml: !Highcharts.hasSVG && !useCanVG,
 	product: '@product.name@',
 	version: '@product.version@'
 });

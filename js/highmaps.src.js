@@ -21,11 +21,17 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	isFirefox: /Firefox/.test(navigator.userAgent),
 	isTouchDevice: /(Mobile|Android|Windows Phone)/.test(navigator.userAgent),
 	SVG_NS: 'http://www.w3.org/2000/svg'
-},
+},	init = function () {
+		var H = Highcharts;
+		H.hasSVG = !!document.createElementNS && !!document.createElementNS(H.SVG_NS, 'svg').createSVGRect;
+	};
+
+	// Initialize some Highcharts variables
+	init();
+
 	// some variables
-	hasSVG = !!document.createElementNS && !!document.createElementNS(Highcharts.SVG_NS, 'svg').createSVGRect,
-	hasBidiBug = Highcharts.isFirefox && parseInt(navigator.userAgent.split('Firefox/')[1], 10) < 4, // issue #38
-	useCanVG = !hasSVG && !Highcharts.isIE && !!document.createElement('canvas').getContext,
+var hasBidiBug = Highcharts.isFirefox && parseInt(navigator.userAgent.split('Firefox/')[1], 10) < 4, // issue #38
+	useCanVG = !Highcharts.hasSVG && !Highcharts.isIE && !!document.createElement('canvas').getContext,
 	Renderer,
 	hasTouch,
 	symbolSizes = {},
@@ -69,7 +75,6 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 
 	// lookup over the types and the associated classes
 	seriesTypes = {};
-
 
 Highcharts.seriesTypes = seriesTypes;
 
@@ -276,7 +281,7 @@ var pick = Highcharts.pick = function () {
  * @param {Object} styles Style object with camel case property names
  */
 function css(el, styles) {
-	if (Highcharts.isIE && !hasSVG) { // #2686
+	if (Highcharts.isIE && !Highcharts.hasSVG) { // #2686
 		if (styles && styles.opacity !== undefined) {
 			styles.filter = 'alpha(opacity=' + (styles.opacity * 100) + ')';
 		}
@@ -1481,7 +1486,7 @@ defaultOptions = {
 
 	tooltip: {
 		enabled: true,
-		animation: hasSVG,
+		animation: Highcharts.hasSVG,
 		//crosshairs: null,
 		backgroundColor: 'rgba(249, 249, 249, .85)',
 		borderWidth: 1,
@@ -2198,12 +2203,12 @@ SVGElement.prototype = {
 			// store object
 			elemWrapper.styles = styles;
 
-			if (textWidth && (useCanVG || (!hasSVG && elemWrapper.renderer.forExport))) {
+			if (textWidth && (useCanVG || (!Highcharts.hasSVG && elemWrapper.renderer.forExport))) {
 				delete styles.width;
 			}
 
 			// serialize and set style attribute
-			if (isIE && !hasSVG) {
+			if (isIE && !Highcharts.hasSVG) {
 				css(elemWrapper.element, styles);
 			} else {
 				/*jslint unparam: true*/
@@ -3181,7 +3186,7 @@ SVGRenderer.prototype = {
 							if (!spanNo && lineNo) {
 
 								// allow getting the right offset height in exporting in IE
-								if (!hasSVG && forExport) {
+								if (!Highcharts.hasSVG && forExport) {
 									css(tspan, { display: 'block' });
 								}
 
@@ -3219,7 +3224,7 @@ SVGRenderer.prototype = {
 									actualWidth = bBox.width;
 
 									// Old IE cannot measure the actualWidth for SVG elements (#2314)
-									if (!hasSVG && renderer.forExport) {
+									if (!Highcharts.hasSVG && renderer.forExport) {
 										actualWidth = renderer.measureSpanWidth(tspan.firstChild.data, wrapper.styles);
 									}
 
@@ -3949,7 +3954,7 @@ SVGRenderer.prototype = {
 
 		// declare variables
 		var renderer = this,
-			fakeSVG = useCanVG || (!hasSVG && renderer.forExport),
+			fakeSVG = useCanVG || (!Highcharts.hasSVG && renderer.forExport),
 			wrapper,
 			attr = {};
 
@@ -4635,7 +4640,7 @@ extend(SVGRenderer.prototype, {
  * @constructor
  */
 var VMLRenderer, VMLElement;
-if (!hasSVG && !useCanVG) {
+if (!Highcharts.hasSVG && !useCanVG) {
 
 /**
  * The VML element wrapper.
@@ -12034,7 +12039,7 @@ Chart.prototype = {
 
 		// Note: in spite of JSLint's complaints, window == window.top is required
 		/*jslint eqeq: true*/
-		if ((!hasSVG && (window == window.top && document.readyState !== 'complete')) || (useCanVG && !window.canvg)) {
+		if ((!Highcharts.hasSVG && (window == window.top && document.readyState !== 'complete')) || (useCanVG && !window.canvg)) {
 		/*jslint eqeq: false*/
 			if (useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready
@@ -15085,7 +15090,7 @@ var ColumnSeries = extendClass(Series, {
 			attr = {},
 			translatedThreshold;
 
-		if (hasSVG) { // VML is too slow anyway
+		if (Highcharts.hasSVG) { // VML is too slow anyway
 			if (init) {
 				attr.scaleY = 0.001;
 				translatedThreshold = Math.min(yAxis.pos + yAxis.len, Math.max(yAxis.pos, yAxis.toPixels(options.threshold)));
@@ -18701,7 +18706,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			 * Safari: 0.000001
 			 * Opera: 0.00000000001 (unlimited)
 			 */
-			TRACKER_FILL = 'rgba(192,192,192,' + (hasSVG ? 0.0001 : 0.002) + ')';
+			TRACKER_FILL = 'rgba(192,192,192,' + (Highcharts.hasSVG ? 0.0001 : 0.002) + ')';
 
 		// Extend end points. A better way would be to use round linecaps,
 		// but those are not clickable in VML.
@@ -19440,9 +19445,9 @@ extend(Highcharts, {
 	splat: splat,
 	extendClass: extendClass,
 	pInt: pInt,
-	svg: hasSVG,
+	svg: Highcharts.hasSVG,
 	canvas: useCanVG,
-	vml: !hasSVG && !useCanVG,
+	vml: !Highcharts.hasSVG && !useCanVG,
 	product: 'Highmaps',
 	version: '1.1.4-modified'
 });
