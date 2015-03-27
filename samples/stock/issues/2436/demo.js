@@ -11,6 +11,9 @@ $(function () {
             width: 500,
             height: 300
         },
+        rangeSelector: {
+            inputEnabled: false
+        },
         title: {
             text: 'In Highstock 1.3.7, the navigator did not span the full data'
         },

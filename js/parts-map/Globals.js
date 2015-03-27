@@ -14,6 +14,7 @@ var UNDEFINED,
 	
 	addEvent = Highcharts.addEvent,
 	each = Highcharts.each,
+	error = Highcharts.error,
 	extend = Highcharts.extend,
 	extendClass = Highcharts.extendClass,
 	merge = Highcharts.merge,

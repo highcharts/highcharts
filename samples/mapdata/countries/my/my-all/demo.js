@@ -3,67 +3,67 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "my-pg",
+            "hc-key": "my-sa",
             "value": 0
         },
         {
-            "hc-key": "my-pl",
+            "hc-key": "my-sk",
             "value": 1
         },
         {
-            "hc-key": "my-jh",
+            "hc-key": "my-la",
             "value": 2
         },
         {
-            "hc-key": "my-sl",
+            "hc-key": "my-pg",
             "value": 3
         },
         {
-            "hc-key": "my-kl",
+            "hc-key": "my-kh",
             "value": 4
         },
         {
-            "hc-key": "my-pj",
+            "hc-key": "my-sl",
             "value": 5
         },
         {
-            "hc-key": "my-pk",
+            "hc-key": "my-ph",
             "value": 6
         },
         {
-            "hc-key": "my-kh",
+            "hc-key": "my-kl",
             "value": 7
         },
         {
-            "hc-key": "my-kn",
+            "hc-key": "my-pj",
             "value": 8
         },
         {
-            "hc-key": "my-me",
+            "hc-key": "my-pl",
             "value": 9
         },
         {
-            "hc-key": "my-ns",
+            "hc-key": "my-jh",
             "value": 10
         },
         {
-            "hc-key": "my-ph",
+            "hc-key": "my-pk",
             "value": 11
         },
         {
-            "hc-key": "my-te",
+            "hc-key": "my-kn",
             "value": 12
         },
         {
-            "hc-key": "my-sa",
+            "hc-key": "my-me",
             "value": 13
         },
         {
-            "hc-key": "my-sk",
+            "hc-key": "my-ns",
             "value": 14
         },
         {
-            "hc-key": "my-la",
+            "hc-key": "my-te",
             "value": 15
         },
         {

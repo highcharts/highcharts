@@ -12,7 +12,8 @@ Series.prototype.drawDataLabels = function () {
 		generalOptions,
 		hasRendered = series.hasRendered || 0,
 		str,
-		dataLabelsGroup;
+		dataLabelsGroup,
+		renderer = series.chart.renderer;
 
 	if (options.enabled || series._hasPointLabels) {
 
@@ -52,10 +53,12 @@ Series.prototype.drawDataLabels = function () {
 				name,
 				rotation,
 				connector = point.connector,
-				isNew = true;
+				isNew = true,
+				style,
+				moreStyle = {};
 
 			// Determine if each data label is enabled
-			pointOptions = point.options && point.options.dataLabels;
+			pointOptions = point.dlOptions || (point.options && point.options.dataLabels); // dlOptions is used in treemaps
 			enabled = pick(pointOptions && pointOptions.enabled, generalOptions.enabled); // #2282
 
 
@@ -70,6 +73,7 @@ Series.prototype.drawDataLabels = function () {
 				// Create individual options structure that can be extended without
 				// affecting others
 				options = merge(generalOptions, pointOptions);
+				style = options.style;
 
 				rotation = options.rotation;
 
@@ -80,7 +84,7 @@ Series.prototype.drawDataLabels = function () {
 					options.formatter.call(labelConfig, options);
 
 				// Determine the color
-				options.style.color = pick(options.color, options.style.color, series.color, 'black');
+				style.color = pick(options.color, style.color, series.color, 'black');
 
 
 				// update existing label
@@ -112,6 +116,18 @@ Series.prototype.drawDataLabels = function () {
 						padding: options.padding,
 						zIndex: 1
 					};
+					
+					// Get automated contrast color
+					if (style.color === 'contrast') {
+						moreStyle.color = options.inside || options.distance < 0 || !!seriesOptions.stacking ? 
+							renderer.getContrast(point.color || series.color) : 
+							'#000000';
+					}
+					if (cursor) {
+						moreStyle.cursor = cursor;
+					}
+					
+
 					// Remove unused attributes (#947)
 					for (name in attr) {
 						if (attr[name] === UNDEFINED) {
@@ -119,17 +135,17 @@ Series.prototype.drawDataLabels = function () {
 						}
 					}
 
-					dataLabel = point.dataLabel = series.chart.renderer[rotation ? 'text' : 'label']( // labels don't support rotation
+					dataLabel = point.dataLabel = renderer[rotation ? 'text' : 'label']( // labels don't support rotation
 						str,
 						0,
 						-999,
-						null,
+						options.shape,
 						null,
 						null,
 						options.useHTML
 					)
 					.attr(attr)
-					.css(extend(options.style, cursor && { cursor: cursor }))
+					.css(extend(style, moreStyle))
 					.add(dataLabelsGroup)
 					.shadow(options.shadow);
 
@@ -153,6 +169,8 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		plotX = pick(point.plotX, -999),
 		plotY = pick(point.plotY, -999),
 		bBox = dataLabel.getBBox(),
+		baseline = chart.renderer.fontMetrics(options.style.fontSize).b,
+		rotCorr, // rotation correction
 		// Math.round for rounding errors (#2683), alignTo to allow column labels (#2700)
 		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, mathRound(plotY), inverted) ||
 			(alignTo && chart.isInsidePlot(plotX, inverted ? alignTo.x + 1 : alignTo.y + alignTo.height - 1, inverted))),
@@ -176,8 +194,9 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 
 		// Allow a hook for changing alignment in the last moment, then do the alignment
 		if (options.rotation) { // Fancy box alignment isn't supported for rotated text
+			rotCorr = chart.renderer.rotCorr(baseline, options.rotation); // #3723
 			dataLabel[isNew ? 'attr' : 'animate']({
-					x: alignTo.x + options.x + alignTo.width / 2,
+					x: alignTo.x + options.x + alignTo.width / 2 + rotCorr.x,
 					y: alignTo.y + options.y + alignTo.height / 2
 				})
 				.attr({ // #3003
@@ -196,6 +215,15 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 				visible = chart.isInsidePlot(alignAttr.x, alignAttr.y) && chart.isInsidePlot(alignAttr.x + bBox.width, alignAttr.y + bBox.height);
 
 			}
+
+			// When we're using a shape, make it possible with a connector or an arrow pointing to thie point
+			if (options.shape) {
+				dataLabel.attr({
+					anchorX: point.plotX,
+					anchorY: point.plotY
+				});
+			}
+
 		}
 	}
 
@@ -216,10 +244,11 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
 		align = options.align,
 		verticalAlign = options.verticalAlign,
 		off,
-		justified;
+		justified,
+		padding = dataLabel.box ? 0 : (dataLabel.padding || 0);
 
 	// Off left
-	off = alignAttr.x;
+	off = alignAttr.x + padding;
 	if (off < 0) {
 		if (align === 'right') {
 			options.align = 'left';
@@ -230,7 +259,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
 	}
 
 	// Off right
-	off = alignAttr.x + bBox.width;
+	off = alignAttr.x + bBox.width - padding;
 	if (off > chart.plotWidth) {
 		if (align === 'left') {
 			options.align = 'right';
@@ -241,7 +270,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
 	}
 
 	// Off top
-	off = alignAttr.y;
+	off = alignAttr.y + padding;
 	if (off < 0) {
 		if (verticalAlign === 'bottom') {
 			options.verticalAlign = 'top';
@@ -252,7 +281,7 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
 	}
 
 	// Off bottom
-	off = alignAttr.y + bBox.height;
+	off = alignAttr.y + bBox.height - padding;
 	if (off > chart.plotHeight) {
 		if (verticalAlign === 'top') {
 			options.verticalAlign = 'bottom';
@@ -677,10 +706,10 @@ if (seriesTypes.column) {
 	 * Override the basic data label alignment by adjusting for the position of the column
 	 */
 	seriesTypes.column.prototype.alignDataLabel = function (point, dataLabel, options,  alignTo, isNew) {
-		var chart = this.chart,
-			inverted = chart.inverted,
+		var inverted = this.chart.inverted,
+			series = point.series,
 			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
-			below = point.below || (point.plotY > pick(this.translatedThreshold, chart.plotSizeY)),
+			below = point.below || (point.plotY > pick(this.translatedThreshold, series.yAxis.len)),
 			inside = pick(options.inside, !!this.options.stacking); // draw it inside the box?
 
 		// Align to the column itself, or the top of it
@@ -689,8 +718,8 @@ if (seriesTypes.column) {
 
 			if (inverted) {
 				alignTo = {
-					x: chart.plotWidth - alignTo.y - alignTo.height,
-					y: chart.plotHeight - alignTo.x - alignTo.width,
+					x: series.yAxis.len - alignTo.y - alignTo.height,
+					y: series.xAxis.len - alignTo.x - alignTo.width,
 					width: alignTo.height,
 					height: alignTo.width
 				};

@@ -39,6 +39,20 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 		return [point.low, point.high];
 	},
 	pointValKey: 'low',
+	deferTranslatePolar: true,
+
+	/**
+	 * Translate a point's plotHigh from the internal angle and radius measures to 
+	 * true plotHigh coordinates. This is an addition of the toXY method found in
+	 * Polar.js, because it runs too early for arearanges to be considered (#3419).
+	 */
+	highToXY: function (point) {
+		// Find the polar plotX and plotY
+		var chart = this.chart,
+			xy = this.xAxis.postTranslate(point.rectPlotX, this.yAxis.len - point.plotHigh);
+		point.plotHighX = xy.x - chart.plotLeft;
+		point.plotHigh = xy.y - chart.plotTop;
+	},
 	
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY
@@ -63,6 +77,13 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 				point.plotHigh = yAxis.translate(high, 0, 1, 0, 1);
 			}
 		});
+
+		// Postprocess plotHigh
+		if (this.chart.polar) {
+			each(this.points, function (point) {
+				series.highToXY(point);
+			});
+		}
 	},
 	
 	/**
@@ -220,6 +241,8 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 	alignDataLabel: function () {
 		seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
 	},
+	
+	setStackedPoints: noop,
 	
 	getSymbol: noop,
 	

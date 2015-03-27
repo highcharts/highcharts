@@ -7,7 +7,7 @@
  * License: www.highcharts.com/license
  */
 
-/*global Highcharts*/
+/*global Highcharts, HighchartsAdapter*/
 (function (H) {
 	"use strict";
 
@@ -120,21 +120,44 @@
 			}
 			return color;
 		},
+		/*
+		 * Return an intermediate color between two colors, according to pos where 0
+		 * is the from color and 1 is the to color.
+		 */
 		tweenColors: function (from, to, pos) {
 			// Check for has alpha, because rgba colors perform worse due to lack of
 			// support in WebKit.
-			var hasAlpha = (to.rgba[3] !== 1 || from.rgba[3] !== 1);
+			var hasAlpha,
+				ret;
 
-			if (from.rgba.length === 0 || to.rgba.length === 0) {
-				return 'none';
+			// Unsupported color, return to-color (#3920)
+			if (!to.rgba.length || !from.rgba.length) {
+				Highcharts.error(23);
+				ret = to.raw;
+
+			// Interpolate
+			} else {
+				from = from.rgba;
+				to = to.rgba;
+				hasAlpha = (to[3] !== 1 || from[3] !== 1);
+				ret = (hasAlpha ? 'rgba(' : 'rgb(') + 
+					Math.round(to[0] + (from[0] - to[0]) * (1 - pos)) + ',' + 
+					Math.round(to[1] + (from[1] - to[1]) * (1 - pos)) + ',' + 
+					Math.round(to[2] + (from[2] - to[2]) * (1 - pos)) + 
+					(hasAlpha ? (',' + (to[3] + (from[3] - to[3]) * (1 - pos))) : '') + ')';
 			}
-			return (hasAlpha ? 'rgba(' : 'rgb(') + 
-				Math.round(to.rgba[0] + (from.rgba[0] - to.rgba[0]) * (1 - pos)) + ',' + 
-				Math.round(to.rgba[1] + (from.rgba[1] - to.rgba[1]) * (1 - pos)) + ',' + 
-				Math.round(to.rgba[2] + (from.rgba[2] - to.rgba[2]) * (1 - pos)) + 
-				(hasAlpha ? (',' + (to.rgba[3] + (from.rgba[3] - to.rgba[3]) * (1 - pos))) : '') + ')';
+			return ret;
 		}
 	};
+
+	/**
+	 * Handle animation of the color attributes directly
+	 */
+	each(['fill', 'stroke'], function (prop) {
+		HighchartsAdapter.addAnimSetter(prop, function (fx) {
+			fx.elem.attr(prop, colorAxisMethods.tweenColors(H.Color(fx.start), H.Color(fx.end), fx.pos));
+		});
+	});
 
 	// The series prototype
 	H.seriesTypes.solidgauge = H.extendClass(H.seriesTypes.gauge, {
@@ -162,22 +185,30 @@
 				yAxis = series.yAxis,
 				center = yAxis.center,
 				options = series.options,
-				renderer = series.chart.renderer;
+				renderer = series.chart.renderer,
+				overshoot = options.overshoot,
+				overshootVal = overshoot && typeof overshoot === 'number' ? overshoot / 180 * Math.PI : 0;
 
 			H.each(series.points, function (point) {
 				var graphic = point.graphic,
 					rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true),
-					radius = (pInt(pick(options.radius, 100)) * center[2]) / 200,
-					innerRadius = (pInt(pick(options.innerRadius, 60)) * center[2]) / 200,
+					radius = (pInt(pick(point.options.radius, options.radius, 100)) * center[2]) / 200, // docs: series<solidgauge>.data.radius http://jsfiddle.net/highcharts/7nwebu4b/
+					innerRadius = (pInt(pick(point.options.innerRadius, options.innerRadius, 60)) * center[2]) / 200, // docs: series<solidgauge>.data.innerRadius
 					shapeArgs,
 					d,
 					toColor = yAxis.toColor(point.y, point),
 					fromColor;
 
+				if (toColor === 'none') { // #3708
+					toColor = point.color || series.color || 'none';
+				}
 				if (toColor !== 'none') {
 					fromColor = point.color;
 					point.color = toColor;
 				}
+
+				// Handle overshoot and clipping to axis max/min
+				rotation = Math.max(yAxis.startAngleRad - overshootVal, Math.min(yAxis.endAngleRad + overshootVal, rotation));
 
 				// Handle the wrap option
 				if (options.wrap === false) {
@@ -194,41 +225,44 @@
 					maxAngle = minAngle + 2 * Math.PI;
 				}
 
-				shapeArgs = {
+				point.shapeArgs = shapeArgs = {
 					x: center[0],
 					y: center[1],
 					r: radius,
 					innerR: innerRadius,
 					start: minAngle,
-					end: maxAngle 
+					end: maxAngle,
+					fill: toColor
 				};
+				point.startR = radius; // For PieSeries.animate
 
 				if (graphic) {
 					d = shapeArgs.d;
-
-					/*jslint unparam: true*/
-					graphic.attr({
-						fill: point.color
-					}).animate(shapeArgs, {
-						step: function (value, fx) {
-							graphic.attr('fill', colorAxisMethods.tweenColors(H.Color(fromColor), H.Color(toColor), fx.pos));
-						}
-					});
-					/*jslint unparam: false*/
+					graphic.animate(shapeArgs);
 					shapeArgs.d = d; // animate alters it
 				} else {					
 					point.graphic = renderer.arc(shapeArgs)
 						.attr({
 							stroke: options.borderColor || 'none',
 							'stroke-width': options.borderWidth || 0,
-							fill: point.color,
+							fill: toColor,
 							'sweep-flag': 0
 						})
 						.add(series.group);
 				}
 			});
 		},
-		animate: null
+
+		/**
+		 * Extend the pie slice animation by animating from start angle and up
+		 */
+		animate: function (init) {
+
+			if (!init) {
+				this.startAngleRad = this.yAxis.startAngleRad;
+				H.seriesTypes.pie.prototype.animate.call(this, init);
+			}
+		}
 	});
 
 }(Highcharts));

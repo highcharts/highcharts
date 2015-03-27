@@ -1,7 +1,7 @@
 $(function () {
     $('#container').highcharts({
         data: {
-            table: document.getElementById('datatable')
+            table: 'datatable'
         },
         chart: {
             type: 'column'

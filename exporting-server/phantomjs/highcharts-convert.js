@@ -18,10 +18,14 @@
 	"use strict";
 
 	var config = {
-			/* define locations of mandatory javascript files */
+			/* define locations of mandatory javascript files.
+			 * Depending on purchased license change the HIGHCHARTS property to 
+			 * highcharts.js or highstock.js 
+			 */
 			files: { 
 				JQUERY: 'jquery.1.9.1.min.js',
 				HIGHCHARTS: 'highstock.js',
+				/* HIGHCHARTS: 'highcharts.js',*/
 				HIGHCHARTS_MORE: 'highcharts-more.js',
 				HIGHCHARTS_DATA: 'data.js',
 				HIGHCHARTS_DRILLDOWN: 'drilldown.js',
@@ -30,7 +34,8 @@
 				HIGHCHARTS_3D: 'highcharts-3d.js',
 				HIGHCHARTS_NODATA: 'no-data-to-display.js',
 				/*HIGHCHARTS_MAP: 'map.js',*/
-				HIGHCHARTS_SOLID_GAUGE: 'solid-gauge.js'
+				HIGHCHARTS_SOLID_GAUGE: 'solid-gauge.js',
+				BROKEN_AXIS: 'broken-axis.js'
 			},
 			TIMEOUT: 5000 /* 5 seconds timout for loading images */
 		},
@@ -447,7 +452,7 @@
 		};
 
 		if (params.length < 1) {
-			exit("Error: Insuficient parameters");
+			exit("Error: Insufficient parameters");
 		} else {
 			input = params.infile;
 			output = params.outfile;
@@ -511,7 +516,7 @@
 
 		server.listen(host + ':' + port,
 			function (request, response) {
-				var jsonStr = request.post,
+				var jsonStr = request.postRaw || request.post,
 					params,
 					msg;
 				try {

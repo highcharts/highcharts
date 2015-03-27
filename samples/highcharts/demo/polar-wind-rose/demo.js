@@ -27,7 +27,6 @@ $(function () {
         },
 
         legend: {
-            reversed: true,
             align: 'right',
             verticalAlign: 'top',
             y: 100,
@@ -49,7 +48,8 @@ $(function () {
                 formatter: function () {
                     return this.value + '%';
                 }
-            }
+            },
+            reversedStacks: false
         },
 
         tooltip: {

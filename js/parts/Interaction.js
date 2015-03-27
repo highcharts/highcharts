@@ -14,10 +14,6 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 				var target = e.target,
 				point;
 
-				if (chart.hoverSeries !== series) {
-					series.onMouseOver();
-				}
-
 				while (target && !point) {
 					point = target.point;
 					target = target.parentNode;
@@ -214,8 +210,9 @@ extend(Legend.prototype, {
 
 		addEvent(item.checkbox, 'click', function (event) {
 			var target = event.target;
-			fireEvent(item, 'checkboxClick', {
-					checked: target.checked
+			fireEvent(item.series || item, 'checkboxClick', { // #3712
+					checked: target.checked,
+					item: item
 				},
 				function () {
 					item.select();
@@ -340,9 +337,12 @@ extend(Chart.prototype, {
 				halfPointRange = (axis.pointRange || 0) / 2,
 				extremes = axis.getExtremes(),
 				newMin = axis.toValue(startPos - mousePos, true) + halfPointRange,
-				newMax = axis.toValue(startPos + chart[isX ? 'plotWidth' : 'plotHeight'] - mousePos, true) - halfPointRange;
+				newMax = axis.toValue(startPos + chart[isX ? 'plotWidth' : 'plotHeight'] - mousePos, true) - halfPointRange,
+				goingLeft = startPos > mousePos; // #3613
 
-			if (axis.series.length && newMin > mathMin(extremes.dataMin, extremes.min) && newMax < mathMax(extremes.dataMax, extremes.max)) {
+			if (axis.series.length && 
+					(goingLeft || newMin > mathMin(extremes.dataMin, extremes.min)) && 
+					(!goingLeft || newMax < mathMax(extremes.dataMax, extremes.max))) {
 				axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
 				doRedraw = true;
 			}
@@ -404,6 +404,10 @@ extend(Point.prototype, {
 			chart = series.chart,
 			tooltip = chart.tooltip,
 			hoverPoint = chart.hoverPoint;
+
+		if (chart.hoverSeries !== series) {
+			series.onMouseOver();
+		}		
 
 		// set normal state to previous series
 		if (hoverPoint && hoverPoint !== point) {
@@ -565,7 +569,7 @@ extend(Point.prototype, {
 		if (haloOptions && haloOptions.size) {
 			if (!halo) {
 				series.halo = halo = chart.renderer.path()
-					.add(series.seriesGroup);
+					.add(chart.seriesGroup);
 			}
 			halo.attr(extend({
 				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
@@ -677,7 +681,7 @@ extend(Series.prototype, {
 			}
 
 			if (state) {
-				lineWidth = (stateOptions[state].lineWidth || lineWidth) + (stateOptions[state].lineWidthPlus || 0);
+				lineWidth = stateOptions[state].lineWidth || lineWidth + (stateOptions[state].lineWidthPlus || 0); // #4035
 			}
 
 			if (graph && !graph.dashstyle) { // hover is turned off for dashed lines in VML
@@ -720,7 +724,7 @@ extend(Series.prototype, {
 
 
 		// hide tooltip (#1361)
-		if (chart.hoverSeries === series) {
+		if (chart.hoverSeries === series || (chart.hoverPoint && chart.hoverPoint.series) === series) {
 			series.onMouseOut();
 		}
 
@@ -754,73 +758,6 @@ extend(Series.prototype, {
 		}
 
 		fireEvent(series, showOrHide);
-	},
-
-	/**
-	 * Memorize tooltip texts and positions
-	 */
-	setTooltipPoints: function (renew) {
-		var series = this,
-			points = [],
-			pointsLength,
-			low,
-			high,
-			xAxis = series.xAxis,
-			halfPointRange = ((xAxis && xAxis.pointRange) || 0) / 2,
-			xExtremes = xAxis && xAxis.getExtremes(),
-			axisLength = xAxis ? (xAxis.tooltipLen || xAxis.len) : series.chart.plotSizeX, // tooltipLen and tooltipPosName used in polar
-			point,
-			pointX,
-			nextPoint,
-			i,
-			tooltipPoints = []; // a lookup array for each pixel in the x dimension
-
-		// don't waste resources if tracker is disabled
-		if (series.options.enableMouseTracking === false || series.singularTooltips) {
-			return;
-		}
-
-		// renew
-		if (renew) {
-			series.tooltipPoints = null;
-		}
-
-		// Filter out null values
-		points = this.getValidPoints();
-
-		// Reverse the points in case the X axis is reversed
-		if (xAxis && xAxis.reversed) {
-			points = points.reverse();
-		}
-
-		// Polar needs additional shaping
-		if (series.orderTooltipPoints) {
-			series.orderTooltipPoints(points);
-		}
-
-		// Assign each pixel position to the nearest point
-		pointsLength = points.length;
-		for (i = 0; i < pointsLength; i++) {
-			point = points[i];
-			pointX = point.x;
-			if (pointX >= xExtremes.min - halfPointRange && pointX <= xExtremes.max + halfPointRange) { // #1149, #3152
-				nextPoint = points[i + 1];
-
-				// Set this range's low to the last range's high plus one
-				low = high === UNDEFINED ? 0 : high + 1;
-				// Now find the new high
-				high = points[i + 1] ?
-					mathMin(mathMax(0, mathFloor( // #2070
-						(point.clientX + (nextPoint ? (nextPoint.wrappedClientX || nextPoint.clientX) : axisLength)) / 2
-					)), axisLength) :
-					axisLength;
-
-				while (low >= 0 && low <= high) {
-					tooltipPoints[low++] = point;
-				}
-			}
-		}
-		series.tooltipPoints = tooltipPoints;
 	},
 
 	/**

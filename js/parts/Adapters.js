@@ -17,7 +17,7 @@ if (globalAdapter) {
 var adapterRun = adapter.adapterRun,
 	getScript = adapter.getScript,
 	inArray = adapter.inArray,
-	each = adapter.each,
+	each = Highcharts.each = adapter.each,
 	grep = adapter.grep,
 	offset = adapter.offset,
 	map = adapter.map,

@@ -29,25 +29,6 @@ $(function () {
         {
             "hc-key": "nz-6476",
             "value": 6
-        },
-        {
-            "hc-key": "nz-6479",
-            "value": 7
-        },
-        {
-            "hc-key": "nz-6480",
-            "value": 8
-        },
-        {
-            "hc-key": "nz-6481",
-            "value": 9
-        },
-        {
-            "hc-key": "nz-6482",
-            "value": 10
-        },
-        {
-            "value": 11
         }
     ];
 
@@ -87,13 +68,6 @@ $(function () {
                 enabled: true,
                 format: '{point.name}'
             }
-        }, {
-            name: 'Separators',
-            type: 'mapline',
-            data: Highcharts.geojson(Highcharts.maps['countries/ck/ck-all'], 'mapline'),
-            color: 'silver',
-            showInLegend: false,
-            enableMouseTracking: false
         }]
     });
 });

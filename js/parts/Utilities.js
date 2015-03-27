@@ -4,7 +4,7 @@
  * @param {Object} a The object to be extended
  * @param {Object} b The object to add to the first one
  */
-function extend(a, b) {
+var extend = Highcharts.extend = function (a, b) {
 	var n;
 	if (!a) {
 		a = {};
@@ -13,7 +13,7 @@ function extend(a, b) {
 		a[n] = b[n];
 	}
 	return a;
-}
+};
 	
 /**
  * Deep merge two or more objects and return a third object. If the first argument is
@@ -40,8 +40,8 @@ function merge() {
 					value = original[key];
 
 					// Copy the contents of objects, but not arrays or DOM nodes
-					if (value && typeof value === 'object' && Object.prototype.toString.call(value) !== '[object Array]'
-							&& key !== 'renderTo' && typeof value.nodeType !== 'number') {
+					if (value && typeof value === 'object' && Object.prototype.toString.call(value) !== '[object Array]' &&
+							key !== 'renderTo' && typeof value.nodeType !== 'number') {
 						copy[key] = doCopy(copy[key] || {}, value);
 				
 					// Primitives and arrays are copied over directly
@@ -183,7 +183,7 @@ function splat(obj) {
 /**
  * Return the first value that is defined. Like MooTools' $.pick.
  */
-function pick() {
+var pick = Highcharts.pick = function () {
 	var args = arguments,
 		i,
 		arg,
@@ -194,7 +194,7 @@ function pick() {
 			return arg;
 		}
 	}
-}
+};
 
 /**
  * Set CSS on a given element
@@ -265,13 +265,18 @@ function pad(number, length) {
  * as the original function, except that the original function is unshifted and passed as the first 
  * argument. 
  */
-function wrap(obj, method, func) {
+var wrap = Highcharts.wrap = function (obj, method, func) {
 	var proceed = obj[method];
 	obj[method] = function () {
 		var args = Array.prototype.slice.call(arguments);
 		args.unshift(proceed);
 		return func.apply(this, args);
 	};
+};
+
+
+function getTZOffset(timestamp) {
+	return ((getTimezoneOffset && getTimezoneOffset(timestamp)) || timezoneOffset || 0) * 60000;
 }
 
 /**
@@ -286,7 +291,7 @@ dateFormat = function (format, timestamp, capitalize) {
 	}
 	format = pick(format, '%Y-%m-%d %H:%M:%S');
 
-	var date = new Date(timestamp - timezoneOffset),
+	var date = new Date(timestamp - getTZOffset(timestamp)),
 		key, // used in for constuct below
 		// get the basic time values
 		hours = date[getHours](),
@@ -432,8 +437,10 @@ function getMagnitude(num) {
  * @param {Number} magnitude
  * @param {Object} options
  */
-function normalizeTickInterval(interval, multiples, magnitude, allowDecimals) {
-	var normalized, i;
+function normalizeTickInterval(interval, multiples, magnitude, allowDecimals, preventExceed) {
+	var normalized, 
+		i,
+		retInterval = interval;
 
 	// round to a tenfold of 1, 2, 2.5 or 5
 	magnitude = pick(magnitude, 1);
@@ -455,16 +462,17 @@ function normalizeTickInterval(interval, multiples, magnitude, allowDecimals) {
 
 	// normalize the interval to the nearest multiple
 	for (i = 0; i < multiples.length; i++) {
-		interval = multiples[i];
-		if (normalized <= (multiples[i] + (multiples[i + 1] || multiples[i])) / 2) {
+		retInterval = multiples[i];
+		if ((preventExceed && retInterval * magnitude >= interval) || // only allow tick amounts smaller than natural
+			(!preventExceed && (normalized <= (multiples[i] + (multiples[i + 1] || multiples[i])) / 2))) {
 			break;
 		}
 	}
 
 	// multiply back to the correct magnitude
-	interval *= magnitude;
-
-	return interval;
+	retInterval *= magnitude;
+	
+	return retInterval;
 }
 
 
@@ -622,13 +630,12 @@ timeUnits = {
  * @param {String} decPoint The decimal point, defaults to the one given in the lang options
  * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
  */
-// docs: Overridable by wrap. Demo at /members/highcharts-numberformat
 Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
 	var lang = defaultOptions.lang,
 		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
 		n = +number || 0,
 		c = decimals === -1 ?
-			(n.toString().split('.')[1] || '').length : // preserve decimals
+			mathMin((n.toString().split('.')[1] || '').length, 20) : // Preserve decimals. Not huge numbers (#3793).
 			(isNaN(decimals = mathAbs(decimals)) ? 2 : decimals),
 		d = decPoint === undefined ? lang.decimalPoint : decPoint,
 		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,

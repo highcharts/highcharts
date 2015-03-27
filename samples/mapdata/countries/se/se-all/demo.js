@@ -43,11 +43,11 @@ $(function () {
             "value": 9
         },
         {
-            "hc-key": "se-gv",
+            "hc-key": "se-ko",
             "value": 10
         },
         {
-            "hc-key": "se-ko",
+            "hc-key": "se-gv",
             "value": 11
         },
         {
@@ -63,15 +63,15 @@ $(function () {
             "value": 14
         },
         {
-            "hc-key": "se-sd",
+            "hc-key": "se-vm",
             "value": 15
         },
         {
-            "hc-key": "se-vm",
+            "hc-key": "se-ha",
             "value": 16
         },
         {
-            "hc-key": "se-ha",
+            "hc-key": "se-sd",
             "value": 17
         },
         {

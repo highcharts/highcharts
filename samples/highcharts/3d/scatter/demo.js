@@ -1,7 +1,7 @@
 $(function () {
     $('#container').highcharts({
         chart: {
-            margin: [150, 75, 75, 75],
+            margin: [150, 75, 100, 75],
             type: 'scatter',
             options3d: {
                 enabled: true,

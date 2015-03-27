@@ -31,19 +31,19 @@ $(function () {
             "value": 6
         },
         {
-            "hc-key": "eg-ss",
+            "hc-key": "eg-qh",
             "value": 7
         },
         {
-            "hc-key": "eg-qh",
+            "hc-key": "eg-ql",
             "value": 8
         },
         {
-            "hc-key": "eg-ql",
+            "hc-key": "eg-sq",
             "value": 9
         },
         {
-            "hc-key": "eg-sq",
+            "hc-key": "eg-ss",
             "value": 10
         },
         {

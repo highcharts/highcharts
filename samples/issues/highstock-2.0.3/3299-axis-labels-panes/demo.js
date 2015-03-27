@@ -34,7 +34,6 @@ $(function() {
 		$('#container').highcharts('StockChart', {
 		    
 		    rangeSelector: {
-				inputEnabled: $('#container').width() > 480,
 		        selected: 1
 		    },
 

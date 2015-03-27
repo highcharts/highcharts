@@ -8,7 +8,10 @@ var units = [].concat(defaultDataGroupingUnits), // copy
 	// is a pattern that is repeated several places in Highcharts. Consider making this
 	// a global utility method.
 	numExt = function (extreme) {
-		return Math[extreme].apply(0, grep(arguments, function (n) { return typeof n === 'number'; }));
+		var numbers = grep(arguments, function (n) { return typeof n === 'number'; });
+		if (numbers.length) {
+			return Math[extreme].apply(0, numbers);
+		}
 	};
 
 // add more resolution to units
@@ -168,7 +171,7 @@ Scroller.prototype = {
 		if (!scroller.rendered) {
 			// the group
 			handles[index] = renderer.g('navigator-handle-' + ['left', 'right'][index])
-				.css({ cursor: 'e-resize' })
+				.css({ cursor: 'ew-resize' })
 				.attr({ zIndex: 4 - index }) // zIndex = 3 for right handle, 4 for left
 				.add();
 
@@ -361,7 +364,10 @@ Scroller.prototype = {
 					.attr({
 						fill: navigatorOptions.maskFill
 					}).add(navigatorGroup);
-				if (!navigatorOptions.maskInside) {
+				
+				if (navigatorOptions.maskInside) {
+					scroller.leftShade.css({ cursor: 'ew-resize '});
+				} else {
 					scroller.rightShade = renderer.rect()
 						.attr({
 							fill: navigatorOptions.maskFill
@@ -438,13 +444,13 @@ Scroller.prototype = {
 					height: height
 				});
 			}
-
+	
 			scroller.outline[verb]({ d: [
 				M,
 				scrollerLeft, outlineTop, // left
 				L,
-				navigatorLeft + zoomedMin + halfOutline, outlineTop, // upper left of zoomed range
-				navigatorLeft + zoomedMin + halfOutline, outlineTop + outlineHeight, // lower left of z.r.
+				navigatorLeft + zoomedMin - halfOutline, outlineTop, // upper left of zoomed range
+				navigatorLeft + zoomedMin - halfOutline, outlineTop + outlineHeight, // lower left of z.r.
 				L,
 				navigatorLeft + zoomedMax - halfOutline, outlineTop + outlineHeight, // lower right of z.r.
 				L,
@@ -579,8 +585,6 @@ Scroller.prototype = {
 			top = scroller.top,
 			dragOffset,
 			hasDragged,
-			bodyStyle = document.body.style,
-			defaultBodyCursor,
 			baseSeries = scroller.baseSeries;
 
 		/**
@@ -630,13 +634,6 @@ Scroller.prototype = {
 					scroller.grabbedCenter = chartX;
 					scroller.fixedWidth = range;
 
-					// In SVG browsers, change the cursor. IE6 & 7 produce an error on changing the cursor,
-					// and IE8 isn't able to show it while dragging anyway.
-					if (chart.renderer.isSVG) {
-						defaultBodyCursor = bodyStyle.cursor;
-						bodyStyle.cursor = 'ew-resize';
-					}
-
 					dragOffset = chartX - zoomedMin;
 
 
@@ -669,7 +666,7 @@ Scroller.prototype = {
 						left = 0;
 					} else if (left + range >= navigatorWidth) {
 						left = navigatorWidth - range;
-						fixedMax = xAxis.dataMax; // #2293
+						fixedMax = scroller.getUnionExtremes().dataMax; // #2293, #3543
 					}
 					if (left !== zoomedMin) { // it has actually moved
 						scroller.fixedWidth = range; // #1370
@@ -778,7 +775,6 @@ Scroller.prototype = {
 			if (e.type !== 'mousemove') {
 				scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = scroller.fixedWidth =
 					scroller.fixedExtreme = scroller.otherHandlePos = hasDragged = dragOffset = null;
-				bodyStyle.cursor = defaultBodyCursor || '';
 			}
 
 		};
@@ -794,7 +790,9 @@ Scroller.prototype = {
 		if (scroller.navigatorEnabled) {
 			// an x axis is required for scrollbar also
 			scroller.xAxis = xAxis = new Axis(chart, merge({
-				ordinal: baseSeries && baseSeries.xAxis.options.ordinal // inherit base xAxis' ordinal option
+				// inherit base xAxis' break and ordinal options
+				breaks: baseSeries && baseSeries.xAxis.options.breaks,
+				ordinal: baseSeries && baseSeries.xAxis.options.ordinal 
 			}, navigatorOptions.xAxis, {
 				id: 'navigator-x-axis',
 				isX: true,
@@ -869,7 +867,7 @@ Scroller.prototype = {
 			var legend = this.legend,
 				legendOptions = legend.options;
 
-			proceed.call(this);
+			proceed.apply(this, [].slice.call(arguments, 1));
 
 			// Compute the top position
 			scroller.top = top = scroller.navigatorOptions.top ||

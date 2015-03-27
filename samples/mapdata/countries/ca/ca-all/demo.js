@@ -27,35 +27,35 @@ $(function () {
             "value": 5
         },
         {
-            "hc-key": "ca-on",
+            "hc-key": "ca-mb",
             "value": 6
         },
         {
-            "hc-key": "ca-qc",
+            "hc-key": "ca-on",
             "value": 7
         },
         {
-            "hc-key": "ca-nl",
+            "hc-key": "ca-qc",
             "value": 8
         },
         {
-            "hc-key": "ca-nb",
+            "hc-key": "ca-nl",
             "value": 9
         },
         {
-            "hc-key": "ca-ns",
+            "hc-key": "ca-nb",
             "value": 10
         },
         {
-            "hc-key": "ca-yt",
+            "hc-key": "ca-ns",
             "value": 11
         },
         {
-            "hc-key": "ca-mb",
+            "hc-key": "ca-pe",
             "value": 12
         },
         {
-            "hc-key": "ca-pe",
+            "hc-key": "ca-yt",
             "value": 13
         }
     ];

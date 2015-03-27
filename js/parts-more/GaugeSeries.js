@@ -16,9 +16,6 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 		borderColor: 'silver',
 		borderRadius: 3,
 		crop: false,
-		style: {
-			fontWeight: 'bold'
-		},
 		verticalAlign: 'top',
 		zIndex: 2
 	},

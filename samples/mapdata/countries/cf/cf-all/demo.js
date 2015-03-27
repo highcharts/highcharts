@@ -3,71 +3,71 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "cf-uk",
+            "hc-key": "cf-vk",
             "value": 0
         },
         {
-            "hc-key": "cf-ac",
+            "hc-key": "cf-hk",
             "value": 1
         },
         {
-            "hc-key": "cf-bb",
+            "hc-key": "cf-hm",
             "value": 2
         },
         {
-            "hc-key": "cf-vk",
+            "hc-key": "cf-mb",
             "value": 3
         },
         {
-            "hc-key": "cf-hk",
+            "hc-key": "cf-bg",
             "value": 4
         },
         {
-            "hc-key": "cf-hm",
+            "hc-key": "cf-mp",
             "value": 5
         },
         {
-            "hc-key": "cf-mb",
+            "hc-key": "cf-lb",
             "value": 6
         },
         {
-            "hc-key": "cf-bg",
+            "hc-key": "cf-hs",
             "value": 7
         },
         {
-            "hc-key": "cf-mp",
+            "hc-key": "cf-op",
             "value": 8
         },
         {
-            "hc-key": "cf-lb",
+            "hc-key": "cf-se",
             "value": 9
         },
         {
-            "hc-key": "cf-hs",
+            "hc-key": "cf-nm",
             "value": 10
         },
         {
-            "hc-key": "cf-op",
+            "hc-key": "cf-kg",
             "value": 11
         },
         {
-            "hc-key": "cf-se",
+            "hc-key": "cf-kb",
             "value": 12
         },
         {
-            "hc-key": "cf-nm",
+            "hc-key": "cf-bk",
             "value": 13
         },
         {
-            "hc-key": "cf-kg",
+            "hc-key": "cf-uk",
             "value": 14
         },
         {
-            "hc-key": "cf-kb",
+            "hc-key": "cf-ac",
             "value": 15
         },
         {
-            "hc-key": "cf-bk",
+            "hc-key": "cf-bb",
             "value": 16
         }
     ];

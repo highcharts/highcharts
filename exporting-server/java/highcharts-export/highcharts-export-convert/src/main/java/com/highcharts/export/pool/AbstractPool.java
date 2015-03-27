@@ -47,7 +47,7 @@ public abstract class AbstractPool<T> implements ObjectPool<T> {
 	}
 
 	@Override
-	@Scheduled(initialDelay = 10000, fixedRate = 60000)
+	@Scheduled(initialDelay = 10000, fixedRate = 5000)
 	public void poolCleaner() throws InterruptedException, PoolException {
 
 		logger.debug("HC: queue size: " + queue.size() + " poolSize " + poolSize.get());
@@ -58,7 +58,6 @@ public abstract class AbstractPool<T> implements ObjectPool<T> {
 			T object = borrowObject();
 			if (object == null) {
 				logger.debug("HC: object is null");
-				continue;
 			} else {
 				logger.debug("HC: validating " + object.toString());
 				if (!objectFactory.validate(object)) {

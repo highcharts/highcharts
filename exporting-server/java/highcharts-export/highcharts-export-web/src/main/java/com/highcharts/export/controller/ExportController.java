@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -70,7 +71,7 @@ public class ExportController extends HttpServlet {
 		@RequestParam(value = "width", required = false) String width,
 		@RequestParam(value = "scale", required = false) String scale,
 		@RequestParam(value = "options", required = false) String options,
-        @RequestParam(value = "globaloptions", required = false) String globalOptions,
+		@RequestParam(value = "globaloptions", required = false) String globalOptions,
 		@RequestParam(value = "constr", required = false) String constructor,
 		@RequestParam(value = "callback", required = false) String callback,
 		@RequestParam(value = "callbackHC", required = false) String callbackHC,
@@ -86,24 +87,24 @@ public class ExportController extends HttpServlet {
 
 		if ("GET".equalsIgnoreCase(request.getMethod())) {
 
-            // Handle redirect downloads for Android devices, these come in without request parameters
-            String tempFile = (String) session.getAttribute("tempFile");
-            session.removeAttribute("tempFile");
+			// Handle redirect downloads for Android devices, these come in without request parameters
+			String tempFile = (String) session.getAttribute("tempFile");
+			session.removeAttribute("tempFile");
 
-            if (tempFile != null && !tempFile.isEmpty()) {
+			if (tempFile != null && !tempFile.isEmpty()) {
 				logger.debug("filename stored in session, read and stream from filesystem");				
 				String basename = FilenameUtils.getBaseName(tempFile);
 				String extension = FilenameUtils.getExtension(tempFile);
 
 				return getFile(basename, extension);
 
-            }
-        }
+			}
+		}
 
-        // check for visitors who don't know this domain is really only for the exporting service ;)
+		// check for visitors who don't know this domain is really only for the exporting service ;)
 		if (request.getParameterMap().isEmpty()) {
 			 throw new ZeroRequestParameterException();
-        }
+		}
 
 		/* Most JSONP implementations use the 'callback' request parameter and this overwrites
 		 * the original callback parameter for chart creation with Highcharts. If JSONP is
@@ -119,17 +120,17 @@ public class ExportController extends HttpServlet {
 			if (callbackHC != null) {
 				callback = callbackHC;
 			}
-        }
-       
+		}
+
 		if (isAndroid || MimeType.PDF.equals(mime) || async) {
 			randomFilename = createRandomFileName(mime.name().toLowerCase());
 		}
 
 		/* If randomFilename is not null, then we want to save the filename in session, in case of GET is used later on*/
-        if (isAndroid) {
-            logger.debug("storing randomfile in session: " +  FilenameUtils.getName(randomFilename));
-            session.setAttribute("tempFile", FilenameUtils.getName(randomFilename));
-        }
+		if (isAndroid) {
+			logger.debug("storing randomfile in session: " +  FilenameUtils.getName(randomFilename));
+			session.setAttribute("tempFile", FilenameUtils.getName(randomFilename));
+		}
 
 		String output = convert(svg, mime, width, scale, options, constructor, callback, globalOptions, randomFilename);
 		ByteArrayOutputStream stream;
@@ -138,18 +139,18 @@ public class ExportController extends HttpServlet {
 
 		if (async) {
 			String link = TempDir.getDownloadLink(randomFilename);
-            stream = new ByteArrayOutputStream();
-            if (jsonp) {
-                StringBuilder sb = new StringBuilder(jsonpCallback);
-                sb.append("('");
-                sb.append(link);
-                sb.append("')");
-                stream.write(sb.toString().getBytes("utf-8"));
-                headers.add("Content-Type", "text/javascript; charset=utf-8");
-            } else {
-                stream.write(link.getBytes("utf-8"));
-                headers.add("Content-Type", "text/html; charset=UTF-8");
-            }
+			stream = new ByteArrayOutputStream();
+			if (jsonp) {
+				StringBuilder sb = new StringBuilder(jsonpCallback);
+				sb.append("('");
+				sb.append(link);
+				sb.append("')");
+				stream.write(sb.toString().getBytes("utf-8"));
+				headers.add("Content-Type", "text/javascript; charset=utf-8");
+			} else {
+				stream.write(link.getBytes("utf-8"));
+				headers.add("Content-Type", "text/html; charset=UTF-8");
+			}
 		} else {
 			headers.add("Content-Type", mime.getType() + "; charset=utf-8");
 			if (randomFilename != null && randomFilename.equals(output)) {
@@ -160,7 +161,7 @@ public class ExportController extends HttpServlet {
 			}
 			filename = getFilename(filename);
 			headers.add("Content-Disposition",
-                   "attachment; filename=" + filename.replace(" ", "_") + "." + mime.name().toLowerCase());
+				   "attachment; filename=" + filename.replace(" ", "_") + "." + mime.name().toLowerCase());
 		}
 
 		headers.setContentLength(stream.size());
@@ -215,7 +216,7 @@ public class ExportController extends HttpServlet {
 
 		headers.add("Content-Type", mime.getType() + "; charset=utf-8");
 		headers.add("Content-Disposition",
-                   "attachment; filename=" + name + "." + extension);
+				   "attachment; filename=" + name + "." + extension);
 		headers.setContentLength(stream.size());
 
 		return new HttpEntity<byte[]>(stream.toByteArray(), headers);
@@ -239,7 +240,7 @@ public class ExportController extends HttpServlet {
 			// create a svg file out of the options
 			input = options;
 			callback = sanitize(callback);
-            globalOptions = sanitize(globalOptions);
+			globalOptions = sanitize(globalOptions);
 		} else {
 			// assume SVG conversion
 			svg = sanitize(svg);
@@ -256,7 +257,7 @@ public class ExportController extends HttpServlet {
 		if (convertSvg && mime.equals(MimeType.SVG)) {
 				output = converter.redirectSVG(input, filename);
 		} else {
-			output = converter.convert(input, mime, constructor, callback, globalOptions, parsedWidth, parsedScale, filename);
+				output = converter.convert(input, mime, constructor, callback, globalOptions, parsedWidth, parsedScale, filename);
 		}
 
 		return output;
@@ -400,7 +401,7 @@ public class ExportController extends HttpServlet {
 		ModelAndView modelAndView = new ModelAndView();
 		modelAndView.setViewName("error");
 		modelAndView.addObject("message",
-				"Something went wrong while converting. " + ex.getMessage());
+				"Something went wrong while converting. " + StringEscapeUtils.escapeHtml(ex.getMessage()));
 		response.setStatus(500);
 		return modelAndView;
 	}
@@ -415,10 +416,23 @@ public class ExportController extends HttpServlet {
 		return modelAndView;
 	}
 
+	@ExceptionHandler(IllegalStateException.class)
+	public ModelAndView handleIllegalStateException(Exception ex, HttpServletResponse response) {
+		ModelAndView modelAndView = new ModelAndView();
+		modelAndView.setViewName("error");
+		String message = "Something went wrong while converting. " + StringEscapeUtils.escapeHtml(ex.getMessage());
+		if (ex.getMessage().contains("Form too large")) {
+			message = "Sorry, you have reached the data limit, you can POST to the export server";
+		}
+		modelAndView.addObject("message", message);
+		response.setStatus(500);
+		return modelAndView;
+	}
+
 	@ExceptionHandler(ServletException.class)
 	public ModelAndView handleServletException(Exception ex, HttpServletResponse response) {
 		ModelAndView modelAndView = new ModelAndView();
-		modelAndView.addObject("message", ex.getMessage());
+		modelAndView.addObject("message", StringEscapeUtils.escapeHtml(ex.getMessage()));
 		response.setStatus(500);
 		return modelAndView;
 	}

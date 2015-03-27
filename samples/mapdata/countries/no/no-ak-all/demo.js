@@ -23,64 +23,72 @@ $(function () {
             "value": 4
         },
         {
-            "hc-key": "no-ak-239",
+            "hc-key": "no-os-219",
             "value": 5
         },
         {
-            "hc-key": "no-ak-238",
+            "hc-key": "no-ak-239",
             "value": 6
         },
         {
-            "hc-key": "no-ak-234",
+            "hc-key": "no-ak-238",
             "value": 7
         },
         {
-            "hc-key": "no-ak-235",
+            "hc-key": "no-ak-234",
             "value": 8
         },
         {
-            "hc-key": "no-ak-236",
+            "hc-key": "no-ak-235",
             "value": 9
         },
         {
-            "hc-key": "no-ak-215",
+            "hc-key": "no-ak-236",
             "value": 10
         },
         {
-            "hc-key": "no-ak-237",
+            "hc-key": "no-ak-215",
             "value": 11
         },
         {
-            "hc-key": "no-ak-233",
+            "hc-key": "no-ak-237",
             "value": 12
         },
         {
-            "hc-key": "no-ak-231",
+            "hc-key": "no-ak-233",
             "value": 13
         },
         {
-            "hc-key": "no-ak-229",
+            "hc-key": "no-ak-231",
             "value": 14
         },
         {
-            "hc-key": "no-ak-230",
+            "hc-key": "no-ak-229",
             "value": 15
         },
         {
-            "hc-key": "no-ak-228",
+            "hc-key": "no-ak-230",
             "value": 16
         },
         {
-            "hc-key": "no-ak-227",
+            "hc-key": "no-ak-228",
             "value": 17
         },
         {
-            "hc-key": "no-ak-226",
+            "hc-key": "no-ak-227",
             "value": 18
         },
         {
-            "hc-key": "no-ak-221",
+            "hc-key": "no-ak-226",
             "value": 19
+        },
+        {
+            "hc-key": "no-ak-221",
+            "value": 20
+        },
+        {
+            "hc-key": "no-os-220",
+            "value": 21
         }
     ];
 

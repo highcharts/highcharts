@@ -362,6 +362,30 @@ RangeSelector.prototype = {
 		this[name + 'DateBox'].attr({ text: dateFormat(options.inputDateFormat || '%b %e, %Y', this[name + 'Input'].HCTime) });
 	},
 
+	showInput: function (name) {
+		var inputGroup = this.inputGroup,
+			dateBox = this[name + 'DateBox'];
+
+		css(this[name + 'Input'], {
+			left: (inputGroup.translateX + dateBox.x) + PX,
+			top: inputGroup.translateY + PX,
+			width: (dateBox.width - 2) + PX,
+			height: (dateBox.height - 2) + PX,
+			border: '2px solid silver'
+		});
+	},
+
+	hideInput: function (name) {
+		if (document.activeElement === this[name + 'Input']) { // Prevent running again and again
+			css(this[name + 'Input'], {
+				border: 0,
+				width: '1px',
+				height: '1px'
+			});
+			this.setInputValue(name);
+		}
+	},
+
 	/**
 	 * Draw either the 'from' or the 'to' HTML input box of the range selector
 	 * @param {Object} name
@@ -404,6 +428,7 @@ RangeSelector.prototype = {
 				color: '#444'
 			}, chartStyle, options.inputStyle))
 			.on('click', function () {
+				rangeSelector.showInput(name); // If it is already focused, the onfocus event doesn't fire (#3713)
 				rangeSelector[name + 'Input'].focus();
 			})
 			.add(inputGroup);
@@ -430,22 +455,11 @@ RangeSelector.prototype = {
 
 		// Blow up the input box
 		input.onfocus = function () {
-			css(this, {
-				left: (inputGroup.translateX + dateBox.x) + PX,
-				top: inputGroup.translateY + PX,
-				width: (dateBox.width - 2) + PX,
-				height: (dateBox.height - 2) + PX,
-				border: '2px solid silver'
-			});
+			rangeSelector.showInput(name);
 		};
 		// Hide away the input box
 		input.onblur = function () {
-			css(this, {
-				border: 0,
-				width: '1px',
-				height: '1px'
-			});
-			rangeSelector.setInputValue(name);
+			rangeSelector.hideInput(name);
 		};
 
 		// handle changes in the input boxes
@@ -522,19 +536,24 @@ RangeSelector.prototype = {
 			inputGroup = rangeSelector.inputGroup,
 			buttonTheme = options.buttonTheme,
 			buttonPosition = options.buttonPosition || {},
-			inputEnabled = options.inputEnabled !== false,
+			inputEnabled = options.inputEnabled,
 			states = buttonTheme && buttonTheme.states,
 			plotLeft = chart.plotLeft,
 			yAlign,
 			buttonLeft,
-			buttonTop;
+			buttonTop,
+			buttonGroup = rangeSelector.group,
+			buttonBBox;
 
 
 		// create the elements
 		if (!rangeSelector.rendered) {
+
+			rangeSelector.group = buttonGroup = renderer.g('range-selector-buttons').add();
+
 			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, pick(buttonPosition.x, plotLeft), pick(buttonPosition.y, chart.plotTop - 35) + 15)
 				.css(options.labelStyle)
-				.add();
+				.add(buttonGroup);
 
 			// button starting position
 			buttonLeft = pick(buttonPosition.x, plotLeft) + rangeSelector.zoomText.getBBox().width + 5;
@@ -557,7 +576,7 @@ RangeSelector.prototype = {
 					.css({
 						textAlign: 'center'
 					})
-					.add();
+					.add(buttonGroup);
 
 				// increase button position for the next button
 				buttonLeft += buttons[i].width + pick(options.buttonSpacing, 5);
@@ -571,7 +590,7 @@ RangeSelector.prototype = {
 
 			// first create a wrapper outside the container in order to make
 			// the inputs work and make export correct
-			if (inputEnabled) {
+			if (inputEnabled !== false) {
 				rangeSelector.div = div = createElement('div', null, {
 					position: 'relative',
 					height: 0,
@@ -590,17 +609,23 @@ RangeSelector.prototype = {
 			}
 		}
 		
-		if (inputEnabled) {
+		if (inputEnabled !== false) {
 		
 			// Update the alignment to the updated spacing box
 			yAlign = chart.plotTop - 45;		
 			inputGroup.align(extend({
 				y: yAlign,
 				width: inputGroup.offset,
-				// detect collision with the exporting buttons
+				// Detect collision with the exporting buttons
 				x: navButtonOptions && (yAlign < (navButtonOptions.y || 0) + navButtonOptions.height - chart.spacing[0]) ? 
 					-40 : 0
 			}, options.inputPosition), true, chart.spacingBox);
+
+			// Hide if overlapping - inputEnabled is null or undefined
+			if (!defined(inputEnabled)) {
+				buttonBBox = buttonGroup.getBBox();
+				inputGroup[inputGroup.translateX < buttonBBox.x + buttonBBox.width + 10 ? 'hide' : 'show']();
+			}
 	
 			// Set or reset the input values
 			rangeSelector.setInputValue('min', min);

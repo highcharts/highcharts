@@ -1,6 +1,4 @@
 $(function () {
-    // get the jQuery wrapper
-    var $report = $('#report');
 
     // create the chart
     $('#container').highcharts({
@@ -14,7 +12,25 @@ $(function () {
                 point: {
                     events: {
                         select: function () {
-                            $report.html(this.category + ': ' + this.y + ' was last selected');
+                            var text = this.category + ': ' + this.y + ' was last selected',
+                                chart = this.series.chart;
+                            if (!chart.lbl) {
+                                chart.lbl = chart.renderer.label(text, 100, 70)
+                                    .attr({
+                                        padding: 10,
+                                        r: 5,
+                                        fill: Highcharts.getOptions().colors[1],
+                                        zIndex: 5
+                                    })
+                                    .css({
+                                        color: '#FFFFFF'
+                                    })
+                                    .add();
+                            } else {
+                                chart.lbl.attr({
+                                    text: text
+                                });
+                            }
                         }
                     }
                 }

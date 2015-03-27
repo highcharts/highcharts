@@ -49,6 +49,7 @@ var ColumnSeries = extendClass(Series, {
 		r: 'borderRadius'
 	},
 	cropShoulder: 0,
+	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	negStacks: true, // use separate negative stacks, unlike area stacks where a negative 
 		// point is substracted from previous (#1910)
@@ -149,7 +150,7 @@ var ColumnSeries = extendClass(Series, {
 			options = series.options,
 			borderWidth = series.borderWidth = pick(
 				options.borderWidth, 
-				series.activePointCount > 0.5 * series.xAxis.len ? 0 : 1
+				series.closestPointRange * series.xAxis.transA < 2 ? 0 : 1 // #3635
 			),
 			yAxis = series.yAxis,
 			threshold = options.threshold,
@@ -162,8 +163,11 @@ var ColumnSeries = extendClass(Series, {
 			xCrisp = -(borderWidth % 2 ? 0.5 : 0),
 			yCrisp = borderWidth % 2 ? 0.5 : 1;
 
-		if (chart.renderer.isVML && chart.inverted) {
-			yCrisp += 1;
+		if (chart.inverted) {
+			translatedThreshold -= 0.5; // #3355
+			if (chart.renderer.isVML) {
+				yCrisp += 1;
+			}
 		}
 
 		// When the pointPadding is 0, we want the columns to be packed tightly, so we allow individual
@@ -202,9 +206,9 @@ var ColumnSeries = extendClass(Series, {
 			point.barX = barX;
 			point.pointWidth = pointWidth;
 
-			// Fix the tooltip on center of grouped columns (#1216, #424)
+			// Fix the tooltip on center of grouped columns (#1216, #424, #3648)
 			point.tooltipPos = chart.inverted ? 
-				[yAxis.len - plotY, series.xAxis.len - barX - barW / 2] : 
+				[yAxis.len + yAxis.pos - chart.plotLeft - plotY, series.xAxis.len - barX - barW / 2] : 
 				[barX + barW / 2, plotY + yAxis.pos - chart.plotTop];
 
 			// Round off to obtain crisp edges and avoid overlapping with neighbours (#2694)
@@ -213,7 +217,7 @@ var ColumnSeries = extendClass(Series, {
 			barW = right - barX;
 
 			fromTop = mathAbs(barY) < 0.5;
-			bottom = mathRound(barY + barH) + yCrisp;
+			bottom = mathMin(mathRound(barY + barH) + yCrisp, 9e4); // #3575
 			barY = mathRound(barY) + yCrisp;
 			barH = bottom - barY;
 
@@ -284,8 +288,8 @@ var ColumnSeries = extendClass(Series, {
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
-						.attr(pointAttr)
 						.attr(borderAttr)
+						.attr(pointAttr)
 						.add(series.group)
 						.shadow(options.shadow, null, options.stacking && !options.borderRadius);
 				}

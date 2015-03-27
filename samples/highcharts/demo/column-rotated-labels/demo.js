@@ -60,12 +60,11 @@ $(function () {
                 rotation: -90,
                 color: '#FFFFFF',
                 align: 'right',
-                x: 4,
-                y: 10,
+                format: '{point.y:.1f}', // one decimal
+                y: 10, // 10 pixels down from the top
                 style: {
                     fontSize: '13px',
-                    fontFamily: 'Verdana, sans-serif',
-                    textShadow: '0 0 3px black'
+                    fontFamily: 'Verdana, sans-serif'
                 }
             }
         }]

@@ -153,7 +153,8 @@ extend(Point.prototype, {
 			graphic = point.graphic,
 			i,
 			chart = series.chart,
-			seriesOptions = series.options;
+			seriesOptions = series.options,
+			names = series.xAxis && series.xAxis.names;
 
 		redraw = pick(redraw, true);
 
@@ -182,6 +183,9 @@ extend(Point.prototype, {
 			// record changes in the parallel arrays
 			i = point.index;
 			series.updateParallelArrays(point, i);
+			if (names && point.name) {
+				names[point.x] = point.name;
+			}
 
 			seriesOptions.data[i] = point.options;
 
@@ -191,8 +195,9 @@ extend(Point.prototype, {
 				chart.isDirtyBox = true;
 			}
 
-			if (seriesOptions.legendType === 'point') { // #1831, #1885
-				chart.legend.destroyItem(point);
+			if (chart.legend.display && seriesOptions.legendType === 'point') { // #1831, #1885, #3934
+				series.updateTotals();
+				chart.legend.clearItems();
 			}
 			if (redraw) {
 				chart.redraw(animation);
@@ -214,37 +219,7 @@ extend(Point.prototype, {
 	 *    configuration
 	 */
 	remove: function (redraw, animation) {
-		var point = this,
-			series = point.series,
-			points = series.points,
-			chart = series.chart,
-			i,
-			data = series.data;
-
-		setAnimation(animation, chart);
-		redraw = pick(redraw, true);
-
-		// fire the event with a default handler of removing the point
-		point.firePointEvent('remove', null, function () {
-
-			// splice all the parallel arrays
-			i = inArray(point, data);
-			if (data.length === points.length) {
-				points.splice(i, 1);
-			}
-			data.splice(i, 1);
-			series.options.data.splice(i, 1);
-			series.updateParallelArrays(point, 'splice', i, 1);
-
-			point.destroy();
-
-			// redraw
-			series.isDirty = true;
-			series.isDirtyData = true;
-			if (redraw) {
-				chart.redraw();
-			}
-		});
+		this.series.removePoint(inArray(this, this.series.data), redraw, animation);
 	}
 });
 
@@ -348,6 +323,48 @@ extend(Series.prototype, {
 	},
 
 	/**
+	 * Remove a point (rendered or not), by index
+	 */
+	removePoint: function (i, redraw, animation) {
+
+		var series = this,
+			data = series.data,
+			point = data[i],
+			points = series.points,
+			chart = series.chart,
+			remove = function () {
+
+				if (data.length === points.length) {
+					points.splice(i, 1);
+				}
+				data.splice(i, 1);
+				series.options.data.splice(i, 1);
+				series.updateParallelArrays(point || { series: series }, 'splice', i, 1);
+
+				if (point) {
+					point.destroy();
+				}
+
+				// redraw
+				series.isDirty = true;
+				series.isDirtyData = true;
+				if (redraw) {
+					chart.redraw();
+				}
+			};
+
+		setAnimation(animation, chart);
+		redraw = pick(redraw, true);
+
+		// Fire the event with a default handler of removing the point
+		if (point) {
+			point.firePointEvent('remove', null, remove);
+		} else {
+			remove();
+		}
+	},
+
+	/**
 	 * Remove a series and optionally redraw the chart
 	 *
 	 * @param {Boolean} redraw Whether to redraw the chart or wait for an explicit call
@@ -417,12 +434,11 @@ extend(Series.prototype, {
 			pointStart: this.xData[0] // when updating after addPoint
 		}, { data: this.options.data }, newOptions);
 
-		// Destroy the series and reinsert methods from the type prototype
+		// Destroy the series and delete all properties. Reinsert all methods 
+		// and properties from the new type prototype (#2270, #3719)
 		this.remove(false);
-		for (n in proto) { // Overwrite series-type specific methods (#2270)
-			if (proto.hasOwnProperty(n)) {
-				this[n] = UNDEFINED;
-			}
+		for (n in proto) {
+			this[n] = UNDEFINED;
 		}
 		extend(this, seriesTypes[newOptions.type || oldType].prototype);
 

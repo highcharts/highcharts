@@ -7,39 +7,39 @@ $(function () {
             "value": 0
         },
         {
-            "hc-key": "sr-cm",
+            "hc-key": "sr-ma",
             "value": 1
         },
         {
-            "hc-key": "sr-cr",
+            "hc-key": "sr-pr",
             "value": 2
         },
         {
-            "hc-key": "sr-pm",
+            "hc-key": "sr-br",
             "value": 3
         },
         {
-            "hc-key": "sr-sa",
+            "hc-key": "sr-si",
             "value": 4
         },
         {
-            "hc-key": "sr-wa",
+            "hc-key": "sr-cm",
             "value": 5
         },
         {
-            "hc-key": "sr-ma",
+            "hc-key": "sr-cr",
             "value": 6
         },
         {
-            "hc-key": "sr-pr",
+            "hc-key": "sr-pm",
             "value": 7
         },
         {
-            "hc-key": "sr-br",
+            "hc-key": "sr-sa",
             "value": 8
         },
         {
-            "hc-key": "sr-si",
+            "hc-key": "sr-wa",
             "value": 9
         }
     ];

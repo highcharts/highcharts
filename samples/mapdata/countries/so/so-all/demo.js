@@ -3,55 +3,55 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "so-hi",
+            "hc-key": "so-br",
             "value": 0
         },
         {
-            "hc-key": "so-sd",
+            "hc-key": "so-by",
             "value": 1
         },
         {
-            "hc-key": "so-mu",
+            "hc-key": "so-ge",
             "value": 2
         },
         {
-            "hc-key": "so-nu",
+            "hc-key": "so-bk",
             "value": 3
         },
         {
-            "hc-key": "so-jh",
+            "hc-key": "so-jd",
             "value": 4
         },
         {
-            "hc-key": "so-br",
+            "hc-key": "so-sh",
             "value": 5
         },
         {
-            "hc-key": "so-by",
+            "hc-key": "so-bn",
             "value": 6
         },
         {
-            "hc-key": "so-ge",
+            "hc-key": "so-ga",
             "value": 7
         },
         {
-            "hc-key": "so-bk",
+            "hc-key": "so-hi",
             "value": 8
         },
         {
-            "hc-key": "so-jd",
+            "hc-key": "so-sd",
             "value": 9
         },
         {
-            "hc-key": "so-sh",
+            "hc-key": "so-mu",
             "value": 10
         },
         {
-            "hc-key": "so-bn",
+            "hc-key": "so-nu",
             "value": 11
         },
         {
-            "hc-key": "so-ga",
+            "hc-key": "so-jh",
             "value": 12
         }
     ];

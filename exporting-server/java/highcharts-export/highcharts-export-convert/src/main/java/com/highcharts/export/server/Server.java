@@ -42,7 +42,7 @@ public class Server {
 		try {
 			ArrayList<String> commands = new ArrayList<String>();
 			commands.add(exec);
-			commands.add(TempDir.getPhantomJsDir().toAbsolutePath().toString() + "/" + script);
+			commands.add(script);
 			commands.add("-host");
 			commands.add(host);
 			commands.add("-port");

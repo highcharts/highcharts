@@ -4,6 +4,7 @@
   "main": "js/highcharts.src.js",
   "author": "",
   "devDependencies": {
-    "grunt": "^0.4.5"
+    "grunt": "^0.4.5",
+    "grunt-jslint": "^1.1.12"
   }
 }

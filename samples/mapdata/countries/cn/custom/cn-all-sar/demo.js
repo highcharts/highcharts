@@ -3,11 +3,11 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "cn-hb",
+            "hc-key": "cn-3664",
             "value": 0
         },
         {
-            "hc-key": "cn-3664",
+            "hc-key": "cn-hb",
             "value": 1
         },
         {
@@ -23,79 +23,79 @@ $(function () {
             "value": 4
         },
         {
-            "hc-key": "cn-gs",
+            "hc-key": "cn-3682",
             "value": 5
         },
         {
-            "hc-key": "cn-3682",
+            "hc-key": "cn-6655",
             "value": 6
         },
         {
-            "hc-key": "cn-6655",
+            "hc-key": "cn-6656",
             "value": 7
         },
         {
-            "hc-key": "cn-6656",
+            "hc-key": "cn-6658",
             "value": 8
         },
         {
-            "hc-key": "cn-6658",
+            "hc-key": "cn-6659",
             "value": 9
         },
         {
-            "hc-key": "cn-6659",
+            "hc-key": "cn-6660",
             "value": 10
         },
         {
-            "hc-key": "cn-6660",
+            "hc-key": "cn-6661",
             "value": 11
         },
         {
-            "hc-key": "cn-6661",
+            "hc-key": "cn-6662",
             "value": 12
         },
         {
-            "hc-key": "cn-6662",
+            "hc-key": "cn-6664",
             "value": 13
         },
         {
-            "hc-key": "cn-6664",
+            "hc-key": "cn-6668",
             "value": 14
         },
         {
-            "hc-key": "cn-6668",
+            "hc-key": "cn-nx",
             "value": 15
         },
         {
-            "hc-key": "cn-nx",
+            "hc-key": "cn-sa",
             "value": 16
         },
         {
-            "hc-key": "cn-sa",
+            "hc-key": "cn-ah",
             "value": 17
         },
         {
-            "hc-key": "cn-6657",
+            "hc-key": "cn-hu",
             "value": 18
         },
         {
-            "hc-key": "cn-6663",
+            "hc-key": "cn-cq",
             "value": 19
         },
         {
-            "hc-key": "cn-ah",
+            "hc-key": "cn-6657",
             "value": 20
         },
         {
-            "hc-key": "cn-hu",
+            "hc-key": "cn-6663",
             "value": 21
         },
         {
-            "hc-key": "cn-6665",
+            "hc-key": "cn-hn",
             "value": 22
         },
         {
-            "hc-key": "cn-cq",
+            "hc-key": "cn-6665",
             "value": 23
         },
         {
@@ -107,11 +107,11 @@ $(function () {
             "value": 25
         },
         {
-            "hc-key": "cn-hn",
+            "hc-key": "cn-6669",
             "value": 26
         },
         {
-            "hc-key": "cn-6669",
+            "hc-key": "cn-he",
             "value": 27
         },
         {
@@ -123,43 +123,43 @@ $(function () {
             "value": 29
         },
         {
-            "hc-key": "cn-he",
+            "hc-key": "cn-xz",
             "value": 30
         },
         {
-            "hc-key": "cn-xz",
+            "hc-key": "cn-yn",
             "value": 31
         },
         {
-            "hc-key": "cn-yn",
+            "hc-key": "cn-gd",
             "value": 32
         },
         {
-            "hc-key": "cn-gd",
+            "hc-key": "cn-bj",
             "value": 33
         },
         {
-            "hc-key": "cn-bj",
+            "hc-key": "cn-ln",
             "value": 34
         },
         {
-            "hc-key": "cn-ln",
+            "hc-key": "cn-sd",
             "value": 35
         },
         {
-            "hc-key": "cn-sd",
+            "hc-key": "cn-tj",
             "value": 36
         },
         {
-            "hc-key": "cn-tj",
+            "hc-key": "cn-js",
             "value": 37
         },
         {
-            "hc-key": "cn-js",
+            "hc-key": "cn-jx",
             "value": 38
         },
         {
-            "hc-key": "cn-jx",
+            "hc-key": "cn-gs",
             "value": 39
         },
         {
@@ -167,35 +167,35 @@ $(function () {
             "value": 40
         },
         {
-            "hc-key": "cn-qh",
+            "hc-key": "cn-xj",
             "value": 41
         },
         {
-            "hc-key": "cn-xj",
+            "hc-key": "cn-nm",
             "value": 42
         },
         {
-            "hc-key": "cn-nm",
+            "hc-key": "cn-hl",
             "value": 43
         },
         {
-            "hc-key": "cn-hl",
+            "hc-key": "cn-gz",
             "value": 44
         },
         {
-            "hc-key": "cn-gz",
+            "hc-key": "cn-gx",
             "value": 45
         },
         {
-            "hc-key": "cn-gx",
+            "hc-key": "cn-fj",
             "value": 46
         },
         {
-            "hc-key": "cn-fj",
+            "hc-key": "cn-ha",
             "value": 47
         },
         {
-            "hc-key": "cn-ha",
+            "hc-key": "cn-qh",
             "value": 48
         },
         {

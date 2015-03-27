@@ -11,51 +11,51 @@ $(function () {
             "value": 1
         },
         {
-            "hc-key": "uz-qr",
+            "hc-key": "uz-an",
             "value": 2
         },
         {
-            "hc-key": "uz-nw",
+            "hc-key": "uz-ng",
             "value": 3
         },
         {
-            "hc-key": "uz-sa",
+            "hc-key": "uz-ji",
             "value": 4
         },
         {
-            "hc-key": "uz-qa",
+            "hc-key": "uz-si",
             "value": 5
         },
         {
-            "hc-key": "uz-su",
+            "hc-key": "uz-ta",
             "value": 6
         },
         {
-            "hc-key": "uz-an",
+            "hc-key": "uz-bu",
             "value": 7
         },
         {
-            "hc-key": "uz-ng",
+            "hc-key": "uz-kh",
             "value": 8
         },
         {
-            "hc-key": "uz-ji",
+            "hc-key": "uz-qr",
             "value": 9
         },
         {
-            "hc-key": "uz-si",
+            "hc-key": "uz-nw",
             "value": 10
         },
         {
-            "hc-key": "uz-ta",
+            "hc-key": "uz-sa",
             "value": 11
         },
         {
-            "hc-key": "uz-bu",
+            "hc-key": "uz-qa",
             "value": 12
         },
         {
-            "hc-key": "uz-kh",
+            "hc-key": "uz-su",
             "value": 13
         }
     ];

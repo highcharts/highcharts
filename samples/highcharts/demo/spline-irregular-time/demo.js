@@ -30,6 +30,14 @@ $(function () {
             pointFormat: '{point.x:%e. %b}: {point.y:.2f} m'
         },
 
+        plotOptions: {
+            spline: {
+                marker: {
+                    enabled: true
+                }
+            }
+        },
+
         series: [{
             name: 'Winter 2007-2008',
             // Define the data points. All series have a dummy year

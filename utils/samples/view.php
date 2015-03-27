@@ -1,14 +1,13 @@
 <?php
 
 session_start();
-$defaults = json_decode(file_get_contents('default-settings.json'));
 
 define('FRAMEWORK', 'jQuery');
 
 require_once('functions.php');
 
 @$path = $_GET['path'];
-if (!preg_match('/^[a-z]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
+if (!preg_match('/^[a-z\-]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
 	die ('Invalid sample path input');
 }
 
@@ -108,7 +107,7 @@ function getResources() {
 				window.onload = function () {
 					document.getElementById('container').innerHTML = 
 						'<div style="margin-top: 150px; %text-align: center"><h3 style="font-size: 2em; color: red">' +
-						'jQuery is missing</h3><p>Check your settings in <code>default-settings.json</code>.</div>';
+						'jQuery is missing</h3><p>Check your settings in <code>settings.php</code>.</div>';
 				}
 				return;
 			}
@@ -153,12 +152,10 @@ function getResources() {
 					var checked = $(this).attr('checked');
 					
 					$('#source-box').css({
-						width: checked ? '50%' : 'auto',
-						'float': checked ? 'left' : 'none'
+						width: checked ? '50%' : 0
 					});
 					$('#main-content').css({
-						width: checked ? '50%' : 'auto',
-						'float': checked ? 'right' : 'none'
+						width: checked ? '50%' : '100%'
 					});
 					$.each(Highcharts.charts, function () {
 						this.reflow();
@@ -291,22 +288,6 @@ function getResources() {
 
 		<style type="text/css">
 			<?php @include("$fullpath/demo.css"); ?>
-		</style>
-
-		<style type="text/css">
-			.top-bar {
-				color: white;
-				font-family: Arial, sans-serif;
-				font-size: 0.8em;
-				padding: 0.5em;
-				height: 50px;
-				background: #34343e;
-				box-shadow: 0px 0px 8px #888;
-			}
-			li, a, p, div {
-				font-family: Arial, sans-serif;
-				font-size: 10pt;
-			}
 		</style>
 
 	</head>

@@ -11,7 +11,7 @@ $(function () {
             "value": 1
         },
         {
-            "hc-key": "al-2179",
+            "hc-key": "al-du",
             "value": 2
         },
         {
@@ -47,7 +47,7 @@ $(function () {
             "value": 10
         },
         {
-            "hc-key": "al-du",
+            "hc-key": "al-ti",
             "value": 11
         }
     ];

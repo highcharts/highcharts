@@ -6,12 +6,14 @@ header('Content-Type: text/javascript');
  * This file concatenates the part files and returns the result based on the setup in /build.xml
  */
 $target = @$_GET['target'];
-$partsDir = 'parts/';
+$partsDir = '';
 
 if ($target == 'highchartsmore') {
 	$partsDir = 'parts-more/';
 
 } else if ($target == 'highmaps') {
+	$partsDir = '';
+} else if ($target == 'highstock') {
 	$partsDir = '';
 }
 
@@ -24,10 +26,17 @@ if ($target) {
 
 	$files = $xml->xpath("/project/target[@name=\"set.properties\"]/filelist[@id=\"$target.files\"]/file");
 
-	echo "window.console && console.log('Running $target.js from parts');\n";
+	$s = "window.console && console.log('Running $target.js from parts');\n";
 	foreach ($files as $file) {
-		include($partsDir . $file['name']);
+		$s .= file_get_contents($partsDir . $file['name']);
 	}
+	// Use latest version of canvas-tools
+	$s = str_replace(
+		'http://code.highcharts.com@product.cdnpath@/@product.version@/modules/canvas-tools.js',
+		"http://code.highcharts.com/modules/canvas-tools.js",
+		$s
+	);
+	echo $s;
 
 } else { // mapdata for instance
 	echo file_get_contents('http://code.highcharts.com' . $_SERVER['REQUEST_URI']);

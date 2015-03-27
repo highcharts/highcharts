@@ -23,195 +23,195 @@ $(function () {
             "value": 4
         },
         {
-            "hc-key": "tr-ad",
+            "hc-key": "tr-tt",
             "value": 5
         },
         {
-            "hc-key": "tr-km",
+            "hc-key": "tr-ss",
             "value": 6
         },
         {
-            "hc-key": "tr-ky",
+            "hc-key": "tr-ml",
             "value": 7
         },
         {
-            "hc-key": "tr-tt",
+            "hc-key": "tr-en",
             "value": 8
         },
         {
-            "hc-key": "tr-ss",
+            "hc-key": "tr-gi",
             "value": 9
         },
         {
-            "hc-key": "tr-eg",
+            "hc-key": "tr-tb",
             "value": 10
         },
         {
-            "hc-key": "tr-en",
+            "hc-key": "tr-bg",
             "value": 11
         },
         {
-            "hc-key": "tr-ml",
+            "hc-key": "tr-ic",
             "value": 12
         },
         {
-            "hc-key": "tr-gi",
+            "hc-key": "tr-ko",
             "value": 13
         },
         {
-            "hc-key": "tr-tb",
+            "hc-key": "tr-ht",
             "value": 14
         },
         {
-            "hc-key": "tr-bg",
+            "hc-key": "tr-aa",
             "value": 15
         },
         {
-            "hc-key": "tr-dy",
+            "hc-key": "tr-cm",
             "value": 16
         },
         {
-            "hc-key": "tr-ic",
+            "hc-key": "tr-kk",
             "value": 17
         },
         {
-            "hc-key": "tr-ko",
+            "hc-key": "tr-ng",
             "value": 18
         },
         {
-            "hc-key": "tr-ht",
+            "hc-key": "tr-ak",
             "value": 19
         },
         {
-            "hc-key": "tr-aa",
+            "hc-key": "tr-kh",
             "value": 20
         },
         {
-            "hc-key": "tr-cm",
+            "hc-key": "tr-yz",
             "value": 21
         },
         {
-            "hc-key": "tr-kk",
+            "hc-key": "tr-am",
             "value": 22
         },
         {
-            "hc-key": "tr-ng",
+            "hc-key": "tr-ms",
             "value": 23
         },
         {
-            "hc-key": "tr-ak",
+            "hc-key": "tr-bm",
             "value": 24
         },
         {
-            "hc-key": "tr-kh",
+            "hc-key": "tr-ka",
             "value": 25
         },
         {
-            "hc-key": "tr-yz",
+            "hc-key": "tr-ig",
             "value": 26
         },
         {
-            "hc-key": "tr-am",
+            "hc-key": "tr-zo",
             "value": 27
         },
         {
-            "hc-key": "tr-ms",
+            "hc-key": "tr-kb",
             "value": 28
         },
         {
-            "hc-key": "tr-bm",
+            "hc-key": "tr-yl",
             "value": 29
         },
         {
-            "hc-key": "tr-ka",
+            "hc-key": "tr-kc",
             "value": 30
         },
         {
-            "hc-key": "tr-ig",
+            "hc-key": "tr-sk",
             "value": 31
         },
         {
-            "hc-key": "tr-zo",
+            "hc-key": "tr-ci",
             "value": 32
         },
         {
-            "hc-key": "tr-kb",
+            "hc-key": "tr-bl",
             "value": 33
         },
         {
-            "hc-key": "tr-mn",
+            "hc-key": "tr-ed",
             "value": 34
         },
         {
-            "hc-key": "tr-ay",
+            "hc-key": "tr-es",
             "value": 35
         },
         {
-            "hc-key": "tr-yl",
+            "hc-key": "tr-bu",
             "value": 36
         },
         {
-            "hc-key": "tr-kc",
+            "hc-key": "tr-br",
             "value": 37
         },
         {
-            "hc-key": "tr-ed",
+            "hc-key": "tr-ks",
             "value": 38
         },
         {
-            "hc-key": "tr-sk",
+            "hc-key": "tr-kl",
             "value": 39
         },
         {
-            "hc-key": "tr-bu",
+            "hc-key": "tr-ib",
             "value": 40
         },
         {
-            "hc-key": "tr-ci",
+            "hc-key": "tr-kr",
             "value": 41
         },
         {
-            "hc-key": "tr-bl",
+            "hc-key": "tr-al",
             "value": 42
         },
         {
-            "hc-key": "tr-kl",
+            "hc-key": "tr-af",
             "value": 43
         },
         {
-            "hc-key": "tr-ib",
+            "hc-key": "tr-bd",
             "value": 44
         },
         {
-            "hc-key": "tr-es",
+            "hc-key": "tr-ip",
             "value": 45
         },
         {
-            "hc-key": "tr-kr",
+            "hc-key": "tr-ay",
             "value": 46
         },
         {
-            "hc-key": "tr-al",
+            "hc-key": "tr-mn",
             "value": 47
         },
         {
-            "hc-key": "tr-br",
+            "hc-key": "tr-dy",
             "value": 48
         },
         {
-            "hc-key": "tr-ks",
+            "hc-key": "tr-ad",
             "value": 49
         },
         {
-            "hc-key": "tr-af",
+            "hc-key": "tr-km",
             "value": 50
         },
         {
-            "hc-key": "tr-bd",
+            "hc-key": "tr-ky",
             "value": 51
         },
         {
-            "hc-key": "tr-ip",
+            "hc-key": "tr-eg",
             "value": 52
         },
         {
@@ -315,19 +315,19 @@ $(function () {
             "value": 77
         },
         {
-            "hc-key": "tr-us",
+            "hc-key": "tr-os",
             "value": 78
         },
         {
-            "hc-key": "tr-os",
+            "hc-key": "tr-gu",
             "value": 79
         },
         {
-            "hc-key": "tr-gu",
+            "hc-key": "tr-bc",
             "value": 80
         },
         {
-            "hc-key": "tr-bc",
+            "hc-key": "tr-us",
             "value": 81
         }
     ];

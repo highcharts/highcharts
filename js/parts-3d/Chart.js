@@ -69,21 +69,38 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'redraw', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));	
 });
 
-Highcharts.Chart.prototype.retrieveStacks = function (grouping, stacking) {
+// Draw the series in the reverse order (#3803, #3917)
+Highcharts.wrap(Highcharts.Chart.prototype, 'renderSeries', function (proceed) {
+	var series,
+		i = this.series.length;
+	
+	if (this.is3d()) {
+		while (i--) {		
+			series = this.series[i];
+			series.translate();
+			series.render();	
+		}
+	} else {
+		proceed.call(this);
+	}
+});
 
-	var stacks = {},
+Highcharts.Chart.prototype.retrieveStacks = function (stacking) {
+	var series = this.series,
+		stacks = {},
+		stackNumber,
 		i = 1;
 
-	if (grouping || !stacking) { return this.series; }
-
 	Highcharts.each(this.series, function (S) {
-		if (!stacks[S.options.stack || 0]) {
-			stacks[S.options.stack || 0] = { series: [S], position: i};
+		stackNumber = stacking ? (S.options.stack || 0) : series.length - 1 - S.index; // #3841
+		if (!stacks[stackNumber]) {
+			stacks[stackNumber] = { series: [S], position: i};
 			i++;
 		} else {
-			stacks[S.options.stack || 0].series.push(S);
+			stacks[stackNumber].series.push(S);
 		}
 	});
+
 	stacks.totalStacks = i + 1;
 	return stacks;
 };

@@ -8,7 +8,24 @@ $(function () {
             series: {
                 events: {
                     checkboxClick: function (event) {
-                        alert('The checkbox is now ' + event.checked);
+                        var text = 'The checkbox is now ' + event.checked;
+                        if (!this.chart.lbl) {
+                            this.chart.lbl = this.chart.renderer.label(text, 100, 70)
+                                .attr({
+                                    padding: 10,
+                                    r: 5,
+                                    fill: Highcharts.getOptions().colors[1],
+                                    zIndex: 5
+                                })
+                                .css({
+                                    color: '#FFFFFF'
+                                })
+                                .add();
+                        } else {
+                            this.chart.lbl.attr({
+                                text: text
+                            });
+                        }
                     }
                 },
                 showCheckbox: true

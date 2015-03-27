@@ -39,10 +39,12 @@ $(function () {
             gridLineColor: 'red',
             min: 0,
             max: 250,
-            tickInterval: 50
+            tickInterval: 50,
+            tickAmount: 6
         }, {
             lineWidth: w,
-            opposite: 'true'
+            opposite: 'true',
+            tickAmount: 6
         }],
         series: [{
             data: [200, 29.9, 71.5, 0, 0, 129.2, 144.0, 176.0, 135.6, 148.5, 250, 250, 194.1, 0],

@@ -5,14 +5,6 @@ $(function () {
         {
             "hc-key": "no-os-301",
             "value": 0
-        },
-        {
-            "hc-key": "no-os-219",
-            "value": 1
-        },
-        {
-            "hc-key": "no-os-220",
-            "value": 2
         }
     ];
 

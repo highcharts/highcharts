@@ -14,7 +14,7 @@ Legend.prototype = {
 		
 		var legend = this,
 			itemStyle = options.itemStyle,
-			padding = pick(options.padding, 8),
+			padding,
 			itemMarginTop = options.itemMarginTop || 0;
 	
 		this.options = options;
@@ -26,13 +26,12 @@ Legend.prototype = {
 		legend.itemStyle = itemStyle;
 		legend.itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle);
 		legend.itemMarginTop = itemMarginTop;
-		legend.padding = padding;
+		legend.padding = padding = pick(options.padding, 8);
 		legend.initialItemX = padding;
 		legend.initialItemY = padding - 5; // 5 is the number of pixels above the text
 		legend.maxItemWidth = 0;
 		legend.chart = chart;
 		legend.itemHeight = 0;
-		legend.lastLineHeight = 0;
 		legend.symbolWidth = pick(options.symbolWidth, 16);
 		legend.pages = [];
 
@@ -135,6 +134,16 @@ Legend.prototype = {
 		if (checkbox) {
 			discardElement(item.checkbox);
 		}
+	},
+
+	/**
+	 * Destroy all items.
+	 */
+	clearItems: function () {
+		var legend = this;
+		each(legend.getAllItems(), function (item) {
+			legend.destroyItem(item); 
+		});		
 	},
 
 	/**
@@ -259,7 +268,8 @@ Legend.prototype = {
 
 			// Get the baseline for the first item - the font size is equal for all
 			if (!legend.baseline) {
-				legend.baseline = renderer.fontMetrics(itemStyle.fontSize, li).f + 3 + itemMarginTop;
+				legend.fontMetrics = renderer.fontMetrics(itemStyle.fontSize, li);
+				legend.baseline = legend.fontMetrics.f + 3 + itemMarginTop;
 				li.attr('y', legend.baseline);
 			}
 
@@ -293,7 +303,7 @@ Legend.prototype = {
 				(widthOption || (chart.chartWidth - 2 * padding - initialItemX - options.x))) {
 			legend.itemX = initialItemX;
 			legend.itemY += itemMarginTop + legend.lastLineHeight + itemMarginBottom;
-			legend.lastLineHeight = 0; // reset for next line
+			legend.lastLineHeight = 0; // reset for next line (#915, #3976)
 		}
 
 		// If the item exceeds the height, start a new column
@@ -353,6 +363,39 @@ Legend.prototype = {
 	},
 
 	/**
+	 * Adjust the chart margins by reserving space for the legend on only one side
+	 * of the chart. If the position is set to a corner, top or bottom is reserved
+	 * for horizontal legends and left or right for vertical ones.
+	 */
+	adjustMargins: function (margin, spacing) {
+		var chart = this.chart, 
+			options = this.options,
+			// Use the first letter of each alignment option in order to detect the side 
+			alignment = options.align[0] + options.verticalAlign[0] + options.layout[0];
+			
+		if (this.display && !options.floating) {
+
+			each([
+				/(lth|ct|rth)/,
+				/(rtv|rm|rbv)/,
+				/(rbh|cb|lbh)/,
+				/(lbv|lm|ltv)/
+			], function (alignments, side) {
+				if (alignments.test(alignment) && !defined(margin[side])) {
+					// Now we have detected on which side of the chart we should reserve space for the legend
+					chart[marginNames[side]] = mathMax(
+						chart[marginNames[side]],
+						chart.legend[(side + 1) % 2 ? 'legendHeight' : 'legendWidth'] + 
+							[1, -1, -1, 1][side] * options[(side % 2) ? 'x' : 'y'] + 
+							pick(options.margin, 12) +
+							spacing[side]
+					);
+				}
+			});
+		}
+	},
+
+	/**
 	 * Render the legend. This method can be called both before and after
 	 * chart.render. If called after, it will only rearrange items instead
 	 * of creating new ones.
@@ -407,20 +450,19 @@ Legend.prototype = {
 		legend.display = display = !!allItems.length;
 
 		// render the items
+		legend.lastLineHeight = 0;
 		each(allItems, function (item) {
 			legend.renderItem(item); 
 		});
 
-		// Draw the border
-		legendWidth = options.width || legend.offsetWidth;
+		// Get the box
+		legendWidth = (options.width || legend.offsetWidth) + padding;
 		legendHeight = legend.lastItemY + legend.lastLineHeight + legend.titleHeight;
-		
-		
 		legendHeight = legend.handleOverflow(legendHeight);
+		legendHeight += padding;
 
+		// Draw the border and/or background
 		if (legendBorderWidth || legendBackgroundColor) {
-			legendWidth += padding;
-			legendHeight += padding;
 
 			if (!box) {
 				legend.box = box = renderer.rect(
@@ -665,11 +707,11 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 	 * @param {Object} item The series (this) or point
 	 */
 	drawRectangle: function (legend, item) {
-		var symbolHeight = legend.options.symbolHeight || 12;
-		
+		var symbolHeight = legend.options.symbolHeight || legend.fontMetrics.f; // docs: Now defaults to the font size
+
 		item.legendSymbol = this.chart.renderer.rect(
 			0,
-			legend.baseline - 5 - (symbolHeight / 2),
+			legend.baseline - symbolHeight + 1, // #3988
 			legend.symbolWidth,
 			symbolHeight,
 			legend.options.symbolRadius || 0
@@ -690,12 +732,11 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 		var options = this.options,
 			markerOptions = options.marker,
 			radius,
-			legendOptions = legend.options,
 			legendSymbol,
 			symbolWidth = legend.symbolWidth,
 			renderer = this.chart.renderer,
 			legendItemGroup = this.legendGroup,
-			verticalCenter = legend.baseline - mathRound(renderer.fontMetrics(legendOptions.itemStyle.fontSize, this.legendItem).b * 0.3),
+			verticalCenter = legend.baseline - mathRound(legend.fontMetrics.b * 0.3),
 			attr;
 
 		// Draw the line

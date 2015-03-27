@@ -69,6 +69,7 @@
         <property name="prototype.src.name" value="prototype-adapter.src.js"/-->
         <property name="standalone.src.name" value="standalone-framework.src.js"/>
         <property name="exporting.src.name" value="exporting.src.js"/>
+        <property name="broken-axis.src.name" value="broken-axis.src.js"/>
         <property name="data.src.name" value="data.src.js"/>
         <property name="drilldown.src.name" value="drilldown.src.js"/>
         <property name="funnel.src.name" value="funnel.src.js"/>
@@ -76,11 +77,13 @@
         <property name="nodata.src.name" value="no-data-to-display.src.js"/>
         <property name="map.src.name" value="map.src.js"/>
         <property name="heatmap.src.name" value="heatmap.src.js"/>
+        <property name="treemap.src.name" value="treemap.src.js"/>
         <property name="annotations.src.name" value="annotations.src.js"/>
         <!--property name="mootools.minified.name" value="mootools-adapter.js"/>
         <property name="prototype.minified.name" value="prototype-adapter.js"/-->
         <property name="standalone.minified.name" value="standalone-framework.js"/>
         <property name="exporting.minified.name" value="exporting.js"/>
+        <property name="broken-axis.minified.name" value="broken-axis.js"/>
         <property name="data.minified.name" value="data.js"/>
         <property name="drilldown.minified.name" value="drilldown.js"/>
         <property name="funnel.minified.name" value="funnel.js"/>
@@ -88,20 +91,24 @@
         <property name="nodata.minified.name" value="no-data-to-display.js"/>
         <property name="map.minified.name" value="map.js"/>
         <property name="heatmap.minified.name" value="heatmap.js"/>
+        <property name="treemap.minified.name" value="treemap.js"/>
         <property name="annotations.minified.name" value="annotations.js"/>
         <!--property name="mootools.src.file" value="${basedir}/js/adapters/${mootools.src.name}"/>
         <property name="prototype.src.file" value="${basedir}/js/adapters/${prototype.src.name}"/-->
         <property name="standalone.src.file" value="${basedir}/js/adapters/${standalone.src.name}"/>
         <property name="exporting.src.file" value="${basedir}/js/modules/${exporting.src.name}"/>
+        <property name="broken-axis.src.file" value="${basedir}/js/modules/broken-axis.src.js"/>
         <property name="data.src.file" value="${basedir}/js/modules/${data.src.name}"/>
         <property name="drilldown.src.file" value="${basedir}/js/modules/${drilldown.src.name}"/>
         <property name="funnel.src.file" value="${basedir}/js/modules/${funnel.src.name}"/>
+        <property name="overlapping-datalabels.src.file" value="${basedir}/js/modules/overlapping-datalabels.src.js"/>
         <property name="solidgauge.src.file" value="${basedir}/js/modules/${solidgauge.src.name}"/>
         <property name="nodata.src.file" value="${basedir}/js/modules/${nodata.src.name}"/>
         <property name="map.src.file" value="${basedir}/js/modules/${map.src.name}"/>
         <property name="heatmap.src.file" value="${basedir}/js/modules/${heatmap.src.name}"/>
+        <property name="treemap.src.file" value="${basedir}/js/modules/${treemap.src.name}"/>
         <property name="annotations.src.file" value="${basedir}/js/modules/${annotations.src.name}"/>
-        <property name="highcharts-all.minified.name" value="highcharts-all.js"/>
+        <property name="highstock-all.minified.name" value="highstock-all.js"/>
 
         <!-- jsLint -->
         <property name="jslint4java.dir" value="${tools.dir}/jslint4java"/>
@@ -140,101 +147,104 @@
         <property name="max.age.one.month" value="2592001"/>
         <property name="max.age.one.day" value="86400"/>
         <!-- This is the list of files for highcharts -->
-        <filelist id="highcharts.files" dir="${highcharts.parts.dir}">
-            <file name="Intro.js"/>
-            <file name="Globals.js"/>
-            <file name="Utilities.js"/>
-            <file name="PathAnimation.js"/>
-            <file name="JQueryAdapter.js"/>
-            <file name="Adapters.js"/>
-            <file name="Options.js"/>
-            <file name="Color.js"/>
-            <file name="SvgRenderer.js"/>
-            <file name="Html.js"/>
-            <file name="VmlRenderer.js"/>
-            <file name="CanVGRenderer.js"/>
-            <file name="Tick.js"/>
-            <file name="PlotLineOrBand.js"/>
-            <file name="Axis.js"/>
-            <file name="DateTimeAxis.js"/>
-            <file name="LogarithmicAxis.js"/> 
-            <file name="Tooltip.js"/>
-            <file name="Pointer.js"/>
-            <file name="TouchPointer.js"/>
-            <file name="MSPointer.js"/>
-            <file name="Legend.js"/>
-            <file name="Chart.js"/>
-            <file name="CenteredSeriesMixin.js"/>
-			<file name="Point.js"/>
-            <file name="Series.js"/>
-            <file name="Stacking.js"/>
-            <file name="Dynamics.js"/>
-            <file name="LineSeries.js"/>
-            <file name="AreaSeries.js"/>
-            <file name="SplineSeries.js"/>
-            <file name="AreaSplineSeries.js"/>
-            <file name="ColumnSeries.js"/>
-            <file name="BarSeries.js"/>
-            <file name="ScatterSeries.js"/>
-            <file name="PieSeries.js"/>
-            <file name="DataLabels.js"/>
-            <file name="Interaction.js"/>
-            <file name="Facade.js"/>
-            <file name="Outro.js"/>
+        <filelist id="highcharts.files" dir="${basedir}/js">
+            <file name="parts/Intro.js"/>
+            <file name="parts/Globals.js"/>
+            <file name="parts/Utilities.js"/>
+            <file name="parts/PathAnimation.js"/>
+            <file name="parts/JQueryAdapter.js"/>
+            <file name="parts/Adapters.js"/>
+            <file name="parts/Options.js"/>
+            <file name="parts/Color.js"/>
+            <file name="parts/SvgRenderer.js"/>
+            <file name="parts/Html.js"/>
+            <file name="parts/VmlRenderer.js"/>
+            <file name="parts/CanVGRenderer.js"/>
+            <file name="parts/Tick.js"/>
+            <file name="parts/PlotLineOrBand.js"/>
+            <file name="parts/Axis.js"/>
+            <file name="parts/DateTimeAxis.js"/>
+            <file name="parts/LogarithmicAxis.js"/> 
+            <file name="parts/Tooltip.js"/>
+            <file name="parts/Pointer.js"/>
+            <file name="parts/TouchPointer.js"/>
+            <file name="parts/MSPointer.js"/>
+            <file name="parts/Legend.js"/>
+            <file name="parts/Chart.js"/>
+            <file name="parts/CenteredSeriesMixin.js"/>
+			<file name="parts/Point.js"/>
+            <file name="parts/Series.js"/>
+            <file name="parts/Stacking.js"/>
+            <file name="parts/Dynamics.js"/>
+            <file name="parts/LineSeries.js"/>
+            <file name="parts/AreaSeries.js"/>
+            <file name="parts/SplineSeries.js"/>
+            <file name="parts/AreaSplineSeries.js"/>
+            <file name="parts/ColumnSeries.js"/>
+            <file name="parts/BarSeries.js"/>
+            <file name="parts/ScatterSeries.js"/>
+            <file name="parts/PieSeries.js"/>
+            <file name="parts/DataLabels.js"/>
+            <file name="modules/overlapping-datalabels.src.js"/>
+            <file name="parts/Interaction.js"/>
+            <file name="parts/Facade.js"/>
+            <file name="parts/Outro.js"/>
         </filelist>
 
         <!-- This is the list of files for highstock -->
-        <filelist id="highstock.files" dir="${highcharts.parts.dir}">
-            <file name="Intro.js"/>
-            <file name="Globals.js"/>
-            <file name="Utilities.js"/>
-            <file name="PathAnimation.js"/>
-            <file name="JQueryAdapter.js"/>
-            <file name="Adapters.js"/>
-            <file name="Options.js"/>
-            <file name="Color.js"/>
-            <file name="SvgRenderer.js"/>
-            <file name="Html.js"/>
-            <file name="VmlRenderer.js"/>
-            <file name="CanVGRenderer.js"/>
-            <file name="Tick.js"/>
-            <file name="PlotLineOrBand.js"/>
-            <file name="Axis.js"/>
-            <file name="DateTimeAxis.js"/>
-            <file name="LogarithmicAxis.js"/>
-            <file name="Tooltip.js"/>
-            <file name="Pointer.js"/>
-            <file name="TouchPointer.js"/>
-            <file name="MSPointer.js"/>
-            <file name="Legend.js"/>
-            <file name="Chart.js"/>
-            <file name="CenteredSeriesMixin.js"/>
-            <file name="Point.js"/>
-            <file name="Series.js"/>
-            <file name="Stacking.js"/>
-            <file name="Dynamics.js"/>
-            <file name="LineSeries.js"/>
-            <file name="AreaSeries.js"/>
-            <file name="SplineSeries.js"/>
-            <file name="AreaSplineSeries.js"/>
-            <file name="ColumnSeries.js"/>
-            <file name="BarSeries.js"/>
-            <file name="ScatterSeries.js"/>
-            <file name="PieSeries.js"/>
-            <file name="DataLabels.js"/>
-            <file name="Interaction.js"/>
+        <filelist id="highstock.files" dir="${basedir}/js">
+            <file name="parts/Intro.js"/>
+            <file name="parts/Globals.js"/>
+            <file name="parts/Utilities.js"/>
+            <file name="parts/PathAnimation.js"/>
+            <file name="parts/JQueryAdapter.js"/>
+            <file name="parts/Adapters.js"/>
+            <file name="parts/Options.js"/>
+            <file name="parts/Color.js"/>
+            <file name="parts/SvgRenderer.js"/>
+            <file name="parts/Html.js"/>
+            <file name="parts/VmlRenderer.js"/>
+            <file name="parts/CanVGRenderer.js"/>
+            <file name="parts/Tick.js"/>
+            <file name="parts/PlotLineOrBand.js"/>
+            <file name="parts/Axis.js"/>
+            <file name="parts/DateTimeAxis.js"/>
+            <file name="parts/LogarithmicAxis.js"/>
+            <file name="parts/Tooltip.js"/>
+            <file name="parts/Pointer.js"/>
+            <file name="parts/TouchPointer.js"/>
+            <file name="parts/MSPointer.js"/>
+            <file name="parts/Legend.js"/>
+            <file name="parts/Chart.js"/>
+            <file name="parts/CenteredSeriesMixin.js"/>
+            <file name="parts/Point.js"/>
+            <file name="parts/Series.js"/>
+            <file name="parts/Stacking.js"/>
+            <file name="parts/Dynamics.js"/>
+            <file name="parts/LineSeries.js"/>
+            <file name="parts/AreaSeries.js"/>
+            <file name="parts/SplineSeries.js"/>
+            <file name="parts/AreaSplineSeries.js"/>
+            <file name="parts/ColumnSeries.js"/>
+            <file name="parts/BarSeries.js"/>
+            <file name="parts/ScatterSeries.js"/>
+            <file name="parts/PieSeries.js"/>
+            <file name="parts/DataLabels.js"/>
+            <file name="modules/overlapping-datalabels.src.js"/>
+            <file name="parts/Interaction.js"/>
             <!-- Stock -->
-            <file name="OrdinalAxis.js"/>
-            <file name="DataGrouping.js"/>
-            <file name="OHLCSeries.js"/>
-            <file name="CandlestickSeries.js"/>
-            <file name="FlagsSeries.js"/>
-            <file name="Scroller.js"/>
-            <file name="RangeSelector.js"/>
-            <file name="StockNavigation.js"/>
-            <file name="StockChart.js"/>
-            <file name="Facade.js"/>
-            <file name="Outro.js"/>
+            <file name="parts/OrdinalAxis.js"/>
+            <file name="modules/broken-axis.src.js"/>
+            <file name="parts/DataGrouping.js"/>
+            <file name="parts/OHLCSeries.js"/>
+            <file name="parts/CandlestickSeries.js"/>
+            <file name="parts/FlagsSeries.js"/>
+            <file name="parts/Scroller.js"/>
+            <file name="parts/RangeSelector.js"/>
+            <file name="parts/StockNavigation.js"/>
+            <file name="parts/StockChart.js"/>
+            <file name="parts/Facade.js"/>
+            <file name="parts/Outro.js"/>
         </filelist>
 
         <!-- This is the list of files for highcharts-more -->
@@ -250,6 +260,7 @@
             <file name="BoxPlotSeries.js"/>
             <file name="ErrorBarSeries.js"/>
             <file name="WaterfallSeries.js"/>
+            <file name="PolygonSeries.js"/>
             <file name="BubbleSeries.js"/>
             <file name="Polar.js"/>
             <file name="Outro.js"/>
@@ -348,11 +359,13 @@
             <file name="parts/ScatterSeries.js"/>
             <!-- file name="parts/PieSeries.js"/ -->
             <file name="parts/DataLabels.js"/>
+            <file name="modules/overlapping-datalabels.src.js"/>
             <!-- Maps -->
             <file name="parts-map/MapAxis.js"/>
             <file name="parts-map/ColorAxis.js"/>
             <file name="parts-map/ColorSeriesMixin.js"/>
             <file name="parts-map/MapSeries.js"/>
+            <file name="modules/overlapping-datalabels.src.js"/>
             <file name="parts-map/MapNavigation.js"/>
             <file name="parts-map/MapPointer.js"/>
             <file name="parts-map/MapLineSeries.js"/>
@@ -368,12 +381,17 @@
             <file name="parts/Outro.js"/>
         </filelist>
 
-        <filelist id="highcharts-all.files" dir="${dist.dir}">
+        <!-- Files for the Cloud -->
+        <filelist id="highstock-all.files" dir="${dist.dir}">
             <file name="js/adapters/${standalone.minified.name}"/>
-            <file name="highcharts/js/${highcharts.minified.name}"/>
-            <file name="highcharts/js/${highchartsmore.minified.name}"/>
-            <file name="highcharts/js/${highcharts3d.minified.name}"/>
+            <file name="highstock/js/${highstock.minified.name}"/>
+            <file name="highstock/js/${highchartsmore.minified.name}"/>
+            <file name="highstock/js/${highcharts3d.minified.name}"/>
             <file name="js/modules/${exporting.minified.name}"/>
+            <file name="js/modules/${solidgauge.minified.name}"/>
+            <file name="js/modules/${funnel.minified.name}"/>
+            <file name="js/modules/${nodata.minified.name}"/>
+            <file name="js/modules/overlapping-datalabels.js"/>
             <file name="js/modules/${data.minified.name}"/>
         </filelist>
 
@@ -545,15 +563,18 @@
             <fileset file="${prototype.src.file}"/>
             <fileset file="${standalone.src.file}"/>
             <fileset file="${exporting.src.file}"/>
+            <fileset file="${broken-axis.src.file}"/>
             <fileset file="${data.src.file}"/>
             <fileset file="${drilldown.src.file}"/>
             <fileset file="${funnel.src.file}"/>
             <fileset file="${solidgauge.src.file}"/>
             <fileset file="${nodata.src.file}"/>
+            <fileset file="${overlapping-datalabels.src.file}"/>
             <fileset file="${map.src.file}"/>
             <fileset file="${heatmap.src.file}"/>
             <fileset file="${annotations.src.file}"/>
             <fileset dir="${themes.dir}"/>
+            <fileset file="js/modules/treemap.src.js"/>
             <fileset file="js/modules/canvgrenderer-extended.src.js"/>
         </jslint>
 
@@ -695,6 +716,14 @@
             <param name="param.out" value="${dist.dir}/js/modules/${exporting.minified.name}"/>
         </antcall>
         <antcall target="compile">
+            <param name="param.src" value="${overlapping-datalabels.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/modules/overlapping-datalabels.js"/>
+        </antcall>
+        <antcall target="compile">
+            <param name="param.src" value="${broken-axis.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/modules/broken-axis.js"/>
+        </antcall>
+        <antcall target="compile">
             <param name="param.src" value="${data.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/${data.minified.name}"/>
         </antcall>
@@ -723,6 +752,10 @@
             <param name="param.out" value="${dist.dir}/js/modules/${heatmap.minified.name}"/>
         </antcall>
         <antcall target="compile">
+            <param name="param.src" value="${treemap.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/modules/${treemap.minified.name}"/>
+        </antcall>
+        <antcall target="compile">
             <param name="param.src" value="${annotations.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/${annotations.minified.name}"/>
         </antcall>
@@ -732,8 +765,8 @@
         </antcall>
         <!-- Concatenate a single file with minified standalone adapter and highcharts sources -->
         <!-- for faster download from cloud.highcharts.com -->
-        <concat destfile="${dist.dir}/highcharts/js/${highcharts-all.minified.name}">
-            <filelist refid="highcharts-all.files"/>
+        <concat destfile="${dist.dir}/highstock/js/${highstock-all.minified.name}">
+            <filelist refid="highstock-all.files"/>
             <filterchain>
                 <replacetokens>
                     <token key="product.name" value="${highcharts.product.name}"/>
@@ -828,21 +861,44 @@
             </condition>
         </fail -->
 
+        <echo message=""/>
+        <echo message="Building offline api for highcharts, be patient.." />
+        <echo message=""/>
+        <exec dir="./" executable="grunt" outputproperty="output">
+            <arg line="download-api:highcharts:${highcharts.product.version}" /> <!-- version number -->
+        </exec>
+        <echo message="${output}" />
+        <echo message=""/>
+        <echo message="Building offline api for highstock, be patient.." />
+        <echo message=""/>
+        <exec dir="./" executable="grunt" outputproperty="output">
+            <arg line="download-api:highstock:${highstock.product.version}" /> <!-- version number -->
+        </exec>
+        <echo message="${output}" />
+        <echo message=""/>
+        <echo message="Building offline api for highmaps, be patient.." />
+        <echo message=""/>
+        <exec dir="./" executable="grunt" outputproperty="output">
+            <arg line="download-api:highmaps:${highmaps.product.version}" /> <!-- version number -->
+        </exec>
+        <echo message="${output}" />
+
+
         <echo file="${dist.dir}/products.js" append="false">
             var products = {
-                Highcharts: {
-                    date: '${highcharts.product.date}', 
-                    nr: '${highcharts.product.version}'
+                "Highcharts": {
+                    "date": "${highcharts.product.date}", 
+                    "nr": "${highcharts.product.version}"
                 },
-                Highstock: {
-                    date: '${highstock.product.date}',
-                    nr: '${highstock.product.version}'
+                "Highstock": {
+                    "date": "${highstock.product.date}",
+                    "nr": "${highstock.product.version}"
                 },
-                Highmaps: {
-                    date: '${highmaps.product.date}',
-                    nr: '${highmaps.product.version}'
+                "Highmaps": {
+                    "date": "${highmaps.product.date}",
+                    "nr": "${highmaps.product.version}"
                 }
-            };
+            }
         </echo>
         <!-- 2. Copy highcharts source and minified versions, adapters, modules, themes. Replace product and version at the same time -->
         <copy file="${highcharts.src.file}" todir="${dist.dir}/highcharts/js"><filterset refid="highcharts.filter"/></copy>
@@ -886,6 +942,10 @@
         <copy file="${exporting.src.file}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
 
+        <copy file="${broken-axis.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${broken-axis.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        
+
         <copy file="${data.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${data.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${data.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
@@ -925,6 +985,13 @@
         <copy file="${dist.dir}/js/modules/${heatmap.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${heatmap.src.file}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${heatmap.minified.name}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
+        
+        <copy file="${treemap.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${treemap.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${treemap.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${treemap.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${treemap.src.file}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${treemap.minified.name}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
         
         <copy file="build/canvas-tools.src.js" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="build/canvas-tools.js" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>

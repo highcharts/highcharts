@@ -9,10 +9,6 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 			return this.point.z;
 		},
 		inside: true,
-		style: {
-			color: 'white',
-			textShadow: '0px 0px 3px black'
-		},
 		verticalAlign: 'middle'
 	},
 	// displayNegative: true,
@@ -36,13 +32,15 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 		pointFormat: '({point.x}, {point.y}), Size: {point.z}'
 	},
 	turboThreshold: 0,
-	zThreshold: 0
+	zThreshold: 0,
+	zoneAxis: 'z'
 });
 
 var BubblePoint = extendClass(Point, {
 	haloPath: function () {
 		return Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
-	}
+	},
+	ttBelow: false
 });
 
 // 2 - Create the series object
@@ -53,6 +51,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	parallelArrays: ['x', 'y', 'z'],
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	bubblePadding: true,
+	zoneAxis: 'z',
 	
 	/**
 	 * Mapping between SVG attributes and the corresponding options
@@ -165,9 +164,6 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		while (i--) {
 			point = data[i];
 			radius = radii ? radii[i] : 0; // #1737
-
-			// Flag for negativeColor to be applied in Series.js
-			point.negative = point.z < (this.options.zThreshold || 0);
 			
 			if (radius >= this.minPxSize / 2) {
 				// Shape arguments
@@ -210,9 +206,11 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		item.legendSymbol.isMarker = true;	
 		
 	},
-	
+		
 	drawPoints: seriesTypes.column.prototype.drawPoints,
-	alignDataLabel: seriesTypes.column.prototype.alignDataLabel
+	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
+	buildKDTree: noop,
+	applyZones: noop
 });
 
 /**
@@ -237,78 +235,76 @@ Axis.prototype.beforePadding = function () {
 		activeSeries = [];
 
 	// Handle padding on the second pass, or on redraw
-	if (this.tickPositions) {
-		each(this.series, function (series) {
+	each(this.series, function (series) {
 
-			var seriesOptions = series.options,
-				zData;
+		var seriesOptions = series.options,
+			zData;
 
-			if (series.bubblePadding && (series.visible || !chart.options.chart.ignoreHiddenSeries)) {
+		if (series.bubblePadding && (series.visible || !chart.options.chart.ignoreHiddenSeries)) {
 
-				// Correction for #1673
-				axis.allowZoomOutside = true;
+			// Correction for #1673
+			axis.allowZoomOutside = true;
 
-				// Cache it
-				activeSeries.push(series);
+			// Cache it
+			activeSeries.push(series);
 
-				if (isXAxis) { // because X axis is evaluated first
-				
-					// For each series, translate the size extremes to pixel values
-					each(['minSize', 'maxSize'], function (prop) {
-						var length = seriesOptions[prop],
-							isPercent = /%$/.test(length);
-						
-						length = pInt(length);
-						extremes[prop] = isPercent ?
-							smallestSize * length / 100 :
-							length;
-						
-					});
-					series.minPxSize = extremes.minSize;
-					
-					// Find the min and max Z
-					zData = series.zData;
-					if (zData.length) { // #1735
-						zMin = pick(seriesOptions.zMin, math.min(
-							zMin,
-							math.max(
-								arrayMin(zData), 
-								seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
-							)
-						));
-						zMax = pick(seriesOptions.zMax, math.max(zMax, arrayMax(zData)));
-					}
-				}
-			}
-		});
-
-		each(activeSeries, function (series) {
-
-			var data = series[dataKey],
-				i = data.length,
-				radius;
-
-			if (isXAxis) {
-				series.getRadii(zMin, zMax, extremes.minSize, extremes.maxSize);
-			}
+			if (isXAxis) { // because X axis is evaluated first
 			
-			if (range > 0) {
-				while (i--) {
-					if (typeof data[i] === 'number') {
-						radius = series.radii[i];
-						pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
-						pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
-					}
+				// For each series, translate the size extremes to pixel values
+				each(['minSize', 'maxSize'], function (prop) {
+					var length = seriesOptions[prop],
+						isPercent = /%$/.test(length);
+					
+					length = pInt(length);
+					extremes[prop] = isPercent ?
+						smallestSize * length / 100 :
+						length;
+					
+				});
+				series.minPxSize = extremes.minSize;
+				
+				// Find the min and max Z
+				zData = series.zData;
+				if (zData.length) { // #1735
+					zMin = pick(seriesOptions.zMin, math.min(
+						zMin,
+						math.max(
+							arrayMin(zData), 
+							seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
+						)
+					));
+					zMax = pick(seriesOptions.zMax, math.max(zMax, arrayMax(zData)));
 				}
 			}
-		});
-		
-		if (activeSeries.length && range > 0 && pick(this.options.min, this.userMin) === UNDEFINED && pick(this.options.max, this.userMax) === UNDEFINED) {
-			pxMax -= axisLength;
-			transA *= (axisLength + pxMin - pxMax) / axisLength;
-			this.min += pxMin / transA;
-			this.max += pxMax / transA;
 		}
+	});
+
+	each(activeSeries, function (series) {
+
+		var data = series[dataKey],
+			i = data.length,
+			radius;
+
+		if (isXAxis) {
+			series.getRadii(zMin, zMax, extremes.minSize, extremes.maxSize);
+		}
+		
+		if (range > 0) {
+			while (i--) {
+				if (typeof data[i] === 'number') {
+					radius = series.radii[i];
+					pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
+					pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);
+				}
+			}
+		}
+	});
+	
+	if (activeSeries.length && range > 0 && pick(this.options.min, this.userMin) === UNDEFINED && pick(this.options.max, this.userMax) === UNDEFINED) {
+		pxMax -= axisLength;
+		transA *= (axisLength + pxMin - pxMax) / axisLength;
+		this.min += pxMin / transA;
+		this.max += pxMax / transA;
 	}
 };
 

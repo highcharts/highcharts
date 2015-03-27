@@ -2,5 +2,5 @@
  name: Highcharts Demo
  authors:
    - Torstein Hønsi
- requiresManualTesting: true
+ exportInnerHTML: true
 ...

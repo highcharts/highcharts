@@ -47,19 +47,19 @@ $(function () {
             "value": 10
         },
         {
-            "hc-key": "ly-sr",
+            "hc-key": "ly-za",
             "value": 11
         },
         {
-            "hc-key": "ly-za",
+            "hc-key": "ly-mz",
             "value": 12
         },
         {
-            "hc-key": "ly-mz",
+            "hc-key": "ly-tn",
             "value": 13
         },
         {
-            "hc-key": "ly-tn",
+            "hc-key": "ly-sr",
             "value": 14
         },
         {

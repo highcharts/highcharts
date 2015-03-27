@@ -15,35 +15,35 @@ $(function () {
             "value": 2
         },
         {
-            "hc-key": "et-ti",
+            "hc-key": "et-sn",
             "value": 3
         },
         {
-            "hc-key": "et-af",
+            "hc-key": "et-ga",
             "value": 4
         },
         {
-            "hc-key": "et-am",
+            "hc-key": "et-aa",
             "value": 5
         },
         {
-            "hc-key": "et-sn",
+            "hc-key": "et-so",
             "value": 6
         },
         {
-            "hc-key": "et-ga",
+            "hc-key": "et-dd",
             "value": 7
         },
         {
-            "hc-key": "et-aa",
+            "hc-key": "et-ti",
             "value": 8
         },
         {
-            "hc-key": "et-so",
+            "hc-key": "et-af",
             "value": 9
         },
         {
-            "hc-key": "et-dd",
+            "hc-key": "et-am",
             "value": 10
         }
     ];

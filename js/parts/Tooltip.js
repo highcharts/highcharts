@@ -32,7 +32,7 @@ Tooltip.prototype = {
 		this.isHidden = true;
 
 
-		// create the label
+		// create the label		
 		this.label = chart.renderer.label('', 0, 0, options.shape || 'callout', null, null, options.useHTML, null, 'tooltip')
 			.attr({
 				padding: padding,
@@ -136,6 +136,7 @@ Tooltip.prototype = {
 			}
 
 			this.chart.hoverPoints = null;
+			this.chart.hoverSeries = null;
 		}
 	},
 	
@@ -148,9 +149,11 @@ Tooltip.prototype = {
 			chart = this.chart,
 			inverted = chart.inverted,
 			plotTop = chart.plotTop,
+			plotLeft = chart.plotLeft,
 			plotX = 0,
 			plotY = 0,
-			yAxis;
+			yAxis,
+			xAxis;
 		
 		points = splat(points);
 		
@@ -171,7 +174,8 @@ Tooltip.prototype = {
 		if (!ret) {
 			each(points, function (point) {
 				yAxis = point.series.yAxis;
-				plotX += point.plotX;
+				xAxis = point.series.xAxis;
+				plotX += point.plotX  + (!inverted && xAxis ? xAxis.left - plotLeft : 0); 
 				plotY += (point.plotLow ? (point.plotLow + point.plotHigh) / 2 : point.plotY) +
 					(!inverted && yAxis ? yAxis.top - plotTop : 0); // #1151
 			});
@@ -199,11 +203,12 @@ Tooltip.prototype = {
 		var chart = this.chart,
 			distance = this.distance,
 			ret = {},
+			h = point.h,
 			swapped,
 			first = ['y', chart.chartHeight, boxHeight, point.plotY + chart.plotTop],
 			second = ['x', chart.chartWidth, boxWidth, point.plotX + chart.plotLeft],
 			// The far side is right or bottom
-			preferFarSide = point.ttBelow || (chart.inverted && !point.negative) || (!chart.inverted && point.negative),
+			preferFarSide = pick(point.ttBelow, (chart.inverted && !point.negative) || (!chart.inverted && point.negative)),
 			/**
 			 * Handle the preferred dimension. When the preferred dimension is tooltip
 			 * on top or bottom of the point, it will look for space there.
@@ -219,9 +224,9 @@ Tooltip.prototype = {
 				} else if (!preferFarSide && roomLeft) {
 					ret[dim] = alignedLeft;
 				} else if (roomLeft) {
-					ret[dim] = alignedLeft;
+					ret[dim] = alignedLeft - h < 0 ? alignedLeft : alignedLeft - h;
 				} else if (roomRight) {
-					ret[dim] = alignedRight;
+					ret[dim] = alignedRight + h + innerSize > outerSize ? alignedRight : alignedRight + h;
 				} else {
 					return false;
 				}
@@ -287,18 +292,13 @@ Tooltip.prototype = {
 	 */
 	defaultFormatter: function (tooltip) {
 		var items = this.points || splat(this),
-			series = items[0].series,
 			s;
 
 		// build the header
 		s = [tooltip.tooltipFooterHeaderFormatter(items[0])]; //#3397: abstraction to enable formatting of footer and header
 
 		// build the values
-		each(items, function (item) {
-			series = item.series;
-			s.push((series.tooltipFormatter && series.tooltipFormatter(item)) ||
-				item.point.tooltipFormatter(series.tooltipOptions.pointFormat));
-		});
+		s = s.concat(tooltip.bodyFormatter(items));
 
 		// footer
 		s.push(tooltip.tooltipFooterHeaderFormatter(items[0], true)); //#3397: abstraction to enable formatting of footer and header
@@ -392,8 +392,13 @@ Tooltip.prototype = {
 			label.attr({
 				stroke: borderColor
 			});
-			
-			tooltip.updatePosition({ plotX: x, plotY: y, negative: point.negative, ttBelow: point.ttBelow });
+			tooltip.updatePosition({ 
+				plotX: x, 
+				plotY: y, 
+				negative: point.negative, 
+				ttBelow: point.ttBelow, 
+				h: (point.shapeArgs && point.shapeArgs.height) || 0
+			});
 		
 			this.isHidden = false;
 		}
@@ -510,6 +515,17 @@ Tooltip.prototype = {
 			point: point,
 			series: series
 		});
-	}
+	},
 
+	/**
+     * Build the body (lines) of the tooltip by iterating over the items and returning one entry for each item,
+     * abstracting this functionality allows to easily overwrite and extend it. 
+	 */
+	bodyFormatter: function (items) {
+        return map(items, function (item) {
+            var tooltipOptions = item.series.tooltipOptions;
+            return (tooltipOptions.pointFormatter || item.point.tooltipFormatter).call(item.point, tooltipOptions.pointFormat);
+        });
+    }
+    
 };

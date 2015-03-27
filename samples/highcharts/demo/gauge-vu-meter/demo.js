@@ -100,9 +100,10 @@ $(function () {
 
     },
 
-        // Let the music play
-        function (chart) {
-            setInterval(function () {
+    // Let the music play
+    function (chart) {
+        setInterval(function () {
+            if (chart.series) { // the chart may be destroyed
                 var left = chart.series[0].points[0],
                     right = chart.series[1].points[0],
                     leftVal,
@@ -121,8 +122,8 @@ $(function () {
                 left.update(leftVal, false);
                 right.update(rightVal, false);
                 chart.redraw();
+            }
+        }, 500);
 
-            }, 500);
-
-        });
+    });
 });

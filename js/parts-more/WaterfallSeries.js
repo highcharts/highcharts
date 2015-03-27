@@ -70,10 +70,12 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				[0, yValue];
 
 			// override point value for sums
-			if (isNaN(point.y)) {
+			// #3710 Update point does not propagate to sum
+			if (point.isSum) {
 				point.y = yValue;
+			} else if (point.isIntermediateSum) {
+				point.y = yValue - previousIntermediate; // #3840
 			}
-
 			// up points
 			y = mathMax(previousY, previousY + point.y) + range[0];
 			shapeArgs.y = yAxis.translate(y, 0, 1);
@@ -89,12 +91,17 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				shapeArgs.height = yAxis.translate(previousIntermediate, 0, 1) - shapeArgs.y;
 				previousIntermediate = range[1];
 
-			// if it's not the sum point, update previous stack end position
+			// If it's not the sum point, update previous stack end position and get 
+			// shape height (#3886)
 			} else {
+				if (previousY !== 0) { // Not the first point
+					shapeArgs.height = yValue > 0 ? 
+						yAxis.translate(previousY, 0, 1) - shapeArgs.y :
+						yAxis.translate(previousY, 0, 1) - yAxis.translate(previousY - yValue, 0, 1);
+				}
 				previousY += yValue;
 			}
-
-			// negative points
+			// #3952 Negative sum or intermediate sum not rendered correctly
 			if (shapeArgs.height < 0) {
 				shapeArgs.y += shapeArgs.height;
 				shapeArgs.height *= -1;
@@ -122,7 +129,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		var series = this,
 			options = series.options,
 			yData = series.yData,
-			points = series.points,
+			points = series.options.data, // #3710 Update point does not propagate to sum
 			point,
 			dataLength = yData.length,
 			threshold = options.threshold || 0,
@@ -189,9 +196,16 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
 
 		each(series.points, function (point) {
-			if (point.y > 0 && !point.color) {
-				point.pointAttr = seriesDownPointAttr;
-				point.color = upColor;
+			if (!point.options.color) {
+				// Up color
+				if (point.y > 0) {
+					point.pointAttr = seriesDownPointAttr;
+					point.color = upColor;
+
+				// Down color (#3710, update to negative)
+				} else {
+					point.pointAttr = series.pointAttr;
+				}
 			}
 		});
 	},

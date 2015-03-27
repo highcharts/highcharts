@@ -5,13 +5,15 @@
  * TODO:
  * - add column support (box collision detection, same as above)
  * - other series types, area etc.
- * - possible spline interpolation?
  * - avoid data labels, when data labels above, show series label below.
- * - optional connectors when labels are distant
- * - too slow here: http://jsfiddle.net/highcharts/114wejdx/
+ * - add options (enabled, style, connector, format, formatter)
+ * - connectors: Make a separate shape with anchors to use as label
+ * - do labels in a timeout since they don't interfere with others
  * 
+ * http://jsfiddle.net/highcharts/L2u9rpwr/
  * http://jsfiddle.net/highcharts/y5A37/
  * http://jsfiddle.net/highcharts/264Nm/
+ * http://jsfiddle.net/highcharts/y5A37/
  */
 
 /*global Highcharts */
@@ -66,6 +68,7 @@
             deltaX,
             deltaY,
             delta,
+            last,
             len,
             n,
             j,
@@ -96,6 +99,7 @@
             len = points.length;
             for (i = 0; i < len; i += 1) {
 
+                // Add interpolated points
                 if (i > 0) {
                     deltaX = Math.abs(points[i].plotX - points[i - 1].plotX);
                     deltaY = Math.abs(points[i].plotY - points[i - 1].plotY);
@@ -113,8 +117,18 @@
                     }
                 }
 
+                // Add the real point if not too close to the previous
                 if (typeof points[i].plotY === 'number') {
-                    interpolated.push(points[i]);
+                    last = interpolated[interpolated.length - 1];
+                    if (last) {
+                        delta = Math.max(
+                            Math.abs(points[i].plotX - last.plotX),
+                            Math.abs(points[i].plotY - last.plotY)
+                        );
+                    }
+                    if (!last || delta > distance / 2) {
+                        interpolated.push(points[i]);
+                    }
                 }
             }
         }
@@ -126,6 +140,10 @@
      */
     Series.prototype.checkClearPoint = function (x, y, bBox, checkDistance) {
         var distToOthersSquared = Number.MAX_VALUE, // distance to other graphs
+            distToPointSquared = Number.MAX_VALUE,
+            dist,
+            connectorPoint,
+            connectorEnabled = true, // make part of the options set
             chart = this.chart,
             series,
             points,
@@ -139,6 +157,15 @@
                 r2.right < r1.left ||
                 r2.top > r1.bottom ||
                 r2.bottom < r1.top);
+        }
+
+        /**
+         * Get the weight in order to determine the ideal position. Larger distance to
+         * other series gives more weight. Smaller distance to the actual point (connector points only)
+         * gives more weight.
+         */
+        function getWeight(distToOthersSquared, distToPointSquared) {
+            return distToOthersSquared - distToPointSquared;
         }
 
         // First check for collision with existing labels
@@ -200,13 +227,32 @@
                         );
                     }
                 }
+
+                // Do we need a connector? 
+                if (connectorEnabled && this === series && checkDistance && !withinRange) {
+                    for (j = 1; j < points.length; j += 1) {
+                        dist = Math.min(
+                            Math.pow(x + bBox.width / 2 - points[j].plotX, 2) + Math.pow(y + bBox.height / 2 - points[j].plotY, 2),
+                            Math.pow(x - points[j].plotX, 2) + Math.pow(y - points[j].plotY, 2),
+                            Math.pow(x + bBox.width - points[j].plotX, 2) + Math.pow(y - points[j].plotY, 2),
+                            Math.pow(x + bBox.width - points[j].plotX, 2) + Math.pow(y + bBox.height - points[j].plotY, 2),
+                            Math.pow(x - points[j].plotX, 2) + Math.pow(y + bBox.height - points[j].plotY, 2)
+                        );
+                        if (dist < distToPointSquared) {
+                            distToPointSquared = dist;
+                            connectorPoint = points[j];
+                        }
+                    }
+                    withinRange = true;
+                }
             }
         }
 
         return !checkDistance || withinRange ? {
             x: x,
             y: y,
-            distToOthersSquared: distToOthersSquared
+            weight: getWeight(distToOthersSquared, connectorPoint ? distToPointSquared : 0),
+            connectorPoint: connectorPoint
         } : false;
 
     };
@@ -262,8 +308,6 @@
 
                 bBox = series.labelBySeries.getBBox();
                 bBox.width = Math.round(bBox.width);
-
-                console.log('-- ' + series.name + ' --');
 
                 // Ideal positions are centered above or below a point on right side of chart
                 for (i = points.length - 1; i > 0; i -= 1) {
@@ -330,8 +374,6 @@
 
                 }
 
-                console.log('foundClosePosition', results.length);
-
                 // Brute force, try all positions on the chart in a 16x16 grid
                 if (!results.length) {
                     for (x = chart.plotWidth - bBox.width; x >= 0; x -= 16) {
@@ -347,7 +389,7 @@
                 if (results.length) {
 
                     results.sort(function (a, b) {
-                        return b.distToOthersSquared - a.distToOthersSquared;
+                        return b.weight - a.weight;
                     });
                     //results = results.reverse();
                     best = results[0];

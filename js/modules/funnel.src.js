@@ -18,7 +18,8 @@ var defaultOptions = Highcharts.getOptions(),
 	seriesTypes = Highcharts.seriesTypes,
 	merge = Highcharts.merge,
 	noop = function () {},
-	each = Highcharts.each;
+	each = Highcharts.each,
+	pick = Highcharts.pick;
 
 // set default options
 defaultPlotOptions.funnel = merge(defaultPlotOptions.pie, {
@@ -49,7 +50,6 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 	
 	type: 'funnel',
 	animate: noop,
-	singularTooltips: true,
 
 	/**
 	 * Overrides the pie translate method
@@ -222,16 +222,16 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 			renderer = chart.renderer;
 
 		each(series.data, function (point) {
-			
-			var graphic = point.graphic,
+			var pointOptions = point.options,
+				graphic = point.graphic,
 				shapeArgs = point.shapeArgs;
 
-			if (!graphic) { // Create the shapes
+			if (!graphic) { // Create the shapes				
 				point.graphic = renderer.path(shapeArgs).
 					attr({
 						fill: point.color,
-						stroke: options.borderColor,
-						'stroke-width': options.borderWidth
+						stroke: pick(pointOptions.borderColor, options.borderColor),
+						'stroke-width': pick(pointOptions.borderWidth, options.borderWidth)
 					}).
 					add(series.group);
 					

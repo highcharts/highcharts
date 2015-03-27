@@ -7,59 +7,59 @@ $(function () {
             "value": 0
         },
         {
-            "hc-key": "sy-la",
+            "hc-key": "sy-hl",
             "value": 1
         },
         {
-            "hc-key": "sy-ta",
+            "hc-key": "sy-hm",
             "value": 2
         },
         {
-            "hc-key": "sy-ra",
+            "hc-key": "sy-hi",
             "value": 3
         },
         {
-            "hc-key": "sy-hl",
+            "hc-key": "sy-id",
             "value": 4
         },
         {
-            "hc-key": "sy-hm",
+            "hc-key": "sy-ha",
             "value": 5
         },
         {
-            "hc-key": "sy-hi",
+            "hc-key": "sy-dy",
             "value": 6
         },
         {
-            "hc-key": "sy-id",
+            "hc-key": "sy-su",
             "value": 7
         },
         {
-            "hc-key": "sy-ha",
+            "hc-key": "sy-rd",
             "value": 8
         },
         {
-            "hc-key": "sy-dy",
+            "hc-key": "sy-qu",
             "value": 9
         },
         {
-            "hc-key": "sy-su",
+            "hc-key": "sy-dr",
             "value": 10
         },
         {
-            "hc-key": "sy-rd",
+            "hc-key": "sy-3686",
             "value": 11
         },
         {
-            "hc-key": "sy-qu",
+            "hc-key": "sy-la",
             "value": 12
         },
         {
-            "hc-key": "sy-dr",
+            "hc-key": "sy-ta",
             "value": 13
         },
         {
-            "hc-key": "sy-3686",
+            "hc-key": "sy-ra",
             "value": 14
         }
     ];

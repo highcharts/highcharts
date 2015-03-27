@@ -1,4 +1,8 @@
-<!DOCTYPE HTML>
+<?php
+
+require_once('functions.php');
+
+?><!DOCTYPE HTML>
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -80,6 +84,10 @@
 				font-family: Arial, Verdana;
 			}
 
+			body {
+				background: #F6F6F6;
+			}
+
 			li, a, p, div, span {
 				font-size: 12px;
 			}
@@ -101,7 +109,8 @@
 				text-transform: uppercase;
 			}
 			li {
-				border: 1px solid white;
+				border: 1px solid #F6F6F6;
+				background: white;
 				border-radius: 5px;
 				padding: 2px;
 			}
@@ -109,25 +118,23 @@
 				color: gray;
 			}
 			
-			li.identical, li.identical a {
-				background: #a4edba;
-			}
 			
 			li.different, li.different a {
 				background: #f15c80;
 				color: white;
 				font-weight: bold;
 			}
+
+			li.identical, li.identical a, li.approved, li.approved a {
+				background: #a4edba;
+				color: #039;
+				font-weight: normal;
+			}
+			
 			
 			li.hilighted {
-				border-color: silver;
-				font-weight: bold;
-				background: black !important;
-				color: white;
-			}
-			li.hilighted a {
-				color: white;
-				background: black;
+				border-color: black;
+				border-left-width: 1em;
 			}
 			body {
 				margin: 0;
@@ -142,6 +149,7 @@
 				position: fixed;
 				top: 0;
 				width: 100%;
+				z-index: 10;
 			}
 			#main-nav {
 				margin-top: 100px;
@@ -181,7 +189,7 @@
 	<div id="top-nav">
 		<a class="button" id="batch-compare" title="Batch compare all samples">
 			<i class="icon-play"></i>
-			Compare
+			Run tests
 		</a>
 		<a class="button" id="batch-stop" title="Stop comparing">
 			<i class="icon-stop"></i>
@@ -207,10 +215,10 @@
 
 	<div id="main-nav">
 	<?php
-	$products = array('highcharts', 'maps', 'stock', 'issues');
+	$products = array('unit-tests', 'highcharts', 'maps', 'stock', 'issues');
 	$samplesDir = dirname(__FILE__). '/../../samples/';
-	$browser = get_browser(null, true);
-	$browserKey = @$browser['parent'];
+	$browser = getBrowser();
+	$browserKey = $browser['parent'];
 	$compare = @json_decode(file_get_contents('temp/compare.json'));
 
 	$i = 1;
@@ -237,16 +245,26 @@
 								$path = "$dir/$file/$innerFile";
 								$suffix = '';
 								$dissIndex = '';
+								$isUnitTest = strstr($yaml, 'qunit');
+								$diff = '';
+
+
 								if (strstr($yaml, 'requiresManualTesting: true')) {
 									$batchClass = '';
 									$suffix = ' <acronym title="Requires manual testing">[m]</acronym>';
 								}
 
 								// Display diff from previous comparison
+								$compareIcon = $isUnitTest ? 'icon-puzzle-piece' : 'icon-columns';
+								$dissIndex = "
+									<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main'><i class='$compareIcon'></i></a>
+								";
 								if (isset($compare->$path->$browserKey)) {
 									$diff = $compare->$path->$browserKey;
-									if ($diff > 0) {
-										$diff = round($diff, 2);
+									if ($diff > 0 || $diff == 'Error') {
+										if (strstr($diff, '.')) {
+											$diff = round($diff, 2);
+										}
 										$compareClass = 'different';
 										$dissIndex = "
 											<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main' data-diff='$diff'>$diff</a>
@@ -254,19 +272,25 @@
 									} else {
 										$compareClass = 'identical';
 									}
-								} else {
-									$dissIndex = "
-										<a class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main'><i class='icon-columns'></i></a>
-									";
-								}
+								} 
 
 								// Comments
 								if (isset($compare->$path->comment)) {
 									$comment = $compare->$path->comment;
+									
+									// Sample is different but approved
+									if ($comment->symbol === 'check' && $comment->diff == $diff) {
+										$compareClass = 'approved';
+									} else if ($comment->symbol === 'exclamation-sign') {
+										$compareClass = 'different';
+									}
+									
+									// Make it string
 									$comment = "
 										<i class='icon-$comment->symbol' title='$comment->title'></i>
-										<span class='comment-title'>$comment->title</span>
+										<span class='comment-title'>$comment->title<br>(Approved diff: $comment->diff)</span>
 									";
+									
 								} else {
 									$comment = "
 										<i class='icon-pencil' title='Add comment'></i>
@@ -276,7 +300,7 @@
 								echo "
 								<li id='li$i' class='$compareClass'>$i. $suffix 
 									<a target='main' id='i$i' class='$batchClass' href='view.php?path=$path&amp;i=$i'>$innerFile</a>
-									<a class='comment' href='compare-comment.php?path=$path&amp;i=$i' target='main'>
+									<a class='comment' href='compare-comment.php?path=$path&amp;i=$i&amp;diff=$diff' target='main'>
 										$comment
 									</a>
 									$dissIndex

@@ -3,91 +3,91 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "td-oa",
+            "hc-key": "td-ma",
             "value": 0
         },
         {
-            "hc-key": "td-lr",
+            "hc-key": "td-sa",
             "value": 1
         },
         {
-            "hc-key": "td-me",
+            "hc-key": "td-nj",
             "value": 2
         },
         {
-            "hc-key": "td-ta",
+            "hc-key": "td-lo",
             "value": 3
         },
         {
-            "hc-key": "td-lo",
+            "hc-key": "td-mw",
             "value": 4
         },
         {
-            "hc-key": "td-ma",
+            "hc-key": "td-br",
             "value": 5
         },
         {
-            "hc-key": "td-gr",
+            "hc-key": "td-ti",
             "value": 6
         },
         {
-            "hc-key": "td-sa",
+            "hc-key": "td-en",
             "value": 7
         },
         {
-            "hc-key": "td-nj",
+            "hc-key": "td-cg",
             "value": 8
         },
         {
-            "hc-key": "td-mw",
+            "hc-key": "td-bg",
             "value": 9
         },
         {
-            "hc-key": "td-br",
+            "hc-key": "td-si",
             "value": 10
         },
         {
-            "hc-key": "td-ti",
+            "hc-key": "td-mo",
             "value": 11
         },
         {
-            "hc-key": "td-en",
+            "hc-key": "td-hd",
             "value": 12
         },
         {
-            "hc-key": "td-cg",
+            "hc-key": "td-km",
             "value": 13
         },
         {
-            "hc-key": "td-bg",
+            "hc-key": "td-lc",
             "value": 14
         },
         {
-            "hc-key": "td-si",
+            "hc-key": "td-bi",
             "value": 15
         },
         {
-            "hc-key": "td-mo",
+            "hc-key": "td-ba",
             "value": 16
         },
         {
-            "hc-key": "td-hd",
+            "hc-key": "td-gr",
             "value": 17
         },
         {
-            "hc-key": "td-km",
+            "hc-key": "td-oa",
             "value": 18
         },
         {
-            "hc-key": "td-lc",
+            "hc-key": "td-lr",
             "value": 19
         },
         {
-            "hc-key": "td-bi",
+            "hc-key": "td-me",
             "value": 20
         },
         {
-            "hc-key": "td-ba",
+            "hc-key": "td-ta",
             "value": 21
         }
     ];

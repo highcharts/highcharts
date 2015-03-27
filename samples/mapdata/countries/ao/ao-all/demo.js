@@ -11,67 +11,67 @@ $(function () {
             "value": 1
         },
         {
-            "hc-key": "ao-hl",
+            "hc-key": "ao-ln",
             "value": 2
         },
         {
-            "hc-key": "ao-mx",
+            "hc-key": "ao-ls",
             "value": 3
         },
         {
-            "hc-key": "ao-ln",
+            "hc-key": "ao-ml",
             "value": 4
         },
         {
-            "hc-key": "ao-ls",
+            "hc-key": "ao-bo",
             "value": 5
         },
         {
-            "hc-key": "ao-ml",
+            "hc-key": "ao-cn",
             "value": 6
         },
         {
-            "hc-key": "ao-bo",
+            "hc-key": "ao-cs",
             "value": 7
         },
         {
-            "hc-key": "ao-cn",
+            "hc-key": "ao-lu",
             "value": 8
         },
         {
-            "hc-key": "ao-cs",
+            "hc-key": "ao-ui",
             "value": 9
         },
         {
-            "hc-key": "ao-lu",
+            "hc-key": "ao-za",
             "value": 10
         },
         {
-            "hc-key": "ao-ui",
+            "hc-key": "ao-bi",
             "value": 11
         },
         {
-            "hc-key": "ao-za",
+            "hc-key": "ao-bg",
             "value": 12
         },
         {
-            "hc-key": "ao-bi",
+            "hc-key": "ao-cc",
             "value": 13
         },
         {
-            "hc-key": "ao-bg",
+            "hc-key": "ao-cu",
             "value": 14
         },
         {
-            "hc-key": "ao-cc",
+            "hc-key": "ao-hm",
             "value": 15
         },
         {
-            "hc-key": "ao-cu",
+            "hc-key": "ao-hl",
             "value": 16
         },
         {
-            "hc-key": "ao-hm",
+            "hc-key": "ao-mx",
             "value": 17
         }
     ];

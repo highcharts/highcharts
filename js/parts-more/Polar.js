@@ -12,6 +12,39 @@
 		colProto;
 
 	/**
+	 * Search a k-d tree by the point angle, used for shared tooltips in polar charts
+	 */
+	seriesProto.searchPointByAngle = function (e) {
+		var series = this,
+			chart = series.chart,
+			xAxis = series.xAxis,
+			center = xAxis.pane.center,
+			plotX = e.chartX - center[0] - chart.plotLeft,
+			plotY = e.chartY - center[1] - chart.plotTop;
+
+		return this.searchKDTree({
+			clientX: 180 + (Math.atan2(plotX, plotY) * (-180 / Math.PI))
+		});
+
+	};
+	
+	/**
+	 * Wrap the buildKDTree function so that it searches by angle (clientX) in case of shared tooltip,
+	 * and by two dimensional distance in case of non-shared.
+	 */
+	wrap(seriesProto, 'buildKDTree', function (proceed) {
+		if (this.chart.polar) {
+			if (this.kdByAngle) {
+				this.searchPoint = this.searchPointByAngle;
+			} else {
+				this.kdDimensions = 2;
+				this.kdComparer = 'distR';
+			}
+		}
+		proceed.apply(this);
+	});
+
+	/**
 	 * Translate a point's plotX and plotY from the internal angle and radius measures to 
 	 * true plotX, plotY coordinates
 	 */
@@ -26,38 +59,23 @@
 		point.rectPlotX = plotX;
 		point.rectPlotY = plotY;
 	
-		// Record the angle in degrees for use in tooltip
-		clientX = ((plotX / Math.PI * 180) + this.xAxis.pane.options.startAngle) % 360;
-		if (clientX < 0) { // #2665
-			clientX += 360;
-		}
-		point.clientX = clientX;
-
-	
 		// Find the polar plotX and plotY
 		xy = this.xAxis.postTranslate(point.plotX, this.yAxis.len - plotY);
 		point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
 		point.plotY = point.polarPlotY = xy.y - chart.plotTop;
-	};
 
-	/** 
-	 * Order the tooltip points to get the mouse capture ranges correct. #1915. 
-	 */
-	seriesProto.orderTooltipPoints = function (points) {
-		if (this.chart.polar) {
-			points.sort(function (a, b) {
-				return a.clientX - b.clientX;
-			});
-
-			// Wrap mouse tracking around to capture movement on the segment to the left
-			// of the north point (#1469, #2093).
-			if (points[0]) {
-				points[0].wrappedClientX = points[0].clientX + 360;
-				points.push(points[0]);
+		// If shared tooltip, record the angle in degrees in order to align X points. Otherwise,
+		// use a standard k-d tree to get the nearest point in two dimensions.
+		if (this.kdByAngle) {
+			clientX = ((plotX / Math.PI * 180) + this.xAxis.pane.options.startAngle) % 360;
+			if (clientX < 0) { // #2665
+				clientX += 360;
 			}
+			point.clientX = clientX;
+		} else {
+			point.clientX = point.plotX;
 		}
 	};
-
 
 	/**
 	 * Add some special init logic to areas and areasplines
@@ -85,6 +103,7 @@
 		}
 	}
 
+ 
 	if (seriesTypes.area) {		
 		wrap(seriesTypes.area.prototype, 'init', initArea);	
 	}
@@ -204,17 +223,25 @@
 	 * center. 
 	 */
 	wrap(seriesProto, 'translate', function (proceed) {
-		
+		var chart = this.chart,
+			points,
+			i;
+
 		// Run uber method
 		proceed.call(this);
 	
 		// Postprocess plot coordinates
-		if (this.chart.polar && !this.preventPostTranslate) {
-			var points = this.points,
+		if (chart.polar) {
+			this.kdByAngle = chart.tooltip.shared;
+	
+			if (!this.preventPostTranslate) {
+				points = this.points;
 				i = points.length;
-			while (i--) {
-				// Translate plotX, plotY from angle and radius to true plot coordinates
-				this.toXY(points[i]);
+
+				while (i--) {
+					// Translate plotX, plotY from angle and radius to true plot coordinates
+					this.toXY(points[i]);
+				}
 			}
 		}
 	});
@@ -311,21 +338,6 @@
 
 	// Define the animate method for regular series
 	wrap(seriesProto, 'animate', polarAnimate);
-
-	/**
-	 * Throw in a couple of properties to let setTooltipPoints know we're indexing the points
-	 * in degrees (0-360), not plot pixel width.
-	 */
-	wrap(seriesProto, 'setTooltipPoints', function (proceed, renew) {
-		
-		if (this.chart.polar) {
-			extend(this.xAxis, {
-				tooltipLen: 360 // degrees are the resolution unit of the tooltipPoints array
-			});	
-		}
-		// Run uber method
-		return proceed.call(this, renew);
-	});
 
 
 	if (seriesTypes.column) {
@@ -426,33 +438,6 @@
 	
 		});		
 	}
-
-
-	/**
-	 * Extend the mouse tracker to return the tooltip position index in terms of
-	 * degrees rather than pixels
-	 */
-	wrap(pointerProto, 'getIndex', function (proceed, e) {
-		var ret,
-			chart = this.chart,
-			center,
-			x,
-			y;
-	
-		if (chart.polar) {
-			center = chart.xAxis[0].center;
-			x = e.chartX - center[0] - chart.plotLeft;
-			y = e.chartY - center[1] - chart.plotTop;
-		
-			ret = 180 - Math.round(Math.atan2(x, y) / Math.PI * 180);
-	
-		} else {
-	
-			// Run uber method
-			ret = proceed.call(this, e);
-		}
-		return ret;
-	});
 
 	/**
 	 * Extend getCoordinates to prepare for polar axis values

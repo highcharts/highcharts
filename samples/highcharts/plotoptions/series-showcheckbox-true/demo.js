@@ -1,9 +1,5 @@
 $(function () {
     $('#container').highcharts({
-        xAxis: {
-            type: 'datetime'
-        },
-
         plotOptions: {
             series: {
                 showCheckbox: true

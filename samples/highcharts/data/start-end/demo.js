@@ -13,7 +13,8 @@ $(function () {
             csv: document.getElementById('csv').innerHTML,
             startRow: 114,
             endRow: 134,
-            endColumn: 1
+            endColumn: 1,
+            firstRowAsNames: false
         },
 
         xAxis: {

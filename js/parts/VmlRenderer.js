@@ -574,6 +574,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		// mimic a rectangle with its style object for automatic updating in attr
 		return extend(clipRect, {
 			members: [],
+			count: 0,
 			left: (isObj ? x.x : x) + 1,
 			top: (isObj ? x.y : y) + 1,
 			width: (isObj ? x.width : width) - 1,

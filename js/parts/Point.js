@@ -68,7 +68,8 @@ Point.prototype = {
 	optionsToObject: function (options) {
 		var ret = {},
 			series = this.series,
-			pointArrayMap = series.pointArrayMap || ['y'],
+			keys = series.options.keys, // docs: http://jsfiddle.net/ch4v7n8v/1
+			pointArrayMap = keys || series.pointArrayMap || ['y'],
 			valueCount = pointArrayMap.length,
 			firstItemType,
 			i = 0,
@@ -79,7 +80,7 @@ Point.prototype = {
 
 		} else if (isArray(options)) {
 			// with leading x value
-			if (options.length > valueCount) {
+			if (!keys && options.length > valueCount) {
 				firstItemType = typeof options[0];
 				if (firstItemType === 'string') {
 					ret.name = options[0];
