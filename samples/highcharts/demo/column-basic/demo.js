@@ -23,7 +23,8 @@ $(function () {
                 'Oct',
                 'Nov',
                 'Dec'
-            ]
+            ],
+            crosshair: true
         },
         yAxis: {
             min: 0,

@@ -25,7 +25,6 @@
 		ColumnSeries = seriesTypes.column,
 		fireEvent = HighchartsAdapter.fireEvent,
 		inArray = HighchartsAdapter.inArray,
-		dupes = [],
 		ddSeriesId = 1;
 
 	// Utilities
@@ -128,9 +127,21 @@
 			levelSeries = [],
 			levelSeriesOptions = [],
 			level,
-			levelNumber;
+			levelNumber,
+			last;
 
+		if (!this.drilldownLevels) {
+			this.drilldownLevels = [];
+		}
+		
 		levelNumber = oldSeries.options._levelNumber || 0;
+
+		// See if we can reuse the registered series from last run
+		last = this.drilldownLevels[this.drilldownLevels.length - 1];
+		if (last && last.levelNumber !== levelNumber) {
+			last = undefined;
+		}
+		
 			
 		ddOptions = extend({
 			color: color,
@@ -140,12 +151,18 @@
 
 		// Record options for all current series
 		each(oldSeries.chart.series, function (series) {
-			if (series.xAxis === xAxis) {
-				levelSeries.push(series);
+			if (series.xAxis === xAxis && !series.isDrilling) {
 				series.options._ddSeriesId = series.options._ddSeriesId || ddSeriesId++;
 				series.options._colorIndex = series.userOptions._colorIndex;
-				levelSeriesOptions.push(series.options);
 				series.options._levelNumber = series.options._levelNumber || levelNumber; // #3182
+
+				if (last) {
+					levelSeries = last.levelSeries;
+					levelSeriesOptions = last.levelSeriesOptions;
+				} else {
+					levelSeries.push(series);
+					levelSeriesOptions.push(series.options);
+				}
 			}
 		});
 
@@ -169,10 +186,7 @@
 			}
 		};
 
-		// Generate and push it to a lookup array
-		if (!this.drilldownLevels) {
-			this.drilldownLevels = [];
-		}
+		// Push it to the lookup array
 		this.drilldownLevels.push(level);
 
 		newSeries = level.lowerSeries = this.addSeries(ddOptions, false);
@@ -298,7 +312,8 @@
 				if (!oldSeries.chart) {  // #2786
 					seriesI = chartSeries.length; // #2919
 					while (seriesI--) {
-						if (chartSeries[seriesI].options.id === level.lowerSeriesOptions.id) {
+						if (chartSeries[seriesI].options.id === level.lowerSeriesOptions.id && 
+								chartSeries[seriesI].options._levelNumber === levelNumber + 1) { // #3867
 							oldSeries = chartSeries[seriesI];
 							break;
 						}
@@ -342,7 +357,7 @@
 			.align();
 		}
 
-		dupes.length = []; // #3315
+		this.ddDupes.length = []; // #3315
 	};
 
 
@@ -513,11 +528,15 @@
 			drilldown = chart.options.drilldown,
 			i = (drilldown.series || []).length,
 			seriesOptions;
+
+		if (!chart.ddDupes) {
+			chart.ddDupes = [];
+		}
 		
 		while (i-- && !seriesOptions) {
-			if (drilldown.series[i].id === this.drilldown && inArray(this.drilldown, dupes) === -1) {
+			if (drilldown.series[i].id === this.drilldown && inArray(this.drilldown, chart.ddDupes) === -1) {
 				seriesOptions = drilldown.series[i];
-				dupes.push(this.drilldown);
+				chart.ddDupes.push(this.drilldown);
 			}
 		}
 

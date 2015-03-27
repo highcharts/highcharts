@@ -1,4 +1,8 @@
-<!DOCTYPE HTML>
+<?php
+
+require_once('functions.php');
+
+?><!DOCTYPE HTML>
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -213,8 +217,8 @@
 	<?php
 	$products = array('unit-tests', 'highcharts', 'maps', 'stock', 'issues');
 	$samplesDir = dirname(__FILE__). '/../../samples/';
-	$browser = get_browser(null, true);
-	$browserKey = @$browser['parent'];
+	$browser = getBrowser();
+	$browserKey = $browser['parent'];
 	$compare = @json_decode(file_get_contents('temp/compare.json'));
 
 	$i = 1;
@@ -242,6 +246,7 @@
 								$suffix = '';
 								$dissIndex = '';
 								$isUnitTest = strstr($yaml, 'qunit');
+								$diff = '';
 
 
 								if (strstr($yaml, 'requiresManualTesting: true')) {

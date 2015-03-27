@@ -10,7 +10,7 @@ function test(chart) {
 	chart.pointer.onContainerMouseMove({
 		type: 'mousemove',
 		pageX: 100,
-		pageY: 100,
+		pageY: 205,
 		target: chart.container
 	});
 

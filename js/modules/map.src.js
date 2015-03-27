@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.3-modified ()
+ * @license Highmaps JS v1.1.4-modified ()
  * Highmaps as a plugin for Highcharts 4.0.x or Highstock 2.0.x (x being the patch version of this file)
  *
  * (c) 2011-2014 Torstein Honsi
@@ -200,7 +200,7 @@ extend(ColorAxis.prototype, {
 	 * Return an intermediate color between two colors, according to pos where 0
 	 * is the from color and 1 is the to color. 
 	 * NOTE: Changes here should be copied
-	 * to the same function in drilldown.src.js.
+	 * to the same function in drilldown.src.js and solid-gauge-src.js.
 	 */
 	tweenColors: function (from, to, pos) {
 		// Check for has alpha, because rgba colors perform worse due to lack of
@@ -477,7 +477,7 @@ extend(ColorAxis.prototype, {
 		}
 	},
 	getPlotLinePath: function (a, b, c, d, pos) {
-		if (pos) { // crosshairs only
+		if (typeof pos === 'number') { // crosshairs only // #3969 pos can be 0 !!
 			return this.horiz ? 
 				['M', pos - 4, this.top - 6, 'L', pos + 4, this.top - 6, pos, this.top, 'Z'] : 
 				['M', this.left, pos, 'L', this.left - 6, pos + 6, this.left - 6, pos - 6, 'Z'];
@@ -1168,11 +1168,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			if (yAxis && yAxis.options.minRange === undefined) {
 				yAxis.minRange = Math.min(5 * minRange, (this.maxY - this.minY) / 5, yAxis.minRange || MAX_VALUE);
 			}
-		} else {
-			this.minY = undefined;
-			this.maxY = undefined;
-			this.minX = undefined;
-			this.maxX = undefined;
 		}
 	},
 	
@@ -1742,6 +1737,7 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 		padding: 0 // #3837
 	},
 	marker: null,
+	pointRange: null, // dynamically set to colsize by default
 	tooltip: {
 		pointFormat: '{point.x}, {point.y}: {point.value}<br/>'
 	},
@@ -1763,10 +1759,17 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	hasPointSpecificOptions: true,
 	supportsDrilldown: true,
 	getExtremesFromAll: true,
+
+	/**
+	 * Override the init method to add point ranges on both axes.
+	 */
 	init: function () {
+		var options;
 		seriesTypes.scatter.prototype.init.apply(this, arguments);
-		this.pointRange = this.options.colsize || 1;
-		this.yAxis.axisPointRange = this.options.rowsize || 1; // general point range
+
+		options = this.options;
+		this.pointRange = options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
+		this.yAxis.axisPointRange = options.rowsize || 1; // general point range
 	},
 	translate: function () {
 		var series = this,
@@ -1785,7 +1788,7 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				y2 = Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 1));
 
 			// Set plotX and plotY for use in K-D-Tree and more
-			point.plotX = (x1 + x2) / 2;
+			point.plotX = point.clientX = (x1 + x2) / 2;
 			point.plotY = (y1 + y2) / 2;
 
 			point.shapeType = 'rect';

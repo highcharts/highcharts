@@ -824,6 +824,7 @@
 			// Get the extremes from the y data
 			Series.prototype.getExtremes.call(this);
 		},
+		getExtremesFromAll: true,
 		bindAxes: function () {
 			var treeAxis = {
 				endOnTick: false,

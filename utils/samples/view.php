@@ -1,7 +1,6 @@
 <?php
 
 session_start();
-$defaults = json_decode(file_get_contents('default-settings.json'));
 
 define('FRAMEWORK', 'jQuery');
 
@@ -108,7 +107,7 @@ function getResources() {
 				window.onload = function () {
 					document.getElementById('container').innerHTML = 
 						'<div style="margin-top: 150px; %text-align: center"><h3 style="font-size: 2em; color: red">' +
-						'jQuery is missing</h3><p>Check your settings in <code>default-settings.json</code>.</div>';
+						'jQuery is missing</h3><p>Check your settings in <code>settings.php</code>.</div>';
 				}
 				return;
 			}

@@ -675,8 +675,6 @@ Series.prototype = {
 			xMax = xExtremes.max,
 			validValue,
 			withinRange,
-			dataMin,
-			dataMax,
 			x,
 			y,
 			i,
@@ -710,8 +708,8 @@ Series.prototype = {
 				}
 			}
 		}
-		this.dataMin = pick(dataMin, arrayMin(activeYData));
-		this.dataMax = pick(dataMax, arrayMax(activeYData));
+		this.dataMin = arrayMin(activeYData);
+		this.dataMax = arrayMax(activeYData);
 	},
 
 	/**
@@ -1397,7 +1395,7 @@ Series.prototype = {
 				series[graphKey] = series.chart.renderer.path(graphPath)
 					.attr(attribs)
 					.add(series.group)
-					.shadow(!i && options.shadow);
+					.shadow((i < 2) && options.shadow); // add shadow to normal series (0) or to first zone (1) #3932
 			}
 		});
 	},
@@ -1426,13 +1424,23 @@ Series.prototype = {
 		if (zones.length && (graph || area)) {
 			// The use of the Color Threshold assumes there are no gaps
 			// so it is safe to hide the original graph and area
-			graph.hide();
-			if (area) { area.hide(); }
+			if (graph) {
+				graph.hide();
+			}
+			if (area) { 
+				area.hide(); 
+			}
 
 			// Create the clips
 			each(zones, function (threshold, i) {
 				translatedFrom = pick(translatedTo, (reversed ? (horiz ? chart.plotWidth : 0) : (horiz ? 0 : axis.toPixels(axis.min))));
 				translatedTo = Math.round(axis.toPixels(pick(threshold.value, axis.max), true));
+
+				if (axis.isXAxis) {
+					translatedFrom = translatedFrom > translatedTo ? translatedTo : translatedFrom; //#4006 from should be less or equal then to
+				} else {
+					translatedFrom = translatedFrom < translatedTo ? translatedTo : translatedFrom; //#4006 from should be less or equal then to
+				}
 
 				if (ignoreZones) {
 					translatedFrom = translatedTo = axis.toPixels(axis.max);
@@ -1485,7 +1493,9 @@ Series.prototype = {
 				} else {
 					clips[i] = renderer.clipRect(clipAttr);
 
-					series['colorGraph' + i].clip(clips[i]);
+					if (graph) {
+						series['colorGraph' + i].clip(clips[i]);
+					}
 
 					if (area) {
 						series['colorArea' + i].clip(clips[i]);
@@ -1691,6 +1701,7 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			wasDirtyData = series.isDirtyData, // cache it here as it is set to false in render, but used after
+			wasDirty = series.isDirty,
 			group = series.group,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis;
@@ -1712,10 +1723,11 @@ Series.prototype = {
 
 		series.translate();
 		series.render();
-
 		if (wasDirtyData) {
-			delete this.kdTree; // #3868 recalculate the kdtree with dirty data
 			fireEvent(series, 'updatedData');
+		}
+		if (wasDirty || wasDirtyData) {			// #3945 recalculate the kdtree when dirty
+			delete this.kdTree; // #3868 recalculate the kdtree with dirty data
 		}
 	},
 
@@ -1725,7 +1737,7 @@ Series.prototype = {
 
 	kdDimensions: 1,
 	kdTree: null,
-	kdAxisArray: ['plotX', 'plotY'],
+	kdAxisArray: ['clientX', 'plotY'],
 	kdComparer: 'distX',
 
 	searchPoint: function (e) {
@@ -1734,10 +1746,10 @@ Series.prototype = {
 			yAxis = series.yAxis,
 			inverted = series.chart.inverted;
 		
-		e.plotX = inverted ? xAxis.len - e.chartY + xAxis.pos : e.chartX - xAxis.pos;
-		e.plotY = inverted ? yAxis.len - e.chartX + yAxis.pos : e.chartY - yAxis.pos;
-
-		return this.searchKDTree(e);
+		return this.searchKDTree({
+			clientX: inverted ? xAxis.len - e.chartY + xAxis.pos : e.chartX - xAxis.pos,
+			plotY: inverted ? yAxis.len - e.chartX + yAxis.pos : e.chartY - yAxis.pos
+		});
 	},
 
 	buildKDTree: function () {
@@ -1770,12 +1782,12 @@ Series.prototype = {
 			}
 		}
 
-		// Start the recursive build process with a clone of the points array (#3873)
+		// Start the recursive build process with a clone of the points array and null points filtered out (#3873)
 		function startRecursive() {
-			var points = series.points.filter(function (point) {
+			var points = grep(series.points, function (point) {
 				return point.y !== null;
 			});
-			series.kdTree = _kdtree(points.slice(), dimensions, dimensions);		
+			series.kdTree = _kdtree(points, dimensions, dimensions);		
 		}
 
 		delete series.kdTree;

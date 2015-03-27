@@ -8,9 +8,10 @@ $(function () {
      * supported. See http://caniuse.com/#feat=download for current uptake.
      *
      * TODO:
-     * - Add crossbrowser support by utilizing the Downloadify Flash library?
-     * - Option to fall back to online export server on missing support. Display human 
-     *   readable error if not.
+     * - Find a flowchart at Dropbox\Highsoft\Teknisk\Docs. The flowchart has not been updated to fit the new logic of implementing FileSaver ourselves.
+     * - Existing code was abandoned in the middle of a revamp, probably needs cleanup.
+     * - Implement "FileSaver.js"-like functionality for cross-browser support. Where Blob would need to be pulled in (old FF/Opera/Safari), emit error msg.
+     * - Option to fall back to online export server on missing support. Display error to user if option disabled and there is no support.
      */
     (function (Highcharts) {
 
@@ -41,6 +42,7 @@ $(function () {
             var chart = this,
                 svg = this.getSVG(), // Get the SVG
                 canvas,
+                canvasCxt,
                 a,
                 href,
                 extension,
@@ -64,13 +66,20 @@ $(function () {
 
                         navigator.msSaveOrOpenBlob(blob, 'chart.' + extension);
 
-                    // HTML5 download attribute
                     } else {
                         a = document.createElement('a');
-                        a.href = href;
-                        a.download = 'chart.' + extension;
-                        document.body.appendChild(a);
-                        a.click();
+                        if (typeof a.download !== 'undefined') {
+                            
+                            // HTML5 download attribute
+                            a.href = href;
+                            a.download = 'chart.' + extension;
+                            document.body.appendChild(a);
+                            a.click();
+
+                        } else {
+                            // Implement FileSaver functionality, or fall back to export server
+                        }
+
                         a.remove();
                     }
                 },
@@ -93,16 +102,26 @@ $(function () {
                 // It's included in the page or preloaded, go ahead
                 if (window.canvg) {
                     prepareCanvas();
-                    download();
-
-                // We need to load canvg before continuing
+                    download();                
+                
+                // No CanVG
                 } else {
-                    this.showLoading();
-                    getScript(Highcharts.getOptions().global.canvasToolsURL, function () {
-                        chart.hideLoading();
-                        prepareCanvas();
+                    // If browser supports SVG canvas rendering directly - do that
+                    canvas = document.createElement('canvas');
+                    canvasCxt = canvas.getContext && canvas.getContext('2d');
+                    if (canvasCxt /* && canvasCxt.drawImage --NOTE: do we need this? */) {
+                        canvasCxt.drawImage(svg, 0, 0);
                         download();
-                    });
+                    } else {
+                        // We need to load canvg before continuing                        
+                        // TODO: If browser does not support SVG & canvas, fallback to export server
+                        this.showLoading();
+                        getScript(Highcharts.getOptions().global.canvasToolsURL, function () {
+                            chart.hideLoading();
+                            prepareCanvas();
+                            download();
+                        });
+                    }
                 }
             }
         };

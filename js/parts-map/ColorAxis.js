@@ -68,7 +68,7 @@ extend(ColorAxis.prototype, {
 	 * Return an intermediate color between two colors, according to pos where 0
 	 * is the from color and 1 is the to color. 
 	 * NOTE: Changes here should be copied
-	 * to the same function in drilldown.src.js.
+	 * to the same function in drilldown.src.js and solid-gauge-src.js.
 	 */
 	tweenColors: function (from, to, pos) {
 		// Check for has alpha, because rgba colors perform worse due to lack of
@@ -345,7 +345,7 @@ extend(ColorAxis.prototype, {
 		}
 	},
 	getPlotLinePath: function (a, b, c, d, pos) {
-		if (pos) { // crosshairs only
+		if (typeof pos === 'number') { // crosshairs only // #3969 pos can be 0 !!
 			return this.horiz ? 
 				['M', pos - 4, this.top - 6, 'L', pos + 4, this.top - 6, pos, this.top, 'Z'] : 
 				['M', this.left, pos, 'L', this.left - 6, pos + 6, this.left - 6, pos - 6, 'Z'];

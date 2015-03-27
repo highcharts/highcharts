@@ -1,11 +1,9 @@
 <?php
 ini_set('display_errors', 'on');
 session_start();
-$defaults = json_decode(file_get_contents('default-settings.json'));
-
-$leftPath = isset($_SESSION['leftPath']) ? $_SESSION['leftPath'] : $defaults->leftPath;
-$rightPath = isset($_SESSION['rightPath']) ? $_SESSION['rightPath'] : $defaults->rightPath;
-
+require_once('../settings.php');
+$leftPath = isset($_SESSION['leftPath']) ? $_SESSION['leftPath'] : Settings::$leftPath;
+$rightPath = isset($_SESSION['rightPath']) ? $_SESSION['rightPath'] : Settings::$rightPath;
 
 
 $leftExporting = "$leftPath/modules/exporting.src.js";
@@ -240,6 +238,13 @@ function getExportInnerHTML() {
 			
 			// Disable animation
 			$(function () {
+
+				// Make sure getJSON content is not cached
+				$.ajaxSetup({
+					type: 'POST',
+					headers: { "cache-control": "no-cache" }
+				});
+
 				if (window.Highcharts) {
 					Highcharts.setOptions({
 						chart: {

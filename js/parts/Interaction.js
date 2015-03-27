@@ -14,10 +14,6 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 				var target = e.target,
 				point;
 
-				if (chart.hoverSeries !== series) {
-					series.onMouseOver();
-				}
-
 				while (target && !point) {
 					point = target.point;
 					target = target.parentNode;
@@ -411,6 +407,10 @@ extend(Point.prototype, {
 			tooltip = chart.tooltip,
 			hoverPoint = chart.hoverPoint;
 
+		if (chart.hoverSeries !== series) {
+			series.onMouseOver();
+		}		
+
 		// set normal state to previous series
 		if (hoverPoint && hoverPoint !== point) {
 			hoverPoint.onMouseOut();
@@ -683,7 +683,7 @@ extend(Series.prototype, {
 			}
 
 			if (state) {
-				lineWidth = (stateOptions[state].lineWidth || lineWidth) + (stateOptions[state].lineWidthPlus || 0);
+				lineWidth = stateOptions[state].lineWidth || lineWidth + (stateOptions[state].lineWidthPlus || 0); // #4035
 			}
 
 			if (graph && !graph.dashstyle) { // hover is turned off for dashed lines in VML

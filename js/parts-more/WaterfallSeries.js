@@ -101,6 +101,11 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				}
 				previousY += yValue;
 			}
+			// #3952 Negative sum or intermediate sum not rendered correctly
+			if (shapeArgs.height < 0) {
+				shapeArgs.y += shapeArgs.height;
+				shapeArgs.height *= -1;
+			}
 
 			point.plotY = shapeArgs.y = Math.round(shapeArgs.y) - (series.borderWidth % 2) / 2;
 			shapeArgs.height = Math.max(Math.round(shapeArgs.height), 0.001); // #3151

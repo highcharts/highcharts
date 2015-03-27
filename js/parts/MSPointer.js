@@ -50,7 +50,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 			});
 		},
 		onDocumentPointerUp: function (e) {
-			translateMSPointer(e, 'onContainerTouchEnd', 'touchend', function (e) {
+			translateMSPointer(e, 'onDocumentTouchEnd', 'touchend', function (e) {
 				delete touches[e.pointerId];
 			});
 		},

@@ -43,6 +43,8 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	getDate,
 	getMonth,
 	getFullYear,
+	setMilliseconds,
+	setSeconds,
 	setMinutes,
 	setHours,
 	setDate,

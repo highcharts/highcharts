@@ -253,11 +253,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			if (yAxis && yAxis.options.minRange === undefined) {
 				yAxis.minRange = Math.min(5 * minRange, (this.maxY - this.minY) / 5, yAxis.minRange || MAX_VALUE);
 			}
-		} else {
-			this.minY = undefined;
-			this.maxY = undefined;
-			this.minX = undefined;
-			this.maxX = undefined;
 		}
 	},
 	

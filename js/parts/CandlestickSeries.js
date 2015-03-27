@@ -118,7 +118,9 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 				];
 
 				if (graphic) {
-					graphic.animate({ d: path });
+					graphic
+						.attr(pointAttr) // #3897
+						.animate({ d: path });
 				} else {
 					point.graphic = chart.renderer.path(path)
 						.attr(pointAttr)

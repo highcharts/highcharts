@@ -2,11 +2,6 @@
 ini_set('display_errors', 1);
 
 session_start();
-//$defaults = json_decode(file_get_contents('default-settings.json'));
-
-//define('FRAMEWORK', 'jQuery');
-
-//require_once('functions.php');
 
 @$path = $_GET['path'];
 if (!preg_match('/^[a-z\-]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {

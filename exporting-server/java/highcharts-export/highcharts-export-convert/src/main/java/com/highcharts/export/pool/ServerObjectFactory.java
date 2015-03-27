@@ -1,5 +1,6 @@
 package com.highcharts.export.pool;
 
+import java.nio.file.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,15 +11,14 @@ import org.apache.log4j.Logger;
 import com.highcharts.export.server.Server;
 import com.highcharts.export.server.ServerState;
 import com.highcharts.export.util.TempDir;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.TreeMap;
 
 import org.apache.commons.io.IOUtils;
@@ -46,9 +46,11 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 	public Server create() {
 		logger.debug("in makeObject, " + exec + ", " +  script + ", " +  host);
 		Integer port = this.getAvailablePort();
+		String separator = FileSystems.getDefault().getSeparator();
+
         if (script.isEmpty()) {
             // use the bundled highcharts-convert.js script
-            script = TempDir.getPhantomJsDir().toAbsolutePath().toString() + "/highcharts-convert.js";
+            script = TempDir.getPhantomJsDir().toAbsolutePath().toString() + separator + "highcharts-convert.js";
         }
         Server server = new Server(exec, script, host, port, connectTimeout, readTimeout, maxTimeout);
 		portUsage.put(port, PortStatus.BUSY);
@@ -203,8 +205,11 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 				try {
 					file = Files.createFile(path).toFile();
 					file.deleteOnExit();
-					InputStream in = resource.getInputStream();
-					IOUtils.copy(in, new FileOutputStream(file));
+					try (InputStream in = resource.getInputStream();
+					     OutputStream out=new FileOutputStream(file);)
+			        {
+					    IOUtils.copy(in, out);
+			        }
 				} catch (IOException ioex) {
 					logger.error("Error while setting up phantomjs environment: " + ioex.getMessage());
 				}

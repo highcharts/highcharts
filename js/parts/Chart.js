@@ -1180,7 +1180,7 @@ Chart.prototype = {
 		chart.getAxisMargins();
 
 		// If the plot area size has changed significantly, calculate tick positions again
-		redoHorizontal = tempWidth / chart.plotWidth > 1.2;
+		redoHorizontal = tempWidth / chart.plotWidth > 1.1;
 		redoVertical = tempHeight / chart.plotHeight > 1.1;
 
 		if (redoHorizontal || redoVertical) {

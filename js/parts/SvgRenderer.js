@@ -10,7 +10,7 @@ SVGElement.prototype = {
 	opacity: 1,
 	SVG_NS: Highcharts.SVG_NS,
 	// For labels, these CSS properties are applied to the <text> node directly
-	textProps: ['fontSize', 'fontWeight', 'fontFamily', 'color', 
+	textProps: ['fontSize', 'fontWeight', 'fontFamily', 'fontStyle', 'color', 
 		'lineHeight', 'width', 'textDecoration', 'textShadow'],
 	
 	/**
@@ -1090,17 +1090,22 @@ SVGElement.prototype = {
 			otherZIndex,
 			element = this.element,
 			inserted,
+			run = this.added,
 			i;
 		
 		if (defined(value)) {
 			element.setAttribute(key, value); // So we can read it for other elements in the group
-			this[key] = +value;
+			value = +value;
+			if (this[key] === value) { // Only update when needed (#3865)
+				run = false;
+			}
+			this[key] = value;
 		}
 
 		// Insert according to this and other elements' zIndex. Before .add() is called,
 		// nothing is done. Then on add, or by later calls to zIndexSetter, the node
 		// is placed on the right place in the DOM.
-		if (this.added) {
+		if (run) {
 			value = this.zIndex;
 
 			if (value && parentGroup) {

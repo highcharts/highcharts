@@ -133,8 +133,6 @@ Pointer.prototype = {
 			hoverPoint = chart.hoverPoint,
 			hoverSeries = chart.hoverSeries,
 			i,
-			trueXkd,
-			trueX,
 			//j,
 			distance = chart.chartWidth,
 			rdistance = chart.chartWidth,
@@ -154,8 +152,13 @@ Pointer.prototype = {
 			}
 		}
 
+		// If it has a hoverPoint and that series requires direct touch (like columns), 
+		// use the hoverPoint (#3899). Otherwise, search the k-d tree.	
+		if (!shared && hoverSeries && hoverSeries.directTouch && hoverPoint) {
+			kdpoint = hoverPoint;
+
 		// Handle shared tooltip or cases where a series is not yet hovered
-		if (!(hoverSeries && hoverSeries.noSharedTooltip) && (shared || !hoverSeries)) { // #3821 
+		} else {
 			// Find nearest points on all series
 			each(series, function (s) {
 				// Skip hidden series
@@ -170,30 +173,23 @@ Pointer.prototype = {
 			// Find absolute nearest point
 			each(kdpoints, function (p) {
 				if (p && defined(p.plotX) && defined(p.plotY)) {
-					if ((p.dist.distX < distance) || ((p.dist.distX === distance || p.series.kdDimensions > 1) && p.dist.distR < rdistance)) {
+					if ((p.dist.distX < distance) || ((p.dist.distX === distance || p.series.kdDimensions > 1) && 
+							p.dist.distR < rdistance)) {
 						distance = p.dist.distX;
 						rdistance = p.dist.distR;
 						kdpoint = p;
 					}
 				}
-			});	
-
-		// Handle non-shared tooltips
-		} else {
-			// If it has a hoverPoint and that series requires direct touch (like columns), use the hoverPoint (#3899).
-			// Otherwise, search the k-d tree (like scatter).
-			kdpoint = (hoverSeries.directTouch && hoverPoint) || (hoverSeries && hoverSeries.searchPoint(e));
+			});
 		}
 
-		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden
-		if (kdpoint && kdpoint !== hoverPoint) {
+		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926
+		if (kdpoint && (kdpoint !== hoverPoint || (tooltip && tooltip.isHidden))) {
 			// Draw tooltip if necessary
 			if (shared && !kdpoint.series.noSharedTooltip) {
 				i = kdpoints.length;
-				trueXkd = kdpoint.clientX;
 				while (i--) {
-					trueX = kdpoints[i].clientX;
-					if (kdpoints[i].x !== kdpoint.x || trueX !== trueXkd || !defined(kdpoints[i].y) || (kdpoints[i].series.noSharedTooltip || false)) {
+					if (kdpoints[i].clientX !== kdpoint.clientX || kdpoints[i].series.noSharedTooltip) {
 						kdpoints.splice(i, 1);
 					}
 				}
@@ -206,12 +202,14 @@ Pointer.prototype = {
 					if (point !== kdpoint) { 
 						point.onMouseOver(e);
 					}
-				});				
-				kdpoint.onMouseOver(e); // #3919 do mouseover on the closest point last to ensure it is the hoverpoint
+				});	
+				// #3919, #3985 do mouseover on the closest point last to ensure it is the hoverpoint
+				((hoverSeries && hoverSeries.directTouch && hoverPoint) || kdpoint).onMouseOver(e); 
 			} else {
 				if (tooltip) { 
 					tooltip.refresh(kdpoint, e);
 				}
+				kdpoint.onMouseOver(e); 
 			}
 		
 		// Update positions (regardless of kdpoint or hoverPoint)
@@ -226,7 +224,9 @@ Pointer.prototype = {
 		// Start the event listener to pick up the tooltip 
 		if (tooltip && !pointer._onDocumentMouseMove) {
 			pointer._onDocumentMouseMove = function (e) {
-				pointer.onDocumentMouseMove(e);
+				if (charts[hoverChartIndex]) {
+					charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
+				}
 			};
 			addEvent(document, 'mousemove', pointer._onDocumentMouseMove);
 		}

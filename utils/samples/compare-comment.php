@@ -3,6 +3,7 @@
 $compare = json_decode(file_get_contents('temp/compare.json'));
 $path = $_GET['path'];
 $diff = $_GET['diff'];
+$focus = $_GET['focus'] === 'false' ? false : true;
 $i = $_GET['i'];
 $updateContents = false;
 
@@ -58,9 +59,11 @@ $symbols = array('check', 'exclamation-sign');
 		</style>
 		<script>
 
+		<?php if ($focus) : ?>
 		$(function () {
 			$('#title')[0].focus();
 		});
+		<? endif; ?>
 		
 		<?php if ($updateContents) : ?>
 			if (window.parent.frames[0]) {

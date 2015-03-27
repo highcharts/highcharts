@@ -282,7 +282,7 @@ $(function () {
                         data: [],
                         dataLabels: {
                             enabled: true,
-                            color: 'white',
+                            color: '#FFFFFF',
                             format: '{point.code}',
                             style: {
                                 textTransform: 'uppercase'

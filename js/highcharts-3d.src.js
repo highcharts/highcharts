@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.3-modified ()
+ * @license Highcharts JS v4.1.4-modified ()
  *
  * (c) 2009-2013 Torstein Hønsi
  *

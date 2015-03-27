@@ -26,12 +26,19 @@
                     throw err;
                 }
                 sys.puts(stdout);
-            };
+            },
+            commands = [
+                'git status',
+                'git add --all',
+                'git commit -m "v' + version + '"',
+                'git tag -a "v' + version + '" -m "Tagged ' + product + ' version ' + version + '"',
+                'git push',
+                'git push --tags'
+            ];
 
-        cmd.exec('git status', options, puts);
-        cmd.exec('git commit -a -m "v' + version + '"', options, puts);
-        cmd.exec('git tag -a "v' + version + '" -m "Tagged ' + product + ' version ' + version + '"', options, puts);
-        cmd.exec('git push --tags', options, puts);
+        //cmd.exec(commands.join(' && '), options, puts);
+        console.log('--- ' + product + '---')
+        console.log(commands.join('\n'));
     }
 
     /**
