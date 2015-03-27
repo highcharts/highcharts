@@ -13,7 +13,7 @@
  * @constructor
  */
 var VMLRenderer, VMLElement;
-if (!Highcharts.hasSVG && !useCanVG) {
+if (!Highcharts.svg && !useCanVG) {
 
 /**
  * The VML element wrapper.

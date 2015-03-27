@@ -202,7 +202,7 @@ var pick = Highcharts.pick = function () {
  * @param {Object} styles Style object with camel case property names
  */
 function css(el, styles) {
-	if (Highcharts.isIE && !Highcharts.hasSVG) { // #2686
+	if (Highcharts.isIE && !Highcharts.svg) { // #2686
 		if (styles && styles.opacity !== undefined) {
 			styles.filter = 'alpha(opacity=' + (styles.opacity * 100) + ')';
 		}

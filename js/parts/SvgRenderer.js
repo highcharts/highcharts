@@ -456,12 +456,12 @@ SVGElement.prototype = {
 			// store object
 			elemWrapper.styles = styles;
 
-			if (textWidth && (useCanVG || (!Highcharts.hasSVG && elemWrapper.renderer.forExport))) {
+			if (textWidth && (useCanVG || (!Highcharts.svg && elemWrapper.renderer.forExport))) {
 				delete styles.width;
 			}
 
 			// serialize and set style attribute
-			if (isIE && !Highcharts.hasSVG) {
+			if (isIE && !Highcharts.svg) {
 				css(elemWrapper.element, styles);
 			} else {
 				/*jslint unparam: true*/
@@ -1439,7 +1439,7 @@ SVGRenderer.prototype = {
 							if (!spanNo && lineNo) {
 
 								// allow getting the right offset height in exporting in IE
-								if (!Highcharts.hasSVG && forExport) {
+								if (!Highcharts.svg && forExport) {
 									css(tspan, { display: 'block' });
 								}
 
@@ -1477,7 +1477,7 @@ SVGRenderer.prototype = {
 									actualWidth = bBox.width;
 
 									// Old IE cannot measure the actualWidth for SVG elements (#2314)
-									if (!Highcharts.hasSVG && renderer.forExport) {
+									if (!Highcharts.svg && renderer.forExport) {
 										actualWidth = renderer.measureSpanWidth(tspan.firstChild.data, wrapper.styles);
 									}
 
@@ -2207,7 +2207,7 @@ SVGRenderer.prototype = {
 
 		// declare variables
 		var renderer = this,
-			fakeSVG = useCanVG || (!Highcharts.hasSVG && renderer.forExport),
+			fakeSVG = useCanVG || (!Highcharts.svg && renderer.forExport),
 			wrapper,
 			attr = {};
 
