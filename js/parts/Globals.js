@@ -6,7 +6,8 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	isFirefox: /Firefox/.test(navigator.userAgent),
 	isTouchDevice: /(Mobile|Android|Windows Phone)/.test(navigator.userAgent),
 	SVG_NS: 'http://www.w3.org/2000/svg',
-	idCounter: 0
+	idCounter: 0,
+	chartCount: 0
 },	init = function () {
 		var H = Highcharts;
 		H.svg = !!document.createElementNS && !!document.createElementNS(H.SVG_NS, 'svg').createSVGRect;
@@ -27,7 +28,6 @@ var hasBidiBug = Highcharts.isFirefox && parseInt(navigator.userAgent.split('Fir
 	timeUnits,
 	noop = function () {},
 	charts = [],
-	chartCount = 0,
 
 	// some constants for frequently used strings
 	numRegex = /^[0-9]+$/,

@@ -654,7 +654,7 @@ Pointer.prototype = {
 			pointer.onContainerClick(e);
 		};
 		addEvent(container, 'mouseleave', pointer.onContainerMouseLeave);
-		if (chartCount === 1) {
+		if (Highcharts.chartCount === 1) {
 			addEvent(document, 'mouseup', pointer.onDocumentMouseUp);
 		}
 		if (Highcharts.hasTouch) {
@@ -664,7 +664,7 @@ Pointer.prototype = {
 			container.ontouchmove = function (e) {
 				pointer.onContainerTouchMove(e);
 			};
-			if (chartCount === 1) {
+			if (Highcharts.chartCount === 1) {
 				addEvent(document, 'touchend', pointer.onDocumentTouchEnd);
 			}
 		}
@@ -678,7 +678,7 @@ Pointer.prototype = {
 		var prop;
 
 		removeEvent(this.chart.container, 'mouseleave', this.onContainerMouseLeave);
-		if (!chartCount) {
+		if (!Highcharts.chartCount) {
 			removeEvent(document, 'mouseup', this.onDocumentMouseUp);
 			removeEvent(document, 'touchend', this.onDocumentTouchEnd);
 		}

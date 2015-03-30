@@ -21,7 +21,8 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	isFirefox: /Firefox/.test(navigator.userAgent),
 	isTouchDevice: /(Mobile|Android|Windows Phone)/.test(navigator.userAgent),
 	SVG_NS: 'http://www.w3.org/2000/svg',
-	idCounter: 0
+	idCounter: 0,
+	chartCount: 0
 },	init = function () {
 		var H = Highcharts;
 		H.svg = !!document.createElementNS && !!document.createElementNS(H.SVG_NS, 'svg').createSVGRect;
@@ -42,7 +43,6 @@ var hasBidiBug = Highcharts.isFirefox && parseInt(navigator.userAgent.split('Fir
 	timeUnits,
 	noop = function () {},
 	charts = [],
-	chartCount = 0,
 
 	// some constants for frequently used strings
 	numRegex = /^[0-9]+$/,
@@ -9574,7 +9574,7 @@ Pointer.prototype = {
 			pointer.onContainerClick(e);
 		};
 		addEvent(container, 'mouseleave', pointer.onContainerMouseLeave);
-		if (chartCount === 1) {
+		if (Highcharts.chartCount === 1) {
 			addEvent(document, 'mouseup', pointer.onDocumentMouseUp);
 		}
 		if (Highcharts.hasTouch) {
@@ -9584,7 +9584,7 @@ Pointer.prototype = {
 			container.ontouchmove = function (e) {
 				pointer.onContainerTouchMove(e);
 			};
-			if (chartCount === 1) {
+			if (Highcharts.chartCount === 1) {
 				addEvent(document, 'touchend', pointer.onDocumentTouchEnd);
 			}
 		}
@@ -9598,7 +9598,7 @@ Pointer.prototype = {
 		var prop;
 
 		removeEvent(this.chart.container, 'mouseleave', this.onContainerMouseLeave);
-		if (!chartCount) {
+		if (!Highcharts.chartCount) {
 			removeEvent(document, 'mouseup', this.onDocumentMouseUp);
 			removeEvent(document, 'touchend', this.onDocumentTouchEnd);
 		}
@@ -10799,7 +10799,7 @@ Chart.prototype = {
 		// Add the chart to the global lookup
 		chart.index = charts.length;
 		charts.push(chart);
-		chartCount++;
+		Highcharts.chartCount++;
 
 		// Set up auto resize
 		if (optionsChart.reflow !== false) {
@@ -11981,7 +11981,7 @@ Chart.prototype = {
 		
 		// Delete the chart from charts lookup array
 		charts[chart.index] = undefined;
-		chartCount--;
+		Highcharts.chartCount--;
 		chart.renderTo.removeAttribute('data-highcharts-chart');
 
 		// remove events
