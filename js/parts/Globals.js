@@ -18,7 +18,6 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	// some variables
 var hasBidiBug = Highcharts.isFirefox && parseInt(navigator.userAgent.split('Firefox/')[1], 10) < 4, // issue #38
 	Renderer,
-	hasTouch,
 	symbolSizes = {},
 	idCounter = 0,
 	garbageBin,

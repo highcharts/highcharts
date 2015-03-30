@@ -2,7 +2,7 @@
 var hoverChartIndex;
 
 // Global flag for touch support
-hasTouch = document.documentElement.ontouchstart !== undefined;
+Highcharts.hasTouch = document.documentElement.ontouchstart !== undefined;
 
 /**
  * The mouse tracker object. All methods starting with "on" are primary DOM event handlers. 
@@ -657,7 +657,7 @@ Pointer.prototype = {
 		if (chartCount === 1) {
 			addEvent(document, 'mouseup', pointer.onDocumentMouseUp);
 		}
-		if (hasTouch) {
+		if (Highcharts.hasTouch) {
 			container.ontouchstart = function (e) {
 				pointer.onContainerTouchStart(e);
 			};

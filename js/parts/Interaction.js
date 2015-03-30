@@ -43,7 +43,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 						.on('mouseover', onMouseOver)
 						.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
 						.css(css);
-					if (hasTouch) {
+					if (Highcharts.hasTouch) {
 						series[key].on('touchstart', onMouseOver);
 					}
 				}
@@ -138,7 +138,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 					.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
 					.css(css);
 
-				if (hasTouch) {
+				if (Highcharts.hasTouch) {
 					tracker.on('touchstart', onMouseOver);
 				}
 			});

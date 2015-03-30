@@ -543,7 +543,7 @@ Scroller.prototype = {
 		];
 
 		// Touch events
-		if (hasTouch) {
+		if (Highcharts.hasTouch) {
 			_events.push(
 				[container, 'touchstart', mouseDownHandler],
 				[container, 'touchmove', mouseMoveHandler],

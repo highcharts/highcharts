@@ -33,7 +33,6 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	// some variables
 var hasBidiBug = Highcharts.isFirefox && parseInt(navigator.userAgent.split('Firefox/')[1], 10) < 4, // issue #38
 	Renderer,
-	hasTouch,
 	symbolSizes = {},
 	idCounter = 0,
 	garbageBin,
@@ -2240,7 +2239,7 @@ SVGElement.prototype = {
 			element = svgElement.element;
 		
 		// touch
-		if (hasTouch && eventType === 'click') {
+		if (Highcharts.hasTouch && eventType === 'click') {
 			element.ontouchstart = function (e) {			
 				svgElement.touchEventFired = Date.now();				
 				e.preventDefault();
@@ -8923,7 +8922,7 @@ Tooltip.prototype = {
 var hoverChartIndex;
 
 // Global flag for touch support
-hasTouch = document.documentElement.ontouchstart !== undefined;
+Highcharts.hasTouch = document.documentElement.ontouchstart !== undefined;
 
 /**
  * The mouse tracker object. All methods starting with "on" are primary DOM event handlers. 
@@ -9578,7 +9577,7 @@ Pointer.prototype = {
 		if (chartCount === 1) {
 			addEvent(document, 'mouseup', pointer.onDocumentMouseUp);
 		}
-		if (hasTouch) {
+		if (Highcharts.hasTouch) {
 			container.ontouchstart = function (e) {
 				pointer.onContainerTouchStart(e);
 			};
@@ -18658,7 +18657,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 						.on('mouseover', onMouseOver)
 						.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
 						.css(css);
-					if (hasTouch) {
+					if (Highcharts.hasTouch) {
 						series[key].on('touchstart', onMouseOver);
 					}
 				}
@@ -18753,7 +18752,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 					.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
 					.css(css);
 
-				if (hasTouch) {
+				if (Highcharts.hasTouch) {
 					tracker.on('touchstart', onMouseOver);
 				}
 			});

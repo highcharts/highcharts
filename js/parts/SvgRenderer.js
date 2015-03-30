@@ -493,7 +493,7 @@ SVGElement.prototype = {
 			element = svgElement.element;
 		
 		// touch
-		if (hasTouch && eventType === 'click') {
+		if (Highcharts.hasTouch && eventType === 'click') {
 			element.ontouchstart = function (e) {			
 				svgElement.touchEventFired = Date.now();				
 				e.preventDefault();
