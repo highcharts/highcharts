@@ -587,7 +587,7 @@ Chart.prototype = {
 			containerId;
 
 		chart.renderTo = renderTo = optionsChart.renderTo;
-		containerId = 'highcharts-' + idCounter++;
+		containerId = 'highcharts-' + Highcharts.idCounter++;
 
 		if (isString(renderTo)) {
 			chart.renderTo = renderTo = document.getElementById(renderTo);

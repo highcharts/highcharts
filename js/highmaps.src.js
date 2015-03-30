@@ -20,7 +20,8 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	isWebKit: /AppleWebKit/.test(navigator.userAgent),
 	isFirefox: /Firefox/.test(navigator.userAgent),
 	isTouchDevice: /(Mobile|Android|Windows Phone)/.test(navigator.userAgent),
-	SVG_NS: 'http://www.w3.org/2000/svg'
+	SVG_NS: 'http://www.w3.org/2000/svg',
+	idCounter: 0
 },	init = function () {
 		var H = Highcharts;
 		H.svg = !!document.createElementNS && !!document.createElementNS(H.SVG_NS, 'svg').createSVGRect;
@@ -34,7 +35,6 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 var hasBidiBug = Highcharts.isFirefox && parseInt(navigator.userAgent.split('Firefox/')[1], 10) < 4, // issue #38
 	Renderer,
 	symbolSizes = {},
-	idCounter = 0,
 	garbageBin,
 	defaultOptions,
 	dateFormat, // function
@@ -1866,7 +1866,7 @@ SVGElement.prototype = {
 			} else {
 
 				// Set the id and create the element
-				gradAttr.id = id = 'highcharts-' + idCounter++;
+				gradAttr.id = id = 'highcharts-' + Highcharts.idCounter++;
 				gradients[key] = gradientObject = renderer.createElement(gradName)
 					.attr(gradAttr)
 					.add(renderer.defs);
@@ -3924,7 +3924,7 @@ SVGRenderer.prototype = {
 	 */
 	clipRect: function (x, y, width, height) {
 		var wrapper,
-			id = 'highcharts-' + idCounter++,
+			id = 'highcharts-' + Highcharts.idCounter++,
 
 			clipPath = this.createElement('clipPath').attr({
 				id: id
@@ -11303,7 +11303,7 @@ Chart.prototype = {
 			containerId;
 
 		chart.renderTo = renderTo = optionsChart.renderTo;
-		containerId = 'highcharts-' + idCounter++;
+		containerId = 'highcharts-' + Highcharts.idCounter++;
 
 		if (isString(renderTo)) {
 			chart.renderTo = renderTo = document.getElementById(renderTo);

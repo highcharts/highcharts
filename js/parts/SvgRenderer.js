@@ -120,7 +120,7 @@ SVGElement.prototype = {
 			} else {
 
 				// Set the id and create the element
-				gradAttr.id = id = 'highcharts-' + idCounter++;
+				gradAttr.id = id = 'highcharts-' + Highcharts.idCounter++;
 				gradients[key] = gradientObject = renderer.createElement(gradName)
 					.attr(gradAttr)
 					.add(renderer.defs);
@@ -2178,7 +2178,7 @@ SVGRenderer.prototype = {
 	 */
 	clipRect: function (x, y, width, height) {
 		var wrapper,
-			id = 'highcharts-' + idCounter++,
+			id = 'highcharts-' + Highcharts.idCounter++,
 
 			clipPath = this.createElement('clipPath').attr({
 				id: id
