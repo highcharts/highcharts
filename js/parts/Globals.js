@@ -20,7 +20,6 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 var hasBidiBug = Highcharts.isFirefox && parseInt(navigator.userAgent.split('Firefox/')[1], 10) < 4, // issue #38
 	Renderer,
 	symbolSizes = {},
-	garbageBin,
 	defaultOptions,
 	dateFormat, // function
 	globalAnimation,

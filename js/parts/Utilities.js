@@ -562,6 +562,7 @@ function destroyObjectProperties(obj, except) {
  * @param {Object} The HTML node to discard
  */
 function discardElement(element) {
+	var garbageBin = Highcharts.garbageBin;
 	// create a garbage bin element, not part of the DOM
 	if (!garbageBin) {
 		garbageBin = createElement('div');

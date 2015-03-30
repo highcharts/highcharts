@@ -35,7 +35,6 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 var hasBidiBug = Highcharts.isFirefox && parseInt(navigator.userAgent.split('Firefox/')[1], 10) < 4, // issue #38
 	Renderer,
 	symbolSizes = {},
-	garbageBin,
 	defaultOptions,
 	dateFormat, // function
 	globalAnimation,
@@ -640,6 +639,7 @@ function destroyObjectProperties(obj, except) {
  * @param {Object} The HTML node to discard
  */
 function discardElement(element) {
+	var garbageBin = Highcharts.garbageBin;
 	// create a garbage bin element, not part of the DOM
 	if (!garbageBin) {
 		garbageBin = createElement('div');
