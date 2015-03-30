@@ -24,6 +24,7 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 },	init = function () {
 		var H = Highcharts;
 		H.svg = !!document.createElementNS && !!document.createElementNS(H.SVG_NS, 'svg').createSVGRect;
+		H.useCanVG = !H.svg && !H.isIE && !!document.createElement('canvas').getContext;
 	};
 
 	// Initialize some Highcharts variables
@@ -31,7 +32,6 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 
 	// some variables
 var hasBidiBug = Highcharts.isFirefox && parseInt(navigator.userAgent.split('Firefox/')[1], 10) < 4, // issue #38
-	useCanVG = !Highcharts.svg && !Highcharts.isIE && !!document.createElement('canvas').getContext,
 	Renderer,
 	hasTouch,
 	symbolSizes = {},
@@ -2203,7 +2203,7 @@ SVGElement.prototype = {
 			// store object
 			elemWrapper.styles = styles;
 
-			if (textWidth && (useCanVG || (!Highcharts.svg && elemWrapper.renderer.forExport))) {
+			if (textWidth && (Highcharts.useCanVG || (!Highcharts.svg && elemWrapper.renderer.forExport))) {
 				delete styles.width;
 			}
 
@@ -3954,7 +3954,7 @@ SVGRenderer.prototype = {
 
 		// declare variables
 		var renderer = this,
-			fakeSVG = useCanVG || (!Highcharts.svg && renderer.forExport),
+			fakeSVG = Highcharts.useCanVG || (!Highcharts.svg && renderer.forExport),
 			wrapper,
 			attr = {};
 
@@ -4640,7 +4640,7 @@ extend(SVGRenderer.prototype, {
  * @constructor
  */
 var VMLRenderer, VMLElement;
-if (!Highcharts.svg && !useCanVG) {
+if (!Highcharts.svg && !Highcharts.useCanVG) {
 
 /**
  * The VML element wrapper.
@@ -5708,7 +5708,7 @@ SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
 var CanVGRenderer,
 	CanVGController;
 
-if (useCanVG) {
+if (Highcharts.useCanVG) {
 	/**
 	 * The CanVGRenderer is empty from start to keep the source footprint small.
 	 * When requested, the CanVGController downloads the rest of the source packaged
@@ -8901,7 +8901,7 @@ Tooltip.prototype = {
 
 		// When using canVG the shadow shows up as a gray circle
 		// even if the tooltip is hidden.
-		if (!useCanVG) {
+		if (!Highcharts.useCanVG) {
 			this.label.shadow(options.shadow);
 		}
 
@@ -9406,7 +9406,7 @@ Pointer.prototype = {
 		
 		var chartOptions = options.chart,
 			chartEvents = chartOptions.events,
-			zoomType = useCanVG ? '' : chartOptions.zoomType,
+			zoomType = Highcharts.useCanVG ? '' : chartOptions.zoomType,
 			inverted = chart.inverted,
 			zoomX,
 			zoomY;
@@ -11283,7 +11283,7 @@ Chart.prototype = {
 		chart.yAxis = [];
 
 		// Expose methods and variables
-		chart.animation = useCanVG ? false : pick(optionsChart.animation, true);
+		chart.animation = Highcharts.useCanVG ? false : pick(optionsChart.animation, true);
 		chart.pointCount = chart.colorCounter = chart.symbolCounter = 0;
 
 		chart.firstRender();
@@ -11835,7 +11835,7 @@ Chart.prototype = {
 				new SVGRenderer(container, chartWidth, chartHeight, optionsChart.style, true) :
 				new Renderer(container, chartWidth, chartHeight, optionsChart.style);
 
-		if (useCanVG) {
+		if (Highcharts.useCanVG) {
 			// If we need canvg library, extend and configure the renderer
 			// to get the tracker for translating mouse events
 			chart.renderer.create(chart, container, chartWidth, chartHeight);
@@ -12502,9 +12502,9 @@ Chart.prototype = {
 
 		// Note: in spite of JSLint's complaints, window == window.top is required
 		/*jslint eqeq: true*/
-		if ((!Highcharts.svg && (window == window.top && document.readyState !== 'complete')) || (useCanVG && !window.canvg)) {
+		if ((!Highcharts.svg && (window == window.top && document.readyState !== 'complete')) || (Highcharts.useCanVG && !window.canvg)) {
 		/*jslint eqeq: false*/
-			if (useCanVG) {
+			if (Highcharts.useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready
 				CanVGController.push(function () { chart.firstRender(); }, chart.options.global.canvasToolsURL);
 			} else {
@@ -12941,7 +12941,7 @@ Series.prototype = {
 		});
 
 		// special
-		if (useCanVG) {
+		if (Highcharts.useCanVG) {
 			options.animation = false;
 		}
 
@@ -18504,8 +18504,8 @@ extend(Highcharts, {
 	splat: splat,
 	extendClass: extendClass,
 	pInt: pInt,
-	canvas: useCanVG,
-	vml: !Highcharts.svg && !useCanVG,
+	canvas: Highcharts.useCanVG,
+	vml: !Highcharts.svg && !Highcharts.useCanVG,
 	product: 'Highcharts',
 	version: '4.1.4-modified'
 });

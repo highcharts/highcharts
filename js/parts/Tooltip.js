@@ -48,7 +48,7 @@ Tooltip.prototype = {
 
 		// When using canVG the shadow shows up as a gray circle
 		// even if the tooltip is hidden.
-		if (!useCanVG) {
+		if (!Highcharts.useCanVG) {
 			this.label.shadow(options.shadow);
 		}
 

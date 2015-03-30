@@ -9,6 +9,7 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 },	init = function () {
 		var H = Highcharts;
 		H.svg = !!document.createElementNS && !!document.createElementNS(H.SVG_NS, 'svg').createSVGRect;
+		H.useCanVG = !H.svg && !H.isIE && !!document.createElement('canvas').getContext;
 	};
 
 	// Initialize some Highcharts variables
@@ -16,7 +17,6 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 
 	// some variables
 var hasBidiBug = Highcharts.isFirefox && parseInt(navigator.userAgent.split('Firefox/')[1], 10) < 4, // issue #38
-	useCanVG = !Highcharts.svg && !Highcharts.isIE && !!document.createElement('canvas').getContext,
 	Renderer,
 	hasTouch,
 	symbolSizes = {},

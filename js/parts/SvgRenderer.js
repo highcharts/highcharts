@@ -456,7 +456,7 @@ SVGElement.prototype = {
 			// store object
 			elemWrapper.styles = styles;
 
-			if (textWidth && (useCanVG || (!Highcharts.svg && elemWrapper.renderer.forExport))) {
+			if (textWidth && (Highcharts.useCanVG || (!Highcharts.svg && elemWrapper.renderer.forExport))) {
 				delete styles.width;
 			}
 
@@ -2207,7 +2207,7 @@ SVGRenderer.prototype = {
 
 		// declare variables
 		var renderer = this,
-			fakeSVG = useCanVG || (!Highcharts.svg && renderer.forExport),
+			fakeSVG = Highcharts.useCanVG || (!Highcharts.svg && renderer.forExport),
 			wrapper,
 			attr = {};
 

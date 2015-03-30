@@ -22,7 +22,7 @@ Pointer.prototype = {
 		
 		var chartOptions = options.chart,
 			chartEvents = chartOptions.events,
-			zoomType = useCanVG ? '' : chartOptions.zoomType,
+			zoomType = Highcharts.useCanVG ? '' : chartOptions.zoomType,
 			inverted = chart.inverted,
 			zoomX,
 			zoomY;

@@ -103,7 +103,7 @@ Chart.prototype = {
 		chart.yAxis = [];
 
 		// Expose methods and variables
-		chart.animation = useCanVG ? false : pick(optionsChart.animation, true);
+		chart.animation = Highcharts.useCanVG ? false : pick(optionsChart.animation, true);
 		chart.pointCount = chart.colorCounter = chart.symbolCounter = 0;
 
 		chart.firstRender();
@@ -655,7 +655,7 @@ Chart.prototype = {
 				new SVGRenderer(container, chartWidth, chartHeight, optionsChart.style, true) :
 				new Renderer(container, chartWidth, chartHeight, optionsChart.style);
 
-		if (useCanVG) {
+		if (Highcharts.useCanVG) {
 			// If we need canvg library, extend and configure the renderer
 			// to get the tracker for translating mouse events
 			chart.renderer.create(chart, container, chartWidth, chartHeight);
@@ -1322,9 +1322,9 @@ Chart.prototype = {
 
 		// Note: in spite of JSLint's complaints, window == window.top is required
 		/*jslint eqeq: true*/
-		if ((!Highcharts.svg && (window == window.top && document.readyState !== 'complete')) || (useCanVG && !window.canvg)) {
+		if ((!Highcharts.svg && (window == window.top && document.readyState !== 'complete')) || (Highcharts.useCanVG && !window.canvg)) {
 		/*jslint eqeq: false*/
-			if (useCanVG) {
+			if (Highcharts.useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready
 				CanVGController.push(function () { chart.firstRender(); }, chart.options.global.canvasToolsURL);
 			} else {

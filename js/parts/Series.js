@@ -61,7 +61,7 @@ Series.prototype = {
 		});
 
 		// special
-		if (useCanVG) {
+		if (Highcharts.useCanVG) {
 			options.animation = false;
 		}
 

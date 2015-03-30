@@ -7,7 +7,7 @@
 var CanVGRenderer,
 	CanVGController;
 
-if (useCanVG) {
+if (Highcharts.useCanVG) {
 	/**
 	 * The CanVGRenderer is empty from start to keep the source footprint small.
 	 * When requested, the CanVGController downloads the rest of the source packaged
