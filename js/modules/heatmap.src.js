@@ -24,8 +24,7 @@ var Axis = Highcharts.Axis,
 	merge = Highcharts.merge,
 	pick = Highcharts.pick,
 	seriesTypes = Highcharts.seriesTypes,
-	wrap = Highcharts.wrap,
-	noop = function () {};
+	wrap = Highcharts.wrap;
 
 	
 
@@ -332,9 +331,9 @@ extend(ColorAxis.prototype, {
 	/**
 	 * Fool the legend
 	 */
-	setState: noop,
+	setState: Highcharts.noop,
 	visible: true,
-	setVisible: noop,
+	setVisible: Highcharts.noop,
 	getSeriesExtremes: function () {
 		var series;
 		if (this.series.length) {
@@ -436,7 +435,7 @@ extend(ColorAxis.prototype, {
 					options: {},
 					drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 					visible: true,
-					setState: noop,
+					setState: Highcharts.noop,
 					setVisible: function () {
 						vis = this.visible = !vis;
 						each(axis.series, function (series) {
@@ -524,7 +523,7 @@ var colorSeriesMixin = {
 	axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
 	optionalAxis: 'colorAxis',
 	trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-	getSymbol: noop,
+	getSymbol: Highcharts.noop,
 	parallelArrays: ['x', 'y', 'value'],
 	colorKey: 'value',
 	
@@ -640,8 +639,8 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		}
 	},
 	drawPoints: seriesTypes.column.prototype.drawPoints,
-	animate: noop,
-	getBox: noop,
+	animate: Highcharts.noop,
+	getBox: Highcharts.noop,
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
 	getExtremes: function () {

@@ -18,5 +18,4 @@ var arrayMin = Highcharts.arrayMin,
 	CenteredSeriesMixin = Highcharts.CenteredSeriesMixin,
 	TrackerMixin = Highcharts.TrackerMixin,
 	Series = Highcharts.Series,
-	Color = Highcharts.Color,
-	noop = function () {};
+	Color = Highcharts.Color;

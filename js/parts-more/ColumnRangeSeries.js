@@ -52,7 +52,7 @@
 		},
 		directTouch: true,
 		trackerGroups: ['group', 'dataLabelsGroup'],
-		drawGraph: noop,
+		drawGraph: Highcharts.noop,
 		pointAttrToOptions: colProto.pointAttrToOptions,
 		drawPoints: colProto.drawPoints,
 		drawTracker: colProto.drawTracker,

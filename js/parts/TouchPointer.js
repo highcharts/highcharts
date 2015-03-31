@@ -151,7 +151,7 @@ extend(Highcharts.Pointer.prototype, {
 			// Set the marker
 			if (!selectionMarker) {
 				self.selectionMarker = selectionMarker = extend({
-					destroy: noop
+					destroy: Highcharts.noop
 				}, chart.plotBox);
 			}
 			

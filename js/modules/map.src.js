@@ -33,10 +33,7 @@ var Axis = Highcharts.Axis,
 	defaultOptions = Highcharts.getOptions(),
 	seriesTypes = Highcharts.seriesTypes,
 	defaultPlotOptions = defaultOptions.plotOptions,
-	wrap = Highcharts.wrap,
-	noop = function () {};
-
-	/**
+	wrap = Highcharts.wrap;/**
  * Override to use the extreme coordinates from the SVG shape, not the
  * data values
  */
@@ -435,9 +432,9 @@ extend(ColorAxis.prototype, {
 	/**
 	 * Fool the legend
 	 */
-	setState: noop,
+	setState: Highcharts.noop,
 	visible: true,
-	setVisible: noop,
+	setVisible: Highcharts.noop,
 	getSeriesExtremes: function () {
 		var series;
 		if (this.series.length) {
@@ -539,7 +536,7 @@ extend(ColorAxis.prototype, {
 					options: {},
 					drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 					visible: true,
-					setState: noop,
+					setState: Highcharts.noop,
 					setVisible: function () {
 						vis = this.visible = !vis;
 						each(axis.series, function (series) {
@@ -627,7 +624,7 @@ var colorSeriesMixin = {
 	axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
 	optionalAxis: 'colorAxis',
 	trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-	getSymbol: noop,
+	getSymbol: Highcharts.noop,
 	parallelArrays: ['x', 'y', 'value'],
 	colorKey: 'value',
 	
@@ -1085,7 +1082,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	getExtremesFromAll: true,
 	useMapGeometry: true, // get axis extremes from paths, not values
 	forceDL: true,
-	searchPoint: noop,
+	searchPoint: Highcharts.noop,
 	/**
 	 * Get the bounding box of all paths in the map combined.
 	 */
@@ -1324,13 +1321,13 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	/**
 	 * No graph for the map series
 	 */
-	drawGraph: noop,
+	drawGraph: Highcharts.noop,
 	
 	/**
 	 * We need the points' bounding boxes in order to draw the data labels, so 
 	 * we skip it now and call it from drawPoints instead.
 	 */
-	drawDataLabels: noop,
+	drawDataLabels: Highcharts.noop,
 
 	/**
 	 * Allow a quick redraw by just translating the area group. Used for zooming and panning
@@ -1444,7 +1441,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					}
 
 					if (!supportsVectorEffect) {
-						point.graphic['stroke-widthSetter'] = noop;
+						point.graphic['stroke-widthSetter'] = Highcharts.noop;
 					}
 				}
 			});
@@ -1810,8 +1807,8 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		}
 	},
 	drawPoints: seriesTypes.column.prototype.drawPoints,
-	animate: noop,
-	getBox: noop,
+	animate: Highcharts.noop,
+	getBox: Highcharts.noop,
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
 	getExtremes: function () {

@@ -90,8 +90,8 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		}
 	},
 	drawPoints: seriesTypes.column.prototype.drawPoints,
-	animate: noop,
-	getBox: noop,
+	animate: Highcharts.noop,
+	getBox: Highcharts.noop,
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
 	getExtremes: function () {

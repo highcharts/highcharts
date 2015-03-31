@@ -424,7 +424,7 @@ extend(Axis.prototype, {
 					xAxis: fakeAxis,
 					xData: series.xData,
 					chart: chart,
-					destroyGroupedData: noop
+					destroyGroupedData: Highcharts.noop
 				};
 				fakeSeries.options = {
 					dataGrouping : grouping ? {

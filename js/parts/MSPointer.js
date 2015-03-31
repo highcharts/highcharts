@@ -26,7 +26,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 				p[method]({
 					type: wktype,
 					target: e.currentTarget,
-					preventDefault: noop,
+					preventDefault: Highcharts.noop,
 					touches: getWebkitTouches()
 				});				
 			}

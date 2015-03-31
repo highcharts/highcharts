@@ -52,7 +52,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 	/**
 	 * Disable data labels for box plot
 	 */
-	drawDataLabels: noop,
+	drawDataLabels: Highcharts.noop,
 
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY
@@ -260,7 +260,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 		});
 
 	},
-	setStackedPoints: noop // #3890
+	setStackedPoints: Highcharts.noop // #3890
 
 
 });

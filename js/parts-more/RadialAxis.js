@@ -1,6 +1,7 @@
 
 var axisProto = Axis.prototype,
-	tickProto = Tick.prototype;
+	tickProto = Tick.prototype,
+	noop = Highcharts.noop;
 	
 /**
  * Augmented methods for the x axis in order to hide it completely, used for the X axis in gauges

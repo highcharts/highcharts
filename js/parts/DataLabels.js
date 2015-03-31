@@ -636,7 +636,7 @@ if (seriesTypes.pie) {
 		});
 	};
 
-	seriesTypes.pie.prototype.alignDataLabel =  noop;
+	seriesTypes.pie.prototype.alignDataLabel =  Highcharts.noop;
 
 	/**
 	 * Verify whether the data labels are allowed to draw, or we should run more translation and data

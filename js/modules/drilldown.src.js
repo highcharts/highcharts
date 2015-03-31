@@ -12,7 +12,7 @@
 
 	"use strict";
 
-	var noop = function () {},
+	var noop = H.noop,
 		defaultOptions = H.getOptions(),
 		each = H.each,
 		extend = H.extend,

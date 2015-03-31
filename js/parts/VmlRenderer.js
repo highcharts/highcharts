@@ -363,7 +363,7 @@ VMLElement = {
 		}
 		return this;
 	},
-	updateShadows: noop, // Used in SVG only
+	updateShadows: Highcharts.noop, // Used in SVG only
 
 	setAttr: function (key, value) {
 		if (this.docMode8) { // IE8 setAttribute bug
@@ -409,7 +409,7 @@ VMLElement = {
 			this.setAttr('fillcolor', this.renderer.color(value, element, key, this));
 		}
 	},
-	opacitySetter: noop, // Don't bother - animation is too slow and filters introduce artifacts
+	opacitySetter: Highcharts.noop, // Don't bother - animation is too slow and filters introduce artifacts
 	rotationSetter: function (value, key, element) {
 		var style = element.style,
 			deg2rad = Highcharts.deg2rad;

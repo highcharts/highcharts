@@ -14,7 +14,7 @@
 		extendClass = H.extendClass,
 		defaultOptions = H.getOptions(),
 		plotOptions = defaultOptions.plotOptions,
-		noop = function () {},
+		noop = H.noop,
 		each = H.each,
 		pick = H.pick,
 		Series = H.Series,

@@ -174,7 +174,7 @@ var PieSeries = {
 	/**
 	 * Pies have one color each point
 	 */
-	getColor: noop,
+	getColor: Highcharts.noop,
 
 	/**
 	 * Animate the pies in
@@ -453,7 +453,7 @@ var PieSeries = {
 	},
 
 
-	searchPoint: noop,
+	searchPoint: Highcharts.noop,
 
 	/**
 	 * Utility for sorting data labels
@@ -477,7 +477,7 @@ var PieSeries = {
 	/**
 	 * Pies don't have point marker symbols
 	 */
-	getSymbol: noop
+	getSymbol: Highcharts.noop
 
 };
 PieSeries = extendClass(Series, PieSeries);

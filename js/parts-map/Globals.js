@@ -21,7 +21,4 @@ var Axis = Highcharts.Axis,
 	defaultOptions = Highcharts.getOptions(),
 	seriesTypes = Highcharts.seriesTypes,
 	defaultPlotOptions = defaultOptions.plotOptions,
-	wrap = Highcharts.wrap,
-	noop = function () {};
-
-	
+	wrap = Highcharts.wrap;

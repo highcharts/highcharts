@@ -303,9 +303,9 @@ extend(ColorAxis.prototype, {
 	/**
 	 * Fool the legend
 	 */
-	setState: noop,
+	setState: Highcharts.noop,
 	visible: true,
-	setVisible: noop,
+	setVisible: Highcharts.noop,
 	getSeriesExtremes: function () {
 		var series;
 		if (this.series.length) {
@@ -407,7 +407,7 @@ extend(ColorAxis.prototype, {
 					options: {},
 					drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 					visible: true,
-					setState: noop,
+					setState: Highcharts.noop,
 					setVisible: function () {
 						vis = this.visible = !vis;
 						each(axis.series, function (series) {

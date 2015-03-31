@@ -13,7 +13,7 @@ var colorSeriesMixin = {
 	axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
 	optionalAxis: 'colorAxis',
 	trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-	getSymbol: noop,
+	getSymbol: Highcharts.noop,
 	parallelArrays: ['x', 'y', 'value'],
 	colorKey: 'value',
 	

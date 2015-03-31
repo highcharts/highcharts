@@ -64,7 +64,7 @@ var GaugeSeries = {
 	// chart.angular will be set to true when a gauge series is present, and this will
 	// be used on the axes
 	angular: true, 
-	drawGraph: noop,
+	drawGraph: Highcharts.noop,
 	fixedBox: true,
 	forceDL: true,
 	trackerGroups: ['group', 'dataLabelsGroup'],

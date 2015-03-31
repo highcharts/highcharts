@@ -170,7 +170,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	getExtremesFromAll: true,
 	useMapGeometry: true, // get axis extremes from paths, not values
 	forceDL: true,
-	searchPoint: noop,
+	searchPoint: Highcharts.noop,
 	/**
 	 * Get the bounding box of all paths in the map combined.
 	 */
@@ -409,13 +409,13 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	/**
 	 * No graph for the map series
 	 */
-	drawGraph: noop,
+	drawGraph: Highcharts.noop,
 	
 	/**
 	 * We need the points' bounding boxes in order to draw the data labels, so 
 	 * we skip it now and call it from drawPoints instead.
 	 */
-	drawDataLabels: noop,
+	drawDataLabels: Highcharts.noop,
 
 	/**
 	 * Allow a quick redraw by just translating the area group. Used for zooming and panning
@@ -529,7 +529,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					}
 
 					if (!supportsVectorEffect) {
-						point.graphic['stroke-widthSetter'] = noop;
+						point.graphic['stroke-widthSetter'] = Highcharts.noop;
 					}
 				}
 			});

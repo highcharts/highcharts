@@ -250,9 +250,9 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 		seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
 	},
 	
-	setStackedPoints: noop,
+	setStackedPoints: Highcharts.noop,
 	
-	getSymbol: noop,
+	getSymbol: Highcharts.noop,
 	
-	drawPoints: noop
+	drawPoints: Highcharts.noop
 });

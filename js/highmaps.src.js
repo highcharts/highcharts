@@ -22,7 +22,8 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	isTouchDevice: /(Mobile|Android|Windows Phone)/.test(navigator.userAgent),
 	SVG_NS: 'http://www.w3.org/2000/svg',
 	idCounter: 0,
-	chartCount: 0
+	chartCount: 0,
+	noop: function () {}
 },	init = function () {
 		var H = Highcharts;
 		H.svg = !!document.createElementNS && !!document.createElementNS(H.SVG_NS, 'svg').createSVGRect;
@@ -41,7 +42,6 @@ var hasBidiBug = Highcharts.isFirefox && parseInt(navigator.userAgent.split('Fir
 	globalAnimation,
 	pathAnim,
 	timeUnits,
-	noop = function () {},
 	charts = [],
 
 	// some constants for frequently used strings
@@ -4988,7 +4988,7 @@ VMLElement = {
 		}
 		return this;
 	},
-	updateShadows: noop, // Used in SVG only
+	updateShadows: Highcharts.noop, // Used in SVG only
 
 	setAttr: function (key, value) {
 		if (this.docMode8) { // IE8 setAttribute bug
@@ -5034,7 +5034,7 @@ VMLElement = {
 			this.setAttr('fillcolor', this.renderer.color(value, element, key, this));
 		}
 	},
-	opacitySetter: noop, // Don't bother - animation is too slow and filters introduce artifacts
+	opacitySetter: Highcharts.noop, // Don't bother - animation is too slow and filters introduce artifacts
 	rotationSetter: function (value, key, element) {
 		var style = element.style,
 			deg2rad = Highcharts.deg2rad;
@@ -9765,7 +9765,7 @@ extend(Highcharts.Pointer.prototype, {
 			// Set the marker
 			if (!selectionMarker) {
 				self.selectionMarker = selectionMarker = extend({
-					destroy: noop
+					destroy: Highcharts.noop
 				}, chart.plotBox);
 			}
 			
@@ -9853,7 +9853,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 				p[method]({
 					type: wktype,
 					target: e.currentTarget,
-					preventDefault: noop,
+					preventDefault: Highcharts.noop,
 					touches: getWebkitTouches()
 				});				
 			}
@@ -15019,7 +15019,7 @@ var ColumnSeries = extendClass(Series, {
 
 	},
 
-	getSymbol: noop,
+	getSymbol: Highcharts.noop,
 	
 	/**
 	 * Use a solid rectangle like the area series types
@@ -15030,7 +15030,7 @@ var ColumnSeries = extendClass(Series, {
 	/**
 	 * Columns have no graph
 	 */
-	drawGraph: noop,
+	drawGraph: Highcharts.noop,
 
 	/**
 	 * Draw the columns. For bars, the series.group is rotated, so the same coordinates
@@ -15808,7 +15808,7 @@ if (seriesTypes.pie) {
 		});
 	};
 
-	seriesTypes.pie.prototype.alignDataLabel =  noop;
+	seriesTypes.pie.prototype.alignDataLabel =  Highcharts.noop;
 
 	/**
 	 * Verify whether the data labels are allowed to draw, or we should run more translation and data
@@ -16426,9 +16426,9 @@ extend(ColorAxis.prototype, {
 	/**
 	 * Fool the legend
 	 */
-	setState: noop,
+	setState: Highcharts.noop,
 	visible: true,
-	setVisible: noop,
+	setVisible: Highcharts.noop,
 	getSeriesExtremes: function () {
 		var series;
 		if (this.series.length) {
@@ -16530,7 +16530,7 @@ extend(ColorAxis.prototype, {
 					options: {},
 					drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 					visible: true,
-					setState: noop,
+					setState: Highcharts.noop,
 					setVisible: function () {
 						vis = this.visible = !vis;
 						each(axis.series, function (series) {
@@ -16618,7 +16618,7 @@ var colorSeriesMixin = {
 	axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
 	optionalAxis: 'colorAxis',
 	trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-	getSymbol: noop,
+	getSymbol: Highcharts.noop,
 	parallelArrays: ['x', 'y', 'value'],
 	colorKey: 'value',
 	
@@ -16814,7 +16814,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	getExtremesFromAll: true,
 	useMapGeometry: true, // get axis extremes from paths, not values
 	forceDL: true,
-	searchPoint: noop,
+	searchPoint: Highcharts.noop,
 	/**
 	 * Get the bounding box of all paths in the map combined.
 	 */
@@ -17053,13 +17053,13 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	/**
 	 * No graph for the map series
 	 */
-	drawGraph: noop,
+	drawGraph: Highcharts.noop,
 	
 	/**
 	 * We need the points' bounding boxes in order to draw the data labels, so 
 	 * we skip it now and call it from drawPoints instead.
 	 */
-	drawDataLabels: noop,
+	drawDataLabels: Highcharts.noop,
 
 	/**
 	 * Allow a quick redraw by just translating the area group. Used for zooming and panning
@@ -17173,7 +17173,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					}
 
 					if (!supportsVectorEffect) {
-						point.graphic['stroke-widthSetter'] = noop;
+						point.graphic['stroke-widthSetter'] = Highcharts.noop;
 					}
 				}
 			});
@@ -17983,8 +17983,8 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		
 	drawPoints: seriesTypes.column.prototype.drawPoints,
 	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
-	buildKDTree: noop,
-	applyZones: noop
+	buildKDTree: Highcharts.noop,
+	applyZones: Highcharts.noop
 });
 
 /**
@@ -18598,8 +18598,8 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		}
 	},
 	drawPoints: seriesTypes.column.prototype.drawPoints,
-	animate: noop,
-	getBox: noop,
+	animate: Highcharts.noop,
+	getBox: Highcharts.noop,
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
 	getExtremes: function () {

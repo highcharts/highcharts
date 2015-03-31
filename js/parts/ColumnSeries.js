@@ -240,7 +240,7 @@ var ColumnSeries = extendClass(Series, {
 
 	},
 
-	getSymbol: noop,
+	getSymbol: Highcharts.noop,
 	
 	/**
 	 * Use a solid rectangle like the area series types
@@ -251,7 +251,7 @@ var ColumnSeries = extendClass(Series, {
 	/**
 	 * Columns have no graph
 	 */
-	drawGraph: noop,
+	drawGraph: Highcharts.noop,
 
 	/**
 	 * Draw the columns. For bars, the series.group is rotated, so the same coordinates

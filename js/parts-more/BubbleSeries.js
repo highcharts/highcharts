@@ -209,8 +209,8 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		
 	drawPoints: seriesTypes.column.prototype.drawPoints,
 	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
-	buildKDTree: noop,
-	applyZones: noop
+	buildKDTree: Highcharts.noop,
+	applyZones: Highcharts.noop
 });
 
 /**

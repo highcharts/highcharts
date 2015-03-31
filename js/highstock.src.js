@@ -22,7 +22,8 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	isTouchDevice: /(Mobile|Android|Windows Phone)/.test(navigator.userAgent),
 	SVG_NS: 'http://www.w3.org/2000/svg',
 	idCounter: 0,
-	chartCount: 0
+	chartCount: 0,
+	noop: function () {}
 },	init = function () {
 		var H = Highcharts;
 		H.svg = !!document.createElementNS && !!document.createElementNS(H.SVG_NS, 'svg').createSVGRect;
@@ -41,7 +42,6 @@ var hasBidiBug = Highcharts.isFirefox && parseInt(navigator.userAgent.split('Fir
 	globalAnimation,
 	pathAnim,
 	timeUnits,
-	noop = function () {},
 	charts = [],
 
 	// some constants for frequently used strings
@@ -4988,7 +4988,7 @@ VMLElement = {
 		}
 		return this;
 	},
-	updateShadows: noop, // Used in SVG only
+	updateShadows: Highcharts.noop, // Used in SVG only
 
 	setAttr: function (key, value) {
 		if (this.docMode8) { // IE8 setAttribute bug
@@ -5034,7 +5034,7 @@ VMLElement = {
 			this.setAttr('fillcolor', this.renderer.color(value, element, key, this));
 		}
 	},
-	opacitySetter: noop, // Don't bother - animation is too slow and filters introduce artifacts
+	opacitySetter: Highcharts.noop, // Don't bother - animation is too slow and filters introduce artifacts
 	rotationSetter: function (value, key, element) {
 		var style = element.style,
 			deg2rad = Highcharts.deg2rad;
@@ -10228,7 +10228,7 @@ extend(Highcharts.Pointer.prototype, {
 			// Set the marker
 			if (!selectionMarker) {
 				self.selectionMarker = selectionMarker = extend({
-					destroy: noop
+					destroy: Highcharts.noop
 				}, chart.plotBox);
 			}
 			
@@ -10316,7 +10316,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 				p[method]({
 					type: wktype,
 					target: e.currentTarget,
-					preventDefault: noop,
+					preventDefault: Highcharts.noop,
 					touches: getWebkitTouches()
 				});				
 			}
@@ -15657,7 +15657,7 @@ var AreaSeries = extendClass(Series, {
 						clientX: plotX, 
 						plotY: plotY, 
 						yBottom: plotY,
-						onMouseOver: noop
+						onMouseOver: Highcharts.noop
 					});
 				}
 			});
@@ -16167,7 +16167,7 @@ var ColumnSeries = extendClass(Series, {
 
 	},
 
-	getSymbol: noop,
+	getSymbol: Highcharts.noop,
 	
 	/**
 	 * Use a solid rectangle like the area series types
@@ -16178,7 +16178,7 @@ var ColumnSeries = extendClass(Series, {
 	/**
 	 * Columns have no graph
 	 */
-	drawGraph: noop,
+	drawGraph: Highcharts.noop,
 
 	/**
 	 * Draw the columns. For bars, the series.group is rotated, so the same coordinates
@@ -16507,7 +16507,7 @@ var PieSeries = {
 	/**
 	 * Pies have one color each point
 	 */
-	getColor: noop,
+	getColor: Highcharts.noop,
 
 	/**
 	 * Animate the pies in
@@ -16786,7 +16786,7 @@ var PieSeries = {
 	},
 
 
-	searchPoint: noop,
+	searchPoint: Highcharts.noop,
 
 	/**
 	 * Utility for sorting data labels
@@ -16810,7 +16810,7 @@ var PieSeries = {
 	/**
 	 * Pies don't have point marker symbols
 	 */
-	getSymbol: noop
+	getSymbol: Highcharts.noop
 
 };
 PieSeries = extendClass(Series, PieSeries);
@@ -17454,7 +17454,7 @@ if (seriesTypes.pie) {
 		});
 	};
 
-	seriesTypes.pie.prototype.alignDataLabel =  noop;
+	seriesTypes.pie.prototype.alignDataLabel =  Highcharts.noop;
 
 	/**
 	 * Verify whether the data labels are allowed to draw, or we should run more translation and data
@@ -18897,7 +18897,7 @@ extend(Axis.prototype, {
 					xAxis: fakeAxis,
 					xData: series.xData,
 					chart: chart,
-					destroyGroupedData: noop
+					destroyGroupedData: Highcharts.noop
 				};
 				fakeSeries.options = {
 					dataGrouping : grouping ? {
@@ -20571,9 +20571,9 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	/**
 	 * Disable animation
 	 */
-	animate: noop,
-	buildKDTree: noop,
-	setClip: noop
+	animate: Highcharts.noop,
+	buildKDTree: Highcharts.noop,
+	setClip: Highcharts.noop
 
 });
 

@@ -7,7 +7,8 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	isTouchDevice: /(Mobile|Android|Windows Phone)/.test(navigator.userAgent),
 	SVG_NS: 'http://www.w3.org/2000/svg',
 	idCounter: 0,
-	chartCount: 0
+	chartCount: 0,
+	noop: function () {}
 },	init = function () {
 		var H = Highcharts;
 		H.svg = !!document.createElementNS && !!document.createElementNS(H.SVG_NS, 'svg').createSVGRect;
@@ -26,7 +27,6 @@ var hasBidiBug = Highcharts.isFirefox && parseInt(navigator.userAgent.split('Fir
 	globalAnimation,
 	pathAnim,
 	timeUnits,
-	noop = function () {},
 	charts = [],
 
 	// some constants for frequently used strings

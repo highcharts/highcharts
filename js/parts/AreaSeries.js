@@ -85,7 +85,7 @@ var AreaSeries = extendClass(Series, {
 						clientX: plotX, 
 						plotY: plotY, 
 						yBottom: plotY,
-						onMouseOver: noop
+						onMouseOver: Highcharts.noop
 					});
 				}
 			});

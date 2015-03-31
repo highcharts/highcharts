@@ -17,7 +17,7 @@ var defaultOptions = Highcharts.getOptions(),
 	defaultPlotOptions = defaultOptions.plotOptions,
 	seriesTypes = Highcharts.seriesTypes,
 	merge = Highcharts.merge,
-	noop = function () {},
+	noop = Highcharts.noop,
 	each = Highcharts.each,
 	pick = Highcharts.pick;
 

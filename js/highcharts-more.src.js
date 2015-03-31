@@ -33,8 +33,7 @@ var arrayMin = Highcharts.arrayMin,
 	CenteredSeriesMixin = Highcharts.CenteredSeriesMixin,
 	TrackerMixin = Highcharts.TrackerMixin,
 	Series = Highcharts.Series,
-	Color = Highcharts.Color,
-	noop = function () {};/**
+	Color = Highcharts.Color;/**
  * The Pane object allows options that are common to a set of X and Y axes.
  * 
  * In the future, this can be extended to basic Highcharts and Highstock.
@@ -115,7 +114,8 @@ extend(Pane.prototype, {
 	
 });
 var axisProto = Axis.prototype,
-	tickProto = Tick.prototype;
+	tickProto = Tick.prototype,
+	noop = Highcharts.noop;
 	
 /**
  * Augmented methods for the x axis in order to hide it completely, used for the X axis in gauges
@@ -900,11 +900,11 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 		seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
 	},
 	
-	setStackedPoints: noop,
+	setStackedPoints: Highcharts.noop,
 	
-	getSymbol: noop,
+	getSymbol: Highcharts.noop,
 	
-	drawPoints: noop
+	drawPoints: Highcharts.noop
 });/**
  * The AreaSplineRangeSeries class
  */
@@ -973,7 +973,7 @@ seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
 		},
 		directTouch: true,
 		trackerGroups: ['group', 'dataLabelsGroup'],
-		drawGraph: noop,
+		drawGraph: Highcharts.noop,
 		pointAttrToOptions: colProto.pointAttrToOptions,
 		drawPoints: colProto.drawPoints,
 		drawTracker: colProto.drawTracker,
@@ -1048,7 +1048,7 @@ var GaugeSeries = {
 	// chart.angular will be set to true when a gauge series is present, and this will
 	// be used on the axes
 	angular: true, 
-	drawGraph: noop,
+	drawGraph: Highcharts.noop,
 	fixedBox: true,
 	forceDL: true,
 	trackerGroups: ['group', 'dataLabelsGroup'],
@@ -1277,7 +1277,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 	/**
 	 * Disable data labels for box plot
 	 */
-	drawDataLabels: noop,
+	drawDataLabels: Highcharts.noop,
 
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY
@@ -1485,7 +1485,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 		});
 
 	},
-	setStackedPoints: noop // #3890
+	setStackedPoints: Highcharts.noop // #3890
 
 
 });
@@ -1517,7 +1517,7 @@ seriesTypes.errorbar = extendClass(seriesTypes.boxplot, {
 	},
 	pointValKey: 'high', // defines the top of the tracker
 	doQuartiles: false,
-	drawDataLabels: seriesTypes.arearange ? seriesTypes.arearange.prototype.drawDataLabels : noop,
+	drawDataLabels: seriesTypes.arearange ? seriesTypes.arearange.prototype.drawDataLabels : Highcharts.noop,
 
 	/**
 	 * Get the width and X offset, either on top of the linked series column
@@ -1784,7 +1784,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	/**
 	 * Extremes are recorded in processData
 	 */
-	getExtremes: noop,
+	getExtremes: Highcharts.noop,
 
 	drawGraph: Series.prototype.drawGraph
 });
@@ -2025,8 +2025,8 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		
 	drawPoints: seriesTypes.column.prototype.drawPoints,
 	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
-	buildKDTree: noop,
-	applyZones: noop
+	buildKDTree: Highcharts.noop,
+	applyZones: Highcharts.noop
 });
 
 /**

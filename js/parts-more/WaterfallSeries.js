@@ -250,7 +250,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	/**
 	 * Extremes are recorded in processData
 	 */
-	getExtremes: noop,
+	getExtremes: Highcharts.noop,
 
 	drawGraph: Series.prototype.drawGraph
 });

@@ -13,7 +13,6 @@ var Axis = Highcharts.Axis,
 	merge = Highcharts.merge,
 	pick = Highcharts.pick,
 	seriesTypes = Highcharts.seriesTypes,
-	wrap = Highcharts.wrap,
-	noop = function () {};
+	wrap = Highcharts.wrap;
 
 	
