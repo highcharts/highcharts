@@ -936,7 +936,7 @@ function draw3DPoints(proceed) {
 		var options = this.options,
 			states = this.options.states;
 			
-		this.borderWidth = options.borderWidth = options.edgeWidth || 1;
+		this.borderWidth = options.borderWidth = defined(options.edgeWidth) ? options.edgeWidth : 1; //#4055
 
 		Highcharts.each(this.data, function (point) {
 			if (point.y !== null) {
