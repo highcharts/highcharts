@@ -52,14 +52,24 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 		xAxis = chart.xAxis[0],
 		padAxis,
 		fixTo,
-		fixDiff;
+		fixDiff,
+		preserveAspectRatio;
 
 	
 	// Run the parent method
 	proceed.call(this);
+
+	// Check for map-like series
+	if (this.coll === 'yAxis' && xAxis.transA !== UNDEFINED) {
+		each(this.series, function (series) {
+			if (series.preserveAspectRatio) {
+				preserveAspectRatio = true;
+			}
+		});
+	}
 	
 	// On Y axis, handle both
-	if (chart.options.chart.preserveAspectRatio && this.coll === 'yAxis' && xAxis.transA !== UNDEFINED) {
+	if (preserveAspectRatio) {
 		
 		// Use the same translation for both axes
 		this.transA = xAxis.transA = Math.min(this.transA, xAxis.transA);

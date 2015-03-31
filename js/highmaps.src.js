@@ -16096,14 +16096,24 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 		xAxis = chart.xAxis[0],
 		padAxis,
 		fixTo,
-		fixDiff;
+		fixDiff,
+		preserveAspectRatio;
 
 	
 	// Run the parent method
 	proceed.call(this);
+
+	// Check for map-like series
+	if (this.coll === 'yAxis' && xAxis.transA !== UNDEFINED) {
+		each(this.series, function (series) {
+			if (series.preserveAspectRatio) {
+				preserveAspectRatio = true;
+			}
+		});
+	}
 	
 	// On Y axis, handle both
-	if (chart.options.chart.preserveAspectRatio && this.coll === 'yAxis' && xAxis.transA !== UNDEFINED) {
+	if (preserveAspectRatio) {
 		
 		// Use the same translation for both axes
 		this.transA = xAxis.transA = Math.min(this.transA, xAxis.transA);
@@ -16830,6 +16840,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	useMapGeometry: true, // get axis extremes from paths, not values
 	forceDL: true,
 	searchPoint: noop,
+	preserveAspectRatio: true, // X axis and Y axis must have same translation slope
 	/**
 	 * Get the bounding box of all paths in the map combined.
 	 */
@@ -18511,8 +18522,7 @@ Highcharts.Map = function (options, callback) {
 	{ // forced options
 		chart: {
 			inverted: false,
-			alignTicks: false,
-			preserveAspectRatio: true
+			alignTicks: false
 		}
 	});
 
