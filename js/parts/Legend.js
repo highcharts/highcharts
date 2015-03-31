@@ -370,6 +370,7 @@ Legend.prototype = {
 	adjustMargins: function (margin, spacing) {
 		var chart = this.chart, 
 			options = this.options,
+			marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
 			// Use the first letter of each alignment option in order to detect the side 
 			alignment = options.align[0] + options.verticalAlign[0] + options.layout[0];
 			

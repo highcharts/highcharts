@@ -45,7 +45,6 @@ var hasBidiBug = Highcharts.isFirefox && parseInt(navigator.userAgent.split('Fir
 	charts = [],
 
 	// some constants for frequently used strings
-	marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
 	
 	// Object for extending Axis
 	AxisPlotLineOrBandExtension,
@@ -10289,6 +10288,7 @@ Legend.prototype = {
 	adjustMargins: function (margin, spacing) {
 		var chart = this.chart, 
 			options = this.options,
+			marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
 			// Use the first letter of each alignment option in order to detect the side 
 			alignment = options.align[0] + options.verticalAlign[0] + options.layout[0];
 			
@@ -11417,6 +11417,7 @@ Chart.prototype = {
 
 		var chart = this,
 			axisOffset = chart.axisOffset = [0, 0, 0, 0], // top, right, bottom, left
+			marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
 			margin = chart.margin;
 		
 		// pre-render axes to get labels offset width
@@ -11630,7 +11631,8 @@ Chart.prototype = {
 	 * Initial margins before auto size margins are applied
 	 */
 	resetMargins: function () {
-		var chart = this;
+		var chart = this,
+			marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'];
 
 		each(marginNames, function (m, side) {
 			chart[m] = pick(chart.margin[side], chart.spacing[side]);

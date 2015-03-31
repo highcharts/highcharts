@@ -701,6 +701,7 @@ Chart.prototype = {
 
 		var chart = this,
 			axisOffset = chart.axisOffset = [0, 0, 0, 0], // top, right, bottom, left
+			marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
 			margin = chart.margin;
 		
 		// pre-render axes to get labels offset width
@@ -914,7 +915,8 @@ Chart.prototype = {
 	 * Initial margins before auto size margins are applied
 	 */
 	resetMargins: function () {
-		var chart = this;
+		var chart = this,
+			marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'];
 
 		each(marginNames, function (m, side) {
 			chart[m] = pick(chart.margin[side], chart.spacing[side]);
