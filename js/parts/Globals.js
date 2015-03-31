@@ -30,7 +30,6 @@ var hasBidiBug = Highcharts.isFirefox && parseInt(navigator.userAgent.split('Fir
 	charts = [],
 
 	// some constants for frequently used strings
-	numRegex = /^[0-9]+$/,
 	marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
 	
 	// Object for extending Axis

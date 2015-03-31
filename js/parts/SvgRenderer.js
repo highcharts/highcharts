@@ -674,6 +674,7 @@ SVGElement.prototype = {
 	 */
 	getBBox: function (reload) {
 		var wrapper = this,
+			numRegex = /^[0-9]+$/,
 			deg2rad = Highcharts.deg2rad,
 			isIE = Highcharts.isIE,
 			isFirefox = Highcharts.isFirefox,
