@@ -896,26 +896,32 @@ Scroller.prototype = {
 		var baseAxis = this.chart.xAxis[0],
 			navAxis = this.xAxis,
 			navAxisOptions = navAxis.options,
-			baseAxisOptions = baseAxis.options;
+			baseAxisOptions = baseAxis.options,
+			ret;
 
 		if (!returnFalseOnNoBaseSeries || baseAxis.dataMin !== null) {
-			return {
-				dataMin: numExt(
-					'min',
-					navAxisOptions && navAxisOptions.min,
-					baseAxisOptions.min,
-					baseAxis.dataMin, 
-					navAxis.dataMin
+			ret = {
+				dataMin: pick( // #4053
+					navAxisOptions && navAxisOptions.min, 
+					numExt(
+						'min',
+						baseAxisOptions.min,
+						baseAxis.dataMin, 
+						navAxis.dataMin
+					)
 				),
-				dataMax: numExt(
-					'max',
+				dataMax: pick(
 					navAxisOptions && navAxisOptions.max,
-					baseAxisOptions.max,
-					baseAxis.dataMax, 
-					navAxis.dataMax
+					numExt(
+						'max',
+						baseAxisOptions.max,
+						baseAxis.dataMax, 
+						navAxis.dataMax
+					)
 				)
 			};
 		}
+		return ret;
 	},
 
 	/**

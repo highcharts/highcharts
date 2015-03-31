@@ -1,0 +1,23 @@
+diff --git a/js/highcharts.src.js b/js/highcharts.src.js
+index 7fced61..7efbcc1 100644
+--- a/js/highcharts.src.js
++++ b/js/highcharts.src.js
+@@ -3634,8 +3634,7 @@ SVGRenderer.prototype = {
+ 		renderer.height = height;
+ 
+ 		renderer.boxWrapper[pick(animate, true) ? 'animate' : 'attr']({
+-			width: width,
+-			height: height
++			viewBox: '0 0 ' + width + ' ' + height
+ 		});
+ 
+ 		while (i--) {
+@@ -11832,7 +11831,7 @@ Chart.prototype = {
+ 				position: RELATIVE,
+ 				overflow: HIDDEN, // needed for context menu (avoid scrollbars) and
+ 					// content overflow in IE
+-				width: chartWidth + PX,
++				//width: chartWidth + PX,
+ 				height: chartHeight + PX,
+ 				textAlign: 'left',
+ 				lineHeight: 'normal', // #427
