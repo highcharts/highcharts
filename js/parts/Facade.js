@@ -19,7 +19,6 @@ extend(Highcharts, {
 	format: format,
 	pathAnim: pathAnim,
 	getOptions: getOptions,
-	hasBidiBug: hasBidiBug,
 	setOptions: setOptions,
 	addEvent: addEvent,
 	removeEvent: removeEvent,
