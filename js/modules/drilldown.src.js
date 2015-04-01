@@ -642,10 +642,7 @@
 					.attr({
 						'class': 'highcharts-drilldown-data-label'
 					})
-					.css(css)
-					.on('click', function () {
-						point.doDrilldown();
-					});
+					.css(css);
 			}
 		});
 	});
