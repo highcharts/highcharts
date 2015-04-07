@@ -117,6 +117,7 @@ function draw3DPoints(proceed) {
 		var grouping = this.chart.options.plotOptions.column.grouping;
 		if (grouping !== undefined && !grouping && this.group.zIndex !== undefined && !this.zIndexSet) {
 			this.group.attr({zIndex : (this.group.zIndex * 10)});
+			this.zIndexSet = true; // #4062 set zindex only once
 		} 
 
 		var options = this.options,
