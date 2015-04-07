@@ -23,6 +23,7 @@
 		seriesTypes = H.seriesTypes,
 		PieSeries = seriesTypes.pie,
 		ColumnSeries = seriesTypes.column,
+		Tick = H.Tick,
 		fireEvent = HighchartsAdapter.fireEvent,
 		inArray = HighchartsAdapter.inArray,
 		ddSeriesId = 1;
@@ -546,7 +547,7 @@
 			point: this,
 			seriesOptions: seriesOptions,
 			category: category,
-			points: category !== undefined && this.series.xAxis.ticks[category].label.ddPoints.slice(0)
+			points: category !== undefined && this.series.xAxis.ddPoints[category].slice(0)
 		});
 		
 		if (seriesOptions) {
@@ -562,13 +563,70 @@
 	 * Drill down to a given category. This is the same as clicking on an axis label.
 	 */
 	H.Axis.prototype.drilldownCategory = function (x) {
-		each(this.ticks[x].label.ddPoints, function (point) {
-			if (point.series && point.series.visible && point.doDrilldown) { // #3197
+		var key,
+			point,
+			ddPointsX = this.ddPoints[x];
+		for (key in ddPointsX) {
+			point = ddPointsX[key];
+			if (point && point.series && point.series.visible && point.doDrilldown) { // #3197
 				point.doDrilldown(true, x);
 			}
-		});
+		}
 		this.chart.applyDrilldown();
 	};
+
+	/**
+	 * Create and return a collection of points associated with the X position. Reset it for each level.
+	 */	
+	H.Axis.prototype.getDDPoints = function (x, levelNumber) {
+		var ddPoints = this.ddPoints;
+		if (!ddPoints) {
+			this.ddPoints = ddPoints = {};
+		}
+		if (!ddPoints[x]) {
+			ddPoints[x] = [];
+		}
+		if (ddPoints[x].levelNumber !== levelNumber) {
+			ddPoints[x].length = 0; // reset
+		}
+		return ddPoints[x];
+	};
+
+
+	/**
+	 * Make a tick label drillable, or remove drilling on update
+	 */
+	Tick.prototype.drillable = function () {
+		var pos = this.pos,
+			label = this.label,
+			axis = this.axis,
+			ddPointsX = axis.ddPoints && axis.ddPoints[pos];
+
+		if (label && ddPointsX && ddPointsX.length) {
+			if (!label.basicStyles) {
+				label.basicStyles = H.merge(label.styles);
+			}
+			label
+				.addClass('highcharts-drilldown-axis-label')
+				.css(axis.chart.options.drilldown.activeAxisLabelStyle)
+				.on('click', function () {
+					axis.drilldownCategory(pos);
+				});
+
+		} else if (label && label.basicStyles) {
+			label.styles = {}; // reset for full overwrite of styles
+			label.css(label.basicStyles);
+			label.on('click', null); // #3806			
+		}
+	};
+
+	/**
+	 * Always keep the drillability updated (#3951)
+	 */
+	wrap(Tick.prototype, 'addLabel', function (proceed) {
+		proceed.call(this);
+		this.drillable();
+	});
 	
 
 	/**
@@ -577,20 +635,9 @@
 	 */
 	wrap(H.Point.prototype, 'init', function (proceed, series, options, x) {
 		var point = proceed.call(this, series, options, x),
-			chart = series.chart,
 			tick = series.xAxis && series.xAxis.ticks[x],
-			tickLabel = tick && tick.label;
+			ddPointsX = series.xAxis.getDDPoints(x, series.options._levelNumber);
 
-		// Create a collection of points associated with the label. Reset it for each level.
-		if (tickLabel) {
-			if (!tickLabel.ddPoints) {
-				tickLabel.ddPoints = [];
-			}
-			if (tickLabel.levelNumber !== series.options._levelNumber) {
-				tickLabel.ddPoints.length = 0; // reset
-			}
-		}				
-		
 		if (point.drilldown) {
 			
 			// Add the click event to the point 
@@ -606,26 +653,16 @@
 				}
 			});*/
 
-			// Make axis labels clickable
-			if (tickLabel) {
-				if (!tickLabel.basicStyles) {
-					tickLabel.basicStyles = H.merge(tickLabel.styles);
-				}
-				tickLabel
-					.addClass('highcharts-drilldown-axis-label')
-					.css(chart.options.drilldown.activeAxisLabelStyle)
-					.on('click', function () {
-						series.xAxis.drilldownCategory(x);
-					});
-				
-				tickLabel.ddPoints.push(point);
-				tickLabel.levelNumber = series.options._levelNumber;
-					
-			}
-		} else if (tickLabel && tickLabel.basicStyles && tickLabel.levelNumber !== series.options._levelNumber) {
-			tickLabel.styles = {}; // reset for full overwrite of styles
-			tickLabel.css(tickLabel.basicStyles);
-			tickLabel.on('click', null); // #3806			
+
+			// Register drilldown points on this X value
+			ddPointsX.push(point);
+			ddPointsX.levelNumber = series.options._levelNumber;
+
+		}
+
+		// Add or remove click handler and style on the tick label
+		if (tick) {
+			tick.drillable();
 		}
 
 		return point;
