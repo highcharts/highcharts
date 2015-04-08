@@ -3,6 +3,8 @@ $(function () {
     /**
      * This snippet reads the dataGrouping custom option on range selector buttons, and applies
      * data grouping before selecting the range.
+     * TODO:
+     * - Pre-selected button
      */
     (function (H) {
 
