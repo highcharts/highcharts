@@ -9,6 +9,8 @@ $(function () {
      */
     (function (H) {
 
+        var addEvent = H.addEvent;
+
         /**
          * Force data grouping to a single unit.
          */
@@ -20,12 +22,13 @@ $(function () {
 
             if (baseAxis) {
                 H.each(baseAxis.series, function (series) {
+                    baseAxis.forcedDataGrouping = !!dataGrouping;
                     series.update({
                         dataGrouping: {
                             forced: !!dataGrouping,
                             units: dataGrouping ? [dataGrouping] : null
                         }
-                    });
+                    }, false);
                 });
             }
         }
@@ -42,13 +45,19 @@ $(function () {
         });
 
         // Unset the forced data grouping when unselecting a range
-        H.wrap(H.RangeSelector.prototype, 'setSelected', function (proceed, i) {
-            var setToNull = i === null && this.selected !== null;
-            proceed.call(this, i);                                        
-            if (setToNull) {
-                this.forceDataGrouping(false, true);
-            }
-        });
+        H.wrap(H.RangeSelector.prototype, 'init', function (proceed, chart) {
+            var rangeSelector = this;
+
+            proceed.call(this, chart);
+                    
+            addEvent(chart, 'load', function () {
+                addEvent(chart.xAxis[0], 'setExtremes', function (e) {
+                    if (this.max - this.min !== chart.fixedRange && e.trigger !== 'rangeSelectorButton' && chart.xAxis[0].forcedDataGrouping) {
+                        rangeSelector.forceDataGrouping(false, false);
+                    }
+                });
+            });
+        })
 
         
 
