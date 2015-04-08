@@ -14062,6 +14062,10 @@ Series.prototype = {
 					if (!defaultLineColor) {
 						attr.lineColor = point.color; // Bubbles take point color, line markers use white
 					}
+					// Color is explicitly set to null or undefined (#1288, #4068)
+					if (normalOptions.hasOwnProperty('color') && !normalOptions.color) {
+						delete normalOptions.color;
+					}
 					pointAttr[NORMAL_STATE] = series.convertAttribs(extend(attr, normalOptions), seriesPointAttr[NORMAL_STATE]);
 
 					// inherit from point normal and series hover
