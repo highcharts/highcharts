@@ -3,9 +3,6 @@ $(function () {
     /**
      * This snippet reads the dataGrouping custom option on range selector buttons, and applies
      * data grouping before selecting the range.
-     * TODO: 
-     * - Release forced data grouping on setting extremes.
-     * - Button to release force data grouping, probably simply by ommitting the dataGrouping option.
      */
     (function (H) {
 
@@ -31,7 +28,7 @@ $(function () {
                     }, false);
                 });
             }
-        }
+        };
 
         // Set the forced data grouping when selecting a range
         H.wrap(H.RangeSelector.prototype, 'clickButton', function (proceed, i, redraw) {
@@ -52,7 +49,8 @@ $(function () {
                     
             addEvent(chart, 'load', function () {
                 addEvent(chart.xAxis[0], 'setExtremes', function (e) {
-                    if (this.max - this.min !== chart.fixedRange && e.trigger !== 'rangeSelectorButton' && chart.xAxis[0].forcedDataGrouping) {
+                    if (this.max - this.min !== chart.fixedRange && e.trigger !== 'rangeSelectorButton' &&
+                            e.trigger !== 'updatedData' && chart.xAxis[0].forcedDataGrouping) {
                         rangeSelector.forceDataGrouping(false, false);
                     }
                 });
@@ -63,7 +61,7 @@ $(function () {
 
         H.setOptions({
             lang: {
-                rangeSelectorZoom: 'Grouping'
+                rangeSelectorZoom: 'Group by'
             }
         });
     }(Highcharts));
@@ -73,19 +71,20 @@ $(function () {
         $('#container').highcharts('StockChart', {            
 
             rangeSelector : {
+                allButtonsEnabled: true,
                 buttons: [{
                     type: 'month',
                     count: 1,
-                    text: 'Daily',
+                    text: 'Day',
                     dataGrouping: ['day', [1]]
                 }, {
                     type: 'year',
                     count: 1,
-                    text: 'Weekly',
+                    text: 'Week',
                     dataGrouping: ['week', [1]]
                 }, {
                     type: 'all',
-                    text: 'Monthly',
+                    text: 'Month',
                     dataGrouping: ['month', [1]]
                 }],
                 buttonTheme: {
