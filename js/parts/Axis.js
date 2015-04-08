@@ -1577,7 +1577,11 @@ Axis.prototype = {
 				pos = tickPositions[i];
 				label = ticks[pos].label;
 				if (label) {
-					if (this.len / tickPositions.length - 4 < label.getBBox().height) {
+					// Reset ellipsis in order to get the correct bounding box (#4070)
+					if (label.styles.textOverflow === 'ellipsis') {
+						label.css({ textOverflow: 'clip' });
+					}
+					if (label.getBBox().height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f)) {
 						label.specCss = { textOverflow: 'ellipsis' };
 					}
 				}
