@@ -8,23 +8,49 @@ $(function () {
      * - Button to release force data grouping, probably simply by ommitting the dataGrouping option.
      */
     (function (H) {
-        H.wrap(H.RangeSelector.prototype, 'clickButton', function (proceed, i, redraw) {
-            var dataGrouping = this.buttonOptions[i].dataGrouping,
+
+        /**
+         * Force data grouping to a single unit.
+         */
+        H.RangeSelector.prototype.forceDataGrouping = function (dataGrouping, redraw) {
+            var rangeSelector = this,
                 baseAxis = this.chart.xAxis[0];
 
-            if (baseAxis && dataGrouping) {
+            redraw = H.pick(redraw, true);
+
+            if (baseAxis) {
                 H.each(baseAxis.series, function (series) {
                     series.update({
                         dataGrouping: {
-                            forced: true,
-                            units: [dataGrouping]
+                            forced: !!dataGrouping,
+                            units: dataGrouping ? [dataGrouping] : null
                         }
-                    }, false);
+                    });
                 });
-                            
-                proceed.call(this, i, redraw);
+            }
+        }
+
+        // Set the forced data grouping when selecting a range
+        H.wrap(H.RangeSelector.prototype, 'clickButton', function (proceed, i, redraw) {
+            var dataGrouping = this.buttonOptions[i].dataGrouping;
+                
+            if (dataGrouping) {
+                this.forceDataGrouping(dataGrouping, false);
+            }
+
+            proceed.call(this, i, redraw);
+        });
+
+        // Unset the forced data grouping when unselecting a range
+        H.wrap(H.RangeSelector.prototype, 'setSelected', function (proceed, i) {
+            var setToNull = i === null && this.selected !== null;
+            proceed.call(this, i);                                        
+            if (setToNull) {
+                this.forceDataGrouping(false, true);
             }
         });
+
+        
 
         H.setOptions({
             lang: {

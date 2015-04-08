@@ -215,7 +215,7 @@ require_once('functions.php');
 
 	<div id="main-nav">
 	<?php
-	$products = array('unit-tests', 'highcharts', 'maps', 'stock', 'issues');
+	$products = array('highcharts', 'maps', 'stock', 'issues');
 	$samplesDir = dirname(__FILE__). '/../../samples/';
 	$browser = getBrowser();
 	$browserKey = $browser['parent'];
