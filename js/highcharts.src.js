@@ -16437,14 +16437,14 @@ var PiePoint = extendClass(Point, {
 	 * @param {Boolean} vis Whether to show the slice or not. If undefined, the
 	 *    visibility is toggled
 	 */
-	setVisible: function (vis) {
+	setVisible: function (vis, force) {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
 			doRedraw = !series.isDirty && series.options.ignoreHiddenPoint;
 
 		// Only if the value has changed
-		if (vis !== point.visible) {
+		if (vis !== point.visible || force) {
 			
 			// If called without an argument, toggle visibility
 			point.visible = point.options.visible = vis = vis === UNDEFINED ? !point.visible : vis;
@@ -16771,6 +16771,9 @@ var PieSeries = {
 
 		// draw the slices
 		each(series.points, function (point) {
+
+			var visible = point.options.visible;
+
 			graphic = point.graphic;
 			shapeArgs = point.shapeArgs;
 			shadowGroup = point.shadowGroup;
@@ -16811,8 +16814,8 @@ var PieSeries = {
 			}
 
 			// Detect point specific visibility (#2430)
-			if (point.options.visible !== undefined) {
-				point.setVisible(point.options.visible);
+			if (visible !== undefined) {
+				point.setVisible(visible, true);
 			}
 
 		});
@@ -17346,7 +17349,7 @@ if (seriesTypes.pie) {
 				point = points[j];
 				labelPos = point.labelPos;
 				dataLabel = point.dataLabel;
-				visibility = point.visible === false ? HIDDEN : VISIBLE;
+				visibility = point.visible === false ? HIDDEN : 'inherit';
 				naturalY = labelPos[1];
 
 				if (distanceOption > 0) {
@@ -17367,6 +17370,7 @@ if (seriesTypes.pie) {
 
 				// get the x - use the natural x position for first and last slot, to prevent the top
 				// and botton slice connectors from touching each other on either side
+				// Problem: Should check that it makes sense - http://jsfiddle.net/highcharts/n1y6ngxz/
 				x = options.justify ?
 					seriesCenter[0] + (i ? -1 : 1) * (radius + distanceOption) :
 					series.getX(y === centerY - radius - distanceOption || y === centerY + radius + distanceOption ? naturalY : y, i);
