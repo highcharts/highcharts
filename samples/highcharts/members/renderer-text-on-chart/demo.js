@@ -11,7 +11,7 @@ $(function () {
 
     }, function (chart) { // on complete
 
-        chart.renderer.text('Series 1', 140, 150)
+        chart.renderer.text('Series 1', 140, 140)
             .attr({
                 rotation: -25
             })
