@@ -20004,6 +20004,35 @@ Axis.prototype.getGroupPixelWidth = function () {
 	return doGrouping ? groupPixelWidth : 0;
 };
 
+/**
+ * Force data grouping on all the axis' series.
+ */
+Axis.prototype.setDataGrouping = function (dataGrouping, redraw) { // docs
+	redraw = pick(redraw, true);
+
+	if (!dataGrouping) {   
+		dataGrouping = {
+			forced: false,
+			units: null
+		};
+	}
+
+	// Axis is instantiated, update all series
+	if (this instanceof Axis) {
+		each(this.series, function (series) {
+			series.update({
+				dataGrouping: dataGrouping
+			}, false);
+		});
+
+	// Axis not yet instanciated, alter series options
+	} else {
+		each(this.chart.options.series, function (seriesOptions) {
+			seriesOptions.dataGrouping = dataGrouping;
+		});
+	}
+};
+
 
 
 /* ****************************************************************************
@@ -21899,13 +21928,21 @@ RangeSelector.prototype = {
 			range = rangeOptions._range,
 			rangeMin,
 			year,
-			timeName;
+			timeName,
+			dataGrouping = rangeOptions.dataGrouping;
 
 		if (dataMin === null || dataMax === null || // chart has no data, base series is removed
 				i === rangeSelector.selected) { // same button is clicked twice
 			return;
 		}
 
+		// Apply dataGrouping associated to button
+		if (dataGrouping) { // docs (demo created)
+			this.forcedDataGrouping = true;			
+			Axis.prototype.setDataGrouping.call(baseAxis || { chart: this.chart }, dataGrouping, false);
+		}
+
+		// Apply range
 		if (type === 'month' || type === 'year') {
 			timeName = { month: 'Month', year: 'FullYear'}[type];
 			date['set' + timeName](date['get' + timeName]() - count);
@@ -22073,8 +22110,16 @@ RangeSelector.prototype = {
 			this.clickButton(selectedOption, false);
 		}
 
-		// normalize the pressed button whenever a new range is selected
+
 		addEvent(chart, 'load', function () {
+			// If a data grouping is applied to the current button, release it when extremes change
+			addEvent(chart.xAxis[0], 'setExtremes', function (e) {
+				if (this.max - this.min !== chart.fixedRange && e.trigger !== 'rangeSelectorButton' &&
+						e.trigger !== 'updatedData' && rangeSelector.forcedDataGrouping) {
+					this.setDataGrouping(false, false);
+				}
+			});
+			// Normalize the pressed button whenever a new range is selected
 			addEvent(chart.xAxis[0], 'afterSetExtremes', function () {
 				rangeSelector.updateButtonStates(true);
 			});
