@@ -1241,10 +1241,9 @@ Series.prototype = {
 		// Clear the animation timeout if we are destroying the series during initial animation
 		clearTimeout(series.animationTimeout);
 
-		// destroy all SVGElements associated to the series
-		each(['area', 'graph', 'dataLabelsGroup', 'group', 'markerGroup', 'tracker',
-				'graphNeg', 'areaNeg', 'posClip', 'negClip'], function (prop) {
-			if (series[prop]) {
+		// Destroy all SVGElements associated to the series
+		for (prop in series) {
+			if (series[prop] instanceof SVGElement) {
 
 				// issue 134 workaround
 				destroy = issue134 && prop === 'group' ?
@@ -1253,7 +1252,7 @@ Series.prototype = {
 
 				series[prop][destroy]();
 			}
-		});
+		}
 
 		// remove from hoverSeries
 		if (chart.hoverSeries === series) {
@@ -1370,7 +1369,7 @@ Series.prototype = {
 			zones = this.zones;
 
 		each(zones, function (threshold, i) {
-			props.push(['colorGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
+			props.push(['zoneGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
 		});
 		
 		// Draw the graph
@@ -1498,11 +1497,11 @@ Series.prototype = {
 					clips[i] = renderer.clipRect(clipAttr);
 
 					if (graph) {
-						series['colorGraph' + i].clip(clips[i]);
+						series['zoneGraph' + i].clip(clips[i]);
 					}
 
 					if (area) {
-						series['colorArea' + i].clip(clips[i]);
+						series['zoneArea' + i].clip(clips[i]);
 					}
 				}
 				// if this zone extends out of the axis, ignore the others

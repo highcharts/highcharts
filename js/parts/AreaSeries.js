@@ -179,7 +179,7 @@ var AreaSeries = extendClass(Series, {
 			props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
 		
 		each(zones, function (threshold, i) {
-			props.push(['colorArea' + i, threshold.color || series.color, threshold.fillColor || options.fillColor]);
+			props.push(['zoneArea' + i, threshold.color || series.color, threshold.fillColor || options.fillColor]);
 		});
 		each(props, function (prop) {
 			var areaKey = prop[0],
