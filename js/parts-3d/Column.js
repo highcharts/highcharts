@@ -37,7 +37,7 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 		}
 	});
 	// store for later use #4067
-	series.z = z;	    
+	series.z = z;
 });
 
 Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'animate', function (proceed) {
