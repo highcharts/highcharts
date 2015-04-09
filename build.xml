@@ -651,6 +651,10 @@
             <arg value="UTF-8"/>
             <arg value="${param.src}"/>
         </java>
+
+        <!-- Convert back to Unicode escape (#4079) -->
+        <replace file="${param.out}" token="●" value="\u25CF"/>
+
         <length file="${param.src}" property="input.length"/>
         <length file="${param.out}" property="gcc.output.length"/>
         <!-- Create a temporary zipfile to get the zipped size -->
