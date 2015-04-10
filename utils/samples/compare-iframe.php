@@ -346,9 +346,9 @@ function getExportInnerHTML() {
 	</head>
 	<body>
 
-<?php echo getHTML($_GET['which']); ?>
-
 		<div id="qunit"></div>
 		<div id="qunit-fixture"></div>
+<?php echo getHTML($_GET['which']); ?>
+
 	</body>
 </html>
