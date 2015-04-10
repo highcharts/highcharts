@@ -10,7 +10,7 @@
 	$comment = @$compare->$path->comment;
 
 
-	$isUnitTest = strstr(@file_get_contents("../../samples/$path/demo.details"), 'qunit') ? true : false;
+	$isUnitTest = file_exists("../../samples/$path/unit-tests.js") || strstr(@file_get_contents("../../samples/$path/demo.details"), 'qunit') ? true : false;
 	
 	$browser = getBrowser();
 	$browserKey = $browser['parent'];
