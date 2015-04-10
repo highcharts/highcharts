@@ -44,6 +44,12 @@ $(function () {
             '{"radialGradient":{"cx":0.5,"cy":0.3,"r":0.7},"stops":[[0,"#FFFF00"],[1,"#00FFFF"]]}',
             'Gradients'
         );
+        assert.equal(
+            tweenColors(Color(), Color(), 0.5),
+            'none',
+            'Undefined colors'
+        );
+        
     });
 
 });
