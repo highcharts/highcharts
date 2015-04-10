@@ -8,6 +8,7 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	SVG_NS: 'http://www.w3.org/2000/svg',
 	idCounter: 0,
 	chartCount: 0,
+	seriesTypes: {},
 	noop: function () {}
 },	init = function () {
 		var H = Highcharts;
@@ -51,10 +52,4 @@ var Renderer,
 	setHours,
 	setDate,
 	setMonth,
-	setFullYear,
-
-
-	// lookup over the types and the associated classes
-	seriesTypes = {};
-
-Highcharts.seriesTypes = seriesTypes;
+	setFullYear;

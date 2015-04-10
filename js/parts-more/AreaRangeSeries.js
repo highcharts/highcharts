@@ -32,7 +32,7 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 /**
  * Add the series type
  */
-seriesTypes.arearange = extendClass(seriesTypes.area, {
+Highcharts.seriesTypes.arearange = extendClass(Highcharts.seriesTypes.area, {
 	type: 'arearange',
 	pointArrayMap: ['low', 'high'],
 	toYData: function (point) {
@@ -77,7 +77,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 		var series = this,
 			yAxis = series.yAxis;
 
-		seriesTypes.area.prototype.translate.apply(series);
+		Highcharts.seriesTypes.area.prototype.translate.apply(series);
 
 		// Set plotLow and plotHigh
 		each(series.points, function (point) {
@@ -247,7 +247,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 	},
 	
 	alignDataLabel: function () {
-		seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
+		Highcharts.seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
 	},
 	
 	setStackedPoints: Highcharts.noop,

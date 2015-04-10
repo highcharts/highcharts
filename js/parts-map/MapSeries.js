@@ -163,7 +163,7 @@ var MapAreaPoint = extendClass(Point, {
 /**
  * Add the series type
  */
-seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
+Highcharts.seriesTypes.map = extendClass(Highcharts.seriesTypes.scatter, merge(colorSeriesMixin, {
 	type: 'map',
 	pointClass: MapAreaPoint,
 	supportsDrilldown: true,
@@ -515,7 +515,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 			// Draw them in transformGroup
 			series.group = series.transformGroup;
-			seriesTypes.column.prototype.drawPoints.apply(series);
+			Highcharts.seriesTypes.column.prototype.drawPoints.apply(series);
 			series.group = group; // Reset
 
 			// Add class names
@@ -710,7 +710,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * and animate them into the origin point in the upper series.
 	 */
 	animateDrillupFrom: function (level) {
-		seriesTypes.column.prototype.animateDrillupFrom.call(this, level);
+		Highcharts.seriesTypes.column.prototype.animateDrillupFrom.call(this, level);
 	},
 
 
@@ -719,6 +719,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * moved into place
 	 */
 	animateDrillupTo: function (init) {
-		seriesTypes.column.prototype.animateDrillupTo.call(this, init);
+		Highcharts.seriesTypes.column.prototype.animateDrillupTo.call(this, init);
 	}
 }));

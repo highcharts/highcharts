@@ -412,6 +412,7 @@ extend(Series.prototype, {
 			// in with type specific plotOptions
 			oldOptions = this.userOptions,
 			oldType = this.type,
+			seriesTypes = Highcharts.seriesTypes,
 			proto = seriesTypes[oldType].prototype,
 			preserve = ['group', 'markerGroup', 'dataLabelsGroup'],
 			n;

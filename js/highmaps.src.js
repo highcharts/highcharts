@@ -23,6 +23,7 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	SVG_NS: 'http://www.w3.org/2000/svg',
 	idCounter: 0,
 	chartCount: 0,
+	seriesTypes: {},
 	noop: function () {}
 },	init = function () {
 		var H = Highcharts;
@@ -66,14 +67,7 @@ var Renderer,
 	setHours,
 	setDate,
 	setMonth,
-	setFullYear,
-
-
-	// lookup over the types and the associated classes
-	seriesTypes = {};
-
-Highcharts.seriesTypes = seriesTypes;
-
+	setFullYear;
 /**
  * Extend an object with the members of another
  * @param {Object} a The object to be extended
@@ -10833,7 +10827,7 @@ Chart.prototype = {
 			optionsChart = chart.options.chart,
 			type = options.type || optionsChart.type || optionsChart.defaultSeriesType,
 			series,
-			constr = seriesTypes[type];
+			constr = Highcharts.seriesTypes[type];
 
 		// No such series type
 		if (!constr) {
@@ -11758,6 +11752,7 @@ Chart.prototype = {
 	 */
 	propFromSeries: function () {
 		var chart = this,
+			seriesTypes = Highcharts.seriesTypes,
 			optionsChart = chart.options.chart,
 			klass,
 			seriesOptions = chart.options.series,
@@ -14656,6 +14651,7 @@ extend(Series.prototype, {
 			// in with type specific plotOptions
 			oldOptions = this.userOptions,
 			oldType = this.type,
+			seriesTypes = Highcharts.seriesTypes,
 			proto = seriesTypes[oldType].prototype,
 			preserve = ['group', 'markerGroup', 'dataLabelsGroup'],
 			n;
@@ -14775,7 +14771,7 @@ extend(Axis.prototype, {
  * LineSeries object
  */
 var LineSeries = extendClass(Series);
-seriesTypes.line = LineSeries;
+Highcharts.seriesTypes.line = LineSeries;
 
 /**
  * Set the default options for column
@@ -15134,7 +15130,7 @@ var ColumnSeries = extendClass(Series, {
 		Series.prototype.remove.apply(series, arguments);
 	}
 });
-seriesTypes.column = ColumnSeries;
+Highcharts.seriesTypes.column = ColumnSeries;
 /**
  * Set the default options for scatter
  */
@@ -15168,7 +15164,7 @@ var ScatterSeries = extendClass(Series, {
 	}
 });
 
-seriesTypes.scatter = ScatterSeries;
+Highcharts.seriesTypes.scatter = ScatterSeries;
 
 /**
  * Draw the data labels
@@ -15472,8 +15468,8 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
 /**
  * Override the base drawDataLabels method by pie specific functionality
  */
-if (seriesTypes.pie) {
-	seriesTypes.pie.prototype.drawDataLabels = function () {
+if (Highcharts.seriesTypes.pie) {
+	Highcharts.seriesTypes.pie.prototype.drawDataLabels = function () {
 		var series = this,
 			data = series.data,
 			point,
@@ -15790,7 +15786,7 @@ if (seriesTypes.pie) {
 	 * Perform the final placement of the data labels after we have verified that they
 	 * fall within the plot area.
 	 */
-	seriesTypes.pie.prototype.placeDataLabels = function () {
+	Highcharts.seriesTypes.pie.prototype.placeDataLabels = function () {
 		each(this.points, function (point) {
 			var dataLabel = point.dataLabel,
 				_pos;
@@ -15808,14 +15804,14 @@ if (seriesTypes.pie) {
 		});
 	};
 
-	seriesTypes.pie.prototype.alignDataLabel =  Highcharts.noop;
+	Highcharts.seriesTypes.pie.prototype.alignDataLabel =  Highcharts.noop;
 
 	/**
 	 * Verify whether the data labels are allowed to draw, or we should run more translation and data
 	 * label positioning to keep them inside the plot area. Returns true when data labels are ready
 	 * to draw.
 	 */
-	seriesTypes.pie.prototype.verifyDataLabelOverflow = function (overflow) {
+	Highcharts.seriesTypes.pie.prototype.verifyDataLabelOverflow = function (overflow) {
 
 		var center = this.center,
 			options = this.options,
@@ -15872,12 +15868,12 @@ if (seriesTypes.pie) {
 	};
 }
 
-if (seriesTypes.column) {
+if (Highcharts.seriesTypes.column) {
 
 	/**
 	 * Override the basic data label alignment by adjusting for the position of the column
 	 */
-	seriesTypes.column.prototype.alignDataLabel = function (point, dataLabel, options,  alignTo, isNew) {
+	Highcharts.seriesTypes.column.prototype.alignDataLabel = function (point, dataLabel, options,  alignTo, isNew) {
 		var inverted = this.chart.inverted,
 			series = point.series,
 			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
@@ -16807,7 +16803,7 @@ var MapAreaPoint = extendClass(Point, {
 /**
  * Add the series type
  */
-seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
+Highcharts.seriesTypes.map = extendClass(Highcharts.seriesTypes.scatter, merge(colorSeriesMixin, {
 	type: 'map',
 	pointClass: MapAreaPoint,
 	supportsDrilldown: true,
@@ -17159,7 +17155,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 			// Draw them in transformGroup
 			series.group = series.transformGroup;
-			seriesTypes.column.prototype.drawPoints.apply(series);
+			Highcharts.seriesTypes.column.prototype.drawPoints.apply(series);
 			series.group = group; // Reset
 
 			// Add class names
@@ -17354,7 +17350,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * and animate them into the origin point in the upper series.
 	 */
 	animateDrillupFrom: function (level) {
-		seriesTypes.column.prototype.animateDrillupFrom.call(this, level);
+		Highcharts.seriesTypes.column.prototype.animateDrillupFrom.call(this, level);
 	},
 
 
@@ -17363,7 +17359,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * moved into place
 	 */
 	animateDrillupTo: function (init) {
-		seriesTypes.column.prototype.animateDrillupTo.call(this, init);
+		Highcharts.seriesTypes.column.prototype.animateDrillupTo.call(this, init);
 	}
 }));/**
  * Highmaps JS v1.1.4-modified ()
@@ -17734,7 +17730,7 @@ defaultPlotOptions.mapline = merge(defaultPlotOptions.map, {
 	lineWidth: 1,
 	fillColor: 'none'
 });
-seriesTypes.mapline = extendClass(seriesTypes.map, {
+Highcharts.seriesTypes.mapline = extendClass(Highcharts.seriesTypes.map, {
 	type: 'mapline',
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'color',
@@ -17742,7 +17738,7 @@ seriesTypes.mapline = extendClass(seriesTypes.map, {
 		fill: 'fillColor',
 		dashstyle: 'dashStyle'
 	},
-	drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
+	drawLegendSymbol: Highcharts.seriesTypes.line.prototype.drawLegendSymbol
 });
 
 // The mappoint series type
@@ -17760,7 +17756,7 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 		}
 	}
 });
-seriesTypes.mappoint = extendClass(seriesTypes.scatter, {
+Highcharts.seriesTypes.mappoint = extendClass(Highcharts.seriesTypes.scatter, {
 	type: 'mappoint',
 	forceDL: true,
 	pointClass: extendClass(Point, {
@@ -17818,7 +17814,7 @@ var BubblePoint = extendClass(Point, {
 });
 
 // 2 - Create the series object
-seriesTypes.bubble = extendClass(seriesTypes.scatter, {
+Highcharts.seriesTypes.bubble = extendClass(Highcharts.seriesTypes.scatter, {
 	type: 'bubble',
 	pointClass: BubblePoint,
 	pointArrayMap: ['y', 'z'],
@@ -17930,7 +17926,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			radii = this.radii;
 		
 		// Run the parent method
-		seriesTypes.scatter.prototype.translate.call(this);
+		Highcharts.seriesTypes.scatter.prototype.translate.call(this);
 		
 		// Set the shape type and arguments to be picked up in drawPoints
 		i = data.length;
@@ -17981,8 +17977,8 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		
 	},
 		
-	drawPoints: seriesTypes.column.prototype.drawPoints,
-	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
+	drawPoints: Highcharts.seriesTypes.column.prototype.drawPoints,
+	alignDataLabel: Highcharts.seriesTypes.column.prototype.alignDataLabel,
 	buildKDTree: Highcharts.noop,
 	applyZones: Highcharts.noop
 });
@@ -18088,7 +18084,7 @@ Axis.prototype.beforePadding = function () {
 
 
 // The mapbubble series type
-if (seriesTypes.bubble) {
+if (Highcharts.seriesTypes.bubble) {
 
 	defaultPlotOptions.mapbubble = merge(defaultPlotOptions.bubble, {
 		animationLimit: 500,
@@ -18096,7 +18092,7 @@ if (seriesTypes.bubble) {
 			pointFormat: '{point.name}: {point.z}'
 		}
 	});
-	seriesTypes.mapbubble = extendClass(seriesTypes.bubble, {
+	Highcharts.seriesTypes.mapbubble = extendClass(Highcharts.seriesTypes.bubble, {
 		pointClass: extendClass(Point, {
 			applyOptions: function (options, x) {
 				var point;
@@ -18116,9 +18112,9 @@ if (seriesTypes.bubble) {
 		/**
 		 * Return the map area identified by the dataJoinBy option
 		 */
-		getMapData: seriesTypes.map.prototype.getMapData,
-		getBox: seriesTypes.map.prototype.getBox,
-		setData: seriesTypes.map.prototype.setData
+		getMapData: Highcharts.seriesTypes.map.prototype.getMapData,
+		getBox: Highcharts.seriesTypes.map.prototype.getBox,
+		setData: Highcharts.seriesTypes.map.prototype.setData
 	});
 }
 
@@ -18541,7 +18537,7 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 });
 
 // The Heatmap series type
-seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
+Highcharts.seriesTypes.heatmap = extendClass(Highcharts.seriesTypes.scatter, merge(colorSeriesMixin, {
 	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
@@ -18553,7 +18549,7 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 */
 	init: function () {
 		var options;
-		seriesTypes.scatter.prototype.init.apply(this, arguments);
+		Highcharts.seriesTypes.scatter.prototype.init.apply(this, arguments);
 
 		options = this.options;
 		this.pointRange = options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
@@ -18597,7 +18593,7 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			});
 		}
 	},
-	drawPoints: seriesTypes.column.prototype.drawPoints,
+	drawPoints: Highcharts.seriesTypes.column.prototype.drawPoints,
 	animate: Highcharts.noop,
 	getBox: Highcharts.noop,
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
@@ -18769,15 +18765,15 @@ var TrackerMixin = Highcharts.TrackerMixin = {
  * themselves act as trackers
  */ 
 
-if (seriesTypes.column) {
+if (Highcharts.seriesTypes.column) {
 	ColumnSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;	
 }
 
-if (seriesTypes.pie) {
-	seriesTypes.pie.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
+if (Highcharts.seriesTypes.pie) {
+	Highcharts.seriesTypes.pie.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
-if (seriesTypes.scatter) {
+if (Highcharts.seriesTypes.scatter) {
 	ScatterSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 

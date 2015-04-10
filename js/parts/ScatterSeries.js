@@ -31,5 +31,5 @@ var ScatterSeries = extendClass(Series, {
 	}
 });
 
-seriesTypes.scatter = ScatterSeries;
+Highcharts.seriesTypes.scatter = ScatterSeries;
 

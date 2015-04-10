@@ -7,8 +7,8 @@ defaultPlotOptions.areasplinerange = merge(defaultPlotOptions.arearange);
 /**
  * AreaSplineRangeSeries object
  */
-seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
+Highcharts.seriesTypes.areasplinerange = extendClass(Highcharts.seriesTypes.arearange, {
 	type: 'areasplinerange',
-	getPointSpline: seriesTypes.spline.prototype.getPointSpline
+	getPointSpline: Highcharts.seriesTypes.spline.prototype.getPointSpline
 });
 

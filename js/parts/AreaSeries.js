@@ -205,4 +205,4 @@ var AreaSeries = extendClass(Series, {
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
 
-seriesTypes.area = AreaSeries;
+Highcharts.seriesTypes.area = AreaSeries;

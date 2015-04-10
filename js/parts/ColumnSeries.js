@@ -355,4 +355,4 @@ var ColumnSeries = extendClass(Series, {
 		Series.prototype.remove.apply(series, arguments);
 	}
 });
-seriesTypes.column = ColumnSeries;
+Highcharts.seriesTypes.column = ColumnSeries;

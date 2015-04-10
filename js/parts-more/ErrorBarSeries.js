@@ -14,7 +14,7 @@ defaultPlotOptions.errorbar = merge(defaultPlotOptions.boxplot, {
 });
 
 // 2 - Create the series object
-seriesTypes.errorbar = extendClass(seriesTypes.boxplot, {
+Highcharts.seriesTypes.errorbar = extendClass(Highcharts.seriesTypes.boxplot, {
 	type: 'errorbar',
 	pointArrayMap: ['low', 'high'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
@@ -22,7 +22,7 @@ seriesTypes.errorbar = extendClass(seriesTypes.boxplot, {
 	},
 	pointValKey: 'high', // defines the top of the tracker
 	doQuartiles: false,
-	drawDataLabels: seriesTypes.arearange ? seriesTypes.arearange.prototype.drawDataLabels : Highcharts.noop,
+	drawDataLabels: Highcharts.seriesTypes.arearange ? Highcharts.seriesTypes.arearange.prototype.drawDataLabels : Highcharts.noop,
 
 	/**
 	 * Get the width and X offset, either on top of the linked series column
@@ -30,7 +30,7 @@ seriesTypes.errorbar = extendClass(seriesTypes.boxplot, {
 	 */
 	getColumnMetrics: function () {
 		return (this.linkedParent && this.linkedParent.columnMetrics) || 
-			seriesTypes.column.prototype.getColumnMetrics.call(this);
+			Highcharts.seriesTypes.column.prototype.getColumnMetrics.call(this);
 	}
 });
 

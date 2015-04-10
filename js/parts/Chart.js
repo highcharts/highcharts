@@ -117,7 +117,7 @@ Chart.prototype = {
 			optionsChart = chart.options.chart,
 			type = options.type || optionsChart.type || optionsChart.defaultSeriesType,
 			series,
-			constr = seriesTypes[type];
+			constr = Highcharts.seriesTypes[type];
 
 		// No such series type
 		if (!constr) {
@@ -1042,6 +1042,7 @@ Chart.prototype = {
 	 */
 	propFromSeries: function () {
 		var chart = this,
+			seriesTypes = Highcharts.seriesTypes,
 			optionsChart = chart.options.chart,
 			klass,
 			seriesOptions = chart.options.series,

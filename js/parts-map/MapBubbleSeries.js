@@ -1,7 +1,7 @@
 
 
 // The mapbubble series type
-if (seriesTypes.bubble) {
+if (Highcharts.seriesTypes.bubble) {
 
 	defaultPlotOptions.mapbubble = merge(defaultPlotOptions.bubble, {
 		animationLimit: 500,
@@ -9,7 +9,7 @@ if (seriesTypes.bubble) {
 			pointFormat: '{point.name}: {point.z}'
 		}
 	});
-	seriesTypes.mapbubble = extendClass(seriesTypes.bubble, {
+	Highcharts.seriesTypes.mapbubble = extendClass(Highcharts.seriesTypes.bubble, {
 		pointClass: extendClass(Point, {
 			applyOptions: function (options, x) {
 				var point;
@@ -29,8 +29,8 @@ if (seriesTypes.bubble) {
 		/**
 		 * Return the map area identified by the dataJoinBy option
 		 */
-		getMapData: seriesTypes.map.prototype.getMapData,
-		getBox: seriesTypes.map.prototype.getBox,
-		setData: seriesTypes.map.prototype.setData
+		getMapData: Highcharts.seriesTypes.map.prototype.getMapData,
+		getBox: Highcharts.seriesTypes.map.prototype.getBox,
+		setData: Highcharts.seriesTypes.map.prototype.setData
 	});
 }

@@ -121,5 +121,5 @@ var SplineSeries = extendClass(Series, {
 		return ret;
 	}
 });
-seriesTypes.spline = SplineSeries;
+Highcharts.seriesTypes.spline = SplineSeries;
 

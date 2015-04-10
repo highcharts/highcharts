@@ -35,7 +35,7 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 	 * Postprocess mapping between options and SVG attributes
 	 */
 	getAttribs: function () {
-		seriesTypes.ohlc.prototype.getAttribs.apply(this, arguments);
+		Highcharts.seriesTypes.ohlc.prototype.getAttribs.apply(this, arguments);
 		var series = this,
 			options = series.options,
 			stateOptions = options.states,			
@@ -136,7 +136,7 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 
 });
 
-seriesTypes.candlestick = CandlestickSeries;
+Highcharts.seriesTypes.candlestick = CandlestickSeries;
 
 /* ****************************************************************************
  * End Candlestick series code												*

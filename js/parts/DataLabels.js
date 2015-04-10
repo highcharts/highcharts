@@ -300,8 +300,8 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
 /**
  * Override the base drawDataLabels method by pie specific functionality
  */
-if (seriesTypes.pie) {
-	seriesTypes.pie.prototype.drawDataLabels = function () {
+if (Highcharts.seriesTypes.pie) {
+	Highcharts.seriesTypes.pie.prototype.drawDataLabels = function () {
 		var series = this,
 			data = series.data,
 			point,
@@ -618,7 +618,7 @@ if (seriesTypes.pie) {
 	 * Perform the final placement of the data labels after we have verified that they
 	 * fall within the plot area.
 	 */
-	seriesTypes.pie.prototype.placeDataLabels = function () {
+	Highcharts.seriesTypes.pie.prototype.placeDataLabels = function () {
 		each(this.points, function (point) {
 			var dataLabel = point.dataLabel,
 				_pos;
@@ -636,14 +636,14 @@ if (seriesTypes.pie) {
 		});
 	};
 
-	seriesTypes.pie.prototype.alignDataLabel =  Highcharts.noop;
+	Highcharts.seriesTypes.pie.prototype.alignDataLabel =  Highcharts.noop;
 
 	/**
 	 * Verify whether the data labels are allowed to draw, or we should run more translation and data
 	 * label positioning to keep them inside the plot area. Returns true when data labels are ready
 	 * to draw.
 	 */
-	seriesTypes.pie.prototype.verifyDataLabelOverflow = function (overflow) {
+	Highcharts.seriesTypes.pie.prototype.verifyDataLabelOverflow = function (overflow) {
 
 		var center = this.center,
 			options = this.options,
@@ -700,12 +700,12 @@ if (seriesTypes.pie) {
 	};
 }
 
-if (seriesTypes.column) {
+if (Highcharts.seriesTypes.column) {
 
 	/**
 	 * Override the basic data label alignment by adjusting for the position of the column
 	 */
-	seriesTypes.column.prototype.alignDataLabel = function (point, dataLabel, options,  alignTo, isNew) {
+	Highcharts.seriesTypes.column.prototype.alignDataLabel = function (point, dataLabel, options,  alignTo, isNew) {
 		var inverted = this.chart.inverted,
 			series = point.series,
 			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment

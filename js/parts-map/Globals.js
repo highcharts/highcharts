@@ -19,6 +19,5 @@ var Axis = Highcharts.Axis,
 	merge = Highcharts.merge,
 	pick = Highcharts.pick,
 	defaultOptions = Highcharts.getOptions(),
-	seriesTypes = Highcharts.seriesTypes,
 	defaultPlotOptions = defaultOptions.plotOptions,
 	wrap = Highcharts.wrap;

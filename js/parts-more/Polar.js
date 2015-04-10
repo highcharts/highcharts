@@ -104,18 +104,18 @@
 	}
 
  
-	if (seriesTypes.area) {		
-		wrap(seriesTypes.area.prototype, 'init', initArea);	
+	if (Highcharts.seriesTypes.area) {		
+		wrap(Highcharts.seriesTypes.area.prototype, 'init', initArea);	
 	}
-	if (seriesTypes.areaspline) {		
-		wrap(seriesTypes.areaspline.prototype, 'init', initArea);			
+	if (Highcharts.seriesTypes.areaspline) {		
+		wrap(Highcharts.seriesTypes.areaspline.prototype, 'init', initArea);			
 	}	
 
-	if (seriesTypes.spline) {
+	if (Highcharts.seriesTypes.spline) {
 		/**
 		 * Overridden method for calculating a spline from one point to the next
 		 */
-		wrap(seriesTypes.spline.prototype, 'getPointSpline', function (proceed, segment, point, i) {
+		wrap(Highcharts.seriesTypes.spline.prototype, 'getPointSpline', function (proceed, segment, point, i) {
 	
 			var ret,
 				smoothing = 1.5, // 1 means control points midway between points, 2 means 1/3 from the point, 3 is 1/4 etc;
@@ -332,9 +332,9 @@
 	wrap(seriesProto, 'animate', polarAnimate);
 
 
-	if (seriesTypes.column) {
+	if (Highcharts.seriesTypes.column) {
 
-		colProto = seriesTypes.column.prototype;
+		colProto = Highcharts.seriesTypes.column.prototype;
 		/**
 		* Define the animate method for columnseries
 		*/

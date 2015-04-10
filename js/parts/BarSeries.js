@@ -9,5 +9,5 @@ var BarSeries = extendClass(ColumnSeries, {
 	type: 'bar',
 	inverted: true
 });
-seriesTypes.bar = BarSeries;
+Highcharts.seriesTypes.bar = BarSeries;
 

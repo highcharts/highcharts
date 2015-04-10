@@ -153,15 +153,15 @@ var TrackerMixin = Highcharts.TrackerMixin = {
  * themselves act as trackers
  */ 
 
-if (seriesTypes.column) {
+if (Highcharts.seriesTypes.column) {
 	ColumnSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;	
 }
 
-if (seriesTypes.pie) {
-	seriesTypes.pie.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
+if (Highcharts.seriesTypes.pie) {
+	Highcharts.seriesTypes.pie.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
-if (seriesTypes.scatter) {
+if (Highcharts.seriesTypes.scatter) {
 	ScatterSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 

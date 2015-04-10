@@ -481,5 +481,5 @@ var PieSeries = {
 
 };
 PieSeries = extendClass(Series, PieSeries);
-seriesTypes.pie = PieSeries;
+Highcharts.seriesTypes.pie = PieSeries;
 

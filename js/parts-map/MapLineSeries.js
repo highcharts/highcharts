@@ -6,7 +6,7 @@ defaultPlotOptions.mapline = merge(defaultPlotOptions.map, {
 	lineWidth: 1,
 	fillColor: 'none'
 });
-seriesTypes.mapline = extendClass(seriesTypes.map, {
+Highcharts.seriesTypes.mapline = extendClass(Highcharts.seriesTypes.map, {
 	type: 'mapline',
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'color',
@@ -14,5 +14,5 @@ seriesTypes.mapline = extendClass(seriesTypes.map, {
 		fill: 'fillColor',
 		dashstyle: 'dashStyle'
 	},
-	drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
+	drawLegendSymbol: Highcharts.seriesTypes.line.prototype.drawLegendSymbol
 });

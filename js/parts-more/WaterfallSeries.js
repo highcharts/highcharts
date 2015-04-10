@@ -20,7 +20,7 @@ defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
 
 
 // 2 - Create the series object
-seriesTypes.waterfall = extendClass(seriesTypes.column, {
+Highcharts.seriesTypes.waterfall = extendClass(Highcharts.seriesTypes.column, {
 	type: 'waterfall',
 
 	upColorProp: 'fill',
@@ -52,7 +52,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			tooltipY;
 
 		// run column series translate
-		seriesTypes.column.prototype.translate.apply(this);
+		Highcharts.seriesTypes.column.prototype.translate.apply(this);
 
 		previousY = previousIntermediate = threshold;
 		points = series.points;
@@ -181,7 +181,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	 * Postprocess mapping between options and SVG attributes
 	 */
 	getAttribs: function () {
-		seriesTypes.column.prototype.getAttribs.apply(this, arguments);
+		Highcharts.seriesTypes.column.prototype.getAttribs.apply(this, arguments);
 
 		var series = this,
 			options = series.options,

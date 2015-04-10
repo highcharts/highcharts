@@ -1,6 +1,6 @@
 (function () {
 	
-	var colProto = seriesTypes.column.prototype;
+	var colProto = Highcharts.seriesTypes.column.prototype;
 
 	/**
 	 * The ColumnRangeSeries class
@@ -13,7 +13,7 @@
 	/**
 	 * ColumnRangeSeries object
 	 */
-	seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
+	Highcharts.seriesTypes.columnrange = extendClass(Highcharts.seriesTypes.arearange, {
 		type: 'columnrange',
 		/**
 		 * Translate data points from raw values x and y to plotX and plotY

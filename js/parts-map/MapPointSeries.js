@@ -15,7 +15,7 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 		}
 	}
 });
-seriesTypes.mappoint = extendClass(seriesTypes.scatter, {
+Highcharts.seriesTypes.mappoint = extendClass(Highcharts.seriesTypes.scatter, {
 	type: 'mappoint',
 	forceDL: true,
 	pointClass: extendClass(Point, {

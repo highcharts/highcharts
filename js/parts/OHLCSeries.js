@@ -22,7 +22,7 @@ defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 });
 
 // 2 - Create the OHLCSeries object
-var OHLCSeries = extendClass(seriesTypes.column, {
+var OHLCSeries = extendClass(Highcharts.seriesTypes.column, {
 	type: 'ohlc',
 	pointArrayMap: ['open', 'high', 'low', 'close'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
@@ -40,7 +40,7 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 	 * Postprocess mapping between options and SVG attributes
 	 */
 	getAttribs: function () {
-		seriesTypes.column.prototype.getAttribs.apply(this, arguments);
+		Highcharts.seriesTypes.column.prototype.getAttribs.apply(this, arguments);
 		var series = this,
 			options = series.options,
 			stateOptions = options.states,
@@ -66,7 +66,7 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 		var series = this,
 			yAxis = series.yAxis;
 
-		seriesTypes.column.prototype.translate.apply(series);
+		Highcharts.seriesTypes.column.prototype.translate.apply(series);
 
 		// do the translation
 		each(series.points, function (point) {
@@ -168,7 +168,7 @@ var OHLCSeries = extendClass(seriesTypes.column, {
 
 
 });
-seriesTypes.ohlc = OHLCSeries;
+Highcharts.seriesTypes.ohlc = OHLCSeries;
 /* ****************************************************************************
  * End OHLC series code													   *
  *****************************************************************************/

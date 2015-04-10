@@ -44,7 +44,7 @@ var BubblePoint = extendClass(Point, {
 });
 
 // 2 - Create the series object
-seriesTypes.bubble = extendClass(seriesTypes.scatter, {
+Highcharts.seriesTypes.bubble = extendClass(Highcharts.seriesTypes.scatter, {
 	type: 'bubble',
 	pointClass: BubblePoint,
 	pointArrayMap: ['y', 'z'],
@@ -156,7 +156,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			radii = this.radii;
 		
 		// Run the parent method
-		seriesTypes.scatter.prototype.translate.call(this);
+		Highcharts.seriesTypes.scatter.prototype.translate.call(this);
 		
 		// Set the shape type and arguments to be picked up in drawPoints
 		i = data.length;
@@ -207,8 +207,8 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		
 	},
 		
-	drawPoints: seriesTypes.column.prototype.drawPoints,
-	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
+	drawPoints: Highcharts.seriesTypes.column.prototype.drawPoints,
+	alignDataLabel: Highcharts.seriesTypes.column.prototype.alignDataLabel,
 	buildKDTree: Highcharts.noop,
 	applyZones: Highcharts.noop
 });

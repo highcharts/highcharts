@@ -31,7 +31,6 @@ var Axis = Highcharts.Axis,
 	merge = Highcharts.merge,
 	pick = Highcharts.pick,
 	defaultOptions = Highcharts.getOptions(),
-	seriesTypes = Highcharts.seriesTypes,
 	defaultPlotOptions = defaultOptions.plotOptions,
 	wrap = Highcharts.wrap;/**
  * Override to use the extreme coordinates from the SVG shape, not the
@@ -1075,7 +1074,7 @@ var MapAreaPoint = extendClass(Point, {
 /**
  * Add the series type
  */
-seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
+Highcharts.seriesTypes.map = extendClass(Highcharts.seriesTypes.scatter, merge(colorSeriesMixin, {
 	type: 'map',
 	pointClass: MapAreaPoint,
 	supportsDrilldown: true,
@@ -1427,7 +1426,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 			// Draw them in transformGroup
 			series.group = series.transformGroup;
-			seriesTypes.column.prototype.drawPoints.apply(series);
+			Highcharts.seriesTypes.column.prototype.drawPoints.apply(series);
 			series.group = group; // Reset
 
 			// Add class names
@@ -1622,7 +1621,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * and animate them into the origin point in the upper series.
 	 */
 	animateDrillupFrom: function (level) {
-		seriesTypes.column.prototype.animateDrillupFrom.call(this, level);
+		Highcharts.seriesTypes.column.prototype.animateDrillupFrom.call(this, level);
 	},
 
 
@@ -1631,7 +1630,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * moved into place
 	 */
 	animateDrillupTo: function (init) {
-		seriesTypes.column.prototype.animateDrillupTo.call(this, init);
+		Highcharts.seriesTypes.column.prototype.animateDrillupTo.call(this, init);
 	}
 }));
 
@@ -1641,7 +1640,7 @@ defaultPlotOptions.mapline = merge(defaultPlotOptions.map, {
 	lineWidth: 1,
 	fillColor: 'none'
 });
-seriesTypes.mapline = extendClass(seriesTypes.map, {
+Highcharts.seriesTypes.mapline = extendClass(Highcharts.seriesTypes.map, {
 	type: 'mapline',
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'color',
@@ -1649,7 +1648,7 @@ seriesTypes.mapline = extendClass(seriesTypes.map, {
 		fill: 'fillColor',
 		dashstyle: 'dashStyle'
 	},
-	drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
+	drawLegendSymbol: Highcharts.seriesTypes.line.prototype.drawLegendSymbol
 });
 
 // The mappoint series type
@@ -1667,7 +1666,7 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 		}
 	}
 });
-seriesTypes.mappoint = extendClass(seriesTypes.scatter, {
+Highcharts.seriesTypes.mappoint = extendClass(Highcharts.seriesTypes.scatter, {
 	type: 'mappoint',
 	forceDL: true,
 	pointClass: extendClass(Point, {
@@ -1682,7 +1681,7 @@ seriesTypes.mappoint = extendClass(seriesTypes.scatter, {
 });
 
 // The mapbubble series type
-if (seriesTypes.bubble) {
+if (Highcharts.seriesTypes.bubble) {
 
 	defaultPlotOptions.mapbubble = merge(defaultPlotOptions.bubble, {
 		animationLimit: 500,
@@ -1690,7 +1689,7 @@ if (seriesTypes.bubble) {
 			pointFormat: '{point.name}: {point.z}'
 		}
 	});
-	seriesTypes.mapbubble = extendClass(seriesTypes.bubble, {
+	Highcharts.seriesTypes.mapbubble = extendClass(Highcharts.seriesTypes.bubble, {
 		pointClass: extendClass(Point, {
 			applyOptions: function (options, x) {
 				var point;
@@ -1710,9 +1709,9 @@ if (seriesTypes.bubble) {
 		/**
 		 * Return the map area identified by the dataJoinBy option
 		 */
-		getMapData: seriesTypes.map.prototype.getMapData,
-		getBox: seriesTypes.map.prototype.getBox,
-		setData: seriesTypes.map.prototype.setData
+		getMapData: Highcharts.seriesTypes.map.prototype.getMapData,
+		getBox: Highcharts.seriesTypes.map.prototype.getBox,
+		setData: Highcharts.seriesTypes.map.prototype.setData
 	});
 }
 
@@ -1750,7 +1749,7 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 });
 
 // The Heatmap series type
-seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
+Highcharts.seriesTypes.heatmap = extendClass(Highcharts.seriesTypes.scatter, merge(colorSeriesMixin, {
 	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
@@ -1762,7 +1761,7 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 */
 	init: function () {
 		var options;
-		seriesTypes.scatter.prototype.init.apply(this, arguments);
+		Highcharts.seriesTypes.scatter.prototype.init.apply(this, arguments);
 
 		options = this.options;
 		this.pointRange = options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
@@ -1806,7 +1805,7 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			});
 		}
 	},
-	drawPoints: seriesTypes.column.prototype.drawPoints,
+	drawPoints: Highcharts.seriesTypes.column.prototype.drawPoints,
 	animate: Highcharts.noop,
 	getBox: Highcharts.noop,
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle,

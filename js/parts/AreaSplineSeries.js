@@ -18,5 +18,5 @@ var areaProto = AreaSeries.prototype,
 		drawLegendSymbol: LegendSymbolMixin.drawRectangle
 	});
 
-seriesTypes.areaspline = AreaSplineSeries;
+Highcharts.seriesTypes.areaspline = AreaSplineSeries;
 

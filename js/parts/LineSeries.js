@@ -3,5 +3,5 @@
  * LineSeries object
  */
 var LineSeries = extendClass(Series);
-seriesTypes.line = LineSeries;
+Highcharts.seriesTypes.line = LineSeries;
 

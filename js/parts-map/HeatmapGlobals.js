@@ -12,7 +12,6 @@ var Axis = Highcharts.Axis,
 	extendClass = Highcharts.extendClass,
 	merge = Highcharts.merge,
 	pick = Highcharts.pick,
-	seriesTypes = Highcharts.seriesTypes,
 	wrap = Highcharts.wrap;
 
 	

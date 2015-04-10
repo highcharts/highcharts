@@ -22,7 +22,6 @@ var arrayMin = Highcharts.arrayMin,
 	pick = Highcharts.pick,
 	pInt = Highcharts.pInt,
 	defaultPlotOptions = Highcharts.getOptions().plotOptions,
-	seriesTypes = Highcharts.seriesTypes,
 	extendClass = Highcharts.extendClass,
 	splat = Highcharts.splat,
 	wrap = Highcharts.wrap,
@@ -682,7 +681,7 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 /**
  * Add the series type
  */
-seriesTypes.arearange = extendClass(seriesTypes.area, {
+Highcharts.seriesTypes.arearange = extendClass(Highcharts.seriesTypes.area, {
 	type: 'arearange',
 	pointArrayMap: ['low', 'high'],
 	toYData: function (point) {
@@ -727,7 +726,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 		var series = this,
 			yAxis = series.yAxis;
 
-		seriesTypes.area.prototype.translate.apply(series);
+		Highcharts.seriesTypes.area.prototype.translate.apply(series);
 
 		// Set plotLow and plotHigh
 		each(series.points, function (point) {
@@ -897,7 +896,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 	},
 	
 	alignDataLabel: function () {
-		seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
+		Highcharts.seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
 	},
 	
 	setStackedPoints: Highcharts.noop,
@@ -914,14 +913,14 @@ defaultPlotOptions.areasplinerange = merge(defaultPlotOptions.arearange);
 /**
  * AreaSplineRangeSeries object
  */
-seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
+Highcharts.seriesTypes.areasplinerange = extendClass(Highcharts.seriesTypes.arearange, {
 	type: 'areasplinerange',
-	getPointSpline: seriesTypes.spline.prototype.getPointSpline
+	getPointSpline: Highcharts.seriesTypes.spline.prototype.getPointSpline
 });
 
 (function () {
 	
-	var colProto = seriesTypes.column.prototype;
+	var colProto = Highcharts.seriesTypes.column.prototype;
 
 	/**
 	 * The ColumnRangeSeries class
@@ -934,7 +933,7 @@ seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
 	/**
 	 * ColumnRangeSeries object
 	 */
-	seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
+	Highcharts.seriesTypes.columnrange = extendClass(Highcharts.seriesTypes.arearange, {
 		type: 'columnrange',
 		/**
 		 * Translate data points from raw values x and y to plotX and plotY
@@ -1221,7 +1220,7 @@ var GaugeSeries = {
 	 */
 	drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint
 };
-seriesTypes.gauge = extendClass(seriesTypes.line, GaugeSeries);
+Highcharts.seriesTypes.gauge = extendClass(Highcharts.seriesTypes.line, GaugeSeries);
 
 /* ****************************************************************************
  * Start Box plot series code											      *
@@ -1257,7 +1256,7 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 });
 
 // Create the series object
-seriesTypes.boxplot = extendClass(seriesTypes.column, {
+Highcharts.seriesTypes.boxplot = extendClass(Highcharts.seriesTypes.column, {
 	type: 'boxplot',
 	pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
@@ -1287,7 +1286,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			yAxis = series.yAxis,
 			pointArrayMap = series.pointArrayMap;
 
-		seriesTypes.column.prototype.translate.apply(series);
+		Highcharts.seriesTypes.column.prototype.translate.apply(series);
 
 		// do the translation on each point dimension
 		each(series.points, function (point) {
@@ -1509,7 +1508,7 @@ defaultPlotOptions.errorbar = merge(defaultPlotOptions.boxplot, {
 });
 
 // 2 - Create the series object
-seriesTypes.errorbar = extendClass(seriesTypes.boxplot, {
+Highcharts.seriesTypes.errorbar = extendClass(Highcharts.seriesTypes.boxplot, {
 	type: 'errorbar',
 	pointArrayMap: ['low', 'high'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
@@ -1517,7 +1516,7 @@ seriesTypes.errorbar = extendClass(seriesTypes.boxplot, {
 	},
 	pointValKey: 'high', // defines the top of the tracker
 	doQuartiles: false,
-	drawDataLabels: seriesTypes.arearange ? seriesTypes.arearange.prototype.drawDataLabels : Highcharts.noop,
+	drawDataLabels: Highcharts.seriesTypes.arearange ? Highcharts.seriesTypes.arearange.prototype.drawDataLabels : Highcharts.noop,
 
 	/**
 	 * Get the width and X offset, either on top of the linked series column
@@ -1525,7 +1524,7 @@ seriesTypes.errorbar = extendClass(seriesTypes.boxplot, {
 	 */
 	getColumnMetrics: function () {
 		return (this.linkedParent && this.linkedParent.columnMetrics) || 
-			seriesTypes.column.prototype.getColumnMetrics.call(this);
+			Highcharts.seriesTypes.column.prototype.getColumnMetrics.call(this);
 	}
 });
 
@@ -1554,7 +1553,7 @@ defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
 
 
 // 2 - Create the series object
-seriesTypes.waterfall = extendClass(seriesTypes.column, {
+Highcharts.seriesTypes.waterfall = extendClass(Highcharts.seriesTypes.column, {
 	type: 'waterfall',
 
 	upColorProp: 'fill',
@@ -1586,7 +1585,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			tooltipY;
 
 		// run column series translate
-		seriesTypes.column.prototype.translate.apply(this);
+		Highcharts.seriesTypes.column.prototype.translate.apply(this);
 
 		previousY = previousIntermediate = threshold;
 		points = series.points;
@@ -1715,7 +1714,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	 * Postprocess mapping between options and SVG attributes
 	 */
 	getAttribs: function () {
-		seriesTypes.column.prototype.getAttribs.apply(this, arguments);
+		Highcharts.seriesTypes.column.prototype.getAttribs.apply(this, arguments);
 
 		var series = this,
 			options = series.options,
@@ -1804,7 +1803,7 @@ defaultPlotOptions.polygon = merge(defaultPlotOptions.scatter, {
 /**
  * The polygon series class
  */
-seriesTypes.polygon = extendClass(seriesTypes.scatter, {
+Highcharts.seriesTypes.polygon = extendClass(Highcharts.seriesTypes.scatter, {
 	type: 'polygon',
 	fillGraph: true,
 	// Close all segments
@@ -1860,7 +1859,7 @@ var BubblePoint = extendClass(Point, {
 });
 
 // 2 - Create the series object
-seriesTypes.bubble = extendClass(seriesTypes.scatter, {
+Highcharts.seriesTypes.bubble = extendClass(Highcharts.seriesTypes.scatter, {
 	type: 'bubble',
 	pointClass: BubblePoint,
 	pointArrayMap: ['y', 'z'],
@@ -1972,7 +1971,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			radii = this.radii;
 		
 		// Run the parent method
-		seriesTypes.scatter.prototype.translate.call(this);
+		Highcharts.seriesTypes.scatter.prototype.translate.call(this);
 		
 		// Set the shape type and arguments to be picked up in drawPoints
 		i = data.length;
@@ -2023,8 +2022,8 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		
 	},
 		
-	drawPoints: seriesTypes.column.prototype.drawPoints,
-	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
+	drawPoints: Highcharts.seriesTypes.column.prototype.drawPoints,
+	alignDataLabel: Highcharts.seriesTypes.column.prototype.alignDataLabel,
 	buildKDTree: Highcharts.noop,
 	applyZones: Highcharts.noop
 });
@@ -2233,18 +2232,18 @@ Axis.prototype.beforePadding = function () {
 	}
 
  
-	if (seriesTypes.area) {		
-		wrap(seriesTypes.area.prototype, 'init', initArea);	
+	if (Highcharts.seriesTypes.area) {		
+		wrap(Highcharts.seriesTypes.area.prototype, 'init', initArea);	
 	}
-	if (seriesTypes.areaspline) {		
-		wrap(seriesTypes.areaspline.prototype, 'init', initArea);			
+	if (Highcharts.seriesTypes.areaspline) {		
+		wrap(Highcharts.seriesTypes.areaspline.prototype, 'init', initArea);			
 	}	
 
-	if (seriesTypes.spline) {
+	if (Highcharts.seriesTypes.spline) {
 		/**
 		 * Overridden method for calculating a spline from one point to the next
 		 */
-		wrap(seriesTypes.spline.prototype, 'getPointSpline', function (proceed, segment, point, i) {
+		wrap(Highcharts.seriesTypes.spline.prototype, 'getPointSpline', function (proceed, segment, point, i) {
 	
 			var ret,
 				smoothing = 1.5, // 1 means control points midway between points, 2 means 1/3 from the point, 3 is 1/4 etc;
@@ -2461,9 +2460,9 @@ Axis.prototype.beforePadding = function () {
 	wrap(seriesProto, 'animate', polarAnimate);
 
 
-	if (seriesTypes.column) {
+	if (Highcharts.seriesTypes.column) {
 
-		colProto = seriesTypes.column.prototype;
+		colProto = Highcharts.seriesTypes.column.prototype;
 		/**
 		* Define the animate method for columnseries
 		*/

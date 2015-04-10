@@ -23,6 +23,7 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	SVG_NS: 'http://www.w3.org/2000/svg',
 	idCounter: 0,
 	chartCount: 0,
+	seriesTypes: {},
 	noop: function () {}
 },	init = function () {
 		var H = Highcharts;
@@ -66,14 +67,7 @@ var Renderer,
 	setHours,
 	setDate,
 	setMonth,
-	setFullYear,
-
-
-	// lookup over the types and the associated classes
-	seriesTypes = {};
-
-Highcharts.seriesTypes = seriesTypes;
-
+	setFullYear;
 /**
  * Extend an object with the members of another
  * @param {Object} a The object to be extended
@@ -11296,7 +11290,7 @@ Chart.prototype = {
 			optionsChart = chart.options.chart,
 			type = options.type || optionsChart.type || optionsChart.defaultSeriesType,
 			series,
-			constr = seriesTypes[type];
+			constr = Highcharts.seriesTypes[type];
 
 		// No such series type
 		if (!constr) {
@@ -12221,6 +12215,7 @@ Chart.prototype = {
 	 */
 	propFromSeries: function () {
 		var chart = this,
+			seriesTypes = Highcharts.seriesTypes,
 			optionsChart = chart.options.chart,
 			klass,
 			seriesOptions = chart.options.series,
@@ -15449,6 +15444,7 @@ extend(Series.prototype, {
 			// in with type specific plotOptions
 			oldOptions = this.userOptions,
 			oldType = this.type,
+			seriesTypes = Highcharts.seriesTypes,
 			proto = seriesTypes[oldType].prototype,
 			preserve = ['group', 'markerGroup', 'dataLabelsGroup'],
 			n;
@@ -15568,7 +15564,7 @@ extend(Axis.prototype, {
  * LineSeries object
  */
 var LineSeries = extendClass(Series);
-seriesTypes.line = LineSeries;
+Highcharts.seriesTypes.line = LineSeries;
 
 /**
  * Set the default options for area
@@ -15777,7 +15773,7 @@ var AreaSeries = extendClass(Series, {
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
 
-seriesTypes.area = AreaSeries;
+Highcharts.seriesTypes.area = AreaSeries;
 /**
  * Set the default options for spline
  */
@@ -15901,7 +15897,7 @@ var SplineSeries = extendClass(Series, {
 		return ret;
 	}
 });
-seriesTypes.spline = SplineSeries;
+Highcharts.seriesTypes.spline = SplineSeries;
 
 /**
  * Set the default options for areaspline
@@ -15923,7 +15919,7 @@ var areaProto = AreaSeries.prototype,
 		drawLegendSymbol: LegendSymbolMixin.drawRectangle
 	});
 
-seriesTypes.areaspline = AreaSplineSeries;
+Highcharts.seriesTypes.areaspline = AreaSplineSeries;
 
 /**
  * Set the default options for column
@@ -16282,7 +16278,7 @@ var ColumnSeries = extendClass(Series, {
 		Series.prototype.remove.apply(series, arguments);
 	}
 });
-seriesTypes.column = ColumnSeries;
+Highcharts.seriesTypes.column = ColumnSeries;
 /**
  * Set the default options for bar
  */
@@ -16294,7 +16290,7 @@ var BarSeries = extendClass(ColumnSeries, {
 	type: 'bar',
 	inverted: true
 });
-seriesTypes.bar = BarSeries;
+Highcharts.seriesTypes.bar = BarSeries;
 
 /**
  * Set the default options for scatter
@@ -16329,7 +16325,7 @@ var ScatterSeries = extendClass(Series, {
 	}
 });
 
-seriesTypes.scatter = ScatterSeries;
+Highcharts.seriesTypes.scatter = ScatterSeries;
 
 /**
  * Set the default options for pie
@@ -16814,7 +16810,7 @@ var PieSeries = {
 
 };
 PieSeries = extendClass(Series, PieSeries);
-seriesTypes.pie = PieSeries;
+Highcharts.seriesTypes.pie = PieSeries;
 
 /**
  * Draw the data labels
@@ -17118,8 +17114,8 @@ Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBo
 /**
  * Override the base drawDataLabels method by pie specific functionality
  */
-if (seriesTypes.pie) {
-	seriesTypes.pie.prototype.drawDataLabels = function () {
+if (Highcharts.seriesTypes.pie) {
+	Highcharts.seriesTypes.pie.prototype.drawDataLabels = function () {
 		var series = this,
 			data = series.data,
 			point,
@@ -17436,7 +17432,7 @@ if (seriesTypes.pie) {
 	 * Perform the final placement of the data labels after we have verified that they
 	 * fall within the plot area.
 	 */
-	seriesTypes.pie.prototype.placeDataLabels = function () {
+	Highcharts.seriesTypes.pie.prototype.placeDataLabels = function () {
 		each(this.points, function (point) {
 			var dataLabel = point.dataLabel,
 				_pos;
@@ -17454,14 +17450,14 @@ if (seriesTypes.pie) {
 		});
 	};
 
-	seriesTypes.pie.prototype.alignDataLabel =  Highcharts.noop;
+	Highcharts.seriesTypes.pie.prototype.alignDataLabel =  Highcharts.noop;
 
 	/**
 	 * Verify whether the data labels are allowed to draw, or we should run more translation and data
 	 * label positioning to keep them inside the plot area. Returns true when data labels are ready
 	 * to draw.
 	 */
-	seriesTypes.pie.prototype.verifyDataLabelOverflow = function (overflow) {
+	Highcharts.seriesTypes.pie.prototype.verifyDataLabelOverflow = function (overflow) {
 
 		var center = this.center,
 			options = this.options,
@@ -17518,12 +17514,12 @@ if (seriesTypes.pie) {
 	};
 }
 
-if (seriesTypes.column) {
+if (Highcharts.seriesTypes.column) {
 
 	/**
 	 * Override the basic data label alignment by adjusting for the position of the column
 	 */
-	seriesTypes.column.prototype.alignDataLabel = function (point, dataLabel, options,  alignTo, isNew) {
+	Highcharts.seriesTypes.column.prototype.alignDataLabel = function (point, dataLabel, options,  alignTo, isNew) {
 		var inverted = this.chart.inverted,
 			series = point.series,
 			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
@@ -17828,15 +17824,15 @@ var TrackerMixin = Highcharts.TrackerMixin = {
  * themselves act as trackers
  */ 
 
-if (seriesTypes.column) {
+if (Highcharts.seriesTypes.column) {
 	ColumnSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;	
 }
 
-if (seriesTypes.pie) {
-	seriesTypes.pie.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
+if (Highcharts.seriesTypes.pie) {
+	Highcharts.seriesTypes.pie.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
-if (seriesTypes.scatter) {
+if (Highcharts.seriesTypes.scatter) {
 	ScatterSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 

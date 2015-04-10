@@ -23,7 +23,6 @@ var Axis = Highcharts.Axis,
 	extendClass = Highcharts.extendClass,
 	merge = Highcharts.merge,
 	pick = Highcharts.pick,
-	seriesTypes = Highcharts.seriesTypes,
 	wrap = Highcharts.wrap;
 
 	
@@ -582,7 +581,7 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 });
 
 // The Heatmap series type
-seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
+Highcharts.seriesTypes.heatmap = extendClass(Highcharts.seriesTypes.scatter, merge(colorSeriesMixin, {
 	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
@@ -594,7 +593,7 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 */
 	init: function () {
 		var options;
-		seriesTypes.scatter.prototype.init.apply(this, arguments);
+		Highcharts.seriesTypes.scatter.prototype.init.apply(this, arguments);
 
 		options = this.options;
 		this.pointRange = options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
@@ -638,7 +637,7 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			});
 		}
 	},
-	drawPoints: seriesTypes.column.prototype.drawPoints,
+	drawPoints: Highcharts.seriesTypes.column.prototype.drawPoints,
 	animate: Highcharts.noop,
 	getBox: Highcharts.noop,
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
