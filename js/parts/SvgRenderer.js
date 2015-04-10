@@ -1950,7 +1950,8 @@ SVGRenderer.prototype = {
 			imageRegex = /^url\((.*?)\)$/,
 			imageSrc,
 			imageSize,
-			centerImage;
+			centerImage,
+			symbolSizes = {};
 
 		if (path) {
 

@@ -37,7 +37,6 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 
 	// some variables
 var Renderer,
-	symbolSizes = {},
 	defaultOptions,
 	dateFormat, // function
 	globalAnimation,
@@ -3688,7 +3687,8 @@ SVGRenderer.prototype = {
 			imageRegex = /^url\((.*?)\)$/,
 			imageSrc,
 			imageSize,
-			centerImage;
+			centerImage,
+			symbolSizes = {};
 
 		if (path) {
 
