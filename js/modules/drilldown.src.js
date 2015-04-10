@@ -634,8 +634,9 @@
 	 */
 	wrap(H.Point.prototype, 'init', function (proceed, series, options, x) {
 		var point = proceed.call(this, series, options, x),
-			tick = series.xAxis && series.xAxis.ticks[x],
-			ddPointsX = series.xAxis.getDDPoints(x, series.options._levelNumber);
+			xAxis = series.xAxis,
+			tick = xAxis && xAxis.ticks[x],
+			ddPointsX = xAxis && xAxis.getDDPoints(x, series.options._levelNumber);
 
 		if (point.drilldown) {
 			
@@ -654,8 +655,10 @@
 
 
 			// Register drilldown points on this X value
-			ddPointsX.push(point);
-			ddPointsX.levelNumber = series.options._levelNumber;
+			if (ddPointsX) {
+				ddPointsX.push(point);
+				ddPointsX.levelNumber = series.options._levelNumber;
+			}
 
 		}
 
