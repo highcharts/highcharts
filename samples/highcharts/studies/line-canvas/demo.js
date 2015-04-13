@@ -11,7 +11,6 @@ $(function () {
             generatePoints: noop,
             getExtremes: noop,
             drawTracker: noop,
-            setTooltipPoints: noop,
             pointRange: 0,
             getContext: function () {
                 var ns, fo;
@@ -31,12 +30,8 @@ $(function () {
             drawGraph: function () {
                 var series = this,
                     data = this.options.data,
-                    transAX = this.xAxis.transA,
-                    transAY = this.yAxis.transA,
-                    xMin = this.xAxis.min,
-                    yMin = this.yAxis.min,
-                    yMax = this.yAxis.max,
-                    colorAxis = series.colorAxis,
+                    xAxis = this.xAxis,
+                    yAxis = this.yAxis,
                     ctx,
                     renderer,
                     c = 0;
@@ -50,8 +45,8 @@ $(function () {
                     }
                     c++;
                     ctx.lineTo(
-                        (point[0] - xMin) * transAX,
-                        (yMax - point[1] + yMin) * transAY
+                        xAxis.toPixels(point[0], true),
+                        yAxis.toPixels(point[1], true)
                     );
 
                     // We need to stroke the line for every 1000 pixels. It will crash the browser
@@ -97,14 +92,15 @@ $(function () {
         }
         return arr;
     }
-    var data = getData(500000);
+    var n = 500000,
+        data = getData(n);
 
 
     console.time('line');
     $('#container').highcharts({
 
         title: {
-            text: 'Trimmed Highcharts'
+            text: 'Trimmed Highcharts drawing ' + n + ' points'
         },
 
         subtitle: {
@@ -114,6 +110,10 @@ $(function () {
         xAxis: {
             min: 0,
             max: 500000
+        },
+
+        tooltip: {
+            shared: true
         },
 
         yAxis: {
