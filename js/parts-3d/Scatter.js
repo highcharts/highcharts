@@ -12,7 +12,7 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 	var series = this,
 		chart = series.chart,
 		depth = chart.options.chart.options3d.depth,
-		zAxis = chart.options.zAxis || { min : 0, max: depth };
+		zAxis = Highcharts.pick(series.zAxis, chart.options.zAxis, { min : 0, max: depth });
 
 	var rangeModifier = depth / (zAxis.max - zAxis.min),
 		raw_points = [],
