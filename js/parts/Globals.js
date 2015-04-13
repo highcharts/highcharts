@@ -22,7 +22,6 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 
 	// some variables
 var Renderer,
-	defaultOptions,
 	dateFormat, // function
 	globalAnimation,
 	pathAnim,

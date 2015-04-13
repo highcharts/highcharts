@@ -366,7 +366,7 @@ Axis.prototype = {
 			[this.defaultTopAxisOptions, this.defaultRightAxisOptions,
 				this.defaultBottomAxisOptions, this.defaultLeftAxisOptions][this.side],
 			merge(
-				defaultOptions[this.coll], // if set in setOptions (#1053)
+				Highcharts.defaultOptions[this.coll], // if set in setOptions (#1053)
 				userOptions
 			)
 		);
@@ -380,7 +380,7 @@ Axis.prototype = {
 			value = this.value,
 			categories = axis.categories,
 			dateTimeLabelFormat = this.dateTimeLabelFormat,
-			numericSymbols = defaultOptions.lang.numericSymbols,
+			numericSymbols = Highcharts.defaultOptions.lang.numericSymbols,
 			i = numericSymbols && numericSymbols.length,
 			multi,
 			ret,

@@ -37,7 +37,6 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 
 	// some variables
 var Renderer,
-	defaultOptions,
 	dateFormat, // function
 	globalAnimation,
 	pathAnim,
@@ -367,7 +366,7 @@ dateFormat = function (format, timestamp, capitalize) {
 		dayOfMonth = date[getDate](),
 		month = date[getMonth](),
 		fullYear = date[getFullYear](),
-		lang = defaultOptions.lang,
+		lang = Highcharts.defaultOptions.lang,
 		langWeekdays = lang.weekdays,
 
 		// List all format keys. Custom formats can be added from the outside. 
@@ -421,7 +420,7 @@ dateFormat = function (format, timestamp, capitalize) {
 function formatSingle(format, val) {
 	var floatRegex = /f$/,
 		decRegex = /\.([0-9])/,
-		lang = defaultOptions.lang,
+		lang = Highcharts.defaultOptions.lang,
 		decimals;
 
 	if (floatRegex.test(format)) { // float
@@ -700,7 +699,7 @@ timeUnits = {
  * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
  */
 Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
-	var lang = defaultOptions.lang,
+	var lang = Highcharts.defaultOptions.lang,
 		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
 		n = +number || 0,
 		c = decimals === -1 ?
@@ -1200,7 +1199,7 @@ var adapterRun = adapter.adapterRun,
 /* ****************************************************************************
  * Handle the options                                                         *
  *****************************************************************************/
-defaultOptions = {
+Highcharts.defaultOptions = {
 	colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', 
 		    '#8085e9', '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'],
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
@@ -1534,7 +1533,7 @@ defaultOptions = {
 
 
 // Series defaults
-var defaultPlotOptions = defaultOptions.plotOptions,
+var defaultPlotOptions = Highcharts.defaultOptions.plotOptions,
 	defaultSeriesOptions = defaultPlotOptions.line;
 
 // set the default time methods
@@ -1547,7 +1546,7 @@ setTimeMethods();
  * local time or UTC (default).
  */
 function setTimeMethods() {
-	var globalOptions = defaultOptions.global,
+	var globalOptions = Highcharts.defaultOptions.global,
 		useUTC = globalOptions.useUTC,
 		GET = useUTC ? 'getUTC' : 'get',
 		SET = useUTC ? 'setUTC' : 'set';
@@ -1596,12 +1595,12 @@ function setTimeMethods() {
 function setOptions(options) {
 	
 	// Copy in the default options
-	defaultOptions = merge(true, defaultOptions, options);
+	Highcharts.defaultOptions = merge(true, Highcharts.defaultOptions, options);
 	
 	// Apply UTC
 	setTimeMethods();
 
-	return defaultOptions;
+	return Highcharts.defaultOptions;
 }
 
 /**
@@ -1609,7 +1608,7 @@ function setOptions(options) {
  * wasn't enough because the setOptions method created a new object.
  */
 function getOptions() {
-	return defaultOptions;
+	return Highcharts.defaultOptions;
 }
 
 
@@ -5366,7 +5365,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 								sizex *= radialReference[2] / bBox.width;
 								sizey *= radialReference[2] / bBox.height;
 							}
-							fillAttr = 'src="' + defaultOptions.global.VMLRadialGradientURL + '" ' +
+							fillAttr = 'src="' + Highcharts.defaultOptions.global.VMLRadialGradientURL + '" ' +
 								'size="' + sizex + ',' + sizey + '" ' +
 								'origin="0.5,0.5" ' +
 								'position="' + cx + ',' + cy + '" ' +
@@ -6750,7 +6749,7 @@ Axis.prototype = {
 			[this.defaultTopAxisOptions, this.defaultRightAxisOptions,
 				this.defaultBottomAxisOptions, this.defaultLeftAxisOptions][this.side],
 			merge(
-				defaultOptions[this.coll], // if set in setOptions (#1053)
+				Highcharts.defaultOptions[this.coll], // if set in setOptions (#1053)
 				userOptions
 			)
 		);
@@ -6764,7 +6763,7 @@ Axis.prototype = {
 			value = this.value,
 			categories = axis.categories,
 			dateTimeLabelFormat = this.dateTimeLabelFormat,
-			numericSymbols = defaultOptions.lang.numericSymbols,
+			numericSymbols = Highcharts.defaultOptions.lang.numericSymbols,
 			i = numericSymbols && numericSymbols.length,
 			multi,
 			ret,
@@ -8557,7 +8556,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 	var tickPositions = [],
 		i,
 		higherRanks = {},
-		useUTC = defaultOptions.global.useUTC,
+		useUTC = Highcharts.defaultOptions.global.useUTC,
 		minYear, // used in months and years as a basis for Date.UTC()
 		minDate = new Date(min - getTZOffset(min)),
 		interval = normalizedInterval.unitRange,
@@ -11197,7 +11196,7 @@ Chart.prototype = {
 			seriesOptions = userOptions.series; // skip merging data points to increase performance
 
 		userOptions.series = null;
-		options = merge(defaultOptions, userOptions); // do the merge
+		options = merge(Highcharts.defaultOptions, userOptions); // do the merge
 		options.series = userOptions.series = seriesOptions; // set back the series data
 		this.userOptions = userOptions;
 
@@ -13149,8 +13148,8 @@ Series.prototype = {
 
 		// The tooltip options are merged between global and series specific options
 		this.tooltipOptions = merge(
-			defaultOptions.tooltip,
-			defaultOptions.plotOptions[this.type].tooltip,
+			Highcharts.defaultOptions.tooltip,
+			Highcharts.defaultOptions.plotOptions[this.type].tooltip,
 			userOptions.tooltip,
 			userPlotOptions.series && userPlotOptions.series.tooltip,
 			userPlotOptions[this.type] && userPlotOptions[this.type].tooltip,
@@ -17898,7 +17897,7 @@ extend(Legend.prototype, {
 /* 
  * Add pointer cursor to legend itemstyle in defaultOptions
  */
-defaultOptions.legend.itemStyle.cursor = 'pointer';
+Highcharts.defaultOptions.legend.itemStyle.cursor = 'pointer';
 
 
 /* 
@@ -17911,7 +17910,7 @@ extend(Chart.prototype, {
 	 */
 	showResetZoom: function () {
 		var chart = this,
-			lang = defaultOptions.lang,
+			lang = Highcharts.defaultOptions.lang,
 			btnOptions = chart.options.chart.resetZoomButton,
 			theme = btnOptions.theme,
 			states = theme.states,

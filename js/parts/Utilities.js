@@ -299,7 +299,7 @@ dateFormat = function (format, timestamp, capitalize) {
 		dayOfMonth = date[getDate](),
 		month = date[getMonth](),
 		fullYear = date[getFullYear](),
-		lang = defaultOptions.lang,
+		lang = Highcharts.defaultOptions.lang,
 		langWeekdays = lang.weekdays,
 
 		// List all format keys. Custom formats can be added from the outside. 
@@ -353,7 +353,7 @@ dateFormat = function (format, timestamp, capitalize) {
 function formatSingle(format, val) {
 	var floatRegex = /f$/,
 		decRegex = /\.([0-9])/,
-		lang = defaultOptions.lang,
+		lang = Highcharts.defaultOptions.lang,
 		decimals;
 
 	if (floatRegex.test(format)) { // float
@@ -632,7 +632,7 @@ timeUnits = {
  * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
  */
 Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
-	var lang = defaultOptions.lang,
+	var lang = Highcharts.defaultOptions.lang,
 		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
 		n = +number || 0,
 		c = decimals === -1 ?

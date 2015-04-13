@@ -273,8 +273,8 @@ Series.prototype = {
 
 		// The tooltip options are merged between global and series specific options
 		this.tooltipOptions = merge(
-			defaultOptions.tooltip,
-			defaultOptions.plotOptions[this.type].tooltip,
+			Highcharts.defaultOptions.tooltip,
+			Highcharts.defaultOptions.plotOptions[this.type].tooltip,
 			userOptions.tooltip,
 			userPlotOptions.series && userPlotOptions.series.tooltip,
 			userPlotOptions[this.type] && userPlotOptions[this.type].tooltip,

@@ -21,7 +21,7 @@ units[5] = ['week', [1, 2, 3]]; // allow more weeks
 
 defaultSeriesType = Highcharts.seriesTypes.areaspline === undefined ? 'line' : 'areaspline';
 
-extend(defaultOptions, {
+extend(Highcharts.defaultOptions, {
 	navigator: {
 		//enabled: true,
 		handles: {

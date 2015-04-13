@@ -1718,7 +1718,7 @@ if (Highcharts.seriesTypes.bubble) {
 /**
  * Extend the default options with map options
  */
-defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
+Highcharts.defaultOptions.plotOptions.heatmap = merge(Highcharts.defaultOptions.plotOptions.scatter, {
 	animation: false,
 	borderWidth: 0,
 	nullColor: '#F8F8F8',
@@ -2021,7 +2021,7 @@ Highcharts.geojson = function (geojson, hType, series) {
  */
 wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
 
-	if (defaultOptions.credits.text === this.options.credits.text && this.mapCredits) { // default text and mapCredits is set
+	if (Highcharts.defaultOptions.credits.text === this.options.credits.text && this.mapCredits) { // default text and mapCredits is set
 		credits.text = this.mapCredits;
 		credits.href = null;
 	}
@@ -2036,14 +2036,14 @@ wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
 });
 
 // Add language
-extend(defaultOptions.lang, {
+extend(Highcharts.defaultOptions.lang, {
 	zoomIn: 'Zoom in',
 	zoomOut: 'Zoom out'
 });
 
 
 // Set the default map navigation options
-defaultOptions.mapNavigation = {
+Highcharts.defaultOptions.mapNavigation = {
 	buttonOptions: {
 		alignTo: 'plotBox',
 		align: 'left',

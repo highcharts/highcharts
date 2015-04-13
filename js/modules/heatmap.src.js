@@ -17,7 +17,6 @@ var Axis = Highcharts.Axis,
 	LegendSymbolMixin = Highcharts.LegendSymbolMixin,
 	Series = Highcharts.Series,
 	
-	defaultOptions = Highcharts.getOptions(),
 	each = Highcharts.each,
 	extend = Highcharts.extend,
 	extendClass = Highcharts.extendClass,
@@ -550,7 +549,7 @@ var colorSeriesMixin = {
 /**
  * Extend the default options with map options
  */
-defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
+Highcharts.defaultOptions.plotOptions.heatmap = merge(Highcharts.defaultOptions.plotOptions.scatter, {
 	animation: false,
 	borderWidth: 0,
 	nullColor: '#F8F8F8',

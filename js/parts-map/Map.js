@@ -1,14 +1,14 @@
 
 
 // Add language
-extend(defaultOptions.lang, {
+extend(Highcharts.defaultOptions.lang, {
 	zoomIn: 'Zoom in',
 	zoomOut: 'Zoom out'
 });
 
 
 // Set the default map navigation options
-defaultOptions.mapNavigation = {
+Highcharts.defaultOptions.mapNavigation = {
 	buttonOptions: {
 		alignTo: 'plotBox',
 		align: 'left',

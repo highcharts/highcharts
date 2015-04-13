@@ -1,7 +1,7 @@
 /* ****************************************************************************
  * Handle the options                                                         *
  *****************************************************************************/
-defaultOptions = {
+Highcharts.defaultOptions = {
 	colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', 
 		    '#8085e9', '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'],
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
@@ -335,7 +335,7 @@ defaultOptions = {
 
 
 // Series defaults
-var defaultPlotOptions = defaultOptions.plotOptions,
+var defaultPlotOptions = Highcharts.defaultOptions.plotOptions,
 	defaultSeriesOptions = defaultPlotOptions.line;
 
 // set the default time methods
@@ -348,7 +348,7 @@ setTimeMethods();
  * local time or UTC (default).
  */
 function setTimeMethods() {
-	var globalOptions = defaultOptions.global,
+	var globalOptions = Highcharts.defaultOptions.global,
 		useUTC = globalOptions.useUTC,
 		GET = useUTC ? 'getUTC' : 'get',
 		SET = useUTC ? 'setUTC' : 'set';
@@ -397,12 +397,12 @@ function setTimeMethods() {
 function setOptions(options) {
 	
 	// Copy in the default options
-	defaultOptions = merge(true, defaultOptions, options);
+	Highcharts.defaultOptions = merge(true, Highcharts.defaultOptions, options);
 	
 	// Apply UTC
 	setTimeMethods();
 
-	return defaultOptions;
+	return Highcharts.defaultOptions;
 }
 
 /**
@@ -410,6 +410,6 @@ function setOptions(options) {
  * wasn't enough because the setOptions method created a new object.
  */
 function getOptions() {
-	return defaultOptions;
+	return Highcharts.defaultOptions;
 }
 

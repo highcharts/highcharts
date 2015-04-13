@@ -14,7 +14,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 	var tickPositions = [],
 		i,
 		higherRanks = {},
-		useUTC = defaultOptions.global.useUTC,
+		useUTC = Highcharts.defaultOptions.global.useUTC,
 		minYear, // used in months and years as a basis for Date.UTC()
 		minDate = new Date(min - getTZOffset(min)),
 		interval = normalizedInterval.unitRange,

@@ -24,7 +24,7 @@ Chart.prototype = {
 			seriesOptions = userOptions.series; // skip merging data points to increase performance
 
 		userOptions.series = null;
-		options = merge(defaultOptions, userOptions); // do the merge
+		options = merge(Highcharts.defaultOptions, userOptions); // do the merge
 		options.series = userOptions.series = seriesOptions; // set back the series data
 		this.userOptions = userOptions;
 

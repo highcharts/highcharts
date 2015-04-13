@@ -197,7 +197,7 @@ Highcharts.geojson = function (geojson, hType, series) {
  */
 wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
 
-	if (defaultOptions.credits.text === this.options.credits.text && this.mapCredits) { // default text and mapCredits is set
+	if (Highcharts.defaultOptions.credits.text === this.options.credits.text && this.mapCredits) { // default text and mapCredits is set
 		credits.text = this.mapCredits;
 		credits.href = null;
 	}

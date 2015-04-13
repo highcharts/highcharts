@@ -227,7 +227,7 @@ extend(Legend.prototype, {
 /* 
  * Add pointer cursor to legend itemstyle in defaultOptions
  */
-defaultOptions.legend.itemStyle.cursor = 'pointer';
+Highcharts.defaultOptions.legend.itemStyle.cursor = 'pointer';
 
 
 /* 
@@ -240,7 +240,7 @@ extend(Chart.prototype, {
 	 */
 	showResetZoom: function () {
 		var chart = this,
-			lang = defaultOptions.lang,
+			lang = Highcharts.defaultOptions.lang,
 			btnOptions = chart.options.chart.resetZoomButton,
 			theme = btnOptions.theme,
 			states = theme.states,

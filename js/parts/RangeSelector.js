@@ -1,7 +1,7 @@
 /* ****************************************************************************
  * Start Range Selector code												  *
  *****************************************************************************/
-extend(defaultOptions, {
+extend(Highcharts.defaultOptions, {
 	rangeSelector: {
 		// allButtonsEnabled: false,
 		// enabled: true,
@@ -46,7 +46,7 @@ extend(defaultOptions, {
 		// selected: undefined
 	}
 });
-defaultOptions.lang = merge(defaultOptions.lang, {
+Highcharts.defaultOptions.lang = merge(Highcharts.defaultOptions.lang, {
 	rangeSelectorZoom: 'Zoom',
 	rangeSelectorFrom: 'From',
 	rangeSelectorTo: 'To'
@@ -372,7 +372,7 @@ RangeSelector.prototype = {
 			chartStyle = chart.renderer.style,
 			renderer = chart.renderer,
 			options = chart.options.rangeSelector,
-			lang = defaultOptions.lang,
+			lang = Highcharts.defaultOptions.lang,
 			div = rangeSelector.div,
 			isMin = name === 'min',
 			input,
@@ -466,7 +466,7 @@ RangeSelector.prototype = {
 			if (!isNaN(value)) {
 
 				// Correct for timezone offset (#433)
-				if (!defaultOptions.global.useUTC) {
+				if (!Highcharts.defaultOptions.global.useUTC) {
 					value = value + new Date().getTimezoneOffset() * 60 * 1000;
 				}
 
@@ -517,7 +517,7 @@ RangeSelector.prototype = {
 			navButtonOptions = chartOptions.exporting && chartOptions.navigation && chartOptions.navigation.buttonOptions, 
 			options = chartOptions.rangeSelector,
 			buttons = rangeSelector.buttons,
-			lang = defaultOptions.lang,
+			lang = Highcharts.defaultOptions.lang,
 			div = rangeSelector.div,
 			inputGroup = rangeSelector.inputGroup,
 			buttonTheme = options.buttonTheme,
