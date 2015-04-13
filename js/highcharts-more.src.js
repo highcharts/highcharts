@@ -1563,8 +1563,6 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 	upColorProp: 'fill',
 
-	pointArrayMap: ['low', 'y'],
-
 	pointValKey: 'y',
 
 	/**
