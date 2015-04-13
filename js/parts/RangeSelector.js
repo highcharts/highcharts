@@ -98,7 +98,7 @@ RangeSelector.prototype = {
 		}
 
 		// Apply dataGrouping associated to button
-		if (dataGrouping) { // docs (demo created)
+		if (dataGrouping) {
 			this.forcedDataGrouping = true;			
 			Axis.prototype.setDataGrouping.call(baseAxis || { chart: this.chart }, dataGrouping, false);
 		}

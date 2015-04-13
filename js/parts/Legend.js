@@ -707,7 +707,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 	 * @param {Object} item The series (this) or point
 	 */
 	drawRectangle: function (legend, item) {
-		var symbolHeight = legend.options.symbolHeight || legend.fontMetrics.f; // docs: Now defaults to the font size
+		var symbolHeight = legend.options.symbolHeight || legend.fontMetrics.f;
 
 		item.legendSymbol = this.chart.renderer.rect(
 			0,

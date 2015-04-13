@@ -7897,7 +7897,7 @@ Axis.prototype = {
 		if (horiz) {
 			autoRotation = defined(rotationOption) ? 
 				[rotationOption] :
-				slotSize < pick(labelOptions.autoRotationLimit, 80) && !labelOptions.staggerLines && !labelOptions.step && labelOptions.autoRotation; // docs: API and demo created, enable with "since".
+				slotSize < pick(labelOptions.autoRotationLimit, 80) && !labelOptions.staggerLines && !labelOptions.step && labelOptions.autoRotation;
 
 			if (autoRotation) {
 
@@ -11110,7 +11110,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 	 * @param {Object} item The series (this) or point
 	 */
 	drawRectangle: function (legend, item) {
-		var symbolHeight = legend.options.symbolHeight || legend.fontMetrics.f; // docs: Now defaults to the font size
+		var symbolHeight = legend.options.symbolHeight || legend.fontMetrics.f;
 
 		item.legendSymbol = this.chart.renderer.rect(
 			0,
@@ -21946,7 +21946,7 @@ RangeSelector.prototype = {
 		}
 
 		// Apply dataGrouping associated to button
-		if (dataGrouping) { // docs (demo created)
+		if (dataGrouping) {
 			this.forcedDataGrouping = true;			
 			Axis.prototype.setDataGrouping.call(baseAxis || { chart: this.chart }, dataGrouping, false);
 		}
