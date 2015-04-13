@@ -1410,6 +1410,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					scaleY: 1
 				})
 				.add(group);
+			series.transformGroup.survive = true;
 		}
 		
 		// Draw the shapes again

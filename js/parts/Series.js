@@ -1243,7 +1243,7 @@ Series.prototype = {
 
 		// Destroy all SVGElements associated to the series
 		for (prop in series) {
-			if (series[prop] instanceof SVGElement) {
+			if (series[prop] instanceof SVGElement && !series[prop].survive) { // Survive provides a hook for not destroying
 
 				// issue 134 workaround
 				destroy = issue134 && prop === 'group' ?
