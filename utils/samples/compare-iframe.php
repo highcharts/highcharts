@@ -304,7 +304,8 @@ function getExportInnerHTML() {
 					<?php if (getExportInnerHTML()) : ?>
 					// Bypass the export module
 					Highcharts.Chart.prototype.getSVG = function () {
-						return this.container.innerHTML;
+						return this.container.innerHTML
+							.replace(/<\/svg>.*?$/, '</svg>'); // strip useHTML
 					};
 					<?php endif ?>
 
