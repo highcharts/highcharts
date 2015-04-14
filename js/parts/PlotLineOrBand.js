@@ -57,7 +57,7 @@ Highcharts.PlotLineOrBand.prototype = {
 			path = axis.getPlotLinePath(value, width);
 
 			if (typeof formatter === 'function') {
-				path = formatter(path);
+				path = formatter.call(options, path);
 			}
 
 			attribs = {
