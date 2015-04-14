@@ -1,8 +1,11 @@
 $(function () {
 
     (function (H) {
-        var noop = function () {};
-        H.extend(H.Series.prototype, {
+        var noop = function () {},
+            Series = H.Series,
+            wrap = H.wrap;
+
+        H.extend(Series.prototype, {
             setData: function () {
                 this.points = []
             },
@@ -12,19 +15,27 @@ $(function () {
             getExtremes: noop,
             drawTracker: noop,
             pointRange: 0,
+
+            /**
+             * Create a hidden canvas to draw the graph on. The contents is later copied over 
+             * to an SVG image element.
+             */
             getContext: function () {
-                var ns, fo;
                 if (!this.canvas) {
-                    ns = 'http://www.w3.org/1999/xhtml';
-                    fo = this.chart.renderer.createElement('foreignObject').add(this.group);
-                    this.canvas = document.createElementNS(ns, 'canvas');
+                    this.canvas = document.createElement('canvas');
                     this.canvas.setAttribute('width', this.chart.chartWidth);
                     this.canvas.setAttribute('height', this.chart.chartHeight);
-                    fo.element.appendChild(this.canvas);
+                    this.image = this.chart.renderer.image('', 0, 0, this.chart.chartWidth, this.chart.chartHeight).add(this.group);
                     this.ctx = this.canvas.getContext('2d');
-                    this.ctx.translate(this.group.translateX, this.group.translateY)
                 }
                 return this.ctx;
+            },
+
+            /** 
+             * Draw the canvas image inside an SVG image
+             */ 
+            canvasToSVG: function () {
+                this.image.attr({ href: this.canvas.toDataURL('image/png') });
             },
 
             drawGraph: function () {
@@ -34,23 +45,46 @@ $(function () {
                     yAxis = this.yAxis,
                     ctx,
                     renderer,
+                    clientX,
+                    lastClientX,
                     c = 0;
 
                 ctx = this.getContext();
                 
 
-                H.each(data, function (point) {
+                H.each(data, function (point, i) {
+
+                    var p;
+
                     if (c === 0) {
                         ctx.beginPath();
                     }
                     c++;
+
+
+                    clientX = xAxis.toPixels(point[0], true);
+
+                    p = {
+                        clientX: clientX,
+                        plotY: yAxis.toPixels(point[1], true)
+                    };
+                    
+                    // The k-d tree requires series points
+                    clientX = Math.round(clientX);
+                    if (clientX !== lastClientX) {
+                        p.plotX = p.clientX;
+                        p.i = i;
+                        series.points.push(p);
+                        lastClientX = clientX;
+                    }
+
                     ctx.lineTo(
-                        xAxis.toPixels(point[0], true),
-                        yAxis.toPixels(point[1], true)
+                        p.clientX,
+                        p.plotY
                     );
 
                     // We need to stroke the line for every 1000 pixels. It will crash the browser
-                    // my memory use if we stroke too infrequently.
+                    // memory use if we stroke too infrequently.
                     if (c === 1000) {
                         ctx.strokeStyle = series.color;
                         ctx.lineWidth = series.options.lineWidth;
@@ -59,8 +93,26 @@ $(function () {
                     }
                 });
 
+                this.canvasToSVG();
+
             }
         });
+
+        /**
+         * Return a point instance from the k-d-tree
+         */
+        wrap(Series.prototype, 'searchPoint', function (proceed, e) {
+            var point = proceed.call(this, e),
+                ret;
+
+            if (point) {
+                ret = (new this.pointClass()).init(this, this.options.data[point.i]);
+                ret.dist = point.dist;
+                ret.plotX = point.plotX;
+                ret.plotY = point.plotY;
+            }
+            return ret;
+        })
     }(Highcharts));
 
     function getData(n) {
@@ -104,7 +156,7 @@ $(function () {
         },
 
         subtitle: {
-            text: 'The line is rendered on canvas, and a lot of features are bypassed for speed'
+            text: 'The line is rendered on canvas, and some features are bypassed for speed'
         },
 
         xAxis: {
@@ -113,7 +165,8 @@ $(function () {
         },
 
         tooltip: {
-            shared: true
+            shared: true,
+            headerFormat: ''
         },
 
         yAxis: {

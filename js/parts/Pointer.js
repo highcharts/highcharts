@@ -172,7 +172,7 @@ Pointer.prototype = {
 			});
 			// Find absolute nearest point
 			each(kdpoints, function (p) {
-				if (p && defined(p.plotX) && defined(p.plotY)) {
+				if (p && p.dist) {
 					if ((p.dist.distX < distance) || ((p.dist.distX === distance || p.series.kdDimensions > 1) && 
 							p.dist.distR < rdistance)) {
 						distance = p.dist.distX;
