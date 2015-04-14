@@ -2,8 +2,6 @@
 	EXTENSION FOR 3D SCATTER CHART
 ***/
 
-Highcharts.seriesTypes.scatter.prototype.axisTypes = ['xAxis', 'yAxis', 'zAxis'];
-
 Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function (proceed) {
 //function translate3d(proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
@@ -32,8 +30,6 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 			z: (raw_point.z - zAxis.min) * rangeModifier
 		});
 	}
-	console.log(zAxis);
-
 	projected_points = perspective(raw_points, chart, true);
 
 	for (i = 0; i < series.data.length; i++) {
@@ -49,13 +45,17 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 	}
 });
 
-Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'init', function (proceed) {
-	var result = proceed.apply(this, [].slice.call(arguments, 1));
+Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'init', function (proceed, chart, options) {
+	if (chart.is3d()) {
+		// add a third coordinate
+		this.axisTypes = ['xAxis', 'yAxis', 'zAxis'];
+		this.pointArrayMap = ['x', 'y', 'z'];
+		this.parallelArrays = ['x', 'y', 'z'];
+	}
+
+	var result = proceed.apply(this, [chart, options]);
 
 	if (this.chart.is3d()) {
-		// Add a third coordinate
-		this.pointArrayMap = ['x', 'y', 'z'];
-
 		// Set a new default tooltip formatter
 		var default3dScatterTooltip = 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>';
 		if (this.userOptions.tooltip) {
@@ -65,22 +65,4 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'init', function (proc
 		}
 	}
 	return result;
-});
-
-Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'setData', function (proceed, data, redraw, animation, updatePoints) {
-	var result = proceed.apply(this, [].slice.call(arguments, 1));
-
-	if (this.chart.is3d()) {
-		var series = this,
-			dataLength = data.length,
-			zData = [],
-			i = 0;
-
-		while(i < data.length) {
-			zData.push(data[i][2]);
-			i++;
-		}
-
-		this.zData = zData;
-	}
 });
