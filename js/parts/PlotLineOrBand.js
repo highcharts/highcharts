@@ -12,7 +12,7 @@ Highcharts.PlotLineOrBand = function (axis, options) {
 };
 
 Highcharts.PlotLineOrBand.prototype = {
-	
+
 	/**
 	 * Render the plot line or plot band. If it is already existing,
 	 * move it.
@@ -25,6 +25,7 @@ Highcharts.PlotLineOrBand.prototype = {
 			optionsLabel = options.label,
 			label = plotLine.label,
 			width = options.width,
+			formatter = options.formatter,
 			to = options.to,
 			from = options.from,
 			isBand = defined(from) && defined(to),
@@ -54,6 +55,11 @@ Highcharts.PlotLineOrBand.prototype = {
 		// plot line
 		if (width) {
 			path = axis.getPlotLinePath(value, width);
+
+			if (typeof formatter === 'function') {
+				path = formatter(path);
+			}
+
 			attribs = {
 				stroke: color,
 				'stroke-width': width
@@ -171,7 +177,7 @@ Highcharts.PlotLineOrBand.prototype = {
 	destroy: function () {
 		// remove it from the lookup
 		erase(this.axis.plotLinesAndBands, this);
-		
+
 		delete this.axis;
 		destroyObjectProperties(this);
 	}
@@ -185,7 +191,7 @@ AxisPlotLineOrBandExtension = {
 
 	/**
 	 * Create the path for a plot band
-	 */ 
+	 */
 	getPlotBandPath: function (from, to) {
 		var toPath = this.getPlotLinePath(to, null, null, true),
 			path = this.getPlotLinePath(from, null, null, true);
@@ -200,14 +206,14 @@ AxisPlotLineOrBandExtension = {
 		} else { // outside the axis area
 			path = null;
 		}
-		
+
 		return path;
 	},
 
 	addPlotBand: function (options) {
 		return this.addPlotBandOrLine(options, 'plotBands');
 	},
-	
+
 	addPlotLine: function (options) {
 		return this.addPlotBandOrLine(options, 'plotLines');
 	},
@@ -225,11 +231,11 @@ AxisPlotLineOrBandExtension = {
 			// Add it to the user options for exporting and Axis.update
 			if (coll) {
 				userOptions[coll] = userOptions[coll] || [];
-				userOptions[coll].push(options); 
+				userOptions[coll].push(options);
 			}
-			this.plotLinesAndBands.push(obj); 
+			this.plotLinesAndBands.push(obj);
 		}
-		
+
 		return obj;
 	},
 
