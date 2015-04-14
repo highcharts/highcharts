@@ -256,6 +256,45 @@ Highcharts.extend(ZAxis.prototype, {
 		Highcharts.Axis.prototype.setAxisSize.call(this);
 		this.width = this.len = this.chart.options.chart.options3d.depth;
 		this.right = this.chart.chartWidth - this.width - this.left;
+	},
+	getSeriesExtremes: function () {
+		var axis = this,
+			chart = axis.chart;
+
+		axis.hasVisibleSeries = false;
+
+		// Reset properties in case we're redrawing (#3353)
+		axis.dataMin = axis.dataMax = axis.ignoreMinPadding = axis.ignoreMaxPadding = null;
+		
+		if (axis.buildStacks) {
+			axis.buildStacks();
+		}
+
+		// loop through this axis' series
+		Highcharts.each(axis.series, function (series) {
+
+			if (series.visible || !chart.options.chart.ignoreHiddenSeries) {
+
+				var seriesOptions = series.options,
+					zData,
+					threshold = seriesOptions.threshold,
+					seriesDataMin,
+					seriesDataMax;
+
+				axis.hasVisibleSeries = true;
+
+				// Validate threshold in logarithmic axes
+				if (axis.isLog && threshold <= 0) {
+					threshold = null;
+				}
+
+				zData = series.zData;
+				if (zData.length) {
+					axis.dataMin = Math.min(pick(axis.dataMin, zData[0]), Math.min.apply(null, zData));
+					axis.dataMax = Math.max(pick(axis.dataMax, zData[0]), Math.max.apply(null, zData));
+				}
+			}
+		});
 	}
 });
 
