@@ -21,13 +21,24 @@ $(function () {
              * to an SVG image element.
              */
             getContext: function () {
+                var width = this.chart.chartWidth,
+                    height = this.chart.chartHeight;
+
                 if (!this.canvas) {
                     this.canvas = document.createElement('canvas');
-                    this.canvas.setAttribute('width', this.chart.chartWidth);
-                    this.canvas.setAttribute('height', this.chart.chartHeight);
-                    this.image = this.chart.renderer.image('', 0, 0, this.chart.chartWidth, this.chart.chartHeight).add(this.group);
+                    this.image = this.chart.renderer.image('', 0, 0, width, height).add(this.group);
                     this.ctx = this.canvas.getContext('2d');
+                } else {
+                    this.ctx.clearRect(0, 0, width, height);
                 }
+
+                this.canvas.setAttribute('width', width);
+                this.canvas.setAttribute('height', height);
+                this.image.attr({
+                    width: width,
+                    height: height
+                });
+                    
                 return this.ctx;
             },
 
@@ -47,51 +58,58 @@ $(function () {
                     renderer,
                     clientX,
                     lastClientX,
-                    c = 0;
+                    width = series.chart.chartWidth,
+                    c = 0,
+                    stroke = function () {
+                        ctx.strokeStyle = series.color;
+                        ctx.lineWidth = series.options.lineWidth;
+                        ctx.stroke();
+                        c = 0;
+                    };
 
                 ctx = this.getContext();
-                
 
                 H.each(data, function (point, i) {
 
                     var p;
 
-                    if (c === 0) {
-                        ctx.beginPath();
-                    }
-                    c++;
-
-
                     clientX = xAxis.toPixels(point[0], true);
 
-                    p = {
-                        clientX: clientX,
-                        plotY: yAxis.toPixels(point[1], true)
-                    };
-                    
-                    // The k-d tree requires series points
-                    clientX = Math.round(clientX);
-                    if (clientX !== lastClientX) {
-                        p.plotX = p.clientX;
-                        p.i = i;
-                        series.points.push(p);
-                        lastClientX = clientX;
-                    }
+                    if (clientX > 0 && clientX < width) {
 
-                    ctx.lineTo(
-                        p.clientX,
-                        p.plotY
-                    );
+                        if (c === 0) {
+                            ctx.beginPath();
+                        }                    
 
-                    // We need to stroke the line for every 1000 pixels. It will crash the browser
-                    // memory use if we stroke too infrequently.
-                    if (c === 1000) {
-                        ctx.strokeStyle = series.color;
-                        ctx.lineWidth = series.options.lineWidth;
-                        ctx.stroke();
-                        c = 0;
+                        p = {
+                            clientX: clientX,
+                            plotY: yAxis.toPixels(point[1], true)
+                        };
+                        
+                        // The k-d tree requires series points
+                        clientX = Math.round(clientX);
+                        if (clientX !== lastClientX) {
+                            p.plotX = p.clientX;
+                            p.i = i;
+                            series.points.push(p);
+                            lastClientX = clientX;
+                        }
+
+                        ctx.lineTo(
+                            p.clientX,
+                            p.plotY
+                        );
+
+                        // We need to stroke the line for every 1000 pixels. It will crash the browser
+                        // memory use if we stroke too infrequently.
+                        c++;
+                        if (c === 1000) {
+                            stroke();
+                        }
                     }
                 });
+
+                stroke();
 
                 this.canvasToSVG();
 
@@ -151,6 +169,10 @@ $(function () {
     console.time('line');
     $('#container').highcharts({
 
+        chart: {
+            zoomType: 'x'
+        },
+
         title: {
             text: 'Trimmed Highcharts drawing ' + n + ' points'
         },
@@ -166,7 +188,8 @@ $(function () {
 
         tooltip: {
             shared: true,
-            headerFormat: ''
+            headerFormat: '',
+            pointFormat: 'x: {point.x}, y: {point.y:.f}'
         },
 
         yAxis: {
