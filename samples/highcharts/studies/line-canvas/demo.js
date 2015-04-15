@@ -6,13 +6,13 @@ $(function () {
             wrap = H.wrap;
 
         H.extend(Series.prototype, {
-            setData: function () {
-                this.points = []
+            _setData: function () {
+                this.points = [];
             },
-            processData: noop,
+            _processData: noop,
             translate: noop,
             generatePoints: noop,
-            getExtremes: noop,
+            _getExtremes: noop,
             drawTracker: noop,
             pointRange: 0,
 
@@ -21,8 +21,8 @@ $(function () {
              * to an SVG image element.
              */
             getContext: function () {
-                var width = this.chart.chartWidth,
-                    height = this.chart.chartHeight;
+                var width = this.chart.plotWidth,
+                    height = this.chart.plotHeight;
 
                 if (!this.canvas) {
                     this.canvas = document.createElement('canvas');
@@ -38,28 +38,30 @@ $(function () {
                     width: width,
                     height: height
                 });
-                    
+
                 return this.ctx;
             },
 
             /** 
              * Draw the canvas image inside an SVG image
-             */ 
+             */
             canvasToSVG: function () {
                 this.image.attr({ href: this.canvas.toDataURL('image/png') });
             },
 
             drawGraph: function () {
                 var series = this,
-                    data = this.options.data,
                     xAxis = this.xAxis,
                     yAxis = this.yAxis,
                     ctx,
-                    renderer,
-                    clientX,
                     lastClientX,
-                    width = series.chart.chartWidth,
+                    i,
                     c = 0,
+                    xData = series.processedXData,
+                    yData = series.processedYData,
+                    len = xData.length,
+                    clientX,
+                    plotY,
                     stroke = function () {
                         ctx.strokeStyle = series.color;
                         ctx.lineWidth = series.options.lineWidth;
@@ -67,47 +69,40 @@ $(function () {
                         c = 0;
                     };
 
+                series.points = []; // For k-d tree only
                 ctx = this.getContext();
 
-                H.each(data, function (point, i) {
+                for (i = 0; i < len; i = i + 1) {
+                    clientX = Math.round(xAxis.toPixels(xData[i], true));
+                    plotY = yAxis.toPixels(yData[i], true);
 
-                    var p;
-
-                    clientX = xAxis.toPixels(point[0], true);
-
-                    if (clientX > 0 && clientX < width) {
-
-                        if (c === 0) {
-                            ctx.beginPath();
-                        }                    
-
-                        p = {
-                            clientX: clientX,
-                            plotY: yAxis.toPixels(point[1], true)
-                        };
-                        
-                        // The k-d tree requires series points
-                        clientX = Math.round(clientX);
-                        if (clientX !== lastClientX) {
-                            p.plotX = p.clientX;
-                            p.i = i;
-                            series.points.push(p);
-                            lastClientX = clientX;
-                        }
-
-                        ctx.lineTo(
-                            p.clientX,
-                            p.plotY
-                        );
-
-                        // We need to stroke the line for every 1000 pixels. It will crash the browser
-                        // memory use if we stroke too infrequently.
-                        c++;
-                        if (c === 1000) {
-                            stroke();
-                        }
+                    if (c === 0) {
+                        ctx.beginPath();
                     }
-                });
+
+                    // The k-d tree requires series points
+                    if (clientX !== lastClientX) {
+                        series.points.push({
+                            clientX: clientX,
+                            plotX: clientX,
+                            plotY: plotY,
+                            i: i
+                        });
+                        lastClientX = clientX;
+                    }
+
+                    ctx.lineTo(
+                        clientX,
+                        plotY
+                    );
+
+                    // We need to stroke the line for every 1000 pixels. It will crash the browser
+                    // memory use if we stroke too infrequently.
+                    c = c + 1;
+                    if (c === 1000) {
+                        stroke();
+                    }
+                }
 
                 stroke();
 
@@ -130,17 +125,17 @@ $(function () {
                 ret.plotY = point.plotY;
             }
             return ret;
-        })
+        });
     }(Highcharts));
 
     function getData(n) {
-        var arr = [], 
+        var arr = [],
             i,
             a,
             b,
             c,
             spike;
-        for (i = 0; i < n; i++) {
+        for (i = 0; i < n; i = i + 1) {
             if (i % 100 === 0) {
                 a = 2 * Math.random();
             }
@@ -181,24 +176,15 @@ $(function () {
             text: 'The line is rendered on canvas, and some features are bypassed for speed'
         },
 
-        xAxis: {
-            min: 0,
-            max: 500000
-        },
-
         tooltip: {
             shared: true,
             headerFormat: '',
-            pointFormat: 'x: {point.x}, y: {point.y:.f}'
-        },
-
-        yAxis: {
-            min: -10,
-            max: 20
+            pointFormat: 'x: {point.x}, y: {point.y:.2f}'
         },
 
         series: [{
-            data: data
+            data: data,
+            lineWidth: 1
         }]
 
     });
