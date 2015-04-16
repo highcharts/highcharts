@@ -34,10 +34,6 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 	if (this.isZAxis) {
 		// pass
 	} else if (this.horiz) {
-		/// BOTTOM
-		if (this.axisLine) {
-			this.axisLine.hide();
-		}
 		var bottomShape = {
 			x: left,
 			y: top + (chart.xAxis[0].opposite ? -fbottom.size : height),
@@ -67,10 +63,6 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 			this.backFrame = renderer.cuboid(backShape).attr({fill: fback.color, zIndex: -3}).css({stroke: fback.color}).add();
 		} else {
 			this.backFrame.animate(backShape);
-		}
-		// SIDE
-		if (this.axisLine) {
-			this.axisLine.hide();
 		}
 		var sideShape = {
 			x: left + (chart.yAxis[0].opposite ? width : -fside.size),
@@ -118,6 +110,11 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed)
 	path = this.chart.renderer.toLinePath(pArr, false);
 
 	return path;
+});
+
+Highcharts.wrap(Highcharts.Axis.prototype, 'getLinePath', function (proceed) {
+	// do not draw axislines in 3D ?
+	return [];
 });
 
 Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotBandPath', function (proceed) {
