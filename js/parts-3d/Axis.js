@@ -102,7 +102,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed)
 	var chart = this.chart,
 		options3d = chart.options.chart.options3d;
 
-	var d = this.isZAxis ? this.chart.width : options3d.depth,
+	var d = this.isZAxis ? this.chart.plotWidth : options3d.depth,
 		opposite = this.opposite;
 	if (this.horiz) {
 		opposite = !opposite;
