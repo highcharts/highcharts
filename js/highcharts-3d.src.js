@@ -651,10 +651,6 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 	if (this.isZAxis) {
 		// pass
 	} else if (this.horiz) {
-		/// BOTTOM
-		if (this.axisLine) {
-			this.axisLine.hide();
-		}
 		var bottomShape = {
 			x: left,
 			y: top + (chart.xAxis[0].opposite ? -fbottom.size : height),
@@ -684,10 +680,6 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 			this.backFrame = renderer.cuboid(backShape).attr({fill: fback.color, zIndex: -3}).css({stroke: fback.color}).add();
 		} else {
 			this.backFrame.animate(backShape);
-		}
-		// SIDE
-		if (this.axisLine) {
-			this.axisLine.hide();
 		}
 		var sideShape = {
 			x: left + (chart.yAxis[0].opposite ? width : -fside.size),
@@ -719,7 +711,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed)
 	var chart = this.chart,
 		options3d = chart.options.chart.options3d;
 
-	var d = this.isZAxis ? this.chart.xAxis[0].width : options3d.depth,
+	var d = this.isZAxis ? this.chart.plotWidth : options3d.depth,
 		opposite = this.opposite;
 	if (this.horiz) {
 		opposite = !opposite;
@@ -735,6 +727,11 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed)
 	path = this.chart.renderer.toLinePath(pArr, false);
 
 	return path;
+});
+
+Highcharts.wrap(Highcharts.Axis.prototype, 'getLinePath', function (proceed) {
+	// do not draw axislines in 3D ?
+	return [];
 });
 
 Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotBandPath', function (proceed) {
@@ -873,6 +870,45 @@ Highcharts.extend(ZAxis.prototype, {
 		Highcharts.Axis.prototype.setAxisSize.call(this);
 		this.width = this.len = this.chart.options.chart.options3d.depth;
 		this.right = this.chart.chartWidth - this.width - this.left;
+	},
+	getSeriesExtremes: function () {
+		var axis = this,
+			chart = axis.chart;
+
+		axis.hasVisibleSeries = false;
+
+		// Reset properties in case we're redrawing (#3353)
+		axis.dataMin = axis.dataMax = axis.ignoreMinPadding = axis.ignoreMaxPadding = null;
+		
+		if (axis.buildStacks) {
+			axis.buildStacks();
+		}
+
+		// loop through this axis' series
+		Highcharts.each(axis.series, function (series) {
+
+			if (series.visible || !chart.options.chart.ignoreHiddenSeries) {
+
+				var seriesOptions = series.options,
+					zData,
+					threshold = seriesOptions.threshold,
+					seriesDataMin,
+					seriesDataMax;
+
+				axis.hasVisibleSeries = true;
+
+				// Validate threshold in logarithmic axes
+				if (axis.isLog && threshold <= 0) {
+					threshold = null;
+				}
+
+				zData = series.zData;
+				if (zData.length) {
+					axis.dataMin = Math.min(pick(axis.dataMin, zData[0]), Math.min.apply(null, zData));
+					axis.dataMax = Math.max(pick(axis.dataMax, zData[0]), Math.max.apply(null, zData));
+				}
+			}
+		});
 	}
 });
 
@@ -1308,6 +1344,7 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'animate', function (proce
 });/*** 
 	EXTENSION FOR 3D SCATTER CHART
 ***/
+
 Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function (proceed) {
 //function translate3d(proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
@@ -1319,7 +1356,7 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 	var series = this,
 		chart = series.chart,
 		depth = chart.options.chart.options3d.depth,
-		zAxis = chart.options.zAxis || { min : 0, max: depth };
+		zAxis = Highcharts.pick(series.zAxis, chart.options.zAxis[0], { min : 0, max: depth });
 
 	var rangeModifier = depth / (zAxis.max - zAxis.min),
 		raw_points = [],
@@ -1336,7 +1373,6 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 			z: (raw_point.z - zAxis.min) * rangeModifier
 		});
 	}
-
 	projected_points = perspective(raw_points, chart, true);
 
 	for (i = 0; i < series.data.length; i++) {
@@ -1352,13 +1388,17 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 	}
 });
 
-Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'init', function (proceed) {
-	var result = proceed.apply(this, [].slice.call(arguments, 1));
+Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'init', function (proceed, chart, options) {
+	if (chart.is3d()) {
+		// add a third coordinate
+		this.axisTypes = ['xAxis', 'yAxis', 'zAxis'];
+		this.pointArrayMap = ['x', 'y', 'z'];
+		this.parallelArrays = ['x', 'y', 'z'];
+	}
+
+	var result = proceed.apply(this, [chart, options]);
 
 	if (this.chart.is3d()) {
-		// Add a third coordinate
-		this.pointArrayMap = ['x', 'y', 'z'];
-
 		// Set a new default tooltip formatter
 		var default3dScatterTooltip = 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>';
 		if (this.userOptions.tooltip) {
