@@ -1799,6 +1799,8 @@ Axis.prototype = {
 			margin = horiz ? axisLeft : axisTop,
 			opposite = this.opposite,
 			offset = this.offset,
+			xOption = axisTitleOptions.x || 0, // docs
+			yOption = axisTitleOptions.y || 0,
 			fontSize = pInt(axisTitleOptions.style.fontSize || 12),
 
 			// the position in the length direction of the axis
@@ -1817,12 +1819,11 @@ Axis.prototype = {
 
 		return {
 			x: horiz ?
-				alongAxis :
-				offAxis + (opposite ? this.width : 0) + offset +
-					(axisTitleOptions.x || 0), // x
+				alongAxis + xOption :
+				offAxis + (opposite ? this.width : 0) + offset + xOption,
 			y: horiz ?
-				offAxis - (opposite ? this.height : 0) + offset :
-				alongAxis + (axisTitleOptions.y || 0) // y
+				offAxis + yOption - (opposite ? this.height : 0) + offset :
+				alongAxis + yOption
 		};
 	},
 
