@@ -12,11 +12,9 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 
 	var series = this,
 		chart = series.chart,
-		depth = chart.options.chart.options3d.depth,
-		zAxis = Highcharts.pick(series.zAxis, chart.options.zAxis[0], { min : 0, max: depth });
+		zAxis = Highcharts.pick(series.zAxis, chart.options.zAxis[0]);
 
-	var rangeModifier = depth / (zAxis.max - zAxis.min),
-		raw_points = [],
+	var raw_points = [],
 		raw_point,
 		projected_points,
 		projected_point,
@@ -27,9 +25,10 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 		raw_points.push({
 			x: raw_point.plotX,
 			y: raw_point.plotY,
-			z: (raw_point.z - zAxis.min) * rangeModifier
+			z: zAxis.translate(raw_point.z)
 		});
 	}
+
 	projected_points = perspective(raw_points, chart, true);
 
 	for (i = 0; i < series.data.length; i++) {
