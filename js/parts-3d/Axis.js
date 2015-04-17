@@ -128,13 +128,19 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotBandPath', function (proceed)
 	
 		var toPath = this.getPlotLinePath(to),
 			path = this.getPlotLinePath(from);
-
+			
 		if (path && toPath) {
 			path.push(
-				toPath[7],	// These two do not exist in the regular getPlotLine
-				toPath[8],  // ---- # 3005
+				'L',
+				toPath[10],	// These two do not exist in the regular getPlotLine
+				toPath[11],  // ---- # 3005
+				'L',
+				toPath[7],
+				toPath[8],
+				'L',
 				toPath[4],
 				toPath[5],
+				'L',
 				toPath[1],
 				toPath[2]
 			);
