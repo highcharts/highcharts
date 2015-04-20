@@ -1371,6 +1371,9 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 
 	for (i = 0; i < series.data.length; i++) {
 		raw_point = series.data[i];
+
+		raw_point.isInside = raw_point.isInside ? (raw_point.z >= zAxis.min && raw_point.z <= zAxis.max) : false;
+
 		raw_points.push({
 			x: raw_point.plotX,
 			y: raw_point.plotY,
@@ -1390,7 +1393,10 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 		raw_point.plotX = projected_point.x;
 		raw_point.plotY = projected_point.y;
 		raw_point.plotZ = projected_point.z;
+
+
 	}
+
 });
 
 Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'init', function (proceed, chart, options) {
