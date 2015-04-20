@@ -10,6 +10,7 @@
 (function (H) {
     var noop = function () {},
         Series = H.Series,
+        seriesTypes = H.seriesTypes,
         wrap = H.wrap;
 
     H.extend(Series.prototype, {
@@ -76,7 +77,7 @@
                     c = 0;
                 };
 
-            series.points = []; // For k-d tree only
+            this.points = [];
             ctx = this.getContext();
 
             for (i = 0; i < len; i = i + 1) {
@@ -117,6 +118,60 @@
 
         }
     });
+
+    seriesTypes.scatter.prototype.drawPoints = function () {
+        var series = this,
+            xAxis = this.xAxis,
+            yAxis = this.yAxis,
+            ctx,
+            i,
+            c = 0,
+            xData = series.processedXData,
+            yData = series.processedYData,
+            len = xData.length,
+            clientX,
+            plotY,
+            stroke = function () {
+                ctx.fillStyle = series.color;
+                ctx.fill();
+                c = 0;
+            };
+
+        series.points = []; // For k-d tree only
+        ctx = this.getContext();
+
+        for (i = 0; i < len; i = i + 1) {
+            clientX = Math.round(xAxis.toPixels(xData[i], true));
+            plotY = yAxis.toPixels(yData[i], true);
+
+            if (c === 0) {
+                ctx.beginPath();
+            }
+
+            // The k-d tree requires series points
+            series.points.push({
+                clientX: clientX,
+                plotX: clientX,
+                plotY: plotY,
+                i: i
+            });
+            ctx.moveTo(clientX, plotY);
+            ctx.arc(clientX, plotY, 1, 0, 2 * Math.PI, false);
+
+
+            // We need to stroke the line for every 1000 pixels. It will crash the browser
+            // memory use if we stroke too infrequently.
+            c = c + 1;
+            if (c === 1000) {
+                stroke();
+            }
+        }
+
+        stroke();
+
+        this.canvasToSVG();
+
+    };
 
     /**
      * Return a point instance from the k-d-tree
