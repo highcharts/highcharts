@@ -32,7 +32,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 		top = this.top;
 
 	if (this.isZAxis) {
-		// pass
+		return;
 	} else if (this.horiz) {
 		var bottomShape = {
 			x: left,

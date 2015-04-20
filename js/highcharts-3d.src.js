@@ -649,7 +649,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 		top = this.top;
 
 	if (this.isZAxis) {
-		// pass
+		return;
 	} else if (this.horiz) {
 		var bottomShape = {
 			x: left,
@@ -745,13 +745,19 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotBandPath', function (proceed)
 	
 		var toPath = this.getPlotLinePath(to),
 			path = this.getPlotLinePath(from);
-
+			
 		if (path && toPath) {
 			path.push(
-				toPath[7],	// These two do not exist in the regular getPlotLine
-				toPath[8],  // ---- # 3005
+				'L',
+				toPath[10],	// These two do not exist in the regular getPlotLine
+				toPath[11],  // ---- # 3005
+				'L',
+				toPath[7],
+				toPath[8],
+				'L',
 				toPath[4],
 				toPath[5],
+				'L',
 				toPath[1],
 				toPath[2]
 			);
@@ -1355,11 +1361,9 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 
 	var series = this,
 		chart = series.chart,
-		depth = chart.options.chart.options3d.depth,
-		zAxis = Highcharts.pick(series.zAxis, chart.options.zAxis[0], { min : 0, max: depth });
+		zAxis = Highcharts.pick(series.zAxis, chart.options.zAxis[0]);
 
-	var rangeModifier = depth / (zAxis.max - zAxis.min),
-		raw_points = [],
+	var raw_points = [],
 		raw_point,
 		projected_points,
 		projected_point,
@@ -1370,9 +1374,10 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 		raw_points.push({
 			x: raw_point.plotX,
 			y: raw_point.plotY,
-			z: (raw_point.z - zAxis.min) * rangeModifier
+			z: zAxis.translate(raw_point.z)
 		});
 	}
+
 	projected_points = perspective(raw_points, chart, true);
 
 	for (i = 0; i < series.data.length; i++) {
