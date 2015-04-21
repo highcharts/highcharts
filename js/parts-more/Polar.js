@@ -231,7 +231,7 @@
 	
 		// Postprocess plot coordinates
 		if (chart.polar) {
-			this.kdByAngle = chart.tooltip.shared;
+			this.kdByAngle = chart.tooltip && chart.tooltip.shared;
 	
 			if (!this.preventPostTranslate) {
 				points = this.points;
