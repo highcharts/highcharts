@@ -78,6 +78,7 @@
 
         render: function () {
             var series = this,
+                options = series.options,
                 chart = series.chart,
                 xAxis = this.xAxis,
                 yAxis = this.yAxis,
@@ -94,17 +95,23 @@
                 yMax = yExtremes.max,
                 pointTaken = {},
                 points,
-                r = series.options.marker.radius,
-                cvsLineTo = this.options.lineWidth ? this.cvsLineTo : false,
+                r = options.marker && options.marker.radius,
+                cvsDrawPoint = this.cvsDrawPoint,
+                cvsLineTo = options.lineWidth ? this.cvsLineTo : false,
                 cvsMarker = r <= 1 ? this.cvsMarkerSquare : this.cvsMarkerCircle,
+                lastPoint,
+                yBottom = yAxis.getThreshold(options.threshold),
+                doFill = this.fill,
+                isRange = series.pointArrayMap && series.pointArrayMap.join(',') === 'low,high',
+                cropStart = series.cropStart || 0,
                 stroke = function () {
-                    if (cvsLineTo) {
-                        ctx.strokeStyle = series.color;
-                        ctx.lineWidth = series.options.lineWidth;
-                        ctx.stroke();
-                    } else {
+                    if (doFill) {
                         ctx.fillStyle = series.color;
                         ctx.fill();
+                    } else {
+                        ctx.strokeStyle = series.color;
+                        ctx.lineWidth = options.lineWidth;
+                        ctx.stroke();
                     }
                 };
 
@@ -113,7 +120,7 @@
                 'group',
                 'series',
                 series.visible ? 'visible' : 'hidden',
-                series.options.zIndex,
+                options.zIndex,
                 chart.seriesGroup
             );
 
@@ -131,7 +138,13 @@
                 var y = yData[i],
                     clientX,
                     plotY;
-                if (x >= xMin && x <= xMax && y >= yMin && y <= yMax) {
+
+                if (isRange) {
+                    yBottom = yAxis.toPixels(y[0], true);
+                    y = y[1];
+                }
+
+                if (x >= xMin && x <= xMax && y >= yMin && y <= yMax) { // this is faster for scatter zooming
 
                     clientX = Math.round(xAxis.toPixels(x, true));
                     plotY = Math.round(yAxis.toPixels(y, true));
@@ -147,16 +160,24 @@
                             clientX: clientX,
                             plotX: clientX,
                             plotY: plotY,
-                            i: i
+                            i: cropStart + i
                         });
                         pointTaken[clientX + ',' + plotY] = true;
                     }
 
-                    if (cvsLineTo) {
+                    if (cvsDrawPoint) {
+                        cvsDrawPoint(ctx, clientX, plotY, yBottom, lastPoint);
+                    } else if (cvsLineTo) {
                         cvsLineTo(ctx, clientX, plotY);
                     } else if (cvsMarker) {
                         cvsMarker(ctx, clientX, plotY, r);
                     }
+
+                    lastPoint = {
+                        clientX: clientX,
+                        plotY: plotY,
+                        yBottom: yBottom
+                    };
 
                     // We need to stroke the line for every 1000 pixels. It will crash the browser
                     // memory use if we stroke too infrequently.
@@ -179,8 +200,11 @@
                 
                 // Do not use chart.hideLoading, as it runs JS animation and will be blocked by buildKDTree.
                 // CSS animation looks good, but then it must be deleted in timeout.
-                chart.loadingDiv.style.display = 'none';
-                chart.loadingShown = false;
+                if (chart.loadingDiv) {
+                    chart.loadingDiv.style.display = 'none';
+                    chart.loadingShown = false;
+                }
+
 
                 delete series.buildKDTree; // Go back to prototype, ready to build
                 series.buildKDTree();
@@ -199,7 +223,21 @@
         ctx.moveTo(clientX, plotY);
         ctx.rect(clientX - r, plotY - r, r * 2, r * 2);
     };
+    seriesTypes.scatter.prototype.fill = true;
 
+    seriesTypes.area.prototype.cvsDrawPoint = function (ctx, clientX, plotY, yBottom, lastPoint) {
+        if (lastPoint && clientX !== lastPoint.clientX) {
+            ctx.moveTo(lastPoint.clientX, lastPoint.yBottom);
+            ctx.lineTo(lastPoint.clientX, lastPoint.plotY);
+            ctx.lineTo(clientX, plotY);
+            ctx.lineTo(clientX, yBottom);
+        }
+    };
+    seriesTypes.area.prototype.fill = true;
+
+    if (seriesTypes.arearange) {
+        seriesTypes.arearange.prototype.translate = noop;
+    }
 
     /**
      * Return a point instance from the k-d-tree
