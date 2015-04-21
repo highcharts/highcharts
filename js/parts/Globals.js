@@ -23,7 +23,6 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	// some variables
 var Renderer,
 	dateFormat, // function
-	globalAnimation,
 	pathAnim,
 	timeUnits,
 	charts = [],

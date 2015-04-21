@@ -606,7 +606,7 @@ function correctFloat(num) {
  * @param {Object} chart
  */
 function setAnimation(animation, chart) {
-	globalAnimation = pick(animation, chart.animation);
+	Highcharts.globalAnimation = pick(animation, chart.animation);
 }
 
 /**

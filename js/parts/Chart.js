@@ -807,10 +807,10 @@ Chart.prototype = {
 		}
 
 		// Resize the container with the global animation applied if enabled (#2503)
-		(globalAnimation ? animate : css)(chart.container, {
+		(Highcharts.globalAnimation ? animate : css)(chart.container, {
 			width: chartWidth + 'px',
 			height: chartHeight + 'px'
-		}, globalAnimation);
+		}, Highcharts.globalAnimation);
 
 		chart.setChartSize(true);
 		chart.renderer.setSize(chartWidth, chartHeight, animation);
@@ -841,10 +841,10 @@ Chart.prototype = {
 
 		// fire endResize and set isResizing back
 		// If animation is disabled, fire without delay
-		if (globalAnimation === false) {
+		if (Highcharts.globalAnimation === false) {
 			fireEndResize();
 		} else { // else set a timeout with the animation duration
-			setTimeout(fireEndResize, (globalAnimation && globalAnimation.duration) || 500);
+			setTimeout(fireEndResize, (Highcharts.globalAnimation && Highcharts.globalAnimation.duration) || 500);
 		}
 	},
 

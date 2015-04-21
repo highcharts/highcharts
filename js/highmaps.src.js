@@ -38,7 +38,6 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	// some variables
 var Renderer,
 	dateFormat, // function
-	globalAnimation,
 	pathAnim,
 	timeUnits,
 	charts = [],
@@ -673,7 +672,7 @@ function correctFloat(num) {
  * @param {Object} chart
  */
 function setAnimation(animation, chart) {
-	globalAnimation = pick(animation, chart.animation);
+	Highcharts.globalAnimation = pick(animation, chart.animation);
 }
 
 /**
@@ -1769,7 +1768,7 @@ SVGElement.prototype = {
 	 * @param {Function} complete Function to perform at the end of animation
 	 */
 	animate: function (params, options, complete) {
-		var animOptions = pick(options, globalAnimation, true);
+		var animOptions = pick(options, Highcharts.globalAnimation, true);
 		stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
 		if (animOptions) {
 			animOptions = merge(animOptions, {}); //#2625
@@ -8072,7 +8071,7 @@ Axis.prototype = {
 			var pos,
 				i,
 				forDestruction = [],
-				delay = globalAnimation ? globalAnimation.duration || 500 : 0,
+				delay = Highcharts.globalAnimation ? Highcharts.globalAnimation.duration || 500 : 0,
 				destroyInactiveItems = function () {
 					i = forDestruction.length;
 					while (i--) {
@@ -11516,10 +11515,10 @@ Chart.prototype = {
 		}
 
 		// Resize the container with the global animation applied if enabled (#2503)
-		(globalAnimation ? animate : css)(chart.container, {
+		(Highcharts.globalAnimation ? animate : css)(chart.container, {
 			width: chartWidth + 'px',
 			height: chartHeight + 'px'
-		}, globalAnimation);
+		}, Highcharts.globalAnimation);
 
 		chart.setChartSize(true);
 		chart.renderer.setSize(chartWidth, chartHeight, animation);
@@ -11550,10 +11549,10 @@ Chart.prototype = {
 
 		// fire endResize and set isResizing back
 		// If animation is disabled, fire without delay
-		if (globalAnimation === false) {
+		if (Highcharts.globalAnimation === false) {
 			fireEndResize();
 		} else { // else set a timeout with the animation duration
-			setTimeout(fireEndResize, (globalAnimation && globalAnimation.duration) || 500);
+			setTimeout(fireEndResize, (Highcharts.globalAnimation && Highcharts.globalAnimation.duration) || 500);
 		}
 	},
 

@@ -1949,7 +1949,7 @@ Axis.prototype = {
 			var pos,
 				i,
 				forDestruction = [],
-				delay = globalAnimation ? globalAnimation.duration || 500 : 0,
+				delay = Highcharts.globalAnimation ? Highcharts.globalAnimation.duration || 500 : 0,
 				destroyInactiveItems = function () {
 					i = forDestruction.length;
 					while (i--) {
