@@ -6,8 +6,11 @@
  *
  * Author: Torstein Honsi
  */
-
+/*global document, Highcharts, setTimeout */
 (function (H) {
+
+    'use strict';
+
     var CHUNK_SIZE = 50000,
         noop = function () {},
         Series = H.Series,
@@ -15,7 +18,7 @@
         each = H.each,
         wrap = H.wrap;
 
-    function eachAsync (arr, fn, callback, i) {
+    function eachAsync(arr, fn, callback, i) {
         i = i || 0;
         each(arr.slice(i, i + CHUNK_SIZE - 1), fn);
         if (i < arr.length) {
@@ -28,13 +31,8 @@
     }
 
     H.extend(Series.prototype, {
-        _setData: function () {
-            this.points = [];
-        },
-        _processData: noop,
         translate: noop,
         generatePoints: noop,
-        _getExtremes: noop,
         drawTracker: noop,
         pointRange: 0,
         drawPoints: noop,
@@ -82,14 +80,21 @@
                 xAxis = this.xAxis,
                 yAxis = this.yAxis,
                 ctx,
-                lastClientX,
                 i,
                 c = 0,
                 xData = series.processedXData,
                 yData = series.processedYData,
-                len = xData.length,
                 clientX,
                 plotY,
+                xExtremes = xAxis.getExtremes(),
+                xMin = xExtremes.min,
+                xMax = xExtremes.max,
+                yExtremes = yAxis.getExtremes(),
+                yMin = yExtremes.min,
+                yMax = yExtremes.max,
+                pointTaken = {},
+                cvsLineTo = this.options.lineWidth ? this.cvsLineTo : false,
+                cvsMarker = this.cvsMarker,
                 stroke = function () {
                     if (cvsLineTo) {
                         ctx.strokeStyle = series.color;
@@ -99,9 +104,7 @@
                         ctx.fillStyle = series.color;
                         ctx.fill();
                     }
-                },
-                cvsLineTo = this.options.lineWidth ? this.cvsLineTo : false,
-                cvsMarker = this.cvsMarker;
+                };
 
             this.points = [];
             ctx = this.getContext();
@@ -113,37 +116,44 @@
 
             i = 0;
             eachAsync(xData, function (x) {
-                clientX = Math.round(xAxis.toPixels(x, true));
-                plotY = yAxis.toPixels(yData[i], true);
 
-                if (c === 0) {
-                    ctx.beginPath();
+                var y = yData[i];
+                if (x >= xMin && x <= xMax && y >= yMin && y <= yMax) {
+
+                    clientX = Math.round(xAxis.toPixels(x, true));
+                    plotY = Math.round(yAxis.toPixels(y, true));
+
+                    if (c === 0) {
+                        ctx.beginPath();
+                    }
+
+                    // The k-d tree requires series points. Reduce the amount of points, since the time to build the 
+                    // tree increases exponentially.
+                    if (!pointTaken[clientX + ',' + plotY]) {
+                        series.points.push({
+                            clientX: clientX,
+                            plotX: clientX,
+                            plotY: plotY,
+                            i: i
+                        });
+                        pointTaken[clientX + ',' + plotY] = true;
+                    }
+
+                    if (cvsLineTo) {
+                        cvsLineTo(ctx, clientX, plotY);
+                    } else if (cvsMarker) {
+                        cvsMarker(ctx, clientX, plotY);
+                    }
+
+                    // We need to stroke the line for every 1000 pixels. It will crash the browser
+                    // memory use if we stroke too infrequently.
+                    c = c + 1;
+                    if (c === 1000) {
+                        stroke();
+                        c = 0;
+                    }
                 }
 
-                // The k-d tree requires series points
-                if (clientX !== lastClientX) {
-                    series.points.push({
-                        clientX: clientX,
-                        plotX: clientX,
-                        plotY: plotY,
-                        i: i
-                    });
-                    lastClientX = clientX;
-                }
-
-                if (cvsLineTo) {
-                    cvsLineTo(ctx, clientX, plotY);
-                } else if (cvsMarker) {
-                    cvsMarker(ctx, clientX, plotY);
-                }
-
-                // We need to stroke the line for every 1000 pixels. It will crash the browser
-                // memory use if we stroke too infrequently.
-                c = c + 1;
-                if (c === 1000) {
-                    stroke();
-                    c = 0;
-                }
                 i = i + 1;
 
                 if (i % CHUNK_SIZE === 0) {
