@@ -1,7 +1,7 @@
 /**
  * Path interpolation algorithm used across adapters
  */
-pathAnim = {
+Highcharts.pathAnim = {
 	/**
 	 * Prepare start and end values so that the path can be animated one to one
 	 */

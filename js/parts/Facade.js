@@ -17,7 +17,6 @@ extend(Highcharts, {
 	dateFormat: dateFormat,
 	error: error,
 	format: format,
-	pathAnim: pathAnim,
 	getOptions: getOptions,
 	setOptions: setOptions,
 	addEvent: addEvent,

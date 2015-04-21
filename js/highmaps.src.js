@@ -38,7 +38,6 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	// some variables
 var Renderer,
 	dateFormat, // function
-	pathAnim,
 	timeUnits,
 	charts = [],
 
@@ -716,7 +715,7 @@ Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
 /**
  * Path interpolation algorithm used across adapters
  */
-pathAnim = {
+Highcharts.pathAnim = {
 	/**
 	 * Prepare start and end values so that the path can be animated one to one
 	 */
@@ -1172,7 +1171,7 @@ var globalAdapter = window.HighchartsAdapter,
 	
 // Initialize the adapter
 if (globalAdapter) {
-	globalAdapter.init.call(globalAdapter, pathAnim);
+	globalAdapter.init.call(globalAdapter, Highcharts.pathAnim);
 }
 
 
@@ -19425,7 +19424,6 @@ extend(Highcharts, {
 	dateFormat: dateFormat,
 	error: error,
 	format: format,
-	pathAnim: pathAnim,
 	getOptions: getOptions,
 	setOptions: setOptions,
 	addEvent: addEvent,
