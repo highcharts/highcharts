@@ -8253,7 +8253,7 @@ Axis.prototype = {
 			!this.crosshair || 
 			// Snap
 			((defined(point) || !pick(this.crosshair.snap, true)) === false) || 
-			// Not on this axis 	#4095 #2088
+			// Not on this axis 	#4095 #2888
 			((defined(point) && (point.series[this.coll] !== this)))
 		) {
 			this.hideCrosshair();
@@ -8616,7 +8616,7 @@ Tooltip.prototype = {
 		var chart = this.chart,
 			distance = this.distance,
 			ret = {},
-			h = point.h,
+			h = point.h || 0, // #4117
 			swapped,
 			first = ['y', chart.chartHeight, boxHeight, point.plotY + chart.plotTop],
 			second = ['x', chart.chartWidth, boxWidth, point.plotX + chart.plotLeft],
