@@ -8,10 +8,24 @@
  */
 
 (function (H) {
-    var noop = function () {},
+    var CHUNK_SIZE = 50000,
+        noop = function () {},
         Series = H.Series,
         seriesTypes = H.seriesTypes,
+        each = H.each,
         wrap = H.wrap;
+
+    function eachAsync (arr, fn, callback, i) {
+        i = i || 0;
+        each(arr.slice(i, i + CHUNK_SIZE - 1), fn);
+        if (i < arr.length) {
+            setTimeout(function () {
+                eachAsync(arr, fn, callback, i + CHUNK_SIZE);
+            });
+        } else if (callback) {
+            callback();
+        }
+    }
 
     H.extend(Series.prototype, {
         _setData: function () {
@@ -23,6 +37,7 @@
         _getExtremes: noop,
         drawTracker: noop,
         pointRange: 0,
+        drawPoints: noop,
 
         /**
          * Create a hidden canvas to draw the graph on. The contents is later copied over 
@@ -57,8 +72,13 @@
             this.image.attr({ href: this.canvas.toDataURL('image/png') });
         },
 
+        cvsLineTo: function (ctx, clientX, plotY) {
+            ctx.lineTo(clientX, plotY);
+        },
+
         drawGraph: function () {
             var series = this,
+                chart = series.chart,
                 xAxis = this.xAxis,
                 yAxis = this.yAxis,
                 ctx,
@@ -71,17 +91,29 @@
                 clientX,
                 plotY,
                 stroke = function () {
-                    ctx.strokeStyle = series.color;
-                    ctx.lineWidth = series.options.lineWidth;
-                    ctx.stroke();
-                    c = 0;
-                };
+                    if (cvsLineTo) {
+                        ctx.strokeStyle = series.color;
+                        ctx.lineWidth = series.options.lineWidth;
+                        ctx.stroke();
+                    } else {
+                        ctx.fillStyle = series.color;
+                        ctx.fill();
+                    }
+                },
+                cvsLineTo = this.options.lineWidth ? this.cvsLineTo : false,
+                cvsMarker = this.cvsMarker;
 
             this.points = [];
             ctx = this.getContext();
+            series.buildKDTree = noop; // Do not start building while drawing 
 
-            for (i = 0; i < len; i = i + 1) {
-                clientX = Math.round(xAxis.toPixels(xData[i], true));
+            if (xData.length > 99999) {
+                chart.showLoading('Drawing...');
+            }
+
+            i = 0;
+            eachAsync(xData, function (x) {
+                clientX = Math.round(xAxis.toPixels(x, true));
                 plotY = yAxis.toPixels(yData[i], true);
 
                 if (c === 0) {
@@ -99,78 +131,38 @@
                     lastClientX = clientX;
                 }
 
-                ctx.lineTo(
-                    clientX,
-                    plotY
-                );
+                if (cvsLineTo) {
+                    cvsLineTo(ctx, clientX, plotY);
+                } else if (cvsMarker) {
+                    cvsMarker(ctx, clientX, plotY);
+                }
 
                 // We need to stroke the line for every 1000 pixels. It will crash the browser
                 // memory use if we stroke too infrequently.
                 c = c + 1;
                 if (c === 1000) {
                     stroke();
+                    c = 0;
                 }
-            }
+                i = i + 1;
 
-            stroke();
+                if (i % CHUNK_SIZE === 0) {
+                    series.canvasToSVG();
+                }
 
-            this.canvasToSVG();
-
+            }, function () {
+                stroke();
+                series.canvasToSVG();
+                chart.hideLoading();
+                delete series.buildKDTree; // Go back to prototype, ready to build
+            });
         }
     });
 
-    seriesTypes.scatter.prototype.drawPoints = function () {
-        var series = this,
-            xAxis = this.xAxis,
-            yAxis = this.yAxis,
-            ctx,
-            i,
-            c = 0,
-            xData = series.processedXData,
-            yData = series.processedYData,
-            len = xData.length,
-            clientX,
-            plotY,
-            stroke = function () {
-                ctx.fillStyle = series.color;
-                ctx.fill();
-                c = 0;
-            };
-
-        series.points = []; // For k-d tree only
-        ctx = this.getContext();
-
-        for (i = 0; i < len; i = i + 1) {
-            clientX = Math.round(xAxis.toPixels(xData[i], true));
-            plotY = yAxis.toPixels(yData[i], true);
-
-            if (c === 0) {
-                ctx.beginPath();
-            }
-
-            // The k-d tree requires series points
-            series.points.push({
-                clientX: clientX,
-                plotX: clientX,
-                plotY: plotY,
-                i: i
-            });
-            ctx.moveTo(clientX, plotY);
-            ctx.arc(clientX, plotY, 1, 0, 2 * Math.PI, false);
-
-
-            // We need to stroke the line for every 1000 pixels. It will crash the browser
-            // memory use if we stroke too infrequently.
-            c = c + 1;
-            if (c === 1000) {
-                stroke();
-            }
-        }
-
-        stroke();
-
-        this.canvasToSVG();
-
+    seriesTypes.scatter.prototype.drawGraph = Series.prototype.drawGraph; // Draws markers too
+    seriesTypes.scatter.prototype.cvsMarker = function (ctx, clientX, plotY) {
+        ctx.moveTo(clientX, plotY);
+        ctx.arc(clientX, plotY, 1, 0, 2 * Math.PI, false);
     };
 
     /**
