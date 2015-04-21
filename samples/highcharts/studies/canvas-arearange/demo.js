@@ -57,7 +57,6 @@ $(function () {
         },
 
         tooltip: {
-            headerFormat: '',
             valueDecimals: 2
         },
 

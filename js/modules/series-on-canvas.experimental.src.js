@@ -249,6 +249,7 @@
         if (point) {
             ret = (new this.pointClass()).init(this, this.options.data[point.i]);
             ret.dist = point.dist;
+            ret.category = ret.x;
             ret.plotX = point.plotX;
             ret.plotY = point.plotY;
         }

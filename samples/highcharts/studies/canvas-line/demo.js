@@ -6,7 +6,6 @@ $(function () {
             a,
             b,
             c,
-            low,
             spike;
         for (i = 0; i < n; i = i + 1) {
             if (i % 100 === 0) {
@@ -34,11 +33,10 @@ $(function () {
         data = getData(n);
 
 
-    console.time('area');
+    console.time('line');
     $('#container').highcharts({
 
         chart: {
-            type: 'area',
             zoomType: 'x'
         },
 
@@ -47,7 +45,7 @@ $(function () {
         },
 
         subtitle: {
-            text: 'The arearange is rendered on canvas, and some features are bypassed for speed'
+            text: 'The line is rendered on canvas, and some features are bypassed for speed'
         },
 
         tooltip: {
@@ -55,10 +53,11 @@ $(function () {
         },
 
         series: [{
-            data: data
+            data: data,
+            lineWidth: 1
         }]
 
     });
-    console.timeEnd('area');
+    console.timeEnd('line');
 
 });
