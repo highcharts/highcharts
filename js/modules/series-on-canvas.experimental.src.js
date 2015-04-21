@@ -2,6 +2,8 @@
  * This is an experimental Highcharts module that draws long data series on a canvas
  * in order to increase performance of the initial load time and tooltip responsiveness.
  *
+ * See discussion in 
+ *
  * Compatible with HTML5 canvas-compatible browsers (not IE < 9).
  *
  * Author: Torstein Honsi
@@ -12,7 +14,7 @@
     'use strict';
 
     var CHUNK_SIZE = 50000,
-        noop = function () {},
+        noop = function () { return undefined; },
         Series = H.Series,
         seriesTypes = H.seriesTypes,
         each = H.each,
@@ -74,7 +76,7 @@
             ctx.lineTo(clientX, plotY);
         },
 
-        drawGraph: function () {
+        render: function () {
             var series = this,
                 chart = series.chart,
                 xAxis = this.xAxis,
@@ -84,8 +86,6 @@
                 c = 0,
                 xData = series.processedXData,
                 yData = series.processedYData,
-                clientX,
-                plotY,
                 xExtremes = xAxis.getExtremes(),
                 xMin = xExtremes.min,
                 xMax = xExtremes.max,
@@ -93,6 +93,7 @@
                 yMin = yExtremes.min,
                 yMax = yExtremes.max,
                 pointTaken = {},
+                points,
                 cvsLineTo = this.options.lineWidth ? this.cvsLineTo : false,
                 cvsMarker = this.cvsMarker,
                 stroke = function () {
@@ -106,7 +107,16 @@
                     }
                 };
 
-            this.points = [];
+            // The group
+            series.plotGroup(
+                'group',
+                'series',
+                series.visible ? 'visible' : 'hidden',
+                series.options.zIndex,
+                chart.seriesGroup
+            );
+
+            points = this.points = [];
             ctx = this.getContext();
             series.buildKDTree = noop; // Do not start building while drawing 
 
@@ -117,7 +127,9 @@
             i = 0;
             eachAsync(xData, function (x) {
 
-                var y = yData[i];
+                var y = yData[i],
+                    clientX,
+                    plotY;
                 if (x >= xMin && x <= xMax && y >= yMin && y <= yMax) {
 
                     clientX = Math.round(xAxis.toPixels(x, true));
@@ -130,7 +142,7 @@
                     // The k-d tree requires series points. Reduce the amount of points, since the time to build the 
                     // tree increases exponentially.
                     if (!pointTaken[clientX + ',' + plotY]) {
-                        series.points.push({
+                        points.push({
                             clientX: clientX,
                             plotX: clientX,
                             plotY: plotY,
@@ -165,11 +177,12 @@
                 series.canvasToSVG();
                 chart.hideLoading();
                 delete series.buildKDTree; // Go back to prototype, ready to build
+                series.buildKDTree();
             });
         }
     });
 
-    seriesTypes.scatter.prototype.drawGraph = Series.prototype.drawGraph; // Draws markers too
+    //seriesTypes.scatter.prototype.drawGraph = Series.prototype.drawGraph; // Draws markers too
     seriesTypes.scatter.prototype.cvsMarker = function (ctx, clientX, plotY) {
         ctx.moveTo(clientX, plotY);
         ctx.arc(clientX, plotY, 1, 0, 2 * Math.PI, false);
