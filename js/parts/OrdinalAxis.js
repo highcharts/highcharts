@@ -37,6 +37,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 		info,
 		posLength,
 		outsideMax,
+		timeUnits = Highcharts.timeUnits,
 		groupPositions = [],
 		lastGroupPosition = -Number.MAX_VALUE,
 		tickPixelIntervalOption = this.options.tickPixelInterval;

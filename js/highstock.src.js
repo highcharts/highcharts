@@ -24,6 +24,16 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	idCounter: 0,
 	chartCount: 0,
 	seriesTypes: {},
+	timeUnits: {
+		millisecond: 1,
+		second: 1000,
+		minute: 60000,
+		hour: 3600000,
+		day: 24 * 3600000,
+		week: 7 * 24 * 3600000,
+		month: 28 * 24 * 3600000,
+		year: 364 * 24 * 3600000
+	},
 	noop: function () {}
 },	init = function () {
 		var H = Highcharts;
@@ -38,7 +48,6 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	// some variables
 var Renderer,
 	dateFormat, // function
-	timeUnits,
 	charts = [],
 
 	// some constants for frequently used strings
@@ -673,21 +682,6 @@ function correctFloat(num) {
 function setAnimation(animation, chart) {
 	Highcharts.globalAnimation = pick(animation, chart.animation);
 }
-
-/**
- * The time unit lookup
- */
-timeUnits = {
-	millisecond: 1,
-	second: 1000,
-	minute: 60000,
-	hour: 3600000,
-	day: 24 * 3600000,
-	week: 7 * 24 * 3600000,
-	month: 28 * 24 * 3600000,
-	year: 364 * 24 * 3600000
-};
-
 
 /**
  * Format a number and return a string based on input settings
@@ -8552,6 +8546,7 @@ extend(Axis.prototype, AxisPlotLineOrBandExtension);
  */
 Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWeek) {
 	var tickPositions = [],
+		timeUnits = Highcharts.timeUnits,
 		i,
 		higherRanks = {},
 		useUTC = Highcharts.defaultOptions.global.useUTC,
@@ -8699,6 +8694,7 @@ Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) 
 				'year',
 				null
 			]],
+		timeUnits = Highcharts.timeUnits,
 		unit = units[units.length - 1], // default unit is years
 		interval = timeUnits[unit[0]],
 		multiples = unit[1],
@@ -9291,6 +9287,7 @@ Tooltip.prototype = {
 				day: 3
 			},
 			date,
+			timeUnits = Highcharts.timeUnits,
 			lastN;
 
 		if (closestPointRange) {
@@ -18503,6 +18500,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 		info,
 		posLength,
 		outsideMax,
+		timeUnits = Highcharts.timeUnits,
 		groupPositions = [],
 		lastGroupPosition = -Number.MAX_VALUE,
 		tickPixelIntervalOption = this.options.tickPixelInterval;

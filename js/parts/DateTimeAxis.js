@@ -12,6 +12,7 @@
  */
 Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWeek) {
 	var tickPositions = [],
+		timeUnits = Highcharts.timeUnits,
 		i,
 		higherRanks = {},
 		useUTC = Highcharts.defaultOptions.global.useUTC,
@@ -159,6 +160,7 @@ Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) 
 				'year',
 				null
 			]],
+		timeUnits = Highcharts.timeUnits,
 		unit = units[units.length - 1], // default unit is years
 		interval = timeUnits[unit[0]],
 		multiples = unit[1],

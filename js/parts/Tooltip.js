@@ -449,6 +449,7 @@ Tooltip.prototype = {
 				day: 3
 			},
 			date,
+			timeUnits = Highcharts.timeUnits,
 			lastN;
 
 		if (closestPointRange) {

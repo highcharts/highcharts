@@ -9,6 +9,16 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	idCounter: 0,
 	chartCount: 0,
 	seriesTypes: {},
+	timeUnits: {
+		millisecond: 1,
+		second: 1000,
+		minute: 60000,
+		hour: 3600000,
+		day: 24 * 3600000,
+		week: 7 * 24 * 3600000,
+		month: 28 * 24 * 3600000,
+		year: 364 * 24 * 3600000
+	},
 	noop: function () {}
 },	init = function () {
 		var H = Highcharts;
@@ -23,7 +33,6 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	// some variables
 var Renderer,
 	dateFormat, // function
-	timeUnits,
 	charts = [],
 
 	// some constants for frequently used strings
