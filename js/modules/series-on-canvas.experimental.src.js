@@ -94,8 +94,9 @@
                 yMax = yExtremes.max,
                 pointTaken = {},
                 points,
+                r = series.options.marker.radius,
                 cvsLineTo = this.options.lineWidth ? this.cvsLineTo : false,
-                cvsMarker = this.cvsMarker,
+                cvsMarker = r <= 1 ? this.cvsMarkerSquare : this.cvsMarkerCircle,
                 stroke = function () {
                     if (cvsLineTo) {
                         ctx.strokeStyle = series.color;
@@ -154,7 +155,7 @@
                     if (cvsLineTo) {
                         cvsLineTo(ctx, clientX, plotY);
                     } else if (cvsMarker) {
-                        cvsMarker(ctx, clientX, plotY);
+                        cvsMarker(ctx, clientX, plotY, r);
                     }
 
                     // We need to stroke the line for every 1000 pixels. It will crash the browser
@@ -175,18 +176,30 @@
             }, function () {
                 stroke();
                 series.canvasToSVG();
-                chart.hideLoading();
+                
+                // Do not use chart.hideLoading, as it runs JS animation and will be blocked by buildKDTree.
+                // CSS animation looks good, but then it must be deleted in timeout.
+                chart.loadingDiv.style.display = 'none';
+                chart.loadingShown = false;
+
                 delete series.buildKDTree; // Go back to prototype, ready to build
                 series.buildKDTree();
+                
             });
         }
     });
 
-    //seriesTypes.scatter.prototype.drawGraph = Series.prototype.drawGraph; // Draws markers too
-    seriesTypes.scatter.prototype.cvsMarker = function (ctx, clientX, plotY) {
+    seriesTypes.scatter.prototype.cvsMarkerCircle = function (ctx, clientX, plotY, r) {
         ctx.moveTo(clientX, plotY);
-        ctx.arc(clientX, plotY, 1, 0, 2 * Math.PI, false);
+        ctx.arc(clientX, plotY, r, 0, 2 * Math.PI, false);
     };
+
+    // Rect is twice as fast as arc, should be used for small markers // docs: recommended settings
+    seriesTypes.scatter.prototype.cvsMarkerSquare = function (ctx, clientX, plotY, r) {
+        ctx.moveTo(clientX, plotY);
+        ctx.rect(clientX - r, plotY - r, r * 2, r * 2);
+    };
+
 
     /**
      * Return a point instance from the k-d-tree

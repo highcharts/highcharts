@@ -39,6 +39,9 @@ $(function () {
             animation: false,
             color: 'rgba(152,0,67,0.2)',
             data: data,
+            marker: {
+                radius: 1
+            },
             tooltip: {
                 followPointer: false,
                 pointFormat: '[{point.x:.1f}, {point.y:.1f}]'
