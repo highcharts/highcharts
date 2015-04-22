@@ -12,12 +12,10 @@
  * - Column range.
  * - Heatmap and treemap? Not core, so the implementation should perhaps lie in feature files.
  * - Set up option structure. Like plotOptions.series.optimize.
- * - Kick in at a certain threshold, but do SVG below that.
  * - Check or implement stacking in area and column.
  * - Null points.
  * - Check inverted charts.
  * - Chart callback should be async after last series is drawn.
- * - Better "drawing" label. Don't dim background. Consider progress bar.
  * - Cache full-size image so we don't have to redraw on hide/show and zoom up.
  * - Test IE9 and IE10.
  * - Tooltip on scatter sample looks wrong?
