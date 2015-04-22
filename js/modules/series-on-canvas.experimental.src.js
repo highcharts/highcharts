@@ -8,8 +8,11 @@
  *
  * 
  * Development plan
- * - Column.
+ * - Column. One pixel per column is probably enough. Otherwise, SVG should be used.
  * - Column range.
+ * - Consider detecting the min and max for each pixel using algorithm from http://jsfiddle.net/highcharts/fo20b66d/1/
+ *   and a loop that runs prior to the drawing loop, adds all rounded clientX to a parallel 
+ *   array and records transistions.
  * - Heatmap and treemap? Not core, so the implementation should perhaps lie in feature files.
  * - Set up option structure. Like plotOptions.series.optimize.
  * - Check or implement stacking in area and column.
@@ -18,6 +21,7 @@
  * - Chart callback should be async after last series is drawn. (But not necessarily, we don't do
      that with initial series animation).
  * - Cache full-size image so we don't have to redraw on hide/show and zoom up.
+ * - Point marker graphic isn't showing.
  * - Test IE9 and IE10.
  * - Tooltip on scatter sample looks wrong?
  */
@@ -338,9 +342,9 @@
      */
     wrap(Series.prototype, 'searchPoint', function (proceed, e) {
         var point = proceed.call(this, e),
-            ret;
+            ret = point;
 
-        if (point) {
+        if (point && !(point instanceof this.pointClass)) {
             ret = (new this.pointClass()).init(this, this.options.data[point.i]);
             ret.dist = point.dist;
             ret.category = ret.x;
