@@ -13,19 +13,19 @@
 
     'use strict';
 
-    var CHUNK_SIZE = 50000,
-        noop = function () { return undefined; },
+    var noop = function () { return undefined; },
         Series = H.Series,
         seriesTypes = H.seriesTypes,
         each = H.each,
         wrap = H.wrap;
 
-    function eachAsync(arr, fn, callback, i) {
+    function eachAsync(arr, fn, callback, chunkSize, i) {
         i = i || 0;
-        each(arr.slice(i, i + CHUNK_SIZE - 1), fn);
-        if (i < arr.length) {
+        chunkSize = chunkSize || 50000;
+        each(arr.slice(i, i + chunkSize - 1), fn);
+        if (i + chunkSize < arr.length) {
             setTimeout(function () {
-                eachAsync(arr, fn, callback, i + CHUNK_SIZE);
+                eachAsync(arr, fn, callback, chunkSize, i + chunkSize);
             });
         } else if (callback) {
             callback();
@@ -190,7 +190,7 @@
 
                 i = i + 1;
 
-                if (i % CHUNK_SIZE === 0) {
+                if (i % 50000 === 0) {
                     series.canvasToSVG();
                 }
 
@@ -209,7 +209,8 @@
                 delete series.buildKDTree; // Go back to prototype, ready to build
                 series.buildKDTree();
                 
-            });
+             // Don't do async on export, the exportChart, getSVGForExport and getSVG methods are not chained for it.
+            }, chart.renderer.forExport ? Number.MAX_VALUE : undefined);
         }
     });
 
