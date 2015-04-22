@@ -33,7 +33,6 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 
 	// some variables
 var Renderer,
-	dateFormat, // function
 
 	// some constants for frequently used strings
 	

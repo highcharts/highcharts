@@ -437,6 +437,7 @@ Tooltip.prototype = {
 	 */
 	getXDateFormat: function (point, options, xAxis) {
 		var xDateFormat,
+			dateFormat = Highcharts.dateFormat,
 			dateTimeLabelFormats = options.dateTimeLabelFormats,
 			closestPointRange = xAxis && xAxis.closestPointRange,
 			n,

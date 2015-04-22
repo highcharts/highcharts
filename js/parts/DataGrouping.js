@@ -389,6 +389,7 @@ tooltipProto.tooltipFooterHeaderFormatter = function (point, isFooter) {
 		xDateFormat = tooltipOptions.xDateFormat,
 		xDateFormatEnd,
 		xAxis = series.xAxis,
+		dateFormat = Highcharts.dateFormat,
 		currentDataGrouping,
 		dateTimeLabelFormats,
 		labelFormats,

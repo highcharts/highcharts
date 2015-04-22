@@ -285,7 +285,7 @@ function getTZOffset(timestamp) {
  * @param {Number} timestamp
  * @param {Boolean} capitalize
  */
-dateFormat = function (format, timestamp, capitalize) {
+Highcharts.dateFormat = function (format, timestamp, capitalize) {
 	if (!defined(timestamp) || isNaN(timestamp)) {
 		return 'Invalid date';
 	}
@@ -368,7 +368,7 @@ function formatSingle(format, val) {
 			);
 		}
 	} else {
-		val = dateFormat(format, val);
+		val = Highcharts.dateFormat(format, val);
 	}
 	return val;
 }

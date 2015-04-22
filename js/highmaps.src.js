@@ -48,7 +48,6 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 
 	// some variables
 var Renderer,
-	dateFormat, // function
 
 	// some constants for frequently used strings
 	
@@ -359,7 +358,7 @@ function getTZOffset(timestamp) {
  * @param {Number} timestamp
  * @param {Boolean} capitalize
  */
-dateFormat = function (format, timestamp, capitalize) {
+Highcharts.dateFormat = function (format, timestamp, capitalize) {
 	if (!defined(timestamp) || isNaN(timestamp)) {
 		return 'Invalid date';
 	}
@@ -442,7 +441,7 @@ function formatSingle(format, val) {
 			);
 		}
 	} else {
-		val = dateFormat(format, val);
+		val = Highcharts.dateFormat(format, val);
 	}
 	return val;
 }
@@ -6511,7 +6510,7 @@ Axis.prototype = {
 			ret = value;
 
 		} else if (dateTimeLabelFormat) { // datetime axis
-			ret = dateFormat(dateTimeLabelFormat, value);
+			ret = Highcharts.dateFormat(dateTimeLabelFormat, value);
 
 		} else if (i && numericSymbolDetector >= 1000) {
 			// Decide whether we should add a numeric symbol like k (thousands) or M (millions).
@@ -8810,6 +8809,7 @@ Tooltip.prototype = {
 	 */
 	getXDateFormat: function (point, options, xAxis) {
 		var xDateFormat,
+			dateFormat = Highcharts.dateFormat,
 			dateTimeLabelFormats = options.dateTimeLabelFormats,
 			closestPointRange = xAxis && xAxis.closestPointRange,
 			n,
@@ -19419,7 +19419,6 @@ extend(Highcharts, {
 	// Various
 	arrayMin: arrayMin,
 	arrayMax: arrayMax,
-	dateFormat: dateFormat,
 	error: error,
 	format: format,
 	getOptions: getOptions,

@@ -277,6 +277,7 @@ RangeSelector.prototype = {
 	updateButtonStates: function (updating) {
 		var rangeSelector = this,
 			chart = this.chart,
+			dateFormat = Highcharts.dateFormat,
 			baseAxis = chart.xAxis[0],
 			unionExtremes = (chart.scroller && chart.scroller.getUnionExtremes()) || baseAxis,
 			dataMin = unionExtremes.dataMin,
@@ -352,7 +353,8 @@ RangeSelector.prototype = {
 	 * @param {Number} time
 	 */
 	setInputValue: function (name, time) {
-		var options = this.chart.options.rangeSelector;
+		var options = this.chart.options.rangeSelector,
+			dateFormat = Highcharts.dateFormat;
 
 		if (defined(time)) {
 			this[name + 'Input'].HCTime = time;

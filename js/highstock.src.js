@@ -48,7 +48,6 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 
 	// some variables
 var Renderer,
-	dateFormat, // function
 
 	// some constants for frequently used strings
 	
@@ -359,7 +358,7 @@ function getTZOffset(timestamp) {
  * @param {Number} timestamp
  * @param {Boolean} capitalize
  */
-dateFormat = function (format, timestamp, capitalize) {
+Highcharts.dateFormat = function (format, timestamp, capitalize) {
 	if (!defined(timestamp) || isNaN(timestamp)) {
 		return 'Invalid date';
 	}
@@ -442,7 +441,7 @@ function formatSingle(format, val) {
 			);
 		}
 	} else {
-		val = dateFormat(format, val);
+		val = Highcharts.dateFormat(format, val);
 	}
 	return val;
 }
@@ -6771,7 +6770,7 @@ Axis.prototype = {
 			ret = value;
 
 		} else if (dateTimeLabelFormat) { // datetime axis
-			ret = dateFormat(dateTimeLabelFormat, value);
+			ret = Highcharts.dateFormat(dateTimeLabelFormat, value);
 
 		} else if (i && numericSymbolDetector >= 1000) {
 			// Decide whether we should add a numeric symbol like k (thousands) or M (millions).
@@ -9275,6 +9274,7 @@ Tooltip.prototype = {
 	 */
 	getXDateFormat: function (point, options, xAxis) {
 		var xDateFormat,
+			dateFormat = Highcharts.dateFormat,
 			dateTimeLabelFormats = options.dateTimeLabelFormats,
 			closestPointRange = xAxis && xAxis.closestPointRange,
 			n,
@@ -18504,6 +18504,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 		info,
 		posLength,
 		outsideMax,
+		dateFormat = Highcharts.dateFormat,
 		timeUnits = Highcharts.timeUnits,
 		groupPositions = [],
 		lastGroupPosition = -Number.MAX_VALUE,
@@ -19821,6 +19822,7 @@ tooltipProto.tooltipFooterHeaderFormatter = function (point, isFooter) {
 		xDateFormat = tooltipOptions.xDateFormat,
 		xDateFormatEnd,
 		xAxis = series.xAxis,
+		dateFormat = Highcharts.dateFormat,
 		currentDataGrouping,
 		dateTimeLabelFormats,
 		labelFormats,
@@ -22047,6 +22049,7 @@ RangeSelector.prototype = {
 	updateButtonStates: function (updating) {
 		var rangeSelector = this,
 			chart = this.chart,
+			dateFormat = Highcharts.dateFormat,
 			baseAxis = chart.xAxis[0],
 			unionExtremes = (chart.scroller && chart.scroller.getUnionExtremes()) || baseAxis,
 			dataMin = unionExtremes.dataMin,
@@ -22122,7 +22125,8 @@ RangeSelector.prototype = {
 	 * @param {Number} time
 	 */
 	setInputValue: function (name, time) {
-		var options = this.chart.options.rangeSelector;
+		var options = this.chart.options.rangeSelector,
+			dateFormat = Highcharts.dateFormat;
 
 		if (defined(time)) {
 			this[name + 'Input'].HCTime = time;
@@ -23155,7 +23159,6 @@ extend(Highcharts, {
 	// Various
 	arrayMin: arrayMin,
 	arrayMax: arrayMax,
-	dateFormat: dateFormat,
 	error: error,
 	format: format,
 	getOptions: getOptions,
