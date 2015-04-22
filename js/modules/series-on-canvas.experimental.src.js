@@ -2,11 +2,25 @@
  * This is an experimental Highcharts module that draws long data series on a canvas
  * in order to increase performance of the initial load time and tooltip responsiveness.
  *
- * See discussion in 
- *
- * Compatible with HTML5 canvas-compatible browsers (not IE < 9).
+ * Compatible with HTML5 canvas compatible browsers (not IE < 9).
  *
  * Author: Torstein Honsi
+ *
+ * 
+ * Development plan
+ * - Column.
+ * - Column range.
+ * - Heatmap and treemap? Not core, so the implementation should perhaps lie in feature files.
+ * - Set up option structure. Like plotOptions.series.optimize.
+ * - Kick in at a certain threshold, but do SVG below that.
+ * - Check or implement stacking in area and column.
+ * - Null points.
+ * - Check inverted charts.
+ * - Chart callback should be async after last series is drawn.
+ * - Better "drawing" label. Don't dim background. Consider progress bar.
+ * - Cache full-size image so we don't have to redraw on hide/show and zoom up.
+ * - Test IE9 and IE10.
+ * - Tooltip on scatter sample looks wrong?
  */
 /*global document, Highcharts, setTimeout */
 (function (H) {
@@ -197,7 +211,7 @@
             }, function () {
                 stroke();
                 series.canvasToSVG();
-                
+
                 // Do not use chart.hideLoading, as it runs JS animation and will be blocked by buildKDTree.
                 // CSS animation looks good, but then it must be deleted in timeout.
                 if (chart.loadingDiv) {
@@ -208,7 +222,7 @@
 
                 delete series.buildKDTree; // Go back to prototype, ready to build
                 series.buildKDTree();
-                
+
              // Don't do async on export, the exportChart, getSVGForExport and getSVG methods are not chained for it.
             }, chart.renderer.forExport ? Number.MAX_VALUE : undefined);
         }
