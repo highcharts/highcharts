@@ -15,7 +15,8 @@
  * - Check or implement stacking in area and column.
  * - Null points.
  * - Check inverted charts.
- * - Chart callback should be async after last series is drawn.
+ * - Chart callback should be async after last series is drawn. (But not necessarily, we don't do
+     that with initial series animation).
  * - Cache full-size image so we don't have to redraw on hide/show and zoom up.
  * - Test IE9 and IE10.
  * - Tooltip on scatter sample looks wrong?
@@ -298,7 +299,7 @@
                     setTimeout(function () {
                         loadingDiv.parentNode.removeChild(loadingDiv);
                         chart.loadingDiv = chart.loadingSpan = null;
-                    });
+                    }, 250);
                 }
 
 
