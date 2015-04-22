@@ -33,7 +33,8 @@
         each = H.each,
         extend = H.extend,
         merge = H.merge,
-        wrap = H.wrap;
+        wrap = H.wrap,
+        THRESHOLD = 5000;
 
     function eachAsync(arr, fn, callback, chunkSize, i) {
         i = i || 0;
@@ -48,12 +49,62 @@
         }
     }
 
+    /**
+     * Override a bunch of methods the same way. If the number of points is below the threshold,
+     * run the original method. If not, check for a canvas version or do nothing.
+     */
+    each(['translate', 'generatePoints', 'drawTracker', 'drawPoints', 'render'], function (method) {
+        function branch(proceed) {
+            if (this.processedXData.length < THRESHOLD) {
+
+                // Clear image
+                if (method === 'render' && this.image) {
+                    this.image.attr({ href: '' });
+                    this.animate = null; // We're zooming in, don't run animation
+                }
+
+                proceed.call(this);
+
+            // If a canvas version of the method exists, like renderCanvas(), run
+            } else if (this[method + 'Canvas']) {
+
+                this[method + 'Canvas']();
+            }
+        }
+        wrap(Series.prototype, method, branch);
+
+        // A special case for arearange - its translate method is already wrapped
+        if (method === 'translate' && seriesTypes.arearange) {
+            wrap(seriesTypes.arearange.prototype, method, branch);
+        }
+    });
+
     H.extend(Series.prototype, {
-        translate: noop,
-        generatePoints: noop,
-        drawTracker: noop,
         pointRange: 0,
-        drawPoints: noop,
+
+        /**
+         * If implemented in the core, parts of this can probably be shared with other similar
+         * methods in Highcharts.
+         */
+        destroyGraphics: function () {
+            var series = this,
+                points = this.points,
+                point,
+                i;
+
+            for (i = 0; i < points.length; i = i + 1) {
+                point = points[i];
+                if (point && point.graphic) {
+                    point.graphic = point.graphic.destroy();
+                }
+            }
+
+            each(['graph', 'area'], function (prop) {
+                if (series[prop]) {
+                    series[prop] = series[prop].destroy();
+                }
+            });
+        },
 
         /**
          * Create a hidden canvas to draw the graph on. The contents is later copied over 
@@ -92,7 +143,7 @@
             ctx.lineTo(clientX, plotY);
         },
 
-        render: function () {
+        renderCanvas: function () {
             var series = this,
                 options = series.options,
                 chart = series.chart,
@@ -131,6 +182,11 @@
                         ctx.stroke();
                     }
                 };
+
+            // If we are zooming out from SVG mode, destroy the graphics
+            if (this.points) {
+                this.destroyGraphics();
+            }
 
             // The group
             series.plotGroup(
@@ -277,10 +333,6 @@
         }
     };
     seriesTypes.area.prototype.fill = true;
-
-    if (seriesTypes.arearange) {
-        seriesTypes.arearange.prototype.translate = noop;
-    }
 
     /**
      * Return a point instance from the k-d-tree
