@@ -78,6 +78,7 @@ Chart.prototype = {
 		//this.loadingSpan = undefined;
 
 		var chart = this,
+			charts = Highcharts.charts,
 			eventType;
 
 		// Add the chart to the global lookup
@@ -577,6 +578,7 @@ Chart.prototype = {
 	 */
 	getContainer: function () {
 		var chart = this,
+			charts = Highcharts.charts,
 			container,
 			optionsChart = chart.options.chart,
 			chartWidth,
@@ -1257,6 +1259,7 @@ Chart.prototype = {
 	 */
 	destroy: function () {
 		var chart = this,
+			charts = Highcharts.charts,
 			axes = chart.axes,
 			series = chart.series,
 			container = chart.container,

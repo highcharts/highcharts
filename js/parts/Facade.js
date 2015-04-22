@@ -13,7 +13,6 @@ extend(Highcharts, {
 	// Various
 	arrayMin: arrayMin,
 	arrayMax: arrayMax,
-	charts: charts,
 	dateFormat: dateFormat,
 	error: error,
 	format: format,

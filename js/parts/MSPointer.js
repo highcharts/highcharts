@@ -18,7 +18,8 @@ if (window.PointerEvent || window.MSPointerEvent) {
 			return fake;
 		},
 		translateMSPointer = function (e, method, wktype, callback) {
-			var p;
+			var p,
+				charts = Highcharts.charts;
 			e = e.originalEvent || e;
 			if ((e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) && charts[hoverChartIndex]) {
 				callback(e);

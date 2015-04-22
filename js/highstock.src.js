@@ -34,6 +34,7 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 		month: 28 * 24 * 3600000,
 		year: 364 * 24 * 3600000
 	},
+	charts: [],
 	noop: function () {}
 },	init = function () {
 		var H = Highcharts;
@@ -48,7 +49,6 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	// some variables
 var Renderer,
 	dateFormat, // function
-	charts = [],
 
 	// some constants for frequently used strings
 	
@@ -941,7 +941,7 @@ Highcharts.pathAnim = {
 
 					// When called without parameters or with the return argument, get a predefined chart
 					if (options === undefined) {
-						ret = charts[attr(this[0], 'data-highcharts-chart')];
+						ret = Highcharts.charts[attr(this[0], 'data-highcharts-chart')];
 					}
 				}
 				
@@ -9594,8 +9594,8 @@ Pointer.prototype = {
 		// Start the event listener to pick up the tooltip 
 		if (tooltip && !pointer._onDocumentMouseMove) {
 			pointer._onDocumentMouseMove = function (e) {
-				if (charts[hoverChartIndex]) {
-					charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
+				if (Highcharts.charts[hoverChartIndex]) {
+					Highcharts.charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
 				}
 			};
 			addEvent(document, 'mousemove', pointer._onDocumentMouseMove);
@@ -9880,8 +9880,8 @@ Pointer.prototype = {
 	
 
 	onDocumentMouseUp: function (e) {
-		if (charts[hoverChartIndex]) {
-			charts[hoverChartIndex].pointer.drop(e);
+		if (Highcharts.charts[hoverChartIndex]) {
+			Highcharts.charts[hoverChartIndex].pointer.drop(e);
 		}
 	},
 
@@ -9906,7 +9906,7 @@ Pointer.prototype = {
 	 * When mouse leaves the container, hide the tooltip.
 	 */
 	onContainerMouseLeave: function () {
-		var chart = charts[hoverChartIndex];
+		var chart = Highcharts.charts[hoverChartIndex];
 		if (chart) {
 			chart.pointer.reset();
 			chart.pointer.chartPosition = null; // also reset the chart position, used in #149 fix
@@ -10270,8 +10270,8 @@ extend(Highcharts.Pointer.prototype, {
 	},
 
 	onDocumentTouchEnd: function (e) {
-		if (charts[hoverChartIndex]) {
-			charts[hoverChartIndex].pointer.drop(e);
+		if (Highcharts.charts[hoverChartIndex]) {
+			Highcharts.charts[hoverChartIndex].pointer.drop(e);
 		}
 	}
 
@@ -10296,7 +10296,8 @@ if (window.PointerEvent || window.MSPointerEvent) {
 			return fake;
 		},
 		translateMSPointer = function (e, method, wktype, callback) {
-			var p;
+			var p,
+				charts = Highcharts.charts;
 			e = e.originalEvent || e;
 			if ((e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) && charts[hoverChartIndex]) {
 				callback(e);
@@ -11245,6 +11246,7 @@ Chart.prototype = {
 		//this.loadingSpan = undefined;
 
 		var chart = this,
+			charts = Highcharts.charts,
 			eventType;
 
 		// Add the chart to the global lookup
@@ -11744,6 +11746,7 @@ Chart.prototype = {
 	 */
 	getContainer: function () {
 		var chart = this,
+			charts = Highcharts.charts,
 			container,
 			optionsChart = chart.options.chart,
 			chartWidth,
@@ -12424,6 +12427,7 @@ Chart.prototype = {
 	 */
 	destroy: function () {
 		var chart = this,
+			charts = Highcharts.charts,
 			axes = chart.axes,
 			series = chart.series,
 			container = chart.container,
@@ -23151,7 +23155,6 @@ extend(Highcharts, {
 	// Various
 	arrayMin: arrayMin,
 	arrayMax: arrayMax,
-	charts: charts,
 	dateFormat: dateFormat,
 	error: error,
 	format: format,

@@ -224,8 +224,8 @@ Pointer.prototype = {
 		// Start the event listener to pick up the tooltip 
 		if (tooltip && !pointer._onDocumentMouseMove) {
 			pointer._onDocumentMouseMove = function (e) {
-				if (charts[hoverChartIndex]) {
-					charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
+				if (Highcharts.charts[hoverChartIndex]) {
+					Highcharts.charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
 				}
 			};
 			addEvent(document, 'mousemove', pointer._onDocumentMouseMove);
@@ -510,8 +510,8 @@ Pointer.prototype = {
 	
 
 	onDocumentMouseUp: function (e) {
-		if (charts[hoverChartIndex]) {
-			charts[hoverChartIndex].pointer.drop(e);
+		if (Highcharts.charts[hoverChartIndex]) {
+			Highcharts.charts[hoverChartIndex].pointer.drop(e);
 		}
 	},
 
@@ -536,7 +536,7 @@ Pointer.prototype = {
 	 * When mouse leaves the container, hide the tooltip.
 	 */
 	onContainerMouseLeave: function () {
-		var chart = charts[hoverChartIndex];
+		var chart = Highcharts.charts[hoverChartIndex];
 		if (chart) {
 			chart.pointer.reset();
 			chart.pointer.chartPosition = null; // also reset the chart position, used in #149 fix

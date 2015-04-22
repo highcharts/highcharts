@@ -19,6 +19,7 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 		month: 28 * 24 * 3600000,
 		year: 364 * 24 * 3600000
 	},
+	charts: [],
 	noop: function () {}
 },	init = function () {
 		var H = Highcharts;
@@ -33,7 +34,6 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	// some variables
 var Renderer,
 	dateFormat, // function
-	charts = [],
 
 	// some constants for frequently used strings
 	
