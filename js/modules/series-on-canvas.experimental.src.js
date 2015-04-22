@@ -31,6 +31,8 @@
         Series = H.Series,
         seriesTypes = H.seriesTypes,
         each = H.each,
+        extend = H.extend,
+        merge = H.merge,
         wrap = H.wrap;
 
     function eachAsync(arr, fn, callback, chunkSize, i) {
@@ -118,6 +120,7 @@
                 doFill = this.fill,
                 isRange = series.pointArrayMap && series.pointArrayMap.join(',') === 'low,high',
                 cropStart = series.cropStart || 0,
+                loadingOptions = chart.options.loading,
                 stroke = function () {
                     if (doFill) {
                         ctx.fillStyle = series.color;
@@ -142,8 +145,21 @@
             ctx = this.getContext();
             series.buildKDTree = noop; // Do not start building while drawing 
 
+            // Display a loading indicator
             if (xData.length > 99999) {
+                chart.options.loading = merge(loadingOptions, {
+                    labelStyle: {
+                        backgroundColor: 'rgba(255,255,255,0.75)',
+                        padding: '1em',
+                        borderRadius: '0.5em'
+                    },
+                    style: {
+                        backgroundColor: 'none',
+                        opacity: 1
+                    }
+                });
                 chart.showLoading('Drawing...');
+                chart.options.loading = loadingOptions; // reset
             }
 
             i = 0;
@@ -209,14 +225,26 @@
                 }
 
             }, function () {
+
+                var loadingDiv = chart.loadingDiv;
+
                 stroke();
                 series.canvasToSVG();
 
                 // Do not use chart.hideLoading, as it runs JS animation and will be blocked by buildKDTree.
-                // CSS animation looks good, but then it must be deleted in timeout.
-                if (chart.loadingDiv) {
-                    chart.loadingDiv.style.display = 'none';
+                // CSS animation looks good, but then it must be deleted in timeout. If we add the module to core,
+                // change hideLoading so we can skip this block.
+                if (loadingDiv) {
+                    extend(loadingDiv.style, {
+                        transition: 'opacity 250ms',
+                        opacity: 0
+                    });
+
                     chart.loadingShown = false;
+                    setTimeout(function () {
+                        loadingDiv.parentNode.removeChild(loadingDiv);
+                        chart.loadingDiv = chart.loadingSpan = null;
+                    });
                 }
 
 
