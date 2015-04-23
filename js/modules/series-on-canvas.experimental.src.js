@@ -16,7 +16,6 @@
  * - Heatmap and treemap? Not core, so the implementation should perhaps lie in feature files.
  * - Set up option structure. Like plotOptions.series.optimize.
  * - Check or implement stacking in area and column.
- * - Null points.
  * - Check inverted charts.
  * - Chart callback should be async after last series is drawn. (But not necessarily, we don't do
      that with initial series animation).
@@ -175,6 +174,8 @@
                 isRange = series.pointArrayMap && series.pointArrayMap.join(',') === 'low,high',
                 cropStart = series.cropStart || 0,
                 loadingOptions = chart.options.loading,
+                wasNull,
+                connectNulls = options.connectNulls,
                 stroke = function () {
                     if (doFill) {
                         ctx.fillStyle = series.color;
@@ -226,14 +227,17 @@
 
                 var y = yData[i],
                     clientX,
-                    plotY;
+                    plotY,
+                    isNull;
 
                 if (isRange) {
                     yBottom = yAxis.toPixels(y[0], true);
                     y = y[1];
                 }
 
-                if (x >= xMin && x <= xMax && y >= yMin && y <= yMax) { // this is faster for scatter zooming
+                isNull = y === null;
+
+                if (!isNull && x >= xMin && x <= xMax && y >= yMin && y <= yMax) { // this is faster for scatter zooming
 
                     clientX = Math.round(xAxis.toPixels(x, true));
                     plotY = Math.round(yAxis.toPixels(y, true));
@@ -254,12 +258,16 @@
                         pointTaken[clientX + ',' + plotY] = true;
                     }
 
-                    if (cvsDrawPoint) {
-                        cvsDrawPoint(ctx, clientX, plotY, yBottom, lastPoint);
-                    } else if (cvsLineTo) {
-                        cvsLineTo(ctx, clientX, plotY);
-                    } else if (cvsMarker) {
-                        cvsMarker(ctx, clientX, plotY, r);
+                    if (wasNull) {
+                        ctx.moveTo(clientX, plotY);
+                    } else {
+                        if (cvsDrawPoint) {
+                            cvsDrawPoint(ctx, clientX, plotY, yBottom, lastPoint);
+                        } else if (cvsLineTo) {
+                            cvsLineTo(ctx, clientX, plotY);
+                        } else if (cvsMarker) {
+                            cvsMarker(ctx, clientX, plotY, r);
+                        }
                     }
 
                     lastPoint = {
@@ -276,6 +284,7 @@
                         c = 0;
                     }
                 }
+                wasNull = isNull && !connectNulls;
 
                 i = i + 1;
 
