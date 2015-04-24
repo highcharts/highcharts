@@ -22,7 +22,6 @@
  * - Cache full-size image so we don't have to redraw on hide/show and zoom up.
  * - What happens with the loading label when two series?
  * - Test IE9 and IE10.
- * - Skip getExtremes when axis extremes are set explicitly.
  */
 /*global document, Highcharts, setTimeout */
 (function (H) {
@@ -81,6 +80,20 @@
             wrap(seriesTypes.arearange.prototype, method, branch);
         }
     });
+
+    /**
+     * Override the Series.getExtremes method to not compute extremes when min and max are set.
+     * If we use this in the core, we only need the simple condition.
+     */
+    wrap(Series.prototype, 'getExtremes', function (proceed, yData) {
+        var yAxisOptions = this.yAxis.options;
+        yData = yData || this.stackedYData || this.processedYData;
+
+        if (yData.length < THRESHOLD || typeof yAxisOptions.min !== 'number' || typeof yAxisOptions.max !== 'number') {
+            proceed.call(this, yData);
+        }
+    });
+
 
     H.extend(Series.prototype, {
         pointRange: 0,

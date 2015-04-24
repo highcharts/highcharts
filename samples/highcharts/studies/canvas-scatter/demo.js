@@ -20,16 +20,21 @@ $(function () {
         },
 
         xAxis: {
+            min: 0,
+            max: 100,
             gridLineWidth: 1
         },
 
         yAxis: {
+            // Renders faster when we don't have to compute min and max
+            min: 0, 
+            max: 100,
             minPadding: 0,
             maxPadding: 0
         },
 
         title: {
-            text: 'Scatter chart with ' + data.length + ' points'
+            text: 'Scatter chart with ' + Highcharts.numberFormat(data.length, 0, ' ') + ' points'
         },
         legend: {
             enabled: false
