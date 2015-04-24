@@ -27,6 +27,7 @@
  * - For scatter plots, use a marker.radius of 1 or less. It results in a rectange being drawn, which is 
  *   considerably faster than a circle.
  * - Set extremes (min, max) explicitly on the axes in order for Highcharts to avoid computing extremes.
+ * - Set enableMouseTracking to false on the series to improve total rendering time.
  */
 /*global document, Highcharts, setTimeout */
 (function (H) {
@@ -190,7 +191,7 @@
                 c = 0,
                 xData = series.processedXData,
                 yData = series.processedYData,
-                rawData = series.options.data,
+                rawData = options.data,
                 xExtremes = xAxis.getExtremes(),
                 xMin = xExtremes.min,
                 xMax = xExtremes.max,
@@ -203,6 +204,7 @@
                 cvsDrawPoint = this.cvsDrawPoint,
                 cvsLineTo = options.lineWidth ? this.cvsLineTo : false,
                 cvsMarker = r <= 1 ? this.cvsMarkerSquare : this.cvsMarkerCircle,
+                enableMouseTracking = options.enableMouseTracking !== false,
                 lastPoint,
                 yBottom = yAxis.getThreshold(options.threshold),
                 doFill = this.fill,
@@ -306,18 +308,6 @@
                         ctx.beginPath();
                     }
 
-                    // The k-d tree requires series points. Reduce the amount of points, since the time to build the 
-                    // tree increases exponentially.
-                    if (!pointTaken[clientX + ',' + plotY]) {
-                        points.push({
-                            clientX: clientX,
-                            plotX: clientX,
-                            plotY: plotY,
-                            i: cropStart + i
-                        });
-                        pointTaken[clientX + ',' + plotY] = true;
-                    }
-
                     if (wasNull) {
                         ctx.moveTo(clientX, plotY);
                     } else {
@@ -330,18 +320,32 @@
                         }
                     }
 
-                    lastPoint = {
-                        clientX: clientX,
-                        plotY: plotY,
-                        yBottom: yBottom
-                    };
-
                     // We need to stroke the line for every 1000 pixels. It will crash the browser
                     // memory use if we stroke too infrequently.
                     c = c + 1;
                     if (c === 1000) {
                         stroke();
                         c = 0;
+                    }
+
+                    // Area charts need to keep track of the last point
+                    lastPoint = {
+                        clientX: clientX,
+                        plotY: plotY,
+                        yBottom: yBottom
+                    };
+
+
+                    // The k-d tree requires series points. Reduce the amount of points, since the time to build the 
+                    // tree increases exponentially.
+                    if (enableMouseTracking && !pointTaken[clientX + ',' + plotY]) {
+                        points.push({
+                            clientX: clientX,
+                            plotX: clientX,
+                            plotY: plotY,
+                            i: cropStart + i
+                        });
+                        pointTaken[clientX + ',' + plotY] = true;
                     }
                 }
                 wasNull = isNull && !connectNulls;
@@ -374,7 +378,6 @@
                         chart.loadingDiv = chart.loadingSpan = null;
                     }, 250);
                 }
-
 
                 delete series.buildKDTree; // Go back to prototype, ready to build
                 series.buildKDTree();
