@@ -22,7 +22,7 @@
  * - Cache full-size image so we don't have to redraw on hide/show and zoom up.
  * - What happens with the loading label when two series?
  * - Test IE9 and IE10.
- * - Tooltip on scatter sample looks wrong?
+ * - Skip getExtremes when axis extremes are set explicitly.
  */
 /*global document, Highcharts, setTimeout */
 (function (H) {
@@ -36,12 +36,13 @@
         extend = H.extend,
         merge = H.merge,
         wrap = H.wrap,
+        CHUNK_SIZE = 50000,
         THRESHOLD = 5000;
 
     function eachAsync(arr, fn, callback, chunkSize, i) {
         i = i || 0;
-        chunkSize = chunkSize || 50000;
-        each(arr.slice(i, i + chunkSize - 1), fn);
+        chunkSize = chunkSize || CHUNK_SIZE;
+        each(arr.slice(i, i + chunkSize), fn);
         if (i + chunkSize < arr.length) {
             setTimeout(function () {
                 eachAsync(arr, fn, callback, chunkSize, i + chunkSize);
@@ -291,7 +292,7 @@
 
                 i = i + 1;
 
-                if (i % 50000 === 0) {
+                if (i % CHUNK_SIZE === 0) {
                     series.canvasToSVG();
                 }
 
