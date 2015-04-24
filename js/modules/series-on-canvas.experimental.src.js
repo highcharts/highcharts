@@ -20,7 +20,7 @@
  * - Chart callback should be async after last series is drawn. (But not necessarily, we don't do
      that with initial series animation).
  * - Cache full-size image so we don't have to redraw on hide/show and zoom up.
- * - Point marker graphic isn't showing.
+ * - What happens with the loading label when two series?
  * - Test IE9 and IE10.
  * - Tooltip on scatter sample looks wrong?
  */
@@ -200,6 +200,9 @@
                 options.zIndex,
                 chart.seriesGroup
             );
+
+            series.getAttribs();
+            series.markerGroup = series.group;
 
             points = this.points = [];
             ctx = this.getContext();
