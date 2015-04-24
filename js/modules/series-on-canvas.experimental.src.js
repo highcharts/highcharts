@@ -21,7 +21,6 @@
      that with initial series animation).
  * - Cache full-size image so we don't have to redraw on hide/show and zoom up.
  * - What happens with the loading label when two series?
- * - When axis extremes are set, we can further optimize by skipping setData and work on options.data directly.
  * - Test IE9 and IE10.
  *
  * Optimizing tips for users
@@ -63,7 +62,7 @@
      */
     each(['translate', 'generatePoints', 'drawTracker', 'drawPoints', 'render'], function (method) {
         function branch(proceed) {
-            if (this.options.data.length < THRESHOLD) {
+            if ((this.processedXData || this.options.data).length < THRESHOLD) {
 
                 // Clear image
                 if (method === 'render' && this.image) {
@@ -210,6 +209,7 @@
                 isRange = series.pointArrayMap && series.pointArrayMap.join(',') === 'low,high',
                 cropStart = series.cropStart || 0,
                 loadingOptions = chart.options.loading,
+                requireSorting = series.requireSorting,
                 wasNull,
                 connectNulls = options.connectNulls,
                 stroke = function () {
@@ -270,7 +270,8 @@
                     y,
                     clientX,
                     plotY,
-                    isNull;
+                    isNull,
+                    isYInside = true;
 
                 if (useRaw) {
                     x = d[0];
@@ -291,7 +292,12 @@
 
                 isNull = y === null;
 
-                if (!isNull && x >= xMin && x <= xMax && y >= yMin && y <= yMax) { // this is faster for scatter zooming
+                // Optimize for scatter zooming
+                if (!requireSorting) {
+                    isYInside = y >= yMin && y <= yMax;
+                }
+
+                if (!isNull && x >= xMin && x <= xMax && isYInside) {
 
                     clientX = Math.round(xAxis.toPixels(x, true));
                     plotY = Math.round(yAxis.toPixels(y, true));
