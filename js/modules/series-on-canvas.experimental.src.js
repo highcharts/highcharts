@@ -21,7 +21,13 @@
      that with initial series animation).
  * - Cache full-size image so we don't have to redraw on hide/show and zoom up.
  * - What happens with the loading label when two series?
+ * - When axis extremes are set, we can further optimize by skipping setData and work on options.data directly.
  * - Test IE9 and IE10.
+ *
+ * Optimizing tips for users
+ * - For scatter plots, use a marker.radius of 1 or less. It results in a rectange being drawn, which is 
+ *   considerably faster than a circle.
+ * - Set extremes (min, max) explicitly on the axes in order for Highcharts to avoid computing extremes.
  */
 /*global document, Highcharts, setTimeout */
 (function (H) {
@@ -57,7 +63,7 @@
      */
     each(['translate', 'generatePoints', 'drawTracker', 'drawPoints', 'render'], function (method) {
         function branch(proceed) {
-            if (this.processedXData.length < THRESHOLD) {
+            if (this.options.data.length < THRESHOLD) {
 
                 // Clear image
                 if (method === 'render' && this.image) {
@@ -82,21 +88,36 @@
     });
 
     /**
-     * Override the Series.getExtremes method to not compute extremes when min and max are set.
-     * If we use this in the core, we only need the simple condition.
+     * Do not compute extremes when min and max are set.
+     * If we use this in the core, we can add the hook to hasExtremes to the methods directly.
      */
-    wrap(Series.prototype, 'getExtremes', function (proceed, yData) {
-        var yAxisOptions = this.yAxis.options;
-        yData = yData || this.stackedYData || this.processedYData;
-
-        if (yData.length < THRESHOLD || typeof yAxisOptions.min !== 'number' || typeof yAxisOptions.max !== 'number') {
-            proceed.call(this, yData);
+    wrap(Series.prototype, 'getExtremes', function (proceed) {
+        if (!this.hasExtremes()) {
+            proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+        }
+    });
+    wrap(Series.prototype, 'setData', function (proceed) {
+        if (!this.hasExtremes(true)) {
+            proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+        }
+    });
+    wrap(Series.prototype, 'processData', function (proceed) {
+        if (!this.hasExtremes(true)) {
+            proceed.apply(this, Array.prototype.slice.call(arguments, 1));
         }
     });
 
 
     H.extend(Series.prototype, {
         pointRange: 0,
+
+        hasExtremes: function (checkX) {
+            var data = this.options.data,
+                xAxis = this.xAxis.options,
+                yAxis = this.yAxis.options;
+            return data.length > THRESHOLD && typeof yAxis.min === 'number' && typeof yAxis.max === 'number' &&
+                (!checkX || (typeof xAxis.min === 'number' && typeof xAxis.max === 'number'));
+        },
 
         /**
          * If implemented in the core, parts of this can probably be shared with other similar
@@ -170,6 +191,7 @@
                 c = 0,
                 xData = series.processedXData,
                 yData = series.processedYData,
+                rawData = series.options.data,
                 xExtremes = xAxis.getExtremes(),
                 xMin = xExtremes.min,
                 xMax = xExtremes.max,
@@ -199,7 +221,8 @@
                         ctx.lineWidth = options.lineWidth;
                         ctx.stroke();
                     }
-                };
+                },
+                useRaw = !xData;
 
             // If we are zooming out from SVG mode, destroy the graphics
             if (this.points) {
@@ -223,7 +246,7 @@
             series.buildKDTree = noop; // Do not start building while drawing 
 
             // Display a loading indicator
-            if (xData.length > 99999) {
+            if (rawData.length > 99999) {
                 chart.options.loading = merge(loadingOptions, {
                     labelStyle: {
                         backgroundColor: 'rgba(255,255,255,0.75)',
@@ -239,15 +262,29 @@
                 chart.options.loading = loadingOptions; // reset
             }
 
+            // Loop over the points
             i = 0;
-            eachAsync(xData, function (x) {
+            eachAsync(xData || rawData, function (d) {
 
-                var y = yData[i],
+                var x,
+                    y,
                     clientX,
                     plotY,
                     isNull;
 
+                if (useRaw) {
+                    x = d[0];
+                    y = d[1];
+                } else {
+                    x = d;
+                    y = yData[i];
+                }
+
+                // Resolve low and high for range series
                 if (isRange) {
+                    if (useRaw) {
+                        y = d.slice(1, 3);
+                    }
                     yBottom = yAxis.toPixels(y[0], true);
                     y = y[1];
                 }
@@ -346,7 +383,7 @@
         ctx.arc(clientX, plotY, r, 0, 2 * Math.PI, false);
     };
 
-    // Rect is twice as fast as arc, should be used for small markers // docs: recommended settings
+    // Rect is twice as fast as arc, should be used for small markers
     seriesTypes.scatter.prototype.cvsMarkerSquare = function (ctx, clientX, plotY, r) {
         ctx.moveTo(clientX, plotY);
         ctx.rect(clientX - r, plotY - r, r * 2, r * 2);

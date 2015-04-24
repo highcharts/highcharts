@@ -2,7 +2,7 @@ $(function () {
 
     // Prepare the data
     var data = [],
-        n = 500000,
+        n = 1000000,
         i;
     for (i = 0; i < n; i += 1) {
         data.push([
@@ -42,7 +42,7 @@ $(function () {
         series: [{
             type: 'scatter',
             animation: false,
-            color: 'rgba(152,0,67,0.2)',
+            color: 'rgba(152,0,67,0.1)',
             data: data,
             marker: {
                 radius: 1
