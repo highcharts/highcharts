@@ -13,6 +13,7 @@ $(function () {
 
 
     console.time('scatter');
+    console.time('asyncRender')
     $('#container').highcharts({
 
         chart: {
@@ -49,6 +50,11 @@ $(function () {
             tooltip: {
                 followPointer: false,
                 pointFormat: '[{point.x:.1f}, {point.y:.1f}]'
+            },
+            events: {
+                renderedCanvas: function () {
+                    console.timeEnd('asyncRender');
+                }
             }
         }]
 

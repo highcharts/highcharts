@@ -29,8 +29,8 @@
  * - Set extremes (min, max) explicitly on the axes in order for Highcharts to avoid computing extremes.
  * - Set enableMouseTracking to false on the series to improve total rendering time.
  */
-/*global document, Highcharts, setTimeout */
-(function (H) {
+/*global document, Highcharts, HighchartsAdapter, setTimeout */
+(function (H, HA) {
 
     'use strict';
 
@@ -39,6 +39,7 @@
         seriesTypes = H.seriesTypes,
         each = H.each,
         extend = H.extend,
+        fireEvent = HA.fireEvent,
         merge = H.merge,
         wrap = H.wrap,
         CHUNK_SIZE = 50000,
@@ -404,6 +405,8 @@
                 stroke();
                 series.canvasToSVG();
 
+                fireEvent(series, 'renderedCanvas'); // docs
+
                 // Do not use chart.hideLoading, as it runs JS animation and will be blocked by buildKDTree.
                 // CSS animation looks good, but then it must be deleted in timeout. If we add the module to core,
                 // change hideLoading so we can skip this block.
@@ -469,4 +472,4 @@
         }
         return ret;
     });
-}(Highcharts));
+}(Highcharts, HighchartsAdapter));
