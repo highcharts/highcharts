@@ -199,6 +199,8 @@
                 yMin = yExtremes.min,
                 yMax = yExtremes.max,
                 pointTaken = {},
+                lastClientX,
+                sampling = !!series.sampling,
                 points,
                 r = options.marker && options.marker.radius,
                 cvsDrawPoint = this.cvsDrawPoint,
@@ -214,6 +216,11 @@
                 requireSorting = series.requireSorting,
                 wasNull,
                 connectNulls = options.connectNulls,
+                useRaw = !xData,
+                minVal,
+                maxVal,
+                minI,
+                maxI,
                 stroke = function () {
                     if (doFill) {
                         ctx.fillStyle = series.color;
@@ -224,7 +231,51 @@
                         ctx.stroke();
                     }
                 },
-                useRaw = !xData;
+                drawPoint = function (clientX, plotY, yBottom, i) {
+                    if (c === 0) {
+                        ctx.beginPath();
+                    }
+
+                    if (wasNull) {
+                        ctx.moveTo(clientX, plotY);
+                    } else {
+                        if (cvsDrawPoint) {
+                            cvsDrawPoint(ctx, clientX, plotY, yBottom, lastPoint);
+                        } else if (cvsLineTo) {
+                            cvsLineTo(ctx, clientX, plotY);
+                        } else if (cvsMarker) {
+                            cvsMarker(ctx, clientX, plotY, r);
+                        }
+                    }
+
+                    // We need to stroke the line for every 1000 pixels. It will crash the browser
+                    // memory use if we stroke too infrequently.
+                    c = c + 1;
+                    if (c === 1000) {
+                        stroke();
+                        c = 0;
+                    }
+
+                    // Area charts need to keep track of the last point
+                    lastPoint = {
+                        clientX: clientX,
+                        plotY: plotY,
+                        yBottom: yBottom
+                    };
+
+
+                    // The k-d tree requires series points. Reduce the amount of points, since the time to build the 
+                    // tree increases exponentially.
+                    if (enableMouseTracking && !pointTaken[clientX + ',' + plotY]) {
+                        points.push({
+                            clientX: clientX,
+                            plotX: clientX,
+                            plotY: plotY,
+                            i: cropStart + i
+                        });
+                        pointTaken[clientX + ',' + plotY] = true;
+                    }
+                };
 
             // If we are zooming out from SVG mode, destroy the graphics
             if (this.points) {
@@ -302,50 +353,40 @@
                 if (!isNull && x >= xMin && x <= xMax && isYInside) {
 
                     clientX = Math.round(xAxis.toPixels(x, true));
-                    plotY = Math.round(yAxis.toPixels(y, true));
 
-                    if (c === 0) {
-                        ctx.beginPath();
-                    }
+                    if (sampling) {
+                        if (clientX === lastClientX) {
+                            if (y > maxVal) {
+                                maxVal = y;
+                                maxI = i;
+                            } else if (y < minVal) {
+                                minVal = y;
+                                minI = i;
+                            }
 
-                    if (wasNull) {
-                        ctx.moveTo(clientX, plotY);
-                    } else {
-                        if (cvsDrawPoint) {
-                            cvsDrawPoint(ctx, clientX, plotY, yBottom, lastPoint);
-                        } else if (cvsLineTo) {
-                            cvsLineTo(ctx, clientX, plotY);
-                        } else if (cvsMarker) {
-                            cvsMarker(ctx, clientX, plotY, r);
+                        } else { // Add points and reset
+                            // TODO: 
+                            // In area and column charts, we should probably have the same mechanism
+                            // that the range chart, so we draw a 1px wide rectangle from the min
+                            // to the max value. K-d-points need to reflect both min and max.
+                            /*
+                            if (typeof minI === 'number') {
+                                drawPoint(lastClientX, yAxis.toPixels(minVal, true), yBottom, minI);
+                            }
+                            if (typeof maxI === 'number') {
+                                drawPoint(lastClientX, yAxis.toPixels(maxVal, true), yBottom, maxI);
+                            }
+                            */
+                            drawPoint(lastClientX, yAxis.toPixels(y, true), yBottom, i);
+
+
+                            minVal = maxVal = y;
+                            minI = maxI = undefined;
+                            lastClientX = clientX;
                         }
-                    }
-
-                    // We need to stroke the line for every 1000 pixels. It will crash the browser
-                    // memory use if we stroke too infrequently.
-                    c = c + 1;
-                    if (c === 1000) {
-                        stroke();
-                        c = 0;
-                    }
-
-                    // Area charts need to keep track of the last point
-                    lastPoint = {
-                        clientX: clientX,
-                        plotY: plotY,
-                        yBottom: yBottom
-                    };
-
-
-                    // The k-d tree requires series points. Reduce the amount of points, since the time to build the 
-                    // tree increases exponentially.
-                    if (enableMouseTracking && !pointTaken[clientX + ',' + plotY]) {
-                        points.push({
-                            clientX: clientX,
-                            plotX: clientX,
-                            plotY: plotY,
-                            i: cropStart + i
-                        });
-                        pointTaken[clientX + ',' + plotY] = true;
+                    } else {
+                        plotY = Math.round(yAxis.toPixels(y, true));
+                        drawPoint(clientX, plotY, yBottom, i);
                     }
                 }
                 wasNull = isNull && !connectNulls;
@@ -399,15 +440,18 @@
     };
     seriesTypes.scatter.prototype.fill = true;
 
-    seriesTypes.area.prototype.cvsDrawPoint = function (ctx, clientX, plotY, yBottom, lastPoint) {
-        if (lastPoint && clientX !== lastPoint.clientX) {
-            ctx.moveTo(lastPoint.clientX, lastPoint.yBottom);
-            ctx.lineTo(lastPoint.clientX, lastPoint.plotY);
-            ctx.lineTo(clientX, plotY);
-            ctx.lineTo(clientX, yBottom);
-        }
-    };
-    seriesTypes.area.prototype.fill = true;
+    extend(seriesTypes.area.prototype, {
+        cvsDrawPoint: function (ctx, clientX, plotY, yBottom, lastPoint) {
+            if (lastPoint && clientX !== lastPoint.clientX) {
+                ctx.moveTo(lastPoint.clientX, lastPoint.yBottom);
+                ctx.lineTo(lastPoint.clientX, lastPoint.plotY);
+                ctx.lineTo(clientX, plotY);
+                ctx.lineTo(clientX, yBottom);
+            }
+        },
+        fill: true,
+        sampling: true
+    });
 
     /**
      * Return a point instance from the k-d-tree
