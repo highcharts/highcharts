@@ -44,7 +44,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		}
 	
 		if (interval >= timeUnits.day) { // day
-			minDate[setDate](interval >= timeUnits.month ? 1 :
+			minDate.hcSetDate(interval >= timeUnits.month ? 1 :
 				count * Math.floor(minDateDate / count));
 		}
 	
@@ -62,7 +62,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		// week is a special case that runs outside the hierarchy
 		if (interval === timeUnits.week) {
 			// get start of current week, independent of count
-			minDate[setDate](minDateDate - minDate.hcGetDay() +
+			minDate.hcSetDate(minDateDate - minDate.hcGetDay() +
 				pick(startOfWeek, 1));
 		}
 	

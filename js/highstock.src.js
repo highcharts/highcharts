@@ -51,7 +51,6 @@ var AxisPlotLineOrBandExtension,
 
 	// time methods, changed based on whether or not UTC is used
 	Date,  // Allow using a different Date class
-	setDate,
 	setMonth,
 	setFullYear;
 /**
@@ -1556,7 +1555,7 @@ function setTimeMethods() {
 	Date.hcSetSeconds = Date[SET + 'Seconds'];
 	Date.hcSetMinutes = Date[SET + 'Minutes'];
 	Date.hcSetHours = Date[SET + 'Hours'];
-	setDate =         SET + 'Date';
+	Date.hcSetDate = Date[SET + 'Date'];
 	setMonth =        SET + 'Month';
 	setFullYear =     SET + 'FullYear';
 
@@ -8560,7 +8559,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		}
 	
 		if (interval >= timeUnits.day) { // day
-			minDate[setDate](interval >= timeUnits.month ? 1 :
+			minDate.hcSetDate(interval >= timeUnits.month ? 1 :
 				count * Math.floor(minDateDate / count));
 		}
 	
@@ -8578,7 +8577,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		// week is a special case that runs outside the hierarchy
 		if (interval === timeUnits.week) {
 			// get start of current week, independent of count
-			minDate[setDate](minDateDate - minDate.hcGetDay() +
+			minDate.hcSetDate(minDateDate - minDate.hcGetDay() +
 				pick(startOfWeek, 1));
 		}
 	

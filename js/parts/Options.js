@@ -384,7 +384,7 @@ function setTimeMethods() {
 	Date.hcSetSeconds = Date[SET + 'Seconds'];
 	Date.hcSetMinutes = Date[SET + 'Minutes'];
 	Date.hcSetHours = Date[SET + 'Hours'];
-	setDate =         SET + 'Date';
+	Date.hcSetDate = Date[SET + 'Date'];
 	setMonth =        SET + 'Month';
 	setFullYear =     SET + 'FullYear';
 
