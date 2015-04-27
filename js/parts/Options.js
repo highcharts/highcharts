@@ -375,7 +375,7 @@ function setTimeMethods() {
 		return d;
 	};
 	Date.hcGetMinutes = Date[GET + 'Minutes'];
-	getHours =        GET + 'Hours';
+	Date.hcGetHours = Date[GET + 'Hours'];
 	getDay =          GET + 'Day';
 	getDate =         GET + 'Date';
 	getMonth =        GET + 'Month';

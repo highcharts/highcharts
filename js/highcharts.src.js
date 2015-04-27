@@ -51,7 +51,6 @@ var AxisPlotLineOrBandExtension,
 
 	// time methods, changed based on whether or not UTC is used
 	Date,  // Allow using a different Date class
-	getHours,
 	getDay,
 	getDate,
 	getMonth,
@@ -359,7 +358,7 @@ Highcharts.dateFormat = function (format, timestamp, capitalize) {
 	var date = new Date(timestamp - getTZOffset(timestamp)),
 		key, // used in for constuct below
 		// get the basic time values
-		hours = date[getHours](),
+		hours = date.hcGetHours(),
 		day = date[getDay](),
 		dayOfMonth = date[getDate](),
 		month = date[getMonth](),
@@ -1556,7 +1555,7 @@ function setTimeMethods() {
 		return d;
 	};
 	Date.hcGetMinutes = Date[GET + 'Minutes'];
-	getHours =        GET + 'Hours';
+	Date.hcGetHours = Date[GET + 'Hours'];
 	getDay =          GET + 'Day';
 	getDate =         GET + 'Date';
 	getMonth =        GET + 'Month';
@@ -8563,7 +8562,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 	
 		if (interval >= timeUnits.hour) { // hour
 			minDate[setHours](interval >= timeUnits.day ? 0 :
-				count * Math.floor(minDate[getHours]() / count));
+				count * Math.floor(minDate.hcGetHours() / count));
 		}
 	
 		if (interval >= timeUnits.day) { // day
