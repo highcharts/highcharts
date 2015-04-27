@@ -548,11 +548,11 @@
 				// External tools like Date.js and MooTools extend Date object and
 				// returns a date.
 				if (typeof match === 'object' && match !== null && match.getTime) {
-					ret = match.getTime() - match.getTimezoneOffset() * 60000;
+					ret = match.getTime() - match.hcGetTimezoneOffset() * 60000;
 				
 				// Timestamp
 				} else if (typeof match === 'number' && !isNaN(match)) {
-					ret = match - (new Date(match)).getTimezoneOffset() * 60000;
+					ret = match - (new Date(match)).hcGetTimezoneOffset() * 60000;
 				}
 			}
 		}

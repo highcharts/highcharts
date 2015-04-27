@@ -469,7 +469,7 @@ RangeSelector.prototype = {
 
 				// Correct for timezone offset (#433)
 				if (!Highcharts.defaultOptions.global.useUTC) {
-					value = value + new Date().getTimezoneOffset() * 60 * 1000;
+					value = value + new Date().hcGetTimezoneOffset() * 60 * 1000;
 				}
 
 				// Validate the extremes. If it goes beyound the data min or max, use the

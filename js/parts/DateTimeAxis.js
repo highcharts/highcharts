@@ -69,14 +69,14 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 	
 		// get tick positions
 		i = 1;
-		if (Date.hcTimezoneOffset || Date.getTimezoneOffset) {
+		if (Date.hcTimezoneOffset || Date.hcGetTimezoneOffset) {
 			minDate = minDate.getTime();
 			minDate = new Date(minDate + getTZOffset(minDate));
 		}
 		minYear = minDate.hcGetFullYear();
 		var time = minDate.getTime(),
 			localTimezoneOffset = (timeUnits.day + 
-					(useUTC ? getTZOffset(minDate) : minDate.getTimezoneOffset() * 60 * 1000)
+					(useUTC ? getTZOffset(minDate) : minDate.hcGetTimezoneOffset() * 60 * 1000)
 				) % timeUnits.day; // #950, #3359
 	
 		// iterate and add tick positions at appropriate values

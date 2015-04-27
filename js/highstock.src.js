@@ -330,7 +330,7 @@ var wrap = Highcharts.wrap = function (obj, method, func) {
 
 function getTZOffset(timestamp) {
 	var D = Date;
-	return ((D.getTimezoneOffset && D.getTimezoneOffset(timestamp)) || D.hcTimezoneOffset || 0) * 60000;
+	return ((D.hcGetTimezoneOffset && D.hcGetTimezoneOffset(timestamp)) || D.hcTimezoneOffset || 0) * 60000;
 }
 
 /**
@@ -1526,7 +1526,7 @@ function setTimeMethods() {
 
 	Date = globalOptions.Date || window.Date;
 	Date.hcTimezoneOffset = useUTC && globalOptions.timezoneOffset;
-	Date.getTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
+	Date.hcGetTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
 	Date.hcMakeTime = function (year, month, date, hours, minutes, seconds) {
 		var d;
 		if (useUTC) {
@@ -8583,14 +8583,14 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 	
 		// get tick positions
 		i = 1;
-		if (Date.hcTimezoneOffset || Date.getTimezoneOffset) {
+		if (Date.hcTimezoneOffset || Date.hcGetTimezoneOffset) {
 			minDate = minDate.getTime();
 			minDate = new Date(minDate + getTZOffset(minDate));
 		}
 		minYear = minDate.hcGetFullYear();
 		var time = minDate.getTime(),
 			localTimezoneOffset = (timeUnits.day + 
-					(useUTC ? getTZOffset(minDate) : minDate.getTimezoneOffset() * 60 * 1000)
+					(useUTC ? getTZOffset(minDate) : minDate.hcGetTimezoneOffset() * 60 * 1000)
 				) % timeUnits.day; // #950, #3359
 	
 		// iterate and add tick positions at appropriate values
@@ -22223,7 +22223,7 @@ RangeSelector.prototype = {
 
 				// Correct for timezone offset (#433)
 				if (!Highcharts.defaultOptions.global.useUTC) {
-					value = value + new Date().getTimezoneOffset() * 60 * 1000;
+					value = value + new Date().hcGetTimezoneOffset() * 60 * 1000;
 				}
 
 				// Validate the extremes. If it goes beyound the data min or max, use the
