@@ -51,7 +51,6 @@ var AxisPlotLineOrBandExtension,
 
 	// time methods, changed based on whether or not UTC is used
 	Date,  // Allow using a different Date class
-	getMinutes,
 	getHours,
 	getDay,
 	getDate,
@@ -394,7 +393,7 @@ Highcharts.dateFormat = function (format, timestamp, capitalize) {
 			'H': pad(hours), // Two digits hours in 24h format, 00 through 23
 			'I': pad((hours % 12) || 12), // Two digits hours in 12h format, 00 through 11
 			'l': (hours % 12) || 12, // Hours in 12h format, 1 through 12
-			'M': pad(date[getMinutes]()), // Two digits minutes, 00 through 59
+			'M': pad(date.hcGetMinutes()), // Two digits minutes, 00 through 59
 			'p': hours < 12 ? 'AM' : 'PM', // Upper case AM or PM
 			'P': hours < 12 ? 'am' : 'pm', // Lower case AM or PM
 			'S': pad(date.getSeconds()), // Two digits seconds, 00 through  59
@@ -1556,7 +1555,7 @@ function setTimeMethods() {
 		}
 		return d;
 	};
-	getMinutes =      GET + 'Minutes';
+	Date.hcGetMinutes = Date[GET + 'Minutes'];
 	getHours =        GET + 'Hours';
 	getDay =          GET + 'Day';
 	getDate =         GET + 'Date';
@@ -8559,7 +8558,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 	
 		if (interval >= timeUnits.minute) { // minute
 			minDate[setMinutes](interval >= timeUnits.hour ? 0 :
-				count * Math.floor(minDate[getMinutes]() / count));
+				count * Math.floor(minDate.hcGetMinutes() / count));
 		}
 	
 		if (interval >= timeUnits.hour) { // hour

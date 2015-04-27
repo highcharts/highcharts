@@ -329,7 +329,7 @@ Highcharts.dateFormat = function (format, timestamp, capitalize) {
 			'H': pad(hours), // Two digits hours in 24h format, 00 through 23
 			'I': pad((hours % 12) || 12), // Two digits hours in 12h format, 00 through 11
 			'l': (hours % 12) || 12, // Hours in 12h format, 1 through 12
-			'M': pad(date[getMinutes]()), // Two digits minutes, 00 through 59
+			'M': pad(date.hcGetMinutes()), // Two digits minutes, 00 through 59
 			'p': hours < 12 ? 'AM' : 'PM', // Upper case AM or PM
 			'P': hours < 12 ? 'am' : 'pm', // Lower case AM or PM
 			'S': pad(date.getSeconds()), // Two digits seconds, 00 through  59
