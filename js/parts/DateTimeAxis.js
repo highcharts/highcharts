@@ -67,7 +67,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 	
 		// get tick positions
 		i = 1;
-		if (Date.hcTimezoneOffset || getTimezoneOffset) {
+		if (Date.hcTimezoneOffset || Date.getTimezoneOffset) {
 			minDate = minDate.getTime();
 			minDate = new Date(minDate + getTZOffset(minDate));
 		}

@@ -51,7 +51,6 @@ var AxisPlotLineOrBandExtension,
 
 	// time methods, changed based on whether or not UTC is used
 	Date,  // Allow using a different Date class
-	getTimezoneOffset,
 	getMinutes,
 	getHours,
 	getDay,
@@ -342,7 +341,8 @@ var wrap = Highcharts.wrap = function (obj, method, func) {
 
 
 function getTZOffset(timestamp) {
-	return ((getTimezoneOffset && getTimezoneOffset(timestamp)) || Date.hcTimezoneOffset || 0) * 60000;
+	var D = Date;
+	return ((D.getTimezoneOffset && D.getTimezoneOffset(timestamp)) || D.hcTimezoneOffset || 0) * 60000;
 }
 
 /**
@@ -1538,7 +1538,7 @@ function setTimeMethods() {
 
 	Date = globalOptions.Date || window.Date;
 	Date.hcTimezoneOffset = useUTC && globalOptions.timezoneOffset;
-	getTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
+	Date.getTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
 	Date.hcMakeTime = function (year, month, date, hours, minutes, seconds) {
 		var d;
 		if (useUTC) {
@@ -8593,7 +8593,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 	
 		// get tick positions
 		i = 1;
-		if (Date.hcTimezoneOffset || getTimezoneOffset) {
+		if (Date.hcTimezoneOffset || Date.getTimezoneOffset) {
 			minDate = minDate.getTime();
 			minDate = new Date(minDate + getTZOffset(minDate));
 		}
