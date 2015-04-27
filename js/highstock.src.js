@@ -348,11 +348,12 @@ Highcharts.dateFormat = function (format, timestamp, capitalize) {
 	var date = new Date(timestamp - getTZOffset(timestamp)),
 		key, // used in for constuct below
 		// get the basic time values
-		hours = date.hcGetHours(),
-		day = date.hcGetDay(),
-		dayOfMonth = date.hcGetDate(),
-		month = date.hcGetMonth(),
-		fullYear = date.hcGetFullYear(),
+		d = Date,
+		hours = date[d.hcGetHours](),
+		day = date[d.hcGetDay](),
+		dayOfMonth = date[d.hcGetDate](),
+		month = date[d.hcGetMonth](),
+		fullYear = date[d.hcGetFullYear](),
 		lang = Highcharts.defaultOptions.lang,
 		langWeekdays = lang.weekdays,
 
@@ -382,7 +383,7 @@ Highcharts.dateFormat = function (format, timestamp, capitalize) {
 			'H': pad(hours), // Two digits hours in 24h format, 00 through 23
 			'I': pad((hours % 12) || 12), // Two digits hours in 12h format, 00 through 11
 			'l': (hours % 12) || 12, // Hours in 12h format, 1 through 12
-			'M': pad(date.hcGetMinutes()), // Two digits minutes, 00 through 59
+			'M': pad(date[Date.hcGetMinutes]()), // Two digits minutes, 00 through 59
 			'p': hours < 12 ? 'AM' : 'PM', // Upper case AM or PM
 			'P': hours < 12 ? 'am' : 'pm', // Lower case AM or PM
 			'S': pad(date.getSeconds()), // Two digits seconds, 00 through  59
@@ -1544,19 +1545,19 @@ function setTimeMethods() {
 		}
 		return d;
 	};
-	Date.hcGetMinutes = Date[GET + 'Minutes'];
-	Date.hcGetHours = Date[GET + 'Hours'];
-	Date.hcGetDay = Date[GET + 'Day'];
-	Date.hcGetDate = Date[GET + 'Date'];
-	Date.hcGetMonth = Date[GET + 'Month'];
-	Date.hcGetFullYear = Date[GET + 'FullYear'];
-	Date.hcSetMilliseconds = Date[SET + 'Milliseconds'];
-	Date.hcSetSeconds = Date[SET + 'Seconds'];
-	Date.hcSetMinutes = Date[SET + 'Minutes'];
-	Date.hcSetHours = Date[SET + 'Hours'];
-	Date.hcSetDate = Date[SET + 'Date'];
-	Date.hcSetMonth = Date[SET + 'Month'];
-	Date.hcSetFullYear = Date[SET + 'FullYear'];
+	Date.hcGetMinutes = GET + 'Minutes';
+	Date.hcGetHours = GET + 'Hours';
+	Date.hcGetDay = GET + 'Day';
+	Date.hcGetDate = GET + 'Date';
+	Date.hcGetMonth = GET + 'Month';
+	Date.hcGetFullYear = GET + 'FullYear';
+	Date.hcSetMilliseconds = SET + 'Milliseconds';
+	Date.hcSetSeconds = SET + 'Seconds';
+	Date.hcSetMinutes = SET + 'Minutes';
+	Date.hcSetHours = SET + 'Hours';
+	Date.hcSetDate = SET + 'Date';
+	Date.hcSetMonth = SET + 'Month';
+	Date.hcSetFullYear = SET + 'FullYear';
 
 }
 
@@ -8529,68 +8530,69 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		timeUnits = Highcharts.timeUnits,
 		i,
 		higherRanks = {},
+		d = Date,
 		useUTC = Highcharts.defaultOptions.global.useUTC,
 		minYear, // used in months and years as a basis for Date.UTC()
-		minDate = new Date(min - getTZOffset(min)),
-		minDateDate = minDate.hcGetDate(),
-		minMonth = minDate.hcGetMonth(),
-		makeTime = Date.hcMakeTime,
+		minDate = new d(min - getTZOffset(min)),
+		minDateDate = minDate[d.hcGetDate](),
+		minMonth = minDate[d.hcGetMonth](),
+		makeTime = d.hcMakeTime,
 		interval = normalizedInterval.unitRange,
 		count = normalizedInterval.count;
 
 	if (defined(min)) { // #1300
-		minDate.hcSetMilliseconds(interval >= timeUnits.second ? 0 : // #3935
+		minDate[d.hcSetMilliseconds](interval >= timeUnits.second ? 0 : // #3935
 			count * Math.floor(minDate.getMilliseconds() / count)); // #3652, #3654
 
 		if (interval >= timeUnits.second) { // second
-			minDate.hcSetSeconds(interval >= timeUnits.minute ? 0 : // #3935
+			minDate[d.hcSetSeconds](interval >= timeUnits.minute ? 0 : // #3935
 				count * Math.floor(minDate.getSeconds() / count));
 		}
 	
 		if (interval >= timeUnits.minute) { // minute
-			minDate.hcSetMinutes(interval >= timeUnits.hour ? 0 :
-				count * Math.floor(minDate.hcGetMinutes() / count));
+			minDate[d.hcSetMinutes](interval >= timeUnits.hour ? 0 :
+				count * Math.floor(minDate[d.hcGetMinutes]() / count));
 		}
 	
 		if (interval >= timeUnits.hour) { // hour
-			minDate.hcSetHours(interval >= timeUnits.day ? 0 :
-				count * Math.floor(minDate.hcGetHours() / count));
+			minDate[d.hcSetHours](interval >= timeUnits.day ? 0 :
+				count * Math.floor(minDate[d.hcGetHours]() / count));
 		}
 	
 		if (interval >= timeUnits.day) { // day
-			minDate.hcSetDate(interval >= timeUnits.month ? 1 :
+			minDate[d.hcSetDate](interval >= timeUnits.month ? 1 :
 				count * Math.floor(minDateDate / count));
 		}
 	
 		if (interval >= timeUnits.month) { // month
-			minDate.hcSetMonth(interval >= timeUnits.year ? 0 :
+			minDate[d.hcSetMonth](interval >= timeUnits.year ? 0 :
 				count * Math.floor(minMonth / count));
-			minYear = minDate.hcGetFullYear();
+			minYear = minDate[d.hcGetFullYear]();
 		}
 	
 		if (interval >= timeUnits.year) { // year
 			minYear -= minYear % count;
-			minDate.hcSetFullYear(minYear);
+			minDate[d.hcSetFullYear](minYear);
 		}
 	
 		// week is a special case that runs outside the hierarchy
 		if (interval === timeUnits.week) {
 			// get start of current week, independent of count
-			minDate.hcSetDate(minDateDate - minDate.hcGetDay() +
+			minDate[d.hcSetDate](minDateDate - minDate[d.hcGetDay]() +
 				pick(startOfWeek, 1));
 		}
 	
 	
 		// get tick positions
 		i = 1;
-		if (Date.hcTimezoneOffset || Date.hcGetTimezoneOffset) {
+		if (d.hcTimezoneOffset || d.hcGetTimezoneOffset) {
 			minDate = minDate.getTime();
-			minDate = new Date(minDate + getTZOffset(minDate));
+			minDate = new d(minDate + getTZOffset(minDate));
 		}
-		minYear = minDate.hcGetFullYear();
+		minYear = minDate[d.hcGetFullYear]();
 		var time = minDate.getTime(),
 			localTimezoneOffset = (timeUnits.day + 
-					(useUTC ? getTZOffset(minDate) : minDate.hcGetTimezoneOffset() * 60 * 1000)
+					(useUTC ? getTZOffset(minDate) : minDate.getTimezoneOffset() * 60 * 1000)
 				) % timeUnits.day; // #950, #3359
 	
 		// iterate and add tick positions at appropriate values
@@ -22223,7 +22225,7 @@ RangeSelector.prototype = {
 
 				// Correct for timezone offset (#433)
 				if (!Highcharts.defaultOptions.global.useUTC) {
-					value = value + new Date().hcGetTimezoneOffset() * 60 * 1000;
+					value = value + new Date().getTimezoneOffset() * 60 * 1000;
 				}
 
 				// Validate the extremes. If it goes beyound the data min or max, use the

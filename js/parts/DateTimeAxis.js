@@ -15,68 +15,69 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		timeUnits = Highcharts.timeUnits,
 		i,
 		higherRanks = {},
+		d = Date,
 		useUTC = Highcharts.defaultOptions.global.useUTC,
 		minYear, // used in months and years as a basis for Date.UTC()
-		minDate = new Date(min - getTZOffset(min)),
-		minDateDate = minDate.hcGetDate(),
-		minMonth = minDate.hcGetMonth(),
-		makeTime = Date.hcMakeTime,
+		minDate = new d(min - getTZOffset(min)),
+		minDateDate = minDate[d.hcGetDate](),
+		minMonth = minDate[d.hcGetMonth](),
+		makeTime = d.hcMakeTime,
 		interval = normalizedInterval.unitRange,
 		count = normalizedInterval.count;
 
 	if (defined(min)) { // #1300
-		minDate.hcSetMilliseconds(interval >= timeUnits.second ? 0 : // #3935
+		minDate[d.hcSetMilliseconds](interval >= timeUnits.second ? 0 : // #3935
 			count * Math.floor(minDate.getMilliseconds() / count)); // #3652, #3654
 
 		if (interval >= timeUnits.second) { // second
-			minDate.hcSetSeconds(interval >= timeUnits.minute ? 0 : // #3935
+			minDate[d.hcSetSeconds](interval >= timeUnits.minute ? 0 : // #3935
 				count * Math.floor(minDate.getSeconds() / count));
 		}
 	
 		if (interval >= timeUnits.minute) { // minute
-			minDate.hcSetMinutes(interval >= timeUnits.hour ? 0 :
-				count * Math.floor(minDate.hcGetMinutes() / count));
+			minDate[d.hcSetMinutes](interval >= timeUnits.hour ? 0 :
+				count * Math.floor(minDate[d.hcGetMinutes]() / count));
 		}
 	
 		if (interval >= timeUnits.hour) { // hour
-			minDate.hcSetHours(interval >= timeUnits.day ? 0 :
-				count * Math.floor(minDate.hcGetHours() / count));
+			minDate[d.hcSetHours](interval >= timeUnits.day ? 0 :
+				count * Math.floor(minDate[d.hcGetHours]() / count));
 		}
 	
 		if (interval >= timeUnits.day) { // day
-			minDate.hcSetDate(interval >= timeUnits.month ? 1 :
+			minDate[d.hcSetDate](interval >= timeUnits.month ? 1 :
 				count * Math.floor(minDateDate / count));
 		}
 	
 		if (interval >= timeUnits.month) { // month
-			minDate.hcSetMonth(interval >= timeUnits.year ? 0 :
+			minDate[d.hcSetMonth](interval >= timeUnits.year ? 0 :
 				count * Math.floor(minMonth / count));
-			minYear = minDate.hcGetFullYear();
+			minYear = minDate[d.hcGetFullYear]();
 		}
 	
 		if (interval >= timeUnits.year) { // year
 			minYear -= minYear % count;
-			minDate.hcSetFullYear(minYear);
+			minDate[d.hcSetFullYear](minYear);
 		}
 	
 		// week is a special case that runs outside the hierarchy
 		if (interval === timeUnits.week) {
 			// get start of current week, independent of count
-			minDate.hcSetDate(minDateDate - minDate.hcGetDay() +
+			minDate[d.hcSetDate](minDateDate - minDate[d.hcGetDay]() +
 				pick(startOfWeek, 1));
 		}
 	
 	
 		// get tick positions
 		i = 1;
-		if (Date.hcTimezoneOffset || Date.hcGetTimezoneOffset) {
+		if (d.hcTimezoneOffset || d.hcGetTimezoneOffset) {
 			minDate = minDate.getTime();
-			minDate = new Date(minDate + getTZOffset(minDate));
+			minDate = new d(minDate + getTZOffset(minDate));
 		}
-		minYear = minDate.hcGetFullYear();
+		minYear = minDate[d.hcGetFullYear]();
 		var time = minDate.getTime(),
 			localTimezoneOffset = (timeUnits.day + 
-					(useUTC ? getTZOffset(minDate) : minDate.hcGetTimezoneOffset() * 60 * 1000)
+					(useUTC ? getTZOffset(minDate) : minDate.getTimezoneOffset() * 60 * 1000)
 				) % timeUnits.day; // #950, #3359
 	
 		// iterate and add tick positions at appropriate values

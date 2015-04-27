@@ -374,19 +374,19 @@ function setTimeMethods() {
 		}
 		return d;
 	};
-	Date.hcGetMinutes = Date[GET + 'Minutes'];
-	Date.hcGetHours = Date[GET + 'Hours'];
-	Date.hcGetDay = Date[GET + 'Day'];
-	Date.hcGetDate = Date[GET + 'Date'];
-	Date.hcGetMonth = Date[GET + 'Month'];
-	Date.hcGetFullYear = Date[GET + 'FullYear'];
-	Date.hcSetMilliseconds = Date[SET + 'Milliseconds'];
-	Date.hcSetSeconds = Date[SET + 'Seconds'];
-	Date.hcSetMinutes = Date[SET + 'Minutes'];
-	Date.hcSetHours = Date[SET + 'Hours'];
-	Date.hcSetDate = Date[SET + 'Date'];
-	Date.hcSetMonth = Date[SET + 'Month'];
-	Date.hcSetFullYear = Date[SET + 'FullYear'];
+	Date.hcGetMinutes = GET + 'Minutes';
+	Date.hcGetHours = GET + 'Hours';
+	Date.hcGetDay = GET + 'Day';
+	Date.hcGetDate = GET + 'Date';
+	Date.hcGetMonth = GET + 'Month';
+	Date.hcGetFullYear = GET + 'FullYear';
+	Date.hcSetMilliseconds = SET + 'Milliseconds';
+	Date.hcSetSeconds = SET + 'Seconds';
+	Date.hcSetMinutes = SET + 'Minutes';
+	Date.hcSetHours = SET + 'Hours';
+	Date.hcSetDate = SET + 'Date';
+	Date.hcSetMonth = SET + 'Month';
+	Date.hcSetFullYear = SET + 'FullYear';
 
 }
 
