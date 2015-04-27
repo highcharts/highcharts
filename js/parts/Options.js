@@ -380,7 +380,7 @@ function setTimeMethods() {
 	Date.hcGetDate = Date[GET + 'Date'];
 	Date.hcGetMonth = Date[GET + 'Month'];
 	Date.hcGetFullYear = Date[GET + 'FullYear'];
-	setMilliseconds = SET + 'Milliseconds';
+	Date.hcSetMilliseconds = Date[SET + 'Milliseconds'];
 	setSeconds =      SET + 'Seconds';
 	setMinutes =      SET + 'Minutes';
 	setHours =        SET + 'Hours';
