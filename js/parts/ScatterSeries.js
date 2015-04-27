@@ -23,7 +23,6 @@ var ScatterSeries = extendClass(Series, {
 	trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
 	takeOrdinalPosition: false, // #2342
 	kdDimensions: 2,
-	kdComparer: 'distR',
 	drawGraph: function () {
 		if (this.options.lineWidth) {
 			Series.prototype.drawGraph.call(this);

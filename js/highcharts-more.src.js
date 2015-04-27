@@ -2171,7 +2171,6 @@ Axis.prototype.beforePadding = function () {
 				this.searchPoint = this.searchPointByAngle;
 			} else {
 				this.kdDimensions = 2;
-				this.kdComparer = 'distR';
 			}
 		}
 		proceed.apply(this);

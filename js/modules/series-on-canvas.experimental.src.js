@@ -459,8 +459,8 @@
     /**
      * Return a point instance from the k-d-tree
      */
-    wrap(Series.prototype, 'searchPoint', function (proceed, e, c) {
-        var point = proceed.call(this, e, c),
+    wrap(Series.prototype, 'searchPoint', function (proceed, e) {
+        var point = proceed.call(this, e),
             ret = point;
 
         if (point && !(point instanceof this.pointClass)) {

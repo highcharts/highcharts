@@ -1741,9 +1741,8 @@ Series.prototype = {
 
 	kdDimensions: 1,
 	kdAxisArray: ['clientX', 'plotY'],
-	kdComparer: 'distX',
 
-	searchPoint: function (e, kdComparer) {
+	searchPoint: function (e, compareX) {
 		var series = this,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
@@ -1752,7 +1751,7 @@ Series.prototype = {
 		return this.searchKDTree({
 			clientX: inverted ? xAxis.len - e.chartY + xAxis.pos : e.chartX - xAxis.pos,
 			plotY: inverted ? yAxis.len - e.chartX + yAxis.pos : e.chartY - yAxis.pos
-		}, kdComparer);
+		}, compareX);
 	},
 
 	buildKDTree: function () {
@@ -1791,7 +1790,7 @@ Series.prototype = {
 				return point.y !== null;
 			});
 
-			series.kdTree = _kdtree(points, dimensions, dimensions);	
+			series.kdTree = _kdtree(points, dimensions, dimensions);
 		}
 		delete series.kdTree;
 		
@@ -1802,22 +1801,20 @@ Series.prototype = {
 		}
 	},
 
-	searchKDTree: function (point, kdComparer) {
+	searchKDTree: function (point, compareX) {
 		var series = this,
 			kdX = this.kdAxisArray[0],
-			kdY = this.kdAxisArray[1];
+			kdY = this.kdAxisArray[1],
+			kdComparer = compareX ? 'distX' : 'dist';
 
-		// Internal function
-		function _distance(p1, p2) {
+		// Set the one and two dimensional distance on the point object
+		function setDistance(p1, p2) {
 			var x = (defined(p1[kdX]) && defined(p2[kdX])) ? Math.pow(p1[kdX] - p2[kdX], 2) : null,
 				y = (defined(p1[kdY]) && defined(p2[kdY])) ? Math.pow(p1[kdY] - p2[kdY], 2) : null,
 				r = (x || 0) + (y || 0);
 
-			return {
-				distX: defined(x) ? Math.sqrt(x) : Number.MAX_VALUE,
-				distY: defined(y) ? Math.sqrt(y) : Number.MAX_VALUE,
-				distR: defined(r) ? Math.sqrt(r) : Number.MAX_VALUE
-			};
+			p2.dist = defined(r) ? Math.sqrt(r) : Number.MAX_VALUE;
+			p2.distX = defined(x) ? Math.sqrt(x) : Number.MAX_VALUE;
 		}
 		function _search(search, tree, depth, dimensions) {
 			var point = tree.point,
@@ -1828,23 +1825,25 @@ Series.prototype = {
 				ret = point,
 				nPoint1,
 				nPoint2;
-			point.dist = _distance(search, point);
+			
+			setDistance(search, point);
+
 			// Pick side based on distance to splitting point
 			tdist = search[axis] - point[axis];
 			sideA = tdist < 0 ? 'left' : 'right';
+			sideB = tdist < 0 ? 'right' : 'left';
 
-				sideB = tdist < 0 ? 'right' : 'left';
 			// End of tree
 			if (tree[sideA]) {
 				nPoint1 =_search(search, tree[sideA], depth + 1, dimensions);
 
-				ret = (nPoint1.dist[kdComparer] < ret.dist[kdComparer] ? nPoint1 : point);
+				ret = (nPoint1[kdComparer] < ret[kdComparer] ? nPoint1 : point);
 			} 
 			if (tree[sideB]) {
 				// compare distance to current best to splitting point to decide wether to check side B or not
-				if (Math.sqrt(tdist*tdist) < ret.dist[kdComparer]) {
+				if (Math.sqrt(tdist * tdist) < ret[kdComparer]) {
 					nPoint2 = _search(search, tree[sideB], depth + 1, dimensions);
-					ret = (nPoint2.dist[kdComparer] < ret.dist[kdComparer] ? nPoint2 : ret);
+					ret = (nPoint2[kdComparer] < ret[kdComparer] ? nPoint2 : ret);
 				}
 			}
 			
