@@ -51,7 +51,6 @@ var AxisPlotLineOrBandExtension,
 
 	// time methods, changed based on whether or not UTC is used
 	Date,  // Allow using a different Date class
-	setMinutes,
 	setHours,
 	setDate,
 	setMonth,
@@ -1556,7 +1555,7 @@ function setTimeMethods() {
 	Date.hcGetFullYear = Date[GET + 'FullYear'];
 	Date.hcSetMilliseconds = Date[SET + 'Milliseconds'];
 	Date.hcSetSeconds = Date[SET + 'Seconds'];
-	setMinutes =      SET + 'Minutes';
+	Date.hcSetMinutes = Date[SET + 'Minutes'];
 	setHours =        SET + 'Hours';
 	setDate =         SET + 'Date';
 	setMonth =        SET + 'Month';
@@ -8552,7 +8551,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		}
 	
 		if (interval >= timeUnits.minute) { // minute
-			minDate[setMinutes](interval >= timeUnits.hour ? 0 :
+			minDate.hcSetMinutes(interval >= timeUnits.hour ? 0 :
 				count * Math.floor(minDate.hcGetMinutes() / count));
 		}
 	
