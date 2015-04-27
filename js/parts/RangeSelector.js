@@ -135,7 +135,7 @@ RangeSelector.prototype = {
 					redraw = false;
 				}
 				now = new Date(dataMax);
-				year = now.getFullYear();
+				year = now.hcGetFullYear();
 				newMin = rangeMin = Math.max(dataMin || 0, Date.UTC(year, 0, 1));
 				now = now.getTime();
 				newMax = Math.min(dataMax || now, now);

@@ -299,7 +299,7 @@ Highcharts.dateFormat = function (format, timestamp, capitalize) {
 		day = date.hcGetDay(),
 		dayOfMonth = date.hcGetDate(),
 		month = date.hcGetMonth(),
-		fullYear = date[getFullYear](),
+		fullYear = date.hcGetFullYear(),
 		lang = Highcharts.defaultOptions.lang,
 		langWeekdays = lang.weekdays,
 

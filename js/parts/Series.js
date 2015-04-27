@@ -193,7 +193,7 @@ Series.prototype = {
 			date = new Date(xIncrement);
 			date = (pointIntervalUnit === 'month') ?
 				+date[setMonth](date.hcGetMonth() + pointInterval) :
-				+date[setFullYear](date[getFullYear]() + pointInterval);
+				+date[setFullYear](date.hcGetFullYear() + pointInterval);
 			pointInterval = date - xIncrement;
 		}
 		

@@ -51,7 +51,6 @@ var AxisPlotLineOrBandExtension,
 
 	// time methods, changed based on whether or not UTC is used
 	Date,  // Allow using a different Date class
-	getFullYear,
 	setMilliseconds,
 	setSeconds,
 	setMinutes,
@@ -359,7 +358,7 @@ Highcharts.dateFormat = function (format, timestamp, capitalize) {
 		day = date.hcGetDay(),
 		dayOfMonth = date.hcGetDate(),
 		month = date.hcGetMonth(),
-		fullYear = date[getFullYear](),
+		fullYear = date.hcGetFullYear(),
 		lang = Highcharts.defaultOptions.lang,
 		langWeekdays = lang.weekdays,
 
@@ -1556,7 +1555,7 @@ function setTimeMethods() {
 	Date.hcGetDay = Date[GET + 'Day'];
 	Date.hcGetDate = Date[GET + 'Date'];
 	Date.hcGetMonth = Date[GET + 'Month'];
-	getFullYear =     GET + 'FullYear';
+	Date.hcGetFullYear = Date[GET + 'FullYear'];
 	setMilliseconds = SET + 'Milliseconds';
 	setSeconds =      SET + 'Seconds';
 	setMinutes =      SET + 'Minutes';
@@ -12552,7 +12551,7 @@ Series.prototype = {
 			date = new Date(xIncrement);
 			date = (pointIntervalUnit === 'month') ?
 				+date[setMonth](date.hcGetMonth() + pointInterval) :
-				+date[setFullYear](date[getFullYear]() + pointInterval);
+				+date[setFullYear](date.hcGetFullYear() + pointInterval);
 			pointInterval = date - xIncrement;
 		}
 		
