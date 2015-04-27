@@ -51,7 +51,6 @@ var AxisPlotLineOrBandExtension,
 
 	// time methods, changed based on whether or not UTC is used
 	Date,  // Allow using a different Date class
-	setSeconds,
 	setMinutes,
 	setHours,
 	setDate,
@@ -1556,7 +1555,7 @@ function setTimeMethods() {
 	Date.hcGetMonth = Date[GET + 'Month'];
 	Date.hcGetFullYear = Date[GET + 'FullYear'];
 	Date.hcSetMilliseconds = Date[SET + 'Milliseconds'];
-	setSeconds =      SET + 'Seconds';
+	Date.hcSetSeconds = Date[SET + 'Seconds'];
 	setMinutes =      SET + 'Minutes';
 	setHours =        SET + 'Hours';
 	setDate =         SET + 'Date';

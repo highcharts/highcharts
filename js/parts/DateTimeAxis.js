@@ -29,7 +29,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 			count * Math.floor(minDate.getMilliseconds() / count)); // #3652, #3654
 
 		if (interval >= timeUnits.second) { // second
-			minDate[setSeconds](interval >= timeUnits.minute ? 0 : // #3935
+			minDate.hcSetSeconds(interval >= timeUnits.minute ? 0 : // #3935
 				count * Math.floor(minDate.getSeconds() / count));
 		}
 	
