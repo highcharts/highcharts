@@ -36,7 +36,6 @@ var AxisPlotLineOrBandExtension,
 
 	// time methods, changed based on whether or not UTC is used
 	Date,  // Allow using a different Date class
-	timezoneOffset,
 	getTimezoneOffset,
 	getMinutes,
 	getHours,

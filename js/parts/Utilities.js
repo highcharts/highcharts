@@ -276,7 +276,7 @@ var wrap = Highcharts.wrap = function (obj, method, func) {
 
 
 function getTZOffset(timestamp) {
-	return ((getTimezoneOffset && getTimezoneOffset(timestamp)) || timezoneOffset || 0) * 60000;
+	return ((getTimezoneOffset && getTimezoneOffset(timestamp)) || Date.hcTimezoneOffset || 0) * 60000;
 }
 
 /**
