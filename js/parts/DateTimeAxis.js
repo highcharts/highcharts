@@ -49,7 +49,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		}
 	
 		if (interval >= timeUnits.month) { // month
-			minDate[setMonth](interval >= timeUnits.year ? 0 :
+			minDate.hcSetMonth(interval >= timeUnits.year ? 0 :
 				count * Math.floor(minMonth / count));
 			minYear = minDate.hcGetFullYear();
 		}

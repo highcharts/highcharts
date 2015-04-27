@@ -51,7 +51,6 @@ var AxisPlotLineOrBandExtension,
 
 	// time methods, changed based on whether or not UTC is used
 	Date,  // Allow using a different Date class
-	setMonth,
 	setFullYear;
 /**
  * Extend an object with the members of another
@@ -1556,7 +1555,7 @@ function setTimeMethods() {
 	Date.hcSetMinutes = Date[SET + 'Minutes'];
 	Date.hcSetHours = Date[SET + 'Hours'];
 	Date.hcSetDate = Date[SET + 'Date'];
-	setMonth =        SET + 'Month';
+	Date.hcSetMonth = Date[SET + 'Month'];
 	setFullYear =     SET + 'FullYear';
 
 }
@@ -8564,7 +8563,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		}
 	
 		if (interval >= timeUnits.month) { // month
-			minDate[setMonth](interval >= timeUnits.year ? 0 :
+			minDate.hcSetMonth(interval >= timeUnits.year ? 0 :
 				count * Math.floor(minMonth / count));
 			minYear = minDate.hcGetFullYear();
 		}
@@ -13049,7 +13048,7 @@ Series.prototype = {
 		if (pointIntervalUnit === 'month' || pointIntervalUnit === 'year') {
 			date = new Date(xIncrement);
 			date = (pointIntervalUnit === 'month') ?
-				+date[setMonth](date.hcGetMonth() + pointInterval) :
+				+date.hcSetMonth(date.hcGetMonth() + pointInterval) :
 				+date[setFullYear](date.hcGetFullYear() + pointInterval);
 			pointInterval = date - xIncrement;
 		}
