@@ -51,7 +51,6 @@ var AxisPlotLineOrBandExtension,
 
 	// time methods, changed based on whether or not UTC is used
 	Date,  // Allow using a different Date class
-	makeTime,
 	timezoneOffset,
 	getTimezoneOffset,
 	getMinutes,
@@ -1541,7 +1540,7 @@ function setTimeMethods() {
 	Date = globalOptions.Date || window.Date;
 	timezoneOffset = useUTC && globalOptions.timezoneOffset;
 	getTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
-	makeTime = function (year, month, date, hours, minutes, seconds) {
+	Date.hcMakeTime = function (year, month, date, hours, minutes, seconds) {
 		var d;
 		if (useUTC) {
 			d = Date.UTC.apply(0, arguments);

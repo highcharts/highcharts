@@ -357,7 +357,7 @@ function setTimeMethods() {
 	Date = globalOptions.Date || window.Date;
 	timezoneOffset = useUTC && globalOptions.timezoneOffset;
 	getTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
-	makeTime = function (year, month, date, hours, minutes, seconds) {
+	Date.hcMakeTime = function (year, month, date, hours, minutes, seconds) {
 		var d;
 		if (useUTC) {
 			d = Date.UTC.apply(0, arguments);
