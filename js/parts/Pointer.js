@@ -164,7 +164,7 @@ Pointer.prototype = {
 				// Skip hidden series
 				noSharedTooltip = s.noSharedTooltip && shared;
 				if (s.visible && !noSharedTooltip && pick(s.options.enableMouseTracking, true)) { // #3821
-					kdpointT = s.searchPoint(e); // #3828
+					kdpointT = s.searchPoint(e, noSharedTooltip ? 'distR' : 'distX'); // #3828
 					if (kdpointT) {
 						kdpoints.push(kdpointT);
 					}
@@ -173,12 +173,18 @@ Pointer.prototype = {
 			// Find absolute nearest point
 			each(kdpoints, function (p) {
 				if (p && p.dist) {
+					if (p.dist.distR < distance) {
+						distance = p.dist.distR;
+						kdpoint = p;
+					}
+					/*
 					if ((p.dist.distX < distance) || ((p.dist.distX === distance || p.series.kdDimensions > 1) && 
 							p.dist.distR < rdistance)) {
 						distance = p.dist.distX;
 						rdistance = p.dist.distR;
 						kdpoint = p;
 					}
+					*/
 				}
 			});
 		}
