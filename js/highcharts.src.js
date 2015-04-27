@@ -14649,7 +14649,6 @@ Series.prototype = {
 	 */
 
 	kdDimensions: 1,
-	kdTree: null,
 	kdAxisArray: ['clientX', 'plotY'],
 	kdComparer: 'distX',
 
