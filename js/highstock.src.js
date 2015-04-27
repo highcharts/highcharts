@@ -51,7 +51,6 @@ var AxisPlotLineOrBandExtension,
 
 	// time methods, changed based on whether or not UTC is used
 	Date,  // Allow using a different Date class
-	getDay,
 	getDate,
 	getMonth,
 	getFullYear,
@@ -359,7 +358,7 @@ Highcharts.dateFormat = function (format, timestamp, capitalize) {
 		key, // used in for constuct below
 		// get the basic time values
 		hours = date.hcGetHours(),
-		day = date[getDay](),
+		day = date.hcGetDay(),
 		dayOfMonth = date[getDate](),
 		month = date[getMonth](),
 		fullYear = date[getFullYear](),
@@ -1556,7 +1555,7 @@ function setTimeMethods() {
 	};
 	Date.hcGetMinutes = Date[GET + 'Minutes'];
 	Date.hcGetHours = Date[GET + 'Hours'];
-	getDay =          GET + 'Day';
+	Date.hcGetDay = Date[GET + 'Day'];
 	getDate =         GET + 'Date';
 	getMonth =        GET + 'Month';
 	getFullYear =     GET + 'FullYear';
@@ -8584,7 +8583,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		// week is a special case that runs outside the hierarchy
 		if (interval === timeUnits.week) {
 			// get start of current week, independent of count
-			minDate[setDate](minDate[getDate]() - minDate[getDay]() +
+			minDate[setDate](minDate[getDate]() - minDate.hcGetDay() +
 				pick(startOfWeek, 1));
 		}
 	

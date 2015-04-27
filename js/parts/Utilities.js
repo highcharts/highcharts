@@ -296,7 +296,7 @@ Highcharts.dateFormat = function (format, timestamp, capitalize) {
 		key, // used in for constuct below
 		// get the basic time values
 		hours = date.hcGetHours(),
-		day = date[getDay](),
+		day = date.hcGetDay(),
 		dayOfMonth = date[getDate](),
 		month = date[getMonth](),
 		fullYear = date[getFullYear](),
