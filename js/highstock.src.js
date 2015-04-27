@@ -51,7 +51,6 @@ var AxisPlotLineOrBandExtension,
 
 	// time methods, changed based on whether or not UTC is used
 	Date,  // Allow using a different Date class
-	getDate,
 	getMonth,
 	getFullYear,
 	setMilliseconds,
@@ -359,7 +358,7 @@ Highcharts.dateFormat = function (format, timestamp, capitalize) {
 		// get the basic time values
 		hours = date.hcGetHours(),
 		day = date.hcGetDay(),
-		dayOfMonth = date[getDate](),
+		dayOfMonth = date.hcGetDate(),
 		month = date[getMonth](),
 		fullYear = date[getFullYear](),
 		lang = Highcharts.defaultOptions.lang,
@@ -1556,7 +1555,7 @@ function setTimeMethods() {
 	Date.hcGetMinutes = Date[GET + 'Minutes'];
 	Date.hcGetHours = Date[GET + 'Hours'];
 	Date.hcGetDay = Date[GET + 'Day'];
-	getDate =         GET + 'Date';
+	Date.hcGetDate = Date[GET + 'Date'];
 	getMonth =        GET + 'Month';
 	getFullYear =     GET + 'FullYear';
 	setMilliseconds = SET + 'Milliseconds';
@@ -8541,6 +8540,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		useUTC = Highcharts.defaultOptions.global.useUTC,
 		minYear, // used in months and years as a basis for Date.UTC()
 		minDate = new Date(min - getTZOffset(min)),
+		minDateDate = minDate.hcGetDate(),
 		makeTime = Date.hcMakeTime,
 		interval = normalizedInterval.unitRange,
 		count = normalizedInterval.count;
@@ -8566,7 +8566,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 	
 		if (interval >= timeUnits.day) { // day
 			minDate[setDate](interval >= timeUnits.month ? 1 :
-				count * Math.floor(minDate[getDate]() / count));
+				count * Math.floor(minDateDate / count));
 		}
 	
 		if (interval >= timeUnits.month) { // month
@@ -8583,7 +8583,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		// week is a special case that runs outside the hierarchy
 		if (interval === timeUnits.week) {
 			// get start of current week, independent of count
-			minDate[setDate](minDate[getDate]() - minDate.hcGetDay() +
+			minDate[setDate](minDateDate - minDate.hcGetDay() +
 				pick(startOfWeek, 1));
 		}
 	
@@ -8597,7 +8597,6 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		minYear = minDate[getFullYear]();
 		var time = minDate.getTime(),
 			minMonth = minDate[getMonth](),
-			minDateDate = minDate[getDate](),
 			localTimezoneOffset = (timeUnits.day + 
 					(useUTC ? getTZOffset(minDate) : minDate.getTimezoneOffset() * 60 * 1000)
 				) % timeUnits.day; // #950, #3359
