@@ -374,20 +374,12 @@ function setTimeMethods() {
 		}
 		return d;
 	};
-	Date.hcGetMinutes = GET + 'Minutes';
-	Date.hcGetHours = GET + 'Hours';
-	Date.hcGetDay = GET + 'Day';
-	Date.hcGetDate = GET + 'Date';
-	Date.hcGetMonth = GET + 'Month';
-	Date.hcGetFullYear = GET + 'FullYear';
-	Date.hcSetMilliseconds = SET + 'Milliseconds';
-	Date.hcSetSeconds = SET + 'Seconds';
-	Date.hcSetMinutes = SET + 'Minutes';
-	Date.hcSetHours = SET + 'Hours';
-	Date.hcSetDate = SET + 'Date';
-	Date.hcSetMonth = SET + 'Month';
-	Date.hcSetFullYear = SET + 'FullYear';
-
+	each(['Minutes', 'Hours', 'Day', 'Date', 'Month', 'FullYear'], function (s) {
+		Date['hcGet' + s] = GET + s;
+	});
+	each(['Milliseconds', 'Seconds', 'Minutes', 'Hours', 'Date', 'Month', 'FullYear'], function (s) {
+		Date['hcSet' + s] = SET + s;
+	});
 }
 
 /**
