@@ -14165,7 +14165,6 @@ Series.prototype = {
 	},
 
 	buildKDTree: function () {
-		console.log('build');
 		var series = this,
 			dimensions = series.kdDimensions;
 
