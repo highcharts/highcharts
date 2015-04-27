@@ -1049,7 +1049,7 @@ Highcharts.VMLRenderer = VMLRenderer = function () {
 VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
 
 	// general renderer
-	Renderer = VMLRenderer;
+	Highcharts.Renderer = VMLRenderer;
 }
 
 // This method is used with exporting in old IE, when emulating SVG (see #2314)

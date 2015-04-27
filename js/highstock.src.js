@@ -46,13 +46,8 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	// Initialize some Highcharts variables
 	init();
 
-	// some variables
-var Renderer,
-
-	// some constants for frequently used strings
-	
 	// Object for extending Axis
-	AxisPlotLineOrBandExtension,
+var AxisPlotLineOrBandExtension,
 
 	// time methods, changed based on whether or not UTC is used
 	Date,  // Allow using a different Date class
@@ -4310,7 +4305,7 @@ SVGRenderer.prototype = {
 
 
 // general renderer
-Renderer = SVGRenderer;
+Highcharts.Renderer = SVGRenderer;
 // extend SvgElement for useHTML option
 extend(SVGElement.prototype, {
 	/**
@@ -5658,7 +5653,7 @@ Highcharts.VMLRenderer = VMLRenderer = function () {
 VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
 
 	// general renderer
-	Renderer = VMLRenderer;
+	Highcharts.Renderer = VMLRenderer;
 }
 
 // This method is used with exporting in old IE, when emulating SVG (see #2314)
@@ -5741,7 +5736,7 @@ if (Highcharts.useCanVG) {
 		};
 	}());
 
-	Renderer = CanVGRenderer;
+	Highcharts.Renderer = CanVGRenderer;
 } // end CanVGRenderer
 
 /* ****************************************************************************
@@ -11823,7 +11818,7 @@ Chart.prototype = {
 		chart.renderer =
 			optionsChart.forExport ? // force SVG, used for SVG export
 				new SVGRenderer(container, chartWidth, chartHeight, optionsChart.style, true) :
-				new Renderer(container, chartWidth, chartHeight, optionsChart.style);
+				new Highcharts.Renderer(container, chartWidth, chartHeight, optionsChart.style);
 
 		if (Highcharts.useCanVG) {
 			// If we need canvg library, extend and configure the renderer
@@ -20614,7 +20609,7 @@ each(['circle', 'square'], function (shape) {
 // The symbol callbacks are generated on the SVGRenderer object in all browsers. Even
 // VML browsers need this in order to generate shapes in export. Now share
 // them with the VMLRenderer.
-if (Renderer === Highcharts.VMLRenderer) {
+if (Highcharts.Renderer === Highcharts.VMLRenderer) {
 	each(['flag', 'circlepin', 'squarepin'], function (shape) {
 		VMLRenderer.prototype.symbols[shape] = symbols[shape];
 	});
@@ -22853,7 +22848,7 @@ SVGRenderer.prototype.crispPolyLine = function (points, width) {
 	}
 	return points;
 };
-if (Renderer === Highcharts.VMLRenderer) {
+if (Highcharts.Renderer === Highcharts.VMLRenderer) {
 	VMLRenderer.prototype.crispPolyLine = SVGRenderer.prototype.crispPolyLine;
 }
 
@@ -23152,7 +23147,6 @@ extend(Highcharts, {
 	Color: Color,
 	Point: Point,
 	Tick: Tick,	
-	Renderer: Renderer,
 	SVGElement: SVGElement,
 	SVGRenderer: SVGRenderer,
 	

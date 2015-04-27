@@ -2583,4 +2583,4 @@ SVGRenderer.prototype = {
 
 
 // general renderer
-Renderer = SVGRenderer;
+Highcharts.Renderer = SVGRenderer;

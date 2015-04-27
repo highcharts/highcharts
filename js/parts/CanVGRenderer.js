@@ -58,7 +58,7 @@ if (Highcharts.useCanVG) {
 		};
 	}());
 
-	Renderer = CanVGRenderer;
+	Highcharts.Renderer = CanVGRenderer;
 } // end CanVGRenderer
 
 /* ****************************************************************************

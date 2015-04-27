@@ -31,13 +31,8 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	// Initialize some Highcharts variables
 	init();
 
-	// some variables
-var Renderer,
-
-	// some constants for frequently used strings
-	
 	// Object for extending Axis
-	AxisPlotLineOrBandExtension,
+var AxisPlotLineOrBandExtension,
 
 	// time methods, changed based on whether or not UTC is used
 	Date,  // Allow using a different Date class

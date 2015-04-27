@@ -6,7 +6,6 @@ extend(Highcharts, {
 	Color: Color,
 	Point: Point,
 	Tick: Tick,	
-	Renderer: Renderer,
 	SVGElement: SVGElement,
 	SVGRenderer: SVGRenderer,
 	

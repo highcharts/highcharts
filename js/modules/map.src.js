@@ -18,7 +18,6 @@ var Axis = Highcharts.Axis,
 	Pointer = Highcharts.Pointer,
 	Legend = Highcharts.Legend,
 	LegendSymbolMixin = Highcharts.LegendSymbolMixin,
-	Renderer = Highcharts.Renderer,
 	Series = Highcharts.Series,
 	SVGRenderer = Highcharts.SVGRenderer,
 	VMLRenderer = Highcharts.VMLRenderer,
@@ -2150,7 +2149,7 @@ SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
 // The symbol callbacks are generated on the SVGRenderer object in all browsers. Even
 // VML browsers need this in order to generate shapes in export. Now share
 // them with the VMLRenderer.
-if (Renderer === VMLRenderer) {
+if (Highcharts.Renderer === VMLRenderer) {
 	each(['topbutton', 'bottombutton'], function (shape) {
 		VMLRenderer.prototype.symbols[shape] = SVGRenderer.prototype.symbols[shape];
 	});
