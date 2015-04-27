@@ -39,7 +39,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		}
 	
 		if (interval >= timeUnits.hour) { // hour
-			minDate[setHours](interval >= timeUnits.day ? 0 :
+			minDate.hcSetHours(interval >= timeUnits.day ? 0 :
 				count * Math.floor(minDate.hcGetHours() / count));
 		}
 	
