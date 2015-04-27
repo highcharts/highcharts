@@ -19,6 +19,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		minYear, // used in months and years as a basis for Date.UTC()
 		minDate = new Date(min - getTZOffset(min)),
 		minDateDate = minDate.hcGetDate(),
+		minMonth = minDate.hcGetMonth(),
 		makeTime = Date.hcMakeTime,
 		interval = normalizedInterval.unitRange,
 		count = normalizedInterval.count;
@@ -49,7 +50,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 	
 		if (interval >= timeUnits.month) { // month
 			minDate[setMonth](interval >= timeUnits.year ? 0 :
-				count * Math.floor(minDate[getMonth]() / count));
+				count * Math.floor(minMonth / count));
 			minYear = minDate[getFullYear]();
 		}
 	
@@ -74,7 +75,6 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		}
 		minYear = minDate[getFullYear]();
 		var time = minDate.getTime(),
-			minMonth = minDate[getMonth](),
 			localTimezoneOffset = (timeUnits.day + 
 					(useUTC ? getTZOffset(minDate) : minDate.getTimezoneOffset() * 60 * 1000)
 				) % timeUnits.day; // #950, #3359
