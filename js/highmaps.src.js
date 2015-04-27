@@ -50,8 +50,8 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 var AxisPlotLineOrBandExtension,
 
 	// time methods, changed based on whether or not UTC is used
-	Date,  // Allow using a different Date class
-	setFullYear;
+	Date;  // Allow using a different Date class
+
 /**
  * Extend an object with the members of another
  * @param {Object} a The object to be extended
@@ -1556,7 +1556,7 @@ function setTimeMethods() {
 	Date.hcSetHours = Date[SET + 'Hours'];
 	Date.hcSetDate = Date[SET + 'Date'];
 	Date.hcSetMonth = Date[SET + 'Month'];
-	setFullYear =     SET + 'FullYear';
+	Date.hcSetFullYear = Date[SET + 'FullYear'];
 
 }
 
@@ -12545,7 +12545,7 @@ Series.prototype = {
 			date = new Date(xIncrement);
 			date = (pointIntervalUnit === 'month') ?
 				+date.hcSetMonth(date.hcGetMonth() + pointInterval) :
-				+date[setFullYear](date.hcGetFullYear() + pointInterval);
+				+date.hcSetFullYear(date.hcGetFullYear() + pointInterval);
 			pointInterval = date - xIncrement;
 		}
 		

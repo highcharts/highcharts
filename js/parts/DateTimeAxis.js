@@ -56,7 +56,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 	
 		if (interval >= timeUnits.year) { // year
 			minYear -= minYear % count;
-			minDate[setFullYear](minYear);
+			minDate.hcSetFullYear(minYear);
 		}
 	
 		// week is a special case that runs outside the hierarchy

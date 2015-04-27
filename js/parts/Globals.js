@@ -35,5 +35,4 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 var AxisPlotLineOrBandExtension,
 
 	// time methods, changed based on whether or not UTC is used
-	Date,  // Allow using a different Date class
-	setFullYear;
+	Date;  // Allow using a different Date class
