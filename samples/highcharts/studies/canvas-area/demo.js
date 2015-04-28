@@ -30,9 +30,7 @@ $(function () {
         }
         return arr;
     }
-    var n = 500000,
-        data = getData(n);
-
+    var data = getData(500000);
 
     console.time('area');
     $('#container').highcharts({
@@ -43,7 +41,7 @@ $(function () {
         },
 
         title: {
-            text: 'Trimmed Highcharts drawing ' + n + ' points'
+            text: 'Trimmed Highcharts drawing ' + data.length + ' points'
         },
 
         subtitle: {

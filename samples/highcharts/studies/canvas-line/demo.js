@@ -54,7 +54,7 @@ $(function () {
 
         series: [{
             data: data,
-            lineWidth: 1
+            lineWidth: 0.5
         }]
 
     });

@@ -10,7 +10,6 @@
  * Development plan
  * - Column. One pixel per column is probably enough. Otherwise, SVG should be used.
  * - Column range.
- * - For sampling, check the implementation when points are not 1px away.
  * - Heatmap and treemap? Not core, so the implementation should perhaps lie in feature files.
  * - Check how it works with Highstock and data grouping.
  * - Check or implement stacking in area and column.
@@ -245,7 +244,9 @@
                 maxVal,
                 minI,
                 maxI,
-                fillColor = Color(series.color).setOpacity(pick(options.fillOpacity, 0.75)).get(),
+                fillColor = series.fillOpacity ?
+                        new Color(series.color).setOpacity(pick(options.fillOpacity, 0.75)).get() :
+                        series.color,
                 stroke = function () {
                     if (doFill) {
                         ctx.fillStyle = fillColor;
@@ -388,33 +389,36 @@
                     clientX = Math.round(xAxis.toPixels(x, true));
 
                     if (sampling) {
-                        if (clientX === lastClientX) {
+                        if (minI === undefined || clientX === lastClientX) {
                             if (!isRange) {
                                 low = y;
                             }
-                            if (y > maxVal) {
+                            if (maxI === undefined || y > maxVal) {
                                 maxVal = y;
                                 maxI = i;
-                            } else if (low < minVal) {
+                            }
+                            if (minI === undefined || low < minVal) {
                                 minVal = low;
                                 minI = i;
                             }
 
-                        } else { // Add points and reset
-                            if (typeof minI === 'number') { // then maxI is also a number
+                        }
+                        if (clientX !== lastClientX) { // Add points and reset
+                            if (minI !== undefined) { // then maxI is also a number
                                 plotY = yAxis.toPixels(maxVal, true);
                                 yBottom = yAxis.toPixels(minVal, true);
                                 drawPoint(
-                                    lastClientX,
+                                    clientX,
                                     hasThreshold ? Math.min(plotY, translatedThreshold) : plotY,
                                     hasThreshold ? Math.max(yBottom, translatedThreshold) : yBottom
                                 );
-                                addKDPoint(lastClientX, plotY, maxI);
-                                addKDPoint(lastClientX, yBottom, minI);
+                                addKDPoint(clientX, plotY, maxI);
+                                if (yBottom !== plotY) {
+                                    addKDPoint(clientX, yBottom, minI);
+                                }
                             }
 
 
-                            minVal = maxVal = y;
                             minI = maxI = undefined;
                             lastClientX = clientX;
                         }
@@ -491,6 +495,7 @@
             }
         },
         fill: true,
+        fillOpacity: true,
         sampling: true
     });
 
