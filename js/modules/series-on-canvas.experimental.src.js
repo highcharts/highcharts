@@ -8,7 +8,6 @@
  *
  * 
  * Development plan
- * - Column. One pixel per column is probably enough. Otherwise, SVG should be used.
  * - Column range.
  * - Heatmap and treemap? Not core, so the implementation should perhaps lie in feature files.
  * - Check how it works with Highstock and data grouping.
@@ -31,6 +30,7 @@
  * - Area lines are not drawn
  * - Point markers are not drawn
  * - Zones and negativeColor don't work
+ * - Columns are always one pixel wide. Don't set the threshold too low.
  *
  * Optimizing tips for users
  * - For scatter plots, use a marker.radius of 1 or less. It results in a rectangle being drawn, which is 
@@ -73,7 +73,7 @@
     }
 
     // Set default options
-    each(['area', 'arearange', 'line', 'scatter'], function (type) {
+    each(['area', 'arearange', 'column', 'line', 'scatter'], function (type) {
         if (plotOptions[type]) {
             plotOptions[type].boostThreshold = 5000;
         }
@@ -105,9 +105,14 @@
         }
         wrap(Series.prototype, method, branch);
 
-        // A special case for arearange - its translate method is already wrapped
-        if (method === 'translate' && seriesTypes.arearange) {
-            wrap(seriesTypes.arearange.prototype, method, branch);
+        // A special case for some types - its translate method is already wrapped
+        if (method === 'translate') {
+            if (seriesTypes.column) {
+                wrap(seriesTypes.column.prototype, method, branch);
+            }
+            if (seriesTypes.arearange) {
+                wrap(seriesTypes.arearange.prototype, method, branch);
+            }
         }
     });
 
@@ -475,6 +480,12 @@
                     chart.loadingShown = loadingShown - 1;
                 }
 
+                // Pass tests in Pointer. 
+                // TODO: Replace this with a single property, and replace when zooming in
+                // below boostThreshold.
+                series.directTouch = false;
+                series.options.stickyTracking = true;
+
                 delete series.buildKDTree; // Go back to prototype, ready to build
                 series.buildKDTree();
 
@@ -506,6 +517,14 @@
         },
         fill: true,
         fillOpacity: true,
+        sampling: true
+    });
+
+    extend(seriesTypes.column.prototype, {
+        cvsDrawPoint: function (ctx, clientX, plotY, yBottom) {
+            ctx.rect(clientX - 1, plotY, 1, yBottom - plotY);
+        },
+        fill: true,
         sampling: true
     });
 
