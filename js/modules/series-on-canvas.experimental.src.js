@@ -19,15 +19,22 @@
  * - Check inverted charts.
  * - Chart callback should be async after last series is drawn. (But not necessarily, we don't do
      that with initial series animation).
- * - Cache full-size image so we don't have to redraw on hide/show and zoom up.
- * - What happens with the loading label when two series?
+ * - Cache full-size image so we don't have to redraw on hide/show and zoom up. But k-d-tree still
+ *   needs to be built.
  * - Test IE9 and IE10.
+ *
+ * If this module is taken in as part of the core
+ * - All the loading logic should be merged with core. Update styles in the core.
+ * - Most of the method wraps should probably be added directly in parent methods.
  *
  * Optimizing tips for users
  * - For scatter plots, use a marker.radius of 1 or less. It results in a rectangle being drawn, which is 
  *   considerably faster than a circle.
  * - Set extremes (min, max) explicitly on the axes in order for Highcharts to avoid computing extremes.
  * - Set enableMouseTracking to false on the series to improve total rendering time.
+ * - The default threshold is set based on one series. If you have multiple, dense series, the combined
+ *   number of points drawn gets higher, and you may want to set the threshold lower in order to 
+ *   use optimizations.
  */
 /*global document, Highcharts, HighchartsAdapter, setTimeout */
 (function (H, HA) {
@@ -322,6 +329,11 @@
                 });
                 chart.showLoading('Drawing...');
                 chart.options.loading = loadingOptions; // reset
+                if (chart.loadingShown === true) {
+                    chart.loadingShown = 1;
+                } else {
+                    chart.loadingShown = chart.loadingShown + 1;
+                }
             }
 
             // Loop over the points
@@ -408,7 +420,8 @@
 
             }, function () {
 
-                var loadingDiv = chart.loadingDiv;
+                var loadingDiv = chart.loadingDiv,
+                    loadingShown = +chart.loadingShown;
 
                 stroke();
                 series.canvasToSVG();
@@ -418,7 +431,7 @@
                 // Do not use chart.hideLoading, as it runs JS animation and will be blocked by buildKDTree.
                 // CSS animation looks good, but then it must be deleted in timeout. If we add the module to core,
                 // change hideLoading so we can skip this block.
-                if (loadingDiv) {
+                if (loadingShown === 1) {
                     extend(loadingDiv.style, {
                         transition: 'opacity 250ms',
                         opacity: 0
@@ -429,6 +442,9 @@
                         loadingDiv.parentNode.removeChild(loadingDiv);
                         chart.loadingDiv = chart.loadingSpan = null;
                     }, 250);
+                }
+                if (loadingShown) {
+                    chart.loadingShown = loadingShown - 1;
                 }
 
                 delete series.buildKDTree; // Go back to prototype, ready to build
