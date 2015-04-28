@@ -14,7 +14,16 @@
 /*jslint ass: true, sloppy: true, forin: true, plusplus: true, nomen: true, vars: true, regexp: true, newcap: true, browser: true, continue: true, white: true */
 (function () {
 // The Highcharts namespace
-var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
+var Highcharts;
+
+(function (H) {
+	var init = function () {
+		H.svg = !!document.createElementNS && !!document.createElementNS(H.SVG_NS, 'svg').createSVGRect;
+		H.useCanVG = !H.svg && !H.isIE && !!document.createElement('canvas').getContext;
+		H.hasBidiBug = H.isFirefox && parseInt(navigator.userAgent.split('Firefox/')[1], 10) < 4; // issue #38
+	};
+
+H = window.Highcharts = window.Highcharts ? window.Highcharts.error(16, true) : {
 	deg2rad: Math.PI * 2 / 360,
 	isIE: /(msie|trident)/i.test(navigator.userAgent) && !window.opera,
 	isWebKit: /AppleWebKit/.test(navigator.userAgent),
@@ -36,16 +45,13 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	},
 	charts: [],
 	noop: function () {}
-},	init = function () {
-		var H = Highcharts;
-		H.svg = !!document.createElementNS && !!document.createElementNS(H.SVG_NS, 'svg').createSVGRect;
-		H.useCanVG = !H.svg && !H.isIE && !!document.createElement('canvas').getContext;
-		H.hasBidiBug = H.isFirefox && parseInt(navigator.userAgent.split('Firefox/')[1], 10) < 4; // issue #38
-	};
+};
 
 	// Initialize some Highcharts variables
 	init();
 
+	return (Highcharts = H);
+}(Highcharts));
 /**
  * Extend an object with the members of another
  * @param {Object} a The object to be extended
