@@ -86,7 +86,7 @@
     each(['translate', 'generatePoints', 'drawTracker', 'drawPoints', 'render'], function (method) {
         function branch(proceed) {
             var letItPass = this.options.stacking && (method === 'translate' || method === 'generatePoints');
-            if ((this.processedXData || this.options.data).length < this.options.boostThreshold ||
+            if ((this.processedXData || this.options.data).length < (this.options.boostThreshold || Number.MAX_VALUE) ||
                     letItPass) {
 
                 // Clear image
@@ -140,7 +140,7 @@
                 data = options.data,
                 xAxis = this.xAxis.options,
                 yAxis = this.yAxis.options;
-            return data.length > options.boostThreshold && typeof yAxis.min === 'number' && typeof yAxis.max === 'number' &&
+            return data.length > (options.boostThreshold || Number.MAX_VALUE) && typeof yAxis.min === 'number' && typeof yAxis.max === 'number' &&
                 (!checkX || (typeof xAxis.min === 'number' && typeof xAxis.max === 'number'));
         },
 
