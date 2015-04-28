@@ -46,8 +46,6 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	// Initialize some Highcharts variables
 	init();
 
-	// Object for extending Axis
-var AxisPlotLineOrBandExtension;
 /**
  * Extend an object with the members of another
  * @param {Object} a The object to be extended
@@ -6264,9 +6262,10 @@ Highcharts.PlotLineOrBand.prototype = {
 
 /**
  * Object with members for extending the Axis prototype
+ * @todo Extend directly instead of adding object to Highcharts first
  */
 
-AxisPlotLineOrBandExtension = {
+Highcharts.AxisPlotLineOrBandExtension = {
 
 	/**
 	 * Create the path for a plot band
@@ -8501,7 +8500,7 @@ Axis.prototype = {
 	}
 }; // end Axis
 
-extend(Axis.prototype, AxisPlotLineOrBandExtension);
+extend(Axis.prototype, Highcharts.AxisPlotLineOrBandExtension);
 
 /**
  * Set the tick positions to a time unit that makes sense, for example

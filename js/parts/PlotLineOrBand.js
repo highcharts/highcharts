@@ -179,9 +179,10 @@ Highcharts.PlotLineOrBand.prototype = {
 
 /**
  * Object with members for extending the Axis prototype
+ * @todo Extend directly instead of adding object to Highcharts first
  */
 
-AxisPlotLineOrBandExtension = {
+Highcharts.AxisPlotLineOrBandExtension = {
 
 	/**
 	 * Create the path for a plot band

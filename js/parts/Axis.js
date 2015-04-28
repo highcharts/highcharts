@@ -2156,4 +2156,4 @@ Axis.prototype = {
 	}
 }; // end Axis
 
-extend(Axis.prototype, AxisPlotLineOrBandExtension);
+extend(Axis.prototype, Highcharts.AxisPlotLineOrBandExtension);

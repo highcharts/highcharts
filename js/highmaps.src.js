@@ -46,8 +46,6 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	// Initialize some Highcharts variables
 	init();
 
-	// Object for extending Axis
-var AxisPlotLineOrBandExtension;
 /**
  * Extend an object with the members of another
  * @param {Object} a The object to be extended
@@ -8241,7 +8239,7 @@ Axis.prototype = {
 	}
 }; // end Axis
 
-extend(Axis.prototype, AxisPlotLineOrBandExtension);
+extend(Axis.prototype, Highcharts.AxisPlotLineOrBandExtension);
 /**
  * Methods defined on the Axis prototype
  */

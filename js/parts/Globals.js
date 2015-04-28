@@ -30,6 +30,3 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 
 	// Initialize some Highcharts variables
 	init();
-
-	// Object for extending Axis
-var AxisPlotLineOrBandExtension;
