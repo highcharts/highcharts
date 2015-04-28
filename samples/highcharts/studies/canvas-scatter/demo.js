@@ -11,6 +11,10 @@ $(function () {
         ]);
     }
 
+    if (!Highcharts.Series.prototype.renderCanvas) {
+        console.error('Module not loaded');
+        return;
+    }
 
     console.time('scatter');
     console.time('asyncRender')

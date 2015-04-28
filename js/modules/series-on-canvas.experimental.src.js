@@ -14,7 +14,7 @@
  *   and a loop that runs prior to the drawing loop, adds all rounded clientX to a parallel 
  *   array and records transistions.
  * - Heatmap and treemap? Not core, so the implementation should perhaps lie in feature files.
- * - Set up option structure. Like plotOptions.series.optimize.
+ * - Check how it works with Highstock and data grouping.
  * - Check or implement stacking in area and column.
  * - Check inverted charts.
  * - Chart callback should be async after last series is drawn. (But not necessarily, we don't do
@@ -24,7 +24,7 @@
  * - Test IE9 and IE10.
  *
  * Optimizing tips for users
- * - For scatter plots, use a marker.radius of 1 or less. It results in a rectange being drawn, which is 
+ * - For scatter plots, use a marker.radius of 1 or less. It results in a rectangle being drawn, which is 
  *   considerably faster than a circle.
  * - Set extremes (min, max) explicitly on the axes in order for Highcharts to avoid computing extremes.
  * - Set enableMouseTracking to false on the series to improve total rendering time.
@@ -42,8 +42,8 @@
         fireEvent = HA.fireEvent,
         merge = H.merge,
         wrap = H.wrap,
-        CHUNK_SIZE = 50000,
-        THRESHOLD = 5000;
+        plotOptions = H.getOptions().plotOptions,
+        CHUNK_SIZE = 50000;
 
     function eachAsync(arr, fn, callback, chunkSize, i) {
         i = i || 0;
@@ -58,13 +58,20 @@
         }
     }
 
+    // Set default options
+    each(['area', 'arearange', 'line', 'scatter'], function (type) {
+        if (plotOptions[type]) {
+            plotOptions[type].boostThreshold = 5000;
+        }
+    });
+
     /**
      * Override a bunch of methods the same way. If the number of points is below the threshold,
      * run the original method. If not, check for a canvas version or do nothing.
      */
     each(['translate', 'generatePoints', 'drawTracker', 'drawPoints', 'render'], function (method) {
         function branch(proceed) {
-            if ((this.processedXData || this.options.data).length < THRESHOLD) {
+            if ((this.processedXData || this.options.data).length < this.options.boostThreshold) {
 
                 // Clear image
                 if (method === 'render' && this.image) {
@@ -113,10 +120,11 @@
         pointRange: 0,
 
         hasExtremes: function (checkX) {
-            var data = this.options.data,
+            var options = this.options,
+                data = options.data,
                 xAxis = this.xAxis.options,
                 yAxis = this.yAxis.options;
-            return data.length > THRESHOLD && typeof yAxis.min === 'number' && typeof yAxis.max === 'number' &&
+            return data.length > options.boostThreshold && typeof yAxis.min === 'number' && typeof yAxis.max === 'number' &&
                 (!checkX || (typeof xAxis.min === 'number' && typeof xAxis.max === 'number'));
         },
 
