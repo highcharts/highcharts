@@ -12,7 +12,6 @@
  * - Column range.
  * - For sampling, check the implementation when points are not 1px away.
  * - Heatmap and treemap? Not core, so the implementation should perhaps lie in feature files.
- * - Area fill opacity
  * - Check how it works with Highstock and data grouping.
  * - Check or implement stacking in area and column.
  * - Check inverted charts.
@@ -46,12 +45,14 @@
     'use strict';
 
     var noop = function () { return undefined; },
+        Color = H.Color,
         Series = H.Series,
         seriesTypes = H.seriesTypes,
         each = H.each,
         extend = H.extend,
         fireEvent = HA.fireEvent,
         merge = H.merge,
+        pick = H.pick,
         wrap = H.wrap,
         plotOptions = H.getOptions().plotOptions,
         CHUNK_SIZE = 50000;
@@ -244,9 +245,10 @@
                 maxVal,
                 minI,
                 maxI,
+                fillColor = Color(series.color).setOpacity(pick(options.fillOpacity, 0.75)).get(),
                 stroke = function () {
                     if (doFill) {
-                        ctx.fillStyle = series.color;
+                        ctx.fillStyle = fillColor;
                         ctx.fill();
                     } else {
                         ctx.strokeStyle = series.color;
@@ -395,7 +397,7 @@
                                 maxI = i;
                             } else if (low < minVal) {
                                 minVal = low;
-                                minI = low;
+                                minI = i;
                             }
 
                         } else { // Add points and reset
