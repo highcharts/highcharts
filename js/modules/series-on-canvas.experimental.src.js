@@ -10,13 +10,13 @@
  * Development plan
  * - Column. One pixel per column is probably enough. Otherwise, SVG should be used.
  * - Column range.
- * - Consider detecting the min and max for each pixel using algorithm from http://jsfiddle.net/highcharts/fo20b66d/1/
- *   and a loop that runs prior to the drawing loop, adds all rounded clientX to a parallel 
- *   array and records transistions.
+ * - For sampling, check the implementation when points are not 1px away.
  * - Heatmap and treemap? Not core, so the implementation should perhaps lie in feature files.
+ * - Area fill opacity
  * - Check how it works with Highstock and data grouping.
  * - Check or implement stacking in area and column.
  * - Check inverted charts.
+ * - Check reversed axes.
  * - Chart callback should be async after last series is drawn. (But not necessarily, we don't do
      that with initial series animation).
  * - Cache full-size image so we don't have to redraw on hide/show and zoom up. But k-d-tree still
@@ -26,6 +26,10 @@
  * If this module is taken in as part of the core
  * - All the loading logic should be merged with core. Update styles in the core.
  * - Most of the method wraps should probably be added directly in parent methods.
+ *
+ * Notes for boost mode
+ * - Area lines are not drawn
+ * - Point markers are not drawn
  *
  * Optimizing tips for users
  * - For scatter plots, use a marker.radius of 1 or less. It results in a rectangle being drawn, which is 
@@ -224,7 +228,10 @@
                 cvsMarker = r <= 1 ? this.cvsMarkerSquare : this.cvsMarkerCircle,
                 enableMouseTracking = options.enableMouseTracking !== false,
                 lastPoint,
-                yBottom = yAxis.getThreshold(options.threshold),
+                threshold = options.threshold,
+                yBottom = yAxis.getThreshold(threshold),
+                hasThreshold = typeof threshold === 'number',
+                translatedThreshold = yBottom,
                 doFill = this.fill,
                 isRange = series.pointArrayMap && series.pointArrayMap.join(',') === 'low,high',
                 cropStart = series.cropStart || 0,
@@ -247,7 +254,7 @@
                         ctx.stroke();
                     }
                 },
-                drawPoint = function (clientX, plotY, yBottom, i) {
+                drawPoint = function (clientX, plotY, yBottom) {
                     if (c === 0) {
                         ctx.beginPath();
                     }
@@ -278,7 +285,9 @@
                         plotY: plotY,
                         yBottom: yBottom
                     };
+                },
 
+                addKDPoint = function (clientX, plotY, i) {
 
                     // The k-d tree requires series points. Reduce the amount of points, since the time to build the 
                     // tree increases exponentially.
@@ -345,6 +354,7 @@
                     clientX,
                     plotY,
                     isNull,
+                    low,
                     isYInside = true;
 
                 if (useRaw) {
@@ -360,7 +370,7 @@
                     if (useRaw) {
                         y = d.slice(1, 3);
                     }
-                    yBottom = yAxis.toPixels(y[0], true);
+                    low = y[0];
                     y = y[1];
                 }
 
@@ -377,28 +387,29 @@
 
                     if (sampling) {
                         if (clientX === lastClientX) {
+                            if (!isRange) {
+                                low = y;
+                            }
                             if (y > maxVal) {
                                 maxVal = y;
                                 maxI = i;
-                            } else if (y < minVal) {
-                                minVal = y;
-                                minI = i;
+                            } else if (low < minVal) {
+                                minVal = low;
+                                minI = low;
                             }
 
                         } else { // Add points and reset
-                            // TODO: 
-                            // In area and column charts, we should probably have the same mechanism
-                            // that the range chart, so we draw a 1px wide rectangle from the min
-                            // to the max value. K-d-points need to reflect both min and max.
-                            /*
-                            if (typeof minI === 'number') {
-                                drawPoint(lastClientX, yAxis.toPixels(minVal, true), yBottom, minI);
+                            if (typeof minI === 'number') { // then maxI is also a number
+                                plotY = yAxis.toPixels(maxVal, true);
+                                yBottom = yAxis.toPixels(minVal, true);
+                                drawPoint(
+                                    lastClientX,
+                                    hasThreshold ? Math.min(plotY, translatedThreshold) : plotY,
+                                    hasThreshold ? Math.max(yBottom, translatedThreshold) : yBottom
+                                );
+                                addKDPoint(lastClientX, plotY, maxI);
+                                addKDPoint(lastClientX, yBottom, minI);
                             }
-                            if (typeof maxI === 'number') {
-                                drawPoint(lastClientX, yAxis.toPixels(maxVal, true), yBottom, maxI);
-                            }
-                            */
-                            drawPoint(lastClientX, yAxis.toPixels(y, true), yBottom, i);
 
 
                             minVal = maxVal = y;
@@ -407,7 +418,8 @@
                         }
                     } else {
                         plotY = Math.round(yAxis.toPixels(y, true));
-                        drawPoint(clientX, plotY, yBottom, i);
+                        drawPoint(clientX, plotY, yBottom);
+                        addKDPoint(clientX, plotY, i);
                     }
                 }
                 wasNull = isNull && !connectNulls;
