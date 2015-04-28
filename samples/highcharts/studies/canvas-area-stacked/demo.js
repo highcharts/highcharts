@@ -30,7 +30,8 @@ $(function () {
         }
         return arr;
     }
-    var data = getData(500000);
+    var data1 = getData(50000),
+        data2 = getData(50000);
 
     console.time('area');
     $('#container').highcharts({
@@ -41,7 +42,7 @@ $(function () {
         },
 
         title: {
-            text: 'Trimmed Highcharts drawing ' + data.length + ' points'
+            text: 'Trimmed Highcharts drawing ' + (data1.length + data2.length) + ' points'
         },
 
         subtitle: {
@@ -52,8 +53,16 @@ $(function () {
             valueDecimals: 2
         },
 
+        plotOptions: {
+            area: {
+                stacking: true
+            }
+        },
+
         series: [{
-            data: data
+            data: data1
+        }, {
+            data: data2
         }]
 
     });

@@ -12,7 +12,6 @@
  * - Column range.
  * - Heatmap and treemap? Not core, so the implementation should perhaps lie in feature files.
  * - Check how it works with Highstock and data grouping.
- * - Check or implement stacking in area and column.
  * - Check inverted charts.
  * - Check reversed axes.
  * - Chart callback should be async after last series is drawn. (But not necessarily, we don't do
@@ -20,6 +19,9 @@
  * - Cache full-size image so we don't have to redraw on hide/show and zoom up. But k-d-tree still
  *   needs to be built.
  * - Test IE9 and IE10.
+ * - Stacking is not perhaps not correct since it doesn't use the translation given in 
+ *   the translate method. If this gets to complicated, a possible way out would be to 
+ *   have a simplified renderCanvas method that simply draws the areaPath on a canvas.
  *
  * If this module is taken in as part of the core
  * - All the loading logic should be merged with core. Update styles in the core.
@@ -28,6 +30,7 @@
  * Notes for boost mode
  * - Area lines are not drawn
  * - Point markers are not drawn
+ * - Zones and negativeColor don't work
  *
  * Optimizing tips for users
  * - For scatter plots, use a marker.radius of 1 or less. It results in a rectangle being drawn, which is 
@@ -82,7 +85,9 @@
      */
     each(['translate', 'generatePoints', 'drawTracker', 'drawPoints', 'render'], function (method) {
         function branch(proceed) {
-            if ((this.processedXData || this.options.data).length < this.options.boostThreshold) {
+            var letItPass = this.options.stacking && (method === 'translate' || method === 'generatePoints');
+            if ((this.processedXData || this.options.data).length < this.options.boostThreshold ||
+                    letItPass) {
 
                 // Clear image
                 if (method === 'render' && this.image) {
@@ -234,6 +239,7 @@
                 translatedThreshold = yBottom,
                 doFill = this.fill,
                 isRange = series.pointArrayMap && series.pointArrayMap.join(',') === 'low,high',
+                isStacked = !!options.stacking,
                 cropStart = series.cropStart || 0,
                 loadingOptions = chart.options.loading,
                 requireSorting = series.requireSorting,
@@ -350,7 +356,7 @@
 
             // Loop over the points
             i = 0;
-            eachAsync(xData || rawData, function (d) {
+            eachAsync(isStacked ? series.data : (xData || rawData), function (d) {
 
                 var x,
                     y,
@@ -375,6 +381,10 @@
                     }
                     low = y[0];
                     y = y[1];
+                } else if (isStacked) {
+                    x = d.x;
+                    y = d.stackY;
+                    low = y - d.y;
                 }
 
                 isNull = y === null;
