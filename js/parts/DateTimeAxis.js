@@ -15,12 +15,10 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		timeUnits = Highcharts.timeUnits,
 		i,
 		higherRanks = {},
-		d = Date,
+		d = Highcharts.Date,
 		useUTC = Highcharts.defaultOptions.global.useUTC,
 		minYear, // used in months and years as a basis for Date.UTC()
 		minDate = new d(min - getTZOffset(min)),
-		minDateDate = minDate[d.hcGetDate](),
-		minMonth = minDate[d.hcGetMonth](),
 		makeTime = d.hcMakeTime,
 		interval = normalizedInterval.unitRange,
 		count = normalizedInterval.count;
@@ -46,12 +44,12 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 	
 		if (interval >= timeUnits.day) { // day
 			minDate[d.hcSetDate](interval >= timeUnits.month ? 1 :
-				count * Math.floor(minDateDate / count));
+				count * Math.floor(minDate[d.hcGetDate]() / count));
 		}
 	
 		if (interval >= timeUnits.month) { // month
 			minDate[d.hcSetMonth](interval >= timeUnits.year ? 0 :
-				count * Math.floor(minMonth / count));
+				count * Math.floor(minDate[d.hcGetMonth]() / count));
 			minYear = minDate[d.hcGetFullYear]();
 		}
 	
@@ -63,7 +61,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		// week is a special case that runs outside the hierarchy
 		if (interval === timeUnits.week) {
 			// get start of current week, independent of count
-			minDate[d.hcSetDate](minDateDate - minDate[d.hcGetDay]() +
+			minDate[d.hcSetDate](minDate[d.hcGetDate]() - minDate[d.hcGetDay]() +
 				pick(startOfWeek, 1));
 		}
 	
@@ -76,6 +74,8 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		}
 		minYear = minDate[d.hcGetFullYear]();
 		var time = minDate.getTime(),
+			minMonth = minDate[d.hcGetMonth](),
+			minDateDate = minDate[d.hcGetDate](),
 			localTimezoneOffset = (timeUnits.day + 
 					(useUTC ? getTZOffset(minDate) : minDate.getTimezoneOffset() * 60 * 1000)
 				) % timeUnits.day; // #950, #3359

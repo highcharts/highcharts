@@ -82,7 +82,8 @@ RangeSelector.prototype = {
 			newMin,
 			newMax = baseAxis && Math.round(Math.min(baseAxis.max, pick(dataMax, baseAxis.max))), // #1568
 			now,
-			date = new Date(newMax),
+			d = Highcharts.Date,
+			date = new d(newMax),
 			type = rangeOptions.type,
 			count = rangeOptions.count,
 			baseXAxisOptions,
@@ -134,9 +135,9 @@ RangeSelector.prototype = {
 					});
 					redraw = false;
 				}
-				now = new Date(dataMax);
-				year = now.hcGetFullYear();
-				newMin = rangeMin = Math.max(dataMin || 0, Date.UTC(year, 0, 1));
+				now = new d(dataMax);
+				year = now[d.hcGetFullYear]();
+				newMin = rangeMin = Math.max(dataMin || 0, d.UTC(year, 0, 1));
 				now = now.getTime();
 				newMax = Math.min(dataMax || now, now);
 

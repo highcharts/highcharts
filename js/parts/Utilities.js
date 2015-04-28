@@ -276,8 +276,8 @@ var wrap = Highcharts.wrap = function (obj, method, func) {
 
 
 function getTZOffset(timestamp) {
-	var D = Date;
-	return ((D.hcGetTimezoneOffset && D.hcGetTimezoneOffset(timestamp)) || D.hcTimezoneOffset || 0) * 60000;
+	var d = Highcharts.Date;
+	return ((d.hcGetTimezoneOffset && d.hcGetTimezoneOffset(timestamp)) || d.hcTimezoneOffset || 0) * 60000;
 }
 
 /**
@@ -292,10 +292,10 @@ Highcharts.dateFormat = function (format, timestamp, capitalize) {
 	}
 	format = pick(format, '%Y-%m-%d %H:%M:%S');
 
-	var date = new Date(timestamp - getTZOffset(timestamp)),
+	var d = Highcharts.Date,
+		date = new d(timestamp - getTZOffset(timestamp)),
 		key, // used in for constuct below
 		// get the basic time values
-		d = Date,
 		hours = date[d.hcGetHours](),
 		day = date[d.hcGetDay](),
 		dayOfMonth = date[d.hcGetDate](),
@@ -330,7 +330,7 @@ Highcharts.dateFormat = function (format, timestamp, capitalize) {
 			'H': pad(hours), // Two digits hours in 24h format, 00 through 23
 			'I': pad((hours % 12) || 12), // Two digits hours in 12h format, 00 through 11
 			'l': (hours % 12) || 12, // Hours in 12h format, 1 through 12
-			'M': pad(date[Date.hcGetMinutes]()), // Two digits minutes, 00 through 59
+			'M': pad(date[d.hcGetMinutes]()), // Two digits minutes, 00 through 59
 			'p': hours < 12 ? 'AM' : 'PM', // Upper case AM or PM
 			'P': hours < 12 ? 'am' : 'pm', // Lower case AM or PM
 			'S': pad(date.getSeconds()), // Two digits seconds, 00 through  59

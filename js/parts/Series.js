@@ -181,6 +181,7 @@ Series.prototype = {
 		var options = this.options,
 			xIncrement = this.xIncrement,
 			date,
+			d = Highcharts.Date,
 			pointInterval,
 			pointIntervalUnit = options.pointIntervalUnit;
 		
@@ -190,11 +191,12 @@ Series.prototype = {
 		
 		// Added code for pointInterval strings
 		if (pointIntervalUnit === 'month' || pointIntervalUnit === 'year') {
-			date = new Date(xIncrement);
+			date = new d(xIncrement);
 			date = (pointIntervalUnit === 'month') ?
-				+date.hcSetMonth(date.hcGetMonth() + pointInterval) :
-				+date.hcSetFullYear(date.hcGetFullYear() + pointInterval);
+				+date[d.hcSetMonth](date[d.hcGetMonth]() + pointInterval) :
+				+date[d.hcSetFullYear](date[d.hcGetFullYear]() + pointInterval);
 			pointInterval = date - xIncrement;
+
 		}
 		
 		this.xIncrement = xIncrement + pointInterval;

@@ -349,21 +349,22 @@ setTimeMethods();
  */
 function setTimeMethods() {
 	var globalOptions = Highcharts.defaultOptions.global,
+		hcD,
 		useUTC = globalOptions.useUTC,
 		GET = useUTC ? 'getUTC' : 'get',
 		SET = useUTC ? 'setUTC' : 'set';
 
-
-	Date = globalOptions.Date || window.Date;
-	Date.hcTimezoneOffset = useUTC && globalOptions.timezoneOffset;
-	Date.hcGetTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
-	Date.hcMakeTime = function (year, month, date, hours, minutes, seconds) {
+	Highcharts.Date = globalOptions.Date || window.Date; // Allow using a different Date class
+	hcD = Highcharts.Date;
+	hcD.hcTimezoneOffset = useUTC && globalOptions.timezoneOffset;
+	hcD.hcGetTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
+	hcD.hcMakeTime = function (year, month, date, hours, minutes, seconds) {
 		var d;
 		if (useUTC) {
-			d = Date.UTC.apply(0, arguments);
+			d = hcD.UTC.apply(0, arguments);
 			d += getTZOffset(d);
 		} else {
-			d = new Date(
+			d = new hcD(
 				year,
 				month,
 				pick(date, 1),
@@ -375,10 +376,10 @@ function setTimeMethods() {
 		return d;
 	};
 	each(['Minutes', 'Hours', 'Day', 'Date', 'Month', 'FullYear'], function (s) {
-		Date['hcGet' + s] = GET + s;
+		hcD['hcGet' + s] = GET + s;
 	});
 	each(['Milliseconds', 'Seconds', 'Minutes', 'Hours', 'Date', 'Month', 'FullYear'], function (s) {
-		Date['hcSet' + s] = SET + s;
+		hcD['hcSet' + s] = SET + s;
 	});
 }
 

@@ -32,7 +32,4 @@ var Highcharts = window.Highcharts = window.Highcharts ? error(16, true) : {
 	init();
 
 	// Object for extending Axis
-var AxisPlotLineOrBandExtension,
-
-	// time methods, changed based on whether or not UTC is used
-	Date;  // Allow using a different Date class
+var AxisPlotLineOrBandExtension;
