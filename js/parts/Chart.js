@@ -579,6 +579,7 @@ Chart.prototype = {
 	 */
 	getContainer: function () {
 		var chart = this,
+			attr = Highcharts.attr,
 			charts = Highcharts.charts,
 			container,
 			optionsChart = chart.options.chart,

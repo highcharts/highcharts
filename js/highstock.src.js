@@ -201,7 +201,7 @@ Highcharts.defined = function (obj) {
  * @param {String|Object} prop The property or an abject of key-value pairs
  * @param {String} value The value if a single property is set
  */
-function attr(elem, prop, value) {
+Highcharts.attr = function (elem, prop, value) {
 	var key,
 		ret;
 
@@ -223,7 +223,7 @@ function attr(elem, prop, value) {
 		}
 	}
 	return ret;
-}
+};
 /**
  * Check if an element is an array, and if not, make it into an array. Like
  * MooTools' $.splat.
@@ -922,7 +922,7 @@ Highcharts.pathAnim = {
 
 					// When called without parameters or with the return argument, get a predefined chart
 					if (options === undefined) {
-						ret = Highcharts.charts[attr(this[0], 'data-highcharts-chart')];
+						ret = Highcharts.charts[Highcharts.attr(this[0], 'data-highcharts-chart')];
 					}
 				}
 				
@@ -1928,7 +1928,7 @@ SVGElement.prototype = {
 
 						// Create the clone and apply shadow properties
 						clone = tspan.cloneNode(1);
-						attr(clone, {
+						Highcharts.attr(clone, {
 							'class': 'highcharts-text-shadow',
 							'fill': color,
 							'stroke': color,
@@ -2028,6 +2028,7 @@ SVGElement.prototype = {
 	 */
 	addClass: function (className) {
 		var element = this.element,
+			attr = Highcharts.attr,
 			currentClassName = attr(element, 'class') || '';
 
 		if (currentClassName.indexOf(className) === -1) {
@@ -2172,7 +2173,7 @@ SVGElement.prototype = {
 				for (n in styles) {
 					serializedCss += n.replace(/([A-Z])/g, hyphenate) + ':' + styles[n] + ';';
 				}
-				attr(elem, 'style', serializedCss); // #1881
+				Highcharts.attr(elem, 'style', serializedCss); // #1881
 			}
 
 
@@ -2647,6 +2648,7 @@ SVGElement.prototype = {
 	 */
 	shadow: function (shadowOptions, group, cutOff) {
 		var shadows = [],
+			attr = Highcharts.attr,
 			i,
 			shadow,
 			element = this.element,
@@ -2820,7 +2822,7 @@ SVGElement.prototype = {
 			childNodes = parentNode.childNodes;
 			for (i = 0; i < childNodes.length && !inserted; i++) {
 				otherElement = childNodes[i];
-				otherZIndex = attr(otherElement, 'zIndex');
+				otherZIndex = Highcharts.attr(otherElement, 'zIndex');
 				if (otherElement !== element && (
 						// Insert before the first element with a higher zIndex
 						Highcharts.pInt(otherZIndex) > value ||
@@ -2887,6 +2889,7 @@ SVGRenderer.prototype = {
 	 */
 	init: function (container, width, height, style, forExport) {
 		var renderer = this,
+			attr = Highcharts.attr,
 			loc = location,
 			boxWrapper,
 			element,
@@ -3035,6 +3038,7 @@ SVGRenderer.prototype = {
 			childNodes = textNode.childNodes,
 			styleRegex,
 			hrefRegex,
+			attr = Highcharts.attr,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
 			width = wrapper.textWidth,
@@ -3543,7 +3547,7 @@ SVGRenderer.prototype = {
 		}
 
 		wrapper.rSetter = function (value) {
-			attr(this.element, {
+			Highcharts.attr(this.element, {
 				rx: value,
 				ry: value
 			});
@@ -4537,7 +4541,7 @@ Highcharts.extend(SVGRenderer.prototype, {
 							// Create a HTML div and append it to the parent div to emulate
 							// the SVG group structure
 							htmlGroup = parentGroup.div = parentGroup.div || createElement('div', {
-								className: attr(parentGroup.element, 'class')
+								className: Highcharts.attr(parentGroup.element, 'class')
 							}, {
 								position: 'absolute',
 								left: (parentGroup.translateX || 0) + 'px',
@@ -9943,7 +9947,7 @@ Pointer.prototype = {
 	inClass: function (element, className) {
 		var elemClassName;
 		while (element) {
-			elemClassName = attr(element, 'class');
+			elemClassName = Highcharts.attr(element, 'class');
 			if (elemClassName) {
 				if (elemClassName.indexOf(className) !== -1) {
 					return true;
@@ -11748,6 +11752,7 @@ Chart.prototype = {
 	 */
 	getContainer: function () {
 		var chart = this,
+			attr = Highcharts.attr,
 			charts = Highcharts.charts,
 			container,
 			optionsChart = chart.options.chart,

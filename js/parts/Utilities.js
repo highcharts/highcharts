@@ -148,7 +148,7 @@ Highcharts.defined = function (obj) {
  * @param {String|Object} prop The property or an abject of key-value pairs
  * @param {String} value The value if a single property is set
  */
-function attr(elem, prop, value) {
+Highcharts.attr = function (elem, prop, value) {
 	var key,
 		ret;
 
@@ -170,7 +170,7 @@ function attr(elem, prop, value) {
 		}
 	}
 	return ret;
-}
+};
 /**
  * Check if an element is an array, and if not, make it into an array. Like
  * MooTools' $.splat.

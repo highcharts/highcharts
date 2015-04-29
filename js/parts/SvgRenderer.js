@@ -226,7 +226,7 @@ SVGElement.prototype = {
 
 						// Create the clone and apply shadow properties
 						clone = tspan.cloneNode(1);
-						attr(clone, {
+						Highcharts.attr(clone, {
 							'class': 'highcharts-text-shadow',
 							'fill': color,
 							'stroke': color,
@@ -326,6 +326,7 @@ SVGElement.prototype = {
 	 */
 	addClass: function (className) {
 		var element = this.element,
+			attr = Highcharts.attr,
 			currentClassName = attr(element, 'class') || '';
 
 		if (currentClassName.indexOf(className) === -1) {
@@ -470,7 +471,7 @@ SVGElement.prototype = {
 				for (n in styles) {
 					serializedCss += n.replace(/([A-Z])/g, hyphenate) + ':' + styles[n] + ';';
 				}
-				attr(elem, 'style', serializedCss); // #1881
+				Highcharts.attr(elem, 'style', serializedCss); // #1881
 			}
 
 
@@ -945,6 +946,7 @@ SVGElement.prototype = {
 	 */
 	shadow: function (shadowOptions, group, cutOff) {
 		var shadows = [],
+			attr = Highcharts.attr,
 			i,
 			shadow,
 			element = this.element,
@@ -1118,7 +1120,7 @@ SVGElement.prototype = {
 			childNodes = parentNode.childNodes;
 			for (i = 0; i < childNodes.length && !inserted; i++) {
 				otherElement = childNodes[i];
-				otherZIndex = attr(otherElement, 'zIndex');
+				otherZIndex = Highcharts.attr(otherElement, 'zIndex');
 				if (otherElement !== element && (
 						// Insert before the first element with a higher zIndex
 						Highcharts.pInt(otherZIndex) > value ||
@@ -1185,6 +1187,7 @@ SVGRenderer.prototype = {
 	 */
 	init: function (container, width, height, style, forExport) {
 		var renderer = this,
+			attr = Highcharts.attr,
 			loc = location,
 			boxWrapper,
 			element,
@@ -1333,6 +1336,7 @@ SVGRenderer.prototype = {
 			childNodes = textNode.childNodes,
 			styleRegex,
 			hrefRegex,
+			attr = Highcharts.attr,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
 			width = wrapper.textWidth,
@@ -1841,7 +1845,7 @@ SVGRenderer.prototype = {
 		}
 
 		wrapper.rSetter = function (value) {
-			attr(this.element, {
+			Highcharts.attr(this.element, {
 				rx: value,
 				ry: value
 			});

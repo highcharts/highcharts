@@ -247,7 +247,7 @@ Highcharts.extend(SVGRenderer.prototype, {
 							// Create a HTML div and append it to the parent div to emulate
 							// the SVG group structure
 							htmlGroup = parentGroup.div = parentGroup.div || createElement('div', {
-								className: attr(parentGroup.element, 'class')
+								className: Highcharts.attr(parentGroup.element, 'class')
 							}, {
 								position: 'absolute',
 								left: (parentGroup.translateX || 0) + 'px',
