@@ -1420,7 +1420,7 @@ Chart.prototype = {
 	*/
 	splashArray: function (target, options) {
 		var oVar = options[target],
-			tArray = isObject(oVar) ? oVar : [oVar, oVar, oVar, oVar];
+			tArray = Highcharts.isObject(oVar) ? oVar : [oVar, oVar, oVar, oVar];
 
 		return [pick(options[target + 'Top'], tArray[0]),
 				pick(options[target + 'Right'], tArray[1]),

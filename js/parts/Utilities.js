@@ -89,9 +89,9 @@ Highcharts.isString = function (s) {
  * Check for object
  * @param {Object} obj
  */
-function isObject(obj) {
+Highcharts.isObject = function (obj) {
 	return obj && typeof obj === 'object';
-}
+};
 
 /**
  * Check for array
@@ -164,7 +164,7 @@ function attr(elem, prop, value) {
 		}
 
 	// else if prop is defined, it is a hash of key/value pairs
-	} else if (defined(prop) && isObject(prop)) {
+	} else if (defined(prop) && Highcharts.isObject(prop)) {
 		for (key in prop) {
 			elem.setAttribute(key, prop[key]);
 		}

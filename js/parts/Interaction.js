@@ -301,7 +301,7 @@ Highcharts.extend(Chart.prototype, {
 		resetZoomButton = chart.resetZoomButton;
 		if (displayButton && !resetZoomButton) {
 			chart.showResetZoom();
-		} else if (!displayButton && isObject(resetZoomButton)) {
+		} else if (!displayButton && Highcharts.isObject(resetZoomButton)) {
 			chart.resetZoomButton = resetZoomButton.destroy();
 		}
 		

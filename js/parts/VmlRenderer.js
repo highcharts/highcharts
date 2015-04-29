@@ -575,7 +575,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 		// create a dummy element
 		var clipRect = this.createElement(),
-			isObj = isObject(x);
+			isObj = Highcharts.isObject(x);
 
 		// mimic a rectangle with its style object for automatic updating in attr
 		return Highcharts.extend(clipRect, {
@@ -843,7 +843,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		};
 		if (isArray(path)) {
 			attr.d = path;
-		} else if (isObject(path)) { // attributes
+		} else if (Highcharts.isObject(path)) { // attributes
 			Highcharts.extend(attr, path);
 		}
 		// create the shape
@@ -859,7 +859,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 */
 	circle: function (x, y, r) {
 		var circle = this.symbol('circle');
-		if (isObject(x)) {
+		if (Highcharts.isObject(x)) {
 			r = x.r;
 			y = x.y;
 			x = x.x;

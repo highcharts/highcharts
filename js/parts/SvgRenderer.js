@@ -1745,7 +1745,7 @@ SVGRenderer.prototype = {
 		};
 		if (isArray(path)) {
 			attr.d = path;
-		} else if (isObject(path)) { // attributes
+		} else if (Highcharts.isObject(path)) { // attributes
 			Highcharts.extend(attr, path);
 		}
 		return this.createElement('path').attr(attr);
@@ -1758,7 +1758,7 @@ SVGRenderer.prototype = {
 	 * @param {Number} r The radius
 	 */
 	circle: function (x, y, r) {
-		var attr = isObject(x) ?
+		var attr = Highcharts.isObject(x) ?
 			x :
 			{
 				x: x,
@@ -1788,7 +1788,7 @@ SVGRenderer.prototype = {
 	arc: function (x, y, r, innerR, start, end) {
 		var arc;
 
-		if (isObject(x)) {
+		if (Highcharts.isObject(x)) {
 			y = x.y;
 			r = x.r;
 			innerR = x.innerR;
@@ -1819,10 +1819,10 @@ SVGRenderer.prototype = {
 	 */
 	rect: function (x, y, width, height, r, strokeWidth) {
 
-		r = isObject(x) ? x.r : r;
+		r = Highcharts.isObject(x) ? x.r : r;
 
 		var wrapper = this.createElement('rect'),
-			attribs = isObject(x) ? x : x === undefined ? {} : {
+			attribs = Highcharts.isObject(x) ? x : x === undefined ? {} : {
 				x: x,
 				y: y,
 				width: Math.max(width, 0),

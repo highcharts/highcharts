@@ -142,9 +142,9 @@ Highcharts.isString = function (s) {
  * Check for object
  * @param {Object} obj
  */
-function isObject(obj) {
+Highcharts.isObject = function (obj) {
 	return obj && typeof obj === 'object';
-}
+};
 
 /**
  * Check for array
@@ -217,7 +217,7 @@ function attr(elem, prop, value) {
 		}
 
 	// else if prop is defined, it is a hash of key/value pairs
-	} else if (defined(prop) && isObject(prop)) {
+	} else if (defined(prop) && Highcharts.isObject(prop)) {
 		for (key in prop) {
 			elem.setAttribute(key, prop[key]);
 		}
@@ -3447,7 +3447,7 @@ SVGRenderer.prototype = {
 		};
 		if (isArray(path)) {
 			attr.d = path;
-		} else if (isObject(path)) { // attributes
+		} else if (Highcharts.isObject(path)) { // attributes
 			Highcharts.extend(attr, path);
 		}
 		return this.createElement('path').attr(attr);
@@ -3460,7 +3460,7 @@ SVGRenderer.prototype = {
 	 * @param {Number} r The radius
 	 */
 	circle: function (x, y, r) {
-		var attr = isObject(x) ?
+		var attr = Highcharts.isObject(x) ?
 			x :
 			{
 				x: x,
@@ -3490,7 +3490,7 @@ SVGRenderer.prototype = {
 	arc: function (x, y, r, innerR, start, end) {
 		var arc;
 
-		if (isObject(x)) {
+		if (Highcharts.isObject(x)) {
 			y = x.y;
 			r = x.r;
 			innerR = x.innerR;
@@ -3521,10 +3521,10 @@ SVGRenderer.prototype = {
 	 */
 	rect: function (x, y, width, height, r, strokeWidth) {
 
-		r = isObject(x) ? x.r : r;
+		r = Highcharts.isObject(x) ? x.r : r;
 
 		var wrapper = this.createElement('rect'),
-			attribs = isObject(x) ? x : x === undefined ? {} : {
+			attribs = Highcharts.isObject(x) ? x : x === undefined ? {} : {
 				x: x,
 				y: y,
 				width: Math.max(width, 0),
@@ -5159,7 +5159,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 		// create a dummy element
 		var clipRect = this.createElement(),
-			isObj = isObject(x);
+			isObj = Highcharts.isObject(x);
 
 		// mimic a rectangle with its style object for automatic updating in attr
 		return Highcharts.extend(clipRect, {
@@ -5427,7 +5427,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		};
 		if (isArray(path)) {
 			attr.d = path;
-		} else if (isObject(path)) { // attributes
+		} else if (Highcharts.isObject(path)) { // attributes
 			Highcharts.extend(attr, path);
 		}
 		// create the shape
@@ -5443,7 +5443,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 */
 	circle: function (x, y, r) {
 		var circle = this.symbol('circle');
-		if (isObject(x)) {
+		if (Highcharts.isObject(x)) {
 			r = x.r;
 			y = x.y;
 			x = x.x;
@@ -12568,7 +12568,7 @@ Chart.prototype = {
 	*/
 	splashArray: function (target, options) {
 		var oVar = options[target],
-			tArray = isObject(oVar) ? oVar : [oVar, oVar, oVar, oVar];
+			tArray = Highcharts.isObject(oVar) ? oVar : [oVar, oVar, oVar, oVar];
 
 		return [pick(options[target + 'Top'], tArray[0]),
 				pick(options[target + 'Right'], tArray[1]),
@@ -13749,7 +13749,7 @@ Series.prototype = {
 			sharedClipKey;
 
 		// Animation option is set to true
-		if (animation && !isObject(animation)) {
+		if (animation && !Highcharts.isObject(animation)) {
 			animation = defaultPlotOptions[series.type].animation;
 		}
 
@@ -15178,7 +15178,7 @@ Highcharts.extend(Point.prototype, {
 			point.applyOptions(options);
 
 			// Update visuals
-			if (isObject(options) && !isArray(options)) {
+			if (Highcharts.isObject(options) && !isArray(options)) {
 				// Defer the actual redraw until getAttribs has been called (#3260)
 				point.redraw = function () {
 					if (graphic) {
@@ -17955,7 +17955,7 @@ Highcharts.extend(Chart.prototype, {
 		resetZoomButton = chart.resetZoomButton;
 		if (displayButton && !resetZoomButton) {
 			chart.showResetZoom();
-		} else if (!displayButton && isObject(resetZoomButton)) {
+		} else if (!displayButton && Highcharts.isObject(resetZoomButton)) {
 			chart.resetZoomButton = resetZoomButton.destroy();
 		}
 		
@@ -21746,7 +21746,7 @@ wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 // Pick up badly formatted point options to addPoint
 wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, animation) {
 	var turboThreshold = this.options.turboThreshold;
-	if (turboThreshold && this.xData.length > turboThreshold && isObject(options) && !isArray(options) && this.chart.scroller) {
+	if (turboThreshold && this.xData.length > turboThreshold && Highcharts.isObject(options) && !isArray(options) && this.chart.scroller) {
 		error(20, true);
 	}
 	proceed.call(this, options, redraw, shift, animation);

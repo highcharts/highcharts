@@ -892,7 +892,7 @@ Series.prototype = {
 			sharedClipKey;
 
 		// Animation option is set to true
-		if (animation && !isObject(animation)) {
+		if (animation && !Highcharts.isObject(animation)) {
 			animation = defaultPlotOptions[series.type].animation;
 		}
 
