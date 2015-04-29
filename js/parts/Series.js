@@ -1199,6 +1199,7 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			issue134 = /AppleWebKit\/533/.test(navigator.userAgent),
+			erase = Highcharts.erase,
 			destroy,
 			i,
 			data = series.data || [],

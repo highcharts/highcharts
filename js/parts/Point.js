@@ -123,7 +123,7 @@ Point.prototype = {
 
 		if (hoverPoints) {
 			point.setState();
-			erase(hoverPoints, point);
+			Highcharts.erase(hoverPoints, point);
 			if (!hoverPoints.length) {
 				chart.hoverPoints = null;
 			}

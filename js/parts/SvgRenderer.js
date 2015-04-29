@@ -625,7 +625,7 @@ SVGElement.prototype = {
 			this.alignByTranslate = alignByTranslate;
 			if (!box || Highcharts.isString(box)) { // boxes other than renderer handle this internally
 				this.alignTo = alignTo = box || 'renderer';
-				erase(alignedObjects, this); // prevent duplicates, like legendGroup after resize
+				Highcharts.erase(alignedObjects, this); // prevent duplicates, like legendGroup after resize
 				alignedObjects.push(this);
 				box = null; // reassign it below
 			}
@@ -928,7 +928,7 @@ SVGElement.prototype = {
 
 		// remove from alignObjects
 		if (wrapper.alignTo) {
-			erase(wrapper.renderer.alignedObjects, wrapper);
+			Highcharts.erase(wrapper.renderer.alignedObjects, wrapper);
 		}
 
 		for (key in wrapper) {

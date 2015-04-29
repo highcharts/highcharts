@@ -174,7 +174,7 @@ Highcharts.lin2log = function (num) {
  * @param {Array} arr
  * @param {Mixed} item
  */
-function erase(arr, item) {
+Highcharts.erase = function (arr, item) {
 	var i = arr.length;
 	while (i--) {
 		if (arr[i] === item) {
@@ -183,7 +183,7 @@ function erase(arr, item) {
 		}
 	}
 	//return arr;
-}
+};
 
 /**
  * Returns true if the object is not null or undefined. Like MooTools' $.defined.
@@ -2327,7 +2327,7 @@ SVGElement.prototype = {
 			this.alignByTranslate = alignByTranslate;
 			if (!box || Highcharts.isString(box)) { // boxes other than renderer handle this internally
 				this.alignTo = alignTo = box || 'renderer';
-				erase(alignedObjects, this); // prevent duplicates, like legendGroup after resize
+				Highcharts.erase(alignedObjects, this); // prevent duplicates, like legendGroup after resize
 				alignedObjects.push(this);
 				box = null; // reassign it below
 			}
@@ -2630,7 +2630,7 @@ SVGElement.prototype = {
 
 		// remove from alignObjects
 		if (wrapper.alignTo) {
-			erase(wrapper.renderer.alignedObjects, wrapper);
+			Highcharts.erase(wrapper.renderer.alignedObjects, wrapper);
 		}
 
 		for (key in wrapper) {
@@ -4793,6 +4793,7 @@ VMLElement = {
 	 */
 	clip: function (clipRect) {
 		var wrapper = this,
+			erase = Highcharts.erase,
 			clipMembers,
 			cssRet;
 
@@ -12240,7 +12241,7 @@ Point.prototype = {
 
 		if (hoverPoints) {
 			point.setState();
-			erase(hoverPoints, point);
+			Highcharts.erase(hoverPoints, point);
 			if (!hoverPoints.length) {
 				chart.hoverPoints = null;
 			}
@@ -13556,6 +13557,7 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			issue134 = /AppleWebKit\/533/.test(navigator.userAgent),
+			erase = Highcharts.erase,
 			destroy,
 			i,
 			data = series.data || [],
@@ -14706,6 +14708,7 @@ Highcharts.extend(Axis.prototype, {
      */
 	remove: function (redraw) {
 		var chart = this.chart,
+			erase = Highcharts.erase,
 			key = this.coll, // xAxis or yAxis
 			axisSeries = this.series,
 			i = axisSeries.length;

@@ -209,6 +209,7 @@ VMLElement = {
 	 */
 	clip: function (clipRect) {
 		var wrapper = this,
+			erase = Highcharts.erase,
 			clipMembers,
 			cssRet;
 

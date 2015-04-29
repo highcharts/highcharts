@@ -121,7 +121,7 @@ Highcharts.lin2log = function (num) {
  * @param {Array} arr
  * @param {Mixed} item
  */
-function erase(arr, item) {
+Highcharts.erase = function (arr, item) {
 	var i = arr.length;
 	while (i--) {
 		if (arr[i] === item) {
@@ -130,7 +130,7 @@ function erase(arr, item) {
 		}
 	}
 	//return arr;
-}
+};
 
 /**
  * Returns true if the object is not null or undefined. Like MooTools' $.defined.

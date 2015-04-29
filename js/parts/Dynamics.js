@@ -483,6 +483,7 @@ Highcharts.extend(Axis.prototype, {
      */
 	remove: function (redraw) {
 		var chart = this.chart,
+			erase = Highcharts.erase,
 			key = this.coll, // xAxis or yAxis
 			axisSeries = this.series,
 			i = axisSeries.length;

@@ -171,7 +171,7 @@ Highcharts.PlotLineOrBand.prototype = {
 	 */
 	destroy: function () {
 		// remove it from the lookup
-		erase(this.axis.plotLinesAndBands, this);
+		Highcharts.erase(this.axis.plotLinesAndBands, this);
 		
 		delete this.axis;
 		destroyObjectProperties(this);
@@ -253,7 +253,7 @@ Highcharts.AxisPlotLineOrBandExtension = {
 			i = arr.length;
 			while (i--) {
 				if (arr[i].id === id) {
-					erase(arr, arr[i]);
+					Highcharts.erase(arr, arr[i]);
 				}
 			}
 		});
