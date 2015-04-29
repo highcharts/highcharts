@@ -623,7 +623,7 @@ SVGElement.prototype = {
 		if (alignOptions) {
 			this.alignOptions = alignOptions;
 			this.alignByTranslate = alignByTranslate;
-			if (!box || isString(box)) { // boxes other than renderer handle this internally
+			if (!box || Highcharts.isString(box)) { // boxes other than renderer handle this internally
 				this.alignTo = alignTo = box || 'renderer';
 				erase(alignedObjects, this); // prevent duplicates, like legendGroup after resize
 				alignedObjects.push(this);

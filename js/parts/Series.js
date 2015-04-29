@@ -453,7 +453,7 @@ Series.prototype = {
 			}
 
 			// Forgetting to cast strings to numbers is a common caveat when handling CSV or JSON
-			if (isString(yData[0])) {
+			if (Highcharts.isString(yData[0])) {
 				error(14, true);
 			}
 

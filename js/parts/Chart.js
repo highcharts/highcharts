@@ -591,7 +591,7 @@ Chart.prototype = {
 		chart.renderTo = renderTo = optionsChart.renderTo;
 		containerId = 'highcharts-' + Highcharts.idCounter++;
 
-		if (isString(renderTo)) {
+		if (Highcharts.isString(renderTo)) {
 			chart.renderTo = renderTo = document.getElementById(renderTo);
 		}
 		
@@ -1095,7 +1095,7 @@ Chart.prototype = {
 		// Apply new links
 		each(chartSeries, function (series) {
 			var linkedTo = series.options.linkedTo;
-			if (isString(linkedTo)) {
+			if (Highcharts.isString(linkedTo)) {
 				if (linkedTo === ':previous') {
 					linkedTo = chart.series[series.index - 1];
 				} else {

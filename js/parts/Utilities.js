@@ -81,9 +81,9 @@ Highcharts.pInt = function (s, mag) {
  * Check for string
  * @param {Object} s
  */
-function isString(s) {
+Highcharts.isString = function (s) {
 	return typeof s === 'string';
-}
+};
 
 /**
  * Check for object
@@ -153,7 +153,7 @@ function attr(elem, prop, value) {
 		ret;
 
 	// if the prop is a string
-	if (isString(prop)) {
+	if (Highcharts.isString(prop)) {
 		// set the value
 		if (defined(value)) {
 			elem.setAttribute(prop, value);

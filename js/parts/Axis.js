@@ -827,7 +827,7 @@ Axis.prototype = {
 						// is 'between' or 'on', this padding does not apply.
 						minPointOffset = Math.max(
 							minPointOffset,
-							isString(pointPlacement) ? 0 : seriesPointRange / 2
+							Highcharts.isString(pointPlacement) ? 0 : seriesPointRange / 2
 						);
 
 						// Determine the total padding needed to the length of the axis to make room for the
@@ -1544,7 +1544,7 @@ Axis.prototype = {
 			pos;
 
 		// Set rotation option unless it is "auto", like in gauges
-		if (!isString(labelOptions.rotation)) {
+		if (!Highcharts.isString(labelOptions.rotation)) {
 			attr.rotation = labelOptions.rotation;
 		}
 		

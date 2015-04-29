@@ -134,9 +134,9 @@ Highcharts.pInt = function (s, mag) {
  * Check for string
  * @param {Object} s
  */
-function isString(s) {
+Highcharts.isString = function (s) {
 	return typeof s === 'string';
-}
+};
 
 /**
  * Check for object
@@ -206,7 +206,7 @@ function attr(elem, prop, value) {
 		ret;
 
 	// if the prop is a string
-	if (isString(prop)) {
+	if (Highcharts.isString(prop)) {
 		// set the value
 		if (defined(value)) {
 			elem.setAttribute(prop, value);
@@ -904,7 +904,7 @@ Highcharts.pathAnim = {
 
 				if (this[0]) {
 
-					if (isString(args[0])) {
+					if (Highcharts.isString(args[0])) {
 						constr = args[0];
 						args = Array.prototype.slice.call(args, 1); 
 					}
@@ -2325,7 +2325,7 @@ SVGElement.prototype = {
 		if (alignOptions) {
 			this.alignOptions = alignOptions;
 			this.alignByTranslate = alignByTranslate;
-			if (!box || isString(box)) { // boxes other than renderer handle this internally
+			if (!box || Highcharts.isString(box)) { // boxes other than renderer handle this internally
 				this.alignTo = alignTo = box || 'renderer';
 				erase(alignedObjects, this); // prevent duplicates, like legendGroup after resize
 				alignedObjects.push(this);
@@ -6918,7 +6918,7 @@ Axis.prototype = {
 						// is 'between' or 'on', this padding does not apply.
 						minPointOffset = Math.max(
 							minPointOffset,
-							isString(pointPlacement) ? 0 : seriesPointRange / 2
+							Highcharts.isString(pointPlacement) ? 0 : seriesPointRange / 2
 						);
 
 						// Determine the total padding needed to the length of the axis to make room for the
@@ -7635,7 +7635,7 @@ Axis.prototype = {
 			pos;
 
 		// Set rotation option unless it is "auto", like in gauges
-		if (!isString(labelOptions.rotation)) {
+		if (!Highcharts.isString(labelOptions.rotation)) {
 			attr.rotation = labelOptions.rotation;
 		}
 		
@@ -11271,7 +11271,7 @@ Chart.prototype = {
 		chart.renderTo = renderTo = optionsChart.renderTo;
 		containerId = 'highcharts-' + Highcharts.idCounter++;
 
-		if (isString(renderTo)) {
+		if (Highcharts.isString(renderTo)) {
 			chart.renderTo = renderTo = document.getElementById(renderTo);
 		}
 		
@@ -11775,7 +11775,7 @@ Chart.prototype = {
 		// Apply new links
 		each(chartSeries, function (series) {
 			var linkedTo = series.options.linkedTo;
-			if (isString(linkedTo)) {
+			if (Highcharts.isString(linkedTo)) {
 				if (linkedTo === ':previous') {
 					linkedTo = chart.series[series.index - 1];
 				} else {
@@ -12803,7 +12803,7 @@ Series.prototype = {
 			}
 
 			// Forgetting to cast strings to numbers is a common caveat when handling CSV or JSON
-			if (isString(yData[0])) {
+			if (Highcharts.isString(yData[0])) {
 				error(14, true);
 			}
 

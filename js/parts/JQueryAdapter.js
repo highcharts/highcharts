@@ -119,7 +119,7 @@
 
 				if (this[0]) {
 
-					if (isString(args[0])) {
+					if (Highcharts.isString(args[0])) {
 						constr = args[0];
 						args = Array.prototype.slice.call(args, 1); 
 					}
