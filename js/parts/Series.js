@@ -412,7 +412,7 @@ Series.prototype = {
 				}
 
 
-				if (isNumber(firstPoint)) { // assume all points are numbers
+				if (Highcharts.isNumber(firstPoint)) { // assume all points are numbers
 					var x = pick(options.pointStart, 0),
 						pointInterval = pick(options.pointInterval, 1);
 
@@ -734,7 +734,7 @@ Series.prototype = {
 			hasModifyValue = !!series.modifyValue,
 			i,
 			pointPlacement = options.pointPlacement,
-			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
+			dynamicallyPlaced = pointPlacement === 'between' || Highcharts.isNumber(pointPlacement),
 			threshold = options.threshold,
 			plotX,
 			plotY,

@@ -545,7 +545,7 @@ Axis.prototype = {
 				pointPlacement = 0.5;
 			}
 			returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * minPixelPadding) +
-				(isNumber(pointPlacement) ? localA * pointPlacement * axis.pointRange : 0);
+				(Highcharts.isNumber(pointPlacement) ? localA * pointPlacement * axis.pointRange : 0);
 		}
 
 		return returnValue;
@@ -638,7 +638,7 @@ Axis.prototype = {
 			tickPositions = [];
 
 		// For single points, add a tick regardless of the relative position (#2662)
-		if (min === max && isNumber(min)) {
+		if (min === max && Highcharts.isNumber(min)) {
 			return [min];
 		}
 
@@ -880,6 +880,7 @@ Axis.prototype = {
 		var axis = this,
 			chart = axis.chart,
 			options = axis.options,
+			isNumber = Highcharts.isNumber,
 			isLog = axis.isLog,
 			isDatetimeAxis = axis.isDatetimeAxis,
 			isXAxis = axis.isXAxis,

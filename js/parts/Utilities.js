@@ -105,9 +105,9 @@ Highcharts.isArray = function (obj) {
  * Check for number
  * @param {Object} n
  */
-function isNumber(n) {
+Highcharts.isNumber = function (n) {
 	return typeof n === 'number';
-}
+};
 
 function log2lin(num) {
 	return Math.log(num) / Math.LN10;

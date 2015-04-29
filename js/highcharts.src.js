@@ -158,9 +158,9 @@ Highcharts.isArray = function (obj) {
  * Check for number
  * @param {Object} n
  */
-function isNumber(n) {
+Highcharts.isNumber = function (n) {
 	return typeof n === 'number';
-}
+};
 
 function log2lin(num) {
 	return Math.log(num) / Math.LN10;
@@ -1663,7 +1663,7 @@ var Color = function (input) {
 				stop.brighten(alpha);
 			});
 		
-		} else if (isNumber(alpha) && alpha !== 0) {
+		} else if (Highcharts.isNumber(alpha) && alpha !== 0) {
 			var i;
 			for (i = 0; i < 3; i++) {
 				rgba[i] += Highcharts.pInt(alpha * 255);
@@ -4749,7 +4749,7 @@ VMLElement = {
 			// Multiply by 10 to allow subpixel precision.
 			// Substracting half a pixel seems to make the coordinates
 			// align with SVG, but this hasn't been tested thoroughly
-			if (isNumber(value[i])) {
+			if (Highcharts.isNumber(value[i])) {
 				path[i] = Math.round(value[i] * 10) - 5;
 			} else if (value[i] === 'Z') { // close the path
 				path[i] = 'x';
@@ -5010,7 +5010,7 @@ VMLElement = {
 	'stroke-widthSetter': function (value, key, element) {
 		element.stroked = !!value; // VML "stroked" attribute
 		this[key] = value; // used in getter, issue #113
-		if (isNumber(value)) {
+		if (Highcharts.isNumber(value)) {
 			value += 'px';
 		}
 		this.setAttr('strokeweight', value);
@@ -6897,7 +6897,7 @@ Axis.prototype = {
 				pointPlacement = 0.5;
 			}
 			returnValue = sign * (val - localMin) * localA + cvsOffset + (sign * minPixelPadding) +
-				(isNumber(pointPlacement) ? localA * pointPlacement * axis.pointRange : 0);
+				(Highcharts.isNumber(pointPlacement) ? localA * pointPlacement * axis.pointRange : 0);
 		}
 
 		return returnValue;
@@ -6990,7 +6990,7 @@ Axis.prototype = {
 			tickPositions = [];
 
 		// For single points, add a tick regardless of the relative position (#2662)
-		if (min === max && isNumber(min)) {
+		if (min === max && Highcharts.isNumber(min)) {
 			return [min];
 		}
 
@@ -7232,6 +7232,7 @@ Axis.prototype = {
 		var axis = this,
 			chart = axis.chart,
 			options = axis.options,
+			isNumber = Highcharts.isNumber,
 			isLog = axis.isLog,
 			isDatetimeAxis = axis.isDatetimeAxis,
 			isXAxis = axis.isXAxis,
@@ -9317,7 +9318,7 @@ Tooltip.prototype = {
 			tooltipOptions = series.tooltipOptions,
 			xDateFormat = tooltipOptions.xDateFormat,
 			xAxis = series.xAxis,
-			isDateTime = xAxis && xAxis.options.type === 'datetime' && isNumber(point.key),
+			isDateTime = xAxis && xAxis.options.type === 'datetime' && Highcharts.isNumber(point.key),
 			formatString = tooltipOptions[footOrHead+'Format'];
 
 		// Guess the best date format based on the closest point distance (#568, #3418)
@@ -13269,7 +13270,7 @@ Series.prototype = {
 				}
 
 
-				if (isNumber(firstPoint)) { // assume all points are numbers
+				if (Highcharts.isNumber(firstPoint)) { // assume all points are numbers
 					var x = pick(options.pointStart, 0),
 						pointInterval = pick(options.pointInterval, 1);
 
@@ -13591,7 +13592,7 @@ Series.prototype = {
 			hasModifyValue = !!series.modifyValue,
 			i,
 			pointPlacement = options.pointPlacement,
-			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
+			dynamicallyPlaced = pointPlacement === 'between' || Highcharts.isNumber(pointPlacement),
 			threshold = options.threshold,
 			plotX,
 			plotY,

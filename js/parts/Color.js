@@ -84,7 +84,7 @@ var Color = function (input) {
 				stop.brighten(alpha);
 			});
 		
-		} else if (isNumber(alpha) && alpha !== 0) {
+		} else if (Highcharts.isNumber(alpha) && alpha !== 0) {
 			var i;
 			for (i = 0; i < 3; i++) {
 				rgba[i] += Highcharts.pInt(alpha * 255);

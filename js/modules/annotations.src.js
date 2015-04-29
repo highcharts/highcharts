@@ -5,6 +5,7 @@ var ALIGN_FACTOR,
 	Chart = Highcharts.Chart,
 	extend = Highcharts.extend,
 	isArray = Highcharts.isArray,
+	isNumber = Highcharts.isNumber,
 	each = Highcharts.each;
 
 ALLOWED_SHAPES = ["path", "rect", "circle"];
@@ -59,10 +60,6 @@ function defaultOptions(shapeType) {
 	}
 
 	return options;
-}
-
-function isNumber(n) {
-	return typeof n === 'number';
 }
 
 function defined(obj) {

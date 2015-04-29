@@ -500,7 +500,7 @@ Tooltip.prototype = {
 			tooltipOptions = series.tooltipOptions,
 			xDateFormat = tooltipOptions.xDateFormat,
 			xAxis = series.xAxis,
-			isDateTime = xAxis && xAxis.options.type === 'datetime' && isNumber(point.key),
+			isDateTime = xAxis && xAxis.options.type === 'datetime' && Highcharts.isNumber(point.key),
 			formatString = tooltipOptions[footOrHead+'Format'];
 
 		// Guess the best date format based on the closest point distance (#568, #3418)

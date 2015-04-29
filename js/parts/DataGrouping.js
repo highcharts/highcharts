@@ -397,7 +397,7 @@ tooltipProto.tooltipFooterHeaderFormatter = function (point, isFooter) {
 		ret;
 
 	// apply only to grouped series
-	if (xAxis && xAxis.options.type === 'datetime' && dataGroupingOptions && isNumber(point.key)) {
+	if (xAxis && xAxis.options.type === 'datetime' && dataGroupingOptions && Highcharts.isNumber(point.key)) {
 
 		// set variables
 		currentDataGrouping = series.currentDataGrouping;

@@ -165,7 +165,7 @@ VMLElement = {
 			// Multiply by 10 to allow subpixel precision.
 			// Substracting half a pixel seems to make the coordinates
 			// align with SVG, but this hasn't been tested thoroughly
-			if (isNumber(value[i])) {
+			if (Highcharts.isNumber(value[i])) {
 				path[i] = Math.round(value[i] * 10) - 5;
 			} else if (value[i] === 'Z') { // close the path
 				path[i] = 'x';
@@ -426,7 +426,7 @@ VMLElement = {
 	'stroke-widthSetter': function (value, key, element) {
 		element.stroked = !!value; // VML "stroked" attribute
 		this[key] = value; // used in getter, issue #113
-		if (isNumber(value)) {
+		if (Highcharts.isNumber(value)) {
 			value += 'px';
 		}
 		this.setAttr('strokeweight', value);
