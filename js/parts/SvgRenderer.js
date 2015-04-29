@@ -82,7 +82,7 @@ SVGElement.prototype = {
 			radialReference = elem.radialReference;
 
 			// Keep < 2.2 kompatibility
-			if (isArray(gradAttr)) {
+			if (Highcharts.isArray(gradAttr)) {
 				color[gradName] = gradAttr = {
 					x1: gradAttr[0],
 					y1: gradAttr[1],
@@ -1743,7 +1743,7 @@ SVGRenderer.prototype = {
 		var attr = {
 			fill: 'none'
 		};
-		if (isArray(path)) {
+		if (Highcharts.isArray(path)) {
 			attr.d = path;
 		} else if (Highcharts.isObject(path)) { // attributes
 			Highcharts.extend(attr, path);

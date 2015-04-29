@@ -163,7 +163,7 @@ Highcharts.extend(Point.prototype, {
 			point.applyOptions(options);
 
 			// Update visuals
-			if (Highcharts.isObject(options) && !isArray(options)) {
+			if (Highcharts.isObject(options) && !Highcharts.isArray(options)) {
 				// Defer the actual redraw until getAttribs has been called (#3260)
 				point.redraw = function () {
 					if (graphic) {

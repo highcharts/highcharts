@@ -841,7 +841,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			// subpixel precision down to 0.1 (width and height = 1px)
 			coordsize: '10 10'
 		};
-		if (isArray(path)) {
+		if (Highcharts.isArray(path)) {
 			attr.d = path;
 		} else if (Highcharts.isObject(path)) { // attributes
 			Highcharts.extend(attr, path);

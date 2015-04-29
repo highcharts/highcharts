@@ -97,9 +97,9 @@ Highcharts.isObject = function (obj) {
  * Check for array
  * @param {Object} obj
  */
-function isArray(obj) {
+Highcharts.isArray = function (obj) {
 	return Object.prototype.toString.call(obj) === '[object Array]';
-}
+};
 
 /**
  * Check for number
@@ -176,7 +176,7 @@ function attr(elem, prop, value) {
  * MooTools' $.splat.
  */
 function splat(obj) {
-	return isArray(obj) ? obj : [obj];
+	return Highcharts.isArray(obj) ? obj : [obj];
 }
 
 

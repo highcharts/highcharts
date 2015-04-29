@@ -78,7 +78,7 @@ Point.prototype = {
 		if (typeof options === 'number' || options === null) {
 			ret[pointArrayMap[0]] = options;
 
-		} else if (isArray(options)) {
+		} else if (Highcharts.isArray(options)) {
 			// with leading x value
 			if (!keys && options.length > valueCount) {
 				firstItemType = typeof options[0];

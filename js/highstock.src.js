@@ -150,9 +150,9 @@ Highcharts.isObject = function (obj) {
  * Check for array
  * @param {Object} obj
  */
-function isArray(obj) {
+Highcharts.isArray = function (obj) {
 	return Object.prototype.toString.call(obj) === '[object Array]';
-}
+};
 
 /**
  * Check for number
@@ -229,7 +229,7 @@ function attr(elem, prop, value) {
  * MooTools' $.splat.
  */
 function splat(obj) {
-	return isArray(obj) ? obj : [obj];
+	return Highcharts.isArray(obj) ? obj : [obj];
 }
 
 
@@ -1784,7 +1784,7 @@ SVGElement.prototype = {
 			radialReference = elem.radialReference;
 
 			// Keep < 2.2 kompatibility
-			if (isArray(gradAttr)) {
+			if (Highcharts.isArray(gradAttr)) {
 				color[gradName] = gradAttr = {
 					x1: gradAttr[0],
 					y1: gradAttr[1],
@@ -3445,7 +3445,7 @@ SVGRenderer.prototype = {
 		var attr = {
 			fill: 'none'
 		};
-		if (isArray(path)) {
+		if (Highcharts.isArray(path)) {
 			attr.d = path;
 		} else if (Highcharts.isObject(path)) { // attributes
 			Highcharts.extend(attr, path);
@@ -5425,7 +5425,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			// subpixel precision down to 0.1 (width and height = 1px)
 			coordsize: '10 10'
 		};
-		if (isArray(path)) {
+		if (Highcharts.isArray(path)) {
 			attr.d = path;
 		} else if (Highcharts.isObject(path)) { // attributes
 			Highcharts.extend(attr, path);
@@ -12695,7 +12695,7 @@ Point.prototype = {
 		if (typeof options === 'number' || options === null) {
 			ret[pointArrayMap[0]] = options;
 
-		} else if (isArray(options)) {
+		} else if (Highcharts.isArray(options)) {
 			// with leading x value
 			if (!keys && options.length > valueCount) {
 				firstItemType = typeof options[0];
@@ -13279,7 +13279,7 @@ Series.prototype = {
 						x += pointInterval;
 					}
 					series.xIncrement = x;
-				} else if (isArray(firstPoint)) { // assume all points are arrays
+				} else if (Highcharts.isArray(firstPoint)) { // assume all points are arrays
 					if (valueCount) { // [x, low, high] or [x, o, h, l, c]
 						for (i = 0; i < dataLength; i++) {
 							pt = data[i];
@@ -15178,7 +15178,7 @@ Highcharts.extend(Point.prototype, {
 			point.applyOptions(options);
 
 			// Update visuals
-			if (Highcharts.isObject(options) && !isArray(options)) {
+			if (Highcharts.isObject(options) && !Highcharts.isArray(options)) {
 				// Defer the actual redraw until getAttribs has been called (#3260)
 				point.redraw = function () {
 					if (graphic) {
@@ -21746,7 +21746,7 @@ wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 // Pick up badly formatted point options to addPoint
 wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, animation) {
 	var turboThreshold = this.options.turboThreshold;
-	if (turboThreshold && this.xData.length > turboThreshold && Highcharts.isObject(options) && !isArray(options) && this.chart.scroller) {
+	if (turboThreshold && this.xData.length > turboThreshold && Highcharts.isObject(options) && !Highcharts.isArray(options) && this.chart.scroller) {
 		error(20, true);
 	}
 	proceed.call(this, options, redraw, shift, animation);

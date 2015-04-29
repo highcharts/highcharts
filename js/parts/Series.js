@@ -422,7 +422,7 @@ Series.prototype = {
 						x += pointInterval;
 					}
 					series.xIncrement = x;
-				} else if (isArray(firstPoint)) { // assume all points are arrays
+				} else if (Highcharts.isArray(firstPoint)) { // assume all points are arrays
 					if (valueCount) { // [x, low, high] or [x, o, h, l, c]
 						for (i = 0; i < dataLength; i++) {
 							pt = data[i];
