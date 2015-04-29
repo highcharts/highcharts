@@ -13,7 +13,7 @@ Tooltip.prototype = {
 
 		var borderWidth = options.borderWidth,
 			style = options.style,
-			padding = pInt(style.padding);
+			padding = Highcharts.pInt(style.padding);
 
 		// Save the chart and options
 		this.chart = chart;

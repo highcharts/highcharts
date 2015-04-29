@@ -1796,7 +1796,7 @@ Axis.prototype = {
 			margin = horiz ? axisLeft : axisTop,
 			opposite = this.opposite,
 			offset = this.offset,
-			fontSize = pInt(axisTitleOptions.style.fontSize || 12),
+			fontSize = Highcharts.pInt(axisTitleOptions.style.fontSize || 12),
 
 			// the position in the length direction of the axis
 			alongAxis = {

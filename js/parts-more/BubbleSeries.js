@@ -194,7 +194,7 @@ Highcharts.seriesTypes.bubble = extendClass(Highcharts.seriesTypes.scatter, {
 	 * @param {Object} item The series (this) or point
 	 */
 	drawLegendSymbol: function (legend, item) {
-		var radius = pInt(legend.itemStyle.fontSize) / 2;
+		var radius = Highcharts.pInt(legend.itemStyle.fontSize) / 2;
 		
 		item.legendSymbol = this.chart.renderer.circle(
 			radius,
@@ -255,7 +255,7 @@ Axis.prototype.beforePadding = function () {
 					var length = seriesOptions[prop],
 						isPercent = /%$/.test(length);
 					
-					length = pInt(length);
+					length = Highcharts.pInt(length);
 					extremes[prop] = isPercent ?
 						smallestSize * length / 100 :
 						length;

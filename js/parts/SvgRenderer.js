@@ -230,7 +230,7 @@ SVGElement.prototype = {
 							'class': 'highcharts-text-shadow',
 							'fill': color,
 							'stroke': color,
-							'stroke-opacity': 1 / Math.max(pInt(strokeWidth), 3),
+							'stroke-opacity': 1 / Math.max(Highcharts.pInt(strokeWidth), 3),
 							'stroke-width': strokeWidth,
 							'stroke-linejoin': 'round'
 						});
@@ -442,7 +442,7 @@ SVGElement.prototype = {
 		}
 		if (hasNew) {
 			textWidth = elemWrapper.textWidth = 
-				(styles && styles.width && elem.nodeName.toLowerCase() === 'text' && pInt(styles.width)) || 
+				(styles && styles.width && elem.nodeName.toLowerCase() === 'text' && Highcharts.pInt(styles.width)) || 
 				elemWrapper.textWidth; // #3501
 
 			// Merge the new styles with the old ones
@@ -1041,7 +1041,7 @@ SVGElement.prototype = {
 
 			i = value.length;
 			while (i--) {
-				value[i] = pInt(value[i]) * this['stroke-width'];
+				value[i] = Highcharts.pInt(value[i]) * this['stroke-width'];
 			}
 			value = value.join(',')
 				.replace('NaN', 'none'); // #3226
@@ -1119,7 +1119,7 @@ SVGElement.prototype = {
 				otherZIndex = attr(otherElement, 'zIndex');
 				if (otherElement !== element && (
 						// Insert before the first element with a higher zIndex
-						pInt(otherZIndex) > value ||
+						Highcharts.pInt(otherZIndex) > value ||
 						// If no zIndex given, insert before the first element with a zIndex
 						(!defined(value) && defined(otherZIndex))
 
@@ -1341,7 +1341,7 @@ SVGRenderer.prototype = {
 			tempParent = width && !wrapper.added && this.box,
 			getLineHeight = function (tspan) {
 				return textLineHeight ? 
-					pInt(textLineHeight) :
+					Highcharts.pInt(textLineHeight) :
 					renderer.fontMetrics(
 						/(px|em)$/.test(tspan && tspan.style.fontSize) ?
 							tspan.style.fontSize :
@@ -2264,7 +2264,7 @@ SVGRenderer.prototype = {
 			elem = elem.element || elem; // SVGElement
 			fontSize = window.getComputedStyle(elem, "").fontSize;
 		}
-		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
+		fontSize = /px/.test(fontSize) ? Highcharts.pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
 
 		// Empirical values found by comparing font size and bounding box height.
 		// Applies to the default font family. http://jsfiddle.net/highcharts/7xvn7/

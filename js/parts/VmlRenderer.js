@@ -287,7 +287,7 @@ VMLElement = {
 		len = path.length;
 
 		if (len === 9 || len === 11) {
-			path[len - 4] = path[len - 2] = pInt(path[len - 2]) - 10 * length;
+			path[len - 4] = path[len - 2] = Highcharts.pInt(path[len - 2]) - 10 * length;
 		}
 		return path.join(' ');
 	},
@@ -301,6 +301,7 @@ VMLElement = {
 			i,
 			element = this.element,
 			renderer = this.renderer,
+			pInt = Highcharts.pInt,
 			shadow,
 			elemStyle = element.style,
 			markup,
@@ -927,6 +928,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 */
 	invertChild: function (element, parentNode) {
 		var ren = this,
+			pInt = Highcharts.pInt,
 			parentStyle = parentNode.style,
 			imgStyle = element.tagName === 'IMG' && element.style; // #1111
 

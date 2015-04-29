@@ -76,6 +76,7 @@ var GaugeSeries = {
 		
 		var series = this,
 			yAxis = series.yAxis,
+			pInt = Highcharts.pInt,
 			options = series.options,
 			center = yAxis.center;
 			

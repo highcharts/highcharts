@@ -16,7 +16,7 @@ var Color = function (input) {
 	 * @param {String} input
 	 */
 	function init(input) {
-
+		var pInt = Highcharts.pInt;
 		// Gradients
 		if (input && input.stops) {
 			stops = map(input.stops, function (stop) {
@@ -87,7 +87,7 @@ var Color = function (input) {
 		} else if (isNumber(alpha) && alpha !== 0) {
 			var i;
 			for (i = 0; i < 3; i++) {
-				rgba[i] += pInt(alpha * 255);
+				rgba[i] += Highcharts.pInt(alpha * 255);
 
 				if (rgba[i] < 0) {
 					rgba[i] = 0;

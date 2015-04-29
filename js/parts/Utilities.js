@@ -73,9 +73,9 @@ Highcharts.merge = function () {
  * @param {Object} s
  * @param {Number} mag Magnitude
  */
-function pInt(s, mag) {
+Highcharts.pInt = function (s, mag) {
 	return parseInt(s, mag || 10);
-}
+};
 
 /**
  * Check for string
@@ -628,7 +628,7 @@ Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
 		d = decPoint === undefined ? lang.decimalPoint : decPoint,
 		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
 		s = n < 0 ? "-" : "",
-		i = String(pInt(n = Math.abs(n).toFixed(c))),
+		i = String(Highcharts.pInt(n = Math.abs(n).toFixed(c))),
 		j = i.length > 3 ? i.length % 3 : 0;
 
 	return (s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +

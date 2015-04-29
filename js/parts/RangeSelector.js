@@ -455,6 +455,7 @@ RangeSelector.prototype = {
 		input.onchange = function () {
 			var inputValue = input.value,
 				value = (options.inputDateParser || Date.parse)(inputValue),
+				pInt = Highcharts.pInt,
 				xAxis = chart.xAxis[0],
 				dataMin = xAxis.dataMin,
 				dataMax = xAxis.dataMax;

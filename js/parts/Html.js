@@ -99,7 +99,7 @@ Highcharts.extend(SVGElement.prototype, {
 			var width,
 				rotation = wrapper.rotation,
 				baseline,
-				textWidth = pInt(wrapper.textWidth),
+				textWidth = Highcharts.pInt(wrapper.textWidth),
 				currentTextTransform = [rotation, align, elem.innerHTML, wrapper.textWidth].join(',');
 
 			if (currentTextTransform !== wrapper.cTT) { // do the calculations and DOM access only if properties changed

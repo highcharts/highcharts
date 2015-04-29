@@ -19,7 +19,6 @@ var arrayMin = Highcharts.arrayMin,
 	merge = Highcharts.merge,
 	map = Highcharts.map,
 	pick = Highcharts.pick,
-	pInt = Highcharts.pInt,
 	defaultPlotOptions = Highcharts.getOptions().plotOptions,
 	extendClass = Highcharts.extendClass,
 	splat = Highcharts.splat,
@@ -382,7 +381,7 @@ var radialAxisMixin = {
 			// Convert percentages to pixel values
 			radii = map(radii, function (radius) {
 				if (percentRegex.test(radius)) {
-					radius = (pInt(radius, 10) * fullRadius) / 100;
+					radius = (Highcharts.pInt(radius, 10) * fullRadius) / 100;
 				}
 				return radius;
 			});
@@ -1059,6 +1058,7 @@ var GaugeSeries = {
 		
 		var series = this,
 			yAxis = series.yAxis,
+			pInt = Highcharts.pInt,
 			options = series.options,
 			center = yAxis.center;
 			
@@ -2009,7 +2009,7 @@ Highcharts.seriesTypes.bubble = extendClass(Highcharts.seriesTypes.scatter, {
 	 * @param {Object} item The series (this) or point
 	 */
 	drawLegendSymbol: function (legend, item) {
-		var radius = pInt(legend.itemStyle.fontSize) / 2;
+		var radius = Highcharts.pInt(legend.itemStyle.fontSize) / 2;
 		
 		item.legendSymbol = this.chart.renderer.circle(
 			radius,
@@ -2070,7 +2070,7 @@ Axis.prototype.beforePadding = function () {
 					var length = seriesOptions[prop],
 						isPercent = /%$/.test(length);
 					
-					length = pInt(length);
+					length = Highcharts.pInt(length);
 					extremes[prop] = isPercent ?
 						smallestSize * length / 100 :
 						length;

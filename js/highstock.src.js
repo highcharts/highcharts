@@ -126,9 +126,9 @@ Highcharts.merge = function () {
  * @param {Object} s
  * @param {Number} mag Magnitude
  */
-function pInt(s, mag) {
+Highcharts.pInt = function (s, mag) {
 	return parseInt(s, mag || 10);
-}
+};
 
 /**
  * Check for string
@@ -681,7 +681,7 @@ Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
 		d = decPoint === undefined ? lang.decimalPoint : decPoint,
 		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
 		s = n < 0 ? "-" : "",
-		i = String(pInt(n = Math.abs(n).toFixed(c))),
+		i = String(Highcharts.pInt(n = Math.abs(n).toFixed(c))),
 		j = i.length > 3 ? i.length % 3 : 0;
 
 	return (s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
@@ -1595,7 +1595,7 @@ var Color = function (input) {
 	 * @param {String} input
 	 */
 	function init(input) {
-
+		var pInt = Highcharts.pInt;
 		// Gradients
 		if (input && input.stops) {
 			stops = map(input.stops, function (stop) {
@@ -1666,7 +1666,7 @@ var Color = function (input) {
 		} else if (isNumber(alpha) && alpha !== 0) {
 			var i;
 			for (i = 0; i < 3; i++) {
-				rgba[i] += pInt(alpha * 255);
+				rgba[i] += Highcharts.pInt(alpha * 255);
 
 				if (rgba[i] < 0) {
 					rgba[i] = 0;
@@ -1932,7 +1932,7 @@ SVGElement.prototype = {
 							'class': 'highcharts-text-shadow',
 							'fill': color,
 							'stroke': color,
-							'stroke-opacity': 1 / Math.max(pInt(strokeWidth), 3),
+							'stroke-opacity': 1 / Math.max(Highcharts.pInt(strokeWidth), 3),
 							'stroke-width': strokeWidth,
 							'stroke-linejoin': 'round'
 						});
@@ -2144,7 +2144,7 @@ SVGElement.prototype = {
 		}
 		if (hasNew) {
 			textWidth = elemWrapper.textWidth = 
-				(styles && styles.width && elem.nodeName.toLowerCase() === 'text' && pInt(styles.width)) || 
+				(styles && styles.width && elem.nodeName.toLowerCase() === 'text' && Highcharts.pInt(styles.width)) || 
 				elemWrapper.textWidth; // #3501
 
 			// Merge the new styles with the old ones
@@ -2743,7 +2743,7 @@ SVGElement.prototype = {
 
 			i = value.length;
 			while (i--) {
-				value[i] = pInt(value[i]) * this['stroke-width'];
+				value[i] = Highcharts.pInt(value[i]) * this['stroke-width'];
 			}
 			value = value.join(',')
 				.replace('NaN', 'none'); // #3226
@@ -2821,7 +2821,7 @@ SVGElement.prototype = {
 				otherZIndex = attr(otherElement, 'zIndex');
 				if (otherElement !== element && (
 						// Insert before the first element with a higher zIndex
-						pInt(otherZIndex) > value ||
+						Highcharts.pInt(otherZIndex) > value ||
 						// If no zIndex given, insert before the first element with a zIndex
 						(!defined(value) && defined(otherZIndex))
 
@@ -3043,7 +3043,7 @@ SVGRenderer.prototype = {
 			tempParent = width && !wrapper.added && this.box,
 			getLineHeight = function (tspan) {
 				return textLineHeight ? 
-					pInt(textLineHeight) :
+					Highcharts.pInt(textLineHeight) :
 					renderer.fontMetrics(
 						/(px|em)$/.test(tspan && tspan.style.fontSize) ?
 							tspan.style.fontSize :
@@ -3966,7 +3966,7 @@ SVGRenderer.prototype = {
 			elem = elem.element || elem; // SVGElement
 			fontSize = window.getComputedStyle(elem, "").fontSize;
 		}
-		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
+		fontSize = /px/.test(fontSize) ? Highcharts.pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
 
 		// Empirical values found by comparing font size and bounding box height.
 		// Applies to the default font family. http://jsfiddle.net/highcharts/7xvn7/
@@ -4387,7 +4387,7 @@ Highcharts.extend(SVGElement.prototype, {
 			var width,
 				rotation = wrapper.rotation,
 				baseline,
-				textWidth = pInt(wrapper.textWidth),
+				textWidth = Highcharts.pInt(wrapper.textWidth),
 				currentTextTransform = [rotation, align, elem.innerHTML, wrapper.textWidth].join(',');
 
 			if (currentTextTransform !== wrapper.cTT) { // do the calculations and DOM access only if properties changed
@@ -4871,7 +4871,7 @@ VMLElement = {
 		len = path.length;
 
 		if (len === 9 || len === 11) {
-			path[len - 4] = path[len - 2] = pInt(path[len - 2]) - 10 * length;
+			path[len - 4] = path[len - 2] = Highcharts.pInt(path[len - 2]) - 10 * length;
 		}
 		return path.join(' ');
 	},
@@ -4885,6 +4885,7 @@ VMLElement = {
 			i,
 			element = this.element,
 			renderer = this.renderer,
+			pInt = Highcharts.pInt,
 			shadow,
 			elemStyle = element.style,
 			markup,
@@ -5511,6 +5512,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 */
 	invertChild: function (element, parentNode) {
 		var ren = this,
+			pInt = Highcharts.pInt,
 			parentStyle = parentNode.style,
 			imgStyle = element.tagName === 'IMG' && element.style; // #1111
 
@@ -8146,7 +8148,7 @@ Axis.prototype = {
 			margin = horiz ? axisLeft : axisTop,
 			opposite = this.opposite,
 			offset = this.offset,
-			fontSize = pInt(axisTitleOptions.style.fontSize || 12),
+			fontSize = Highcharts.pInt(axisTitleOptions.style.fontSize || 12),
 
 			// the position in the length direction of the axis
 			alongAxis = {
@@ -8828,7 +8830,7 @@ Tooltip.prototype = {
 
 		var borderWidth = options.borderWidth,
 			style = options.style,
-			padding = pInt(style.padding);
+			padding = Highcharts.pInt(style.padding);
 
 		// Save the chart and options
 		this.chart = chart;
@@ -11750,7 +11752,7 @@ Chart.prototype = {
 		// because web pages that are saved to disk from the browser, will preserve the data-highcharts-chart
 		// attribute and the SVG contents, but not an interactive chart. So in this case,
 		// charts[oldChartIndex] will point to the wrong chart if any (#2609).
-		oldChartIndex = pInt(attr(renderTo, indexAttrName));
+		oldChartIndex = Highcharts.pInt(attr(renderTo, indexAttrName));
 		if (!isNaN(oldChartIndex) && charts[oldChartIndex] && charts[oldChartIndex].hasRendered) {
 			charts[oldChartIndex].destroy();
 		}		
@@ -12270,6 +12272,7 @@ Chart.prototype = {
 	 */
 	renderLabels: function () {
 		var chart = this,
+			pInt = Highcharts.pInt,
 			labels = chart.options.labels;
 		if (labels.items) {
 			each(labels.items, function (label) {
@@ -12583,6 +12586,7 @@ var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
 		
 		var options = this.options,
 			chart = this.chart,
+			pInt = Highcharts.pInt,
 			slicingRoom = 2 * (options.slicedOffset || 0),
 			handleSlicingRoom,
 			plotWidth = chart.plotWidth - 2 * slicingRoom,
@@ -21799,7 +21803,7 @@ Highcharts.extend(Highcharts.defaultOptions, {
 		// selected: undefined
 	}
 });
-Highcharts.defaultOptions.lang = Highcharts.Highcharts.merge(Highcharts.defaultOptions.lang, {
+Highcharts.defaultOptions.lang = Highcharts.merge(Highcharts.defaultOptions.lang, {
 	rangeSelectorZoom: 'Zoom',
 	rangeSelectorFrom: 'From',
 	rangeSelectorTo: 'To'
@@ -22208,6 +22212,7 @@ RangeSelector.prototype = {
 		input.onchange = function () {
 			var inputValue = input.value,
 				value = (options.inputDateParser || Date.parse)(inputValue),
+				pInt = Highcharts.pInt,
 				xAxis = chart.xAxis[0],
 				dataMin = xAxis.dataMin,
 				dataMax = xAxis.dataMax;
@@ -23153,7 +23158,6 @@ Highcharts.extend(Highcharts, {
 	map: map,
 	splat: splat,
 	extendClass: extendClass,
-	pInt: pInt,
 	canvas: Highcharts.useCanVG,
 	vml: !Highcharts.svg && !Highcharts.useCanVG,
 	product: 'Highstock',
