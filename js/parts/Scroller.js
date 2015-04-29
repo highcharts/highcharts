@@ -1106,7 +1106,7 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 		// the reset button is pressed, revert to this state
 		} else if (zoomType === 'xy') {
 			previousZoom = this.previousZoom;
-			if (defined(newMin)) {
+			if (Highcharts.defined(newMin)) {
 				this.previousZoom = [this.min, this.max];
 			} else if (previousZoom) {
 				newMin = previousZoom[0];

@@ -124,6 +124,7 @@ Pointer.prototype = {
 
 		var pointer = this,
 			chart = pointer.chart,
+			defined = Highcharts.defined,
 			series = chart.series,
 			tooltip = chart.tooltip,
 			shared = tooltip ? tooltip.shared : false,
@@ -457,7 +458,7 @@ Pointer.prototype = {
 
 				// record each axis' min and max
 				each(chart.axes, function (axis) {
-					if (axis.zoomEnabled && defined(axis.min) && (hasPinched || pointer[{ xAxis: 'zoomX', yAxis: 'zoomY' }[axis.coll]])) { // #859, #3569
+					if (axis.zoomEnabled && Highcharts.defined(axis.min) && (hasPinched || pointer[{ xAxis: 'zoomX', yAxis: 'zoomY' }[axis.coll]])) { // #859, #3569
 						var horiz = axis.horiz,
 							minPixelPadding = e.type === 'touchend' ? axis.minPixelPadding: 0, // #1207, #3075
 							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop) + minPixelPadding),

@@ -23,7 +23,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		interval = normalizedInterval.unitRange,
 		count = normalizedInterval.count;
 
-	if (defined(min)) { // #1300
+	if (Highcharts.defined(min)) { // #1300
 		minDate[d.hcSetMilliseconds](interval >= timeUnits.second ? 0 : // #3935
 			count * Math.floor(minDate.getMilliseconds() / count)); // #3652, #3654
 

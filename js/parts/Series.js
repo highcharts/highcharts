@@ -299,7 +299,7 @@ Series.prototype = {
 			});
 		}
 		if (zones.length) { // Push one extra zone for the rest
-			if (defined(zones[zones.length - 1].value)) {
+			if (Highcharts.defined(zones[zones.length - 1].value)) {
 				zones.push({
 					color: this.color,
 					fillColor: this.fillColor
@@ -316,7 +316,7 @@ Series.prototype = {
 			counterName = prop + 'Counter';
 
 		if (!value) {
-			if (defined(userOptions[indexName])) { // after Series.update()
+			if (Highcharts.defined(userOptions[indexName])) { // after Series.update()
 				i = userOptions[indexName];
 			} else {
 				userOptions[indexName] = i = this.chart[counterName] % defaults.length;
@@ -786,7 +786,7 @@ Series.prototype = {
 			}
 
 			// Set translated yBottom or remove it
-			point.yBottom = defined(yBottom) ?
+			point.yBottom = Highcharts.defined(yBottom) ?
 				yAxis.translate(yBottom, 0, 1, 0, 1) :
 				null;
 
@@ -1133,7 +1133,7 @@ Series.prototype = {
 				// check if the point has specific visual options
 				if (point.options) {
 					for (key in pointAttrToOptions) {
-						if (defined(normalOptions[pointAttrToOptions[key]])) {
+						if (Highcharts.defined(normalOptions[pointAttrToOptions[key]])) {
 							hasPointSpecificOptions = true;
 						}
 					}
@@ -1804,6 +1804,7 @@ Series.prototype = {
 
 	searchKDTree: function (point) {
 		var series = this,
+			defined = Highcharts.defined,
 			kdComparer = this.kdComparer,
 			kdX = this.kdAxisArray[0],
 			kdY = this.kdAxisArray[1];

@@ -136,9 +136,9 @@ Highcharts.erase = function (arr, item) {
  * Returns true if the object is not null or undefined. Like MooTools' $.defined.
  * @param {Object} obj
  */
-function defined(obj) {
+Highcharts.defined = function (obj) {
 	return obj !== undefined && obj !== null;
-}
+};
 
 /**
  * Set or get an attribute or an object of attributes. Can't use jQuery attr because
@@ -155,7 +155,7 @@ function attr(elem, prop, value) {
 	// if the prop is a string
 	if (Highcharts.isString(prop)) {
 		// set the value
-		if (defined(value)) {
+		if (Highcharts.defined(value)) {
 			elem.setAttribute(prop, value);
 
 		// get the value
@@ -164,7 +164,7 @@ function attr(elem, prop, value) {
 		}
 
 	// else if prop is defined, it is a hash of key/value pairs
-	} else if (defined(prop) && Highcharts.isObject(prop)) {
+	} else if (Highcharts.defined(prop) && Highcharts.isObject(prop)) {
 		for (key in prop) {
 			elem.setAttribute(key, prop[key]);
 		}
@@ -287,7 +287,7 @@ function getTZOffset(timestamp) {
  * @param {Boolean} capitalize
  */
 Highcharts.dateFormat = function (format, timestamp, capitalize) {
-	if (!defined(timestamp) || isNaN(timestamp)) {
+	if (!Highcharts.defined(timestamp) || isNaN(timestamp)) {
 		return 'Invalid date';
 	}
 	format = pick(format, '%Y-%m-%d %H:%M:%S');

@@ -47,6 +47,7 @@ Series.prototype.drawDataLabels = function () {
 		each(points, function (point) {
 
 			var enabled,
+				defined = Highcharts.defined,
 				dataLabel = point.dataLabel,
 				labelConfig,
 				attr,

@@ -123,7 +123,7 @@ var ColumnSeries = extendClass(Series, {
 			groupWidth = categoryWidth - 2 * groupPadding,
 			pointOffsetWidth = groupWidth / columnCount,
 			optionPointWidth = options.pointWidth,
-			pointPadding = defined(optionPointWidth) ? (pointOffsetWidth - optionPointWidth) / 2 :
+			pointPadding = Highcharts.defined(optionPointWidth) ? (pointOffsetWidth - optionPointWidth) / 2 :
 				pointOffsetWidth * options.pointPadding,
 			pointWidth = pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding), // exact point width, used in polar charts
 			colIndex = (reversedXAxis ? 
@@ -276,7 +276,7 @@ var ColumnSeries = extendClass(Series, {
 			if (plotY !== undefined && !isNaN(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
 
-				borderAttr = defined(series.borderWidth) ? {
+				borderAttr = Highcharts.defined(series.borderWidth) ? {
 					'stroke-width': series.borderWidth
 				} : {};
 

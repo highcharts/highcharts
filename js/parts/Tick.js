@@ -22,6 +22,7 @@ Tick.prototype = {
 			options = axis.options,
 			chart = axis.chart,
 			categories = axis.categories,
+			defined = Highcharts.defined,
 			names = axis.names,
 			pos = tick.pos,
 			labelOptions = options.labels,

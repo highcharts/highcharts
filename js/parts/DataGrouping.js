@@ -332,7 +332,7 @@ seriesProto.processData = function () {
 		series.closestPointRange = groupPositions.info.totalRange;
 
 		// Make sure the X axis extends to show the first group (#2533)
-		if (defined(groupedXData[0]) && groupedXData[0] < xAxis.dataMin) {
+		if (Highcharts.defined(groupedXData[0]) && groupedXData[0] < xAxis.dataMin) {
 			if (xAxis.min === xAxis.dataMin) {
 				xAxis.min = groupedXData[0];
 			}

@@ -255,7 +255,7 @@ Axis.prototype = {
 		axis.isDatetimeAxis = isDatetimeAxis;
 
 		// Flag, if axis is linked to another axis
-		axis.isLinked = defined(options.linkedTo);
+		axis.isLinked = Highcharts.defined(options.linkedTo);
 		// Linked axis.
 		//axis.linkedParent = undefined;
 
@@ -427,7 +427,8 @@ Axis.prototype = {
 	 */
 	getSeriesExtremes: function () {
 		var axis = this,
-			chart = axis.chart;
+			chart = axis.chart,
+			defined = Highcharts.defined;
 
 		axis.hasVisibleSeries = false;
 
@@ -719,6 +720,7 @@ Axis.prototype = {
 	 */
 	adjustForMinRange: function () {
 		var axis = this,
+			defined = Highcharts.defined,
 			options = axis.options,
 			min = axis.min,
 			max = axis.max,
@@ -793,6 +795,7 @@ Axis.prototype = {
 	 */
 	setAxisTranslation: function (saveOld) {
 		var axis = this,
+			defined = Highcharts.defined,
 			range = axis.max - axis.min,
 			pointRange = axis.axisPointRange || 0,
 			closestPointRange,
@@ -879,6 +882,7 @@ Axis.prototype = {
 	setTickInterval: function (secondPass) {
 		var axis = this,
 			chart = axis.chart,
+			defined = Highcharts.defined,
 			options = axis.options,
 			isNumber = Highcharts.isNumber,
 			log2lin = Highcharts.log2lin,
@@ -1093,7 +1097,7 @@ Axis.prototype = {
 			// When there is only one point, or all points have the same value on this axis, then min
 			// and max are equal and tickPositions.length is 0 or 1. In this case, add some padding
 			// in order to center the point, but leave it with one tick. #1337.
-			if (this.min === this.max && defined(this.min) && !this.tickAmount) {
+			if (this.min === this.max && Highcharts.defined(this.min) && !this.tickAmount) {
 				// Substract half a unit (#2619, #2846, #2515, #3390)
 				single = true;
 				this.min -= 0.5;
@@ -1128,7 +1132,7 @@ Axis.prototype = {
 		}
 
 		// If no tick are left, set one tick in the middle (#3195) 
-		if (tickPositions.length === 0 && defined(roundedMin)) {
+		if (tickPositions.length === 0 && Highcharts.defined(roundedMin)) {
 			tickPositions.push((roundedMax + roundedMin) / 2);
 		}		
 	},
@@ -1143,7 +1147,7 @@ Axis.prototype = {
 			tickAmount = options.tickAmount,
 			tickPixelInterval = options.tickPixelInterval;
 
-		if (!defined(options.tickInterval) && this.len < tickPixelInterval && !this.isRadial &&
+		if (!Highcharts.defined(options.tickInterval) && this.len < tickPixelInterval && !this.isRadial &&
 				!this.isLog && options.startOnTick && options.endOnTick) {
 			tickAmount = 2;
 		}
@@ -1207,7 +1211,7 @@ Axis.prototype = {
 		}
 
 		// The finalTickAmt property is set in getTickAmount
-		if (defined(finalTickAmt)) {
+		if (Highcharts.defined(finalTickAmt)) {
 			i = len = tickPositions.length;
 			while (i--) {
 				if (
@@ -1344,6 +1348,7 @@ Axis.prototype = {
 	zoom: function (newMin, newMax) {
 		var dataMin = this.dataMin,
 			dataMax = this.dataMax,
+			defined = Highcharts.defined,
 			options = this.options;
 
 		// Prevent pinch zooming out of range. Check for defined is for #1946. #1734.
@@ -1491,7 +1496,7 @@ Axis.prototype = {
 			};
 		
 		if (horiz) {
-			autoRotation = defined(rotationOption) ? 
+			autoRotation = Highcharts.defined(rotationOption) ? 
 				[rotationOption] :
 				slotSize < pick(labelOptions.autoRotationLimit, 80) && !labelOptions.staggerLines && !labelOptions.step && labelOptions.autoRotation; // docs: API and demo created, enable with "since".
 
@@ -1625,6 +1630,7 @@ Axis.prototype = {
 	getOffset: function () {
 		var axis = this,
 			chart = axis.chart,
+			defined = Highcharts.defined,
 			renderer = chart.renderer,
 			options = axis.options,
 			tickPositions = axis.tickPositions,
@@ -1849,7 +1855,7 @@ Axis.prototype = {
 			linePath,
 			lin2log = Highcharts.lin2log,
 			hasRendered = chart.hasRendered,
-			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
+			slideInTicks = hasRendered && Highcharts.defined(axis.oldMin) && !isNaN(axis.oldMin),
 			hasData = axis.hasData,
 			showAxis = axis.showAxis,
 			from,
@@ -2096,6 +2102,7 @@ Axis.prototype = {
 		var path,
 			options = this.crosshair,
 			animation = options.animation,
+			defined = Highcharts.defined,
 			pos,
 			attribs,
 			categorized;

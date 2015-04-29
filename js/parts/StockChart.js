@@ -164,6 +164,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 	var axis = this,
 		series = (this.isLinked && !this.series ? this.linkedParent.series : this.series),
 		chart = axis.chart,
+		defined = Highcharts.defined,
 		renderer = chart.renderer,
 		axisLeft = axis.left,
 		axisTop = axis.top,
@@ -309,6 +310,8 @@ if (Highcharts.Renderer === Highcharts.VMLRenderer) {
 
 // Wrapper to hide the label
 wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
+	var defined = Highcharts.defined;
+
 	proceed.call(this, i);
 
 	if (!defined(this.crossLabelArray)) { return; }
@@ -324,6 +327,8 @@ wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
 
 // Wrapper to draw the label
 wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
+	var defined = Highcharts.defined;
+	
 	// Draw the crosshair
 	proceed.call(this, e, point);
 

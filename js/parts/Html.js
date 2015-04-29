@@ -108,7 +108,7 @@ Highcharts.extend(SVGElement.prototype, {
 				baseline = renderer.fontMetrics(elem.style.fontSize).b;
 
 				// Renderer specific handling of span rotation
-				if (defined(rotation)) {
+				if (Highcharts.defined(rotation)) {
 					wrapper.setSpanRotation(rotation, alignCorrection, baseline);
 				}
 

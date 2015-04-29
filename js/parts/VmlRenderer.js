@@ -1041,7 +1041,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		 */
 		rect: function (x, y, w, h, options) {
 			return SVGRenderer.prototype.symbols[
-				!defined(options) || !options.r ? 'square' : 'callout'
+				!Highcharts.defined(options) || !options.r ? 'square' : 'callout'
 			].call(0, x, y, w, h, options);
 		}
 	}

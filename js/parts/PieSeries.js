@@ -126,7 +126,7 @@ var PiePoint = extendClass(Point, {
 		redraw = pick(redraw, true);
 
 		// if called without an argument, toggle
-		point.sliced = point.options.sliced = sliced = defined(sliced) ? sliced : !point.sliced;
+		point.sliced = point.options.sliced = sliced = Highcharts.defined(sliced) ? sliced : !point.sliced;
 		series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
 
 		translation = sliced ? point.slicedTranslation : {

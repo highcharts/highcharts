@@ -3,6 +3,7 @@
 var ALIGN_FACTOR,
 	ALLOWED_SHAPES,
 	Chart = Highcharts.Chart,
+	defined = Highcharts.defined,
 	extend = Highcharts.extend,
 	isArray = Highcharts.isArray,
 	isNumber = Highcharts.isNumber,
@@ -60,10 +61,6 @@ function defaultOptions(shapeType) {
 	}
 
 	return options;
-}
-
-function defined(obj) {
-	return obj !== undefined && obj !== null;
 }
 
 function translatePath(d, xAxis, yAxis, xOffset, yOffset) {

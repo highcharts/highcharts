@@ -516,6 +516,7 @@ Chart.prototype = {
 	 */
 	getChartSize: function () {
 		var chart = this,
+			defined = Highcharts.defined,
 			optionsChart = chart.options.chart,
 			widthOption = optionsChart.width,
 			heightOption = optionsChart.height,
@@ -680,7 +681,7 @@ Chart.prototype = {
 		chart.resetMargins();
 
 		// Adjust for title and subtitle
-		if (titleOffset && !defined(margin[0])) {
+		if (titleOffset && !Highcharts.defined(margin[0])) {
 			chart.plotTop = Math.max(chart.plotTop, titleOffset + chart.options.title.margin + spacing[0]);
 		}
 		
@@ -715,7 +716,7 @@ Chart.prototype = {
 
 		// Add the axis offsets
 		each(marginNames, function (m, side) {
-			if (!defined(margin[side])) {
+			if (!Highcharts.defined(margin[side])) {
 				chart[m] += axisOffset[side];
 			}		
 		});
@@ -783,6 +784,7 @@ Chart.prototype = {
 		var chart = this,
 			chartWidth,
 			chartHeight,
+			defined = Highcharts.defined,
 			fireEndResize;
 
 		// Handle the isResizing counter

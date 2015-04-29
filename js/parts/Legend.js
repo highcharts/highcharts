@@ -347,7 +347,7 @@ Legend.prototype = {
 			var seriesOptions = series.options;
 
 			// Handle showInLegend. If the series is linked to another series, defaults to false.
-			if (!pick(seriesOptions.showInLegend, !defined(seriesOptions.linkedTo) ? undefined : false, true)) {
+			if (!pick(seriesOptions.showInLegend, !Highcharts.defined(seriesOptions.linkedTo) ? undefined : false, true)) {
 				return;
 			}
 
@@ -382,7 +382,7 @@ Legend.prototype = {
 				/(rbh|cb|lbh)/,
 				/(lbv|lm|ltv)/
 			], function (alignments, side) {
-				if (alignments.test(alignment) && !defined(margin[side])) {
+				if (alignments.test(alignment) && !Highcharts.defined(margin[side])) {
 					// Now we have detected on which side of the chart we should reserve space for the legend
 					chart[marginNames[side]] = Math.max(
 						chart[marginNames[side]],

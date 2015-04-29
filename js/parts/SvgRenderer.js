@@ -93,7 +93,7 @@ SVGElement.prototype = {
 			}
 
 			// Correct the radial gradient for the radial reference system
-			if (gradName === 'radialGradient' && radialReference && !defined(gradAttr.gradientUnits)) {
+			if (gradName === 'radialGradient' && radialReference && !Highcharts.defined(gradAttr.gradientUnits)) {
 				gradAttr = Highcharts.merge(gradAttr, {
 					cx: (radialReference[0] - radialReference[2] / 2) + gradAttr.cx * radialReference[2],
 					cy: (radialReference[1] - radialReference[2] / 2) + gradAttr.cy * radialReference[2],
@@ -556,6 +556,7 @@ SVGElement.prototype = {
 			inverted = wrapper.inverted,
 			rotation = wrapper.rotation,
 			element = wrapper.element,
+			defined = Highcharts.defined,
 			transform;
 
 		// flipping affects translate as adjustment for flipping around the group's axis
@@ -1083,6 +1084,7 @@ SVGElement.prototype = {
 	},
 	zIndexSetter: function (value, key) {
 		var renderer = this.renderer,
+			defined = Highcharts.defined,
 			parentGroup = this.parentGroup,
 			parentWrapper = parentGroup || renderer,
 			parentNode = parentWrapper.element || renderer.box,
@@ -1880,7 +1882,7 @@ SVGRenderer.prototype = {
 	 */
 	g: function (name) {
 		var elem = this.createElement('g');
-		return defined(name) ? elem.attr({ 'class': 'highcharts-' + name }) : elem;
+		return Highcharts.defined(name) ? elem.attr({ 'class': 'highcharts-' + name }) : elem;
 	},
 
 	/**
@@ -2340,7 +2342,7 @@ SVGRenderer.prototype = {
 				boxY,
 				style = text.element.style;
 
-			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && defined(text.textStr) && 
+			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && Highcharts.defined(text.textStr) && 
 				text.getBBox(); //#3295 && 3514 box failure when string equals 0
 			wrapper.width = (width || bBox.width || 0) + 2 * padding + paddingLeft;
 			wrapper.height = (height || bBox.height || 0) + 2 * padding;
@@ -2386,7 +2388,7 @@ SVGRenderer.prototype = {
 			y = baseline ? 0 : baselineOffset;
 
 			// compensate for alignment
-			if (defined(width) && bBox && (textAlign === 'center' || textAlign === 'right')) {
+			if (Highcharts.defined(width) && bBox && (textAlign === 'center' || textAlign === 'right')) {
 				x += { center: 0.5, right: 1 }[textAlign] * (width - bBox.width);
 			}
 
@@ -2432,7 +2434,7 @@ SVGRenderer.prototype = {
 				y: y
 			});
 
-			if (box && defined(anchorX)) {
+			if (box && Highcharts.defined(anchorX)) {
 				wrapper.attr({
 					anchorX: anchorX,
 					anchorY: anchorY
@@ -2452,13 +2454,13 @@ SVGRenderer.prototype = {
 			height = value;
 		};
 		wrapper.paddingSetter =  function (value) {
-			if (defined(value) && value !== padding) {
+			if (Highcharts.defined(value) && value !== padding) {
 				padding = wrapper.padding = value;
 				updateTextPadding();
 			}
 		};
 		wrapper.paddingLeftSetter =  function (value) {
-			if (defined(value) && value !== paddingLeft) {
+			if (Highcharts.defined(value) && value !== paddingLeft) {
 				paddingLeft = value;
 				updateTextPadding();
 			}

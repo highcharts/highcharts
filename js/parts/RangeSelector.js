@@ -357,7 +357,7 @@ RangeSelector.prototype = {
 		var options = this.chart.options.rangeSelector,
 			dateFormat = Highcharts.dateFormat;
 
-		if (defined(time)) {
+		if (Highcharts.defined(time)) {
 			this[name + 'Input'].HCTime = time;
 		}
 		
@@ -612,7 +612,7 @@ RangeSelector.prototype = {
 			}, options.inputPosition), true, chart.spacingBox);
 
 			// Hide if overlapping - inputEnabled is null or undefined
-			if (!defined(inputEnabled)) {
+			if (!Highcharts.defined(inputEnabled)) {
 				buttonBBox = buttonGroup.getBBox();
 				inputGroup[inputGroup.translateX < buttonBBox.x + buttonBBox.width + 10 ? 'hide' : 'show']();
 			}
