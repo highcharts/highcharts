@@ -352,7 +352,7 @@ Axis.prototype = {
 		// extend logarithmic axis
 		if (axis.isLog) {
 			axis.val2lin = Highcharts.log2lin;
-			axis.lin2val = lin2log;
+			axis.lin2val = Highcharts.lin2log;
 		}
 	},
 
@@ -1411,7 +1411,8 @@ Axis.prototype = {
 	 */
 	getExtremes: function () {
 		var axis = this,
-			isLog = axis.isLog;
+			isLog = axis.isLog,
+			lin2log = Highcharts.lin2log;
 
 		return {
 			min: isLog ? correctFloat(lin2log(axis.min)) : axis.min,
@@ -1429,7 +1430,8 @@ Axis.prototype = {
 	 */
 	getThreshold: function (threshold) {
 		var axis = this,
-			isLog = axis.isLog;
+			isLog = axis.isLog,
+			lin2log = Highcharts.lin2log;
 
 		var realMin = isLog ? lin2log(axis.min) : axis.min,
 			realMax = isLog ? lin2log(axis.max) : axis.max;
@@ -1845,6 +1847,7 @@ Axis.prototype = {
 			tickmarkOffset = axis.tickmarkOffset,
 			lineWidth = options.lineWidth,
 			linePath,
+			lin2log = Highcharts.lin2log,
 			hasRendered = chart.hasRendered,
 			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
 			hasData = axis.hasData,

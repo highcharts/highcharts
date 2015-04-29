@@ -112,9 +112,9 @@ Highcharts.isNumber = function (n) {
 Highcharts.log2lin = function (num) {
 	return Math.log(num) / Math.LN10;
 };
-function lin2log(num) {
+Highcharts.lin2log = function (num) {
 	return Math.pow(10, num);
-}
+};
 
 /**
  * Remove last occurence of an item from an array

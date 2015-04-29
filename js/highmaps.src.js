@@ -165,9 +165,9 @@ Highcharts.isNumber = function (n) {
 Highcharts.log2lin = function (num) {
 	return Math.log(num) / Math.LN10;
 };
-function lin2log(num) {
+Highcharts.lin2log = function (num) {
 	return Math.pow(10, num);
-}
+};
 
 /**
  * Remove last occurence of an item from an array
@@ -5781,7 +5781,7 @@ Tick.prototype = {
 			isFirst: isFirst,
 			isLast: isLast,
 			dateTimeLabelFormat: dateTimeLabelFormat,
-			value: axis.isLog ? correctFloat(lin2log(value)) : value
+			value: axis.isLog ? correctFloat(Highcharts.lin2log(value)) : value
 		});
 
 		// prepare CSS
@@ -6443,7 +6443,7 @@ Axis.prototype = {
 		// extend logarithmic axis
 		if (axis.isLog) {
 			axis.val2lin = Highcharts.log2lin;
-			axis.lin2val = lin2log;
+			axis.lin2val = Highcharts.lin2log;
 		}
 	},
 
@@ -7502,7 +7502,8 @@ Axis.prototype = {
 	 */
 	getExtremes: function () {
 		var axis = this,
-			isLog = axis.isLog;
+			isLog = axis.isLog,
+			lin2log = Highcharts.lin2log;
 
 		return {
 			min: isLog ? correctFloat(lin2log(axis.min)) : axis.min,
@@ -7520,7 +7521,8 @@ Axis.prototype = {
 	 */
 	getThreshold: function (threshold) {
 		var axis = this,
-			isLog = axis.isLog;
+			isLog = axis.isLog,
+			lin2log = Highcharts.lin2log;
 
 		var realMin = isLog ? lin2log(axis.min) : axis.min,
 			realMax = isLog ? lin2log(axis.max) : axis.max;
@@ -7936,6 +7938,7 @@ Axis.prototype = {
 			tickmarkOffset = axis.tickmarkOffset,
 			lineWidth = options.lineWidth,
 			linePath,
+			lin2log = Highcharts.lin2log,
 			hasRendered = chart.hasRendered,
 			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
 			hasData = axis.hasData,
@@ -8260,6 +8263,7 @@ Highcharts.extend(Axis.prototype, Highcharts.AxisPlotLineOrBandExtension);
 Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 	var axis = this,
 		log2lin = Highcharts.log2lin,
+		lin2log = Highcharts.lin2log,
 		options = axis.options,
 		axisLength = axis.len,
 		// Since we use this method for both major and minor ticks,
