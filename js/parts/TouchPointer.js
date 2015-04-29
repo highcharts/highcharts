@@ -1,5 +1,5 @@
 /* Support for touch devices */
-extend(Highcharts.Pointer.prototype, {
+Highcharts.extend(Highcharts.Pointer.prototype, {
 
 	/**
 	 * Run translation operations
@@ -150,7 +150,7 @@ extend(Highcharts.Pointer.prototype, {
 
 			// Set the marker
 			if (!selectionMarker) {
-				self.selectionMarker = selectionMarker = extend({
+				self.selectionMarker = selectionMarker = Highcharts.extend({
 					destroy: Highcharts.noop
 				}, chart.plotBox);
 			}

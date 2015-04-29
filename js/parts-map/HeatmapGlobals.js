@@ -7,7 +7,6 @@ var Axis = Highcharts.Axis,
 	Series = Highcharts.Series,
 	
 	each = Highcharts.each,
-	extend = Highcharts.extend,
 	extendClass = Highcharts.extendClass,
 	merge = Highcharts.merge,
 	pick = Highcharts.pick,

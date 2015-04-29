@@ -22,7 +22,7 @@ Highcharts.seriesTypes.mappoint = extendClass(Highcharts.seriesTypes.scatter, {
 		applyOptions: function (options, x) {
 			var point = Point.prototype.applyOptions.call(this, options, x);
 			if (options.lat !== undefined && options.lon !== undefined) {
-				point = extend(point, this.series.chart.fromLatLonToPoint(point));
+				point = Highcharts.extend(point, this.series.chart.fromLatLonToPoint(point));
 			}
 			return point;
 		}

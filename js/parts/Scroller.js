@@ -21,7 +21,7 @@ units[5] = ['week', [1, 2, 3]]; // allow more weeks
 
 defaultSeriesType = Highcharts.seriesTypes.areaspline === undefined ? 'line' : 'areaspline';
 
-extend(Highcharts.defaultOptions, {
+Highcharts.extend(Highcharts.defaultOptions, {
 	navigator: {
 		//enabled: true,
 		handles: {
@@ -980,7 +980,7 @@ Scroller.prototype = {
 		if (baseSeries && this.navigatorOptions.adaptToUpdatedData !== false) {
 			addEvent(baseSeries, 'updatedData', this.updatedDataHandler);
 			// Survive Series.update()
-			baseSeries.userOptions.events = extend(baseSeries.userOptions.event, { updatedData: this.updatedDataHandler });
+			baseSeries.userOptions.events = Highcharts.extend(baseSeries.userOptions.event, { updatedData: this.updatedDataHandler });
 
 		}
 	},

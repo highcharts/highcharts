@@ -25,7 +25,6 @@ var Axis = Highcharts.Axis,
 	addEvent = Highcharts.addEvent,
 	each = Highcharts.each,
 	error = Highcharts.error,
-	extend = Highcharts.extend,
 	extendClass = Highcharts.extendClass,
 	merge = Highcharts.merge,
 	pick = Highcharts.pick,
@@ -135,8 +134,8 @@ var ColorAxis = Highcharts.ColorAxis = function () {
 	this.isColorAxis = true;
 	this.init.apply(this, arguments);
 };
-extend(ColorAxis.prototype, Axis.prototype);
-extend(ColorAxis.prototype, {
+Highcharts.extend(ColorAxis.prototype, Axis.prototype);
+Highcharts.extend(ColorAxis.prototype, {
 	defaultColorAxisOptions: {
 		lineWidth: 0,
 		gridLineWidth: 1,
@@ -526,9 +525,8 @@ extend(ColorAxis.prototype, {
 				if (to !== undefined) {
 					name += Highcharts.numberFormat(to, valueDecimals) + valueSuffix;
 				}
-				
 				// Add a mock object to the legend items
-				legendItems.push(extend({
+				legendItems.push(Highcharts.extend({
 					chart: chart,
 					name: name,
 					options: {},
@@ -648,7 +646,7 @@ var colorSeriesMixin = {
 	}
 };
 // Add events to the Chart object itself
-extend(Chart.prototype, {
+Highcharts.extend(Chart.prototype, {
 	renderMapNavigation: function () {
 		var chart = this,
 			options = this.options.mapNavigation,
@@ -688,7 +686,7 @@ extend(Chart.prototype, {
 						})					
 						.add();
 					button.handler = buttonOptions.onclick;
-					button.align(extend(buttonOptions, { width: button.width, height: 2 * button.height }), null, buttonOptions.alignTo);
+					button.align(Highcharts.extend(buttonOptions, { width: button.width, height: 2 * button.height }), null, buttonOptions.alignTo);
 				}
 			}
 		}
@@ -827,7 +825,7 @@ wrap(Chart.prototype, 'render', function (proceed) {
 });
 
 // Extend the Pointer
-extend(Pointer.prototype, {
+Highcharts.extend(Pointer.prototype, {
 
 	/**
 	 * The event handler for the doubleclick event
@@ -973,7 +971,7 @@ var MapAreaPoint = extendClass(Point, {
 					point.x = mapPoint._midX;
 					point.y = mapPoint._midY;
 				}
-				extend(point, mapPoint); // copy over properties
+				Highcharts.extend(point, mapPoint); // copy over properties
 			} else {
 				point.value = point.value || null;
 			}
@@ -1672,7 +1670,7 @@ Highcharts.seriesTypes.mappoint = extendClass(Highcharts.seriesTypes.scatter, {
 		applyOptions: function (options, x) {
 			var point = Point.prototype.applyOptions.call(this, options, x);
 			if (options.lat !== undefined && options.lon !== undefined) {
-				point = extend(point, this.series.chart.fromLatLonToPoint(point));
+				point = Highcharts.extend(point, this.series.chart.fromLatLonToPoint(point));
 			}
 			return point;
 		}
@@ -1694,7 +1692,7 @@ if (Highcharts.seriesTypes.bubble) {
 				var point;
 				if (options.lat !== undefined && options.lon !== undefined) {
 					point = Point.prototype.applyOptions.call(this, options, x);
-					point = extend(point, this.series.chart.fromLatLonToPoint(point));
+					point = Highcharts.extend(point, this.series.chart.fromLatLonToPoint(point));
 				} else {
 					point = MapAreaPoint.prototype.applyOptions.call(this, options, x);
 				}
@@ -1997,7 +1995,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 			}
 		}
 		if (point) {
-			mapData.push(extend(point, {
+			mapData.push(Highcharts.extend(point, {
 				name: properties.name || properties.NAME, 
 				properties: properties
 			}));
@@ -2035,7 +2033,7 @@ wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
 });
 
 // Add language
-extend(Highcharts.defaultOptions.lang, {
+Highcharts.extend(Highcharts.defaultOptions.lang, {
 	zoomIn: 'Zoom in',
 	zoomOut: 'Zoom out'
 });

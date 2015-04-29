@@ -4,7 +4,7 @@
  * @param {Object} a The object to be extended
  * @param {Object} b The object to add to the first one
  */
-var extend = Highcharts.extend = function (a, b) {
+Highcharts.extend = function (a, b) {
 	var n;
 	if (!a) {
 		a = {};
@@ -207,7 +207,7 @@ function css(el, styles) {
 			styles.filter = 'alpha(opacity=' + (styles.opacity * 100) + ')';
 		}
 	}
-	extend(el.style, styles);
+	Highcharts.extend(el.style, styles);
 }
 
 /**
@@ -221,7 +221,7 @@ function css(el, styles) {
 function createElement(tag, attribs, styles, parent, nopad) {
 	var el = document.createElement(tag);
 	if (attribs) {
-		extend(el, attribs);
+		Highcharts.extend(el, attribs);
 	}
 	if (nopad) {
 		css(el, {padding: 0, border: 'none', margin: 0});
@@ -243,7 +243,7 @@ function createElement(tag, attribs, styles, parent, nopad) {
 function extendClass(parent, members) {
 	var object = function () {};
 	object.prototype = new parent();
-	extend(object.prototype, members);
+	Highcharts.extend(object.prototype, members);
 	return object;
 }
 
@@ -305,7 +305,7 @@ Highcharts.dateFormat = function (format, timestamp, capitalize) {
 		langWeekdays = lang.weekdays,
 
 		// List all format keys. Custom formats can be added from the outside. 
-		replacements = extend({
+		replacements = Highcharts.extend({
 
 			// Day
 			'a': langWeekdays[day].substr(0, 3), // Short weekday, like 'Mon'

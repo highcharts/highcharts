@@ -1313,7 +1313,7 @@ Axis.prototype = {
 		});
 
 		// Extend the arguments with min and max
-		eventArguments = extend(eventArguments, {
+		eventArguments = Highcharts.extend(eventArguments, {
 			min: newMin,
 			max: newMax
 		});
@@ -2156,4 +2156,4 @@ Axis.prototype = {
 	}
 }; // end Axis
 
-extend(Axis.prototype, Highcharts.AxisPlotLineOrBandExtension);
+Highcharts.extend(Axis.prototype, Highcharts.AxisPlotLineOrBandExtension);

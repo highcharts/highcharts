@@ -519,7 +519,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		renderer.alignedObjects = [];
 
 		boxWrapper = renderer.createElement('div')
-			.css(extend(this.getStyle(style), { position: 'relative'}));
+			.css(Highcharts.extend(this.getStyle(style), { position: 'relative'}));
 		box = boxWrapper.element;
 		container.appendChild(boxWrapper.element);
 
@@ -577,7 +577,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			isObj = isObject(x);
 
 		// mimic a rectangle with its style object for automatic updating in attr
-		return extend(clipRect, {
+		return Highcharts.extend(clipRect, {
 			members: [],
 			count: 0,
 			left: (isObj ? x.x : x) + 1,
@@ -604,7 +604,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 				// issue 74 workaround
 				if (!inverted && wrapper.docMode8 && nodeName === 'DIV') {
-					extend(ret, {
+					Highcharts.extend(ret, {
 						width: right + 'px',
 						height: bottom + 'px'
 					});
@@ -843,7 +843,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		if (isArray(path)) {
 			attr.d = path;
 		} else if (isObject(path)) { // attributes
-			extend(attr, path);
+			Highcharts.extend(attr, path);
 		}
 		// create the shape
 		return this.createElement('shape').attr(attr);

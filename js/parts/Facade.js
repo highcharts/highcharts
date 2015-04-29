@@ -1,6 +1,6 @@
 
 // global variables
-extend(Highcharts, {
+Highcharts.extend(Highcharts, {
 	
 	// Constructors
 	Color: Color,

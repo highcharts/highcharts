@@ -1,5 +1,5 @@
 // extend SvgElement for useHTML option
-extend(SVGElement.prototype, {
+Highcharts.extend(SVGElement.prototype, {
 	/**
 	 * Apply CSS to HTML elements. This is used in text within SVG rendering and
 	 * by the VML renderer
@@ -18,7 +18,7 @@ extend(SVGElement.prototype, {
 			styles.whiteSpace = 'nowrap';
 			styles.overflow = 'hidden';
 		}
-		wrapper.styles = extend(wrapper.styles, styles);
+		wrapper.styles = Highcharts.extend(wrapper.styles, styles);
 		css(wrapper.element, styles);
 
 		return wrapper;
@@ -165,7 +165,7 @@ extend(SVGElement.prototype, {
 });
 
 // Extend SvgRenderer for useHTML option.
-extend(SVGRenderer.prototype, {
+Highcharts.extend(SVGRenderer.prototype, {
 	/**
 	 * Create HTML text node. This is used by the VML renderer as well as the SVG
 	 * renderer through the useHTML option.
@@ -259,7 +259,7 @@ extend(SVGRenderer.prototype, {
 
 							// Set listeners to update the HTML div's position whenever the SVG group
 							// position is changed
-							extend(parentGroup, {
+							Highcharts.extend(parentGroup, {
 								translateXSetter: function (value, key) {
 									htmlGroupStyle.left = value + 'px';
 									parentGroup[key] = value;

@@ -1,7 +1,7 @@
 
 
 // Extend the Pointer
-extend(Pointer.prototype, {
+Highcharts.extend(Pointer.prototype, {
 
 	/**
 	 * The event handler for the doubleclick event

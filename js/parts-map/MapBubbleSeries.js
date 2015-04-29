@@ -15,7 +15,7 @@ if (Highcharts.seriesTypes.bubble) {
 				var point;
 				if (options.lat !== undefined && options.lon !== undefined) {
 					point = Point.prototype.applyOptions.call(this, options, x);
-					point = extend(point, this.series.chart.fromLatLonToPoint(point));
+					point = Highcharts.extend(point, this.series.chart.fromLatLonToPoint(point));
 				} else {
 					point = MapAreaPoint.prototype.applyOptions.call(this, options, x);
 				}

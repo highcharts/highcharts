@@ -57,7 +57,7 @@ H = window.Highcharts = window.Highcharts ? window.Highcharts.error(16, true) : 
  * @param {Object} a The object to be extended
  * @param {Object} b The object to add to the first one
  */
-var extend = Highcharts.extend = function (a, b) {
+Highcharts.extend = function (a, b) {
 	var n;
 	if (!a) {
 		a = {};
@@ -260,7 +260,7 @@ function css(el, styles) {
 			styles.filter = 'alpha(opacity=' + (styles.opacity * 100) + ')';
 		}
 	}
-	extend(el.style, styles);
+	Highcharts.extend(el.style, styles);
 }
 
 /**
@@ -274,7 +274,7 @@ function css(el, styles) {
 function createElement(tag, attribs, styles, parent, nopad) {
 	var el = document.createElement(tag);
 	if (attribs) {
-		extend(el, attribs);
+		Highcharts.extend(el, attribs);
 	}
 	if (nopad) {
 		css(el, {padding: 0, border: 'none', margin: 0});
@@ -296,7 +296,7 @@ function createElement(tag, attribs, styles, parent, nopad) {
 function extendClass(parent, members) {
 	var object = function () {};
 	object.prototype = new parent();
-	extend(object.prototype, members);
+	Highcharts.extend(object.prototype, members);
 	return object;
 }
 
@@ -358,7 +358,7 @@ Highcharts.dateFormat = function (format, timestamp, capitalize) {
 		langWeekdays = lang.weekdays,
 
 		// List all format keys. Custom formats can be added from the outside. 
-		replacements = extend({
+		replacements = Highcharts.extend({
 
 			// Day
 			'a': langWeekdays[day].substr(0, 3), // Short weekday, like 'Mon'
@@ -1047,7 +1047,7 @@ Highcharts.pathAnim = {
 				delete eventArguments.returnValue;
 			}
 	
-			extend(event, eventArguments);
+			Highcharts.extend(event, eventArguments);
 	
 			// Prevent jQuery from triggering the object method that is named the
 			// same as the event. For example, if the event is 'select', jQuery
@@ -2149,7 +2149,7 @@ SVGElement.prototype = {
 
 			// Merge the new styles with the old ones
 			if (oldStyles) {
-				styles = extend(
+				styles = Highcharts.extend(
 					oldStyles,
 					newStyles
 				);
@@ -2441,7 +2441,7 @@ SVGElement.prototype = {
 					bBox = element.getBBox ?
 						// SVG: use extend because IE9 is not allowed to change width and height in case
 						// of rotation (below)
-						extend({}, element.getBBox()) :
+						Highcharts.extend({}, element.getBBox()) :
 						// Canvas renderer and legacy IE in export mode
 						{
 							width: element.offsetWidth,
@@ -2958,7 +2958,7 @@ SVGRenderer.prototype = {
 	},
 
 	getStyle: function (style) {
-		return (this.style = extend({
+		return (this.style = Highcharts.extend({
 			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif', // default font
 			fontSize: '12px'
 		}, style));
@@ -3415,7 +3415,7 @@ SVGRenderer.prototype = {
 				}
 			})
 			.attr(normalState)
-			.css(extend({ cursor: 'default' }, normalStyle));
+			.css(Highcharts.extend({ cursor: 'default' }, normalStyle));
 	},
 
 	/**
@@ -3448,7 +3448,7 @@ SVGRenderer.prototype = {
 		if (isArray(path)) {
 			attr.d = path;
 		} else if (isObject(path)) { // attributes
-			extend(attr, path);
+			Highcharts.extend(attr, path);
 		}
 		return this.createElement('path').attr(attr);
 	},
@@ -3601,7 +3601,7 @@ SVGRenderer.prototype = {
 
 		// optional properties
 		if (arguments.length > 1) {
-			extend(attribs, {
+			Highcharts.extend(attribs, {
 				x: x,
 				y: y,
 				width: width,
@@ -3659,7 +3659,7 @@ SVGRenderer.prototype = {
 
 			obj = this.path(path);
 			// expando properties for use in animate and attr
-			extend(obj, {
+			Highcharts.extend(obj, {
 				symbolName: symbol,
 				x: x,
 				y: y,
@@ -3667,7 +3667,7 @@ SVGRenderer.prototype = {
 				height: height
 			});
 			if (options) {
-				extend(obj, options);
+				Highcharts.extend(obj, options);
 			}
 
 
@@ -4066,7 +4066,7 @@ SVGRenderer.prototype = {
 
 				// apply the box attributes
 				if (!box.isImg) { // #1630
-					box.attr(extend({
+					box.attr(Highcharts.extend({
 						width: Math.round(wrapper.width),
 						height: Math.round(wrapper.height)
 					}, deferredAttr));
@@ -4220,7 +4220,7 @@ SVGRenderer.prototype = {
 
 		// Redirect certain methods to either the box or the text
 		var baseCss = wrapper.css;
-		return extend(wrapper, {
+		return Highcharts.extend(wrapper, {
 			/**
 			 * Pick up some properties and apply them to the text instead of the wrapper
 			 */
@@ -4287,7 +4287,7 @@ SVGRenderer.prototype = {
 // general renderer
 Highcharts.Renderer = SVGRenderer;
 // extend SvgElement for useHTML option
-extend(SVGElement.prototype, {
+Highcharts.extend(SVGElement.prototype, {
 	/**
 	 * Apply CSS to HTML elements. This is used in text within SVG rendering and
 	 * by the VML renderer
@@ -4306,7 +4306,7 @@ extend(SVGElement.prototype, {
 			styles.whiteSpace = 'nowrap';
 			styles.overflow = 'hidden';
 		}
-		wrapper.styles = extend(wrapper.styles, styles);
+		wrapper.styles = Highcharts.extend(wrapper.styles, styles);
 		css(wrapper.element, styles);
 
 		return wrapper;
@@ -4453,7 +4453,7 @@ extend(SVGElement.prototype, {
 });
 
 // Extend SvgRenderer for useHTML option.
-extend(SVGRenderer.prototype, {
+Highcharts.extend(SVGRenderer.prototype, {
 	/**
 	 * Create HTML text node. This is used by the VML renderer as well as the SVG
 	 * renderer through the useHTML option.
@@ -4547,7 +4547,7 @@ extend(SVGRenderer.prototype, {
 
 							// Set listeners to update the HTML div's position whenever the SVG group
 							// position is changed
-							extend(parentGroup, {
+							Highcharts.extend(parentGroup, {
 								translateXSetter: function (value, key) {
 									htmlGroupStyle.left = value + 'px';
 									parentGroup[key] = value;
@@ -5103,7 +5103,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		renderer.alignedObjects = [];
 
 		boxWrapper = renderer.createElement('div')
-			.css(extend(this.getStyle(style), { position: 'relative'}));
+			.css(Highcharts.extend(this.getStyle(style), { position: 'relative'}));
 		box = boxWrapper.element;
 		container.appendChild(boxWrapper.element);
 
@@ -5161,7 +5161,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			isObj = isObject(x);
 
 		// mimic a rectangle with its style object for automatic updating in attr
-		return extend(clipRect, {
+		return Highcharts.extend(clipRect, {
 			members: [],
 			count: 0,
 			left: (isObj ? x.x : x) + 1,
@@ -5188,7 +5188,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 				// issue 74 workaround
 				if (!inverted && wrapper.docMode8 && nodeName === 'DIV') {
-					extend(ret, {
+					Highcharts.extend(ret, {
 						width: right + 'px',
 						height: bottom + 'px'
 					});
@@ -5427,7 +5427,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		if (isArray(path)) {
 			attr.d = path;
 		} else if (isObject(path)) { // attributes
-			extend(attr, path);
+			Highcharts.extend(attr, path);
 		}
 		// create the shape
 		return this.createElement('shape').attr(attr);
@@ -7663,7 +7663,7 @@ Axis.prototype = {
 		});
 
 		// Extend the arguments with min and max
-		eventArguments = extend(eventArguments, {
+		eventArguments = Highcharts.extend(eventArguments, {
 			min: newMin,
 			max: newMax
 		});
@@ -8506,7 +8506,7 @@ Axis.prototype = {
 	}
 }; // end Axis
 
-extend(Axis.prototype, Highcharts.AxisPlotLineOrBandExtension);
+Highcharts.extend(Axis.prototype, Highcharts.AxisPlotLineOrBandExtension);
 
 /**
  * Set the tick positions to a time unit that makes sense, for example
@@ -8629,7 +8629,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 
 
 	// record information on the chosen unit - for dynamic label formatter
-	tickPositions.info = extend(normalizedInterval, {
+	tickPositions.info = Highcharts.extend(normalizedInterval, {
 		higherRanks: higherRanks,
 		totalRange: interval * count
 	});
@@ -8899,7 +8899,7 @@ Tooltip.prototype = {
 			skipAnchor = tooltip.followPointer || tooltip.len > 1;
 
 		// Get intermediate values for animation
-		extend(now, {
+		Highcharts.extend(now, {
 			x: animate ? (2 * now.x + x) / 3 : x,
 			y: animate ? (now.y + y) / 2 : y,
 			anchorX: skipAnchor ? undefined : animate ? (2 * now.anchorX + anchorX) / 3 : anchorX,
@@ -9438,7 +9438,7 @@ Pointer.prototype = {
 			chartY = ePos.pageY - chartPosition.top;
 		}
 
-		return extend(e, {
+		return Highcharts.extend(e, {
 			chartX: Math.round(chartX),
 			chartY: Math.round(chartY)
 		});
@@ -9821,7 +9821,7 @@ Pointer.prototype = {
 				});
 				if (runZoom) {
 					fireEvent(chart, 'selection', selectionData, function (args) { 
-						chart.zoom(extend(args, hasPinched ? { animation: false } : null)); 
+						chart.zoom(Highcharts.extend(args, hasPinched ? { animation: false } : null)); 
 					});
 				}
 
@@ -9959,7 +9959,7 @@ Pointer.prototype = {
 			if (hoverPoint && this.inClass(e.target, 'highcharts-tracker')) {
 
 				// the series click event
-				fireEvent(hoverPoint.series, 'click', extend(e, {
+				fireEvent(hoverPoint.series, 'click', Highcharts.extend(e, {
 					point: hoverPoint
 				}));
 
@@ -9970,7 +9970,7 @@ Pointer.prototype = {
 
 			// When clicking outside a tracker, fire a chart event
 			} else {
-				extend(e, this.getCoordinates(e));
+				Highcharts.extend(e, this.getCoordinates(e));
 
 				// fire a click event in the chart
 				if (chart.isInsidePlot(e.chartX - plotLeft, e.chartY - plotTop)) {
@@ -10042,7 +10042,7 @@ Pointer.prototype = {
 
 
 /* Support for touch devices */
-extend(Highcharts.Pointer.prototype, {
+Highcharts.extend(Highcharts.Pointer.prototype, {
 
 	/**
 	 * Run translation operations
@@ -10193,7 +10193,7 @@ extend(Highcharts.Pointer.prototype, {
 
 			// Set the marker
 			if (!selectionMarker) {
-				self.selectionMarker = selectionMarker = extend({
+				self.selectionMarker = selectionMarker = Highcharts.extend({
 					destroy: Highcharts.noop
 				}, chart.plotBox);
 			}
@@ -10292,7 +10292,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	/**
 	 * Extend the Pointer prototype with methods for each event handler and more
 	 */
-	extend(Pointer.prototype, {
+	Highcharts.extend(Pointer.prototype, {
 		onContainerPointerDown: function (e) {
 			translateMSPointer(e, 'onContainerTouchStart', 'touchstart', function (e) {
 				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY, target: e.currentTarget };
@@ -10863,7 +10863,7 @@ Legend.prototype = {
 		}*/
 
 		if (display) {
-			legendGroup.align(extend({
+			legendGroup.align(Highcharts.extend({
 				width: legendWidth,
 				height: legendHeight
 			}, options), true, 'spacingBox');
@@ -11402,7 +11402,7 @@ Chart.prototype = {
 				if (axis.isDirtyExtremes) { // #821
 					axis.isDirtyExtremes = false;
 					afterRedraw.push(function () { // prevent a recursive call to chart.redraw() (#1119)
-						fireEvent(axis, 'afterSetExtremes', extend(axis.eventArgs, axis.getExtremes())); // #747, #751
+						fireEvent(axis, 'afterSetExtremes', Highcharts.extend(axis.eventArgs, axis.getExtremes())); // #747, #751
 						delete axis.eventArgs;
 					});
 				}
@@ -11625,7 +11625,7 @@ Chart.prototype = {
 		if (title) {
 			title
 				.css({ width: (titleOptions.width || autoWidth) + 'px' })
-				.align(extend({ 
+				.align(Highcharts.extend({ 
 					y: renderer.fontMetrics(titleOptions.style.fontSize, title).b - 3
 				}, titleOptions), false, 'spacingBox');
 			
@@ -11636,7 +11636,7 @@ Chart.prototype = {
 		if (subtitle) {
 			subtitle
 				.css({ width: (subtitleOptions.width || autoWidth) + 'px' })
-				.align(extend({ 
+				.align(Highcharts.extend({ 
 					y: titleOffset + (titleOptions.margin - 13) + renderer.fontMetrics(titleOptions.style.fontSize, subtitle).b 
 				}, subtitleOptions), false, 'spacingBox');
 			
@@ -11780,7 +11780,7 @@ Chart.prototype = {
 				className: 'highcharts-' + 'container' +
 					(optionsChart.className ? ' ' + optionsChart.className : ''),
 				id: containerId
-			}, extend({
+			}, Highcharts.extend({
 				position: 'relative',
 				overflow: 'hidden', // needed for context menu (avoid scrollbars) and
 					// content overflow in IE
@@ -12273,7 +12273,7 @@ Chart.prototype = {
 			labels = chart.options.labels;
 		if (labels.items) {
 			each(labels.items, function (label) {
-				var style = extend(labels.style, label.style),
+				var style = Highcharts.extend(labels.style, label.style),
 					x = pInt(style.left) + chart.plotLeft,
 					y = pInt(style.top) + chart.plotTop + 12;
 
@@ -12652,6 +12652,7 @@ Point.prototype = {
 	applyOptions: function (options, x) {
 		var point = this,
 			series = point.series,
+			extend = Highcharts.extend,
 			pointValKey = series.options.pointValKey || series.pointValKey;
 
 		options = Point.prototype.optionsToObject.call(this, options);
@@ -12904,7 +12905,7 @@ Series.prototype = {
 		series.bindAxes();
 
 		// set some variables
-		extend(series, {
+		Highcharts.extend(series, {
 			name: options.name,
 			state: '',
 			pointAttr: {},
@@ -13837,7 +13838,7 @@ Series.prototype = {
 
 					if (graphic) { // update
 						graphic[isInside ? 'show' : 'hide'](true) // Since the marker group isn't clipped, each individual marker must be toggled
-							.animate(extend({
+							.animate(Highcharts.extend({
 								x: plotX - radius,
 								y: plotY - radius
 							}, graphic.symbolName ? { // don't apply to image symbols #507
@@ -14016,7 +14017,7 @@ Series.prototype = {
 					if (!defaultLineColor) {
 						attr.lineColor = point.color; // Bubbles take point color, line markers use white
 					}
-					pointAttr[''] = series.convertAttribs(extend(attr, normalOptions), seriesPointAttr['']);
+					pointAttr[''] = series.convertAttribs(Highcharts.extend(attr, normalOptions), seriesPointAttr['']);
 
 					// inherit from point normal and series hover
 					pointAttr.hover = series.convertAttribs(
@@ -15009,7 +15010,7 @@ Series.prototype.setPercentStacks = function () {
 };
 
 // Extend the Chart prototype for dynamic methods
-extend(Chart.prototype, {
+Highcharts.extend(Chart.prototype, {
 
 	/**
 	 * Add a series dynamically after  time
@@ -15092,7 +15093,7 @@ extend(Chart.prototype, {
 		if (!loadingDiv) {
 			chart.loadingDiv = loadingDiv = createElement('div', {
 				className: 'highcharts-loading'
-			}, extend(loadingOptions.style, {
+			}, Highcharts.extend(loadingOptions.style, {
 				zIndex: 10,
 				display: 'none'
 			}), chart.container);
@@ -15147,7 +15148,7 @@ extend(Chart.prototype, {
 });
 
 // extend the Point prototype for dynamic methods
-extend(Point.prototype, {
+Highcharts.extend(Point.prototype, {
 	/**
 	 * Update the point with new options (typically x/y data) and optionally redraw the series.
 	 *
@@ -15234,7 +15235,7 @@ extend(Point.prototype, {
 });
 
 // Extend the series prototype for dynamic methods
-extend(Series.prototype, {
+Highcharts.extend(Series.prototype, {
 	/**
 	 * Add a point dynamically after chart load time
 	 * @param {Object} options Point options as given in series.data
@@ -15451,7 +15452,7 @@ extend(Series.prototype, {
 		for (n in proto) {
 			this[n] = undefined;
 		}
-		extend(this, seriesTypes[newOptions.type || oldType].prototype);
+		Highcharts.extend(this, seriesTypes[newOptions.type || oldType].prototype);
 
 		// Re-register groups (#3094)
 		each(preserve, function (prop) {
@@ -15467,7 +15468,7 @@ extend(Series.prototype, {
 });
 
 // Extend the Axis.prototype for dynamic methods
-extend(Axis.prototype, {
+Highcharts.extend(Axis.prototype, {
 
 	/**
 	 * Update the axis with a new options structure
@@ -15480,7 +15481,7 @@ extend(Axis.prototype, {
 		this.destroy(true);
 		this._addedPlotLB = undefined; // #1611, #2887
 
-		this.init(chart, extend(newOptions, { events: undefined }));
+		this.init(chart, Highcharts.extend(newOptions, { events: undefined }));
 
 		chart.isDirtyBox = true;
 		if (pick(redraw, true)) {
@@ -16361,7 +16362,7 @@ var PiePoint = extendClass(Point, {
 		var point = this,
 			toggleSlice;
 
-		extend(point, {
+		Highcharts.extend(point, {
 			visible: point.visible !== false,
 			name: pick(point.name, 'Slice')
 		});
@@ -16734,7 +16735,7 @@ var PieSeries = {
 
 			// draw the slice
 			if (graphic) {
-				graphic.animate(extend(shapeArgs, groupTranslation));
+				graphic.animate(Highcharts.extend(shapeArgs, groupTranslation));
 			} else {
 				point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 					.setRadialReference(series.center)
@@ -16937,7 +16938,7 @@ Series.prototype.drawDataLabels = function () {
 						options.useHTML
 					)
 					.attr(attr)
-					.css(extend(style, moreStyle))
+					.css(Highcharts.extend(style, moreStyle))
 					.add(dataLabelsGroup)
 					.shadow(options.shadow);
 
@@ -16971,7 +16972,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 	if (visible) {
 
 		// The alignment box is a singular point
-		alignTo = extend({
+		alignTo = Highcharts.extend({
 			x: inverted ? chart.plotWidth - plotY : plotX,
 			y: Math.round(inverted ? chart.plotHeight - plotX : plotY),
 			width: 0,
@@ -16979,7 +16980,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		}, alignTo);
 
 		// Add the text size for alignment calculation
-		extend(options, {
+		Highcharts.extend(options, {
 			width: bBox.width,
 			height: bBox.height
 		});
@@ -17817,7 +17818,7 @@ if (Highcharts.seriesTypes.scatter) {
 /* 
  * Extend Legend for item events 
  */ 
-extend(Legend.prototype, {
+Highcharts.extend(Legend.prototype, {
 
 	setItemEvents: function (item, legendItem, useHTML, itemStyle, itemHiddenStyle) {
 	var legend = this;
@@ -17883,7 +17884,7 @@ Highcharts.defaultOptions.legend.itemStyle.cursor = 'pointer';
  * Extend the Chart object with interaction
  */
 
-extend(Chart.prototype, {
+Highcharts.extend(Chart.prototype, {
 	/**
 	 * Display the zoom button
 	 */
@@ -18011,7 +18012,7 @@ extend(Chart.prototype, {
 /*
  * Extend the Point object with interaction
  */
-extend(Point.prototype, {
+Highcharts.extend(Point.prototype, {
 	/**
 	 * Toggle the selection status of a point
 	 * @param {Boolean} selected Whether to select or unselect the point.
@@ -18222,7 +18223,7 @@ extend(Point.prototype, {
 				series.halo = halo = chart.renderer.path()
 					.add(chart.seriesGroup);
 			}
-			halo.attr(extend({
+			halo.attr(Highcharts.extend({
 				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
 			}, haloOptions.attributes))[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
@@ -18253,7 +18254,7 @@ extend(Point.prototype, {
  * Extend the Series object with interaction
  */
 
-extend(Series.prototype, {
+Highcharts.extend(Series.prototype, {
 	/**
 	 * Series mouse over handler
 	 */
@@ -18447,7 +18448,7 @@ extend(Series.prototype, {
 	drawTracker: TrackerMixin.drawTrackerGraph
 });
 // global variables
-extend(Highcharts, {
+Highcharts.extend(Highcharts, {
 	
 	// Constructors
 	Color: Color,

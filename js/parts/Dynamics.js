@@ -1,5 +1,5 @@
 // Extend the Chart prototype for dynamic methods
-extend(Chart.prototype, {
+Highcharts.extend(Chart.prototype, {
 
 	/**
 	 * Add a series dynamically after  time
@@ -82,7 +82,7 @@ extend(Chart.prototype, {
 		if (!loadingDiv) {
 			chart.loadingDiv = loadingDiv = createElement('div', {
 				className: 'highcharts-loading'
-			}, extend(loadingOptions.style, {
+			}, Highcharts.extend(loadingOptions.style, {
 				zIndex: 10,
 				display: 'none'
 			}), chart.container);
@@ -137,7 +137,7 @@ extend(Chart.prototype, {
 });
 
 // extend the Point prototype for dynamic methods
-extend(Point.prototype, {
+Highcharts.extend(Point.prototype, {
 	/**
 	 * Update the point with new options (typically x/y data) and optionally redraw the series.
 	 *
@@ -224,7 +224,7 @@ extend(Point.prototype, {
 });
 
 // Extend the series prototype for dynamic methods
-extend(Series.prototype, {
+Highcharts.extend(Series.prototype, {
 	/**
 	 * Add a point dynamically after chart load time
 	 * @param {Object} options Point options as given in series.data
@@ -441,7 +441,7 @@ extend(Series.prototype, {
 		for (n in proto) {
 			this[n] = undefined;
 		}
-		extend(this, seriesTypes[newOptions.type || oldType].prototype);
+		Highcharts.extend(this, seriesTypes[newOptions.type || oldType].prototype);
 
 		// Re-register groups (#3094)
 		each(preserve, function (prop) {
@@ -457,7 +457,7 @@ extend(Series.prototype, {
 });
 
 // Extend the Axis.prototype for dynamic methods
-extend(Axis.prototype, {
+Highcharts.extend(Axis.prototype, {
 
 	/**
 	 * Update the axis with a new options structure
@@ -470,7 +470,7 @@ extend(Axis.prototype, {
 		this.destroy(true);
 		this._addedPlotLB = undefined; // #1611, #2887
 
-		this.init(chart, extend(newOptions, { events: undefined }));
+		this.init(chart, Highcharts.extend(newOptions, { events: undefined }));
 
 		chart.isDirtyBox = true;
 		if (pick(redraw, true)) {

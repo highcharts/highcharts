@@ -54,7 +54,7 @@ var PiePoint = extendClass(Point, {
 		var point = this,
 			toggleSlice;
 
-		extend(point, {
+		Highcharts.extend(point, {
 			visible: point.visible !== false,
 			name: pick(point.name, 'Slice')
 		});
@@ -427,7 +427,7 @@ var PieSeries = {
 
 			// draw the slice
 			if (graphic) {
-				graphic.animate(extend(shapeArgs, groupTranslation));
+				graphic.animate(Highcharts.extend(shapeArgs, groupTranslation));
 			} else {
 				point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 					.setRadialReference(series.center)

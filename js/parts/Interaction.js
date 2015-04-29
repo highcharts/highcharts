@@ -168,7 +168,7 @@ if (Highcharts.seriesTypes.scatter) {
 /* 
  * Extend Legend for item events 
  */ 
-extend(Legend.prototype, {
+Highcharts.extend(Legend.prototype, {
 
 	setItemEvents: function (item, legendItem, useHTML, itemStyle, itemHiddenStyle) {
 	var legend = this;
@@ -234,7 +234,7 @@ Highcharts.defaultOptions.legend.itemStyle.cursor = 'pointer';
  * Extend the Chart object with interaction
  */
 
-extend(Chart.prototype, {
+Highcharts.extend(Chart.prototype, {
 	/**
 	 * Display the zoom button
 	 */
@@ -362,7 +362,7 @@ extend(Chart.prototype, {
 /*
  * Extend the Point object with interaction
  */
-extend(Point.prototype, {
+Highcharts.extend(Point.prototype, {
 	/**
 	 * Toggle the selection status of a point
 	 * @param {Boolean} selected Whether to select or unselect the point.
@@ -573,7 +573,7 @@ extend(Point.prototype, {
 				series.halo = halo = chart.renderer.path()
 					.add(chart.seriesGroup);
 			}
-			halo.attr(extend({
+			halo.attr(Highcharts.extend({
 				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
 			}, haloOptions.attributes))[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
@@ -604,7 +604,7 @@ extend(Point.prototype, {
  * Extend the Series object with interaction
  */
 
-extend(Series.prototype, {
+Highcharts.extend(Series.prototype, {
 	/**
 	 * Series mouse over handler
 	 */

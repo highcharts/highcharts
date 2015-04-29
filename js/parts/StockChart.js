@@ -359,7 +359,7 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 			stroke: options.borderColor || null,
 			'stroke-width': options.borderWidth || 0
 		})
-		.css(extend({				
+		.css(Highcharts.extend({				
 			color: 'white',
 			fontWeight: 'normal',
 			fontSize: '11px',

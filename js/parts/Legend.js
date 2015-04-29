@@ -515,7 +515,7 @@ Legend.prototype = {
 		}*/
 
 		if (display) {
-			legendGroup.align(extend({
+			legendGroup.align(Highcharts.extend({
 				width: legendWidth,
 				height: legendHeight
 			}, options), true, 'spacingBox');

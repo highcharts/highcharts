@@ -8,7 +8,7 @@ function Pane(options, chart, firstAxis) {
 }
 
 // Extend the Pane prototype
-extend(Pane.prototype, {
+Highcharts.extend(Pane.prototype, {
 	
 	/**
 	 * Initiate the Pane object

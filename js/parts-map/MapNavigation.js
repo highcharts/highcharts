@@ -1,6 +1,6 @@
 
 // Add events to the Chart object itself
-extend(Chart.prototype, {
+Highcharts.extend(Chart.prototype, {
 	renderMapNavigation: function () {
 		var chart = this,
 			options = this.options.mapNavigation,
@@ -40,7 +40,7 @@ extend(Chart.prototype, {
 						})					
 						.add();
 					button.handler = buttonOptions.onclick;
-					button.align(extend(buttonOptions, { width: button.width, height: 2 * button.height }), null, buttonOptions.alignTo);
+					button.align(Highcharts.extend(buttonOptions, { width: button.width, height: 2 * button.height }), null, buttonOptions.alignTo);
 				}
 			}
 		}

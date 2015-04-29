@@ -1,7 +1,6 @@
 var arrayMin = Highcharts.arrayMin,
 	arrayMax = Highcharts.arrayMax,
 	each = Highcharts.each,
-	extend = Highcharts.extend,
 	merge = Highcharts.merge,
 	map = Highcharts.map,
 	pick = Highcharts.pick,

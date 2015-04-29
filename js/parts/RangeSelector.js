@@ -1,7 +1,7 @@
 /* ****************************************************************************
  * Start Range Selector code												  *
  *****************************************************************************/
-extend(Highcharts.defaultOptions, {
+Highcharts.extend(Highcharts.defaultOptions, {
 	rangeSelector: {
 		// allButtonsEnabled: false,
 		// enabled: true,
@@ -419,7 +419,7 @@ RangeSelector.prototype = {
 			name: name,
 			className: 'highcharts-range-selector',
 			type: 'text'
-		}, extend({
+		}, Highcharts.extend({
 			position: 'absolute',
 			border: 0,
 			width: '1px', // Chrome needs a pixel to see it
@@ -602,7 +602,7 @@ RangeSelector.prototype = {
 		
 			// Update the alignment to the updated spacing box
 			yAlign = chart.plotTop - 45;		
-			inputGroup.align(extend({
+			inputGroup.align(Highcharts.extend({
 				y: yAlign,
 				width: inputGroup.offset,
 				// Detect collision with the exporting buttons

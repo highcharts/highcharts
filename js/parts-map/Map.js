@@ -1,7 +1,7 @@
 
 
 // Add language
-extend(Highcharts.defaultOptions.lang, {
+Highcharts.extend(Highcharts.defaultOptions.lang, {
 	zoomIn: 'Zoom in',
 	zoomOut: 'Zoom out'
 });

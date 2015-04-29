@@ -16,7 +16,6 @@
 var arrayMin = Highcharts.arrayMin,
 	arrayMax = Highcharts.arrayMax,
 	each = Highcharts.each,
-	extend = Highcharts.extend,
 	merge = Highcharts.merge,
 	map = Highcharts.map,
 	pick = Highcharts.pick,
@@ -42,7 +41,7 @@ function Pane(options, chart, firstAxis) {
 }
 
 // Extend the Pane prototype
-extend(Pane.prototype, {
+Highcharts.extend(Pane.prototype, {
 	
 	/**
 	 * Initiate the Pane object
@@ -490,6 +489,7 @@ var radialAxisMixin = {
  */
 wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 	var axis = this,
+		extend = Highcharts.extend,
 		angular = chart.angular,
 		polar = chart.polar,
 		isX = userOptions.isX,

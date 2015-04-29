@@ -174,7 +174,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 			}
 		}
 		if (point) {
-			mapData.push(extend(point, {
+			mapData.push(Highcharts.extend(point, {
 				name: properties.name || properties.NAME, 
 				properties: properties
 			}));

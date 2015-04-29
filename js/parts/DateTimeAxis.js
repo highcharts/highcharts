@@ -120,7 +120,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 
 
 	// record information on the chosen unit - for dynamic label formatter
-	tickPositions.info = extend(normalizedInterval, {
+	tickPositions.info = Highcharts.extend(normalizedInterval, {
 		higherRanks: higherRanks,
 		totalRange: interval * count
 	});

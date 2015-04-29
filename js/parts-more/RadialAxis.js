@@ -377,6 +377,7 @@ var radialAxisMixin = {
  */
 wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 	var axis = this,
+		extend = Highcharts.extend,
 		angular = chart.angular,
 		polar = chart.polar,
 		isX = userOptions.isX,

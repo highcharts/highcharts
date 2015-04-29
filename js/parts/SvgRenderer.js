@@ -447,7 +447,7 @@ SVGElement.prototype = {
 
 			// Merge the new styles with the old ones
 			if (oldStyles) {
-				styles = extend(
+				styles = Highcharts.extend(
 					oldStyles,
 					newStyles
 				);
@@ -739,7 +739,7 @@ SVGElement.prototype = {
 					bBox = element.getBBox ?
 						// SVG: use extend because IE9 is not allowed to change width and height in case
 						// of rotation (below)
-						extend({}, element.getBBox()) :
+						Highcharts.extend({}, element.getBBox()) :
 						// Canvas renderer and legacy IE in export mode
 						{
 							width: element.offsetWidth,
@@ -1256,7 +1256,7 @@ SVGRenderer.prototype = {
 	},
 
 	getStyle: function (style) {
-		return (this.style = extend({
+		return (this.style = Highcharts.extend({
 			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif', // default font
 			fontSize: '12px'
 		}, style));
@@ -1713,7 +1713,7 @@ SVGRenderer.prototype = {
 				}
 			})
 			.attr(normalState)
-			.css(extend({ cursor: 'default' }, normalStyle));
+			.css(Highcharts.extend({ cursor: 'default' }, normalStyle));
 	},
 
 	/**
@@ -1746,7 +1746,7 @@ SVGRenderer.prototype = {
 		if (isArray(path)) {
 			attr.d = path;
 		} else if (isObject(path)) { // attributes
-			extend(attr, path);
+			Highcharts.extend(attr, path);
 		}
 		return this.createElement('path').attr(attr);
 	},
@@ -1899,7 +1899,7 @@ SVGRenderer.prototype = {
 
 		// optional properties
 		if (arguments.length > 1) {
-			extend(attribs, {
+			Highcharts.extend(attribs, {
 				x: x,
 				y: y,
 				width: width,
@@ -1957,7 +1957,7 @@ SVGRenderer.prototype = {
 
 			obj = this.path(path);
 			// expando properties for use in animate and attr
-			extend(obj, {
+			Highcharts.extend(obj, {
 				symbolName: symbol,
 				x: x,
 				y: y,
@@ -1965,7 +1965,7 @@ SVGRenderer.prototype = {
 				height: height
 			});
 			if (options) {
-				extend(obj, options);
+				Highcharts.extend(obj, options);
 			}
 
 
@@ -2364,7 +2364,7 @@ SVGRenderer.prototype = {
 
 				// apply the box attributes
 				if (!box.isImg) { // #1630
-					box.attr(extend({
+					box.attr(Highcharts.extend({
 						width: Math.round(wrapper.width),
 						height: Math.round(wrapper.height)
 					}, deferredAttr));
@@ -2518,7 +2518,7 @@ SVGRenderer.prototype = {
 
 		// Redirect certain methods to either the box or the text
 		var baseCss = wrapper.css;
-		return extend(wrapper, {
+		return Highcharts.extend(wrapper, {
 			/**
 			 * Pick up some properties and apply them to the text instead of the wrapper
 			 */

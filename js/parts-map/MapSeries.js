@@ -63,7 +63,7 @@ var MapAreaPoint = extendClass(Point, {
 					point.x = mapPoint._midX;
 					point.y = mapPoint._midY;
 				}
-				extend(point, mapPoint); // copy over properties
+				Highcharts.extend(point, mapPoint); // copy over properties
 			} else {
 				point.value = point.value || null;
 			}

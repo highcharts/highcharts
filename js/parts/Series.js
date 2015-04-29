@@ -52,7 +52,7 @@ Series.prototype = {
 		series.bindAxes();
 
 		// set some variables
-		extend(series, {
+		Highcharts.extend(series, {
 			name: options.name,
 			state: '',
 			pointAttr: {},
@@ -985,7 +985,7 @@ Series.prototype = {
 
 					if (graphic) { // update
 						graphic[isInside ? 'show' : 'hide'](true) // Since the marker group isn't clipped, each individual marker must be toggled
-							.animate(extend({
+							.animate(Highcharts.extend({
 								x: plotX - radius,
 								y: plotY - radius
 							}, graphic.symbolName ? { // don't apply to image symbols #507
@@ -1164,7 +1164,7 @@ Series.prototype = {
 					if (!defaultLineColor) {
 						attr.lineColor = point.color; // Bubbles take point color, line markers use white
 					}
-					pointAttr[''] = series.convertAttribs(extend(attr, normalOptions), seriesPointAttr['']);
+					pointAttr[''] = series.convertAttribs(Highcharts.extend(attr, normalOptions), seriesPointAttr['']);
 
 					// inherit from point normal and series hover
 					pointAttr.hover = series.convertAttribs(

@@ -256,7 +256,7 @@ Chart.prototype = {
 				if (axis.isDirtyExtremes) { // #821
 					axis.isDirtyExtremes = false;
 					afterRedraw.push(function () { // prevent a recursive call to chart.redraw() (#1119)
-						fireEvent(axis, 'afterSetExtremes', extend(axis.eventArgs, axis.getExtremes())); // #747, #751
+						fireEvent(axis, 'afterSetExtremes', Highcharts.extend(axis.eventArgs, axis.getExtremes())); // #747, #751
 						delete axis.eventArgs;
 					});
 				}
@@ -479,7 +479,7 @@ Chart.prototype = {
 		if (title) {
 			title
 				.css({ width: (titleOptions.width || autoWidth) + 'px' })
-				.align(extend({ 
+				.align(Highcharts.extend({ 
 					y: renderer.fontMetrics(titleOptions.style.fontSize, title).b - 3
 				}, titleOptions), false, 'spacingBox');
 			
@@ -490,7 +490,7 @@ Chart.prototype = {
 		if (subtitle) {
 			subtitle
 				.css({ width: (subtitleOptions.width || autoWidth) + 'px' })
-				.align(extend({ 
+				.align(Highcharts.extend({ 
 					y: titleOffset + (titleOptions.margin - 13) + renderer.fontMetrics(titleOptions.style.fontSize, subtitle).b 
 				}, subtitleOptions), false, 'spacingBox');
 			
@@ -634,7 +634,7 @@ Chart.prototype = {
 				className: 'highcharts-' + 'container' +
 					(optionsChart.className ? ' ' + optionsChart.className : ''),
 				id: containerId
-			}, extend({
+			}, Highcharts.extend({
 				position: 'relative',
 				overflow: 'hidden', // needed for context menu (avoid scrollbars) and
 					// content overflow in IE
@@ -1127,7 +1127,7 @@ Chart.prototype = {
 			labels = chart.options.labels;
 		if (labels.items) {
 			each(labels.items, function (label) {
-				var style = extend(labels.style, label.style),
+				var style = Highcharts.extend(labels.style, label.style),
 					x = pInt(style.left) + chart.plotLeft,
 					y = pInt(style.top) + chart.plotTop + 12;
 

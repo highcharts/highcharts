@@ -145,7 +145,7 @@ Series.prototype.drawDataLabels = function () {
 						options.useHTML
 					)
 					.attr(attr)
-					.css(extend(style, moreStyle))
+					.css(Highcharts.extend(style, moreStyle))
 					.add(dataLabelsGroup)
 					.shadow(options.shadow);
 
@@ -179,7 +179,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 	if (visible) {
 
 		// The alignment box is a singular point
-		alignTo = extend({
+		alignTo = Highcharts.extend({
 			x: inverted ? chart.plotWidth - plotY : plotX,
 			y: Math.round(inverted ? chart.plotHeight - plotX : plotY),
 			width: 0,
@@ -187,7 +187,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		}, alignTo);
 
 		// Add the text size for alignment calculation
-		extend(options, {
+		Highcharts.extend(options, {
 			width: bBox.width,
 			height: bBox.height
 		});

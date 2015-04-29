@@ -8,8 +8,8 @@ var ColorAxis = Highcharts.ColorAxis = function () {
 	this.isColorAxis = true;
 	this.init.apply(this, arguments);
 };
-extend(ColorAxis.prototype, Axis.prototype);
-extend(ColorAxis.prototype, {
+Highcharts.extend(ColorAxis.prototype, Axis.prototype);
+Highcharts.extend(ColorAxis.prototype, {
 	defaultColorAxisOptions: {
 		lineWidth: 0,
 		gridLineWidth: 1,
@@ -399,9 +399,8 @@ extend(ColorAxis.prototype, {
 				if (to !== undefined) {
 					name += Highcharts.numberFormat(to, valueDecimals) + valueSuffix;
 				}
-				
 				// Add a mock object to the legend items
-				legendItems.push(extend({
+				legendItems.push(Highcharts.extend({
 					chart: chart,
 					name: name,
 					options: {},

@@ -90,7 +90,7 @@ Pointer.prototype = {
 			chartY = ePos.pageY - chartPosition.top;
 		}
 
-		return extend(e, {
+		return Highcharts.extend(e, {
 			chartX: Math.round(chartX),
 			chartY: Math.round(chartY)
 		});
@@ -473,7 +473,7 @@ Pointer.prototype = {
 				});
 				if (runZoom) {
 					fireEvent(chart, 'selection', selectionData, function (args) { 
-						chart.zoom(extend(args, hasPinched ? { animation: false } : null)); 
+						chart.zoom(Highcharts.extend(args, hasPinched ? { animation: false } : null)); 
 					});
 				}
 
@@ -611,7 +611,7 @@ Pointer.prototype = {
 			if (hoverPoint && this.inClass(e.target, 'highcharts-tracker')) {
 
 				// the series click event
-				fireEvent(hoverPoint.series, 'click', extend(e, {
+				fireEvent(hoverPoint.series, 'click', Highcharts.extend(e, {
 					point: hoverPoint
 				}));
 
@@ -622,7 +622,7 @@ Pointer.prototype = {
 
 			// When clicking outside a tracker, fire a chart event
 			} else {
-				extend(e, this.getCoordinates(e));
+				Highcharts.extend(e, this.getCoordinates(e));
 
 				// fire a click event in the chart
 				if (chart.isInsidePlot(e.chartX - plotLeft, e.chartY - plotTop)) {

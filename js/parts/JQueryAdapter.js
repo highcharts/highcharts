@@ -262,7 +262,7 @@
 				delete eventArguments.returnValue;
 			}
 	
-			extend(event, eventArguments);
+			Highcharts.extend(event, eventArguments);
 	
 			// Prevent jQuery from triggering the object method that is named the
 			// same as the event. For example, if the event is 'select', jQuery
