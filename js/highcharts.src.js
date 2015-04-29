@@ -228,9 +228,9 @@ Highcharts.attr = function (elem, prop, value) {
  * Check if an element is an array, and if not, make it into an array. Like
  * MooTools' $.splat.
  */
-function splat(obj) {
+Highcharts.splat = function (obj) {
 	return Highcharts.isArray(obj) ? obj : [obj];
-}
+};
 
 
 /**
@@ -6678,7 +6678,7 @@ Axis.prototype = {
 		//axis.userMax = undefined,
 
 		// Crosshair options
-		axis.crosshair = pick(options.crosshair, splat(chart.options.tooltip.crosshairs)[isXAxis ? 0 : 1], false);
+		axis.crosshair = pick(options.crosshair, Highcharts.splat(chart.options.tooltip.crosshairs)[isXAxis ? 0 : 1], false);
 		// Run Axis
 
 		var eventType,
@@ -8996,7 +8996,7 @@ Tooltip.prototype = {
 			yAxis,
 			xAxis;
 		
-		points = splat(points);
+		points = Highcharts.splat(points);
 		
 		// Pie uses a special tooltipPos
 		ret = points[0].tooltipPos;
@@ -9132,7 +9132,7 @@ Tooltip.prototype = {
 	 * here is an object holding point, series, x, y etc.
 	 */
 	defaultFormatter: function (tooltip) {
-		var items = this.points || splat(this),
+		var items = this.points || Highcharts.splat(this),
 			s;
 
 		// build the header
@@ -9171,7 +9171,7 @@ Tooltip.prototype = {
 		clearTimeout(this.hideTimer);
 		
 		// get the reference point coordinates (pie charts use tooltipPos)
-		tooltip.followPointer = splat(point)[0].series.tooltipOptions.followPointer;
+		tooltip.followPointer = Highcharts.splat(point)[0].series.tooltipOptions.followPointer;
 		anchor = tooltip.getAnchor(point, mouseEvent);
 		x = anchor[0];
 		y = anchor[1];
@@ -9632,7 +9632,7 @@ Pointer.prototype = {
 		allowMove = allowMove && tooltip && tooltipPoints;
 			
 		// Check if the points have moved outside the plot area, #1003		
-		if (allowMove  && splat(tooltipPoints)[0].plotX === undefined) {
+		if (allowMove  && Highcharts.splat(tooltipPoints)[0].plotX === undefined) {
 			allowMove = false;
 		}	
 		// Just move the tooltip, #349
@@ -11519,6 +11519,7 @@ Chart.prototype = {
 	 */
 	getAxes: function () {
 		var chart = this,
+			splat = Highcharts.splat,
 			options = this.options,
 			xAxisOptions = options.xAxis = splat(options.xAxis || {}),
 			yAxisOptions = options.yAxis = splat(options.yAxis || {}),
@@ -13524,7 +13525,7 @@ Series.prototype = {
 				points[i] = point;
 			} else {
 				// splat the y data in case of ohlc data array
-				points[i] = (new pointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
+				points[i] = (new pointClass()).init(series, [processedXData[i]].concat(Highcharts.splat(processedYData[i])));
 			}
 			points[i].index = cursor; // For faster access in Point.update
 		}
@@ -15095,7 +15096,7 @@ Highcharts.extend(Chart.prototype, {
 		/*jslint unused: true*/
 
 		// Push the new axis options to the chart options
-		chartOptions[key] = splat(chartOptions[key] || {});
+		chartOptions[key] = Highcharts.splat(chartOptions[key] || {});
 		chartOptions[key].push(options);
 
 		if (pick(redraw, true)) {
@@ -18507,7 +18508,6 @@ Highcharts.extend(Highcharts, {
 	css: css,
 	each: each,
 	map: map,
-	splat: splat,
 	extendClass: extendClass,
 	canvas: Highcharts.useCanVG,
 	vml: !Highcharts.svg && !Highcharts.useCanVG,

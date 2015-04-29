@@ -175,9 +175,9 @@ Highcharts.attr = function (elem, prop, value) {
  * Check if an element is an array, and if not, make it into an array. Like
  * MooTools' $.splat.
  */
-function splat(obj) {
+Highcharts.splat = function (obj) {
 	return Highcharts.isArray(obj) ? obj : [obj];
-}
+};
 
 
 /**

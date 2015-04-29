@@ -316,7 +316,7 @@ Axis.prototype = {
 		//axis.userMax = undefined,
 
 		// Crosshair options
-		axis.crosshair = pick(options.crosshair, splat(chart.options.tooltip.crosshairs)[isXAxis ? 0 : 1], false);
+		axis.crosshair = pick(options.crosshair, Highcharts.splat(chart.options.tooltip.crosshairs)[isXAxis ? 0 : 1], false);
 		// Run Axis
 
 		var eventType,

@@ -50,7 +50,7 @@ Highcharts.extend(Chart.prototype, {
 		/*jslint unused: true*/
 
 		// Push the new axis options to the chart options
-		chartOptions[key] = splat(chartOptions[key] || {});
+		chartOptions[key] = Highcharts.splat(chartOptions[key] || {});
 		chartOptions[key].push(options);
 
 		if (pick(redraw, true)) {

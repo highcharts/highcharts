@@ -23,7 +23,6 @@ Highcharts.extend(Highcharts, {
 	css: css,
 	each: each,
 	map: map,
-	splat: splat,
 	extendClass: extendClass,
 	canvas: Highcharts.useCanVG,
 	vml: !Highcharts.svg && !Highcharts.useCanVG,

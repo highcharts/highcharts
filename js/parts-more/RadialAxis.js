@@ -418,7 +418,7 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 			chart.panes = [];
 		}
 		this.pane = pane = chart.panes[paneIndex] = chart.panes[paneIndex] || new Pane(
-			splat(chartOptions.pane)[paneIndex],
+			Highcharts.splat(chartOptions.pane)[paneIndex],
 			chart,
 			axis
 		);

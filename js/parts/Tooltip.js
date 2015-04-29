@@ -155,7 +155,7 @@ Tooltip.prototype = {
 			yAxis,
 			xAxis;
 		
-		points = splat(points);
+		points = Highcharts.splat(points);
 		
 		// Pie uses a special tooltipPos
 		ret = points[0].tooltipPos;
@@ -291,7 +291,7 @@ Tooltip.prototype = {
 	 * here is an object holding point, series, x, y etc.
 	 */
 	defaultFormatter: function (tooltip) {
-		var items = this.points || splat(this),
+		var items = this.points || Highcharts.splat(this),
 			s;
 
 		// build the header
@@ -330,7 +330,7 @@ Tooltip.prototype = {
 		clearTimeout(this.hideTimer);
 		
 		// get the reference point coordinates (pie charts use tooltipPos)
-		tooltip.followPointer = splat(point)[0].series.tooltipOptions.followPointer;
+		tooltip.followPointer = Highcharts.splat(point)[0].series.tooltipOptions.followPointer;
 		anchor = tooltip.getAnchor(point, mouseEvent);
 		x = anchor[0];
 		y = anchor[1];

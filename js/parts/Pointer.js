@@ -258,7 +258,7 @@ Pointer.prototype = {
 		allowMove = allowMove && tooltip && tooltipPoints;
 			
 		// Check if the points have moved outside the plot area, #1003		
-		if (allowMove  && splat(tooltipPoints)[0].plotX === undefined) {
+		if (allowMove  && Highcharts.splat(tooltipPoints)[0].plotX === undefined) {
 			allowMove = false;
 		}	
 		// Just move the tooltip, #349

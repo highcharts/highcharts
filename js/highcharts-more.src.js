@@ -21,7 +21,6 @@ var arrayMin = Highcharts.arrayMin,
 	pick = Highcharts.pick,
 	defaultPlotOptions = Highcharts.getOptions().plotOptions,
 	extendClass = Highcharts.extendClass,
-	splat = Highcharts.splat,
 	wrap = Highcharts.wrap,
 	Axis = Highcharts.Axis,
 	Tick = Highcharts.Tick,
@@ -63,7 +62,7 @@ Highcharts.extend(Pane.prototype, {
 		// To avoid having weighty logic to place, update and remove the backgrounds,
 		// push them to the first axis' plot bands and borrow the existing logic there.
 		if (backgroundOption) {
-			each([].concat(splat(backgroundOption)).reverse(), function (config) {
+			each([].concat(Highcharts.splat(backgroundOption)).reverse(), function (config) {
 				var backgroundColor = config.backgroundColor,  // if defined, replace the old one (specific for gradients)
 					axisUserOptions = firstAxis.userOptions;
 				config = merge(pane.defaultBackgroundOptions, config);
@@ -529,7 +528,7 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 			chart.panes = [];
 		}
 		this.pane = pane = chart.panes[paneIndex] = chart.panes[paneIndex] || new Pane(
-			splat(chartOptions.pane)[paneIndex],
+			Highcharts.splat(chartOptions.pane)[paneIndex],
 			chart,
 			axis
 		);

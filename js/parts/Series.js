@@ -639,7 +639,7 @@ Series.prototype = {
 				points[i] = point;
 			} else {
 				// splat the y data in case of ohlc data array
-				points[i] = (new pointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
+				points[i] = (new pointClass()).init(series, [processedXData[i]].concat(Highcharts.splat(processedYData[i])));
 			}
 			points[i].index = cursor; // For faster access in Point.update
 		}

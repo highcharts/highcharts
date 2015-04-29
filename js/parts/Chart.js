@@ -346,6 +346,7 @@ Chart.prototype = {
 	 */
 	getAxes: function () {
 		var chart = this,
+			splat = Highcharts.splat,
 			options = this.options,
 			xAxisOptions = options.xAxis = splat(options.xAxis || {}),
 			yAxisOptions = options.yAxis = splat(options.yAxis || {}),
