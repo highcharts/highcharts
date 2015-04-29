@@ -7,6 +7,7 @@
  */
 Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 	var axis = this,
+		log2lin = Highcharts.log2lin,
 		options = axis.options,
 		axisLength = axis.len,
 		// Since we use this method for both major and minor ticks,

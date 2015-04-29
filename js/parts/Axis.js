@@ -351,7 +351,7 @@ Axis.prototype = {
 
 		// extend logarithmic axis
 		if (axis.isLog) {
-			axis.val2lin = log2lin;
+			axis.val2lin = Highcharts.log2lin;
 			axis.lin2val = lin2log;
 		}
 	},
@@ -881,6 +881,7 @@ Axis.prototype = {
 			chart = axis.chart,
 			options = axis.options,
 			isNumber = Highcharts.isNumber,
+			log2lin = Highcharts.log2lin,
 			isLog = axis.isLog,
 			isDatetimeAxis = axis.isDatetimeAxis,
 			isXAxis = axis.isXAxis,

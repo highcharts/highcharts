@@ -109,9 +109,9 @@ Highcharts.isNumber = function (n) {
 	return typeof n === 'number';
 };
 
-function log2lin(num) {
+Highcharts.log2lin = function (num) {
 	return Math.log(num) / Math.LN10;
-}
+};
 function lin2log(num) {
 	return Math.pow(10, num);
 }

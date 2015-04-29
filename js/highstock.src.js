@@ -162,9 +162,9 @@ Highcharts.isNumber = function (n) {
 	return typeof n === 'number';
 };
 
-function log2lin(num) {
+Highcharts.log2lin = function (num) {
 	return Math.log(num) / Math.LN10;
-}
+};
 function lin2log(num) {
 	return Math.pow(10, num);
 }
@@ -6115,6 +6115,7 @@ Highcharts.PlotLineOrBand.prototype = {
 			options = plotLine.options,
 			optionsLabel = options.label,
 			label = plotLine.label,
+			log2lin = Highcharts.log2lin,
 			width = options.width,
 			to = options.to,
 			from = options.from,
@@ -6703,7 +6704,7 @@ Axis.prototype = {
 
 		// extend logarithmic axis
 		if (axis.isLog) {
-			axis.val2lin = log2lin;
+			axis.val2lin = Highcharts.log2lin;
 			axis.lin2val = lin2log;
 		}
 	},
@@ -7233,6 +7234,7 @@ Axis.prototype = {
 			chart = axis.chart,
 			options = axis.options,
 			isNumber = Highcharts.isNumber,
+			log2lin = Highcharts.log2lin,
 			isLog = axis.isLog,
 			isDatetimeAxis = axis.isDatetimeAxis,
 			isXAxis = axis.isXAxis,
@@ -8726,6 +8728,7 @@ Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) 
  */
 Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 	var axis = this,
+		log2lin = Highcharts.log2lin,
 		options = axis.options,
 		axisLength = axis.len,
 		// Since we use this method for both major and minor ticks,

@@ -24,6 +24,7 @@ Highcharts.PlotLineOrBand.prototype = {
 			options = plotLine.options,
 			optionsLabel = options.label,
 			label = plotLine.label,
+			log2lin = Highcharts.log2lin,
 			width = options.width,
 			to = options.to,
 			from = options.from,
