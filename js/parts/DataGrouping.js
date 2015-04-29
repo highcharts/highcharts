@@ -464,10 +464,10 @@ wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
 
 	if (specificOptions[type]) { // #1284
 		if (!defaultOptions) {
-			defaultOptions = merge(commonOptions, specificOptions[type]);
+			defaultOptions = Highcharts.merge(commonOptions, specificOptions[type]);
 		}
 
-		options.dataGrouping = merge(
+		options.dataGrouping = Highcharts.merge(
 			defaultOptions,
 			plotOptions.series && plotOptions.series.dataGrouping, // #1228
 			plotOptions[type].dataGrouping, // Set by the StockChart constructor

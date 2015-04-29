@@ -451,7 +451,7 @@ Highcharts.extend(Point.prototype, {
 	importEvents: function () {
 		if (!this.hasImportedEvents) {
 			var point = this,
-				options = merge(point.series.options.point, point.options),
+				options = Highcharts.merge(point.series.options.point, point.options),
 				events = options.events,
 				eventType;
 
@@ -510,7 +510,7 @@ Highcharts.extend(Point.prototype, {
 		// apply hover styles to the existing point
 		if (point.graphic) {
 			radius = markerOptions && point.graphic.symbolName && pointAttr.r;
-			point.graphic.attr(merge(
+			point.graphic.attr(Highcharts.merge(
 				pointAttr,
 				radius ? { // new symbol attributes (#507, #612)
 					x: plotX - radius,

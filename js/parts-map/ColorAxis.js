@@ -36,7 +36,7 @@ Highcharts.extend(ColorAxis.prototype, {
 			options;
 
 		// Build the options
-		options = merge(this.defaultColorAxisOptions, {
+		options = Highcharts.merge(this.defaultColorAxisOptions, {
 			side: horiz ? 2 : 1,
 			reversed: !horiz
 		}, userOptions, {
@@ -108,7 +108,7 @@ Highcharts.extend(ColorAxis.prototype, {
 		each(userOptions.dataClasses, function (dataClass, i) {
 			var colors;
 
-			dataClass = merge(dataClass);
+			dataClass = Highcharts.merge(dataClass);
 			dataClasses.push(dataClass);
 			if (!dataClass.color) {
 				if (options.dataClassColor === 'category') {

@@ -71,7 +71,7 @@ Tick.prototype = {
 						)
 						//.attr(attr)
 						// without position absolute, IE export sometimes is wrong
-						.css(merge(labelOptions.style))
+						.css(Highcharts.merge(labelOptions.style))
 						.add(axis.labelGroup) :
 					null;
 			tick.labelLength = label && label.getBBox().width; // Un-rotated length

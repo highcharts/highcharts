@@ -43,7 +43,7 @@ Highcharts.extend(Chart.prototype, {
 			axis;
 
 		/*jslint unused: false*/
-		axis = new Axis(this, merge(options, {
+		axis = new Axis(this, Highcharts.merge(options, {
 			index: this[key].length,
 			isX: isX
 		}));
@@ -429,7 +429,7 @@ Highcharts.extend(Series.prototype, {
 		});
 
 		// Do the merge, with some forced options
-		newOptions = merge(oldOptions, {
+		newOptions = Highcharts.merge(oldOptions, {
 			animation: false,
 			index: this.index,
 			pointStart: this.xData[0] // when updating after addPoint
@@ -465,7 +465,7 @@ Highcharts.extend(Axis.prototype, {
 	update: function (newOptions, redraw) {
 		var chart = this.chart;
 
-		newOptions = chart.options[this.coll][this.options.index] = merge(this.userOptions, newOptions);
+		newOptions = chart.options[this.coll][this.options.index] = Highcharts.merge(this.userOptions, newOptions);
 
 		this.destroy(true);
 		this._addedPlotLB = undefined; // #1611, #2887

@@ -3,7 +3,7 @@
  *****************************************************************************/
 
 // 1 - set default options
-defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
+defaultPlotOptions.candlestick = Highcharts.merge(defaultPlotOptions.column, {
 	lineColor: 'black',
 	lineWidth: 1,
 	states: {

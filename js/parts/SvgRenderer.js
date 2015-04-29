@@ -36,7 +36,7 @@ SVGElement.prototype = {
 		var animOptions = pick(options, Highcharts.globalAnimation, true);
 		stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
 		if (animOptions) {
-			animOptions = merge(animOptions, {}); //#2625
+			animOptions = Highcharts.merge(animOptions, {}); //#2625
 			if (complete) { // allows using a callback with the global animation without overwriting it
 				animOptions.complete = complete;
 			}
@@ -94,7 +94,7 @@ SVGElement.prototype = {
 
 			// Correct the radial gradient for the radial reference system
 			if (gradName === 'radialGradient' && radialReference && !defined(gradAttr.gradientUnits)) {
-				gradAttr = merge(gradAttr, {
+				gradAttr = Highcharts.merge(gradAttr, {
 					cx: (radialReference[0] - radialReference[2] / 2) + gradAttr.cx * radialReference[2],
 					cy: (radialReference[1] - radialReference[2] / 2) + gradAttr.cy * radialReference[2],
 					r: gradAttr.r * radialReference[2],
@@ -1620,7 +1620,7 @@ SVGRenderer.prototype = {
 			verticalGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
 
 		// Normal state - prepare the attributes
-		normalState = merge({
+		normalState = Highcharts.merge({
 			'stroke-width': 1,
 			stroke: '#CCCCCC',
 			fill: {
@@ -1640,7 +1640,7 @@ SVGRenderer.prototype = {
 		delete normalState.style;
 
 		// Hover state
-		hoverState = merge(normalState, {
+		hoverState = Highcharts.merge(normalState, {
 			stroke: '#68A',
 			fill: {
 				linearGradient: verticalGradient,
@@ -1654,7 +1654,7 @@ SVGRenderer.prototype = {
 		delete hoverState.style;
 
 		// Pressed state
-		pressedState = merge(normalState, {
+		pressedState = Highcharts.merge(normalState, {
 			stroke: '#68A',
 			fill: {
 				linearGradient: verticalGradient,
@@ -1668,7 +1668,7 @@ SVGRenderer.prototype = {
 		delete pressedState.style;
 
 		// Disabled state
-		disabledState = merge(normalState, {
+		disabledState = Highcharts.merge(normalState, {
 			style: {
 				color: '#CCC'
 			}
@@ -2525,7 +2525,7 @@ SVGRenderer.prototype = {
 			css: function (styles) {
 				if (styles) {
 					var textStyles = {};
-					styles = merge(styles); // create a copy to avoid altering the original object (#537)
+					styles = Highcharts.merge(styles); // create a copy to avoid altering the original object (#537)
 					each(wrapper.textProps, function (prop) {
 						if (styles[prop] !== undefined) {
 							textStyles[prop] = styles[prop];

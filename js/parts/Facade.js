@@ -23,7 +23,6 @@ Highcharts.extend(Highcharts, {
 	css: css,
 	each: each,
 	map: map,
-	merge: merge,
 	splat: splat,
 	extendClass: extendClass,
 	pInt: pInt,

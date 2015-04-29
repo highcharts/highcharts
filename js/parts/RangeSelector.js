@@ -46,7 +46,7 @@ Highcharts.extend(Highcharts.defaultOptions, {
 		// selected: undefined
 	}
 });
-Highcharts.defaultOptions.lang = merge(Highcharts.defaultOptions.lang, {
+Highcharts.defaultOptions.lang = Highcharts.merge(Highcharts.defaultOptions.lang, {
 	rangeSelectorZoom: 'Zoom',
 	rangeSelectorFrom: 'From',
 	rangeSelectorTo: 'To'
@@ -168,7 +168,7 @@ RangeSelector.prototype = {
 		// update the chart
 		if (!baseAxis) { // axis not yet instanciated
 			baseXAxisOptions = chart.options.xAxis;
-			baseXAxisOptions[0] = merge(
+			baseXAxisOptions[0] = Highcharts.merge(
 				baseXAxisOptions[0],
 				{
 					range: range,
@@ -388,7 +388,7 @@ RangeSelector.prototype = {
 			.attr({
 				padding: 2
 			})
-			.css(merge(chartStyle, options.labelStyle))
+			.css(Highcharts.merge(chartStyle, options.labelStyle))
 			.add(inputGroup);
 		inputGroup.offset += label.width + 5;
 		
@@ -402,7 +402,7 @@ RangeSelector.prototype = {
 				stroke: options.inputBoxBorderColor || 'silver',
 				'stroke-width': 1
 			})
-			.css(merge({
+			.css(Highcharts.merge({
 				textAlign: 'center',
 				color: '#444'
 			}, chartStyle, options.inputStyle))

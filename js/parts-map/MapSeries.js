@@ -6,7 +6,7 @@ var supportsVectorEffect = document.documentElement.style.vectorEffect !== undef
 /**
  * Extend the default options with map options
  */
-defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
+defaultPlotOptions.map = Highcharts.merge(defaultPlotOptions.scatter, {
 	allAreas: true,
 
 	animation: false, // makes the complex shapes slow
@@ -163,7 +163,7 @@ var MapAreaPoint = extendClass(Point, {
 /**
  * Add the series type
  */
-Highcharts.seriesTypes.map = extendClass(Highcharts.seriesTypes.scatter, merge(colorSeriesMixin, {
+Highcharts.seriesTypes.map = extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(colorSeriesMixin, {
 	type: 'map',
 	pointClass: MapAreaPoint,
 	supportsDrilldown: true,
@@ -397,7 +397,7 @@ Highcharts.seriesTypes.map = extendClass(Highcharts.seriesTypes.scatter, merge(c
 
 				each(mapData, function (mapPoint) {
 					if (!joinBy[0] || dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1) {
-						data.push(merge(mapPoint, { value: null }));
+						data.push(Highcharts.merge(mapPoint, { value: null }));
 					}
 				});
 			}

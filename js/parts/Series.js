@@ -267,14 +267,14 @@ Series.prototype = {
 		// type options like column.animation would be overwritten by the general option.
 		// But issues have been raised here (#3881), and the solution may be to distinguish 
 		// between default option and userOptions like in the tooltip below.
-		options = merge(
+		options = Highcharts.merge(
 			typeOptions,
 			plotOptions.series,
 			itemOptions
 		);
 
 		// The tooltip options are merged between global and series specific options
-		this.tooltipOptions = merge(
+		this.tooltipOptions = Highcharts.merge(
 			Highcharts.defaultOptions.tooltip,
 			Highcharts.defaultOptions.plotOptions[this.type].tooltip,
 			userOptions.tooltip,

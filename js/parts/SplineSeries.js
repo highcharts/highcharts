@@ -1,7 +1,7 @@
 /**
  * Set the default options for spline
  */
-defaultPlotOptions.spline = merge(defaultSeriesOptions);
+defaultPlotOptions.spline = Highcharts.merge(defaultSeriesOptions);
 
 /**
  * SplineSeries object

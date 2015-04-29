@@ -1046,7 +1046,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 Highcharts.VMLRenderer = VMLRenderer = function () {
 	this.init.apply(this, arguments);
 };
-VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
+VMLRenderer.prototype = Highcharts.merge(SVGRenderer.prototype, VMLRendererExtension);
 
 	// general renderer
 	Highcharts.Renderer = VMLRenderer;

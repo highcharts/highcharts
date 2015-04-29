@@ -53,7 +53,7 @@ var Color = function (input) {
 		var ret;
 
 		if (stops) {
-			ret = merge(input);
+			ret = Highcharts.merge(input);
 			ret.stops = [].concat(ret.stops);
 			each(stops, function (stop, i) {
 				ret.stops[i] = [ret.stops[i][0], stop.get(format)];

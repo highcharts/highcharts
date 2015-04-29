@@ -26,7 +26,6 @@ var Axis = Highcharts.Axis,
 	each = Highcharts.each,
 	error = Highcharts.error,
 	extendClass = Highcharts.extendClass,
-	merge = Highcharts.merge,
 	pick = Highcharts.pick,
 	defaultOptions = Highcharts.getOptions(),
 	defaultPlotOptions = defaultOptions.plotOptions,
@@ -162,7 +161,7 @@ Highcharts.extend(ColorAxis.prototype, {
 			options;
 
 		// Build the options
-		options = merge(this.defaultColorAxisOptions, {
+		options = Highcharts.merge(this.defaultColorAxisOptions, {
 			side: horiz ? 2 : 1,
 			reversed: !horiz
 		}, userOptions, {
@@ -234,7 +233,7 @@ Highcharts.extend(ColorAxis.prototype, {
 		each(userOptions.dataClasses, function (dataClass, i) {
 			var colors;
 
-			dataClass = merge(dataClass);
+			dataClass = Highcharts.merge(dataClass);
 			dataClasses.push(dataClass);
 			if (!dataClass.color) {
 				if (options.dataClassColor === 'category') {
@@ -663,9 +662,9 @@ Highcharts.extend(Chart.prototype, {
 		if (pick(options.enableButtons, options.enabled) && !chart.renderer.forExport) {
 			for (n in buttons) {
 				if (buttons.hasOwnProperty(n)) {
-					buttonOptions = merge(options.buttonOptions, buttons[n]);
+					buttonOptions = Highcharts.merge(options.buttonOptions, buttons[n]);
 					attr = buttonOptions.theme;
-					attr.style = merge(buttonOptions.theme.style, buttonOptions.style); // #3203
+					attr.style = Highcharts.merge(buttonOptions.theme.style, buttonOptions.style); // #3203
 					states = attr.states;
 					button = chart.renderer.button(
 							buttonOptions.text, 
@@ -914,7 +913,7 @@ var supportsVectorEffect = document.documentElement.style.vectorEffect !== undef
 /**
  * Extend the default options with map options
  */
-defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
+defaultPlotOptions.map = Highcharts.merge(defaultPlotOptions.scatter, {
 	allAreas: true,
 
 	animation: false, // makes the complex shapes slow
@@ -1071,7 +1070,7 @@ var MapAreaPoint = extendClass(Point, {
 /**
  * Add the series type
  */
-Highcharts.seriesTypes.map = extendClass(Highcharts.seriesTypes.scatter, merge(colorSeriesMixin, {
+Highcharts.seriesTypes.map = extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(colorSeriesMixin, {
 	type: 'map',
 	pointClass: MapAreaPoint,
 	supportsDrilldown: true,
@@ -1305,7 +1304,7 @@ Highcharts.seriesTypes.map = extendClass(Highcharts.seriesTypes.scatter, merge(c
 
 				each(mapData, function (mapPoint) {
 					if (!joinBy[0] || dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1) {
-						data.push(merge(mapPoint, { value: null }));
+						data.push(Highcharts.merge(mapPoint, { value: null }));
 					}
 				});
 			}
@@ -1633,7 +1632,7 @@ Highcharts.seriesTypes.map = extendClass(Highcharts.seriesTypes.scatter, merge(c
 
 
 // The mapline series type
-defaultPlotOptions.mapline = merge(defaultPlotOptions.map, {
+defaultPlotOptions.mapline = Highcharts.merge(defaultPlotOptions.map, {
 	lineWidth: 1,
 	fillColor: 'none'
 });
@@ -1649,7 +1648,7 @@ Highcharts.seriesTypes.mapline = extendClass(Highcharts.seriesTypes.map, {
 });
 
 // The mappoint series type
-defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
+defaultPlotOptions.mappoint = Highcharts.merge(defaultPlotOptions.scatter, {
 	dataLabels: {
 		enabled: true,
 		formatter: function () { // #2945
@@ -1680,7 +1679,7 @@ Highcharts.seriesTypes.mappoint = extendClass(Highcharts.seriesTypes.scatter, {
 // The mapbubble series type
 if (Highcharts.seriesTypes.bubble) {
 
-	defaultPlotOptions.mapbubble = merge(defaultPlotOptions.bubble, {
+	defaultPlotOptions.mapbubble = Highcharts.merge(defaultPlotOptions.bubble, {
 		animationLimit: 500,
 		tooltip: {
 			pointFormat: '{point.name}: {point.z}'
@@ -1715,7 +1714,7 @@ if (Highcharts.seriesTypes.bubble) {
 /**
  * Extend the default options with map options
  */
-Highcharts.defaultOptions.plotOptions.heatmap = merge(Highcharts.defaultOptions.plotOptions.scatter, {
+Highcharts.defaultOptions.plotOptions.heatmap = Highcharts.merge(Highcharts.defaultOptions.plotOptions.scatter, {
 	animation: false,
 	borderWidth: 0,
 	nullColor: '#F8F8F8',
@@ -1746,7 +1745,7 @@ Highcharts.defaultOptions.plotOptions.heatmap = merge(Highcharts.defaultOptions.
 });
 
 // The Heatmap series type
-Highcharts.seriesTypes.heatmap = extendClass(Highcharts.seriesTypes.scatter, merge(colorSeriesMixin, {
+Highcharts.seriesTypes.heatmap = extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(colorSeriesMixin, {
 	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
@@ -2181,13 +2180,13 @@ Highcharts.Map = function (options, callback) {
 	seriesOptions = options.series;
 	options.series = null;
 	
-	options = merge({
+	options = Highcharts.merge({
 		chart: {
 			panning: 'xy',
 			type: 'map'
 		},
 		xAxis: hiddenAxis,
-		yAxis: merge(hiddenAxis, { reversed: true })	
+		yAxis: Highcharts.merge(hiddenAxis, { reversed: true })	
 	},
 	options, // user's options
 

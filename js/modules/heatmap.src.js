@@ -19,7 +19,6 @@ var Axis = Highcharts.Axis,
 	
 	each = Highcharts.each,
 	extendClass = Highcharts.extendClass,
-	merge = Highcharts.merge,
 	pick = Highcharts.pick,
 	wrap = Highcharts.wrap;
 
@@ -61,7 +60,7 @@ Highcharts.extend(ColorAxis.prototype, {
 			options;
 
 		// Build the options
-		options = merge(this.defaultColorAxisOptions, {
+		options = Highcharts.merge(this.defaultColorAxisOptions, {
 			side: horiz ? 2 : 1,
 			reversed: !horiz
 		}, userOptions, {
@@ -133,7 +132,7 @@ Highcharts.extend(ColorAxis.prototype, {
 		each(userOptions.dataClasses, function (dataClass, i) {
 			var colors;
 
-			dataClass = merge(dataClass);
+			dataClass = Highcharts.merge(dataClass);
 			dataClasses.push(dataClass);
 			if (!dataClass.color) {
 				if (options.dataClassColor === 'category') {
@@ -547,7 +546,7 @@ var colorSeriesMixin = {
 /**
  * Extend the default options with map options
  */
-Highcharts.defaultOptions.plotOptions.heatmap = merge(Highcharts.defaultOptions.plotOptions.scatter, {
+Highcharts.defaultOptions.plotOptions.heatmap = Highcharts.merge(Highcharts.defaultOptions.plotOptions.scatter, {
 	animation: false,
 	borderWidth: 0,
 	nullColor: '#F8F8F8',
@@ -578,7 +577,7 @@ Highcharts.defaultOptions.plotOptions.heatmap = merge(Highcharts.defaultOptions.
 });
 
 // The Heatmap series type
-Highcharts.seriesTypes.heatmap = extendClass(Highcharts.seriesTypes.scatter, merge(colorSeriesMixin, {
+Highcharts.seriesTypes.heatmap = extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(colorSeriesMixin, {
 	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,

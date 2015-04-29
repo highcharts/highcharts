@@ -1,7 +1,7 @@
 /**
  * Set the default options for column
  */
-defaultPlotOptions.column = merge(defaultSeriesOptions, {
+defaultPlotOptions.column = Highcharts.merge(defaultSeriesOptions, {
 	borderColor: '#FFFFFF',
 	//borderWidth: 1,
 	borderRadius: 0,
@@ -284,7 +284,7 @@ var ColumnSeries = extendClass(Series, {
 				
 				if (graphic) { // update
 					stop(graphic);
-					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs));
+					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](Highcharts.merge(shapeArgs));
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)

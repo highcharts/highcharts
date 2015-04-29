@@ -136,7 +136,7 @@ Axis.prototype = {
 			formatter: function () {
 				return Highcharts.numberFormat(this.total, -1);
 			},
-			style: merge(defaultPlotOptions.line.dataLabels.style, { color: '#000000' })
+			style: Highcharts.merge(defaultPlotOptions.line.dataLabels.style, { color: '#000000' })
 		}
 	},
 
@@ -360,12 +360,12 @@ Axis.prototype = {
 	 * Merge and set options
 	 */
 	setOptions: function (userOptions) {
-		this.options = merge(
+		this.options = Highcharts.merge(
 			this.defaultOptions,
 			this.isXAxis ? {} : this.defaultYAxisOptions,
 			[this.defaultTopAxisOptions, this.defaultRightAxisOptions,
 				this.defaultBottomAxisOptions, this.defaultLeftAxisOptions][this.side],
-			merge(
+			Highcharts.merge(
 				Highcharts.defaultOptions[this.coll], // if set in setOptions (#1053)
 				userOptions
 			)
@@ -1603,7 +1603,7 @@ Axis.prototype = {
 				label = tick && tick.label;
 			if (label) {
 				if (css) {
-					label.css(merge(css, label.specCss));
+					label.css(Highcharts.merge(css, label.specCss));
 				}
 				delete label.specCss;
 				label.attr(attr);

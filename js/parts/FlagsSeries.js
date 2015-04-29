@@ -5,7 +5,7 @@
 var symbols = SVGRenderer.prototype.symbols;
 
 // 1 - set default options
-defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
+defaultPlotOptions.flags = Highcharts.merge(defaultPlotOptions.column, {
 	fillColor: 'white',
 	lineWidth: 1,
 	pointRange: 0, // #673
@@ -209,7 +209,7 @@ Highcharts.seriesTypes.flags = extendClass(Highcharts.seriesTypes.column, {
 						anchorY,
 						options.useHTML
 					)
-					.css(merge(options.style, point.style))
+					.css(Highcharts.merge(options.style, point.style))
 					.attr(pointAttr)
 					.attr({
 						align: shape === 'flag' ? 'left' : 'center',

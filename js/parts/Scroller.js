@@ -790,7 +790,7 @@ Scroller.prototype = {
 
 		if (scroller.navigatorEnabled) {
 			// an x axis is required for scrollbar also
-			scroller.xAxis = xAxis = new Axis(chart, merge({
+			scroller.xAxis = xAxis = new Axis(chart, Highcharts.merge({
 				// inherit base xAxis' break and ordinal options
 				breaks: baseSeries && baseSeries.xAxis.options.breaks,
 				ordinal: baseSeries && baseSeries.xAxis.options.ordinal 
@@ -811,7 +811,7 @@ Scroller.prototype = {
 				zoomEnabled: false
 			}));
 
-			scroller.yAxis = yAxis = new Axis(chart, merge(navigatorOptions.yAxis, {
+			scroller.yAxis = yAxis = new Axis(chart, Highcharts.merge(navigatorOptions.yAxis, {
 				id: 'navigator-y-axis',
 				alignTicks: false,
 				height: height,
@@ -957,7 +957,7 @@ Scroller.prototype = {
 		this.hasNavigatorData = !!navigatorData;
 
 		// Merge the series options
-		mergedNavSeriesOptions = merge(baseOptions, navigatorSeriesOptions, {
+		mergedNavSeriesOptions = Highcharts.merge(baseOptions, navigatorSeriesOptions, {
 			enableMouseTracking: false,
 			group: 'nav', // for columns
 			padXAxis: false,

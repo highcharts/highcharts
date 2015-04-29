@@ -3,7 +3,7 @@
 // The mapbubble series type
 if (Highcharts.seriesTypes.bubble) {
 
-	defaultPlotOptions.mapbubble = merge(defaultPlotOptions.bubble, {
+	defaultPlotOptions.mapbubble = Highcharts.merge(defaultPlotOptions.bubble, {
 		animationLimit: 500,
 		tooltip: {
 			pointFormat: '{point.name}: {point.z}'

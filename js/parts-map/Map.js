@@ -149,13 +149,13 @@ Highcharts.Map = function (options, callback) {
 	seriesOptions = options.series;
 	options.series = null;
 	
-	options = merge({
+	options = Highcharts.merge({
 		chart: {
 			panning: 'xy',
 			type: 'map'
 		},
 		xAxis: hiddenAxis,
-		yAxis: merge(hiddenAxis, { reversed: true })	
+		yAxis: Highcharts.merge(hiddenAxis, { reversed: true })	
 	},
 	options, // user's options
 

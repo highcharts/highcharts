@@ -2,7 +2,7 @@
 
 
 // The mapline series type
-defaultPlotOptions.mapline = merge(defaultPlotOptions.map, {
+defaultPlotOptions.mapline = Highcharts.merge(defaultPlotOptions.map, {
 	lineWidth: 1,
 	fillColor: 'none'
 });

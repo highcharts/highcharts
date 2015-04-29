@@ -22,7 +22,7 @@ Highcharts.extend = function (a, b) {
  * First, it deep merged arrays, which lead to workarounds in Highcharts. Second,
  * it copied properties from extended prototypes. 
  */
-function merge() {
+Highcharts.merge = function () {
 	var i,
 		args = arguments,
 		len,
@@ -66,7 +66,7 @@ function merge() {
 	}
 
 	return ret;
-}
+};
 
 /**
  * Shortcut for parseInt

@@ -24,7 +24,7 @@ Legend.prototype = {
 		}
 	
 		legend.itemStyle = itemStyle;
-		legend.itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle);
+		legend.itemHiddenStyle = Highcharts.merge(itemStyle, options.itemHiddenStyle);
 		legend.itemMarginTop = itemMarginTop;
 		legend.padding = padding = pick(options.padding, 8);
 		legend.initialItemX = padding;
@@ -259,7 +259,7 @@ Legend.prototype = {
 					legend.baseline || 0,
 					useHTML
 				)
-				.css(merge(item.visible ? itemStyle : itemHiddenStyle)) // merge to prevent modifying original (#1021)
+				.css(Highcharts.merge(item.visible ? itemStyle : itemHiddenStyle)) // merge to prevent modifying original (#1021)
 				.attr({
 					align: ltr ? 'left' : 'right',
 					zIndex: 2

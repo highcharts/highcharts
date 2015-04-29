@@ -27,7 +27,7 @@ Highcharts.StockChart = function (options, callback) {
 
 	// apply X axis options to both single and multi y axes
 	options.xAxis = map(splat(options.xAxis || {}), function (xAxisOptions) {
-		return merge({ // defaults
+		return Highcharts.merge({ // defaults
 				minPadding: 0,
 				maxPadding: 0,
 				ordinal: true,
@@ -50,7 +50,7 @@ Highcharts.StockChart = function (options, callback) {
 	// apply Y axis options to both single and multi y axes
 	options.yAxis = map(splat(options.yAxis || {}), function (yAxisOptions) {
 		opposite = pick(yAxisOptions.opposite, true);
-		return merge({ // defaults
+		return Highcharts.merge({ // defaults
 			labels: {
 				y: -2
 			},
@@ -65,7 +65,7 @@ Highcharts.StockChart = function (options, callback) {
 
 	options.series = null;
 
-	options = merge({
+	options = Highcharts.merge({
 		chart: {
 			panning: true,
 			pinchType: 'x'
@@ -578,7 +578,7 @@ wrap(Series.prototype, 'render', function (proceed) {
 
 		// First render, initial clip box
 		if (!this.clipBox && this.animate && this.animate.toString().indexOf('sharedClip') !== -1) {
-			this.clipBox = merge(this.chart.clipBox);
+			this.clipBox = Highcharts.merge(this.chart.clipBox);
 			this.clipBox.width = this.xAxis.len;
 			this.clipBox.height = this.yAxis.len;
 

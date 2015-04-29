@@ -1,7 +1,7 @@
 /**
  * Set the default options for bar
  */
-defaultPlotOptions.bar = merge(defaultPlotOptions.column);
+defaultPlotOptions.bar = Highcharts.merge(defaultPlotOptions.column);
 /**
  * The Bar series class
  */

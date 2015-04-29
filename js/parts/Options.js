@@ -390,7 +390,7 @@ function setTimeMethods() {
 function setOptions(options) {
 	
 	// Copy in the default options
-	Highcharts.defaultOptions = merge(true, Highcharts.defaultOptions, options);
+	Highcharts.defaultOptions = Highcharts.merge(true, Highcharts.defaultOptions, options);
 	
 	// Apply UTC
 	setTimeMethods();

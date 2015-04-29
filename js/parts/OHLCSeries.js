@@ -3,7 +3,7 @@
  *****************************************************************************/
 
 // 1 - Set default options
-defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
+defaultPlotOptions.ohlc = Highcharts.merge(defaultPlotOptions.column, {
 	lineWidth: 1,
 	tooltip: {
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' + // docs
@@ -45,7 +45,7 @@ var OHLCSeries = extendClass(Highcharts.seriesTypes.column, {
 			options = series.options,
 			stateOptions = options.states,
 			upColor = options.upColor || series.color,
-			seriesDownPointAttr = merge(series.pointAttr),
+			seriesDownPointAttr = Highcharts.merge(series.pointAttr),
 			upColorProp = series.upColorProp;
 
 		seriesDownPointAttr[''][upColorProp] = upColor;

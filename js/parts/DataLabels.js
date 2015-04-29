@@ -72,7 +72,7 @@ Series.prototype.drawDataLabels = function () {
 
 				// Create individual options structure that can be extended without
 				// affecting others
-				options = merge(generalOptions, pointOptions);
+				options = Highcharts.merge(generalOptions, pointOptions);
 				style = options.style;
 
 				rotation = options.rotation;
@@ -714,7 +714,7 @@ if (Highcharts.seriesTypes.column) {
 
 		// Align to the column itself, or the top of it
 		if (dlBox) { // Area range uses this method but not alignTo
-			alignTo = merge(dlBox);
+			alignTo = Highcharts.merge(dlBox);
 
 			if (inverted) {
 				alignTo = {

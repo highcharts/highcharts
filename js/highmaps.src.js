@@ -75,7 +75,7 @@ Highcharts.extend = function (a, b) {
  * First, it deep merged arrays, which lead to workarounds in Highcharts. Second,
  * it copied properties from extended prototypes. 
  */
-function merge() {
+Highcharts.merge = function () {
 	var i,
 		args = arguments,
 		len,
@@ -119,7 +119,7 @@ function merge() {
 	}
 
 	return ret;
-}
+};
 
 /**
  * Shortcut for parseInt
@@ -1561,7 +1561,7 @@ function setTimeMethods() {
 function setOptions(options) {
 	
 	// Copy in the default options
-	Highcharts.defaultOptions = merge(true, Highcharts.defaultOptions, options);
+	Highcharts.defaultOptions = Highcharts.merge(true, Highcharts.defaultOptions, options);
 	
 	// Apply UTC
 	setTimeMethods();
@@ -1632,7 +1632,7 @@ var Color = function (input) {
 		var ret;
 
 		if (stops) {
-			ret = merge(input);
+			ret = Highcharts.merge(input);
 			ret.stops = [].concat(ret.stops);
 			each(stops, function (stop, i) {
 				ret.stops[i] = [ret.stops[i][0], stop.get(format)];
@@ -1738,7 +1738,7 @@ SVGElement.prototype = {
 		var animOptions = pick(options, Highcharts.globalAnimation, true);
 		stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
 		if (animOptions) {
-			animOptions = merge(animOptions, {}); //#2625
+			animOptions = Highcharts.merge(animOptions, {}); //#2625
 			if (complete) { // allows using a callback with the global animation without overwriting it
 				animOptions.complete = complete;
 			}
@@ -1796,7 +1796,7 @@ SVGElement.prototype = {
 
 			// Correct the radial gradient for the radial reference system
 			if (gradName === 'radialGradient' && radialReference && !defined(gradAttr.gradientUnits)) {
-				gradAttr = merge(gradAttr, {
+				gradAttr = Highcharts.merge(gradAttr, {
 					cx: (radialReference[0] - radialReference[2] / 2) + gradAttr.cx * radialReference[2],
 					cy: (radialReference[1] - radialReference[2] / 2) + gradAttr.cy * radialReference[2],
 					r: gradAttr.r * radialReference[2],
@@ -3322,7 +3322,7 @@ SVGRenderer.prototype = {
 			verticalGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
 
 		// Normal state - prepare the attributes
-		normalState = merge({
+		normalState = Highcharts.merge({
 			'stroke-width': 1,
 			stroke: '#CCCCCC',
 			fill: {
@@ -3342,7 +3342,7 @@ SVGRenderer.prototype = {
 		delete normalState.style;
 
 		// Hover state
-		hoverState = merge(normalState, {
+		hoverState = Highcharts.merge(normalState, {
 			stroke: '#68A',
 			fill: {
 				linearGradient: verticalGradient,
@@ -3356,7 +3356,7 @@ SVGRenderer.prototype = {
 		delete hoverState.style;
 
 		// Pressed state
-		pressedState = merge(normalState, {
+		pressedState = Highcharts.merge(normalState, {
 			stroke: '#68A',
 			fill: {
 				linearGradient: verticalGradient,
@@ -3370,7 +3370,7 @@ SVGRenderer.prototype = {
 		delete pressedState.style;
 
 		// Disabled state
-		disabledState = merge(normalState, {
+		disabledState = Highcharts.merge(normalState, {
 			style: {
 				color: '#CCC'
 			}
@@ -4227,7 +4227,7 @@ SVGRenderer.prototype = {
 			css: function (styles) {
 				if (styles) {
 					var textStyles = {};
-					styles = merge(styles); // create a copy to avoid altering the original object (#537)
+					styles = Highcharts.merge(styles); // create a copy to avoid altering the original object (#537)
 					each(wrapper.textProps, function (prop) {
 						if (styles[prop] !== undefined) {
 							textStyles[prop] = styles[prop];
@@ -5630,7 +5630,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 Highcharts.VMLRenderer = VMLRenderer = function () {
 	this.init.apply(this, arguments);
 };
-VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
+VMLRenderer.prototype = Highcharts.merge(SVGRenderer.prototype, VMLRendererExtension);
 
 	// general renderer
 	Highcharts.Renderer = VMLRenderer;
@@ -5798,7 +5798,7 @@ Tick.prototype = {
 						)
 						//.attr(attr)
 						// without position absolute, IE export sometimes is wrong
-						.css(merge(labelOptions.style))
+						.css(Highcharts.merge(labelOptions.style))
 						.add(axis.labelGroup) :
 					null;
 			tick.labelLength = label && label.getBBox().width; // Un-rotated length
@@ -6225,7 +6225,7 @@ Axis.prototype = {
 			formatter: function () {
 				return Highcharts.numberFormat(this.total, -1);
 			},
-			style: merge(defaultPlotOptions.line.dataLabels.style, { color: '#000000' })
+			style: Highcharts.merge(defaultPlotOptions.line.dataLabels.style, { color: '#000000' })
 		}
 	},
 
@@ -6449,12 +6449,12 @@ Axis.prototype = {
 	 * Merge and set options
 	 */
 	setOptions: function (userOptions) {
-		this.options = merge(
+		this.options = Highcharts.merge(
 			this.defaultOptions,
 			this.isXAxis ? {} : this.defaultYAxisOptions,
 			[this.defaultTopAxisOptions, this.defaultRightAxisOptions,
 				this.defaultBottomAxisOptions, this.defaultLeftAxisOptions][this.side],
-			merge(
+			Highcharts.merge(
 				Highcharts.defaultOptions[this.coll], // if set in setOptions (#1053)
 				userOptions
 			)
@@ -7692,7 +7692,7 @@ Axis.prototype = {
 				label = tick && tick.label;
 			if (label) {
 				if (css) {
-					label.css(merge(css, label.specCss));
+					label.css(Highcharts.merge(css, label.specCss));
 				}
 				delete label.specCss;
 				label.attr(attr);
@@ -9904,7 +9904,7 @@ Legend.prototype = {
 		}
 	
 		legend.itemStyle = itemStyle;
-		legend.itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle);
+		legend.itemHiddenStyle = Highcharts.merge(itemStyle, options.itemHiddenStyle);
 		legend.itemMarginTop = itemMarginTop;
 		legend.padding = padding = pick(options.padding, 8);
 		legend.initialItemX = padding;
@@ -10139,7 +10139,7 @@ Legend.prototype = {
 					legend.baseline || 0,
 					useHTML
 				)
-				.css(merge(item.visible ? itemStyle : itemHiddenStyle)) // merge to prevent modifying original (#1021)
+				.css(Highcharts.merge(item.visible ? itemStyle : itemHiddenStyle)) // merge to prevent modifying original (#1021)
 				.attr({
 					align: ltr ? 'left' : 'right',
 					zIndex: 2
@@ -10702,7 +10702,7 @@ Chart.prototype = {
 			seriesOptions = userOptions.series; // skip merging data points to increase performance
 
 		userOptions.series = null;
-		options = merge(Highcharts.defaultOptions, userOptions); // do the merge
+		options = Highcharts.merge(Highcharts.defaultOptions, userOptions); // do the merge
 		options.series = userOptions.series = seriesOptions; // set back the series data
 		this.userOptions = userOptions;
 
@@ -11104,8 +11104,8 @@ Chart.prototype = {
 			chartTitleOptions,
 			chartSubtitleOptions;
 
-		chartTitleOptions = options.title = merge(options.title, titleOptions);
-		chartSubtitleOptions = options.subtitle = merge(options.subtitle, subtitleOptions);
+		chartTitleOptions = options.title = Highcharts.merge(options.title, titleOptions);
+		chartSubtitleOptions = options.subtitle = Highcharts.merge(options.subtitle, subtitleOptions);
 
 		// add title and subtitle
 		each([
@@ -12614,14 +12614,14 @@ Series.prototype = {
 		// type options like column.animation would be overwritten by the general option.
 		// But issues have been raised here (#3881), and the solution may be to distinguish 
 		// between default option and userOptions like in the tooltip below.
-		options = merge(
+		options = Highcharts.merge(
 			typeOptions,
 			plotOptions.series,
 			itemOptions
 		);
 
 		// The tooltip options are merged between global and series specific options
-		this.tooltipOptions = merge(
+		this.tooltipOptions = Highcharts.merge(
 			Highcharts.defaultOptions.tooltip,
 			Highcharts.defaultOptions.plotOptions[this.type].tooltip,
 			userOptions.tooltip,
@@ -14256,7 +14256,7 @@ Highcharts.extend(Chart.prototype, {
 			axis;
 
 		/*jslint unused: false*/
-		axis = new Axis(this, merge(options, {
+		axis = new Axis(this, Highcharts.merge(options, {
 			index: this[key].length,
 			isX: isX
 		}));
@@ -14642,7 +14642,7 @@ Highcharts.extend(Series.prototype, {
 		});
 
 		// Do the merge, with some forced options
-		newOptions = merge(oldOptions, {
+		newOptions = Highcharts.merge(oldOptions, {
 			animation: false,
 			index: this.index,
 			pointStart: this.xData[0] // when updating after addPoint
@@ -14678,7 +14678,7 @@ Highcharts.extend(Axis.prototype, {
 	update: function (newOptions, redraw) {
 		var chart = this.chart;
 
-		newOptions = chart.options[this.coll][this.options.index] = merge(this.userOptions, newOptions);
+		newOptions = chart.options[this.coll][this.options.index] = Highcharts.merge(this.userOptions, newOptions);
 
 		this.destroy(true);
 		this._addedPlotLB = undefined; // #1611, #2887
@@ -14750,7 +14750,7 @@ Highcharts.seriesTypes.line = LineSeries;
 /**
  * Set the default options for column
  */
-defaultPlotOptions.column = merge(defaultSeriesOptions, {
+defaultPlotOptions.column = Highcharts.merge(defaultSeriesOptions, {
 	borderColor: '#FFFFFF',
 	//borderWidth: 1,
 	borderRadius: 0,
@@ -15033,7 +15033,7 @@ var ColumnSeries = extendClass(Series, {
 				
 				if (graphic) { // update
 					stop(graphic);
-					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs));
+					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](Highcharts.merge(shapeArgs));
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
@@ -15108,7 +15108,7 @@ Highcharts.seriesTypes.column = ColumnSeries;
 /**
  * Set the default options for scatter
  */
-defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
+defaultPlotOptions.scatter = Highcharts.merge(defaultSeriesOptions, {
 	lineWidth: 0,
 	marker: {
 		enabled: true // Overrides auto-enabling in line series (#3647)
@@ -15214,7 +15214,7 @@ Series.prototype.drawDataLabels = function () {
 
 				// Create individual options structure that can be extended without
 				// affecting others
-				options = merge(generalOptions, pointOptions);
+				options = Highcharts.merge(generalOptions, pointOptions);
 				style = options.style;
 
 				rotation = options.rotation;
@@ -15856,7 +15856,7 @@ if (Highcharts.seriesTypes.column) {
 
 		// Align to the column itself, or the top of it
 		if (dlBox) { // Area range uses this method but not alignTo
-			alignTo = merge(dlBox);
+			alignTo = Highcharts.merge(dlBox);
 
 			if (inverted) {
 				alignTo = {
@@ -16129,7 +16129,7 @@ Highcharts.extend(ColorAxis.prototype, {
 			options;
 
 		// Build the options
-		options = merge(this.defaultColorAxisOptions, {
+		options = Highcharts.merge(this.defaultColorAxisOptions, {
 			side: horiz ? 2 : 1,
 			reversed: !horiz
 		}, userOptions, {
@@ -16201,7 +16201,7 @@ Highcharts.extend(ColorAxis.prototype, {
 		each(userOptions.dataClasses, function (dataClass, i) {
 			var colors;
 
-			dataClass = merge(dataClass);
+			dataClass = Highcharts.merge(dataClass);
 			dataClasses.push(dataClass);
 			if (!dataClass.color) {
 				if (options.dataClassColor === 'category') {
@@ -16619,7 +16619,7 @@ var supportsVectorEffect = document.documentElement.style.vectorEffect !== undef
 /**
  * Extend the default options with map options
  */
-defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
+defaultPlotOptions.map = Highcharts.merge(defaultPlotOptions.scatter, {
 	allAreas: true,
 
 	animation: false, // makes the complex shapes slow
@@ -16776,7 +16776,7 @@ var MapAreaPoint = extendClass(Point, {
 /**
  * Add the series type
  */
-Highcharts.seriesTypes.map = extendClass(Highcharts.seriesTypes.scatter, merge(colorSeriesMixin, {
+Highcharts.seriesTypes.map = extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(colorSeriesMixin, {
 	type: 'map',
 	pointClass: MapAreaPoint,
 	supportsDrilldown: true,
@@ -17010,7 +17010,7 @@ Highcharts.seriesTypes.map = extendClass(Highcharts.seriesTypes.scatter, merge(c
 
 				each(mapData, function (mapPoint) {
 					if (!joinBy[0] || dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1) {
-						data.push(merge(mapPoint, { value: null }));
+						data.push(Highcharts.merge(mapPoint, { value: null }));
 					}
 				});
 			}
@@ -17452,9 +17452,9 @@ Highcharts.extend(Chart.prototype, {
 		if (pick(options.enableButtons, options.enabled) && !chart.renderer.forExport) {
 			for (n in buttons) {
 				if (buttons.hasOwnProperty(n)) {
-					buttonOptions = merge(options.buttonOptions, buttons[n]);
+					buttonOptions = Highcharts.merge(options.buttonOptions, buttons[n]);
 					attr = buttonOptions.theme;
-					attr.style = merge(buttonOptions.theme.style, buttonOptions.style); // #3203
+					attr.style = Highcharts.merge(buttonOptions.theme.style, buttonOptions.style); // #3203
 					states = attr.states;
 					button = chart.renderer.button(
 							buttonOptions.text, 
@@ -17699,7 +17699,7 @@ wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches,
 
 
 // The mapline series type
-defaultPlotOptions.mapline = merge(defaultPlotOptions.map, {
+defaultPlotOptions.mapline = Highcharts.merge(defaultPlotOptions.map, {
 	lineWidth: 1,
 	fillColor: 'none'
 });
@@ -17715,7 +17715,7 @@ Highcharts.seriesTypes.mapline = extendClass(Highcharts.seriesTypes.map, {
 });
 
 // The mappoint series type
-defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
+defaultPlotOptions.mappoint = Highcharts.merge(defaultPlotOptions.scatter, {
 	dataLabels: {
 		enabled: true,
 		formatter: function () { // #2945
@@ -17746,7 +17746,7 @@ Highcharts.seriesTypes.mappoint = extendClass(Highcharts.seriesTypes.scatter, {
  *****************************************************************************/
 
 // 1 - set default options
-defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
+defaultPlotOptions.bubble = Highcharts.merge(defaultPlotOptions.scatter, {
 	dataLabels: {
 		formatter: function () { // #2945
 			return this.point.z;
@@ -18059,7 +18059,7 @@ Axis.prototype.beforePadding = function () {
 // The mapbubble series type
 if (Highcharts.seriesTypes.bubble) {
 
-	defaultPlotOptions.mapbubble = merge(defaultPlotOptions.bubble, {
+	defaultPlotOptions.mapbubble = Highcharts.merge(defaultPlotOptions.bubble, {
 		animationLimit: 500,
 		tooltip: {
 			pointFormat: '{point.name}: {point.z}'
@@ -18452,13 +18452,13 @@ Highcharts.Map = function (options, callback) {
 	seriesOptions = options.series;
 	options.series = null;
 	
-	options = merge({
+	options = Highcharts.merge({
 		chart: {
 			panning: 'xy',
 			type: 'map'
 		},
 		xAxis: hiddenAxis,
-		yAxis: merge(hiddenAxis, { reversed: true })	
+		yAxis: Highcharts.merge(hiddenAxis, { reversed: true })	
 	},
 	options, // user's options
 
@@ -18479,7 +18479,7 @@ Highcharts.Map = function (options, callback) {
 /**
  * Extend the default options with map options
  */
-Highcharts.defaultOptions.plotOptions.heatmap = merge(Highcharts.defaultOptions.plotOptions.scatter, {
+Highcharts.defaultOptions.plotOptions.heatmap = Highcharts.merge(Highcharts.defaultOptions.plotOptions.scatter, {
 	animation: false,
 	borderWidth: 0,
 	nullColor: '#F8F8F8',
@@ -18510,7 +18510,7 @@ Highcharts.defaultOptions.plotOptions.heatmap = merge(Highcharts.defaultOptions.
 });
 
 // The Heatmap series type
-Highcharts.seriesTypes.heatmap = extendClass(Highcharts.seriesTypes.scatter, merge(colorSeriesMixin, {
+Highcharts.seriesTypes.heatmap = extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(colorSeriesMixin, {
 	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
@@ -19036,7 +19036,7 @@ Highcharts.extend(Point.prototype, {
 	importEvents: function () {
 		if (!this.hasImportedEvents) {
 			var point = this,
-				options = merge(point.series.options.point, point.options),
+				options = Highcharts.merge(point.series.options.point, point.options),
 				events = options.events,
 				eventType;
 
@@ -19095,7 +19095,7 @@ Highcharts.extend(Point.prototype, {
 		// apply hover styles to the existing point
 		if (point.graphic) {
 			radius = markerOptions && point.graphic.symbolName && pointAttr.r;
-			point.graphic.attr(merge(
+			point.graphic.attr(Highcharts.merge(
 				pointAttr,
 				radius ? { // new symbol attributes (#507, #612)
 					x: plotX - radius,
@@ -19406,7 +19406,6 @@ Highcharts.extend(Highcharts, {
 	css: css,
 	each: each,
 	map: map,
-	merge: merge,
 	splat: splat,
 	extendClass: extendClass,
 	pInt: pInt,

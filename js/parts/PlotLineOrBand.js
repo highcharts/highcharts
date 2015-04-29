@@ -114,7 +114,7 @@ Highcharts.PlotLineOrBand.prototype = {
 		// the plot band/line label
 		if (optionsLabel && defined(optionsLabel.text) && path && path.length && axis.width > 0 && axis.height > 0) {
 			// apply defaults
-			optionsLabel = merge({
+			optionsLabel = Highcharts.merge({
 				align: horiz && isBand && 'center',
 				x: horiz ? !isBand && 4 : 10,
 				verticalAlign : !horiz && isBand && 'middle',

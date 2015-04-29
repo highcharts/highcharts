@@ -1,7 +1,7 @@
 
 
 // The mappoint series type
-defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
+defaultPlotOptions.mappoint = Highcharts.merge(defaultPlotOptions.scatter, {
 	dataLabels: {
 		enabled: true,
 		formatter: function () { // #2945

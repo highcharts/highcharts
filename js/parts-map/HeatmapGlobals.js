@@ -8,7 +8,6 @@ var Axis = Highcharts.Axis,
 	
 	each = Highcharts.each,
 	extendClass = Highcharts.extendClass,
-	merge = Highcharts.merge,
 	pick = Highcharts.pick,
 	wrap = Highcharts.wrap;
 

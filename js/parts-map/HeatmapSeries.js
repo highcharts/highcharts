@@ -2,7 +2,7 @@
 /**
  * Extend the default options with map options
  */
-Highcharts.defaultOptions.plotOptions.heatmap = merge(Highcharts.defaultOptions.plotOptions.scatter, {
+Highcharts.defaultOptions.plotOptions.heatmap = Highcharts.merge(Highcharts.defaultOptions.plotOptions.scatter, {
 	animation: false,
 	borderWidth: 0,
 	nullColor: '#F8F8F8',
@@ -33,7 +33,7 @@ Highcharts.defaultOptions.plotOptions.heatmap = merge(Highcharts.defaultOptions.
 });
 
 // The Heatmap series type
-Highcharts.seriesTypes.heatmap = extendClass(Highcharts.seriesTypes.scatter, merge(colorSeriesMixin, {
+Highcharts.seriesTypes.heatmap = extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(colorSeriesMixin, {
 	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,

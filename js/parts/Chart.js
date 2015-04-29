@@ -24,7 +24,7 @@ Chart.prototype = {
 			seriesOptions = userOptions.series; // skip merging data points to increase performance
 
 		userOptions.series = null;
-		options = merge(Highcharts.defaultOptions, userOptions); // do the merge
+		options = Highcharts.merge(Highcharts.defaultOptions, userOptions); // do the merge
 		options.series = userOptions.series = seriesOptions; // set back the series data
 		this.userOptions = userOptions;
 
@@ -426,8 +426,8 @@ Chart.prototype = {
 			chartTitleOptions,
 			chartSubtitleOptions;
 
-		chartTitleOptions = options.title = merge(options.title, titleOptions);
-		chartSubtitleOptions = options.subtitle = merge(options.subtitle, subtitleOptions);
+		chartTitleOptions = options.title = Highcharts.merge(options.title, titleOptions);
+		chartSubtitleOptions = options.subtitle = Highcharts.merge(options.subtitle, subtitleOptions);
 
 		// add title and subtitle
 		each([

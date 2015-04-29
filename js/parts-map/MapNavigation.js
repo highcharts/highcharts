@@ -17,9 +17,9 @@ Highcharts.extend(Chart.prototype, {
 		if (pick(options.enableButtons, options.enabled) && !chart.renderer.forExport) {
 			for (n in buttons) {
 				if (buttons.hasOwnProperty(n)) {
-					buttonOptions = merge(options.buttonOptions, buttons[n]);
+					buttonOptions = Highcharts.merge(options.buttonOptions, buttons[n]);
 					attr = buttonOptions.theme;
-					attr.style = merge(buttonOptions.theme.style, buttonOptions.style); // #3203
+					attr.style = Highcharts.merge(buttonOptions.theme.style, buttonOptions.style); // #3203
 					states = attr.states;
 					button = chart.renderer.button(
 							buttonOptions.text, 
