@@ -15219,6 +15219,9 @@ extend(Point.prototype, {
 			point.applyOptions(options);
 
 			// Update visuals
+			if (point.y === null && graphic) { // #4146
+				point.graphic = graphic.destroy();
+			}
 			if (isObject(options) && !isArray(options)) {
 				// Defer the actual redraw until getAttribs has been called (#3260)
 				point.redraw = function () {
