@@ -306,10 +306,10 @@ Highcharts.extendClass = function (parent, members) {
  * @param {Number} number
  * @param {Number} length
  */
-function pad(number, length) {
+Highcharts.pad = function (number, length) {
 	// Create an array of the remaining length +1 and join it with 0's
 	return new Array((length || 2) + 1 - String(number).length).join(0) + number;
-}
+};
 
 /**
  * Wrap a method with extended functionality, preserving the original function
@@ -357,6 +357,7 @@ Highcharts.dateFormat = function (format, timestamp, capitalize) {
 		fullYear = date[d.hcGetFullYear](),
 		lang = Highcharts.defaultOptions.lang,
 		langWeekdays = lang.weekdays,
+		pad = Highcharts.pad,
 
 		// List all format keys. Custom formats can be added from the outside. 
 		replacements = Highcharts.extend({
