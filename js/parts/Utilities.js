@@ -201,14 +201,14 @@ Highcharts.pick = function () {
  * @param {Object} el
  * @param {Object} styles Style object with camel case property names
  */
-function css(el, styles) {
+Highcharts.css = function (el, styles) {
 	if (Highcharts.isIE && !Highcharts.svg) { // #2686
 		if (styles && styles.opacity !== undefined) {
 			styles.filter = 'alpha(opacity=' + (styles.opacity * 100) + ')';
 		}
 	}
 	Highcharts.extend(el.style, styles);
-}
+};
 
 /**
  * Utility function to create element with attributes and styles
@@ -219,7 +219,8 @@ function css(el, styles) {
  * @param {Object} nopad
  */
 function createElement(tag, attribs, styles, parent, nopad) {
-	var el = document.createElement(tag);
+	var el = document.createElement(tag),
+		css = Highcharts.css;
 	if (attribs) {
 		Highcharts.extend(el, attribs);
 	}

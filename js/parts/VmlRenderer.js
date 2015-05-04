@@ -112,7 +112,7 @@ VMLElement = {
 			costheta = Math.cos(rotation * deg2rad),
 			sintheta = Math.sin(rotation * deg2rad);
 					
-		css(this.element, {
+		Highcharts.css(this.element, {
 			filter: rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta,
 				', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
 				', sizingMethod=\'auto expand\')'].join('') : 'none'
@@ -145,7 +145,7 @@ VMLElement = {
 			if (rotation) {
 				this.yCorr -= height * alignCorrection * (sintheta < 0 ? -1 : 1);
 			}
-			css(this.element, {
+			Highcharts.css(this.element, {
 				textAlign: align
 			});
 		}
@@ -934,7 +934,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			parentStyle = parentNode.style,
 			imgStyle = element.tagName === 'IMG' && element.style; // #1111
 
-		css(element, {
+		Highcharts.css(element, {
 			flip: 'x',
 			left: pInt(parentStyle.width) - (imgStyle ? pInt(imgStyle.top) : 1),
 			top: pInt(parentStyle.height) - (imgStyle ? pInt(imgStyle.left) : 1),
@@ -1063,7 +1063,7 @@ SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
 	textNode = document.createTextNode(text);
 
 	measuringSpan.appendChild(textNode);
-	css(measuringSpan, styles);
+	Highcharts.css(measuringSpan, styles);
 	this.box.appendChild(measuringSpan);
 	offsetWidth = measuringSpan.offsetWidth;
 	discardElement(measuringSpan); // #2463

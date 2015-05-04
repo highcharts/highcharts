@@ -254,14 +254,14 @@ Highcharts.pick = function () {
  * @param {Object} el
  * @param {Object} styles Style object with camel case property names
  */
-function css(el, styles) {
+Highcharts.css = function (el, styles) {
 	if (Highcharts.isIE && !Highcharts.svg) { // #2686
 		if (styles && styles.opacity !== undefined) {
 			styles.filter = 'alpha(opacity=' + (styles.opacity * 100) + ')';
 		}
 	}
 	Highcharts.extend(el.style, styles);
-}
+};
 
 /**
  * Utility function to create element with attributes and styles
@@ -272,7 +272,8 @@ function css(el, styles) {
  * @param {Object} nopad
  */
 function createElement(tag, attribs, styles, parent, nopad) {
-	var el = document.createElement(tag);
+	var el = document.createElement(tag),
+		css = Highcharts.css;
 	if (attribs) {
 		Highcharts.extend(el, attribs);
 	}
@@ -1889,7 +1890,7 @@ SVGElement.prototype = {
 		// No reason to polyfill, we've got native support
 		if (supports) {
 			if (hasContrast) { // Apply the altered style
-				css(elem, {
+				Highcharts.css(elem, {
 					textShadow: textShadow
 				});
 			}
@@ -2166,7 +2167,7 @@ SVGElement.prototype = {
 
 			// serialize and set style attribute
 			if (isIE && !Highcharts.svg) {
-				css(elemWrapper.element, styles);
+				Highcharts.css(elemWrapper.element, styles);
 			} else {
 				/*jslint unparam: true*/
 				hyphenate = function (a, b) { return '-' + b.toLowerCase(); };
@@ -2893,6 +2894,7 @@ SVGRenderer.prototype = {
 	init: function (container, width, height, style, forExport) {
 		var renderer = this,
 			attr = Highcharts.attr,
+			css = Highcharts.css,
 			loc = location,
 			boxWrapper,
 			element,
@@ -3042,6 +3044,7 @@ SVGRenderer.prototype = {
 			styleRegex,
 			hrefRegex,
 			attr = Highcharts.attr,
+			css = Highcharts.css,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
 			width = wrapper.textWidth,
@@ -4316,7 +4319,7 @@ Highcharts.extend(SVGElement.prototype, {
 			styles.overflow = 'hidden';
 		}
 		wrapper.styles = Highcharts.extend(wrapper.styles, styles);
-		css(wrapper.element, styles);
+		Highcharts.css(wrapper.element, styles);
 
 		return wrapper;
 	},
@@ -4360,6 +4363,7 @@ Highcharts.extend(SVGElement.prototype, {
 
 		var wrapper = this,
 			renderer = wrapper.renderer,
+			css = Highcharts.css,
 			elem = wrapper.element,
 			translateX = wrapper.translateX || 0,
 			translateY = wrapper.translateY || 0,
@@ -4449,7 +4453,7 @@ Highcharts.extend(SVGElement.prototype, {
 
 		rotationStyle[cssTransformKey] = rotationStyle.transform = 'rotate(' + rotation + 'deg)';
 		rotationStyle[cssTransformKey + (Highcharts.isFirefox ? 'Origin' : '-origin')] = rotationStyle.transformOrigin = (alignCorrection * 100) + '% ' + baseline + 'px';
-		css(this.element, rotationStyle);
+		Highcharts.css(this.element, rotationStyle);
 	},
 
 	/**
@@ -4705,7 +4709,7 @@ VMLElement = {
 			costheta = Math.cos(rotation * deg2rad),
 			sintheta = Math.sin(rotation * deg2rad);
 					
-		css(this.element, {
+		Highcharts.css(this.element, {
 			filter: rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta,
 				', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
 				', sizingMethod=\'auto expand\')'].join('') : 'none'
@@ -4738,7 +4742,7 @@ VMLElement = {
 			if (rotation) {
 				this.yCorr -= height * alignCorrection * (sintheta < 0 ? -1 : 1);
 			}
-			css(this.element, {
+			Highcharts.css(this.element, {
 				textAlign: align
 			});
 		}
@@ -5527,7 +5531,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			parentStyle = parentNode.style,
 			imgStyle = element.tagName === 'IMG' && element.style; // #1111
 
-		css(element, {
+		Highcharts.css(element, {
 			flip: 'x',
 			left: pInt(parentStyle.width) - (imgStyle ? pInt(imgStyle.top) : 1),
 			top: pInt(parentStyle.height) - (imgStyle ? pInt(imgStyle.left) : 1),
@@ -5656,7 +5660,7 @@ SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
 	textNode = document.createTextNode(text);
 
 	measuringSpan.appendChild(textNode);
-	css(measuringSpan, styles);
+	Highcharts.css(measuringSpan, styles);
 	this.box.appendChild(measuringSpan);
 	offsetWidth = measuringSpan.offsetWidth;
 	discardElement(measuringSpan); // #2463
@@ -9408,7 +9412,7 @@ Pointer.prototype = {
 
 		// Reset all
 		if (chart) { // it may be destroyed on mouse up - #877
-			css(chart.container, { cursor: chart._cursor });
+			Highcharts.css(chart.container, { cursor: chart._cursor });
 			chart.cancelClick = this.hasDragged > 10; // #370
 			chart.mouseIsDown = this.hasDragged = this.hasPinched = false;
 			this.pinchDown = [];
@@ -9899,7 +9903,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 		proceed.call(this, chart, options);
 		if (this.hasZoom || this.followTouchMove) {
-			css(chart.container, {
+			Highcharts.css(chart.container, {
 				'-ms-touch-action': 'none',
 				'touch-action': 'none'
 			});
@@ -10101,7 +10105,7 @@ Legend.prototype = {
 				
 				if (checkbox) {
 					top = (translateY + checkbox.y + (scrollOffset || 0) + 3);
-					css(checkbox, {
+					Highcharts.css(checkbox, {
 						left: (alignAttr.translateX + item.checkboxOffset + checkbox.x - 20) + 'px',
 						top: top + 'px',
 						display: top > translateY - 6 && top < translateY + clipHeight - 6 ? '' : 'none'
@@ -11280,7 +11284,7 @@ Chart.prototype = {
 				this.renderTo.removeChild(container); // do not clone this
 			}
 			this.renderToClone = clone = this.renderTo.cloneNode(0);
-			css(clone, {
+			Highcharts.css(clone, {
 				position: 'absolute',
 				top: '-9999px',
 				display: 'block' // #833
@@ -11534,7 +11538,7 @@ Chart.prototype = {
 		}
 
 		// Resize the container with the global animation applied if enabled (#2503)
-		(Highcharts.globalAnimation ? animate : css)(chart.container, {
+		(Highcharts.globalAnimation ? animate : Highcharts.css)(chart.container, {
 			width: chartWidth + 'px',
 			height: chartHeight + 'px'
 		}, Highcharts.globalAnimation);
@@ -14337,6 +14341,7 @@ Highcharts.extend(Chart.prototype, {
 			options = chart.options,
 			loadingDiv = chart.loadingDiv,
 			loadingOptions = options.loading,
+			css = Highcharts.css,
 			setLoadingSize = function () {
 				if (loadingDiv) {
 					css(loadingDiv, {
@@ -14398,7 +14403,7 @@ Highcharts.extend(Chart.prototype, {
 			}, {
 				duration: options.loading.hideDuration || 100,
 				complete: function () {
-					css(loadingDiv, { display: 'none' });
+					Highcharts.css(loadingDiv, { display: 'none' });
 				}
 			});
 		}
@@ -19011,7 +19016,7 @@ Highcharts.extend(Chart.prototype, {
 		if (doRedraw) {
 			chart.redraw(false);
 		}
-		css(chart.container, { cursor: 'move' });
+		Highcharts.css(chart.container, { cursor: 'move' });
 	}
 });
 
@@ -19474,7 +19479,6 @@ Highcharts.extend(Highcharts, {
 	removeEvent: removeEvent,
 	createElement: createElement,
 	discardElement: discardElement,
-	css: css,
 	each: each,
 	map: map,
 	extendClass: extendClass,

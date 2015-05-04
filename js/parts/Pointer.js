@@ -490,7 +490,7 @@ Pointer.prototype = {
 
 		// Reset all
 		if (chart) { // it may be destroyed on mouse up - #877
-			css(chart.container, { cursor: chart._cursor });
+			Highcharts.css(chart.container, { cursor: chart._cursor });
 			chart.cancelClick = this.hasDragged > 10; // #370
 			chart.mouseIsDown = this.hasDragged = this.hasPinched = false;
 			this.pinchDown = [];

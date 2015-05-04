@@ -606,7 +606,7 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
 			}
 
 			chart.mouseDownX = chartX; // set new reference for next run
-			css(chart.container, { cursor: 'move' });
+			Highcharts.css(chart.container, { cursor: 'move' });
 		}
 
 	} else {

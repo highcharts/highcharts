@@ -180,7 +180,7 @@ Legend.prototype = {
 				
 				if (checkbox) {
 					top = (translateY + checkbox.y + (scrollOffset || 0) + 3);
-					css(checkbox, {
+					Highcharts.css(checkbox, {
 						left: (alignAttr.translateX + item.checkboxOffset + checkbox.x - 20) + 'px',
 						top: top + 'px',
 						display: top > translateY - 6 && top < translateY + clipHeight - 6 ? '' : 'none'

@@ -186,7 +186,7 @@ SVGElement.prototype = {
 		// No reason to polyfill, we've got native support
 		if (supports) {
 			if (hasContrast) { // Apply the altered style
-				css(elem, {
+				Highcharts.css(elem, {
 					textShadow: textShadow
 				});
 			}
@@ -463,7 +463,7 @@ SVGElement.prototype = {
 
 			// serialize and set style attribute
 			if (isIE && !Highcharts.svg) {
-				css(elemWrapper.element, styles);
+				Highcharts.css(elemWrapper.element, styles);
 			} else {
 				/*jslint unparam: true*/
 				hyphenate = function (a, b) { return '-' + b.toLowerCase(); };
@@ -1190,6 +1190,7 @@ SVGRenderer.prototype = {
 	init: function (container, width, height, style, forExport) {
 		var renderer = this,
 			attr = Highcharts.attr,
+			css = Highcharts.css,
 			loc = location,
 			boxWrapper,
 			element,
@@ -1339,6 +1340,7 @@ SVGRenderer.prototype = {
 			styleRegex,
 			hrefRegex,
 			attr = Highcharts.attr,
+			css = Highcharts.css,
 			parentX = attr(textNode, 'x'),
 			textStyles = wrapper.styles,
 			width = wrapper.textWidth,

@@ -67,6 +67,7 @@ Highcharts.extend(Chart.prototype, {
 			options = chart.options,
 			loadingDiv = chart.loadingDiv,
 			loadingOptions = options.loading,
+			css = Highcharts.css,
 			setLoadingSize = function () {
 				if (loadingDiv) {
 					css(loadingDiv, {
@@ -128,7 +129,7 @@ Highcharts.extend(Chart.prototype, {
 			}, {
 				duration: options.loading.hideDuration || 100,
 				complete: function () {
-					css(loadingDiv, { display: 'none' });
+					Highcharts.css(loadingDiv, { display: 'none' });
 				}
 			});
 		}

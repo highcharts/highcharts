@@ -70,7 +70,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 		proceed.call(this, chart, options);
 		if (this.hasZoom || this.followTouchMove) {
-			css(chart.container, {
+			Highcharts.css(chart.container, {
 				'-ms-touch-action': 'none',
 				'touch-action': 'none'
 			});

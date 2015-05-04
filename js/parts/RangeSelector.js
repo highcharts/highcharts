@@ -377,6 +377,7 @@ RangeSelector.prototype = {
 			renderer = chart.renderer,
 			options = chart.options.rangeSelector,
 			lang = Highcharts.defaultOptions.lang,
+			css = Highcharts.css,
 			div = rangeSelector.div,
 			isMin = name === 'min',
 			input,

@@ -20,7 +20,6 @@ Highcharts.extend(Highcharts, {
 	removeEvent: removeEvent,
 	createElement: createElement,
 	discardElement: discardElement,
-	css: css,
 	each: each,
 	map: map,
 	extendClass: extendClass,

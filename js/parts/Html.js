@@ -19,7 +19,7 @@ Highcharts.extend(SVGElement.prototype, {
 			styles.overflow = 'hidden';
 		}
 		wrapper.styles = Highcharts.extend(wrapper.styles, styles);
-		css(wrapper.element, styles);
+		Highcharts.css(wrapper.element, styles);
 
 		return wrapper;
 	},
@@ -63,6 +63,7 @@ Highcharts.extend(SVGElement.prototype, {
 
 		var wrapper = this,
 			renderer = wrapper.renderer,
+			css = Highcharts.css,
 			elem = wrapper.element,
 			translateX = wrapper.translateX || 0,
 			translateY = wrapper.translateY || 0,
@@ -152,7 +153,7 @@ Highcharts.extend(SVGElement.prototype, {
 
 		rotationStyle[cssTransformKey] = rotationStyle.transform = 'rotate(' + rotation + 'deg)';
 		rotationStyle[cssTransformKey + (Highcharts.isFirefox ? 'Origin' : '-origin')] = rotationStyle.transformOrigin = (alignCorrection * 100) + '% ' + baseline + 'px';
-		css(this.element, rotationStyle);
+		Highcharts.css(this.element, rotationStyle);
 	},
 
 	/**

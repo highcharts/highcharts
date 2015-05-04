@@ -355,7 +355,7 @@ Highcharts.extend(Chart.prototype, {
 		if (doRedraw) {
 			chart.redraw(false);
 		}
-		css(chart.container, { cursor: 'move' });
+		Highcharts.css(chart.container, { cursor: 'move' });
 	}
 });
 

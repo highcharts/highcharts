@@ -559,7 +559,7 @@ Chart.prototype = {
 				this.renderTo.removeChild(container); // do not clone this
 			}
 			this.renderToClone = clone = this.renderTo.cloneNode(0);
-			css(clone, {
+			Highcharts.css(clone, {
 				position: 'absolute',
 				top: '-9999px',
 				display: 'block' // #833
@@ -813,7 +813,7 @@ Chart.prototype = {
 		}
 
 		// Resize the container with the global animation applied if enabled (#2503)
-		(Highcharts.globalAnimation ? animate : css)(chart.container, {
+		(Highcharts.globalAnimation ? animate : Highcharts.css)(chart.container, {
 			width: chartWidth + 'px',
 			height: chartHeight + 'px'
 		}, Highcharts.globalAnimation);
