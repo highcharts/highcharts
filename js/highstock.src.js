@@ -14961,7 +14961,7 @@ Series.prototype.setStackedPoints = function () {
 		// If the StackItem doesn't exist, create it first
 		stack = stacks[key][x];
 		if (y !== null) {
-			stack.points[pointKey] = [pick(stack.cum, stackThreshold)];
+			stack.points[pointKey] = stack.points[series.index] = [pick(stack.cum, stackThreshold)];
 		}
 
 		// Add value to the stack total
