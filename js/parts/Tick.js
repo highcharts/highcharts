@@ -116,16 +116,14 @@ Tick.prototype = {
 		// If it now overshoots the slotWidth, add ellipsis.
 		if (!rotation) {
 			leftPos = pxPos - factor * labelWidth;
-			rightPos = pxPos + factor * labelWidth;
+			rightPos = pxPos + (1 - factor) * labelWidth;
 
 			if (leftPos < leftBound) {
-				slotWidth -= leftBound - leftPos;
-				xy.x = leftBound;
-				label.attr({ align: 'left' });				
+				slotWidth = xy.x + slotWidth * (1 - factor) - leftBound;
+				xy.x += (1 - factor) * (axis.slotWidth - slotWidth); // align it within the new slot
 			} else if (rightPos > rightBound) {
-				slotWidth -= rightPos - rightBound;
-				xy.x = rightBound;
-				label.attr({ align: 'right' });
+				slotWidth = rightBound - xy.x + slotWidth * factor;
+				xy.x -= factor * (axis.slotWidth - slotWidth); // align it within the new slot
 			}
 
 			// If the label width exceeds the available space, set a text width to be 
@@ -134,7 +132,6 @@ Tick.prototype = {
 			if (labelWidth > slotWidth || (axis.autoRotation && label.styles.width)) {
 				textWidth = slotWidth;
 			}
-		
 
 		// Add ellipsis to prevent rotated labels to be clipped against the edge of the chart
 		} else if (rotation < 0 && pxPos - factor * labelWidth < leftBound) {

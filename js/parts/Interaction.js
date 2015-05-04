@@ -666,10 +666,10 @@ extend(Series.prototype, {
 		var series = this,
 			options = series.options,
 			graph = series.graph,
-			graphNeg = series.graphNeg,
 			stateOptions = options.states,
 			lineWidth = options.lineWidth,
-			attribs;
+			attribs,
+			i = 0;
 
 		state = state || NORMAL_STATE;
 
@@ -690,8 +690,9 @@ extend(Series.prototype, {
 				};
 				// use attr because animate will cause any other animation on the graph to stop
 				graph.attr(attribs);
-				if (graphNeg) {
-					graphNeg.attr(attribs);
+				while (series['zoneGraph' + i]) {
+					series['zoneGraph' + i].attr(attribs);
+					i = i + 1;
 				}
 			}
 		}

@@ -74,38 +74,42 @@ var PiePoint = extendClass(Point, {
 	 * @param {Boolean} vis Whether to show the slice or not. If undefined, the
 	 *    visibility is toggled
 	 */
-	setVisible: function (vis) {
+	setVisible: function (vis, force) {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
 			doRedraw = !series.isDirty && series.options.ignoreHiddenPoint;
 
-		// if called without an argument, toggle visibility
-		point.visible = point.options.visible = vis = vis === UNDEFINED ? !point.visible : vis;
-		series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
+		// Only if the value has changed
+		if (vis !== point.visible || force) {
+			
+			// If called without an argument, toggle visibility
+			point.visible = point.options.visible = vis = vis === UNDEFINED ? !point.visible : vis;
+			series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
 
-		// Show and hide associated elements
-		each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
-			if (point[key]) {
-				point[key][vis ? 'show' : 'hide'](true);
-			}
-		});
-
-		if (point.legendItem) {
-			if (chart.hasRendered) {
-				series.updateTotals();
-				chart.legend.clearItems();
-				if (!doRedraw) {
-					chart.legend.render();
+			// Show and hide associated elements
+			each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
+				if (point[key]) {
+					point[key][vis ? 'show' : 'hide'](true);
 				}
-			}
-			chart.legend.colorizeItem(point, vis);
-		}
+			});
 
-		// Handle ignore hidden slices
-		if (doRedraw) {
-			series.isDirty = true;
-			chart.redraw();
+			if (point.legendItem) {
+				if (chart.hasRendered) {
+					series.updateTotals();
+					chart.legend.clearItems();
+					if (!doRedraw) {
+						chart.legend.render();
+					}
+				}
+				chart.legend.colorizeItem(point, vis);
+			}
+
+			// Handle ignore hidden slices
+			if (doRedraw) {
+				series.isDirty = true;
+				chart.redraw();
+			}
 		}
 	},
 
@@ -404,6 +408,9 @@ var PieSeries = {
 
 		// draw the slices
 		each(series.points, function (point) {
+
+			var visible = point.options.visible;
+
 			graphic = point.graphic;
 			shapeArgs = point.shapeArgs;
 			shadowGroup = point.shadowGroup;
@@ -443,9 +450,9 @@ var PieSeries = {
 					.shadow(shadow, shadowGroup);	
 			}
 
-			// detect point specific visibility (#2430)
-			if (point.visible !== undefined) {
-				point.setVisible(point.visible);
+			// Detect point specific visibility (#2430)
+			if (visible !== undefined) {
+				point.setVisible(visible, true);
 			}
 
 		});

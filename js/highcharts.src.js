@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.4-modified ()
+ * @license Highcharts JS v4.1.5-modified ()
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -56,7 +56,7 @@ var UNDEFINED,
 	charts = [],
 	chartCount = 0,
 	PRODUCT = 'Highcharts',
-	VERSION = '4.1.4-modified',
+	VERSION = '4.1.5-modified',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -1271,8 +1271,8 @@ defaultOptions = {
 	global: {
 		useUTC: true,
 		//timezoneOffset: 0,
-		canvasToolsURL: 'http://code.highcharts.com/4.1.4-modified/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/4.1.4-modified/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/4.1.5-modified/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/4.1.5-modified/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -3279,7 +3279,7 @@ SVGRenderer.prototype = {
 												wasTooLong = true;
 											}
 											wordStr = span.substring(0, wordStr.length + (tooLong ? -1 : 1) * mathCeil(cursor));
-											words = [wordStr + '\u2026'];
+											words = [wordStr + (width > 3 ? '\u2026' : '')];
 											tspan.removeChild(tspan.firstChild);
 										}
 
@@ -5914,16 +5914,14 @@ Tick.prototype = {
 		// If it now overshoots the slotWidth, add ellipsis.
 		if (!rotation) {
 			leftPos = pxPos - factor * labelWidth;
-			rightPos = pxPos + factor * labelWidth;
+			rightPos = pxPos + (1 - factor) * labelWidth;
 
 			if (leftPos < leftBound) {
-				slotWidth -= leftBound - leftPos;
-				xy.x = leftBound;
-				label.attr({ align: 'left' });				
+				slotWidth = xy.x + slotWidth * (1 - factor) - leftBound;
+				xy.x += (1 - factor) * (axis.slotWidth - slotWidth); // align it within the new slot
 			} else if (rightPos > rightBound) {
-				slotWidth -= rightPos - rightBound;
-				xy.x = rightBound;
-				label.attr({ align: 'right' });
+				slotWidth = rightBound - xy.x + slotWidth * factor;
+				xy.x -= factor * (axis.slotWidth - slotWidth); // align it within the new slot
 			}
 
 			// If the label width exceeds the available space, set a text width to be 
@@ -5932,7 +5930,6 @@ Tick.prototype = {
 			if (labelWidth > slotWidth || (axis.autoRotation && label.styles.width)) {
 				textWidth = slotWidth;
 			}
-		
 
 		// Add ellipsis to prevent rotated labels to be clipped against the edge of the chart
 		} else if (rotation < 0 && pxPos - factor * labelWidth < leftBound) {
@@ -7907,7 +7904,7 @@ Axis.prototype = {
 		if (horiz) {
 			autoRotation = defined(rotationOption) ? 
 				[rotationOption] :
-				slotSize < pick(labelOptions.autoRotationLimit, 80) && !labelOptions.staggerLines && !labelOptions.step && labelOptions.autoRotation; // docs: API and demo created, enable with "since".
+				slotSize < pick(labelOptions.autoRotationLimit, 80) && !labelOptions.staggerLines && !labelOptions.step && labelOptions.autoRotation;
 
 			if (autoRotation) {
 
@@ -7949,8 +7946,9 @@ Axis.prototype = {
 			labelOptions = this.options.labels,
 			horiz = this.horiz,
 			margin = chart.margin,
+			slotCount = this.categories ? tickPositions.length : tickPositions.length - 1,
 			slotWidth = this.slotWidth = (horiz && !labelOptions.step && !labelOptions.rotation &&
-				((this.staggerLines || 1) * chart.plotWidth) / tickPositions.length) ||
+				((this.staggerLines || 1) * chart.plotWidth) / slotCount) ||
 				(!horiz && ((margin[3] && (margin[3] - chart.spacing[3])) || chart.chartWidth * 0.33)), // #1580, #1931,
 			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))),
 			attr = {},
@@ -7996,7 +7994,11 @@ Axis.prototype = {
 				pos = tickPositions[i];
 				label = ticks[pos].label;
 				if (label) {
-					if (this.len / tickPositions.length - 4 < label.getBBox().height) {
+					// Reset ellipsis in order to get the correct bounding box (#4070)
+					if (label.styles.textOverflow === 'ellipsis') {
+						label.css({ textOverflow: 'clip' });
+					}
+					if (label.getBBox().height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f)) {
 						label.specCss = { textOverflow: 'ellipsis' };
 					}
 				}
@@ -8214,6 +8216,8 @@ Axis.prototype = {
 			margin = horiz ? axisLeft : axisTop,
 			opposite = this.opposite,
 			offset = this.offset,
+			xOption = axisTitleOptions.x || 0, // docs
+			yOption = axisTitleOptions.y || 0,
 			fontSize = pInt(axisTitleOptions.style.fontSize || 12),
 
 			// the position in the length direction of the axis
@@ -8232,12 +8236,11 @@ Axis.prototype = {
 
 		return {
 			x: horiz ?
-				alongAxis :
-				offAxis + (opposite ? this.width : 0) + offset +
-					(axisTitleOptions.x || 0), // x
+				alongAxis + xOption :
+				offAxis + (opposite ? this.width : 0) + offset + xOption,
 			y: horiz ?
-				offAxis - (opposite ? this.height : 0) + offset :
-				alongAxis + (axisTitleOptions.y || 0) // y
+				offAxis + yOption - (opposite ? this.height : 0) + offset :
+				alongAxis + yOption
 		};
 	},
 
@@ -8517,7 +8520,9 @@ Axis.prototype = {
 			// Disabled in options
 			!this.crosshair || 
 			// Snap
-			((defined(point) || !pick(this.crosshair.snap, true)) === false)
+			((defined(point) || !pick(this.crosshair.snap, true)) === false) || 
+			// Not on this axis (#4095, #2888)
+			((defined(point) && (point.series[this.coll] !== this)))
 		) {
 			this.hideCrosshair();
 		
@@ -9082,7 +9087,7 @@ Tooltip.prototype = {
 		var chart = this.chart,
 			distance = this.distance,
 			ret = {},
-			h = point.h,
+			h = point.h || 0, // #4117
 			swapped,
 			first = ['y', chart.chartHeight, boxHeight, point.plotY + chart.plotTop],
 			second = ['x', chart.chartWidth, boxWidth, point.plotX + chart.plotLeft],
@@ -9538,14 +9543,10 @@ Pointer.prototype = {
 			tooltip = chart.tooltip,
 			shared = tooltip ? tooltip.shared : false,
 			followPointer,
-			//point,
-			//points,
 			hoverPoint = chart.hoverPoint,
 			hoverSeries = chart.hoverSeries,
 			i,
-			//j,
 			distance = chart.chartWidth,
-			rdistance = chart.chartWidth,
 			anchor,
 			noSharedTooltip,
 			kdpoints = [],
@@ -9574,7 +9575,7 @@ Pointer.prototype = {
 				// Skip hidden series
 				noSharedTooltip = s.noSharedTooltip && shared;
 				if (s.visible && !noSharedTooltip && pick(s.options.enableMouseTracking, true)) { // #3821
-					kdpointT = s.searchPoint(e); // #3828
+					kdpointT = s.searchPoint(e, !noSharedTooltip); // #3828
 					if (kdpointT) {
 						kdpoints.push(kdpointT);
 					}
@@ -9582,13 +9583,9 @@ Pointer.prototype = {
 			});
 			// Find absolute nearest point
 			each(kdpoints, function (p) {
-				if (p && defined(p.plotX) && defined(p.plotY)) {
-					if ((p.dist.distX < distance) || ((p.dist.distX === distance || p.series.kdDimensions > 1) && 
-							p.dist.distR < rdistance)) {
-						distance = p.dist.distX;
-						rdistance = p.dist.distR;
-						kdpoint = p;
-					}
+				if (p && typeof p.dist === 'number' && p.dist < distance) {
+					distance = p.dist;
+					kdpoint = p;
 				}
 			});
 		}
@@ -10386,7 +10383,7 @@ if (win.PointerEvent || win.MSPointerEvent) {
 	// Disable default IE actions for pinch and such on chart element
 	wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 		proceed.call(this, chart, options);
-		if (this.hasZoom || this.followTouchMove) {
+		if (this.hasZoom) { // #4014
 			css(chart.container, {
 				'-ms-touch-action': NONE,
 				'touch-action': NONE
@@ -11116,7 +11113,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 	 * @param {Object} item The series (this) or point
 	 */
 	drawRectangle: function (legend, item) {
-		var symbolHeight = legend.options.symbolHeight || legend.fontMetrics.f; // docs: Now defaults to the font size
+		var symbolHeight = legend.options.symbolHeight || legend.fontMetrics.f;
 
 		item.legendSymbol = this.chart.renderer.rect(
 			0,
@@ -13597,6 +13594,7 @@ Series.prototype = {
 			pointPlacement = options.pointPlacement,
 			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
 			threshold = options.threshold,
+			stackThreshold = options.startFromThreshold ? threshold : 0,
 			plotX,
 			plotY,
 			lastPlotX,
@@ -13608,7 +13606,7 @@ Series.prototype = {
 				xValue = point.x,
 				yValue = point.y,
 				yBottom = point.low,
-				stack = stacking && yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey],
+				stack = stacking && yAxis.stacks[(series.negStacks && yValue < (stackThreshold ? 0 : threshold) ? '-' : '') + series.stackKey],
 				pointStack,
 				stackValues;
 
@@ -13630,7 +13628,7 @@ Series.prototype = {
 				yBottom = stackValues[0];
 				yValue = stackValues[1];
 
-				if (yBottom === 0) {
+				if (yBottom === stackThreshold) {
 					yBottom = pick(threshold, yAxis.min);
 				}
 				if (yAxis.isLog && yBottom <= 0) { // #1200, #1232
@@ -13733,7 +13731,7 @@ Series.prototype = {
 			this.sharedClipKey = sharedClipKey;
 		}
 
-		// Remove the shared clipping rectancgle when all series are shown
+		// Remove the shared clipping rectangle when all series are shown
 		if (!animation) {
 			clipRect.count -= 1;
 			if (clipRect.count <= 0 && sharedClipKey && chart[sharedClipKey]) {
@@ -14030,6 +14028,10 @@ Series.prototype = {
 					if (!defaultLineColor) {
 						attr.lineColor = point.color; // Bubbles take point color, line markers use white
 					}
+					// Color is explicitly set to null or undefined (#1288, #4068)
+					if (normalOptions.hasOwnProperty('color') && !normalOptions.color) {
+						delete normalOptions.color;
+					}
 					pointAttr[NORMAL_STATE] = series.convertAttribs(extend(attr, normalOptions), seriesPointAttr[NORMAL_STATE]);
 
 					// inherit from point normal and series hover
@@ -14105,10 +14107,9 @@ Series.prototype = {
 		// Clear the animation timeout if we are destroying the series during initial animation
 		clearTimeout(series.animationTimeout);
 
-		// destroy all SVGElements associated to the series
-		each(['area', 'graph', 'dataLabelsGroup', 'group', 'markerGroup', 'tracker',
-				'graphNeg', 'areaNeg', 'posClip', 'negClip'], function (prop) {
-			if (series[prop]) {
+		// Destroy all SVGElements associated to the series
+		for (prop in series) {
+			if (series[prop] instanceof SVGElement && !series[prop].survive) { // Survive provides a hook for not destroying
 
 				// issue 134 workaround
 				destroy = issue134 && prop === 'group' ?
@@ -14117,7 +14118,7 @@ Series.prototype = {
 
 				series[prop][destroy]();
 			}
-		});
+		}
 
 		// remove from hoverSeries
 		if (chart.hoverSeries === series) {
@@ -14226,7 +14227,7 @@ Series.prototype = {
 			zones = this.zones;
 
 		each(zones, function (threshold, i) {
-			props.push(['colorGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
+			props.push(['zoneGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
 		});
 		
 		// Draw the graph
@@ -14354,11 +14355,11 @@ Series.prototype = {
 					clips[i] = renderer.clipRect(clipAttr);
 
 					if (graph) {
-						series['colorGraph' + i].clip(clips[i]);
+						series['zoneGraph' + i].clip(clips[i]);
 					}
 
 					if (area) {
-						series['colorArea' + i].clip(clips[i]);
+						series['zoneArea' + i].clip(clips[i]);
 					}
 				}
 				// if this zone extends out of the axis, ignore the others
@@ -14596,11 +14597,9 @@ Series.prototype = {
 	 */
 
 	kdDimensions: 1,
-	kdTree: null,
 	kdAxisArray: ['clientX', 'plotY'],
-	kdComparer: 'distX',
 
-	searchPoint: function (e) {
+	searchPoint: function (e, compareX) {
 		var series = this,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
@@ -14609,7 +14608,7 @@ Series.prototype = {
 		return this.searchKDTree({
 			clientX: inverted ? xAxis.len - e.chartY + xAxis.pos : e.chartX - xAxis.pos,
 			plotY: inverted ? yAxis.len - e.chartX + yAxis.pos : e.chartY - yAxis.pos
-		});
+		}, compareX);
 	},
 
 	buildKDTree: function () {
@@ -14632,7 +14631,7 @@ Series.prototype = {
 			
 				median = Math.floor(length / 2);
 				
-				// build and return node
+				// build and return nod
 				return {
 					point: points[median],
 					left: _kdtree(points.slice(0, median), depth + 1, dimensions),
@@ -14647,9 +14646,9 @@ Series.prototype = {
 			var points = grep(series.points, function (point) {
 				return point.y !== null;
 			});
-			series.kdTree = _kdtree(points, dimensions, dimensions);		
-		}
 
+			series.kdTree = _kdtree(points, dimensions, dimensions);
+		}
 		delete series.kdTree;
 		
 		if (series.options.kdSync) {  // For testing tooltips, don't build async
@@ -14659,23 +14658,20 @@ Series.prototype = {
 		}
 	},
 
-	searchKDTree: function (point) {
+	searchKDTree: function (point, compareX) {
 		var series = this,
-			kdComparer = this.kdComparer,
 			kdX = this.kdAxisArray[0],
-			kdY = this.kdAxisArray[1];
+			kdY = this.kdAxisArray[1],
+			kdComparer = compareX ? 'distX' : 'dist';
 
-		// Internal function
-		function _distance(p1, p2) {
+		// Set the one and two dimensional distance on the point object
+		function setDistance(p1, p2) {
 			var x = (defined(p1[kdX]) && defined(p2[kdX])) ? Math.pow(p1[kdX] - p2[kdX], 2) : null,
 				y = (defined(p1[kdY]) && defined(p2[kdY])) ? Math.pow(p1[kdY] - p2[kdY], 2) : null,
 				r = (x || 0) + (y || 0);
-				
-			return {
-				distX: defined(x) ? Math.sqrt(x) : Number.MAX_VALUE,
-				distY: defined(y) ? Math.sqrt(y) : Number.MAX_VALUE,
-				distR: defined(r) ? Math.sqrt(r) : Number.MAX_VALUE
-			};
+
+			p2.dist = defined(r) ? Math.sqrt(r) : Number.MAX_VALUE;
+			p2.distX = defined(x) ? Math.sqrt(x) : Number.MAX_VALUE;
 		}
 		function _search(search, tree, depth, dimensions) {
 			var point = tree.point,
@@ -14686,27 +14682,28 @@ Series.prototype = {
 				ret = point,
 				nPoint1,
 				nPoint2;
-			point.dist = _distance(search, point);
+			
+			setDistance(search, point);
 
 			// Pick side based on distance to splitting point
 			tdist = search[axis] - point[axis];
 			sideA = tdist < 0 ? 'left' : 'right';
+			sideB = tdist < 0 ? 'right' : 'left';
 
 			// End of tree
 			if (tree[sideA]) {
 				nPoint1 =_search(search, tree[sideA], depth + 1, dimensions);
 
-				ret = (nPoint1.dist[kdComparer] < ret.dist[kdComparer] ? nPoint1 : point);
-
-				sideB = tdist < 0 ? 'right' : 'left';
-				if (tree[sideB]) {
-					// compare distance to current best to splitting point to decide wether to check side B or not
-					if (Math.sqrt(tdist*tdist) < ret.dist[kdComparer]) {
-						nPoint2 = _search(search, tree[sideB], depth + 1, dimensions);
-						ret = (nPoint2.dist[kdComparer] < ret.dist[kdComparer] ? nPoint2 : ret);
-					}
+				ret = (nPoint1[kdComparer] < ret[kdComparer] ? nPoint1 : point);
+			} 
+			if (tree[sideB]) {
+				// compare distance to current best to splitting point to decide wether to check side B or not
+				if (Math.sqrt(tdist * tdist) < ret[kdComparer]) {
+					nPoint2 = _search(search, tree[sideB], depth + 1, dimensions);
+					ret = (nPoint2[kdComparer] < ret[kdComparer] ? nPoint2 : ret);
 				}
 			}
+			
 			return ret;
 		}
 
@@ -14804,7 +14801,8 @@ StackItem.prototype = {
 			axis = stackItem.axis,
 			chart = axis.chart,
 			inverted = chart.inverted,
-			neg = this.isNegative,							// special treatment is needed for negative stacks
+			reversed = axis.reversed,
+			neg = (this.isNegative && !reversed) || (!this.isNegative && reversed), // #4056
 			y = axis.translate(axis.usePercentage ? 100 : this.total, 0, 0, 0, 1), // stack value translated mapped to chart coordinates
 			yZero = axis.translate(0),						// stack origin
 			h = mathAbs(y - yZero),							// stack height
@@ -14916,6 +14914,7 @@ Series.prototype.setStackedPoints = function () {
 		yDataLength = yData.length,
 		seriesOptions = series.options,
 		threshold = seriesOptions.threshold,
+		stackThreshold = seriesOptions.startFromThreshold ? threshold : 0,
 		stackOption = seriesOptions.stack,
 		stacking = seriesOptions.stacking,
 		stackKey = series.stackKey,
@@ -14941,7 +14940,7 @@ Series.prototype.setStackedPoints = function () {
 
 		// Read stacked values into a stack based on the x value,
 		// the sign of y and the stack key. Stacking is also handled for null values (#739)
-		isNegative = negStacks && y < threshold;
+		isNegative = negStacks && y < (stackThreshold ? 0 : threshold);
 		key = isNegative ? negKey : stackKey;
 
 		// Create empty object for this stack if it doesn't exist yet
@@ -14962,7 +14961,7 @@ Series.prototype.setStackedPoints = function () {
 		// If the StackItem doesn't exist, create it first
 		stack = stacks[key][x];
 		if (y !== null) {
-			stack.points[pointKey] = stack.points[series.index] = [stack.cum || 0];
+			stack.points[pointKey] = [pick(stack.cum, stackThreshold)];
 		}
 
 		// Add value to the stack total
@@ -14982,7 +14981,7 @@ Series.prototype.setStackedPoints = function () {
 			stack.total = correctFloat(stack.total + (y || 0));
 		}
 
-		stack.cum = (stack.cum || 0) + (y || 0);
+		stack.cum = pick(stack.cum, stackThreshold) + (y || 0);
 
 		if (y !== null) {
 			stack.points[pointKey].push(stack.cum);
@@ -15196,6 +15195,9 @@ extend(Point.prototype, {
 			point.applyOptions(options);
 
 			// Update visuals
+			if (point.y === null && graphic) { // #4146
+				point.graphic = graphic.destroy();
+			}
 			if (isObject(options) && !isArray(options)) {
 				// Defer the actual redraw until getAttribs has been called (#3260)
 				point.redraw = function () {
@@ -15276,20 +15278,25 @@ extend(Series.prototype, {
 			chart = series.chart,
 			names = series.xAxis && series.xAxis.names,
 			currentShift = (graph && graph.shift) || 0,
+			shiftShapes = ['graph', 'area'],
 			dataOptions = seriesOptions.data,
 			point,
 			isInTheMiddle,
 			xData = series.xData,
-			x,
-			i;
+			i,
+			x;
 
 		setAnimation(animation, chart);
 
 		// Make graph animate sideways
 		if (shift) {
-			each([graph, area, series.graphNeg, series.areaNeg], function (shape) {
-				if (shape) {
-					shape.shift = currentShift + 1;
+			i = series.zones.length;
+			while (i--) {
+				shiftShapes.push('zoneGraph' + i, 'zoneArea' + i);
+			}
+			each(shiftShapes, function (shape) {
+				if (series[shape]) {
+					series[shape].shift = currentShift + 1;
 				}
 			});
 		}
@@ -15850,7 +15857,7 @@ var AreaSeries = extendClass(Series, {
 			props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
 		
 		each(zones, function (threshold, i) {
-			props.push(['colorArea' + i, threshold.color || series.color, threshold.fillColor || options.fillColor]);
+			props.push(['zoneArea' + i, threshold.color || series.color, threshold.fillColor || options.fillColor]);
 		});
 		each(props, function (prop) {
 			var areaKey = prop[0],
@@ -16049,6 +16056,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 		verticalAlign: null, // auto
 		y: null
 	},
+	startFromThreshold: true, // docs: http://jsfiddle.net/highcharts/hz8fopan/14/
 	stickyTracking: false,
 	tooltip: {
 		distance: 6
@@ -16207,16 +16215,18 @@ var ColumnSeries = extendClass(Series, {
 				right,
 				bottom,
 				fromTop,
+				up,
 				barH = mathMax(plotY, yBottom) - barY;
 
 			// Handle options.minPointLength
 			if (mathAbs(barH) < minPointLength) {
 				if (minPointLength) {
 					barH = minPointLength;
+					up = (!yAxis.reversed && !point.negative) || (yAxis.reversed && point.negative);
 					barY =
 						mathRound(mathAbs(barY - translatedThreshold) > minPointLength ? // stacked
 							yBottom - minPointLength : // keep position
-							translatedThreshold - (yAxis.translate(point.y, 0, 1, 0, 1) <= translatedThreshold ? minPointLength : 0)); // use exact yAxis.translation (#1485)
+							translatedThreshold - (up ? minPointLength : 0)); // #1485, #4051
 				}
 			}
 
@@ -16412,7 +16422,6 @@ var ScatterSeries = extendClass(Series, {
 	trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
 	takeOrdinalPosition: false, // #2342
 	kdDimensions: 2,
-	kdComparer: 'distR',
 	drawGraph: function () {
 		if (this.options.lineWidth) {
 			Series.prototype.drawGraph.call(this);
@@ -16498,38 +16507,42 @@ var PiePoint = extendClass(Point, {
 	 * @param {Boolean} vis Whether to show the slice or not. If undefined, the
 	 *    visibility is toggled
 	 */
-	setVisible: function (vis) {
+	setVisible: function (vis, force) {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
 			doRedraw = !series.isDirty && series.options.ignoreHiddenPoint;
 
-		// if called without an argument, toggle visibility
-		point.visible = point.options.visible = vis = vis === UNDEFINED ? !point.visible : vis;
-		series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
+		// Only if the value has changed
+		if (vis !== point.visible || force) {
+			
+			// If called without an argument, toggle visibility
+			point.visible = point.options.visible = vis = vis === UNDEFINED ? !point.visible : vis;
+			series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
 
-		// Show and hide associated elements
-		each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
-			if (point[key]) {
-				point[key][vis ? 'show' : 'hide'](true);
-			}
-		});
-
-		if (point.legendItem) {
-			if (chart.hasRendered) {
-				series.updateTotals();
-				chart.legend.clearItems();
-				if (!doRedraw) {
-					chart.legend.render();
+			// Show and hide associated elements
+			each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
+				if (point[key]) {
+					point[key][vis ? 'show' : 'hide'](true);
 				}
-			}
-			chart.legend.colorizeItem(point, vis);
-		}
+			});
 
-		// Handle ignore hidden slices
-		if (doRedraw) {
-			series.isDirty = true;
-			chart.redraw();
+			if (point.legendItem) {
+				if (chart.hasRendered) {
+					series.updateTotals();
+					chart.legend.clearItems();
+					if (!doRedraw) {
+						chart.legend.render();
+					}
+				}
+				chart.legend.colorizeItem(point, vis);
+			}
+
+			// Handle ignore hidden slices
+			if (doRedraw) {
+				series.isDirty = true;
+				chart.redraw();
+			}
 		}
 	},
 
@@ -16828,6 +16841,9 @@ var PieSeries = {
 
 		// draw the slices
 		each(series.points, function (point) {
+
+			var visible = point.options.visible;
+
 			graphic = point.graphic;
 			shapeArgs = point.shapeArgs;
 			shadowGroup = point.shadowGroup;
@@ -16867,9 +16883,9 @@ var PieSeries = {
 					.shadow(shadow, shadowGroup);	
 			}
 
-			// detect point specific visibility (#2430)
-			if (point.visible !== undefined) {
-				point.setVisible(point.visible);
+			// Detect point specific visibility (#2430)
+			if (visible !== undefined) {
+				point.setVisible(visible, true);
 			}
 
 		});
@@ -17403,7 +17419,7 @@ if (seriesTypes.pie) {
 				point = points[j];
 				labelPos = point.labelPos;
 				dataLabel = point.dataLabel;
-				visibility = point.visible === false ? HIDDEN : VISIBLE;
+				visibility = point.visible === false ? HIDDEN : 'inherit';
 				naturalY = labelPos[1];
 
 				if (distanceOption > 0) {
@@ -17424,6 +17440,7 @@ if (seriesTypes.pie) {
 
 				// get the x - use the natural x position for first and last slot, to prevent the top
 				// and botton slice connectors from touching each other on either side
+				// Problem: Should check that it makes sense - http://jsfiddle.net/highcharts/n1y6ngxz/
 				x = options.justify ?
 					seriesCenter[0] + (i ? -1 : 1) * (radius + distanceOption) :
 					series.getX(y === centerY - radius - distanceOption || y === centerY + radius + distanceOption ? naturalY : y, i);
@@ -17666,7 +17683,7 @@ if (seriesTypes.column) {
 
 
 /**
- * Highcharts JS v4.1.4-modified ()
+ * Highcharts JS v4.1.5-modified ()
  * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
  *
  * (c) 2010-2014 Torstein Honsi
@@ -17678,6 +17695,7 @@ if (seriesTypes.column) {
 (function (H) {
 	var Chart = H.Chart,
 		each = H.each,
+		pick = H.pick,
 		addEvent = HighchartsAdapter.addEvent;
 
 	// Collect potensial overlapping data labels. Stack labels probably don't need to be 
@@ -17691,7 +17709,7 @@ if (seriesTypes.column) {
 				if ((dlOptions.enabled || series._hasPointLabels) && !dlOptions.allowOverlap && series.visible) { // #3866
 					each(series.points, function (point) { 
 						if (point.dataLabel) {
-							point.dataLabel.labelrank = point.labelrank;
+							point.dataLabel.labelrank = pick(point.labelrank, point.shapeArgs && point.shapeArgs.height); // #4118
 							labels.push(point.dataLabel);
 						}
 					});
@@ -17737,6 +17755,13 @@ if (seriesTypes.column) {
 				label.newOpacity = 1;
 			}
 		}
+
+		// Prevent a situation in a gradually rising slope, that each label
+		// will hide the previous one because the previous one always has
+		// lower rank.
+		labels.sort(function (a, b) {
+			return b.labelrank - a.labelrank;
+		});
 
 		// Detect overlapping labels
 		for (i = 0; i < len; i++) {
@@ -18432,10 +18457,10 @@ extend(Series.prototype, {
 		var series = this,
 			options = series.options,
 			graph = series.graph,
-			graphNeg = series.graphNeg,
 			stateOptions = options.states,
 			lineWidth = options.lineWidth,
-			attribs;
+			attribs,
+			i = 0;
 
 		state = state || NORMAL_STATE;
 
@@ -18456,8 +18481,9 @@ extend(Series.prototype, {
 				};
 				// use attr because animate will cause any other animation on the graph to stop
 				graph.attr(attribs);
-				if (graphNeg) {
-					graphNeg.attr(attribs);
+				while (series['zoneGraph' + i]) {
+					series['zoneGraph' + i].attr(attribs);
+					i = i + 1;
 				}
 			}
 		}

@@ -690,6 +690,7 @@ Series.prototype = {
 			pointPlacement = options.pointPlacement,
 			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
 			threshold = options.threshold,
+			stackThreshold = options.startFromThreshold ? threshold : 0,
 			plotX,
 			plotY,
 			lastPlotX,
@@ -701,7 +702,7 @@ Series.prototype = {
 				xValue = point.x,
 				yValue = point.y,
 				yBottom = point.low,
-				stack = stacking && yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey],
+				stack = stacking && yAxis.stacks[(series.negStacks && yValue < (stackThreshold ? 0 : threshold) ? '-' : '') + series.stackKey],
 				pointStack,
 				stackValues;
 
@@ -723,7 +724,7 @@ Series.prototype = {
 				yBottom = stackValues[0];
 				yValue = stackValues[1];
 
-				if (yBottom === 0) {
+				if (yBottom === stackThreshold) {
 					yBottom = pick(threshold, yAxis.min);
 				}
 				if (yAxis.isLog && yBottom <= 0) { // #1200, #1232
@@ -826,7 +827,7 @@ Series.prototype = {
 			this.sharedClipKey = sharedClipKey;
 		}
 
-		// Remove the shared clipping rectancgle when all series are shown
+		// Remove the shared clipping rectangle when all series are shown
 		if (!animation) {
 			clipRect.count -= 1;
 			if (clipRect.count <= 0 && sharedClipKey && chart[sharedClipKey]) {
@@ -1123,6 +1124,10 @@ Series.prototype = {
 					if (!defaultLineColor) {
 						attr.lineColor = point.color; // Bubbles take point color, line markers use white
 					}
+					// Color is explicitly set to null or undefined (#1288, #4068)
+					if (normalOptions.hasOwnProperty('color') && !normalOptions.color) {
+						delete normalOptions.color;
+					}
 					pointAttr[NORMAL_STATE] = series.convertAttribs(extend(attr, normalOptions), seriesPointAttr[NORMAL_STATE]);
 
 					// inherit from point normal and series hover
@@ -1198,10 +1203,9 @@ Series.prototype = {
 		// Clear the animation timeout if we are destroying the series during initial animation
 		clearTimeout(series.animationTimeout);
 
-		// destroy all SVGElements associated to the series
-		each(['area', 'graph', 'dataLabelsGroup', 'group', 'markerGroup', 'tracker',
-				'graphNeg', 'areaNeg', 'posClip', 'negClip'], function (prop) {
-			if (series[prop]) {
+		// Destroy all SVGElements associated to the series
+		for (prop in series) {
+			if (series[prop] instanceof SVGElement && !series[prop].survive) { // Survive provides a hook for not destroying
 
 				// issue 134 workaround
 				destroy = issue134 && prop === 'group' ?
@@ -1210,7 +1214,7 @@ Series.prototype = {
 
 				series[prop][destroy]();
 			}
-		});
+		}
 
 		// remove from hoverSeries
 		if (chart.hoverSeries === series) {
@@ -1319,7 +1323,7 @@ Series.prototype = {
 			zones = this.zones;
 
 		each(zones, function (threshold, i) {
-			props.push(['colorGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
+			props.push(['zoneGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
 		});
 		
 		// Draw the graph
@@ -1447,11 +1451,11 @@ Series.prototype = {
 					clips[i] = renderer.clipRect(clipAttr);
 
 					if (graph) {
-						series['colorGraph' + i].clip(clips[i]);
+						series['zoneGraph' + i].clip(clips[i]);
 					}
 
 					if (area) {
-						series['colorArea' + i].clip(clips[i]);
+						series['zoneArea' + i].clip(clips[i]);
 					}
 				}
 				// if this zone extends out of the axis, ignore the others
@@ -1689,11 +1693,9 @@ Series.prototype = {
 	 */
 
 	kdDimensions: 1,
-	kdTree: null,
 	kdAxisArray: ['clientX', 'plotY'],
-	kdComparer: 'distX',
 
-	searchPoint: function (e) {
+	searchPoint: function (e, compareX) {
 		var series = this,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
@@ -1702,7 +1704,7 @@ Series.prototype = {
 		return this.searchKDTree({
 			clientX: inverted ? xAxis.len - e.chartY + xAxis.pos : e.chartX - xAxis.pos,
 			plotY: inverted ? yAxis.len - e.chartX + yAxis.pos : e.chartY - yAxis.pos
-		});
+		}, compareX);
 	},
 
 	buildKDTree: function () {
@@ -1725,7 +1727,7 @@ Series.prototype = {
 			
 				median = Math.floor(length / 2);
 				
-				// build and return node
+				// build and return nod
 				return {
 					point: points[median],
 					left: _kdtree(points.slice(0, median), depth + 1, dimensions),
@@ -1740,9 +1742,9 @@ Series.prototype = {
 			var points = grep(series.points, function (point) {
 				return point.y !== null;
 			});
-			series.kdTree = _kdtree(points, dimensions, dimensions);		
-		}
 
+			series.kdTree = _kdtree(points, dimensions, dimensions);
+		}
 		delete series.kdTree;
 		
 		if (series.options.kdSync) {  // For testing tooltips, don't build async
@@ -1752,23 +1754,20 @@ Series.prototype = {
 		}
 	},
 
-	searchKDTree: function (point) {
+	searchKDTree: function (point, compareX) {
 		var series = this,
-			kdComparer = this.kdComparer,
 			kdX = this.kdAxisArray[0],
-			kdY = this.kdAxisArray[1];
+			kdY = this.kdAxisArray[1],
+			kdComparer = compareX ? 'distX' : 'dist';
 
-		// Internal function
-		function _distance(p1, p2) {
+		// Set the one and two dimensional distance on the point object
+		function setDistance(p1, p2) {
 			var x = (defined(p1[kdX]) && defined(p2[kdX])) ? Math.pow(p1[kdX] - p2[kdX], 2) : null,
 				y = (defined(p1[kdY]) && defined(p2[kdY])) ? Math.pow(p1[kdY] - p2[kdY], 2) : null,
 				r = (x || 0) + (y || 0);
-				
-			return {
-				distX: defined(x) ? Math.sqrt(x) : Number.MAX_VALUE,
-				distY: defined(y) ? Math.sqrt(y) : Number.MAX_VALUE,
-				distR: defined(r) ? Math.sqrt(r) : Number.MAX_VALUE
-			};
+
+			p2.dist = defined(r) ? Math.sqrt(r) : Number.MAX_VALUE;
+			p2.distX = defined(x) ? Math.sqrt(x) : Number.MAX_VALUE;
 		}
 		function _search(search, tree, depth, dimensions) {
 			var point = tree.point,
@@ -1779,27 +1778,28 @@ Series.prototype = {
 				ret = point,
 				nPoint1,
 				nPoint2;
-			point.dist = _distance(search, point);
+			
+			setDistance(search, point);
 
 			// Pick side based on distance to splitting point
 			tdist = search[axis] - point[axis];
 			sideA = tdist < 0 ? 'left' : 'right';
+			sideB = tdist < 0 ? 'right' : 'left';
 
 			// End of tree
 			if (tree[sideA]) {
 				nPoint1 =_search(search, tree[sideA], depth + 1, dimensions);
 
-				ret = (nPoint1.dist[kdComparer] < ret.dist[kdComparer] ? nPoint1 : point);
-
-				sideB = tdist < 0 ? 'right' : 'left';
-				if (tree[sideB]) {
-					// compare distance to current best to splitting point to decide wether to check side B or not
-					if (Math.sqrt(tdist*tdist) < ret.dist[kdComparer]) {
-						nPoint2 = _search(search, tree[sideB], depth + 1, dimensions);
-						ret = (nPoint2.dist[kdComparer] < ret.dist[kdComparer] ? nPoint2 : ret);
-					}
+				ret = (nPoint1[kdComparer] < ret[kdComparer] ? nPoint1 : point);
+			} 
+			if (tree[sideB]) {
+				// compare distance to current best to splitting point to decide wether to check side B or not
+				if (Math.sqrt(tdist * tdist) < ret[kdComparer]) {
+					nPoint2 = _search(search, tree[sideB], depth + 1, dimensions);
+					ret = (nPoint2[kdComparer] < ret[kdComparer] ? nPoint2 : ret);
 				}
 			}
+			
 			return ret;
 		}
 

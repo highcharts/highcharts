@@ -37,7 +37,8 @@
             ];
 
         //cmd.exec(commands.join(' && '), options, puts);
-        console.log('--- ' + product + '---')
+        console.log('--- ' + product + '---');
+        console.log('cd ~/github/' + product + '-release');
         console.log(commands.join('\n'));
     }
 

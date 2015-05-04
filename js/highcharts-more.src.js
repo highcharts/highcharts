@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.4-modified ()
+ * @license Highcharts JS v4.1.5-modified ()
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -1555,8 +1555,6 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 	upColorProp: 'fill',
 
-	pointArrayMap: ['low', 'y'],
-
 	pointValKey: 'y',
 
 	/**
@@ -2165,7 +2163,6 @@ Axis.prototype.beforePadding = function () {
 				this.searchPoint = this.searchPointByAngle;
 			} else {
 				this.kdDimensions = 2;
-				this.kdComparer = 'distR';
 			}
 		}
 		proceed.apply(this);
@@ -2359,7 +2356,7 @@ Axis.prototype.beforePadding = function () {
 	
 		// Postprocess plot coordinates
 		if (chart.polar) {
-			this.kdByAngle = chart.tooltip.shared;
+			this.kdByAngle = chart.tooltip && chart.tooltip.shared;
 	
 			if (!this.preventPostTranslate) {
 				points = this.points;

@@ -163,6 +163,9 @@ extend(Point.prototype, {
 			point.applyOptions(options);
 
 			// Update visuals
+			if (point.y === null && graphic) { // #4146
+				point.graphic = graphic.destroy();
+			}
 			if (isObject(options) && !isArray(options)) {
 				// Defer the actual redraw until getAttribs has been called (#3260)
 				point.redraw = function () {
@@ -243,20 +246,25 @@ extend(Series.prototype, {
 			chart = series.chart,
 			names = series.xAxis && series.xAxis.names,
 			currentShift = (graph && graph.shift) || 0,
+			shiftShapes = ['graph', 'area'],
 			dataOptions = seriesOptions.data,
 			point,
 			isInTheMiddle,
 			xData = series.xData,
-			x,
-			i;
+			i,
+			x;
 
 		setAnimation(animation, chart);
 
 		// Make graph animate sideways
 		if (shift) {
-			each([graph, area, series.graphNeg, series.areaNeg], function (shape) {
-				if (shape) {
-					shape.shift = currentShift + 1;
+			i = series.zones.length;
+			while (i--) {
+				shiftShapes.push('zoneGraph' + i, 'zoneArea' + i);
+			}
+			each(shiftShapes, function (shape) {
+				if (series[shape]) {
+					series[shape].shift = currentShift + 1;
 				}
 			});
 		}

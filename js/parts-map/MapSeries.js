@@ -171,6 +171,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	useMapGeometry: true, // get axis extremes from paths, not values
 	forceDL: true,
 	searchPoint: noop,
+	preserveAspectRatio: true, // X axis and Y axis must have same translation slope
 	/**
 	 * Get the bounding box of all paths in the map combined.
 	 */
@@ -484,6 +485,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					scaleY: 1
 				})
 				.add(group);
+			series.transformGroup.survive = true;
 		}
 		
 		// Draw the shapes again
@@ -686,16 +688,16 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			
 			// TODO: Animate this.group instead
 			each(this.points, function (point) {
-
-				point.graphic
-					.attr(level.shapeArgs)
-					.animate({
-						scaleX: 1,
-						scaleY: 1,
-						translateX: 0,
-						translateY: 0
-					}, animationOptions);
-
+				if (point.graphic) {
+					point.graphic
+						.attr(level.shapeArgs)
+						.animate({
+							scaleX: 1,
+							scaleY: 1,
+							translateX: 0,
+							translateY: 0
+						}, animationOptions);
+				}
 			});
 
 			this.animate = null;

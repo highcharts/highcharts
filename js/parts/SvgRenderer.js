@@ -1490,7 +1490,7 @@ SVGRenderer.prototype = {
 												wasTooLong = true;
 											}
 											wordStr = span.substring(0, wordStr.length + (tooLong ? -1 : 1) * mathCeil(cursor));
-											words = [wordStr + '\u2026'];
+											words = [wordStr + (width > 3 ? '\u2026' : '')];
 											tspan.removeChild(tspan.firstChild);
 										}
 

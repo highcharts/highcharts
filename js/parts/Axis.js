@@ -1488,7 +1488,7 @@ Axis.prototype = {
 		if (horiz) {
 			autoRotation = defined(rotationOption) ? 
 				[rotationOption] :
-				slotSize < pick(labelOptions.autoRotationLimit, 80) && !labelOptions.staggerLines && !labelOptions.step && labelOptions.autoRotation; // docs: API and demo created, enable with "since".
+				slotSize < pick(labelOptions.autoRotationLimit, 80) && !labelOptions.staggerLines && !labelOptions.step && labelOptions.autoRotation;
 
 			if (autoRotation) {
 
@@ -1530,8 +1530,9 @@ Axis.prototype = {
 			labelOptions = this.options.labels,
 			horiz = this.horiz,
 			margin = chart.margin,
+			slotCount = this.categories ? tickPositions.length : tickPositions.length - 1,
 			slotWidth = this.slotWidth = (horiz && !labelOptions.step && !labelOptions.rotation &&
-				((this.staggerLines || 1) * chart.plotWidth) / tickPositions.length) ||
+				((this.staggerLines || 1) * chart.plotWidth) / slotCount) ||
 				(!horiz && ((margin[3] && (margin[3] - chart.spacing[3])) || chart.chartWidth * 0.33)), // #1580, #1931,
 			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))),
 			attr = {},
@@ -1577,7 +1578,11 @@ Axis.prototype = {
 				pos = tickPositions[i];
 				label = ticks[pos].label;
 				if (label) {
-					if (this.len / tickPositions.length - 4 < label.getBBox().height) {
+					// Reset ellipsis in order to get the correct bounding box (#4070)
+					if (label.styles.textOverflow === 'ellipsis') {
+						label.css({ textOverflow: 'clip' });
+					}
+					if (label.getBBox().height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f)) {
 						label.specCss = { textOverflow: 'ellipsis' };
 					}
 				}
@@ -1795,6 +1800,8 @@ Axis.prototype = {
 			margin = horiz ? axisLeft : axisTop,
 			opposite = this.opposite,
 			offset = this.offset,
+			xOption = axisTitleOptions.x || 0, // docs
+			yOption = axisTitleOptions.y || 0,
 			fontSize = pInt(axisTitleOptions.style.fontSize || 12),
 
 			// the position in the length direction of the axis
@@ -1813,12 +1820,11 @@ Axis.prototype = {
 
 		return {
 			x: horiz ?
-				alongAxis :
-				offAxis + (opposite ? this.width : 0) + offset +
-					(axisTitleOptions.x || 0), // x
+				alongAxis + xOption :
+				offAxis + (opposite ? this.width : 0) + offset + xOption,
 			y: horiz ?
-				offAxis - (opposite ? this.height : 0) + offset :
-				alongAxis + (axisTitleOptions.y || 0) // y
+				offAxis + yOption - (opposite ? this.height : 0) + offset :
+				alongAxis + yOption
 		};
 	},
 
@@ -2098,7 +2104,9 @@ Axis.prototype = {
 			// Disabled in options
 			!this.crosshair || 
 			// Snap
-			((defined(point) || !pick(this.crosshair.snap, true)) === false)
+			((defined(point) || !pick(this.crosshair.snap, true)) === false) || 
+			// Not on this axis (#4095, #2888)
+			((defined(point) && (point.series[this.coll] !== this)))
 		) {
 			this.hideCrosshair();
 		

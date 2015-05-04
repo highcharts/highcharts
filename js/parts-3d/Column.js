@@ -35,7 +35,9 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 			tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], chart, false)[0];
 			point.tooltipPos = [tooltipPos.x, tooltipPos.y];
 		}
-	});	    
+	});
+	// store for later use #4067
+	series.z = z;
 });
 
 Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'animate', function (proceed) {
@@ -115,14 +117,15 @@ function draw3DPoints(proceed) {
 	// Do not do this if the chart is not 3D
 	if (this.chart.is3d()) {		
 		var grouping = this.chart.options.plotOptions.column.grouping;
-		if (grouping !== undefined && !grouping && this.group.zIndex !== undefined) {
+		if (grouping !== undefined && !grouping && this.group.zIndex !== undefined && !this.zIndexSet) {
 			this.group.attr({zIndex : (this.group.zIndex * 10)});
+			this.zIndexSet = true; // #4062 set zindex only once
 		} 
 
 		var options = this.options,
 			states = this.options.states;
 			
-		this.borderWidth = options.borderWidth = options.edgeWidth || 1;
+		this.borderWidth = options.borderWidth = defined(options.edgeWidth) ? options.edgeWidth : 1; //#4055
 
 		Highcharts.each(this.data, function (point) {
 			if (point.y !== null) {
@@ -151,7 +154,7 @@ Highcharts.wrap(Highcharts.Series.prototype, 'alignDataLabel', function (proceed
 		var args = arguments,
 			alignTo = args[4];
 		
-		var pos = ({x: alignTo.x, y: alignTo.y, z: 0});
+		var pos = ({x: alignTo.x, y: alignTo.y, z: series.z});
 		pos = perspective([pos], chart, true)[0];
 		alignTo.x = pos.x;
 		alignTo.y = pos.y;

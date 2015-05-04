@@ -537,6 +537,35 @@ Axis.prototype.getGroupPixelWidth = function () {
 	return doGrouping ? groupPixelWidth : 0;
 };
 
+/**
+ * Force data grouping on all the axis' series.
+ */
+Axis.prototype.setDataGrouping = function (dataGrouping, redraw) { // docs
+	redraw = pick(redraw, true);
+
+	if (!dataGrouping) {   
+		dataGrouping = {
+			forced: false,
+			units: null
+		};
+	}
+
+	// Axis is instantiated, update all series
+	if (this instanceof Axis) {
+		each(this.series, function (series) {
+			series.update({
+				dataGrouping: dataGrouping
+			}, false);
+		});
+
+	// Axis not yet instanciated, alter series options
+	} else {
+		each(this.chart.options.series, function (seriesOptions) {
+			seriesOptions.dataGrouping = dataGrouping;
+		});
+	}
+};
+
 
 
 /* ****************************************************************************

@@ -1,7 +1,9 @@
-<p>Highstock 2.1.4 (2015-03-10)</p>
+<p>Highstock 2.1.5 (2015-04-13)</p>
 <ul>
-    <li>Most changes listed under Highcharts 4.1.4 above also apply to Highstock 2.1.4.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/2998">#2998</a>, reflow during initial series animation caused clipped chart.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3865">#3865</a>, range selector not working in IE.</li>
-    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3897">#3897</a>, point up/down colors not redrawing after updating point value.</li>
+    <li>Most changes listed under Highcharts 4.1.5 above also apply to Highstock 2.1.5.</li>
+    <li>Added feature, forced data grouping tied to range selector buttons. <a href="http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/stock/rangeselector/datagrouping/">View demo</a>.</li>
+    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/3983">#3983</a>, plot band labels outside axis range were visible.</li>
+    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4042">#4042</a>, column series disappearing if another column series is updated and data grouping enabled. Also affects series types derived from columns. Closes <a href="https://github.com/highslide-software/highcharts.com/issues/4040">#4040</a>.</li>
+    <li>Fixed <a href="https://github.com/highslide-software/highcharts.com/issues/4053">#4053</a>, min and max in the navigator.xAxis options were not respected if the data exceeded the setting.</li>
+    <li>Fixed issue with the range selector input boxes not being able to focus after first focusing, then clicking on the chart outside the input.</li>
 </ul>
