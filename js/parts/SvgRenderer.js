@@ -33,7 +33,7 @@ SVGElement.prototype = {
 	 * @param {Function} complete Function to perform at the end of animation
 	 */
 	animate: function (params, options, complete) {
-		var animOptions = pick(options, Highcharts.globalAnimation, true);
+		var animOptions = Highcharts.pick(options, Highcharts.globalAnimation, true);
 		stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
 		if (animOptions) {
 			animOptions = Highcharts.merge(animOptions, {}); //#2625
@@ -354,7 +354,7 @@ SVGElement.prototype = {
 		var wrapper = this;
 
 		each(['x', 'y', 'r', 'start', 'end', 'width', 'height', 'innerR', 'anchorX', 'anchorY'], function (key) {
-			wrapper[key] = pick(hash[key], wrapper[key]);
+			wrapper[key] = Highcharts.pick(hash[key], wrapper[key]);
 		});
 
 		wrapper.attr({
@@ -558,6 +558,7 @@ SVGElement.prototype = {
 			rotation = wrapper.rotation,
 			element = wrapper.element,
 			defined = Highcharts.defined,
+			pick = Highcharts.pick,
 			transform;
 
 		// flipping affects translate as adjustment for flipping around the group's axis
@@ -639,7 +640,7 @@ SVGElement.prototype = {
 			alignTo = this.alignTo;
 		}
 
-		box = pick(box, renderer[alignTo], renderer);
+		box = Highcharts.pick(box, renderer[alignTo], renderer);
 
 		// Assign variables
 		align = alignOptions.align;
@@ -947,6 +948,7 @@ SVGElement.prototype = {
 	shadow: function (shadowOptions, group, cutOff) {
 		var shadows = [],
 			attr = Highcharts.attr,
+			pick = Highcharts.pick,
 			i,
 			shadow,
 			element = this.element,
@@ -1007,7 +1009,7 @@ SVGElement.prototype = {
 	 * for animation.
 	 */
 	_defaultGetter: function (key) {
-		var ret = pick(this[key], this.element ? this.element.getAttribute(key) : null, 0);
+		var ret = Highcharts.pick(this[key], this.element ? this.element.getAttribute(key) : null, 0);
 
 		if (/^[\-0-9\.]+$/.test(ret)) { // is numerical
 			ret = parseFloat(ret);
@@ -1064,7 +1066,7 @@ SVGElement.prototype = {
 			titleNode = document.createElementNS(this.SVG_NS, 'title');
 			this.element.appendChild(titleNode);
 		}
-		titleNode.textContent = (String(pick(value), '')).replace(/<[^>]*>/g, ''); // #3276 #3895
+		titleNode.textContent = (String(Highcharts.pick(value), '')).replace(/<[^>]*>/g, ''); // #3276 #3895
 	},
 	textSetter: function (value) {
 		if (value !== this.textStr) {
@@ -1330,7 +1332,7 @@ SVGRenderer.prototype = {
 		var textNode = wrapper.element,
 			renderer = this,
 			forExport = renderer.forExport,
-			textStr = pick(wrapper.textStr, '').toString(),
+			textStr = Highcharts.pick(wrapper.textStr, '').toString(),
 			hasMarkup = textStr.indexOf('<') !== -1,
 			lines,
 			childNodes = textNode.childNodes,
@@ -1869,7 +1871,7 @@ SVGRenderer.prototype = {
 		renderer.width = width;
 		renderer.height = height;
 
-		renderer.boxWrapper[pick(animate, true) ? 'animate' : 'attr']({
+		renderer.boxWrapper[Highcharts.pick(animate, true) ? 'animate' : 'attr']({
 			width: width,
 			height: height
 		});

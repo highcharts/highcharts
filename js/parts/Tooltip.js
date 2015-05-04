@@ -126,7 +126,7 @@ Tooltip.prototype = {
 			this.hideTimer = setTimeout(function () {
 				tooltip.label.fadeOut();
 				tooltip.isHidden = true;
-			}, pick(delay, this.options.hideDelay, 500));
+			}, Highcharts.pick(delay, this.options.hideDelay, 500));
 
 			// hide previous hoverPoints and set new
 			if (hoverPoints) {
@@ -208,7 +208,7 @@ Tooltip.prototype = {
 			first = ['y', chart.chartHeight, boxHeight, point.plotY + chart.plotTop],
 			second = ['x', chart.chartWidth, boxWidth, point.plotX + chart.plotLeft],
 			// The far side is right or bottom
-			preferFarSide = pick(point.ttBelow, (chart.inverted && !point.negative) || (!chart.inverted && point.negative)),
+			preferFarSide = Highcharts.pick(point.ttBelow, (chart.inverted && !point.negative) || (!chart.inverted && point.negative)),
 			/**
 			 * Handle the preferred dimension. When the preferred dimension is tooltip
 			 * on top or bottom of the point, it will look for space there.
@@ -369,7 +369,7 @@ Tooltip.prototype = {
 
 		// register the current series
 		currentSeries = point.series;
-		this.distance = pick(currentSeries.tooltipOptions.distance, 16);
+		this.distance = Highcharts.pick(currentSeries.tooltipOptions.distance, 16);
 
 		// update the inner HTML
 		if (text === false) {

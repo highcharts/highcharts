@@ -77,6 +77,7 @@ var GaugeSeries = {
 		var series = this,
 			yAxis = series.yAxis,
 			pInt = Highcharts.pInt,
+			pick = Highcharts.pick,
 			options = series.options,
 			center = yAxis.center;
 			
@@ -169,7 +170,7 @@ var GaugeSeries = {
 				translateY: center[1]
 			});
 		} else {
-			series.pivot = renderer.circle(0, 0, pick(pivotOptions.radius, 5))
+			series.pivot = renderer.circle(0, 0, Highcharts.pick(pivotOptions.radius, 5))
 				.attr({
 					'stroke-width': pivotOptions.borderWidth || 0,
 					stroke: pivotOptions.borderColor || 'silver',
@@ -228,7 +229,7 @@ var GaugeSeries = {
 		Series.prototype.setData.call(this, data, false);
 		this.processData();
 		this.generatePoints();
-		if (pick(redraw, true)) {
+		if (Highcharts.pick(redraw, true)) {
 			this.chart.redraw();
 		}
 	},

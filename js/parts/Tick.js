@@ -31,7 +31,7 @@ Tick.prototype = {
 			isFirst = pos === tickPositions[0],
 			isLast = pos === tickPositions[tickPositions.length - 1],
 			value = categories ?
-				pick(categories[pos], names[pos], pos) :
+				Highcharts.pick(categories[pos], names[pos], pos) :
 				pos,
 			label = tick.label,
 			tickPositionInfo = tickPositions.info,
@@ -100,6 +100,7 @@ Tick.prototype = {
 	handleOverflow: function (xy) {
 		var axis = this.axis,
 			deg2rad = Highcharts.deg2rad,
+			pick = Highcharts.pick,
 			pxPos = xy.x,
 			chartWidth = axis.chart.chartWidth,
 			spacing = axis.chart.spacing,
@@ -182,7 +183,7 @@ Tick.prototype = {
 			reversed = axis.reversed,
 			staggerLines = axis.staggerLines,
 			rotCorr = axis.tickRotCorr || { x: 0, y: 0 },
-			yOffset = pick(labelOptions.y, rotCorr.y + (axis.side === 2 ? 8 : -(label.getBBox().height / 2))),
+			yOffset = Highcharts.pick(labelOptions.y, rotCorr.y + (axis.side === 2 ? 8 : -(label.getBBox().height / 2))),
 			line;
 
 		x = x + labelOptions.x + rotCorr.x - (tickmarkOffset && horiz ?
@@ -228,6 +229,7 @@ Tick.prototype = {
 			options = axis.options,
 			chart = axis.chart,
 			renderer = chart.renderer,
+			pick = Highcharts.pick,
 			horiz = axis.horiz,
 			type = tick.type,
 			label = tick.label,

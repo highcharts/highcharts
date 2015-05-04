@@ -350,6 +350,7 @@ setTimeMethods();
 function setTimeMethods() {
 	var globalOptions = Highcharts.defaultOptions.global,
 		hcD,
+		pick = Highcharts.pick,
 		useUTC = globalOptions.useUTC,
 		GET = useUTC ? 'getUTC' : 'get',
 		SET = useUTC ? 'setUTC' : 'set';

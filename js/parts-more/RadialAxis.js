@@ -120,7 +120,7 @@ var radialAxisMixin = {
 	 */
 	getLinePath: function (lineWidth, radius) {
 		var center = this.center;
-		radius = pick(radius, center[2] / 2 - this.offset);
+		radius = Highcharts.pick(radius, center[2] / 2 - this.offset);
 		
 		return this.chart.renderer.symbols.arc(
 			this.left + center[0],
@@ -197,7 +197,7 @@ var radialAxisMixin = {
 			}
 			
 			// Axis len is used to lay out the ticks
-			this.len = this.width = this.height = this.center[2] * pick(this.sector, 1) / 2;
+			this.len = this.width = this.height = this.center[2] * Highcharts.pick(this.sector, 1) / 2;
 
 
 		}
@@ -210,7 +210,7 @@ var radialAxisMixin = {
 	getPosition: function (value, length) {
 		return this.postTranslate(
 			this.isCircular ? this.translate(value) : 0, // #2848
-			pick(this.isCircular ? length : this.translate(value), this.center[2] / 2) - this.offset
+			Highcharts.pick(this.isCircular ? length : this.translate(value), this.center[2] / 2) - this.offset
 		);		
 	},
 	
@@ -236,6 +236,7 @@ var radialAxisMixin = {
 	 */
 	getPlotBandPath: function (from, to, options) {
 		var center = this.center,
+			pick = Highcharts.pick,
 			startAngleRad = this.startAngleRad,
 			fullRadius = center[2] / 2,
 			radii = [
@@ -433,7 +434,7 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		// given in degrees relative to top, while internal computations are
 		// in radians relative to right (like SVG).
 		this.startAngleRad = startAngleRad = (paneOptions.startAngle - 90) * Math.PI / 180;
-		this.endAngleRad = endAngleRad = (pick(paneOptions.endAngle, paneOptions.startAngle + 360)  - 90) * Math.PI / 180;
+		this.endAngleRad = endAngleRad = (Highcharts.pick(paneOptions.endAngle, paneOptions.startAngle + 360)  - 90) * Math.PI / 180;
 		this.offset = options.offset || 0;
 		
 		this.isCircular = isCircular;
@@ -470,7 +471,7 @@ wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, label
 		angle = ((axis.translate(this.pos) + axis.startAngleRad + Math.PI / 2) / Math.PI * 180) % 360;
 
 	if (axis.isRadial) {
-		ret = axis.getPosition(this.pos, (axis.center[2] / 2) + pick(labelOptions.distance, -25));
+		ret = axis.getPosition(this.pos, (axis.center[2] / 2) + Highcharts.pick(labelOptions.distance, -25));
 		
 		// Automatically rotated
 		if (labelOptions.rotation === 'auto') {

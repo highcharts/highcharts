@@ -125,7 +125,7 @@ var ColumnSeries = extendClass(Series, {
 			optionPointWidth = options.pointWidth,
 			pointPadding = Highcharts.defined(optionPointWidth) ? (pointOffsetWidth - optionPointWidth) / 2 :
 				pointOffsetWidth * options.pointPadding,
-			pointWidth = pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding), // exact point width, used in polar charts
+			pointWidth = Highcharts.pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding), // exact point width, used in polar charts
 			colIndex = (reversedXAxis ? 
 				columnCount - (series.columnIndex || 0) : // #1251
 				series.columnIndex) || 0,
@@ -147,6 +147,7 @@ var ColumnSeries = extendClass(Series, {
 	translate: function () {
 		var series = this,
 			chart = series.chart,
+			pick = Highcharts.pick,
 			options = series.options,
 			borderWidth = series.borderWidth = pick(
 				options.borderWidth, 

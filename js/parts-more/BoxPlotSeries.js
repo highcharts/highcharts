@@ -83,6 +83,7 @@ Highcharts.seriesTypes.boxplot = extendClass(Highcharts.seriesTypes.column, {
 			options = series.options,
 			chart = series.chart,
 			renderer = chart.renderer,
+			pick = Highcharts.pick,
 			pointAttr,
 			q1Plot,
 			q3Plot,

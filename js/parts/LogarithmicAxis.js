@@ -71,7 +71,7 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 			tickPixelIntervalOption = options.tickPixelInterval / (minor ? 5 : 1),
 			totalPixelLength = minor ? axisLength / axis.tickPositions.length : axisLength;
 		
-		interval = pick(
+		interval = Highcharts.pick(
 			filteredTickIntervalOption,
 			axis._minorAutoInterval,
 			(realMax - realMin) * tickPixelIntervalOption / (totalPixelLength || 1)

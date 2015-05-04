@@ -46,7 +46,7 @@ Pointer.prototype = {
 
 		if (Highcharts.Tooltip && options.tooltip.enabled) {
 			chart.tooltip = new Tooltip(chart, options.tooltip);
-			this.followTouchMove = pick(options.tooltip.followTouchMove, true);
+			this.followTouchMove = Highcharts.pick(options.tooltip.followTouchMove, true);
 		}
 
 		this.setDOMEvents();
@@ -125,6 +125,7 @@ Pointer.prototype = {
 		var pointer = this,
 			chart = pointer.chart,
 			defined = Highcharts.defined,
+			pick = Highcharts.pick,
 			series = chart.series,
 			tooltip = chart.tooltip,
 			shared = tooltip ? tooltip.shared : false,
@@ -267,7 +268,7 @@ Pointer.prototype = {
 			if (hoverPoint) { // #2500
 				hoverPoint.setState(hoverPoint.state, true);
 				each(chart.axes, function (axis) {
-					if (pick(axis.options.crosshair && axis.options.crosshair.snap, true)) {
+					if (Highcharts.pick(axis.options.crosshair && axis.options.crosshair.snap, true)) {
 						axis.drawCrosshair(null, allowMove);
 					}  else {
 						axis.hideCrosshair();

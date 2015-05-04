@@ -14,7 +14,7 @@ Highcharts.extend(Chart.prototype, {
 				this.handler.call(chart); 
 			};
 
-		if (pick(options.enableButtons, options.enabled) && !chart.renderer.forExport) {
+		if (Highcharts.pick(options.enableButtons, options.enabled) && !chart.renderer.forExport) {
 			for (n in buttons) {
 				if (buttons.hasOwnProperty(n)) {
 					buttonOptions = Highcharts.merge(options.buttonOptions, buttons[n]);
@@ -88,6 +88,7 @@ Highcharts.extend(Chart.prototype, {
 		var chart = this,
 			xAxis = chart.xAxis[0],
 			xRange = xAxis.max - xAxis.min,
+			pick = Highcharts.pick,
 			centerX = pick(centerXArg, xAxis.min + xRange / 2),
 			newXRange = xRange * howMuch,
 			yAxis = chart.yAxis[0],
@@ -155,6 +156,7 @@ Highcharts.extend(Chart.prototype, {
  */
 wrap(Chart.prototype, 'render', function (proceed) {
 	var chart = this,
+		pick = Highcharts.pick,
 		mapNavigation = chart.options.mapNavigation;
 
 	// Render the plus and minus buttons. Doing this before the shapes makes getBBox much quicker, at least in Chrome.

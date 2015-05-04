@@ -56,7 +56,7 @@ var PiePoint = extendClass(Point, {
 
 		Highcharts.extend(point, {
 			visible: point.visible !== false,
-			name: pick(point.name, 'Slice')
+			name: Highcharts.pick(point.name, 'Slice')
 		});
 
 		// add event listener for select
@@ -123,7 +123,7 @@ var PiePoint = extendClass(Point, {
 		setAnimation(animation, chart);
 
 		// redraw is true by default
-		redraw = pick(redraw, true);
+		redraw = Highcharts.pick(redraw, true);
 
 		// if called without an argument, toggle
 		point.sliced = point.options.sliced = sliced = Highcharts.defined(sliced) ? sliced : !point.sliced;
@@ -219,7 +219,7 @@ var PieSeries = {
 		Series.prototype.setData.call(this, data, false, animation, updatePoints);
 		this.processData();
 		this.generatePoints();
-		if (pick(redraw, true)) {
+		if (Highcharts.pick(redraw, true)) {
 			this.chart.redraw(animation);
 		} 
 	},
@@ -286,7 +286,7 @@ var PieSeries = {
 			angle,
 			startAngle = options.startAngle || 0,
 			startAngleRad = series.startAngleRad = Math.PI / 180 * (startAngle - 90),
-			endAngleRad = series.endAngleRad = Math.PI / 180 * ((pick(options.endAngle, startAngle + 360)) - 90),
+			endAngleRad = series.endAngleRad = Math.PI / 180 * ((Highcharts.pick(options.endAngle, startAngle + 360)) - 90),
 			circ = endAngleRad - startAngleRad, //2 * Math.PI,
 			points = series.points,
 			radiusX, // the x component of the radius vector for a given point

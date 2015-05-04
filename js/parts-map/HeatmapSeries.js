@@ -48,7 +48,7 @@ Highcharts.seriesTypes.heatmap = extendClass(Highcharts.seriesTypes.scatter, Hig
 		Highcharts.seriesTypes.scatter.prototype.init.apply(this, arguments);
 
 		options = this.options;
-		this.pointRange = options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
+		this.pointRange = options.pointRange = Highcharts.pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
 		this.yAxis.axisPointRange = options.rowsize || 1; // general point range
 	},
 	translate: function () {

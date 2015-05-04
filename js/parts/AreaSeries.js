@@ -126,7 +126,7 @@ var AreaSeries = extendClass(Series, {
 			// splines and with series with different extremes
 			for (i = segment.length - 1; i >= 0; i--) {
 
-				yBottom = pick(segment[i].yBottom, translatedThreshold);
+				yBottom = Highcharts.pick(segment[i].yBottom, translatedThreshold);
 			
 				// step line?
 				if (i < segment.length - 1 && options.step) {
@@ -176,6 +176,7 @@ var AreaSeries = extendClass(Series, {
 			areaPath = this.areaPath,
 			options = this.options,
 			zones = this.zones,
+			pick = Highcharts.pick,
 			props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
 		
 		each(zones, function (threshold, i) {

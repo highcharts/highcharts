@@ -378,7 +378,7 @@
 							{
 								start: start,
 								end: start + point.pointWidth,
-								innerR: len - pick(point.yBottom, len)
+								innerR: len - Highcharts.pick(point.yBottom, len)
 							}
 						)
 					};

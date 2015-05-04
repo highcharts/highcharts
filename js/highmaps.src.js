@@ -236,7 +236,7 @@ Highcharts.splat = function (obj) {
 /**
  * Return the first value that is defined. Like MooTools' $.pick.
  */
-var pick = Highcharts.pick = function () {
+Highcharts.pick = function () {
 	var args = arguments,
 		i,
 		arg,
@@ -343,7 +343,7 @@ Highcharts.dateFormat = function (format, timestamp, capitalize) {
 	if (!Highcharts.defined(timestamp) || isNaN(timestamp)) {
 		return 'Invalid date';
 	}
-	format = pick(format, '%Y-%m-%d %H:%M:%S');
+	format = Highcharts.pick(format, '%Y-%m-%d %H:%M:%S');
 
 	var d = Highcharts.Date,
 		date = new d(timestamp - getTZOffset(timestamp)),
@@ -498,7 +498,7 @@ function normalizeTickInterval(interval, multiples, magnitude, allowDecimals, pr
 		retInterval = interval;
 
 	// round to a tenfold of 1, 2, 2.5 or 5
-	magnitude = pick(magnitude, 1);
+	magnitude = Highcharts.pick(magnitude, 1);
 	normalized = interval / magnitude;
 
 	// multiples for a linear scale
@@ -661,7 +661,7 @@ function correctFloat(num) {
  * @param {Object} chart
  */
 function setAnimation(animation, chart) {
-	Highcharts.globalAnimation = pick(animation, chart.animation);
+	Highcharts.globalAnimation = Highcharts.pick(animation, chart.animation);
 }
 
 /**
@@ -1521,6 +1521,7 @@ setTimeMethods();
 function setTimeMethods() {
 	var globalOptions = Highcharts.defaultOptions.global,
 		hcD,
+		pick = Highcharts.pick,
 		useUTC = globalOptions.useUTC,
 		GET = useUTC ? 'getUTC' : 'get',
 		SET = useUTC ? 'setUTC' : 'set';
@@ -1735,7 +1736,7 @@ SVGElement.prototype = {
 	 * @param {Function} complete Function to perform at the end of animation
 	 */
 	animate: function (params, options, complete) {
-		var animOptions = pick(options, Highcharts.globalAnimation, true);
+		var animOptions = Highcharts.pick(options, Highcharts.globalAnimation, true);
 		stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
 		if (animOptions) {
 			animOptions = Highcharts.merge(animOptions, {}); //#2625
@@ -2056,7 +2057,7 @@ SVGElement.prototype = {
 		var wrapper = this;
 
 		each(['x', 'y', 'r', 'start', 'end', 'width', 'height', 'innerR', 'anchorX', 'anchorY'], function (key) {
-			wrapper[key] = pick(hash[key], wrapper[key]);
+			wrapper[key] = Highcharts.pick(hash[key], wrapper[key]);
 		});
 
 		wrapper.attr({
@@ -2260,6 +2261,7 @@ SVGElement.prototype = {
 			rotation = wrapper.rotation,
 			element = wrapper.element,
 			defined = Highcharts.defined,
+			pick = Highcharts.pick,
 			transform;
 
 		// flipping affects translate as adjustment for flipping around the group's axis
@@ -2341,7 +2343,7 @@ SVGElement.prototype = {
 			alignTo = this.alignTo;
 		}
 
-		box = pick(box, renderer[alignTo], renderer);
+		box = Highcharts.pick(box, renderer[alignTo], renderer);
 
 		// Assign variables
 		align = alignOptions.align;
@@ -2649,6 +2651,7 @@ SVGElement.prototype = {
 	shadow: function (shadowOptions, group, cutOff) {
 		var shadows = [],
 			attr = Highcharts.attr,
+			pick = Highcharts.pick,
 			i,
 			shadow,
 			element = this.element,
@@ -2709,7 +2712,7 @@ SVGElement.prototype = {
 	 * for animation.
 	 */
 	_defaultGetter: function (key) {
-		var ret = pick(this[key], this.element ? this.element.getAttribute(key) : null, 0);
+		var ret = Highcharts.pick(this[key], this.element ? this.element.getAttribute(key) : null, 0);
 
 		if (/^[\-0-9\.]+$/.test(ret)) { // is numerical
 			ret = parseFloat(ret);
@@ -2766,7 +2769,7 @@ SVGElement.prototype = {
 			titleNode = document.createElementNS(this.SVG_NS, 'title');
 			this.element.appendChild(titleNode);
 		}
-		titleNode.textContent = (String(pick(value), '')).replace(/<[^>]*>/g, ''); // #3276 #3895
+		titleNode.textContent = (String(Highcharts.pick(value), '')).replace(/<[^>]*>/g, ''); // #3276 #3895
 	},
 	textSetter: function (value) {
 		if (value !== this.textStr) {
@@ -3032,7 +3035,7 @@ SVGRenderer.prototype = {
 		var textNode = wrapper.element,
 			renderer = this,
 			forExport = renderer.forExport,
-			textStr = pick(wrapper.textStr, '').toString(),
+			textStr = Highcharts.pick(wrapper.textStr, '').toString(),
 			hasMarkup = textStr.indexOf('<') !== -1,
 			lines,
 			childNodes = textNode.childNodes,
@@ -3571,7 +3574,7 @@ SVGRenderer.prototype = {
 		renderer.width = width;
 		renderer.height = height;
 
-		renderer.boxWrapper[pick(animate, true) ? 'animate' : 'attr']({
+		renderer.boxWrapper[Highcharts.pick(animate, true) ? 'animate' : 'attr']({
 			width: width,
 			height: height
 		});
@@ -4406,7 +4409,7 @@ Highcharts.extend(SVGElement.prototype, {
 					wrapper.setSpanRotation(rotation, alignCorrection, baseline);
 				}
 
-				width = pick(wrapper.elemWidth, elem.offsetWidth);
+				width = Highcharts.pick(wrapper.elemWidth, elem.offsetWidth);
 
 				// Update textWidth
 				if (width > textWidth && /[ \-]/.test(elem.textContent || elem.innerText)) { // #983, #1254
@@ -4717,7 +4720,7 @@ VMLElement = {
 		var deg2rad = Highcharts.deg2rad,
 			costheta = rotation ? Math.cos(rotation * deg2rad) : 1,
 			sintheta = rotation ? Math.sin(rotation * deg2rad) : 0,
-			height = pick(this.elemHeight, this.element.offsetHeight),
+			height = Highcharts.pick(this.elemHeight, this.element.offsetHeight),
 			quad,
 			nonLeft = align && align !== 'left';
 
@@ -4893,6 +4896,7 @@ VMLElement = {
 			element = this.element,
 			renderer = this.renderer,
 			pInt = Highcharts.pInt,
+			pick = Highcharts.pick,
 			shadow,
 			elemStyle = element.style,
 			markup,
@@ -5767,7 +5771,7 @@ Tick.prototype = {
 			isFirst = pos === tickPositions[0],
 			isLast = pos === tickPositions[tickPositions.length - 1],
 			value = categories ?
-				pick(categories[pos], names[pos], pos) :
+				Highcharts.pick(categories[pos], names[pos], pos) :
 				pos,
 			label = tick.label,
 			tickPositionInfo = tickPositions.info,
@@ -5836,6 +5840,7 @@ Tick.prototype = {
 	handleOverflow: function (xy) {
 		var axis = this.axis,
 			deg2rad = Highcharts.deg2rad,
+			pick = Highcharts.pick,
 			pxPos = xy.x,
 			chartWidth = axis.chart.chartWidth,
 			spacing = axis.chart.spacing,
@@ -5918,7 +5923,7 @@ Tick.prototype = {
 			reversed = axis.reversed,
 			staggerLines = axis.staggerLines,
 			rotCorr = axis.tickRotCorr || { x: 0, y: 0 },
-			yOffset = pick(labelOptions.y, rotCorr.y + (axis.side === 2 ? 8 : -(label.getBBox().height / 2))),
+			yOffset = Highcharts.pick(labelOptions.y, rotCorr.y + (axis.side === 2 ? 8 : -(label.getBBox().height / 2))),
 			line;
 
 		x = x + labelOptions.x + rotCorr.x - (tickmarkOffset && horiz ?
@@ -5964,6 +5969,7 @@ Tick.prototype = {
 			options = axis.options,
 			chart = axis.chart,
 			renderer = chart.renderer,
+			pick = Highcharts.pick,
 			horiz = axis.horiz,
 			type = tick.type,
 			label = tick.label,
@@ -6303,7 +6309,8 @@ Axis.prototype = {
 
 
 		var isXAxis = userOptions.isX,
-			axis = this;
+			axis = this,
+			pick = Highcharts.pick;
 
 		// Flag, is the axis horizontal
 		axis.horiz = chart.inverted ? !isXAxis : isXAxis;
@@ -6527,7 +6534,8 @@ Axis.prototype = {
 	getSeriesExtremes: function () {
 		var axis = this,
 			chart = axis.chart,
-			defined = Highcharts.defined;
+			defined = Highcharts.defined,
+			pick = Highcharts.pick;
 
 		axis.hasVisibleSeries = false;
 
@@ -6706,7 +6714,7 @@ Axis.prototype = {
 				return x;
 			};
 
-		translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
+		translatedValue = Highcharts.pick(translatedValue, axis.translate(value, null, null, old));
 		x1 = x2 = Math.round(translatedValue + transB);
 		y1 = y2 = Math.round(cHeight - translatedValue - transB);
 
@@ -6820,6 +6828,7 @@ Axis.prototype = {
 	adjustForMinRange: function () {
 		var axis = this,
 			defined = Highcharts.defined,
+			pick = Highcharts.pick,
 			options = axis.options,
 			min = axis.min,
 			max = axis.max,
@@ -6985,6 +6994,7 @@ Axis.prototype = {
 			options = axis.options,
 			isNumber = Highcharts.isNumber,
 			log2lin = Highcharts.log2lin,
+			pick = Highcharts.pick,
 			isLog = axis.isLog,
 			isDatetimeAxis = axis.isDatetimeAxis,
 			isXAxis = axis.isXAxis,
@@ -7411,7 +7421,7 @@ Axis.prototype = {
 		var axis = this,
 			chart = axis.chart;
 
-		redraw = pick(redraw, true); // defaults to true
+		redraw = Highcharts.pick(redraw, true); // defaults to true
 
 		each(axis.series, function (serie) {
 			delete serie.kdTree;
@@ -7448,6 +7458,7 @@ Axis.prototype = {
 		var dataMin = this.dataMin,
 			dataMax = this.dataMax,
 			defined = Highcharts.defined,
+			pick = Highcharts.pick,
 			options = this.options;
 
 		// Prevent pinch zooming out of range. Check for defined is for #1946. #1734.
@@ -7483,6 +7494,7 @@ Axis.prototype = {
 			offsetLeft = options.offsetLeft || 0,
 			offsetRight = options.offsetRight || 0,
 			horiz = this.horiz,
+			pick = Highcharts.pick,
 			width = pick(options.width, chart.plotWidth - offsetLeft + offsetRight),
 			height = pick(options.height, chart.plotHeight),
 			top = pick(options.top, chart.plotTop),
@@ -7555,7 +7567,7 @@ Axis.prototype = {
 	 */
 	autoLabelAlign: function (rotation) {
 		var ret,
-			angle = (pick(rotation, 0) - (this.side * 90) + 720) % 360;
+			angle = (Highcharts.pick(rotation, 0) - (this.side * 90) + 720) % 360;
 
 		if (angle > 15 && angle < 165) {
 			ret = 'right';
@@ -7597,7 +7609,7 @@ Axis.prototype = {
 		if (horiz) {
 			autoRotation = Highcharts.defined(rotationOption) ? 
 				[rotationOption] :
-				slotSize < pick(labelOptions.autoRotationLimit, 80) && !labelOptions.staggerLines && !labelOptions.step && labelOptions.autoRotation; // docs: API and demo created, enable with "since".
+				slotSize < Highcharts.pick(labelOptions.autoRotationLimit, 80) && !labelOptions.staggerLines && !labelOptions.step && labelOptions.autoRotation; // docs: API and demo created, enable with "since".
 
 			if (autoRotation) {
 
@@ -7730,6 +7742,7 @@ Axis.prototype = {
 		var axis = this,
 			chart = axis.chart,
 			defined = Highcharts.defined,
+			pick = Highcharts.pick,
 			renderer = chart.renderer,
 			options = axis.options,
 			tickPositions = axis.tickPositions,
@@ -8202,6 +8215,7 @@ Axis.prototype = {
 			options = this.crosshair,
 			animation = options.animation,
 			defined = Highcharts.defined,
+			pick = Highcharts.pick,
 			pos,
 			attribs,
 			categorized;
@@ -8341,7 +8355,7 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 			tickPixelIntervalOption = options.tickPixelInterval / (minor ? 5 : 1),
 			totalPixelLength = minor ? axisLength / axis.tickPositions.length : axisLength;
 		
-		interval = pick(
+		interval = Highcharts.pick(
 			filteredTickIntervalOption,
 			axis._minorAutoInterval,
 			(realMax - realMin) * tickPixelIntervalOption / (totalPixelLength || 1)
@@ -8497,7 +8511,7 @@ Tooltip.prototype = {
 			this.hideTimer = setTimeout(function () {
 				tooltip.label.fadeOut();
 				tooltip.isHidden = true;
-			}, pick(delay, this.options.hideDelay, 500));
+			}, Highcharts.pick(delay, this.options.hideDelay, 500));
 
 			// hide previous hoverPoints and set new
 			if (hoverPoints) {
@@ -8579,7 +8593,7 @@ Tooltip.prototype = {
 			first = ['y', chart.chartHeight, boxHeight, point.plotY + chart.plotTop],
 			second = ['x', chart.chartWidth, boxWidth, point.plotX + chart.plotLeft],
 			// The far side is right or bottom
-			preferFarSide = pick(point.ttBelow, (chart.inverted && !point.negative) || (!chart.inverted && point.negative)),
+			preferFarSide = Highcharts.pick(point.ttBelow, (chart.inverted && !point.negative) || (!chart.inverted && point.negative)),
 			/**
 			 * Handle the preferred dimension. When the preferred dimension is tooltip
 			 * on top or bottom of the point, it will look for space there.
@@ -8740,7 +8754,7 @@ Tooltip.prototype = {
 
 		// register the current series
 		currentSeries = point.series;
-		this.distance = pick(currentSeries.tooltipOptions.distance, 16);
+		this.distance = Highcharts.pick(currentSeries.tooltipOptions.distance, 16);
 
 		// update the inner HTML
 		if (text === false) {
@@ -8950,7 +8964,7 @@ Pointer.prototype = {
 
 		if (Highcharts.Tooltip && options.tooltip.enabled) {
 			chart.tooltip = new Tooltip(chart, options.tooltip);
-			this.followTouchMove = pick(options.tooltip.followTouchMove, true);
+			this.followTouchMove = Highcharts.pick(options.tooltip.followTouchMove, true);
 		}
 
 		this.setDOMEvents();
@@ -9029,6 +9043,7 @@ Pointer.prototype = {
 		var pointer = this,
 			chart = pointer.chart,
 			defined = Highcharts.defined,
+			pick = Highcharts.pick,
 			series = chart.series,
 			tooltip = chart.tooltip,
 			shared = tooltip ? tooltip.shared : false,
@@ -9171,7 +9186,7 @@ Pointer.prototype = {
 			if (hoverPoint) { // #2500
 				hoverPoint.setState(hoverPoint.state, true);
 				each(chart.axes, function (axis) {
-					if (pick(axis.options.crosshair && axis.options.crosshair.snap, true)) {
+					if (Highcharts.pick(axis.options.crosshair && axis.options.crosshair.snap, true)) {
 						axis.drawCrosshair(null, allowMove);
 					}  else {
 						axis.hideCrosshair();
@@ -9705,6 +9720,7 @@ Highcharts.extend(Highcharts.Pointer.prototype, {
 			hasZoom = self.hasZoom,
 			selectionMarker = self.selectionMarker,
 			transform = {},
+			pick = Highcharts.pick,
 			fireClickEvent = touchesLength === 1 && ((self.inClass(e.target, 'highcharts-tracker') && 
 				chart.runTrackerClick) || self.runChartClick),
 			clip = {};
@@ -9920,6 +9936,7 @@ Legend.prototype = {
 		var legend = this,
 			itemStyle = options.itemStyle,
 			padding,
+			pick = Highcharts.pick,
 			itemMarginTop = options.itemMarginTop || 0;
 	
 		this.options = options;
@@ -10134,7 +10151,7 @@ Legend.prototype = {
 			itemStyle = legend.itemStyle,
 			itemHiddenStyle = legend.itemHiddenStyle,
 			padding = legend.padding,
-			itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
+			itemDistance = horizontal ? Highcharts.pick(options.itemDistance, 20) : 0,
 			ltr = !options.rtl,
 			itemHeight,
 			widthOption = options.width,
@@ -10252,7 +10269,7 @@ Legend.prototype = {
 			var seriesOptions = series.options;
 
 			// Handle showInLegend. If the series is linked to another series, defaults to false.
-			if (!pick(seriesOptions.showInLegend, !Highcharts.defined(seriesOptions.linkedTo) ? undefined : false, true)) {
+			if (!Highcharts.pick(seriesOptions.showInLegend, !Highcharts.defined(seriesOptions.linkedTo) ? undefined : false, true)) {
 				return;
 			}
 
@@ -10293,7 +10310,7 @@ Legend.prototype = {
 						chart[marginNames[side]],
 						chart.legend[(side + 1) % 2 ? 'legendHeight' : 'legendWidth'] + 
 							[1, -1, -1, 1][side] * options[(side % 2) ? 'x' : 'y'] + 
-							pick(options.margin, 12) +
+							Highcharts.pick(options.margin, 12) +
 							spacing[side]
 					);
 				}
@@ -10439,6 +10456,7 @@ Legend.prototype = {
 		var legend = this,
 			chart = this.chart,
 			renderer = chart.renderer,
+			pick = Highcharts.pick,
 			options = this.options,
 			optionsY = options.y,
 			alignTop = options.verticalAlign === 'top',
@@ -10807,7 +10825,7 @@ Chart.prototype = {
 		chart.yAxis = [];
 
 		// Expose methods and variables
-		chart.animation = Highcharts.useCanVG ? false : pick(optionsChart.animation, true);
+		chart.animation = Highcharts.useCanVG ? false : Highcharts.pick(optionsChart.animation, true);
 		chart.pointCount = chart.colorCounter = chart.symbolCounter = 0;
 
 		chart.firstRender();
@@ -11112,7 +11130,7 @@ Chart.prototype = {
 
 		each(chart.series, function (series) {
 			if (series.options.stacking && (series.visible === true || chart.options.chart.ignoreHiddenSeries === false)) {
-				series.stackKey = series.type + pick(series.options.stack, '');
+				series.stackKey = series.type + Highcharts.pick(series.options.stack, '');
 			}
 		});
 	},	
@@ -11209,7 +11227,7 @@ Chart.prototype = {
 		if (!this.isDirtyBox && requiresDirtyBox) {
 			this.isDirtyBox = requiresDirtyBox;
 			// Redraw if necessary (#2719, #2744)		
-			if (this.hasRendered && pick(redraw, true) && this.isDirtyBox) {
+			if (this.hasRendered && Highcharts.pick(redraw, true) && this.isDirtyBox) {
 				this.redraw();
 			}
 		}
@@ -11235,7 +11253,7 @@ Chart.prototype = {
 		}
 		
 		chart.chartWidth = Math.max(0, widthOption || chart.containerWidth || 600); // #1393, 1460
-		chart.chartHeight = Math.max(0, pick(heightOption,
+		chart.chartHeight = Math.max(0, Highcharts.pick(heightOption,
 			// the offsetHeight of an empty container is 0 in standard browsers, but 19 in IE7:
 			chart.containerHeight > 19 ? chart.containerHeight : 400));
 	},
@@ -11628,7 +11646,7 @@ Chart.prototype = {
 			marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'];
 
 		each(marginNames, function (m, side) {
-			chart[m] = pick(chart.margin[side], chart.spacing[side]);
+			chart[m] = Highcharts.pick(chart.margin[side], chart.spacing[side]);
 		});
 		chart.axisOffset = [0, 0, 0, 0]; // top, right, bottom, left
 		chart.clipOffset = [0, 0, 0, 0];
@@ -12127,6 +12145,7 @@ Chart.prototype = {
 	*/
 	splashArray: function (target, options) {
 		var oVar = options[target],
+			pick = Highcharts.pick,
 			tArray = Highcharts.isObject(oVar) ? oVar : [oVar, oVar, oVar, oVar];
 
 		return [pick(options[target + 'Top'], tArray[0]),
@@ -12329,7 +12348,7 @@ Point.prototype = {
 		// Insert options for valueDecimals, valuePrefix, and valueSuffix
 		var series = this.series,
 			seriesTooltipOptions = series.tooltipOptions,
-			valueDecimals = pick(seriesTooltipOptions.valueDecimals, ''),
+			valueDecimals = Highcharts.pick(seriesTooltipOptions.valueDecimals, ''),
 			valuePrefix = seriesTooltipOptions.valuePrefix || '',
 			valueSuffix = seriesTooltipOptions.valueSuffix || '';
 
@@ -12414,6 +12433,7 @@ Series.prototype = {
 	parallelArrays: ['x', 'y'], // each point's x and y values are stored in this.xData and this.yData
 	init: function (chart, options) {
 		var series = this,
+			pick = Highcharts.pick,
 			eventType,
 			events,
 			chartSeries = chart.series,
@@ -12559,6 +12579,7 @@ Series.prototype = {
 			xIncrement = this.xIncrement,
 			date,
 			d = Highcharts.Date,
+			pick = Highcharts.pick,
 			pointInterval,
 			pointIntervalUnit = options.pointIntervalUnit;
 		
@@ -12740,6 +12761,7 @@ Series.prototype = {
 			dataLength,
 			options = series.options,
 			chart = series.chart,
+			pick = Highcharts.pick,
 			firstPoint = null,
 			xAxis = series.xAxis,
 			hasCategories = xAxis && !!xAxis.categories,
@@ -12950,7 +12972,7 @@ Series.prototype = {
 		var dataLength = xData.length,
 			cropStart = 0,
 			cropEnd = dataLength,
-			cropShoulder = pick(this.cropShoulder, 1), // line-type series need one point outside
+			cropShoulder = Highcharts.pick(this.cropShoulder, 1), // line-type series need one point outside
 			i;
 
 		// iterate up to find slice start
@@ -13147,7 +13169,7 @@ Series.prototype = {
 				yValue = stackValues[1];
 
 				if (yBottom === 0) {
-					yBottom = pick(threshold, yAxis.min);
+					yBottom = Highcharts.pick(threshold, yAxis.min);
 				}
 				if (yAxis.isLog && yBottom <= 0) { // #1200, #1232
 					yBottom = null;
@@ -13315,6 +13337,7 @@ Series.prototype = {
 			pointAttr,
 			points = series.points,
 			chart = series.chart,
+			pick = Highcharts.pick,
 			plotX,
 			plotY,
 			i,
@@ -13410,7 +13433,7 @@ Series.prototype = {
 
 		for (attr in conversion) {
 			option = conversion[attr];
-			obj[attr] = pick(options[option], base1[attr], base2[attr], base3[attr]);
+			obj[attr] = Highcharts.pick(options[option], base1[attr], base2[attr], base3[attr]);
 		}
 		return obj;
 	},
@@ -13787,6 +13810,7 @@ Series.prototype = {
 		var series = this,
 			chart = this.chart,
 			renderer = chart.renderer,
+			pick = Highcharts.pick,
 			zones = this.zones,
 			translatedFrom,
 			translatedTo,
@@ -13980,7 +14004,7 @@ Series.prototype = {
 			animation = options.animation,
 			// Animation doesn't work in IE8 quirks when the group div is hidden,
 			// and looks bad in other oldIE
-			animDuration = (animation && !!series.animate && chart.renderer.isSVG && pick(animation.duration, 500)) || 0,
+			animDuration = (animation && !!series.animate && chart.renderer.isSVG && Highcharts.pick(animation.duration, 500)) || 0,
 			visibility = series.visible ? 'visible' : 'hidden',
 			zIndex = options.zIndex,
 			hasRendered = series.hasRendered,
@@ -14080,6 +14104,7 @@ Series.prototype = {
 	redraw: function () {
 		var series = this,
 			chart = series.chart,
+			pick = Highcharts.pick,
 			wasDirtyData = series.isDirtyData, // cache it here as it is set to false in render, but used after
 			wasDirty = series.isDirty,
 			group = series.group,
@@ -14261,7 +14286,7 @@ Highcharts.extend(Chart.prototype, {
 			chart = this;
 
 		if (options) {
-			redraw = pick(redraw, true); // defaults to true
+			redraw = Highcharts.pick(redraw, true); // defaults to true
 
 			fireEvent(chart, 'addSeries', { options: options }, function () {
 				series = chart.initSeries(options);
@@ -14298,7 +14323,7 @@ Highcharts.extend(Chart.prototype, {
 		chartOptions[key] = Highcharts.splat(chartOptions[key] || {});
 		chartOptions[key].push(options);
 
-		if (pick(redraw, true)) {
+		if (Highcharts.pick(redraw, true)) {
 			this.redraw(animation);
 		}
 	},
@@ -14401,7 +14426,7 @@ Highcharts.extend(Point.prototype, {
 			seriesOptions = series.options,
 			names = series.xAxis && series.xAxis.names;
 
-		redraw = pick(redraw, true);
+		redraw = Highcharts.pick(redraw, true);
 
 		function update() {
 
@@ -14510,7 +14535,7 @@ Highcharts.extend(Series.prototype, {
 		}
 
 		// Optional redraw, defaults to true
-		redraw = pick(redraw, true);
+		redraw = Highcharts.pick(redraw, true);
 
 		// Get options and push the point to xData, yData and series.options. In series.generatePoints
 		// the Point instance will be created on demand and pushed to the series.data array.
@@ -14599,7 +14624,7 @@ Highcharts.extend(Series.prototype, {
 			};
 
 		setAnimation(animation, chart);
-		redraw = pick(redraw, true);
+		redraw = Highcharts.pick(redraw, true);
 
 		// Fire the event with a default handler of removing the point
 		if (point) {
@@ -14620,7 +14645,7 @@ Highcharts.extend(Series.prototype, {
 	remove: function (redraw, animation) {
 		var series = this,
 			chart = series.chart;
-		redraw = pick(redraw, true);
+		redraw = Highcharts.pick(redraw, true);
 
 		if (!series.isRemoving) {  /* prevent triggering native event in jQuery
 				(calling the remove function from the remove event) */
@@ -14695,7 +14720,7 @@ Highcharts.extend(Series.prototype, {
 
 		this.init(chart, newOptions);
 		chart.linkSeries(); // Links are lost in this.remove (#3028)
-		if (pick(redraw, true)) {
+		if (Highcharts.pick(redraw, true)) {
 			chart.redraw(false);
 		}
 	}
@@ -14718,7 +14743,7 @@ Highcharts.extend(Axis.prototype, {
 		this.init(chart, Highcharts.extend(newOptions, { events: undefined }));
 
 		chart.isDirtyBox = true;
-		if (pick(redraw, true)) {
+		if (Highcharts.pick(redraw, true)) {
 			chart.redraw();
 		}
 	},
@@ -14750,7 +14775,7 @@ Highcharts.extend(Axis.prototype, {
 		this.destroy();
 		chart.isDirtyBox = true;
 
-		if (pick(redraw, true)) {
+		if (Highcharts.pick(redraw, true)) {
 			chart.redraw();
 		}
 	},
@@ -14907,7 +14932,7 @@ var ColumnSeries = extendClass(Series, {
 			optionPointWidth = options.pointWidth,
 			pointPadding = Highcharts.defined(optionPointWidth) ? (pointOffsetWidth - optionPointWidth) / 2 :
 				pointOffsetWidth * options.pointPadding,
-			pointWidth = pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding), // exact point width, used in polar charts
+			pointWidth = Highcharts.pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding), // exact point width, used in polar charts
 			colIndex = (reversedXAxis ? 
 				columnCount - (series.columnIndex || 0) : // #1251
 				series.columnIndex) || 0,
@@ -14929,6 +14954,7 @@ var ColumnSeries = extendClass(Series, {
 	translate: function () {
 		var series = this,
 			chart = series.chart,
+			pick = Highcharts.pick,
 			options = series.options,
 			borderWidth = series.borderWidth = pick(
 				options.borderWidth, 
@@ -15185,6 +15211,7 @@ Series.prototype.drawDataLabels = function () {
 		points = series.points,
 		pointOptions,
 		generalOptions,
+		pick = Highcharts.pick,
 		hasRendered = series.hasRendered || 0,
 		str,
 		dataLabelsGroup,
@@ -15342,6 +15369,7 @@ Series.prototype.drawDataLabels = function () {
 Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, isNew) {
 	var chart = this.chart,
 		inverted = chart.inverted,
+		pick = Highcharts.pick,
 		plotX = pick(point.plotX, -999),
 		plotY = pick(point.plotY, -999),
 		bBox = dataLabel.getBBox(),
@@ -15482,6 +15510,7 @@ if (Highcharts.seriesTypes.pie) {
 			data = series.data,
 			point,
 			chart = series.chart,
+			pick = Highcharts.pick,
 			options = series.options.dataLabels,
 			connectorPadding = pick(options.connectorPadding, 10),
 			connectorWidth = pick(options.connectorWidth, 1),
@@ -15884,6 +15913,7 @@ if (Highcharts.seriesTypes.column) {
 	Highcharts.seriesTypes.column.prototype.alignDataLabel = function (point, dataLabel, options,  alignTo, isNew) {
 		var inverted = this.chart.inverted,
 			series = point.series,
+			pick = Highcharts.pick,
 			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
 			below = point.below || (point.plotY > pick(this.translatedThreshold, series.yAxis.len)),
 			inside = pick(options.inside, !!this.options.stacking); // draw it inside the box?
@@ -16039,6 +16069,7 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 	var isXAxis = this.isXAxis,
 		dataMin,
 		dataMax,
+		pick = Highcharts.pick,
 		xData = [],
 		useMapGeometry;
 
@@ -16405,6 +16436,7 @@ Highcharts.extend(ColorAxis.prototype, {
 			legendOptions = legend.options,
 			horiz = this.horiz,
 			box,
+			pick = Highcharts.pick,
 			width = pick(legendOptions.symbolWidth, horiz ? 200 : 12),
 			height = pick(legendOptions.symbolHeight, horiz ? 12 : 200),
 			labelPadding = pick(legendOptions.labelPadding, horiz ? 16 : 30),
@@ -16830,6 +16862,7 @@ Highcharts.seriesTypes.map = extendClass(Highcharts.seriesTypes.scatter, Highcha
 			minRange = MAX_VALUE,
 			xAxis = this.xAxis,
 			yAxis = this.yAxis,
+			pick = Highcharts.pick,
 			hasBox;
 		
 		// Find the bounding box
@@ -17483,7 +17516,7 @@ Highcharts.extend(Chart.prototype, {
 				this.handler.call(chart); 
 			};
 
-		if (pick(options.enableButtons, options.enabled) && !chart.renderer.forExport) {
+		if (Highcharts.pick(options.enableButtons, options.enabled) && !chart.renderer.forExport) {
 			for (n in buttons) {
 				if (buttons.hasOwnProperty(n)) {
 					buttonOptions = Highcharts.merge(options.buttonOptions, buttons[n]);
@@ -17557,6 +17590,7 @@ Highcharts.extend(Chart.prototype, {
 		var chart = this,
 			xAxis = chart.xAxis[0],
 			xRange = xAxis.max - xAxis.min,
+			pick = Highcharts.pick,
 			centerX = pick(centerXArg, xAxis.min + xRange / 2),
 			newXRange = xRange * howMuch,
 			yAxis = chart.yAxis[0],
@@ -17624,6 +17658,7 @@ Highcharts.extend(Chart.prototype, {
  */
 wrap(Chart.prototype, 'render', function (proceed) {
 	var chart = this,
+		pick = Highcharts.pick,
 		mapNavigation = chart.options.mapNavigation;
 
 	// Render the plus and minus buttons. Doing this before the shapes makes getBBox much quicker, at least in Chrome.
@@ -17703,7 +17738,7 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 	proceed.call(this, chart, options);
 
 	// Pinch status
-	if (pick(options.mapNavigation.enableTouchZoom, options.mapNavigation.enabled)) {
+	if (Highcharts.pick(options.mapNavigation.enableTouchZoom, options.mapNavigation.enabled)) {
 		this.pinchX = this.pinchHor = this.pinchY = this.pinchVert = this.hasZoom = true;
 	}
 });
@@ -17844,6 +17879,7 @@ Highcharts.seriesTypes.bubble = extendClass(Highcharts.seriesTypes.scatter, {
 	 */
 	applyOpacity: function (fill) {
 		var markerOptions = this.options.marker,
+			pick = Highcharts.pick,
 			fillOpacity = pick(markerOptions.fillOpacity, 0.5);
 		
 		// When called from Legend.colorizeItem, the fill isn't predefined
@@ -17998,6 +18034,7 @@ Axis.prototype.beforePadding = function () {
 	var axis = this,
 		axisLength = this.len,
 		chart = this.chart,
+		pick = Highcharts.pick,
 		pxMin = 0, 
 		pxMax = axisLength,
 		isXAxis = this.isXAxis,
@@ -18559,7 +18596,7 @@ Highcharts.seriesTypes.heatmap = extendClass(Highcharts.seriesTypes.scatter, Hig
 		Highcharts.seriesTypes.scatter.prototype.init.apply(this, arguments);
 
 		options = this.options;
-		this.pointRange = options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
+		this.pointRange = options.pointRange = Highcharts.pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
 		this.yAxis.axisPointRange = options.rowsize || 1; // general point range
 	},
 	translate: function () {
@@ -18928,7 +18965,7 @@ Highcharts.extend(Chart.prototype, {
 		// Redraw
 		if (hasZoomed) {
 			chart.redraw(
-				pick(chart.options.chart.animation, event && event.animation, chart.pointCount < 100) // animation
+				Highcharts.pick(chart.options.chart.animation, event && event.animation, chart.pointCount < 100) // animation
 			);
 		}
 	},
@@ -18993,7 +19030,7 @@ Highcharts.extend(Point.prototype, {
 			series = point.series,
 			chart = series.chart;
 
-		selected = pick(selected, !point.selected);
+		selected = Highcharts.pick(selected, !point.selected);
 
 		// fire the event with the defalut handler
 		point.firePointEvent(selected ? 'select' : 'unselect', { accumulate: accumulate }, function () {

@@ -204,7 +204,8 @@ Axis.prototype = {
 
 
 		var isXAxis = userOptions.isX,
-			axis = this;
+			axis = this,
+			pick = Highcharts.pick;
 
 		// Flag, is the axis horizontal
 		axis.horiz = chart.inverted ? !isXAxis : isXAxis;
@@ -428,7 +429,8 @@ Axis.prototype = {
 	getSeriesExtremes: function () {
 		var axis = this,
 			chart = axis.chart,
-			defined = Highcharts.defined;
+			defined = Highcharts.defined,
+			pick = Highcharts.pick;
 
 		axis.hasVisibleSeries = false;
 
@@ -607,7 +609,7 @@ Axis.prototype = {
 				return x;
 			};
 
-		translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
+		translatedValue = Highcharts.pick(translatedValue, axis.translate(value, null, null, old));
 		x1 = x2 = Math.round(translatedValue + transB);
 		y1 = y2 = Math.round(cHeight - translatedValue - transB);
 
@@ -721,6 +723,7 @@ Axis.prototype = {
 	adjustForMinRange: function () {
 		var axis = this,
 			defined = Highcharts.defined,
+			pick = Highcharts.pick,
 			options = axis.options,
 			min = axis.min,
 			max = axis.max,
@@ -886,6 +889,7 @@ Axis.prototype = {
 			options = axis.options,
 			isNumber = Highcharts.isNumber,
 			log2lin = Highcharts.log2lin,
+			pick = Highcharts.pick,
 			isLog = axis.isLog,
 			isDatetimeAxis = axis.isDatetimeAxis,
 			isXAxis = axis.isXAxis,
@@ -1312,7 +1316,7 @@ Axis.prototype = {
 		var axis = this,
 			chart = axis.chart;
 
-		redraw = pick(redraw, true); // defaults to true
+		redraw = Highcharts.pick(redraw, true); // defaults to true
 
 		each(axis.series, function (serie) {
 			delete serie.kdTree;
@@ -1349,6 +1353,7 @@ Axis.prototype = {
 		var dataMin = this.dataMin,
 			dataMax = this.dataMax,
 			defined = Highcharts.defined,
+			pick = Highcharts.pick,
 			options = this.options;
 
 		// Prevent pinch zooming out of range. Check for defined is for #1946. #1734.
@@ -1384,6 +1389,7 @@ Axis.prototype = {
 			offsetLeft = options.offsetLeft || 0,
 			offsetRight = options.offsetRight || 0,
 			horiz = this.horiz,
+			pick = Highcharts.pick,
 			width = pick(options.width, chart.plotWidth - offsetLeft + offsetRight),
 			height = pick(options.height, chart.plotHeight),
 			top = pick(options.top, chart.plotTop),
@@ -1456,7 +1462,7 @@ Axis.prototype = {
 	 */
 	autoLabelAlign: function (rotation) {
 		var ret,
-			angle = (pick(rotation, 0) - (this.side * 90) + 720) % 360;
+			angle = (Highcharts.pick(rotation, 0) - (this.side * 90) + 720) % 360;
 
 		if (angle > 15 && angle < 165) {
 			ret = 'right';
@@ -1498,7 +1504,7 @@ Axis.prototype = {
 		if (horiz) {
 			autoRotation = Highcharts.defined(rotationOption) ? 
 				[rotationOption] :
-				slotSize < pick(labelOptions.autoRotationLimit, 80) && !labelOptions.staggerLines && !labelOptions.step && labelOptions.autoRotation; // docs: API and demo created, enable with "since".
+				slotSize < Highcharts.pick(labelOptions.autoRotationLimit, 80) && !labelOptions.staggerLines && !labelOptions.step && labelOptions.autoRotation; // docs: API and demo created, enable with "since".
 
 			if (autoRotation) {
 
@@ -1631,6 +1637,7 @@ Axis.prototype = {
 		var axis = this,
 			chart = axis.chart,
 			defined = Highcharts.defined,
+			pick = Highcharts.pick,
 			renderer = chart.renderer,
 			options = axis.options,
 			tickPositions = axis.tickPositions,
@@ -2103,6 +2110,7 @@ Axis.prototype = {
 			options = this.crosshair,
 			animation = options.animation,
 			defined = Highcharts.defined,
+			pick = Highcharts.pick,
 			pos,
 			attribs,
 			categorized;

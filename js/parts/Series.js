@@ -37,6 +37,7 @@ Series.prototype = {
 	parallelArrays: ['x', 'y'], // each point's x and y values are stored in this.xData and this.yData
 	init: function (chart, options) {
 		var series = this,
+			pick = Highcharts.pick,
 			eventType,
 			events,
 			chartSeries = chart.series,
@@ -182,6 +183,7 @@ Series.prototype = {
 			xIncrement = this.xIncrement,
 			date,
 			d = Highcharts.Date,
+			pick = Highcharts.pick,
 			pointInterval,
 			pointIntervalUnit = options.pointIntervalUnit;
 		
@@ -363,6 +365,7 @@ Series.prototype = {
 			dataLength,
 			options = series.options,
 			chart = series.chart,
+			pick = Highcharts.pick,
 			firstPoint = null,
 			xAxis = series.xAxis,
 			hasCategories = xAxis && !!xAxis.categories,
@@ -573,7 +576,7 @@ Series.prototype = {
 		var dataLength = xData.length,
 			cropStart = 0,
 			cropEnd = dataLength,
-			cropShoulder = pick(this.cropShoulder, 1), // line-type series need one point outside
+			cropShoulder = Highcharts.pick(this.cropShoulder, 1), // line-type series need one point outside
 			i;
 
 		// iterate up to find slice start
@@ -770,7 +773,7 @@ Series.prototype = {
 				yValue = stackValues[1];
 
 				if (yBottom === 0) {
-					yBottom = pick(threshold, yAxis.min);
+					yBottom = Highcharts.pick(threshold, yAxis.min);
 				}
 				if (yAxis.isLog && yBottom <= 0) { // #1200, #1232
 					yBottom = null;
@@ -938,6 +941,7 @@ Series.prototype = {
 			pointAttr,
 			points = series.points,
 			chart = series.chart,
+			pick = Highcharts.pick,
 			plotX,
 			plotY,
 			i,
@@ -1033,7 +1037,7 @@ Series.prototype = {
 
 		for (attr in conversion) {
 			option = conversion[attr];
-			obj[attr] = pick(options[option], base1[attr], base2[attr], base3[attr]);
+			obj[attr] = Highcharts.pick(options[option], base1[attr], base2[attr], base3[attr]);
 		}
 		return obj;
 	},
@@ -1410,6 +1414,7 @@ Series.prototype = {
 		var series = this,
 			chart = this.chart,
 			renderer = chart.renderer,
+			pick = Highcharts.pick,
 			zones = this.zones,
 			translatedFrom,
 			translatedTo,
@@ -1603,7 +1608,7 @@ Series.prototype = {
 			animation = options.animation,
 			// Animation doesn't work in IE8 quirks when the group div is hidden,
 			// and looks bad in other oldIE
-			animDuration = (animation && !!series.animate && chart.renderer.isSVG && pick(animation.duration, 500)) || 0,
+			animDuration = (animation && !!series.animate && chart.renderer.isSVG && Highcharts.pick(animation.duration, 500)) || 0,
 			visibility = series.visible ? 'visible' : 'hidden',
 			zIndex = options.zIndex,
 			hasRendered = series.hasRendered,
@@ -1703,6 +1708,7 @@ Series.prototype = {
 	redraw: function () {
 		var series = this,
 			chart = series.chart,
+			pick = Highcharts.pick,
 			wasDirtyData = series.isDirtyData, // cache it here as it is set to false in render, but used after
 			wasDirty = series.isDirty,
 			group = series.group,

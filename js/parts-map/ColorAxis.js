@@ -278,6 +278,7 @@ Highcharts.extend(ColorAxis.prototype, {
 			legendOptions = legend.options,
 			horiz = this.horiz,
 			box,
+			pick = Highcharts.pick,
 			width = pick(legendOptions.symbolWidth, horiz ? 200 : 12),
 			height = pick(legendOptions.symbolHeight, horiz ? 12 : 200),
 			labelPadding = pick(legendOptions.labelPadding, horiz ? 16 : 30),

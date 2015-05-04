@@ -15,6 +15,7 @@ Legend.prototype = {
 		var legend = this,
 			itemStyle = options.itemStyle,
 			padding,
+			pick = Highcharts.pick,
 			itemMarginTop = options.itemMarginTop || 0;
 	
 		this.options = options;
@@ -229,7 +230,7 @@ Legend.prototype = {
 			itemStyle = legend.itemStyle,
 			itemHiddenStyle = legend.itemHiddenStyle,
 			padding = legend.padding,
-			itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
+			itemDistance = horizontal ? Highcharts.pick(options.itemDistance, 20) : 0,
 			ltr = !options.rtl,
 			itemHeight,
 			widthOption = options.width,
@@ -347,7 +348,7 @@ Legend.prototype = {
 			var seriesOptions = series.options;
 
 			// Handle showInLegend. If the series is linked to another series, defaults to false.
-			if (!pick(seriesOptions.showInLegend, !Highcharts.defined(seriesOptions.linkedTo) ? undefined : false, true)) {
+			if (!Highcharts.pick(seriesOptions.showInLegend, !Highcharts.defined(seriesOptions.linkedTo) ? undefined : false, true)) {
 				return;
 			}
 
@@ -388,7 +389,7 @@ Legend.prototype = {
 						chart[marginNames[side]],
 						chart.legend[(side + 1) % 2 ? 'legendHeight' : 'legendWidth'] + 
 							[1, -1, -1, 1][side] * options[(side % 2) ? 'x' : 'y'] + 
-							pick(options.margin, 12) +
+							Highcharts.pick(options.margin, 12) +
 							spacing[side]
 					);
 				}
@@ -534,6 +535,7 @@ Legend.prototype = {
 		var legend = this,
 			chart = this.chart,
 			renderer = chart.renderer,
+			pick = Highcharts.pick,
 			options = this.options,
 			optionsY = options.y,
 			alignTop = options.verticalAlign === 'top',

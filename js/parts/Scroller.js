@@ -266,6 +266,7 @@ Scroller.prototype = {
 		var scroller = this,
 			chart = scroller.chart,
 			renderer = chart.renderer,
+			pick = Highcharts.pick,
 			navigatorLeft,
 			navigatorWidth,
 			scrollerLeft,
@@ -874,7 +875,7 @@ Scroller.prototype = {
 			scroller.top = top = scroller.navigatorOptions.top ||
 				this.chartHeight - scroller.height - scroller.scrollbarHeight - this.spacing[2] -
 						(legendOptions.verticalAlign === 'bottom' && legendOptions.enabled && !legendOptions.floating ?
-							legend.legendHeight + pick(legendOptions.margin, 10) : 0);
+							legend.legendHeight + Highcharts.pick(legendOptions.margin, 10) : 0);
 
 			if (xAxis && yAxis) { // false if navigator is disabled (#904)
 

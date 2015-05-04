@@ -127,7 +127,7 @@ VMLElement = {
 		var deg2rad = Highcharts.deg2rad,
 			costheta = rotation ? Math.cos(rotation * deg2rad) : 1,
 			sintheta = rotation ? Math.sin(rotation * deg2rad) : 0,
-			height = pick(this.elemHeight, this.element.offsetHeight),
+			height = Highcharts.pick(this.elemHeight, this.element.offsetHeight),
 			quad,
 			nonLeft = align && align !== 'left';
 
@@ -303,6 +303,7 @@ VMLElement = {
 			element = this.element,
 			renderer = this.renderer,
 			pInt = Highcharts.pInt,
+			pick = Highcharts.pick,
 			shadow,
 			elemStyle = element.style,
 			markup,

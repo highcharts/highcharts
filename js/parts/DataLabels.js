@@ -10,6 +10,7 @@ Series.prototype.drawDataLabels = function () {
 		points = series.points,
 		pointOptions,
 		generalOptions,
+		pick = Highcharts.pick,
 		hasRendered = series.hasRendered || 0,
 		str,
 		dataLabelsGroup,
@@ -167,6 +168,7 @@ Series.prototype.drawDataLabels = function () {
 Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, isNew) {
 	var chart = this.chart,
 		inverted = chart.inverted,
+		pick = Highcharts.pick,
 		plotX = pick(point.plotX, -999),
 		plotY = pick(point.plotY, -999),
 		bBox = dataLabel.getBBox(),
@@ -307,6 +309,7 @@ if (Highcharts.seriesTypes.pie) {
 			data = series.data,
 			point,
 			chart = series.chart,
+			pick = Highcharts.pick,
 			options = series.options.dataLabels,
 			connectorPadding = pick(options.connectorPadding, 10),
 			connectorWidth = pick(options.connectorWidth, 1),
@@ -709,6 +712,7 @@ if (Highcharts.seriesTypes.column) {
 	Highcharts.seriesTypes.column.prototype.alignDataLabel = function (point, dataLabel, options,  alignTo, isNew) {
 		var inverted = this.chart.inverted,
 			series = point.series,
+			pick = Highcharts.pick,
 			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
 			below = point.below || (point.plotY > pick(this.translatedThreshold, series.yAxis.len)),
 			inside = pick(options.inside, !!this.options.stacking); // draw it inside the box?

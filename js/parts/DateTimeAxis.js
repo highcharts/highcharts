@@ -62,7 +62,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 		if (interval === timeUnits.week) {
 			// get start of current week, independent of count
 			minDate[d.hcSetDate](minDate[d.hcGetDate]() - minDate[d.hcGetDay]() +
-				pick(startOfWeek, 1));
+				Highcharts.pick(startOfWeek, 1));
 		}
 	
 	

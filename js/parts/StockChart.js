@@ -5,6 +5,7 @@ Highcharts.StockChart = function (options, callback) {
 	var seriesOptions = options.series, // to increase performance, don't merge the data 
 		opposite,
 		splat = Highcharts.splat,
+		pick = Highcharts.pick,
 
 		// Always disable startOnTick:true on the main axis when the navigator is enabled (#1090)
 		navigatorEnabled = pick(options.navigator && options.navigator.enabled, true),
@@ -219,7 +220,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 		}
 	});
 	
-	translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
+	translatedValue = Highcharts.pick(translatedValue, axis.translate(value, null, null, old));
 	
 	if (!isNaN(translatedValue)) {
 		if (axis.horiz) {
@@ -361,7 +362,7 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 			zIndex: 12,
 			height: horiz ? 16 : undefined,
 			fill: options.backgroundColor || (this.series[0] && this.series[0].color) || 'gray',
-			padding: pick(options.padding, 2),
+			padding: Highcharts.pick(options.padding, 2),
 			stroke: options.borderColor || null,
 			'stroke-width': options.borderWidth || 0
 		})
@@ -547,7 +548,7 @@ Axis.prototype.setCompare = function (compare, redraw) {
 		each(this.series, function (series) {
 			series.setCompare(compare);
 		});
-		if (pick(redraw, true)) {
+		if (Highcharts.pick(redraw, true)) {
 			this.chart.redraw();
 		}
 	}
@@ -562,7 +563,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 	
 	pointFormat = pointFormat.replace(
 		'{point.change}',
-		(point.change > 0 ? '+' : '') + Highcharts.numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
+		(point.change > 0 ? '+' : '') + Highcharts.numberFormat(point.change, Highcharts.pick(point.series.tooltipOptions.changeDecimals, 2))
 	); 
 	
 	return pointTooltipFormatter.apply(this, [pointFormat]);

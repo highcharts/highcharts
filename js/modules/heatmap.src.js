@@ -19,7 +19,6 @@ var Axis = Highcharts.Axis,
 	
 	each = Highcharts.each,
 	extendClass = Highcharts.extendClass,
-	pick = Highcharts.pick,
 	wrap = Highcharts.wrap;
 
 	
@@ -302,6 +301,7 @@ Highcharts.extend(ColorAxis.prototype, {
 			legendOptions = legend.options,
 			horiz = this.horiz,
 			box,
+			pick = Highcharts.pick,
 			width = pick(legendOptions.symbolWidth, horiz ? 200 : 12),
 			height = pick(legendOptions.symbolHeight, horiz ? 12 : 200),
 			labelPadding = pick(legendOptions.labelPadding, horiz ? 16 : 30),
@@ -592,7 +592,7 @@ Highcharts.seriesTypes.heatmap = extendClass(Highcharts.seriesTypes.scatter, Hig
 		Highcharts.seriesTypes.scatter.prototype.init.apply(this, arguments);
 
 		options = this.options;
-		this.pointRange = options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
+		this.pointRange = options.pointRange = Highcharts.pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
 		this.yAxis.axisPointRange = options.rowsize || 1; // general point range
 	},
 	translate: function () {

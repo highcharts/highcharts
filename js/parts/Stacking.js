@@ -3,7 +3,8 @@
  */
 function StackItem(axis, options, isNegative, x, stackOption) {
 	
-	var inverted = axis.chart.inverted;
+	var inverted = axis.chart.inverted,
+		pick = Highcharts.pick;
 
 	this.axis = axis;
 
@@ -111,7 +112,7 @@ StackItem.prototype = {
  */
 Axis.prototype.buildStacks = function () {
 	var series = this.series,
-		reversedStacks = pick(this.options.reversedStacks, true),
+		reversedStacks = Highcharts.pick(this.options.reversedStacks, true),
 		i = series.length;
 	if (!this.isXAxis) {
 		this.usePercentage = false;

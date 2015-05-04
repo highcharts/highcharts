@@ -105,6 +105,7 @@ Highcharts.extend(Highcharts.Pointer.prototype, {
 			hasZoom = self.hasZoom,
 			selectionMarker = self.selectionMarker,
 			transform = {},
+			pick = Highcharts.pick,
 			fireClickEvent = touchesLength === 1 && ((self.inClass(e.target, 'highcharts-tracker') && 
 				chart.runTrackerClick) || self.runChartClick),
 			clip = {};

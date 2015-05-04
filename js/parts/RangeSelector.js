@@ -73,6 +73,7 @@ RangeSelector.prototype = {
 		var rangeSelector = this,
 			selected = rangeSelector.selected,
 			chart = rangeSelector.chart,
+			pick = Highcharts.pick,
 			buttons = rangeSelector.buttons,
 			rangeOptions = rangeSelector.buttonOptions[i],
 			baseAxis = chart.xAxis[0],
@@ -515,6 +516,7 @@ RangeSelector.prototype = {
 
 		var rangeSelector = this,
 			chart = rangeSelector.chart,
+			pick = Highcharts.pick,
 			renderer = chart.renderer,
 			container = chart.container,
 			chartOptions = chart.options,
@@ -668,6 +670,7 @@ RangeSelector.prototype = {
  */
 Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
 	var fixedRange = this.chart && this.chart.fixedRange,
+		pick = Highcharts.pick,
 		newMin = pick(fixedMin, this.translate(pxMin, true)),
 		newMax = pick(fixedMax, this.translate(pxMax, true)),
 		changeRatio = fixedRange && (newMax - newMin) / fixedRange;

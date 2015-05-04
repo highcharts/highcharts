@@ -309,7 +309,7 @@ Highcharts.extend(Chart.prototype, {
 		// Redraw
 		if (hasZoomed) {
 			chart.redraw(
-				pick(chart.options.chart.animation, event && event.animation, chart.pointCount < 100) // animation
+				Highcharts.pick(chart.options.chart.animation, event && event.animation, chart.pointCount < 100) // animation
 			);
 		}
 	},
@@ -374,7 +374,7 @@ Highcharts.extend(Point.prototype, {
 			series = point.series,
 			chart = series.chart;
 
-		selected = pick(selected, !point.selected);
+		selected = Highcharts.pick(selected, !point.selected);
 
 		// fire the event with the defalut handler
 		point.firePointEvent(selected ? 'select' : 'unselect', { accumulate: accumulate }, function () {

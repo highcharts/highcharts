@@ -6,6 +6,7 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 	var isXAxis = this.isXAxis,
 		dataMin,
 		dataMax,
+		pick = Highcharts.pick,
 		xData = [],
 		useMapGeometry;
 

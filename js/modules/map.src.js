@@ -26,7 +26,6 @@ var Axis = Highcharts.Axis,
 	each = Highcharts.each,
 	error = Highcharts.error,
 	extendClass = Highcharts.extendClass,
-	pick = Highcharts.pick,
 	defaultOptions = Highcharts.getOptions(),
 	defaultPlotOptions = defaultOptions.plotOptions,
 	wrap = Highcharts.wrap;/**
@@ -37,6 +36,7 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 	var isXAxis = this.isXAxis,
 		dataMin,
 		dataMax,
+		pick = Highcharts.pick,
 		xData = [],
 		useMapGeometry;
 
@@ -403,6 +403,7 @@ Highcharts.extend(ColorAxis.prototype, {
 			legendOptions = legend.options,
 			horiz = this.horiz,
 			box,
+			pick = Highcharts.pick,
 			width = pick(legendOptions.symbolWidth, horiz ? 200 : 12),
 			height = pick(legendOptions.symbolHeight, horiz ? 12 : 200),
 			labelPadding = pick(legendOptions.labelPadding, horiz ? 16 : 30),
@@ -659,7 +660,7 @@ Highcharts.extend(Chart.prototype, {
 				this.handler.call(chart); 
 			};
 
-		if (pick(options.enableButtons, options.enabled) && !chart.renderer.forExport) {
+		if (Highcharts.pick(options.enableButtons, options.enabled) && !chart.renderer.forExport) {
 			for (n in buttons) {
 				if (buttons.hasOwnProperty(n)) {
 					buttonOptions = Highcharts.merge(options.buttonOptions, buttons[n]);
@@ -733,6 +734,7 @@ Highcharts.extend(Chart.prototype, {
 		var chart = this,
 			xAxis = chart.xAxis[0],
 			xRange = xAxis.max - xAxis.min,
+			pick = Highcharts.pick,
 			centerX = pick(centerXArg, xAxis.min + xRange / 2),
 			newXRange = xRange * howMuch,
 			yAxis = chart.yAxis[0],
@@ -800,6 +802,7 @@ Highcharts.extend(Chart.prototype, {
  */
 wrap(Chart.prototype, 'render', function (proceed) {
 	var chart = this,
+		pick = Highcharts.pick,
 		mapNavigation = chart.options.mapNavigation;
 
 	// Render the plus and minus buttons. Doing this before the shapes makes getBBox much quicker, at least in Chrome.
@@ -879,7 +882,7 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 	proceed.call(this, chart, options);
 
 	// Pinch status
-	if (pick(options.mapNavigation.enableTouchZoom, options.mapNavigation.enabled)) {
+	if (Highcharts.pick(options.mapNavigation.enableTouchZoom, options.mapNavigation.enabled)) {
 		this.pinchX = this.pinchHor = this.pinchY = this.pinchVert = this.hasZoom = true;
 	}
 });
@@ -1090,6 +1093,7 @@ Highcharts.seriesTypes.map = extendClass(Highcharts.seriesTypes.scatter, Highcha
 			minRange = MAX_VALUE,
 			xAxis = this.xAxis,
 			yAxis = this.yAxis,
+			pick = Highcharts.pick,
 			hasBox;
 		
 		// Find the bounding box
@@ -1760,7 +1764,7 @@ Highcharts.seriesTypes.heatmap = extendClass(Highcharts.seriesTypes.scatter, Hig
 		Highcharts.seriesTypes.scatter.prototype.init.apply(this, arguments);
 
 		options = this.options;
-		this.pointRange = options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
+		this.pointRange = options.pointRange = Highcharts.pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
 		this.yAxis.axisPointRange = options.rowsize || 1; // general point range
 	},
 	translate: function () {

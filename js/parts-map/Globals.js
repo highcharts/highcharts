@@ -14,7 +14,6 @@ var Axis = Highcharts.Axis,
 	each = Highcharts.each,
 	error = Highcharts.error,
 	extendClass = Highcharts.extendClass,
-	pick = Highcharts.pick,
 	defaultOptions = Highcharts.getOptions(),
 	defaultPlotOptions = defaultOptions.plotOptions,
 	wrap = Highcharts.wrap;

@@ -183,6 +183,7 @@ Highcharts.seriesTypes.map = extendClass(Highcharts.seriesTypes.scatter, Highcha
 			minRange = MAX_VALUE,
 			xAxis = this.xAxis,
 			yAxis = this.yAxis,
+			pick = Highcharts.pick,
 			hasBox;
 		
 		// Find the bounding box

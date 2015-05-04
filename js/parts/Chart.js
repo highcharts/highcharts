@@ -104,7 +104,7 @@ Chart.prototype = {
 		chart.yAxis = [];
 
 		// Expose methods and variables
-		chart.animation = Highcharts.useCanVG ? false : pick(optionsChart.animation, true);
+		chart.animation = Highcharts.useCanVG ? false : Highcharts.pick(optionsChart.animation, true);
 		chart.pointCount = chart.colorCounter = chart.symbolCounter = 0;
 
 		chart.firstRender();
@@ -409,7 +409,7 @@ Chart.prototype = {
 
 		each(chart.series, function (series) {
 			if (series.options.stacking && (series.visible === true || chart.options.chart.ignoreHiddenSeries === false)) {
-				series.stackKey = series.type + pick(series.options.stack, '');
+				series.stackKey = series.type + Highcharts.pick(series.options.stack, '');
 			}
 		});
 	},	
@@ -506,7 +506,7 @@ Chart.prototype = {
 		if (!this.isDirtyBox && requiresDirtyBox) {
 			this.isDirtyBox = requiresDirtyBox;
 			// Redraw if necessary (#2719, #2744)		
-			if (this.hasRendered && pick(redraw, true) && this.isDirtyBox) {
+			if (this.hasRendered && Highcharts.pick(redraw, true) && this.isDirtyBox) {
 				this.redraw();
 			}
 		}
@@ -532,7 +532,7 @@ Chart.prototype = {
 		}
 		
 		chart.chartWidth = Math.max(0, widthOption || chart.containerWidth || 600); // #1393, 1460
-		chart.chartHeight = Math.max(0, pick(heightOption,
+		chart.chartHeight = Math.max(0, Highcharts.pick(heightOption,
 			// the offsetHeight of an empty container is 0 in standard browsers, but 19 in IE7:
 			chart.containerHeight > 19 ? chart.containerHeight : 400));
 	},
@@ -925,7 +925,7 @@ Chart.prototype = {
 			marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'];
 
 		each(marginNames, function (m, side) {
-			chart[m] = pick(chart.margin[side], chart.spacing[side]);
+			chart[m] = Highcharts.pick(chart.margin[side], chart.spacing[side]);
 		});
 		chart.axisOffset = [0, 0, 0, 0]; // top, right, bottom, left
 		chart.clipOffset = [0, 0, 0, 0];
@@ -1424,6 +1424,7 @@ Chart.prototype = {
 	*/
 	splashArray: function (target, options) {
 		var oVar = options[target],
+			pick = Highcharts.pick,
 			tArray = Highcharts.isObject(oVar) ? oVar : [oVar, oVar, oVar, oVar];
 
 		return [pick(options[target + 'Top'], tArray[0]),

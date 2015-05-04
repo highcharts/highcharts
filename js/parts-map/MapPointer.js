@@ -56,7 +56,7 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 	proceed.call(this, chart, options);
 
 	// Pinch status
-	if (pick(options.mapNavigation.enableTouchZoom, options.mapNavigation.enabled)) {
+	if (Highcharts.pick(options.mapNavigation.enableTouchZoom, options.mapNavigation.enabled)) {
 		this.pinchX = this.pinchHor = this.pinchY = this.pinchVert = this.hasZoom = true;
 	}
 });

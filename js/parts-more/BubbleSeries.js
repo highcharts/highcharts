@@ -67,6 +67,7 @@ Highcharts.seriesTypes.bubble = extendClass(Highcharts.seriesTypes.scatter, {
 	 */
 	applyOpacity: function (fill) {
 		var markerOptions = this.options.marker,
+			pick = Highcharts.pick,
 			fillOpacity = pick(markerOptions.fillOpacity, 0.5);
 		
 		// When called from Legend.colorizeItem, the fill isn't predefined
@@ -221,6 +222,7 @@ Axis.prototype.beforePadding = function () {
 	var axis = this,
 		axisLength = this.len,
 		chart = this.chart,
+		pick = Highcharts.pick,
 		pxMin = 0, 
 		pxMax = axisLength,
 		isXAxis = this.isXAxis,

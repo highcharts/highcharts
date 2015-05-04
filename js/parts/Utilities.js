@@ -183,7 +183,7 @@ Highcharts.splat = function (obj) {
 /**
  * Return the first value that is defined. Like MooTools' $.pick.
  */
-var pick = Highcharts.pick = function () {
+Highcharts.pick = function () {
 	var args = arguments,
 		i,
 		arg,
@@ -290,7 +290,7 @@ Highcharts.dateFormat = function (format, timestamp, capitalize) {
 	if (!Highcharts.defined(timestamp) || isNaN(timestamp)) {
 		return 'Invalid date';
 	}
-	format = pick(format, '%Y-%m-%d %H:%M:%S');
+	format = Highcharts.pick(format, '%Y-%m-%d %H:%M:%S');
 
 	var d = Highcharts.Date,
 		date = new d(timestamp - getTZOffset(timestamp)),
@@ -445,7 +445,7 @@ function normalizeTickInterval(interval, multiples, magnitude, allowDecimals, pr
 		retInterval = interval;
 
 	// round to a tenfold of 1, 2, 2.5 or 5
-	magnitude = pick(magnitude, 1);
+	magnitude = Highcharts.pick(magnitude, 1);
 	normalized = interval / magnitude;
 
 	// multiples for a linear scale
@@ -608,7 +608,7 @@ function correctFloat(num) {
  * @param {Object} chart
  */
 function setAnimation(animation, chart) {
-	Highcharts.globalAnimation = pick(animation, chart.animation);
+	Highcharts.globalAnimation = Highcharts.pick(animation, chart.animation);
 }
 
 /**

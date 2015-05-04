@@ -16,7 +16,7 @@ Highcharts.extend(Chart.prototype, {
 			chart = this;
 
 		if (options) {
-			redraw = pick(redraw, true); // defaults to true
+			redraw = Highcharts.pick(redraw, true); // defaults to true
 
 			fireEvent(chart, 'addSeries', { options: options }, function () {
 				series = chart.initSeries(options);
@@ -53,7 +53,7 @@ Highcharts.extend(Chart.prototype, {
 		chartOptions[key] = Highcharts.splat(chartOptions[key] || {});
 		chartOptions[key].push(options);
 
-		if (pick(redraw, true)) {
+		if (Highcharts.pick(redraw, true)) {
 			this.redraw(animation);
 		}
 	},
@@ -156,7 +156,7 @@ Highcharts.extend(Point.prototype, {
 			seriesOptions = series.options,
 			names = series.xAxis && series.xAxis.names;
 
-		redraw = pick(redraw, true);
+		redraw = Highcharts.pick(redraw, true);
 
 		function update() {
 
@@ -265,7 +265,7 @@ Highcharts.extend(Series.prototype, {
 		}
 
 		// Optional redraw, defaults to true
-		redraw = pick(redraw, true);
+		redraw = Highcharts.pick(redraw, true);
 
 		// Get options and push the point to xData, yData and series.options. In series.generatePoints
 		// the Point instance will be created on demand and pushed to the series.data array.
@@ -354,7 +354,7 @@ Highcharts.extend(Series.prototype, {
 			};
 
 		setAnimation(animation, chart);
-		redraw = pick(redraw, true);
+		redraw = Highcharts.pick(redraw, true);
 
 		// Fire the event with a default handler of removing the point
 		if (point) {
@@ -375,7 +375,7 @@ Highcharts.extend(Series.prototype, {
 	remove: function (redraw, animation) {
 		var series = this,
 			chart = series.chart;
-		redraw = pick(redraw, true);
+		redraw = Highcharts.pick(redraw, true);
 
 		if (!series.isRemoving) {  /* prevent triggering native event in jQuery
 				(calling the remove function from the remove event) */
@@ -450,7 +450,7 @@ Highcharts.extend(Series.prototype, {
 
 		this.init(chart, newOptions);
 		chart.linkSeries(); // Links are lost in this.remove (#3028)
-		if (pick(redraw, true)) {
+		if (Highcharts.pick(redraw, true)) {
 			chart.redraw(false);
 		}
 	}
@@ -473,7 +473,7 @@ Highcharts.extend(Axis.prototype, {
 		this.init(chart, Highcharts.extend(newOptions, { events: undefined }));
 
 		chart.isDirtyBox = true;
-		if (pick(redraw, true)) {
+		if (Highcharts.pick(redraw, true)) {
 			chart.redraw();
 		}
 	},
@@ -505,7 +505,7 @@ Highcharts.extend(Axis.prototype, {
 		this.destroy();
 		chart.isDirtyBox = true;
 
-		if (pick(redraw, true)) {
+		if (Highcharts.pick(redraw, true)) {
 			chart.redraw();
 		}
 	},

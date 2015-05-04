@@ -9,6 +9,7 @@ var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
 		var options = this.options,
 			chart = this.chart,
 			pInt = Highcharts.pInt,
+			pick = Highcharts.pick,
 			slicingRoom = 2 * (options.slicedOffset || 0),
 			handleSlicingRoom,
 			plotWidth = chart.plotWidth - 2 * slicingRoom,

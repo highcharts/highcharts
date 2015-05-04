@@ -112,7 +112,7 @@ Highcharts.extend(SVGElement.prototype, {
 					wrapper.setSpanRotation(rotation, alignCorrection, baseline);
 				}
 
-				width = pick(wrapper.elemWidth, elem.offsetWidth);
+				width = Highcharts.pick(wrapper.elemWidth, elem.offsetWidth);
 
 				// Update textWidth
 				if (width > textWidth && /[ \-]/.test(elem.textContent || elem.innerText)) { // #983, #1254
