@@ -2377,20 +2377,22 @@ Axis.prototype.beforePadding = function () {
 	wrap(seriesProto, 'getGraphPath', function (proceed, points) {
 		var series = this;
 		
-		points = points || this.points;
-	
 		// Connect the path
-		if (this.chart.polar && this.options.connectEnds !== false && points[0].y !== null) {
-			this.connectEnds = true; // re-used in splines
-			points.splice(points.length, 0, points[0]);
-		}
-
-		// For area charts, pseudo points are added to the graph, now we need to translate these
-		each(points, function (point) {
-			if (point.polarPlotY === undefined) {
-				series.toXY(point);
+		if (this.chart.polar) {
+			points = points || this.points;
+	
+			if (this.options.connectEnds !== false && points[0].y !== null) {
+				this.connectEnds = true; // re-used in splines
+				points.splice(points.length, 0, points[0]);
 			}
-		});
+
+			// For area charts, pseudo points are added to the graph, now we need to translate these
+			each(points, function (point) {
+				if (point.polarPlotY === undefined) {
+					series.toXY(point);
+				}
+			});
+		}
 	
 		// Run uber method
 		return proceed.call(this, points);
