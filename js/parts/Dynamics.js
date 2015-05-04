@@ -65,6 +65,7 @@ Highcharts.extend(Chart.prototype, {
 	showLoading: function (str) {
 		var chart = this,
 			options = chart.options,
+			createElement = Highcharts.createElement,
 			loadingDiv = chart.loadingDiv,
 			loadingOptions = options.loading,
 			css = Highcharts.css,

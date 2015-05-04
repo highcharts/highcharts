@@ -218,7 +218,7 @@ Highcharts.css = function (el, styles) {
  * @param {Object} parent
  * @param {Object} nopad
  */
-function createElement(tag, attribs, styles, parent, nopad) {
+Highcharts.createElement = function (tag, attribs, styles, parent, nopad) {
 	var el = document.createElement(tag),
 		css = Highcharts.css;
 	if (attribs) {
@@ -234,7 +234,7 @@ function createElement(tag, attribs, styles, parent, nopad) {
 		parent.appendChild(el);
 	}
 	return el;
-}
+};
 
 /**
  * Extend a prototyped class by new members
@@ -568,7 +568,7 @@ function discardElement(element) {
 	var garbageBin = Highcharts.garbageBin;
 	// create a garbage bin element, not part of the DOM
 	if (!garbageBin) {
-		garbageBin = createElement('div');
+		garbageBin = Highcharts.createElement('div');
 	}
 
 	// move the node and empty bin

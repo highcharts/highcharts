@@ -21,7 +21,7 @@ SVGElement.prototype = {
 	init: function (renderer, nodeName) {
 		var wrapper = this;
 		wrapper.element = nodeName === 'span' ?
-			createElement(nodeName) :
+			Highcharts.createElement(nodeName) :
 			document.createElementNS(wrapper.SVG_NS, nodeName);
 		wrapper.renderer = renderer;
 	},
@@ -2018,7 +2018,7 @@ SVGRenderer.prototype = {
 
 				// Create a dummy JavaScript image to get the width and height. Due to a bug in IE < 8,
 				// the created element must be assigned to a variable in order to load (#292).
-				imageElement = createElement('img', {
+				imageElement = Highcharts.createElement('img', {
 					onload: function () {
 						centerImage(obj, symbolSizes[imageSrc] = [this.width, this.height]);
 					},

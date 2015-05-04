@@ -47,7 +47,7 @@ VMLElement = {
 			markup = isDiv || nodeName === 'span' || nodeName === 'img' ?
 				markup.join('')
 				: renderer.prepVML(markup);
-			wrapper.element = createElement(markup);
+			wrapper.element = Highcharts.createElement(markup);
 		}
 
 		wrapper.renderer = renderer;
@@ -302,6 +302,7 @@ VMLElement = {
 			i,
 			element = this.element,
 			renderer = this.renderer,
+			createElement = Highcharts.createElement,
 			pInt = Highcharts.pInt,
 			pick = Highcharts.pick,
 			shadow,
@@ -381,7 +382,7 @@ VMLElement = {
 	},
 	dashstyleSetter: function (value, key, element) {
 		var strokeElem = element.getElementsByTagName('stroke')[0] ||
-			createElement(this.renderer.prepVML(['<stroke/>']), null, null, element);
+			Highcharts.createElement(this.renderer.prepVML(['<stroke/>']), null, null, element);
 		strokeElem[key] = value || 'solid';
 		this[key] = value; /* because changing stroke-width will change the dash length
 			and cause an epileptic effect */
@@ -673,7 +674,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					// are reversed.
 					markup = ['<fill colors="' + colors.join(',') + '" opacity="', opacity2, '" o:opacity2="', opacity1,
 						'" type="', fillType, '" ', fillAttr, 'focus="100%" method="any" />'];
-					createElement(renderer.prepVML(markup), null, null, elem);
+					Highcharts.createElement(renderer.prepVML(markup), null, null, elem);
 				};
 
 			// Extend from 0 to 1
@@ -784,7 +785,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			colorObject = Color(color);
 
 			markup = ['<', prop, ' opacity="', colorObject.get('a'), '"/>'];
-			createElement(this.prepVML(markup), null, null, elem);
+			Highcharts.createElement(this.prepVML(markup), null, null, elem);
 
 			ret = colorObject.get('rgb');
 

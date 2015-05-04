@@ -271,7 +271,7 @@ Highcharts.css = function (el, styles) {
  * @param {Object} parent
  * @param {Object} nopad
  */
-function createElement(tag, attribs, styles, parent, nopad) {
+Highcharts.createElement = function (tag, attribs, styles, parent, nopad) {
 	var el = document.createElement(tag),
 		css = Highcharts.css;
 	if (attribs) {
@@ -287,7 +287,7 @@ function createElement(tag, attribs, styles, parent, nopad) {
 		parent.appendChild(el);
 	}
 	return el;
-}
+};
 
 /**
  * Extend a prototyped class by new members
@@ -621,7 +621,7 @@ function discardElement(element) {
 	var garbageBin = Highcharts.garbageBin;
 	// create a garbage bin element, not part of the DOM
 	if (!garbageBin) {
-		garbageBin = createElement('div');
+		garbageBin = Highcharts.createElement('div');
 	}
 
 	// move the node and empty bin
@@ -1725,7 +1725,7 @@ SVGElement.prototype = {
 	init: function (renderer, nodeName) {
 		var wrapper = this;
 		wrapper.element = nodeName === 'span' ?
-			createElement(nodeName) :
+			Highcharts.createElement(nodeName) :
 			document.createElementNS(wrapper.SVG_NS, nodeName);
 		wrapper.renderer = renderer;
 	},
@@ -3722,7 +3722,7 @@ SVGRenderer.prototype = {
 
 				// Create a dummy JavaScript image to get the width and height. Due to a bug in IE < 8,
 				// the created element must be assigned to a variable in order to load (#292).
-				imageElement = createElement('img', {
+				imageElement = Highcharts.createElement('img', {
 					onload: function () {
 						centerImage(obj, symbolSizes[imageSrc] = [this.width, this.height]);
 					},
@@ -4547,7 +4547,7 @@ Highcharts.extend(SVGRenderer.prototype, {
 
 							// Create a HTML div and append it to the parent div to emulate
 							// the SVG group structure
-							htmlGroup = parentGroup.div = parentGroup.div || createElement('div', {
+							htmlGroup = parentGroup.div = parentGroup.div || Highcharts.createElement('div', {
 								className: Highcharts.attr(parentGroup.element, 'class')
 							}, {
 								position: 'absolute',
@@ -4644,7 +4644,7 @@ VMLElement = {
 			markup = isDiv || nodeName === 'span' || nodeName === 'img' ?
 				markup.join('')
 				: renderer.prepVML(markup);
-			wrapper.element = createElement(markup);
+			wrapper.element = Highcharts.createElement(markup);
 		}
 
 		wrapper.renderer = renderer;
@@ -4899,6 +4899,7 @@ VMLElement = {
 			i,
 			element = this.element,
 			renderer = this.renderer,
+			createElement = Highcharts.createElement,
 			pInt = Highcharts.pInt,
 			pick = Highcharts.pick,
 			shadow,
@@ -4978,7 +4979,7 @@ VMLElement = {
 	},
 	dashstyleSetter: function (value, key, element) {
 		var strokeElem = element.getElementsByTagName('stroke')[0] ||
-			createElement(this.renderer.prepVML(['<stroke/>']), null, null, element);
+			Highcharts.createElement(this.renderer.prepVML(['<stroke/>']), null, null, element);
 		strokeElem[key] = value || 'solid';
 		this[key] = value; /* because changing stroke-width will change the dash length
 			and cause an epileptic effect */
@@ -5270,7 +5271,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 					// are reversed.
 					markup = ['<fill colors="' + colors.join(',') + '" opacity="', opacity2, '" o:opacity2="', opacity1,
 						'" type="', fillType, '" ', fillAttr, 'focus="100%" method="any" />'];
-					createElement(renderer.prepVML(markup), null, null, elem);
+					Highcharts.createElement(renderer.prepVML(markup), null, null, elem);
 				};
 
 			// Extend from 0 to 1
@@ -5381,7 +5382,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			colorObject = Color(color);
 
 			markup = ['<', prop, ' opacity="', colorObject.get('a'), '"/>'];
-			createElement(this.prepVML(markup), null, null, elem);
+			Highcharts.createElement(this.prepVML(markup), null, null, elem);
 
 			ret = colorObject.get('rgb');
 
@@ -11358,7 +11359,7 @@ Chart.prototype = {
 		chartHeight = chart.chartHeight;
 
 		// create the inner container
-		chart.container = container = createElement('div', {
+		chart.container = container = Highcharts.createElement('div', {
 				className: 'highcharts-' + 'container' +
 					(optionsChart.className ? ' ' + optionsChart.className : ''),
 				id: containerId
@@ -14339,6 +14340,7 @@ Highcharts.extend(Chart.prototype, {
 	showLoading: function (str) {
 		var chart = this,
 			options = chart.options,
+			createElement = Highcharts.createElement,
 			loadingDiv = chart.loadingDiv,
 			loadingOptions = options.loading,
 			css = Highcharts.css,
@@ -18865,7 +18867,7 @@ Highcharts.extend(Legend.prototype, {
 	createCheckboxForItem: function (item) {
 		var legend = this;
 
-		item.checkbox = createElement('input', {
+		item.checkbox = Highcharts.createElement('input', {
 			type: 'checkbox',
 			checked: item.selected,
 			defaultChecked: item.selected // required by IE7
@@ -19477,7 +19479,6 @@ Highcharts.extend(Highcharts, {
 	setOptions: setOptions,
 	addEvent: addEvent,
 	removeEvent: removeEvent,
-	createElement: createElement,
 	discardElement: discardElement,
 	each: each,
 	map: map,

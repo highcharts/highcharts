@@ -204,7 +204,7 @@ Highcharts.extend(Legend.prototype, {
 	createCheckboxForItem: function (item) {
 		var legend = this;
 
-		item.checkbox = createElement('input', {
+		item.checkbox = Highcharts.createElement('input', {
 			type: 'checkbox',
 			checked: item.selected,
 			defaultChecked: item.selected // required by IE7

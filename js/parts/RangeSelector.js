@@ -417,7 +417,7 @@ RangeSelector.prototype = {
 
 		// Create the HTML input element. This is rendered as 1x1 pixel then set to the right size 
 		// when focused.
-		this[name + 'Input'] = input = createElement('input', {
+		this[name + 'Input'] = input = Highcharts.createElement('input', {
 			name: name,
 			className: 'highcharts-range-selector',
 			type: 'text'
@@ -584,7 +584,7 @@ RangeSelector.prototype = {
 			// first create a wrapper outside the container in order to make
 			// the inputs work and make export correct
 			if (inputEnabled !== false) {
-				rangeSelector.div = div = createElement('div', null, {
+				rangeSelector.div = div = Highcharts.createElement('div', null, {
 					position: 'relative',
 					height: 0,
 					zIndex: 1 // above container

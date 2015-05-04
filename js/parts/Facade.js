@@ -18,7 +18,6 @@ Highcharts.extend(Highcharts, {
 	setOptions: setOptions,
 	addEvent: addEvent,
 	removeEvent: removeEvent,
-	createElement: createElement,
 	discardElement: discardElement,
 	each: each,
 	map: map,
