@@ -16025,6 +16025,13 @@ if (seriesTypes.column) {
 			}
 		}
 
+		// Prevent a situation in a gradually rising slope, that each label
+		// will hide the previous one because the previous one always has
+		// lower rank.
+		labels.sort(function (a, b) {
+			return b.labelrank - a.labelrank;
+		});
+
 		// Detect overlapping labels
 		for (i = 0; i < len; i++) {
 			label1 = labels[i];
@@ -17473,6 +17480,13 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				label.newOpacity = 1;
 			}
 		}
+
+		// Prevent a situation in a gradually rising slope, that each label
+		// will hide the previous one because the previous one always has
+		// lower rank.
+		labels.sort(function (a, b) {
+			return b.labelrank - a.labelrank;
+		});
 
 		// Detect overlapping labels
 		for (i = 0; i < len; i++) {
