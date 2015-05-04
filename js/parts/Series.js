@@ -1231,7 +1231,7 @@ Series.prototype = {
 	/**
 	 * Get the graph path
 	 */
-	getGraphPath: function (points) {
+	getGraphPath: function (points, nullsAsZeroes) {
 		var series = this,
 			options = series.options,
 			step = options.step,
@@ -1248,7 +1248,7 @@ Series.prototype = {
 				lastPoint,
 				pathToPoint; // the path to this point from the previous
 
-			if (point.isNull) {
+			if (point.isNull && !nullsAsZeroes) {
 				gap = true;
 
 			} else {

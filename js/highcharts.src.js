@@ -14135,7 +14135,7 @@ Series.prototype = {
 	/**
 	 * Get the graph path
 	 */
-	getGraphPath: function (points) {
+	getGraphPath: function (points, nullsAsZeroes) {
 		var series = this,
 			options = series.options,
 			step = options.step,
@@ -14152,7 +14152,7 @@ Series.prototype = {
 				lastPoint,
 				pathToPoint; // the path to this point from the previous
 
-			if (point.isNull) {
+			if (point.isNull && !nullsAsZeroes) {
 				gap = true;
 
 			} else {
@@ -15608,7 +15608,6 @@ var AreaSeries = extendClass(Series, {
 			seriesLength = yAxisSeries.length,
 			visibleSeries,
 			upOrDown = pick(yAxis.options.reversedStacks, true) ? 1 : -1,
-			connectNulls = series.options.connectNulls,
 			i,
 			x;
 
@@ -15628,9 +15627,7 @@ var AreaSeries = extendClass(Series, {
 				return a - b;
 			});
 
-			if (!connectNulls) {
-				visibleSeries = map(yAxisSeries, function () { return this.visible; });
-			}
+			visibleSeries = map(yAxisSeries, function () { return this.visible; });
 
 			each(keys, function (x, idx) {
 				var y = 0,
@@ -15641,41 +15638,39 @@ var AreaSeries = extendClass(Series, {
 					segment.push(pointMap[x]);
 
 					// Find left and right cliff. -1 goes left, 1 goes right.
-					if (!connectNulls) {
-						each([-1, 1], function (direction) {
-							var nullName = direction === 1 ? 'rightNull' : 'leftNull',
-								cliffName = direction === 1 ? 'rightCliff' : 'leftCliff',
-								cliff = 0,
-								otherStack = stack[keys[idx + direction]];
+					each([-1, 1], function (direction) {
+						var nullName = direction === 1 ? 'rightNull' : 'leftNull',
+							cliffName = direction === 1 ? 'rightCliff' : 'leftCliff',
+							cliff = 0,
+							otherStack = stack[keys[idx + direction]];
 
-							// If there is a stack next to this one, to the left or to the right...
-							if (otherStack) {
-								i = seriesIndex;
-								while (i >= 0 && i < seriesLength) { // Can go either up or down, depending on reversedStacks
-									stackPoint = otherStack.points[i];
-									if (!stackPoint) {
-										// If the next point in this series is missing, mark the point
-										// with point.leftNull or point.rightNull = true.
-										if (i === seriesIndex) {
-											pointMap[x][nullName] = true;
+						// If there is a stack next to this one, to the left or to the right...
+						if (otherStack) {
+							i = seriesIndex;
+							while (i >= 0 && i < seriesLength) { // Can go either up or down, depending on reversedStacks
+								stackPoint = otherStack.points[i];
+								if (!stackPoint) {
+									// If the next point in this series is missing, mark the point
+									// with point.leftNull or point.rightNull = true.
+									if (i === seriesIndex) {
+										pointMap[x][nullName] = true;
 
-										// If there are missing points in the next stack in any of the 
-										// series below this one, we need to substract the missing values
-										// and add a hiatus to the left or right.
-										} else if (visibleSeries[i]) {
-											stackedValues = stack[x].points[i];
-											if (stackedValues) {
-												cliff -= stackedValues[1] - stackedValues[0];
-											}
+									// If there are missing points in the next stack in any of the 
+									// series below this one, we need to substract the missing values
+									// and add a hiatus to the left or right.
+									} else if (visibleSeries[i]) {
+										stackedValues = stack[x].points[i];
+										if (stackedValues) {
+											cliff -= stackedValues[1] - stackedValues[0];
 										}
 									}
-									// When reversedStacks is true, loop up, else loop down
-									i += upOrDown; 
-								}					
-							}
-							pointMap[x][cliffName] = cliff;
-						});
-					}
+								}
+								// When reversedStacks is true, loop up, else loop down
+								i += upOrDown; 
+							}					
+						}
+						pointMap[x][cliffName] = cliff;
+					});
 
 
 				// There is no point for this X value in this series, so we 
@@ -15823,8 +15818,8 @@ var AreaSeries = extendClass(Series, {
 				});
 			}
 		}
-		topPath = getGraphPath.call(this, topPoints);
-		bottomPath = getGraphPath.call(this, bottomPoints.reverse());
+		topPath = getGraphPath.call(this, topPoints, connectNulls);
+		bottomPath = getGraphPath.call(this, bottomPoints.reverse(), connectNulls);
 		if (bottomPath.length) {
 			bottomPath[0] = L;
 		}
