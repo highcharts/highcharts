@@ -44,7 +44,7 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 /**
  * Extend the point object
  */
-var GaugePoint = extendClass(Point, {
+var GaugePoint = Highcharts.extendClass(Point, {
 	/**
 	 * Don't do any hover colors or anything
 	 */
@@ -239,5 +239,5 @@ var GaugeSeries = {
 	 */
 	drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint
 };
-Highcharts.seriesTypes.gauge = extendClass(Highcharts.seriesTypes.line, GaugeSeries);
+Highcharts.seriesTypes.gauge = Highcharts.extendClass(Highcharts.seriesTypes.line, GaugeSeries);
 

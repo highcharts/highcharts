@@ -15,10 +15,10 @@ defaultPlotOptions.mappoint = Highcharts.merge(defaultPlotOptions.scatter, {
 		}
 	}
 });
-Highcharts.seriesTypes.mappoint = extendClass(Highcharts.seriesTypes.scatter, {
+Highcharts.seriesTypes.mappoint = Highcharts.extendClass(Highcharts.seriesTypes.scatter, {
 	type: 'mappoint',
 	forceDL: true,
-	pointClass: extendClass(Point, {
+	pointClass: Highcharts.extendClass(Point, {
 		applyOptions: function (options, x) {
 			var point = Point.prototype.applyOptions.call(this, options, x);
 			if (options.lat !== undefined && options.lon !== undefined) {

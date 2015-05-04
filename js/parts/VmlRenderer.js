@@ -490,7 +490,7 @@ VMLElement = {
 		element.style[key] = value;
 	}
 };
-Highcharts.VMLElement = VMLElement = extendClass(SVGElement, VMLElement);
+Highcharts.VMLElement = VMLElement = Highcharts.extendClass(SVGElement, VMLElement);
 
 // Some shared setters
 VMLElement.prototype.ySetter =

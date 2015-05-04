@@ -21,7 +21,6 @@ Highcharts.extend(Highcharts, {
 	discardElement: discardElement,
 	each: each,
 	map: map,
-	extendClass: extendClass,
 	canvas: Highcharts.useCanVG,
 	vml: !Highcharts.svg && !Highcharts.useCanVG,
 	product: '@product.name@',

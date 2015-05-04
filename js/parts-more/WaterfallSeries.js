@@ -20,7 +20,7 @@ defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
 
 
 // 2 - Create the series object
-Highcharts.seriesTypes.waterfall = extendClass(Highcharts.seriesTypes.column, {
+Highcharts.seriesTypes.waterfall = Highcharts.extendClass(Highcharts.seriesTypes.column, {
 	type: 'waterfall',
 
 	upColorProp: 'fill',

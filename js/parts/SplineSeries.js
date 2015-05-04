@@ -6,7 +6,7 @@ defaultPlotOptions.spline = Highcharts.merge(defaultSeriesOptions);
 /**
  * SplineSeries object
  */
-var SplineSeries = extendClass(Series, {
+var SplineSeries = Highcharts.extendClass(Series, {
 	type: 'spline',
 
 	/**

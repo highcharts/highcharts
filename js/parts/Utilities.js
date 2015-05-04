@@ -241,12 +241,12 @@ Highcharts.createElement = function (tag, attribs, styles, parent, nopad) {
  * @param {Object} parent
  * @param {Object} members
  */
-function extendClass(parent, members) {
+Highcharts.extendClass = function (parent, members) {
 	var object = function () {};
 	object.prototype = new parent();
 	Highcharts.extend(object.prototype, members);
 	return object;
-}
+};
 
 /**
  * Pad a string to a given length by adding 0 to the beginning

@@ -44,7 +44,7 @@ defaultPlotOptions.map = Highcharts.merge(defaultPlotOptions.scatter, {
 /**
  * The MapAreaPoint object
  */
-var MapAreaPoint = extendClass(Point, {
+var MapAreaPoint = Highcharts.extendClass(Point, {
 	/**
 	 * Extend the Point object to split paths
 	 */
@@ -163,7 +163,7 @@ var MapAreaPoint = extendClass(Point, {
 /**
  * Add the series type
  */
-Highcharts.seriesTypes.map = extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(colorSeriesMixin, {
+Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(colorSeriesMixin, {
 	type: 'map',
 	pointClass: MapAreaPoint,
 	supportsDrilldown: true,

@@ -32,7 +32,7 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 /**
  * Add the series type
  */
-Highcharts.seriesTypes.arearange = extendClass(Highcharts.seriesTypes.area, {
+Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes.area, {
 	type: 'arearange',
 	pointArrayMap: ['low', 'high'],
 	toYData: function (point) {

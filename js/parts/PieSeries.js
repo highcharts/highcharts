@@ -43,7 +43,7 @@ defaultPlotOptions.pie = Highcharts.merge(defaultSeriesOptions, {
 /**
  * Extended point object for pies
  */
-var PiePoint = extendClass(Point, {
+var PiePoint = Highcharts.extendClass(Point, {
 	/**
 	 * Initiate the pie slice
 	 */
@@ -480,6 +480,6 @@ var PieSeries = {
 	getSymbol: Highcharts.noop
 
 };
-PieSeries = extendClass(Series, PieSeries);
+PieSeries = Highcharts.extendClass(Series, PieSeries);
 Highcharts.seriesTypes.pie = PieSeries;
 

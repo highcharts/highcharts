@@ -10,7 +10,7 @@ defaultPlotOptions.polygon = merge(defaultPlotOptions.scatter, {
 /**
  * The polygon series class
  */
-Highcharts.seriesTypes.polygon = extendClass(Highcharts.seriesTypes.scatter, {
+Highcharts.seriesTypes.polygon = Highcharts.extendClass(Highcharts.seriesTypes.scatter, {
 	type: 'polygon',
 	fillGraph: true,
 	// Close all segments

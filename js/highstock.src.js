@@ -294,12 +294,12 @@ Highcharts.createElement = function (tag, attribs, styles, parent, nopad) {
  * @param {Object} parent
  * @param {Object} members
  */
-function extendClass(parent, members) {
+Highcharts.extendClass = function (parent, members) {
 	var object = function () {};
 	object.prototype = new parent();
 	Highcharts.extend(object.prototype, members);
 	return object;
-}
+};
 
 /**
  * Pad a string to a given length by adding 0 to the beginning
@@ -5087,7 +5087,7 @@ VMLElement = {
 		element.style[key] = value;
 	}
 };
-Highcharts.VMLElement = VMLElement = extendClass(SVGElement, VMLElement);
+Highcharts.VMLElement = VMLElement = Highcharts.extendClass(SVGElement, VMLElement);
 
 // Some shared setters
 VMLElement.prototype.ySetter =
@@ -15612,7 +15612,7 @@ Highcharts.extend(Axis.prototype, {
 /**
  * LineSeries object
  */
-var LineSeries = extendClass(Series);
+var LineSeries = Highcharts.extendClass(Series);
 Highcharts.seriesTypes.line = LineSeries;
 
 /**
@@ -15629,7 +15629,7 @@ defaultPlotOptions.area = Highcharts.merge(defaultSeriesOptions, {
 /**
  * AreaSeries object
  */
-var AreaSeries = extendClass(Series, {
+var AreaSeries = Highcharts.extendClass(Series, {
 	type: 'area',
 	/**
 	 * For stacks, don't split segments on null values. Instead, draw null values with 
@@ -15832,7 +15832,7 @@ defaultPlotOptions.spline = Highcharts.merge(defaultSeriesOptions);
 /**
  * SplineSeries object
  */
-var SplineSeries = extendClass(Series, {
+var SplineSeries = Highcharts.extendClass(Series, {
 	type: 'spline',
 
 	/**
@@ -15958,7 +15958,7 @@ defaultPlotOptions.areaspline = Highcharts.merge(defaultPlotOptions.area);
  * AreaSplineSeries object
  */
 var areaProto = AreaSeries.prototype,
-	AreaSplineSeries = extendClass(SplineSeries, {
+	AreaSplineSeries = Highcharts.extendClass(SplineSeries, {
 		type: 'areaspline',
 		closedStacks: true, // instead of following the previous graph back, follow the threshold back
 		
@@ -16014,7 +16014,7 @@ defaultPlotOptions.column = Highcharts.merge(defaultSeriesOptions, {
 /**
  * ColumnSeries object
  */
-var ColumnSeries = extendClass(Series, {
+var ColumnSeries = Highcharts.extendClass(Series, {
 	type: 'column',
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
@@ -16337,7 +16337,7 @@ defaultPlotOptions.bar = Highcharts.merge(defaultPlotOptions.column);
 /**
  * The Bar series class
  */
-var BarSeries = extendClass(ColumnSeries, {
+var BarSeries = Highcharts.extendClass(ColumnSeries, {
 	type: 'bar',
 	inverted: true
 });
@@ -16360,7 +16360,7 @@ defaultPlotOptions.scatter = Highcharts.merge(defaultSeriesOptions, {
 /**
  * The scatter series class
  */
-var ScatterSeries = extendClass(Series, {
+var ScatterSeries = Highcharts.extendClass(Series, {
 	type: 'scatter',
 	sorted: false,
 	requireSorting: false,
@@ -16423,7 +16423,7 @@ defaultPlotOptions.pie = Highcharts.merge(defaultSeriesOptions, {
 /**
  * Extended point object for pies
  */
-var PiePoint = extendClass(Point, {
+var PiePoint = Highcharts.extendClass(Point, {
 	/**
 	 * Initiate the pie slice
 	 */
@@ -16860,7 +16860,7 @@ var PieSeries = {
 	getSymbol: Highcharts.noop
 
 };
-PieSeries = extendClass(Series, PieSeries);
+PieSeries = Highcharts.extendClass(Series, PieSeries);
 Highcharts.seriesTypes.pie = PieSeries;
 
 /**
@@ -20057,7 +20057,7 @@ defaultPlotOptions.ohlc = Highcharts.merge(defaultPlotOptions.column, {
 });
 
 // 2 - Create the OHLCSeries object
-var OHLCSeries = extendClass(Highcharts.seriesTypes.column, {
+var OHLCSeries = Highcharts.extendClass(Highcharts.seriesTypes.column, {
 	type: 'ohlc',
 	pointArrayMap: ['open', 'high', 'low', 'close'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
@@ -20227,7 +20227,7 @@ defaultPlotOptions.candlestick = Highcharts.merge(defaultPlotOptions.column, {
 });
 
 // 2 - Create the CandlestickSeries object
-var CandlestickSeries = extendClass(OHLCSeries, {
+var CandlestickSeries = Highcharts.extendClass(OHLCSeries, {
 	type: 'candlestick',
 
 	/**
@@ -20383,7 +20383,7 @@ defaultPlotOptions.flags = Highcharts.merge(defaultPlotOptions.column, {
 });
 
 // 2 - Create the CandlestickSeries object
-Highcharts.seriesTypes.flags = extendClass(Highcharts.seriesTypes.column, {
+Highcharts.seriesTypes.flags = Highcharts.extendClass(Highcharts.seriesTypes.column, {
 	type: 'flags',
 	sorted: false,
 	noSharedTooltip: true,
@@ -23239,7 +23239,6 @@ Highcharts.extend(Highcharts, {
 	discardElement: discardElement,
 	each: each,
 	map: map,
-	extendClass: extendClass,
 	canvas: Highcharts.useCanVG,
 	vml: !Highcharts.svg && !Highcharts.useCanVG,
 	product: 'Highstock',

@@ -9,8 +9,8 @@ if (Highcharts.seriesTypes.bubble) {
 			pointFormat: '{point.name}: {point.z}'
 		}
 	});
-	Highcharts.seriesTypes.mapbubble = extendClass(Highcharts.seriesTypes.bubble, {
-		pointClass: extendClass(Point, {
+	Highcharts.seriesTypes.mapbubble = Highcharts.extendClass(Highcharts.seriesTypes.bubble, {
+		pointClass: Highcharts.extendClass(Point, {
 			applyOptions: function (options, x) {
 				var point;
 				if (options.lat !== undefined && options.lon !== undefined) {

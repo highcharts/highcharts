@@ -18,7 +18,6 @@ var Axis = Highcharts.Axis,
 	Series = Highcharts.Series,
 	
 	each = Highcharts.each,
-	extendClass = Highcharts.extendClass,
 	wrap = Highcharts.wrap;
 
 	
@@ -577,7 +576,7 @@ Highcharts.defaultOptions.plotOptions.heatmap = Highcharts.merge(Highcharts.defa
 });
 
 // The Heatmap series type
-Highcharts.seriesTypes.heatmap = extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(colorSeriesMixin, {
+Highcharts.seriesTypes.heatmap = Highcharts.extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(colorSeriesMixin, {
 	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,

@@ -7,7 +7,6 @@ var Axis = Highcharts.Axis,
 	Series = Highcharts.Series,
 	
 	each = Highcharts.each,
-	extendClass = Highcharts.extendClass,
 	wrap = Highcharts.wrap;
 
 	

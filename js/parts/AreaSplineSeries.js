@@ -7,7 +7,7 @@ defaultPlotOptions.areaspline = Highcharts.merge(defaultPlotOptions.area);
  * AreaSplineSeries object
  */
 var areaProto = AreaSeries.prototype,
-	AreaSplineSeries = extendClass(SplineSeries, {
+	AreaSplineSeries = Highcharts.extendClass(SplineSeries, {
 		type: 'areaspline',
 		closedStacks: true, // instead of following the previous graph back, follow the threshold back
 		

@@ -22,7 +22,7 @@ defaultPlotOptions.ohlc = Highcharts.merge(defaultPlotOptions.column, {
 });
 
 // 2 - Create the OHLCSeries object
-var OHLCSeries = extendClass(Highcharts.seriesTypes.column, {
+var OHLCSeries = Highcharts.extendClass(Highcharts.seriesTypes.column, {
 	type: 'ohlc',
 	pointArrayMap: ['open', 'high', 'low', 'close'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation

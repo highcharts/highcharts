@@ -15,7 +15,7 @@ defaultPlotOptions.scatter = Highcharts.merge(defaultSeriesOptions, {
 /**
  * The scatter series class
  */
-var ScatterSeries = extendClass(Series, {
+var ScatterSeries = Highcharts.extendClass(Series, {
 	type: 'scatter',
 	sorted: false,
 	requireSorting: false,

@@ -12,7 +12,7 @@ defaultPlotOptions.area = Highcharts.merge(defaultSeriesOptions, {
 /**
  * AreaSeries object
  */
-var AreaSeries = extendClass(Series, {
+var AreaSeries = Highcharts.extendClass(Series, {
 	type: 'area',
 	/**
 	 * For stacks, don't split segments on null values. Instead, draw null values with 

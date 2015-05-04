@@ -13,7 +13,6 @@ var Axis = Highcharts.Axis,
 	addEvent = Highcharts.addEvent,
 	each = Highcharts.each,
 	error = Highcharts.error,
-	extendClass = Highcharts.extendClass,
 	defaultOptions = Highcharts.getOptions(),
 	defaultPlotOptions = defaultOptions.plotOptions,
 	wrap = Highcharts.wrap;

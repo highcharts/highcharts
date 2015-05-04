@@ -36,7 +36,7 @@ defaultPlotOptions.bubble = Highcharts.merge(defaultPlotOptions.scatter, {
 	zoneAxis: 'z'
 });
 
-var BubblePoint = extendClass(Point, {
+var BubblePoint = Highcharts.extendClass(Point, {
 	haloPath: function () {
 		return Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
 	},
@@ -44,7 +44,7 @@ var BubblePoint = extendClass(Point, {
 });
 
 // 2 - Create the series object
-Highcharts.seriesTypes.bubble = extendClass(Highcharts.seriesTypes.scatter, {
+Highcharts.seriesTypes.bubble = Highcharts.extendClass(Highcharts.seriesTypes.scatter, {
 	type: 'bubble',
 	pointClass: BubblePoint,
 	pointArrayMap: ['y', 'z'],

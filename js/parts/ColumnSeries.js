@@ -41,7 +41,7 @@ defaultPlotOptions.column = Highcharts.merge(defaultSeriesOptions, {
 /**
  * ColumnSeries object
  */
-var ColumnSeries = extendClass(Series, {
+var ColumnSeries = Highcharts.extendClass(Series, {
 	type: 'column',
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',

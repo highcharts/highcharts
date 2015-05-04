@@ -31,7 +31,7 @@ defaultPlotOptions.flags = Highcharts.merge(defaultPlotOptions.column, {
 });
 
 // 2 - Create the CandlestickSeries object
-Highcharts.seriesTypes.flags = extendClass(Highcharts.seriesTypes.column, {
+Highcharts.seriesTypes.flags = Highcharts.extendClass(Highcharts.seriesTypes.column, {
 	type: 'flags',
 	sorted: false,
 	noSharedTooltip: true,

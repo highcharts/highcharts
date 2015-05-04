@@ -19,7 +19,6 @@ var arrayMin = Highcharts.arrayMin,
 	merge = Highcharts.merge,
 	map = Highcharts.map,
 	defaultPlotOptions = Highcharts.getOptions().plotOptions,
-	extendClass = Highcharts.extendClass,
 	wrap = Highcharts.wrap,
 	Axis = Highcharts.Axis,
 	Tick = Highcharts.Tick,
@@ -679,7 +678,7 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 /**
  * Add the series type
  */
-Highcharts.seriesTypes.arearange = extendClass(Highcharts.seriesTypes.area, {
+Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes.area, {
 	type: 'arearange',
 	pointArrayMap: ['low', 'high'],
 	toYData: function (point) {
@@ -911,7 +910,7 @@ defaultPlotOptions.areasplinerange = merge(defaultPlotOptions.arearange);
 /**
  * AreaSplineRangeSeries object
  */
-Highcharts.seriesTypes.areasplinerange = extendClass(Highcharts.seriesTypes.arearange, {
+Highcharts.seriesTypes.areasplinerange = Highcharts.extendClass(Highcharts.seriesTypes.arearange, {
 	type: 'areasplinerange',
 	getPointSpline: Highcharts.seriesTypes.spline.prototype.getPointSpline
 });
@@ -931,7 +930,7 @@ Highcharts.seriesTypes.areasplinerange = extendClass(Highcharts.seriesTypes.area
 	/**
 	 * ColumnRangeSeries object
 	 */
-	Highcharts.seriesTypes.columnrange = extendClass(Highcharts.seriesTypes.arearange, {
+	Highcharts.seriesTypes.columnrange = Highcharts.extendClass(Highcharts.seriesTypes.arearange, {
 		type: 'columnrange',
 		/**
 		 * Translate data points from raw values x and y to plotX and plotY
@@ -1025,7 +1024,7 @@ defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 /**
  * Extend the point object
  */
-var GaugePoint = extendClass(Point, {
+var GaugePoint = Highcharts.extendClass(Point, {
 	/**
 	 * Don't do any hover colors or anything
 	 */
@@ -1220,7 +1219,7 @@ var GaugeSeries = {
 	 */
 	drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint
 };
-Highcharts.seriesTypes.gauge = extendClass(Highcharts.seriesTypes.line, GaugeSeries);
+Highcharts.seriesTypes.gauge = Highcharts.extendClass(Highcharts.seriesTypes.line, GaugeSeries);
 
 /* ****************************************************************************
  * Start Box plot series code											      *
@@ -1256,7 +1255,7 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 });
 
 // Create the series object
-Highcharts.seriesTypes.boxplot = extendClass(Highcharts.seriesTypes.column, {
+Highcharts.seriesTypes.boxplot = Highcharts.extendClass(Highcharts.seriesTypes.column, {
 	type: 'boxplot',
 	pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
@@ -1509,7 +1508,7 @@ defaultPlotOptions.errorbar = merge(defaultPlotOptions.boxplot, {
 });
 
 // 2 - Create the series object
-Highcharts.seriesTypes.errorbar = extendClass(Highcharts.seriesTypes.boxplot, {
+Highcharts.seriesTypes.errorbar = Highcharts.extendClass(Highcharts.seriesTypes.boxplot, {
 	type: 'errorbar',
 	pointArrayMap: ['low', 'high'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
@@ -1554,7 +1553,7 @@ defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
 
 
 // 2 - Create the series object
-Highcharts.seriesTypes.waterfall = extendClass(Highcharts.seriesTypes.column, {
+Highcharts.seriesTypes.waterfall = Highcharts.extendClass(Highcharts.seriesTypes.column, {
 	type: 'waterfall',
 
 	upColorProp: 'fill',
@@ -1804,7 +1803,7 @@ defaultPlotOptions.polygon = merge(defaultPlotOptions.scatter, {
 /**
  * The polygon series class
  */
-Highcharts.seriesTypes.polygon = extendClass(Highcharts.seriesTypes.scatter, {
+Highcharts.seriesTypes.polygon = Highcharts.extendClass(Highcharts.seriesTypes.scatter, {
 	type: 'polygon',
 	fillGraph: true,
 	// Close all segments
@@ -1852,7 +1851,7 @@ defaultPlotOptions.bubble = Highcharts.merge(defaultPlotOptions.scatter, {
 	zoneAxis: 'z'
 });
 
-var BubblePoint = extendClass(Point, {
+var BubblePoint = Highcharts.extendClass(Point, {
 	haloPath: function () {
 		return Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
 	},
@@ -1860,7 +1859,7 @@ var BubblePoint = extendClass(Point, {
 });
 
 // 2 - Create the series object
-Highcharts.seriesTypes.bubble = extendClass(Highcharts.seriesTypes.scatter, {
+Highcharts.seriesTypes.bubble = Highcharts.extendClass(Highcharts.seriesTypes.scatter, {
 	type: 'bubble',
 	pointClass: BubblePoint,
 	pointArrayMap: ['y', 'z'],

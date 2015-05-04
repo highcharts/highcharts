@@ -2,6 +2,6 @@
 /**
  * LineSeries object
  */
-var LineSeries = extendClass(Series);
+var LineSeries = Highcharts.extendClass(Series);
 Highcharts.seriesTypes.line = LineSeries;
 

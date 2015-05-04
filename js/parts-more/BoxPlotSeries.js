@@ -32,7 +32,7 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 });
 
 // Create the series object
-Highcharts.seriesTypes.boxplot = extendClass(Highcharts.seriesTypes.column, {
+Highcharts.seriesTypes.boxplot = Highcharts.extendClass(Highcharts.seriesTypes.column, {
 	type: 'boxplot',
 	pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation

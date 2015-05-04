@@ -13,7 +13,7 @@
 	/**
 	 * ColumnRangeSeries object
 	 */
-	Highcharts.seriesTypes.columnrange = extendClass(Highcharts.seriesTypes.arearange, {
+	Highcharts.seriesTypes.columnrange = Highcharts.extendClass(Highcharts.seriesTypes.arearange, {
 		type: 'columnrange',
 		/**
 		 * Translate data points from raw values x and y to plotX and plotY

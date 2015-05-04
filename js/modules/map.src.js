@@ -25,7 +25,6 @@ var Axis = Highcharts.Axis,
 	addEvent = Highcharts.addEvent,
 	each = Highcharts.each,
 	error = Highcharts.error,
-	extendClass = Highcharts.extendClass,
 	defaultOptions = Highcharts.getOptions(),
 	defaultPlotOptions = defaultOptions.plotOptions,
 	wrap = Highcharts.wrap;/**
@@ -954,7 +953,7 @@ defaultPlotOptions.map = Highcharts.merge(defaultPlotOptions.scatter, {
 /**
  * The MapAreaPoint object
  */
-var MapAreaPoint = extendClass(Point, {
+var MapAreaPoint = Highcharts.extendClass(Point, {
 	/**
 	 * Extend the Point object to split paths
 	 */
@@ -1073,7 +1072,7 @@ var MapAreaPoint = extendClass(Point, {
 /**
  * Add the series type
  */
-Highcharts.seriesTypes.map = extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(colorSeriesMixin, {
+Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(colorSeriesMixin, {
 	type: 'map',
 	pointClass: MapAreaPoint,
 	supportsDrilldown: true,
@@ -1640,7 +1639,7 @@ defaultPlotOptions.mapline = Highcharts.merge(defaultPlotOptions.map, {
 	lineWidth: 1,
 	fillColor: 'none'
 });
-Highcharts.seriesTypes.mapline = extendClass(Highcharts.seriesTypes.map, {
+Highcharts.seriesTypes.mapline = Highcharts.extendClass(Highcharts.seriesTypes.map, {
 	type: 'mapline',
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'color',
@@ -1666,10 +1665,10 @@ defaultPlotOptions.mappoint = Highcharts.merge(defaultPlotOptions.scatter, {
 		}
 	}
 });
-Highcharts.seriesTypes.mappoint = extendClass(Highcharts.seriesTypes.scatter, {
+Highcharts.seriesTypes.mappoint = Highcharts.extendClass(Highcharts.seriesTypes.scatter, {
 	type: 'mappoint',
 	forceDL: true,
-	pointClass: extendClass(Point, {
+	pointClass: Highcharts.extendClass(Point, {
 		applyOptions: function (options, x) {
 			var point = Point.prototype.applyOptions.call(this, options, x);
 			if (options.lat !== undefined && options.lon !== undefined) {
@@ -1689,8 +1688,8 @@ if (Highcharts.seriesTypes.bubble) {
 			pointFormat: '{point.name}: {point.z}'
 		}
 	});
-	Highcharts.seriesTypes.mapbubble = extendClass(Highcharts.seriesTypes.bubble, {
-		pointClass: extendClass(Point, {
+	Highcharts.seriesTypes.mapbubble = Highcharts.extendClass(Highcharts.seriesTypes.bubble, {
+		pointClass: Highcharts.extendClass(Point, {
 			applyOptions: function (options, x) {
 				var point;
 				if (options.lat !== undefined && options.lon !== undefined) {
@@ -1749,7 +1748,7 @@ Highcharts.defaultOptions.plotOptions.heatmap = Highcharts.merge(Highcharts.defa
 });
 
 // The Heatmap series type
-Highcharts.seriesTypes.heatmap = extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(colorSeriesMixin, {
+Highcharts.seriesTypes.heatmap = Highcharts.extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(colorSeriesMixin, {
 	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
