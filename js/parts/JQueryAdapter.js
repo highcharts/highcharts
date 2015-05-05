@@ -1,8 +1,9 @@
-(function ($) {
+(function (H, $) {
+	var HighchartsAdapter;
 	/**
 	 * The default HighchartsAdapter for jQuery
 	 */
-	window.HighchartsAdapter = window.HighchartsAdapter || ($ && {
+	HighchartsAdapter = window.HighchartsAdapter || ($ && {
 		
 		/**
 		 * Initialize the adapter by applying some extensions to jQuery
@@ -64,7 +65,7 @@
 			});
 
 			// Extend the opacity getter, needed for fading opacity with IE9 and jQuery 1.10+
-			Highcharts.wrap($.cssHooks.opacity, 'get', function (proceed, elem, computed) {
+			H.wrap($.cssHooks.opacity, 'get', function (proceed, elem, computed) {
 				return elem.attr ? (elem.opacity || 0) : proceed.call(this, elem, computed);
 			});
 			
@@ -119,7 +120,7 @@
 
 				if (this[0]) {
 
-					if (Highcharts.isString(args[0])) {
+					if (H.isString(args[0])) {
 						constr = args[0];
 						args = Array.prototype.slice.call(args, 1); 
 					}
@@ -130,14 +131,14 @@
 						/*jslint unused:false*/
 						options.chart = options.chart || {};
 						options.chart.renderTo = this[0];
-						chart = new Highcharts[constr](options, args[1]);
+						chart = new H[constr](options, args[1]);
 						ret = this;
 						/*jslint unused:true*/
 					}
 
 					// When called without parameters or with the return argument, get a predefined chart
 					if (options === undefined) {
-						ret = Highcharts.charts[Highcharts.attr(this[0], 'data-highcharts-chart')];
+						ret = H.charts[H.attr(this[0], 'data-highcharts-chart')];
 					}
 				}
 				
@@ -256,13 +257,13 @@
 			//
 			// To avoid problems in IE (see #1010) where we cannot delete the properties and avoid
 			// testing if they are there (warning in chrome) the only option is to test if running IE.
-			if (!Highcharts.isIE && eventArguments) {
+			if (!H.isIE && eventArguments) {
 				delete eventArguments.layerX;
 				delete eventArguments.layerY;
 				delete eventArguments.returnValue;
 			}
 	
-			Highcharts.extend(event, eventArguments);
+			H.extend(event, eventArguments);
 	
 			// Prevent jQuery from triggering the object method that is named the
 			// same as the event. For example, if the event is 'select', jQuery
@@ -352,4 +353,6 @@
 			}
 		}
 	});
-}(window.jQuery));
+	
+	return (window.HighchartsAdapter = HighchartsAdapter);
+}(Highcharts, window.jQuery));
