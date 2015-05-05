@@ -15,7 +15,6 @@ Highcharts.extend(Highcharts, {
 	setOptions: setOptions,
 	addEvent: addEvent,
 	removeEvent: removeEvent,
-	discardElement: discardElement,
 	each: each,
 	map: map,
 	canvas: Highcharts.useCanVG,

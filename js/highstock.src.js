@@ -618,7 +618,7 @@ Highcharts.destroyObjectProperties = function (obj, except) {
  * Discard an element by moving it to the bin and delete
  * @param {Object} The HTML node to discard
  */
-function discardElement(element) {
+Highcharts.discardElement = function (element) {
 	var garbageBin = Highcharts.garbageBin;
 	// create a garbage bin element, not part of the DOM
 	if (!garbageBin) {
@@ -630,7 +630,7 @@ function discardElement(element) {
 		garbageBin.appendChild(element);
 	}
 	garbageBin.innerHTML = '';
-}
+};
 
 /**
  * Provide error messages for debugging, with links to online explanation 
@@ -4845,7 +4845,7 @@ VMLElement = {
 		// discardElement will detach the node from its parent before attaching it
 		// to the garbage bin. Therefore it is important that the node is attached and have parent.
 		if (element.parentNode) {
-			discardElement(element);
+			Highcharts.discardElement(element);
 		}
 	},
 
@@ -5665,7 +5665,7 @@ SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
 	Highcharts.css(measuringSpan, styles);
 	this.box.appendChild(measuringSpan);
 	offsetWidth = measuringSpan.offsetWidth;
-	discardElement(measuringSpan); // #2463
+	Highcharts.discardElement(measuringSpan); // #2463
 	return offsetWidth;
 };
 
@@ -10535,7 +10535,7 @@ Legend.prototype = {
 		});
 
 		if (checkbox) {
-			discardElement(item.checkbox);
+			Highcharts.discardElement(item.checkbox);
 		}
 	},
 
@@ -11751,7 +11751,7 @@ Chart.prototype = {
 		if (revert) {
 			if (clone) {
 				this.renderTo.appendChild(container);
-				discardElement(clone);
+				Highcharts.discardElement(clone);
 				delete this.renderToClone;
 			}
 		
@@ -12513,7 +12513,7 @@ Chart.prototype = {
 			container.innerHTML = '';
 			removeEvent(container);
 			if (parentNode) {
-				discardElement(container);
+				Highcharts.discardElement(container);
 			}
 
 		}
@@ -22496,7 +22496,7 @@ RangeSelector.prototype = {
 				if (this[key].destroy) { // SVGElement
 					this[key].destroy();
 				} else if (this[key].nodeType) { // HTML element
-					discardElement(this[key]);
+					Highcharts.discardElement(this[key]);
 				}
 			}
 			this[key] = null;
@@ -23240,7 +23240,6 @@ Highcharts.extend(Highcharts, {
 	setOptions: setOptions,
 	addEvent: addEvent,
 	removeEvent: removeEvent,
-	discardElement: discardElement,
 	each: each,
 	map: map,
 	canvas: Highcharts.useCanVG,

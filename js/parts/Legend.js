@@ -133,7 +133,7 @@ Legend.prototype = {
 		});
 
 		if (checkbox) {
-			discardElement(item.checkbox);
+			Highcharts.discardElement(item.checkbox);
 		}
 	},
 

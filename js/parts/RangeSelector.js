@@ -658,7 +658,7 @@ RangeSelector.prototype = {
 				if (this[key].destroy) { // SVGElement
 					this[key].destroy();
 				} else if (this[key].nodeType) { // HTML element
-					discardElement(this[key]);
+					Highcharts.discardElement(this[key]);
 				}
 			}
 			this[key] = null;

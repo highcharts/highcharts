@@ -549,7 +549,7 @@ Chart.prototype = {
 		if (revert) {
 			if (clone) {
 				this.renderTo.appendChild(container);
-				discardElement(clone);
+				Highcharts.discardElement(clone);
 				delete this.renderToClone;
 			}
 		
@@ -1311,7 +1311,7 @@ Chart.prototype = {
 			container.innerHTML = '';
 			removeEvent(container);
 			if (parentNode) {
-				discardElement(container);
+				Highcharts.discardElement(container);
 			}
 
 		}
