@@ -256,7 +256,7 @@ Highcharts.extend(Series.prototype, {
 
 		// Make graph animate sideways
 		if (shift) {
-			each([graph, area, series.graphNeg, series.areaNeg], function (shape) {
+			Highcharts.each([graph, area, series.graphNeg, series.areaNeg], function (shape) {
 				if (shape) {
 					shape.shift = currentShift + 1;
 				}
@@ -425,7 +425,7 @@ Highcharts.extend(Series.prototype, {
 		}
 
 		// Make sure groups are not destroyed (#3094)
-		each(preserve, function (prop) {
+		Highcharts.each(preserve, function (prop) {
 			preserve[prop] = series[prop];
 			delete series[prop];
 		});
@@ -446,7 +446,7 @@ Highcharts.extend(Series.prototype, {
 		Highcharts.extend(this, seriesTypes[newOptions.type || oldType].prototype);
 
 		// Re-register groups (#3094)
-		each(preserve, function (prop) {
+		Highcharts.each(preserve, function (prop) {
 			series[prop] = preserve[prop];
 		});
 
@@ -501,7 +501,7 @@ Highcharts.extend(Axis.prototype, {
 		erase(chart.axes, this);
 		erase(chart[key], this);
 		chart.options[key].splice(this.options.index, 1);
-		each(chart[key], function (axis, i) { // Re-index, #1706
+		Highcharts.each(chart[key], function (axis, i) { // Re-index, #1706
 			axis.options.index = i;
 		});
 		this.destroy();

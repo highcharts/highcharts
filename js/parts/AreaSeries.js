@@ -51,7 +51,7 @@ var AreaSeries = Highcharts.extendClass(Series, {
 				return a - b;
 			});
 
-			each(keys, function (x) {
+			Highcharts.each(keys, function (x) {
 				var y = 0,
 					stackPoint;
 
@@ -179,10 +179,10 @@ var AreaSeries = Highcharts.extendClass(Series, {
 			pick = Highcharts.pick,
 			props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
 		
-		each(zones, function (threshold, i) {
+		Highcharts.each(zones, function (threshold, i) {
 			props.push(['colorArea' + i, threshold.color || series.color, threshold.fillColor || options.fillColor]);
 		});
-		each(props, function (prop) {
+		Highcharts.each(props, function (prop) {
 			var areaKey = prop[0],
 				area = series[areaKey];
 				

@@ -188,7 +188,7 @@
 				overshoot = options.overshoot,
 				overshootVal = overshoot && typeof overshoot === 'number' ? overshoot / 180 * Math.PI : 0;
 
-			H.each(series.points, function (point) {
+			each(series.points, function (point) {
 				var graphic = point.graphic,
 					rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true),
 					radius = (pInt(pick(point.options.radius, options.radius, 100)) * center[2]) / 200, // docs: series<solidgauge>.data.radius http://jsfiddle.net/highcharts/7nwebu4b/

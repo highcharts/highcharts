@@ -119,7 +119,7 @@ Highcharts.seriesTypes.flags = Highcharts.extendClass(Highcharts.seriesTypes.col
 		}
 
 		// Add plotY position and handle stacking
-		each(points, function (point, i) {
+		Highcharts.each(points, function (point, i) {
 
 			var stackIndex;
 			
@@ -243,7 +243,7 @@ Highcharts.seriesTypes.flags = Highcharts.extendClass(Highcharts.seriesTypes.col
 
 		// Bring each stacked flag up on mouse over, this allows readability of vertically
 		// stacked elements as well as tight points on the x axis. #1924.
-		each(points, function (point) {
+		Highcharts.each(points, function (point) {
 			var graphic = point.graphic;
 			if (graphic) {
 				Highcharts.addEvent(graphic.element, 'mouseover', function () {
@@ -258,7 +258,7 @@ Highcharts.seriesTypes.flags = Highcharts.extendClass(Highcharts.seriesTypes.col
 					}
 
 					// Revert other raised points
-					each(points, function (otherPoint) {
+					Highcharts.each(points, function (otherPoint) {
 						if (otherPoint !== point && otherPoint.raised && otherPoint.graphic) {
 							otherPoint.graphic.attr({
 								y: otherPoint._y
@@ -298,7 +298,7 @@ symbols.flag = function (x, y, w, h, options) {
 };
 
 // create the circlepin and squarepin icons with anchor
-each(['circle', 'square'], function (shape) {
+Highcharts.each(['circle', 'square'], function (shape) {
 	symbols[shape + 'pin'] = function (x, y, w, h, options) {
 
 		var anchorX = options && options.anchorX,
@@ -321,7 +321,7 @@ each(['circle', 'square'], function (shape) {
 // VML browsers need this in order to generate shapes in export. Now share
 // them with the VMLRenderer.
 if (Highcharts.Renderer === Highcharts.VMLRenderer) {
-	each(['flag', 'circlepin', 'squarepin'], function (shape) {
+	Highcharts.each(['flag', 'circlepin', 'squarepin'], function (shape) {
 		VMLRenderer.prototype.symbols[shape] = symbols[shape];
 	});
 }

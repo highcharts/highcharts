@@ -80,7 +80,7 @@ Highcharts.extend(SVGElement.prototype, {
 			marginTop: translateY
 		});
 		if (shadows) { // used in labels/tooltip
-			each(shadows, function (shadow) {
+			Highcharts.each(shadows, function (shadow) {
 				css(shadow, {
 					marginLeft: translateX + 1,
 					marginTop: translateY + 1
@@ -90,7 +90,7 @@ Highcharts.extend(SVGElement.prototype, {
 
 		// apply inversion
 		if (wrapper.inverted) { // wrapper is a group
-			each(elem.childNodes, function (child) {
+			Highcharts.each(elem.childNodes, function (child) {
 				renderer.invertChild(child, elem);
 			});
 		}
@@ -242,7 +242,7 @@ Highcharts.extend(SVGRenderer.prototype, {
 						}
 
 						// Ensure dynamically updating position when any parent is translated
-						each(parents.reverse(), function (parentGroup) {
+						Highcharts.each(parents.reverse(), function (parentGroup) {
 							var htmlGroupStyle;
 
 							// Create a HTML div and append it to the parent div to emulate

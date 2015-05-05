@@ -199,7 +199,7 @@ Highcharts.wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lin
 
 	// Get the related axes based options.*Axis setting #2810
 	axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
-	each(axes2, function (A) {
+	Highcharts.each(axes2, function (A) {
 		if (defined(A.options.id) ? A.options.id.indexOf('navigator') === -1 : true) {
 			var a = (A.isXAxis ? 'yAxis' : 'xAxis'),
 				rax = (defined(A.options[a]) ? chart[a][A.options[a]] : chart[a][0]);	
@@ -215,7 +215,7 @@ Highcharts.wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lin
 	// we are adding an axis without data, so we need to populate this with grid
 	// lines (#2796).
 	uniqueAxes = axes.length ? [] : [axis.isXAxis ? chart.yAxis[0] : chart.xAxis[0]]; //#3742
-	each(axes, function (axis2) {
+	Highcharts.each(axes, function (axis2) {
 		if (HighchartsAdapter.inArray(axis2, uniqueAxes) === -1) {
 			uniqueAxes.push(axis2);
 		}
@@ -225,7 +225,7 @@ Highcharts.wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lin
 	
 	if (!isNaN(translatedValue)) {
 		if (axis.horiz) {
-			each(uniqueAxes, function (axis2) {
+			Highcharts.each(uniqueAxes, function (axis2) {
 				var skip;
 
 				y1 = axis2.pos;
@@ -244,7 +244,7 @@ Highcharts.wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lin
 				}
 			});
 		} else {
-			each(uniqueAxes, function (axis2) {
+			Highcharts.each(uniqueAxes, function (axis2) {
 				var skip;
 
 				x1 = axis2.pos;
@@ -322,7 +322,7 @@ Highcharts.wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
 	if (defined(i)) {
 		if (this.crossLabelArray[i]) { this.crossLabelArray[i].hide(); }
 	} else {
-		each(this.crossLabelArray, function (crosslabel) {
+		Highcharts.each(this.crossLabelArray, function (crosslabel) {
 			crosslabel.hide();
 		});
 	}
@@ -546,7 +546,7 @@ Highcharts.wrap(seriesProto, 'getExtremes', function (proceed) {
  */
 Axis.prototype.setCompare = function (compare, redraw) {
 	if (!this.isXAxis) {
-		each(this.series, function (series) {
+		Highcharts.each(this.series, function (series) {
 			series.setCompare(compare);
 		});
 		if (Highcharts.pick(redraw, true)) {

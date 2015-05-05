@@ -206,7 +206,7 @@ Chart.prototype = {
 		}
 
 		// handle updated data in the series
-		each(series, function (serie) {
+		Highcharts.each(series, function (serie) {
 			if (serie.isDirty) { // prepare the data so axis can read it
 				if (serie.options.legendType === 'point') {
 					redrawLegend = true;
@@ -235,7 +235,7 @@ Chart.prototype = {
 				chart.maxTicks = null;
 
 				// set axes scales
-				each(axes, function (axis) {
+				Highcharts.each(axes, function (axis) {
 					axis.setScale();
 				});
 			}
@@ -245,14 +245,14 @@ Chart.prototype = {
 
 		if (hasCartesianSeries) {
 			// If one axis is dirty, all axes must be redrawn (#792, #2169)
-			each(axes, function (axis) {
+			Highcharts.each(axes, function (axis) {
 				if (axis.isDirty) {
 					isDirtyBox = true;
 				}
 			});
 
 			// redraw axes
-			each(axes, function (axis) {
+			Highcharts.each(axes, function (axis) {
 				
 				// Fire 'afterSetExtremes' only if extremes are set
 				if (axis.isDirtyExtremes) { // #821
@@ -276,7 +276,7 @@ Chart.prototype = {
 
 
 		// redraw affected series
-		each(series, function (serie) {
+		Highcharts.each(series, function (serie) {
 			if (serie.isDirty && serie.visible &&
 					(!serie.isCartesian || serie.xAxis)) { // issue #153
 				serie.redraw();
@@ -299,7 +299,7 @@ Chart.prototype = {
 		}
 		
 		// Fire callbacks that are put on hold until after the redraw
-		each(afterRedraw, function (callback) {
+		Highcharts.each(afterRedraw, function (callback) {
 			callback.call();
 		});
 	},
@@ -356,19 +356,19 @@ Chart.prototype = {
 			axis;
 
 		// make sure the options are arrays and add some members
-		each(xAxisOptions, function (axis, i) {
+		Highcharts.each(xAxisOptions, function (axis, i) {
 			axis.index = i;
 			axis.isX = true;
 		});
 
-		each(yAxisOptions, function (axis, i) {
+		Highcharts.each(yAxisOptions, function (axis, i) {
 			axis.index = i;
 		});
 
 		// concatenate all axis options into one array
 		optionsArray = xAxisOptions.concat(yAxisOptions);
 
-		each(optionsArray, function (axisOptions) {
+		Highcharts.each(optionsArray, function (axisOptions) {
 			axis = new Axis(chart, axisOptions);
 		});
 	},
@@ -379,7 +379,7 @@ Chart.prototype = {
 	 */
 	getSelectedPoints: function () {
 		var points = [];
-		each(this.series, function (serie) {
+		Highcharts.each(this.series, function (serie) {
 			points = points.concat(HighchartsAdapter.grep(serie.points || [], function (point) {
 				return point.selected;
 			}));
@@ -403,13 +403,13 @@ Chart.prototype = {
 		var chart = this;
 
 		// reset stacks for each yAxis
-		each(chart.yAxis, function (axis) {
+		Highcharts.each(chart.yAxis, function (axis) {
 			if (axis.stacks && axis.hasVisibleSeries) {
 				axis.oldStacks = axis.stacks;
 			}
 		});
 
-		each(chart.series, function (series) {
+		Highcharts.each(chart.series, function (series) {
 			if (series.options.stacking && (series.visible === true || chart.options.chart.ignoreHiddenSeries === false)) {
 				series.stackKey = series.type + Highcharts.pick(series.options.stack, '');
 			}
@@ -433,7 +433,7 @@ Chart.prototype = {
 		chartSubtitleOptions = options.subtitle = Highcharts.merge(options.subtitle, subtitleOptions);
 
 		// add title and subtitle
-		each([
+		Highcharts.each([
 			['title', titleOptions, chartTitleOptions],
 			['subtitle', subtitleOptions, chartSubtitleOptions]
 		], function (arr) {
@@ -714,13 +714,13 @@ Chart.prototype = {
 		
 		// pre-render axes to get labels offset width
 		if (chart.hasCartesianSeries) {
-			each(chart.axes, function (axis) {
+			Highcharts.each(chart.axes, function (axis) {
 				axis.getOffset();
 			});
 		}
 
 		// Add the axis offsets
-		each(marginNames, function (m, side) {
+		Highcharts.each(marginNames, function (m, side) {
 			if (!Highcharts.defined(margin[side])) {
 				chart[m] += axisOffset[side];
 			}		
@@ -829,13 +829,13 @@ Chart.prototype = {
 
 		// handle axes
 		chart.maxTicks = null;
-		each(chart.axes, function (axis) {
+		Highcharts.each(chart.axes, function (axis) {
 			axis.isDirty = true;
 			axis.setScale();
 		});
 
 		// make sure non-cartesian series are also handled
-		each(chart.series, function (serie) {
+		Highcharts.each(chart.series, function (serie) {
 			serie.isDirty = true;
 		});
 
@@ -916,7 +916,7 @@ Chart.prototype = {
 		};
 
 		if (!skipAxes) {
-			each(chart.axes, function (axis) {
+			Highcharts.each(chart.axes, function (axis) {
 				axis.setAxisSize();
 				axis.setAxisTranslation();
 			});
@@ -930,7 +930,7 @@ Chart.prototype = {
 		var chart = this,
 			marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'];
 
-		each(marginNames, function (m, side) {
+		Highcharts.each(marginNames, function (m, side) {
 			chart[m] = Highcharts.pick(chart.margin[side], chart.spacing[side]);
 		});
 		chart.axisOffset = [0, 0, 0, 0]; // top, right, bottom, left
@@ -1062,7 +1062,7 @@ Chart.prototype = {
 			value;
 			
 			
-		each(['inverted', 'angular', 'polar'], function (key) {
+		Highcharts.each(['inverted', 'angular', 'polar'], function (key) {
 			
 			// The default series type's class
 			klass = seriesTypes[optionsChart.type || optionsChart.defaultSeriesType];
@@ -1098,12 +1098,12 @@ Chart.prototype = {
 			chartSeries = chart.series;
 
 		// Reset links
-		each(chartSeries, function (series) {
+		Highcharts.each(chartSeries, function (series) {
 			series.linkedSeries.length = 0;
 		});
 
 		// Apply new links
-		each(chartSeries, function (series) {
+		Highcharts.each(chartSeries, function (series) {
 			var linkedTo = series.options.linkedTo;
 			if (Highcharts.isString(linkedTo)) {
 				if (linkedTo === ':previous') {
@@ -1123,7 +1123,7 @@ Chart.prototype = {
 	 * Render series for the chart
 	 */
 	renderSeries: function () {
-		each(this.series, function (serie) {
+		Highcharts.each(this.series, function (serie) {
 			serie.translate();
 			serie.render();
 		});
@@ -1137,7 +1137,7 @@ Chart.prototype = {
 			pInt = Highcharts.pInt,
 			labels = chart.options.labels;
 		if (labels.items) {
-			each(labels.items, function (label) {
+			Highcharts.each(labels.items, function (label) {
 				var style = Highcharts.extend(labels.style, label.style),
 					x = pInt(style.left) + chart.plotLeft,
 					y = pInt(style.top) + chart.plotTop + 12;
@@ -1190,7 +1190,7 @@ Chart.prototype = {
 		tempHeight = chart.plotHeight = chart.plotHeight - 13; // 13 is the most common height of X axis labels
 
 		// Get margins by pre-rendering axes
-		each(axes, function (axis) {
+		Highcharts.each(axes, function (axis) {
 			axis.setScale();
 		});
 		chart.getAxisMargins();
@@ -1202,7 +1202,7 @@ Chart.prototype = {
 		if (redoHorizontal || redoVertical) {
 
 			chart.maxTicks = null; // reset for second pass
-			each(axes, function (axis) {
+			Highcharts.each(axes, function (axis) {
 				if ((axis.horiz && redoHorizontal) || (!axis.horiz && redoVertical)) {
 					axis.setTickInterval(true); // update to reflect the new margins
 				}
@@ -1216,7 +1216,7 @@ Chart.prototype = {
 
 		// Axes
 		if (chart.hasCartesianSeries) {
-			each(axes, function (axis) {
+			Highcharts.each(axes, function (axis) {
 				axis.render();
 			});
 		}
@@ -1303,7 +1303,7 @@ Chart.prototype = {
 		}
 
 		// ==== Destroy chart properties:
-		each(['title', 'subtitle', 'chartBackground', 'plotBackground', 'plotBGImage', 
+		Highcharts.each(['title', 'subtitle', 'chartBackground', 'plotBackground', 'plotBGImage', 
 				'plotBorder', 'seriesGroup', 'clipRect', 'credits', 'pointer', 'scroller', 
 				'rangeSelector', 'legend', 'resetZoomButton', 'tooltip', 'renderer'], function (name) {
 			var prop = chart[name];
@@ -1389,7 +1389,7 @@ Chart.prototype = {
 		chart.getAxes();
 
 		// Initialize the series
-		each(options.series || [], function (serieOptions) {
+		Highcharts.each(options.series || [], function (serieOptions) {
 			chart.initSeries(serieOptions);
 		});
 
@@ -1413,7 +1413,7 @@ Chart.prototype = {
 		if (callback) {
 			callback.apply(chart, [chart]);
 		}
-		each(chart.callbacks, function (fn) {
+		Highcharts.each(chart.callbacks, function (fn) {
 			if (chart.index !== undefined) { // Chart destroyed in its own callback (#3600)
 				fn.apply(chart, [chart]);
 			}

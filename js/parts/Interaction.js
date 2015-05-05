@@ -25,7 +25,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			};
 
 		// Add reference to the point
-		each(series.points, function (point) {
+		Highcharts.each(series.points, function (point) {
 			if (point.graphic) {
 				point.graphic.element.point = point;
 			}
@@ -36,7 +36,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 
 		// Add the event listeners, we need to do this only once
 		if (!series._hasTracking) {
-			each(series.trackerGroups, function (key) {
+			Highcharts.each(series.trackerGroups, function (key) {
 				if (series[key]) { // we don't always have dataLabelsGroup
 					series[key]
 						.addClass('highcharts-tracker')
@@ -132,7 +132,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 
 			// The tracker is added to the series group, which is clipped, but is covered
 			// by the marker group. So the marker group also needs to capture events.
-			each([series.tracker, series.markerGroup], function (tracker) {
+			Highcharts.each([series.tracker, series.markerGroup], function (tracker) {
 				tracker.addClass('highcharts-tracker')
 					.on('mouseover', onMouseOver)
 					.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
@@ -279,11 +279,11 @@ Highcharts.extend(Chart.prototype, {
 
 		// If zoom is called with no arguments, reset the axes
 		if (!event || event.resetSelection) {
-			each(chart.axes, function (axis) {
+			Highcharts.each(chart.axes, function (axis) {
 				hasZoomed = axis.zoom();
 			});
 		} else { // else, zoom in on all axes
-			each(event.xAxis.concat(event.yAxis), function (axisData) {
+			Highcharts.each(event.xAxis.concat(event.yAxis), function (axisData) {
 				var axis = axisData.axis,
 					isXAxis = axis.isXAxis;
 
@@ -327,12 +327,12 @@ Highcharts.extend(Chart.prototype, {
 
 		// remove active points for shared tooltip
 		if (hoverPoints) {
-			each(hoverPoints, function (point) {
+			Highcharts.each(hoverPoints, function (point) {
 				point.setState();
 			});
 		}
 
-		each(panning === 'xy' ? [1, 0] : [1], function (isX) { // xy is used in maps
+		Highcharts.each(panning === 'xy' ? [1, 0] : [1], function (isX) { // xy is used in maps
 			var mousePos = e[isX ? 'chartX' : 'chartY'],
 				axis = chart[isX ? 'xAxis' : 'yAxis'][0],
 				startPos = chart[isX ? 'mouseDownX' : 'mouseDownY'],
@@ -386,7 +386,7 @@ Highcharts.extend(Point.prototype, {
 
 			// unselect all other points unless Ctrl or Cmd + click
 			if (!accumulate) {
-				each(chart.getSelectedPoints(), function (loopPoint) {
+				Highcharts.each(chart.getSelectedPoints(), function (loopPoint) {
 					if (loopPoint.selected && loopPoint !== point) {
 						loopPoint.selected = loopPoint.options.selected = false;
 						series.options.data[inArray(loopPoint, series.data)] = loopPoint.options;
@@ -719,7 +719,7 @@ Highcharts.extend(Series.prototype, {
 		showOrHide = vis ? 'show' : 'hide';
 
 		// show or hide elements
-		each(['group', 'dataLabelsGroup', 'markerGroup', 'tracker'], function (key) {
+		Highcharts.each(['group', 'dataLabelsGroup', 'markerGroup', 'tracker'], function (key) {
 			if (series[key]) {
 				series[key][showOrHide]();
 			}
@@ -741,7 +741,7 @@ Highcharts.extend(Series.prototype, {
 		series.isDirty = true;
 		// in a stack, all other series are affected
 		if (series.options.stacking) {
-			each(chart.series, function (otherSeries) {
+			Highcharts.each(chart.series, function (otherSeries) {
 				if (otherSeries.options.stacking && otherSeries.visible) {
 					otherSeries.isDirty = true;
 				}
@@ -749,7 +749,7 @@ Highcharts.extend(Series.prototype, {
 		}
 
 		// show or hide linked series
-		each(series.linkedSeries, function (otherSeries) {
+		Highcharts.each(series.linkedSeries, function (otherSeries) {
 			otherSeries.setVisible(vis, false);
 		});
 

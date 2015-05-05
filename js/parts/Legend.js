@@ -126,7 +126,7 @@ Legend.prototype = {
 		var checkbox = item.checkbox;
 
 		// destroy SVG elements
-		each(['legendItem', 'legendLine', 'legendSymbol', 'legendGroup'], function (key) {
+		Highcharts.each(['legendItem', 'legendLine', 'legendSymbol', 'legendGroup'], function (key) {
 			if (item[key]) {
 				item[key] = item[key].destroy();
 			}
@@ -142,7 +142,7 @@ Legend.prototype = {
 	 */
 	clearItems: function () {
 		var legend = this;
-		each(legend.getAllItems(), function (item) {
+		Highcharts.each(legend.getAllItems(), function (item) {
 			legend.destroyItem(item); 
 		});		
 	},
@@ -174,7 +174,7 @@ Legend.prototype = {
 
 		if (alignAttr) {
 			translateY = alignAttr.translateY;
-			each(this.allItems, function (item) {
+			Highcharts.each(this.allItems, function (item) {
 				var checkbox = item.checkbox,
 					top;
 				
@@ -344,7 +344,7 @@ Legend.prototype = {
 	 */
 	getAllItems: function () {
 		var allItems = [];
-		each(this.chart.series, function (series) {
+		Highcharts.each(this.chart.series, function (series) {
 			var seriesOptions = series.options;
 
 			// Handle showInLegend. If the series is linked to another series, defaults to false.
@@ -377,7 +377,7 @@ Legend.prototype = {
 			
 		if (this.display && !options.floating) {
 
-			each([
+			Highcharts.each([
 				/(lth|ct|rth)/,
 				/(rtv|rm|rbv)/,
 				/(rbh|cb|lbh)/,
@@ -453,7 +453,7 @@ Legend.prototype = {
 
 		// render the items
 		legend.lastLineHeight = 0;
-		each(allItems, function (item) {
+		Highcharts.each(allItems, function (item) {
 			legend.renderItem(item); 
 		});
 
@@ -499,7 +499,7 @@ Legend.prototype = {
 
 		// Now that the legend width and height are established, put the items in the 
 		// final position
-		each(allItems, function (item) {
+		Highcharts.each(allItems, function (item) {
 			legend.positionItem(item);
 		});
 
@@ -569,7 +569,7 @@ Legend.prototype = {
 			
 			// Fill pages with Y positions so that the top of each a legend item defines
 			// the scroll top for each page (#2098)
-			each(allItems, function (item, i) {
+			Highcharts.each(allItems, function (item, i) {
 				var y = item._legendItemPos[1],
 					h = Math.round(item.legendItem.getBBox().height),
 					len = pages.length;

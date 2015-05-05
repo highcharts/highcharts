@@ -45,7 +45,7 @@ var CandlestickSeries = Highcharts.extendClass(OHLCSeries, {
 
 		// Add custom line color for points going up (close > open).
 		// Fill is handled by OHLCSeries' getAttribs.
-		each(series.points, function (point) {
+		Highcharts.each(series.points, function (point) {
 			if (point.open < point.close) {
 				point.pointAttr[''].stroke = upLineColor;
 				point.pointAttr.hover.stroke = hoverStroke;
@@ -76,7 +76,7 @@ var CandlestickSeries = Highcharts.extendClass(OHLCSeries, {
 			halfWidth;
 
 
-		each(points, function (point) {
+		Highcharts.each(points, function (point) {
 
 			graphic = point.graphic;
 			if (point.plotY !== undefined) {

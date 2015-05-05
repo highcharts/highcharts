@@ -129,7 +129,7 @@ RangeSelector.prototype = {
 				if (dataMax === undefined) {
 					dataMin = Number.MAX_VALUE;
 					dataMax = Number.MIN_VALUE;
-					each(chart.series, function (series) {
+					Highcharts.each(chart.series, function (series) {
 						var xData = series.xData; // reassign it to the last item
 						dataMin = Math.min(xData[0], dataMin);
 						dataMax = Math.max(xData[xData.length - 1], dataMax);
@@ -260,7 +260,7 @@ RangeSelector.prototype = {
 		addEvent(chart, 'resize', blurInputs);
 
 		// Extend the buttonOptions with actual range
-		each(buttonOptions, rangeSelector.computeButtonRange);
+		Highcharts.each(buttonOptions, rangeSelector.computeButtonRange);
 
 		// zoomed range based on a pre-selected button index
 		if (selectedOption !== undefined && buttonOptions[selectedOption]) {
@@ -297,7 +297,7 @@ RangeSelector.prototype = {
 			rangeSelector.setSelected(null);
 		}
 
-		each(rangeSelector.buttonOptions, function (rangeOptions, i) {
+		Highcharts.each(rangeSelector.buttonOptions, function (rangeOptions, i) {
 			var range = rangeOptions._range,
 				// Disable buttons where the range exceeds what is allowed in the current view
 				isTooGreatRange = range > dataMax - dataMin,
@@ -554,7 +554,7 @@ RangeSelector.prototype = {
 			buttonLeft = pick(buttonPosition.x, plotLeft) + rangeSelector.zoomText.getBBox().width + 5;
 			buttonTop = pick(buttonPosition.y, chart.plotTop - 35);
 
-			each(rangeSelector.buttonOptions, function (rangeOptions, i) {
+			Highcharts.each(rangeSelector.buttonOptions, function (rangeOptions, i) {
 				buttons[i] = renderer.button(
 						rangeOptions.text,
 						buttonLeft,

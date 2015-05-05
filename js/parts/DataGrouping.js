@@ -357,7 +357,7 @@ seriesProto.destroyGroupedData = function () {
 	var groupedData = this.groupedData;
 
 	// clear previous groups
-	each(groupedData || [], function (point, i) {
+	Highcharts.each(groupedData || [], function (point, i) {
 		if (point) {
 			groupedData[i] = point.destroy ? point.destroy() : null;
 		}
@@ -489,7 +489,7 @@ Highcharts.wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
  */
 Highcharts.wrap(Axis.prototype, 'setScale', function (proceed) {
 	proceed.call(this);
-	each(this.series, function (series) {
+	Highcharts.each(this.series, function (series) {
 		series.hasProcessed = false;
 	});
 });

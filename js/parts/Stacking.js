@@ -272,7 +272,7 @@ Series.prototype.setPercentStacks = function () {
 		correctFloat = Highcharts.correctFloat,
 		processedXData = series.processedXData;
 
-	each([stackKey, '-' + stackKey], function (key) {
+	Highcharts.each([stackKey, '-' + stackKey], function (key) {
 		var i = processedXData.length,
 			x,
 			stack,

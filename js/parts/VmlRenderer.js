@@ -446,7 +446,7 @@ VMLElement = {
 		
 		// Let the shadow follow the main element
 		if (this.shadows) {
-			each(this.shadows, function (shadow) {
+			Highcharts.each(this.shadows, function (shadow) {
 				shadow.style[key] = value;
 			});
 		}
@@ -618,7 +618,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 			// used in attr and animation to update the clipping of all members
 			updateClipping: function () {
-				each(clipRect.members, function (member) {
+				Highcharts.each(clipRect.members, function (member) {
 					if (member.element) { // Deleted series, like in stock/members/series-remove demo. Should be removed from members, but this will do.
 						member.css(clipRect.getCSS(member));
 					}
@@ -694,7 +694,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			}
 
 			// Compute the stops
-			each(stops, function (stop, i) {
+			Highcharts.each(stops, function (stop, i) {
 				if (regexRgba.test(stop[1])) {
 					colorObject = Color(stop[1]);
 					stopColor = colorObject.get('rgb');
@@ -943,7 +943,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		});
 
 		// Recursively invert child elements, needed for nested composite shapes like box plots and error bars. #1680, #1806.
-		each(element.childNodes, function (child) {
+		Highcharts.each(element.childNodes, function (child) {
 			ren.invertChild(child, element);
 		});
 	},

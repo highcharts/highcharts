@@ -66,7 +66,7 @@ var ColumnSeries = Highcharts.extendClass(Series, {
 		// if the series is added dynamically, force redraw of other
 		// series affected by a new column
 		if (chart.hasRendered) {
-			each(chart.series, function (otherSeries) {
+			Highcharts.each(chart.series, function (otherSeries) {
 				if (otherSeries.type === series.type) {
 					otherSeries.isDirty = true;
 				}
@@ -96,7 +96,7 @@ var ColumnSeries = Highcharts.extendClass(Series, {
 		if (options.grouping === false) {
 			columnCount = 1;
 		} else {
-			each(series.chart.series, function (otherSeries) {
+			Highcharts.each(series.chart.series, function (otherSeries) {
 				var otherOptions = otherSeries.options,
 					otherYAxis = otherSeries.yAxis;
 				if (otherSeries.type === series.type && otherSeries.visible &&
@@ -181,7 +181,7 @@ var ColumnSeries = Highcharts.extendClass(Series, {
 		Series.prototype.translate.apply(series);
 
 		// Record the new values
-		each(series.points, function (point) {
+		Highcharts.each(series.points, function (point) {
 			var yBottom = pick(point.yBottom, translatedThreshold),
 				plotY = Math.min(Math.max(-999 - yBottom, point.plotY), yAxis.len + 999 + yBottom), // Don't draw too far outside plot area (#1303, #2241)
 				barX = point.plotX + pointXOffset,
@@ -269,7 +269,7 @@ var ColumnSeries = Highcharts.extendClass(Series, {
 			pointAttr;
 
 		// draw the columns
-		each(series.points, function (point) {
+		Highcharts.each(series.points, function (point) {
 			var plotY = point.plotY,
 				graphic = point.graphic,
 				borderAttr;
@@ -346,7 +346,7 @@ var ColumnSeries = Highcharts.extendClass(Series, {
 		// column and bar series affects other series of the same type
 		// as they are either stacked or grouped
 		if (chart.hasRendered) {
-			each(chart.series, function (otherSeries) {
+			Highcharts.each(chart.series, function (otherSeries) {
 				if (otherSeries.type === series.type) {
 					otherSeries.isDirty = true;
 				}

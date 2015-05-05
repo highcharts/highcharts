@@ -206,7 +206,7 @@ Highcharts.extend(Axis.prototype, {
 		// apply the ordinal logic
 		if (axis.options.ordinal || axis.options.breaks) {
 
-			each(axis.series, function (series, i) {
+			Highcharts.each(axis.series, function (series, i) {
 
 				if (series.visible !== false && (series.takeOrdinalPosition !== false || axis.options.breaks)) {
 
@@ -421,7 +421,7 @@ Highcharts.extend(Axis.prototype, {
 			};
 
 			// Add the fake series to hold the full data, then apply processData to it
-			each(axis.series, function (series) {
+			Highcharts.each(axis.series, function (series) {
 				fakeSeries = {
 					xAxis: fakeAxis,
 					xData: series.xData,
@@ -563,7 +563,7 @@ Highcharts.wrap(Chart.prototype, 'pan', function (proceed, e) {
 
 			// Remove active points for shared tooltip
 			if (hoverPoints) {
-				each(hoverPoints, function (point) {
+				Highcharts.each(hoverPoints, function (point) {
 					point.setState();
 				});
 			}
@@ -642,7 +642,7 @@ Highcharts.wrap(Series.prototype, 'getSegments', function (proceed) {
 		segments = series.segments;
 
 		// extension for ordinal breaks
-		each(segments, function (segment, no) {
+		Highcharts.each(segments, function (segment, no) {
 			var i = segment.length - 1;
 			while (i--) {
 				if (segment[i + 1].x - segment[i].x > xAxis.closestPointRange * gapSize) {

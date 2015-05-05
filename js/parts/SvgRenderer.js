@@ -128,7 +128,7 @@ SVGElement.prototype = {
 
 				// The gradient needs to keep a list of stops to be able to destroy them
 				gradientObject.stops = [];
-				each(stops, function (stop) {
+				Highcharts.each(stops, function (stop) {
 					var stopObject;
 					if (stop[1].indexOf('rgba') === 0) {
 						colorObject = Color(stop[1]);
@@ -199,7 +199,7 @@ SVGElement.prototype = {
 			this.ySetter = this.xSetter;
 
 			tspans = [].slice.call(elem.getElementsByTagName('tspan'));
-			each(textShadow.split(/\s?,\s?/g), function (textShadow) {
+			Highcharts.each(textShadow.split(/\s?,\s?/g), function (textShadow) {
 				var firstChild = elem.firstChild,
 					color,
 					strokeWidth;
@@ -211,7 +211,7 @@ SVGElement.prototype = {
 				strokeWidth = textShadow[textShadow.length - 2];
 
 				if (strokeWidth) {
-					each(tspans, function (tspan, y) {
+					Highcharts.each(tspans, function (tspan, y) {
 						var clone;
 
 						// Let the first line start at the correct X position
@@ -353,7 +353,7 @@ SVGElement.prototype = {
 	symbolAttr: function (hash) {
 		var wrapper = this;
 
-		each(['x', 'y', 'r', 'start', 'end', 'width', 'height', 'innerR', 'anchorX', 'anchorY'], function (key) {
+		Highcharts.each(['x', 'y', 'r', 'start', 'end', 'width', 'height', 'innerR', 'anchorX', 'anchorY'], function (key) {
 			wrapper[key] = Highcharts.pick(hash[key], wrapper[key]);
 		});
 
@@ -726,7 +726,7 @@ SVGElement.prototype = {
 					// When the text shadow shim is used, we need to hide the fake shadows
 					// to get the correct bounding box (#3872)
 					toggleTextShadowShim = this.fakeTS && function (display) {
-						each(element.querySelectorAll('.' + 'highcharts-text-shadow'), function (tspan) {
+						Highcharts.each(element.querySelectorAll('.' + 'highcharts-text-shadow'), function (tspan) {
 							tspan.style.display = display;
 						});
 					};
@@ -916,7 +916,7 @@ SVGElement.prototype = {
 
 		// destroy shadows
 		if (shadows) {
-			each(shadows, function (shadow) {
+			Highcharts.each(shadows, function (shadow) {
 				wrapper.safeRemoveChild(shadow);
 			});
 		}
@@ -1404,13 +1404,13 @@ SVGRenderer.prototype = {
 
 			
 			// build the lines
-			each(lines, function (line, lineNo) {
+			Highcharts.each(lines, function (line, lineNo) {
 				var spans, spanNo = 0;
 
 				line = line.replace(/<span/g, '|||<span').replace(/<\/span>/g, '</span>|||');
 				spans = line.split('|||');
 
-				each(spans, function (span) {
+				Highcharts.each(spans, function (span) {
 					if (span !== '' || spans.length === 1) {
 						var attributes = {},
 							tspan = document.createElementNS(renderer.SVG_NS, 'tspan'),
@@ -2537,7 +2537,7 @@ SVGRenderer.prototype = {
 				if (styles) {
 					var textStyles = {};
 					styles = Highcharts.merge(styles); // create a copy to avoid altering the original object (#537)
-					each(wrapper.textProps, function (prop) {
+					Highcharts.each(wrapper.textProps, function (prop) {
 						if (styles[prop] !== undefined) {
 							textStyles[prop] = styles[prop];
 							delete styles[prop];

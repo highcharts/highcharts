@@ -553,7 +553,7 @@ Scroller.prototype = {
 		}
 
 		// Add them all
-		each(_events, function (args) {
+		Highcharts.each(_events, function (args) {
 			Highcharts.addEvent.apply(null, args);
 		});
 		this._events = _events;
@@ -565,7 +565,7 @@ Scroller.prototype = {
 	removeEvents: function () {
 		var removeEvent = Highcharts.removeEvent;
 		
-		each(this._events, function (args) {
+		Highcharts.each(this._events, function (args) {
 			removeEvent.apply(null, args);
 		});
 		this._events = undefined;
@@ -1062,7 +1062,7 @@ Scroller.prototype = {
 		scroller.removeEvents();
 
 		// Destroy properties
-		each([scroller.xAxis, scroller.yAxis, scroller.leftShade, scroller.rightShade, scroller.outline, scroller.scrollbarTrack, scroller.scrollbarRifles, scroller.scrollbarGroup, scroller.scrollbar], function (prop) {
+		Highcharts.each([scroller.xAxis, scroller.yAxis, scroller.leftShade, scroller.rightShade, scroller.outline, scroller.scrollbarTrack, scroller.scrollbarRifles, scroller.scrollbarGroup, scroller.scrollbar], function (prop) {
 			if (prop && prop.destroy) {
 				prop.destroy();
 			}
@@ -1070,7 +1070,7 @@ Scroller.prototype = {
 		scroller.xAxis = scroller.yAxis = scroller.leftShade = scroller.rightShade = scroller.outline = scroller.scrollbarTrack = scroller.scrollbarRifles = scroller.scrollbarGroup = scroller.scrollbar = null;
 
 		// Destroy elements in collection
-		each([scroller.scrollbarButtons, scroller.handles, scroller.elementsToDestroy], function (coll) {
+		Highcharts.each([scroller.scrollbarButtons, scroller.handles, scroller.elementsToDestroy], function (coll) {
 			Highcharts.destroyObjectProperties(coll);
 		});
 	}

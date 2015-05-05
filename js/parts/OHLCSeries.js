@@ -52,7 +52,7 @@ var OHLCSeries = Highcharts.extendClass(Highcharts.seriesTypes.column, {
 		seriesDownPointAttr.hover[upColorProp] = stateOptions.hover.upColor || upColor;
 		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
 
-		each(series.points, function (point) {
+		Highcharts.each(series.points, function (point) {
 			if (point.open < point.close && !point.options.color) {
 				point.pointAttr = seriesDownPointAttr;
 			}
@@ -69,7 +69,7 @@ var OHLCSeries = Highcharts.extendClass(Highcharts.seriesTypes.column, {
 		Highcharts.seriesTypes.column.prototype.translate.apply(series);
 
 		// do the translation
-		each(series.points, function (point) {
+		Highcharts.each(series.points, function (point) {
 			// the graphics
 			if (point.open !== null) {
 				point.plotOpen = yAxis.translate(point.open, 0, 1, 0, 1);
@@ -98,7 +98,7 @@ var OHLCSeries = Highcharts.extendClass(Highcharts.seriesTypes.column, {
 			crispX;
 
 
-		each(points, function (point) {
+		Highcharts.each(points, function (point) {
 			if (point.plotY !== undefined) {
 
 				graphic = point.graphic;

@@ -45,7 +45,7 @@ Series.prototype.drawDataLabels = function () {
 
 		// Make the labels for each point
 		generalOptions = options;
-		each(points, function (point) {
+		Highcharts.each(points, function (point) {
 
 			var enabled,
 				defined = Highcharts.defined,
@@ -351,7 +351,7 @@ if (Highcharts.seriesTypes.pie) {
 		Series.prototype.drawDataLabels.apply(series);
 
 		// arrange points for detection collision
-		each(data, function (point) {
+		Highcharts.each(data, function (point) {
 			if (point.dataLabel && point.visible) { // #407, #2510
 				halves[point.half].push(point);
 			}
@@ -571,7 +571,7 @@ if (Highcharts.seriesTypes.pie) {
 
 			// Draw the connectors
 			if (outside && connectorWidth) {
-				each(this.points, function (point) {
+				Highcharts.each(this.points, function (point) {
 					connector = point.connector;
 					labelPos = point.labelPos;
 					dataLabel = point.dataLabel;
@@ -623,7 +623,7 @@ if (Highcharts.seriesTypes.pie) {
 	 * fall within the plot area.
 	 */
 	Highcharts.seriesTypes.pie.prototype.placeDataLabels = function () {
-		each(this.points, function (point) {
+		Highcharts.each(this.points, function (point) {
 			var dataLabel = point.dataLabel,
 				_pos;
 
@@ -687,7 +687,7 @@ if (Highcharts.seriesTypes.pie) {
 		if (newSize < center[2]) {
 			center[2] = newSize;
 			this.translate(center);
-			each(this.points, function (point) {
+			Highcharts.each(this.points, function (point) {
 				if (point.dataLabel) {
 					point.dataLabel._pos = null; // reset
 				}

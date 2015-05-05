@@ -112,7 +112,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 
 
 		// mark new days if the time is dividible by day (#1649, #1760)
-		each(HighchartsAdapter.grep(tickPositions, function (time) {
+		Highcharts.each(HighchartsAdapter.grep(tickPositions, function (time) {
 			return interval <= timeUnits.hour && time % timeUnits.day === localTimezoneOffset;
 		}), function (time) {
 			higherRanks[time] = 'day';

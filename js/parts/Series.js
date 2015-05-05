@@ -84,7 +84,7 @@ Series.prototype = {
 		series.getSymbol();
 
 		// Set the data
-		each(series.parallelArrays, function (key) {
+		Highcharts.each(series.parallelArrays, function (key) {
 			series[key + 'Data'] = [];
 		});
 		series.setData(options.data, false);
@@ -104,7 +104,7 @@ Series.prototype = {
 			stableSort(this.yAxis.series, sortByIndex);
 		}
 
-		each(chartSeries, function (series, i) {
+		Highcharts.each(chartSeries, function (series, i) {
 			series.index = i;
 			series.name = series.name || 'Series ' + (i + 1);
 		});
@@ -121,9 +121,9 @@ Series.prototype = {
 			chart = series.chart,
 			axisOptions;
 
-		each(series.axisTypes || [], function (AXIS) { // repeat for xAxis and yAxis
+		Highcharts.each(series.axisTypes || [], function (AXIS) { // repeat for xAxis and yAxis
 
-			each(chart[AXIS], function (axis) { // loop through the chart's axis objects
+			Highcharts.each(chart[AXIS], function (axis) { // loop through the chart's axis objects
 				axisOptions = axis.options;
 
 				// apply if the series xAxis or yAxis option mathches the number of the
@@ -171,7 +171,7 @@ Series.prototype = {
 					Array.prototype[i].apply(series[key + 'Data'], Array.prototype.slice.call(args, 2));
 				};
 
-		each(series.parallelArrays, fn);
+		Highcharts.each(series.parallelArrays, fn);
 	},
 
 	/**
@@ -233,7 +233,7 @@ Series.prototype = {
 
 			// else, split on null points
 			} else {
-				each(points, function (point, i) {
+				Highcharts.each(points, function (point, i) {
 					if (point.y === null) {
 						if (i > lastNull + 1) {
 							segments.push(points.slice(lastNull + 1, i));
@@ -386,7 +386,7 @@ Series.prototype = {
 		// If the point count is the same as is was, just run Point.update which is
 		// cheaper, allows animation, and keeps references to points.
 		if (updatePoints !== false && dataLength && oldDataLength === dataLength && !series.cropped && !series.hasGroupedData && series.visible) {
-			each(data, function (point, i) {
+			Highcharts.each(data, function (point, i) {
 				oldData[i].update(point, false, null, false);
 			});
 
@@ -399,7 +399,7 @@ Series.prototype = {
 			series.colorCounter = 0; // for series with colorByPoint (#1547)
 			
 			// Update parallel arrays
-			each(this.parallelArrays, function (key) {
+			Highcharts.each(this.parallelArrays, function (key) {
 				series[key + 'Data'].length = 0;
 			});
 
@@ -1103,7 +1103,7 @@ Series.prototype = {
 		seriesPointAttr[''] = series.convertAttribs(normalOptions, normalDefaults);
 
 		// 'hover' and 'select' states inherit from normal state except the default radius
-		each(['hover', 'select'], function (state) {
+		Highcharts.each(['hover', 'select'], function (state) {
 			seriesPointAttr[state] =
 					series.convertAttribs(stateOptions[state], seriesPointAttr['']);
 		});
@@ -1220,7 +1220,7 @@ Series.prototype = {
 		Highcharts.removeEvent(series);
 
 		// erase from axes
-		each(series.axisTypes || [], function (AXIS) {
+		Highcharts.each(series.axisTypes || [], function (AXIS) {
 			axis = series[AXIS];
 			if (axis) {
 				erase(axis.series, series);
@@ -1247,7 +1247,7 @@ Series.prototype = {
 		clearTimeout(series.animationTimeout);
 
 		// destroy all SVGElements associated to the series
-		each(['area', 'graph', 'dataLabelsGroup', 'group', 'markerGroup', 'tracker',
+		Highcharts.each(['area', 'graph', 'dataLabelsGroup', 'group', 'markerGroup', 'tracker',
 				'graphNeg', 'areaNeg', 'posClip', 'negClip'], function (prop) {
 			if (series[prop]) {
 
@@ -1281,7 +1281,7 @@ Series.prototype = {
 			step = series.options.step;
 
 		// build the segment line
-		each(segment, function (point, i) {
+		Highcharts.each(segment, function (point, i) {
 
 			var plotX = point.plotX,
 				plotY = point.plotY,
@@ -1341,7 +1341,7 @@ Series.prototype = {
 			singlePoints = []; // used in drawTracker
 
 		// Divide into segments and build graph and area paths
-		each(series.segments, function (segment) {
+		Highcharts.each(series.segments, function (segment) {
 
 			segmentPath = series.getSegmentPath(segment);
 
@@ -1374,12 +1374,12 @@ Series.prototype = {
 			fillColor = (this.fillGraph && this.color) || 'none', // polygon series use filled graph
 			zones = this.zones;
 
-		each(zones, function (threshold, i) {
+		Highcharts.each(zones, function (threshold, i) {
 			props.push(['colorGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
 		});
 		
 		// Draw the graph
-		each(props, function (prop, i) {
+		Highcharts.each(props, function (prop, i) {
 			var graphKey = prop[0],
 				graph = series[graphKey],
 				attribs;
@@ -1442,7 +1442,7 @@ Series.prototype = {
 			}
 
 			// Create the clips
-			each(zones, function (threshold, i) {
+			Highcharts.each(zones, function (threshold, i) {
 				translatedFrom = pick(translatedTo, (reversed ? (horiz ? chart.plotWidth : 0) : (horiz ? 0 : axis.toPixels(axis.min))));
 				translatedTo = Math.round(axis.toPixels(pick(threshold.value, axis.max), true));
 
@@ -1538,7 +1538,7 @@ Series.prototype = {
 				height: series.xAxis.len
 			};
 
-			each(['group', 'markerGroup'], function (groupName) {
+			Highcharts.each(['group', 'markerGroup'], function (groupName) {
 				if (series[groupName]) {
 					series[groupName].attr(size).invert();
 				}
@@ -1651,7 +1651,7 @@ Series.prototype = {
 			series.applyZones();
 		}
 
-		each(series.points, function (point) {
+		Highcharts.each(series.points, function (point) {
 			if (point.redraw) {
 				point.redraw();
 			}

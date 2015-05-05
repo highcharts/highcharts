@@ -122,14 +122,14 @@ Highcharts.extend(Highcharts.Pointer.prototype, {
 		
 		// Register the touch start position
 		if (e.type === 'touchstart') {
-			each(touches, function (e, i) {
+			Highcharts.each(touches, function (e, i) {
 				pinchDown[i] = { chartX: e.chartX, chartY: e.chartY };
 			});
 			lastValidTouch.x = [pinchDown[0].chartX, pinchDown[1] && pinchDown[1].chartX];
 			lastValidTouch.y = [pinchDown[0].chartY, pinchDown[1] && pinchDown[1].chartY];
 
 			// Identify the data bounds in pixels
-			each(chart.axes, function (axis) {
+			Highcharts.each(chart.axes, function (axis) {
 				if (axis.zoomEnabled) {
 					var bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
 						minPixelPadding = axis.minPixelPadding,

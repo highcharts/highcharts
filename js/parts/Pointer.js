@@ -107,7 +107,7 @@ Pointer.prototype = {
 				yAxis: []
 			};
 
-		each(this.chart.axes, function (axis) {
+		Highcharts.each(this.chart.axes, function (axis) {
 			coordinates[axis.isXAxis ? 'xAxis' : 'yAxis'].push({
 				axis: axis,
 				value: axis.toValue(e[axis.horiz ? 'chartX' : 'chartY'])
@@ -162,7 +162,7 @@ Pointer.prototype = {
 		// Handle shared tooltip or cases where a series is not yet hovered
 		} else {
 			// Find nearest points on all series
-			each(series, function (s) {
+			Highcharts.each(series, function (s) {
 				// Skip hidden series
 				noSharedTooltip = s.noSharedTooltip && shared;
 				if (s.visible && !noSharedTooltip && pick(s.options.enableMouseTracking, true)) { // #3821
@@ -173,7 +173,7 @@ Pointer.prototype = {
 				}
 			});
 			// Find absolute nearest point
-			each(kdpoints, function (p) {
+			Highcharts.each(kdpoints, function (p) {
 				if (p && defined(p.plotX) && defined(p.plotY)) {
 					if ((p.dist.distX < distance) || ((p.dist.distX === distance || p.series.kdDimensions > 1) && 
 							p.dist.distR < rdistance)) {
@@ -200,7 +200,7 @@ Pointer.prototype = {
 				}
 
 				// do mouseover on all points except the closest
-				each(kdpoints, function (point) {
+				Highcharts.each(kdpoints, function (point) {
 					if (point !== kdpoint) { 
 						point.onMouseOver(e);
 					}
@@ -234,7 +234,7 @@ Pointer.prototype = {
 		}
 		
 		// Crosshair
-		each(chart.axes, function (axis) {
+		Highcharts.each(chart.axes, function (axis) {
 			axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
 		});	
 				
@@ -267,7 +267,7 @@ Pointer.prototype = {
 			tooltip.refresh(tooltipPoints);
 			if (hoverPoint) { // #2500
 				hoverPoint.setState(hoverPoint.state, true);
-				each(chart.axes, function (axis) {
+				Highcharts.each(chart.axes, function (axis) {
 					if (Highcharts.pick(axis.options.crosshair && axis.options.crosshair.snap, true)) {
 						axis.drawCrosshair(null, allowMove);
 					}  else {
@@ -298,7 +298,7 @@ Pointer.prototype = {
 			}
 
 			// Remove crosshairs
-			each(chart.axes, function (axis) {
+			Highcharts.each(chart.axes, function (axis) {
 				axis.hideCrosshair();
 			});
 			
@@ -316,7 +316,7 @@ Pointer.prototype = {
 			seriesAttribs;
 
 		// Scale each series
-		each(chart.series, function (series) {
+		Highcharts.each(chart.series, function (series) {
 			seriesAttribs = attribs || series.getPlotBox(); // #1701
 			if (series.xAxis && series.xAxis.zoomEnabled) {
 				series.group.attr(seriesAttribs);
@@ -458,7 +458,7 @@ Pointer.prototype = {
 			if (this.hasDragged || hasPinched) {
 
 				// record each axis' min and max
-				each(chart.axes, function (axis) {
+				Highcharts.each(chart.axes, function (axis) {
 					if (axis.zoomEnabled && Highcharts.defined(axis.min) && (hasPinched || pointer[{ xAxis: 'zoomX', yAxis: 'zoomY' }[axis.coll]])) { // #859, #3569
 						var horiz = axis.horiz,
 							minPixelPadding = e.type === 'touchend' ? axis.minPixelPadding: 0, // #1207, #3075

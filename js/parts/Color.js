@@ -55,7 +55,7 @@ var Color = function (input) {
 		if (stops) {
 			ret = Highcharts.merge(input);
 			ret.stops = [].concat(ret.stops);
-			each(stops, function (stop, i) {
+			Highcharts.each(stops, function (stop, i) {
 				ret.stops[i] = [ret.stops[i][0], stop.get(format)];
 			});
 
@@ -80,7 +80,7 @@ var Color = function (input) {
 	 */
 	function brighten(alpha) {
 		if (stops) {
-			each(stops, function (stop) {
+			Highcharts.each(stops, function (stop) {
 				stop.brighten(alpha);
 			});
 		

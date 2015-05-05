@@ -86,7 +86,7 @@ var PiePoint = Highcharts.extendClass(Point, {
 		series.options.data[HighchartsAdapter.inArray(point, series.data)] = point.options; // update userOptions.data
 
 		// Show and hide associated elements
-		each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
+		Highcharts.each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
 			if (point[key]) {
 				point[key][vis ? 'show' : 'hide'](true);
 			}
@@ -186,7 +186,7 @@ var PieSeries = {
 			startAngleRad = series.startAngleRad;
 
 		if (!init) {
-			each(points, function (point) {
+			Highcharts.each(points, function (point) {
 				var graphic = point.graphic,
 					args = point.shapeArgs;
 
@@ -404,7 +404,7 @@ var PieSeries = {
 		}
 
 		// draw the slices
-		each(series.points, function (point) {
+		Highcharts.each(series.points, function (point) {
 			graphic = point.graphic;
 			shapeArgs = point.shapeArgs;
 			shadowGroup = point.shadowGroup;

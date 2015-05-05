@@ -130,7 +130,7 @@ Tooltip.prototype = {
 
 			// hide previous hoverPoints and set new
 			if (hoverPoints) {
-				each(hoverPoints, function (point) {
+				Highcharts.each(hoverPoints, function (point) {
 					point.setState();
 				});
 			}
@@ -172,7 +172,7 @@ Tooltip.prototype = {
 		}
 		// When shared, use the average position
 		if (!ret) {
-			each(points, function (point) {
+			Highcharts.each(points, function (point) {
 				yAxis = point.series.yAxis;
 				xAxis = point.series.xAxis;
 				plotX += point.plotX  + (!inverted && xAxis ? xAxis.left - plotLeft : 0); 
@@ -342,12 +342,12 @@ Tooltip.prototype = {
 			
 			chart.hoverPoints = point;
 			if (hoverPoints) {
-				each(hoverPoints, function (point) {
+				Highcharts.each(hoverPoints, function (point) {
 					point.setState();
 				});
 			}
 
-			each(point, function (item) {
+			Highcharts.each(point, function (item) {
 				item.setState('hover');
 
 				pointConfig.push(item.getLabelConfig());

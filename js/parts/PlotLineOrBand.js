@@ -252,7 +252,7 @@ Highcharts.AxisPlotLineOrBandExtension = {
 				plotLinesAndBands[i].destroy();
 			}
 		}
-		each([options.plotLines || [], userOptions.plotLines || [], options.plotBands || [], userOptions.plotBands || []], function (arr) {
+		Highcharts.each([options.plotLines || [], userOptions.plotLines || [], options.plotBands || [], userOptions.plotBands || []], function (arr) {
 			i = arr.length;
 			while (i--) {
 				if (arr[i].id === id) {

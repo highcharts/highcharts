@@ -1520,6 +1520,7 @@ function setTimeMethods() {
 	var globalOptions = Highcharts.defaultOptions.global,
 		hcD,
 		pick = Highcharts.pick,
+		each = Highcharts.each,
 		useUTC = globalOptions.useUTC,
 		GET = useUTC ? 'getUTC' : 'get',
 		SET = useUTC ? 'setUTC' : 'set';
@@ -1633,7 +1634,7 @@ var Color = function (input) {
 		if (stops) {
 			ret = Highcharts.merge(input);
 			ret.stops = [].concat(ret.stops);
-			each(stops, function (stop, i) {
+			Highcharts.each(stops, function (stop, i) {
 				ret.stops[i] = [ret.stops[i][0], stop.get(format)];
 			});
 
@@ -1658,7 +1659,7 @@ var Color = function (input) {
 	 */
 	function brighten(alpha) {
 		if (stops) {
-			each(stops, function (stop) {
+			Highcharts.each(stops, function (stop) {
 				stop.brighten(alpha);
 			});
 		
@@ -1829,7 +1830,7 @@ SVGElement.prototype = {
 
 				// The gradient needs to keep a list of stops to be able to destroy them
 				gradientObject.stops = [];
-				each(stops, function (stop) {
+				Highcharts.each(stops, function (stop) {
 					var stopObject;
 					if (stop[1].indexOf('rgba') === 0) {
 						colorObject = Color(stop[1]);
@@ -1900,7 +1901,7 @@ SVGElement.prototype = {
 			this.ySetter = this.xSetter;
 
 			tspans = [].slice.call(elem.getElementsByTagName('tspan'));
-			each(textShadow.split(/\s?,\s?/g), function (textShadow) {
+			Highcharts.each(textShadow.split(/\s?,\s?/g), function (textShadow) {
 				var firstChild = elem.firstChild,
 					color,
 					strokeWidth;
@@ -1912,7 +1913,7 @@ SVGElement.prototype = {
 				strokeWidth = textShadow[textShadow.length - 2];
 
 				if (strokeWidth) {
-					each(tspans, function (tspan, y) {
+					Highcharts.each(tspans, function (tspan, y) {
 						var clone;
 
 						// Let the first line start at the correct X position
@@ -2054,7 +2055,7 @@ SVGElement.prototype = {
 	symbolAttr: function (hash) {
 		var wrapper = this;
 
-		each(['x', 'y', 'r', 'start', 'end', 'width', 'height', 'innerR', 'anchorX', 'anchorY'], function (key) {
+		Highcharts.each(['x', 'y', 'r', 'start', 'end', 'width', 'height', 'innerR', 'anchorX', 'anchorY'], function (key) {
 			wrapper[key] = Highcharts.pick(hash[key], wrapper[key]);
 		});
 
@@ -2427,7 +2428,7 @@ SVGElement.prototype = {
 					// When the text shadow shim is used, we need to hide the fake shadows
 					// to get the correct bounding box (#3872)
 					toggleTextShadowShim = this.fakeTS && function (display) {
-						each(element.querySelectorAll('.' + 'highcharts-text-shadow'), function (tspan) {
+						Highcharts.each(element.querySelectorAll('.' + 'highcharts-text-shadow'), function (tspan) {
 							tspan.style.display = display;
 						});
 					};
@@ -2617,7 +2618,7 @@ SVGElement.prototype = {
 
 		// destroy shadows
 		if (shadows) {
-			each(shadows, function (shadow) {
+			Highcharts.each(shadows, function (shadow) {
 				wrapper.safeRemoveChild(shadow);
 			});
 		}
@@ -3105,13 +3106,13 @@ SVGRenderer.prototype = {
 
 			
 			// build the lines
-			each(lines, function (line, lineNo) {
+			Highcharts.each(lines, function (line, lineNo) {
 				var spans, spanNo = 0;
 
 				line = line.replace(/<span/g, '|||<span').replace(/<\/span>/g, '</span>|||');
 				spans = line.split('|||');
 
-				each(spans, function (span) {
+				Highcharts.each(spans, function (span) {
 					if (span !== '' || spans.length === 1) {
 						var attributes = {},
 							tspan = document.createElementNS(renderer.SVG_NS, 'tspan'),
@@ -4238,7 +4239,7 @@ SVGRenderer.prototype = {
 				if (styles) {
 					var textStyles = {};
 					styles = Highcharts.merge(styles); // create a copy to avoid altering the original object (#537)
-					each(wrapper.textProps, function (prop) {
+					Highcharts.each(wrapper.textProps, function (prop) {
 						if (styles[prop] !== undefined) {
 							textStyles[prop] = styles[prop];
 							delete styles[prop];
@@ -4379,7 +4380,7 @@ Highcharts.extend(SVGElement.prototype, {
 			marginTop: translateY
 		});
 		if (shadows) { // used in labels/tooltip
-			each(shadows, function (shadow) {
+			Highcharts.each(shadows, function (shadow) {
 				css(shadow, {
 					marginLeft: translateX + 1,
 					marginTop: translateY + 1
@@ -4389,7 +4390,7 @@ Highcharts.extend(SVGElement.prototype, {
 
 		// apply inversion
 		if (wrapper.inverted) { // wrapper is a group
-			each(elem.childNodes, function (child) {
+			Highcharts.each(elem.childNodes, function (child) {
 				renderer.invertChild(child, elem);
 			});
 		}
@@ -4541,7 +4542,7 @@ Highcharts.extend(SVGRenderer.prototype, {
 						}
 
 						// Ensure dynamically updating position when any parent is translated
-						each(parents.reverse(), function (parentGroup) {
+						Highcharts.each(parents.reverse(), function (parentGroup) {
 							var htmlGroupStyle;
 
 							// Create a HTML div and append it to the parent div to emulate
@@ -5042,7 +5043,7 @@ VMLElement = {
 		
 		// Let the shadow follow the main element
 		if (this.shadows) {
-			each(this.shadows, function (shadow) {
+			Highcharts.each(this.shadows, function (shadow) {
 				shadow.style[key] = value;
 			});
 		}
@@ -5214,7 +5215,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 
 			// used in attr and animation to update the clipping of all members
 			updateClipping: function () {
-				each(clipRect.members, function (member) {
+				Highcharts.each(clipRect.members, function (member) {
 					if (member.element) { // Deleted series, like in stock/members/series-remove demo. Should be removed from members, but this will do.
 						member.css(clipRect.getCSS(member));
 					}
@@ -5290,7 +5291,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			}
 
 			// Compute the stops
-			each(stops, function (stop, i) {
+			Highcharts.each(stops, function (stop, i) {
 				if (regexRgba.test(stop[1])) {
 					colorObject = Color(stop[1]);
 					stopColor = colorObject.get('rgb');
@@ -5539,7 +5540,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		});
 
 		// Recursively invert child elements, needed for nested composite shapes like box plots and error bars. #1680, #1806.
-		each(element.childNodes, function (child) {
+		Highcharts.each(element.childNodes, function (child) {
 			ren.invertChild(child, element);
 		});
 	},
@@ -6551,7 +6552,7 @@ Axis.prototype = {
 		}
 
 		// loop through this axis' series
-		each(axis.series, function (series) {
+		Highcharts.each(axis.series, function (series) {
 
 			if (series.visible || !chart.options.chart.ignoreHiddenSeries) {
 
@@ -6858,7 +6859,7 @@ Axis.prototype = {
 
 				// Find the closest distance between raw data points, as opposed to
 				// closestPointRange that applies to processed points (cropped and grouped)
-				each(axis.series, function (series) {
+				Highcharts.each(axis.series, function (series) {
 					xData = series.xData;
 					loopLength = series.xIncrement ? 1 : xData.length - 1;
 					for (i = loopLength; i > 0; i--) {
@@ -6928,7 +6929,7 @@ Axis.prototype = {
 				pointRangePadding = linkedParent.pointRangePadding;
 
 			} else {
-				each(axis.series, function (series) {
+				Highcharts.each(axis.series, function (series) {
 					var seriesPointRange = hasCategories ? 1 : (isXAxis ? series.pointRange : (axis.axisPointRange || 0)), // #2806
 						pointPlacement = series.options.pointPlacement,
 						seriesClosestPointRange = series.closestPointRange;
@@ -7100,7 +7101,7 @@ Axis.prototype = {
 		// Now we're finished detecting min and max, crop and group series data. This
 		// is in turn needed in order to find tick positions in ordinal axes.
 		if (isXAxis && !secondPass) {
-			each(axis.series, function (series) {
+			Highcharts.each(axis.series, function (series) {
 				series.processData(axis.min !== axis.oldMin || axis.max !== axis.oldMax);
 			});
 		}
@@ -7271,7 +7272,7 @@ Axis.prototype = {
 
 		if (!tickAmount && this.chart.options.chart.alignTicks !== false && options.alignTicks !== false) {
 			// Check if there are multiple axes in the same pane
-			each(this.chart[this.coll], function (axis) {
+			Highcharts.each(this.chart[this.coll], function (axis) {
 				var options = axis.options,
 					horiz = axis.horiz,
 					key = [horiz ? options.left : options.top, horiz ? options.width : options.height, options.pane].join(',');
@@ -7364,7 +7365,7 @@ Axis.prototype = {
 		isDirtyAxisLength = axis.len !== axis.oldAxisLength;
 
 		// is there new data?
-		each(axis.series, function (series) {
+		Highcharts.each(axis.series, function (series) {
 			if (series.isDirtyData || series.isDirty ||
 					series.xAxis.isDirty) { // when x axis is dirty, we need new data extremes for y as well
 				isDirtyData = true;
@@ -7431,7 +7432,7 @@ Axis.prototype = {
 
 		redraw = Highcharts.pick(redraw, true); // defaults to true
 
-		each(axis.series, function (serie) {
+		Highcharts.each(axis.series, function (serie) {
 			delete serie.kdTree;
 		});
 
@@ -7624,7 +7625,7 @@ Axis.prototype = {
 
 				// Loop over the given autoRotation options, and determine which gives the best score. The 
 				// best score is that with the lowest number of steps and a rotation closest to horizontal.
-				each(autoRotation, function (rot) {
+				Highcharts.each(autoRotation, function (rot) {
 					var score;
 
 					if (rot === rotationOption || (rot && rot >= -90 && rot <= 90)) { // #3891
@@ -7681,7 +7682,7 @@ Axis.prototype = {
 		if (this.autoRotation) {
 
 			// Get the longest label length
-			each(tickPositions, function (tick) {
+			Highcharts.each(tickPositions, function (tick) {
 				tick = ticks[tick];
 				if (tick && tick.labelLength > labelLength) {
 					labelLength = tick.labelLength;
@@ -7727,7 +7728,7 @@ Axis.prototype = {
 		this.labelAlign = attr.align = labelOptions.align || this.autoLabelAlign(this.labelRotation);
 
 		// Apply general and specific CSS
-		each(tickPositions, function (pos) {
+		Highcharts.each(tickPositions, function (pos) {
 			var tick = ticks[pos],
 				label = tick && tick.label;
 			if (label) {
@@ -7798,7 +7799,7 @@ Axis.prototype = {
 		if (hasData || axis.isLinked) {
 			
 			// Generate ticks
-			each(tickPositions, function (pos) {
+			Highcharts.each(tickPositions, function (pos) {
 				if (!ticks[pos]) {
 					ticks[pos] = new Tick(axis, pos);
 				} else {
@@ -7808,7 +7809,7 @@ Axis.prototype = {
 
 			axis.renderUnsquish();
 
-			each(tickPositions, function (pos) {
+			Highcharts.each(tickPositions, function (pos) {
 				// left side must be align: right and right side must have align: left for labels
 				if (side === 0 || side === 2 || { 1: 'left', 3: 'right' }[side] === axis.labelAlign) {
 
@@ -7988,7 +7989,7 @@ Axis.prototype = {
 		axis.overlap = false;
 
 		// Mark all elements inActive before we go over and mark the active ones
-		each([ticks, minorTicks, alternateBands], function (coll) {
+		Highcharts.each([ticks, minorTicks, alternateBands], function (coll) {
 			var pos;
 			for (pos in coll) {
 				coll[pos].isActive = false;
@@ -8000,7 +8001,7 @@ Axis.prototype = {
 
 			// minor ticks
 			if (axis.minorTickInterval && !axis.categories) {
-				each(axis.getMinorTickPositions(), function (pos) {
+				Highcharts.each(axis.getMinorTickPositions(), function (pos) {
 					if (!minorTicks[pos]) {
 						minorTicks[pos] = new Tick(axis, pos, 'minor');
 					}
@@ -8017,7 +8018,7 @@ Axis.prototype = {
 			// Major ticks. Pull out the first item and render it last so that
 			// we can get the position of the neighbour label. #808.
 			if (tickPositions.length) { // #1300
-				each(tickPositions, function (pos, i) {
+				Highcharts.each(tickPositions, function (pos, i) {
 
 					// linked axes need an extra check to find out if
 					if (!isLinked || (pos >= axis.min && pos <= axis.max)) {
@@ -8048,7 +8049,7 @@ Axis.prototype = {
 
 			// alternate grid color
 			if (alternateGridColor) {
-				each(tickPositions, function (pos, i) {
+				Highcharts.each(tickPositions, function (pos, i) {
 					if (i % 2 === 0 && pos < axis.max) {
 						if (!alternateBands[pos]) {
 							alternateBands[pos] = new Highcharts.PlotLineOrBand(axis);
@@ -8068,7 +8069,7 @@ Axis.prototype = {
 
 			// custom plot lines and bands
 			if (!axis._addedPlotLB) { // only first time
-				each((options.plotLines || []).concat(options.plotBands || []), function (plotLineOptions) {
+				Highcharts.each((options.plotLines || []).concat(options.plotBands || []), function (plotLineOptions) {
 					axis.addPlotBandOrLine(plotLineOptions);
 				});
 				axis._addedPlotLB = true;
@@ -8077,7 +8078,7 @@ Axis.prototype = {
 		} // end if hasData
 
 		// Remove inactive ticks
-		each([ticks, minorTicks, alternateBands], function (coll) {
+		Highcharts.each([ticks, minorTicks, alternateBands], function (coll) {
 			var pos,
 				i,
 				forDestruction = [],
@@ -8160,12 +8161,12 @@ Axis.prototype = {
 		this.render();
 
 		// move plot lines and bands
-		each(this.plotLinesAndBands, function (plotLine) {
+		Highcharts.each(this.plotLinesAndBands, function (plotLine) {
 			plotLine.render();
 		});
 
 		// mark associated series as dirty and ready for redraw
-		each(this.series, function (series) {
+		Highcharts.each(this.series, function (series) {
 			series.isDirty = true;
 		});
 
@@ -8195,7 +8196,7 @@ Axis.prototype = {
 		}
 
 		// Destroy collections
-		each([axis.ticks, axis.minorTicks, axis.alternateBands], function (coll) {
+		Highcharts.each([axis.ticks, axis.minorTicks, axis.alternateBands], function (coll) {
 			destroyObjectProperties(coll);
 		});
 		i = plotLinesAndBands.length;
@@ -8204,7 +8205,7 @@ Axis.prototype = {
 		}
 
 		// Destroy local variables
-		each(['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup', 'cross', 'gridGroup', 'labelGroup'], function (prop) {
+		Highcharts.each(['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup', 'cross', 'gridGroup', 'labelGroup'], function (prop) {
 			if (axis[prop]) {
 				axis[prop] = axis[prop].destroy();
 			}
@@ -8525,7 +8526,7 @@ Tooltip.prototype = {
 
 			// hide previous hoverPoints and set new
 			if (hoverPoints) {
-				each(hoverPoints, function (point) {
+				Highcharts.each(hoverPoints, function (point) {
 					point.setState();
 				});
 			}
@@ -8567,7 +8568,7 @@ Tooltip.prototype = {
 		}
 		// When shared, use the average position
 		if (!ret) {
-			each(points, function (point) {
+			Highcharts.each(points, function (point) {
 				yAxis = point.series.yAxis;
 				xAxis = point.series.xAxis;
 				plotX += point.plotX  + (!inverted && xAxis ? xAxis.left - plotLeft : 0); 
@@ -8737,12 +8738,12 @@ Tooltip.prototype = {
 			
 			chart.hoverPoints = point;
 			if (hoverPoints) {
-				each(hoverPoints, function (point) {
+				Highcharts.each(hoverPoints, function (point) {
 					point.setState();
 				});
 			}
 
-			each(point, function (item) {
+			Highcharts.each(point, function (item) {
 				item.setState('hover');
 
 				pointConfig.push(item.getLabelConfig());
@@ -9035,7 +9036,7 @@ Pointer.prototype = {
 				yAxis: []
 			};
 
-		each(this.chart.axes, function (axis) {
+		Highcharts.each(this.chart.axes, function (axis) {
 			coordinates[axis.isXAxis ? 'xAxis' : 'yAxis'].push({
 				axis: axis,
 				value: axis.toValue(e[axis.horiz ? 'chartX' : 'chartY'])
@@ -9090,7 +9091,7 @@ Pointer.prototype = {
 		// Handle shared tooltip or cases where a series is not yet hovered
 		} else {
 			// Find nearest points on all series
-			each(series, function (s) {
+			Highcharts.each(series, function (s) {
 				// Skip hidden series
 				noSharedTooltip = s.noSharedTooltip && shared;
 				if (s.visible && !noSharedTooltip && pick(s.options.enableMouseTracking, true)) { // #3821
@@ -9101,7 +9102,7 @@ Pointer.prototype = {
 				}
 			});
 			// Find absolute nearest point
-			each(kdpoints, function (p) {
+			Highcharts.each(kdpoints, function (p) {
 				if (p && defined(p.plotX) && defined(p.plotY)) {
 					if ((p.dist.distX < distance) || ((p.dist.distX === distance || p.series.kdDimensions > 1) && 
 							p.dist.distR < rdistance)) {
@@ -9128,7 +9129,7 @@ Pointer.prototype = {
 				}
 
 				// do mouseover on all points except the closest
-				each(kdpoints, function (point) {
+				Highcharts.each(kdpoints, function (point) {
 					if (point !== kdpoint) { 
 						point.onMouseOver(e);
 					}
@@ -9162,7 +9163,7 @@ Pointer.prototype = {
 		}
 		
 		// Crosshair
-		each(chart.axes, function (axis) {
+		Highcharts.each(chart.axes, function (axis) {
 			axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
 		});	
 				
@@ -9195,7 +9196,7 @@ Pointer.prototype = {
 			tooltip.refresh(tooltipPoints);
 			if (hoverPoint) { // #2500
 				hoverPoint.setState(hoverPoint.state, true);
-				each(chart.axes, function (axis) {
+				Highcharts.each(chart.axes, function (axis) {
 					if (Highcharts.pick(axis.options.crosshair && axis.options.crosshair.snap, true)) {
 						axis.drawCrosshair(null, allowMove);
 					}  else {
@@ -9226,7 +9227,7 @@ Pointer.prototype = {
 			}
 
 			// Remove crosshairs
-			each(chart.axes, function (axis) {
+			Highcharts.each(chart.axes, function (axis) {
 				axis.hideCrosshair();
 			});
 			
@@ -9244,7 +9245,7 @@ Pointer.prototype = {
 			seriesAttribs;
 
 		// Scale each series
-		each(chart.series, function (series) {
+		Highcharts.each(chart.series, function (series) {
 			seriesAttribs = attribs || series.getPlotBox(); // #1701
 			if (series.xAxis && series.xAxis.zoomEnabled) {
 				series.group.attr(seriesAttribs);
@@ -9386,7 +9387,7 @@ Pointer.prototype = {
 			if (this.hasDragged || hasPinched) {
 
 				// record each axis' min and max
-				each(chart.axes, function (axis) {
+				Highcharts.each(chart.axes, function (axis) {
 					if (axis.zoomEnabled && Highcharts.defined(axis.min) && (hasPinched || pointer[{ xAxis: 'zoomX', yAxis: 'zoomY' }[axis.coll]])) { // #859, #3569
 						var horiz = axis.horiz,
 							minPixelPadding = e.type === 'touchend' ? axis.minPixelPadding: 0, // #1207, #3075
@@ -9750,14 +9751,14 @@ Highcharts.extend(Highcharts.Pointer.prototype, {
 		
 		// Register the touch start position
 		if (e.type === 'touchstart') {
-			each(touches, function (e, i) {
+			Highcharts.each(touches, function (e, i) {
 				pinchDown[i] = { chartX: e.chartX, chartY: e.chartY };
 			});
 			lastValidTouch.x = [pinchDown[0].chartX, pinchDown[1] && pinchDown[1].chartX];
 			lastValidTouch.y = [pinchDown[0].chartY, pinchDown[1] && pinchDown[1].chartY];
 
 			// Identify the data bounds in pixels
-			each(chart.axes, function (axis) {
+			Highcharts.each(chart.axes, function (axis) {
 				if (axis.zoomEnabled) {
 					var bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
 						minPixelPadding = axis.minPixelPadding,
@@ -10060,7 +10061,7 @@ Legend.prototype = {
 		var checkbox = item.checkbox;
 
 		// destroy SVG elements
-		each(['legendItem', 'legendLine', 'legendSymbol', 'legendGroup'], function (key) {
+		Highcharts.each(['legendItem', 'legendLine', 'legendSymbol', 'legendGroup'], function (key) {
 			if (item[key]) {
 				item[key] = item[key].destroy();
 			}
@@ -10076,7 +10077,7 @@ Legend.prototype = {
 	 */
 	clearItems: function () {
 		var legend = this;
-		each(legend.getAllItems(), function (item) {
+		Highcharts.each(legend.getAllItems(), function (item) {
 			legend.destroyItem(item); 
 		});		
 	},
@@ -10108,7 +10109,7 @@ Legend.prototype = {
 
 		if (alignAttr) {
 			translateY = alignAttr.translateY;
-			each(this.allItems, function (item) {
+			Highcharts.each(this.allItems, function (item) {
 				var checkbox = item.checkbox,
 					top;
 				
@@ -10278,7 +10279,7 @@ Legend.prototype = {
 	 */
 	getAllItems: function () {
 		var allItems = [];
-		each(this.chart.series, function (series) {
+		Highcharts.each(this.chart.series, function (series) {
 			var seriesOptions = series.options;
 
 			// Handle showInLegend. If the series is linked to another series, defaults to false.
@@ -10311,7 +10312,7 @@ Legend.prototype = {
 			
 		if (this.display && !options.floating) {
 
-			each([
+			Highcharts.each([
 				/(lth|ct|rth)/,
 				/(rtv|rm|rbv)/,
 				/(rbh|cb|lbh)/,
@@ -10387,7 +10388,7 @@ Legend.prototype = {
 
 		// render the items
 		legend.lastLineHeight = 0;
-		each(allItems, function (item) {
+		Highcharts.each(allItems, function (item) {
 			legend.renderItem(item); 
 		});
 
@@ -10433,7 +10434,7 @@ Legend.prototype = {
 
 		// Now that the legend width and height are established, put the items in the 
 		// final position
-		each(allItems, function (item) {
+		Highcharts.each(allItems, function (item) {
 			legend.positionItem(item);
 		});
 
@@ -10503,7 +10504,7 @@ Legend.prototype = {
 			
 			// Fill pages with Y positions so that the top of each a legend item defines
 			// the scroll top for each page (#2098)
-			each(allItems, function (item, i) {
+			Highcharts.each(allItems, function (item, i) {
 				var y = item._legendItemPos[1],
 					h = Math.round(item.legendItem.getBBox().height),
 					len = pages.length;
@@ -10940,7 +10941,7 @@ Chart.prototype = {
 		}
 
 		// handle updated data in the series
-		each(series, function (serie) {
+		Highcharts.each(series, function (serie) {
 			if (serie.isDirty) { // prepare the data so axis can read it
 				if (serie.options.legendType === 'point') {
 					redrawLegend = true;
@@ -10969,7 +10970,7 @@ Chart.prototype = {
 				chart.maxTicks = null;
 
 				// set axes scales
-				each(axes, function (axis) {
+				Highcharts.each(axes, function (axis) {
 					axis.setScale();
 				});
 			}
@@ -10979,14 +10980,14 @@ Chart.prototype = {
 
 		if (hasCartesianSeries) {
 			// If one axis is dirty, all axes must be redrawn (#792, #2169)
-			each(axes, function (axis) {
+			Highcharts.each(axes, function (axis) {
 				if (axis.isDirty) {
 					isDirtyBox = true;
 				}
 			});
 
 			// redraw axes
-			each(axes, function (axis) {
+			Highcharts.each(axes, function (axis) {
 				
 				// Fire 'afterSetExtremes' only if extremes are set
 				if (axis.isDirtyExtremes) { // #821
@@ -11010,7 +11011,7 @@ Chart.prototype = {
 
 
 		// redraw affected series
-		each(series, function (serie) {
+		Highcharts.each(series, function (serie) {
 			if (serie.isDirty && serie.visible &&
 					(!serie.isCartesian || serie.xAxis)) { // issue #153
 				serie.redraw();
@@ -11033,7 +11034,7 @@ Chart.prototype = {
 		}
 		
 		// Fire callbacks that are put on hold until after the redraw
-		each(afterRedraw, function (callback) {
+		Highcharts.each(afterRedraw, function (callback) {
 			callback.call();
 		});
 	},
@@ -11090,19 +11091,19 @@ Chart.prototype = {
 			axis;
 
 		// make sure the options are arrays and add some members
-		each(xAxisOptions, function (axis, i) {
+		Highcharts.each(xAxisOptions, function (axis, i) {
 			axis.index = i;
 			axis.isX = true;
 		});
 
-		each(yAxisOptions, function (axis, i) {
+		Highcharts.each(yAxisOptions, function (axis, i) {
 			axis.index = i;
 		});
 
 		// concatenate all axis options into one array
 		optionsArray = xAxisOptions.concat(yAxisOptions);
 
-		each(optionsArray, function (axisOptions) {
+		Highcharts.each(optionsArray, function (axisOptions) {
 			axis = new Axis(chart, axisOptions);
 		});
 	},
@@ -11113,7 +11114,7 @@ Chart.prototype = {
 	 */
 	getSelectedPoints: function () {
 		var points = [];
-		each(this.series, function (serie) {
+		Highcharts.each(this.series, function (serie) {
 			points = points.concat(HighchartsAdapter.grep(serie.points || [], function (point) {
 				return point.selected;
 			}));
@@ -11137,13 +11138,13 @@ Chart.prototype = {
 		var chart = this;
 
 		// reset stacks for each yAxis
-		each(chart.yAxis, function (axis) {
+		Highcharts.each(chart.yAxis, function (axis) {
 			if (axis.stacks && axis.hasVisibleSeries) {
 				axis.oldStacks = axis.stacks;
 			}
 		});
 
-		each(chart.series, function (series) {
+		Highcharts.each(chart.series, function (series) {
 			if (series.options.stacking && (series.visible === true || chart.options.chart.ignoreHiddenSeries === false)) {
 				series.stackKey = series.type + Highcharts.pick(series.options.stack, '');
 			}
@@ -11167,7 +11168,7 @@ Chart.prototype = {
 		chartSubtitleOptions = options.subtitle = Highcharts.merge(options.subtitle, subtitleOptions);
 
 		// add title and subtitle
-		each([
+		Highcharts.each([
 			['title', titleOptions, chartTitleOptions],
 			['subtitle', subtitleOptions, chartSubtitleOptions]
 		], function (arr) {
@@ -11448,13 +11449,13 @@ Chart.prototype = {
 		
 		// pre-render axes to get labels offset width
 		if (chart.hasCartesianSeries) {
-			each(chart.axes, function (axis) {
+			Highcharts.each(chart.axes, function (axis) {
 				axis.getOffset();
 			});
 		}
 
 		// Add the axis offsets
-		each(marginNames, function (m, side) {
+		Highcharts.each(marginNames, function (m, side) {
 			if (!Highcharts.defined(margin[side])) {
 				chart[m] += axisOffset[side];
 			}		
@@ -11563,13 +11564,13 @@ Chart.prototype = {
 
 		// handle axes
 		chart.maxTicks = null;
-		each(chart.axes, function (axis) {
+		Highcharts.each(chart.axes, function (axis) {
 			axis.isDirty = true;
 			axis.setScale();
 		});
 
 		// make sure non-cartesian series are also handled
-		each(chart.series, function (serie) {
+		Highcharts.each(chart.series, function (serie) {
 			serie.isDirty = true;
 		});
 
@@ -11650,7 +11651,7 @@ Chart.prototype = {
 		};
 
 		if (!skipAxes) {
-			each(chart.axes, function (axis) {
+			Highcharts.each(chart.axes, function (axis) {
 				axis.setAxisSize();
 				axis.setAxisTranslation();
 			});
@@ -11664,7 +11665,7 @@ Chart.prototype = {
 		var chart = this,
 			marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'];
 
-		each(marginNames, function (m, side) {
+		Highcharts.each(marginNames, function (m, side) {
 			chart[m] = Highcharts.pick(chart.margin[side], chart.spacing[side]);
 		});
 		chart.axisOffset = [0, 0, 0, 0]; // top, right, bottom, left
@@ -11796,7 +11797,7 @@ Chart.prototype = {
 			value;
 			
 			
-		each(['inverted', 'angular', 'polar'], function (key) {
+		Highcharts.each(['inverted', 'angular', 'polar'], function (key) {
 			
 			// The default series type's class
 			klass = seriesTypes[optionsChart.type || optionsChart.defaultSeriesType];
@@ -11832,12 +11833,12 @@ Chart.prototype = {
 			chartSeries = chart.series;
 
 		// Reset links
-		each(chartSeries, function (series) {
+		Highcharts.each(chartSeries, function (series) {
 			series.linkedSeries.length = 0;
 		});
 
 		// Apply new links
-		each(chartSeries, function (series) {
+		Highcharts.each(chartSeries, function (series) {
 			var linkedTo = series.options.linkedTo;
 			if (Highcharts.isString(linkedTo)) {
 				if (linkedTo === ':previous') {
@@ -11857,7 +11858,7 @@ Chart.prototype = {
 	 * Render series for the chart
 	 */
 	renderSeries: function () {
-		each(this.series, function (serie) {
+		Highcharts.each(this.series, function (serie) {
 			serie.translate();
 			serie.render();
 		});
@@ -11871,7 +11872,7 @@ Chart.prototype = {
 			pInt = Highcharts.pInt,
 			labels = chart.options.labels;
 		if (labels.items) {
-			each(labels.items, function (label) {
+			Highcharts.each(labels.items, function (label) {
 				var style = Highcharts.extend(labels.style, label.style),
 					x = pInt(style.left) + chart.plotLeft,
 					y = pInt(style.top) + chart.plotTop + 12;
@@ -11924,7 +11925,7 @@ Chart.prototype = {
 		tempHeight = chart.plotHeight = chart.plotHeight - 13; // 13 is the most common height of X axis labels
 
 		// Get margins by pre-rendering axes
-		each(axes, function (axis) {
+		Highcharts.each(axes, function (axis) {
 			axis.setScale();
 		});
 		chart.getAxisMargins();
@@ -11936,7 +11937,7 @@ Chart.prototype = {
 		if (redoHorizontal || redoVertical) {
 
 			chart.maxTicks = null; // reset for second pass
-			each(axes, function (axis) {
+			Highcharts.each(axes, function (axis) {
 				if ((axis.horiz && redoHorizontal) || (!axis.horiz && redoVertical)) {
 					axis.setTickInterval(true); // update to reflect the new margins
 				}
@@ -11950,7 +11951,7 @@ Chart.prototype = {
 
 		// Axes
 		if (chart.hasCartesianSeries) {
-			each(axes, function (axis) {
+			Highcharts.each(axes, function (axis) {
 				axis.render();
 			});
 		}
@@ -12037,7 +12038,7 @@ Chart.prototype = {
 		}
 
 		// ==== Destroy chart properties:
-		each(['title', 'subtitle', 'chartBackground', 'plotBackground', 'plotBGImage', 
+		Highcharts.each(['title', 'subtitle', 'chartBackground', 'plotBackground', 'plotBGImage', 
 				'plotBorder', 'seriesGroup', 'clipRect', 'credits', 'pointer', 'scroller', 
 				'rangeSelector', 'legend', 'resetZoomButton', 'tooltip', 'renderer'], function (name) {
 			var prop = chart[name];
@@ -12123,7 +12124,7 @@ Chart.prototype = {
 		chart.getAxes();
 
 		// Initialize the series
-		each(options.series || [], function (serieOptions) {
+		Highcharts.each(options.series || [], function (serieOptions) {
 			chart.initSeries(serieOptions);
 		});
 
@@ -12147,7 +12148,7 @@ Chart.prototype = {
 		if (callback) {
 			callback.apply(chart, [chart]);
 		}
-		each(chart.callbacks, function (fn) {
+		Highcharts.each(chart.callbacks, function (fn) {
 			if (chart.index !== undefined) { // Chart destroyed in its own callback (#3600)
 				fn.apply(chart, [chart]);
 			}
@@ -12374,7 +12375,7 @@ Point.prototype = {
 			valueSuffix = seriesTooltipOptions.valueSuffix || '';
 
 		// Loop over the point array map and replace unformatted values with sprintf formatting markup
-		each(series.pointArrayMap || ['y'], function (key) {
+		Highcharts.each(series.pointArrayMap || ['y'], function (key) {
 			key = '{point.' + key; // without the closing bracket
 			if (valuePrefix || valueSuffix) {
 				pointFormat = pointFormat.replace(key + '}', valuePrefix + key + '}' + valueSuffix);
@@ -12501,7 +12502,7 @@ Series.prototype = {
 		series.getSymbol();
 
 		// Set the data
-		each(series.parallelArrays, function (key) {
+		Highcharts.each(series.parallelArrays, function (key) {
 			series[key + 'Data'] = [];
 		});
 		series.setData(options.data, false);
@@ -12521,7 +12522,7 @@ Series.prototype = {
 			stableSort(this.yAxis.series, sortByIndex);
 		}
 
-		each(chartSeries, function (series, i) {
+		Highcharts.each(chartSeries, function (series, i) {
 			series.index = i;
 			series.name = series.name || 'Series ' + (i + 1);
 		});
@@ -12538,9 +12539,9 @@ Series.prototype = {
 			chart = series.chart,
 			axisOptions;
 
-		each(series.axisTypes || [], function (AXIS) { // repeat for xAxis and yAxis
+		Highcharts.each(series.axisTypes || [], function (AXIS) { // repeat for xAxis and yAxis
 
-			each(chart[AXIS], function (axis) { // loop through the chart's axis objects
+			Highcharts.each(chart[AXIS], function (axis) { // loop through the chart's axis objects
 				axisOptions = axis.options;
 
 				// apply if the series xAxis or yAxis option mathches the number of the
@@ -12588,7 +12589,7 @@ Series.prototype = {
 					Array.prototype[i].apply(series[key + 'Data'], Array.prototype.slice.call(args, 2));
 				};
 
-		each(series.parallelArrays, fn);
+		Highcharts.each(series.parallelArrays, fn);
 	},
 
 	/**
@@ -12650,7 +12651,7 @@ Series.prototype = {
 
 			// else, split on null points
 			} else {
-				each(points, function (point, i) {
+				Highcharts.each(points, function (point, i) {
 					if (point.y === null) {
 						if (i > lastNull + 1) {
 							segments.push(points.slice(lastNull + 1, i));
@@ -12803,7 +12804,7 @@ Series.prototype = {
 		// If the point count is the same as is was, just run Point.update which is
 		// cheaper, allows animation, and keeps references to points.
 		if (updatePoints !== false && dataLength && oldDataLength === dataLength && !series.cropped && !series.hasGroupedData && series.visible) {
-			each(data, function (point, i) {
+			Highcharts.each(data, function (point, i) {
 				oldData[i].update(point, false, null, false);
 			});
 
@@ -12816,7 +12817,7 @@ Series.prototype = {
 			series.colorCounter = 0; // for series with colorByPoint (#1547)
 			
 			// Update parallel arrays
-			each(this.parallelArrays, function (key) {
+			Highcharts.each(this.parallelArrays, function (key) {
 				series[key + 'Data'].length = 0;
 			});
 
@@ -13520,7 +13521,7 @@ Series.prototype = {
 		seriesPointAttr[''] = series.convertAttribs(normalOptions, normalDefaults);
 
 		// 'hover' and 'select' states inherit from normal state except the default radius
-		each(['hover', 'select'], function (state) {
+		Highcharts.each(['hover', 'select'], function (state) {
 			seriesPointAttr[state] =
 					series.convertAttribs(stateOptions[state], seriesPointAttr['']);
 		});
@@ -13637,7 +13638,7 @@ Series.prototype = {
 		Highcharts.removeEvent(series);
 
 		// erase from axes
-		each(series.axisTypes || [], function (AXIS) {
+		Highcharts.each(series.axisTypes || [], function (AXIS) {
 			axis = series[AXIS];
 			if (axis) {
 				erase(axis.series, series);
@@ -13664,7 +13665,7 @@ Series.prototype = {
 		clearTimeout(series.animationTimeout);
 
 		// destroy all SVGElements associated to the series
-		each(['area', 'graph', 'dataLabelsGroup', 'group', 'markerGroup', 'tracker',
+		Highcharts.each(['area', 'graph', 'dataLabelsGroup', 'group', 'markerGroup', 'tracker',
 				'graphNeg', 'areaNeg', 'posClip', 'negClip'], function (prop) {
 			if (series[prop]) {
 
@@ -13698,7 +13699,7 @@ Series.prototype = {
 			step = series.options.step;
 
 		// build the segment line
-		each(segment, function (point, i) {
+		Highcharts.each(segment, function (point, i) {
 
 			var plotX = point.plotX,
 				plotY = point.plotY,
@@ -13758,7 +13759,7 @@ Series.prototype = {
 			singlePoints = []; // used in drawTracker
 
 		// Divide into segments and build graph and area paths
-		each(series.segments, function (segment) {
+		Highcharts.each(series.segments, function (segment) {
 
 			segmentPath = series.getSegmentPath(segment);
 
@@ -13791,12 +13792,12 @@ Series.prototype = {
 			fillColor = (this.fillGraph && this.color) || 'none', // polygon series use filled graph
 			zones = this.zones;
 
-		each(zones, function (threshold, i) {
+		Highcharts.each(zones, function (threshold, i) {
 			props.push(['colorGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
 		});
 		
 		// Draw the graph
-		each(props, function (prop, i) {
+		Highcharts.each(props, function (prop, i) {
 			var graphKey = prop[0],
 				graph = series[graphKey],
 				attribs;
@@ -13859,7 +13860,7 @@ Series.prototype = {
 			}
 
 			// Create the clips
-			each(zones, function (threshold, i) {
+			Highcharts.each(zones, function (threshold, i) {
 				translatedFrom = pick(translatedTo, (reversed ? (horiz ? chart.plotWidth : 0) : (horiz ? 0 : axis.toPixels(axis.min))));
 				translatedTo = Math.round(axis.toPixels(pick(threshold.value, axis.max), true));
 
@@ -13955,7 +13956,7 @@ Series.prototype = {
 				height: series.xAxis.len
 			};
 
-			each(['group', 'markerGroup'], function (groupName) {
+			Highcharts.each(['group', 'markerGroup'], function (groupName) {
 				if (series[groupName]) {
 					series[groupName].attr(size).invert();
 				}
@@ -14068,7 +14069,7 @@ Series.prototype = {
 			series.applyZones();
 		}
 
-		each(series.points, function (point) {
+		Highcharts.each(series.points, function (point) {
 			if (point.redraw) {
 				point.redraw();
 			}
@@ -14550,7 +14551,7 @@ Highcharts.extend(Series.prototype, {
 
 		// Make graph animate sideways
 		if (shift) {
-			each([graph, area, series.graphNeg, series.areaNeg], function (shape) {
+			Highcharts.each([graph, area, series.graphNeg, series.areaNeg], function (shape) {
 				if (shape) {
 					shape.shift = currentShift + 1;
 				}
@@ -14719,7 +14720,7 @@ Highcharts.extend(Series.prototype, {
 		}
 
 		// Make sure groups are not destroyed (#3094)
-		each(preserve, function (prop) {
+		Highcharts.each(preserve, function (prop) {
 			preserve[prop] = series[prop];
 			delete series[prop];
 		});
@@ -14740,7 +14741,7 @@ Highcharts.extend(Series.prototype, {
 		Highcharts.extend(this, seriesTypes[newOptions.type || oldType].prototype);
 
 		// Re-register groups (#3094)
-		each(preserve, function (prop) {
+		Highcharts.each(preserve, function (prop) {
 			series[prop] = preserve[prop];
 		});
 
@@ -14795,7 +14796,7 @@ Highcharts.extend(Axis.prototype, {
 		erase(chart.axes, this);
 		erase(chart[key], this);
 		chart.options[key].splice(this.options.index, 1);
-		each(chart[key], function (axis, i) { // Re-index, #1706
+		Highcharts.each(chart[key], function (axis, i) { // Re-index, #1706
 			axis.options.index = i;
 		});
 		this.destroy();
@@ -14899,7 +14900,7 @@ var ColumnSeries = Highcharts.extendClass(Series, {
 		// if the series is added dynamically, force redraw of other
 		// series affected by a new column
 		if (chart.hasRendered) {
-			each(chart.series, function (otherSeries) {
+			Highcharts.each(chart.series, function (otherSeries) {
 				if (otherSeries.type === series.type) {
 					otherSeries.isDirty = true;
 				}
@@ -14929,7 +14930,7 @@ var ColumnSeries = Highcharts.extendClass(Series, {
 		if (options.grouping === false) {
 			columnCount = 1;
 		} else {
-			each(series.chart.series, function (otherSeries) {
+			Highcharts.each(series.chart.series, function (otherSeries) {
 				var otherOptions = otherSeries.options,
 					otherYAxis = otherSeries.yAxis;
 				if (otherSeries.type === series.type && otherSeries.visible &&
@@ -15014,7 +15015,7 @@ var ColumnSeries = Highcharts.extendClass(Series, {
 		Series.prototype.translate.apply(series);
 
 		// Record the new values
-		each(series.points, function (point) {
+		Highcharts.each(series.points, function (point) {
 			var yBottom = pick(point.yBottom, translatedThreshold),
 				plotY = Math.min(Math.max(-999 - yBottom, point.plotY), yAxis.len + 999 + yBottom), // Don't draw too far outside plot area (#1303, #2241)
 				barX = point.plotX + pointXOffset,
@@ -15102,7 +15103,7 @@ var ColumnSeries = Highcharts.extendClass(Series, {
 			pointAttr;
 
 		// draw the columns
-		each(series.points, function (point) {
+		Highcharts.each(series.points, function (point) {
 			var plotY = point.plotY,
 				graphic = point.graphic,
 				borderAttr;
@@ -15179,7 +15180,7 @@ var ColumnSeries = Highcharts.extendClass(Series, {
 		// column and bar series affects other series of the same type
 		// as they are either stacked or grouped
 		if (chart.hasRendered) {
-			each(chart.series, function (otherSeries) {
+			Highcharts.each(chart.series, function (otherSeries) {
 				if (otherSeries.type === series.type) {
 					otherSeries.isDirty = true;
 				}
@@ -15272,7 +15273,7 @@ Series.prototype.drawDataLabels = function () {
 
 		// Make the labels for each point
 		generalOptions = options;
-		each(points, function (point) {
+		Highcharts.each(points, function (point) {
 
 			var enabled,
 				defined = Highcharts.defined,
@@ -15578,7 +15579,7 @@ if (Highcharts.seriesTypes.pie) {
 		Series.prototype.drawDataLabels.apply(series);
 
 		// arrange points for detection collision
-		each(data, function (point) {
+		Highcharts.each(data, function (point) {
 			if (point.dataLabel && point.visible) { // #407, #2510
 				halves[point.half].push(point);
 			}
@@ -15798,7 +15799,7 @@ if (Highcharts.seriesTypes.pie) {
 
 			// Draw the connectors
 			if (outside && connectorWidth) {
-				each(this.points, function (point) {
+				Highcharts.each(this.points, function (point) {
 					connector = point.connector;
 					labelPos = point.labelPos;
 					dataLabel = point.dataLabel;
@@ -15850,7 +15851,7 @@ if (Highcharts.seriesTypes.pie) {
 	 * fall within the plot area.
 	 */
 	Highcharts.seriesTypes.pie.prototype.placeDataLabels = function () {
-		each(this.points, function (point) {
+		Highcharts.each(this.points, function (point) {
 			var dataLabel = point.dataLabel,
 				_pos;
 
@@ -15914,7 +15915,7 @@ if (Highcharts.seriesTypes.pie) {
 		if (newSize < center[2]) {
 			center[2] = newSize;
 			this.translate(center);
-			each(this.points, function (point) {
+			Highcharts.each(this.points, function (point) {
 				if (point.dataLabel) {
 					point.dataLabel._pos = null; // reset
 				}
@@ -18714,7 +18715,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			};
 
 		// Add reference to the point
-		each(series.points, function (point) {
+		Highcharts.each(series.points, function (point) {
 			if (point.graphic) {
 				point.graphic.element.point = point;
 			}
@@ -18725,7 +18726,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 
 		// Add the event listeners, we need to do this only once
 		if (!series._hasTracking) {
-			each(series.trackerGroups, function (key) {
+			Highcharts.each(series.trackerGroups, function (key) {
 				if (series[key]) { // we don't always have dataLabelsGroup
 					series[key]
 						.addClass('highcharts-tracker')
@@ -18821,7 +18822,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 
 			// The tracker is added to the series group, which is clipped, but is covered
 			// by the marker group. So the marker group also needs to capture events.
-			each([series.tracker, series.markerGroup], function (tracker) {
+			Highcharts.each([series.tracker, series.markerGroup], function (tracker) {
 				tracker.addClass('highcharts-tracker')
 					.on('mouseover', onMouseOver)
 					.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
@@ -18968,11 +18969,11 @@ Highcharts.extend(Chart.prototype, {
 
 		// If zoom is called with no arguments, reset the axes
 		if (!event || event.resetSelection) {
-			each(chart.axes, function (axis) {
+			Highcharts.each(chart.axes, function (axis) {
 				hasZoomed = axis.zoom();
 			});
 		} else { // else, zoom in on all axes
-			each(event.xAxis.concat(event.yAxis), function (axisData) {
+			Highcharts.each(event.xAxis.concat(event.yAxis), function (axisData) {
 				var axis = axisData.axis,
 					isXAxis = axis.isXAxis;
 
@@ -19016,12 +19017,12 @@ Highcharts.extend(Chart.prototype, {
 
 		// remove active points for shared tooltip
 		if (hoverPoints) {
-			each(hoverPoints, function (point) {
+			Highcharts.each(hoverPoints, function (point) {
 				point.setState();
 			});
 		}
 
-		each(panning === 'xy' ? [1, 0] : [1], function (isX) { // xy is used in maps
+		Highcharts.each(panning === 'xy' ? [1, 0] : [1], function (isX) { // xy is used in maps
 			var mousePos = e[isX ? 'chartX' : 'chartY'],
 				axis = chart[isX ? 'xAxis' : 'yAxis'][0],
 				startPos = chart[isX ? 'mouseDownX' : 'mouseDownY'],
@@ -19075,7 +19076,7 @@ Highcharts.extend(Point.prototype, {
 
 			// unselect all other points unless Ctrl or Cmd + click
 			if (!accumulate) {
-				each(chart.getSelectedPoints(), function (loopPoint) {
+				Highcharts.each(chart.getSelectedPoints(), function (loopPoint) {
 					if (loopPoint.selected && loopPoint !== point) {
 						loopPoint.selected = loopPoint.options.selected = false;
 						series.options.data[inArray(loopPoint, series.data)] = loopPoint.options;
@@ -19408,7 +19409,7 @@ Highcharts.extend(Series.prototype, {
 		showOrHide = vis ? 'show' : 'hide';
 
 		// show or hide elements
-		each(['group', 'dataLabelsGroup', 'markerGroup', 'tracker'], function (key) {
+		Highcharts.each(['group', 'dataLabelsGroup', 'markerGroup', 'tracker'], function (key) {
 			if (series[key]) {
 				series[key][showOrHide]();
 			}
@@ -19430,7 +19431,7 @@ Highcharts.extend(Series.prototype, {
 		series.isDirty = true;
 		// in a stack, all other series are affected
 		if (series.options.stacking) {
-			each(chart.series, function (otherSeries) {
+			Highcharts.each(chart.series, function (otherSeries) {
 				if (otherSeries.options.stacking && otherSeries.visible) {
 					otherSeries.isDirty = true;
 				}
@@ -19438,7 +19439,7 @@ Highcharts.extend(Series.prototype, {
 		}
 
 		// show or hide linked series
-		each(series.linkedSeries, function (otherSeries) {
+		Highcharts.each(series.linkedSeries, function (otherSeries) {
 			otherSeries.setVisible(vis, false);
 		});
 
