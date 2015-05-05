@@ -38,6 +38,7 @@ Series.prototype = {
 	init: function (chart, options) {
 		var series = this,
 			pick = Highcharts.pick,
+			stableSort = Highcharts.stableSort,
 			eventType,
 			events,
 			chartSeries = chart.series,

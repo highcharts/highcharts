@@ -439,7 +439,7 @@ Legend.prototype = {
 		allItems = legend.getAllItems();
 
 		// sort by legendIndex
-		stableSort(allItems, function (a, b) {
+		Highcharts.stableSort(allItems, function (a, b) {
 			return ((a.options && a.options.legendIndex) || 0) - ((b.options && b.options.legendIndex) || 0);
 		});
 

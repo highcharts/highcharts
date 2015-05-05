@@ -537,7 +537,7 @@ Highcharts.normalizeTickInterval = function (interval, multiples, magnitude, all
  * Utility method that sorts an object array and keeping the order of equal items.
  * ECMA script standard does not specify the behaviour when items are equal.
  */
-function stableSort(arr, sortFunction) {
+Highcharts.stableSort = function (arr, sortFunction) {
 	var length = arr.length,
 		sortValue,
 		i;
@@ -556,7 +556,7 @@ function stableSort(arr, sortFunction) {
 	for (i = 0; i < length; i++) {
 		delete arr[i].ss_i; // stable sort index
 	}
-}
+};
 
 /**
  * Non-recursive method to find the lowest member of an array. Math.min raises a maximum
@@ -10366,7 +10366,7 @@ Legend.prototype = {
 		allItems = legend.getAllItems();
 
 		// sort by legendIndex
-		stableSort(allItems, function (a, b) {
+		Highcharts.stableSort(allItems, function (a, b) {
 			return ((a.options && a.options.legendIndex) || 0) - ((b.options && b.options.legendIndex) || 0);
 		});
 
@@ -12440,6 +12440,7 @@ Series.prototype = {
 	init: function (chart, options) {
 		var series = this,
 			pick = Highcharts.pick,
+			stableSort = Highcharts.stableSort,
 			eventType,
 			events,
 			chartSeries = chart.series,
