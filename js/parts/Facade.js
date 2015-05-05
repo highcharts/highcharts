@@ -12,7 +12,6 @@ Highcharts.extend(Highcharts, {
 	// Various
 	getOptions: getOptions,
 	setOptions: setOptions,
-	removeEvent: removeEvent,
 	each: each,
 	canvas: Highcharts.useCanVG,
 	vml: !Highcharts.svg && !Highcharts.useCanVG,

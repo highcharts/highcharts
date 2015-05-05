@@ -1165,7 +1165,6 @@ if (globalAdapter) {
 // default adapters below.
 var adapterRun = adapter.adapterRun,
 	each = Highcharts.each = adapter.each,
-	removeEvent = adapter.removeEvent,
 	fireEvent = adapter.fireEvent,
 	washMouseEvent = adapter.washMouseEvent,
 	animate = adapter.animate,
@@ -3008,7 +3007,7 @@ SVGRenderer.prototype = {
 		// We need to check that there is a handler, otherwise all functions that are registered for event 'resize' are removed
 		// See issue #982
 		if (renderer.subPixelFix) {
-			removeEvent(window, 'resize', renderer.subPixelFix);
+			HighchartsAdapter.removeEvent(window, 'resize', renderer.subPixelFix);
 		}
 
 		renderer.alignedObjects = null;
@@ -4278,6 +4277,7 @@ SVGRenderer.prototype = {
 			 * Destroy and release memory.
 			 */
 			destroy: function () {
+				var removeEvent = HighchartsAdapter.removeEvent;
 
 				// Added by button implementation
 				removeEvent(wrapper.element, 'mouseenter');
@@ -8454,7 +8454,7 @@ Axis.prototype = {
 
 		// Remove the events
 		if (!keepEvents) {
-			removeEvent(axis);
+			HighchartsAdapter.removeEvent(axis);
 		}
 
 		// Destroy each stack total
@@ -9699,7 +9699,7 @@ Pointer.prototype = {
 			}
 
 			if (pointer._onDocumentMouseMove) {
-				removeEvent(document, 'mousemove', pointer._onDocumentMouseMove);
+				HighchartsAdapter.removeEvent(document, 'mousemove', pointer._onDocumentMouseMove);
 				pointer._onDocumentMouseMove = null;
 			}
 
@@ -10084,7 +10084,8 @@ Pointer.prototype = {
 	 * Destroys the Pointer object and disconnects DOM events.
 	 */
 	destroy: function () {
-		var prop;
+		var prop,
+			removeEvent = HighchartsAdapter.removeEvent;
 
 		removeEvent(this.chart.container, 'mouseleave', this.onContainerMouseLeave);
 		if (!Highcharts.chartCount) {
@@ -10404,7 +10405,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	});
 	// Destroy MS events also
 	Highcharts.wrap(Pointer.prototype, 'destroy', function (proceed) {
-		this.batchMSEvents(removeEvent);
+		this.batchMSEvents(HighchartsAdapter.removeEvent);
 		proceed.call(this);
 	});
 }
@@ -11984,7 +11985,7 @@ Chart.prototype = {
 		
 		addEvent(window, 'resize', reflow);
 		addEvent(chart, 'destroy', function () {
-			removeEvent(window, 'resize', reflow);
+			HighchartsAdapter.removeEvent(window, 'resize', reflow);
 		});
 	},
 
@@ -12477,6 +12478,7 @@ Chart.prototype = {
 	destroy: function () {
 		var chart = this,
 			charts = Highcharts.charts,
+			removeEvent = HighchartsAdapter.removeEvent,
 			axes = chart.axes,
 			series = chart.series,
 			container = chart.container,
@@ -12822,7 +12824,7 @@ Point.prototype = {
 
 		// remove all events
 		if (point.graphic || point.dataLabel) { // removeEvent and destroyElements are performance expensive
-			removeEvent(point);
+			HighchartsAdapter.removeEvent(point);
 			point.destroyElements();
 		}
 
@@ -14144,7 +14146,7 @@ Series.prototype = {
 		fireEvent(series, 'destroy');
 
 		// remove all events
-		removeEvent(series);
+		HighchartsAdapter.removeEvent(series);
 
 		// erase from axes
 		each(series.axisTypes || [], function (AXIS) {
@@ -14474,7 +14476,7 @@ Series.prototype = {
 
 		addEvent(chart, 'resize', setInvert); // do it on resize
 		addEvent(series, 'destroy', function () {
-			removeEvent(chart, 'resize', setInvert);
+			HighchartsAdapter.removeEvent(chart, 'resize', setInvert);
 		});
 
 		// Do it now
@@ -21269,7 +21271,8 @@ Scroller.prototype = {
 	 * Removes the event handlers attached previously with addEvents.
 	 */
 	removeEvents: function () {
-
+		var removeEvent = HighchartsAdapter.removeEvent;
+		
 		each(this._events, function (args) {
 			removeEvent.apply(null, args);
 		});
@@ -22491,6 +22494,7 @@ RangeSelector.prototype = {
 			maxInput = this.maxInput,
 			chart = this.chart,
 			blurInputs = this.blurInputs,
+			removeEvent = HighchartsAdapter.removeEvent,
 			key;
 
 		removeEvent(chart.container, 'mousedown', blurInputs);
@@ -22599,6 +22603,8 @@ Chart.prototype.callbacks.push(function (chart) {
 	}
 
 	function destroyEvents() {
+		var removeEvent = HighchartsAdapter.removeEvent;
+		
 		if (scroller) {
 			removeEvent(chart.xAxis[0], 'afterSetExtremes', afterSetExtremesHandlerScroller);
 		}
@@ -23256,7 +23262,6 @@ Highcharts.extend(Highcharts, {
 	// Various
 	getOptions: getOptions,
 	setOptions: setOptions,
-	removeEvent: removeEvent,
 	each: each,
 	canvas: Highcharts.useCanVG,
 	vml: !Highcharts.svg && !Highcharts.useCanVG,

@@ -293,7 +293,7 @@ Pointer.prototype = {
 			}
 
 			if (pointer._onDocumentMouseMove) {
-				removeEvent(document, 'mousemove', pointer._onDocumentMouseMove);
+				HighchartsAdapter.removeEvent(document, 'mousemove', pointer._onDocumentMouseMove);
 				pointer._onDocumentMouseMove = null;
 			}
 
@@ -678,7 +678,8 @@ Pointer.prototype = {
 	 * Destroys the Pointer object and disconnects DOM events.
 	 */
 	destroy: function () {
-		var prop;
+		var prop,
+			removeEvent = HighchartsAdapter.removeEvent;
 
 		removeEvent(this.chart.container, 'mouseleave', this.onContainerMouseLeave);
 		if (!Highcharts.chartCount) {

@@ -1217,7 +1217,7 @@ Series.prototype = {
 		fireEvent(series, 'destroy');
 
 		// remove all events
-		removeEvent(series);
+		HighchartsAdapter.removeEvent(series);
 
 		// erase from axes
 		each(series.axisTypes || [], function (AXIS) {
@@ -1547,7 +1547,7 @@ Series.prototype = {
 
 		addEvent(chart, 'resize', setInvert); // do it on resize
 		addEvent(series, 'destroy', function () {
-			removeEvent(chart, 'resize', setInvert);
+			HighchartsAdapter.removeEvent(chart, 'resize', setInvert);
 		});
 
 		// Do it now

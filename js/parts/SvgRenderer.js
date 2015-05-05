@@ -1301,7 +1301,7 @@ SVGRenderer.prototype = {
 		// We need to check that there is a handler, otherwise all functions that are registered for event 'resize' are removed
 		// See issue #982
 		if (renderer.subPixelFix) {
-			removeEvent(window, 'resize', renderer.subPixelFix);
+			HighchartsAdapter.removeEvent(window, 'resize', renderer.subPixelFix);
 		}
 
 		renderer.alignedObjects = null;
@@ -2571,6 +2571,7 @@ SVGRenderer.prototype = {
 			 * Destroy and release memory.
 			 */
 			destroy: function () {
+				var removeEvent = HighchartsAdapter.removeEvent;
 
 				// Added by button implementation
 				removeEvent(wrapper.element, 'mouseenter');

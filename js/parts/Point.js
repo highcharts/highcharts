@@ -135,7 +135,7 @@ Point.prototype = {
 
 		// remove all events
 		if (point.graphic || point.dataLabel) { // removeEvent and destroyElements are performance expensive
-			removeEvent(point);
+			HighchartsAdapter.removeEvent(point);
 			point.destroyElements();
 		}
 
