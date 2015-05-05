@@ -17,6 +17,7 @@ if (globalAdapter) {
 Highcharts.each = adapter.each;
 Highcharts.map = adapter.map;
 Highcharts.addEvent = adapter.addEvent;
+Highcharts.removeEvent = adapter.removeEvent;
 var adapterRun = adapter.adapterRun,
 	stop = adapter.stop;
 

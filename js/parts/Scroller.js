@@ -563,7 +563,7 @@ Scroller.prototype = {
 	 * Removes the event handlers attached previously with addEvents.
 	 */
 	removeEvents: function () {
-		var removeEvent = HighchartsAdapter.removeEvent;
+		var removeEvent = Highcharts.removeEvent;
 		
 		each(this._events, function (args) {
 			removeEvent.apply(null, args);

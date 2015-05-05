@@ -293,7 +293,7 @@ Pointer.prototype = {
 			}
 
 			if (pointer._onDocumentMouseMove) {
-				HighchartsAdapter.removeEvent(document, 'mousemove', pointer._onDocumentMouseMove);
+				Highcharts.removeEvent(document, 'mousemove', pointer._onDocumentMouseMove);
 				pointer._onDocumentMouseMove = null;
 			}
 
@@ -680,7 +680,7 @@ Pointer.prototype = {
 	 */
 	destroy: function () {
 		var prop,
-			removeEvent = HighchartsAdapter.removeEvent;
+			removeEvent = Highcharts.removeEvent;
 
 		removeEvent(this.chart.container, 'mouseleave', this.onContainerMouseLeave);
 		if (!Highcharts.chartCount) {

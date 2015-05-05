@@ -1166,6 +1166,7 @@ if (globalAdapter) {
 Highcharts.each = adapter.each;
 Highcharts.map = adapter.map;
 Highcharts.addEvent = adapter.addEvent;
+Highcharts.removeEvent = adapter.removeEvent;
 var adapterRun = adapter.adapterRun,
 	stop = adapter.stop;
 
@@ -3006,7 +3007,7 @@ SVGRenderer.prototype = {
 		// We need to check that there is a handler, otherwise all functions that are registered for event 'resize' are removed
 		// See issue #982
 		if (renderer.subPixelFix) {
-			HighchartsAdapter.removeEvent(window, 'resize', renderer.subPixelFix);
+			Highcharts.removeEvent(window, 'resize', renderer.subPixelFix);
 		}
 
 		renderer.alignedObjects = null;
@@ -4276,7 +4277,7 @@ SVGRenderer.prototype = {
 			 * Destroy and release memory.
 			 */
 			destroy: function () {
-				var removeEvent = HighchartsAdapter.removeEvent;
+				var removeEvent = Highcharts.removeEvent;
 
 				// Added by button implementation
 				removeEvent(wrapper.element, 'mouseenter');
@@ -8453,7 +8454,7 @@ Axis.prototype = {
 
 		// Remove the events
 		if (!keepEvents) {
-			HighchartsAdapter.removeEvent(axis);
+			Highcharts.removeEvent(axis);
 		}
 
 		// Destroy each stack total
@@ -9698,7 +9699,7 @@ Pointer.prototype = {
 			}
 
 			if (pointer._onDocumentMouseMove) {
-				HighchartsAdapter.removeEvent(document, 'mousemove', pointer._onDocumentMouseMove);
+				Highcharts.removeEvent(document, 'mousemove', pointer._onDocumentMouseMove);
 				pointer._onDocumentMouseMove = null;
 			}
 
@@ -10085,7 +10086,7 @@ Pointer.prototype = {
 	 */
 	destroy: function () {
 		var prop,
-			removeEvent = HighchartsAdapter.removeEvent;
+			removeEvent = Highcharts.removeEvent;
 
 		removeEvent(this.chart.container, 'mouseleave', this.onContainerMouseLeave);
 		if (!Highcharts.chartCount) {
@@ -10405,7 +10406,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	});
 	// Destroy MS events also
 	Highcharts.wrap(Pointer.prototype, 'destroy', function (proceed) {
-		this.batchMSEvents(HighchartsAdapter.removeEvent);
+		this.batchMSEvents(Highcharts.removeEvent);
 		proceed.call(this);
 	});
 }
@@ -11986,7 +11987,7 @@ Chart.prototype = {
 		
 		addEvent(window, 'resize', reflow);
 		addEvent(chart, 'destroy', function () {
-			HighchartsAdapter.removeEvent(window, 'resize', reflow);
+			Highcharts.removeEvent(window, 'resize', reflow);
 		});
 	},
 
@@ -12480,7 +12481,7 @@ Chart.prototype = {
 	destroy: function () {
 		var chart = this,
 			charts = Highcharts.charts,
-			removeEvent = HighchartsAdapter.removeEvent,
+			removeEvent = Highcharts.removeEvent,
 			axes = chart.axes,
 			series = chart.series,
 			container = chart.container,
@@ -12827,7 +12828,7 @@ Point.prototype = {
 
 		// remove all events
 		if (point.graphic || point.dataLabel) { // removeEvent and destroyElements are performance expensive
-			HighchartsAdapter.removeEvent(point);
+			Highcharts.removeEvent(point);
 			point.destroyElements();
 		}
 
@@ -14149,7 +14150,7 @@ Series.prototype = {
 		HighchartsAdapter.fireEvent(series, 'destroy');
 
 		// remove all events
-		HighchartsAdapter.removeEvent(series);
+		Highcharts.removeEvent(series);
 
 		// erase from axes
 		each(series.axisTypes || [], function (AXIS) {
@@ -14479,7 +14480,7 @@ Series.prototype = {
 
 		addEvent(chart, 'resize', setInvert); // do it on resize
 		addEvent(series, 'destroy', function () {
-			HighchartsAdapter.removeEvent(chart, 'resize', setInvert);
+			Highcharts.removeEvent(chart, 'resize', setInvert);
 		});
 
 		// Do it now

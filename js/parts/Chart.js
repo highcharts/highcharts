@@ -775,7 +775,7 @@ Chart.prototype = {
 		
 		addEvent(window, 'resize', reflow);
 		addEvent(chart, 'destroy', function () {
-			HighchartsAdapter.removeEvent(window, 'resize', reflow);
+			Highcharts.removeEvent(window, 'resize', reflow);
 		});
 	},
 
@@ -1269,7 +1269,7 @@ Chart.prototype = {
 	destroy: function () {
 		var chart = this,
 			charts = Highcharts.charts,
-			removeEvent = HighchartsAdapter.removeEvent,
+			removeEvent = Highcharts.removeEvent,
 			axes = chart.axes,
 			series = chart.series,
 			container = chart.container,

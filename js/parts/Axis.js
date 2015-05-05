@@ -2075,7 +2075,7 @@ Axis.prototype = {
 
 		// Remove the events
 		if (!keepEvents) {
-			HighchartsAdapter.removeEvent(axis);
+			Highcharts.removeEvent(axis);
 		}
 
 		// Destroy each stack total

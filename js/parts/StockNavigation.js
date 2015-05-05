@@ -30,7 +30,7 @@ Chart.prototype.callbacks.push(function (chart) {
 	}
 
 	function destroyEvents() {
-		var removeEvent = HighchartsAdapter.removeEvent;
+		var removeEvent = Highcharts.removeEvent;
 		
 		if (scroller) {
 			removeEvent(chart.xAxis[0], 'afterSetExtremes', afterSetExtremesHandlerScroller);

@@ -638,7 +638,7 @@ RangeSelector.prototype = {
 			maxInput = this.maxInput,
 			chart = this.chart,
 			blurInputs = this.blurInputs,
-			removeEvent = HighchartsAdapter.removeEvent,
+			removeEvent = Highcharts.removeEvent,
 			key;
 
 		removeEvent(chart.container, 'mousedown', blurInputs);

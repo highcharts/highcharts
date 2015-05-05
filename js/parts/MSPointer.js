@@ -86,7 +86,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	});
 	// Destroy MS events also
 	Highcharts.wrap(Pointer.prototype, 'destroy', function (proceed) {
-		this.batchMSEvents(HighchartsAdapter.removeEvent);
+		this.batchMSEvents(Highcharts.removeEvent);
 		proceed.call(this);
 	});
 }
