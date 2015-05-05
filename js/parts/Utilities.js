@@ -597,11 +597,11 @@ Highcharts.error = function (code, stop) {
  * Fix JS round off float errors
  * @param {Number} num
  */
-function correctFloat(num) {
+Highcharts.correctFloat = function (num) {
 	return parseFloat(
 		num.toPrecision(14)
 	);
-}
+};
 
 /**
  * Set the global animation to either a given value, or fall back to the

@@ -53,7 +53,7 @@ Tick.prototype = {
 			isFirst: isFirst,
 			isLast: isLast,
 			dateTimeLabelFormat: dateTimeLabelFormat,
-			value: axis.isLog ? correctFloat(Highcharts.lin2log(value)) : value
+			value: axis.isLog ? Highcharts.correctFloat(Highcharts.lin2log(value)) : value
 		});
 
 		// prepare CSS

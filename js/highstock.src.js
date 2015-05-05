@@ -650,11 +650,11 @@ Highcharts.error = function (code, stop) {
  * Fix JS round off float errors
  * @param {Number} num
  */
-function correctFloat(num) {
+Highcharts.correctFloat = function (num) {
 	return parseFloat(
 		num.toPrecision(14)
 	);
-}
+};
 
 /**
  * Set the global animation to either a given value, or fall back to the
@@ -5799,7 +5799,7 @@ Tick.prototype = {
 			isFirst: isFirst,
 			isLast: isLast,
 			dateTimeLabelFormat: dateTimeLabelFormat,
-			value: axis.isLog ? correctFloat(Highcharts.lin2log(value)) : value
+			value: axis.isLog ? Highcharts.correctFloat(Highcharts.lin2log(value)) : value
 		});
 
 		// prepare CSS
@@ -7012,6 +7012,7 @@ Axis.prototype = {
 	getLinearTickPositions: function (tickInterval, min, max) {
 		var pos,
 			lastPos,
+			correctFloat = Highcharts.correctFloat,
 			roundedMin = correctFloat(Math.floor(min / tickInterval) * tickInterval),
 			roundedMax = correctFloat(Math.ceil(max / tickInterval) * tickInterval),
 			tickPositions = [];
@@ -7268,6 +7269,7 @@ Axis.prototype = {
 			log2lin = Highcharts.log2lin,
 			pick = Highcharts.pick,
 			error = Highcharts.error,
+			correctFloat = Highcharts.correctFloat,
 			isLog = axis.isLog,
 			isDatetimeAxis = axis.isDatetimeAxis,
 			isXAxis = axis.isXAxis,
@@ -7579,7 +7581,7 @@ Axis.prototype = {
 
 		if (currentTickAmount < tickAmount) { // TODO: Check #3411
 			while (tickPositions.length < tickAmount) {
-				tickPositions.push(correctFloat(
+				tickPositions.push(Highcharts.correctFloat(
 					tickPositions[tickPositions.length - 1] + tickInterval
 				));
 			}
@@ -7800,6 +7802,7 @@ Axis.prototype = {
 	 */
 	getExtremes: function () {
 		var axis = this,
+			correctFloat = Highcharts.correctFloat,
 			isLog = axis.isLog,
 			lin2log = Highcharts.lin2log;
 
@@ -14982,6 +14985,7 @@ Series.prototype.setStackedPoints = function () {
 		yAxis = series.yAxis,
 		stacks = yAxis.stacks,
 		oldStacks = yAxis.oldStacks,
+		correctFloat = Highcharts.correctFloat,
 		isNegative,
 		stack,
 		other,
@@ -15062,6 +15066,7 @@ Series.prototype.setPercentStacks = function () {
 	var series = this,
 		stackKey = series.stackKey,
 		stacks = series.yAxis.stacks,
+		correctFloat = Highcharts.correctFloat,
 		processedXData = series.processedXData;
 
 	each([stackKey, '-' + stackKey], function (key) {

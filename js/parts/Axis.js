@@ -636,6 +636,7 @@ Axis.prototype = {
 	getLinearTickPositions: function (tickInterval, min, max) {
 		var pos,
 			lastPos,
+			correctFloat = Highcharts.correctFloat,
 			roundedMin = correctFloat(Math.floor(min / tickInterval) * tickInterval),
 			roundedMax = correctFloat(Math.ceil(max / tickInterval) * tickInterval),
 			tickPositions = [];
@@ -892,6 +893,7 @@ Axis.prototype = {
 			log2lin = Highcharts.log2lin,
 			pick = Highcharts.pick,
 			error = Highcharts.error,
+			correctFloat = Highcharts.correctFloat,
 			isLog = axis.isLog,
 			isDatetimeAxis = axis.isDatetimeAxis,
 			isXAxis = axis.isXAxis,
@@ -1203,7 +1205,7 @@ Axis.prototype = {
 
 		if (currentTickAmount < tickAmount) { // TODO: Check #3411
 			while (tickPositions.length < tickAmount) {
-				tickPositions.push(correctFloat(
+				tickPositions.push(Highcharts.correctFloat(
 					tickPositions[tickPositions.length - 1] + tickInterval
 				));
 			}
@@ -1424,6 +1426,7 @@ Axis.prototype = {
 	 */
 	getExtremes: function () {
 		var axis = this,
+			correctFloat = Highcharts.correctFloat,
 			isLog = axis.isLog,
 			lin2log = Highcharts.lin2log;
 

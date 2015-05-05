@@ -188,6 +188,7 @@ Series.prototype.setStackedPoints = function () {
 		yAxis = series.yAxis,
 		stacks = yAxis.stacks,
 		oldStacks = yAxis.oldStacks,
+		correctFloat = Highcharts.correctFloat,
 		isNegative,
 		stack,
 		other,
@@ -268,6 +269,7 @@ Series.prototype.setPercentStacks = function () {
 	var series = this,
 		stackKey = series.stackKey,
 		stacks = series.yAxis.stacks,
+		correctFloat = Highcharts.correctFloat,
 		processedXData = series.processedXData;
 
 	each([stackKey, '-' + stackKey], function (key) {
