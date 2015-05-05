@@ -52,7 +52,7 @@ var PiePoint = Highcharts.extendClass(Point, {
 		Point.prototype.init.apply(this, arguments);
 
 		var point = this,
-			addEvent = HighchartsAdapter.addEvent,
+			addEvent = Highcharts.addEvent,
 			toggleSlice;
 
 		Highcharts.extend(point, {

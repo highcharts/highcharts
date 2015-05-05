@@ -14,7 +14,7 @@ Highcharts.wrap(Series.prototype, 'init', function (proceed) {
 
 	// Destroy the extended ordinal index on updated data
 	if (xAxis && xAxis.options.ordinal) {
-		HighchartsAdapter.addEvent(series, 'updatedData', function () {
+		Highcharts.addEvent(series, 'updatedData', function () {
 			delete xAxis.ordinalIndex;
 		});
 	}

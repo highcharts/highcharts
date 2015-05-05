@@ -554,7 +554,7 @@ Scroller.prototype = {
 
 		// Add them all
 		each(_events, function (args) {
-			HighchartsAdapter.addEvent.apply(null, args);
+			Highcharts.addEvent.apply(null, args);
 		});
 		this._events = _events;
 	},
@@ -980,7 +980,7 @@ Scroller.prototype = {
 		// Respond to updated data in the base series.
 		// Abort if lazy-loading data from the server.
 		if (baseSeries && this.navigatorOptions.adaptToUpdatedData !== false) {
-			HighchartsAdapter.addEvent(baseSeries, 'updatedData', this.updatedDataHandler);
+			Highcharts.addEvent(baseSeries, 'updatedData', this.updatedDataHandler);
 			// Survive Series.update()
 			baseSeries.userOptions.events = Highcharts.extend(baseSeries.userOptions.event, { updatedData: this.updatedDataHandler });
 
@@ -1124,7 +1124,7 @@ Highcharts.wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 // Initialize scroller for stock charts
 Highcharts.wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 
-	HighchartsAdapter.addEvent(this, 'beforeRender', function () {
+	Highcharts.addEvent(this, 'beforeRender', function () {
 		var options = this.options;
 		if (options.navigator.enabled || options.scrollbar.enabled) {
 			this.scroller = new Scroller(this);

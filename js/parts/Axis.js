@@ -347,7 +347,7 @@ Axis.prototype = {
 
 		// register event listeners
 		for (eventType in events) {
-			HighchartsAdapter.addEvent(axis, eventType, events[eventType]);
+			Highcharts.addEvent(axis, eventType, events[eventType]);
 		}
 
 		// extend logarithmic axis

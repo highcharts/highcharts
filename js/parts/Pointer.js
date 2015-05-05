@@ -230,7 +230,7 @@ Pointer.prototype = {
 					Highcharts.charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
 				}
 			};
-			HighchartsAdapter.addEvent(document, 'mousemove', pointer._onDocumentMouseMove);
+			Highcharts.addEvent(document, 'mousemove', pointer._onDocumentMouseMove);
 		}
 		
 		// Crosshair
@@ -645,7 +645,7 @@ Pointer.prototype = {
 	setDOMEvents: function () {
 
 		var pointer = this,
-			addEvent = HighchartsAdapter.addEvent,
+			addEvent = Highcharts.addEvent,
 			container = pointer.chart.container;
 
 		container.onmousedown = function (e) {

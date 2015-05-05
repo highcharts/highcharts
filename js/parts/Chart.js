@@ -21,7 +21,7 @@ Chart.prototype = {
 
 		// Handle regular options
 		var options,
-			addEvent = HighchartsAdapter.addEvent,
+			addEvent = Highcharts.addEvent,
 			seriesOptions = userOptions.series; // skip merging data points to increase performance
 
 		userOptions.series = null;
@@ -767,7 +767,7 @@ Chart.prototype = {
 	 */
 	initReflow: function () {
 		var chart = this,
-			addEvent = HighchartsAdapter.addEvent,
+			addEvent = Highcharts.addEvent,
 			reflow = function (e) {
 				chart.reflow(e);
 			};

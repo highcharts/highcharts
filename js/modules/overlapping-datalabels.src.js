@@ -11,7 +11,7 @@
 (function (H) {
 	var Chart = H.Chart,
 		each = H.each,
-		addEvent = HighchartsAdapter.addEvent;
+		addEvent = Highcharts.addEvent;
 
 	// Collect potensial overlapping data labels. Stack labels probably don't need to be 
 	// considered because they are usually accompanied by data labels that lie inside the columns.

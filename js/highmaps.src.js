@@ -1165,6 +1165,7 @@ if (globalAdapter) {
 // default adapters below.
 Highcharts.each = adapter.each;
 Highcharts.map = adapter.map;
+Highcharts.addEvent = adapter.addEvent;
 var adapterRun = adapter.adapterRun,
 	stop = adapter.stop;
 
@@ -2963,7 +2964,7 @@ SVGRenderer.prototype = {
 			subPixelFix();
 
 			// run it on resize
-			HighchartsAdapter.addEvent(window, 'resize', subPixelFix);
+			Highcharts.addEvent(window, 'resize', subPixelFix);
 		}
 	},
 
@@ -3331,7 +3332,7 @@ SVGRenderer.prototype = {
 			pressedStyle,
 			disabledStyle,
 			isIE = Highcharts.isIE,
-			addEvent = HighchartsAdapter.addEvent,
+			addEvent = Highcharts.addEvent,
 			verticalGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
 
 		// Normal state - prepare the attributes
@@ -6459,7 +6460,7 @@ Axis.prototype = {
 
 		// register event listeners
 		for (eventType in events) {
-			HighchartsAdapter.addEvent(axis, eventType, events[eventType]);
+			Highcharts.addEvent(axis, eventType, events[eventType]);
 		}
 
 		// extend logarithmic axis
@@ -9161,7 +9162,7 @@ Pointer.prototype = {
 					Highcharts.charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
 				}
 			};
-			HighchartsAdapter.addEvent(document, 'mousemove', pointer._onDocumentMouseMove);
+			Highcharts.addEvent(document, 'mousemove', pointer._onDocumentMouseMove);
 		}
 		
 		// Crosshair
@@ -9576,7 +9577,7 @@ Pointer.prototype = {
 	setDOMEvents: function () {
 
 		var pointer = this,
-			addEvent = HighchartsAdapter.addEvent,
+			addEvent = Highcharts.addEvent,
 			container = pointer.chart.container;
 
 		container.onmousedown = function (e) {
@@ -9926,7 +9927,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	Highcharts.wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
 		proceed.apply(this);
 		if (this.hasZoom || this.followTouchMove) {
-			this.batchMSEvents(HighchartsAdapter.addEvent);
+			this.batchMSEvents(Highcharts.addEvent);
 		}
 	});
 	// Destroy MS events also
@@ -9978,7 +9979,7 @@ Legend.prototype = {
 		legend.render();
 
 		// move checkboxes
-		HighchartsAdapter.addEvent(legend.chart, 'endResize', function () { 
+		Highcharts.addEvent(legend.chart, 'endResize', function () { 
 			legend.positionCheckboxes();
 		});
 
@@ -10758,7 +10759,7 @@ Chart.prototype = {
 
 		// Handle regular options
 		var options,
-			addEvent = HighchartsAdapter.addEvent,
+			addEvent = Highcharts.addEvent,
 			seriesOptions = userOptions.series; // skip merging data points to increase performance
 
 		userOptions.series = null;
@@ -11504,7 +11505,7 @@ Chart.prototype = {
 	 */
 	initReflow: function () {
 		var chart = this,
-			addEvent = HighchartsAdapter.addEvent,
+			addEvent = Highcharts.addEvent,
 			reflow = function (e) {
 				chart.reflow(e);
 			};
@@ -12488,7 +12489,7 @@ Series.prototype = {
 		// register event listeners
 		events = options.events;
 		for (eventType in events) {
-			HighchartsAdapter.addEvent(series, eventType, events[eventType]);
+			Highcharts.addEvent(series, eventType, events[eventType]);
 		}
 		if (
 			(events && events.click) ||
@@ -13941,7 +13942,7 @@ Series.prototype = {
 	 */
 	invertGroups: function () {
 		var series = this,
-			addEvent = HighchartsAdapter.addEvent,
+			addEvent = Highcharts.addEvent,
 			chart = series.chart;
 
 		// Pie, go away (#1736)
@@ -14390,7 +14391,7 @@ Highcharts.extend(Chart.prototype, {
 				loadingOptions.labelStyle,
 				loadingDiv
 			);
-			HighchartsAdapter.addEvent(chart, 'redraw', setLoadingSize); // #1080
+			Highcharts.addEvent(chart, 'redraw', setLoadingSize); // #1080
 		}
 
 		// update text
@@ -15262,7 +15263,7 @@ Series.prototype.drawDataLabels = function () {
 		if (pick(options.defer, true)) {
 			dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
 			if (!hasRendered) {
-				HighchartsAdapter.addEvent(series, 'afterAnimate', function () {
+				Highcharts.addEvent(series, 'afterAnimate', function () {
 					if (series.visible) { // #3023, #3024
 						dataLabelsGroup.show();
 					}
@@ -16002,7 +16003,7 @@ if (Highcharts.seriesTypes.column) {
 (function (H) {
 	var Chart = H.Chart,
 		each = H.each,
-		addEvent = HighchartsAdapter.addEvent;
+		addEvent = Highcharts.addEvent;
 
 	// Collect potensial overlapping data labels. Stack labels probably don't need to be 
 	// considered because they are usually accompanied by data labels that lie inside the columns.
@@ -17444,7 +17445,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 (function (H) {
 	var Chart = H.Chart,
 		each = H.each,
-		addEvent = HighchartsAdapter.addEvent;
+		addEvent = Highcharts.addEvent;
 
 	// Collect potensial overlapping data labels. Stack labels probably don't need to be 
 	// considered because they are usually accompanied by data labels that lie inside the columns.
@@ -17689,7 +17690,7 @@ Highcharts.extend(Chart.prototype, {
 Highcharts.wrap(Chart.prototype, 'render', function (proceed) {
 	var chart = this,
 		pick = Highcharts.pick,
-		addEvent = HighchartsAdapter.addEvent,
+		addEvent = Highcharts.addEvent,
 		mapNavigation = chart.options.mapNavigation;
 
 	// Render the plus and minus buttons. Doing this before the shapes makes getBBox much quicker, at least in Chrome.
@@ -18900,7 +18901,7 @@ Highcharts.extend(Legend.prototype, {
 			defaultChecked: item.selected // required by IE7
 		}, legend.options.itemCheckboxStyle, legend.chart.container);
 
-		HighchartsAdapter.addEvent(item.checkbox, 'click', function (event) {
+		Highcharts.addEvent(item.checkbox, 'click', function (event) {
 			var target = event.target;
 			HighchartsAdapter.fireEvent(item.series || item, 'checkboxClick', { // #3712
 					checked: target.checked,
@@ -19149,7 +19150,7 @@ Highcharts.extend(Point.prototype, {
 			point.events = events;
 
 			for (eventType in events) {
-				HighchartsAdapter.addEvent(point, eventType, events[eventType]);
+				Highcharts.addEvent(point, eventType, events[eventType]);
 			}
 			this.hasImportedEvents = true;
 

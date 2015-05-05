@@ -41,7 +41,7 @@ Legend.prototype = {
 		legend.render();
 
 		// move checkboxes
-		HighchartsAdapter.addEvent(legend.chart, 'endResize', function () { 
+		Highcharts.addEvent(legend.chart, 'endResize', function () { 
 			legend.positionCheckboxes();
 		});
 
