@@ -134,7 +134,7 @@ var DATA_GROUPING = 'dataGrouping',
 			return arr.length ? arrayMax(arr) : (arr.hasNulls ? null : undefined);
 		},
 		low: function (arr) {
-			return arr.length ? arrayMin(arr) : (arr.hasNulls ? null : undefined);
+			return arr.length ? Highcharts.arrayMin(arr) : (arr.hasNulls ? null : undefined);
 		},
 		close: function (arr) {
 			return arr.length ? arr[arr.length - 1] : (arr.hasNulls ? null : undefined);

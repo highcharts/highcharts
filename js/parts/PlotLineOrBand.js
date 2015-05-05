@@ -26,6 +26,7 @@ Highcharts.PlotLineOrBand.prototype = {
 			label = plotLine.label,
 			log2lin = Highcharts.log2lin,
 			defined = Highcharts.defined,
+			arrayMin = Highcharts.arrayMin,
 			width = options.width,
 			to = options.to,
 			from = options.from,

@@ -271,7 +271,7 @@ Axis.prototype.beforePadding = function () {
 					zMin = pick(seriesOptions.zMin, Math.min(
 						zMin,
 						Math.max(
-							arrayMin(zData), 
+							Highcharts.arrayMin(zData), 
 							seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
 						)
 					));

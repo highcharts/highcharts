@@ -1,5 +1,4 @@
-var arrayMin = Highcharts.arrayMin,
-	arrayMax = Highcharts.arrayMax,
+var arrayMax = Highcharts.arrayMax,
 	each = Highcharts.each,
 	merge = Highcharts.merge,
 	map = Highcharts.map,

@@ -563,7 +563,7 @@ Highcharts.stableSort = function (arr, sortFunction) {
  * call stack size exceeded error in Chrome when trying to apply more than 150.000 points. This
  * method is slightly slower, but safe.
  */
-function arrayMin(data) {
+Highcharts.arrayMin = function (data) {
 	var i = data.length,
 		min = data[0];
 
@@ -573,7 +573,7 @@ function arrayMin(data) {
 		}
 	}
 	return min;
-}
+};
 
 /**
  * Non-recursive method to find the lowest member of an array. Math.min raises a maximum
@@ -6137,6 +6137,7 @@ Highcharts.PlotLineOrBand.prototype = {
 			label = plotLine.label,
 			log2lin = Highcharts.log2lin,
 			defined = Highcharts.defined,
+			arrayMin = Highcharts.arrayMin,
 			width = options.width,
 			to = options.to,
 			from = options.from,
@@ -6837,7 +6838,7 @@ Axis.prototype = {
 				if (axis.isXAxis) {
 					xData = series.xData;
 					if (xData.length) {
-						axis.dataMin = Math.min(pick(axis.dataMin, xData[0]), arrayMin(xData));
+						axis.dataMin = Math.min(pick(axis.dataMin, xData[0]), Highcharts.arrayMin(xData));
 						axis.dataMax = Math.max(pick(axis.dataMax, xData[0]), arrayMax(xData));
 					}
 
@@ -7152,7 +7153,7 @@ Axis.prototype = {
 				maxArgs[2] = axis.dataMax;
 			}
 
-			max = arrayMin(maxArgs);
+			max = Highcharts.arrayMin(maxArgs);
 
 			// now if the max is adjusted, adjust the min back
 			if (max - min < minRange) {
@@ -13627,7 +13628,7 @@ Series.prototype = {
 				}
 			}
 		}
-		this.dataMin = arrayMin(activeYData);
+		this.dataMin = Highcharts.arrayMin(activeYData);
 		this.dataMax = arrayMax(activeYData);
 	},
 
@@ -19628,7 +19629,7 @@ var DATA_GROUPING = 'dataGrouping',
 			return arr.length ? arrayMax(arr) : (arr.hasNulls ? null : undefined);
 		},
 		low: function (arr) {
-			return arr.length ? arrayMin(arr) : (arr.hasNulls ? null : undefined);
+			return arr.length ? Highcharts.arrayMin(arr) : (arr.hasNulls ? null : undefined);
 		},
 		close: function (arr) {
 			return arr.length ? arr[arr.length - 1] : (arr.hasNulls ? null : undefined);
@@ -23231,7 +23232,6 @@ Highcharts.extend(Highcharts, {
 	SVGRenderer: SVGRenderer,
 	
 	// Various
-	arrayMin: arrayMin,
 	arrayMax: arrayMax,
 	error: error,
 	getOptions: getOptions,

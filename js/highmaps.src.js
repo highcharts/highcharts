@@ -563,7 +563,7 @@ Highcharts.stableSort = function (arr, sortFunction) {
  * call stack size exceeded error in Chrome when trying to apply more than 150.000 points. This
  * method is slightly slower, but safe.
  */
-function arrayMin(data) {
+Highcharts.arrayMin = function (data) {
 	var i = data.length,
 		min = data[0];
 
@@ -573,7 +573,7 @@ function arrayMin(data) {
 		}
 	}
 	return min;
-}
+};
 
 /**
  * Non-recursive method to find the lowest member of an array. Math.min raises a maximum
@@ -6574,7 +6574,7 @@ Axis.prototype = {
 				if (axis.isXAxis) {
 					xData = series.xData;
 					if (xData.length) {
-						axis.dataMin = Math.min(pick(axis.dataMin, xData[0]), arrayMin(xData));
+						axis.dataMin = Math.min(pick(axis.dataMin, xData[0]), Highcharts.arrayMin(xData));
 						axis.dataMax = Math.max(pick(axis.dataMax, xData[0]), arrayMax(xData));
 					}
 
@@ -6889,7 +6889,7 @@ Axis.prototype = {
 				maxArgs[2] = axis.dataMax;
 			}
 
-			max = arrayMin(maxArgs);
+			max = Highcharts.arrayMin(maxArgs);
 
 			// now if the max is adjusted, adjust the min back
 			if (max - min < minRange) {
@@ -13116,7 +13116,7 @@ Series.prototype = {
 				}
 			}
 		}
-		this.dataMin = arrayMin(activeYData);
+		this.dataMin = Highcharts.arrayMin(activeYData);
 		this.dataMax = arrayMax(activeYData);
 	},
 
@@ -18092,7 +18092,7 @@ Axis.prototype.beforePadding = function () {
 					zMin = pick(seriesOptions.zMin, Math.min(
 						zMin,
 						Math.max(
-							arrayMin(zData), 
+							Highcharts.arrayMin(zData), 
 							seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
 						)
 					));
@@ -19473,7 +19473,6 @@ Highcharts.extend(Highcharts, {
 	SVGRenderer: SVGRenderer,
 	
 	// Various
-	arrayMin: arrayMin,
 	arrayMax: arrayMax,
 	error: error,
 	getOptions: getOptions,

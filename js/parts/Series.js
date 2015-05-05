@@ -714,7 +714,7 @@ Series.prototype = {
 				}
 			}
 		}
-		this.dataMin = arrayMin(activeYData);
+		this.dataMin = Highcharts.arrayMin(activeYData);
 		this.dataMax = arrayMax(activeYData);
 	},
 

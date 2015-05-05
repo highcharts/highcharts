@@ -510,7 +510,7 @@ Highcharts.stableSort = function (arr, sortFunction) {
  * call stack size exceeded error in Chrome when trying to apply more than 150.000 points. This
  * method is slightly slower, but safe.
  */
-function arrayMin(data) {
+Highcharts.arrayMin = function (data) {
 	var i = data.length,
 		min = data[0];
 
@@ -520,7 +520,7 @@ function arrayMin(data) {
 		}
 	}
 	return min;
-}
+};
 
 /**
  * Non-recursive method to find the lowest member of an array. Math.min raises a maximum

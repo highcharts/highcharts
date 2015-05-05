@@ -463,7 +463,7 @@ Axis.prototype = {
 				if (axis.isXAxis) {
 					xData = series.xData;
 					if (xData.length) {
-						axis.dataMin = Math.min(pick(axis.dataMin, xData[0]), arrayMin(xData));
+						axis.dataMin = Math.min(pick(axis.dataMin, xData[0]), Highcharts.arrayMin(xData));
 						axis.dataMax = Math.max(pick(axis.dataMax, xData[0]), arrayMax(xData));
 					}
 
@@ -778,7 +778,7 @@ Axis.prototype = {
 				maxArgs[2] = axis.dataMax;
 			}
 
-			max = arrayMin(maxArgs);
+			max = Highcharts.arrayMin(maxArgs);
 
 			// now if the max is adjusted, adjust the min back
 			if (max - min < minRange) {

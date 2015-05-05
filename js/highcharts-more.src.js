@@ -13,8 +13,7 @@
 /*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
 
 (function (Highcharts) {
-var arrayMin = Highcharts.arrayMin,
-	arrayMax = Highcharts.arrayMax,
+var arrayMax = Highcharts.arrayMax,
 	each = Highcharts.each,
 	merge = Highcharts.merge,
 	map = Highcharts.map,
@@ -2085,7 +2084,7 @@ Axis.prototype.beforePadding = function () {
 					zMin = pick(seriesOptions.zMin, Math.min(
 						zMin,
 						Math.max(
-							arrayMin(zData), 
+							Highcharts.arrayMin(zData), 
 							seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
 						)
 					));
