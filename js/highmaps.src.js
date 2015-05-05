@@ -1167,11 +1167,7 @@ Highcharts.each = adapter.each;
 Highcharts.map = adapter.map;
 Highcharts.addEvent = adapter.addEvent;
 Highcharts.removeEvent = adapter.removeEvent;
-var adapterRun = adapter.adapterRun,
-	stop = adapter.stop;
-
-
-
+var adapterRun = adapter.adapterRun;
 /* ****************************************************************************
  * Handle the options                                                         *
  *****************************************************************************/
@@ -1740,7 +1736,7 @@ SVGElement.prototype = {
 	 */
 	animate: function (params, options, complete) {
 		var animOptions = Highcharts.pick(options, Highcharts.globalAnimation, true);
-		stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
+		Highcharts.stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
 		if (animOptions) {
 			animOptions = Highcharts.merge(animOptions, {}); //#2625
 			if (complete) { // allows using a callback with the global animation without overwriting it
@@ -2603,7 +2599,7 @@ SVGElement.prototype = {
 
 		// remove events
 		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = element.point = null;
-		stop(wrapper); // stop running animations
+		Highcharts.stop(wrapper); // stop running animations
 
 		if (wrapper.clipPath) {
 			wrapper.clipPath = wrapper.clipPath.destroy();
@@ -8778,7 +8774,7 @@ Tooltip.prototype = {
 
 			// show it
 			if (tooltip.isHidden) {
-				stop(label);
+				Highcharts.stop(label);
 				label.attr('opacity', 1).show();
 			}
 
@@ -13805,7 +13801,7 @@ Series.prototype = {
 				attribs;
 
 			if (graph) {
-				stop(graph); // cancel running animations, #459
+				Highcharts.stop(graph); // cancel running animations, #459
 				graph.animate({ d: graphPath });
 
 			} else if ((lineWidth || fillColor) && graphPath.length) { // #1487
@@ -15120,7 +15116,7 @@ var ColumnSeries = Highcharts.extendClass(Series, {
 				pointAttr = point.pointAttr[point.selected ? 'select' : ''] || series.pointAttr[''];
 				
 				if (graphic) { // update
-					stop(graphic);
+					Highcharts.stop(graphic);
 					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](Highcharts.merge(shapeArgs));
 
 				} else {

@@ -284,7 +284,7 @@ var ColumnSeries = Highcharts.extendClass(Series, {
 				pointAttr = point.pointAttr[point.selected ? 'select' : ''] || series.pointAttr[''];
 				
 				if (graphic) { // update
-					stop(graphic);
+					Highcharts.stop(graphic);
 					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](Highcharts.merge(shapeArgs));
 
 				} else {
