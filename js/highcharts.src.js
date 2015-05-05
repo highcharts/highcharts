@@ -1165,7 +1165,6 @@ if (globalAdapter) {
 // default adapters below.
 var adapterRun = adapter.adapterRun,
 	each = Highcharts.each = adapter.each,
-	grep = adapter.grep,
 	offset = adapter.offset,
 	map = adapter.map,
 	addEvent = adapter.addEvent,
@@ -8679,7 +8678,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 
 
 		// mark new days if the time is dividible by day (#1649, #1760)
-		each(grep(tickPositions, function (time) {
+		each(HighchartsAdapter.grep(tickPositions, function (time) {
 			return interval <= timeUnits.hour && time % timeUnits.day === localTimezoneOffset;
 		}), function (time) {
 			higherRanks[time] = 'day';
@@ -11590,7 +11589,7 @@ Chart.prototype = {
 	getSelectedPoints: function () {
 		var points = [];
 		each(this.series, function (serie) {
-			points = points.concat(grep(serie.points || [], function (point) {
+			points = points.concat(HighchartsAdapter.grep(serie.points || [], function (point) {
 				return point.selected;
 			}));
 		});
@@ -11601,7 +11600,7 @@ Chart.prototype = {
 	 * Get the currently selected series
 	 */
 	getSelectedSeries: function () {
-		return grep(this.series, function (serie) {
+		return HighchartsAdapter.grep(this.series, function (serie) {
 			return serie.selected;
 		});
 	},
@@ -14722,7 +14721,7 @@ Series.prototype = {
 
 		// Start the recursive build process with a clone of the points array and null points filtered out (#3873)
 		function startRecursive() {
-			var points = grep(series.points, function (point) {
+			var points = HighchartsAdapter.grep(series.points, function (point) {
 				return point.y !== null;
 			});
 			series.kdTree = _kdtree(points, dimensions, dimensions);		

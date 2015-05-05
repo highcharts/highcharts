@@ -1795,7 +1795,7 @@ Series.prototype = {
 
 		// Start the recursive build process with a clone of the points array and null points filtered out (#3873)
 		function startRecursive() {
-			var points = grep(series.points, function (point) {
+			var points = HighchartsAdapter.grep(series.points, function (point) {
 				return point.y !== null;
 			});
 			series.kdTree = _kdtree(points, dimensions, dimensions);		

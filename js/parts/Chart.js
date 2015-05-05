@@ -378,7 +378,7 @@ Chart.prototype = {
 	getSelectedPoints: function () {
 		var points = [];
 		each(this.series, function (serie) {
-			points = points.concat(grep(serie.points || [], function (point) {
+			points = points.concat(HighchartsAdapter.grep(serie.points || [], function (point) {
 				return point.selected;
 			}));
 		});
@@ -389,7 +389,7 @@ Chart.prototype = {
 	 * Get the currently selected series
 	 */
 	getSelectedSeries: function () {
-		return grep(this.series, function (serie) {
+		return HighchartsAdapter.grep(this.series, function (serie) {
 			return serie.selected;
 		});
 	},

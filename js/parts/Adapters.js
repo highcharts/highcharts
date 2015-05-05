@@ -16,7 +16,6 @@ if (globalAdapter) {
 // default adapters below.
 var adapterRun = adapter.adapterRun,
 	each = Highcharts.each = adapter.each,
-	grep = adapter.grep,
 	offset = adapter.offset,
 	map = adapter.map,
 	addEvent = adapter.addEvent,
