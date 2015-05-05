@@ -694,7 +694,7 @@ Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
 };
 
 // Initialize scroller for stock charts
-wrap(Chart.prototype, 'init', function (proceed, options, callback) {
+Highcharts.wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 	
 	addEvent(this, 'init', function () {
 		if (this.options.rangeSelector.enabled) {

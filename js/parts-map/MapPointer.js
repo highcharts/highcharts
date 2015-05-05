@@ -51,7 +51,7 @@ Highcharts.extend(Pointer.prototype, {
 });
 
 // Implement the pinchType option
-wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
+Highcharts.wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 
 	proceed.call(this, chart, options);
 
@@ -62,7 +62,7 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 });
 
 // Extend the pinchTranslate method to preserve fixed ratio when zooming
-wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
+Highcharts.wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
 	var xBigger;
 	proceed.call(this, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 

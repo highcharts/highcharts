@@ -17,9 +17,7 @@ var Axis = Highcharts.Axis,
 	LegendSymbolMixin = Highcharts.LegendSymbolMixin,
 	Series = Highcharts.Series,
 	
-	each = Highcharts.each,
-	wrap = Highcharts.wrap;
-
+	each = Highcharts.each;
 	
 
 
@@ -462,7 +460,7 @@ each(['fill', 'stroke'], function (prop) {
 /**
  * Extend the chart getAxes method to also get the color axis
  */
-wrap(Chart.prototype, 'getAxes', function (proceed) {
+Highcharts.wrap(Chart.prototype, 'getAxes', function (proceed) {
 
 	var options = this.options,
 		colorAxisOptions = options.colorAxis;
@@ -480,7 +478,7 @@ wrap(Chart.prototype, 'getAxes', function (proceed) {
  * Wrap the legend getAllItems method to add the color axis. This also removes the 
  * axis' own series to prevent them from showing up individually.
  */
-wrap(Legend.prototype, 'getAllItems', function (proceed) {
+Highcharts.wrap(Legend.prototype, 'getAllItems', function (proceed) {
 	var allItems = [],
 		colorAxis = this.chart.colorAxis[0];
 

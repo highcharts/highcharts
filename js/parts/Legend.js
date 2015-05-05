@@ -783,7 +783,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 // TODO: Explore if there's a general cause for this. The problem may be related 
 // to nested group elements, as the legend item texts are within 4 group elements.
 if (/Trident\/7\.0/.test(navigator.userAgent) || Highcharts.isFirefox) {
-	wrap(Legend.prototype, 'positionItem', function (proceed, item) {
+	Highcharts.wrap(Legend.prototype, 'positionItem', function (proceed, item) {
 		var legend = this,
 			runPositionItem = function () { // If chart destroyed in sync, this is undefined (#2030)
 				if (item._legendItemPos) {

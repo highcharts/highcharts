@@ -455,7 +455,7 @@ seriesProto.destroy = function () {
 
 // Handle default options for data grouping. This must be set at runtime because some series types are
 // defined after this.
-wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
+Highcharts.wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
 
 	var options = proceed.call(this, itemOptions),
 		type = this.type,
@@ -487,7 +487,7 @@ wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
  * When resetting the scale reset the hasProccessed flag to avoid taking previous data grouping
  * of neighbour series into accound when determining group pixel width (#2692).
  */
-wrap(Axis.prototype, 'setScale', function (proceed) {
+Highcharts.wrap(Axis.prototype, 'setScale', function (proceed) {
 	proceed.call(this);
 	each(this.series, function (series) {
 		series.hasProcessed = false;

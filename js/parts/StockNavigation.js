@@ -44,7 +44,7 @@ Chart.prototype.callbacks.push(function (chart) {
 		addEvent(chart.xAxis[0], 'afterSetExtremes', afterSetExtremesHandlerScroller);
 
 		// redraw the scroller on chart resize or box resize
-		wrap(chart, 'drawChartBox', function (proceed) {
+		Highcharts.wrap(chart, 'drawChartBox', function (proceed) {
 			var isDirtyBox = this.isDirtyBox;
 			proceed.call(this);
 			if (isDirtyBox) {

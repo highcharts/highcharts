@@ -376,7 +376,7 @@ var radialAxisMixin = {
 /**
  * Override axisProto.init to mix in special axis instance functions and function overrides
  */
-wrap(axisProto, 'init', function (proceed, chart, userOptions) {
+Highcharts.wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 	var axis = this,
 		extend = Highcharts.extend,
 		angular = chart.angular,
@@ -450,7 +450,7 @@ wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 /**
  * Add special cases within the Tick class' methods for radial axes.
  */	
-wrap(tickProto, 'getPosition', function (proceed, horiz, pos, tickmarkOffset, old) {
+Highcharts.wrap(tickProto, 'getPosition', function (proceed, horiz, pos, tickmarkOffset, old) {
 	var axis = this.axis;
 	
 	return axis.getPosition ? 
@@ -462,7 +462,7 @@ wrap(tickProto, 'getPosition', function (proceed, horiz, pos, tickmarkOffset, ol
  * Wrap the getLabelPosition function to find the center position of the label
  * based on the distance option
  */	
-wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, labelOptions, tickmarkOffset, index, step) {
+Highcharts.wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, labelOptions, tickmarkOffset, index, step) {
 	var axis = this.axis,
 		optionsY = labelOptions.y,
 		ret,
@@ -517,7 +517,7 @@ wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, label
 /**
  * Wrap the getMarkPath function to return the path of the radial marker
  */
-wrap(tickProto, 'getMarkPath', function (proceed, x, y, tickLength, tickWidth, horiz, renderer) {
+Highcharts.wrap(tickProto, 'getMarkPath', function (proceed, x, y, tickLength, tickWidth, horiz, renderer) {
 	var axis = this.axis,
 		endPoint,
 		ret;

@@ -3,7 +3,7 @@
  *****************************************************************************/
 
 
-wrap(Series.prototype, 'init', function (proceed) {
+Highcharts.wrap(Series.prototype, 'init', function (proceed) {
 	var series = this,
 		xAxis;
 
@@ -27,7 +27,7 @@ wrap(Series.prototype, 'init', function (proceed) {
  * positions up in segments, find the tick positions for each segment then concatenize them.
  * This method is used from both data grouping logic and X axis tick position logic.
  */
-wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min, max, startOfWeek, positions, closestDistance, findHigherRanks) {
+Highcharts.wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min, max, startOfWeek, positions, closestDistance, findHigherRanks) {
 
 	var start = 0,
 		end = 0,
@@ -531,7 +531,7 @@ Highcharts.extend(Axis.prototype, {
 });
 
 // Extending the Chart.pan method for ordinal axes
-wrap(Chart.prototype, 'pan', function (proceed, e) {
+Highcharts.wrap(Chart.prototype, 'pan', function (proceed, e) {
 	var chart = this,
 		xAxis = chart.xAxis[0],
 		chartX = e.chartX,
@@ -626,7 +626,7 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
  * Extend getSegments by identifying gaps in the ordinal data so that we can draw a gap in the
  * line or area
  */
-wrap(Series.prototype, 'getSegments', function (proceed) {
+Highcharts.wrap(Series.prototype, 'getSegments', function (proceed) {
 
 	var series = this,
 		segments,

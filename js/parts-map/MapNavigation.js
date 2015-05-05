@@ -154,7 +154,7 @@ Highcharts.extend(Chart.prototype, {
 /**
  * Extend the Chart.render method to add zooming and panning
  */
-wrap(Chart.prototype, 'render', function (proceed) {
+Highcharts.wrap(Chart.prototype, 'render', function (proceed) {
 	var chart = this,
 		pick = Highcharts.pick,
 		mapNavigation = chart.options.mapNavigation;

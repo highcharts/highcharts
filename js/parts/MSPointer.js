@@ -67,7 +67,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	});
 
 	// Disable default IE actions for pinch and such on chart element
-	wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
+	Highcharts.wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 		proceed.call(this, chart, options);
 		if (this.hasZoom || this.followTouchMove) {
 			Highcharts.css(chart.container, {
@@ -78,14 +78,14 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	});
 
 	// Add IE specific touch events to chart
-	wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
+	Highcharts.wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
 		proceed.apply(this);
 		if (this.hasZoom || this.followTouchMove) {
 			this.batchMSEvents(addEvent);
 		}
 	});
 	// Destroy MS events also
-	wrap(Pointer.prototype, 'destroy', function (proceed) {
+	Highcharts.wrap(Pointer.prototype, 'destroy', function (proceed) {
 		this.batchMSEvents(removeEvent);
 		proceed.call(this);
 	});

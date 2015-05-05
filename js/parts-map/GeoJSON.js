@@ -195,7 +195,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 /**
  * Override showCredits to include map source by default
  */
-wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
+Highcharts.wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
 
 	if (Highcharts.defaultOptions.credits.text === this.options.credits.text && this.mapCredits) { // default text and mapCredits is set
 		credits.text = this.mapCredits;

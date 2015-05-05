@@ -319,7 +319,7 @@ Highcharts.pad = function (number, length) {
  * as the original function, except that the original function is unshifted and passed as the first 
  * argument. 
  */
-var wrap = Highcharts.wrap = function (obj, method, func) {
+Highcharts.wrap = function (obj, method, func) {
 	var proceed = obj[method];
 	obj[method] = function () {
 		var args = Array.prototype.slice.call(arguments);
@@ -851,7 +851,7 @@ Highcharts.pathAnim = {
 			});
 
 			// Extend the opacity getter, needed for fading opacity with IE9 and jQuery 1.10+
-			wrap($.cssHooks.opacity, 'get', function (proceed, elem, computed) {
+			Highcharts.wrap($.cssHooks.opacity, 'get', function (proceed, elem, computed) {
 				return elem.attr ? (elem.opacity || 0) : proceed.call(this, elem, computed);
 			});
 			
@@ -10372,7 +10372,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	});
 
 	// Disable default IE actions for pinch and such on chart element
-	wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
+	Highcharts.wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 		proceed.call(this, chart, options);
 		if (this.hasZoom || this.followTouchMove) {
 			Highcharts.css(chart.container, {
@@ -10383,14 +10383,14 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	});
 
 	// Add IE specific touch events to chart
-	wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
+	Highcharts.wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
 		proceed.apply(this);
 		if (this.hasZoom || this.followTouchMove) {
 			this.batchMSEvents(addEvent);
 		}
 	});
 	// Destroy MS events also
-	wrap(Pointer.prototype, 'destroy', function (proceed) {
+	Highcharts.wrap(Pointer.prototype, 'destroy', function (proceed) {
 		this.batchMSEvents(removeEvent);
 		proceed.call(this);
 	});
@@ -11180,7 +11180,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 // TODO: Explore if there's a general cause for this. The problem may be related 
 // to nested group elements, as the legend item texts are within 4 group elements.
 if (/Trident\/7\.0/.test(navigator.userAgent) || Highcharts.isFirefox) {
-	wrap(Legend.prototype, 'positionItem', function (proceed, item) {
+	Highcharts.wrap(Legend.prototype, 'positionItem', function (proceed, item) {
 		var legend = this,
 			runPositionItem = function () { // If chart destroyed in sync, this is undefined (#2030)
 				if (item._legendItemPos) {

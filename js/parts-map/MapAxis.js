@@ -2,7 +2,7 @@
  * Override to use the extreme coordinates from the SVG shape, not the
  * data values
  */
-wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
+Highcharts.wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 	var isXAxis = this.isXAxis,
 		dataMin,
 		dataMax,
@@ -45,7 +45,7 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 /**
  * Override axis translation to make sure the aspect ratio is always kept
  */
-wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
+Highcharts.wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 	var chart = this.chart,
 		mapRatio,
 		plotRatio = chart.plotWidth / chart.plotHeight,
@@ -90,7 +90,7 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 /**
  * Override Axis.render in order to delete the fixTo prop
  */
-wrap(Axis.prototype, 'render', function (proceed) {
+Highcharts.wrap(Axis.prototype, 'render', function (proceed) {
 	proceed.call(this);
 	this.fixTo = null;
 });

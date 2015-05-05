@@ -319,7 +319,7 @@ Highcharts.pad = function (number, length) {
  * as the original function, except that the original function is unshifted and passed as the first 
  * argument. 
  */
-var wrap = Highcharts.wrap = function (obj, method, func) {
+Highcharts.wrap = function (obj, method, func) {
 	var proceed = obj[method];
 	obj[method] = function () {
 		var args = Array.prototype.slice.call(arguments);
@@ -851,7 +851,7 @@ Highcharts.pathAnim = {
 			});
 
 			// Extend the opacity getter, needed for fading opacity with IE9 and jQuery 1.10+
-			wrap($.cssHooks.opacity, 'get', function (proceed, elem, computed) {
+			Highcharts.wrap($.cssHooks.opacity, 'get', function (proceed, elem, computed) {
 				return elem.attr ? (elem.opacity || 0) : proceed.call(this, elem, computed);
 			});
 			
@@ -10372,7 +10372,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	});
 
 	// Disable default IE actions for pinch and such on chart element
-	wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
+	Highcharts.wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 		proceed.call(this, chart, options);
 		if (this.hasZoom || this.followTouchMove) {
 			Highcharts.css(chart.container, {
@@ -10383,14 +10383,14 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	});
 
 	// Add IE specific touch events to chart
-	wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
+	Highcharts.wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
 		proceed.apply(this);
 		if (this.hasZoom || this.followTouchMove) {
 			this.batchMSEvents(addEvent);
 		}
 	});
 	// Destroy MS events also
-	wrap(Pointer.prototype, 'destroy', function (proceed) {
+	Highcharts.wrap(Pointer.prototype, 'destroy', function (proceed) {
 		this.batchMSEvents(removeEvent);
 		proceed.call(this);
 	});
@@ -11180,7 +11180,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 // TODO: Explore if there's a general cause for this. The problem may be related 
 // to nested group elements, as the legend item texts are within 4 group elements.
 if (/Trident\/7\.0/.test(navigator.userAgent) || Highcharts.isFirefox) {
-	wrap(Legend.prototype, 'positionItem', function (proceed, item) {
+	Highcharts.wrap(Legend.prototype, 'positionItem', function (proceed, item) {
 		var legend = this,
 			runPositionItem = function () { // If chart destroyed in sync, this is undefined (#2030)
 				if (item._legendItemPos) {
@@ -18529,7 +18529,7 @@ Highcharts.extend(Series.prototype, {
  *****************************************************************************/
 
 
-wrap(Series.prototype, 'init', function (proceed) {
+Highcharts.wrap(Series.prototype, 'init', function (proceed) {
 	var series = this,
 		xAxis;
 
@@ -18553,7 +18553,7 @@ wrap(Series.prototype, 'init', function (proceed) {
  * positions up in segments, find the tick positions for each segment then concatenize them.
  * This method is used from both data grouping logic and X axis tick position logic.
  */
-wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min, max, startOfWeek, positions, closestDistance, findHigherRanks) {
+Highcharts.wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min, max, startOfWeek, positions, closestDistance, findHigherRanks) {
 
 	var start = 0,
 		end = 0,
@@ -19057,7 +19057,7 @@ Highcharts.extend(Axis.prototype, {
 });
 
 // Extending the Chart.pan method for ordinal axes
-wrap(Chart.prototype, 'pan', function (proceed, e) {
+Highcharts.wrap(Chart.prototype, 'pan', function (proceed, e) {
 	var chart = this,
 		xAxis = chart.xAxis[0],
 		chartX = e.chartX,
@@ -19152,7 +19152,7 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
  * Extend getSegments by identifying gaps in the ordinal data so that we can draw a gap in the
  * line or area
  */
-wrap(Series.prototype, 'getSegments', function (proceed) {
+Highcharts.wrap(Series.prototype, 'getSegments', function (proceed) {
 
 	var series = this,
 		segments,
@@ -19947,7 +19947,7 @@ seriesProto.destroy = function () {
 
 // Handle default options for data grouping. This must be set at runtime because some series types are
 // defined after this.
-wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
+Highcharts.wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
 
 	var options = proceed.call(this, itemOptions),
 		type = this.type,
@@ -19979,7 +19979,7 @@ wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
  * When resetting the scale reset the hasProccessed flag to avoid taking previous data grouping
  * of neighbour series into accound when determining group pixel width (#2692).
  */
-wrap(Axis.prototype, 'setScale', function (proceed) {
+Highcharts.wrap(Axis.prototype, 'setScale', function (proceed) {
 	proceed.call(this);
 	each(this.series, function (series) {
 		series.hasProcessed = false;
@@ -21512,7 +21512,7 @@ Scroller.prototype = {
 			// If not, set up an event to listen for added series
 			} else if (chart.series.length === 0) {
 
-				wrap(chart, 'redraw', function (proceed, animation) {
+				Highcharts.wrap(chart, 'redraw', function (proceed, animation) {
 					// We've got one, now add it as base and reset chart.redraw
 					if (chart.series.length > 0 && !scroller.series) {
 						scroller.setBaseSeries();
@@ -21548,7 +21548,7 @@ Scroller.prototype = {
 		 * For stock charts, extend the Chart.getMargins method so that we can set the final top position
 		 * of the navigator once the height of the chart, including the legend, is determined. #367.
 		 */
-		wrap(chart, 'getMargins', function (proceed) {
+		Highcharts.wrap(chart, 'getMargins', function (proceed) {
 
 			var legend = this.legend,
 				legendOptions = legend.options;
@@ -21766,7 +21766,7 @@ Highcharts.Scroller = Scroller;
  * For Stock charts, override selection zooming with some special features because
  * X axis zooming is already allowed by the Navigator and Range selector.
  */
-wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
+Highcharts.wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 	var chart = this.chart,
 		chartOptions = chart.options,
 		zoomType = chartOptions.chart.zoomType,
@@ -21805,7 +21805,7 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 });
 
 // Initialize scroller for stock charts
-wrap(Chart.prototype, 'init', function (proceed, options, callback) {
+Highcharts.wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 
 	addEvent(this, 'beforeRender', function () {
 		var options = this.options;
@@ -21819,7 +21819,7 @@ wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 });
 
 // Pick up badly formatted point options to addPoint
-wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, animation) {
+Highcharts.wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, animation) {
 	var turboThreshold = this.options.turboThreshold;
 	if (turboThreshold && this.xData.length > turboThreshold && Highcharts.isObject(options) && !Highcharts.isArray(options) && this.chart.scroller) {
 		error(20, true);
@@ -22526,7 +22526,7 @@ Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
 };
 
 // Initialize scroller for stock charts
-wrap(Chart.prototype, 'init', function (proceed, options, callback) {
+Highcharts.wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 	
 	addEvent(this, 'init', function () {
 		if (this.options.rangeSelector.enabled) {
@@ -22590,7 +22590,7 @@ Chart.prototype.callbacks.push(function (chart) {
 		addEvent(chart.xAxis[0], 'afterSetExtremes', afterSetExtremesHandlerScroller);
 
 		// redraw the scroller on chart resize or box resize
-		wrap(chart, 'drawChartBox', function (proceed) {
+		Highcharts.wrap(chart, 'drawChartBox', function (proceed) {
 			var isDirtyBox = this.isDirtyBox;
 			proceed.call(this);
 			if (isDirtyBox) {
@@ -22742,7 +22742,7 @@ Highcharts.StockChart = function (options, callback) {
 };
 
 // Implement the pinchType option
-wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
+Highcharts.wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 
 	var pinchType = options.chart.pinchType || '';
 		
@@ -22756,7 +22756,7 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 
 // Override the automatic label alignment so that the first Y axis' labels
 // are drawn on top of the grid line, and subsequent axes are drawn outside
-wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
+Highcharts.wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 	var chart = this.chart,
 		options = this.options,
 		panes = chart._labelPanes = chart._labelPanes || {},
@@ -22779,7 +22779,7 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 });
 
 // Override getPlotLinePath to allow for multipane charts
-wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old, force, translatedValue) {
+Highcharts.wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old, force, translatedValue) {
 	var axis = this,
 		series = (this.isLinked && !this.series ? this.linkedParent.series : this.series),
 		chart = axis.chart,
@@ -22928,7 +22928,7 @@ if (Highcharts.Renderer === Highcharts.VMLRenderer) {
 
 
 // Wrapper to hide the label
-wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
+Highcharts.wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
 	var defined = Highcharts.defined;
 
 	proceed.call(this, i);
@@ -22945,7 +22945,7 @@ wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
 });
 
 // Wrapper to draw the label
-wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
+Highcharts.wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	var defined = Highcharts.defined;
 	
 	// Draw the crosshair
@@ -23148,7 +23148,7 @@ seriesProto.processData = function () {
 /**
  * Modify series extremes
  */
-wrap(seriesProto, 'getExtremes', function (proceed) {
+Highcharts.wrap(seriesProto, 'getExtremes', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (this.modifyValue) {
@@ -23195,7 +23195,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
  * Extend the Series prototype to create a separate series clip box. This is related
  * to using multiple panes, and a future pane logic should incorporate this feature (#2754).
  */
-wrap(Series.prototype, 'render', function (proceed) {
+Highcharts.wrap(Series.prototype, 'render', function (proceed) {
 	// Only do this on stock charts (#2939), and only if the series type handles clipping
 	// in the animate method (#2975).
 	if (this.chart.options._stock) {

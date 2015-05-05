@@ -9,7 +9,8 @@
 
 	var seriesProto = Series.prototype,
 		pointerProto = Pointer.prototype,
-		colProto;
+		colProto,
+		wrap = Highcharts.wrap;
 
 	/**
 	 * Search a k-d tree by the point angle, used for shared tooltips in polar charts

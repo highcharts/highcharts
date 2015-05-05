@@ -6,7 +6,5 @@ var Axis = Highcharts.Axis,
 	LegendSymbolMixin = Highcharts.LegendSymbolMixin,
 	Series = Highcharts.Series,
 	
-	each = Highcharts.each,
-	wrap = Highcharts.wrap;
-
+	each = Highcharts.each;
 	

@@ -828,7 +828,7 @@ Scroller.prototype = {
 			// If not, set up an event to listen for added series
 			} else if (chart.series.length === 0) {
 
-				wrap(chart, 'redraw', function (proceed, animation) {
+				Highcharts.wrap(chart, 'redraw', function (proceed, animation) {
 					// We've got one, now add it as base and reset chart.redraw
 					if (chart.series.length > 0 && !scroller.series) {
 						scroller.setBaseSeries();
@@ -864,7 +864,7 @@ Scroller.prototype = {
 		 * For stock charts, extend the Chart.getMargins method so that we can set the final top position
 		 * of the navigator once the height of the chart, including the legend, is determined. #367.
 		 */
-		wrap(chart, 'getMargins', function (proceed) {
+		Highcharts.wrap(chart, 'getMargins', function (proceed) {
 
 			var legend = this.legend,
 				legendOptions = legend.options;
@@ -1082,7 +1082,7 @@ Highcharts.Scroller = Scroller;
  * For Stock charts, override selection zooming with some special features because
  * X axis zooming is already allowed by the Navigator and Range selector.
  */
-wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
+Highcharts.wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 	var chart = this.chart,
 		chartOptions = chart.options,
 		zoomType = chartOptions.chart.zoomType,
@@ -1121,7 +1121,7 @@ wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 });
 
 // Initialize scroller for stock charts
-wrap(Chart.prototype, 'init', function (proceed, options, callback) {
+Highcharts.wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 
 	addEvent(this, 'beforeRender', function () {
 		var options = this.options;
@@ -1135,7 +1135,7 @@ wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 });
 
 // Pick up badly formatted point options to addPoint
-wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, animation) {
+Highcharts.wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, animation) {
 	var turboThreshold = this.options.turboThreshold;
 	if (turboThreshold && this.xData.length > turboThreshold && Highcharts.isObject(options) && !Highcharts.isArray(options) && this.chart.scroller) {
 		error(20, true);

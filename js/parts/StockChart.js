@@ -125,7 +125,7 @@ Highcharts.StockChart = function (options, callback) {
 };
 
 // Implement the pinchType option
-wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
+Highcharts.wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 
 	var pinchType = options.chart.pinchType || '';
 		
@@ -139,7 +139,7 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 
 // Override the automatic label alignment so that the first Y axis' labels
 // are drawn on top of the grid line, and subsequent axes are drawn outside
-wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
+Highcharts.wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 	var chart = this.chart,
 		options = this.options,
 		panes = chart._labelPanes = chart._labelPanes || {},
@@ -162,7 +162,7 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 });
 
 // Override getPlotLinePath to allow for multipane charts
-wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old, force, translatedValue) {
+Highcharts.wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old, force, translatedValue) {
 	var axis = this,
 		series = (this.isLinked && !this.series ? this.linkedParent.series : this.series),
 		chart = axis.chart,
@@ -311,7 +311,7 @@ if (Highcharts.Renderer === Highcharts.VMLRenderer) {
 
 
 // Wrapper to hide the label
-wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
+Highcharts.wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
 	var defined = Highcharts.defined;
 
 	proceed.call(this, i);
@@ -328,7 +328,7 @@ wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
 });
 
 // Wrapper to draw the label
-wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
+Highcharts.wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	var defined = Highcharts.defined;
 	
 	// Draw the crosshair
@@ -531,7 +531,7 @@ seriesProto.processData = function () {
 /**
  * Modify series extremes
  */
-wrap(seriesProto, 'getExtremes', function (proceed) {
+Highcharts.wrap(seriesProto, 'getExtremes', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (this.modifyValue) {
@@ -578,7 +578,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
  * Extend the Series prototype to create a separate series clip box. This is related
  * to using multiple panes, and a future pane logic should incorporate this feature (#2754).
  */
-wrap(Series.prototype, 'render', function (proceed) {
+Highcharts.wrap(Series.prototype, 'render', function (proceed) {
 	// Only do this on stock charts (#2939), and only if the series type handles clipping
 	// in the animate method (#2975).
 	if (this.chart.options._stock) {

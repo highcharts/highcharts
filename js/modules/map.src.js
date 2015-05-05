@@ -26,12 +26,11 @@ var Axis = Highcharts.Axis,
 	each = Highcharts.each,
 	error = Highcharts.error,
 	defaultOptions = Highcharts.getOptions(),
-	defaultPlotOptions = defaultOptions.plotOptions,
-	wrap = Highcharts.wrap;/**
+	defaultPlotOptions = defaultOptions.plotOptions;/**
  * Override to use the extreme coordinates from the SVG shape, not the
  * data values
  */
-wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
+Highcharts.wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 	var isXAxis = this.isXAxis,
 		dataMin,
 		dataMax,
@@ -74,7 +73,7 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 /**
  * Override axis translation to make sure the aspect ratio is always kept
  */
-wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
+Highcharts.wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 	var chart = this.chart,
 		mapRatio,
 		plotRatio = chart.plotWidth / chart.plotHeight,
@@ -119,7 +118,7 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 /**
  * Override Axis.render in order to delete the fixTo prop
  */
-wrap(Axis.prototype, 'render', function (proceed) {
+Highcharts.wrap(Axis.prototype, 'render', function (proceed) {
 	proceed.call(this);
 	this.fixTo = null;
 });
@@ -564,7 +563,7 @@ each(['fill', 'stroke'], function (prop) {
 /**
  * Extend the chart getAxes method to also get the color axis
  */
-wrap(Chart.prototype, 'getAxes', function (proceed) {
+Highcharts.wrap(Chart.prototype, 'getAxes', function (proceed) {
 
 	var options = this.options,
 		colorAxisOptions = options.colorAxis;
@@ -582,7 +581,7 @@ wrap(Chart.prototype, 'getAxes', function (proceed) {
  * Wrap the legend getAllItems method to add the color axis. This also removes the 
  * axis' own series to prevent them from showing up individually.
  */
-wrap(Legend.prototype, 'getAllItems', function (proceed) {
+Highcharts.wrap(Legend.prototype, 'getAllItems', function (proceed) {
 	var allItems = [],
 		colorAxis = this.chart.colorAxis[0];
 
@@ -799,7 +798,7 @@ Highcharts.extend(Chart.prototype, {
 /**
  * Extend the Chart.render method to add zooming and panning
  */
-wrap(Chart.prototype, 'render', function (proceed) {
+Highcharts.wrap(Chart.prototype, 'render', function (proceed) {
 	var chart = this,
 		pick = Highcharts.pick,
 		mapNavigation = chart.options.mapNavigation;
@@ -876,7 +875,7 @@ Highcharts.extend(Pointer.prototype, {
 });
 
 // Implement the pinchType option
-wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
+Highcharts.wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 
 	proceed.call(this, chart, options);
 
@@ -887,7 +886,7 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 });
 
 // Extend the pinchTranslate method to preserve fixed ratio when zooming
-wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
+Highcharts.wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
 	var xBigger;
 	proceed.call(this, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 
@@ -2018,7 +2017,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 /**
  * Override showCredits to include map source by default
  */
-wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
+Highcharts.wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
 
 	if (Highcharts.defaultOptions.credits.text === this.options.credits.text && this.mapCredits) { // default text and mapCredits is set
 		credits.text = this.mapCredits;

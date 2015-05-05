@@ -319,7 +319,7 @@ Highcharts.pad = function (number, length) {
  * as the original function, except that the original function is unshifted and passed as the first 
  * argument. 
  */
-var wrap = Highcharts.wrap = function (obj, method, func) {
+Highcharts.wrap = function (obj, method, func) {
 	var proceed = obj[method];
 	obj[method] = function () {
 		var args = Array.prototype.slice.call(arguments);
@@ -851,7 +851,7 @@ Highcharts.pathAnim = {
 			});
 
 			// Extend the opacity getter, needed for fading opacity with IE9 and jQuery 1.10+
-			wrap($.cssHooks.opacity, 'get', function (proceed, elem, computed) {
+			Highcharts.wrap($.cssHooks.opacity, 'get', function (proceed, elem, computed) {
 				return elem.attr ? (elem.opacity || 0) : proceed.call(this, elem, computed);
 			});
 			
@@ -9902,7 +9902,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	});
 
 	// Disable default IE actions for pinch and such on chart element
-	wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
+	Highcharts.wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 		proceed.call(this, chart, options);
 		if (this.hasZoom || this.followTouchMove) {
 			Highcharts.css(chart.container, {
@@ -9913,14 +9913,14 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	});
 
 	// Add IE specific touch events to chart
-	wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
+	Highcharts.wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
 		proceed.apply(this);
 		if (this.hasZoom || this.followTouchMove) {
 			this.batchMSEvents(addEvent);
 		}
 	});
 	// Destroy MS events also
-	wrap(Pointer.prototype, 'destroy', function (proceed) {
+	Highcharts.wrap(Pointer.prototype, 'destroy', function (proceed) {
 		this.batchMSEvents(removeEvent);
 		proceed.call(this);
 	});
@@ -10710,7 +10710,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 // TODO: Explore if there's a general cause for this. The problem may be related 
 // to nested group elements, as the legend item texts are within 4 group elements.
 if (/Trident\/7\.0/.test(navigator.userAgent) || Highcharts.isFirefox) {
-	wrap(Legend.prototype, 'positionItem', function (proceed, item) {
+	Highcharts.wrap(Legend.prototype, 'positionItem', function (proceed, item) {
 		var legend = this,
 			runPositionItem = function () { // If chart destroyed in sync, this is undefined (#2030)
 				if (item._legendItemPos) {
@@ -16073,7 +16073,7 @@ if (Highcharts.seriesTypes.column) {
  * Override to use the extreme coordinates from the SVG shape, not the
  * data values
  */
-wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
+Highcharts.wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 	var isXAxis = this.isXAxis,
 		dataMin,
 		dataMax,
@@ -16116,7 +16116,7 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 /**
  * Override axis translation to make sure the aspect ratio is always kept
  */
-wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
+Highcharts.wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 	var chart = this.chart,
 		mapRatio,
 		plotRatio = chart.plotWidth / chart.plotHeight,
@@ -16161,7 +16161,7 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 /**
  * Override Axis.render in order to delete the fixTo prop
  */
-wrap(Axis.prototype, 'render', function (proceed) {
+Highcharts.wrap(Axis.prototype, 'render', function (proceed) {
 	proceed.call(this);
 	this.fixTo = null;
 });
@@ -16606,7 +16606,7 @@ each(['fill', 'stroke'], function (prop) {
 /**
  * Extend the chart getAxes method to also get the color axis
  */
-wrap(Chart.prototype, 'getAxes', function (proceed) {
+Highcharts.wrap(Chart.prototype, 'getAxes', function (proceed) {
 
 	var options = this.options,
 		colorAxisOptions = options.colorAxis;
@@ -16624,7 +16624,7 @@ wrap(Chart.prototype, 'getAxes', function (proceed) {
  * Wrap the legend getAllItems method to add the color axis. This also removes the 
  * axis' own series to prevent them from showing up individually.
  */
-wrap(Legend.prototype, 'getAllItems', function (proceed) {
+Highcharts.wrap(Legend.prototype, 'getAllItems', function (proceed) {
 	var allItems = [],
 		colorAxis = this.chart.colorAxis[0];
 
@@ -17664,7 +17664,7 @@ Highcharts.extend(Chart.prototype, {
 /**
  * Extend the Chart.render method to add zooming and panning
  */
-wrap(Chart.prototype, 'render', function (proceed) {
+Highcharts.wrap(Chart.prototype, 'render', function (proceed) {
 	var chart = this,
 		pick = Highcharts.pick,
 		mapNavigation = chart.options.mapNavigation;
@@ -17741,7 +17741,7 @@ Highcharts.extend(Pointer.prototype, {
 });
 
 // Implement the pinchType option
-wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
+Highcharts.wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 
 	proceed.call(this, chart, options);
 
@@ -17752,7 +17752,7 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 });
 
 // Extend the pinchTranslate method to preserve fixed ratio when zooming
-wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
+Highcharts.wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
 	var xBigger;
 	proceed.call(this, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 
@@ -18366,7 +18366,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 /**
  * Override showCredits to include map source by default
  */
-wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
+Highcharts.wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
 
 	if (Highcharts.defaultOptions.credits.text === this.options.credits.text && this.mapCredits) { // default text and mapCredits is set
 		credits.text = this.mapCredits;
