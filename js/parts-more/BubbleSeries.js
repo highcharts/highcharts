@@ -275,7 +275,7 @@ Axis.prototype.beforePadding = function () {
 							seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
 						)
 					));
-					zMax = pick(seriesOptions.zMax, Math.max(zMax, arrayMax(zData)));
+					zMax = pick(seriesOptions.zMax, Math.max(zMax, Highcharts.arrayMax(zData)));
 				}
 			}
 		}

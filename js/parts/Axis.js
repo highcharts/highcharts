@@ -464,7 +464,7 @@ Axis.prototype = {
 					xData = series.xData;
 					if (xData.length) {
 						axis.dataMin = Math.min(pick(axis.dataMin, xData[0]), Highcharts.arrayMin(xData));
-						axis.dataMax = Math.max(pick(axis.dataMax, xData[0]), arrayMax(xData));
+						axis.dataMax = Math.max(pick(axis.dataMax, xData[0]), Highcharts.arrayMax(xData));
 					}
 
 				// Get dataMin and dataMax for Y axes, as well as handle stacking and processed data
@@ -724,6 +724,7 @@ Axis.prototype = {
 		var axis = this,
 			defined = Highcharts.defined,
 			pick = Highcharts.pick,
+			arrayMax = Highcharts.arrayMax,
 			options = axis.options,
 			min = axis.min,
 			max = axis.max,

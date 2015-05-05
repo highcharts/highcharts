@@ -527,7 +527,7 @@ Highcharts.arrayMin = function (data) {
  * call stack size exceeded error in Chrome when trying to apply more than 150.000 points. This
  * method is slightly slower, but safe.
  */
-function arrayMax(data) {
+Highcharts.arrayMax = function (data) {
 	var i = data.length,
 		max = data[0];
 
@@ -537,7 +537,7 @@ function arrayMax(data) {
 		}
 	}
 	return max;
-}
+};
 
 /**
  * Utility method that destroys any SVGElement or VMLElement that are properties on the given object.

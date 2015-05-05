@@ -1,5 +1,4 @@
-var arrayMax = Highcharts.arrayMax,
-	each = Highcharts.each,
+var each = Highcharts.each,
 	merge = Highcharts.merge,
 	map = Highcharts.map,
 	defaultPlotOptions = Highcharts.getOptions().plotOptions,

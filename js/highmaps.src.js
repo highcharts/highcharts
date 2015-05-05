@@ -580,7 +580,7 @@ Highcharts.arrayMin = function (data) {
  * call stack size exceeded error in Chrome when trying to apply more than 150.000 points. This
  * method is slightly slower, but safe.
  */
-function arrayMax(data) {
+Highcharts.arrayMax = function (data) {
 	var i = data.length,
 		max = data[0];
 
@@ -590,7 +590,7 @@ function arrayMax(data) {
 		}
 	}
 	return max;
-}
+};
 
 /**
  * Utility method that destroys any SVGElement or VMLElement that are properties on the given object.
@@ -6575,7 +6575,7 @@ Axis.prototype = {
 					xData = series.xData;
 					if (xData.length) {
 						axis.dataMin = Math.min(pick(axis.dataMin, xData[0]), Highcharts.arrayMin(xData));
-						axis.dataMax = Math.max(pick(axis.dataMax, xData[0]), arrayMax(xData));
+						axis.dataMax = Math.max(pick(axis.dataMax, xData[0]), Highcharts.arrayMax(xData));
 					}
 
 				// Get dataMin and dataMax for Y axes, as well as handle stacking and processed data
@@ -6835,6 +6835,7 @@ Axis.prototype = {
 		var axis = this,
 			defined = Highcharts.defined,
 			pick = Highcharts.pick,
+			arrayMax = Highcharts.arrayMax,
 			options = axis.options,
 			min = axis.min,
 			max = axis.max,
@@ -13117,7 +13118,7 @@ Series.prototype = {
 			}
 		}
 		this.dataMin = Highcharts.arrayMin(activeYData);
-		this.dataMax = arrayMax(activeYData);
+		this.dataMax = Highcharts.arrayMax(activeYData);
 	},
 
 	/**
@@ -15774,7 +15775,7 @@ if (Highcharts.seriesTypes.pie) {
 
 		// Do not apply the final placement and draw the connectors until we have verified
 		// that labels are not spilling over.
-		if (arrayMax(overflow) === 0 || this.verifyDataLabelOverflow(overflow)) {
+		if (Highcharts.arrayMax(overflow) === 0 || this.verifyDataLabelOverflow(overflow)) {
 
 			// Place the labels in the final position
 			this.placeDataLabels();
@@ -18096,7 +18097,7 @@ Axis.prototype.beforePadding = function () {
 							seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
 						)
 					));
-					zMax = pick(seriesOptions.zMax, Math.max(zMax, arrayMax(zData)));
+					zMax = pick(seriesOptions.zMax, Math.max(zMax, Highcharts.arrayMax(zData)));
 				}
 			}
 		}
@@ -19473,7 +19474,6 @@ Highcharts.extend(Highcharts, {
 	SVGRenderer: SVGRenderer,
 	
 	// Various
-	arrayMax: arrayMax,
 	error: error,
 	getOptions: getOptions,
 	setOptions: setOptions,

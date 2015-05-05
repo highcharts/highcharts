@@ -13,8 +13,7 @@
 /*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
 
 (function (Highcharts) {
-var arrayMax = Highcharts.arrayMax,
-	each = Highcharts.each,
+var each = Highcharts.each,
 	merge = Highcharts.merge,
 	map = Highcharts.map,
 	defaultPlotOptions = Highcharts.getOptions().plotOptions,
@@ -2088,7 +2087,7 @@ Axis.prototype.beforePadding = function () {
 							seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
 						)
 					));
-					zMax = pick(seriesOptions.zMax, Math.max(zMax, arrayMax(zData)));
+					zMax = pick(seriesOptions.zMax, Math.max(zMax, Highcharts.arrayMax(zData)));
 				}
 			}
 		}

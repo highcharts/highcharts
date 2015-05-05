@@ -564,7 +564,7 @@ if (Highcharts.seriesTypes.pie) {
 
 		// Do not apply the final placement and draw the connectors until we have verified
 		// that labels are not spilling over.
-		if (arrayMax(overflow) === 0 || this.verifyDataLabelOverflow(overflow)) {
+		if (Highcharts.arrayMax(overflow) === 0 || this.verifyDataLabelOverflow(overflow)) {
 
 			// Place the labels in the final position
 			this.placeDataLabels();
