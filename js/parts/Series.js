@@ -145,7 +145,7 @@ Series.prototype = {
 
 			// The series needs an X and an Y axis
 			if (!series[AXIS] && series.optionalAxis !== AXIS) {
-				error(18, true);
+				Highcharts.error(18, true);
 			}
 
 		});
@@ -367,6 +367,7 @@ Series.prototype = {
 			options = series.options,
 			chart = series.chart,
 			pick = Highcharts.pick,
+			error = Highcharts.error,
 			firstPoint = null,
 			xAxis = series.xAxis,
 			hasCategories = xAxis && !!xAxis.categories,
@@ -552,7 +553,7 @@ Series.prototype = {
 			// Unsorted data is not supported by the line tooltip, as well as data grouping and
 			// navigation in Stock charts (#725) and width calculation of columns (#1900)
 			} else if (distance < 0 && series.requireSorting) {
-				error(15);
+				Highcharts.error(15);
 			}
 		}
 
@@ -758,7 +759,7 @@ Series.prototype = {
 			// Discard disallowed y values for log axes (#3434)
 			if (yAxis.isLog && yValue !== null && yValue <= 0) {
 				point.y = yValue = null;
-				error(10);
+				Highcharts.error(10);
 			}
 
 			// Get the plotX translation

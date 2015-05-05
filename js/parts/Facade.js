@@ -10,7 +10,6 @@ Highcharts.extend(Highcharts, {
 	SVGRenderer: SVGRenderer,
 	
 	// Various
-	error: error,
 	getOptions: getOptions,
 	setOptions: setOptions,
 	addEvent: addEvent,

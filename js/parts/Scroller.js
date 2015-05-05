@@ -1138,7 +1138,7 @@ Highcharts.wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 Highcharts.wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, animation) {
 	var turboThreshold = this.options.turboThreshold;
 	if (turboThreshold && this.xData.length > turboThreshold && Highcharts.isObject(options) && !Highcharts.isArray(options) && this.chart.scroller) {
-		error(20, true);
+		Highcharts.error(20, true);
 	}
 	proceed.call(this, options, redraw, shift, animation);
 });

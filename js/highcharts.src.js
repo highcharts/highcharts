@@ -635,7 +635,7 @@ Highcharts.discardElement = function (element) {
 /**
  * Provide error messages for debugging, with links to online explanation 
  */
-function error (code, stop) {
+Highcharts.error = function (code, stop) {
 	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
 	if (stop) {
 		throw msg;
@@ -644,7 +644,7 @@ function error (code, stop) {
 	if (window.console) {
 		console.log(msg);
 	}
-}
+};
 
 /**
  * Fix JS round off float errors
@@ -7267,6 +7267,7 @@ Axis.prototype = {
 			isNumber = Highcharts.isNumber,
 			log2lin = Highcharts.log2lin,
 			pick = Highcharts.pick,
+			error = Highcharts.error,
 			isLog = axis.isLog,
 			isDatetimeAxis = axis.isDatetimeAxis,
 			isXAxis = axis.isXAxis,
@@ -11324,7 +11325,7 @@ Chart.prototype = {
 
 		// No such series type
 		if (!constr) {
-			error(17, true);
+			Highcharts.error(17, true);
 		}
 
 		series = new constr();
@@ -11802,7 +11803,7 @@ Chart.prototype = {
 		
 		// Display an error if the renderTo is wrong
 		if (!renderTo) {
-			error(13, true);
+			Highcharts.error(13, true);
 		}
 		
 		// If the container already holds a chart, destroy it. The check for hasRendered is there
@@ -13062,7 +13063,7 @@ Series.prototype = {
 
 			// The series needs an X and an Y axis
 			if (!series[AXIS] && series.optionalAxis !== AXIS) {
-				error(18, true);
+				Highcharts.error(18, true);
 			}
 
 		});
@@ -13284,6 +13285,7 @@ Series.prototype = {
 			options = series.options,
 			chart = series.chart,
 			pick = Highcharts.pick,
+			error = Highcharts.error,
 			firstPoint = null,
 			xAxis = series.xAxis,
 			hasCategories = xAxis && !!xAxis.categories,
@@ -13469,7 +13471,7 @@ Series.prototype = {
 			// Unsorted data is not supported by the line tooltip, as well as data grouping and
 			// navigation in Stock charts (#725) and width calculation of columns (#1900)
 			} else if (distance < 0 && series.requireSorting) {
-				error(15);
+				Highcharts.error(15);
 			}
 		}
 
@@ -13675,7 +13677,7 @@ Series.prototype = {
 			// Discard disallowed y values for log axes (#3434)
 			if (yAxis.isLog && yValue !== null && yValue <= 0) {
 				point.y = yValue = null;
-				error(10);
+				Highcharts.error(10);
 			}
 
 			// Get the plotX translation
@@ -18542,7 +18544,6 @@ Highcharts.extend(Highcharts, {
 	SVGRenderer: SVGRenderer,
 	
 	// Various
-	error: error,
 	getOptions: getOptions,
 	setOptions: setOptions,
 	addEvent: addEvent,

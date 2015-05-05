@@ -891,6 +891,7 @@ Axis.prototype = {
 			isNumber = Highcharts.isNumber,
 			log2lin = Highcharts.log2lin,
 			pick = Highcharts.pick,
+			error = Highcharts.error,
 			isLog = axis.isLog,
 			isDatetimeAxis = axis.isDatetimeAxis,
 			isXAxis = axis.isXAxis,

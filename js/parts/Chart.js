@@ -122,7 +122,7 @@ Chart.prototype = {
 
 		// No such series type
 		if (!constr) {
-			error(17, true);
+			Highcharts.error(17, true);
 		}
 
 		series = new constr();
@@ -600,7 +600,7 @@ Chart.prototype = {
 		
 		// Display an error if the renderTo is wrong
 		if (!renderTo) {
-			error(13, true);
+			Highcharts.error(13, true);
 		}
 		
 		// If the container already holds a chart, destroy it. The check for hasRendered is there

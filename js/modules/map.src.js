@@ -24,7 +24,6 @@ var Axis = Highcharts.Axis,
 	
 	addEvent = Highcharts.addEvent,
 	each = Highcharts.each,
-	error = Highcharts.error,
 	defaultOptions = Highcharts.getOptions(),
 	defaultPlotOptions = defaultOptions.plotOptions;/**
  * Override to use the extreme coordinates from the SVG shape, not the
@@ -1845,7 +1844,7 @@ function pointInPolygon(point, polygon) {
  */
 Chart.prototype.transformFromLatLon = function (latLon, transform) {
 	if (window.proj4 === undefined) {
-		error(21);
+		Highcharts.error(21);
 		return {
 			x: 0,
 			y: null
@@ -1868,7 +1867,7 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
  */
 Chart.prototype.transformToLatLon = function (point, transform) {
 	if (window.proj4 === undefined) {
-		error(21);
+		Highcharts.error(21);
 		return;
 	}
 
@@ -1892,7 +1891,7 @@ Chart.prototype.fromPointToLatLon = function (point) {
 		transform;
 
 	if (!transforms) {
-		error(22);
+		Highcharts.error(22);
 		return;
 	}
 
@@ -1911,7 +1910,7 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
 		coords;
 
 	if (!transforms) {
-		error(22);
+		Highcharts.error(22);
 		return {
 			x: 0,
 			y: null

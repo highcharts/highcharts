@@ -12,6 +12,5 @@ var Axis = Highcharts.Axis,
 	
 	addEvent = Highcharts.addEvent,
 	each = Highcharts.each,
-	error = Highcharts.error,
 	defaultOptions = Highcharts.getOptions(),
 	defaultPlotOptions = defaultOptions.plotOptions;

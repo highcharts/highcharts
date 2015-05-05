@@ -582,7 +582,7 @@ Highcharts.discardElement = function (element) {
 /**
  * Provide error messages for debugging, with links to online explanation 
  */
-function error (code, stop) {
+Highcharts.error = function (code, stop) {
 	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
 	if (stop) {
 		throw msg;
@@ -591,7 +591,7 @@ function error (code, stop) {
 	if (window.console) {
 		console.log(msg);
 	}
-}
+};
 
 /**
  * Fix JS round off float errors
