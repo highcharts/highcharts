@@ -252,7 +252,7 @@ Highcharts.extend(Series.prototype, {
 			x,
 			i;
 
-		setAnimation(animation, chart);
+		Highcharts.setAnimation(animation, chart);
 
 		// Make graph animate sideways
 		if (shift) {
@@ -355,7 +355,7 @@ Highcharts.extend(Series.prototype, {
 				}
 			};
 
-		setAnimation(animation, chart);
+		Highcharts.setAnimation(animation, chart);
 		redraw = Highcharts.pick(redraw, true);
 
 		// Fire the event with a default handler of removing the point

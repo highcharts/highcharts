@@ -662,9 +662,9 @@ Highcharts.correctFloat = function (num) {
  * @param {Object} animation
  * @param {Object} chart
  */
-function setAnimation(animation, chart) {
+Highcharts.setAnimation = function (animation, chart) {
 	Highcharts.globalAnimation = Highcharts.pick(animation, chart.animation);
-}
+};
 
 /**
  * Format a number and return a string based on input settings
@@ -10591,7 +10591,7 @@ Legend.prototype = {
 		if (currentPage > 0) {
 			
 			if (animation !== undefined) {
-				setAnimation(animation, this.chart);
+				Highcharts.setAnimation(animation, this.chart);
 			}
 			
 			this.nav.attr({
@@ -10904,7 +10904,7 @@ Chart.prototype = {
 			isHiddenChart = renderer.isHidden(),
 			afterRedraw = [];
 			
-		setAnimation(animation, chart);
+		Highcharts.setAnimation(animation, chart);
 		
 		if (isHiddenChart) {
 			chart.cloneRenderTo();
@@ -11533,7 +11533,7 @@ Chart.prototype = {
 		};
 
 		// set the animation for the current process
-		setAnimation(animation, chart);
+		Highcharts.setAnimation(animation, chart);
 
 		chart.oldChartHeight = chart.chartHeight;
 		chart.oldChartWidth = chart.chartWidth;
@@ -14536,7 +14536,7 @@ Highcharts.extend(Series.prototype, {
 			x,
 			i;
 
-		setAnimation(animation, chart);
+		Highcharts.setAnimation(animation, chart);
 
 		// Make graph animate sideways
 		if (shift) {
@@ -14639,7 +14639,7 @@ Highcharts.extend(Series.prototype, {
 				}
 			};
 
-		setAnimation(animation, chart);
+		Highcharts.setAnimation(animation, chart);
 		redraw = Highcharts.pick(redraw, true);
 
 		// Fire the event with a default handler of removing the point

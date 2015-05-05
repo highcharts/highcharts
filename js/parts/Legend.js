@@ -658,7 +658,7 @@ Legend.prototype = {
 		if (currentPage > 0) {
 			
 			if (animation !== undefined) {
-				setAnimation(animation, this.chart);
+				Highcharts.setAnimation(animation, this.chart);
 			}
 			
 			this.nav.attr({

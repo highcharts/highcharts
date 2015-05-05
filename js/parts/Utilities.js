@@ -609,9 +609,9 @@ Highcharts.correctFloat = function (num) {
  * @param {Object} animation
  * @param {Object} chart
  */
-function setAnimation(animation, chart) {
+Highcharts.setAnimation = function (animation, chart) {
 	Highcharts.globalAnimation = Highcharts.pick(animation, chart.animation);
-}
+};
 
 /**
  * Format a number and return a string based on input settings

@@ -171,7 +171,7 @@ Chart.prototype = {
 			isHiddenChart = renderer.isHidden(),
 			afterRedraw = [];
 			
-		setAnimation(animation, chart);
+		Highcharts.setAnimation(animation, chart);
 		
 		if (isHiddenChart) {
 			chart.cloneRenderTo();
@@ -800,7 +800,7 @@ Chart.prototype = {
 		};
 
 		// set the animation for the current process
-		setAnimation(animation, chart);
+		Highcharts.setAnimation(animation, chart);
 
 		chart.oldChartHeight = chart.chartHeight;
 		chart.oldChartWidth = chart.chartWidth;

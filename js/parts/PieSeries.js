@@ -120,7 +120,7 @@ var PiePoint = Highcharts.extendClass(Point, {
 			chart = series.chart,
 			translation;
 
-		setAnimation(animation, chart);
+		Highcharts.setAnimation(animation, chart);
 
 		// redraw is true by default
 		redraw = Highcharts.pick(redraw, true);
