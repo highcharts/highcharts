@@ -932,7 +932,7 @@ Series.prototype = {
 	 */
 	afterAnimate: function () {
 		this.setClip();
-		fireEvent(this, 'afterAnimate');
+		HighchartsAdapter.fireEvent(this, 'afterAnimate');
 	},
 
 	/**
@@ -1214,7 +1214,7 @@ Series.prototype = {
 			axis;
 
 		// add event hook
-		fireEvent(series, 'destroy');
+		HighchartsAdapter.fireEvent(series, 'destroy');
 
 		// remove all events
 		HighchartsAdapter.removeEvent(series);
@@ -1736,7 +1736,7 @@ Series.prototype = {
 		series.translate();
 		series.render();
 		if (wasDirtyData) {
-			fireEvent(series, 'updatedData');
+			HighchartsAdapter.fireEvent(series, 'updatedData');
 		}
 		if (wasDirty || wasDirtyData) {			// #3945 recalculate the kdtree when dirty
 			delete this.kdTree; // #3868 recalculate the kdtree with dirty data

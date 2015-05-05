@@ -236,6 +236,6 @@ Point.prototype = {
 			};
 		}
 
-		fireEvent(this, eventType, eventArgs, defaultFunction);
+		HighchartsAdapter.fireEvent(this, eventType, eventArgs, defaultFunction);
 	}
 };

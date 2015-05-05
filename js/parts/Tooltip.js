@@ -402,7 +402,7 @@ Tooltip.prototype = {
 		
 			this.isHidden = false;
 		}
-		fireEvent(chart, 'tooltipRefresh', {
+		HighchartsAdapter.fireEvent(chart, 'tooltipRefresh', {
 				text: text,
 				x: x + chart.plotLeft,
 				y: y + chart.plotTop,

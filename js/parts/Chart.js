@@ -161,6 +161,7 @@ Chart.prototype = {
 			pointer = chart.pointer,
 			legend = chart.legend,
 			redrawLegend = chart.isDirtyLegend,
+			fireEvent = HighchartsAdapter.fireEvent,
 			hasStackedSeries,
 			hasDirtyStacks,
 			hasCartesianSeries = chart.hasCartesianSeries,
@@ -789,6 +790,7 @@ Chart.prototype = {
 			chartWidth,
 			chartHeight,
 			defined = Highcharts.defined,
+			fireEvent = HighchartsAdapter.fireEvent,
 			fireEndResize;
 
 		// Handle the isResizing counter
@@ -1275,7 +1277,7 @@ Chart.prototype = {
 			parentNode = container && container.parentNode;
 			
 		// fire the chart.destoy event
-		fireEvent(chart, 'destroy');
+		HighchartsAdapter.fireEvent(chart, 'destroy');
 		
 		// Delete the chart from charts lookup array
 		charts[chart.index] = undefined;
@@ -1360,6 +1362,7 @@ Chart.prototype = {
 	firstRender: function () {
 		var chart = this,
 			options = chart.options,
+			fireEvent = HighchartsAdapter.fireEvent,
 			callback = chart.callback;
 
 		// Check whether the chart is ready to render

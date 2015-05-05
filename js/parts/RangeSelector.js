@@ -235,6 +235,7 @@ RangeSelector.prototype = {
 		var rangeSelector = this,
 			addEvent = HighchartsAdapter.addEvent,
 			options = chart.options.rangeSelector,
+			fireEvent = HighchartsAdapter.fireEvent,
 			buttonOptions = options.buttons || [].concat(rangeSelector.defaultButtons),
 			selectedOption = options.selected,
 			blurInputs = rangeSelector.blurInputs = function () {

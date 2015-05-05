@@ -18,7 +18,7 @@ Highcharts.extend(Chart.prototype, {
 		if (options) {
 			redraw = Highcharts.pick(redraw, true); // defaults to true
 
-			fireEvent(chart, 'addSeries', { options: options }, function () {
+			HighchartsAdapter.fireEvent(chart, 'addSeries', { options: options }, function () {
 				series = chart.initSeries(options);
 
 				chart.isDirtyLegend = true; // the series array is out of sync with the display
@@ -384,7 +384,7 @@ Highcharts.extend(Series.prototype, {
 			series.isRemoving = true;
 
 			// fire the event with a default handler of removing the point
-			fireEvent(series, 'remove', null, function () {
+			HighchartsAdapter.fireEvent(series, 'remove', null, function () {
 
 
 				// destroy elements

@@ -474,7 +474,7 @@ Pointer.prototype = {
 					}
 				});
 				if (runZoom) {
-					fireEvent(chart, 'selection', selectionData, function (args) { 
+					HighchartsAdapter.fireEvent(chart, 'selection', selectionData, function (args) { 
 						chart.zoom(Highcharts.extend(args, hasPinched ? { animation: false } : null)); 
 					});
 				}
@@ -599,6 +599,7 @@ Pointer.prototype = {
 
 	onContainerClick: function (e) {
 		var chart = this.chart,
+			fireEvent = HighchartsAdapter.fireEvent,
 			hoverPoint = chart.hoverPoint, 
 			plotLeft = chart.plotLeft,
 			plotTop = chart.plotTop;

@@ -196,7 +196,7 @@ Highcharts.extend(Legend.prototype, {
 			if (item.firePointEvent) { // point
 				item.firePointEvent(strLegendItemClick, event, fnLegendItemClick);
 			} else {
-				fireEvent(item, strLegendItemClick, event, fnLegendItemClick);
+				HighchartsAdapter.fireEvent(item, strLegendItemClick, event, fnLegendItemClick);
 			}
 		});
 	},
@@ -212,7 +212,7 @@ Highcharts.extend(Legend.prototype, {
 
 		HighchartsAdapter.addEvent(item.checkbox, 'click', function (event) {
 			var target = event.target;
-			fireEvent(item.series || item, 'checkboxClick', { // #3712
+			HighchartsAdapter.fireEvent(item.series || item, 'checkboxClick', { // #3712
 					checked: target.checked,
 					item: item
 				},
@@ -261,7 +261,7 @@ Highcharts.extend(Chart.prototype, {
 	 */
 	zoomOut: function () {
 		var chart = this;
-		fireEvent(chart, 'selection', { resetSelection: true }, function () { 
+		HighchartsAdapter.fireEvent(chart, 'selection', { resetSelection: true }, function () { 
 			chart.zoom();
 		});
 	},
@@ -622,7 +622,7 @@ Highcharts.extend(Series.prototype, {
 		// trigger the event, but to save processing time,
 		// only if defined
 		if (series.options.events.mouseOver) {
-			fireEvent(series, 'mouseOver');
+			HighchartsAdapter.fireEvent(series, 'mouseOver');
 		}
 
 		// hover this
@@ -648,7 +648,7 @@ Highcharts.extend(Series.prototype, {
 
 		// fire the mouse out event
 		if (series && options.events.mouseOut) {
-			fireEvent(series, 'mouseOut');
+			HighchartsAdapter.fireEvent(series, 'mouseOut');
 		}
 
 
@@ -760,7 +760,7 @@ Highcharts.extend(Series.prototype, {
 			chart.redraw();
 		}
 
-		fireEvent(series, showOrHide);
+		HighchartsAdapter.fireEvent(series, showOrHide);
 	},
 
 	/**
@@ -793,7 +793,7 @@ Highcharts.extend(Series.prototype, {
 			series.checkbox.checked = selected;
 		}
 
-		fireEvent(series, selected ? 'select' : 'unselect');
+		HighchartsAdapter.fireEvent(series, selected ? 'select' : 'unselect');
 	},
 
 	drawTracker: TrackerMixin.drawTrackerGraph

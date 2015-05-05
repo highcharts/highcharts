@@ -1165,7 +1165,6 @@ if (globalAdapter) {
 // default adapters below.
 var adapterRun = adapter.adapterRun,
 	each = Highcharts.each = adapter.each,
-	fireEvent = adapter.fireEvent,
 	animate = adapter.animate,
 	stop = adapter.stop;
 
@@ -7446,7 +7445,7 @@ Axis.prototype = {
 		});
 
 		// Fire the event
-		fireEvent(axis, 'setExtremes', eventArguments, function () { // the default event handler
+		HighchartsAdapter.fireEvent(axis, 'setExtremes', eventArguments, function () { // the default event handler
 
 			axis.userMin = newMin;
 			axis.userMax = newMax;
@@ -8801,7 +8800,7 @@ Tooltip.prototype = {
 		
 			this.isHidden = false;
 		}
-		fireEvent(chart, 'tooltipRefresh', {
+		HighchartsAdapter.fireEvent(chart, 'tooltipRefresh', {
 				text: text,
 				x: x + chart.plotLeft,
 				y: y + chart.plotTop,
@@ -9406,7 +9405,7 @@ Pointer.prototype = {
 					}
 				});
 				if (runZoom) {
-					fireEvent(chart, 'selection', selectionData, function (args) { 
+					HighchartsAdapter.fireEvent(chart, 'selection', selectionData, function (args) { 
 						chart.zoom(Highcharts.extend(args, hasPinched ? { animation: false } : null)); 
 					});
 				}
@@ -9531,6 +9530,7 @@ Pointer.prototype = {
 
 	onContainerClick: function (e) {
 		var chart = this.chart,
+			fireEvent = HighchartsAdapter.fireEvent,
 			hoverPoint = chart.hoverPoint, 
 			plotLeft = chart.plotLeft,
 			plotTop = chart.plotTop;
@@ -10898,6 +10898,7 @@ Chart.prototype = {
 			pointer = chart.pointer,
 			legend = chart.legend,
 			redrawLegend = chart.isDirtyLegend,
+			fireEvent = HighchartsAdapter.fireEvent,
 			hasStackedSeries,
 			hasDirtyStacks,
 			hasCartesianSeries = chart.hasCartesianSeries,
@@ -11526,6 +11527,7 @@ Chart.prototype = {
 			chartWidth,
 			chartHeight,
 			defined = Highcharts.defined,
+			fireEvent = HighchartsAdapter.fireEvent,
 			fireEndResize;
 
 		// Handle the isResizing counter
@@ -12012,7 +12014,7 @@ Chart.prototype = {
 			parentNode = container && container.parentNode;
 			
 		// fire the chart.destoy event
-		fireEvent(chart, 'destroy');
+		HighchartsAdapter.fireEvent(chart, 'destroy');
 		
 		// Delete the chart from charts lookup array
 		charts[chart.index] = undefined;
@@ -12097,6 +12099,7 @@ Chart.prototype = {
 	firstRender: function () {
 		var chart = this,
 			options = chart.options,
+			fireEvent = HighchartsAdapter.fireEvent,
 			callback = chart.callback;
 
 		// Check whether the chart is ready to render
@@ -12411,7 +12414,7 @@ Point.prototype = {
 			};
 		}
 
-		fireEvent(this, eventType, eventArgs, defaultFunction);
+		HighchartsAdapter.fireEvent(this, eventType, eventArgs, defaultFunction);
 	}
 };/**
  * @classDescription The base function which all other series types inherit from. The data in the series is stored
@@ -13347,7 +13350,7 @@ Series.prototype = {
 	 */
 	afterAnimate: function () {
 		this.setClip();
-		fireEvent(this, 'afterAnimate');
+		HighchartsAdapter.fireEvent(this, 'afterAnimate');
 	},
 
 	/**
@@ -13629,7 +13632,7 @@ Series.prototype = {
 			axis;
 
 		// add event hook
-		fireEvent(series, 'destroy');
+		HighchartsAdapter.fireEvent(series, 'destroy');
 
 		// remove all events
 		HighchartsAdapter.removeEvent(series);
@@ -14151,7 +14154,7 @@ Series.prototype = {
 		series.translate();
 		series.render();
 		if (wasDirtyData) {
-			fireEvent(series, 'updatedData');
+			HighchartsAdapter.fireEvent(series, 'updatedData');
 		}
 		if (wasDirty || wasDirtyData) {			// #3945 recalculate the kdtree when dirty
 			delete this.kdTree; // #3868 recalculate the kdtree with dirty data
@@ -14310,7 +14313,7 @@ Highcharts.extend(Chart.prototype, {
 		if (options) {
 			redraw = Highcharts.pick(redraw, true); // defaults to true
 
-			fireEvent(chart, 'addSeries', { options: options }, function () {
+			HighchartsAdapter.fireEvent(chart, 'addSeries', { options: options }, function () {
 				series = chart.initSeries(options);
 
 				chart.isDirtyLegend = true; // the series array is out of sync with the display
@@ -14676,7 +14679,7 @@ Highcharts.extend(Series.prototype, {
 			series.isRemoving = true;
 
 			// fire the event with a default handler of removing the point
-			fireEvent(series, 'remove', null, function () {
+			HighchartsAdapter.fireEvent(series, 'remove', null, function () {
 
 
 				// destroy elements
@@ -18877,7 +18880,7 @@ Highcharts.extend(Legend.prototype, {
 			if (item.firePointEvent) { // point
 				item.firePointEvent(strLegendItemClick, event, fnLegendItemClick);
 			} else {
-				fireEvent(item, strLegendItemClick, event, fnLegendItemClick);
+				HighchartsAdapter.fireEvent(item, strLegendItemClick, event, fnLegendItemClick);
 			}
 		});
 	},
@@ -18893,7 +18896,7 @@ Highcharts.extend(Legend.prototype, {
 
 		HighchartsAdapter.addEvent(item.checkbox, 'click', function (event) {
 			var target = event.target;
-			fireEvent(item.series || item, 'checkboxClick', { // #3712
+			HighchartsAdapter.fireEvent(item.series || item, 'checkboxClick', { // #3712
 					checked: target.checked,
 					item: item
 				},
@@ -18942,7 +18945,7 @@ Highcharts.extend(Chart.prototype, {
 	 */
 	zoomOut: function () {
 		var chart = this;
-		fireEvent(chart, 'selection', { resetSelection: true }, function () { 
+		HighchartsAdapter.fireEvent(chart, 'selection', { resetSelection: true }, function () { 
 			chart.zoom();
 		});
 	},
@@ -19303,7 +19306,7 @@ Highcharts.extend(Series.prototype, {
 		// trigger the event, but to save processing time,
 		// only if defined
 		if (series.options.events.mouseOver) {
-			fireEvent(series, 'mouseOver');
+			HighchartsAdapter.fireEvent(series, 'mouseOver');
 		}
 
 		// hover this
@@ -19329,7 +19332,7 @@ Highcharts.extend(Series.prototype, {
 
 		// fire the mouse out event
 		if (series && options.events.mouseOut) {
-			fireEvent(series, 'mouseOut');
+			HighchartsAdapter.fireEvent(series, 'mouseOut');
 		}
 
 
@@ -19441,7 +19444,7 @@ Highcharts.extend(Series.prototype, {
 			chart.redraw();
 		}
 
-		fireEvent(series, showOrHide);
+		HighchartsAdapter.fireEvent(series, showOrHide);
 	},
 
 	/**
@@ -19474,7 +19477,7 @@ Highcharts.extend(Series.prototype, {
 			series.checkbox.checked = selected;
 		}
 
-		fireEvent(series, selected ? 'select' : 'unselect');
+		HighchartsAdapter.fireEvent(series, selected ? 'select' : 'unselect');
 	},
 
 	drawTracker: TrackerMixin.drawTrackerGraph

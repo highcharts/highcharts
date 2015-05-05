@@ -1333,7 +1333,7 @@ Axis.prototype = {
 		});
 
 		// Fire the event
-		fireEvent(axis, 'setExtremes', eventArguments, function () { // the default event handler
+		HighchartsAdapter.fireEvent(axis, 'setExtremes', eventArguments, function () { // the default event handler
 
 			axis.userMin = newMin;
 			axis.userMax = newMax;
