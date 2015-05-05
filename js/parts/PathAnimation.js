@@ -1,7 +1,8 @@
+(function (H) {
 /**
  * Path interpolation algorithm used across adapters
  */
-Highcharts.pathAnim = {
+H.pathAnim = {
 	/**
 	 * Prepare start and end values so that the path can be animated one to one
 	 */
@@ -94,3 +95,5 @@ Highcharts.pathAnim = {
 	}
 };
 
+	return (Highcharts = H);
+}(Highcharts));

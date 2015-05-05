@@ -691,10 +691,11 @@ H.numberFormat = function (number, decimals, decPoint, thousandsSep) {
 };
 
 	return (Highcharts = H);
-}(Highcharts));/**
+}(Highcharts));(function (H) {
+/**
  * Path interpolation algorithm used across adapters
  */
-Highcharts.pathAnim = {
+H.pathAnim = {
 	/**
 	 * Prepare start and end values so that the path can be animated one to one
 	 */
@@ -787,6 +788,8 @@ Highcharts.pathAnim = {
 	}
 };
 
+	return (Highcharts = H);
+}(Highcharts));
 (function ($) {
 	/**
 	 * The default HighchartsAdapter for jQuery
