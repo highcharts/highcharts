@@ -152,7 +152,6 @@ var AreaSeries = extendClass(Series, {
 			isNull,
 			yBottom,
 			connectNulls = options.connectNulls || stacking === 'percent',
-			useDummyPoints = !stacking || (!connectNulls && stacking),
 			cliffPoint = function (plotY) {
 				return {
 					plotX: plotX,
@@ -164,10 +163,11 @@ var AreaSeries = extendClass(Series, {
 			 * To display null points in underlying stacked series, this series graph must be 
 			 * broken, and the area also fall down to fill the gap left by the null point. #2069
 			 */
-			addDummyPoints = function (i, otherI, plotX, cliffName) {
+			addDummyPoints = function (i, otherI, plotX, side) {
 				var point = points[i],
 					stackedValues = stacking && stacks[point.x].points[seriesIndex],
-					nullName = i > otherI ? 'leftNull' : 'rightNull';
+					nullName = side + 'Null',
+					cliffName = side + 'Cliff';
 
 
 				// Break the graph line itself. A null pseudo-point is added to provide a break in the 
@@ -226,19 +226,21 @@ var AreaSeries = extendClass(Series, {
 
 			if (!isNull || connectNulls) {
 
-				if (useDummyPoints) {
-					addDummyPoints(i, i - 1, plotX, 'leftCliff');
+				if (!connectNulls) {
+					addDummyPoints(i, i - 1, plotX, 'left');
 				}
 
-				graphPoints.push(points[i]);
-				topPoints.push(points[i]);
-				bottomPoints.push({
-					plotX: plotX,
-					plotY: yBottom
-				});
+				if (points[i].plotY !== undefined) { // Undefined for null point when stacking is false and connectNulls true
+					graphPoints.push(points[i]);
+					topPoints.push(points[i]);
+					bottomPoints.push({
+						plotX: plotX,
+						plotY: yBottom
+					});
+				}
 
-				if (useDummyPoints) {
-					addDummyPoints(i, i + 1, plotX, 'rightCliff');
+				if (!connectNulls) {
+					addDummyPoints(i, i + 1, plotX, 'right');
 				}
 			} else {
 				graphPoints.push({
