@@ -15727,14 +15727,21 @@ var AreaSeries = extendClass(Series, {
 			isNull,
 			yBottom,
 			connectNulls = options.connectNulls || stacking === 'percent',
-			useDummyPoints = !connectNulls && stacking,
+			useDummyPoints = !stacking || (!connectNulls && stacking),
+			cliffPoint = function (plotY) {
+				return {
+					plotX: plotX,
+					plotY: plotY,
+					isCliff: true
+				};
+			},
 			/**
 			 * To display null points in underlying stacked series, this series graph must be 
 			 * broken, and the area also fall down to fill the gap left by the null point. #2069
 			 */
 			addDummyPoints = function (i, otherI, plotX, cliffName) {
 				var point = points[i],
-					stackedValues = stacks[point.x].points[seriesIndex],
+					stackedValues = stacking && stacks[point.x].points[seriesIndex],
 					nullName = i > otherI ? 'leftNull' : 'rightNull';
 
 
@@ -15762,24 +15769,19 @@ var AreaSeries = extendClass(Series, {
 
 				if (point[cliffName] || point[nullName]) {
 					// Add to the top and bottom line of the area
-					topPoints.push({
-						plotX: plotX,
-						plotY: yAxis.toPixels(
-							(point[nullName] ? stackedValues[0] : stackedValues[1]) + (point[cliffName] || 0),
-							true
-						),
-						isCliff: true
-					});
-					bottomPoints.push({
-						plotX: plotX,
-						plotY: yAxis.toPixels(
-							stackedValues[0] + (point[cliffName] || 0), 
-							true
-						),
-						isCliff: true
-					});
-
-				} 
+					topPoints.push(cliffPoint(yAxis.toPixels(
+						(point[nullName] ? stackedValues[0] : stackedValues[1]) + (point[cliffName] || 0),
+						true
+					)));
+					bottomPoints.push(cliffPoint(yAxis.toPixels(
+						stackedValues[0] + (point[cliffName] || 0), 
+						true
+					)));
+				
+				} else if (!stacking && points[otherI] && points[otherI].isNull) {
+					topPoints.push(cliffPoint(translatedThreshold));
+					bottomPoints.push(cliffPoint(translatedThreshold));
+				}
 			};
 
 		// Find what points to use
