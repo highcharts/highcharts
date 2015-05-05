@@ -82,7 +82,7 @@ var PiePoint = Highcharts.extendClass(Point, {
 
 		// if called without an argument, toggle visibility
 		point.visible = point.options.visible = vis = vis === undefined ? !point.visible : vis;
-		series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
+		series.options.data[Highcharts.inArray(point, series.data)] = point.options; // update userOptions.data
 
 		// Show and hide associated elements
 		each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
@@ -127,7 +127,7 @@ var PiePoint = Highcharts.extendClass(Point, {
 
 		// if called without an argument, toggle
 		point.sliced = point.options.sliced = sliced = Highcharts.defined(sliced) ? sliced : !point.sliced;
-		series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
+		series.options.data[Highcharts.inArray(point, series.data)] = point.options; // update userOptions.data
 
 		translation = sliced ? point.slicedTranslation : {
 			translateX: 0,

@@ -1165,7 +1165,6 @@ if (globalAdapter) {
 // default adapters below.
 var adapterRun = adapter.adapterRun,
 	getScript = adapter.getScript,
-	inArray = adapter.inArray,
 	each = Highcharts.each = adapter.each,
 	grep = adapter.grep,
 	offset = adapter.offset,
@@ -6443,7 +6442,7 @@ Axis.prototype = {
 			events = axis.options.events;
 
 		// Register
-		if (inArray(axis, chart.axes) === -1) { // don't add it again on Axis.update()
+		if (Highcharts.inArray(axis, chart.axes) === -1) { // don't add it again on Axis.update()
 			if (isXAxis && !this.isColorAxis) { // #2713
 				chart.axes.splice(chart.xAxis.length, 0, axis);
 			} else {
@@ -14513,7 +14512,7 @@ Highcharts.extend(Point.prototype, {
 	 *    configuration
 	 */
 	remove: function (redraw, animation) {
-		this.series.removePoint(inArray(this, this.series.data), redraw, animation);
+		this.series.removePoint(Highcharts.inArray(this, this.series.data), redraw, animation);
 	}
 });
 
@@ -19052,7 +19051,8 @@ Highcharts.extend(Point.prototype, {
 	select: function (selected, accumulate) {
 		var point = this,
 			series = point.series,
-			chart = series.chart;
+			chart = series.chart,
+			inArray = HighchartsAdapter.inArray;
 
 		selected = Highcharts.pick(selected, !point.selected);
 
@@ -19118,7 +19118,7 @@ Highcharts.extend(Point.prototype, {
 
 		this.firePointEvent('mouseOut');
 
-		if (!hoverPoints || inArray(this, hoverPoints) === -1) { // #887, #2240
+		if (!hoverPoints || Highcharts.inArray(this, hoverPoints) === -1) { // #887, #2240
 			this.setState();
 			chart.hoverPoint = null;
 		}

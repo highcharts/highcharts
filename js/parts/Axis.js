@@ -324,7 +324,7 @@ Axis.prototype = {
 			events = axis.options.events;
 
 		// Register
-		if (inArray(axis, chart.axes) === -1) { // don't add it again on Axis.update()
+		if (Highcharts.inArray(axis, chart.axes) === -1) { // don't add it again on Axis.update()
 			if (isXAxis && !this.isColorAxis) { // #2713
 				chart.axes.splice(chart.xAxis.length, 0, axis);
 			} else {

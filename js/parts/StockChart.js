@@ -215,7 +215,7 @@ Highcharts.wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lin
 	// lines (#2796).
 	uniqueAxes = axes.length ? [] : [axis.isXAxis ? chart.yAxis[0] : chart.xAxis[0]]; //#3742
 	each(axes, function (axis2) {
-		if (inArray(axis2, uniqueAxes) === -1) {
+		if (Highcharts.inArray(axis2, uniqueAxes) === -1) {
 			uniqueAxes.push(axis2);
 		}
 	});

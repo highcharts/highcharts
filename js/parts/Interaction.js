@@ -372,7 +372,8 @@ Highcharts.extend(Point.prototype, {
 	select: function (selected, accumulate) {
 		var point = this,
 			series = point.series,
-			chart = series.chart;
+			chart = series.chart,
+			inArray = HighchartsAdapter.inArray;
 
 		selected = Highcharts.pick(selected, !point.selected);
 
@@ -438,7 +439,7 @@ Highcharts.extend(Point.prototype, {
 
 		this.firePointEvent('mouseOut');
 
-		if (!hoverPoints || inArray(this, hoverPoints) === -1) { // #887, #2240
+		if (!hoverPoints || Highcharts.inArray(this, hoverPoints) === -1) { // #887, #2240
 			this.setState();
 			chart.hoverPoint = null;
 		}
