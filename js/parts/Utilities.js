@@ -1,10 +1,10 @@
-
+(function (H) {
 /**
  * Extend an object with the members of another
  * @param {Object} a The object to be extended
  * @param {Object} b The object to add to the first one
  */
-Highcharts.extend = function (a, b) {
+H.extend = function (a, b) {
 	var n;
 	if (!a) {
 		a = {};
@@ -22,7 +22,7 @@ Highcharts.extend = function (a, b) {
  * First, it deep merged arrays, which lead to workarounds in Highcharts. Second,
  * it copied properties from extended prototypes. 
  */
-Highcharts.merge = function () {
+H.merge = function () {
 	var i,
 		args = arguments,
 		len,
@@ -73,7 +73,7 @@ Highcharts.merge = function () {
  * @param {Object} s
  * @param {Number} mag Magnitude
  */
-Highcharts.pInt = function (s, mag) {
+H.pInt = function (s, mag) {
 	return parseInt(s, mag || 10);
 };
 
@@ -81,7 +81,7 @@ Highcharts.pInt = function (s, mag) {
  * Check for string
  * @param {Object} s
  */
-Highcharts.isString = function (s) {
+H.isString = function (s) {
 	return typeof s === 'string';
 };
 
@@ -89,7 +89,7 @@ Highcharts.isString = function (s) {
  * Check for object
  * @param {Object} obj
  */
-Highcharts.isObject = function (obj) {
+H.isObject = function (obj) {
 	return obj && typeof obj === 'object';
 };
 
@@ -97,7 +97,7 @@ Highcharts.isObject = function (obj) {
  * Check for array
  * @param {Object} obj
  */
-Highcharts.isArray = function (obj) {
+H.isArray = function (obj) {
 	return Object.prototype.toString.call(obj) === '[object Array]';
 };
 
@@ -105,14 +105,14 @@ Highcharts.isArray = function (obj) {
  * Check for number
  * @param {Object} n
  */
-Highcharts.isNumber = function (n) {
+H.isNumber = function (n) {
 	return typeof n === 'number';
 };
 
-Highcharts.log2lin = function (num) {
+H.log2lin = function (num) {
 	return Math.log(num) / Math.LN10;
 };
-Highcharts.lin2log = function (num) {
+H.lin2log = function (num) {
 	return Math.pow(10, num);
 };
 
@@ -121,7 +121,7 @@ Highcharts.lin2log = function (num) {
  * @param {Array} arr
  * @param {Mixed} item
  */
-Highcharts.erase = function (arr, item) {
+H.erase = function (arr, item) {
 	var i = arr.length;
 	while (i--) {
 		if (arr[i] === item) {
@@ -136,7 +136,7 @@ Highcharts.erase = function (arr, item) {
  * Returns true if the object is not null or undefined. Like MooTools' $.defined.
  * @param {Object} obj
  */
-Highcharts.defined = function (obj) {
+H.defined = function (obj) {
 	return obj !== undefined && obj !== null;
 };
 
@@ -148,14 +148,14 @@ Highcharts.defined = function (obj) {
  * @param {String|Object} prop The property or an abject of key-value pairs
  * @param {String} value The value if a single property is set
  */
-Highcharts.attr = function (elem, prop, value) {
+H.attr = function (elem, prop, value) {
 	var key,
 		ret;
 
 	// if the prop is a string
-	if (Highcharts.isString(prop)) {
+	if (H.isString(prop)) {
 		// set the value
-		if (Highcharts.defined(value)) {
+		if (H.defined(value)) {
 			elem.setAttribute(prop, value);
 
 		// get the value
@@ -164,7 +164,7 @@ Highcharts.attr = function (elem, prop, value) {
 		}
 
 	// else if prop is defined, it is a hash of key/value pairs
-	} else if (Highcharts.defined(prop) && Highcharts.isObject(prop)) {
+	} else if (H.defined(prop) && H.isObject(prop)) {
 		for (key in prop) {
 			elem.setAttribute(key, prop[key]);
 		}
@@ -175,15 +175,15 @@ Highcharts.attr = function (elem, prop, value) {
  * Check if an element is an array, and if not, make it into an array. Like
  * MooTools' $.splat.
  */
-Highcharts.splat = function (obj) {
-	return Highcharts.isArray(obj) ? obj : [obj];
+H.splat = function (obj) {
+	return H.isArray(obj) ? obj : [obj];
 };
 
 
 /**
  * Return the first value that is defined. Like MooTools' $.pick.
  */
-Highcharts.pick = function () {
+H.pick = function () {
 	var args = arguments,
 		i,
 		arg,
@@ -201,13 +201,13 @@ Highcharts.pick = function () {
  * @param {Object} el
  * @param {Object} styles Style object with camel case property names
  */
-Highcharts.css = function (el, styles) {
-	if (Highcharts.isIE && !Highcharts.svg) { // #2686
+H.css = function (el, styles) {
+	if (H.isIE && !H.svg) { // #2686
 		if (styles && styles.opacity !== undefined) {
 			styles.filter = 'alpha(opacity=' + (styles.opacity * 100) + ')';
 		}
 	}
-	Highcharts.extend(el.style, styles);
+	H.extend(el.style, styles);
 };
 
 /**
@@ -218,11 +218,11 @@ Highcharts.css = function (el, styles) {
  * @param {Object} parent
  * @param {Object} nopad
  */
-Highcharts.createElement = function (tag, attribs, styles, parent, nopad) {
+H.createElement = function (tag, attribs, styles, parent, nopad) {
 	var el = document.createElement(tag),
-		css = Highcharts.css;
+		css = H.css;
 	if (attribs) {
-		Highcharts.extend(el, attribs);
+		H.extend(el, attribs);
 	}
 	if (nopad) {
 		css(el, {padding: 0, border: 'none', margin: 0});
@@ -241,10 +241,10 @@ Highcharts.createElement = function (tag, attribs, styles, parent, nopad) {
  * @param {Object} parent
  * @param {Object} members
  */
-Highcharts.extendClass = function (parent, members) {
+H.extendClass = function (parent, members) {
 	var object = function () {};
 	object.prototype = new parent();
-	Highcharts.extend(object.prototype, members);
+	H.extend(object.prototype, members);
 	return object;
 };
 
@@ -253,7 +253,7 @@ Highcharts.extendClass = function (parent, members) {
  * @param {Number} number
  * @param {Number} length
  */
-Highcharts.pad = function (number, length) {
+H.pad = function (number, length) {
 	// Create an array of the remaining length +1 and join it with 0's
 	return new Array((length || 2) + 1 - String(number).length).join(0) + number;
 };
@@ -266,7 +266,7 @@ Highcharts.pad = function (number, length) {
  * as the original function, except that the original function is unshifted and passed as the first 
  * argument. 
  */
-Highcharts.wrap = function (obj, method, func) {
+H.wrap = function (obj, method, func) {
 	var proceed = obj[method];
 	obj[method] = function () {
 		var args = Array.prototype.slice.call(arguments);
@@ -276,8 +276,8 @@ Highcharts.wrap = function (obj, method, func) {
 };
 
 
-Highcharts.getTZOffset = function (timestamp) {
-	var d = Highcharts.Date;
+H.getTZOffset = function (timestamp) {
+	var d = H.Date;
 	return ((d.hcGetTimezoneOffset && d.hcGetTimezoneOffset(timestamp)) || d.hcTimezoneOffset || 0) * 60000;
 };
 
@@ -287,14 +287,14 @@ Highcharts.getTZOffset = function (timestamp) {
  * @param {Number} timestamp
  * @param {Boolean} capitalize
  */
-Highcharts.dateFormat = function (format, timestamp, capitalize) {
-	if (!Highcharts.defined(timestamp) || isNaN(timestamp)) {
+H.dateFormat = function (format, timestamp, capitalize) {
+	if (!H.defined(timestamp) || isNaN(timestamp)) {
 		return 'Invalid date';
 	}
-	format = Highcharts.pick(format, '%Y-%m-%d %H:%M:%S');
+	format = H.pick(format, '%Y-%m-%d %H:%M:%S');
 
-	var d = Highcharts.Date,
-		date = new d(timestamp - Highcharts.getTZOffset(timestamp)),
+	var d = H.Date,
+		date = new d(timestamp - H.getTZOffset(timestamp)),
 		key, // used in for constuct below
 		// get the basic time values
 		hours = date[d.hcGetHours](),
@@ -302,12 +302,12 @@ Highcharts.dateFormat = function (format, timestamp, capitalize) {
 		dayOfMonth = date[d.hcGetDate](),
 		month = date[d.hcGetMonth](),
 		fullYear = date[d.hcGetFullYear](),
-		lang = Highcharts.defaultOptions.lang,
+		lang = H.defaultOptions.lang,
 		langWeekdays = lang.weekdays,
-		pad = Highcharts.pad,
+		pad = H.pad,
 
 		// List all format keys. Custom formats can be added from the outside. 
-		replacements = Highcharts.extend({
+		replacements = H.extend({
 
 			// Day
 			'a': langWeekdays[day].substr(0, 3), // Short weekday, like 'Mon'
@@ -337,7 +337,7 @@ Highcharts.dateFormat = function (format, timestamp, capitalize) {
 			'P': hours < 12 ? 'am' : 'pm', // Lower case AM or PM
 			'S': pad(date.getSeconds()), // Two digits seconds, 00 through  59
 			'L': pad(Math.round(timestamp % 1000), 3) // Milliseconds (naming from Ruby)
-		}, Highcharts.dateFormats);
+		}, H.dateFormats);
 
 
 	// do the replaces
@@ -354,17 +354,17 @@ Highcharts.dateFormat = function (format, timestamp, capitalize) {
 /** 
  * Format a single variable. Similar to sprintf, without the % prefix.
  */
-Highcharts.formatSingle = function (format, val) {
+H.formatSingle = function (format, val) {
 	var floatRegex = /f$/,
 		decRegex = /\.([0-9])/,
-		lang = Highcharts.defaultOptions.lang,
+		lang = H.defaultOptions.lang,
 		decimals;
 
 	if (floatRegex.test(format)) { // float
 		decimals = format.match(decRegex);
 		decimals = decimals ? decimals[1] : -1;
 		if (val !== null) {
-			val = Highcharts.numberFormat(
+			val = H.numberFormat(
 				val,
 				decimals,
 				lang.decimalPoint,
@@ -372,7 +372,7 @@ Highcharts.formatSingle = function (format, val) {
 			);
 		}
 	} else {
-		val = Highcharts.dateFormat(format, val);
+		val = H.dateFormat(format, val);
 	}
 	return val;
 };
@@ -380,7 +380,7 @@ Highcharts.formatSingle = function (format, val) {
 /**
  * Format a string according to a subset of the rules of Python's String.format method.
  */
-Highcharts.format = function (str, ctx) {
+H.format = function (str, ctx) {
 	var splitter = '{',
 		isInside = false,
 		segment,
@@ -409,7 +409,7 @@ Highcharts.format = function (str, ctx) {
 
 			// Format the replacement
 			if (valueAndFormat.length) {
-				val = Highcharts.formatSingle(valueAndFormat.join(':'), val);
+				val = H.formatSingle(valueAndFormat.join(':'), val);
 			}
 
 			// Push the result and advance the cursor
@@ -430,7 +430,7 @@ Highcharts.format = function (str, ctx) {
 /**
  * Get the magnitude of a number
  */
-Highcharts.getMagnitude = function (num) {
+H.getMagnitude = function (num) {
 	return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
 };
 
@@ -441,13 +441,13 @@ Highcharts.getMagnitude = function (num) {
  * @param {Number} magnitude
  * @param {Object} options
  */
-Highcharts.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimals, preventExceed) {
+H.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimals, preventExceed) {
 	var normalized, 
 		i,
 		retInterval = interval;
 
 	// round to a tenfold of 1, 2, 2.5 or 5
-	magnitude = Highcharts.pick(magnitude, 1);
+	magnitude = H.pick(magnitude, 1);
 	normalized = interval / magnitude;
 
 	// multiples for a linear scale
@@ -484,7 +484,7 @@ Highcharts.normalizeTickInterval = function (interval, multiples, magnitude, all
  * Utility method that sorts an object array and keeping the order of equal items.
  * ECMA script standard does not specify the behaviour when items are equal.
  */
-Highcharts.stableSort = function (arr, sortFunction) {
+H.stableSort = function (arr, sortFunction) {
 	var length = arr.length,
 		sortValue,
 		i;
@@ -510,7 +510,7 @@ Highcharts.stableSort = function (arr, sortFunction) {
  * call stack size exceeded error in Chrome when trying to apply more than 150.000 points. This
  * method is slightly slower, but safe.
  */
-Highcharts.arrayMin = function (data) {
+H.arrayMin = function (data) {
 	var i = data.length,
 		min = data[0];
 
@@ -527,7 +527,7 @@ Highcharts.arrayMin = function (data) {
  * call stack size exceeded error in Chrome when trying to apply more than 150.000 points. This
  * method is slightly slower, but safe.
  */
-Highcharts.arrayMax = function (data) {
+H.arrayMax = function (data) {
 	var i = data.length,
 		max = data[0];
 
@@ -546,7 +546,7 @@ Highcharts.arrayMax = function (data) {
  * @param {Object} The object to destroy properties on
  * @param {Object} Exception, do not destroy this property, only delete it.
  */
-Highcharts.destroyObjectProperties = function (obj, except) {
+H.destroyObjectProperties = function (obj, except) {
 	var n;
 	for (n in obj) {
 		// If the object is non-null and destroy is defined
@@ -565,11 +565,11 @@ Highcharts.destroyObjectProperties = function (obj, except) {
  * Discard an element by moving it to the bin and delete
  * @param {Object} The HTML node to discard
  */
-Highcharts.discardElement = function (element) {
-	var garbageBin = Highcharts.garbageBin;
+H.discardElement = function (element) {
+	var garbageBin = H.garbageBin;
 	// create a garbage bin element, not part of the DOM
 	if (!garbageBin) {
-		garbageBin = Highcharts.createElement('div');
+		garbageBin = H.createElement('div');
 	}
 
 	// move the node and empty bin
@@ -582,7 +582,7 @@ Highcharts.discardElement = function (element) {
 /**
  * Provide error messages for debugging, with links to online explanation 
  */
-Highcharts.error = function (code, stop) {
+H.error = function (code, stop) {
 	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
 	if (stop) {
 		throw msg;
@@ -597,7 +597,7 @@ Highcharts.error = function (code, stop) {
  * Fix JS round off float errors
  * @param {Number} num
  */
-Highcharts.correctFloat = function (num) {
+H.correctFloat = function (num) {
 	return parseFloat(
 		num.toPrecision(14)
 	);
@@ -609,8 +609,8 @@ Highcharts.correctFloat = function (num) {
  * @param {Object} animation
  * @param {Object} chart
  */
-Highcharts.setAnimation = function (animation, chart) {
-	Highcharts.globalAnimation = Highcharts.pick(animation, chart.animation);
+H.setAnimation = function (animation, chart) {
+	H.globalAnimation = H.pick(animation, chart.animation);
 };
 
 /**
@@ -620,8 +620,8 @@ Highcharts.setAnimation = function (animation, chart) {
  * @param {String} decPoint The decimal point, defaults to the one given in the lang options
  * @param {String} thousandsSep The thousands separator, defaults to the one given in the lang options
  */
-Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
-	var lang = Highcharts.defaultOptions.lang,
+H.numberFormat = function (number, decimals, decPoint, thousandsSep) {
+	var lang = H.defaultOptions.lang,
 		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
 		n = +number || 0,
 		c = decimals === -1 ?
@@ -630,9 +630,12 @@ Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
 		d = decPoint === undefined ? lang.decimalPoint : decPoint,
 		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
 		s = n < 0 ? "-" : "",
-		i = String(Highcharts.pInt(n = Math.abs(n).toFixed(c))),
+		i = String(H.pInt(n = Math.abs(n).toFixed(c))),
 		j = i.length > 3 ? i.length % 3 : 0;
 
 	return (s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
 			(c ? d + Math.abs(n - i).toFixed(c).slice(2) : ""));
 };
+
+	return (Highcharts = H);
+}(Highcharts));
