@@ -817,7 +817,7 @@ Chart.prototype = {
 		}
 
 		// Resize the container with the global animation applied if enabled (#2503)
-		(Highcharts.globalAnimation ? animate : Highcharts.css)(chart.container, {
+		(Highcharts.globalAnimation ? HighchartsAdapter.animate : Highcharts.css)(chart.container, {
 			width: chartWidth + 'px',
 			height: chartHeight + 'px'
 		}, Highcharts.globalAnimation);

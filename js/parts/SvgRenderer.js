@@ -40,7 +40,7 @@ SVGElement.prototype = {
 			if (complete) { // allows using a callback with the global animation without overwriting it
 				animOptions.complete = complete;
 			}
-			animate(this, params, animOptions);
+			HighchartsAdapter.animate(this, params, animOptions);
 		} else {
 			this.attr(params);
 			if (complete) {

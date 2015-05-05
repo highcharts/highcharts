@@ -1165,7 +1165,6 @@ if (globalAdapter) {
 // default adapters below.
 var adapterRun = adapter.adapterRun,
 	each = Highcharts.each = adapter.each,
-	animate = adapter.animate,
 	stop = adapter.stop;
 
 
@@ -1744,7 +1743,7 @@ SVGElement.prototype = {
 			if (complete) { // allows using a callback with the global animation without overwriting it
 				animOptions.complete = complete;
 			}
-			animate(this, params, animOptions);
+			HighchartsAdapter.animate(this, params, animOptions);
 		} else {
 			this.attr(params);
 			if (complete) {
@@ -12027,7 +12026,7 @@ Chart.prototype = {
 		}
 
 		// Resize the container with the global animation applied if enabled (#2503)
-		(Highcharts.globalAnimation ? animate : Highcharts.css)(chart.container, {
+		(Highcharts.globalAnimation ? HighchartsAdapter.animate : Highcharts.css)(chart.container, {
 			width: chartWidth + 'px',
 			height: chartHeight + 'px'
 		}, Highcharts.globalAnimation);
@@ -15210,7 +15209,7 @@ Highcharts.extend(Chart.prototype, {
 				opacity: 0,
 				display: ''				
 			});
-			animate(loadingDiv, {
+			HighchartsAdapter.animate(loadingDiv, {
 				opacity: loadingOptions.style.opacity
 			}, {
 				duration: loadingOptions.showDuration || 0
@@ -15228,7 +15227,7 @@ Highcharts.extend(Chart.prototype, {
 			loadingDiv = this.loadingDiv;
 
 		if (loadingDiv) {
-			animate(loadingDiv, {
+			HighchartsAdapter.animate(loadingDiv, {
 				opacity: 0
 			}, {
 				duration: options.loading.hideDuration || 100,

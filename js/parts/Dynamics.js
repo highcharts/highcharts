@@ -107,7 +107,7 @@ Highcharts.extend(Chart.prototype, {
 				opacity: 0,
 				display: ''				
 			});
-			animate(loadingDiv, {
+			HighchartsAdapter.animate(loadingDiv, {
 				opacity: loadingOptions.style.opacity
 			}, {
 				duration: loadingOptions.showDuration || 0
@@ -125,7 +125,7 @@ Highcharts.extend(Chart.prototype, {
 			loadingDiv = this.loadingDiv;
 
 		if (loadingDiv) {
-			animate(loadingDiv, {
+			HighchartsAdapter.animate(loadingDiv, {
 				opacity: 0
 			}, {
 				duration: options.loading.hideDuration || 100,
