@@ -3,6 +3,7 @@
 
 Chart.prototype.callbacks.push(function (chart) {
 	var extremes,
+		addEvent = Highcharts.addEvent,
 		scroller = chart.scroller,
 		rangeSelector = chart.rangeSelector;
 

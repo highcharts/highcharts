@@ -34,7 +34,7 @@ Series.prototype.drawDataLabels = function () {
 		if (pick(options.defer, true)) {
 			dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
 			if (!hasRendered) {
-				addEvent(series, 'afterAnimate', function () {
+				HighchartsAdapter.addEvent(series, 'afterAnimate', function () {
 					if (series.visible) { // #3023, #3024
 						dataLabelsGroup.show();
 					}

@@ -81,7 +81,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	Highcharts.wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
 		proceed.apply(this);
 		if (this.hasZoom || this.followTouchMove) {
-			this.batchMSEvents(addEvent);
+			this.batchMSEvents(HighchartsAdapter.addEvent);
 		}
 	});
 	// Destroy MS events also

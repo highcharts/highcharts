@@ -1165,7 +1165,6 @@ if (globalAdapter) {
 // default adapters below.
 var adapterRun = adapter.adapterRun,
 	each = Highcharts.each = adapter.each,
-	addEvent = adapter.addEvent,
 	removeEvent = adapter.removeEvent,
 	fireEvent = adapter.fireEvent,
 	washMouseEvent = adapter.washMouseEvent,
@@ -2967,7 +2966,7 @@ SVGRenderer.prototype = {
 			subPixelFix();
 
 			// run it on resize
-			addEvent(window, 'resize', subPixelFix);
+			HighchartsAdapter.addEvent(window, 'resize', subPixelFix);
 		}
 	},
 
@@ -3335,6 +3334,7 @@ SVGRenderer.prototype = {
 			pressedStyle,
 			disabledStyle,
 			isIE = Highcharts.isIE,
+			addEvent = HighchartsAdapter.addEvent,
 			verticalGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
 
 		// Normal state - prepare the attributes
@@ -6726,7 +6726,7 @@ Axis.prototype = {
 
 		// register event listeners
 		for (eventType in events) {
-			addEvent(axis, eventType, events[eventType]);
+			HighchartsAdapter.addEvent(axis, eventType, events[eventType]);
 		}
 
 		// extend logarithmic axis
@@ -9636,7 +9636,7 @@ Pointer.prototype = {
 					Highcharts.charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
 				}
 			};
-			addEvent(document, 'mousemove', pointer._onDocumentMouseMove);
+			HighchartsAdapter.addEvent(document, 'mousemove', pointer._onDocumentMouseMove);
 		}
 		
 		// Crosshair
@@ -10050,6 +10050,7 @@ Pointer.prototype = {
 	setDOMEvents: function () {
 
 		var pointer = this,
+			addEvent = HighchartsAdapter.addEvent,
 			container = pointer.chart.container;
 
 		container.onmousedown = function (e) {
@@ -10398,7 +10399,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	Highcharts.wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
 		proceed.apply(this);
 		if (this.hasZoom || this.followTouchMove) {
-			this.batchMSEvents(addEvent);
+			this.batchMSEvents(HighchartsAdapter.addEvent);
 		}
 	});
 	// Destroy MS events also
@@ -10450,7 +10451,7 @@ Legend.prototype = {
 		legend.render();
 
 		// move checkboxes
-		addEvent(legend.chart, 'endResize', function () { 
+		HighchartsAdapter.addEvent(legend.chart, 'endResize', function () { 
 			legend.positionCheckboxes();
 		});
 
@@ -11230,6 +11231,7 @@ Chart.prototype = {
 
 		// Handle regular options
 		var options,
+			addEvent = HighchartsAdapter.addEvent,
 			seriesOptions = userOptions.series; // skip merging data points to increase performance
 
 		userOptions.series = null;
@@ -11974,6 +11976,7 @@ Chart.prototype = {
 	 */
 	initReflow: function () {
 		var chart = this,
+			addEvent = HighchartsAdapter.addEvent,
 			reflow = function (e) {
 				chart.reflow(e);
 			};
@@ -12994,7 +12997,7 @@ Series.prototype = {
 		// register event listeners
 		events = options.events;
 		for (eventType in events) {
-			addEvent(series, eventType, events[eventType]);
+			HighchartsAdapter.addEvent(series, eventType, events[eventType]);
 		}
 		if (
 			(events && events.click) ||
@@ -14447,6 +14450,7 @@ Series.prototype = {
 	 */
 	invertGroups: function () {
 		var series = this,
+			addEvent = HighchartsAdapter.addEvent,
 			chart = series.chart;
 
 		// Pie, go away (#1736)
@@ -15190,7 +15194,7 @@ Highcharts.extend(Chart.prototype, {
 				loadingOptions.labelStyle,
 				loadingDiv
 			);
-			addEvent(chart, 'redraw', setLoadingSize); // #1080
+			HighchartsAdapter.addEvent(chart, 'redraw', setLoadingSize); // #1080
 		}
 
 		// update text
@@ -16449,6 +16453,7 @@ var PiePoint = Highcharts.extendClass(Point, {
 		Point.prototype.init.apply(this, arguments);
 
 		var point = this,
+			addEvent = HighchartsAdapter.addEvent,
 			toggleSlice;
 
 		Highcharts.extend(point, {
@@ -16916,7 +16921,7 @@ Series.prototype.drawDataLabels = function () {
 		if (pick(options.defer, true)) {
 			dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
 			if (!hasRendered) {
-				addEvent(series, 'afterAnimate', function () {
+				HighchartsAdapter.addEvent(series, 'afterAnimate', function () {
 					if (series.visible) { // #3023, #3024
 						dataLabelsGroup.show();
 					}
@@ -17954,7 +17959,7 @@ Highcharts.extend(Legend.prototype, {
 			defaultChecked: item.selected // required by IE7
 		}, legend.options.itemCheckboxStyle, legend.chart.container);
 
-		addEvent(item.checkbox, 'click', function (event) {
+		HighchartsAdapter.addEvent(item.checkbox, 'click', function (event) {
 			var target = event.target;
 			fireEvent(item.series || item, 'checkboxClick', { // #3712
 					checked: target.checked,
@@ -18203,7 +18208,7 @@ Highcharts.extend(Point.prototype, {
 			point.events = events;
 
 			for (eventType in events) {
-				addEvent(point, eventType, events[eventType]);
+				HighchartsAdapter.addEvent(point, eventType, events[eventType]);
 			}
 			this.hasImportedEvents = true;
 
@@ -18557,7 +18562,7 @@ Highcharts.wrap(Series.prototype, 'init', function (proceed) {
 
 	// Destroy the extended ordinal index on updated data
 	if (xAxis && xAxis.options.ordinal) {
-		addEvent(series, 'updatedData', function () {
+		HighchartsAdapter.addEvent(series, 'updatedData', function () {
 			delete xAxis.ordinalIndex;
 		});
 	}
@@ -20616,7 +20621,7 @@ Highcharts.seriesTypes.flags = Highcharts.extendClass(Highcharts.seriesTypes.col
 		each(points, function (point) {
 			var graphic = point.graphic;
 			if (graphic) {
-				addEvent(graphic.element, 'mouseover', function () {
+				HighchartsAdapter.addEvent(graphic.element, 'mouseover', function () {
 
 					// Raise this point
 					if (point.stackIndex > 0 && !point.raised) {
@@ -21255,7 +21260,7 @@ Scroller.prototype = {
 
 		// Add them all
 		each(_events, function (args) {
-			addEvent.apply(null, args);
+			HighchartsAdapter.addEvent.apply(null, args);
 		});
 		this._events = _events;
 	},
@@ -21680,7 +21685,7 @@ Scroller.prototype = {
 		// Respond to updated data in the base series.
 		// Abort if lazy-loading data from the server.
 		if (baseSeries && this.navigatorOptions.adaptToUpdatedData !== false) {
-			addEvent(baseSeries, 'updatedData', this.updatedDataHandler);
+			HighchartsAdapter.addEvent(baseSeries, 'updatedData', this.updatedDataHandler);
 			// Survive Series.update()
 			baseSeries.userOptions.events = Highcharts.extend(baseSeries.userOptions.event, { updatedData: this.updatedDataHandler });
 
@@ -21824,7 +21829,7 @@ Highcharts.wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 // Initialize scroller for stock charts
 Highcharts.wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 
-	addEvent(this, 'beforeRender', function () {
+	HighchartsAdapter.addEvent(this, 'beforeRender', function () {
 		var options = this.options;
 		if (options.navigator.enabled || options.scrollbar.enabled) {
 			this.scroller = new Scroller(this);
@@ -21994,7 +21999,7 @@ RangeSelector.prototype = {
 			// "ytd" is pre-selected. We don't yet have access to processed point and extremes data
 			// (things like pointStart and pointInterval are missing), so we delay the process (#942)
 			} else {
-				addEvent(chart, 'beforeRender', function () {
+				HighchartsAdapter.addEvent(chart, 'beforeRender', function () {
 					rangeSelector.clickButton(i);
 				});
 				return;
@@ -22082,6 +22087,7 @@ RangeSelector.prototype = {
 	init: function (chart) {
 		
 		var rangeSelector = this,
+			addEvent = HighchartsAdapter.addEvent,
 			options = chart.options.rangeSelector,
 			buttonOptions = options.buttons || [].concat(rangeSelector.defaultButtons),
 			selectedOption = options.selected,
@@ -22545,7 +22551,7 @@ Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
 // Initialize scroller for stock charts
 Highcharts.wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 	
-	addEvent(this, 'init', function () {
+	HighchartsAdapter.addEvent(this, 'init', function () {
 		if (this.options.rangeSelector.enabled) {
 			this.rangeSelector = new RangeSelector(this);
 		}
@@ -22566,6 +22572,7 @@ Highcharts.RangeSelector = RangeSelector;
 
 Chart.prototype.callbacks.push(function (chart) {
 	var extremes,
+		addEvent = Highcharts.addEvent,
 		scroller = chart.scroller,
 		rangeSelector = chart.rangeSelector;
 
@@ -23249,7 +23256,6 @@ Highcharts.extend(Highcharts, {
 	// Various
 	getOptions: getOptions,
 	setOptions: setOptions,
-	addEvent: addEvent,
 	removeEvent: removeEvent,
 	each: each,
 	canvas: Highcharts.useCanVG,

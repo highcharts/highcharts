@@ -95,7 +95,7 @@ Highcharts.extend(Chart.prototype, {
 				loadingOptions.labelStyle,
 				loadingDiv
 			);
-			addEvent(chart, 'redraw', setLoadingSize); // #1080
+			HighchartsAdapter.addEvent(chart, 'redraw', setLoadingSize); // #1080
 		}
 
 		// update text

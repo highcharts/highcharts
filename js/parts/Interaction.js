@@ -210,7 +210,7 @@ Highcharts.extend(Legend.prototype, {
 			defaultChecked: item.selected // required by IE7
 		}, legend.options.itemCheckboxStyle, legend.chart.container);
 
-		addEvent(item.checkbox, 'click', function (event) {
+		HighchartsAdapter.addEvent(item.checkbox, 'click', function (event) {
 			var target = event.target;
 			fireEvent(item.series || item, 'checkboxClick', { // #3712
 					checked: target.checked,
@@ -459,7 +459,7 @@ Highcharts.extend(Point.prototype, {
 			point.events = events;
 
 			for (eventType in events) {
-				addEvent(point, eventType, events[eventType]);
+				HighchartsAdapter.addEvent(point, eventType, events[eventType]);
 			}
 			this.hasImportedEvents = true;
 

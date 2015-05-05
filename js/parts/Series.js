@@ -70,7 +70,7 @@ Series.prototype = {
 		// register event listeners
 		events = options.events;
 		for (eventType in events) {
-			addEvent(series, eventType, events[eventType]);
+			HighchartsAdapter.addEvent(series, eventType, events[eventType]);
 		}
 		if (
 			(events && events.click) ||
@@ -1523,6 +1523,7 @@ Series.prototype = {
 	 */
 	invertGroups: function () {
 		var series = this,
+			addEvent = HighchartsAdapter.addEvent,
 			chart = series.chart;
 
 		// Pie, go away (#1736)

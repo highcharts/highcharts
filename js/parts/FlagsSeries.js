@@ -246,7 +246,7 @@ Highcharts.seriesTypes.flags = Highcharts.extendClass(Highcharts.seriesTypes.col
 		each(points, function (point) {
 			var graphic = point.graphic;
 			if (graphic) {
-				addEvent(graphic.element, 'mouseover', function () {
+				HighchartsAdapter.addEvent(graphic.element, 'mouseover', function () {
 
 					// Raise this point
 					if (point.stackIndex > 0 && !point.raised) {

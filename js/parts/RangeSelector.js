@@ -145,7 +145,7 @@ RangeSelector.prototype = {
 			// "ytd" is pre-selected. We don't yet have access to processed point and extremes data
 			// (things like pointStart and pointInterval are missing), so we delay the process (#942)
 			} else {
-				addEvent(chart, 'beforeRender', function () {
+				HighchartsAdapter.addEvent(chart, 'beforeRender', function () {
 					rangeSelector.clickButton(i);
 				});
 				return;
@@ -233,6 +233,7 @@ RangeSelector.prototype = {
 	init: function (chart) {
 		
 		var rangeSelector = this,
+			addEvent = HighchartsAdapter.addEvent,
 			options = chart.options.rangeSelector,
 			buttonOptions = options.buttons || [].concat(rangeSelector.defaultButtons),
 			selectedOption = options.selected,
@@ -696,7 +697,7 @@ Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
 // Initialize scroller for stock charts
 Highcharts.wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 	
-	addEvent(this, 'init', function () {
+	HighchartsAdapter.addEvent(this, 'init', function () {
 		if (this.options.rangeSelector.enabled) {
 			this.rangeSelector = new RangeSelector(this);
 		}

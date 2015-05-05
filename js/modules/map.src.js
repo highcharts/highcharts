@@ -22,7 +22,6 @@ var Axis = Highcharts.Axis,
 	SVGRenderer = Highcharts.SVGRenderer,
 	VMLRenderer = Highcharts.VMLRenderer,
 	
-	addEvent = Highcharts.addEvent,
 	each = Highcharts.each,
 	defaultOptions = Highcharts.getOptions(),
 	defaultPlotOptions = defaultOptions.plotOptions;/**
@@ -800,6 +799,7 @@ Highcharts.extend(Chart.prototype, {
 Highcharts.wrap(Chart.prototype, 'render', function (proceed) {
 	var chart = this,
 		pick = Highcharts.pick,
+		addEvent = HighchartsAdapter.addEvent,
 		mapNavigation = chart.options.mapNavigation;
 
 	// Render the plus and minus buttons. Doing this before the shapes makes getBBox much quicker, at least in Chrome.

@@ -1259,7 +1259,7 @@ SVGRenderer.prototype = {
 			subPixelFix();
 
 			// run it on resize
-			addEvent(window, 'resize', subPixelFix);
+			HighchartsAdapter.addEvent(window, 'resize', subPixelFix);
 		}
 	},
 
@@ -1627,6 +1627,7 @@ SVGRenderer.prototype = {
 			pressedStyle,
 			disabledStyle,
 			isIE = Highcharts.isIE,
+			addEvent = HighchartsAdapter.addEvent,
 			verticalGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
 
 		// Normal state - prepare the attributes
