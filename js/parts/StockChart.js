@@ -28,7 +28,7 @@ Highcharts.StockChart = function (options, callback) {
 		};
 
 	// apply X axis options to both single and multi y axes
-	options.xAxis = HighchartsAdapter.map(splat(options.xAxis || {}), function (xAxisOptions) {
+	options.xAxis = Highcharts.map(splat(options.xAxis || {}), function (xAxisOptions) {
 		return Highcharts.merge({ // defaults
 				minPadding: 0,
 				maxPadding: 0,
@@ -50,7 +50,7 @@ Highcharts.StockChart = function (options, callback) {
 	});
 
 	// apply Y axis options to both single and multi y axes
-	options.yAxis = HighchartsAdapter.map(splat(options.yAxis || {}), function (yAxisOptions) {
+	options.yAxis = Highcharts.map(splat(options.yAxis || {}), function (yAxisOptions) {
 		opposite = pick(yAxisOptions.opposite, true);
 		return Highcharts.merge({ // defaults
 			labels: {
@@ -167,7 +167,7 @@ Highcharts.wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lin
 		series = (this.isLinked && !this.series ? this.linkedParent.series : this.series),
 		chart = axis.chart,
 		defined = Highcharts.defined,
-		map = HighchartsAdapter.map,
+		map = Highcharts.map,
 		renderer = chart.renderer,
 		axisLeft = axis.left,
 		axisTop = axis.top,

@@ -116,7 +116,7 @@ Highcharts.extend(Highcharts.Pointer.prototype, {
 		}
 		
 		// Normalize each touch
-		HighchartsAdapter.map(touches, function (e) {
+		Highcharts.map(touches, function (e) {
 			return self.normalize(e);
 		});
 		

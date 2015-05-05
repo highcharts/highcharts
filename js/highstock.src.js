@@ -1164,6 +1164,7 @@ if (globalAdapter) {
 // and all the utility functions will be null. In that case they are populated by the
 // default adapters below.
 Highcharts.each = adapter.each;
+Highcharts.map = adapter.map;
 var adapterRun = adapter.adapterRun,
 	stop = adapter.stop;
 
@@ -1599,7 +1600,7 @@ var Color = function (input) {
 		var pInt = Highcharts.pInt;
 		// Gradients
 		if (input && input.stops) {
-			stops = HighchartsAdapter.map(input.stops, function (stop) {
+			stops = Highcharts.map(input.stops, function (stop) {
 				return Color(stop[1]);
 			});
 
@@ -8852,7 +8853,7 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 			Highcharts.getMagnitude(interval)
 		);
 		
-		positions = HighchartsAdapter.map(axis.getLinearTickPositions(
+		positions = Highcharts.map(axis.getLinearTickPositions(
 			interval, 
 			realMin,
 			realMax	
@@ -9061,7 +9062,7 @@ Tooltip.prototype = {
 			];
 		}
 
-		return HighchartsAdapter.map(ret, Math.round);
+		return Highcharts.map(ret, Math.round);
 	},
 	
 	/**
@@ -9394,7 +9395,7 @@ Tooltip.prototype = {
      * abstracting this functionality allows to easily overwrite and extend it. 
 	 */
 	bodyFormatter: function (items) {
-        return HighchartsAdapter.map(items, function (item) {
+        return Highcharts.map(items, function (item) {
             var tooltipOptions = item.series.tooltipOptions;
             return (tooltipOptions.pointFormatter || item.point.tooltipFormatter).call(item.point, tooltipOptions.pointFormat);
         });
@@ -10219,7 +10220,7 @@ Highcharts.extend(Highcharts.Pointer.prototype, {
 		}
 		
 		// Normalize each touch
-		HighchartsAdapter.map(touches, function (e) {
+		Highcharts.map(touches, function (e) {
 			return self.normalize(e);
 		});
 		
@@ -22677,7 +22678,7 @@ Highcharts.StockChart = function (options, callback) {
 		};
 
 	// apply X axis options to both single and multi y axes
-	options.xAxis = HighchartsAdapter.map(splat(options.xAxis || {}), function (xAxisOptions) {
+	options.xAxis = Highcharts.map(splat(options.xAxis || {}), function (xAxisOptions) {
 		return Highcharts.merge({ // defaults
 				minPadding: 0,
 				maxPadding: 0,
@@ -22699,7 +22700,7 @@ Highcharts.StockChart = function (options, callback) {
 	});
 
 	// apply Y axis options to both single and multi y axes
-	options.yAxis = HighchartsAdapter.map(splat(options.yAxis || {}), function (yAxisOptions) {
+	options.yAxis = Highcharts.map(splat(options.yAxis || {}), function (yAxisOptions) {
 		opposite = pick(yAxisOptions.opposite, true);
 		return Highcharts.merge({ // defaults
 			labels: {
@@ -22816,7 +22817,7 @@ Highcharts.wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lin
 		series = (this.isLinked && !this.series ? this.linkedParent.series : this.series),
 		chart = axis.chart,
 		defined = Highcharts.defined,
-		map = HighchartsAdapter.map,
+		map = Highcharts.map,
 		renderer = chart.renderer,
 		axisLeft = axis.left,
 		axisTop = axis.top,

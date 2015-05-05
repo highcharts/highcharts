@@ -1164,6 +1164,7 @@ if (globalAdapter) {
 // and all the utility functions will be null. In that case they are populated by the
 // default adapters below.
 Highcharts.each = adapter.each;
+Highcharts.map = adapter.map;
 var adapterRun = adapter.adapterRun,
 	stop = adapter.stop;
 
@@ -1599,7 +1600,7 @@ var Color = function (input) {
 		var pInt = Highcharts.pInt;
 		// Gradients
 		if (input && input.stops) {
-			stops = HighchartsAdapter.map(input.stops, function (stop) {
+			stops = Highcharts.map(input.stops, function (stop) {
 				return Color(stop[1]);
 			});
 
@@ -8852,7 +8853,7 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 			Highcharts.getMagnitude(interval)
 		);
 		
-		positions = HighchartsAdapter.map(axis.getLinearTickPositions(
+		positions = Highcharts.map(axis.getLinearTickPositions(
 			interval, 
 			realMin,
 			realMax	
@@ -9061,7 +9062,7 @@ Tooltip.prototype = {
 			];
 		}
 
-		return HighchartsAdapter.map(ret, Math.round);
+		return Highcharts.map(ret, Math.round);
 	},
 	
 	/**
@@ -9394,7 +9395,7 @@ Tooltip.prototype = {
      * abstracting this functionality allows to easily overwrite and extend it. 
 	 */
 	bodyFormatter: function (items) {
-        return HighchartsAdapter.map(items, function (item) {
+        return Highcharts.map(items, function (item) {
             var tooltipOptions = item.series.tooltipOptions;
             return (tooltipOptions.pointFormatter || item.point.tooltipFormatter).call(item.point, tooltipOptions.pointFormat);
         });
@@ -10219,7 +10220,7 @@ Highcharts.extend(Highcharts.Pointer.prototype, {
 		}
 		
 		// Normalize each touch
-		HighchartsAdapter.map(touches, function (e) {
+		Highcharts.map(touches, function (e) {
 			return self.normalize(e);
 		});
 		

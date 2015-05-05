@@ -15,6 +15,7 @@ if (globalAdapter) {
 // and all the utility functions will be null. In that case they are populated by the
 // default adapters below.
 Highcharts.each = adapter.each;
+Highcharts.map = adapter.map;
 var adapterRun = adapter.adapterRun,
 	stop = adapter.stop;
 
