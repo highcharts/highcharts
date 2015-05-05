@@ -1019,7 +1019,7 @@ Axis.prototype = {
 		// for linear axes, get magnitude and normalize the interval
 		if (!isDatetimeAxis && !isLog) { // linear
 			if (!tickIntervalOption) {
-				axis.tickInterval = normalizeTickInterval(
+				axis.tickInterval = Highcharts.normalizeTickInterval(
 					axis.tickInterval, 
 					null, 
 					Highcharts.getMagnitude(axis.tickInterval), 

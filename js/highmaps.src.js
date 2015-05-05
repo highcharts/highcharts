@@ -494,7 +494,7 @@ Highcharts.getMagnitude = function (num) {
  * @param {Number} magnitude
  * @param {Object} options
  */
-function normalizeTickInterval(interval, multiples, magnitude, allowDecimals, preventExceed) {
+Highcharts.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimals, preventExceed) {
 	var normalized, 
 		i,
 		retInterval = interval;
@@ -530,7 +530,7 @@ function normalizeTickInterval(interval, multiples, magnitude, allowDecimals, pr
 	retInterval *= magnitude;
 	
 	return retInterval;
-}
+};
 
 
 /**
@@ -7130,7 +7130,7 @@ Axis.prototype = {
 		// for linear axes, get magnitude and normalize the interval
 		if (!isDatetimeAxis && !isLog) { // linear
 			if (!tickIntervalOption) {
-				axis.tickInterval = normalizeTickInterval(
+				axis.tickInterval = Highcharts.normalizeTickInterval(
 					axis.tickInterval, 
 					null, 
 					Highcharts.getMagnitude(axis.tickInterval), 
@@ -8367,7 +8367,7 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 			(realMax - realMin) * tickPixelIntervalOption / (totalPixelLength || 1)
 		);
 		
-		interval = normalizeTickInterval(
+		interval = Highcharts.normalizeTickInterval(
 			interval, 
 			null, 
 			Highcharts.getMagnitude(interval)

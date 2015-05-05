@@ -441,7 +441,7 @@ Highcharts.getMagnitude = function (num) {
  * @param {Number} magnitude
  * @param {Object} options
  */
-function normalizeTickInterval(interval, multiples, magnitude, allowDecimals, preventExceed) {
+Highcharts.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimals, preventExceed) {
 	var normalized, 
 		i,
 		retInterval = interval;
@@ -477,7 +477,7 @@ function normalizeTickInterval(interval, multiples, magnitude, allowDecimals, pr
 	retInterval *= magnitude;
 	
 	return retInterval;
-}
+};
 
 
 /**

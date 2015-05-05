@@ -77,7 +77,7 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 			(realMax - realMin) * tickPixelIntervalOption / (totalPixelLength || 1)
 		);
 		
-		interval = normalizeTickInterval(
+		interval = Highcharts.normalizeTickInterval(
 			interval, 
 			null, 
 			Highcharts.getMagnitude(interval)
