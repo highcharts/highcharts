@@ -520,6 +520,7 @@ Chart.prototype = {
 	getChartSize: function () {
 		var chart = this,
 			defined = Highcharts.defined,
+			adapterRun = HighchartsAdapter.adapterRun,
 			optionsChart = chart.options.chart,
 			widthOption = optionsChart.width,
 			heightOption = optionsChart.height,
@@ -736,6 +737,7 @@ Chart.prototype = {
 		var chart = this,
 			optionsChart = chart.options.chart,
 			renderTo = chart.renderTo,
+			adapterRun = HighchartsAdapter.adapterRun,
 			width = optionsChart.width || adapterRun(renderTo, 'width'),
 			height = optionsChart.height || adapterRun(renderTo, 'height'),
 			target = e ? e.target : window, // #805 - MooTools doesn't supply e
