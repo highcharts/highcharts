@@ -354,7 +354,7 @@ Highcharts.dateFormat = function (format, timestamp, capitalize) {
 /** 
  * Format a single variable. Similar to sprintf, without the % prefix.
  */
-function formatSingle(format, val) {
+Highcharts.formatSingle = function (format, val) {
 	var floatRegex = /f$/,
 		decRegex = /\.([0-9])/,
 		lang = Highcharts.defaultOptions.lang,
@@ -375,7 +375,7 @@ function formatSingle(format, val) {
 		val = Highcharts.dateFormat(format, val);
 	}
 	return val;
-}
+};
 
 /**
  * Format a string according to a subset of the rules of Python's String.format method.
@@ -409,7 +409,7 @@ function format(str, ctx) {
 
 			// Format the replacement
 			if (valueAndFormat.length) {
-				val = formatSingle(valueAndFormat.join(':'), val);
+				val = Highcharts.formatSingle(valueAndFormat.join(':'), val);
 			}
 
 			// Push the result and advance the cursor
