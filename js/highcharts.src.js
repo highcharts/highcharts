@@ -1147,26 +1147,27 @@ H.pathAnim = {
 	});
 	
 	return (window.HighchartsAdapter = HighchartsAdapter);
-}(Highcharts, window.jQuery));
-
-
+}(Highcharts, window.jQuery));(function (H) {
 // check for a custom HighchartsAdapter defined prior to this file
 var globalAdapter = window.HighchartsAdapter,
 	adapter = globalAdapter || {};
 	
 // Initialize the adapter
 if (globalAdapter) {
-	globalAdapter.init.call(globalAdapter, Highcharts.pathAnim);
+	globalAdapter.init.call(globalAdapter, H.pathAnim);
 }
 
 
 // Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
 // and all the utility functions will be null. In that case they are populated by the
 // default adapters below.
-Highcharts.each = adapter.each;
-Highcharts.map = adapter.map;
-Highcharts.addEvent = adapter.addEvent;
-Highcharts.removeEvent = adapter.removeEvent;
+H.each = adapter.each;
+H.map = adapter.map;
+H.addEvent = adapter.addEvent;
+H.removeEvent = adapter.removeEvent;
+
+    return (Highcharts = H);
+}(Highcharts));
 /* ****************************************************************************
  * Handle the options                                                         *
  *****************************************************************************/
@@ -9479,7 +9480,7 @@ Pointer.prototype = {
 
 		// Get mouse position
 		if (!chartPosition) {
-			this.chartPosition = chartPosition = Highcharts.offset(this.chart.container);
+			this.chartPosition = chartPosition = HighchartsAdapter.offset(this.chart.container);
 		}
 
 		// chartX and chartY
