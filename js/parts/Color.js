@@ -19,7 +19,7 @@ var Color = function (input) {
 		var pInt = Highcharts.pInt;
 		// Gradients
 		if (input && input.stops) {
-			stops = map(input.stops, function (stop) {
+			stops = HighchartsAdapter.map(input.stops, function (stop) {
 				return Color(stop[1]);
 			});
 

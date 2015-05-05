@@ -1,5 +1,4 @@
 var each = Highcharts.each,
-	map = Highcharts.map,
 	defaultPlotOptions = Highcharts.getOptions().plotOptions,
 	Axis = Highcharts.Axis,
 	Tick = Highcharts.Tick,

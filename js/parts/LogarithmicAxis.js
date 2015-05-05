@@ -83,7 +83,7 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 			Highcharts.getMagnitude(interval)
 		);
 		
-		positions = map(axis.getLinearTickPositions(
+		positions = HighchartsAdapter.map(axis.getLinearTickPositions(
 			interval, 
 			realMin,
 			realMax	

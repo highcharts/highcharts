@@ -14,7 +14,6 @@
 
 (function (Highcharts) {
 var each = Highcharts.each,
-	map = Highcharts.map,
 	defaultPlotOptions = Highcharts.getOptions().plotOptions,
 	Axis = Highcharts.Axis,
 	Tick = Highcharts.Tick,
@@ -374,7 +373,7 @@ var radialAxisMixin = {
 			}
 			
 			// Convert percentages to pixel values
-			radii = map(radii, function (radius) {
+			radii = HighchartsAdapter.map(radii, function (radius) {
 				if (percentRegex.test(radius)) {
 					radius = (Highcharts.pInt(radius, 10) * fullRadius) / 100;
 				}

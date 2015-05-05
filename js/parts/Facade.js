@@ -15,7 +15,6 @@ Highcharts.extend(Highcharts, {
 	addEvent: addEvent,
 	removeEvent: removeEvent,
 	each: each,
-	map: map,
 	canvas: Highcharts.useCanVG,
 	vml: !Highcharts.svg && !Highcharts.useCanVG,
 	product: '@product.name@',

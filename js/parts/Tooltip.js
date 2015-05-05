@@ -191,7 +191,7 @@ Tooltip.prototype = {
 			];
 		}
 
-		return map(ret, Math.round);
+		return HighchartsAdapter.map(ret, Math.round);
 	},
 	
 	/**
@@ -524,7 +524,7 @@ Tooltip.prototype = {
      * abstracting this functionality allows to easily overwrite and extend it. 
 	 */
 	bodyFormatter: function (items) {
-        return map(items, function (item) {
+        return HighchartsAdapter.map(items, function (item) {
             var tooltipOptions = item.series.tooltipOptions;
             return (tooltipOptions.pointFormatter || item.point.tooltipFormatter).call(item.point, tooltipOptions.pointFormat);
         });

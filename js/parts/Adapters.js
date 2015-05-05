@@ -16,7 +16,6 @@ if (globalAdapter) {
 // default adapters below.
 var adapterRun = adapter.adapterRun,
 	each = Highcharts.each = adapter.each,
-	map = adapter.map,
 	addEvent = adapter.addEvent,
 	removeEvent = adapter.removeEvent,
 	fireEvent = adapter.fireEvent,

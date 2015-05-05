@@ -1165,7 +1165,6 @@ if (globalAdapter) {
 // default adapters below.
 var adapterRun = adapter.adapterRun,
 	each = Highcharts.each = adapter.each,
-	map = adapter.map,
 	addEvent = adapter.addEvent,
 	removeEvent = adapter.removeEvent,
 	fireEvent = adapter.fireEvent,
@@ -1605,7 +1604,7 @@ var Color = function (input) {
 		var pInt = Highcharts.pInt;
 		// Gradients
 		if (input && input.stops) {
-			stops = map(input.stops, function (stop) {
+			stops = HighchartsAdapter.map(input.stops, function (stop) {
 				return Color(stop[1]);
 			});
 
@@ -8383,7 +8382,7 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 			Highcharts.getMagnitude(interval)
 		);
 		
-		positions = map(axis.getLinearTickPositions(
+		positions = HighchartsAdapter.map(axis.getLinearTickPositions(
 			interval, 
 			realMin,
 			realMax	
@@ -8592,7 +8591,7 @@ Tooltip.prototype = {
 			];
 		}
 
-		return map(ret, Math.round);
+		return HighchartsAdapter.map(ret, Math.round);
 	},
 	
 	/**
@@ -8925,7 +8924,7 @@ Tooltip.prototype = {
      * abstracting this functionality allows to easily overwrite and extend it. 
 	 */
 	bodyFormatter: function (items) {
-        return map(items, function (item) {
+        return HighchartsAdapter.map(items, function (item) {
             var tooltipOptions = item.series.tooltipOptions;
             return (tooltipOptions.pointFormatter || item.point.tooltipFormatter).call(item.point, tooltipOptions.pointFormat);
         });
@@ -9747,7 +9746,7 @@ Highcharts.extend(Highcharts.Pointer.prototype, {
 		}
 		
 		// Normalize each touch
-		map(touches, function (e) {
+		HighchartsAdapter.map(touches, function (e) {
 			return self.normalize(e);
 		});
 		
@@ -19490,7 +19489,6 @@ Highcharts.extend(Highcharts, {
 	addEvent: addEvent,
 	removeEvent: removeEvent,
 	each: each,
-	map: map,
 	canvas: Highcharts.useCanVG,
 	vml: !Highcharts.svg && !Highcharts.useCanVG,
 	product: 'Highmaps',

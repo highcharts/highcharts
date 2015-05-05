@@ -269,7 +269,7 @@ var radialAxisMixin = {
 			}
 			
 			// Convert percentages to pixel values
-			radii = map(radii, function (radius) {
+			radii = HighchartsAdapter.map(radii, function (radius) {
 				if (percentRegex.test(radius)) {
 					radius = (Highcharts.pInt(radius, 10) * fullRadius) / 100;
 				}
