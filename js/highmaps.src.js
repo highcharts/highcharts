@@ -19499,7 +19499,6 @@ Highcharts.extend(Highcharts, {
 	// Various
 	getOptions: getOptions,
 	setOptions: setOptions,
-	each: each,
 	canvas: Highcharts.useCanVG,
 	vml: !Highcharts.svg && !Highcharts.useCanVG,
 	product: 'Highmaps',
