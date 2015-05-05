@@ -85,7 +85,7 @@ var radialAxisMixin = {
 	 */
 	setOptions: function (userOptions) {
 		
-		var options = this.options = merge(
+		var options = this.options = Highcharts.merge(
 			this.defaultOptions,
 			this.defaultRadialOptions,
 			userOptions
@@ -404,7 +404,7 @@ Highcharts.wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		//extend(this, userOptions.isX ? radialAxisMixin : radialAxisMixin);
 		extend(this, radialAxisMixin);
 		isCircular = isX;
-		this.defaultRadialOptions = isX ? this.defaultRadialXOptions : merge(this.defaultYAxisOptions, this.defaultRadialYOptions);
+		this.defaultRadialOptions = isX ? this.defaultRadialXOptions : Highcharts.merge(this.defaultYAxisOptions, this.defaultRadialYOptions);
 		
 	}
 	

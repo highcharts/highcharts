@@ -3,7 +3,7 @@
  *****************************************************************************/
 
 // 1 - set default options
-defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
+defaultPlotOptions.waterfall = Highcharts.merge(defaultPlotOptions.column, {
 	lineWidth: 1,
 	lineColor: '#333',
 	dashStyle: 'dot',
@@ -188,7 +188,7 @@ Highcharts.seriesTypes.waterfall = Highcharts.extendClass(Highcharts.seriesTypes
 			stateOptions = options.states,
 			upColor = options.upColor || series.color,
 			hoverColor = Highcharts.Color(upColor).brighten(0.1).get(),
-			seriesDownPointAttr = merge(series.pointAttr),
+			seriesDownPointAttr = Highcharts.merge(series.pointAttr),
 			upColorProp = series.upColorProp;
 
 		seriesDownPointAttr[''][upColorProp] = upColor;

@@ -14,7 +14,6 @@
 
 (function (Highcharts) {
 var each = Highcharts.each,
-	merge = Highcharts.merge,
 	map = Highcharts.map,
 	defaultPlotOptions = Highcharts.getOptions().plotOptions,
 	Axis = Highcharts.Axis,
@@ -42,6 +41,7 @@ Highcharts.extend(Pane.prototype, {
 	init: function (options, chart, firstAxis) {
 		var pane = this,
 			backgroundOption,
+			merge = Highcharts.merge,
 			defaultOptions = pane.defaultOptions;
 		
 		pane.chart = chart;
@@ -190,7 +190,7 @@ var radialAxisMixin = {
 	 */
 	setOptions: function (userOptions) {
 		
-		var options = this.options = merge(
+		var options = this.options = Highcharts.merge(
 			this.defaultOptions,
 			this.defaultRadialOptions,
 			userOptions
@@ -509,7 +509,7 @@ Highcharts.wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		//extend(this, userOptions.isX ? radialAxisMixin : radialAxisMixin);
 		extend(this, radialAxisMixin);
 		isCircular = isX;
-		this.defaultRadialOptions = isX ? this.defaultRadialXOptions : merge(this.defaultYAxisOptions, this.defaultRadialYOptions);
+		this.defaultRadialOptions = isX ? this.defaultRadialXOptions : Highcharts.merge(this.defaultYAxisOptions, this.defaultRadialYOptions);
 		
 	}
 	
@@ -649,7 +649,7 @@ Highcharts.wrap(tickProto, 'getMarkPath', function (proceed, x, y, tickLength, t
 /**
  * Extend the default options with map options
  */
-defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
+defaultPlotOptions.arearange = Highcharts.merge(defaultPlotOptions.area, {
 	lineWidth: 1,
 	marker: null,
 	threshold: null,
@@ -902,7 +902,7 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
  * The AreaSplineRangeSeries class
  */
 
-defaultPlotOptions.areasplinerange = merge(defaultPlotOptions.arearange);
+defaultPlotOptions.areasplinerange = Highcharts.merge(defaultPlotOptions.arearange);
 
 /**
  * AreaSplineRangeSeries object
@@ -919,7 +919,7 @@ Highcharts.seriesTypes.areasplinerange = Highcharts.extendClass(Highcharts.serie
 	/**
 	 * The ColumnRangeSeries class
 	 */
-	defaultPlotOptions.columnrange = merge(defaultPlotOptions.column, defaultPlotOptions.arearange, {
+	defaultPlotOptions.columnrange = Highcharts.merge(defaultPlotOptions.column, defaultPlotOptions.arearange, {
 		lineWidth: 1,
 		pointRange: null
 	});
@@ -984,7 +984,7 @@ Highcharts.seriesTypes.areasplinerange = Highcharts.extendClass(Highcharts.serie
 /**
  * Extend the default options
  */
-defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
+defaultPlotOptions.gauge = Highcharts.merge(defaultPlotOptions.line, {
 	dataLabels: {
 		enabled: true,
 		defer: false,
@@ -1062,7 +1062,7 @@ var GaugeSeries = {
 		
 		each(series.points, function (point) {
 			
-			var dialOptions = merge(options.dial, point.dial),
+			var dialOptions = Highcharts.merge(options.dial, point.dial),
 				radius = (pInt(pick(dialOptions.radius, 80)) * center[2]) / 200,
 				baseLength = (pInt(pick(dialOptions.baseLength, 70)) * radius) / 100,
 				rearLength = (pInt(pick(dialOptions.rearLength, 10)) * radius) / 100,
@@ -1123,7 +1123,7 @@ var GaugeSeries = {
 			var graphic = point.graphic,
 				shapeArgs = point.shapeArgs,
 				d = shapeArgs.d,
-				dialOptions = merge(options.dial, point.dial); // #1233
+				dialOptions = Highcharts.merge(options.dial, point.dial); // #1233
 			
 			if (graphic) {
 				graphic.animate(shapeArgs);
@@ -1223,7 +1223,7 @@ Highcharts.seriesTypes.gauge = Highcharts.extendClass(Highcharts.seriesTypes.lin
  *****************************************************************************/
 
 // Set default options
-defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
+defaultPlotOptions.boxplot = Highcharts.merge(defaultPlotOptions.column, {
 	fillColor: '#FFFFFF',
 	lineWidth: 1,
 	//medianColor: null,
@@ -1494,7 +1494,7 @@ Highcharts.seriesTypes.boxplot = Highcharts.extendClass(Highcharts.seriesTypes.c
  *****************************************************************************/
 
 // 1 - set default options
-defaultPlotOptions.errorbar = merge(defaultPlotOptions.boxplot, {
+defaultPlotOptions.errorbar = Highcharts.merge(defaultPlotOptions.boxplot, {
 	color: '#000000',
 	grouping: false,
 	linkedTo: ':previous',
@@ -1533,7 +1533,7 @@ Highcharts.seriesTypes.errorbar = Highcharts.extendClass(Highcharts.seriesTypes.
  *****************************************************************************/
 
 // 1 - set default options
-defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
+defaultPlotOptions.waterfall = Highcharts.merge(defaultPlotOptions.column, {
 	lineWidth: 1,
 	lineColor: '#333',
 	dashStyle: 'dot',
@@ -1718,7 +1718,7 @@ Highcharts.seriesTypes.waterfall = Highcharts.extendClass(Highcharts.seriesTypes
 			stateOptions = options.states,
 			upColor = options.upColor || series.color,
 			hoverColor = Highcharts.Color(upColor).brighten(0.1).get(),
-			seriesDownPointAttr = merge(series.pointAttr),
+			seriesDownPointAttr = Highcharts.merge(series.pointAttr),
 			upColorProp = series.upColorProp;
 
 		seriesDownPointAttr[''][upColorProp] = upColor;
@@ -1791,7 +1791,7 @@ Highcharts.seriesTypes.waterfall = Highcharts.extendClass(Highcharts.seriesTypes
 /**
  * Set the default options for polygon
  */
-defaultPlotOptions.polygon = merge(defaultPlotOptions.scatter, {
+defaultPlotOptions.polygon = Highcharts.merge(defaultPlotOptions.scatter, {
 	marker: {
 		enabled: false
 	}

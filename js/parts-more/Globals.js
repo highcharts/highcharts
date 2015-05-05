@@ -1,5 +1,4 @@
 var each = Highcharts.each,
-	merge = Highcharts.merge,
 	map = Highcharts.map,
 	defaultPlotOptions = Highcharts.getOptions().plotOptions,
 	Axis = Highcharts.Axis,

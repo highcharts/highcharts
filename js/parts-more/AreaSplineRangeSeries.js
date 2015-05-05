@@ -2,7 +2,7 @@
  * The AreaSplineRangeSeries class
  */
 
-defaultPlotOptions.areasplinerange = merge(defaultPlotOptions.arearange);
+defaultPlotOptions.areasplinerange = Highcharts.merge(defaultPlotOptions.arearange);
 
 /**
  * AreaSplineRangeSeries object

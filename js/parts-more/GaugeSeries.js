@@ -7,7 +7,7 @@
 /**
  * Extend the default options
  */
-defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
+defaultPlotOptions.gauge = Highcharts.merge(defaultPlotOptions.line, {
 	dataLabels: {
 		enabled: true,
 		defer: false,
@@ -85,7 +85,7 @@ var GaugeSeries = {
 		
 		each(series.points, function (point) {
 			
-			var dialOptions = merge(options.dial, point.dial),
+			var dialOptions = Highcharts.merge(options.dial, point.dial),
 				radius = (pInt(pick(dialOptions.radius, 80)) * center[2]) / 200,
 				baseLength = (pInt(pick(dialOptions.baseLength, 70)) * radius) / 100,
 				rearLength = (pInt(pick(dialOptions.rearLength, 10)) * radius) / 100,
@@ -146,7 +146,7 @@ var GaugeSeries = {
 			var graphic = point.graphic,
 				shapeArgs = point.shapeArgs,
 				d = shapeArgs.d,
-				dialOptions = merge(options.dial, point.dial); // #1233
+				dialOptions = Highcharts.merge(options.dial, point.dial); // #1233
 			
 			if (graphic) {
 				graphic.animate(shapeArgs);

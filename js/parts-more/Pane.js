@@ -16,6 +16,7 @@ Highcharts.extend(Pane.prototype, {
 	init: function (options, chart, firstAxis) {
 		var pane = this,
 			backgroundOption,
+			merge = Highcharts.merge,
 			defaultOptions = pane.defaultOptions;
 		
 		pane.chart = chart;
