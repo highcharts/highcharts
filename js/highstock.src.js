@@ -599,7 +599,7 @@ Highcharts.arrayMax = function (data) {
  * @param {Object} The object to destroy properties on
  * @param {Object} Exception, do not destroy this property, only delete it.
  */
-function destroyObjectProperties(obj, except) {
+Highcharts.destroyObjectProperties = function (obj, except) {
 	var n;
 	for (n in obj) {
 		// If the object is non-null and destroy is defined
@@ -611,7 +611,7 @@ function destroyObjectProperties(obj, except) {
 		// Delete the property from the object.
 		delete obj[n];
 	}
-}
+};
 
 
 /**
@@ -2993,7 +2993,7 @@ SVGRenderer.prototype = {
 		renderer.boxWrapper = renderer.boxWrapper.destroy();
 
 		// Call destroy on all gradient elements
-		destroyObjectProperties(renderer.gradients || {});
+		Highcharts.destroyObjectProperties(renderer.gradients || {});
 		renderer.gradients = null;
 
 		// Defs are null in VMLRenderer
@@ -6105,7 +6105,7 @@ Tick.prototype = {
 	 * Destructor for the tick prototype
 	 */
 	destroy: function () {
-		destroyObjectProperties(this, this.axis);
+		Highcharts.destroyObjectProperties(this, this.axis);
 	}
 };
 
@@ -6288,7 +6288,7 @@ Highcharts.PlotLineOrBand.prototype = {
 		Highcharts.erase(this.axis.plotLinesAndBands, this);
 		
 		delete this.axis;
-		destroyObjectProperties(this);
+		Highcharts.destroyObjectProperties(this);
 	}
 };
 
@@ -8442,6 +8442,7 @@ Axis.prototype = {
 			stacks = axis.stacks,
 			stackKey,
 			plotLinesAndBands = axis.plotLinesAndBands,
+			destroyObjectProperties = Highcharts.destroyObjectProperties,
 			i;
 
 		// Remove the events
@@ -14832,7 +14833,7 @@ function StackItem(axis, options, isNegative, x, stackOption) {
 
 StackItem.prototype = {
 	destroy: function () {
-		destroyObjectProperties(this, this.axis);
+		Highcharts.destroyObjectProperties(this, this.axis);
 	},
 
 	/**
@@ -21759,7 +21760,7 @@ Scroller.prototype = {
 
 		// Destroy elements in collection
 		each([scroller.scrollbarButtons, scroller.handles, scroller.elementsToDestroy], function (coll) {
-			destroyObjectProperties(coll);
+			Highcharts.destroyObjectProperties(coll);
 		});
 	}
 };
@@ -22479,7 +22480,7 @@ RangeSelector.prototype = {
 		removeEvent(chart, 'resize', blurInputs);
 
 		// Destroy elements in collections
-		destroyObjectProperties(this.buttons);
+		Highcharts.destroyObjectProperties(this.buttons);
 		
 		// Clear input element events
 		if (minInput) {

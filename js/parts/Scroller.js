@@ -1070,7 +1070,7 @@ Scroller.prototype = {
 
 		// Destroy elements in collection
 		each([scroller.scrollbarButtons, scroller.handles, scroller.elementsToDestroy], function (coll) {
-			destroyObjectProperties(coll);
+			Highcharts.destroyObjectProperties(coll);
 		});
 	}
 };

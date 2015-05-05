@@ -359,7 +359,7 @@ Tick.prototype = {
 	 * Destructor for the tick prototype
 	 */
 	destroy: function () {
-		destroyObjectProperties(this, this.axis);
+		Highcharts.destroyObjectProperties(this, this.axis);
 	}
 };
 

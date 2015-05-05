@@ -177,7 +177,7 @@ Highcharts.PlotLineOrBand.prototype = {
 		Highcharts.erase(this.axis.plotLinesAndBands, this);
 		
 		delete this.axis;
-		destroyObjectProperties(this);
+		Highcharts.destroyObjectProperties(this);
 	}
 };
 

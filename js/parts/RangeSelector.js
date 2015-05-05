@@ -642,7 +642,7 @@ RangeSelector.prototype = {
 		removeEvent(chart, 'resize', blurInputs);
 
 		// Destroy elements in collections
-		destroyObjectProperties(this.buttons);
+		Highcharts.destroyObjectProperties(this.buttons);
 		
 		// Clear input element events
 		if (minInput) {

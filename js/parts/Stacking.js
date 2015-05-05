@@ -41,7 +41,7 @@ function StackItem(axis, options, isNegative, x, stackOption) {
 
 StackItem.prototype = {
 	destroy: function () {
-		destroyObjectProperties(this, this.axis);
+		Highcharts.destroyObjectProperties(this, this.axis);
 	},
 
 	/**

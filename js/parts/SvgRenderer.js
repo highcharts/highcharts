@@ -1288,7 +1288,7 @@ SVGRenderer.prototype = {
 		renderer.boxWrapper = renderer.boxWrapper.destroy();
 
 		// Call destroy on all gradient elements
-		destroyObjectProperties(renderer.gradients || {});
+		Highcharts.destroyObjectProperties(renderer.gradients || {});
 		renderer.gradients = null;
 
 		// Defs are null in VMLRenderer

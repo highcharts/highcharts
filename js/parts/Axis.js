@@ -2066,6 +2066,7 @@ Axis.prototype = {
 			stacks = axis.stacks,
 			stackKey,
 			plotLinesAndBands = axis.plotLinesAndBands,
+			destroyObjectProperties = Highcharts.destroyObjectProperties,
 			i;
 
 		// Remove the events
