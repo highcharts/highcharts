@@ -77,7 +77,7 @@ Pointer.prototype = {
 
 		// Get mouse position
 		if (!chartPosition) {
-			this.chartPosition = chartPosition = Highcharts.offset(this.chart.container);
+			this.chartPosition = chartPosition = HighchartsAdapter.offset(this.chart.container);
 		}
 
 		// chartX and chartY
