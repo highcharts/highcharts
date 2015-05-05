@@ -15795,7 +15795,7 @@ var AreaSeries = extendClass(Series, {
 
 		for (i = 0; i < points.length; i++) {
 			isNull = points[i].isNull;
-			plotX = points[i].plotX;
+			plotX = pick(points[i].rectPlotX, points[i].plotX);
 			plotY = points[i].plotY;
 			yBottom = pick(points[i].yBottom, translatedThreshold);
 
@@ -15805,7 +15805,7 @@ var AreaSeries = extendClass(Series, {
 					addDummyPoints(i, i - 1, plotX, 'left');
 				}
 
-				if (points[i].plotY !== undefined) { // Undefined for null point when stacking is false and connectNulls true
+				if (!(isNull && !stacking && connectNulls)) { // Skip null point when stacking is false and connectNulls true
 					graphPoints.push(points[i]);
 					topPoints.push(points[i]);
 					bottomPoints.push({
