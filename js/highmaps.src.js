@@ -483,9 +483,9 @@ Highcharts.format = function (str, ctx) {
 /**
  * Get the magnitude of a number
  */
-function getMagnitude(num) {
+Highcharts.getMagnitude = function (num) {
 	return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
-}
+};
 
 /**
  * Take an interval and normalize it to multiples of 1, 2, 2.5 and 5
@@ -7133,7 +7133,7 @@ Axis.prototype = {
 				axis.tickInterval = normalizeTickInterval(
 					axis.tickInterval, 
 					null, 
-					getMagnitude(axis.tickInterval), 
+					Highcharts.getMagnitude(axis.tickInterval), 
 					// If the tick interval is between 0.5 and 5 and the axis max is in the order of
 					// thousands, chances are we are dealing with years. Don't allow decimals. #3363.
 					pick(options.allowDecimals, !(axis.tickInterval > 0.5 && axis.tickInterval < 5 && axis.max > 1000 && axis.max < 9999)),
@@ -8370,7 +8370,7 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 		interval = normalizeTickInterval(
 			interval, 
 			null, 
-			getMagnitude(interval)
+			Highcharts.getMagnitude(interval)
 		);
 		
 		positions = map(axis.getLinearTickPositions(

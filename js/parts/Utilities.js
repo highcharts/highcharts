@@ -430,9 +430,9 @@ Highcharts.format = function (str, ctx) {
 /**
  * Get the magnitude of a number
  */
-function getMagnitude(num) {
+Highcharts.getMagnitude = function (num) {
 	return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
-}
+};
 
 /**
  * Take an interval and normalize it to multiples of 1, 2, 2.5 and 5

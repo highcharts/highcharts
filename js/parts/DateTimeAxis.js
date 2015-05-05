@@ -198,7 +198,7 @@ Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) 
 	count = normalizeTickInterval(
 		tickInterval / interval, 
 		multiples,
-		unit[0] === 'year' ? Math.max(getMagnitude(tickInterval / interval), 1) : 1 // #1913, #2360
+		unit[0] === 'year' ? Math.max(Highcharts.getMagnitude(tickInterval / interval), 1) : 1 // #1913, #2360
 	);
 	
 	return {
