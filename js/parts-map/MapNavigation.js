@@ -52,7 +52,7 @@ Highcharts.extend(Chart.prototype, {
 	 * in Highcharts, perhaps it should be elevated to a common utility function.
 	 */
 	fitToBox: function (inner, outer) {
-		each([['x', 'width'], ['y', 'height']], function (dim) {
+		Highcharts.each([['x', 'width'], ['y', 'height']], function (dim) {
 			var pos = dim[0],
 				size = dim[1];
 

@@ -80,7 +80,7 @@ var MapAreaPoint = Highcharts.extendClass(Point, {
 			method = vis ? 'show' : 'hide';
 
 		// Show and hide associated elements
-		each(['graphic', 'dataLabel'], function (key) {
+		Highcharts.each(['graphic', 'dataLabel'], function (key) {
 			if (point[key]) {
 				point[key][method]();
 			}
@@ -187,7 +187,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 			hasBox;
 		
 		// Find the bounding box
-		each(paths || [], function (point) {
+		Highcharts.each(paths || [], function (point) {
 
 			if (point.path) {
 				if (typeof point.path === 'string') {
@@ -321,6 +321,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 			mapData = options.mapData,
 			joinBy = options.joinBy,
 			joinByNull = joinBy === null,
+			each = Highcharts.each,
 			dataUsed = [],
 			mapPoint,
 			transform,
@@ -437,7 +438,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 
 		series.generatePoints();
 		
-		each(series.data, function (point) {
+		Highcharts.each(series.data, function (point) {
 		
 			// Record the middle point (loosely based on centroid), determined
 			// by the middleX and middleY options.
@@ -470,6 +471,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 			group = series.group,
 			chart = series.chart,
 			renderer = chart.renderer,
+			each = Highcharts.each,
 			scaleX,
 			scaleY,
 			translateX,
@@ -686,7 +688,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 			};
 			
 			// TODO: Animate this.group instead
-			each(this.points, function (point) {
+			Highcharts.each(this.points, function (point) {
 
 				point.graphic
 					.attr(level.shapeArgs)

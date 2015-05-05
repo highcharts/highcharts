@@ -105,7 +105,7 @@ Highcharts.extend(ColorAxis.prototype, {
 		this.dataClasses = dataClasses = [];
 		this.legendItems = [];
 
-		each(userOptions.dataClasses, function (dataClass, i) {
+		Highcharts.each(userOptions.dataClasses, function (dataClass, i) {
 			var colors;
 
 			dataClass = Highcharts.merge(dataClass);
@@ -134,7 +134,7 @@ Highcharts.extend(ColorAxis.prototype, {
 			[0, this.options.minColor],
 			[1, this.options.maxColor]
 		];
-		each(this.stops, function (stop) {
+		Highcharts.each(this.stops, function (stop) {
 			stop.color = Color(stop[1]);
 		});
 	},
@@ -356,7 +356,7 @@ Highcharts.extend(ColorAxis.prototype, {
 	},
 
 	update: function (newOptions, redraw) {
-		each(this.series, function (series) {
+		Highcharts.each(this.series, function (series) {
 			series.isDirtyData = true; // Needed for Axis.update when choropleth colors change
 		});
 		Axis.prototype.update.call(this, newOptions, redraw);
@@ -379,7 +379,7 @@ Highcharts.extend(ColorAxis.prototype, {
 			name;
 
 		if (!legendItems.length) {
-			each(this.dataClasses, function (dataClass, i) {
+			Highcharts.each(this.dataClasses, function (dataClass, i) {
 				var vis = true,
 					from = dataClass.from,
 					to = dataClass.to;
@@ -410,8 +410,8 @@ Highcharts.extend(ColorAxis.prototype, {
 					setState: Highcharts.noop,
 					setVisible: function () {
 						vis = this.visible = !vis;
-						each(axis.series, function (series) {
-							each(series.points, function (point) {
+						Highcharts.each(axis.series, function (series) {
+							Highcharts.each(series.points, function (point) {
 								if (point.dataClass === i) {
 									point.setVisible(vis);
 								}
@@ -431,7 +431,7 @@ Highcharts.extend(ColorAxis.prototype, {
 /**
  * Handle animation of the color attributes directly
  */
-each(['fill', 'stroke'], function (prop) {
+Highcharts.each(['fill', 'stroke'], function (prop) {
 	HighchartsAdapter.addAnimSetter(prop, function (fx) {
 		fx.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(fx.start), Color(fx.end), fx.pos));
 	});
@@ -474,7 +474,7 @@ Highcharts.wrap(Legend.prototype, 'getAllItems', function (proceed) {
 		}
 
 		// Don't add the color axis' series
-		each(colorAxis.series, function (series) {
+		Highcharts.each(colorAxis.series, function (series) {
 			series.options.showInLegend = false;
 		});
 	}

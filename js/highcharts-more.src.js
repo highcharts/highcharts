@@ -13,8 +13,7 @@
 /*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
 
 (function (Highcharts) {
-var each = Highcharts.each,
-	defaultPlotOptions = Highcharts.getOptions().plotOptions,
+var defaultPlotOptions = Highcharts.getOptions().plotOptions,
 	Axis = Highcharts.Axis,
 	Tick = Highcharts.Tick,
 	Point = Highcharts.Point,
@@ -56,7 +55,7 @@ Highcharts.extend(Pane.prototype, {
 		// To avoid having weighty logic to place, update and remove the backgrounds,
 		// push them to the first axis' plot bands and borrow the existing logic there.
 		if (backgroundOption) {
-			each([].concat(Highcharts.splat(backgroundOption)).reverse(), function (config) {
+			Highcharts.each([].concat(Highcharts.splat(backgroundOption)).reverse(), function (config) {
 				var backgroundColor = config.backgroundColor,  // if defined, replace the old one (specific for gradients)
 					axisUserOptions = firstAxis.userOptions;
 				config = merge(pane.defaultBackgroundOptions, config);
@@ -416,6 +415,7 @@ var radialAxisMixin = {
 			center = axis.center,
 			chart = axis.chart,
 			end = axis.getPosition(value),
+			each = Highcharts.each,
 			xAxis,
 			xy,
 			tickPositions,
@@ -702,7 +702,7 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 	getSegments: function () {
 		var series = this;
 
-		each(series.points, function (point) {
+		Highcharts.each(series.points, function (point) {
 			if (!series.options.connectNulls && (point.low === null || point.high === null)) {
 				point.y = null;
 			} else if (point.low === null && point.high !== null) {
@@ -717,6 +717,7 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 	 */
 	translate: function () {
 		var series = this,
+			each = Highcharts.each,
 			yAxis = series.yAxis;
 
 		Highcharts.seriesTypes.area.prototype.translate.apply(series);
@@ -939,7 +940,7 @@ Highcharts.seriesTypes.areasplinerange = Highcharts.extendClass(Highcharts.serie
 			colProto.translate.apply(series);
 
 			// Set plotLow and plotHigh
-			each(series.points, function (point) {
+			Highcharts.each(series.points, function (point) {
 				var shapeArgs = point.shapeArgs,
 					minPointLength = series.options.minPointLength,
 					heightDifference,
@@ -1059,7 +1060,7 @@ var GaugeSeries = {
 			
 		series.generatePoints();
 		
-		each(series.points, function (point) {
+		Highcharts.each(series.points, function (point) {
 			
 			var dialOptions = Highcharts.merge(options.dial, point.dial),
 				radius = (pInt(pick(dialOptions.radius, 80)) * center[2]) / 200,
@@ -1117,7 +1118,7 @@ var GaugeSeries = {
 			pivotOptions = options.pivot,
 			renderer = series.chart.renderer;
 		
-		each(series.points, function (point) {
+		Highcharts.each(series.points, function (point) {
 			
 			var graphic = point.graphic,
 				shapeArgs = point.shapeArgs,
@@ -1164,7 +1165,7 @@ var GaugeSeries = {
 		var series = this;
 
 		if (!init) {
-			each(series.points, function (point) {
+			Highcharts.each(series.points, function (point) {
 				var graphic = point.graphic;
 
 				if (graphic) {
@@ -1279,6 +1280,7 @@ Highcharts.seriesTypes.boxplot = Highcharts.extendClass(Highcharts.seriesTypes.c
 	translate: function () {
 		var series = this,
 			yAxis = series.yAxis,
+			each = Highcharts.each,
 			pointArrayMap = series.pointArrayMap;
 
 		Highcharts.seriesTypes.column.prototype.translate.apply(series);
@@ -1329,7 +1331,7 @@ Highcharts.seriesTypes.boxplot = Highcharts.extendClass(Highcharts.seriesTypes.c
 			whiskerLength = parseInt(series.options.whiskerLength, 10) / 100;
 
 
-		each(points, function (point) {
+		Highcharts.each(points, function (point) {
 
 			graphic = point.graphic;
 			shapeArgs = point.shapeArgs; // the box
@@ -1724,7 +1726,7 @@ Highcharts.seriesTypes.waterfall = Highcharts.extendClass(Highcharts.seriesTypes
 		seriesDownPointAttr.hover[upColorProp] = stateOptions.hover.upColor || hoverColor;
 		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
 
-		each(series.points, function (point) {
+		Highcharts.each(series.points, function (point) {
 			if (!point.options.color) {
 				// Up color
 				if (point.y > 0) {
@@ -1936,7 +1938,7 @@ Highcharts.seriesTypes.bubble = Highcharts.extendClass(Highcharts.seriesTypes.sc
 		var animation = this.options.animation;
 		
 		if (!init) { // run the animation
-			each(this.points, function (point) {
+			Highcharts.each(this.points, function (point) {
 				var graphic = point.graphic,
 					shapeArgs = point.shapeArgs;
 
@@ -2034,6 +2036,7 @@ Axis.prototype.beforePadding = function () {
 		axisLength = this.len,
 		chart = this.chart,
 		pick = Highcharts.pick,
+		each = Highcharts.each,
 		pxMin = 0, 
 		pxMax = axisLength,
 		isXAxis = this.isXAxis,
@@ -2570,7 +2573,7 @@ Axis.prototype.beforePadding = function () {
 	
 		if (chart.polar) {	
 
-			each(chart.axes, function (axis) {
+			Highcharts.each(chart.axes, function (axis) {
 				var isXAxis = axis.isXAxis,
 					center = axis.center,
 					x = e.chartX - center[0] - chart.plotLeft,

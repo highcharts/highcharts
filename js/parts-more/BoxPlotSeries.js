@@ -60,6 +60,7 @@ Highcharts.seriesTypes.boxplot = Highcharts.extendClass(Highcharts.seriesTypes.c
 	translate: function () {
 		var series = this,
 			yAxis = series.yAxis,
+			each = Highcharts.each,
 			pointArrayMap = series.pointArrayMap;
 
 		Highcharts.seriesTypes.column.prototype.translate.apply(series);
@@ -110,7 +111,7 @@ Highcharts.seriesTypes.boxplot = Highcharts.extendClass(Highcharts.seriesTypes.c
 			whiskerLength = parseInt(series.options.whiskerLength, 10) / 100;
 
 
-		each(points, function (point) {
+		Highcharts.each(points, function (point) {
 
 			graphic = point.graphic;
 			shapeArgs = point.shapeArgs; // the box

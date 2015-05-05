@@ -60,7 +60,7 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 	getSegments: function () {
 		var series = this;
 
-		each(series.points, function (point) {
+		Highcharts.each(series.points, function (point) {
 			if (!series.options.connectNulls && (point.low === null || point.high === null)) {
 				point.y = null;
 			} else if (point.low === null && point.high !== null) {
@@ -75,6 +75,7 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 	 */
 	translate: function () {
 		var series = this,
+			each = Highcharts.each,
 			yAxis = series.yAxis;
 
 		Highcharts.seriesTypes.area.prototype.translate.apply(series);

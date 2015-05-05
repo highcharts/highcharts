@@ -10,6 +10,5 @@ var Axis = Highcharts.Axis,
 	SVGRenderer = Highcharts.SVGRenderer,
 	VMLRenderer = Highcharts.VMLRenderer,
 	
-	each = Highcharts.each,
 	defaultOptions = Highcharts.getOptions(),
 	defaultPlotOptions = defaultOptions.plotOptions;

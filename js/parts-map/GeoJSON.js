@@ -114,6 +114,7 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
 Highcharts.geojson = function (geojson, hType, series) {
 	var mapData = [],
 		path = [],
+		each = Highcharts.each,
 		polygonToPath = function (polygon) {
 			var i = 0,
 				len = polygon.length;

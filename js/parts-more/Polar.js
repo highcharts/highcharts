@@ -444,7 +444,7 @@
 	
 		if (chart.polar) {	
 
-			each(chart.axes, function (axis) {
+			Highcharts.each(chart.axes, function (axis) {
 				var isXAxis = axis.isXAxis,
 					center = axis.center,
 					x = e.chartX - center[0] - chart.plotLeft,

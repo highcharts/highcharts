@@ -26,7 +26,7 @@ var colorSeriesMixin = {
 			colorAxis = this.colorAxis,
 			colorKey = this.colorKey;
 
-		each(this.data, function (point) {
+		Highcharts.each(this.data, function (point) {
 			var value = point[colorKey],
 				color;
 

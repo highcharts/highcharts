@@ -26,7 +26,7 @@
 			colProto.translate.apply(series);
 
 			// Set plotLow and plotHigh
-			each(series.points, function (point) {
+			Highcharts.each(series.points, function (point) {
 				var shapeArgs = point.shapeArgs,
 					minPointLength = series.options.minPointLength,
 					heightDifference,

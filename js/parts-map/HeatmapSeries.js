@@ -54,6 +54,7 @@ Highcharts.seriesTypes.heatmap = Highcharts.extendClass(Highcharts.seriesTypes.s
 	translate: function () {
 		var series = this,
 			options = series.options,
+			each = Highcharts.each,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis;
 

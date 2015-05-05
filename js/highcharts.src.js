@@ -1163,8 +1163,8 @@ if (globalAdapter) {
 // Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
 // and all the utility functions will be null. In that case they are populated by the
 // default adapters below.
+Highcharts.each = adapter.each;
 var adapterRun = adapter.adapterRun,
-	each = Highcharts.each = adapter.each,
 	stop = adapter.stop;
 
 

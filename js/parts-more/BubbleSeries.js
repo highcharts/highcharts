@@ -125,7 +125,7 @@ Highcharts.seriesTypes.bubble = Highcharts.extendClass(Highcharts.seriesTypes.sc
 		var animation = this.options.animation;
 		
 		if (!init) { // run the animation
-			each(this.points, function (point) {
+			Highcharts.each(this.points, function (point) {
 				var graphic = point.graphic,
 					shapeArgs = point.shapeArgs;
 
@@ -223,6 +223,7 @@ Axis.prototype.beforePadding = function () {
 		axisLength = this.len,
 		chart = this.chart,
 		pick = Highcharts.pick,
+		each = Highcharts.each,
 		pxMin = 0, 
 		pxMax = axisLength,
 		isXAxis = this.isXAxis,

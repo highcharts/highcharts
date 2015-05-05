@@ -116,7 +116,7 @@ SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
 // VML browsers need this in order to generate shapes in export. Now share
 // them with the VMLRenderer.
 if (Highcharts.Renderer === VMLRenderer) {
-	each(['topbutton', 'bottombutton'], function (shape) {
+	Highcharts.each(['topbutton', 'bottombutton'], function (shape) {
 		VMLRenderer.prototype.symbols[shape] = SVGRenderer.prototype.symbols[shape];
 	});
 }

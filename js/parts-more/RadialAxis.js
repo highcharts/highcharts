@@ -312,6 +312,7 @@ var radialAxisMixin = {
 			center = axis.center,
 			chart = axis.chart,
 			end = axis.getPosition(value),
+			each = Highcharts.each,
 			xAxis,
 			xy,
 			tickPositions,

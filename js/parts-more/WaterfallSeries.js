@@ -195,7 +195,7 @@ Highcharts.seriesTypes.waterfall = Highcharts.extendClass(Highcharts.seriesTypes
 		seriesDownPointAttr.hover[upColorProp] = stateOptions.hover.upColor || hoverColor;
 		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
 
-		each(series.points, function (point) {
+		Highcharts.each(series.points, function (point) {
 			if (!point.options.color) {
 				// Up color
 				if (point.y > 0) {

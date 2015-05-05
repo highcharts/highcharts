@@ -83,7 +83,7 @@ var GaugeSeries = {
 			
 		series.generatePoints();
 		
-		each(series.points, function (point) {
+		Highcharts.each(series.points, function (point) {
 			
 			var dialOptions = Highcharts.merge(options.dial, point.dial),
 				radius = (pInt(pick(dialOptions.radius, 80)) * center[2]) / 200,
@@ -141,7 +141,7 @@ var GaugeSeries = {
 			pivotOptions = options.pivot,
 			renderer = series.chart.renderer;
 		
-		each(series.points, function (point) {
+		Highcharts.each(series.points, function (point) {
 			
 			var graphic = point.graphic,
 				shapeArgs = point.shapeArgs,
@@ -188,7 +188,7 @@ var GaugeSeries = {
 		var series = this;
 
 		if (!init) {
-			each(series.points, function (point) {
+			Highcharts.each(series.points, function (point) {
 				var graphic = point.graphic;
 
 				if (graphic) {

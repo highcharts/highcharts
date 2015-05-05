@@ -22,7 +22,6 @@ var Axis = Highcharts.Axis,
 	SVGRenderer = Highcharts.SVGRenderer,
 	VMLRenderer = Highcharts.VMLRenderer,
 	
-	each = Highcharts.each,
 	defaultOptions = Highcharts.getOptions(),
 	defaultPlotOptions = defaultOptions.plotOptions;/**
  * Override to use the extreme coordinates from the SVG shape, not the
@@ -33,6 +32,7 @@ Highcharts.wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 		dataMin,
 		dataMax,
 		pick = Highcharts.pick,
+		each = Highcharts.each,
 		xData = [],
 		useMapGeometry;
 
@@ -226,7 +226,7 @@ Highcharts.extend(ColorAxis.prototype, {
 		this.dataClasses = dataClasses = [];
 		this.legendItems = [];
 
-		each(userOptions.dataClasses, function (dataClass, i) {
+		Highcharts.each(userOptions.dataClasses, function (dataClass, i) {
 			var colors;
 
 			dataClass = Highcharts.merge(dataClass);
@@ -255,7 +255,7 @@ Highcharts.extend(ColorAxis.prototype, {
 			[0, this.options.minColor],
 			[1, this.options.maxColor]
 		];
-		each(this.stops, function (stop) {
+		Highcharts.each(this.stops, function (stop) {
 			stop.color = Color(stop[1]);
 		});
 	},
@@ -477,7 +477,7 @@ Highcharts.extend(ColorAxis.prototype, {
 	},
 
 	update: function (newOptions, redraw) {
-		each(this.series, function (series) {
+		Highcharts.each(this.series, function (series) {
 			series.isDirtyData = true; // Needed for Axis.update when choropleth colors change
 		});
 		Axis.prototype.update.call(this, newOptions, redraw);
@@ -500,7 +500,7 @@ Highcharts.extend(ColorAxis.prototype, {
 			name;
 
 		if (!legendItems.length) {
-			each(this.dataClasses, function (dataClass, i) {
+			Highcharts.each(this.dataClasses, function (dataClass, i) {
 				var vis = true,
 					from = dataClass.from,
 					to = dataClass.to;
@@ -531,8 +531,8 @@ Highcharts.extend(ColorAxis.prototype, {
 					setState: Highcharts.noop,
 					setVisible: function () {
 						vis = this.visible = !vis;
-						each(axis.series, function (series) {
-							each(series.points, function (point) {
+						Highcharts.each(axis.series, function (series) {
+							Highcharts.each(series.points, function (point) {
 								if (point.dataClass === i) {
 									point.setVisible(vis);
 								}
@@ -552,7 +552,7 @@ Highcharts.extend(ColorAxis.prototype, {
 /**
  * Handle animation of the color attributes directly
  */
-each(['fill', 'stroke'], function (prop) {
+Highcharts.each(['fill', 'stroke'], function (prop) {
 	HighchartsAdapter.addAnimSetter(prop, function (fx) {
 		fx.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(fx.start), Color(fx.end), fx.pos));
 	});
@@ -595,7 +595,7 @@ Highcharts.wrap(Legend.prototype, 'getAllItems', function (proceed) {
 		}
 
 		// Don't add the color axis' series
-		each(colorAxis.series, function (series) {
+		Highcharts.each(colorAxis.series, function (series) {
 			series.options.showInLegend = false;
 		});
 	}
@@ -629,7 +629,7 @@ var colorSeriesMixin = {
 			colorAxis = this.colorAxis,
 			colorKey = this.colorKey;
 
-		each(this.data, function (point) {
+		Highcharts.each(this.data, function (point) {
 			var value = point[colorKey],
 				color;
 
@@ -694,7 +694,7 @@ Highcharts.extend(Chart.prototype, {
 	 * in Highcharts, perhaps it should be elevated to a common utility function.
 	 */
 	fitToBox: function (inner, outer) {
-		each([['x', 'width'], ['y', 'height']], function (dim) {
+		Highcharts.each([['x', 'width'], ['y', 'height']], function (dim) {
 			var pos = dim[0],
 				size = dim[1];
 
@@ -987,7 +987,7 @@ var MapAreaPoint = Highcharts.extendClass(Point, {
 			method = vis ? 'show' : 'hide';
 
 		// Show and hide associated elements
-		each(['graphic', 'dataLabel'], function (key) {
+		Highcharts.each(['graphic', 'dataLabel'], function (key) {
 			if (point[key]) {
 				point[key][method]();
 			}
@@ -1094,7 +1094,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 			hasBox;
 		
 		// Find the bounding box
-		each(paths || [], function (point) {
+		Highcharts.each(paths || [], function (point) {
 
 			if (point.path) {
 				if (typeof point.path === 'string') {
@@ -1228,6 +1228,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 			mapData = options.mapData,
 			joinBy = options.joinBy,
 			joinByNull = joinBy === null,
+			each = Highcharts.each,
 			dataUsed = [],
 			mapPoint,
 			transform,
@@ -1344,7 +1345,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 
 		series.generatePoints();
 		
-		each(series.data, function (point) {
+		Highcharts.each(series.data, function (point) {
 		
 			// Record the middle point (loosely based on centroid), determined
 			// by the middleX and middleY options.
@@ -1377,6 +1378,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 			group = series.group,
 			chart = series.chart,
 			renderer = chart.renderer,
+			each = Highcharts.each,
 			scaleX,
 			scaleY,
 			translateX,
@@ -1593,7 +1595,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 			};
 			
 			// TODO: Animate this.group instead
-			each(this.points, function (point) {
+			Highcharts.each(this.points, function (point) {
 
 				point.graphic
 					.attr(level.shapeArgs)
@@ -1767,6 +1769,7 @@ Highcharts.seriesTypes.heatmap = Highcharts.extendClass(Highcharts.seriesTypes.s
 	translate: function () {
 		var series = this,
 			options = series.options,
+			each = Highcharts.each,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis;
 
@@ -1935,6 +1938,7 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
 Highcharts.geojson = function (geojson, hType, series) {
 	var mapData = [],
 		path = [],
+		each = Highcharts.each,
 		polygonToPath = function (polygon) {
 			var i = 0,
 				len = polygon.length;
@@ -2148,7 +2152,7 @@ SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
 // VML browsers need this in order to generate shapes in export. Now share
 // them with the VMLRenderer.
 if (Highcharts.Renderer === VMLRenderer) {
-	each(['topbutton', 'bottombutton'], function (shape) {
+	Highcharts.each(['topbutton', 'bottombutton'], function (shape) {
 		VMLRenderer.prototype.symbols[shape] = SVGRenderer.prototype.symbols[shape];
 	});
 }
