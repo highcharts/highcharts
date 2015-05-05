@@ -65,7 +65,7 @@ Pointer.prototype = {
 		e = e || window.event;
 
 		// Framework specific normalizing (#1165)
-		e = washMouseEvent(e);
+		e = HighchartsAdapter.washMouseEvent(e);
 
 		// More IE normalizing, needs to go after washMouseEvent
 		if (!e.target) {

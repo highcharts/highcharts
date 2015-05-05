@@ -1166,7 +1166,6 @@ if (globalAdapter) {
 var adapterRun = adapter.adapterRun,
 	each = Highcharts.each = adapter.each,
 	fireEvent = adapter.fireEvent,
-	washMouseEvent = adapter.washMouseEvent,
 	animate = adapter.animate,
 	stop = adapter.stop;
 
@@ -8998,7 +8997,7 @@ Pointer.prototype = {
 		e = e || window.event;
 
 		// Framework specific normalizing (#1165)
-		e = washMouseEvent(e);
+		e = HighchartsAdapter.washMouseEvent(e);
 
 		// More IE normalizing, needs to go after washMouseEvent
 		if (!e.target) {

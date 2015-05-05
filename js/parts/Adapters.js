@@ -17,7 +17,6 @@ if (globalAdapter) {
 var adapterRun = adapter.adapterRun,
 	each = Highcharts.each = adapter.each,
 	fireEvent = adapter.fireEvent,
-	washMouseEvent = adapter.washMouseEvent,
 	animate = adapter.animate,
 	stop = adapter.stop;
 
