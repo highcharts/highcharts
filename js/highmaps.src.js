@@ -1164,7 +1164,6 @@ if (globalAdapter) {
 // and all the utility functions will be null. In that case they are populated by the
 // default adapters below.
 var adapterRun = adapter.adapterRun,
-	getScript = adapter.getScript,
 	each = Highcharts.each = adapter.each,
 	grep = adapter.grep,
 	offset = adapter.offset,
@@ -5734,7 +5733,7 @@ if (Highcharts.useCanVG) {
 			push: function (func, scriptLocation) {
 				// Only get the script once
 				if (deferredRenderCalls.length === 0) {
-					getScript(scriptLocation, drawDeferred);
+					HighchartsAdapter.getScript(scriptLocation, drawDeferred);
 				}
 				// Register render call
 				deferredRenderCalls.push(func);
