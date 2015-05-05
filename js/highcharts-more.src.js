@@ -2374,7 +2374,7 @@ Axis.prototype.beforePadding = function () {
 	 * Extend getSegmentPath to allow connecting ends across 0 to provide a closed circle in 
 	 * line-like series.
 	 */
-	wrap(seriesProto, 'getGraphPath', function (proceed, points) {
+	wrap(seriesProto, 'getGraphPath', function (proceed, points, nullsAsZeroes) {
 		var series = this;
 		
 		// Connect the path
@@ -2395,7 +2395,7 @@ Axis.prototype.beforePadding = function () {
 		}
 	
 		// Run uber method
-		return proceed.call(this, points);
+		return proceed.call(this, points, nullsAsZeroes);
 	
 	});
 

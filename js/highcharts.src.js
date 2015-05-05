@@ -15726,7 +15726,8 @@ var AreaSeries = extendClass(Series, {
 			translatedThreshold = yAxis.toPixels(options.threshold, true),
 			isNull,
 			yBottom,
-			connectNulls = options.connectNulls,
+			connectNulls = options.connectNulls || stacking === 'percent',
+			useDummyPoints = !connectNulls && stacking,
 			/**
 			 * To display null points in underlying stacked series, this series graph must be 
 			 * broken, and the area also fall down to fill the gap left by the null point. #2069
@@ -15798,7 +15799,7 @@ var AreaSeries = extendClass(Series, {
 
 			if (!isNull || connectNulls) {
 
-				if (!connectNulls && stacking) {
+				if (useDummyPoints) {
 					addDummyPoints(i, i - 1, plotX, 'leftCliff');
 				}
 
@@ -15809,7 +15810,7 @@ var AreaSeries = extendClass(Series, {
 					plotY: yBottom
 				});
 
-				if (!connectNulls && stacking) {
+				if (useDummyPoints) {
 					addDummyPoints(i, i + 1, plotX, 'rightCliff');
 				}
 			} else {

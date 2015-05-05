@@ -15726,7 +15726,8 @@ var AreaSeries = extendClass(Series, {
 			translatedThreshold = yAxis.toPixels(options.threshold, true),
 			isNull,
 			yBottom,
-			connectNulls = options.connectNulls,
+			connectNulls = options.connectNulls || stacking === 'percent',
+			useDummyPoints = !connectNulls && stacking,
 			/**
 			 * To display null points in underlying stacked series, this series graph must be 
 			 * broken, and the area also fall down to fill the gap left by the null point. #2069
@@ -15798,7 +15799,7 @@ var AreaSeries = extendClass(Series, {
 
 			if (!isNull || connectNulls) {
 
-				if (!connectNulls && stacking) {
+				if (useDummyPoints) {
 					addDummyPoints(i, i - 1, plotX, 'leftCliff');
 				}
 
@@ -15809,7 +15810,7 @@ var AreaSeries = extendClass(Series, {
 					plotY: yBottom
 				});
 
-				if (!connectNulls && stacking) {
+				if (useDummyPoints) {
 					addDummyPoints(i, i + 1, plotX, 'rightCliff');
 				}
 			} else {
@@ -19207,7 +19208,7 @@ wrap(Chart.prototype, 'pan', function (proceed, e) {
  * Extend getGraphPath by identifying gaps in the ordinal data so that we can draw a gap in the
  * line or area
  */
-wrap(AreaSeries.prototype, 'getGraphPath', function (proceed, points) {
+wrap(AreaSeries.prototype, 'getGraphPath', function (proceed, points, nullsAsZeroes) {
 
 	var gapSize = this.options.gapSize,
 		xAxis = this.xAxis,
@@ -19231,7 +19232,7 @@ wrap(AreaSeries.prototype, 'getGraphPath', function (proceed, points) {
 	}
 
 	// Call base method
-	return proceed.call(this, points);
+	return proceed.call(this, points, nullsAsZeroes);
 
 });
 
