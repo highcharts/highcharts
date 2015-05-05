@@ -380,7 +380,7 @@ Highcharts.formatSingle = function (format, val) {
 /**
  * Format a string according to a subset of the rules of Python's String.format method.
  */
-function format(str, ctx) {
+Highcharts.format = function (str, ctx) {
 	var splitter = '{',
 		isInside = false,
 		segment,
@@ -425,7 +425,7 @@ function format(str, ctx) {
 	}
 	ret.push(str);
 	return ret.join('');
-}
+};
 
 /**
  * Get the magnitude of a number

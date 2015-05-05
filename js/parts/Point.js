@@ -205,7 +205,7 @@ Point.prototype = {
 			pointFormat = pointFormat.replace(key + '}', key + ':,.' + valueDecimals + 'f}');
 		});
 
-		return format(pointFormat, {
+		return Highcharts.format(pointFormat, {
 			point: this,
 			series: this.series
 		});

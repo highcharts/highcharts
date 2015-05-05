@@ -391,7 +391,7 @@ Axis.prototype = {
 			numericSymbolDetector = axis.isLog ? value : axis.tickInterval;
 
 		if (formatOption) {
-			ret = format(formatOption, this);
+			ret = Highcharts.format(formatOption, this);
 
 		} else if (categories) {
 			ret = value;

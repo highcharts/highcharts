@@ -13,7 +13,6 @@ Highcharts.extend(Highcharts, {
 	arrayMin: arrayMin,
 	arrayMax: arrayMax,
 	error: error,
-	format: format,
 	getOptions: getOptions,
 	setOptions: setOptions,
 	addEvent: addEvent,

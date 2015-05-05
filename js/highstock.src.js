@@ -433,7 +433,7 @@ Highcharts.formatSingle = function (format, val) {
 /**
  * Format a string according to a subset of the rules of Python's String.format method.
  */
-function format(str, ctx) {
+Highcharts.format = function (str, ctx) {
 	var splitter = '{',
 		isInside = false,
 		segment,
@@ -478,7 +478,7 @@ function format(str, ctx) {
 	}
 	ret.push(str);
 	return ret.join('');
-}
+};
 
 /**
  * Get the magnitude of a number
@@ -6765,7 +6765,7 @@ Axis.prototype = {
 			numericSymbolDetector = axis.isLog ? value : axis.tickInterval;
 
 		if (formatOption) {
-			ret = format(formatOption, this);
+			ret = Highcharts.format(formatOption, this);
 
 		} else if (categories) {
 			ret = value;
@@ -9375,7 +9375,7 @@ Tooltip.prototype = {
 			formatString = formatString.replace('{point.key}', '{point.key:' + xDateFormat + '}');
 		}
 
-		return format(formatString, {
+		return Highcharts.format(formatString, {
 			point: point,
 			series: series
 		});
@@ -10653,7 +10653,7 @@ Legend.prototype = {
 
 			// Generate the list item text and add it to the group
 			item.legendItem = li = renderer.text(
-					options.labelFormat ? format(options.labelFormat, item) : options.labelFormatter.call(item),
+					options.labelFormat ? Highcharts.format(options.labelFormat, item) : options.labelFormatter.call(item),
 					ltr ? symbolWidth + symbolPadding : -symbolPadding,
 					legend.baseline || 0,
 					useHTML
@@ -12878,7 +12878,7 @@ Point.prototype = {
 			pointFormat = pointFormat.replace(key + '}', key + ':,.' + valueDecimals + 'f}');
 		});
 
-		return format(pointFormat, {
+		return Highcharts.format(pointFormat, {
 			point: this,
 			series: this.series
 		});
@@ -14838,7 +14838,7 @@ StackItem.prototype = {
 		var options = this.options,
 			formatOption = options.format,
 			str = formatOption ?
-				format(formatOption, this) : 
+				Highcharts.format(formatOption, this) : 
 				options.formatter.call(this);  // format the text in the label
 
 		// Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
@@ -16949,7 +16949,7 @@ Series.prototype.drawDataLabels = function () {
 				// Get the string
 				labelConfig = point.getLabelConfig();
 				str = options.format ?
-					format(options.format, labelConfig) :
+					Highcharts.format(options.format, labelConfig) :
 					options.formatter.call(labelConfig, options);
 
 				// Determine the color
@@ -23017,7 +23017,7 @@ Highcharts.wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 
 	// show the label
 	crossLabel.attr({
-		text: formatOption ? format(formatOption, {value: point[axis]}) : options.formatter.call(this, point[axis]), 
+		text: formatOption ? Highcharts.format(formatOption, {value: point[axis]}) : options.formatter.call(this, point[axis]), 
 		x: posx, 
 		y: posy, 
 		visibility: 'visible'
@@ -23233,7 +23233,6 @@ Highcharts.extend(Highcharts, {
 	arrayMin: arrayMin,
 	arrayMax: arrayMax,
 	error: error,
-	format: format,
 	getOptions: getOptions,
 	setOptions: setOptions,
 	addEvent: addEvent,

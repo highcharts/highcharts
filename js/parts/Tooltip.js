@@ -513,7 +513,7 @@ Tooltip.prototype = {
 			formatString = formatString.replace('{point.key}', '{point.key:' + xDateFormat + '}');
 		}
 
-		return format(formatString, {
+		return Highcharts.format(formatString, {
 			point: point,
 			series: series
 		});

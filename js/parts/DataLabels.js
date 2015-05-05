@@ -82,7 +82,7 @@ Series.prototype.drawDataLabels = function () {
 				// Get the string
 				labelConfig = point.getLabelConfig();
 				str = options.format ?
-					format(options.format, labelConfig) :
+					Highcharts.format(options.format, labelConfig) :
 					options.formatter.call(labelConfig, options);
 
 				// Determine the color
