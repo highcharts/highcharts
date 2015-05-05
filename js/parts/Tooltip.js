@@ -378,7 +378,7 @@ Tooltip.prototype = {
 
 			// show it
 			if (tooltip.isHidden) {
-				Highcharts.stop(label);
+				HighchartsAdapter.stop(label);
 				label.attr('opacity', 1).show();
 			}
 

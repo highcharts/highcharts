@@ -1736,7 +1736,7 @@ SVGElement.prototype = {
 	 */
 	animate: function (params, options, complete) {
 		var animOptions = Highcharts.pick(options, Highcharts.globalAnimation, true);
-		Highcharts.stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
+		HighchartsAdapter.stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
 		if (animOptions) {
 			animOptions = Highcharts.merge(animOptions, {}); //#2625
 			if (complete) { // allows using a callback with the global animation without overwriting it
@@ -2599,7 +2599,7 @@ SVGElement.prototype = {
 
 		// remove events
 		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = element.point = null;
-		Highcharts.stop(wrapper); // stop running animations
+		HighchartsAdapter.stop(wrapper); // stop running animations
 
 		if (wrapper.clipPath) {
 			wrapper.clipPath = wrapper.clipPath.destroy();
@@ -8774,7 +8774,7 @@ Tooltip.prototype = {
 
 			// show it
 			if (tooltip.isHidden) {
-				Highcharts.stop(label);
+				HighchartsAdapter.stop(label);
 				label.attr('opacity', 1).show();
 			}
 
@@ -13803,7 +13803,7 @@ Series.prototype = {
 				attribs;
 
 			if (graph) {
-				Highcharts.stop(graph); // cancel running animations, #459
+				HighchartsAdapter.stop(graph); // cancel running animations, #459
 				graph.animate({ d: graphPath });
 
 			} else if ((lineWidth || fillColor) && graphPath.length) { // #1487
@@ -15118,7 +15118,7 @@ var ColumnSeries = Highcharts.extendClass(Series, {
 				pointAttr = point.pointAttr[point.selected ? 'select' : ''] || series.pointAttr[''];
 				
 				if (graphic) { // update
-					Highcharts.stop(graphic);
+					HighchartsAdapter.stop(graphic);
 					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](Highcharts.merge(shapeArgs));
 
 				} else {

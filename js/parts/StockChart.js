@@ -592,7 +592,7 @@ Highcharts.wrap(Series.prototype, 'render', function (proceed) {
 
 		// On redrawing, resizing etc, update the clip rectangle
 		} else if (this.chart[this.sharedClipKey]) {
-			Highcharts.stop(this.chart[this.sharedClipKey]); // #2998
+			HighchartsAdapter.stop(this.chart[this.sharedClipKey]); // #2998
 			this.chart[this.sharedClipKey].attr({
 				width: this.xAxis.len,
 				height: this.yAxis.len

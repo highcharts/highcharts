@@ -34,7 +34,7 @@ SVGElement.prototype = {
 	 */
 	animate: function (params, options, complete) {
 		var animOptions = Highcharts.pick(options, Highcharts.globalAnimation, true);
-		Highcharts.stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
+		HighchartsAdapter.stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
 		if (animOptions) {
 			animOptions = Highcharts.merge(animOptions, {}); //#2625
 			if (complete) { // allows using a callback with the global animation without overwriting it
@@ -897,7 +897,7 @@ SVGElement.prototype = {
 
 		// remove events
 		element.onclick = element.onmouseout = element.onmouseover = element.onmousemove = element.point = null;
-		Highcharts.stop(wrapper); // stop running animations
+		HighchartsAdapter.stop(wrapper); // stop running animations
 
 		if (wrapper.clipPath) {
 			wrapper.clipPath = wrapper.clipPath.destroy();

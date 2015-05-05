@@ -1385,7 +1385,7 @@ Series.prototype = {
 				attribs;
 
 			if (graph) {
-				Highcharts.stop(graph); // cancel running animations, #459
+				HighchartsAdapter.stop(graph); // cancel running animations, #459
 				graph.animate({ d: graphPath });
 
 			} else if ((lineWidth || fillColor) && graphPath.length) { // #1487
