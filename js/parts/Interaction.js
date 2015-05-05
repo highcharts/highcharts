@@ -439,7 +439,7 @@ Highcharts.extend(Point.prototype, {
 
 		this.firePointEvent('mouseOut');
 
-		if (!hoverPoints || Highcharts.inArray(this, hoverPoints) === -1) { // #887, #2240
+		if (!hoverPoints || HighchartsAdapter.inArray(this, hoverPoints) === -1) { // #887, #2240
 			this.setState();
 			chart.hoverPoint = null;
 		}

@@ -221,7 +221,7 @@ Highcharts.extend(Point.prototype, {
 	 *    configuration
 	 */
 	remove: function (redraw, animation) {
-		this.series.removePoint(Highcharts.inArray(this, this.series.data), redraw, animation);
+		this.series.removePoint(HighchartsAdapter.inArray(this, this.series.data), redraw, animation);
 	}
 });
 
