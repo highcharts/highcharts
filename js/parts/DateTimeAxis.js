@@ -13,6 +13,7 @@
 Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWeek) {
 	var tickPositions = [],
 		timeUnits = Highcharts.timeUnits,
+		getTZOffset = Highcharts.getTZOffset,
 		i,
 		higherRanks = {},
 		d = Highcharts.Date,

@@ -276,10 +276,10 @@ Highcharts.wrap = function (obj, method, func) {
 };
 
 
-function getTZOffset(timestamp) {
+Highcharts.getTZOffset = function (timestamp) {
 	var d = Highcharts.Date;
 	return ((d.hcGetTimezoneOffset && d.hcGetTimezoneOffset(timestamp)) || d.hcTimezoneOffset || 0) * 60000;
-}
+};
 
 /**
  * Based on http://www.php.net/manual/en/function.strftime.php
@@ -294,7 +294,7 @@ Highcharts.dateFormat = function (format, timestamp, capitalize) {
 	format = Highcharts.pick(format, '%Y-%m-%d %H:%M:%S');
 
 	var d = Highcharts.Date,
-		date = new d(timestamp - getTZOffset(timestamp)),
+		date = new d(timestamp - Highcharts.getTZOffset(timestamp)),
 		key, // used in for constuct below
 		// get the basic time values
 		hours = date[d.hcGetHours](),

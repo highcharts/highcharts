@@ -363,7 +363,7 @@ function setTimeMethods() {
 		var d;
 		if (useUTC) {
 			d = hcD.UTC.apply(0, arguments);
-			d += getTZOffset(d);
+			d += Highcharts.getTZOffset(d);
 		} else {
 			d = new hcD(
 				year,
