@@ -1,13 +1,14 @@
-
+(function (H) {
+	var each = H.each,
+		pInt = H.pInt,
+		rgbaRegEx = /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
+		hexRegEx = /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/,
+		rgbRegEx = /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/;
 /**
  * Handle color operations. The object methods are chainable.
  * @param {String} input The input color in either rbga or hex format
  */
-var rgbaRegEx = /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
-	hexRegEx = /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/,
-	rgbRegEx = /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/;
-
-Highcharts.Color = function (input) {
+H.Color = function (input) {
 	// declare variables
 	var rgba = [], result, stops;
 
@@ -16,11 +17,10 @@ Highcharts.Color = function (input) {
 	 * @param {String} input
 	 */
 	function init(input) {
-		var pInt = Highcharts.pInt;
 		// Gradients
 		if (input && input.stops) {
-			stops = Highcharts.map(input.stops, function (stop) {
-				return Highcharts.Color(stop[1]);
+			stops = H.map(input.stops, function (stop) {
+				return H.Color(stop[1]);
 			});
 
 		// Solid colors
@@ -53,9 +53,9 @@ Highcharts.Color = function (input) {
 		var ret;
 
 		if (stops) {
-			ret = Highcharts.merge(input);
+			ret = H.merge(input);
 			ret.stops = [].concat(ret.stops);
-			Highcharts.each(stops, function (stop, i) {
+			each(stops, function (stop, i) {
 				ret.stops[i] = [ret.stops[i][0], stop.get(format)];
 			});
 
@@ -80,14 +80,14 @@ Highcharts.Color = function (input) {
 	 */
 	function brighten(alpha) {
 		if (stops) {
-			Highcharts.each(stops, function (stop) {
+			each(stops, function (stop) {
 				stop.brighten(alpha);
 			});
 		
-		} else if (Highcharts.isNumber(alpha) && alpha !== 0) {
+		} else if (H.isNumber(alpha) && alpha !== 0) {
 			var i;
 			for (i = 0; i < 3; i++) {
-				rgba[i] += Highcharts.pInt(alpha * 255);
+				rgba[i] += pInt(alpha * 255);
 
 				if (rgba[i] < 0) {
 					rgba[i] = 0;
@@ -121,3 +121,5 @@ Highcharts.Color = function (input) {
 	};
 };
 
+	return H;
+}(Highcharts));
