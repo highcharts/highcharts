@@ -95,5 +95,5 @@ H.pathAnim = {
 	}
 };
 
-	return (Highcharts = H);
+	return H;
 }(Highcharts));

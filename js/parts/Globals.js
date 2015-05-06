@@ -1,23 +1,24 @@
-// The Highcharts namespace
-var Highcharts;
+(function () {
+	var SVG_NS = 'http://www.w3.org/2000/svg',
+		svg = !!document.createElementNS && !!document.createElementNS(SVG_NS, 'svg').createSVGRect,
+		isIE = /(msie|trident)/i.test(userAgent) && !window.opera,
+		useCanVG = !svg && !isIE && !!document.createElement('canvas').getContext,
+		userAgent = navigator.userAgent,
+		isFirefox = /Firefox/.test(userAgent),
+		hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4; // issue #38
 
-(function (H) {
-	var init = function () {
-		H.svg = !!document.createElementNS && !!document.createElementNS(H.SVG_NS, 'svg').createSVGRect;
-		H.useCanVG = !H.svg && !H.isIE && !!document.createElement('canvas').getContext;
-		H.hasBidiBug = H.isFirefox && parseInt(navigator.userAgent.split('Firefox/')[1], 10) < 4; // issue #38
-	};
-
-H = window.Highcharts = window.Highcharts ? window.Highcharts.error(16, true) : {
+window.Highcharts = window.Highcharts ? window.Highcharts.error(16, true) : {
 	deg2rad: Math.PI * 2 / 360,
-	isIE: /(msie|trident)/i.test(navigator.userAgent) && !window.opera,
-	isWebKit: /AppleWebKit/.test(navigator.userAgent),
-	isFirefox: /Firefox/.test(navigator.userAgent),
-	isTouchDevice: /(Mobile|Android|Windows Phone)/.test(navigator.userAgent),
-	SVG_NS: 'http://www.w3.org/2000/svg',
+	hasBidiBug: hasBidiBug,
+	isIE: isIE,
+	isWebKit: /AppleWebKit/.test(userAgent),
+	isFirefox: isFirefox,
+	isTouchDevice: /(Mobile|Android|Windows Phone)/.test(userAgent),
+	SVG_NS: SVG_NS,
 	idCounter: 0,
 	chartCount: 0,
 	seriesTypes: {},
+	svg: svg,
 	timeUnits: {
 		millisecond: 1,
 		second: 1000,
@@ -28,12 +29,10 @@ H = window.Highcharts = window.Highcharts ? window.Highcharts.error(16, true) : 
 		month: 28 * 24 * 3600000,
 		year: 364 * 24 * 3600000
 	},
+	useCanVG: useCanVG,
 	charts: [],
 	noop: function () {}
 };
 
-	// Initialize some Highcharts variables
-	init();
-
-	return (Highcharts = H);
-}(Highcharts));
+	return window.Highcharts;
+}());

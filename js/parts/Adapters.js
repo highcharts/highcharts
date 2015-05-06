@@ -17,5 +17,5 @@ H.map = adapter.map;
 H.addEvent = adapter.addEvent;
 H.removeEvent = adapter.removeEvent;
 
-    return (Highcharts = H);
+    return H;
 }(Highcharts));

@@ -409,5 +409,5 @@ H.getOptions = function() {
 	return H.defaultOptions;
 };
 
-	return (Highcharts = H);
+	return H;
 }(Highcharts));

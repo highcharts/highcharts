@@ -637,5 +637,5 @@ H.numberFormat = function (number, decimals, decPoint, thousandsSep) {
 			(c ? d + Math.abs(n - i).toFixed(c).slice(2) : ""));
 };
 
-	return (Highcharts = H);
+	return H;
 }(Highcharts));
