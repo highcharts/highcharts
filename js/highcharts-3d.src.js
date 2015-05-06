@@ -513,7 +513,7 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 ***/
 // Shorthand to check the is3d flag
 Highcharts.Chart.prototype.is3d = function () {
-	return this.options.chart.options3d && this.options.chart.options3d.enabled;
+	return !this.inverted && this.options.chart.options3d && this.options.chart.options3d.enabled; // #4160 3D should not work with inverted charts
 };
 
 Highcharts.wrap(Highcharts.Chart.prototype, 'isInsidePlot', function (proceed) {
@@ -729,7 +729,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed)
 	return path;
 });
 
-Highcharts.wrap(Highcharts.Axis.prototype, 'getLinePath', function (proceed) {
+Highcharts.wrap(Highcharts.Axis.prototype, 'getLinePath', function () {
 	// do not draw axislines in 3D ?
 	return [];
 });
@@ -897,9 +897,7 @@ Highcharts.extend(ZAxis.prototype, {
 
 				var seriesOptions = series.options,
 					zData,
-					threshold = seriesOptions.threshold,
-					seriesDataMin,
-					seriesDataMax;
+					threshold = seriesOptions.threshold;
 
 				axis.hasVisibleSeries = true;
 
