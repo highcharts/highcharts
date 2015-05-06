@@ -1574,9 +1574,9 @@ Highcharts.setOptions = function (options) {
  * Get the updated default options. Until 3.0.7, merely exposing defaultOptions for outside modules
  * wasn't enough because the setOptions method created a new object.
  */
-function getOptions() {
+Highcharts.getOptions = function() {
 	return Highcharts.defaultOptions;
-}
+};
 
 
 /**
@@ -19500,7 +19500,6 @@ Highcharts.extend(Highcharts, {
 	SVGRenderer: SVGRenderer,
 	
 	// Various
-	getOptions: getOptions,
 	canvas: Highcharts.useCanVG,
 	vml: !Highcharts.svg && !Highcharts.useCanVG,
 	product: 'Highmaps',
