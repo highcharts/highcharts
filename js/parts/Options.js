@@ -336,6 +336,7 @@ Highcharts.defaultOptions = {
 
 // Series defaults
 var defaultPlotOptions = Highcharts.defaultOptions.plotOptions;
+Highcharts.defaultSeriesOptions = defaultPlotOptions.line;
 
 // set the default time methods
 setTimeMethods();

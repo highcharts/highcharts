@@ -1506,6 +1506,7 @@ Highcharts.defaultOptions = {
 
 // Series defaults
 var defaultPlotOptions = Highcharts.defaultOptions.plotOptions;
+Highcharts.defaultSeriesOptions = defaultPlotOptions.line;
 
 // set the default time methods
 setTimeMethods();
@@ -15643,7 +15644,7 @@ Highcharts.seriesTypes.line = LineSeries;
 /**
  * Set the default options for area
  */
-defaultPlotOptions.area = Highcharts.merge(Highcharts.defaultOptions.plotOptions.line, {
+defaultPlotOptions.area = Highcharts.merge(Highcharts.defaultSeriesOptions, {
 	threshold: 0
 	// trackByArea: false,
 	// lineColor: null, // overrides color, but lets fillColor be unaltered
@@ -15852,7 +15853,7 @@ Highcharts.seriesTypes.area = AreaSeries;
 /**
  * Set the default options for spline
  */
-defaultPlotOptions.spline = Highcharts.merge(Highcharts.defaultOptions.plotOptions.line);
+defaultPlotOptions.spline = Highcharts.merge(Highcharts.defaultSeriesOptions);
 
 /**
  * SplineSeries object
@@ -15999,7 +16000,7 @@ Highcharts.seriesTypes.areaspline = AreaSplineSeries;
 /**
  * Set the default options for column
  */
-defaultPlotOptions.column = Highcharts.merge(Highcharts.defaultOptions.plotOptions.line, {
+defaultPlotOptions.column = Highcharts.merge(Highcharts.defaultSeriesOptions, {
 	borderColor: '#FFFFFF',
 	//borderWidth: 1,
 	borderRadius: 0,
@@ -16371,7 +16372,7 @@ Highcharts.seriesTypes.bar = BarSeries;
 /**
  * Set the default options for scatter
  */
-defaultPlotOptions.scatter = Highcharts.merge(Highcharts.defaultOptions.plotOptions.line, {
+defaultPlotOptions.scatter = Highcharts.merge(Highcharts.defaultSeriesOptions, {
 	lineWidth: 0,
 	marker: {
 		enabled: true // Overrides auto-enabling in line series (#3647)
@@ -16406,7 +16407,7 @@ Highcharts.seriesTypes.scatter = ScatterSeries;
 /**
  * Set the default options for pie
  */
-defaultPlotOptions.pie = Highcharts.merge(Highcharts.defaultOptions.plotOptions.line, {
+defaultPlotOptions.pie = Highcharts.merge(Highcharts.defaultSeriesOptions, {
 	borderColor: '#FFFFFF',
 	borderWidth: 1,
 	center: [null, null],

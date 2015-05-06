@@ -1,7 +1,7 @@
 /**
  * Set the default options for scatter
  */
-defaultPlotOptions.scatter = Highcharts.merge(Highcharts.defaultOptions.plotOptions.line, {
+defaultPlotOptions.scatter = Highcharts.merge(Highcharts.defaultSeriesOptions, {
 	lineWidth: 0,
 	marker: {
 		enabled: true // Overrides auto-enabling in line series (#3647)

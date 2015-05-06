@@ -1506,6 +1506,7 @@ Highcharts.defaultOptions = {
 
 // Series defaults
 var defaultPlotOptions = Highcharts.defaultOptions.plotOptions;
+Highcharts.defaultSeriesOptions = defaultPlotOptions.line;
 
 // set the default time methods
 setTimeMethods();
@@ -14835,7 +14836,7 @@ Highcharts.seriesTypes.line = LineSeries;
 /**
  * Set the default options for column
  */
-defaultPlotOptions.column = Highcharts.merge(Highcharts.defaultOptions.plotOptions.line, {
+defaultPlotOptions.column = Highcharts.merge(Highcharts.defaultSeriesOptions, {
 	borderColor: '#FFFFFF',
 	//borderWidth: 1,
 	borderRadius: 0,
@@ -15194,7 +15195,7 @@ Highcharts.seriesTypes.column = ColumnSeries;
 /**
  * Set the default options for scatter
  */
-defaultPlotOptions.scatter = Highcharts.merge(Highcharts.defaultOptions.plotOptions.line, {
+defaultPlotOptions.scatter = Highcharts.merge(Highcharts.defaultSeriesOptions, {
 	lineWidth: 0,
 	marker: {
 		enabled: true // Overrides auto-enabling in line series (#3647)
