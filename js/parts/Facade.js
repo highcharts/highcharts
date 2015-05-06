@@ -11,7 +11,6 @@ Highcharts.extend(Highcharts, {
 	
 	// Various
 	getOptions: getOptions,
-	setOptions: setOptions,
 	canvas: Highcharts.useCanVG,
 	vml: !Highcharts.svg && !Highcharts.useCanVG,
 	product: '@product.name@',

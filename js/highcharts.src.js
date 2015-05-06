@@ -1559,7 +1559,7 @@ function setTimeMethods() {
  * Merge the default options with custom options and return the new options structure
  * @param {Object} options The new custom options
  */
-function setOptions(options) {
+Highcharts.setOptions = function (options) {
 	
 	// Copy in the default options
 	Highcharts.defaultOptions = Highcharts.merge(true, Highcharts.defaultOptions, options);
@@ -1568,7 +1568,7 @@ function setOptions(options) {
 	setTimeMethods();
 
 	return Highcharts.defaultOptions;
-}
+};
 
 /**
  * Get the updated default options. Until 3.0.7, merely exposing defaultOptions for outside modules
@@ -18564,7 +18564,6 @@ Highcharts.extend(Highcharts, {
 	
 	// Various
 	getOptions: getOptions,
-	setOptions: setOptions,
 	canvas: Highcharts.useCanVG,
 	vml: !Highcharts.svg && !Highcharts.useCanVG,
 	product: 'Highcharts',
