@@ -9535,6 +9535,7 @@ Pointer.prototype = {
 			distance = chart.chartWidth,
 			anchor,
 			noSharedTooltip,
+			directTouch,
 			kdpoints = [],
 			kdpoint,
 			kdpointT;
@@ -9551,7 +9552,7 @@ Pointer.prototype = {
 
 		// If it has a hoverPoint and that series requires direct touch (like columns), 
 		// use the hoverPoint (#3899). Otherwise, search the k-d tree.	
-		if (!shared && hoverSeries && hoverSeries.directTouch && hoverPoint) {
+		if (hoverSeries && ((!shared && hoverSeries.directTouch) || hoverSeries.noSharedTooltip) && hoverPoint) {
 			kdpoint = hoverPoint;
 
 		// Handle shared tooltip or cases where a series is not yet hovered
@@ -9560,7 +9561,8 @@ Pointer.prototype = {
 			each(series, function (s) {
 				// Skip hidden series
 				noSharedTooltip = s.noSharedTooltip && shared;
-				if (s.visible && !noSharedTooltip && pick(s.options.enableMouseTracking, true)) { // #3821
+				directTouch = !shared && s.directTouch;
+				if (s.visible && !noSharedTooltip && !directTouch && pick(s.options.enableMouseTracking, true)) { // #3821
 					kdpointT = s.searchPoint(e, !noSharedTooltip); // #3828
 					if (kdpointT) {
 						kdpoints.push(kdpointT);
