@@ -13648,7 +13648,7 @@ Series.prototype = {
 			}
 
 			// Get the plotX translation
-			point.plotX = plotX = xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement, this.type === 'flags'); // Math.round fixes #591
+			point.plotX = plotX = mathMin(mathMax(-1e5, xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement, this.type === 'flags')), 1e5); // #3923
 
 
 			// Calculate the bottom y value for stacked series
