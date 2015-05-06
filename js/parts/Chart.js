@@ -660,7 +660,7 @@ Chart.prototype = {
 		// Initialize the renderer
 		chart.renderer =
 			optionsChart.forExport ? // force SVG, used for SVG export
-				new SVGRenderer(container, chartWidth, chartHeight, optionsChart.style, true) :
+				new Highcharts.SVGRenderer(container, chartWidth, chartHeight, optionsChart.style, true) :
 				new Highcharts.Renderer(container, chartWidth, chartHeight, optionsChart.style);
 
 		if (Highcharts.useCanVG) {

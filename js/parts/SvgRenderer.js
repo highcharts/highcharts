@@ -1,8 +1,8 @@
-
+(function (H) {
 /**
  * A wrapper object for SVG elements
  */
-function SVGElement() {}
+var SVGElement = Highcharts.SVGElement = function () {};
 
 SVGElement.prototype = {
 	
@@ -1174,7 +1174,7 @@ SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter =
 /**
  * The default SVG renderer
  */
-var SVGRenderer = function () {
+var SVGRenderer = Highcharts.SVGRenderer = function () {
 	this.init.apply(this, arguments);
 };
 SVGRenderer.prototype = {
@@ -2596,3 +2596,6 @@ SVGRenderer.prototype = {
 
 // general renderer
 Highcharts.Renderer = SVGRenderer;
+
+	return H;
+}(Highcharts));

@@ -1,5 +1,5 @@
 // extend SvgElement for useHTML option
-Highcharts.extend(SVGElement.prototype, {
+Highcharts.extend(Highcharts.SVGElement.prototype, {
 	/**
 	 * Apply CSS to HTML elements. This is used in text within SVG rendering and
 	 * by the VML renderer
@@ -166,7 +166,7 @@ Highcharts.extend(SVGElement.prototype, {
 });
 
 // Extend SvgRenderer for useHTML option.
-Highcharts.extend(SVGRenderer.prototype, {
+Highcharts.extend(Highcharts.SVGRenderer.prototype, {
 	/**
 	 * Create HTML text node. This is used by the VML renderer as well as the SVG
 	 * renderer through the useHTML option.

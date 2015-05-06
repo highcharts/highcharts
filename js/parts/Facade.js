@@ -5,8 +5,6 @@ Highcharts.extend(Highcharts, {
 	// Constructors
 	Point: Point,
 	Tick: Tick,	
-	SVGElement: SVGElement,
-	SVGRenderer: SVGRenderer,
 	
 	// Various
 	canvas: Highcharts.useCanVG,

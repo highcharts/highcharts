@@ -1704,11 +1704,11 @@ H.Color = function (input) {
 
 	return H;
 }(Highcharts));
-
+(function (H) {
 /**
  * A wrapper object for SVG elements
  */
-function SVGElement() {}
+var SVGElement = Highcharts.SVGElement = function () {};
 
 SVGElement.prototype = {
 	
@@ -2880,7 +2880,7 @@ SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter =
 /**
  * The default SVG renderer
  */
-var SVGRenderer = function () {
+var SVGRenderer = Highcharts.SVGRenderer = function () {
 	this.init.apply(this, arguments);
 };
 SVGRenderer.prototype = {
@@ -4302,8 +4302,11 @@ SVGRenderer.prototype = {
 
 // general renderer
 Highcharts.Renderer = SVGRenderer;
+
+	return H;
+}(Highcharts));
 // extend SvgElement for useHTML option
-Highcharts.extend(SVGElement.prototype, {
+Highcharts.extend(Highcharts.SVGElement.prototype, {
 	/**
 	 * Apply CSS to HTML elements. This is used in text within SVG rendering and
 	 * by the VML renderer
@@ -4470,7 +4473,7 @@ Highcharts.extend(SVGElement.prototype, {
 });
 
 // Extend SvgRenderer for useHTML option.
-Highcharts.extend(SVGRenderer.prototype, {
+Highcharts.extend(Highcharts.SVGRenderer.prototype, {
 	/**
 	 * Create HTML text node. This is used by the VML renderer as well as the SVG
 	 * renderer through the useHTML option.
@@ -4696,7 +4699,7 @@ VMLElement = {
 	/**
 	 * VML always uses htmlUpdateTransform
 	 */
-	updateTransform: SVGElement.prototype.htmlUpdateTransform,
+	updateTransform: Highcharts.SVGElement.prototype.htmlUpdateTransform,
 
 	/**
 	 * Set the rotation of a span with oldIE's filter
@@ -4838,7 +4841,7 @@ VMLElement = {
 	 * Set styles for the element
 	 * @param {Object} styles
 	 */
-	css: SVGElement.prototype.htmlCss,
+	css: Highcharts.SVGElement.prototype.htmlCss,
 
 	/**
 	 * Removes a child either by removeChild or move to garbageBin.
@@ -4860,7 +4863,7 @@ VMLElement = {
 			this.destroyClip();
 		}
 
-		return SVGElement.prototype.destroy.apply(this);
+		return Highcharts.SVGElement.prototype.destroy.apply(this);
 	},
 
 	/**
@@ -5091,7 +5094,7 @@ VMLElement = {
 		element.style[key] = value;
 	}
 };
-Highcharts.VMLElement = VMLElement = Highcharts.extendClass(SVGElement, VMLElement);
+Highcharts.VMLElement = VMLElement = Highcharts.extendClass(Highcharts.SVGElement, VMLElement);
 
 // Some shared setters
 VMLElement.prototype.ySetter =
@@ -5434,7 +5437,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 * @param {Number} x
 	 * @param {Number} y
 	 */
-	text: SVGRenderer.prototype.html,
+	text: Highcharts.SVGRenderer.prototype.html,
 
 	/**
 	 * Create and return a path element
@@ -5522,7 +5525,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 * For rectangles, VML uses a shape for rect to overcome bugs and rotation problems
 	 */
 	createElement: function (nodeName) {
-		return nodeName === 'rect' ? this.symbol(nodeName) : SVGRenderer.prototype.createElement.call(this, nodeName);	
+		return nodeName === 'rect' ? this.symbol(nodeName) : Highcharts.SVGRenderer.prototype.createElement.call(this, nodeName);	
 	},
 
 	/**
@@ -5643,7 +5646,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		 * use the simpler square path, else use the callout path without the arrow.
 		 */
 		rect: function (x, y, w, h, options) {
-			return SVGRenderer.prototype.symbols[
+			return Highcharts.SVGRenderer.prototype.symbols[
 				!Highcharts.defined(options) || !options.r ? 'square' : 'callout'
 			].call(0, x, y, w, h, options);
 		}
@@ -5652,14 +5655,14 @@ var VMLRendererExtension = { // inherit SVGRenderer
 Highcharts.VMLRenderer = VMLRenderer = function () {
 	this.init.apply(this, arguments);
 };
-VMLRenderer.prototype = Highcharts.merge(SVGRenderer.prototype, VMLRendererExtension);
+VMLRenderer.prototype = Highcharts.merge(Highcharts.SVGRenderer.prototype, VMLRendererExtension);
 
 	// general renderer
 	Highcharts.Renderer = VMLRenderer;
 }
 
 // This method is used with exporting in old IE, when emulating SVG (see #2314)
-SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
+Highcharts.SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
 	var measuringSpan = document.createElement('span'),
 		offsetWidth,
 	textNode = document.createTextNode(text);
@@ -11399,7 +11402,7 @@ Chart.prototype = {
 		// Initialize the renderer
 		chart.renderer =
 			optionsChart.forExport ? // force SVG, used for SVG export
-				new SVGRenderer(container, chartWidth, chartHeight, optionsChart.style, true) :
+				new Highcharts.SVGRenderer(container, chartWidth, chartHeight, optionsChart.style, true) :
 				new Highcharts.Renderer(container, chartWidth, chartHeight, optionsChart.style);
 
 		if (Highcharts.useCanVG) {
@@ -18517,10 +18520,10 @@ function selectiveRoundedRect(attr, x, y, w, h, rTopLeft, rTopRight, rBottomRigh
         'Z'
     ];
 }
-SVGRenderer.prototype.symbols.topbutton = function (x, y, w, h, attr) {
+Highcharts.SVGRenderer.prototype.symbols.topbutton = function (x, y, w, h, attr) {
 	return selectiveRoundedRect(attr, x, y, w, h, attr.r, attr.r, 0, 0);
 };
-SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
+Highcharts.SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
 	return selectiveRoundedRect(attr, x, y, w, h, 0, 0, attr.r, attr.r);
 };
 // The symbol callbacks are generated on the SVGRenderer object in all browsers. Even
@@ -18528,7 +18531,7 @@ SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
 // them with the VMLRenderer.
 if (Highcharts.Renderer === VMLRenderer) {
 	Highcharts.each(['topbutton', 'bottombutton'], function (shape) {
-		VMLRenderer.prototype.symbols[shape] = SVGRenderer.prototype.symbols[shape];
+		VMLRenderer.prototype.symbols[shape] = Highcharts.SVGRenderer.prototype.symbols[shape];
 	});
 }
 
@@ -19498,8 +19501,6 @@ Highcharts.extend(Highcharts, {
 	// Constructors
 	Point: Point,
 	Tick: Tick,	
-	SVGElement: SVGElement,
-	SVGRenderer: SVGRenderer,
 	
 	// Various
 	canvas: Highcharts.useCanVG,

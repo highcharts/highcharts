@@ -2,7 +2,7 @@
  * Start Flags series code													*
  *****************************************************************************/
 
-var symbols = SVGRenderer.prototype.symbols;
+var symbols = Highcharts.SVGRenderer.prototype.symbols;
 
 // 1 - set default options
 Highcharts.defaultPlotOptions.flags = Highcharts.merge(Highcharts.defaultPlotOptions.column, {

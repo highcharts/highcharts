@@ -291,7 +291,7 @@ Axis.prototype.getPlotBandPath = function (from, to) {
 };
 
 // Function to crisp a line with multiple segments
-SVGRenderer.prototype.crispPolyLine = function (points, width) {
+Highcharts.SVGRenderer.prototype.crispPolyLine = function (points, width) {
 	// points format: ['M', 0, 0, 'L', 100, 0]		
 	// normalize to a crisp line
 	var i;
@@ -307,7 +307,7 @@ SVGRenderer.prototype.crispPolyLine = function (points, width) {
 	return points;
 };
 if (Highcharts.Renderer === Highcharts.VMLRenderer) {
-	VMLRenderer.prototype.crispPolyLine = SVGRenderer.prototype.crispPolyLine;
+	VMLRenderer.prototype.crispPolyLine = Highcharts.SVGRenderer.prototype.crispPolyLine;
 }
 
 

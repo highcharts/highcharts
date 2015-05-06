@@ -95,7 +95,7 @@ VMLElement = {
 	/**
 	 * VML always uses htmlUpdateTransform
 	 */
-	updateTransform: SVGElement.prototype.htmlUpdateTransform,
+	updateTransform: Highcharts.SVGElement.prototype.htmlUpdateTransform,
 
 	/**
 	 * Set the rotation of a span with oldIE's filter
@@ -237,7 +237,7 @@ VMLElement = {
 	 * Set styles for the element
 	 * @param {Object} styles
 	 */
-	css: SVGElement.prototype.htmlCss,
+	css: Highcharts.SVGElement.prototype.htmlCss,
 
 	/**
 	 * Removes a child either by removeChild or move to garbageBin.
@@ -259,7 +259,7 @@ VMLElement = {
 			this.destroyClip();
 		}
 
-		return SVGElement.prototype.destroy.apply(this);
+		return Highcharts.SVGElement.prototype.destroy.apply(this);
 	},
 
 	/**
@@ -490,7 +490,7 @@ VMLElement = {
 		element.style[key] = value;
 	}
 };
-Highcharts.VMLElement = VMLElement = Highcharts.extendClass(SVGElement, VMLElement);
+Highcharts.VMLElement = VMLElement = Highcharts.extendClass(Highcharts.SVGElement, VMLElement);
 
 // Some shared setters
 VMLElement.prototype.ySetter =
@@ -833,7 +833,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 * @param {Number} x
 	 * @param {Number} y
 	 */
-	text: SVGRenderer.prototype.html,
+	text: Highcharts.SVGRenderer.prototype.html,
 
 	/**
 	 * Create and return a path element
@@ -921,7 +921,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 	 * For rectangles, VML uses a shape for rect to overcome bugs and rotation problems
 	 */
 	createElement: function (nodeName) {
-		return nodeName === 'rect' ? this.symbol(nodeName) : SVGRenderer.prototype.createElement.call(this, nodeName);	
+		return nodeName === 'rect' ? this.symbol(nodeName) : Highcharts.SVGRenderer.prototype.createElement.call(this, nodeName);	
 	},
 
 	/**
@@ -1042,7 +1042,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		 * use the simpler square path, else use the callout path without the arrow.
 		 */
 		rect: function (x, y, w, h, options) {
-			return SVGRenderer.prototype.symbols[
+			return Highcharts.SVGRenderer.prototype.symbols[
 				!Highcharts.defined(options) || !options.r ? 'square' : 'callout'
 			].call(0, x, y, w, h, options);
 		}
@@ -1051,14 +1051,14 @@ var VMLRendererExtension = { // inherit SVGRenderer
 Highcharts.VMLRenderer = VMLRenderer = function () {
 	this.init.apply(this, arguments);
 };
-VMLRenderer.prototype = Highcharts.merge(SVGRenderer.prototype, VMLRendererExtension);
+VMLRenderer.prototype = Highcharts.merge(Highcharts.SVGRenderer.prototype, VMLRendererExtension);
 
 	// general renderer
 	Highcharts.Renderer = VMLRenderer;
 }
 
 // This method is used with exporting in old IE, when emulating SVG (see #2314)
-SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
+Highcharts.SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
 	var measuringSpan = document.createElement('span'),
 		offsetWidth,
 	textNode = document.createTextNode(text);

@@ -18,7 +18,6 @@ var Axis = Highcharts.Axis,
 	Legend = Highcharts.Legend,
 	LegendSymbolMixin = Highcharts.LegendSymbolMixin,
 	Series = Highcharts.Series,
-	SVGRenderer = Highcharts.SVGRenderer,
 	VMLRenderer = Highcharts.VMLRenderer;
 /**
  * Override to use the extreme coordinates from the SVG shape, not the
@@ -2139,10 +2138,10 @@ function selectiveRoundedRect(attr, x, y, w, h, rTopLeft, rTopRight, rBottomRigh
         'Z'
     ];
 }
-SVGRenderer.prototype.symbols.topbutton = function (x, y, w, h, attr) {
+Highcharts.SVGRenderer.prototype.symbols.topbutton = function (x, y, w, h, attr) {
 	return selectiveRoundedRect(attr, x, y, w, h, attr.r, attr.r, 0, 0);
 };
-SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
+Highcharts.SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
 	return selectiveRoundedRect(attr, x, y, w, h, 0, 0, attr.r, attr.r);
 };
 // The symbol callbacks are generated on the SVGRenderer object in all browsers. Even
@@ -2150,7 +2149,7 @@ SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
 // them with the VMLRenderer.
 if (Highcharts.Renderer === VMLRenderer) {
 	Highcharts.each(['topbutton', 'bottombutton'], function (shape) {
-		VMLRenderer.prototype.symbols[shape] = SVGRenderer.prototype.symbols[shape];
+		VMLRenderer.prototype.symbols[shape] = Highcharts.SVGRenderer.prototype.symbols[shape];
 	});
 }
 
