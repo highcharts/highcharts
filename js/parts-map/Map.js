@@ -115,9 +115,9 @@ Highcharts.SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, at
 // The symbol callbacks are generated on the SVGRenderer object in all browsers. Even
 // VML browsers need this in order to generate shapes in export. Now share
 // them with the VMLRenderer.
-if (Highcharts.Renderer === VMLRenderer) {
+if (Highcharts.Renderer === Highcharts.VMLRenderer) {
 	Highcharts.each(['topbutton', 'bottombutton'], function (shape) {
-		VMLRenderer.prototype.symbols[shape] = Highcharts.SVGRenderer.prototype.symbols[shape];
+		Highcharts.VMLRenderer.prototype.symbols[shape] = Highcharts.SVGRenderer.prototype.symbols[shape];
 	});
 }
 

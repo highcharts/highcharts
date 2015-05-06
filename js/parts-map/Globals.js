@@ -5,5 +5,4 @@ var Axis = Highcharts.Axis,
 	Pointer = Highcharts.Pointer,
 	Legend = Highcharts.Legend,
 	LegendSymbolMixin = Highcharts.LegendSymbolMixin,
-	Series = Highcharts.Series,
-	VMLRenderer = Highcharts.VMLRenderer;
+	Series = Highcharts.Series;

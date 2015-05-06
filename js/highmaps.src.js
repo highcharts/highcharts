@@ -4609,7 +4609,10 @@ extend(H.SVGRenderer.prototype, {
 
 	return H;
 }(Highcharts));
-
+(function (H) {
+	var VMLRenderer,
+		VMLRendererExtension,
+		VMLElement;
 
 /* ****************************************************************************
  *                                                                            *
@@ -4623,7 +4626,6 @@ extend(H.SVGRenderer.prototype, {
 /**
  * @constructor
  */
-var VMLRenderer, VMLElement;
 if (!Highcharts.svg && !Highcharts.useCanVG) {
 
 /**
@@ -5113,7 +5115,7 @@ VMLElement.prototype.ySetter =
 /**
  * The VML renderer
  */
-var VMLRendererExtension = { // inherit SVGRenderer
+VMLRendererExtension = { // inherit SVGRenderer
 
 	Element: VMLElement,
 	isIE8: navigator.userAgent.indexOf('MSIE 8.0') > -1,
@@ -5688,6 +5690,9 @@ Highcharts.SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
  * END OF INTERNET EXPLORER <= 8 SPECIFIC CODE                                *
  *                                                                            *
  *****************************************************************************/
+	
+	return H;
+}(Highcharts));
 /* ****************************************************************************
  *                                                                            *
  * START OF ANDROID < 3 SPECIFIC CODE. THIS CAN BE REMOVED IF YOU'RE NOT      *
@@ -18536,9 +18541,9 @@ Highcharts.SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, at
 // The symbol callbacks are generated on the SVGRenderer object in all browsers. Even
 // VML browsers need this in order to generate shapes in export. Now share
 // them with the VMLRenderer.
-if (Highcharts.Renderer === VMLRenderer) {
+if (Highcharts.Renderer === Highcharts.VMLRenderer) {
 	Highcharts.each(['topbutton', 'bottombutton'], function (shape) {
-		VMLRenderer.prototype.symbols[shape] = Highcharts.SVGRenderer.prototype.symbols[shape];
+		Highcharts.VMLRenderer.prototype.symbols[shape] = Highcharts.SVGRenderer.prototype.symbols[shape];
 	});
 }
 

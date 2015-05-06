@@ -322,7 +322,7 @@ Highcharts.each(['circle', 'square'], function (shape) {
 // them with the VMLRenderer.
 if (Highcharts.Renderer === Highcharts.VMLRenderer) {
 	Highcharts.each(['flag', 'circlepin', 'squarepin'], function (shape) {
-		VMLRenderer.prototype.symbols[shape] = symbols[shape];
+		Highcharts.VMLRenderer.prototype.symbols[shape] = symbols[shape];
 	});
 }
 

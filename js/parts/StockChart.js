@@ -307,7 +307,7 @@ Highcharts.SVGRenderer.prototype.crispPolyLine = function (points, width) {
 	return points;
 };
 if (Highcharts.Renderer === Highcharts.VMLRenderer) {
-	VMLRenderer.prototype.crispPolyLine = Highcharts.SVGRenderer.prototype.crispPolyLine;
+	Highcharts.VMLRenderer.prototype.crispPolyLine = Highcharts.SVGRenderer.prototype.crispPolyLine;
 }
 
 
