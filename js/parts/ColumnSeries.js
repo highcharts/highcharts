@@ -1,7 +1,7 @@
 /**
  * Set the default options for column
  */
-defaultPlotOptions.column = Highcharts.merge(defaultSeriesOptions, {
+defaultPlotOptions.column = Highcharts.merge(Highcharts.defaultOptions.plotOptions.line, {
 	borderColor: '#FFFFFF',
 	//borderWidth: 1,
 	borderRadius: 0,
