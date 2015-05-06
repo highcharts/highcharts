@@ -1,7 +1,8 @@
+(function (H) {
 /* ****************************************************************************
  * Handle the options                                                         *
  *****************************************************************************/
-Highcharts.defaultOptions = {
+H.defaultOptions = {
 	colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', 
 		    '#8085e9', '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'],
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
@@ -141,7 +142,7 @@ Highcharts.defaultOptions = {
 				// defer: true,
 				// enabled: false,
 				formatter: function () {
-					return this.y === null ? '' : Highcharts.numberFormat(this.y, -1);
+					return this.y === null ? '' : H.numberFormat(this.y, -1);
 				},
 				style: {
 					color: 'contrast',
@@ -277,7 +278,7 @@ Highcharts.defaultOptions = {
 
 	tooltip: {
 		enabled: true,
-		animation: Highcharts.svg,
+		animation: H.svg,
 		//crosshairs: null,
 		backgroundColor: 'rgba(249, 249, 249, .85)',
 		borderWidth: 1,
@@ -299,7 +300,7 @@ Highcharts.defaultOptions = {
 		shadow: true,
 		//shape: 'callout',
 		//shared: false,
-		snap: Highcharts.isTouchDevice ? 25 : 10,
+		snap: H.isTouchDevice ? 25 : 10,
 		style: {
 			color: '#333333',
 			cursor: 'default',
@@ -335,8 +336,8 @@ Highcharts.defaultOptions = {
 
 
 // Series defaults
-Highcharts.defaultPlotOptions = Highcharts.defaultOptions.plotOptions;
-Highcharts.defaultSeriesOptions = Highcharts.defaultPlotOptions.line;
+H.defaultPlotOptions = H.defaultOptions.plotOptions;
+H.defaultSeriesOptions = H.defaultPlotOptions.line;
 
 // set the default time methods
 setTimeMethods();
@@ -348,23 +349,23 @@ setTimeMethods();
  * local time or UTC (default).
  */
 function setTimeMethods() {
-	var globalOptions = Highcharts.defaultOptions.global,
+	var globalOptions = H.defaultOptions.global,
 		hcD,
-		pick = Highcharts.pick,
-		each = Highcharts.each,
+		pick = H.pick,
+		each = H.each,
 		useUTC = globalOptions.useUTC,
 		GET = useUTC ? 'getUTC' : 'get',
 		SET = useUTC ? 'setUTC' : 'set';
 
-	Highcharts.Date = globalOptions.Date || window.Date; // Allow using a different Date class
-	hcD = Highcharts.Date;
+	H.Date = globalOptions.Date || window.Date; // Allow using a different Date class
+	hcD = H.Date;
 	hcD.hcTimezoneOffset = useUTC && globalOptions.timezoneOffset;
 	hcD.hcGetTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
 	hcD.hcMakeTime = function (year, month, date, hours, minutes, seconds) {
 		var d;
 		if (useUTC) {
 			d = hcD.UTC.apply(0, arguments);
-			d += Highcharts.getTZOffset(d);
+			d += H.getTZOffset(d);
 		} else {
 			d = new hcD(
 				year,
@@ -389,22 +390,24 @@ function setTimeMethods() {
  * Merge the default options with custom options and return the new options structure
  * @param {Object} options The new custom options
  */
-Highcharts.setOptions = function (options) {
+H.setOptions = function (options) {
 	
 	// Copy in the default options
-	Highcharts.defaultOptions = Highcharts.merge(true, Highcharts.defaultOptions, options);
+	H.defaultOptions = H.merge(true, H.defaultOptions, options);
 	
 	// Apply UTC
 	setTimeMethods();
 
-	return Highcharts.defaultOptions;
+	return H.defaultOptions;
 };
 
 /**
  * Get the updated default options. Until 3.0.7, merely exposing defaultOptions for outside modules
  * wasn't enough because the setOptions method created a new object.
  */
-Highcharts.getOptions = function() {
-	return Highcharts.defaultOptions;
+H.getOptions = function() {
+	return H.defaultOptions;
 };
 
+	return (Highcharts = H);
+}(Highcharts));
