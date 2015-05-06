@@ -1344,7 +1344,7 @@ Chart.prototype = {
 		/*jslint eqeq: false*/
 			if (Highcharts.useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready
-				CanVGController.push(function () { chart.firstRender(); }, chart.options.global.canvasToolsURL);
+				Highcharts.CanVGController.push(function () { chart.firstRender(); }, chart.options.global.canvasToolsURL);
 			} else {
 				document.attachEvent('onreadystatechange', function () {
 					document.detachEvent('onreadystatechange', chart.firstRender);

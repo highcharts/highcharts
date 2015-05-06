@@ -5693,24 +5693,24 @@ Highcharts.SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
 	
 	return H;
 }(Highcharts));
+(function (H) {
+	var CanVGRenderer;
+
 /* ****************************************************************************
  *                                                                            *
  * START OF ANDROID < 3 SPECIFIC CODE. THIS CAN BE REMOVED IF YOU'RE NOT      *
  * TARGETING THAT SYSTEM.                                                     *
  *                                                                            *
  *****************************************************************************/
-var CanVGRenderer,
-	CanVGController;
-
-if (Highcharts.useCanVG) {
+if (H.useCanVG) {
 	/**
 	 * The CanVGRenderer is empty from start to keep the source footprint small.
 	 * When requested, the CanVGController downloads the rest of the source packaged
 	 * together with the canvg library.
 	 */
-	Highcharts.CanVGRenderer = CanVGRenderer = function () {
+	H.CanVGRenderer = CanVGRenderer = function () {
 		// Override the global SVG namespace to fake SVG/HTML that accepts CSS
-		Highcharts.SVG_NS = 'http://www.w3.org/1999/xhtml';
+		H.SVG_NS = 'http://www.w3.org/1999/xhtml';
 	};
 
 	/**
@@ -5722,7 +5722,7 @@ if (Highcharts.useCanVG) {
 	/**
 	 * Handles on demand download of canvg rendering support.
 	 */
-	CanVGController = (function () {
+	H.CanVGController = (function () {
 		// List of renderering calls
 		var deferredRenderCalls = [];
 
@@ -5753,7 +5753,7 @@ if (Highcharts.useCanVG) {
 		};
 	}());
 
-	Highcharts.Renderer = CanVGRenderer;
+	H.Renderer = CanVGRenderer;
 } // end CanVGRenderer
 
 /* ****************************************************************************
@@ -5762,6 +5762,8 @@ if (Highcharts.useCanVG) {
  *                                                                            *
  *****************************************************************************/
 
+	return H;
+}(Highcharts));
 /**
  * The Tick class
  */
@@ -12098,7 +12100,7 @@ Chart.prototype = {
 		/*jslint eqeq: false*/
 			if (Highcharts.useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready
-				CanVGController.push(function () { chart.firstRender(); }, chart.options.global.canvasToolsURL);
+				Highcharts.CanVGController.push(function () { chart.firstRender(); }, chart.options.global.canvasToolsURL);
 			} else {
 				document.attachEvent('onreadystatechange', function () {
 					document.detachEvent('onreadystatechange', chart.firstRender);
