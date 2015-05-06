@@ -9271,7 +9271,7 @@ Tooltip.prototype = {
 				plotY: y, 
 				negative: point.negative, 
 				ttBelow: point.ttBelow, 
-				h: (point.shapeArgs && point.shapeArgs.height) || 0
+				h: anchor[2] || 0
 			});
 		
 			this.isHidden = false;
@@ -16161,11 +16161,6 @@ var ColumnSeries = extendClass(Series, {
 			point.barX = barX;
 			point.pointWidth = pointWidth;
 
-			// Fix the tooltip on center of grouped columns (#1216, #424, #3648)
-			point.tooltipPos = chart.inverted ? 
-				[yAxis.len + yAxis.pos - chart.plotLeft - plotY, series.xAxis.len - barX - barW / 2] : 
-				[barX + barW / 2, plotY + yAxis.pos - chart.plotTop];
-
 			// Round off to obtain crisp edges and avoid overlapping with neighbours (#2694)
 			right = mathRound(barX + barW) + xCrisp;
 			barX = mathRound(barX) + xCrisp;
@@ -16181,6 +16176,11 @@ var ColumnSeries = extendClass(Series, {
 				barY -= 1;
 				barH += 1;
 			}
+
+			// Fix the tooltip on center of grouped columns (#1216, #424, #3648)
+			point.tooltipPos = chart.inverted ? 
+				[yAxis.len + yAxis.pos - chart.plotLeft - plotY, series.xAxis.len - barX - barW / 2, barH] : 
+				[barX + barW / 2, plotY + yAxis.pos - chart.plotTop, barH];
 
 			// Register shape type and arguments to be used in drawPoints
 			point.shapeType = 'rect';

@@ -397,7 +397,7 @@ Tooltip.prototype = {
 				plotY: y, 
 				negative: point.negative, 
 				ttBelow: point.ttBelow, 
-				h: (point.shapeArgs && point.shapeArgs.height) || 0
+				h: anchor[2] || 0
 			});
 		
 			this.isHidden = false;
