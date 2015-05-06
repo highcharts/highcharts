@@ -6906,7 +6906,7 @@ Axis.prototype = {
 	 *
 	 */
 	translate: function (val, backwards, cvsCoord, old, handleLog, pointPlacement) {
-		var axis = this,
+		var axis = this.linkedParent || this, // #1417
 			sign = 1,
 			cvsOffset = 0,
 			localA = old ? axis.oldTransA : axis.transA,
