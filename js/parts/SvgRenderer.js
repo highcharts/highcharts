@@ -131,7 +131,7 @@ SVGElement.prototype = {
 				Highcharts.each(stops, function (stop) {
 					var stopObject;
 					if (stop[1].indexOf('rgba') === 0) {
-						colorObject = Color(stop[1]);
+						colorObject = Highcharts.Color(stop[1]);
 						stopColor = colorObject.get('rgb');
 						stopOpacity = colorObject.get('a');
 					} else {
@@ -1603,7 +1603,7 @@ SVGRenderer.prototype = {
 	 * Returns white for dark colors and black for bright colors
 	 */
 	getContrast: function (color) {
-		color = Color(color).rgba;
+		color = Highcharts.Color(color).rgba;
 		return color[0] + color[1] + color[2] > 384 ? '#000' : '#FFF';
 	},
 

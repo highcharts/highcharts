@@ -3,7 +3,6 @@
 Highcharts.extend(Highcharts, {
 	
 	// Constructors
-	Color: Color,
 	Point: Point,
 	Tick: Tick,	
 	SVGElement: SVGElement,

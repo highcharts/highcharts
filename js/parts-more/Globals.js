@@ -4,5 +4,4 @@ var Axis = Highcharts.Axis,
 	Pointer = Highcharts.Pointer,
 	CenteredSeriesMixin = Highcharts.CenteredSeriesMixin,
 	TrackerMixin = Highcharts.TrackerMixin,
-	Series = Highcharts.Series,
-	Color = Highcharts.Color;
+	Series = Highcharts.Series;

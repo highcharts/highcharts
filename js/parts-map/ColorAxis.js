@@ -120,8 +120,8 @@ Highcharts.extend(ColorAxis.prototype, {
 					}
 				} else {
 					dataClass.color = axis.tweenColors(
-						Color(options.minColor), 
-						Color(options.maxColor), 
+						Highcharts.Color(options.minColor), 
+						Highcharts.Color(options.maxColor), 
 						len < 2 ? 0.5 : i / (len - 1) // #3219
 					);
 				}
@@ -135,7 +135,7 @@ Highcharts.extend(ColorAxis.prototype, {
 			[1, this.options.maxColor]
 		];
 		Highcharts.each(this.stops, function (stop) {
-			stop.color = Color(stop[1]);
+			stop.color = Highcharts.Color(stop[1]);
 		});
 	},
 
@@ -433,7 +433,7 @@ Highcharts.extend(ColorAxis.prototype, {
  */
 Highcharts.each(['fill', 'stroke'], function (prop) {
 	HighchartsAdapter.addAnimSetter(prop, function (fx) {
-		fx.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(fx.start), Color(fx.end), fx.pos));
+		fx.elem.attr(prop, ColorAxis.prototype.tweenColors(Highcharts.Color(fx.start), Highcharts.Color(fx.end), fx.pos));
 	});
 });
 

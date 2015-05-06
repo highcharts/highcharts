@@ -575,7 +575,7 @@ Highcharts.extend(Point.prototype, {
 					.add(chart.seriesGroup);
 			}
 			halo.attr(Highcharts.extend({
-				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
+				fill: Highcharts.Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
 			}, haloOptions.attributes))[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
 			});

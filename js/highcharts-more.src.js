@@ -19,8 +19,8 @@ var Axis = Highcharts.Axis,
 	Pointer = Highcharts.Pointer,
 	CenteredSeriesMixin = Highcharts.CenteredSeriesMixin,
 	TrackerMixin = Highcharts.TrackerMixin,
-	Series = Highcharts.Series,
-	Color = Highcharts.Color;/**
+	Series = Highcharts.Series;
+/**
  * The Pane object allows options that are common to a set of X and Y axes.
  * 
  * In the future, this can be extended to basic Highcharts and Highstock.
@@ -1886,7 +1886,7 @@ Highcharts.seriesTypes.bubble = Highcharts.extendClass(Highcharts.seriesTypes.sc
 		fill = fill || markerOptions.fillColor || this.color; 
 		
 		if (fillOpacity !== 1) {
-			fill = Color(fill).setOpacity(fillOpacity).get('rgba');
+			fill = Highcharts.Color(fill).setOpacity(fillOpacity).get('rgba');
 		}
 		return fill;
 	},

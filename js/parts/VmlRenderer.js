@@ -696,7 +696,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			// Compute the stops
 			Highcharts.each(stops, function (stop, i) {
 				if (regexRgba.test(stop[1])) {
-					colorObject = Color(stop[1]);
+					colorObject = Highcharts.Color(stop[1]);
 					stopColor = colorObject.get('rgb');
 					stopOpacity = colorObject.get('a');
 				} else {
@@ -782,7 +782,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		// to hold the opacity component
 		} else if (regexRgba.test(color) && elem.tagName !== 'IMG') {
 
-			colorObject = Color(color);
+			colorObject = Highcharts.Color(color);
 
 			markup = ['<', prop, ' opacity="', colorObject.get('a'), '"/>'];
 			Highcharts.createElement(this.prepVML(markup), null, null, elem);

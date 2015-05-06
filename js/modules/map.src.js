@@ -13,7 +13,6 @@
 
 var Axis = Highcharts.Axis,
 	Chart = Highcharts.Chart,
-	Color = Highcharts.Color,
 	Point = Highcharts.Point,
 	Pointer = Highcharts.Pointer,
 	Legend = Highcharts.Legend,
@@ -239,8 +238,8 @@ Highcharts.extend(ColorAxis.prototype, {
 					}
 				} else {
 					dataClass.color = axis.tweenColors(
-						Color(options.minColor), 
-						Color(options.maxColor), 
+						Highcharts.Color(options.minColor), 
+						Highcharts.Color(options.maxColor), 
 						len < 2 ? 0.5 : i / (len - 1) // #3219
 					);
 				}
@@ -254,7 +253,7 @@ Highcharts.extend(ColorAxis.prototype, {
 			[1, this.options.maxColor]
 		];
 		Highcharts.each(this.stops, function (stop) {
-			stop.color = Color(stop[1]);
+			stop.color = Highcharts.Color(stop[1]);
 		});
 	},
 
@@ -552,7 +551,7 @@ Highcharts.extend(ColorAxis.prototype, {
  */
 Highcharts.each(['fill', 'stroke'], function (prop) {
 	HighchartsAdapter.addAnimSetter(prop, function (fx) {
-		fx.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(fx.start), Color(fx.end), fx.pos));
+		fx.elem.attr(prop, ColorAxis.prototype.tweenColors(Highcharts.Color(fx.start), Highcharts.Color(fx.end), fx.pos));
 	});
 });
 
@@ -1012,8 +1011,8 @@ var MapAreaPoint = Highcharts.extendClass(Point, {
 	onMouseOut: function () {
 		var point = this,
 			start = +new Date(),
-			normalColor = Color(point.color),
-			hoverColor = Color(point.pointAttr.hover.fill),
+			normalColor = Highcharts.Color(point.color),
+			hoverColor = Highcharts.Color(point.pointAttr.hover.fill),
 			animation = point.series.options.states.normal.animation,
 			duration = animation && (animation.duration || 500),
 			fill;

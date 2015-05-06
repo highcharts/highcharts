@@ -7,7 +7,7 @@ var rgbaRegEx = /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,
 	hexRegEx = /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/,
 	rgbRegEx = /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/;
 
-var Color = function (input) {
+Highcharts.Color = function (input) {
 	// declare variables
 	var rgba = [], result, stops;
 
@@ -20,7 +20,7 @@ var Color = function (input) {
 		// Gradients
 		if (input && input.stops) {
 			stops = Highcharts.map(input.stops, function (stop) {
-				return Color(stop[1]);
+				return Highcharts.Color(stop[1]);
 			});
 
 		// Solid colors

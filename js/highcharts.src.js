@@ -1590,7 +1590,7 @@ var rgbaRegEx = /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,
 	hexRegEx = /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/,
 	rgbRegEx = /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/;
 
-var Color = function (input) {
+Highcharts.Color = function (input) {
 	// declare variables
 	var rgba = [], result, stops;
 
@@ -1603,7 +1603,7 @@ var Color = function (input) {
 		// Gradients
 		if (input && input.stops) {
 			stops = Highcharts.map(input.stops, function (stop) {
-				return Color(stop[1]);
+				return Highcharts.Color(stop[1]);
 			});
 
 		// Solid colors
@@ -1837,7 +1837,7 @@ SVGElement.prototype = {
 				Highcharts.each(stops, function (stop) {
 					var stopObject;
 					if (stop[1].indexOf('rgba') === 0) {
-						colorObject = Color(stop[1]);
+						colorObject = Highcharts.Color(stop[1]);
 						stopColor = colorObject.get('rgb');
 						stopOpacity = colorObject.get('a');
 					} else {
@@ -3309,7 +3309,7 @@ SVGRenderer.prototype = {
 	 * Returns white for dark colors and black for bright colors
 	 */
 	getContrast: function (color) {
-		color = Color(color).rgba;
+		color = Highcharts.Color(color).rgba;
 		return color[0] + color[1] + color[2] > 384 ? '#000' : '#FFF';
 	},
 
@@ -5297,7 +5297,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 			// Compute the stops
 			Highcharts.each(stops, function (stop, i) {
 				if (regexRgba.test(stop[1])) {
-					colorObject = Color(stop[1]);
+					colorObject = Highcharts.Color(stop[1]);
 					stopColor = colorObject.get('rgb');
 					stopOpacity = colorObject.get('a');
 				} else {
@@ -5383,7 +5383,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		// to hold the opacity component
 		} else if (regexRgba.test(color) && elem.tagName !== 'IMG') {
 
-			colorObject = Color(color);
+			colorObject = Highcharts.Color(color);
 
 			markup = ['<', prop, ' opacity="', colorObject.get('a'), '"/>'];
 			Highcharts.createElement(this.prepVML(markup), null, null, elem);
@@ -14025,12 +14025,12 @@ Series.prototype = {
 
 			// if no hover color is given, brighten the normal color
 			stateOptionsHover.color = stateOptionsHover.color ||
-				Color(stateOptionsHover.color || seriesColor)
+				Highcharts.Color(stateOptionsHover.color || seriesColor)
 					.brighten(stateOptionsHover.brightness).get();
 
 			// if no hover negativeColor is given, brighten the normal negativeColor
 			stateOptionsHover.negativeColor = stateOptionsHover.negativeColor ||
-				Color(stateOptionsHover.negativeColor || seriesNegativeColor)
+				Highcharts.Color(stateOptionsHover.negativeColor || seriesNegativeColor)
 					.brighten(stateOptionsHover.brightness).get();
 		}
 
@@ -14092,7 +14092,7 @@ Series.prototype = {
 					if (!seriesOptions.marker) { // column, bar, point
 						// If no hover color is given, brighten the normal color. #1619, #2579
 						pointStateOptionsHover.color = pointStateOptionsHover.color || (!point.options.color && stateOptionsHover[(point.negative && seriesNegativeColor ? 'negativeColor' : 'color')]) ||
-							Color(point.color)
+							Highcharts.Color(point.color)
 								.brighten(pointStateOptionsHover.brightness || stateOptionsHover.brightness)
 								.get();
 					}
@@ -15841,7 +15841,7 @@ var AreaSeries = Highcharts.extendClass(Series, {
 					.attr({
 						fill: pick(
 							prop[2],
-							Color(prop[1]).setOpacity(pick(options.fillOpacity, 0.75)).get()
+							Highcharts.Color(prop[1]).setOpacity(pick(options.fillOpacity, 0.75)).get()
 						),
 						zIndex: 0 // #1069
 					}).add(series.group);
@@ -18332,7 +18332,7 @@ Highcharts.extend(Point.prototype, {
 					.add(chart.seriesGroup);
 			}
 			halo.attr(Highcharts.extend({
-				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
+				fill: Highcharts.Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
 			}, haloOptions.attributes))[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
 			});
@@ -18559,7 +18559,6 @@ Highcharts.extend(Series.prototype, {
 Highcharts.extend(Highcharts, {
 	
 	// Constructors
-	Color: Color,
 	Point: Point,
 	Tick: Tick,	
 	SVGElement: SVGElement,
