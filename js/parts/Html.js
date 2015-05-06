@@ -1,5 +1,9 @@
+(function (H) {
+	var css = H.css,
+		each = H.each,
+		extend = H.extend;
 // extend SvgElement for useHTML option
-Highcharts.extend(Highcharts.SVGElement.prototype, {
+extend(H.SVGElement.prototype, {
 	/**
 	 * Apply CSS to HTML elements. This is used in text within SVG rendering and
 	 * by the VML renderer
@@ -18,8 +22,8 @@ Highcharts.extend(Highcharts.SVGElement.prototype, {
 			styles.whiteSpace = 'nowrap';
 			styles.overflow = 'hidden';
 		}
-		wrapper.styles = Highcharts.extend(wrapper.styles, styles);
-		Highcharts.css(wrapper.element, styles);
+		wrapper.styles = extend(wrapper.styles, styles);
+		css(wrapper.element, styles);
 
 		return wrapper;
 	},
@@ -63,7 +67,6 @@ Highcharts.extend(Highcharts.SVGElement.prototype, {
 
 		var wrapper = this,
 			renderer = wrapper.renderer,
-			css = Highcharts.css,
 			elem = wrapper.element,
 			translateX = wrapper.translateX || 0,
 			translateY = wrapper.translateY || 0,
@@ -80,7 +83,7 @@ Highcharts.extend(Highcharts.SVGElement.prototype, {
 			marginTop: translateY
 		});
 		if (shadows) { // used in labels/tooltip
-			Highcharts.each(shadows, function (shadow) {
+			each(shadows, function (shadow) {
 				css(shadow, {
 					marginLeft: translateX + 1,
 					marginTop: translateY + 1
@@ -90,7 +93,7 @@ Highcharts.extend(Highcharts.SVGElement.prototype, {
 
 		// apply inversion
 		if (wrapper.inverted) { // wrapper is a group
-			Highcharts.each(elem.childNodes, function (child) {
+			each(elem.childNodes, function (child) {
 				renderer.invertChild(child, elem);
 			});
 		}
@@ -100,7 +103,7 @@ Highcharts.extend(Highcharts.SVGElement.prototype, {
 			var width,
 				rotation = wrapper.rotation,
 				baseline,
-				textWidth = Highcharts.pInt(wrapper.textWidth),
+				textWidth = H.pInt(wrapper.textWidth),
 				currentTextTransform = [rotation, align, elem.innerHTML, wrapper.textWidth].join(',');
 
 			if (currentTextTransform !== wrapper.cTT) { // do the calculations and DOM access only if properties changed
@@ -109,11 +112,11 @@ Highcharts.extend(Highcharts.SVGElement.prototype, {
 				baseline = renderer.fontMetrics(elem.style.fontSize).b;
 
 				// Renderer specific handling of span rotation
-				if (Highcharts.defined(rotation)) {
+				if (H.defined(rotation)) {
 					wrapper.setSpanRotation(rotation, alignCorrection, baseline);
 				}
 
-				width = Highcharts.pick(wrapper.elemWidth, elem.offsetWidth);
+				width = H.pick(wrapper.elemWidth, elem.offsetWidth);
 
 				// Update textWidth
 				if (width > textWidth && /[ \-]/.test(elem.textContent || elem.innerText)) { // #983, #1254
@@ -135,7 +138,7 @@ Highcharts.extend(Highcharts.SVGElement.prototype, {
 			});
 
 			// force reflow in webkit to apply the left and top on useHTML element (#1249)
-			if (Highcharts.isWebKit) {
+			if (H.isWebKit) {
 				baseline = elem.offsetHeight; // assigned to baseline for JSLint purpose
 			}
 
@@ -149,11 +152,11 @@ Highcharts.extend(Highcharts.SVGElement.prototype, {
 	 */
 	setSpanRotation: function (rotation, alignCorrection, baseline) {
 		var rotationStyle = {},
-			cssTransformKey = Highcharts.isIE ? '-ms-transform' : Highcharts.isWebKit ? '-webkit-transform' : Highcharts.isFirefox ? 'MozTransform' : window.opera ? '-o-transform' : '';
+			cssTransformKey = H.isIE ? '-ms-transform' : H.isWebKit ? '-webkit-transform' : H.isFirefox ? 'MozTransform' : window.opera ? '-o-transform' : '';
 
 		rotationStyle[cssTransformKey] = rotationStyle.transform = 'rotate(' + rotation + 'deg)';
-		rotationStyle[cssTransformKey + (Highcharts.isFirefox ? 'Origin' : '-origin')] = rotationStyle.transformOrigin = (alignCorrection * 100) + '% ' + baseline + 'px';
-		Highcharts.css(this.element, rotationStyle);
+		rotationStyle[cssTransformKey + (H.isFirefox ? 'Origin' : '-origin')] = rotationStyle.transformOrigin = (alignCorrection * 100) + '% ' + baseline + 'px';
+		css(this.element, rotationStyle);
 	},
 
 	/**
@@ -166,7 +169,7 @@ Highcharts.extend(Highcharts.SVGElement.prototype, {
 });
 
 // Extend SvgRenderer for useHTML option.
-Highcharts.extend(Highcharts.SVGRenderer.prototype, {
+extend(H.SVGRenderer.prototype, {
 	/**
 	 * Create HTML text node. This is used by the VML renderer as well as the SVG
 	 * renderer through the useHTML option.
@@ -242,13 +245,13 @@ Highcharts.extend(Highcharts.SVGRenderer.prototype, {
 						}
 
 						// Ensure dynamically updating position when any parent is translated
-						Highcharts.each(parents.reverse(), function (parentGroup) {
+						each(parents.reverse(), function (parentGroup) {
 							var htmlGroupStyle;
 
 							// Create a HTML div and append it to the parent div to emulate
 							// the SVG group structure
-							htmlGroup = parentGroup.div = parentGroup.div || Highcharts.createElement('div', {
-								className: Highcharts.attr(parentGroup.element, 'class')
+							htmlGroup = parentGroup.div = parentGroup.div || H.createElement('div', {
+								className: H.attr(parentGroup.element, 'class')
 							}, {
 								position: 'absolute',
 								left: (parentGroup.translateX || 0) + 'px',
@@ -260,7 +263,7 @@ Highcharts.extend(Highcharts.SVGRenderer.prototype, {
 
 							// Set listeners to update the HTML div's position whenever the SVG group
 							// position is changed
-							Highcharts.extend(parentGroup, {
+							extend(parentGroup, {
 								translateXSetter: function (value, key) {
 									htmlGroupStyle.left = value + 'px';
 									parentGroup[key] = value;
@@ -296,3 +299,6 @@ Highcharts.extend(Highcharts.SVGRenderer.prototype, {
 		return wrapper;
 	}
 });
+
+	return H;
+}(Highcharts));
