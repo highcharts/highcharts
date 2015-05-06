@@ -6,7 +6,7 @@
 /**
  * Extend the default options with map options
  */
-defaultPlotOptions.arearange = Highcharts.merge(defaultPlotOptions.area, {
+Highcharts.defaultPlotOptions.arearange = Highcharts.merge(Highcharts.defaultPlotOptions.area, {
 	lineWidth: 1,
 	marker: null,
 	threshold: null,

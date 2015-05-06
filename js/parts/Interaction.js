@@ -476,7 +476,7 @@ Highcharts.extend(Point.prototype, {
 			plotY = point.plotY,
 			series = point.series,
 			stateOptions = series.options.states,
-			markerOptions = defaultPlotOptions[series.type].marker && series.options.marker,
+			markerOptions = Highcharts.defaultPlotOptions[series.type].marker && series.options.marker,
 			normalDisabled = markerOptions && !markerOptions.enabled,
 			markerStateOptions = markerOptions && markerOptions.states[state],
 			stateDisabled = markerStateOptions && markerStateOptions.enabled === false,

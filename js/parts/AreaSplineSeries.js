@@ -1,7 +1,7 @@
 /**
  * Set the default options for areaspline
  */
-defaultPlotOptions.areaspline = Highcharts.merge(defaultPlotOptions.area);
+Highcharts.defaultPlotOptions.areaspline = Highcharts.merge(Highcharts.defaultPlotOptions.area);
 
 /**
  * AreaSplineSeries object

@@ -335,7 +335,7 @@ Series.prototype = {
 	 */
 	getColor: function () {
 		if (!this.options.colorByPoint) {
-			this.getCyclic('color', this.options.color || defaultPlotOptions[this.type].color, this.chart.options.colors);
+			this.getCyclic('color', this.options.color || Highcharts.defaultPlotOptions[this.type].color, this.chart.options.colors);
 		}
 	},
 	/**
@@ -898,7 +898,7 @@ Series.prototype = {
 
 		// Animation option is set to true
 		if (animation && !Highcharts.isObject(animation)) {
-			animation = defaultPlotOptions[series.type].animation;
+			animation = Highcharts.defaultPlotOptions[series.type].animation;
 		}
 
 		// Initialize the animation. Set up the clipping rectangle.
@@ -1054,7 +1054,7 @@ Series.prototype = {
 	getAttribs: function () {
 		var series = this,
 			seriesOptions = series.options,
-			normalOptions = defaultPlotOptions[series.type].marker ? seriesOptions.marker : seriesOptions,
+			normalOptions = Highcharts.defaultPlotOptions[series.type].marker ? seriesOptions.marker : seriesOptions,
 			stateOptions = normalOptions.states,
 			stateOptionsHover = stateOptions.hover,
 			pointStateOptionsHover,

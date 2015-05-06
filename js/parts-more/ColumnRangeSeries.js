@@ -5,7 +5,7 @@
 	/**
 	 * The ColumnRangeSeries class
 	 */
-	defaultPlotOptions.columnrange = Highcharts.merge(defaultPlotOptions.column, defaultPlotOptions.arearange, {
+	Highcharts.defaultPlotOptions.columnrange = Highcharts.merge(Highcharts.defaultPlotOptions.column, Highcharts.defaultPlotOptions.arearange, {
 		lineWidth: 1,
 		pointRange: null
 	});

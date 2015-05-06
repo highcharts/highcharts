@@ -8,7 +8,4 @@ var Axis = Highcharts.Axis,
 	LegendSymbolMixin = Highcharts.LegendSymbolMixin,
 	Series = Highcharts.Series,
 	SVGRenderer = Highcharts.SVGRenderer,
-	VMLRenderer = Highcharts.VMLRenderer,
-	
-	defaultOptions = Highcharts.getOptions(),
-	defaultPlotOptions = defaultOptions.plotOptions;
+	VMLRenderer = Highcharts.VMLRenderer;

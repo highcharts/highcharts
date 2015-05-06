@@ -3,7 +3,7 @@
  *****************************************************************************/
 
 // 1 - Set default options
-defaultPlotOptions.ohlc = Highcharts.merge(defaultPlotOptions.column, {
+Highcharts.defaultPlotOptions.ohlc = Highcharts.merge(Highcharts.defaultPlotOptions.column, {
 	lineWidth: 1,
 	tooltip: {
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' + // docs

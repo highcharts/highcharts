@@ -1,5 +1,4 @@
-var defaultPlotOptions = Highcharts.getOptions().plotOptions,
-	Axis = Highcharts.Axis,
+var Axis = Highcharts.Axis,
 	Tick = Highcharts.Tick,
 	Point = Highcharts.Point,
 	Pointer = Highcharts.Pointer,

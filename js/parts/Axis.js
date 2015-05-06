@@ -136,7 +136,7 @@ Axis.prototype = {
 			formatter: function () {
 				return Highcharts.numberFormat(this.total, -1);
 			},
-			style: Highcharts.merge(defaultPlotOptions.line.dataLabels.style, { color: '#000000' })
+			style: Highcharts.merge(Highcharts.defaultPlotOptions.line.dataLabels.style, { color: '#000000' })
 		}
 	},
 

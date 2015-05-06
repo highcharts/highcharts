@@ -7,7 +7,7 @@
 /**
  * Extend the default options
  */
-defaultPlotOptions.gauge = Highcharts.merge(defaultPlotOptions.line, {
+Highcharts.defaultPlotOptions.gauge = Highcharts.merge(Highcharts.defaultPlotOptions.line, {
 	dataLabels: {
 		enabled: true,
 		defer: false,

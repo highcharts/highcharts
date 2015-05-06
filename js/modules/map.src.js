@@ -20,10 +20,8 @@ var Axis = Highcharts.Axis,
 	LegendSymbolMixin = Highcharts.LegendSymbolMixin,
 	Series = Highcharts.Series,
 	SVGRenderer = Highcharts.SVGRenderer,
-	VMLRenderer = Highcharts.VMLRenderer,
-	
-	defaultOptions = Highcharts.getOptions(),
-	defaultPlotOptions = defaultOptions.plotOptions;/**
+	VMLRenderer = Highcharts.VMLRenderer;
+/**
  * Override to use the extreme coordinates from the SVG shape, not the
  * data values
  */
@@ -913,7 +911,7 @@ var supportsVectorEffect = document.documentElement.style.vectorEffect !== undef
 /**
  * Extend the default options with map options
  */
-defaultPlotOptions.map = Highcharts.merge(defaultPlotOptions.scatter, {
+Highcharts.defaultPlotOptions.map = Highcharts.merge(Highcharts.defaultPlotOptions.scatter, {
 	allAreas: true,
 
 	animation: false, // makes the complex shapes slow
@@ -1635,7 +1633,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 
 
 // The mapline series type
-defaultPlotOptions.mapline = Highcharts.merge(defaultPlotOptions.map, {
+Highcharts.defaultPlotOptions.mapline = Highcharts.merge(Highcharts.defaultPlotOptions.map, {
 	lineWidth: 1,
 	fillColor: 'none'
 });
@@ -1651,7 +1649,7 @@ Highcharts.seriesTypes.mapline = Highcharts.extendClass(Highcharts.seriesTypes.m
 });
 
 // The mappoint series type
-defaultPlotOptions.mappoint = Highcharts.merge(defaultPlotOptions.scatter, {
+Highcharts.defaultPlotOptions.mappoint = Highcharts.merge(Highcharts.defaultPlotOptions.scatter, {
 	dataLabels: {
 		enabled: true,
 		formatter: function () { // #2945
@@ -1682,7 +1680,7 @@ Highcharts.seriesTypes.mappoint = Highcharts.extendClass(Highcharts.seriesTypes.
 // The mapbubble series type
 if (Highcharts.seriesTypes.bubble) {
 
-	defaultPlotOptions.mapbubble = Highcharts.merge(defaultPlotOptions.bubble, {
+	Highcharts.defaultPlotOptions.mapbubble = Highcharts.merge(Highcharts.defaultPlotOptions.bubble, {
 		animationLimit: 500,
 		tooltip: {
 			pointFormat: '{point.name}: {point.z}'

@@ -1505,8 +1505,8 @@ Highcharts.defaultOptions = {
 
 
 // Series defaults
-var defaultPlotOptions = Highcharts.defaultOptions.plotOptions;
-Highcharts.defaultSeriesOptions = defaultPlotOptions.line;
+Highcharts.defaultPlotOptions = Highcharts.defaultOptions.plotOptions;
+Highcharts.defaultSeriesOptions = Highcharts.defaultPlotOptions.line;
 
 // set the default time methods
 setTimeMethods();
@@ -6512,7 +6512,7 @@ Axis.prototype = {
 			formatter: function () {
 				return Highcharts.numberFormat(this.total, -1);
 			},
-			style: Highcharts.merge(defaultPlotOptions.line.dataLabels.style, { color: '#000000' })
+			style: Highcharts.merge(Highcharts.defaultPlotOptions.line.dataLabels.style, { color: '#000000' })
 		}
 	},
 
@@ -13267,7 +13267,7 @@ Series.prototype = {
 	 */
 	getColor: function () {
 		if (!this.options.colorByPoint) {
-			this.getCyclic('color', this.options.color || defaultPlotOptions[this.type].color, this.chart.options.colors);
+			this.getCyclic('color', this.options.color || Highcharts.defaultPlotOptions[this.type].color, this.chart.options.colors);
 		}
 	},
 	/**
@@ -13830,7 +13830,7 @@ Series.prototype = {
 
 		// Animation option is set to true
 		if (animation && !Highcharts.isObject(animation)) {
-			animation = defaultPlotOptions[series.type].animation;
+			animation = Highcharts.defaultPlotOptions[series.type].animation;
 		}
 
 		// Initialize the animation. Set up the clipping rectangle.
@@ -13986,7 +13986,7 @@ Series.prototype = {
 	getAttribs: function () {
 		var series = this,
 			seriesOptions = series.options,
-			normalOptions = defaultPlotOptions[series.type].marker ? seriesOptions.marker : seriesOptions,
+			normalOptions = Highcharts.defaultPlotOptions[series.type].marker ? seriesOptions.marker : seriesOptions,
 			stateOptions = normalOptions.states,
 			stateOptionsHover = stateOptions.hover,
 			pointStateOptionsHover,
@@ -15644,7 +15644,7 @@ Highcharts.seriesTypes.line = LineSeries;
 /**
  * Set the default options for area
  */
-defaultPlotOptions.area = Highcharts.merge(Highcharts.defaultSeriesOptions, {
+Highcharts.defaultPlotOptions.area = Highcharts.merge(Highcharts.defaultSeriesOptions, {
 	threshold: 0
 	// trackByArea: false,
 	// lineColor: null, // overrides color, but lets fillColor be unaltered
@@ -15853,7 +15853,7 @@ Highcharts.seriesTypes.area = AreaSeries;
 /**
  * Set the default options for spline
  */
-defaultPlotOptions.spline = Highcharts.merge(Highcharts.defaultSeriesOptions);
+Highcharts.defaultPlotOptions.spline = Highcharts.merge(Highcharts.defaultSeriesOptions);
 
 /**
  * SplineSeries object
@@ -15978,7 +15978,7 @@ Highcharts.seriesTypes.spline = SplineSeries;
 /**
  * Set the default options for areaspline
  */
-defaultPlotOptions.areaspline = Highcharts.merge(defaultPlotOptions.area);
+Highcharts.defaultPlotOptions.areaspline = Highcharts.merge(Highcharts.defaultPlotOptions.area);
 
 /**
  * AreaSplineSeries object
@@ -16000,7 +16000,7 @@ Highcharts.seriesTypes.areaspline = AreaSplineSeries;
 /**
  * Set the default options for column
  */
-defaultPlotOptions.column = Highcharts.merge(Highcharts.defaultSeriesOptions, {
+Highcharts.defaultPlotOptions.column = Highcharts.merge(Highcharts.defaultSeriesOptions, {
 	borderColor: '#FFFFFF',
 	//borderWidth: 1,
 	borderRadius: 0,
@@ -16359,7 +16359,7 @@ Highcharts.seriesTypes.column = ColumnSeries;
 /**
  * Set the default options for bar
  */
-defaultPlotOptions.bar = Highcharts.merge(defaultPlotOptions.column);
+Highcharts.defaultPlotOptions.bar = Highcharts.merge(Highcharts.defaultPlotOptions.column);
 /**
  * The Bar series class
  */
@@ -16372,7 +16372,7 @@ Highcharts.seriesTypes.bar = BarSeries;
 /**
  * Set the default options for scatter
  */
-defaultPlotOptions.scatter = Highcharts.merge(Highcharts.defaultSeriesOptions, {
+Highcharts.defaultPlotOptions.scatter = Highcharts.merge(Highcharts.defaultSeriesOptions, {
 	lineWidth: 0,
 	marker: {
 		enabled: true // Overrides auto-enabling in line series (#3647)
@@ -16407,7 +16407,7 @@ Highcharts.seriesTypes.scatter = ScatterSeries;
 /**
  * Set the default options for pie
  */
-defaultPlotOptions.pie = Highcharts.merge(Highcharts.defaultSeriesOptions, {
+Highcharts.defaultPlotOptions.pie = Highcharts.merge(Highcharts.defaultSeriesOptions, {
 	borderColor: '#FFFFFF',
 	borderWidth: 1,
 	center: [null, null],
@@ -18230,7 +18230,7 @@ Highcharts.extend(Point.prototype, {
 			plotY = point.plotY,
 			series = point.series,
 			stateOptions = series.options.states,
-			markerOptions = defaultPlotOptions[series.type].marker && series.options.marker,
+			markerOptions = Highcharts.defaultPlotOptions[series.type].marker && series.options.marker,
 			normalDisabled = markerOptions && !markerOptions.enabled,
 			markerStateOptions = markerOptions && markerOptions.states[state],
 			stateDisabled = markerStateOptions && markerStateOptions.enabled === false,
@@ -19979,7 +19979,7 @@ Highcharts.wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
 	var options = proceed.call(this, itemOptions),
 		type = this.type,
 		plotOptions = this.chart.options.plotOptions,
-		defaultOptions = defaultPlotOptions[type].dataGrouping;
+		defaultOptions = Highcharts.defaultPlotOptions[type].dataGrouping;
 
 	if (specificOptions[type]) { // #1284
 		if (!defaultOptions) {
@@ -20066,7 +20066,7 @@ Axis.prototype.getGroupPixelWidth = function () {
  *****************************************************************************/
 
 // 1 - Set default options
-defaultPlotOptions.ohlc = Highcharts.merge(defaultPlotOptions.column, {
+Highcharts.defaultPlotOptions.ohlc = Highcharts.merge(Highcharts.defaultPlotOptions.column, {
 	lineWidth: 1,
 	tooltip: {
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' + // docs
@@ -20240,7 +20240,7 @@ Highcharts.seriesTypes.ohlc = OHLCSeries;
  *****************************************************************************/
 
 // 1 - set default options
-defaultPlotOptions.candlestick = Highcharts.merge(defaultPlotOptions.column, {
+Highcharts.defaultPlotOptions.candlestick = Highcharts.merge(Highcharts.defaultPlotOptions.column, {
 	lineColor: 'black',
 	lineWidth: 1,
 	states: {
@@ -20248,7 +20248,7 @@ defaultPlotOptions.candlestick = Highcharts.merge(defaultPlotOptions.column, {
 			lineWidth: 2
 		}
 	},
-	tooltip: defaultPlotOptions.ohlc.tooltip,
+	tooltip: Highcharts.defaultPlotOptions.ohlc.tooltip,
 	threshold: null,
 	upColor: 'white'
 	// upLineColor: null
@@ -20385,7 +20385,7 @@ Highcharts.seriesTypes.candlestick = CandlestickSeries;
 var symbols = SVGRenderer.prototype.symbols;
 
 // 1 - set default options
-defaultPlotOptions.flags = Highcharts.merge(defaultPlotOptions.column, {
+Highcharts.defaultPlotOptions.flags = Highcharts.merge(Highcharts.defaultPlotOptions.column, {
 	fillColor: 'white',
 	lineWidth: 1,
 	pointRange: 0, // #673

@@ -5,7 +5,7 @@
 var symbols = SVGRenderer.prototype.symbols;
 
 // 1 - set default options
-defaultPlotOptions.flags = Highcharts.merge(defaultPlotOptions.column, {
+Highcharts.defaultPlotOptions.flags = Highcharts.merge(Highcharts.defaultPlotOptions.column, {
 	fillColor: 'white',
 	lineWidth: 1,
 	pointRange: 0, // #673

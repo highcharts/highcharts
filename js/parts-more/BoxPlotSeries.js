@@ -3,7 +3,7 @@
  *****************************************************************************/
 
 // Set default options
-defaultPlotOptions.boxplot = Highcharts.merge(defaultPlotOptions.column, {
+Highcharts.defaultPlotOptions.boxplot = Highcharts.merge(Highcharts.defaultPlotOptions.column, {
 	fillColor: '#FFFFFF',
 	lineWidth: 1,
 	//medianColor: null,

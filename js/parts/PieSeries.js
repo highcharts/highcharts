@@ -1,7 +1,7 @@
 /**
  * Set the default options for pie
  */
-defaultPlotOptions.pie = Highcharts.merge(Highcharts.defaultSeriesOptions, {
+Highcharts.defaultPlotOptions.pie = Highcharts.merge(Highcharts.defaultSeriesOptions, {
 	borderColor: '#FFFFFF',
 	borderWidth: 1,
 	center: [null, null],

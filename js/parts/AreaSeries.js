@@ -1,7 +1,7 @@
 /**
  * Set the default options for area
  */
-defaultPlotOptions.area = Highcharts.merge(Highcharts.defaultSeriesOptions, {
+Highcharts.defaultPlotOptions.area = Highcharts.merge(Highcharts.defaultSeriesOptions, {
 	threshold: 0
 	// trackByArea: false,
 	// lineColor: null, // overrides color, but lets fillColor be unaltered

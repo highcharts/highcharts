@@ -1505,8 +1505,8 @@ Highcharts.defaultOptions = {
 
 
 // Series defaults
-var defaultPlotOptions = Highcharts.defaultOptions.plotOptions;
-Highcharts.defaultSeriesOptions = defaultPlotOptions.line;
+Highcharts.defaultPlotOptions = Highcharts.defaultOptions.plotOptions;
+Highcharts.defaultSeriesOptions = Highcharts.defaultPlotOptions.line;
 
 // set the default time methods
 setTimeMethods();
@@ -6247,7 +6247,7 @@ Axis.prototype = {
 			formatter: function () {
 				return Highcharts.numberFormat(this.total, -1);
 			},
-			style: Highcharts.merge(defaultPlotOptions.line.dataLabels.style, { color: '#000000' })
+			style: Highcharts.merge(Highcharts.defaultPlotOptions.line.dataLabels.style, { color: '#000000' })
 		}
 	},
 
@@ -12754,7 +12754,7 @@ Series.prototype = {
 	 */
 	getColor: function () {
 		if (!this.options.colorByPoint) {
-			this.getCyclic('color', this.options.color || defaultPlotOptions[this.type].color, this.chart.options.colors);
+			this.getCyclic('color', this.options.color || Highcharts.defaultPlotOptions[this.type].color, this.chart.options.colors);
 		}
 	},
 	/**
@@ -13317,7 +13317,7 @@ Series.prototype = {
 
 		// Animation option is set to true
 		if (animation && !Highcharts.isObject(animation)) {
-			animation = defaultPlotOptions[series.type].animation;
+			animation = Highcharts.defaultPlotOptions[series.type].animation;
 		}
 
 		// Initialize the animation. Set up the clipping rectangle.
@@ -13473,7 +13473,7 @@ Series.prototype = {
 	getAttribs: function () {
 		var series = this,
 			seriesOptions = series.options,
-			normalOptions = defaultPlotOptions[series.type].marker ? seriesOptions.marker : seriesOptions,
+			normalOptions = Highcharts.defaultPlotOptions[series.type].marker ? seriesOptions.marker : seriesOptions,
 			stateOptions = normalOptions.states,
 			stateOptionsHover = stateOptions.hover,
 			pointStateOptionsHover,
@@ -14836,7 +14836,7 @@ Highcharts.seriesTypes.line = LineSeries;
 /**
  * Set the default options for column
  */
-defaultPlotOptions.column = Highcharts.merge(Highcharts.defaultSeriesOptions, {
+Highcharts.defaultPlotOptions.column = Highcharts.merge(Highcharts.defaultSeriesOptions, {
 	borderColor: '#FFFFFF',
 	//borderWidth: 1,
 	borderRadius: 0,
@@ -15195,7 +15195,7 @@ Highcharts.seriesTypes.column = ColumnSeries;
 /**
  * Set the default options for scatter
  */
-defaultPlotOptions.scatter = Highcharts.merge(Highcharts.defaultSeriesOptions, {
+Highcharts.defaultPlotOptions.scatter = Highcharts.merge(Highcharts.defaultSeriesOptions, {
 	lineWidth: 0,
 	marker: {
 		enabled: true // Overrides auto-enabling in line series (#3647)
@@ -16714,7 +16714,7 @@ var supportsVectorEffect = document.documentElement.style.vectorEffect !== undef
 /**
  * Extend the default options with map options
  */
-defaultPlotOptions.map = Highcharts.merge(defaultPlotOptions.scatter, {
+Highcharts.defaultPlotOptions.map = Highcharts.merge(Highcharts.defaultPlotOptions.scatter, {
 	allAreas: true,
 
 	animation: false, // makes the complex shapes slow
@@ -17800,7 +17800,7 @@ Highcharts.wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDow
 
 
 // The mapline series type
-defaultPlotOptions.mapline = Highcharts.merge(defaultPlotOptions.map, {
+Highcharts.defaultPlotOptions.mapline = Highcharts.merge(Highcharts.defaultPlotOptions.map, {
 	lineWidth: 1,
 	fillColor: 'none'
 });
@@ -17816,7 +17816,7 @@ Highcharts.seriesTypes.mapline = Highcharts.extendClass(Highcharts.seriesTypes.m
 });
 
 // The mappoint series type
-defaultPlotOptions.mappoint = Highcharts.merge(defaultPlotOptions.scatter, {
+Highcharts.defaultPlotOptions.mappoint = Highcharts.merge(Highcharts.defaultPlotOptions.scatter, {
 	dataLabels: {
 		enabled: true,
 		formatter: function () { // #2945
@@ -17847,7 +17847,7 @@ Highcharts.seriesTypes.mappoint = Highcharts.extendClass(Highcharts.seriesTypes.
  *****************************************************************************/
 
 // 1 - set default options
-defaultPlotOptions.bubble = Highcharts.merge(defaultPlotOptions.scatter, {
+Highcharts.defaultPlotOptions.bubble = Highcharts.merge(Highcharts.defaultPlotOptions.scatter, {
 	dataLabels: {
 		formatter: function () { // #2945
 			return this.point.z;
@@ -18163,7 +18163,7 @@ Axis.prototype.beforePadding = function () {
 // The mapbubble series type
 if (Highcharts.seriesTypes.bubble) {
 
-	defaultPlotOptions.mapbubble = Highcharts.merge(defaultPlotOptions.bubble, {
+	Highcharts.defaultPlotOptions.mapbubble = Highcharts.merge(Highcharts.defaultPlotOptions.bubble, {
 		animationLimit: 500,
 		tooltip: {
 			pointFormat: '{point.name}: {point.z}'
@@ -19167,7 +19167,7 @@ Highcharts.extend(Point.prototype, {
 			plotY = point.plotY,
 			series = point.series,
 			stateOptions = series.options.states,
-			markerOptions = defaultPlotOptions[series.type].marker && series.options.marker,
+			markerOptions = Highcharts.defaultPlotOptions[series.type].marker && series.options.marker,
 			normalDisabled = markerOptions && !markerOptions.enabled,
 			markerStateOptions = markerOptions && markerOptions.states[state],
 			stateDisabled = markerStateOptions && markerStateOptions.enabled === false,

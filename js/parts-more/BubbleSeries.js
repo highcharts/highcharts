@@ -3,7 +3,7 @@
  *****************************************************************************/
 
 // 1 - set default options
-defaultPlotOptions.bubble = Highcharts.merge(defaultPlotOptions.scatter, {
+Highcharts.defaultPlotOptions.bubble = Highcharts.merge(Highcharts.defaultPlotOptions.scatter, {
 	dataLabels: {
 		formatter: function () { // #2945
 			return this.point.z;

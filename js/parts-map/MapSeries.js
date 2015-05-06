@@ -6,7 +6,7 @@ var supportsVectorEffect = document.documentElement.style.vectorEffect !== undef
 /**
  * Extend the default options with map options
  */
-defaultPlotOptions.map = Highcharts.merge(defaultPlotOptions.scatter, {
+Highcharts.defaultPlotOptions.map = Highcharts.merge(Highcharts.defaultPlotOptions.scatter, {
 	allAreas: true,
 
 	animation: false, // makes the complex shapes slow

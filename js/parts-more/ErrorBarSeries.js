@@ -3,7 +3,7 @@
  *****************************************************************************/
 
 // 1 - set default options
-defaultPlotOptions.errorbar = Highcharts.merge(defaultPlotOptions.boxplot, {
+Highcharts.defaultPlotOptions.errorbar = Highcharts.merge(Highcharts.defaultPlotOptions.boxplot, {
 	color: '#000000',
 	grouping: false,
 	linkedTo: ':previous',

@@ -1,7 +1,7 @@
 /**
  * Set the default options for polygon
  */
-defaultPlotOptions.polygon = Highcharts.merge(defaultPlotOptions.scatter, {
+Highcharts.defaultPlotOptions.polygon = Highcharts.merge(Highcharts.defaultPlotOptions.scatter, {
 	marker: {
 		enabled: false
 	}

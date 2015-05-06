@@ -13,8 +13,7 @@
 /*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
 
 (function (Highcharts) {
-var defaultPlotOptions = Highcharts.getOptions().plotOptions,
-	Axis = Highcharts.Axis,
+var Axis = Highcharts.Axis,
 	Tick = Highcharts.Tick,
 	Point = Highcharts.Point,
 	Pointer = Highcharts.Pointer,
@@ -648,7 +647,7 @@ Highcharts.wrap(tickProto, 'getMarkPath', function (proceed, x, y, tickLength, t
 /**
  * Extend the default options with map options
  */
-defaultPlotOptions.arearange = Highcharts.merge(defaultPlotOptions.area, {
+Highcharts.defaultPlotOptions.arearange = Highcharts.merge(Highcharts.defaultPlotOptions.area, {
 	lineWidth: 1,
 	marker: null,
 	threshold: null,
@@ -902,7 +901,7 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
  * The AreaSplineRangeSeries class
  */
 
-defaultPlotOptions.areasplinerange = Highcharts.merge(defaultPlotOptions.arearange);
+Highcharts.defaultPlotOptions.areasplinerange = Highcharts.merge(Highcharts.defaultPlotOptions.arearange);
 
 /**
  * AreaSplineRangeSeries object
@@ -919,7 +918,7 @@ Highcharts.seriesTypes.areasplinerange = Highcharts.extendClass(Highcharts.serie
 	/**
 	 * The ColumnRangeSeries class
 	 */
-	defaultPlotOptions.columnrange = Highcharts.merge(defaultPlotOptions.column, defaultPlotOptions.arearange, {
+	Highcharts.defaultPlotOptions.columnrange = Highcharts.merge(Highcharts.defaultPlotOptions.column, Highcharts.defaultPlotOptions.arearange, {
 		lineWidth: 1,
 		pointRange: null
 	});
@@ -984,7 +983,7 @@ Highcharts.seriesTypes.areasplinerange = Highcharts.extendClass(Highcharts.serie
 /**
  * Extend the default options
  */
-defaultPlotOptions.gauge = Highcharts.merge(defaultPlotOptions.line, {
+Highcharts.defaultPlotOptions.gauge = Highcharts.merge(Highcharts.defaultPlotOptions.line, {
 	dataLabels: {
 		enabled: true,
 		defer: false,
@@ -1223,7 +1222,7 @@ Highcharts.seriesTypes.gauge = Highcharts.extendClass(Highcharts.seriesTypes.lin
  *****************************************************************************/
 
 // Set default options
-defaultPlotOptions.boxplot = Highcharts.merge(defaultPlotOptions.column, {
+Highcharts.defaultPlotOptions.boxplot = Highcharts.merge(Highcharts.defaultPlotOptions.column, {
 	fillColor: '#FFFFFF',
 	lineWidth: 1,
 	//medianColor: null,
@@ -1495,7 +1494,7 @@ Highcharts.seriesTypes.boxplot = Highcharts.extendClass(Highcharts.seriesTypes.c
  *****************************************************************************/
 
 // 1 - set default options
-defaultPlotOptions.errorbar = Highcharts.merge(defaultPlotOptions.boxplot, {
+Highcharts.defaultPlotOptions.errorbar = Highcharts.merge(Highcharts.defaultPlotOptions.boxplot, {
 	color: '#000000',
 	grouping: false,
 	linkedTo: ':previous',
@@ -1534,7 +1533,7 @@ Highcharts.seriesTypes.errorbar = Highcharts.extendClass(Highcharts.seriesTypes.
  *****************************************************************************/
 
 // 1 - set default options
-defaultPlotOptions.waterfall = Highcharts.merge(defaultPlotOptions.column, {
+Highcharts.defaultPlotOptions.waterfall = Highcharts.merge(Highcharts.defaultPlotOptions.column, {
 	lineWidth: 1,
 	lineColor: '#333',
 	dashStyle: 'dot',
@@ -1792,7 +1791,7 @@ Highcharts.seriesTypes.waterfall = Highcharts.extendClass(Highcharts.seriesTypes
 /**
  * Set the default options for polygon
  */
-defaultPlotOptions.polygon = Highcharts.merge(defaultPlotOptions.scatter, {
+Highcharts.defaultPlotOptions.polygon = Highcharts.merge(Highcharts.defaultPlotOptions.scatter, {
 	marker: {
 		enabled: false
 	}
@@ -1816,7 +1815,7 @@ Highcharts.seriesTypes.polygon = Highcharts.extendClass(Highcharts.seriesTypes.s
  *****************************************************************************/
 
 // 1 - set default options
-defaultPlotOptions.bubble = Highcharts.merge(defaultPlotOptions.scatter, {
+Highcharts.defaultPlotOptions.bubble = Highcharts.merge(Highcharts.defaultPlotOptions.scatter, {
 	dataLabels: {
 		formatter: function () { // #2945
 			return this.point.z;

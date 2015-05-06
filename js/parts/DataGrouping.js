@@ -460,7 +460,7 @@ Highcharts.wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
 	var options = proceed.call(this, itemOptions),
 		type = this.type,
 		plotOptions = this.chart.options.plotOptions,
-		defaultOptions = defaultPlotOptions[type].dataGrouping;
+		defaultOptions = Highcharts.defaultPlotOptions[type].dataGrouping;
 
 	if (specificOptions[type]) { // #1284
 		if (!defaultOptions) {

@@ -3,7 +3,7 @@
  *****************************************************************************/
 
 // 1 - set default options
-defaultPlotOptions.waterfall = Highcharts.merge(defaultPlotOptions.column, {
+Highcharts.defaultPlotOptions.waterfall = Highcharts.merge(Highcharts.defaultPlotOptions.column, {
 	lineWidth: 1,
 	lineColor: '#333',
 	dashStyle: 'dot',
