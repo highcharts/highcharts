@@ -8572,7 +8572,10 @@ H.extend(H.Axis.prototype, H.AxisPlotLineOrBandExtension);
 
 	return H;
 }(Highcharts));
-
+(function (H) {
+	var Date = H.Date,
+		getTZOffset = H.getTZOffset,
+		timeUnits = H.timeUnits;
 /**
  * Set the tick positions to a time unit that makes sense, for example
  * on the first of each month or on every Monday. Return an array
@@ -8584,73 +8587,70 @@ H.extend(H.Axis.prototype, H.AxisPlotLineOrBandExtension);
  * @param {Number} max The maximum in axis values
  * @param {Number} startOfWeek
  */
-Highcharts.Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWeek) {
+H.Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWeek) {
 	var tickPositions = [],
-		timeUnits = Highcharts.timeUnits,
-		getTZOffset = Highcharts.getTZOffset,
 		i,
 		higherRanks = {},
-		d = Highcharts.Date,
-		useUTC = Highcharts.defaultOptions.global.useUTC,
+		useUTC = H.defaultOptions.global.useUTC,
 		minYear, // used in months and years as a basis for Date.UTC()
-		minDate = new d(min - getTZOffset(min)),
-		makeTime = d.hcMakeTime,
+		minDate = new Date(min - getTZOffset(min)),
+		makeTime = Date.hcMakeTime,
 		interval = normalizedInterval.unitRange,
 		count = normalizedInterval.count;
 
-	if (Highcharts.defined(min)) { // #1300
-		minDate[d.hcSetMilliseconds](interval >= timeUnits.second ? 0 : // #3935
+	if (H.defined(min)) { // #1300
+		minDate[Date.hcSetMilliseconds](interval >= timeUnits.second ? 0 : // #3935
 			count * Math.floor(minDate.getMilliseconds() / count)); // #3652, #3654
 
 		if (interval >= timeUnits.second) { // second
-			minDate[d.hcSetSeconds](interval >= timeUnits.minute ? 0 : // #3935
+			minDate[Date.hcSetSeconds](interval >= timeUnits.minute ? 0 : // #3935
 				count * Math.floor(minDate.getSeconds() / count));
 		}
 	
 		if (interval >= timeUnits.minute) { // minute
-			minDate[d.hcSetMinutes](interval >= timeUnits.hour ? 0 :
-				count * Math.floor(minDate[d.hcGetMinutes]() / count));
+			minDate[Date.hcSetMinutes](interval >= timeUnits.hour ? 0 :
+				count * Math.floor(minDate[Date.hcGetMinutes]() / count));
 		}
 	
 		if (interval >= timeUnits.hour) { // hour
-			minDate[d.hcSetHours](interval >= timeUnits.day ? 0 :
-				count * Math.floor(minDate[d.hcGetHours]() / count));
+			minDate[Date.hcSetHours](interval >= timeUnits.day ? 0 :
+				count * Math.floor(minDate[Date.hcGetHours]() / count));
 		}
 	
 		if (interval >= timeUnits.day) { // day
-			minDate[d.hcSetDate](interval >= timeUnits.month ? 1 :
-				count * Math.floor(minDate[d.hcGetDate]() / count));
+			minDate[Date.hcSetDate](interval >= timeUnits.month ? 1 :
+				count * Math.floor(minDate[Date.hcGetDate]() / count));
 		}
 	
 		if (interval >= timeUnits.month) { // month
-			minDate[d.hcSetMonth](interval >= timeUnits.year ? 0 :
-				count * Math.floor(minDate[d.hcGetMonth]() / count));
-			minYear = minDate[d.hcGetFullYear]();
+			minDate[Date.hcSetMonth](interval >= timeUnits.year ? 0 :
+				count * Math.floor(minDate[Date.hcGetMonth]() / count));
+			minYear = minDate[Date.hcGetFullYear]();
 		}
 	
 		if (interval >= timeUnits.year) { // year
 			minYear -= minYear % count;
-			minDate[d.hcSetFullYear](minYear);
+			minDate[Date.hcSetFullYear](minYear);
 		}
 	
 		// week is a special case that runs outside the hierarchy
 		if (interval === timeUnits.week) {
 			// get start of current week, independent of count
-			minDate[d.hcSetDate](minDate[d.hcGetDate]() - minDate[d.hcGetDay]() +
-				Highcharts.pick(startOfWeek, 1));
+			minDate[Date.hcSetDate](minDate[Date.hcGetDate]() - minDate[Date.hcGetDay]() +
+				H.pick(startOfWeek, 1));
 		}
 	
 	
 		// get tick positions
 		i = 1;
-		if (d.hcTimezoneOffset || d.hcGetTimezoneOffset) {
+		if (Date.hcTimezoneOffset || Date.hcGetTimezoneOffset) {
 			minDate = minDate.getTime();
-			minDate = new d(minDate + getTZOffset(minDate));
+			minDate = new Date(minDate + getTZOffset(minDate));
 		}
-		minYear = minDate[d.hcGetFullYear]();
+		minYear = minDate[Date.hcGetFullYear]();
 		var time = minDate.getTime(),
-			minMonth = minDate[d.hcGetMonth](),
-			minDateDate = minDate[d.hcGetDate](),
+			minMonth = minDate[Date.hcGetMonth](),
+			minDateDate = minDate[Date.hcGetDate](),
 			localTimezoneOffset = (timeUnits.day + 
 					(useUTC ? getTZOffset(minDate) : minDate.getTimezoneOffset() * 60 * 1000)
 				) % timeUnits.day; // #950, #3359
@@ -8686,7 +8686,7 @@ Highcharts.Axis.prototype.getTimeTicks = function (normalizedInterval, min, max,
 
 
 		// mark new days if the time is dividible by day (#1649, #1760)
-		Highcharts.each(HighchartsAdapter.grep(tickPositions, function (time) {
+		H.each(HighchartsAdapter.grep(tickPositions, function (time) {
 			return interval <= timeUnits.hour && time % timeUnits.day === localTimezoneOffset;
 		}), function (time) {
 			higherRanks[time] = 'day';
@@ -8695,7 +8695,7 @@ Highcharts.Axis.prototype.getTimeTicks = function (normalizedInterval, min, max,
 
 
 	// record information on the chosen unit - for dynamic label formatter
-	tickPositions.info = Highcharts.extend(normalizedInterval, {
+	tickPositions.info = H.extend(normalizedInterval, {
 		higherRanks: higherRanks,
 		totalRange: interval * count
 	});
@@ -8711,7 +8711,7 @@ Highcharts.Axis.prototype.getTimeTicks = function (normalizedInterval, min, max,
  * prevent it for running over again for each segment having the same interval. 
  * #662, #697.
  */
-Highcharts.Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) {
+H.Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) {
 	var units = unitsOption || [[
 				'millisecond', // unit name
 				[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
@@ -8737,7 +8737,6 @@ Highcharts.Axis.prototype.normalizeTimeTickInterval = function (tickInterval, un
 				'year',
 				null
 			]],
-		timeUnits = Highcharts.timeUnits,
 		unit = units[units.length - 1], // default unit is years
 		interval = timeUnits[unit[0]],
 		multiples = unit[1],
@@ -8769,10 +8768,10 @@ Highcharts.Axis.prototype.normalizeTimeTickInterval = function (tickInterval, un
 	}
 
 	// get the count
-	count = Highcharts.normalizeTickInterval(
+	count = H.normalizeTickInterval(
 		tickInterval / interval, 
 		multiples,
-		unit[0] === 'year' ? Math.max(Highcharts.getMagnitude(tickInterval / interval), 1) : 1 // #1913, #2360
+		unit[0] === 'year' ? Math.max(H.getMagnitude(tickInterval / interval), 1) : 1 // #1913, #2360
 	);
 	
 	return {
@@ -8780,7 +8779,11 @@ Highcharts.Axis.prototype.normalizeTimeTickInterval = function (tickInterval, un
 		count: count,
 		unitName: unit[0]
 	};
-};/**
+};
+
+	return H;
+}(Highcharts));
+/**
  * Methods defined on the Axis prototype
  */
 
