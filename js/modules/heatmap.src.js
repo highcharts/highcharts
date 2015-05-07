@@ -10,8 +10,7 @@
 (function (Highcharts) {
 
 
-var Axis = Highcharts.Axis,
-	Chart = Highcharts.Chart,
+var Chart = Highcharts.Chart,
 	Legend = Highcharts.Legend,
 	LegendSymbolMixin = Highcharts.LegendSymbolMixin,
 	Series = Highcharts.Series;
@@ -25,7 +24,7 @@ var ColorAxis = Highcharts.ColorAxis = function () {
 	this.isColorAxis = true;
 	this.init.apply(this, arguments);
 };
-Highcharts.extend(ColorAxis.prototype, Axis.prototype);
+Highcharts.extend(ColorAxis.prototype, Highcharts.Axis.prototype);
 Highcharts.extend(ColorAxis.prototype, {
 	defaultColorAxisOptions: {
 		lineWidth: 0,
@@ -64,7 +63,7 @@ Highcharts.extend(ColorAxis.prototype, {
 			isColor: true
 		});
 
-		Axis.prototype.init.call(this, chart, options);
+		Highcharts.Axis.prototype.init.call(this, chart, options);
 
 		// Base init() pushes it to the xAxis array, now pop it again
 		//chart[this.isXAxis ? 'xAxis' : 'yAxis'].pop();
@@ -161,7 +160,7 @@ Highcharts.extend(ColorAxis.prototype, {
 	 * stops.
 	 */
 	setOptions: function (userOptions) {
-		Axis.prototype.setOptions.call(this, userOptions);
+		Highcharts.Axis.prototype.setOptions.call(this, userOptions);
 
 		this.options.crosshair = this.options.marker;
 		this.coll = 'colorAxis';
@@ -249,7 +248,7 @@ Highcharts.extend(ColorAxis.prototype, {
 		
 		if (group) {
 
-			Axis.prototype.getOffset.call(this);
+			Highcharts.Axis.prototype.getOffset.call(this);
 			
 			if (!this.axisGroup.parentGroup) {
 
@@ -349,7 +348,7 @@ Highcharts.extend(ColorAxis.prototype, {
 			
 			point.plotX = crossPos;
 			point.plotY = this.len - crossPos;
-			Axis.prototype.drawCrosshair.call(this, e, point);
+			Highcharts.Axis.prototype.drawCrosshair.call(this, e, point);
 			point.plotX = plotX;
 			point.plotY = plotY;
 			
@@ -368,7 +367,7 @@ Highcharts.extend(ColorAxis.prototype, {
 				['M', pos - 4, this.top - 6, 'L', pos + 4, this.top - 6, pos, this.top, 'Z'] : 
 				['M', this.left, pos, 'L', this.left - 6, pos + 6, this.left - 6, pos - 6, 'Z'];
 		} else {
-			return Axis.prototype.getPlotLinePath.call(this, a, b, c, d);
+			return Highcharts.Axis.prototype.getPlotLinePath.call(this, a, b, c, d);
 		}
 	},
 
@@ -376,7 +375,7 @@ Highcharts.extend(ColorAxis.prototype, {
 		Highcharts.each(this.series, function (series) {
 			series.isDirtyData = true; // Needed for Axis.update when choropleth colors change
 		});
-		Axis.prototype.update.call(this, newOptions, redraw);
+		Highcharts.Axis.prototype.update.call(this, newOptions, redraw);
 		if (this.legendItem) {
 			this.setLegendColor();
 			this.chart.legend.colorizeItem(this, true);

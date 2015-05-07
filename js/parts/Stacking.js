@@ -110,7 +110,7 @@ StackItem.prototype = {
 /**
  * Build the stacks from top down
  */
-Axis.prototype.buildStacks = function () {
+Highcharts.Axis.prototype.buildStacks = function () {
 	var series = this.series,
 		reversedStacks = Highcharts.pick(this.options.reversedStacks, true),
 		i = series.length;
@@ -128,7 +128,7 @@ Axis.prototype.buildStacks = function () {
 	}
 };
 
-Axis.prototype.renderStackTotals = function () {
+Highcharts.Axis.prototype.renderStackTotals = function () {
 	var axis = this,
 		chart = axis.chart,
 		renderer = chart.renderer,

@@ -43,7 +43,7 @@ Highcharts.extend(Chart.prototype, {
 			axis;
 
 		/*jslint unused: false*/
-		axis = new Axis(this, Highcharts.merge(options, {
+		axis = new Highcharts.Axis(this, Highcharts.merge(options, {
 			index: this[key].length,
 			isX: isX
 		}));
@@ -459,7 +459,7 @@ Highcharts.extend(Series.prototype, {
 });
 
 // Extend the Axis.prototype for dynamic methods
-Highcharts.extend(Axis.prototype, {
+Highcharts.extend(Highcharts.Axis.prototype, {
 
 	/**
 	 * Update the axis with a new options structure

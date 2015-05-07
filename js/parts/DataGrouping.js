@@ -487,7 +487,7 @@ Highcharts.wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
  * When resetting the scale reset the hasProccessed flag to avoid taking previous data grouping
  * of neighbour series into accound when determining group pixel width (#2692).
  */
-Highcharts.wrap(Axis.prototype, 'setScale', function (proceed) {
+Highcharts.wrap(Highcharts.Axis.prototype, 'setScale', function (proceed) {
 	proceed.call(this);
 	Highcharts.each(this.series, function (series) {
 		series.hasProcessed = false;
@@ -498,7 +498,7 @@ Highcharts.wrap(Axis.prototype, 'setScale', function (proceed) {
  * Get the data grouping pixel width based on the greatest defined individual width
  * of the axis' series, and if whether one of the axes need grouping.
  */
-Axis.prototype.getGroupPixelWidth = function () {
+Highcharts.Axis.prototype.getGroupPixelWidth = function () {
 
 	var series = this.series,
 		len = series.length,

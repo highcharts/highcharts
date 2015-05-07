@@ -1,5 +1,5 @@
 
-var axisProto = Axis.prototype,
+var axisProto = Highcharts.Axis.prototype,
 	tickProto = Highcharts.Tick.prototype,
 	noop = Highcharts.noop;
 	

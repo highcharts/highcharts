@@ -13,8 +13,7 @@
 /*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
 
 (function (Highcharts) {
-var Axis = Highcharts.Axis,
-	Point = Highcharts.Point,
+var Point = Highcharts.Point,
 	Pointer = Highcharts.Pointer,
 	CenteredSeriesMixin = Highcharts.CenteredSeriesMixin,
 	TrackerMixin = Highcharts.TrackerMixin,
@@ -100,7 +99,7 @@ Highcharts.extend(Pane.prototype, {
 	}
 	
 });
-var axisProto = Axis.prototype,
+var axisProto = Highcharts.Axis.prototype,
 	tickProto = Highcharts.Tick.prototype,
 	noop = Highcharts.noop;
 	
@@ -2029,7 +2028,7 @@ Highcharts.seriesTypes.bubble = Highcharts.extendClass(Highcharts.seriesTypes.sc
  * Add logic to pad each axis with the amount of pixels
  * necessary to avoid the bubbles to overflow.
  */
-Axis.prototype.beforePadding = function () {
+Highcharts.Axis.prototype.beforePadding = function () {
 	var axis = this,
 		axisLength = this.len,
 		chart = this.chart,

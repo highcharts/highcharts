@@ -27,7 +27,7 @@ Highcharts.wrap(Series.prototype, 'init', function (proceed) {
  * positions up in segments, find the tick positions for each segment then concatenize them.
  * This method is used from both data grouping logic and X axis tick position logic.
  */
-Highcharts.wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min, max, startOfWeek, positions, closestDistance, findHigherRanks) {
+Highcharts.wrap(Highcharts.Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min, max, startOfWeek, positions, closestDistance, findHigherRanks) {
 
 	var start = 0,
 		end = 0,
@@ -184,7 +184,7 @@ Highcharts.wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInt
 });
 
 // Extend the Axis prototype
-Highcharts.extend(Axis.prototype, {
+Highcharts.extend(Highcharts.Axis.prototype, {
 
 	/**
 	 * Calculate the ordinal positions before tick positions are calculated.
@@ -417,7 +417,7 @@ Highcharts.extend(Axis.prototype, {
 				options: {
 					ordinal: true
 				},
-				val2lin: Axis.prototype.val2lin // #2590
+				val2lin: Highcharts.Axis.prototype.val2lin // #2590
 			};
 
 			// Add the fake series to hold the full data, then apply processData to it

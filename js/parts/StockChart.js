@@ -139,7 +139,7 @@ Highcharts.wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 
 // Override the automatic label alignment so that the first Y axis' labels
 // are drawn on top of the grid line, and subsequent axes are drawn outside
-Highcharts.wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
+Highcharts.wrap(Highcharts.Axis.prototype, 'autoLabelAlign', function (proceed) {
 	var chart = this.chart,
 		options = this.options,
 		panes = chart._labelPanes = chart._labelPanes || {},
@@ -162,7 +162,7 @@ Highcharts.wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 });
 
 // Override getPlotLinePath to allow for multipane charts
-Highcharts.wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old, force, translatedValue) {
+Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old, force, translatedValue) {
 	var axis = this,
 		series = (this.isLinked && !this.series ? this.linkedParent.series : this.series),
 		chart = axis.chart,
@@ -272,7 +272,7 @@ Highcharts.wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lin
 });
 
 // Override getPlotBandPath to allow for multipane charts
-Axis.prototype.getPlotBandPath = function (from, to) {		
+Highcharts.Axis.prototype.getPlotBandPath = function (from, to) {		
 	var toPath = this.getPlotLinePath(to, null, null, true),
 		path = this.getPlotLinePath(from, null, null, true),
 		result = [],
@@ -312,7 +312,7 @@ if (Highcharts.Renderer === Highcharts.VMLRenderer) {
 
 
 // Wrapper to hide the label
-Highcharts.wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
+Highcharts.wrap(Highcharts.Axis.prototype, 'hideCrosshair', function (proceed, i) {
 	var defined = Highcharts.defined;
 
 	proceed.call(this, i);
@@ -329,7 +329,7 @@ Highcharts.wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
 });
 
 // Wrapper to draw the label
-Highcharts.wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
+Highcharts.wrap(Highcharts.Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	var defined = Highcharts.defined;
 	
 	// Draw the crosshair
@@ -544,7 +544,7 @@ Highcharts.wrap(seriesProto, 'getExtremes', function (proceed) {
 /**
  * Add a utility method, setCompare, to the Y axis
  */
-Axis.prototype.setCompare = function (compare, redraw) {
+Highcharts.Axis.prototype.setCompare = function (compare, redraw) {
 	if (!this.isXAxis) {
 		Highcharts.each(this.series, function (series) {
 			series.setCompare(compare);

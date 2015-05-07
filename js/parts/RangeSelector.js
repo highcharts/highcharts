@@ -672,7 +672,7 @@ RangeSelector.prototype = {
 /**
  * Add logic to normalize the zoomed range in order to preserve the pressed state of range selector buttons
  */
-Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
+Highcharts.Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
 	var fixedRange = this.chart && this.chart.fixedRange,
 		pick = Highcharts.pick,
 		newMin = pick(fixedMin, this.translate(pxMin, true)),

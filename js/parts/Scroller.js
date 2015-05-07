@@ -792,7 +792,7 @@ Scroller.prototype = {
 
 		if (scroller.navigatorEnabled) {
 			// an x axis is required for scrollbar also
-			scroller.xAxis = xAxis = new Axis(chart, Highcharts.merge({
+			scroller.xAxis = xAxis = new Highcharts.Axis(chart, Highcharts.merge({
 				// inherit base xAxis' break and ordinal options
 				breaks: baseSeries && baseSeries.xAxis.options.breaks,
 				ordinal: baseSeries && baseSeries.xAxis.options.ordinal 
@@ -813,7 +813,7 @@ Scroller.prototype = {
 				zoomEnabled: false
 			}));
 
-			scroller.yAxis = yAxis = new Axis(chart, Highcharts.merge(navigatorOptions.yAxis, {
+			scroller.yAxis = yAxis = new Highcharts.Axis(chart, Highcharts.merge(navigatorOptions.yAxis, {
 				id: 'navigator-y-axis',
 				alignTicks: false,
 				height: height,
@@ -856,7 +856,7 @@ Scroller.prototype = {
 						// from value to pixel
 						scrollTrackWidth * (value - min) / valueRange;
 				},
-				toFixedRange: Axis.prototype.toFixedRange
+				toFixedRange: Highcharts.Axis.prototype.toFixedRange
 			};
 		}
 
@@ -1083,7 +1083,7 @@ Highcharts.Scroller = Scroller;
  * For Stock charts, override selection zooming with some special features because
  * X axis zooming is already allowed by the Navigator and Range selector.
  */
-Highcharts.wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
+Highcharts.wrap(Highcharts.Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 	var chart = this.chart,
 		chartOptions = chart.options,
 		zoomType = chartOptions.chart.zoomType,

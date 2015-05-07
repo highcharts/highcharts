@@ -10,7 +10,7 @@
  * @param {Number} max The maximum in axis values
  * @param {Number} startOfWeek
  */
-Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWeek) {
+Highcharts.Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWeek) {
 	var tickPositions = [],
 		timeUnits = Highcharts.timeUnits,
 		getTZOffset = Highcharts.getTZOffset,
@@ -137,7 +137,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
  * prevent it for running over again for each segment having the same interval. 
  * #662, #697.
  */
-Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) {
+Highcharts.Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) {
 	var units = unitsOption || [[
 				'millisecond', // unit name
 				[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples

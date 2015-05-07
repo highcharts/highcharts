@@ -1,6 +1,5 @@
 
-var Axis = Highcharts.Axis,
-	Chart = Highcharts.Chart,
+var Chart = Highcharts.Chart,
 	Point = Highcharts.Point,
 	Pointer = Highcharts.Pointer,
 	Legend = Highcharts.Legend,

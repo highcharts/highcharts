@@ -5,7 +5,7 @@
 /**
  * Set the tick positions of a logarithmic axis
  */
-Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
+Highcharts.Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 	var axis = this,
 		log2lin = Highcharts.log2lin,
 		lin2log = Highcharts.lin2log,

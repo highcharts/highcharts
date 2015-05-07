@@ -369,7 +369,7 @@ Chart.prototype = {
 		optionsArray = xAxisOptions.concat(yAxisOptions);
 
 		Highcharts.each(optionsArray, function (axisOptions) {
-			axis = new Axis(chart, axisOptions);
+			axis = new Highcharts.Axis(chart, axisOptions);
 		});
 	},
 

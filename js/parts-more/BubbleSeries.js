@@ -218,7 +218,7 @@ Highcharts.seriesTypes.bubble = Highcharts.extendClass(Highcharts.seriesTypes.sc
  * Add logic to pad each axis with the amount of pixels
  * necessary to avoid the bubbles to overflow.
  */
-Axis.prototype.beforePadding = function () {
+Highcharts.Axis.prototype.beforePadding = function () {
 	var axis = this,
 		axisLength = this.len,
 		chart = this.chart,
