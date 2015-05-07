@@ -1691,7 +1691,7 @@ Axis.prototype = {
 			// Generate ticks
 			Highcharts.each(tickPositions, function (pos) {
 				if (!ticks[pos]) {
-					ticks[pos] = new Tick(axis, pos);
+					ticks[pos] = new Highcharts.Tick(axis, pos);
 				} else {
 					ticks[pos].addLabel(); // update labels depending on tick interval
 				}
@@ -1866,6 +1866,7 @@ Axis.prototype = {
 			lineWidth = options.lineWidth,
 			linePath,
 			lin2log = Highcharts.lin2log,
+			Tick = Highcharts.Tick,
 			hasRendered = chart.hasRendered,
 			slideInTicks = hasRendered && Highcharts.defined(axis.oldMin) && !isNaN(axis.oldMin),
 			hasData = axis.hasData,

@@ -14,7 +14,6 @@
 
 (function (Highcharts) {
 var Axis = Highcharts.Axis,
-	Tick = Highcharts.Tick,
 	Point = Highcharts.Point,
 	Pointer = Highcharts.Pointer,
 	CenteredSeriesMixin = Highcharts.CenteredSeriesMixin,
@@ -102,7 +101,7 @@ Highcharts.extend(Pane.prototype, {
 	
 });
 var axisProto = Axis.prototype,
-	tickProto = Tick.prototype,
+	tickProto = Highcharts.Tick.prototype,
 	noop = Highcharts.noop;
 	
 /**

@@ -1,6 +1,6 @@
 
 var axisProto = Axis.prototype,
-	tickProto = Tick.prototype,
+	tickProto = Highcharts.Tick.prototype,
 	noop = Highcharts.noop;
 	
 /**

@@ -5764,10 +5764,15 @@ if (H.useCanVG) {
 
 	return H;
 }(Highcharts));
+(function (H) {
+	var defined = H.defined,
+		pick = H.pick,
+		deg2rad = H.deg2rad;
+
 /**
  * The Tick class
  */
-function Tick(axis, pos, type, noLabel) {
+H.Tick = function (axis, pos, type, noLabel) {
 	this.axis = axis;
 	this.pos = pos;
 	this.type = type || '';
@@ -5776,9 +5781,9 @@ function Tick(axis, pos, type, noLabel) {
 	if (!type && !noLabel) {
 		this.addLabel();
 	}
-}
+};
 
-Tick.prototype = {
+H.Tick.prototype = {
 	/**
 	 * Write the tick label
 	 */
@@ -5788,7 +5793,6 @@ Tick.prototype = {
 			options = axis.options,
 			chart = axis.chart,
 			categories = axis.categories,
-			defined = Highcharts.defined,
 			names = axis.names,
 			pos = tick.pos,
 			labelOptions = options.labels,
@@ -5797,7 +5801,7 @@ Tick.prototype = {
 			isFirst = pos === tickPositions[0],
 			isLast = pos === tickPositions[tickPositions.length - 1],
 			value = categories ?
-				Highcharts.pick(categories[pos], names[pos], pos) :
+				pick(categories[pos], names[pos], pos) :
 				pos,
 			label = tick.label,
 			tickPositionInfo = tickPositions.info,
@@ -5819,7 +5823,7 @@ Tick.prototype = {
 			isFirst: isFirst,
 			isLast: isLast,
 			dateTimeLabelFormat: dateTimeLabelFormat,
-			value: axis.isLog ? Highcharts.correctFloat(Highcharts.lin2log(value)) : value
+			value: axis.isLog ? H.correctFloat(H.lin2log(value)) : value
 		});
 
 		// prepare CSS
@@ -5838,7 +5842,7 @@ Tick.prototype = {
 						)
 						//.attr(attr)
 						// without position absolute, IE export sometimes is wrong
-						.css(Highcharts.merge(labelOptions.style))
+						.css(H.merge(labelOptions.style))
 						.add(axis.labelGroup) :
 					null;
 			tick.labelLength = label && label.getBBox().width; // Un-rotated length
@@ -5865,8 +5869,6 @@ Tick.prototype = {
 	 */
 	handleOverflow: function (xy) {
 		var axis = this.axis,
-			deg2rad = Highcharts.deg2rad,
-			pick = Highcharts.pick,
 			pxPos = xy.x,
 			chartWidth = axis.chart.chartWidth,
 			spacing = axis.chart.spacing,
@@ -5949,7 +5951,7 @@ Tick.prototype = {
 			reversed = axis.reversed,
 			staggerLines = axis.staggerLines,
 			rotCorr = axis.tickRotCorr || { x: 0, y: 0 },
-			yOffset = Highcharts.pick(labelOptions.y, rotCorr.y + (axis.side === 2 ? 8 : -(label.getBBox().height / 2))),
+			yOffset = pick(labelOptions.y, rotCorr.y + (axis.side === 2 ? 8 : -(label.getBBox().height / 2))),
 			line;
 
 		x = x + labelOptions.x + rotCorr.x - (tickmarkOffset && horiz ?
@@ -5995,7 +5997,6 @@ Tick.prototype = {
 			options = axis.options,
 			chart = axis.chart,
 			renderer = chart.renderer,
-			pick = Highcharts.pick,
 			horiz = axis.horiz,
 			type = tick.type,
 			label = tick.label,
@@ -6125,11 +6126,12 @@ Tick.prototype = {
 	 * Destructor for the tick prototype
 	 */
 	destroy: function () {
-		Highcharts.destroyObjectProperties(this, this.axis);
+		H.destroyObjectProperties(this, this.axis);
 	}
 };
 
-/**
+	return H;
+}(Highcharts));/**
  * The object wrapper for plot lines and plot bands
  * @param {Object} options
  */
@@ -8087,7 +8089,7 @@ Axis.prototype = {
 			// Generate ticks
 			Highcharts.each(tickPositions, function (pos) {
 				if (!ticks[pos]) {
-					ticks[pos] = new Tick(axis, pos);
+					ticks[pos] = new Highcharts.Tick(axis, pos);
 				} else {
 					ticks[pos].addLabel(); // update labels depending on tick interval
 				}
@@ -8262,6 +8264,7 @@ Axis.prototype = {
 			lineWidth = options.lineWidth,
 			linePath,
 			lin2log = Highcharts.lin2log,
+			Tick = Highcharts.Tick,
 			hasRendered = chart.hasRendered,
 			slideInTicks = hasRendered && Highcharts.defined(axis.oldMin) && !isNaN(axis.oldMin),
 			hasData = axis.hasData,
@@ -23278,7 +23281,6 @@ Highcharts.extend(Highcharts, {
 	
 	// Constructors
 	Point: Point,
-	Tick: Tick,	
 	
 	// Various
 	canvas: Highcharts.useCanVG,

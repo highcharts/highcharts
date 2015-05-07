@@ -4,7 +4,6 @@ Highcharts.extend(Highcharts, {
 	
 	// Constructors
 	Point: Point,
-	Tick: Tick,	
 	
 	// Various
 	canvas: Highcharts.useCanVG,
