@@ -6131,11 +6131,16 @@ H.Tick.prototype = {
 };
 
 	return H;
-}(Highcharts));/**
+}(Highcharts));(function (H) {
+	var log2lin = H.log2lin,
+		defined = H.defined,
+		arrayMin = H.arrayMin,
+		arrayMax = H.arrayMax;
+/**
  * The object wrapper for plot lines and plot bands
  * @param {Object} options
  */
-Highcharts.PlotLineOrBand = function (axis, options) {
+H.PlotLineOrBand = function (axis, options) {
 	this.axis = axis;
 
 	if (options) {
@@ -6144,7 +6149,7 @@ Highcharts.PlotLineOrBand = function (axis, options) {
 	}
 };
 
-Highcharts.PlotLineOrBand.prototype = {
+H.PlotLineOrBand.prototype = {
 	
 	/**
 	 * Render the plot line or plot band. If it is already existing,
@@ -6157,10 +6162,6 @@ Highcharts.PlotLineOrBand.prototype = {
 			options = plotLine.options,
 			optionsLabel = options.label,
 			label = plotLine.label,
-			log2lin = Highcharts.log2lin,
-			defined = Highcharts.defined,
-			arrayMin = Highcharts.arrayMin,
-			arrayMax = Highcharts.arrayMax,
 			width = options.width,
 			to = options.to,
 			from = options.from,
@@ -6251,7 +6252,7 @@ Highcharts.PlotLineOrBand.prototype = {
 		// the plot band/line label
 		if (optionsLabel && defined(optionsLabel.text) && path && path.length && axis.width > 0 && axis.height > 0) {
 			// apply defaults
-			optionsLabel = Highcharts.merge({
+			optionsLabel = H.merge({
 				align: horiz && isBand && 'center',
 				x: horiz ? !isBand && 4 : 10,
 				verticalAlign : !horiz && isBand && 'middle',
@@ -6307,10 +6308,10 @@ Highcharts.PlotLineOrBand.prototype = {
 	 */
 	destroy: function () {
 		// remove it from the lookup
-		Highcharts.erase(this.axis.plotLinesAndBands, this);
+		H.erase(this.axis.plotLinesAndBands, this);
 		
 		delete this.axis;
-		Highcharts.destroyObjectProperties(this);
+		H.destroyObjectProperties(this);
 	}
 };
 
@@ -6319,7 +6320,7 @@ Highcharts.PlotLineOrBand.prototype = {
  * @todo Extend directly instead of adding object to Highcharts first
  */
 
-Highcharts.AxisPlotLineOrBandExtension = {
+H.AxisPlotLineOrBandExtension = {
 
 	/**
 	 * Create the path for a plot band
@@ -6356,7 +6357,7 @@ Highcharts.AxisPlotLineOrBandExtension = {
 	 * @param options {Object} The plotBand or plotLine configuration object
 	 */
 	addPlotBandOrLine: function (options, coll) {
-		var obj = new Highcharts.PlotLineOrBand(this, options).render(),
+		var obj = new H.PlotLineOrBand(this, options).render(),
 			userOptions = this.userOptions;
 
 		if (obj) { // #2189
@@ -6385,17 +6386,19 @@ Highcharts.AxisPlotLineOrBandExtension = {
 				plotLinesAndBands[i].destroy();
 			}
 		}
-		Highcharts.each([options.plotLines || [], userOptions.plotLines || [], options.plotBands || [], userOptions.plotBands || []], function (arr) {
+		H.each([options.plotLines || [], userOptions.plotLines || [], options.plotBands || [], userOptions.plotBands || []], function (arr) {
 			i = arr.length;
 			while (i--) {
 				if (arr[i].id === id) {
-					Highcharts.erase(arr, arr[i]);
+					H.erase(arr, arr[i]);
 				}
 			}
 		});
 	}
 };
 
+	return H;
+}(Highcharts));
 /**
  * Create a new axis object
  * @param {Object} chart
