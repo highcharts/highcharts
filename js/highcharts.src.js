@@ -8508,7 +8508,7 @@ Axis.prototype = {
 			// Snap
 			((defined(point) || !pick(this.crosshair.snap, true)) === false) || 
 			// Not on this axis (#4095, #2888)
-			((defined(point) && (point.series[this.coll] !== this)))
+			(point && point.series && point.series[this.coll] !== this)
 		) {
 			this.hideCrosshair();
 		
@@ -9662,7 +9662,7 @@ Pointer.prototype = {
 				hoverPoint.setState(hoverPoint.state, true);
 				each(chart.axes, function (axis) {
 					if (pick(axis.options.crosshair && axis.options.crosshair.snap, true)) {
-						axis.drawCrosshair(null, allowMove);
+						axis.drawCrosshair(null, hoverPoint);
 					}  else {
 						axis.hideCrosshair();
 					}
