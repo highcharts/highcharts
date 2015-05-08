@@ -18714,7 +18714,7 @@ extend(Axis.prototype, {
 			i;
 
 		// apply the ordinal logic
-		if (axis.options.ordinal || axis.options.breaks) {
+		if (axis.options.ordinal || (axis.isXAxis && axis.options.breaks)) { // #4167 YAxis is never ordinal ?
 
 			each(axis.series, function (series, i) {
 
