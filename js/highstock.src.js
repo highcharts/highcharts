@@ -14135,7 +14135,7 @@ Series.prototype = {
 	/**
 	 * Get the graph path
 	 */
-	getGraphPath: function (points, nullsAsZeroes) {
+	getGraphPath: function (points, nullsAsZeroes, connectCliffs) {
 		var series = this,
 			options = series.options,
 			step = options.step,
@@ -14149,9 +14149,12 @@ Series.prototype = {
 
 			var plotX = point.plotX,
 				plotY = point.plotY,
-				lastPoint,
+				lastPoint = points[i - 1],					
 				pathToPoint; // the path to this point from the previous
 
+			if ((point.leftCliff || (lastPoint && lastPoint.rightCliff)) && !connectCliffs) {
+				gap = true; // ... and continue
+			}
 			if (point.isNull && !nullsAsZeroes) {
 				gap = true;
 
@@ -14166,7 +14169,6 @@ Series.prototype = {
 
 				} else if (step) {
 
-					lastPoint = points[i - 1];
 					if (step === 'right') {
 						pathToPoint = [
 							L,
@@ -15713,7 +15715,7 @@ var AreaSeries = extendClass(Series, {
 			stacking = options.stacking,
 			yAxis = this.yAxis,
 			topPath,
-			topPoints = [],
+			//topPoints = [],
 			bottomPath,
 			bottomPoints = [],
 			graphPoints = [],
@@ -15723,15 +15725,16 @@ var AreaSeries = extendClass(Series, {
 			plotX,
 			plotY,
 			stacks = yAxis.stacks[this.stackKey],
+			threshold = options.threshold,
 			translatedThreshold = yAxis.toPixels(options.threshold, true),
 			isNull,
 			yBottom,
 			connectNulls = options.connectNulls || stacking === 'percent',
-			cliffPoint = function (plotY) {
+			dummyPoint = function (y, isNull) {
 				return {
 					plotX: plotX,
-					plotY: plotY,
-					isCliff: true
+					plotY: yAxis.toPixels(y, true),
+					isNull: isNull
 				};
 			},
 			/**
@@ -15742,45 +15745,25 @@ var AreaSeries = extendClass(Series, {
 				var point = points[i],
 					stackedValues = stacking && stacks[point.x].points[seriesIndex],
 					nullName = side + 'Null',
-					cliffName = side + 'Cliff';
-
-
-				// Break the graph line itself. A null pseudo-point is added to provide a break in the 
-				// line, then a new point is added on the same x position to start the line again.
-				if (point[cliffName]) {
-
-					// Add to the graph
-					if (otherI > i) {
-						graphPoints.push({
-							isNull: true
-						});
-					}
-					graphPoints.push({
-						plotX: plotX,
-						plotY: yAxis.toPixels(stackedValues[1] + point[cliffName], true)
-					});
-					if (otherI < i) {
-						graphPoints.push({
-							isNull: true
-						});
-					}
-					
-				}
+					cliffName = side + 'Cliff',
+					top,
+					bottom,
+					isNull = true;
 
 				if (point[cliffName] || point[nullName]) {
-					// Add to the top and bottom line of the area
-					topPoints.push(cliffPoint(yAxis.toPixels(
-						(point[nullName] ? stackedValues[0] : stackedValues[1]) + (point[cliffName] || 0),
-						true
-					)));
-					bottomPoints.push(cliffPoint(yAxis.toPixels(
-						stackedValues[0] + (point[cliffName] || 0), 
-						true
-					)));
+
+					top = (point[nullName] ? stackedValues[0] : stackedValues[1]) + (point[cliffName] || 0);
+					bottom = stackedValues[0] + (point[cliffName] || 0);
+					isNull = point[nullName];
 				
 				} else if (!stacking && points[otherI] && points[otherI].isNull) {
-					topPoints.push(cliffPoint(translatedThreshold));
-					bottomPoints.push(cliffPoint(translatedThreshold));
+					top = bottom = threshold;
+				}
+
+				// Add to the top and bottom line of the area
+				if (top !== undefined) {
+					graphPoints.push(dummyPoint(top, isNull));
+					bottomPoints.push(dummyPoint(bottom));
 				}
 			};
 
@@ -15807,8 +15790,8 @@ var AreaSeries = extendClass(Series, {
 
 				if (!(isNull && !stacking && connectNulls)) { // Skip null point when stacking is false and connectNulls true
 					graphPoints.push(points[i]);
-					topPoints.push(points[i]);
 					bottomPoints.push({
+						x: i,
 						plotX: plotX,
 						plotY: yBottom
 					});
@@ -15817,20 +15800,18 @@ var AreaSeries = extendClass(Series, {
 				if (!connectNulls) {
 					addDummyPoints(i, i + 1, plotX, 'right');
 				}
-			} else {
-				graphPoints.push({
-					isNull: true
-				});
 			}
 		}
-		topPath = getGraphPath.call(this, topPoints, connectNulls);
-		bottomPath = getGraphPath.call(this, bottomPoints.reverse(), connectNulls);
+
+		topPath = getGraphPath.call(this, graphPoints, true, true);
+		
+		bottomPath = getGraphPath.call(this, bottomPoints.reverse(), true, true);
 		if (bottomPath.length) {
 			bottomPath[0] = L;
 		}
 
 		areaPath = topPath.concat(bottomPath);
-		graphPath = getGraphPath.call(this, graphPoints);
+		graphPath = getGraphPath.call(this, graphPoints, false, connectNulls); // TODO: don't set leftCliff and rightCliff when connectNulls?
 
 		this.areaPath = areaPath;
 		return graphPath;
@@ -15903,16 +15884,33 @@ var SplineSeries = extendClass(Series, {
 			denom = smoothing + 1,
 			plotX = point.plotX,
 			plotY = point.plotY,
-			lastPoint = points[i - 1],
-			nextPoint = points[i + 1],
+			lastPoint,
+			nextPoint,
 			leftContX,
 			leftContY,
 			rightContX,
 			rightContY,
-			ret;
-
+			ret,
+			j;
+/*
+		j = i;
+		while (j--) {
+			if (points[j] && points[j].x !== undefined) {
+				lastPoint = points[j];
+				break;
+			}
+		}
+		j = i;
+		while (j < points.length && j++) {
+			if (points[j] && points[j].x !== undefined) {
+				nextPoint = points[j];
+				break;
+			}
+		}
+		*/
+		
 		// Find control points
-		if (!point.isCliff && lastPoint && !lastPoint.isNull && !lastPoint.isCliff && nextPoint && !nextPoint.isNull && !nextPoint.isCliff) {
+		if (point.x !== undefined && lastPoint && !lastPoint.isNull && nextPoint && !nextPoint.isNull) {
 			var lastX = lastPoint.plotX,
 				lastY = lastPoint.plotY,
 				nextX = nextPoint.plotX,
@@ -15946,12 +15944,19 @@ var SplineSeries = extendClass(Series, {
 			} else if (rightContY < nextY && rightContY < plotY) {
 				rightContY = mathMin(nextY, plotY);
 				leftContY = 2 * plotY - rightContY;
-			}
+			}			
+			/*if (point.leftCliff) {
+				leftContY += this.yAxis.toPixels(point.y - point.leftCliff, true) - plotY;
+			}			
+			if (point.rightCliff) {
+				rightContY += this.yAxis.toPixels(point.y - point.rightCliff, true) - plotY;
+			}*/
 
 			// record for drawing in next point
 			point.rightContX = rightContX;
 			point.rightContY = rightContY;
 
+			
 		}
 		
 		// Visualize control points for debugging
@@ -15987,7 +15992,6 @@ var SplineSeries = extendClass(Series, {
 				.add();
 		}
 		// */
-
 		ret = [
 			'C',
 			lastPoint.rightContX || lastPoint.plotX,

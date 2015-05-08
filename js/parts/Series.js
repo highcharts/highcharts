@@ -1231,7 +1231,7 @@ Series.prototype = {
 	/**
 	 * Get the graph path
 	 */
-	getGraphPath: function (points, nullsAsZeroes) {
+	getGraphPath: function (points, nullsAsZeroes, connectCliffs) {
 		var series = this,
 			options = series.options,
 			step = options.step,
@@ -1245,9 +1245,12 @@ Series.prototype = {
 
 			var plotX = point.plotX,
 				plotY = point.plotY,
-				lastPoint,
+				lastPoint = points[i - 1],					
 				pathToPoint; // the path to this point from the previous
 
+			if ((point.leftCliff || (lastPoint && lastPoint.rightCliff)) && !connectCliffs) {
+				gap = true; // ... and continue
+			}
 			if (point.isNull && !nullsAsZeroes) {
 				gap = true;
 
@@ -1262,7 +1265,6 @@ Series.prototype = {
 
 				} else if (step) {
 
-					lastPoint = points[i - 1];
 					if (step === 'right') {
 						pathToPoint = [
 							L,

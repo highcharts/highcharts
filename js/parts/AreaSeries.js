@@ -138,7 +138,7 @@ var AreaSeries = extendClass(Series, {
 			stacking = options.stacking,
 			yAxis = this.yAxis,
 			topPath,
-			topPoints = [],
+			//topPoints = [],
 			bottomPath,
 			bottomPoints = [],
 			graphPoints = [],
@@ -148,15 +148,16 @@ var AreaSeries = extendClass(Series, {
 			plotX,
 			plotY,
 			stacks = yAxis.stacks[this.stackKey],
+			threshold = options.threshold,
 			translatedThreshold = yAxis.toPixels(options.threshold, true),
 			isNull,
 			yBottom,
 			connectNulls = options.connectNulls || stacking === 'percent',
-			cliffPoint = function (plotY) {
+			dummyPoint = function (y, isNull) {
 				return {
 					plotX: plotX,
-					plotY: plotY,
-					isCliff: true
+					plotY: yAxis.toPixels(y, true),
+					isNull: isNull
 				};
 			},
 			/**
@@ -167,45 +168,25 @@ var AreaSeries = extendClass(Series, {
 				var point = points[i],
 					stackedValues = stacking && stacks[point.x].points[seriesIndex],
 					nullName = side + 'Null',
-					cliffName = side + 'Cliff';
-
-
-				// Break the graph line itself. A null pseudo-point is added to provide a break in the 
-				// line, then a new point is added on the same x position to start the line again.
-				if (point[cliffName]) {
-
-					// Add to the graph
-					if (otherI > i) {
-						graphPoints.push({
-							isNull: true
-						});
-					}
-					graphPoints.push({
-						plotX: plotX,
-						plotY: yAxis.toPixels(stackedValues[1] + point[cliffName], true)
-					});
-					if (otherI < i) {
-						graphPoints.push({
-							isNull: true
-						});
-					}
-					
-				}
+					cliffName = side + 'Cliff',
+					top,
+					bottom,
+					isNull = true;
 
 				if (point[cliffName] || point[nullName]) {
-					// Add to the top and bottom line of the area
-					topPoints.push(cliffPoint(yAxis.toPixels(
-						(point[nullName] ? stackedValues[0] : stackedValues[1]) + (point[cliffName] || 0),
-						true
-					)));
-					bottomPoints.push(cliffPoint(yAxis.toPixels(
-						stackedValues[0] + (point[cliffName] || 0), 
-						true
-					)));
+
+					top = (point[nullName] ? stackedValues[0] : stackedValues[1]) + (point[cliffName] || 0);
+					bottom = stackedValues[0] + (point[cliffName] || 0);
+					isNull = point[nullName];
 				
 				} else if (!stacking && points[otherI] && points[otherI].isNull) {
-					topPoints.push(cliffPoint(translatedThreshold));
-					bottomPoints.push(cliffPoint(translatedThreshold));
+					top = bottom = threshold;
+				}
+
+				// Add to the top and bottom line of the area
+				if (top !== undefined) {
+					graphPoints.push(dummyPoint(top, isNull));
+					bottomPoints.push(dummyPoint(bottom));
 				}
 			};
 
@@ -232,8 +213,8 @@ var AreaSeries = extendClass(Series, {
 
 				if (!(isNull && !stacking && connectNulls)) { // Skip null point when stacking is false and connectNulls true
 					graphPoints.push(points[i]);
-					topPoints.push(points[i]);
 					bottomPoints.push({
+						x: i,
 						plotX: plotX,
 						plotY: yBottom
 					});
@@ -242,20 +223,18 @@ var AreaSeries = extendClass(Series, {
 				if (!connectNulls) {
 					addDummyPoints(i, i + 1, plotX, 'right');
 				}
-			} else {
-				graphPoints.push({
-					isNull: true
-				});
 			}
 		}
-		topPath = getGraphPath.call(this, topPoints, connectNulls);
-		bottomPath = getGraphPath.call(this, bottomPoints.reverse(), connectNulls);
+
+		topPath = getGraphPath.call(this, graphPoints, true, true);
+		
+		bottomPath = getGraphPath.call(this, bottomPoints.reverse(), true, true);
 		if (bottomPath.length) {
 			bottomPath[0] = L;
 		}
 
 		areaPath = topPath.concat(bottomPath);
-		graphPath = getGraphPath.call(this, graphPoints);
+		graphPath = getGraphPath.call(this, graphPoints, false, connectNulls); // TODO: don't set leftCliff and rightCliff when connectNulls?
 
 		this.areaPath = areaPath;
 		return graphPath;

@@ -17,16 +17,33 @@ var SplineSeries = extendClass(Series, {
 			denom = smoothing + 1,
 			plotX = point.plotX,
 			plotY = point.plotY,
-			lastPoint = points[i - 1],
-			nextPoint = points[i + 1],
+			lastPoint,
+			nextPoint,
 			leftContX,
 			leftContY,
 			rightContX,
 			rightContY,
-			ret;
-
+			ret,
+			j;
+/*
+		j = i;
+		while (j--) {
+			if (points[j] && points[j].x !== undefined) {
+				lastPoint = points[j];
+				break;
+			}
+		}
+		j = i;
+		while (j < points.length && j++) {
+			if (points[j] && points[j].x !== undefined) {
+				nextPoint = points[j];
+				break;
+			}
+		}
+		*/
+		
 		// Find control points
-		if (!point.isCliff && lastPoint && !lastPoint.isNull && !lastPoint.isCliff && nextPoint && !nextPoint.isNull && !nextPoint.isCliff) {
+		if (point.x !== undefined && lastPoint && !lastPoint.isNull && nextPoint && !nextPoint.isNull) {
 			var lastX = lastPoint.plotX,
 				lastY = lastPoint.plotY,
 				nextX = nextPoint.plotX,
@@ -60,12 +77,19 @@ var SplineSeries = extendClass(Series, {
 			} else if (rightContY < nextY && rightContY < plotY) {
 				rightContY = mathMin(nextY, plotY);
 				leftContY = 2 * plotY - rightContY;
-			}
+			}			
+			/*if (point.leftCliff) {
+				leftContY += this.yAxis.toPixels(point.y - point.leftCliff, true) - plotY;
+			}			
+			if (point.rightCliff) {
+				rightContY += this.yAxis.toPixels(point.y - point.rightCliff, true) - plotY;
+			}*/
 
 			// record for drawing in next point
 			point.rightContX = rightContX;
 			point.rightContY = rightContY;
 
+			
 		}
 		
 		// Visualize control points for debugging
@@ -101,7 +125,6 @@ var SplineSeries = extendClass(Series, {
 				.add();
 		}
 		// */
-
 		ret = [
 			'C',
 			lastPoint.rightContX || lastPoint.plotX,
