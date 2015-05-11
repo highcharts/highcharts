@@ -80,36 +80,32 @@ var PiePoint = extendClass(Point, {
 			chart = series.chart,
 			doRedraw = !series.isDirty && series.options.ignoreHiddenPoint;
 
-		// Only if the value has changed
-		if (vis !== point.visible) {
-			
-			// If called without an argument, toggle visibility
-			point.visible = point.options.visible = vis = vis === UNDEFINED ? !point.visible : vis;
-			series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
+		// if called without an argument, toggle visibility
+		point.visible = point.options.visible = vis = vis === UNDEFINED ? !point.visible : vis;
+		series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
 
-			// Show and hide associated elements
-			each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
-				if (point[key]) {
-					point[key][vis ? 'show' : 'hide'](true);
-				}
-			});
-
-			if (point.legendItem) {
-				if (chart.hasRendered) {
-					series.updateTotals();
-					chart.legend.clearItems();
-					if (!doRedraw) {
-						chart.legend.render();
-					}
-				}
-				chart.legend.colorizeItem(point, vis);
+		// Show and hide associated elements
+		each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
+			if (point[key]) {
+				point[key][vis ? 'show' : 'hide'](true);
 			}
+		});
 
-			// Handle ignore hidden slices
-			if (doRedraw) {
-				series.isDirty = true;
-				chart.redraw();
+		if (point.legendItem) {
+			if (chart.hasRendered) {
+				series.updateTotals();
+				chart.legend.clearItems();
+				if (!doRedraw) {
+					chart.legend.render();
+				}
 			}
+			chart.legend.colorizeItem(point, vis);
+		}
+
+		// Handle ignore hidden slices
+		if (doRedraw) {
+			series.isDirty = true;
+			chart.redraw();
 		}
 	},
 
@@ -447,9 +443,9 @@ var PieSeries = {
 					.shadow(shadow, shadowGroup);	
 			}
 
-			// Detect point specific visibility (#2430)
-			if (point.options.visible !== undefined) {
-				point.setVisible(point.options.visible);
+			// detect point specific visibility (#2430)
+			if (point.visible !== undefined) {
+				point.setVisible(point.visible);
 			}
 
 		});
