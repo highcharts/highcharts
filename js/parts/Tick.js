@@ -108,6 +108,7 @@ Tick.prototype = {
 			factor = { left: 0, center: 0.5, right: 1 }[axis.labelAlign],
 			labelWidth = label.getBBox().width,
 			slotWidth = axis.slotWidth,
+			xCorrection = factor,
 			leftPos,
 			rightPos,
 			textWidth;
@@ -120,12 +121,15 @@ Tick.prototype = {
 
 			if (leftPos < leftBound) {
 				slotWidth = xy.x + slotWidth * (1 - factor) - leftBound;
-				xy.x += (1 - factor) * (axis.slotWidth - slotWidth); // align it within the new slot
+				xCorrection -= 1;
 			} else if (rightPos > rightBound) {
 				slotWidth = rightBound - xy.x + slotWidth * factor;
-				xy.x -= factor * (axis.slotWidth - slotWidth); // align it within the new slot
 			}
 
+			slotWidth = mathMin(axis.slotWidth, slotWidth); // #4177
+			if (slotWidth < axis.slotWidth) {
+				xy.x -= xCorrection * (axis.slotWidth - slotWidth); // align it within the new slot
+			}
 			// If the label width exceeds the available space, set a text width to be 
 			// picked up below. Also, if a width has been set before, we need to set a new
 			// one because the reported labelWidth will be limited by the box (#3938).
