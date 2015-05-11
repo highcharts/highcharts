@@ -74,30 +74,40 @@ var PiePoint = extendClass(Point, {
 	 * @param {Boolean} vis Whether to show the slice or not. If undefined, the
 	 *    visibility is toggled
 	 */
-	setVisible: function (vis) {
+	setVisible: function (vis, redraw) { // docs: redraw parameter. Radrawing calculates new percentages and totals and moves other slices.
 		var point = this,
 			series = point.series,
-			chart = series.chart;
-
-		// if called without an argument, toggle visibility
-		point.visible = point.options.visible = vis = vis === UNDEFINED ? !point.visible : vis;
-		series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
-
-		// Show and hide associated elements
-		each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
-			if (point[key]) {
-				point[key][vis ? 'show' : 'hide'](true);
-			}
-		});
-
-		if (point.legendItem) {
-			chart.legend.colorizeItem(point, vis);
-		}
+			chart = series.chart,
+			ignoreHiddenPoint = series.options.ignoreHiddenPoint;
 		
-		// Handle ignore hidden slices
-		if (!series.isDirty && series.options.ignoreHiddenPoint) {
-			series.isDirty = true;
-			chart.redraw();
+		redraw = pick(redraw, ignoreHiddenPoint);
+
+		if (vis !== point.visible) {
+
+			// If called without an argument, toggle visibility
+			point.visible = point.options.visible = vis = vis === UNDEFINED ? !point.visible : vis;
+			series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
+
+			// Show and hide associated elements. This is performed regardless of redraw or not,
+			// because chart.redraw only handles full series.
+			each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
+				if (point[key]) {
+					point[key][vis ? 'show' : 'hide'](true);
+				}
+			});
+
+			if (point.legendItem) {
+				chart.legend.colorizeItem(point, vis);
+			}
+			
+			// Handle ignore hidden slices
+			if (ignoreHiddenPoint) {
+				series.isDirty = true;
+			}
+
+			if (redraw) {
+				chart.redraw();
+			}
 		}
 	},
 
@@ -217,31 +227,19 @@ var PieSeries = {
 	},
 
 	/**
-	 * Extend the generatePoints method by adding total and percentage properties to each point
+	 * Recompute total chart sum and update percentages of points.
 	 */
-	generatePoints: function () {
+	updateTotals: function () {
 		var i,
 			total = 0,
-			points,
-			len,
+			points = this.points,
+			len = points.length,
 			point,
 			ignoreHiddenPoint = this.options.ignoreHiddenPoint;
 
-		Series.prototype.generatePoints.call(this);
-
-		// Populate local vars
-		points = this.points;
-		len = points.length;
-		
 		// Get the total sum
 		for (i = 0; i < len; i++) {
 			point = points[i];
-
-			// Disallow negative values (#1530, #3623)
-			if (point.y < 0) {
-				point.y = null;
-			}
-			
 			total += (ignoreHiddenPoint && !point.visible) ? 0 : point.y;
 		}
 		this.total = total;
@@ -249,10 +247,17 @@ var PieSeries = {
 		// Set each point's properties
 		for (i = 0; i < len; i++) {
 			point = points[i];
-			point.percentage = total > 0 ? (point.y / total) * 100 : 0;
+			point.percentage = (total > 0 && (point.visible || !ignoreHiddenPoint)) ? point.y / total * 100 : 0;
 			point.total = total;
 		}
-		
+	},
+
+	/**
+	 * Extend the generatePoints method by adding total and percentage properties to each point
+	 */
+	generatePoints: function () {
+		Series.prototype.generatePoints.call(this);
+		this.updateTotals();
 	},
 	
 	/**
@@ -413,7 +418,7 @@ var PieSeries = {
 
 			// draw the slice
 			if (graphic) {
-				graphic.animate(extend(shapeArgs, groupTranslation));
+				graphic.animate(extend(shapeArgs, groupTranslation));				
 			} else {
 				point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 					.setRadialReference(series.center)
@@ -427,11 +432,6 @@ var PieSeries = {
 					.attr(groupTranslation)
 					.add(series.group)
 					.shadow(shadow, shadowGroup);	
-			}
-
-			// detect point specific visibility (#2430)
-			if (point.visible !== undefined) {
-				point.setVisible(point.visible);
 			}
 
 		});

@@ -572,7 +572,7 @@ if (seriesTypes.pie) {
 					labelPos = point.labelPos;
 					dataLabel = point.dataLabel;
 
-					if (dataLabel && dataLabel._pos) {
+					if (dataLabel && dataLabel._pos && point.visible) {
 						visibility = dataLabel._attr.visibility;
 						x = dataLabel.connX;
 						y = dataLabel.connY;
@@ -623,7 +623,7 @@ if (seriesTypes.pie) {
 			var dataLabel = point.dataLabel,
 				_pos;
 
-			if (dataLabel) {
+			if (dataLabel && point.visible) {
 				_pos = dataLabel._pos;
 				if (_pos) {
 					dataLabel.attr(dataLabel._attr);

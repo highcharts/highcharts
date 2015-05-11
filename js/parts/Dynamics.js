@@ -173,7 +173,7 @@ extend(Point.prototype, {
 						if (options && options.marker && options.marker.symbol) {
 							point.graphic = graphic.destroy();
 						} else {
-							graphic.attr(point.pointAttr[point.state || '']);
+							graphic.attr(point.pointAttr[point.state || ''])[point.visible ? 'show' : 'hide'](); // #2430
 						}
 					}
 					if (options && options.dataLabels && point.dataLabel) { // #2468
@@ -199,7 +199,7 @@ extend(Point.prototype, {
 			}
 
 			if (seriesOptions.legendType === 'point') { // #1831, #1885
-				chart.legend.destroyItem(point);
+				chart.isDirtyLegend = true;
 			}
 			if (redraw) {
 				chart.redraw(animation);
