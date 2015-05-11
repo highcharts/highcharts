@@ -198,9 +198,8 @@ extend(Point.prototype, {
 				chart.isDirtyBox = true;
 			}
 
-			if (chart.legend.display && seriesOptions.legendType === 'point') { // #1831, #1885, #3934
-				series.updateTotals();
-				chart.legend.clearItems();
+			if (seriesOptions.legendType === 'point') { // #1831, #1885
+				chart.legend.destroyItem(point);
 			}
 			if (redraw) {
 				chart.redraw(animation);
