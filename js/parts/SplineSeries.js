@@ -17,8 +17,8 @@ var SplineSeries = extendClass(Series, {
 			denom = smoothing + 1,
 			plotX = point.plotX,
 			plotY = point.plotY,
-			lastPoint,
-			nextPoint,
+			lastPoint = points[i - 1],
+			nextPoint = points[i + 1],
 			leftContX,
 			leftContY,
 			rightContX,
@@ -41,9 +41,9 @@ var SplineSeries = extendClass(Series, {
 			}
 		}
 		*/
-		
+		//if (!lastPoint) return;
 		// Find control points
-		if (point.x !== undefined && lastPoint && !lastPoint.isNull && nextPoint && !nextPoint.isNull) {
+		if (/*point.x !== undefined && */lastPoint && !lastPoint.isNull && nextPoint && !nextPoint.isNull) {
 			var lastX = lastPoint.plotX,
 				lastY = lastPoint.plotY,
 				nextX = nextPoint.plotX,
