@@ -74,14 +74,14 @@ var PiePoint = extendClass(Point, {
 	 * @param {Boolean} vis Whether to show the slice or not. If undefined, the
 	 *    visibility is toggled
 	 */
-	setVisible: function (vis, force) {
+	setVisible: function (vis) {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
 			doRedraw = !series.isDirty && series.options.ignoreHiddenPoint;
 
 		// Only if the value has changed
-		if (vis !== point.visible || force) {
+		if (vis !== point.visible) {
 			
 			// If called without an argument, toggle visibility
 			point.visible = point.options.visible = vis = vis === UNDEFINED ? !point.visible : vis;
@@ -408,9 +408,6 @@ var PieSeries = {
 
 		// draw the slices
 		each(series.points, function (point) {
-
-			var visible = point.options.visible;
-
 			graphic = point.graphic;
 			shapeArgs = point.shapeArgs;
 			shadowGroup = point.shadowGroup;
@@ -451,8 +448,8 @@ var PieSeries = {
 			}
 
 			// Detect point specific visibility (#2430)
-			if (visible !== undefined) {
-				point.setVisible(visible, true);
+			if (point.options.visible !== undefined) {
+				point.setVisible(point.options.visible);
 			}
 
 		});
