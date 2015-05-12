@@ -15730,31 +15730,24 @@ var AreaSeries = extendClass(Series, {
 			isNull,
 			yBottom,
 			connectNulls = options.connectNulls || stacking === 'percent',
-			dummyPoint = function (y, isNull) {
-				return {
-					plotX: plotX,
-					plotY: yAxis.toPixels(y, true),
-					isNull: isNull
-				};
-			},
 			/**
 			 * To display null points in underlying stacked series, this series graph must be 
 			 * broken, and the area also fall down to fill the gap left by the null point. #2069
 			 */
-			addDummyPoints = function (i, otherI, plotX, side) {
+			addDummyPoints = function (i, otherI, side) {
 				var point = points[i],
 					stackedValues = stacking && stacks[point.x].points[seriesIndex],
-					nullName = side + 'Null',
-					cliffName = side + 'Cliff',
+					nullVal = point[side + 'Null'] || 0,
+					cliffVal = point[side + 'Cliff'] || 0,
 					top,
 					bottom,
 					isNull = true;
 
-				if (point[cliffName] || point[nullName]) {
+				if (cliffVal || nullVal) {
 
-					top = (point[nullName] ? stackedValues[0] : stackedValues[1]) + (point[cliffName] || 0);
-					bottom = stackedValues[0] + (point[cliffName] || 0);
-					isNull = point[nullName];
+					top = (nullVal ? stackedValues[0] : stackedValues[1]) + cliffVal;
+					bottom = stackedValues[0] + cliffVal;
+					isNull = !!nullVal;
 				
 				} else if (!stacking && points[otherI] && points[otherI].isNull) {
 					top = bottom = threshold;
@@ -15762,8 +15755,15 @@ var AreaSeries = extendClass(Series, {
 
 				// Add to the top and bottom line of the area
 				if (top !== undefined) {
-					graphPoints.push(dummyPoint(top, isNull));
-					bottomPoints.push(dummyPoint(bottom));
+					graphPoints.push({
+						plotX: plotX,
+						plotY: yAxis.toPixels(top, true),
+						isNull: isNull
+					});
+					bottomPoints.push({
+						plotX: plotX,
+						plotY: yAxis.toPixels(bottom, true)
+					});
 				}
 			};
 
@@ -15785,7 +15785,7 @@ var AreaSeries = extendClass(Series, {
 			if (!isNull || connectNulls) {
 
 				if (!connectNulls) {
-					addDummyPoints(i, i - 1, plotX, 'left');
+					addDummyPoints(i, i - 1, 'left');
 				}
 
 				if (!(isNull && !stacking && connectNulls)) { // Skip null point when stacking is false and connectNulls true
@@ -15798,7 +15798,7 @@ var AreaSeries = extendClass(Series, {
 				}
 
 				if (!connectNulls) {
-					addDummyPoints(i, i + 1, plotX, 'right');
+					addDummyPoints(i, i + 1, 'right');
 				}
 			}
 		}
@@ -15884,33 +15884,16 @@ var SplineSeries = extendClass(Series, {
 			denom = smoothing + 1,
 			plotX = point.plotX,
 			plotY = point.plotY,
-			lastPoint,
-			nextPoint,
+			lastPoint = points[i - 1],
+			nextPoint = points[i + 1],
 			leftContX,
 			leftContY,
 			rightContX,
 			rightContY,
-			ret,
-			j;
-/*
-		j = i;
-		while (j--) {
-			if (points[j] && points[j].x !== undefined) {
-				lastPoint = points[j];
-				break;
-			}
-		}
-		j = i;
-		while (j < points.length && j++) {
-			if (points[j] && points[j].x !== undefined) {
-				nextPoint = points[j];
-				break;
-			}
-		}
-		*/
-		
+			ret;
+
 		// Find control points
-		if (point.x !== undefined && lastPoint && !lastPoint.isNull && nextPoint && !nextPoint.isNull) {
+		if (lastPoint && !lastPoint.isNull && nextPoint && !nextPoint.isNull) {
 			var lastX = lastPoint.plotX,
 				lastY = lastPoint.plotY,
 				nextX = nextPoint.plotX,
@@ -15944,13 +15927,7 @@ var SplineSeries = extendClass(Series, {
 			} else if (rightContY < nextY && rightContY < plotY) {
 				rightContY = mathMin(nextY, plotY);
 				leftContY = 2 * plotY - rightContY;
-			}			
-			/*if (point.leftCliff) {
-				leftContY += this.yAxis.toPixels(point.y - point.leftCliff, true) - plotY;
-			}			
-			if (point.rightCliff) {
-				rightContY += this.yAxis.toPixels(point.y - point.rightCliff, true) - plotY;
-			}*/
+			}
 
 			// record for drawing in next point
 			point.rightContX = rightContX;

@@ -23,27 +23,10 @@ var SplineSeries = extendClass(Series, {
 			leftContY,
 			rightContX,
 			rightContY,
-			ret,
-			j;
-/*
-		j = i;
-		while (j--) {
-			if (points[j] && points[j].x !== undefined) {
-				lastPoint = points[j];
-				break;
-			}
-		}
-		j = i;
-		while (j < points.length && j++) {
-			if (points[j] && points[j].x !== undefined) {
-				nextPoint = points[j];
-				break;
-			}
-		}
-		*/
-		//if (!lastPoint) return;
+			ret;
+
 		// Find control points
-		if (/*point.x !== undefined && */lastPoint && !lastPoint.isNull && nextPoint && !nextPoint.isNull) {
+		if (lastPoint && !lastPoint.isNull && nextPoint && !nextPoint.isNull) {
 			var lastX = lastPoint.plotX,
 				lastY = lastPoint.plotY,
 				nextX = nextPoint.plotX,
@@ -77,13 +60,7 @@ var SplineSeries = extendClass(Series, {
 			} else if (rightContY < nextY && rightContY < plotY) {
 				rightContY = mathMin(nextY, plotY);
 				leftContY = 2 * plotY - rightContY;
-			}			
-			/*if (point.leftCliff) {
-				leftContY += this.yAxis.toPixels(point.y - point.leftCliff, true) - plotY;
-			}			
-			if (point.rightCliff) {
-				rightContY += this.yAxis.toPixels(point.y - point.rightCliff, true) - plotY;
-			}*/
+			}
 
 			// record for drawing in next point
 			point.rightContX = rightContX;
