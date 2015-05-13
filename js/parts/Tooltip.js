@@ -1,19 +1,24 @@
+(function (H) {
+	var each = H.each,
+		map = H.map,
+		pick = H.pick,
+		splat = H.splat;
 /**
  * The tooltip object
  * @param {Object} chart The chart instance
  * @param {Object} options Tooltip options
  */
-var Tooltip = Highcharts.Tooltip = function () {
+H.Tooltip = function () {
 	this.init.apply(this, arguments);
 };
 
-Tooltip.prototype = {
+H.Tooltip.prototype = {
 
 	init: function (chart, options) {
 
 		var borderWidth = options.borderWidth,
 			style = options.style,
-			padding = Highcharts.pInt(style.padding);
+			padding = H.pInt(style.padding);
 
 		// Save the chart and options
 		this.chart = chart;
@@ -48,7 +53,7 @@ Tooltip.prototype = {
 
 		// When using canVG the shadow shows up as a gray circle
 		// even if the tooltip is hidden.
-		if (!Highcharts.useCanVG) {
+		if (!H.useCanVG) {
 			this.label.shadow(options.shadow);
 		}
 
@@ -84,7 +89,7 @@ Tooltip.prototype = {
 			skipAnchor = tooltip.followPointer || tooltip.len > 1;
 
 		// Get intermediate values for animation
-		Highcharts.extend(now, {
+		H.extend(now, {
 			x: animate ? (2 * now.x + x) / 3 : x,
 			y: animate ? (now.y + y) / 2 : y,
 			anchorX: skipAnchor ? undefined : animate ? (2 * now.anchorX + anchorX) / 3 : anchorX,
@@ -126,11 +131,11 @@ Tooltip.prototype = {
 			this.hideTimer = setTimeout(function () {
 				tooltip.label.fadeOut();
 				tooltip.isHidden = true;
-			}, Highcharts.pick(delay, this.options.hideDelay, 500));
+			}, pick(delay, this.options.hideDelay, 500));
 
 			// hide previous hoverPoints and set new
 			if (hoverPoints) {
-				Highcharts.each(hoverPoints, function (point) {
+				each(hoverPoints, function (point) {
 					point.setState();
 				});
 			}
@@ -155,7 +160,7 @@ Tooltip.prototype = {
 			yAxis,
 			xAxis;
 		
-		points = Highcharts.splat(points);
+		points = splat(points);
 		
 		// Pie uses a special tooltipPos
 		ret = points[0].tooltipPos;
@@ -172,7 +177,7 @@ Tooltip.prototype = {
 		}
 		// When shared, use the average position
 		if (!ret) {
-			Highcharts.each(points, function (point) {
+			each(points, function (point) {
 				yAxis = point.series.yAxis;
 				xAxis = point.series.xAxis;
 				plotX += point.plotX  + (!inverted && xAxis ? xAxis.left - plotLeft : 0); 
@@ -191,7 +196,7 @@ Tooltip.prototype = {
 			];
 		}
 
-		return Highcharts.map(ret, Math.round);
+		return map(ret, Math.round);
 	},
 	
 	/**
@@ -208,7 +213,7 @@ Tooltip.prototype = {
 			first = ['y', chart.chartHeight, boxHeight, point.plotY + chart.plotTop],
 			second = ['x', chart.chartWidth, boxWidth, point.plotX + chart.plotLeft],
 			// The far side is right or bottom
-			preferFarSide = Highcharts.pick(point.ttBelow, (chart.inverted && !point.negative) || (!chart.inverted && point.negative)),
+			preferFarSide = pick(point.ttBelow, (chart.inverted && !point.negative) || (!chart.inverted && point.negative)),
 			/**
 			 * Handle the preferred dimension. When the preferred dimension is tooltip
 			 * on top or bottom of the point, it will look for space there.
@@ -291,7 +296,7 @@ Tooltip.prototype = {
 	 * here is an object holding point, series, x, y etc.
 	 */
 	defaultFormatter: function (tooltip) {
-		var items = this.points || Highcharts.splat(this),
+		var items = this.points || splat(this),
 			s;
 
 		// build the header
@@ -330,7 +335,7 @@ Tooltip.prototype = {
 		clearTimeout(this.hideTimer);
 		
 		// get the reference point coordinates (pie charts use tooltipPos)
-		tooltip.followPointer = Highcharts.splat(point)[0].series.tooltipOptions.followPointer;
+		tooltip.followPointer = splat(point)[0].series.tooltipOptions.followPointer;
 		anchor = tooltip.getAnchor(point, mouseEvent);
 		x = anchor[0];
 		y = anchor[1];
@@ -342,12 +347,12 @@ Tooltip.prototype = {
 			
 			chart.hoverPoints = point;
 			if (hoverPoints) {
-				Highcharts.each(hoverPoints, function (point) {
+				each(hoverPoints, function (point) {
 					point.setState();
 				});
 			}
 
-			Highcharts.each(point, function (item) {
+			each(point, function (item) {
 				item.setState('hover');
 
 				pointConfig.push(item.getLabelConfig());
@@ -369,7 +374,7 @@ Tooltip.prototype = {
 
 		// register the current series
 		currentSeries = point.series;
-		this.distance = Highcharts.pick(currentSeries.tooltipOptions.distance, 16);
+		this.distance = pick(currentSeries.tooltipOptions.distance, 16);
 
 		// update the inner HTML
 		if (text === false) {
@@ -437,7 +442,7 @@ Tooltip.prototype = {
 	 */
 	getXDateFormat: function (point, options, xAxis) {
 		var xDateFormat,
-			dateFormat = Highcharts.dateFormat,
+			dateFormat = H.dateFormat,
 			dateTimeLabelFormats = options.dateTimeLabelFormats,
 			closestPointRange = xAxis && xAxis.closestPointRange,
 			n,
@@ -450,7 +455,7 @@ Tooltip.prototype = {
 				day: 3
 			},
 			date,
-			timeUnits = Highcharts.timeUnits,
+			timeUnits = H.timeUnits,
 			lastN;
 
 		if (closestPointRange) {
@@ -500,7 +505,7 @@ Tooltip.prototype = {
 			tooltipOptions = series.tooltipOptions,
 			xDateFormat = tooltipOptions.xDateFormat,
 			xAxis = series.xAxis,
-			isDateTime = xAxis && xAxis.options.type === 'datetime' && Highcharts.isNumber(point.key),
+			isDateTime = xAxis && xAxis.options.type === 'datetime' && H.isNumber(point.key),
 			formatString = tooltipOptions[footOrHead+'Format'];
 
 		// Guess the best date format based on the closest point distance (#568, #3418)
@@ -513,7 +518,7 @@ Tooltip.prototype = {
 			formatString = formatString.replace('{point.key}', '{point.key:' + xDateFormat + '}');
 		}
 
-		return Highcharts.format(formatString, {
+		return H.format(formatString, {
 			point: point,
 			series: series
 		});
@@ -524,10 +529,13 @@ Tooltip.prototype = {
      * abstracting this functionality allows to easily overwrite and extend it. 
 	 */
 	bodyFormatter: function (items) {
-        return Highcharts.map(items, function (item) {
+        return map(items, function (item) {
             var tooltipOptions = item.series.tooltipOptions;
             return (tooltipOptions.pointFormatter || item.point.tooltipFormatter).call(item.point, tooltipOptions.pointFormat);
         });
     }
     
 };
+
+	return H;
+}(Highcharts));

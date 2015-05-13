@@ -45,7 +45,7 @@ Pointer.prototype = {
 		this.lastValidTouch = {};
 
 		if (Highcharts.Tooltip && options.tooltip.enabled) {
-			chart.tooltip = new Tooltip(chart, options.tooltip);
+			chart.tooltip = new Highcharts.Tooltip(chart, options.tooltip);
 			this.followTouchMove = Highcharts.pick(options.tooltip.followTouchMove, true);
 		}
 
