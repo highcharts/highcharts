@@ -1,3 +1,6 @@
+(function (H) {
+	var lin2log = H.lin2log,
+		log2lin = H.log2lin;
 /**
  * Methods defined on the Axis prototype
  */
@@ -5,10 +8,8 @@
 /**
  * Set the tick positions of a logarithmic axis
  */
-Highcharts.Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
+H.Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 	var axis = this,
-		log2lin = Highcharts.log2lin,
-		lin2log = Highcharts.lin2log,
 		options = axis.options,
 		axisLength = axis.len,
 		// Since we use this method for both major and minor ticks,
@@ -71,19 +72,19 @@ Highcharts.Axis.prototype.getLogTickPositions = function (interval, min, max, mi
 			tickPixelIntervalOption = options.tickPixelInterval / (minor ? 5 : 1),
 			totalPixelLength = minor ? axisLength / axis.tickPositions.length : axisLength;
 		
-		interval = Highcharts.pick(
+		interval = H.pick(
 			filteredTickIntervalOption,
 			axis._minorAutoInterval,
 			(realMax - realMin) * tickPixelIntervalOption / (totalPixelLength || 1)
 		);
 		
-		interval = Highcharts.normalizeTickInterval(
+		interval = H.normalizeTickInterval(
 			interval, 
 			null, 
-			Highcharts.getMagnitude(interval)
+			H.getMagnitude(interval)
 		);
 		
-		positions = Highcharts.map(axis.getLinearTickPositions(
+		positions = H.map(axis.getLinearTickPositions(
 			interval, 
 			realMin,
 			realMax	
@@ -100,3 +101,6 @@ Highcharts.Axis.prototype.getLogTickPositions = function (interval, min, max, mi
 	}
 	return positions;
 };
+
+	return H;
+}(Highcharts));
