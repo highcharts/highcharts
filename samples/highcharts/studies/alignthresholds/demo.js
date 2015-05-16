@@ -19,9 +19,10 @@ $(function () {
                 index,
                 newTickPos,
                 threshold,
-                axis = this,
-                getIndex = function () {
-                    return inArray(threshold, axis.tickPositions);
+                // Find the index and return boolean result
+                isAligned = function (axis) {
+                    index = inArray(threshold, axis.tickPositions); // used in while-loop
+                    return axis.tickPositions.length === axis.tickAmount && index === primaryIndex;
                 };
 
             if (chart.options.chart.alignThresholds && this !== primaryAxis) {
@@ -33,8 +34,7 @@ $(function () {
                 if (this.tickPositions) {
                     // Add tick positions to the top or bottom in order to align the threshold
                     // to the primary axis threshold
-                    index = getIndex();
-                    while (this.tickPositions.length !== this.tickAmount || index !== primaryIndex) {
+                    while (!isAligned(this)) {
                         if (index < primaryIndex) {
                             newTickPos = this.tickPositions[0] - this.tickInterval;
                             this.tickPositions.unshift(newTickPos);
@@ -45,7 +45,6 @@ $(function () {
                             this.max = newTickPos;
                         }
                         proceed.call(this);
-                        index = getIndex();
                     }
                 }
 
