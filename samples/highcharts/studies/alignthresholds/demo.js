@@ -31,7 +31,7 @@ $(function () {
 
                 primaryIndex = primaryAxis.tickPositions && inArray(primaryThreshold, primaryAxis.tickPositions);
 
-                if (this.tickPositions) {
+                if (this.tickPositions && primaryIndex > 0 && primaryIndex < primaryAxis.tickPositions.length - 1) {
                     // Add tick positions to the top or bottom in order to align the threshold
                     // to the primary axis threshold
                     while (!isAligned(this)) {
@@ -58,6 +58,9 @@ $(function () {
         chart: {
             alignThresholds: true,
             type: 'area'
+        },
+        title: {
+            text: 'The <em>alignThreshold</em> option is true'
         },
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
