@@ -4,7 +4,7 @@ $(function () {
      * Experimental Highcharts plugin to implement chart.alignThreshold option. This primary axis
      * will be computed first, then all following axes will be aligned to the threshold.
      * Author: Torstein Hønsi
-     * Last revision: 2015-05-16
+     * Last revision: 2015-05-18
      */
     (function (H) {
         var Axis = H.Axis,
