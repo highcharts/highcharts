@@ -7300,7 +7300,7 @@ Axis.prototype = {
 					key = [horiz ? options.left : options.top, horiz ? options.width : options.height, options.pane].join(',');
 				
 				if (others[key]) {
-					hasOther = true;
+					hasOther = !!axis.series.length; // #4201
 				} else {
 					others[key] = 1;
 				}
