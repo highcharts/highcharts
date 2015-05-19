@@ -177,8 +177,8 @@ Pointer.prototype = {
 			});
 		}
 
-		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926
-		if (kdpoint && (kdpoint !== hoverPoint || (tooltip && tooltip.isHidden))) {
+		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
+		if (kdpoint && (kdpoint !== this.prevKDPoint || (tooltip && tooltip.isHidden))) {
 			// Draw tooltip if necessary
 			if (shared && !kdpoint.series.noSharedTooltip) {
 				i = kdpoints.length;
@@ -205,6 +205,7 @@ Pointer.prototype = {
 				}
 				kdpoint.onMouseOver(e); 
 			}
+			this.prevKDPoint = kdpoint;
 		
 		// Update positions (regardless of kdpoint or hoverPoint)
 		} else {
@@ -229,7 +230,8 @@ Pointer.prototype = {
 		each(chart.axes, function (axis) {
 			axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
 		});	
-				
+		
+
 	},
 
 
