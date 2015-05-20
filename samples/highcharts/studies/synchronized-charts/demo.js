@@ -23,13 +23,11 @@ $(function () {
         for (i = 0; i < 3; i++) {
             chart = Highcharts.charts[i];
             offset = $(chart.container).offset();
-            if (chart !== false) {
-                chart.pointer.onContainerMouseMove({
-                    pageX: e.pageX,
-                    pageY: offset.top + 100,
-                    target: chart.series[0].graph
-                });
-            }
+            chart.pointer.onContainerMouseMove({
+                pageX: e.pageX,
+                pageY: offset.top + 100,
+                target: chart.series[0].graph
+            });
         }
     }
 
@@ -71,6 +69,18 @@ $(function () {
                     title: {
                         text: dataset.name
                     }
+                },
+                tooltip: {
+                    positioner: function () {
+                        return {
+                            x: 50,
+                            y: 10
+                        };
+                    },
+                    borderWidth: 0,
+                    backgroundColor: 'none',
+                    headerFormat: '',
+                    shadow: false
                 },
                 series: [{
                     data: dataset.data,
