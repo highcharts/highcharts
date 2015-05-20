@@ -10136,8 +10136,14 @@ H.Pointer.prototype = {
 
 	return H;
 }(Highcharts));
+(function (H) {
+	var charts = H.charts,
+		each = H.each,
+		extend = H.extend,
+		hoverChartIndex = H.hoverChartIndex,
+		pick = H.pick;
 /* Support for touch devices */
-Highcharts.extend(Highcharts.Pointer.prototype, {
+extend(H.Pointer.prototype, {
 
 	/**
 	 * Run translation operations
@@ -10243,7 +10249,6 @@ Highcharts.extend(Highcharts.Pointer.prototype, {
 			hasZoom = self.hasZoom,
 			selectionMarker = self.selectionMarker,
 			transform = {},
-			pick = Highcharts.pick,
 			fireClickEvent = touchesLength === 1 && ((self.inClass(e.target, 'highcharts-tracker') && 
 				chart.runTrackerClick) || self.runChartClick),
 			clip = {};
@@ -10254,20 +10259,20 @@ Highcharts.extend(Highcharts.Pointer.prototype, {
 		}
 		
 		// Normalize each touch
-		Highcharts.map(touches, function (e) {
+		H.map(touches, function (e) {
 			return self.normalize(e);
 		});
 		
 		// Register the touch start position
 		if (e.type === 'touchstart') {
-			Highcharts.each(touches, function (e, i) {
+			each(touches, function (e, i) {
 				pinchDown[i] = { chartX: e.chartX, chartY: e.chartY };
 			});
 			lastValidTouch.x = [pinchDown[0].chartX, pinchDown[1] && pinchDown[1].chartX];
 			lastValidTouch.y = [pinchDown[0].chartY, pinchDown[1] && pinchDown[1].chartY];
 
 			// Identify the data bounds in pixels
-			Highcharts.each(chart.axes, function (axis) {
+			each(chart.axes, function (axis) {
 				if (axis.zoomEnabled) {
 					var bounds = chart.bounds[axis.horiz ? 'h' : 'v'],
 						minPixelPadding = axis.minPixelPadding,
@@ -10289,8 +10294,8 @@ Highcharts.extend(Highcharts.Pointer.prototype, {
 
 			// Set the marker
 			if (!selectionMarker) {
-				self.selectionMarker = selectionMarker = Highcharts.extend({
-					destroy: Highcharts.noop
+				self.selectionMarker = selectionMarker = extend({
+					destroy: H.noop
 				}, chart.plotBox);
 			}
 			
@@ -10314,7 +10319,7 @@ Highcharts.extend(Highcharts.Pointer.prototype, {
 	onContainerTouchStart: function (e) {
 		var chart = this.chart;
 
-		Highcharts.hoverChartIndex = chart.index;
+		hoverChartIndex = chart.index;
 
 		if (e.touches.length === 1) {
 
@@ -10344,12 +10349,15 @@ Highcharts.extend(Highcharts.Pointer.prototype, {
 	},
 
 	onDocumentTouchEnd: function (e) {
-		if (Highcharts.charts[Highcharts.hoverChartIndex]) {
-			Highcharts.charts[Highcharts.hoverChartIndex].pointer.drop(e);
+		if (charts[hoverChartIndex]) {
+			charts[hoverChartIndex].pointer.drop(e);
 		}
 	}
 
 });
+
+	return H;
+}(Highcharts));
 if (window.PointerEvent || window.MSPointerEvent) {
 	
 	// The touches object keeps track of the points being touched at all times
