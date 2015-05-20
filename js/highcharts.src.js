@@ -9430,11 +9430,20 @@ H.Tooltip.prototype = {
 
 	return H;
 }(Highcharts));
-
-var hoverChartIndex;
+(function (H) {
+var addEvent = H.addEvent,
+	chartCount = H.chartCount,
+	charts = H.charts,
+	defined = H.defined,
+	each = H.each,
+	extend = H.extend,
+	hoverChartIndex = H.hoverChartIndex,
+	pick = H.pick,
+	removeEvent = H.removeEvent,
+	Tooltip = H.Tooltip;
 
 // Global flag for touch support
-Highcharts.hasTouch = document.documentElement.ontouchstart !== undefined;
+H.hasTouch = document.documentElement.ontouchstart !== undefined;
 
 /**
  * The mouse tracker object. All methods starting with "on" are primary DOM event handlers. 
@@ -9442,11 +9451,11 @@ Highcharts.hasTouch = document.documentElement.ontouchstart !== undefined;
  * @param {Object} chart The Chart instance
  * @param {Object} options The root options object
  */
-var Pointer = Highcharts.Pointer = function (chart, options) {
+H.Pointer = function (chart, options) {
 	this.init(chart, options);
 };
 
-Pointer.prototype = {
+H.Pointer.prototype = {
 	/**
 	 * Initialize Pointer
 	 */
@@ -9454,7 +9463,7 @@ Pointer.prototype = {
 		
 		var chartOptions = options.chart,
 			chartEvents = chartOptions.events,
-			zoomType = Highcharts.useCanVG ? '' : chartOptions.zoomType,
+			zoomType = H.useCanVG ? '' : chartOptions.zoomType,
 			inverted = chart.inverted,
 			zoomX,
 			zoomY;
@@ -9476,9 +9485,9 @@ Pointer.prototype = {
 		this.pinchDown = [];
 		this.lastValidTouch = {};
 
-		if (Highcharts.Tooltip && options.tooltip.enabled) {
-			chart.tooltip = new Highcharts.Tooltip(chart, options.tooltip);
-			this.followTouchMove = Highcharts.pick(options.tooltip.followTouchMove, true);
+		if (Tooltip && options.tooltip.enabled) {
+			chart.tooltip = new Tooltip(chart, options.tooltip);
+			this.followTouchMove = pick(options.tooltip.followTouchMove, true);
 		}
 
 		this.setDOMEvents();
@@ -9522,7 +9531,7 @@ Pointer.prototype = {
 			chartY = ePos.pageY - chartPosition.top;
 		}
 
-		return Highcharts.extend(e, {
+		return extend(e, {
 			chartX: Math.round(chartX),
 			chartY: Math.round(chartY)
 		});
@@ -9539,7 +9548,7 @@ Pointer.prototype = {
 				yAxis: []
 			};
 
-		Highcharts.each(this.chart.axes, function (axis) {
+		each(this.chart.axes, function (axis) {
 			coordinates[axis.isXAxis ? 'xAxis' : 'yAxis'].push({
 				axis: axis,
 				value: axis.toValue(e[axis.horiz ? 'chartX' : 'chartY'])
@@ -9556,8 +9565,6 @@ Pointer.prototype = {
 
 		var pointer = this,
 			chart = pointer.chart,
-			defined = Highcharts.defined,
-			pick = Highcharts.pick,
 			series = chart.series,
 			tooltip = chart.tooltip,
 			shared = tooltip ? tooltip.shared : false,
@@ -9594,7 +9601,7 @@ Pointer.prototype = {
 		// Handle shared tooltip or cases where a series is not yet hovered
 		} else {
 			// Find nearest points on all series
-			Highcharts.each(series, function (s) {
+			each(series, function (s) {
 				// Skip hidden series
 				noSharedTooltip = s.noSharedTooltip && shared;
 				if (s.visible && !noSharedTooltip && pick(s.options.enableMouseTracking, true)) { // #3821
@@ -9605,7 +9612,7 @@ Pointer.prototype = {
 				}
 			});
 			// Find absolute nearest point
-			Highcharts.each(kdpoints, function (p) {
+			each(kdpoints, function (p) {
 				if (p && defined(p.plotX) && defined(p.plotY)) {
 					if ((p.dist.distX < distance) || ((p.dist.distX === distance || p.series.kdDimensions > 1) && 
 							p.dist.distR < rdistance)) {
@@ -9632,7 +9639,7 @@ Pointer.prototype = {
 				}
 
 				// do mouseover on all points except the closest
-				Highcharts.each(kdpoints, function (point) {
+				each(kdpoints, function (point) {
 					if (point !== kdpoint) { 
 						point.onMouseOver(e);
 					}
@@ -9658,15 +9665,15 @@ Pointer.prototype = {
 		// Start the event listener to pick up the tooltip 
 		if (tooltip && !pointer._onDocumentMouseMove) {
 			pointer._onDocumentMouseMove = function (e) {
-				if (Highcharts.charts[hoverChartIndex]) {
-					Highcharts.charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
+				if (charts[hoverChartIndex]) {
+					charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
 				}
 			};
-			Highcharts.addEvent(document, 'mousemove', pointer._onDocumentMouseMove);
+			addEvent(document, 'mousemove', pointer._onDocumentMouseMove);
 		}
 		
 		// Crosshair
-		Highcharts.each(chart.axes, function (axis) {
+		each(chart.axes, function (axis) {
 			axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
 		});	
 				
@@ -9691,7 +9698,7 @@ Pointer.prototype = {
 		allowMove = allowMove && tooltip && tooltipPoints;
 			
 		// Check if the points have moved outside the plot area, #1003		
-		if (allowMove  && Highcharts.splat(tooltipPoints)[0].plotX === undefined) {
+		if (allowMove  && H.splat(tooltipPoints)[0].plotX === undefined) {
 			allowMove = false;
 		}	
 		// Just move the tooltip, #349
@@ -9699,8 +9706,8 @@ Pointer.prototype = {
 			tooltip.refresh(tooltipPoints);
 			if (hoverPoint) { // #2500
 				hoverPoint.setState(hoverPoint.state, true);
-				Highcharts.each(chart.axes, function (axis) {
-					if (Highcharts.pick(axis.options.crosshair && axis.options.crosshair.snap, true)) {
+				each(chart.axes, function (axis) {
+					if (pick(axis.options.crosshair && axis.options.crosshair.snap, true)) {
 						axis.drawCrosshair(null, allowMove);
 					}  else {
 						axis.hideCrosshair();
@@ -9725,12 +9732,12 @@ Pointer.prototype = {
 			}
 
 			if (pointer._onDocumentMouseMove) {
-				Highcharts.removeEvent(document, 'mousemove', pointer._onDocumentMouseMove);
+				removeEvent(document, 'mousemove', pointer._onDocumentMouseMove);
 				pointer._onDocumentMouseMove = null;
 			}
 
 			// Remove crosshairs
-			Highcharts.each(chart.axes, function (axis) {
+			each(chart.axes, function (axis) {
 				axis.hideCrosshair();
 			});
 			
@@ -9748,7 +9755,7 @@ Pointer.prototype = {
 			seriesAttribs;
 
 		// Scale each series
-		Highcharts.each(chart.series, function (series) {
+		each(chart.series, function (series) {
 			seriesAttribs = attribs || series.getPlotBox(); // #1701
 			if (series.xAxis && series.xAxis.zoomEnabled) {
 				series.group.attr(seriesAttribs);
@@ -9890,8 +9897,8 @@ Pointer.prototype = {
 			if (this.hasDragged || hasPinched) {
 
 				// record each axis' min and max
-				Highcharts.each(chart.axes, function (axis) {
-					if (axis.zoomEnabled && Highcharts.defined(axis.min) && (hasPinched || pointer[{ xAxis: 'zoomX', yAxis: 'zoomY' }[axis.coll]])) { // #859, #3569
+				each(chart.axes, function (axis) {
+					if (axis.zoomEnabled && defined(axis.min) && (hasPinched || pointer[{ xAxis: 'zoomX', yAxis: 'zoomY' }[axis.coll]])) { // #859, #3569
 						var horiz = axis.horiz,
 							minPixelPadding = e.type === 'touchend' ? axis.minPixelPadding: 0, // #1207, #3075
 							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop) + minPixelPadding),
@@ -9907,7 +9914,7 @@ Pointer.prototype = {
 				});
 				if (runZoom) {
 					HighchartsAdapter.fireEvent(chart, 'selection', selectionData, function (args) { 
-						chart.zoom(Highcharts.extend(args, hasPinched ? { animation: false } : null)); 
+						chart.zoom(extend(args, hasPinched ? { animation: false } : null)); 
 					});
 				}
 
@@ -9922,7 +9929,7 @@ Pointer.prototype = {
 
 		// Reset all
 		if (chart) { // it may be destroyed on mouse up - #877
-			Highcharts.css(chart.container, { cursor: chart._cursor });
+			H.css(chart.container, { cursor: chart._cursor });
 			chart.cancelClick = this.hasDragged > 10; // #370
 			chart.mouseIsDown = this.hasDragged = this.hasPinched = false;
 			this.pinchDown = [];
@@ -9944,8 +9951,8 @@ Pointer.prototype = {
 	
 
 	onDocumentMouseUp: function (e) {
-		if (Highcharts.charts[hoverChartIndex]) {
-			Highcharts.charts[hoverChartIndex].pointer.drop(e);
+		if (charts[hoverChartIndex]) {
+			charts[hoverChartIndex].pointer.drop(e);
 		}
 	},
 
@@ -9970,7 +9977,7 @@ Pointer.prototype = {
 	 * When mouse leaves the container, hide the tooltip.
 	 */
 	onContainerMouseLeave: function () {
-		var chart = Highcharts.charts[hoverChartIndex];
+		var chart = charts[hoverChartIndex];
 		if (chart) {
 			chart.pointer.reset();
 			chart.pointer.chartPosition = null; // also reset the chart position, used in #149 fix
@@ -10006,7 +10013,7 @@ Pointer.prototype = {
 	inClass: function (element, className) {
 		var elemClassName;
 		while (element) {
-			elemClassName = Highcharts.attr(element, 'class');
+			elemClassName = H.attr(element, 'class');
 			if (elemClassName) {
 				if (elemClassName.indexOf(className) !== -1) {
 					return true;
@@ -10046,7 +10053,7 @@ Pointer.prototype = {
 			if (hoverPoint && this.inClass(e.target, 'highcharts-tracker')) {
 
 				// the series click event
-				fireEvent(hoverPoint.series, 'click', Highcharts.extend(e, {
+				fireEvent(hoverPoint.series, 'click', extend(e, {
 					point: hoverPoint
 				}));
 
@@ -10057,7 +10064,7 @@ Pointer.prototype = {
 
 			// When clicking outside a tracker, fire a chart event
 			} else {
-				Highcharts.extend(e, this.getCoordinates(e));
+				extend(e, this.getCoordinates(e));
 
 				// fire a click event in the chart
 				if (chart.isInsidePlot(e.chartX - plotLeft, e.chartY - plotTop)) {
@@ -10077,7 +10084,6 @@ Pointer.prototype = {
 	setDOMEvents: function () {
 
 		var pointer = this,
-			addEvent = Highcharts.addEvent,
 			container = pointer.chart.container;
 
 		container.onmousedown = function (e) {
@@ -10090,17 +10096,17 @@ Pointer.prototype = {
 			pointer.onContainerClick(e);
 		};
 		addEvent(container, 'mouseleave', pointer.onContainerMouseLeave);
-		if (Highcharts.chartCount === 1) {
+		if (chartCount === 1) {
 			addEvent(document, 'mouseup', pointer.onDocumentMouseUp);
 		}
-		if (Highcharts.hasTouch) {
+		if (H.hasTouch) {
 			container.ontouchstart = function (e) {
 				pointer.onContainerTouchStart(e);
 			};
 			container.ontouchmove = function (e) {
 				pointer.onContainerTouchMove(e);
 			};
-			if (Highcharts.chartCount === 1) {
+			if (chartCount === 1) {
 				addEvent(document, 'touchend', pointer.onDocumentTouchEnd);
 			}
 		}
@@ -10111,11 +10117,10 @@ Pointer.prototype = {
 	 * Destroys the Pointer object and disconnects DOM events.
 	 */
 	destroy: function () {
-		var prop,
-			removeEvent = Highcharts.removeEvent;
+		var prop;
 
 		removeEvent(this.chart.container, 'mouseleave', this.onContainerMouseLeave);
-		if (!Highcharts.chartCount) {
+		if (!chartCount) {
 			removeEvent(document, 'mouseup', this.onDocumentMouseUp);
 			removeEvent(document, 'touchend', this.onDocumentTouchEnd);
 		}
@@ -10129,7 +10134,8 @@ Pointer.prototype = {
 	}
 };
 
-
+	return H;
+}(Highcharts));
 /* Support for touch devices */
 Highcharts.extend(Highcharts.Pointer.prototype, {
 
@@ -10308,7 +10314,7 @@ Highcharts.extend(Highcharts.Pointer.prototype, {
 	onContainerTouchStart: function (e) {
 		var chart = this.chart;
 
-		hoverChartIndex = chart.index;
+		Highcharts.hoverChartIndex = chart.index;
 
 		if (e.touches.length === 1) {
 
@@ -10338,8 +10344,8 @@ Highcharts.extend(Highcharts.Pointer.prototype, {
 	},
 
 	onDocumentTouchEnd: function (e) {
-		if (Highcharts.charts[hoverChartIndex]) {
-			Highcharts.charts[hoverChartIndex].pointer.drop(e);
+		if (Highcharts.charts[Highcharts.hoverChartIndex]) {
+			Highcharts.charts[Highcharts.hoverChartIndex].pointer.drop(e);
 		}
 	}
 
@@ -10367,9 +10373,9 @@ if (window.PointerEvent || window.MSPointerEvent) {
 			var p,
 				charts = Highcharts.charts;
 			e = e.originalEvent || e;
-			if ((e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) && charts[hoverChartIndex]) {
+			if ((e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) && charts[Highcharts.hoverChartIndex]) {
 				callback(e);
-				p = charts[hoverChartIndex].pointer;
+				p = charts[Highcharts.hoverChartIndex].pointer;
 				p[method]({
 					type: wktype,
 					target: e.currentTarget,
@@ -10382,7 +10388,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	/**
 	 * Extend the Pointer prototype with methods for each event handler and more
 	 */
-	Highcharts.extend(Pointer.prototype, {
+	Highcharts.extend(Highcharts.Pointer.prototype, {
 		onContainerPointerDown: function (e) {
 			translateMSPointer(e, 'onContainerTouchStart', 'touchstart', function (e) {
 				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY, target: e.currentTarget };
@@ -10413,7 +10419,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	});
 
 	// Disable default IE actions for pinch and such on chart element
-	Highcharts.wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
+	Highcharts.wrap(Highcharts.Pointer.prototype, 'init', function (proceed, chart, options) {
 		proceed.call(this, chart, options);
 		if (this.hasZoom || this.followTouchMove) {
 			Highcharts.css(chart.container, {
@@ -10424,14 +10430,14 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	});
 
 	// Add IE specific touch events to chart
-	Highcharts.wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
+	Highcharts.wrap(Highcharts.Pointer.prototype, 'setDOMEvents', function (proceed) {
 		proceed.apply(this);
 		if (this.hasZoom || this.followTouchMove) {
 			this.batchMSEvents(Highcharts.addEvent);
 		}
 	});
 	// Destroy MS events also
-	Highcharts.wrap(Pointer.prototype, 'destroy', function (proceed) {
+	Highcharts.wrap(Highcharts.Pointer.prototype, 'destroy', function (proceed) {
 		this.batchMSEvents(Highcharts.removeEvent);
 		proceed.call(this);
 	});
@@ -12640,7 +12646,7 @@ Chart.prototype = {
 
 		// depends on inverted and on margins being set
 		if (Highcharts.Pointer) {
-			chart.pointer = new Pointer(chart, options);
+			chart.pointer = new Highcharts.Pointer(chart, options);
 		}
 
 		chart.render();

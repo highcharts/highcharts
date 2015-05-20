@@ -1402,7 +1402,7 @@ Chart.prototype = {
 
 		// depends on inverted and on margins being set
 		if (Highcharts.Pointer) {
-			chart.pointer = new Pointer(chart, options);
+			chart.pointer = new Highcharts.Pointer(chart, options);
 		}
 
 		chart.render();

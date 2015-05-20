@@ -125,7 +125,7 @@ Highcharts.StockChart = function (options, callback) {
 };
 
 // Implement the pinchType option
-Highcharts.wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
+Highcharts.wrap(Highcharts.Pointer.prototype, 'init', function (proceed, chart, options) {
 
 	var pinchType = options.chart.pinchType || '';
 		

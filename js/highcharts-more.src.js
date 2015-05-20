@@ -14,7 +14,6 @@
 
 (function (Highcharts) {
 var Point = Highcharts.Point,
-	Pointer = Highcharts.Pointer,
 	CenteredSeriesMixin = Highcharts.CenteredSeriesMixin,
 	TrackerMixin = Highcharts.TrackerMixin,
 	Series = Highcharts.Series;
@@ -2134,7 +2133,7 @@ Highcharts.Axis.prototype.beforePadding = function () {
 	 */
 
 	var seriesProto = Series.prototype,
-		pointerProto = Pointer.prototype,
+		pointerProto = Highcharts.Pointer.prototype,
 		colProto,
 		wrap = Highcharts.wrap;
 

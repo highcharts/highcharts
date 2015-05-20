@@ -21,9 +21,9 @@ if (window.PointerEvent || window.MSPointerEvent) {
 			var p,
 				charts = Highcharts.charts;
 			e = e.originalEvent || e;
-			if ((e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) && charts[hoverChartIndex]) {
+			if ((e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) && charts[Highcharts.hoverChartIndex]) {
 				callback(e);
-				p = charts[hoverChartIndex].pointer;
+				p = charts[Highcharts.hoverChartIndex].pointer;
 				p[method]({
 					type: wktype,
 					target: e.currentTarget,
@@ -36,7 +36,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	/**
 	 * Extend the Pointer prototype with methods for each event handler and more
 	 */
-	Highcharts.extend(Pointer.prototype, {
+	Highcharts.extend(Highcharts.Pointer.prototype, {
 		onContainerPointerDown: function (e) {
 			translateMSPointer(e, 'onContainerTouchStart', 'touchstart', function (e) {
 				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY, target: e.currentTarget };
@@ -67,7 +67,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	});
 
 	// Disable default IE actions for pinch and such on chart element
-	Highcharts.wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
+	Highcharts.wrap(Highcharts.Pointer.prototype, 'init', function (proceed, chart, options) {
 		proceed.call(this, chart, options);
 		if (this.hasZoom || this.followTouchMove) {
 			Highcharts.css(chart.container, {
@@ -78,14 +78,14 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	});
 
 	// Add IE specific touch events to chart
-	Highcharts.wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
+	Highcharts.wrap(Highcharts.Pointer.prototype, 'setDOMEvents', function (proceed) {
 		proceed.apply(this);
 		if (this.hasZoom || this.followTouchMove) {
 			this.batchMSEvents(Highcharts.addEvent);
 		}
 	});
 	// Destroy MS events also
-	Highcharts.wrap(Pointer.prototype, 'destroy', function (proceed) {
+	Highcharts.wrap(Highcharts.Pointer.prototype, 'destroy', function (proceed) {
 		this.batchMSEvents(Highcharts.removeEvent);
 		proceed.call(this);
 	});

@@ -13,7 +13,6 @@
 
 var Chart = Highcharts.Chart,
 	Point = Highcharts.Point,
-	Pointer = Highcharts.Pointer,
 	Legend = Highcharts.Legend,
 	LegendSymbolMixin = Highcharts.LegendSymbolMixin,
 	Series = Highcharts.Series;/**
@@ -817,7 +816,7 @@ Highcharts.wrap(Chart.prototype, 'render', function (proceed) {
 });
 
 // Extend the Pointer
-Highcharts.extend(Pointer.prototype, {
+Highcharts.extend(Highcharts.Pointer.prototype, {
 
 	/**
 	 * The event handler for the doubleclick event
@@ -867,7 +866,7 @@ Highcharts.extend(Pointer.prototype, {
 });
 
 // Implement the pinchType option
-Highcharts.wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
+Highcharts.wrap(Highcharts.Pointer.prototype, 'init', function (proceed, chart, options) {
 
 	proceed.call(this, chart, options);
 
@@ -878,7 +877,7 @@ Highcharts.wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 });
 
 // Extend the pinchTranslate method to preserve fixed ratio when zooming
-Highcharts.wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
+Highcharts.wrap(Highcharts.Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
 	var xBigger;
 	proceed.call(this, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 
