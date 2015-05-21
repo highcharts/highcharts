@@ -1,14 +1,25 @@
 {
-  "name": "Highcharts",
+  "name": "highcharts",
   "version": "4.0.3",
+  "description": "JavaScript charting framework",
+  "keywords": [
+    "charts",
+    "graphs",
+    "visualization",
+    "data",
+    "browserify",
+    "webpack"
+  ],
   "main": "js/highcharts.src.js",
-  "author": "",
+  "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",
+  "homepage": "https://www.highcharts.com/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/highslide-software/highcharts.com.git"
+    "url": "https://github.com/highslide-software/highcharts.com"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-jslint": "^1.1.12"
-  }
+  },
+  "license": "https://www.highcharts.com/license"
 }
