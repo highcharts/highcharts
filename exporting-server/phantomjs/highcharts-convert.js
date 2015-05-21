@@ -22,10 +22,19 @@
 			 * Depending on purchased license change the HIGHCHARTS property to 
 			 * highcharts.js or highstock.js 
 			 */
-			files: { 
+			files_map: { 
 				JQUERY: 'jquery.1.9.1.min.js',
-				HIGHCHARTS: 'highstock.js',
-				/* HIGHCHARTS: 'highcharts.js',*/
+				HIGHCHARTS: 'highmaps.js',
+				HIGHCHARTS_DATA: 'data.js',
+				HIGHCHARTS_DRILLDOWN: 'drilldown.js',
+				HIGHCHARTS_HEATMAP: 'heatmap.js',
+				HIGHCHARTS_NODATA: 'no-data-to-display.js'
+			},
+			
+			files_chart: { 
+				JQUERY: 'jquery.1.9.1.min.js',
+				HIGHCHARTS: 'highcharts.js',
+				/*HIGHCHARTS: 'highstock.js',*/
 				HIGHCHARTS_MORE: 'highcharts-more.js',
 				HIGHCHARTS_DATA: 'data.js',
 				HIGHCHARTS_DRILLDOWN: 'drilldown.js',
@@ -33,7 +42,6 @@
 				HIGHCHARTS_HEATMAP: 'heatmap.js',
 				HIGHCHARTS_3D: 'highcharts-3d.js',
 				HIGHCHARTS_NODATA: 'no-data-to-display.js',
-				/*HIGHCHARTS_MAP: 'map.js',*/
 				HIGHCHARTS_SOLID_GAUGE: 'solid-gauge.js',
 				BROKEN_AXIS: 'broken-axis.js'
 			},
@@ -70,6 +78,9 @@
 			console.log(', or run PhantomJS as server: highcharts-convert.js -host 127.0.0.1 -port 1234');
 		}
 
+		// default to chart
+		config.files = config.files_chart;
+
 		for (i = 0; i < system.args.length; i += 1) {
 			if (system.args[i].charAt(0) === '-') {
 				key = system.args[i].substr(1, i.length);
@@ -83,10 +94,16 @@
 					}
 				} else {
 					map[key] = system.args[i + 1];
+					
+					// override with map if that's what we're doing
+					if(key === 'constr' && map[key] == 'Map')
+						config.files = config.files_map;
 				}
 			}
 		}
+
 		return map;
+
 	};
 
 	render = function (params, exitCallback) {
@@ -521,6 +538,13 @@
 					msg;
 				try {
 					params = JSON.parse(jsonStr);
+					
+					// load our includes based on the type of chart
+					if(params.constr == 'Map')
+						config.files = config.files_map;
+					else
+						config.files = config.files_chart;
+					
 					if (params.status) {
 						// for server health validation
 						response.statusCode = 200;
