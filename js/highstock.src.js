@@ -21001,8 +21001,8 @@ Scroller.prototype = {
 			verb,
 			unionExtremes;
 
-		// don't render the navigator until we have data (#486)
-		if (isNaN(min)) {
+		// Don't render the navigator until we have data (#486, #4202)
+		if (!defined(min)) {
 			return;
 		}
 
