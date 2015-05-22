@@ -4,7 +4,7 @@ var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
 	 * Get the center of the pie based on the size and center options relative to the  
 	 * plot area. Borrowed by the polar and gauge series types.
 	 */
-	getCenter: function () {
+	getCenter: function (size) {
 		
 		var options = this.options,
 			chart = this.chart,
@@ -28,9 +28,15 @@ var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
 				// i == 1: centerY, relative to height
 				// i == 2: size, relative to smallestSize
 				// i == 3: innerSize, relative to size
-				[plotWidth, plotHeight, smallestSize, positions[2]][i] *
-					pInt(value) / 100 :
+				[plotWidth, plotHeight, smallestSize, positions[2]][i] * pInt(value) / 100 :
+								
 				pInt(value)) + (handleSlicingRoom ? slicingRoom : 0);
+
+			// If the size is set, we're in a recursive loop trying to fit data labels.
+			// The inner size must follow (#2077)
+			if (i === 2 && size) {
+				positions[i] = size;
+			}
 		}
 		return positions;
 	}
