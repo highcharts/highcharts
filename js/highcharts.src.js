@@ -14341,8 +14341,10 @@ Series.prototype = {
 			chartSizeMax = mathMax(chart.chartWidth, chart.chartHeight),
 			zoneAxis = this.zoneAxis || 'y',
 			axis = this[zoneAxis + 'Axis'],
+			extremes,
 			reversed = axis.reversed,
 			horiz = axis.horiz,
+			pxRange,
 			ignoreZones = false;
 
 		if (zones.length && (graph || area)) {
@@ -14356,25 +14358,32 @@ Series.prototype = {
 			}
 
 			// Create the clips
+			extremes = axis.getExtremes();
 			each(zones, function (threshold, i) {
-				translatedFrom = pick(translatedTo, (reversed ? (horiz ? chart.plotWidth : 0) : (horiz ? 0 : axis.toPixels(axis.min))));
-				translatedTo = mathRound(axis.toPixels(pick(threshold.value, axis.max), true));
 
+				translatedFrom = reversed ? 
+					(horiz ? chart.plotWidth : 0) : 
+					(horiz ? 0 : axis.toPixels(extremes.min));
+				translatedFrom = mathMin(pick(translatedTo, translatedFrom), chartSizeMax);
+				translatedTo = mathMin(mathRound(axis.toPixels(pick(threshold.value, extremes.max), true)), chartSizeMax);
+
+				// From should be less or equal then to (#4006)
 				if (axis.isXAxis) {
-					translatedFrom = translatedFrom > translatedTo ? translatedTo : translatedFrom; //#4006 from should be less or equal then to
+					translatedFrom = translatedFrom > translatedTo ? translatedTo : translatedFrom; 
 				} else {
-					translatedFrom = translatedFrom < translatedTo ? translatedTo : translatedFrom; //#4006 from should be less or equal then to
+					translatedFrom = translatedFrom < translatedTo ? translatedTo : translatedFrom;
 				}
 
 				if (ignoreZones) {
-					translatedFrom = translatedTo = axis.toPixels(axis.max);
+					translatedFrom = translatedTo = axis.toPixels(extremes.max);
 				}
 
+				pxRange = Math.abs(translatedFrom - translatedTo);
 				if (axis.isXAxis) {
 					clipAttr = {
 						x: reversed ? translatedTo : translatedFrom,
 						y: 0,
-						width: Math.abs(translatedFrom - translatedTo), 
+						width: pxRange, 
 						height: chartSizeMax
 					};
 					if (!horiz) {
@@ -14385,12 +14394,12 @@ Series.prototype = {
 						x: 0,
 						y: reversed ? translatedFrom : translatedTo,
 						width: chartSizeMax, 
-						height: Math.abs(translatedFrom - translatedTo)
+						height: pxRange
 					};
 					if (horiz) {
 						clipAttr.y = chart.plotWidth - clipAttr.y;
 					}
-				} 
+				}
 
 				/// VML SUPPPORT
 				if (chart.inverted && renderer.isVML) {
@@ -14426,7 +14435,7 @@ Series.prototype = {
 					}
 				}
 				// if this zone extends out of the axis, ignore the others
-				ignoreZones = threshold.value > axis.max;
+				ignoreZones = threshold.value > extremes.max;
 			});
 			this.clips = clips;
 		}
