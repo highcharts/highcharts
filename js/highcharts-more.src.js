@@ -832,6 +832,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			dataLabelOptions = this.options.dataLabels,
 			align = dataLabelOptions.align,
 			point,
+			up,
 			inverted = this.chart.inverted;
 			
 		if (dataLabelOptions.enabled || this._hasPointLabels) {
@@ -840,6 +841,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			i = length;
 			while (i--) {
 				point = data[i];
+				up = point.plotHigh > point.plotLow;
 				
 				// Set preliminary values
 				point.y = point.high;
@@ -852,10 +854,10 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 				point.dataLabel = point.dataLabelUpper;
 				
 				// Set the default offset
-				point.below = false;
+				point.below = up;
 				if (inverted) {
 					if (!align) {
-						dataLabelOptions.align = 'left';
+						dataLabelOptions.align = up ? 'right' : 'left';
 					}
 					dataLabelOptions.x = dataLabelOptions.xHigh;								
 				} else {
@@ -871,6 +873,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			i = length;
 			while (i--) {
 				point = data[i];
+				up = point.plotHigh > point.plotLow;
 				
 				// Move the generated labels from step 1, and reassign the original data labels
 				point.dataLabelUpper = point.dataLabel;
@@ -881,10 +884,10 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 				point.plotY = point._plotY;
 				
 				// Set the default offset
-				point.below = true;
+				point.below = !up;
 				if (inverted) {
 					if (!align) {
-						dataLabelOptions.align = 'right';
+						dataLabelOptions.align = up ? 'left' : 'right';
 					}
 					dataLabelOptions.x = dataLabelOptions.xLow;
 				} else {
@@ -966,11 +969,18 @@ seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
 				y = plotHigh;
 				height = point.plotY - plotHigh;
 
-				if (height < minPointLength) {
+				// Adjust for minPointLength
+				if (Math.abs(height) < minPointLength) {
 					heightDifference = (minPointLength - height);
 					height += heightDifference;
 					y -= heightDifference / 2;
+
+				// Adjust for negative ranges or reversed Y axis (#1457)
+				} else if (height < 0) {
+					height *= -1;
+					y -= height;
 				}
+
 				shapeArgs.height = height;
 				shapeArgs.y = y;
 			});
