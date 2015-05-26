@@ -113,7 +113,7 @@
 		}
 
 		$.each($('#exportForm').serializeArray(), function (i, pair) {
-    		dataString += '&' + pair.name + '=' + pair.value;
+    		dataString += '&' + pair.name + '=' + encodeURIComponent(pair.value);
     	});
 
     	if (window.XDomainRequest) {
