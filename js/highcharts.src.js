@@ -9315,7 +9315,7 @@ Tooltip.prototype = {
 				day: 3
 			},
 			date,
-			lastN;
+			lastN = 'millisecond'; // for sub-millisecond data, #4223
 
 		if (closestPointRange) {
 			date = dateFormat('%m-%d %H:%M:%S.%L', point.x);
