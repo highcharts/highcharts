@@ -31,6 +31,7 @@
 				HIGHCHARTS_DRILLDOWN: 'drilldown.js',
 				HIGHCHARTS_FUNNEL: 'funnel.js',
 				HIGHCHARTS_HEATMAP: 'heatmap.js',
+				HIGHCHARTS_TREEMAP: 'treemap.js',
 				HIGHCHARTS_3D: 'highcharts-3d.js',
 				HIGHCHARTS_NODATA: 'no-data-to-display.js',
 				HIGHCHARTS_MAP: 'map.js',
