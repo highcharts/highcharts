@@ -33,7 +33,7 @@
 				HIGHCHARTS_HEATMAP: 'heatmap.js',
 				HIGHCHARTS_3D: 'highcharts-3d.js',
 				HIGHCHARTS_NODATA: 'no-data-to-display.js',
-				/*HIGHCHARTS_MAP: 'map.js',*/
+				HIGHCHARTS_MAP: 'map.js',
 				HIGHCHARTS_SOLID_GAUGE: 'solid-gauge.js',
 				BROKEN_AXIS: 'broken-axis.js'
 			},
