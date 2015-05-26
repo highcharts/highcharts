@@ -962,7 +962,7 @@ Axis.prototype = {
 			axis.tickInterval = 1;
 		} else if (isLinked && !tickIntervalOption &&
 				tickPixelIntervalOption === axis.linkedParent.options.tickPixelInterval) {
-			axis.tickInterval = axis.linkedParent.tickInterval;
+			axis.tickInterval = tickIntervalOption = axis.linkedParent.tickInterval;
 		} else {
 			axis.tickInterval = pick(
 				tickIntervalOption,
@@ -1007,20 +1007,18 @@ Axis.prototype = {
 		}
 
 		// for linear axes, get magnitude and normalize the interval
-		if (!isDatetimeAxis && !isLog) { // linear
-			if (!tickIntervalOption) {
-				axis.tickInterval = normalizeTickInterval(
-					axis.tickInterval, 
-					null, 
-					getMagnitude(axis.tickInterval), 
-					// If the tick interval is between 0.5 and 5 and the axis max is in the order of
-					// thousands, chances are we are dealing with years. Don't allow decimals. #3363.
-					pick(options.allowDecimals, !(axis.tickInterval > 0.5 && axis.tickInterval < 5 && axis.max > 1000 && axis.max < 9999)),
-					!!this.tickAmount
-				);
-			}
+		if (!isDatetimeAxis && !isLog && !tickIntervalOption) {
+			axis.tickInterval = normalizeTickInterval(
+				axis.tickInterval, 
+				null, 
+				getMagnitude(axis.tickInterval), 
+				// If the tick interval is between 0.5 and 5 and the axis max is in the order of
+				// thousands, chances are we are dealing with years. Don't allow decimals. #3363.
+				pick(options.allowDecimals, !(axis.tickInterval > 0.5 && axis.tickInterval < 5 && axis.max > 1000 && axis.max < 9999)),
+				!!this.tickAmount
+			);
 		}
-
+		
 		// Prevent ticks from getting so close that we can't draw the labels
 		if (!this.tickAmount && this.len) { // Color axis with disabled legend has no length
 			axis.tickInterval = axis.unsquish();
