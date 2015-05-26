@@ -577,7 +577,7 @@ wrap(Series.prototype, 'render', function (proceed) {
 	if (this.chart.options._stock) {
 
 		// First render, initial clip box
-		if (!this.clipBox && this.animate && this.animate.toString().indexOf('sharedClip') !== -1) {
+		if (!this.clipBox && this.animate) {
 			this.clipBox = merge(this.chart.clipBox);
 			this.clipBox.width = this.xAxis.len;
 			this.clipBox.height = this.yAxis.len;

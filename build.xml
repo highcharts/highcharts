@@ -1803,7 +1803,7 @@
         <!-- files for downloadbuilder -->            
         <copy file="js/parts.js" tofile="${highcharts.site.dir}/joomla/templates/highsoft_colorful/js/parts.js" overwrite="true"/>
         <!-- copy the highstock partfiles , these include also highcharts partfiles -->
-        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source/parts" overwrite="true">
+        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source" overwrite="true">
             <filelist refid="highstock.files"/>
             <filterset refid="download.builder.filter"/>
         </copy>

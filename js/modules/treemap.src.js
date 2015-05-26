@@ -93,7 +93,8 @@
 						this.dataLabel.attr({ zIndex: (this.pointAttr[''].zIndex + 1) });
 					}
 				}
-			}
+			},
+			setVisible: seriesTypes.pie.prototype.pointClass.prototype.setVisible
 		}),
 		handleLayout: function () {
 			var series = this,
