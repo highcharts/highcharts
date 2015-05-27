@@ -20,12 +20,13 @@
 	var config = {
 			/* define locations of mandatory javascript files.
 			 * Depending on purchased license change the HIGHCHARTS property to 
-			 * highcharts.js or highstock.js 
+			 * Highcharts.js or Highstock.js or Highmaps.js
 			 */
-			files: { 
+			files: {
+				// Highcharts serverside rendering config
 				JQUERY: 'jquery.1.9.1.min.js',
-				HIGHCHARTS: 'highstock.js',
-				/* HIGHCHARTS: 'highcharts.js',*/
+				/* HIGHCHARTS: 'highstock.js',*/
+				HIGHCHARTS: 'highcharts.js',
 				HIGHCHARTS_MORE: 'highcharts-more.js',
 				HIGHCHARTS_DATA: 'data.js',
 				HIGHCHARTS_DRILLDOWN: 'drilldown.js',
@@ -34,9 +35,56 @@
 				HIGHCHARTS_TREEMAP: 'treemap.js',
 				HIGHCHARTS_3D: 'highcharts-3d.js',
 				HIGHCHARTS_NODATA: 'no-data-to-display.js',
-				HIGHCHARTS_MAP: 'map.js',
+				// Uncomment below if you have both Highcharts and Highmaps license
+				// HIGHCHARTS_MAP: 'map.js',
 				HIGHCHARTS_SOLID_GAUGE: 'solid-gauge.js',
 				BROKEN_AXIS: 'broken-axis.js'
+
+				// Highstock serverside rendering config
+				/*
+				JQUERY: 'jquery.1.9.1.min.js',
+				/* HIGHCHARTS: 'highstock.js',*/
+				HIGHCHARTS: 'highcharts.js',
+				HIGHCHARTS_MORE: 'highcharts-more.js',
+				HIGHCHARTS_DATA: 'data.js',
+				HIGHCHARTS_DRILLDOWN: 'drilldown.js',
+				HIGHCHARTS_FUNNEL: 'funnel.js',
+				HIGHCHARTS_HEATMAP: 'heatmap.js',
+				HIGHCHARTS_TREEMAP: 'treemap.js',
+				HIGHCHARTS_3D: 'highcharts-3d.js',
+				HIGHCHARTS_NODATA: 'no-data-to-display.js',
+				// Uncomment below if you have both Highcharts and Highmaps license
+				// HIGHCHARTS_MAP: 'map.js',
+				HIGHCHARTS_SOLID_GAUGE: 'solid-gauge.js',
+				BROKEN_AXIS: 'broken-axis.js'
+
+				// Highstock serverside rendering config
+				/*
+				JQUERY: 'jquery.1.9.1.min.js',
+				HIGHCHARTS: 'highstock.js',
+				HIGHCHARTS_MORE: 'highcharts-more.js',
+				HIGHCHARTS_DATA: 'data.js',
+				HIGHCHARTS_DRILLDOWN: 'drilldown.js',
+				HIGHCHARTS_FUNNEL: 'funnel.js',
+				HIGHCHARTS_HEATMAP: 'heatmap.js',
+				HIGHCHARTS_TREEMAP: 'treemap.js',
+				HIGHCHARTS_3D: 'highcharts-3d.js',
+				HIGHCHARTS_NODATA: 'no-data-to-display.js',
+				// Uncomment below if you have both Highstock and Highmaps license
+				// HIGHCHARTS_MAP: 'map.js',
+				HIGHCHARTS_SOLID_GAUGE: 'solid-gauge.js',
+				BROKEN_AXIS: 'broken-axis.js'
+				*/
+
+				// Highmaps serverside rendering config
+				/*
+				 JQUERY: 'jquery.1.9.1.min.js',
+				 HIGHCHARTS: 'highmaps.js',
+				 HIGHCHARTS_DATA: 'data.js',
+				 HIGHCHARTS_DRILLDOWN: 'drilldown.js',
+				 HIGHCHARTS_HEATMAP: 'heatmap.js',
+				 HIGHCHARTS_TREEMAP: 'treemap.js'
+				*/
 			},
 			TIMEOUT: 5000 /* 5 seconds timout for loading images */
 		},
