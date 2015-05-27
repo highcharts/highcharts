@@ -520,21 +520,21 @@
 					 */
 
 					 // load our javascript dependencies based on the constructor
-					 if (params.constr === 'Map') {
+					 if (constr === 'Map') {
 						 jsFiles = config.files.highmaps;
-					 } else if (params.constr === 'StockChart')
+					 } else if (constr === 'StockChart')
 					    jsFiles = config.files.highstock;
 					 else {
 						jsFiles = config.files.highcharts;
 					}
 
 					// load necessary libraries
-					for (jsFile in config.files) {
-						if (config.files.hasOwnProperty(jsFile)) {
-							page.injectJs(config.files[jsFile]);
+					for (jsFile in jsFiles) {
+						if (jsFiles.hasOwnProperty(jsFile)) {
+							page.injectJs(jsFiles[jsFile]);
 						}
 					}
-                    
+
 					// load chart in page and return svg height and width
 					svg = page.evaluate(createChart, constr, input, globalOptions, dataOptions, customCode, outType, callback, messages);
 
