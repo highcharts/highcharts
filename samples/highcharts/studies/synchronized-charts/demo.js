@@ -1,8 +1,6 @@
 /*
 TO DO
-- Zoom on X
 - Check mobile
-- Fix issue with last chart, tooltip only displays when mouse over tracker
 - Add to demos
 */
 
@@ -30,21 +28,38 @@ $(function () {
         valueDecimals: 0
     }];
 
-    function mousemove(e) {
+    /**
+     * When pointing over one of the charts, keep the other ones in sync
+     */
+    function pointermove(e) {
         var chart,
             offset,
             i;
-        
+            //method = { touchmove: 'onContainerTouchMove', mousemove: 'onContainerMouseMove' }[e.type];
+
         for (i = 0; i < 3; i++) {
             chart = Highcharts.charts[i];
-            offset = $(chart.container).offset();
-            chart.pointer.onContainerMouseMove({
-                pageX: e.pageX,
-                pageY: offset.top + 100,
-                target: chart.series[0].graph.element
-            });
+            if (e.currentTarget !== chart.container.parentNode) {
+                offset = $(chart.container).offset();
+                chart.pointer['onContainerMouseMove']({
+                    //pageX: e.pageX || (e.touches && e.touches.item(0).pageX),
+                    pageX: e.pageX,
+                    pageY: offset.top + 100,
+                    target: chart.series[0].graph.element,
+                    /*touches: [{
+                        pageX: e.pageX,
+                        pageY: offset.top + 100
+                    }],
+                    type: e.type*/
+                });
+            }
         }
     }
+
+    /**
+     * Once the tooltip and the crosshair is drawn, leave it
+     */
+    Highcharts.Pointer.prototype.reset = function () {};
 
 
     $.each(datasets, function (i, dataset) {
@@ -57,16 +72,17 @@ $(function () {
 
         $('<div class="chart">')
             .appendTo('#container')
-            .bind('mousemove', mousemove)
+            //.bind('mousemove touchmove', pointermove)
+            .bind('mousemove', pointermove)
             .highcharts({
                 chart: {
-                    marginLeft: 80 // keep all charts aligned
+                    marginLeft: 40 // keep all charts left aligned
                 },
                 title: {
                     text: dataset.name,
                     align: 'left',
                     margin: 0,
-                    x: 70
+                    x: 40
                 },
                 credits: {
                     enabled: false
@@ -81,9 +97,6 @@ $(function () {
                     }
                 },
                 yAxis: {
-                    labels: {
-                        format: '{value} ' + dataset.unit
-                    },
                     title: {
                         text: null
                     }
