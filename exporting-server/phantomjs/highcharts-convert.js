@@ -22,51 +22,48 @@
 			 * Depending on purchased license change the HIGHCHARTS property to 
 			 * highcharts.js or highstock.js 
 			 */
+
 			files: {
-				// Highcharts serverside rendering config
-				JQUERY: 'jquery.1.9.1.min.js',
-				/* HIGHCHARTS: 'highstock.js',*/
-				HIGHCHARTS: 'highcharts.js',
-				HIGHCHARTS_MORE: 'highcharts-more.js',
-				HIGHCHARTS_DATA: 'data.js',
-				HIGHCHARTS_DRILLDOWN: 'drilldown.js',
-				HIGHCHARTS_FUNNEL: 'funnel.js',
-				HIGHCHARTS_HEATMAP: 'heatmap.js',
-				HIGHCHARTS_TREEMAP: 'treemap.js',
-				HIGHCHARTS_3D: 'highcharts-3d.js',
-				HIGHCHARTS_NODATA: 'no-data-to-display.js',
-				// Uncomment below if you have both Highcharts and Highmaps license
-				// HIGHCHARTS_MAP: 'map.js',
-				HIGHCHARTS_SOLID_GAUGE: 'solid-gauge.js',
-				BROKEN_AXIS: 'broken-axis.js'
-
-				// Highstock serverside rendering config
-				/*
-				 JQUERY: 'jquery.1.9.1.min.js',
-				 HIGHCHARTS: 'highstock.js',
-				 HIGHCHARTS_MORE: 'highcharts-more.js',
-				 HIGHCHARTS_DATA: 'data.js',
-				 HIGHCHARTS_DRILLDOWN: 'drilldown.js',
-				 HIGHCHARTS_FUNNEL: 'funnel.js',
-				 HIGHCHARTS_HEATMAP: 'heatmap.js',
-				 HIGHCHARTS_TREEMAP: 'treemap.js',
-				 HIGHCHARTS_3D: 'highcharts-3d.js',
-				 HIGHCHARTS_NODATA: 'no-data-to-display.js',
-				 // Uncomment below if you have both Highstock and Highmaps license
-				 // HIGHCHARTS_MAP: 'map.js',
-				 HIGHCHARTS_SOLID_GAUGE: 'solid-gauge.js',
-				 BROKEN_AXIS: 'broken-axis.js'
-				 */
-
-				// Highmaps serverside rendering config
-				/*
-				 JQUERY: 'jquery.1.9.1.min.js',
-				 HIGHCHARTS: 'highmaps.js',
-				 HIGHCHARTS_DATA: 'data.js',
-				 HIGHCHARTS_DRILLDOWN: 'drilldown.js',
-				 HIGHCHARTS_HEATMAP: 'heatmap.js',
-				 HIGHCHARTS_TREEMAP: 'treemap.js'
-				 */
+				highcharts: {
+					JQUERY: 'jquery.1.9.1.min.js',
+					HIGHCHARTS: 'highcharts.js',
+					HIGHCHARTS_MORE: 'highcharts-more.js',
+					HIGHCHARTS_DATA: 'data.js',
+					HIGHCHARTS_DRILLDOWN: 'drilldown.js',
+					HIGHCHARTS_FUNNEL: 'funnel.js',
+					HIGHCHARTS_HEATMAP: 'heatmap.js',
+					HIGHCHARTS_TREEMAP: 'treemap.js',
+					HIGHCHARTS_3D: 'highcharts-3d.js',
+					HIGHCHARTS_NODATA: 'no-data-to-display.js',
+					// Uncomment below if you have both Highcharts and Highmaps license
+					// HIGHCHARTS_MAP: 'map.js',
+					HIGHCHARTS_SOLID_GAUGE: 'solid-gauge.js',
+					BROKEN_AXIS: 'broken-axis.js'
+				},
+				highstock: {
+					JQUERY: 'jquery.1.9.1.min.js',
+					HIGHCHARTS: 'highstock.js',
+					HIGHCHARTS_MORE: 'highcharts-more.js',
+					HIGHCHARTS_DATA: 'data.js',
+					HIGHCHARTS_DRILLDOWN: 'drilldown.js',
+					HIGHCHARTS_FUNNEL: 'funnel.js',
+					HIGHCHARTS_HEATMAP: 'heatmap.js',
+					HIGHCHARTS_TREEMAP: 'treemap.js',
+					HIGHCHARTS_3D: 'highcharts-3d.js',
+					HIGHCHARTS_NODATA: 'no-data-to-display.js',
+					// Uncomment below if you have both Highstock and Highmaps license
+					// HIGHCHARTS_MAP: 'map.js',
+					HIGHCHARTS_SOLID_GAUGE: 'solid-gauge.js',
+					BROKEN_AXIS: 'broken-axis.js'
+				},
+				highmaps: {
+					JQUERY: 'jquery.1.9.1.min.js',
+					HIGHCHARTS: 'highmaps.js',
+					HIGHCHARTS_DATA: 'data.js',
+					HIGHCHARTS_DRILLDOWN: 'drilldown.js',
+					HIGHCHARTS_HEATMAP: 'heatmap.js',
+					HIGHCHARTS_NODATA: 'no-data-to-display.js'
+				}
 			},
 			TIMEOUT: 5000 /* 5 seconds timout for loading images */
 		},
@@ -507,7 +504,8 @@
 					globalOptions = params.globaloptions,
 					dataOptions = params.dataoptions,
 					customCode = 'function customCode(options) {\n' + params.customcode + '}\n',
-					jsfile;
+					jsFile,
+					jsFiles;
 
 				/* Decide if we have to generate a svg first before rendering */
 				if (input.substring(0, 4).toLowerCase() === "<svg" || input.substring(0, 5).toLowerCase() === "<?xml"
@@ -517,12 +515,23 @@
 					page.viewportSize = { width: svg.width, height: svg.height };
 					renderSVG(svg);
 				} else {
-					// We have a js file, let highcharts create the chart first and grab the svg
+					/**
+					 * We have a js file, let's render serverside from Highcharts options and grab the svg from it
+					 */
+
+					 // load our javascript dependencies based on the constructor
+					 if (params.constr === 'Map') {
+						 jsFiles = config.files.highmaps;
+					 } else if (params.constr === 'StockChart')
+					    jsFiles = config.files.highstock;
+					 else {
+						jsFiles = config.files.highcharts;
+					}
 
 					// load necessary libraries
-					for (jsfile in config.files) {
-						if (config.files.hasOwnProperty(jsfile)) {
-							page.injectJs(config.files[jsfile]);	
+					for (jsFile in config.files) {
+						if (config.files.hasOwnProperty(jsFile)) {
+							page.injectJs(config.files[jsFile]);
 						}
 					}
                     
