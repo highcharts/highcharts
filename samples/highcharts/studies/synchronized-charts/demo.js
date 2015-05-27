@@ -1,7 +1,8 @@
 /*
 TO DO
-- Check mobile
+- Check mobile (touchmove + pinch zoom)
 - Add to demos
+- Add a descriptive comment in the top of this file
 */
 
 
@@ -29,38 +30,45 @@ $(function () {
     }];
 
     /**
-     * When pointing over one of the charts, keep the other ones in sync
+     * In order to synchronize tooltips and crosshairs, override the 
+     * built-in events with handlers defined on the parent element.
      */
-    function pointermove(e) {
+    $('#container').bind('mousemove touchmove', function (e) {
         var chart,
-            offset,
+            point,
             i;
-            //method = { touchmove: 'onContainerTouchMove', mousemove: 'onContainerMouseMove' }[e.type];
 
-        for (i = 0; i < 3; i++) {
+        for (i = 0; i < Highcharts.charts.length; i++) {
             chart = Highcharts.charts[i];
-            if (e.currentTarget !== chart.container.parentNode) {
-                offset = $(chart.container).offset();
-                chart.pointer['onContainerMouseMove']({
-                    //pageX: e.pageX || (e.touches && e.touches.item(0).pageX),
-                    pageX: e.pageX,
-                    pageY: offset.top + 100,
-                    target: chart.series[0].graph.element,
-                    /*touches: [{
-                        pageX: e.pageX,
-                        pageY: offset.top + 100
-                    }],
-                    type: e.type*/
-                });
+            e = chart.pointer.normalize(); // Find coordinates within the chart
+            point = chart.series[0].searchPoint(e, true); // Get the hovered point
+
+            if (point) {
+                point.onMouseOver(); // Show the hover marker
+                chart.tooltip.refresh(point); // Show the tooltip
+                chart.xAxis[0].drawCrosshair(e, point); // Show the crosshair
             }
         }
-    }
-
+    });
     /**
-     * Once the tooltip and the crosshair is drawn, leave it
+     * Override the reset function, we don't need to hide the tooltips and crosshairs.
      */
     Highcharts.Pointer.prototype.reset = function () {};
 
+    /**
+     * Synchronize zooming through the setExtremes event handler.
+     */
+    function syncExtremes(e) {
+        var thisChart = this.chart;
+
+        Highcharts.each(Highcharts.charts, function (chart) {
+            if (chart !== thisChart) {
+                if (chart.xAxis[0].setExtremes) { // It is null while updating
+                    chart.xAxis[0].setExtremes(e.min, e.max);
+                }
+            }
+        });
+    }
 
     $.each(datasets, function (i, dataset) {
 
@@ -69,14 +77,12 @@ $(function () {
             return [xData[i], val];
         });
 
-
         $('<div class="chart">')
             .appendTo('#container')
-            //.bind('mousemove touchmove', pointermove)
-            .bind('mousemove', pointermove)
             .highcharts({
                 chart: {
-                    marginLeft: 40 // keep all charts left aligned
+                    marginLeft: 40, // Keep all charts left aligned
+                    zoomType: 'x'
                 },
                 title: {
                     text: dataset.name,
@@ -92,6 +98,9 @@ $(function () {
                 },
                 xAxis: {
                     crosshair: true,
+                    events: {
+                        setExtremes: syncExtremes
+                    },
                     labels: {
                         format: '{value} km'
                     }
