@@ -1,6 +1,7 @@
 /*** 
 	EXTENSION FOR 3D SCATTER CHART
 ***/
+
 Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function (proceed) {
 //function translate3d(proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
@@ -11,11 +12,9 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 
 	var series = this,
 		chart = series.chart,
-		depth = chart.options.chart.options3d.depth,
-		zAxis = chart.options.zAxis || { min : 0, max: depth };
+		zAxis = Highcharts.pick(series.zAxis, chart.options.zAxis[0]);
 
-	var rangeModifier = depth / (zAxis.max - zAxis.min),
-		raw_points = [],
+	var raw_points = [],
 		raw_point,
 		projected_points,
 		projected_point,
@@ -23,10 +22,13 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 
 	for (i = 0; i < series.data.length; i++) {
 		raw_point = series.data[i];
+
+		raw_point.isInside = raw_point.isInside ? (raw_point.z >= zAxis.min && raw_point.z <= zAxis.max) : false;
+
 		raw_points.push({
 			x: raw_point.plotX,
 			y: raw_point.plotY,
-			z: (raw_point.z - zAxis.min) * rangeModifier
+			z: zAxis.translate(raw_point.z)
 		});
 	}
 
@@ -42,16 +44,23 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 		raw_point.plotX = projected_point.x;
 		raw_point.plotY = projected_point.y;
 		raw_point.plotZ = projected_point.z;
+
+
 	}
+
 });
 
-Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'init', function (proceed) {
-	var result = proceed.apply(this, [].slice.call(arguments, 1));
+Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'init', function (proceed, chart, options) {
+	if (chart.is3d()) {
+		// add a third coordinate
+		this.axisTypes = ['xAxis', 'yAxis', 'zAxis'];
+		this.pointArrayMap = ['x', 'y', 'z'];
+		this.parallelArrays = ['x', 'y', 'z'];
+	}
+
+	var result = proceed.apply(this, [chart, options]);
 
 	if (this.chart.is3d()) {
-		// Add a third coordinate
-		this.pointArrayMap = ['x', 'y', 'z'];
-
 		// Set a new default tooltip formatter
 		var default3dScatterTooltip = 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>';
 		if (this.userOptions.tooltip) {
