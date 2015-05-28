@@ -1,3 +1,8 @@
+(function (H) {
+	var charts = H.charts,
+		hoverChartIndex = H.hoverChartIndex,
+		Pointer = H.Pointer,
+		wrap = H.wrap;
 if (window.PointerEvent || window.MSPointerEvent) {
 	
 	// The touches object keeps track of the points being touched at all times
@@ -18,16 +23,15 @@ if (window.PointerEvent || window.MSPointerEvent) {
 			return fake;
 		},
 		translateMSPointer = function (e, method, wktype, callback) {
-			var p,
-				charts = Highcharts.charts;
+			var p;
 			e = e.originalEvent || e;
-			if ((e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) && charts[Highcharts.hoverChartIndex]) {
+			if ((e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) && charts[hoverChartIndex]) {
 				callback(e);
-				p = charts[Highcharts.hoverChartIndex].pointer;
+				p = charts[hoverChartIndex].pointer;
 				p[method]({
 					type: wktype,
 					target: e.currentTarget,
-					preventDefault: Highcharts.noop,
+					preventDefault: H.noop,
 					touches: getWebkitTouches()
 				});				
 			}
@@ -36,7 +40,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	/**
 	 * Extend the Pointer prototype with methods for each event handler and more
 	 */
-	Highcharts.extend(Highcharts.Pointer.prototype, {
+	H.extend(Pointer.prototype, {
 		onContainerPointerDown: function (e) {
 			translateMSPointer(e, 'onContainerTouchStart', 'touchstart', function (e) {
 				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY, target: e.currentTarget };
@@ -67,10 +71,10 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	});
 
 	// Disable default IE actions for pinch and such on chart element
-	Highcharts.wrap(Highcharts.Pointer.prototype, 'init', function (proceed, chart, options) {
+	wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 		proceed.call(this, chart, options);
 		if (this.hasZoom || this.followTouchMove) {
-			Highcharts.css(chart.container, {
+			H.css(chart.container, {
 				'-ms-touch-action': 'none',
 				'touch-action': 'none'
 			});
@@ -78,15 +82,18 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	});
 
 	// Add IE specific touch events to chart
-	Highcharts.wrap(Highcharts.Pointer.prototype, 'setDOMEvents', function (proceed) {
+	wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
 		proceed.apply(this);
 		if (this.hasZoom || this.followTouchMove) {
-			this.batchMSEvents(Highcharts.addEvent);
+			this.batchMSEvents(H.addEvent);
 		}
 	});
 	// Destroy MS events also
-	Highcharts.wrap(Highcharts.Pointer.prototype, 'destroy', function (proceed) {
-		this.batchMSEvents(Highcharts.removeEvent);
+	wrap(Pointer.prototype, 'destroy', function (proceed) {
+		this.batchMSEvents(H.removeEvent);
 		proceed.call(this);
 	});
 }
+
+	return H;
+}(Highcharts));
