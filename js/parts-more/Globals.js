@@ -1,3 +1,2 @@
-var Point = Highcharts.Point,
-	TrackerMixin = Highcharts.TrackerMixin,
+var TrackerMixin = Highcharts.TrackerMixin,
 	Series = Highcharts.Series;

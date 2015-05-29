@@ -12785,10 +12785,13 @@ H.CenteredSeriesMixin = {
 
 	return H;
 }(Highcharts));
+(function (H) {
+	var extend = H.extend,
+		Point = H.Point = function () {};
+
 /**
  * The Point object and prototype. Inheritable and used as base for PiePoint
  */
-var Point = function () {};
 Point.prototype = {
 
 	/**
@@ -12826,7 +12829,6 @@ Point.prototype = {
 	applyOptions: function (options, x) {
 		var point = this,
 			series = point.series,
-			extend = Highcharts.extend,
 			pointValKey = series.options.pointValKey || series.pointValKey;
 
 		options = Point.prototype.optionsToObject.call(this, options);
@@ -12865,7 +12867,7 @@ Point.prototype = {
 		if (typeof options === 'number' || options === null) {
 			ret[pointArrayMap[0]] = options;
 
-		} else if (Highcharts.isArray(options)) {
+		} else if (H.isArray(options)) {
 			// with leading x value
 			if (!keys && options.length > valueCount) {
 				firstItemType = typeof options[0];
@@ -12910,7 +12912,7 @@ Point.prototype = {
 
 		if (hoverPoints) {
 			point.setState();
-			Highcharts.erase(hoverPoints, point);
+			H.erase(hoverPoints, point);
 			if (!hoverPoints.length) {
 				chart.hoverPoints = null;
 			}
@@ -12922,7 +12924,7 @@ Point.prototype = {
 
 		// remove all events
 		if (point.graphic || point.dataLabel) { // removeEvent and destroyElements are performance expensive
-			Highcharts.removeEvent(point);
+			H.removeEvent(point);
 			point.destroyElements();
 		}
 
@@ -12979,12 +12981,12 @@ Point.prototype = {
 		// Insert options for valueDecimals, valuePrefix, and valueSuffix
 		var series = this.series,
 			seriesTooltipOptions = series.tooltipOptions,
-			valueDecimals = Highcharts.pick(seriesTooltipOptions.valueDecimals, ''),
+			valueDecimals = H.pick(seriesTooltipOptions.valueDecimals, ''),
 			valuePrefix = seriesTooltipOptions.valuePrefix || '',
 			valueSuffix = seriesTooltipOptions.valueSuffix || '';
 
 		// Loop over the point array map and replace unformatted values with sprintf formatting markup
-		Highcharts.each(series.pointArrayMap || ['y'], function (key) {
+		H.each(series.pointArrayMap || ['y'], function (key) {
 			key = '{point.' + key; // without the closing bracket
 			if (valuePrefix || valueSuffix) {
 				pointFormat = pointFormat.replace(key + '}', valuePrefix + key + '}' + valueSuffix);
@@ -12992,7 +12994,7 @@ Point.prototype = {
 			pointFormat = pointFormat.replace(key + '}', key + ':,.' + valueDecimals + 'f}');
 		});
 
-		return Highcharts.format(pointFormat, {
+		return H.format(pointFormat, {
 			point: this,
 			series: this.series
 		});
@@ -13025,7 +13027,11 @@ Point.prototype = {
 
 		HighchartsAdapter.fireEvent(this, eventType, eventArgs, defaultFunction);
 	}
-};/**
+};
+
+	return H;
+}(Highcharts));
+/**
  * @classDescription The base function which all other series types inherit from. The data in the series is stored
  * in various arrays.
  *
@@ -13050,7 +13056,7 @@ Series.prototype = {
 
 	isCartesian: true,
 	type: 'line',
-	pointClass: Point,
+	pointClass: Highcharts.Point,
 	sorted: true, // requires the data to be sorted
 	requireSorting: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
@@ -15353,7 +15359,7 @@ Highcharts.extend(Highcharts.Chart.prototype, {
 });
 
 // extend the Point prototype for dynamic methods
-Highcharts.extend(Point.prototype, {
+Highcharts.extend(Highcharts.Point.prototype, {
 	/**
 	 * Update the point with new options (typically x/y data) and optionally redraw the series.
 	 *
@@ -16568,13 +16574,13 @@ Highcharts.defaultPlotOptions.pie = Highcharts.merge(Highcharts.defaultSeriesOpt
 /**
  * Extended point object for pies
  */
-var PiePoint = Highcharts.extendClass(Point, {
+var PiePoint = Highcharts.extendClass(Highcharts.Point, {
 	/**
 	 * Initiate the pie slice
 	 */
 	init: function () {
 
-		Point.prototype.init.apply(this, arguments);
+		Highcharts.Point.prototype.init.apply(this, arguments);
 
 		var point = this,
 			addEvent = Highcharts.addEvent,
@@ -18229,7 +18235,7 @@ Highcharts.extend(Highcharts.Chart.prototype, {
 /*
  * Extend the Point object with interaction
  */
-Highcharts.extend(Point.prototype, {
+Highcharts.extend(Highcharts.Point.prototype, {
 	/**
 	 * Toggle the selection status of a point
 	 * @param {Boolean} selected Whether to select or unselect the point.
@@ -23282,7 +23288,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'drawCrosshair', function (proceed, e
  
 var seriesInit = seriesProto.init, 
 	seriesProcessData = seriesProto.processData,
-	pointTooltipFormatter = Point.prototype.tooltipFormatter;
+	pointTooltipFormatter = Highcharts.Point.prototype.tooltipFormatter;
 	
 /**
  * Extend series.init by adding a method to modify the y value used for plotting
@@ -23392,7 +23398,7 @@ Highcharts.Axis.prototype.setCompare = function (compare, redraw) {
  * Extend the tooltip formatter by adding support for the point.change variable
  * as well as the changeDecimals option
  */
-Point.prototype.tooltipFormatter = function (pointFormat) {
+Highcharts.Point.prototype.tooltipFormatter = function (pointFormat) {
 	var point = this;
 	
 	pointFormat = pointFormat.replace(
@@ -23439,7 +23445,6 @@ Highcharts.wrap(Series.prototype, 'render', function (proceed) {
 Highcharts.extend(Highcharts, {
 	
 	// Constructors
-	Point: Point,
 	
 	// Various
 	canvas: Highcharts.useCanVG,

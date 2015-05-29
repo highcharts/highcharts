@@ -139,7 +139,7 @@ Highcharts.extend(Highcharts.Chart.prototype, {
 });
 
 // extend the Point prototype for dynamic methods
-Highcharts.extend(Point.prototype, {
+Highcharts.extend(Highcharts.Point.prototype, {
 	/**
 	 * Update the point with new options (typically x/y data) and optionally redraw the series.
 	 *

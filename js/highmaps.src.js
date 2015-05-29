@@ -12258,10 +12258,13 @@ Chart.prototype = {
 
 	return H;
 }(Highcharts));
+(function (H) {
+	var extend = H.extend,
+		Point = H.Point = function () {};
+
 /**
  * The Point object and prototype. Inheritable and used as base for PiePoint
  */
-var Point = function () {};
 Point.prototype = {
 
 	/**
@@ -12299,7 +12302,6 @@ Point.prototype = {
 	applyOptions: function (options, x) {
 		var point = this,
 			series = point.series,
-			extend = Highcharts.extend,
 			pointValKey = series.options.pointValKey || series.pointValKey;
 
 		options = Point.prototype.optionsToObject.call(this, options);
@@ -12338,7 +12340,7 @@ Point.prototype = {
 		if (typeof options === 'number' || options === null) {
 			ret[pointArrayMap[0]] = options;
 
-		} else if (Highcharts.isArray(options)) {
+		} else if (H.isArray(options)) {
 			// with leading x value
 			if (!keys && options.length > valueCount) {
 				firstItemType = typeof options[0];
@@ -12383,7 +12385,7 @@ Point.prototype = {
 
 		if (hoverPoints) {
 			point.setState();
-			Highcharts.erase(hoverPoints, point);
+			H.erase(hoverPoints, point);
 			if (!hoverPoints.length) {
 				chart.hoverPoints = null;
 			}
@@ -12395,7 +12397,7 @@ Point.prototype = {
 
 		// remove all events
 		if (point.graphic || point.dataLabel) { // removeEvent and destroyElements are performance expensive
-			Highcharts.removeEvent(point);
+			H.removeEvent(point);
 			point.destroyElements();
 		}
 
@@ -12452,12 +12454,12 @@ Point.prototype = {
 		// Insert options for valueDecimals, valuePrefix, and valueSuffix
 		var series = this.series,
 			seriesTooltipOptions = series.tooltipOptions,
-			valueDecimals = Highcharts.pick(seriesTooltipOptions.valueDecimals, ''),
+			valueDecimals = H.pick(seriesTooltipOptions.valueDecimals, ''),
 			valuePrefix = seriesTooltipOptions.valuePrefix || '',
 			valueSuffix = seriesTooltipOptions.valueSuffix || '';
 
 		// Loop over the point array map and replace unformatted values with sprintf formatting markup
-		Highcharts.each(series.pointArrayMap || ['y'], function (key) {
+		H.each(series.pointArrayMap || ['y'], function (key) {
 			key = '{point.' + key; // without the closing bracket
 			if (valuePrefix || valueSuffix) {
 				pointFormat = pointFormat.replace(key + '}', valuePrefix + key + '}' + valueSuffix);
@@ -12465,7 +12467,7 @@ Point.prototype = {
 			pointFormat = pointFormat.replace(key + '}', key + ':,.' + valueDecimals + 'f}');
 		});
 
-		return Highcharts.format(pointFormat, {
+		return H.format(pointFormat, {
 			point: this,
 			series: this.series
 		});
@@ -12498,7 +12500,11 @@ Point.prototype = {
 
 		HighchartsAdapter.fireEvent(this, eventType, eventArgs, defaultFunction);
 	}
-};/**
+};
+
+	return H;
+}(Highcharts));
+/**
  * @classDescription The base function which all other series types inherit from. The data in the series is stored
  * in various arrays.
  *
@@ -12523,7 +12529,7 @@ Series.prototype = {
 
 	isCartesian: true,
 	type: 'line',
-	pointClass: Point,
+	pointClass: Highcharts.Point,
 	sorted: true, // requires the data to be sorted
 	requireSorting: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
@@ -14525,7 +14531,7 @@ Highcharts.extend(Highcharts.Chart.prototype, {
 });
 
 // extend the Point prototype for dynamic methods
-Highcharts.extend(Point.prototype, {
+Highcharts.extend(Highcharts.Point.prototype, {
 	/**
 	 * Update the point with new options (typically x/y data) and optionally redraw the series.
 	 *
@@ -16868,13 +16874,13 @@ Highcharts.defaultPlotOptions.map = Highcharts.merge(Highcharts.defaultPlotOptio
 /**
  * The MapAreaPoint object
  */
-var MapAreaPoint = Highcharts.extendClass(Point, {
+var MapAreaPoint = Highcharts.extendClass(Highcharts.Point, {
 	/**
 	 * Extend the Point object to split paths
 	 */
 	applyOptions: function (options, x) {
 
-		var point = Point.prototype.applyOptions.call(this, options, x),
+		var point = Highcharts.Point.prototype.applyOptions.call(this, options, x),
 			series = this.series,
 			joinBy = series.joinBy,
 			mapPoint;
@@ -16917,7 +16923,7 @@ var MapAreaPoint = Highcharts.extendClass(Point, {
 	onMouseOver: function (e) {
 		clearTimeout(this.colorInterval);
 		if (this.value !== null) {
-			Point.prototype.onMouseOver.call(this, e);
+			Highcharts.Point.prototype.onMouseOver.call(this, e);
 		} else { //#3401 Tooltip doesn't hide when hovering over null points
 			this.series.onMouseOut(e);
 		}
@@ -16956,7 +16962,7 @@ var MapAreaPoint = Highcharts.extendClass(Point, {
 				}
 			}, 13);
 		}
-		Point.prototype.onMouseOut.call(point);
+		Highcharts.Point.prototype.onMouseOut.call(point);
 
 		if (fill) {
 			point.pointAttr[''].fill = fill;
@@ -17959,9 +17965,9 @@ Highcharts.defaultPlotOptions.mappoint = Highcharts.merge(Highcharts.defaultPlot
 Highcharts.seriesTypes.mappoint = Highcharts.extendClass(Highcharts.seriesTypes.scatter, {
 	type: 'mappoint',
 	forceDL: true,
-	pointClass: Highcharts.extendClass(Point, {
+	pointClass: Highcharts.extendClass(Highcharts.Point, {
 		applyOptions: function (options, x) {
-			var point = Point.prototype.applyOptions.call(this, options, x);
+			var point = Highcharts.Point.prototype.applyOptions.call(this, options, x);
 			if (options.lat !== undefined && options.lon !== undefined) {
 				point = Highcharts.extend(point, this.series.chart.fromLatLonToPoint(point));
 			}
@@ -18006,9 +18012,9 @@ Highcharts.defaultPlotOptions.bubble = Highcharts.merge(Highcharts.defaultPlotOp
 	zoneAxis: 'z'
 });
 
-var BubblePoint = Highcharts.extendClass(Point, {
+var BubblePoint = Highcharts.extendClass(Highcharts.Point, {
 	haloPath: function () {
-		return Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
+		return Highcharts.Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
 	},
 	ttBelow: false
 });
@@ -18296,11 +18302,11 @@ if (Highcharts.seriesTypes.bubble) {
 		}
 	});
 	Highcharts.seriesTypes.mapbubble = Highcharts.extendClass(Highcharts.seriesTypes.bubble, {
-		pointClass: Highcharts.extendClass(Point, {
+		pointClass: Highcharts.extendClass(Highcharts.Point, {
 			applyOptions: function (options, x) {
 				var point;
 				if (options.lat !== undefined && options.lon !== undefined) {
-					point = Point.prototype.applyOptions.call(this, options, x);
+					point = Highcharts.Point.prototype.applyOptions.call(this, options, x);
 					point = Highcharts.extend(point, this.series.chart.fromLatLonToPoint(point));
 				} else {
 					point = MapAreaPoint.prototype.applyOptions.call(this, options, x);
@@ -19179,7 +19185,7 @@ Highcharts.extend(Highcharts.Chart.prototype, {
 /*
  * Extend the Point object with interaction
  */
-Highcharts.extend(Point.prototype, {
+Highcharts.extend(Highcharts.Point.prototype, {
 	/**
 	 * Toggle the selection status of a point
 	 * @param {Boolean} selected Whether to select or unselect the point.
@@ -19621,7 +19627,6 @@ Highcharts.extend(Series.prototype, {
 Highcharts.extend(Highcharts, {
 	
 	// Constructors
-	Point: Point,
 	
 	// Various
 	canvas: Highcharts.useCanVG,

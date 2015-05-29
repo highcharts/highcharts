@@ -1,7 +1,10 @@
+(function (H) {
+	var extend = H.extend,
+		Point = H.Point = function () {};
+
 /**
  * The Point object and prototype. Inheritable and used as base for PiePoint
  */
-var Point = function () {};
 Point.prototype = {
 
 	/**
@@ -39,7 +42,6 @@ Point.prototype = {
 	applyOptions: function (options, x) {
 		var point = this,
 			series = point.series,
-			extend = Highcharts.extend,
 			pointValKey = series.options.pointValKey || series.pointValKey;
 
 		options = Point.prototype.optionsToObject.call(this, options);
@@ -78,7 +80,7 @@ Point.prototype = {
 		if (typeof options === 'number' || options === null) {
 			ret[pointArrayMap[0]] = options;
 
-		} else if (Highcharts.isArray(options)) {
+		} else if (H.isArray(options)) {
 			// with leading x value
 			if (!keys && options.length > valueCount) {
 				firstItemType = typeof options[0];
@@ -123,7 +125,7 @@ Point.prototype = {
 
 		if (hoverPoints) {
 			point.setState();
-			Highcharts.erase(hoverPoints, point);
+			H.erase(hoverPoints, point);
 			if (!hoverPoints.length) {
 				chart.hoverPoints = null;
 			}
@@ -135,7 +137,7 @@ Point.prototype = {
 
 		// remove all events
 		if (point.graphic || point.dataLabel) { // removeEvent and destroyElements are performance expensive
-			Highcharts.removeEvent(point);
+			H.removeEvent(point);
 			point.destroyElements();
 		}
 
@@ -192,12 +194,12 @@ Point.prototype = {
 		// Insert options for valueDecimals, valuePrefix, and valueSuffix
 		var series = this.series,
 			seriesTooltipOptions = series.tooltipOptions,
-			valueDecimals = Highcharts.pick(seriesTooltipOptions.valueDecimals, ''),
+			valueDecimals = H.pick(seriesTooltipOptions.valueDecimals, ''),
 			valuePrefix = seriesTooltipOptions.valuePrefix || '',
 			valueSuffix = seriesTooltipOptions.valueSuffix || '';
 
 		// Loop over the point array map and replace unformatted values with sprintf formatting markup
-		Highcharts.each(series.pointArrayMap || ['y'], function (key) {
+		H.each(series.pointArrayMap || ['y'], function (key) {
 			key = '{point.' + key; // without the closing bracket
 			if (valuePrefix || valueSuffix) {
 				pointFormat = pointFormat.replace(key + '}', valuePrefix + key + '}' + valueSuffix);
@@ -205,7 +207,7 @@ Point.prototype = {
 			pointFormat = pointFormat.replace(key + '}', key + ':,.' + valueDecimals + 'f}');
 		});
 
-		return Highcharts.format(pointFormat, {
+		return H.format(pointFormat, {
 			point: this,
 			series: this.series
 		});
@@ -239,3 +241,6 @@ Point.prototype = {
 		HighchartsAdapter.fireEvent(this, eventType, eventArgs, defaultFunction);
 	}
 };
+
+	return H;
+}(Highcharts));

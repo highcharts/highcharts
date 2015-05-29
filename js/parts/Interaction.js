@@ -362,7 +362,7 @@ Highcharts.extend(Highcharts.Chart.prototype, {
 /*
  * Extend the Point object with interaction
  */
-Highcharts.extend(Point.prototype, {
+Highcharts.extend(Highcharts.Point.prototype, {
 	/**
 	 * Toggle the selection status of a point
 	 * @param {Boolean} selected Whether to select or unselect the point.

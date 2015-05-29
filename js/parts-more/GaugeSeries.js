@@ -44,7 +44,7 @@ Highcharts.defaultPlotOptions.gauge = Highcharts.merge(Highcharts.defaultPlotOpt
 /**
  * Extend the point object
  */
-var GaugePoint = Highcharts.extendClass(Point, {
+var GaugePoint = Highcharts.extendClass(Highcharts.Point, {
 	/**
 	 * Don't do any hover colors or anything
 	 */

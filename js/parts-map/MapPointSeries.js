@@ -18,9 +18,9 @@ Highcharts.defaultPlotOptions.mappoint = Highcharts.merge(Highcharts.defaultPlot
 Highcharts.seriesTypes.mappoint = Highcharts.extendClass(Highcharts.seriesTypes.scatter, {
 	type: 'mappoint',
 	forceDL: true,
-	pointClass: Highcharts.extendClass(Point, {
+	pointClass: Highcharts.extendClass(Highcharts.Point, {
 		applyOptions: function (options, x) {
-			var point = Point.prototype.applyOptions.call(this, options, x);
+			var point = Highcharts.Point.prototype.applyOptions.call(this, options, x);
 			if (options.lat !== undefined && options.lon !== undefined) {
 				point = Highcharts.extend(point, this.series.chart.fromLatLonToPoint(point));
 			}

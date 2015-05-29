@@ -44,13 +44,13 @@ Highcharts.defaultPlotOptions.map = Highcharts.merge(Highcharts.defaultPlotOptio
 /**
  * The MapAreaPoint object
  */
-var MapAreaPoint = Highcharts.extendClass(Point, {
+var MapAreaPoint = Highcharts.extendClass(Highcharts.Point, {
 	/**
 	 * Extend the Point object to split paths
 	 */
 	applyOptions: function (options, x) {
 
-		var point = Point.prototype.applyOptions.call(this, options, x),
+		var point = Highcharts.Point.prototype.applyOptions.call(this, options, x),
 			series = this.series,
 			joinBy = series.joinBy,
 			mapPoint;
@@ -93,7 +93,7 @@ var MapAreaPoint = Highcharts.extendClass(Point, {
 	onMouseOver: function (e) {
 		clearTimeout(this.colorInterval);
 		if (this.value !== null) {
-			Point.prototype.onMouseOver.call(this, e);
+			Highcharts.Point.prototype.onMouseOver.call(this, e);
 		} else { //#3401 Tooltip doesn't hide when hovering over null points
 			this.series.onMouseOut(e);
 		}
@@ -132,7 +132,7 @@ var MapAreaPoint = Highcharts.extendClass(Point, {
 				}
 			}, 13);
 		}
-		Point.prototype.onMouseOut.call(point);
+		Highcharts.Point.prototype.onMouseOut.call(point);
 
 		if (fill) {
 			point.pointAttr[''].fill = fill;

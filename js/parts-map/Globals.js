@@ -1,3 +1,2 @@
 
-var Point = Highcharts.Point,
-	Series = Highcharts.Series;
+var Series = Highcharts.Series;

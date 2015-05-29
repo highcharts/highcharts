@@ -36,9 +36,9 @@ Highcharts.defaultPlotOptions.bubble = Highcharts.merge(Highcharts.defaultPlotOp
 	zoneAxis: 'z'
 });
 
-var BubblePoint = Highcharts.extendClass(Point, {
+var BubblePoint = Highcharts.extendClass(Highcharts.Point, {
 	haloPath: function () {
-		return Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
+		return Highcharts.Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
 	},
 	ttBelow: false
 });

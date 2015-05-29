@@ -449,7 +449,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'drawCrosshair', function (proceed, e
  
 var seriesInit = seriesProto.init, 
 	seriesProcessData = seriesProto.processData,
-	pointTooltipFormatter = Point.prototype.tooltipFormatter;
+	pointTooltipFormatter = Highcharts.Point.prototype.tooltipFormatter;
 	
 /**
  * Extend series.init by adding a method to modify the y value used for plotting
@@ -559,7 +559,7 @@ Highcharts.Axis.prototype.setCompare = function (compare, redraw) {
  * Extend the tooltip formatter by adding support for the point.change variable
  * as well as the changeDecimals option
  */
-Point.prototype.tooltipFormatter = function (pointFormat) {
+Highcharts.Point.prototype.tooltipFormatter = function (pointFormat) {
 	var point = this;
 	
 	pointFormat = pointFormat.replace(

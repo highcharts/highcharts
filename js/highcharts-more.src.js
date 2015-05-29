@@ -13,8 +13,7 @@
 /*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
 
 (function (Highcharts) {
-var Point = Highcharts.Point,
-	TrackerMixin = Highcharts.TrackerMixin,
+var TrackerMixin = Highcharts.TrackerMixin,
 	Series = Highcharts.Series;
 /**
  * The Pane object allows options that are common to a set of X and Y axes.
@@ -1026,7 +1025,7 @@ Highcharts.defaultPlotOptions.gauge = Highcharts.merge(Highcharts.defaultPlotOpt
 /**
  * Extend the point object
  */
-var GaugePoint = Highcharts.extendClass(Point, {
+var GaugePoint = Highcharts.extendClass(Highcharts.Point, {
 	/**
 	 * Don't do any hover colors or anything
 	 */
@@ -1852,9 +1851,9 @@ Highcharts.defaultPlotOptions.bubble = Highcharts.merge(Highcharts.defaultPlotOp
 	zoneAxis: 'z'
 });
 
-var BubblePoint = Highcharts.extendClass(Point, {
+var BubblePoint = Highcharts.extendClass(Highcharts.Point, {
 	haloPath: function () {
-		return Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
+		return Highcharts.Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
 	},
 	ttBelow: false
 });

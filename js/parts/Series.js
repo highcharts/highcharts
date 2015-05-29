@@ -23,7 +23,7 @@ Series.prototype = {
 
 	isCartesian: true,
 	type: 'line',
-	pointClass: Point,
+	pointClass: Highcharts.Point,
 	sorted: true, // requires the data to be sorted
 	requireSorting: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options

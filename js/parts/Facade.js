@@ -3,7 +3,6 @@
 Highcharts.extend(Highcharts, {
 	
 	// Constructors
-	Point: Point,
 	
 	// Various
 	canvas: Highcharts.useCanVG,

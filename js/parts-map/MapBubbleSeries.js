@@ -10,11 +10,11 @@ if (Highcharts.seriesTypes.bubble) {
 		}
 	});
 	Highcharts.seriesTypes.mapbubble = Highcharts.extendClass(Highcharts.seriesTypes.bubble, {
-		pointClass: Highcharts.extendClass(Point, {
+		pointClass: Highcharts.extendClass(Highcharts.Point, {
 			applyOptions: function (options, x) {
 				var point;
 				if (options.lat !== undefined && options.lon !== undefined) {
-					point = Point.prototype.applyOptions.call(this, options, x);
+					point = Highcharts.Point.prototype.applyOptions.call(this, options, x);
 					point = Highcharts.extend(point, this.series.chart.fromLatLonToPoint(point));
 				} else {
 					point = MapAreaPoint.prototype.applyOptions.call(this, options, x);

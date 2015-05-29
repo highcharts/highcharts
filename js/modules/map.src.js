@@ -11,8 +11,7 @@
 (function (Highcharts) {
 
 
-var Point = Highcharts.Point,
-	Series = Highcharts.Series;/**
+var Series = Highcharts.Series;/**
  * Override to use the extreme coordinates from the SVG shape, not the
  * data values
  */
@@ -949,13 +948,13 @@ Highcharts.defaultPlotOptions.map = Highcharts.merge(Highcharts.defaultPlotOptio
 /**
  * The MapAreaPoint object
  */
-var MapAreaPoint = Highcharts.extendClass(Point, {
+var MapAreaPoint = Highcharts.extendClass(Highcharts.Point, {
 	/**
 	 * Extend the Point object to split paths
 	 */
 	applyOptions: function (options, x) {
 
-		var point = Point.prototype.applyOptions.call(this, options, x),
+		var point = Highcharts.Point.prototype.applyOptions.call(this, options, x),
 			series = this.series,
 			joinBy = series.joinBy,
 			mapPoint;
@@ -998,7 +997,7 @@ var MapAreaPoint = Highcharts.extendClass(Point, {
 	onMouseOver: function (e) {
 		clearTimeout(this.colorInterval);
 		if (this.value !== null) {
-			Point.prototype.onMouseOver.call(this, e);
+			Highcharts.Point.prototype.onMouseOver.call(this, e);
 		} else { //#3401 Tooltip doesn't hide when hovering over null points
 			this.series.onMouseOut(e);
 		}
@@ -1037,7 +1036,7 @@ var MapAreaPoint = Highcharts.extendClass(Point, {
 				}
 			}, 13);
 		}
-		Point.prototype.onMouseOut.call(point);
+		Highcharts.Point.prototype.onMouseOut.call(point);
 
 		if (fill) {
 			point.pointAttr[''].fill = fill;
@@ -1668,9 +1667,9 @@ Highcharts.defaultPlotOptions.mappoint = Highcharts.merge(Highcharts.defaultPlot
 Highcharts.seriesTypes.mappoint = Highcharts.extendClass(Highcharts.seriesTypes.scatter, {
 	type: 'mappoint',
 	forceDL: true,
-	pointClass: Highcharts.extendClass(Point, {
+	pointClass: Highcharts.extendClass(Highcharts.Point, {
 		applyOptions: function (options, x) {
-			var point = Point.prototype.applyOptions.call(this, options, x);
+			var point = Highcharts.Point.prototype.applyOptions.call(this, options, x);
 			if (options.lat !== undefined && options.lon !== undefined) {
 				point = Highcharts.extend(point, this.series.chart.fromLatLonToPoint(point));
 			}
@@ -1689,11 +1688,11 @@ if (Highcharts.seriesTypes.bubble) {
 		}
 	});
 	Highcharts.seriesTypes.mapbubble = Highcharts.extendClass(Highcharts.seriesTypes.bubble, {
-		pointClass: Highcharts.extendClass(Point, {
+		pointClass: Highcharts.extendClass(Highcharts.Point, {
 			applyOptions: function (options, x) {
 				var point;
 				if (options.lat !== undefined && options.lon !== undefined) {
-					point = Point.prototype.applyOptions.call(this, options, x);
+					point = Highcharts.Point.prototype.applyOptions.call(this, options, x);
 					point = Highcharts.extend(point, this.series.chart.fromLatLonToPoint(point));
 				} else {
 					point = MapAreaPoint.prototype.applyOptions.call(this, options, x);

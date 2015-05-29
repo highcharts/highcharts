@@ -43,13 +43,13 @@ Highcharts.defaultPlotOptions.pie = Highcharts.merge(Highcharts.defaultSeriesOpt
 /**
  * Extended point object for pies
  */
-var PiePoint = Highcharts.extendClass(Point, {
+var PiePoint = Highcharts.extendClass(Highcharts.Point, {
 	/**
 	 * Initiate the pie slice
 	 */
 	init: function () {
 
-		Point.prototype.init.apply(this, arguments);
+		Highcharts.Point.prototype.init.apply(this, arguments);
 
 		var point = this,
 			addEvent = Highcharts.addEvent,
