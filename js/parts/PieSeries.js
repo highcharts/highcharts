@@ -468,7 +468,7 @@ var PieSeries = {
 	/**
 	 * Use a simple symbol from LegendSymbolMixin
 	 */
-	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+	drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle,
 
 	/**
 	 * Use the getCenter method from drawLegendSymbol

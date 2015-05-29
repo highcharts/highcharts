@@ -93,7 +93,7 @@ Highcharts.seriesTypes.heatmap = Highcharts.extendClass(Highcharts.seriesTypes.s
 	drawPoints: Highcharts.seriesTypes.column.prototype.drawPoints,
 	animate: Highcharts.noop,
 	getBox: Highcharts.noop,
-	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+	drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle,
 
 	getExtremes: function () {
 		// Get the extremes from the value data

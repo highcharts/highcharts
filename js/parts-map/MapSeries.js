@@ -706,7 +706,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 		
 	},
 
-	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+	drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle,
 
 	/**
 	 * When drilling up, pull out the individual point graphics from the lower series

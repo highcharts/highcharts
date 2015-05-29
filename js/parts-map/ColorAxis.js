@@ -405,7 +405,7 @@ Highcharts.extend(ColorAxis.prototype, {
 					chart: chart,
 					name: name,
 					options: {},
-					drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+					drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle,
 					visible: true,
 					setState: Highcharts.noop,
 					setVisible: function () {
@@ -458,7 +458,7 @@ Highcharts.wrap(Chart.prototype, 'getAxes', function (proceed) {
  * Wrap the legend getAllItems method to add the color axis. This also removes the 
  * axis' own series to prevent them from showing up individually.
  */
-Highcharts.wrap(Legend.prototype, 'getAllItems', function (proceed) {
+Highcharts.wrap(Highcharts.Legend.prototype, 'getAllItems', function (proceed) {
 	var allItems = [],
 		colorAxis = this.chart.colorAxis[0];
 

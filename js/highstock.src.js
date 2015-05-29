@@ -10457,10 +10457,16 @@ if (window.PointerEvent || window.MSPointerEvent) {
 
 	return H;
 }(Highcharts));
+(function (H) {
+	var defined = H.defined,
+		each = H.each,
+		Legend,
+		merge = H.merge,
+		pick = H.pick;
 /**
  * The overview of the chart's series
  */
-var Legend = Highcharts.Legend = function (chart, options) {
+Legend = H.Legend = function (chart, options) {
 	this.init(chart, options);
 };
 
@@ -10474,7 +10480,6 @@ Legend.prototype = {
 		var legend = this,
 			itemStyle = options.itemStyle,
 			padding,
-			pick = Highcharts.pick,
 			itemMarginTop = options.itemMarginTop || 0;
 	
 		this.options = options;
@@ -10484,7 +10489,7 @@ Legend.prototype = {
 		}
 	
 		legend.itemStyle = itemStyle;
-		legend.itemHiddenStyle = Highcharts.merge(itemStyle, options.itemHiddenStyle);
+		legend.itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle);
 		legend.itemMarginTop = itemMarginTop;
 		legend.padding = padding = pick(options.padding, 8);
 		legend.initialItemX = padding;
@@ -10500,7 +10505,7 @@ Legend.prototype = {
 		legend.render();
 
 		// move checkboxes
-		Highcharts.addEvent(legend.chart, 'endResize', function () { 
+		H.addEvent(legend.chart, 'endResize', function () { 
 			legend.positionCheckboxes();
 		});
 
@@ -10585,14 +10590,14 @@ Legend.prototype = {
 		var checkbox = item.checkbox;
 
 		// destroy SVG elements
-		Highcharts.each(['legendItem', 'legendLine', 'legendSymbol', 'legendGroup'], function (key) {
+		each(['legendItem', 'legendLine', 'legendSymbol', 'legendGroup'], function (key) {
 			if (item[key]) {
 				item[key] = item[key].destroy();
 			}
 		});
 
 		if (checkbox) {
-			Highcharts.discardElement(item.checkbox);
+			H.discardElement(item.checkbox);
 		}
 	},
 
@@ -10601,7 +10606,7 @@ Legend.prototype = {
 	 */
 	clearItems: function () {
 		var legend = this;
-		Highcharts.each(legend.getAllItems(), function (item) {
+		each(legend.getAllItems(), function (item) {
 			legend.destroyItem(item); 
 		});		
 	},
@@ -10633,13 +10638,13 @@ Legend.prototype = {
 
 		if (alignAttr) {
 			translateY = alignAttr.translateY;
-			Highcharts.each(this.allItems, function (item) {
+			each(this.allItems, function (item) {
 				var checkbox = item.checkbox,
 					top;
 				
 				if (checkbox) {
 					top = (translateY + checkbox.y + (scrollOffset || 0) + 3);
-					Highcharts.css(checkbox, {
+					H.css(checkbox, {
 						left: (alignAttr.translateX + item.checkboxOffset + checkbox.x - 20) + 'px',
 						top: top + 'px',
 						display: top > translateY - 6 && top < translateY + clipHeight - 6 ? '' : 'none'
@@ -10689,7 +10694,7 @@ Legend.prototype = {
 			itemStyle = legend.itemStyle,
 			itemHiddenStyle = legend.itemHiddenStyle,
 			padding = legend.padding,
-			itemDistance = horizontal ? Highcharts.pick(options.itemDistance, 20) : 0,
+			itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
 			ltr = !options.rtl,
 			itemHeight,
 			widthOption = options.width,
@@ -10714,12 +10719,12 @@ Legend.prototype = {
 
 			// Generate the list item text and add it to the group
 			item.legendItem = li = renderer.text(
-					options.labelFormat ? Highcharts.format(options.labelFormat, item) : options.labelFormatter.call(item),
+					options.labelFormat ? H.format(options.labelFormat, item) : options.labelFormatter.call(item),
 					ltr ? symbolWidth + symbolPadding : -symbolPadding,
 					legend.baseline || 0,
 					useHTML
 				)
-				.css(Highcharts.merge(item.visible ? itemStyle : itemHiddenStyle)) // merge to prevent modifying original (#1021)
+				.css(merge(item.visible ? itemStyle : itemHiddenStyle)) // merge to prevent modifying original (#1021)
 				.attr({
 					align: ltr ? 'left' : 'right',
 					zIndex: 2
@@ -10803,11 +10808,11 @@ Legend.prototype = {
 	 */
 	getAllItems: function () {
 		var allItems = [];
-		Highcharts.each(this.chart.series, function (series) {
+		each(this.chart.series, function (series) {
 			var seriesOptions = series.options;
 
 			// Handle showInLegend. If the series is linked to another series, defaults to false.
-			if (!Highcharts.pick(seriesOptions.showInLegend, !Highcharts.defined(seriesOptions.linkedTo) ? undefined : false, true)) {
+			if (!pick(seriesOptions.showInLegend, !defined(seriesOptions.linkedTo) ? undefined : false, true)) {
 				return;
 			}
 
@@ -10836,19 +10841,19 @@ Legend.prototype = {
 			
 		if (this.display && !options.floating) {
 
-			Highcharts.each([
+			each([
 				/(lth|ct|rth)/,
 				/(rtv|rm|rbv)/,
 				/(rbh|cb|lbh)/,
 				/(lbv|lm|ltv)/
 			], function (alignments, side) {
-				if (alignments.test(alignment) && !Highcharts.defined(margin[side])) {
+				if (alignments.test(alignment) && !defined(margin[side])) {
 					// Now we have detected on which side of the chart we should reserve space for the legend
 					chart[marginNames[side]] = Math.max(
 						chart[marginNames[side]],
 						chart.legend[(side + 1) % 2 ? 'legendHeight' : 'legendWidth'] + 
 							[1, -1, -1, 1][side] * options[(side % 2) ? 'x' : 'y'] + 
-							Highcharts.pick(options.margin, 12) +
+							pick(options.margin, 12) +
 							spacing[side]
 					);
 				}
@@ -10898,7 +10903,7 @@ Legend.prototype = {
 		allItems = legend.getAllItems();
 
 		// sort by legendIndex
-		Highcharts.stableSort(allItems, function (a, b) {
+		H.stableSort(allItems, function (a, b) {
 			return ((a.options && a.options.legendIndex) || 0) - ((b.options && b.options.legendIndex) || 0);
 		});
 
@@ -10912,7 +10917,7 @@ Legend.prototype = {
 
 		// render the items
 		legend.lastLineHeight = 0;
-		Highcharts.each(allItems, function (item) {
+		each(allItems, function (item) {
 			legend.renderItem(item); 
 		});
 
@@ -10958,7 +10963,7 @@ Legend.prototype = {
 
 		// Now that the legend width and height are established, put the items in the 
 		// final position
-		Highcharts.each(allItems, function (item) {
+		each(allItems, function (item) {
 			legend.positionItem(item);
 		});
 
@@ -10975,7 +10980,7 @@ Legend.prototype = {
 		}*/
 
 		if (display) {
-			legendGroup.align(Highcharts.extend({
+			legendGroup.align(H.extend({
 				width: legendWidth,
 				height: legendHeight
 			}, options), true, 'spacingBox');
@@ -10994,7 +10999,6 @@ Legend.prototype = {
 		var legend = this,
 			chart = this.chart,
 			renderer = chart.renderer,
-			pick = Highcharts.pick,
 			options = this.options,
 			optionsY = options.y,
 			alignTop = options.verticalAlign === 'top',
@@ -11028,7 +11032,7 @@ Legend.prototype = {
 			
 			// Fill pages with Y positions so that the top of each a legend item defines
 			// the scroll top for each page (#2098)
-			Highcharts.each(allItems, function (item, i) {
+			each(allItems, function (item, i) {
 				var y = item._legendItemPos[1],
 					h = Math.round(item.legendItem.getBBox().height),
 					len = pages.length;
@@ -11117,7 +11121,7 @@ Legend.prototype = {
 		if (currentPage > 0) {
 			
 			if (animation !== undefined) {
-				Highcharts.setAnimation(animation, this.chart);
+				H.setAnimation(animation, this.chart);
 			}
 			
 			this.nav.attr({
@@ -11160,7 +11164,7 @@ Legend.prototype = {
  * LegendSymbolMixin
  */ 
 
-var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
+H.LegendSymbolMixin = {
 
 	/**
 	 * Get the series' symbol in the legend
@@ -11241,8 +11245,8 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 // and for #2580, a similar drawing flaw in Firefox 26.
 // TODO: Explore if there's a general cause for this. The problem may be related 
 // to nested group elements, as the legend item texts are within 4 group elements.
-if (/Trident\/7\.0/.test(navigator.userAgent) || Highcharts.isFirefox) {
-	Highcharts.wrap(Legend.prototype, 'positionItem', function (proceed, item) {
+if (/Trident\/7\.0/.test(navigator.userAgent) || H.isFirefox) {
+	H.wrap(Legend.prototype, 'positionItem', function (proceed, item) {
 		var legend = this,
 			runPositionItem = function () { // If chart destroyed in sync, this is undefined (#2030)
 				if (item._legendItemPos) {
@@ -11257,6 +11261,9 @@ if (/Trident\/7\.0/.test(navigator.userAgent) || Highcharts.isFirefox) {
 		setTimeout(runPositionItem);
 	});
 }
+
+	return H;
+}(Highcharts));
 /**
  * The chart class
  * @param {Object} options
@@ -12436,7 +12443,7 @@ Chart.prototype = {
 
 
 		// Legend
-		chart.legend = new Legend(chart, options.legend);
+		chart.legend = new Highcharts.Legend(chart, options.legend);
 
 		chart.getStacks(); // render stacks
 
@@ -13334,7 +13341,7 @@ Series.prototype = {
 		}
 	},
 
-	drawLegendSymbol: LegendSymbolMixin.drawLineMarker,
+	drawLegendSymbol: Highcharts.LegendSymbolMixin.drawLineMarker,
 
 	/**
 	 * Replace the series data with a new set of data
@@ -15896,7 +15903,7 @@ var AreaSeries = Highcharts.extendClass(Series, {
 		});
 	},
 
-	drawLegendSymbol: LegendSymbolMixin.drawRectangle
+	drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle
 });
 
 Highcharts.seriesTypes.area = AreaSeries;
@@ -16042,7 +16049,7 @@ var areaProto = AreaSeries.prototype,
 		getSegmentPath: areaProto.getSegmentPath,
 		closeSegment: areaProto.closeSegment,
 		drawGraph: areaProto.drawGraph,
-		drawLegendSymbol: LegendSymbolMixin.drawRectangle
+		drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle
 	});
 
 Highcharts.seriesTypes.areaspline = AreaSplineSeries;
@@ -16295,7 +16302,7 @@ var ColumnSeries = Highcharts.extendClass(Series, {
 	/**
 	 * Use a solid rectangle like the area series types
 	 */
-	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+	drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle,
 	
 	
 	/**
@@ -16924,7 +16931,7 @@ var PieSeries = {
 	/**
 	 * Use a simple symbol from LegendSymbolMixin
 	 */
-	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+	drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle,
 
 	/**
 	 * Use the getCenter method from drawLegendSymbol
@@ -17972,7 +17979,7 @@ if (Highcharts.seriesTypes.scatter) {
 /* 
  * Extend Legend for item events 
  */ 
-Highcharts.extend(Legend.prototype, {
+Highcharts.extend(Highcharts.Legend.prototype, {
 
 	setItemEvents: function (item, legendItem, useHTML, itemStyle, itemHiddenStyle) {
 	var legend = this;

@@ -1177,7 +1177,7 @@ Chart.prototype = {
 
 
 		// Legend
-		chart.legend = new Legend(chart, options.legend);
+		chart.legend = new Highcharts.Legend(chart, options.legend);
 
 		chart.getStacks(); // render stacks
 

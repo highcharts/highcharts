@@ -352,7 +352,7 @@ Series.prototype = {
 		}
 	},
 
-	drawLegendSymbol: LegendSymbolMixin.drawLineMarker,
+	drawLegendSymbol: Highcharts.LegendSymbolMixin.drawLineMarker,
 
 	/**
 	 * Replace the series data with a new set of data

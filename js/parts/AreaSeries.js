@@ -203,7 +203,7 @@ var AreaSeries = Highcharts.extendClass(Series, {
 		});
 	},
 
-	drawLegendSymbol: LegendSymbolMixin.drawRectangle
+	drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle
 });
 
 Highcharts.seriesTypes.area = AreaSeries;

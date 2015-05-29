@@ -15,7 +15,7 @@ var areaProto = AreaSeries.prototype,
 		getSegmentPath: areaProto.getSegmentPath,
 		closeSegment: areaProto.closeSegment,
 		drawGraph: areaProto.drawGraph,
-		drawLegendSymbol: LegendSymbolMixin.drawRectangle
+		drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle
 	});
 
 Highcharts.seriesTypes.areaspline = AreaSplineSeries;

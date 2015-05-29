@@ -246,7 +246,7 @@ var ColumnSeries = Highcharts.extendClass(Series, {
 	/**
 	 * Use a solid rectangle like the area series types
 	 */
-	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+	drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle,
 	
 	
 	/**

@@ -168,7 +168,7 @@ if (Highcharts.seriesTypes.scatter) {
 /* 
  * Extend Legend for item events 
  */ 
-Highcharts.extend(Legend.prototype, {
+Highcharts.extend(Highcharts.Legend.prototype, {
 
 	setItemEvents: function (item, legendItem, useHTML, itemStyle, itemHiddenStyle) {
 	var legend = this;
