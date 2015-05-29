@@ -40,7 +40,8 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 			shapeArgs.origin = origin;
 			shapeArgs.alpha = alpha;
 			shapeArgs.beta = beta;
-		
+			shapeArgs.center = series.center;
+			
 			var angle = (shapeArgs.end + shapeArgs.start) / 2;
 
 			point.slicedTranslation = {

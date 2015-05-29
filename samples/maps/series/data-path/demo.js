@@ -58,10 +58,7 @@ $(function () {
             name: 'Random data',
             dataLabels: {
                 enabled: true,
-                format: '{point.name}',
-                style: {
-                    color: '#000000'
-                }
+                format: '{point.name}'
             },
             states: {
                 hover: {

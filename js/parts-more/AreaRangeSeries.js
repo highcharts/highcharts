@@ -179,6 +179,7 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 			dataLabelOptions = this.options.dataLabels,
 			align = dataLabelOptions.align,
 			point,
+			up,
 			inverted = this.chart.inverted;
 			
 		if (dataLabelOptions.enabled || this._hasPointLabels) {
@@ -187,6 +188,7 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 			i = length;
 			while (i--) {
 				point = data[i];
+				up = point.plotHigh > point.plotLow;
 				
 				// Set preliminary values
 				point.y = point.high;
@@ -199,10 +201,10 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 				point.dataLabel = point.dataLabelUpper;
 				
 				// Set the default offset
-				point.below = false;
+				point.below = up;
 				if (inverted) {
 					if (!align) {
-						dataLabelOptions.align = 'left';
+						dataLabelOptions.align = up ? 'right' : 'left';
 					}
 					dataLabelOptions.x = dataLabelOptions.xHigh;								
 				} else {
@@ -218,6 +220,7 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 			i = length;
 			while (i--) {
 				point = data[i];
+				up = point.plotHigh > point.plotLow;
 				
 				// Move the generated labels from step 1, and reassign the original data labels
 				point.dataLabelUpper = point.dataLabel;
@@ -228,10 +231,10 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 				point.plotY = point._plotY;
 				
 				// Set the default offset
-				point.below = true;
+				point.below = !up;
 				if (inverted) {
 					if (!align) {
-						dataLabelOptions.align = 'right';
+						dataLabelOptions.align = up ? 'left' : 'right';
 					}
 					dataLabelOptions.x = dataLabelOptions.xLow;
 				} else {

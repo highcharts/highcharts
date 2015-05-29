@@ -93,7 +93,8 @@
 						this.dataLabel.attr({ zIndex: (this.pointAttr[''].zIndex + 1) });
 					}
 				}
-			}
+			},
+			setVisible: seriesTypes.pie.prototype.pointClass.prototype.setVisible
 		}),
 		handleLayout: function () {
 			var series = this,
@@ -773,6 +774,7 @@
 			this.rootNode = id;
 			this.xAxis.setExtremes(val.x, val.x + val.width, false);
 			this.yAxis.setExtremes(val.y, val.y + val.height, false);
+			this.isDirty = true; // Force redraw
 			this.chart.redraw();
 		},
 		showDrillUpButton: function (name) {

@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.4-modified ()
+ * @license Highcharts JS v4.1.5-modified ()
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -816,6 +816,7 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 			dataLabelOptions = this.options.dataLabels,
 			align = dataLabelOptions.align,
 			point,
+			up,
 			inverted = this.chart.inverted;
 			
 		if (dataLabelOptions.enabled || this._hasPointLabels) {
@@ -824,6 +825,7 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 			i = length;
 			while (i--) {
 				point = data[i];
+				up = point.plotHigh > point.plotLow;
 				
 				// Set preliminary values
 				point.y = point.high;
@@ -836,10 +838,10 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 				point.dataLabel = point.dataLabelUpper;
 				
 				// Set the default offset
-				point.below = false;
+				point.below = up;
 				if (inverted) {
 					if (!align) {
-						dataLabelOptions.align = 'left';
+						dataLabelOptions.align = up ? 'right' : 'left';
 					}
 					dataLabelOptions.x = dataLabelOptions.xHigh;								
 				} else {
@@ -855,6 +857,7 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 			i = length;
 			while (i--) {
 				point = data[i];
+				up = point.plotHigh > point.plotLow;
 				
 				// Move the generated labels from step 1, and reassign the original data labels
 				point.dataLabelUpper = point.dataLabel;
@@ -865,10 +868,10 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 				point.plotY = point._plotY;
 				
 				// Set the default offset
-				point.below = true;
+				point.below = !up;
 				if (inverted) {
 					if (!align) {
-						dataLabelOptions.align = 'right';
+						dataLabelOptions.align = up ? 'left' : 'right';
 					}
 					dataLabelOptions.x = dataLabelOptions.xLow;
 				} else {
@@ -950,11 +953,18 @@ Highcharts.seriesTypes.areasplinerange = Highcharts.extendClass(Highcharts.serie
 				y = plotHigh;
 				height = point.plotY - plotHigh;
 
-				if (height < minPointLength) {
+				// Adjust for minPointLength
+				if (Math.abs(height) < minPointLength) {
 					heightDifference = (minPointLength - height);
 					height += heightDifference;
 					y -= heightDifference / 2;
+
+				// Adjust for negative ranges or reversed Y axis (#1457)
+				} else if (height < 0) {
+					height *= -1;
+					y -= height;
 				}
+
 				shapeArgs.height = height;
 				shapeArgs.y = y;
 			});
@@ -1550,8 +1560,6 @@ Highcharts.seriesTypes.waterfall = Highcharts.extendClass(Highcharts.seriesTypes
 	type: 'waterfall',
 
 	upColorProp: 'fill',
-
-	pointArrayMap: ['low', 'y'],
 
 	pointValKey: 'y',
 
@@ -2163,7 +2171,6 @@ Highcharts.Axis.prototype.beforePadding = function () {
 				this.searchPoint = this.searchPointByAngle;
 			} else {
 				this.kdDimensions = 2;
-				this.kdComparer = 'distR';
 			}
 		}
 		proceed.apply(this);
@@ -2356,7 +2363,7 @@ Highcharts.Axis.prototype.beforePadding = function () {
 	
 		// Postprocess plot coordinates
 		if (chart.polar) {
-			this.kdByAngle = chart.tooltip.shared;
+			this.kdByAngle = chart.tooltip && chart.tooltip.shared;
 	
 			if (!this.preventPostTranslate) {
 				points = this.points;

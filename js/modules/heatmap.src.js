@@ -91,8 +91,7 @@ Highcharts.extend(ColorAxis.prototype, {
 
 		// Unsupported color, return to-color (#3920)
 		if (!to.rgba.length || !from.rgba.length) {
-			Highcharts.error(23);
-			ret = to.raw;
+			ret = to.raw || 'none';
 
 		// Interpolate
 		} else {
@@ -573,6 +572,7 @@ Highcharts.seriesTypes.heatmap = Highcharts.extendClass(Highcharts.seriesTypes.s
 	hasPointSpecificOptions: true,
 	supportsDrilldown: true,
 	getExtremesFromAll: true,
+	directTouch: true,
 
 	/**
 	 * Override the init method to add point ranges on both axes.

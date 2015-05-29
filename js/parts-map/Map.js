@@ -162,8 +162,7 @@ Highcharts.Map = function (options, callback) {
 	{ // forced options
 		chart: {
 			inverted: false,
-			alignTicks: false,
-			preserveAspectRatio: true
+			alignTicks: false
 		}
 	});
 

@@ -175,8 +175,8 @@
 						if (line.length) {
 							line = line.split('|');
 
-							var $li = $('<li>').appendTo('#ul'),
-								commit = line[0],
+							var commit = line[0],
+								$li = $('<li>').appendTo('#ul').data({ commit: commit }),
 								date = line[1],
 								dateObj = new Date(date.substr(0, 4), date.substr(5, 2) - 1, +date.substr(8, 2), +date.substr(11, 2), date.substr(14, 2)),
 								parents = line[3].split(' '),
@@ -237,24 +237,37 @@
 								.html(line[2])
 								.appendTo($li);
 
-
-
-							$('<div class="status status-none">Not inspected</div>')
+							var statusTexts = {
+								'status-none': 'Not inspected',
+								'status-works': 'Works',
+								'status-fails': 'Fails'
+							},
+							status = window.parent.commits[commit] || 'status-none';
+							$('<div class="status"></div>')
+								.addClass(status) // get from parent
+								.html(statusTexts[status])
 								.click(function () {
-									var $this = $(this);
+									var $this = $(this),
+										newClass;
+
 									if ($this.hasClass('status-none')) {
-										$this.removeClass('status-none')
-											.addClass('status-works')
-											.html('Works');
+										newClass = 'status-works';
+										$this.removeClass('status-none');
 									} else if ($this.hasClass('status-works')) {
-										$this.removeClass('status-works')
-											.addClass('status-fails')
-											.html('Fails');
+										newClass = 'status-fails';
+										$this.removeClass('status-works');
 									} else if ($this.hasClass('status-fails')) {
-										$this.removeClass('status-fails')
-											.addClass('status-none')
-											.html('Not inspected');
+										newClass = 'status-none';
+										$this.removeClass('status-fails');
 									}
+
+									if (newClass) {
+										$this.addClass(newClass)
+											.html(statusTexts[newClass]);
+									}
+
+									// Store for refresh
+									window.parent.commits[$this.parent().data('commit')] = newClass;
 								})
 								.appendTo($li);
 

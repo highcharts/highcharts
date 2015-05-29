@@ -54,14 +54,24 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'setAxisTranslation', function (proce
 		xAxis = chart.xAxis[0],
 		padAxis,
 		fixTo,
-		fixDiff;
+		fixDiff,
+		preserveAspectRatio;
 
 	
 	// Run the parent method
 	proceed.call(this);
+
+	// Check for map-like series
+	if (this.coll === 'yAxis' && xAxis.transA !== undefined) {
+		Highcharts.each(this.series, function (series) {
+			if (series.preserveAspectRatio) {
+				preserveAspectRatio = true;
+			}
+		});
+	}
 	
 	// On Y axis, handle both
-	if (chart.options.chart.preserveAspectRatio && this.coll === 'yAxis' && xAxis.transA !== undefined) {
+	if (preserveAspectRatio) {
 		
 		// Use the same translation for both axes
 		this.transA = xAxis.transA = Math.min(this.transA, xAxis.transA);

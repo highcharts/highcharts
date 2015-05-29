@@ -123,7 +123,12 @@ function getExportInnerHTML() {
 		<title>Highcharts demo</title>
 		<?php echo getFramework($_GET['which'] === 'left' ? $leftFramework : $rightFramework); ?>
 		<?php echo getResources(); ?>
-		
+
+		<?php if (is_file("$path/unit-tests.js")) : ?>
+		<script src="http://code.jquery.com/qunit/qunit-1.15.0.js"></script>
+   		<link rel="stylesheet" type="text/css" href="http://code.jquery.com/qunit/qunit-1.15.0.css" />		
+   		<?php endif; ?>
+
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 		<style type="text/css">
 			<?php @include("$path/demo.css"); ?>
@@ -299,7 +304,8 @@ function getExportInnerHTML() {
 					<?php if (getExportInnerHTML()) : ?>
 					// Bypass the export module
 					Highcharts.Chart.prototype.getSVG = function () {
-						return this.container.innerHTML;
+						return this.container.innerHTML
+							.replace(/<\/svg>.*?$/, '</svg>'); // strip useHTML
 					};
 					<?php endif ?>
 
@@ -315,6 +321,9 @@ function getExportInnerHTML() {
 				$(document).unbind().die();    //remove listeners on document
 				$(document).find('*').unbind().die(); //remove listeners on all nodes
 			}
+
+
+			
 		</script>
 		
 		
@@ -327,13 +336,20 @@ function getExportInnerHTML() {
 			console.error(e.message);
 			parent.window.onDifferent('Error');
 		}
+
+		$(function () {
+		<?php
+			@include("$path/unit-tests.js");
+		?>
+		});
 		</script>
 		
 	</head>
 	<body>
 
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
 <?php echo getHTML($_GET['which']); ?>
-
 
 	</body>
 </html>

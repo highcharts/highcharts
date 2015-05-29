@@ -180,7 +180,7 @@ var AreaSeries = Highcharts.extendClass(Series, {
 			props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
 		
 		Highcharts.each(zones, function (threshold, i) {
-			props.push(['colorArea' + i, threshold.color || series.color, threshold.fillColor || options.fillColor]);
+			props.push(['zoneArea' + i, threshold.color || series.color, threshold.fillColor || options.fillColor]);
 		});
 		Highcharts.each(props, function (prop) {
 			var areaKey = prop[0],

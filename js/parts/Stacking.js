@@ -79,7 +79,8 @@ StackItem.prototype = {
 			axis = stackItem.axis,
 			chart = axis.chart,
 			inverted = chart.inverted,
-			neg = this.isNegative,							// special treatment is needed for negative stacks
+			reversed = axis.reversed,
+			neg = (this.isNegative && !reversed) || (!this.isNegative && reversed), // #4056
 			y = axis.translate(axis.usePercentage ? 100 : this.total, 0, 0, 0, 1), // stack value translated mapped to chart coordinates
 			yZero = axis.translate(0),						// stack origin
 			h = Math.abs(y - yZero),							// stack height
@@ -174,12 +175,14 @@ Series.prototype.setStackedPoints = function () {
 	}
 
 	var series = this,
+		pick = Highcharts.pick,
 		xData = series.processedXData,
 		yData = series.processedYData,
 		stackedYData = [],
 		yDataLength = yData.length,
 		seriesOptions = series.options,
 		threshold = seriesOptions.threshold,
+		stackThreshold = seriesOptions.startFromThreshold ? threshold : 0,
 		stackOption = seriesOptions.stack,
 		stacking = seriesOptions.stacking,
 		stackKey = series.stackKey,
@@ -206,7 +209,7 @@ Series.prototype.setStackedPoints = function () {
 
 		// Read stacked values into a stack based on the x value,
 		// the sign of y and the stack key. Stacking is also handled for null values (#739)
-		isNegative = negStacks && y < threshold;
+		isNegative = negStacks && y < (stackThreshold ? 0 : threshold);
 		key = isNegative ? negKey : stackKey;
 
 		// Create empty object for this stack if it doesn't exist yet
@@ -226,7 +229,10 @@ Series.prototype.setStackedPoints = function () {
 
 		// If the StackItem doesn't exist, create it first
 		stack = stacks[key][x];
-		stack.points[pointKey] = [stack.cum || 0];
+		//stack.points[pointKey] = [stack.cum || stackThreshold];
+		stack.points[pointKey] = [pick(stack.cum, stackThreshold)];
+
+		
 
 		// Add value to the stack total
 		if (stacking === 'percent') {
@@ -245,7 +251,7 @@ Series.prototype.setStackedPoints = function () {
 			stack.total = correctFloat(stack.total + (y || 0));
 		}
 
-		stack.cum = (stack.cum || 0) + (y || 0);
+		stack.cum = pick(stack.cum, stackThreshold) + (y || 0);
 
 		stack.points[pointKey].push(stack.cum);
 		stackedYData[i] = stack.cum;

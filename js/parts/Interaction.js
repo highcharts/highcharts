@@ -641,6 +641,8 @@ Highcharts.extend(Series.prototype, {
 			tooltip = chart.tooltip,
 			hoverPoint = chart.hoverPoint;
 
+		chart.hoverSeries = null; // #182, set to null before the mouseOut event fires
+
 		// trigger mouse out on the point, which must be in this series
 		if (hoverPoint) {
 			hoverPoint.onMouseOut();
@@ -659,7 +661,6 @@ Highcharts.extend(Series.prototype, {
 
 		// set normal state
 		series.setState();
-		chart.hoverSeries = null;
 	},
 
 	/**
@@ -669,10 +670,10 @@ Highcharts.extend(Series.prototype, {
 		var series = this,
 			options = series.options,
 			graph = series.graph,
-			graphNeg = series.graphNeg,
 			stateOptions = options.states,
 			lineWidth = options.lineWidth,
-			attribs;
+			attribs,
+			i = 0;
 
 		state = state || '';
 
@@ -693,8 +694,9 @@ Highcharts.extend(Series.prototype, {
 				};
 				// use attr because animate will cause any other animation on the graph to stop
 				graph.attr(attribs);
-				if (graphNeg) {
-					graphNeg.attr(attribs);
+				while (series['zoneGraph' + i]) {
+					series['zoneGraph' + i].attr(attribs);
+					i = i + 1;
 				}
 			}
 		}

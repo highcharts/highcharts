@@ -75,38 +75,40 @@ var PiePoint = Highcharts.extendClass(Point, {
 	 * @param {Boolean} vis Whether to show the slice or not. If undefined, the
 	 *    visibility is toggled
 	 */
-	setVisible: function (vis) {
+	setVisible: function (vis, redraw) { // docs: redraw parameter. Radrawing calculates new percentages and totals and moves other slices.
 		var point = this,
 			series = point.series,
 			chart = series.chart,
-			doRedraw = !series.isDirty && series.options.ignoreHiddenPoint;
+			ignoreHiddenPoint = series.options.ignoreHiddenPoint;
+		
+		redraw = Highcharts.pick(redraw, ignoreHiddenPoint);
 
-		// if called without an argument, toggle visibility
-		point.visible = point.options.visible = vis = vis === undefined ? !point.visible : vis;
-		series.options.data[HighchartsAdapter.inArray(point, series.data)] = point.options; // update userOptions.data
+		if (vis !== point.visible) {
 
-		// Show and hide associated elements
-		Highcharts.each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
-			if (point[key]) {
-				point[key][vis ? 'show' : 'hide'](true);
-			}
-		});
+			// If called without an argument, toggle visibility
+			point.visible = point.options.visible = vis = vis === undefined ? !point.visible : vis;
+			series.options.data[HighchartsAdapter.inArray(point, series.data)] = point.options; // update userOptions.data
 
-		if (point.legendItem) {
-			if (chart.hasRendered) {
-				series.updateTotals();
-				chart.legend.clearItems();
-				if (!doRedraw) {
-					chart.legend.render();
+			// Show and hide associated elements. This is performed regardless of redraw or not,
+			// because chart.redraw only handles full series.
+			Highcharts.each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
+				if (point[key]) {
+					point[key][vis ? 'show' : 'hide'](true);
 				}
-			}
-			chart.legend.colorizeItem(point, vis);
-		}
+			});
 
-		// Handle ignore hidden slices
-		if (doRedraw) {
-			series.isDirty = true;
-			chart.redraw();
+			if (point.legendItem) {
+				chart.legend.colorizeItem(point, vis);
+			}
+			
+			// Handle ignore hidden slices
+			if (ignoreHiddenPoint) {
+				series.isDirty = true;
+			}
+
+			if (redraw) {
+				chart.redraw();
+			}
 		}
 	},
 
@@ -231,24 +233,14 @@ var PieSeries = {
 	updateTotals: function () {
 		var i,
 			total = 0,
-			points,
-			len,
+			points = this.points,
+			len = points.length,
 			point,
 			ignoreHiddenPoint = this.options.ignoreHiddenPoint;
 
-		// Populate local vars
-		points = this.points;
-		len = points.length;
-		
 		// Get the total sum
 		for (i = 0; i < len; i++) {
 			point = points[i];
-
-			// Disallow negative values (#1530, #3623)
-			if (point.y < 0) {
-				point.y = null;
-			}
-			
 			total += (ignoreHiddenPoint && !point.visible) ? 0 : point.y;
 		}
 		this.total = total;
@@ -256,7 +248,6 @@ var PieSeries = {
 		// Set each point's properties
 		for (i = 0; i < len; i++) {
 			point = points[i];
-			//point.percentage = (total <= 0 || ignoreHiddenPoint && !point.visible) ? 0 : point.y / total * 100;
 			point.percentage = (total > 0 && (point.visible || !ignoreHiddenPoint)) ? point.y / total * 100 : 0;
 			point.total = total;
 		}
@@ -442,11 +433,6 @@ var PieSeries = {
 					.attr(groupTranslation)
 					.add(series.group)
 					.shadow(shadow, shadowGroup);	
-			}
-
-			// detect point specific visibility (#2430)
-			if (point.visible !== undefined) {
-				point.setVisible(point.visible);
 			}
 
 		});

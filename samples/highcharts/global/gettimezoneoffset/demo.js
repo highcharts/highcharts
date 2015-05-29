@@ -8,7 +8,7 @@ $(function () {
              */
             getTimezoneOffset: function (timestamp) {
                 var zone = 'Europe/Oslo',
-                    timezoneOffset = moment.tz.zone(zone).parse(timestamp);
+                    timezoneOffset = -moment.tz(timestamp, zone).utcOffset();
 
                 return timezoneOffset;
             }
@@ -44,7 +44,10 @@ $(function () {
             },
             pointStart: Date.UTC(2014, 9, 15),
             pointInterval: 24 * 36e5,
-            name: 'UTC Midnight'
+            name: 'UTC Midnight',
+            tooltip: {
+                pointFormat: 'UTC midnight = {point.x:%H:%M} local time'
+            }
         }]
     });
 });

@@ -171,6 +171,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 	useMapGeometry: true, // get axis extremes from paths, not values
 	forceDL: true,
 	searchPoint: Highcharts.noop,
+	preserveAspectRatio: true, // X axis and Y axis must have same translation slope
 	/**
 	 * Get the bounding box of all paths in the map combined.
 	 */
@@ -487,6 +488,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 					scaleY: 1
 				})
 				.add(group);
+			series.transformGroup.survive = true;
 		}
 		
 		// Draw the shapes again
@@ -689,16 +691,16 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 			
 			// TODO: Animate this.group instead
 			Highcharts.each(this.points, function (point) {
-
-				point.graphic
-					.attr(level.shapeArgs)
-					.animate({
-						scaleX: 1,
-						scaleY: 1,
-						translateX: 0,
-						translateY: 0
-					}, animationOptions);
-
+				if (point.graphic) {
+					point.graphic
+						.attr(level.shapeArgs)
+						.animate({
+							scaleX: 1,
+							scaleY: 1,
+							translateX: 0,
+							translateY: 0
+						}, animationOptions);
+				}
 			});
 
 			this.animate = null;

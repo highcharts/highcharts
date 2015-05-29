@@ -31,6 +31,7 @@ Highcharts.defaultPlotOptions.column = Highcharts.merge(Highcharts.defaultSeries
 		verticalAlign: null, // auto
 		y: null
 	},
+	startFromThreshold: true, // docs: http://jsfiddle.net/highcharts/hz8fopan/14/
 	stickyTracking: false,
 	tooltip: {
 		distance: 6
@@ -190,27 +191,24 @@ var ColumnSeries = Highcharts.extendClass(Series, {
 				right,
 				bottom,
 				fromTop,
+				up,
 				barH = Math.max(plotY, yBottom) - barY;
 
 			// Handle options.minPointLength
 			if (Math.abs(barH) < minPointLength) {
 				if (minPointLength) {
 					barH = minPointLength;
+					up = (!yAxis.reversed && !point.negative) || (yAxis.reversed && point.negative);
 					barY =
 						Math.round(Math.abs(barY - translatedThreshold) > minPointLength ? // stacked
 							yBottom - minPointLength : // keep position
-							translatedThreshold - (yAxis.translate(point.y, 0, 1, 0, 1) <= translatedThreshold ? minPointLength : 0)); // use exact yAxis.translation (#1485)
+							translatedThreshold - (up ? minPointLength : 0)); // #1485, #4051
 				}
 			}
 
 			// Cache for access in polar
 			point.barX = barX;
 			point.pointWidth = pointWidth;
-
-			// Fix the tooltip on center of grouped columns (#1216, #424, #3648)
-			point.tooltipPos = chart.inverted ? 
-				[yAxis.len + yAxis.pos - chart.plotLeft - plotY, series.xAxis.len - barX - barW / 2] : 
-				[barX + barW / 2, plotY + yAxis.pos - chart.plotTop];
 
 			// Round off to obtain crisp edges and avoid overlapping with neighbours (#2694)
 			right = Math.round(barX + barW) + xCrisp;
@@ -227,6 +225,11 @@ var ColumnSeries = Highcharts.extendClass(Series, {
 				barY -= 1;
 				barH += 1;
 			}
+
+			// Fix the tooltip on center of grouped columns (#1216, #424, #3648)
+			point.tooltipPos = chart.inverted ? 
+				[yAxis.len + yAxis.pos - chart.plotLeft - plotY, series.xAxis.len - barX - barW / 2, barH] : 
+				[barX + barW / 2, plotY + yAxis.pos - chart.plotTop, barH];
 
 			// Register shape type and arguments to be used in drawPoints
 			point.shapeType = 'rect';

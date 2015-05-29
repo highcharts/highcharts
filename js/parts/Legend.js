@@ -143,16 +143,6 @@ Legend.prototype = {
 	},
 
 	/**
-	 * Destroy all items.
-	 */
-	clearItems: function () {
-		var legend = this;
-		each(legend.getAllItems(), function (item) {
-			legend.destroyItem(item); 
-		});		
-	},
-
-	/**
 	 * Destroys the legend.
 	 */
 	destroy: function () {
@@ -221,6 +211,16 @@ Legend.prototype = {
 	},
 
 	/**
+	 * Set the legend item text
+	 */
+	setText: function (item) {
+		var options = this.options;
+		item.legendItem.attr({
+			text: options.labelFormat ? Highcharts.format(options.labelFormat, item) : options.labelFormatter.call(item)
+		});
+	},
+
+	/**
 	 * Render a single specific legend item
 	 * @param {Object} item A series or point
 	 */
@@ -260,7 +260,7 @@ Legend.prototype = {
 
 			// Generate the list item text and add it to the group
 			item.legendItem = li = renderer.text(
-					options.labelFormat ? H.format(options.labelFormat, item) : options.labelFormatter.call(item),
+					'',
 					ltr ? symbolWidth + symbolPadding : -symbolPadding,
 					legend.baseline || 0,
 					useHTML
@@ -294,6 +294,9 @@ Legend.prototype = {
 				legend.createCheckboxForItem(item);				
 			}
 		}
+
+		// Always update the text
+		legend.setText(item);
 
 		// calculate the positions for the next line
 		bBox = li.getBBox();
@@ -714,7 +717,7 @@ H.LegendSymbolMixin = {
 	 * @param {Object} item The series (this) or point
 	 */
 	drawRectangle: function (legend, item) {
-		var symbolHeight = legend.options.symbolHeight || legend.fontMetrics.f; // docs: Now defaults to the font size
+		var symbolHeight = legend.options.symbolHeight || legend.fontMetrics.f;
 
 		item.legendSymbol = this.chart.renderer.rect(
 			0,

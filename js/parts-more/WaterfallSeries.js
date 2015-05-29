@@ -25,8 +25,6 @@ Highcharts.seriesTypes.waterfall = Highcharts.extendClass(Highcharts.seriesTypes
 
 	upColorProp: 'fill',
 
-	pointArrayMap: ['low', 'y'],
-
 	pointValKey: 'y',
 
 	/**

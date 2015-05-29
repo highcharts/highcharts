@@ -115,8 +115,14 @@ extend(H.Pointer.prototype, {
 				chart.runTrackerClick) || self.runChartClick),
 			clip = {};
 
+		// Don't initiate panning until the user has pinched. This prevents us from 
+		// blocking page scrolling as users scroll down a long page (#4210).
+		if (touchesLength > 1) {
+			self.initiated = true;
+		}
+
 		// On touch devices, only proceed to trigger click if a handler is defined
-		if (hasZoom && !fireClickEvent) {
+		if (hasZoom && self.initiated && !fireClickEvent) {
 			e.preventDefault();
 		}
 		
@@ -178,7 +184,10 @@ extend(H.Pointer.prototype, {
 		}
 	},
 
-	onContainerTouchStart: function (e) {
+	/**
+	 * General touch handler shared by touchstart and touchmove.
+	 */
+	touch: function (e, start) {
 		var chart = this.chart;
 
 		hoverChartIndex = chart.index;
@@ -190,24 +199,28 @@ extend(H.Pointer.prototype, {
 			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop) && !chart.openMenu) {
 
 				// Run mouse events and display tooltip etc
-				this.runPointActions(e);
+				if (start) {
+					this.runPointActions(e);
+				}
 
 				this.pinch(e);
 
-			} else {
+			} else if (start) {
 				// Hide the tooltip on touching outside the plot area (#1203)
 				this.reset();
 			}
 
 		} else if (e.touches.length === 2) {
 			this.pinch(e);
-		}   
+		}
+	},
+
+	onContainerTouchStart: function (e) {
+		this.touch(e, true);
 	},
 
 	onContainerTouchMove: function (e) {
-		if (e.touches.length === 1 || e.touches.length === 2) {
-			this.pinch(e);
-		}
+		this.touch(e);
 	},
 
 	onDocumentTouchEnd: function (e) {

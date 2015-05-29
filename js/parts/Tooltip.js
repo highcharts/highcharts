@@ -132,16 +132,6 @@ H.Tooltip.prototype = {
 				tooltip.label.fadeOut();
 				tooltip.isHidden = true;
 			}, pick(delay, this.options.hideDelay, 500));
-
-			// hide previous hoverPoints and set new
-			if (hoverPoints) {
-				each(hoverPoints, function (point) {
-					point.setState();
-				});
-			}
-
-			this.chart.hoverPoints = null;
-			this.chart.hoverSeries = null;
 		}
 	},
 	
@@ -208,7 +198,7 @@ H.Tooltip.prototype = {
 		var chart = this.chart,
 			distance = this.distance,
 			ret = {},
-			h = point.h,
+			h = point.h || 0, // #4117
 			swapped,
 			first = ['y', chart.chartHeight, boxHeight, point.plotY + chart.plotTop],
 			second = ['x', chart.chartWidth, boxWidth, point.plotX + chart.plotLeft],
@@ -402,7 +392,7 @@ H.Tooltip.prototype = {
 				plotY: y, 
 				negative: point.negative, 
 				ttBelow: point.ttBelow, 
-				h: (point.shapeArgs && point.shapeArgs.height) || 0
+				h: anchor[2] || 0
 			});
 		
 			this.isHidden = false;
@@ -431,7 +421,7 @@ H.Tooltip.prototype = {
 		// do the move
 		this.move(
 			Math.round(pos.x), 
-			Math.round(pos.y), 
+			Math.round(pos.y || 0), // can be undefined (#3977) 
 			point.plotX + chart.plotLeft, 
 			point.plotY + chart.plotTop
 		);
@@ -456,7 +446,7 @@ H.Tooltip.prototype = {
 			},
 			date,
 			timeUnits = H.timeUnits,
-			lastN;
+			lastN = 'millisecond'; // for sub-millisecond data, #4223
 
 		if (closestPointRange) {
 			date = dateFormat('%m-%d %H:%M:%S.%L', point.x);

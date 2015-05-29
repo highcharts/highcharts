@@ -165,6 +165,9 @@ Highcharts.extend(Point.prototype, {
 			point.applyOptions(options);
 
 			// Update visuals
+			if (point.y === null && graphic) { // #4146
+				point.graphic = graphic.destroy();
+			}
 			if (Highcharts.isObject(options) && !Highcharts.isArray(options)) {
 				// Defer the actual redraw until getAttribs has been called (#3260)
 				point.redraw = function () {
@@ -172,7 +175,7 @@ Highcharts.extend(Point.prototype, {
 						if (options && options.marker && options.marker.symbol) {
 							point.graphic = graphic.destroy();
 						} else {
-							graphic.attr(point.pointAttr[point.state || '']);
+							graphic.attr(point.pointAttr[point.state || ''])[point.visible ? 'show' : 'hide'](); // #2430
 						}
 					}
 					if (options && options.dataLabels && point.dataLabel) { // #2468
@@ -197,9 +200,8 @@ Highcharts.extend(Point.prototype, {
 				chart.isDirtyBox = true;
 			}
 
-			if (chart.legend.display && seriesOptions.legendType === 'point') { // #1831, #1885, #3934
-				series.updateTotals();
-				chart.legend.clearItems();
+			if (seriesOptions.legendType === 'point') { // #1831, #1885
+				chart.isDirtyLegend = true;
 			}
 			if (redraw) {
 				chart.redraw(animation);
@@ -245,20 +247,25 @@ Highcharts.extend(Series.prototype, {
 			chart = series.chart,
 			names = series.xAxis && series.xAxis.names,
 			currentShift = (graph && graph.shift) || 0,
+			shiftShapes = ['graph', 'area'],
 			dataOptions = seriesOptions.data,
 			point,
 			isInTheMiddle,
 			xData = series.xData,
-			x,
-			i;
+			i,
+			x;
 
 		Highcharts.setAnimation(animation, chart);
 
 		// Make graph animate sideways
 		if (shift) {
-			Highcharts.each([graph, area, series.graphNeg, series.areaNeg], function (shape) {
-				if (shape) {
-					shape.shift = currentShift + 1;
+			i = series.zones.length;
+			while (i--) {
+				shiftShapes.push('zoneGraph' + i, 'zoneArea' + i);
+			}
+			Highcharts.each(shiftShapes, function (shape) {
+				if (series[shape]) {
+					series[shape].shift = currentShift + 1;
 				}
 			});
 		}

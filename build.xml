@@ -651,6 +651,10 @@
             <arg value="UTF-8"/>
             <arg value="${param.src}"/>
         </java>
+
+        <!-- Convert back to Unicode escape (#4079) -->
+        <replace file="${param.out}" token="●" value="\u25CF"/>
+
         <length file="${param.src}" property="input.length"/>
         <length file="${param.out}" property="gcc.output.length"/>
         <!-- Create a temporary zipfile to get the zipped size -->
@@ -1082,8 +1086,10 @@
         <!-- update the highcharts export-server (GitHub) with newest js from the files in the dist -->
         <copy file="${dist.dir}/highcharts/js/highcharts.js" todir="exporting-server/phantomjs/"/>
         <copy file="${dist.dir}/highstock/js/highstock.js" todir="exporting-server/phantomjs/"/>
+        <copy file="${dist.dir}/highmaps/js/highmaps.js" todir="exporting-server/phantomjs/"/>
         <copy file="${dist.dir}/highcharts/js/highcharts-more.js" todir="exporting-server/phantomjs/"/>
-        <copy file="${dist.dir}/highcharts/js/highcharts-3d.js" todir="exporting-server/phantomjs/"/>      
+        <copy file="${dist.dir}/highcharts/js/highcharts-3d.js" todir="exporting-server/phantomjs/"/>
+        <copy file="${dist.dir}/highmaps/js/modules/map.js" todir="exporting-server/phantomjs/"/>
         <copy todir="exporting-server/phantomjs/">
             <fileset refid="export.module.files"/>
         </copy>
@@ -1799,7 +1805,7 @@
         <!-- files for downloadbuilder -->            
         <copy file="js/parts.js" tofile="${highcharts.site.dir}/joomla/templates/highsoft_colorful/js/parts.js" overwrite="true"/>
         <!-- copy the highstock partfiles , these include also highcharts partfiles -->
-        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source/parts" overwrite="true">
+        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source" overwrite="true">
             <filelist refid="highstock.files"/>
             <filterset refid="download.builder.filter"/>
         </copy>

@@ -16,6 +16,7 @@ $(function () {
                 'Jun asdkjfasd afkjs dfa'
             ],
             labels: {
+                autoRotationLimit: 60,
                 style: {
                     fontSize: '0.8em'
                 }

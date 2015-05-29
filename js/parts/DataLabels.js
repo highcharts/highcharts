@@ -576,7 +576,7 @@ if (Highcharts.seriesTypes.pie) {
 					labelPos = point.labelPos;
 					dataLabel = point.dataLabel;
 
-					if (dataLabel && dataLabel._pos) {
+					if (dataLabel && dataLabel._pos && point.visible) {
 						visibility = dataLabel._attr.visibility;
 						x = dataLabel.connX;
 						y = dataLabel.connY;
@@ -627,7 +627,7 @@ if (Highcharts.seriesTypes.pie) {
 			var dataLabel = point.dataLabel,
 				_pos;
 
-			if (dataLabel) {
+			if (dataLabel && point.visible) {
 				_pos = dataLabel._pos;
 				if (_pos) {
 					dataLabel.attr(dataLabel._attr);
@@ -685,8 +685,8 @@ if (Highcharts.seriesTypes.pie) {
 
 		// If the size must be decreased, we need to run translate and drawDataLabels again
 		if (newSize < center[2]) {
-			center[2] = newSize;
-			this.translate(center);
+			this.center = this.getCenter(newSize);
+			this.translate(this.center);
 			Highcharts.each(this.points, function (point) {
 				if (point.dataLabel) {
 					point.dataLabel._pos = null; // reset
@@ -714,7 +714,7 @@ if (Highcharts.seriesTypes.column) {
 			series = point.series,
 			pick = Highcharts.pick,
 			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
-			below = point.below || (point.plotY > pick(this.translatedThreshold, series.yAxis.len)),
+			below = pick(point.below, point.plotY > pick(this.translatedThreshold, series.yAxis.len)), // point.below is used in range series
 			inside = pick(options.inside, !!this.options.stacking); // draw it inside the box?
 
 		// Align to the column itself, or the top of it

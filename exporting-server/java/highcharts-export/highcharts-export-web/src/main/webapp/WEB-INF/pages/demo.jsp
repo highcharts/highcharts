@@ -113,7 +113,7 @@
 		}
 
 		$.each($('#exportForm').serializeArray(), function (i, pair) {
-    		dataString += '&' + pair.name + '=' + pair.value;
+    		dataString += '&' + pair.name + '=' + encodeURIComponent(pair.value);
     	});
 
     	if (window.XDomainRequest) {
@@ -205,6 +205,7 @@
 			<select name="constr">
 				<option value="Chart">Chart</option>
 				<option value="StockChart">StockChart</option>
+				<option value="Map">Map</option>
 			</select> </br> <br /> <label for="callback">Callback</label>
 			<div class="info">The callback will be fired after
 				the chart is created.</div>

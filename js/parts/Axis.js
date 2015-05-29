@@ -512,7 +512,7 @@ H.Axis.prototype = {
 	 *
 	 */
 	translate: function (val, backwards, cvsCoord, old, handleLog, pointPlacement) {
-		var axis = this,
+		var axis = this.linkedParent || this, // #1417
 			sign = 1,
 			cvsOffset = 0,
 			localA = old ? axis.oldTransA : axis.transA,
@@ -974,7 +974,7 @@ H.Axis.prototype = {
 			axis.tickInterval = 1;
 		} else if (isLinked && !tickIntervalOption &&
 				tickPixelIntervalOption === axis.linkedParent.options.tickPixelInterval) {
-			axis.tickInterval = axis.linkedParent.tickInterval;
+			axis.tickInterval = tickIntervalOption = axis.linkedParent.tickInterval;
 		} else {
 			axis.tickInterval = pick(
 				tickIntervalOption,
@@ -1019,20 +1019,18 @@ H.Axis.prototype = {
 		}
 
 		// for linear axes, get magnitude and normalize the interval
-		if (!isDatetimeAxis && !isLog) { // linear
-			if (!tickIntervalOption) {
-				axis.tickInterval = H.normalizeTickInterval(
-					axis.tickInterval, 
-					null, 
-					H.getMagnitude(axis.tickInterval), 
-					// If the tick interval is between 0.5 and 5 and the axis max is in the order of
-					// thousands, chances are we are dealing with years. Don't allow decimals. #3363.
-					pick(options.allowDecimals, !(axis.tickInterval > 0.5 && axis.tickInterval < 5 && axis.max > 1000 && axis.max < 9999)),
-					!!this.tickAmount
-				);
-			}
+		if (!isDatetimeAxis && !isLog && !tickIntervalOption) {
+			axis.tickInterval = H.normalizeTickInterval(
+				axis.tickInterval, 
+				null, 
+				H.getMagnitude(axis.tickInterval), 
+				// If the tick interval is between 0.5 and 5 and the axis max is in the order of
+				// thousands, chances are we are dealing with years. Don't allow decimals. #3363.
+				pick(options.allowDecimals, !(axis.tickInterval > 0.5 && axis.tickInterval < 5 && axis.max > 1000 && axis.max < 9999)),
+				!!this.tickAmount
+			);
 		}
-
+		
 		// Prevent ticks from getting so close that we can't draw the labels
 		if (!this.tickAmount && this.len) { // Color axis with disabled legend has no length
 			axis.tickInterval = axis.unsquish();
@@ -1166,7 +1164,9 @@ H.Axis.prototype = {
 					key = [horiz ? options.left : options.top, horiz ? options.width : options.height, options.pane].join(',');
 				
 				if (others[key]) {
-					hasOther = true;
+					if (axis.series.length) {
+						hasOther = true; // #4201
+					}
 				} else {
 					others[key] = 1;
 				}
@@ -1500,7 +1500,7 @@ H.Axis.prototype = {
 		if (horiz) {
 			autoRotation = defined(rotationOption) ? 
 				[rotationOption] :
-				slotSize < pick(labelOptions.autoRotationLimit, 80) && !labelOptions.staggerLines && !labelOptions.step && labelOptions.autoRotation; // docs: API and demo created, enable with "since".
+				slotSize < pick(labelOptions.autoRotationLimit, 80) && !labelOptions.staggerLines && !labelOptions.step && labelOptions.autoRotation;
 
 			if (autoRotation) {
 
@@ -1542,8 +1542,9 @@ H.Axis.prototype = {
 			labelOptions = this.options.labels,
 			horiz = this.horiz,
 			margin = chart.margin,
+			slotCount = this.categories ? tickPositions.length : tickPositions.length - 1,
 			slotWidth = this.slotWidth = (horiz && !labelOptions.step && !labelOptions.rotation &&
-				((this.staggerLines || 1) * chart.plotWidth) / tickPositions.length) ||
+				((this.staggerLines || 1) * chart.plotWidth) / slotCount) ||
 				(!horiz && ((margin[3] && (margin[3] - chart.spacing[3])) || chart.chartWidth * 0.33)), // #1580, #1931,
 			innerWidth = Math.max(1, Math.round(slotWidth - 2 * (labelOptions.padding || 5))),
 			attr = {},
@@ -1589,7 +1590,11 @@ H.Axis.prototype = {
 				pos = tickPositions[i];
 				label = ticks[pos].label;
 				if (label) {
-					if (this.len / tickPositions.length - 4 < label.getBBox().height) {
+					// Reset ellipsis in order to get the correct bounding box (#4070)
+					if (label.styles.textOverflow === 'ellipsis') {
+						label.css({ textOverflow: 'clip' });
+					}
+					if (label.getBBox().height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f)) {
 						label.specCss = { textOverflow: 'ellipsis' };
 					}
 				}
@@ -1807,6 +1812,8 @@ H.Axis.prototype = {
 			margin = horiz ? axisLeft : axisTop,
 			opposite = this.opposite,
 			offset = this.offset,
+			xOption = axisTitleOptions.x || 0, // docs
+			yOption = axisTitleOptions.y || 0,
 			fontSize = H.pInt(axisTitleOptions.style.fontSize || 12),
 
 			// the position in the length direction of the axis
@@ -1825,12 +1832,11 @@ H.Axis.prototype = {
 
 		return {
 			x: horiz ?
-				alongAxis :
-				offAxis + (opposite ? this.width : 0) + offset +
-					(axisTitleOptions.x || 0), // x
+				alongAxis + xOption :
+				offAxis + (opposite ? this.width : 0) + offset + xOption,
 			y: horiz ?
-				offAxis - (opposite ? this.height : 0) + offset :
-				alongAxis + (axisTitleOptions.y || 0) // y
+				offAxis + yOption - (opposite ? this.height : 0) + offset :
+				alongAxis + yOption
 		};
 	},
 
@@ -2110,7 +2116,9 @@ H.Axis.prototype = {
 			// Disabled in options
 			!this.crosshair || 
 			// Snap
-			((defined(point) || !pick(this.crosshair.snap, true)) === false)
+			((defined(point) || !pick(this.crosshair.snap, true)) === false) || 
+			// Not on this axis (#4095, #2888)
+			(point && point.series && point.series[this.coll] !== this)
 		) {
 			this.hideCrosshair();
 		

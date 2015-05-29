@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.4-modified ()
+ * @license Highmaps JS v1.1.5-modified ()
  * Highmaps as a plugin for Highcharts 4.0.x or Highstock 2.0.x (x being the patch version of this file)
  *
  * (c) 2011-2014 Torstein Honsi
@@ -68,14 +68,24 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'setAxisTranslation', function (proce
 		xAxis = chart.xAxis[0],
 		padAxis,
 		fixTo,
-		fixDiff;
+		fixDiff,
+		preserveAspectRatio;
 
 	
 	// Run the parent method
 	proceed.call(this);
+
+	// Check for map-like series
+	if (this.coll === 'yAxis' && xAxis.transA !== undefined) {
+		Highcharts.each(this.series, function (series) {
+			if (series.preserveAspectRatio) {
+				preserveAspectRatio = true;
+			}
+		});
+	}
 	
 	// On Y axis, handle both
-	if (chart.options.chart.preserveAspectRatio && this.coll === 'yAxis' && xAxis.transA !== undefined) {
+	if (preserveAspectRatio) {
 		
 		// Use the same translation for both axes
 		this.transA = xAxis.transA = Math.min(this.transA, xAxis.transA);
@@ -188,8 +198,7 @@ Highcharts.extend(ColorAxis.prototype, {
 
 		// Unsupported color, return to-color (#3920)
 		if (!to.rgba.length || !from.rgba.length) {
-			Highcharts.error(23);
-			ret = to.raw;
+			ret = to.raw || 'none';
 
 		// Interpolate
 		} else {
@@ -1067,6 +1076,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 	useMapGeometry: true, // get axis extremes from paths, not values
 	forceDL: true,
 	searchPoint: Highcharts.noop,
+	preserveAspectRatio: true, // X axis and Y axis must have same translation slope
 	/**
 	 * Get the bounding box of all paths in the map combined.
 	 */
@@ -1383,6 +1393,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 					scaleY: 1
 				})
 				.add(group);
+			series.transformGroup.survive = true;
 		}
 		
 		// Draw the shapes again
@@ -1585,16 +1596,16 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 			
 			// TODO: Animate this.group instead
 			Highcharts.each(this.points, function (point) {
-
-				point.graphic
-					.attr(level.shapeArgs)
-					.animate({
-						scaleX: 1,
-						scaleY: 1,
-						translateX: 0,
-						translateY: 0
-					}, animationOptions);
-
+				if (point.graphic) {
+					point.graphic
+						.attr(level.shapeArgs)
+						.animate({
+							scaleX: 1,
+							scaleY: 1,
+							translateX: 0,
+							translateY: 0
+						}, animationOptions);
+				}
 			});
 
 			this.animate = null;
@@ -1743,6 +1754,7 @@ Highcharts.seriesTypes.heatmap = Highcharts.extendClass(Highcharts.seriesTypes.s
 	hasPointSpecificOptions: true,
 	supportsDrilldown: true,
 	getExtremesFromAll: true,
+	directTouch: true,
 
 	/**
 	 * Override the init method to add point ranges on both axes.
@@ -2187,8 +2199,7 @@ Highcharts.Map = function (options, callback) {
 	{ // forced options
 		chart: {
 			inverted: false,
-			alignTicks: false,
-			preserveAspectRatio: true
+			alignTicks: false
 		}
 	});
 

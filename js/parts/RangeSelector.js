@@ -91,13 +91,21 @@ RangeSelector.prototype = {
 			range = rangeOptions._range,
 			rangeMin,
 			year,
-			timeName;
+			timeName,
+			dataGrouping = rangeOptions.dataGrouping;
 
 		if (dataMin === null || dataMax === null || // chart has no data, base series is removed
 				i === rangeSelector.selected) { // same button is clicked twice
 			return;
 		}
 
+		// Apply dataGrouping associated to button
+		if (dataGrouping) {
+			this.forcedDataGrouping = true;			
+			Highcharts.Axis.prototype.setDataGrouping.call(baseAxis || { chart: this.chart }, dataGrouping, false);
+		}
+
+		// Apply range
 		if (type === 'month' || type === 'year') {
 			timeName = { month: 'Month', year: 'FullYear'}[type];
 			date['set' + timeName](date['get' + timeName]() - count);
@@ -267,8 +275,16 @@ RangeSelector.prototype = {
 			this.clickButton(selectedOption, false);
 		}
 
-		// normalize the pressed button whenever a new range is selected
+
 		addEvent(chart, 'load', function () {
+			// If a data grouping is applied to the current button, release it when extremes change
+			addEvent(chart.xAxis[0], 'setExtremes', function (e) {
+				if (this.max - this.min !== chart.fixedRange && e.trigger !== 'rangeSelectorButton' &&
+						e.trigger !== 'updatedData' && rangeSelector.forcedDataGrouping) {
+					this.setDataGrouping(false, false);
+				}
+			});
+			// Normalize the pressed button whenever a new range is selected
 			addEvent(chart.xAxis[0], 'afterSetExtremes', function () {
 				rangeSelector.updateButtonStates(true);
 			});
@@ -368,6 +384,30 @@ RangeSelector.prototype = {
 		this[name + 'DateBox'].attr({ text: dateFormat(options.inputDateFormat || '%b %e, %Y', this[name + 'Input'].HCTime) });
 	},
 
+	showInput: function (name) {
+		var inputGroup = this.inputGroup,
+			dateBox = this[name + 'DateBox'];
+
+		Highcharts.css(this[name + 'Input'], {
+			left: (inputGroup.translateX + dateBox.x) + 'px',
+			top: inputGroup.translateY + 'px',
+			width: (dateBox.width - 2) + 'px',
+			height: (dateBox.height - 2) + 'px',
+			border: '2px solid silver'
+		});
+	},
+
+	hideInput: function (name) {
+		if (document.activeElement === this[name + 'Input']) { // Prevent running again and again
+			Highcharts.css(this[name + 'Input'], {
+				border: 0,
+				width: '1px',
+				height: '1px'
+			});
+			this.setInputValue(name);
+		}
+	},
+
 	/**
 	 * Draw either the 'from' or the 'to' HTML input box of the range selector
 	 * @param {Object} name
@@ -379,7 +419,6 @@ RangeSelector.prototype = {
 			renderer = chart.renderer,
 			options = chart.options.rangeSelector,
 			lang = Highcharts.defaultOptions.lang,
-			css = Highcharts.css,
 			div = rangeSelector.div,
 			isMin = name === 'min',
 			input,
@@ -411,6 +450,7 @@ RangeSelector.prototype = {
 				color: '#444'
 			}, chartStyle, options.inputStyle))
 			.on('click', function () {
+				rangeSelector.showInput(name); // If it is already focused, the onfocus event doesn't fire (#3713)
 				rangeSelector[name + 'Input'].focus();
 			})
 			.add(inputGroup);
@@ -437,22 +477,11 @@ RangeSelector.prototype = {
 
 		// Blow up the input box
 		input.onfocus = function () {
-			css(this, {
-				left: (inputGroup.translateX + dateBox.x) + 'px',
-				top: inputGroup.translateY + 'px',
-				width: (dateBox.width - 2) + 'px',
-				height: (dateBox.height - 2) + 'px',
-				border: '2px solid silver'
-			});
+			rangeSelector.showInput(name);
 		};
 		// Hide away the input box
 		input.onblur = function () {
-			css(this, {
-				border: 0,
-				width: '1px',
-				height: '1px'
-			});
-			rangeSelector.setInputValue(name);
+			rangeSelector.hideInput(name);
 		};
 
 		// handle changes in the input boxes
