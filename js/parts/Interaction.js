@@ -234,7 +234,7 @@ Highcharts.defaultOptions.legend.itemStyle.cursor = 'pointer';
  * Extend the Chart object with interaction
  */
 
-Highcharts.extend(Chart.prototype, {
+Highcharts.extend(Highcharts.Chart.prototype, {
 	/**
 	 * Display the zoom button
 	 */

@@ -1122,7 +1122,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'zoom', function (proceed, newMin, ne
 });
 
 // Initialize scroller for stock charts
-Highcharts.wrap(Chart.prototype, 'init', function (proceed, options, callback) {
+Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed, options, callback) {
 
 	Highcharts.addEvent(this, 'beforeRender', function () {
 		var options = this.options;

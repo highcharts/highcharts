@@ -1,5 +1,5 @@
 // Extend the Chart prototype for dynamic methods
-Highcharts.extend(Chart.prototype, {
+Highcharts.extend(Highcharts.Chart.prototype, {
 
 	/**
 	 * Add a series dynamically after  time

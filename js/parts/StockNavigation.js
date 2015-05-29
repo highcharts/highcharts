@@ -1,7 +1,7 @@
 
 
 
-Chart.prototype.callbacks.push(function (chart) {
+Highcharts.Chart.prototype.callbacks.push(function (chart) {
 	var extremes,
 		addEvent = Highcharts.addEvent,
 		scroller = chart.scroller,

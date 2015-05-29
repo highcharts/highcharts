@@ -1,4 +1,3 @@
 
-var Chart = Highcharts.Chart,
-	Series = Highcharts.Series;
+var Series = Highcharts.Series;
 	

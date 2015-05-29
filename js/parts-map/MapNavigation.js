@@ -1,6 +1,6 @@
 
 // Add events to the Chart object itself
-Highcharts.extend(Chart.prototype, {
+Highcharts.extend(Highcharts.Chart.prototype, {
 	renderMapNavigation: function () {
 		var chart = this,
 			options = this.options.mapNavigation,
@@ -154,7 +154,7 @@ Highcharts.extend(Chart.prototype, {
 /**
  * Extend the Chart.render method to add zooming and panning
  */
-Highcharts.wrap(Chart.prototype, 'render', function (proceed) {
+Highcharts.wrap(Highcharts.Chart.prototype, 'render', function (proceed) {
 	var chart = this,
 		pick = Highcharts.pick,
 		addEvent = Highcharts.addEvent,

@@ -531,7 +531,7 @@ Highcharts.extend(Highcharts.Axis.prototype, {
 });
 
 // Extending the Chart.pan method for ordinal axes
-Highcharts.wrap(Chart.prototype, 'pan', function (proceed, e) {
+Highcharts.wrap(Highcharts.Chart.prototype, 'pan', function (proceed, e) {
 	var chart = this,
 		xAxis = chart.xAxis[0],
 		chartX = e.chartX,

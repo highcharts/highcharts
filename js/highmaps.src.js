@@ -10785,12 +10785,34 @@ if (/Trident\/7\.0/.test(navigator.userAgent) || H.isFirefox) {
 
 	return H;
 }(Highcharts));
+(function (H) {
+	var addEvent = H.addEvent,
+		attr = H.attr,
+		Axis = H.Axis, // @todo add as requirement
+		Chart,
+		chartCount = H.chartCount,
+		charts = H.charts,
+		css = H.css,
+		defined = H.defined,
+		each = H.each,
+		error = H.error,
+		extend = H.extend,
+		globalAnimation = H.globalAnimation,
+		Legend = H.Legend, // @todo add as requirement
+		merge = H.merge,
+		Pointer = H.Pointer, // @todo add as requirement
+		pick = H.pick,
+		pInt = H.pInt,
+		removeEvent = H.removeEvent,
+		seriesTypes = H.seriesTypes,
+		splat = H.splat,
+		useCanVG = H.useCanVG;
 /**
  * The chart class
  * @param {Object} options
  * @param {Function} callback Function to run when the chart has loaded
  */
-var Chart = Highcharts.Chart = function () {
+Chart = H.Chart = function () {
 	this.init.apply(this, arguments);
 };
 
@@ -10808,11 +10830,10 @@ Chart.prototype = {
 
 		// Handle regular options
 		var options,
-			addEvent = Highcharts.addEvent,
 			seriesOptions = userOptions.series; // skip merging data points to increase performance
 
 		userOptions.series = null;
-		options = Highcharts.merge(Highcharts.defaultOptions, userOptions); // do the merge
+		options = merge(H.defaultOptions, userOptions); // do the merge
 		options.series = userOptions.series = seriesOptions; // set back the series data
 		this.userOptions = userOptions;
 
@@ -10866,13 +10887,12 @@ Chart.prototype = {
 		//this.loadingSpan = undefined;
 
 		var chart = this,
-			charts = Highcharts.charts,
 			eventType;
 
 		// Add the chart to the global lookup
 		chart.index = charts.length;
 		charts.push(chart);
-		Highcharts.chartCount++;
+		chartCount++;
 
 		// Set up auto resize
 		if (optionsChart.reflow !== false) {
@@ -10892,7 +10912,7 @@ Chart.prototype = {
 		chart.yAxis = [];
 
 		// Expose methods and variables
-		chart.animation = Highcharts.useCanVG ? false : Highcharts.pick(optionsChart.animation, true);
+		chart.animation = useCanVG ? false : pick(optionsChart.animation, true);
 		chart.pointCount = chart.colorCounter = chart.symbolCounter = 0;
 
 		chart.firstRender();
@@ -10906,11 +10926,11 @@ Chart.prototype = {
 			optionsChart = chart.options.chart,
 			type = options.type || optionsChart.type || optionsChart.defaultSeriesType,
 			series,
-			constr = Highcharts.seriesTypes[type];
+			constr = seriesTypes[type];
 
 		// No such series type
 		if (!constr) {
-			Highcharts.error(17, true);
+			error(17, true);
 		}
 
 		series = new constr();
@@ -10960,7 +10980,7 @@ Chart.prototype = {
 			isHiddenChart = renderer.isHidden(),
 			afterRedraw = [];
 			
-		Highcharts.setAnimation(animation, chart);
+		H.setAnimation(animation, chart);
 		
 		if (isHiddenChart) {
 			chart.cloneRenderTo();
@@ -10993,7 +11013,7 @@ Chart.prototype = {
 		}
 
 		// handle updated data in the series
-		Highcharts.each(series, function (serie) {
+		each(series, function (serie) {
 			if (serie.isDirty) { // prepare the data so axis can read it
 				if (serie.options.legendType === 'point') {
 					redrawLegend = true;
@@ -11022,7 +11042,7 @@ Chart.prototype = {
 				chart.maxTicks = null;
 
 				// set axes scales
-				Highcharts.each(axes, function (axis) {
+				each(axes, function (axis) {
 					axis.setScale();
 				});
 			}
@@ -11032,20 +11052,20 @@ Chart.prototype = {
 
 		if (hasCartesianSeries) {
 			// If one axis is dirty, all axes must be redrawn (#792, #2169)
-			Highcharts.each(axes, function (axis) {
+			each(axes, function (axis) {
 				if (axis.isDirty) {
 					isDirtyBox = true;
 				}
 			});
 
 			// redraw axes
-			Highcharts.each(axes, function (axis) {
+			each(axes, function (axis) {
 				
 				// Fire 'afterSetExtremes' only if extremes are set
 				if (axis.isDirtyExtremes) { // #821
 					axis.isDirtyExtremes = false;
 					afterRedraw.push(function () { // prevent a recursive call to chart.redraw() (#1119)
-						fireEvent(axis, 'afterSetExtremes', Highcharts.extend(axis.eventArgs, axis.getExtremes())); // #747, #751
+						fireEvent(axis, 'afterSetExtremes', extend(axis.eventArgs, axis.getExtremes())); // #747, #751
 						delete axis.eventArgs;
 					});
 				}
@@ -11063,7 +11083,7 @@ Chart.prototype = {
 
 
 		// redraw affected series
-		Highcharts.each(series, function (serie) {
+		each(series, function (serie) {
 			if (serie.isDirty && serie.visible &&
 					(!serie.isCartesian || serie.xAxis)) { // issue #153
 				serie.redraw();
@@ -11086,7 +11106,7 @@ Chart.prototype = {
 		}
 		
 		// Fire callbacks that are put on hold until after the redraw
-		Highcharts.each(afterRedraw, function (callback) {
+		each(afterRedraw, function (callback) {
 			callback.call();
 		});
 	},
@@ -11135,7 +11155,6 @@ Chart.prototype = {
 	 */
 	getAxes: function () {
 		var chart = this,
-			splat = Highcharts.splat,
 			options = this.options,
 			xAxisOptions = options.xAxis = splat(options.xAxis || {}),
 			yAxisOptions = options.yAxis = splat(options.yAxis || {}),
@@ -11143,20 +11162,20 @@ Chart.prototype = {
 			axis;
 
 		// make sure the options are arrays and add some members
-		Highcharts.each(xAxisOptions, function (axis, i) {
+		each(xAxisOptions, function (axis, i) {
 			axis.index = i;
 			axis.isX = true;
 		});
 
-		Highcharts.each(yAxisOptions, function (axis, i) {
+		each(yAxisOptions, function (axis, i) {
 			axis.index = i;
 		});
 
 		// concatenate all axis options into one array
 		optionsArray = xAxisOptions.concat(yAxisOptions);
 
-		Highcharts.each(optionsArray, function (axisOptions) {
-			axis = new Highcharts.Axis(chart, axisOptions);
+		each(optionsArray, function (axisOptions) {
+			axis = new Axis(chart, axisOptions);
 		});
 	},
 
@@ -11166,7 +11185,7 @@ Chart.prototype = {
 	 */
 	getSelectedPoints: function () {
 		var points = [];
-		Highcharts.each(this.series, function (serie) {
+		each(this.series, function (serie) {
 			points = points.concat(HighchartsAdapter.grep(serie.points || [], function (point) {
 				return point.selected;
 			}));
@@ -11190,15 +11209,15 @@ Chart.prototype = {
 		var chart = this;
 
 		// reset stacks for each yAxis
-		Highcharts.each(chart.yAxis, function (axis) {
+		each(chart.yAxis, function (axis) {
 			if (axis.stacks && axis.hasVisibleSeries) {
 				axis.oldStacks = axis.stacks;
 			}
 		});
 
-		Highcharts.each(chart.series, function (series) {
+		each(chart.series, function (series) {
 			if (series.options.stacking && (series.visible === true || chart.options.chart.ignoreHiddenSeries === false)) {
-				series.stackKey = series.type + Highcharts.pick(series.options.stack, '');
+				series.stackKey = series.type + pick(series.options.stack, '');
 			}
 		});
 	},	
@@ -11216,11 +11235,11 @@ Chart.prototype = {
 			chartTitleOptions,
 			chartSubtitleOptions;
 
-		chartTitleOptions = options.title = Highcharts.merge(options.title, titleOptions);
-		chartSubtitleOptions = options.subtitle = Highcharts.merge(options.subtitle, subtitleOptions);
+		chartTitleOptions = options.title = merge(options.title, titleOptions);
+		chartSubtitleOptions = options.subtitle = merge(options.subtitle, subtitleOptions);
 
 		// add title and subtitle
-		Highcharts.each([
+		each([
 			['title', titleOptions, chartTitleOptions],
 			['subtitle', subtitleOptions, chartSubtitleOptions]
 		], function (arr) {
@@ -11269,7 +11288,7 @@ Chart.prototype = {
 		if (title) {
 			title
 				.css({ width: (titleOptions.width || autoWidth) + 'px' })
-				.align(Highcharts.extend({ 
+				.align(extend({ 
 					y: renderer.fontMetrics(titleOptions.style.fontSize, title).b - 3
 				}, titleOptions), false, 'spacingBox');
 			
@@ -11280,7 +11299,7 @@ Chart.prototype = {
 		if (subtitle) {
 			subtitle
 				.css({ width: (subtitleOptions.width || autoWidth) + 'px' })
-				.align(Highcharts.extend({ 
+				.align(extend({ 
 					y: titleOffset + (titleOptions.margin - 13) + renderer.fontMetrics(titleOptions.style.fontSize, subtitle).b 
 				}, subtitleOptions), false, 'spacingBox');
 			
@@ -11295,7 +11314,7 @@ Chart.prototype = {
 		if (!this.isDirtyBox && requiresDirtyBox) {
 			this.isDirtyBox = requiresDirtyBox;
 			// Redraw if necessary (#2719, #2744)		
-			if (this.hasRendered && Highcharts.pick(redraw, true) && this.isDirtyBox) {
+			if (this.hasRendered && pick(redraw, true) && this.isDirtyBox) {
 				this.redraw();
 			}
 		}
@@ -11306,7 +11325,6 @@ Chart.prototype = {
 	 */
 	getChartSize: function () {
 		var chart = this,
-			defined = Highcharts.defined,
 			adapterRun = HighchartsAdapter.adapterRun,
 			optionsChart = chart.options.chart,
 			widthOption = optionsChart.width,
@@ -11322,7 +11340,7 @@ Chart.prototype = {
 		}
 		
 		chart.chartWidth = Math.max(0, widthOption || chart.containerWidth || 600); // #1393, 1460
-		chart.chartHeight = Math.max(0, Highcharts.pick(heightOption,
+		chart.chartHeight = Math.max(0, pick(heightOption,
 			// the offsetHeight of an empty container is 0 in standard browsers, but 19 in IE7:
 			chart.containerHeight > 19 ? chart.containerHeight : 400));
 	},
@@ -11339,7 +11357,7 @@ Chart.prototype = {
 		if (revert) {
 			if (clone) {
 				this.renderTo.appendChild(container);
-				Highcharts.discardElement(clone);
+				H.discardElement(clone);
 				delete this.renderToClone;
 			}
 		
@@ -11349,7 +11367,7 @@ Chart.prototype = {
 				this.renderTo.removeChild(container); // do not clone this
 			}
 			this.renderToClone = clone = this.renderTo.cloneNode(0);
-			Highcharts.css(clone, {
+			css(clone, {
 				position: 'absolute',
 				top: '-9999px',
 				display: 'block' // #833
@@ -11370,8 +11388,6 @@ Chart.prototype = {
 	 */
 	getContainer: function () {
 		var chart = this,
-			attr = Highcharts.attr,
-			charts = Highcharts.charts,
 			container,
 			optionsChart = chart.options.chart,
 			chartWidth,
@@ -11382,22 +11398,22 @@ Chart.prototype = {
 			containerId;
 
 		chart.renderTo = renderTo = optionsChart.renderTo;
-		containerId = 'highcharts-' + Highcharts.idCounter++;
+		containerId = 'highcharts-' + H.idCounter++;
 
-		if (Highcharts.isString(renderTo)) {
+		if (H.isString(renderTo)) {
 			chart.renderTo = renderTo = document.getElementById(renderTo);
 		}
 		
 		// Display an error if the renderTo is wrong
 		if (!renderTo) {
-			Highcharts.error(13, true);
+			error(13, true);
 		}
 		
 		// If the container already holds a chart, destroy it. The check for hasRendered is there
 		// because web pages that are saved to disk from the browser, will preserve the data-highcharts-chart
 		// attribute and the SVG contents, but not an interactive chart. So in this case,
 		// charts[oldChartIndex] will point to the wrong chart if any (#2609).
-		oldChartIndex = Highcharts.pInt(attr(renderTo, indexAttrName));
+		oldChartIndex = pInt(attr(renderTo, indexAttrName));
 		if (!isNaN(oldChartIndex) && charts[oldChartIndex] && charts[oldChartIndex].hasRendered) {
 			charts[oldChartIndex].destroy();
 		}		
@@ -11423,11 +11439,11 @@ Chart.prototype = {
 		chartHeight = chart.chartHeight;
 
 		// create the inner container
-		chart.container = container = Highcharts.createElement('div', {
+		chart.container = container = H.createElement('div', {
 				className: 'highcharts-' + 'container' +
 					(optionsChart.className ? ' ' + optionsChart.className : ''),
 				id: containerId
-			}, Highcharts.extend({
+			}, extend({
 				position: 'relative',
 				overflow: 'hidden', // needed for context menu (avoid scrollbars) and
 					// content overflow in IE
@@ -11447,10 +11463,10 @@ Chart.prototype = {
 		// Initialize the renderer
 		chart.renderer =
 			optionsChart.forExport ? // force SVG, used for SVG export
-				new Highcharts.SVGRenderer(container, chartWidth, chartHeight, optionsChart.style, true) :
-				new Highcharts.Renderer(container, chartWidth, chartHeight, optionsChart.style);
+				new H.SVGRenderer(container, chartWidth, chartHeight, optionsChart.style, true) :
+				new H.Renderer(container, chartWidth, chartHeight, optionsChart.style);
 
-		if (Highcharts.useCanVG) {
+		if (useCanVG) {
 			// If we need canvg library, extend and configure the renderer
 			// to get the tracker for translating mouse events
 			chart.renderer.create(chart, container, chartWidth, chartHeight);
@@ -11473,7 +11489,7 @@ Chart.prototype = {
 		chart.resetMargins();
 
 		// Adjust for title and subtitle
-		if (titleOffset && !Highcharts.defined(margin[0])) {
+		if (titleOffset && !defined(margin[0])) {
 			chart.plotTop = Math.max(chart.plotTop, titleOffset + chart.options.title.margin + spacing[0]);
 		}
 		
@@ -11501,14 +11517,14 @@ Chart.prototype = {
 		
 		// pre-render axes to get labels offset width
 		if (chart.hasCartesianSeries) {
-			Highcharts.each(chart.axes, function (axis) {
+			each(chart.axes, function (axis) {
 				axis.getOffset();
 			});
 		}
 
 		// Add the axis offsets
-		Highcharts.each(marginNames, function (m, side) {
-			if (!Highcharts.defined(margin[side])) {
+		each(marginNames, function (m, side) {
+			if (!defined(margin[side])) {
 				chart[m] += axisOffset[side];
 			}		
 		});
@@ -11556,7 +11572,6 @@ Chart.prototype = {
 	 */
 	initReflow: function () {
 		var chart = this,
-			addEvent = Highcharts.addEvent,
 			reflow = function (e) {
 				chart.reflow(e);
 			};
@@ -11564,7 +11579,7 @@ Chart.prototype = {
 		
 		addEvent(window, 'resize', reflow);
 		addEvent(chart, 'destroy', function () {
-			Highcharts.removeEvent(window, 'resize', reflow);
+			removeEvent(window, 'resize', reflow);
 		});
 	},
 
@@ -11578,7 +11593,6 @@ Chart.prototype = {
 		var chart = this,
 			chartWidth,
 			chartHeight,
-			defined = Highcharts.defined,
 			fireEvent = HighchartsAdapter.fireEvent,
 			fireEndResize;
 
@@ -11593,7 +11607,7 @@ Chart.prototype = {
 		};
 
 		// set the animation for the current process
-		Highcharts.setAnimation(animation, chart);
+		H.setAnimation(animation, chart);
 
 		chart.oldChartHeight = chart.chartHeight;
 		chart.oldChartWidth = chart.chartWidth;
@@ -11606,23 +11620,23 @@ Chart.prototype = {
 		}
 
 		// Resize the container with the global animation applied if enabled (#2503)
-		(Highcharts.globalAnimation ? HighchartsAdapter.animate : Highcharts.css)(chart.container, {
+		(globalAnimation ? HighchartsAdapter.animate : css)(chart.container, {
 			width: chartWidth + 'px',
 			height: chartHeight + 'px'
-		}, Highcharts.globalAnimation);
+		}, globalAnimation);
 
 		chart.setChartSize(true);
 		chart.renderer.setSize(chartWidth, chartHeight, animation);
 
 		// handle axes
 		chart.maxTicks = null;
-		Highcharts.each(chart.axes, function (axis) {
+		each(chart.axes, function (axis) {
 			axis.isDirty = true;
 			axis.setScale();
 		});
 
 		// make sure non-cartesian series are also handled
-		Highcharts.each(chart.series, function (serie) {
+		each(chart.series, function (serie) {
 			serie.isDirty = true;
 		});
 
@@ -11640,10 +11654,10 @@ Chart.prototype = {
 
 		// fire endResize and set isResizing back
 		// If animation is disabled, fire without delay
-		if (Highcharts.globalAnimation === false) {
+		if (globalAnimation === false) {
 			fireEndResize();
 		} else { // else set a timeout with the animation duration
-			setTimeout(fireEndResize, (Highcharts.globalAnimation && Highcharts.globalAnimation.duration) || 500);
+			setTimeout(fireEndResize, (globalAnimation && globalAnimation.duration) || 500);
 		}
 	},
 
@@ -11703,7 +11717,7 @@ Chart.prototype = {
 		};
 
 		if (!skipAxes) {
-			Highcharts.each(chart.axes, function (axis) {
+			each(chart.axes, function (axis) {
 				axis.setAxisSize();
 				axis.setAxisTranslation();
 			});
@@ -11717,8 +11731,8 @@ Chart.prototype = {
 		var chart = this,
 			marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'];
 
-		Highcharts.each(marginNames, function (m, side) {
-			chart[m] = Highcharts.pick(chart.margin[side], chart.spacing[side]);
+		each(marginNames, function (m, side) {
+			chart[m] = pick(chart.margin[side], chart.spacing[side]);
 		});
 		chart.axisOffset = [0, 0, 0, 0]; // top, right, bottom, left
 		chart.clipOffset = [0, 0, 0, 0];
@@ -11841,7 +11855,6 @@ Chart.prototype = {
 	 */
 	propFromSeries: function () {
 		var chart = this,
-			seriesTypes = Highcharts.seriesTypes,
 			optionsChart = chart.options.chart,
 			klass,
 			seriesOptions = chart.options.series,
@@ -11849,7 +11862,7 @@ Chart.prototype = {
 			value;
 			
 			
-		Highcharts.each(['inverted', 'angular', 'polar'], function (key) {
+		each(['inverted', 'angular', 'polar'], function (key) {
 			
 			// The default series type's class
 			klass = seriesTypes[optionsChart.type || optionsChart.defaultSeriesType];
@@ -11885,14 +11898,14 @@ Chart.prototype = {
 			chartSeries = chart.series;
 
 		// Reset links
-		Highcharts.each(chartSeries, function (series) {
+		each(chartSeries, function (series) {
 			series.linkedSeries.length = 0;
 		});
 
 		// Apply new links
-		Highcharts.each(chartSeries, function (series) {
+		each(chartSeries, function (series) {
 			var linkedTo = series.options.linkedTo;
-			if (Highcharts.isString(linkedTo)) {
+			if (H.isString(linkedTo)) {
 				if (linkedTo === ':previous') {
 					linkedTo = chart.series[series.index - 1];
 				} else {
@@ -11910,7 +11923,7 @@ Chart.prototype = {
 	 * Render series for the chart
 	 */
 	renderSeries: function () {
-		Highcharts.each(this.series, function (serie) {
+		each(this.series, function (serie) {
 			serie.translate();
 			serie.render();
 		});
@@ -11921,11 +11934,10 @@ Chart.prototype = {
 	 */
 	renderLabels: function () {
 		var chart = this,
-			pInt = Highcharts.pInt,
 			labels = chart.options.labels;
 		if (labels.items) {
-			Highcharts.each(labels.items, function (label) {
-				var style = Highcharts.extend(labels.style, label.style),
+			each(labels.items, function (label) {
+				var style = extend(labels.style, label.style),
 					x = pInt(style.left) + chart.plotLeft,
 					y = pInt(style.top) + chart.plotTop + 12;
 
@@ -11964,7 +11976,7 @@ Chart.prototype = {
 
 
 		// Legend
-		chart.legend = new Highcharts.Legend(chart, options.legend);
+		chart.legend = new Legend(chart, options.legend);
 
 		chart.getStacks(); // render stacks
 
@@ -11977,7 +11989,7 @@ Chart.prototype = {
 		tempHeight = chart.plotHeight = chart.plotHeight - 13; // 13 is the most common height of X axis labels
 
 		// Get margins by pre-rendering axes
-		Highcharts.each(axes, function (axis) {
+		each(axes, function (axis) {
 			axis.setScale();
 		});
 		chart.getAxisMargins();
@@ -11989,7 +12001,7 @@ Chart.prototype = {
 		if (redoHorizontal || redoVertical) {
 
 			chart.maxTicks = null; // reset for second pass
-			Highcharts.each(axes, function (axis) {
+			each(axes, function (axis) {
 				if ((axis.horiz && redoHorizontal) || (!axis.horiz && redoVertical)) {
 					axis.setTickInterval(true); // update to reflect the new margins
 				}
@@ -12003,7 +12015,7 @@ Chart.prototype = {
 
 		// Axes
 		if (chart.hasCartesianSeries) {
-			Highcharts.each(axes, function (axis) {
+			each(axes, function (axis) {
 				axis.render();
 			});
 		}
@@ -12057,8 +12069,6 @@ Chart.prototype = {
 	 */
 	destroy: function () {
 		var chart = this,
-			charts = Highcharts.charts,
-			removeEvent = Highcharts.removeEvent,
 			axes = chart.axes,
 			series = chart.series,
 			container = chart.container,
@@ -12070,7 +12080,7 @@ Chart.prototype = {
 		
 		// Delete the chart from charts lookup array
 		charts[chart.index] = undefined;
-		Highcharts.chartCount--;
+		chartCount--;
 		chart.renderTo.removeAttribute('data-highcharts-chart');
 
 		// remove events
@@ -12090,7 +12100,7 @@ Chart.prototype = {
 		}
 
 		// ==== Destroy chart properties:
-		Highcharts.each(['title', 'subtitle', 'chartBackground', 'plotBackground', 'plotBGImage', 
+		each(['title', 'subtitle', 'chartBackground', 'plotBackground', 'plotBGImage', 
 				'plotBorder', 'seriesGroup', 'clipRect', 'credits', 'pointer', 'scroller', 
 				'rangeSelector', 'legend', 'resetZoomButton', 'tooltip', 'renderer'], function (name) {
 			var prop = chart[name];
@@ -12105,7 +12115,7 @@ Chart.prototype = {
 			container.innerHTML = '';
 			removeEvent(container);
 			if (parentNode) {
-				Highcharts.discardElement(container);
+				H.discardElement(container);
 			}
 
 		}
@@ -12127,11 +12137,11 @@ Chart.prototype = {
 
 		// Note: in spite of JSLint's complaints, window == window.top is required
 		/*jslint eqeq: true*/
-		if ((!Highcharts.svg && (window == window.top && document.readyState !== 'complete')) || (Highcharts.useCanVG && !window.canvg)) {
+		if ((!H.svg && (window == window.top && document.readyState !== 'complete')) || (useCanVG && !window.canvg)) {
 		/*jslint eqeq: false*/
-			if (Highcharts.useCanVG) {
+			if (useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready
-				Highcharts.CanVGController.push(function () { chart.firstRender(); }, chart.options.global.canvasToolsURL);
+				H.CanVGController.push(function () { chart.firstRender(); }, chart.options.global.canvasToolsURL);
 			} else {
 				document.attachEvent('onreadystatechange', function () {
 					document.detachEvent('onreadystatechange', chart.firstRender);
@@ -12176,7 +12186,7 @@ Chart.prototype = {
 		chart.getAxes();
 
 		// Initialize the series
-		Highcharts.each(options.series || [], function (serieOptions) {
+		each(options.series || [], function (serieOptions) {
 			chart.initSeries(serieOptions);
 		});
 
@@ -12188,8 +12198,8 @@ Chart.prototype = {
 		fireEvent(chart, 'beforeRender'); 
 
 		// depends on inverted and on margins being set
-		if (Highcharts.Pointer) {
-			chart.pointer = new Highcharts.Pointer(chart, options);
+		if (Pointer) {
+			chart.pointer = new Pointer(chart, options);
 		}
 
 		chart.render();
@@ -12200,7 +12210,7 @@ Chart.prototype = {
 		if (callback) {
 			callback.apply(chart, [chart]);
 		}
-		Highcharts.each(chart.callbacks, function (fn) {
+		each(chart.callbacks, function (fn) {
 			if (chart.index !== undefined) { // Chart destroyed in its own callback (#3600)
 				fn.apply(chart, [chart]);
 			}
@@ -12219,8 +12229,7 @@ Chart.prototype = {
 	*/
 	splashArray: function (target, options) {
 		var oVar = options[target],
-			pick = Highcharts.pick,
-			tArray = Highcharts.isObject(oVar) ? oVar : [oVar, oVar, oVar, oVar];
+			tArray = H.isObject(oVar) ? oVar : [oVar, oVar, oVar, oVar];
 
 		return [pick(options[target + 'Top'], tArray[0]),
 				pick(options[target + 'Right'], tArray[1]),
@@ -12228,6 +12237,9 @@ Chart.prototype = {
 				pick(options[target + 'Left'], tArray[3])];
 	}
 }; // end Chart
+
+	return H;
+}(Highcharts));
 /**
  * The Point object and prototype. Inheritable and used as base for PiePoint
  */
@@ -14346,7 +14358,7 @@ Series.prototype = {
 }; // end Series prototype
 
 // Extend the Chart prototype for dynamic methods
-Highcharts.extend(Chart.prototype, {
+Highcharts.extend(Highcharts.Chart.prototype, {
 
 	/**
 	 * Add a series dynamically after  time
@@ -16678,7 +16690,7 @@ Highcharts.each(['fill', 'stroke'], function (prop) {
 /**
  * Extend the chart getAxes method to also get the color axis
  */
-Highcharts.wrap(Chart.prototype, 'getAxes', function (proceed) {
+Highcharts.wrap(Highcharts.Chart.prototype, 'getAxes', function (proceed) {
 
 	var options = this.options,
 		colorAxisOptions = options.colorAxis;
@@ -17584,7 +17596,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 
 }(Highcharts));
 // Add events to the Chart object itself
-Highcharts.extend(Chart.prototype, {
+Highcharts.extend(Highcharts.Chart.prototype, {
 	renderMapNavigation: function () {
 		var chart = this,
 			options = this.options.mapNavigation,
@@ -17738,7 +17750,7 @@ Highcharts.extend(Chart.prototype, {
 /**
  * Extend the Chart.render method to add zooming and panning
  */
-Highcharts.wrap(Chart.prototype, 'render', function (proceed) {
+Highcharts.wrap(Highcharts.Chart.prototype, 'render', function (proceed) {
 	var chart = this,
 		pick = Highcharts.pick,
 		addEvent = Highcharts.addEvent,
@@ -18268,7 +18280,7 @@ function pointInPolygon(point, polygon) {
 /**
  * Get point from latLon using specified transform definition
  */
-Chart.prototype.transformFromLatLon = function (latLon, transform) {
+Highcharts.Chart.prototype.transformFromLatLon = function (latLon, transform) {
 	if (window.proj4 === undefined) {
 		Highcharts.error(21);
 		return {
@@ -18291,7 +18303,7 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
 /**
  * Get latLon from point using specified transform definition
  */
-Chart.prototype.transformToLatLon = function (point, transform) {
+Highcharts.Chart.prototype.transformToLatLon = function (point, transform) {
 	if (window.proj4 === undefined) {
 		Highcharts.error(21);
 		return;
@@ -18312,7 +18324,7 @@ Chart.prototype.transformToLatLon = function (point, transform) {
 	return {lat: projected.y, lon: projected.x};
 };
 
-Chart.prototype.fromPointToLatLon = function (point) {
+Highcharts.Chart.prototype.fromPointToLatLon = function (point) {
 	var transforms = this.mapTransforms,
 		transform;
 
@@ -18330,7 +18342,7 @@ Chart.prototype.fromPointToLatLon = function (point) {
 	return this.transformToLatLon(point, transforms['default']);
 };
 
-Chart.prototype.fromLatLonToPoint = function (latLon) {
+Highcharts.Chart.prototype.fromLatLonToPoint = function (latLon) {
 	var transforms = this.mapTransforms,
 		transform,
 		coords;
@@ -18443,7 +18455,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 /**
  * Override showCredits to include map source by default
  */
-Highcharts.wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
+Highcharts.wrap(Highcharts.Chart.prototype, 'showCredits', function (proceed, credits) {
 
 	if (Highcharts.defaultOptions.credits.text === this.options.credits.text && this.mapCredits) { // default text and mapCredits is set
 		credits.text = this.mapCredits;
@@ -18629,7 +18641,7 @@ Highcharts.Map = function (options, callback) {
 	options.series = seriesOptions;
 
 
-	return new Chart(options, callback);
+	return new Highcharts.Chart(options, callback);
 };
 
 /**
@@ -18976,7 +18988,7 @@ Highcharts.defaultOptions.legend.itemStyle.cursor = 'pointer';
  * Extend the Chart object with interaction
  */
 
-Highcharts.extend(Chart.prototype, {
+Highcharts.extend(Highcharts.Chart.prototype, {
 	/**
 	 * Display the zoom button
 	 */

@@ -170,5 +170,5 @@ Highcharts.Map = function (options, callback) {
 	options.series = seriesOptions;
 
 
-	return new Chart(options, callback);
+	return new Highcharts.Chart(options, callback);
 };

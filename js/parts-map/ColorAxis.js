@@ -440,7 +440,7 @@ Highcharts.each(['fill', 'stroke'], function (prop) {
 /**
  * Extend the chart getAxes method to also get the color axis
  */
-Highcharts.wrap(Chart.prototype, 'getAxes', function (proceed) {
+Highcharts.wrap(Highcharts.Chart.prototype, 'getAxes', function (proceed) {
 
 	var options = this.options,
 		colorAxisOptions = options.colorAxis;

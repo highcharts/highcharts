@@ -11,8 +11,7 @@
 (function (Highcharts) {
 
 
-var Chart = Highcharts.Chart,
-	Point = Highcharts.Point,
+var Point = Highcharts.Point,
 	Series = Highcharts.Series;/**
  * Override to use the extreme coordinates from the SVG shape, not the
  * data values
@@ -551,7 +550,7 @@ Highcharts.each(['fill', 'stroke'], function (prop) {
 /**
  * Extend the chart getAxes method to also get the color axis
  */
-Highcharts.wrap(Chart.prototype, 'getAxes', function (proceed) {
+Highcharts.wrap(Highcharts.Chart.prototype, 'getAxes', function (proceed) {
 
 	var options = this.options,
 		colorAxisOptions = options.colorAxis;
@@ -632,7 +631,7 @@ var colorSeriesMixin = {
 	}
 };
 // Add events to the Chart object itself
-Highcharts.extend(Chart.prototype, {
+Highcharts.extend(Highcharts.Chart.prototype, {
 	renderMapNavigation: function () {
 		var chart = this,
 			options = this.options.mapNavigation,
@@ -786,7 +785,7 @@ Highcharts.extend(Chart.prototype, {
 /**
  * Extend the Chart.render method to add zooming and panning
  */
-Highcharts.wrap(Chart.prototype, 'render', function (proceed) {
+Highcharts.wrap(Highcharts.Chart.prototype, 'render', function (proceed) {
 	var chart = this,
 		pick = Highcharts.pick,
 		addEvent = Highcharts.addEvent,
@@ -1835,7 +1834,7 @@ function pointInPolygon(point, polygon) {
 /**
  * Get point from latLon using specified transform definition
  */
-Chart.prototype.transformFromLatLon = function (latLon, transform) {
+Highcharts.Chart.prototype.transformFromLatLon = function (latLon, transform) {
 	if (window.proj4 === undefined) {
 		Highcharts.error(21);
 		return {
@@ -1858,7 +1857,7 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
 /**
  * Get latLon from point using specified transform definition
  */
-Chart.prototype.transformToLatLon = function (point, transform) {
+Highcharts.Chart.prototype.transformToLatLon = function (point, transform) {
 	if (window.proj4 === undefined) {
 		Highcharts.error(21);
 		return;
@@ -1879,7 +1878,7 @@ Chart.prototype.transformToLatLon = function (point, transform) {
 	return {lat: projected.y, lon: projected.x};
 };
 
-Chart.prototype.fromPointToLatLon = function (point) {
+Highcharts.Chart.prototype.fromPointToLatLon = function (point) {
 	var transforms = this.mapTransforms,
 		transform;
 
@@ -1897,7 +1896,7 @@ Chart.prototype.fromPointToLatLon = function (point) {
 	return this.transformToLatLon(point, transforms['default']);
 };
 
-Chart.prototype.fromLatLonToPoint = function (latLon) {
+Highcharts.Chart.prototype.fromLatLonToPoint = function (latLon) {
 	var transforms = this.mapTransforms,
 		transform,
 		coords;
@@ -2010,7 +2009,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 /**
  * Override showCredits to include map source by default
  */
-Highcharts.wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
+Highcharts.wrap(Highcharts.Chart.prototype, 'showCredits', function (proceed, credits) {
 
 	if (Highcharts.defaultOptions.credits.text === this.options.credits.text && this.mapCredits) { // default text and mapCredits is set
 		credits.text = this.mapCredits;
@@ -2196,7 +2195,7 @@ Highcharts.Map = function (options, callback) {
 	options.series = seriesOptions;
 
 
-	return new Chart(options, callback);
+	return new Highcharts.Chart(options, callback);
 };
 
 }(Highcharts));

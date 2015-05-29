@@ -21,7 +21,7 @@ function pointInPolygon(point, polygon) {
 /**
  * Get point from latLon using specified transform definition
  */
-Chart.prototype.transformFromLatLon = function (latLon, transform) {
+Highcharts.Chart.prototype.transformFromLatLon = function (latLon, transform) {
 	if (window.proj4 === undefined) {
 		Highcharts.error(21);
 		return {
@@ -44,7 +44,7 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
 /**
  * Get latLon from point using specified transform definition
  */
-Chart.prototype.transformToLatLon = function (point, transform) {
+Highcharts.Chart.prototype.transformToLatLon = function (point, transform) {
 	if (window.proj4 === undefined) {
 		Highcharts.error(21);
 		return;
@@ -65,7 +65,7 @@ Chart.prototype.transformToLatLon = function (point, transform) {
 	return {lat: projected.y, lon: projected.x};
 };
 
-Chart.prototype.fromPointToLatLon = function (point) {
+Highcharts.Chart.prototype.fromPointToLatLon = function (point) {
 	var transforms = this.mapTransforms,
 		transform;
 
@@ -83,7 +83,7 @@ Chart.prototype.fromPointToLatLon = function (point) {
 	return this.transformToLatLon(point, transforms['default']);
 };
 
-Chart.prototype.fromLatLonToPoint = function (latLon) {
+Highcharts.Chart.prototype.fromLatLonToPoint = function (latLon) {
 	var transforms = this.mapTransforms,
 		transform,
 		coords;
@@ -196,7 +196,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 /**
  * Override showCredits to include map source by default
  */
-Highcharts.wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
+Highcharts.wrap(Highcharts.Chart.prototype, 'showCredits', function (proceed, credits) {
 
 	if (Highcharts.defaultOptions.credits.text === this.options.credits.text && this.mapCredits) { // default text and mapCredits is set
 		credits.text = this.mapCredits;
