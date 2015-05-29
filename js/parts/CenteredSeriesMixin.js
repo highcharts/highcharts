@@ -1,5 +1,7 @@
-
-var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
+(function (H) {
+	var pInt = H.pInt,
+		pick = H.pick;
+H.CenteredSeriesMixin = {
 	/**
 	 * Get the center of the pie based on the size and center options relative to the  
 	 * plot area. Borrowed by the polar and gauge series types.
@@ -8,8 +10,6 @@ var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
 		
 		var options = this.options,
 			chart = this.chart,
-			pInt = Highcharts.pInt,
-			pick = Highcharts.pick,
 			slicingRoom = 2 * (options.slicedOffset || 0),
 			handleSlicingRoom,
 			plotWidth = chart.plotWidth - 2 * slicingRoom,
@@ -38,3 +38,5 @@ var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
 	}
 };
 
+	return H;
+}(Highcharts));

@@ -14,7 +14,6 @@
 
 (function (Highcharts) {
 var Point = Highcharts.Point,
-	CenteredSeriesMixin = Highcharts.CenteredSeriesMixin,
 	TrackerMixin = Highcharts.TrackerMixin,
 	Series = Highcharts.Series;
 /**
@@ -209,7 +208,7 @@ var radialAxisMixin = {
 		this.chart.axisOffset[this.side] = 0;
 		
 		// Set the center array
-		this.center = this.pane.center = CenteredSeriesMixin.getCenter.call(this.pane);
+		this.center = this.pane.center = Highcharts.CenteredSeriesMixin.getCenter.call(this.pane);
 	},
 
 

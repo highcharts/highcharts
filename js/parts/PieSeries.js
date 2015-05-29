@@ -473,7 +473,7 @@ var PieSeries = {
 	/**
 	 * Use the getCenter method from drawLegendSymbol
 	 */
-	getCenter: CenteredSeriesMixin.getCenter,
+	getCenter: Highcharts.CenteredSeriesMixin.getCenter,
 
 	/**
 	 * Pies don't have point marker symbols
