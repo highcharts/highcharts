@@ -1,10 +1,14 @@
+(function (H) {
+	var Axis = H.Axis,
+		correctFloat = H.correctFloat,
+		pick = H.pick,
+		Series = H.Series;
 /**
  * The class for stack items
  */
 function StackItem(axis, options, isNegative, x, stackOption) {
 	
-	var inverted = axis.chart.inverted,
-		pick = Highcharts.pick;
+	var inverted = axis.chart.inverted;
 
 	this.axis = axis;
 
@@ -41,7 +45,7 @@ function StackItem(axis, options, isNegative, x, stackOption) {
 
 StackItem.prototype = {
 	destroy: function () {
-		Highcharts.destroyObjectProperties(this, this.axis);
+		H.destroyObjectProperties(this, this.axis);
 	},
 
 	/**
@@ -51,7 +55,7 @@ StackItem.prototype = {
 		var options = this.options,
 			formatOption = options.format,
 			str = formatOption ?
-				Highcharts.format(formatOption, this) : 
+				H.format(formatOption, this) : 
 				options.formatter.call(this);  // format the text in the label
 
 		// Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
@@ -111,9 +115,9 @@ StackItem.prototype = {
 /**
  * Build the stacks from top down
  */
-Highcharts.Axis.prototype.buildStacks = function () {
+Axis.prototype.buildStacks = function () {
 	var series = this.series,
-		reversedStacks = Highcharts.pick(this.options.reversedStacks, true),
+		reversedStacks = pick(this.options.reversedStacks, true),
 		i = series.length;
 	if (!this.isXAxis) {
 		this.usePercentage = false;
@@ -129,7 +133,7 @@ Highcharts.Axis.prototype.buildStacks = function () {
 	}
 };
 
-Highcharts.Axis.prototype.renderStackTotals = function () {
+Axis.prototype.renderStackTotals = function () {
 	var axis = this,
 		chart = axis.chart,
 		renderer = chart.renderer,
@@ -169,13 +173,12 @@ Highcharts.Axis.prototype.renderStackTotals = function () {
 /**
  * Adds series' points value to corresponding stack
  */
-Highcharts.Series.prototype.setStackedPoints = function () {
+Series.prototype.setStackedPoints = function () {
 	if (!this.options.stacking || (this.visible !== true && this.chart.options.chart.ignoreHiddenSeries !== false)) {
 		return;
 	}
 
 	var series = this,
-		pick = Highcharts.pick,
 		xData = series.processedXData,
 		yData = series.processedYData,
 		stackedYData = [],
@@ -191,7 +194,6 @@ Highcharts.Series.prototype.setStackedPoints = function () {
 		yAxis = series.yAxis,
 		stacks = yAxis.stacks,
 		oldStacks = yAxis.oldStacks,
-		correctFloat = Highcharts.correctFloat,
 		isNegative,
 		stack,
 		other,
@@ -271,14 +273,13 @@ Highcharts.Series.prototype.setStackedPoints = function () {
 /**
  * Iterate over all stacks and compute the absolute values to percent
  */
-Highcharts.Series.prototype.setPercentStacks = function () {
+Series.prototype.setPercentStacks = function () {
 	var series = this,
 		stackKey = series.stackKey,
 		stacks = series.yAxis.stacks,
-		correctFloat = Highcharts.correctFloat,
 		processedXData = series.processedXData;
 
-	Highcharts.each([stackKey, '-' + stackKey], function (key) {
+	H.each([stackKey, '-' + stackKey], function (key) {
 		var i = processedXData.length,
 			x,
 			stack,
@@ -299,3 +300,5 @@ Highcharts.Series.prototype.setPercentStacks = function () {
 	});
 };
 
+	return H;
+}(Highcharts));
