@@ -162,7 +162,7 @@ if (Highcharts.seriesTypes.pie) {
 }
 
 if (Highcharts.seriesTypes.scatter) {
-	ScatterSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
+	Highcharts.seriesTypes.scatter.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
 /* 

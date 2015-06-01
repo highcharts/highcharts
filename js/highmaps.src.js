@@ -15327,10 +15327,13 @@ H.seriesTypes.column = ColumnSeries;
 
 	return H;
 }(Highcharts));
+(function (H) {
+	var ScatterSeries,
+		Series = H.Series;
 /**
  * Set the default options for scatter
  */
-Highcharts.defaultPlotOptions.scatter = Highcharts.merge(Highcharts.defaultSeriesOptions, {
+H.defaultPlotOptions.scatter = H.merge(H.defaultSeriesOptions, {
 	lineWidth: 0,
 	marker: {
 		enabled: true // Overrides auto-enabling in line series (#3647)
@@ -15344,7 +15347,7 @@ Highcharts.defaultPlotOptions.scatter = Highcharts.merge(Highcharts.defaultSerie
 /**
  * The scatter series class
  */
-var ScatterSeries = Highcharts.extendClass(Highcharts.Series, {
+ScatterSeries = H.extendClass(Series, {
 	type: 'scatter',
 	sorted: false,
 	requireSorting: false,
@@ -15354,13 +15357,15 @@ var ScatterSeries = Highcharts.extendClass(Highcharts.Series, {
 	kdDimensions: 2,
 	drawGraph: function () {
 		if (this.options.lineWidth) {
-			Highcharts.Series.prototype.drawGraph.call(this);
+			Series.prototype.drawGraph.call(this);
 		}
 	}
 });
 
-Highcharts.seriesTypes.scatter = ScatterSeries;
+H.seriesTypes.scatter = ScatterSeries;
 
+	return H;
+}(Highcharts));
 /**
  * Draw the data labels
  */
@@ -19014,7 +19019,7 @@ if (Highcharts.seriesTypes.pie) {
 }
 
 if (Highcharts.seriesTypes.scatter) {
-	ScatterSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
+	Highcharts.seriesTypes.scatter.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
 /* 
