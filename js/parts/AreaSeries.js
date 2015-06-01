@@ -1,7 +1,14 @@
+(function (H) {
+	var AreaSeries,
+		Color = H.Color,
+		each = H.each,
+		LegendSymbolMixin = H.LegendSymbolMixin,
+		pick = H.pick,
+		Series = H.Series;
 /**
  * Set the default options for area
  */
-Highcharts.defaultPlotOptions.area = Highcharts.merge(Highcharts.defaultSeriesOptions, {
+H.defaultPlotOptions.area = H.merge(H.defaultSeriesOptions, {
 	threshold: 0
 	// trackByArea: false,
 	// lineColor: null, // overrides color, but lets fillColor be unaltered
@@ -12,7 +19,7 @@ Highcharts.defaultPlotOptions.area = Highcharts.merge(Highcharts.defaultSeriesOp
 /**
  * AreaSeries object
  */
-var AreaSeries = Highcharts.extendClass(Highcharts.Series, {
+AreaSeries = H.extendClass(Series, {
 	type: 'area',
 	/**
 	 * For stacks, don't split segments on null values. Instead, draw null values with 
@@ -51,7 +58,7 @@ var AreaSeries = Highcharts.extendClass(Highcharts.Series, {
 				return a - b;
 			});
 
-			Highcharts.each(keys, function (x) {
+			each(keys, function (x) {
 				var y = 0,
 					stackPoint;
 
@@ -85,7 +92,7 @@ var AreaSeries = Highcharts.extendClass(Highcharts.Series, {
 						clientX: plotX, 
 						plotY: plotY, 
 						yBottom: plotY,
-						onMouseOver: Highcharts.noop
+						onMouseOver: H.noop
 					});
 				}
 			});
@@ -95,7 +102,7 @@ var AreaSeries = Highcharts.extendClass(Highcharts.Series, {
 			}
 
 		} else {
-			Highcharts.Series.prototype.getSegments.call(this);
+			Series.prototype.getSegments.call(this);
 			segments = this.segments;
 		}
 
@@ -108,7 +115,7 @@ var AreaSeries = Highcharts.extendClass(Highcharts.Series, {
 	 */
 	getSegmentPath: function (segment) {
 		
-		var segmentPath = Highcharts.Series.prototype.getSegmentPath.call(this, segment), // call base method
+		var segmentPath = Series.prototype.getSegmentPath.call(this, segment), // call base method
 			areaSegmentPath = [].concat(segmentPath), // work on a copy for the area path
 			i,
 			options = this.options,
@@ -126,7 +133,7 @@ var AreaSeries = Highcharts.extendClass(Highcharts.Series, {
 			// splines and with series with different extremes
 			for (i = segment.length - 1; i >= 0; i--) {
 
-				yBottom = Highcharts.pick(segment[i].yBottom, translatedThreshold);
+				yBottom = pick(segment[i].yBottom, translatedThreshold);
 			
 				// step line?
 				if (i < segment.length - 1 && options.step) {
@@ -169,20 +176,19 @@ var AreaSeries = Highcharts.extendClass(Highcharts.Series, {
 		this.areaPath = [];
 		
 		// Call the base method
-		Highcharts.Series.prototype.drawGraph.apply(this);
+		Series.prototype.drawGraph.apply(this);
 		
 		// Define local variables
 		var series = this,
 			areaPath = this.areaPath,
 			options = this.options,
 			zones = this.zones,
-			pick = Highcharts.pick,
 			props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
 		
-		Highcharts.each(zones, function (threshold, i) {
+		each(zones, function (threshold, i) {
 			props.push(['zoneArea' + i, threshold.color || series.color, threshold.fillColor || options.fillColor]);
 		});
-		Highcharts.each(props, function (prop) {
+		each(props, function (prop) {
 			var areaKey = prop[0],
 				area = series[areaKey];
 				
@@ -195,7 +201,7 @@ var AreaSeries = Highcharts.extendClass(Highcharts.Series, {
 					.attr({
 						fill: pick(
 							prop[2],
-							Highcharts.Color(prop[1]).setOpacity(pick(options.fillOpacity, 0.75)).get()
+							Color(prop[1]).setOpacity(pick(options.fillOpacity, 0.75)).get()
 						),
 						zIndex: 0 // #1069
 					}).add(series.group);
@@ -203,7 +209,10 @@ var AreaSeries = Highcharts.extendClass(Highcharts.Series, {
 		});
 	},
 
-	drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle
+	drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
 
-Highcharts.seriesTypes.area = AreaSeries;
+H.seriesTypes.area = AreaSeries;
+
+	return H;
+}(Highcharts));
