@@ -5,7 +5,7 @@ Highcharts.defaultPlotOptions.bar = Highcharts.merge(Highcharts.defaultPlotOptio
 /**
  * The Bar series class
  */
-var BarSeries = Highcharts.extendClass(ColumnSeries, {
+var BarSeries = Highcharts.extendClass(Highcharts.seriesTypes.column, {
 	type: 'bar',
 	inverted: true
 });

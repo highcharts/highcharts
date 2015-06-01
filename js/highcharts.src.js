@@ -16163,10 +16163,16 @@ H.seriesTypes.areaspline = AreaSplineSeries;
 
 	return H;
 }(Highcharts));
+(function (H) {
+	var ColumnSeries,
+		defined = H.defined,
+		LegendSymbolMixin = H.LegendSymbolMixin,
+		pick = H.pick,
+		Series = H.Series;
 /**
  * Set the default options for column
  */
-Highcharts.defaultPlotOptions.column = Highcharts.merge(Highcharts.defaultSeriesOptions, {
+H.defaultPlotOptions.column = H.merge(H.defaultSeriesOptions, {
 	borderColor: '#FFFFFF',
 	//borderWidth: 1,
 	borderRadius: 0,
@@ -16207,7 +16213,7 @@ Highcharts.defaultPlotOptions.column = Highcharts.merge(Highcharts.defaultSeries
 /**
  * ColumnSeries object
  */
-var ColumnSeries = Highcharts.extendClass(Highcharts.Series, {
+ColumnSeries = H.extendClass(Series, {
 	type: 'column',
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
@@ -16224,7 +16230,7 @@ var ColumnSeries = Highcharts.extendClass(Highcharts.Series, {
 	 * Initialize the series
 	 */
 	init: function () {
-		Highcharts.Series.prototype.init.apply(this, arguments);
+		Series.prototype.init.apply(this, arguments);
 
 		var series = this,
 			chart = series.chart;
@@ -16232,7 +16238,7 @@ var ColumnSeries = Highcharts.extendClass(Highcharts.Series, {
 		// if the series is added dynamically, force redraw of other
 		// series affected by a new column
 		if (chart.hasRendered) {
-			Highcharts.each(chart.series, function (otherSeries) {
+			each(chart.series, function (otherSeries) {
 				if (otherSeries.type === series.type) {
 					otherSeries.isDirty = true;
 				}
@@ -16262,7 +16268,7 @@ var ColumnSeries = Highcharts.extendClass(Highcharts.Series, {
 		if (options.grouping === false) {
 			columnCount = 1;
 		} else {
-			Highcharts.each(series.chart.series, function (otherSeries) {
+			each(series.chart.series, function (otherSeries) {
 				var otherOptions = otherSeries.options,
 					otherYAxis = otherSeries.yAxis;
 				if (otherSeries.type === series.type && otherSeries.visible &&
@@ -16289,9 +16295,9 @@ var ColumnSeries = Highcharts.extendClass(Highcharts.Series, {
 			groupWidth = categoryWidth - 2 * groupPadding,
 			pointOffsetWidth = groupWidth / columnCount,
 			optionPointWidth = options.pointWidth,
-			pointPadding = Highcharts.defined(optionPointWidth) ? (pointOffsetWidth - optionPointWidth) / 2 :
+			pointPadding = defined(optionPointWidth) ? (pointOffsetWidth - optionPointWidth) / 2 :
 				pointOffsetWidth * options.pointPadding,
-			pointWidth = Highcharts.pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding), // exact point width, used in polar charts
+			pointWidth = pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding), // exact point width, used in polar charts
 			colIndex = (reversedXAxis ? 
 				columnCount - (series.columnIndex || 0) : // #1251
 				series.columnIndex) || 0,
@@ -16313,7 +16319,6 @@ var ColumnSeries = Highcharts.extendClass(Highcharts.Series, {
 	translate: function () {
 		var series = this,
 			chart = series.chart,
-			pick = Highcharts.pick,
 			options = series.options,
 			borderWidth = series.borderWidth = pick(
 				options.borderWidth, 
@@ -16344,10 +16349,10 @@ var ColumnSeries = Highcharts.extendClass(Highcharts.Series, {
 			seriesBarW = Math.ceil(seriesBarW);
 		}
 
-		Highcharts.Series.prototype.translate.apply(series);
+		Series.prototype.translate.apply(series);
 
 		// Record the new values
-		Highcharts.each(series.points, function (point) {
+		each(series.points, function (point) {
 			var yBottom = pick(point.yBottom, translatedThreshold),
 				plotY = Math.min(Math.max(-999 - yBottom, point.plotY), yAxis.len + 999 + yBottom), // Don't draw too far outside plot area (#1303, #2241)
 				barX = point.plotX + pointXOffset,
@@ -16409,18 +16414,18 @@ var ColumnSeries = Highcharts.extendClass(Highcharts.Series, {
 
 	},
 
-	getSymbol: Highcharts.noop,
+	getSymbol: H.noop,
 	
 	/**
 	 * Use a solid rectangle like the area series types
 	 */
-	drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle,
+	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 	
 	
 	/**
 	 * Columns have no graph
 	 */
-	drawGraph: Highcharts.noop,
+	drawGraph: H.noop,
 
 	/**
 	 * Draw the columns. For bars, the series.group is rotated, so the same coordinates
@@ -16437,7 +16442,7 @@ var ColumnSeries = Highcharts.extendClass(Highcharts.Series, {
 			pointAttr;
 
 		// draw the columns
-		Highcharts.each(series.points, function (point) {
+		each(series.points, function (point) {
 			var plotY = point.plotY,
 				graphic = point.graphic,
 				borderAttr;
@@ -16445,7 +16450,7 @@ var ColumnSeries = Highcharts.extendClass(Highcharts.Series, {
 			if (plotY !== undefined && !isNaN(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
 
-				borderAttr = Highcharts.defined(series.borderWidth) ? {
+				borderAttr = defined(series.borderWidth) ? {
 					'stroke-width': series.borderWidth
 				} : {};
 
@@ -16453,7 +16458,7 @@ var ColumnSeries = Highcharts.extendClass(Highcharts.Series, {
 				
 				if (graphic) { // update
 					HighchartsAdapter.stop(graphic);
-					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](Highcharts.merge(shapeArgs));
+					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](H.merge(shapeArgs));
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
@@ -16481,7 +16486,7 @@ var ColumnSeries = Highcharts.extendClass(Highcharts.Series, {
 			attr = {},
 			translatedThreshold;
 
-		if (Highcharts.svg) { // VML is too slow anyway
+		if (H.svg) { // VML is too slow anyway
 			if (init) {
 				attr.scaleY = 0.001;
 				translatedThreshold = Math.min(yAxis.pos + yAxis.len, Math.max(yAxis.pos, yAxis.toPixels(options.threshold)));
@@ -16514,17 +16519,20 @@ var ColumnSeries = Highcharts.extendClass(Highcharts.Series, {
 		// column and bar series affects other series of the same type
 		// as they are either stacked or grouped
 		if (chart.hasRendered) {
-			Highcharts.each(chart.series, function (otherSeries) {
+			each(chart.series, function (otherSeries) {
 				if (otherSeries.type === series.type) {
 					otherSeries.isDirty = true;
 				}
 			});
 		}
 
-		Highcharts.Series.prototype.remove.apply(series, arguments);
+		Series.prototype.remove.apply(series, arguments);
 	}
 });
-Highcharts.seriesTypes.column = ColumnSeries;
+H.seriesTypes.column = ColumnSeries;
+
+	return H;
+}(Highcharts));
 /**
  * Set the default options for bar
  */
