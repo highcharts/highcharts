@@ -237,7 +237,7 @@ var GaugeSeries = {
 	/**
 	 * If the tracking module is loaded, add the point tracker
 	 */
-	drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint
+	drawTracker: Highcharts.TrackerMixin && Highcharts.TrackerMixin.drawTrackerPoint
 };
 Highcharts.seriesTypes.gauge = Highcharts.extendClass(Highcharts.seriesTypes.line, GaugeSeries);
 

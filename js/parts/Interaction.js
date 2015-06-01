@@ -1,8 +1,17 @@
+(function (H) {
+	var Chart = H.Chart,
+		Color = H.Color,
+		each = H.each,
+		Legend = H.Legend,
+		Point = H.Point,
+		Series = H.Series,
+		seriesTypes = H.seriesTypes,
+		TrackerMixin;
 /**
  * TrackerMixin for points and graphs
  */
 
-var TrackerMixin = Highcharts.TrackerMixin = {
+TrackerMixin = H.TrackerMixin = {
 
 	drawTrackerPoint: function () {
 		var series = this,
@@ -25,7 +34,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			};
 
 		// Add reference to the point
-		Highcharts.each(series.points, function (point) {
+		each(series.points, function (point) {
 			if (point.graphic) {
 				point.graphic.element.point = point;
 			}
@@ -36,14 +45,14 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 
 		// Add the event listeners, we need to do this only once
 		if (!series._hasTracking) {
-			Highcharts.each(series.trackerGroups, function (key) {
+			each(series.trackerGroups, function (key) {
 				if (series[key]) { // we don't always have dataLabelsGroup
 					series[key]
 						.addClass('highcharts-tracker')
 						.on('mouseover', onMouseOver)
 						.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
 						.css(css);
-					if (Highcharts.hasTouch) {
+					if (H.hasTouch) {
 						series[key].on('touchstart', onMouseOver);
 					}
 				}
@@ -91,7 +100,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			 * Safari: 0.000001
 			 * Opera: 0.00000000001 (unlimited)
 			 */
-			TRACKER_FILL = 'rgba(192,192,192,' + (Highcharts.svg ? 0.0001 : 0.002) + ')';
+			TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
 
 		// Extend end points. A better way would be to use round linecaps,
 		// but those are not clickable in VML.
@@ -132,13 +141,13 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 
 			// The tracker is added to the series group, which is clipped, but is covered
 			// by the marker group. So the marker group also needs to capture events.
-			Highcharts.each([series.tracker, series.markerGroup], function (tracker) {
+			each([series.tracker, series.markerGroup], function (tracker) {
 				tracker.addClass('highcharts-tracker')
 					.on('mouseover', onMouseOver)
 					.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
 					.css(css);
 
-				if (Highcharts.hasTouch) {
+				if (H.hasTouch) {
 					tracker.on('touchstart', onMouseOver);
 				}
 			});
@@ -153,22 +162,22 @@ var TrackerMixin = Highcharts.TrackerMixin = {
  * themselves act as trackers
  */ 
 
-if (Highcharts.seriesTypes.column) {
-	Highcharts.seriesTypes.column.prototype.drawTracker = TrackerMixin.drawTrackerPoint;	
+if (seriesTypes.column) {
+	seriesTypes.column.prototype.drawTracker = TrackerMixin.drawTrackerPoint;	
 }
 
-if (Highcharts.seriesTypes.pie) {
-	Highcharts.seriesTypes.pie.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
+if (seriesTypes.pie) {
+	seriesTypes.pie.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
-if (Highcharts.seriesTypes.scatter) {
-	Highcharts.seriesTypes.scatter.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
+if (seriesTypes.scatter) {
+	seriesTypes.scatter.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
 /* 
  * Extend Legend for item events 
  */ 
-Highcharts.extend(Highcharts.Legend.prototype, {
+H.extend(Legend.prototype, {
 
 	setItemEvents: function (item, legendItem, useHTML, itemStyle, itemHiddenStyle) {
 	var legend = this;
@@ -204,13 +213,13 @@ Highcharts.extend(Highcharts.Legend.prototype, {
 	createCheckboxForItem: function (item) {
 		var legend = this;
 
-		item.checkbox = Highcharts.createElement('input', {
+		item.checkbox = H.createElement('input', {
 			type: 'checkbox',
 			checked: item.selected,
 			defaultChecked: item.selected // required by IE7
 		}, legend.options.itemCheckboxStyle, legend.chart.container);
 
-		Highcharts.addEvent(item.checkbox, 'click', function (event) {
+		H.addEvent(item.checkbox, 'click', function (event) {
 			var target = event.target;
 			HighchartsAdapter.fireEvent(item.series || item, 'checkboxClick', { // #3712
 					checked: target.checked,
@@ -227,20 +236,20 @@ Highcharts.extend(Highcharts.Legend.prototype, {
 /* 
  * Add pointer cursor to legend itemstyle in defaultOptions
  */
-Highcharts.defaultOptions.legend.itemStyle.cursor = 'pointer';
+H.defaultOptions.legend.itemStyle.cursor = 'pointer';
 
 
 /* 
  * Extend the Chart object with interaction
  */
 
-Highcharts.extend(Highcharts.Chart.prototype, {
+H.extend(Chart.prototype, {
 	/**
 	 * Display the zoom button
 	 */
 	showResetZoom: function () {
 		var chart = this,
-			lang = Highcharts.defaultOptions.lang,
+			lang = H.defaultOptions.lang,
 			btnOptions = chart.options.chart.resetZoomButton,
 			theme = btnOptions.theme,
 			states = theme.states,
@@ -279,11 +288,11 @@ Highcharts.extend(Highcharts.Chart.prototype, {
 
 		// If zoom is called with no arguments, reset the axes
 		if (!event || event.resetSelection) {
-			Highcharts.each(chart.axes, function (axis) {
+			each(chart.axes, function (axis) {
 				hasZoomed = axis.zoom();
 			});
 		} else { // else, zoom in on all axes
-			Highcharts.each(event.xAxis.concat(event.yAxis), function (axisData) {
+			each(event.xAxis.concat(event.yAxis), function (axisData) {
 				var axis = axisData.axis,
 					isXAxis = axis.isXAxis;
 
@@ -301,7 +310,7 @@ Highcharts.extend(Highcharts.Chart.prototype, {
 		resetZoomButton = chart.resetZoomButton;
 		if (displayButton && !resetZoomButton) {
 			chart.showResetZoom();
-		} else if (!displayButton && Highcharts.isObject(resetZoomButton)) {
+		} else if (!displayButton && H.isObject(resetZoomButton)) {
 			chart.resetZoomButton = resetZoomButton.destroy();
 		}
 		
@@ -309,7 +318,7 @@ Highcharts.extend(Highcharts.Chart.prototype, {
 		// Redraw
 		if (hasZoomed) {
 			chart.redraw(
-				Highcharts.pick(chart.options.chart.animation, event && event.animation, chart.pointCount < 100) // animation
+				H.pick(chart.options.chart.animation, event && event.animation, chart.pointCount < 100) // animation
 			);
 		}
 	},
@@ -327,12 +336,12 @@ Highcharts.extend(Highcharts.Chart.prototype, {
 
 		// remove active points for shared tooltip
 		if (hoverPoints) {
-			Highcharts.each(hoverPoints, function (point) {
+			each(hoverPoints, function (point) {
 				point.setState();
 			});
 		}
 
-		Highcharts.each(panning === 'xy' ? [1, 0] : [1], function (isX) { // xy is used in maps
+		each(panning === 'xy' ? [1, 0] : [1], function (isX) { // xy is used in maps
 			var mousePos = e[isX ? 'chartX' : 'chartY'],
 				axis = chart[isX ? 'xAxis' : 'yAxis'][0],
 				startPos = chart[isX ? 'mouseDownX' : 'mouseDownY'],
@@ -355,14 +364,14 @@ Highcharts.extend(Highcharts.Chart.prototype, {
 		if (doRedraw) {
 			chart.redraw(false);
 		}
-		Highcharts.css(chart.container, { cursor: 'move' });
+		H.css(chart.container, { cursor: 'move' });
 	}
 });
 
 /*
  * Extend the Point object with interaction
  */
-Highcharts.extend(Highcharts.Point.prototype, {
+H.extend(Point.prototype, {
 	/**
 	 * Toggle the selection status of a point
 	 * @param {Boolean} selected Whether to select or unselect the point.
@@ -375,7 +384,7 @@ Highcharts.extend(Highcharts.Point.prototype, {
 			chart = series.chart,
 			inArray = HighchartsAdapter.inArray;
 
-		selected = Highcharts.pick(selected, !point.selected);
+		selected = H.pick(selected, !point.selected);
 
 		// fire the event with the defalut handler
 		point.firePointEvent(selected ? 'select' : 'unselect', { accumulate: accumulate }, function () {
@@ -386,7 +395,7 @@ Highcharts.extend(Highcharts.Point.prototype, {
 
 			// unselect all other points unless Ctrl or Cmd + click
 			if (!accumulate) {
-				Highcharts.each(chart.getSelectedPoints(), function (loopPoint) {
+				each(chart.getSelectedPoints(), function (loopPoint) {
 					if (loopPoint.selected && loopPoint !== point) {
 						loopPoint.selected = loopPoint.options.selected = false;
 						series.options.data[inArray(loopPoint, series.data)] = loopPoint.options;
@@ -452,14 +461,14 @@ Highcharts.extend(Highcharts.Point.prototype, {
 	importEvents: function () {
 		if (!this.hasImportedEvents) {
 			var point = this,
-				options = Highcharts.merge(point.series.options.point, point.options),
+				options = H.merge(point.series.options.point, point.options),
 				events = options.events,
 				eventType;
 
 			point.events = events;
 
 			for (eventType in events) {
-				Highcharts.addEvent(point, eventType, events[eventType]);
+				H.addEvent(point, eventType, events[eventType]);
 			}
 			this.hasImportedEvents = true;
 
@@ -476,7 +485,7 @@ Highcharts.extend(Highcharts.Point.prototype, {
 			plotY = point.plotY,
 			series = point.series,
 			stateOptions = series.options.states,
-			markerOptions = Highcharts.defaultPlotOptions[series.type].marker && series.options.marker,
+			markerOptions = H.defaultPlotOptions[series.type].marker && series.options.marker,
 			normalDisabled = markerOptions && !markerOptions.enabled,
 			markerStateOptions = markerOptions && markerOptions.states[state],
 			stateDisabled = markerStateOptions && markerStateOptions.enabled === false,
@@ -511,7 +520,7 @@ Highcharts.extend(Highcharts.Point.prototype, {
 		// apply hover styles to the existing point
 		if (point.graphic) {
 			radius = markerOptions && point.graphic.symbolName && pointAttr.r;
-			point.graphic.attr(Highcharts.merge(
+			point.graphic.attr(H.merge(
 				pointAttr,
 				radius ? { // new symbol attributes (#507, #612)
 					x: plotX - radius,
@@ -574,8 +583,8 @@ Highcharts.extend(Highcharts.Point.prototype, {
 				series.halo = halo = chart.renderer.path()
 					.add(chart.seriesGroup);
 			}
-			halo.attr(Highcharts.extend({
-				fill: Highcharts.Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
+			halo.attr(H.extend({
+				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
 			}, haloOptions.attributes))[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
 			});
@@ -605,7 +614,7 @@ Highcharts.extend(Highcharts.Point.prototype, {
  * Extend the Series object with interaction
  */
 
-Highcharts.extend(Highcharts.Series.prototype, {
+H.extend(Series.prototype, {
 	/**
 	 * Series mouse over handler
 	 */
@@ -721,7 +730,7 @@ Highcharts.extend(Highcharts.Series.prototype, {
 		showOrHide = vis ? 'show' : 'hide';
 
 		// show or hide elements
-		Highcharts.each(['group', 'dataLabelsGroup', 'markerGroup', 'tracker'], function (key) {
+		each(['group', 'dataLabelsGroup', 'markerGroup', 'tracker'], function (key) {
 			if (series[key]) {
 				series[key][showOrHide]();
 			}
@@ -743,7 +752,7 @@ Highcharts.extend(Highcharts.Series.prototype, {
 		series.isDirty = true;
 		// in a stack, all other series are affected
 		if (series.options.stacking) {
-			Highcharts.each(chart.series, function (otherSeries) {
+			each(chart.series, function (otherSeries) {
 				if (otherSeries.options.stacking && otherSeries.visible) {
 					otherSeries.isDirty = true;
 				}
@@ -751,7 +760,7 @@ Highcharts.extend(Highcharts.Series.prototype, {
 		}
 
 		// show or hide linked series
-		Highcharts.each(series.linkedSeries, function (otherSeries) {
+		each(series.linkedSeries, function (otherSeries) {
 			otherSeries.setVisible(vis, false);
 		});
 
@@ -800,3 +809,6 @@ Highcharts.extend(Highcharts.Series.prototype, {
 
 	drawTracker: TrackerMixin.drawTrackerGraph
 });
+
+	return H;
+}(Highcharts));

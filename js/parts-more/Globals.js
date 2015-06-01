@@ -1,1 +1,0 @@
-var TrackerMixin = Highcharts.TrackerMixin;

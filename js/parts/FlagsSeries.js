@@ -239,7 +239,7 @@ Highcharts.seriesTypes.flags = Highcharts.extendClass(Highcharts.seriesTypes.col
 		var series = this,
 			points = series.points;
 		
-		TrackerMixin.drawTrackerPoint.apply(this);
+		Highcharts.TrackerMixin.drawTrackerPoint.apply(this);
 
 		// Bring each stacked flag up on mouse over, this allows readability of vertically
 		// stacked elements as well as tight points on the x axis. #1924.

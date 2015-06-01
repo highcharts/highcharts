@@ -13,7 +13,7 @@
 /*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
 
 (function (Highcharts) {
-var TrackerMixin = Highcharts.TrackerMixin;/**
+/**
  * The Pane object allows options that are common to a set of X and Y axes.
  * 
  * In the future, this can be extended to basic Highcharts and Highstock.
@@ -1216,7 +1216,7 @@ var GaugeSeries = {
 	/**
 	 * If the tracking module is loaded, add the point tracker
 	 */
-	drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint
+	drawTracker: Highcharts.TrackerMixin && Highcharts.TrackerMixin.drawTrackerPoint
 };
 Highcharts.seriesTypes.gauge = Highcharts.extendClass(Highcharts.seriesTypes.line, GaugeSeries);
 
