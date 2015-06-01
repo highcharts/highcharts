@@ -1,13 +1,16 @@
+(function (H) {
+	var areaProto = H.seriesTypes.area.prototype,
+		AreaSplineSeries,
+		LegendSymbolMixin = H.LegendSymbolMixin;
 /**
  * Set the default options for areaspline
  */
-Highcharts.defaultPlotOptions.areaspline = Highcharts.merge(Highcharts.defaultPlotOptions.area);
+H.defaultPlotOptions.areaspline = H.merge(H.defaultPlotOptions.area);
 
 /**
  * AreaSplineSeries object
  */
-var areaProto = Highcharts.seriesTypes.area.prototype,
-	AreaSplineSeries = Highcharts.extendClass(Highcharts.seriesTypes.spline, {
+AreaSplineSeries = H.extendClass(H.seriesTypes.spline, {
 		type: 'areaspline',
 		closedStacks: true, // instead of following the previous graph back, follow the threshold back
 		
@@ -15,8 +18,10 @@ var areaProto = Highcharts.seriesTypes.area.prototype,
 		getSegmentPath: areaProto.getSegmentPath,
 		closeSegment: areaProto.closeSegment,
 		drawGraph: areaProto.drawGraph,
-		drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle
+		drawLegendSymbol: LegendSymbolMixin.drawRectangle
 	});
 
-Highcharts.seriesTypes.areaspline = AreaSplineSeries;
+H.seriesTypes.areaspline = AreaSplineSeries;
 
+	return H;
+}(Highcharts));
