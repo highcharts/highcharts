@@ -1,12 +1,16 @@
+(function (H) {
+	var Series = H.Series,
+		SplineSeries;
+
 /**
  * Set the default options for spline
  */
-Highcharts.defaultPlotOptions.spline = Highcharts.merge(Highcharts.defaultSeriesOptions);
+H.defaultPlotOptions.spline = H.merge(H.defaultSeriesOptions);
 
 /**
  * SplineSeries object
  */
-var SplineSeries = Highcharts.extendClass(Highcharts.Series, {
+SplineSeries = H.extendClass(Series, {
 	type: 'spline',
 
 	/**
@@ -121,5 +125,7 @@ var SplineSeries = Highcharts.extendClass(Highcharts.Series, {
 		return ret;
 	}
 });
-Highcharts.seriesTypes.spline = SplineSeries;
+H.seriesTypes.spline = SplineSeries;
 
+	return H;
+}(Highcharts));
