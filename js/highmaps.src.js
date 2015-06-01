@@ -14945,13 +14945,17 @@ extend(Axis.prototype, {
 
 	return H;
 }(Highcharts));
-
+(function (H) {
+    var LineSeries,
+        Series = H.Series;
 /**
  * LineSeries object
  */
-var LineSeries = Highcharts.extendClass(Highcharts.Series);
-Highcharts.seriesTypes.line = LineSeries;
+LineSeries = H.extendClass(Series);
+H.seriesTypes.line = LineSeries;
 
+    return H;
+}(Highcharts));
 /**
  * Set the default options for column
  */
