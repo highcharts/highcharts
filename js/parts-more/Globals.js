@@ -1,2 +1,1 @@
-var TrackerMixin = Highcharts.TrackerMixin,
-	Series = Highcharts.Series;
+var TrackerMixin = Highcharts.TrackerMixin;

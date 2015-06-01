@@ -1,7 +1,7 @@
 /**
  * Draw the data labels
  */
-Series.prototype.drawDataLabels = function () {
+Highcharts.Series.prototype.drawDataLabels = function () {
 
 	var series = this,
 		seriesOptions = series.options,
@@ -165,7 +165,7 @@ Series.prototype.drawDataLabels = function () {
 /**
  * Align each individual data label
  */
-Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, isNew) {
+Highcharts.Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, isNew) {
 	var chart = this.chart,
 		inverted = chart.inverted,
 		pick = Highcharts.pick,
@@ -242,7 +242,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
  * If data labels fall partly outside the plot area, align them back in, in a way that
  * doesn't hide the point.
  */
-Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBox, alignTo, isNew) {
+Highcharts.Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBox, alignTo, isNew) {
 	var chart = this.chart,
 		align = options.align,
 		verticalAlign = options.verticalAlign,
@@ -348,7 +348,7 @@ if (Highcharts.seriesTypes.pie) {
 		}
 
 		// run parent method
-		Series.prototype.drawDataLabels.apply(series);
+		Highcharts.Series.prototype.drawDataLabels.apply(series);
 
 		// arrange points for detection collision
 		Highcharts.each(data, function (point) {
@@ -755,7 +755,7 @@ if (Highcharts.seriesTypes.column) {
 		);
 
 		// Call the parent method
-		Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
+		Highcharts.Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
 	};
 }
 

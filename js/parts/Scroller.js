@@ -1143,7 +1143,7 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed, options, 
 });
 
 // Pick up badly formatted point options to addPoint
-Highcharts.wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, animation) {
+Highcharts.wrap(Highcharts.Series.prototype, 'addPoint', function (proceed, options, redraw, shift, animation) {
 	var turboThreshold = this.options.turboThreshold;
 	if (turboThreshold && this.xData.length > turboThreshold && Highcharts.isObject(options) && !Highcharts.isArray(options) && this.chart.scroller) {
 		Highcharts.error(20, true);

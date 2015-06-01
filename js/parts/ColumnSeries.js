@@ -42,7 +42,7 @@ Highcharts.defaultPlotOptions.column = Highcharts.merge(Highcharts.defaultSeries
 /**
  * ColumnSeries object
  */
-var ColumnSeries = Highcharts.extendClass(Series, {
+var ColumnSeries = Highcharts.extendClass(Highcharts.Series, {
 	type: 'column',
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
@@ -59,7 +59,7 @@ var ColumnSeries = Highcharts.extendClass(Series, {
 	 * Initialize the series
 	 */
 	init: function () {
-		Series.prototype.init.apply(this, arguments);
+		Highcharts.Series.prototype.init.apply(this, arguments);
 
 		var series = this,
 			chart = series.chart;
@@ -179,7 +179,7 @@ var ColumnSeries = Highcharts.extendClass(Series, {
 			seriesBarW = Math.ceil(seriesBarW);
 		}
 
-		Series.prototype.translate.apply(series);
+		Highcharts.Series.prototype.translate.apply(series);
 
 		// Record the new values
 		Highcharts.each(series.points, function (point) {
@@ -356,7 +356,7 @@ var ColumnSeries = Highcharts.extendClass(Series, {
 			});
 		}
 
-		Series.prototype.remove.apply(series, arguments);
+		Highcharts.Series.prototype.remove.apply(series, arguments);
 	}
 });
 Highcharts.seriesTypes.column = ColumnSeries;

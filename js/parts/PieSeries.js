@@ -219,7 +219,7 @@ var PieSeries = {
 	 * in order to access the points from the legend.
 	 */
 	setData: function (data, redraw, animation, updatePoints) {
-		Series.prototype.setData.call(this, data, false, animation, updatePoints);
+		Highcharts.Series.prototype.setData.call(this, data, false, animation, updatePoints);
 		this.processData();
 		this.generatePoints();
 		if (Highcharts.pick(redraw, true)) {
@@ -257,7 +257,7 @@ var PieSeries = {
 	 * Extend the generatePoints method by adding total and percentage properties to each point
 	 */
 	generatePoints: function () {
-		Series.prototype.generatePoints.call(this);
+		Highcharts.Series.prototype.generatePoints.call(this);
 		this.updateTotals();
 	},
 	
@@ -467,6 +467,6 @@ var PieSeries = {
 	getSymbol: Highcharts.noop
 
 };
-PieSeries = Highcharts.extendClass(Series, PieSeries);
+PieSeries = Highcharts.extendClass(Highcharts.Series, PieSeries);
 Highcharts.seriesTypes.pie = PieSeries;
 

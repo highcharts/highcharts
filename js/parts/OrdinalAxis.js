@@ -3,7 +3,7 @@
  *****************************************************************************/
 
 
-Highcharts.wrap(Series.prototype, 'init', function (proceed) {
+Highcharts.wrap(Highcharts.Series.prototype, 'init', function (proceed) {
 	var series = this,
 		xAxis;
 
@@ -626,7 +626,7 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'pan', function (proceed, e) {
  * Extend getSegments by identifying gaps in the ordinal data so that we can draw a gap in the
  * line or area
  */
-Highcharts.wrap(Series.prototype, 'getSegments', function (proceed) {
+Highcharts.wrap(Highcharts.Series.prototype, 'getSegments', function (proceed) {
 
 	var series = this,
 		segments,

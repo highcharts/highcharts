@@ -579,7 +579,7 @@ Highcharts.Point.prototype.tooltipFormatter = function (pointFormat) {
  * Extend the Series prototype to create a separate series clip box. This is related
  * to using multiple panes, and a future pane logic should incorporate this feature (#2754).
  */
-Highcharts.wrap(Series.prototype, 'render', function (proceed) {
+Highcharts.wrap(Highcharts.Series.prototype, 'render', function (proceed) {
 	// Only do this on stock charts (#2939), and only if the series type handles clipping
 	// in the animate method (#2975).
 	if (this.chart.options._stock) {

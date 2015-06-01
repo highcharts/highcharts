@@ -15,7 +15,7 @@ Highcharts.defaultPlotOptions.scatter = Highcharts.merge(Highcharts.defaultSerie
 /**
  * The scatter series class
  */
-var ScatterSeries = Highcharts.extendClass(Series, {
+var ScatterSeries = Highcharts.extendClass(Highcharts.Series, {
 	type: 'scatter',
 	sorted: false,
 	requireSorting: false,
@@ -25,7 +25,7 @@ var ScatterSeries = Highcharts.extendClass(Series, {
 	kdDimensions: 2,
 	drawGraph: function () {
 		if (this.options.lineWidth) {
-			Series.prototype.drawGraph.call(this);
+			Highcharts.Series.prototype.drawGraph.call(this);
 		}
 	}
 });

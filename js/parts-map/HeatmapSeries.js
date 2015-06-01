@@ -98,12 +98,12 @@ Highcharts.seriesTypes.heatmap = Highcharts.extendClass(Highcharts.seriesTypes.s
 
 	getExtremes: function () {
 		// Get the extremes from the value data
-		Series.prototype.getExtremes.call(this, this.valueData);
+		Highcharts.Series.prototype.getExtremes.call(this, this.valueData);
 		this.valueMin = this.dataMin;
 		this.valueMax = this.dataMax;
 
 		// Get the extremes from the y data
-		Series.prototype.getExtremes.call(this);
+		Highcharts.Series.prototype.getExtremes.call(this);
 	}
 		
 }));

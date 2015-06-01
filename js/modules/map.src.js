@@ -10,8 +10,7 @@
 /*global HighchartsAdapter*/
 (function (Highcharts) {
 
-
-var Series = Highcharts.Series;/**
+/**
  * Override to use the extreme coordinates from the SVG shape, not the
  * data values
  */
@@ -1164,7 +1163,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 	
 	getExtremes: function () {
 		// Get the actual value extremes for colors
-		Series.prototype.getExtremes.call(this, this.valueData);
+		Highcharts.Series.prototype.getExtremes.call(this, this.valueData);
 
 		// Recalculate box on updated data
 		if (this.chart.hasRendered && this.isDirtyData) {
@@ -1309,7 +1308,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 				});
 			}
 		}
-		Series.prototype.setData.call(this, data, redraw);
+		Highcharts.Series.prototype.setData.call(this, data, redraw);
 	},
 
 	
@@ -1502,7 +1501,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 	 */		
 	drawMapDataLabels: function () {
 
-		Series.prototype.drawDataLabels.call(this);
+		Highcharts.Series.prototype.drawDataLabels.call(this);
 		if (this.dataLabelsGroup) {
 			this.dataLabelsGroup.clip(this.chart.clipRect);
 		}
@@ -1513,7 +1512,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 	 */
 	render: function () {
 		var series = this,
-			render = Series.prototype.render;
+			render = Highcharts.Series.prototype.render;
 
 		// Give IE8 some time to breathe.
 		if (series.chart.renderer.isVML && series.data.length > 3000) {
@@ -1812,12 +1811,12 @@ Highcharts.seriesTypes.heatmap = Highcharts.extendClass(Highcharts.seriesTypes.s
 
 	getExtremes: function () {
 		// Get the extremes from the value data
-		Series.prototype.getExtremes.call(this, this.valueData);
+		Highcharts.Series.prototype.getExtremes.call(this, this.valueData);
 		this.valueMin = this.dataMin;
 		this.valueMax = this.dataMax;
 
 		// Get the extremes from the y data
-		Series.prototype.getExtremes.call(this);
+		Highcharts.Series.prototype.getExtremes.call(this);
 	}
 		
 }));

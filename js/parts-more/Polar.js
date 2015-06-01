@@ -7,7 +7,7 @@
 	 * 
 	 */
 
-	var seriesProto = Series.prototype,
+	var seriesProto = Highcharts.Series.prototype,
 		pointerProto = Highcharts.Pointer.prototype,
 		colProto,
 		wrap = Highcharts.wrap;

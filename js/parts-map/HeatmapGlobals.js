@@ -1,3 +1,0 @@
-
-var Series = Highcharts.Series;
-	

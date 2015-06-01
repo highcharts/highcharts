@@ -12,7 +12,7 @@ Highcharts.defaultPlotOptions.area = Highcharts.merge(Highcharts.defaultSeriesOp
 /**
  * AreaSeries object
  */
-var AreaSeries = Highcharts.extendClass(Series, {
+var AreaSeries = Highcharts.extendClass(Highcharts.Series, {
 	type: 'area',
 	/**
 	 * For stacks, don't split segments on null values. Instead, draw null values with 
@@ -95,7 +95,7 @@ var AreaSeries = Highcharts.extendClass(Series, {
 			}
 
 		} else {
-			Series.prototype.getSegments.call(this);
+			Highcharts.Series.prototype.getSegments.call(this);
 			segments = this.segments;
 		}
 
@@ -108,7 +108,7 @@ var AreaSeries = Highcharts.extendClass(Series, {
 	 */
 	getSegmentPath: function (segment) {
 		
-		var segmentPath = Series.prototype.getSegmentPath.call(this, segment), // call base method
+		var segmentPath = Highcharts.Series.prototype.getSegmentPath.call(this, segment), // call base method
 			areaSegmentPath = [].concat(segmentPath), // work on a copy for the area path
 			i,
 			options = this.options,
@@ -169,7 +169,7 @@ var AreaSeries = Highcharts.extendClass(Series, {
 		this.areaPath = [];
 		
 		// Call the base method
-		Series.prototype.drawGraph.apply(this);
+		Highcharts.Series.prototype.drawGraph.apply(this);
 		
 		// Define local variables
 		var series = this,

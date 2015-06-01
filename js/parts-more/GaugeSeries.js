@@ -217,7 +217,7 @@ var GaugeSeries = {
 			this.options.zIndex, 
 			this.chart.seriesGroup
 		);
-		Series.prototype.render.call(this);
+		Highcharts.Series.prototype.render.call(this);
 		this.group.clip(this.chart.clipRect);
 	},
 	
@@ -226,7 +226,7 @@ var GaugeSeries = {
 	 * in order to access the points from the legend.
 	 */
 	setData: function (data, redraw) {
-		Series.prototype.setData.call(this, data, false);
+		Highcharts.Series.prototype.setData.call(this, data, false);
 		this.processData();
 		this.generatePoints();
 		if (Highcharts.pick(redraw, true)) {

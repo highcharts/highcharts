@@ -605,7 +605,7 @@ Highcharts.extend(Highcharts.Point.prototype, {
  * Extend the Series object with interaction
  */
 
-Highcharts.extend(Series.prototype, {
+Highcharts.extend(Highcharts.Series.prototype, {
 	/**
 	 * Series mouse over handler
 	 */

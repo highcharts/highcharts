@@ -13,9 +13,7 @@
 /*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
 
 (function (Highcharts) {
-var TrackerMixin = Highcharts.TrackerMixin,
-	Series = Highcharts.Series;
-/**
+var TrackerMixin = Highcharts.TrackerMixin;/**
  * The Pane object allows options that are common to a set of X and Y axes.
  * 
  * In the future, this can be extended to basic Highcharts and Highstock.
@@ -703,7 +701,7 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 				point.y = point.high;
 			}
 		});
-		Series.prototype.getSegments.call(this);
+		Highcharts.Series.prototype.getSegments.call(this);
 	},
 	
 	/**
@@ -754,7 +752,7 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 		var lowSegment,
 			highSegment = [],
 			i = segment.length,
-			baseGetSegmentPath = Series.prototype.getSegmentPath,
+			baseGetSegmentPath = Highcharts.Series.prototype.getSegmentPath,
 			point,
 			linePath,
 			lowerPath,
@@ -811,7 +809,7 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 			length = data.length,
 			i,
 			originalDataLabels = [],
-			seriesProto = Series.prototype,
+			seriesProto = Highcharts.Series.prototype,
 			dataLabelOptions = this.options.dataLabels,
 			align = dataLabelOptions.align,
 			point,
@@ -1198,7 +1196,7 @@ var GaugeSeries = {
 			this.options.zIndex, 
 			this.chart.seriesGroup
 		);
-		Series.prototype.render.call(this);
+		Highcharts.Series.prototype.render.call(this);
 		this.group.clip(this.chart.clipRect);
 	},
 	
@@ -1207,7 +1205,7 @@ var GaugeSeries = {
 	 * in order to access the points from the legend.
 	 */
 	setData: function (data, redraw) {
-		Series.prototype.setData.call(this, data, false);
+		Highcharts.Series.prototype.setData.call(this, data, false);
 		this.processData();
 		this.generatePoints();
 		if (Highcharts.pick(redraw, true)) {
@@ -1691,7 +1689,7 @@ Highcharts.seriesTypes.waterfall = Highcharts.extendClass(Highcharts.seriesTypes
 			dataMax = Math.max(sum, dataMax);
 		}
 
-		Series.prototype.processData.call(this, force);
+		Highcharts.Series.prototype.processData.call(this, force);
 
 		// Record extremes
 		series.dataMin = dataMin;
@@ -1785,7 +1783,7 @@ Highcharts.seriesTypes.waterfall = Highcharts.extendClass(Highcharts.seriesTypes
 	 */
 	getExtremes: Highcharts.noop,
 
-	drawGraph: Series.prototype.drawGraph
+	drawGraph: Highcharts.Series.prototype.drawGraph
 });
 
 /* ****************************************************************************
@@ -1808,9 +1806,9 @@ Highcharts.seriesTypes.polygon = Highcharts.extendClass(Highcharts.seriesTypes.s
 	fillGraph: true,
 	// Close all segments
 	getSegmentPath: function (segment) {
-		return Series.prototype.getSegmentPath.call(this, segment).concat('z');
+		return Highcharts.Series.prototype.getSegmentPath.call(this, segment).concat('z');
 	},
-	drawGraph: Series.prototype.drawGraph,
+	drawGraph: Highcharts.Series.prototype.drawGraph,
 	drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle
 });
 /* ****************************************************************************
@@ -1898,7 +1896,7 @@ Highcharts.seriesTypes.bubble = Highcharts.extendClass(Highcharts.seriesTypes.sc
 	 * Extend the convertAttribs method by applying opacity to the fill
 	 */
 	convertAttribs: function () {
-		var obj = Series.prototype.convertAttribs.apply(this, arguments);
+		var obj = Highcharts.Series.prototype.convertAttribs.apply(this, arguments);
 		
 		obj.fill = this.applyOpacity(obj.fill);
 		
@@ -2138,7 +2136,7 @@ Highcharts.Axis.prototype.beforePadding = function () {
 	 * 
 	 */
 
-	var seriesProto = Series.prototype,
+	var seriesProto = Highcharts.Series.prototype,
 		pointerProto = Highcharts.Pointer.prototype,
 		colProto,
 		wrap = Highcharts.wrap;

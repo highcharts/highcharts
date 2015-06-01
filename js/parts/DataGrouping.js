@@ -3,7 +3,7 @@
  ******************************************************************************/
 /*jslint white:true */
 var DATA_GROUPING = 'dataGrouping',
-	seriesProto = Series.prototype,
+	seriesProto = Highcharts.Series.prototype,
 	tooltipProto = Highcharts.Tooltip.prototype,
 	baseProcessData = seriesProto.processData,
 	baseGeneratePoints = seriesProto.generatePoints,

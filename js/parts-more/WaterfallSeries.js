@@ -156,7 +156,7 @@ Highcharts.seriesTypes.waterfall = Highcharts.extendClass(Highcharts.seriesTypes
 			dataMax = Math.max(sum, dataMax);
 		}
 
-		Series.prototype.processData.call(this, force);
+		Highcharts.Series.prototype.processData.call(this, force);
 
 		// Record extremes
 		series.dataMin = dataMin;
@@ -250,7 +250,7 @@ Highcharts.seriesTypes.waterfall = Highcharts.extendClass(Highcharts.seriesTypes
 	 */
 	getExtremes: Highcharts.noop,
 
-	drawGraph: Series.prototype.drawGraph
+	drawGraph: Highcharts.Series.prototype.drawGraph
 });
 
 /* ****************************************************************************

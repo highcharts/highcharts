@@ -169,7 +169,7 @@ Highcharts.Axis.prototype.renderStackTotals = function () {
 /**
  * Adds series' points value to corresponding stack
  */
-Series.prototype.setStackedPoints = function () {
+Highcharts.Series.prototype.setStackedPoints = function () {
 	if (!this.options.stacking || (this.visible !== true && this.chart.options.chart.ignoreHiddenSeries !== false)) {
 		return;
 	}
@@ -271,7 +271,7 @@ Series.prototype.setStackedPoints = function () {
 /**
  * Iterate over all stacks and compute the absolute values to percent
  */
-Series.prototype.setPercentStacks = function () {
+Highcharts.Series.prototype.setPercentStacks = function () {
 	var series = this,
 		stackKey = series.stackKey,
 		stacks = series.yAxis.stacks,

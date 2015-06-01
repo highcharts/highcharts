@@ -42,7 +42,7 @@ Highcharts.seriesTypes.flags = Highcharts.extendClass(Highcharts.seriesTypes.col
 	/**
 	 * Inherit the initialization from base Series
 	 */
-	init: Series.prototype.init,
+	init: Highcharts.Series.prototype.init,
 
 	/**
 	 * One-to-one mapping from options to SVG attributes

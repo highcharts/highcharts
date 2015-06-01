@@ -15,8 +15,8 @@ Highcharts.seriesTypes.polygon = Highcharts.extendClass(Highcharts.seriesTypes.s
 	fillGraph: true,
 	// Close all segments
 	getSegmentPath: function (segment) {
-		return Series.prototype.getSegmentPath.call(this, segment).concat('z');
+		return Highcharts.Series.prototype.getSegmentPath.call(this, segment).concat('z');
 	},
-	drawGraph: Series.prototype.drawGraph,
+	drawGraph: Highcharts.Series.prototype.drawGraph,
 	drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle
 });

@@ -228,7 +228,7 @@ Highcharts.extend(Highcharts.Point.prototype, {
 });
 
 // Extend the series prototype for dynamic methods
-Highcharts.extend(Series.prototype, {
+Highcharts.extend(Highcharts.Series.prototype, {
 	/**
 	 * Add a point dynamically after chart load time
 	 * @param {Object} options Point options as given in series.data

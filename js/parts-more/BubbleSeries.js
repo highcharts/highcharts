@@ -83,7 +83,7 @@ Highcharts.seriesTypes.bubble = Highcharts.extendClass(Highcharts.seriesTypes.sc
 	 * Extend the convertAttribs method by applying opacity to the fill
 	 */
 	convertAttribs: function () {
-		var obj = Series.prototype.convertAttribs.apply(this, arguments);
+		var obj = Highcharts.Series.prototype.convertAttribs.apply(this, arguments);
 		
 		obj.fill = this.applyOpacity(obj.fill);
 		

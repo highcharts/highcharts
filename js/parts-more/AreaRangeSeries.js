@@ -67,7 +67,7 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 				point.y = point.high;
 			}
 		});
-		Series.prototype.getSegments.call(this);
+		Highcharts.Series.prototype.getSegments.call(this);
 	},
 	
 	/**
@@ -118,7 +118,7 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 		var lowSegment,
 			highSegment = [],
 			i = segment.length,
-			baseGetSegmentPath = Series.prototype.getSegmentPath,
+			baseGetSegmentPath = Highcharts.Series.prototype.getSegmentPath,
 			point,
 			linePath,
 			lowerPath,
@@ -175,7 +175,7 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 			length = data.length,
 			i,
 			originalDataLabels = [],
-			seriesProto = Series.prototype,
+			seriesProto = Highcharts.Series.prototype,
 			dataLabelOptions = this.options.dataLabels,
 			align = dataLabelOptions.align,
 			point,
