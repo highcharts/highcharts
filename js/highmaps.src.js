@@ -14959,6 +14959,7 @@ H.seriesTypes.line = LineSeries;
 (function (H) {
 	var ColumnSeries,
 		defined = H.defined,
+		each = H.each,
 		LegendSymbolMixin = H.LegendSymbolMixin,
 		pick = H.pick,
 		Series = H.Series;
@@ -19005,7 +19006,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
  */ 
 
 if (Highcharts.seriesTypes.column) {
-	ColumnSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;	
+	Highcharts.seriesTypes.column.prototype.drawTracker = TrackerMixin.drawTrackerPoint;	
 }
 
 if (Highcharts.seriesTypes.pie) {

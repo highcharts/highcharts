@@ -16166,6 +16166,7 @@ H.seriesTypes.areaspline = AreaSplineSeries;
 (function (H) {
 	var ColumnSeries,
 		defined = H.defined,
+		each = H.each,
 		LegendSymbolMixin = H.LegendSymbolMixin,
 		pick = H.pick,
 		Series = H.Series;
@@ -16533,19 +16534,23 @@ H.seriesTypes.column = ColumnSeries;
 
 	return H;
 }(Highcharts));
+(function (H) {
+    var BarSeries;
 /**
  * Set the default options for bar
  */
-Highcharts.defaultPlotOptions.bar = Highcharts.merge(Highcharts.defaultPlotOptions.column);
+H.defaultPlotOptions.bar = H.merge(H.defaultPlotOptions.column);
 /**
  * The Bar series class
  */
-var BarSeries = Highcharts.extendClass(ColumnSeries, {
+BarSeries = H.extendClass(H.seriesTypes.column, {
 	type: 'bar',
 	inverted: true
 });
-Highcharts.seriesTypes.bar = BarSeries;
+H.seriesTypes.bar = BarSeries;
 
+    return H;
+}(Highcharts));
 /**
  * Set the default options for scatter
  */
@@ -18078,7 +18083,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
  */ 
 
 if (Highcharts.seriesTypes.column) {
-	ColumnSeries.prototype.drawTracker = TrackerMixin.drawTrackerPoint;	
+	Highcharts.seriesTypes.column.prototype.drawTracker = TrackerMixin.drawTrackerPoint;	
 }
 
 if (Highcharts.seriesTypes.pie) {
