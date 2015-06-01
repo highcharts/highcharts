@@ -15366,10 +15366,15 @@ H.seriesTypes.scatter = ScatterSeries;
 
 	return H;
 }(Highcharts));
+(function (H) {
+	var defined = H.defined,
+		pick = H.pick,
+		Series = H.Series,
+		seriesTypes = H.seriesTypes;
 /**
  * Draw the data labels
  */
-Highcharts.Series.prototype.drawDataLabels = function () {
+Series.prototype.drawDataLabels = function () {
 
 	var series = this,
 		seriesOptions = series.options,
@@ -15378,7 +15383,6 @@ Highcharts.Series.prototype.drawDataLabels = function () {
 		points = series.points,
 		pointOptions,
 		generalOptions,
-		pick = Highcharts.pick,
 		hasRendered = series.hasRendered || 0,
 		str,
 		dataLabelsGroup,
@@ -15402,7 +15406,7 @@ Highcharts.Series.prototype.drawDataLabels = function () {
 		if (pick(options.defer, true)) {
 			dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
 			if (!hasRendered) {
-				Highcharts.addEvent(series, 'afterAnimate', function () {
+				H.addEvent(series, 'afterAnimate', function () {
 					if (series.visible) { // #3023, #3024
 						dataLabelsGroup.show();
 					}
@@ -15413,10 +15417,9 @@ Highcharts.Series.prototype.drawDataLabels = function () {
 
 		// Make the labels for each point
 		generalOptions = options;
-		Highcharts.each(points, function (point) {
+		H.each(points, function (point) {
 
 			var enabled,
-				defined = Highcharts.defined,
 				dataLabel = point.dataLabel,
 				labelConfig,
 				attr,
@@ -15442,7 +15445,7 @@ Highcharts.Series.prototype.drawDataLabels = function () {
 
 				// Create individual options structure that can be extended without
 				// affecting others
-				options = Highcharts.merge(generalOptions, pointOptions);
+				options = H.merge(generalOptions, pointOptions);
 				style = options.style;
 
 				rotation = options.rotation;
@@ -15450,7 +15453,7 @@ Highcharts.Series.prototype.drawDataLabels = function () {
 				// Get the string
 				labelConfig = point.getLabelConfig();
 				str = options.format ?
-					Highcharts.format(options.format, labelConfig) :
+					H.format(options.format, labelConfig) :
 					options.formatter.call(labelConfig, options);
 
 				// Determine the color
@@ -15515,7 +15518,7 @@ Highcharts.Series.prototype.drawDataLabels = function () {
 						options.useHTML
 					)
 					.attr(attr)
-					.css(Highcharts.extend(style, moreStyle))
+					.css(H.extend(style, moreStyle))
 					.add(dataLabelsGroup)
 					.shadow(options.shadow);
 
@@ -15533,10 +15536,9 @@ Highcharts.Series.prototype.drawDataLabels = function () {
 /**
  * Align each individual data label
  */
-Highcharts.Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, isNew) {
+Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, isNew) {
 	var chart = this.chart,
 		inverted = chart.inverted,
-		pick = Highcharts.pick,
 		plotX = pick(point.plotX, -999),
 		plotY = pick(point.plotY, -999),
 		bBox = dataLabel.getBBox(),
@@ -15550,7 +15552,7 @@ Highcharts.Series.prototype.alignDataLabel = function (point, dataLabel, options
 	if (visible) {
 
 		// The alignment box is a singular point
-		alignTo = Highcharts.extend({
+		alignTo = H.extend({
 			x: inverted ? chart.plotWidth - plotY : plotX,
 			y: Math.round(inverted ? chart.plotHeight - plotX : plotY),
 			width: 0,
@@ -15558,7 +15560,7 @@ Highcharts.Series.prototype.alignDataLabel = function (point, dataLabel, options
 		}, alignTo);
 
 		// Add the text size for alignment calculation
-		Highcharts.extend(options, {
+		H.extend(options, {
 			width: bBox.width,
 			height: bBox.height
 		});
@@ -15610,7 +15612,7 @@ Highcharts.Series.prototype.alignDataLabel = function (point, dataLabel, options
  * If data labels fall partly outside the plot area, align them back in, in a way that
  * doesn't hide the point.
  */
-Highcharts.Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBox, alignTo, isNew) {
+Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBox, alignTo, isNew) {
 	var chart = this.chart,
 		align = options.align,
 		verticalAlign = options.verticalAlign,
@@ -15671,13 +15673,12 @@ Highcharts.Series.prototype.justifyDataLabel = function (dataLabel, options, ali
 /**
  * Override the base drawDataLabels method by pie specific functionality
  */
-if (Highcharts.seriesTypes.pie) {
-	Highcharts.seriesTypes.pie.prototype.drawDataLabels = function () {
+if (seriesTypes.pie) {
+	seriesTypes.pie.prototype.drawDataLabels = function () {
 		var series = this,
 			data = series.data,
 			point,
 			chart = series.chart,
-			pick = Highcharts.pick,
 			options = series.options.dataLabels,
 			connectorPadding = pick(options.connectorPadding, 10),
 			connectorWidth = pick(options.connectorWidth, 1),
@@ -15716,10 +15717,10 @@ if (Highcharts.seriesTypes.pie) {
 		}
 
 		// run parent method
-		Highcharts.Series.prototype.drawDataLabels.apply(series);
+		Series.prototype.drawDataLabels.apply(series);
 
 		// arrange points for detection collision
-		Highcharts.each(data, function (point) {
+		H.each(data, function (point) {
 			if (point.dataLabel && point.visible) { // #407, #2510
 				halves[point.half].push(point);
 			}
@@ -15932,14 +15933,14 @@ if (Highcharts.seriesTypes.pie) {
 
 		// Do not apply the final placement and draw the connectors until we have verified
 		// that labels are not spilling over.
-		if (Highcharts.arrayMax(overflow) === 0 || this.verifyDataLabelOverflow(overflow)) {
+		if (H.arrayMax(overflow) === 0 || this.verifyDataLabelOverflow(overflow)) {
 
 			// Place the labels in the final position
 			this.placeDataLabels();
 
 			// Draw the connectors
 			if (outside && connectorWidth) {
-				Highcharts.each(this.points, function (point) {
+				H.each(this.points, function (point) {
 					connector = point.connector;
 					labelPos = point.labelPos;
 					dataLabel = point.dataLabel;
@@ -15990,8 +15991,8 @@ if (Highcharts.seriesTypes.pie) {
 	 * Perform the final placement of the data labels after we have verified that they
 	 * fall within the plot area.
 	 */
-	Highcharts.seriesTypes.pie.prototype.placeDataLabels = function () {
-		Highcharts.each(this.points, function (point) {
+	seriesTypes.pie.prototype.placeDataLabels = function () {
+		H.each(this.points, function (point) {
 			var dataLabel = point.dataLabel,
 				_pos;
 
@@ -16008,14 +16009,14 @@ if (Highcharts.seriesTypes.pie) {
 		});
 	};
 
-	Highcharts.seriesTypes.pie.prototype.alignDataLabel =  Highcharts.noop;
+	seriesTypes.pie.prototype.alignDataLabel =  H.noop;
 
 	/**
 	 * Verify whether the data labels are allowed to draw, or we should run more translation and data
 	 * label positioning to keep them inside the plot area. Returns true when data labels are ready
 	 * to draw.
 	 */
-	Highcharts.seriesTypes.pie.prototype.verifyDataLabelOverflow = function (overflow) {
+	seriesTypes.pie.prototype.verifyDataLabelOverflow = function (overflow) {
 
 		var center = this.center,
 			options = this.options,
@@ -16055,7 +16056,7 @@ if (Highcharts.seriesTypes.pie) {
 		if (newSize < center[2]) {
 			this.center = this.getCenter(newSize);
 			this.translate(this.center);
-			Highcharts.each(this.points, function (point) {
+			H.each(this.points, function (point) {
 				if (point.dataLabel) {
 					point.dataLabel._pos = null; // reset
 				}
@@ -16072,22 +16073,21 @@ if (Highcharts.seriesTypes.pie) {
 	};
 }
 
-if (Highcharts.seriesTypes.column) {
+if (seriesTypes.column) {
 
 	/**
 	 * Override the basic data label alignment by adjusting for the position of the column
 	 */
-	Highcharts.seriesTypes.column.prototype.alignDataLabel = function (point, dataLabel, options,  alignTo, isNew) {
+	seriesTypes.column.prototype.alignDataLabel = function (point, dataLabel, options,  alignTo, isNew) {
 		var inverted = this.chart.inverted,
 			series = point.series,
-			pick = Highcharts.pick,
 			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
 			below = pick(point.below, point.plotY > pick(this.translatedThreshold, series.yAxis.len)), // point.below is used in range series
 			inside = pick(options.inside, !!this.options.stacking); // draw it inside the box?
 
 		// Align to the column itself, or the top of it
 		if (dlBox) { // Area range uses this method but not alignTo
-			alignTo = Highcharts.merge(dlBox);
+			alignTo = H.merge(dlBox);
 
 			if (inverted) {
 				alignTo = {
@@ -16123,12 +16123,12 @@ if (Highcharts.seriesTypes.column) {
 		);
 
 		// Call the parent method
-		Highcharts.Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
+		Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
 	};
 }
 
-
-
+	return H;
+}(Highcharts));
 /**
  * Highmaps JS v1.1.5-modified ()
  * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
