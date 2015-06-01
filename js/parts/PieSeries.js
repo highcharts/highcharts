@@ -1,7 +1,14 @@
+(function (H) {
+	var CenteredSeriesMixin = H.CenteredSeriesMixin,
+		LegendSymbolMixin = H.LegendSymbolMixin,
+		PiePoint,
+		PieSeries,
+		Point = H.Point,
+		Series = H.Series;
 /**
  * Set the default options for pie
  */
-Highcharts.defaultPlotOptions.pie = Highcharts.merge(Highcharts.defaultSeriesOptions, {
+H.defaultPlotOptions.pie = H.merge(H.defaultSeriesOptions, {
 	borderColor: '#FFFFFF',
 	borderWidth: 1,
 	center: [null, null],
@@ -43,21 +50,21 @@ Highcharts.defaultPlotOptions.pie = Highcharts.merge(Highcharts.defaultSeriesOpt
 /**
  * Extended point object for pies
  */
-var PiePoint = Highcharts.extendClass(Highcharts.Point, {
+PiePoint = H.extendClass(Point, {
 	/**
 	 * Initiate the pie slice
 	 */
 	init: function () {
 
-		Highcharts.Point.prototype.init.apply(this, arguments);
+		Point.prototype.init.apply(this, arguments);
 
 		var point = this,
-			addEvent = Highcharts.addEvent,
+			addEvent = H.addEvent,
 			toggleSlice;
 
-		Highcharts.extend(point, {
+		H.extend(point, {
 			visible: point.visible !== false,
-			name: Highcharts.pick(point.name, 'Slice')
+			name: H.pick(point.name, 'Slice')
 		});
 
 		// add event listener for select
@@ -81,7 +88,7 @@ var PiePoint = Highcharts.extendClass(Highcharts.Point, {
 			chart = series.chart,
 			ignoreHiddenPoint = series.options.ignoreHiddenPoint;
 		
-		redraw = Highcharts.pick(redraw, ignoreHiddenPoint);
+		redraw = H.pick(redraw, ignoreHiddenPoint);
 
 		if (vis !== point.visible) {
 
@@ -91,7 +98,7 @@ var PiePoint = Highcharts.extendClass(Highcharts.Point, {
 
 			// Show and hide associated elements. This is performed regardless of redraw or not,
 			// because chart.redraw only handles full series.
-			Highcharts.each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
+			H.each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
 				if (point[key]) {
 					point[key][vis ? 'show' : 'hide'](true);
 				}
@@ -123,13 +130,13 @@ var PiePoint = Highcharts.extendClass(Highcharts.Point, {
 			chart = series.chart,
 			translation;
 
-		Highcharts.setAnimation(animation, chart);
+		H.setAnimation(animation, chart);
 
 		// redraw is true by default
-		redraw = Highcharts.pick(redraw, true);
+		redraw = H.pick(redraw, true);
 
 		// if called without an argument, toggle
-		point.sliced = point.options.sliced = sliced = Highcharts.defined(sliced) ? sliced : !point.sliced;
+		point.sliced = point.options.sliced = sliced = H.defined(sliced) ? sliced : !point.sliced;
 		series.options.data[HighchartsAdapter.inArray(point, series.data)] = point.options; // update userOptions.data
 
 		translation = sliced ? point.slicedTranslation : {
@@ -160,7 +167,7 @@ var PiePoint = Highcharts.extendClass(Highcharts.Point, {
 /**
  * The Pie series class
  */
-var PieSeries = {
+PieSeries = {
 	type: 'pie',
 	isCartesian: false,
 	pointClass: PiePoint,
@@ -177,7 +184,7 @@ var PieSeries = {
 	/**
 	 * Pies have one color each point
 	 */
-	getColor: Highcharts.noop,
+	getColor: H.noop,
 
 	/**
 	 * Animate the pies in
@@ -188,7 +195,7 @@ var PieSeries = {
 			startAngleRad = series.startAngleRad;
 
 		if (!init) {
-			Highcharts.each(points, function (point) {
+			H.each(points, function (point) {
 				var graphic = point.graphic,
 					args = point.shapeArgs;
 
@@ -219,10 +226,10 @@ var PieSeries = {
 	 * in order to access the points from the legend.
 	 */
 	setData: function (data, redraw, animation, updatePoints) {
-		Highcharts.Series.prototype.setData.call(this, data, false, animation, updatePoints);
+		Series.prototype.setData.call(this, data, false, animation, updatePoints);
 		this.processData();
 		this.generatePoints();
-		if (Highcharts.pick(redraw, true)) {
+		if (H.pick(redraw, true)) {
 			this.chart.redraw(animation);
 		} 
 	},
@@ -257,7 +264,7 @@ var PieSeries = {
 	 * Extend the generatePoints method by adding total and percentage properties to each point
 	 */
 	generatePoints: function () {
-		Highcharts.Series.prototype.generatePoints.call(this);
+		Series.prototype.generatePoints.call(this);
 		this.updateTotals();
 	},
 	
@@ -278,7 +285,7 @@ var PieSeries = {
 			angle,
 			startAngle = options.startAngle || 0,
 			startAngleRad = series.startAngleRad = Math.PI / 180 * (startAngle - 90),
-			endAngleRad = series.endAngleRad = Math.PI / 180 * ((Highcharts.pick(options.endAngle, startAngle + 360)) - 90),
+			endAngleRad = series.endAngleRad = Math.PI / 180 * ((H.pick(options.endAngle, startAngle + 360)) - 90),
 			circ = endAngleRad - startAngleRad, //2 * Math.PI,
 			points = series.points,
 			radiusX, // the x component of the radius vector for a given point
@@ -395,7 +402,7 @@ var PieSeries = {
 		}
 
 		// draw the slices
-		Highcharts.each(series.points, function (point) {
+		H.each(series.points, function (point) {
 			graphic = point.graphic;
 			shapeArgs = point.shapeArgs;
 			shadowGroup = point.shadowGroup;
@@ -419,7 +426,7 @@ var PieSeries = {
 
 			// draw the slice
 			if (graphic) {
-				graphic.animate(Highcharts.extend(shapeArgs, groupTranslation));
+				graphic.animate(H.extend(shapeArgs, groupTranslation));
 			} else {
 				point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 					.setRadialReference(series.center)
@@ -440,7 +447,7 @@ var PieSeries = {
 	},
 
 
-	searchPoint: Highcharts.noop,
+	searchPoint: H.noop,
 
 	/**
 	 * Utility for sorting data labels
@@ -454,19 +461,21 @@ var PieSeries = {
 	/**
 	 * Use a simple symbol from LegendSymbolMixin
 	 */
-	drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle,
+	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
 	/**
 	 * Use the getCenter method from drawLegendSymbol
 	 */
-	getCenter: Highcharts.CenteredSeriesMixin.getCenter,
+	getCenter: CenteredSeriesMixin.getCenter,
 
 	/**
 	 * Pies don't have point marker symbols
 	 */
-	getSymbol: Highcharts.noop
+	getSymbol: H.noop
 
 };
-PieSeries = Highcharts.extendClass(Highcharts.Series, PieSeries);
-Highcharts.seriesTypes.pie = PieSeries;
+PieSeries = H.extendClass(Series, PieSeries);
+H.seriesTypes.pie = PieSeries;
 
+	return H;
+}(Highcharts));
