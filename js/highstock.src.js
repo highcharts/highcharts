@@ -17,11 +17,14 @@
 		svg = !!document.createElementNS && !!document.createElementNS(SVG_NS, 'svg').createSVGRect,
 		isIE = /(msie|trident)/i.test(userAgent) && !window.opera,
 		useCanVG = !svg && !isIE && !!document.createElement('canvas').getContext,
+		vml = !svg && !useCanVG,
 		userAgent = navigator.userAgent,
 		isFirefox = /Firefox/.test(userAgent),
 		hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4; // issue #38
 
 window.Highcharts = window.Highcharts ? window.Highcharts.error(16, true) : {
+	product: 'Highstock',
+	version: '2.1.5-modified',
 	deg2rad: Math.PI * 2 / 360,
 	hasBidiBug: hasBidiBug,
 	isIE: isIE,
@@ -44,6 +47,7 @@ window.Highcharts = window.Highcharts ? window.Highcharts.error(16, true) : {
 		year: 364 * 24 * 3600000
 	},
 	useCanVG: useCanVG,
+	vml: vml,
 	charts: [],
 	noop: function () {}
 };
@@ -23522,17 +23526,5 @@ Highcharts.wrap(Highcharts.Series.prototype, 'render', function (proceed) {
 		}
 	}
 	proceed.call(this);
-});
-
-// global variables
-Highcharts.extend(Highcharts, {
-	
-	// Constructors
-	
-	// Various
-	canvas: Highcharts.useCanVG,
-	vml: !Highcharts.svg && !Highcharts.useCanVG,
-	product: 'Highstock',
-	version: '2.1.5-modified'
 });
 
