@@ -1,9 +1,10 @@
+(function (H) {
 /* ****************************************************************************
  * Start Candlestick series code											  *
  *****************************************************************************/
 
 // 1 - set default options
-Highcharts.defaultPlotOptions.candlestick = Highcharts.merge(Highcharts.defaultPlotOptions.column, {
+H.defaultPlotOptions.candlestick = H.merge(H.defaultPlotOptions.column, {
 	lineColor: 'black',
 	lineWidth: 1,
 	states: {
@@ -11,14 +12,14 @@ Highcharts.defaultPlotOptions.candlestick = Highcharts.merge(Highcharts.defaultP
 			lineWidth: 2
 		}
 	},
-	tooltip: Highcharts.defaultPlotOptions.ohlc.tooltip,
+	tooltip: H.defaultPlotOptions.ohlc.tooltip,
 	threshold: null,
 	upColor: 'white'
 	// upLineColor: null
 });
 
 // 2 - Create the CandlestickSeries object
-var CandlestickSeries = Highcharts.extendClass(Highcharts.seriesTypes.ohlc, {
+var CandlestickSeries = H.extendClass(H.seriesTypes.ohlc, {
 	type: 'candlestick',
 
 	/**
@@ -35,7 +36,7 @@ var CandlestickSeries = Highcharts.extendClass(Highcharts.seriesTypes.ohlc, {
 	 * Postprocess mapping between options and SVG attributes
 	 */
 	getAttribs: function () {
-		Highcharts.seriesTypes.ohlc.prototype.getAttribs.apply(this, arguments);
+		H.seriesTypes.ohlc.prototype.getAttribs.apply(this, arguments);
 		var series = this,
 			options = series.options,
 			stateOptions = options.states,			
@@ -45,7 +46,7 @@ var CandlestickSeries = Highcharts.extendClass(Highcharts.seriesTypes.ohlc, {
 
 		// Add custom line color for points going up (close > open).
 		// Fill is handled by OHLCSeries' getAttribs.
-		Highcharts.each(series.points, function (point) {
+		H.each(series.points, function (point) {
 			if (point.open < point.close) {
 				point.pointAttr[''].stroke = upLineColor;
 				point.pointAttr.hover.stroke = hoverStroke;
@@ -76,7 +77,7 @@ var CandlestickSeries = Highcharts.extendClass(Highcharts.seriesTypes.ohlc, {
 			halfWidth;
 
 
-		Highcharts.each(points, function (point) {
+		H.each(points, function (point) {
 
 			graphic = point.graphic;
 			if (point.plotY !== undefined) {
@@ -136,8 +137,11 @@ var CandlestickSeries = Highcharts.extendClass(Highcharts.seriesTypes.ohlc, {
 
 });
 
-Highcharts.seriesTypes.candlestick = CandlestickSeries;
+H.seriesTypes.candlestick = CandlestickSeries;
 
 /* ****************************************************************************
  * End Candlestick series code												*
  *****************************************************************************/
+
+	return H;
+}(Highcharts));
