@@ -22968,14 +22968,28 @@ Chart.prototype.callbacks.push(function (chart) {
 
 	return H;
 }(Highcharts));
+(function (H) {
+	var Axis = H.Axis,
+		Chart = H.Chart,
+		Point = H.Point,
+		Pointer = H.Pointer,
+		Renderer = H.Renderer,
+		Series = H.Series,
+		StockChart,
+		SVGRenderer = H.SVGRenderer,
+		VMLRenderer = H.VMLRenderer,
+		seriesProto = Series.prototype,
+		seriesInit = seriesProto.init, 
+		seriesProcessData = seriesProto.processData,
+		pointTooltipFormatter = Point.prototype.tooltipFormatter;
 /**
  * A wrapper for Chart with all the default values for a Stock chart
  */
-Highcharts.StockChart = function (options, callback) {
+StockChart = H.StockChart = function (options, callback) {
 	var seriesOptions = options.series, // to increase performance, don't merge the data 
 		opposite,
-		splat = Highcharts.splat,
-		pick = Highcharts.pick,
+		splat = H.splat,
+		pick = H.pick,
 
 		// Always disable startOnTick:true on the main axis when the navigator is enabled (#1090)
 		navigatorEnabled = pick(options.navigator && options.navigator.enabled, true),
@@ -22998,8 +23012,8 @@ Highcharts.StockChart = function (options, callback) {
 		};
 
 	// apply X axis options to both single and multi y axes
-	options.xAxis = Highcharts.map(splat(options.xAxis || {}), function (xAxisOptions) {
-		return Highcharts.merge({ // defaults
+	options.xAxis = H.map(splat(options.xAxis || {}), function (xAxisOptions) {
+		return H.merge({ // defaults
 				minPadding: 0,
 				maxPadding: 0,
 				ordinal: true,
@@ -23020,9 +23034,9 @@ Highcharts.StockChart = function (options, callback) {
 	});
 
 	// apply Y axis options to both single and multi y axes
-	options.yAxis = Highcharts.map(splat(options.yAxis || {}), function (yAxisOptions) {
+	options.yAxis = H.map(splat(options.yAxis || {}), function (yAxisOptions) {
 		opposite = pick(yAxisOptions.opposite, true);
-		return Highcharts.merge({ // defaults
+		return H.merge({ // defaults
 			labels: {
 				y: -2
 			},
@@ -23037,7 +23051,7 @@ Highcharts.StockChart = function (options, callback) {
 
 	options.series = null;
 
-	options = Highcharts.merge({
+	options = H.merge({
 		chart: {
 			panning: true,
 			pinchType: 'x'
@@ -23091,11 +23105,11 @@ Highcharts.StockChart = function (options, callback) {
 	options.series = seriesOptions;
 
 
-	return new Highcharts.Chart(options, callback);
+	return new Chart(options, callback);
 };
 
 // Implement the pinchType option
-Highcharts.wrap(Highcharts.Pointer.prototype, 'init', function (proceed, chart, options) {
+H.wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 
 	var pinchType = options.chart.pinchType || '';
 		
@@ -23109,7 +23123,7 @@ Highcharts.wrap(Highcharts.Pointer.prototype, 'init', function (proceed, chart, 
 
 // Override the automatic label alignment so that the first Y axis' labels
 // are drawn on top of the grid line, and subsequent axes are drawn outside
-Highcharts.wrap(Highcharts.Axis.prototype, 'autoLabelAlign', function (proceed) {
+H.wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 	var chart = this.chart,
 		options = this.options,
 		panes = chart._labelPanes = chart._labelPanes || {},
@@ -23132,12 +23146,12 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'autoLabelAlign', function (proceed) 
 });
 
 // Override getPlotLinePath to allow for multipane charts
-Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old, force, translatedValue) {
+H.wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old, force, translatedValue) {
 	var axis = this,
 		series = (this.isLinked && !this.series ? this.linkedParent.series : this.series),
 		chart = axis.chart,
-		defined = Highcharts.defined,
-		map = Highcharts.map,
+		defined = H.defined,
+		map = H.map,
 		renderer = chart.renderer,
 		axisLeft = axis.left,
 		axisTop = axis.top,
@@ -23169,7 +23183,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed,
 
 	// Get the related axes based options.*Axis setting #2810
 	axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
-	Highcharts.each(axes2, function (A) {
+	H.each(axes2, function (A) {
 		if (defined(A.options.id) ? A.options.id.indexOf('navigator') === -1 : true) {
 			var a = (A.isXAxis ? 'yAxis' : 'xAxis'),
 				rax = (defined(A.options[a]) ? chart[a][A.options[a]] : chart[a][0]);	
@@ -23185,17 +23199,17 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed,
 	// we are adding an axis without data, so we need to populate this with grid
 	// lines (#2796).
 	uniqueAxes = axes.length ? [] : [axis.isXAxis ? chart.yAxis[0] : chart.xAxis[0]]; //#3742
-	Highcharts.each(axes, function (axis2) {
+	H.each(axes, function (axis2) {
 		if (HighchartsAdapter.inArray(axis2, uniqueAxes) === -1) {
 			uniqueAxes.push(axis2);
 		}
 	});
 	
-	translatedValue = Highcharts.pick(translatedValue, axis.translate(value, null, null, old));
+	translatedValue = H.pick(translatedValue, axis.translate(value, null, null, old));
 	
 	if (!isNaN(translatedValue)) {
 		if (axis.horiz) {
-			Highcharts.each(uniqueAxes, function (axis2) {
+			H.each(uniqueAxes, function (axis2) {
 				var skip;
 
 				y1 = axis2.pos;
@@ -23214,7 +23228,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed,
 				}
 			});
 		} else {
-			Highcharts.each(uniqueAxes, function (axis2) {
+			H.each(uniqueAxes, function (axis2) {
 				var skip;
 
 				x1 = axis2.pos;
@@ -23242,7 +23256,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed,
 });
 
 // Override getPlotBandPath to allow for multipane charts
-Highcharts.Axis.prototype.getPlotBandPath = function (from, to) {		
+Axis.prototype.getPlotBandPath = function (from, to) {		
 	var toPath = this.getPlotLinePath(to, null, null, true),
 		path = this.getPlotLinePath(from, null, null, true),
 		result = [],
@@ -23261,7 +23275,7 @@ Highcharts.Axis.prototype.getPlotBandPath = function (from, to) {
 };
 
 // Function to crisp a line with multiple segments
-Highcharts.SVGRenderer.prototype.crispPolyLine = function (points, width) {
+SVGRenderer.prototype.crispPolyLine = function (points, width) {
 	// points format: ['M', 0, 0, 'L', 100, 0]		
 	// normalize to a crisp line
 	var i;
@@ -23276,14 +23290,14 @@ Highcharts.SVGRenderer.prototype.crispPolyLine = function (points, width) {
 	}
 	return points;
 };
-if (Highcharts.Renderer === Highcharts.VMLRenderer) {
-	Highcharts.VMLRenderer.prototype.crispPolyLine = Highcharts.SVGRenderer.prototype.crispPolyLine;
+if (Renderer === VMLRenderer) {
+	VMLRenderer.prototype.crispPolyLine = SVGRenderer.prototype.crispPolyLine;
 }
 
 
 // Wrapper to hide the label
-Highcharts.wrap(Highcharts.Axis.prototype, 'hideCrosshair', function (proceed, i) {
-	var defined = Highcharts.defined;
+H.wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
+	var defined = H.defined;
 
 	proceed.call(this, i);
 
@@ -23292,15 +23306,15 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'hideCrosshair', function (proceed, i
 	if (defined(i)) {
 		if (this.crossLabelArray[i]) { this.crossLabelArray[i].hide(); }
 	} else {
-		Highcharts.each(this.crossLabelArray, function (crosslabel) {
+		H.each(this.crossLabelArray, function (crosslabel) {
 			crosslabel.hide();
 		});
 	}
 });
 
 // Wrapper to draw the label
-Highcharts.wrap(Highcharts.Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
-	var defined = Highcharts.defined;
+H.wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
+	var defined = H.defined;
 	
 	// Draw the crosshair
 	proceed.call(this, e, point);
@@ -23333,11 +23347,11 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'drawCrosshair', function (proceed, e
 			zIndex: 12,
 			height: horiz ? 16 : undefined,
 			fill: options.backgroundColor || (this.series[0] && this.series[0].color) || 'gray',
-			padding: Highcharts.pick(options.padding, 2),
+			padding: H.pick(options.padding, 2),
 			stroke: options.borderColor || null,
 			'stroke-width': options.borderWidth || 0
 		})
-		.css(Highcharts.extend({				
+		.css(H.extend({				
 			color: 'white',
 			fontWeight: 'normal',
 			fontSize: '11px',
@@ -23370,7 +23384,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'drawCrosshair', function (proceed, e
 
 	// show the label
 	crossLabel.attr({
-		text: formatOption ? Highcharts.format(formatOption, {value: point[axis]}) : options.formatter.call(this, point[axis]), 
+		text: formatOption ? H.format(formatOption, {value: point[axis]}) : options.formatter.call(this, point[axis]), 
 		x: posx, 
 		y: posy, 
 		visibility: 'visible'
@@ -23416,11 +23430,6 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'drawCrosshair', function (proceed, e
 /* ****************************************************************************
  * Start value compare logic                                                  *
  *****************************************************************************/
- 
-var seriesProto = Highcharts.Series.prototype,
-	seriesInit = seriesProto.init, 
-	seriesProcessData = seriesProto.processData,
-	pointTooltipFormatter = Highcharts.Point.prototype.tooltipFormatter;
 	
 /**
  * Extend series.init by adding a method to modify the y value used for plotting
@@ -23503,7 +23512,7 @@ seriesProto.processData = function () {
 /**
  * Modify series extremes
  */
-Highcharts.wrap(seriesProto, 'getExtremes', function (proceed) {
+H.wrap(seriesProto, 'getExtremes', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (this.modifyValue) {
@@ -23515,12 +23524,12 @@ Highcharts.wrap(seriesProto, 'getExtremes', function (proceed) {
 /**
  * Add a utility method, setCompare, to the Y axis
  */
-Highcharts.Axis.prototype.setCompare = function (compare, redraw) {
+Axis.prototype.setCompare = function (compare, redraw) {
 	if (!this.isXAxis) {
-		Highcharts.each(this.series, function (series) {
+		H.each(this.series, function (series) {
 			series.setCompare(compare);
 		});
-		if (Highcharts.pick(redraw, true)) {
+		if (H.pick(redraw, true)) {
 			this.chart.redraw();
 		}
 	}
@@ -23530,12 +23539,12 @@ Highcharts.Axis.prototype.setCompare = function (compare, redraw) {
  * Extend the tooltip formatter by adding support for the point.change variable
  * as well as the changeDecimals option
  */
-Highcharts.Point.prototype.tooltipFormatter = function (pointFormat) {
+Point.prototype.tooltipFormatter = function (pointFormat) {
 	var point = this;
 	
 	pointFormat = pointFormat.replace(
 		'{point.change}',
-		(point.change > 0 ? '+' : '') + Highcharts.numberFormat(point.change, Highcharts.pick(point.series.tooltipOptions.changeDecimals, 2))
+		(point.change > 0 ? '+' : '') + H.numberFormat(point.change, H.pick(point.series.tooltipOptions.changeDecimals, 2))
 	); 
 	
 	return pointTooltipFormatter.apply(this, [pointFormat]);
@@ -23550,14 +23559,14 @@ Highcharts.Point.prototype.tooltipFormatter = function (pointFormat) {
  * Extend the Series prototype to create a separate series clip box. This is related
  * to using multiple panes, and a future pane logic should incorporate this feature (#2754).
  */
-Highcharts.wrap(Highcharts.Series.prototype, 'render', function (proceed) {
+H.wrap(Series.prototype, 'render', function (proceed) {
 	// Only do this on stock charts (#2939), and only if the series type handles clipping
 	// in the animate method (#2975).
 	if (this.chart.options._stock) {
 
 		// First render, initial clip box
 		if (!this.clipBox && this.animate) {
-			this.clipBox = Highcharts.merge(this.chart.clipBox);
+			this.clipBox = H.merge(this.chart.clipBox);
 			this.clipBox.width = this.xAxis.len;
 			this.clipBox.height = this.yAxis.len;
 
@@ -23572,4 +23581,7 @@ Highcharts.wrap(Highcharts.Series.prototype, 'render', function (proceed) {
 	}
 	proceed.call(this);
 });
+
+	return H;
+}(Highcharts));
 
