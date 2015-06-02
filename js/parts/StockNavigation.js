@@ -1,9 +1,9 @@
+(function (H) {
+	var Chart = H.Chart;
 
-
-
-Highcharts.Chart.prototype.callbacks.push(function (chart) {
+Chart.prototype.callbacks.push(function (chart) {
 	var extremes,
-		addEvent = Highcharts.addEvent,
+		addEvent = H.addEvent,
 		scroller = chart.scroller,
 		rangeSelector = chart.rangeSelector;
 
@@ -30,7 +30,7 @@ Highcharts.Chart.prototype.callbacks.push(function (chart) {
 	}
 
 	function destroyEvents() {
-		var removeEvent = Highcharts.removeEvent;
+		var removeEvent = H.removeEvent;
 		
 		if (scroller) {
 			removeEvent(chart.xAxis[0], 'afterSetExtremes', afterSetExtremesHandlerScroller);
@@ -47,7 +47,7 @@ Highcharts.Chart.prototype.callbacks.push(function (chart) {
 		addEvent(chart.xAxis[0], 'afterSetExtremes', afterSetExtremesHandlerScroller);
 
 		// redraw the scroller on chart resize or box resize
-		Highcharts.wrap(chart, 'drawChartBox', function (proceed) {
+		H.wrap(chart, 'drawChartBox', function (proceed) {
 			var isDirtyBox = this.isDirtyBox;
 			proceed.call(this);
 			if (isDirtyBox) {
@@ -72,3 +72,6 @@ Highcharts.Chart.prototype.callbacks.push(function (chart) {
 	// Remove resize/afterSetExtremes at chart destroy
 	addEvent(chart, 'destroy', destroyEvents);
 });
+
+	return H;
+}(Highcharts));
