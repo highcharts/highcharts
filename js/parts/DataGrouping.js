@@ -4,6 +4,7 @@
  ******************************************************************************/
 /*jslint white:true */
 var Axis = H.Axis,
+	each = H.each,
 	seriesProto = H.Series.prototype,
 	tooltipProto = H.Tooltip.prototype,
 	baseProcessData = seriesProto.processData,
@@ -358,7 +359,7 @@ seriesProto.destroyGroupedData = function () {
 	var groupedData = this.groupedData;
 
 	// clear previous groups
-	H.each(groupedData || [], function (point, i) {
+	each(groupedData || [], function (point, i) {
 		if (point) {
 			groupedData[i] = point.destroy ? point.destroy() : null;
 		}
@@ -490,7 +491,7 @@ H.wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
  */
 H.wrap(Axis.prototype, 'setScale', function (proceed) {
 	proceed.call(this);
-	H.each(this.series, function (series) {
+	each(this.series, function (series) {
 		series.hasProcessed = false;
 	});
 });
