@@ -1,11 +1,16 @@
+(function (H) {
+	var Renderer = H.Renderer,
+		Series = H.Series,
+		SVGRenderer = H.SVGRenderer,
+		TrackerMixin = H.TrackerMixin,
+		VMLRenderer = H.VMLRenderer,
+		symbols = SVGRenderer.prototype.symbols;
 /* ****************************************************************************
  * Start Flags series code													*
  *****************************************************************************/
 
-var symbols = Highcharts.SVGRenderer.prototype.symbols;
-
 // 1 - set default options
-Highcharts.defaultPlotOptions.flags = Highcharts.merge(Highcharts.defaultPlotOptions.column, {
+H.defaultPlotOptions.flags = H.merge(H.defaultPlotOptions.column, {
 	fillColor: 'white',
 	lineWidth: 1,
 	pointRange: 0, // #673
@@ -31,7 +36,7 @@ Highcharts.defaultPlotOptions.flags = Highcharts.merge(Highcharts.defaultPlotOpt
 });
 
 // 2 - Create the CandlestickSeries object
-Highcharts.seriesTypes.flags = Highcharts.extendClass(Highcharts.seriesTypes.column, {
+H.seriesTypes.flags = H.extendClass(H.seriesTypes.column, {
 	type: 'flags',
 	sorted: false,
 	noSharedTooltip: true,
@@ -42,7 +47,7 @@ Highcharts.seriesTypes.flags = Highcharts.extendClass(Highcharts.seriesTypes.col
 	/**
 	 * Inherit the initialization from base Series
 	 */
-	init: Highcharts.Series.prototype.init,
+	init: Series.prototype.init,
 
 	/**
 	 * One-to-one mapping from options to SVG attributes
@@ -59,7 +64,7 @@ Highcharts.seriesTypes.flags = Highcharts.extendClass(Highcharts.seriesTypes.col
 	 */
 	translate: function () {
 
-		Highcharts.seriesTypes.column.prototype.translate.apply(this);
+		H.seriesTypes.column.prototype.translate.apply(this);
 
 		var series = this,
 			options = series.options,
@@ -119,7 +124,7 @@ Highcharts.seriesTypes.flags = Highcharts.extendClass(Highcharts.seriesTypes.col
 		}
 
 		// Add plotY position and handle stacking
-		Highcharts.each(points, function (point, i) {
+		H.each(points, function (point, i) {
 
 			var stackIndex;
 			
@@ -209,7 +214,7 @@ Highcharts.seriesTypes.flags = Highcharts.extendClass(Highcharts.seriesTypes.col
 						anchorY,
 						options.useHTML
 					)
-					.css(Highcharts.merge(options.style, point.style))
+					.css(H.merge(options.style, point.style))
 					.attr(pointAttr)
 					.attr({
 						align: shape === 'flag' ? 'left' : 'center',
@@ -239,14 +244,14 @@ Highcharts.seriesTypes.flags = Highcharts.extendClass(Highcharts.seriesTypes.col
 		var series = this,
 			points = series.points;
 		
-		Highcharts.TrackerMixin.drawTrackerPoint.apply(this);
+		TrackerMixin.drawTrackerPoint.apply(this);
 
 		// Bring each stacked flag up on mouse over, this allows readability of vertically
 		// stacked elements as well as tight points on the x axis. #1924.
-		Highcharts.each(points, function (point) {
+		H.each(points, function (point) {
 			var graphic = point.graphic;
 			if (graphic) {
-				Highcharts.addEvent(graphic.element, 'mouseover', function () {
+				H.addEvent(graphic.element, 'mouseover', function () {
 
 					// Raise this point
 					if (point.stackIndex > 0 && !point.raised) {
@@ -258,7 +263,7 @@ Highcharts.seriesTypes.flags = Highcharts.extendClass(Highcharts.seriesTypes.col
 					}
 
 					// Revert other raised points
-					Highcharts.each(points, function (otherPoint) {
+					H.each(points, function (otherPoint) {
 						if (otherPoint !== point && otherPoint.raised && otherPoint.graphic) {
 							otherPoint.graphic.attr({
 								y: otherPoint._y
@@ -274,9 +279,9 @@ Highcharts.seriesTypes.flags = Highcharts.extendClass(Highcharts.seriesTypes.col
 	/**
 	 * Disable animation
 	 */
-	animate: Highcharts.noop,
-	buildKDTree: Highcharts.noop,
-	setClip: Highcharts.noop
+	animate: H.noop,
+	buildKDTree: H.noop,
+	setClip: H.noop
 
 });
 
@@ -298,7 +303,7 @@ symbols.flag = function (x, y, w, h, options) {
 };
 
 // create the circlepin and squarepin icons with anchor
-Highcharts.each(['circle', 'square'], function (shape) {
+H.each(['circle', 'square'], function (shape) {
 	symbols[shape + 'pin'] = function (x, y, w, h, options) {
 
 		var anchorX = options && options.anchorX,
@@ -320,12 +325,15 @@ Highcharts.each(['circle', 'square'], function (shape) {
 // The symbol callbacks are generated on the SVGRenderer object in all browsers. Even
 // VML browsers need this in order to generate shapes in export. Now share
 // them with the VMLRenderer.
-if (Highcharts.Renderer === Highcharts.VMLRenderer) {
-	Highcharts.each(['flag', 'circlepin', 'squarepin'], function (shape) {
-		Highcharts.VMLRenderer.prototype.symbols[shape] = symbols[shape];
+if (Renderer === VMLRenderer) {
+	H.each(['flag', 'circlepin', 'squarepin'], function (shape) {
+		VMLRenderer.prototype.symbols[shape] = symbols[shape];
 	});
 }
 
 /* ****************************************************************************
  * End Flags series code													  *
  *****************************************************************************/
+
+	return H;
+}(Highcharts));
