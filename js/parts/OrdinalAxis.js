@@ -1,9 +1,14 @@
+(function (H) {
+	var Axis = H.Axis,
+		Chart = H.Chart,
+		Series = H.Series;
+
 /* ****************************************************************************
  * Start ordinal axis logic                                                   *
  *****************************************************************************/
 
 
-Highcharts.wrap(Highcharts.Series.prototype, 'init', function (proceed) {
+H.wrap(Series.prototype, 'init', function (proceed) {
 	var series = this,
 		xAxis;
 
@@ -14,7 +19,7 @@ Highcharts.wrap(Highcharts.Series.prototype, 'init', function (proceed) {
 
 	// Destroy the extended ordinal index on updated data
 	if (xAxis && xAxis.options.ordinal) {
-		Highcharts.addEvent(series, 'updatedData', function () {
+		H.addEvent(series, 'updatedData', function () {
 			delete xAxis.ordinalIndex;
 		});
 	}
@@ -27,7 +32,7 @@ Highcharts.wrap(Highcharts.Series.prototype, 'init', function (proceed) {
  * positions up in segments, find the tick positions for each segment then concatenize them.
  * This method is used from both data grouping logic and X axis tick position logic.
  */
-Highcharts.wrap(Highcharts.Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min, max, startOfWeek, positions, closestDistance, findHigherRanks) {
+H.wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min, max, startOfWeek, positions, closestDistance, findHigherRanks) {
 
 	var start = 0,
 		end = 0,
@@ -37,8 +42,8 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getTimeTicks', function (proceed, no
 		info,
 		posLength,
 		outsideMax,
-		dateFormat = Highcharts.dateFormat,
-		timeUnits = Highcharts.timeUnits,
+		dateFormat = H.dateFormat,
+		timeUnits = H.timeUnits,
 		groupPositions = [],
 		lastGroupPosition = -Number.MAX_VALUE,
 		tickPixelIntervalOption = this.options.tickPixelInterval;
@@ -121,7 +126,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getTimeTicks', function (proceed, no
 
 	// Don't show ticks within a gap in the ordinal axis, where the space between
 	// two points is greater than a portion of the tick pixel interval
-	if (findHigherRanks && Highcharts.defined(tickPixelIntervalOption)) { // check for squashed ticks
+	if (findHigherRanks && H.defined(tickPixelIntervalOption)) { // check for squashed ticks
 
 		var length = groupPositions.length,
 			i = length,
@@ -184,7 +189,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getTimeTicks', function (proceed, no
 });
 
 // Extend the Axis prototype
-Highcharts.extend(Highcharts.Axis.prototype, {
+H.extend(Axis.prototype, {
 
 	/**
 	 * Calculate the ordinal positions before tick positions are calculated.
@@ -208,7 +213,7 @@ Highcharts.extend(Highcharts.Axis.prototype, {
 		// apply the ordinal logic
 		if (isOrdinal || hasBreaks) { // #4167 YAxis is never ordinal ?
 
-			Highcharts.each(axis.series, function (series, i) {
+			H.each(axis.series, function (series, i) {
 
 				if (series.visible !== false && (series.takeOrdinalPosition !== false || hasBreaks)) {
 
@@ -417,16 +422,16 @@ Highcharts.extend(Highcharts.Axis.prototype, {
 				options: {
 					ordinal: true
 				},
-				val2lin: Highcharts.Axis.prototype.val2lin // #2590
+				val2lin: Axis.prototype.val2lin // #2590
 			};
 
 			// Add the fake series to hold the full data, then apply processData to it
-			Highcharts.each(axis.series, function (series) {
+			H.each(axis.series, function (series) {
 				fakeSeries = {
 					xAxis: fakeAxis,
 					xData: series.xData,
 					chart: chart,
-					destroyGroupedData: Highcharts.noop
+					destroyGroupedData: H.noop
 				};
 				fakeSeries.options = {
 					dataGrouping : grouping ? {
@@ -531,7 +536,7 @@ Highcharts.extend(Highcharts.Axis.prototype, {
 });
 
 // Extending the Chart.pan method for ordinal axes
-Highcharts.wrap(Highcharts.Chart.prototype, 'pan', function (proceed, e) {
+H.wrap(Chart.prototype, 'pan', function (proceed, e) {
 	var chart = this,
 		xAxis = chart.xAxis[0],
 		chartX = e.chartX,
@@ -563,7 +568,7 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'pan', function (proceed, e) {
 
 			// Remove active points for shared tooltip
 			if (hoverPoints) {
-				Highcharts.each(hoverPoints, function (point) {
+				H.each(hoverPoints, function (point) {
 					point.setState();
 				});
 			}
@@ -606,7 +611,7 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'pan', function (proceed, e) {
 			}
 
 			chart.mouseDownX = chartX; // set new reference for next run
-			Highcharts.css(chart.container, { cursor: 'move' });
+			H.css(chart.container, { cursor: 'move' });
 		}
 
 	} else {
@@ -626,7 +631,7 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'pan', function (proceed, e) {
  * Extend getSegments by identifying gaps in the ordinal data so that we can draw a gap in the
  * line or area
  */
-Highcharts.wrap(Highcharts.Series.prototype, 'getSegments', function (proceed) {
+H.wrap(Series.prototype, 'getSegments', function (proceed) {
 
 	var series = this,
 		segments,
@@ -642,7 +647,7 @@ Highcharts.wrap(Highcharts.Series.prototype, 'getSegments', function (proceed) {
 		segments = series.segments;
 
 		// extension for ordinal breaks
-		Highcharts.each(segments, function (segment, no) {
+		H.each(segments, function (segment, no) {
 			var i = segment.length - 1;
 			while (i--) {
 				if (segment[i + 1].x - segment[i].x > xAxis.closestPointRange * gapSize) {
@@ -660,3 +665,6 @@ Highcharts.wrap(Highcharts.Series.prototype, 'getSegments', function (proceed) {
 /* ****************************************************************************
  * End ordinal axis logic                                                   *
  *****************************************************************************/
+
+	return H;
+}(Highcharts));
