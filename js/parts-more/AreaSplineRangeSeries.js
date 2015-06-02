@@ -1,14 +1,17 @@
+(function (H) {
 /**
  * The AreaSplineRangeSeries class
  */
 
-Highcharts.defaultPlotOptions.areasplinerange = Highcharts.merge(Highcharts.defaultPlotOptions.arearange);
+H.defaultPlotOptions.areasplinerange = H.merge(H.defaultPlotOptions.arearange);
 
 /**
  * AreaSplineRangeSeries object
  */
-Highcharts.seriesTypes.areasplinerange = Highcharts.extendClass(Highcharts.seriesTypes.arearange, {
+H.seriesTypes.areasplinerange = H.extendClass(H.seriesTypes.arearange, {
 	type: 'areasplinerange',
-	getPointSpline: Highcharts.seriesTypes.spline.prototype.getPointSpline
+	getPointSpline: H.seriesTypes.spline.prototype.getPointSpline
 });
 
+	return H;
+}(Highcharts));
