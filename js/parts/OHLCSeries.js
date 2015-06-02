@@ -1,9 +1,11 @@
+(function (H) {
+	var OHLCSeries;
 /* ****************************************************************************
  * Start OHLC series code													 *
  *****************************************************************************/
 
 // 1 - Set default options
-Highcharts.defaultPlotOptions.ohlc = Highcharts.merge(Highcharts.defaultPlotOptions.column, {
+H.defaultPlotOptions.ohlc = H.merge(H.defaultPlotOptions.column, {
 	lineWidth: 1,
 	tooltip: {
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' + // docs
@@ -22,7 +24,7 @@ Highcharts.defaultPlotOptions.ohlc = Highcharts.merge(Highcharts.defaultPlotOpti
 });
 
 // 2 - Create the OHLCSeries object
-var OHLCSeries = Highcharts.extendClass(Highcharts.seriesTypes.column, {
+OHLCSeries = H.extendClass(H.seriesTypes.column, {
 	type: 'ohlc',
 	pointArrayMap: ['open', 'high', 'low', 'close'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
@@ -40,19 +42,19 @@ var OHLCSeries = Highcharts.extendClass(Highcharts.seriesTypes.column, {
 	 * Postprocess mapping between options and SVG attributes
 	 */
 	getAttribs: function () {
-		Highcharts.seriesTypes.column.prototype.getAttribs.apply(this, arguments);
+		H.seriesTypes.column.prototype.getAttribs.apply(this, arguments);
 		var series = this,
 			options = series.options,
 			stateOptions = options.states,
 			upColor = options.upColor || series.color,
-			seriesDownPointAttr = Highcharts.merge(series.pointAttr),
+			seriesDownPointAttr = H.merge(series.pointAttr),
 			upColorProp = series.upColorProp;
 
 		seriesDownPointAttr[''][upColorProp] = upColor;
 		seriesDownPointAttr.hover[upColorProp] = stateOptions.hover.upColor || upColor;
 		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
 
-		Highcharts.each(series.points, function (point) {
+		H.each(series.points, function (point) {
 			if (point.open < point.close && !point.options.color) {
 				point.pointAttr = seriesDownPointAttr;
 			}
@@ -66,10 +68,10 @@ var OHLCSeries = Highcharts.extendClass(Highcharts.seriesTypes.column, {
 		var series = this,
 			yAxis = series.yAxis;
 
-		Highcharts.seriesTypes.column.prototype.translate.apply(series);
+		H.seriesTypes.column.prototype.translate.apply(series);
 
 		// do the translation
-		Highcharts.each(series.points, function (point) {
+		H.each(series.points, function (point) {
 			// the graphics
 			if (point.open !== null) {
 				point.plotOpen = yAxis.translate(point.open, 0, 1, 0, 1);
@@ -98,7 +100,7 @@ var OHLCSeries = Highcharts.extendClass(Highcharts.seriesTypes.column, {
 			crispX;
 
 
-		Highcharts.each(points, function (point) {
+		H.each(points, function (point) {
 			if (point.plotY !== undefined) {
 
 				graphic = point.graphic;
@@ -168,7 +170,10 @@ var OHLCSeries = Highcharts.extendClass(Highcharts.seriesTypes.column, {
 
 
 });
-Highcharts.seriesTypes.ohlc = OHLCSeries;
+H.seriesTypes.ohlc = OHLCSeries;
 /* ****************************************************************************
  * End OHLC series code													   *
  *****************************************************************************/
+
+	return H;
+}(Highcharts));

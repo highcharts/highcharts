@@ -18,7 +18,7 @@ Highcharts.defaultPlotOptions.candlestick = Highcharts.merge(Highcharts.defaultP
 });
 
 // 2 - Create the CandlestickSeries object
-var CandlestickSeries = Highcharts.extendClass(OHLCSeries, {
+var CandlestickSeries = Highcharts.extendClass(Highcharts.seriesTypes.ohlc, {
 	type: 'candlestick',
 
 	/**
