@@ -1,3 +1,5 @@
+(function (H) {
+	var Series = H.Series;
 /* 
  * The AreaRangeSeries class
  * 
@@ -6,7 +8,7 @@
 /**
  * Extend the default options with map options
  */
-Highcharts.defaultPlotOptions.arearange = Highcharts.merge(Highcharts.defaultPlotOptions.area, {
+H.defaultPlotOptions.arearange = H.merge(H.defaultPlotOptions.area, {
 	lineWidth: 1,
 	marker: null,
 	threshold: null,
@@ -32,7 +34,7 @@ Highcharts.defaultPlotOptions.arearange = Highcharts.merge(Highcharts.defaultPlo
 /**
  * Add the series type
  */
-Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes.area, {
+H.seriesTypes.arearange = H.extendClass(H.seriesTypes.area, {
 	type: 'arearange',
 	pointArrayMap: ['low', 'high'],
 	toYData: function (point) {
@@ -60,14 +62,14 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 	getSegments: function () {
 		var series = this;
 
-		Highcharts.each(series.points, function (point) {
+		H.each(series.points, function (point) {
 			if (!series.options.connectNulls && (point.low === null || point.high === null)) {
 				point.y = null;
 			} else if (point.low === null && point.high !== null) {
 				point.y = point.high;
 			}
 		});
-		Highcharts.Series.prototype.getSegments.call(this);
+		Series.prototype.getSegments.call(this);
 	},
 	
 	/**
@@ -75,10 +77,10 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 	 */
 	translate: function () {
 		var series = this,
-			each = Highcharts.each,
+			each = H.each,
 			yAxis = series.yAxis;
 
-		Highcharts.seriesTypes.area.prototype.translate.apply(series);
+		H.seriesTypes.area.prototype.translate.apply(series);
 
 		// Set plotLow and plotHigh
 		each(series.points, function (point) {
@@ -118,7 +120,7 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 		var lowSegment,
 			highSegment = [],
 			i = segment.length,
-			baseGetSegmentPath = Highcharts.Series.prototype.getSegmentPath,
+			baseGetSegmentPath = Series.prototype.getSegmentPath,
 			point,
 			linePath,
 			lowerPath,
@@ -175,7 +177,7 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 			length = data.length,
 			i,
 			originalDataLabels = [],
-			seriesProto = Highcharts.Series.prototype,
+			seriesProto = Series.prototype,
 			dataLabelOptions = this.options.dataLabels,
 			align = dataLabelOptions.align,
 			point,
@@ -251,12 +253,15 @@ Highcharts.seriesTypes.arearange = Highcharts.extendClass(Highcharts.seriesTypes
 	},
 	
 	alignDataLabel: function () {
-		Highcharts.seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
+		H.seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
 	},
 	
-	setStackedPoints: Highcharts.noop,
+	setStackedPoints: H.noop,
 	
-	getSymbol: Highcharts.noop,
+	getSymbol: H.noop,
 	
-	drawPoints: Highcharts.noop
+	drawPoints: H.noop
 });
+
+	return H;
+}(Highcharts));
