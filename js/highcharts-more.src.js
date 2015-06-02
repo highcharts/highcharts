@@ -13,6 +13,7 @@
 /*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
 
 (function (Highcharts) {
+(function (H) {
 /**
  * The Pane object allows options that are common to a set of X and Y axes.
  * 
@@ -23,7 +24,7 @@ function Pane(options, chart, firstAxis) {
 }
 
 // Extend the Pane prototype
-Highcharts.extend(Pane.prototype, {
+H.extend(Pane.prototype, {
 	
 	/**
 	 * Initiate the Pane object
@@ -31,7 +32,7 @@ Highcharts.extend(Pane.prototype, {
 	init: function (options, chart, firstAxis) {
 		var pane = this,
 			backgroundOption,
-			merge = Highcharts.merge,
+			merge = H.merge,
 			defaultOptions = pane.defaultOptions;
 		
 		pane.chart = chart;
@@ -47,7 +48,7 @@ Highcharts.extend(Pane.prototype, {
 		// To avoid having weighty logic to place, update and remove the backgrounds,
 		// push them to the first axis' plot bands and borrow the existing logic there.
 		if (backgroundOption) {
-			Highcharts.each([].concat(Highcharts.splat(backgroundOption)).reverse(), function (config) {
+			H.each([].concat(H.splat(backgroundOption)).reverse(), function (config) {
 				var backgroundColor = config.backgroundColor,  // if defined, replace the old one (specific for gradients)
 					axisUserOptions = firstAxis.userOptions;
 				config = merge(pane.defaultBackgroundOptions, config);
@@ -94,6 +95,12 @@ Highcharts.extend(Pane.prototype, {
 	}
 	
 });
+
+H.Pane = Pane;
+
+	return H;
+}(Highcharts));
+
 var axisProto = Highcharts.Axis.prototype,
 	tickProto = Highcharts.Tick.prototype,
 	noop = Highcharts.noop;
@@ -514,7 +521,7 @@ Highcharts.wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		if (!chart.panes) {
 			chart.panes = [];
 		}
-		this.pane = pane = chart.panes[paneIndex] = chart.panes[paneIndex] || new Pane(
+		this.pane = pane = chart.panes[paneIndex] = chart.panes[paneIndex] || new Highcharts.Pane(
 			Highcharts.splat(chartOptions.pane)[paneIndex],
 			chart,
 			axis

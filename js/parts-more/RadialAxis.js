@@ -419,7 +419,7 @@ Highcharts.wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		if (!chart.panes) {
 			chart.panes = [];
 		}
-		this.pane = pane = chart.panes[paneIndex] = chart.panes[paneIndex] || new Pane(
+		this.pane = pane = chart.panes[paneIndex] = chart.panes[paneIndex] || new Highcharts.Pane(
 			Highcharts.splat(chartOptions.pane)[paneIndex],
 			chart,
 			axis
