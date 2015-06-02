@@ -82,7 +82,8 @@ $(function () {
             .highcharts({
                 chart: {
                     marginLeft: 40, // Keep all charts left aligned
-                    zoomType: 'x'
+                    zoomType: 'x',
+                    pinchType: null // Disable zoom on touch devices
                 },
                 title: {
                     text: dataset.name,
