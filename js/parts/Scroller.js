@@ -1,7 +1,7 @@
 /* ****************************************************************************
  * Start Scroller code														*
  *****************************************************************************/
-var units = [].concat(defaultDataGroupingUnits), // copy
+var units = [].concat(Highcharts.defaultDataGroupingUnits), // copy
 	defaultSeriesType,
 	isTouchDevice = Highcharts.isTouchDevice,
 	

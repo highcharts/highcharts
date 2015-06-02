@@ -447,7 +447,8 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'drawCrosshair', function (proceed, e
  * Start value compare logic                                                  *
  *****************************************************************************/
  
-var seriesInit = seriesProto.init, 
+var seriesProto = Highcharts.Series.prototype,
+	seriesInit = seriesProto.init, 
 	seriesProcessData = seriesProto.processData,
 	pointTooltipFormatter = Highcharts.Point.prototype.tooltipFormatter;
 	
@@ -521,7 +522,7 @@ seriesProto.processData = function () {
 		
 		// find the first value for comparison
 		for (; i < length; i++) {
-			if (typeof processedYData[i] === NUMBER && processedXData[i] >= series.xAxis.min) {
+			if (typeof processedYData[i] === 'number' && processedXData[i] >= series.xAxis.min) {
 				series.compareValue = processedYData[i];
 				break;
 			}

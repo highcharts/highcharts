@@ -19735,13 +19735,14 @@ H.wrap(Series.prototype, 'getSegments', function (proceed) {
 
 	});
 }(Highcharts));
+(function (H) {
 /* ****************************************************************************
  * Start data grouping module												 *
  ******************************************************************************/
 /*jslint white:true */
-var DATA_GROUPING = 'dataGrouping',
-	seriesProto = Highcharts.Series.prototype,
-	tooltipProto = Highcharts.Tooltip.prototype,
+var Axis = H.Axis,
+	seriesProto = H.Series.prototype,
+	tooltipProto = H.Tooltip.prototype,
 	baseProcessData = seriesProto.processData,
 	baseGeneratePoints = seriesProto.generatePoints,
 	baseDestroy = seriesProto.destroy,
@@ -19798,7 +19799,7 @@ var DATA_GROUPING = 'dataGrouping',
 	},
 
 	// units are defined in a separate array to allow complete overriding in case of a user option
-	defaultDataGroupingUnits = [[
+	defaultDataGroupingUnits = H.defaultDataGroupingUnits = [[
 			'millisecond', // unit name
 			[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
 		], [
@@ -19868,10 +19869,10 @@ var DATA_GROUPING = 'dataGrouping',
 			return arr.length ? arr[0] : (arr.hasNulls ? null : undefined);
 		},
 		high: function (arr) {
-			return arr.length ? Highcharts.arrayMax(arr) : (arr.hasNulls ? null : undefined);
+			return arr.length ? H.arrayMax(arr) : (arr.hasNulls ? null : undefined);
 		},
 		low: function (arr) {
-			return arr.length ? Highcharts.arrayMin(arr) : (arr.hasNulls ? null : undefined);
+			return arr.length ? H.arrayMin(arr) : (arr.hasNulls ? null : undefined);
 		},
 		close: function (arr) {
 			return arr.length ? arr[arr.length - 1] : (arr.hasNulls ? null : undefined);
@@ -20001,8 +20002,8 @@ seriesProto.processData = function () {
 	var series = this,
 		chart = series.chart,
 		options = series.options,
-		dataGroupingOptions = options[DATA_GROUPING],
-		groupingEnabled = series.allowDG !== false && dataGroupingOptions && Highcharts.pick(dataGroupingOptions.enabled, chart.options._stock),
+		dataGroupingOptions = options.dataGrouping,
+		groupingEnabled = series.allowDG !== false && dataGroupingOptions && H.pick(dataGroupingOptions.enabled, chart.options._stock),
 		hasGroupedData;
 
 	// run base method
@@ -20069,7 +20070,7 @@ seriesProto.processData = function () {
 		series.closestPointRange = groupPositions.info.totalRange;
 
 		// Make sure the X axis extends to show the first group (#2533)
-		if (Highcharts.defined(groupedXData[0]) && groupedXData[0] < xAxis.dataMin) {
+		if (H.defined(groupedXData[0]) && groupedXData[0] < xAxis.dataMin) {
 			if (xAxis.min === xAxis.dataMin) {
 				xAxis.min = groupedXData[0];
 			}
@@ -20094,7 +20095,7 @@ seriesProto.destroyGroupedData = function () {
 	var groupedData = this.groupedData;
 
 	// clear previous groups
-	Highcharts.each(groupedData || [], function (point, i) {
+	H.each(groupedData || [], function (point, i) {
 		if (point) {
 			groupedData[i] = point.destroy ? point.destroy() : null;
 		}
@@ -20126,7 +20127,7 @@ tooltipProto.tooltipFooterHeaderFormatter = function (point, isFooter) {
 		xDateFormat = tooltipOptions.xDateFormat,
 		xDateFormatEnd,
 		xAxis = series.xAxis,
-		dateFormat = Highcharts.dateFormat,
+		dateFormat = H.dateFormat,
 		currentDataGrouping,
 		dateTimeLabelFormats,
 		labelFormats,
@@ -20134,7 +20135,7 @@ tooltipProto.tooltipFooterHeaderFormatter = function (point, isFooter) {
 		ret;
 
 	// apply only to grouped series
-	if (xAxis && xAxis.options.type === 'datetime' && dataGroupingOptions && Highcharts.isNumber(point.key)) {
+	if (xAxis && xAxis.options.type === 'datetime' && dataGroupingOptions && H.isNumber(point.key)) {
 
 		// set variables
 		currentDataGrouping = series.currentDataGrouping;
@@ -20192,19 +20193,19 @@ seriesProto.destroy = function () {
 
 // Handle default options for data grouping. This must be set at runtime because some series types are
 // defined after this.
-Highcharts.wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
+H.wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
 
 	var options = proceed.call(this, itemOptions),
 		type = this.type,
 		plotOptions = this.chart.options.plotOptions,
-		defaultOptions = Highcharts.defaultPlotOptions[type].dataGrouping;
+		defaultOptions = H.defaultPlotOptions[type].dataGrouping;
 
 	if (specificOptions[type]) { // #1284
 		if (!defaultOptions) {
-			defaultOptions = Highcharts.merge(commonOptions, specificOptions[type]);
+			defaultOptions = H.merge(commonOptions, specificOptions[type]);
 		}
 
-		options.dataGrouping = Highcharts.merge(
+		options.dataGrouping = H.merge(
 			defaultOptions,
 			plotOptions.series && plotOptions.series.dataGrouping, // #1228
 			plotOptions[type].dataGrouping, // Set by the StockChart constructor
@@ -20224,9 +20225,9 @@ Highcharts.wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
  * When resetting the scale reset the hasProccessed flag to avoid taking previous data grouping
  * of neighbour series into accound when determining group pixel width (#2692).
  */
-Highcharts.wrap(Highcharts.Axis.prototype, 'setScale', function (proceed) {
+H.wrap(Axis.prototype, 'setScale', function (proceed) {
 	proceed.call(this);
-	Highcharts.each(this.series, function (series) {
+	H.each(this.series, function (series) {
 		series.hasProcessed = false;
 	});
 });
@@ -20235,7 +20236,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'setScale', function (proceed) {
  * Get the data grouping pixel width based on the greatest defined individual width
  * of the axis' series, and if whether one of the axes need grouping.
  */
-Highcharts.Axis.prototype.getGroupPixelWidth = function () {
+Axis.prototype.getGroupPixelWidth = function () {
 
 	var series = this.series,
 		len = series.length,
@@ -20278,8 +20279,8 @@ Highcharts.Axis.prototype.getGroupPixelWidth = function () {
 /**
  * Force data grouping on all the axis' series.
  */
-Highcharts.Axis.prototype.setDataGrouping = function (dataGrouping, redraw) { // docs
-	redraw = Highcharts.pick(redraw, true);
+Axis.prototype.setDataGrouping = function (dataGrouping, redraw) { // docs
+	redraw = H.pick(redraw, true);
 
 	if (!dataGrouping) {   
 		dataGrouping = {
@@ -20289,7 +20290,7 @@ Highcharts.Axis.prototype.setDataGrouping = function (dataGrouping, redraw) { //
 	}
 
 	// Axis is instantiated, update all series
-	if (this instanceof Highcharts.Axis) {
+	if (this instanceof Axis) {
 		each(this.series, function (series) {
 			series.update({
 				dataGrouping: dataGrouping
@@ -20308,7 +20309,11 @@ Highcharts.Axis.prototype.setDataGrouping = function (dataGrouping, redraw) { //
 
 /* ****************************************************************************
  * End data grouping module												   *
- ******************************************************************************//* ****************************************************************************
+ ******************************************************************************/
+
+	return H;
+}(Highcharts));
+/* ****************************************************************************
  * Start OHLC series code													 *
  *****************************************************************************/
 
@@ -20959,7 +20964,7 @@ if (Highcharts.Renderer === Highcharts.VMLRenderer) {
 /* ****************************************************************************
  * Start Scroller code														*
  *****************************************************************************/
-var units = [].concat(defaultDataGroupingUnits), // copy
+var units = [].concat(Highcharts.defaultDataGroupingUnits), // copy
 	defaultSeriesType,
 	isTouchDevice = Highcharts.isTouchDevice,
 	
@@ -23381,7 +23386,8 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'drawCrosshair', function (proceed, e
  * Start value compare logic                                                  *
  *****************************************************************************/
  
-var seriesInit = seriesProto.init, 
+var seriesProto = Highcharts.Series.prototype,
+	seriesInit = seriesProto.init, 
 	seriesProcessData = seriesProto.processData,
 	pointTooltipFormatter = Highcharts.Point.prototype.tooltipFormatter;
 	
@@ -23455,7 +23461,7 @@ seriesProto.processData = function () {
 		
 		// find the first value for comparison
 		for (; i < length; i++) {
-			if (typeof processedYData[i] === NUMBER && processedXData[i] >= series.xAxis.min) {
+			if (typeof processedYData[i] === 'number' && processedXData[i] >= series.xAxis.min) {
 				series.compareValue = processedYData[i];
 				break;
 			}
