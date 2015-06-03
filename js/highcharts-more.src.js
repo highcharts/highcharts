@@ -1574,12 +1574,15 @@ H.seriesTypes.errorbar = H.extendClass(H.seriesTypes.boxplot, {
  *****************************************************************************/
 
 }(Highcharts));
+(function (H) {
+	var Color = H.Color,
+		Series = H.Series;
 /* ****************************************************************************
  * Start Waterfall series code                                                *
  *****************************************************************************/
 
 // 1 - set default options
-Highcharts.defaultPlotOptions.waterfall = Highcharts.merge(Highcharts.defaultPlotOptions.column, {
+H.defaultPlotOptions.waterfall = H.merge(H.defaultPlotOptions.column, {
 	lineWidth: 1,
 	lineColor: '#333',
 	dashStyle: 'dot',
@@ -1596,7 +1599,7 @@ Highcharts.defaultPlotOptions.waterfall = Highcharts.merge(Highcharts.defaultPlo
 
 
 // 2 - Create the series object
-Highcharts.seriesTypes.waterfall = Highcharts.extendClass(Highcharts.seriesTypes.column, {
+H.seriesTypes.waterfall = H.extendClass(H.seriesTypes.column, {
 	type: 'waterfall',
 
 	upColorProp: 'fill',
@@ -1626,7 +1629,7 @@ Highcharts.seriesTypes.waterfall = Highcharts.extendClass(Highcharts.seriesTypes
 			tooltipY;
 
 		// run column series translate
-		Highcharts.seriesTypes.column.prototype.translate.apply(this);
+		H.seriesTypes.column.prototype.translate.apply(this);
 
 		previousY = previousIntermediate = threshold;
 		points = series.points;
@@ -1732,7 +1735,7 @@ Highcharts.seriesTypes.waterfall = Highcharts.extendClass(Highcharts.seriesTypes
 			dataMax = Math.max(sum, dataMax);
 		}
 
-		Highcharts.Series.prototype.processData.call(this, force);
+		Series.prototype.processData.call(this, force);
 
 		// Record extremes
 		series.dataMin = dataMin;
@@ -1755,21 +1758,21 @@ Highcharts.seriesTypes.waterfall = Highcharts.extendClass(Highcharts.seriesTypes
 	 * Postprocess mapping between options and SVG attributes
 	 */
 	getAttribs: function () {
-		Highcharts.seriesTypes.column.prototype.getAttribs.apply(this, arguments);
+		H.seriesTypes.column.prototype.getAttribs.apply(this, arguments);
 
 		var series = this,
 			options = series.options,
 			stateOptions = options.states,
 			upColor = options.upColor || series.color,
-			hoverColor = Highcharts.Color(upColor).brighten(0.1).get(),
-			seriesDownPointAttr = Highcharts.merge(series.pointAttr),
+			hoverColor = Color(upColor).brighten(0.1).get(),
+			seriesDownPointAttr = H.merge(series.pointAttr),
 			upColorProp = series.upColorProp;
 
 		seriesDownPointAttr[''][upColorProp] = upColor;
 		seriesDownPointAttr.hover[upColorProp] = stateOptions.hover.upColor || hoverColor;
 		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
 
-		Highcharts.each(series.points, function (point) {
+		H.each(series.points, function (point) {
 			if (!point.options.color) {
 				// Up color
 				if (point.y > 0) {
@@ -1824,14 +1827,17 @@ Highcharts.seriesTypes.waterfall = Highcharts.extendClass(Highcharts.seriesTypes
 	/**
 	 * Extremes are recorded in processData
 	 */
-	getExtremes: Highcharts.noop,
+	getExtremes: H.noop,
 
-	drawGraph: Highcharts.Series.prototype.drawGraph
+	drawGraph: Series.prototype.drawGraph
 });
 
 /* ****************************************************************************
  * End Waterfall series code                                                  *
  *****************************************************************************/
+
+	return H;
+}(Highcharts));
 /**
  * Set the default options for polygon
  */
