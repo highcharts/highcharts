@@ -1,3 +1,9 @@
+(function (H) {
+	var GaugePoint,
+		GaugeSeries,
+		Point = H.Point,
+		Series = H.Series,
+		TrackerMixin = H.TrackerMixin;
 /* 
  * The GaugeSeries class
  */
@@ -7,7 +13,7 @@
 /**
  * Extend the default options
  */
-Highcharts.defaultPlotOptions.gauge = Highcharts.merge(Highcharts.defaultPlotOptions.line, {
+H.defaultPlotOptions.gauge = H.merge(H.defaultPlotOptions.line, {
 	dataLabels: {
 		enabled: true,
 		defer: false,
@@ -44,7 +50,7 @@ Highcharts.defaultPlotOptions.gauge = Highcharts.merge(Highcharts.defaultPlotOpt
 /**
  * Extend the point object
  */
-var GaugePoint = Highcharts.extendClass(Highcharts.Point, {
+GaugePoint = H.extendClass(Point, {
 	/**
 	 * Don't do any hover colors or anything
 	 */
@@ -57,14 +63,14 @@ var GaugePoint = Highcharts.extendClass(Highcharts.Point, {
 /**
  * Add the series type
  */
-var GaugeSeries = {
+GaugeSeries = {
 	type: 'gauge',
 	pointClass: GaugePoint,
 	
 	// chart.angular will be set to true when a gauge series is present, and this will
 	// be used on the axes
 	angular: true, 
-	drawGraph: Highcharts.noop,
+	drawGraph: H.noop,
 	fixedBox: true,
 	forceDL: true,
 	trackerGroups: ['group', 'dataLabelsGroup'],
@@ -76,16 +82,16 @@ var GaugeSeries = {
 		
 		var series = this,
 			yAxis = series.yAxis,
-			pInt = Highcharts.pInt,
-			pick = Highcharts.pick,
+			pInt = H.pInt,
+			pick = H.pick,
 			options = series.options,
 			center = yAxis.center;
 			
 		series.generatePoints();
 		
-		Highcharts.each(series.points, function (point) {
+		H.each(series.points, function (point) {
 			
-			var dialOptions = Highcharts.merge(options.dial, point.dial),
+			var dialOptions = H.merge(options.dial, point.dial),
 				radius = (pInt(pick(dialOptions.radius, 80)) * center[2]) / 200,
 				baseLength = (pInt(pick(dialOptions.baseLength, 70)) * radius) / 100,
 				rearLength = (pInt(pick(dialOptions.rearLength, 10)) * radius) / 100,
@@ -141,12 +147,12 @@ var GaugeSeries = {
 			pivotOptions = options.pivot,
 			renderer = series.chart.renderer;
 		
-		Highcharts.each(series.points, function (point) {
+		H.each(series.points, function (point) {
 			
 			var graphic = point.graphic,
 				shapeArgs = point.shapeArgs,
 				d = shapeArgs.d,
-				dialOptions = Highcharts.merge(options.dial, point.dial); // #1233
+				dialOptions = H.merge(options.dial, point.dial); // #1233
 			
 			if (graphic) {
 				graphic.animate(shapeArgs);
@@ -170,7 +176,7 @@ var GaugeSeries = {
 				translateY: center[1]
 			});
 		} else {
-			series.pivot = renderer.circle(0, 0, Highcharts.pick(pivotOptions.radius, 5))
+			series.pivot = renderer.circle(0, 0, H.pick(pivotOptions.radius, 5))
 				.attr({
 					'stroke-width': pivotOptions.borderWidth || 0,
 					stroke: pivotOptions.borderColor || 'silver',
@@ -188,7 +194,7 @@ var GaugeSeries = {
 		var series = this;
 
 		if (!init) {
-			Highcharts.each(series.points, function (point) {
+			H.each(series.points, function (point) {
 				var graphic = point.graphic;
 
 				if (graphic) {
@@ -217,7 +223,7 @@ var GaugeSeries = {
 			this.options.zIndex, 
 			this.chart.seriesGroup
 		);
-		Highcharts.Series.prototype.render.call(this);
+		Series.prototype.render.call(this);
 		this.group.clip(this.chart.clipRect);
 	},
 	
@@ -226,10 +232,10 @@ var GaugeSeries = {
 	 * in order to access the points from the legend.
 	 */
 	setData: function (data, redraw) {
-		Highcharts.Series.prototype.setData.call(this, data, false);
+		Series.prototype.setData.call(this, data, false);
 		this.processData();
 		this.generatePoints();
-		if (Highcharts.pick(redraw, true)) {
+		if (H.pick(redraw, true)) {
 			this.chart.redraw();
 		}
 	},
@@ -237,7 +243,9 @@ var GaugeSeries = {
 	/**
 	 * If the tracking module is loaded, add the point tracker
 	 */
-	drawTracker: Highcharts.TrackerMixin && Highcharts.TrackerMixin.drawTrackerPoint
+	drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint
 };
-Highcharts.seriesTypes.gauge = Highcharts.extendClass(Highcharts.seriesTypes.line, GaugeSeries);
+H.seriesTypes.gauge = H.extendClass(H.seriesTypes.line, GaugeSeries);
 
+	return H;
+}(Highcharts));
