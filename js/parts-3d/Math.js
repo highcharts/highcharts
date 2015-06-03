@@ -1,13 +1,9 @@
+(function (H) {
 /**
  *	Mathematical Functionility
  */
-var PI = Math.PI,
-	deg2rad = (PI / 180), // degrees to radians 
-	sin = Math.sin,
-	cos = Math.cos, 
-	pick = Highcharts.pick,
-	round = Math.round;
-
+var deg2rad = H.deg2rad, // degrees to radians 
+	pick = H.pick;
 /**
  * Transforms a given array of points according to the angles in chart.options.
  * Parameters: 
@@ -46,15 +42,15 @@ function perspective(points, chart, insidePlotArea) {
 		vd = origin.vd,
 		angle1 = deg2rad * (inverted ?  options3d.beta  : -options3d.beta),
 		angle2 = deg2rad * (inverted ? -options3d.alpha :  options3d.alpha),
-		s1 = sin(angle1),
-		c1 = cos(angle1),
-		s2 = sin(angle2),
-		c2 = cos(angle2);
+		s1 = Math.sin(angle1),
+		c1 = Math.cos(angle1),
+		s2 = Math.sin(angle2),
+		c2 = Math.cos(angle2);
 
 	var x, y, z, px, py, pz;
 
 	// Transform each point
-	Highcharts.each(points, function (point) {
+	H.each(points, function (point) {
 		x = (inverted ? point.y : point.x) - xe;
 		y = (inverted ? point.x : point.y) - ye;
 		z = (point.z || 0) - ze;
@@ -84,4 +80,7 @@ function perspective(points, chart, insidePlotArea) {
 	return result;
 }
 // Make function acessible to plugins
-Highcharts.perspective = perspective;
+H.perspective = perspective;
+
+	return H;
+}(Highcharts));

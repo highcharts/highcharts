@@ -16,16 +16,12 @@
 	/**
 	Shorthands for often used function
 */ 
+(function (H) {
 /**
  *	Mathematical Functionility
  */
-var PI = Math.PI,
-	deg2rad = (PI / 180), // degrees to radians 
-	sin = Math.sin,
-	cos = Math.cos, 
-	pick = Highcharts.pick,
-	round = Math.round;
-
+var deg2rad = H.deg2rad, // degrees to radians 
+	pick = H.pick;
 /**
  * Transforms a given array of points according to the angles in chart.options.
  * Parameters: 
@@ -64,15 +60,15 @@ function perspective(points, chart, insidePlotArea) {
 		vd = origin.vd,
 		angle1 = deg2rad * (inverted ?  options3d.beta  : -options3d.beta),
 		angle2 = deg2rad * (inverted ? -options3d.alpha :  options3d.alpha),
-		s1 = sin(angle1),
-		c1 = cos(angle1),
-		s2 = sin(angle2),
-		c2 = cos(angle2);
+		s1 = Math.sin(angle1),
+		c1 = Math.cos(angle1),
+		s2 = Math.sin(angle2),
+		c2 = Math.cos(angle2);
 
 	var x, y, z, px, py, pz;
 
 	// Transform each point
-	Highcharts.each(points, function (point) {
+	H.each(points, function (point) {
 		x = (inverted ? point.y : point.x) - xe;
 		y = (inverted ? point.x : point.y) - ye;
 		z = (point.z || 0) - ze;
@@ -102,12 +98,15 @@ function perspective(points, chart, insidePlotArea) {
 	return result;
 }
 // Make function acessible to plugins
-Highcharts.perspective = perspective;
+H.perspective = perspective;
+
+	return H;
+}(Highcharts));
 /*** 
 	EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
 	***/
 ////// HELPER METHODS //////
-var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
+var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (Math.PI / 2);
 
 //Shoelace algorithm -- http://en.wikipedia.org/wiki/Shoelace_formula
 function shapeArea(vertexes) {
@@ -135,25 +134,25 @@ function averageZ(vertexes) {
   */
 function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
 	var result = [];
-	if ((end > start) && (end - start > PI / 2 + 0.0001)) {
-		result = result.concat(curveTo(cx, cy, rx, ry, start, start + (PI / 2), dx, dy));
-		result = result.concat(curveTo(cx, cy, rx, ry, start + (PI / 2), end, dx, dy));
+	if ((end > start) && (end - start > Math.PI / 2 + 0.0001)) {
+		result = result.concat(curveTo(cx, cy, rx, ry, start, start + (Math.PI / 2), dx, dy));
+		result = result.concat(curveTo(cx, cy, rx, ry, start + (Math.PI / 2), end, dx, dy));
 		return result;
-	} else if ((end < start) && (start - end > PI / 2 + 0.0001)) {			
-		result = result.concat(curveTo(cx, cy, rx, ry, start, start - (PI / 2), dx, dy));
-		result = result.concat(curveTo(cx, cy, rx, ry, start - (PI / 2), end, dx, dy));
+	} else if ((end < start) && (start - end > Math.PI / 2 + 0.0001)) {			
+		result = result.concat(curveTo(cx, cy, rx, ry, start, start - (Math.PI / 2), dx, dy));
+		result = result.concat(curveTo(cx, cy, rx, ry, start - (Math.PI / 2), end, dx, dy));
 		return result;
 	} else {
 		var arcAngle = end - start;
 		return [
 			'C', 
-			cx + (rx * cos(start)) - ((rx * dFactor * arcAngle) * sin(start)) + dx,
-			cy + (ry * sin(start)) + ((ry * dFactor * arcAngle) * cos(start)) + dy,
-			cx + (rx * cos(end)) + ((rx * dFactor * arcAngle) * sin(end)) + dx,
-			cy + (ry * sin(end)) - ((ry * dFactor * arcAngle) * cos(end)) + dy,
+			cx + (rx * Math.cos(start)) - ((rx * dFactor * arcAngle) * Math.sin(start)) + dx,
+			cy + (ry * Math.sin(start)) + ((ry * dFactor * arcAngle) * Math.cos(start)) + dy,
+			cx + (rx * Math.cos(end)) + ((rx * dFactor * arcAngle) * Math.sin(end)) + dx,
+			cy + (ry * Math.sin(end)) - ((ry * dFactor * arcAngle) * Math.cos(end)) + dy,
 
-			cx + (rx * cos(end)) + dx,
-			cy + (ry * sin(end)) + dy
+			cx + (rx * Math.cos(end)) + dx,
+			cy + (ry * Math.sin(end)) + dy
 		];
 	}
 }
@@ -283,7 +282,7 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	];
 
 	// apply perspective
-	pArr = perspective(pArr, chart, shapeArgs.insidePlotArea);
+	pArr = Highcharts.perspective(pArr, chart, shapeArgs.insidePlotArea);
 
 	// helper method to decide which side is visible
 	var pickShape = function (path1, path2) {
@@ -456,16 +455,16 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 		beta = shapeArgs.beta; // beta rotation of the chart
 
 	// Derived Variables
-	var cs = cos(start),		// cosinus of the start angle
-		ss = sin(start),		// sinus of the start angle
-		ce = cos(end),			// cosinus of the end angle
-		se = sin(end),			// sinus of the end angle
-		rx = r * cos(beta),		// x-radius 
-		ry = r * cos(alpha),	// y-radius
-		irx = ir * cos(beta),	// x-radius (inner)
-		iry = ir * cos(alpha),	// y-radius (inner)
-		dx = d * sin(beta),		// distance between top and bottom in x
-		dy = d * sin(alpha);	// distance between top and bottom in y
+	var cs = Math.cos(start),		// cosinus of the start angle
+		ss = Math.sin(start),		// sinus of the start angle
+		ce = Math.cos(end),			// cosinus of the end angle
+		se = Math.sin(end),			// sinus of the end angle
+		rx = r * Math.cos(beta),		// x-radius 
+		ry = r * Math.cos(alpha),	// y-radius
+		irx = ir * Math.cos(beta),	// x-radius (inner)
+		iry = ir * Math.cos(alpha),	// y-radius (inner)
+		dx = d * Math.sin(beta),		// distance between top and bottom in x
+		dy = d * Math.sin(alpha);	// distance between top and bottom in y
 
 	// TOP	
 	var top = ['M', cx + (rx * cs), cy + (ry * ss)];
@@ -477,16 +476,16 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 	top = top.concat(['Z']);
 
 	// OUTSIDE
-	var b = (beta > 0 ? PI / 2 : 0),
-		a = (alpha > 0 ? 0 : PI / 2);
+	var b = (beta > 0 ? Math.PI / 2 : 0),
+		a = (alpha > 0 ? 0 : Math.PI / 2);
 
 	var start2 = start > -b ? start : (end > -b ? -b : start),
-		end2 = end < PI - a ? end : (start < PI - a ? PI - a : end);
+		end2 = end < Math.PI - a ? end : (start < Math.PI - a ? Math.PI - a : end);
 	
-	var out = ['M', cx + (rx * cos(start2)), cy + (ry * sin(start2))];
+	var out = ['M', cx + (rx * Math.cos(start2)), cy + (ry * Math.sin(start2))];
 	out = out.concat(curveTo(cx, cy, rx, ry, start2, end2, 0, 0));
 	out = out.concat([
-		'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
+		'L', cx + (rx * Math.cos(end2)) + dx, cy + (ry * Math.sin(end2)) + dy
 	]);
 	out = out.concat(curveTo(cx, cy, rx, ry, end2, start2, dx, dy));
 	out = out.concat(['Z']);
@@ -495,7 +494,7 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 	var inn = ['M', cx + (irx * cs), cy + (iry * ss)];
 	inn = inn.concat(curveTo(cx, cy, irx, iry, start, end, 0, 0));
 	inn = inn.concat([
-		'L', cx + (irx * cos(end)) + dx, cy + (iry * sin(end)) + dy
+		'L', cx + (irx * Math.cos(end)) + dx, cy + (iry * Math.sin(end)) + dy
 	]);
 	inn = inn.concat(curveTo(cx, cy, irx, iry, end, start, dx, dy));
 	inn = inn.concat(['Z']);
@@ -516,9 +515,9 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 		'Z'
 	];
 
-	var a1 = sin((start + end) / 2),
-		a2 = sin(start),
-		a3 = sin(end);
+	var a1 = Math.sin((start + end) / 2),
+		a2 = Math.sin(start),
+		a3 = Math.sin(end);
 
 	return {
 		top: top,
@@ -748,7 +747,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed)
 		this.swapZ({ x: path[4], y: path[5], z: (opposite ? 0 : d)})
 	];
 
-	pArr = perspective(pArr, this.chart, false);
+	pArr = Highcharts.perspective(pArr, this.chart, false);
 	path = this.chart.renderer.toLinePath(pArr, false);
 
 	return path;
@@ -811,7 +810,7 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getMarkPath', function (proceed) {
 		this.axis.swapZ({x: path[4], y: path[5], z: 0})
 	];
 
-	pArr = perspective(pArr, this.axis.chart, false);
+	pArr = Highcharts.perspective(pArr, this.axis.chart, false);
 	path = [
 		'M', pArr[0].x, pArr[0].y,
 		'L', pArr[1].x, pArr[1].y
@@ -827,7 +826,7 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getLabelPosition', function (proceed
 		return pos;
 	}
 
-	var new_pos = perspective([this.axis.swapZ({x: pos.x, y: pos.y, z: 0})], this.axis.chart, false)[0];
+	var new_pos = Highcharts.perspective([this.axis.swapZ({x: pos.x, y: pos.y, z: 0})], this.axis.chart, false)[0];
 	new_pos.x = new_pos.x - (!this.axis.horiz && this.axis.opposite ? this.axis.transA : 0); //#3788
 	new_pos.old = pos;
 	return new_pos;
@@ -848,7 +847,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getTitlePosition', function (proceed
 		return pos;
 	}
 
-	pos = perspective([this.swapZ({x: pos.x, y: pos.y, z: 0})], this.chart, false)[0];
+	pos = Highcharts.perspective([this.swapZ({x: pos.x, y: pos.y, z: 0})], this.chart, false)[0];
 	return pos;
 });
 
@@ -933,8 +932,8 @@ Highcharts.extend(ZAxis.prototype, {
 
 				zData = series.zData;
 				if (zData.length) {
-					axis.dataMin = Math.min(pick(axis.dataMin, zData[0]), Math.min.apply(null, zData));
-					axis.dataMax = Math.max(pick(axis.dataMax, zData[0]), Math.max.apply(null, zData));
+					axis.dataMin = Math.min(Highcharts.pick(axis.dataMin, zData[0]), Math.min.apply(null, zData));
+					axis.dataMax = Math.max(Highcharts.pick(axis.dataMax, zData[0]), Math.max.apply(null, zData));
 				}
 			}
 		});
@@ -997,7 +996,7 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 			shapeArgs.insidePlotArea = true;
 
 			// Translate the tooltip position in 3d space
-			tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], chart, false)[0];
+			tooltipPos = Highcharts.perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], chart, false)[0];
 			point.tooltipPos = [tooltipPos.x, tooltipPos.y];
 		}
 	});
@@ -1120,7 +1119,7 @@ Highcharts.wrap(Highcharts.Series.prototype, 'alignDataLabel', function (proceed
 			alignTo = args[4];
 		
 		var pos = ({x: alignTo.x, y: alignTo.y, z: series.z});
-		pos = perspective([pos], chart, true)[0];
+		pos = Highcharts.perspective([pos], chart, true)[0];
 		alignTo.x = pos.x;
 		alignTo.y = pos.y;
 	}
@@ -1237,8 +1236,8 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 			var angle = (shapeArgs.end + shapeArgs.start) / 2;
 
 			point.slicedTranslation = {
-				translateX : round(cos(angle) * series.options.slicedOffset * cos(alpha * deg2rad)),
-				translateY : round(sin(angle) * series.options.slicedOffset * cos(alpha * deg2rad))
+				translateX : Math.round(Math.cos(angle) * series.options.slicedOffset * Math.cos(alpha * deg2rad)),
+				translateY : Math.round(Math.sin(angle) * series.options.slicedOffset * Math.cos(alpha * deg2rad))
 			};
 		} else {
 			shapeArgs = null;
@@ -1302,9 +1301,9 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawDataLabels', function
 				a2 = (shapeArgs.start + shapeArgs.end) / 2,
 				labelPos = point.labelPos;
 
-			labelPos[1] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
-			labelPos[3] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
-			labelPos[5] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
+			labelPos[1] += (-r * (1 - Math.cos(a1)) * Math.sin(a2)) + (Math.sin(a2) > 0 ? Math.sin(a1) * d : 0);
+			labelPos[3] += (-r * (1 - Math.cos(a1)) * Math.sin(a2)) + (Math.sin(a2) > 0 ? Math.sin(a1) * d : 0);
+			labelPos[5] += (-r * (1 - Math.cos(a1)) * Math.sin(a2)) + (Math.sin(a2) > 0 ? Math.sin(a1) * d : 0);
 
 		});
 	} 
@@ -1410,7 +1409,7 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 		});
 	}
 
-	projected_points = perspective(raw_points, chart, true);
+	projected_points = Highcharts.perspective(raw_points, chart, true);
 
 	for (i = 0; i < series.data.length; i++) {
 		raw_point = series.data[i];

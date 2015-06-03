@@ -32,7 +32,7 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 		});
 	}
 
-	projected_points = perspective(raw_points, chart, true);
+	projected_points = Highcharts.perspective(raw_points, chart, true);
 
 	for (i = 0; i < series.data.length; i++) {
 		raw_point = series.data[i];

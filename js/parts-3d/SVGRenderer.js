@@ -2,7 +2,7 @@
 	EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
 	***/
 ////// HELPER METHODS //////
-var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
+var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (Math.PI / 2);
 
 //Shoelace algorithm -- http://en.wikipedia.org/wiki/Shoelace_formula
 function shapeArea(vertexes) {
@@ -30,25 +30,25 @@ function averageZ(vertexes) {
   */
 function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
 	var result = [];
-	if ((end > start) && (end - start > PI / 2 + 0.0001)) {
-		result = result.concat(curveTo(cx, cy, rx, ry, start, start + (PI / 2), dx, dy));
-		result = result.concat(curveTo(cx, cy, rx, ry, start + (PI / 2), end, dx, dy));
+	if ((end > start) && (end - start > Math.PI / 2 + 0.0001)) {
+		result = result.concat(curveTo(cx, cy, rx, ry, start, start + (Math.PI / 2), dx, dy));
+		result = result.concat(curveTo(cx, cy, rx, ry, start + (Math.PI / 2), end, dx, dy));
 		return result;
-	} else if ((end < start) && (start - end > PI / 2 + 0.0001)) {			
-		result = result.concat(curveTo(cx, cy, rx, ry, start, start - (PI / 2), dx, dy));
-		result = result.concat(curveTo(cx, cy, rx, ry, start - (PI / 2), end, dx, dy));
+	} else if ((end < start) && (start - end > Math.PI / 2 + 0.0001)) {			
+		result = result.concat(curveTo(cx, cy, rx, ry, start, start - (Math.PI / 2), dx, dy));
+		result = result.concat(curveTo(cx, cy, rx, ry, start - (Math.PI / 2), end, dx, dy));
 		return result;
 	} else {
 		var arcAngle = end - start;
 		return [
 			'C', 
-			cx + (rx * cos(start)) - ((rx * dFactor * arcAngle) * sin(start)) + dx,
-			cy + (ry * sin(start)) + ((ry * dFactor * arcAngle) * cos(start)) + dy,
-			cx + (rx * cos(end)) + ((rx * dFactor * arcAngle) * sin(end)) + dx,
-			cy + (ry * sin(end)) - ((ry * dFactor * arcAngle) * cos(end)) + dy,
+			cx + (rx * Math.cos(start)) - ((rx * dFactor * arcAngle) * Math.sin(start)) + dx,
+			cy + (ry * Math.sin(start)) + ((ry * dFactor * arcAngle) * Math.cos(start)) + dy,
+			cx + (rx * Math.cos(end)) + ((rx * dFactor * arcAngle) * Math.sin(end)) + dx,
+			cy + (ry * Math.sin(end)) - ((ry * dFactor * arcAngle) * Math.cos(end)) + dy,
 
-			cx + (rx * cos(end)) + dx,
-			cy + (ry * sin(end)) + dy
+			cx + (rx * Math.cos(end)) + dx,
+			cy + (ry * Math.sin(end)) + dy
 		];
 	}
 }
@@ -178,7 +178,7 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	];
 
 	// apply perspective
-	pArr = perspective(pArr, chart, shapeArgs.insidePlotArea);
+	pArr = Highcharts.perspective(pArr, chart, shapeArgs.insidePlotArea);
 
 	// helper method to decide which side is visible
 	var pickShape = function (path1, path2) {
@@ -351,16 +351,16 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 		beta = shapeArgs.beta; // beta rotation of the chart
 
 	// Derived Variables
-	var cs = cos(start),		// cosinus of the start angle
-		ss = sin(start),		// sinus of the start angle
-		ce = cos(end),			// cosinus of the end angle
-		se = sin(end),			// sinus of the end angle
-		rx = r * cos(beta),		// x-radius 
-		ry = r * cos(alpha),	// y-radius
-		irx = ir * cos(beta),	// x-radius (inner)
-		iry = ir * cos(alpha),	// y-radius (inner)
-		dx = d * sin(beta),		// distance between top and bottom in x
-		dy = d * sin(alpha);	// distance between top and bottom in y
+	var cs = Math.cos(start),		// cosinus of the start angle
+		ss = Math.sin(start),		// sinus of the start angle
+		ce = Math.cos(end),			// cosinus of the end angle
+		se = Math.sin(end),			// sinus of the end angle
+		rx = r * Math.cos(beta),		// x-radius 
+		ry = r * Math.cos(alpha),	// y-radius
+		irx = ir * Math.cos(beta),	// x-radius (inner)
+		iry = ir * Math.cos(alpha),	// y-radius (inner)
+		dx = d * Math.sin(beta),		// distance between top and bottom in x
+		dy = d * Math.sin(alpha);	// distance between top and bottom in y
 
 	// TOP	
 	var top = ['M', cx + (rx * cs), cy + (ry * ss)];
@@ -372,16 +372,16 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 	top = top.concat(['Z']);
 
 	// OUTSIDE
-	var b = (beta > 0 ? PI / 2 : 0),
-		a = (alpha > 0 ? 0 : PI / 2);
+	var b = (beta > 0 ? Math.PI / 2 : 0),
+		a = (alpha > 0 ? 0 : Math.PI / 2);
 
 	var start2 = start > -b ? start : (end > -b ? -b : start),
-		end2 = end < PI - a ? end : (start < PI - a ? PI - a : end);
+		end2 = end < Math.PI - a ? end : (start < Math.PI - a ? Math.PI - a : end);
 	
-	var out = ['M', cx + (rx * cos(start2)), cy + (ry * sin(start2))];
+	var out = ['M', cx + (rx * Math.cos(start2)), cy + (ry * Math.sin(start2))];
 	out = out.concat(curveTo(cx, cy, rx, ry, start2, end2, 0, 0));
 	out = out.concat([
-		'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
+		'L', cx + (rx * Math.cos(end2)) + dx, cy + (ry * Math.sin(end2)) + dy
 	]);
 	out = out.concat(curveTo(cx, cy, rx, ry, end2, start2, dx, dy));
 	out = out.concat(['Z']);
@@ -390,7 +390,7 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 	var inn = ['M', cx + (irx * cs), cy + (iry * ss)];
 	inn = inn.concat(curveTo(cx, cy, irx, iry, start, end, 0, 0));
 	inn = inn.concat([
-		'L', cx + (irx * cos(end)) + dx, cy + (iry * sin(end)) + dy
+		'L', cx + (irx * Math.cos(end)) + dx, cy + (iry * Math.sin(end)) + dy
 	]);
 	inn = inn.concat(curveTo(cx, cy, irx, iry, end, start, dx, dy));
 	inn = inn.concat(['Z']);
@@ -411,9 +411,9 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 		'Z'
 	];
 
-	var a1 = sin((start + end) / 2),
-		a2 = sin(start),
-		a3 = sin(end);
+	var a1 = Math.sin((start + end) / 2),
+		a2 = Math.sin(start),
+		a3 = Math.sin(end);
 
 	return {
 		top: top,

@@ -106,7 +106,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed)
 		this.swapZ({ x: path[4], y: path[5], z: (opposite ? 0 : d)})
 	];
 
-	pArr = perspective(pArr, this.chart, false);
+	pArr = Highcharts.perspective(pArr, this.chart, false);
 	path = this.chart.renderer.toLinePath(pArr, false);
 
 	return path;
@@ -169,7 +169,7 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getMarkPath', function (proceed) {
 		this.axis.swapZ({x: path[4], y: path[5], z: 0})
 	];
 
-	pArr = perspective(pArr, this.axis.chart, false);
+	pArr = Highcharts.perspective(pArr, this.axis.chart, false);
 	path = [
 		'M', pArr[0].x, pArr[0].y,
 		'L', pArr[1].x, pArr[1].y
@@ -185,7 +185,7 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getLabelPosition', function (proceed
 		return pos;
 	}
 
-	var new_pos = perspective([this.axis.swapZ({x: pos.x, y: pos.y, z: 0})], this.axis.chart, false)[0];
+	var new_pos = Highcharts.perspective([this.axis.swapZ({x: pos.x, y: pos.y, z: 0})], this.axis.chart, false)[0];
 	new_pos.x = new_pos.x - (!this.axis.horiz && this.axis.opposite ? this.axis.transA : 0); //#3788
 	new_pos.old = pos;
 	return new_pos;
@@ -206,7 +206,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getTitlePosition', function (proceed
 		return pos;
 	}
 
-	pos = perspective([this.swapZ({x: pos.x, y: pos.y, z: 0})], this.chart, false)[0];
+	pos = Highcharts.perspective([this.swapZ({x: pos.x, y: pos.y, z: 0})], this.chart, false)[0];
 	return pos;
 });
 
@@ -291,8 +291,8 @@ Highcharts.extend(ZAxis.prototype, {
 
 				zData = series.zData;
 				if (zData.length) {
-					axis.dataMin = Math.min(pick(axis.dataMin, zData[0]), Math.min.apply(null, zData));
-					axis.dataMax = Math.max(pick(axis.dataMax, zData[0]), Math.max.apply(null, zData));
+					axis.dataMin = Math.min(Highcharts.pick(axis.dataMin, zData[0]), Math.min.apply(null, zData));
+					axis.dataMax = Math.max(Highcharts.pick(axis.dataMax, zData[0]), Math.max.apply(null, zData));
 				}
 			}
 		});
