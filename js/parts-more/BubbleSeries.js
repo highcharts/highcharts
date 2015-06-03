@@ -1,9 +1,14 @@
+(function (H) {
+	var Axis = H.Axis,
+		Color = H.Color,
+		Point = H.Point,
+		Series = H.Series;
 /* ****************************************************************************
  * Start Bubble series code											          *
  *****************************************************************************/
 
 // 1 - set default options
-Highcharts.defaultPlotOptions.bubble = Highcharts.merge(Highcharts.defaultPlotOptions.scatter, {
+H.defaultPlotOptions.bubble = H.merge(H.defaultPlotOptions.scatter, {
 	dataLabels: {
 		formatter: function () { // #2945
 			return this.point.z;
@@ -36,15 +41,15 @@ Highcharts.defaultPlotOptions.bubble = Highcharts.merge(Highcharts.defaultPlotOp
 	zoneAxis: 'z'
 });
 
-var BubblePoint = Highcharts.extendClass(Highcharts.Point, {
+var BubblePoint = H.extendClass(Point, {
 	haloPath: function () {
-		return Highcharts.Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
+		return Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
 	},
 	ttBelow: false
 });
 
 // 2 - Create the series object
-Highcharts.seriesTypes.bubble = Highcharts.extendClass(Highcharts.seriesTypes.scatter, {
+H.seriesTypes.bubble = H.extendClass(H.seriesTypes.scatter, {
 	type: 'bubble',
 	pointClass: BubblePoint,
 	pointArrayMap: ['y', 'z'],
@@ -67,14 +72,14 @@ Highcharts.seriesTypes.bubble = Highcharts.extendClass(Highcharts.seriesTypes.sc
 	 */
 	applyOpacity: function (fill) {
 		var markerOptions = this.options.marker,
-			pick = Highcharts.pick,
+			pick = H.pick,
 			fillOpacity = pick(markerOptions.fillOpacity, 0.5);
 		
 		// When called from Legend.colorizeItem, the fill isn't predefined
 		fill = fill || markerOptions.fillColor || this.color; 
 		
 		if (fillOpacity !== 1) {
-			fill = Highcharts.Color(fill).setOpacity(fillOpacity).get('rgba');
+			fill = Color(fill).setOpacity(fillOpacity).get('rgba');
 		}
 		return fill;
 	},
@@ -83,7 +88,7 @@ Highcharts.seriesTypes.bubble = Highcharts.extendClass(Highcharts.seriesTypes.sc
 	 * Extend the convertAttribs method by applying opacity to the fill
 	 */
 	convertAttribs: function () {
-		var obj = Highcharts.Series.prototype.convertAttribs.apply(this, arguments);
+		var obj = Series.prototype.convertAttribs.apply(this, arguments);
 		
 		obj.fill = this.applyOpacity(obj.fill);
 		
@@ -125,7 +130,7 @@ Highcharts.seriesTypes.bubble = Highcharts.extendClass(Highcharts.seriesTypes.sc
 		var animation = this.options.animation;
 		
 		if (!init) { // run the animation
-			Highcharts.each(this.points, function (point) {
+			H.each(this.points, function (point) {
 				var graphic = point.graphic,
 					shapeArgs = point.shapeArgs;
 
@@ -157,7 +162,7 @@ Highcharts.seriesTypes.bubble = Highcharts.extendClass(Highcharts.seriesTypes.sc
 			radii = this.radii;
 		
 		// Run the parent method
-		Highcharts.seriesTypes.scatter.prototype.translate.call(this);
+		H.seriesTypes.scatter.prototype.translate.call(this);
 		
 		// Set the shape type and arguments to be picked up in drawPoints
 		i = data.length;
@@ -195,7 +200,7 @@ Highcharts.seriesTypes.bubble = Highcharts.extendClass(Highcharts.seriesTypes.sc
 	 * @param {Object} item The series (this) or point
 	 */
 	drawLegendSymbol: function (legend, item) {
-		var radius = Highcharts.pInt(legend.itemStyle.fontSize) / 2;
+		var radius = H.pInt(legend.itemStyle.fontSize) / 2;
 		
 		item.legendSymbol = this.chart.renderer.circle(
 			radius,
@@ -208,22 +213,22 @@ Highcharts.seriesTypes.bubble = Highcharts.extendClass(Highcharts.seriesTypes.sc
 		
 	},
 		
-	drawPoints: Highcharts.seriesTypes.column.prototype.drawPoints,
-	alignDataLabel: Highcharts.seriesTypes.column.prototype.alignDataLabel,
-	buildKDTree: Highcharts.noop,
-	applyZones: Highcharts.noop
+	drawPoints: H.seriesTypes.column.prototype.drawPoints,
+	alignDataLabel: H.seriesTypes.column.prototype.alignDataLabel,
+	buildKDTree: H.noop,
+	applyZones: H.noop
 });
 
 /**
  * Add logic to pad each axis with the amount of pixels
  * necessary to avoid the bubbles to overflow.
  */
-Highcharts.Axis.prototype.beforePadding = function () {
+Axis.prototype.beforePadding = function () {
 	var axis = this,
 		axisLength = this.len,
 		chart = this.chart,
-		pick = Highcharts.pick,
-		each = Highcharts.each,
+		pick = H.pick,
+		each = H.each,
 		pxMin = 0, 
 		pxMax = axisLength,
 		isXAxis = this.isXAxis,
@@ -258,7 +263,7 @@ Highcharts.Axis.prototype.beforePadding = function () {
 					var length = seriesOptions[prop],
 						isPercent = /%$/.test(length);
 					
-					length = Highcharts.pInt(length);
+					length = H.pInt(length);
 					extremes[prop] = isPercent ?
 						smallestSize * length / 100 :
 						length;
@@ -272,11 +277,11 @@ Highcharts.Axis.prototype.beforePadding = function () {
 					zMin = pick(seriesOptions.zMin, Math.min(
 						zMin,
 						Math.max(
-							Highcharts.arrayMin(zData), 
+							H.arrayMin(zData), 
 							seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
 						)
 					));
-					zMax = pick(seriesOptions.zMax, Math.max(zMax, Highcharts.arrayMax(zData)));
+					zMax = pick(seriesOptions.zMax, Math.max(zMax, H.arrayMax(zData)));
 				}
 			}
 		}
@@ -314,3 +319,6 @@ Highcharts.Axis.prototype.beforePadding = function () {
 /* ****************************************************************************
  * End Bubble series code                                                     *
  *****************************************************************************/
+
+	return H;
+}(Highcharts));
