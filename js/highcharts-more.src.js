@@ -1532,12 +1532,13 @@ H.seriesTypes.boxplot = H.extendClass(H.seriesTypes.column, {
 
 	return H;
 }(Highcharts));
+(function (H) {
 /* ****************************************************************************
  * Start error bar series code                                                *
  *****************************************************************************/
 
 // 1 - set default options
-Highcharts.defaultPlotOptions.errorbar = Highcharts.merge(Highcharts.defaultPlotOptions.boxplot, {
+H.defaultPlotOptions.errorbar = H.merge(H.defaultPlotOptions.boxplot, {
 	color: '#000000',
 	grouping: false,
 	linkedTo: ':previous',
@@ -1548,7 +1549,7 @@ Highcharts.defaultPlotOptions.errorbar = Highcharts.merge(Highcharts.defaultPlot
 });
 
 // 2 - Create the series object
-Highcharts.seriesTypes.errorbar = Highcharts.extendClass(Highcharts.seriesTypes.boxplot, {
+H.seriesTypes.errorbar = H.extendClass(H.seriesTypes.boxplot, {
 	type: 'errorbar',
 	pointArrayMap: ['low', 'high'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
@@ -1556,7 +1557,7 @@ Highcharts.seriesTypes.errorbar = Highcharts.extendClass(Highcharts.seriesTypes.
 	},
 	pointValKey: 'high', // defines the top of the tracker
 	doQuartiles: false,
-	drawDataLabels: Highcharts.seriesTypes.arearange ? Highcharts.seriesTypes.arearange.prototype.drawDataLabels : Highcharts.noop,
+	drawDataLabels: H.seriesTypes.arearange ? H.seriesTypes.arearange.prototype.drawDataLabels : H.noop,
 
 	/**
 	 * Get the width and X offset, either on top of the linked series column
@@ -1564,13 +1565,15 @@ Highcharts.seriesTypes.errorbar = Highcharts.extendClass(Highcharts.seriesTypes.
 	 */
 	getColumnMetrics: function () {
 		return (this.linkedParent && this.linkedParent.columnMetrics) || 
-			Highcharts.seriesTypes.column.prototype.getColumnMetrics.call(this);
+			H.seriesTypes.column.prototype.getColumnMetrics.call(this);
 	}
 });
 
 /* ****************************************************************************
  * End error bar series code                                                  *
  *****************************************************************************/
+
+}(Highcharts));
 /* ****************************************************************************
  * Start Waterfall series code                                                *
  *****************************************************************************/
