@@ -1423,8 +1423,11 @@ Series.prototype = {
 			axis = this[zoneAxis + 'Axis'],
 			extremes,
 			reversed = axis.reversed,
+			inverted = chart.inverted,
 			horiz = axis.horiz,
 			pxRange,
+			pxPosMin,
+			pxPosMax,
 			ignoreZones = false;
 
 		if (zones.length && (graph || area)) {
@@ -1444,24 +1447,19 @@ Series.prototype = {
 				translatedFrom = reversed ? 
 					(horiz ? chart.plotWidth : 0) : 
 					(horiz ? 0 : axis.toPixels(extremes.min));
-				translatedFrom = mathMin(pick(translatedTo, translatedFrom), chartSizeMax);
-				translatedTo = mathMin(mathRound(axis.toPixels(pick(threshold.value, extremes.max), true)), chartSizeMax);
-
-				// From should be less or equal then to (#4006)
-				if (axis.isXAxis) {
-					translatedFrom = translatedFrom > translatedTo ? translatedTo : translatedFrom; 
-				} else {
-					translatedFrom = translatedFrom < translatedTo ? translatedTo : translatedFrom;
-				}
-
+				translatedFrom = mathMin(mathMax(pick(translatedTo, translatedFrom), 0), chartSizeMax);
+				translatedTo = mathMin(mathMax(mathRound(axis.toPixels(pick(threshold.value, extremes.max), true)), 0), chartSizeMax);
+				
 				if (ignoreZones) {
 					translatedFrom = translatedTo = axis.toPixels(extremes.max);
 				}
 
 				pxRange = Math.abs(translatedFrom - translatedTo);
+				pxPosMin = mathMin(translatedFrom, translatedTo);
+				pxPosMax = mathMax(translatedFrom, translatedTo);
 				if (axis.isXAxis) {
 					clipAttr = {
-						x: reversed ? translatedTo : translatedFrom,
+						x: inverted ? pxPosMax : pxPosMin,
 						y: 0,
 						width: pxRange, 
 						height: chartSizeMax
@@ -1472,10 +1470,10 @@ Series.prototype = {
 				} else {
 					clipAttr = {
 						x: 0,
-						y: reversed ? translatedFrom : translatedTo,
+						y: inverted ? pxPosMax : pxPosMin,
 						width: chartSizeMax, 
 						height: pxRange
-					};
+					};					
 					if (horiz) {
 						clipAttr.y = chart.plotWidth - clipAttr.y;
 					}
@@ -1486,7 +1484,7 @@ Series.prototype = {
 					if (axis.isXAxis) {			
 						clipAttr = {
 							x: 0,
-							y: reversed ? translatedFrom : translatedTo,
+							y: reversed ? pxPosMin : pxPosMax,
 							height: clipAttr.width,
 							width: chart.chartWidth
 						};		

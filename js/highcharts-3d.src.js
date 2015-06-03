@@ -26,6 +26,15 @@ var PI = Math.PI,
 	pick = Highcharts.pick,
 	round = Math.round;
 
+/**
+ * Transforms a given array of points according to the angles in chart.options.
+ * Parameters: 
+ *		- points: the array of points
+ *		- chart: the chart
+ *		- insidePlotArea: wether to verifiy the points are inside the plotArea
+ * Returns:
+ *		- an array of transformed points
+ */
 function perspective(points, chart, insidePlotArea) {
 	var options3d = chart.options.chart.options3d,
 		inverted = false,
@@ -62,6 +71,7 @@ function perspective(points, chart, insidePlotArea) {
 
 	var x, y, z, px, py, pz;
 
+	// Transform each point
 	Highcharts.each(points, function (point) {
 		x = (inverted ? point.y : point.x) - xe;
 		y = (inverted ? point.x : point.y) - ye;
@@ -1132,6 +1142,7 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'drawPoints', draw3DPoi
 	EXTENSION FOR 3D CYLINDRICAL COLUMNS
 	Not supported
 ***/
+/*
 var defaultOptions = Highcharts.getOptions();
 defaultOptions.plotOptions.cylinder = Highcharts.merge(defaultOptions.plotOptions.column);
 var CylinderSeries = Highcharts.extendClass(Highcharts.seriesTypes.column, {
@@ -1181,7 +1192,7 @@ Highcharts.wrap(Highcharts.seriesTypes.cylinder.prototype, 'translate', function
 		shapeArgs.origin = origin;	
 	});
 });
-/*** 
+*//*** 
 	EXTENSION FOR 3D PIES
 ***/
 
