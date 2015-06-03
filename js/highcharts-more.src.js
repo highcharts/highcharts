@@ -1256,12 +1256,13 @@ H.seriesTypes.gauge = H.extendClass(H.seriesTypes.line, GaugeSeries);
 
 	return H;
 }(Highcharts));
+(function (H) {
 /* ****************************************************************************
  * Start Box plot series code											      *
  *****************************************************************************/
 
 // Set default options
-Highcharts.defaultPlotOptions.boxplot = Highcharts.merge(Highcharts.defaultPlotOptions.column, {
+H.defaultPlotOptions.boxplot = H.merge(H.defaultPlotOptions.column, {
 	fillColor: '#FFFFFF',
 	lineWidth: 1,
 	//medianColor: null,
@@ -1290,7 +1291,7 @@ Highcharts.defaultPlotOptions.boxplot = Highcharts.merge(Highcharts.defaultPlotO
 });
 
 // Create the series object
-Highcharts.seriesTypes.boxplot = Highcharts.extendClass(Highcharts.seriesTypes.column, {
+H.seriesTypes.boxplot = H.extendClass(H.seriesTypes.column, {
 	type: 'boxplot',
 	pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
@@ -1310,7 +1311,7 @@ Highcharts.seriesTypes.boxplot = Highcharts.extendClass(Highcharts.seriesTypes.c
 	/**
 	 * Disable data labels for box plot
 	 */
-	drawDataLabels: Highcharts.noop,
+	drawDataLabels: H.noop,
 
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY
@@ -1318,10 +1319,10 @@ Highcharts.seriesTypes.boxplot = Highcharts.extendClass(Highcharts.seriesTypes.c
 	translate: function () {
 		var series = this,
 			yAxis = series.yAxis,
-			each = Highcharts.each,
+			each = H.each,
 			pointArrayMap = series.pointArrayMap;
 
-		Highcharts.seriesTypes.column.prototype.translate.apply(series);
+		H.seriesTypes.column.prototype.translate.apply(series);
 
 		// do the translation on each point dimension
 		each(series.points, function (point) {
@@ -1342,7 +1343,7 @@ Highcharts.seriesTypes.boxplot = Highcharts.extendClass(Highcharts.seriesTypes.c
 			options = series.options,
 			chart = series.chart,
 			renderer = chart.renderer,
-			pick = Highcharts.pick,
+			pick = H.pick,
 			pointAttr,
 			q1Plot,
 			q3Plot,
@@ -1369,7 +1370,7 @@ Highcharts.seriesTypes.boxplot = Highcharts.extendClass(Highcharts.seriesTypes.c
 			whiskerLength = parseInt(series.options.whiskerLength, 10) / 100;
 
 
-		Highcharts.each(points, function (point) {
+		H.each(points, function (point) {
 
 			graphic = point.graphic;
 			shapeArgs = point.shapeArgs; // the box
@@ -1520,7 +1521,7 @@ Highcharts.seriesTypes.boxplot = Highcharts.extendClass(Highcharts.seriesTypes.c
 		});
 
 	},
-	setStackedPoints: Highcharts.noop // #3890
+	setStackedPoints: H.noop // #3890
 
 
 });
@@ -1528,6 +1529,9 @@ Highcharts.seriesTypes.boxplot = Highcharts.extendClass(Highcharts.seriesTypes.c
 /* ****************************************************************************
  * End Box plot series code												*
  *****************************************************************************/
+
+	return H;
+}(Highcharts));
 /* ****************************************************************************
  * Start error bar series code                                                *
  *****************************************************************************/
