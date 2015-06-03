@@ -1838,10 +1838,13 @@ H.seriesTypes.waterfall = H.extendClass(H.seriesTypes.column, {
 
 	return H;
 }(Highcharts));
+(function (H) {
+	var LegendSymbolMixin = H.LegendSymbolMixin,
+		Series = H.Series;
 /**
  * Set the default options for polygon
  */
-Highcharts.defaultPlotOptions.polygon = Highcharts.merge(Highcharts.defaultPlotOptions.scatter, {
+H.defaultPlotOptions.polygon = H.merge(H.defaultPlotOptions.scatter, {
 	marker: {
 		enabled: false
 	}
@@ -1850,16 +1853,19 @@ Highcharts.defaultPlotOptions.polygon = Highcharts.merge(Highcharts.defaultPlotO
 /**
  * The polygon series class
  */
-Highcharts.seriesTypes.polygon = Highcharts.extendClass(Highcharts.seriesTypes.scatter, {
+H.seriesTypes.polygon = H.extendClass(H.seriesTypes.scatter, {
 	type: 'polygon',
 	fillGraph: true,
 	// Close all segments
 	getSegmentPath: function (segment) {
-		return Highcharts.Series.prototype.getSegmentPath.call(this, segment).concat('z');
+		return Series.prototype.getSegmentPath.call(this, segment).concat('z');
 	},
-	drawGraph: Highcharts.Series.prototype.drawGraph,
-	drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle
+	drawGraph: Series.prototype.drawGraph,
+	drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
+
+	return H;
+}(Highcharts));
 /* ****************************************************************************
  * Start Bubble series code											          *
  *****************************************************************************/
