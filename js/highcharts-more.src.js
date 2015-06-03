@@ -2190,8 +2190,7 @@ Axis.prototype.beforePadding = function () {
 
 	return H;
 }(Highcharts));
-
-(function () {
+(function (H) {
 
 	/**
 	 * Extensions for polar charts. Additionally, much of the geometry required for polar charts is
@@ -2199,10 +2198,12 @@ Axis.prototype.beforePadding = function () {
 	 * 
 	 */
 
-	var seriesProto = Highcharts.Series.prototype,
-		pointerProto = Highcharts.Pointer.prototype,
+	var Pointer = H.Pointer,
+		Series = H.Series,
+		seriesProto = Series.prototype,
+		pointerProto = Pointer.prototype,
 		colProto,
-		wrap = Highcharts.wrap;
+		wrap = H.wrap;
 
 	/**
 	 * Search a k-d tree by the point angle, used for shared tooltips in polar charts
@@ -2296,18 +2297,18 @@ Axis.prototype.beforePadding = function () {
 	}
 
  
-	if (Highcharts.seriesTypes.area) {		
-		wrap(Highcharts.seriesTypes.area.prototype, 'init', initArea);	
+	if (H.seriesTypes.area) {		
+		wrap(H.seriesTypes.area.prototype, 'init', initArea);	
 	}
-	if (Highcharts.seriesTypes.areaspline) {		
-		wrap(Highcharts.seriesTypes.areaspline.prototype, 'init', initArea);			
+	if (H.seriesTypes.areaspline) {		
+		wrap(H.seriesTypes.areaspline.prototype, 'init', initArea);			
 	}	
 
-	if (Highcharts.seriesTypes.spline) {
+	if (H.seriesTypes.spline) {
 		/**
 		 * Overridden method for calculating a spline from one point to the next
 		 */
-		wrap(Highcharts.seriesTypes.spline.prototype, 'getPointSpline', function (proceed, segment, point, i) {
+		wrap(H.seriesTypes.spline.prototype, 'getPointSpline', function (proceed, segment, point, i) {
 	
 			var ret,
 				smoothing = 1.5, // 1 means control points midway between points, 2 means 1/3 from the point, 3 is 1/4 etc;
@@ -2524,9 +2525,9 @@ Axis.prototype.beforePadding = function () {
 	wrap(seriesProto, 'animate', polarAnimate);
 
 
-	if (Highcharts.seriesTypes.column) {
+	if (H.seriesTypes.column) {
 
-		colProto = Highcharts.seriesTypes.column.prototype;
+		colProto = H.seriesTypes.column.prototype;
 		/**
 		* Define the animate method for columnseries
 		*/
@@ -2570,7 +2571,7 @@ Axis.prototype.beforePadding = function () {
 							{
 								start: start,
 								end: start + point.pointWidth,
-								innerR: len - Highcharts.pick(point.yBottom, len)
+								innerR: len - H.pick(point.yBottom, len)
 							}
 						)
 					};
@@ -2635,7 +2636,7 @@ Axis.prototype.beforePadding = function () {
 	
 		if (chart.polar) {	
 
-			Highcharts.each(chart.axes, function (axis) {
+			H.each(chart.axes, function (axis) {
 				var isXAxis = axis.isXAxis,
 					center = axis.center,
 					x = e.chartX - center[0] - chart.plotLeft,
@@ -2659,6 +2660,7 @@ Axis.prototype.beforePadding = function () {
 		return ret;
 	});
 
-}());
+	return H;
+}(Highcharts));
 
 }(Highcharts));
