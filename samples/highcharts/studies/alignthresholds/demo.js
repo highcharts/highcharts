@@ -34,17 +34,20 @@ $(function () {
                 if (this.tickPositions && primaryIndex > 0 && primaryIndex < primaryAxis.tickPositions.length - 1) {
                     // Add tick positions to the top or bottom in order to align the threshold
                     // to the primary axis threshold
-                    while (!isAligned(this)) {
-                        if (index < primaryIndex) {
-                            newTickPos = this.tickPositions[0] - this.tickInterval;
-                            this.tickPositions.unshift(newTickPos);
-                            this.min = newTickPos;
-                        } else {
-                            newTickPos = this.tickPositions[this.tickPositions.length - 1] + this.tickInterval;
-                            this.tickPositions.push(newTickPos);
-                            this.max = newTickPos;
+                    if (this.tickAmount) {
+                        while (!isAligned(this)) {
+
+                            if (index < primaryIndex) {
+                                newTickPos = this.tickPositions[0] - this.tickInterval;
+                                this.tickPositions.unshift(newTickPos);
+                                this.min = newTickPos;
+                            } else {
+                                newTickPos = this.tickPositions[this.tickPositions.length - 1] + this.tickInterval;
+                                this.tickPositions.push(newTickPos);
+                                this.max = newTickPos;
+                            }
+                            proceed.call(this);
                         }
-                        proceed.call(this);
                     }
                 }
 
