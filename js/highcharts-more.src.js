@@ -933,14 +933,14 @@ H.seriesTypes.areasplinerange = H.extendClass(H.seriesTypes.arearange, {
 
 	return H;
 }(Highcharts));
-(function () {
+(function (H) {
 	
-	var colProto = Highcharts.seriesTypes.column.prototype;
+	var colProto = H.seriesTypes.column.prototype;
 
 	/**
 	 * The ColumnRangeSeries class
 	 */
-	Highcharts.defaultPlotOptions.columnrange = Highcharts.merge(Highcharts.defaultPlotOptions.column, Highcharts.defaultPlotOptions.arearange, {
+	H.defaultPlotOptions.columnrange = H.merge(H.defaultPlotOptions.column, H.defaultPlotOptions.arearange, {
 		lineWidth: 1,
 		pointRange: null
 	});
@@ -948,7 +948,7 @@ H.seriesTypes.areasplinerange = H.extendClass(H.seriesTypes.arearange, {
 	/**
 	 * ColumnRangeSeries object
 	 */
-	Highcharts.seriesTypes.columnrange = Highcharts.extendClass(Highcharts.seriesTypes.arearange, {
+	H.seriesTypes.columnrange = H.extendClass(H.seriesTypes.arearange, {
 		type: 'columnrange',
 		/**
 		 * Translate data points from raw values x and y to plotX and plotY
@@ -961,7 +961,7 @@ H.seriesTypes.areasplinerange = H.extendClass(H.seriesTypes.arearange, {
 			colProto.translate.apply(series);
 
 			// Set plotLow and plotHigh
-			Highcharts.each(series.points, function (point) {
+			H.each(series.points, function (point) {
 				var shapeArgs = point.shapeArgs,
 					minPointLength = series.options.minPointLength,
 					heightDifference,
@@ -994,14 +994,16 @@ H.seriesTypes.areasplinerange = H.extendClass(H.seriesTypes.arearange, {
 		},
 		directTouch: true,
 		trackerGroups: ['group', 'dataLabelsGroup'],
-		drawGraph: Highcharts.noop,
+		drawGraph: H.noop,
 		pointAttrToOptions: colProto.pointAttrToOptions,
 		drawPoints: colProto.drawPoints,
 		drawTracker: colProto.drawTracker,
 		animate: colProto.animate,
 		getColumnMetrics: colProto.getColumnMetrics
 	});
-}());
+
+	return H;
+}(Highcharts));
 
 /* 
  * The GaugeSeries class
