@@ -4121,8 +4121,8 @@ SVGRenderer.prototype = {
 
 				// create the border box if it is not already present
 				if (!box) {
-					boxX = mathRound(-alignFactor * padding);
-					boxY = baseline ? -baselineOffset : 0;
+					boxX = mathRound(-alignFactor * padding) - crispAdjust;
+					boxY = (baseline ? -baselineOffset : 0) + crispAdjust;
 
 					wrapper.box = box = shape ?
 						renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height, deferredAttr) :
@@ -4259,7 +4259,7 @@ SVGRenderer.prototype = {
 		};
 		wrapper.anchorXSetter = function (value, key) {
 			anchorX = value;
-			boxAttr(key, value + crispAdjust - wrapperX);
+			boxAttr(key, mathRound(value) - crispAdjust - wrapperX);
 		};
 		wrapper.anchorYSetter = function (value, key) {
 			anchorY = value;
