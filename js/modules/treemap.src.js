@@ -154,7 +154,7 @@
 						each(list[id], function (i) {
 							node = getNodeTree(points[i].id, i, (level + 1), list, points, id);
 							childrenTotal += node.val;
-							series.insertElementSorted(sortedChildren, node);
+							series.insertElementSorted(sortedChildren, node, function (el, el2) { return el.val > el2.val; });
 							children.push(node);
 						});
 					}
@@ -657,18 +657,18 @@
 			}
 		},
 		/**
-		 * Inserts an element into an array, sorted by el.val
+		 * Inserts an element into an array, sorted by a condition.
 		 * Modifies the referenced array
-		 * @param {Object[]} arr The array which the element is inserted into.
-		 * @param {Object} el The element to insert.
-		 * @param {number} el.val The value to sort on.
+		 * @param {*[]} arr The array which the element is inserted into.
+		 * @param {*} el The element to insert.
+		 * @param {function} cond The condition to sort on. First parameter is el, second parameter is array element
 		 */
-		insertElementSorted: function (arr, el) {
+		insertElementSorted: function (arr, el, cond) {
 			var i = 0,
 				inserted = false;
 			if (arr.length !== 0) {
-				each(arr, function (el2) {
-					if (el.val > el2.val && !inserted) {
+				each(arr, function (arrayElement) {
+					if (cond(el, arrayElement) && !inserted) {
 						arr.splice(i, 0, el);
 						inserted = true;
 					}
