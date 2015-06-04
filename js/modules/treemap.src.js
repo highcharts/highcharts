@@ -144,24 +144,7 @@
 						point = points[i],
 						nodeTree,
 						node,
-						insertNode,
 						name;
-					insertNode = function () {
-						var i = 0,
-							inserted = false;
-						if (sortedChildren.length !== 0) {
-							each(sortedChildren, function (child) {
-								if (node.val > child.val && !inserted) {
-									sortedChildren.splice(i, 0, node);
-									inserted = true;
-								}
-								i = i + 1;					
-							});
-						} 
-						if (!inserted) {
-							sortedChildren.push(node);
-						}
-					};
 
 					// Actions
 					if (point) {
@@ -171,7 +154,7 @@
 						each(list[id], function (i) {
 							node = getNodeTree(points[i].id, i, (level + 1), list, points, id);
 							childrenTotal += node.val;
-							insertNode();
+							series.insertElementSorted(sortedChildren, node);
 							children.push(node);
 						});
 					}
@@ -671,6 +654,29 @@
 			// Set click events on points 
 			if (seriesOptions.allowDrillToNode) {
 				series.drillTo();
+			}
+		},
+		/**
+		 * Inserts an element into an array, sorted by el.val
+		 * Modifies the referenced array
+		 * @param {Object[]} arr The array which the element is inserted into.
+		 * @param {Object} el The element to insert.
+		 * @param {number} el.val The value to sort on.
+		 */
+		insertElementSorted: function (arr, el) {
+			var i = 0,
+				inserted = false;
+			if (arr.length !== 0) {
+				each(arr, function (el2) {
+					if (el.val > el2.val && !inserted) {
+						arr.splice(i, 0, el);
+						inserted = true;
+					}
+					i = i + 1;					
+				});
+			} 
+			if (!inserted) {
+				arr.push(el);
 			}
 		},
 		/**
