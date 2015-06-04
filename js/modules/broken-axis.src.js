@@ -168,14 +168,15 @@
 					i,
 					j;
 
-				// Min & Max Check
+				// Min & max check (#4247)
 				for (i in breaks) {
 					brk = breaks[i];
+					repeat = brk.repeat || Infinity;
 					if (axis.isInBreak(brk, min)) {
-						min += (brk.to % brk.repeat) - (min % brk.repeat);
+						min += (brk.to % repeat) - (min % repeat);
 					}
 					if (axis.isInBreak(brk, max)) {
-						max -= (max % brk.repeat) - (brk.from % brk.repeat);
+						max -= (max % repeat) - (brk.from % repeat);
 					}
 				}
 
@@ -242,7 +243,6 @@
 
 				axis.min = min;
 				axis.max = max;
-
 			};
 		}
 	});
