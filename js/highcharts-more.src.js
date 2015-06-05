@@ -1630,11 +1630,11 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			// sum points
 			if (point.isSum) {
 				shapeArgs.y = yAxis.translate(range[1], 0, 1);
-				shapeArgs.height = yAxis.translate(range[0], 0, 1) - shapeArgs.y;
+				shapeArgs.height = Math.min(yAxis.translate(range[0], 0, 1), yAxis.len) - shapeArgs.y; // #4256
 
 			} else if (point.isIntermediateSum) {
 				shapeArgs.y = yAxis.translate(range[1], 0, 1);
-				shapeArgs.height = yAxis.translate(previousIntermediate, 0, 1) - shapeArgs.y;
+				shapeArgs.height = Math.min(yAxis.translate(previousIntermediate, 0, 1), yAxis.len) - shapeArgs.y;
 				previousIntermediate = range[1];
 
 			// If it's not the sum point, update previous stack end position and get 
