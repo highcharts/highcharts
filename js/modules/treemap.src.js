@@ -544,39 +544,43 @@
 			}
 		},
 		/**
-		* Extend drawDataLabels with logic to handle the levels option
-		*/
+		 * Extend drawDataLabels with logic to handle custom options related to the treemap series:
+		 * - Points which is not a leaf node, has dataLabels disabled by default.
+		 * - Options set on series.levels is merged in.
+		 * - Width of the dataLabel is set to match the width of the point shape.
+		 */
 		drawDataLabels: function () {
 			var series = this,
 				points = series.points,
 				options,
-				level,
-				dataLabelsGroup = this.dataLabelsGroup,
-				dataLabels;
+				level;
 			each(points, function (point) {
 				level = series.levelMap[point.level];
-				if (!point.isLeaf || level) {
-					options = undefined;
-					// If not a leaf, then label should be disabled as default
-					if (!point.isLeaf) {
-						options = {enabled: false};
-					}
-					if (level) {
-						dataLabels = level.dataLabels;
-						if (dataLabels) {
-							options = merge(options, dataLabels);
-							series._hasPointLabels = true;
-						}
-					}
-					options = merge(options, point.options.dataLabels);
-					point.dlOptions = options;
-				} else {
-					delete point.dlOptions;
+				// Set options to new object to problems with scope
+				options = {style: {}};
+
+				// If not a leaf, then label should be disabled as default
+				if (!point.isLeaf) {
+					options.enabled = false;
 				}
+
+				// If options for level exists, include them as well
+				if (level && level.dataLabels) {
+					options = merge(options, level.dataLabels);
+					series._hasPointLabels = true;
+				}
+
+				// Set dataLabel width to the width of the point shape.
+				if (point.shapeArgs) {
+					options.style.width = point.shapeArgs.width;
+				}
+
+				// Merge custom options with point options
+				point.dlOptions = merge(options, point.options.dataLabels);
 			});
-			this.dataLabelsGroup = this.group;
+
+			this.dataLabelsGroup = this.group; // Draw dataLabels in same group as points, because of z-index on hover
 			Series.prototype.drawDataLabels.call(this);
-			this.dataLabelsGroup = dataLabelsGroup;
 		},
 		alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
 		/**
