@@ -682,7 +682,7 @@
 			each(points, function (point) {
 				var drillId,
 					drillName;
-				H.removeEvent(point, 'click');
+				H.removeEvent(point, 'click.drillTo');
 				if (point.graphic) {
 					point.graphic.css({ cursor: 'default' });
 				}
@@ -700,7 +700,7 @@
 					if (point.graphic) {
 						point.graphic.css({ cursor: 'pointer' });
 					}
-					H.addEvent(point, 'click', function () {
+					H.addEvent(point, 'click.drillTo', function () {
 						point.setState(''); // Remove hover
 						series.drillToNode(drillId);
 						series.showDrillUpButton(drillName);
