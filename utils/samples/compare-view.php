@@ -394,7 +394,12 @@
 								while (i--) {
 									diff += Math.abs(data1[i] - data2[i]); // loops over all reds, greens, blues and alphas
 								}
-								return diff / dividend;
+								diff /= dividend;
+
+								if (diff < 0.005) {
+									diff = 0;
+								}
+								return diff;
 							}
 
 							// called after converting svgs to canvases
