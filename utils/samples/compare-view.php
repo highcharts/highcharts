@@ -60,6 +60,8 @@
 				rightSVG,
 				leftVersion,
 				rightVersion,
+				chartWidth,
+				chartHeight,
 				error,
 				mode = '<?php echo $mode ?>',
 				i = '<?php echo $i ?>'
@@ -218,6 +220,10 @@
 			}
 			
 			function onLoadTest(which, svg) {
+
+				chartWidth = parseInt(svg.match(/width=\"([0-9]+)\"/)[1]);
+				chartHeight = parseInt(svg.match(/height=\"([0-9]+)\"/)[1]);
+
 				if (which == 'left') {
 					leftSVG = svg;
 				} else {
@@ -254,7 +260,9 @@
 						// Initiate
 						if (showingRight === undefined) {
 
-							$('#preview').css({ height: $('#preview').height() })
+							$('#preview').css({ 
+								height: $('#preview').height()
+							});
 
 							$rightImage
 								.css({
@@ -280,6 +288,9 @@
 							showingRight = true;
 						}
 					};
+				$('#preview').css({
+					width: 2 * chartWidth + 20
+				});
 
 				$button
 					.css('display', '')
@@ -344,8 +355,8 @@
 						function canvasCompare(source1, canvas1, source2, canvas2, width, height) {
 							var converted = [],
 								diff = 0,
-								canvasWidth = width || 400, 
-								canvasHeight = height || 300;;
+								canvasWidth = chartWidth || 400, 
+								canvasHeight = chartHeight || 300;
 
 							// converts the svg into canvas
 							//		- source: the svg string
@@ -428,9 +439,17 @@
 								}
 							}
 						
-							// show the canvases
-							document.getElementById(canvas1).style.display = '';
-							document.getElementById(canvas2).style.display = '';
+							
+							$('#preview canvas')
+								.attr({
+									width: chartWidth,
+									height: chartHeight
+								})
+								.css({
+									width: chartWidth + 'px',
+									height: chartHeight + 'px',
+									display: ''
+								});
 							
 							// start converting
 							if (navigator.userAgent.indexOf('Trident') !== -1) {
@@ -594,8 +613,8 @@
 			<pre id="svg"></pre>
 			
 			<div id="preview">
-				<canvas id="cnvLeft" width="400px" height="300px" style="display:none"></canvas>
-				<canvas id="cnvRight" width="400px" height="300px" style="display:none"></canvas>
+				<canvas id="cnvLeft" style="display:none"></canvas>
+				<canvas id="cnvRight" style="display:none"></canvas>
 			</div>
 			<button id="overlay-compare" style="display:none">Compare overlaid</button>
 		
