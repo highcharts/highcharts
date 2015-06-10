@@ -8,7 +8,6 @@ $(function () {
                 alpha: 20,
                 beta: 30,
                 depth: 200,
-                viewDistance: 10,
                 frame: {
                     bottom: {
                         size: 1,
@@ -18,10 +17,10 @@ $(function () {
             }
         },
         title: {
-            text: 'a 3D Scatter Chart'
+            text: '3D scatter chart'
         },
         subtitle: {
-            text: 'with Plot Line & Band'
+            text: 'With plot line and plot band on the Z axis'
         },
         yAxis: {
             min: 0,
@@ -41,8 +40,12 @@ $(function () {
             plotBands: [{
                 from: 4,
                 to: 6,
-                color: '#00FF00'
-            }]
+                color: Highcharts.Color(Highcharts.getOptions().colors[2]).setOpacity(0.5).get()
+            }],
+            tickInterval: 2,
+            min: 0,
+            max: 10,
+            showFirstLabel: false
         },
         series: [{
             data: [

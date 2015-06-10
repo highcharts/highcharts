@@ -8,7 +8,7 @@ $(function () {
                 alpha: 20,
                 beta: 30,
                 depth: 200,
-                viewDistance: 10,
+                viewDistance: 5,
                 frame: {
                     bottom: {
                         size: 1,
@@ -18,10 +18,10 @@ $(function () {
             }
         },
         title: {
-            text: 'a 3D Scatter Chart'
+            text: 'A 3D Scatter Chart'
         },
         subtitle: {
-            text: 'with Grid Lines and Tick Markers on the Z-Axis'
+            text: 'With grid lines and tick marks on the Z-Axis'
         },
         yAxis: {
             min: 0,

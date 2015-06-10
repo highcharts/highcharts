@@ -8,7 +8,7 @@ $(function () {
                 alpha: 20,
                 beta: 30,
                 depth: 200,
-                viewDistance: 10,
+                viewDistance: 5,
                 frame: {
                     bottom: {
                         size: 1,
@@ -36,10 +36,11 @@ $(function () {
             categories: ['Apples', 'Pears', 'Bananas', 'Kiwis'],
             labels: {
                 y: 5,
-                rotation: 30
+                rotation: 18
             }
         },
         series: [{
+            name: 'Fruits',
             data: [
                 // [X, Y, Z]
                 [1, 1, 1],
