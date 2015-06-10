@@ -551,6 +551,7 @@
 		 */
 		drawDataLabels: function () {
 			var series = this,
+				dataLabelsGroup = series.dataLabelsGroup,
 				points = series.points,
 				options,
 				level;
@@ -581,6 +582,7 @@
 
 			this.dataLabelsGroup = this.group; // Draw dataLabels in same group as points, because of z-index on hover
 			Series.prototype.drawDataLabels.call(this);
+			this.dataLabelsGroup = dataLabelsGroup;
 		},
 		alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
 		/**
