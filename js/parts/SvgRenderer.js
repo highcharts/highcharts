@@ -2110,11 +2110,8 @@ SVGRenderer.prototype = {
 				safeDistance = r + halfDistance,
 				anchorX = options && options.anchorX,
 				anchorY = options && options.anchorY,
-				path,
-				normalizer = mathRound(options.strokeWidth || 0) % 2 / 2; // mathRound because strokeWidth can sometimes have roundoff errors;
+				path;
 
-			x += normalizer;
-			y += normalizer;
 			path = [
 				'M', x + r, y, 
 				'L', x + w - r, y, // top side
@@ -2342,7 +2339,7 @@ SVGRenderer.prototype = {
 
 				// create the border box if it is not already present
 				if (!box) {
-					boxX = mathRound(-alignFactor * padding) - crispAdjust;
+					boxX = mathRound(-alignFactor * padding) + crispAdjust;
 					boxY = (baseline ? -baselineOffset : 0) + crispAdjust;
 
 					wrapper.box = box = shape ?
