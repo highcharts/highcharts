@@ -7456,7 +7456,7 @@ Axis.prototype = {
 			this.tickInterval / 5 : options.minorTickInterval;
 
 		// Find the tick positions
-		this.tickPositions = tickPositions = options.tickPositions && options.tickPositions.slice(); // Work on a copy (#1565)
+		this.tickPositions = tickPositions = tickPositionsOption && tickPositionsOption.slice(); // Work on a copy (#1565)
 		if (!tickPositions) {
 
 			if (this.isDatetimeAxis) {
