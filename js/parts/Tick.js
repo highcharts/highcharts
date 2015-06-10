@@ -128,7 +128,7 @@ Tick.prototype = {
 
 			slotWidth = mathMin(axis.slotWidth, slotWidth); // #4177
 			if (slotWidth < axis.slotWidth) {
-				xy.x -= xCorrection * (axis.slotWidth - slotWidth); // align it within the new slot
+				xy.x -= axis.slotWidth - slotWidth - xCorrection * (axis.slotWidth - mathMin(labelWidth, slotWidth));
 			}
 			// If the label width exceeds the available space, set a text width to be 
 			// picked up below. Also, if a width has been set before, we need to set a new
