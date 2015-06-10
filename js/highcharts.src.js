@@ -369,6 +369,13 @@ function pad(number, length) {
 }
 
 /**
+ * Return a length based on either the integer value, or a percentage of a base.
+ */
+function relativeLength (value, base) {
+	return (/%$/).test(value) ? base * parseFloat(value) / 100 : parseFloat(value);
+}
+
+/**
  * Wrap a method with extended functionality, preserving the original function
  * @param {Object} obj The context object that the method belongs to 
  * @param {String} method The name of the method to extend
@@ -12636,7 +12643,7 @@ var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
 	 * Get the center of the pie based on the size and center options relative to the  
 	 * plot area. Borrowed by the polar and gauge series types.
 	 */
-	getCenter: function (size) {
+	getCenter: function () {
 		
 		var options = this.options,
 			chart = this.chart,
@@ -12647,28 +12654,20 @@ var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
 			centerOption = options.center,
 			positions = [pick(centerOption[0], '50%'), pick(centerOption[1], '50%'), options.size || '100%', options.innerSize || 0],
 			smallestSize = mathMin(plotWidth, plotHeight),
-			isPercent,
 			i,
 			value;
 
 		for (i = 0; i < 4; ++i) {
 			value = positions[i];
-			isPercent = /%$/.test(value);
-			handleSlicingRoom = i < 2 || (i === 2 && isPercent);
-			positions[i] = (isPercent ?
-				// i == 0: centerX, relative to width
-				// i == 1: centerY, relative to height
-				// i == 2: size, relative to smallestSize
-				// i == 3: innerSize, relative to size
-				[plotWidth, plotHeight, smallestSize, positions[2]][i] * pInt(value) / 100 :
-								
-				pInt(value)) + (handleSlicingRoom ? slicingRoom : 0);
+			handleSlicingRoom = i < 2 || (i === 2 && /%$/.test(value));
+			
+			// i == 0: centerX, relative to width
+			// i == 1: centerY, relative to height
+			// i == 2: size, relative to smallestSize
+			// i == 3: innerSize, relative to size
+			positions[i] = relativeLength(value, [plotWidth, plotHeight, smallestSize, positions[2]][i]) +
+				(handleSlicingRoom ? slicingRoom : 0);
 
-			// If the size is set, we're in a recursive loop trying to fit data labels.
-			// The inner size must follow (#2077)
-			if (i === 2 && size) {
-				positions[i] = size;
-			}
 		}
 		return positions;
 	}
@@ -17540,8 +17539,9 @@ if (seriesTypes.pie) {
 
 		// If the size must be decreased, we need to run translate and drawDataLabels again
 		if (newSize < center[2]) {
-			this.center = this.getCenter(newSize);
-			this.translate(this.center);
+			center[2] = newSize;
+			center[3] = relativeLength(options.innerSize || 0, newSize);
+			this.translate(center);
 			each(this.points, function (point) {
 				if (point.dataLabel) {
 					point.dataLabel._pos = null; // reset

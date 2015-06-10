@@ -681,8 +681,9 @@ if (seriesTypes.pie) {
 
 		// If the size must be decreased, we need to run translate and drawDataLabels again
 		if (newSize < center[2]) {
-			this.center = this.getCenter(newSize);
-			this.translate(this.center);
+			center[2] = newSize;
+			center[3] = relativeLength(options.innerSize || 0, newSize);
+			this.translate(center);
 			each(this.points, function (point) {
 				if (point.dataLabel) {
 					point.dataLabel._pos = null; // reset
