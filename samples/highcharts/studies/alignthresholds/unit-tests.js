@@ -68,7 +68,7 @@ QUnit.test('alignThreshold', function (assert) {
     );
 
 
-    $('#container').highcharts({
+    /*$('#container').highcharts({
         chart: {
             alignThresholds: true,
             type: 'column'
@@ -98,6 +98,6 @@ QUnit.test('alignThreshold', function (assert) {
     	chart.yAxis[0].tickPositions.indexOf(0),
     	chart.yAxis[1].tickPositions.indexOf(0),
     	'Same threshold position'
-    );
+    );*/
 
 });
