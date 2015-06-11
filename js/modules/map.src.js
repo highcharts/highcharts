@@ -2152,11 +2152,6 @@ Highcharts.maps = {};
 
 // Create symbols for the zoom buttons
 function selectiveRoundedRect(attr, x, y, w, h, rTopLeft, rTopRight, rBottomRight, rBottomLeft) {
-	var normalize = (attr['stroke-width'] % 2 / 2);
-		
-	x -= normalize;
-	y -= normalize;
-
 	return ['M', x + rTopLeft, y,
         // top side
         'L', x + w - rTopRight, y,
@@ -2178,10 +2173,10 @@ function selectiveRoundedRect(attr, x, y, w, h, rTopLeft, rTopRight, rBottomRigh
     ];
 }
 SVGRenderer.prototype.symbols.topbutton = function (x, y, w, h, attr) {
-	return selectiveRoundedRect(attr, x, y, w, h, attr.r, attr.r, 0, 0);
+	return selectiveRoundedRect(attr, x - 1, y - 1, w, h, attr.r, attr.r, 0, 0);
 };
 SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
-	return selectiveRoundedRect(attr, x, y, w, h, 0, 0, attr.r, attr.r);
+	return selectiveRoundedRect(attr, x - 1, y - 1, w, h, 0, 0, attr.r, attr.r);
 };
 // The symbol callbacks are generated on the SVGRenderer object in all browsers. Even
 // VML browsers need this in order to generate shapes in export. Now share

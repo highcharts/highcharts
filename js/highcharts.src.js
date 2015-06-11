@@ -15256,7 +15256,7 @@ extend(Point.prototype, {
 						if (options && options.marker && options.marker.symbol) {
 							point.graphic = graphic.destroy();
 						} else {
-							graphic.attr(point.pointAttr[point.state || ''])[point.visible ? 'show' : 'hide'](); // #2430
+							graphic.attr(point.pointAttr[point.state || ''])[point.visible ? 'show' : 'hide'](true); // #2430
 						}
 					}
 					if (options && options.dataLabels && point.dataLabel) { // #2468
@@ -17354,7 +17354,7 @@ if (seriesTypes.pie) {
 				point = points[j];
 				labelPos = point.labelPos;
 				dataLabel = point.dataLabel;
-				visibility = point.visible === false ? HIDDEN : VISIBLE;
+				visibility = point.visible === false ? HIDDEN : 'inherit';
 				naturalY = labelPos[1];
 
 				if (distanceOption > 0) {

@@ -494,7 +494,7 @@ if (seriesTypes.pie) {
 				point = points[j];
 				labelPos = point.labelPos;
 				dataLabel = point.dataLabel;
-				visibility = point.visible === false ? HIDDEN : VISIBLE;
+				visibility = point.visible === false ? HIDDEN : 'inherit';
 				naturalY = labelPos[1];
 
 				if (distanceOption > 0) {
