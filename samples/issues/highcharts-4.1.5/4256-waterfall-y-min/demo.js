@@ -75,13 +75,13 @@ $(function () {
         
         assert.equal(
             chart.series[0].points[6].graphic.attr('y') + chart.series[0].points[6].graphic.attr('height') <= 
-                chart.yAxis[0].len,
+                chart.yAxis[0].len + 2,
             true,
             'Intermediate sum inside plot area'
         );
         assert.equal(
             chart.series[0].points[7].graphic.attr('y') + chart.series[0].points[7].graphic.attr('height') <= 
-                chart.yAxis[0].len,
+                chart.yAxis[0].len + 2,
             true,
             'Sum inside plot area'
         );

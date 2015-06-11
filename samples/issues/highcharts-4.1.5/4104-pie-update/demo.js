@@ -54,7 +54,7 @@ $(function () {
         );
         assert.equal(
             chart.series[0].points[0].dataLabel.attr('visibility'),     
-            'visible',
+            'inherit',
             'Visible data label on setVisible true'
         );
         assert.equal(
