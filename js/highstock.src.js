@@ -5916,7 +5916,7 @@ Tick.prototype = {
 			}
 
 			slotWidth = mathMin(axis.slotWidth, slotWidth); // #4177
-			if (slotWidth < axis.slotWidth) {
+			if (slotWidth < axis.slotWidth && axis.labelAlign === 'center') {
 				xy.x += goRight * (axis.slotWidth - slotWidth - xCorrection * (axis.slotWidth - mathMin(labelWidth, slotWidth)));				
 			}
 			// If the label width exceeds the available space, set a text width to be 

@@ -5916,7 +5916,7 @@ Tick.prototype = {
 			}
 
 			slotWidth = mathMin(axis.slotWidth, slotWidth); // #4177
-			if (slotWidth < axis.slotWidth) {
+			if (slotWidth < axis.slotWidth && axis.labelAlign === 'center') {
 				xy.x += goRight * (axis.slotWidth - slotWidth - xCorrection * (axis.slotWidth - mathMin(labelWidth, slotWidth)));				
 			}
 			// If the label width exceeds the available space, set a text width to be 
@@ -18513,7 +18513,7 @@ Highcharts.maps = {};
 
 
 // Create symbols for the zoom buttons
-function selectiveRoundedRect(attr, x, y, w, h, rTopLeft, rTopRight, rBottomRight, rBottomLeft) {
+function selectiveRoundedRect(x, y, w, h, rTopLeft, rTopRight, rBottomRight, rBottomLeft) {
 	return ['M', x + rTopLeft, y,
         // top side
         'L', x + w - rTopRight, y,
@@ -18535,10 +18535,10 @@ function selectiveRoundedRect(attr, x, y, w, h, rTopLeft, rTopRight, rBottomRigh
     ];
 }
 SVGRenderer.prototype.symbols.topbutton = function (x, y, w, h, attr) {
-	return selectiveRoundedRect(attr, x - 1, y - 1, w, h, attr.r, attr.r, 0, 0);
+	return selectiveRoundedRect(x - 1, y - 1, w, h, attr.r, attr.r, 0, 0);
 };
 SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
-	return selectiveRoundedRect(attr, x - 1, y - 1, w, h, 0, 0, attr.r, attr.r);
+	return selectiveRoundedRect(x - 1, y - 1, w, h, 0, 0, attr.r, attr.r);
 };
 // The symbol callbacks are generated on the SVGRenderer object in all browsers. Even
 // VML browsers need this in order to generate shapes in export. Now share
