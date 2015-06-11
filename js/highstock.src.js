@@ -16815,7 +16815,8 @@ var PieSeries = {
 						point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE]
 					)
 					.attr({ 
-						'stroke-linejoin': 'round'
+						'stroke-linejoin': 'round',
+						visibility: point.visible ? 'visible' : 'hidden'
 						//zIndex: 1 // #2722 (reversed)
 					})
 					.attr(groupTranslation)
