@@ -41,7 +41,7 @@ $(function () {
             '"Low" data label is drawn above point'
         );
         assert.strictEqual(
-            point.dataLabelUpper.y >= point.plotHigh,
+            Math.round(point.dataLabelUpper.y) >= Math.round(point.plotHigh),
             true,
             '"High" data label is drawn below point'
         );        

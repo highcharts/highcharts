@@ -37,6 +37,7 @@ li, a, p, div {
 	white-space: nowrap;
 	cursor: pointer;
 	margin: 0 3px;
+	line-height: 2.5em;
 }
 .buttons a:hover, a.button:hover, button:hover {
 	background: #40818b;

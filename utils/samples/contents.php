@@ -55,6 +55,11 @@ require_once('functions.php');
 					window.location.reload();
 				});
 
+				$('#fails-only').click(function () {
+					$('#filtered').css('display', 'block');
+					$('#main-nav h2, #main-nav h4, #main-nav li.identical, #main-nav li.approved, #main-nav li.manual').css('display', 'none');
+				});
+
 				$("#slider").slider({
 					min: 0,
 					max: 1,
@@ -72,8 +77,7 @@ require_once('functions.php');
 							} else if (diff < e.value && $li.hasClass('different')) {
 								$li.removeClass('different').addClass('identical');
 							}
-
-						})
+						});
 					}
 				});
 			});
@@ -152,7 +156,7 @@ require_once('functions.php');
 				z-index: 10;
 			}
 			#main-nav {
-				margin-top: 100px;
+				margin-top: 110px;
 				margin-left: 10px;
 			}
 			#batch-stop {
@@ -178,6 +182,13 @@ require_once('functions.php');
 			}
 			.dissimilarity-index {
 				float: right;
+			}
+			#filtered {
+				display: none;
+				margin: 1em 0;
+				padding: 1em;
+				border: 1px solid #7cb5ec;
+				border-radius: 0.5em;
 			}
 
 		</style>
@@ -206,6 +217,11 @@ require_once('functions.php');
 			Settings
 		</a>
 
+		<a class="button" id="fails-only" title="Show only fails">
+			<i class="icon-filter"></i>
+			Fails only
+		</a>
+
 		<div style="margin-top: 1em">
 			<div style="width: 45%; float:left">Diff limit: <span id="slider-value">0</span></div>
 			<div id="slider" style="width: 45%; float:left"></div>
@@ -214,6 +230,10 @@ require_once('functions.php');
 
 
 	<div id="main-nav">
+
+	<div id="filtered">
+		Showing only failed samples. Click "Fails only" again to update. Click "Reload" to release filter.
+	</div>
 	<?php
 	$products = array('highcharts', 'maps', 'stock', 'issues');
 	$samplesDir = dirname(__FILE__). '/../../samples/';
@@ -251,6 +271,7 @@ require_once('functions.php');
 
 								if (strstr($yaml, 'requiresManualTesting: true')) {
 									$batchClass = '';
+									$compareClass = 'manual';
 									$suffix = ' <acronym title="Requires manual testing">[m]</acronym>';
 								}
 
