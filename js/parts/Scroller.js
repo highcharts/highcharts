@@ -300,7 +300,7 @@ Scroller.prototype = {
 			unionExtremes;
 
 		// Don't render the navigator until we have data (#486, #4202)
-		if (!defined(min)) {
+		if (!defined(min) || isNaN(min)) {
 			return;
 		}
 
