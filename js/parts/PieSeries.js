@@ -387,7 +387,8 @@ var PieSeries = {
 			//group,
 			shadow = series.options.shadow,
 			shadowGroup,
-			shapeArgs;
+			shapeArgs,
+			attr;
 
 		if (shadow && !series.shadowGroup) {
 			series.shadowGroup = renderer.g('shadow')
@@ -421,16 +422,17 @@ var PieSeries = {
 			if (graphic) {
 				graphic.animate(extend(shapeArgs, groupTranslation));				
 			} else {
+				attr = { 'stroke-linejoin': 'round' };
+				if (!point.visible) {
+					attr.visibility = 'hidden';
+				}
+
 				point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 					.setRadialReference(series.center)
 					.attr(
 						point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE]
 					)
-					.attr({ 
-						'stroke-linejoin': 'round',
-						visibility: point.visible ? 'visible' : 'hidden'
-						//zIndex: 1 // #2722 (reversed)
-					})
+					.attr(attr)
 					.attr(groupTranslation)
 					.add(series.group)
 					.shadow(shadow, shadowGroup);	
