@@ -174,7 +174,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 		while (i--) {
 			point = points[i];
 			outsideRight = point.plotX > series.xAxis.len;
-			plotX = point.plotX;
+			plotX = point.plotX - 1;
 			stackIndex = point.stackIndex;
 			shape = point.options.shape || options.shape;
 			plotY = point.plotY;
