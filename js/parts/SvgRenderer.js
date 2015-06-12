@@ -175,8 +175,11 @@ SVGElement.prototype = {
 			styles.textShadow = textShadow = textShadow.replace(/contrast/g, this.renderer.getContrast(elem.style.fill));
 		}
 
-		// Safari with retina displays as well as PhantomJS bug (#3974)
-		styles.textRendering = 'geometricPrecision';
+		// Safari with retina displays as well as PhantomJS bug (#3974). Firefox does not tolerate this,
+		// it removes the text shadows.
+		if (isWebKit) {
+			styles.textRendering = 'geometricPrecision';
+		}
 
 		/* Selective side-by-side testing in supported browser (http://jsfiddle.net/highcharts/73L1ptrh/)
 		if (elem.textContent.indexOf('2.') === 0) {

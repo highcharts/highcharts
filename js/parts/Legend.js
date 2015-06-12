@@ -102,10 +102,11 @@ Legend.prototype = {
 			legendItemPos = item._legendItemPos,
 			itemX = legendItemPos[0],
 			itemY = legendItemPos[1],
-			checkbox = item.checkbox;
+			checkbox = item.checkbox,
+			legendGroup = item.legendGroup;
 
-		if (item.legendGroup) {
-			item.legendGroup.translate(
+		if (legendGroup && legendGroup.element) {
+			legendGroup.translate(
 				ltr ? itemX : legend.legendWidth - itemX - 2 * symbolPadding - 4,
 				itemY
 			);

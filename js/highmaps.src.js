@@ -1961,8 +1961,11 @@ SVGElement.prototype = {
 			styles.textShadow = textShadow = textShadow.replace(/contrast/g, this.renderer.getContrast(elem.style.fill));
 		}
 
-		// Safari with retina displays as well as PhantomJS bug (#3974)
-		styles.textRendering = 'geometricPrecision';
+		// Safari with retina displays as well as PhantomJS bug (#3974). Firefox does not tolerate this,
+		// it removes the text shadows.
+		if (isWebKit) {
+			styles.textRendering = 'geometricPrecision';
+		}
 
 		/* Selective side-by-side testing in supported browser (http://jsfiddle.net/highcharts/73L1ptrh/)
 		if (elem.textContent.indexOf('2.') === 0) {
@@ -10053,10 +10056,11 @@ Legend.prototype = {
 			legendItemPos = item._legendItemPos,
 			itemX = legendItemPos[0],
 			itemY = legendItemPos[1],
-			checkbox = item.checkbox;
+			checkbox = item.checkbox,
+			legendGroup = item.legendGroup;
 
-		if (item.legendGroup) {
-			item.legendGroup.translate(
+		if (legendGroup && legendGroup.element) {
+			legendGroup.translate(
 				ltr ? itemX : legend.legendWidth - itemX - 2 * symbolPadding - 4,
 				itemY
 			);
