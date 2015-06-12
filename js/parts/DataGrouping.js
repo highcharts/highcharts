@@ -540,7 +540,7 @@ Axis.prototype.getGroupPixelWidth = function () {
 /**
  * Force data grouping on all the axis' series.
  */
-Axis.prototype.setDataGrouping = function (dataGrouping, redraw) { // docs
+Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
 	redraw = pick(redraw, true);
 
 	if (!dataGrouping) {   
