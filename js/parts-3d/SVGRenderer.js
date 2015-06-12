@@ -1,3 +1,8 @@
+(function (H) {
+	var Color = H.Color,
+		defined = H.defined,
+		SVGElement = H.SVGElement,
+		SVGRenderer = H.SVGRenderer;
 /*** 
 	EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
 	***/
@@ -53,11 +58,11 @@ function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
 	}
 }
 
-Highcharts.SVGRenderer.prototype.toLinePath = function (points, closed) {
+SVGRenderer.prototype.toLinePath = function (points, closed) {
 	var result = [];
 
 	// Put "L x y" for each point
-	Highcharts.each(points, function (point) {
+	H.each(points, function (point) {
 		result.push('L', point.x, point.y);
 	});
 
@@ -75,7 +80,7 @@ Highcharts.SVGRenderer.prototype.toLinePath = function (points, closed) {
 };
 
 ////// CUBOIDS //////
-Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
+SVGRenderer.prototype.cuboid = function (shapeArgs) {
 
 	var result = this.g(),
 	paths = this.cuboidPath(shapeArgs);
@@ -88,8 +93,8 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	// apply the fill everywhere, the top a bit brighter, the side a bit darker
 	result.fillSetter = function (color) {
 		var c0 = color,
-		c1 = Highcharts.Color(color).brighten(0.1).get(),
-		c2 = Highcharts.Color(color).brighten(-0.1).get();
+		c1 = Color(color).brighten(0.1).get(),
+		c2 = Color(color).brighten(-0.1).get();
 
 		this.front.attr({fill: c0});
 		this.top.attr({fill: c1});
@@ -108,21 +113,21 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	};
 
 	result.attr = function (args) {
-		if (args.shapeArgs || Highcharts.defined(args.x)) {
+		if (args.shapeArgs || defined(args.x)) {
 			var shapeArgs = args.shapeArgs || args;
 			var paths = this.renderer.cuboidPath(shapeArgs);
 			this.front.attr({d: paths[0], zIndex: paths[3]});
 			this.top.attr({d: paths[1], zIndex: paths[4]});
 			this.side.attr({d: paths[2], zIndex: paths[5]});			
 		} else {
-			Highcharts.SVGElement.prototype.attr.call(this, args);
+			SVGElement.prototype.attr.call(this, args);
 		}
 
 		return this;
 	};
 	
 	result.animate = function (args, duration, complete) {
-		if (Highcharts.defined(args.x) && Highcharts.defined(args.y)) {
+		if (defined(args.x) && defined(args.y)) {
 			var paths = this.renderer.cuboidPath(args);
 			this.front.attr({zIndex: paths[3]}).animate({d: paths[0]}, duration, complete);
 			this.top.attr({zIndex: paths[4]}).animate({d: paths[1]}, duration, complete);
@@ -132,7 +137,7 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 				this.top.animate(args, duration, complete);
 				this.side.animate(args, duration, complete);
 		} else {
-			Highcharts.SVGElement.prototype.animate.call(this, args, duration, complete);
+			SVGElement.prototype.animate.call(this, args, duration, complete);
 		}
 		return this;
 	};
@@ -155,15 +160,15 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 /**
  *	Generates a cuboid
  */
-Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
+SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	var x = shapeArgs.x,
 		y = shapeArgs.y,
 		z = shapeArgs.z,
 		h = shapeArgs.height,
 		w = shapeArgs.width,
 		d = shapeArgs.depth,		
-		chart = Highcharts.charts[this.chartIndex],
-		map = Highcharts.map;
+		chart = H.charts[this.chartIndex],
+		map = H.map;
 
 	// The 8 corners of the cube
 	var pArr = [
@@ -178,7 +183,7 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	];
 
 	// apply perspective
-	pArr = Highcharts.perspective(pArr, chart, shapeArgs.insidePlotArea);
+	pArr = H.perspective(pArr, chart, shapeArgs.insidePlotArea);
 
 	// helper method to decide which side is visible
 	var pickShape = function (path1, path2) {
@@ -212,10 +217,10 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 };
 
 ////// SECTORS //////
-Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
+SVGRenderer.prototype.arc3d = function (shapeArgs) {
 
-	shapeArgs.alpha *= Highcharts.deg2rad;
-	shapeArgs.beta *= Highcharts.deg2rad;
+	shapeArgs.alpha *= H.deg2rad;
+	shapeArgs.beta *= H.deg2rad;
 	var result = this.g(),
 		paths = this.arc3dPath(shapeArgs),
 		renderer = result.renderer;
@@ -236,7 +241,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		this.color = color;
 
 		var c0 = color,
-		c2 = Highcharts.Color(color).brighten(-0.1).get();
+		c2 = Color(color).brighten(-0.1).get();
 		
 		this.side1.attr({fill: c2});
 		this.side2.attr({fill: c2});
@@ -264,10 +269,10 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 	};
 
 	result.animate = function (args, duration, complete) {
-		if (Highcharts.defined(args.end) || Highcharts.defined(args.start)) {
+		if (defined(args.end) || defined(args.start)) {
 			this._shapeArgs = this.shapeArgs;
 
-			Highcharts.SVGElement.prototype.animate.call(this, {
+			SVGElement.prototype.animate.call(this, {
 				_args: args	
 			}, {
 				duration: duration,
@@ -278,7 +283,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 						start = result._shapeArgs,
 						end = fx.end,
 						pos = fx.pos,
-						sA = Highcharts.merge(start, {
+						sA = H.merge(start, {
 							x: start.x + ((end.x - start.x) * pos),
 							y: start.y + ((end.y - start.y) * pos),
 							r: start.r + ((end.r - start.r) * pos),
@@ -300,7 +305,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 				}
 			}, complete);
 		} else {			
-			Highcharts.SVGElement.prototype.animate.call(this, args, duration, complete);
+			SVGElement.prototype.animate.call(this, args, duration, complete);
 		}
 		return this;
 	};
@@ -313,7 +318,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		this.side1.destroy();
 		this.side2.destroy();
 
-		Highcharts.SVGElement.prototype.destroy.call(this);
+		SVGElement.prototype.destroy.call(this);
 	};
 	// hide all children
 	result.hide = function () {
@@ -339,7 +344,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 /**
  * Generate the paths required to draw a 3D arc
  */
-Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
+SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 	var cx = shapeArgs.x, // x coordinate of the center
 		cy = shapeArgs.y, // y coordinate of the center
 		start = shapeArgs.start, // start angle
@@ -428,3 +433,6 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 		zSide2: a3 * (r * 0.99)
 	};
 };
+
+	return H;
+}(Highcharts));
