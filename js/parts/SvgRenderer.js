@@ -172,7 +172,7 @@ SVGElement.prototype = {
 
 		// When the text shadow is set to contrast, use dark stroke for light text and vice versa
 		if (hasContrast) {
-			styles.textShadow = textShadow.replace(/contrast/g, this.renderer.getContrast(elem.style.fill));
+			styles.textShadow = textShadow = textShadow.replace(/contrast/g, this.renderer.getContrast(elem.style.fill));
 		}
 
 		// Safari with retina displays as well as PhantomJS bug (#3974)
@@ -1586,7 +1586,7 @@ SVGRenderer.prototype = {
 	 */
 	getContrast: function (color) {
 		color = Color(color).rgba;
-		return color[0] + color[1] + color[2] > 384 ? '#000' : '#FFF';
+		return color[0] + color[1] + color[2] > 384 ? '#000000' : '#FFFFFF';
 	},
 
 	/**
