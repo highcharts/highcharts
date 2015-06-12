@@ -690,7 +690,13 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 			insidePlotArea: false
 		};
 		if (!this.bottomFrame) {
-			this.bottomFrame = renderer.cuboid(bottomShape).attr({fill: fbottom.color, zIndex: (chart.yAxis[0].reversed && options3d.alpha > 0 ? 4 : -1)}).css({stroke: fbottom.color}).add();
+			this.bottomFrame = renderer.cuboid(bottomShape).attr({
+				fill: fbottom.color,
+				zIndex: (chart.yAxis[0].reversed && options3d.alpha > 0 ? 4 : -1)
+			})
+			.css({
+				stroke: fbottom.color
+			}).add();
 		} else {
 			this.bottomFrame.animate(bottomShape);
 		}
@@ -706,7 +712,12 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 			insidePlotArea: false
 		};
 		if (!this.backFrame) {
-			this.backFrame = renderer.cuboid(backShape).attr({fill: fback.color, zIndex: -3}).css({stroke: fback.color}).add();
+			this.backFrame = renderer.cuboid(backShape).attr({
+				fill: fback.color, 
+				zIndex: -3
+			}).css({
+				stroke: fback.color
+			}).add();
 		} else {
 			this.backFrame.animate(backShape);
 		}
@@ -720,7 +731,12 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 			insidePlotArea: false
 		};
 		if (!this.sideFrame) {
-			this.sideFrame = renderer.cuboid(sideShape).attr({fill: fside.color, zIndex: -2}).css({stroke: fside.color}).add();
+			this.sideFrame = renderer.cuboid(sideShape).attr({
+				fill: fside.color, 
+				zIndex: -2
+			}).css({
+				stroke: fside.color
+			}).add();
 		} else {
 			this.sideFrame.animate(sideShape);
 		}
@@ -896,7 +912,7 @@ Highcharts.extend(ZAxis.prototype, {
 	setOptions: function (userOptions) {
 		userOptions = Highcharts.merge({
 			offset: 0,
-			lineColor: null
+			lineWidth: 0
 		}, userOptions);
 		Highcharts.Axis.prototype.setOptions.call(this, userOptions);
 		this.coll = 'zAxis';

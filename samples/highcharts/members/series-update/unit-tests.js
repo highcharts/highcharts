@@ -26,7 +26,7 @@ QUnit.test('Series.update', function (assert) {
 	$('#data-labels').click();
 
 	assert.strictEqual(
-		chart.series[0].points[0].dataLabel.element.textContent,
+		chart.series[0].points[0].dataLabel.element.textContent.substr(0, 4),
 		'29.9',
 		'Data labels changed'
 	);

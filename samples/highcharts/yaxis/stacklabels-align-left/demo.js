@@ -19,7 +19,7 @@ $(function () {
                 groupPadding: 0,
                 dataLabels: {
                     enabled: true,
-                    color: 'white'
+                    color: '#FFFFFF'
                 }
             }
         },
