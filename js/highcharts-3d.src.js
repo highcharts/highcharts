@@ -540,15 +540,19 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 
 	return H;
 }(Highcharts));
+(function (H) {
+	var Chart = H.Chart,
+		wrap = H.wrap;
+
 /*** 
 	EXTENSION FOR 3D CHARTS
 ***/
 // Shorthand to check the is3d flag
-Highcharts.Chart.prototype.is3d = function () {
+Chart.prototype.is3d = function () {
 	return !this.inverted && this.options.chart.options3d && this.options.chart.options3d.enabled; // #4160 3D should not work with inverted charts
 };
 
-Highcharts.wrap(Highcharts.Chart.prototype, 'isInsidePlot', function (proceed) {
+wrap(Chart.prototype, 'isInsidePlot', function (proceed) {
 	if (this.is3d()) {
 		return true;
 	} else {
@@ -556,7 +560,7 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'isInsidePlot', function (proceed) {
 	}
 });
 
-var defaultChartOptions = Highcharts.getOptions();
+var defaultChartOptions = H.getOptions();
 defaultChartOptions.chart.options3d = {
 	enabled: false,
 	alpha: 0,
@@ -570,7 +574,7 @@ defaultChartOptions.chart.options3d = {
 	}
 };
 
-Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
+wrap(Chart.prototype, 'init', function (proceed) {
 	var args = [].slice.call(arguments, 1),
 		plotOptions,
 		pieOptions;
@@ -579,12 +583,12 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 		plotOptions = args[0].plotOptions || {};
 		pieOptions = plotOptions.pie || {};
 
-		pieOptions.borderColor = Highcharts.pick(pieOptions.borderColor, undefined); 
+		pieOptions.borderColor = H.pick(pieOptions.borderColor, undefined); 
 	}
 	proceed.apply(this, args);
 });
 
-Highcharts.wrap(Highcharts.Chart.prototype, 'setChartSize', function (proceed) {
+wrap(Chart.prototype, 'setChartSize', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (this.is3d()) {
@@ -603,7 +607,7 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'setChartSize', function (proceed) {
 	}
 });
 
-Highcharts.wrap(Highcharts.Chart.prototype, 'redraw', function (proceed) {
+wrap(Chart.prototype, 'redraw', function (proceed) {
 	if (this.is3d()) {
 		// Set to force a redraw of all elements
 		this.isDirtyBox = true;
@@ -612,7 +616,7 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'redraw', function (proceed) {
 });
 
 // Draw the series in the reverse order (#3803, #3917)
-Highcharts.wrap(Highcharts.Chart.prototype, 'renderSeries', function (proceed) {
+wrap(Chart.prototype, 'renderSeries', function (proceed) {
 	var series,
 		i = this.series.length;
 	
@@ -627,13 +631,13 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'renderSeries', function (proceed) {
 	}
 });
 
-Highcharts.Chart.prototype.retrieveStacks = function (stacking) {
+Chart.prototype.retrieveStacks = function (stacking) {
 	var series = this.series,
 		stacks = {},
 		stackNumber,
 		i = 1;
 
-	Highcharts.each(this.series, function (S) {
+	H.each(this.series, function (S) {
 		stackNumber = stacking ? (S.options.stack || 0) : series.length - 1 - S.index; // #3841
 		if (!stacks[stackNumber]) {
 			stacks[stackNumber] = { series: [S], position: i};
@@ -647,6 +651,8 @@ Highcharts.Chart.prototype.retrieveStacks = function (stacking) {
 	return stacks;
 };
 
+	return H;
+}(Highcharts));
 /***
 	EXTENSION TO THE AXIS
 ***/
