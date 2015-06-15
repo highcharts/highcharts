@@ -19309,7 +19309,7 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 				for (i = 0; i < axis.breakArray.length; i++) {
 					brk = axis.breakArray[i];
 					if (brk.to <= val) {
-						nval -= (brk.len);
+						nval -= brk.len;
 					} else if (brk.from >= val) {
 						break;
 					} else if (axis.isInBreak(brk, val)) {
@@ -19331,12 +19331,11 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 					if (brk.from >= nval) {
 						break;
 					} else if (brk.to < nval) {
-						nval += (brk.to - brk.from);
+						nval += brk.len;
 					} else if (axis.isInBreak(brk, nval)) {
-						nval += (brk.to - brk.from);
+						nval += brk.len;
 					}
 				}
-
 				return nval;
 			};
 
