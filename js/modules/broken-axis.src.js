@@ -37,29 +37,32 @@
 		},
 
 		isInAnyBreak: function (val, testKeep) {
-			// Sanity Check			
-			if (!this.options.breaks) { return false; }
 
 			var breaks = this.options.breaks,
-				i = breaks.length,
-				inbrk = false,
-				keep = false;
+				i = breaks && breaks.length,
+				inbrk,
+				keep,
+				ret;
 
+			
+			if (i) { 
 
-			while (i--) {
-				if (this.isInBreak(breaks[i], val)) {
-					inbrk = true;
-					if (!keep) {
-						keep = pick(breaks[i].showPoints, this.isXAxis ? false : true);
+				while (i--) {
+					if (this.isInBreak(breaks[i], val)) {
+						inbrk = true;
+						if (!keep) {
+							keep = pick(breaks[i].showPoints, this.isXAxis ? false : true);
+						}
 					}
 				}
-			}
 
-			if (inbrk && testKeep) {
-				return inbrk && !keep;
-			} else {
-				return inbrk;
+				if (inbrk && testKeep) {
+					ret = inbrk && !keep;
+				} else {
+					ret = inbrk;
+				}
 			}
+			return ret;
 		}
 	});
 
@@ -256,14 +259,17 @@
 			yAxis = series.yAxis,
 			points = series.points,
 			point,
-			i = points.length;
+			i = points.length,
+			connectNulls = series.options.connectNulls,
+			nullGap;
 
 
 		if (xAxis && yAxis && (xAxis.options.breaks || yAxis.options.breaks)) {
 			while (i--) {
 				point = points[i];
 
-				if (xAxis.isInAnyBreak(point.x, true) || yAxis.isInAnyBreak(point.y, true)) {
+				nullGap = point.y === null && connectNulls === false; // respect nulls inside the break (#4275)
+				if (!nullGap && (xAxis.isInAnyBreak(point.x, true) || yAxis.isInAnyBreak(point.y, true))) {
 					points.splice(i, 1);
 					if (this.data[i]) {
 						this.data[i].destroyElements(); // removes the graphics for this point if they exist
