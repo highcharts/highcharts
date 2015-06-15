@@ -7847,7 +7847,11 @@ Axis.prototype = {
 			realMax = isLog ? lin2log(axis.max) : axis.max;
 
 		if (realMin > threshold || threshold === null) {
-			threshold = realMin;
+      if (realMax < 0) { // only negative values
+          threshold = realMax;
+      } else if (realMin > 0) { //only positive
+          threshold = realMin;
+      }
 		} else if (realMax < threshold) {
 			threshold = realMax;
 		}
