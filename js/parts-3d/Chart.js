@@ -3,7 +3,7 @@
 ***/
 // Shorthand to check the is3d flag
 Highcharts.Chart.prototype.is3d = function () {
-	return !this.inverted && this.options.chart.options3d && this.options.chart.options3d.enabled; // #4160 3D should not work with inverted charts
+	return this.options.chart.options3d && this.options.chart.options3d.enabled; // #4280
 };
 
 Highcharts.wrap(Highcharts.Chart.prototype, 'isInsidePlot', function (proceed) {

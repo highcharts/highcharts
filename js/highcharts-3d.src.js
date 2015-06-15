@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.6 (2015-06-12)
+ * @license Highcharts JS v4.1.6-modified ()
  *
  * (c) 2009-2013 Torstein Hønsi
  *
@@ -542,7 +542,7 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 ***/
 // Shorthand to check the is3d flag
 Highcharts.Chart.prototype.is3d = function () {
-	return !this.inverted && this.options.chart.options3d && this.options.chart.options3d.enabled; // #4160 3D should not work with inverted charts
+	return this.options.chart.options3d && this.options.chart.options3d.enabled; // #4280
 };
 
 Highcharts.wrap(Highcharts.Chart.prototype, 'isInsidePlot', function (proceed) {
