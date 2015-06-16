@@ -174,7 +174,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 		while (i--) {
 			point = points[i];
 			outsideRight = point.plotX > series.xAxis.len;
-			plotX = point.plotX - 1;
+			plotX = point.plotX - pick(point.lineWidth, options.lineWidth) % 2; // #4285
 			stackIndex = point.stackIndex;
 			shape = point.options.shape || options.shape;
 			plotY = point.plotY;
@@ -291,7 +291,6 @@ symbols.flag = function (x, y, w, h, options) {
 		x + w, y,
 		x + w, y + h,
 		x, y + h,
-		'M', anchorX, anchorY,
 		'Z'
 	];
 };
