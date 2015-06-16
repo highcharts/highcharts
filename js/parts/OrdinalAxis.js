@@ -643,7 +643,10 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 		each(segments, function (segment, no) {
 			var i = segment.length - 1;
 			while (i--) {
-				if (segment[i + 1].x - segment[i].x > xAxis.closestPointRange * gapSize) {
+				if (segment[i].x < xAxis.min && segment[i + 1].x > xAxis.max) {
+					segments.length = 0;
+					break;
+				} else if (segment[i + 1].x - segment[i].x > xAxis.closestPointRange * gapSize) {
 					segments.splice( // insert after this one
 						no + 1,
 						0,
