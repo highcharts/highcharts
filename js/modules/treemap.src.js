@@ -102,9 +102,9 @@
 				seriesArea;
 			if (this.points.length) {
 				// Assign variables
+				this.rootNode = pick(this.rootNode, "");
 				this.nodeMap = [];
 				tree = this.tree = this.getTree();
-				this.rootNode = pick(this.rootNode, "");
 				this.levelMap = this.getLevels();
 				each(series.points, function (point) {
 					// Reset visibility
@@ -123,6 +123,7 @@
 		getTree: function () {
 			var tree,
 				series = this,
+				points = series.points,
 				i = 0,
 				parentList = [],
 				allIds = [],
@@ -132,46 +133,36 @@
 						parentList[""].push(item);
 					});
 				},
-				getNodeTree = function (id, i, level, list, points, parent, visible) {
+				getNode = function (id, i, level, list, parent) {
 					var children = [],
-						childrenTotal = 0,
-						val,
 						point = points[i],
-						nodeTree,
 						node,
-						name;
+						child,
+						visible;
 
 					// Actions
-					if (visible) {
+					if (id === series.rootNode) {
+						visible = true;
+					} else {
 						visible = pick(point && point.visible, true);
 					}
-					name = pick(point && point.name, "");
-					if (list[id] !== undefined) {
-						each(list[id], function (i) {
-							node = getNodeTree(points[i].id, i, (level + 1), list, points, id, visible);
-							if (node.visible || !series.options.ignoreHiddenPoint) {
-								childrenTotal += node.val;
-								series.insertElementSorted(children, node, function (el, el2) {
-									return el.val > el2.val; 
-								});
-							}
-						});
-					}
-					val = pick((points[i] && points[i].value), childrenTotal, 0);
-					visible = val > 0 ? visible : false;
-					nodeTree = {
+					each((list[id] || []), function (i) {
+						child = getNode(points[i].id, i, (level + 1), list, id);
+						children.push(child);
+					});
+					node = {
 						id: id,
 						i: i,
 						children: children,
-						childrenTotal: childrenTotal,
-						val: val,
 						level: level,
 						parent: parent,
-						name: name,
 						visible: visible
 					};
-					series.nodeMap[nodeTree.id] = nodeTree;
-					return nodeTree;
+					series.nodeMap[node.id] = node;
+					if (point) {
+						point.node = node;
+					}
+					return node;
 				};
 			// Actions
 			// Map children to index
@@ -202,8 +193,42 @@
 					}
 				}
 			}
-			tree = getNodeTree("", -1, 0, parentList, this.points, null, true);
+			tree = getNode("", -1, 0, parentList, null);
+			this.setTreeValues(tree);
 			return tree;
+		},
+		setTreeValues: function (tree) {
+			var series = this,
+				childrenTotal = 0,
+				childrenVisible = [],
+				point = series.points[tree.i];
+			each(tree.children, function (child) {
+				if (child.visible) {
+					child = series.setTreeValues(child);
+					if (child.val > 0) {
+						childrenTotal += child.val;
+						series.insertElementSorted(childrenVisible, child, function (el, el2) {
+							return el.val > el2.val; 
+						});
+					} else {
+						series.setVisibleRecursively(false, child);
+					}
+				} else {
+					series.setVisibleRecursively(false, child);
+				}
+			});
+			tree.val = pick(point && point.value, childrenTotal);
+			tree.childrenVisible = childrenVisible;
+			tree.childrenTotal = childrenTotal;
+			tree.name = pick(point && point.name, "");
+			return tree;
+		},
+		setVisibleRecursively: function (visible, node) {
+			var series = this;
+			node.visible = visible;
+			each(node.children, function (child) {
+				series.setVisibleRecursively(visible, child);
+			});
 		},
 		calculateArea: function (node, area) {
 			var childrenValues = [],
@@ -228,8 +253,8 @@
 					area.direction = level.layoutStartingDirection === 'vertical' ? 0 : 1;
 				}
 			}
-			childrenValues = series[algorithm](area, node.children);
-			each(node.children, function (child) {
+			childrenValues = series[algorithm](area, node.childrenVisible);
+			each(node.childrenVisible, function (child) {
 				levelNr = options.levelIsConstant ? child.level : (child.level - levelRoot);
 				point = series.points[child.i];
 				point.level = levelNr;
@@ -240,10 +265,9 @@
 					childValues.direction = 1 - childValues.direction;
 				}
 				child.values = childValues;
-				point.node = child;
 				point.isLeaf = true;
 				// If node has children, then call method recursively
-				if (child.children.length) {
+				if (child.childrenVisible.length) {
 					point.isLeaf = false;
 					series.calculateArea(child, childValues);
 				}
@@ -267,13 +291,15 @@
 					x2,
 					y1,
 					y2;
-				values.x = values.x / series.axisRatio;
-				values.width = values.width / series.axisRatio;
-				x1 = Math.round(xAxis.translate(values.x, 0, 0, 0, 1));
-				x2 = Math.round(xAxis.translate(values.x + values.width, 0, 0, 0, 1));
-				y1 = Math.round(yAxis.translate(values.y, 0, 0, 0, 1));
-				y2 = Math.round(yAxis.translate(values.y + values.height, 0, 0, 0, 1));
-				if (node.visible || !series.options.ignoreHiddenPoint) {
+				// Points which is not visible, have no values.
+				// @todo delete plotX & plotY on points with no values
+				if (values) {
+					values.x = values.x / series.axisRatio;
+					values.width = values.width / series.axisRatio;
+					x1 = Math.round(xAxis.translate(values.x, 0, 0, 0, 1));
+					x2 = Math.round(xAxis.translate(values.x + values.width, 0, 0, 0, 1));
+					y1 = Math.round(yAxis.translate(values.y, 0, 0, 0, 1));
+					y2 = Math.round(yAxis.translate(values.y + values.height, 0, 0, 0, 1));
 					// Set point values
 					point.shapeType = 'rect';
 					point.shapeArgs = {
@@ -557,7 +583,7 @@
 				level;
 			each(points, function (point) {
 				level = series.levelMap[point.level];
-				// Set options to new object to problems with scope
+				// Set options to new object to avoid problems with scope
 				options = {style: {}};
 
 				// If not a leaf, then label should be disabled as default
@@ -638,6 +664,7 @@
 					delete hover.fill;
 				}
 				point.pointAttr[''] = H.extend(point.pointAttr[''], attr);
+				// @todo Move this to drawDataLabels
 				if (point.dataLabel) {
 					point.dataLabel.attr({ zIndex: (point.pointAttr[''].zIndex + 1) });
 				}
