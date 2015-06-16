@@ -97,8 +97,7 @@
 			setVisible: seriesTypes.pie.prototype.pointClass.prototype.setVisible
 		}),
 		handleLayout: function () {
-			var series = this,
-				tree = this.tree,
+			var tree = this.tree,
 				seriesArea;
 			if (this.points.length) {
 				// Assign variables
@@ -106,11 +105,6 @@
 				this.nodeMap = [];
 				tree = this.tree = this.getTree();
 				this.levelMap = this.getLevels();
-				each(series.points, function (point) {
-					// Reset visibility
-					delete point.plotX;
-					delete point.plotY;
-				});
 				seriesArea = this.getSeriesArea(tree.val);
 				this.nodeMap[""].values = seriesArea;
 				this.calculateArea(tree, seriesArea);
@@ -310,6 +304,10 @@
 					};
 					point.plotX = point.shapeArgs.x + (point.shapeArgs.width / 2);
 					point.plotY = point.shapeArgs.y + (point.shapeArgs.height / 2);
+				} else {
+					// Reset visibility
+					delete point.plotX;
+					delete point.plotY;
 				}
 			});
 		},
