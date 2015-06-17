@@ -6818,7 +6818,7 @@ Axis.prototype = {
 			// logic to the numberFormatter and enable it by a parameter.
 			while (i-- && ret === UNDEFINED) {
 				multi = Math.pow(1000, i + 1);
-				if (numericSymbolDetector >= multi && (value / 10) % (multi / 10) === 0 && numericSymbols[i] !== null) {
+				if (numericSymbolDetector >= multi && (value * 10) % multi === 0 && numericSymbols[i] !== null) {
 					ret = Highcharts.numberFormat(value / multi, -1) + numericSymbols[i];
 				}
 			}
