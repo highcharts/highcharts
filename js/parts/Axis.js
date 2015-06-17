@@ -404,7 +404,7 @@ Axis.prototype = {
 			// logic to the numberFormatter and enable it by a parameter.
 			while (i-- && ret === UNDEFINED) {
 				multi = Math.pow(1000, i + 1);
-				if (numericSymbolDetector >= multi && numericSymbols[i] !== null) {
+				if (numericSymbolDetector >= multi && (value / 10) % (multi / 10) === 0 && numericSymbols[i] !== null) {
 					ret = Highcharts.numberFormat(value / multi, -1) + numericSymbols[i];
 				}
 			}
@@ -412,7 +412,7 @@ Axis.prototype = {
 
 		if (ret === UNDEFINED) {
 			if (mathAbs(value) >= 10000) { // add thousands separators
-				ret = Highcharts.numberFormat(value, 0);
+				ret = Highcharts.numberFormat(value, -1);
 
 			} else { // small numbers
 				ret = Highcharts.numberFormat(value, -1, UNDEFINED, ''); // #2466
