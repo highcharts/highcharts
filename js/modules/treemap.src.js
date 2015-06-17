@@ -105,7 +105,6 @@
 				tree = this.tree = this.getTree();
 				this.levelMap = this.getLevels();
 				seriesArea = this.getSeriesArea(tree.val);
-				this.nodeMap[""].values = seriesArea;
 				this.calculateArea(tree, seriesArea);
 				this.setPointValues();
 			}
@@ -116,7 +115,6 @@
 		getTree: function () {
 			var tree,
 				series = this,
-				points = series.points,
 				i = 0,
 				parentList = [],
 				allIds = [],
@@ -125,31 +123,6 @@
 					each(parentList[key], function (item) {
 						parentList[""].push(item);
 					});
-				},
-				getNode = function (id, i, level, list, parent) {
-					var children = [],
-						point = points[i],
-						node,
-						child;
-
-					// Actions
-					each((list[id] || []), function (i) {
-						child = getNode(points[i].id, i, (level + 1), list, id);
-						children.push(child);
-					});
-					node = {
-						id: id,
-						i: i,
-						children: children,
-						level: level,
-						parent: parent,
-						visible: false
-					};
-					series.nodeMap[node.id] = node;
-					if (point) {
-						point.node = node;
-					}
-					return node;
 				};
 			// Actions
 			this.nodeMap = [];
@@ -182,7 +155,7 @@
 					}
 				}
 			}
-			tree = getNode("", -1, 0, parentList, null);
+			tree = series.buildNode("", -1, 0, parentList, null);
 			this.eachParents(this.nodeMap[this.rootNode], function (node) {
 				node.visible = true;
 			});
@@ -191,6 +164,32 @@
 			});
 			this.setTreeValues(tree);
 			return tree;
+		},
+		buildNode: function (id, i, level, list, parent) {
+			var series = this,
+				children = [],
+				point = series.points[i],
+				node,
+				child;
+
+			// Actions
+			each((list[id] || []), function (i) {
+				child = series.buildNode(series.points[i].id, i, (level + 1), list, id);
+				children.push(child);
+			});
+			node = {
+				id: id,
+				i: i,
+				children: children,
+				level: level,
+				parent: parent,
+				visible: false // @todo move this to better location
+			};
+			series.nodeMap[node.id] = node;
+			if (point) {
+				point.node = node;
+			}
+			return node;
 		},
 		setTreeValues: function (tree) {
 			var series = this,
@@ -339,6 +338,7 @@
 					direction: d,
 					val: val
 				};
+				this.nodeMap[""].values = seriesArea;
 			return seriesArea;
 		},
 		getLevels: function () {
