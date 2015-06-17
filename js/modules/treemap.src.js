@@ -214,11 +214,13 @@
 				if (!inserted) {
 					series.eachChildren(child, function (node) {
 						node.visible = false;
+						node.isLeaf = false;
 					});
 				}
 			});
 			tree.val = pick(point && point.value, childrenTotal);
 			tree.childrenVisible = childrenVisible;
+			tree.isLeaf = (childrenVisible.length ? false : true); 
 			tree.childrenTotal = childrenTotal;
 			tree.name = pick(point && point.name, "");
 			return tree;
@@ -274,10 +276,8 @@
 					childValues.direction = 1 - childValues.direction;
 				}
 				child.values = childValues;
-				point.isLeaf = true;
 				// If node has children, then call method recursively
 				if (child.childrenVisible.length) {
-					point.isLeaf = false;
 					series.calculateArea(child, childValues);
 				}
 				i = i + 1;
@@ -599,7 +599,7 @@
 				options = {style: {}};
 
 				// If not a leaf, then label should be disabled as default
-				if (!point.isLeaf) {
+				if (!point.node.isLeaf) {
 					options.enabled = false;
 				}
 
@@ -660,7 +660,7 @@
 				hover.zIndex = 1001;
 				hover.fill = Color(attr.fill).brighten(seriesOptions.states.hover.brightness).get();
 				// If not a leaf, then remove fill
-				if (!point.isLeaf) {
+				if (!point.node.isLeaf) {
 					if (pick(seriesOptions.interactByLeaf, !seriesOptions.allowDrillToNode)) {
 						attr.fill = 'none';
 						delete hover.fill;
@@ -762,7 +762,7 @@
 		drillToByGroup: function (point) {
 			var series = this,
 				drillId = false;
-			if ((point.node.level - series.nodeMap[series.rootNode].level) === 1 && !point.isLeaf) {
+			if ((point.node.level - series.nodeMap[series.rootNode].level) === 1 && !point.node.isLeaf) {
 				drillId = point.id;
 			}
 			return drillId;
@@ -777,7 +777,7 @@
 			var series = this,
 				drillId = false,
 				nodeParent;
-			if ((point.node.parent !== series.rootNode) && (point.isLeaf)) {
+			if ((point.node.parent !== series.rootNode) && (point.node.isLeaf)) {
 				nodeParent = point.node;
 				while (!drillId) {
 					nodeParent = series.nodeMap[nodeParent.parent];
