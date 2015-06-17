@@ -102,7 +102,6 @@
 			if (this.points.length) {
 				// Assign variables
 				this.rootNode = pick(this.rootNode, "");
-				this.nodeMap = [];
 				tree = this.tree = this.getTree();
 				this.levelMap = this.getLevels();
 				seriesArea = this.getSeriesArea(tree.val);
@@ -153,6 +152,8 @@
 					return node;
 				};
 			// Actions
+			this.nodeMap = [];
+
 			// Map children to index
 			each(this.points, function (point) {
 				var parent = "";
