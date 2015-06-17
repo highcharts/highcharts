@@ -127,21 +127,20 @@
 						parentList[""].push(item);
 					});
 				},
-				getNode = function (id, i, level, list, parent) {
+				getNode = function (id, i, level, list, parent, visible) {
 					var children = [],
 						point = points[i],
 						node,
-						child,
-						visible;
+						child;
 
 					// Actions
 					if (id === series.rootNode) {
 						visible = true;
-					} else {
+					} else if (visible) {
 						visible = pick(point && point.visible, true);
 					}
 					each((list[id] || []), function (i) {
-						child = getNode(points[i].id, i, (level + 1), list, id);
+						child = getNode(points[i].id, i, (level + 1), list, id, visible);
 						children.push(child);
 					});
 					node = {
@@ -187,7 +186,10 @@
 					}
 				}
 			}
-			tree = getNode("", -1, 0, parentList, null);
+			tree = getNode("", -1, 0, parentList, null, false);
+			this.eachParents(this.nodeMap[this.rootNode], function (node) {
+				node.visible = true;
+			});
 			this.setTreeValues(tree);
 			return tree;
 		},
@@ -195,20 +197,24 @@
 			var series = this,
 				childrenTotal = 0,
 				childrenVisible = [],
+				inserted,
 				point = series.points[tree.i];
 			each(tree.children, function (child) {
+				inserted = false;
 				if (child.visible) {
 					child = series.setTreeValues(child);
 					if (child.val > 0) {
+						inserted = true;
 						childrenTotal += child.val;
 						series.insertElementSorted(childrenVisible, child, function (el, el2) {
 							return el.val > el2.val; 
 						});
-					} else {
-						series.setVisibleRecursively(false, child);
 					}
-				} else {
-					series.setVisibleRecursively(false, child);
+				}
+				if (!inserted) {
+					series.eachChildren(child, function (node) {
+						node.visible = false;
+					});
 				}
 			});
 			tree.val = pick(point && point.value, childrenTotal);
@@ -217,12 +223,21 @@
 			tree.name = pick(point && point.name, "");
 			return tree;
 		},
-		setVisibleRecursively: function (visible, node) {
-			var series = this;
-			node.visible = visible;
-			each(node.children, function (child) {
-				series.setVisibleRecursively(visible, child);
-			});
+		eachChildren: function (node, callback) {
+			var children = node.children;
+			callback(node);
+			if (children.length) {
+				each(children, function (child) {
+					callback(child, callback);
+				});
+			}
+		},
+		eachParents: function (node, callback) {
+			var parent = this.nodeMap[node.parent];
+			callback(node);
+			if (parent) {
+				this.eachParents(parent, callback);
+			}
 		},
 		calculateArea: function (node, area) {
 			var childrenValues = [],
@@ -286,7 +301,6 @@
 					y1,
 					y2;
 				// Points which is not visible, have no values.
-				// @todo delete plotX & plotY on points with no values
 				if (values) {
 					values.x = values.x / series.axisRatio;
 					values.width = values.width / series.axisRatio;
