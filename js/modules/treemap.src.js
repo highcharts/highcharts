@@ -127,20 +127,15 @@
 						parentList[""].push(item);
 					});
 				},
-				getNode = function (id, i, level, list, parent, visible) {
+				getNode = function (id, i, level, list, parent) {
 					var children = [],
 						point = points[i],
 						node,
 						child;
 
 					// Actions
-					if (id === series.rootNode) {
-						visible = true;
-					} else if (visible) {
-						visible = pick(point && point.visible, true);
-					}
 					each((list[id] || []), function (i) {
-						child = getNode(points[i].id, i, (level + 1), list, id, visible);
+						child = getNode(points[i].id, i, (level + 1), list, id);
 						children.push(child);
 					});
 					node = {
@@ -149,7 +144,7 @@
 						children: children,
 						level: level,
 						parent: parent,
-						visible: visible
+						visible: false
 					};
 					series.nodeMap[node.id] = node;
 					if (point) {
@@ -186,8 +181,11 @@
 					}
 				}
 			}
-			tree = getNode("", -1, 0, parentList, null, false);
+			tree = getNode("", -1, 0, parentList, null);
 			this.eachParents(this.nodeMap[this.rootNode], function (node) {
+				node.visible = true;
+			});
+			this.eachChildren(this.nodeMap[this.rootNode], function (node) {
 				node.visible = true;
 			});
 			this.setTreeValues(tree);
@@ -201,36 +199,36 @@
 				point = series.points[tree.i];
 			each(tree.children, function (child) {
 				inserted = false;
-				if (child.visible) {
-					child = series.setTreeValues(child);
-					if (child.val > 0) {
-						inserted = true;
-						childrenTotal += child.val;
-						series.insertElementSorted(childrenVisible, child, function (el, el2) {
-							return el.val > el2.val; 
-						});
-					}
+				child = series.setTreeValues(child);
+				if (!child.ignore) {
+					childrenTotal += child.val;
+					series.insertElementSorted(childrenVisible, child, function (el, el2) {
+						return el.val > el2.val; 
+					});
 				}
-				if (!inserted) {
+				if (child.ignore) {
 					series.eachChildren(child, function (node) {
+						node.ignore = true;
 						node.visible = false;
 						node.isLeaf = false;
 					});
 				}
 			});
 			tree.val = pick(point && point.value, childrenTotal);
+			tree.ignore = !(pick(point && point.visible, true) && (tree.val > 0)); // Ignore this node if point is not visible
 			tree.childrenVisible = childrenVisible;
-			tree.isLeaf = (childrenVisible.length ? false : true); 
+			tree.isLeaf = tree.visible && !childrenVisible.length;
 			tree.childrenTotal = childrenTotal;
 			tree.name = pick(point && point.name, "");
 			return tree;
 		},
 		eachChildren: function (node, callback) {
-			var children = node.children;
+			var series = this,
+				children = node.children;
 			callback(node);
 			if (children.length) {
 				each(children, function (child) {
-					callback(child, callback);
+					series.eachChildren(child, callback);
 				});
 			}
 		},
@@ -300,7 +298,7 @@
 					x2,
 					y1,
 					y2;
-				// Points which is not visible, have no values.
+				// Points which is ignored, have no values.
 				if (values) {
 					values.x = values.x / series.axisRatio;
 					values.width = values.width / series.axisRatio;
