@@ -220,6 +220,7 @@ extend(Chart.prototype, {
 
 			// IE specific
 			.replace(/<IMG /g, '<image ')
+			.replace(/<(\/?)TITLE>/g, '<$1title>')
 			.replace(/height=([^" ]+)/g, 'height="$1"')
 			.replace(/width=([^" ]+)/g, 'width="$1"')
 			.replace(/hc-svg-href="([^"]+)">/g, 'xlink:href="$1"/>')
