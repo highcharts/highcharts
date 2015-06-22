@@ -4039,17 +4039,22 @@ SVGRenderer.prototype = {
 	 * Utility to return the baseline offset and total line height from the font size
 	 */
 	fontMetrics: function (fontSize, elem) {
+		var lineHeight,
+			baseline,
+			style;
+
 		fontSize = fontSize || this.style.fontSize;
 		if (elem && win.getComputedStyle) {
 			elem = elem.element || elem; // SVGElement
-			fontSize = win.getComputedStyle(elem, "").fontSize;
+			style = win.getComputedStyle(elem, "");
+			fontSize = style && style.fontSize; // #4309, the style doesn't exist inside a hidden iframe in Firefox
 		}
 		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
 
 		// Empirical values found by comparing font size and bounding box height.
 		// Applies to the default font family. http://jsfiddle.net/highcharts/7xvn7/
-		var lineHeight = fontSize < 24 ? fontSize + 3 : mathRound(fontSize * 1.2),
-			baseline = mathRound(lineHeight * 0.8);
+		lineHeight = fontSize < 24 ? fontSize + 3 : mathRound(fontSize * 1.2);
+		baseline = mathRound(lineHeight * 0.8);
 
 		return {
 			h: lineHeight,
