@@ -1,3 +1,12 @@
+/**
+ * Data retrieved from
+ * http://vikjavev.no/ver/index.php?spenn=2d&sluttid=16.06.2015.
+ * 
+ * To update, change thesluttid value to new start date, retrieve data
+ * by typing the variables vikVindFart and hestVindFart in the Google 
+ * Chrome developer tools console and reformat the data from String to
+ * float. Paste the data in their corresponding 'data' options below
+ */
 $(function () {
     $('#container').highcharts({
         chart: {
@@ -7,7 +16,7 @@ $(function () {
             text: 'Wind speed during two days'
         },
         subtitle: {
-            text: 'October 6th and 7th 2009 at two locations in Vik i Sogn, Norway'
+            text: 'June 16th and 17th 2015 at two locations in Vik i Sogn, Norway'
         },
         xAxis: {
             type: 'datetime',
@@ -110,23 +119,22 @@ $(function () {
                     enabled: false
                 },
                 pointInterval: 3600000, // one hour
-                pointStart: Date.UTC(2009, 9, 6, 0, 0, 0)
+                pointStart: Date.UTC(2015, 5, 16, 0, 0, 0)
             }
         },
         series: [{
             name: 'Hestavollane',
-            data: [4.3, 5.1, 4.3, 5.2, 5.4, 4.7, 3.5, 4.1, 5.6, 7.4, 6.9, 7.1,
-                7.9, 7.9, 7.5, 6.7, 7.7, 7.7, 7.4, 7.0, 7.1, 5.8, 5.9, 7.4,
-                8.2, 8.5, 9.4, 8.1, 10.9, 10.4, 10.9, 12.4, 12.1, 9.5, 7.5,
-                7.1, 7.5, 8.1, 6.8, 3.4, 2.1, 1.9, 2.8, 2.9, 1.3, 4.4, 4.2,
-                3.0, 3.0]
+            data: [2.0, 1.1, 1.2, 0.9, 0.8, 1.2, 0.8, 0.1, 0.0, 2.3, 2.9, 2.4,
+            3.1, 3.1, 3.7, 3.6, 3.4, 4.4, 4.3, 3.8, 3.4, 1.3, 1.2, 1.4, 0.8, 
+            0.5, 0.7, 0.1, 1.2, 1.4, 1.1, 0.6, 0.5, 0.3, 0.2, 1.8, 2.4, 2.9, 
+            2.5, 2.1, 3.3, 3.0, 3.6, 3.9, 4.4, 3.7, 4.2, 4.0, 4.1]
 
         }, {
-            name: 'Voll',
-            data: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 0.0, 0.3, 0.0,
-                0.0, 0.4, 0.0, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-                0.0, 0.6, 1.2, 1.7, 0.7, 2.9, 4.1, 2.6, 3.7, 3.9, 1.7, 2.3,
-                3.0, 3.3, 4.8, 5.0, 4.8, 5.0, 3.2, 2.0, 0.9, 0.4, 0.3, 0.5, 0.4]
+            name: 'Vik',
+            data: [1.3, 2.2, 2.1, 1.6, 2.2, 0.9, 0.4, 0.0, 0.0, 0.0, 0.2, 0.1, 
+            1.8, 1.4, 1.3, 1.3, 2.5, 2.3, 2.2, 2.8, 1.7, 1.0, 1.1, 1.0, 1.6, 
+            0.0, 0.6, 0.0, 0.0, 0.1, 0.1, 0.3, 0.7, 0.2, 0.4, 0.2, 1.0, 0.9, 
+            0.2, 0.3, 0.8, 1.1, 0.6, 1.0, 0.3, 0.0, 0.1, 0.1, 0.2]
         }],
         navigation: {
             menuItemStyle: {
