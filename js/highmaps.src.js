@@ -4608,13 +4608,16 @@ extend(SVGRenderer.prototype, {
 
 						// Ensure dynamically updating position when any parent is translated
 						each(parents.reverse(), function (parentGroup) {
-							var htmlGroupStyle;
+							var htmlGroupStyle,
+								cls = attr(parentGroup.element, 'class');
+
+							if (cls) {
+								cls = { className: cls };
+							} // else null
 
 							// Create a HTML div and append it to the parent div to emulate
 							// the SVG group structure
-							htmlGroup = parentGroup.div = parentGroup.div || createElement(DIV, {
-								className: attr(parentGroup.element, 'class')
-							}, {
+							htmlGroup = parentGroup.div = parentGroup.div || createElement(DIV, cls, {
 								position: ABSOLUTE,
 								left: (parentGroup.translateX || 0) + PX,
 								top: (parentGroup.translateY || 0) + PX
@@ -10524,8 +10527,20 @@ Legend.prototype = {
 			arrowSize = navOptions.arrowSize || 12,
 			nav = this.nav,
 			pages = this.pages,
+			padding = this.padding,
 			lastY,
-			allItems = this.allItems;
+			allItems = this.allItems,
+			clipToHeight = function (height) {
+				clipRect.attr({
+					height: height
+				});
+
+				// useHTML
+				if (legend.contentGroup.div) { // docs: navigation now supported with useHTML
+					legend.contentGroup.div.style.clip = 'rect(' + padding + 'px,9999px,' + (padding + height) + 'px,0)';
+				}
+			};
+
 			
 		// Adjust the height
 		if (options.layout === 'horizontal') {
@@ -10537,9 +10552,9 @@ Legend.prototype = {
 		
 		// Reset the legend height and adjust the clipping rectangle
 		pages.length = 0;
-		if (legendHeight > spaceHeight && !options.useHTML) {
+		if (legendHeight > spaceHeight) {
 
-			this.clipHeight = clipHeight = mathMax(spaceHeight - 20 - this.titleHeight - this.padding, 0);
+			this.clipHeight = clipHeight = mathMax(spaceHeight - 20 - this.titleHeight - padding, 0);
 			this.currentPage = pick(this.currentPage, 1);
 			this.fullHeight = legendHeight;
 			
@@ -10565,13 +10580,12 @@ Legend.prototype = {
 
 			// Only apply clipping if needed. Clipping causes blurred legend in PDF export (#1787)
 			if (!clipRect) {
-				clipRect = legend.clipRect = renderer.clipRect(0, this.padding, 9999, 0);
+				clipRect = legend.clipRect = renderer.clipRect(0, padding, 9999, 0);
 				legend.contentGroup.clip(clipRect);
 			}
-			clipRect.attr({
-				height: clipHeight
-			});
-			
+				
+			clipToHeight(clipHeight);
+
 			// Add navigation elements
 			if (!nav) {
 				this.nav = nav = renderer.g().attr({ zIndex: 1 }).add(this.group);
@@ -10596,9 +10610,7 @@ Legend.prototype = {
 			legendHeight = spaceHeight;
 			
 		} else if (nav) {
-			clipRect.attr({
-				height: chart.chartHeight
-			});
+			clipToHeight(chart.chartHeight);
 			nav.hide();
 			this.scrollGroup.attr({
 				translateY: 1
