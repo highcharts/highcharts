@@ -239,46 +239,36 @@
 				this.eachParents(parent, callback);
 			}
 		},
+		/**
+		 * Recursive function which calculates the area for all children of a node.
+		 * @param {Object} node The node which is parent to the children.
+		 * @param {Object} area The rectangular area of the parent.
+		 * @todo Rename argument node to parent, and rename function to calculateChildrenAreas.
+		 */
 		calculateArea: function (node, area) {
-			var childrenValues = [],
-				childValues,
-				series = this,
+			var series = this,
 				options = series.options,
-				algorithm = options.layoutAlgorithm,
+				levelNumber = (options.levelIsConstant ? node.level : (node.level - this.nodeMap[this.rootNode].level)),
+				level = this.levelMap[levelNumber + 1],
+				algorithm = pick((series[level && level.layoutAlgorithm] && level.layoutAlgorithm), options.layoutAlgorithm),
 				alternate = options.alternateStartingDirection,
-				levelRoot = this.nodeMap[this.rootNode].level,							
-				i = 0,
-				level,
-				levelNr = options.levelIsConstant ? node.level : (node.level - levelRoot),
+				childrenValues = [],
 				point;
-			levelNr = (levelNr > 0) ? levelNr : 0;
-			// If layoutAlgorithm is set for the level of the children, then default is overwritten
-			if (this.levelMap[levelNr + 1]) {
-				level = this.levelMap[levelNr + 1];
-				if (level.layoutAlgorithm && series[level.layoutAlgorithm]) {
-					algorithm = level.layoutAlgorithm;
-				}
-				if (level.layoutStartingDirection) {
-					area.direction = level.layoutStartingDirection === 'vertical' ? 0 : 1;
-				}
+			if (level && level.layoutStartingDirection) {
+				area.direction = level.layoutStartingDirection === 'vertical' ? 0 : 1;
 			}
 			childrenValues = series[algorithm](area, node.childrenVisible);
-			each(node.childrenVisible, function (child) {
-				levelNr = options.levelIsConstant ? child.level : (child.level - levelRoot);
+			each(node.childrenVisible, function (child, index) {
 				point = series.points[child.i];
-				point.level = levelNr;
-				childValues = childrenValues[i];
-				childValues.val = child.childrenTotal;
-				childValues.direction = area.direction;
-				if (alternate) {
-					childValues.direction = 1 - childValues.direction;
-				}
-				child.values = childValues;
+				point.level = levelNumber + 1;
+				child.values = merge(childrenValues[index], {
+					val: child.childrenTotal,
+					direction: (alternate ? 1 - area.direction : area.direction)
+				});
 				// If node has children, then call method recursively
 				if (child.childrenVisible.length) {
-					series.calculateArea(child, childValues);
+					series.calculateArea(child, child.values);
 				}
-				i = i + 1;
 			});
 		},
 		setPointValues: function () {
