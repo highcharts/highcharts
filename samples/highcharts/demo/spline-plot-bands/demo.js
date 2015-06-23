@@ -1,12 +1,4 @@
-/**
- * Data retrieved from
- * http://vikjavev.no/ver/index.php?spenn=2d&sluttid=16.06.2015.
- * 
- * To update, change thesluttid value to new start date, retrieve data
- * by typing the variables vikVindFart and hestVindFart in the Google 
- * Chrome developer tools console and reformat the data from String to
- * float. Paste the data in their corresponding 'data' options below
- */
+// Data retrieved from http://vikjavev.no/ver/index.php?spenn=2d&sluttid=16.06.2015.
 $(function () {
     $('#container').highcharts({
         chart: {
