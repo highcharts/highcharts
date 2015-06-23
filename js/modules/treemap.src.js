@@ -16,6 +16,7 @@
 		plotOptions = defaultOptions.plotOptions,
 		noop = function () { return; },
 		each = H.each,
+		grep = HighchartsAdapter.grep,
 		pick = H.pick,
 		Series = H.Series,
 		Color = H.Color;
@@ -194,17 +195,16 @@
 		setTreeValues: function (tree) {
 			var series = this,
 				childrenTotal = 0,
-				childrenVisible = [],
-				inserted,
+				sorted = [],
 				point = series.points[tree.i];
 			each(tree.children, function (child) {
-				inserted = false;
 				child = series.setTreeValues(child);
+				series.insertElementSorted(sorted, child, function (el, el2) {
+					return el.val > el2.val; 
+				});
+
 				if (!child.ignore) {
 					childrenTotal += child.val;
-					series.insertElementSorted(childrenVisible, child, function (el, el2) {
-						return el.val > el2.val; 
-					});
 				}
 				if (child.ignore) {
 					series.eachChildren(child, function (node) {
@@ -214,10 +214,11 @@
 					});
 				}
 			});
+			// @todo Use merge
 			tree.val = pick(point && point.value, childrenTotal);
 			tree.ignore = !(pick(point && point.visible, true) && (tree.val > 0)); // Ignore this node if point is not visible
-			tree.childrenVisible = childrenVisible;
-			tree.isLeaf = tree.visible && !childrenVisible.length;
+			tree.children = sorted;
+			tree.isLeaf = tree.visible && !childrenTotal;
 			tree.childrenTotal = childrenTotal;
 			tree.name = pick(point && point.name, "");
 			return tree;
@@ -253,12 +254,19 @@
 				algorithm = pick((series[level && level.layoutAlgorithm] && level.layoutAlgorithm), options.layoutAlgorithm),
 				alternate = options.alternateStartingDirection,
 				childrenValues = [],
+				children,
 				point;
+
+			// Collect all children which should be included
+			children = grep(node.children, function (n) {
+				return !n.ignore;
+			});
+
 			if (level && level.layoutStartingDirection) {
 				area.direction = level.layoutStartingDirection === 'vertical' ? 0 : 1;
 			}
-			childrenValues = series[algorithm](area, node.childrenVisible);
-			each(node.childrenVisible, function (child, index) {
+			childrenValues = series[algorithm](area, children);
+			each(children, function (child, index) {
 				point = series.points[child.i];
 				point.level = levelNumber + 1;
 				child.values = merge(childrenValues[index], {
@@ -266,7 +274,7 @@
 					direction: (alternate ? 1 - area.direction : area.direction)
 				});
 				// If node has children, then call method recursively
-				if (child.childrenVisible.length) {
+				if (child.children.length) {
 					series.calculateArea(child, child.values);
 				}
 			});
