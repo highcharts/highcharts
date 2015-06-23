@@ -18189,17 +18189,20 @@ extend(Point.prototype, {
 			hoverPoint.onMouseOut();
 		}
 
-		// trigger the event
-		point.firePointEvent('mouseOver');
+		if (point.series) { // It may have been destroyed, #4130
 
-		// update the tooltip
-		if (tooltip && (!tooltip.shared || series.noSharedTooltip)) {
-			tooltip.refresh(point, e);
+			// trigger the event
+			point.firePointEvent('mouseOver');
+
+			// update the tooltip
+			if (tooltip && (!tooltip.shared || series.noSharedTooltip)) {
+				tooltip.refresh(point, e);
+			}
+
+			// hover this
+			point.setState(HOVER_STATE);
+			chart.hoverPoint = point;
 		}
-
-		// hover this
-		point.setState(HOVER_STATE);
-		chart.hoverPoint = point;
 	},
 
 	/**
