@@ -106,7 +106,7 @@
 				tree = this.tree = this.getTree();
 				this.levelMap = this.getLevels();
 				seriesArea = this.getSeriesArea(tree.val);
-				this.calculateArea(tree, seriesArea);
+				this.calculateChildrenAreas(tree, seriesArea);
 				this.setPointValues();
 			}
 		},
@@ -244,12 +244,11 @@
 		 * Recursive function which calculates the area for all children of a node.
 		 * @param {Object} node The node which is parent to the children.
 		 * @param {Object} area The rectangular area of the parent.
-		 * @todo Rename argument node to parent, and rename function to calculateChildrenAreas.
 		 */
-		calculateArea: function (node, area) {
+		calculateChildrenAreas: function (parent, area) {
 			var series = this,
 				options = series.options,
-				levelNumber = (options.levelIsConstant ? node.level : (node.level - this.nodeMap[this.rootNode].level)),
+				levelNumber = (options.levelIsConstant ? parent.level : (parent.level - this.nodeMap[this.rootNode].level)),
 				level = this.levelMap[levelNumber + 1],
 				algorithm = pick((series[level && level.layoutAlgorithm] && level.layoutAlgorithm), options.layoutAlgorithm),
 				alternate = options.alternateStartingDirection,
@@ -258,7 +257,7 @@
 				point;
 
 			// Collect all children which should be included
-			children = grep(node.children, function (n) {
+			children = grep(parent.children, function (n) {
 				return !n.ignore;
 			});
 
@@ -275,7 +274,7 @@
 				});
 				// If node has children, then call method recursively
 				if (child.children.length) {
-					series.calculateArea(child, child.values);
+					series.calculateChildrenAreas(child, child.values);
 				}
 			});
 		},
