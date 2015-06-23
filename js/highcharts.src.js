@@ -16526,6 +16526,11 @@ var PiePoint = extendClass(Point, {
 			if (point.legendItem) {
 				chart.legend.colorizeItem(point, vis);
 			}
+
+			// #4170, hide halo after hiding point
+			if (!vis && point.state === 'hover') {
+				point.setState('');
+			}
 			
 			// Handle ignore hidden slices
 			if (ignoreHiddenPoint) {
