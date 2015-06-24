@@ -40,9 +40,7 @@ $(function () {
                     formatter: function () {
                         return Math.abs(this.value) + '%';
                     }
-                },
-                min: -7.5,
-                max: 7.5
+                }
             },
 
             plotOptions: {
