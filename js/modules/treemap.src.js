@@ -11,6 +11,7 @@
 (function (H) {
 	var seriesTypes = H.seriesTypes,
 		merge = H.merge,
+		extend = H.extend,
 		extendClass = H.extendClass,
 		defaultOptions = H.getOptions(),
 		plotOptions = defaultOptions.plotOptions,
@@ -97,6 +98,7 @@
 			},
 			setVisible: seriesTypes.pie.prototype.pointClass.prototype.setVisible
 		}),
+		// @todo Move to translate
 		handleLayout: function () {
 			var tree = this.tree,
 				seriesArea;
@@ -196,7 +198,10 @@
 			var series = this,
 				childrenTotal = 0,
 				sorted = [],
+				val,
 				point = series.points[tree.i];
+
+			// First give the children some values
 			each(tree.children, function (child) {
 				child = series.setTreeValues(child);
 				series.insertElementSorted(sorted, child, function (el, el2) {
@@ -205,22 +210,29 @@
 
 				if (!child.ignore) {
 					childrenTotal += child.val;
-				}
-				if (child.ignore) {
+				} else {
+					// @todo Add predicate to avoid looping already ignored children
 					series.eachChildren(child, function (node) {
-						node.ignore = true;
-						node.visible = false;
-						node.isLeaf = false;
+						extend(node, {
+							ignore: true,
+							isLeaf: false,
+							visible: false
+						});
 					});
 				}
 			});
-			// @todo Use merge
-			tree.val = pick(point && point.value, childrenTotal);
-			tree.ignore = !(pick(point && point.visible, true) && (tree.val > 0)); // Ignore this node if point is not visible
-			tree.children = sorted;
-			tree.isLeaf = tree.visible && !childrenTotal;
-			tree.childrenTotal = childrenTotal;
-			tree.name = pick(point && point.name, "");
+
+			// Set the values
+			val = pick(point && point.value, childrenTotal);
+			extend(tree, {
+				children: sorted,
+				childrenTotal: childrenTotal,
+				// Ignore this node if point is not visible
+				ignore: !(pick(point && point.visible, true) && (val > 0)),
+				isLeaf: tree.visible && !childrenTotal,
+				name: pick(point && point.name, ""),
+				val: val
+			});
 			return tree;
 		},
 		eachChildren: function (node, callback) {
