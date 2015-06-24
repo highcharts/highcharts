@@ -21,7 +21,7 @@ $(function () {
             },
 
             rangeSelector: {
-                
+
                 buttons: [{
                     type: 'day',
                     count: 3,
