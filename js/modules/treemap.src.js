@@ -131,6 +131,8 @@
 			this.nodeMap = [];
 
 			// Map children to index
+			// @todo Use data instead of points
+			// @todo Use each index arg instead of iterator			
 			each(this.points, function (point) {
 				var parent = "";
 				allIds.push(point.id);
@@ -149,13 +151,9 @@
 			*  - Add node id to parents children list
 			*/  
 			for (key in parentList) {
-				if (parentList.hasOwnProperty(key)) {
-					if (key !== "") {
-						if (HighchartsAdapter.inArray(key, allIds) === -1) {
-							insertItem(key);
-							delete parentList[key];
-						}
-					}
+				if ((parentList.hasOwnProperty(key)) && (key !== "") && (HighchartsAdapter.inArray(key, allIds) === -1)) {
+					insertItem(key);
+					delete parentList[key];
 				}
 			}
 			tree = series.buildNode("", -1, 0, parentList, null);
