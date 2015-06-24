@@ -1630,6 +1630,13 @@ Axis.prototype = {
 	},
 
 	/**
+	 * Return true if the axis has associated data
+	 */
+	hasData: function () {
+		return this.hasVisibleSeries || (defined(this.min) && defined(this.max) && !!this.tickPositions);
+	},
+
+	/**
 	 * Render the tick labels to a preliminary position to get their sizes
 	 */
 	getOffset: function () {
@@ -1659,7 +1666,7 @@ Axis.prototype = {
 			lineHeightCorrection;
 
 		// For reuse in Axis.render
-		axis.hasData = hasData = (axis.hasVisibleSeries || (defined(axis.min) && defined(axis.max) && !!tickPositions));
+		hasData = axis.hasData();
 		axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
 
 		// Set/reset staggerLines
@@ -1867,7 +1874,6 @@ Axis.prototype = {
 			linePath,
 			hasRendered = chart.hasRendered,
 			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
-			hasData = axis.hasData,
 			showAxis = axis.showAxis,
 			from,
 			to;
@@ -1886,7 +1892,7 @@ Axis.prototype = {
 		});
 
 		// If the series has data draw the ticks. Else only the line and title
-		if (hasData || isLinked) {
+		if (axis.hasData() || isLinked) {
 
 			// minor ticks
 			if (axis.minorTickInterval && !axis.categories) {
