@@ -6,10 +6,10 @@ $(function () {
             plotShadow: false
         },
         title: {
-            text: 'Browser<br>shares',
+            text: 'Browser<br>shares<br>2015',
             align: 'center',
             verticalAlign: 'middle',
-            y: 50
+            y: 40
         },
         tooltip: {
             pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -35,14 +35,14 @@ $(function () {
             name: 'Browser share',
             innerSize: '50%',
             data: [
-                ['Firefox',   45.0],
-                ['IE',       26.8],
-                ['Chrome', 12.8],
-                ['Safari',    8.5],
-                ['Opera',     6.2],
+                ['Firefox',   10.38],
+                ['IE',       56.33],
+                ['Chrome', 24.030000000000005],
+                ['Safari',    4.77],
+                ['Opera',     0.9100000000000001],
                 {
-                    name: 'Others',
-                    y: 0.7,
+                    name: 'Proprietary or Undetectable',
+                    y: 0.2,
                     dataLabels: {
                         enabled: false
                     }
