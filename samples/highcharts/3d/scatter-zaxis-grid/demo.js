@@ -32,8 +32,8 @@ $(function () {
             max: 10,
             gridLineWidth: 1
         },
-        zAxis: {           
-            startOnTick: false, 
+        zAxis: {
+            startOnTick: false,
             tickInterval: 2,
             tickLength: 4,
             tickWidth: 1,

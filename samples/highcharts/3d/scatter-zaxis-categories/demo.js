@@ -32,7 +32,7 @@ $(function () {
             max: 10,
             gridLineWidth: 1
         },
-        zAxis: {          
+        zAxis: {
             categories: ['Apples', 'Pears', 'Bananas', 'Kiwis'],
             labels: {
                 y: 5,

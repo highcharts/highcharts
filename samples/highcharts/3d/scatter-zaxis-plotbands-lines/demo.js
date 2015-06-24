@@ -31,8 +31,8 @@ $(function () {
             max: 10,
             gridLineWidth: 1
         },
-        zAxis: {           
-            plotLines: [{ 
+        zAxis: {
+            plotLines: [{
                 value: 1,
                 color: '#FF0000',
                 width: 1
