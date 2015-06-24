@@ -118,7 +118,6 @@
 		getTree: function () {
 			var tree,
 				series = this,
-				i = 0,
 				parentList = [],
 				allIds = [],
 				key,
@@ -132,8 +131,7 @@
 
 			// Map children to index
 			// @todo Use data instead of points
-			// @todo Use each index arg instead of iterator			
-			each(this.points, function (point) {
+			each(this.points, function (point, index) {
 				var parent = "";
 				allIds.push(point.id);
 				if (point.parent !== undefined) {
@@ -142,8 +140,7 @@
 				if (parentList[parent] === undefined) {
 					parentList[parent] = [];
 				}
-				parentList[parent].push(i);
-				i = i + 1;
+				parentList[parent].push(index);
 			});
 			/* 
 			*  Quality check:
