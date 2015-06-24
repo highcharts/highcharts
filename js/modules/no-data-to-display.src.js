@@ -35,7 +35,8 @@
 			fontWeight: 'bold',		
 			fontSize: '12px',
 			color: '#60606a'		
-		}
+		},
+        useHTML: false
 	};
 
 	/**
@@ -67,7 +68,7 @@
 			noDataOptions = options.noData;
 
 		if (!chart.noDataLabel) {
-			chart.noDataLabel = chart.renderer.label(text, 0, 0, null, null, null, null, null, 'no-data')
+			chart.noDataLabel = chart.renderer.label(text, 0, 0, null, null, null, noDataOptions.useHTML, null, 'no-data')
 				.attr(noDataOptions.attr)
 				.css(noDataOptions.style)
 				.add();
