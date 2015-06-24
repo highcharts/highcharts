@@ -17,8 +17,8 @@ $(function () {
         yAxis: {
             title: {
                 text: 'Total percent market share'
-            },
-            max: 80
+            }
+
         },
         legend: {
             enabled: false
