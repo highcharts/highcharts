@@ -22516,15 +22516,13 @@ RangeSelector.prototype = {
 			states = buttonTheme && buttonTheme.states,
 			plotLeft = chart.plotLeft,
 			buttonLeft,
-			pos,
+			pos = this.getPosition(),
 			buttonGroup = rangeSelector.group,
 			buttonBBox;
 
 
 		// create the elements
 		if (!rangeSelector.rendered) {
-
-			pos = this.getPosition();
 
 			rangeSelector.group = buttonGroup = renderer.g('range-selector-buttons').add();
 
