@@ -22036,6 +22036,8 @@ RangeSelector.prototype = {
 			rangeMin,
 			year,
 			timeName,
+			minSetting,
+			rangeSetting,
 			dataGrouping = rangeOptions.dataGrouping;
 
 		if (dataMin === null || dataMax === null || // chart has no data, base series is removed
@@ -22118,18 +22120,22 @@ RangeSelector.prototype = {
 
 		chart.fixedRange = range;
 
-		// update the chart
-		if (!baseAxis) { // axis not yet instanciated
-			baseXAxisOptions = chart.options.xAxis;
-			baseXAxisOptions[0] = merge(
-				baseXAxisOptions[0],
-				{
-					range: range,
-					min: rangeMin
-				}
-			);
+		// Update the chart
+		if (!baseAxis) { 
+			// Axis not yet instanciated. Temporarily set min and range
+			// options and remove them on chart load (#4317).
+			baseXAxisOptions = chart.options.xAxis[0];
+			rangeSetting = baseXAxisOptions.range;
+			baseXAxisOptions.range = range;
+			minSetting = baseXAxisOptions.min;
+			baseXAxisOptions.min = rangeMin;
 			rangeSelector.setSelected(i);
-		} else { // existing axis object; after render time
+			addEvent(chart, 'load', function resetMinAndRange() {
+				baseXAxisOptions.range = rangeSetting;
+				baseXAxisOptions.min = minSetting;
+			});
+		} else {
+			// Existing axis object. Set extremes after render time.
 			baseAxis.setExtremes(
 				newMin,
 				newMax,
