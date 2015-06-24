@@ -10,7 +10,7 @@ $(function () {
         },
 
         xAxis: {
-            categories: ['January', 'February', 'March', 'April', 'May', 'June', 
+            categories: ['January', 'February', 'March', 'April', 'May', 'June',
                 'July', 'August', 'September', 'October', 'November', 'December']
         },
 

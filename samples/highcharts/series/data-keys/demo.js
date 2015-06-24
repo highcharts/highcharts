@@ -22,15 +22,14 @@ $(function () {
         series: [{
             type: 'pie',
             name: 'Browser share',
-
-            keys: ['name',    'y',  'sliced', 'selected'],
+            keys: ['name', 'y', 'sliced', 'selected'],
             data: [
-                  ['Firefox', 45.0                      ],
-                  ['IE',      26.8                      ],
-                  ['Chrome',  12.8, true,      true     ],
-                  ['Safari',  8.5                       ],
-                  ['Opera',   6.2                       ],
-                  ['Others',  0.7                       ]
+                ['Firefox', 45.0],
+                ['IE', 26.8],
+                ['Chrome', 12.8, true, true],
+                ['Safari', 8.5],
+                ['Opera', 6.2],
+                ['Others', 0.7]
             ]
         }]
     });
