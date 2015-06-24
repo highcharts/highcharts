@@ -1653,6 +1653,7 @@ Axis.prototype = {
 			labelOffsetPadded,
 			axisOffset = chart.axisOffset,
 			clipOffset = chart.clipOffset,
+			clip,
 			directionFactor = [-1, 1, 1, -1][side],
 			n,
 			lineHeightCorrection;
@@ -1761,7 +1762,13 @@ Axis.prototype = {
 			axis.axisTitleMargin + titleOffset + directionFactor * axis.offset,
 			labelOffsetPadded // #3027
 		);
-		clipOffset[invertedSide] = mathMax(clipOffset[invertedSide], mathFloor(options.lineWidth / 2) * 2);
+
+		// Decide the clipping needed to keep the graph inside the plot area and axis lines
+		clip = mathFloor(options.lineWidth / 2) * 2;
+		if (options.offset) {
+			clip = mathMax(0, clip - options.offset);		
+		}
+		clipOffset[invertedSide] = mathMax(clipOffset[invertedSide], clip);
 	},
 
 	/**
