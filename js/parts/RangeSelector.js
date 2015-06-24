@@ -530,6 +530,20 @@ RangeSelector.prototype = {
 		};
 	},
 
+	/** 
+	 * Get the position of the range selector buttons and inputs. This can be overridden from outside for custom positioning.
+	 */
+	getPosition: function () {
+		var chart = this.chart,
+			options = chart.options.rangeSelector,
+			buttonTop = pick((options.buttonPosition || {}).y, chart.plotTop - chart.axisOffset[0] - 35);
+			
+		return {
+			buttonTop: buttonTop,
+			inputTop: buttonTop - 10
+		};
+	},
+
 	/**
 	 * Render the range selector including the buttons and the inputs. The first time render
 	 * is called, the elements are created and positioned. On subsequent calls, they are
@@ -555,9 +569,8 @@ RangeSelector.prototype = {
 			inputEnabled = options.inputEnabled,
 			states = buttonTheme && buttonTheme.states,
 			plotLeft = chart.plotLeft,
-			yAlign,
 			buttonLeft,
-			buttonTop,
+			pos,
 			buttonGroup = rangeSelector.group,
 			buttonBBox;
 
@@ -565,21 +578,22 @@ RangeSelector.prototype = {
 		// create the elements
 		if (!rangeSelector.rendered) {
 
+			pos = this.getPosition();
+
 			rangeSelector.group = buttonGroup = renderer.g('range-selector-buttons').add();
 
-			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, pick(buttonPosition.x, plotLeft), pick(buttonPosition.y, chart.plotTop - 35) + 15)
+			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, pick(buttonPosition.x, plotLeft), pos.buttonTop + 15)
 				.css(options.labelStyle)
 				.add(buttonGroup);
 
 			// button starting position
 			buttonLeft = pick(buttonPosition.x, plotLeft) + rangeSelector.zoomText.getBBox().width + 5;
-			buttonTop = pick(buttonPosition.y, chart.plotTop - 35);
 
 			each(rangeSelector.buttonOptions, function (rangeOptions, i) {
 				buttons[i] = renderer.button(
 						rangeOptions.text,
 						buttonLeft,
-						buttonTop,
+						pos.buttonTop,
 						function () {
 							rangeSelector.clickButton(i);
 							rangeSelector.isActive = true;
@@ -628,12 +642,11 @@ RangeSelector.prototype = {
 		if (inputEnabled !== false) {
 		
 			// Update the alignment to the updated spacing box
-			yAlign = chart.plotTop - 45;		
 			inputGroup.align(extend({
-				y: yAlign,
+				y: pos.inputTop,
 				width: inputGroup.offset,
 				// Detect collision with the exporting buttons
-				x: navButtonOptions && (yAlign < (navButtonOptions.y || 0) + navButtonOptions.height - chart.spacing[0]) ? 
+				x: navButtonOptions && (pos.inputTop < (navButtonOptions.y || 0) + navButtonOptions.height - chart.spacing[0]) ? 
 					-40 : 0
 			}, options.inputPosition), true, chart.spacingBox);
 
