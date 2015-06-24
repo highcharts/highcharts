@@ -12,7 +12,7 @@ $(function () {
         },
 
         subtitle: {
-            text: 'Observed in Vik i Sogn, Norway, 2009'
+            text: 'Observed in Vik i Sogn, Norway'
         },
 
         xAxis: {
