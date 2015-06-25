@@ -1,11 +1,13 @@
 $(function () {
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.json&callback=?', function (data) {
+        var fromYear = new Date(data[0][0]).getFullYear();
+        var toYear = new Date(data[data.length-1][0]).getFullYear();
         $('#container').highcharts({
             chart: {
                 zoomType: 'x'
             },
             title: {
-                text: 'USD to EUR exchange rate from 2009 through 2015'
+                text: 'USD to EUR exchange rate from ' + fromYear + ' through ' + toYear
             },
             subtitle: {
                 text: document.ontouchstart === undefined ?
