@@ -333,6 +333,13 @@ require_once('functions.php');
 								</li>
 								";
 								$i++;
+							
+							} elseif (preg_match('/^[a-zA-Z0-9\-,]+$/', $innerFile)) {
+								echo "
+								<li class='different'>
+									Invalid sample name, use lower case only:<br>$innerFile
+								</li>
+								";
 							}
 						}
 					}
