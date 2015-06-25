@@ -1,6 +1,8 @@
 $(function () {
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.json&callback=?', function (data) {
 
+        var year = new Date(data[data.length-1][0]).getFullYear(); // Get year of last data point
+
         // Create the chart
         $('#container').highcharts('StockChart', {
 
@@ -29,10 +31,10 @@ $(function () {
                 type: 'flags',
                 name: 'Flags on series',
                 data: [{
-                    x: Date.UTC(2011, 1, 22),
+                    x: Date.UTC(year, 1, 22),
                     title: 'On series'
                 }, {
-                    x: Date.UTC(2011, 3, 28),
+                    x: Date.UTC(year, 3, 28),
                     title: 'On series'
                 }],
                 onSeries: 'dataseries',
@@ -41,10 +43,10 @@ $(function () {
                 type: 'flags',
                 name: 'Flags on axis',
                 data: [{
-                    x: Date.UTC(2011, 2, 1),
+                    x: Date.UTC(year, 2, 1),
                     title: 'On axis'
                 }, {
-                    x: Date.UTC(2011, 3, 1),
+                    x: Date.UTC(year, 3, 1),
                     title: 'On axis'
                 }],
                 shape: 'squarepin'
