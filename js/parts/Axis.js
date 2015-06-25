@@ -302,7 +302,8 @@ Axis.prototype = {
 		// Dictionary for stacks
 		axis.stacks = {};
 		axis.oldStacks = {};
-		
+		axis._stacksTouched = 0;
+
 		// Min and max in the data
 		//axis.dataMin = UNDEFINED,
 		//axis.dataMax = UNDEFINED,
@@ -427,7 +428,9 @@ Axis.prototype = {
 	 */
 	getSeriesExtremes: function () {
 		var axis = this,
-			chart = axis.chart;
+				chart = axis.chart,
+				stacks = axis.stacks
+				stacksTouched = axis._stacksTouched;
 
 		axis.hasVisibleSeries = false;
 
@@ -493,6 +496,15 @@ Axis.prototype = {
 				}
 			}
 		});
+		// Destroy unused stacks (#1044)
+		for (type in stacks) {
+			for (i in stacks[type]) {
+				if (stacks[type][i].touched < stacksTouched) {
+					stacks[type][i].destroy();
+					delete stacks[type][i];
+				}
+			}
+		}
 	},
 
 	/**

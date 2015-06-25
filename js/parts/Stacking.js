@@ -189,6 +189,7 @@ Series.prototype.setStackedPoints = function () {
 		yAxis = series.yAxis,
 		stacks = yAxis.stacks,
 		oldStacks = yAxis.oldStacks,
+		stacksTouched = yAxis._stacksTouched = yAxis._stacksTouched + 1,
 		isNegative,
 		stack,
 		other,
@@ -228,7 +229,7 @@ Series.prototype.setStackedPoints = function () {
 		stack = stacks[key][x];
 		//stack.points[pointKey] = [stack.cum || stackThreshold];
 		stack.points[pointKey] = [pick(stack.cum, stackThreshold)];
-
+		stack.touched = stacksTouched;
 		
 
 		// Add value to the stack total
