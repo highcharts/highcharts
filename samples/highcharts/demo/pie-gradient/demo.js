@@ -55,7 +55,7 @@ $(function () {
                     selected: true
                 },
                 {name: "Firefox", y: 10.38},
-                {name: "Safari", y: 4.77}, {name: "Opera",y: 0.9100000000000001},
+                {name: "Safari", y: 4.77}, {name: "Opera", y: 0.9100000000000001},
                 {name: "Proprietary or Undetectable", y: 0.2}
             ]
         }]

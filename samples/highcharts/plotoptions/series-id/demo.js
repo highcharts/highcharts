@@ -22,22 +22,22 @@ $(function () {
         var chart = $('#container').highcharts(),
             series = chart.get('series-1'),
             text = 'The first series\' name is ' + series.name;
-            if (!chart.lbl) {
-                chart.lbl = chart.renderer.label(text, 100, 70)
-                    .attr({
-                        padding: 10,
-                        r: 5,
-                        fill: Highcharts.getOptions().colors[1],
-                        zIndex: 5
-                    })
-                    .css({
-                        color: '#FFFFFF'
-                    })
-                    .add();
-            } else {
-                chart.lbl.attr({
-                    text: text
-                });
-            }
+        if (!chart.lbl) {
+            chart.lbl = chart.renderer.label(text, 100, 70)
+                .attr({
+                    padding: 10,
+                    r: 5,
+                    fill: Highcharts.getOptions().colors[1],
+                    zIndex: 5
+                })
+                .css({
+                    color: '#FFFFFF'
+                })
+                .add();
+        } else {
+            chart.lbl.attr({
+                text: text
+            });
+        }
     });
 });

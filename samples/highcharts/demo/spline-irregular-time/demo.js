@@ -63,7 +63,7 @@ $(function () {
                 [Date.UTC(1971, 4, 19), 1.15],
                 [Date.UTC(1971, 5, 3), 0]
             ]
-        },{
+        }, {
             name: "Winter 2013-2014",
             data: [
                 [Date.UTC(1970, 9, 29), 0],
@@ -79,7 +79,7 @@ $(function () {
                 [Date.UTC(1971, 4, 24), 1.1],
                 [Date.UTC(1971, 5, 10), 0]
             ]
-        },{
+        }, {
             name: "Winter 2014-2015",
             data: [
                 [Date.UTC(1970, 10, 25), 0],

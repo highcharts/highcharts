@@ -30,7 +30,7 @@ $(function () {
         series: [{
             name: 'Target',
             type: 'polygon',
-            data: [[153, 42], [149, 46], [149, 55], [152, 60], [159, 70], [170, 77], [180, 70], 
+            data: [[153, 42], [149, 46], [149, 55], [152, 60], [159, 70], [170, 77], [180, 70],
                 [180, 60], [173, 52], [166, 45]],
             color: Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.5).get(),
             enableMouseTracking: false

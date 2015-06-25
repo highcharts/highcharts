@@ -27,7 +27,7 @@ $(function () {
                                 text: text
                             });
                         }
-                        n++;
+                        n = n + 1;
                     }
                 }
             }
