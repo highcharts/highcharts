@@ -176,11 +176,13 @@
 			}
 			
 			function proceed() {
-				if (window.parent.frames[0] && i !== "" && _continue === 'true' ) {
+				var i = '<?php echo $i ?>';						
+				if (window.parent.frames[0] && i !== '' && _continue === 'true' ) {
 					var contentDoc = window.parent.frames[0].document,
-						i = <?php echo $i ?>,
 						href,
 						next;
+
+					i = parseInt(i);
 						
 					if (!contentDoc || !contentDoc.getElementById('i' + i)) {
 						return;
@@ -203,6 +205,8 @@
 					href = href.replace("view.php", "compare-view.php") + '&continue=true';
 					
 					window.location.href = href; 
+				} else {
+					console.log('@proceed');
 				}		
 			}
 				
