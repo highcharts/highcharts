@@ -68,6 +68,7 @@ $(function () {
                 //proceed.call(this);
             }
         });
+        H.seriesTypes.heatmap.prototype.directTouch = false; // Use k-d-tree
     }(Highcharts));
 
 
