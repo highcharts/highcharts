@@ -19330,6 +19330,7 @@ extend(Point.prototype, {
 
 			if (stateMarkerGraphic) {
 				stateMarkerGraphic[state && chart.isInsidePlot(plotX, plotY, chart.inverted) ? 'show' : 'hide'](); // #2450
+				stateMarkerGraphic.element.point = point; // #4310
 			}
 		}
 
