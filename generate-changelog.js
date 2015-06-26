@@ -16,8 +16,8 @@
      * Get the log from Git
      */
     function getLog(callback) {
-        var after = '2015-04-12',
-            before = '2015-06-12',
+        var after = '2015-06-12',
+            before = '2015-06-26',
             puts = function (err, stdout) {
                 if (err) {
                     throw err;
