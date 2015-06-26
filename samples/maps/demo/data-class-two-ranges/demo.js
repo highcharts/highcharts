@@ -175,7 +175,7 @@ $(function () {
 
 
     // Load the data from a Google Spreadsheet 
-    // https://docs.google.com/a/highsoft.com/spreadsheet/pub?hl=en_GB&hl=en_GB&key=0AoIaUO7wH1HwdFJHaFI4eUJDYlVna3k5TlpuXzZubHc&output=html
+    // https://docs.google.com/a/highsoft.com/spreadsheet/pub?hl=en_GB&hl=en_GB&key=0AoIaUO7wH1HwdDFXSlpjN2J4aGg5MkVHWVhsYmtyVWc&output=html
     Highcharts.data({
 
         googleSpreadsheetKey: '0AoIaUO7wH1HwdDFXSlpjN2J4aGg5MkVHWVhsYmtyVWc',
@@ -224,14 +224,11 @@ $(function () {
                 });
             }
 
-
-
-
             // Make the columns easier to read
             var keys = columns[0],
                 names = columns[1],
                 percent = columns[10],
-            // Build the chart options
+                // Build the chart options
                 options = {
                     chart: {
                         renderTo: 'container',
