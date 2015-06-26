@@ -459,7 +459,7 @@
                 stroke();
                 series.canvasToSVG();
 
-                fireEvent(series, 'renderedCanvas'); // docs
+                fireEvent(series, 'renderedCanvas');
 
                 // Do not use chart.hideLoading, as it runs JS animation and will be blocked by buildKDTree.
                 // CSS animation looks good, but then it must be deleted in timeout. If we add the module to core,
