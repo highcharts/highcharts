@@ -33,11 +33,11 @@ Status
     ['highcharts', 'maps', 'stock', 'issues'].forEach(function (section) {
         section = section + '/';
         fs.list('../../samples/' + section).forEach(function (group) {
-            if (/^[a-z0-9\-]+$/.test(group) && fs.isDirectory('../../samples/' + section + group)) {
+            if (/^[a-z0-9][a-z0-9\.\-]+$/.test(group) &&  fs.isDirectory('../../samples/' + section + group)) {
                 group = group + '/';
                 fs.list('../../samples/' + section + group).forEach(function (sample) {
                     var details;
-                    if (/^[a-z0-9\-]+$/.test(sample) && fs.isDirectory('../../samples/' + section + group + sample + '/')) {
+                    if (/^[a-z0-9\-\,]+$/.test(sample) && fs.isDirectory('../../samples/' + section + group + sample + '/')) {
                         details = '../../samples/' + section + group + sample + '/demo.details';
                         details = fs.isFile(details) && fs.read(details);
 
