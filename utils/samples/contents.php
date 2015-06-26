@@ -2,6 +2,12 @@
 
 require_once('functions.php');
 
+$browser = getBrowser();
+$browserKey = isset($_GET['browserKey']) ? $_GET['browserKey'] : $browser['parent'];
+
+$compare = @json_decode(file_get_contents('temp/compare.json'));
+
+
 ?><!DOCTYPE HTML>
 <html>
 	<head>
@@ -31,8 +37,6 @@ require_once('functions.php');
 
 
 			$(function () {
-
-				//runBatch();
 
 				$(window).bind('keydown', parent.keyDown);
 
@@ -85,6 +89,9 @@ require_once('functions.php');
 						});
 					}
 				});
+
+				$('#main-nav').css('margin-top', $('#top-nav').height());
+				
 			});
 			
 		</script>
@@ -152,7 +159,6 @@ require_once('functions.php');
 				color: white; 
 				font-family: Arial, sans-serif; 
 				padding: 10px; 
-				height: 6.5em;
 				background: #34343e;
 				box-shadow: 0px 0px 8px #888;
 				position: fixed;
@@ -160,9 +166,13 @@ require_once('functions.php');
 				width: 100%;
 				z-index: 10;
 			}
+			#top-nav .text a {
+				color: white;
+				text-decoration: underline;
+			}
 			#main-nav {
-				margin-top: 110px;
 				margin-left: 10px;
+				padding-top: 40px;
 			}
 			#batch-stop {
 				display: none;
@@ -227,10 +237,15 @@ require_once('functions.php');
 			Fails only
 		</a>
 
+		<div class="text">
+			View results for <a href="?"><?php echo $browser['name'] ?></a>, <a href="?browserKey=PhantomJS 2.0.0">PhantomJS</a>
+		</div>
+
 		<div style="margin-top: 1em">
 			<div style="width: 45%; float:left">Diff limit: <span id="slider-value">0</span></div>
 			<div id="slider" style="width: 45%; float:left"></div>
 		</div>
+
 	</div>
 
 
@@ -242,9 +257,7 @@ require_once('functions.php');
 	<?php
 	$products = array('highcharts', 'maps', 'stock', 'issues');
 	$samplesDir = dirname(__FILE__). '/../../samples/';
-	$browser = getBrowser();
-	$browserKey = $browser['parent'];
-	$compare = @json_decode(file_get_contents('temp/compare.json'));
+	
 
 	$i = 1;
 	foreach ($products as $dir) {
