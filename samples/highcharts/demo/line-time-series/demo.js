@@ -1,7 +1,7 @@
 $(function () {
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.json&callback=?', function (data) {
-        var fromYear = new Date(data[0][0]).getFullYear();
-        var toYear = new Date(data[data.length-1][0]).getFullYear();
+        var fromYear = new Date(data[0][0]).getFullYear(),
+            toYear = new Date(data[data.length - 1][0]).getFullYear();
         $('#container').highcharts({
             chart: {
                 zoomType: 'x'
@@ -11,11 +11,10 @@ $(function () {
             },
             subtitle: {
                 text: document.ontouchstart === undefined ?
-                    'Click and drag in the plot area to zoom in' :
-                    'Pinch the chart to zoom in'
+                        'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
             },
             xAxis: {
-                type: 'datetime',
+                type: 'datetime'
             },
             yAxis: {
                 title: {

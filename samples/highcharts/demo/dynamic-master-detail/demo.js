@@ -125,7 +125,7 @@ $(function () {
                                 xAxis.addPlotBand({
                                     id: 'mask-after',
                                     from: max,
-                                    to: data[data.length-1][0],
+                                    to: data[data.length - 1][0],
                                     color: 'rgba(0, 0, 0, 0.2)'
                                 });
 
@@ -146,7 +146,7 @@ $(function () {
                         plotBands: [{
                             id: 'mask-before',
                             from: data[0][0],
-                            to: data[data.length-1][0],
+                            to: data[data.length - 1][0],
                             color: 'rgba(0, 0, 0, 0.2)'
                         }],
                         title: {
@@ -225,12 +225,12 @@ $(function () {
 
             $('<div id="master-container">')
                 .css({
-                position: 'absolute',
-                top: 300,
-                height: 100,
-                width: '100%'
-            })
-                .appendTo($container);
+                    position: 'absolute',
+                    top: 300,
+                    height: 100,
+                    width: '100%'
+                })
+                    .appendTo($container);
 
             // create master and in its callback, create the detail chart
             createMaster();

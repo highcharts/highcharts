@@ -1,17 +1,20 @@
 $(function () {
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.json&callback=?', function (data) {
 
-        var startDate = new Date(data[data.length-1][0]); // Get year of last data point
-        startDate.setMonth(startDate.getMonth()-3);  // a quarter of a year before last data point
-        var minRate = 1;
-        var maxRate = 0;
-        var startPeriod = Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-        console.log(startDate.getFullYear() + " " + startDate.getMonth() + " " + startDate.getDate());
-        for (var i = data.length-1; i >= 0; i--) {
-            var date = data[i][0] // data[i][0] is date
-            var rate = data[i][1] // data[i][1] is exchange rate
-            if (date < startPeriod) break; // stop measuring highs and lows
-
+        var startDate = new Date(data[data.length - 1][0]), // Get year of last data point
+            minRate = 1,
+            maxRate = 0,
+            startPeriod = Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()),
+            date,
+            rate,
+            index;
+        startDate.setMonth(startDate.getMonth() - 3); // a quarter of a year before last data point
+        for (index = data.length - 1; index >= 0; index = index - 1) {
+            date = data[index][0]; // data[i][0] is date
+            rate = data[index][1]; // data[i][1] is exchange rate
+            if (date < startPeriod) {
+                break; // stop measuring highs and lows
+            }
             if (rate > maxRate) {
                 maxRate = rate;
             }
@@ -23,42 +26,42 @@ $(function () {
         // Create the chart
         $('#container').highcharts('StockChart', {
 
-            rangeSelector : {
-                selected : 1
+            rangeSelector: {
+                selected: 1
             },
 
-            title : {
-                text : 'USD to EUR exchange rate'
+            title: {
+                text: 'USD to EUR exchange rate'
             },
 
-            yAxis : {
-                title : {
-                    text : 'Exchange rate'
+            yAxis: {
+                title: {
+                    text: 'Exchange rate'
                 },
-                plotLines : [{
-                    value : minRate,
-                    color : 'green',
-                    dashStyle : 'shortdash',
-                    width : 2,
-                    label : {
-                        text : 'Last quarter minimum'
+                plotLines: [{
+                    value: minRate,
+                    color: 'green',
+                    dashStyle: 'shortdash',
+                    width: 2,
+                    label: {
+                        text: 'Last quarter minimum'
                     }
                 }, {
-                    value : maxRate,
-                    color : 'red',
-                    dashStyle : 'shortdash',
-                    width : 2,
-                    label : {
-                        text : 'Last quarter maximum'
+                    value: maxRate,
+                    color: 'red',
+                    dashStyle: 'shortdash',
+                    width: 2,
+                    label: {
+                        text: 'Last quarter maximum'
                     }
                 }]
             },
 
-            series : [{
-                name : 'USD to EUR',
-                data : data,
-                tooltip : {
-                    valueDecimals : 4
+            series: [{
+                name: 'USD to EUR',
+                data: data,
+                tooltip: {
+                    valueDecimals: 4
                 }
             }]
         });
