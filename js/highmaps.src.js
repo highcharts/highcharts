@@ -10549,7 +10549,7 @@ Legend.prototype = {
 				});
 
 				// useHTML
-				if (legend.contentGroup.div) { // docs: navigation now supported with useHTML
+				if (legend.contentGroup.div) {
 					legend.contentGroup.div.style.clip = 'rect(' + padding + 'px,9999px,' + (padding + height) + 'px,0)';
 				}
 			};
