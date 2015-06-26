@@ -17,7 +17,6 @@ $(function () {
 
         plotOptions: {
             series: {
-                allowPointDrilldown: false,
                 borderWidth: 0,
                 dataLabels: {
                     enabled: true
@@ -57,6 +56,7 @@ $(function () {
             }]
         }],
         drilldown: {
+            allowPointDrilldown: false,
             series: [{
                 id: 'republican-2010',
                 data: [

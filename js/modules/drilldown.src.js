@@ -642,7 +642,7 @@
 			
 			// Add the click event to the point 
 			H.addEvent(point, 'click', function () {
-				if (series.xAxis && series.options.allowPointDrilldown === false) { // docs. Demo added.
+				if (series.xAxis && series.chart.options.drilldown.allowPointDrilldown === false) {
 					series.xAxis.drilldownCategory(x);
 				} else {
 					point.doDrilldown();
