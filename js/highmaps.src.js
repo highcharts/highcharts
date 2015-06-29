@@ -16093,12 +16093,16 @@ if (seriesTypes.column) {
 			j,
 			label1,
 			label2,
-			intersectRect = function (pos1, pos2, size1, size2) {
+			isIntersecting,
+			pos1,
+			pos2,
+			padding,
+			intersectRect = function (x1, y1, w1, h1, x2, y2, w2, h2) {
 				return !(
-					pos2.x > pos1.x + size1.width ||
-					pos2.x + size2.width < pos1.x ||
-					pos2.y > pos1.y + size1.height ||
-					pos2.y + size2.height < pos1.y
+					x2 > x1 + w1 ||
+					x2 + w2 < x1 ||
+					y2 > y1 + h1 ||
+					y2 + h2 < y1
 				);
 			};
 	
@@ -16124,9 +16128,24 @@ if (seriesTypes.column) {
 
 			for (j = i + 1; j < len; ++j) {
 				label2 = labels[j];
-				if (label1 && label2 && label1.placed && label2.placed && label1.newOpacity !== 0 && label2.newOpacity !== 0 && 
-						intersectRect(label1.alignAttr, label2.alignAttr, label1, label2)) {
-					(label1.labelrank < label2.labelrank ? label1 : label2).newOpacity = 0;
+				if (label1 && label2 && label1.placed && label2.placed && label1.newOpacity !== 0 && label2.newOpacity !== 0) {
+					pos1 = label1.alignAttr;
+					pos2 = label2.alignAttr;
+					padding = 2 * (label1.box ? 0 : label1.padding); // Substract the padding if no background or border (#4333)
+					isIntersecting = intersectRect(
+						pos1.x,
+						pos1.y,
+						label1.width - padding,
+						label1.height - padding,
+						pos2.x,
+						pos2.y,
+						label2.width - padding,
+						label2.height - padding
+					);
+
+					if (isIntersecting) {
+						(label1.labelrank < label2.labelrank ? label1 : label2).newOpacity = 0;
+					}
 				}
 			}
 		}
@@ -17568,12 +17587,16 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			j,
 			label1,
 			label2,
-			intersectRect = function (pos1, pos2, size1, size2) {
+			isIntersecting,
+			pos1,
+			pos2,
+			padding,
+			intersectRect = function (x1, y1, w1, h1, x2, y2, w2, h2) {
 				return !(
-					pos2.x > pos1.x + size1.width ||
-					pos2.x + size2.width < pos1.x ||
-					pos2.y > pos1.y + size1.height ||
-					pos2.y + size2.height < pos1.y
+					x2 > x1 + w1 ||
+					x2 + w2 < x1 ||
+					y2 > y1 + h1 ||
+					y2 + h2 < y1
 				);
 			};
 	
@@ -17599,9 +17622,24 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 			for (j = i + 1; j < len; ++j) {
 				label2 = labels[j];
-				if (label1 && label2 && label1.placed && label2.placed && label1.newOpacity !== 0 && label2.newOpacity !== 0 && 
-						intersectRect(label1.alignAttr, label2.alignAttr, label1, label2)) {
-					(label1.labelrank < label2.labelrank ? label1 : label2).newOpacity = 0;
+				if (label1 && label2 && label1.placed && label2.placed && label1.newOpacity !== 0 && label2.newOpacity !== 0) {
+					pos1 = label1.alignAttr;
+					pos2 = label2.alignAttr;
+					padding = 2 * (label1.box ? 0 : label1.padding); // Substract the padding if no background or border (#4333)
+					isIntersecting = intersectRect(
+						pos1.x,
+						pos1.y,
+						label1.width - padding,
+						label1.height - padding,
+						pos2.x,
+						pos2.y,
+						label2.width - padding,
+						label2.height - padding
+					);
+
+					if (isIntersecting) {
+						(label1.labelrank < label2.labelrank ? label1 : label2).newOpacity = 0;
+					}
 				}
 			}
 		}
