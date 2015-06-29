@@ -37,10 +37,10 @@ $(function () {
 
 
 
-    var options = {
+    $('#container').highcharts({
 
-        chart: {
-            renderTo: 'container'
+        title: {
+            text: 'Highcharts snippet to add images to axis labels'
         },
 
         xAxis: {
@@ -59,10 +59,5 @@ $(function () {
             data: [29.9, 71.5, 106.4]
         }]
 
-    };
-
-
-        
-
-    var chart = new Highcharts.Chart(options);
+    })
 });
