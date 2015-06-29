@@ -1,5 +1,6 @@
 $(function () {
-    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=range.json&callback=?', function (data) {
+    // Notice that the dataset has missing data
+    $.getJSON('http://data.highcharts.local/jsonp.php?filename=range.json&callback=?', function (data) {
 
         $('#container').highcharts('StockChart', {
 
