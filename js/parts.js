@@ -446,6 +446,14 @@ var HighchartsConfig = {
 		},
 		"baseUrl": "modules"
 	}, {
+		"name": "offline-exporting.src",
+		"component": "Offline exporting",
+		"group": "Modules",
+		"depends": {
+			"component": ["Core", "Exporting"]
+		},
+		"baseUrl": "modules"
+	}, {
 		"name": "data.src",
 		"component": "Data",
 		"group": "Modules",
