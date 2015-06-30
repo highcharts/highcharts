@@ -213,7 +213,7 @@ $(function () {
                             color: '#0200D0',
                             y: parseInt(columns[3][row], 10)
                         }, {
-                            name: 'McCain',
+                            name: 'Romney',
                             color: '#C40401',
                             y: parseInt(columns[4][row], 10)
                         }],
@@ -227,7 +227,7 @@ $(function () {
             // Make the columns easier to read
             var keys = columns[0],
                 names = columns[1],
-                percent = columns[10],
+                percent = columns[7],
                 // Build the chart options
                 options = {
                     chart: {
@@ -237,11 +237,11 @@ $(function () {
                     },
 
                     title: {
-                        text: 'US presidential election 2008 results'
+                        text: 'US presidential election 2012 results'
                     },
                     subtitle: {
                         text: 'Source: <a href="http://en.wikipedia.org/wiki/United_States_presidential_election,' +
-                            '_2008#Election_results">Wikipedia</a>'
+                            '_2012">Wikipedia</a>'
                     },
 
                     legend: {
@@ -266,7 +266,7 @@ $(function () {
                             from: -100,
                             to: 0,
                             color: '#C40401',
-                            name: 'McCain'
+                            name: 'Romney'
                         }, {
                             from: 0,
                             to: 100,
