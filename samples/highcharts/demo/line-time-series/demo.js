@@ -1,7 +1,6 @@
 $(function () {
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.json&callback=?', function (data) {
 
-        console.log(data);
         var fromYear = new Date(data[0][0]).getFullYear(),
             toYear = new Date(data[data.length - 1][0]).getFullYear();
         $('#container').highcharts({
