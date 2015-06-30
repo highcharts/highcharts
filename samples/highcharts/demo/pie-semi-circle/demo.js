@@ -37,9 +37,9 @@ $(function () {
             data: [
                 ['Firefox',   10.38],
                 ['IE',       56.33],
-                ['Chrome', 24.030000000000005],
+                ['Chrome', 24.03],
                 ['Safari',    4.77],
-                ['Opera',     0.9100000000000001],
+                ['Opera',     0.91],
                 {
                     name: 'Proprietary or Undetectable',
                     y: 0.2,

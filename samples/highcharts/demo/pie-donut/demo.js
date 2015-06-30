@@ -21,7 +21,7 @@ $(function () {
                 color: colors[1]
             }
         }, {
-            y: 24.030000000000005,
+            y: 24.03,
             color: colors[2],
             drilldown: {
                 name: 'Chrome versions',
@@ -41,7 +41,7 @@ $(function () {
                 color: colors[3]
             }
         }, {
-            y: 0.9100000000000001,
+            y: 0.91,
             color: colors[4],
             drilldown: {
                 name: 'Opera versions',

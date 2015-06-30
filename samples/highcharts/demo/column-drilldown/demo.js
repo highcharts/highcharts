@@ -46,7 +46,7 @@ $(function () {
                 drilldown: "Microsoft Internet Explorer"
             }, {
                 name: "Chrome",
-                y: 24.030000000000005,
+                y: 24.03,
                 drilldown: "Chrome"
             }, {
                 name: "Firefox",
@@ -58,7 +58,7 @@ $(function () {
                 drilldown: "Safari"
             }, {
                 name: "Opera",
-                y: 0.9100000000000001,
+                y: 0.91,
                 drilldown: "Opera"
             }, {
                 name: "Proprietary or Undetectable",

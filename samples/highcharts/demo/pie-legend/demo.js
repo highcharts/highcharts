@@ -34,7 +34,7 @@ $(function () {
                     y: 56.33
                 }, {
                     name: "Chrome",
-                    y: 24.030000000000005,
+                    y: 24.03,
                     sliced: true,
                     selected: true
                 }, {
@@ -45,7 +45,7 @@ $(function () {
                     y: 4.77
                 }, {
                     name: "Opera",
-                    y: 0.9100000000000001
+                    y: 0.91
                 }, {
                     name: "Proprietary or Undetectable",
                     y: 0.2
