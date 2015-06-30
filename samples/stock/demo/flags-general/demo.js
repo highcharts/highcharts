@@ -1,14 +1,12 @@
 $(function () {
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.json&callback=?', function (data) {
 
-        var year = new Date(data[data.length - 1][0]).getFullYear(); // Get year of last data point
-
         // Create the chart
         $('#container').highcharts('StockChart', {
 
 
             rangeSelector : {
-                selected : 1
+                selected : 0
             },
 
             title : {
@@ -19,7 +17,8 @@ $(function () {
                 style: {
                     width: '200px'
                 },
-                valueDecimals: 4
+                valueDecimals: 4,
+                shared : true
             },
 
             yAxis : {
@@ -37,29 +36,29 @@ $(function () {
             }, {
                 type : 'flags',
                 data : [{
-                    x : Date.UTC(year, 3, 25),
+                    x : Date.UTC(2015, 5, 30),
                     title : 'H',
-                    text : 'Euro Contained by Channel Resistance'
+                    text : 'Surging US dollar curbs global IT spend'
                 }, {
-                    x : Date.UTC(year, 3, 28),
+                    x : Date.UTC(2015, 5, 29),
                     title : 'G',
-                    text : 'EURUSD: Bulls Clear Path to 1.50 Figure'
+                    text : 'Euro records stunning reversal against dollar'
                 }, {
-                    x : Date.UTC(year, 4, 4),
+                    x : Date.UTC(2015, 5, 26),
                     title : 'F',
-                    text : 'EURUSD: Rate Decision to End Standstill'
+                    text : 'Greek Negotiations Take Sharp Turn for Worse, US Dollar set to Rally '
                 }, {
-                    x : Date.UTC(year, 4, 5),
+                    x : Date.UTC(2015, 5, 19),
                     title : 'E',
-                    text : 'EURUSD: Enter Short on Channel Break'
+                    text : 'US Dollar Declines Over the Week on Rate Timeline'
                 }, {
-                    x : Date.UTC(year, 4, 6),
+                    x : Date.UTC(2015, 5, 12),
                     title : 'D',
-                    text : 'Forex: U.S. Non-Farm Payrolls Expand 244K, U.S. Dollar Rally Cut Short By Risk Appetite'
+                    text : 'Zimbabwe ditches \'worthless\' currency for the US dollar '
                 }, {
-                    x : Date.UTC(year, 4, 6),
+                    x : Date.UTC(2015, 5, 8),
                     title : 'C',
-                    text : 'US Dollar: Is This the Long-Awaited Recovery or a Temporary Bounce?'
+                    text : 'Stocks fall on Greece, rate concerns; US dollar dips'
                 }],
                 onSeries : 'dataseries',
                 shape : 'circlepin',
