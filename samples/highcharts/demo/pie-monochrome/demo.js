@@ -43,7 +43,6 @@ $(function () {
         },
         series: [{
             name: "Brands",
-            colorByPoint: true,
             data: [
                 {name: "Microsoft Internet Explorer", y: 56.33},
                 {name: "Chrome", y: 24.030000000000005},
