@@ -13,7 +13,6 @@
 (function (Highcharts) {
 
 // Dummy object so we can reuse our canvas-tools.js without errors
-// Is this needed now?
 Highcharts.CanVGRenderer = {};
 
 /**
@@ -79,7 +78,7 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
 				if (finallyCallback) {
 					finallyCallback(imageURL, callbackArgs);
 				}
-			};				  
+			};
 			img.src = imageURL;
 		},
 		// Get blob URL from SVG code. Falls back to normal data URI.
