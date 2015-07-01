@@ -1435,18 +1435,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		// Draw the shapes again
 		if (series.doFullTranslate()) {
 
-			// Individual point actions	
-			if (chart.hasRendered && series.pointAttrToOptions.fill === 'color') {
-				each(series.points, function (point) {
-
-					// Reset color on update/redraw
-					if (point.graphic) {
-						point.graphic.attr('fill', point.color);
-					}
-
-				});
-			}
-
 			// If vector-effect is not supported, we set the stroke-width on the group element
 			// and let all point graphics inherit. That way we don't have to iterate over all 
 			// points to update the stroke-width on zooming.
@@ -1476,6 +1464,11 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 					if (!supportsVectorEffect) {
 						point.graphic['stroke-widthSetter'] = noop;
+					}
+
+					// Reset color on update/redraw
+					if (chart.hasRendered && point.graphic.attr('fill') !== point.color) {
+						point.graphic.animate({ fill: point.color });
 					}
 				}
 			});
