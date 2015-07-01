@@ -17764,7 +17764,7 @@ if (seriesTypes.column) {
 		// will hide the previous one because the previous one always has
 		// lower rank.
 		labels.sort(function (a, b) {
-			return b.labelrank - a.labelrank;
+			return (b.labelrank || 0) - (a.labelrank || 0);
 		});
 
 		// Detect overlapping labels
