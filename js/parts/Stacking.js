@@ -198,6 +198,9 @@ Series.prototype.setStackedPoints = function () {
 		x,
 		y;
 
+
+	yAxis.stacksTouched += 1;
+
 	// loop over the non-null y values and read them into a local array
 	for (i = 0; i < yDataLength; i++) {
 		x = xData[i];
@@ -228,7 +231,7 @@ Series.prototype.setStackedPoints = function () {
 		stack = stacks[key][x];
 		//stack.points[pointKey] = [stack.cum || stackThreshold];
 		stack.points[pointKey] = [pick(stack.cum, stackThreshold)];
-
+		stack.touched = yAxis.stacksTouched;
 		
 
 		// Add value to the stack total

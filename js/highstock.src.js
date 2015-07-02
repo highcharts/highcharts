@@ -6732,7 +6732,8 @@ Axis.prototype = {
 		// Dictionary for stacks
 		axis.stacks = {};
 		axis.oldStacks = {};
-		
+		axis.stacksTouched = 0;
+
 		// Min and max in the data
 		//axis.dataMin = UNDEFINED,
 		//axis.dataMax = UNDEFINED,
@@ -7686,8 +7687,17 @@ Axis.prototype = {
 			if (!axis.isXAxis) {
 				for (type in stacks) {
 					for (i in stacks[type]) {
-						stacks[type][i].total = null;
-						stacks[type][i].cum = 0;
+
+						// Clean up memory after point deletion (#1044, #4320)
+						if (stacks[type][i].touched < axis.stacksTouched) {
+							stacks[type][i].destroy();
+							delete stacks[type][i];
+
+						// Reset stacks
+						} else {
+							stacks[type][i].total = null;
+							stacks[type][i].cum = 0;
+						}
 					}
 				}
 			}
@@ -15040,6 +15050,9 @@ Series.prototype.setStackedPoints = function () {
 		x,
 		y;
 
+
+	yAxis.stacksTouched += 1;
+
 	// loop over the non-null y values and read them into a local array
 	for (i = 0; i < yDataLength; i++) {
 		x = xData[i];
@@ -15070,7 +15083,7 @@ Series.prototype.setStackedPoints = function () {
 		stack = stacks[key][x];
 		//stack.points[pointKey] = [stack.cum || stackThreshold];
 		stack.points[pointKey] = [pick(stack.cum, stackThreshold)];
-
+		stack.touched = yAxis.stacksTouched;
 		
 
 		// Add value to the stack total
