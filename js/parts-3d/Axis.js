@@ -128,9 +128,9 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed)
 	return path;
 });
 
-Highcharts.wrap(Highcharts.Axis.prototype, 'getLinePath', function () {
-	// do not draw axislines in 3D ?
-	return [];
+// Do not draw axislines in 3D
+Highcharts.wrap(Highcharts.Axis.prototype, 'getLinePath', function (proceed) {
+	return this.chart.is3d() ? [] : proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotBandPath', function (proceed) {
