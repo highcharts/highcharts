@@ -1,6 +1,22 @@
 /**
  * Mixin for maps and heatmaps
  */
+var colorPointMixin = {
+	/**
+	 * Set the visibility of a single point
+	 */
+	setVisible: function (vis) {
+		var point = this,
+			method = vis ? 'show' : 'hide';
+
+		// Show and hide associated elements
+		each(['graphic', 'dataLabel'], function (key) {
+			if (point[key]) {
+				point[key][method]();
+			}
+		});
+	}
+};
 var colorSeriesMixin = {
 
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options

@@ -6,6 +6,7 @@ var UNDEFINED,
 	Legend = Highcharts.Legend,
 	LegendSymbolMixin = Highcharts.LegendSymbolMixin,
 	Series = Highcharts.Series,
+	Point = Highcharts.Point,
 	
 	defaultOptions = Highcharts.getOptions(),
 	each = Highcharts.each,

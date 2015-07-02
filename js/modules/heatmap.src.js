@@ -17,6 +17,7 @@ var UNDEFINED,
 	Legend = Highcharts.Legend,
 	LegendSymbolMixin = Highcharts.LegendSymbolMixin,
 	Series = Highcharts.Series,
+	Point = Highcharts.Point,
 	
 	defaultOptions = Highcharts.getOptions(),
 	each = Highcharts.each,
@@ -531,6 +532,22 @@ wrap(Legend.prototype, 'getAllItems', function (proceed) {
 });/**
  * Mixin for maps and heatmaps
  */
+var colorPointMixin = {
+	/**
+	 * Set the visibility of a single point
+	 */
+	setVisible: function (vis) {
+		var point = this,
+			method = vis ? 'show' : 'hide';
+
+		// Show and hide associated elements
+		each(['graphic', 'dataLabel'], function (key) {
+			if (point[key]) {
+				point[key][method]();
+			}
+		});
+	}
+};
 var colorSeriesMixin = {
 
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
@@ -606,6 +623,7 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
+	pointClass: extendClass(Point, colorPointMixin),
 	supportsDrilldown: true,
 	getExtremesFromAll: true,
 	directTouch: true,
