@@ -2131,7 +2131,8 @@ Axis.prototype.beforePadding = function () {
 		}
 	});
 	
-	if (activeSeries.length && range > 0 && pick(this.options.min, this.userMin) === UNDEFINED && pick(this.options.max, this.userMax) === UNDEFINED) {
+	if (activeSeries.length && range > 0 && pick(this.options.min, this.userMin) === UNDEFINED && 
+			pick(this.options.max, this.userMax) === UNDEFINED && !this.isLog) {
 		pxMax -= axisLength;
 		transA *= (axisLength + pxMin - pxMax) / axisLength;
 		this.min += pxMin / transA;
