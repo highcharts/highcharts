@@ -50,7 +50,7 @@ $(function () {
 
     // Get the data. The contents of the data file can be viewed at 
     // https://github.com/highslide-software/highcharts.com/blob/master/samples/data/activity.json
-    $.getJSON('http://www.highcharts.local/samples/data/jsonp.php?filename=activity.json&callback=?', function (activity) {
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=activity.json&callback=?', function (activity) {
         $.each(activity.datasets, function (i, dataset) {
 
             // Add X values
@@ -62,7 +62,9 @@ $(function () {
                 .appendTo('#container')
                 .highcharts({
                     chart: {
-                        marginLeft: 40 // Keep all charts left aligned
+                        marginLeft: 40, // Keep all charts left aligned
+                        spacingTop: 20,
+                        spacingBottom: 20
                         // zoomType: 'x',
                         // pinchType: null // Disable zoom on touch devices
                     },
@@ -70,7 +72,7 @@ $(function () {
                         text: dataset.name,
                         align: 'left',
                         margin: 0,
-                        x: 40
+                        x: 30
                     },
                     credits: {
                         enabled: false
