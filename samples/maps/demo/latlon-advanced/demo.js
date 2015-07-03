@@ -36,10 +36,6 @@ $(function () {
                 }]
             },
 
-            mapNavigation: {
-                enabled: true
-            },
-
             series: [{
                 name: 'Basemap',
                 mapData: map,
@@ -51,7 +47,8 @@ $(function () {
                 type: 'mapline',
                 data: H.geojson(map, 'mapline'),
                 color: '#101010',
-                enableMouseTracking: false
+                enableMouseTracking: false,
+                showInLegend: false
             }, {
                 type: 'mapbubble',
                 dataLabels: {
