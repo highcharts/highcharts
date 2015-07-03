@@ -574,7 +574,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 wrap(Series.prototype, 'render', function (proceed) {
 	// Only do this on stock charts (#2939), and only if the series type handles clipping
 	// in the animate method (#2975).
-	if (this.chart.options._stock) {
+	if (this.chart.options._stock && this.xAxis) {
 
 		// First render, initial clip box
 		if (!this.clipBox && this.animate) {
