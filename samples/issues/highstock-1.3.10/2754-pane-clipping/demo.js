@@ -1,15 +1,15 @@
-$(function() {
+$(function () {
     $('#container').highcharts('StockChart', {
-        
+
         rangeSelector: {
             inputEnabled: true,
             selected: 1
         },
-        
+
         title: {
             text: 'AAPL Historical'
         },
-        
+
         yAxis: [{
             title: {
                 text: 'OHLC'
@@ -29,14 +29,14 @@ $(function() {
             min: 0,
             max: 100
         }],
-        
-        navigator: {            
+
+        navigator: {
             yAxis: {
                 min: 0,
                 max: 100
             }
         },
-        
+
         series: [{
             type: 'area',
             name: 'AAPL',

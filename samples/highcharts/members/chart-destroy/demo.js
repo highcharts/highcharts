@@ -13,7 +13,7 @@ $(function () {
     });
 
     // the button handler
-    $('#button').click(function() {
+    $('#button').click(function () {
         $('#container').highcharts().destroy();
         $(this).attr('disabled', true);
     });

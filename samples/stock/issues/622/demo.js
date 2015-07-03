@@ -1,11 +1,11 @@
-$(function() {
-    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv.json&callback=?', function(data) {
+$(function () {
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv.json&callback=?', function (data) {
 
         // split the data set into ohlc and volume
         var ohlc = [],
             volume = [],
             dataLength = data.length;
-            
+
         for (i = 0; i < dataLength; i++) {
             ohlc.push([
                 data[i][0], // the date
@@ -14,7 +14,7 @@ $(function() {
                 data[i][3], // low
                 data[i][4] // close
             ]);
-            
+
             volume.push([
                 data[i][0], // the date
                 data[i][5] // the volume
@@ -50,7 +50,7 @@ $(function() {
                 },
                 lineWidth: 2
             }],
-            
+
             series: [{
                 type: 'candlestick',
                 name: 'AAPL',

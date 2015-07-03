@@ -1,7 +1,7 @@
 
 $(function () {
     /**
-     * Create a constructor for sparklines that takes some sensible defaults and merges in the individual 
+     * Create a constructor for sparklines that takes some sensible defaults and merges in the individual
      * chart options. This function is also available from the jQuery plugin as $(element).highcharts('SparkLine').
      */
     Highcharts.SparkLine = function (options, callback) {
@@ -104,14 +104,19 @@ $(function () {
     function doChunk() {
         var time = +new Date(),
             i,
-            len = $tds.length;
+            len = $tds.length,
+            $td,
+            stringdata,
+            arr,
+            data,
+            chart;
 
-        for (i = 0; i < len; i++) {
-            var $td = $($tds[i]),
-                stringdata = $td.data('sparkline'),
-                arr = stringdata.split('; '),
-                data = $.map(arr[0].split(', '), parseFloat),
-                chart = {};
+        for (i = 0; i < len; i += 1) {
+            $td = $($tds[i]);
+            stringdata = $td.data('sparkline');
+            arr = stringdata.split('; ');
+            data = $.map(arr[0].split(', '), parseFloat);
+            chart = {};
 
             if (arr[1]) {
                 chart.type = arr[1];
@@ -128,8 +133,8 @@ $(function () {
                 chart: chart
             });
 
-            n++;
-            
+            n += 1;
+
             // If the process takes too much time, run a timeout to allow interaction with the browser
             if (new Date() - time > 500) {
                 $tds.splice(0, i + 1);
@@ -144,5 +149,5 @@ $(function () {
         }
     }
     doChunk();
-    
+
 });

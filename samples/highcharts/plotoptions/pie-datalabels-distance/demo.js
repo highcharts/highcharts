@@ -3,16 +3,15 @@ $(function () {
         chart: {
             type: 'pie'
         },
-        
+
         plotOptions: {
             pie: {
                 dataLabels: {
-                    distance: -30,
-                    color: 'white'
+                    distance: -30
                 }
             }
         },
-        
+
         series: [{
             data: [
                 ['Firefox',   44.2],

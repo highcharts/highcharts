@@ -10,7 +10,7 @@ $(function () {
                     enabled: true,
                     distance: 40
                 },
-          
+
                 center: ['50%', '50%'],
                 size: '75%'
             }
@@ -32,4 +32,4 @@ $(function () {
         }]
     });
 });
-    
+

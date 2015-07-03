@@ -1,6 +1,6 @@
 $(function () {
     $('#container').highcharts({
-    
+
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
@@ -18,9 +18,26 @@ $(function () {
 
 
     // The button action
-    $('#button').click(function() {
+    $('#button').click(function () {
         var chart = $('#container').highcharts(),
-            series = chart.get('series-1');
-        alert ('The first series\' name is '+ series.name);
+            series = chart.get('series-1'),
+            text = 'The first series\' name is ' + series.name;
+        if (!chart.lbl) {
+            chart.lbl = chart.renderer.label(text, 100, 70)
+                .attr({
+                    padding: 10,
+                    r: 5,
+                    fill: Highcharts.getOptions().colors[1],
+                    zIndex: 5
+                })
+                .css({
+                    color: '#FFFFFF'
+                })
+                .add();
+        } else {
+            chart.lbl.attr({
+                text: text
+            });
+        }
     });
 });

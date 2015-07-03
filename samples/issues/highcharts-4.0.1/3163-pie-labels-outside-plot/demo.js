@@ -5,7 +5,7 @@ $(function () {
             "type": "pie",
             plotBackgroundColor: '#EFEFFF',
             width: 600,
-            height: 243 
+            height: 243
         },
         credits: {
             enabled: false

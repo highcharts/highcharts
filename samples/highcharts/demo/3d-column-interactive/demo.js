@@ -28,23 +28,23 @@ $(function () {
             data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
         }]
     });
-    
-
-    // Activate the sliders
-    $('#R0').on('change', function(){
-        chart.options.chart.options3d.alpha = this.value;
-        showValues();
-        chart.redraw(false);
-    });
-    $('#R1').on('change', function(){
-        chart.options.chart.options3d.beta = this.value;
-        showValues();
-        chart.redraw(false);
-    });
 
     function showValues() {
         $('#R0-value').html(chart.options.chart.options3d.alpha);
         $('#R1-value').html(chart.options.chart.options3d.beta);
     }
+
+    // Activate the sliders
+    $('#R0').on('change', function () {
+        chart.options.chart.options3d.alpha = this.value;
+        showValues();
+        chart.redraw(false);
+    });
+    $('#R1').on('change', function () {
+        chart.options.chart.options3d.beta = this.value;
+        showValues();
+        chart.redraw(false);
+    });
+
     showValues();
 });

@@ -78,7 +78,8 @@ StackItem.prototype = {
 			axis = stackItem.axis,
 			chart = axis.chart,
 			inverted = chart.inverted,
-			neg = this.isNegative,							// special treatment is needed for negative stacks
+			reversed = axis.reversed,
+			neg = (this.isNegative && !reversed) || (!this.isNegative && reversed), // #4056
 			y = axis.translate(axis.usePercentage ? 100 : this.total, 0, 0, 0, 1), // stack value translated mapped to chart coordinates
 			yZero = axis.translate(0),						// stack origin
 			h = mathAbs(y - yZero),							// stack height
@@ -101,6 +102,26 @@ StackItem.prototype = {
 			label[this.options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) ? 'show' : 'hide'](true);
 		}
 	}
+};
+
+/**
+ * Generate stacks for each series and calculate stacks total values
+ */
+Chart.prototype.getStacks = function () {
+	var chart = this;
+
+	// reset stacks for each yAxis
+	each(chart.yAxis, function (axis) {
+		if (axis.stacks && axis.hasVisibleSeries) {
+			axis.oldStacks = axis.stacks;
+		}
+	});
+
+	each(chart.series, function (series) {
+		if (series.options.stacking && (series.visible === true || chart.options.chart.ignoreHiddenSeries === false)) {
+			series.stackKey = series.type + pick(series.options.stack, '');
+		}
+	});
 };
 
 
@@ -161,6 +182,49 @@ Axis.prototype.renderStackTotals = function () {
 	}
 };
 
+/**
+ * Set all the stacks to initial states and destroy unused ones.
+ */
+Axis.prototype.resetStacks = function () {
+	var stacks = this.stacks,
+		type,
+		i;
+	if (!this.isXAxis) {
+		for (type in stacks) {
+			for (i in stacks[type]) {
+
+				// Clean up memory after point deletion (#1044, #4320)
+				if (stacks[type][i].touched < this.stacksTouched) {
+					stacks[type][i].destroy();
+					delete stacks[type][i];
+
+				// Reset stacks
+				} else {
+					stacks[type][i].total = null;
+					stacks[type][i].cum = 0;
+				}
+			}
+		}
+	}
+};
+
+Axis.prototype.cleanStacks = function () {
+	var stacks, type, i;
+
+	if (!this.isXAxis) {
+		if (this.oldStacks) {
+			stacks = this.stacks = this.oldStacks;
+		}
+
+		// reset stacks
+		for (type in stacks) {
+			for (i in stacks[type]) {
+				stacks[type][i].cum = stacks[type][i].total;
+			}
+		}
+	}
+};
+
 
 // Stacking methods defnied for Series prototype
 
@@ -179,6 +243,7 @@ Series.prototype.setStackedPoints = function () {
 		yDataLength = yData.length,
 		seriesOptions = series.options,
 		threshold = seriesOptions.threshold,
+		stackThreshold = seriesOptions.startFromThreshold ? threshold : 0,
 		stackOption = seriesOptions.stack,
 		stacking = seriesOptions.stacking,
 		stackKey = series.stackKey,
@@ -196,6 +261,9 @@ Series.prototype.setStackedPoints = function () {
 		x,
 		y;
 
+
+	yAxis.stacksTouched += 1;
+
 	// loop over the non-null y values and read them into a local array
 	for (i = 0; i < yDataLength; i++) {
 		x = xData[i];
@@ -204,7 +272,7 @@ Series.prototype.setStackedPoints = function () {
 
 		// Read stacked values into a stack based on the x value,
 		// the sign of y and the stack key. Stacking is also handled for null values (#739)
-		isNegative = negStacks && y < threshold;
+		isNegative = negStacks && y < (stackThreshold ? 0 : threshold);
 		key = isNegative ? negKey : stackKey;
 
 		// Create empty object for this stack if it doesn't exist yet
@@ -224,7 +292,10 @@ Series.prototype.setStackedPoints = function () {
 
 		// If the StackItem doesn't exist, create it first
 		stack = stacks[key][x];
-		stack.points[pointKey] = [stack.cum || 0];
+		//stack.points[pointKey] = [stack.cum || stackThreshold];
+		stack.points[pointKey] = [pick(stack.cum, stackThreshold)];
+		stack.touched = yAxis.stacksTouched;
+		
 
 		// Add value to the stack total
 		if (stacking === 'percent') {
@@ -243,7 +314,7 @@ Series.prototype.setStackedPoints = function () {
 			stack.total = correctFloat(stack.total + (y || 0));
 		}
 
-		stack.cum = (stack.cum || 0) + (y || 0);
+		stack.cum = pick(stack.cum, stackThreshold) + (y || 0);
 
 		stack.points[pointKey].push(stack.cum);
 		stackedYData[i] = stack.cum;

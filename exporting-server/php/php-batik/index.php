@@ -33,7 +33,7 @@ if (get_magic_quotes_gpc()) {
 
 // check for malicious attack in SVG
 if(strpos($svg,"<!ENTITY") !== false || strpos($svg,"<!DOCTYPE") !== false){
-	exit("Execution is topped, the posted SVG could contain code for a malicious attack");
+	exit("Execution is stopped, the posted SVG could contain code for a malicious attack");
 }
 
 $tempName = md5(rand());
@@ -75,7 +75,16 @@ if (isset($typeString)) {
 			the /temp directory are set to 777.");
 	}
 	
-	// do the conversion
+	// Troubleshooting snippet
+	/*
+	$command = "/Library/Java/JavaVirtualMachines/jdk1.7.0_45.jdk/Contents/Home/bin/java -jar ". BATIK_PATH ." $typeString -d $outfile $width temp/$tempName.svg 2>&1"; 
+	$output = shell_exec($command);
+	echo "<pre>Command: $command <br>";
+	echo "Output: $output</pre>";
+	die;
+	// */
+
+	// Do the conversion
 	$output = shell_exec("java -jar ". BATIK_PATH ." $typeString -d $outfile $width temp/$tempName.svg");
 	
 	// catch error

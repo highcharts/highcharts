@@ -2,10 +2,10 @@ $(function () {
 
     var data = [1, 3, 5, 2, 4, 1, 3];
 
-        
+
     // Initiate the chart
     $('#container').highcharts('Map', {
-        
+
         title : {
             text : 'Data joined by <em>null</em>'
         },

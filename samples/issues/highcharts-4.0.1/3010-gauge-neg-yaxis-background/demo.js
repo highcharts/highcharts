@@ -1,5 +1,5 @@
 $(function () {
- 
+
     $('#container-rpm').highcharts({
 
         chart: {
@@ -9,7 +9,7 @@ $(function () {
         pane: {
             startAngle: -90,
             endAngle: 90,
-            background: {               
+            background: {
                 innerRadius: '60%',
                 outerRadius: '100%',
                 shape: 'arc',

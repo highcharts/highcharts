@@ -6,14 +6,14 @@ $(function () {
         $.each(data, function () {
             this.code = this.code.toUpperCase();
         });
-    
+
         // Instanciate the map
         $('#container').highcharts('Map', {
-            
+
             chart : {
                 borderWidth : 1
             },
-            
+
             title : {
                 text : 'US population density (/km²)'
             },
@@ -42,7 +42,7 @@ $(function () {
                     [1, '#000022']
                 ]
             },
-            
+
             series : [{
                 animation: {
                     duration: 1000

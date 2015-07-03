@@ -1,4 +1,7 @@
 
+// The vector-effect attribute is not supported in IE <= 11 (at least), so we need 
+// diffent logic (#3218)
+var supportsVectorEffect = document.documentElement.style.vectorEffect !== undefined;
 
 /**
  * Extend the default options with map options
@@ -16,15 +19,11 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 		formatter: function () { // #2945
 			return this.point.value;
 		},
+		inside: true, // for the color
 		verticalAlign: 'middle',
 		crop: false,
 		overflow: false,
-		padding: 0,
-		style: {
-			color: 'white',
-			fontWeight: 'bold',
-			HcTextStroke: '3px rgba(0,0,0,0.5)'
-		}
+		padding: 0
 	},
 	turboThreshold: 0,
 	tooltip: {
@@ -45,7 +44,7 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 /**
  * The MapAreaPoint object
  */
-var MapAreaPoint = extendClass(Point, {
+var MapAreaPoint = extendClass(Point, colorPointMixin, {
 	/**
 	 * Extend the Point object to split paths
 	 */
@@ -74,27 +73,14 @@ var MapAreaPoint = extendClass(Point, {
 	},
 
 	/**
-	 * Set the visibility of a single map area
-	 */
-	setVisible: function (vis) {
-		var point = this,
-			method = vis ? 'show' : 'hide';
-
-		// Show and hide associated elements
-		each(['graphic', 'dataLabel'], function (key) {
-			if (point[key]) {
-				point[key][method]();
-			}
-		});
-	},
-
-	/**
 	 * Stop the fade-out 
 	 */
 	onMouseOver: function (e) {
 		clearTimeout(this.colorInterval);
 		if (this.value !== null) {
 			Point.prototype.onMouseOver.call(this, e);
+		} else { //#3401 Tooltip doesn't hide when hovering over null points
+			this.series.onMouseOut(e);
 		}
 	},
 	/**
@@ -169,6 +155,8 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	getExtremesFromAll: true,
 	useMapGeometry: true, // get axis extremes from paths, not values
 	forceDL: true,
+	searchPoint: noop,
+	preserveAspectRatio: true, // X axis and Y axis must have same translation slope
 	/**
 	 * Get the bounding box of all paths in the map combined.
 	 */
@@ -320,6 +308,8 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			joinByNull = joinBy === null,
 			dataUsed = [],
 			mapPoint,
+			transform,
+			mapTransforms,
 			props,
 			i;
 
@@ -348,6 +338,16 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		this.getBox(data);
 		if (mapData) {
 			if (mapData.type === 'FeatureCollection') {
+				if (mapData['hc-transform']) {
+					this.chart.mapTransforms = mapTransforms = mapData['hc-transform'];
+					// Cache cos/sin of transform rotation angle
+					for (transform in mapTransforms) {
+						if (mapTransforms.hasOwnProperty(transform) && transform.rotation) {							
+							transform.cosAngle = Math.cos(transform.rotation);
+							transform.sinAngle = Math.sin(transform.rotation);							
+						}
+					}
+				}
 				mapData = Highcharts.geojson(mapData, this.type, this);
 			}
 
@@ -408,7 +408,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * in capable browsers.
 	 */
 	doFullTranslate: function () {
-		return this.isDirtyData || this.chart.renderer.isVML || !this.baseTrans;
+		return this.isDirtyData || this.chart.isResizing || this.chart.renderer.isVML || !this.baseTrans;
 	},
 	
 	/**
@@ -433,10 +433,11 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		
 				point.shapeType = 'path';
 				point.shapeArgs = {
-					//d: display ? series.translatePath(point.path) : ''
-					d: series.translatePath(point.path),
-					'vector-effect': 'non-scaling-stroke'
+					d: series.translatePath(point.path)
 				};
+				if (supportsVectorEffect) {
+					point.shapeArgs['vector-effect'] = 'non-scaling-stroke';
+				}
 			}
 		});
 		
@@ -469,20 +470,21 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					scaleY: 1
 				})
 				.add(group);
+			series.transformGroup.survive = true;
 		}
 		
 		// Draw the shapes again
 		if (series.doFullTranslate()) {
 
-			// Individual point actions	
-			if (chart.hasRendered && series.pointAttrToOptions.fill === 'color') {
+			// If vector-effect is not supported, we set the stroke-width on the group element
+			// and let all point graphics inherit. That way we don't have to iterate over all 
+			// points to update the stroke-width on zooming.
+			if (!supportsVectorEffect) {
 				each(series.points, function (point) {
-
-					// Reset color on update/redraw
-					if (point.graphic) {
-						point.graphic.attr('fill', point.color);
+					var attr = point.pointAttr[''];
+					if (attr['stroke-width'] === series.pointAttr['']['stroke-width']) {
+						attr['stroke-width'] = 'inherit';
 					}
-
 				});
 			}
 
@@ -500,6 +502,15 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					if (point.properties && point.properties['hc-key']) {
 						point.graphic.addClass('highcharts-key-' + point.properties['hc-key'].toLowerCase());
 					}
+
+					if (!supportsVectorEffect) {
+						point.graphic['stroke-widthSetter'] = noop;
+					}
+
+					// Reset color on update/redraw
+					if (chart.hasRendered && point.graphic.attr('fill') !== point.color) {
+						point.graphic.animate({ fill: point.color });
+					}
 				}
 			});
 
@@ -512,28 +523,28 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				transAY: yAxis.transA
 			};
 
-			// Reset transformations
-			this.transformGroup.attr({
-				scaleX: 1,
-				scaleY: 1,
+			// Reset transformation in case we're doing a full translate (#3789)
+			this.transformGroup.animate({
 				translateX: 0,
-				translateY: 0
+				translateY: 0,
+				scaleX: 1,
+				scaleY: 1
 			});
 
 		// Just update the scale and transform for better performance
 		} else {
 			scaleX = xAxis.transA / baseTrans.transAX;
 			scaleY = yAxis.transA / baseTrans.transAY;
-			if (scaleX > 0.99 && scaleX < 1.01 && scaleY > 0.99 && scaleY < 1.01) { // rounding errors
-				translateX = 0;
-				translateY = 0;
+			translateX = xAxis.toPixels(baseTrans.originX, true);
+			translateY = yAxis.toPixels(baseTrans.originY, true);
+
+			// Handle rounding errors in normal view (#3789)
+			if (scaleX > 0.99 && scaleX < 1.01 && scaleY > 0.99 && scaleY < 1.01) {
 				scaleX = 1;
 				scaleY = 1;
-
-			} else {	
-				translateX = xAxis.toPixels(baseTrans.originX, true);
-				translateY = yAxis.toPixels(baseTrans.originY, true);
-			} 
+				translateX = Math.round(translateX);
+				translateY = Math.round(translateY);
+			}
 
 			this.transformGroup.animate({
 				translateX: translateX,
@@ -542,6 +553,13 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				scaleY: scaleY
 			});
 
+		}
+
+		// Set the stroke-width directly on the group element so the children inherit it. We need to use 
+		// setAttribute directly, because the stroke-widthSetter method expects a stroke color also to be 
+		// set.
+		if (!supportsVectorEffect) {
+			series.group.element.setAttribute('stroke-width', series.options.borderWidth / (scaleX || 1));
 		}
 
 		this.drawMapDataLabels();
@@ -559,63 +577,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		if (this.dataLabelsGroup) {
 			this.dataLabelsGroup.clip(this.chart.clipRect);
 		}
-
-		this.hideOverlappingDataLabels();
-	},
-
-	/**
-	 * Hide overlapping labels. Labels are moved and faded in and out on zoom to provide a smooth 
-	 * visual imression.
-	 */		
-	hideOverlappingDataLabels: function () {
-
-		var points = this.points,
-			len = points.length,
-			i,
-			j,
-			label1,
-			label2,
-			intersectRect = function (pos1, pos2, size1, size2) {
-				return !(
-					pos2.x > pos1.x + size1.width ||
-					pos2.x + size2.width < pos1.x ||
-					pos2.y > pos1.y + size1.height ||
-					pos2.y + size2.height < pos1.y
-				);
-			};
-
-		// Mark with initial opacity
-		each(points, function (point, label) {
-			label = point.dataLabel;
-			if (label) {
-				label.oldOpacity = label.opacity;
-				label.newOpacity = 1;
-			}
-		});
-
-		// Detect overlapping labels
-		for (i = 0; i < len - 1; ++i) {
-			label1 = points[i].dataLabel;
-
-			for (j = i + 1; j < len; ++j) {
-				label2 = points[j].dataLabel;
-				if (label1 && label2 && label1.newOpacity !== 0 && label2.newOpacity !== 0 && 
-						intersectRect(label1.alignAttr, label2.alignAttr, label1, label2)) {
-					(points[i].labelrank < points[j].labelrank ? label1 : label2).newOpacity = 0;
-				}
-			}
-		}
-
-		// Hide or show
-		each(points, function (point, label) {
-			label = point.dataLabel;
-			if (label) {
-				if (label.oldOpacity !== label.newOpacity) {
-					label[label.isOld ? 'animate' : 'attr'](extend({ opacity: label.newOpacity }, label.alignAttr));
-				}
-				label.isOld = true;
-			}
-		});
 	},
 
 	/**
@@ -705,16 +666,16 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			
 			// TODO: Animate this.group instead
 			each(this.points, function (point) {
-
-				point.graphic
-					.attr(level.shapeArgs)
-					.animate({
-						scaleX: 1,
-						scaleY: 1,
-						translateX: 0,
-						translateY: 0
-					}, animationOptions);
-
+				if (point.graphic) {
+					point.graphic
+						.attr(level.shapeArgs)
+						.animate({
+							scaleX: 1,
+							scaleY: 1,
+							translateX: 0,
+							translateY: 0
+						}, animationOptions);
+				}
 			});
 
 			this.animate = null;

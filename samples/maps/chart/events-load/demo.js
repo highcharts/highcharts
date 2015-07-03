@@ -1,13 +1,13 @@
 $(function () {
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
-        
+
         // Initiate the chart
         $('#container').highcharts('Map', {
 
             chart: {
                 events: {
-                    load: function (e) {
+                    load: function () {
                         this.addSeries({
                             type: 'mappoint',
                             data: [{
@@ -16,11 +16,11 @@ $(function () {
                                 name: 'Point added on chart load'
                             }],
                             name: 'Series added on chart load'
-                        })
+                        });
                     }
                 }
             },
-            
+
             title : {
                 text : 'Add series on chart load'
             },

@@ -4,6 +4,34 @@
 ////// HELPER METHODS //////
 var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
 
+function defined(obj) {
+	return obj !== undefined && obj !== null;
+}
+
+//Shoelace algorithm -- http://en.wikipedia.org/wiki/Shoelace_formula
+function shapeArea(vertexes) {
+	var area = 0,
+		i,
+		j;
+	for (i = 0; i < vertexes.length; i++) {
+		j = (i + 1) % vertexes.length;
+		area += vertexes[i].x * vertexes[j].y - vertexes[j].x * vertexes[i].y;
+	}
+	return area / 2;
+}
+
+function averageZ(vertexes) {
+	var z = 0,
+		i;
+	for (i = 0; i < vertexes.length; i++) {
+		z += vertexes[i].z;
+	}
+	return vertexes.length ? z / vertexes.length : 0;
+}
+
+/** Method to construct a curved path
+  * Can 'wrap' around more then 180 degrees
+  */
 function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
 	var result = [];
 	if ((end > start) && (end - start > PI / 2 + 0.0001)) {
@@ -37,12 +65,14 @@ Highcharts.SVGRenderer.prototype.toLinePath = function (points, closed) {
 		result.push('L', point.x, point.y);
 	});
 
-	// Set the first element to M
-	result[0] = 'M';
+	if (points.length) {
+		// Set the first element to M
+		result[0] = 'M';
 
-	// If it is a closed line, add Z
-	if (closed) {
-		result.push('Z');
+		// If it is a closed line, add Z
+		if (closed) {
+			result.push('Z');
+		}
 	}
 	
 	return result;
@@ -54,10 +84,12 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	var result = this.g(),
 	paths = this.cuboidPath(shapeArgs);
 
+	// create the 3 sides
 	result.front = this.path(paths[0]).attr({zIndex: paths[3], 'stroke-linejoin': 'round'}).add(result);
 	result.top = this.path(paths[1]).attr({zIndex: paths[4], 'stroke-linejoin': 'round'}).add(result);
 	result.side = this.path(paths[2]).attr({zIndex: paths[5], 'stroke-linejoin': 'round'}).add(result);
 
+	// apply the fill everywhere, the top a bit brighter, the side a bit darker
 	result.fillSetter = function (color) {
 		var c0 = color,
 		c1 = Highcharts.Color(color).brighten(0.1).get(),
@@ -71,6 +103,7 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 		return this;
 	};
 
+	// apply opacaity everywhere
 	result.opacitySetter = function (opacity) {
 		this.front.attr({opacity: opacity});
 		this.top.attr({opacity: opacity});
@@ -79,7 +112,7 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	};
 
 	result.attr = function (args) {
-		if (args.shapeArgs || args.x) {
+		if (args.shapeArgs || defined(args.x)) {
 			var shapeArgs = args.shapeArgs || args;
 			var paths = this.renderer.cuboidPath(shapeArgs);
 			this.front.attr({d: paths[0], zIndex: paths[3]});
@@ -93,7 +126,7 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	};
 	
 	result.animate = function (args, duration, complete) {
-		if (args.x && args.y) {
+		if (defined(args.x) && defined(args.y)) {
 			var paths = this.renderer.cuboidPath(args);
 			this.front.attr({zIndex: paths[3]}).animate({d: paths[0]}, duration, complete);
 			this.top.attr({zIndex: paths[4]}).animate({d: paths[1]}, duration, complete);
@@ -108,6 +141,7 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 		return this;
 	};
 
+	// destroy all children
 	result.destroy = function () {
 		this.front.destroy();
 		this.top.destroy();
@@ -122,18 +156,20 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	return result;
 };
 
-
+/**
+ *	Generates a cuboid
+ */
 Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	var x = shapeArgs.x,
 		y = shapeArgs.y,
 		z = shapeArgs.z,
 		h = shapeArgs.height,
 		w = shapeArgs.width,
-		d = shapeArgs.depth,
-		alpha = shapeArgs.alpha,
-		beta = shapeArgs.beta,
-		origin = shapeArgs.origin;
+		d = shapeArgs.depth,		
+		chart = Highcharts.charts[this.chartIndex],
+		map = Highcharts.map;
 
+	// The 8 corners of the cube
 	var pArr = [
 		{x: x, y: y, z: z},
 		{x: x + w, y: y, z: z},
@@ -145,71 +181,38 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 		{x: x, y: y, z: z + d}
 	];
 
-	pArr = perspective(pArr, alpha, beta, origin);
+	// apply perspective
+	pArr = perspective(pArr, chart, shapeArgs.insidePlotArea);
 
-	var path1, // FRONT
-		path2, // TOP OR BOTTOM
-		path3; // LEFT OR RIGHT
+	// helper method to decide which side is visible
+	var pickShape = function (path1, path2) {
+		path1 = map(path1, function (i) { return pArr[i]; });
+		path2 = map(path2, function (i) { return pArr[i]; });
+		if (shapeArea(path1) < 0) {
+			return path1;
+		} else if (shapeArea(path2) < 0) {
+			return path2;
+		} else {
+			return [];
+		}
+	};
 
-	// front	
-	path1 = [
-	'M', pArr[0].x, pArr[0].y,
-	'L', pArr[1].x, pArr[1].y,
-	'L', pArr[2].x, pArr[2].y,
-	'L', pArr[3].x, pArr[3].y,
-	'Z'
-	];
-	var z1 = (pArr[0].z + pArr[1].z + pArr[2].z + pArr[3].z) / 4;
+	// front or back
+	var front = [3, 2, 1, 0];
+	var back = [7, 6, 5, 4];
+	var path1 = pickShape(front, back);
 
 	// top or bottom
-	var top = [
-	'M', pArr[0].x, pArr[0].y,
-	'L', pArr[7].x, pArr[7].y,
-	'L', pArr[6].x, pArr[6].y,
-	'L', pArr[1].x, pArr[1].y,
-	'Z'
-	];
-	var bottom = [
-	'M', pArr[3].x, pArr[3].y,
-	'L', pArr[2].x, pArr[2].y,
-	'L', pArr[5].x, pArr[5].y,
-	'L', pArr[4].x, pArr[4].y,
-	'Z'
-	];
-	if (pArr[7].y < pArr[1].y) {
-		path2 = top;
-	} else if (pArr[4].y > pArr[2].y) {
-		path2 = bottom;
-	} else {
-		path2 = [];
-	}
-	var z2 = (beta > 0 ? (pArr[0].z + pArr[7].z + pArr[6].z + pArr[1].z) / 4 : (pArr[3].z + pArr[2].z + pArr[5].z + pArr[4].z) / 4);
+	var top = [1, 6, 7, 0];
+	var bottom = [4, 5, 2, 3];
+	var path2 = pickShape(top, bottom);
 
 	// side
-	var right = [
-	'M', pArr[1].x, pArr[1].y,
-	'L', pArr[2].x, pArr[2].y,
-	'L', pArr[5].x, pArr[5].y,
-	'L', pArr[6].x, pArr[6].y,
-	'Z'
-	];
-	var left = [
-	'M', pArr[0].x, pArr[0].y,
-	'L', pArr[7].x, pArr[7].y,
-	'L', pArr[4].x, pArr[4].y,
-	'L', pArr[3].x, pArr[3].y,
-	'Z'
-	];	
-	if (pArr[6].x > pArr[1].x) {
-		path3 = right;
-	} else if (pArr[7].x < pArr[0].x) {
-		path3 = left;
-	} else {
-		path3 = [];
-	}
-	var z3 = (alpha > 0 ? (pArr[1].z + pArr[2].z + pArr[5].z + pArr[6].z) / 4 : (pArr[0].z + pArr[7].z + pArr[4].z + pArr[3].z) / 4);
+	var right = [1, 2, 5, 6];
+	var left = [0, 7, 4, 3];
+	var path3 = pickShape(right, left);
 
-	return [path1, path2, path3, z1, z2, z3];
+	return [this.toLinePath(path1, true), this.toLinePath(path2, true), this.toLinePath(path3, true), averageZ(path1), averageZ(path2), averageZ(path3)];
 };
 
 ////// SECTORS //////
@@ -225,12 +228,14 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 
 	result.shapeArgs = shapeArgs;	// Store for later use
 
-	result.top = renderer.path(paths.top).attr({zIndex: paths.zTop}).add(result);
-	result.side1 = renderer.path(paths.side2).attr({zIndex: paths.zSide2});
-	result.side2 = renderer.path(paths.side1).attr({zIndex: paths.zSide1});
+	// create the different sub sections of the shape
+	result.top = renderer.path(paths.top).setRadialReference(shapeArgs.center).attr({zIndex: paths.zTop}).add(result);
+	result.side1 = renderer.path(paths.side2).attr({zIndex: paths.zSide1});
+	result.side2 = renderer.path(paths.side1).attr({zIndex: paths.zSide2});
 	result.inn = renderer.path(paths.inn).attr({zIndex: paths.zInn});
 	result.out = renderer.path(paths.out).attr({zIndex: paths.zOut});
 
+	// apply the fill to the top and a darker shade to the sides
 	result.fillSetter = function (color) {
 		this.color = color;
 
@@ -245,6 +250,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		return this;
 	};
 	
+	// apply the translation to all
 	result.translateXSetter = function (value) {
 		this.out.attr({translateX: value});
 		this.inn.attr({translateX: value});
@@ -262,7 +268,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 	};
 
 	result.animate = function (args, duration, complete) {
-		if (args.end || args.start) {
+		if (defined(args.end) || defined(args.start)) {
 			this._shapeArgs = this.shapeArgs;
 
 			Highcharts.SVGElement.prototype.animate.call(this, {
@@ -277,6 +283,10 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 						end = fx.end,
 						pos = fx.pos,
 						sA = Highcharts.merge(start, {
+							x: start.x + ((end.x - start.x) * pos),
+							y: start.y + ((end.y - start.y) * pos),
+							r: start.r + ((end.r - start.r) * pos),
+							innerR: start.innerR + ((end.innerR - start.innerR) * pos),
 							start: start.start + ((end.start - start.start) * pos),
 							end: start.end + ((end.end - start.end) * pos)
 						});
@@ -299,6 +309,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		return this;
 	};
 
+	// destroy all children
 	result.destroy = function () {
 		this.top.destroy();
 		this.out.destroy();
@@ -308,6 +319,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 
 		Highcharts.SVGElement.prototype.destroy.call(this);
 	};
+	// hide all children
 	result.hide = function () {
 		this.top.hide();
 		this.out.hide();
@@ -321,36 +333,38 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		this.inn.show();
 		this.side1.show();
 		this.side2.show();
-	};
-	
+	};	
+	// show all children
 	result.zIndex = zIndex;
 	result.attr({zIndex: zIndex});
 	return result;
 };
 
-
+/**
+ * Generate the paths required to draw a 3D arc
+ */
 Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
-	var cx = shapeArgs.x,
-		cy = shapeArgs.y,
-		start = shapeArgs.start,
-		end = shapeArgs.end - 0.00001,
-		r = shapeArgs.r,
-		ir = shapeArgs.innerR,
-		d = shapeArgs.depth,
-		alpha = shapeArgs.alpha,
-		beta = shapeArgs.beta;
+	var cx = shapeArgs.x, // x coordinate of the center
+		cy = shapeArgs.y, // y coordinate of the center
+		start = shapeArgs.start, // start angle
+		end = shapeArgs.end - 0.00001, // end angle
+		r = shapeArgs.r, // radius
+		ir = shapeArgs.innerR, // inner radius
+		d = shapeArgs.depth, // depth
+		alpha = shapeArgs.alpha, // alpha rotation of the chart
+		beta = shapeArgs.beta; // beta rotation of the chart
 
-	// Some Variables
-	var cs = cos(start),
-		ss = sin(start),
-		ce = cos(end),
-		se = sin(end),
-		rx = r * cos(beta),
-		ry = r * cos(alpha),
-		irx = ir * cos(beta),
-		iry = ir * cos(alpha),
-		dx = d * sin(beta),
-		dy = d * sin(alpha);
+	// Derived Variables
+	var cs = cos(start),		// cosinus of the start angle
+		ss = sin(start),		// sinus of the start angle
+		ce = cos(end),			// cosinus of the end angle
+		se = sin(end),			// sinus of the end angle
+		rx = r * cos(beta),		// x-radius 
+		ry = r * cos(alpha),	// y-radius
+		irx = ir * cos(beta),	// x-radius (inner)
+		iry = ir * cos(alpha),	// y-radius (inner)
+		dx = d * sin(beta),		// distance between top and bottom in x
+		dy = d * sin(alpha);	// distance between top and bottom in y
 
 	// TOP	
 	var top = ['M', cx + (rx * cs), cy + (ry * ss)];

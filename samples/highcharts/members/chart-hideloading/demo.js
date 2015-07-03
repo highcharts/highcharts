@@ -19,7 +19,7 @@ $(function () {
 
 
 
-    $button.click(function() {
+    $button.click(function () {
         if (!isLoading) {
             chart.showLoading();
             $button.html('Hide loading');

@@ -6,7 +6,7 @@ $(function () {
         xAxis: {
             categories: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
         },
-        
+
         plotOptions: {
             series: {
                 animation: {
@@ -15,9 +15,9 @@ $(function () {
                 }
             }
         },
-        
+
         series: [{
-            data: [29.9, 71.5, 106.4, 129.2, 111]        
+            data: [29.9, 71.5, 106.4, 129.2, 111]
         }]
     });
 });

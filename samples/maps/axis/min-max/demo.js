@@ -1,14 +1,14 @@
 $(function () {
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
-        
+
         // Initiate the chart
         $('#container').highcharts('Map', {
             chart: {
                 width: 600,
                 height: 500
             },
-            
+
             title : {
                 text : 'Predefined axis min/max to define zoomed area'
             },
@@ -21,13 +21,13 @@ $(function () {
             },
 
             xAxis: {
-                min: 740,
-                max: 1180
+                min: 3330,
+                max: 6044
             },
 
             yAxis: {
-                min: -1730,
-                max: -1470
+                min: -9130,
+                max: -7440
             },
 
             colorAxis: {

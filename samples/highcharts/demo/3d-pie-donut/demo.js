@@ -3,7 +3,7 @@ $(function () {
         chart: {
             type: 'pie',
             options3d: {
-				enabled: true,
+                enabled: true,
                 alpha: 45
             }
         },
@@ -27,7 +27,7 @@ $(function () {
                 ['Mixed nuts', 1],
                 ['Oranges', 6],
                 ['Apples', 8],
-                ['Pears', 4], 
+                ['Pears', 4],
                 ['Clementines', 4],
                 ['Reddish (bag)', 1],
                 ['Grapes (bunch)', 1]

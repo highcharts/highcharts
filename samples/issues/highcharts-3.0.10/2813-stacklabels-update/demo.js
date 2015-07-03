@@ -109,7 +109,7 @@ $(function () {
             linkedTo: "BaselineGary"
         }]
     });
-    
+
     $('#update').click(function () {
         $.each($('#container').highcharts().series, function (key, value) {
             value.update({

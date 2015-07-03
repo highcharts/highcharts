@@ -1,5 +1,5 @@
 /**
- * This is a complex demo of how to set up a Highcharts chart, coupled to a 
+ * This is a complex demo of how to set up a Highcharts chart, coupled to a
  * dynamic source and extended by drawing image sprites, wind arrow paths
  * and a second grid on top of the chart. The purpose of the demo is to inpire
  * developers to go beyond the basic chart types and show how the library can
@@ -8,25 +8,25 @@
  * - Loads weather forecast from www.yr.no in form of an XML service. The XML
  *   is translated on the Higcharts website into JSONP for the sake of the demo
  *   being shown on both our website and JSFiddle.
- * - When the data arrives async, a Meteogram instance is created. We have 
+ * - When the data arrives async, a Meteogram instance is created. We have
  *   created the Meteogram prototype to provide an organized structure of the different
  *   methods and subroutines associated with the demo.
  * - The parseYrData method parses the data from www.yr.no into several parallel arrays. These
  *   arrays are used directly as the data option for temperature, precipitation
- *   and air pressure. As the temperature data gives only full degrees, we apply 
+ *   and air pressure. As the temperature data gives only full degrees, we apply
  *   some smoothing on the graph, but keep the original data in the tooltip.
- * - After this, the options structure is build, and the chart generated with the 
+ * - After this, the options structure is build, and the chart generated with the
  *   parsed data.
  * - In the callback (on chart load), we weather icons on top of the temperature series.
  *   The icons are sprites from a single PNG image, placed inside a clipped 30x30
  *   SVG <g> element. VML interprets this as HTML images inside a clipped div.
- * - Lastly, the wind arrows are built and added below the plot area, and a grid is 
+ * - Lastly, the wind arrows are built and added below the plot area, and a grid is
  *   drawn around them. The wind arrows are basically drawn north-south, then rotated
  *   as per the wind direction.
  */
 
 function Meteogram(xml, container) {
-    // Parallel arrays for the chart data, these are populated as the XML/JSON file 
+    // Parallel arrays for the chart data, these are populated as the XML/JSON file
     // is loaded
     this.symbols = [];
     this.symbolNames = [];
@@ -254,7 +254,7 @@ Meteogram.prototype.drawWeatherSymbols = function (chart) {
     var meteogram = this,
         symbolSprites = this.getSymbolSprites(30);
 
-    $.each(chart.series[0].data, function(i, point) {
+    $.each(chart.series[0].data, function (i, point) {
         var sprite,
             group;
 
@@ -346,11 +346,11 @@ Meteogram.prototype.windArrow = function (name) {
 Meteogram.prototype.drawWindArrows = function (chart) {
     var meteogram = this;
 
-    $.each(chart.series[0].data, function(i, point) {
+    $.each(chart.series[0].data, function (i, point) {
         var sprite, arrow, x, y;
-        
+
         if (meteogram.resolution > 36e5 || i % 2 === 0) {
-            
+
             // Draw the wind arrows
             x = point.plotX + chart.plotLeft + 7;
             y = 255;
@@ -378,7 +378,7 @@ Meteogram.prototype.drawWindArrows = function (chart) {
     });
 };
 
-/** 
+/**
  * Draw blocks around wind arrows, below the plot area
  */
 Meteogram.prototype.drawBlocksForWindArrows = function (chart) {
@@ -390,12 +390,12 @@ Meteogram.prototype.drawBlocksForWindArrows = function (chart) {
         isLast,
         i;
 
-    for (pos = xAxis.min, max = xAxis.max, i = 0; pos <= max + 36e5; pos += 36e5, i ++) {
-        
+    for (pos = xAxis.min, max = xAxis.max, i = 0; pos <= max + 36e5; pos += 36e5, i += 1) {
+
         // Get the X position
         isLast = pos === max + 36e5;
         x = Math.round(xAxis.toPixels(pos)) + (isLast ? 0.5 : -0.5);
-        
+
         // Draw the vertical dividers and ticks
         if (this.resolution > 36e5) {
             isLong = pos % this.resolution === 0;
@@ -416,7 +416,7 @@ Meteogram.prototype.drawBlocksForWindArrows = function (chart) {
  * Get the title based on the XML data
  */
 Meteogram.prototype.getTitle = function () {
-    return 'Meteogram for '+ this.xml.location.name +', '+ this.xml.location.country;
+    return 'Meteogram for ' + this.xml.location.name + ', ' + this.xml.location.country;
 };
 
 /**
@@ -435,12 +435,12 @@ Meteogram.prototype.getChartOptions = function () {
             width: 800,
             height: 310
         },
-        
+
         title: {
             text: this.getTitle(),
             align: 'left'
         },
-        
+
         credits: {
             text: 'Forecast from <a href="http://yr.no">yr.no</a>',
             href: this.xml.credit.link['@attributes'].url,
@@ -448,15 +448,15 @@ Meteogram.prototype.getChartOptions = function () {
                 x: -40
             }
         },
-        
+
         tooltip: {
             shared: true,
             useHTML: true,
-            formatter: function () { 
-                return meteogram.tooltipFormatter(this); 
+            formatter: function () {
+                return meteogram.tooltipFormatter(this);
             }
         },
-        
+
         xAxis: [{ // Bottom X axis
             type: 'datetime',
             tickInterval: 2 * 36e5, // two hours
@@ -487,7 +487,7 @@ Meteogram.prototype.getChartOptions = function () {
             tickLength: 20,
             gridLineWidth: 1
         }],
-        
+
         yAxis: [{ // temperature axis
             title: {
                 text: null
@@ -514,7 +514,7 @@ Meteogram.prototype.getChartOptions = function () {
                 if (pos < this.min) {
                     ret = [];
                     while (pos <= max) {
-                        ret.push(pos++);
+                        ret.push(pos += 1);
                     }
                 } // else return undefined and go auto
 
@@ -524,7 +524,7 @@ Meteogram.prototype.getChartOptions = function () {
             maxPadding: 0.3,
             tickInterval: 1,
             gridLineColor: (Highcharts.theme && Highcharts.theme.background2) || '#F0F0F0'
-            
+
         }, { // precipitation axis
             title: {
                 text: null
@@ -534,7 +534,7 @@ Meteogram.prototype.getChartOptions = function () {
             },
             gridLineWidth: 0,
             tickLength: 0
-        
+
         }, { // Air pressure
             allowDecimals: false,
             title: { // Title on top of axis
@@ -544,7 +544,7 @@ Meteogram.prototype.getChartOptions = function () {
                 rotation: 0,
                 style: {
                     fontSize: '10px',
-                    color: Highcharts.getOptions().colors[2]                         
+                    color: Highcharts.getOptions().colors[2]
                 },
                 textAlign: 'left',
                 x: 3
@@ -552,7 +552,7 @@ Meteogram.prototype.getChartOptions = function () {
             labels: {
                 style: {
                     fontSize: '8px',
-                    color: Highcharts.getOptions().colors[2] 
+                    color: Highcharts.getOptions().colors[2]
                 },
                 y: 2,
                 x: 3
@@ -561,7 +561,7 @@ Meteogram.prototype.getChartOptions = function () {
             opposite: true,
             showLastLabel: false
         }],
-        
+
         legend: {
             enabled: false
         },
@@ -571,8 +571,8 @@ Meteogram.prototype.getChartOptions = function () {
                 pointPlacement: 'between'
             }
         },
-        
-        
+
+
         series: [{
             name: 'Temperature',
             data: this.temperatures,
@@ -632,7 +632,7 @@ Meteogram.prototype.getChartOptions = function () {
     }
 };
 
-/** 
+/**
  * Post-process the chart from the callback function, the second argument to Highcharts.Chart.
  */
 Meteogram.prototype.onChartLoad = function (chart) {
@@ -668,23 +668,23 @@ Meteogram.prototype.parseYrData = function () {
         return;
     }
 
-    // The returned xml variable is a JavaScript representation of the provided XML, 
-    // generated on the server by running PHP simple_load_xml and converting it to 
+    // The returned xml variable is a JavaScript representation of the provided XML,
+    // generated on the server by running PHP simple_load_xml and converting it to
     // JavaScript by json_encode.
-    $.each(xml.forecast.tabular.time, function(i, time) {
-        // Get the times - only Safari can't parse ISO8601 so we need to do some replacements 
-        var from = time['@attributes'].from +' UTC',
-            to = time['@attributes'].to +' UTC';
+    $.each(xml.forecast.tabular.time, function (i, time) {
+        // Get the times - only Safari can't parse ISO8601 so we need to do some replacements
+        var from = time['@attributes'].from + ' UTC',
+            to = time['@attributes'].to + ' UTC';
 
         from = from.replace(/-/g, '/').replace('T', ' ');
         from = Date.parse(from);
         to = to.replace(/-/g, '/').replace('T', ' ');
         to = Date.parse(to);
-        
+
         if (to > pointStart + 4 * 24 * 36e5) {
             return;
         }
-        
+
         // If it is more than an hour between points, show all symbols
         if (i === 0) {
             meteogram.resolution = to - from;
@@ -715,15 +715,15 @@ Meteogram.prototype.parseYrData = function () {
             x: from,
             y: parseFloat(time.pressure['@attributes'].value)
         });
-        
+
         if (i == 0) {
             pointStart = (from + to) / 2;
-        }    
+        }
     });
 
     // Smooth the line
     this.smoothLine(this.temperatures);
-    
+
     // Create the chart when the data is loaded
     this.createChart();
 };
@@ -731,8 +731,8 @@ Meteogram.prototype.parseYrData = function () {
 
 
 
-$(function() { // On DOM ready...
-    
+$(function () { // On DOM ready...
+
     // Set the hash to the yr.no URL we want to parse
     if (!location.hash) {
         var place = 'United_Kingdom/England/London';
@@ -744,11 +744,11 @@ $(function() { // On DOM ready...
 
     }
 
-    // Then get the XML file through Highcharts' jsonp provider, see 
+    // Then get the XML file through Highcharts' jsonp provider, see
     // https://github.com/highslide-software/highcharts.com/blob/master/samples/data/jsonp.php
     // for source code.
     $.getJSON(
-        'http://www.highcharts.com/samples/data/jsonp.php?url=' + location.hash.substr(1) + '&callback=?', 
+        'http://www.highcharts.com/samples/data/jsonp.php?url=' + location.hash.substr(1) + '&callback=?',
         function (xml) {
             var meteogram = new Meteogram(xml, 'container');
         }

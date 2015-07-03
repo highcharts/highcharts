@@ -8,12 +8,12 @@ $(function () {
     // button handler
     var chart = $('#container').highcharts(),
         i = 0;
-    $('#button').click(function() {
+    $('#button').click(function () {
 
-        if (i == chart.series[0].data.length) {
+        if (i === chart.series[0].data.length) {
             i = 0;
         }
         chart.series[0].data[i].select();
-        i++;
+        i += 1;
     });
 });

@@ -28,7 +28,7 @@ $(function () {
             pointStart: 3
         }]
     }, function (chart) {
-        chart.xAxis[0].setExtremes(2, 6, true, false);   
+        chart.xAxis[0].setExtremes(2, 6, true, false);
     });
 
 });

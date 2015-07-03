@@ -8,7 +8,7 @@ $(function () {
         title: {
             text: 'Bug in 3.0.7 caused X axis labels to partly disappear'
         },
-        
+
         series: [{
             data: [1, 3, 2],
             xAxis: 0

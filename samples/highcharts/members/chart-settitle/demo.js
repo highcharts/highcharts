@@ -17,15 +17,17 @@ $(function () {
 
     });
     chart = $('#container').highcharts();
-        
 
-    $('#title').click(function() {
-        chart.setTitle({ text: 'New title '+ i++ });
+
+    $('#title').click(function () {
+        chart.setTitle({ text: 'New title ' + i});
+        i += 1;
     });
-    $('#subtitle').click(function() {
-        chart.setTitle(null, { text: 'New title '+ i++ });
+    $('#subtitle').click(function () {
+        chart.setTitle(null, { text: 'New title ' + i});
+        i += 1;
     });
-    $('#color').click(function() {
+    $('#color').click(function () {
         chart.setTitle(
             { style: { color: 'red' }},
             { style: { color: 'green' }}

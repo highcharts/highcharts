@@ -10,7 +10,7 @@ $(function () {
             title: {
                 text: 'World population 2010 by country'
             },
-            
+
             subtitle : {
                 text : 'Click bubbles to select'
             },

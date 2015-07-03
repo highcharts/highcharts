@@ -1,6 +1,6 @@
 $(function () {
     $('#container').highcharts({
-    
+
         xAxis: {
             type: 'datetime'
         },
@@ -14,7 +14,7 @@ $(function () {
 
 
     // the button action
-    $('#button').click(function() {
+    $('#button').click(function () {
         var chart = $('#container').highcharts();
         chart.xAxis[0].setExtremes(Date.UTC(2010, 0, 2), Date.UTC(2010, 0, 8));
     });

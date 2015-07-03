@@ -99,7 +99,6 @@ extend(Highcharts.Pointer.prototype, {
 		var self = this,
 			chart = self.chart,
 			pinchDown = self.pinchDown,
-			followTouchMove = self.followTouchMove,
 			touches = e.touches,
 			touchesLength = touches.length,
 			lastValidTouch = self.lastValidTouch,
@@ -107,11 +106,17 @@ extend(Highcharts.Pointer.prototype, {
 			selectionMarker = self.selectionMarker,
 			transform = {},
 			fireClickEvent = touchesLength === 1 && ((self.inClass(e.target, PREFIX + 'tracker') && 
-				chart.runTrackerClick) || chart.runChartClick),
+				chart.runTrackerClick) || self.runChartClick),
 			clip = {};
 
+		// Don't initiate panning until the user has pinched. This prevents us from 
+		// blocking page scrolling as users scroll down a long page (#4210).
+		if (touchesLength > 1) {
+			self.initiated = true;
+		}
+
 		// On touch devices, only proceed to trigger click if a handler is defined
-		if ((hasZoom || followTouchMove) && !fireClickEvent) {
+		if (hasZoom && self.initiated && !fireClickEvent) {
 			e.preventDefault();
 		}
 		
@@ -143,6 +148,7 @@ extend(Highcharts.Pointer.prototype, {
 					bounds.max = mathMax(axis.pos + axis.len, absMax + minPixelPadding);
 				}
 			});
+			self.res = true; // reset on next move
 		
 		// Event type is touchmove, handle panning and pinching
 		} else if (pinchDown.length) { // can be 0 when releasing, if touchend fires first
@@ -163,13 +169,19 @@ extend(Highcharts.Pointer.prototype, {
 			self.scaleGroups(transform, clip);
 			
 			// Optionally move the tooltip on touchmove
-			if (!hasZoom && followTouchMove && touchesLength === 1) {
+			if (!hasZoom && self.followTouchMove && touchesLength === 1) {
 				this.runPointActions(self.normalize(e));
+			} else if (self.res) {
+				self.res = false;
+				this.reset(false, 0);
 			}
 		}
 	},
 
-	onContainerTouchStart: function (e) {
+	/**
+	 * General touch handler shared by touchstart and touchmove.
+	 */
+	touch: function (e, start) {
 		var chart = this.chart;
 
 		hoverChartIndex = chart.index;
@@ -178,27 +190,31 @@ extend(Highcharts.Pointer.prototype, {
 
 			e = this.normalize(e);
 
-			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
+			if (chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop) && !chart.openMenu) {
 
 				// Run mouse events and display tooltip etc
-				this.runPointActions(e);
+				if (start) {
+					this.runPointActions(e);
+				}
 
 				this.pinch(e);
 
-			} else {
+			} else if (start) {
 				// Hide the tooltip on touching outside the plot area (#1203)
 				this.reset();
 			}
 
 		} else if (e.touches.length === 2) {
 			this.pinch(e);
-		}   
+		}
+	},
+
+	onContainerTouchStart: function (e) {
+		this.touch(e, true);
 	},
 
 	onContainerTouchMove: function (e) {
-		if (e.touches.length === 1 || e.touches.length === 2) {
-			this.pinch(e);
-		}
+		this.touch(e);
 	},
 
 	onDocumentTouchEnd: function (e) {

@@ -1,40 +1,60 @@
-$(function() {
-	$.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.json&callback=?', function(data) {
+$(function () {
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.json&callback=?', function (data) {
 
-		// Create the chart
-		$('#container').highcharts('StockChart', {
-			
+        var startDate = new Date(data[data.length - 1][0]),
+            minRate = 1,
+            maxRate = 0,
+            startPeriod = Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()),
+            date,
+            rate,
+            index;
+        startDate.setMonth(startDate.getMonth() - 3); // a quarter of a year before last data point
+        for (index = data.length - 1; index >= 0; index = index - 1) {
+            date = data[index][0]; // data[i][0] is date
+            rate = data[index][1]; // data[i][1] is exchange rate
+            if (date < startPeriod) {
+                break; // stop measuring highs and lows
+            }
+            if (rate > maxRate) {
+                maxRate = rate;
+            }
+            if (rate < minRate) {
+                minRate = rate;
+            }
+        }
 
-			rangeSelector : {
-				inputEnabled: $('#container').width() > 480,
-				selected : 1
-			},
+        // Create the chart
+        $('#container').highcharts('StockChart', {
 
-			title : {
-				text : 'USD to EUR exchange rate'
-			},
+            rangeSelector: {
+                selected: 1
+            },
 
-			yAxis : {
-				title : {
-					text : 'Exchange rate'
-				},
-				plotBands : [{
-					from : 0.6738,
-					to : 0.7419,
-					color : 'rgba(68, 170, 213, 0.2)',
-					label : {
-						text : 'Last quarter\'s value range'
-					}
-				}]
-			},
+            title: {
+                text: 'USD to EUR exchange rate'
+            },
 
-			series : [{
-				name : 'USD to EUR',
-				data : data,
-				tooltip: {
-					valueDecimals: 4
-				}
-			}]
-		});
-	});
+            yAxis: {
+                title: {
+                    text: 'Exchange rate'
+                },
+                plotBands: [{
+                    from: minRate,
+                    to: maxRate,
+                    color: 'rgba(68, 170, 213, 0.2)',
+                    label: {
+                        text: 'Last quarter year\'s value range'
+                    }
+                }]
+            },
+
+            series: [{
+                name: 'USD to EUR',
+                data: data,
+                tooltip: {
+                    valueDecimals: 4
+                }
+            }]
+        });
+    });
 });

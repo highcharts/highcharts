@@ -27,7 +27,7 @@ $(function () {
         // resizer minus padding. If your chart has a lot of data or other
         // content, the redrawing might be slow. In that case, we recommend
         // that you use the 'stop' event instead of 'resize'.
-        resize: function() {
+        resize: function () {
             chart.setSize(
                 this.offsetWidth - 20,
                 this.offsetHeight - 20,

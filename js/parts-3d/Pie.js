@@ -22,48 +22,52 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 			z: options3d.depth
 		},
 		alpha = options3d.alpha,
-		beta = options3d.beta;
+		beta = options3d.beta,
+		z = seriesOptions.stacking ? (seriesOptions.stack || 0) * depth : series._i * depth;
 
-	var z = seriesOptions.stacking ? (seriesOptions.stack || 0) * depth : series._i * depth;
 	z += depth / 2;
 
 	if (seriesOptions.grouping !== false) { z = 0; }
 
 	Highcharts.each(series.data, function (point) {
+
+		var shapeArgs = point.shapeArgs,
+			angle;
+
 		point.shapeType = 'arc3d';
-		var shapeArgs = point.shapeArgs;
 
-		if (point.y) { // will be false if null or 0 #3006
-			shapeArgs.z = z;
-			shapeArgs.depth = depth * 0.75;
-			shapeArgs.origin = origin;
-			shapeArgs.alpha = alpha;
-			shapeArgs.beta = beta;
+		shapeArgs.z = z;
+		shapeArgs.depth = depth * 0.75;
+		shapeArgs.origin = origin;
+		shapeArgs.alpha = alpha;
+		shapeArgs.beta = beta;
+		shapeArgs.center = series.center;
 		
-			var angle = (shapeArgs.end + shapeArgs.start) / 2;
+		angle = (shapeArgs.end + shapeArgs.start) / 2;
 
-			point.slicedTranslation = {
-				translateX : round(cos(angle) * series.options.slicedOffset * cos(alpha * deg2rad)),
-				translateY : round(sin(angle) * series.options.slicedOffset * cos(alpha * deg2rad))
-			};
-		} else {
-			shapeArgs = null;
-		}
+		point.slicedTranslation = {
+			translateX : round(cos(angle) * seriesOptions.slicedOffset * cos(alpha * deg2rad)),
+			translateY : round(sin(angle) * seriesOptions.slicedOffset * cos(alpha * deg2rad))
+		};
 	});
 });
 
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype.pointClass.prototype, 'haloPath', function (proceed) {
-	return this.series.chart.is3d() ? [] : proceed.call(this);
+	var args = arguments;
+	return this.series.chart.is3d() ? [] : proceed.call(this, args[1]);
 });
 
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
+
+	var seriesGroup = this.group,
+		options = this.options,
+		states = options.states;
+
 	// Do not do this if the chart is not 3D
 	if (this.chart.is3d()) {
-		var options = this.options,
-			states = this.options.states;
-
 		// Set the border color to the fill color to provide a smooth edge
 		this.borderWidth = options.borderWidth = options.edgeWidth || 1;
+		this.borderColor = options.edgeColor = Highcharts.pick(options.edgeColor, options.borderColor, undefined);
 
 		states.hover.borderColor = Highcharts.pick(states.hover.edgeColor, this.borderColor);		
 		states.hover.borderWidth = Highcharts.pick(states.hover.edgeWidth, this.borderWidth);	
@@ -84,12 +88,16 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (this.chart.is3d()) {		
-		var seriesGroup = this.group;
 		Highcharts.each(this.points, function (point) {
-			point.graphic.out.add(seriesGroup);
-			point.graphic.inn.add(seriesGroup);
-			point.graphic.side1.add(seriesGroup);
-			point.graphic.side2.add(seriesGroup);
+			var graphic = point.graphic;
+
+			graphic.out.add(seriesGroup);
+			graphic.inn.add(seriesGroup);
+			graphic.side1.add(seriesGroup);
+			graphic.side2.add(seriesGroup);
+
+			// Hide null or 0 points (#3006, 3650)
+			graphic[point.y ? 'show' : 'hide']();
 		});		
 	}
 });
@@ -101,13 +109,14 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawDataLabels', function
 			var shapeArgs = point.shapeArgs,
 				r = shapeArgs.r,
 				d = shapeArgs.depth,
-				a1 = shapeArgs.alpha * deg2rad,
+				a1 = (shapeArgs.alpha || series.chart.options.chart.options3d.alpha) * deg2rad, //#3240 issue with datalabels for 0 and null values
 				a2 = (shapeArgs.start + shapeArgs.end) / 2,
 				labelPos = point.labelPos;
 
 			labelPos[1] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
 			labelPos[3] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
 			labelPos[5] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
+
 		});
 	} 
 
@@ -118,7 +127,7 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'addPoint', function (proc
 	proceed.apply(this, [].slice.call(arguments, 1));	
 	if (this.chart.is3d()) {
 		// destroy (and rebuild) everything!!!
-		this.update();
+		this.update(this.userOptions, true); // #3845 pass the old options
 	}
 });
 

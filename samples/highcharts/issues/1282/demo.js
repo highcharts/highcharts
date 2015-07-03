@@ -23,9 +23,9 @@ $(function () {
             stops: [
                 [0, 'rgb(136, 219, 5)'],
                 [1, 'rgb(112, 180, 5)']
-                ]}, 
+                ]},
         ]
-                              
+
         $('#container').highcharts({
             chart: {
                 type: 'column'
@@ -33,11 +33,11 @@ $(function () {
             title: {
                 text:'Gradients should be individual colors'
             },
-            
+
             xAxis: {
                 categories: ['Jan', 'Feb', 'Mar']
             },
-            
+
             series: [{
                 name: name,
                 data: [{

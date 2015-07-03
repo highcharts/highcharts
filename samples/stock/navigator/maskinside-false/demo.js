@@ -1,21 +1,21 @@
-$(function() {
-	$('#container').highcharts('StockChart', {
+$(function () {
+    $('#container').highcharts('StockChart', {
 
-		title: {
-			text: 'Navigator mask is outside zoomed range'
-		},
+        title: {
+            text: 'Navigator mask is outside zoomed range'
+        },
 
-	    navigator: {
-	    	maskInside: false
-	    },
+        navigator: {
+            maskInside: false
+        },
 
-	    rangeSelector: {
-	    	selected: 1
-	    },
+        rangeSelector: {
+            selected: 1
+        },
 
-	    series: [{
-	        name: 'USD to EUR',
-	        data: usdeur
-	    }]
-	});
+        series: [{
+            name: 'USD to EUR',
+            data: usdeur
+        }]
+    });
 });

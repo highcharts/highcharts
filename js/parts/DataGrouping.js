@@ -8,7 +8,7 @@ var DATA_GROUPING = 'dataGrouping',
 	baseProcessData = seriesProto.processData,
 	baseGeneratePoints = seriesProto.generatePoints,
 	baseDestroy = seriesProto.destroy,
-	baseTooltipHeaderFormatter = tooltipProto.tooltipHeaderFormatter,
+	baseTooltipFooterHeaderFormatter = tooltipProto.tooltipFooterHeaderFormatter,
 	NUMBER = 'number',
 
 	commonOptions = {
@@ -305,7 +305,7 @@ seriesProto.processData = function () {
 				xAxis.normalizeTimeTickInterval(interval, dataGroupingOptions.units || defaultDataGroupingUnits),
 				xMin,
 				xMax,
-				null,
+				xAxis.options.startOfWeek,
 				processedXData,
 				series.closestPointRange
 			),
@@ -333,6 +333,9 @@ seriesProto.processData = function () {
 
 		// Make sure the X axis extends to show the first group (#2533)
 		if (defined(groupedXData[0]) && groupedXData[0] < xAxis.dataMin) {
+			if (xAxis.min === xAxis.dataMin) {
+				xAxis.min = groupedXData[0];
+			}
 			xAxis.dataMin = groupedXData[0];
 		}
 
@@ -377,7 +380,7 @@ seriesProto.generatePoints = function () {
 /**
  * Extend the original method, make the tooltip's header reflect the grouped range
  */
-tooltipProto.tooltipHeaderFormatter = function (point) {
+tooltipProto.tooltipFooterHeaderFormatter = function (point, isFooter) {
 	var tooltip = this,
 		series = point.series,
 		options = series.options,
@@ -390,7 +393,6 @@ tooltipProto.tooltipHeaderFormatter = function (point) {
 		dateTimeLabelFormats,
 		labelFormats,
 		formattedKey,
-		n,
 		ret;
 
 	// apply only to grouped series
@@ -413,17 +415,7 @@ tooltipProto.tooltipHeaderFormatter = function (point) {
 		// so if the least distance between points is one minute, show it, but if the
 		// least distance is one day, skip hours and minutes etc.
 		} else if (!xDateFormat && dateTimeLabelFormats) {
-			for (n in timeUnits) {
-				if (timeUnits[n] >= xAxis.closestPointRange || 
-						// If the point is placed every day at 23:59, we need to show
-						// the minutes as well. This logic only works for time units less than 
-						// a day, since all higher time units are dividable by those. #2637.
-						(timeUnits[n] <= timeUnits.day && point.key % timeUnits[n] > 0)) {
-						
-					xDateFormat = dateTimeLabelFormats[n][0];
-					break;
-				}
-			}
+			xDateFormat = tooltip.getXDateFormat(point, tooltipOptions, xAxis);
 		}
 
 		// now format the key
@@ -433,11 +425,11 @@ tooltipProto.tooltipHeaderFormatter = function (point) {
 		}
 
 		// return the replaced format
-		ret = tooltipOptions.headerFormat.replace('{point.key}', formattedKey);
+		ret = tooltipOptions[(isFooter ? 'footer' : 'header') + 'Format'].replace('{point.key}', formattedKey);
 
 	// else, fall back to the regular formatter
 	} else {
-		ret = baseTooltipHeaderFormatter.call(tooltip, point);
+		ret = baseTooltipFooterHeaderFormatter.call(tooltip, point, isFooter);
 	}
 
 	return ret;
@@ -543,6 +535,42 @@ Axis.prototype.getGroupPixelWidth = function () {
 	}
 
 	return doGrouping ? groupPixelWidth : 0;
+};
+
+/**
+ * Force data grouping on all the axis' series.
+ */
+Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
+	var i;
+
+	redraw = pick(redraw, true);
+
+	if (!dataGrouping) {   
+		dataGrouping = {
+			forced: false,
+			units: null
+		};
+	}
+
+	// Axis is instantiated, update all series
+	if (this instanceof Axis) {
+		i = this.series.length;
+		while (i--) {
+			this.series[i].update({
+				dataGrouping: dataGrouping
+			}, false);
+		}
+
+	// Axis not yet instanciated, alter series options
+	} else {
+		each(this.chart.options.series, function (seriesOptions) {
+			seriesOptions.dataGrouping = dataGrouping;
+		}, false);
+	}
+
+	if (redraw) {
+		this.chart.redraw();
+	}
 };
 
 

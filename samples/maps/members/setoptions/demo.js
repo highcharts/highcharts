@@ -27,7 +27,7 @@ $(function () {
 
         // Initiate the chart
         $('#container').highcharts('Map', {
-            
+
             title : {
                 text : 'Set general theme options'
             },

@@ -1,6 +1,7 @@
 /*** 
 	EXTENSION FOR 3D SCATTER CHART
 ***/
+
 Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function (proceed) {
 //function translate3d(proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
@@ -11,45 +12,55 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 
 	var series = this,
 		chart = series.chart,
-		options3d = series.chart.options.chart.options3d,
-		alpha = options3d.alpha,
-		beta = options3d.beta,
-		origin = {
-			x: chart.inverted ? chart.plotHeight / 2 : chart.plotWidth / 2,
-			y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2, 
-			z: options3d.depth,
-			vd: options3d.viewDistance
-		},
-		depth = options3d.depth,
-		zAxis = chart.options.zAxis || { min : 0, max: depth };
-	
-	var rangeModifier = depth / (zAxis.max - zAxis.min);
-	
-	Highcharts.each(series.data, function (point) {
-		var pCo = { 
-			x: point.plotX,
-			y: point.plotY,
-			z: (point.z - zAxis.min) * rangeModifier
-		};
+		zAxis = Highcharts.pick(series.zAxis, chart.options.zAxis[0]);
 
-		pCo = perspective([pCo], alpha, beta, origin)[0];		
+	var raw_points = [],
+		raw_point,
+		projected_points,
+		projected_point,
+		i;
 
-		point.plotXold = point.plotX;
-		point.plotYold = point.plotY;
-		
-		point.plotX = pCo.x;
-		point.plotY = pCo.y;
-		point.plotZ = pCo.z;
-	});	  
+	for (i = 0; i < series.data.length; i++) {
+		raw_point = series.data[i];
+
+		raw_point.isInside = raw_point.isInside ? (raw_point.z >= zAxis.min && raw_point.z <= zAxis.max) : false;
+
+		raw_points.push({
+			x: raw_point.plotX,
+			y: raw_point.plotY,
+			z: zAxis.translate(raw_point.z)
+		});
+	}
+
+	projected_points = perspective(raw_points, chart, true);
+
+	for (i = 0; i < series.data.length; i++) {
+		raw_point = series.data[i];
+		projected_point = projected_points[i];
+
+		raw_point.plotXold = raw_point.plotX;
+		raw_point.plotYold = raw_point.plotY;
+
+		raw_point.plotX = projected_point.x;
+		raw_point.plotY = projected_point.y;
+		raw_point.plotZ = projected_point.z;
+
+
+	}
+
 });
 
-Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'init', function (proceed) {
-	var result = proceed.apply(this, [].slice.call(arguments, 1));
+Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'init', function (proceed, chart, options) {
+	if (chart.is3d()) {
+		// add a third coordinate
+		this.axisTypes = ['xAxis', 'yAxis', 'zAxis'];
+		this.pointArrayMap = ['x', 'y', 'z'];
+		this.parallelArrays = ['x', 'y', 'z'];
+	}
+
+	var result = proceed.apply(this, [chart, options]);
 
 	if (this.chart.is3d()) {
-		// Add a third coordinate
-		this.pointArrayMap = ['x', 'y', 'z'];
-
 		// Set a new default tooltip formatter
 		var default3dScatterTooltip = 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>z: <b>{point.z}</b><br/>';
 		if (this.userOptions.tooltip) {

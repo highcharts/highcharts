@@ -42,7 +42,7 @@ public class Server {
 		try {
 			ArrayList<String> commands = new ArrayList<String>();
 			commands.add(exec);
-			commands.add(TempDir.getPhantomJsDir().toAbsolutePath().toString() + "/" + script);
+			commands.add(script);
 			commands.add("-host");
 			commands.add(host);
 			commands.add("-port");
@@ -55,7 +55,9 @@ public class Server {
 					new InputStreamReader(process.getInputStream()));
 			String readLine = bufferedReader.readLine();
 			if (readLine == null || !readLine.contains("ready")) {
-				throw new RuntimeException("Error, PhantomJS couldnot start");
+                logger.log(Level.WARNING, "Command starting Phantomjs failed");
+                process.destroy();
+				throw new RuntimeException("Error, PhantomJS couldnot start");                
 			}
 
 			initialize();

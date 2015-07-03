@@ -1,17 +1,16 @@
 $(function () {
-    
-    var chart = new Highcharts.Chart({
-    
+
+    $('#container').highcharts({
+
         chart: {
-            renderTo: 'container',
             type: 'gauge'
         },
-        
+
         pane: {
             startAngle: -150,
             endAngle: 150
-        },     
-        
+        },
+
         yAxis: {
             min: 0,
             max: 100,
@@ -22,11 +21,10 @@ $(function () {
                 outerRadius: '105%',
                 thickness: '5%'
             }]
-        },                  
-        
+        },
+
         series: [{
             data: [80]
         }]
-    
     });
 });

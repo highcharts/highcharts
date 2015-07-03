@@ -3,11 +3,11 @@ $(function () {
         chart: {
             type: 'pie'
         },
-        
+
         series: [{
             data: [
                 {
-                    name: 'Firefox',   
+                    name: 'Firefox',
                     y: 44.2,
                     sliced: true
                 },

@@ -37,11 +37,15 @@ $(function () {
         }]
     });
 
-    var chart = $('#container').highcharts();
-        
+    var chart = $('#container').highcharts(),
+        name = false,
+        enableDataLabels = true,
+        enableMarkers = true,
+        color = false;
+
+
     // Toggle names
-    var name = false;
-    $('#name').click(function() {
+    $('#name').click(function () {
         chart.series[0].update({
             name: name ? null : 'First'
         });
@@ -49,8 +53,7 @@ $(function () {
     });
 
     // Toggle data labels
-    var enableDataLabels = true;
-    $('#data-labels').click(function() {
+    $('#data-labels').click(function () {
         chart.series[0].update({
             dataLabels: {
                 enabled: enableDataLabels
@@ -60,8 +63,7 @@ $(function () {
     });
 
     // Toggle point markers
-    var enableMarkers = true;
-    $('#markers').click(function() {
+    $('#markers').click(function () {
         chart.series[0].update({
             marker: {
                 enabled: enableMarkers
@@ -71,8 +73,7 @@ $(function () {
     });
 
     // Toggle point markers
-    var color = false;
-    $('#color').click(function() {
+    $('#color').click(function () {
         chart.series[0].update({
             color: color ? null : Highcharts.getOptions().colors[1]
         });

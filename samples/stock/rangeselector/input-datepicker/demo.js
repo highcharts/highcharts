@@ -1,9 +1,9 @@
-$(function() {
+$(function () {
 
-    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function(data) {
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
         // Create the chart
         $('#container').highcharts('StockChart', {
-            
+
 
             rangeSelector : {
                 selected : 1
@@ -12,7 +12,7 @@ $(function() {
             title : {
                 text : 'AAPL Stock Price'
             },
-            
+
             series : [{
                 name : 'AAPL',
                 data : data,
@@ -20,8 +20,8 @@ $(function() {
                     valueDecimals: 2
                 }
             }]
-            
-        }, function(chart){
+
+        }, function (chart) {
 
             // apply the date pickers
             setTimeout(function () {
@@ -30,12 +30,12 @@ $(function() {
             }, 0);
         });
     });
-    
-    
+
+
     // Set the datepicker's date format
     $.datepicker.setDefaults({
         dateFormat: 'yy-mm-dd',
-        onSelect: function(dateText) {
+        onSelect: function () {
             this.onchange();
             this.onblur();
         }

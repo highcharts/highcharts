@@ -50,7 +50,7 @@ if (win.PointerEvent || win.MSPointerEvent) {
 			});
 		},
 		onDocumentPointerUp: function (e) {
-			translateMSPointer(e, 'onContainerTouchEnd', 'touchend', function (e) {
+			translateMSPointer(e, 'onDocumentTouchEnd', 'touchend', function (e) {
 				delete touches[e.pointerId];
 			});
 		},
@@ -68,7 +68,7 @@ if (win.PointerEvent || win.MSPointerEvent) {
 	// Disable default IE actions for pinch and such on chart element
 	wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 		proceed.call(this, chart, options);
-		if (this.hasZoom || this.followTouchMove) {
+		if (this.hasZoom) { // #4014
 			css(chart.container, {
 				'-ms-touch-action': NONE,
 				'touch-action': NONE

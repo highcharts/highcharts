@@ -2,7 +2,7 @@ $(function () {
 
     // Initiate the chart
     $('#container').highcharts('Map', {
-        
+
         title : {
             text : 'Map with inline point paths'
         },
@@ -58,11 +58,7 @@ $(function () {
             name: 'Random data',
             dataLabels: {
                 enabled: true,
-                format: '{point.name}',
-                style: {
-                    color: 'black',
-                    HcTextStroke: '3px white'
-                }
+                format: '{point.name}'
             },
             states: {
                 hover: {

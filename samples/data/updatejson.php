@@ -2,8 +2,8 @@
 <pre><?php
 
 /**
- * This file should run once a day to update the example data with fresh data from the Google Finance API.
- * 
+ * This file is called once an hour from Pingdom.
+ * It updates the example data with fresh data from the Google Finance API.
  */
 
 $startdate = date('M+j,+Y', mktime() - 7 * 365 * 24 * 3600);

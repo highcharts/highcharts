@@ -14,7 +14,10 @@ extend(SVGElement.prototype, {
 			wrapper.textWidth = textWidth;
 			wrapper.updateTransform();
 		}
-
+		if (styles && styles.textOverflow === 'ellipsis') {
+			styles.whiteSpace = 'nowrap';
+			styles.overflow = 'hidden';
+		}
 		wrapper.styles = extend(wrapper.styles, styles);
 		css(wrapper.element, styles);
 
@@ -31,25 +34,20 @@ extend(SVGElement.prototype, {
 
 	htmlGetBBox: function () {
 		var wrapper = this,
-			element = wrapper.element,
-			bBox = wrapper.bBox;
+			element = wrapper.element;
 
 		// faking getBBox in exported SVG in legacy IE
-		if (!bBox) {
-			// faking getBBox in exported SVG in legacy IE (is this a duplicate of the fix for #1079?)
-			if (element.nodeName === 'text') {
-				element.style.position = ABSOLUTE;
-			}
-
-			bBox = wrapper.bBox = {
-				x: element.offsetLeft,
-				y: element.offsetTop,
-				width: element.offsetWidth,
-				height: element.offsetHeight
-			};
+		// faking getBBox in exported SVG in legacy IE (is this a duplicate of the fix for #1079?)
+		if (element.nodeName === 'text') {
+			element.style.position = ABSOLUTE;
 		}
 
-		return bBox;
+		return {
+			x: element.offsetLeft,
+			y: element.offsetTop,
+			width: element.offsetWidth,
+			height: element.offsetHeight
+		};
 	},
 
 	/**
@@ -72,7 +70,8 @@ extend(SVGElement.prototype, {
 			y = wrapper.y || 0,
 			align = wrapper.textAlign || 'left',
 			alignCorrection = { left: 0, center: 0.5, right: 1 }[align],
-			shadows = wrapper.shadows;
+			shadows = wrapper.shadows,
+			styles = wrapper.styles;
 
 		// apply translate
 		css(elem, {
@@ -120,7 +119,7 @@ extend(SVGElement.prototype, {
 					css(elem, {
 						width: textWidth + PX,
 						display: 'block',
-						whiteSpace: 'normal'
+						whiteSpace: (styles && styles.whiteSpace) || 'normal' // #3331
 					});
 					width = textWidth;
 				}
@@ -205,10 +204,12 @@ extend(SVGRenderer.prototype, {
 			})
 			.css({
 				position: ABSOLUTE,
-				whiteSpace: 'nowrap',
 				fontFamily: this.style.fontFamily,
 				fontSize: this.style.fontSize
 			});
+
+		// Keep the whiteSpace style outside the wrapper.styles collection
+		element.style.whiteSpace = 'nowrap';
 
 		// Use the HTML specific .css method
 		wrapper.css = wrapper.htmlCss;
@@ -241,13 +242,16 @@ extend(SVGRenderer.prototype, {
 
 						// Ensure dynamically updating position when any parent is translated
 						each(parents.reverse(), function (parentGroup) {
-							var htmlGroupStyle;
+							var htmlGroupStyle,
+								cls = attr(parentGroup.element, 'class');
+
+							if (cls) {
+								cls = { className: cls };
+							} // else null
 
 							// Create a HTML div and append it to the parent div to emulate
 							// the SVG group structure
-							htmlGroup = parentGroup.div = parentGroup.div || createElement(DIV, {
-								className: attr(parentGroup.element, 'class')
-							}, {
+							htmlGroup = parentGroup.div = parentGroup.div || createElement(DIV, cls, {
 								position: ABSOLUTE,
 								left: (parentGroup.translateX || 0) + PX,
 								top: (parentGroup.translateY || 0) + PX

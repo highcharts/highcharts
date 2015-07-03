@@ -1,6 +1,6 @@
-$(function() {
+$(function () {
     var chart = new Highcharts.StockChart({
-        
+
         title: {
             text: 'Adding series dynamically failed in Highstock <= 1.3.7'
         },
@@ -15,7 +15,7 @@ $(function() {
                 }
             }
         },
-        
+
         rangeSelector: {
             selected: 1
         }

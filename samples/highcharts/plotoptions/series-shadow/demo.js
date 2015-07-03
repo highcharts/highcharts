@@ -1,6 +1,6 @@
 $(function () {
     $('#container').highcharts({
-        
+
         plotOptions: {
             series: {
                 shadow: true

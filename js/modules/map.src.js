@@ -1,6 +1,6 @@
 /**
- * @license Highmaps JS v1.0.3-modified ()
- * Highmaps as a plugin for Highcharts 4.0.1 or Highstock 2.0.1
+ * @license Highmaps JS v1.1.7-modified ()
+ * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -26,11 +26,11 @@ var UNDEFINED,
 	
 	addEvent = Highcharts.addEvent,
 	each = Highcharts.each,
+	error = Highcharts.error,
 	extend = Highcharts.extend,
 	extendClass = Highcharts.extendClass,
 	merge = Highcharts.merge,
 	pick = Highcharts.pick,
-	numberFormat = Highcharts.numberFormat,
 	defaultOptions = Highcharts.getOptions(),
 	seriesTypes = Highcharts.seriesTypes,
 	defaultPlotOptions = defaultOptions.plotOptions,
@@ -64,7 +64,7 @@ wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 	// Run extremes logic for map and mapline
 	if (isXAxis) {
 		dataMin = pick(this.dataMin, Number.MAX_VALUE);
-		dataMax = pick(this.dataMax, Number.MIN_VALUE);
+		dataMax = pick(this.dataMax, -Number.MAX_VALUE);
 		each(this.series, function (series, i) {
 			if (series.useMapGeometry) {
 				dataMin = Math.min(dataMin, pick(series.minX, dataMin));
@@ -91,14 +91,24 @@ wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 		xAxis = chart.xAxis[0],
 		padAxis,
 		fixTo,
-		fixDiff;
+		fixDiff,
+		preserveAspectRatio;
 
 	
 	// Run the parent method
 	proceed.call(this);
+
+	// Check for map-like series
+	if (this.coll === 'yAxis' && xAxis.transA !== UNDEFINED) {
+		each(this.series, function (series) {
+			if (series.preserveAspectRatio) {
+				preserveAspectRatio = true;
+			}
+		});
+	}
 	
 	// On Y axis, handle both
-	if (chart.options.chart.preserveAspectRatio && this.coll === 'yAxis' && xAxis.transA !== UNDEFINED) {
+	if (preserveAspectRatio) {
 		
 		// Use the same translation for both axes
 		this.transA = xAxis.transA = Math.min(this.transA, xAxis.transA);
@@ -199,18 +209,33 @@ extend(ColorAxis.prototype, {
 
 	/*
 	 * Return an intermediate color between two colors, according to pos where 0
-	 * is the from color and 1 is the to color
+	 * is the from color and 1 is the to color. 
+	 * NOTE: Changes here should be copied
+	 * to the same function in drilldown.src.js and solid-gauge-src.js.
 	 */
 	tweenColors: function (from, to, pos) {
 		// Check for has alpha, because rgba colors perform worse due to lack of
 		// support in WebKit.
-		var hasAlpha = (to.rgba[3] !== 1 || from.rgba[3] !== 1);
-		return (hasAlpha ? 'rgba(' : 'rgb(') + 
-			Math.round(to.rgba[0] + (from.rgba[0] - to.rgba[0]) * (1 - pos)) + ',' + 
-			Math.round(to.rgba[1] + (from.rgba[1] - to.rgba[1]) * (1 - pos)) + ',' + 
-			Math.round(to.rgba[2] + (from.rgba[2] - to.rgba[2]) * (1 - pos)) + 
-			(hasAlpha ? (',' + (to.rgba[3] + (from.rgba[3] - to.rgba[3]) * (1 - pos))) : '') + ')';
-		},
+		var hasAlpha,
+			ret;
+
+		// Unsupported color, return to-color (#3920)
+		if (!to.rgba.length || !from.rgba.length) {
+			ret = to.raw || 'none';
+
+		// Interpolate
+		} else {
+			from = from.rgba;
+			to = to.rgba;
+			hasAlpha = (to[3] !== 1 || from[3] !== 1);
+			ret = (hasAlpha ? 'rgba(' : 'rgb(') + 
+				Math.round(to[0] + (from[0] - to[0]) * (1 - pos)) + ',' + 
+				Math.round(to[1] + (from[1] - to[1]) * (1 - pos)) + ',' + 
+				Math.round(to[2] + (from[2] - to[2]) * (1 - pos)) + 
+				(hasAlpha ? (',' + (to[3] + (from[3] - to[3]) * (1 - pos))) : '') + ')';
+		}
+		return ret;
+	},
 
 	initDataClasses: function (userOptions) {
 		var axis = this,
@@ -359,6 +384,9 @@ extend(ColorAxis.prototype, {
 				this.labelGroup.add(group);
 
 				this.added = true;
+
+				this.labelLeft = 0;
+				this.labelRight = this.width;
 			}
 			// Reset it to avoid color axis reserving space
 			this.chart.axisOffset[this.side] = sideOffset;
@@ -371,9 +399,10 @@ extend(ColorAxis.prototype, {
 	setLegendColor: function () {
 		var grad,
 			horiz = this.horiz,
-			options = this.options;
+			options = this.options,
+			reversed = this.reversed;
 
-		grad = horiz ? [0, 0, 1, 0] : [0, 0, 0, 1]; 
+		grad = horiz ? [+reversed, 0, +!reversed, 0] : [0, +!reversed, 0, +reversed]; // #3190
 		this.legendColor = {
 			linearGradient: { x1: grad[0], y1: grad[1], x2: grad[2], y2: grad[3] },
 			stops: options.stops || [
@@ -428,15 +457,14 @@ extend(ColorAxis.prototype, {
 		}
 	},
 	drawCrosshair: function (e, point) {
-		var newCross = !this.cross,
-			plotX = point && point.plotX,
+		var plotX = point && point.plotX,
 			plotY = point && point.plotY,
 			crossPos,
 			axisPos = this.pos,
 			axisLen = this.len;
 		
 		if (point) {
-			crossPos = this.toPixels(point.value);
+			crossPos = this.toPixels(point[point.series.colorKey]);
 			if (crossPos < axisPos) {
 				crossPos = axisPos - 2;
 			} else if (crossPos > axisPos + axisLen) {
@@ -449,17 +477,17 @@ extend(ColorAxis.prototype, {
 			point.plotX = plotX;
 			point.plotY = plotY;
 			
-			if (!newCross && this.cross) {
+			if (this.cross) {
 				this.cross
 					.attr({
 						fill: this.crosshair.color
 					})
-					.add(this.labelGroup);
+					.add(this.legendGroup);
 			}
 		}
 	},
 	getPlotLinePath: function (a, b, c, d, pos) {
-		if (pos) { // crosshairs only
+		if (typeof pos === 'number') { // crosshairs only // #3969 pos can be 0 !!
 			return this.horiz ? 
 				['M', pos - 4, this.top - 6, 'L', pos + 4, this.top - 6, pos, this.top, 'Z'] : 
 				['M', this.left, pos, 'L', this.left - 6, pos + 6, this.left - 6, pos - 6, 'Z'];
@@ -469,13 +497,31 @@ extend(ColorAxis.prototype, {
 	},
 
 	update: function (newOptions, redraw) {
+		var chart = this.chart,
+			legend = chart.legend;
+
 		each(this.series, function (series) {
 			series.isDirtyData = true; // Needed for Axis.update when choropleth colors change
 		});
+
+		// When updating data classes, destroy old items and make sure new ones are created (#3207)
+		if (newOptions.dataClasses) {
+			each(legend.allItems, function (item) {
+				if (item.isDataClass) {
+					item.legendGroup.destroy();
+				}
+			});			
+			chart.isDirtyLegend = true;
+		}
+
+		// Keep the options structure updated for export. Unlike xAxis and yAxis, the colorAxis is 
+		// not an array. (#3207)
+		chart.options[this.coll] = merge(this.userOptions, newOptions);
+
 		Axis.prototype.update.call(this, newOptions, redraw);
 		if (this.legendItem) {
 			this.setLegendColor();
-			this.chart.legend.colorizeItem(this, true);
+			legend.colorizeItem(this, true);
 		}
 	},
 
@@ -505,13 +551,13 @@ extend(ColorAxis.prototype, {
 					name = '> ';
 				}
 				if (from !== UNDEFINED) {
-					name += numberFormat(from, valueDecimals) + valueSuffix;
+					name += Highcharts.numberFormat(from, valueDecimals) + valueSuffix;
 				}
 				if (from !== UNDEFINED && to !== UNDEFINED) {
 					name += ' - ';
 				}
 				if (to !== UNDEFINED) {
-					name += numberFormat(to, valueDecimals) + valueSuffix;
+					name += Highcharts.numberFormat(to, valueDecimals) + valueSuffix;
 				}
 				
 				// Add a mock object to the legend items
@@ -522,6 +568,7 @@ extend(ColorAxis.prototype, {
 					drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 					visible: true,
 					setState: noop,
+					isDataClass: true,
 					setVisible: function () {
 						vis = this.visible = !vis;
 						each(axis.series, function (series) {
@@ -542,7 +589,14 @@ extend(ColorAxis.prototype, {
 	name: '' // Prevents 'undefined' in legend in IE8
 });
 
-
+/**
+ * Handle animation of the color attributes directly
+ */
+each(['fill', 'stroke'], function (prop) {
+	HighchartsAdapter.addAnimSetter(prop, function (fx) {
+		fx.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(fx.start), Color(fx.end), fx.pos));
+	});
+});
 
 /**
  * Extend the chart getAxes method to also get the color axis
@@ -590,6 +644,22 @@ wrap(Legend.prototype, 'getAllItems', function (proceed) {
 });/**
  * Mixin for maps and heatmaps
  */
+var colorPointMixin = {
+	/**
+	 * Set the visibility of a single point
+	 */
+	setVisible: function (vis) {
+		var point = this,
+			method = vis ? 'show' : 'hide';
+
+		// Show and hide associated elements
+		each(['graphic', 'dataLabel'], function (key) {
+			if (point[key]) {
+				point[key][method]();
+			}
+		});
+	}
+};
 var colorSeriesMixin = {
 
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
@@ -626,55 +696,6 @@ var colorSeriesMixin = {
 			}
 		});
 	}
-};
-
-
-/**
- * Wrap the buildText method and add the hook for add text stroke
- */
-wrap(SVGRenderer.prototype, 'buildText', function (proceed, wrapper) {
-
-	var textStroke = wrapper.styles && wrapper.styles.HcTextStroke;
-
-	proceed.call(this, wrapper);
-
-	// Apply the text stroke
-	if (textStroke && wrapper.applyTextStroke) {
-		wrapper.applyTextStroke(textStroke);
-	}
-});
-
-/**
- * Apply an outside text stroke to data labels, based on the custom CSS property, HcTextStroke.
- * Consider moving this to Highcharts core, also makes sense on stacked columns etc.
- */
-SVGRenderer.prototype.Element.prototype.applyTextStroke = function (textStroke) {
-	var elem = this.element,
-		tspans,
-		firstChild;
-	
-	textStroke = textStroke.split(' ');
-	tspans = elem.getElementsByTagName('tspan');
-	firstChild = elem.firstChild;
-	
-	// In order to get the right y position of the clones, 
-	// copy over the y setter
-	this.ySetter = this.xSetter;
-	
-	each([].slice.call(tspans), function (tspan, y) {
-		var clone;
-		if (y === 0) {
-			tspan.setAttribute('x', elem.getAttribute('x'));
-			if ((y = elem.getAttribute('y')) !== null) {
-				tspan.setAttribute('y', y);
-			}
-		}
-		clone = tspan.cloneNode(1);
-		clone.setAttribute('stroke', textStroke[1]);
-		clone.setAttribute('stroke-width', textStroke[0]);
-		clone.setAttribute('stroke-linejoin', 'round');
-		elem.insertBefore(clone, firstChild);
-	});
 };
 // Add events to the Chart object itself
 extend(Chart.prototype, {
@@ -938,6 +959,9 @@ wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches,
 });
 
 
+// The vector-effect attribute is not supported in IE <= 11 (at least), so we need 
+// diffent logic (#3218)
+var supportsVectorEffect = document.documentElement.style.vectorEffect !== undefined;
 
 /**
  * Extend the default options with map options
@@ -955,15 +979,11 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 		formatter: function () { // #2945
 			return this.point.value;
 		},
+		inside: true, // for the color
 		verticalAlign: 'middle',
 		crop: false,
 		overflow: false,
-		padding: 0,
-		style: {
-			color: 'white',
-			fontWeight: 'bold',
-			HcTextStroke: '3px rgba(0,0,0,0.5)'
-		}
+		padding: 0
 	},
 	turboThreshold: 0,
 	tooltip: {
@@ -984,7 +1004,7 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 /**
  * The MapAreaPoint object
  */
-var MapAreaPoint = extendClass(Point, {
+var MapAreaPoint = extendClass(Point, colorPointMixin, {
 	/**
 	 * Extend the Point object to split paths
 	 */
@@ -1013,27 +1033,14 @@ var MapAreaPoint = extendClass(Point, {
 	},
 
 	/**
-	 * Set the visibility of a single map area
-	 */
-	setVisible: function (vis) {
-		var point = this,
-			method = vis ? 'show' : 'hide';
-
-		// Show and hide associated elements
-		each(['graphic', 'dataLabel'], function (key) {
-			if (point[key]) {
-				point[key][method]();
-			}
-		});
-	},
-
-	/**
 	 * Stop the fade-out 
 	 */
 	onMouseOver: function (e) {
 		clearTimeout(this.colorInterval);
 		if (this.value !== null) {
 			Point.prototype.onMouseOver.call(this, e);
+		} else { //#3401 Tooltip doesn't hide when hovering over null points
+			this.series.onMouseOut(e);
 		}
 	},
 	/**
@@ -1108,6 +1115,8 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	getExtremesFromAll: true,
 	useMapGeometry: true, // get axis extremes from paths, not values
 	forceDL: true,
+	searchPoint: noop,
+	preserveAspectRatio: true, // X axis and Y axis must have same translation slope
 	/**
 	 * Get the bounding box of all paths in the map combined.
 	 */
@@ -1259,6 +1268,8 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			joinByNull = joinBy === null,
 			dataUsed = [],
 			mapPoint,
+			transform,
+			mapTransforms,
 			props,
 			i;
 
@@ -1287,6 +1298,16 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		this.getBox(data);
 		if (mapData) {
 			if (mapData.type === 'FeatureCollection') {
+				if (mapData['hc-transform']) {
+					this.chart.mapTransforms = mapTransforms = mapData['hc-transform'];
+					// Cache cos/sin of transform rotation angle
+					for (transform in mapTransforms) {
+						if (mapTransforms.hasOwnProperty(transform) && transform.rotation) {							
+							transform.cosAngle = Math.cos(transform.rotation);
+							transform.sinAngle = Math.sin(transform.rotation);							
+						}
+					}
+				}
 				mapData = Highcharts.geojson(mapData, this.type, this);
 			}
 
@@ -1347,7 +1368,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	 * in capable browsers.
 	 */
 	doFullTranslate: function () {
-		return this.isDirtyData || this.chart.renderer.isVML || !this.baseTrans;
+		return this.isDirtyData || this.chart.isResizing || this.chart.renderer.isVML || !this.baseTrans;
 	},
 	
 	/**
@@ -1372,10 +1393,11 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		
 				point.shapeType = 'path';
 				point.shapeArgs = {
-					//d: display ? series.translatePath(point.path) : ''
-					d: series.translatePath(point.path),
-					'vector-effect': 'non-scaling-stroke'
+					d: series.translatePath(point.path)
 				};
+				if (supportsVectorEffect) {
+					point.shapeArgs['vector-effect'] = 'non-scaling-stroke';
+				}
 			}
 		});
 		
@@ -1408,20 +1430,21 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					scaleY: 1
 				})
 				.add(group);
+			series.transformGroup.survive = true;
 		}
 		
 		// Draw the shapes again
 		if (series.doFullTranslate()) {
 
-			// Individual point actions	
-			if (chart.hasRendered && series.pointAttrToOptions.fill === 'color') {
+			// If vector-effect is not supported, we set the stroke-width on the group element
+			// and let all point graphics inherit. That way we don't have to iterate over all 
+			// points to update the stroke-width on zooming.
+			if (!supportsVectorEffect) {
 				each(series.points, function (point) {
-
-					// Reset color on update/redraw
-					if (point.graphic) {
-						point.graphic.attr('fill', point.color);
+					var attr = point.pointAttr[''];
+					if (attr['stroke-width'] === series.pointAttr['']['stroke-width']) {
+						attr['stroke-width'] = 'inherit';
 					}
-
 				});
 			}
 
@@ -1439,6 +1462,15 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					if (point.properties && point.properties['hc-key']) {
 						point.graphic.addClass('highcharts-key-' + point.properties['hc-key'].toLowerCase());
 					}
+
+					if (!supportsVectorEffect) {
+						point.graphic['stroke-widthSetter'] = noop;
+					}
+
+					// Reset color on update/redraw
+					if (chart.hasRendered && point.graphic.attr('fill') !== point.color) {
+						point.graphic.animate({ fill: point.color });
+					}
 				}
 			});
 
@@ -1451,28 +1483,28 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				transAY: yAxis.transA
 			};
 
-			// Reset transformations
-			this.transformGroup.attr({
-				scaleX: 1,
-				scaleY: 1,
+			// Reset transformation in case we're doing a full translate (#3789)
+			this.transformGroup.animate({
 				translateX: 0,
-				translateY: 0
+				translateY: 0,
+				scaleX: 1,
+				scaleY: 1
 			});
 
 		// Just update the scale and transform for better performance
 		} else {
 			scaleX = xAxis.transA / baseTrans.transAX;
 			scaleY = yAxis.transA / baseTrans.transAY;
-			if (scaleX > 0.99 && scaleX < 1.01 && scaleY > 0.99 && scaleY < 1.01) { // rounding errors
-				translateX = 0;
-				translateY = 0;
+			translateX = xAxis.toPixels(baseTrans.originX, true);
+			translateY = yAxis.toPixels(baseTrans.originY, true);
+
+			// Handle rounding errors in normal view (#3789)
+			if (scaleX > 0.99 && scaleX < 1.01 && scaleY > 0.99 && scaleY < 1.01) {
 				scaleX = 1;
 				scaleY = 1;
-
-			} else {	
-				translateX = xAxis.toPixels(baseTrans.originX, true);
-				translateY = yAxis.toPixels(baseTrans.originY, true);
-			} 
+				translateX = Math.round(translateX);
+				translateY = Math.round(translateY);
+			}
 
 			this.transformGroup.animate({
 				translateX: translateX,
@@ -1481,6 +1513,13 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				scaleY: scaleY
 			});
 
+		}
+
+		// Set the stroke-width directly on the group element so the children inherit it. We need to use 
+		// setAttribute directly, because the stroke-widthSetter method expects a stroke color also to be 
+		// set.
+		if (!supportsVectorEffect) {
+			series.group.element.setAttribute('stroke-width', series.options.borderWidth / (scaleX || 1));
 		}
 
 		this.drawMapDataLabels();
@@ -1498,63 +1537,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		if (this.dataLabelsGroup) {
 			this.dataLabelsGroup.clip(this.chart.clipRect);
 		}
-
-		this.hideOverlappingDataLabels();
-	},
-
-	/**
-	 * Hide overlapping labels. Labels are moved and faded in and out on zoom to provide a smooth 
-	 * visual imression.
-	 */		
-	hideOverlappingDataLabels: function () {
-
-		var points = this.points,
-			len = points.length,
-			i,
-			j,
-			label1,
-			label2,
-			intersectRect = function (pos1, pos2, size1, size2) {
-				return !(
-					pos2.x > pos1.x + size1.width ||
-					pos2.x + size2.width < pos1.x ||
-					pos2.y > pos1.y + size1.height ||
-					pos2.y + size2.height < pos1.y
-				);
-			};
-
-		// Mark with initial opacity
-		each(points, function (point, label) {
-			label = point.dataLabel;
-			if (label) {
-				label.oldOpacity = label.opacity;
-				label.newOpacity = 1;
-			}
-		});
-
-		// Detect overlapping labels
-		for (i = 0; i < len - 1; ++i) {
-			label1 = points[i].dataLabel;
-
-			for (j = i + 1; j < len; ++j) {
-				label2 = points[j].dataLabel;
-				if (label1 && label2 && label1.newOpacity !== 0 && label2.newOpacity !== 0 && 
-						intersectRect(label1.alignAttr, label2.alignAttr, label1, label2)) {
-					(points[i].labelrank < points[j].labelrank ? label1 : label2).newOpacity = 0;
-				}
-			}
-		}
-
-		// Hide or show
-		each(points, function (point, label) {
-			label = point.dataLabel;
-			if (label) {
-				if (label.oldOpacity !== label.newOpacity) {
-					label[label.isOld ? 'animate' : 'attr'](extend({ opacity: label.newOpacity }, label.alignAttr));
-				}
-				label.isOld = true;
-			}
-		});
 	},
 
 	/**
@@ -1644,16 +1626,16 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 			
 			// TODO: Animate this.group instead
 			each(this.points, function (point) {
-
-				point.graphic
-					.attr(level.shapeArgs)
-					.animate({
-						scaleX: 1,
-						scaleY: 1,
-						translateX: 0,
-						translateY: 0
-					}, animationOptions);
-
+				if (point.graphic) {
+					point.graphic
+						.attr(level.shapeArgs)
+						.animate({
+							scaleX: 1,
+							scaleY: 1,
+							translateX: 0,
+							translateY: 0
+						}, animationOptions);
+				}
 			});
 
 			this.animate = null;
@@ -1705,18 +1687,26 @@ defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 		formatter: function () { // #2945
 			return this.point.name; 
 		},
-		color: 'black',
 		crop: false,
 		defer: false,
 		overflow: false,
 		style: {
-			HcTextStroke: '3px rgba(255,255,255,0.5)'
+			color: '#000000'
 		}
 	}
 });
 seriesTypes.mappoint = extendClass(seriesTypes.scatter, {
 	type: 'mappoint',
-	forceDL: true
+	forceDL: true,
+	pointClass: extendClass(Point, {
+		applyOptions: function (options, x) {
+			var point = Point.prototype.applyOptions.call(this, options, x);
+			if (options.lat !== undefined && options.lon !== undefined) {
+				point = extend(point, this.series.chart.fromLatLonToPoint(point));
+			}
+			return point;
+		}
+	})
 });
 
 // The mapbubble series type
@@ -1730,7 +1720,17 @@ if (seriesTypes.bubble) {
 	});
 	seriesTypes.mapbubble = extendClass(seriesTypes.bubble, {
 		pointClass: extendClass(Point, {
-			applyOptions: MapAreaPoint.prototype.applyOptions
+			applyOptions: function (options, x) {
+				var point;
+				if (options.lat !== undefined && options.lon !== undefined) {
+					point = Point.prototype.applyOptions.call(this, options, x);
+					point = extend(point, this.series.chart.fromLatLonToPoint(point));
+				} else {
+					point = MapAreaPoint.prototype.applyOptions.call(this, options, x);
+				}
+				return point;
+			},
+			ttBelow: false
 		}),
 		xyFromShape: true,
 		type: 'mapbubble',
@@ -1755,16 +1755,14 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 		formatter: function () { // #2945
 			return this.point.value;
 		},
+		inside: true,
 		verticalAlign: 'middle',
 		crop: false,
 		overflow: false,
-		style: {
-			color: 'white',
-			fontWeight: 'bold',
-			HcTextStroke: '1px rgba(0,0,0,0.5)'
-		}
+		padding: 0 // #3837
 	},
 	marker: null,
+	pointRange: null, // dynamically set to colsize by default
 	tooltip: {
 		pointFormat: '{point.x}, {point.y}: {point.value}<br/>'
 	},
@@ -1773,6 +1771,7 @@ defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 			animation: true
 		},
 		hover: {
+			halo: false,  // #3406, halo is not required on heatmaps
 			brightness: 0.2
 		}
 	}
@@ -1783,12 +1782,21 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
+	pointClass: extendClass(Point, colorPointMixin),
 	supportsDrilldown: true,
 	getExtremesFromAll: true,
+	directTouch: true,
+
+	/**
+	 * Override the init method to add point ranges on both axes.
+	 */
 	init: function () {
+		var options;
 		seriesTypes.scatter.prototype.init.apply(this, arguments);
-		this.pointRange = this.options.colsize || 1;
-		this.yAxis.axisPointRange = this.options.rowsize || 1; // general point range
+
+		options = this.options;
+		this.pointRange = options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
+		this.yAxis.axisPointRange = options.rowsize || 1; // general point range
 	},
 	translate: function () {
 		var series = this,
@@ -1807,7 +1815,7 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				y2 = Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 1));
 
 			// Set plotX and plotY for use in K-D-Tree and more
-			point.plotX = (x1 + x2) / 2;
+			point.plotX = point.clientX = (x1 + x2) / 2;
 			point.plotY = (y1 + y2) / 2;
 
 			point.shapeType = 'rect';
@@ -1824,7 +1832,7 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		// Make sure colors are updated on colorAxis update (#2893)
 		if (this.chart.hasRendered) {
 			each(series.points, function (point) {
-				point.shapeArgs.fill = point.color;
+				point.shapeArgs.fill = point.options.color || point.color; // #3311
 			});
 		}
 	},
@@ -1845,6 +1853,115 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		
 }));
 
+
+/** 
+ * Test for point in polygon. Polygon defined as array of [x,y] points.
+ */
+function pointInPolygon(point, polygon) {
+	var i, j, rel1, rel2, c = false,
+		x = point.x,
+		y = point.y;
+
+	for (i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+		rel1 = polygon[i][1] > y;
+		rel2 = polygon[j][1] > y;
+		if (rel1 !== rel2 && (x < (polygon[j][0] - polygon[i][0]) * (y - polygon[i][1]) / (polygon[j][1] - polygon[i][1]) + polygon[i][0])) {
+			c = !c;
+		}
+	}
+
+	return c;
+}
+
+/**
+ * Get point from latLon using specified transform definition
+ */
+Chart.prototype.transformFromLatLon = function (latLon, transform) {
+	if (window.proj4 === undefined) {
+		error(21);
+		return {
+			x: 0,
+			y: null
+		};
+	}
+
+	var projected = window.proj4(transform.crs, [latLon.lon, latLon.lat]),
+		cosAngle = transform.cosAngle || (transform.rotation && Math.cos(transform.rotation)),
+		sinAngle = transform.sinAngle || (transform.rotation && Math.sin(transform.rotation)),
+		rotated = transform.rotation ? [projected[0] * cosAngle + projected[1] * sinAngle, -projected[0] * sinAngle + projected[1] * cosAngle] : projected;
+	
+	return {
+		x: ((rotated[0] - (transform.xoffset || 0)) * (transform.scale || 1) + (transform.xpan || 0)) * (transform.jsonres || 1) + (transform.jsonmarginX || 0),
+		y: (((transform.yoffset || 0) - rotated[1]) * (transform.scale || 1) + (transform.ypan || 0)) * (transform.jsonres || 1) - (transform.jsonmarginY || 0)
+	};
+};
+
+/**
+ * Get latLon from point using specified transform definition
+ */
+Chart.prototype.transformToLatLon = function (point, transform) {
+	if (window.proj4 === undefined) {
+		error(21);
+		return;
+	}
+
+	var normalized = {
+			x: ((point.x - (transform.jsonmarginX || 0)) / (transform.jsonres || 1) - (transform.xpan || 0)) / (transform.scale || 1) + (transform.xoffset || 0),
+			y: ((-point.y - (transform.jsonmarginY || 0)) / (transform.jsonres || 1) + (transform.ypan || 0)) / (transform.scale || 1) + (transform.yoffset || 0)
+		},
+		cosAngle = transform.cosAngle || (transform.rotation && Math.cos(transform.rotation)),
+		sinAngle = transform.sinAngle || (transform.rotation && Math.sin(transform.rotation)),
+		// Note: Inverted sinAngle to reverse rotation direction
+		projected = window.proj4(transform.crs, 'WGS84', transform.rotation ? {
+			x: normalized.x * cosAngle + normalized.y * -sinAngle,
+			y: normalized.x * sinAngle + normalized.y * cosAngle
+		} : normalized);
+
+	return {lat: projected.y, lon: projected.x};
+};
+
+Chart.prototype.fromPointToLatLon = function (point) {
+	var transforms = this.mapTransforms,
+		transform;
+
+	if (!transforms) {
+		error(22);
+		return;
+	}
+
+	for (transform in transforms) {
+		if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone && pointInPolygon({x: point.x, y: -point.y}, transforms[transform].hitZone.coordinates[0])) {
+			return this.transformToLatLon(point, transforms[transform]);
+		}
+	}
+
+	return this.transformToLatLon(point, transforms['default']);
+};
+
+Chart.prototype.fromLatLonToPoint = function (latLon) {
+	var transforms = this.mapTransforms,
+		transform,
+		coords;
+
+	if (!transforms) {
+		error(22);
+		return {
+			x: 0,
+			y: null
+		};
+	}
+
+	for (transform in transforms) {
+		if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone) {
+			coords = this.transformFromLatLon(latLon, transforms[transform]);
+			if (pointInPolygon({x: coords.x, y: -coords.y}, transforms[transform].hitZone.coordinates[0])) {
+				return coords;
+			}
+		}
+	}
+
+	return this.transformFromLatLon(latLon, transforms['default']);
+};
 
 /**
  * Convert a geojson object to map data of a given Highcharts type (map, mappoint or mapline).
@@ -1917,13 +2034,14 @@ Highcharts.geojson = function (geojson, hType, series) {
 				properties: properties
 			}));
 		}
-		
+
 	});
 
 	// Create a credits text that includes map source, to be picked up in Chart.showCredits
-	if (series) {
+	if (series && geojson.copyrightShort) {
 		series.chart.mapCredits = '<a href="http://www.highcharts.com">Highcharts</a> \u00A9 ' +
 			'<a href="' + geojson.copyrightUrl + '">' + geojson.copyrightShort + '</a>';
+		series.chart.mapCreditsFull = geojson.copyright;
 	}
 
 	return mapData;
@@ -1940,6 +2058,12 @@ wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
 	}
 
 	proceed.call(this, credits);
+
+	if (this.credits) { 
+		this.credits.attr({ 
+			title: this.mapCreditsFull
+		});
+	}
 });
 
 // Add language
@@ -2022,12 +2146,7 @@ Highcharts.maps = {};
 
 
 // Create symbols for the zoom buttons
-function selectiveRoundedRect(attr, x, y, w, h, rTopLeft, rTopRight, rBottomRight, rBottomLeft) {
-	var normalize = (attr['stroke-width'] % 2 / 2);
-		
-	x -= normalize;
-	y -= normalize;
-
+function selectiveRoundedRect(x, y, w, h, rTopLeft, rTopRight, rBottomRight, rBottomLeft) {
 	return ['M', x + rTopLeft, y,
         // top side
         'L', x + w - rTopRight, y,
@@ -2049,10 +2168,10 @@ function selectiveRoundedRect(attr, x, y, w, h, rTopLeft, rTopRight, rBottomRigh
     ];
 }
 SVGRenderer.prototype.symbols.topbutton = function (x, y, w, h, attr) {
-	return selectiveRoundedRect(attr, x, y, w, h, attr.r, attr.r, 0, 0);
+	return selectiveRoundedRect(x - 1, y - 1, w, h, attr.r, attr.r, 0, 0);
 };
 SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
-	return selectiveRoundedRect(attr, x, y, w, h, 0, 0, attr.r, attr.r);
+	return selectiveRoundedRect(x - 1, y - 1, w, h, 0, 0, attr.r, attr.r);
 };
 // The symbol callbacks are generated on the SVGRenderer object in all browsers. Even
 // VML browsers need this in order to generate shapes in export. Now share
@@ -2104,8 +2223,7 @@ Highcharts.Map = function (options, callback) {
 	{ // forced options
 		chart: {
 			inverted: false,
-			alignTicks: false,
-			preserveAspectRatio: true
+			alignTicks: false
 		}
 	});
 

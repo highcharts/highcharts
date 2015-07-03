@@ -17,7 +17,7 @@ $(function () {
     });
 
     // button action
-    $('#button').click(function() {
+    $('#button').click(function () {
         var chart = $('#container').highcharts();
         chart.xAxis[0].removePlotLine('plotline-1');
     });

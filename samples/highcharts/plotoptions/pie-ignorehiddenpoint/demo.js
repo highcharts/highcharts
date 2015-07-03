@@ -1,5 +1,5 @@
 $(function () {
-        
+
     // Build the chart
     $('#container').highcharts({
         chart: {
@@ -36,5 +36,5 @@ $(function () {
             ]
         }]
     });
-    
+
 });

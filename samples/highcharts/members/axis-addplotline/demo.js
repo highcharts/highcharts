@@ -15,8 +15,8 @@ $(function () {
     var hasPlotLine = false,
         $button = $('#button'),
         chart = $('#container').highcharts();
-        
-    $button.click(function() {
+
+    $button.click(function () {
         if (!hasPlotLine) {
             chart.xAxis[0].addPlotLine({
                 value: 5.5,

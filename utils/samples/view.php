@@ -1,15 +1,15 @@
 <?php
 
 session_start();
-$defaults = json_decode(file_get_contents('default-settings.json'));
 
 define('FRAMEWORK', 'jQuery');
 
 require_once('functions.php');
 
 @$path = $_GET['path'];
-if (!preg_match('/^[a-z]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
-	die ('Invalid sample path input');
+if (!preg_match('/^[a-z\-]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
+
+	die ();
 }
 
 $i = (int)$_GET['i'];
@@ -41,7 +41,7 @@ if (strstr($html, "/code.highcharts.$topDomain/mapdata")) {
 if (isset($_POST['theme'])) {
 	$_SESSION['theme'] = $_POST['theme'];	
 }
-if ($_SESSION['theme']) {
+if (@$_SESSION['theme']) {
 	$html .= "<script src='http://code.highcharts.$topDomain/themes/". $_SESSION['theme'] .".js'></script>";
 }
 $themes = array(
@@ -107,14 +107,25 @@ function getResources() {
 			if (typeof $ === 'undefined') {
 				window.onload = function () {
 					document.getElementById('container').innerHTML = 
-						'<div style="margin-top: 150px; %text-align: center"><h3 style="font-size: 2em; color: red">' +
-						'jQuery is missing</h3><p>Check your settings in <code>default-settings.json</code>.</div>';
+						'<div style="margin-top: 150px; text-align: center"><h3 style="font-size: 2em; color: red">' +
+						'jQuery is missing</h3><p>Check your settings in <code>settings.php</code>.</div>';
 				}
 				return;
 			}
 
 			
 			$(function() {
+
+
+				if (typeof Highcharts === 'undefined' && !document.getElementById('container')) {
+					window.onload = function () {
+						document.body.innerHTML = 
+							'<div style="margin-top: 150px; text-align: center"><h3 style="font-size: 2em; color: red">' +
+							'Highcharts and container are missing</h3><p>Most likely this sample does not exist.</div>';
+					}
+					return;
+				}
+
 
 				$('#version').html(Highcharts.product + ' ' + Highcharts.version);
 
@@ -153,12 +164,10 @@ function getResources() {
 					var checked = $(this).attr('checked');
 					
 					$('#source-box').css({
-						width: checked ? '50%' : 'auto',
-						'float': checked ? 'left' : 'none'
+						width: checked ? '50%' : 0
 					});
 					$('#main-content').css({
-						width: checked ? '50%' : 'auto',
-						'float': checked ? 'right' : 'none'
+						width: checked ? '50%' : '100%'
 					});
 					$.each(Highcharts.charts, function () {
 						this.reflow();
@@ -179,6 +188,7 @@ function getResources() {
 						$('#source-box').html('');
 					}
 				});
+				contentDoc = null;
 
 			});
 		}());
@@ -195,7 +205,7 @@ function getResources() {
 		}
 
 
-		/* Wrappers for recording mouse events in order to write automatic tests */
+		// Wrappers for recording mouse events in order to write automatic tests 
 		$(function () {
 
 			$(window).bind('keydown', parent.keyDown);
@@ -292,22 +302,6 @@ function getResources() {
 			<?php @include("$fullpath/demo.css"); ?>
 		</style>
 
-		<style type="text/css">
-			.top-bar {
-				color: white;
-				font-family: Arial, sans-serif;
-				font-size: 0.8em;
-				padding: 0.5em;
-				height: 50px;
-				background: #34343e;
-				box-shadow: 0px 0px 8px #888;
-			}
-			li, a, p, div {
-				font-family: Arial, sans-serif;
-				font-size: 10pt;
-			}
-		</style>
-
 	</head>
 	<body style="margin: 0">
 
@@ -321,7 +315,7 @@ function getResources() {
 				<form method="post" action="" style="display:inline">
 					<select name="theme" onchange="this.form.submit()">
 					<?php foreach ($themes as $theme => $themeName) : ?>
-						<option value="<?php echo $theme ?>" <?php if ($theme == $_SESSION['theme']) echo 'selected' ?>>
+						<option value="<?php echo $theme ?>" <?php if ($theme == @$_SESSION['theme']) echo 'selected' ?>>
 							<?php echo $themeName ?>
 						</option>
 					<?php endforeach ?>

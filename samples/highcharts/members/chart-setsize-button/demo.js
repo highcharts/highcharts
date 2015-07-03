@@ -1,8 +1,13 @@
 $(function () {
-    var $container = $('#container');
-    
+    var $container = $('#container'),
+        chart,
+        origChartWidth = 400,
+        origChartHeight = 300,
+        chartWidth = origChartWidth,
+        chartHeight = origChartHeight;
+
     $container.highcharts({
-    
+
         chart: {
             width: 400,
             height: 300
@@ -18,18 +23,19 @@ $(function () {
     });
 
     // create some buttons to test the resize logic
-    var chart = $container.highcharts(),
-        origChartWidth = 400,
-        origChartHeight = 300,
-        chartWidth = origChartWidth,
-        chartHeight = origChartHeight;
-    $('<button>+</button>').insertBefore($container).click(function() {
-        chart.setSize(chartWidth *= 1.1, chartHeight *= 1.1);
+    chart = $container.highcharts();
+
+    $('<button>+</button>').insertBefore($container).click(function () {
+        chartWidth *= 1.1;
+        chartHeight *= 1.1;
+        chart.setSize(chartWidth, chartHeight);
     });
-    $('<button>-</button>').insertBefore($container).click(function() {
-        chart.setSize(chartWidth *= 0.9, chartHeight *= 0.9);
+    $('<button>-</button>').insertBefore($container).click(function () {
+        chartWidth *= 0.9;
+        chartHeight *= 0.9;
+        chart.setSize(chartWidth, chartHeight);
     });
-    $('<button>1:1</button>').insertBefore($container).click(function() {
+    $('<button>1:1</button>').insertBefore($container).click(function () {
         chartWidth = origChartWidth;
         chartHeight = origChartHeight;
         chart.setSize(origChartWidth, origChartHeight);

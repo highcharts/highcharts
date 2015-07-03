@@ -1,4 +1,4 @@
-$(function () {    
+$(function () {
 
     // Create the chart
     $('#container').highcharts({
@@ -24,7 +24,7 @@ $(function () {
             series: {
                 borderWidth: 0,
                 dataLabels: {
-                    enabled: true,
+                    enabled: true
                 }
             }
         },
@@ -72,6 +72,6 @@ $(function () {
                 ]
             }]
         }
-    })
+    });
 });
-    
+

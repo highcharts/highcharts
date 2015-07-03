@@ -4,7 +4,7 @@ $(function () {
             type: 'column',
             margin: 75,
             options3d: {
-				enabled: true,
+                enabled: true,
                 alpha: 10,
                 beta: 25,
                 depth: 70
@@ -25,7 +25,9 @@ $(function () {
             categories: Highcharts.getOptions().lang.shortMonths
         },
         yAxis: {
-            opposite: true
+            title: {
+                text: null
+            }
         },
         series: [{
             name: 'Sales',

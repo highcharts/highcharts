@@ -1,5 +1,5 @@
 $(function () {
-    
+
     $('#container').highcharts({
         chart: {
             type: 'funnel',
@@ -19,7 +19,7 @@ $(function () {
                 },
                 neckWidth: '30%',
                 neckHeight: '25%'
-                
+
                 //-- Other available options
                 // height: pixels or percent
                 // width: pixels or percent

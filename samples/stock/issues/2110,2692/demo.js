@@ -438,21 +438,22 @@ $.each(usdeur, function (i, point) {
     usdrand[i] = [point[0], point[1] + 0.01];
 });
 
-$(function() {
+$(function () {
     $('#container').highcharts('StockChart', {
-                    
+
         title: {
             text: 'Issue in Highstock 1.3.7 caused the data grouping to stick.<br/>Highstock <= 1.3.9 saw the same issue with multiple series.'
         },
         rangeSelector: {
-            selected: 5
+            selected: 5,
+            inputEnabled: false
         },
         series: [{
             data: usdeur,
             dataGrouping: {
                 units: [[
-                    'week',                         
-                    [1]                             
+                    'week',
+                    [1]
                 ], [
                     'month',
                     [1, 2, 3, 4, 6]
@@ -462,8 +463,8 @@ $(function() {
             data: usdrand,
             dataGrouping: {
                 units: [[
-                    'week',                         
-                    [1]                             
+                    'week',
+                    [1]
                 ], [
                     'month',
                     [1, 2, 3, 4, 6]

@@ -8,7 +8,7 @@
  * License: www.highcharts.com/license
  */
 
-(function (H) { // docs
+(function (H) {
 	
 	var seriesTypes = H.seriesTypes,
 		chartPrototype = H.Chart.prototype,
@@ -36,6 +36,7 @@
 			fontSize: '12px',
 			color: '#60606a'		
 		}
+		// useHTML: false // docs
 	};
 
 	/**
@@ -52,7 +53,7 @@
 	});
 
 	H.Series.prototype.hasData = function () {
-		return this.dataMax !== undefined && this.dataMin !== undefined;
+		return this.visible && this.dataMax !== undefined && this.dataMin !== undefined; // #3703
 	};
 	
 	/**
@@ -67,7 +68,18 @@
 			noDataOptions = options.noData;
 
 		if (!chart.noDataLabel) {
-			chart.noDataLabel = chart.renderer.label(text, 0, 0, null, null, null, null, null, 'no-data')
+			chart.noDataLabel = chart.renderer
+				.label(
+					text, 
+					0, 
+					0, 
+					null, 
+					null, 
+					null, 
+					noDataOptions.useHTML, 
+					null, 
+					'no-data'
+				)
 				.attr(noDataOptions.attr)
 				.css(noDataOptions.style)
 				.add();

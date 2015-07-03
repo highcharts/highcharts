@@ -1,27 +1,9 @@
 /* ****************************************************************************
  * Handle the options                                                         *
  *****************************************************************************/
-var
-
-defaultLabelOptions = {
-	enabled: true,
-	// rotation: 0,
-	// align: 'center',
-	x: 0,
-	y: 15,
-	/*formatter: function () {
-		return this.value;
-	},*/
-	style: {
-		color: '#606060',
-		cursor: 'default',
-		fontSize: '11px'
-	}
-};
-
 defaultOptions = {
 	colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', 
-		    '#8085e9', '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'],
+		    '#8085e9', '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'],
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
 		loading: 'Loading...',
@@ -33,7 +15,7 @@ defaultOptions = {
 		numericSymbols: ['k', 'M', 'G', 'T', 'P', 'E'], // SI prefixes used in axis labels
 		resetZoom: 'Reset zoom',
 		resetZoomTitle: 'Reset zoom level 1:1',
-		thousandsSep: ','
+		thousandsSep: ' '
 	},
 	global: {
 		useUTC: true,
@@ -154,22 +136,29 @@ defaultOptions = {
 			point: {
 				events: {}
 			},
-			dataLabels: merge(defaultLabelOptions, {
+			dataLabels: {
 				align: 'center',
-				//defer: true,
-				enabled: false,
+				// defer: true,
+				// enabled: false,
 				formatter: function () {
-					return this.y === null ? '' : numberFormat(this.y, -1);
+					return this.y === null ? '' : Highcharts.numberFormat(this.y, -1);
+				},
+				style: {
+					color: 'contrast',
+					fontSize: '11px',
+					fontWeight: 'bold',
+					textShadow: '0 0 6px contrast, 0 0 3px contrast'
 				},
 				verticalAlign: 'bottom', // above singular point
-				y: 0
+				x: 0,
+				y: 0,
 				// backgroundColor: undefined,
 				// borderColor: undefined,
 				// borderRadius: undefined,
 				// borderWidth: undefined,
-				// padding: 3,
+				padding: 5
 				// shadow: false
-			}),
+			},
 			cropThreshold: 300, // draw points outside the plot area when the number of points is less than this
 			pointRange: 0,
 			//pointStart: 0,
@@ -194,7 +183,7 @@ defaultOptions = {
 			},
 			stickyTracking: true,
 			//tooltip: {
-				//pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y}</b>'
+				//pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b>'
 				//valueDecimals: null,
 				//xDateFormat: '%A, %b %e, %Y',
 				//valuePrefix: '',
@@ -303,9 +292,10 @@ defaultOptions = {
 			month: '%B %Y',
 			year: '%Y'
 		},
+		footerFormat: '',
 		//formatter: defaultFormatter,
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
-		pointFormat: '<span style="color:{series.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
+		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 		shadow: true,
 		//shape: 'callout',
 		//shared: false,
@@ -358,33 +348,45 @@ setTimeMethods();
  * local time or UTC (default).
  */
 function setTimeMethods() {
-	var useUTC = defaultOptions.global.useUTC,
+	var globalOptions = defaultOptions.global,
+		useUTC = globalOptions.useUTC,
 		GET = useUTC ? 'getUTC' : 'get',
 		SET = useUTC ? 'setUTC' : 'set';
 
 
-	timezoneOffset = ((useUTC && defaultOptions.global.timezoneOffset) || 0) * 60000;
-	makeTime = useUTC ? Date.UTC : function (year, month, date, hours, minutes, seconds) {
-		return new Date(
-			year,
-			month,
-			pick(date, 1),
-			pick(hours, 0),
-			pick(minutes, 0),
-			pick(seconds, 0)
-		).getTime();
+	Date = globalOptions.Date || window.Date;
+	timezoneOffset = useUTC && globalOptions.timezoneOffset;
+	getTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
+	makeTime = function (year, month, date, hours, minutes, seconds) {
+		var d;
+		if (useUTC) {
+			d = Date.UTC.apply(0, arguments);
+			d += getTZOffset(d);
+		} else {
+			d = new Date(
+				year,
+				month,
+				pick(date, 1),
+				pick(hours, 0),
+				pick(minutes, 0),
+				pick(seconds, 0)
+			).getTime();
+		}
+		return d;
 	};
-	getMinutes =  GET + 'Minutes';
-	getHours =    GET + 'Hours';
-	getDay =      GET + 'Day';
-	getDate =     GET + 'Date';
-	getMonth =    GET + 'Month';
-	getFullYear = GET + 'FullYear';
-	setMinutes =  SET + 'Minutes';
-	setHours =    SET + 'Hours';
-	setDate =     SET + 'Date';
-	setMonth =    SET + 'Month';
-	setFullYear = SET + 'FullYear';
+	getMinutes =      GET + 'Minutes';
+	getHours =        GET + 'Hours';
+	getDay =          GET + 'Day';
+	getDate =         GET + 'Date';
+	getMonth =        GET + 'Month';
+	getFullYear =     GET + 'FullYear';
+	setMilliseconds = SET + 'Milliseconds';
+	setSeconds =      SET + 'Seconds';
+	setMinutes =      SET + 'Minutes';
+	setHours =        SET + 'Hours';
+	setDate =         SET + 'Date';
+	setMonth =        SET + 'Month';
+	setFullYear =     SET + 'FullYear';
 
 }
 

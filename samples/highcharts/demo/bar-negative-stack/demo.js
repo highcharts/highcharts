@@ -1,20 +1,21 @@
+// Data gathered from http://populationpyramid.net/germany/2015/
 $(function () {
-    var chart,
-        categories = ['0-4', '5-9', '10-14', '15-19',
+    // Age categories
+    var categories = ['0-4', '5-9', '10-14', '15-19',
             '20-24', '25-29', '30-34', '35-39', '40-44',
             '45-49', '50-54', '55-59', '60-64', '65-69',
             '70-74', '75-79', '80-84', '85-89', '90-94',
-            '95-99', '100 +'];
-    $(document).ready(function() {
+            '95-99', '100 + '];
+    $(document).ready(function () {
         $('#container').highcharts({
             chart: {
                 type: 'bar'
             },
             title: {
-                text: 'Population pyramid for Germany, midyear 2010'
+                text: 'Population pyramid for Germany, 2015'
             },
             subtitle: {
-                text: 'Source: www.census.gov'
+                text: 'Source: <a href="http://populationpyramid.net/germany/2015/">Population Pyramids of the World from 1950 to 2100</a>'
             },
             xAxis: [{
                 categories: categories,
@@ -36,39 +37,37 @@ $(function () {
                     text: null
                 },
                 labels: {
-                    formatter: function(){
-                        return (Math.abs(this.value) / 1000000) + 'M';
+                    formatter: function () {
+                        return Math.abs(this.value) + '%';
                     }
-                },
-                min: -4000000,
-                max: 4000000
+                }
             },
-    
+
             plotOptions: {
                 series: {
                     stacking: 'normal'
                 }
             },
-    
+
             tooltip: {
-                formatter: function(){
-                    return '<b>'+ this.series.name +', age '+ this.point.category +'</b><br/>'+
-                        'Population: '+ Highcharts.numberFormat(Math.abs(this.point.y), 0);
+                formatter: function () {
+                    return '<b>' + this.series.name + ', age ' + this.point.category + '</b><br/>' +
+                        'Population: ' + Highcharts.numberFormat(Math.abs(this.point.y), 0);
                 }
             },
-    
+
             series: [{
                 name: 'Male',
-                data: [-1746181, -1884428, -2089758, -2222362, -2537431, -2507081, -2443179,
-                    -2664537, -3556505, -3680231, -3143062, -2721122, -2229181, -2227768,
-                    -2176300, -1329968, -836804, -354784, -90569, -28367, -3878]
+                data: [-2.2, -2.2, -2.3, -2.5, -2.7, -3.1, -3.2,
+                    -3.0, -3.2, -4.3, -4.4, -3.6, -3.1, -2.4,
+                    -2.5, -2.3, -1.2, -0.6, -0.2, -0.0, -0.0]
             }, {
                 name: 'Female',
-                data: [1656154, 1787564, 1981671, 2108575, 2403438, 2366003, 2301402, 2519874,
-                    3360596, 3493473, 3050775, 2759560, 2304444, 2426504, 2568938, 1785638,
-                    1447162, 1005011, 330870, 130632, 21208]
+                data: [2.1, 2.0, 2.2, 2.4, 2.6, 3.0, 3.1, 2.9,
+                    3.1, 4.1, 4.3, 3.6, 3.4, 2.6, 2.9, 2.9,
+                    1.8, 1.2, 0.6, 0.1, 0.0]
             }]
         });
     });
-    
+
 });

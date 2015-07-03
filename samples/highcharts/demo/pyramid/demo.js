@@ -1,5 +1,5 @@
 $(function () {
-    
+
     $('#container').highcharts({
         chart: {
             type: 'pyramid',

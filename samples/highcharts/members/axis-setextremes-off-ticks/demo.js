@@ -14,9 +14,10 @@ $(function () {
 
 
     // the button action
-    $('#button').click(function() {
-        var chart = $('#container').highcharts();
-        var yAxis = chart.yAxis[0];
+    $('#button').click(function () {
+        var chart = $('#container').highcharts(),
+            yAxis = chart.yAxis[0];
+
         yAxis.options.startOnTick = false;
         yAxis.options.endOnTick = false;
 

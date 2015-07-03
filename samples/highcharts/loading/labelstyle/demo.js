@@ -4,7 +4,7 @@ $(function () {
         $button = $('#button'),
         chart;
 
-    $button.click(function() {
+    $button.click(function () {
         if (!isLoading) {
             chart.showLoading();
             $button.html('Hide loading');
@@ -18,7 +18,7 @@ $(function () {
 
     // create the chart
     $('#container').highcharts({
-    
+
         loading: {
             labelStyle: {
                 top: '45%'
@@ -34,5 +34,5 @@ $(function () {
         }]
     });
     chart = $('#container').highcharts();
-        
+
 });

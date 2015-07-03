@@ -1,23 +1,23 @@
-$(function() {
-	$('#container').highcharts('StockChart', {
-		title: {
-			text: 'legend is horizontal by default'
-		},
+$(function () {
+    $('#container').highcharts('StockChart', {
+        title: {
+            text: 'legend is horizontal by default'
+        },
 
-	    legend: {
-	    	enabled: true
-	    },
+        legend: {
+            enabled: true
+        },
 
-	    rangeSelector: {
-	    	selected: 1
-	    },
+        rangeSelector: {
+            selected: 1
+        },
 
-	    series: [{
-	        name: 'ADBE',
-	        data: ADBE
-	    }, {
-	        name: 'MSFT',
-	        data: MSFT
-	    }]
-	});
+        series: [{
+            name: 'ADBE',
+            data: ADBE
+        }, {
+            name: 'MSFT',
+            data: MSFT
+        }]
+    });
 });

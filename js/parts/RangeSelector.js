@@ -89,13 +89,23 @@ RangeSelector.prototype = {
 			range = rangeOptions._range,
 			rangeMin,
 			year,
-			timeName;
+			timeName,
+			minSetting,
+			rangeSetting,
+			dataGrouping = rangeOptions.dataGrouping;
 
 		if (dataMin === null || dataMax === null || // chart has no data, base series is removed
 				i === rangeSelector.selected) { // same button is clicked twice
 			return;
 		}
 
+		// Apply dataGrouping associated to button
+		if (dataGrouping) {
+			this.forcedDataGrouping = true;			
+			Axis.prototype.setDataGrouping.call(baseAxis || { chart: this.chart }, dataGrouping, false);
+		}
+
+		// Apply range
 		if (type === 'month' || type === 'year') {
 			timeName = { month: 'Month', year: 'FullYear'}[type];
 			date['set' + timeName](date['get' + timeName]() - count);
@@ -164,18 +174,22 @@ RangeSelector.prototype = {
 
 		chart.fixedRange = range;
 
-		// update the chart
-		if (!baseAxis) { // axis not yet instanciated
-			baseXAxisOptions = chart.options.xAxis;
-			baseXAxisOptions[0] = merge(
-				baseXAxisOptions[0],
-				{
-					range: range,
-					min: rangeMin
-				}
-			);
+		// Update the chart
+		if (!baseAxis) { 
+			// Axis not yet instanciated. Temporarily set min and range
+			// options and remove them on chart load (#4317).
+			baseXAxisOptions = chart.options.xAxis[0];
+			rangeSetting = baseXAxisOptions.range;
+			baseXAxisOptions.range = range;
+			minSetting = baseXAxisOptions.min;
+			baseXAxisOptions.min = rangeMin;
 			rangeSelector.setSelected(i);
-		} else { // existing axis object; after render time
+			addEvent(chart, 'load', function resetMinAndRange() {
+				baseXAxisOptions.range = rangeSetting;
+				baseXAxisOptions.min = minSetting;
+			});
+		} else {
+			// Existing axis object. Set extremes after render time.
 			baseAxis.setExtremes(
 				newMin,
 				newMax,
@@ -237,11 +251,11 @@ RangeSelector.prototype = {
 			blurInputs = rangeSelector.blurInputs = function () {
 				var minInput = rangeSelector.minInput,
 					maxInput = rangeSelector.maxInput;
-				if (minInput) {
-					minInput.blur();
+				if (minInput && minInput.blur) { //#3274 in some case blur is not defined
+					fireEvent(minInput, 'blur'); //#3274
 				}
-				if (maxInput) {
-					maxInput.blur();
+				if (maxInput && maxInput.blur) { //#3274 in some case blur is not defined
+					fireEvent(maxInput, 'blur'); //#3274
 				}
 			};
 
@@ -263,8 +277,16 @@ RangeSelector.prototype = {
 			this.clickButton(selectedOption, false);
 		}
 
-		// normalize the pressed button whenever a new range is selected
+
 		addEvent(chart, 'load', function () {
+			// If a data grouping is applied to the current button, release it when extremes change
+			addEvent(chart.xAxis[0], 'setExtremes', function (e) {
+				if (this.max - this.min !== chart.fixedRange && e.trigger !== 'rangeSelectorButton' &&
+						e.trigger !== 'updatedData' && rangeSelector.forcedDataGrouping) {
+					this.setDataGrouping(false, false);
+				}
+			});
+			// Normalize the pressed button whenever a new range is selected
 			addEvent(chart.xAxis[0], 'afterSetExtremes', function () {
 				rangeSelector.updateButtonStates(true);
 			});
@@ -362,6 +384,30 @@ RangeSelector.prototype = {
 		this[name + 'DateBox'].attr({ text: dateFormat(options.inputDateFormat || '%b %e, %Y', this[name + 'Input'].HCTime) });
 	},
 
+	showInput: function (name) {
+		var inputGroup = this.inputGroup,
+			dateBox = this[name + 'DateBox'];
+
+		css(this[name + 'Input'], {
+			left: (inputGroup.translateX + dateBox.x) + PX,
+			top: inputGroup.translateY + PX,
+			width: (dateBox.width - 2) + PX,
+			height: (dateBox.height - 2) + PX,
+			border: '2px solid silver'
+		});
+	},
+
+	hideInput: function (name) {
+		if (document.activeElement === this[name + 'Input']) { // Prevent running again and again
+			css(this[name + 'Input'], {
+				border: 0,
+				width: '1px',
+				height: '1px'
+			});
+			this.setInputValue(name);
+		}
+	},
+
 	/**
 	 * Draw either the 'from' or the 'to' HTML input box of the range selector
 	 * @param {Object} name
@@ -404,6 +450,7 @@ RangeSelector.prototype = {
 				color: '#444'
 			}, chartStyle, options.inputStyle))
 			.on('click', function () {
+				rangeSelector.showInput(name); // If it is already focused, the onfocus event doesn't fire (#3713)
 				rangeSelector[name + 'Input'].focus();
 			})
 			.add(inputGroup);
@@ -430,22 +477,11 @@ RangeSelector.prototype = {
 
 		// Blow up the input box
 		input.onfocus = function () {
-			css(this, {
-				left: (inputGroup.translateX + dateBox.x) + PX,
-				top: inputGroup.translateY + PX,
-				width: (dateBox.width - 2) + PX,
-				height: (dateBox.height - 2) + PX,
-				border: '2px solid silver'
-			});
+			rangeSelector.showInput(name);
 		};
 		// Hide away the input box
 		input.onblur = function () {
-			css(this, {
-				border: 0,
-				width: '1px',
-				height: '1px'
-			});
-			rangeSelector.setInputValue(name);
+			rangeSelector.hideInput(name);
 		};
 
 		// handle changes in the input boxes
@@ -500,6 +536,20 @@ RangeSelector.prototype = {
 		};
 	},
 
+	/** 
+	 * Get the position of the range selector buttons and inputs. This can be overridden from outside for custom positioning.
+	 */
+	getPosition: function () {
+		var chart = this.chart,
+			options = chart.options.rangeSelector,
+			buttonTop = pick((options.buttonPosition || {}).y, chart.plotTop - chart.axisOffset[0] - 35);
+			
+		return {
+			buttonTop: buttonTop,
+			inputTop: buttonTop - 10
+		};
+	},
+
 	/**
 	 * Render the range selector including the buttons and the inputs. The first time render
 	 * is called, the elements are created and positioned. On subsequent calls, they are
@@ -521,38 +571,46 @@ RangeSelector.prototype = {
 			div = rangeSelector.div,
 			inputGroup = rangeSelector.inputGroup,
 			buttonTheme = options.buttonTheme,
-			inputEnabled = options.inputEnabled !== false,
+			buttonPosition = options.buttonPosition || {},
+			inputEnabled = options.inputEnabled,
 			states = buttonTheme && buttonTheme.states,
 			plotLeft = chart.plotLeft,
-			yAlign,
-			buttonLeft;
+			buttonLeft,
+			pos = this.getPosition(),
+			buttonGroup = rangeSelector.group,
+			buttonBBox;
+
 
 		// create the elements
 		if (!rangeSelector.rendered) {
-			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, plotLeft, chart.plotTop - 20)
+
+			rangeSelector.group = buttonGroup = renderer.g('range-selector-buttons').add();
+
+			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, pick(buttonPosition.x, plotLeft), pos.buttonTop + 15)
 				.css(options.labelStyle)
-				.add();
+				.add(buttonGroup);
 
 			// button starting position
-			buttonLeft = plotLeft + rangeSelector.zoomText.getBBox().width + 5;
+			buttonLeft = pick(buttonPosition.x, plotLeft) + rangeSelector.zoomText.getBBox().width + 5;
 
 			each(rangeSelector.buttonOptions, function (rangeOptions, i) {
 				buttons[i] = renderer.button(
 						rangeOptions.text,
 						buttonLeft,
-						chart.plotTop - 35,
+						pos.buttonTop,
 						function () {
 							rangeSelector.clickButton(i);
 							rangeSelector.isActive = true;
 						},
 						buttonTheme,
 						states && states.hover,
-						states && states.select
+						states && states.select,
+						states && states.disabled
 					)
 					.css({
 						textAlign: 'center'
 					})
-					.add();
+					.add(buttonGroup);
 
 				// increase button position for the next button
 				buttonLeft += buttons[i].width + pick(options.buttonSpacing, 5);
@@ -566,7 +624,7 @@ RangeSelector.prototype = {
 
 			// first create a wrapper outside the container in order to make
 			// the inputs work and make export correct
-			if (inputEnabled) {
+			if (inputEnabled !== false) {
 				rangeSelector.div = div = createElement('div', null, {
 					position: 'relative',
 					height: 0,
@@ -585,17 +643,22 @@ RangeSelector.prototype = {
 			}
 		}
 		
-		if (inputEnabled) {
+		if (inputEnabled !== false) {
 		
 			// Update the alignment to the updated spacing box
-			yAlign = chart.plotTop - 45;		
 			inputGroup.align(extend({
-				y: yAlign,
+				y: pos.inputTop,
 				width: inputGroup.offset,
-				// detect collision with the exporting buttons
-				x: navButtonOptions && (yAlign < (navButtonOptions.y || 0) + navButtonOptions.height - chart.spacing[0]) ? 
+				// Detect collision with the exporting buttons
+				x: navButtonOptions && (pos.inputTop < (navButtonOptions.y || 0) + navButtonOptions.height - chart.spacing[0]) ? 
 					-40 : 0
 			}, options.inputPosition), true, chart.spacingBox);
+
+			// Hide if overlapping - inputEnabled is null or undefined
+			if (!defined(inputEnabled)) {
+				buttonBBox = buttonGroup.getBBox();
+				inputGroup[inputGroup.translateX < buttonBBox.x + buttonBBox.width + 10 ? 'hide' : 'show']();
+			}
 	
 			// Set or reset the input values
 			rangeSelector.setInputValue('min', min);

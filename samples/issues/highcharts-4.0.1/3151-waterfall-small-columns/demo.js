@@ -9,7 +9,7 @@ $(function () {
         },
 
         subtitle: {
-        	text: 'Issue: Small columns didn\'t display'
+            text: 'Issue: Small columns didn\'t display'
         },
 
         xAxis: {

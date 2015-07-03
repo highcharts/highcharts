@@ -1,0 +1,41 @@
+<script src="http://code.highcharts.com/maps/highmaps.js"></script>
+<script src="http://code.highcharts.com/maps/modules/data.js"></script>
+<script src="http://code.highcharts.com/mapdata/custom/world.js"></script>
+<script src="http://code.highcharts.com/mapdata/index.js"></script>
+<script src="https://rawgithub.com/highslide-software/draggable-points/master/draggable-points.js"></script>
+
+<div id="outer">
+	<div id="outer-container">
+		<div id="container"></div>
+		<div id="code-container">
+			<button id="close">Back to map</button>
+			<div id="code-inner"></div>
+		</div>
+	</div>
+
+	<form>
+		<div class="form">
+
+			<p>
+				<label>Load another map</label>
+				<select id="maps"></select>
+			</p>
+
+			<p>
+				Clicking adds points to
+				<input type="radio" name="series" value="points" id="points" checked="checked" />
+				<label for="points">Points</label>
+				<input type="radio" name="series" value="connected-points" id="connected-points" />
+				<label for="connected-points">Connected points</label>
+			</p>
+
+			<p>
+				<input type="checkbox" name="delete" id="delete" />
+				<label for="delete">Delete points by click</label>
+			</p>
+			<p>
+				<button id="getconfig">Get series configuration</button>
+			</p>
+		</div>
+	</form>
+</div>

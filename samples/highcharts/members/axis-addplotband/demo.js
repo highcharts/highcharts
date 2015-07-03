@@ -15,8 +15,8 @@ $(function () {
     var hasPlotBand = false,
         chart = $('#container').highcharts(),
         $button = $('#button');
-    
-    $button.click(function() {
+
+    $button.click(function () {
         if (!hasPlotBand) {
             chart.xAxis[0].addPlotBand({
                 from: 5.5,

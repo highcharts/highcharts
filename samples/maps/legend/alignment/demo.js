@@ -1,14 +1,14 @@
 $(function () {
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
-        
+
         // Initiate the chart
         $('#container').highcharts('Map', {
 
             chart: {
                 marginLeft: 70
             },
-            
+
             title : {
                 text : 'Legend alignment'
             },
@@ -20,7 +20,9 @@ $(function () {
                 align: 'left',
                 verticalAlign: 'middle',
                 y: 100,
-                floating: true
+                floating: true,
+                borderWidth: 1,
+                backgroundColor: 'white'
             },
 
             mapNavigation: {

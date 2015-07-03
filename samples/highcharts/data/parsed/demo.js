@@ -13,9 +13,9 @@ $(function () {
             csv: document.getElementById('csv').innerHTML,
             parsed: function (columns) {
                 // We want to keep the values since 1950 only
-                $.each(columns, function (i, column) {
+                $.each(columns, function () {
                     // Keep the first item which is the series name, then remove the following 70
-                    column.splice(1, 70);
+                    this.splice(1, 70);
                 });
             }
         },

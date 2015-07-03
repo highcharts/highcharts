@@ -39,6 +39,20 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 		return [point.low, point.high];
 	},
 	pointValKey: 'low',
+	deferTranslatePolar: true,
+
+	/**
+	 * Translate a point's plotHigh from the internal angle and radius measures to 
+	 * true plotHigh coordinates. This is an addition of the toXY method found in
+	 * Polar.js, because it runs too early for arearanges to be considered (#3419).
+	 */
+	highToXY: function (point) {
+		// Find the polar plotX and plotY
+		var chart = this.chart,
+			xy = this.xAxis.postTranslate(point.rectPlotX, this.yAxis.len - point.plotHigh);
+		point.plotHighX = xy.x - chart.plotLeft;
+		point.plotHigh = xy.y - chart.plotTop;
+	},
 	
 	/**
 	 * Extend getSegments to force null points if the higher value is null. #1703.
@@ -85,6 +99,13 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 				point.plotHigh = yAxis.translate(high, 0, 1, 0, 1);
 			}
 		});
+
+		// Postprocess plotHigh
+		if (this.chart.polar) {
+			each(this.points, function (point) {
+				series.highToXY(point);
+			});
+		}
 	},
 	
 	/**
@@ -114,7 +135,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			point = segment[i];
 			if (point.plotHigh !== null) {
 				highSegment.push({
-					plotX: point.plotX,
+					plotX: point.plotHighX || point.plotX, // plotHighX is for polar charts
 					plotY: point.plotHigh
 				});
 			}
@@ -135,7 +156,9 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 		linePath = [].concat(lowerPath, higherPath);
 		
 		// For the area path, we need to change the 'move' statement into 'lineTo' or 'curveTo'
-		higherPath[0] = 'L'; // this probably doesn't work for spline			
+		if (!this.chart.polar) {
+			higherPath[0] = 'L'; // this probably doesn't work for spline
+		}
 		this.areaPath = this.areaPath.concat(lowerPath, higherPath);
 		
 		return linePath;
@@ -155,6 +178,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			dataLabelOptions = this.options.dataLabels,
 			align = dataLabelOptions.align,
 			point,
+			up,
 			inverted = this.chart.inverted;
 			
 		if (dataLabelOptions.enabled || this._hasPointLabels) {
@@ -163,26 +187,29 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			i = length;
 			while (i--) {
 				point = data[i];
-				
-				// Set preliminary values
-				point.y = point.high;
-				point._plotY = point.plotY;
-				point.plotY = point.plotHigh;
-				
-				// Store original data labels and set preliminary label objects to be picked up 
-				// in the uber method
-				originalDataLabels[i] = point.dataLabel;
-				point.dataLabel = point.dataLabelUpper;
-				
-				// Set the default offset
-				point.below = false;
-				if (inverted) {
-					if (!align) {
-						dataLabelOptions.align = 'left';
+				if (point) {
+					up = point.plotHigh > point.plotLow;
+					
+					// Set preliminary values
+					point.y = point.high;
+					point._plotY = point.plotY;
+					point.plotY = point.plotHigh;
+					
+					// Store original data labels and set preliminary label objects to be picked up 
+					// in the uber method
+					originalDataLabels[i] = point.dataLabel;
+					point.dataLabel = point.dataLabelUpper;
+					
+					// Set the default offset
+					point.below = up;
+					if (inverted) {
+						if (!align) {
+							dataLabelOptions.align = up ? 'right' : 'left';
+						}
+						dataLabelOptions.x = dataLabelOptions.xHigh;								
+					} else {
+						dataLabelOptions.y = dataLabelOptions.yHigh;
 					}
-					dataLabelOptions.x = dataLabelOptions.xHigh;								
-				} else {
-					dataLabelOptions.y = dataLabelOptions.yHigh;
 				}
 			}
 			
@@ -194,24 +221,27 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			i = length;
 			while (i--) {
 				point = data[i];
-				
-				// Move the generated labels from step 1, and reassign the original data labels
-				point.dataLabelUpper = point.dataLabel;
-				point.dataLabel = originalDataLabels[i];
-				
-				// Reset values
-				point.y = point.low;
-				point.plotY = point._plotY;
-				
-				// Set the default offset
-				point.below = true;
-				if (inverted) {
-					if (!align) {
-						dataLabelOptions.align = 'right';
+				if (point) {
+					up = point.plotHigh > point.plotLow;
+					
+					// Move the generated labels from step 1, and reassign the original data labels
+					point.dataLabelUpper = point.dataLabel;
+					point.dataLabel = originalDataLabels[i];
+					
+					// Reset values
+					point.y = point.low;
+					point.plotY = point._plotY;
+					
+					// Set the default offset
+					point.below = !up;
+					if (inverted) {
+						if (!align) {
+							dataLabelOptions.align = up ? 'left' : 'right';
+						}
+						dataLabelOptions.x = dataLabelOptions.xLow;
+					} else {
+						dataLabelOptions.y = dataLabelOptions.yLow;
 					}
-					dataLabelOptions.x = dataLabelOptions.xLow;
-				} else {
-					dataLabelOptions.y = dataLabelOptions.yLow;
 				}
 			}
 			if (seriesProto.drawDataLabels) {
@@ -226,6 +256,8 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 	alignDataLabel: function () {
 		seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
 	},
+	
+	setStackedPoints: noop,
 	
 	getSymbol: noop,
 	

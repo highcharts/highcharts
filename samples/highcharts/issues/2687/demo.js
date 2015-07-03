@@ -24,7 +24,7 @@ $(function () {
             name: 'Tokyo',
             data: [1, 2, 3]
         },
-                
+
         {
             name: 'Tokyo',
             yAxis: 1,
@@ -49,6 +49,6 @@ $(function () {
     }, function (chart) {
         chart.yAxis[1].remove();
     });
-    
+
 });
-    
+

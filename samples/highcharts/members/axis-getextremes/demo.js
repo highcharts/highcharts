@@ -12,23 +12,23 @@ $(function () {
 
 
     // the button action
-    $('#button').click(function() {
+    $('#button').click(function () {
         var chart = $('#container').highcharts(),
             extremes = chart.yAxis[0].getExtremes();
 
         chart.renderer.label(
-            'dataMax: '+ extremes.dataMax +'<br/>'+
-            'dataMin: '+ extremes.dataMin +'<br/>'+
-            'max: '+ extremes.max +'<br/>'+
-            'min: '+ extremes.min +'<br/>',
+            'dataMax: ' + extremes.dataMax + '<br/>' +
+                'dataMin: ' + extremes.dataMin + '<br/>' +
+                'max: ' + extremes.max + '<br/>' +
+                'min: ' + extremes.min + '<br/>',
             100,
             100
         )
-        .attr({
-            fill: '#FCFFC5',
-            zIndex: 8
-        })
-        .add();
+            .attr({
+                fill: '#FCFFC5',
+                zIndex: 8
+            })
+            .add();
 
         $(this).attr('disabled', true);
     });

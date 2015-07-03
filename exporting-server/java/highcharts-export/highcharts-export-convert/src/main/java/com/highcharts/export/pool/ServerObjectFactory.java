@@ -1,5 +1,6 @@
 package com.highcharts.export.pool;
 
+import java.nio.file.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,15 +11,16 @@ import org.apache.log4j.Logger;
 import com.highcharts.export.server.Server;
 import com.highcharts.export.server.ServerState;
 import com.highcharts.export.util.TempDir;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.TreeMap;
+
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.ClassPathResource;
 
@@ -29,9 +31,10 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 	private String host;
 	private int basePort;
 	private int readTimeout;
+	private int poolSize;
 	private int connectTimeout;
 	private int maxTimeout;
-	private static HashMap<Integer, PortStatus> portUsage = new HashMap<Integer, PortStatus>();
+	private static TreeMap<Integer, PortStatus> portUsage = new TreeMap<>();
 	protected static Logger logger = Logger.getLogger("pool");
 
 	private enum PortStatus {
@@ -43,8 +46,15 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 	public Server create() {
 		logger.debug("in makeObject, " + exec + ", " +  script + ", " +  host);
 		Integer port = this.getAvailablePort();
+		String separator = FileSystems.getDefault().getSeparator();
+
+        if (script.isEmpty()) {
+            // use the bundled highcharts-convert.js script
+            script = TempDir.getPhantomJsDir().toAbsolutePath().toString() + separator + "highcharts-convert.js";
+        }
+        Server server = new Server(exec, script, host, port, connectTimeout, readTimeout, maxTimeout);
 		portUsage.put(port, PortStatus.BUSY);
-		return new Server(exec, script, host, port, connectTimeout, readTimeout, maxTimeout);
+		return server;
 	}
 
 	@Override
@@ -90,16 +100,27 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 	}
 
 	public Integer getAvailablePort() {
-		for (Map.Entry<Integer, PortStatus> entry : portUsage.entrySet()) {
-		   if (PortStatus.FREE == entry.getValue()) {
-			   // return available port
-			   logger.debug("Portusage " + portUsage.toString());
-			   return entry.getKey();
-		   }
+
+		/* first we check within the defined port range from baseport
+		* up to baseport + poolsize
+		*/
+		int port = basePort;
+		for (; port < basePort + poolSize; port++) {
+
+			if (portUsage.containsKey(port)) {
+				if (portUsage.get(port) == PortStatus.FREE) {
+					return port;
+				}
+			} else {
+				// doesn't exist any longer, but is within the valid port range
+				return port;
+			}
+
 		}
-		// if no port is free
+
+		// at this point there is no free port, we have to look outside of the valid port range
 		logger.debug("Nothing free in Portusage " + portUsage.toString());
-		return basePort + portUsage.size();
+		return portUsage.lastKey() + 1;
 	}
 
 	/*Getters and Setters*/
@@ -160,12 +181,34 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 		this.maxTimeout = maxTimeout;
 	}
 
+	public int getPoolSize() {
+		return poolSize;
+	}
+
+	public void setPoolSize(int poolSize) {
+		this.poolSize = poolSize;
+	}
+
 	@PostConstruct
 	public void afterBeanInit() {
 		
 		URL u = getClass().getProtectionDomain().getCodeSource().getLocation();
 		URLClassLoader jarLoader = new URLClassLoader(new URL[]{u}, Thread.currentThread().getContextClassLoader());
-		String filenames[] = new String[] {"highcharts-convert.js","highcharts.js","highstock.js","jquery.1.9.1.min.js","map.js","highcharts-more.js", "data.js", "drilldown.js", "funnel.js", "heatmap.js", "highcharts-3d.js", "no-data-to-display.js", "maps.js", "solid-gauge.js"};
+		String filenames[] = new String[] {"highcharts-convert.js",
+				"jquery.1.9.1.min.js",
+				"highcharts.js",
+				"highstock.js",
+				"highcharts-more.js",
+				"data.js",
+				"drilldown.js",
+				"funnel.js",
+				"heatmap.js",
+				"highcharts-3d.js",
+				"no-data-to-display.js",
+				"solid-gauge.js",
+				"map.js",
+				"broken-axis.js",
+				"treemap.js"};
 		
 		for (String filename : filenames) {
 		
@@ -176,8 +219,11 @@ public class ServerObjectFactory implements ObjectFactory<Server> {
 				try {
 					file = Files.createFile(path).toFile();
 					file.deleteOnExit();
-					InputStream in = resource.getInputStream();
-					IOUtils.copy(in, new FileOutputStream(file));
+					try (InputStream in = resource.getInputStream();
+					     OutputStream out=new FileOutputStream(file))
+			        {
+					    IOUtils.copy(in, out);
+			        }
 				} catch (IOException ioex) {
 					logger.error("Error while setting up phantomjs environment: " + ioex.getMessage());
 				}

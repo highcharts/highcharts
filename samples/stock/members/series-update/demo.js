@@ -1,5 +1,5 @@
 $(function () {
-    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.json&callback=?', function(data) {
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlc.json&callback=?', function (data) {
 
         // The data point configurations are arrays on the form [x, open, high, low, close].
         // In order to make this understandable for different series types like line, column
@@ -37,11 +37,12 @@ $(function () {
             }]
         });
 
-        var chart = $('#container').highcharts();
-        
+        var chart = $('#container').highcharts(),
+            enableMarkers = true,
+            color = false;
+
         // Toggle point markers
-        var enableMarkers = true;
-        $('#markers').click(function() {
+        $('#markers').click(function () {
             chart.series[0].update({
                 marker: {
                     enabled: enableMarkers
@@ -51,8 +52,7 @@ $(function () {
         });
 
         // Toggle point markers
-        var color = false;
-        $('#color').click(function() {
+        $('#color').click(function () {
             chart.series[0].update({
                 color: color ? null : Highcharts.getOptions().colors[1]
             });
@@ -60,7 +60,8 @@ $(function () {
         });
 
         // Set type
-        $.each(['line', 'spline', 'area', 'areaspline', 'arearange', 'columnrange', 'candlestick', 'ohlc'], function (i, type) {
+        $.each(['line', 'spline', 'area', 'areaspline', 'arearange', 'columnrange', 'candlestick', 'ohlc'], function () {
+            var type = this.toString();
             $('#' + type).click(function () {
                 chart.series[0].update({
                     type: type

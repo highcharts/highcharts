@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Git.php
  *
@@ -31,17 +30,18 @@ class Git {
 	 *
 	 * @var string
 	 */
-	protected static $bin = '/usr/local/git/bin/git';
-	
+
+	protected static $bin = "";
+
 	/**
 	 * Sets git executable path
-	 * 
+	 *
 	 * @param string $path executable location
 	 */
 	public static function set_bin($path) {
 		self::$bin = $path;
 	}
-	
+
 	/**
 	 * Gets git executable path
 	 */
@@ -473,7 +473,7 @@ class GitRepo {
 	public function push($remote, $branch) {
 		return $this->run("push --tags $remote $branch");
 	}
-	
+
 	/**
 	 * Pull specific branch from remote
 	 *
@@ -504,7 +504,7 @@ class GitRepo {
 	public function get_description() {
 		return file_get_contents($this->repo_path."/.git/description");
 	}
-	
+
 }
 
 /* End of file */

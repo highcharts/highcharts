@@ -1,19 +1,18 @@
 $(function () {
-    var $report = $('#report');
 
     // create the chart
     $('#container').highcharts({
         chart: {
             events: {
-                selection: function(event) {
+                selection: function (event) {
                     var text,
                         label;
                     if (event.xAxis) {
-                        text = 'min: '+ Highcharts.numberFormat(event.xAxis[0].min, 2) +', max: '+ Highcharts.numberFormat(event.xAxis[0].max, 2);
+                        text = 'min: ' + Highcharts.numberFormat(event.xAxis[0].min, 2) + ', max: ' + Highcharts.numberFormat(event.xAxis[0].max, 2);
                     } else {
                         text = 'Selection reset';
                     }
-                    var label = this.renderer.label(text, 100, 120)
+                    label = this.renderer.label(text, 100, 120)
                         .attr({
                             fill: Highcharts.getOptions().colors[0],
                             padding: 10,

@@ -1,33 +1,33 @@
-$(function() {
-	$('#container').highcharts('StockChart', {
+$(function () {
+    $('#container').highcharts('StockChart', {
 
-	    chart: {
-        	events: {
-            	redraw: function() {
-                	alert ('The chart is being redrawn');
-            	}
-        	}
-	    },
+        chart: {
+            events: {
+                redraw: function () {
+                    alert('The chart is being redrawn');
+                }
+            }
+        },
 
-	    rangeSelector: {
-	    	selected: 1
-	    },
+        rangeSelector: {
+            selected: 1
+        },
 
-	    series: [{
-	        name: 'MSFT',
-	        data: MSFT
-	    }]
-	});
+        series: [{
+            name: 'MSFT',
+            data: MSFT
+        }]
+    });
 
 
-	// activate the button
-	$('#button').click(function() {
-	    var chart = $('#container').highcharts();
+    // activate the button
+    $('#button').click(function () {
+        var chart = $('#container').highcharts();
         chart.addSeries({
-	    	name: 'ADBE',
-	        data: ADBE
-	    });
+            name: 'ADBE',
+            data: ADBE
+        });
 
-	    $(this).attr('disabled', true);
-	});
+        $(this).attr('disabled', true);
+    });
 });

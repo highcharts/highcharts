@@ -4,7 +4,7 @@ $(function () {
             type: 'column',
             margin: 75,
             options3d: {
-				enabled: true,
+                enabled: true,
                 alpha: 15,
                 beta: 15,
                 depth: 50,
@@ -19,7 +19,7 @@ $(function () {
         xAxis: {
             gridLineWidth: 0,
             type: 'category',
-            categories: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             labels: {
                 style: {
                     color: 'black',

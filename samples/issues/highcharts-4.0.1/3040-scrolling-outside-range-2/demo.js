@@ -15,7 +15,7 @@ $(function () {
         },
 
         xAxis: {
-            type: "datetime",            
+            type: "datetime",
             min: Date.UTC(2014, 4, 1),
             max: Date.UTC(2014, 4, 31),
             ordinal: false
@@ -56,11 +56,11 @@ $(function () {
     $('#left').click(function () {
         chart.xAxis[0].setExtremes(Date.UTC(2014, 4, 1), Date.UTC(2014, 4, 4), true, false);
     });
-    
+
     $('#right').click(function () {
         chart.xAxis[0].setExtremes(Date.UTC(2014, 4, 20), Date.UTC(2014, 4, 25), true, false);
     });
-    
+
     $('#on').click(function () {
         chart.xAxis[0].setExtremes(Date.UTC(2014, 4, 1), Date.UTC(2014, 4, 7), true, false);
     });

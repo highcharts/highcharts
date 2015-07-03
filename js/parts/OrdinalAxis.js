@@ -43,7 +43,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 
 	// The positions are not always defined, for example for ordinal positions when data
 	// has regular interval (#1557, #2090)
-	if (!this.options.ordinal || !positions || positions.length < 3 || min === UNDEFINED) {
+	if ((!this.options.ordinal && !this.options.breaks) || !positions || positions.length < 3 || min === UNDEFINED) {
 		return proceed.call(this, normalizedInterval, min, max, startOfWeek);
 	}
 
@@ -51,6 +51,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 	// the closest distance. The closest distance is already found at this point, so
 	// we reuse that instead of computing it again.
 	posLength = positions.length;
+
 	for (; end < posLength; end++) {
 
 		outsideMax = end && positions[end - 1] > max;
@@ -97,7 +98,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 
 		// Compare points two by two
 		for (start = 1; start < end; start++) {
-			if (new Date(groupPositions[start] - timezoneOffset)[getDate]() !== new Date(groupPositions[start - 1] - timezoneOffset)[getDate]()) {
+			if (dateFormat('%d', groupPositions[start]) !== dateFormat('%d', groupPositions[start - 1])) {
 				higherRanks[groupPositions[start]] = 'day';
 				hasCrossedHigherRank = true;
 			}
@@ -198,14 +199,16 @@ extend(Axis.prototype, {
 			minIndex,
 			maxIndex,
 			slope,
+			hasBreaks = axis.isXAxis && !!axis.options.breaks,
+			isOrdinal = axis.options.ordinal,
 			i;
 
 		// apply the ordinal logic
-		if (axis.options.ordinal) {
+		if (isOrdinal || hasBreaks) { // #4167 YAxis is never ordinal ?
 
 			each(axis.series, function (series, i) {
 
-				if (series.visible !== false && series.takeOrdinalPosition !== false) {
+				if (series.visible !== false && (series.takeOrdinalPosition !== false || hasBreaks)) {
 
 					// concatenate the processed X data into the existing positions, or the empty array
 					ordinalPositions = ordinalPositions.concat(series.processedXData);
@@ -260,7 +263,7 @@ extend(Axis.prototype, {
 				// This relies on the ordinalPositions being set. Use mathMax and mathMin to prevent
 				// padding on either sides of the data.
 				minIndex = axis.val2lin(mathMax(min, ordinalPositions[0]), true);
-				maxIndex = axis.val2lin(mathMin(max, ordinalPositions[ordinalPositions.length - 1]), true);
+				maxIndex = mathMax(axis.val2lin(mathMin(max, ordinalPositions[ordinalPositions.length - 1]), true), 1); // #3339
 
 				// Set the slope and offset of the values compared to the indices in the ordinal positions
 				axis.ordinalSlope = slope = (max - min) / (maxIndex - minIndex);
@@ -270,6 +273,7 @@ extend(Axis.prototype, {
 				axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = UNDEFINED;
 			}
 		}
+		axis.doPostTranslate = (isOrdinal && useOrdinal) || hasBreaks; // #3818, #4196
 		axis.groupIntervalFactor = null; // reset for next run
 	},
 	/**
@@ -511,9 +515,16 @@ extend(Axis.prototype, {
 		// thus the tick interval should not be altered
 		var ordinalSlope = this.ordinalSlope;
 
-		return ordinalSlope ?
-			tickInterval / (ordinalSlope / this.closestPointRange) :
-			tickInterval;
+
+		if (ordinalSlope) {
+			if (!this.options.breaks) {
+				return tickInterval / (ordinalSlope / this.closestPointRange); 
+			} else {
+				return this.closestPointRange;
+			}
+		} else {
+			return tickInterval;
+		}
 	}
 });
 
@@ -632,7 +643,10 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 		each(segments, function (segment, no) {
 			var i = segment.length - 1;
 			while (i--) {
-				if (segment[i + 1].x - segment[i].x > xAxis.closestPointRange * gapSize) {
+				if (segment[i].x < xAxis.min && segment[i + 1].x > xAxis.max) {
+					segments.length = 0;
+					break;
+				} else if (segment[i + 1].x - segment[i].x > xAxis.closestPointRange * gapSize) {
 					segments.splice( // insert after this one
 						no + 1,
 						0,

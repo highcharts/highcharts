@@ -3,7 +3,7 @@ $(function () {
         chart: {
             type: 'pie',
             options3d: {
-				enabled: true,
+                enabled: true,
                 alpha: 45,
                 beta: 0
             }

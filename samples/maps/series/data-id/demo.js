@@ -2,7 +2,7 @@ $(function () {
 
     // Initiate the chart
     $('#container').highcharts('Map', {
-        
+
         title : {
             text : 'Select point by id'
         },
@@ -61,8 +61,7 @@ $(function () {
                 enabled: true,
                 format: '{point.name}',
                 style: {
-                    color: 'black',
-                    HcTextStroke: '3px rgba(255,255,255,0.7)'
+                    color: '#000000'
                 }
             },
             states: {

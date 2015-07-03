@@ -33,9 +33,9 @@ $(function () {
             name: 'Average',
             data: [3, 2.67, 3, 6.33, 3.33],
             marker: {
-            	lineWidth: 2,
-            	lineColor: Highcharts.getOptions().colors[3],
-            	fillColor: 'white'
+                lineWidth: 2,
+                lineColor: Highcharts.getOptions().colors[3],
+                fillColor: 'white'
             }
         }, {
             type: 'pie',
@@ -62,4 +62,4 @@ $(function () {
         }]
     });
 });
-    
+

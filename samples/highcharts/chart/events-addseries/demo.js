@@ -3,7 +3,7 @@ $(function () {
     $('#container').highcharts({
         chart: {
             events: {
-                addSeries: function() {
+                addSeries: function () {
                     var label = this.renderer.label('A series was added, about to redraw chart', 100, 120)
                         .attr({
                             fill: Highcharts.getOptions().colors[0],
@@ -34,7 +34,7 @@ $(function () {
 
 
     // activate the button
-    $('#button').click(function() {
+    $('#button').click(function () {
         var chart = $('#container').highcharts();
 
         chart.addSeries({

@@ -10,7 +10,7 @@ $(function () {
     });
 
     // button handler
-    $('#button').click(function() {
+    $('#button').click(function () {
         var chart = $('#container').highcharts(),
             series = chart.series[0];
         if (series.data.length) {

@@ -1,14 +1,14 @@
 $(function () {
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
-    
-            
+
+
         // Initiate the chart
         $('#container').highcharts('Map', {
             chart : {
                 borderWidth : 1
             },
-            
+
             title : {
                 text : 'Legend padding and item margin'
             },
@@ -16,7 +16,7 @@ $(function () {
             mapNavigation: {
                 enabled: true
             },
-            
+
             legend: {
                 title: {
                     text: 'Individuals per km²'
@@ -80,7 +80,7 @@ $(function () {
                 },
                 tooltip: {
                     valueSuffix: '/km²'
-                },
+                }
             }]
         });
     });

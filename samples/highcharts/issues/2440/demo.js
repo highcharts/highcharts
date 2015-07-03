@@ -27,12 +27,12 @@ $(function () {
                 stacking: 'normal'
             }
         },
-        
+
         series: [{
             data: [3, 3, 3]
         }, {
             data: [2, 1, 2]
         }]
     });
-    
+
 });

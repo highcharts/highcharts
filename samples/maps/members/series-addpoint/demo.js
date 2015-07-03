@@ -9,12 +9,12 @@ $(function () {
             mapData = Highcharts.geojson(Highcharts.maps['custom/world']),
             greenland;
 
-        for (mapDataIndex = 0; mapDataIndex < mapData.length; mapDataIndex++) {
+        for (mapDataIndex = 0; mapDataIndex < mapData.length; mapDataIndex += 1) {
             if (mapData[mapDataIndex].properties['iso-a2'] === 'GL') {
                 break;
             }
         }
-        for (dataIndex = 0; dataIndex < data.length; dataIndex++) {
+        for (dataIndex = 0; dataIndex < data.length; dataIndex += 1) {
             if (data[dataIndex].code === 'GL') {
                 break;
             }
@@ -24,14 +24,14 @@ $(function () {
         data.splice(dataIndex, 1);
         mapData.splice(mapDataIndex, 1);
 
-        
+
         // Initiate the chart
         $('#container').highcharts('Map', {
 
             title: {
                 text: 'Add point'
             },
-            
+
             legend: {
                 title: {
                     text: 'Population density per km²'

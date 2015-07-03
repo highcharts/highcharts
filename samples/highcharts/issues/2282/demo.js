@@ -3,13 +3,13 @@ $(function () {
         chart: {
             type: 'column'
         },
-        
+
         title: {
             text: 'Individually enabling/disabling data labels'
         },
-        
+
         series: [{
-        	name: 'Generally enabled, one disabled',
+            name: 'Generally enabled, one disabled',
             dataLabels: {
                 enabled: true
             },
@@ -20,7 +20,7 @@ $(function () {
                 y: 1
             }, 1]
         }, {
-        	name: 'Generally disabled, one enabled',
+            name: 'Generally disabled, one enabled',
             dataLabels: {
                 enabled: false
             },

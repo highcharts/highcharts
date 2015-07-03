@@ -1,11 +1,9 @@
 <?php
 ini_set('display_errors', 'on');
 session_start();
-$defaults = json_decode(file_get_contents('default-settings.json'));
-
-$leftPath = isset($_SESSION['leftPath']) ? $_SESSION['leftPath'] : $defaults->leftPath;
-$rightPath = isset($_SESSION['rightPath']) ? $_SESSION['rightPath'] : $defaults->rightPath;
-
+require_once('../settings.php');
+$leftPath = isset($_SESSION['leftPath']) ? $_SESSION['leftPath'] : Settings::$leftPath;
+$rightPath = isset($_SESSION['rightPath']) ? $_SESSION['rightPath'] : Settings::$rightPath;
 
 
 $leftExporting = "$leftPath/modules/exporting.src.js";
@@ -107,6 +105,15 @@ function getCompareTooltips() {
 
 	return strstr($yaml, 'compareTooltips: true');
 }
+function getExportInnerHTML() {
+	global $path;
+	// No idea why file_get_contents doesn't work here...
+	ob_start();
+	@include("$path/demo.details");
+	$yaml = ob_get_clean();
+
+	return strstr($yaml, 'exportInnerHTML: true');
+}
 
 
 ?><!DOCTYPE HTML>
@@ -114,10 +121,15 @@ function getCompareTooltips() {
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Highcharts demo</title>
-		
 		<?php echo getFramework($_GET['which'] === 'left' ? $leftFramework : $rightFramework); ?>
 		<?php echo getResources(); ?>
-		
+
+		<?php if (is_file("$path/unit-tests.js")) : ?>
+		<script src="http://code.jquery.com/qunit/qunit-1.15.0.js"></script>
+   		<link rel="stylesheet" type="text/css" href="http://code.jquery.com/qunit/qunit-1.15.0.css" />		
+   		<?php endif; ?>
+
+		<link rel="stylesheet" type="text/css" href="style.css"/>
 		<style type="text/css">
 			<?php @include("$path/demo.css"); ?>
 		</style>
@@ -137,26 +149,50 @@ function getCompareTooltips() {
 			};
 
 			function compareHTML() {
-					var start = + new Date(),
-						interval;
+				var start = + new Date(),
+					interval,
+					QUnit = window.QUnit;
+			
+				window.parent.<?php echo $_GET['which']; ?>Version = Highcharts.version;
+
+				// If running QUnit, use the built-in callback
+				if (QUnit) {
+					QUnit.done(function (e) {
+						if (e.passed === e.total) {
+							window.parent.onIdentical();
+						} else {
+							window.parent.onDifferent(e.passed + '/' + e.total);
+						}
+					});
 				
-					window.parent.<?php echo $_GET['which']; ?>Version = Highcharts.version;
-					
+
+				// Else, prepare for async
+				} else {
+				
 					// To give Ajax some time to load, look for the chart every 50 ms for two seconds
 					interval = setInterval(function() {
-						chart = window.Highcharts && window.Highcharts.charts[0];
+						chart = window.Highcharts && window.Highcharts.charts[0],
+						QUnit = window.QUnit;
 
 						// Compare chart objects
 						if (chart) {
 
 							// Automatically click buttons with classname "autocompare"
-							$('.autocompare').click();
+							tryToRun(function () {
+								$('.autocompare').click();
+							});
 
 							window.parent.onLoadTest('<?php echo $_GET['which']; ?>', $(chart.container).html());
 							clearInterval(interval);
 							
 						// Compare renderers
 						} else if (window.renderer) {
+	
+							// Automatically click buttons with classname "autocompare"
+							tryToRun(function () {
+								$('.autocompare').click();
+							});
+
 							// Create a mock chart object with a getSVG method
 							chart = {
 								getSVG: function () {
@@ -173,11 +209,12 @@ function getCompareTooltips() {
 						}
 						
 					}, 50);
+				}
 				
 			}
 
 			function compareSVG() {
-				window.parent.onLoadTest('<?php echo $_GET['which']; ?>', chart.getSVG());
+				window.parent.onLoadTest('<?php echo $_GET['which']; ?>', (chart.getSVGForExport || chart.getSVG).call(chart));
 			}
 
 			function tryToRun(proceed) {
@@ -186,11 +223,9 @@ function getCompareTooltips() {
 						return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
 					}
 				} catch (e) {
-					console.error('HIGHCHARTS UTILS CAUGHT ERROR:', e.message);
-					if (parent.window.report) {
-						parent.window.report += '<br/>Broke on JS error (<?php echo $_GET['which']; ?>) ';
-					}
-					parent.window.$('#report').html(parent.window.report);
+					e = 'ERROR (<?php echo $_GET['which']; ?> frame): ' + e.message;
+					console.error(e);
+					parent.window.error = e;
 					parent.window.onDifferent('Error');
 
 				}
@@ -208,6 +243,13 @@ function getCompareTooltips() {
 			
 			// Disable animation
 			$(function () {
+
+				// Make sure getJSON content is not cached
+				$.ajaxSetup({
+					type: 'POST',
+					headers: { "cache-control": "no-cache" }
+				});
+
 				if (window.Highcharts) {
 					Highcharts.setOptions({
 						chart: {
@@ -216,21 +258,19 @@ function getCompareTooltips() {
 						plotOptions: {
 							series: {
 								animation: false,
-								marker: {
-									lineWidth: 1
-								},
-								borderWidth: 1
+								kdSync: true
 							}
+						},
+						tooltip: {
+							animation: false
 						}
-							
 					});
 
 					// Wrap constructors in order to catch JS errors
 					//Highcharts.wrap(Highcharts, 'Chart', tryToRun);
 					//Highcharts.wrap(Highcharts, 'StockChart', tryToRun);
 					//Highcharts.wrap(Highcharts, 'Map', tryToRun);
-					Highcharts.wrap(Highcharts.Chart.prototype, 'init', tryToRun);
-
+					Highcharts.wrap(Highcharts.Chart.prototype, 'init', tryToRun);					
 
 					<?php if (getCompareTooltips()) : ?>
 					// Start with tooltip open 
@@ -244,26 +284,46 @@ function getCompareTooltips() {
 						}
 					});
 					<?php endif ?>
-
+					
 					<?php if (file_exists("$path/test.js")) : ?>
+
 					<?php include("$path/test.js"); ?>
 					Highcharts.Chart.prototype.callbacks.push(function (chart) {
 						try {
 							test(chart);
 						} catch (e) {
-							console.error('HIGHCHARTS UTILS CAUGHT ERROR:', e.message);
+							e = 'ERROR in test.js (<?php echo $_GET['which'] ?> frame): ' + e.message;
+							console.error(e);
+							parent.window.error = e;
 							parent.window.onDifferent('Error');
 						}
 
 					});
 					<?php endif ?>
 
+					<?php if (getExportInnerHTML()) : ?>
+					// Bypass the export module
+					Highcharts.Chart.prototype.getSVG = function () {
+						return this.container.innerHTML
+							.replace(/<\/svg>.*?$/, '</svg>'); // strip useHTML
+					};
+					<?php endif ?>
+
+
 
 				}
 
 			});
 			
-			window.alert = function () {}
+			window.isComparing = true;
+			window.alert = function () {};
+			window.onbeforeunload = function(){
+				$(document).unbind().die();    //remove listeners on document
+				$(document).find('*').unbind().die(); //remove listeners on all nodes
+			}
+
+
+			
 		</script>
 		
 		
@@ -276,13 +336,20 @@ function getCompareTooltips() {
 			console.error(e.message);
 			parent.window.onDifferent('Error');
 		}
+
+		$(function () {
+		<?php
+			@include("$path/unit-tests.js");
+		?>
+		});
 		</script>
 		
 	</head>
-	<body style="margin: 0">
+	<body>
 
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
 <?php echo getHTML($_GET['which']); ?>
-
 
 	</body>
 </html>

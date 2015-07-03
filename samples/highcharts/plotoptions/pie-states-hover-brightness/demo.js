@@ -3,7 +3,7 @@ $(function () {
         chart: {
             type: 'pie'
         },
-        
+
         plotOptions: {
             pie: {
                 states: {
@@ -13,7 +13,7 @@ $(function () {
                 }
             }
         },
-        
+
         series: [{
             data: [
                 ['Firefox',   44.2],

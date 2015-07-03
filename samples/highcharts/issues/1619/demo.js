@@ -9,7 +9,7 @@ $(function () {
         chart: {
             type: 'pie'
         },
-        
+
         series: [{
             data: [
                 {
@@ -19,6 +19,6 @@ $(function () {
                 }
             ]
         }]
-    
+
     });
 });

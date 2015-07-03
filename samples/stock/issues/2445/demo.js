@@ -1,8 +1,8 @@
-$(function() {
+$(function () {
     var seriesOptions = [],
         names = ['Serie 1', 'Serie 2'];
 
-    $.each(names, function(i, name) {
+    $.each(names, function (i, name) {
             seriesOptions[i] = {
                 name: name,
                 data: [
@@ -26,7 +26,7 @@ $(function() {
                     [1296000000000,1],
                     [1296086400000,1],
                     [1296172800000,1],
-                    [1296432000000,1]                    
+                    [1296432000000,1]
                 ]
             }
         });
@@ -46,7 +46,7 @@ $(function() {
             },
             scrollbar: {
                 enabled: false
-            },            
+            },
             plotOptions: {
                 series: {
                     stacking: 'percent',

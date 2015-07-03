@@ -3,7 +3,7 @@ $(function () {
         chart: {
             type: 'pie'
         },
-        
+
         plotOptions: {
             pie: {
                 center: [100, 100],
@@ -12,7 +12,7 @@ $(function () {
                 }
             }
         },
-        
+
         series: [{
             data: [
                 ['Firefox',   44.2],

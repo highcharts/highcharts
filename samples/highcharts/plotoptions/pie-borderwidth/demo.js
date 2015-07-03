@@ -3,13 +3,13 @@ $(function () {
         chart: {
             type: 'pie'
         },
-        
+
         plotOptions: {
             pie: {
                 borderWidth: 3
             }
         },
-        
+
         series: [{
             data: [
                 ['Firefox',   44.2],

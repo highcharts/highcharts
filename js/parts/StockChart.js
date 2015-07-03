@@ -17,13 +17,8 @@ Highcharts.StockChart = function (options, callback) {
 			marker: {
 				enabled: false,
 				radius: 2
-			},
-			// gapSize: 0,
-			states: {
-				hover: {
-					lineWidth: 2
-				}
 			}
+			// gapSize: 0
 		},
 		columnOptions = {
 			shadow: false,
@@ -143,11 +138,21 @@ wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 // Override the automatic label alignment so that the first Y axis' labels
 // are drawn on top of the grid line, and subsequent axes are drawn outside
 wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
+	var chart = this.chart,
+		options = this.options,
+		panes = chart._labelPanes = chart._labelPanes || {},
+		key,
+		labelOptions = this.options.labels;
 	if (this.chart.options._stock && this.coll === 'yAxis') {
-		if (inArray(this, this.chart.yAxis) === 0) {
-			if (this.options.labels.x === 15) { // default
-				this.options.labels.x = 0;
+		key = options.top + ',' + options.height;
+		if (!panes[key] && labelOptions.enabled) { // do it only for the first Y axis of each pane
+			if (labelOptions.x === 15) { // default
+				labelOptions.x = 0;
 			}
+			if (labelOptions.align === undefined) {
+				labelOptions.align = 'right';
+			}
+			panes[key] = 1;
 			return 'right';
 		}
 	}
@@ -155,7 +160,7 @@ wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 });
 
 // Override getPlotLinePath to allow for multipane charts
-Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, translatedValue) {
+wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old, force, translatedValue) {
 	var axis = this,
 		series = (this.isLinked && !this.series ? this.linkedParent.series : this.series),
 		chart = axis.chart,
@@ -167,9 +172,14 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 		x2,
 		y2,
 		result = [],
-		axes,
+		axes = [], //#3416 need a default array
 		axes2,
 		uniqueAxes;
+
+	// Ignore in case of color Axis. #3360, #3524
+	if (axis.coll === 'colorAxis') {
+		return proceed.apply(this, [].slice.call(arguments, 1));
+	}
 
 	// Get the related axes based on series
 	axes = (axis.isXAxis ? 
@@ -182,7 +192,6 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 			map(series, function (S) { return S.xAxis; })
 		)
 	);
-
 
 	// Get the related axes based options.*Axis setting #2810
 	axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
@@ -201,7 +210,7 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 	// Remove duplicates in the axes array. If there are no axes in the axes array,
 	// we are adding an axis without data, so we need to populate this with grid
 	// lines (#2796).
-	uniqueAxes = axes.length ? [] : [axis];
+	uniqueAxes = axes.length ? [] : [axis.isXAxis ? chart.yAxis[0] : chart.xAxis[0]]; //#3742
 	each(axes, function (axis2) {
 		if (inArray(axis2, uniqueAxes) === -1) {
 			uniqueAxes.push(axis2);
@@ -213,21 +222,39 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 	if (!isNaN(translatedValue)) {
 		if (axis.horiz) {
 			each(uniqueAxes, function (axis2) {
-				y1 = axis2.top;
+				var skip;
+
+				y1 = axis2.pos;
 				y2 = y1 + axis2.len;
 				x1 = x2 = mathRound(translatedValue + axis.transB);
 
-				if ((x1 >= axisLeft && x1 <= axisLeft + axis.width) || force) {
+				if (x1 < axisLeft || x1 > axisLeft + axis.width) { // outside plot area
+					if (force) {
+						x1 = x2 = mathMin(mathMax(axisLeft, x1), axisLeft + axis.width);
+					} else {
+						skip = true;
+					}
+				}
+				if (!skip) {
 					result.push('M', x1, y1, 'L', x2, y2);
 				}
 			});
 		} else {
 			each(uniqueAxes, function (axis2) {
-				x1 = axis2.left;
-				x2 = x1 + axis2.width;
+				var skip;
+
+				x1 = axis2.pos;
+				x2 = x1 + axis2.len;
 				y1 = y2 = mathRound(axisTop + axis.height - translatedValue);
 
-				if ((y1 >= axisTop && y1 <= axisTop + axis.height) || force) {
+				if (y1 < axisTop || y1 > axisTop + axis.height) { // outside plot area
+					if (force) {
+						y1 = y2 = mathMin(mathMax(axisTop, y1), axis.top + axis.height);
+					} else {
+						skip = true;
+					}
+				}
+				if (!skip) {
 					result.push('M', x1, y1, 'L', x2, y2);
 				}
 			});
@@ -235,17 +262,19 @@ Axis.prototype.getPlotLinePath = function (value, lineWidth, old, force, transla
 	}
 	if (result.length > 0) {
 		return renderer.crispPolyLine(result, lineWidth || 1); 
+	} else {
+		return null; //#3557 getPlotLinePath in regular Highcharts also returns null
 	}
-};
+});
 
 // Override getPlotBandPath to allow for multipane charts
 Axis.prototype.getPlotBandPath = function (from, to) {		
-	var toPath = this.getPlotLinePath(to),
-		path = this.getPlotLinePath(from),
+	var toPath = this.getPlotLinePath(to, null, null, true),
+		path = this.getPlotLinePath(from, null, null, true),
 		result = [],
 		i;
 
-	if (path && toPath) {
+	if (path && toPath && path.toString() !== toPath.toString()) {
 		// Go over each subpath
 		for (i = 0; i < path.length; i += 6) {
 			result.push('M', path[i + 1], path[i + 2], 'L', path[i + 4], path[i + 5], toPath[i + 4], toPath[i + 5], toPath[i + 1], toPath[i + 2]);
@@ -253,7 +282,7 @@ Axis.prototype.getPlotBandPath = function (from, to) {
 	} else { // outside the axis area
 		result = null;
 	}
-		
+
 	return result;
 };
 
@@ -527,7 +556,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 	
 	pointFormat = pointFormat.replace(
 		'{point.change}',
-		(point.change > 0 ? '+' : '') + numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
+		(point.change > 0 ? '+' : '') + Highcharts.numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
 	); 
 	
 	return pointTooltipFormatter.apply(this, [pointFormat]);
@@ -540,7 +569,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 
 /**
  * Extend the Series prototype to create a separate series clip box. This is related
- * to using multiple panes, and a future pane logic should incorporate this feature.
+ * to using multiple panes, and a future pane logic should incorporate this feature (#2754).
  */
 wrap(Series.prototype, 'render', function (proceed) {
 	// Only do this on stock charts (#2939), and only if the series type handles clipping
@@ -548,13 +577,14 @@ wrap(Series.prototype, 'render', function (proceed) {
 	if (this.chart.options._stock) {
 
 		// First render, initial clip box
-		if (!this.clipBox && this.animate && this.animate.toString().indexOf('sharedClip') !== -1) {
+		if (!this.clipBox && this.animate) {
 			this.clipBox = merge(this.chart.clipBox);
 			this.clipBox.width = this.xAxis.len;
 			this.clipBox.height = this.yAxis.len;
 
 		// On redrawing, resizing etc, update the clip rectangle
 		} else if (this.chart[this.sharedClipKey]) {
+			stop(this.chart[this.sharedClipKey]); // #2998
 			this.chart[this.sharedClipKey].attr({
 				width: this.xAxis.len,
 				height: this.yAxis.len

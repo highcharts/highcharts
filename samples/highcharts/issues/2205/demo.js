@@ -8,7 +8,7 @@ window.onload = function () {
         title: {
             text: 'Tooltip position using standalone framework in a scrollable container'
         },
-        
+
         series: [{
             data: [1]
         }],
@@ -16,6 +16,6 @@ window.onload = function () {
         tooltip: {
             animation: false
         }
-    
+
     });
 };

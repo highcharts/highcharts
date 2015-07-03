@@ -1,4 +1,4 @@
-/*** 
+/***
 	EXTENSION FOR 3D COLUMNS
 ***/
 Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (proceed) {
@@ -11,21 +11,10 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 
 	var series = this,
 		chart = series.chart,
-		options = chart.options,
-		seriesOptions = series.options,		
-		options3d = options.chart.options3d,
+		seriesOptions = series.options,
+		depth = seriesOptions.depth || 25;
 
-		depth = seriesOptions.depth || 25,
-		origin = {
-			x: chart.plotWidth / 2,
-			y: chart.plotHeight / 2, 
-			z: options3d.depth,
-			vd: options3d.viewDistance
-		},
-		alpha = options3d.alpha,
-		beta = options3d.beta * (chart.yAxis[0].opposite ? -1 : 1);
-
-	var stack = seriesOptions.stacking ? (seriesOptions.stack || 0) : series._i; 
+	var stack = seriesOptions.stacking ? (seriesOptions.stack || 0) : series._i;
 	var z = stack * (depth + (seriesOptions.groupZPadding || 1));
 
 	if (seriesOptions.grouping !== false) { z = 0; }
@@ -33,21 +22,22 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 	z += (seriesOptions.groupZPadding || 1);
 
 	Highcharts.each(series.data, function (point) {
-		var shapeArgs = point.shapeArgs,
-			tooltipPos = point.tooltipPos;
+		if (point.y !== null) {
+			var shapeArgs = point.shapeArgs,
+				tooltipPos = point.tooltipPos;
 
-		point.shapeType = 'cuboid';
-		shapeArgs.alpha = alpha;
-		shapeArgs.beta = beta; 
-		shapeArgs.z = z;
-		shapeArgs.origin = origin;
-		shapeArgs.depth = depth;
+			point.shapeType = 'cuboid';
+			shapeArgs.z = z;
+			shapeArgs.depth = depth;
+			shapeArgs.insidePlotArea = true;
 
-		// Translate the tooltip position in 3d space
-		tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], alpha, beta, origin)[0];
-		point.tooltipPos = [tooltipPos.x, tooltipPos.y];
-
-	});	    
+			// Translate the tooltip position in 3d space
+			tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], chart, false)[0];
+			point.tooltipPos = [tooltipPos.x, tooltipPos.y];
+		}
+	});
+	// store for later use #4067
+	series.z = z;
 });
 
 Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'animate', function (proceed) {
@@ -63,25 +53,29 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'animate', function (pr
 		if (Highcharts.svg) { // VML is too slow anyway
 			if (init) {
 				Highcharts.each(series.data, function (point) {
-					point.height = point.shapeArgs.height;
-					point.shapey = point.shapeArgs.y;	//#2968				
-					point.shapeArgs.height = 1;
-					if (!reversed) {
-						if (point.stackY) {
-							point.shapeArgs.y = point.plotY + yAxis.translate(point.stackY);
-						} else {
-							point.shapeArgs.y = point.plotY + (point.negative ? -point.height : point.height);
+					if (point.y !== null) {
+						point.height = point.shapeArgs.height;
+						point.shapey = point.shapeArgs.y;	//#2968				
+						point.shapeArgs.height = 1;
+						if (!reversed) {
+							if (point.stackY) {
+								point.shapeArgs.y = point.plotY + yAxis.translate(point.stackY);
+							} else {
+								point.shapeArgs.y = point.plotY + (point.negative ? -point.height : point.height);
+							}
 						}
 					}
 				});
 
 			} else { // run the animation				
 				Highcharts.each(series.data, function (point) {					
-					point.shapeArgs.height = point.height;
-					point.shapeArgs.y = point.shapey;	//#2968
-					// null value do not have a graphic
-					if (point.graphic) {
-						point.graphic.animate(point.shapeArgs, series.options.animation);					
+					if (point.y !== null) {
+						point.shapeArgs.height = point.height;
+						point.shapeArgs.y = point.shapey;	//#2968
+						// null value do not have a graphic
+						if (point.graphic) {
+							point.graphic.animate(point.shapeArgs, series.options.animation);					
+						}
 					}
 				});
 
@@ -104,8 +98,8 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proce
 			stacking = seriesOptions.stacking,
 			z = 0;	
 		
-		if (!(grouping !== undefined && !grouping) && stacking) {
-			var stacks = this.chart.retrieveStacks(grouping, stacking),
+		if (!(grouping !== undefined && !grouping)) {
+			var stacks = this.chart.retrieveStacks(stacking),
 				stack = seriesOptions.stack || 0,
 				i; // position within the stack
 			for (i = 0; i < stacks[stack].series.length; i++) {
@@ -123,24 +117,27 @@ function draw3DPoints(proceed) {
 	// Do not do this if the chart is not 3D
 	if (this.chart.is3d()) {		
 		var grouping = this.chart.options.plotOptions.column.grouping;
-		if (grouping !== undefined && !grouping && this.group.zIndex !== undefined) {
+		if (grouping !== undefined && !grouping && this.group.zIndex !== undefined && !this.zIndexSet) {
 			this.group.attr({zIndex : (this.group.zIndex * 10)});
+			this.zIndexSet = true; // #4062 set zindex only once
 		} 
 
 		var options = this.options,
 			states = this.options.states;
 			
-		this.borderWidth = options.borderWidth = options.edgeWidth || 1;
+		this.borderWidth = options.borderWidth = defined(options.edgeWidth) ? options.edgeWidth : 1; //#4055
 
 		Highcharts.each(this.data, function (point) {
-			var pointAttr = point.pointAttr;
+			if (point.y !== null) {
+				var pointAttr = point.pointAttr;
 
-			// Set the border color to the fill color to provide a smooth edge
-			this.borderColor = Highcharts.pick(options.edgeColor, pointAttr[''].fill);
+				// Set the border color to the fill color to provide a smooth edge
+				this.borderColor = Highcharts.pick(options.edgeColor, pointAttr[''].fill);
 
-			pointAttr[''].stroke = this.borderColor;
-			pointAttr.hover.stroke = Highcharts.pick(states.hover.edgeColor, this.borderColor);
-			pointAttr.select.stroke = Highcharts.pick(states.select.edgeColor, this.borderColor);
+				pointAttr[''].stroke = this.borderColor;
+				pointAttr.hover.stroke = Highcharts.pick(states.hover.edgeColor, this.borderColor);
+				pointAttr.select.stroke = Highcharts.pick(states.select.edgeColor, this.borderColor);
+			}
 		});
 	}
 
@@ -152,23 +149,13 @@ Highcharts.wrap(Highcharts.Series.prototype, 'alignDataLabel', function (proceed
 	// Only do this for 3D columns and columnranges
 	if (this.chart.is3d() && (this.type === 'column' || this.type === 'columnrange')) {
 		var series = this,
-			chart = series.chart,
-			options = chart.options,		
-			options3d = options.chart.options3d,
-			origin = {
-				x: chart.plotWidth / 2,
-				y: chart.plotHeight / 2, 
-				z: options3d.depth,
-				vd: options3d.viewDistance
-			},
-			alpha = options3d.alpha,
-			beta = options3d.beta * (chart.yAxis[0].opposite ? -1 : 1);
+			chart = series.chart;
 
 		var args = arguments,
 			alignTo = args[4];
 		
-		var pos = ({x: alignTo.x, y: alignTo.y, z: 0});
-		pos = perspective([pos], alpha, beta, origin)[0];
+		var pos = ({x: alignTo.x, y: alignTo.y, z: series.z});
+		pos = perspective([pos], chart, true)[0];
 		alignTo.x = pos.x;
 		alignTo.y = pos.y;
 	}
@@ -186,6 +173,7 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'drawPoints', draw3DPoi
 	EXTENSION FOR 3D CYLINDRICAL COLUMNS
 	Not supported
 ***/
+/*
 var defaultOptions = Highcharts.getOptions();
 defaultOptions.plotOptions.cylinder = Highcharts.merge(defaultOptions.plotOptions.column);
 var CylinderSeries = Highcharts.extendClass(Highcharts.seriesTypes.column, {
@@ -235,3 +223,4 @@ Highcharts.wrap(Highcharts.seriesTypes.cylinder.prototype, 'translate', function
 		shapeArgs.origin = origin;	
 	});
 });
+*/

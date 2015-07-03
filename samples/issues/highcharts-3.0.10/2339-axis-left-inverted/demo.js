@@ -5,12 +5,12 @@ $(function () {
             inverted: true,
             type: 'area'
         },
-        
+
         xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
-        
+
         yAxis: [{
             offset: 0,
             width: 100,

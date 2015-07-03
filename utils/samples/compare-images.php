@@ -1,9 +1,24 @@
 <?php
 ini_set('display_errors', 'on');
 session_start();
-$defaults = json_decode(file_get_contents('default-settings.json'));
+require_once('../settings.php');
 
-define('EXPORT_SERVER', isset($_SESSION['exportServer']) ? $_SESSION['exportServer'] : $defaults->exportServer);
+$exportServer = isset($_SESSION['exportServer']) ? $_SESSION['exportServer'] : Settings::$exportServer;
+
+$fallBackToOnline = false;
+if ($exportServer !== 'http://export.highcharts.com/') {
+
+	$file = file_get_contents($exportServer);
+	$localServerStarted = strstr($file, 'Highcharts Export');
+	
+	if ($localServerStarted == false) {
+		$exportServer = 'http://export.highcharts.com/';
+		$fallBackToOnline = true;
+	}
+}
+
+
+
 
 /**
  * Send a post request
@@ -30,10 +45,9 @@ function post($url, $data) {
 function dissimilarityIndexCalculator($str_img,$str_match){
 	
 	//Try to make images from the urls, on fail return false.
-	$img_source = @ImageCreateFromString($str_img);
-	$img_match  = @ImageCreateFromString($str_match);
-	if (!$img_source || !$img_match) return false;
-
+	$img_source = ImageCreateFromString($str_img);
+	$img_match  = ImageCreateFromString($str_match);
+	
 	//Get image sizes.
 	//list($int_img_source_width, $int_img_source_height)     = getimagesizefromstring ($str_img);
 	//list($int_img_match_width, $int_img_match_height)   = getimagesizefromstring ($str_match);
@@ -121,13 +135,13 @@ if (get_magic_quotes_gpc()) {
 	$rightSVG = stripslashes($rightSVG);
 }
 
-$leftImage = post(EXPORT_SERVER, array(
+$leftImage = post($exportServer, array(
 	'width' => 500,
 	'type' => 'image/png',
 	'svg' => $leftSVG
 ));
 
-$rightImage = post(EXPORT_SERVER, array(
+$rightImage = post($exportServer, array(
 	'width' => 500,
  	'type' => 'image/png',
 	'svg' => $rightSVG
@@ -147,6 +161,9 @@ file_put_contents("temp/left.png", $leftImage);
 file_put_contents("temp/right.png", $rightImage);
 $difference['sourceImage']['url'] = "temp/left.png";
 $difference['matchImage']['url'] = "temp/right.png";
+$difference['fallBackToOnline'] = $fallBackToOnline;
+
+
 
 // compare to reference
 $path = str_replace('--', '/', $_POST['path']);

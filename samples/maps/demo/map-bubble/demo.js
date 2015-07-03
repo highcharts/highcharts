@@ -9,7 +9,7 @@ $(function () {
             if (this.code === 'UK') {
                 this.code = 'GB';
             }
-        })
+        });
 
         $('#container').highcharts('Map', {
             chart : {
@@ -17,9 +17,9 @@ $(function () {
             },
 
             title: {
-                text: 'World population 2010 by country'
+                text: 'World population 2013 by country'
             },
-            
+
             subtitle : {
                 text : 'Demo of Highcharts map with bubbles'
             },
@@ -43,7 +43,7 @@ $(function () {
             }, {
                 type: 'mapbubble',
                 mapData: mapData,
-                name: 'Population 2010',
+                name: 'Population 2013',
                 joinBy: ['iso-a2', 'code'],
                 data: data,
                 minSize: 4,

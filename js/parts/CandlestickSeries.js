@@ -47,6 +47,15 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 		// Fill is handled by OHLCSeries' getAttribs.
 		each(series.points, function (point) {
 			if (point.open < point.close) {
+
+				// If an individual line color is set, we need to merge the
+				// point attributes, because they are shared between all up
+				// points by inheritance from OHCLSeries.
+				if (point.lineColor) {
+					point.pointAttr = merge(point.pointAttr);
+					upLineColor = point.lineColor;
+				}
+
 				point.pointAttr[''].stroke = upLineColor;
 				point.pointAttr.hover.stroke = hoverStroke;
 				point.pointAttr.select.stroke = selectStroke;
@@ -118,7 +127,9 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 				];
 
 				if (graphic) {
-					graphic.animate({ d: path });
+					graphic
+						.attr(pointAttr) // #3897
+						.animate({ d: path });
 				} else {
 					point.graphic = chart.renderer.path(path)
 						.attr(pointAttr)

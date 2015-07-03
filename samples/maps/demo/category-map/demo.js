@@ -1,6 +1,6 @@
 $(function () {
 
-        
+
     // Instanciate the map
     $('#container').highcharts('Map', {
         chart: {
@@ -9,7 +9,7 @@ $(function () {
         title : {
             text : 'Europe time zones'
         },
-        
+
         legend: {
             enabled: true
         },
@@ -39,7 +39,7 @@ $(function () {
 
             }
         },
-        
+
         series : [{
             name: 'UTC',
             data: $.map(['IE', 'IS', 'GB', 'PT'], function (code) {

@@ -1,0 +1,25 @@
+.main {
+    width: 400px;
+    margin: 0 auto;
+}
+
+.chart {
+    min-width: 300px;
+    max-width: 800px;
+    height: 300px;
+    margin: 1em auto;
+}
+
+.modal {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.7);
+}
+.modal .chart {
+    height: 90%;
+    width: 90%;
+    max-width: none;
+}

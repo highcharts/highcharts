@@ -18,7 +18,7 @@ $(function () {
             title: {
                 text: 'Employees'
             }
-        },{
+        }, {
             title: {
                 text: 'Profit (millions)'
             },
@@ -49,7 +49,7 @@ $(function () {
             data: [140, 90, 40],
             pointPadding: 0.4,
             pointPlacement: -0.2
-        },{
+        }, {
             name: 'Profit',
             color: 'rgba(248,161,63,1)',
             data: [183.6, 178.8, 198.5],
@@ -57,10 +57,10 @@ $(function () {
                 valuePrefix: '$',
                 valueSuffix: ' M'
             },
-            pointPadding: .3,
+            pointPadding: 0.3,
             pointPlacement: 0.2,
             yAxis: 1
-        },{
+        }, {
             name: 'Profit Optimized',
             color: 'rgba(186,60,61,.9)',
             data: [203.6, 198.8, 208.5],
@@ -68,7 +68,7 @@ $(function () {
                 valuePrefix: '$',
                 valueSuffix: ' M'
             },
-            pointPadding: .4,
+            pointPadding: 0.4,
             pointPlacement: 0.2,
             yAxis: 1
         }]
