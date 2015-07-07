@@ -1796,7 +1796,7 @@ SVGElement.prototype = {
 	opacity: 1,
 	// For labels, these CSS properties are applied to the <text> node directly
 	textProps: ['fontSize', 'fontWeight', 'fontFamily', 'fontStyle', 'color', 
-		'lineHeight', 'width', 'textDecoration', 'textShadow'],
+		'lineHeight', 'width', 'textDecoration', 'textOverflow', 'textShadow'],
 	
 	/**
 	 * Initialize the SVG renderer
@@ -19331,16 +19331,18 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 
 	extend(Axis.prototype, {
 		isInBreak: function (brk, val) {
-			var repeat = brk.repeat || Infinity,
+			var ret,
+				repeat = brk.repeat || Infinity,
 				from = brk.from,
 				length = brk.to - brk.from,
 				test = (val >= from ? (val - from) % repeat :  repeat - ((from - val) % repeat));
 
 			if (!brk.inclusive) {
-				return (test < length && test !== 0);
+				ret = test < length && test !== 0;
 			} else {
-				return (test <= length);
+				ret = test <= length;
 			}
+			return ret;
 		},
 
 		isInAnyBreak: function (val, testKeep) {
