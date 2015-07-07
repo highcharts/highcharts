@@ -16832,7 +16832,7 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 /**
  * The MapAreaPoint object
  */
-var MapAreaPoint = extendClass(Point, colorPointMixin, {
+var MapAreaPoint = extendClass(Point, extend({
 	/**
 	 * Extend the Point object to split paths
 	 */
@@ -16931,7 +16931,8 @@ var MapAreaPoint = extendClass(Point, colorPointMixin, {
 		);
 		series.chart.redraw();
 	}
-});
+}, colorPointMixin)
+);
 
 /**
  * Add the series type
