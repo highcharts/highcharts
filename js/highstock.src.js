@@ -19607,7 +19607,7 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 			y = point.stackY || point.y;
 			for (j = 0; j < breaks.length; j++) {
 				brk = breaks[j];
-				if(threshold < brk.from) {
+				if(threshold < brk.from || threshold === null) {
 					if (y > brk.to) {
 						fireEvent(yAxis, 'pointBreak', {point: point, brk: brk});
 					} else if (y > brk.from && y < brk.to) {

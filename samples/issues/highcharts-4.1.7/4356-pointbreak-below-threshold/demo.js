@@ -45,6 +45,7 @@ $(function () {
             },
             series: [{
                 name: 'Threshold 0',
+                // threshold: 0, // default
                 data: [10000, 50000, -10000, -70000]
             }, {
                 name: 'Threshold 100k',
@@ -53,6 +54,10 @@ $(function () {
             }, {
                 name: 'Threshold -100k',
                 threshold: -100000,
+                data: [10000, 50000, -10000, -70000]
+            }, {
+                name: 'Threshold null',
+                threshold: null,
                 data: [10000, 50000, -10000, -70000]
             }]
         }).highcharts();
@@ -83,6 +88,13 @@ $(function () {
         assert.strictEqual(
             !(series[2].points[3][['brk', breaks[0].from, breaks[0].to]] instanceof Highcharts.SVGElement) && 
             !(series[2].points[3][['brk', breaks[1].from, breaks[1].to]] instanceof
+                Highcharts.SVGElement),
+            true,
+            "Has zero breaks"
+        );
+        assert.strictEqual(
+            !(series[3].points[3][['brk', breaks[0].from, breaks[0].to]] instanceof Highcharts.SVGElement) && 
+            !(series[3].points[3][['brk', breaks[1].from, breaks[1].to]] instanceof
                 Highcharts.SVGElement),
             true,
             "Has zero breaks"
@@ -131,6 +143,20 @@ $(function () {
             true,
             "Has exactly one (bottom) break"
         );
+        assert.strictEqual(
+            (series[3].points[0][['brk', breaks[0].from, breaks[0].to]] instanceof Highcharts.SVGElement) && 
+            !(series[3].points[0][['brk', breaks[1].from, breaks[1].to]] instanceof
+                Highcharts.SVGElement),
+            true,
+            "Has exactly one (bottom) break"
+        );
+        assert.strictEqual(
+            (series[3].points[2][['brk', breaks[0].from, breaks[0].to]] instanceof Highcharts.SVGElement) && 
+            !(series[3].points[2][['brk', breaks[1].from, breaks[1].to]] instanceof
+                Highcharts.SVGElement),
+            true,
+            "Has exactly one (bottom) break"
+        );
         // Two or more breaks:
         assert.strictEqual(
             (series[1].points[3][['brk', breaks[0].from, breaks[0].to]] instanceof Highcharts.SVGElement) && 
@@ -142,6 +168,13 @@ $(function () {
         assert.strictEqual(
             (series[2].points[1][['brk', breaks[0].from, breaks[0].to]] instanceof Highcharts.SVGElement) && 
             (series[2].points[1][['brk', breaks[1].from, breaks[1].to]] instanceof
+                Highcharts.SVGElement),
+            true,
+            "Has two breaks"
+        );
+        assert.strictEqual(
+            (series[3].points[1][['brk', breaks[0].from, breaks[0].to]] instanceof Highcharts.SVGElement) && 
+            (series[3].points[1][['brk', breaks[1].from, breaks[1].to]] instanceof
                 Highcharts.SVGElement),
             true,
             "Has two breaks"
