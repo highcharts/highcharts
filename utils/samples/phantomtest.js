@@ -61,7 +61,10 @@ Status
             });
         }
 
-        console.error(msgStack.join('\n'));
+        console.error(
+            'Error detected. To start again from this sample, run with argument --start n, where n is the number\n\n.' +
+            msgStack.join('\n')
+        );
         phantom.exit();
     };
 
