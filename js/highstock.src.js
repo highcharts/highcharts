@@ -19595,6 +19595,8 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 			points = series.points,
 			yAxis = series.yAxis,
 			breaks = yAxis.breakArray || [],
+			threshold = pick(this.options.threshold, yAxis.min),
+			eventName,
 			point,
 			brk,
 			i,
@@ -19606,12 +19608,15 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 			y = point.stackY || point.y;
 			for (j = 0; j < breaks.length; j++) {
 				brk = breaks[j];
-				if (y < brk.from) {
-					break;
-				} else if (y > brk.to) {
-					fireEvent(yAxis, 'pointBreak', {point: point, brk: brk});
-				} else {
-					fireEvent(yAxis, 'pointInBreak', {point: point, brk: brk});
+				eventName = false;
+
+				if ((threshold < brk.from && y > brk.to) || (threshold > brk.from && y < brk.from)) { 
+						eventName = 'pointBreak';
+				} else if ((threshold < brk.from && y > brk.from && y < brk.to) || (threshold > brk.from && y > brk.to && y < brk.from)) { // point falls inside the break
+						eventName = 'pointInBreak'; // docs
+				} 
+				if (eventName) {
+					fireEvent(yAxis, eventName, {point: point, brk: brk});
 				}
 			}
 		}
