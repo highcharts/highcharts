@@ -288,6 +288,7 @@
 			points = series.points,
 			yAxis = series.yAxis,
 			breaks = yAxis.breakArray || [],
+			threshold = this.options.threshold,
 			point,
 			brk,
 			i,
@@ -299,13 +300,19 @@
 			y = point.stackY || point.y;
 			for (j = 0; j < breaks.length; j++) {
 				brk = breaks[j];
-				if (y < brk.from) {
-					break;
-				} else if (y > brk.to) {
-					fireEvent(yAxis, 'pointBreak', {point: point, brk: brk});
-				} else {
-					fireEvent(yAxis, 'pointInBreak', {point: point, brk: brk});
-				}
+				if(threshold < brk.from) {
+					if (y > brk.to) {
+						fireEvent(yAxis, 'pointBreak', {point: point, brk: brk});
+					} else if (y > brk.from && y < brk.to) {
+						fireEvent(yAxis, 'pointInBreak', {point: point, brk: brk}); // docs ??
+					}
+				} else if(threshold > brk.from){
+					if (y < brk.from) {
+						fireEvent(yAxis, 'pointBreak', {point: point, brk: brk});
+					} else if (y > brk.to && y < brk.to) {
+						fireEvent(yAxis, 'pointInBreak', {point: point, brk: brk}); // docs ??
+					}
+				} 
 			}
 		}
 
