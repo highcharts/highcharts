@@ -18255,7 +18255,7 @@ if (seriesTypes.bubble) {
 		pointClass: extendClass(Point, {
 			applyOptions: function (options, x) {
 				var point;
-				if (options.lat !== undefined && options.lon !== undefined) {
+				if (options && options.lat !== undefined && options.lon !== undefined) {
 					point = Point.prototype.applyOptions.call(this, options, x);
 					point = extend(point, this.series.chart.fromLatLonToPoint(point));
 				} else {
