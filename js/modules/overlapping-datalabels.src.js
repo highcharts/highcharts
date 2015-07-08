@@ -112,16 +112,30 @@
 		}
 
 		// Hide or show
-		for (i = 0; i < len; i++) {
-			label = labels[i];
+		each(labels, function (label) {
+			var complete,
+				newOpacity;
+
 			if (label) {
-				if (label.oldOpacity !== label.newOpacity && label.placed) {
-					label.alignAttr.opacity = label.newOpacity;
-					label[label.isOld && label.newOpacity ? 'animate' : 'attr'](label.alignAttr);
+				newOpacity = label.newOpacity;
+
+				// Make sure the label is completely hidden to avoid catching clicks (#4362)
+				if (newOpacity) {
+					label.show(true);
+				} else {
+					complete = function () {
+						label.hide();
+					};
+				}
+
+				// Animate or set the opacity
+				if (label.oldOpacity !== newOpacity && label.placed) {
+					label.alignAttr.opacity = newOpacity;
+					label[label.isOld ? 'animate' : 'attr'](label.alignAttr, null, complete);
 				}
 				label.isOld = true;
 			}
-		}
+		});
 	};
 
 }(Highcharts));
