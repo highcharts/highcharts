@@ -19595,7 +19595,7 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 			points = series.points,
 			yAxis = series.yAxis,
 			breaks = yAxis.breakArray || [],
-			threshold = this.options.threshold === null ? yAxis.min : this.options.threshold,
+			threshold = pick(this.options.threshold, yAxis.min),
 			eventName,
 			point,
 			brk,
