@@ -52,9 +52,9 @@ $(function () {
             null,
             'Visible pie on setVisible true'
         );
-        assert.equal(
-            chart.series[0].points[0].dataLabel.attr('visibility'),     
-            'inherit',
+        assert.strictEqual(
+            chart.series[0].points[0].dataLabel.element.getAttribute('visibility'),     
+            null,
             'Visible data label on setVisible true'
         );
         assert.equal(
