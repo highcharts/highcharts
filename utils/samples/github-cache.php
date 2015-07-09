@@ -10,6 +10,8 @@ $file = $_GET['file'];
 
 $cachePath = 'temp/' . $commit . '-' . str_replace('/', '-', $file);
 
+$file = preg_replace('/^\/stock/', '', $file);
+$file = preg_replace('/^\/maps/', '', $file);
 if (!is_file($cachePath)) {
 	file_put_contents($cachePath, file_get_contents("http://github.highcharts.com/{$commit}{$file}"));
 }
