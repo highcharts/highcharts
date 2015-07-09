@@ -2177,15 +2177,15 @@ SVGElement.prototype = {
 			key,
 			attribs = {},
 			normalizer,
-			strokeWidth = rect.strokeWidth || wrapper.strokeWidth || 0;
+			strokeWidth = pick(rect.strokeWidth, wrapper.strokeWidth, 0);
 
 		normalizer = mathRound(strokeWidth) % 2 / 2; // mathRound because strokeWidth can sometimes have roundoff errors
 
 		// normalize for crisp edges
-		rect.x = mathFloor(rect.x || wrapper.x || 0) + normalizer;
-		rect.y = mathFloor(rect.y || wrapper.y || 0) + normalizer;
-		rect.width = mathFloor((rect.width || wrapper.width || 0) - 2 * normalizer);
-		rect.height = mathFloor((rect.height || wrapper.height || 0) - 2 * normalizer);
+		rect.x = mathFloor(pick(rect.x, wrapper.x, 0)) + normalizer;
+		rect.y = mathFloor(pick(rect.y, wrapper.y, 0)) + normalizer;
+		rect.width = mathFloor((pick(rect.width, wrapper.width, 0)) - 2 * normalizer);
+		rect.height = mathFloor((pick(rect.height, wrapper.height, 0)) - 2 * normalizer);
 		rect.strokeWidth = strokeWidth;
 
 		for (key in rect) {
