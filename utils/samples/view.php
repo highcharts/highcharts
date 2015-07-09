@@ -8,8 +8,8 @@ require_once('functions.php');
 
 @$path = $_GET['path'];
 if (!preg_match('/^[a-z\-]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
-
-	die ();
+	header('Location: index.php');
+	exit;
 }
 
 $i = (int)$_GET['i'];

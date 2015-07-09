@@ -213,6 +213,9 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 	<body>
 		
 	<div id="top-nav">
+		<a class="button" href="index.php" target="main">
+			<i class="icon-home"></i>
+		</a>
 		<a class="button" id="batch-compare" title="Batch compare all samples">
 			<i class="icon-play"></i>
 			Run tests

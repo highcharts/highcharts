@@ -5,6 +5,10 @@ require_once('../settings.php');
 $leftPath = isset($_SESSION['leftPath']) ? $_SESSION['leftPath'] : Settings::$leftPath;
 $rightPath = isset($_SESSION['rightPath']) ? $_SESSION['rightPath'] : Settings::$rightPath;
 
+if (preg_match('/^[a-z0-9]+$/', $leftPath)) {
+	$leftPath = "/samples/github-cache.php?commit=$leftPath&file=";
+}
+
 
 $leftExporting = "$leftPath/modules/exporting.src.js";
 $rightExporting = "$rightPath/modules/exporting.src.js";
