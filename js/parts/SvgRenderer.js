@@ -796,13 +796,7 @@ SVGElement.prototype = {
 	 * Show the element
 	 */
 	show: function (inherit) {
-		// IE9-11 doesn't handle visibilty:inherit well, so we remove the attribute instead (#2881)
-		if (inherit && this.element.namespaceURI === SVG_NS) {
-			this.element.removeAttribute('visibility');
-		} else {
-			this.attr({ visibility: inherit ? 'inherit' : VISIBLE });
-		}
-		return this;
+		return this.attr({ visibility: inherit ? 'inherit' : VISIBLE });
 	},
 
 	/**
@@ -1083,6 +1077,14 @@ SVGElement.prototype = {
 			element.setAttribute(key, value);
 		} else if (value) {
 			this.colorGradient(value, key, element);
+		}
+	},
+	visibilitySetter: function (value, key, element) {
+		// IE9-11 doesn't handle visibilty:inherit well, so we remove the attribute instead (#2881, #3909)
+		if (value === 'inherit') {
+			element.removeAttribute(key);
+		} else {
+			element.setAttribute(key, value);
 		}
 	},
 	zIndexSetter: function (value, key) {
