@@ -9,7 +9,6 @@ Arguments:
 
 Status
 - Requires PhantomJS 2
-- Currently only runs through highcharts/demo
 */
 
 /*global console, phantom, require*/
@@ -62,7 +61,7 @@ Status
         }
 
         console.error(
-            'Error detected. To start again from this sample, run with argument --start n, where n is the number\n\n.' +
+            '\nError detected in ' + samples[i] + '. To start again from this sample, run with argument --start ' + i +'\n\n.' +
             msgStack.join('\n')
         );
         phantom.exit();
@@ -73,12 +72,16 @@ Status
         var sample = samples[i];
 
         page.open('http://utils.highcharts.local/samples/compare-view.php?path=' + sample, function (status) {
-            console.log(i, status, sample);
+            //console.log(i, status, sample);
         });
     }
 
     page.onConsoleMessage = function (m) {
-        if (m === '@proceed') {
+        if (m.indexOf('@proceed') === 0) {
+
+            // Output the results of the finished test
+            console.log(i, m.replace('@proceed ', ''));
+
             i = i + 1;
             if (samples[i]) {
                 runRecursive();

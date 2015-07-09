@@ -33,6 +33,7 @@
 		
 		<script type="text/javascript">
 			var diff,
+				path = '<?php echo $path ?>',
 				commentHref = 'compare-comment.php?path=<?php echo $path ?>&i=<?php echo $i ?>&diff=',
 				commentFrame;
 			$(function() {
@@ -68,6 +69,14 @@
 				_continue = '<?php echo $continue ?>';
 				
 			function markList(className, difference) {
+
+				// Process the difference and set global 
+				if (typeof difference === 'number') {
+					diff = difference.toFixed(2);
+				} else {
+					diff = difference || 0;
+				}
+
 				if (window.parent.frames[0]) {
 					var contentDoc = window.parent.frames[0].document,
 						li = contentDoc.getElementById('li<?php echo $i ?>'),
@@ -84,12 +93,6 @@
 						$('.dissimilarity-index', li).remove();
 						
 						if (difference !== undefined) {
-							if (typeof difference === 'number') {
-								diff = difference.toFixed(2);
-
-							} else {
-								diff = difference;
-							}
 
 							<?php if (isset($comment) && $comment->symbol == 'check') : ?>
 							if (diff.toString() === '<?php echo $comment->diff ?>') {
@@ -174,6 +177,24 @@
 				contentDoc.currentLi = li;
 					
 			}
+
+			/**
+			 * Pad a string to a given length
+			 * @param {String} s
+			 * @param {Number} length
+			 */
+			function pad(s, length, left) {
+				var padding;
+
+				if (s.length > length) {
+					s = s.substring(0, length);
+				}
+
+				padding = new Array((length || 2) + 1 - s.length).join(' ');
+
+				return left ? padding + s : s + padding;
+			}
+
 			
 			function proceed() {
 				var i = '<?php echo $i ?>';						
@@ -205,20 +226,29 @@
 					href = href.replace("view.php", "compare-view.php") + '&continue=true';
 					
 					window.location.href = href; 
+
+				// Else, log the result. This is picked up when running in PhantomJS (phantomtest.js script).
 				} else {
-					console.log('@proceed');
+					if (typeof diff === 'function') { // leaks from jsDiff
+						diff = 0;
+					}
+					console.log([
+						'@proceed',
+						pad(path, 60, false),
+						diff ? pad(String(diff), 4, true) : '   .' // Only a dot when success
+					].join(' '));
 				}		
 			}
 				
 			function onIdentical() {
-				$.get('compare-update-report.php', { path: '<?php echo $path ?>', diff: 0 });
+				$.get('compare-update-report.php', { path: path, diff: 0 });
 				markList("identical");
 				proceed();
 			}
 			
 			function onDifferent(diff) {
 				// Save it for refreshes
-				$.get('compare-update-report.php', { path: '<?php echo $path ?>', diff: diff });
+				$.get('compare-update-report.php', { path: path, diff: diff });
 				markList("different", diff);
 				proceed();
 			}
