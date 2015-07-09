@@ -272,10 +272,11 @@ extend(SVGRenderer.prototype, {
 									htmlGroupStyle.top = value + PX;
 									parentGroup[key] = value;
 									parentGroup.doTransform = true;
-								},
-								visibilitySetter: function (value, key) {
-									htmlGroupStyle[key] = value;
 								}
+							});
+							wrap(parentGroup, 'visibilitySetter', function (proceed, value, key, elem) {
+								proceed.call(this, value, key, elem);
+								htmlGroupStyle[key] = value;
 							});
 						});
 
