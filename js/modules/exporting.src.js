@@ -537,7 +537,8 @@ extend(Chart.prototype, {
 							onmouseout: function () {
 								css(this, menuItemStyle);
 							},
-							onclick: function () {
+							onclick: function (e) {
+								e.stopPropagation();
 								hide();
 								if (item.onclick) {
 									item.onclick.apply(chart, arguments);
