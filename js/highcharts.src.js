@@ -17840,19 +17840,21 @@ if (seriesTypes.column) {
 			if (label) {
 				newOpacity = label.newOpacity;
 
-				// Make sure the label is completely hidden to avoid catching clicks (#4362)
-				if (newOpacity) {
-					label.show(true);
-				} else {
-					complete = function () {
-						label.hide();
-					};
-				}
-
-				// Animate or set the opacity
 				if (label.oldOpacity !== newOpacity && label.placed) {
+
+					// Make sure the label is completely hidden to avoid catching clicks (#4362)
+					if (newOpacity) {
+						label.show(true);
+					} else {
+						complete = function () {
+							label.hide();
+						};
+					}
+
+					// Animate or set the opacity					
 					label.alignAttr.opacity = newOpacity;
 					label[label.isOld ? 'animate' : 'attr'](label.alignAttr, null, complete);
+					
 				}
 				label.isOld = true;
 			}
