@@ -2,7 +2,14 @@
 ini_set('display_errors', 'on');
 session_start();
 require_once('../settings.php');
-$leftPath = isset($_SESSION['leftPath']) ? $_SESSION['leftPath'] : Settings::$leftPath;
+
+if (isset($_GET['commit'])) {
+	$leftPath = $_GET['commit']; // used by PhantomJS command line
+} elseif (isset($_SESSION['leftPath'])) {
+	$leftPath = $_SESSION['leftPath'];
+} else {
+	$leftPath = Settings::$leftPath;
+}
 $rightPath = isset($_SESSION['rightPath']) ? $_SESSION['rightPath'] : Settings::$rightPath;
 
 if (preg_match('/^[a-z0-9]+$/', $leftPath)) {
