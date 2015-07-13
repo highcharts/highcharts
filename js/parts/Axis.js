@@ -1761,10 +1761,7 @@ Axis.prototype = {
 		);
 
 		// Decide the clipping needed to keep the graph inside the plot area and axis lines
-		clip = mathFloor(options.lineWidth / 2) * 2;
-		if (options.offset) {
-			clip = mathMax(0, clip - options.offset);		
-		}
+		clip = options.offset ? 0 : mathFloor(options.lineWidth / 2) * 2; // #4308, #4371
 		clipOffset[invertedSide] = mathMax(clipOffset[invertedSide], clip);
 	},
 
