@@ -405,7 +405,8 @@ return {
 				end,
 				fx,
 				args,
-				name;
+				name,
+				PX = 'px';
 
 			el.stopAnimation = false; // ready for new
 
@@ -441,12 +442,15 @@ return {
 				} else {
 					start = parseFloat(HighchartsAdapter._getStyle(el, name)) || 0;
 					if (name !== 'opacity') {
-						unit = 'px';
+						unit = PX;
 					}
 				}
 	
 				if (!end) {
 					end = prop[name];
+				}
+				if (end.match && end.match(PX)) {
+					end = end.replace(/px/g, ''); // #4351
 				}
 				fx.custom(start, end, unit);
 			}	
