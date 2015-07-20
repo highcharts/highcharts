@@ -445,7 +445,7 @@ Series.prototype = {
 						pt = { series: series };
 						series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
 						series.updateParallelArrays(pt, i);
-						if (hasCategories && pt.name) {
+						if (hasCategories && defined(pt.name)) { // #4401
 							xAxis.names[pt.x] = pt.name; // #2046
 						}
 					}
