@@ -9020,8 +9020,25 @@ Pointer.prototype = {
 		}
 
 		this.setDOMEvents();
-	}, 
 
+		this._initialTouch = this._lastTouch = null;
+		this.PRESSMOVETHRESHOLD = 5;
+	}, 
+	_getTouchProps: function(touch) {
+		if (!touch) return {};
+		return {
+			pageX: touch.pageX,
+			pageY: touch.pageY,
+			clientX: touch.clientX,
+			clientY: touch.clientY
+		};
+	},
+	_calculateMovement: function(touch) {
+		return {
+			x: Math.abs(touch.clientX - this._initialTouch.clientX),
+			y: Math.abs(touch.clientY - this._initialTouch.clientY)
+		};
+	},
 	/**
 	 * Add crossbrowser support for chartX and chartY
 	 * @param {Object} e The event object in standard browsers
@@ -9412,6 +9429,8 @@ Pointer.prototype = {
 			chart = this.chart,
 			hasPinched = this.hasPinched;
 
+		this._initialTouch = this._lastTouch = null;
+
 		if (this.selectionMarker) {
 			var selectionData = {
 					xAxis: [],
@@ -9774,12 +9793,23 @@ extend(Highcharts.Pointer.prototype, {
 			transform = {},
 			fireClickEvent = touchesLength === 1 && ((self.inClass(e.target, PREFIX + 'tracker') && 
 				chart.runTrackerClick) || self.runChartClick),
-			clip = {};
+			clip = {},
+			movement = null;
 
 		// Don't initiate panning until the user has pinched. This prevents us from 
 		// blocking page scrolling as users scroll down a long page (#4210).
 		if (touchesLength > 1) {
 			self.initiated = true;
+		} else if (touchesLength == 1) {
+			if (e.type === 'touchstart') {
+				this._initialTouch = this._lastTouch = this._getTouchProps(e.touches[0]);
+			} else if (e.type === 'touchmove') {
+				this._lastTouch = this._getTouchProps(e.touches[0]);
+				movement = this._calculateMovement(this._lastTouch);
+				if (movement.x <= this.PRESSMOVETHRESHOLD || movement.y <= this.PRESSMOVETHRESHOLD) {
+					return;
+				}
+			}
 		}
 
 		// On touch devices, only proceed to trigger click if a handler is defined

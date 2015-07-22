@@ -107,12 +107,23 @@ extend(Highcharts.Pointer.prototype, {
 			transform = {},
 			fireClickEvent = touchesLength === 1 && ((self.inClass(e.target, PREFIX + 'tracker') && 
 				chart.runTrackerClick) || self.runChartClick),
-			clip = {};
+			clip = {},
+			movement = null;
 
 		// Don't initiate panning until the user has pinched. This prevents us from 
 		// blocking page scrolling as users scroll down a long page (#4210).
 		if (touchesLength > 1) {
 			self.initiated = true;
+		} else if (touchesLength == 1) {
+			if (e.type === 'touchstart') {
+				this._initialTouch = this._lastTouch = this._getTouchProps(e.touches[0]);
+			} else if (e.type === 'touchmove') {
+				this._lastTouch = this._getTouchProps(e.touches[0]);
+				movement = this._calculateMovement(this._lastTouch);
+				if (movement.x <= this.PRESSMOVETHRESHOLD || movement.y <= this.PRESSMOVETHRESHOLD) {
+					return;
+				}
+			}
 		}
 
 		// On touch devices, only proceed to trigger click if a handler is defined
