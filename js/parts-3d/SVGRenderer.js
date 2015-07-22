@@ -275,6 +275,18 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 				_args: args	
 			}, {
 				duration: duration,
+				start: function () {
+					var args = arguments,
+						fx = args[0],					
+						elem = fx.elem,
+						end = elem._shapeArgs;
+
+					if (end.fill !== elem.color) {
+						elem.attr({
+							fill: end.fill
+						});
+					}
+				},
 				step: function () {
 					var args = arguments,
 						fx = args[1],
