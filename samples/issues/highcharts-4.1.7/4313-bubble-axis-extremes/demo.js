@@ -21,17 +21,19 @@ $(function () {
                         [41, 22, 14]
                     ]
                 }]
-            }).highcharts();
+            }).highcharts(),
+            topPoint = chart.series[0].points[0],
+            rightPoint = chart.series[0].points[1];
 
         assert.strictEqual(
-            chart.xAxis[0].max > chart.series[0].xData[1],
-            true,
-            'Proper padding for xAxis.max'
-        );
-        assert.strictEqual(
-            chart.yAxis[0].max > chart.series[0].yData[0],
+             parseFloat(topPoint.graphic.attr("cy")) > parseFloat(topPoint.graphic.attr("r")),
             true,
             'Proper padding for yAxis.max'
+        );
+        assert.strictEqual(
+            chart.plotWidth > parseFloat(rightPoint.graphic.attr("cx")) + parseFloat(rightPoint.graphic.attr("r")),
+            true,
+            'Proper padding for xAxis.max'
         );
     });
 });
