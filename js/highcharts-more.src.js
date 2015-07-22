@@ -2138,12 +2138,15 @@ Axis.prototype.beforePadding = function () {
 		}
 	});
 	
-	if (activeSeries.length && range > 0 && pick(this.options.min, this.userMin) === UNDEFINED && 
-			pick(this.options.max, this.userMax) === UNDEFINED && !this.isLog) {
+
+	if (activeSeries.length && range > 0 && !this.isLog) {
 		pxMax -= axisLength;
 		transA *= (axisLength + pxMin - pxMax) / axisLength;
-		this.min += pxMin / transA;
-		this.max += pxMax / transA;
+		each([['min', 'userMin', pxMin], ['max', 'userMax', pxMax]], function (keys) {
+			if (pick(axis.options[keys[0]], axis[keys[1]]) === UNDEFINED) {
+				axis[keys[0]] += keys[2] / transA; 
+			}
+		});
 	}
 };
 
