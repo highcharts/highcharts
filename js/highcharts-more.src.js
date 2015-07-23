@@ -950,6 +950,8 @@ seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
 		translate: function () {
 			var series = this,
 				yAxis = series.yAxis,
+				xAxis = series.xAxis,
+				chart = series.chart,
 				plotHigh;
 
 			colProto.translate.apply(series);
@@ -962,7 +964,6 @@ seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
 					height,
 					y;
 
-				point.tooltipPos = null; // don't inherit from column
 				point.plotHigh = plotHigh = yAxis.translate(point.high, 0, 1, 0, 1);
 				point.plotLow = point.plotY;
 
@@ -984,6 +985,17 @@ seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
 
 				shapeArgs.height = height;
 				shapeArgs.y = y;
+
+				point.tooltipPos = chart.inverted ? 
+					[ 
+						yAxis.len + yAxis.pos - chart.plotLeft - y - height / 2, 
+						xAxis.len + xAxis.pos - chart.plotTop - shapeArgs.x - shapeArgs.width / 2, 
+						height
+					] : [
+						xAxis.left - chart.plotLeft + shapeArgs.x + shapeArgs.width / 2, 
+						yAxis.pos - chart.plotTop + y + height / 2, 
+						height
+					]; // don't inherit from column tooltip position - #3372
 			});
 		},
 		directTouch: true,
