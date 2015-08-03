@@ -6052,7 +6052,7 @@ Tick.prototype = {
 			gridLineColor = options[gridPrefix + 'LineColor'],
 			dashStyle = options[gridPrefix + 'LineDashStyle'],
 			tickLength = options[tickPrefix + 'Length'],
-			tickWidth = options[tickPrefix + 'Width'] || 0,
+			tickWidth = pick(options[tickPrefix + 'Width'], !type && axis.isXAxis ? 1 : 0), // X axis defaults to 1
 			tickColor = options[tickPrefix + 'Color'],
 			tickPosition = options[tickPrefix + 'Position'],
 			gridLinePath,
@@ -6263,7 +6263,7 @@ Axis.prototype = {
 		tickmarkPlacement: 'between', // on or between
 		tickPixelInterval: 100,
 		tickPosition: 'outside',
-		tickWidth: 1,
+		//tickWidth: 1,
 		title: {
 			//text: null,
 			align: 'middle', // low, middle or high
@@ -6295,7 +6295,7 @@ Axis.prototype = {
 		maxPadding: 0.05,
 		minPadding: 0.05,
 		startOnTick: true,
-		tickWidth: 0,
+		//tickWidth: 0,
 		title: {
 			rotation: 270,
 			text: 'Values'
@@ -6381,6 +6381,8 @@ Axis.prototype = {
 		var isXAxis = userOptions.isX,
 			axis = this;
 
+		axis.chart = chart;
+
 		// Flag, is the axis horizontal
 		axis.horiz = chart.inverted ? !isXAxis : isXAxis;
 
@@ -6411,7 +6413,6 @@ Axis.prototype = {
 		//axis.ignoreMinPadding = UNDEFINED; // can be set to true by a column or bar series
 		//axis.ignoreMaxPadding = UNDEFINED;
 
-		axis.chart = chart;
 		axis.reversed = options.reversed;
 		axis.zoomEnabled = options.zoomEnabled !== false;
 
