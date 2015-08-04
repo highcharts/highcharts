@@ -1117,6 +1117,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	useMapGeometry: true, // get axis extremes from paths, not values
 	forceDL: true,
 	searchPoint: noop,
+	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	preserveAspectRatio: true, // X axis and Y axis must have same translation slope
 	/**
 	 * Get the bounding box of all paths in the map combined.
