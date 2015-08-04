@@ -196,7 +196,11 @@
 					shapeArgs,
 					d,
 					toColor = yAxis.toColor(point.y, point),
-					fromColor;
+					fromColor,
+					axisMinAngle = Math.min(yAxis.startAngleRad, yAxis.endAngleRad),
+					axisMaxAngle = Math.max(yAxis.startAngleRad, yAxis.endAngleRad),
+					minAngle,
+					maxAngle;
 
 				if (toColor === 'none') { // #3708
 					toColor = point.color || series.color || 'none';
@@ -207,18 +211,15 @@
 				}
 
 				// Handle overshoot and clipping to axis max/min
-				rotation = Math.max(yAxis.startAngleRad - overshootVal, Math.min(yAxis.endAngleRad + overshootVal, rotation));
+				rotation = Math.max(axisMinAngle - overshootVal, Math.min(axisMaxAngle + overshootVal, rotation));
 
 				// Handle the wrap option
 				if (options.wrap === false) {
-					rotation = Math.max(yAxis.startAngleRad, Math.min(yAxis.endAngleRad, rotation));
+					rotation = Math.max(axisMinAngle, Math.min(axisMaxAngle, rotation));
 				}
-				rotation = rotation * 180 / Math.PI;
 
-				var angle1 = rotation / (180 / Math.PI),
-					angle2 = yAxis.startAngleRad,
-					minAngle = Math.min(angle1, angle2),
-					maxAngle = Math.max(angle1, angle2);
+				minAngle = Math.min(rotation, yAxis.startAngleRad);
+				maxAngle = Math.max(rotation, yAxis.startAngleRad);
 
 				if (maxAngle - minAngle > 2 * Math.PI) {
 					maxAngle = minAngle + 2 * Math.PI;
