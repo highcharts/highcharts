@@ -22421,7 +22421,7 @@ RangeSelector.prototype = {
 		if (fixedTimes[type]) {
 			rangeOptions._range = fixedTimes[type] * count;				
 		} else if (type === 'month' || type === 'year') {
-			rangeOptions._range = { month: 30, year: 365 }[type] * 24 * 36e5 * count;
+			rangeOptions._range = { month: 31, year: 365 }[type] * 24 * 36e5 * count; // 31 for month, as per #4147
 		}
 	},
 	
