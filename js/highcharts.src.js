@@ -7941,7 +7941,7 @@ Axis.prototype = {
 				});
 			}
 
-		} else {
+		} else if (!labelOptions.step) { // #4411
 			newTickInterval = getStep(labelMetrics.h);
 		}
 
