@@ -14247,7 +14247,7 @@ Series.prototype = {
 
 		// Start the recursive build process with a clone of the points array and null points filtered out (#3873)
 		function startRecursive() {
-			var points = grep(series.points, function (point) {
+			var points = grep(series.points || [], function (point) { // #4390
 				return point.y !== null;
 			});
 
