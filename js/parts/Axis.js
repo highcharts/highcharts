@@ -1866,7 +1866,9 @@ Axis.prototype = {
 			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
 			showAxis = axis.showAxis,
 			from,
-			to;
+			to,
+			aGCtickPositions,
+			modPos;
 
 		// Reset
 		axis.labelEdge.length = 0;
@@ -1934,8 +1936,16 @@ Axis.prototype = {
 
 			// alternate grid color
 			if (alternateGridColor) {
-				each(tickPositions, function (pos, i) {
-					if (i % 2 === 0 && pos < axis.max) {
+				aGCtickPositions = axis.tickPositions.info ? [axis.min].concat(tickPositions) : tickPositions;
+				each(aGCtickPositions, function (pos, i) {
+					if (axis.tickPositions.info) {
+						modPos = i ? pos : tickPositions[i] - axis.tickPositions.info.totalRange;
+						modPos = Math.floor((axis.dataMax - modPos) / axis.tickPositions.info.totalRange);
+						i -= 1;
+					} else {
+						modPos = i
+					}
+					if (modPos % 2 === 0 && pos < axis.max) {
 						if (!alternateBands[pos]) {
 							alternateBands[pos] = new Highcharts.PlotLineOrBand(axis);
 						}
