@@ -763,7 +763,9 @@ Chart.prototype = {
 		var chart = this,
 			chartWidth,
 			chartHeight,
-			fireEndResize;
+			fireEndResize,
+			renderer = chart.renderer,
+			globalAnimation = renderer.globalAnimation;
 
 		// Handle the isResizing counter
 		chart.isResizing += 1;
@@ -795,7 +797,7 @@ Chart.prototype = {
 		}, globalAnimation);
 
 		chart.setChartSize(true);
-		chart.renderer.setSize(chartWidth, chartHeight, animation);
+		renderer.setSize(chartWidth, chartHeight, animation);
 
 		// handle axes
 		chart.maxTicks = null;

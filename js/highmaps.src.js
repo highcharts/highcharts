@@ -49,7 +49,6 @@ var UNDEFINED,
 	garbageBin,
 	defaultOptions,
 	dateFormat, // function
-	globalAnimation,
 	pathAnim,
 	timeUnits,
 	noop = function () { return UNDEFINED; },
@@ -723,7 +722,7 @@ function correctFloat(num, prec) {
  * @param {Object} chart
  */
 function setAnimation(animation, chart) {
-	globalAnimation = pick(animation, chart.animation);
+	chart.renderer.globalAnimation = pick(animation, chart.animation);
 }
 
 /**
@@ -1818,7 +1817,7 @@ SVGElement.prototype = {
 	 * @param {Function} complete Function to perform at the end of animation
 	 */
 	animate: function (params, options, complete) {
-		var animOptions = pick(options, globalAnimation, true);
+		var animOptions = pick(options, this.renderer.globalAnimation, true);
 		stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
 		if (animOptions) {
 			animOptions = merge(animOptions, {}); //#2625
@@ -8044,6 +8043,7 @@ Axis.prototype = {
 			hasRendered = chart.hasRendered,
 			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
 			showAxis = axis.showAxis,
+			globalAnimation = renderer.globalAnimation,
 			from,
 			to;
 
@@ -11561,7 +11561,9 @@ Chart.prototype = {
 		var chart = this,
 			chartWidth,
 			chartHeight,
-			fireEndResize;
+			fireEndResize,
+			renderer = chart.renderer,
+			globalAnimation = renderer.globalAnimation;
 
 		// Handle the isResizing counter
 		chart.isResizing += 1;
@@ -11593,7 +11595,7 @@ Chart.prototype = {
 		}, globalAnimation);
 
 		chart.setChartSize(true);
-		chart.renderer.setSize(chartWidth, chartHeight, animation);
+		renderer.setSize(chartWidth, chartHeight, animation);
 
 		// handle axes
 		chart.maxTicks = null;

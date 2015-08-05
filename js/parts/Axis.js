@@ -1865,6 +1865,7 @@ Axis.prototype = {
 			hasRendered = chart.hasRendered,
 			slideInTicks = hasRendered && defined(axis.oldMin) && !isNaN(axis.oldMin),
 			showAxis = axis.showAxis,
+			globalAnimation = renderer.globalAnimation,
 			from,
 			to;
 

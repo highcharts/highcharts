@@ -612,7 +612,7 @@ function correctFloat(num, prec) {
  * @param {Object} chart
  */
 function setAnimation(animation, chart) {
-	globalAnimation = pick(animation, chart.animation);
+	chart.renderer.globalAnimation = pick(animation, chart.animation);
 }
 
 /**
