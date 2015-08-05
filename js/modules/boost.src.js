@@ -255,6 +255,7 @@
                 maxVal,
                 minI,
                 maxI,
+                markerGroup,
                 fillColor = series.fillOpacity ?
                         new Color(series.color).setOpacity(pick(options.fillOpacity, 0.75)).get() :
                         series.color,
@@ -331,6 +332,7 @@
             );
 
             series.getAttribs();
+            markerGroup = series.markerGroup;
             series.markerGroup = series.group;
 
             points = this.points = [];
@@ -472,7 +474,9 @@
 
                     chart.loadingShown = false;
                     setTimeout(function () {
-                        loadingDiv.parentNode.removeChild(loadingDiv);
+                        if (loadingDiv.parentNode) { // In exporting it is falsy
+                            loadingDiv.parentNode.removeChild(loadingDiv);
+                        }
                         chart.loadingDiv = chart.loadingSpan = null;
                     }, 250);
                 }
@@ -488,6 +492,9 @@
 
                 delete series.buildKDTree; // Go back to prototype, ready to build
                 series.buildKDTree();
+
+                // Reset marker group
+                series.markerGroup = markerGroup;
 
              // Don't do async on export, the exportChart, getSVGForExport and getSVG methods are not chained for it.
             }, chart.renderer.forExport ? Number.MAX_VALUE : undefined);
