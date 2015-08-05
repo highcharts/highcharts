@@ -4149,7 +4149,11 @@ SVGRenderer.prototype = {
 					wrapper.box = box = shape ?
 						renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height, deferredAttr) :
 						renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
-					box.attr('fill', NONE).add(wrapper);
+
+					if (!box.isImg) { // #4324, fill "none" causes it to be ignored by mouse events in IE
+						box.attr('fill', NONE);
+					}
+					box.add(wrapper);
 				}
 
 				// apply the box attributes
