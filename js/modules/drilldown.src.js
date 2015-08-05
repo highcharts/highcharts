@@ -122,7 +122,6 @@
 			xAxis = oldSeries.xAxis,
 			yAxis = oldSeries.yAxis,
 			newSeries,
-			isPie = pick(ddOptions.type, oldSeries.type) === "pie",
 			color = point.color || oldSeries.color,
 			pointIndex,
 			levelSeries = [],
@@ -145,7 +144,7 @@
 		
 			
 		ddOptions = extend({
-			color: isPie ? null : color, // #4359 - pie chart slices shouldn't have the same color
+			color: oldSeries.options.colorByPoint ? null : color, // #4359 - pie chart slices shouldn't have the same color
 			_ddSeriesId: ddSeriesId++
 		}, ddOptions);
 		pointIndex = inArray(point, oldSeries.points);
