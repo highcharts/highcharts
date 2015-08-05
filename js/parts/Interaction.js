@@ -399,8 +399,12 @@ extend(Point.prototype, {
 
 	/**
 	 * Runs on mouse over the point
+	 *
+	 * @param {Object} e The event arguments
+	 * @param {Boolean} byProximity Falsy for kd points that are closest to the mouse, or to 
+	 *        actually hovered points. True for other points in shared tooltip.
 	 */
-	onMouseOver: function (e) {
+	onMouseOver: function (e, byProximity) {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
@@ -428,7 +432,9 @@ extend(Point.prototype, {
 
 			// hover this
 			point.setState(HOVER_STATE);
-			chart.hoverPoint = point;
+			if (!byProximity) {
+				chart.hoverPoint = point;
+			}
 		}
 	},
 

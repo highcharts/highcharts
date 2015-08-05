@@ -191,14 +191,10 @@ Pointer.prototype = {
 					tooltip.refresh(kdpoints, e);
 				}
 
-				// do mouseover on all points except the closest
+				// Do mouseover on all points (#3919, #3985, #4410)
 				each(kdpoints, function (point) {
-					if (point !== kdpoint) { 
-						point.onMouseOver(e);
-					}
-				});	
-				// #3919, #3985 do mouseover on the closest point last to ensure it is the hoverpoint
-				((hoverSeries && hoverSeries.directTouch && hoverPoint) || kdpoint).onMouseOver(e); 
+					point.onMouseOver(e, point !== ((hoverSeries && hoverSeries.directTouch && hoverPoint) || kdpoint));
+				}); 
 			} else {
 				if (tooltip) { 
 					tooltip.refresh(kdpoint, e);
