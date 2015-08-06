@@ -83,12 +83,14 @@ function getJS() {
 
 function getHTML($which) {
 	global $path, $leftPath, $rightPath, $rightExporting, $leftExporting;
-	
+	$bogus = md5('bogus');
 	
 	// No idea why file_get_contents doesn't work here...
 	ob_start();
 	include("$path/demo.html");
 	$s = ob_get_clean();
+
+	$s = str_replace('http://code.highcharts.com/mapdata', $bogus, $s);
 	
 	if ($which == 'left') {
 		$s = str_replace('http://code.highcharts.com', $leftPath, $s);
@@ -99,6 +101,8 @@ function getHTML($which) {
 		$s = str_replace('http://code.highcharts.com', $rightPath, $s);
 		$exporting = $leftExporting;
 	}
+
+	$s = str_replace($bogus, 'http://code.highcharts.com/mapdata', $s);
 	
 	if (strlen($s) > 0 && strpos($s, 'exporting.js') === false) {
 		$s .= '<script src="' . $exporting . '"></script>';
