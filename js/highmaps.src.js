@@ -16291,6 +16291,8 @@ extend(ColorAxis.prototype, Axis.prototype);
 extend(ColorAxis.prototype, {
 	defaultColorAxisOptions: {
 		lineWidth: 0,
+		minPadding: 0,
+		maxPadding: 0,
 		gridLineWidth: 1,
 		tickPixelInterval: 72,
 		startOnTick: true,
@@ -16319,7 +16321,6 @@ extend(ColorAxis.prototype, {
 			side: horiz ? 2 : 1,
 			reversed: !horiz
 		}, userOptions, {
-			isX: horiz,
 			opposite: !horiz,
 			showEmpty: false,
 			title: null,
@@ -16338,7 +16339,6 @@ extend(ColorAxis.prototype, {
 		this.initStops(userOptions);
 
 		// Override original axis properties
-		this.isXAxis = true;
 		this.horiz = horiz;
 		this.zoomEnabled = false;
 	},
