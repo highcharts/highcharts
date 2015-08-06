@@ -13882,8 +13882,7 @@ Series.prototype = {
 			graph = this.graph,
 			area = this.area,
 			chartSizeMax = mathMax(chart.chartWidth, chart.chartHeight),
-			zoneAxis = this.zoneAxis || 'y',
-			axis = this[zoneAxis + 'Axis'],
+			axis = this[(this.zoneAxis || 'y') + 'Axis'],
 			extremes,
 			reversed = axis.reversed,
 			inverted = chart.inverted,
@@ -13893,7 +13892,7 @@ Series.prototype = {
 			pxPosMax,
 			ignoreZones = false;
 
-		if (zones.length && (graph || area)) {
+		if (zones.length && (graph || area) && axis.min !== UNDEFINED) {
 			// The use of the Color Threshold assumes there are no gaps
 			// so it is safe to hide the original graph and area
 			if (graph) {
