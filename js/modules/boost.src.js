@@ -52,6 +52,7 @@
         seriesTypes = H.seriesTypes,
         each = H.each,
         extend = H.extend,
+        addEvent = HA. addEvent,
         fireEvent = HA.fireEvent,
         merge = H.merge,
         pick = H.pick,
@@ -255,7 +256,6 @@
                 maxVal,
                 minI,
                 maxI,
-                markerGroup,
                 fillColor = series.fillOpacity ?
                         new Color(series.color).setOpacity(pick(options.fillOpacity, 0.75)).get() :
                         series.color,
@@ -332,8 +332,10 @@
             );
 
             series.getAttribs();
-            markerGroup = series.markerGroup;
             series.markerGroup = series.group;
+            addEvent(series, 'destroy', function () {
+                series.markerGroup = null;
+            })
 
             points = this.points = [];
             ctx = this.getContext();
@@ -492,9 +494,6 @@
 
                 delete series.buildKDTree; // Go back to prototype, ready to build
                 series.buildKDTree();
-
-                // Reset marker group
-                series.markerGroup = markerGroup;
 
              // Don't do async on export, the exportChart, getSVGForExport and getSVG methods are not chained for it.
             }, chart.renderer.forExport ? Number.MAX_VALUE : undefined);
