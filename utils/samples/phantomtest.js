@@ -25,7 +25,8 @@ Status
         params = {
             start: 0
         },
-        i;
+        i,
+        retries = 0;
 
     args.forEach(function(arg, j) {
         if (arg === '--start') {
@@ -61,23 +62,33 @@ Status
 
         var msgStack = [msg];
 
-        if (trace && trace.length) {
-            msgStack.push('TRACE:');
-            trace.forEach(function(t) {
-                msgStack.push(' -> ' + t.file + ': ' + t.line + (t['function'] ? ' (in function "' + t['function'] + '")' : ''));
-            });
-        }
+        if (retries < 2) {
+            console.log('Error detected, trying again...');
+            page.reload();
+            retries++;
 
-        console.error(
-            '\nError detected in ' + samples[i] + '. To start again from this sample, run with argument --start ' +
-                i + '\n\n.' + msgStack.join('\n')
-        );
-        phantom.exit();
+        } else {
+
+            if (trace && trace.length) {
+                msgStack.push('TRACE:');
+                trace.forEach(function(t) {
+                    msgStack.push(' -> ' + t.file + ': ' + t.line + (t['function'] ? ' (in function "' + t['function'] + '")' : ''));
+                });
+            }
+
+            console.error(
+                '\nError detected in ' + samples[i] + '. To start again from this sample, run with argument --start ' +
+                    i + '\n\n.' + msgStack.join('\n')
+            );
+            phantom.exit();
+        }
     };
 
 
     function runRecursive() {
         var qs = ['path=' + samples[i]];
+
+        retries = 0;
 
         if (params.commit) {
             qs.push('commit=' + params.commit);
