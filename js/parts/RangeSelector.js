@@ -82,22 +82,23 @@ RangeSelector.prototype = {
 			newMin,
 			newMax = baseAxis && mathRound(mathMin(baseAxis.max, pick(dataMax, baseAxis.max))), // #1568
 			now,
-			date = new Date(newMax),
 			type = rangeOptions.type,
-			count = rangeOptions.count,
 			baseXAxisOptions,
 			range = rangeOptions._range,
 			rangeMin,
 			year,
-			timeName,
 			minSetting,
 			rangeSetting,
+			ctx,
 			dataGrouping = rangeOptions.dataGrouping;
 
 		if (dataMin === null || dataMax === null || // chart has no data, base series is removed
 				i === rangeSelector.selected) { // same button is clicked twice
 			return;
 		}
+
+		// Set the fixed range before range is altered
+		chart.fixedRange = range;
 
 		// Apply dataGrouping associated to button
 		if (dataGrouping) {
@@ -107,16 +108,21 @@ RangeSelector.prototype = {
 
 		// Apply range
 		if (type === 'month' || type === 'year') {
-			timeName = { month: 'Month', year: 'FullYear'}[type];
-			date['set' + timeName](date['get' + timeName]() - count);
-
-			newMin = date.getTime();
-			dataMin = pick(dataMin, Number.MIN_VALUE);
-			if (isNaN(newMin) || newMin < dataMin) {
-				newMin = dataMin;
-				newMax = mathMin(newMin + range, dataMax);
+			if (!baseAxis) {
+				// This is set to the user options and picked up later when the axis is instantiated
+				// so that we know the min and max.
+				range = rangeOptions;
 			} else {
-				range = newMax - newMin;
+				ctx = {
+					range: rangeOptions,
+					max: newMax,
+					dataMin: dataMin,
+					dataMax: dataMax
+				};
+				newMin = baseAxis.minFromRange.call(ctx);
+				if (typeof ctx.newMax === 'number') {
+					newMax = ctx.newMax;
+				}
 			}
 
 		// Fixed times like minutes, hours, days
@@ -171,8 +177,6 @@ RangeSelector.prototype = {
 		if (buttons[i]) {
 			buttons[i].setState(2);
 		}
-
-		chart.fixedRange = range;
 
 		// Update the chart
 		if (!baseAxis) { 
@@ -324,12 +328,14 @@ RangeSelector.prototype = {
 				isAllButAlreadyShowingAll = rangeOptions.type === 'all' && baseAxis.max - baseAxis.min >= dataMax - dataMin && 
 					buttons[i].state !== 2,
 				// Disable the YTD button if the complete range is within the same year
-				isYTDButNotAvailable = rangeOptions.type === 'ytd' && dateFormat('%Y', dataMin) === dateFormat('%Y', dataMax);
+				isYTDButNotAvailable = rangeOptions.type === 'ytd' && dateFormat('%Y', dataMin) === dateFormat('%Y', dataMax),
+				// Set a button on export
+				isSelectedForExport = chart.renderer.forExport && i === selected;
 
 			// The new zoom area happens to match the range for a button - mark it selected.
 			// This happens when scrolling across an ordinal gap. It can be seen in the intraday
 			// demos when selecting 1h and scroll across the night gap.
-			if (range === mathRound(baseAxis.max - baseAxis.min) && i !== selected) {
+			if (isSelectedForExport || (range === mathRound(baseAxis.max - baseAxis.min) && i !== selected)) {
 				rangeSelector.setSelected(i);
 				buttons[i].setState(2);
 			
@@ -364,7 +370,7 @@ RangeSelector.prototype = {
 		if (fixedTimes[type]) {
 			rangeOptions._range = fixedTimes[type] * count;				
 		} else if (type === 'month' || type === 'year') {
-			rangeOptions._range = { month: 31, year: 365 }[type] * 24 * 36e5 * count; // 31 for month, as per #4147
+			rangeOptions._range = { month: 30, year: 365 }[type] * 24 * 36e5 * count;
 		}
 	},
 	
@@ -730,6 +736,36 @@ Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
 		min: newMin,
 		max: newMax
 	};
+};
+
+Axis.prototype.minFromRange = function () {
+	var rangeOptions = this.range,
+		type = rangeOptions.type,
+		timeName = { month: 'Month', year: 'FullYear'}[type],
+		min,
+		max = this.max,
+		date = new Date(max),
+		dataMin,
+		range;
+
+	if (typeof rangeOptions === 'number') {
+		min = this.max - rangeOptions;
+		range = rangeOptions;
+	} else {
+		date['set' + timeName](date['get' + timeName]() - rangeOptions.count);
+		min = date.getTime();
+	}
+
+	dataMin = pick(this.dataMin, Number.MIN_VALUE);
+	if (isNaN(min)) {
+		min = dataMin;
+	}
+	if (min <= dataMin) {
+		min = dataMin;
+		this.newMax = mathMin(min + range, this.dataMax);
+	}
+	return min;
+
 };
 
 // Initialize scroller for stock charts

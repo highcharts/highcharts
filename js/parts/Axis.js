@@ -877,6 +877,10 @@ Axis.prototype = {
 		axis.minPixelPadding = transA * minPointOffset;
 	},
 
+	minFromRange: function () {
+		return this.max - this.range;
+	},
+
 	/**
 	 * Set the tick positions to round values and optionally extend the extremes
 	 * to the nearest tick
@@ -929,7 +933,7 @@ Axis.prototype = {
 
 		// handle zoomed range
 		if (axis.range && defined(axis.max)) {
-			axis.userMin = axis.min = mathMax(axis.min, axis.max - axis.range); // #618
+			axis.userMin = axis.min = mathMax(axis.min, axis.minFromRange()); // #618
 			axis.userMax = axis.max;
 
 			axis.range = null;  // don't use it when running setExtremes
