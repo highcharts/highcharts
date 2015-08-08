@@ -172,7 +172,7 @@
 			seriesOptions: oldSeries.options,
 			levelSeriesOptions: levelSeriesOptions,
 			levelSeries: levelSeries,
-			shapeArgs: point.shapeArgs,
+			shapeArgs: point.dlBox || point.shapeArgs, // Adds compatibility for 'rounded-corners' plugin
 			bBox: point.graphic ? point.graphic.getBBox() : {}, // no graphic in line series with markers disabled
 			color: color,
 			lowerSeriesOptions: ddOptions,
