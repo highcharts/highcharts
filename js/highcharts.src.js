@@ -404,7 +404,7 @@ function getTZOffset(timestamp) {
  */
 dateFormat = function (format, timestamp, capitalize) {
 	if (!defined(timestamp) || isNaN(timestamp)) {
-		return 'Invalid date';
+		return defaultOptions.lang.invalidDate || '';
 	}
 	format = pick(format, '%Y-%m-%d %H:%M:%S');
 
@@ -1258,6 +1258,7 @@ defaultOptions = {
 				'August', 'September', 'October', 'November', 'December'],
 		shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 		weekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+		// invalidDate: '', // docs
 		decimalPoint: '.',
 		numericSymbols: ['k', 'M', 'G', 'T', 'P', 'E'], // SI prefixes used in axis labels
 		resetZoom: 'Reset zoom',
