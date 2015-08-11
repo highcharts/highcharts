@@ -9176,7 +9176,9 @@ Pointer.prototype = {
 				if (tooltip) { 
 					tooltip.refresh(kdpoint, e);
 				}
-				kdpoint.onMouseOver(e); 
+				if(!hoverSeries || !hoverSeries.directTouch) { // #4448
+					kdpoint.onMouseOver(e); 
+				}
 			}
 			this.prevKDPoint = kdpoint;
 		
