@@ -30,7 +30,7 @@ $(function () {
 
         assert.equal(
             xAxis.max - xAxis.min,
-            3 * 30 * 24 * 36e5,
+            92 * 24 * 36e5 - 36e5,
             '3M'
         );
 
