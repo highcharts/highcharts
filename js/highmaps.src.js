@@ -12383,15 +12383,15 @@ Point.prototype = {
 	 * Return the configuration hash needed for the data label and tooltip formatters
 	 */
 	getLabelConfig: function () {
-		var point = this;
 		return {
-			x: point.category,
-			y: point.y,
-			key: point.name || point.category,
-			series: point.series,
-			point: point,
-			percentage: point.percentage,
-			total: point.total || point.stackTotal
+			x: this.category,
+			y: this.y,
+			color: this.color,
+			key: this.name || this.category,
+			series: this.series,
+			point: this,
+			percentage: this.percentage,
+			total: this.total || this.stackTotal
 		};
 	},	
 
@@ -15241,7 +15241,7 @@ defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 		enabled: true // Overrides auto-enabling in line series (#3647)
 	},
 	tooltip: {
-		headerFormat: '<span style="color:{series.color}">\u25CF</span> <span style="font-size: 10px;"> {series.name}</span><br/>',
+		headerFormat: '<span style="color:{point.color}">\u25CF</span> <span style="font-size: 10px;"> {series.name}</span><br/>',
 		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
 	}
 });

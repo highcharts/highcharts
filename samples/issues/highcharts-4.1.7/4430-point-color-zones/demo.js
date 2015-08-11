@@ -1,5 +1,5 @@
 $(function () {
-    QUnit.test('Pie connector with HTML', function (assert) {
+    QUnit.test('Point colors within color zones', function (assert) {
         var chart = $('#container').highcharts({
             chart: {
                 type: 'area'
