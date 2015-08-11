@@ -22835,6 +22835,9 @@ Axis.prototype.minFromRange = function () {
 		min = dataMin;
 		this.newMax = mathMin(min + range, this.dataMax);
 	}
+	if (isNaN(max)) {
+		min = undefined;
+	}
 	return min;
 
 };
