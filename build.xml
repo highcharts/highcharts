@@ -644,8 +644,6 @@
             <arg value="${param.src}"/>
             <arg value="--js_output_file"/>
             <arg value="${param.out}"/>
-            <arg value="--charset"/>
-            <arg value="UTF-8"/>
         </java>
         <java jar="${yuicomp.jar}" fork="true">
             <arg value="--type"/>
@@ -656,9 +654,6 @@
             <arg value="UTF-8"/>
             <arg value="${param.src}"/>
         </java>
-
-        <!-- Convert back to Unicode escape (#4079) -->
-        <replace file="${param.out}" token="●" value="\u25CF"/>
 
         <length file="${param.src}" property="input.length"/>
         <length file="${param.out}" property="gcc.output.length"/>
