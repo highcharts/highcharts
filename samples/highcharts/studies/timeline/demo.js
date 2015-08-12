@@ -1,6 +1,7 @@
 $(function () {
 
-    var dataSequence = [
+    var chart,
+        dataSequence = [
         {
             name: '2009',
             data: [5, 3, 2, 1]
@@ -35,7 +36,7 @@ $(function () {
     $('#container').highcharts('Map', {
 
         title: {
-            text: 'Highmaps basic demo'
+            text: 'Highmaps with time control'
         },
 
         subtitle: {
@@ -50,7 +51,8 @@ $(function () {
         },
 
         colorAxis: {
-            min: 0
+            min: 0,
+            max: 10
         },
 
         series: [{
@@ -70,12 +72,12 @@ $(function () {
         }]
     });
     
-    var chart = $('#container').highcharts();
+    chart = $('#container').highcharts();
     
     function update(increment) {
         var input = $('#play-range')[0],
             output = $('#play-output')[0];
-        console.log(increment, input.value);
+
         if (increment) {
             input.value = parseInt(input.value) + increment;
         }
@@ -102,7 +104,7 @@ $(function () {
                 update(1);
             }, 500);
         } else {
-            pause()
+            pause();
         }
     });
     
