@@ -11,7 +11,9 @@
 }
 #play-controls {
     text-align: center;
-    width: 100%;
+    min-width: 310px;
+    max-width: 800px;
+    margin: 0 auto;
     padding: 5px 0 1em 0;
 }
 #play-controls * {
@@ -24,11 +26,14 @@
     text-align: center;
     font-size: 15px;
     cursor: pointer;
+    border: 1px solid silver;
+    border-radius: 3px;
+    background: #f8f8f8;
 }
 #play-range {
     margin: 2.5%;
     width: 70%;
 }
 #play-output {
-    font-family:"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
 }
