@@ -9,7 +9,8 @@
  * 
  * Development plan
  * - Column range.
- * - Heatmap and treemap? Not core, so the implementation should perhaps lie in feature files.
+ * - Heatmap.
+ * - Treemap.
  * - Check how it works with Highstock and data grouping.
  * - Check inverted charts.
  * - Check reversed axes.
