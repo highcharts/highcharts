@@ -404,14 +404,12 @@ RangeSelector.prototype = {
 	},
 
 	hideInput: function (name) {
-		if (document.activeElement === this[name + 'Input']) { // Prevent running again and again
-			css(this[name + 'Input'], {
-				border: 0,
-				width: '1px',
-				height: '1px'
-			});
-			this.setInputValue(name);
-		}
+		css(this[name + 'Input'], {
+			border: 0,
+			width: '1px',
+			height: '1px'
+		});
+		this.setInputValue(name);
 	},
 
 	/**
