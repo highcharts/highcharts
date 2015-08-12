@@ -15365,8 +15365,6 @@ extend(Point.prototype, {
 					if (graphic && graphic.element) {
 						if (options && options.marker && options.marker.symbol) {
 							point.graphic = graphic.destroy();
-						} else {
-							graphic.attr(point.pointAttr[point.state || ''])[point.visible === false ? 'hide' : 'show'](true); // #2430
 						}
 					}
 					if (options && options.dataLabels && point.dataLabel) { // #2468
