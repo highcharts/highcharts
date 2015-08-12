@@ -16638,7 +16638,7 @@ extend(ColorAxis.prototype, {
 		});
 
 		// When updating data classes, destroy old items and make sure new ones are created (#3207)
-		if (newOptions.dataClasses) {
+		if (newOptions.dataClasses && legend.allItems) {
 			each(legend.allItems, function (item) {
 				if (item.isDataClass) {
 					item.legendGroup.destroy();
