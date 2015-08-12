@@ -100,7 +100,7 @@ extend(SVGElement.prototype, {
 				rotation = wrapper.rotation,
 				baseline,
 				textWidth = pInt(wrapper.textWidth),
-				currentTextTransform = [rotation, align, elem.innerHTML, wrapper.textWidth].join(',');
+				currentTextTransform = [rotation, align, elem.innerHTML, wrapper.textWidth, wrapper.textAlign].join(',');
 
 			if (currentTextTransform !== wrapper.cTT) { // do the calculations and DOM access only if properties changed
 
@@ -185,6 +185,7 @@ extend(SVGRenderer.prototype, {
 				delete this.bBox;
 			}
 			element.innerHTML = this.textStr = value;
+			wrapper.htmlUpdateTransform();
 		};
 
 		// Various setters which rely on update transform
