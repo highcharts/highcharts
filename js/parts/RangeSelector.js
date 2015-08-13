@@ -582,15 +582,16 @@ RangeSelector.prototype = {
 			buttonLeft,
 			pos = this.getPosition(),
 			buttonGroup = rangeSelector.group,
-			buttonBBox;
+			buttonBBox,
+			rendered = rangeSelector.rendered;
 
 
 		// create the elements
-		if (!rangeSelector.rendered) {
+		if (!rendered) {
 
 			rangeSelector.group = buttonGroup = renderer.g('range-selector-buttons').add();
 
-			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, pick(buttonPosition.x, plotLeft), pos.buttonTop + 15)
+			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, pick(buttonPosition.x, plotLeft), 15)
 				.css(options.labelStyle)
 				.add(buttonGroup);
 
@@ -601,7 +602,7 @@ RangeSelector.prototype = {
 				buttons[i] = renderer.button(
 						rangeOptions.text,
 						buttonLeft,
-						pos.buttonTop,
+						0,
 						function () {
 							rangeSelector.clickButton(i);
 							rangeSelector.isActive = true;
@@ -646,6 +647,11 @@ RangeSelector.prototype = {
 				rangeSelector.drawInput('max');	
 			}
 		}
+
+		// Set or update the group position
+		buttonGroup[rendered ? 'animate' : 'attr']({
+			translateY: pos.buttonTop
+		});
 		
 		if (inputEnabled !== false) {
 		
