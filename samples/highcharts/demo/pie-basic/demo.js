@@ -3,10 +3,11 @@ $(function () {
         chart: {
             plotBackgroundColor: null,
             plotBorderWidth: null,
-            plotShadow: false
+            plotShadow: false,
+            type: 'pie'
         },
         title: {
-            text: 'Browser market shares at a specific website, 2014'
+            text: 'Browser market shares January, 2015 to May, 2015'
         },
         tooltip: {
             pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -25,22 +26,29 @@ $(function () {
             }
         },
         series: [{
-            type: 'pie',
-            name: 'Browser share',
-            data: [
-                ['Firefox',   45.0],
-                ['IE',       26.8],
-                {
-                    name: 'Chrome',
-                    y: 12.8,
-                    sliced: true,
-                    selected: true
-                },
-                ['Safari',    8.5],
-                ['Opera',     6.2],
-                ['Others',   0.7]
-            ]
+            name: "Brands",
+            colorByPoint: true,
+            data: [{
+                name: "Microsoft Internet Explorer",
+                y: 56.33
+            }, {
+                name: "Chrome",
+                y: 24.03,
+                sliced: true,
+                selected: true
+            }, {
+                name: "Firefox",
+                y: 10.38
+            }, {
+                name: "Safari",
+                y: 4.77
+            }, {
+                name: "Opera",
+                y: 0.91
+            }, {
+                name: "Proprietary or Undetectable",
+                y: 0.2
+            }]
         }]
     });
 });
-

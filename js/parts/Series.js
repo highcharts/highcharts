@@ -336,7 +336,9 @@ Series.prototype = {
 		// cheaper, allows animation, and keeps references to points.
 		if (updatePoints !== false && dataLength && oldDataLength === dataLength && !series.cropped && !series.hasGroupedData && series.visible) {
 			each(data, function (point, i) {
-				oldData[i].update(point, false, null, false);
+				if (oldData[i].update) { // Linked, previously hidden series (#3709)
+					oldData[i].update(point, false, null, false);
+				}
 			});
 
 		} else {
@@ -399,7 +401,7 @@ Series.prototype = {
 						pt = { series: series };
 						series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
 						series.updateParallelArrays(pt, i);
-						if (hasCategories && pt.name) {
+						if (hasCategories && defined(pt.name)) { // #4401
 							xAxis.names[pt.x] = pt.name; // #2046
 						}
 					}
@@ -647,8 +649,8 @@ Series.prototype = {
 			// For points within the visible range, including the first point outside the
 			// visible range, consider y extremes
 			validValue = y !== null && y !== UNDEFINED && (!yAxis.isLog || (y.length || y > 0));
-			withinRange = this.getExtremesFromAll || this.cropped || ((xData[i + 1] || x) >= xMin &&
-				(xData[i - 1] || x) <= xMax);
+			withinRange = this.getExtremesFromAll || this.options.getExtremesFromAll || this.cropped ||
+				((xData[i + 1] || x) >= xMin &&	(xData[i - 1] || x) <= xMax);
 
 			if (validValue && withinRange) {
 
@@ -713,7 +715,7 @@ Series.prototype = {
 			}
 
 			// Get the plotX translation
-			point.plotX = plotX = xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement, this.type === 'flags'); // Math.round fixes #591
+			point.plotX = plotX = mathMin(mathMax(-1e5, xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement, this.type === 'flags')), 1e5); // #3923
 
 
 			// Calculate the bottom y value for stacked series
@@ -1020,6 +1022,8 @@ Series.prototype = {
 			},
 			points = series.points || [], // #927
 			i,
+			j,
+			threshold,
 			point,
 			seriesPointAttr = [],
 			pointAttr,
@@ -1079,13 +1083,15 @@ Series.prototype = {
 				}
 
 				if (zones.length) {
-					var j = 0,
-						threshold = zones[j];
+					j = 0;
+					threshold = zones[j];
 					while (point[zoneAxis] >= threshold.value) {				
 						threshold = zones[++j];
 					}
 					
-					point.color = point.fillColor = threshold.color;
+					if (threshold.color) {
+						point.color = point.fillColor = threshold.color;
+					}
 				}
 
 				hasPointSpecificOptions = seriesOptions.colorByPoint || point.color; // #868
@@ -1335,7 +1341,6 @@ Series.prototype = {
 				attribs;
 
 			if (graph) {
-				stop(graph); // cancel running animations, #459
 				graph.animate({ d: graphPath });
 
 			} else if ((lineWidth || fillColor) && graphPath.length) { // #1487
@@ -1374,13 +1379,17 @@ Series.prototype = {
 			graph = this.graph,
 			area = this.area,
 			chartSizeMax = mathMax(chart.chartWidth, chart.chartHeight),
-			zoneAxis = this.zoneAxis || 'y',
-			axis = this[zoneAxis + 'Axis'],
+			axis = this[(this.zoneAxis || 'y') + 'Axis'],
+			extremes,
 			reversed = axis.reversed,
+			inverted = chart.inverted,
 			horiz = axis.horiz,
+			pxRange,
+			pxPosMin,
+			pxPosMax,
 			ignoreZones = false;
 
-		if (zones.length && (graph || area)) {
+		if (zones.length && (graph || area) && axis.min !== UNDEFINED) {
 			// The use of the Color Threshold assumes there are no gaps
 			// so it is safe to hide the original graph and area
 			if (graph) {
@@ -1391,25 +1400,27 @@ Series.prototype = {
 			}
 
 			// Create the clips
+			extremes = axis.getExtremes();
 			each(zones, function (threshold, i) {
-				translatedFrom = pick(translatedTo, (reversed ? (horiz ? chart.plotWidth : 0) : (horiz ? 0 : axis.toPixels(axis.min))));
-				translatedTo = mathRound(axis.toPixels(pick(threshold.value, axis.max), true));
 
-				if (axis.isXAxis) {
-					translatedFrom = translatedFrom > translatedTo ? translatedTo : translatedFrom; //#4006 from should be less or equal then to
-				} else {
-					translatedFrom = translatedFrom < translatedTo ? translatedTo : translatedFrom; //#4006 from should be less or equal then to
-				}
-
+				translatedFrom = reversed ? 
+					(horiz ? chart.plotWidth : 0) : 
+					(horiz ? 0 : axis.toPixels(extremes.min));
+				translatedFrom = mathMin(mathMax(pick(translatedTo, translatedFrom), 0), chartSizeMax);
+				translatedTo = mathMin(mathMax(mathRound(axis.toPixels(pick(threshold.value, extremes.max), true)), 0), chartSizeMax);
+				
 				if (ignoreZones) {
-					translatedFrom = translatedTo = axis.toPixels(axis.max);
+					translatedFrom = translatedTo = axis.toPixels(extremes.max);
 				}
 
+				pxRange = Math.abs(translatedFrom - translatedTo);
+				pxPosMin = mathMin(translatedFrom, translatedTo);
+				pxPosMax = mathMax(translatedFrom, translatedTo);
 				if (axis.isXAxis) {
 					clipAttr = {
-						x: reversed ? translatedTo : translatedFrom,
+						x: inverted ? pxPosMax : pxPosMin,
 						y: 0,
-						width: Math.abs(translatedFrom - translatedTo), 
+						width: pxRange, 
 						height: chartSizeMax
 					};
 					if (!horiz) {
@@ -1418,21 +1429,21 @@ Series.prototype = {
 				} else {
 					clipAttr = {
 						x: 0,
-						y: reversed ? translatedFrom : translatedTo,
+						y: inverted ? pxPosMax : pxPosMin,
 						width: chartSizeMax, 
-						height: Math.abs(translatedFrom - translatedTo)
-					};
+						height: pxRange
+					};					
 					if (horiz) {
 						clipAttr.y = chart.plotWidth - clipAttr.y;
 					}
-				} 
+				}
 
 				/// VML SUPPPORT
 				if (chart.inverted && renderer.isVML) {
 					if (axis.isXAxis) {			
 						clipAttr = {
 							x: 0,
-							y: reversed ? translatedFrom : translatedTo,
+							y: reversed ? pxPosMin : pxPosMax,
 							height: clipAttr.width,
 							width: chart.chartWidth
 						};		
@@ -1461,7 +1472,7 @@ Series.prototype = {
 					}
 				}
 				// if this zone extends out of the axis, ignore the others
-				ignoreZones = threshold.value > axis.max;
+				ignoreZones = threshold.value > extremes.max;
 			});
 			this.clips = clips;
 		}
@@ -1741,7 +1752,7 @@ Series.prototype = {
 
 		// Start the recursive build process with a clone of the points array and null points filtered out (#3873)
 		function startRecursive() {
-			var points = grep(series.points, function (point) {
+			var points = grep(series.points || [], function (point) { // #4390
 				return point.y !== null;
 			});
 

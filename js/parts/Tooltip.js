@@ -127,16 +127,6 @@ Tooltip.prototype = {
 				tooltip.label.fadeOut();
 				tooltip.isHidden = true;
 			}, pick(delay, this.options.hideDelay, 500));
-
-			// hide previous hoverPoints and set new
-			if (hoverPoints) {
-				each(hoverPoints, function (point) {
-					point.setState();
-				});
-			}
-
-			this.chart.hoverPoints = null;
-			this.chart.hoverSeries = null;
 		}
 	},
 	
@@ -205,15 +195,15 @@ Tooltip.prototype = {
 			ret = {},
 			h = point.h || 0, // #4117
 			swapped,
-			first = ['y', chart.chartHeight, boxHeight, point.plotY + chart.plotTop],
-			second = ['x', chart.chartWidth, boxWidth, point.plotX + chart.plotLeft],
+			first = ['y', chart.chartHeight, boxHeight, point.plotY + chart.plotTop, chart.plotTop, chart.plotTop + chart.plotHeight],
+			second = ['x', chart.chartWidth, boxWidth, point.plotX + chart.plotLeft, chart.plotLeft, chart.plotLeft + chart.plotWidth],
 			// The far side is right or bottom
 			preferFarSide = pick(point.ttBelow, (chart.inverted && !point.negative) || (!chart.inverted && point.negative)),
 			/**
 			 * Handle the preferred dimension. When the preferred dimension is tooltip
 			 * on top or bottom of the point, it will look for space there.
 			 */
-			firstDimension = function (dim, outerSize, innerSize, point) {
+			firstDimension = function (dim, outerSize, innerSize, point, min, max) {
 				var roomLeft = innerSize < point - distance,
 					roomRight = point + distance + innerSize < outerSize,
 					alignedLeft = point - distance - innerSize,
@@ -224,9 +214,9 @@ Tooltip.prototype = {
 				} else if (!preferFarSide && roomLeft) {
 					ret[dim] = alignedLeft;
 				} else if (roomLeft) {
-					ret[dim] = alignedLeft - h < 0 ? alignedLeft : alignedLeft - h;
+					ret[dim] = mathMin(max - innerSize, alignedLeft - h < 0 ? alignedLeft : alignedLeft - h);
 				} else if (roomRight) {
-					ret[dim] = alignedRight + h + innerSize > outerSize ? alignedRight : alignedRight + h;
+					ret[dim] = mathMax(min, alignedRight + h + innerSize > outerSize ? alignedRight : alignedRight + h);
 				} else {
 					return false;
 				}
@@ -397,7 +387,7 @@ Tooltip.prototype = {
 				plotY: y, 
 				negative: point.negative, 
 				ttBelow: point.ttBelow, 
-				h: (point.shapeArgs && point.shapeArgs.height) || 0
+				h: anchor[2] || 0
 			});
 		
 			this.isHidden = false;
@@ -426,7 +416,7 @@ Tooltip.prototype = {
 		// do the move
 		this.move(
 			mathRound(pos.x), 
-			mathRound(pos.y), 
+			mathRound(pos.y || 0), // can be undefined (#3977) 
 			point.plotX + chart.plotLeft, 
 			point.plotY + chart.plotTop
 		);
@@ -449,7 +439,7 @@ Tooltip.prototype = {
 				day: 3
 			},
 			date,
-			lastN;
+			lastN = 'millisecond'; // for sub-millisecond data, #4223
 
 		if (closestPointRange) {
 			date = dateFormat('%m-%d %H:%M:%S.%L', point.x);

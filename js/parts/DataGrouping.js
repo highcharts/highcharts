@@ -540,7 +540,9 @@ Axis.prototype.getGroupPixelWidth = function () {
 /**
  * Force data grouping on all the axis' series.
  */
-Axis.prototype.setDataGrouping = function (dataGrouping, redraw) { // docs
+Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
+	var i;
+
 	redraw = pick(redraw, true);
 
 	if (!dataGrouping) {   
@@ -552,17 +554,22 @@ Axis.prototype.setDataGrouping = function (dataGrouping, redraw) { // docs
 
 	// Axis is instantiated, update all series
 	if (this instanceof Axis) {
-		each(this.series, function (series) {
-			series.update({
+		i = this.series.length;
+		while (i--) {
+			this.series[i].update({
 				dataGrouping: dataGrouping
 			}, false);
-		});
+		}
 
 	// Axis not yet instanciated, alter series options
 	} else {
 		each(this.chart.options.series, function (seriesOptions) {
 			seriesOptions.dataGrouping = dataGrouping;
-		});
+		}, false);
+	}
+
+	if (redraw) {
+		this.chart.redraw();
 	}
 };
 

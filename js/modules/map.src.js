@@ -1,6 +1,6 @@
 /**
- * @license Highmaps JS v1.1.5-modified ()
- * Highmaps as a plugin for Highcharts 4.0.x or Highstock 2.0.x (x being the patch version of this file)
+ * @license Highmaps JS v1.1.7-modified ()
+ * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -155,6 +155,8 @@ extend(ColorAxis.prototype, Axis.prototype);
 extend(ColorAxis.prototype, {
 	defaultColorAxisOptions: {
 		lineWidth: 0,
+		minPadding: 0,
+		maxPadding: 0,
 		gridLineWidth: 1,
 		tickPixelInterval: 72,
 		startOnTick: true,
@@ -183,7 +185,6 @@ extend(ColorAxis.prototype, {
 			side: horiz ? 2 : 1,
 			reversed: !horiz
 		}, userOptions, {
-			isX: horiz,
 			opposite: !horiz,
 			showEmpty: false,
 			title: null,
@@ -202,7 +203,6 @@ extend(ColorAxis.prototype, {
 		this.initStops(userOptions);
 
 		// Override original axis properties
-		this.isXAxis = true;
 		this.horiz = horiz;
 		this.zoomEnabled = false;
 	},
@@ -497,13 +497,31 @@ extend(ColorAxis.prototype, {
 	},
 
 	update: function (newOptions, redraw) {
+		var chart = this.chart,
+			legend = chart.legend;
+
 		each(this.series, function (series) {
 			series.isDirtyData = true; // Needed for Axis.update when choropleth colors change
 		});
+
+		// When updating data classes, destroy old items and make sure new ones are created (#3207)
+		if (newOptions.dataClasses && legend.allItems) {
+			each(legend.allItems, function (item) {
+				if (item.isDataClass) {
+					item.legendGroup.destroy();
+				}
+			});			
+			chart.isDirtyLegend = true;
+		}
+
+		// Keep the options structure updated for export. Unlike xAxis and yAxis, the colorAxis is 
+		// not an array. (#3207)
+		chart.options[this.coll] = merge(this.userOptions, newOptions);
+
 		Axis.prototype.update.call(this, newOptions, redraw);
 		if (this.legendItem) {
 			this.setLegendColor();
-			this.chart.legend.colorizeItem(this, true);
+			legend.colorizeItem(this, true);
 		}
 	},
 
@@ -550,6 +568,7 @@ extend(ColorAxis.prototype, {
 					drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 					visible: true,
 					setState: noop,
+					isDataClass: true,
 					setVisible: function () {
 						vis = this.visible = !vis;
 						each(axis.series, function (series) {
@@ -625,6 +644,22 @@ wrap(Legend.prototype, 'getAllItems', function (proceed) {
 });/**
  * Mixin for maps and heatmaps
  */
+var colorPointMixin = {
+	/**
+	 * Set the visibility of a single point
+	 */
+	setVisible: function (vis) {
+		var point = this,
+			method = vis ? 'show' : 'hide';
+
+		// Show and hide associated elements
+		each(['graphic', 'dataLabel'], function (key) {
+			if (point[key]) {
+				point[key][method]();
+			}
+		});
+	}
+};
 var colorSeriesMixin = {
 
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
@@ -654,7 +689,8 @@ var colorSeriesMixin = {
 			var value = point[colorKey],
 				color;
 
-			color = value === null ? nullColor : (colorAxis && value !== undefined) ? colorAxis.toColor(value, point) : point.color || series.color;
+			color = point.options.color || 
+				(value === null ? nullColor : (colorAxis && value !== undefined) ? colorAxis.toColor(value, point) : point.color || series.color);
 
 			if (color) {
 				point.color = color;
@@ -969,7 +1005,7 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 /**
  * The MapAreaPoint object
  */
-var MapAreaPoint = extendClass(Point, {
+var MapAreaPoint = extendClass(Point, extend({
 	/**
 	 * Extend the Point object to split paths
 	 */
@@ -995,21 +1031,6 @@ var MapAreaPoint = extendClass(Point, {
 		}
 		
 		return point;
-	},
-
-	/**
-	 * Set the visibility of a single map area
-	 */
-	setVisible: function (vis) {
-		var point = this,
-			method = vis ? 'show' : 'hide';
-
-		// Show and hide associated elements
-		each(['graphic', 'dataLabel'], function (key) {
-			if (point[key]) {
-				point[key][method]();
-			}
-		});
 	},
 
 	/**
@@ -1083,7 +1104,8 @@ var MapAreaPoint = extendClass(Point, {
 		);
 		series.chart.redraw();
 	}
-});
+}, colorPointMixin)
+);
 
 /**
  * Add the series type
@@ -1096,6 +1118,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	useMapGeometry: true, // get axis extremes from paths, not values
 	forceDL: true,
 	searchPoint: noop,
+	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	preserveAspectRatio: true, // X axis and Y axis must have same translation slope
 	/**
 	 * Get the bounding box of all paths in the map combined.
@@ -1421,10 +1444,9 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				each(series.points, function (point) {
 
 					// Reset color on update/redraw
-					if (point.graphic) {
-						point.graphic.attr('fill', point.color);
+					if (point.shapeArgs) {
+						point.shapeArgs.fill = point.color;
 					}
-
 				});
 			}
 
@@ -1709,7 +1731,7 @@ if (seriesTypes.bubble) {
 		pointClass: extendClass(Point, {
 			applyOptions: function (options, x) {
 				var point;
-				if (options.lat !== undefined && options.lon !== undefined) {
+				if (options && options.lat !== undefined && options.lon !== undefined) {
 					point = Point.prototype.applyOptions.call(this, options, x);
 					point = extend(point, this.series.chart.fromLatLonToPoint(point));
 				} else {
@@ -1769,8 +1791,10 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
+	pointClass: extendClass(Point, colorPointMixin),
 	supportsDrilldown: true,
 	getExtremesFromAll: true,
+	directTouch: true,
 
 	/**
 	 * Override the init method to add point ranges on both axes.
@@ -2131,12 +2155,7 @@ Highcharts.maps = {};
 
 
 // Create symbols for the zoom buttons
-function selectiveRoundedRect(attr, x, y, w, h, rTopLeft, rTopRight, rBottomRight, rBottomLeft) {
-	var normalize = (attr['stroke-width'] % 2 / 2);
-		
-	x -= normalize;
-	y -= normalize;
-
+function selectiveRoundedRect(x, y, w, h, rTopLeft, rTopRight, rBottomRight, rBottomLeft) {
 	return ['M', x + rTopLeft, y,
         // top side
         'L', x + w - rTopRight, y,
@@ -2158,10 +2177,10 @@ function selectiveRoundedRect(attr, x, y, w, h, rTopLeft, rTopRight, rBottomRigh
     ];
 }
 SVGRenderer.prototype.symbols.topbutton = function (x, y, w, h, attr) {
-	return selectiveRoundedRect(attr, x, y, w, h, attr.r, attr.r, 0, 0);
+	return selectiveRoundedRect(x - 1, y - 1, w, h, attr.r, attr.r, 0, 0);
 };
 SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
-	return selectiveRoundedRect(attr, x, y, w, h, 0, 0, attr.r, attr.r);
+	return selectiveRoundedRect(x - 1, y - 1, w, h, 0, 0, attr.r, attr.r);
 };
 // The symbol callbacks are generated on the SVGRenderer object in all browsers. Even
 // VML browsers need this in order to generate shapes in export. Now share

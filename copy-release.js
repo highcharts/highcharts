@@ -28,7 +28,8 @@
                 sys.puts(stdout);
             },
             commands = [
-                'git status',
+                //'git status',
+                'cd ~/github/' + product + '-release',
                 'git add --all',
                 'git commit -m "v' + version + '"',
                 'git tag -a "v' + version + '" -m "Tagged ' + product + ' version ' + version + '"',
@@ -37,32 +38,38 @@
             ];
 
         //cmd.exec(commands.join(' && '), options, puts);
-        console.log('--- ' + product + '---');
-        console.log('cd ~/github/' + product + '-release');
-        console.log(commands.join('\n'));
+        console.log('\n--- ' + product + ': Verify changes and run: ---');
+        console.log(commands.join(' &&\n'));
     }
 
     /**
      * Add the current version to the Bower file
      */
-    function updateBowerFile(product, version, name) {
+    function updateJSONFiles(product, version, name) {
 
-        console.log('Updating bower.json for ' + name + '...');
+        var i = 0;
 
-        fs.readFile('../' + product + '-release/bower.json', function (err, bower) {
+        function proceed (err) {
+            i = i + 1;
             if (err) {
                 throw err;
             }
-            bower = JSON.parse(bower);
-            bower.version = 'v' + version;
-            bower = JSON.stringify(bower, null, '  ');
-            fs.writeFile('../' + product + '-release/bower.json', bower, function (err) {
+            if (push && i === 2) {
+                runGit(product, version);
+            }
+        }
+
+        console.log('Updating bower.json and package.json for ' + name + '...');
+
+        ['bower', 'package'].forEach(function (file ) {
+            fs.readFile('../' + product + '-release/' + file + '.json', function (err, json) {
                 if (err) {
                     throw err;
                 }
-                if (push) {
-                    runGit(product, version);
-                }
+                json = JSON.parse(json);
+                json.version = 'v' + version;
+                json = JSON.stringify(json, null, '  ');
+                fs.writeFile('../' + product + '-release/' + file + '.json', json, proceed);
             });
         });
     }
@@ -105,7 +112,7 @@
 
         copyFiles(product, name);
 
-        updateBowerFile(product, version, name);
+        updateJSONFiles(product, version, name);
     }
 
     // Load the current products and versions

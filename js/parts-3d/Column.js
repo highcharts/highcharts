@@ -173,6 +173,7 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'drawPoints', draw3DPoi
 	EXTENSION FOR 3D CYLINDRICAL COLUMNS
 	Not supported
 ***/
+/*
 var defaultOptions = Highcharts.getOptions();
 defaultOptions.plotOptions.cylinder = Highcharts.merge(defaultOptions.plotOptions.column);
 var CylinderSeries = Highcharts.extendClass(Highcharts.seriesTypes.column, {
@@ -222,3 +223,4 @@ Highcharts.wrap(Highcharts.seriesTypes.cylinder.prototype, 'translate', function
 		shapeArgs.origin = origin;	
 	});
 });
+*/

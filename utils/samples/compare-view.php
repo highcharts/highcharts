@@ -33,6 +33,7 @@
 		
 		<script type="text/javascript">
 			var diff,
+				path = '<?php echo $path ?>',
 				commentHref = 'compare-comment.php?path=<?php echo $path ?>&i=<?php echo $i ?>&diff=',
 				commentFrame;
 			$(function() {
@@ -60,12 +61,22 @@
 				rightSVG,
 				leftVersion,
 				rightVersion,
+				chartWidth,
+				chartHeight,
 				error,
 				mode = '<?php echo $mode ?>',
 				i = '<?php echo $i ?>'
 				_continue = '<?php echo $continue ?>';
 				
 			function markList(className, difference) {
+
+				// Process the difference and set global 
+				if (typeof difference === 'number') {
+					diff = difference.toFixed(2);
+				} else {
+					diff = difference || 0;
+				}
+
 				if (window.parent.frames[0]) {
 					var contentDoc = window.parent.frames[0].document,
 						li = contentDoc.getElementById('li<?php echo $i ?>'),
@@ -82,12 +93,6 @@
 						$('.dissimilarity-index', li).remove();
 						
 						if (difference !== undefined) {
-							if (typeof difference === 'number') {
-								diff = difference.toFixed(2);
-
-							} else {
-								diff = difference;
-							}
 
 							<?php if (isset($comment) && $comment->symbol == 'check') : ?>
 							if (diff.toString() === '<?php echo $comment->diff ?>') {
@@ -172,13 +177,33 @@
 				contentDoc.currentLi = li;
 					
 			}
+
+			/**
+			 * Pad a string to a given length
+			 * @param {String} s
+			 * @param {Number} length
+			 */
+			function pad(s, length, left) {
+				var padding;
+
+				if (s.length > length) {
+					s = s.substring(0, length);
+				}
+
+				padding = new Array((length || 2) + 1 - s.length).join(' ');
+
+				return left ? padding + s : s + padding;
+			}
+
 			
 			function proceed() {
-				if (window.parent.frames[0] && i !== "" && _continue === 'true' ) {
+				var i = '<?php echo $i ?>';						
+				if (window.parent.frames[0] && i !== '' && _continue === 'true' ) {
 					var contentDoc = window.parent.frames[0].document,
-						i = <?php echo $i ?>,
 						href,
 						next;
+
+					i = parseInt(i);
 						
 					if (!contentDoc || !contentDoc.getElementById('i' + i)) {
 						return;
@@ -201,23 +226,38 @@
 					href = href.replace("view.php", "compare-view.php") + '&continue=true';
 					
 					window.location.href = href; 
+
+				// Else, log the result. This is picked up when running in PhantomJS (phantomtest.js script).
+				} else {
+					if (typeof diff === 'function') { // leaks from jsDiff
+						diff = 0;
+					}
+					console.log([
+						'@proceed',
+						pad(path, 60, false),
+						diff ? pad(String(diff), 4, true) : '   .' // Only a dot when success
+					].join(' '));
 				}		
 			}
 				
 			function onIdentical() {
-				$.get('compare-update-report.php', { path: '<?php echo $path ?>', diff: 0 });
+				$.get('compare-update-report.php', { path: path, diff: 0 });
 				markList("identical");
 				proceed();
 			}
 			
 			function onDifferent(diff) {
 				// Save it for refreshes
-				$.get('compare-update-report.php', { path: '<?php echo $path ?>', diff: diff });
+				$.get('compare-update-report.php', { path: path, diff: diff });
 				markList("different", diff);
 				proceed();
 			}
 			
 			function onLoadTest(which, svg) {
+
+				chartWidth = parseInt(svg.match(/width=\"([0-9]+)\"/)[1]);
+				chartHeight = parseInt(svg.match(/height=\"([0-9]+)\"/)[1]);
+
 				if (which == 'left') {
 					leftSVG = svg;
 				} else {
@@ -254,7 +294,9 @@
 						// Initiate
 						if (showingRight === undefined) {
 
-							$('#preview').css({ height: $('#preview').height() })
+							$('#preview').css({ 
+								height: $('#preview').height()
+							});
 
 							$rightImage
 								.css({
@@ -280,6 +322,9 @@
 							showingRight = true;
 						}
 					};
+				$('#preview').css({
+					width: 2 * chartWidth + 20
+				});
 
 				$button
 					.css('display', '')
@@ -308,11 +353,11 @@
 				if (leftSVG && rightSVG) {
 					leftSVG = leftSVG
 						.replace(/which=left/g, "")
-						.replace(/Created with [a-zA-Z0-9\.@ ]+/, "Created with ___");
+						.replace(/Created with [a-zA-Z0-9\.@\- ]+/, "Created with ___");
 						
 					rightSVG = rightSVG
 						.replace(/which=right/g, "")
-						.replace(/Created with [a-zA-Z0-9\.@ ]+/, "Created with ___");
+						.replace(/Created with [a-zA-Z0-9\.@\- ]+/, "Created with ___");
 				}
 
 				if (leftSVG === rightSVG) {
@@ -344,8 +389,8 @@
 						function canvasCompare(source1, canvas1, source2, canvas2, width, height) {
 							var converted = [],
 								diff = 0,
-								canvasWidth = width || 400, 
-								canvasHeight = height || 300;;
+								canvasWidth = chartWidth || 400, 
+								canvasHeight = chartHeight || 300;
 
 							// converts the svg into canvas
 							//		- source: the svg string
@@ -394,7 +439,12 @@
 								while (i--) {
 									diff += Math.abs(data1[i] - data2[i]); // loops over all reds, greens, blues and alphas
 								}
-								return diff / dividend;
+								diff /= dividend;
+
+								if (diff < 0.005) {
+									diff = 0;
+								}
+								return diff;
 							}
 
 							// called after converting svgs to canvases
@@ -423,9 +473,17 @@
 								}
 							}
 						
-							// show the canvases
-							document.getElementById(canvas1).style.display = '';
-							document.getElementById(canvas2).style.display = '';
+							
+							$('#preview canvas')
+								.attr({
+									width: chartWidth,
+									height: chartHeight
+								})
+								.css({
+									width: chartWidth + 'px',
+									height: chartHeight + 'px',
+									display: ''
+								});
 							
 							// start converting
 							if (navigator.userAgent.indexOf('Trident') !== -1) {
@@ -589,8 +647,8 @@
 			<pre id="svg"></pre>
 			
 			<div id="preview">
-				<canvas id="cnvLeft" width="400px" height="300px" style="display:none"></canvas>
-				<canvas id="cnvRight" width="400px" height="300px" style="display:none"></canvas>
+				<canvas id="cnvLeft" style="display:none"></canvas>
+				<canvas id="cnvRight" style="display:none"></canvas>
 			</div>
 			<button id="overlay-compare" style="display:none">Compare overlaid</button>
 		

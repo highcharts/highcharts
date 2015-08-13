@@ -1,5 +1,4 @@
 $(function () {
-    var $reporting = $('#reporting');
 
     $('#container').highcharts({
 
@@ -29,8 +28,8 @@ $(function () {
                             }
                             chart.lbl
                                 .show()
-                                .attr({ 
-                                    text: 'x: ' + this.x + ', y: ' + this.y 
+                                .attr({
+                                    text: 'x: ' + this.x + ', y: ' + this.y
                                 });
                         }
                     }

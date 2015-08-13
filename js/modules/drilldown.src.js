@@ -144,7 +144,7 @@
 		
 			
 		ddOptions = extend({
-			color: color,
+			color: oldSeries.options.colorByPoint ? null : color, // #4359 - pie chart slices shouldn't have the same color
 			_ddSeriesId: ddSeriesId++
 		}, ddOptions);
 		pointIndex = inArray(point, oldSeries.points);
@@ -642,7 +642,11 @@
 			
 			// Add the click event to the point 
 			H.addEvent(point, 'click', function () {
-				point.doDrilldown();
+				if (series.xAxis && series.chart.options.drilldown.allowPointDrilldown === false) {
+					series.xAxis.drilldownCategory(x);
+				} else {
+					point.doDrilldown();
+				}
 			});
 			/*wrap(point, 'importEvents', function (proceed) { // wrapping importEvents makes point.click event work
 				if (!this.hasImportedEvents) {

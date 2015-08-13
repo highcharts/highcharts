@@ -15,7 +15,7 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 		distance: 30,
 		enabled: true,
 		formatter: function () { // #2945
-			return this.point.name;
+			return this.y === null ? undefined : this.point.name;
 		},
 		// softConnector: true,
 		x: 0
@@ -74,20 +74,22 @@ var PiePoint = extendClass(Point, {
 	 * @param {Boolean} vis Whether to show the slice or not. If undefined, the
 	 *    visibility is toggled
 	 */
-	setVisible: function (vis, force) {
+	setVisible: function (vis, redraw) {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
-			doRedraw = !series.isDirty && series.options.ignoreHiddenPoint;
+			ignoreHiddenPoint = series.options.ignoreHiddenPoint;
+		
+		redraw = pick(redraw, ignoreHiddenPoint);
 
-		// Only if the value has changed
-		if (vis !== point.visible || force) {
-			
+		if (vis !== point.visible) {
+
 			// If called without an argument, toggle visibility
 			point.visible = point.options.visible = vis = vis === UNDEFINED ? !point.visible : vis;
 			series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
 
-			// Show and hide associated elements
+			// Show and hide associated elements. This is performed regardless of redraw or not,
+			// because chart.redraw only handles full series.
 			each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
 				if (point[key]) {
 					point[key][vis ? 'show' : 'hide'](true);
@@ -95,19 +97,20 @@ var PiePoint = extendClass(Point, {
 			});
 
 			if (point.legendItem) {
-				if (chart.hasRendered) {
-					series.updateTotals();
-					chart.legend.clearItems();
-					if (!doRedraw) {
-						chart.legend.render();
-					}
-				}
 				chart.legend.colorizeItem(point, vis);
 			}
 
+			// #4170, hide halo after hiding point
+			if (!vis && point.state === 'hover') {
+				point.setState('');
+			}
+			
 			// Handle ignore hidden slices
-			if (doRedraw) {
+			if (ignoreHiddenPoint) {
 				series.isDirty = true;
+			}
+
+			if (redraw) {
 				chart.redraw();
 			}
 		}
@@ -166,6 +169,7 @@ var PieSeries = {
 	isCartesian: false,
 	pointClass: PiePoint,
 	requireSorting: false,
+	directTouch: true,
 	noSharedTooltip: true,
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	axisTypes: [],
@@ -234,24 +238,14 @@ var PieSeries = {
 	updateTotals: function () {
 		var i,
 			total = 0,
-			points,
-			len,
+			points = this.points,
+			len = points.length,
 			point,
 			ignoreHiddenPoint = this.options.ignoreHiddenPoint;
 
-		// Populate local vars
-		points = this.points;
-		len = points.length;
-		
 		// Get the total sum
 		for (i = 0; i < len; i++) {
 			point = points[i];
-
-			// Disallow negative values (#1530, #3623)
-			if (point.y < 0) {
-				point.y = null;
-			}
-			
 			total += (ignoreHiddenPoint && !point.visible) ? 0 : point.y;
 		}
 		this.total = total;
@@ -259,7 +253,6 @@ var PieSeries = {
 		// Set each point's properties
 		for (i = 0; i < len; i++) {
 			point = points[i];
-			//point.percentage = (total <= 0 || ignoreHiddenPoint && !point.visible) ? 0 : point.y / total * 100;
 			point.percentage = (total > 0 && (point.visible || !ignoreHiddenPoint)) ? point.y / total * 100 : 0;
 			point.total = total;
 		}
@@ -399,7 +392,8 @@ var PieSeries = {
 			//group,
 			shadow = series.options.shadow,
 			shadowGroup,
-			shapeArgs;
+			shapeArgs,
+			attr;
 
 		if (shadow && !series.shadowGroup) {
 			series.shadowGroup = renderer.g('shadow')
@@ -408,53 +402,48 @@ var PieSeries = {
 
 		// draw the slices
 		each(series.points, function (point) {
+			if (point.y !== null) {
+				graphic = point.graphic;
+				shapeArgs = point.shapeArgs;
+				shadowGroup = point.shadowGroup;
 
-			var visible = point.options.visible;
+				// put the shadow behind all points
+				if (shadow && !shadowGroup) {
+					shadowGroup = point.shadowGroup = renderer.g('shadow')
+						.add(series.shadowGroup);
+				}
 
-			graphic = point.graphic;
-			shapeArgs = point.shapeArgs;
-			shadowGroup = point.shadowGroup;
+				// if the point is sliced, use special translation, else use plot area traslation
+				groupTranslation = point.sliced ? point.slicedTranslation : {
+					translateX: 0,
+					translateY: 0
+				};
 
-			// put the shadow behind all points
-			if (shadow && !shadowGroup) {
-				shadowGroup = point.shadowGroup = renderer.g('shadow')
-					.add(series.shadowGroup);
+				//group.translate(groupTranslation[0], groupTranslation[1]);
+				if (shadowGroup) {
+					shadowGroup.attr(groupTranslation);
+				}
+
+				// draw the slice
+				if (graphic) {
+					graphic.animate(extend(shapeArgs, groupTranslation));				
+				} else {
+					attr = { 'stroke-linejoin': 'round' };
+					if (!point.visible) {
+						attr.visibility = 'hidden';
+					}
+
+					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
+						.setRadialReference(series.center)
+						.attr(
+							point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE]
+						)
+						.attr(attr)
+						.attr(groupTranslation)
+						.add(series.group)
+						.shadow(shadow, shadowGroup);	
+				}
 			}
-
-			// if the point is sliced, use special translation, else use plot area traslation
-			groupTranslation = point.sliced ? point.slicedTranslation : {
-				translateX: 0,
-				translateY: 0
-			};
-
-			//group.translate(groupTranslation[0], groupTranslation[1]);
-			if (shadowGroup) {
-				shadowGroup.attr(groupTranslation);
-			}
-
-			// draw the slice
-			if (graphic) {
-				graphic.animate(extend(shapeArgs, groupTranslation));
-			} else {
-				point.graphic = graphic = renderer[point.shapeType](shapeArgs)
-					.setRadialReference(series.center)
-					.attr(
-						point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE]
-					)
-					.attr({ 
-						'stroke-linejoin': 'round'
-						//zIndex: 1 // #2722 (reversed)
-					})
-					.attr(groupTranslation)
-					.add(series.group)
-					.shadow(shadow, shadowGroup);	
-			}
-
-			// Detect point specific visibility (#2430)
-			if (visible !== undefined) {
-				point.setVisible(visible, true);
-			}
-
 		});
 
 	},

@@ -15,7 +15,7 @@ $(function () {
 
         series: [{
             data: (function (arr, i) {
-                for (i = 0; i < 200; i++) {
+                for (i = 0; i < 200; i = i + 1) {
                     arr.push(i);
                 }
                 return arr;
@@ -28,7 +28,7 @@ $(function () {
     $('#remove').click(function () {
         var chart = $('#container').highcharts();
         chart.series[0].removePoint(0);
-        
+
         chart.xAxis[0].setExtremes(0, 100); // Verify that point [0, 0] is removed
     });
 });

@@ -21,7 +21,7 @@ $(function () {
             },
 
             rangeSelector: {
-                
+
                 buttons: [{
                     type: 'day',
                     count: 3,
@@ -56,7 +56,7 @@ $(function () {
             },
 
             title: {
-                text: 'Hourly temperatures in Vik i Sogn, Norway, 2004-2010'
+                text: 'Hourly temperatures in Vik i Sogn, Norway, 2009-2015'
             },
 
             subtitle: {
@@ -65,9 +65,9 @@ $(function () {
 
             series: [{
                 name: 'Temperature',
-                data: data,
-                pointStart: Date.UTC(2004, 3, 1),
-                pointInterval: 3600 * 1000,
+                data: data.data,
+                pointStart: data.pointStart,
+                pointInterval: data.pointInterval,
                 tooltip: {
                     valueDecimals: 1,
                     valueSuffix: '°C'

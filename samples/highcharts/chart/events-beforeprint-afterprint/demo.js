@@ -3,20 +3,20 @@ $(function () {
         chart: {
             events: {
                 beforePrint: function () {
-                    this._hasUserSize = this.hasUserSize;
-                    this._reset = [this.chartWidth, this.chartHeight, false];
+                    this.oldhasUserSize = this.hasUserSize;
+                    this.resetParams = [this.chartWidth, this.chartHeight, false];
                     this.setSize(600, 400, false);
                 },
                 afterPrint: function () {
-                    this.setSize.apply(this, this._reset);
-                    this.hasUserSize = this._hasUserSize;
+                    this.setSize.apply(this, this.resetParams);
+                    this.hasUserSize = this.oldhasUserSize;
                 }
             }
         }
     });
 
     $('#container').highcharts({
-        
+
         title: {
             text: 'Rescale to print'
         },
@@ -26,7 +26,7 @@ $(function () {
         },
 
         xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
 

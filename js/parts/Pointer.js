@@ -134,6 +134,7 @@ Pointer.prototype = {
 			distance = chart.chartWidth,
 			anchor,
 			noSharedTooltip,
+			directTouch,
 			kdpoints = [],
 			kdpoint,
 			kdpointT;
@@ -149,7 +150,7 @@ Pointer.prototype = {
 		}
 
 		// If it has a hoverPoint and that series requires direct touch (like columns), 
-		// use the hoverPoint (#3899). Otherwise, search the k-d tree.	
+		// use the hoverPoint (#3899). Otherwise, search the k-d tree.
 		if (!shared && hoverSeries && hoverSeries.directTouch && hoverPoint) {
 			kdpoint = hoverPoint;
 
@@ -159,8 +160,9 @@ Pointer.prototype = {
 			each(series, function (s) {
 				// Skip hidden series
 				noSharedTooltip = s.noSharedTooltip && shared;
-				if (s.visible && !noSharedTooltip && pick(s.options.enableMouseTracking, true)) { // #3821
-					kdpointT = s.searchPoint(e, !noSharedTooltip); // #3828
+				directTouch = !shared && s.directTouch;
+				if (s.visible && !noSharedTooltip && !directTouch && pick(s.options.enableMouseTracking, true)) { // #3821
+					kdpointT = s.searchPoint(e, !noSharedTooltip && s.kdDimensions === 1); // #3828
 					if (kdpointT) {
 						kdpoints.push(kdpointT);
 					}
@@ -175,8 +177,8 @@ Pointer.prototype = {
 			});
 		}
 
-		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926
-		if (kdpoint && (kdpoint !== hoverPoint || (tooltip && tooltip.isHidden))) {
+		// Refresh tooltip for kdpoint if new hover point or tooltip was hidden // #3926, #4200
+		if (kdpoint && (kdpoint !== this.prevKDPoint || (tooltip && tooltip.isHidden))) {
 			// Draw tooltip if necessary
 			if (shared && !kdpoint.series.noSharedTooltip) {
 				i = kdpoints.length;
@@ -189,20 +191,17 @@ Pointer.prototype = {
 					tooltip.refresh(kdpoints, e);
 				}
 
-				// do mouseover on all points except the closest
+				// Do mouseover on all points (#3919, #3985, #4410)
 				each(kdpoints, function (point) {
-					if (point !== kdpoint) { 
-						point.onMouseOver(e);
-					}
-				});	
-				// #3919, #3985 do mouseover on the closest point last to ensure it is the hoverpoint
-				((hoverSeries && hoverSeries.directTouch && hoverPoint) || kdpoint).onMouseOver(e); 
+					point.onMouseOver(e, point !== ((hoverSeries && hoverSeries.directTouch && hoverPoint) || kdpoint));
+				}); 
 			} else {
 				if (tooltip) { 
 					tooltip.refresh(kdpoint, e);
 				}
 				kdpoint.onMouseOver(e); 
 			}
+			this.prevKDPoint = kdpoint;
 		
 		// Update positions (regardless of kdpoint or hoverPoint)
 		} else {
@@ -227,7 +226,8 @@ Pointer.prototype = {
 		each(chart.axes, function (axis) {
 			axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
 		});	
-				
+		
+
 	},
 
 
@@ -242,8 +242,9 @@ Pointer.prototype = {
 			chart = pointer.chart,
 			hoverSeries = chart.hoverSeries,
 			hoverPoint = chart.hoverPoint,
+			hoverPoints = chart.hoverPoints,
 			tooltip = chart.tooltip,
-			tooltipPoints = tooltip && tooltip.shared ? chart.hoverPoints : hoverPoint;
+			tooltipPoints = tooltip && tooltip.shared ? hoverPoints : hoverPoint;
 			
 		// Narrow in allowMove
 		allowMove = allowMove && tooltip && tooltipPoints;
@@ -259,7 +260,7 @@ Pointer.prototype = {
 				hoverPoint.setState(hoverPoint.state, true);
 				each(chart.axes, function (axis) {
 					if (pick(axis.options.crosshair && axis.options.crosshair.snap, true)) {
-						axis.drawCrosshair(null, allowMove);
+						axis.drawCrosshair(null, hoverPoint);
 					}  else {
 						axis.hideCrosshair();
 					}
@@ -272,6 +273,12 @@ Pointer.prototype = {
 
 			if (hoverPoint) {
 				hoverPoint.onMouseOut();
+			}
+
+			if (hoverPoints) {
+				each(hoverPoints, function (point) {
+					point.setState();
+				});
 			}
 
 			if (hoverSeries) {
@@ -292,7 +299,7 @@ Pointer.prototype = {
 				axis.hideCrosshair();
 			});
 			
-			pointer.hoverX = null;
+			pointer.hoverX = chart.hoverPoints = chart.hoverPoint = null;
 
 		}
 	},
@@ -354,9 +361,16 @@ Pointer.prototype = {
 			plotHeight = chart.plotHeight,
 			clickedInside,
 			size,
+			selectionMarker = this.selectionMarker,
 			mouseDownX = this.mouseDownX,
 			mouseDownY = this.mouseDownY,
 			panKey = chartOptions.panKey && e[chartOptions.panKey + 'Key'];
+
+		// If the device supports both touch and mouse (like IE11), and we are touch-dragging
+		// inside the plot area, don't handle the mouse event. #4339.
+		if (selectionMarker && selectionMarker.touch) {
+			return;
+		}
 
 		// If the mouse is outside the plot area, adjust to cooordinates
 		// inside to prevent the selection marker from going outside
@@ -383,8 +397,8 @@ Pointer.prototype = {
 
 			// make a selection
 			if (chart.hasCartesianSeries && (this.zoomX || this.zoomY) && clickedInside && !panKey) {
-				if (!this.selectionMarker) {
-					this.selectionMarker = chart.renderer.rect(
+				if (!selectionMarker) {
+					this.selectionMarker = selectionMarker = chart.renderer.rect(
 						plotLeft,
 						plotTop,
 						zoomHor ? 1 : plotWidth,
@@ -400,24 +414,24 @@ Pointer.prototype = {
 			}
 
 			// adjust the width of the selection marker
-			if (this.selectionMarker && zoomHor) {
+			if (selectionMarker && zoomHor) {
 				size = chartX - mouseDownX;
-				this.selectionMarker.attr({
+				selectionMarker.attr({
 					width: mathAbs(size),
 					x: (size > 0 ? 0 : size) + mouseDownX
 				});
 			}
 			// adjust the height of the selection marker
-			if (this.selectionMarker && zoomVert) {
+			if (selectionMarker && zoomVert) {
 				size = chartY - mouseDownY;
-				this.selectionMarker.attr({
+				selectionMarker.attr({
 					height: mathAbs(size),
 					y: (size > 0 ? 0 : size) + mouseDownY
 				});
 			}
 
 			// panning
-			if (clickedInside && !this.selectionMarker && chartOptions.panning) {
+			if (clickedInside && !selectionMarker && chartOptions.panning) {
 				chart.pan(e, chartOptions.panning);
 			}
 		}
@@ -595,7 +609,6 @@ Pointer.prototype = {
 		
 		e = this.normalize(e);
 		e.originalEvent = e; // #3913
-		e.cancelBubble = true; // IE specific
 
 		if (!chart.cancelClick) {
 			

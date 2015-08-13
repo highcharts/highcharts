@@ -1,19 +1,19 @@
 $(function () {
     $('#container').highcharts({
-        
+
         chart: {
             zoomType: 'x'
         },
-        
+
         title: {
             text: 'Hide overlapping data labels'
-        },  
+        },
 
         series: [{
             data: (function (arr, len) {
-                var i = 0;
-                while (len--) {
-                    arr.push(i++);
+                var i;
+                for (i = 0; i < len; i = i + 1) {
+                    arr.push(i);
                 }
                 return arr;
             }([], 50)),

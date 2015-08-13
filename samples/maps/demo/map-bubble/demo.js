@@ -17,7 +17,7 @@ $(function () {
             },
 
             title: {
-                text: 'World population 2010 by country'
+                text: 'World population 2013 by country'
             },
 
             subtitle : {
@@ -43,7 +43,7 @@ $(function () {
             }, {
                 type: 'mapbubble',
                 mapData: mapData,
-                name: 'Population 2010',
+                name: 'Population 2013',
                 joinBy: ['iso-a2', 'code'],
                 data: data,
                 minSize: 4,

@@ -1,26 +1,30 @@
 $(function () {
 
+    var converters = {
+        // Latin to Farsi
+        fa: function (number) {
+            return number.toString().replace(/\d/g, function (d) {
+                return String.fromCharCode(d.charCodeAt(0) + 1728);
+            });
+        },
+        // Latin to Arabic
+        ar: function (number) {
+            return number.toString().replace(/\d/g, function (d) {
+                return String.fromCharCode(d.charCodeAt(0) + 1584);
+            });
+        }
+    };
+
     Highcharts.setOptions({
         lang: {
             decimalPoint: '\u066B',
             thousandsSeparator: '\u066C'
         }
     });
-    // English to Farsi
-    function digits_en2fa (number) {
-        return number.toString().replace(/\d/g, function(d){
-            return String.fromCharCode(d.charCodeAt(0) + 1728);
-        });
-    }
-    // English to Arabic
-    function digits_en2ar(number) {
-        return number.toString().replace(/\d/g, function(d){
-            return String.fromCharCode(d.charCodeAt(0) + 1584);
-        });
-    }
+
     Highcharts.wrap(Highcharts, 'numberFormat', function (proceed) {
         var ret = proceed.apply(0, [].slice.call(arguments, 1));
-        return digits_en2ar(ret);
+        return converters.ar(ret);
     });
 
     $('#container').highcharts({

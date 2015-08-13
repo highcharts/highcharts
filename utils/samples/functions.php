@@ -41,6 +41,11 @@ function getBrowser() {
         $bname = 'Google Chrome'; 
         $ub = "Chrome"; 
     } 
+    elseif(preg_match('/PhantomJS/i',$u_agent)) 
+    { 
+        $bname = 'PhantomJS'; 
+        $ub = "PhantomJS"; 
+    } 
     elseif(preg_match('/Safari/i',$u_agent)) 
     { 
         $bname = 'Apple Safari'; 

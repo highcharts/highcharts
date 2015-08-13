@@ -199,14 +199,16 @@ extend(Axis.prototype, {
 			minIndex,
 			maxIndex,
 			slope,
+			hasBreaks = axis.isXAxis && !!axis.options.breaks,
+			isOrdinal = axis.options.ordinal,
 			i;
 
 		// apply the ordinal logic
-		if (axis.options.ordinal || axis.options.breaks) {
+		if (isOrdinal || hasBreaks) { // #4167 YAxis is never ordinal ?
 
 			each(axis.series, function (series, i) {
 
-				if (series.visible !== false && (series.takeOrdinalPosition !== false || axis.options.breaks)) {
+				if (series.visible !== false && (series.takeOrdinalPosition !== false || hasBreaks)) {
 
 					// concatenate the processed X data into the existing positions, or the empty array
 					ordinalPositions = ordinalPositions.concat(series.processedXData);
@@ -270,10 +272,8 @@ extend(Axis.prototype, {
 			} else {
 				axis.ordinalPositions = axis.ordinalSlope = axis.ordinalOffset = UNDEFINED;
 			}
-			if (axis.options.ordinal) {
-				axis.doPostTranslate = useOrdinal; // #3818
-			}
 		}
+		axis.doPostTranslate = (isOrdinal && useOrdinal) || hasBreaks; // #3818, #4196
 		axis.groupIntervalFactor = null; // reset for next run
 	},
 	/**

@@ -123,10 +123,11 @@ var ColumnSeries = extendClass(Series, {
 			groupPadding = categoryWidth * options.groupPadding,
 			groupWidth = categoryWidth - 2 * groupPadding,
 			pointOffsetWidth = groupWidth / columnCount,
-			optionPointWidth = options.pointWidth,
-			pointPadding = defined(optionPointWidth) ? (pointOffsetWidth - optionPointWidth) / 2 :
-				pointOffsetWidth * options.pointPadding,
-			pointWidth = pick(optionPointWidth, pointOffsetWidth - 2 * pointPadding), // exact point width, used in polar charts
+			pointWidth = mathMin(
+				options.maxPointWidth || xAxis.len, // docs: Sample created. Add "See also" to pointWidth. Close UserVoice.
+				pick(options.pointWidth, pointOffsetWidth * (1 - 2 * options.pointPadding))
+			),
+			pointPadding = (pointOffsetWidth - pointWidth) / 2,
 			colIndex = (reversedXAxis ? 
 				columnCount - (series.columnIndex || 0) : // #1251
 				series.columnIndex) || 0,
@@ -183,7 +184,8 @@ var ColumnSeries = extendClass(Series, {
 		// Record the new values
 		each(series.points, function (point) {
 			var yBottom = pick(point.yBottom, translatedThreshold),
-				plotY = mathMin(mathMax(-999 - yBottom, point.plotY), yAxis.len + 999 + yBottom), // Don't draw too far outside plot area (#1303, #2241)
+				safeDistance = 999 + mathAbs(yBottom),
+				plotY = mathMin(mathMax(-safeDistance, point.plotY), yAxis.len + safeDistance), // Don't draw too far outside plot area (#1303, #2241, #4264)
 				barX = point.plotX + pointXOffset,
 				barW = seriesBarW,
 				barY = mathMin(plotY, yBottom),
@@ -209,11 +211,6 @@ var ColumnSeries = extendClass(Series, {
 			point.barX = barX;
 			point.pointWidth = pointWidth;
 
-			// Fix the tooltip on center of grouped columns (#1216, #424, #3648)
-			point.tooltipPos = chart.inverted ? 
-				[yAxis.len + yAxis.pos - chart.plotLeft - plotY, series.xAxis.len - barX - barW / 2] : 
-				[barX + barW / 2, plotY + yAxis.pos - chart.plotTop];
-
 			// Round off to obtain crisp edges and avoid overlapping with neighbours (#2694)
 			right = mathRound(barX + barW) + xCrisp;
 			barX = mathRound(barX) + xCrisp;
@@ -230,6 +227,11 @@ var ColumnSeries = extendClass(Series, {
 				barH += 1;
 			}
 
+			// Fix the tooltip on center of grouped columns (#1216, #424, #3648)
+			point.tooltipPos = chart.inverted ? 
+				[yAxis.len + yAxis.pos - chart.plotLeft - plotY, series.xAxis.len - barX - barW / 2, barH] : 
+				[barX + barW / 2, plotY + yAxis.pos - chart.plotTop, barH];
+
 			// Register shape type and arguments to be used in drawPoints
 			point.shapeType = 'rect';
 			point.shapeArgs = {
@@ -238,7 +240,6 @@ var ColumnSeries = extendClass(Series, {
 				width: barW,
 				height: barH
 			};
-
 		});
 
 	},

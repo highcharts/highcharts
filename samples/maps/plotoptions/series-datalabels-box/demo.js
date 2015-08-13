@@ -48,7 +48,7 @@ $(function () {
                     backgroundColor: 'rgba(0,0,0,0.3)',
                     borderRadius: 7,
                     padding: 4,
-                    color: 'white',
+                    color: '#FFFFFF',
                     format: '{point.code}',
                     style: {
                         textTransform: 'uppercase'

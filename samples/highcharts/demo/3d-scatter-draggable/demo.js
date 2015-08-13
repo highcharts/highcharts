@@ -60,7 +60,8 @@ $(function () {
         },
         zAxis: {
             min: 0,
-            max: 10
+            max: 10,
+            showFirstLabel: false
         },
         legend: {
             enabled: false
@@ -89,12 +90,10 @@ $(function () {
             'mousemove.hc touchdrag.hc': function (e) {
                 // Run beta
                 newBeta = beta + (posX - e.pageX) / sensitivity;
-                newBeta = Math.min(100, Math.max(-100, newBeta));
                 chart.options.chart.options3d.beta = newBeta;
 
                 // Run alpha
                 newAlpha = alpha + (e.pageY - posY) / sensitivity;
-                newAlpha = Math.min(100, Math.max(-100, newAlpha));
                 chart.options.chart.options3d.alpha = newAlpha;
 
                 chart.redraw(false);

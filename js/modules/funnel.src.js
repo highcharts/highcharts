@@ -69,6 +69,7 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 			chart = series.chart,
 			options = series.options,
 			reversed = options.reversed,
+			ignoreHiddenPoint = options.ignoreHiddenPoint,
 			plotWidth = chart.plotWidth,
 			plotHeight = chart.plotHeight,
 			cumulative = 0, // start at top
@@ -133,7 +134,9 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 
 		// get the total sum
 		each(data, function (point) {
-			sum += point.y;
+			if (!ignoreHiddenPoint || point.visible !== false) {
+				sum += point.y;
+			}
 		});
 
 		each(data, function (point) {
@@ -206,7 +209,9 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 			// Mimicking pie data label placement logic
 			point.half = half;
 
-			cumulative += fraction;
+			if (!ignoreHiddenPoint || point.visible !== false) {
+				cumulative += fraction;
+			}
 		});		
 	},
 	/**

@@ -69,6 +69,7 @@
         <property name="prototype.src.name" value="prototype-adapter.src.js"/-->
         <property name="standalone.src.name" value="standalone-framework.src.js"/>
         <property name="exporting.src.name" value="exporting.src.js"/>
+        <property name="offline-exporting.src.name" value="offline-exporting.src.js"/>
         <property name="broken-axis.src.name" value="broken-axis.src.js"/>
         <property name="data.src.name" value="data.src.js"/>
         <property name="drilldown.src.name" value="drilldown.src.js"/>
@@ -83,6 +84,7 @@
         <property name="prototype.minified.name" value="prototype-adapter.js"/-->
         <property name="standalone.minified.name" value="standalone-framework.js"/>
         <property name="exporting.minified.name" value="exporting.js"/>
+        <property name="offline-exporting.minified.name" value="offline-exporting.js"/>        
         <property name="broken-axis.minified.name" value="broken-axis.js"/>
         <property name="data.minified.name" value="data.js"/>
         <property name="drilldown.minified.name" value="drilldown.js"/>
@@ -97,6 +99,7 @@
         <property name="prototype.src.file" value="${basedir}/js/adapters/${prototype.src.name}"/-->
         <property name="standalone.src.file" value="${basedir}/js/adapters/${standalone.src.name}"/>
         <property name="exporting.src.file" value="${basedir}/js/modules/${exporting.src.name}"/>
+        <property name="offline-exporting.src.file" value="${basedir}/js/modules/${offline-exporting.src.name}"/>
         <property name="broken-axis.src.file" value="${basedir}/js/modules/broken-axis.src.js"/>
         <property name="data.src.file" value="${basedir}/js/modules/${data.src.name}"/>
         <property name="drilldown.src.file" value="${basedir}/js/modules/${drilldown.src.name}"/>
@@ -398,6 +401,7 @@
         <!-- Convenience list for modules, used in download builder  -->
         <filelist id="highcharts-modules.files" dir="${basedir}/js">
             <file name="modules/${exporting.src.name}"/>
+            <file name="modules/${offline-exporting.src.name}"/>
             <file name="modules/${data.src.name}"/>
             <file name="modules/${drilldown.src.name}"/>
             <file name="modules/${nodata.src.name}"/>
@@ -563,6 +567,7 @@
             <fileset file="${prototype.src.file}"/>
             <fileset file="${standalone.src.file}"/>
             <fileset file="${exporting.src.file}"/>
+            <fileset file="${offline-exporting.src.file}"/>
             <fileset file="${broken-axis.src.file}"/>
             <fileset file="${data.src.file}"/>
             <fileset file="${drilldown.src.file}"/>
@@ -639,8 +644,6 @@
             <arg value="${param.src}"/>
             <arg value="--js_output_file"/>
             <arg value="${param.out}"/>
-            <arg value="--charset"/>
-            <arg value="UTF-8"/>
         </java>
         <java jar="${yuicomp.jar}" fork="true">
             <arg value="--type"/>
@@ -651,9 +654,6 @@
             <arg value="UTF-8"/>
             <arg value="${param.src}"/>
         </java>
-
-        <!-- Convert back to Unicode escape (#4079) -->
-        <replace file="${param.out}" token="●" value="\u25CF"/>
 
         <length file="${param.src}" property="input.length"/>
         <length file="${param.out}" property="gcc.output.length"/>
@@ -719,6 +719,10 @@
             <param name="param.src" value="${exporting.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/${exporting.minified.name}"/>
         </antcall>
+        <antcall target="compile">
+            <param name="param.src" value="${offline-exporting.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/modules/${offline-exporting.minified.name}"/>
+        </antcall>        
         <antcall target="compile">
             <param name="param.src" value="${overlapping-datalabels.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/overlapping-datalabels.js"/>
@@ -946,6 +950,13 @@
         <copy file="${exporting.src.file}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${exporting.minified.name}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
 
+        <copy file="${offline-exporting.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${offline-exporting.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${offline-exporting.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${offline-exporting.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${offline-exporting.src.file}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${offline-exporting.minified.name}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
+
         <copy file="${broken-axis.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${broken-axis.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         
@@ -1086,8 +1097,10 @@
         <!-- update the highcharts export-server (GitHub) with newest js from the files in the dist -->
         <copy file="${dist.dir}/highcharts/js/highcharts.js" todir="exporting-server/phantomjs/"/>
         <copy file="${dist.dir}/highstock/js/highstock.js" todir="exporting-server/phantomjs/"/>
+        <copy file="${dist.dir}/highmaps/js/highmaps.js" todir="exporting-server/phantomjs/"/>
         <copy file="${dist.dir}/highcharts/js/highcharts-more.js" todir="exporting-server/phantomjs/"/>
-        <copy file="${dist.dir}/highcharts/js/highcharts-3d.js" todir="exporting-server/phantomjs/"/>      
+        <copy file="${dist.dir}/highcharts/js/highcharts-3d.js" todir="exporting-server/phantomjs/"/>
+        <copy file="${dist.dir}/highmaps/js/modules/map.js" todir="exporting-server/phantomjs/"/>
         <copy todir="exporting-server/phantomjs/">
             <fileset refid="export.module.files"/>
         </copy>
@@ -1803,7 +1816,7 @@
         <!-- files for downloadbuilder -->            
         <copy file="js/parts.js" tofile="${highcharts.site.dir}/joomla/templates/highsoft_colorful/js/parts.js" overwrite="true"/>
         <!-- copy the highstock partfiles , these include also highcharts partfiles -->
-        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source/parts" overwrite="true">
+        <copy todir="${highcharts.site.dir}/joomla/components/com_download/source" overwrite="true">
             <filelist refid="highstock.files"/>
             <filterset refid="download.builder.filter"/>
         </copy>

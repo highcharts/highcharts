@@ -45,7 +45,7 @@ $(function () {
         },
 
         subtitle: {
-            text: 'The columns are rendered on canvas, and some features are bypassed for speed'
+            text: 'Using the experimental Highcharts Boost module'
         },
 
         tooltip: {

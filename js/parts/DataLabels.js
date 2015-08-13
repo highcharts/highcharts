@@ -515,7 +515,6 @@ if (seriesTypes.pie) {
 
 				// get the x - use the natural x position for first and last slot, to prevent the top
 				// and botton slice connectors from touching each other on either side
-				// Problem: Should check that it makes sense - http://jsfiddle.net/highcharts/n1y6ngxz/
 				x = options.justify ?
 					seriesCenter[0] + (i ? -1 : 1) * (radius + distanceOption) :
 					series.getX(y === centerY - radius - distanceOption || y === centerY + radius + distanceOption ? naturalY : y, i);
@@ -573,7 +572,7 @@ if (seriesTypes.pie) {
 					labelPos = point.labelPos;
 					dataLabel = point.dataLabel;
 
-					if (dataLabel && dataLabel._pos) {
+					if (dataLabel && dataLabel._pos && point.visible) {
 						visibility = dataLabel._attr.visibility;
 						x = dataLabel.connX;
 						y = dataLabel.connY;
@@ -624,7 +623,7 @@ if (seriesTypes.pie) {
 			var dataLabel = point.dataLabel,
 				_pos;
 
-			if (dataLabel) {
+			if (dataLabel && point.visible) {
 				_pos = dataLabel._pos;
 				if (_pos) {
 					dataLabel.attr(dataLabel._attr);
@@ -683,6 +682,7 @@ if (seriesTypes.pie) {
 		// If the size must be decreased, we need to run translate and drawDataLabels again
 		if (newSize < center[2]) {
 			center[2] = newSize;
+			center[3] = relativeLength(options.innerSize || 0, newSize);
 			this.translate(center);
 			each(this.points, function (point) {
 				if (point.dataLabel) {
@@ -710,7 +710,7 @@ if (seriesTypes.column) {
 		var inverted = this.chart.inverted,
 			series = point.series,
 			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
-			below = point.below || (point.plotY > pick(this.translatedThreshold, series.yAxis.len)),
+			below = pick(point.below, point.plotY > pick(this.translatedThreshold, series.yAxis.len)), // point.below is used in range series
 			inside = pick(options.inside, !!this.options.stacking); // draw it inside the box?
 
 		// Align to the column itself, or the top of it

@@ -12,13 +12,13 @@ $(function () {
                     verticalAlign: 'top',
                     color: 'white',
                     style: {
-                        fontWeight: 'bold'   
+                        fontWeight: 'bold'
                     }
                 }
             }, {
                 level: 2,
                 layoutAlgorithm: 'stripes'
-            }],            
+            }],
             data: [{
                 id: "id_1",
                 name: 'A'

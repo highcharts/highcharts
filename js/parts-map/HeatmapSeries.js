@@ -37,8 +37,10 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
+	pointClass: extendClass(Point, colorPointMixin),
 	supportsDrilldown: true,
 	getExtremesFromAll: true,
+	directTouch: true,
 
 	/**
 	 * Override the init method to add point ranges on both axes.

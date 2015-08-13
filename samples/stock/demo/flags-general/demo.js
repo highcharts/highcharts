@@ -6,7 +6,7 @@ $(function () {
 
 
             rangeSelector : {
-                selected : 1
+                selected : 0
             },
 
             title : {
@@ -17,7 +17,8 @@ $(function () {
                 style: {
                     width: '200px'
                 },
-                valueDecimals: 4
+                valueDecimals: 4,
+                shared : true
             },
 
             yAxis : {
@@ -35,29 +36,29 @@ $(function () {
             }, {
                 type : 'flags',
                 data : [{
-                    x : Date.UTC(2011, 3, 25),
-                    title : 'H',
-                    text : 'Euro Contained by Channel Resistance'
-                }, {
-                    x : Date.UTC(2011, 3, 28),
-                    title : 'G',
-                    text : 'EURUSD: Bulls Clear Path to 1.50 Figure'
-                }, {
-                    x : Date.UTC(2011, 4, 4),
-                    title : 'F',
-                    text : 'EURUSD: Rate Decision to End Standstill'
-                }, {
-                    x : Date.UTC(2011, 4, 5),
-                    title : 'E',
-                    text : 'EURUSD: Enter Short on Channel Break'
-                }, {
-                    x : Date.UTC(2011, 4, 6),
-                    title : 'D',
-                    text : 'Forex: U.S. Non-Farm Payrolls Expand 244K, U.S. Dollar Rally Cut Short By Risk Appetite'
-                }, {
-                    x : Date.UTC(2011, 4, 6),
+                    x : Date.UTC(2015, 5, 8),
                     title : 'C',
-                    text : 'US Dollar: Is This the Long-Awaited Recovery or a Temporary Bounce?'
+                    text : 'Stocks fall on Greece, rate concerns; US dollar dips'
+                }, {
+                    x : Date.UTC(2015, 5, 12),
+                    title : 'D',
+                    text : 'Zimbabwe ditches \'worthless\' currency for the US dollar '
+                }, {
+                    x : Date.UTC(2015, 5, 19),
+                    title : 'E',
+                    text : 'US Dollar Declines Over the Week on Rate Timeline'
+                }, {
+                    x : Date.UTC(2015, 5, 26),
+                    title : 'F',
+                    text : 'Greek Negotiations Take Sharp Turn for Worse, US Dollar set to Rally '
+                }, {
+                    x : Date.UTC(2015, 5, 29),
+                    title : 'G',
+                    text : 'Euro records stunning reversal against dollar'
+                }, {
+                    x : Date.UTC(2015, 5, 30),
+                    title : 'H',
+                    text : 'Surging US dollar curbs global IT spend'
                 }],
                 onSeries : 'dataseries',
                 shape : 'circlepin',

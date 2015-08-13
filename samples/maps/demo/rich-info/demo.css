@@ -1,3 +1,6 @@
+* {
+	font-family: sans-serif;
+}
 #wrapper {
 	height: 500px;
 	width: 1000px;
@@ -19,6 +22,7 @@
 }
 #info h2 {
 	display: inline;
+	font-size: 13pt;
 }
 #info .f32 .flag {
 	vertical-align: bottom !important;

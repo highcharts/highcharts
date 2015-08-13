@@ -17,6 +17,7 @@ var UNDEFINED,
 	Legend = Highcharts.Legend,
 	LegendSymbolMixin = Highcharts.LegendSymbolMixin,
 	Series = Highcharts.Series,
+	Point = Highcharts.Point,
 	
 	defaultOptions = Highcharts.getOptions(),
 	each = Highcharts.each,
@@ -42,6 +43,8 @@ extend(ColorAxis.prototype, Axis.prototype);
 extend(ColorAxis.prototype, {
 	defaultColorAxisOptions: {
 		lineWidth: 0,
+		minPadding: 0,
+		maxPadding: 0,
 		gridLineWidth: 1,
 		tickPixelInterval: 72,
 		startOnTick: true,
@@ -70,7 +73,6 @@ extend(ColorAxis.prototype, {
 			side: horiz ? 2 : 1,
 			reversed: !horiz
 		}, userOptions, {
-			isX: horiz,
 			opposite: !horiz,
 			showEmpty: false,
 			title: null,
@@ -89,7 +91,6 @@ extend(ColorAxis.prototype, {
 		this.initStops(userOptions);
 
 		// Override original axis properties
-		this.isXAxis = true;
 		this.horiz = horiz;
 		this.zoomEnabled = false;
 	},
@@ -384,13 +385,31 @@ extend(ColorAxis.prototype, {
 	},
 
 	update: function (newOptions, redraw) {
+		var chart = this.chart,
+			legend = chart.legend;
+
 		each(this.series, function (series) {
 			series.isDirtyData = true; // Needed for Axis.update when choropleth colors change
 		});
+
+		// When updating data classes, destroy old items and make sure new ones are created (#3207)
+		if (newOptions.dataClasses && legend.allItems) {
+			each(legend.allItems, function (item) {
+				if (item.isDataClass) {
+					item.legendGroup.destroy();
+				}
+			});			
+			chart.isDirtyLegend = true;
+		}
+
+		// Keep the options structure updated for export. Unlike xAxis and yAxis, the colorAxis is 
+		// not an array. (#3207)
+		chart.options[this.coll] = merge(this.userOptions, newOptions);
+
 		Axis.prototype.update.call(this, newOptions, redraw);
 		if (this.legendItem) {
 			this.setLegendColor();
-			this.chart.legend.colorizeItem(this, true);
+			legend.colorizeItem(this, true);
 		}
 	},
 
@@ -437,6 +456,7 @@ extend(ColorAxis.prototype, {
 					drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 					visible: true,
 					setState: noop,
+					isDataClass: true,
 					setVisible: function () {
 						vis = this.visible = !vis;
 						each(axis.series, function (series) {
@@ -512,6 +532,22 @@ wrap(Legend.prototype, 'getAllItems', function (proceed) {
 });/**
  * Mixin for maps and heatmaps
  */
+var colorPointMixin = {
+	/**
+	 * Set the visibility of a single point
+	 */
+	setVisible: function (vis) {
+		var point = this,
+			method = vis ? 'show' : 'hide';
+
+		// Show and hide associated elements
+		each(['graphic', 'dataLabel'], function (key) {
+			if (point[key]) {
+				point[key][method]();
+			}
+		});
+	}
+};
 var colorSeriesMixin = {
 
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
@@ -541,7 +577,8 @@ var colorSeriesMixin = {
 			var value = point[colorKey],
 				color;
 
-			color = value === null ? nullColor : (colorAxis && value !== undefined) ? colorAxis.toColor(value, point) : point.color || series.color;
+			color = point.options.color || 
+				(value === null ? nullColor : (colorAxis && value !== undefined) ? colorAxis.toColor(value, point) : point.color || series.color);
 
 			if (color) {
 				point.color = color;
@@ -587,8 +624,10 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
+	pointClass: extendClass(Point, colorPointMixin),
 	supportsDrilldown: true,
 	getExtremesFromAll: true,
+	directTouch: true,
 
 	/**
 	 * Override the init method to add point ranges on both axes.

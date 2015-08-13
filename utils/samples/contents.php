@@ -2,6 +2,12 @@
 
 require_once('functions.php');
 
+$browser = getBrowser();
+$browserKey = isset($_GET['browserKey']) ? $_GET['browserKey'] : $browser['parent'];
+
+$compare = @json_decode(file_get_contents('temp/compare.json'));
+
+
 ?><!DOCTYPE HTML>
 <html>
 	<head>
@@ -17,21 +23,24 @@ require_once('functions.php');
 		
 		<script>
 			var diffThreshold = 0;
+			function runBatch() {
+				var currentLi = document.currentLi || $('#li1')[0];
+				if (currentLi) {
+					var href = currentLi.getElementsByTagName("a")[0].href;
+				
+					href = href.replace("view.php", "compare-view.php") + '&continue=true';
+					window.parent.frames[1].location.href = href;
+				}
+				$(this).toggle();
+				$('#batch-stop').toggle();
+			}
+
+
 			$(function () {
 
 				$(window).bind('keydown', parent.keyDown);
 
-				$("#batch-compare").click(function() {
-					var currentLi = document.currentLi || $('#li1')[0];
-					if (currentLi) {
-						var href = currentLi.getElementsByTagName("a")[0].href;
-					
-						href = href.replace("view.php", "compare-view.php") + '&continue=true';
-						window.parent.frames[1].location.href = href;
-					}
-					$(this).toggle();
-					$('#batch-stop').toggle();
-				});
+				$("#batch-compare").click(runBatch);
 
 				$("#batch-stop").click(function() {
 					var currentLi = document.currentLi || $('#li1')[0];
@@ -55,6 +64,11 @@ require_once('functions.php');
 					window.location.reload();
 				});
 
+				$('#fails-only').click(function () {
+					$('#filtered').css('display', 'block');
+					$('#main-nav h2, #main-nav h4, #main-nav li.identical, #main-nav li.approved').css('display', 'none');
+				});
+
 				$("#slider").slider({
 					min: 0,
 					max: 1,
@@ -72,10 +86,12 @@ require_once('functions.php');
 							} else if (diff < e.value && $li.hasClass('different')) {
 								$li.removeClass('different').addClass('identical');
 							}
-
-						})
+						});
 					}
 				});
+
+				$('#main-nav').css('margin-top', $('#top-nav').height());
+				
 			});
 			
 		</script>
@@ -143,7 +159,6 @@ require_once('functions.php');
 				color: white; 
 				font-family: Arial, sans-serif; 
 				padding: 10px; 
-				height: 6.5em;
 				background: #34343e;
 				box-shadow: 0px 0px 8px #888;
 				position: fixed;
@@ -151,9 +166,13 @@ require_once('functions.php');
 				width: 100%;
 				z-index: 10;
 			}
+			#top-nav .text a {
+				color: white;
+				text-decoration: underline;
+			}
 			#main-nav {
-				margin-top: 100px;
 				margin-left: 10px;
+				padding-top: 40px;
 			}
 			#batch-stop {
 				display: none;
@@ -179,6 +198,13 @@ require_once('functions.php');
 			.dissimilarity-index {
 				float: right;
 			}
+			#filtered {
+				display: none;
+				margin: 1em 0;
+				padding: 1em;
+				border: 1px solid #7cb5ec;
+				border-radius: 0.5em;
+			}
 
 		</style>
 		
@@ -187,6 +213,9 @@ require_once('functions.php');
 	<body>
 		
 	<div id="top-nav">
+		<a class="button" href="index.php" target="main">
+			<i class="icon-home"></i>
+		</a>
 		<a class="button" id="batch-compare" title="Batch compare all samples">
 			<i class="icon-play"></i>
 			Run tests
@@ -206,20 +235,32 @@ require_once('functions.php');
 			Settings
 		</a>
 
+		<a class="button" id="fails-only" title="Show only fails">
+			<i class="icon-filter"></i>
+			Fails only
+		</a>
+
+		<div class="text">
+			View results for <a href="?"><?php echo $browser['name'] ?></a>, <a href="?browserKey=PhantomJS 2.0.0">PhantomJS</a>
+		</div>
+
 		<div style="margin-top: 1em">
 			<div style="width: 45%; float:left">Diff limit: <span id="slider-value">0</span></div>
 			<div id="slider" style="width: 45%; float:left"></div>
 		</div>
+
 	</div>
 
 
 	<div id="main-nav">
+
+	<div id="filtered">
+		Showing only failed samples. Click "Fails only" again to update. Click "Reload" to release filter.
+	</div>
 	<?php
 	$products = array('highcharts', 'maps', 'stock', 'issues');
 	$samplesDir = dirname(__FILE__). '/../../samples/';
-	$browser = getBrowser();
-	$browserKey = $browser['parent'];
-	$compare = @json_decode(file_get_contents('temp/compare.json'));
+	
 
 	$i = 1;
 	foreach ($products as $dir) {
@@ -251,6 +292,7 @@ require_once('functions.php');
 
 								if (strstr($yaml, 'requiresManualTesting: true')) {
 									$batchClass = '';
+									$compareClass = 'manual';
 									$suffix = ' <acronym title="Requires manual testing">[m]</acronym>';
 								}
 
@@ -307,6 +349,13 @@ require_once('functions.php');
 								</li>
 								";
 								$i++;
+							
+							} elseif (preg_match('/^[a-zA-Z0-9\-,]+$/', $innerFile)) {
+								echo "
+								<li class='different'>
+									Invalid sample name, use lower case only:<br>$innerFile
+								</li>
+								";
 							}
 						}
 					}

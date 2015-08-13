@@ -3,7 +3,7 @@
 ***/
 // Shorthand to check the is3d flag
 Highcharts.Chart.prototype.is3d = function () {
-	return this.options.chart.options3d && this.options.chart.options3d.enabled;
+	return this.options.chart.options3d && this.options.chart.options3d.enabled; // #4280
 };
 
 Highcharts.wrap(Highcharts.Chart.prototype, 'isInsidePlot', function (proceed) {

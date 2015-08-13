@@ -100,7 +100,7 @@ extend(SVGElement.prototype, {
 				rotation = wrapper.rotation,
 				baseline,
 				textWidth = pInt(wrapper.textWidth),
-				currentTextTransform = [rotation, align, elem.innerHTML, wrapper.textWidth].join(',');
+				currentTextTransform = [rotation, align, elem.innerHTML, wrapper.textWidth, wrapper.textAlign].join(',');
 
 			if (currentTextTransform !== wrapper.cTT) { // do the calculations and DOM access only if properties changed
 
@@ -185,6 +185,7 @@ extend(SVGRenderer.prototype, {
 				delete this.bBox;
 			}
 			element.innerHTML = this.textStr = value;
+			wrapper.htmlUpdateTransform();
 		};
 
 		// Various setters which rely on update transform
@@ -242,13 +243,16 @@ extend(SVGRenderer.prototype, {
 
 						// Ensure dynamically updating position when any parent is translated
 						each(parents.reverse(), function (parentGroup) {
-							var htmlGroupStyle;
+							var htmlGroupStyle,
+								cls = attr(parentGroup.element, 'class');
+
+							if (cls) {
+								cls = { className: cls };
+							} // else null
 
 							// Create a HTML div and append it to the parent div to emulate
 							// the SVG group structure
-							htmlGroup = parentGroup.div = parentGroup.div || createElement(DIV, {
-								className: attr(parentGroup.element, 'class')
-							}, {
+							htmlGroup = parentGroup.div = parentGroup.div || createElement(DIV, cls, {
 								position: ABSOLUTE,
 								left: (parentGroup.translateX || 0) + PX,
 								top: (parentGroup.translateY || 0) + PX
@@ -269,10 +273,11 @@ extend(SVGRenderer.prototype, {
 									htmlGroupStyle.top = value + PX;
 									parentGroup[key] = value;
 									parentGroup.doTransform = true;
-								},
-								visibilitySetter: function (value, key) {
-									htmlGroupStyle[key] = value;
 								}
+							});
+							wrap(parentGroup, 'visibilitySetter', function (proceed, value, key, elem) {
+								proceed.call(this, value, key, elem);
+								htmlGroupStyle[key] = value;
 							});
 						});
 

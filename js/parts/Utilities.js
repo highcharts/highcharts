@@ -258,6 +258,13 @@ function pad(number, length) {
 }
 
 /**
+ * Return a length based on either the integer value, or a percentage of a base.
+ */
+function relativeLength (value, base) {
+	return (/%$/).test(value) ? base * parseFloat(value) / 100 : parseFloat(value);
+}
+
+/**
  * Wrap a method with extended functionality, preserving the original function
  * @param {Object} obj The context object that the method belongs to 
  * @param {String} method The name of the method to extend
@@ -287,7 +294,7 @@ function getTZOffset(timestamp) {
  */
 dateFormat = function (format, timestamp, capitalize) {
 	if (!defined(timestamp) || isNaN(timestamp)) {
-		return 'Invalid date';
+		return defaultOptions.lang.invalidDate || '';
 	}
 	format = pick(format, '%Y-%m-%d %H:%M:%S');
 
@@ -592,9 +599,9 @@ function error (code, stop) {
  * Fix JS round off float errors
  * @param {Number} num
  */
-function correctFloat(num) {
+function correctFloat(num, prec) {
 	return parseFloat(
-		num.toPrecision(14)
+		num.toPrecision(prec || 14)
 	);
 }
 
@@ -605,7 +612,7 @@ function correctFloat(num) {
  * @param {Object} chart
  */
 function setAnimation(animation, chart) {
-	globalAnimation = pick(animation, chart.animation);
+	chart.renderer.globalAnimation = pick(animation, chart.animation);
 }
 
 /**

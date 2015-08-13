@@ -397,8 +397,12 @@ extend(Point.prototype, {
 
 	/**
 	 * Runs on mouse over the point
+	 *
+	 * @param {Object} e The event arguments
+	 * @param {Boolean} byProximity Falsy for kd points that are closest to the mouse, or to 
+	 *        actually hovered points. True for other points in shared tooltip.
 	 */
-	onMouseOver: function (e) {
+	onMouseOver: function (e, byProximity) {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
@@ -414,17 +418,22 @@ extend(Point.prototype, {
 			hoverPoint.onMouseOut();
 		}
 
-		// trigger the event
-		point.firePointEvent('mouseOver');
+		if (point.series) { // It may have been destroyed, #4130
 
-		// update the tooltip
-		if (tooltip && (!tooltip.shared || series.noSharedTooltip)) {
-			tooltip.refresh(point, e);
+			// trigger the event
+			point.firePointEvent('mouseOver');
+
+			// update the tooltip
+			if (tooltip && (!tooltip.shared || series.noSharedTooltip)) {
+				tooltip.refresh(point, e);
+			}
+
+			// hover this
+			point.setState(HOVER_STATE);
+			if (!byProximity) {
+				chart.hoverPoint = point;
+			}
 		}
-
-		// hover this
-		point.setState(HOVER_STATE);
-		chart.hoverPoint = point;
 	},
 
 	/**
@@ -561,6 +570,7 @@ extend(Point.prototype, {
 
 			if (stateMarkerGraphic) {
 				stateMarkerGraphic[state && chart.isInsidePlot(plotX, plotY, chart.inverted) ? 'show' : 'hide'](); // #2450
+				stateMarkerGraphic.element.point = point; // #4310
 			}
 		}
 
@@ -638,6 +648,8 @@ extend(Series.prototype, {
 			tooltip = chart.tooltip,
 			hoverPoint = chart.hoverPoint;
 
+		chart.hoverSeries = null; // #182, set to null before the mouseOut event fires
+
 		// trigger mouse out on the point, which must be in this series
 		if (hoverPoint) {
 			hoverPoint.onMouseOut();
@@ -656,7 +668,6 @@ extend(Series.prototype, {
 
 		// set normal state
 		series.setState();
-		chart.hoverSeries = null;
 	},
 
 	/**

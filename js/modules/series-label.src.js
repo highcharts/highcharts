@@ -93,6 +93,8 @@
             if (d) {
                 this.graph.attr({ d: d });
             }
+            // Last point
+            interpolated.push(points[points.length - 1]);
 
         // Interpolate
         } else {
@@ -400,7 +402,7 @@
                         top: best.y,
                         bottom: best.y + bBox.height
                     });
-                    series.labelBySeries[isNew ? 'attr' : 'animate']({
+                    series.labelBySeries.attr({
                         x: best.x,
                         y: best.y
                     });

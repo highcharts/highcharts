@@ -44,7 +44,7 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 /**
  * The MapAreaPoint object
  */
-var MapAreaPoint = extendClass(Point, {
+var MapAreaPoint = extendClass(Point, extend({
 	/**
 	 * Extend the Point object to split paths
 	 */
@@ -70,21 +70,6 @@ var MapAreaPoint = extendClass(Point, {
 		}
 		
 		return point;
-	},
-
-	/**
-	 * Set the visibility of a single map area
-	 */
-	setVisible: function (vis) {
-		var point = this,
-			method = vis ? 'show' : 'hide';
-
-		// Show and hide associated elements
-		each(['graphic', 'dataLabel'], function (key) {
-			if (point[key]) {
-				point[key][method]();
-			}
-		});
 	},
 
 	/**
@@ -158,7 +143,8 @@ var MapAreaPoint = extendClass(Point, {
 		);
 		series.chart.redraw();
 	}
-});
+}, colorPointMixin)
+);
 
 /**
  * Add the series type
@@ -171,6 +157,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	useMapGeometry: true, // get axis extremes from paths, not values
 	forceDL: true,
 	searchPoint: noop,
+	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	preserveAspectRatio: true, // X axis and Y axis must have same translation slope
 	/**
 	 * Get the bounding box of all paths in the map combined.
@@ -496,10 +483,9 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				each(series.points, function (point) {
 
 					// Reset color on update/redraw
-					if (point.graphic) {
-						point.graphic.attr('fill', point.color);
+					if (point.shapeArgs) {
+						point.shapeArgs.fill = point.color;
 					}
-
 				});
 			}
 

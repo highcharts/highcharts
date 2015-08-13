@@ -10,7 +10,7 @@ SVGElement.prototype = {
 	opacity: 1,
 	// For labels, these CSS properties are applied to the <text> node directly
 	textProps: ['fontSize', 'fontWeight', 'fontFamily', 'fontStyle', 'color', 
-		'lineHeight', 'width', 'textDecoration', 'textShadow'],
+		'lineHeight', 'width', 'textDecoration', 'textOverflow', 'textShadow'],
 	
 	/**
 	 * Initialize the SVG renderer
@@ -32,7 +32,7 @@ SVGElement.prototype = {
 	 * @param {Function} complete Function to perform at the end of animation
 	 */
 	animate: function (params, options, complete) {
-		var animOptions = pick(options, globalAnimation, true);
+		var animOptions = pick(options, this.renderer.globalAnimation, true);
 		stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
 		if (animOptions) {
 			animOptions = merge(animOptions, {}); //#2625
@@ -41,10 +41,7 @@ SVGElement.prototype = {
 			}
 			animate(this, params, animOptions);
 		} else {
-			this.attr(params);
-			if (complete) {
-				complete();
-			}
+			this.attr(params, null, complete);
 		}
 		return this;
 	},
@@ -165,13 +162,20 @@ SVGElement.prototype = {
 		var elem = this.element,
 			tspans,
 			hasContrast = textShadow.indexOf('contrast') !== -1,
+			styles = {},
 			// IE10 and IE11 report textShadow in elem.style even though it doesn't work. Check
 			// this again with new IE release. In exports, the rendering is passed to PhantomJS. 
 			supports = this.renderer.forExport || (elem.style.textShadow !== UNDEFINED && !isIE);
 
 		// When the text shadow is set to contrast, use dark stroke for light text and vice versa
 		if (hasContrast) {
-			textShadow = textShadow.replace(/contrast/g, this.renderer.getContrast(elem.style.fill));
+			styles.textShadow = textShadow = textShadow.replace(/contrast/g, this.renderer.getContrast(elem.style.fill));
+		}
+
+		// Safari with retina displays as well as PhantomJS bug (#3974). Firefox does not tolerate this,
+		// it removes the text shadows.
+		if (isWebKit) {
+			styles.textRendering = 'geometricPrecision';
 		}
 
 		/* Selective side-by-side testing in supported browser (http://jsfiddle.net/highcharts/73L1ptrh/)
@@ -183,11 +187,7 @@ SVGElement.prototype = {
 
 		// No reason to polyfill, we've got native support
 		if (supports) {
-			if (hasContrast) { // Apply the altered style
-				css(elem, {
-					textShadow: textShadow
-				});
-			}
+			css(elem, styles); // Apply altered textShadow or textRendering workaround
 		} else {
 
 			this.fakeTS = true; // Fake text shadow
@@ -244,7 +244,7 @@ SVGElement.prototype = {
 	 * @param {Object|String} hash
 	 * @param {Mixed|Undefined} val
 	 */
-	attr: function (hash, val) {
+	attr: function (hash, val, complete) {
 		var key,
 			value,
 			element = this.element,
@@ -301,6 +301,11 @@ SVGElement.prototype = {
 				this.doTransform = false;
 			}
 
+		}
+
+		// In accordance with animate, run a complete callback
+		if (complete) {
+			complete();
 		}
 
 		return ret;
@@ -780,7 +785,9 @@ SVGElement.prototype = {
 			}
 
 			// Cache it
-			renderer.cache[cacheKey] = bBox;
+			if (cacheKey) {
+				renderer.cache[cacheKey] = bBox;
+			}
 		}
 		return bBox;
 	},
@@ -789,13 +796,7 @@ SVGElement.prototype = {
 	 * Show the element
 	 */
 	show: function (inherit) {
-		// IE9-11 doesn't handle visibilty:inherit well, so we remove the attribute instead (#2881)
-		if (inherit && this.element.namespaceURI === SVG_NS) {
-			this.element.removeAttribute('visibility');
-		} else {
-			this.attr({ visibility: inherit ? 'inherit' : VISIBLE });
-		}
-		return this;
+		return this.attr({ visibility: inherit ? 'inherit' : VISIBLE });
 	},
 
 	/**
@@ -1054,7 +1055,11 @@ SVGElement.prototype = {
 			titleNode = doc.createElementNS(SVG_NS, 'title');
 			this.element.appendChild(titleNode);
 		}
-		titleNode.textContent = (String(pick(value), '')).replace(/<[^>]*>/g, ''); // #3276 #3895
+		titleNode.appendChild(
+			doc.createTextNode(
+				(String(pick(value), '')).replace(/<[^>]*>/g, '') // #3276, #3895
+			)
+		);
 	},
 	textSetter: function (value) {
 		if (value !== this.textStr) {
@@ -1072,6 +1077,14 @@ SVGElement.prototype = {
 			element.setAttribute(key, value);
 		} else if (value) {
 			this.colorGradient(value, key, element);
+		}
+	},
+	visibilitySetter: function (value, key, element) {
+		// IE9-11 doesn't handle visibilty:inherit well, so we remove the attribute instead (#2881, #3909)
+		if (value === 'inherit') {
+			element.removeAttribute(key);
+		} else {
+			element.setAttribute(key, value);
 		}
 	},
 	zIndexSetter: function (value, key) {
@@ -1586,7 +1599,7 @@ SVGRenderer.prototype = {
 	 */
 	getContrast: function (color) {
 		color = Color(color).rgba;
-		return color[0] + color[1] + color[2] > 384 ? '#000' : '#FFF';
+		return color[0] + color[1] + color[2] > 384 ? '#000000' : '#FFFFFF';
 	},
 
 	/**
@@ -1698,9 +1711,9 @@ SVGRenderer.prototype = {
 		};
 
 		return label
-			.on('click', function () {
+			.on('click', function (e) {
 				if (curState !== 3) {
-					callback.call(label);
+					callback.call(label, e);
 				}
 			})
 			.attr(normalState)
@@ -2110,11 +2123,8 @@ SVGRenderer.prototype = {
 				safeDistance = r + halfDistance,
 				anchorX = options && options.anchorX,
 				anchorY = options && options.anchorY,
-				path,
-				normalizer = mathRound(options.strokeWidth || 0) % 2 / 2; // mathRound because strokeWidth can sometimes have roundoff errors;
+				path;
 
-			x += normalizer;
-			y += normalizer;
 			path = [
 				'M', x + r, y, 
 				'L', x + w - r, y, // top side
@@ -2249,17 +2259,22 @@ SVGRenderer.prototype = {
 	 * Utility to return the baseline offset and total line height from the font size
 	 */
 	fontMetrics: function (fontSize, elem) {
+		var lineHeight,
+			baseline,
+			style;
+
 		fontSize = fontSize || this.style.fontSize;
 		if (elem && win.getComputedStyle) {
 			elem = elem.element || elem; // SVGElement
-			fontSize = win.getComputedStyle(elem, "").fontSize;
+			style = win.getComputedStyle(elem, "");
+			fontSize = style && style.fontSize; // #4309, the style doesn't exist inside a hidden iframe in Firefox
 		}
 		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
 
 		// Empirical values found by comparing font size and bounding box height.
 		// Applies to the default font family. http://jsfiddle.net/highcharts/7xvn7/
-		var lineHeight = fontSize < 24 ? fontSize + 3 : mathRound(fontSize * 1.2),
-			baseline = mathRound(lineHeight * 0.8);
+		lineHeight = fontSize < 24 ? fontSize + 3 : mathRound(fontSize * 1.2);
+		baseline = mathRound(lineHeight * 0.8);
 
 		return {
 			h: lineHeight,
@@ -2342,13 +2357,17 @@ SVGRenderer.prototype = {
 
 				// create the border box if it is not already present
 				if (!box) {
-					boxX = mathRound(-alignFactor * padding);
-					boxY = baseline ? -baselineOffset : 0;
+					boxX = mathRound(-alignFactor * padding) + crispAdjust;
+					boxY = (baseline ? -baselineOffset : 0) + crispAdjust;
 
 					wrapper.box = box = shape ?
 						renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height, deferredAttr) :
 						renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
-					box.attr('fill', NONE).add(wrapper);
+
+					if (!box.isImg) { // #4324, fill "none" causes it to be ignored by mouse events in IE
+						box.attr('fill', NONE);
+					}
+					box.add(wrapper);
 				}
 
 				// apply the box attributes
@@ -2383,11 +2402,7 @@ SVGRenderer.prototype = {
 			if (x !== text.x || y !== text.y) {
 				text.attr('x', x);
 				if (y !== UNDEFINED) {
-					// As a workaround for #3649, use translation instead of y attribute. #3649
-					// is a rendering bug in WebKit for Retina (Mac, iOS, PhantomJS) that 
-					// results in duplicated text when an y attribute is used in combination 
-					// with a CSS text-style.
-					text.attr(text.element.nodeName === 'SPAN' ? 'y' : 'translateY', y);
+					text.attr('y', y);
 				}
 			}
 
@@ -2484,7 +2499,7 @@ SVGRenderer.prototype = {
 		};
 		wrapper.anchorXSetter = function (value, key) {
 			anchorX = value;
-			boxAttr(key, value + crispAdjust - wrapperX);
+			boxAttr(key, mathRound(value) - crispAdjust - wrapperX);
 		};
 		wrapper.anchorYSetter = function (value, key) {
 			anchorY = value;

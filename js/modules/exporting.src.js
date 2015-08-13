@@ -220,16 +220,24 @@ extend(Chart.prototype, {
 
 			// IE specific
 			.replace(/<IMG /g, '<image ')
+			.replace(/<(\/?)TITLE>/g, '<$1title>')
 			.replace(/height=([^" ]+)/g, 'height="$1"')
 			.replace(/width=([^" ]+)/g, 'width="$1"')
 			.replace(/hc-svg-href="([^"]+)">/g, 'xlink:href="$1"/>')
-			.replace(/ id=([^" >]+)/g, 'id="$1"') // #4003
+			.replace(/ id=([^" >]+)/g, ' id="$1"') // #4003
 			.replace(/class=([^" >]+)/g, 'class="$1"')
 			.replace(/ transform /g, ' ')
 			.replace(/:(path|rect)/g, '$1')
 			.replace(/style="([^"]+)"/g, function (s) {
 				return s.toLowerCase();
 			});
+	},
+
+	/**
+	 * Return innerHTML of chart. Used as hook for plugins.
+	 */
+	getChartHTML: function () {
+		return this.container.innerHTML;
 	},
 
 	/**
@@ -331,7 +339,7 @@ extend(Chart.prototype, {
 		});
 
 		// get the SVG from the container's innerHTML
-		svg = chartCopy.container.innerHTML;
+		svg = chartCopy.getChartHTML();
 
 		// free up memory
 		options = null;
@@ -529,7 +537,8 @@ extend(Chart.prototype, {
 							onmouseout: function () {
 								css(this, menuItemStyle);
 							},
-							onclick: function () {
+							onclick: function (e) {
+								e.stopPropagation();
 								hide();
 								if (item.onclick) {
 									item.onclick.apply(chart, arguments);
@@ -612,8 +621,9 @@ extend(Chart.prototype, {
 		delete attr.states;
 
 		if (onclick) {
-			callback = function () {
-				onclick.apply(chart, arguments);
+			callback = function (e) {
+				e.stopPropagation();
+				onclick.call(chart, e);
 			};
 
 		} else if (menuItems) {

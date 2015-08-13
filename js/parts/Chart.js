@@ -202,10 +202,13 @@ Chart.prototype = {
 			}
 		}
 
-		// handle updated data in the series
+		// Handle updated data in the series
 		each(series, function (serie) {
-			if (serie.isDirty) { // prepare the data so axis can read it
+			if (serie.isDirty) {
 				if (serie.options.legendType === 'point') {
+					if (serie.updateTotals) {
+						serie.updateTotals();
+					}
 					redrawLegend = true;
 				}
 			}
@@ -250,16 +253,16 @@ Chart.prototype = {
 
 			// redraw axes
 			each(axes, function (axis) {
-				
+
 				// Fire 'afterSetExtremes' only if extremes are set
-				if (axis.isDirtyExtremes) { // #821
-					axis.isDirtyExtremes = false;
+				var key = axis.min + ',' + axis.max;
+				if (axis.extKey !== key) { // #821, #4452
+					axis.extKey = key;
 					afterRedraw.push(function () { // prevent a recursive call to chart.redraw() (#1119)
 						fireEvent(axis, 'afterSetExtremes', extend(axis.eventArgs, axis.getExtremes())); // #747, #751
 						delete axis.eventArgs;
 					});
 				}
-				
 				if (isDirtyBox || hasStackedSeries) {
 					axis.redraw();
 				}
@@ -391,26 +394,6 @@ Chart.prototype = {
 			return serie.selected;
 		});
 	},
-
-	/**
-	 * Generate stacks for each series and calculate stacks total values
-	 */
-	getStacks: function () {
-		var chart = this;
-
-		// reset stacks for each yAxis
-		each(chart.yAxis, function (axis) {
-			if (axis.stacks && axis.hasVisibleSeries) {
-				axis.oldStacks = axis.stacks;
-			}
-		});
-
-		each(chart.series, function (series) {
-			if (series.options.stacking && (series.visible === true || chart.options.chart.ignoreHiddenSeries === false)) {
-				series.stackKey = series.type + pick(series.options.stack, '');
-			}
-		});
-	},	
 
 	/**
 	 * Show the title and subtitle of the chart
@@ -780,7 +763,9 @@ Chart.prototype = {
 		var chart = this,
 			chartWidth,
 			chartHeight,
-			fireEndResize;
+			fireEndResize,
+			renderer = chart.renderer,
+			globalAnimation = renderer.globalAnimation;
 
 		// Handle the isResizing counter
 		chart.isResizing += 1;
@@ -812,7 +797,7 @@ Chart.prototype = {
 		}, globalAnimation);
 
 		chart.setChartSize(true);
-		chart.renderer.setSize(chartWidth, chartHeight, animation);
+		renderer.setSize(chartWidth, chartHeight, animation);
 
 		// handle axes
 		chart.maxTicks = null;
@@ -1163,7 +1148,10 @@ Chart.prototype = {
 		// Legend
 		chart.legend = new Legend(chart, options.legend);
 
-		chart.getStacks(); // render stacks
+		// Get stacks
+		if (chart.getStacks) {
+			chart.getStacks();
+		}
 
 		// Get chart margins
 		chart.getMargins(true);

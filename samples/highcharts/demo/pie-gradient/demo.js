@@ -3,7 +3,11 @@ $(function () {
     // Radialize the colors
     Highcharts.getOptions().colors = Highcharts.map(Highcharts.getOptions().colors, function (color) {
         return {
-            radialGradient: { cx: 0.5, cy: 0.3, r: 0.7 },
+            radialGradient: {
+                cx: 0.5,
+                cy: 0.3,
+                r: 0.7
+            },
             stops: [
                 [0, color],
                 [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
@@ -16,10 +20,11 @@ $(function () {
         chart: {
             plotBackgroundColor: null,
             plotBorderWidth: null,
-            plotShadow: false
+            plotShadow: false,
+            type: 'pie'
         },
         title: {
-            text: 'Browser market shares at a specific website, 2014'
+            text: 'Browser market shares. January, 2015 to May, 2015'
         },
         tooltip: {
             pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
@@ -39,22 +44,19 @@ $(function () {
             }
         },
         series: [{
-            type: 'pie',
-            name: 'Browser share',
+            name: "Brands",
             data: [
-                ['Firefox',   45.0],
-                ['IE',       26.8],
+                {name: "Microsoft Internet Explorer", y: 56.33},
                 {
-                    name: 'Chrome',
-                    y: 12.8,
+                    name: "Chrome",
+                    y: 24.03,
                     sliced: true,
                     selected: true
                 },
-                ['Safari',    8.5],
-                ['Opera',     6.2],
-                ['Others',   0.7]
+                {name: "Firefox", y: 10.38},
+                {name: "Safari", y: 4.77}, {name: "Opera", y: 0.91},
+                {name: "Proprietary or Undetectable", y: 0.2}
             ]
         }]
     });
 });
-

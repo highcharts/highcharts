@@ -24,42 +24,47 @@
 
 	extend(Axis.prototype, {
 		isInBreak: function (brk, val) {
-			var repeat = brk.repeat || Infinity,
+			var ret,
+				repeat = brk.repeat || Infinity,
 				from = brk.from,
 				length = brk.to - brk.from,
 				test = (val >= from ? (val - from) % repeat :  repeat - ((from - val) % repeat));
 
 			if (!brk.inclusive) {
-				return (test < length && test !== 0);
+				ret = test < length && test !== 0;
 			} else {
-				return (test <= length);
+				ret = test <= length;
 			}
+			return ret;
 		},
 
 		isInAnyBreak: function (val, testKeep) {
-			// Sanity Check			
-			if (!this.options.breaks) { return false; }
 
 			var breaks = this.options.breaks,
-				i = breaks.length,
-				inbrk = false,
-				keep = false;
+				i = breaks && breaks.length,
+				inbrk,
+				keep,
+				ret;
 
+			
+			if (i) { 
 
-			while (i--) {
-				if (this.isInBreak(breaks[i], val)) {
-					inbrk = true;
-					if (!keep) {
-						keep = pick(breaks[i].showPoints, this.isXAxis ? false : true);
+				while (i--) {
+					if (this.isInBreak(breaks[i], val)) {
+						inbrk = true;
+						if (!keep) {
+							keep = pick(breaks[i].showPoints, this.isXAxis ? false : true);
+						}
 					}
 				}
-			}
 
-			if (inbrk && testKeep) {
-				return inbrk && !keep;
-			} else {
-				return inbrk;
+				if (inbrk && testKeep) {
+					ret = inbrk && !keep;
+				} else {
+					ret = inbrk;
+				}
 			}
+			return ret;
 		}
 	});
 
@@ -110,7 +115,7 @@
 				for (i = 0; i < axis.breakArray.length; i++) {
 					brk = axis.breakArray[i];
 					if (brk.to <= val) {
-						nval -= (brk.len);
+						nval -= brk.len;
 					} else if (brk.from >= val) {
 						break;
 					} else if (axis.isInBreak(brk, val)) {
@@ -132,12 +137,11 @@
 					if (brk.from >= nval) {
 						break;
 					} else if (brk.to < nval) {
-						nval += (brk.to - brk.from);
+						nval += brk.len;
 					} else if (axis.isInBreak(brk, nval)) {
-						nval += (brk.to - brk.from);
+						nval += brk.len;
 					}
 				}
-
 				return nval;
 			};
 
@@ -168,14 +172,15 @@
 					i,
 					j;
 
-				// Min & Max Check
+				// Min & max check (#4247)
 				for (i in breaks) {
 					brk = breaks[i];
+					repeat = brk.repeat || Infinity;
 					if (axis.isInBreak(brk, min)) {
-						min += (brk.to % brk.repeat) - (min % brk.repeat);
+						min += (brk.to % repeat) - (min % repeat);
 					}
 					if (axis.isInBreak(brk, max)) {
-						max -= (max % brk.repeat) - (brk.from % brk.repeat);
+						max -= (max % repeat) - (brk.from % repeat);
 					}
 				}
 
@@ -242,7 +247,6 @@
 
 				axis.min = min;
 				axis.max = max;
-
 			};
 		}
 	});
@@ -256,16 +260,21 @@
 			yAxis = series.yAxis,
 			points = series.points,
 			point,
-			i = points.length;
+			i = points.length,
+			connectNulls = series.options.connectNulls,
+			nullGap;
 
 
 		if (xAxis && yAxis && (xAxis.options.breaks || yAxis.options.breaks)) {
 			while (i--) {
 				point = points[i];
 
-				if (xAxis.isInAnyBreak(point.x, true) || yAxis.isInAnyBreak(point.y, true)) {
+				nullGap = point.y === null && connectNulls === false; // respect nulls inside the break (#4275)
+				if (!nullGap && (xAxis.isInAnyBreak(point.x, true) || yAxis.isInAnyBreak(point.y, true))) {
 					points.splice(i, 1);
-					this.data[i].destroyElements(); // removes the graphics for this point if they exist
+					if (this.data[i]) {
+						this.data[i].destroyElements(); // removes the graphics for this point if they exist
+					}
 				}
 			}
 		}
@@ -279,6 +288,8 @@
 			points = series.points,
 			yAxis = series.yAxis,
 			breaks = yAxis.breakArray || [],
+			threshold = pick(this.options.threshold, yAxis.min),
+			eventName,
 			point,
 			brk,
 			i,
@@ -290,12 +301,15 @@
 			y = point.stackY || point.y;
 			for (j = 0; j < breaks.length; j++) {
 				brk = breaks[j];
-				if (y < brk.from) {
-					break;
-				} else if (y > brk.to) {
-					fireEvent(yAxis, 'pointBreak', {point: point, brk: brk});
-				} else {
-					fireEvent(yAxis, 'pointInBreak', {point: point, brk: brk});
+				eventName = false;
+
+				if ((threshold < brk.from && y > brk.to) || (threshold > brk.from && y < brk.from)) { 
+						eventName = 'pointBreak';
+				} else if ((threshold < brk.from && y > brk.from && y < brk.to) || (threshold > brk.from && y > brk.to && y < brk.from)) { // point falls inside the break
+						eventName = 'pointInBreak'; // docs
+				} 
+				if (eventName) {
+					fireEvent(yAxis, eventName, {point: point, brk: brk});
 				}
 			}
 		}

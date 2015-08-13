@@ -18,14 +18,14 @@ $(function () {
         },
 
         subtitle: {
-            text: 'Temperature variation by day and hour through April 2013',
+            text: 'Temperature variation by day and hour through May 2015',
             align: 'left'
         },
 
         xAxis: {
             tickPixelInterval: 50,
-            min: Date.UTC(2013, 3, 1),
-            max: Date.UTC(2013, 3, 30)
+            min: Date.UTC(2015, 4, 1),
+            max: Date.UTC(2015, 4, 30)
         },
 
         yAxis: {

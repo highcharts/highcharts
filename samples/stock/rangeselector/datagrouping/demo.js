@@ -2,7 +2,7 @@ $(function () {
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
         // Create the chart
-        $('#container').highcharts('StockChart', {            
+        $('#container').highcharts('StockChart', {
 
             rangeSelector : {
                 allButtonsEnabled: true,
@@ -28,7 +28,7 @@ $(function () {
                     dataGrouping: {
                         forced: true,
                         units: [['month', [1]]]
-                    } 
+                    }
                 }],
                 buttonTheme: {
                     width: 60

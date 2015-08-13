@@ -35,6 +35,7 @@ defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 seriesTypes.arearange = extendClass(seriesTypes.area, {
 	type: 'arearange',
 	pointArrayMap: ['low', 'high'],
+	dataLabelCollections: ['dataLabel', 'dataLabelUpper'],
 	toYData: function (point) {
 		return [point.low, point.high];
 	},
@@ -170,6 +171,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			dataLabelOptions = this.options.dataLabels,
 			align = dataLabelOptions.align,
 			point,
+			up,
 			inverted = this.chart.inverted;
 			
 		if (dataLabelOptions.enabled || this._hasPointLabels) {
@@ -178,26 +180,29 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			i = length;
 			while (i--) {
 				point = data[i];
-				
-				// Set preliminary values
-				point.y = point.high;
-				point._plotY = point.plotY;
-				point.plotY = point.plotHigh;
-				
-				// Store original data labels and set preliminary label objects to be picked up 
-				// in the uber method
-				originalDataLabels[i] = point.dataLabel;
-				point.dataLabel = point.dataLabelUpper;
-				
-				// Set the default offset
-				point.below = false;
-				if (inverted) {
-					if (!align) {
-						dataLabelOptions.align = 'left';
+				if (point) {
+					up = point.plotHigh > point.plotLow;
+					
+					// Set preliminary values
+					point.y = point.high;
+					point._plotY = point.plotY;
+					point.plotY = point.plotHigh;
+					
+					// Store original data labels and set preliminary label objects to be picked up 
+					// in the uber method
+					originalDataLabels[i] = point.dataLabel;
+					point.dataLabel = point.dataLabelUpper;
+					
+					// Set the default offset
+					point.below = up;
+					if (inverted) {
+						if (!align) {
+							dataLabelOptions.align = up ? 'right' : 'left';
+						}
+						dataLabelOptions.x = dataLabelOptions.xHigh;								
+					} else {
+						dataLabelOptions.y = dataLabelOptions.yHigh;
 					}
-					dataLabelOptions.x = dataLabelOptions.xHigh;								
-				} else {
-					dataLabelOptions.y = dataLabelOptions.yHigh;
 				}
 			}
 			
@@ -209,24 +214,27 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			i = length;
 			while (i--) {
 				point = data[i];
-				
-				// Move the generated labels from step 1, and reassign the original data labels
-				point.dataLabelUpper = point.dataLabel;
-				point.dataLabel = originalDataLabels[i];
-				
-				// Reset values
-				point.y = point.low;
-				point.plotY = point._plotY;
-				
-				// Set the default offset
-				point.below = true;
-				if (inverted) {
-					if (!align) {
-						dataLabelOptions.align = 'right';
+				if (point) {
+					up = point.plotHigh > point.plotLow;
+					
+					// Move the generated labels from step 1, and reassign the original data labels
+					point.dataLabelUpper = point.dataLabel;
+					point.dataLabel = originalDataLabels[i];
+					
+					// Reset values
+					point.y = point.low;
+					point.plotY = point._plotY;
+					
+					// Set the default offset
+					point.below = !up;
+					if (inverted) {
+						if (!align) {
+							dataLabelOptions.align = up ? 'left' : 'right';
+						}
+						dataLabelOptions.x = dataLabelOptions.xLow;
+					} else {
+						dataLabelOptions.y = dataLabelOptions.yLow;
 					}
-					dataLabelOptions.x = dataLabelOptions.xLow;
-				} else {
-					dataLabelOptions.y = dataLabelOptions.yLow;
 				}
 			}
 			if (seriesProto.drawDataLabels) {

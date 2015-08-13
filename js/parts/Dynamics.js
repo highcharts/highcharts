@@ -169,11 +169,9 @@ extend(Point.prototype, {
 			if (isObject(options) && !isArray(options)) {
 				// Defer the actual redraw until getAttribs has been called (#3260)
 				point.redraw = function () {
-					if (graphic) {
+					if (graphic && graphic.element) {
 						if (options && options.marker && options.marker.symbol) {
 							point.graphic = graphic.destroy();
-						} else {
-							graphic.attr(point.pointAttr[point.state || '']);
 						}
 					}
 					if (options && options.dataLabels && point.dataLabel) { // #2468
@@ -198,9 +196,8 @@ extend(Point.prototype, {
 				chart.isDirtyBox = true;
 			}
 
-			if (chart.legend.display && seriesOptions.legendType === 'point') { // #1831, #1885, #3934
-				series.updateTotals();
-				chart.legend.clearItems();
+			if (seriesOptions.legendType === 'point') { // #1831, #1885
+				chart.isDirtyLegend = true;
 			}
 			if (redraw) {
 				chart.redraw(animation);
@@ -475,7 +472,7 @@ extend(Axis.prototype, {
 		newOptions = chart.options[this.coll][this.options.index] = merge(this.userOptions, newOptions);
 
 		this.destroy(true);
-		this._addedPlotLB = UNDEFINED; // #1611, #2887
+		this._addedPlotLB = this.chart._labelPanes = UNDEFINED; // #1611, #2887, #4314
 
 		this.init(chart, extend(newOptions, { events: UNDEFINED }));
 
