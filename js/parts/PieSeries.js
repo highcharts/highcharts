@@ -426,7 +426,9 @@ var PieSeries = {
 
 				// draw the slice
 				if (graphic) {
-					graphic.animate(extend(shapeArgs, groupTranslation));				
+					graphic
+						.setRadialReference(series.center)
+						.animate(extend(shapeArgs, groupTranslation));				
 				} else {
 					attr = { 'stroke-linejoin': 'round' };
 					if (!point.visible) {
