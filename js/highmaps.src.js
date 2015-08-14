@@ -7512,15 +7512,17 @@ Axis.prototype = {
 	zoom: function (newMin, newMax) {
 		var dataMin = this.dataMin,
 			dataMax = this.dataMax,
-			options = this.options;
+			options = this.options,
+			min = mathMin(dataMin, pick(options.min, dataMin)),
+			max = mathMax(dataMax, pick(options.max, dataMax));
 
 		// Prevent pinch zooming out of range. Check for defined is for #1946. #1734.
 		if (!this.allowZoomOutside) {
-			if (defined(dataMin) && newMin <= mathMin(dataMin, pick(options.min, dataMin))) {
-				newMin = UNDEFINED;
+			if (defined(dataMin) && newMin <= min) {
+				newMin = min;
 			}
-			if (defined(dataMax) && newMax >= mathMax(dataMax, pick(options.max, dataMax))) {
-				newMax = UNDEFINED;
+			if (defined(dataMax) && newMax >= max) {
+				newMax = max;
 			}
 		}
 
