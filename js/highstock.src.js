@@ -11462,8 +11462,8 @@ Chart.prototype = {
 					if (serie.updateTotals) {
 						serie.updateTotals();
 					}
-					redrawLegend = true;
 				}
+				redrawLegend = true; // #2165 - redraw legend upon showing/hiding series
 			}
 		});
 
