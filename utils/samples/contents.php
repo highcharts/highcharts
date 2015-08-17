@@ -35,10 +35,17 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 				$('#batch-stop').toggle();
 			}
 
+			
+			
 
 			$(function () {
 
 				$(window).bind('keydown', parent.keyDown);
+
+				/*setInterval(function countFails() {
+					$('#count-fails').html('(' + ($('#main-nav li').length - 
+						$('#main-nav li.identical, #main-nav li.approved').length) + ')');
+				}, 3000);*/
 
 				$("#batch-compare").click(runBatch);
 
@@ -238,6 +245,7 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 		<a class="button" id="fails-only" title="Show only fails">
 			<i class="icon-filter"></i>
 			Fails only
+			<span id="count-fails"></span>
 		</a>
 
 		<div class="text">
@@ -314,7 +322,12 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 									} else {
 										$compareClass = 'identical';
 									}
-								} 
+								}
+
+								// No symbol for manual tests
+								if ($compareClass == 'manual') {
+									$dissIndex = '';
+								}
 
 								// Comments
 								if (isset($compare->$path->comment)) {

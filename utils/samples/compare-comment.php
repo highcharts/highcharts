@@ -8,7 +8,7 @@ $i = $_GET['i'];
 $updateContents = false;
 
 
-if (isset($_POST) && @$_POST['submit'] == 'OK') {
+if (isset($_POST) && (@$_POST['submit'] || @$_POST['submit-actual'])) {
 	$compare->$path->comment = (object) $_POST;
 	file_put_contents('temp/compare.json', json_encode($compare));
 	$updateContents = true;
@@ -25,8 +25,7 @@ $symbols = array('check', 'exclamation-sign');
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Comparison comment :: Highcharts Utils</title>
 		<script src="http://code.jquery.com/jquery.js"></script>
-		<script>
-		</script>
+		<link type="text/css" rel="stylesheet" href="style.css" />
 		
 		<style type="text/css">
 			.top-bar {
@@ -44,6 +43,14 @@ $symbols = array('check', 'exclamation-sign');
 				text-decoration: none;
 				font-weight: bold;
 			}
+			td {
+				font-size: 0.8em;
+			}
+			.desc {
+				font-style: italic;
+				color: #666;
+			}
+
 			input[type=text] {
 				min-width: 200px;
 			}
@@ -58,6 +65,15 @@ $symbols = array('check', 'exclamation-sign');
 
 		</style>
 		<script>
+
+		$(function () {
+			$('#submit-actual').click(function () {
+				$('#diff').attr(
+					'value',
+					$(this).data('diff')
+				);
+			});
+		});
 
 		<?php if ($focus) : ?>
 		$(function () {
@@ -100,7 +116,7 @@ $symbols = array('check', 'exclamation-sign');
 
 		<div style="margin: 10px">
 
-			<small>If the symbol is "check" and the approved diff equals the reported diff, it will appear green in the list on the left.</small>
+			<small class="desc">If the symbol is "check" and the approved diff equals the reported diff, it will appear green in the list on the left.</small>
 			<form action="" method="post">
 
 				<table>
@@ -129,7 +145,15 @@ $symbols = array('check', 'exclamation-sign');
 					</tr>
 					<tr>
 						<td></td>
-						<td><input type="submit" name="submit" value="OK" /></td>
+						<td>
+							<input type="submit" id="submit" name="submit" value="OK" />
+
+							<?php
+							if (isset($comment) && $comment->diff != $diff) {
+								echo "<input type='submit' name='submit-actual' id='submit-actual' data-diff='$diff' value='Approve $diff' />";
+							}
+							?>
+						</td>
 					</tr>
 				</table>
 			</form>
