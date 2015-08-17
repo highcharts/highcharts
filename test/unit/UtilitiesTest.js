@@ -319,6 +319,9 @@ UtilTest.prototype.testFormat = function () {
 UtilTest.prototype.testDateFormat = function () {
 	
 	// Issue #953
-	assertEquals('Two occurences of a pattern', '2012-01-01, 00:00 - 00:59', 
+	assertEquals('Two occurences of a pattern', '2012-01-01, 00:00 - 00:59',
 		dateFormat('%Y-%m-%d, %H:00 - %H:59', Date.UTC(2012, 0, 1, 0, 0, 0)));
+
+	assertEquals('Hours in 24 hours format', '5:55', dateFormat('%k:%M',
+		Date.UTC(2015, 0, 1, 5, 55, 0)));
 }
