@@ -63,11 +63,11 @@ $(function () {
             "value": 14
         },
         {
-            "hc-key": "us-wy-001",
+            "hc-key": "us-wy-007",
             "value": 15
         },
         {
-            "hc-key": "us-wy-007",
+            "hc-key": "us-wy-001",
             "value": 16
         },
         {

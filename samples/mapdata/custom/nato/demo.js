@@ -67,35 +67,35 @@ $(function () {
             "value": 15
         },
         {
-            "hc-key": "be",
+            "hc-key": "pl",
             "value": 16
         },
         {
-            "hc-key": "pl",
+            "hc-key": "sk",
             "value": 17
         },
         {
-            "hc-key": "sk",
+            "hc-key": "bg",
             "value": 18
         },
         {
-            "hc-key": "bg",
+            "hc-key": "lv",
             "value": 19
         },
         {
-            "hc-key": "lv",
+            "hc-key": "hu",
             "value": 20
         },
         {
-            "hc-key": "hu",
+            "hc-key": "lu",
             "value": 21
         },
         {
-            "hc-key": "lu",
+            "hc-key": "si",
             "value": 22
         },
         {
-            "hc-key": "si",
+            "hc-key": "be",
             "value": 23
         },
         {

@@ -107,15 +107,15 @@ $(function () {
             "value": 25
         },
         {
-            "hc-key": "mx-gj",
+            "hc-key": "mx-tm",
             "value": 26
         },
         {
-            "hc-key": "mx-tm",
+            "hc-key": "mx-co",
             "value": 27
         },
         {
-            "hc-key": "mx-co",
+            "hc-key": "mx-yu",
             "value": 28
         },
         {
@@ -123,7 +123,7 @@ $(function () {
             "value": 29
         },
         {
-            "hc-key": "mx-yu",
+            "hc-key": "mx-gj",
             "value": 30
         },
         {

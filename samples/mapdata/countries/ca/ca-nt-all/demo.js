@@ -19,11 +19,11 @@ $(function () {
             "value": 3
         },
         {
-            "hc-key": "ca-nt-6104",
+            "hc-key": "ca-nt-6102",
             "value": 4
         },
         {
-            "hc-key": "ca-nt-6102",
+            "hc-key": "ca-nt-6104",
             "value": 5
         }
     ];

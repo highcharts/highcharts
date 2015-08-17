@@ -7,11 +7,11 @@ $(function () {
             "value": 0
         },
         {
-            "hc-key": "us-al-05",
+            "hc-key": "us-al-04",
             "value": 1
         },
         {
-            "hc-key": "us-al-04",
+            "hc-key": "us-al-05",
             "value": 2
         },
         {

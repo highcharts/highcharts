@@ -103,15 +103,15 @@ $(function () {
             "value": 24
         },
         {
-            "hc-key": "id-1024",
+            "hc-key": "id-jr",
             "value": 25
         },
         {
-            "hc-key": "id-jk",
+            "hc-key": "id-1024",
             "value": 26
         },
         {
-            "hc-key": "id-jr",
+            "hc-key": "id-jk",
             "value": 27
         },
         {

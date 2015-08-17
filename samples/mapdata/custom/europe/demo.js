@@ -99,35 +99,35 @@ $(function () {
             "value": 23
         },
         {
-            "hc-key": "pl",
+            "hc-key": "lt",
             "value": 24
         },
         {
-            "hc-key": "lt",
+            "hc-key": "si",
             "value": 25
         },
         {
-            "hc-key": "si",
+            "hc-key": "ba",
             "value": 26
         },
         {
-            "hc-key": "ba",
+            "hc-key": "mc",
             "value": 27
         },
         {
-            "hc-key": "mc",
+            "hc-key": "al",
             "value": 28
         },
         {
-            "hc-key": "al",
+            "hc-key": "cnm",
             "value": 29
         },
         {
-            "hc-key": "cnm",
+            "hc-key": "nc",
             "value": 30
         },
         {
-            "hc-key": "nc",
+            "hc-key": "rs",
             "value": 31
         },
         {
@@ -135,47 +135,47 @@ $(function () {
             "value": 32
         },
         {
-            "hc-key": "rs",
+            "hc-key": "me",
             "value": 33
         },
         {
-            "hc-key": "me",
+            "hc-key": "li",
             "value": 34
         },
         {
-            "hc-key": "li",
+            "hc-key": "at",
             "value": 35
         },
         {
-            "hc-key": "at",
+            "hc-key": "sk",
             "value": 36
         },
         {
-            "hc-key": "sk",
+            "hc-key": "hu",
             "value": 37
         },
         {
-            "hc-key": "hu",
+            "hc-key": "ad",
             "value": 38
         },
         {
-            "hc-key": "ad",
+            "hc-key": "lu",
             "value": 39
         },
         {
-            "hc-key": "lu",
+            "hc-key": "ch",
             "value": 40
         },
         {
-            "hc-key": "ch",
+            "hc-key": "be",
             "value": 41
         },
         {
-            "hc-key": "be",
+            "hc-key": "kv",
             "value": 42
         },
         {
-            "hc-key": "kv",
+            "hc-key": "pl",
             "value": 43
         },
         {

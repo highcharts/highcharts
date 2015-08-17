@@ -63,7 +63,7 @@ $(function () {
             "value": 14
         },
         {
-            "hc-key": "us-fl-17",
+            "hc-key": "us-fl-06",
             "value": 15
         },
         {
@@ -71,31 +71,31 @@ $(function () {
             "value": 16
         },
         {
-            "hc-key": "us-fl-09",
+            "hc-key": "us-fl-17",
             "value": 17
         },
         {
-            "hc-key": "us-fl-10",
+            "hc-key": "us-fl-09",
             "value": 18
         },
         {
-            "hc-key": "us-fl-07",
+            "hc-key": "us-fl-10",
             "value": 19
         },
         {
-            "hc-key": "us-fl-23",
+            "hc-key": "us-fl-07",
             "value": 20
         },
         {
-            "hc-key": "us-fl-06",
+            "hc-key": "us-fl-23",
             "value": 21
         },
         {
-            "hc-key": "us-fl-21",
+            "hc-key": "us-fl-03",
             "value": 22
         },
         {
-            "hc-key": "us-fl-03",
+            "hc-key": "us-fl-05",
             "value": 23
         },
         {
@@ -107,7 +107,7 @@ $(function () {
             "value": 25
         },
         {
-            "hc-key": "us-fl-05",
+            "hc-key": "us-fl-21",
             "value": 26
         }
     ];

@@ -7,35 +7,35 @@ $(function () {
             "value": 0
         },
         {
-            "hc-key": "cl-ll",
+            "hc-key": "cl-bi",
             "value": 1
         },
         {
-            "hc-key": "cl-li",
+            "hc-key": "cl-ll",
             "value": 2
         },
         {
-            "hc-key": "cl-ai",
+            "hc-key": "cl-li",
             "value": 3
         },
         {
-            "hc-key": "cl-ma",
+            "hc-key": "cl-ai",
             "value": 4
         },
         {
-            "hc-key": "cl-vs",
+            "hc-key": "cl-ma",
             "value": 5
         },
         {
-            "hc-key": "cl-at",
+            "hc-key": "cl-co",
             "value": 6
         },
         {
-            "hc-key": "cl-co",
+            "hc-key": "cl-at",
             "value": 7
         },
         {
-            "hc-key": "cl-bi",
+            "hc-key": "cl-vs",
             "value": 8
         },
         {
