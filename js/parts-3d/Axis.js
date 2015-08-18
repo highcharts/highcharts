@@ -1,15 +1,16 @@
 /***
 	EXTENSION TO THE AXIS
 ***/
-Highcharts.wrap(Highcharts.Axis.prototype, 'init', function (proceed) {
-	var args = arguments;
-	if (args[1].is3d()) {
-		args[2].tickWidth = Highcharts.pick(args[2].tickWidth, 0);
-		args[2].gridLineWidth = Highcharts.pick(args[2].gridLineWidth, 1);
+Highcharts.wrap(Highcharts.Axis.prototype, 'setOptions', function (proceed, userOptions) {
+	var options;
+	proceed.call(this, userOptions);
+	if (this.chart.is3d()) {
+		options = this.options;
+		options.tickWidth = Highcharts.pick(options.tickWidth, 0);
+		options.gridLineWidth = Highcharts.pick(options.gridLineWidth, 1);
 	}
+});
 
-	proceed.apply(this, [].slice.call(arguments, 1));
-});	
 Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 

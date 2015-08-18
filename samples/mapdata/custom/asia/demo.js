@@ -43,7 +43,7 @@ $(function () {
             "value": 9
         },
         {
-            "hc-key": "pg",
+            "hc-key": "sp",
             "value": 10
         },
         {
@@ -95,59 +95,59 @@ $(function () {
             "value": 22
         },
         {
-            "hc-key": "iq",
+            "hc-key": "uz",
             "value": 23
         },
         {
-            "hc-key": "uz",
+            "hc-key": "tl",
             "value": 24
         },
         {
-            "hc-key": "tl",
+            "hc-key": "kh",
             "value": 25
         },
         {
-            "hc-key": "kz",
+            "hc-key": "bt",
             "value": 26
         },
         {
-            "hc-key": "il",
+            "hc-key": "ge",
             "value": 27
         },
         {
-            "hc-key": "sy",
+            "hc-key": "kz",
             "value": 28
         },
         {
-            "hc-key": "bn",
+            "hc-key": "il",
             "value": 29
         },
         {
-            "hc-key": "jo",
+            "hc-key": "sy",
             "value": 30
         },
         {
-            "hc-key": "tm",
+            "hc-key": "jo",
             "value": 31
         },
         {
-            "hc-key": "cnm",
+            "hc-key": "tm",
             "value": 32
         },
         {
-            "hc-key": "cy",
+            "hc-key": "cnm",
             "value": 33
         },
         {
-            "hc-key": "nc",
+            "hc-key": "mn",
             "value": 34
         },
         {
-            "hc-key": "mn",
+            "hc-key": "kw",
             "value": 35
         },
         {
-            "hc-key": "kh",
+            "hc-key": "iq",
             "value": 36
         },
         {
@@ -175,43 +175,43 @@ $(function () {
             "value": 42
         },
         {
-            "hc-key": "kw",
+            "hc-key": "bn",
             "value": 43
         },
         {
-            "hc-key": "ge",
+            "hc-key": "af",
             "value": 44
         },
         {
-            "hc-key": "af",
+            "hc-key": "kp",
             "value": 45
         },
         {
-            "hc-key": "kp",
+            "hc-key": "lb",
             "value": 46
         },
         {
-            "hc-key": "lb",
+            "hc-key": "nc",
             "value": 47
         },
         {
-            "hc-key": "tw",
+            "hc-key": "cy",
             "value": 48
         },
         {
-            "hc-key": "lk",
+            "hc-key": "tw",
             "value": 49
         },
         {
-            "hc-key": "kg",
+            "hc-key": "np",
             "value": 50
         },
         {
-            "hc-key": "bt",
+            "hc-key": "lk",
             "value": 51
         },
         {
-            "hc-key": "np",
+            "hc-key": "kg",
             "value": 52
         }
     ];

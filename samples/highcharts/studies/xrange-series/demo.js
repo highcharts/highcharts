@@ -17,7 +17,7 @@ $(function () {
             /**
              * Borrow the column series metrics, but with swapped axes. This gives free access
              * to features like groupPadding, grouping, pointWidth etc.
-             */  
+             */
             getColumnMetrics: function () {
                 var metrics,
                     chart = this.chart,
@@ -35,18 +35,17 @@ $(function () {
                 metrics = columnType.prototype.getColumnMetrics.call(this);
 
                 swapAxes();
-                
+
                 return metrics;
             },
             translate: function () {
                 columnType.prototype.translate.apply(this, arguments);
                 var series = this,
                     xAxis = series.xAxis,
-                    yAxis = series.yAxis,
                     metrics = series.columnMetrics;
 
                 H.each(series.points, function (point) {
-                    barWidth = xAxis.translate(H.pick(point.x2, point.x + (point.len || 0))) - point.plotX;
+                    var barWidth = xAxis.translate(H.pick(point.x2, point.x + (point.len || 0))) - point.plotX;
                     point.shapeArgs = {
                         x: point.plotX,
                         y: point.plotY + metrics.offset,
@@ -78,10 +77,10 @@ $(function () {
                 if (dataMax > Number.MIN_VALUE) {
                     axis.dataMax = dataMax;
                 }
-            }                
+            }
         });
     }(Highcharts));
-    
+
 
     // THE CHART
     $('#container').highcharts({
@@ -92,7 +91,7 @@ $(function () {
             text: 'Highcharts X-range study'
         },
         xAxis: {
-            type: 'datetime',
+            type: 'datetime'
         },
         yAxis: {
             title: '',
@@ -104,8 +103,8 @@ $(function () {
             name: 'Project 1',
             // pointPadding: 0,
             // groupPadding: 0,
-             borderRadius: 5,
-             pointWidth: 10,
+            borderRadius: 5,
+            pointWidth: 10,
             data: [{
                 x: Date.UTC(2014, 11, 1),
                 x2: Date.UTC(2014, 11, 2),

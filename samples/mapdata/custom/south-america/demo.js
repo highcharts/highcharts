@@ -39,11 +39,11 @@ $(function () {
             "value": 8
         },
         {
-            "hc-key": "gy",
+            "hc-key": "sr",
             "value": 9
         },
         {
-            "hc-key": "sr",
+            "hc-key": "gy",
             "value": 10
         },
         {

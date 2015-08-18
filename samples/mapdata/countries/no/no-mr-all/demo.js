@@ -7,47 +7,47 @@ $(function () {
             "value": 0
         },
         {
-            "hc-key": "no-mr-1529",
+            "hc-key": "no-mr-1576",
             "value": 1
         },
         {
-            "hc-key": "no-mr-1576",
+            "hc-key": "no-mr-1554",
             "value": 2
         },
         {
-            "hc-key": "no-mr-1554",
+            "hc-key": "no-mr-1511",
             "value": 3
         },
         {
-            "hc-key": "no-mr-1511",
+            "hc-key": "no-mr-1526",
             "value": 4
         },
         {
-            "hc-key": "no-mr-1526",
+            "hc-key": "no-mr-1524",
             "value": 5
         },
         {
-            "hc-key": "no-mr-1524",
+            "hc-key": "no-mr-1525",
             "value": 6
         },
         {
-            "hc-key": "no-mr-1525",
+            "hc-key": "no-mr-1528",
             "value": 7
         },
         {
-            "hc-key": "no-mr-1528",
+            "hc-key": "no-mr-1523",
             "value": 8
         },
         {
-            "hc-key": "no-mr-1523",
+            "hc-key": "no-mr-1539",
             "value": 9
         },
         {
-            "hc-key": "no-mr-1539",
+            "hc-key": "no-mr-1535",
             "value": 10
         },
         {
-            "hc-key": "no-mr-1535",
+            "hc-key": "no-mr-1529",
             "value": 11
         },
         {
@@ -63,15 +63,15 @@ $(function () {
             "value": 14
         },
         {
-            "hc-key": "no-mr-1504",
+            "hc-key": "no-mr-1551",
             "value": 15
         },
         {
-            "hc-key": "no-mr-1551",
+            "hc-key": "no-mr-1531",
             "value": 16
         },
         {
-            "hc-key": "no-mr-1531",
+            "hc-key": "no-mr-1504",
             "value": 17
         },
         {

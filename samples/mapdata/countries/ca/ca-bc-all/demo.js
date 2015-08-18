@@ -55,55 +55,55 @@ $(function () {
             "value": 12
         },
         {
-            "hc-key": "ca-bc-5921",
+            "hc-key": "ca-bc-5915",
             "value": 13
         },
         {
-            "hc-key": "ca-bc-5953",
+            "hc-key": "ca-bc-5921",
             "value": 14
         },
         {
-            "hc-key": "ca-bc-5941",
+            "hc-key": "ca-bc-5933",
             "value": 15
         },
         {
-            "hc-key": "ca-bc-5935",
+            "hc-key": "ca-bc-5941",
             "value": 16
         },
         {
-            "hc-key": "ca-bc-5933",
+            "hc-key": "ca-bc-5953",
             "value": 17
         },
         {
-            "hc-key": "ca-bc-5907",
+            "hc-key": "ca-bc-5935",
             "value": 18
         },
         {
-            "hc-key": "ca-bc-5939",
+            "hc-key": "ca-bc-5907",
             "value": 19
         },
         {
-            "hc-key": "ca-bc-5937",
+            "hc-key": "ca-bc-5939",
             "value": 20
         },
         {
-            "hc-key": "ca-bc-5931",
+            "hc-key": "ca-bc-5937",
             "value": 21
         },
         {
-            "hc-key": "ca-bc-5919",
+            "hc-key": "ca-bc-5931",
             "value": 22
         },
         {
-            "hc-key": "ca-bc-5905",
+            "hc-key": "ca-bc-5919",
             "value": 23
         },
         {
-            "hc-key": "ca-bc-5909",
+            "hc-key": "ca-bc-5905",
             "value": 24
         },
         {
-            "hc-key": "ca-bc-5915",
+            "hc-key": "ca-bc-5909",
             "value": 25
         },
         {

@@ -11,107 +11,107 @@ $(function () {
             "value": 1
         },
         {
-            "hc-key": "es-me",
+            "hc-key": "es-le",
             "value": 2
         },
         {
-            "hc-key": "es-p",
+            "hc-key": "es-me",
             "value": 3
         },
         {
-            "hc-key": "es-s",
+            "hc-key": "es-p",
             "value": 4
         },
         {
-            "hc-key": "es-na",
+            "hc-key": "es-s",
             "value": 5
         },
         {
-            "hc-key": "es-ce",
+            "hc-key": "es-na",
             "value": 6
         },
         {
-            "hc-key": "es-cu",
+            "hc-key": "es-ce",
             "value": 7
         },
         {
-            "hc-key": "es-vi",
+            "hc-key": "es-cu",
             "value": 8
         },
         {
-            "hc-key": "es-ss",
+            "hc-key": "es-vi",
             "value": 9
         },
         {
-            "hc-key": "es-gr",
+            "hc-key": "es-ss",
             "value": 10
         },
         {
-            "hc-key": "es-mu",
+            "hc-key": "es-gr",
             "value": 11
         },
         {
-            "hc-key": "es-sa",
+            "hc-key": "es-mu",
             "value": 12
         },
         {
-            "hc-key": "es-le",
+            "hc-key": "es-bu",
             "value": 13
         },
         {
-            "hc-key": "es-za",
+            "hc-key": "es-sa",
             "value": 14
         },
         {
-            "hc-key": "es-m",
+            "hc-key": "es-za",
             "value": 15
         },
         {
-            "hc-key": "es-gu",
+            "hc-key": "es-hu",
             "value": 16
         },
         {
-            "hc-key": "es-sg",
+            "hc-key": "es-m",
             "value": 17
         },
         {
-            "hc-key": "es-se",
+            "hc-key": "es-gu",
             "value": 18
         },
         {
-            "hc-key": "es-te",
+            "hc-key": "es-sg",
             "value": 19
         },
         {
-            "hc-key": "es-v",
+            "hc-key": "es-se",
             "value": 20
         },
         {
-            "hc-key": "es-bu",
+            "hc-key": "es-t",
             "value": 21
         },
         {
-            "hc-key": "es-bi",
+            "hc-key": "es-te",
             "value": 22
         },
         {
-            "hc-key": "es-or",
+            "hc-key": "es-v",
             "value": 23
         },
         {
-            "hc-key": "es-l",
+            "hc-key": "es-bi",
             "value": 24
         },
         {
-            "hc-key": "es-z",
+            "hc-key": "es-or",
             "value": 25
         },
         {
-            "hc-key": "es-t",
+            "hc-key": "es-l",
             "value": 26
         },
         {
-            "hc-key": "es-lo",
+            "hc-key": "es-z",
             "value": 27
         },
         {
@@ -135,7 +135,7 @@ $(function () {
             "value": 32
         },
         {
-            "hc-key": "es-cr",
+            "hc-key": "es-to",
             "value": 33
         },
         {
@@ -143,31 +143,31 @@ $(function () {
             "value": 34
         },
         {
-            "hc-key": "es-to",
+            "hc-key": "es-co",
             "value": 35
         },
         {
-            "hc-key": "es-co",
+            "hc-key": "es-h",
             "value": 36
         },
         {
-            "hc-key": "es-ma",
+            "hc-key": "es-c",
             "value": 37
         },
         {
-            "hc-key": "es-h",
+            "hc-key": "es-ma",
             "value": 38
         },
         {
-            "hc-key": "es-hu",
+            "hc-key": "es-po",
             "value": 39
         },
         {
-            "hc-key": "es-c",
+            "hc-key": "es-lo",
             "value": 40
         },
         {
-            "hc-key": "es-po",
+            "hc-key": "es-so",
             "value": 41
         },
         {
@@ -191,11 +191,11 @@ $(function () {
             "value": 46
         },
         {
-            "hc-key": "es-j",
+            "hc-key": "es-cr",
             "value": 47
         },
         {
-            "hc-key": "es-so",
+            "hc-key": "es-j",
             "value": 48
         },
         {

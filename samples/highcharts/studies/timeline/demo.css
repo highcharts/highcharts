@@ -1,0 +1,39 @@
+#container {
+    height: 500px;
+    min-width: 310px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+.loading {
+    margin-top: 10em;
+    text-align: center;
+    color: gray;
+}
+#play-controls {
+    text-align: center;
+    min-width: 310px;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 5px 0 1em 0;
+}
+#play-controls * {
+    display: inline-block;
+    vertical-align: middle;
+}
+#play-pause-button {
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    font-size: 15px;
+    cursor: pointer;
+    border: 1px solid silver;
+    border-radius: 3px;
+    background: #f8f8f8;
+}
+#play-range {
+    margin: 2.5%;
+    width: 70%;
+}
+#play-output {
+    font-family: Arial, Helvetica, sans-serif;
+}

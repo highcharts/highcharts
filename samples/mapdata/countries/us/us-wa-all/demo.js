@@ -135,27 +135,27 @@ $(function () {
             "value": 32
         },
         {
-            "hc-key": "us-wa-077",
+            "hc-key": "us-wa-063",
             "value": 33
         },
         {
-            "hc-key": "us-wa-063",
+            "hc-key": "us-wa-051",
             "value": 34
         },
         {
-            "hc-key": "us-wa-051",
+            "hc-key": "us-wa-009",
             "value": 35
         },
         {
-            "hc-key": "us-wa-009",
+            "hc-key": "us-wa-059",
             "value": 36
         },
         {
-            "hc-key": "us-wa-059",
+            "hc-key": "us-wa-039",
             "value": 37
         },
         {
-            "hc-key": "us-wa-039",
+            "hc-key": "us-wa-077",
             "value": 38
         }
     ];

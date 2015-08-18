@@ -155,6 +155,8 @@ extend(ColorAxis.prototype, Axis.prototype);
 extend(ColorAxis.prototype, {
 	defaultColorAxisOptions: {
 		lineWidth: 0,
+		minPadding: 0,
+		maxPadding: 0,
 		gridLineWidth: 1,
 		tickPixelInterval: 72,
 		startOnTick: true,
@@ -183,7 +185,6 @@ extend(ColorAxis.prototype, {
 			side: horiz ? 2 : 1,
 			reversed: !horiz
 		}, userOptions, {
-			isX: horiz,
 			opposite: !horiz,
 			showEmpty: false,
 			title: null,
@@ -202,7 +203,6 @@ extend(ColorAxis.prototype, {
 		this.initStops(userOptions);
 
 		// Override original axis properties
-		this.isXAxis = true;
 		this.horiz = horiz;
 		this.zoomEnabled = false;
 	},
@@ -505,7 +505,7 @@ extend(ColorAxis.prototype, {
 		});
 
 		// When updating data classes, destroy old items and make sure new ones are created (#3207)
-		if (newOptions.dataClasses) {
+		if (newOptions.dataClasses && legend.allItems) {
 			each(legend.allItems, function (item) {
 				if (item.isDataClass) {
 					item.legendGroup.destroy();
@@ -689,7 +689,8 @@ var colorSeriesMixin = {
 			var value = point[colorKey],
 				color;
 
-			color = value === null ? nullColor : (colorAxis && value !== undefined) ? colorAxis.toColor(value, point) : point.color || series.color;
+			color = point.options.color || 
+				(value === null ? nullColor : (colorAxis && value !== undefined) ? colorAxis.toColor(value, point) : point.color || series.color);
 
 			if (color) {
 				point.color = color;
@@ -1004,7 +1005,7 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 /**
  * The MapAreaPoint object
  */
-var MapAreaPoint = extendClass(Point, colorPointMixin, {
+var MapAreaPoint = extendClass(Point, extend({
 	/**
 	 * Extend the Point object to split paths
 	 */
@@ -1103,7 +1104,8 @@ var MapAreaPoint = extendClass(Point, colorPointMixin, {
 		);
 		series.chart.redraw();
 	}
-});
+}, colorPointMixin)
+);
 
 /**
  * Add the series type
@@ -1116,6 +1118,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	useMapGeometry: true, // get axis extremes from paths, not values
 	forceDL: true,
 	searchPoint: noop,
+	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	preserveAspectRatio: true, // X axis and Y axis must have same translation slope
 	/**
 	 * Get the bounding box of all paths in the map combined.
@@ -1436,6 +1439,17 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		// Draw the shapes again
 		if (series.doFullTranslate()) {
 
+			// Individual point actions	
+			if (chart.hasRendered && series.pointAttrToOptions.fill === 'color') {
+				each(series.points, function (point) {
+
+					// Reset color on update/redraw
+					if (point.shapeArgs) {
+						point.shapeArgs.fill = point.color;
+					}
+				});
+			}
+
 			// If vector-effect is not supported, we set the stroke-width on the group element
 			// and let all point graphics inherit. That way we don't have to iterate over all 
 			// points to update the stroke-width on zooming.
@@ -1465,11 +1479,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 					if (!supportsVectorEffect) {
 						point.graphic['stroke-widthSetter'] = noop;
-					}
-
-					// Reset color on update/redraw
-					if (chart.hasRendered && point.graphic.attr('fill') !== point.color) {
-						point.graphic.animate({ fill: point.color });
 					}
 				}
 			});
@@ -1722,7 +1731,7 @@ if (seriesTypes.bubble) {
 		pointClass: extendClass(Point, {
 			applyOptions: function (options, x) {
 				var point;
-				if (options.lat !== undefined && options.lon !== undefined) {
+				if (options && options.lat !== undefined && options.lon !== undefined) {
 					point = Point.prototype.applyOptions.call(this, options, x);
 					point = extend(point, this.series.chart.fromLatLonToPoint(point));
 				} else {

@@ -24,16 +24,18 @@
 
 	extend(Axis.prototype, {
 		isInBreak: function (brk, val) {
-			var repeat = brk.repeat || Infinity,
+			var ret,
+				repeat = brk.repeat || Infinity,
 				from = brk.from,
 				length = brk.to - brk.from,
 				test = (val >= from ? (val - from) % repeat :  repeat - ((from - val) % repeat));
 
 			if (!brk.inclusive) {
-				return (test < length && test !== 0);
+				ret = test < length && test !== 0;
 			} else {
-				return (test <= length);
+				ret = test <= length;
 			}
+			return ret;
 		},
 
 		isInAnyBreak: function (val, testKeep) {
@@ -286,7 +288,7 @@
 			points = series.points,
 			yAxis = series.yAxis,
 			breaks = yAxis.breakArray || [],
-			threshold = this.options.threshold === null ? yAxis.min : this.options.threshold,
+			threshold = pick(this.options.threshold, yAxis.min),
 			eventName,
 			point,
 			brk,

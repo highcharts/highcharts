@@ -2,8 +2,19 @@
 ini_set('display_errors', 'on');
 session_start();
 require_once('../settings.php');
-$leftPath = isset($_SESSION['leftPath']) ? $_SESSION['leftPath'] : Settings::$leftPath;
+
+if (isset($_GET['commit'])) {
+	$leftPath = $_GET['commit']; // used by PhantomJS command line
+} elseif (isset($_SESSION['leftPath'])) {
+	$leftPath = $_SESSION['leftPath'];
+} else {
+	$leftPath = Settings::$leftPath;
+}
 $rightPath = isset($_SESSION['rightPath']) ? $_SESSION['rightPath'] : Settings::$rightPath;
+
+if (preg_match('/^[a-z0-9]+$/', $leftPath)) {
+	$leftPath = "/samples/github-cache.php?commit=$leftPath&file=";
+}
 
 
 $leftExporting = "$leftPath/modules/exporting.src.js";
@@ -72,12 +83,14 @@ function getJS() {
 
 function getHTML($which) {
 	global $path, $leftPath, $rightPath, $rightExporting, $leftExporting;
-	
+	$bogus = md5('bogus');
 	
 	// No idea why file_get_contents doesn't work here...
 	ob_start();
 	include("$path/demo.html");
 	$s = ob_get_clean();
+
+	$s = str_replace('http://code.highcharts.com/mapdata', $bogus, $s);
 	
 	if ($which == 'left') {
 		$s = str_replace('http://code.highcharts.com', $leftPath, $s);
@@ -88,6 +101,8 @@ function getHTML($which) {
 		$s = str_replace('http://code.highcharts.com', $rightPath, $s);
 		$exporting = $leftExporting;
 	}
+
+	$s = str_replace($bogus, 'http://code.highcharts.com/mapdata', $s);
 	
 	if (strlen($s) > 0 && strpos($s, 'exporting.js') === false) {
 		$s .= '<script src="' . $exporting . '"></script>';

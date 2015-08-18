@@ -5,11 +5,11 @@ Usage:
 phantomjs [arguments] phantomtest.js
 
 Arguments:
+--commit What commit number to run visual tests against.
 --start  What sample number to start from. Use this to resume after error.
 
 Status
 - Requires PhantomJS 2
-- Currently only runs through highcharts/demo
 */
 
 /*global console, phantom, require*/
@@ -22,13 +22,21 @@ Status
         samples = [],
         system = require('system'),
         args = system.args,
-        i = 0;
+        params = {
+            start: 0
+        },
+        i,
+        retries = 0;
 
     args.forEach(function(arg, j) {
         if (arg === '--start') {
-            i = parseInt(args[j + 1], 10);
+            params.start = parseInt(args[j + 1], 10);
+        } else if (arg === '--commit') {
+            params.commit = args[j + 1];
         }
     });
+
+    i = params.start;
 
     ['highcharts', 'maps', 'stock', 'issues'].forEach(function (section) {
         section = section + '/';
@@ -54,28 +62,47 @@ Status
 
         var msgStack = [msg];
 
-        if (trace && trace.length) {
-            msgStack.push('TRACE:');
-            trace.forEach(function(t) {
-                msgStack.push(' -> ' + t.file + ': ' + t.line + (t['function'] ? ' (in function "' + t['function'] + '")' : ''));
-            });
-        }
+        if (retries < 2) {
+            console.log('Error detected, trying again...');
+            page.reload();
+            retries++;
 
-        console.error(msgStack.join('\n'));
-        phantom.exit();
+        } else {
+
+            if (trace && trace.length) {
+                msgStack.push('TRACE:');
+                trace.forEach(function(t) {
+                    msgStack.push(' -> ' + t.file + ': ' + t.line + (t['function'] ? ' (in function "' + t['function'] + '")' : ''));
+                });
+            }
+
+            console.error(
+                '\nError detected in ' + samples[i] + '. To start again from this sample, run with argument --start ' +
+                    i + '\n\n.' + msgStack.join('\n')
+            );
+            phantom.exit();
+        }
     };
 
 
     function runRecursive() {
-        var sample = samples[i];
+        var qs = ['path=' + samples[i]];
 
-        page.open('http://utils.highcharts.local/samples/compare-view.php?path=' + sample, function (status) {
-            console.log(i, status, sample);
-        });
+        retries = 0;
+
+        if (params.commit) {
+            qs.push('commit=' + params.commit);
+        }
+
+        page.open('http://utils.highcharts.local/samples/compare-view.php?' + qs.join('&'));
     }
 
     page.onConsoleMessage = function (m) {
-        if (m === '@proceed') {
+        if (m.indexOf('@proceed') === 0) {
+
+            // Output the results of the finished test
+            console.log(i, m.replace('@proceed ', ''));
+
             i = i + 1;
             if (samples[i]) {
                 runRecursive();

@@ -44,7 +44,7 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 /**
  * The MapAreaPoint object
  */
-var MapAreaPoint = extendClass(Point, colorPointMixin, {
+var MapAreaPoint = extendClass(Point, extend({
 	/**
 	 * Extend the Point object to split paths
 	 */
@@ -143,7 +143,8 @@ var MapAreaPoint = extendClass(Point, colorPointMixin, {
 		);
 		series.chart.redraw();
 	}
-});
+}, colorPointMixin)
+);
 
 /**
  * Add the series type
@@ -156,6 +157,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	useMapGeometry: true, // get axis extremes from paths, not values
 	forceDL: true,
 	searchPoint: noop,
+	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	preserveAspectRatio: true, // X axis and Y axis must have same translation slope
 	/**
 	 * Get the bounding box of all paths in the map combined.
@@ -476,6 +478,17 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		// Draw the shapes again
 		if (series.doFullTranslate()) {
 
+			// Individual point actions	
+			if (chart.hasRendered && series.pointAttrToOptions.fill === 'color') {
+				each(series.points, function (point) {
+
+					// Reset color on update/redraw
+					if (point.shapeArgs) {
+						point.shapeArgs.fill = point.color;
+					}
+				});
+			}
+
 			// If vector-effect is not supported, we set the stroke-width on the group element
 			// and let all point graphics inherit. That way we don't have to iterate over all 
 			// points to update the stroke-width on zooming.
@@ -505,11 +518,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 					if (!supportsVectorEffect) {
 						point.graphic['stroke-widthSetter'] = noop;
-					}
-
-					// Reset color on update/redraw
-					if (chart.hasRendered && point.graphic.attr('fill') !== point.color) {
-						point.graphic.animate({ fill: point.color });
 					}
 				}
 			});

@@ -27,15 +27,15 @@ $(function () {
             "value": 5
         },
         {
-            "hc-key": "eg",
+            "hc-key": "kw",
             "value": 6
         },
         {
-            "hc-key": "il",
+            "hc-key": "eg",
             "value": 7
         },
         {
-            "hc-key": "kw",
+            "hc-key": "il",
             "value": 8
         },
         {

@@ -87,63 +87,63 @@ $(function () {
             "value": 20
         },
         {
-            "hc-key": "in-ap",
+            "hc-key": "in-tn",
             "value": 21
         },
         {
-            "hc-key": "in-ka",
+            "hc-key": "in-ap",
             "value": 22
         },
         {
-            "hc-key": "in-mh",
+            "hc-key": "in-ka",
             "value": 23
         },
         {
-            "hc-key": "in-or",
+            "hc-key": "in-mh",
             "value": 24
         },
         {
-            "hc-key": "in-dn",
+            "hc-key": "in-or",
             "value": 25
         },
         {
-            "hc-key": "in-dl",
+            "hc-key": "in-dn",
             "value": 26
         },
         {
-            "hc-key": "in-hp",
+            "hc-key": "in-dl",
             "value": 27
         },
         {
-            "hc-key": "in-rj",
+            "hc-key": "in-hp",
             "value": 28
         },
         {
-            "hc-key": "in-up",
+            "hc-key": "in-rj",
             "value": 29
         },
         {
-            "hc-key": "in-ut",
+            "hc-key": "in-up",
             "value": 30
         },
         {
-            "hc-key": "in-jh",
+            "hc-key": "in-ut",
             "value": 31
         },
         {
-            "hc-key": "in-ch",
+            "hc-key": "in-jh",
             "value": 32
         },
         {
-            "hc-key": "in-br",
+            "hc-key": "in-ch",
             "value": 33
         },
         {
-            "hc-key": "in-sk",
+            "hc-key": "in-br",
             "value": 34
         },
         {
-            "hc-key": "in-tn",
+            "hc-key": "in-sk",
             "value": 35
         }
     ];

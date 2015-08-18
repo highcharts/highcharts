@@ -9,7 +9,8 @@
  * 
  * Development plan
  * - Column range.
- * - Heatmap and treemap? Not core, so the implementation should perhaps lie in feature files.
+ * - Heatmap.
+ * - Treemap.
  * - Check how it works with Highstock and data grouping.
  * - Check inverted charts.
  * - Check reversed axes.
@@ -52,6 +53,7 @@
         seriesTypes = H.seriesTypes,
         each = H.each,
         extend = H.extend,
+        addEvent = HA. addEvent,
         fireEvent = HA.fireEvent,
         merge = H.merge,
         pick = H.pick,
@@ -332,6 +334,9 @@
 
             series.getAttribs();
             series.markerGroup = series.group;
+            addEvent(series, 'destroy', function () {
+                series.markerGroup = null;
+            })
 
             points = this.points = [];
             ctx = this.getContext();
@@ -472,7 +477,9 @@
 
                     chart.loadingShown = false;
                     setTimeout(function () {
-                        loadingDiv.parentNode.removeChild(loadingDiv);
+                        if (loadingDiv.parentNode) { // In exporting it is falsy
+                            loadingDiv.parentNode.removeChild(loadingDiv);
+                        }
                         chart.loadingDiv = chart.loadingSpan = null;
                     }, 250);
                 }

@@ -11,11 +11,11 @@ $(function () {
             "value": 1
         },
         {
-            "hc-key": "us-ar-01",
+            "hc-key": "us-ar-02",
             "value": 2
         },
         {
-            "hc-key": "us-ar-02",
+            "hc-key": "us-ar-01",
             "value": 3
         }
     ];

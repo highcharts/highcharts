@@ -31,11 +31,11 @@ $(function () {
             "value": 6
         },
         {
-            "hc-key": "mm-kh",
+            "hc-key": "mm-sh",
             "value": 7
         },
         {
-            "hc-key": "mm-sh",
+            "hc-key": "mm-kh",
             "value": 8
         },
         {

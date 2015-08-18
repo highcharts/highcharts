@@ -23,11 +23,11 @@ $(function () {
             "value": 4
         },
         {
-            "hc-key": "us-wi-05",
+            "hc-key": "us-wi-01",
             "value": 5
         },
         {
-            "hc-key": "us-wi-01",
+            "hc-key": "us-wi-05",
             "value": 6
         },
         {
