@@ -144,7 +144,7 @@
 		
 			
 		ddOptions = extend({
-			color: oldSeries.options.colorByPoint ? null : color, // #4359 - pie chart slices shouldn't have the same color
+			color: color,
 			_ddSeriesId: ddSeriesId++
 		}, ddOptions);
 		pointIndex = inArray(point, oldSeries.points);
