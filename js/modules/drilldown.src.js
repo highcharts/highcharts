@@ -122,7 +122,6 @@
 			xAxis = oldSeries.xAxis,
 			yAxis = oldSeries.yAxis,
 			newSeries,
-			isPie = pick(ddOptions.type, oldSeries.type) === "pie",
 			color = point.color || oldSeries.color,
 			pointIndex,
 			levelSeries = [],
