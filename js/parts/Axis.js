@@ -1081,6 +1081,11 @@ Axis.prototype = {
 				tickPositions = this.getLinearTickPositions(this.tickInterval, this.min, this.max);
 			}
 
+			// Too dense ticks, keep only the first and last (#4477)
+			if (tickPositions.length > this.len) {
+				tickPositions = [tickPositions[0], tickPositions.pop()];
+			}
+
 			this.tickPositions = tickPositions;
 
 			// Run the tick positioner callback, that allows modifying auto tick positions.
