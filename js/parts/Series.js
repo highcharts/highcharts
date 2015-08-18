@@ -104,7 +104,7 @@ Series.prototype = {
 
 		each(chartSeries, function (series, i) {
 			series.index = i;
-			series.name = series.name || 'Series ' + (i + 1);
+			series.name = pick(series.options.name, 'Series ' + (i + 1)); // #4119
 		});
 
 	},
