@@ -70,6 +70,7 @@
         <property name="standalone.src.name" value="standalone-framework.src.js"/>
         <property name="exporting.src.name" value="exporting.src.js"/>
         <property name="offline-exporting.src.name" value="offline-exporting.src.js"/>
+        <property name="boost.src.name" value="boost.src.js"/>
         <property name="broken-axis.src.name" value="broken-axis.src.js"/>
         <property name="data.src.name" value="data.src.js"/>
         <property name="drilldown.src.name" value="drilldown.src.js"/>
@@ -85,6 +86,7 @@
         <property name="standalone.minified.name" value="standalone-framework.js"/>
         <property name="exporting.minified.name" value="exporting.js"/>
         <property name="offline-exporting.minified.name" value="offline-exporting.js"/>        
+        <property name="boost.minified.name" value="boost.js"/>
         <property name="broken-axis.minified.name" value="broken-axis.js"/>
         <property name="data.minified.name" value="data.js"/>
         <property name="drilldown.minified.name" value="drilldown.js"/>
@@ -100,6 +102,7 @@
         <property name="standalone.src.file" value="${basedir}/js/adapters/${standalone.src.name}"/>
         <property name="exporting.src.file" value="${basedir}/js/modules/${exporting.src.name}"/>
         <property name="offline-exporting.src.file" value="${basedir}/js/modules/${offline-exporting.src.name}"/>
+        <property name="boost.src.file" value="${basedir}/js/modules/boost.src.js"/>
         <property name="broken-axis.src.file" value="${basedir}/js/modules/broken-axis.src.js"/>
         <property name="data.src.file" value="${basedir}/js/modules/${data.src.name}"/>
         <property name="drilldown.src.file" value="${basedir}/js/modules/${drilldown.src.name}"/>
@@ -728,6 +731,10 @@
             <param name="param.out" value="${dist.dir}/js/modules/overlapping-datalabels.js"/>
         </antcall>
         <antcall target="compile">
+            <param name="param.src" value="${boost.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/modules/boost.js"/>
+        </antcall>
+        <antcall target="compile">
             <param name="param.src" value="${broken-axis.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/broken-axis.js"/>
         </antcall>
@@ -956,6 +963,13 @@
         <copy file="${dist.dir}/js/modules/${offline-exporting.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${offline-exporting.src.file}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${offline-exporting.minified.name}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
+
+        <copy file="${boost.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${boost.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${boost.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${boost.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${boost.src.file}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${boost.minified.name}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
 
         <copy file="${broken-axis.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${broken-axis.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
