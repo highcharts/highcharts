@@ -35,18 +35,16 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 				$('#batch-stop').toggle();
 			}
 
-			
-			
+			function countFails() {
+				$('#count-fails').html('(' + ($('#main-nav li').length - 
+					$('#main-nav li.identical, #main-nav li.approved').length) + ')');
+			}
 
 			$(function () {
 
 				$(window).bind('keydown', parent.keyDown);
 
-				/*setInterval(function countFails() {
-					$('#count-fails').html('(' + ($('#main-nav li').length - 
-						$('#main-nav li.identical, #main-nav li.approved').length) + ')');
-				}, 3000);*/
-
+				
 				$("#batch-compare").click(runBatch);
 
 				$("#batch-stop").click(function() {
@@ -98,6 +96,8 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 				});
 
 				$('#main-nav').css('margin-top', $('#top-nav').height());
+
+				countFails();
 				
 			});
 			

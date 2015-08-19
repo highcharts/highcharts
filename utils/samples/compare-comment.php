@@ -83,7 +83,8 @@ $symbols = array('check', 'exclamation-sign');
 		
 		<?php if ($updateContents) : ?>
 			if (window.parent.frames[0]) {
-				var contentDoc = (window.parent.parent || window.parent).frames[0].document,
+				var contentWin = (window.parent.parent || window.parent).frames[0],
+					contentDoc = contentWin.document,
 					li = contentDoc.getElementById('li<?php echo $i ?>');
 
 				// Sample is different but approved
@@ -95,6 +96,9 @@ $symbols = array('check', 'exclamation-sign');
 
 				$('.comment', li).html("<i class='icon-<?php echo $comment->symbol ?>' title='<?php echo $comment->title ?>'></i>" + 
 					"<span class='comment-title'><?php echo $comment->title ?><br/>(Approved diff: <?php echo $comment->diff ?>)</span>");
+
+
+				contentWin.countFails();
 			}
 
 
