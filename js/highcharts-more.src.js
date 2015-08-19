@@ -2166,6 +2166,8 @@ Axis.prototype.beforePadding = function () {
 		each([['min', 'userMin', pxMin], ['max', 'userMax', pxMax]], function (keys) {
 			if (pick(axis.options[keys[0]], axis[keys[1]]) === UNDEFINED) {
 				axis[keys[0]] += keys[2] / transA; 
+			} else {
+				axis.allowZoomOutside = false; // #4332
 			}
 		});
 	}
