@@ -319,7 +319,10 @@ RangeSelector.prototype = {
 		}
 
 		each(rangeSelector.buttonOptions, function (rangeOptions, i) {
-			var range = rangeOptions._range,
+			var actualRange = mathRound(baseAxis.max - baseAxis.min),
+				range = rangeOptions._range,
+				type = rangeOptions.type,
+				count = rangeOptions.count || 1,
 				// Disable buttons where the range exceeds what is allowed in the current view
 				isTooGreatRange = range > dataMax - dataMin,
 				// Disable buttons where the range is smaller than the minimum range
@@ -330,12 +333,19 @@ RangeSelector.prototype = {
 				// Disable the YTD button if the complete range is within the same year
 				isYTDButNotAvailable = rangeOptions.type === 'ytd' && dateFormat('%Y', dataMin) === dateFormat('%Y', dataMax),
 				// Set a button on export
-				isSelectedForExport = chart.renderer.forExport && i === selected;
+				isSelectedForExport = chart.renderer.forExport && i === selected,
 
+				isSameRange = range === actualRange;
+
+			// Months and years have a variable range so we check the extremes
+			if ((type === 'month' || type === 'year') && (actualRange >= { month: 28, year: 365 }[type] * 24 * 36e5 * count) && 
+					(actualRange <= { month: 31, year: 366 }[type] * 24 * 36e5 * count)) {
+				isSameRange = true;
+			}
 			// The new zoom area happens to match the range for a button - mark it selected.
 			// This happens when scrolling across an ordinal gap. It can be seen in the intraday
 			// demos when selecting 1h and scroll across the night gap.
-			if (isSelectedForExport || (range === mathRound(baseAxis.max - baseAxis.min) && i !== selected)) {
+			if (isSelectedForExport || (isSameRange && i !== selected)) {
 				rangeSelector.setSelected(i);
 				buttons[i].setState(2);
 			

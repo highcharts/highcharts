@@ -2,4 +2,5 @@
  name: Highcharts Stock Demo
  authors:
    - Torstein Hønsi
+ requiresManualTesting: true
  ...

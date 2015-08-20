@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.7-modified ()
+ * @license Highstock JS v2.1.8 (2015-08-20)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -55,7 +55,7 @@ var UNDEFINED,
 	charts = [],
 	chartCount = 0,
 	PRODUCT = 'Highstock',
-	VERSION = '2.1.7-modified',
+	VERSION = '2.1.8',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -1259,7 +1259,7 @@ defaultOptions = {
 				'August', 'September', 'October', 'November', 'December'],
 		shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 		weekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-		// invalidDate: '', // docs
+		// invalidDate: '',
 		decimalPoint: '.',
 		numericSymbols: ['k', 'M', 'G', 'T', 'P', 'E'], // SI prefixes used in axis labels
 		resetZoom: 'Reset zoom',
@@ -1269,8 +1269,8 @@ defaultOptions = {
 	global: {
 		useUTC: true,
 		//timezoneOffset: 0,
-		canvasToolsURL: 'http://code.highcharts.com/stock/2.1.7-modified/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/stock/2.1.7-modified/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/stock/2.1.8/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/stock/2.1.8/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -1941,9 +1941,9 @@ SVGElement.prototype = {
 	 * Apply a polyfill to the text-stroke CSS property, by copying the text element
 	 * and apply strokes to the copy.
 	 *
+	 * Contrast checks at http://jsfiddle.net/highcharts/43soe9m1/2/
+	 *
 	 * docs: update default, document the polyfill and the limitations on hex colors and pixel values, document contrast pseudo-color
-	 * TODO: 
-	 * - update defaults
 	 */
 	applyTextShadow: function (textShadow) {
 		var elem = this.element,
@@ -7520,6 +7520,11 @@ Axis.prototype = {
 				tickPositions = this.getLogTickPositions(this.tickInterval, this.min, this.max);
 			} else {
 				tickPositions = this.getLinearTickPositions(this.tickInterval, this.min, this.max);
+			}
+
+			// Too dense ticks, keep only the first and last (#4477)
+			if (tickPositions.length > this.len) {
+				tickPositions = [tickPositions[0], tickPositions.pop()];
 			}
 
 			this.tickPositions = tickPositions;
@@ -13292,7 +13297,9 @@ Series.prototype = {
 	 * Get the series' color
 	 */
 	getColor: function () {
-		if (!this.options.colorByPoint) {
+		if (this.options.colorByPoint) {
+			this.options.color = null; // #4359, selected slice got series.color even when colorByPoint was set.
+		} else {
 			this.getCyclic('color', this.options.color || defaultPlotOptions[this.type].color, this.chart.options.colors);
 		}
 	},
@@ -16220,7 +16227,7 @@ var ColumnSeries = extendClass(Series, {
 			groupWidth = categoryWidth - 2 * groupPadding,
 			pointOffsetWidth = groupWidth / columnCount,
 			pointWidth = mathMin(
-				options.maxPointWidth || xAxis.len, // docs: Sample created. Add "See also" to pointWidth. Close UserVoice.
+				options.maxPointWidth || xAxis.len,
 				pick(options.pointWidth, pointOffsetWidth * (1 - 2 * options.pointPadding))
 			),
 			pointPadding = (pointOffsetWidth - pointWidth) / 2,
@@ -16683,11 +16690,6 @@ var PieSeries = {
 		'stroke-width': 'borderWidth',
 		fill: 'color'
 	},
-
-	/**
-	 * Pies have one color each point
-	 */
-	getColor: noop,
 
 	/**
 	 * Animate the pies in
@@ -17744,7 +17746,7 @@ if (seriesTypes.column) {
 
 
 /**
- * Highstock JS v2.1.7-modified ()
+ * Highstock JS v2.1.8 (2015-08-20)
  * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
  *
  * (c) 2010-2014 Torstein Honsi
@@ -19362,7 +19364,7 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
  * End ordinal axis logic                                                   *
  *****************************************************************************/
 /**
- * Highstock JS v2.1.7-modified ()
+ * Highstock JS v2.1.8 (2015-08-20)
  * Highcharts Broken Axis module
  * 
  * Author: Stephane Vanraes, Torstein Honsi
@@ -22399,7 +22401,10 @@ RangeSelector.prototype = {
 		}
 
 		each(rangeSelector.buttonOptions, function (rangeOptions, i) {
-			var range = rangeOptions._range,
+			var actualRange = mathRound(baseAxis.max - baseAxis.min),
+				range = rangeOptions._range,
+				type = rangeOptions.type,
+				count = rangeOptions.count || 1,
 				// Disable buttons where the range exceeds what is allowed in the current view
 				isTooGreatRange = range > dataMax - dataMin,
 				// Disable buttons where the range is smaller than the minimum range
@@ -22410,12 +22415,19 @@ RangeSelector.prototype = {
 				// Disable the YTD button if the complete range is within the same year
 				isYTDButNotAvailable = rangeOptions.type === 'ytd' && dateFormat('%Y', dataMin) === dateFormat('%Y', dataMax),
 				// Set a button on export
-				isSelectedForExport = chart.renderer.forExport && i === selected;
+				isSelectedForExport = chart.renderer.forExport && i === selected,
 
+				isSameRange = range === actualRange;
+
+			// Months and years have a variable range so we check the extremes
+			if ((type === 'month' || type === 'year') && (actualRange >= { month: 28, year: 365 }[type] * 24 * 36e5 * count) && 
+					(actualRange <= { month: 31, year: 366 }[type] * 24 * 36e5 * count)) {
+				isSameRange = true;
+			}
 			// The new zoom area happens to match the range for a button - mark it selected.
 			// This happens when scrolling across an ordinal gap. It can be seen in the intraday
 			// demos when selecting 1h and scroll across the night gap.
-			if (isSelectedForExport || (range === mathRound(baseAxis.max - baseAxis.min) && i !== selected)) {
+			if (isSelectedForExport || (isSameRange && i !== selected)) {
 				rangeSelector.setSelected(i);
 				buttons[i].setState(2);
 			

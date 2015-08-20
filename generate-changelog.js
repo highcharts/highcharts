@@ -4,20 +4,37 @@
 /**
  * This node script copies commit messages since the last release and
  * generates a draft for a changelog.
+ *
+ * Parameters
+ * --after String The start date.
+ * --before String Optional. The end date for the changelog, defaults to today.
  */
 
 (function () {
     'use strict';
 
     var fs = require('fs'),
-        cmd = require('child_process');
+        cmd = require('child_process'),
+        params;
+
+    /**
+     * Get parameters listed by -- notation
+     */
+    function getParams() {
+        var params = {};
+        process.argv.forEach(function(arg, j) {
+            if (arg.substr(0, 2) === '--') {
+                params[arg.substr(2)] = process.argv[j + 1];
+            }
+        });
+        return params;
+    }
 
     /**
      * Get the log from Git
      */
     function getLog(callback) {
-        var after = '2015-06-12',
-            before = '2015-06-26',
+        var command,
             puts = function (err, stdout) {
                 if (err) {
                     throw err;
@@ -25,7 +42,12 @@
                 callback(stdout);
             };
 
-        cmd.exec('git log --after={' + after + '} --before={' + before + '} --format="%s<br>"', null, puts);
+        command = 'git log --after={' + params.after + '} --format="%s<br>" ';
+        if (params.before) {
+            command += '--before={' + params.before + '} ';
+        }
+
+        cmd.exec(command, null, puts);
     }
 
     /**
@@ -100,6 +122,8 @@
             console.log('Wrote draft to ' + filename);
         });
     }
+
+    params = getParams();
 
 
     // Get the Git log 

@@ -180,11 +180,6 @@ var PieSeries = {
 	},
 
 	/**
-	 * Pies have one color each point
-	 */
-	getColor: noop,
-
-	/**
 	 * Animate the pies in
 	 */
 	animate: function (init) {

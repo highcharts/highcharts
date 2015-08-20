@@ -53,7 +53,7 @@
         seriesTypes = H.seriesTypes,
         each = H.each,
         extend = H.extend,
-        addEvent = HA. addEvent,
+        addEvent = HA.addEvent,
         fireEvent = HA.fireEvent,
         merge = H.merge,
         pick = H.pick,
@@ -336,7 +336,7 @@
             series.markerGroup = series.group;
             addEvent(series, 'destroy', function () {
                 series.markerGroup = null;
-            })
+            });
 
             points = this.points = [];
             ctx = this.getContext();

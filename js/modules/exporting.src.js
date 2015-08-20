@@ -255,7 +255,10 @@ extend(Chart.prototype, {
 			sourceHeight,
 			cssWidth,
 			cssHeight,
-			options = merge(chart.options, additionalOptions); // copy the options and add extra options
+			html,
+			options = merge(chart.options, additionalOptions), // copy the options and add extra options
+			allowHTML = options.exporting.allowHTML; // docs: experimental, see #2473
+			
 
 		// IE compatibility hack for generating SVG content that it doesn't really understand
 		if (!doc.createElementNS) {
@@ -290,7 +293,7 @@ extend(Chart.prototype, {
 		extend(options.chart, {
 			animation: false,
 			renderTo: sandbox,
-			forExport: true,
+			forExport: !allowHTML,
 			width: sourceWidth,
 			height: sourceHeight
 		});
@@ -345,6 +348,19 @@ extend(Chart.prototype, {
 		options = null;
 		chartCopy.destroy();
 		discardElement(sandbox);
+
+		// Move HTML into a foreignObject
+		if (allowHTML) {
+			html = svg.match(/<\/svg>(.*?$)/);
+			if (html) {
+				html = '<foreignObject x="0" y="0 width="200" height="200">' +
+					'<body xmlns="http://www.w3.org/1999/xhtml">' +
+					html[1] +
+					'</body>' + 
+					'</foreignObject>';
+				svg = svg.replace('</svg>', html + '</svg>');
+			}
+		}
 
 		// sanitize
 		svg = this.sanitizeSVG(svg);
