@@ -5,7 +5,6 @@ small variation for each data set, and a mouse/touch event handler to bind the c
 */
 
 $(function () {
-    
 
     /**
      * In order to synchronize tooltips and crosshairs, override the 
@@ -16,7 +15,7 @@ $(function () {
             point,
             i;
 
-        for (i = 0; i < Highcharts.charts.length; i++) {
+        for (i = 0; i < Highcharts.charts.length; i = i + 1) {
             chart = Highcharts.charts[i];
             e = chart.pointer.normalize(e); // Find coordinates within the chart
             point = chart.series[0].searchPoint(e, true); // Get the hovered point
@@ -31,7 +30,9 @@ $(function () {
     /**
      * Override the reset function, we don't need to hide the tooltips and crosshairs.
      */
-    Highcharts.Pointer.prototype.reset = function () {};
+    Highcharts.Pointer.prototype.reset = function () {
+        return undefined;
+    };
 
     /**
      * Synchronize zooming through the setExtremes event handler.
