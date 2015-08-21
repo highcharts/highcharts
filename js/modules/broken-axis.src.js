@@ -78,10 +78,6 @@
 				newPositions = [],
 				i;
 
-			if (info && info.totalRange >= axis.closestPointRange) { 
-				return;
-			}
-
 			for (i = 0; i < tickPositions.length; i++) {
 				if (!axis.isInAnyBreak(tickPositions[i])) {
 					newPositions.push(tickPositions[i]);

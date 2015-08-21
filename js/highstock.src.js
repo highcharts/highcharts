@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.8 (2015-08-20)
+ * @license Highstock JS v2.1.8-modified ()
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -55,7 +55,7 @@ var UNDEFINED,
 	charts = [],
 	chartCount = 0,
 	PRODUCT = 'Highstock',
-	VERSION = '2.1.8',
+	VERSION = '2.1.8-modified',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -1269,8 +1269,8 @@ defaultOptions = {
 	global: {
 		useUTC: true,
 		//timezoneOffset: 0,
-		canvasToolsURL: 'http://code.highcharts.com/stock/2.1.8/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/stock/2.1.8/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/stock/2.1.8-modified/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/stock/2.1.8-modified/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -3800,7 +3800,24 @@ SVGRenderer.prototype = {
 				// the created element must be assigned to a variable in order to load (#292).
 				imageElement = createElement('img', {
 					onload: function () {
+
+						// Special case for SVGs on IE11, the width is not accessible until the image is 
+						// part of the DOM (#2854).
+						if (this.width === 0) { 
+							css(this, {
+								position: ABSOLUTE,
+								top: '-999em'
+							});
+							document.body.appendChild(this);
+						}
+
+						// Center the image
 						centerImage(obj, symbolSizes[imageSrc] = [this.width, this.height]);
+
+						// Clean up after #2854 workaround.
+						if (this.parentNode) {
+							this.parentNode.removeChild(this);
+						}
 					},
 					src: imageSrc
 				});
@@ -17746,7 +17763,7 @@ if (seriesTypes.column) {
 
 
 /**
- * Highstock JS v2.1.8 (2015-08-20)
+ * Highstock JS v2.1.8-modified ()
  * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
  *
  * (c) 2010-2014 Torstein Honsi
@@ -19364,7 +19381,7 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
  * End ordinal axis logic                                                   *
  *****************************************************************************/
 /**
- * Highstock JS v2.1.8 (2015-08-20)
+ * Highstock JS v2.1.8-modified ()
  * Highcharts Broken Axis module
  * 
  * Author: Stephane Vanraes, Torstein Honsi
@@ -19442,10 +19459,6 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 				info = this.tickPositions.info,
 				newPositions = [],
 				i;
-
-			if (info && info.totalRange >= axis.closestPointRange) { 
-				return;
-			}
 
 			for (i = 0; i < tickPositions.length; i++) {
 				if (!axis.isInAnyBreak(tickPositions[i])) {

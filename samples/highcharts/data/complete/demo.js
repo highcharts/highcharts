@@ -15,7 +15,7 @@ $(function () {
                 // Add another series to the output
                 options.series.push({
                     name: 'Trend',
-                    data: [{ x: 1880, y: -0.4 }, { x: 2010, y: 0.5 }],
+                    data: [{ x: 1880, y: -0.4 }, { x: 2014, y: 0.52 }],
                     dashStyle: 'dash'
                 });
             }
