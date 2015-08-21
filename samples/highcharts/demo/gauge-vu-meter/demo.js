@@ -34,6 +34,10 @@ $(function () {
             size: 300
         }],
 
+        tooltip: {
+            enabled: false
+        },
+
         yAxis: [{
             min: -20,
             max: 6,
@@ -91,9 +95,11 @@ $(function () {
 
 
         series: [{
+            name: 'Channel A',
             data: [-20],
             yAxis: 0
         }, {
+            name: 'Channel B',
             data: [-20],
             yAxis: 1
         }]
