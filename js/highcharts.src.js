@@ -9951,16 +9951,18 @@ Pointer.prototype = {
 				}
 
 			}
-			this.selectionMarker = this.selectionMarker.destroy();
+			if (charts[chart.index]) { // #3535
+				this.selectionMarker = this.selectionMarker.destroy();
 
-			// Reset scaling preview
-			if (hasPinched) {
-				this.scaleGroups();
+				// Reset scaling preview
+				if (hasPinched) {
+					this.scaleGroups();
+				}
 			}
 		}
 
 		// Reset all
-		if (chart) { // it may be destroyed on mouse up - #877
+		if (charts[chart.index]) { // it may be destroyed on mouse up - #877, #3535
 			css(chart.container, { cursor: chart._cursor });
 			chart.cancelClick = this.hasDragged > 10; // #370
 			chart.mouseIsDown = this.hasDragged = this.hasPinched = false;
