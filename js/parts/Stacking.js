@@ -1,11 +1,13 @@
 /**
  * The class for stack items
  */
-function StackItem(axis, options, isNegative, x, stackOption) {
+function StackItem(axis, xAxis, options, isNegative, x, stackOption) {
 	
 	var inverted = axis.chart.inverted;
 
 	this.axis = axis;
+
+	this.xAxis = xAxis;
 
 	// Tells if the stack is negative
 	this.isNegative = isNegative;
@@ -83,7 +85,7 @@ StackItem.prototype = {
 			y = axis.translate(axis.usePercentage ? 100 : this.total, 0, 0, 0, 1), // stack value translated mapped to chart coordinates
 			yZero = axis.translate(0),						// stack origin
 			h = mathAbs(y - yZero),							// stack height
-			x = chart.xAxis[0].translate(this.x) + xOffset,	// stack x position
+			x = stackItem.xAxis.left - axis.chart.plotLeft + stackItem.xAxis.translate(this.x) + xOffset,	// stack x position
 			plotHeight = chart.plotHeight,
 			stackBox = {	// this is the box for the complete stack
 				x: inverted ? (neg ? y : y - h) : x,
@@ -119,7 +121,7 @@ Chart.prototype.getStacks = function () {
 
 	each(chart.series, function (series) {
 		if (series.options.stacking && (series.visible === true || chart.options.chart.ignoreHiddenSeries === false)) {
-			series.stackKey = series.type + pick(series.options.stack, '');
+			series.stackKey = series.type + pick(series.options.stack, '') + pick(series.options.xAxis, 0); // #4024
 		}
 	});
 };
@@ -250,6 +252,7 @@ Series.prototype.setStackedPoints = function () {
 		negKey = '-' + stackKey,
 		negStacks = series.negStacks,
 		yAxis = series.yAxis,
+		xAxis = series.xAxis,
 		stacks = yAxis.stacks,
 		oldStacks = yAxis.oldStacks,
 		isNegative,
@@ -286,7 +289,7 @@ Series.prototype.setStackedPoints = function () {
 				stacks[key][x] = oldStacks[key][x];
 				stacks[key][x].total = null;
 			} else {
-				stacks[key][x] = new StackItem(yAxis, yAxis.options.stackLabels, isNegative, x, stackOption);
+				stacks[key][x] = new StackItem(yAxis, xAxis, yAxis.options.stackLabels, isNegative, x, stackOption);
 			}
 		}
 

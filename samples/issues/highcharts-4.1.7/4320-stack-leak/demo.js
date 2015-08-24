@@ -25,7 +25,7 @@ $(function () {
         }).highcharts();
 
         assert.strictEqual(
-            sizeof(chart.yAxis[0].stacks.area),
+            sizeof(chart.yAxis[0].stacks.area0),
             5,
             'Stack is 5'
         );
