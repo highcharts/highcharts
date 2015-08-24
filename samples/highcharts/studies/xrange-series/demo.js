@@ -12,6 +12,7 @@ $(function () {
         H.seriesTypes.xrange = H.extendClass(columnType, {
             type: 'xrange',
             parallelArrays: ['x', 'x2', 'y'],
+            requireSorting: false,
             animate: H.seriesTypes.line.prototype.animate,
 
             /**
