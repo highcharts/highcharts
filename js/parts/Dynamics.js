@@ -393,6 +393,10 @@ extend(Series.prototype, {
 				// destroy elements
 				series.destroy();
 
+				// update series' indexes - #2859
+				each(chart.series, function (s, i) {
+					s.index = i;
+				});
 
 				// redraw
 				chart.isDirtyLegend = chart.isDirtyBox = true;
