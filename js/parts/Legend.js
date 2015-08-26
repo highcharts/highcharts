@@ -460,10 +460,10 @@ Legend.prototype = {
 		});
 
 		// Get the box
-		legendWidth = (options.width || legend.offsetWidth) + padding;
 		legendHeight = legend.lastItemY + legend.lastLineHeight + legend.titleHeight;
 		legendHeight = legend.handleOverflow(legendHeight);
 		legendHeight += padding;
+		legendWidth = (options.width || legend.offsetWidth) + padding;
 
 		// Draw the border and/or background
 		if (legendBorderWidth || legendBackgroundColor) {
@@ -630,6 +630,7 @@ Legend.prototype = {
 			legend.scroll(0);
 			
 			legendHeight = spaceHeight;
+			this.offsetWidth = mathMax(this.offsetWidth, this.nav.getBBox().width); // #3455
 			
 		} else if (nav) {
 			clipToHeight(chart.chartHeight);

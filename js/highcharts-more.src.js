@@ -951,6 +951,8 @@ seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
 		translate: function () {
 			var series = this,
 				yAxis = series.yAxis,
+				xAxis = series.xAxis,
+				chart = series.chart,
 				plotHigh;
 
 			colProto.translate.apply(series);
@@ -963,7 +965,6 @@ seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
 					height,
 					y;
 
-				point.tooltipPos = null; // don't inherit from column
 				point.plotHigh = plotHigh = yAxis.translate(point.high, 0, 1, 0, 1);
 				point.plotLow = point.plotY;
 
@@ -985,6 +986,17 @@ seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
 
 				shapeArgs.height = height;
 				shapeArgs.y = y;
+
+				point.tooltipPos = chart.inverted ? 
+					[ 
+						yAxis.len + yAxis.pos - chart.plotLeft - y - height / 2, 
+						xAxis.len + xAxis.pos - chart.plotTop - shapeArgs.x - shapeArgs.width / 2, 
+						height
+					] : [
+						xAxis.left - chart.plotLeft + shapeArgs.x + shapeArgs.width / 2, 
+						yAxis.pos - chart.plotTop + y + height / 2, 
+						height
+					]; // don't inherit from column tooltip position - #3372
 			});
 		},
 		directTouch: true,
@@ -1595,12 +1607,14 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			previousY,
 			previousIntermediate,
 			range,
+			minPointLength = pick(options.minPointLength, 5),
 			threshold = options.threshold,
 			stacking = options.stacking,
 			tooltipY;
 
 		// run column series translate
 		seriesTypes.column.prototype.translate.apply(this);
+		series.minPointLengthOffset = 0;
 
 		previousY = previousIntermediate = threshold;
 		points = series.points;
@@ -1632,11 +1646,11 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			// sum points
 			if (point.isSum) {
 				shapeArgs.y = yAxis.translate(range[1], 0, 1);
-				shapeArgs.height = Math.min(yAxis.translate(range[0], 0, 1), yAxis.len) - shapeArgs.y; // #4256
+				shapeArgs.height = Math.min(yAxis.translate(range[0], 0, 1), yAxis.len) - shapeArgs.y + series.minPointLengthOffset; // #4256
 
 			} else if (point.isIntermediateSum) {
 				shapeArgs.y = yAxis.translate(range[1], 0, 1);
-				shapeArgs.height = Math.min(yAxis.translate(previousIntermediate, 0, 1), yAxis.len) - shapeArgs.y;
+				shapeArgs.height = Math.min(yAxis.translate(previousIntermediate, 0, 1), yAxis.len) - shapeArgs.y + series.minPointLengthOffset;
 				previousIntermediate = range[1];
 
 			// If it's not the sum point, update previous stack end position and get 
@@ -1659,8 +1673,15 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			shapeArgs.height = mathMax(mathRound(shapeArgs.height), 0.001); // #3151
 			point.yBottom = shapeArgs.y + shapeArgs.height;
 
+			if (shapeArgs.height <= minPointLength) {
+				shapeArgs.height = minPointLength;
+				series.minPointLengthOffset += minPointLength;
+			}
+
+			shapeArgs.y -= series.minPointLengthOffset;
+
 			// Correct tooltip placement (#3014)
-			tooltipY = point.plotY + (point.negative ? shapeArgs.height : 0);
+			tooltipY = point.plotY + (point.negative ? shapeArgs.height : 0) - series.minPointLengthOffset;
 			if (series.chart.inverted) {
 				point.tooltipPos[0] = yAxis.len - tooltipY;
 			} else {
@@ -1735,7 +1756,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			options = series.options,
 			stateOptions = options.states,
 			upColor = options.upColor || series.color,
-			hoverColor = Highcharts.Color(upColor).brighten(0.1).get(),
+			hoverColor = Highcharts.Color(upColor).brighten(options.states.hover.brightness).get(),
 			seriesDownPointAttr = merge(series.pointAttr),
 			upColorProp = series.upColorProp;
 
@@ -2145,6 +2166,8 @@ Axis.prototype.beforePadding = function () {
 		each([['min', 'userMin', pxMin], ['max', 'userMax', pxMax]], function (keys) {
 			if (pick(axis.options[keys[0]], axis[keys[1]]) === UNDEFINED) {
 				axis[keys[0]] += keys[2] / transA; 
+			} else {
+				axis.allowZoomOutside = false; // #4332
 			}
 		});
 	}

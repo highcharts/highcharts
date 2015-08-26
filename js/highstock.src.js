@@ -2180,15 +2180,15 @@ SVGElement.prototype = {
 			key,
 			attribs = {},
 			normalizer,
-			strokeWidth = rect.strokeWidth || wrapper.strokeWidth || 0;
+			strokeWidth = pick(rect.strokeWidth, wrapper.strokeWidth, 0);
 
 		normalizer = mathRound(strokeWidth) % 2 / 2; // mathRound because strokeWidth can sometimes have roundoff errors
 
 		// normalize for crisp edges
-		rect.x = mathFloor(rect.x || wrapper.x || 0) + normalizer;
-		rect.y = mathFloor(rect.y || wrapper.y || 0) + normalizer;
-		rect.width = mathFloor((rect.width || wrapper.width || 0) - 2 * normalizer);
-		rect.height = mathFloor((rect.height || wrapper.height || 0) - 2 * normalizer);
+		rect.x = mathFloor(pick(rect.x, wrapper.x, 0)) + normalizer;
+		rect.y = mathFloor(pick(rect.y, wrapper.y, 0)) + normalizer;
+		rect.width = mathFloor((pick(rect.width, wrapper.width, 0)) - 2 * normalizer);
+		rect.height = mathFloor((pick(rect.height, wrapper.height, 0)) - 2 * normalizer);
 		rect.strokeWidth = strokeWidth;
 
 		for (key in rect) {
@@ -9951,16 +9951,18 @@ Pointer.prototype = {
 				}
 
 			}
-			this.selectionMarker = this.selectionMarker.destroy();
+			if (charts[chart.index]) { // #3535
+				this.selectionMarker = this.selectionMarker.destroy();
 
-			// Reset scaling preview
-			if (hasPinched) {
-				this.scaleGroups();
+				// Reset scaling preview
+				if (hasPinched) {
+					this.scaleGroups();
+				}
 			}
 		}
 
 		// Reset all
-		if (chart) { // it may be destroyed on mouse up - #877
+		if (charts[chart.index]) { // it may be destroyed on mouse up - #877, #3535
 			css(chart.container, { cursor: chart._cursor });
 			chart.cancelClick = this.hasDragged > 10; // #370
 			chart.mouseIsDown = this.hasDragged = this.hasPinched = false;
@@ -10945,10 +10947,10 @@ Legend.prototype = {
 		});
 
 		// Get the box
-		legendWidth = (options.width || legend.offsetWidth) + padding;
 		legendHeight = legend.lastItemY + legend.lastLineHeight + legend.titleHeight;
 		legendHeight = legend.handleOverflow(legendHeight);
 		legendHeight += padding;
+		legendWidth = (options.width || legend.offsetWidth) + padding;
 
 		// Draw the border and/or background
 		if (legendBorderWidth || legendBackgroundColor) {
@@ -11115,6 +11117,7 @@ Legend.prototype = {
 			legend.scroll(0);
 			
 			legendHeight = spaceHeight;
+			this.offsetWidth = mathMax(this.offsetWidth, this.nav.getBBox().width); // #3455
 			
 		} else if (nav) {
 			clipToHeight(chart.chartHeight);
@@ -11504,8 +11507,8 @@ Chart.prototype = {
 					if (serie.updateTotals) {
 						serie.updateTotals();
 					}
-					redrawLegend = true;
 				}
+				redrawLegend = true; // #2165 - redraw legend upon showing/hiding series
 			}
 		});
 
@@ -13088,7 +13091,7 @@ Series.prototype = {
 
 		each(chartSeries, function (series, i) {
 			series.index = i;
-			series.name = series.name || 'Series ' + (i + 1);
+			series.name = pick(series.options.name, 'Series ' + (i + 1)); // #4119
 		});
 
 	},
@@ -14139,9 +14142,9 @@ Series.prototype = {
 					pointStateOptionsHover = stateOptions[HOVER_STATE] = stateOptions[HOVER_STATE] || {};
 
 					// Handle colors for column and pies
-					if (!seriesOptions.marker) { // column, bar, point
+					if (!seriesOptions.marker || (point.negative && !pointStateOptionsHover.fillColor && !stateOptionsHover.fillColor)) { // column, bar, point or negative threshold for series with markers (#3636)
 						// If no hover color is given, brighten the normal color. #1619, #2579
-						pointStateOptionsHover.color = pointStateOptionsHover.color || (!point.options.color && stateOptionsHover[(point.negative && seriesNegativeColor ? 'negativeColor' : 'color')]) ||
+						pointStateOptionsHover[series.pointAttrToOptions.fill] = pointStateOptionsHover.color || (!point.options.color && stateOptionsHover[(point.negative && seriesNegativeColor ? 'negativeColor' : 'color')]) ||
 							Color(point.color)
 								.brighten(pointStateOptionsHover.brightness || stateOptionsHover.brightness)
 								.get();
@@ -14862,11 +14865,13 @@ Series.prototype = {
 /**
  * The class for stack items
  */
-function StackItem(axis, options, isNegative, x, stackOption) {
+function StackItem(axis, xAxis, options, isNegative, x, stackOption) {
 	
 	var inverted = axis.chart.inverted;
 
 	this.axis = axis;
+
+	this.xAxis = xAxis;
 
 	// Tells if the stack is negative
 	this.isNegative = isNegative;
@@ -14944,7 +14949,7 @@ StackItem.prototype = {
 			y = axis.translate(axis.usePercentage ? 100 : this.total, 0, 0, 0, 1), // stack value translated mapped to chart coordinates
 			yZero = axis.translate(0),						// stack origin
 			h = mathAbs(y - yZero),							// stack height
-			x = chart.xAxis[0].translate(this.x) + xOffset,	// stack x position
+			x = stackItem.xAxis.left - axis.chart.plotLeft + stackItem.xAxis.translate(this.x) + xOffset,	// stack x position
 			plotHeight = chart.plotHeight,
 			stackBox = {	// this is the box for the complete stack
 				x: inverted ? (neg ? y : y - h) : x,
@@ -14980,7 +14985,7 @@ Chart.prototype.getStacks = function () {
 
 	each(chart.series, function (series) {
 		if (series.options.stacking && (series.visible === true || chart.options.chart.ignoreHiddenSeries === false)) {
-			series.stackKey = series.type + pick(series.options.stack, '');
+			series.stackKey = series.type + pick(series.options.stack, '') + pick(series.options.xAxis, 0); // #4024
 		}
 	});
 };
@@ -15111,6 +15116,7 @@ Series.prototype.setStackedPoints = function () {
 		negKey = '-' + stackKey,
 		negStacks = series.negStacks,
 		yAxis = series.yAxis,
+		xAxis = series.xAxis,
 		stacks = yAxis.stacks,
 		oldStacks = yAxis.oldStacks,
 		isNegative,
@@ -15147,7 +15153,7 @@ Series.prototype.setStackedPoints = function () {
 				stacks[key][x] = oldStacks[key][x];
 				stacks[key][x].total = null;
 			} else {
-				stacks[key][x] = new StackItem(yAxis, yAxis.options.stackLabels, isNegative, x, stackOption);
+				stacks[key][x] = new StackItem(yAxis, xAxis, yAxis.options.stackLabels, isNegative, x, stackOption);
 			}
 		}
 
@@ -15617,6 +15623,10 @@ extend(Series.prototype, {
 				// destroy elements
 				series.destroy();
 
+				// update series' indexes - #2859
+				each(chart.series, function (s, i) {
+					s.index = i;
+				});
 
 				// redraw
 				chart.isDirtyLegend = chart.isDirtyBox = true;
@@ -16202,6 +16212,7 @@ var ColumnSeries = extendClass(Series, {
 
 		var series = this,
 			options = series.options,
+			chart = series.chart,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
 			reversedXAxis = xAxis.reversed,
@@ -16216,10 +16227,10 @@ var ColumnSeries = extendClass(Series, {
 		if (options.grouping === false) {
 			columnCount = 1;
 		} else {
-			each(series.chart.series, function (otherSeries) {
+			each(chart.series, function (otherSeries) {
 				var otherOptions = otherSeries.options,
 					otherYAxis = otherSeries.yAxis;
-				if (otherSeries.type === series.type && otherSeries.visible &&
+				if (otherSeries.type === series.type && (otherSeries.visible || chart.options.chart.ignoreHiddenSeries === false) &&
 						yAxis.len === otherYAxis.len && yAxis.pos === otherYAxis.pos) {  // #642, #2086
 					if (otherOptions.stacking) {
 						stackKey = otherSeries.stackKey;
@@ -16407,7 +16418,7 @@ var ColumnSeries = extendClass(Series, {
 				
 				if (graphic) { // update
 					stop(graphic);
-					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs));
+					graphic.attr(borderAttr).attr(pointAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs)); // #4267
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
@@ -20795,6 +20806,8 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 				pointAttr = point.pointAttr[point.selected ? 'select' : ''] || seriesPointAttr;
 				if (graphic) { // update
 					graphic.attr({
+						text: pick(point.options.title, options.title, 'A') // first apply text, so text will be centered later
+					}).attr({
 						x: plotX,
 						y: plotY,
 						r: pointAttr.r,
@@ -20803,7 +20816,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 					});
 				} else {
 					graphic = point.graphic = renderer.label(
-						point.options.title || options.title || 'A',
+						pick(point.options.title, options.title, 'A'), 
 						plotX,
 						plotY,
 						shape,

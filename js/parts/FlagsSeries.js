@@ -195,6 +195,8 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 				pointAttr = point.pointAttr[point.selected ? 'select' : ''] || seriesPointAttr;
 				if (graphic) { // update
 					graphic.attr({
+						text: pick(point.options.title, options.title, 'A') // first apply text, so text will be centered later
+					}).attr({
 						x: plotX,
 						y: plotY,
 						r: pointAttr.r,
@@ -203,7 +205,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 					});
 				} else {
 					graphic = point.graphic = renderer.label(
-						point.options.title || options.title || 'A',
+						pick(point.options.title, options.title, 'A'), 
 						plotX,
 						plotY,
 						shape,

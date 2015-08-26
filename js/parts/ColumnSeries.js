@@ -83,6 +83,7 @@ var ColumnSeries = extendClass(Series, {
 
 		var series = this,
 			options = series.options,
+			chart = series.chart,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
 			reversedXAxis = xAxis.reversed,
@@ -97,10 +98,10 @@ var ColumnSeries = extendClass(Series, {
 		if (options.grouping === false) {
 			columnCount = 1;
 		} else {
-			each(series.chart.series, function (otherSeries) {
+			each(chart.series, function (otherSeries) {
 				var otherOptions = otherSeries.options,
 					otherYAxis = otherSeries.yAxis;
-				if (otherSeries.type === series.type && otherSeries.visible &&
+				if (otherSeries.type === series.type && (otherSeries.visible || chart.options.chart.ignoreHiddenSeries === false) &&
 						yAxis.len === otherYAxis.len && yAxis.pos === otherYAxis.pos) {  // #642, #2086
 					if (otherOptions.stacking) {
 						stackKey = otherSeries.stackKey;
@@ -288,7 +289,7 @@ var ColumnSeries = extendClass(Series, {
 				
 				if (graphic) { // update
 					stop(graphic);
-					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs));
+					graphic.attr(borderAttr).attr(pointAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs)); // #4267
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
