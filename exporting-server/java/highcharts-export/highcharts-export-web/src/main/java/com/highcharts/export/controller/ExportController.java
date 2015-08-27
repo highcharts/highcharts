@@ -179,12 +179,14 @@ public class ExportController extends HttpServlet {
 	public HttpEntity<byte[]> exportFromJson(
 		@PathVariable("name") String name,
 		@PathVariable("ext") String extension,
-		@RequestBody String requestBody) throws SVGConverterException, TimeoutException, NoSuchElementException, PoolException {
+		@RequestBody String requestBody) throws SVGConverterException, TimeoutException, NoSuchElementException, PoolException, ServletException {
 
 		String randomFilename;
 		randomFilename = null;
 		String json = requestBody;
 		MimeType mime = getMime(extension);
+
+		if (json.indexOf("outfile") > -1) throw new ServletException("Detected illegal \'outfile\' property in json");
 
 		// add outfile parameter to the json with a simple string replace
 		if (MimeType.PDF.equals(mime)) {
