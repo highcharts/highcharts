@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeoutException;
 
+import com.highcharts.export.util.TempDir;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,10 +106,10 @@ public class SVGConverter {
 		// add XML Doctype for svg
 		String output = SVG_DOCTYPE + svg;
 
+		// for async/android use we need to load the file
 		if (filename != null) {
 			// Create file and return filename instead.
-			//String filename = createUniqueFileName(".svg");
-			File file = new File(filename);
+			File file = new File(TempDir.getOutputDir() + "/" + filename);
 			try {
 				FileUtils.writeStringToFile(file, output);
 			} catch (IOException ioex) {

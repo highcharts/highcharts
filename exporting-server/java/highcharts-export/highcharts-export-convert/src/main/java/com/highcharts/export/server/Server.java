@@ -47,6 +47,8 @@ public class Server {
 			commands.add(host);
 			commands.add("-port");
 			commands.add("" + port);
+			commands.add("-tmpdir");
+			commands.add("" + TempDir.getOutputDir());
 
 			logger.log(Level.FINE, commands.toString());
 

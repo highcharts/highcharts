@@ -224,9 +224,16 @@
 			if (outType === 'pdf' || output !== undefined || !serverMode) {
 				if (output === undefined) {
 					// in case of pdf files
-					output = config.tmpDir + '/chart.' + outType;
+					output = 'chart.' + outType;
 				}
-				page.render(output);
+
+				if (config.tmpDir) {
+					// assume only output is a filename, not a path.
+					page.render(config.tmpDir + '/' + output);
+				} else {
+					page.render(output)
+				}
+
 				exit(output);
 			} else {
 				base64 = page.renderBase64(outType);
@@ -274,6 +281,9 @@
 
 					if (output !== undefined) {
 						// write the file
+						if (config.tmpDir) {
+							output = config.tmpDir + '/' + output;
+						}
 						svgFile = fs.open(output, "w");
 						svgFile.write(svg);
 						svgFile.close();
@@ -591,22 +601,20 @@
 
 	args = mapCLArguments();
 
-	// set tmpDir, for output temporary files.
-	if (args.tmpdir === undefined) {
-		config.tmpDir = fs.workingDirectory + '/tmp';
-	} else {
-		config.tmpDir = args.tmpdir;
-	}
+	// set tmpDir, for outputting temporary files.
+	if (args.tmpdir !== undefined) {
 
-	// exists tmpDir and is it writable?
-	if (!fs.exists(config.tmpDir)) {
-		try{
-			fs.makeDirectory(config.tmpDir);
-		} catch (e) {
-			console.log('ERROR: Cannot create temp directory for ' + config.tmpDir);
+		config.tmpDir = args.tmpdir;
+
+		// Make sure tmpDir exist and is writable
+		if (!fs.exists(config.tmpDir)) {
+			try{
+				fs.makeDirectory(config.tmpDir);
+			} catch (e) {
+				console.log('ERROR: Cannot create temp directory for ' + config.tmpDir);
+			}
 		}
 	}
-
 
 	if (args.host !== undefined && args.port !== undefined) {
 		startServer(args.host, args.port);

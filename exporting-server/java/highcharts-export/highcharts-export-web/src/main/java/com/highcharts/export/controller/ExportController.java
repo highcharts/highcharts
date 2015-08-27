@@ -92,7 +92,7 @@ public class ExportController extends HttpServlet {
 			session.removeAttribute("tempFile");
 
 			if (tempFile != null && !tempFile.isEmpty()) {
-				logger.debug("filename stored in session, read and stream from filesystem");				
+				logger.debug("filename stored in session, read and stream from filesystem");
 				String basename = FilenameUtils.getBaseName(tempFile);
 				String extension = FilenameUtils.getExtension(tempFile);
 
@@ -128,8 +128,8 @@ public class ExportController extends HttpServlet {
 
 		/* If randomFilename is not null, then we want to save the filename in session, in case of GET is used later on*/
 		if (isAndroid) {
-			logger.debug("storing randomfile in session: " +  FilenameUtils.getName(randomFilename));
-			session.setAttribute("tempFile", FilenameUtils.getName(randomFilename));
+			logger.debug("storing randomfile in session: " + randomFilename);
+			session.setAttribute("tempFile", randomFilename);
 		}
 
 		String output = convert(svg, mime, width, scale, options, constructor, callback, globalOptions, randomFilename);
@@ -171,9 +171,8 @@ public class ExportController extends HttpServlet {
 
 	@RequestMapping(value = "/files/{name}.{ext}", method = RequestMethod.GET)
 	public HttpEntity<byte[]> getFile(@PathVariable("name") String name, @PathVariable("ext") String extension) throws SVGConverterException, IOException {
-		
-		Path path = Paths.get(TempDir.getOutputDir().toString(), name + "." + extension);
-		String filename = path.toString();
+
+		String filename =  name + "." + extension;
 		MimeType mime = getMime(extension);
 
 		ByteArrayOutputStream stream = writeFileToStream(filename);
@@ -323,8 +322,7 @@ public class ExportController extends HttpServlet {
 	}
 
 	public String createRandomFileName(String extension) {
-		Path path = Paths.get(TempDir.outputDir.toString(), RandomStringUtils.randomAlphanumeric(8) + "." + extension);
-		return path.toString();
+		return RandomStringUtils.randomAlphanumeric(8) + "." + extension;
 	}
 
 	private ByteArrayOutputStream outputToStream(String output, boolean base64) throws SVGConverterException {
@@ -348,7 +346,8 @@ public class ExportController extends HttpServlet {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
 		try {
-			stream.write(FileUtils.readFileToByteArray(new File(filename)));
+			String tmpFile = TempDir.outputDir + String.valueOf(File.separatorChar) + filename;
+			stream.write(FileUtils.readFileToByteArray(new File(tmpFile)));
 		} catch (IOException ioex) {
 			logger.error("Tried to read file from filesystem: " + ioex.getMessage());
 			throw new SVGConverterException("IOException: cannot find your file to download...");
