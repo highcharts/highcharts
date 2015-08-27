@@ -216,7 +216,7 @@ var ColumnSeries = extendClass(Series, {
 			barX = mathRound(barX) + xCrisp;
 			barW = right - barX;
 
-			fromTop = mathAbs(barY) < 0.5;
+			fromTop = mathAbs(barY) <= 0.5; // #4504
 			bottom = mathMin(mathRound(barY + barH) + yCrisp, 9e4); // #3575
 			barY = mathRound(barY) + yCrisp;
 			barH = bottom - barY;
