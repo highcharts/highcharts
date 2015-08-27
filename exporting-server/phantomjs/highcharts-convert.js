@@ -144,6 +144,9 @@
 		window.optionsParsed = false;
 		window.callbackParsed = false;
         
+		//security measures, for not allowing loading iframes
+		page.navigationLocked = true;
+		
 		page.onConsoleMessage = function (msg) {
 			console.log(msg);
             
