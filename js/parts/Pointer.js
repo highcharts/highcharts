@@ -131,7 +131,7 @@ Pointer.prototype = {
 			hoverPoint = chart.hoverPoint,
 			hoverSeries = chart.hoverSeries,
 			i,
-			distance = chart.chartWidth,
+			distance = Number.MAX_VALUE, // #4511
 			anchor,
 			noSharedTooltip,
 			directTouch,
