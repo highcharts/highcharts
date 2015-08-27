@@ -9,43 +9,34 @@
  */
 package com.highcharts.export.controller;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.NoSuchElementException;
-import java.util.concurrent.TimeoutException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-
 import com.highcharts.export.converter.SVGConverter;
 import com.highcharts.export.converter.SVGConverterException;
 import com.highcharts.export.pool.PoolException;
 import com.highcharts.export.util.MimeType;
 import com.highcharts.export.util.TempDir;
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import javax.servlet.http.HttpSession;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.NoSuchElementException;
+import java.util.concurrent.TimeoutException;
 
 @Controller
 @RequestMapping("/")
@@ -172,8 +163,8 @@ public class ExportController extends HttpServlet {
 	@RequestMapping(value = "/files/{name}.{ext}", method = RequestMethod.GET)
 	public HttpEntity<byte[]> getFile(@PathVariable("name") String name, @PathVariable("ext") String extension) throws SVGConverterException, IOException {
 
-		String filename =  name + "." + extension;
-		MimeType mime = getMime(extension);
+		String filename =  name + "." + extension;		
+		MimeType mime = MimeType.valueOf(extension.toUpperCase());
 
 		ByteArrayOutputStream stream = writeFileToStream(filename);
 
