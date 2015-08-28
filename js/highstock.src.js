@@ -22850,16 +22850,20 @@ Axis.prototype.minFromRange = function () {
 		timeName = { month: 'Month', year: 'FullYear'}[type],
 		min,
 		max = this.max,
-		date = new Date(max),
 		dataMin,
-		range;
+		range,
+		// Get the true range from a start date
+		getTrueRange = function (base, count) {
+			var date = new Date(base);
+			date['set' + timeName](date['get' + timeName]() + count);
+			return date.getTime() - base;
+		};
 
 	if (typeof rangeOptions === 'number') {
 		min = this.max - rangeOptions;
 		range = rangeOptions;
 	} else {
-		date['set' + timeName](date['get' + timeName]() - rangeOptions.count);
-		min = date.getTime();
+		min = max + getTrueRange(max, -rangeOptions.count);
 	}
 
 	dataMin = pick(this.dataMin, Number.MIN_VALUE);
@@ -22868,6 +22872,9 @@ Axis.prototype.minFromRange = function () {
 	}
 	if (min <= dataMin) {
 		min = dataMin;
+		if (range === undefined) { // #4501
+			range = getTrueRange(min, rangeOptions.count);
+		}
 		this.newMax = mathMin(min + range, this.dataMax);
 	}
 	if (isNaN(max)) {
