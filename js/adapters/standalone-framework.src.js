@@ -14,7 +14,6 @@ var UNDEFINED,
 	doc = document,
 	emptyArray = [],
 	timers = [],
-	timerId,
 	animSetters = {},
 	Fx;
 
@@ -337,7 +336,7 @@ return {
 				t.elem = this.elem;
 
 				if (t() && timers.push(t) === 1) {
-					timerId = setInterval(function () {
+					t.timerId = setInterval(function () {
 						
 						for (i = 0; i < timers.length; i++) {
 							if (!timers[i]()) {
@@ -346,7 +345,7 @@ return {
 						}
 
 						if (!timers.length) {
-							clearInterval(timerId);
+							clearInterval(t.timerId);
 						}
 					}, 13);
 				}
@@ -360,7 +359,7 @@ return {
 					elem = this.elem,
 					i;
 				
-				if (elem.stopAnimation || (elem.attr && !elem.element)) { // #2616, element including flag is destroyed
+				if (elem.attr && !elem.element) { // #2616, element including flag is destroyed
 					ret = false;
 
 				} else if (gotoEnd || t >= options.duration + this.startTime) {
@@ -407,8 +406,6 @@ return {
 				args,
 				name,
 				PX = 'px';
-
-			el.stopAnimation = false; // ready for new
 
 			if (typeof opt !== 'object' || opt === null) {
 				args = arguments;
@@ -592,7 +589,17 @@ return {
 	 * Stop running animation
 	 */
 	stop: function (el) {
-		el.stopAnimation = true;
+
+		var i = timers.length,
+			timer;
+
+		// Remove timers related to this element (#4519)
+		while (i--) {
+			timer = timers[i];
+			if (timer.elem === el) {
+				timers.splice(i, 1);
+			}
+		}
 	},
 
 	/**
