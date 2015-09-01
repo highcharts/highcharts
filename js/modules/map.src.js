@@ -846,10 +846,10 @@ H.wrap(Chart.prototype, 'render', function (proceed) {
 });
 	return H;
 }(Highcharts));
-
-
+(function (H) {
+	var Pointer = H.Pointer;
 // Extend the Pointer
-Highcharts.extend(Highcharts.Pointer.prototype, {
+H.extend(Pointer.prototype, {
 
 	/**
 	 * The event handler for the doubleclick event
@@ -899,18 +899,18 @@ Highcharts.extend(Highcharts.Pointer.prototype, {
 });
 
 // Implement the pinchType option
-Highcharts.wrap(Highcharts.Pointer.prototype, 'init', function (proceed, chart, options) {
+H.wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 
 	proceed.call(this, chart, options);
 
 	// Pinch status
-	if (Highcharts.pick(options.mapNavigation.enableTouchZoom, options.mapNavigation.enabled)) {
+	if (H.pick(options.mapNavigation.enableTouchZoom, options.mapNavigation.enabled)) {
 		this.pinchX = this.pinchHor = this.pinchY = this.pinchVert = this.hasZoom = true;
 	}
 });
 
 // Extend the pinchTranslate method to preserve fixed ratio when zooming
-Highcharts.wrap(Highcharts.Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
+H.wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
 	var xBigger;
 	proceed.call(this, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 
@@ -930,6 +930,8 @@ Highcharts.wrap(Highcharts.Pointer.prototype, 'pinchTranslate', function (procee
 	}
 });
 
+	return H;
+}(Highcharts));
 
 // The vector-effect attribute is not supported in IE <= 11 (at least), so we need 
 // diffent logic (#3218)
