@@ -1,8 +1,12 @@
+(function (H) {
+	var seriesTypes = H.seriesTypes,
+		wrap = H.wrap;
+
 /*** 
 	EXTENSION FOR 3D SCATTER CHART
 ***/
 
-Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function (proceed) {
+wrap(seriesTypes.scatter.prototype, 'translate', function (proceed) {
 //function translate3d(proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 	
@@ -12,7 +16,7 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 
 	var series = this,
 		chart = series.chart,
-		zAxis = Highcharts.pick(series.zAxis, chart.options.zAxis[0]);
+		zAxis = H.pick(series.zAxis, chart.options.zAxis[0]);
 
 	var raw_points = [],
 		raw_point,
@@ -32,7 +36,7 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 		});
 	}
 
-	projected_points = Highcharts.perspective(raw_points, chart, true);
+	projected_points = H.perspective(raw_points, chart, true);
 
 	for (i = 0; i < series.data.length; i++) {
 		raw_point = series.data[i];
@@ -50,7 +54,7 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 
 });
 
-Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'init', function (proceed, chart, options) {
+wrap(seriesTypes.scatter.prototype, 'init', function (proceed, chart, options) {
 	if (chart.is3d()) {
 		// add a third coordinate
 		this.axisTypes = ['xAxis', 'yAxis', 'zAxis'];
@@ -71,3 +75,5 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'init', function (proc
 	}
 	return result;
 });
+	return H;
+}(Highcharts));
