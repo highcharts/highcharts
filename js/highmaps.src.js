@@ -16845,10 +16845,13 @@ H.wrap(Legend.prototype, 'getAllItems', function (proceed) {
 
 	return H;
 }(Highcharts));
+(function (H) {
+	var colorSeriesMixin;
+
 /**
  * Mixin for maps and heatmaps
  */
-var colorSeriesMixin = {
+colorSeriesMixin = H.colorSeriesMixin = {
 
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
@@ -16860,7 +16863,7 @@ var colorSeriesMixin = {
 	axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
 	optionalAxis: 'colorAxis',
 	trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-	getSymbol: Highcharts.noop,
+	getSymbol: H.noop,
 	parallelArrays: ['x', 'y', 'value'],
 	colorKey: 'value',
 	
@@ -16873,7 +16876,7 @@ var colorSeriesMixin = {
 			colorAxis = this.colorAxis,
 			colorKey = this.colorKey;
 
-		Highcharts.each(this.data, function (point) {
+		H.each(this.data, function (point) {
 			var value = point[colorKey],
 				color;
 
@@ -16885,6 +16888,9 @@ var colorSeriesMixin = {
 		});
 	}
 };
+	return H;
+}(Highcharts));
+
 // The vector-effect attribute is not supported in IE <= 11 (at least), so we need 
 // diffent logic (#3218)
 var supportsVectorEffect = document.documentElement.style.vectorEffect !== undefined;
@@ -17049,7 +17055,7 @@ var MapAreaPoint = Highcharts.extendClass(Highcharts.Point, {
 /**
  * Add the series type
  */
-Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(colorSeriesMixin, {
+Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(Highcharts.colorSeriesMixin, {
 	type: 'map',
 	pointClass: MapAreaPoint,
 	supportsDrilldown: true,
@@ -18810,7 +18816,7 @@ Highcharts.defaultOptions.plotOptions.heatmap = Highcharts.merge(Highcharts.defa
 });
 
 // The Heatmap series type
-Highcharts.seriesTypes.heatmap = Highcharts.extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(colorSeriesMixin, {
+Highcharts.seriesTypes.heatmap = Highcharts.extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(Highcharts.colorSeriesMixin, {
 	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,

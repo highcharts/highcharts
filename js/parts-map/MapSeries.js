@@ -163,7 +163,7 @@ var MapAreaPoint = Highcharts.extendClass(Highcharts.Point, {
 /**
  * Add the series type
  */
-Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(colorSeriesMixin, {
+Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(Highcharts.colorSeriesMixin, {
 	type: 'map',
 	pointClass: MapAreaPoint,
 	supportsDrilldown: true,

@@ -33,7 +33,7 @@ Highcharts.defaultOptions.plotOptions.heatmap = Highcharts.merge(Highcharts.defa
 });
 
 // The Heatmap series type
-Highcharts.seriesTypes.heatmap = Highcharts.extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(colorSeriesMixin, {
+Highcharts.seriesTypes.heatmap = Highcharts.extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(Highcharts.colorSeriesMixin, {
 	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
