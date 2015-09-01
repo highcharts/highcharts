@@ -709,8 +709,20 @@ extend(Chart.prototype, {
 			buttonOptions,
 			attr,
 			states,
-			outerHandler = function () { 
-				this.handler.call(chart); 
+			stopEvent = function (e) {
+				if (e) {
+					if (e.preventDefault) {
+						e.preventDefault();
+					}
+					if (e.stopPropagation) {
+						e.stopPropagation();
+					}
+					e.cancelBubble = true;
+				}
+			},
+			outerHandler = function (e) {
+				this.handler.call(chart, e);
+				stopEvent(e); // Stop default click event (#4444)
 			};
 
 		if (pick(options.enableButtons, options.enabled) && !chart.renderer.forExport) {
@@ -740,6 +752,7 @@ extend(Chart.prototype, {
 						.add();
 					button.handler = buttonOptions.onclick;
 					button.align(extend(buttonOptions, { width: button.width, height: 2 * button.height }), null, buttonOptions.alignTo);
+					addEvent(button.element, 'dblclick', stopEvent); // Stop double click event (#4444)
 				}
 			}
 		}
