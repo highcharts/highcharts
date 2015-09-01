@@ -7,5 +7,3 @@
  */
 
 /*global HighchartsAdapter*/
-(function (Highcharts) {
-

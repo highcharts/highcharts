@@ -7,8 +7,6 @@
  */
 
 /*global HighchartsAdapter*/
-(function (Highcharts) {
-
 (function (H) {
 	var Axis = H.Axis,
 		Chart = H.Chart,
@@ -660,6 +658,4 @@ H.seriesTypes.heatmap = H.extendClass(H.seriesTypes.scatter, H.merge(colorSeries
 }));
 
 	return H;
-}(Highcharts));
-
 }(Highcharts));

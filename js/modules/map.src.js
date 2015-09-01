@@ -8,8 +8,6 @@
  */
 
 /*global HighchartsAdapter*/
-(function (Highcharts) {
-
 (function (H) {
 	var Axis = H.Axis,
 		each = H.each,
@@ -2274,6 +2272,4 @@ H.Map = function (options, callback) {
 };
 
 	return H;
-}(Highcharts));
-
 }(Highcharts));

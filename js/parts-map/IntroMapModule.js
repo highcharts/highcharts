@@ -8,5 +8,3 @@
  */
 
 /*global HighchartsAdapter*/
-(function (Highcharts) {
-
