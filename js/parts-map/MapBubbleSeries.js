@@ -1,23 +1,25 @@
-
+(function (H) {
+	var MapAreaPoint = H.MapAreaPoint,
+		Point = H.Point;
 
 // The mapbubble series type
-if (Highcharts.seriesTypes.bubble) {
+if (H.seriesTypes.bubble) {
 
-	Highcharts.defaultPlotOptions.mapbubble = Highcharts.merge(Highcharts.defaultPlotOptions.bubble, {
+	H.defaultPlotOptions.mapbubble = H.merge(H.defaultPlotOptions.bubble, {
 		animationLimit: 500,
 		tooltip: {
 			pointFormat: '{point.name}: {point.z}'
 		}
 	});
-	Highcharts.seriesTypes.mapbubble = Highcharts.extendClass(Highcharts.seriesTypes.bubble, {
-		pointClass: Highcharts.extendClass(Highcharts.Point, {
+	H.seriesTypes.mapbubble = H.extendClass(H.seriesTypes.bubble, {
+		pointClass: H.extendClass(Point, {
 			applyOptions: function (options, x) {
 				var point;
 				if (options.lat !== undefined && options.lon !== undefined) {
-					point = Highcharts.Point.prototype.applyOptions.call(this, options, x);
-					point = Highcharts.extend(point, this.series.chart.fromLatLonToPoint(point));
+					point = Point.prototype.applyOptions.call(this, options, x);
+					point = H.extend(point, this.series.chart.fromLatLonToPoint(point));
 				} else {
-					point = Highcharts.MapAreaPoint.prototype.applyOptions.call(this, options, x);
+					point = MapAreaPoint.prototype.applyOptions.call(this, options, x);
 				}
 				return point;
 			},
@@ -29,8 +31,11 @@ if (Highcharts.seriesTypes.bubble) {
 		/**
 		 * Return the map area identified by the dataJoinBy option
 		 */
-		getMapData: Highcharts.seriesTypes.map.prototype.getMapData,
-		getBox: Highcharts.seriesTypes.map.prototype.getBox,
-		setData: Highcharts.seriesTypes.map.prototype.setData
+		getMapData: H.seriesTypes.map.prototype.getMapData,
+		getBox: H.seriesTypes.map.prototype.getBox,
+		setData: H.seriesTypes.map.prototype.setData
 	});
 }
+
+	return H;
+}(Highcharts));
