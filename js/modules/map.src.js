@@ -1458,7 +1458,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 					// Reset color on update/redraw
 					if (point.shapeArgs) {
-						point.shapeArgs.fill = point.color;
+						point.shapeArgs.fill = point.pointAttr[pick(point.state, '')].fill; // #3529
 					}
 				});
 			}
