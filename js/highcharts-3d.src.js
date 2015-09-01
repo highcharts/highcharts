@@ -11,9 +11,7 @@
 
 // JSLint options:
 /*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
-
-(function (Highcharts) {
-	/**
+/**
 	Shorthands for often used function
 */ 
 (function (H) {
@@ -1543,6 +1541,4 @@ H.wrap(Axis.prototype, 'render', function (proceed) {
 
 }
 	return H;
-}(Highcharts));
-
 }(Highcharts));
