@@ -1,14 +1,16 @@
-
-
+(function (H) {
+	var Chart = H.Chart,
+		SVGRenderer = H.SVGRenderer,
+		VMLRenderer = H.VMLRenderer;
 // Add language
-Highcharts.extend(Highcharts.defaultOptions.lang, {
+H.extend(H.defaultOptions.lang, {
 	zoomIn: 'Zoom in',
 	zoomOut: 'Zoom out'
 });
 
 
 // Set the default map navigation options
-Highcharts.defaultOptions.mapNavigation = {
+H.defaultOptions.mapNavigation = {
 	buttonOptions: {
 		alignTo: 'plotBox',
 		align: 'left',
@@ -52,7 +54,7 @@ Highcharts.defaultOptions.mapNavigation = {
 /**
  * Utility for reading SVG paths directly.
  */
-Highcharts.splitPath = function (path) {
+H.splitPath = function (path) {
 	var i;
 
 	// Move letters apart
@@ -73,7 +75,7 @@ Highcharts.splitPath = function (path) {
 };
 
 // A placeholder for map definitions
-Highcharts.maps = {};
+H.maps = {};
 
 
 
@@ -106,18 +108,18 @@ function selectiveRoundedRect(attr, x, y, w, h, rTopLeft, rTopRight, rBottomRigh
         'Z'
     ];
 }
-Highcharts.SVGRenderer.prototype.symbols.topbutton = function (x, y, w, h, attr) {
+SVGRenderer.prototype.symbols.topbutton = function (x, y, w, h, attr) {
 	return selectiveRoundedRect(attr, x, y, w, h, attr.r, attr.r, 0, 0);
 };
-Highcharts.SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
+SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
 	return selectiveRoundedRect(attr, x, y, w, h, 0, 0, attr.r, attr.r);
 };
 // The symbol callbacks are generated on the SVGRenderer object in all browsers. Even
 // VML browsers need this in order to generate shapes in export. Now share
 // them with the VMLRenderer.
-if (Highcharts.Renderer === Highcharts.VMLRenderer) {
-	Highcharts.each(['topbutton', 'bottombutton'], function (shape) {
-		Highcharts.VMLRenderer.prototype.symbols[shape] = Highcharts.SVGRenderer.prototype.symbols[shape];
+if (H.Renderer === VMLRenderer) {
+	H.each(['topbutton', 'bottombutton'], function (shape) {
+		VMLRenderer.prototype.symbols[shape] = SVGRenderer.prototype.symbols[shape];
 	});
 }
 
@@ -125,7 +127,7 @@ if (Highcharts.Renderer === Highcharts.VMLRenderer) {
 /**
  * A wrapper for Chart with all the default values for a Map
  */
-Highcharts.Map = function (options, callback) {
+H.Map = function (options, callback) {
 	
 	var hiddenAxis = {
 			endOnTick: false,
@@ -149,13 +151,13 @@ Highcharts.Map = function (options, callback) {
 	seriesOptions = options.series;
 	options.series = null;
 	
-	options = Highcharts.merge({
+	options = H.merge({
 		chart: {
 			panning: 'xy',
 			type: 'map'
 		},
 		xAxis: hiddenAxis,
-		yAxis: Highcharts.merge(hiddenAxis, { reversed: true })	
+		yAxis: H.merge(hiddenAxis, { reversed: true })	
 	},
 	options, // user's options
 
@@ -169,5 +171,8 @@ Highcharts.Map = function (options, callback) {
 	options.series = seriesOptions;
 
 
-	return new Highcharts.Chart(options, callback);
+	return new Chart(options, callback);
 };
+
+	return H;
+}(Highcharts));
