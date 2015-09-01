@@ -261,11 +261,7 @@ public class ExportController extends HttpServlet {
 	}
 
 	private static MimeType getMime(String mime) {
-		MimeType type = MimeType.get(mime);
-		if (type != null) {
-			return type;
-		}
-		return MimeType.PNG;
+		return MimeType.get(mime);
 	}
 
 	private static String sanitize(String parameter) {

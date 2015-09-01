@@ -11,6 +11,7 @@ package com.highcharts.export.util;
 
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public enum MimeType {
@@ -18,19 +19,11 @@ public enum MimeType {
 	JPEG("image/jpeg", "jpeg"),
 	PDF("application/pdf", "pdf"),
 	SVG("image/svg+xml", "svg");
-
-	private static final Map<String, MimeType> lookup = new HashMap<>();
-
-	static {
-		for (MimeType m : EnumSet.allOf(MimeType.class)) {
-			lookup.put(m.getType(), m);
-		}
-	}
-
+	
 	private String type;
 	private String extension;
 
-	private MimeType(String type, String extension) {
+	MimeType(String type, String extension) {
 		this.type = type;
 		this.extension = extension;
 	}
@@ -43,7 +36,20 @@ public enum MimeType {
 		return extension;
 	}
 
-	public static MimeType get(String type) {
+	public static MimeType get(String typeOrExtension) {
+		for (MimeType m : EnumSet.allOf(MimeType.class)) {
+			if (m.getType().equalsIgnoreCase(typeOrExtension) || m.getExtension().equalsIgnoreCase(typeOrExtension)) {
+				return m;
+			}
+		}
+		
+		return MimeType.PNG;
+		
+		/*Iterator it = lookup.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry pair = (Map.Entry)it.next();
+			if 
+		}
 		
 		// Check first if we give in the name of the mime, like svg, png, pfd
 		MimeType mime = MimeType.valueOf(type.toUpperCase());
@@ -57,6 +63,6 @@ public enum MimeType {
 			return mime;
 		}
 		// else return default
-		return MimeType.PNG;
+		return MimeType.PNG;*/
 	}
 }
