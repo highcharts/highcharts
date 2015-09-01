@@ -16353,18 +16353,26 @@ wrap(Axis.prototype, 'render', function (proceed) {
 
 	return H;
 }(Highcharts));
-
-
+(function (H) {
+	var Axis = H.Axis,
+		Chart = H.Chart,
+		Color = H.Color,
+		ColorAxis,
+		each = H.each,
+		extend = H.extend,
+		Legend = H.Legend,
+		LegendSymbolMixin = H.LegendSymbolMixin,
+		pick = H.pick;
 
 /**
  * The ColorAxis object for inclusion in gradient legends
  */
-var ColorAxis = Highcharts.ColorAxis = function () {
+ColorAxis = H.ColorAxis = function () {
 	this.isColorAxis = true;
 	this.init.apply(this, arguments);
 };
-Highcharts.extend(ColorAxis.prototype, Highcharts.Axis.prototype);
-Highcharts.extend(ColorAxis.prototype, {
+extend(ColorAxis.prototype, Axis.prototype);
+extend(ColorAxis.prototype, {
 	defaultColorAxisOptions: {
 		lineWidth: 0,
 		gridLineWidth: 1,
@@ -16391,7 +16399,7 @@ Highcharts.extend(ColorAxis.prototype, {
 			options;
 
 		// Build the options
-		options = Highcharts.merge(this.defaultColorAxisOptions, {
+		options = H.merge(this.defaultColorAxisOptions, {
 			side: horiz ? 2 : 1,
 			reversed: !horiz
 		}, userOptions, {
@@ -16402,7 +16410,7 @@ Highcharts.extend(ColorAxis.prototype, {
 			isColor: true
 		});
 
-		Highcharts.Axis.prototype.init.call(this, chart, options);
+		Axis.prototype.init.call(this, chart, options);
 
 		// Base init() pushes it to the xAxis array, now pop it again
 		//chart[this.isXAxis ? 'xAxis' : 'yAxis'].pop();
@@ -16459,10 +16467,10 @@ Highcharts.extend(ColorAxis.prototype, {
 		this.dataClasses = dataClasses = [];
 		this.legendItems = [];
 
-		Highcharts.each(userOptions.dataClasses, function (dataClass, i) {
+		each(userOptions.dataClasses, function (dataClass, i) {
 			var colors;
 
-			dataClass = Highcharts.merge(dataClass);
+			dataClass = H.merge(dataClass);
 			dataClasses.push(dataClass);
 			if (!dataClass.color) {
 				if (options.dataClassColor === 'category') {
@@ -16474,8 +16482,8 @@ Highcharts.extend(ColorAxis.prototype, {
 					}
 				} else {
 					dataClass.color = axis.tweenColors(
-						Highcharts.Color(options.minColor), 
-						Highcharts.Color(options.maxColor), 
+						Color(options.minColor), 
+						Color(options.maxColor), 
 						len < 2 ? 0.5 : i / (len - 1) // #3219
 					);
 				}
@@ -16488,8 +16496,8 @@ Highcharts.extend(ColorAxis.prototype, {
 			[0, this.options.minColor],
 			[1, this.options.maxColor]
 		];
-		Highcharts.each(this.stops, function (stop) {
-			stop.color = Highcharts.Color(stop[1]);
+		each(this.stops, function (stop) {
+			stop.color = Color(stop[1]);
 		});
 	},
 
@@ -16498,7 +16506,7 @@ Highcharts.extend(ColorAxis.prototype, {
 	 * stops.
 	 */
 	setOptions: function (userOptions) {
-		Highcharts.Axis.prototype.setOptions.call(this, userOptions);
+		Axis.prototype.setOptions.call(this, userOptions);
 
 		this.options.crosshair = this.options.marker;
 		this.coll = 'colorAxis';
@@ -16586,7 +16594,7 @@ Highcharts.extend(ColorAxis.prototype, {
 		
 		if (group) {
 
-			Highcharts.Axis.prototype.getOffset.call(this);
+			Axis.prototype.getOffset.call(this);
 			
 			if (!this.axisGroup.parentGroup) {
 
@@ -16632,7 +16640,6 @@ Highcharts.extend(ColorAxis.prototype, {
 			legendOptions = legend.options,
 			horiz = this.horiz,
 			box,
-			pick = Highcharts.pick,
 			width = pick(legendOptions.symbolWidth, horiz ? 200 : 12),
 			height = pick(legendOptions.symbolHeight, horiz ? 12 : 200),
 			labelPadding = pick(legendOptions.labelPadding, horiz ? 16 : 30),
@@ -16658,9 +16665,9 @@ Highcharts.extend(ColorAxis.prototype, {
 	/**
 	 * Fool the legend
 	 */
-	setState: Highcharts.noop,
+	setState: H.noop,
 	visible: true,
-	setVisible: Highcharts.noop,
+	setVisible: H.noop,
 	getSeriesExtremes: function () {
 		var series;
 		if (this.series.length) {
@@ -16686,7 +16693,7 @@ Highcharts.extend(ColorAxis.prototype, {
 			
 			point.plotX = crossPos;
 			point.plotY = this.len - crossPos;
-			Highcharts.Axis.prototype.drawCrosshair.call(this, e, point);
+			Axis.prototype.drawCrosshair.call(this, e, point);
 			point.plotX = plotX;
 			point.plotY = plotY;
 			
@@ -16705,15 +16712,15 @@ Highcharts.extend(ColorAxis.prototype, {
 				['M', pos - 4, this.top - 6, 'L', pos + 4, this.top - 6, pos, this.top, 'Z'] : 
 				['M', this.left, pos, 'L', this.left - 6, pos + 6, this.left - 6, pos - 6, 'Z'];
 		} else {
-			return Highcharts.Axis.prototype.getPlotLinePath.call(this, a, b, c, d);
+			return Axis.prototype.getPlotLinePath.call(this, a, b, c, d);
 		}
 	},
 
 	update: function (newOptions, redraw) {
-		Highcharts.each(this.series, function (series) {
+		each(this.series, function (series) {
 			series.isDirtyData = true; // Needed for Axis.update when choropleth colors change
 		});
-		Highcharts.Axis.prototype.update.call(this, newOptions, redraw);
+		Axis.prototype.update.call(this, newOptions, redraw);
 		if (this.legendItem) {
 			this.setLegendColor();
 			this.chart.legend.colorizeItem(this, true);
@@ -16733,7 +16740,7 @@ Highcharts.extend(ColorAxis.prototype, {
 			name;
 
 		if (!legendItems.length) {
-			Highcharts.each(this.dataClasses, function (dataClass, i) {
+			each(this.dataClasses, function (dataClass, i) {
 				var vis = true,
 					from = dataClass.from,
 					to = dataClass.to;
@@ -16746,26 +16753,26 @@ Highcharts.extend(ColorAxis.prototype, {
 					name = '> ';
 				}
 				if (from !== undefined) {
-					name += Highcharts.numberFormat(from, valueDecimals) + valueSuffix;
+					name += H.numberFormat(from, valueDecimals) + valueSuffix;
 				}
 				if (from !== undefined && to !== undefined) {
 					name += ' - ';
 				}
 				if (to !== undefined) {
-					name += Highcharts.numberFormat(to, valueDecimals) + valueSuffix;
+					name += H.numberFormat(to, valueDecimals) + valueSuffix;
 				}
 				// Add a mock object to the legend items
-				legendItems.push(Highcharts.extend({
+				legendItems.push(extend({
 					chart: chart,
 					name: name,
 					options: {},
-					drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle,
+					drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 					visible: true,
-					setState: Highcharts.noop,
+					setState: H.noop,
 					setVisible: function () {
 						vis = this.visible = !vis;
-						Highcharts.each(axis.series, function (series) {
-							Highcharts.each(series.points, function (point) {
+						each(axis.series, function (series) {
+							each(series.points, function (point) {
 								if (point.dataClass === i) {
 									point.setVisible(vis);
 								}
@@ -16785,16 +16792,16 @@ Highcharts.extend(ColorAxis.prototype, {
 /**
  * Handle animation of the color attributes directly
  */
-Highcharts.each(['fill', 'stroke'], function (prop) {
+each(['fill', 'stroke'], function (prop) {
 	HighchartsAdapter.addAnimSetter(prop, function (fx) {
-		fx.elem.attr(prop, ColorAxis.prototype.tweenColors(Highcharts.Color(fx.start), Highcharts.Color(fx.end), fx.pos));
+		fx.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(fx.start), Color(fx.end), fx.pos));
 	});
 });
 
 /**
  * Extend the chart getAxes method to also get the color axis
  */
-Highcharts.wrap(Highcharts.Chart.prototype, 'getAxes', function (proceed) {
+H.wrap(Chart.prototype, 'getAxes', function (proceed) {
 
 	var options = this.options,
 		colorAxisOptions = options.colorAxis;
@@ -16812,7 +16819,7 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'getAxes', function (proceed) {
  * Wrap the legend getAllItems method to add the color axis. This also removes the 
  * axis' own series to prevent them from showing up individually.
  */
-Highcharts.wrap(Highcharts.Legend.prototype, 'getAllItems', function (proceed) {
+H.wrap(Legend.prototype, 'getAllItems', function (proceed) {
 	var allItems = [],
 		colorAxis = this.chart.colorAxis[0];
 
@@ -16828,13 +16835,17 @@ Highcharts.wrap(Highcharts.Legend.prototype, 'getAllItems', function (proceed) {
 		}
 
 		// Don't add the color axis' series
-		Highcharts.each(colorAxis.series, function (series) {
+		each(colorAxis.series, function (series) {
 			series.options.showInLegend = false;
 		});
 	}
 
 	return allItems.concat(proceed.call(this));
-});/**
+});
+
+	return H;
+}(Highcharts));
+/**
  * Mixin for maps and heatmaps
  */
 var colorSeriesMixin = {
@@ -17000,7 +17011,7 @@ var MapAreaPoint = Highcharts.extendClass(Highcharts.Point, {
 					pos = 1;
 				}
 				if (graphic) {
-					graphic.attr('fill', ColorAxis.prototype.tweenColors.call(0, hoverColor, normalColor, pos));
+					graphic.attr('fill', Highcharts.ColorAxis.prototype.tweenColors.call(0, hoverColor, normalColor, pos));
 				}
 				if (pos >= 1) {
 					clearTimeout(point.colorInterval);

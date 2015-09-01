@@ -125,7 +125,7 @@ var MapAreaPoint = Highcharts.extendClass(Highcharts.Point, {
 					pos = 1;
 				}
 				if (graphic) {
-					graphic.attr('fill', ColorAxis.prototype.tweenColors.call(0, hoverColor, normalColor, pos));
+					graphic.attr('fill', Highcharts.ColorAxis.prototype.tweenColors.call(0, hoverColor, normalColor, pos));
 				}
 				if (pos >= 1) {
 					clearTimeout(point.colorInterval);
