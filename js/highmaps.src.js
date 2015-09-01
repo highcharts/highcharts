@@ -13682,9 +13682,8 @@ Series.prototype = {
 						threshold = zones[++j];
 					}
 					
-					if (threshold.color) {
-						point.color = point.fillColor = threshold.color;
-					}
+					point.color = point.fillColor = pick(threshold.color, series.color); // #3636, #4267, #4430 - inherit color from series, when color is not set directly
+					
 				}
 
 				hasPointSpecificOptions = seriesOptions.colorByPoint || point.color; // #868
