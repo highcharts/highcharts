@@ -11,8 +11,6 @@
 
 // JSLint options:
 /*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
-
-(function (Highcharts) {
 (function (H) {
 /**
  * The Pane object allows options that are common to a set of X and Y axes.
@@ -2661,6 +2659,4 @@ Axis.prototype.beforePadding = function () {
 	});
 
 	return H;
-}(Highcharts));
-
 }(Highcharts));
