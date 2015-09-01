@@ -1,13 +1,16 @@
+(function (H) {
+	var Axis = H.Axis,
+		each = H.each,
+		pick = H.pick,
+		wrap = H.wrap;
 /**
  * Override to use the extreme coordinates from the SVG shape, not the
  * data values
  */
-Highcharts.wrap(Highcharts.Axis.prototype, 'getSeriesExtremes', function (proceed) {
+wrap(Axis.prototype, 'getSeriesExtremes', function (proceed) {
 	var isXAxis = this.isXAxis,
 		dataMin,
 		dataMax,
-		pick = Highcharts.pick,
-		each = Highcharts.each,
 		xData = [],
 		useMapGeometry;
 
@@ -46,7 +49,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getSeriesExtremes', function (procee
 /**
  * Override axis translation to make sure the aspect ratio is always kept
  */
-Highcharts.wrap(Highcharts.Axis.prototype, 'setAxisTranslation', function (proceed) {
+wrap(Axis.prototype, 'setAxisTranslation', function (proceed) {
 	var chart = this.chart,
 		mapRatio,
 		plotRatio = chart.plotWidth / chart.plotHeight,
@@ -63,7 +66,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'setAxisTranslation', function (proce
 
 	// Check for map-like series
 	if (this.coll === 'yAxis' && xAxis.transA !== undefined) {
-		Highcharts.each(this.series, function (series) {
+		each(this.series, function (series) {
 			if (series.preserveAspectRatio) {
 				preserveAspectRatio = true;
 			}
@@ -101,7 +104,10 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'setAxisTranslation', function (proce
 /**
  * Override Axis.render in order to delete the fixTo prop
  */
-Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
+wrap(Axis.prototype, 'render', function (proceed) {
 	proceed.call(this);
 	this.fixTo = null;
 });
+
+	return H;
+}(Highcharts));
