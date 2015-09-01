@@ -18027,10 +18027,11 @@ H.seriesTypes.mapline = H.extendClass(H.seriesTypes.map, {
 });
 	return H;
 }(Highcharts));
-
+(function (H) {
+	var Point = H.Point;
 
 // The mappoint series type
-Highcharts.defaultPlotOptions.mappoint = Highcharts.merge(Highcharts.defaultPlotOptions.scatter, {
+H.defaultPlotOptions.mappoint = H.merge(H.defaultPlotOptions.scatter, {
 	dataLabels: {
 		enabled: true,
 		formatter: function () { // #2945
@@ -18044,19 +18045,22 @@ Highcharts.defaultPlotOptions.mappoint = Highcharts.merge(Highcharts.defaultPlot
 		}
 	}
 });
-Highcharts.seriesTypes.mappoint = Highcharts.extendClass(Highcharts.seriesTypes.scatter, {
+H.seriesTypes.mappoint = H.extendClass(H.seriesTypes.scatter, {
 	type: 'mappoint',
 	forceDL: true,
-	pointClass: Highcharts.extendClass(Highcharts.Point, {
+	pointClass: H.extendClass(Point, {
 		applyOptions: function (options, x) {
-			var point = Highcharts.Point.prototype.applyOptions.call(this, options, x);
+			var point = Point.prototype.applyOptions.call(this, options, x);
 			if (options.lat !== undefined && options.lon !== undefined) {
-				point = Highcharts.extend(point, this.series.chart.fromLatLonToPoint(point));
+				point = H.extend(point, this.series.chart.fromLatLonToPoint(point));
 			}
 			return point;
 		}
 	})
-});(function (H) {
+});
+	return H;
+}(Highcharts));
+(function (H) {
 	var Axis = H.Axis,
 		Color = H.Color,
 		Point = H.Point,
