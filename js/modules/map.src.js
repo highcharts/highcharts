@@ -932,6 +932,16 @@ H.wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touche
 
 	return H;
 }(Highcharts));
+(function (H) {
+	var Color = H.Color,
+		ColorAxis = H.ColorAxis,
+		colorSeriesMixin = H.colorSeriesMixin,
+		each = H.each,
+		LegendSymbolMixin = H.LegendSymbolMixin,
+		pick = H.pick,
+		Point = H.Point,
+		Series = H.Series,
+		seriesTypes = H.seriesTypes;
 
 // The vector-effect attribute is not supported in IE <= 11 (at least), so we need 
 // diffent logic (#3218)
@@ -940,7 +950,7 @@ var supportsVectorEffect = document.documentElement.style.vectorEffect !== undef
 /**
  * Extend the default options with map options
  */
-Highcharts.defaultPlotOptions.map = Highcharts.merge(Highcharts.defaultPlotOptions.scatter, {
+H.defaultPlotOptions.map = H.merge(H.defaultPlotOptions.scatter, {
 	allAreas: true,
 
 	animation: false, // makes the complex shapes slow
@@ -978,13 +988,13 @@ Highcharts.defaultPlotOptions.map = Highcharts.merge(Highcharts.defaultPlotOptio
 /**
  * The MapAreaPoint object
  */
-var MapAreaPoint = Highcharts.extendClass(Highcharts.Point, {
+var MapAreaPoint = H.MapAreaPoint = H.extendClass(Point, {
 	/**
 	 * Extend the Point object to split paths
 	 */
 	applyOptions: function (options, x) {
 
-		var point = Highcharts.Point.prototype.applyOptions.call(this, options, x),
+		var point = Point.prototype.applyOptions.call(this, options, x),
 			series = this.series,
 			joinBy = series.joinBy,
 			mapPoint;
@@ -997,7 +1007,7 @@ var MapAreaPoint = Highcharts.extendClass(Highcharts.Point, {
 					point.x = mapPoint._midX;
 					point.y = mapPoint._midY;
 				}
-				Highcharts.extend(point, mapPoint); // copy over properties
+				H.extend(point, mapPoint); // copy over properties
 			} else {
 				point.value = point.value || null;
 			}
@@ -1014,7 +1024,7 @@ var MapAreaPoint = Highcharts.extendClass(Highcharts.Point, {
 			method = vis ? 'show' : 'hide';
 
 		// Show and hide associated elements
-		Highcharts.each(['graphic', 'dataLabel'], function (key) {
+		each(['graphic', 'dataLabel'], function (key) {
 			if (point[key]) {
 				point[key][method]();
 			}
@@ -1027,7 +1037,7 @@ var MapAreaPoint = Highcharts.extendClass(Highcharts.Point, {
 	onMouseOver: function (e) {
 		clearTimeout(this.colorInterval);
 		if (this.value !== null) {
-			Highcharts.Point.prototype.onMouseOver.call(this, e);
+			Point.prototype.onMouseOver.call(this, e);
 		} else { //#3401 Tooltip doesn't hide when hovering over null points
 			this.series.onMouseOut(e);
 		}
@@ -1041,8 +1051,8 @@ var MapAreaPoint = Highcharts.extendClass(Highcharts.Point, {
 	onMouseOut: function () {
 		var point = this,
 			start = +new Date(),
-			normalColor = Highcharts.Color(point.color),
-			hoverColor = Highcharts.Color(point.pointAttr.hover.fill),
+			normalColor = Color(point.color),
+			hoverColor = Color(point.pointAttr.hover.fill),
 			animation = point.series.options.states.normal.animation,
 			duration = animation && (animation.duration || 500),
 			fill;
@@ -1059,14 +1069,14 @@ var MapAreaPoint = Highcharts.extendClass(Highcharts.Point, {
 					pos = 1;
 				}
 				if (graphic) {
-					graphic.attr('fill', Highcharts.ColorAxis.prototype.tweenColors.call(0, hoverColor, normalColor, pos));
+					graphic.attr('fill', ColorAxis.prototype.tweenColors.call(0, hoverColor, normalColor, pos));
 				}
 				if (pos >= 1) {
 					clearTimeout(point.colorInterval);
 				}
 			}, 13);
 		}
-		Highcharts.Point.prototype.onMouseOut.call(point);
+		Point.prototype.onMouseOut.call(point);
 
 		if (fill) {
 			point.pointAttr[''].fill = fill;
@@ -1097,14 +1107,14 @@ var MapAreaPoint = Highcharts.extendClass(Highcharts.Point, {
 /**
  * Add the series type
  */
-Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(Highcharts.colorSeriesMixin, {
+seriesTypes.map = H.extendClass(seriesTypes.scatter, H.merge(colorSeriesMixin, {
 	type: 'map',
 	pointClass: MapAreaPoint,
 	supportsDrilldown: true,
 	getExtremesFromAll: true,
 	useMapGeometry: true, // get axis extremes from paths, not values
 	forceDL: true,
-	searchPoint: Highcharts.noop,
+	searchPoint: H.noop,
 	preserveAspectRatio: true, // X axis and Y axis must have same translation slope
 	/**
 	 * Get the bounding box of all paths in the map combined.
@@ -1118,15 +1128,14 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 			minRange = MAX_VALUE,
 			xAxis = this.xAxis,
 			yAxis = this.yAxis,
-			pick = Highcharts.pick,
 			hasBox;
 		
 		// Find the bounding box
-		Highcharts.each(paths || [], function (point) {
+		each(paths || [], function (point) {
 
 			if (point.path) {
 				if (typeof point.path === 'string') {
-					point.path = Highcharts.splitPath(point.path);
+					point.path = H.splitPath(point.path);
 				}
 
 				var path = point.path || [],
@@ -1194,7 +1203,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 	
 	getExtremes: function () {
 		// Get the actual value extremes for colors
-		Highcharts.Series.prototype.getExtremes.call(this, this.valueData);
+		Series.prototype.getExtremes.call(this, this.valueData);
 
 		// Recalculate box on updated data
 		if (this.chart.hasRendered && this.isDirtyData) {
@@ -1256,7 +1265,6 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 			mapData = options.mapData,
 			joinBy = options.joinBy,
 			joinByNull = joinBy === null,
-			each = Highcharts.each,
 			dataUsed = [],
 			mapPoint,
 			transform,
@@ -1267,7 +1275,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 		if (joinByNull) {
 			joinBy = '_i';
 		}
-		joinBy = this.joinBy = Highcharts.splat(joinBy);
+		joinBy = this.joinBy = H.splat(joinBy);
 		if (!joinBy[1]) {
 			joinBy[1] = joinBy[0];
 		}
@@ -1299,7 +1307,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 						}
 					}
 				}
-				mapData = Highcharts.geojson(mapData, this.type, this);
+				mapData = H.geojson(mapData, this.type, this);
 			}
 
 			this.getBox(mapData);
@@ -1334,25 +1342,25 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 
 				each(mapData, function (mapPoint) {
 					if (!joinBy[0] || dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1) {
-						data.push(Highcharts.merge(mapPoint, { value: null }));
+						data.push(H.merge(mapPoint, { value: null }));
 					}
 				});
 			}
 		}
-		Highcharts.Series.prototype.setData.call(this, data, redraw);
+		Series.prototype.setData.call(this, data, redraw);
 	},
 
 	
 	/**
 	 * No graph for the map series
 	 */
-	drawGraph: Highcharts.noop,
+	drawGraph: H.noop,
 	
 	/**
 	 * We need the points' bounding boxes in order to draw the data labels, so 
 	 * we skip it now and call it from drawPoints instead.
 	 */
-	drawDataLabels: Highcharts.noop,
+	drawDataLabels: H.noop,
 
 	/**
 	 * Allow a quick redraw by just translating the area group. Used for zooming and panning
@@ -1373,7 +1381,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 
 		series.generatePoints();
 		
-		Highcharts.each(series.data, function (point) {
+		each(series.data, function (point) {
 		
 			// Record the middle point (loosely based on centroid), determined
 			// by the middleX and middleY options.
@@ -1406,7 +1414,6 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 			group = series.group,
 			chart = series.chart,
 			renderer = chart.renderer,
-			each = Highcharts.each,
 			scaleX,
 			scaleY,
 			translateX,
@@ -1454,7 +1461,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 
 			// Draw them in transformGroup
 			series.group = series.transformGroup;
-			Highcharts.seriesTypes.column.prototype.drawPoints.apply(series);
+			seriesTypes.column.prototype.drawPoints.apply(series);
 			series.group = group; // Reset
 
 			// Add class names
@@ -1468,7 +1475,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 					}
 
 					if (!supportsVectorEffect) {
-						point.graphic['stroke-widthSetter'] = Highcharts.noop;
+						point.graphic['stroke-widthSetter'] = H.noop;
 					}
 				}
 			});
@@ -1532,7 +1539,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 	 */		
 	drawMapDataLabels: function () {
 
-		Highcharts.Series.prototype.drawDataLabels.call(this);
+		Series.prototype.drawDataLabels.call(this);
 		if (this.dataLabelsGroup) {
 			this.dataLabelsGroup.clip(this.chart.clipRect);
 		}
@@ -1543,7 +1550,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 	 */
 	render: function () {
 		var series = this,
-			render = Highcharts.Series.prototype.render;
+			render = Series.prototype.render;
 
 		// Give IE8 some time to breathe.
 		if (series.chart.renderer.isVML && series.data.length > 3000) {
@@ -1624,7 +1631,7 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 			};
 			
 			// TODO: Animate this.group instead
-			Highcharts.each(this.points, function (point) {
+			each(this.points, function (point) {
 				if (point.graphic) {
 					point.graphic
 						.attr(level.shapeArgs)
@@ -1642,14 +1649,14 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 		
 	},
 
-	drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle,
+	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
 	/**
 	 * When drilling up, pull out the individual point graphics from the lower series
 	 * and animate them into the origin point in the upper series.
 	 */
 	animateDrillupFrom: function (level) {
-		Highcharts.seriesTypes.column.prototype.animateDrillupFrom.call(this, level);
+		seriesTypes.column.prototype.animateDrillupFrom.call(this, level);
 	},
 
 
@@ -1658,9 +1665,13 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 	 * moved into place
 	 */
 	animateDrillupTo: function (init) {
-		Highcharts.seriesTypes.column.prototype.animateDrillupTo.call(this, init);
+		seriesTypes.column.prototype.animateDrillupTo.call(this, init);
 	}
 }));
+
+	return H;
+}(Highcharts));
+
 
 
 // The mapline series type
@@ -1725,7 +1736,7 @@ if (Highcharts.seriesTypes.bubble) {
 					point = Highcharts.Point.prototype.applyOptions.call(this, options, x);
 					point = Highcharts.extend(point, this.series.chart.fromLatLonToPoint(point));
 				} else {
-					point = MapAreaPoint.prototype.applyOptions.call(this, options, x);
+					point = Highcharts.MapAreaPoint.prototype.applyOptions.call(this, options, x);
 				}
 				return point;
 			},
