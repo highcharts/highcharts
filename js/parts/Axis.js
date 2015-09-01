@@ -1168,12 +1168,12 @@ Axis.prototype = {
 					horiz = axis.horiz,
 					key = [horiz ? options.left : options.top, horiz ? options.width : options.height, options.pane].join(',');
 				
-				if (others[key]) {
-					if (axis.series.length) {
+				if (axis.series.length) { // #4442
+					if (others[key]) {
 						hasOther = true; // #4201
+					} else {
+						others[key] = 1;
 					}
-				} else {
-					others[key] = 1;
 				}
 			});
 

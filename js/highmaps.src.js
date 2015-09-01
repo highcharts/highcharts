@@ -2886,7 +2886,7 @@ SVGElement.prototype = {
 		// IE9-11 doesn't handle visibilty:inherit well, so we remove the attribute instead (#2881, #3909)
 		if (value === 'inherit') {
 			element.removeAttribute(key);
-		} else {
+		} else {
 			element.setAttribute(key, value);
 		}
 	},
@@ -7393,12 +7393,12 @@ Axis.prototype = {
 					horiz = axis.horiz,
 					key = [horiz ? options.left : options.top, horiz ? options.width : options.height, options.pane].join(',');
 				
-				if (others[key]) {
-					if (axis.series.length) {
+				if (axis.series.length) { // #4442
+					if (others[key]) {
 						hasOther = true; // #4201
+					} else {
+						others[key] = 1;
 					}
-				} else {
-					others[key] = 1;
 				}
 			});
 
@@ -12544,6 +12544,7 @@ Series.prototype = {
 		fill: 'fillColor',
 		r: 'radius'
 	},
+	directTouch: false,
 	axisTypes: ['xAxis', 'yAxis'],
 	colorCounter: 0,
 	parallelArrays: ['x', 'y'], // each point's x and y values are stored in this.xData and this.yData
@@ -17755,8 +17756,20 @@ extend(Chart.prototype, {
 			buttonOptions,
 			attr,
 			states,
-			outerHandler = function () { 
-				this.handler.call(chart); 
+			stopEvent = function (e) {
+				if (e) {
+					if (e.preventDefault) {
+						e.preventDefault();
+					}
+					if (e.stopPropagation) {
+						e.stopPropagation();
+					}
+					e.cancelBubble = true;
+				}
+			},
+			outerHandler = function (e) {
+				this.handler.call(chart, e);
+				stopEvent(e); // Stop default click event (#4444)
 			};
 
 		if (pick(options.enableButtons, options.enabled) && !chart.renderer.forExport) {
@@ -17786,6 +17799,7 @@ extend(Chart.prototype, {
 						.add();
 					button.handler = buttonOptions.onclick;
 					button.align(extend(buttonOptions, { width: button.width, height: 2 * button.height }), null, buttonOptions.alignTo);
+					addEvent(button.element, 'dblclick', stopEvent); // Stop double click event (#4444)
 				}
 			}
 		}
