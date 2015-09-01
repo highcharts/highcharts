@@ -1224,11 +1224,18 @@ wrap(seriesTypes.cylinder.prototype, 'translate', function (proceed) {
 
 	return H;
 }(Highcharts));
+(function (H) {
+	var deg2rad = H.deg2rad,
+		each = H.each,
+		pick = H.pick,
+		seriesTypes = H.seriesTypes,
+		wrap = H.wrap;
+
 /*** 
 	EXTENSION FOR 3D PIES
 ***/
 
-Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (proceed) {
+wrap(seriesTypes.pie.prototype, 'translate', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	// Do not do this if the chart is not 3D
@@ -1255,10 +1262,9 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 
 	if (seriesOptions.grouping !== false) { z = 0; }
 
-	Highcharts.each(series.data, function (point) {
+	each(series.data, function (point) {
 		point.shapeType = 'arc3d';
-		var shapeArgs = point.shapeArgs,
-			deg2rad = Highcharts.deg2rad;
+		var shapeArgs = point.shapeArgs;
 
 		if (point.y) { // will be false if null or 0 #3006
 			shapeArgs.z = z;
@@ -1280,12 +1286,12 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 	});
 });
 
-Highcharts.wrap(Highcharts.seriesTypes.pie.prototype.pointClass.prototype, 'haloPath', function (proceed) {
+wrap(seriesTypes.pie.prototype.pointClass.prototype, 'haloPath', function (proceed) {
 	var args = arguments;
 	return this.series.chart.is3d() ? [] : proceed.call(this, args[1]);
 });
 
-Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
+wrap(seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
 	// Do not do this if the chart is not 3D
 	if (this.chart.is3d()) {
 		var options = this.options,
@@ -1293,14 +1299,14 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 
 		// Set the border color to the fill color to provide a smooth edge
 		this.borderWidth = options.borderWidth = options.edgeWidth || 1;
-		this.borderColor = options.edgeColor = Highcharts.pick(options.edgeColor, options.borderColor, undefined);
+		this.borderColor = options.edgeColor = pick(options.edgeColor, options.borderColor, undefined);
 
-		states.hover.borderColor = Highcharts.pick(states.hover.edgeColor, this.borderColor);		
-		states.hover.borderWidth = Highcharts.pick(states.hover.edgeWidth, this.borderWidth);	
-		states.select.borderColor = Highcharts.pick(states.select.edgeColor, this.borderColor);		
-		states.select.borderWidth = Highcharts.pick(states.select.edgeWidth, this.borderWidth);
+		states.hover.borderColor = pick(states.hover.edgeColor, this.borderColor);		
+		states.hover.borderWidth = pick(states.hover.edgeWidth, this.borderWidth);	
+		states.select.borderColor = pick(states.select.edgeColor, this.borderColor);		
+		states.select.borderWidth = pick(states.select.edgeWidth, this.borderWidth);
 
-		Highcharts.each(this.data, function (point) {
+		each(this.data, function (point) {
 			var pointAttr = point.pointAttr;
 			pointAttr[''].stroke = point.series.borderColor || point.color;
 			pointAttr['']['stroke-width'] = point.series.borderWidth;
@@ -1315,7 +1321,7 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 
 	if (this.chart.is3d()) {		
 		var seriesGroup = this.group;
-		Highcharts.each(this.points, function (point) {
+		each(this.points, function (point) {
 			point.graphic.out.add(seriesGroup);
 			point.graphic.inn.add(seriesGroup);
 			point.graphic.side1.add(seriesGroup);
@@ -1324,11 +1330,10 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 	}
 });
 
-Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
+wrap(seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
 	if (this.chart.is3d()) {
-		var series = this,
-			deg2rad = Highcharts.deg2rad;
-		Highcharts.each(series.data, function (point) {
+		var series = this;
+		each(series.data, function (point) {
 			var shapeArgs = point.shapeArgs,
 				r = shapeArgs.r,
 				d = shapeArgs.depth,
@@ -1346,7 +1351,7 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawDataLabels', function
 	proceed.apply(this, [].slice.call(arguments, 1));
 });
 
-Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'addPoint', function (proceed) {
+wrap(seriesTypes.pie.prototype, 'addPoint', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));	
 	if (this.chart.is3d()) {
 		// destroy (and rebuild) everything!!!
@@ -1354,7 +1359,7 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'addPoint', function (proc
 	}
 });
 
-Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'animate', function (proceed) {
+wrap(seriesTypes.pie.prototype, 'animate', function (proceed) {
 	if (!this.chart.is3d()) {
 		proceed.apply(this, [].slice.call(arguments, 1));
 	} else {
@@ -1366,7 +1371,7 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'animate', function (proce
 			group = this.group,
 			markerGroup = this.markerGroup;
 
-		if (Highcharts.svg) { // VML is too slow anyway
+		if (H.svg) { // VML is too slow anyway
 				
 				if (animation === true) {
 					animation = {};
@@ -1410,7 +1415,9 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'animate', function (proce
 				
 		}
 	}
-});/*** 
+});
+	return H;
+}(Highcharts));/*** 
 	EXTENSION FOR 3D SCATTER CHART
 ***/
 
