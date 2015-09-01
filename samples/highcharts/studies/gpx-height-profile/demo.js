@@ -147,7 +147,6 @@ $(function () {
     
         series: [{
             data: data,
-            threshold: null,
             name: 'Elevation',
             marker: {
                 enabled: false,
@@ -163,7 +162,9 @@ $(function () {
                     [0, 'rgba(65, 116, 158, 0.7)'],
                     [1, 'rgba(255, 255, 255, 0.7)']
                 ]
-            }
+            },
+            threshold: null,
+            turboThreshold: 0
         }]
     
     });
