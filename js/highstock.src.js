@@ -14145,7 +14145,7 @@ Series.prototype = {
 						threshold = zones[++j];
 					}
 					
-					point.color = point.fillColor = pick(threshold.color, series.color); // #3636, #4267, #4430 - inherit color from series, when color is not set directly
+					point.color = point.fillColor = pick(threshold.color, series.color); // #3636, #4267, #4430 - inherit color from series, when color is undefined
 					
 				}
 
