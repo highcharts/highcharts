@@ -1841,6 +1841,7 @@ SVGElement.prototype = {
 			colorObject,
 			gradName,
 			gradAttr,
+			radAttr,
 			gradients,
 			gradientObject,
 			stops,
@@ -1877,12 +1878,11 @@ SVGElement.prototype = {
 
 			// Correct the radial gradient for the radial reference system
 			if (gradName === 'radialGradient' && radialReference && !defined(gradAttr.gradientUnits)) {
-				gradAttr = merge(gradAttr, {
-					cx: (radialReference[0] - radialReference[2] / 2) + gradAttr.cx * radialReference[2],
-					cy: (radialReference[1] - radialReference[2] / 2) + gradAttr.cy * radialReference[2],
-					r: gradAttr.r * radialReference[2],
-					gradientUnits: 'userSpaceOnUse'
-				});
+				radAttr = gradAttr; // Save the radial attributes for updating
+				gradAttr = merge(gradAttr, 
+					renderer.getRadialAttr(radialReference, radAttr),
+					{ gradientUnits: 'userSpaceOnUse' }
+				);
 			}
 
 			// Build the unique key to detect whether we need to create a new element (#1282)
@@ -1908,6 +1908,7 @@ SVGElement.prototype = {
 					.attr(gradAttr)
 					.add(renderer.defs);
 
+				gradientObject.radAttr = radAttr;
 
 				// The gradient needs to keep a list of stops to be able to destroy them
 				gradientObject.stops = [];
@@ -1934,6 +1935,7 @@ SVGElement.prototype = {
 
 			// Set the reference to the gradient object
 			elem.setAttribute(prop, 'url(' + renderer.url + '#' + id + ')');
+			elem.gradient = key;
 		} 
 	},
 
@@ -2306,7 +2308,21 @@ SVGElement.prototype = {
 	 * [centerX, centerY, diameter] in pixels.
 	 */
 	setRadialReference: function (coordinates) {
+		var existingGradient = this.renderer.gradients[this.element.gradient];
+
 		this.element.radialReference = coordinates;
+		
+		// On redrawing objects with an existing gradient, the gradient needs
+		// to be repositioned (#3801)
+		if (existingGradient && existingGradient.radAttr) {
+			existingGradient.animate(
+				this.renderer.getRadialAttr(
+					coordinates, 
+					existingGradient.radAttr
+				)
+			);
+		}
+
 		return this;
 	},
 
@@ -2870,7 +2886,7 @@ SVGElement.prototype = {
 		// IE9-11 doesn't handle visibilty:inherit well, so we remove the attribute instead (#2881, #3909)
 		if (value === 'inherit') {
 			element.removeAttribute(key);
-		} else {
+		} else {
 			element.setAttribute(key, value);
 		}
 	},
@@ -3107,6 +3123,17 @@ SVGRenderer.prototype = {
 	 * Dummy function for use in canvas renderer
 	 */
 	draw: function () {},
+
+	/**
+	 * Get converted radial gradient attributes
+	 */
+	getRadialAttr: function (radialReference, gradAttr) {
+		return {
+			cx: (radialReference[0] - radialReference[2] / 2) + gradAttr.cx * radialReference[2],
+			cy: (radialReference[1] - radialReference[2] / 2) + gradAttr.cy * radialReference[2],
+			r: gradAttr.r * radialReference[2]
+		};
+	},
 
 	/**
 	 * Parse a simple HTML string into SVG tspans
@@ -8071,11 +8098,11 @@ Axis.prototype = {
 			var tick = ticks[pos],
 				label = tick && tick.label;
 			if (label) {
+				label.attr(attr); // This needs to go before the CSS in old IE (#4502)
 				if (css) {
 					label.css(merge(css, label.specCss));
 				}
 				delete label.specCss;
-				label.attr(attr);
 				tick.rotation = attr.rotation;
 			}
 		});
@@ -10061,11 +10088,11 @@ Pointer.prototype = {
 
 	onTrackerMouseOut: function (e) {
 		var series = this.chart.hoverSeries,
-			relatedTarget = e.relatedTarget || e.toElement,
-			relatedSeries = relatedTarget && relatedTarget.point && relatedTarget.point.series; // #2499
+			relatedTarget = e.relatedTarget || e.toElement;
 		
-		if (series && !series.options.stickyTracking && !this.inClass(relatedTarget, PREFIX + 'tooltip') &&
-				relatedSeries !== series) {
+		if (series && !series.options.stickyTracking && 
+				!this.inClass(relatedTarget, PREFIX + 'tooltip') &&
+				!this.inClass(relatedTarget, PREFIX + 'series-' + series.index)) { // #2499, #4465
 			series.onMouseOut();
 		}
 	},
@@ -14567,7 +14594,10 @@ Series.prototype = {
 					zIndex: zIndex || 0.1 // IE8 needs this
 				})
 				.add(parent);
+
+			group.addClass('highcharts-series-' + this.index);
 		}
+		
 		// Place it on first and subsequent (redraw) calls
 		group[isNew ? 'attr' : 'animate'](this.getPlotBox());
 		return group;
@@ -16961,7 +16991,9 @@ var PieSeries = {
 
 				// draw the slice
 				if (graphic) {
-					graphic.animate(extend(shapeArgs, groupTranslation));				
+					graphic
+						.setRadialReference(series.center)
+						.animate(extend(shapeArgs, groupTranslation));				
 				} else {
 					attr = { 'stroke-linejoin': 'round' };
 					if (!point.visible) {
@@ -21292,7 +21324,7 @@ Scroller.prototype = {
 
 
 		// handles are allowed to cross, but never exceed the plot area
-		scroller.zoomedMax = mathMin(mathMax(pxMin, pxMax), navigatorWidth);
+		scroller.zoomedMax = mathMin(mathMax(pxMin, pxMax, 0), navigatorWidth);
 		scroller.zoomedMin = 
 			mathMax(scroller.fixedWidth ? scroller.zoomedMax - scroller.fixedWidth : mathMin(pxMin, pxMax), 0);
 		scroller.range = scroller.zoomedMax - scroller.zoomedMin;
@@ -22864,16 +22896,20 @@ Axis.prototype.minFromRange = function () {
 		timeName = { month: 'Month', year: 'FullYear'}[type],
 		min,
 		max = this.max,
-		date = new Date(max),
 		dataMin,
-		range;
+		range,
+		// Get the true range from a start date
+		getTrueRange = function (base, count) {
+			var date = new Date(base);
+			date['set' + timeName](date['get' + timeName]() + count);
+			return date.getTime() - base;
+		};
 
 	if (typeof rangeOptions === 'number') {
 		min = this.max - rangeOptions;
 		range = rangeOptions;
 	} else {
-		date['set' + timeName](date['get' + timeName]() - rangeOptions.count);
-		min = date.getTime();
+		min = max + getTrueRange(max, -rangeOptions.count);
 	}
 
 	dataMin = pick(this.dataMin, Number.MIN_VALUE);
@@ -22882,6 +22918,9 @@ Axis.prototype.minFromRange = function () {
 	}
 	if (min <= dataMin) {
 		min = dataMin;
+		if (range === undefined) { // #4501
+			range = getTrueRange(min, rangeOptions.count);
+		}
 		this.newMax = mathMin(min + range, this.dataMax);
 	}
 	if (isNaN(max)) {

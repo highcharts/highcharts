@@ -23,11 +23,11 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Compare SVG</title>
 		
-		<script src="http://code.jquery.com/jquery-1.7.js"></script>
-		<script src="http://ejohn.org/files/jsdiff.js"></script>
+		<script src="cache.php?file=http://code.jquery.com/jquery-1.7.js"></script>
+		<script src="cache.php?file=http://ejohn.org/files/jsdiff.js"></script>
 
-		<script src="http://www.highcharts.com/lib/canvg-1.1/rgbcolor.js"></script>
-		<script src="http://www.highcharts.com/lib/canvg-1.1/canvg.js"></script>
+		<script src="cache.php?file=http://www.highcharts.com/lib/canvg-1.1/rgbcolor.js"></script>
+		<script src="cache.php?file=http://www.highcharts.com/lib/canvg-1.1/canvg.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css"/>
 
 		
