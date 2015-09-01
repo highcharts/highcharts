@@ -353,7 +353,7 @@ extend(Chart.prototype, {
 		if (allowHTML) {
 			html = svg.match(/<\/svg>(.*?$)/);
 			if (html) {
-				html = '<foreignObject x="0" y="0 width="200" height="200">' +
+				html = '<foreignObject x="0" y="0" width="200" height="200">' +
 					'<body xmlns="http://www.w3.org/1999/xhtml">' +
 					html[1] +
 					'</body>' + 
