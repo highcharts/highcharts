@@ -1,8 +1,12 @@
-
+(function (H) {
+	var colorSeriesMixin = H.colorSeriesMixin,
+		each = H.each,
+		LegendSymbolMixin = H.LegendSymbolMixin,
+		Series = H.Series;
 /**
  * Extend the default options with map options
  */
-Highcharts.defaultOptions.plotOptions.heatmap = Highcharts.merge(Highcharts.defaultOptions.plotOptions.scatter, {
+H.defaultOptions.plotOptions.heatmap = H.merge(H.defaultOptions.plotOptions.scatter, {
 	animation: false,
 	borderWidth: 0,
 	nullColor: '#F8F8F8',
@@ -33,7 +37,7 @@ Highcharts.defaultOptions.plotOptions.heatmap = Highcharts.merge(Highcharts.defa
 });
 
 // The Heatmap series type
-Highcharts.seriesTypes.heatmap = Highcharts.extendClass(Highcharts.seriesTypes.scatter, Highcharts.merge(Highcharts.colorSeriesMixin, {
+H.seriesTypes.heatmap = H.extendClass(H.seriesTypes.scatter, H.merge(colorSeriesMixin, {
 	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
@@ -46,16 +50,15 @@ Highcharts.seriesTypes.heatmap = Highcharts.extendClass(Highcharts.seriesTypes.s
 	 */
 	init: function () {
 		var options;
-		Highcharts.seriesTypes.scatter.prototype.init.apply(this, arguments);
+		H.seriesTypes.scatter.prototype.init.apply(this, arguments);
 
 		options = this.options;
-		this.pointRange = options.pointRange = Highcharts.pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
+		this.pointRange = options.pointRange = H.pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
 		this.yAxis.axisPointRange = options.rowsize || 1; // general point range
 	},
 	translate: function () {
 		var series = this,
 			options = series.options,
-			each = Highcharts.each,
 			xAxis = series.xAxis,
 			yAxis = series.yAxis;
 
@@ -91,20 +94,22 @@ Highcharts.seriesTypes.heatmap = Highcharts.extendClass(Highcharts.seriesTypes.s
 			});
 		}
 	},
-	drawPoints: Highcharts.seriesTypes.column.prototype.drawPoints,
-	animate: Highcharts.noop,
-	getBox: Highcharts.noop,
-	drawLegendSymbol: Highcharts.LegendSymbolMixin.drawRectangle,
+	drawPoints: H.seriesTypes.column.prototype.drawPoints,
+	animate: H.noop,
+	getBox: H.noop,
+	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
 	getExtremes: function () {
 		// Get the extremes from the value data
-		Highcharts.Series.prototype.getExtremes.call(this, this.valueData);
+		Series.prototype.getExtremes.call(this, this.valueData);
 		this.valueMin = this.dataMin;
 		this.valueMax = this.dataMax;
 
 		// Get the extremes from the y data
-		Highcharts.Series.prototype.getExtremes.call(this);
+		Series.prototype.getExtremes.call(this);
 	}
 		
 }));
 
+	return H;
+}(Highcharts));
