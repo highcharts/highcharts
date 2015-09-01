@@ -17725,9 +17725,13 @@ Highcharts.seriesTypes.map = Highcharts.extendClass(Highcharts.seriesTypes.scatt
 		}
 	};
 
-}(Highcharts));
+}(Highcharts));(function (H) {
+	var Chart = H.Chart,
+		extend = H.extend,
+		pick = H.pick;
+
 // Add events to the Chart object itself
-Highcharts.extend(Highcharts.Chart.prototype, {
+extend(Chart.prototype, {
 	renderMapNavigation: function () {
 		var chart = this,
 			options = this.options.mapNavigation,
@@ -17741,12 +17745,12 @@ Highcharts.extend(Highcharts.Chart.prototype, {
 				this.handler.call(chart); 
 			};
 
-		if (Highcharts.pick(options.enableButtons, options.enabled) && !chart.renderer.forExport) {
+		if (pick(options.enableButtons, options.enabled) && !chart.renderer.forExport) {
 			for (n in buttons) {
 				if (buttons.hasOwnProperty(n)) {
-					buttonOptions = Highcharts.merge(options.buttonOptions, buttons[n]);
+					buttonOptions = H.merge(options.buttonOptions, buttons[n]);
 					attr = buttonOptions.theme;
-					attr.style = Highcharts.merge(buttonOptions.theme.style, buttonOptions.style); // #3203
+					attr.style = H.merge(buttonOptions.theme.style, buttonOptions.style); // #3203
 					states = attr.states;
 					button = chart.renderer.button(
 							buttonOptions.text, 
@@ -17767,7 +17771,7 @@ Highcharts.extend(Highcharts.Chart.prototype, {
 						})					
 						.add();
 					button.handler = buttonOptions.onclick;
-					button.align(Highcharts.extend(buttonOptions, { width: button.width, height: 2 * button.height }), null, buttonOptions.alignTo);
+					button.align(extend(buttonOptions, { width: button.width, height: 2 * button.height }), null, buttonOptions.alignTo);
 				}
 			}
 		}
@@ -17779,7 +17783,7 @@ Highcharts.extend(Highcharts.Chart.prototype, {
 	 * in Highcharts, perhaps it should be elevated to a common utility function.
 	 */
 	fitToBox: function (inner, outer) {
-		Highcharts.each([['x', 'width'], ['y', 'height']], function (dim) {
+		H.each([['x', 'width'], ['y', 'height']], function (dim) {
 			var pos = dim[0],
 				size = dim[1];
 
@@ -17815,7 +17819,6 @@ Highcharts.extend(Highcharts.Chart.prototype, {
 		var chart = this,
 			xAxis = chart.xAxis[0],
 			xRange = xAxis.max - xAxis.min,
-			pick = Highcharts.pick,
 			centerX = pick(centerXArg, xAxis.min + xRange / 2),
 			newXRange = xRange * howMuch,
 			yAxis = chart.yAxis[0],
@@ -17881,10 +17884,9 @@ Highcharts.extend(Highcharts.Chart.prototype, {
 /**
  * Extend the Chart.render method to add zooming and panning
  */
-Highcharts.wrap(Highcharts.Chart.prototype, 'render', function (proceed) {
+H.wrap(Chart.prototype, 'render', function (proceed) {
 	var chart = this,
-		pick = Highcharts.pick,
-		addEvent = Highcharts.addEvent,
+		addEvent = H.addEvent,
 		mapNavigation = chart.options.mapNavigation;
 
 	// Render the plus and minus buttons. Doing this before the shapes makes getBBox much quicker, at least in Chrome.
@@ -17907,6 +17909,9 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'render', function (proceed) {
 		});
 	}
 });
+	return H;
+}(Highcharts));
+
 
 // Extend the Pointer
 Highcharts.extend(Highcharts.Pointer.prototype, {
