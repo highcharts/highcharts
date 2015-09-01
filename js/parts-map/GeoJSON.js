@@ -1,4 +1,6 @@
-
+(function (H) {
+	var Chart = H.Chart,
+		error = H.error;
 /** 
  * Test for point in polygon. Polygon defined as array of [x,y] points.
  */
@@ -21,9 +23,9 @@ function pointInPolygon(point, polygon) {
 /**
  * Get point from latLon using specified transform definition
  */
-Highcharts.Chart.prototype.transformFromLatLon = function (latLon, transform) {
+Chart.prototype.transformFromLatLon = function (latLon, transform) {
 	if (window.proj4 === undefined) {
-		Highcharts.error(21);
+		error(21);
 		return {
 			x: 0,
 			y: null
@@ -44,9 +46,9 @@ Highcharts.Chart.prototype.transformFromLatLon = function (latLon, transform) {
 /**
  * Get latLon from point using specified transform definition
  */
-Highcharts.Chart.prototype.transformToLatLon = function (point, transform) {
+Chart.prototype.transformToLatLon = function (point, transform) {
 	if (window.proj4 === undefined) {
-		Highcharts.error(21);
+		error(21);
 		return;
 	}
 
@@ -65,12 +67,12 @@ Highcharts.Chart.prototype.transformToLatLon = function (point, transform) {
 	return {lat: projected.y, lon: projected.x};
 };
 
-Highcharts.Chart.prototype.fromPointToLatLon = function (point) {
+Chart.prototype.fromPointToLatLon = function (point) {
 	var transforms = this.mapTransforms,
 		transform;
 
 	if (!transforms) {
-		Highcharts.error(22);
+		error(22);
 		return;
 	}
 
@@ -83,13 +85,13 @@ Highcharts.Chart.prototype.fromPointToLatLon = function (point) {
 	return this.transformToLatLon(point, transforms['default']);
 };
 
-Highcharts.Chart.prototype.fromLatLonToPoint = function (latLon) {
+Chart.prototype.fromLatLonToPoint = function (latLon) {
 	var transforms = this.mapTransforms,
 		transform,
 		coords;
 
 	if (!transforms) {
-		Highcharts.error(22);
+		error(22);
 		return {
 			x: 0,
 			y: null
@@ -111,10 +113,10 @@ Highcharts.Chart.prototype.fromLatLonToPoint = function (latLon) {
 /**
  * Convert a geojson object to map data of a given Highcharts type (map, mappoint or mapline).
  */
-Highcharts.geojson = function (geojson, hType, series) {
+H.geojson = function (geojson, hType, series) {
 	var mapData = [],
 		path = [],
-		each = Highcharts.each,
+		each = H.each,
 		polygonToPath = function (polygon) {
 			var i = 0,
 				len = polygon.length;
@@ -175,7 +177,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 			}
 		}
 		if (point) {
-			mapData.push(Highcharts.extend(point, {
+			mapData.push(H.extend(point, {
 				name: properties.name || properties.NAME, 
 				properties: properties
 			}));
@@ -196,9 +198,9 @@ Highcharts.geojson = function (geojson, hType, series) {
 /**
  * Override showCredits to include map source by default
  */
-Highcharts.wrap(Highcharts.Chart.prototype, 'showCredits', function (proceed, credits) {
+H.wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
 
-	if (Highcharts.defaultOptions.credits.text === this.options.credits.text && this.mapCredits) { // default text and mapCredits is set
+	if (H.defaultOptions.credits.text === this.options.credits.text && this.mapCredits) { // default text and mapCredits is set
 		credits.text = this.mapCredits;
 		credits.href = null;
 	}
@@ -211,3 +213,6 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'showCredits', function (proceed, cr
 		});
 	}
 });
+
+	return H;
+}(Highcharts));
