@@ -39,7 +39,6 @@ function getTags() {
 }
 */
 // Load issues
-//$since = '2013-06-13T20:30:00Z';
 
 function rebuildHistory () {
 	$states = array('open', 'closed');
@@ -83,9 +82,11 @@ function rebuildHistory () {
 function incrementKeyedIssues($keyedIssues) {
 	$states = array('open', 'closed');
 	$since = $keyedIssues->meta->since;
+
+	//$since = '2013-11-06T20:30:00Z';
 	foreach ($states as $state) {
 		$page = 1;
-		$lastPage = $page + 9;
+		$lastPage = $page + 19;
 
 
 		while ($page <= $lastPage) {

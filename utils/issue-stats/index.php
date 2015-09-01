@@ -105,15 +105,13 @@ $plotLines = array_values($plotLines);
 
 	<script src="http://www.highcharts.com/lib/jquery-1.10.1.js"></script>
 	<script src="http://code.highcharts.com/stock/highstock.js"></script>
+	<script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
 	<link rel="stylesheet" href="http://www.highcharts.com/joomla/templates/highsoft_bootstrap/assets/css/template.css"/>
 	<script>
 		$(function () {
 			$('#container').highcharts('StockChart', {
 				chart: {
 					marginRight: 50
-				},
-				rangeSelector: {
-					selected: 4
 				},
 				xAxis: {
 					plotLines: <?php echo json_encode($plotLines) ?>
@@ -123,7 +121,10 @@ $plotLines = array_values($plotLines);
 					name: 'Open issues',
 					fillOpacity: 0.1,
 					data: <?php echo json_encode($openByDate) ?>
-				}]
+				}],
+				exporting: {
+					sourceWidth: 1000
+				}
 			});
 
 			$('#import').click(function () {
