@@ -1497,29 +1497,34 @@ wrap(seriesTypes.scatter.prototype, 'init', function (proceed, chart, options) {
 });
 	return H;
 }(Highcharts));
+(function (H) {
+	var Axis = H.Axis,
+		SVGRenderer = H.SVGRenderer,
+		VMLRenderer = H.VMLRenderer;
+
 /**
  *	Extension to the VML Renderer
  */
-if (Highcharts.VMLRenderer) {
+if (VMLRenderer) {
 
-Highcharts.setOptions({animate: false});
+H.setOptions({animate: false});
 
-Highcharts.VMLRenderer.prototype.cuboid = Highcharts.SVGRenderer.prototype.cuboid;
-Highcharts.VMLRenderer.prototype.cuboidPath = Highcharts.SVGRenderer.prototype.cuboidPath;
+VMLRenderer.prototype.cuboid = SVGRenderer.prototype.cuboid;
+VMLRenderer.prototype.cuboidPath = SVGRenderer.prototype.cuboidPath;
 
-Highcharts.VMLRenderer.prototype.toLinePath = Highcharts.SVGRenderer.prototype.toLinePath;
+VMLRenderer.prototype.toLinePath = SVGRenderer.prototype.toLinePath;
 
-Highcharts.VMLRenderer.prototype.createElement3D = Highcharts.SVGRenderer.prototype.createElement3D;
+VMLRenderer.prototype.createElement3D = SVGRenderer.prototype.createElement3D;
 
-Highcharts.VMLRenderer.prototype.arc3d = function (shapeArgs) { 
-	var result = Highcharts.SVGRenderer.prototype.arc3d.call(this, shapeArgs);
+VMLRenderer.prototype.arc3d = function (shapeArgs) { 
+	var result = SVGRenderer.prototype.arc3d.call(this, shapeArgs);
 	result.css({zIndex: result.zIndex});
 	return result;
 };
 
-Highcharts.VMLRenderer.prototype.arc3dPath = Highcharts.SVGRenderer.prototype.arc3dPath;
+VMLRenderer.prototype.arc3dPath = SVGRenderer.prototype.arc3dPath;
 
-Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
+H.wrap(Axis.prototype, 'render', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 	// VML doesn't support a negative z-index
 	if (this.sideFrame) {
@@ -1537,5 +1542,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 });
 
 }
+	return H;
+}(Highcharts));
 
 }(Highcharts));
