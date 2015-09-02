@@ -13885,11 +13885,12 @@ Series.prototype = {
 	 */
 	setClip: function (animation) {
 		var chart = this.chart,
+			options = this.options,
 			renderer = chart.renderer,
 			inverted = chart.inverted,
 			seriesClipBox = this.clipBox,
 			clipBox = seriesClipBox || chart.clipBox,
-			sharedClipKey = this.sharedClipKey || ['_sharedClip', animation && animation.duration, animation && animation.easing, clipBox.height].join(','),
+			sharedClipKey = this.sharedClipKey || ['_sharedClip', animation && animation.duration, animation && animation.easing, clipBox.height, options.xAxis, options.yAxis].join(','), // #4526
 			clipRect = chart[sharedClipKey],
 			markerClipRect = chart[sharedClipKey + 'm'];
 
@@ -13914,7 +13915,7 @@ Series.prototype = {
 			clipRect.count += 1;
 		}
 
-		if (this.options.clip !== false) {
+		if (options.clip !== false) {
 			this.group.clip(animation || seriesClipBox ? clipRect : chart.clipRect);
 			this.markerGroup.clip(markerClipRect);
 			this.sharedClipKey = sharedClipKey;
