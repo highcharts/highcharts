@@ -1824,17 +1824,19 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		var series = this,
 			options = series.options,
 			xAxis = series.xAxis,
-			yAxis = series.yAxis;
+			yAxis = series.yAxis,
+			colsize = xAxis.single ? 1 : options.colsize,
+			rowsize = yAxis.single ? 1 : options.rowsize;
 
 		series.generatePoints();
 
 		each(series.points, function (point) {
-			var xPad = (options.colsize || 1) / 2,
-				yPad = (options.rowsize || 1) / 2,
-				x1 = Math.max(0, Math.round(xAxis.len - xAxis.translate(point.x - xPad, 0, 1, 0, 1))),
-				x2 = Math.min(xAxis.len, Math.round(xAxis.len - xAxis.translate(point.x + xPad, 0, 1, 0, 1))),
-				y1 = Math.max(0, Math.round(yAxis.translate(point.y - yPad, 0, 1, 0, 1))),
-				y2 = Math.min(yAxis.len, Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 1)));
+			var xPad = (colsize || 1) / 2,
+				yPad = (rowsize || 1) / 2,
+				x1 = Math.round(xAxis.len - xAxis.translate(point.x - xPad, 0, 1, 0, 1)),
+				x2 = Math.round(xAxis.len - xAxis.translate(point.x + xPad, 0, 1, 0, 1)),
+				y1 = Math.round(yAxis.translate(point.y - yPad, 0, 1, 0, 1)),
+				y2 = Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 1));
 
 			// Set plotX and plotY for use in K-D-Tree and more
 			point.plotX = point.clientX = (x1 + x2) / 2;
