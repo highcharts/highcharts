@@ -21,6 +21,7 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	maxSize: '20%',
 	// negativeColor: null,
 	// sizeBy: 'area'
+	softThreshold: false, // docs
 	states: {
 		hover: {
 			halo: {
