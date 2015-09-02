@@ -1,6 +1,6 @@
+<?php ini_set('display_errors', 'on'); ?>
 <title>Issue import</title>
 <?php
-ini_set('display_errors', 'on');
 
 function getSSLPage($url) {
     $ch = curl_init();
@@ -17,25 +17,39 @@ function getSSLPage($url) {
     curl_close($ch);
     return $result;
 }
+
+function showError($response) {
+	if ($response->message) {
+		echo "<div style='color:red; font-weight: bold'>$response->message</div>\n";
+	} else {
+		echo "<div style='color:red; font-weight: bold'>Unknown problem</div>\n";
+	}
+}
+
 /*
 function getTags() {
+
 	$file = getSSLPage('https://api.github.com/repos/highslide-software/highcharts.com/tags');
 	echo "\n<h2>Loaded tags</h2>\n";
 	$tags = json_decode($file);
 
-	foreach ($tags as $tag) {
-		$commitFile = "pages/" . $tag->commit->sha . '.json';
-		if (!is_file($commitFile)) {
-			file_put_contents(
-				$commitFile, 
-				getSSLPage('https://api.github.com/repos/highslide-software/highcharts.com/commits/' . $tag->commit->sha))
-			);
+	if (is_array($tags)) {
+		foreach ($tags as $tag) {
+			$commitFile = "pages/" . $tag->commit->sha . '.json';
+			if (!is_file($commitFile)) {
+				file_put_contents(
+					$commitFile, 
+					getSSLPage('https://api.github.com/repos/highslide-software/highcharts.com/commits/' . $tag->commit->sha))
+				);
+			}
+			$commit = json_decode(file_get_contents($commitFile));
+			$tag->date = $commit->commit->author->date;
+			echo "$tag->name <small>$tag->date</small><br/>";
 		}
-		$commit = json_decode(file_get_contents($commitFile));
-		$tag->date = $commit->commit->author->date;
-		echo "$tag->name <small>$tag->date</small><br/>";
+		file_put_contents("pages/tags.json", json_encode($tags));
+	} else {
+		showError($tags);
 	}
-	file_put_contents("pages/tags.json", json_encode($tags));
 }
 */
 // Load issues
@@ -68,11 +82,7 @@ function rebuildHistory () {
 				file_put_contents("pages/$state-$page.json", $file);
 				$page++;
 			} else {
-				if ($issues->message) {
-					echo "<div style='color:red; font-weight: bold'>$issues->message</div>\n";
-				} else {
-					echo "<div style='color:red; font-weight: bold'>Unknown problem</div>\n";
-				}
+				showError($issues);
 				break;
 			}
 		}
@@ -166,6 +176,7 @@ function getKeyedIssuesFromDownloadedFiles() {
 }
 
 updateSinceLast();
+//getTags();
 //file_put_contents('pages/keyed-issues.json', json_encode(getKeyedIssuesFromDownloadedFiles()));
 
 ?>
