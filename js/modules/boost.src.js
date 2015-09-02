@@ -145,8 +145,8 @@
         hasExtremes: function (checkX) {
             var options = this.options,
                 data = options.data,
-                xAxis = this.xAxis.options,
-                yAxis = this.yAxis.options;
+                xAxis = this.xAxis && this.xAxis.options,
+                yAxis = this.yAxis && this.yAxis.options;
             return data.length > (options.boostThreshold || Number.MAX_VALUE) && typeof yAxis.min === 'number' && typeof yAxis.max === 'number' &&
                 (!checkX || (typeof xAxis.min === 'number' && typeof xAxis.max === 'number'));
         },

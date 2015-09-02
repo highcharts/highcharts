@@ -6659,7 +6659,7 @@ Axis.prototype = {
 
 		// Reset properties in case we're redrawing (#3353)
 		axis.dataMin = axis.dataMax = axis.threshold = null;
-		axis.softThreshold = true;
+		axis.softThreshold = !axis.isXAxis;
 		
 		if (axis.buildStacks) {
 			axis.buildStacks();
