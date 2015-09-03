@@ -643,7 +643,7 @@ Highcharts.Chart.prototype.retrieveStacks = function (stacking) {
 		i = 1;
 
 	Highcharts.each(this.series, function (S) {
-		stackNumber = stacking ? (S.options.stack || 0) : series.length - 1 - S.index; // #3841
+		stackNumber = pick(S.options.stack, (stacking ? 0 : series.length - 1 - S.index)); // #3841, #4532
 		if (!stacks[stackNumber]) {
 			stacks[stackNumber] = { series: [S], position: i};
 			i++;
