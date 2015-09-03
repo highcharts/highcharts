@@ -15,7 +15,14 @@ function onChartLoad() {
         angle,
         radius,
         badgeColor = Highcharts.Color(Highcharts.getOptions().colors[0]).brighten(-0.2).get(),
-        spike;
+        spike,
+        empImage,
+        big5,
+        label,
+        left,
+        right,
+        years,
+        renderer;
 
     if (this.chartWidth < 530) {
         return;
@@ -41,7 +48,7 @@ function onChartLoad() {
         .add();
 
     // Employee image overlay
-    var empImage = this.renderer.path(path)
+    empImage = this.renderer.path(path)
         .attr({
             zIndex: 7,
             opacity: 0,
@@ -51,7 +58,7 @@ function onChartLoad() {
         .add();
 
     // Big 5
-    var big5 = this.renderer.text('5')
+    big5 = this.renderer.text('5')
         .attr({
             zIndex: 6
         })
@@ -62,23 +69,24 @@ function onChartLoad() {
             fontFamily: "'Brush Script MT', sans-serif"
         })
         .add();
-    big5.attr({ 
+    big5.attr({
         x: centerX - big5.getBBox().width / 2,
         y: centerY + 14
     });
 
     // Draw the label
-    var label = this.renderer.text('Highcharts Anniversary')
+    label = this.renderer.text('Highcharts Anniversary')
         .attr({
             zIndex: 6
         })
         .css({
             color: '#FFFFFF'
         })
-        .add()
+        .add();
 
-    var left = centerX - label.getBBox().width / 2,
-        right = centerX + label.getBBox().width / 2;
+    left = centerX - label.getBBox().width / 2;
+    right = centerX + label.getBBox().width / 2;
+
     label.attr({
         x: left,
         y: centerY + 44
@@ -87,43 +95,44 @@ function onChartLoad() {
     // The band
     left = centerX - 90;
     right = centerX + 90;
-    this.renderer.path([
-        'M', left, centerY + 30,
-        'L', right, centerY + 30,
-        right, centerY + 50,
-        left, centerY + 50,
-        'z',
-        'M', left, centerY + 40,
-        'L', left - 20, centerY + 40,
-        left - 10, centerY + 50,
-        left - 20, centerY + 60,
-        left + 10, centerY + 60,
-        left, centerY + 50,
-        left + 10, centerY + 60,
-        left + 10, centerY + 50,
-        left, centerY + 50,
-        'z',
-        'M', right, centerY + 40,
-        'L', right + 20, centerY + 40,
-        right + 10, centerY + 50,
-        right + 20, centerY + 60,
-        right - 10, centerY + 60,
-        right, centerY + 50,
-        right - 10, centerY + 60,
-        right - 10, centerY + 50,
-        right, centerY + 50,
-        'z',
-    ])
-    .attr({
-        fill: badgeColor,
-        stroke: '#FFFFFF',
-        'stroke-width': 1,
-        zIndex: 5
-    })
-    .add();
+    this.renderer
+        .path([
+            'M', left, centerY + 30,
+            'L', right, centerY + 30,
+            right, centerY + 50,
+            left, centerY + 50,
+            'z',
+            'M', left, centerY + 40,
+            'L', left - 20, centerY + 40,
+            left - 10, centerY + 50,
+            left - 20, centerY + 60,
+            left + 10, centerY + 60,
+            left, centerY + 50,
+            left + 10, centerY + 60,
+            left + 10, centerY + 50,
+            left, centerY + 50,
+            'z',
+            'M', right, centerY + 40,
+            'L', right + 20, centerY + 40,
+            right + 10, centerY + 50,
+            right + 20, centerY + 60,
+            right - 10, centerY + 60,
+            right, centerY + 50,
+            right - 10, centerY + 60,
+            right - 10, centerY + 50,
+            right, centerY + 50,
+            'z'
+        ])
+        .attr({
+            fill: badgeColor,
+            stroke: '#FFFFFF',
+            'stroke-width': 1,
+            zIndex: 5
+        })
+        .add();
 
     // 2009-2014
-    var years = this.renderer.text('2009-2014')
+    years = this.renderer.text('2009-2014')
         .attr({
             zIndex: 6
         })
@@ -140,37 +149,39 @@ function onChartLoad() {
 
 
     // Prepare mouseover
-    var renderer = this.renderer;
+    renderer = this.renderer;
     if (renderer.defs) { // is SVG
-        $.each(this.get('employees').points, function (i, point) {
+        $.each(this.get('employees').points, function () {
+            var point = this,
+                pattern;
             if (point.image) {
-                var pattern = renderer.createElement('pattern').attr({
+                pattern = renderer.createElement('pattern').attr({
                     id: 'pattern-' + point.image,
                     patternUnits: 'userSpaceOnUse',
                     width: 400,
                     height: 400
                 }).add(renderer.defs);
                 renderer.image(
-                    //'http://www.highcharts.com/joomla/components/com_about/assets/images/' + point.image + '.jpg',
-                   'http://www.highcharts.com/images/employees2014/' + point.image + '.jpg',
+                    'http://www.highcharts.com/images/employees2014/' + point.image + '.jpg',
                     centerX - 80,
                     centerY - 80,
                     160,
                     213
                 ).add(pattern);
-                
+
                 Highcharts.addEvent(point, 'mouseOver', function () {
-                    empImage.attr({
-                        fill: 'url(#pattern-' + point.image + ')'
-                    })
-                    .animate({ opacity: 1 }, { duration : 500 })
+                    empImage
+                        .attr({
+                            fill: 'url(#pattern-' + point.image + ')'
+                        })
+                        .animate({ opacity: 1 }, { duration : 500 });
                 });
                 Highcharts.addEvent(point, 'mouseOut', function () {
                     empImage.animate({ opacity: 0 }, { duration : 500 });
                 });
             }
         });
-    }    
+    }
 }
 
 $(function () {
@@ -180,7 +191,7 @@ $(function () {
             events: {
                 load: onChartLoad
             }
-        },        
+        },
 
         xAxis: {
             type: 'datetime',
@@ -222,7 +233,7 @@ $(function () {
                     y: 30
                 }
             }]
-                
+
         },
 
         title: {
@@ -292,12 +303,12 @@ $(function () {
             name: 'Revenue',
             id: 'revenue',
             type: 'area',
-            data: [[1257033600000,2],[1259625600000,3],[1262304000000,2],[1264982400000,3],[1267401600000,4],[1270080000000,4],[1272672000000,4],[1275350400000,4],[1277942400000,5],[1280620800000,7],[1283299200000,6],[1285891200000,9],[1288569600000,10],[1291161600000,8],[1293840000000,10],[1296518400000,13],[1298937600000,15],[1301616000000,14],[1304208000000,15],[1306886400000,16],[1309478400000,22],[1312156800000,19],[1314835200000,20],[1317427200000,32],[1320105600000,34],[1322697600000,36],[1325376000000,34],[1328054400000,40],[1330560000000,37],[1333238400000,35],[1335830400000,40],[1338508800000,38],[1341100800000,39],[1343779200000,43],[1346457600000,49],[1349049600000,43],[1351728000000,54],[1354320000000,44],[1356998400000,43],[1359676800000,43],[1362096000000,52],[1364774400000,52],[1367366400000,56],[1370044800000,62],[1372636800000,66],[1375315200000,62],[1377993600000,63],[1380585600000,60],[1383264000000,60],[1385856000000,58],[1388534400000,65],[1391212800000,52],[1393632000000,72],[1396310400000,57],[1398902400000,70],[1401580800000,63],[1404172800000,65],[1406851200000,65],[1409529600000,89],[1412121600000,100]],
+            data: [[1257033600000, 2], [1259625600000, 3], [1262304000000, 2], [1264982400000, 3], [1267401600000, 4], [1270080000000, 4], [1272672000000, 4], [1275350400000, 4], [1277942400000, 5], [1280620800000, 7], [1283299200000, 6], [1285891200000, 9], [1288569600000, 10], [1291161600000, 8], [1293840000000, 10], [1296518400000, 13], [1298937600000, 15], [1301616000000, 14], [1304208000000, 15], [1306886400000, 16], [1309478400000, 22], [1312156800000, 19], [1314835200000, 20], [1317427200000, 32], [1320105600000, 34], [1322697600000, 36], [1325376000000, 34], [1328054400000, 40], [1330560000000, 37], [1333238400000, 35], [1335830400000, 40], [1338508800000, 38], [1341100800000, 39], [1343779200000, 43], [1346457600000, 49], [1349049600000, 43], [1351728000000, 54], [1354320000000, 44], [1356998400000, 43], [1359676800000, 43], [1362096000000, 52], [1364774400000, 52], [1367366400000, 56], [1370044800000, 62], [1372636800000, 66], [1375315200000, 62], [1377993600000, 63], [1380585600000, 60], [1383264000000, 60], [1385856000000, 58], [1388534400000, 65], [1391212800000, 52], [1393632000000, 72], [1396310400000, 57], [1398902400000, 70], [1401580800000, 63], [1404172800000, 65], [1406851200000, 65], [1409529600000, 89], [1412121600000, 100]],
             tooltip: {
                 xDateFormat: '%B %Y',
                 valueSuffix: ' % of best month'
             }
-            
+
         }, {
             yAxis: 1,
             name: 'Highsoft employees',
@@ -325,7 +336,7 @@ $(function () {
                 { x: Date.UTC(2014, 9, 1), y: 11, name: 'Anita joined', image: 'Anita' },
                 { x: Date.UTC(2014, 10, 27), y: 11, name: ' ', image: null }
             ]
-            
+
         }]
     };
 
@@ -350,7 +361,7 @@ $(function () {
             data: [
                 { x: Date.UTC(2014, 5, 13), text: 'Highmaps version 1.0 released', title: 'Maps' }
             ],
-            showInLegend: false            
+            showInLegend: false
         }, {
             type: 'flags',
             name: 'Highcharts',

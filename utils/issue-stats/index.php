@@ -103,9 +103,9 @@ $plotLines = array_values($plotLines);
 
 	<title>Issue statistics</title>
 
-	<script src="http://www.highcharts.local/lib/jquery-1.10.1.js"></script>
-	<script src="http://code.highcharts.local/stock/highstock.js"></script>
-	<link rel="stylesheet" href="http://www.highcharts.com/templates/yoo_symphony/css/template.css"/>
+	<script src="http://www.highcharts.com/lib/jquery-1.10.1.js"></script>
+	<script src="http://code.highcharts.com/stock/highstock.js"></script>
+	<link rel="stylesheet" href="http://www.highcharts.com/joomla/templates/highsoft_bootstrap/assets/css/template.css"/>
 	<script>
 		$(function () {
 			$('#container').highcharts('StockChart', {
@@ -135,11 +135,18 @@ $plotLines = array_values($plotLines);
 		});
 	</script>
 	<style type="text/css">
+		body {
+			background: white;
+		}
 		li {
 			list-style: none;
+			padding: 0.3em 0;
 		}
 		li a {
 			text-decoration: none;
+		}
+		#keywords li a {
+			font-weight: normal;
 		}
 		.issue-number {
 			display: inline-block;

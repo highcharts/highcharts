@@ -21,13 +21,16 @@
 			var labels = [];
 
 			each(chart.series, function (series) {
-				var dlOptions = series.options.dataLabels;
+				var dlOptions = series.options.dataLabels,
+					collections = series.dataLabelCollections || ['dataLabel']; // Range series have two collections
 				if ((dlOptions.enabled || series._hasPointLabels) && !dlOptions.allowOverlap && series.visible) { // #3866
-					each(series.points, function (point) { 
-						if (point.dataLabel) {
-							point.dataLabel.labelrank = pick(point.labelrank, point.shapeArgs && point.shapeArgs.height); // #4118
-							labels.push(point.dataLabel);
-						}
+					each(collections, function (coll) {
+						each(series.points, function (point) {
+							if (point[coll]) {
+								point[coll].labelrank = pick(point.labelrank, point.shapeArgs && point.shapeArgs.height); // #4118
+								labels.push(point[coll]);
+							}
+						});
 					});
 				}
 			});
@@ -54,12 +57,16 @@
 			j,
 			label1,
 			label2,
-			intersectRect = function (pos1, pos2, size1, size2) {
+			isIntersecting,
+			pos1,
+			pos2,
+			padding,
+			intersectRect = function (x1, y1, w1, h1, x2, y2, w2, h2) {
 				return !(
-					pos2.x > pos1.x + size1.width ||
-					pos2.x + size2.width < pos1.x ||
-					pos2.y > pos1.y + size1.height ||
-					pos2.y + size2.height < pos1.y
+					x2 > x1 + w1 ||
+					x2 + w2 < x1 ||
+					y2 > y1 + h1 ||
+					y2 + h2 < y1
 				);
 			};
 	
@@ -76,7 +83,7 @@
 		// will hide the previous one because the previous one always has
 		// lower rank.
 		labels.sort(function (a, b) {
-			return b.labelrank - a.labelrank;
+			return (b.labelrank || 0) - (a.labelrank || 0);
 		});
 
 		// Detect overlapping labels
@@ -85,24 +92,55 @@
 
 			for (j = i + 1; j < len; ++j) {
 				label2 = labels[j];
-				if (label1 && label2 && label1.placed && label2.placed && label1.newOpacity !== 0 && label2.newOpacity !== 0 && 
-						intersectRect(label1.alignAttr, label2.alignAttr, label1, label2)) {
-					(label1.labelrank < label2.labelrank ? label1 : label2).newOpacity = 0;
+				if (label1 && label2 && label1.placed && label2.placed && label1.newOpacity !== 0 && label2.newOpacity !== 0) {
+					pos1 = label1.alignAttr;
+					pos2 = label2.alignAttr;
+					padding = 2 * (label1.box ? 0 : label1.padding); // Substract the padding if no background or border (#4333)
+					isIntersecting = intersectRect(
+						pos1.x,
+						pos1.y,
+						label1.width - padding,
+						label1.height - padding,
+						pos2.x,
+						pos2.y,
+						label2.width - padding,
+						label2.height - padding
+					);
+
+					if (isIntersecting) {
+						(label1.labelrank < label2.labelrank ? label1 : label2).newOpacity = 0;
+					}
 				}
 			}
 		}
 
 		// Hide or show
-		for (i = 0; i < len; i++) {
-			label = labels[i];
+		each(labels, function (label) {
+			var complete,
+				newOpacity;
+
 			if (label) {
-				if (label.oldOpacity !== label.newOpacity && label.placed) {
-					label.alignAttr.opacity = label.newOpacity;
-					label[label.isOld && label.newOpacity ? 'animate' : 'attr'](label.alignAttr);
+				newOpacity = label.newOpacity;
+
+				if (label.oldOpacity !== newOpacity && label.placed) {
+
+					// Make sure the label is completely hidden to avoid catching clicks (#4362)
+					if (newOpacity) {
+						label.show(true);
+					} else {
+						complete = function () {
+							label.hide();
+						};
+					}
+
+					// Animate or set the opacity					
+					label.alignAttr.opacity = newOpacity;
+					label[label.isOld ? 'animate' : 'attr'](label.alignAttr, null, complete);
+					
 				}
 				label.isOld = true;
 			}
-		}
+		});
 	};
 
 }(Highcharts));

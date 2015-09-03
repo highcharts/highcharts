@@ -29,7 +29,7 @@ $(function () {
         }
         return arr;
     }
-    var n = 500000,
+    var n = 50000,
         data = getData(n);
 
 
@@ -45,7 +45,7 @@ $(function () {
         },
 
         subtitle: {
-            text: 'The line is rendered on canvas, and some features are bypassed for speed'
+            text: 'Using the experimental Highcharts Boost module'
         },
 
         tooltip: {

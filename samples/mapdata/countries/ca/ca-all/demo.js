@@ -23,15 +23,15 @@ $(function () {
             "value": 4
         },
         {
-            "hc-key": "ca-sk",
+            "hc-key": "ca-nl",
             "value": 5
         },
         {
-            "hc-key": "ca-mb",
+            "hc-key": "ca-sk",
             "value": 6
         },
         {
-            "hc-key": "ca-on",
+            "hc-key": "ca-mb",
             "value": 7
         },
         {
@@ -39,7 +39,7 @@ $(function () {
             "value": 8
         },
         {
-            "hc-key": "ca-nl",
+            "hc-key": "ca-on",
             "value": 9
         },
         {

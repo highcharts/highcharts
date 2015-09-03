@@ -39,55 +39,55 @@ $(function () {
             "value": 8
         },
         {
-            "hc-key": "se-vg",
+            "hc-key": "se-bl",
             "value": 9
         },
         {
-            "hc-key": "se-ko",
+            "hc-key": "se-vg",
             "value": 10
         },
         {
-            "hc-key": "se-gv",
+            "hc-key": "se-ko",
             "value": 11
         },
         {
-            "hc-key": "se-jo",
+            "hc-key": "se-gv",
             "value": 12
         },
         {
-            "hc-key": "se-kr",
+            "hc-key": "se-jo",
             "value": 13
         },
         {
-            "hc-key": "se-or",
+            "hc-key": "se-kr",
             "value": 14
         },
         {
-            "hc-key": "se-vm",
+            "hc-key": "se-or",
             "value": 15
         },
         {
-            "hc-key": "se-ha",
+            "hc-key": "se-vm",
             "value": 16
         },
         {
-            "hc-key": "se-sd",
+            "hc-key": "se-ha",
             "value": 17
         },
         {
-            "hc-key": "se-vr",
+            "hc-key": "se-sd",
             "value": 18
         },
         {
-            "hc-key": "se-ja",
+            "hc-key": "se-vr",
             "value": 19
         },
         {
-            "hc-key": "se-sn",
+            "hc-key": "se-ja",
             "value": 20
         },
         {
-            "hc-key": "se-bl",
+            "hc-key": "se-sn",
             "value": 21
         }
     ];

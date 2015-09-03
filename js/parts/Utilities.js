@@ -259,6 +259,13 @@ H.pad = function (number, length) {
 };
 
 /**
+ * Return a length based on either the integer value, or a percentage of a base.
+ */
+H.relativeLength = function (value, base) {
+	return (/%$/).test(value) ? base * parseFloat(value) / 100 : parseFloat(value);
+};
+
+/**
  * Wrap a method with extended functionality, preserving the original function
  * @param {Object} obj The context object that the method belongs to 
  * @param {String} method The name of the method to extend
@@ -289,7 +296,7 @@ H.getTZOffset = function (timestamp) {
  */
 H.dateFormat = function (format, timestamp, capitalize) {
 	if (!H.defined(timestamp) || isNaN(timestamp)) {
-		return 'Invalid date';
+		return H.defaultOptions.lang.invalidDate || '';
 	}
 	format = H.pick(format, '%Y-%m-%d %H:%M:%S');
 
@@ -330,6 +337,7 @@ H.dateFormat = function (format, timestamp, capitalize) {
 
 			// Time
 			'H': pad(hours), // Two digits hours in 24h format, 00 through 23
+			'k': hours, // Hours in 24h format, 0 through 23
 			'I': pad((hours % 12) || 12), // Two digits hours in 12h format, 00 through 11
 			'l': (hours % 12) || 12, // Hours in 12h format, 1 through 12
 			'M': pad(date[d.hcGetMinutes]()), // Two digits minutes, 00 through 59
@@ -597,9 +605,9 @@ H.error = function (code, stop) {
  * Fix JS round off float errors
  * @param {Number} num
  */
-H.correctFloat = function (num) {
+H.correctFloat = function (num, prec) {
 	return parseFloat(
-		num.toPrecision(14)
+		num.toPrecision(prec || 14)
 	);
 };
 
@@ -610,7 +618,21 @@ H.correctFloat = function (num) {
  * @param {Object} chart
  */
 H.setAnimation = function (animation, chart) {
-	H.globalAnimation = H.pick(animation, chart.animation);
+	chart.renderer.globalAnimation = H.pick(animation, chart.animation);
+};
+
+/**
+ * The time unit lookup
+ */
+H.timeUnits = {
+	millisecond: 1,
+	second: 1000,
+	minute: 60000,
+	hour: 3600000,
+	day: 24 * 3600000,
+	week: 7 * 24 * 3600000,
+	month: 28 * 24 * 3600000,
+	year: 364 * 24 * 3600000
 };
 
 /**

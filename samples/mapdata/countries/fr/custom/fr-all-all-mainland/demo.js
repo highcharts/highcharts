@@ -27,27 +27,27 @@ $(function () {
             "value": 5
         },
         {
-            "hc-key": "fr-u-bd",
+            "hc-key": "fr-u-vc",
             "value": 6
         },
         {
-            "hc-key": "fr-u-vc",
+            "hc-key": "fr-n-hg",
             "value": 7
         },
         {
-            "hc-key": "fr-m-mm",
+            "hc-key": "fr-c-cl",
             "value": 8
         },
         {
-            "hc-key": "fr-o-no",
+            "hc-key": "fr-k-lz",
             "value": 9
         },
         {
-            "hc-key": "fr-l-cr",
+            "hc-key": "fr-m-mm",
             "value": 10
         },
         {
-            "hc-key": "fr-c-pd",
+            "hc-key": "fr-o-no",
             "value": 11
         },
         {
@@ -63,11 +63,11 @@ $(function () {
             "value": 14
         },
         {
-            "hc-key": "fr-s-as",
+            "hc-key": "fr-u-ap",
             "value": 15
         },
         {
-            "hc-key": "fr-u-ap",
+            "hc-key": "fr-s-as",
             "value": 16
         },
         {
@@ -95,63 +95,63 @@ $(function () {
             "value": 22
         },
         {
-            "hc-key": "fr-t-ct",
+            "hc-key": "fr-l-cr",
             "value": 23
         },
         {
-            "hc-key": "fr-t-ds",
+            "hc-key": "fr-r-ml",
             "value": 24
         },
         {
-            "hc-key": "fr-r-ml",
+            "hc-key": "fr-t-ds",
             "value": 25
         },
         {
-            "hc-key": "fr-v-dm",
+            "hc-key": "fr-t-ct",
             "value": 26
         },
         {
-            "hc-key": "fr-v-ah",
+            "hc-key": "fr-v-dm",
             "value": 27
         },
         {
-            "hc-key": "fr-q-eu",
+            "hc-key": "fr-v-ah",
             "value": 28
         },
         {
-            "hc-key": "fr-j-es",
+            "hc-key": "fr-q-eu",
             "value": 29
         },
         {
-            "hc-key": "fr-f-el",
+            "hc-key": "fr-j-es",
             "value": 30
         },
         {
-            "hc-key": "fr-j-hd",
+            "hc-key": "fr-f-el",
             "value": 31
         },
         {
-            "hc-key": "fr-r-st",
+            "hc-key": "fr-v-hs",
             "value": 32
         },
         {
-            "hc-key": "fr-f-il",
+            "hc-key": "fr-j-hd",
             "value": 33
         },
         {
-            "hc-key": "fr-v-is",
+            "hc-key": "fr-r-st",
             "value": 34
         },
         {
-            "hc-key": "fr-i-ju",
+            "hc-key": "fr-f-il",
             "value": 35
         },
         {
-            "hc-key": "fr-b-pa",
+            "hc-key": "fr-v-is",
             "value": 36
         },
         {
-            "hc-key": "fr-b-ld",
+            "hc-key": "fr-i-ju",
             "value": 37
         },
         {
@@ -159,139 +159,139 @@ $(function () {
             "value": 38
         },
         {
-            "hc-key": "fr-c-cl",
+            "hc-key": "fr-n-lo",
             "value": 39
         },
         {
-            "hc-key": "fr-n-lo",
+            "hc-key": "fr-n-tg",
             "value": 40
         },
         {
-            "hc-key": "fr-n-tg",
+            "hc-key": "fr-b-lg",
             "value": 41
         },
         {
-            "hc-key": "fr-b-lg",
+            "hc-key": "fr-e-iv",
             "value": 42
         },
         {
-            "hc-key": "fr-e-iv",
+            "hc-key": "fr-m-ms",
             "value": 43
         },
         {
-            "hc-key": "fr-m-ms",
+            "hc-key": "fr-d-ni",
             "value": 44
         },
         {
-            "hc-key": "fr-d-ni",
+            "hc-key": "fr-f-lt",
             "value": 45
         },
         {
-            "hc-key": "fr-f-lt",
+            "hc-key": "fr-j-vp",
             "value": 46
         },
         {
-            "hc-key": "fr-j-vp",
+            "hc-key": "fr-l-cz",
             "value": 47
         },
         {
-            "hc-key": "fr-n-ge",
+            "hc-key": "fr-c-pd",
             "value": 48
         },
         {
-            "hc-key": "fr-j-se",
+            "hc-key": "fr-n-ge",
             "value": 49
         },
         {
-            "hc-key": "fr-j-ss",
+            "hc-key": "fr-b-pa",
             "value": 50
         },
         {
-            "hc-key": "fr-s-so",
+            "hc-key": "fr-j-se",
             "value": 51
         },
         {
-            "hc-key": "fr-i-tb",
+            "hc-key": "fr-j-ss",
             "value": 52
         },
         {
-            "hc-key": "fr-i-hn",
+            "hc-key": "fr-s-so",
             "value": 53
         },
         {
-            "hc-key": "fr-j-vo",
+            "hc-key": "fr-i-tb",
             "value": 54
         },
         {
-            "hc-key": "fr-j-vm",
+            "hc-key": "fr-i-hn",
             "value": 55
         },
         {
-            "hc-key": "fr-t-vn",
+            "hc-key": "fr-j-vo",
             "value": 56
         },
         {
-            "hc-key": "fr-m-vg",
+            "hc-key": "fr-j-vm",
             "value": 57
         },
         {
-            "hc-key": "fr-j-yv",
+            "hc-key": "fr-t-vn",
             "value": 58
         },
         {
-            "hc-key": "fr-f-lc",
+            "hc-key": "fr-m-vg",
             "value": 59
         },
         {
-            "hc-key": "fr-e-fi",
+            "hc-key": "fr-j-yv",
             "value": 60
         },
         {
-            "hc-key": "fr-p-mh",
+            "hc-key": "fr-u-bd",
             "value": 61
         },
         {
-            "hc-key": "fr-g-an",
+            "hc-key": "fr-f-lc",
             "value": 62
         },
         {
-            "hc-key": "fr-n-ag",
+            "hc-key": "fr-e-fi",
             "value": 63
         },
         {
-            "hc-key": "fr-a-br",
+            "hc-key": "fr-p-mh",
             "value": 64
         },
         {
-            "hc-key": "fr-p-cv",
+            "hc-key": "fr-g-an",
             "value": 65
         },
         {
-            "hc-key": "fr-c-al",
+            "hc-key": "fr-n-ag",
             "value": 66
         },
         {
-            "hc-key": "fr-e-ca",
+            "hc-key": "fr-a-br",
             "value": 67
         },
         {
-            "hc-key": "fr-l-cz",
+            "hc-key": "fr-p-cv",
             "value": 68
         },
         {
-            "hc-key": "fr-i-db",
+            "hc-key": "fr-e-ca",
             "value": 69
         },
         {
-            "hc-key": "fr-b-gi",
+            "hc-key": "fr-i-db",
             "value": 70
         },
         {
-            "hc-key": "fr-a-hr",
+            "hc-key": "fr-b-gi",
             "value": 71
         },
         {
-            "hc-key": "fr-n-hg",
+            "hc-key": "fr-a-hr",
             "value": 72
         },
         {
@@ -303,15 +303,15 @@ $(function () {
             "value": 74
         },
         {
-            "hc-key": "fr-v-hs",
+            "hc-key": "fr-u-ha",
             "value": 75
         },
         {
-            "hc-key": "fr-u-ha",
+            "hc-key": "fr-k-he",
             "value": 76
         },
         {
-            "hc-key": "fr-k-he",
+            "hc-key": "fr-b-ld",
             "value": 77
         },
         {
@@ -319,7 +319,7 @@ $(function () {
             "value": 78
         },
         {
-            "hc-key": "fr-k-lz",
+            "hc-key": "fr-g-mr",
             "value": 79
         },
         {
@@ -343,7 +343,7 @@ $(function () {
             "value": 84
         },
         {
-            "hc-key": "fr-v-rh",
+            "hc-key": "fr-c-al",
             "value": 85
         },
         {
@@ -355,27 +355,27 @@ $(function () {
             "value": 87
         },
         {
-            "hc-key": "fr-s-oi",
+            "hc-key": "fr-l-hv",
             "value": 88
         },
         {
-            "hc-key": "fr-n-ta",
+            "hc-key": "fr-f-in",
             "value": 89
         },
         {
-            "hc-key": "fr-d-yo",
+            "hc-key": "fr-s-oi",
             "value": 90
         },
         {
-            "hc-key": "fr-l-hv",
+            "hc-key": "fr-v-rh",
             "value": 91
         },
         {
-            "hc-key": "fr-f-in",
+            "hc-key": "fr-n-ta",
             "value": 92
         },
         {
-            "hc-key": "fr-g-mr",
+            "hc-key": "fr-d-yo",
             "value": 93
         },
         {

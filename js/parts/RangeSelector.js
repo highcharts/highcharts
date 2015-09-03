@@ -88,20 +88,23 @@ RangeSelector.prototype = {
 			newMin,
 			newMax = baseAxis && Math.round(Math.min(baseAxis.max, pick(dataMax, baseAxis.max))), // #1568
 			now,
-			date = new d(newMax),
 			type = rangeOptions.type,
-			count = rangeOptions.count,
 			baseXAxisOptions,
 			range = rangeOptions._range,
 			rangeMin,
 			year,
-			timeName,
+			minSetting,
+			rangeSetting,
+			ctx,
 			dataGrouping = rangeOptions.dataGrouping;
 
 		if (dataMin === null || dataMax === null || // chart has no data, base series is removed
 				i === rangeSelector.selected) { // same button is clicked twice
 			return;
 		}
+
+		// Set the fixed range before range is altered
+		chart.fixedRange = range;
 
 		// Apply dataGrouping associated to button
 		if (dataGrouping) {
@@ -111,16 +114,21 @@ RangeSelector.prototype = {
 
 		// Apply range
 		if (type === 'month' || type === 'year') {
-			timeName = { month: 'Month', year: 'FullYear'}[type];
-			date['set' + timeName](date['get' + timeName]() - count);
-
-			newMin = date.getTime();
-			dataMin = pick(dataMin, Number.MIN_VALUE);
-			if (isNaN(newMin) || newMin < dataMin) {
-				newMin = dataMin;
-				newMax = Math.min(newMin + range, dataMax);
+			if (!baseAxis) {
+				// This is set to the user options and picked up later when the axis is instantiated
+				// so that we know the min and max.
+				range = rangeOptions;
 			} else {
-				range = newMax - newMin;
+				ctx = {
+					range: rangeOptions,
+					max: newMax,
+					dataMin: dataMin,
+					dataMax: dataMax
+				};
+				newMin = baseAxis.minFromRange.call(ctx);
+				if (typeof ctx.newMax === 'number') {
+					newMax = ctx.newMax;
+				}
 			}
 
 		// Fixed times like minutes, hours, days
@@ -176,20 +184,22 @@ RangeSelector.prototype = {
 			buttons[i].setState(2);
 		}
 
-		chart.fixedRange = range;
-
-		// update the chart
-		if (!baseAxis) { // axis not yet instanciated
-			baseXAxisOptions = chart.options.xAxis;
-			baseXAxisOptions[0] = H.merge(
-				baseXAxisOptions[0],
-				{
-					range: range,
-					min: rangeMin
-				}
-			);
+		// Update the chart
+		if (!baseAxis) { 
+			// Axis not yet instanciated. Temporarily set min and range
+			// options and remove them on chart load (#4317).
+			baseXAxisOptions = chart.options.xAxis[0];
+			rangeSetting = baseXAxisOptions.range;
+			baseXAxisOptions.range = range;
+			minSetting = baseXAxisOptions.min;
+			baseXAxisOptions.min = rangeMin;
 			rangeSelector.setSelected(i);
-		} else { // existing axis object; after render time
+			H.addEvent(chart, 'load', function resetMinAndRange() {
+				baseXAxisOptions.range = rangeSetting;
+				baseXAxisOptions.min = minSetting;
+			});
+		} else {
+			// Existing axis object. Set extremes after render time.
 			baseAxis.setExtremes(
 				newMin,
 				newMax,
@@ -317,7 +327,10 @@ RangeSelector.prototype = {
 		}
 
 		H.each(rangeSelector.buttonOptions, function (rangeOptions, i) {
-			var range = rangeOptions._range,
+			var actualRange = Math.round(baseAxis.max - baseAxis.min),
+				range = rangeOptions._range,
+				type = rangeOptions.type,
+				count = rangeOptions.count || 1,
 				// Disable buttons where the range exceeds what is allowed in the current view
 				isTooGreatRange = range > dataMax - dataMin,
 				// Disable buttons where the range is smaller than the minimum range
@@ -326,12 +339,21 @@ RangeSelector.prototype = {
 				isAllButAlreadyShowingAll = rangeOptions.type === 'all' && baseAxis.max - baseAxis.min >= dataMax - dataMin && 
 					buttons[i].state !== 2,
 				// Disable the YTD button if the complete range is within the same year
-				isYTDButNotAvailable = rangeOptions.type === 'ytd' && dateFormat('%Y', dataMin) === dateFormat('%Y', dataMax);
+				isYTDButNotAvailable = rangeOptions.type === 'ytd' && dateFormat('%Y', dataMin) === dateFormat('%Y', dataMax),
+				// Set a button on export
+				isSelectedForExport = chart.renderer.forExport && i === selected,
 
+				isSameRange = range === actualRange;
+
+			// Months and years have a variable range so we check the extremes
+			if ((type === 'month' || type === 'year') && (actualRange >= { month: 28, year: 365 }[type] * 24 * 36e5 * count) && 
+					(actualRange <= { month: 31, year: 366 }[type] * 24 * 36e5 * count)) {
+				isSameRange = true;
+			}
 			// The new zoom area happens to match the range for a button - mark it selected.
 			// This happens when scrolling across an ordinal gap. It can be seen in the intraday
 			// demos when selecting 1h and scroll across the night gap.
-			if (range === Math.round(baseAxis.max - baseAxis.min) && i !== selected) {
+			if (isSelectedForExport || (isSameRange && i !== selected)) {
 				rangeSelector.setSelected(i);
 				buttons[i].setState(2);
 			
@@ -400,14 +422,12 @@ RangeSelector.prototype = {
 	},
 
 	hideInput: function (name) {
-		if (document.activeElement === this[name + 'Input']) { // Prevent running again and again
-			H.css(this[name + 'Input'], {
-				border: 0,
-				width: '1px',
-				height: '1px'
-			});
-			this.setInputValue(name);
-		}
+		H.css(this[name + 'Input'], {
+			border: 0,
+			width: '1px',
+			height: '1px'
+		});
+		this.setInputValue(name);
 	},
 
 	/**
@@ -539,6 +559,20 @@ RangeSelector.prototype = {
 		};
 	},
 
+	/** 
+	 * Get the position of the range selector buttons and inputs. This can be overridden from outside for custom positioning.
+	 */
+	getPosition: function () {
+		var chart = this.chart,
+			options = chart.options.rangeSelector,
+			buttonTop = pick((options.buttonPosition || {}).y, chart.plotTop - chart.axisOffset[0] - 35);
+			
+		return {
+			buttonTop: buttonTop,
+			inputTop: buttonTop - 10
+		};
+	},
+
 	/**
 	 * Render the range selector including the buttons and the inputs. The first time render
 	 * is called, the elements are created and positioned. On subsequent calls, they are
@@ -564,31 +598,30 @@ RangeSelector.prototype = {
 			inputEnabled = options.inputEnabled,
 			states = buttonTheme && buttonTheme.states,
 			plotLeft = chart.plotLeft,
-			yAlign,
 			buttonLeft,
-			buttonTop,
+			pos = this.getPosition(),
 			buttonGroup = rangeSelector.group,
-			buttonBBox;
+			buttonBBox,
+			rendered = rangeSelector.rendered;
 
 
 		// create the elements
-		if (!rangeSelector.rendered) {
+		if (!rendered) {
 
 			rangeSelector.group = buttonGroup = renderer.g('range-selector-buttons').add();
 
-			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, pick(buttonPosition.x, plotLeft), pick(buttonPosition.y, chart.plotTop - 35) + 15)
+			rangeSelector.zoomText = renderer.text(lang.rangeSelectorZoom, pick(buttonPosition.x, plotLeft), 15)
 				.css(options.labelStyle)
 				.add(buttonGroup);
 
 			// button starting position
 			buttonLeft = pick(buttonPosition.x, plotLeft) + rangeSelector.zoomText.getBBox().width + 5;
-			buttonTop = pick(buttonPosition.y, chart.plotTop - 35);
 
 			H.each(rangeSelector.buttonOptions, function (rangeOptions, i) {
 				buttons[i] = renderer.button(
 						rangeOptions.text,
 						buttonLeft,
-						buttonTop,
+						0,
 						function () {
 							rangeSelector.clickButton(i);
 							rangeSelector.isActive = true;
@@ -633,16 +666,20 @@ RangeSelector.prototype = {
 				rangeSelector.drawInput('max');	
 			}
 		}
+
+		// Set or update the group position
+		buttonGroup[rendered ? 'animate' : 'attr']({
+			translateY: pos.buttonTop
+		});
 		
 		if (inputEnabled !== false) {
 		
 			// Update the alignment to the updated spacing box
-			yAlign = chart.plotTop - 45;		
 			inputGroup.align(H.extend({
-				y: yAlign,
+				y: pos.inputTop,
 				width: inputGroup.offset,
 				// Detect collision with the exporting buttons
-				x: navButtonOptions && (yAlign < (navButtonOptions.y || 0) + navButtonOptions.height - chart.spacing[0]) ? 
+				x: navButtonOptions && (pos.inputTop < (navButtonOptions.y || 0) + navButtonOptions.height - chart.spacing[0]) ? 
 					-40 : 0
 			}, options.inputPosition), true, chart.spacingBox);
 
@@ -723,6 +760,46 @@ Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
 		min: newMin,
 		max: newMax
 	};
+};
+
+Axis.prototype.minFromRange = function () {
+	var rangeOptions = this.range,
+		type = rangeOptions.type,
+		timeName = { month: 'Month', year: 'FullYear'}[type],
+		min,
+		max = this.max,
+		dataMin,
+		range,
+		// Get the true range from a start date
+		getTrueRange = function (base, count) {
+			var date = new Date(base);
+			date['set' + timeName](date['get' + timeName]() + count);
+			return date.getTime() - base;
+		};
+
+	if (typeof rangeOptions === 'number') {
+		min = this.max - rangeOptions;
+		range = rangeOptions;
+	} else {
+		min = max + getTrueRange(max, -rangeOptions.count);
+	}
+
+	dataMin = pick(this.dataMin, Number.MIN_VALUE);
+	if (isNaN(min)) {
+		min = dataMin;
+	}
+	if (min <= dataMin) {
+		min = dataMin;
+		if (range === undefined) { // #4501
+			range = getTrueRange(min, rangeOptions.count);
+		}
+		this.newMax = Math.min(min + range, this.dataMax);
+	}
+	if (isNaN(max)) {
+		min = undefined;
+	}
+	return min;
+
 };
 
 // Initialize scroller for stock charts

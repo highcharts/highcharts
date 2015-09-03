@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.5-modified ()
+ * @license Highcharts JS v4.1.8-modified ()
  *
  * (c) 2009-2013 Torstein Hønsi
  *
@@ -378,6 +378,18 @@ SVGRenderer.prototype.arc3d = function (shapeArgs) {
 				_args: args	
 			}, {
 				duration: duration,
+				start: function () {
+					var args = arguments,
+						fx = args[0],					
+						elem = fx.elem,
+						end = elem._shapeArgs;
+
+					if (end.fill !== elem.color) {
+						elem.attr({
+							fill: end.fill
+						});
+					}
+				},
 				step: function () {
 					var args = arguments,
 						fx = args[1],
@@ -547,7 +559,7 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 ***/
 // Shorthand to check the is3d flag
 Chart.prototype.is3d = function () {
-	return !this.inverted && this.options.chart.options3d && this.options.chart.options3d.enabled; // #4160 3D should not work with inverted charts
+	return this.options.chart.options3d && this.options.chart.options3d.enabled; // #4280
 };
 
 wrap(Chart.prototype, 'isInsidePlot', function (proceed) {
@@ -663,15 +675,16 @@ Chart.prototype.retrieveStacks = function (stacking) {
 /***
 	EXTENSION TO THE AXIS
 ***/
-wrap(Axis.prototype, 'init', function (proceed) {
-	var args = arguments;
-	if (args[1].is3d()) {
-		args[2].tickWidth = pick(args[2].tickWidth, 0);
-		args[2].gridLineWidth = pick(args[2].gridLineWidth, 1);
+wrap(Axis.prototype, 'setOptions', function (proceed, userOptions) {
+	var options;
+	proceed.call(this, userOptions);
+	if (this.chart.is3d()) {
+		options = this.options;
+		options.tickWidth = pick(options.tickWidth, 0);
+		options.gridLineWidth = pick(options.gridLineWidth, 1);
 	}
+});
 
-	proceed.apply(this, [].slice.call(arguments, 1));
-});	
 wrap(Axis.prototype, 'render', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
@@ -706,7 +719,13 @@ wrap(Axis.prototype, 'render', function (proceed) {
 			insidePlotArea: false
 		};
 		if (!this.bottomFrame) {
-			this.bottomFrame = renderer.cuboid(bottomShape).attr({fill: fbottom.color, zIndex: (chart.yAxis[0].reversed && options3d.alpha > 0 ? 4 : -1)}).css({stroke: fbottom.color}).add();
+			this.bottomFrame = renderer.cuboid(bottomShape).attr({
+				fill: fbottom.color,
+				zIndex: (chart.yAxis[0].reversed && options3d.alpha > 0 ? 4 : -1)
+			})
+			.css({
+				stroke: fbottom.color
+			}).add();
 		} else {
 			this.bottomFrame.animate(bottomShape);
 		}
@@ -722,7 +741,12 @@ wrap(Axis.prototype, 'render', function (proceed) {
 			insidePlotArea: false
 		};
 		if (!this.backFrame) {
-			this.backFrame = renderer.cuboid(backShape).attr({fill: fback.color, zIndex: -3}).css({stroke: fback.color}).add();
+			this.backFrame = renderer.cuboid(backShape).attr({
+				fill: fback.color, 
+				zIndex: -3
+			}).css({
+				stroke: fback.color
+			}).add();
 		} else {
 			this.backFrame.animate(backShape);
 		}
@@ -736,7 +760,12 @@ wrap(Axis.prototype, 'render', function (proceed) {
 			insidePlotArea: false
 		};
 		if (!this.sideFrame) {
-			this.sideFrame = renderer.cuboid(sideShape).attr({fill: fside.color, zIndex: -2}).css({stroke: fside.color}).add();
+			this.sideFrame = renderer.cuboid(sideShape).attr({
+				fill: fside.color, 
+				zIndex: -2
+			}).css({
+				stroke: fside.color
+			}).add();
 		} else {
 			this.sideFrame.animate(sideShape);
 		}
@@ -774,9 +803,9 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed) {
 	return path;
 });
 
-wrap(Axis.prototype, 'getLinePath', function () {
-	// do not draw axislines in 3D ?
-	return [];
+// Do not draw axislines in 3D
+wrap(Axis.prototype, 'getLinePath', function (proceed) {
+	return this.chart.is3d() ? [] : proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 wrap(Axis.prototype, 'getPlotBandPath', function (proceed) {
@@ -912,7 +941,7 @@ extend(ZAxis.prototype, {
 	setOptions: function (userOptions) {
 		userOptions = H.merge({
 			offset: 0,
-			lineColor: null
+			lineWidth: 0
 		}, userOptions);
 		Axis.prototype.setOptions.call(this, userOptions);
 		this.coll = 'zAxis';
@@ -1253,34 +1282,32 @@ wrap(seriesTypes.pie.prototype, 'translate', function (proceed) {
 			z: options3d.depth
 		},
 		alpha = options3d.alpha,
-		beta = options3d.beta;
+		beta = options3d.beta,
+		z = seriesOptions.stacking ? (seriesOptions.stack || 0) * depth : series._i * depth;
 
-	var z = seriesOptions.stacking ? (seriesOptions.stack || 0) * depth : series._i * depth;
 	z += depth / 2;
 
 	if (seriesOptions.grouping !== false) { z = 0; }
 
 	each(series.data, function (point) {
+		var shapeArgs = point.shapeArgs,
+			angle;
+
 		point.shapeType = 'arc3d';
-		var shapeArgs = point.shapeArgs;
 
-		if (point.y) { // will be false if null or 0 #3006
-			shapeArgs.z = z;
-			shapeArgs.depth = depth * 0.75;
-			shapeArgs.origin = origin;
-			shapeArgs.alpha = alpha;
-			shapeArgs.beta = beta;
-			shapeArgs.center = series.center;
-			
-			var angle = (shapeArgs.end + shapeArgs.start) / 2;
+		shapeArgs.z = z;
+		shapeArgs.depth = depth * 0.75;
+		shapeArgs.origin = origin;
+		shapeArgs.alpha = alpha;
+		shapeArgs.beta = beta;
+		shapeArgs.center = series.center;
+		
+		angle = (shapeArgs.end + shapeArgs.start) / 2;
 
-			point.slicedTranslation = {
-				translateX : Math.round(Math.cos(angle) * series.options.slicedOffset * Math.cos(alpha * deg2rad)),
-				translateY : Math.round(Math.sin(angle) * series.options.slicedOffset * Math.cos(alpha * deg2rad))
-			};
-		} else {
-			shapeArgs = null;
-		}
+		point.slicedTranslation = {
+			translateX : Math.round(Math.cos(angle) * seriesOptions.slicedOffset * Math.cos(alpha * deg2rad)),
+			translateY : Math.round(Math.sin(angle) * seriesOptions.slicedOffset * Math.cos(alpha * deg2rad))
+		};
 	});
 });
 
@@ -1290,11 +1317,12 @@ wrap(seriesTypes.pie.prototype.pointClass.prototype, 'haloPath', function (proce
 });
 
 wrap(seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
+	var seriesGroup = this.group,
+		options = this.options,
+		states = options.states;
+
 	// Do not do this if the chart is not 3D
 	if (this.chart.is3d()) {
-		var options = this.options,
-			states = this.options.states;
-
 		// Set the border color to the fill color to provide a smooth edge
 		this.borderWidth = options.borderWidth = options.edgeWidth || 1;
 		this.borderColor = options.edgeColor = pick(options.edgeColor, options.borderColor, undefined);
@@ -1318,12 +1346,16 @@ wrap(seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (this.chart.is3d()) {		
-		var seriesGroup = this.group;
 		each(this.points, function (point) {
-			point.graphic.out.add(seriesGroup);
-			point.graphic.inn.add(seriesGroup);
-			point.graphic.side1.add(seriesGroup);
-			point.graphic.side2.add(seriesGroup);
+			var graphic = point.graphic;
+
+			graphic.out.add(seriesGroup);
+			graphic.inn.add(seriesGroup);
+			graphic.side1.add(seriesGroup);
+			graphic.side2.add(seriesGroup);
+
+			// Hide null or 0 points (#3006, 3650)
+			graphic[point.y ? 'show' : 'hide']();
 		});		
 	}
 });

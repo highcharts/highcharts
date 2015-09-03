@@ -15,7 +15,7 @@ if (H.seriesTypes.bubble) {
 		pointClass: H.extendClass(Point, {
 			applyOptions: function (options, x) {
 				var point;
-				if (options.lat !== undefined && options.lon !== undefined) {
+				if (options && options.lat !== undefined && options.lon !== undefined) {
 					point = Point.prototype.applyOptions.call(this, options, x);
 					point = H.extend(point, this.series.chart.fromLatLonToPoint(point));
 				} else {

@@ -46,6 +46,7 @@ Series.prototype = {
 		fill: 'fillColor',
 		r: 'radius'
 	},
+	directTouch: false,
 	axisTypes: ['xAxis', 'yAxis'],
 	colorCounter: 0,
 	parallelArrays: ['x', 'y'], // each point's x and y values are stored in this.xData and this.yData
@@ -344,7 +345,9 @@ Series.prototype = {
 	 * Get the series' color
 	 */
 	getColor: function () {
-		if (!this.options.colorByPoint) {
+		if (this.options.colorByPoint) {
+			this.options.color = null; // #4359, selected slice got series.color even when colorByPoint was set.
+		} else {
 			this.getCyclic('color', this.options.color || H.defaultPlotOptions[this.type].color, this.chart.options.colors);
 		}
 	},
@@ -395,7 +398,9 @@ Series.prototype = {
 		// cheaper, allows animation, and keeps references to points.
 		if (updatePoints !== false && dataLength && oldDataLength === dataLength && !series.cropped && !series.hasGroupedData && series.visible) {
 			each(data, function (point, i) {
-				oldData[i].update(point, false, null, false);
+				if (oldData[i].update) { // Linked, previously hidden series (#3709)
+					oldData[i].update(point, false, null, false);
+				}
 			});
 
 		} else {
@@ -458,7 +463,7 @@ Series.prototype = {
 						pt = { series: series };
 						series.pointClass.prototype.applyOptions.apply(pt, [data[i]]);
 						series.updateParallelArrays(pt, i);
-						if (hasCategories && pt.name) {
+						if (hasCategories && defined(pt.name)) { // #4401
 							xAxis.names[pt.x] = pt.name; // #2046
 						}
 					}
@@ -706,8 +711,8 @@ Series.prototype = {
 			// For points within the visible range, including the first point outside the
 			// visible range, consider y extremes
 			validValue = y !== null && y !== undefined && (!yAxis.isLog || (y.length || y > 0));
-			withinRange = this.getExtremesFromAll || this.cropped || ((xData[i + 1] || x) >= xMin &&
-				(xData[i - 1] || x) <= xMax);
+			withinRange = this.getExtremesFromAll || this.options.getExtremesFromAll || this.cropped ||
+				((xData[i + 1] || x) >= xMin &&	(xData[i - 1] || x) <= xMax);
 
 			if (validValue && withinRange) {
 
@@ -1074,6 +1079,8 @@ Series.prototype = {
 			},
 			points = series.points || [], // #927
 			i,
+			j,
+			threshold,
 			point,
 			seriesPointAttr = [],
 			pointAttr,
@@ -1133,13 +1140,15 @@ Series.prototype = {
 				}
 
 				if (zones.length) {
-					var j = 0,
-						threshold = zones[j];
+					j = 0;
+					threshold = zones[j];
 					while (point[zoneAxis] >= threshold.value) {				
 						threshold = zones[++j];
 					}
 					
-					point.color = point.fillColor = threshold.color;
+					if (threshold.color) {
+						point.color = point.fillColor = threshold.color;
+					}
 				}
 
 				hasPointSpecificOptions = seriesOptions.colorByPoint || point.color; // #868
@@ -1396,7 +1405,6 @@ Series.prototype = {
 				attribs;
 
 			if (graph) {
-				HighchartsAdapter.stop(graph); // cancel running animations, #459
 				graph.animate({ d: graphPath });
 
 			} else if ((lineWidth || fillColor) && graphPath.length) { // #1487
@@ -1435,15 +1443,17 @@ Series.prototype = {
 			graph = this.graph,
 			area = this.area,
 			chartSizeMax = Math.max(chart.chartWidth, chart.chartHeight),
-			zoneAxis = this.zoneAxis || 'y',
-			axis = this[zoneAxis + 'Axis'],
+			axis = this[(this.zoneAxis || 'y') + 'Axis'],
 			extremes,
 			reversed = axis.reversed,
+			inverted = chart.inverted,
 			horiz = axis.horiz,
 			pxRange,
+			pxPosMin,
+			pxPosMax,
 			ignoreZones = false;
 
-		if (zones.length && (graph || area)) {
+		if (zones.length && (graph || area) && axis.min !== undefined) {
 			// The use of the Color Threshold assumes there are no gaps
 			// so it is safe to hide the original graph and area
 			if (graph) {
@@ -1460,24 +1470,19 @@ Series.prototype = {
 				translatedFrom = reversed ? 
 					(horiz ? chart.plotWidth : 0) : 
 					(horiz ? 0 : axis.toPixels(extremes.min));
-				translatedFrom = Math.min(pick(translatedTo, translatedFrom), chartSizeMax);
-				translatedTo = Math.min(Math.round(axis.toPixels(pick(threshold.value, extremes.max), true)), chartSizeMax);
-
-				// From should be less or equal then to (#4006)
-				if (axis.isXAxis) {
-					translatedFrom = translatedFrom > translatedTo ? translatedTo : translatedFrom; 
-				} else {
-					translatedFrom = translatedFrom < translatedTo ? translatedTo : translatedFrom;
-				}
-
+				translatedFrom = Math.min(Math.max(pick(translatedTo, translatedFrom), 0), chartSizeMax);
+				translatedTo = Math.min(Math.max(Math.round(axis.toPixels(pick(threshold.value, extremes.max), true)), 0), chartSizeMax);
+				
 				if (ignoreZones) {
 					translatedFrom = translatedTo = axis.toPixels(extremes.max);
 				}
 
 				pxRange = Math.abs(translatedFrom - translatedTo);
+				pxPosMin = Math.min(translatedFrom, translatedTo);
+				pxPosMax = Math.max(translatedFrom, translatedTo);
 				if (axis.isXAxis) {
 					clipAttr = {
-						x: reversed ? translatedTo : translatedFrom,
+						x: inverted ? pxPosMax : pxPosMin,
 						y: 0,
 						width: pxRange, 
 						height: chartSizeMax
@@ -1488,7 +1493,7 @@ Series.prototype = {
 				} else {
 					clipAttr = {
 						x: 0,
-						y: reversed ? translatedFrom : translatedTo,
+						y: inverted ? pxPosMax : pxPosMin,
 						width: chartSizeMax, 
 						height: pxRange
 					};
@@ -1502,7 +1507,7 @@ Series.prototype = {
 					if (axis.isXAxis) {			
 						clipAttr = {
 							x: 0,
-							y: reversed ? translatedFrom : translatedTo,
+							y: reversed ? pxPosMin : pxPosMax,
 							height: clipAttr.width,
 							width: chart.chartWidth
 						};		
@@ -1591,7 +1596,10 @@ Series.prototype = {
 					zIndex: zIndex || 0.1 // IE8 needs this
 				})
 				.add(parent);
+
+			group.addClass('highcharts-series-' + this.index);
 		}
+		
 		// Place it on first and subsequent (redraw) calls
 		group[isNew ? 'attr' : 'animate'](this.getPlotBox());
 		return group;
@@ -1811,7 +1819,7 @@ Series.prototype = {
 
 		// Start the recursive build process with a clone of the points array and null points filtered out (#3873)
 		function startRecursive() {
-			var points = HighchartsAdapter.grep(series.points, function (point) {
+			var points = HighchartsAdapter.grep(series.points || [], function (point) { // #4390
 				return point.y !== null;
 			});
 

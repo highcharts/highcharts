@@ -47,39 +47,39 @@ $(function () {
             "value": 10
         },
         {
-            "hc-key": "nl-gr-gm0005",
+            "hc-key": "nl-gr-gm0024",
             "value": 11
         },
         {
-            "hc-key": "nl-gr-gm0040",
+            "hc-key": "nl-gr-gm0005",
             "value": 12
         },
         {
-            "hc-key": "nl-gr-gm0007",
+            "hc-key": "nl-gr-gm0040",
             "value": 13
         },
         {
-            "hc-key": "nl-gr-gm0009",
+            "hc-key": "nl-gr-gm0007",
             "value": 14
         },
         {
-            "hc-key": "nl-gr-gm0014",
+            "hc-key": "nl-gr-gm0009",
             "value": 15
         },
         {
-            "hc-key": "nl-gr-gm0018",
+            "hc-key": "nl-gr-gm0014",
             "value": 16
         },
         {
-            "hc-key": "nl-gr-gm0010",
+            "hc-key": "nl-gr-gm0018",
             "value": 17
         },
         {
-            "hc-key": "nl-gr-gm0003",
+            "hc-key": "nl-gr-gm0010",
             "value": 18
         },
         {
-            "hc-key": "nl-gr-gm0024",
+            "hc-key": "nl-gr-gm0003",
             "value": 19
         },
         {

@@ -171,7 +171,6 @@ H.seriesTypes.flags = H.extendClass(H.seriesTypes.column, {
 			point,
 			graphic,
 			stackIndex,
-			crisp = (options.lineWidth % 2 / 2),
 			anchorX,
 			anchorY,
 			outsideRight;
@@ -180,14 +179,18 @@ H.seriesTypes.flags = H.extendClass(H.seriesTypes.column, {
 		while (i--) {
 			point = points[i];
 			outsideRight = point.plotX > series.xAxis.len;
-			plotX = point.plotX + (outsideRight ? crisp : -crisp);
+			plotX = point.plotX;
+			if (plotX > 0) { // #3119
+				plotX -= H.pick(point.lineWidth, options.lineWidth) % 2; // #4285
+			}
 			stackIndex = point.stackIndex;
 			shape = point.options.shape || options.shape;
 			plotY = point.plotY;
+
 			if (plotY !== undefined) {
-				plotY = point.plotY + optionsY + crisp - (stackIndex !== undefined && stackIndex * options.stackDistance);
+				plotY = point.plotY + optionsY - (stackIndex !== undefined && stackIndex * options.stackDistance);
 			}
-			anchorX = stackIndex ? undefined : point.plotX + crisp; // skip connectors for higher level stacked points
+			anchorX = stackIndex ? undefined : point.plotX; // skip connectors for higher level stacked points
 			anchorY = stackIndex ? undefined : point.plotY;
 
 			graphic = point.graphic;
@@ -297,7 +300,6 @@ symbols.flag = function (x, y, w, h, options) {
 		x + w, y,
 		x + w, y + h,
 		x, y + h,
-		'M', anchorX, anchorY,
 		'Z'
 	];
 };
@@ -308,8 +310,16 @@ H.each(['circle', 'square'], function (shape) {
 
 		var anchorX = options && options.anchorX,
 			anchorY = options &&  options.anchorY,
-			path = symbols[shape](x, y, w, h),
+			path,
 			labelTopOrBottomY;
+
+		// For single-letter flags, make sure circular flags are not taller than their width
+		if (shape === 'circle' && h > w) {
+			x -= Math.round((h - w) / 2);
+			w = h;
+		}
+
+		path = symbols[shape](x, y, w, h);
 
 		if (anchorX && anchorY) {
 			// if the label is below the anchor, draw the connecting line from the top edge of the label

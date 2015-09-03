@@ -48,6 +48,15 @@ var CandlestickSeries = H.extendClass(H.seriesTypes.ohlc, {
 		// Fill is handled by OHLCSeries' getAttribs.
 		H.each(series.points, function (point) {
 			if (point.open < point.close) {
+
+				// If an individual line color is set, we need to merge the
+				// point attributes, because they are shared between all up
+				// points by inheritance from OHCLSeries.
+				if (point.lineColor) {
+					point.pointAttr = H.merge(point.pointAttr);
+					upLineColor = point.lineColor;
+				}
+
 				point.pointAttr[''].stroke = upLineColor;
 				point.pointAttr.hover.stroke = hoverStroke;
 				point.pointAttr.select.stroke = selectStroke;

@@ -63,11 +63,11 @@ $(function () {
             "value": 14
         },
         {
-            "hc-key": "ba-sr",
+            "hc-key": "ba-3181",
             "value": 15
         },
         {
-            "hc-key": "ba-3181",
+            "hc-key": "ba-sr",
             "value": 16
         },
         {

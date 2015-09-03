@@ -307,7 +307,7 @@ Scroller.prototype = {
 			unionExtremes;
 
 		// Don't render the navigator until we have data (#486, #4202)
-		if (!H.defined(min)) {
+		if (!H.defined(min) || isNaN(min)) {
 			return;
 		}
 
@@ -345,7 +345,7 @@ Scroller.prototype = {
 
 
 		// handles are allowed to cross, but never exceed the plot area
-		scroller.zoomedMax = Math.min(Math.max(pxMin, pxMax), navigatorWidth);
+		scroller.zoomedMax = Math.min(Math.max(pxMin, pxMax, 0), navigatorWidth);
 		scroller.zoomedMin = 
 			Math.max(scroller.fixedWidth ? scroller.zoomedMax - scroller.fixedWidth : Math.min(pxMin, pxMax), 0);
 		scroller.range = scroller.zoomedMax - scroller.zoomedMin;

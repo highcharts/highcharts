@@ -3,14 +3,12 @@
 		attr = H.attr,
 		Axis = H.Axis, // @todo add as requirement
 		Chart,
-		chartCount = H.chartCount,
 		charts = H.charts,
 		css = H.css,
 		defined = H.defined,
 		each = H.each,
 		error = H.error,
 		extend = H.extend,
-		globalAnimation = H.globalAnimation,
 		Legend = H.Legend, // @todo add as requirement
 		merge = H.merge,
 		Pointer = H.Pointer, // @todo add as requirement
@@ -105,7 +103,7 @@ Chart.prototype = {
 		// Add the chart to the global lookup
 		chart.index = charts.length;
 		charts.push(chart);
-		chartCount++;
+		H.chartCount++;
 
 		// Set up auto resize
 		if (optionsChart.reflow !== false) {
@@ -276,16 +274,16 @@ Chart.prototype = {
 
 			// redraw axes
 			each(axes, function (axis) {
-				
+
 				// Fire 'afterSetExtremes' only if extremes are set
-				if (axis.isDirtyExtremes) { // #821
-					axis.isDirtyExtremes = false;
+				var key = axis.min + ',' + axis.max;
+				if (axis.extKey !== key) { // #821, #4452
+					axis.extKey = key;
 					afterRedraw.push(function () { // prevent a recursive call to chart.redraw() (#1119)
 						fireEvent(axis, 'afterSetExtremes', extend(axis.eventArgs, axis.getExtremes())); // #747, #751
 						delete axis.eventArgs;
 					});
 				}
-				
 				if (isDirtyBox || hasStackedSeries) {
 					axis.redraw();
 				}
@@ -417,26 +415,6 @@ Chart.prototype = {
 			return serie.selected;
 		});
 	},
-
-	/**
-	 * Generate stacks for each series and calculate stacks total values
-	 */
-	getStacks: function () {
-		var chart = this;
-
-		// reset stacks for each yAxis
-		each(chart.yAxis, function (axis) {
-			if (axis.stacks && axis.hasVisibleSeries) {
-				axis.oldStacks = axis.stacks;
-			}
-		});
-
-		each(chart.series, function (series) {
-			if (series.options.stacking && (series.visible === true || chart.options.chart.ignoreHiddenSeries === false)) {
-				series.stackKey = series.type + pick(series.options.stack, '');
-			}
-		});
-	},	
 
 	/**
 	 * Show the title and subtitle of the chart
@@ -810,7 +788,9 @@ Chart.prototype = {
 			chartWidth,
 			chartHeight,
 			fireEvent = HighchartsAdapter.fireEvent,
-			fireEndResize;
+			fireEndResize,
+			renderer = chart.renderer,
+			globalAnimation = renderer.globalAnimation;
 
 		// Handle the isResizing counter
 		chart.isResizing += 1;
@@ -842,7 +822,7 @@ Chart.prototype = {
 		}, globalAnimation);
 
 		chart.setChartSize(true);
-		chart.renderer.setSize(chartWidth, chartHeight, animation);
+		renderer.setSize(chartWidth, chartHeight, animation);
 
 		// handle axes
 		chart.maxTicks = null;
@@ -1130,6 +1110,7 @@ Chart.prototype = {
 				if (linkedTo) {
 					linkedTo.linkedSeries.push(series);
 					series.linkedParent = linkedTo;
+					series.visible = pick(series.options.visible, linkedTo.options.visible, series.visible); // #3879
 				}
 			}
 		});
@@ -1194,7 +1175,10 @@ Chart.prototype = {
 		// Legend
 		chart.legend = new Legend(chart, options.legend);
 
-		chart.getStacks(); // render stacks
+		// Get stacks
+		if (chart.getStacks) {
+			chart.getStacks();
+		}
 
 		// Get chart margins
 		chart.getMargins(true);
@@ -1296,7 +1280,7 @@ Chart.prototype = {
 		
 		// Delete the chart from charts lookup array
 		charts[chart.index] = undefined;
-		chartCount--;
+		H.chartCount--;
 		chart.renderTo.removeAttribute('data-highcharts-chart');
 
 		// remove events

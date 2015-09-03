@@ -1,6 +1,6 @@
 $(function () {
     $('#container').highcharts({
-        
+
         title: {
             text: 'Tooltip should follow mouse'
         },
@@ -8,7 +8,7 @@ $(function () {
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr']
         },
-        
+
         tooltip: {
             followPointer: true
         },

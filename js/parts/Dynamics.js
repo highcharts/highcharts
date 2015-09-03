@@ -181,11 +181,9 @@ extend(Point.prototype, {
 			if (H.isObject(options) && !H.isArray(options)) {
 				// Defer the actual redraw until getAttribs has been called (#3260)
 				point.redraw = function () {
-					if (graphic) {
+					if (graphic && graphic.element) {
 						if (options && options.marker && options.marker.symbol) {
 							point.graphic = graphic.destroy();
-						} else {
-							graphic.attr(point.pointAttr[point.state || ''])[point.visible ? 'show' : 'hide'](); // #2430
 						}
 					}
 					if (options && options.dataLabels && point.dataLabel) { // #2468
@@ -486,7 +484,7 @@ extend(Axis.prototype, {
 		newOptions = chart.options[this.coll][this.options.index] = merge(this.userOptions, newOptions);
 
 		this.destroy(true);
-		this._addedPlotLB = undefined; // #1611, #2887
+		this._addedPlotLB = this.chart._labelPanes = undefined; // #1611, #2887, #4314
 
 		this.init(chart, extend(newOptions, { events: undefined }));
 

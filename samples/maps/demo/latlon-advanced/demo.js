@@ -8,9 +8,9 @@ $(function () {
     // Add series with state capital bubbles
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=us-capitals.json&callback=?', function (json) {
         var data = [];
-        $.each(json, function (ix, entry) {
-            entry.z = entry.population;
-            data.push(entry);
+        $.each(json, function () {
+            this.z = this.population;
+            data.push(this);
         });
 
         $('#container').highcharts('Map', {
@@ -33,11 +33,7 @@ $(function () {
                     dashStyle: 'dot',
                     snap: false,
                     color: 'gray'
-                }],
-            },
-
-            mapNavigation: {
-                enabled: true
+                }]
             },
 
             series: [{
@@ -51,7 +47,8 @@ $(function () {
                 type: 'mapline',
                 data: H.geojson(map, 'mapline'),
                 color: '#101010',
-                enableMouseTracking: false
+                enableMouseTracking: false,
+                showInLegend: false
             }, {
                 type: 'mapbubble',
                 dataLabels: {
@@ -76,11 +73,11 @@ $(function () {
             if (!chart.lab) {
                 chart.lab = chart.renderer.text('', 0, 0)
                     .attr({
-                    zIndex: 5
-                })
+                        zIndex: 5
+                    })
                     .css({
-                    color: '#505050'
-                })
+                        color: '#505050'
+                    })
                     .add();
             }
 
@@ -98,10 +95,10 @@ $(function () {
         }
     });
 
-    $('#container').mouseout(function (e) {
+    $('#container').mouseout(function () {
         if (chart && chart.lab) {
             chart.lab.destroy();
             chart.lab = null;
-        };
+        }
     });
 });

@@ -37,6 +37,7 @@ H.defaultPlotOptions.arearange = H.merge(H.defaultPlotOptions.area, {
 H.seriesTypes.arearange = H.extendClass(H.seriesTypes.area, {
 	type: 'arearange',
 	pointArrayMap: ['low', 'high'],
+	dataLabelCollections: ['dataLabel', 'dataLabelUpper'],
 	toYData: function (point) {
 		return [point.low, point.high];
 	},
@@ -190,27 +191,29 @@ H.seriesTypes.arearange = H.extendClass(H.seriesTypes.area, {
 			i = length;
 			while (i--) {
 				point = data[i];
-				up = point.plotHigh > point.plotLow;
-				
-				// Set preliminary values
-				point.y = point.high;
-				point._plotY = point.plotY;
-				point.plotY = point.plotHigh;
-				
-				// Store original data labels and set preliminary label objects to be picked up 
-				// in the uber method
-				originalDataLabels[i] = point.dataLabel;
-				point.dataLabel = point.dataLabelUpper;
-				
-				// Set the default offset
-				point.below = up;
-				if (inverted) {
-					if (!align) {
-						dataLabelOptions.align = up ? 'right' : 'left';
+				if (point) {
+					up = point.plotHigh > point.plotLow;
+					
+					// Set preliminary values
+					point.y = point.high;
+					point._plotY = point.plotY;
+					point.plotY = point.plotHigh;
+					
+					// Store original data labels and set preliminary label objects to be picked up 
+					// in the uber method
+					originalDataLabels[i] = point.dataLabel;
+					point.dataLabel = point.dataLabelUpper;
+					
+					// Set the default offset
+					point.below = up;
+					if (inverted) {
+						if (!align) {
+							dataLabelOptions.align = up ? 'right' : 'left';
+						}
+						dataLabelOptions.x = dataLabelOptions.xHigh;								
+					} else {
+						dataLabelOptions.y = dataLabelOptions.yHigh;
 					}
-					dataLabelOptions.x = dataLabelOptions.xHigh;								
-				} else {
-					dataLabelOptions.y = dataLabelOptions.yHigh;
 				}
 			}
 			
@@ -222,25 +225,27 @@ H.seriesTypes.arearange = H.extendClass(H.seriesTypes.area, {
 			i = length;
 			while (i--) {
 				point = data[i];
-				up = point.plotHigh > point.plotLow;
-				
-				// Move the generated labels from step 1, and reassign the original data labels
-				point.dataLabelUpper = point.dataLabel;
-				point.dataLabel = originalDataLabels[i];
-				
-				// Reset values
-				point.y = point.low;
-				point.plotY = point._plotY;
-				
-				// Set the default offset
-				point.below = !up;
-				if (inverted) {
-					if (!align) {
-						dataLabelOptions.align = up ? 'left' : 'right';
+				if (point) {
+					up = point.plotHigh > point.plotLow;
+					
+					// Move the generated labels from step 1, and reassign the original data labels
+					point.dataLabelUpper = point.dataLabel;
+					point.dataLabel = originalDataLabels[i];
+					
+					// Reset values
+					point.y = point.low;
+					point.plotY = point._plotY;
+					
+					// Set the default offset
+					point.below = !up;
+					if (inverted) {
+						if (!align) {
+							dataLabelOptions.align = up ? 'left' : 'right';
+						}
+						dataLabelOptions.x = dataLabelOptions.xLow;
+					} else {
+						dataLabelOptions.y = dataLabelOptions.yLow;
 					}
-					dataLabelOptions.x = dataLabelOptions.xLow;
-				} else {
-					dataLabelOptions.y = dataLabelOptions.yLow;
 				}
 			}
 			if (seriesProto.drawDataLabels) {

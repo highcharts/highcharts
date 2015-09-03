@@ -22,7 +22,7 @@ H.defaultPlotOptions.pie = H.merge(H.defaultSeriesOptions, {
 		distance: 30,
 		enabled: true,
 		formatter: function () { // #2945
-			return this.point.name;
+			return this.y === null ? undefined : this.point.name;
 		},
 		// softConnector: true,
 		x: 0
@@ -82,7 +82,7 @@ PiePoint = H.extendClass(Point, {
 	 * @param {Boolean} vis Whether to show the slice or not. If undefined, the
 	 *    visibility is toggled
 	 */
-	setVisible: function (vis, redraw) { // docs: redraw parameter. Radrawing calculates new percentages and totals and moves other slices.
+	setVisible: function (vis, redraw) {
 		var point = this,
 			series = point.series,
 			chart = series.chart,
@@ -106,6 +106,11 @@ PiePoint = H.extendClass(Point, {
 
 			if (point.legendItem) {
 				chart.legend.colorizeItem(point, vis);
+			}
+
+			// #4170, hide halo after hiding point
+			if (!vis && point.state === 'hover') {
+				point.setState('');
 			}
 			
 			// Handle ignore hidden slices
@@ -172,6 +177,7 @@ PieSeries = {
 	isCartesian: false,
 	pointClass: PiePoint,
 	requireSorting: false,
+	directTouch: true,
 	noSharedTooltip: true,
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	axisTypes: [],
@@ -180,11 +186,6 @@ PieSeries = {
 		'stroke-width': 'borderWidth',
 		fill: 'color'
 	},
-
-	/**
-	 * Pies have one color each point
-	 */
-	getColor: H.noop,
 
 	/**
 	 * Animate the pies in
@@ -394,7 +395,8 @@ PieSeries = {
 			//group,
 			shadow = series.options.shadow,
 			shadowGroup,
-			shapeArgs;
+			shapeArgs,
+			attr;
 
 		if (shadow && !series.shadowGroup) {
 			series.shadowGroup = renderer.g('shadow')
@@ -403,45 +405,50 @@ PieSeries = {
 
 		// draw the slices
 		H.each(series.points, function (point) {
-			graphic = point.graphic;
-			shapeArgs = point.shapeArgs;
-			shadowGroup = point.shadowGroup;
+			if (point.y !== null) {
+				graphic = point.graphic;
+				shapeArgs = point.shapeArgs;
+				shadowGroup = point.shadowGroup;
 
-			// put the shadow behind all points
-			if (shadow && !shadowGroup) {
-				shadowGroup = point.shadowGroup = renderer.g('shadow')
-					.add(series.shadowGroup);
+				// put the shadow behind all points
+				if (shadow && !shadowGroup) {
+					shadowGroup = point.shadowGroup = renderer.g('shadow')
+						.add(series.shadowGroup);
+				}
+
+				// if the point is sliced, use special translation, else use plot area traslation
+				groupTranslation = point.sliced ? point.slicedTranslation : {
+					translateX: 0,
+					translateY: 0
+				};
+
+				//group.translate(groupTranslation[0], groupTranslation[1]);
+				if (shadowGroup) {
+					shadowGroup.attr(groupTranslation);
+				}
+
+				// draw the slice
+				if (graphic) {
+					graphic
+						.setRadialReference(series.center)
+						.animate(H.extend(shapeArgs, groupTranslation));				
+				} else {
+					attr = { 'stroke-linejoin': 'round' };
+					if (!point.visible) {
+						attr.visibility = 'hidden';
+					}
+
+					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
+						.setRadialReference(series.center)
+						.attr(
+							point.pointAttr[point.selected ? 'select' : '']
+						)
+						.attr(attr)
+						.attr(groupTranslation)
+						.add(series.group)
+						.shadow(shadow, shadowGroup);	
+				}
 			}
-
-			// if the point is sliced, use special translation, else use plot area traslation
-			groupTranslation = point.sliced ? point.slicedTranslation : {
-				translateX: 0,
-				translateY: 0
-			};
-
-			//group.translate(groupTranslation[0], groupTranslation[1]);
-			if (shadowGroup) {
-				shadowGroup.attr(groupTranslation);
-			}
-
-			// draw the slice
-			if (graphic) {
-				graphic.animate(H.extend(shapeArgs, groupTranslation));
-			} else {
-				point.graphic = graphic = renderer[point.shapeType](shapeArgs)
-					.setRadialReference(series.center)
-					.attr(
-						point.pointAttr[point.selected ? 'select' : '']
-					)
-					.attr({ 
-						'stroke-linejoin': 'round'
-						//zIndex: 1 // #2722 (reversed)
-					})
-					.attr(groupTranslation)
-					.add(series.group)
-					.shadow(shadow, shadowGroup);	
-			}
-
 		});
 
 	},

@@ -3,27 +3,27 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "as",
+            "hc-key": "id",
             "value": 0
         },
         {
-            "hc-key": "au",
+            "hc-key": "pw",
             "value": 1
         },
         {
-            "hc-key": "pg",
+            "hc-key": "sb",
             "value": 2
         },
         {
-            "hc-key": "sb",
+            "hc-key": "au",
             "value": 3
         },
         {
-            "hc-key": "vu",
+            "hc-key": "nz",
             "value": 4
         },
         {
-            "hc-key": "gu",
+            "hc-key": "nr",
             "value": 5
         },
         {
@@ -31,11 +31,11 @@ $(function () {
             "value": 6
         },
         {
-            "hc-key": "mh",
+            "hc-key": "pg",
             "value": 7
         },
         {
-            "hc-key": "nr",
+            "hc-key": "mh",
             "value": 8
         },
         {
@@ -43,36 +43,20 @@ $(function () {
             "value": 9
         },
         {
-            "hc-key": "ph",
+            "hc-key": "vu",
             "value": 10
         },
         {
-            "hc-key": "to",
+            "hc-key": "my",
             "value": 11
         },
         {
-            "hc-key": "id",
+            "hc-key": "fj",
             "value": 12
         },
         {
-            "hc-key": "fj",
+            "hc-key": "ph",
             "value": 13
-        },
-        {
-            "hc-key": "nz",
-            "value": 14
-        },
-        {
-            "hc-key": "my",
-            "value": 15
-        },
-        {
-            "hc-key": "ws",
-            "value": 16
-        },
-        {
-            "hc-key": "pw",
-            "value": 17
         }
     ];
 

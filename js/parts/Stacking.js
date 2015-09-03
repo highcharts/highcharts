@@ -1,5 +1,6 @@
 (function (H) {
 	var Axis = H.Axis,
+		Chart = H.Chart,
 		correctFloat = H.correctFloat,
 		pick = H.pick,
 		Series = H.Series;
@@ -109,6 +110,26 @@ StackItem.prototype = {
 	}
 };
 
+/**
+ * Generate stacks for each series and calculate stacks total values
+ */
+Chart.prototype.getStacks = function () {
+	var chart = this;
+
+	// reset stacks for each yAxis
+	H.each(chart.yAxis, function (axis) {
+		if (axis.stacks && axis.hasVisibleSeries) {
+			axis.oldStacks = axis.stacks;
+		}
+	});
+
+	H.each(chart.series, function (series) {
+		if (series.options.stacking && (series.visible === true || chart.options.chart.ignoreHiddenSeries === false)) {
+			series.stackKey = series.type + pick(series.options.stack, '');
+		}
+	});
+};
+
 
 // Stacking methods defined on the Axis prototype
 
@@ -167,6 +188,49 @@ Axis.prototype.renderStackTotals = function () {
 	}
 };
 
+/**
+ * Set all the stacks to initial states and destroy unused ones.
+ */
+Axis.prototype.resetStacks = function () {
+	var stacks = this.stacks,
+		type,
+		i;
+	if (!this.isXAxis) {
+		for (type in stacks) {
+			for (i in stacks[type]) {
+
+				// Clean up memory after point deletion (#1044, #4320)
+				if (stacks[type][i].touched < this.stacksTouched) {
+					stacks[type][i].destroy();
+					delete stacks[type][i];
+
+				// Reset stacks
+				} else {
+					stacks[type][i].total = null;
+					stacks[type][i].cum = 0;
+				}
+			}
+		}
+	}
+};
+
+Axis.prototype.cleanStacks = function () {
+	var stacks, type, i;
+
+	if (!this.isXAxis) {
+		if (this.oldStacks) {
+			stacks = this.stacks = this.oldStacks;
+		}
+
+		// reset stacks
+		for (type in stacks) {
+			for (i in stacks[type]) {
+				stacks[type][i].cum = stacks[type][i].total;
+			}
+		}
+	}
+};
+
 
 // Stacking methods defnied for Series prototype
 
@@ -203,6 +267,9 @@ Series.prototype.setStackedPoints = function () {
 		x,
 		y;
 
+
+	yAxis.stacksTouched += 1;
+
 	// loop over the non-null y values and read them into a local array
 	for (i = 0; i < yDataLength; i++) {
 		x = xData[i];
@@ -233,7 +300,7 @@ Series.prototype.setStackedPoints = function () {
 		stack = stacks[key][x];
 		//stack.points[pointKey] = [stack.cum || stackThreshold];
 		stack.points[pointKey] = [pick(stack.cum, stackThreshold)];
-
+		stack.touched = yAxis.stacksTouched;
 		
 
 		// Add value to the stack total

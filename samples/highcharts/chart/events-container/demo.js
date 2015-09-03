@@ -1,12 +1,12 @@
 $(function () {
     $('#chart1').highcharts({
-        
+
         title: {
             text: 'Click chart to view full page'
         },
-        
+
         xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
 

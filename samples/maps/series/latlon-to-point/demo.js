@@ -1,7 +1,7 @@
 $(function () {
 
     // Initiate the chart
-    var chart = Highcharts.Map({        
+    var chart = Highcharts.Map({
         chart: {
             renderTo: 'container'
         },
@@ -13,12 +13,12 @@ $(function () {
         mapNavigation: {
             enabled: true
         },
-        
+
         tooltip: {
             headerFormat: '',
             pointFormat: '<b>{point.name}</b><br>Lat: {point.lat}, Lon: {point.lon}'
         },
-        
+
         series: [{
             // Use the gb-all map with no data as a basemap
             mapData: Highcharts.maps['countries/gb/gb-all'],

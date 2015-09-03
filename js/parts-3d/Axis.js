@@ -10,15 +10,16 @@
 /***
 	EXTENSION TO THE AXIS
 ***/
-wrap(Axis.prototype, 'init', function (proceed) {
-	var args = arguments;
-	if (args[1].is3d()) {
-		args[2].tickWidth = pick(args[2].tickWidth, 0);
-		args[2].gridLineWidth = pick(args[2].gridLineWidth, 1);
+wrap(Axis.prototype, 'setOptions', function (proceed, userOptions) {
+	var options;
+	proceed.call(this, userOptions);
+	if (this.chart.is3d()) {
+		options = this.options;
+		options.tickWidth = pick(options.tickWidth, 0);
+		options.gridLineWidth = pick(options.gridLineWidth, 1);
 	}
+});
 
-	proceed.apply(this, [].slice.call(arguments, 1));
-});	
 wrap(Axis.prototype, 'render', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
@@ -53,7 +54,13 @@ wrap(Axis.prototype, 'render', function (proceed) {
 			insidePlotArea: false
 		};
 		if (!this.bottomFrame) {
-			this.bottomFrame = renderer.cuboid(bottomShape).attr({fill: fbottom.color, zIndex: (chart.yAxis[0].reversed && options3d.alpha > 0 ? 4 : -1)}).css({stroke: fbottom.color}).add();
+			this.bottomFrame = renderer.cuboid(bottomShape).attr({
+				fill: fbottom.color,
+				zIndex: (chart.yAxis[0].reversed && options3d.alpha > 0 ? 4 : -1)
+			})
+			.css({
+				stroke: fbottom.color
+			}).add();
 		} else {
 			this.bottomFrame.animate(bottomShape);
 		}
@@ -69,7 +76,12 @@ wrap(Axis.prototype, 'render', function (proceed) {
 			insidePlotArea: false
 		};
 		if (!this.backFrame) {
-			this.backFrame = renderer.cuboid(backShape).attr({fill: fback.color, zIndex: -3}).css({stroke: fback.color}).add();
+			this.backFrame = renderer.cuboid(backShape).attr({
+				fill: fback.color, 
+				zIndex: -3
+			}).css({
+				stroke: fback.color
+			}).add();
 		} else {
 			this.backFrame.animate(backShape);
 		}
@@ -83,7 +95,12 @@ wrap(Axis.prototype, 'render', function (proceed) {
 			insidePlotArea: false
 		};
 		if (!this.sideFrame) {
-			this.sideFrame = renderer.cuboid(sideShape).attr({fill: fside.color, zIndex: -2}).css({stroke: fside.color}).add();
+			this.sideFrame = renderer.cuboid(sideShape).attr({
+				fill: fside.color, 
+				zIndex: -2
+			}).css({
+				stroke: fside.color
+			}).add();
 		} else {
 			this.sideFrame.animate(sideShape);
 		}
@@ -121,9 +138,9 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed) {
 	return path;
 });
 
-wrap(Axis.prototype, 'getLinePath', function () {
-	// do not draw axislines in 3D ?
-	return [];
+// Do not draw axislines in 3D
+wrap(Axis.prototype, 'getLinePath', function (proceed) {
+	return this.chart.is3d() ? [] : proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 wrap(Axis.prototype, 'getPlotBandPath', function (proceed) {
@@ -259,7 +276,7 @@ extend(ZAxis.prototype, {
 	setOptions: function (userOptions) {
 		userOptions = H.merge({
 			offset: 0,
-			lineColor: null
+			lineWidth: 0
 		}, userOptions);
 		Axis.prototype.setOptions.call(this, userOptions);
 		this.coll = 'zAxis';

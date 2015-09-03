@@ -163,7 +163,8 @@ extend(H.Pointer.prototype, {
 			// Set the marker
 			if (!selectionMarker) {
 				self.selectionMarker = selectionMarker = extend({
-					destroy: H.noop
+					destroy: H.noop,
+					touch: true
 				}, chart.plotBox);
 			}
 			

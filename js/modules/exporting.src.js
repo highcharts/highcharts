@@ -207,16 +207,24 @@ extend(Chart.prototype, {
 
 			// IE specific
 			.replace(/<IMG /g, '<image ')
+			.replace(/<(\/?)TITLE>/g, '<$1title>')
 			.replace(/height=([^" ]+)/g, 'height="$1"')
 			.replace(/width=([^" ]+)/g, 'width="$1"')
 			.replace(/hc-svg-href="([^"]+)">/g, 'xlink:href="$1"/>')
-			.replace(/ id=([^" >]+)/g, 'id="$1"') // #4003
+			.replace(/ id=([^" >]+)/g, ' id="$1"') // #4003
 			.replace(/class=([^" >]+)/g, 'class="$1"')
 			.replace(/ transform /g, ' ')
 			.replace(/:(path|rect)/g, '$1')
 			.replace(/style="([^"]+)"/g, function (s) {
 				return s.toLowerCase();
 			});
+	},
+
+	/**
+	 * Return innerHTML of chart. Used as hook for plugins.
+	 */
+	getChartHTML: function () {
+		return this.container.innerHTML;
 	},
 
 	/**
@@ -234,7 +242,10 @@ extend(Chart.prototype, {
 			sourceHeight,
 			cssWidth,
 			cssHeight,
-			options = merge(chart.options, additionalOptions); // copy the options and add extra options
+			html,
+			options = merge(chart.options, additionalOptions), // copy the options and add extra options
+			allowHTML = options.exporting.allowHTML; // docs: experimental, see #2473
+			
 
 		// IE compatibility hack for generating SVG content that it doesn't really understand
 		if (!document.createElementNS) {
@@ -269,7 +280,7 @@ extend(Chart.prototype, {
 		extend(options.chart, {
 			animation: false,
 			renderTo: sandbox,
-			forExport: true,
+			forExport: !allowHTML,
 			width: sourceWidth,
 			height: sourceHeight
 		});
@@ -318,12 +329,25 @@ extend(Chart.prototype, {
 		});
 
 		// get the SVG from the container's innerHTML
-		svg = chartCopy.container.innerHTML;
+		svg = chartCopy.getChartHTML();
 
 		// free up memory
 		options = null;
 		chartCopy.destroy();
 		discardElement(sandbox);
+
+		// Move HTML into a foreignObject
+		if (allowHTML) {
+			html = svg.match(/<\/svg>(.*?$)/);
+			if (html) {
+				html = '<foreignObject x="0" y="0" width="200" height="200">' +
+					'<body xmlns="http://www.w3.org/1999/xhtml">' +
+					html[1] +
+					'</body>' + 
+					'</foreignObject>';
+				svg = svg.replace('</svg>', html + '</svg>');
+			}
+		}
 
 		// sanitize
 		svg = this.sanitizeSVG(svg);
@@ -516,7 +540,8 @@ extend(Chart.prototype, {
 							onmouseout: function () {
 								css(this, menuItemStyle);
 							},
-							onclick: function () {
+							onclick: function (e) {
+								e.stopPropagation();
 								hide();
 								if (item.onclick) {
 									item.onclick.apply(chart, arguments);
@@ -599,8 +624,9 @@ extend(Chart.prototype, {
 		delete attr.states;
 
 		if (onclick) {
-			callback = function () {
-				onclick.apply(chart, arguments);
+			callback = function (e) {
+				e.stopPropagation();
+				onclick.call(chart, e);
 			};
 
 		} else if (menuItems) {

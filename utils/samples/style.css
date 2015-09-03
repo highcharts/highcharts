@@ -1,19 +1,28 @@
 body {
 	margin: 0;
+	font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+}
+
+body.page {
+	margin: 1em;
+	font-size: 16px;
+  	line-height: 1.6;
+}
+
+body.page h1 {
+	padding-bottom: 0.3em;
+	font-size: 2.25em;
+	line-height: 1.2;
+	border-bottom: 1px solid #eee;
 }
 
 .top-bar {
 	color: white;
-	font-family: Arial, sans-serif;
 	font-size: 0.8em;
 	padding: 0.5em;
 	height: 50px;
 	background: #34343e;
 	box-shadow: 0px 0px 8px #888;
-}
-li, a, p, div {
-	font-family: Arial, sans-serif;
-	font-size: 10pt;
 }
 #source-box {
 	width: 0;
@@ -37,6 +46,7 @@ li, a, p, div {
 	white-space: nowrap;
 	cursor: pointer;
 	margin: 0 3px;
+	line-height: 2.5em;
 }
 .buttons a:hover, a.button:hover, button:hover {
 	background: #40818b;
@@ -48,7 +58,6 @@ li, a, p, div {
 	color: white;
 	margin-bottom: 0.5em;
 	border: 1px solid silver;
-	font-family: Arial, sans-serif; 
 	font-size: 0.8em; 
 	padding: 0.5em; 
 }

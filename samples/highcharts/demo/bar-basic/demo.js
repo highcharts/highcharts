@@ -7,7 +7,7 @@ $(function () {
             text: 'Historic World Population by Region'
         },
         subtitle: {
-            text: 'Source: Wikipedia.org'
+            text: 'Source: <a href="https://en.wikipedia.org/wiki/World_population">Wikipedia.org</a>'
         },
         xAxis: {
             categories: ['Africa', 'America', 'Asia', 'Europe', 'Oceania'],
@@ -40,7 +40,7 @@ $(function () {
             align: 'right',
             verticalAlign: 'top',
             x: -40,
-            y: 100,
+            y: 80,
             floating: true,
             borderWidth: 1,
             backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
@@ -56,8 +56,8 @@ $(function () {
             name: 'Year 1900',
             data: [133, 156, 947, 408, 6]
         }, {
-            name: 'Year 2008',
-            data: [973, 914, 4054, 732, 34]
+            name: 'Year 2012',
+            data: [1052, 954, 4250, 740, 38]
         }]
     });
 });

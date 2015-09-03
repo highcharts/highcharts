@@ -1,6 +1,4 @@
 $(function () {
-    // get the jQuery wrapper
-    var $report = $('#report');
 
     // create the chart
     $('#container').highcharts({

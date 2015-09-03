@@ -2,8 +2,20 @@
 ini_set('display_errors', 'on');
 session_start();
 require_once('../settings.php');
-$leftPath = isset($_SESSION['leftPath']) ? $_SESSION['leftPath'] : Settings::$leftPath;
+
+if (isset($_GET['commit'])) {
+	$leftPath = $_GET['commit']; // used by PhantomJS command line
+} elseif (isset($_SESSION['leftPath'])) {
+	$leftPath = $_SESSION['leftPath'];
+} else {
+	$leftPath = Settings::$leftPath;
+}
 $rightPath = isset($_SESSION['rightPath']) ? $_SESSION['rightPath'] : Settings::$rightPath;
+
+// A commit is given, insert the full path
+if (preg_match('/^[a-z0-9]+$/', $leftPath)) {
+	$leftPath = "cache.php?file=http://github.highcharts.com/$leftPath";
+}
 
 
 $leftExporting = "$leftPath/modules/exporting.src.js";
@@ -21,6 +33,13 @@ if (!preg_match('/^[a-z\-0-9]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
 $path = "../../samples/$path";
 
 require_once('functions.php');
+
+// Rewrite all external files to load via cache.php
+function cachify($s) {
+
+	$s = preg_replace('/(src|href)="([^"]+)"/', '$1="cache.php?file=$2"', $s);
+	return $s;
+}
 
 function getResources() {
 	global $path;
@@ -44,9 +63,9 @@ function getResources() {
 				$url = trim($line, " -\r");
 				
 				if (preg_match('/\.js$/', $url)) {
-					$html .= "<script src='$url'></script>\n";
+					$html .= "<script src=\"$url\"></script>\n";
 				} elseif (preg_match('/\.css$/', $url)) {
-					$html .= "<link rel='stylesheet' href='$url'></script>\n";
+					$html .= "<link rel=\"stylesheet\" href=\"$url\"></script>\n";
 				}
 			}
 			
@@ -56,7 +75,7 @@ function getResources() {
 			}
 		}
 	}
-	return $html;
+	return cachify($html);
 }
 
 function getJS() {
@@ -67,27 +86,33 @@ function getJS() {
 	include("$path/demo.js");
 	$s = ob_get_clean();
 	
-	return $s;
+	return cachify($s);
 }
 
 function getHTML($which) {
 	global $path, $leftPath, $rightPath, $rightExporting, $leftExporting;
-	
+	$bogus = md5('bogus');
 	
 	// No idea why file_get_contents doesn't work here...
 	ob_start();
 	include("$path/demo.html");
 	$s = ob_get_clean();
+
+	$s = cachify($s);
+
+	$s = str_replace('cache.php?file=http://code.highcharts.com/mapdata', $bogus, $s);
 	
 	if ($which == 'left') {
-		$s = str_replace('http://code.highcharts.com', $leftPath, $s);
+		$s = str_replace('cache.php?file=http://code.highcharts.com', $leftPath, $s);
 		$exporting = $rightExporting;
 		
 	} else {
 		
-		$s = str_replace('http://code.highcharts.com', $rightPath, $s);
+		$s = str_replace('cache.php?file=http://code.highcharts.com', $rightPath, $s);
 		$exporting = $leftExporting;
 	}
+
+	$s = str_replace($bogus, 'cache.php?file=http://code.highcharts.com/mapdata', $s);
 	
 	if (strlen($s) > 0 && strpos($s, 'exporting.js') === false) {
 		$s .= '<script src="' . $exporting . '"></script>';

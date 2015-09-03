@@ -23,59 +23,59 @@ $(function () {
             "value": 4
         },
         {
-            "hc-key": "ve-ap",
+            "hc-key": "ve-bo",
             "value": 5
         },
         {
-            "hc-key": "ve-ba",
+            "hc-key": "ve-ap",
             "value": 6
         },
         {
-            "hc-key": "ve-me",
+            "hc-key": "ve-ba",
             "value": 7
         },
         {
-            "hc-key": "ve-ta",
+            "hc-key": "ve-me",
             "value": 8
         },
         {
-            "hc-key": "ve-tr",
+            "hc-key": "ve-ta",
             "value": 9
         },
         {
-            "hc-key": "ve-zu",
+            "hc-key": "ve-tr",
             "value": 10
         },
         {
-            "hc-key": "ve-co",
+            "hc-key": "ve-zu",
             "value": 11
         },
         {
-            "hc-key": "ve-po",
+            "hc-key": "ve-co",
             "value": 12
         },
         {
-            "hc-key": "ve-ca",
+            "hc-key": "ve-po",
             "value": 13
         },
         {
-            "hc-key": "ve-la",
+            "hc-key": "ve-ca",
             "value": 14
         },
         {
-            "hc-key": "ve-ya",
+            "hc-key": "ve-la",
             "value": 15
         },
         {
-            "hc-key": "ve-fa",
+            "hc-key": "ve-ya",
             "value": 16
         },
         {
-            "hc-key": "ve-am",
+            "hc-key": "ve-fa",
             "value": 17
         },
         {
-            "hc-key": "ve-bo",
+            "hc-key": "ve-am",
             "value": 18
         },
         {

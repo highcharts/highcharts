@@ -10,15 +10,15 @@ $(function () {
             x = path[1];
 
         Highcharts.each(this.breakArray || [], function (brk) {
-            var from;
+            var y;
             if (!axis.horiz) {
                 y = axis.toPixels(brk.from);
-                path.splice(3, 0, 
+                path.splice(3, 0,
                     'L', x, y - 4, // stop
                     'M', x + 5, y - 9, 'L', x - 5, y + 1, // lower slanted line
                     'M', x + 5, y - 1, 'L', x - 5, y + 9, // higher slanted line
                     'M', x, y + 4
-                );
+                    );
             }
         });
         return path;
@@ -27,7 +27,7 @@ $(function () {
     /**
      * On top of each column, draw a zigzag line where the axis break is.
      */
-    function pointBreakColumn(e) {    
+    function pointBreakColumn(e) {
         var point = e.point,
             brk = e.brk,
             shapeArgs = point.shapeArgs,
@@ -36,7 +36,7 @@ $(function () {
             w = shapeArgs.width,
             key = ['brk', brk.from, brk.to],
             path = ['M', x, y, 'L', x + w * 0.25, y + 4, 'L', x + w * 0.75, y - 4, 'L', x + w, y];
-        
+
         if (!point[key]) {
             point[key] = this.chart.renderer.path(path)
                 .attr({
@@ -83,6 +83,4 @@ $(function () {
         }]
 
     });
-    
-    
 });

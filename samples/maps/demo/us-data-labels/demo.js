@@ -2,7 +2,7 @@ $(function () {
 
     // Load the data from the HTML table and tag it with an upper case name used for joining
     var data = [],
-    // Get the map data
+        // Get the map data
         mapData = Highcharts.geojson(Highcharts.maps['countries/us/custom/us-small']);
 
     Highcharts.data({
@@ -22,7 +22,9 @@ $(function () {
     // Process mapdata
     $.each(mapData, function () {
         var path = this.path,
-            copy = { path: path };
+            copy = {
+                path: path
+            };
 
         // This point has a square legend to the right
         if (path[1] === 9727) {
@@ -46,7 +48,7 @@ $(function () {
     $('#container').highcharts('Map', {
 
         title: {
-            text: 'US unemployment rate 2014'
+            text: 'US unemployment rate 2015'
         },
 
         subtitle: {
@@ -67,10 +69,10 @@ $(function () {
         colorAxis: {},
 
         series: [{
-            mapData : mapData,
+            mapData: mapData,
             data: data,
             joinBy: 'ucName',
-            name: 'Unemployment rate per 2014',
+            name: 'Unemployment rate per 2015',
             states: {
                 hover: {
                     color: '#BADA55'

@@ -99,15 +99,15 @@ $(function () {
             "value": 23
         },
         {
-            "hc-key": "us-ak-270",
+            "hc-key": "us-ak-282",
             "value": 24
         },
         {
-            "hc-key": "us-ak-282",
+            "hc-key": "us-ak-230",
             "value": 25
         },
         {
-            "hc-key": "us-ak-230",
+            "hc-key": "us-ak-270",
             "value": 26
         },
         {

@@ -61,7 +61,6 @@ public class TempDir {
 	}
 
 	public static String getDownloadLink(String filename) {
-		filename = FilenameUtils.getName(filename);
 		String link = "files/" + filename;
 		return link;
 	}

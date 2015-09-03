@@ -54,7 +54,7 @@ H.defaultPlotOptions.map = H.merge(H.defaultPlotOptions.scatter, {
 /**
  * The MapAreaPoint object
  */
-var MapAreaPoint = H.MapAreaPoint = H.extendClass(Point, {
+var MapAreaPoint = H.MapAreaPoint = H.extendClass(Point, H.extend({
 	/**
 	 * Extend the Point object to split paths
 	 */
@@ -80,21 +80,6 @@ var MapAreaPoint = H.MapAreaPoint = H.extendClass(Point, {
 		}
 		
 		return point;
-	},
-
-	/**
-	 * Set the visibility of a single map area
-	 */
-	setVisible: function (vis) {
-		var point = this,
-			method = vis ? 'show' : 'hide';
-
-		// Show and hide associated elements
-		each(['graphic', 'dataLabel'], function (key) {
-			if (point[key]) {
-				point[key][method]();
-			}
-		});
 	},
 
 	/**
@@ -168,7 +153,8 @@ var MapAreaPoint = H.MapAreaPoint = H.extendClass(Point, {
 		);
 		series.chart.redraw();
 	}
-});
+}, H.colorPointMixin)
+);
 
 /**
  * Add the series type
@@ -181,6 +167,7 @@ seriesTypes.map = H.extendClass(seriesTypes.scatter, H.merge(colorSeriesMixin, {
 	useMapGeometry: true, // get axis extremes from paths, not values
 	forceDL: true,
 	searchPoint: H.noop,
+	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	preserveAspectRatio: true, // X axis and Y axis must have same translation slope
 	/**
 	 * Get the bounding box of all paths in the map combined.
@@ -506,10 +493,9 @@ seriesTypes.map = H.extendClass(seriesTypes.scatter, H.merge(colorSeriesMixin, {
 				each(series.points, function (point) {
 
 					// Reset color on update/redraw
-					if (point.graphic) {
-						point.graphic.attr('fill', point.color);
+					if (point.shapeArgs) {
+						point.shapeArgs.fill = point.color;
 					}
-
 				});
 			}
 

@@ -41,6 +41,7 @@ H.seriesTypes.heatmap = H.extendClass(H.seriesTypes.scatter, H.merge(colorSeries
 	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
+	pointClass: H.extendClass(H.Point, H.colorPointMixin),
 	supportsDrilldown: true,
 	getExtremesFromAll: true,
 	directTouch: true,

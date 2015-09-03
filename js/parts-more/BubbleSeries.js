@@ -107,18 +107,23 @@ H.seriesTypes.bubble = H.extendClass(H.seriesTypes.scatter, {
 			zData = this.zData,
 			radii = [],
 			sizeByArea = this.options.sizeBy !== 'width',
-			zRange;
-		
+			zRange = zMax - zMin;
+
 		// Set the shape type and arguments to be picked up in drawPoints
 		for (i = 0, len = zData.length; i < len; i++) {
-			zRange = zMax - zMin;
-			pos = zRange > 0 ? // relative size, a number between 0 and 1
-				(zData[i] - zMin) / (zMax - zMin) : 
-				0.5;
-			if (sizeByArea && pos >= 0) {
-				pos = Math.sqrt(pos);
+			// Issue #4419 - if value is less than zMin, push a radius that's always smaller than the minimum size
+			if (zData[i] < zMin) {
+				radii.push(minSize / 2 - 1);
+			} else {
+				// Relative size, a number between 0 and 1
+				pos = zRange > 0 ? (zData[i] - zMin) / zRange : 0.5; 
+				
+				if (sizeByArea && pos >= 0) {
+					pos = Math.sqrt(pos);
+				}
+		
+				radii.push(Math.ceil(minSize + pos * (maxSize - minSize)) / 2);
 			}
-			radii.push(Math.ceil(minSize + pos * (maxSize - minSize)) / 2);
 		}
 		this.radii = radii;
 	},
@@ -270,6 +275,7 @@ Axis.prototype.beforePadding = function () {
 					
 				});
 				series.minPxSize = extremes.minSize;
+				series.maxPxSize = extremes.maxSize;
 				
 				// Find the min and max Z
 				zData = series.zData;
@@ -294,7 +300,7 @@ Axis.prototype.beforePadding = function () {
 			radius;
 
 		if (isXAxis) {
-			series.getRadii(zMin, zMax, extremes.minSize, extremes.maxSize);
+			series.getRadii(zMin, zMax, series.minPxSize, series.maxPxSize);
 		}
 		
 		if (range > 0) {
@@ -307,12 +313,15 @@ Axis.prototype.beforePadding = function () {
 			}
 		}
 	});
-	
-	if (activeSeries.length && range > 0 && pick(this.options.min, this.userMin) === undefined && pick(this.options.max, this.userMax) === undefined) {
+
+	if (activeSeries.length && range > 0 && !this.isLog) {
 		pxMax -= axisLength;
 		transA *= (axisLength + pxMin - pxMax) / axisLength;
-		this.min += pxMin / transA;
-		this.max += pxMax / transA;
+		each([['min', 'userMin', pxMin], ['max', 'userMax', pxMax]], function (keys) {
+			if (pick(axis.options[keys[0]], axis[keys[1]]) === undefined) {
+				axis[keys[0]] += keys[2] / transA; 
+			}
+		});
 	}
 };
 

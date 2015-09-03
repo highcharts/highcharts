@@ -29,34 +29,32 @@ wrap(seriesTypes.pie.prototype, 'translate', function (proceed) {
 			z: options3d.depth
 		},
 		alpha = options3d.alpha,
-		beta = options3d.beta;
+		beta = options3d.beta,
+		z = seriesOptions.stacking ? (seriesOptions.stack || 0) * depth : series._i * depth;
 
-	var z = seriesOptions.stacking ? (seriesOptions.stack || 0) * depth : series._i * depth;
 	z += depth / 2;
 
 	if (seriesOptions.grouping !== false) { z = 0; }
 
 	each(series.data, function (point) {
+		var shapeArgs = point.shapeArgs,
+			angle;
+
 		point.shapeType = 'arc3d';
-		var shapeArgs = point.shapeArgs;
 
-		if (point.y) { // will be false if null or 0 #3006
-			shapeArgs.z = z;
-			shapeArgs.depth = depth * 0.75;
-			shapeArgs.origin = origin;
-			shapeArgs.alpha = alpha;
-			shapeArgs.beta = beta;
-			shapeArgs.center = series.center;
-			
-			var angle = (shapeArgs.end + shapeArgs.start) / 2;
+		shapeArgs.z = z;
+		shapeArgs.depth = depth * 0.75;
+		shapeArgs.origin = origin;
+		shapeArgs.alpha = alpha;
+		shapeArgs.beta = beta;
+		shapeArgs.center = series.center;
+		
+		angle = (shapeArgs.end + shapeArgs.start) / 2;
 
-			point.slicedTranslation = {
-				translateX : Math.round(Math.cos(angle) * series.options.slicedOffset * Math.cos(alpha * deg2rad)),
-				translateY : Math.round(Math.sin(angle) * series.options.slicedOffset * Math.cos(alpha * deg2rad))
-			};
-		} else {
-			shapeArgs = null;
-		}
+		point.slicedTranslation = {
+			translateX : Math.round(Math.cos(angle) * seriesOptions.slicedOffset * Math.cos(alpha * deg2rad)),
+			translateY : Math.round(Math.sin(angle) * seriesOptions.slicedOffset * Math.cos(alpha * deg2rad))
+		};
 	});
 });
 
@@ -66,11 +64,12 @@ wrap(seriesTypes.pie.prototype.pointClass.prototype, 'haloPath', function (proce
 });
 
 wrap(seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
+	var seriesGroup = this.group,
+		options = this.options,
+		states = options.states;
+
 	// Do not do this if the chart is not 3D
 	if (this.chart.is3d()) {
-		var options = this.options,
-			states = this.options.states;
-
 		// Set the border color to the fill color to provide a smooth edge
 		this.borderWidth = options.borderWidth = options.edgeWidth || 1;
 		this.borderColor = options.edgeColor = pick(options.edgeColor, options.borderColor, undefined);
@@ -94,12 +93,16 @@ wrap(seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (this.chart.is3d()) {		
-		var seriesGroup = this.group;
 		each(this.points, function (point) {
-			point.graphic.out.add(seriesGroup);
-			point.graphic.inn.add(seriesGroup);
-			point.graphic.side1.add(seriesGroup);
-			point.graphic.side2.add(seriesGroup);
+			var graphic = point.graphic;
+
+			graphic.out.add(seriesGroup);
+			graphic.inn.add(seriesGroup);
+			graphic.side1.add(seriesGroup);
+			graphic.side2.add(seriesGroup);
+
+			// Hide null or 0 points (#3006, 3650)
+			graphic[point.y ? 'show' : 'hide']();
 		});		
 	}
 });

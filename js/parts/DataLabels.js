@@ -499,7 +499,7 @@ if (seriesTypes.pie) {
 				point = points[j];
 				labelPos = point.labelPos;
 				dataLabel = point.dataLabel;
-				visibility = point.visible === false ? 'hidden' : 'visible';
+				visibility = point.visible === false ? 'hidden' : 'inherit';
 				naturalY = labelPos[1];
 
 				if (distanceOption > 0) {
@@ -686,8 +686,9 @@ if (seriesTypes.pie) {
 
 		// If the size must be decreased, we need to run translate and drawDataLabels again
 		if (newSize < center[2]) {
-			this.center = this.getCenter(newSize);
-			this.translate(this.center);
+			center[2] = newSize;
+			center[3] = H.relativeLength(options.innerSize || 0, newSize);
+			this.translate(center);
 			H.each(this.points, function (point) {
 				if (point.dataLabel) {
 					point.dataLabel._pos = null; // reset

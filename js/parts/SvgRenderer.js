@@ -11,7 +11,7 @@ SVGElement.prototype = {
 	SVG_NS: Highcharts.SVG_NS,
 	// For labels, these CSS properties are applied to the <text> node directly
 	textProps: ['fontSize', 'fontWeight', 'fontFamily', 'fontStyle', 'color', 
-		'lineHeight', 'width', 'textDecoration', 'textShadow'],
+		'lineHeight', 'width', 'textDecoration', 'textOverflow', 'textShadow'],
 	
 	/**
 	 * Initialize the SVG renderer
@@ -33,7 +33,7 @@ SVGElement.prototype = {
 	 * @param {Function} complete Function to perform at the end of animation
 	 */
 	animate: function (params, options, complete) {
-		var animOptions = Highcharts.pick(options, Highcharts.globalAnimation, true);
+		var animOptions = Highcharts.pick(options, this.renderer.globalAnimation, true);
 		HighchartsAdapter.stop(this); // stop regardless of animation actually running, or reverting to .attr (#607)
 		if (animOptions) {
 			animOptions = Highcharts.merge(animOptions, {}); //#2625
@@ -42,10 +42,7 @@ SVGElement.prototype = {
 			}
 			HighchartsAdapter.animate(this, params, animOptions);
 		} else {
-			this.attr(params);
-			if (complete) {
-				complete();
-			}
+			this.attr(params, null, complete);
 		}
 		return this;
 	},
@@ -58,6 +55,7 @@ SVGElement.prototype = {
 			colorObject,
 			gradName,
 			gradAttr,
+			radAttr,
 			gradients,
 			gradientObject,
 			stops,
@@ -94,12 +92,11 @@ SVGElement.prototype = {
 
 			// Correct the radial gradient for the radial reference system
 			if (gradName === 'radialGradient' && radialReference && !Highcharts.defined(gradAttr.gradientUnits)) {
-				gradAttr = Highcharts.merge(gradAttr, {
-					cx: (radialReference[0] - radialReference[2] / 2) + gradAttr.cx * radialReference[2],
-					cy: (radialReference[1] - radialReference[2] / 2) + gradAttr.cy * radialReference[2],
-					r: gradAttr.r * radialReference[2],
-					gradientUnits: 'userSpaceOnUse'
-				});
+				radAttr = gradAttr; // Save the radial attributes for updating
+				gradAttr = Highcharts.merge(gradAttr, 
+					renderer.getRadialAttr(radialReference, radAttr),
+					{ gradientUnits: 'userSpaceOnUse' }
+				);
 			}
 
 			// Build the unique key to detect whether we need to create a new element (#1282)
@@ -125,6 +122,7 @@ SVGElement.prototype = {
 					.attr(gradAttr)
 					.add(renderer.defs);
 
+				gradientObject.radAttr = radAttr;
 
 				// The gradient needs to keep a list of stops to be able to destroy them
 				gradientObject.stops = [];
@@ -151,6 +149,7 @@ SVGElement.prototype = {
 
 			// Set the reference to the gradient object
 			elem.setAttribute(prop, 'url(' + renderer.url + '#' + id + ')');
+			elem.gradient = key;
 		} 
 	},
 
@@ -158,9 +157,9 @@ SVGElement.prototype = {
 	 * Apply a polyfill to the text-stroke CSS property, by copying the text element
 	 * and apply strokes to the copy.
 	 *
+	 * Contrast checks at http://jsfiddle.net/highcharts/43soe9m1/2/
+	 *
 	 * docs: update default, document the polyfill and the limitations on hex colors and pixel values, document contrast pseudo-color
-	 * TODO: 
-	 * - update defaults
 	 */
 	applyTextShadow: function (textShadow) {
 		var elem = this.element,
@@ -174,11 +173,14 @@ SVGElement.prototype = {
 
 		// When the text shadow is set to contrast, use dark stroke for light text and vice versa
 		if (hasContrast) {
-			styles.textShadow = textShadow.replace(/contrast/g, this.renderer.getContrast(elem.style.fill));
+			styles.textShadow = textShadow = textShadow.replace(/contrast/g, this.renderer.getContrast(elem.style.fill));
 		}
 
-		// Safari with retina displays as well as PhantomJS bug (#3974)
-		styles.textRendering = 'geometricPrecision';
+		// Safari with retina displays as well as PhantomJS bug (#3974). Firefox does not tolerate this,
+		// it removes the text shadows.
+		if (Highcharts.isWebKit) {
+			styles.textRendering = 'geometricPrecision';
+		}
 
 		/* Selective side-by-side testing in supported browser (http://jsfiddle.net/highcharts/73L1ptrh/)
 		if (elem.textContent.indexOf('2.') === 0) {
@@ -246,7 +248,7 @@ SVGElement.prototype = {
 	 * @param {Object|String} hash
 	 * @param {Mixed|Undefined} val
 	 */
-	attr: function (hash, val) {
+	attr: function (hash, val, complete) {
 		var key,
 			value,
 			element = this.element,
@@ -303,6 +305,11 @@ SVGElement.prototype = {
 				this.doTransform = false;
 			}
 
+		}
+
+		// In accordance with animate, run a complete callback
+		if (complete) {
+			complete();
 		}
 
 		return ret;
@@ -518,7 +525,21 @@ SVGElement.prototype = {
 	 * [centerX, centerY, diameter] in pixels.
 	 */
 	setRadialReference: function (coordinates) {
+		var existingGradient = this.renderer.gradients[this.element.gradient];
+
 		this.element.radialReference = coordinates;
+		
+		// On redrawing objects with an existing gradient, the gradient needs
+		// to be repositioned (#3801)
+		if (existingGradient && existingGradient.radAttr) {
+			existingGradient.animate(
+				this.renderer.getRadialAttr(
+					coordinates, 
+					existingGradient.radAttr
+				)
+			);
+		}
+
 		return this;
 	},
 
@@ -790,7 +811,9 @@ SVGElement.prototype = {
 			}
 
 			// Cache it
-			renderer.cache[cacheKey] = bBox;
+			if (cacheKey) {
+				renderer.cache[cacheKey] = bBox;
+			}
 		}
 		return bBox;
 	},
@@ -799,13 +822,7 @@ SVGElement.prototype = {
 	 * Show the element
 	 */
 	show: function (inherit) {
-		// IE9-11 doesn't handle visibilty:inherit well, so we remove the attribute instead (#2881)
-		if (inherit && this.element.namespaceURI === this.SVG_NS) {
-			this.element.removeAttribute('visibility');
-		} else {
-			this.attr({ visibility: inherit ? 'inherit' : 'visible' });
-		}
-		return this;
+		return this.attr({ visibility: inherit ? 'inherit' : 'visible' });
 	},
 
 	/**
@@ -1066,7 +1083,11 @@ SVGElement.prototype = {
 			titleNode = document.createElementNS(this.SVG_NS, 'title');
 			this.element.appendChild(titleNode);
 		}
-		titleNode.textContent = (String(Highcharts.pick(value), '')).replace(/<[^>]*>/g, ''); // #3276 #3895
+		titleNode.appendChild(
+			document.createTextNode(
+				(String(Highcharts.pick(value), '')).replace(/<[^>]*>/g, '') // #3276, #3895
+			)
+		);
 	},
 	textSetter: function (value) {
 		if (value !== this.textStr) {
@@ -1084,6 +1105,14 @@ SVGElement.prototype = {
 			element.setAttribute(key, value);
 		} else if (value) {
 			this.colorGradient(value, key, element);
+		}
+	},
+	visibilitySetter: function (value, key, element) {
+		// IE9-11 doesn't handle visibilty:inherit well, so we remove the attribute instead (#2881, #3909)
+		if (value === 'inherit') {
+			element.removeAttribute(key);
+		} else {
+			element.setAttribute(key, value);
 		}
 	},
 	zIndexSetter: function (value, key) {
@@ -1323,6 +1352,17 @@ SVGRenderer.prototype = {
 	 * Dummy function for use in canvas renderer
 	 */
 	draw: function () {},
+
+	/**
+	 * Get converted radial gradient attributes
+	 */
+	getRadialAttr: function (radialReference, gradAttr) {
+		return {
+			cx: (radialReference[0] - radialReference[2] / 2) + gradAttr.cx * radialReference[2],
+			cy: (radialReference[1] - radialReference[2] / 2) + gradAttr.cy * radialReference[2],
+			r: gradAttr.r * radialReference[2]
+		};
+	},
 
 	/**
 	 * Parse a simple HTML string into SVG tspans
@@ -1605,7 +1645,7 @@ SVGRenderer.prototype = {
 	 */
 	getContrast: function (color) {
 		color = Highcharts.Color(color).rgba;
-		return color[0] + color[1] + color[2] > 384 ? '#000' : '#FFF';
+		return color[0] + color[1] + color[2] > 384 ? '#000000' : '#FFFFFF';
 	},
 
 	/**
@@ -1719,9 +1759,9 @@ SVGRenderer.prototype = {
 		};
 
 		return label
-			.on('click', function () {
+			.on('click', function (e) {
 				if (curState !== 3) {
-					callback.call(label);
+					callback.call(label, e);
 				}
 			})
 			.attr(normalState)
@@ -2022,7 +2062,24 @@ SVGRenderer.prototype = {
 				// the created element must be assigned to a variable in order to load (#292).
 				imageElement = Highcharts.createElement('img', {
 					onload: function () {
+
+						// Special case for SVGs on IE11, the width is not accessible until the image is 
+						// part of the DOM (#2854).
+						if (this.width === 0) { 
+							Highcharts.css(this, {
+								position: 'absolute',
+								top: '-999em'
+							});
+							document.body.appendChild(this);
+						}
+
+						// Center the image
 						centerImage(obj, symbolSizes[imageSrc] = [this.width, this.height]);
+
+						// Clean up after #2854 workaround.
+						if (this.parentNode) {
+							this.parentNode.removeChild(this);
+						}
 					},
 					src: imageSrc
 				});
@@ -2132,11 +2189,8 @@ SVGRenderer.prototype = {
 				safeDistance = r + halfDistance,
 				anchorX = options && options.anchorX,
 				anchorY = options && options.anchorY,
-				path,
-				normalizer = Math.round(options.strokeWidth || 0) % 2 / 2; // Math.round because strokeWidth can sometimes have roundoff errors;
+				path;
 
-			x += normalizer;
-			y += normalizer;
 			path = [
 				'M', x + r, y, 
 				'L', x + w - r, y, // top side
@@ -2271,17 +2325,22 @@ SVGRenderer.prototype = {
 	 * Utility to return the baseline offset and total line height from the font size
 	 */
 	fontMetrics: function (fontSize, elem) {
+		var lineHeight,
+			baseline,
+			style;
+
 		fontSize = fontSize || this.style.fontSize;
 		if (elem && window.getComputedStyle) {
 			elem = elem.element || elem; // SVGElement
-			fontSize = window.getComputedStyle(elem, "").fontSize;
+			style = window.getComputedStyle(elem, "");
+			fontSize = style && style.fontSize; // #4309, the style doesn't exist inside a hidden iframe in Firefox
 		}
 		fontSize = /px/.test(fontSize) ? Highcharts.pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
 
 		// Empirical values found by comparing font size and bounding box height.
 		// Applies to the default font family. http://jsfiddle.net/highcharts/7xvn7/
-		var lineHeight = fontSize < 24 ? fontSize + 3 : Math.round(fontSize * 1.2),
-			baseline = Math.round(lineHeight * 0.8);
+		lineHeight = fontSize < 24 ? fontSize + 3 : Math.round(fontSize * 1.2);
+		baseline = Math.round(lineHeight * 0.8);
 
 		return {
 			h: lineHeight,
@@ -2365,13 +2424,17 @@ SVGRenderer.prototype = {
 
 				// create the border box if it is not already present
 				if (!box) {
-					boxX = Math.round(-alignFactor * padding);
-					boxY = baseline ? -baselineOffset : 0;
+					boxX = Math.round(-alignFactor * padding) + crispAdjust;
+					boxY = (baseline ? -baselineOffset : 0) + crispAdjust;
 
 					wrapper.box = box = shape ?
 						renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height, deferredAttr) :
 						renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr['stroke-width']);
-					box.attr('fill', 'none').add(wrapper);
+
+					if (!box.isImg) { // #4324, fill "none" causes it to be ignored by mouse events in IE
+						box.attr('fill', 'none');
+					}
+					box.add(wrapper);
 				}
 
 				// apply the box attributes
@@ -2503,7 +2566,7 @@ SVGRenderer.prototype = {
 		};
 		wrapper.anchorXSetter = function (value, key) {
 			anchorX = value;
-			boxAttr(key, value + crispAdjust - wrapperX);
+			boxAttr(key, Math.round(value) - crispAdjust - wrapperX);
 		};
 		wrapper.anchorYSetter = function (value, key) {
 			anchorY = value;

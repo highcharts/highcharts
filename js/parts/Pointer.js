@@ -1,6 +1,5 @@
 (function (H) {
 var addEvent = H.addEvent,
-	chartCount = H.chartCount,
 	charts = H.charts,
 	defined = H.defined,
 	each = H.each,
@@ -140,7 +139,7 @@ H.Pointer.prototype = {
 			hoverPoint = chart.hoverPoint,
 			hoverSeries = chart.hoverSeries,
 			i,
-			distance = chart.chartWidth,
+			distance = Number.MAX_VALUE, // #4511
 			anchor,
 			noSharedTooltip,
 			directTouch,
@@ -159,8 +158,8 @@ H.Pointer.prototype = {
 		}
 
 		// If it has a hoverPoint and that series requires direct touch (like columns), 
-		// use the hoverPoint (#3899). Otherwise, search the k-d tree.	
-		if (hoverSeries && ((!shared && hoverSeries.directTouch) || hoverSeries.noSharedTooltip) && hoverPoint) {
+		// use the hoverPoint (#3899). Otherwise, search the k-d tree.
+		if (!shared && hoverSeries && hoverSeries.directTouch && hoverPoint) {
 			kdpoint = hoverPoint;
 
 		// Handle shared tooltip or cases where a series is not yet hovered
@@ -171,7 +170,7 @@ H.Pointer.prototype = {
 				noSharedTooltip = s.noSharedTooltip && shared;
 				directTouch = !shared && s.directTouch;
 				if (s.visible && !noSharedTooltip && !directTouch && pick(s.options.enableMouseTracking, true)) { // #3821
-					kdpointT = s.searchPoint(e, !noSharedTooltip); // #3828
+					kdpointT = s.searchPoint(e, !noSharedTooltip && s.kdDimensions === 1); // #3828
 					if (kdpointT) {
 						kdpoints.push(kdpointT);
 					}
@@ -200,19 +199,17 @@ H.Pointer.prototype = {
 					tooltip.refresh(kdpoints, e);
 				}
 
-				// do mouseover on all points except the closest
+				// Do mouseover on all points (#3919, #3985, #4410)
 				each(kdpoints, function (point) {
-					if (point !== kdpoint) { 
-						point.onMouseOver(e);
-					}
-				});	
-				// #3919, #3985 do mouseover on the closest point last to ensure it is the hoverpoint
-				((hoverSeries && hoverSeries.directTouch && hoverPoint) || kdpoint).onMouseOver(e); 
+					point.onMouseOver(e, point !== ((hoverSeries && hoverSeries.directTouch && hoverPoint) || kdpoint));
+				}); 
 			} else {
 				if (tooltip) { 
 					tooltip.refresh(kdpoint, e);
 				}
-				kdpoint.onMouseOver(e); 
+				if(!hoverSeries || !hoverSeries.directTouch) { // #4448
+					kdpoint.onMouseOver(e); 
+				}
 			}
 			this.prevKDPoint = kdpoint;
 		
@@ -374,9 +371,16 @@ H.Pointer.prototype = {
 			plotHeight = chart.plotHeight,
 			clickedInside,
 			size,
+			selectionMarker = this.selectionMarker,
 			mouseDownX = this.mouseDownX,
 			mouseDownY = this.mouseDownY,
 			panKey = chartOptions.panKey && e[chartOptions.panKey + 'Key'];
+
+		// If the device supports both touch and mouse (like IE11), and we are touch-dragging
+		// inside the plot area, don't handle the mouse event. #4339.
+		if (selectionMarker && selectionMarker.touch) {
+			return;
+		}
 
 		// If the mouse is outside the plot area, adjust to cooordinates
 		// inside to prevent the selection marker from going outside
@@ -403,8 +407,8 @@ H.Pointer.prototype = {
 
 			// make a selection
 			if (chart.hasCartesianSeries && (this.zoomX || this.zoomY) && clickedInside && !panKey) {
-				if (!this.selectionMarker) {
-					this.selectionMarker = chart.renderer.rect(
+				if (!selectionMarker) {
+					this.selectionMarker = selectionMarker = chart.renderer.rect(
 						plotLeft,
 						plotTop,
 						zoomHor ? 1 : plotWidth,
@@ -420,24 +424,24 @@ H.Pointer.prototype = {
 			}
 
 			// adjust the width of the selection marker
-			if (this.selectionMarker && zoomHor) {
+			if (selectionMarker && zoomHor) {
 				size = chartX - mouseDownX;
-				this.selectionMarker.attr({
+				selectionMarker.attr({
 					width: Math.abs(size),
 					x: (size > 0 ? 0 : size) + mouseDownX
 				});
 			}
 			// adjust the height of the selection marker
-			if (this.selectionMarker && zoomVert) {
+			if (selectionMarker && zoomVert) {
 				size = chartY - mouseDownY;
-				this.selectionMarker.attr({
+				selectionMarker.attr({
 					height: Math.abs(size),
 					y: (size > 0 ? 0 : size) + mouseDownY
 				});
 			}
 
 			// panning
-			if (clickedInside && !this.selectionMarker && chartOptions.panning) {
+			if (clickedInside && !selectionMarker && chartOptions.panning) {
 				chart.pan(e, chartOptions.panning);
 			}
 		}
@@ -598,11 +602,11 @@ H.Pointer.prototype = {
 
 	onTrackerMouseOut: function (e) {
 		var series = this.chart.hoverSeries,
-			relatedTarget = e.relatedTarget || e.toElement,
-			relatedSeries = relatedTarget && relatedTarget.point && relatedTarget.point.series; // #2499
+			relatedTarget = e.relatedTarget || e.toElement;
 		
-		if (series && !series.options.stickyTracking && !this.inClass(relatedTarget, 'highcharts-tooltip') &&
-				relatedSeries !== series) {
+		if (series && !series.options.stickyTracking && 
+				!this.inClass(relatedTarget, 'highcharts-tooltip') &&
+				!this.inClass(relatedTarget, 'highcharts-series-' + series.index)) { // #2499, #4465
 			series.onMouseOut();
 		}
 	},
@@ -666,7 +670,7 @@ H.Pointer.prototype = {
 			pointer.onContainerClick(e);
 		};
 		addEvent(container, 'mouseleave', pointer.onContainerMouseLeave);
-		if (chartCount === 1) {
+		if (H.chartCount === 1) {
 			addEvent(document, 'mouseup', pointer.onDocumentMouseUp);
 		}
 		if (H.hasTouch) {
@@ -676,7 +680,7 @@ H.Pointer.prototype = {
 			container.ontouchmove = function (e) {
 				pointer.onContainerTouchMove(e);
 			};
-			if (chartCount === 1) {
+			if (H.chartCount === 1) {
 				addEvent(document, 'touchend', pointer.onDocumentTouchEnd);
 			}
 		}
@@ -690,7 +694,7 @@ H.Pointer.prototype = {
 		var prop;
 
 		removeEvent(this.chart.container, 'mouseleave', this.onContainerMouseLeave);
-		if (!chartCount) {
+		if (!H.chartCount) {
 			removeEvent(document, 'mouseup', this.onDocumentMouseUp);
 			removeEvent(document, 'touchend', this.onDocumentTouchEnd);
 		}

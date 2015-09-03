@@ -28,7 +28,8 @@
                 sys.puts(stdout);
             },
             commands = [
-                'git status',
+                //'git status',
+                'cd ~/github/' + product + '-release',
                 'git add --all',
                 'git commit -m "v' + version + '"',
                 'git tag -a "v' + version + '" -m "Tagged ' + product + ' version ' + version + '"',
@@ -37,9 +38,8 @@
             ];
 
         //cmd.exec(commands.join(' && '), options, puts);
-        console.log('--- ' + product + '---');
-        console.log('cd ~/github/' + product + '-release');
-        console.log(commands.join('\n'));
+        console.log('\n--- ' + product + ': Verify changes and run: ---');
+        console.log(commands.join(' &&\n'));
     }
 
     /**

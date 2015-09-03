@@ -106,17 +106,19 @@ H.Tick.prototype = {
 			pxPos = xy.x,
 			chartWidth = axis.chart.chartWidth,
 			spacing = axis.chart.spacing,
-			leftBound = pick(axis.labelLeft, spacing[3]),
-			rightBound = pick(axis.labelRight, chartWidth - spacing[1]),
+			leftBound = pick(axis.labelLeft, Math.min(axis.pos, spacing[3])),
+			rightBound = pick(axis.labelRight, Math.max(axis.pos + axis.len, chartWidth - spacing[1])),
 			label = this.label,
 			rotation = this.rotation,
 			factor = { left: 0, center: 0.5, right: 1 }[axis.labelAlign],
 			labelWidth = label.getBBox().width,
 			slotWidth = axis.slotWidth,
 			xCorrection = factor,
+			goRight = 1,
 			leftPos,
 			rightPos,
-			textWidth;
+			textWidth,
+			css = {};
 
 		// Check if the label overshoots the chart spacing box. If it does, move it.
 		// If it now overshoots the slotWidth, add ellipsis.
@@ -126,14 +128,14 @@ H.Tick.prototype = {
 
 			if (leftPos < leftBound) {
 				slotWidth = xy.x + slotWidth * (1 - factor) - leftBound;
-				xCorrection -= 1;
 			} else if (rightPos > rightBound) {
 				slotWidth = rightBound - xy.x + slotWidth * factor;
+				goRight = -1;
 			}
 
 			slotWidth = Math.min(axis.slotWidth, slotWidth); // #4177
-			if (slotWidth < axis.slotWidth) {
-				xy.x -= xCorrection * (axis.slotWidth - slotWidth); // align it within the new slot
+			if (slotWidth < axis.slotWidth && axis.labelAlign === 'center') {
+				xy.x += goRight * (axis.slotWidth - slotWidth - xCorrection * (axis.slotWidth - Math.min(labelWidth, slotWidth)));				
 			}
 			// If the label width exceeds the available space, set a text width to be 
 			// picked up below. Also, if a width has been set before, we need to set a new
@@ -150,10 +152,11 @@ H.Tick.prototype = {
 		}
 
 		if (textWidth) {
-			label.css({
-				width: textWidth,
-				textOverflow: 'ellipsis'
-			});
+			css.width = textWidth;
+			if (!axis.options.labels.style.textOverflow) {
+				css.textOverflow = 'ellipsis';
+			}
+			label.css(css);
 		}
 	},
 
@@ -244,7 +247,7 @@ H.Tick.prototype = {
 			gridLineColor = options[gridPrefix + 'LineColor'],
 			dashStyle = options[gridPrefix + 'LineDashStyle'],
 			tickLength = options[tickPrefix + 'Length'],
-			tickWidth = options[tickPrefix + 'Width'] || 0,
+			tickWidth = pick(options[tickPrefix + 'Width'], !type && axis.isXAxis ? 1 : 0), // X axis defaults to 1
 			tickColor = options[tickPrefix + 'Color'],
 			tickPosition = options[tickPrefix + 'Position'],
 			gridLinePath,

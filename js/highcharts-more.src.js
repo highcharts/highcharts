@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.5-modified ()
+ * @license Highcharts JS v4.1.8-modified ()
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -35,11 +35,8 @@ H.extend(Pane.prototype, {
 		
 		pane.chart = chart;
 		
-		// Set options
-		if (chart.angular) { // gauges
-			defaultOptions.background = {}; // gets extended by this.defaultBackgroundOptions
-		}
-		pane.options = options = merge(defaultOptions, options);
+		// Set options. Angular charts have a default background (#3318)
+		pane.options = options = merge(defaultOptions, chart.angular ? { background: {} } : undefined, options);
 		
 		backgroundOption = options.background;
 		
@@ -686,6 +683,7 @@ H.defaultPlotOptions.arearange = H.merge(H.defaultPlotOptions.area, {
 H.seriesTypes.arearange = H.extendClass(H.seriesTypes.area, {
 	type: 'arearange',
 	pointArrayMap: ['low', 'high'],
+	dataLabelCollections: ['dataLabel', 'dataLabelUpper'],
 	toYData: function (point) {
 		return [point.low, point.high];
 	},
@@ -839,27 +837,29 @@ H.seriesTypes.arearange = H.extendClass(H.seriesTypes.area, {
 			i = length;
 			while (i--) {
 				point = data[i];
-				up = point.plotHigh > point.plotLow;
-				
-				// Set preliminary values
-				point.y = point.high;
-				point._plotY = point.plotY;
-				point.plotY = point.plotHigh;
-				
-				// Store original data labels and set preliminary label objects to be picked up 
-				// in the uber method
-				originalDataLabels[i] = point.dataLabel;
-				point.dataLabel = point.dataLabelUpper;
-				
-				// Set the default offset
-				point.below = up;
-				if (inverted) {
-					if (!align) {
-						dataLabelOptions.align = up ? 'right' : 'left';
+				if (point) {
+					up = point.plotHigh > point.plotLow;
+					
+					// Set preliminary values
+					point.y = point.high;
+					point._plotY = point.plotY;
+					point.plotY = point.plotHigh;
+					
+					// Store original data labels and set preliminary label objects to be picked up 
+					// in the uber method
+					originalDataLabels[i] = point.dataLabel;
+					point.dataLabel = point.dataLabelUpper;
+					
+					// Set the default offset
+					point.below = up;
+					if (inverted) {
+						if (!align) {
+							dataLabelOptions.align = up ? 'right' : 'left';
+						}
+						dataLabelOptions.x = dataLabelOptions.xHigh;								
+					} else {
+						dataLabelOptions.y = dataLabelOptions.yHigh;
 					}
-					dataLabelOptions.x = dataLabelOptions.xHigh;								
-				} else {
-					dataLabelOptions.y = dataLabelOptions.yHigh;
 				}
 			}
 			
@@ -871,25 +871,27 @@ H.seriesTypes.arearange = H.extendClass(H.seriesTypes.area, {
 			i = length;
 			while (i--) {
 				point = data[i];
-				up = point.plotHigh > point.plotLow;
-				
-				// Move the generated labels from step 1, and reassign the original data labels
-				point.dataLabelUpper = point.dataLabel;
-				point.dataLabel = originalDataLabels[i];
-				
-				// Reset values
-				point.y = point.low;
-				point.plotY = point._plotY;
-				
-				// Set the default offset
-				point.below = !up;
-				if (inverted) {
-					if (!align) {
-						dataLabelOptions.align = up ? 'left' : 'right';
+				if (point) {
+					up = point.plotHigh > point.plotLow;
+					
+					// Move the generated labels from step 1, and reassign the original data labels
+					point.dataLabelUpper = point.dataLabel;
+					point.dataLabel = originalDataLabels[i];
+					
+					// Reset values
+					point.y = point.low;
+					point.plotY = point._plotY;
+					
+					// Set the default offset
+					point.below = !up;
+					if (inverted) {
+						if (!align) {
+							dataLabelOptions.align = up ? 'left' : 'right';
+						}
+						dataLabelOptions.x = dataLabelOptions.xLow;
+					} else {
+						dataLabelOptions.y = dataLabelOptions.yLow;
 					}
-					dataLabelOptions.x = dataLabelOptions.xLow;
-				} else {
-					dataLabelOptions.y = dataLabelOptions.yLow;
 				}
 			}
 			if (seriesProto.drawDataLabels) {
@@ -1659,11 +1661,11 @@ H.seriesTypes.waterfall = H.extendClass(H.seriesTypes.column, {
 			// sum points
 			if (point.isSum) {
 				shapeArgs.y = yAxis.translate(range[1], 0, 1);
-				shapeArgs.height = yAxis.translate(range[0], 0, 1) - shapeArgs.y;
+				shapeArgs.height = Math.min(yAxis.translate(range[0], 0, 1), yAxis.len) - shapeArgs.y; // #4256
 
 			} else if (point.isIntermediateSum) {
 				shapeArgs.y = yAxis.translate(range[1], 0, 1);
-				shapeArgs.height = yAxis.translate(previousIntermediate, 0, 1) - shapeArgs.y;
+				shapeArgs.height = Math.min(yAxis.translate(previousIntermediate, 0, 1), yAxis.len) - shapeArgs.y;
 				previousIntermediate = range[1];
 
 			// If it's not the sum point, update previous stack end position and get 
@@ -1973,18 +1975,23 @@ H.seriesTypes.bubble = H.extendClass(H.seriesTypes.scatter, {
 			zData = this.zData,
 			radii = [],
 			sizeByArea = this.options.sizeBy !== 'width',
-			zRange;
-		
+			zRange = zMax - zMin;
+
 		// Set the shape type and arguments to be picked up in drawPoints
 		for (i = 0, len = zData.length; i < len; i++) {
-			zRange = zMax - zMin;
-			pos = zRange > 0 ? // relative size, a number between 0 and 1
-				(zData[i] - zMin) / (zMax - zMin) : 
-				0.5;
-			if (sizeByArea && pos >= 0) {
-				pos = Math.sqrt(pos);
+			// Issue #4419 - if value is less than zMin, push a radius that's always smaller than the minimum size
+			if (zData[i] < zMin) {
+				radii.push(minSize / 2 - 1);
+			} else {
+				// Relative size, a number between 0 and 1
+				pos = zRange > 0 ? (zData[i] - zMin) / zRange : 0.5; 
+				
+				if (sizeByArea && pos >= 0) {
+					pos = Math.sqrt(pos);
+				}
+		
+				radii.push(Math.ceil(minSize + pos * (maxSize - minSize)) / 2);
 			}
-			radii.push(Math.ceil(minSize + pos * (maxSize - minSize)) / 2);
 		}
 		this.radii = radii;
 	},
@@ -2136,6 +2143,7 @@ Axis.prototype.beforePadding = function () {
 					
 				});
 				series.minPxSize = extremes.minSize;
+				series.maxPxSize = extremes.maxSize;
 				
 				// Find the min and max Z
 				zData = series.zData;
@@ -2160,7 +2168,7 @@ Axis.prototype.beforePadding = function () {
 			radius;
 
 		if (isXAxis) {
-			series.getRadii(zMin, zMax, extremes.minSize, extremes.maxSize);
+			series.getRadii(zMin, zMax, series.minPxSize, series.maxPxSize);
 		}
 		
 		if (range > 0) {
@@ -2173,12 +2181,15 @@ Axis.prototype.beforePadding = function () {
 			}
 		}
 	});
-	
-	if (activeSeries.length && range > 0 && pick(this.options.min, this.userMin) === undefined && pick(this.options.max, this.userMax) === undefined) {
+
+	if (activeSeries.length && range > 0 && !this.isLog) {
 		pxMax -= axisLength;
 		transA *= (axisLength + pxMin - pxMax) / axisLength;
-		this.min += pxMin / transA;
-		this.max += pxMax / transA;
+		each([['min', 'userMin', pxMin], ['max', 'userMax', pxMax]], function (keys) {
+			if (pick(axis.options[keys[0]], axis[keys[1]]) === undefined) {
+				axis[keys[0]] += keys[2] / transA; 
+			}
+		});
 	}
 };
 

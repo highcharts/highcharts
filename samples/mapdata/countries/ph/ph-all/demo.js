@@ -119,123 +119,123 @@ $(function () {
             "value": 28
         },
         {
-            "hc-key": "ph-7017",
+            "hc-key": "ph-ii",
             "value": 29
         },
         {
-            "hc-key": "ph-7021",
+            "hc-key": "ph-7017",
             "value": 30
         },
         {
-            "hc-key": "ph-lg",
+            "hc-key": "ph-7021",
             "value": 31
         },
         {
-            "hc-key": "ph-ri",
+            "hc-key": "ph-lg",
             "value": 32
         },
         {
-            "hc-key": "ph-ln",
+            "hc-key": "ph-ri",
             "value": 33
         },
         {
-            "hc-key": "ph-6991",
+            "hc-key": "ph-ln",
             "value": 34
         },
         {
-            "hc-key": "ph-ls",
+            "hc-key": "ph-6991",
             "value": 35
         },
         {
-            "hc-key": "ph-nc",
+            "hc-key": "ph-ls",
             "value": 36
         },
         {
-            "hc-key": "ph-mg",
+            "hc-key": "ph-nc",
             "value": 37
         },
         {
-            "hc-key": "ph-sk",
+            "hc-key": "ph-mg",
             "value": 38
         },
         {
-            "hc-key": "ph-sc",
+            "hc-key": "ph-sk",
             "value": 39
         },
         {
-            "hc-key": "ph-sg",
+            "hc-key": "ph-sc",
             "value": 40
         },
         {
-            "hc-key": "ph-an",
+            "hc-key": "ph-sg",
             "value": 41
         },
         {
-            "hc-key": "ph-ss",
+            "hc-key": "ph-an",
             "value": 42
         },
         {
-            "hc-key": "ph-as",
+            "hc-key": "ph-ss",
             "value": 43
         },
         {
-            "hc-key": "ph-do",
+            "hc-key": "ph-as",
             "value": 44
         },
         {
-            "hc-key": "ph-dv",
+            "hc-key": "ph-do",
             "value": 45
         },
         {
-            "hc-key": "ph-bk",
+            "hc-key": "ph-dv",
             "value": 46
         },
         {
-            "hc-key": "ph-cl",
+            "hc-key": "ph-bk",
             "value": 47
         },
         {
-            "hc-key": "ph-2658",
+            "hc-key": "ph-cl",
             "value": 48
         },
         {
-            "hc-key": "ph-ap",
+            "hc-key": "ph-6983",
             "value": 49
         },
         {
-            "hc-key": "ph-6983",
+            "hc-key": "ph-6984",
             "value": 50
         },
         {
-            "hc-key": "ph-6984",
+            "hc-key": "ph-6987",
             "value": 51
         },
         {
-            "hc-key": "ph-6987",
+            "hc-key": "ph-6986",
             "value": 52
         },
         {
-            "hc-key": "ph-6986",
+            "hc-key": "ph-6988",
             "value": 53
         },
         {
-            "hc-key": "ph-6988",
+            "hc-key": "ph-6989",
             "value": 54
         },
         {
-            "hc-key": "ph-6989",
+            "hc-key": "ph-6990",
             "value": 55
         },
         {
-            "hc-key": "ph-6990",
+            "hc-key": "ph-6992",
             "value": 56
         },
         {
-            "hc-key": "ph-6992",
+            "hc-key": "ph-6995",
             "value": 57
         },
         {
-            "hc-key": "ph-6995",
+            "hc-key": "ph-6996",
             "value": 58
         },
         {
@@ -247,131 +247,131 @@ $(function () {
             "value": 60
         },
         {
-            "hc-key": "ph-7018",
+            "hc-key": "ph-nv",
             "value": 61
         },
         {
-            "hc-key": "ph-7022",
+            "hc-key": "ph-7020",
             "value": 62
         },
         {
-            "hc-key": "ph-1852",
+            "hc-key": "ph-7018",
             "value": 63
         },
         {
-            "hc-key": "ph-7000",
+            "hc-key": "ph-7022",
             "value": 64
         },
         {
-            "hc-key": "ph-7001",
+            "hc-key": "ph-1852",
             "value": 65
         },
         {
-            "hc-key": "ph-7002",
+            "hc-key": "ph-7000",
             "value": 66
         },
         {
-            "hc-key": "ph-7003",
+            "hc-key": "ph-7001",
             "value": 67
         },
         {
-            "hc-key": "ph-7004",
+            "hc-key": "ph-7002",
             "value": 68
         },
         {
-            "hc-key": "ph-7006",
+            "hc-key": "ph-7003",
             "value": 69
         },
         {
-            "hc-key": "ph-7007",
+            "hc-key": "ph-7004",
             "value": 70
         },
         {
-            "hc-key": "ph-7008",
+            "hc-key": "ph-7006",
             "value": 71
         },
         {
-            "hc-key": "ph-7009",
+            "hc-key": "ph-7007",
             "value": 72
         },
         {
-            "hc-key": "ph-7010",
+            "hc-key": "ph-7008",
             "value": 73
         },
         {
-            "hc-key": "ph-7011",
+            "hc-key": "ph-7009",
             "value": 74
         },
         {
-            "hc-key": "ph-7012",
+            "hc-key": "ph-7010",
             "value": 75
         },
         {
-            "hc-key": "ph-7013",
+            "hc-key": "ph-7011",
             "value": 76
         },
         {
-            "hc-key": "ph-7014",
+            "hc-key": "ph-7012",
             "value": 77
         },
         {
-            "hc-key": "ph-7015",
+            "hc-key": "ph-7013",
             "value": 78
         },
         {
-            "hc-key": "ph-7016",
+            "hc-key": "ph-7014",
             "value": 79
         },
         {
-            "hc-key": "ph-7019",
+            "hc-key": "ph-7015",
             "value": 80
         },
         {
-            "hc-key": "ph-6456",
+            "hc-key": "ph-7016",
             "value": 81
         },
         {
-            "hc-key": "ph-zs",
+            "hc-key": "ph-7019",
             "value": 82
         },
         {
-            "hc-key": "ph-6996",
+            "hc-key": "ph-6456",
             "value": 83
         },
         {
-            "hc-key": "ph-nd",
+            "hc-key": "ph-zs",
             "value": 84
         },
         {
-            "hc-key": "ph-zn",
+            "hc-key": "ph-nd",
             "value": 85
         },
         {
-            "hc-key": "ph-md",
+            "hc-key": "ph-zn",
             "value": 86
         },
         {
-            "hc-key": "ph-cp",
+            "hc-key": "ph-md",
             "value": 87
         },
         {
-            "hc-key": "ph-ii",
+            "hc-key": "ph-ab",
             "value": 88
         },
         {
-            "hc-key": "ph-ab",
+            "hc-key": "ph-2658",
             "value": 89
         },
         {
-            "hc-key": "ph-au",
+            "hc-key": "ph-ap",
             "value": 90
         },
         {
-            "hc-key": "ph-ib",
+            "hc-key": "ph-au",
             "value": 91
         },
         {
-            "hc-key": "ph-7020",
+            "hc-key": "ph-ib",
             "value": 92
         },
         {
@@ -383,79 +383,79 @@ $(function () {
             "value": 94
         },
         {
-            "hc-key": "ph-nv",
+            "hc-key": "ph-qr",
             "value": 95
         },
         {
-            "hc-key": "ph-qr",
+            "hc-key": "ph-ne",
             "value": 96
         },
         {
-            "hc-key": "ph-ba",
+            "hc-key": "ph-pm",
             "value": 97
         },
         {
-            "hc-key": "ph-ne",
+            "hc-key": "ph-ba",
             "value": 98
         },
         {
-            "hc-key": "ph-pm",
+            "hc-key": "ph-bg",
             "value": 99
         },
         {
-            "hc-key": "ph-bg",
+            "hc-key": "ph-zm",
             "value": 100
         },
         {
-            "hc-key": "ph-zm",
+            "hc-key": "ph-cv",
             "value": 101
         },
         {
-            "hc-key": "ph-cv",
+            "hc-key": "ph-bu",
             "value": 102
         },
         {
-            "hc-key": "ph-bu",
+            "hc-key": "ph-mr",
             "value": 103
         },
         {
-            "hc-key": "ph-mr",
+            "hc-key": "ph-sq",
             "value": 104
         },
         {
-            "hc-key": "ph-sq",
+            "hc-key": "ph-gu",
             "value": 105
         },
         {
-            "hc-key": "ph-gu",
+            "hc-key": "ph-ct",
             "value": 106
         },
         {
-            "hc-key": "ph-ct",
+            "hc-key": "ph-mb",
             "value": 107
         },
         {
-            "hc-key": "ph-mb",
+            "hc-key": "ph-mq",
             "value": 108
         },
         {
-            "hc-key": "ph-mq",
+            "hc-key": "ph-bi",
             "value": 109
         },
         {
-            "hc-key": "ph-bi",
+            "hc-key": "ph-sl",
             "value": 110
         },
         {
-            "hc-key": "ph-sl",
+            "hc-key": "ph-nr",
             "value": 111
         },
         {
-            "hc-key": "ph-nr",
+            "hc-key": "ph-ak",
             "value": 112
         },
         {
-            "hc-key": "ph-ak",
+            "hc-key": "ph-cp",
             "value": 113
         },
         {

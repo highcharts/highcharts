@@ -8,7 +8,8 @@ require_once('functions.php');
 
 @$path = $_GET['path'];
 if (!preg_match('/^[a-z\-]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
-	die ('Invalid sample path input');
+	header('Location: index.php');
+	exit;
 }
 
 $i = (int)$_GET['i'];
@@ -106,7 +107,7 @@ function getResources() {
 			if (typeof $ === 'undefined') {
 				window.onload = function () {
 					document.getElementById('container').innerHTML = 
-						'<div style="margin-top: 150px; %text-align: center"><h3 style="font-size: 2em; color: red">' +
+						'<div style="margin-top: 150px; text-align: center"><h3 style="font-size: 2em; color: red">' +
 						'jQuery is missing</h3><p>Check your settings in <code>settings.php</code>.</div>';
 				}
 				return;
@@ -114,6 +115,17 @@ function getResources() {
 
 			
 			$(function() {
+
+
+				if (typeof Highcharts === 'undefined' && !document.getElementById('container')) {
+					window.onload = function () {
+						document.body.innerHTML = 
+							'<div style="margin-top: 150px; text-align: center"><h3 style="font-size: 2em; color: red">' +
+							'Highcharts and container are missing</h3><p>Most likely this sample does not exist.</div>';
+					}
+					return;
+				}
+
 
 				$('#version').html(Highcharts.product + ' ' + Highcharts.version);
 
