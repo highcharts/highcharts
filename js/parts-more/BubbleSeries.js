@@ -101,18 +101,32 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			pos,
 			zData = this.zData,
 			radii = [],
-			sizeByArea = this.options.sizeBy !== 'width',
-			zRange = zMax - zMin;
+			options = this.options,
+			sizeByArea = options.sizeBy !== 'width',
+			zThreshold = options.zThreshold,
+			zRange = zMax - zMin,
+			value;
 
 		// Set the shape type and arguments to be picked up in drawPoints
 		for (i = 0, len = zData.length; i < len; i++) {
+
+			value = zData[i];
+
+			// When sizing by threshold, the absolute value of z determines the size
+			// of the bubble. // docs. sample created
+			if (options.sizeByAbsoluteValue) {
+				value = Math.abs(value - zThreshold);
+				zMax = Math.max(zMax - zThreshold, Math.abs(zMin - zThreshold));
+				zMin = 0;
+			}
+
 			// Issue #4419 - if value is less than zMin, push a radius that's always smaller than the minimum size
-			if (zData[i] < zMin) {
+			if (value < zMin) {
 				radii.push(minSize / 2 - 1);
 			} else {
 				// Relative size, a number between 0 and 1
-				pos = zRange > 0 ? (zData[i] - zMin) / zRange : 0.5; 
-				
+				pos = zRange > 0 ? (value - zMin) / zRange : 0.5; 
+
 				if (sizeByArea && pos >= 0) {
 					pos = Math.sqrt(pos);
 				}
