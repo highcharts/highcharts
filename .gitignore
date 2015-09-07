@@ -42,3 +42,8 @@ nbproject/
 
 .idea/
 *.iml
+*.error_log
+
+*.access_log
+
+*.log
