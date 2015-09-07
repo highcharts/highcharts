@@ -165,6 +165,7 @@ defaultOptions = {
 			//pointStart: 0,
 			//pointInterval: 1,
 			//showInLegend: null, // auto: true for standalone series, false for linked series
+			softThreshold: true, // docs. Also, update the spline-plot-bands demo by removing y.min
 			states: { // states for the entire series
 				hover: {
 					//enabled: false,
