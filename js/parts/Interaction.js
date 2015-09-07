@@ -687,7 +687,15 @@ extend(Series.prototype, {
 		state = state || NORMAL_STATE;
 
 		if (series.state !== state) {
+
+			series.group
+				.removeClass('highcharts-state-' + (series.state || 'normal'))
+				.addClass('highcharts-state-' + (state || 'normal'));
+
+
 			series.state = state;
+
+			/* presentational
 
 			if (stateOptions[state] && stateOptions[state].enabled === false) {
 				return;
@@ -708,6 +716,7 @@ extend(Series.prototype, {
 					i = i + 1;
 				}
 			}
+			*/
 		}
 	},
 

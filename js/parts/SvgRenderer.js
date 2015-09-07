@@ -338,7 +338,7 @@ SVGElement.prototype = {
 		}
 		return this;
 	},
-	/* hasClass and removeClass are not (yet) needed
+	/* hasClass and removeClass are not (yet) needed */
 	hasClass: function (className) {
 		return attr(this.element, 'class').indexOf(className) !== -1;
 	},
@@ -346,7 +346,6 @@ SVGElement.prototype = {
 		attr(this.element, 'class', attr(this.element, 'class').replace(className, ''));
 		return this;
 	},
-	*/
 
 	/**
 	 * If one of the symbol size affecting parameters are changed,

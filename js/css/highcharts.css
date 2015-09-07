@@ -1,0 +1,29 @@
+
+.highcharts-graph {
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.highcharts-state-hover .highcharts-graph {
+	stroke-width: 3;
+}
+.highcharts-state-hover path {
+    transition: stroke-width 50; /* quick in */
+}
+.highcharts-state-normal path {
+	transition: stroke-width 250ms; /* slow out */
+}
+
+/* Default colors */
+.highcharts-series-0 .highcharts-graph {
+    stroke: rgb(124,181,236); /* #7cb5ec */
+}
+.highcharts-series-0 .highcharts-area {
+    fill: rgba(124,181,236,0.75);
+}
+.highcharts-series-1 .highcharts-graph {
+    stroke: rgb(67,67,72); /* #434348 */
+}
+.highcharts-series-1 .highcharts-area {
+    fill: rgba(67,67,72,0.75);
+}
