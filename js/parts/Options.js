@@ -228,6 +228,7 @@ defaultOptions = {
 		/*style: {
 			padding: '5px'
 		},*/
+		/* presentational
 		itemStyle: {			
 			color: '#333333',
 			fontSize: '12px',
@@ -240,6 +241,7 @@ defaultOptions = {
 		itemHiddenStyle: {
 			color: '#CCC'
 		},
+		*/
 		itemCheckboxStyle: {
 			position: ABSOLUTE,
 			width: '13px', // for IE precision

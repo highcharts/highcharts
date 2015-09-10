@@ -343,7 +343,7 @@ SVGElement.prototype = {
 		return attr(this.element, 'class').indexOf(className) !== -1;
 	},
 	removeClass: function (className) {
-		attr(this.element, 'class', attr(this.element, 'class').replace(className, ''));
+		attr(this.element, 'class', (attr(this.element, 'class') || '').replace(className, ''));
 		return this;
 	},
 
@@ -1776,7 +1776,9 @@ SVGRenderer.prototype = {
 	 */
 	path: function (path) {
 		var attr = {
+			/* presentational
 			fill: NONE
+			*/
 		};
 		if (isArray(path)) {
 			attr.d = path;

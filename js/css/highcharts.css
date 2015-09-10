@@ -24,17 +24,45 @@
 .highcharts-state-normal path {
 	transition: stroke-width 250ms; /* slow out */
 }
+.highcharts-area {
+    fill-opacity: 0.75;
+}
+.highcharts-markers path {
+    stroke-width: 1;
+    stroke: #ffffff;
+}
+
 
 /* Default colors */
 .highcharts-series-0 .highcharts-graph {
-    stroke: rgb(124,181,236); /* #7cb5ec */
+    stroke: #7cb5ec;
 }
-.highcharts-series-0 .highcharts-area {
-    fill: rgba(124,181,236,0.75);
+.highcharts-series-0 .highcharts-area, 
+.highcharts-markers.highcharts-series-0 path,
+.highcharts-legend .highcharts-series-0 rect {
+    fill: #7cb5ec;
 }
 .highcharts-series-1 .highcharts-graph {
-    stroke: rgb(67,67,72); /* #434348 */
+    stroke: #434348;
 }
-.highcharts-series-1 .highcharts-area {
-    fill: rgba(67,67,72,0.75);
+.highcharts-series-1 .highcharts-area,
+.highcharts-markers.highcharts-series-1 path,
+.highcharts-legend .highcharts-series-1 rect {
+    fill: #434348;
 }
+
+/* Legend */
+.highcharts-legend-item text {
+    fill: #333333;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.highcharts-legend-item:hover text {
+    fill: #000;
+}
+.highcharts-legend-item-hidden text, .highcharts-legend-item-hidden rect {
+    fill: #CCC !important;
+    transition: fill 250ms;
+}
+

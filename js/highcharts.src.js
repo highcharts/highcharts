@@ -1476,6 +1476,7 @@ defaultOptions = {
 		/*style: {
 			padding: '5px'
 		},*/
+		/* presentational
 		itemStyle: {			
 			color: '#333333',
 			fontSize: '12px',
@@ -1488,6 +1489,7 @@ defaultOptions = {
 		itemHiddenStyle: {
 			color: '#CCC'
 		},
+		*/
 		itemCheckboxStyle: {
 			position: ABSOLUTE,
 			width: '13px', // for IE precision
@@ -2131,7 +2133,7 @@ SVGElement.prototype = {
 		return attr(this.element, 'class').indexOf(className) !== -1;
 	},
 	removeClass: function (className) {
-		attr(this.element, 'class', attr(this.element, 'class').replace(className, ''));
+		attr(this.element, 'class', (attr(this.element, 'class') || '').replace(className, ''));
 		return this;
 	},
 
@@ -3564,7 +3566,9 @@ SVGRenderer.prototype = {
 	 */
 	path: function (path) {
 		var attr = {
+			/* presentational
 			fill: NONE
+			*/
 		};
 		if (isArray(path)) {
 			attr.d = path;
@@ -10569,7 +10573,9 @@ Legend.prototype = {
 	init: function (chart, options) {
 		
 		var legend = this,
-			itemStyle = options.itemStyle,
+			/* presentational
+			itemStyle = legend.itemStyle = options.itemStyle,
+			*/
 			padding,
 			itemMarginTop = options.itemMarginTop || 0;
 	
@@ -10579,8 +10585,9 @@ Legend.prototype = {
 			return;
 		}
 	
-		legend.itemStyle = itemStyle;
+		/* presentational
 		legend.itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle);
+		*/
 		legend.itemMarginTop = itemMarginTop;
 		legend.padding = padding = pick(options.padding, 8);
 		legend.initialItemX = padding;
@@ -10608,6 +10615,9 @@ Legend.prototype = {
 	 * @param {Object} visible Dimmed or colored
 	 */
 	colorizeItem: function (item, visible) {
+		item.legendGroup[visible ? 'removeClass' : 'addClass']('highcharts-legend-item-hidden');
+
+		/* presentational
 		var legend = this,
 			options = legend.options,
 			legendItem = item.legendItem,
@@ -10644,6 +10654,7 @@ Legend.prototype = {
 
 			legendSymbol.attr(symbolAttr);
 		}
+		*/
 	},
 
 	/**
@@ -10783,8 +10794,10 @@ Legend.prototype = {
 			horizontal = options.layout === 'horizontal',
 			symbolWidth = legend.symbolWidth,
 			symbolPadding = options.symbolPadding,
+			/* presentational
 			itemStyle = legend.itemStyle,
 			itemHiddenStyle = legend.itemHiddenStyle,
+			*/
 			padding = legend.padding,
 			itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
 			ltr = !options.rtl,
@@ -10806,6 +10819,7 @@ Legend.prototype = {
 			// Generate the group box
 			// A group to hold the symbol and text. Text is to be appended in Legend class.
 			item.legendGroup = renderer.g('legend-item')
+				.addClass('highcharts-series-' + item.index)
 				.attr({ zIndex: 1 })
 				.add(legend.scrollGroup);
 
@@ -10816,7 +10830,9 @@ Legend.prototype = {
 					legend.baseline || 0,
 					useHTML
 				)
+				/* presentational
 				.css(merge(item.visible ? itemStyle : itemHiddenStyle)) // merge to prevent modifying original (#1021)
+				*/
 				.attr({
 					align: ltr ? 'left' : 'right',
 					zIndex: 2
@@ -10825,7 +10841,13 @@ Legend.prototype = {
 
 			// Get the baseline for the first item - the font size is equal for all
 			if (!legend.baseline) {
-				legend.fontMetrics = renderer.fontMetrics(itemStyle.fontSize, li);
+				legend.fontMetrics = renderer.fontMetrics(
+					/* presentational
+					itemStyle.fontSize, 
+					*/
+					12,
+					li
+				);
 				legend.baseline = legend.fontMetrics.f + 3 + itemMarginTop;
 				li.attr('y', legend.baseline);
 			}
@@ -10834,7 +10856,10 @@ Legend.prototype = {
 			series.drawLegendSymbol(legend, item);
 
 			if (legend.setItemEvents) {
+				/* presentational 
 				legend.setItemEvents(item, li, useHTML, itemStyle, itemHiddenStyle);
+				*/
+				legend.setItemEvents(item, li, useHTML);
 			}			
 
 			// Colorize the items
@@ -13082,9 +13107,11 @@ Series.prototype = {
 	sorted: true, // requires the data to be sorted
 	requireSorting: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
+		/* presentational
 		stroke: 'lineColor',
 		'stroke-width': 'lineWidth',
 		fill: 'fillColor',
+		*/
 		r: 'radius'
 	},
 	directTouch: false,
@@ -18166,14 +18193,19 @@ if (seriesTypes.scatter) {
 extend(Legend.prototype, {
 
 	setItemEvents: function (item, legendItem, useHTML, itemStyle, itemHiddenStyle) {
-	var legend = this;
-	// Set the events on the item group, or in case of useHTML, the item itself (#1249)
-	(useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
+		var legend = this;
+		// Set the events on the item group, or in case of useHTML, the item itself (#1249)
+		(useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
 			item.setState(HOVER_STATE);
+			/* presentational
 			legendItem.css(legend.options.itemHoverStyle);
+			*/
+
 		})
 		.on('mouseout', function () {
+			/* presentational
 			legendItem.css(item.visible ? itemStyle : itemHiddenStyle);
+			*/
 			item.setState();
 		})
 		.on('click', function (event) {
@@ -18222,7 +18254,9 @@ extend(Legend.prototype, {
 /* 
  * Add pointer cursor to legend itemstyle in defaultOptions
  */
+/* presentational
 defaultOptions.legend.itemStyle.cursor = 'pointer';
+*/
 
 
 /* 

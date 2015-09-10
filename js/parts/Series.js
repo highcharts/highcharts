@@ -27,9 +27,11 @@ Series.prototype = {
 	sorted: true, // requires the data to be sorted
 	requireSorting: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
+		/* presentational
 		stroke: 'lineColor',
 		'stroke-width': 'lineWidth',
 		fill: 'fillColor',
+		*/
 		r: 'radius'
 	},
 	directTouch: false,
