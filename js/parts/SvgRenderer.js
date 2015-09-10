@@ -487,6 +487,13 @@ SVGElement.prototype = {
 	},
 
 	/**
+	 * Get a computed style
+	 */
+	getStyle: function (prop) {
+		return win.getComputedStyle(this.element || this, '').getPropertyValue(prop);
+	},
+
+	/**
 	 * Add an event listener
 	 * @param {String} eventType
 	 * @param {Function} handler
@@ -2310,15 +2317,9 @@ SVGRenderer.prototype = {
 	 */
 	fontMetrics: function (fontSize, elem) {
 		var lineHeight,
-			baseline,
-			style;
+			baseline;
 
-		fontSize = fontSize || this.style.fontSize;
-		if (elem && win.getComputedStyle) {
-			elem = elem.element || elem; // SVGElement
-			style = win.getComputedStyle(elem, "");
-			fontSize = style && style.fontSize; // #4309, the style doesn't exist inside a hidden iframe in Firefox
-		}
+		fontSize = (elem && SVGElement.prototype.getStyle.call(elem, 'fontSize')) || fontSize || this.style.fontSize;
 		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
 
 		// Empirical values found by comparing font size and bounding box height.
