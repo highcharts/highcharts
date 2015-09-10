@@ -781,7 +781,9 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 		// Draw the line
 		if (options.lineWidth) {
 			attr = {
+				/* presentational
 				'stroke-width': options.lineWidth
+				*/
 			};
 			if (options.dashStyle) {
 				attr.dashstyle = options.dashStyle;
@@ -794,6 +796,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 				symbolWidth,
 				verticalCenter
 			])
+			.addClass('highcharts-graph')
 			.attr(attr)
 			.add(legendItemGroup);
 		}
@@ -808,6 +811,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 				2 * radius,
 				2 * radius
 			)
+			.addClass('highcharts-marker')
 			.add(legendItemGroup);
 			legendSymbol.isMarker = true;
 		}

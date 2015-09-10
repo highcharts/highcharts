@@ -27,7 +27,7 @@
 .highcharts-area {
     fill-opacity: 0.75;
 }
-.highcharts-markers path {
+.highcharts-markers path, .highcharts-marker {
     stroke-width: 1;
     stroke: #ffffff;
 }
@@ -39,6 +39,7 @@
 }
 .highcharts-series-0 .highcharts-area, 
 .highcharts-markers.highcharts-series-0 path,
+.highcharts-legend .highcharts-series-0 path,
 .highcharts-legend .highcharts-series-0 rect {
     fill: #7cb5ec;
 }
@@ -47,6 +48,7 @@
 }
 .highcharts-series-1 .highcharts-area,
 .highcharts-markers.highcharts-series-1 path,
+.highcharts-legend .highcharts-series-1 path,
 .highcharts-legend .highcharts-series-1 rect {
     fill: #434348;
 }
@@ -61,8 +63,9 @@
 .highcharts-legend-item:hover text {
     fill: #000;
 }
-.highcharts-legend-item-hidden text, .highcharts-legend-item-hidden rect {
+.highcharts-legend-item-hidden * {
     fill: #CCC !important;
+    stroke: #CCC !imporant;
     transition: fill 250ms;
 }
 
