@@ -1,4 +1,15 @@
-
+.highcharts-container {
+    font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
+    font-size: 12px;
+}
+.highcharts-title {
+    fill: #333333;
+    font-size: 18px;
+}
+.highcharts-subtitle {
+    fill: #555555;
+    font-size: 18px;
+}
 .highcharts-graph {
     stroke-width: 2;
     stroke-linecap: round;

@@ -2126,7 +2126,7 @@ SVGElement.prototype = {
 		}
 		return this;
 	},
-	/* hasClass and removeClass are not (yet) needed
+	/* hasClass and removeClass are not (yet) needed */
 	hasClass: function (className) {
 		return attr(this.element, 'class').indexOf(className) !== -1;
 	},
@@ -2134,7 +2134,6 @@ SVGElement.prototype = {
 		attr(this.element, 'class', attr(this.element, 'class').replace(className, ''));
 		return this;
 	},
-	*/
 
 	/**
 	 * If one of the symbol size affecting parameters are changed,
@@ -3002,7 +3001,9 @@ SVGRenderer.prototype = {
 			.attr({
 				version: '1.1'
 			})
-			.css(this.getStyle(style));
+			/* presentational
+			.css(this.getStyle(style))
+			*/;
 		element = boxWrapper.element;
 		container.appendChild(element);
 
@@ -3063,13 +3064,16 @@ SVGRenderer.prototype = {
 			addEvent(win, 'resize', subPixelFix);
 		}
 	},
-
+	/* presentational
 	getStyle: function (style) {
 		return (this.style = extend({
+			
 			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif', // default font
 			fontSize: '12px'
+
 		}, style));
 	},
+	*/
 
 	/**
 	 * Detect whether the renderer is hidden. This happens when one of the parent elements
@@ -4626,9 +4630,11 @@ extend(SVGRenderer.prototype, {
 				y: mathRound(y)
 			})
 			.css({
-				position: ABSOLUTE,
+				position: ABSOLUTE
+				/* presentational 
 				fontFamily: this.style.fontFamily,
 				fontSize: this.style.fontSize
+				*/
 			});
 
 		// Keep the whiteSpace style outside the wrapper.styles collection
@@ -14442,18 +14448,23 @@ Series.prototype = {
 
 			} else if ((lineWidth || fillColor) && graphPath.length) { // #1487
 				attribs = {
+					/* presentational
 					stroke: prop[1],
 					'stroke-width': lineWidth,
 					fill: fillColor,
+					*/
 					zIndex: 1 // #1069
 				};
+				/* presentational
 				if (prop[2]) {
 					attribs.dashstyle = prop[2];
 				} else if (roundCap) {
 					attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
 				}
+				*/
 
 				series[graphKey] = series.chart.renderer.path(graphPath)
+					.addClass('highcharts-graph')
 					.attr(attribs)
 					.add(series.group)
 					.shadow((i < 2) && options.shadow); // add shadow to normal series (0) or to first zone (1) #3932
@@ -16025,11 +16036,14 @@ var AreaSeries = extendClass(Series, {
 	
 			} else { // create
 				series[areaKey] = series.chart.renderer.path(areaPath)
+					.addClass('highcharts-area')
 					.attr({
+						/* presentational
 						fill: pick(
 							prop[2],
 							Color(prop[1]).setOpacity(pick(options.fillOpacity, 0.75)).get()
 						),
+						*/
 						zIndex: 0 // #1069
 					}).add(series.group);
 			}
@@ -18668,7 +18682,15 @@ extend(Series.prototype, {
 		state = state || NORMAL_STATE;
 
 		if (series.state !== state) {
+
+			series.group
+				.removeClass('highcharts-state-' + (series.state || 'normal'))
+				.addClass('highcharts-state-' + (state || 'normal'));
+
+
 			series.state = state;
+
+			/* presentational
 
 			if (stateOptions[state] && stateOptions[state].enabled === false) {
 				return;
@@ -18689,6 +18711,7 @@ extend(Series.prototype, {
 					i = i + 1;
 				}
 			}
+			*/
 		}
 	},
 

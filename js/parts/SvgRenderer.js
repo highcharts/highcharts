@@ -1213,7 +1213,9 @@ SVGRenderer.prototype = {
 			.attr({
 				version: '1.1'
 			})
-			.css(this.getStyle(style));
+			/* presentational
+			.css(this.getStyle(style))
+			*/;
 		element = boxWrapper.element;
 		container.appendChild(element);
 
@@ -1274,13 +1276,16 @@ SVGRenderer.prototype = {
 			addEvent(win, 'resize', subPixelFix);
 		}
 	},
-
+	/* presentational
 	getStyle: function (style) {
 		return (this.style = extend({
+			
 			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif', // default font
 			fontSize: '12px'
+
 		}, style));
 	},
+	*/
 
 	/**
 	 * Detect whether the renderer is hidden. This happens when one of the parent elements

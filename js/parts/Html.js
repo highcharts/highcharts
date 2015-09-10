@@ -204,9 +204,11 @@ extend(SVGRenderer.prototype, {
 				y: mathRound(y)
 			})
 			.css({
-				position: ABSOLUTE,
+				position: ABSOLUTE
+				/* presentational 
 				fontFamily: this.style.fontFamily,
 				fontSize: this.style.fontSize
+				*/
 			});
 
 		// Keep the whiteSpace style outside the wrapper.styles collection
