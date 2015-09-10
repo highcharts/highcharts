@@ -258,6 +258,7 @@
 			point,
 			i = points.length,
 			connectNulls = series.options.connectNulls,
+			rebuildStacks = false,
 			nullGap;
 
 
@@ -267,11 +268,18 @@
 
 				nullGap = point.y === null && connectNulls === false; // respect nulls inside the break (#4275)
 				if (!nullGap && (xAxis.isInAnyBreak(point.x, true) || yAxis.isInAnyBreak(point.y, true))) {
+					rebuildStacks = true;
 					points.splice(i, 1);
+					series.updateParallelArrays(point, 'splice', i, 1);
 					if (this.data[i]) {
 						this.data[i].destroyElements(); // removes the graphics for this point if they exist
 					}
 				}
+			}
+			// Rebuild stacks
+			if (rebuildStacks) {
+				series.yAxis.cleanStacks();
+				series.yAxis.buildStacks();
 			}
 		}
 
