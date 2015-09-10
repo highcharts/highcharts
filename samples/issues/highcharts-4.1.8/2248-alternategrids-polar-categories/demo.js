@@ -1,49 +1,41 @@
 $(function () {
-    QUnit.test("Compare hover color for points with negative and positive values." , function (assert) {
-        var len = 10,
-            chart = $('#container').highcharts({
+    QUnit.test("Polar and categorized chart should not render extra alternate band." , function (assert) {
+        var chart = $('#container').highcharts({
                 chart: {
-                    type: 'waterfall'
+                    polar: true
+                },
+                xAxis: {
+                    // This alternateGridColor is wrong:
+                    alternateGridColor:'#FFC0C0',
+                    categories: ['Category A', 'Category B', 'Category C', 'Category D', 'Category E'],
+                    // The X axis line is a circle instead of a polygon
+                    lineWidth:0
+                },
+                yAxis: {
+                    //This is correct:
+                    alternateGridColor:'#C0FFC0',
+                    gridLineInterpolation: 'polygon',
+                    title: {
+                        text: 'Y-axis'
+                    }
                 },
                 series: [{
-                    states: {
-                        hover: {
-                            brightness: -0.6
-                        }
-                    },
-                    data: [{
-                        name: 'Start',
-                        y: 120000
-                    }, {
-                        name: 'Product Revenue',
-                        y: 569000
-                    }, {
-                        name: 'Service Revenue',
-                        y: 231000
-                    }, {
-                        name: 'Positive Balance',
-                        isIntermediateSum: true
-                    }, {
-                        name: 'Fixed Costs',
-                        y: -342000
-                    }, {
-                        name: 'Variable Costs',
-                        y: -233000
-                    }, {
-                        name: 'Balance',
-                        isSum: true
-                    }]
+                    name: 'Serie 1',
+                    data: [7.0, 6.9, 9.5, 14.5, 18.2]
+                }, {
+                    name: 'Serie 2',
+                    data: [-0.2, 0.8, 5.7, 11.3, 17.0]
+                }, {
+                    name: 'Serie 3',
+                    data: [-0.9, 0.6, 3.5, 8.4, 13.5]
                 }]
             }).highcharts(),
-            points = chart.series[0].points;
-
-        points[0].setState("hover");
-        points[4].setState("hover");
+            UNDEFINED;
 
         assert.strictEqual(
-            points[0].graphic.attr("fill"),
-            points[4].graphic.attr("fill"),
-            "The same hover color for positive ant negative bars")
+            chart.xAxis[0].alternateBands[4],
+            UNDEFINED,
+            "Zero extra bands.");
     });
     
 });
