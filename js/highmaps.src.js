@@ -6329,6 +6329,7 @@ Axis.prototype = {
 			//y: 0
 		},
 		type: 'linear' // linear, logarithmic or datetime
+		//visible: true // docs, sample created
 	},
 
 	/**
@@ -6464,6 +6465,7 @@ Axis.prototype = {
 		axis.minPixelPadding = 0;
 
 		axis.reversed = options.reversed;
+		axis.visible = options.visible !== false;
 		axis.zoomEnabled = options.zoomEnabled !== false;
 
 		// Initial categories
@@ -8311,13 +8313,15 @@ Axis.prototype = {
 	 */
 	redraw: function () {
 		
-		// render the axis
-		this.render();
+		if (this.visible) {
+			// render the axis
+			this.render();
 
-		// move plot lines and bands
-		each(this.plotLinesAndBands, function (plotLine) {
-			plotLine.render();
-		});
+			// move plot lines and bands
+			each(this.plotLinesAndBands, function (plotLine) {
+				plotLine.render();
+			});
+		}
 
 		// mark associated series as dirty and ready for redraw
 		each(this.series, function (series) {
@@ -11597,7 +11601,9 @@ Chart.prototype = {
 		// pre-render axes to get labels offset width
 		if (chart.hasCartesianSeries) {
 			each(chart.axes, function (axis) {
-				axis.getOffset();
+				if (axis.visible) {
+					axis.getOffset();
+				}
 			});
 		}
 
@@ -12098,7 +12104,9 @@ Chart.prototype = {
 		// Axes
 		if (chart.hasCartesianSeries) {
 			each(axes, function (axis) {
-				axis.render();
+				if (axis.visible) {
+					axis.render();	
+				}
 			});
 		}
 

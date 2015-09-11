@@ -696,7 +696,9 @@ Chart.prototype = {
 		// pre-render axes to get labels offset width
 		if (chart.hasCartesianSeries) {
 			each(chart.axes, function (axis) {
-				axis.getOffset();
+				if (axis.visible) {
+					axis.getOffset();
+				}
 			});
 		}
 
@@ -1197,7 +1199,9 @@ Chart.prototype = {
 		// Axes
 		if (chart.hasCartesianSeries) {
 			each(axes, function (axis) {
-				axis.render();
+				if (axis.visible) {
+					axis.render();	
+				}
 			});
 		}
 
