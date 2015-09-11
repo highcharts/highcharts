@@ -35,6 +35,7 @@ import javax.servlet.http.HttpSession;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeoutException;
 
@@ -321,7 +322,7 @@ public class ExportController extends HttpServlet {
 				 //decode the base64 string
 				stream.write(Base64.decodeBase64(output));
 			} else {
-				stream.write(output.getBytes());
+				stream.write(output.getBytes(Charset.forName("UTF-8")));
 			}
 		} catch (IOException ex) {
 			logger.error("Error in outputToStream: " + ex.getMessage());

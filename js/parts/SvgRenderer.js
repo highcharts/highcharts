@@ -1209,7 +1209,7 @@ SVGRenderer.prototype = {
 	 * @param {Number} height
 	 * @param {Boolean} forExport
 	 */
-	init: function (container, width, height, style, forExport) {
+	init: function (container, width, height, style, forExport, allowHTML) {
 		var renderer = this,
 			loc = location,
 			boxWrapper,
@@ -1252,6 +1252,7 @@ SVGRenderer.prototype = {
 
 
 		renderer.defs = this.createElement('defs').add();
+		renderer.allowHTML = allowHTML;
 		renderer.forExport = forExport;
 		renderer.gradients = {}; // Object where gradient SvgElements are stored
 		renderer.cache = {}; // Cache for numerical bounding boxes
@@ -2274,7 +2275,7 @@ SVGRenderer.prototype = {
 			wrapper,
 			attr = {};
 
-		if (useHTML && !renderer.forExport) {
+		if (useHTML && (renderer.allowHTML || !renderer.forExport)) {
 			return renderer.html(str, x, y);
 		}
 
