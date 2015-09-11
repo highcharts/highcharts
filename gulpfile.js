@@ -18,6 +18,37 @@ var eslint = require('gulp-eslint'),
         "themes": ['./js/themes/*.js']
     };
 
+gulp.task('build', function () {
+    var requirejs = require('requirejs'),
+        filename = 'highcharts-build',
+        config = {
+            baseUrl: './js',
+            name: filename,
+            optimize: 'none',
+            out: './dist/' + filename,
+            onModuleBundleComplete: function (data) {
+                var gulp = module.require('gulp'),
+                    replace = module.require('gulp-replace'),
+                    WS = '\\s*',
+                    CM = ',',
+                    captureQuoted = "'([^']+)'",
+                    captureArray = "\\[(.*?)\\]",
+                    captureFunc = "(function[\\s\\S]*?\\})\\);((?=\\s*define)|\\s*$)",
+                    defineStatements = new RegExp('define\\(' + WS + captureQuoted + WS + CM + WS + captureArray + WS + CM + WS + captureFunc, 'g');
+                
+                gulp.src(data.path)
+                    .pipe(replace(defineStatements, 'var $1 = ($3($2));'))
+                    .pipe(replace(filename, 'Highcharts'))
+                    .pipe(gulp.dest('./dist/2/'+filename));
+            }
+        };
+    requirejs.optimize(config, function (buildResponse) {
+        console.log("Successfully build");
+    }, function(err) {
+        console.log(err.originalError);
+    });
+});
+
 function doLint(paths) {
     return gulp.src(paths)
         .pipe(eslint(config))
