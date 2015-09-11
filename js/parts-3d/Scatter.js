@@ -18,17 +18,19 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 		raw_point,
 		projected_points,
 		projected_point,
+		zValue,
 		i;
 
 	for (i = 0; i < series.data.length; i++) {
 		raw_point = series.data[i];
+		zValue = zAxis.isLog && zAxis.val2lin ? zAxis.val2lin(raw_point.z) : raw_point.z; // #4562
 
-		raw_point.isInside = raw_point.isInside ? (raw_point.z >= zAxis.min && raw_point.z <= zAxis.max) : false;
+		raw_point.isInside = raw_point.isInside ? (zValue >= zAxis.min && zValue <= zAxis.max) : false;
 
 		raw_points.push({
 			x: raw_point.plotX,
 			y: raw_point.plotY,
-			z: zAxis.translate(raw_point.z)
+			z: zAxis.translate(zValue)
 		});
 	}
 
