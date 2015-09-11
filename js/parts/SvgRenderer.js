@@ -1218,7 +1218,8 @@ SVGRenderer.prototype = {
 
 		boxWrapper = renderer.createElement('svg')
 			.attr({
-				version: '1.1'
+				'version': '1.1',
+				'class': 'highcharts-root'
 			})
 			/* presentational
 			.css(this.getStyle(style))
@@ -1907,9 +1908,12 @@ SVGRenderer.prototype = {
 		renderer.width = width;
 		renderer.height = height;
 
-		renderer.boxWrapper[pick(animate, true) ? 'animate' : 'attr']({
+		/**renderer.boxWrapper[pick(animate, true) ? 'animate' : 'attr']({
 			width: width,
 			height: height
+		});*/
+		renderer.boxWrapper.attr({
+			viewBox: '0 0 ' + width + ' ' + height
 		});
 
 		while (i--) {

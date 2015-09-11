@@ -612,10 +612,11 @@ Chart.prototype = {
 
 		// create the inner container
 		chart.container = container = createElement(DIV, {
-				className: PREFIX + 'container' +
-					(optionsChart.className ? ' ' + optionsChart.className : ''),
+				className: PREFIX + 'container ' + (optionsChart.className || ''),
 				id: containerId
-			}, extend({
+			}
+			/* presentational
+			, extend({
 				position: RELATIVE,
 				overflow: HIDDEN, // needed for context menu (avoid scrollbars) and
 					// content overflow in IE
@@ -626,6 +627,8 @@ Chart.prototype = {
 				zIndex: 0, // #1072
 				'-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
 			}, optionsChart.style),
+			*/,
+			null,
 			chart.renderToClone || renderTo
 		);
 
@@ -791,10 +794,12 @@ Chart.prototype = {
 		}
 
 		// Resize the container with the global animation applied if enabled (#2503)
+		/* presentational
 		(globalAnimation ? animate : css)(chart.container, {
 			width: chartWidth + PX,
 			height: chartHeight + PX
 		}, globalAnimation);
+		*/
 
 		chart.setChartSize(true);
 		renderer.setSize(chartWidth, chartHeight, animation);
