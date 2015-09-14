@@ -1,14 +1,17 @@
 (function (H) {
 	var AreaSeries,
+		defaultPlotOptions = H.defaultPlotOptions,
+		defaultSeriesOptions = H.defaultSeriesOptions,
 		Color = H.Color,
 		each = H.each,
 		LegendSymbolMixin = H.LegendSymbolMixin,
+		merge = H.merge,
 		pick = H.pick,
 		Series = H.Series;
 /**
  * Set the default options for area
  */
-H.defaultPlotOptions.area = H.merge(H.defaultSeriesOptions, {
+defaultPlotOptions.area = merge(defaultSeriesOptions, {
 	threshold: 0
 	// trackByArea: false,
 	// lineColor: null, // overrides color, but lets fillColor be unaltered
