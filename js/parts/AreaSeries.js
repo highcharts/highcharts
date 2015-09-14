@@ -1,13 +1,15 @@
 (function (H) {
-	var AreaSeries,
-		defaultPlotOptions = H.defaultPlotOptions,
+	var defaultPlotOptions = H.defaultPlotOptions,
 		defaultSeriesOptions = H.defaultSeriesOptions,
+		extendClass = H.extendClass,
 		Color = H.Color,
 		each = H.each,
 		LegendSymbolMixin = H.LegendSymbolMixin,
 		merge = H.merge,
+		noop = H.noop,
 		pick = H.pick,
-		Series = H.Series;
+		Series = H.Series,
+		seriesTypes = H.seriesTypes;
 /**
  * Set the default options for area
  */
@@ -20,9 +22,9 @@ defaultPlotOptions.area = merge(defaultSeriesOptions, {
 });
 
 /**
- * AreaSeries object
+ * Area series object
  */
-AreaSeries = H.extendClass(Series, {
+seriesTypes.area = extendClass(Series, {
 	type: 'area',
 	/**
 	 * For stacks, don't split segments on null values. Instead, draw null values with 
@@ -95,7 +97,7 @@ AreaSeries = H.extendClass(Series, {
 						clientX: plotX, 
 						plotY: plotY, 
 						yBottom: plotY,
-						onMouseOver: H.noop
+						onMouseOver: noop
 					});
 				}
 			});
@@ -214,8 +216,6 @@ AreaSeries = H.extendClass(Series, {
 
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle
 });
-
-H.seriesTypes.area = AreaSeries;
 
 	return H;
 }(Highcharts));
