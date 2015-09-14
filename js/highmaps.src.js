@@ -13313,6 +13313,10 @@ Series.prototype = {
 			plotX,
 			plotY,
 			lastPlotX,
+			stackIndicator = {
+				x: null,
+				index: 0
+			},
 			closestPointRangePx = Number.MAX_VALUE;
 
 		// Translate each point
@@ -13337,9 +13341,9 @@ Series.prototype = {
 
 			// Calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
-
+				stackIndicator = series.getStackIndicator(stackIndicator, xValue);
 				pointStack = stack[xValue];
-				stackValues = pointStack.points[series.index + ',' + i];
+				stackValues = pointStack.points[series.index + ',' + xValue + ',' + stackIndicator.index];
 				yBottom = stackValues[0];
 				yValue = stackValues[1];
 

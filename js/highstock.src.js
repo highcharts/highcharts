@@ -13812,6 +13812,10 @@ Series.prototype = {
 			plotX,
 			plotY,
 			lastPlotX,
+			stackIndicator = {
+				x: null,
+				index: 0
+			},
 			closestPointRangePx = Number.MAX_VALUE;
 
 		// Translate each point
@@ -13836,9 +13840,9 @@ Series.prototype = {
 
 			// Calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
-
+				stackIndicator = series.getStackIndicator(stackIndicator, xValue);
 				pointStack = stack[xValue];
-				stackValues = pointStack.points[series.index + ',' + i];
+				stackValues = pointStack.points[series.index + ',' + xValue + ',' + stackIndicator.index];
 				yBottom = stackValues[0];
 				yValue = stackValues[1];
 
@@ -15202,6 +15206,10 @@ Series.prototype.setStackedPoints = function () {
 		yAxis = series.yAxis,
 		stacks = yAxis.stacks,
 		oldStacks = yAxis.oldStacks,
+		stackIndicator = {
+			x: null,
+			index: 0
+		},
 		isNegative,
 		stack,
 		other,
@@ -15218,8 +15226,8 @@ Series.prototype.setStackedPoints = function () {
 	for (i = 0; i < yDataLength; i++) {
 		x = xData[i];
 		y = yData[i];
-		pointKey = series.index + ',' + i;
-
+		stackIndicator = series.getStackIndicator(stackIndicator, x);
+		pointKey = series.index + ',' + x + ',' + stackIndicator.index;
 		// Read stacked values into a stack based on the x value,
 		// the sign of y and the stack key. Stacking is also handled for null values (#739)
 		isNegative = negStacks && y < (stackThreshold ? 0 : threshold);
@@ -15288,7 +15296,11 @@ Series.prototype.setPercentStacks = function () {
 	var series = this,
 		stackKey = series.stackKey,
 		stacks = series.yAxis.stacks,
-		processedXData = series.processedXData;
+		processedXData = series.processedXData,
+		stackIndicator = {
+			x: null,
+			index: 0
+		};
 
 	each([stackKey, '-' + stackKey], function (key) {
 		var i = processedXData.length,
@@ -15299,8 +15311,9 @@ Series.prototype.setPercentStacks = function () {
 
 		while (i--) {
 			x = processedXData[i];
+			stackIndicator = series.getStackIndicator(stackIndicator, x);
 			stack = stacks[key] && stacks[key][x];
-			pointExtremes = stack && stack.points[series.index + ',' + i];
+			pointExtremes = stack && stack.points[series.index + ',' + x + ',' + stackIndicator.index];
 			if (pointExtremes) {
 				totalFactor = stack.total ? 100 / stack.total : 0;
 				pointExtremes[0] = correctFloat(pointExtremes[0] * totalFactor); // Y bottom value
@@ -15309,6 +15322,21 @@ Series.prototype.setPercentStacks = function () {
 			}
 		}
 	});
+};
+
+/**
+* Get stack indicator, according to it's x-value, to determine points with the same x-value
+*/
+Series.prototype.getStackIndicator = function(stackIndicator, x) {
+	if (stackIndicator.x !== x) {
+		stackIndicator = {
+			x: x,
+			index: 0
+		};
+	} else {
+		stackIndicator.index++;
+	}
+	return stackIndicator;
 };
 
 // Extend the Chart prototype for dynamic methods
@@ -15886,6 +15914,7 @@ var AreaSeries = extendClass(Series, {
 			plotY,
 			points = this.points,
 			connectNulls = this.options.connectNulls,
+			stackIndicator,
 			i,
 			x;
 
@@ -15923,8 +15952,12 @@ var AreaSeries = extendClass(Series, {
 
 					// Loop down the stack to find the series below this one that has
 					// a value (#1991)
-					for (i = series.index; i <= yAxis.series.length; i++) {
-						stackPoint = stack[x].points[i + ',' + x];
+					for (i = series.index; i <= yAxis.series.length; i++) {		
+						stackIndicator = series.getStackIndicator({
+							x: null,
+							index: 0
+						}, x);
+						stackPoint = stack[x].points[i + ',' + x + ',' + stackIndicator.index];
 						if (stackPoint) {
 							y = stackPoint[1];
 							break;
