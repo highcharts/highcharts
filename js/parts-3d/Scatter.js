@@ -12,40 +12,39 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 
 	var series = this,
 		chart = series.chart,
-		zAxis = Highcharts.pick(series.zAxis, chart.options.zAxis[0]);
-
-	var raw_points = [],
-		raw_point,
-		projected_points,
-		projected_point,
+		zAxis = Highcharts.pick(series.zAxis, chart.options.zAxis[0]),
+		rawPoints = [],
+		rawPoint,
+		projectedPoints,
+		projectedPoint,
 		zValue,
 		i;
 
 	for (i = 0; i < series.data.length; i++) {
-		raw_point = series.data[i];
-		zValue = zAxis.isLog && zAxis.val2lin ? zAxis.val2lin(raw_point.z) : raw_point.z; // #4562
+		rawPoint = series.data[i];
+		zValue = zAxis.isLog && zAxis.val2lin ? zAxis.val2lin(rawPoint.z) : rawPoint.z; // #4562
 
-		raw_point.isInside = raw_point.isInside ? (zValue >= zAxis.min && zValue <= zAxis.max) : false;
+		rawPoint.isInside = rawPoint.isInside ? (zValue >= zAxis.min && zValue <= zAxis.max) : false;
 
-		raw_points.push({
-			x: raw_point.plotX,
-			y: raw_point.plotY,
+		rawPoints.push({
+			x: rawPoint.plotX,
+			y: rawPoint.plotY,
 			z: zAxis.translate(zValue)
 		});
 	}
 
-	projected_points = perspective(raw_points, chart, true);
+	projectedPoints = perspective(rawPoints, chart, true);
 
 	for (i = 0; i < series.data.length; i++) {
-		raw_point = series.data[i];
-		projected_point = projected_points[i];
+		rawPoint = series.data[i];
+		projectedPoint = projectedPoints[i];
 
-		raw_point.plotXold = raw_point.plotX;
-		raw_point.plotYold = raw_point.plotY;
+		rawPoint.plotXold = rawPoint.plotX;
+		rawPoint.plotYold = rawPoint.plotY;
 
-		raw_point.plotX = projected_point.x;
-		raw_point.plotY = projected_point.y;
-		raw_point.plotZ = projected_point.z;
+		rawPoint.plotX = projectedPoint.x;
+		rawPoint.plotY = projectedPoint.y;
+		rawPoint.plotZ = projectedPoint.z;
 
 
 	}
