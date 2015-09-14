@@ -1,5 +1,6 @@
 var eslint = require('gulp-eslint'),
     gulp = require('gulp'),
+    fs = require('fs'),
     config = {
         // List of rules at http://eslint.org/docs/rules/
         // @todo Add more rules when ready.
@@ -16,30 +17,43 @@ var eslint = require('gulp-eslint'),
         "partsMap": ['./js/parts-map/*.js'],
         "partsMore": ['./js/parts-more/*.js'],
         "themes": ['./js/themes/*.js']
+    },
+    optimizeHighcharts = function (fs, path) {
+        var wrapFile = './js/parts/Intro.js',
+            WS = '\\s*',
+            CM = ',',
+            captureQuoted = "'([^']+)'",
+            captureArray = "\\[(.*?)\\]",
+            captureFunc = "(function[\\s\\S]*?\\})\\);((?=\\s*define)|\\s*$)",
+            defineStatements = new RegExp('define\\(' + WS + captureQuoted + WS + CM + WS + captureArray + WS + CM + WS + captureFunc, 'g');
+        fs.readFile(path, 'utf8', function (err, data) {
+            var lines = data.split("\n"),
+                wrap = fs.readFileSync(wrapFile, 'utf8');
+            lines.forEach(function (line, i) {
+                if (line.indexOf("define") !== -1) {
+                    lines[i] = lines[i].replace(/\.\//g, ''); // Remove all beginnings of relative paths
+                    lines[i] = lines[i].replace(/\//g, '_'); // Replace all forward slashes with underscore
+                    lines[i] = lines[i].replace(/"/g, ''); // Remove all double quotes
+                }
+            });
+            data = lines.join('\n'); // Concatenate lines
+            data = data.replace(defineStatements, 'var $1 = ($3($2));'); // Replace define statement with a variable declaration
+            wrap = wrap.replace(/.*@code.*/, data); // Insert code into UMD wrap
+            fs.writeFile(path, wrap, 'utf8');
+        });
+
     };
 
 gulp.task('build', function () {
     var requirejs = require('requirejs'),
         filename = 'highcharts-build',
         config = {
-            baseUrl: './js',
-            name: filename,
+            baseUrl: './js/',
+            name: 'builds/' + filename,
             optimize: 'none',
-            out: './dist/' + filename,
-            onModuleBundleComplete: function (data) {
-                var gulp = module.require('gulp'),
-                    replace = module.require('gulp-replace'),
-                    WS = '\\s*',
-                    CM = ',',
-                    captureQuoted = "'([^']+)'",
-                    captureArray = "\\[(.*?)\\]",
-                    captureFunc = "(function[\\s\\S]*?\\})\\);((?=\\s*define)|\\s*$)",
-                    defineStatements = new RegExp('define\\(' + WS + captureQuoted + WS + CM + WS + captureArray + WS + CM + WS + captureFunc, 'g');
-                
-                gulp.src(data.path)
-                    .pipe(replace(defineStatements, 'var $1 = ($3($2));'))
-                    .pipe(replace(filename, 'Highcharts'))
-                    .pipe(gulp.dest('./dist/2/'+filename));
+            out: './js/' + filename + '.js',
+            onModuleBundleComplete: function (info) {
+                optimizeHighcharts(fs, info.path);
             }
         };
     requirejs.optimize(config, function (buildResponse) {
