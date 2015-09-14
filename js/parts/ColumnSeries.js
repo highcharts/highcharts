@@ -1,14 +1,20 @@
 (function (H) {
-	var ColumnSeries,
+	var defaultPlotOptions = H.defaultPlotOptions,
+		defaultSeriesOptions = H.defaultSeriesOptions,
 		defined = H.defined,
 		each = H.each,
+		extendClass = H.extendClass,
 		LegendSymbolMixin = H.LegendSymbolMixin,
+		merge = H.merge,
+		noop = H.noop,
 		pick = H.pick,
-		Series = H.Series;
+		Series = H.Series,
+		seriesTypes = H.seriesTypes,
+		svg = H.svg;
 /**
  * Set the default options for column
  */
-H.defaultPlotOptions.column = H.merge(H.defaultSeriesOptions, {
+defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	borderColor: '#FFFFFF',
 	//borderWidth: 1,
 	borderRadius: 0,
@@ -49,7 +55,7 @@ H.defaultPlotOptions.column = H.merge(H.defaultSeriesOptions, {
 /**
  * ColumnSeries object
  */
-ColumnSeries = H.extendClass(Series, {
+seriesTypes.column = extendClass(Series, {
 	type: 'column',
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
@@ -251,7 +257,7 @@ ColumnSeries = H.extendClass(Series, {
 
 	},
 
-	getSymbol: H.noop,
+	getSymbol: noop,
 	
 	/**
 	 * Use a solid rectangle like the area series types
@@ -262,7 +268,7 @@ ColumnSeries = H.extendClass(Series, {
 	/**
 	 * Columns have no graph
 	 */
-	drawGraph: H.noop,
+	drawGraph: noop,
 
 	/**
 	 * Draw the columns. For bars, the series.group is rotated, so the same coordinates
@@ -295,7 +301,7 @@ ColumnSeries = H.extendClass(Series, {
 				
 				if (graphic) { // update
 					HighchartsAdapter.stop(graphic);
-					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](H.merge(shapeArgs));
+					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs));
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
@@ -323,7 +329,7 @@ ColumnSeries = H.extendClass(Series, {
 			attr = {},
 			translatedThreshold;
 
-		if (H.svg) { // VML is too slow anyway
+		if (svg) { // VML is too slow anyway
 			if (init) {
 				attr.scaleY = 0.001;
 				translatedThreshold = Math.min(yAxis.pos + yAxis.len, Math.max(yAxis.pos, yAxis.toPixels(options.threshold)));
@@ -366,7 +372,6 @@ ColumnSeries = H.extendClass(Series, {
 		Series.prototype.remove.apply(series, arguments);
 	}
 });
-H.seriesTypes.column = ColumnSeries;
 
 	return H;
 }(Highcharts));

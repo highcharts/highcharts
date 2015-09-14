@@ -1,13 +1,22 @@
 (function (H) {
-	var Axis = H.Axis,
+	var addEvent = H.addEvent,
+		Axis = H.Axis,
 		Chart = H.Chart,
+		createElement = H.createElement,
+		css = H.css,
 		each = H.each,
+		erase = H.erase,
 		extend = H.extend,
+		isArray = H.isArray,
+		isObject = H.isObject,
 		merge = H.merge,
 		pick = H.pick,
 		Point = H.Point,
 		Series = H.Series,
-		seriesTypes = H.seriesTypes;
+		seriesTypes = H.seriesTypes,
+		setAnimation = H.setAnimation,
+		splat = H.splat;
+		
 // Extend the Chart prototype for dynamic methods
 extend(Chart.prototype, {
 
@@ -60,7 +69,7 @@ extend(Chart.prototype, {
 		/*jslint unused: true*/
 
 		// Push the new axis options to the chart options
-		chartOptions[key] = H.splat(chartOptions[key] || {});
+		chartOptions[key] = splat(chartOptions[key] || {});
 		chartOptions[key].push(options);
 
 		if (pick(redraw, true)) {
@@ -75,10 +84,8 @@ extend(Chart.prototype, {
 	showLoading: function (str) {
 		var chart = this,
 			options = chart.options,
-			createElement = H.createElement,
 			loadingDiv = chart.loadingDiv,
 			loadingOptions = options.loading,
-			css = H.css,
 			setLoadingSize = function () {
 				if (loadingDiv) {
 					css(loadingDiv, {
@@ -105,7 +112,7 @@ extend(Chart.prototype, {
 				loadingOptions.labelStyle,
 				loadingDiv
 			);
-			H.addEvent(chart, 'redraw', setLoadingSize); // #1080
+			addEvent(chart, 'redraw', setLoadingSize); // #1080
 		}
 
 		// update text
@@ -140,7 +147,7 @@ extend(Chart.prototype, {
 			}, {
 				duration: options.loading.hideDuration || 100,
 				complete: function () {
-					H.css(loadingDiv, { display: 'none' });
+					css(loadingDiv, { display: 'none' });
 				}
 			});
 		}
@@ -178,7 +185,7 @@ extend(Point.prototype, {
 			if (point.y === null && graphic) { // #4146
 				point.graphic = graphic.destroy();
 			}
-			if (H.isObject(options) && !H.isArray(options)) {
+			if (isObject(options) && !isArray(options)) {
 				// Defer the actual redraw until getAttribs has been called (#3260)
 				point.redraw = function () {
 					if (graphic && graphic.element) {
@@ -263,7 +270,7 @@ extend(Series.prototype, {
 			i,
 			x;
 
-		H.setAnimation(animation, chart);
+		setAnimation(animation, chart);
 
 		// Make graph animate sideways
 		if (shift) {
@@ -370,7 +377,7 @@ extend(Series.prototype, {
 				}
 			};
 
-		H.setAnimation(animation, chart);
+		setAnimation(animation, chart);
 		redraw = pick(redraw, true);
 
 		// Fire the event with a default handler of removing the point
@@ -499,7 +506,6 @@ extend(Axis.prototype, {
      */
 	remove: function (redraw) {
 		var chart = this.chart,
-			erase = H.erase,
 			key = this.coll, // xAxis or yAxis
 			axisSeries = this.series,
 			i = axisSeries.length;

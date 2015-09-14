@@ -1,5 +1,8 @@
 (function (H) {
-	var CanVGRenderer;
+	var CanVGRenderer,
+		CanVGController = H.CanVGController,
+		SVG_NS = H.SVG_NS,
+		useCanVG = H.useCanVG;
 
 /* ****************************************************************************
  *                                                                            *
@@ -7,15 +10,15 @@
  * TARGETING THAT SYSTEM.                                                     *
  *                                                                            *
  *****************************************************************************/
-if (H.useCanVG) {
+if (useCanVG) {
 	/**
 	 * The CanVGRenderer is empty from start to keep the source footprint small.
 	 * When requested, the CanVGController downloads the rest of the source packaged
 	 * together with the canvg library.
 	 */
-	H.CanVGRenderer = CanVGRenderer = function () {
+	H.Renderer = CanVGRenderer = function () {
 		// Override the global SVG namespace to fake SVG/HTML that accepts CSS
-		H.SVG_NS = 'http://www.w3.org/1999/xhtml';
+		SVG_NS = 'http://www.w3.org/1999/xhtml';
 	};
 
 	/**
@@ -27,7 +30,7 @@ if (H.useCanVG) {
 	/**
 	 * Handles on demand download of canvg rendering support.
 	 */
-	H.CanVGController = (function () {
+	CanVGController = (function () {
 		// List of renderering calls
 		var deferredRenderCalls = [];
 
@@ -57,8 +60,6 @@ if (H.useCanVG) {
 			}
 		};
 	}());
-
-	H.Renderer = CanVGRenderer;
 } // end CanVGRenderer
 
 /* ****************************************************************************

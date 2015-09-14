@@ -1,15 +1,32 @@
 (function (H) {
-	var arrayMax = H.arrayMax,
+	var addEvent = H.addEvent,
+		arrayMax = H.arrayMax,
+		arrayMin = H.arrayMin,
+		AxisPlotLineOrBandExtension = H.AxisPlotLineOrBandExtension,
 		correctFloat = H.correctFloat,
+		defaultOptions = H.defaultOptions,
+		defaultPlotOptions = H.defaultPlotOptions,
 		defined = H.defined,
 		deg2rad = H.deg2rad,
 		destroyObjectProperties = H.destroyObjectProperties,
+		each = H.each,
 		error = H.error,
+		extend = H.extend,
+		fireEvent = H.fireEvent,
+		format = H.format,
+		getMagnitude = H.getMagnitude,
+		inArray = HighchartsAdapter.inArray,
 		isNumber = H.isNumber,
+		isString = H.isString,
 		lin2log = H.lin2log,
 		log2lin = H.log2lin,
 		merge = H.merge,
+		normalizeTickInterval = H.normalizeTickInterval,
 		pick = H.pick,
+		pInt = H.pInt,
+		PlotLineOrBand = H.PlotLineOrBand,
+		removeEvent = H.removeEvent,
+		splat = H.splat,
 		Tick = H.Tick;
 /**
  * Create a new axis object
@@ -149,7 +166,7 @@ H.Axis.prototype = {
 			formatter: function () {
 				return H.numberFormat(this.total, -1);
 			},
-			style: merge(H.defaultPlotOptions.line.dataLabels.style, { color: '#000000' })
+			style: merge(defaultPlotOptions.line.dataLabels.style, { color: '#000000' })
 		}
 	},
 
@@ -331,14 +348,14 @@ H.Axis.prototype = {
 		//axis.userMax = undefined,
 
 		// Crosshair options
-		axis.crosshair = pick(options.crosshair, H.splat(chart.options.tooltip.crosshairs)[isXAxis ? 0 : 1], false);
+		axis.crosshair = pick(options.crosshair, splat(chart.options.tooltip.crosshairs)[isXAxis ? 0 : 1], false);
 		// Run Axis
 
 		var eventType,
 			events = axis.options.events;
 
 		// Register
-		if (HighchartsAdapter.inArray(axis, chart.axes) === -1) { // don't add it again on Axis.update()
+		if (inArray(axis, chart.axes) === -1) { // don't add it again on Axis.update()
 			if (isXAxis && !this.isColorAxis) { // #2713
 				chart.axes.splice(chart.xAxis.length, 0, axis);
 			} else {
@@ -361,7 +378,7 @@ H.Axis.prototype = {
 
 		// register event listeners
 		for (eventType in events) {
-			H.addEvent(axis, eventType, events[eventType]);
+			addEvent(axis, eventType, events[eventType]);
 		}
 
 		// extend logarithmic axis
@@ -381,7 +398,7 @@ H.Axis.prototype = {
 			[this.defaultTopAxisOptions, this.defaultRightAxisOptions,
 				this.defaultBottomAxisOptions, this.defaultLeftAxisOptions][this.side],
 			merge(
-				H.defaultOptions[this.coll], // if set in setOptions (#1053)
+				defaultOptions[this.coll], // if set in setOptions (#1053)
 				userOptions
 			)
 		);
@@ -395,7 +412,7 @@ H.Axis.prototype = {
 			value = this.value,
 			categories = axis.categories,
 			dateTimeLabelFormat = this.dateTimeLabelFormat,
-			numericSymbols = H.defaultOptions.lang.numericSymbols,
+			numericSymbols = defaultOptions.lang.numericSymbols,
 			i = numericSymbols && numericSymbols.length,
 			multi,
 			ret,
@@ -405,7 +422,7 @@ H.Axis.prototype = {
 			numericSymbolDetector = axis.isLog ? value : axis.tickInterval;
 
 		if (formatOption) {
-			ret = H.format(formatOption, this);
+			ret = format(formatOption, this);
 
 		} else if (categories) {
 			ret = value;
@@ -452,7 +469,7 @@ H.Axis.prototype = {
 		}
 
 		// loop through this axis' series
-		H.each(axis.series, function (series) {
+		each(axis.series, function (series) {
 
 			if (series.visible || !chart.options.chart.ignoreHiddenSeries) {
 
@@ -473,7 +490,7 @@ H.Axis.prototype = {
 				if (axis.isXAxis) {
 					xData = series.xData;
 					if (xData.length) {
-						axis.dataMin = Math.min(pick(axis.dataMin, xData[0]), H.arrayMin(xData));
+						axis.dataMin = Math.min(pick(axis.dataMin, xData[0]), arrayMin(xData));
 						axis.dataMax = Math.max(pick(axis.dataMax, xData[0]), arrayMax(xData));
 					}
 
@@ -758,7 +775,7 @@ H.Axis.prototype = {
 
 				// Find the closest distance between raw data points, as opposed to
 				// closestPointRange that applies to processed points (cropped and grouped)
-				H.each(axis.series, function (series) {
+				each(axis.series, function (series) {
 					xData = series.xData;
 					loopLength = series.xIncrement ? 1 : xData.length - 1;
 					for (i = loopLength; i > 0; i--) {
@@ -789,7 +806,7 @@ H.Axis.prototype = {
 				maxArgs[2] = axis.dataMax;
 			}
 
-			max = H.arrayMin(maxArgs);
+			max = arrayMin(maxArgs);
 
 			// now if the max is adjusted, adjust the min back
 			if (max - min < minRange) {
@@ -827,7 +844,7 @@ H.Axis.prototype = {
 				pointRangePadding = linkedParent.pointRangePadding;
 
 			} else {
-				H.each(axis.series, function (series) {
+				each(axis.series, function (series) {
 					var seriesPointRange = hasCategories ? 1 : (isXAxis ? series.pointRange : (axis.axisPointRange || 0)), // #2806
 						pointPlacement = series.options.pointPlacement,
 						seriesClosestPointRange = series.closestPointRange;
@@ -843,7 +860,7 @@ H.Axis.prototype = {
 						// is 'between' or 'on', this padding does not apply.
 						minPointOffset = Math.max(
 							minPointOffset,
-							H.isString(pointPlacement) ? 0 : seriesPointRange / 2
+							isString(pointPlacement) ? 0 : seriesPointRange / 2
 						);
 
 						// Determine the total padding needed to the length of the axis to make room for the
@@ -1000,7 +1017,7 @@ H.Axis.prototype = {
 		// Now we're finished detecting min and max, crop and group series data. This
 		// is in turn needed in order to find tick positions in ordinal axes.
 		if (isXAxis && !secondPass) {
-			H.each(axis.series, function (series) {
+			each(axis.series, function (series) {
 				series.processData(axis.min !== axis.oldMin || axis.max !== axis.oldMax);
 			});
 		}
@@ -1031,10 +1048,10 @@ H.Axis.prototype = {
 
 		// for linear axes, get magnitude and normalize the interval
 		if (!isDatetimeAxis && !isLog && !tickIntervalOption) {
-			axis.tickInterval = H.normalizeTickInterval(
+			axis.tickInterval = normalizeTickInterval(
 				axis.tickInterval, 
 				null, 
-				H.getMagnitude(axis.tickInterval), 
+				getMagnitude(axis.tickInterval), 
 				// If the tick interval is between 0.5 and 5 and the axis max is in the order of
 				// thousands, chances are we are dealing with years. Don't allow decimals. #3363.
 				pick(options.allowDecimals, !(axis.tickInterval > 0.5 && axis.tickInterval < 5 && axis.max > 1000 && axis.max < 9999)),
@@ -1174,7 +1191,7 @@ H.Axis.prototype = {
 
 		if (!tickAmount && this.chart.options.chart.alignTicks !== false && options.alignTicks !== false) {
 			// Check if there are multiple axes in the same pane
-			H.each(this.chart[this.coll], function (axis) {
+			each(this.chart[this.coll], function (axis) {
 				var options = axis.options,
 					horiz = axis.horiz,
 					key = [horiz ? options.left : options.top, horiz ? options.width : options.height, options.pane].join(',');
@@ -1266,7 +1283,7 @@ H.Axis.prototype = {
 		isDirtyAxisLength = axis.len !== axis.oldAxisLength;
 
 		// is there new data?
-		H.each(axis.series, function (series) {
+		each(axis.series, function (series) {
 			if (series.isDirtyData || series.isDirty ||
 					series.xAxis.isDirty) { // when x axis is dirty, we need new data extremes for y as well
 				isDirtyData = true;
@@ -1318,18 +1335,18 @@ H.Axis.prototype = {
 
 		redraw = pick(redraw, true); // defaults to true
 
-		H.each(axis.series, function (serie) {
+		each(axis.series, function (serie) {
 			delete serie.kdTree;
 		});
 
 		// Extend the arguments with min and max
-		eventArguments = H.extend(eventArguments, {
+		eventArguments = extend(eventArguments, {
 			min: newMin,
 			max: newMax
 		});
 
 		// Fire the event
-		HighchartsAdapter.fireEvent(axis, 'setExtremes', eventArguments, function () { // the default event handler
+		fireEvent(axis, 'setExtremes', eventArguments, function () { // the default event handler
 
 			axis.userMin = newMin;
 			axis.userMax = newMax;
@@ -1505,7 +1522,7 @@ H.Axis.prototype = {
 
 				// Loop over the given autoRotation options, and determine which gives the best score. The 
 				// best score is that with the lowest number of steps and a rotation closest to horizontal.
-				H.each(autoRotation, function (rot) {
+				each(autoRotation, function (rot) {
 					var score;
 
 					if (rot === rotationOption || (rot && rot >= -90 && rot <= 90)) { // #3891
@@ -1556,7 +1573,7 @@ H.Axis.prototype = {
 			pos;
 
 		// Set rotation option unless it is "auto", like in gauges
-		if (!H.isString(labelOptions.rotation)) {
+		if (!isString(labelOptions.rotation)) {
 			attr.rotation = labelOptions.rotation || 0; // #4443
 		}
 		
@@ -1564,7 +1581,7 @@ H.Axis.prototype = {
 		if (this.autoRotation) {
 
 			// Get the longest label length
-			H.each(tickPositions, function (tick) {
+			each(tickPositions, function (tick) {
 				tick = ticks[tick];
 				if (tick && tick.labelLength > labelLength) {
 					labelLength = tick.labelLength;
@@ -1620,7 +1637,7 @@ H.Axis.prototype = {
 		this.labelAlign = attr.align = labelOptions.align || this.autoLabelAlign(this.labelRotation);
 
 		// Apply general and specific CSS
-		H.each(tickPositions, function (pos) {
+		each(tickPositions, function (pos) {
 			var tick = ticks[pos],
 				label = tick && tick.label;
 			if (label) {
@@ -1697,7 +1714,7 @@ H.Axis.prototype = {
 		if (hasData || axis.isLinked) {
 			
 			// Generate ticks
-			H.each(tickPositions, function (pos) {
+			each(tickPositions, function (pos) {
 				if (!ticks[pos]) {
 					ticks[pos] = new Tick(axis, pos);
 				} else {
@@ -1707,7 +1724,7 @@ H.Axis.prototype = {
 
 			axis.renderUnsquish();
 
-			H.each(tickPositions, function (pos) {
+			each(tickPositions, function (pos) {
 				// left side must be align: right and right side must have align: left for labels
 				if (side === 0 || side === 2 || { 1: 'left', 3: 'right' }[side] === axis.labelAlign) {
 
@@ -1831,7 +1848,7 @@ H.Axis.prototype = {
 			offset = this.offset,
 			xOption = axisTitleOptions.x || 0,
 			yOption = axisTitleOptions.y || 0,
-			fontSize = H.pInt(axisTitleOptions.style.fontSize || 12),
+			fontSize = pInt(axisTitleOptions.style.fontSize || 12),
 
 			// the position in the length direction of the axis
 			alongAxis = {
@@ -1890,7 +1907,7 @@ H.Axis.prototype = {
 		axis.overlap = false;
 
 		// Mark all elements inActive before we go over and mark the active ones
-		H.each([ticks, minorTicks, alternateBands], function (coll) {
+		each([ticks, minorTicks, alternateBands], function (coll) {
 			var pos;
 			for (pos in coll) {
 				coll[pos].isActive = false;
@@ -1902,7 +1919,7 @@ H.Axis.prototype = {
 
 			// minor ticks
 			if (axis.minorTickInterval && !axis.categories) {
-				H.each(axis.getMinorTickPositions(), function (pos) {
+				each(axis.getMinorTickPositions(), function (pos) {
 					if (!minorTicks[pos]) {
 						minorTicks[pos] = new Tick(axis, pos, 'minor');
 					}
@@ -1919,7 +1936,7 @@ H.Axis.prototype = {
 			// Major ticks. Pull out the first item and render it last so that
 			// we can get the position of the neighbour label. #808.
 			if (tickPositions.length) { // #1300
-				H.each(tickPositions, function (pos, i) {
+				each(tickPositions, function (pos, i) {
 
 					// linked axes need an extra check to find out if
 					if (!isLinked || (pos >= axis.min && pos <= axis.max)) {
@@ -1950,10 +1967,10 @@ H.Axis.prototype = {
 
 			// alternate grid color
 			if (alternateGridColor) {
-				H.each(tickPositions, function (pos, i) {
+				each(tickPositions, function (pos, i) {
 					if (i % 2 === 0 && pos < axis.max) {
 						if (!alternateBands[pos]) {
-							alternateBands[pos] = new H.PlotLineOrBand(axis);
+							alternateBands[pos] = new PlotLineOrBand(axis);
 						}
 						from = pos + tickmarkOffset; // #949
 						to = tickPositions[i + 1] !== undefined ? tickPositions[i + 1] + tickmarkOffset : axis.max;
@@ -1970,7 +1987,7 @@ H.Axis.prototype = {
 
 			// custom plot lines and bands
 			if (!axis._addedPlotLB) { // only first time
-				H.each((options.plotLines || []).concat(options.plotBands || []), function (plotLineOptions) {
+				each((options.plotLines || []).concat(options.plotBands || []), function (plotLineOptions) {
 					axis.addPlotBandOrLine(plotLineOptions);
 				});
 				axis._addedPlotLB = true;
@@ -1979,7 +1996,7 @@ H.Axis.prototype = {
 		} // end if hasData
 
 		// Remove inactive ticks
-		H.each([ticks, minorTicks, alternateBands], function (coll) {
+		each([ticks, minorTicks, alternateBands], function (coll) {
 			var pos,
 				i,
 				forDestruction = [],
@@ -2062,12 +2079,12 @@ H.Axis.prototype = {
 		this.render();
 
 		// move plot lines and bands
-		H.each(this.plotLinesAndBands, function (plotLine) {
+		each(this.plotLinesAndBands, function (plotLine) {
 			plotLine.render();
 		});
 
 		// mark associated series as dirty and ready for redraw
-		H.each(this.series, function (series) {
+		each(this.series, function (series) {
 			series.isDirty = true;
 		});
 
@@ -2085,7 +2102,7 @@ H.Axis.prototype = {
 
 		// Remove the events
 		if (!keepEvents) {
-			H.removeEvent(axis);
+			removeEvent(axis);
 		}
 
 		// Destroy each stack total
@@ -2096,7 +2113,7 @@ H.Axis.prototype = {
 		}
 
 		// Destroy collections
-		H.each([axis.ticks, axis.minorTicks, axis.alternateBands], function (coll) {
+		each([axis.ticks, axis.minorTicks, axis.alternateBands], function (coll) {
 			destroyObjectProperties(coll);
 		});
 		i = plotLinesAndBands.length;
@@ -2105,7 +2122,7 @@ H.Axis.prototype = {
 		}
 
 		// Destroy local variables
-		H.each(['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup', 'cross', 'gridGroup', 'labelGroup'], function (prop) {
+		each(['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup', 'cross', 'gridGroup', 'labelGroup'], function (prop) {
 			if (axis[prop]) {
 				axis[prop] = axis[prop].destroy();
 			}
@@ -2192,7 +2209,7 @@ H.Axis.prototype = {
 	}
 }; // end Axis
 
-H.extend(H.Axis.prototype, H.AxisPlotLineOrBandExtension);
+extend(H.Axis.prototype, AxisPlotLineOrBandExtension);
 
 	return H;
 }(Highcharts));

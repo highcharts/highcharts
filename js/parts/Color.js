@@ -1,5 +1,9 @@
 (function (H) {
-	var each = H.each,
+	var Color,
+		each = H.each,
+		isNumber = H.isNumber,
+		map = H.map,
+		merge = H.merge,
 		pInt = H.pInt,
 		rgbaRegEx = /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
 		hexRegEx = /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/,
@@ -8,7 +12,7 @@
  * Handle color operations. The object methods are chainable.
  * @param {String} input The input color in either rbga or hex format
  */
-H.Color = function (input) {
+H.Color = Color = function (input) {
 	// declare variables
 	var rgba = [], result, stops;
 
@@ -19,8 +23,8 @@ H.Color = function (input) {
 	function init(input) {
 		// Gradients
 		if (input && input.stops) {
-			stops = H.map(input.stops, function (stop) {
-				return H.Color(stop[1]);
+			stops = map(input.stops, function (stop) {
+				return Color(stop[1]);
 			});
 
 		// Solid colors
@@ -53,7 +57,7 @@ H.Color = function (input) {
 		var ret;
 
 		if (stops) {
-			ret = H.merge(input);
+			ret = merge(input);
 			ret.stops = [].concat(ret.stops);
 			each(stops, function (stop, i) {
 				ret.stops[i] = [ret.stops[i][0], stop.get(format)];
@@ -84,7 +88,7 @@ H.Color = function (input) {
 				stop.brighten(alpha);
 			});
 		
-		} else if (H.isNumber(alpha) && alpha !== 0) {
+		} else if (isNumber(alpha) && alpha !== 0) {
 			var i;
 			for (i = 0; i < 3; i++) {
 				rgba[i] += pInt(alpha * 255);

@@ -1,10 +1,16 @@
 (function (H) {
+	var defaultPlotOptions = H.defaultPlotOptions,
+		each = H.each,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		seriesTypes = H.seriesTypes;
+
 /* ****************************************************************************
  * Start Candlestick series code											  *
  *****************************************************************************/
 
 // 1 - set default options
-H.defaultPlotOptions.candlestick = H.merge(H.defaultPlotOptions.column, {
+defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
 	lineColor: 'black',
 	lineWidth: 1,
 	states: {
@@ -12,14 +18,14 @@ H.defaultPlotOptions.candlestick = H.merge(H.defaultPlotOptions.column, {
 			lineWidth: 2
 		}
 	},
-	tooltip: H.defaultPlotOptions.ohlc.tooltip,
+	tooltip: defaultPlotOptions.ohlc.tooltip,
 	threshold: null,
 	upColor: 'white'
 	// upLineColor: null
 });
 
 // 2 - Create the CandlestickSeries object
-var CandlestickSeries = H.extendClass(H.seriesTypes.ohlc, {
+seriesTypes.candlestick = extendClass(seriesTypes.ohlc, {
 	type: 'candlestick',
 
 	/**
@@ -36,7 +42,7 @@ var CandlestickSeries = H.extendClass(H.seriesTypes.ohlc, {
 	 * Postprocess mapping between options and SVG attributes
 	 */
 	getAttribs: function () {
-		H.seriesTypes.ohlc.prototype.getAttribs.apply(this, arguments);
+		seriesTypes.ohlc.prototype.getAttribs.apply(this, arguments);
 		var series = this,
 			options = series.options,
 			stateOptions = options.states,			
@@ -46,14 +52,14 @@ var CandlestickSeries = H.extendClass(H.seriesTypes.ohlc, {
 
 		// Add custom line color for points going up (close > open).
 		// Fill is handled by OHLCSeries' getAttribs.
-		H.each(series.points, function (point) {
+		each(series.points, function (point) {
 			if (point.open < point.close) {
 
 				// If an individual line color is set, we need to merge the
 				// point attributes, because they are shared between all up
 				// points by inheritance from OHCLSeries.
 				if (point.lineColor) {
-					point.pointAttr = H.merge(point.pointAttr);
+					point.pointAttr = merge(point.pointAttr);
 					upLineColor = point.lineColor;
 				}
 
@@ -86,7 +92,7 @@ var CandlestickSeries = H.extendClass(H.seriesTypes.ohlc, {
 			halfWidth;
 
 
-		H.each(points, function (point) {
+		each(points, function (point) {
 
 			graphic = point.graphic;
 			if (point.plotY !== undefined) {
@@ -145,8 +151,6 @@ var CandlestickSeries = H.extendClass(H.seriesTypes.ohlc, {
 
 
 });
-
-H.seriesTypes.candlestick = CandlestickSeries;
 
 /* ****************************************************************************
  * End Candlestick series code												*

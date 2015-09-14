@@ -1,16 +1,26 @@
 (function (H) {
-	var Chart = H.Chart,
+	var addEvent = H.addEvent,
+		Chart = H.Chart,
 		Color = H.Color,
+		createElement = H.createElement,
+		css = H.css,
+		defaultOptions = H.defaultOptions,
+		defaultPlotOptions = H.defaultPlotOptions,
 		each = H.each,
+		extend = H.extend,
+		hasTouch = H.hasTouch,
+		isObject = H.isObject,
 		Legend = H.Legend,
+		merge = H.merge,
+		pick = H.pick,
 		Point = H.Point,
 		Series = H.Series,
 		seriesTypes = H.seriesTypes,
+		svg = H.svg,
 		TrackerMixin;
 /**
  * TrackerMixin for points and graphs
  */
-
 TrackerMixin = H.TrackerMixin = {
 
 	drawTrackerPoint: function () {
@@ -52,7 +62,7 @@ TrackerMixin = H.TrackerMixin = {
 						.on('mouseover', onMouseOver)
 						.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
 						.css(css);
-					if (H.hasTouch) {
+					if (hasTouch) {
 						series[key].on('touchstart', onMouseOver);
 					}
 				}
@@ -100,7 +110,7 @@ TrackerMixin = H.TrackerMixin = {
 			 * Safari: 0.000001
 			 * Opera: 0.00000000001 (unlimited)
 			 */
-			TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
+			TRACKER_FILL = 'rgba(192,192,192,' + (svg ? 0.0001 : 0.002) + ')';
 
 		// Extend end points. A better way would be to use round linecaps,
 		// but those are not clickable in VML.
@@ -147,7 +157,7 @@ TrackerMixin = H.TrackerMixin = {
 					.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
 					.css(css);
 
-				if (H.hasTouch) {
+				if (hasTouch) {
 					tracker.on('touchstart', onMouseOver);
 				}
 			});
@@ -177,7 +187,7 @@ if (seriesTypes.scatter) {
 /* 
  * Extend Legend for item events 
  */ 
-H.extend(Legend.prototype, {
+extend(Legend.prototype, {
 
 	setItemEvents: function (item, legendItem, useHTML, itemStyle, itemHiddenStyle) {
 	var legend = this;
@@ -213,13 +223,13 @@ H.extend(Legend.prototype, {
 	createCheckboxForItem: function (item) {
 		var legend = this;
 
-		item.checkbox = H.createElement('input', {
+		item.checkbox = createElement('input', {
 			type: 'checkbox',
 			checked: item.selected,
 			defaultChecked: item.selected // required by IE7
 		}, legend.options.itemCheckboxStyle, legend.chart.container);
 
-		H.addEvent(item.checkbox, 'click', function (event) {
+		addEvent(item.checkbox, 'click', function (event) {
 			var target = event.target;
 			HighchartsAdapter.fireEvent(item.series || item, 'checkboxClick', { // #3712
 					checked: target.checked,
@@ -236,20 +246,20 @@ H.extend(Legend.prototype, {
 /* 
  * Add pointer cursor to legend itemstyle in defaultOptions
  */
-H.defaultOptions.legend.itemStyle.cursor = 'pointer';
+defaultOptions.legend.itemStyle.cursor = 'pointer';
 
 
 /* 
  * Extend the Chart object with interaction
  */
 
-H.extend(Chart.prototype, {
+extend(Chart.prototype, {
 	/**
 	 * Display the zoom button
 	 */
 	showResetZoom: function () {
 		var chart = this,
-			lang = H.defaultOptions.lang,
+			lang = defaultOptions.lang,
 			btnOptions = chart.options.chart.resetZoomButton,
 			theme = btnOptions.theme,
 			states = theme.states,
@@ -310,7 +320,7 @@ H.extend(Chart.prototype, {
 		resetZoomButton = chart.resetZoomButton;
 		if (displayButton && !resetZoomButton) {
 			chart.showResetZoom();
-		} else if (!displayButton && H.isObject(resetZoomButton)) {
+		} else if (!displayButton && isObject(resetZoomButton)) {
 			chart.resetZoomButton = resetZoomButton.destroy();
 		}
 		
@@ -318,7 +328,7 @@ H.extend(Chart.prototype, {
 		// Redraw
 		if (hasZoomed) {
 			chart.redraw(
-				H.pick(chart.options.chart.animation, event && event.animation, chart.pointCount < 100) // animation
+				pick(chart.options.chart.animation, event && event.animation, chart.pointCount < 100) // animation
 			);
 		}
 	},
@@ -364,14 +374,14 @@ H.extend(Chart.prototype, {
 		if (doRedraw) {
 			chart.redraw(false);
 		}
-		H.css(chart.container, { cursor: 'move' });
+		css(chart.container, { cursor: 'move' });
 	}
 });
 
 /*
  * Extend the Point object with interaction
  */
-H.extend(Point.prototype, {
+extend(Point.prototype, {
 	/**
 	 * Toggle the selection status of a point
 	 * @param {Boolean} selected Whether to select or unselect the point.
@@ -384,7 +394,7 @@ H.extend(Point.prototype, {
 			chart = series.chart,
 			inArray = HighchartsAdapter.inArray;
 
-		selected = H.pick(selected, !point.selected);
+		selected = pick(selected, !point.selected);
 
 		// fire the event with the defalut handler
 		point.firePointEvent(selected ? 'select' : 'unselect', { accumulate: accumulate }, function () {
@@ -470,14 +480,14 @@ H.extend(Point.prototype, {
 	importEvents: function () {
 		if (!this.hasImportedEvents) {
 			var point = this,
-				options = H.merge(point.series.options.point, point.options),
+				options = merge(point.series.options.point, point.options),
 				events = options.events,
 				eventType;
 
 			point.events = events;
 
 			for (eventType in events) {
-				H.addEvent(point, eventType, events[eventType]);
+				addEvent(point, eventType, events[eventType]);
 			}
 			this.hasImportedEvents = true;
 
@@ -494,7 +504,7 @@ H.extend(Point.prototype, {
 			plotY = point.plotY,
 			series = point.series,
 			stateOptions = series.options.states,
-			markerOptions = H.defaultPlotOptions[series.type].marker && series.options.marker,
+			markerOptions = defaultPlotOptions[series.type].marker && series.options.marker,
 			normalDisabled = markerOptions && !markerOptions.enabled,
 			markerStateOptions = markerOptions && markerOptions.states[state],
 			stateDisabled = markerStateOptions && markerStateOptions.enabled === false,
@@ -529,7 +539,7 @@ H.extend(Point.prototype, {
 		// apply hover styles to the existing point
 		if (point.graphic) {
 			radius = markerOptions && point.graphic.symbolName && pointAttr.r;
-			point.graphic.attr(H.merge(
+			point.graphic.attr(merge(
 				pointAttr,
 				radius ? { // new symbol attributes (#507, #612)
 					x: plotX - radius,
@@ -593,7 +603,7 @@ H.extend(Point.prototype, {
 				series.halo = halo = chart.renderer.path()
 					.add(chart.seriesGroup);
 			}
-			halo.attr(H.extend({
+			halo.attr(extend({
 				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
 			}, haloOptions.attributes))[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
@@ -624,7 +634,7 @@ H.extend(Point.prototype, {
  * Extend the Series object with interaction
  */
 
-H.extend(Series.prototype, {
+extend(Series.prototype, {
 	/**
 	 * Series mouse over handler
 	 */

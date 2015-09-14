@@ -1,5 +1,7 @@
 (function (H) {
-	var pick = H.pick;
+	var pick = H.pick,
+		relativeLength = H.relativeLength;
+
 H.CenteredSeriesMixin = {
 	/**
 	 * Get the center of the pie based on the size and center options relative to the  
@@ -27,7 +29,7 @@ H.CenteredSeriesMixin = {
 			// i == 1: centerY, relative to height
 			// i == 2: size, relative to smallestSize
 			// i == 3: innerSize, relative to size
-			positions[i] = H.relativeLength(value, [plotWidth, plotHeight, smallestSize, positions[2]][i]) +
+			positions[i] = relativeLength(value, [plotWidth, plotHeight, smallestSize, positions[2]][i]) +
 				(handleSlicingRoom ? slicingRoom : 0);
 
 		}

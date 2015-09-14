@@ -15,6 +15,7 @@ if (globalAdapter) {
 H.each = adapter.each;
 H.map = adapter.map;
 H.addEvent = adapter.addEvent;
+H.fireEvent = adapter.fireEvent;
 H.removeEvent = adapter.removeEvent;
 
     return H;

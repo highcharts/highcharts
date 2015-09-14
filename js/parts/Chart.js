@@ -2,6 +2,10 @@
 	var addEvent = H.addEvent,
 		attr = H.attr,
 		Axis = H.Axis, // @todo add as requirement
+		CanVGController = H.CanVGController,
+		createElement = H.createElement,
+		defaultOptions = H.defaultOptions,
+		discardElement = H.discardElement,
 		Chart,
 		charts = H.charts,
 		css = H.css,
@@ -9,6 +13,7 @@
 		each = H.each,
 		error = H.error,
 		extend = H.extend,
+		isString = H.isString,
 		Legend = H.Legend, // @todo add as requirement
 		merge = H.merge,
 		Pointer = H.Pointer, // @todo add as requirement
@@ -17,13 +22,16 @@
 		removeEvent = H.removeEvent,
 		seriesTypes = H.seriesTypes,
 		splat = H.splat,
+		svg = H.svg,
+		Renderer = H.Renderer,
+		SVGRenderer = H.SVGRenderer,
 		useCanVG = H.useCanVG;
 /**
  * The chart class
  * @param {Object} options
  * @param {Function} callback Function to run when the chart has loaded
  */
-Chart = H.Chart = function () {
+H.Chart = Chart = function () {
 	this.init.apply(this, arguments);
 };
 
@@ -44,7 +52,7 @@ Chart.prototype = {
 			seriesOptions = userOptions.series; // skip merging data points to increase performance
 
 		userOptions.series = null;
-		options = merge(H.defaultOptions, userOptions); // do the merge
+		options = merge(defaultOptions, userOptions); // do the merge
 		options.series = userOptions.series = seriesOptions; // set back the series data
 		this.userOptions = userOptions;
 
@@ -551,7 +559,7 @@ Chart.prototype = {
 		if (revert) {
 			if (clone) {
 				this.renderTo.appendChild(container);
-				H.discardElement(clone);
+				discardElement(clone);
 				delete this.renderToClone;
 			}
 		
@@ -594,7 +602,7 @@ Chart.prototype = {
 		chart.renderTo = renderTo = optionsChart.renderTo;
 		containerId = 'highcharts-' + H.idCounter++;
 
-		if (H.isString(renderTo)) {
+		if (isString(renderTo)) {
 			chart.renderTo = renderTo = document.getElementById(renderTo);
 		}
 		
@@ -633,7 +641,7 @@ Chart.prototype = {
 		chartHeight = chart.chartHeight;
 
 		// create the inner container
-		chart.container = container = H.createElement('div', {
+		chart.container = container = createElement('div', {
 				className: 'highcharts-' + 'container' +
 					(optionsChart.className ? ' ' + optionsChart.className : ''),
 				id: containerId
@@ -657,8 +665,8 @@ Chart.prototype = {
 		// Initialize the renderer
 		chart.renderer =
 			optionsChart.forExport ? // force SVG, used for SVG export
-				new H.SVGRenderer(container, chartWidth, chartHeight, optionsChart.style, true) :
-				new H.Renderer(container, chartWidth, chartHeight, optionsChart.style);
+				new SVGRenderer(container, chartWidth, chartHeight, optionsChart.style, true) :
+				new Renderer(container, chartWidth, chartHeight, optionsChart.style);
 
 		if (useCanVG) {
 			// If we need canvg library, extend and configure the renderer
@@ -1101,7 +1109,7 @@ Chart.prototype = {
 		// Apply new links
 		each(chartSeries, function (series) {
 			var linkedTo = series.options.linkedTo;
-			if (H.isString(linkedTo)) {
+			if (isString(linkedTo)) {
 				if (linkedTo === ':previous') {
 					linkedTo = chart.series[series.index - 1];
 				} else {
@@ -1315,7 +1323,7 @@ Chart.prototype = {
 			container.innerHTML = '';
 			removeEvent(container);
 			if (parentNode) {
-				H.discardElement(container);
+				discardElement(container);
 			}
 
 		}
@@ -1337,11 +1345,11 @@ Chart.prototype = {
 
 		// Note: in spite of JSLint's complaints, window == window.top is required
 		/*jslint eqeq: true*/
-		if ((!H.svg && (window == window.top && document.readyState !== 'complete')) || (useCanVG && !window.canvg)) {
+		if ((!svg && (window == window.top && document.readyState !== 'complete')) || (useCanVG && !window.canvg)) {
 		/*jslint eqeq: false*/
 			if (useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready
-				H.CanVGController.push(function () { chart.firstRender(); }, chart.options.global.canvasToolsURL);
+				CanVGController.push(function () { chart.firstRender(); }, chart.options.global.canvasToolsURL);
 			} else {
 				document.attachEvent('onreadystatechange', function () {
 					document.detachEvent('onreadystatechange', chart.firstRender);

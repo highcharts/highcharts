@@ -1,6 +1,13 @@
 (function (H) {
-	var Date = H.Date,
+	var Axis = H.Axis,
+		Date = H.Date,
+		defaultOptions = H.defaultOptions,
+		defined = H.defined,
+		extend = H.extend,
+		getMagnitude = H.getMagnitude,
 		getTZOffset = H.getTZOffset,
+		normalizeTickInterval = H.normalizeTickInterval,
+		pick = H.pick,
 		timeUnits = H.timeUnits;
 /**
  * Set the tick positions to a time unit that makes sense, for example
@@ -13,18 +20,18 @@
  * @param {Number} max The maximum in axis values
  * @param {Number} startOfWeek
  */
-H.Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWeek) {
+Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWeek) {
 	var tickPositions = [],
 		i,
 		higherRanks = {},
-		useUTC = H.defaultOptions.global.useUTC,
+		useUTC = defaultOptions.global.useUTC,
 		minYear, // used in months and years as a basis for Date.UTC()
 		minDate = new Date(min - getTZOffset(min)),
 		makeTime = Date.hcMakeTime,
 		interval = normalizedInterval.unitRange,
 		count = normalizedInterval.count;
 
-	if (H.defined(min)) { // #1300
+	if (defined(min)) { // #1300
 		minDate[Date.hcSetMilliseconds](interval >= timeUnits.second ? 0 : // #3935
 			count * Math.floor(minDate.getMilliseconds() / count)); // #3652, #3654
 
@@ -63,7 +70,7 @@ H.Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfW
 		if (interval === timeUnits.week) {
 			// get start of current week, independent of count
 			minDate[Date.hcSetDate](minDate[Date.hcGetDate]() - minDate[Date.hcGetDay]() +
-				H.pick(startOfWeek, 1));
+				pick(startOfWeek, 1));
 		}
 	
 	
@@ -112,7 +119,7 @@ H.Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfW
 
 
 		// mark new days if the time is dividible by day (#1649, #1760)
-		H.each(HighchartsAdapter.grep(tickPositions, function (time) {
+		each(HighchartsAdapter.grep(tickPositions, function (time) {
 			return interval <= timeUnits.hour && time % timeUnits.day === localTimezoneOffset;
 		}), function (time) {
 			higherRanks[time] = 'day';
@@ -121,7 +128,7 @@ H.Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfW
 
 
 	// record information on the chosen unit - for dynamic label formatter
-	tickPositions.info = H.extend(normalizedInterval, {
+	tickPositions.info = extend(normalizedInterval, {
 		higherRanks: higherRanks,
 		totalRange: interval * count
 	});
@@ -137,7 +144,7 @@ H.Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfW
  * prevent it for running over again for each segment having the same interval. 
  * #662, #697.
  */
-H.Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) {
+Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) {
 	var units = unitsOption || [[
 				'millisecond', // unit name
 				[1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
@@ -194,10 +201,10 @@ H.Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption
 	}
 
 	// get the count
-	count = H.normalizeTickInterval(
+	count = normalizeTickInterval(
 		tickInterval / interval, 
 		multiples,
-		unit[0] === 'year' ? Math.max(H.getMagnitude(tickInterval / interval), 1) : 1 // #1913, #2360
+		unit[0] === 'year' ? Math.max(getMagnitude(tickInterval / interval), 1) : 1 // #1913, #2360
 	);
 	
 	return {

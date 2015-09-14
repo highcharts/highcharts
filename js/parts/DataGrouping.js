@@ -1,12 +1,24 @@
 (function (H) {
+
+	var arrayMax = H.arrayMax,
+		arrayMin = H.arrayMin,
+		Axis = H.Axis,
+		defaultPlotOptions = H.defaultPlotOptions,
+		defined = H.defined,
+		each = H.each,
+		isNumber = H.isNumber,
+		merge = H.merge,
+		pick = H.pick,
+		Series = H.Series,
+		Tooltip = H.Tooltip,
+		wrap = H.wrap;
+	
 /* ****************************************************************************
  * Start data grouping module												 *
  ******************************************************************************/
 /*jslint white:true */
-var Axis = H.Axis,
-	each = H.each,
-	seriesProto = H.Series.prototype,
-	tooltipProto = H.Tooltip.prototype,
+var seriesProto = Series.prototype,
+	tooltipProto = Tooltip.prototype,
 	baseProcessData = seriesProto.processData,
 	baseGeneratePoints = seriesProto.generatePoints,
 	baseDestroy = seriesProto.destroy,
@@ -133,10 +145,10 @@ var Axis = H.Axis,
 			return arr.length ? arr[0] : (arr.hasNulls ? null : undefined);
 		},
 		high: function (arr) {
-			return arr.length ? H.arrayMax(arr) : (arr.hasNulls ? null : undefined);
+			return arr.length ? arrayMax(arr) : (arr.hasNulls ? null : undefined);
 		},
 		low: function (arr) {
-			return arr.length ? H.arrayMin(arr) : (arr.hasNulls ? null : undefined);
+			return arr.length ? arrayMin(arr) : (arr.hasNulls ? null : undefined);
 		},
 		close: function (arr) {
 			return arr.length ? arr[arr.length - 1] : (arr.hasNulls ? null : undefined);
@@ -267,7 +279,7 @@ seriesProto.processData = function () {
 		chart = series.chart,
 		options = series.options,
 		dataGroupingOptions = options.dataGrouping,
-		groupingEnabled = series.allowDG !== false && dataGroupingOptions && H.pick(dataGroupingOptions.enabled, chart.options._stock),
+		groupingEnabled = series.allowDG !== false && dataGroupingOptions && pick(dataGroupingOptions.enabled, chart.options._stock),
 		hasGroupedData;
 
 	// run base method
@@ -334,7 +346,7 @@ seriesProto.processData = function () {
 		series.closestPointRange = groupPositions.info.totalRange;
 
 		// Make sure the X axis extends to show the first group (#2533)
-		if (H.defined(groupedXData[0]) && groupedXData[0] < xAxis.dataMin) {
+		if (defined(groupedXData[0]) && groupedXData[0] < xAxis.dataMin) {
 			if (xAxis.min === xAxis.dataMin) {
 				xAxis.min = groupedXData[0];
 			}
@@ -399,7 +411,7 @@ tooltipProto.tooltipFooterHeaderFormatter = function (point, isFooter) {
 		ret;
 
 	// apply only to grouped series
-	if (xAxis && xAxis.options.type === 'datetime' && dataGroupingOptions && H.isNumber(point.key)) {
+	if (xAxis && xAxis.options.type === 'datetime' && dataGroupingOptions && isNumber(point.key)) {
 
 		// set variables
 		currentDataGrouping = series.currentDataGrouping;
@@ -457,19 +469,19 @@ seriesProto.destroy = function () {
 
 // Handle default options for data grouping. This must be set at runtime because some series types are
 // defined after this.
-H.wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
+wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
 
 	var options = proceed.call(this, itemOptions),
 		type = this.type,
 		plotOptions = this.chart.options.plotOptions,
-		defaultOptions = H.defaultPlotOptions[type].dataGrouping;
+		defaultOptions = defaultPlotOptions[type].dataGrouping;
 
 	if (specificOptions[type]) { // #1284
 		if (!defaultOptions) {
-			defaultOptions = H.merge(commonOptions, specificOptions[type]);
+			defaultOptions = merge(commonOptions, specificOptions[type]);
 		}
 
-		options.dataGrouping = H.merge(
+		options.dataGrouping = merge(
 			defaultOptions,
 			plotOptions.series && plotOptions.series.dataGrouping, // #1228
 			plotOptions[type].dataGrouping, // Set by the StockChart constructor
@@ -489,7 +501,7 @@ H.wrap(seriesProto, 'setOptions', function (proceed, itemOptions) {
  * When resetting the scale reset the hasProccessed flag to avoid taking previous data grouping
  * of neighbour series into accound when determining group pixel width (#2692).
  */
-H.wrap(Axis.prototype, 'setScale', function (proceed) {
+wrap(Axis.prototype, 'setScale', function (proceed) {
 	proceed.call(this);
 	each(this.series, function (series) {
 		series.hasProcessed = false;
@@ -546,7 +558,7 @@ Axis.prototype.getGroupPixelWidth = function () {
 Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
 	var i;
 
-	redraw = H.pick(redraw, true);
+	redraw = pick(redraw, true);
 
 	if (!dataGrouping) {   
 		dataGrouping = {

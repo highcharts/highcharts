@@ -1,6 +1,14 @@
 (function (H) {
-	var defined = H.defined,
+	var addEvent = H.addEvent,
+		arrayMax = H.arrayMax,
+		defined = H.defined,
+		each = H.each,
+		extend = H.extend,
+		format = H.format,
+		merge = H.merge,
+		noop = H.noop,
 		pick = H.pick,
+		relativeLength = H.relativeLength,
 		Series = H.Series,
 		seriesTypes = H.seriesTypes;
 /**
@@ -38,7 +46,7 @@ Series.prototype.drawDataLabels = function () {
 		if (pick(options.defer, true)) {
 			dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
 			if (!hasRendered) {
-				H.addEvent(series, 'afterAnimate', function () {
+				addEvent(series, 'afterAnimate', function () {
 					if (series.visible) { // #3023, #3024
 						dataLabelsGroup.show();
 					}
@@ -49,7 +57,7 @@ Series.prototype.drawDataLabels = function () {
 
 		// Make the labels for each point
 		generalOptions = options;
-		H.each(points, function (point) {
+		each(points, function (point) {
 
 			var enabled,
 				dataLabel = point.dataLabel,
@@ -77,7 +85,7 @@ Series.prototype.drawDataLabels = function () {
 
 				// Create individual options structure that can be extended without
 				// affecting others
-				options = H.merge(generalOptions, pointOptions);
+				options = merge(generalOptions, pointOptions);
 				style = options.style;
 
 				rotation = options.rotation;
@@ -85,7 +93,7 @@ Series.prototype.drawDataLabels = function () {
 				// Get the string
 				labelConfig = point.getLabelConfig();
 				str = options.format ?
-					H.format(options.format, labelConfig) :
+					format(options.format, labelConfig) :
 					options.formatter.call(labelConfig, options);
 
 				// Determine the color
@@ -150,7 +158,7 @@ Series.prototype.drawDataLabels = function () {
 						options.useHTML
 					)
 					.attr(attr)
-					.css(H.extend(style, moreStyle))
+					.css(extend(style, moreStyle))
 					.add(dataLabelsGroup)
 					.shadow(options.shadow);
 
@@ -184,7 +192,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 	if (visible) {
 
 		// The alignment box is a singular point
-		alignTo = H.extend({
+		alignTo = extend({
 			x: inverted ? chart.plotWidth - plotY : plotX,
 			y: Math.round(inverted ? chart.plotHeight - plotX : plotY),
 			width: 0,
@@ -192,7 +200,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		}, alignTo);
 
 		// Add the text size for alignment calculation
-		H.extend(options, {
+		extend(options, {
 			width: bBox.width,
 			height: bBox.height
 		});
@@ -352,7 +360,7 @@ if (seriesTypes.pie) {
 		Series.prototype.drawDataLabels.apply(series);
 
 		// arrange points for detection collision
-		H.each(data, function (point) {
+		each(data, function (point) {
 			if (point.dataLabel && point.visible) { // #407, #2510
 				halves[point.half].push(point);
 			}
@@ -565,14 +573,14 @@ if (seriesTypes.pie) {
 
 		// Do not apply the final placement and draw the connectors until we have verified
 		// that labels are not spilling over.
-		if (H.arrayMax(overflow) === 0 || this.verifyDataLabelOverflow(overflow)) {
+		if (arrayMax(overflow) === 0 || this.verifyDataLabelOverflow(overflow)) {
 
 			// Place the labels in the final position
 			this.placeDataLabels();
 
 			// Draw the connectors
 			if (outside && connectorWidth) {
-				H.each(this.points, function (point) {
+				each(this.points, function (point) {
 					connector = point.connector;
 					labelPos = point.labelPos;
 					dataLabel = point.dataLabel;
@@ -624,7 +632,7 @@ if (seriesTypes.pie) {
 	 * fall within the plot area.
 	 */
 	seriesTypes.pie.prototype.placeDataLabels = function () {
-		H.each(this.points, function (point) {
+		each(this.points, function (point) {
 			var dataLabel = point.dataLabel,
 				_pos;
 
@@ -641,7 +649,7 @@ if (seriesTypes.pie) {
 		});
 	};
 
-	seriesTypes.pie.prototype.alignDataLabel =  H.noop;
+	seriesTypes.pie.prototype.alignDataLabel =  noop;
 
 	/**
 	 * Verify whether the data labels are allowed to draw, or we should run more translation and data
@@ -687,9 +695,9 @@ if (seriesTypes.pie) {
 		// If the size must be decreased, we need to run translate and drawDataLabels again
 		if (newSize < center[2]) {
 			center[2] = newSize;
-			center[3] = H.relativeLength(options.innerSize || 0, newSize);
+			center[3] = relativeLength(options.innerSize || 0, newSize);
 			this.translate(center);
-			H.each(this.points, function (point) {
+			each(this.points, function (point) {
 				if (point.dataLabel) {
 					point.dataLabel._pos = null; // reset
 				}
@@ -720,7 +728,7 @@ if (seriesTypes.column) {
 
 		// Align to the column itself, or the top of it
 		if (dlBox) { // Area range uses this method but not alignTo
-			alignTo = H.merge(dlBox);
+			alignTo = merge(dlBox);
 
 			if (inverted) {
 				alignTo = {

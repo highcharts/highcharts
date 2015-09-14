@@ -1,17 +1,19 @@
 (function (H) {
-    var BarSeries;
+	var defaultPlotOptions = H.defaultPlotOptions,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		seriesTypes = H.seriesTypes;
 /**
  * Set the default options for bar
  */
-H.defaultPlotOptions.bar = H.merge(H.defaultPlotOptions.column);
+defaultPlotOptions.bar = merge(defaultPlotOptions.column);
 /**
  * The Bar series class
  */
-BarSeries = H.extendClass(H.seriesTypes.column, {
+seriesTypes.bar = extendClass(seriesTypes.column, {
 	type: 'bar',
 	inverted: true
 });
-H.seriesTypes.bar = BarSeries;
 
     return H;
 }(Highcharts));

@@ -1,6 +1,14 @@
 (function (H) {
-	var Renderer = H.Renderer,
+	var addEvent = H.addEvent,
+		defaultPlotOptions = H.defaultPlotOptions,
+		each = H.each,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		noop = H.noop,
+		pick = H.pick,
+		Renderer = H.Renderer,
 		Series = H.Series,
+		seriesTypes = H.seriesTypes,
 		SVGRenderer = H.SVGRenderer,
 		TrackerMixin = H.TrackerMixin,
 		VMLRenderer = H.VMLRenderer,
@@ -10,7 +18,7 @@
  *****************************************************************************/
 
 // 1 - set default options
-H.defaultPlotOptions.flags = H.merge(H.defaultPlotOptions.column, {
+defaultPlotOptions.flags = merge(defaultPlotOptions.column, {
 	fillColor: 'white',
 	lineWidth: 1,
 	pointRange: 0, // #673
@@ -36,7 +44,7 @@ H.defaultPlotOptions.flags = H.merge(H.defaultPlotOptions.column, {
 });
 
 // 2 - Create the CandlestickSeries object
-H.seriesTypes.flags = H.extendClass(H.seriesTypes.column, {
+seriesTypes.flags = extendClass(seriesTypes.column, {
 	type: 'flags',
 	sorted: false,
 	noSharedTooltip: true,
@@ -64,7 +72,7 @@ H.seriesTypes.flags = H.extendClass(H.seriesTypes.column, {
 	 */
 	translate: function () {
 
-		H.seriesTypes.column.prototype.translate.apply(this);
+		seriesTypes.column.prototype.translate.apply(this);
 
 		var series = this,
 			options = series.options,
@@ -124,7 +132,7 @@ H.seriesTypes.flags = H.extendClass(H.seriesTypes.column, {
 		}
 
 		// Add plotY position and handle stacking
-		H.each(points, function (point, i) {
+		each(points, function (point, i) {
 
 			var stackIndex;
 			
@@ -181,7 +189,7 @@ H.seriesTypes.flags = H.extendClass(H.seriesTypes.column, {
 			outsideRight = point.plotX > series.xAxis.len;
 			plotX = point.plotX;
 			if (plotX > 0) { // #3119
-				plotX -= H.pick(point.lineWidth, options.lineWidth) % 2; // #4285
+				plotX -= pick(point.lineWidth, options.lineWidth) % 2; // #4285
 			}
 			stackIndex = point.stackIndex;
 			shape = point.options.shape || options.shape;
@@ -217,7 +225,7 @@ H.seriesTypes.flags = H.extendClass(H.seriesTypes.column, {
 						anchorY,
 						options.useHTML
 					)
-					.css(H.merge(options.style, point.style))
+					.css(merge(options.style, point.style))
 					.attr(pointAttr)
 					.attr({
 						align: shape === 'flag' ? 'left' : 'center',
@@ -251,10 +259,10 @@ H.seriesTypes.flags = H.extendClass(H.seriesTypes.column, {
 
 		// Bring each stacked flag up on mouse over, this allows readability of vertically
 		// stacked elements as well as tight points on the x axis. #1924.
-		H.each(points, function (point) {
+		each(points, function (point) {
 			var graphic = point.graphic;
 			if (graphic) {
-				H.addEvent(graphic.element, 'mouseover', function () {
+				addEvent(graphic.element, 'mouseover', function () {
 
 					// Raise this point
 					if (point.stackIndex > 0 && !point.raised) {
@@ -266,7 +274,7 @@ H.seriesTypes.flags = H.extendClass(H.seriesTypes.column, {
 					}
 
 					// Revert other raised points
-					H.each(points, function (otherPoint) {
+					each(points, function (otherPoint) {
 						if (otherPoint !== point && otherPoint.raised && otherPoint.graphic) {
 							otherPoint.graphic.attr({
 								y: otherPoint._y
@@ -282,9 +290,9 @@ H.seriesTypes.flags = H.extendClass(H.seriesTypes.column, {
 	/**
 	 * Disable animation
 	 */
-	animate: H.noop,
-	buildKDTree: H.noop,
-	setClip: H.noop
+	animate: noop,
+	buildKDTree: noop,
+	setClip: noop
 
 });
 
@@ -305,7 +313,7 @@ symbols.flag = function (x, y, w, h, options) {
 };
 
 // create the circlepin and squarepin icons with anchor
-H.each(['circle', 'square'], function (shape) {
+each(['circle', 'square'], function (shape) {
 	symbols[shape + 'pin'] = function (x, y, w, h, options) {
 
 		var anchorX = options && options.anchorX,
@@ -336,7 +344,7 @@ H.each(['circle', 'square'], function (shape) {
 // VML browsers need this in order to generate shapes in export. Now share
 // them with the VMLRenderer.
 if (Renderer === VMLRenderer) {
-	H.each(['flag', 'circlepin', 'squarepin'], function (shape) {
+	each(['flag', 'circlepin', 'squarepin'], function (shape) {
 		VMLRenderer.prototype.symbols[shape] = symbols[shape];
 	});
 }

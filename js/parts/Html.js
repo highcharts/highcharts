@@ -1,9 +1,21 @@
 (function (H) {
-	var css = H.css,
+	var attr = H.attr,
+		createElement = H.createElement,
+		css = H.css,
+		defined = H.defined,
 		each = H.each,
-		extend = H.extend;
+		extend = H.extend,
+		isFirefox = H.isFirefox,
+		isIE = H.isIE,
+		isWebKit = H.isWebKit,
+		pick = H.pick,
+		pInt = H.pInt,
+		SVGElement = H.SVGElement,
+		SVGRenderer = H.SVGRenderer,
+		wrap = H.wrap;
+
 // extend SvgElement for useHTML option
-extend(H.SVGElement.prototype, {
+extend(SVGElement.prototype, {
 	/**
 	 * Apply CSS to HTML elements. This is used in text within SVG rendering and
 	 * by the VML renderer
@@ -103,7 +115,7 @@ extend(H.SVGElement.prototype, {
 			var width,
 				rotation = wrapper.rotation,
 				baseline,
-				textWidth = H.pInt(wrapper.textWidth),
+				textWidth = pInt(wrapper.textWidth),
 				currentTextTransform = [rotation, align, elem.innerHTML, wrapper.textWidth, wrapper.textAlign].join(',');
 
 			if (currentTextTransform !== wrapper.cTT) { // do the calculations and DOM access only if properties changed
@@ -112,11 +124,11 @@ extend(H.SVGElement.prototype, {
 				baseline = renderer.fontMetrics(elem.style.fontSize).b;
 
 				// Renderer specific handling of span rotation
-				if (H.defined(rotation)) {
+				if (defined(rotation)) {
 					wrapper.setSpanRotation(rotation, alignCorrection, baseline);
 				}
 
-				width = H.pick(wrapper.elemWidth, elem.offsetWidth);
+				width = pick(wrapper.elemWidth, elem.offsetWidth);
 
 				// Update textWidth
 				if (width > textWidth && /[ \-]/.test(elem.textContent || elem.innerText)) { // #983, #1254
@@ -138,7 +150,7 @@ extend(H.SVGElement.prototype, {
 			});
 
 			// force reflow in webkit to apply the left and top on useHTML element (#1249)
-			if (H.isWebKit) {
+			if (isWebKit) {
 				baseline = elem.offsetHeight; // assigned to baseline for JSLint purpose
 			}
 
@@ -152,10 +164,10 @@ extend(H.SVGElement.prototype, {
 	 */
 	setSpanRotation: function (rotation, alignCorrection, baseline) {
 		var rotationStyle = {},
-			cssTransformKey = H.isIE ? '-ms-transform' : H.isWebKit ? '-webkit-transform' : H.isFirefox ? 'MozTransform' : window.opera ? '-o-transform' : '';
+			cssTransformKey = isIE ? '-ms-transform' : isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : window.opera ? '-o-transform' : '';
 
 		rotationStyle[cssTransformKey] = rotationStyle.transform = 'rotate(' + rotation + 'deg)';
-		rotationStyle[cssTransformKey + (H.isFirefox ? 'Origin' : '-origin')] = rotationStyle.transformOrigin = (alignCorrection * 100) + '% ' + baseline + 'px';
+		rotationStyle[cssTransformKey + (isFirefox ? 'Origin' : '-origin')] = rotationStyle.transformOrigin = (alignCorrection * 100) + '% ' + baseline + 'px';
 		css(this.element, rotationStyle);
 	},
 
@@ -169,7 +181,7 @@ extend(H.SVGElement.prototype, {
 });
 
 // Extend SvgRenderer for useHTML option.
-extend(H.SVGRenderer.prototype, {
+extend(SVGRenderer.prototype, {
 	/**
 	 * Create HTML text node. This is used by the VML renderer as well as the SVG
 	 * renderer through the useHTML option.
@@ -248,7 +260,7 @@ extend(H.SVGRenderer.prototype, {
 						// Ensure dynamically updating position when any parent is translated
 						each(parents.reverse(), function (parentGroup) {
 							var htmlGroupStyle,
-								cls = H.attr(parentGroup.element, 'class');
+								cls = attr(parentGroup.element, 'class');
 
 							if (cls) {
 								cls = { className: cls };
@@ -256,7 +268,7 @@ extend(H.SVGRenderer.prototype, {
 
 							// Create a HTML div and append it to the parent div to emulate
 							// the SVG group structure
-							htmlGroup = parentGroup.div = parentGroup.div || H.createElement('div', cls, {
+							htmlGroup = parentGroup.div = parentGroup.div || createElement('div', cls, {
 								position: 'absolute',
 								left: (parentGroup.translateX || 0) + 'px',
 								top: (parentGroup.translateY || 0) + 'px'
@@ -279,7 +291,7 @@ extend(H.SVGRenderer.prototype, {
 									parentGroup.doTransform = true;
 								}
 							});
-							H.wrap(parentGroup, 'visibilitySetter', function (proceed, value, key, elem) {
+							wrap(parentGroup, 'visibilitySetter', function (proceed, value, key, elem) {
 								proceed.call(this, value, key, elem);
 								htmlGroupStyle[key] = value;
 							});
