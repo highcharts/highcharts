@@ -561,12 +561,14 @@ Chart.prototype = {
 	getContainer: function () {
 		var chart = this,
 			container,
-			optionsChart = chart.options.chart,
+			options = chart.options,
+			optionsChart = options.chart,
 			chartWidth,
 			chartHeight,
 			renderTo,
 			indexAttrName = 'data-highcharts-chart',
 			oldChartIndex,
+			Ren,
 			containerId;
 
 		chart.renderTo = renderTo = optionsChart.renderTo;
@@ -633,10 +635,15 @@ Chart.prototype = {
 		chart._cursor = container.style.cursor;
 
 		// Initialize the renderer
-		chart.renderer =
-			optionsChart.forExport ? // force SVG, used for SVG export
-				new SVGRenderer(container, chartWidth, chartHeight, optionsChart.style, true) :
-				new Renderer(container, chartWidth, chartHeight, optionsChart.style);
+		Ren = Highcharts[optionsChart.renderer] || Renderer;
+		chart.renderer = new Ren(
+			container, 
+			chartWidth, 
+			chartHeight, 
+			optionsChart.style, 
+			optionsChart.forExport, 
+			options.exporting && options.exporting.allowHTML
+		);
 
 		if (useCanVG) {
 			// If we need canvg library, extend and configure the renderer
@@ -689,7 +696,9 @@ Chart.prototype = {
 		// pre-render axes to get labels offset width
 		if (chart.hasCartesianSeries) {
 			each(chart.axes, function (axis) {
-				axis.getOffset();
+				if (axis.visible) {
+					axis.getOffset();
+				}
 			});
 		}
 
@@ -1190,7 +1199,9 @@ Chart.prototype = {
 		// Axes
 		if (chart.hasCartesianSeries) {
 			each(axes, function (axis) {
-				axis.render();
+				if (axis.visible) {
+					axis.render();	
+				}
 			});
 		}
 

@@ -134,6 +134,7 @@ Pointer.prototype = {
 			distance = Number.MAX_VALUE, // #4511
 			anchor,
 			noSharedTooltip,
+			stickToHoverSeries,
 			directTouch,
 			kdpoints = [],
 			kdpoint,
@@ -149,9 +150,11 @@ Pointer.prototype = {
 			}
 		}
 
-		// If it has a hoverPoint and that series requires direct touch (like columns), 
-		// use the hoverPoint (#3899). Otherwise, search the k-d tree.
-		if (!shared && hoverSeries && hoverSeries.directTouch && hoverPoint) {
+		// If it has a hoverPoint and that series requires direct touch (like columns, #3899), or we're on 
+		// a noSharedTooltip series among shared tooltip series (#4546), use the hoverPoint . Otherwise, 
+		// search the k-d tree.
+		stickToHoverSeries = hoverSeries && (shared ? hoverSeries.noSharedTooltip : hoverSeries.directTouch);
+		if (stickToHoverSeries && hoverPoint) {
 			kdpoint = hoverPoint;
 
 		// Handle shared tooltip or cases where a series is not yet hovered
