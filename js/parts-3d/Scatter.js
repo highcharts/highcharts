@@ -23,13 +23,14 @@ Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function 
 	for (i = 0; i < series.data.length; i++) {
 		rawPoint = series.data[i];
 		zValue = zAxis.isLog && zAxis.val2lin ? zAxis.val2lin(rawPoint.z) : rawPoint.z; // #4562
+		rawPoint.plotZ = zAxis.translate(zValue);
 
 		rawPoint.isInside = rawPoint.isInside ? (zValue >= zAxis.min && zValue <= zAxis.max) : false;
 
 		rawPoints.push({
 			x: rawPoint.plotX,
 			y: rawPoint.plotY,
-			z: zAxis.translate(zValue)
+			z: rawPoint.plotZ
 		});
 	}
 
