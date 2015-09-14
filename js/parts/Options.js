@@ -1,4 +1,11 @@
 (function (H) {
+	var getTZOffset = H.getTZOffset,
+		isTouchDevice = H.isTouchDevice,
+		merge = H.merge,
+		pick = H.pick,
+		setOptions = H.setOptions,
+		svg = H.svg;
+		
 /* ****************************************************************************
  * Handle the options                                                         *
  *****************************************************************************/
@@ -279,7 +286,7 @@ H.defaultOptions = {
 
 	tooltip: {
 		enabled: true,
-		animation: H.svg,
+		animation: svg,
 		//crosshairs: null,
 		backgroundColor: 'rgba(249, 249, 249, .85)',
 		borderWidth: 1,
@@ -301,7 +308,7 @@ H.defaultOptions = {
 		shadow: true,
 		//shape: 'callout',
 		//shared: false,
-		snap: H.isTouchDevice ? 25 : 10,
+		snap: isTouchDevice ? 25 : 10,
 		style: {
 			color: '#333333',
 			cursor: 'default',
@@ -352,8 +359,6 @@ setTimeMethods();
 function setTimeMethods() {
 	var globalOptions = H.defaultOptions.global,
 		hcD,
-		pick = H.pick,
-		each = H.each,
 		useUTC = globalOptions.useUTC,
 		GET = useUTC ? 'getUTC' : 'get',
 		SET = useUTC ? 'setUTC' : 'set';
@@ -366,7 +371,7 @@ function setTimeMethods() {
 		var d;
 		if (useUTC) {
 			d = hcD.UTC.apply(0, arguments);
-			d += H.getTZOffset(d);
+			d += getTZOffset(d);
 		} else {
 			d = new hcD(
 				year,
@@ -391,10 +396,10 @@ function setTimeMethods() {
  * Merge the default options with custom options and return the new options structure
  * @param {Object} options The new custom options
  */
-H.setOptions = function (options) {
+setOptions = function (options) {
 	
 	// Copy in the default options
-	H.defaultOptions = H.merge(true, H.defaultOptions, options);
+	H.defaultOptions = merge(true, H.defaultOptions, options);
 	
 	// Apply UTC
 	setTimeMethods();

@@ -12,6 +12,19 @@
 // JSLint options:
 /*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console, each, grep */
 /*jslint ass: true, sloppy: true, forin: true, plusplus: true, nomen: true, vars: true, regexp: true, newcap: true, browser: true, continue: true, white: true */
+/*(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(function () {
+            return factory(root);
+        });
+    } else if (typeof module === "object" && typeof module.exports === "object") {
+        module.exports = factory(root);
+    else {
+        factory(global);
+    }
+}(this, function(window) {
+    // @code
+}));*/
 (function () {
 	var SVG_NS = 'http://www.w3.org/2000/svg',
 		svg = !!document.createElementNS && !!document.createElementNS(SVG_NS, 'svg').createSVGRect,
@@ -806,7 +819,14 @@ H.pathAnim = {
 	return H;
 }(Highcharts));
 (function (H, $) {
-	var HighchartsAdapter;
+	var HighchartsAdapter,
+
+		attr = H.attr,
+		charts = H.charts,
+		extend = H.extend,
+		isIE = H.isIE,
+		isString = H.isString,
+		wrap = H.wrap;
 	/**
 	 * The default HighchartsAdapter for jQuery
 	 */
@@ -872,7 +892,7 @@ H.pathAnim = {
 			});
 
 			// Extend the opacity getter, needed for fading opacity with IE9 and jQuery 1.10+
-			H.wrap($.cssHooks.opacity, 'get', function (proceed, elem, computed) {
+			wrap($.cssHooks.opacity, 'get', function (proceed, elem, computed) {
 				return elem.attr ? (elem.opacity || 0) : proceed.call(this, elem, computed);
 			});
 			
@@ -927,7 +947,7 @@ H.pathAnim = {
 
 				if (this[0]) {
 
-					if (H.isString(args[0])) {
+					if (isString(args[0])) {
 						constr = args[0];
 						args = Array.prototype.slice.call(args, 1); 
 					}
@@ -945,7 +965,7 @@ H.pathAnim = {
 
 					// When called without parameters or with the return argument, get a predefined chart
 					if (options === undefined) {
-						ret = H.charts[H.attr(this[0], 'data-highcharts-chart')];
+						ret = charts[attr(this[0], 'data-highcharts-chart')];
 					}
 				}
 				
@@ -1064,13 +1084,13 @@ H.pathAnim = {
 			//
 			// To avoid problems in IE (see #1010) where we cannot delete the properties and avoid
 			// testing if they are there (warning in chrome) the only option is to test if running IE.
-			if (!H.isIE && eventArguments) {
+			if (!isIE && eventArguments) {
 				delete eventArguments.layerX;
 				delete eventArguments.layerY;
 				delete eventArguments.returnValue;
 			}
 	
-			H.extend(event, eventArguments);
+			extend(event, eventArguments);
 	
 			// Prevent jQuery from triggering the object method that is named the
 			// same as the event. For example, if the event is 'select', jQuery
@@ -1185,6 +1205,13 @@ H.removeEvent = adapter.removeEvent;
     return H;
 }(Highcharts));
 (function (H) {
+	var getTZOffset = H.getTZOffset,
+		isTouchDevice = H.isTouchDevice,
+		merge = H.merge,
+		pick = H.pick,
+		setOptions = H.setOptions,
+		svg = H.svg;
+		
 /* ****************************************************************************
  * Handle the options                                                         *
  *****************************************************************************/
@@ -1465,7 +1492,7 @@ H.defaultOptions = {
 
 	tooltip: {
 		enabled: true,
-		animation: H.svg,
+		animation: svg,
 		//crosshairs: null,
 		backgroundColor: 'rgba(249, 249, 249, .85)',
 		borderWidth: 1,
@@ -1487,7 +1514,7 @@ H.defaultOptions = {
 		shadow: true,
 		//shape: 'callout',
 		//shared: false,
-		snap: H.isTouchDevice ? 25 : 10,
+		snap: isTouchDevice ? 25 : 10,
 		style: {
 			color: '#333333',
 			cursor: 'default',
@@ -1538,8 +1565,6 @@ setTimeMethods();
 function setTimeMethods() {
 	var globalOptions = H.defaultOptions.global,
 		hcD,
-		pick = H.pick,
-		each = H.each,
 		useUTC = globalOptions.useUTC,
 		GET = useUTC ? 'getUTC' : 'get',
 		SET = useUTC ? 'setUTC' : 'set';
@@ -1552,7 +1577,7 @@ function setTimeMethods() {
 		var d;
 		if (useUTC) {
 			d = hcD.UTC.apply(0, arguments);
-			d += H.getTZOffset(d);
+			d += getTZOffset(d);
 		} else {
 			d = new hcD(
 				year,
@@ -1577,10 +1602,10 @@ function setTimeMethods() {
  * Merge the default options with custom options and return the new options structure
  * @param {Object} options The new custom options
  */
-H.setOptions = function (options) {
+setOptions = function (options) {
 	
 	// Copy in the default options
-	H.defaultOptions = H.merge(true, H.defaultOptions, options);
+	H.defaultOptions = merge(true, H.defaultOptions, options);
 	
 	// Apply UTC
 	setTimeMethods();
@@ -8938,8 +8963,13 @@ Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) 
 	return H;
 }(Highcharts));
 (function (H) {
-	var lin2log = H.lin2log,
-		log2lin = H.log2lin;
+	var Axis = H.Axis,
+		getMagnitude = H.getMagnitude,
+		lin2log = H.lin2log,
+		log2lin = H.log2lin,
+		map = H.map,
+		normalizeTickInterval = H.normalizeTickInterval,
+		pick = H.pick;
 /**
  * Methods defined on the Axis prototype
  */
@@ -8947,7 +8977,7 @@ Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) 
 /**
  * Set the tick positions of a logarithmic axis
  */
-H.Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
+Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 	var axis = this,
 		options = axis.options,
 		axisLength = axis.len,
@@ -9011,19 +9041,19 @@ H.Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 			tickPixelIntervalOption = options.tickPixelInterval / (minor ? 5 : 1),
 			totalPixelLength = minor ? axisLength / axis.tickPositions.length : axisLength;
 		
-		interval = H.pick(
+		interval = pick(
 			filteredTickIntervalOption,
 			axis._minorAutoInterval,
 			(realMax - realMin) * tickPixelIntervalOption / (totalPixelLength || 1)
 		);
 		
-		interval = H.normalizeTickInterval(
+		interval = normalizeTickInterval(
 			interval, 
 			null, 
-			H.getMagnitude(interval)
+			getMagnitude(interval)
 		);
 		
-		positions = H.map(axis.getLinearTickPositions(
+		positions = map(axis.getLinearTickPositions(
 			interval, 
 			realMin,
 			realMax	
@@ -10523,10 +10553,16 @@ extend(H.Pointer.prototype, {
 	return H;
 }(Highcharts));
 (function (H) {
-	var charts = H.charts,
+	var addEvent = H.addEvent,
+		charts = H.charts,
+		css = H.css,
+		extend = H.extend,
 		hoverChartIndex = H.hoverChartIndex,
+		noop = H.noop,
 		Pointer = H.Pointer,
+		removeEvent = H.removeEvent,
 		wrap = H.wrap;
+
 if (window.PointerEvent || window.MSPointerEvent) {
 	
 	// The touches object keeps track of the points being touched at all times
@@ -10555,7 +10591,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 				p[method]({
 					type: wktype,
 					target: e.currentTarget,
-					preventDefault: H.noop,
+					preventDefault: noop,
 					touches: getWebkitTouches()
 				});				
 			}
@@ -10564,7 +10600,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	/**
 	 * Extend the Pointer prototype with methods for each event handler and more
 	 */
-	H.extend(Pointer.prototype, {
+	extend(Pointer.prototype, {
 		onContainerPointerDown: function (e) {
 			translateMSPointer(e, 'onContainerTouchStart', 'touchstart', function (e) {
 				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY, target: e.currentTarget };
@@ -10598,7 +10634,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 		proceed.call(this, chart, options);
 		if (this.hasZoom) { // #4014
-			H.css(chart.container, {
+			css(chart.container, {
 				'-ms-touch-action': 'none',
 				'touch-action': 'none'
 			});
@@ -10609,12 +10645,12 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
 		proceed.apply(this);
 		if (this.hasZoom || this.followTouchMove) {
-			this.batchMSEvents(H.addEvent);
+			this.batchMSEvents(addEvent);
 		}
 	});
 	// Destroy MS events also
 	wrap(Pointer.prototype, 'destroy', function (proceed) {
-		this.batchMSEvents(H.removeEvent);
+		this.batchMSEvents(removeEvent);
 		proceed.call(this);
 	});
 }
@@ -10622,11 +10658,20 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	return H;
 }(Highcharts));
 (function (H) {
-	var defined = H.defined,
+	var Legend,
+		
+		addEvent = H.addEvent,
+		css = H.css,
+		discardElement = H.discardElement,
+		defined = H.defined,
 		each = H.each,
-		Legend,
+		extend = H.extend,
+		isFirefox = H.isFirefox,
 		merge = H.merge,
-		pick = H.pick;
+		pick = H.pick,
+		setAnimation = H.setAnimation,
+		stableSort = H.stableSort,
+		wrap = H.wrap;
 /**
  * The overview of the chart's series
  */
@@ -10669,7 +10714,7 @@ Legend.prototype = {
 		legend.render();
 
 		// move checkboxes
-		H.addEvent(legend.chart, 'endResize', function () { 
+		addEvent(legend.chart, 'endResize', function () { 
 			legend.positionCheckboxes();
 		});
 
@@ -10762,7 +10807,7 @@ Legend.prototype = {
 		});
 
 		if (checkbox) {
-			H.discardElement(item.checkbox);
+			discardElement(item.checkbox);
 		}
 	},
 
@@ -10799,7 +10844,7 @@ Legend.prototype = {
 				
 				if (checkbox) {
 					top = (translateY + checkbox.y + (scrollOffset || 0) + 3);
-					H.css(checkbox, {
+					css(checkbox, {
 						left: (alignAttr.translateX + item.checkboxOffset + checkbox.x - 20) + 'px',
 						top: top + 'px',
 						display: top > translateY - 6 && top < translateY + clipHeight - 6 ? '' : 'none'
@@ -11071,7 +11116,7 @@ Legend.prototype = {
 		allItems = legend.getAllItems();
 
 		// sort by legendIndex
-		H.stableSort(allItems, function (a, b) {
+		stableSort(allItems, function (a, b) {
 			return ((a.options && a.options.legendIndex) || 0) - ((b.options && b.options.legendIndex) || 0);
 		});
 
@@ -11148,7 +11193,7 @@ Legend.prototype = {
 		}*/
 
 		if (display) {
-			legendGroup.align(H.extend({
+			legendGroup.align(extend({
 				width: legendWidth,
 				height: legendHeight
 			}, options), true, 'spacingBox');
@@ -11298,7 +11343,7 @@ Legend.prototype = {
 		if (currentPage > 0) {
 			
 			if (animation !== undefined) {
-				H.setAnimation(animation, this.chart);
+				setAnimation(animation, this.chart);
 			}
 			
 			this.nav.attr({
@@ -11422,8 +11467,8 @@ H.LegendSymbolMixin = {
 // and for #2580, a similar drawing flaw in Firefox 26.
 // TODO: Explore if there's a general cause for this. The problem may be related 
 // to nested group elements, as the legend item texts are within 4 group elements.
-if (/Trident\/7\.0/.test(navigator.userAgent) || H.isFirefox) {
-	H.wrap(Legend.prototype, 'positionItem', function (proceed, item) {
+if (/Trident\/7\.0/.test(navigator.userAgent) || isFirefox) {
+	wrap(Legend.prototype, 'positionItem', function (proceed, item) {
 		var legend = this,
 			runPositionItem = function () { // If chart destroyed in sync, this is undefined (#2030)
 				if (item._legendItemPos) {
@@ -16005,13 +16050,13 @@ extend(Axis.prototype, {
 	return H;
 }(Highcharts));
 (function (H) {
-    var LineSeries,
-        Series = H.Series;
+	var extendClass = H.extendClass,
+		Series = H.Series,
+		seriesTypes = H.seriesTypes;
 /**
  * LineSeries object
  */
-LineSeries = H.extendClass(Series);
-H.seriesTypes.line = LineSeries;
+seriesTypes.line = extendClass(Series);
 
     return H;
 }(Highcharts));
@@ -16831,16 +16876,27 @@ H.seriesTypes.scatter = ScatterSeries;
 	return H;
 }(Highcharts));
 (function (H) {
-	var CenteredSeriesMixin = H.CenteredSeriesMixin,
+	var PiePoint,
+		
+		addEvent = H.addEvent,
+		CenteredSeriesMixin = H.CenteredSeriesMixin,
+		defaultPlotOptions = H.defaultPlotOptions,
+		defaultSeriesOptions = H.defaultSeriesOptions,
+		defined = H.defined,
+		extend = H.extend,
+		extendClass = H.extendClass,
 		LegendSymbolMixin = H.LegendSymbolMixin,
-		PiePoint,
-		PieSeries,
+		merge = H.merge,
+		noop = H.noop,
+		pick = H.pick,
 		Point = H.Point,
-		Series = H.Series;
+		Series = H.Series,
+		seriesTypes = H.seriesTypes,
+		setAnimation = H.setAnimation;
 /**
  * Set the default options for pie
  */
-H.defaultPlotOptions.pie = H.merge(H.defaultSeriesOptions, {
+defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 	borderColor: '#FFFFFF',
 	borderWidth: 1,
 	center: [null, null],
@@ -16882,7 +16938,7 @@ H.defaultPlotOptions.pie = H.merge(H.defaultSeriesOptions, {
 /**
  * Extended point object for pies
  */
-PiePoint = H.extendClass(Point, {
+PiePoint = extendClass(Point, {
 	/**
 	 * Initiate the pie slice
 	 */
@@ -16891,12 +16947,11 @@ PiePoint = H.extendClass(Point, {
 		Point.prototype.init.apply(this, arguments);
 
 		var point = this,
-			addEvent = H.addEvent,
 			toggleSlice;
 
-		H.extend(point, {
+		extend(point, {
 			visible: point.visible !== false,
-			name: H.pick(point.name, 'Slice')
+			name: pick(point.name, 'Slice')
 		});
 
 		// add event listener for select
@@ -16920,7 +16975,7 @@ PiePoint = H.extendClass(Point, {
 			chart = series.chart,
 			ignoreHiddenPoint = series.options.ignoreHiddenPoint;
 		
-		redraw = H.pick(redraw, ignoreHiddenPoint);
+		redraw = pick(redraw, ignoreHiddenPoint);
 
 		if (vis !== point.visible) {
 
@@ -16930,7 +16985,7 @@ PiePoint = H.extendClass(Point, {
 
 			// Show and hide associated elements. This is performed regardless of redraw or not,
 			// because chart.redraw only handles full series.
-			H.each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
+			each(['graphic', 'dataLabel', 'connector', 'shadowGroup'], function (key) {
 				if (point[key]) {
 					point[key][vis ? 'show' : 'hide'](true);
 				}
@@ -16967,13 +17022,13 @@ PiePoint = H.extendClass(Point, {
 			chart = series.chart,
 			translation;
 
-		H.setAnimation(animation, chart);
+		setAnimation(animation, chart);
 
 		// redraw is true by default
-		redraw = H.pick(redraw, true);
+		redraw = pick(redraw, true);
 
 		// if called without an argument, toggle
-		point.sliced = point.options.sliced = sliced = H.defined(sliced) ? sliced : !point.sliced;
+		point.sliced = point.options.sliced = sliced = defined(sliced) ? sliced : !point.sliced;
 		series.options.data[HighchartsAdapter.inArray(point, series.data)] = point.options; // update userOptions.data
 
 		translation = sliced ? point.slicedTranslation : {
@@ -17004,7 +17059,7 @@ PiePoint = H.extendClass(Point, {
 /**
  * The Pie series class
  */
-PieSeries = {
+seriesTypes.pie = extendClass(Series, {
 	type: 'pie',
 	isCartesian: false,
 	pointClass: PiePoint,
@@ -17028,7 +17083,7 @@ PieSeries = {
 			startAngleRad = series.startAngleRad;
 
 		if (!init) {
-			H.each(points, function (point) {
+			each(points, function (point) {
 				var graphic = point.graphic,
 					args = point.shapeArgs;
 
@@ -17062,7 +17117,7 @@ PieSeries = {
 		Series.prototype.setData.call(this, data, false, animation, updatePoints);
 		this.processData();
 		this.generatePoints();
-		if (H.pick(redraw, true)) {
+		if (pick(redraw, true)) {
 			this.chart.redraw(animation);
 		} 
 	},
@@ -17118,7 +17173,7 @@ PieSeries = {
 			angle,
 			startAngle = options.startAngle || 0,
 			startAngleRad = series.startAngleRad = Math.PI / 180 * (startAngle - 90),
-			endAngleRad = series.endAngleRad = Math.PI / 180 * ((H.pick(options.endAngle, startAngle + 360)) - 90),
+			endAngleRad = series.endAngleRad = Math.PI / 180 * ((pick(options.endAngle, startAngle + 360)) - 90),
 			circ = endAngleRad - startAngleRad, //2 * Math.PI,
 			points = series.points,
 			radiusX, // the x component of the radius vector for a given point
@@ -17236,7 +17291,7 @@ PieSeries = {
 		}
 
 		// draw the slices
-		H.each(series.points, function (point) {
+		each(series.points, function (point) {
 			if (point.y !== null) {
 				graphic = point.graphic;
 				shapeArgs = point.shapeArgs;
@@ -17263,7 +17318,7 @@ PieSeries = {
 				if (graphic) {
 					graphic
 						.setRadialReference(series.center)
-						.animate(H.extend(shapeArgs, groupTranslation));				
+						.animate(extend(shapeArgs, groupTranslation));				
 				} else {
 					attr = { 'stroke-linejoin': 'round' };
 					if (!point.visible) {
@@ -17286,7 +17341,7 @@ PieSeries = {
 	},
 
 
-	searchPoint: H.noop,
+	searchPoint: noop,
 
 	/**
 	 * Utility for sorting data labels
@@ -17310,11 +17365,9 @@ PieSeries = {
 	/**
 	 * Pies don't have point marker symbols
 	 */
-	getSymbol: H.noop
+	getSymbol: noop
 
-};
-PieSeries = H.extendClass(Series, PieSeries);
-H.seriesTypes.pie = PieSeries;
+});
 
 	return H;
 }(Highcharts));
@@ -19070,16 +19123,25 @@ extend(Series.prototype, {
 	return H;
 }(Highcharts));
 (function (H) {
-	var Axis = H.Axis,
+	var addEvent = H.addEvent,
+		Axis = H.Axis,
 		Chart = H.Chart,
-		Series = H.Series;
+		css = H.css,
+		dateFormat = H.dateFormat,
+		defined = H.defined,
+		each = H.each,
+		extend = H.extend,
+		noop = H.noop,
+		Series = H.Series,
+		timeUnits = H.timeUnits,
+		wrap = H.wrap;
 
 /* ****************************************************************************
  * Start ordinal axis logic                                                   *
  *****************************************************************************/
 
 
-H.wrap(Series.prototype, 'init', function (proceed) {
+wrap(Series.prototype, 'init', function (proceed) {
 	var series = this,
 		xAxis;
 
@@ -19090,7 +19152,7 @@ H.wrap(Series.prototype, 'init', function (proceed) {
 
 	// Destroy the extended ordinal index on updated data
 	if (xAxis && xAxis.options.ordinal) {
-		H.addEvent(series, 'updatedData', function () {
+		addEvent(series, 'updatedData', function () {
 			delete xAxis.ordinalIndex;
 		});
 	}
@@ -19103,7 +19165,7 @@ H.wrap(Series.prototype, 'init', function (proceed) {
  * positions up in segments, find the tick positions for each segment then concatenize them.
  * This method is used from both data grouping logic and X axis tick position logic.
  */
-H.wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min, max, startOfWeek, positions, closestDistance, findHigherRanks) {
+wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min, max, startOfWeek, positions, closestDistance, findHigherRanks) {
 
 	var start = 0,
 		end = 0,
@@ -19113,8 +19175,6 @@ H.wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, mi
 		info,
 		posLength,
 		outsideMax,
-		dateFormat = H.dateFormat,
-		timeUnits = H.timeUnits,
 		groupPositions = [],
 		lastGroupPosition = -Number.MAX_VALUE,
 		tickPixelIntervalOption = this.options.tickPixelInterval;
@@ -19197,7 +19257,7 @@ H.wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, mi
 
 	// Don't show ticks within a gap in the ordinal axis, where the space between
 	// two points is greater than a portion of the tick pixel interval
-	if (findHigherRanks && H.defined(tickPixelIntervalOption)) { // check for squashed ticks
+	if (findHigherRanks && defined(tickPixelIntervalOption)) { // check for squashed ticks
 
 		var length = groupPositions.length,
 			i = length,
@@ -19260,7 +19320,7 @@ H.wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, mi
 });
 
 // Extend the Axis prototype
-H.extend(Axis.prototype, {
+extend(Axis.prototype, {
 
 	/**
 	 * Calculate the ordinal positions before tick positions are calculated.
@@ -19284,7 +19344,7 @@ H.extend(Axis.prototype, {
 		// apply the ordinal logic
 		if (isOrdinal || hasBreaks) { // #4167 YAxis is never ordinal ?
 
-			H.each(axis.series, function (series, i) {
+			each(axis.series, function (series, i) {
 
 				if (series.visible !== false && (series.takeOrdinalPosition !== false || hasBreaks)) {
 
@@ -19497,12 +19557,12 @@ H.extend(Axis.prototype, {
 			};
 
 			// Add the fake series to hold the full data, then apply processData to it
-			H.each(axis.series, function (series) {
+			each(axis.series, function (series) {
 				fakeSeries = {
 					xAxis: fakeAxis,
 					xData: series.xData,
 					chart: chart,
-					destroyGroupedData: H.noop
+					destroyGroupedData: noop
 				};
 				fakeSeries.options = {
 					dataGrouping : grouping ? {
@@ -19607,7 +19667,7 @@ H.extend(Axis.prototype, {
 });
 
 // Extending the Chart.pan method for ordinal axes
-H.wrap(Chart.prototype, 'pan', function (proceed, e) {
+wrap(Chart.prototype, 'pan', function (proceed, e) {
 	var chart = this,
 		xAxis = chart.xAxis[0],
 		chartX = e.chartX,
@@ -19639,7 +19699,7 @@ H.wrap(Chart.prototype, 'pan', function (proceed, e) {
 
 			// Remove active points for shared tooltip
 			if (hoverPoints) {
-				H.each(hoverPoints, function (point) {
+				each(hoverPoints, function (point) {
 					point.setState();
 				});
 			}
@@ -19682,7 +19742,7 @@ H.wrap(Chart.prototype, 'pan', function (proceed, e) {
 			}
 
 			chart.mouseDownX = chartX; // set new reference for next run
-			H.css(chart.container, { cursor: 'move' });
+			css(chart.container, { cursor: 'move' });
 		}
 
 	} else {
@@ -19702,7 +19762,7 @@ H.wrap(Chart.prototype, 'pan', function (proceed, e) {
  * Extend getSegments by identifying gaps in the ordinal data so that we can draw a gap in the
  * line or area
  */
-H.wrap(Series.prototype, 'getSegments', function (proceed) {
+wrap(Series.prototype, 'getSegments', function (proceed) {
 
 	var series = this,
 		segments,
@@ -19718,7 +19778,7 @@ H.wrap(Series.prototype, 'getSegments', function (proceed) {
 		segments = series.segments;
 
 		// extension for ordinal breaks
-		H.each(segments, function (segment, no) {
+		each(segments, function (segment, no) {
 			var i = segment.length - 1;
 			while (i--) {
 				if (segment[i].x < xAxis.min && segment[i + 1].x > xAxis.max) {
@@ -20655,13 +20715,18 @@ Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
 	return H;
 }(Highcharts));
 (function (H) {
-	var OHLCSeries;
+	var defaultPlotOptions = H.defaultPlotOptions,
+		each = H.each,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		seriesTypes = H.seriesTypes;
+
 /* ****************************************************************************
  * Start OHLC series code													 *
  *****************************************************************************/
 
 // 1 - Set default options
-H.defaultPlotOptions.ohlc = H.merge(H.defaultPlotOptions.column, {
+defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 	lineWidth: 1,
 	tooltip: {
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' + // docs
@@ -20680,7 +20745,7 @@ H.defaultPlotOptions.ohlc = H.merge(H.defaultPlotOptions.column, {
 });
 
 // 2 - Create the OHLCSeries object
-OHLCSeries = H.extendClass(H.seriesTypes.column, {
+seriesTypes.ohlc = extendClass(seriesTypes.column, {
 	type: 'ohlc',
 	pointArrayMap: ['open', 'high', 'low', 'close'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
@@ -20698,19 +20763,19 @@ OHLCSeries = H.extendClass(H.seriesTypes.column, {
 	 * Postprocess mapping between options and SVG attributes
 	 */
 	getAttribs: function () {
-		H.seriesTypes.column.prototype.getAttribs.apply(this, arguments);
+		seriesTypes.column.prototype.getAttribs.apply(this, arguments);
 		var series = this,
 			options = series.options,
 			stateOptions = options.states,
 			upColor = options.upColor || series.color,
-			seriesDownPointAttr = H.merge(series.pointAttr),
+			seriesDownPointAttr = merge(series.pointAttr),
 			upColorProp = series.upColorProp;
 
 		seriesDownPointAttr[''][upColorProp] = upColor;
 		seriesDownPointAttr.hover[upColorProp] = stateOptions.hover.upColor || upColor;
 		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
 
-		H.each(series.points, function (point) {
+		each(series.points, function (point) {
 			if (point.open < point.close && !point.options.color) {
 				point.pointAttr = seriesDownPointAttr;
 			}
@@ -20724,10 +20789,10 @@ OHLCSeries = H.extendClass(H.seriesTypes.column, {
 		var series = this,
 			yAxis = series.yAxis;
 
-		H.seriesTypes.column.prototype.translate.apply(series);
+		seriesTypes.column.prototype.translate.apply(series);
 
 		// do the translation
-		H.each(series.points, function (point) {
+		each(series.points, function (point) {
 			// the graphics
 			if (point.open !== null) {
 				point.plotOpen = yAxis.translate(point.open, 0, 1, 0, 1);
@@ -20756,7 +20821,7 @@ OHLCSeries = H.extendClass(H.seriesTypes.column, {
 			crispX;
 
 
-		H.each(points, function (point) {
+		each(points, function (point) {
 			if (point.plotY !== undefined) {
 
 				graphic = point.graphic;
@@ -20823,10 +20888,7 @@ OHLCSeries = H.extendClass(H.seriesTypes.column, {
 	 * Disable animation
 	 */
 	animate: null
-
-
 });
-H.seriesTypes.ohlc = OHLCSeries;
 /* ****************************************************************************
  * End OHLC series code													   *
  *****************************************************************************/

@@ -1,11 +1,11 @@
 (function (H) {
-    var LineSeries,
-        Series = H.Series;
+	var extendClass = H.extendClass,
+		Series = H.Series,
+		seriesTypes = H.seriesTypes;
 /**
  * LineSeries object
  */
-LineSeries = H.extendClass(Series);
-H.seriesTypes.line = LineSeries;
+seriesTypes.line = extendClass(Series);
 
     return H;
 }(Highcharts));

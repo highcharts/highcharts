@@ -1,11 +1,16 @@
 (function (H) {
-	var OHLCSeries;
+	var defaultPlotOptions = H.defaultPlotOptions,
+		each = H.each,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		seriesTypes = H.seriesTypes;
+
 /* ****************************************************************************
  * Start OHLC series code													 *
  *****************************************************************************/
 
 // 1 - Set default options
-H.defaultPlotOptions.ohlc = H.merge(H.defaultPlotOptions.column, {
+defaultPlotOptions.ohlc = merge(defaultPlotOptions.column, {
 	lineWidth: 1,
 	tooltip: {
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> <b> {series.name}</b><br/>' + // docs
@@ -24,7 +29,7 @@ H.defaultPlotOptions.ohlc = H.merge(H.defaultPlotOptions.column, {
 });
 
 // 2 - Create the OHLCSeries object
-OHLCSeries = H.extendClass(H.seriesTypes.column, {
+seriesTypes.ohlc = extendClass(seriesTypes.column, {
 	type: 'ohlc',
 	pointArrayMap: ['open', 'high', 'low', 'close'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
@@ -42,19 +47,19 @@ OHLCSeries = H.extendClass(H.seriesTypes.column, {
 	 * Postprocess mapping between options and SVG attributes
 	 */
 	getAttribs: function () {
-		H.seriesTypes.column.prototype.getAttribs.apply(this, arguments);
+		seriesTypes.column.prototype.getAttribs.apply(this, arguments);
 		var series = this,
 			options = series.options,
 			stateOptions = options.states,
 			upColor = options.upColor || series.color,
-			seriesDownPointAttr = H.merge(series.pointAttr),
+			seriesDownPointAttr = merge(series.pointAttr),
 			upColorProp = series.upColorProp;
 
 		seriesDownPointAttr[''][upColorProp] = upColor;
 		seriesDownPointAttr.hover[upColorProp] = stateOptions.hover.upColor || upColor;
 		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
 
-		H.each(series.points, function (point) {
+		each(series.points, function (point) {
 			if (point.open < point.close && !point.options.color) {
 				point.pointAttr = seriesDownPointAttr;
 			}
@@ -68,10 +73,10 @@ OHLCSeries = H.extendClass(H.seriesTypes.column, {
 		var series = this,
 			yAxis = series.yAxis;
 
-		H.seriesTypes.column.prototype.translate.apply(series);
+		seriesTypes.column.prototype.translate.apply(series);
 
 		// do the translation
-		H.each(series.points, function (point) {
+		each(series.points, function (point) {
 			// the graphics
 			if (point.open !== null) {
 				point.plotOpen = yAxis.translate(point.open, 0, 1, 0, 1);
@@ -100,7 +105,7 @@ OHLCSeries = H.extendClass(H.seriesTypes.column, {
 			crispX;
 
 
-		H.each(points, function (point) {
+		each(points, function (point) {
 			if (point.plotY !== undefined) {
 
 				graphic = point.graphic;
@@ -167,10 +172,7 @@ OHLCSeries = H.extendClass(H.seriesTypes.column, {
 	 * Disable animation
 	 */
 	animate: null
-
-
 });
-H.seriesTypes.ohlc = OHLCSeries;
 /* ****************************************************************************
  * End OHLC series code													   *
  *****************************************************************************/

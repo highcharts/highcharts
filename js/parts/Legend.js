@@ -1,9 +1,18 @@
 (function (H) {
-	var defined = H.defined,
+	var Legend,
+		
+		addEvent = H.addEvent,
+		css = H.css,
+		discardElement = H.discardElement,
+		defined = H.defined,
 		each = H.each,
-		Legend,
+		extend = H.extend,
+		isFirefox = H.isFirefox,
 		merge = H.merge,
-		pick = H.pick;
+		pick = H.pick,
+		setAnimation = H.setAnimation,
+		stableSort = H.stableSort,
+		wrap = H.wrap;
 /**
  * The overview of the chart's series
  */
@@ -46,7 +55,7 @@ Legend.prototype = {
 		legend.render();
 
 		// move checkboxes
-		H.addEvent(legend.chart, 'endResize', function () { 
+		addEvent(legend.chart, 'endResize', function () { 
 			legend.positionCheckboxes();
 		});
 
@@ -139,7 +148,7 @@ Legend.prototype = {
 		});
 
 		if (checkbox) {
-			H.discardElement(item.checkbox);
+			discardElement(item.checkbox);
 		}
 	},
 
@@ -176,7 +185,7 @@ Legend.prototype = {
 				
 				if (checkbox) {
 					top = (translateY + checkbox.y + (scrollOffset || 0) + 3);
-					H.css(checkbox, {
+					css(checkbox, {
 						left: (alignAttr.translateX + item.checkboxOffset + checkbox.x - 20) + 'px',
 						top: top + 'px',
 						display: top > translateY - 6 && top < translateY + clipHeight - 6 ? '' : 'none'
@@ -448,7 +457,7 @@ Legend.prototype = {
 		allItems = legend.getAllItems();
 
 		// sort by legendIndex
-		H.stableSort(allItems, function (a, b) {
+		stableSort(allItems, function (a, b) {
 			return ((a.options && a.options.legendIndex) || 0) - ((b.options && b.options.legendIndex) || 0);
 		});
 
@@ -525,7 +534,7 @@ Legend.prototype = {
 		}*/
 
 		if (display) {
-			legendGroup.align(H.extend({
+			legendGroup.align(extend({
 				width: legendWidth,
 				height: legendHeight
 			}, options), true, 'spacingBox');
@@ -675,7 +684,7 @@ Legend.prototype = {
 		if (currentPage > 0) {
 			
 			if (animation !== undefined) {
-				H.setAnimation(animation, this.chart);
+				setAnimation(animation, this.chart);
 			}
 			
 			this.nav.attr({
@@ -799,8 +808,8 @@ H.LegendSymbolMixin = {
 // and for #2580, a similar drawing flaw in Firefox 26.
 // TODO: Explore if there's a general cause for this. The problem may be related 
 // to nested group elements, as the legend item texts are within 4 group elements.
-if (/Trident\/7\.0/.test(navigator.userAgent) || H.isFirefox) {
-	H.wrap(Legend.prototype, 'positionItem', function (proceed, item) {
+if (/Trident\/7\.0/.test(navigator.userAgent) || isFirefox) {
+	wrap(Legend.prototype, 'positionItem', function (proceed, item) {
 		var legend = this,
 			runPositionItem = function () { // If chart destroyed in sync, this is undefined (#2030)
 				if (item._legendItemPos) {

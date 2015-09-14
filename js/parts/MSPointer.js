@@ -1,8 +1,14 @@
 (function (H) {
-	var charts = H.charts,
+	var addEvent = H.addEvent,
+		charts = H.charts,
+		css = H.css,
+		extend = H.extend,
 		hoverChartIndex = H.hoverChartIndex,
+		noop = H.noop,
 		Pointer = H.Pointer,
+		removeEvent = H.removeEvent,
 		wrap = H.wrap;
+
 if (window.PointerEvent || window.MSPointerEvent) {
 	
 	// The touches object keeps track of the points being touched at all times
@@ -31,7 +37,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 				p[method]({
 					type: wktype,
 					target: e.currentTarget,
-					preventDefault: H.noop,
+					preventDefault: noop,
 					touches: getWebkitTouches()
 				});				
 			}
@@ -40,7 +46,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	/**
 	 * Extend the Pointer prototype with methods for each event handler and more
 	 */
-	H.extend(Pointer.prototype, {
+	extend(Pointer.prototype, {
 		onContainerPointerDown: function (e) {
 			translateMSPointer(e, 'onContainerTouchStart', 'touchstart', function (e) {
 				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY, target: e.currentTarget };
@@ -74,7 +80,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 		proceed.call(this, chart, options);
 		if (this.hasZoom) { // #4014
-			H.css(chart.container, {
+			css(chart.container, {
 				'-ms-touch-action': 'none',
 				'touch-action': 'none'
 			});
@@ -85,12 +91,12 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
 		proceed.apply(this);
 		if (this.hasZoom || this.followTouchMove) {
-			this.batchMSEvents(H.addEvent);
+			this.batchMSEvents(addEvent);
 		}
 	});
 	// Destroy MS events also
 	wrap(Pointer.prototype, 'destroy', function (proceed) {
-		this.batchMSEvents(H.removeEvent);
+		this.batchMSEvents(removeEvent);
 		proceed.call(this);
 	});
 }

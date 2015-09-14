@@ -12,6 +12,19 @@
 // JSLint options:
 /*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console, each, grep */
 /*jslint ass: true, sloppy: true, forin: true, plusplus: true, nomen: true, vars: true, regexp: true, newcap: true, browser: true, continue: true, white: true */
+/*(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(function () {
+            return factory(root);
+        });
+    } else if (typeof module === "object" && typeof module.exports === "object") {
+        module.exports = factory(root);
+    else {
+        factory(global);
+    }
+}(this, function(window) {
+    // @code
+}));*/
 (function () {
 	var SVG_NS = 'http://www.w3.org/2000/svg',
 		svg = !!document.createElementNS && !!document.createElementNS(SVG_NS, 'svg').createSVGRect,
@@ -806,7 +819,14 @@ H.pathAnim = {
 	return H;
 }(Highcharts));
 (function (H, $) {
-	var HighchartsAdapter;
+	var HighchartsAdapter,
+
+		attr = H.attr,
+		charts = H.charts,
+		extend = H.extend,
+		isIE = H.isIE,
+		isString = H.isString,
+		wrap = H.wrap;
 	/**
 	 * The default HighchartsAdapter for jQuery
 	 */
@@ -872,7 +892,7 @@ H.pathAnim = {
 			});
 
 			// Extend the opacity getter, needed for fading opacity with IE9 and jQuery 1.10+
-			H.wrap($.cssHooks.opacity, 'get', function (proceed, elem, computed) {
+			wrap($.cssHooks.opacity, 'get', function (proceed, elem, computed) {
 				return elem.attr ? (elem.opacity || 0) : proceed.call(this, elem, computed);
 			});
 			
@@ -927,7 +947,7 @@ H.pathAnim = {
 
 				if (this[0]) {
 
-					if (H.isString(args[0])) {
+					if (isString(args[0])) {
 						constr = args[0];
 						args = Array.prototype.slice.call(args, 1); 
 					}
@@ -945,7 +965,7 @@ H.pathAnim = {
 
 					// When called without parameters or with the return argument, get a predefined chart
 					if (options === undefined) {
-						ret = H.charts[H.attr(this[0], 'data-highcharts-chart')];
+						ret = charts[attr(this[0], 'data-highcharts-chart')];
 					}
 				}
 				
@@ -1064,13 +1084,13 @@ H.pathAnim = {
 			//
 			// To avoid problems in IE (see #1010) where we cannot delete the properties and avoid
 			// testing if they are there (warning in chrome) the only option is to test if running IE.
-			if (!H.isIE && eventArguments) {
+			if (!isIE && eventArguments) {
 				delete eventArguments.layerX;
 				delete eventArguments.layerY;
 				delete eventArguments.returnValue;
 			}
 	
-			H.extend(event, eventArguments);
+			extend(event, eventArguments);
 	
 			// Prevent jQuery from triggering the object method that is named the
 			// same as the event. For example, if the event is 'select', jQuery
@@ -1185,6 +1205,13 @@ H.removeEvent = adapter.removeEvent;
     return H;
 }(Highcharts));
 (function (H) {
+	var getTZOffset = H.getTZOffset,
+		isTouchDevice = H.isTouchDevice,
+		merge = H.merge,
+		pick = H.pick,
+		setOptions = H.setOptions,
+		svg = H.svg;
+		
 /* ****************************************************************************
  * Handle the options                                                         *
  *****************************************************************************/
@@ -1465,7 +1492,7 @@ H.defaultOptions = {
 
 	tooltip: {
 		enabled: true,
-		animation: H.svg,
+		animation: svg,
 		//crosshairs: null,
 		backgroundColor: 'rgba(249, 249, 249, .85)',
 		borderWidth: 1,
@@ -1487,7 +1514,7 @@ H.defaultOptions = {
 		shadow: true,
 		//shape: 'callout',
 		//shared: false,
-		snap: H.isTouchDevice ? 25 : 10,
+		snap: isTouchDevice ? 25 : 10,
 		style: {
 			color: '#333333',
 			cursor: 'default',
@@ -1538,8 +1565,6 @@ setTimeMethods();
 function setTimeMethods() {
 	var globalOptions = H.defaultOptions.global,
 		hcD,
-		pick = H.pick,
-		each = H.each,
 		useUTC = globalOptions.useUTC,
 		GET = useUTC ? 'getUTC' : 'get',
 		SET = useUTC ? 'setUTC' : 'set';
@@ -1552,7 +1577,7 @@ function setTimeMethods() {
 		var d;
 		if (useUTC) {
 			d = hcD.UTC.apply(0, arguments);
-			d += H.getTZOffset(d);
+			d += getTZOffset(d);
 		} else {
 			d = new hcD(
 				year,
@@ -1577,10 +1602,10 @@ function setTimeMethods() {
  * Merge the default options with custom options and return the new options structure
  * @param {Object} options The new custom options
  */
-H.setOptions = function (options) {
+setOptions = function (options) {
 	
 	// Copy in the default options
-	H.defaultOptions = H.merge(true, H.defaultOptions, options);
+	H.defaultOptions = merge(true, H.defaultOptions, options);
 	
 	// Apply UTC
 	setTimeMethods();
@@ -8452,8 +8477,13 @@ extend(H.Axis.prototype, AxisPlotLineOrBandExtension);
 	return H;
 }(Highcharts));
 (function (H) {
-	var lin2log = H.lin2log,
-		log2lin = H.log2lin;
+	var Axis = H.Axis,
+		getMagnitude = H.getMagnitude,
+		lin2log = H.lin2log,
+		log2lin = H.log2lin,
+		map = H.map,
+		normalizeTickInterval = H.normalizeTickInterval,
+		pick = H.pick;
 /**
  * Methods defined on the Axis prototype
  */
@@ -8461,7 +8491,7 @@ extend(H.Axis.prototype, AxisPlotLineOrBandExtension);
 /**
  * Set the tick positions of a logarithmic axis
  */
-H.Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
+Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 	var axis = this,
 		options = axis.options,
 		axisLength = axis.len,
@@ -8525,19 +8555,19 @@ H.Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 			tickPixelIntervalOption = options.tickPixelInterval / (minor ? 5 : 1),
 			totalPixelLength = minor ? axisLength / axis.tickPositions.length : axisLength;
 		
-		interval = H.pick(
+		interval = pick(
 			filteredTickIntervalOption,
 			axis._minorAutoInterval,
 			(realMax - realMin) * tickPixelIntervalOption / (totalPixelLength || 1)
 		);
 		
-		interval = H.normalizeTickInterval(
+		interval = normalizeTickInterval(
 			interval, 
 			null, 
-			H.getMagnitude(interval)
+			getMagnitude(interval)
 		);
 		
-		positions = H.map(axis.getLinearTickPositions(
+		positions = map(axis.getLinearTickPositions(
 			interval, 
 			realMin,
 			realMax	
@@ -10037,10 +10067,16 @@ extend(H.Pointer.prototype, {
 	return H;
 }(Highcharts));
 (function (H) {
-	var charts = H.charts,
+	var addEvent = H.addEvent,
+		charts = H.charts,
+		css = H.css,
+		extend = H.extend,
 		hoverChartIndex = H.hoverChartIndex,
+		noop = H.noop,
 		Pointer = H.Pointer,
+		removeEvent = H.removeEvent,
 		wrap = H.wrap;
+
 if (window.PointerEvent || window.MSPointerEvent) {
 	
 	// The touches object keeps track of the points being touched at all times
@@ -10069,7 +10105,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 				p[method]({
 					type: wktype,
 					target: e.currentTarget,
-					preventDefault: H.noop,
+					preventDefault: noop,
 					touches: getWebkitTouches()
 				});				
 			}
@@ -10078,7 +10114,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	/**
 	 * Extend the Pointer prototype with methods for each event handler and more
 	 */
-	H.extend(Pointer.prototype, {
+	extend(Pointer.prototype, {
 		onContainerPointerDown: function (e) {
 			translateMSPointer(e, 'onContainerTouchStart', 'touchstart', function (e) {
 				touches[e.pointerId] = { pageX: e.pageX, pageY: e.pageY, target: e.currentTarget };
@@ -10112,7 +10148,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 		proceed.call(this, chart, options);
 		if (this.hasZoom) { // #4014
-			H.css(chart.container, {
+			css(chart.container, {
 				'-ms-touch-action': 'none',
 				'touch-action': 'none'
 			});
@@ -10123,12 +10159,12 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	wrap(Pointer.prototype, 'setDOMEvents', function (proceed) {
 		proceed.apply(this);
 		if (this.hasZoom || this.followTouchMove) {
-			this.batchMSEvents(H.addEvent);
+			this.batchMSEvents(addEvent);
 		}
 	});
 	// Destroy MS events also
 	wrap(Pointer.prototype, 'destroy', function (proceed) {
-		this.batchMSEvents(H.removeEvent);
+		this.batchMSEvents(removeEvent);
 		proceed.call(this);
 	});
 }
@@ -10136,11 +10172,20 @@ if (window.PointerEvent || window.MSPointerEvent) {
 	return H;
 }(Highcharts));
 (function (H) {
-	var defined = H.defined,
+	var Legend,
+		
+		addEvent = H.addEvent,
+		css = H.css,
+		discardElement = H.discardElement,
+		defined = H.defined,
 		each = H.each,
-		Legend,
+		extend = H.extend,
+		isFirefox = H.isFirefox,
 		merge = H.merge,
-		pick = H.pick;
+		pick = H.pick,
+		setAnimation = H.setAnimation,
+		stableSort = H.stableSort,
+		wrap = H.wrap;
 /**
  * The overview of the chart's series
  */
@@ -10183,7 +10228,7 @@ Legend.prototype = {
 		legend.render();
 
 		// move checkboxes
-		H.addEvent(legend.chart, 'endResize', function () { 
+		addEvent(legend.chart, 'endResize', function () { 
 			legend.positionCheckboxes();
 		});
 
@@ -10276,7 +10321,7 @@ Legend.prototype = {
 		});
 
 		if (checkbox) {
-			H.discardElement(item.checkbox);
+			discardElement(item.checkbox);
 		}
 	},
 
@@ -10313,7 +10358,7 @@ Legend.prototype = {
 				
 				if (checkbox) {
 					top = (translateY + checkbox.y + (scrollOffset || 0) + 3);
-					H.css(checkbox, {
+					css(checkbox, {
 						left: (alignAttr.translateX + item.checkboxOffset + checkbox.x - 20) + 'px',
 						top: top + 'px',
 						display: top > translateY - 6 && top < translateY + clipHeight - 6 ? '' : 'none'
@@ -10585,7 +10630,7 @@ Legend.prototype = {
 		allItems = legend.getAllItems();
 
 		// sort by legendIndex
-		H.stableSort(allItems, function (a, b) {
+		stableSort(allItems, function (a, b) {
 			return ((a.options && a.options.legendIndex) || 0) - ((b.options && b.options.legendIndex) || 0);
 		});
 
@@ -10662,7 +10707,7 @@ Legend.prototype = {
 		}*/
 
 		if (display) {
-			legendGroup.align(H.extend({
+			legendGroup.align(extend({
 				width: legendWidth,
 				height: legendHeight
 			}, options), true, 'spacingBox');
@@ -10812,7 +10857,7 @@ Legend.prototype = {
 		if (currentPage > 0) {
 			
 			if (animation !== undefined) {
-				H.setAnimation(animation, this.chart);
+				setAnimation(animation, this.chart);
 			}
 			
 			this.nav.attr({
@@ -10936,8 +10981,8 @@ H.LegendSymbolMixin = {
 // and for #2580, a similar drawing flaw in Firefox 26.
 // TODO: Explore if there's a general cause for this. The problem may be related 
 // to nested group elements, as the legend item texts are within 4 group elements.
-if (/Trident\/7\.0/.test(navigator.userAgent) || H.isFirefox) {
-	H.wrap(Legend.prototype, 'positionItem', function (proceed, item) {
+if (/Trident\/7\.0/.test(navigator.userAgent) || isFirefox) {
+	wrap(Legend.prototype, 'positionItem', function (proceed, item) {
 		var legend = this,
 			runPositionItem = function () { // If chart destroyed in sync, this is undefined (#2030)
 				if (item._legendItemPos) {
@@ -15107,13 +15152,13 @@ extend(Axis.prototype, {
 	return H;
 }(Highcharts));
 (function (H) {
-    var LineSeries,
-        Series = H.Series;
+	var extendClass = H.extendClass,
+		Series = H.Series,
+		seriesTypes = H.seriesTypes;
 /**
  * LineSeries object
  */
-LineSeries = H.extendClass(Series);
-H.seriesTypes.line = LineSeries;
+seriesTypes.line = extendClass(Series);
 
     return H;
 }(Highcharts));

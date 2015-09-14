@@ -1,5 +1,12 @@
 (function (H, $) {
-	var HighchartsAdapter;
+	var HighchartsAdapter,
+
+		attr = H.attr,
+		charts = H.charts,
+		extend = H.extend,
+		isIE = H.isIE,
+		isString = H.isString,
+		wrap = H.wrap;
 	/**
 	 * The default HighchartsAdapter for jQuery
 	 */
@@ -65,7 +72,7 @@
 			});
 
 			// Extend the opacity getter, needed for fading opacity with IE9 and jQuery 1.10+
-			H.wrap($.cssHooks.opacity, 'get', function (proceed, elem, computed) {
+			wrap($.cssHooks.opacity, 'get', function (proceed, elem, computed) {
 				return elem.attr ? (elem.opacity || 0) : proceed.call(this, elem, computed);
 			});
 			
@@ -120,7 +127,7 @@
 
 				if (this[0]) {
 
-					if (H.isString(args[0])) {
+					if (isString(args[0])) {
 						constr = args[0];
 						args = Array.prototype.slice.call(args, 1); 
 					}
@@ -138,7 +145,7 @@
 
 					// When called without parameters or with the return argument, get a predefined chart
 					if (options === undefined) {
-						ret = H.charts[H.attr(this[0], 'data-highcharts-chart')];
+						ret = charts[attr(this[0], 'data-highcharts-chart')];
 					}
 				}
 				
@@ -257,13 +264,13 @@
 			//
 			// To avoid problems in IE (see #1010) where we cannot delete the properties and avoid
 			// testing if they are there (warning in chrome) the only option is to test if running IE.
-			if (!H.isIE && eventArguments) {
+			if (!isIE && eventArguments) {
 				delete eventArguments.layerX;
 				delete eventArguments.layerY;
 				delete eventArguments.returnValue;
 			}
 	
-			H.extend(event, eventArguments);
+			extend(event, eventArguments);
 	
 			// Prevent jQuery from triggering the object method that is named the
 			// same as the event. For example, if the event is 'select', jQuery

@@ -1,14 +1,23 @@
 (function (H) {
-	var Axis = H.Axis,
+	var addEvent = H.addEvent,
+		Axis = H.Axis,
 		Chart = H.Chart,
-		Series = H.Series;
+		css = H.css,
+		dateFormat = H.dateFormat,
+		defined = H.defined,
+		each = H.each,
+		extend = H.extend,
+		noop = H.noop,
+		Series = H.Series,
+		timeUnits = H.timeUnits,
+		wrap = H.wrap;
 
 /* ****************************************************************************
  * Start ordinal axis logic                                                   *
  *****************************************************************************/
 
 
-H.wrap(Series.prototype, 'init', function (proceed) {
+wrap(Series.prototype, 'init', function (proceed) {
 	var series = this,
 		xAxis;
 
@@ -19,7 +28,7 @@ H.wrap(Series.prototype, 'init', function (proceed) {
 
 	// Destroy the extended ordinal index on updated data
 	if (xAxis && xAxis.options.ordinal) {
-		H.addEvent(series, 'updatedData', function () {
+		addEvent(series, 'updatedData', function () {
 			delete xAxis.ordinalIndex;
 		});
 	}
@@ -32,7 +41,7 @@ H.wrap(Series.prototype, 'init', function (proceed) {
  * positions up in segments, find the tick positions for each segment then concatenize them.
  * This method is used from both data grouping logic and X axis tick position logic.
  */
-H.wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min, max, startOfWeek, positions, closestDistance, findHigherRanks) {
+wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min, max, startOfWeek, positions, closestDistance, findHigherRanks) {
 
 	var start = 0,
 		end = 0,
@@ -42,8 +51,6 @@ H.wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, mi
 		info,
 		posLength,
 		outsideMax,
-		dateFormat = H.dateFormat,
-		timeUnits = H.timeUnits,
 		groupPositions = [],
 		lastGroupPosition = -Number.MAX_VALUE,
 		tickPixelIntervalOption = this.options.tickPixelInterval;
@@ -126,7 +133,7 @@ H.wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, mi
 
 	// Don't show ticks within a gap in the ordinal axis, where the space between
 	// two points is greater than a portion of the tick pixel interval
-	if (findHigherRanks && H.defined(tickPixelIntervalOption)) { // check for squashed ticks
+	if (findHigherRanks && defined(tickPixelIntervalOption)) { // check for squashed ticks
 
 		var length = groupPositions.length,
 			i = length,
@@ -189,7 +196,7 @@ H.wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, mi
 });
 
 // Extend the Axis prototype
-H.extend(Axis.prototype, {
+extend(Axis.prototype, {
 
 	/**
 	 * Calculate the ordinal positions before tick positions are calculated.
@@ -213,7 +220,7 @@ H.extend(Axis.prototype, {
 		// apply the ordinal logic
 		if (isOrdinal || hasBreaks) { // #4167 YAxis is never ordinal ?
 
-			H.each(axis.series, function (series, i) {
+			each(axis.series, function (series, i) {
 
 				if (series.visible !== false && (series.takeOrdinalPosition !== false || hasBreaks)) {
 
@@ -426,12 +433,12 @@ H.extend(Axis.prototype, {
 			};
 
 			// Add the fake series to hold the full data, then apply processData to it
-			H.each(axis.series, function (series) {
+			each(axis.series, function (series) {
 				fakeSeries = {
 					xAxis: fakeAxis,
 					xData: series.xData,
 					chart: chart,
-					destroyGroupedData: H.noop
+					destroyGroupedData: noop
 				};
 				fakeSeries.options = {
 					dataGrouping : grouping ? {
@@ -536,7 +543,7 @@ H.extend(Axis.prototype, {
 });
 
 // Extending the Chart.pan method for ordinal axes
-H.wrap(Chart.prototype, 'pan', function (proceed, e) {
+wrap(Chart.prototype, 'pan', function (proceed, e) {
 	var chart = this,
 		xAxis = chart.xAxis[0],
 		chartX = e.chartX,
@@ -568,7 +575,7 @@ H.wrap(Chart.prototype, 'pan', function (proceed, e) {
 
 			// Remove active points for shared tooltip
 			if (hoverPoints) {
-				H.each(hoverPoints, function (point) {
+				each(hoverPoints, function (point) {
 					point.setState();
 				});
 			}
@@ -611,7 +618,7 @@ H.wrap(Chart.prototype, 'pan', function (proceed, e) {
 			}
 
 			chart.mouseDownX = chartX; // set new reference for next run
-			H.css(chart.container, { cursor: 'move' });
+			css(chart.container, { cursor: 'move' });
 		}
 
 	} else {
@@ -631,7 +638,7 @@ H.wrap(Chart.prototype, 'pan', function (proceed, e) {
  * Extend getSegments by identifying gaps in the ordinal data so that we can draw a gap in the
  * line or area
  */
-H.wrap(Series.prototype, 'getSegments', function (proceed) {
+wrap(Series.prototype, 'getSegments', function (proceed) {
 
 	var series = this,
 		segments,
@@ -647,7 +654,7 @@ H.wrap(Series.prototype, 'getSegments', function (proceed) {
 		segments = series.segments;
 
 		// extension for ordinal breaks
-		H.each(segments, function (segment, no) {
+		each(segments, function (segment, no) {
 			var i = segment.length - 1;
 			while (i--) {
 				if (segment[i].x < xAxis.min && segment[i + 1].x > xAxis.max) {

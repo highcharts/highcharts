@@ -1,6 +1,11 @@
 (function (H) {
-	var lin2log = H.lin2log,
-		log2lin = H.log2lin;
+	var Axis = H.Axis,
+		getMagnitude = H.getMagnitude,
+		lin2log = H.lin2log,
+		log2lin = H.log2lin,
+		map = H.map,
+		normalizeTickInterval = H.normalizeTickInterval,
+		pick = H.pick;
 /**
  * Methods defined on the Axis prototype
  */
@@ -8,7 +13,7 @@
 /**
  * Set the tick positions of a logarithmic axis
  */
-H.Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
+Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 	var axis = this,
 		options = axis.options,
 		axisLength = axis.len,
@@ -72,19 +77,19 @@ H.Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 			tickPixelIntervalOption = options.tickPixelInterval / (minor ? 5 : 1),
 			totalPixelLength = minor ? axisLength / axis.tickPositions.length : axisLength;
 		
-		interval = H.pick(
+		interval = pick(
 			filteredTickIntervalOption,
 			axis._minorAutoInterval,
 			(realMax - realMin) * tickPixelIntervalOption / (totalPixelLength || 1)
 		);
 		
-		interval = H.normalizeTickInterval(
+		interval = normalizeTickInterval(
 			interval, 
 			null, 
-			H.getMagnitude(interval)
+			getMagnitude(interval)
 		);
 		
-		positions = H.map(axis.getLinearTickPositions(
+		positions = map(axis.getLinearTickPositions(
 			interval, 
 			realMin,
 			realMax	
