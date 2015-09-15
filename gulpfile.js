@@ -10,6 +10,7 @@ var eslint = require('gulp-eslint'),
         }
     },
     paths = {
+        "buildsDir": "./js/builds",
         "distributions": ['./js/highcharts-3d.src.js', './js/highcharts-more.src.js', './js/highcharts.src.js', './js/highmaps.src.js', './js/highstock.src.js'],
         "modules": ['./js/modules/*.js'],
         "parts": ['./js/parts/*.js'],
@@ -42,25 +43,30 @@ var eslint = require('gulp-eslint'),
             fs.writeFile(path, wrap, 'utf8');
         });
 
+    },
+    bundleHighcharts = function (file) {
+        var requirejs = require('requirejs'),
+            fileName = file.slice(0, -3), // Remove file extension (.js) from name
+            config = {
+                baseUrl: './js/',
+                name: 'builds/' + fileName,
+                optimize: 'none',
+                out: './js/' + file,
+                onModuleBundleComplete: function (info) {
+                    optimizeHighcharts(fs, info.path);
+                }
+            };
+
+        requirejs.optimize(config, function (buildResponse) {
+            console.log("Successfully build " + fileName);
+        }, function(err) {
+            console.log(err.originalError);
+        });
     };
 
 gulp.task('build', function () {
-    var requirejs = require('requirejs'),
-        filename = 'highcharts-build',
-        config = {
-            baseUrl: './js/',
-            name: 'builds/' + filename,
-            optimize: 'none',
-            out: './js/' + filename + '.js',
-            onModuleBundleComplete: function (info) {
-                optimizeHighcharts(fs, info.path);
-            }
-        };
-    requirejs.optimize(config, function (buildResponse) {
-        console.log("Successfully build");
-    }, function(err) {
-        console.log(err.originalError);
-    });
+    var buildFiles = fs.readdirSync(paths.buildsDir);
+    buildFiles.forEach(bundleHighcharts);
 });
 
 function doLint(paths) {
