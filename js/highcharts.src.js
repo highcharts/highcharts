@@ -16804,6 +16804,9 @@ var PiePoint = extendClass(Point, {
 			translateY: 0
 		};
 
+		if (point.graphic.hasAnim) {
+			translation = extend(translation, point.shapeArgs); // #1693
+		} 
 		point.graphic.animate(translation);
 		
 		if (point.shadowGroup) {
