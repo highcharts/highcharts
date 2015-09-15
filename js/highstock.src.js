@@ -2976,6 +2976,7 @@ SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter =
 	this.doTransform = true;
 };
 
+
 // WebKit and Batik have problems with a stroke-width of zero, so in this case we remove the 
 // stroke attribute altogether. #1270, #1369, #3065, #3072.
 SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter = function (value, key, element) {
@@ -15034,7 +15035,7 @@ H.Series.prototype = {
 				})
 				.add(parent);
 
-			group.addClass('highcharts-series-' + this.index);
+			group.addClass('highcharts-series-' + this.index + ' highcharts-' + this.type + '-series');
 		}
 		
 		// Place it on first and subsequent (redraw) calls
@@ -16682,8 +16683,10 @@ seriesTypes.areaspline = extendClass(seriesTypes.spline, {
  * Set the default options for column
  */
 defaultPlotOptions.column = merge(defaultSeriesOptions, {
+	
 	borderColor: '#FFFFFF',
 	//borderWidth: 1,
+	
 	borderRadius: 0,
 	//colorByPoint: undefined,
 	groupPadding: 0.2,
@@ -16694,6 +16697,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	minPointLength: 0,
 	cropThreshold: 50, // when there are more points, they will not animate out of the chart on xAxis.setExtremes
 	pointRange: null, // null means auto, meaning 1 in a categorized axis and least distance between points if not categories
+	
 	states: {
 		hover: {
 			brightness: 0.1,
@@ -16706,6 +16710,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 			shadow: false
 		}
 	},
+	
 	dataLabels: {
 		align: null, // auto
 		verticalAlign: null, // auto
@@ -16726,8 +16731,10 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 seriesTypes.column = extendClass(Series, {
 	type: 'column',
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
+		
 		stroke: 'borderColor',
 		fill: 'color',
+		
 		r: 'borderRadius'
 	},
 	cropShoulder: 0,

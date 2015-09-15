@@ -16,8 +16,10 @@
  * Set the default options for column
  */
 defaultPlotOptions.column = merge(defaultSeriesOptions, {
+	/*= if (build.classic) { =*/
 	borderColor: '#FFFFFF',
 	//borderWidth: 1,
+	/*= } =*/
 	borderRadius: 0,
 	//colorByPoint: undefined,
 	groupPadding: 0.2,
@@ -28,6 +30,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	minPointLength: 0,
 	cropThreshold: 50, // when there are more points, they will not animate out of the chart on xAxis.setExtremes
 	pointRange: null, // null means auto, meaning 1 in a categorized axis and least distance between points if not categories
+	/*= if (build.classic) { =*/
 	states: {
 		hover: {
 			brightness: 0.1,
@@ -40,6 +43,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 			shadow: false
 		}
 	},
+	/*= } =*/
 	dataLabels: {
 		align: null, // auto
 		verticalAlign: null, // auto
@@ -60,8 +64,10 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 seriesTypes.column = extendClass(Series, {
 	type: 'column',
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
+		/*= if (build.classic) { =*/
 		stroke: 'borderColor',
 		fill: 'color',
+		/*= } =*/
 		r: 'borderRadius'
 	},
 	cropShoulder: 0,

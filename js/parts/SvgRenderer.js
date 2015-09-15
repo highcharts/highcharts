@@ -1208,6 +1208,7 @@ SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter =
 	this.doTransform = true;
 };
 
+/*= if (build.classic) { =*/
 // WebKit and Batik have problems with a stroke-width of zero, so in this case we remove the 
 // stroke attribute altogether. #1270, #1369, #3065, #3072.
 SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter = function (value, key, element) {
@@ -1223,7 +1224,7 @@ SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter =
 		this.hasStroke = false;
 	}
 };
-
+/*= } =*/
 
 /**
  * The default SVG renderer

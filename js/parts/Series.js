@@ -1616,7 +1616,7 @@ H.Series.prototype = {
 				})
 				.add(parent);
 
-			group.addClass('highcharts-series-' + this.index);
+			group.addClass('highcharts-series-' + this.index + ' highcharts-' + this.type + '-series');
 		}
 		
 		// Place it on first and subsequent (redraw) calls

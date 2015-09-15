@@ -41,6 +41,14 @@
     stroke-width: 1;
     stroke: #ffffff;
 }
+.highcharts-column-series rect {
+    stroke: #ffffff;
+    transition: fill-opacity 250ms;
+}
+.highcharts-column-series rect:hover {
+    fill-opacity: 0.75;
+    transition: fill-opacity 50ms;
+}
 
 
 /* Default colors */
@@ -50,7 +58,8 @@
 .highcharts-series-0 .highcharts-area, 
 .highcharts-markers.highcharts-series-0 path,
 .highcharts-legend .highcharts-series-0 path,
-.highcharts-legend .highcharts-series-0 rect {
+.highcharts-legend .highcharts-series-0 rect,
+.highcharts-series-0.highcharts-column-series rect {
     fill: #7cb5ec;
 }
 .highcharts-series-1 .highcharts-graph {
@@ -59,7 +68,8 @@
 .highcharts-series-1 .highcharts-area,
 .highcharts-markers.highcharts-series-1 path,
 .highcharts-legend .highcharts-series-1 path,
-.highcharts-legend .highcharts-series-1 rect {
+.highcharts-legend .highcharts-series-1 rect,
+.highcharts-series-1.highcharts-column-series rect {
     fill: #434348;
 }
 
