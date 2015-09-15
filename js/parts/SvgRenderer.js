@@ -1,22 +1,32 @@
 (function (H) {
-	var addEvent = H.addEvent,
+	var SVGElement,
+		SVGRenderer,
+
+		addEvent = H.addEvent,
 		attr = H.attr,
 		Color = H.Color,
 		css = H.css,
+		createElement = H.createElement,
 		defined = H.defined,
 		deg2rad = H.deg2rad,
+		destroyObjectProperties = H.destroyObjectProperties,
 		each = H.each,
 		extend = H.extend,
+		erase = H.erase,
+		hasTouch = H.hasTouch,
+		isArray = H.isArray,
 		isFirefox = H.isFirefox,
 		isIE = H.isIE,
 		isObject = H.isObject,
+		isString = H.isString,
 		isWebKit = H.isWebKit,
 		merge = H.merge,
 		pick = H.pick,
 		pInt = H.pInt,
+		removeEvent = H.removeEvent,
 		svg = H.svg,
-		SVGElement,
-		SVGRenderer;
+		SVG_NS = H.SVG_NS,
+		useCanVG = H.useCanVG;
 
 /**
  * A wrapper object for SVG elements
@@ -26,7 +36,7 @@ SVGElement.prototype = {
 	
 	// Default base for animation
 	opacity: 1,
-	SVG_NS: H.SVG_NS,
+	SVG_NS: SVG_NS,
 	// For labels, these CSS properties are applied to the <text> node directly
 	textProps: ['fontSize', 'fontWeight', 'fontFamily', 'fontStyle', 'color', 
 		'lineHeight', 'width', 'textDecoration', 'textOverflow', 'textShadow'],
@@ -39,7 +49,7 @@ SVGElement.prototype = {
 	init: function (renderer, nodeName) {
 		var wrapper = this;
 		wrapper.element = nodeName === 'span' ?
-			H.createElement(nodeName) :
+			createElement(nodeName) :
 			document.createElementNS(wrapper.SVG_NS, nodeName);
 		wrapper.renderer = renderer;
 	},
@@ -98,7 +108,7 @@ SVGElement.prototype = {
 			radialReference = elem.radialReference;
 
 			// Keep < 2.2 kompatibility
-			if (H.isArray(gradAttr)) {
+			if (isArray(gradAttr)) {
 				color[gradName] = gradAttr = {
 					x1: gradAttr[0],
 					y1: gradAttr[1],
@@ -479,7 +489,7 @@ SVGElement.prototype = {
 			// store object
 			elemWrapper.styles = styles;
 
-			if (textWidth && (H.useCanVG || (!svg && elemWrapper.renderer.forExport))) {
+			if (textWidth && (useCanVG || (!svg && elemWrapper.renderer.forExport))) {
 				delete styles.width;
 			}
 
@@ -516,7 +526,7 @@ SVGElement.prototype = {
 			element = svgElement.element;
 		
 		// touch
-		if (H.hasTouch && eventType === 'click') {
+		if (hasTouch && eventType === 'click') {
 			element.ontouchstart = function (e) {			
 				svgElement.touchEventFired = Date.now();				
 				e.preventDefault();
@@ -660,9 +670,9 @@ SVGElement.prototype = {
 		if (alignOptions) {
 			this.alignOptions = alignOptions;
 			this.alignByTranslate = alignByTranslate;
-			if (!box || H.isString(box)) { // boxes other than renderer handle this internally
+			if (!box || isString(box)) { // boxes other than renderer handle this internally
 				this.alignTo = alignTo = box || 'renderer';
-				H.erase(alignedObjects, this); // prevent duplicates, like legendGroup after resize
+				erase(alignedObjects, this); // prevent duplicates, like legendGroup after resize
 				alignedObjects.push(this);
 				box = null; // reassign it below
 			}
@@ -958,7 +968,7 @@ SVGElement.prototype = {
 
 		// remove from alignObjects
 		if (wrapper.alignTo) {
-			H.erase(wrapper.renderer.alignedObjects, wrapper);
+			erase(wrapper.renderer.alignedObjects, wrapper);
 		}
 
 		for (key in wrapper) {
@@ -1215,7 +1225,7 @@ SVGRenderer = H.SVGRenderer = function () {
 };
 SVGRenderer.prototype = {
 	Element: SVGElement,
-	SVG_NS: H.SVG_NS,
+	SVG_NS: SVG_NS,
 	/**
 	 * Initialize the SVGRenderer
 	 * @param {Object} container
@@ -1321,7 +1331,7 @@ SVGRenderer.prototype = {
 		renderer.boxWrapper = renderer.boxWrapper.destroy();
 
 		// Call destroy on all gradient elements
-		H.destroyObjectProperties(renderer.gradients || {});
+		destroyObjectProperties(renderer.gradients || {});
 		renderer.gradients = null;
 
 		// Defs are null in VMLRenderer
@@ -1334,7 +1344,7 @@ SVGRenderer.prototype = {
 		// We need to check that there is a handler, otherwise all functions that are registered for event 'resize' are removed
 		// See issue #982
 		if (renderer.subPixelFix) {
-			H.removeEvent(window, 'resize', renderer.subPixelFix);
+			removeEvent(window, 'resize', renderer.subPixelFix);
 		}
 
 		renderer.alignedObjects = null;
@@ -1795,7 +1805,7 @@ SVGRenderer.prototype = {
 		var attr = {
 			fill: 'none'
 		};
-		if (H.isArray(path)) {
+		if (isArray(path)) {
 			attr.d = path;
 		} else if (isObject(path)) { // attributes
 			extend(attr, path);
@@ -2060,7 +2070,7 @@ SVGRenderer.prototype = {
 
 				// Create a dummy JavaScript image to get the width and height. Due to a bug in IE < 8,
 				// the created element must be assigned to a variable in order to load (#292).
-				imageElement = H.createElement('img', {
+				imageElement = createElement('img', {
 					onload: function () {
 
 						// Special case for SVGs on IE11, the width is not accessible until the image is 
@@ -2275,7 +2285,7 @@ SVGRenderer.prototype = {
 
 		// declare variables
 		var renderer = this,
-			fakeSVG = H.useCanVG || (!svg && renderer.forExport),
+			fakeSVG = useCanVG || (!svg && renderer.forExport),
 			wrapper,
 			attr = {};
 
@@ -2630,8 +2640,7 @@ SVGRenderer.prototype = {
 			 * Destroy and release memory.
 			 */
 			destroy: function () {
-				var removeEvent = H.removeEvent;
-
+				
 				// Added by button implementation
 				removeEvent(wrapper.element, 'mouseenter');
 				removeEvent(wrapper.element, 'mouseleave');

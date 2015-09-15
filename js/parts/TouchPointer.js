@@ -2,9 +2,13 @@
 	var charts = H.charts,
 		each = H.each,
 		extend = H.extend,
-		pick = H.pick;
+		map = H.map,
+		noop = H.noop,
+		pick = H.pick,
+		Pointer = H.Pointer;
+
 /* Support for touch devices */
-extend(H.Pointer.prototype, {
+extend(Pointer.prototype, {
 
 	/**
 	 * Run translation operations
@@ -126,7 +130,7 @@ extend(H.Pointer.prototype, {
 		}
 		
 		// Normalize each touch
-		H.map(touches, function (e) {
+		map(touches, function (e) {
 			return self.normalize(e);
 		});
 		
@@ -162,7 +166,7 @@ extend(H.Pointer.prototype, {
 			// Set the marker
 			if (!selectionMarker) {
 				self.selectionMarker = selectionMarker = extend({
-					destroy: H.noop,
+					destroy: noop,
 					touch: true
 				}, chart.plotBox);
 			}

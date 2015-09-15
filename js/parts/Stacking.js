@@ -2,6 +2,9 @@
 	var Axis = H.Axis,
 		Chart = H.Chart,
 		correctFloat = H.correctFloat,
+		destroyObjectProperties = H.destroyObjectProperties,
+		each = H.each,
+		format = H.format,
 		pick = H.pick,
 		Series = H.Series;
 /**
@@ -46,7 +49,7 @@ function StackItem(axis, options, isNegative, x, stackOption) {
 
 StackItem.prototype = {
 	destroy: function () {
-		H.destroyObjectProperties(this, this.axis);
+		destroyObjectProperties(this, this.axis);
 	},
 
 	/**
@@ -56,7 +59,7 @@ StackItem.prototype = {
 		var options = this.options,
 			formatOption = options.format,
 			str = formatOption ?
-				H.format(formatOption, this) : 
+				format(formatOption, this) : 
 				options.formatter.call(this);  // format the text in the label
 
 		// Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
@@ -117,13 +120,13 @@ Chart.prototype.getStacks = function () {
 	var chart = this;
 
 	// reset stacks for each yAxis
-	H.each(chart.yAxis, function (axis) {
+	each(chart.yAxis, function (axis) {
 		if (axis.stacks && axis.hasVisibleSeries) {
 			axis.oldStacks = axis.stacks;
 		}
 	});
 
-	H.each(chart.series, function (series) {
+	each(chart.series, function (series) {
 		if (series.options.stacking && (series.visible === true || chart.options.chart.ignoreHiddenSeries === false)) {
 			series.stackKey = series.type + pick(series.options.stack, '');
 		}
@@ -346,7 +349,7 @@ Series.prototype.setPercentStacks = function () {
 		stacks = series.yAxis.stacks,
 		processedXData = series.processedXData;
 
-	H.each([stackKey, '-' + stackKey], function (key) {
+	each([stackKey, '-' + stackKey], function (key) {
 		var i = processedXData.length,
 			x,
 			stack,

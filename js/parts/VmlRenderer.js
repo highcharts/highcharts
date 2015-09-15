@@ -1,7 +1,29 @@
 (function (H) {
 	var VMLRenderer,
 		VMLRendererExtension,
-		VMLElement;
+		VMLElement,
+
+		Color = H.Color,
+		createElement = H.createElement,
+		css = H.css,
+		defaultOptions = H.defaultOptions,
+		defined = H.defined,
+		deg2rad = H.deg2rad,
+		discardElement = H.discardElement,
+		erase = H.erase,
+		extend = H.extend,
+		extendClass = H.extendClass,
+		isArray = H.isArray,
+		isNumber = H.isNumber,
+		isObject = H.isObject,
+		merge = H.merge,
+		noop = H.noop,
+		pick = H.pick,
+		pInt = H.pInt,
+		svg = H.svg,
+		SVGElement = H.SVGElement,
+		SVGRenderer = H.SVGRenderer,
+		useCanVG = H.useCanVG;
 
 /* ****************************************************************************
  *                                                                            *
@@ -15,7 +37,7 @@
 /**
  * @constructor
  */
-if (!Highcharts.svg && !Highcharts.useCanVG) {
+if (!svg && !useCanVG) {
 
 /**
  * The VML element wrapper.
@@ -49,7 +71,7 @@ VMLElement = {
 			markup = isDiv || nodeName === 'span' || nodeName === 'img' ?
 				markup.join('')
 				: renderer.prepVML(markup);
-			wrapper.element = Highcharts.createElement(markup);
+			wrapper.element = createElement(markup);
 		}
 
 		wrapper.renderer = renderer;
@@ -97,7 +119,7 @@ VMLElement = {
 	/**
 	 * VML always uses htmlUpdateTransform
 	 */
-	updateTransform: Highcharts.SVGElement.prototype.htmlUpdateTransform,
+	updateTransform: SVGElement.prototype.htmlUpdateTransform,
 
 	/**
 	 * Set the rotation of a span with oldIE's filter
@@ -110,11 +132,10 @@ VMLElement = {
 		// Test case: http://jsfiddle.net/highcharts/Ybt44/
 
 		var rotation = this.rotation,
-			deg2rad = Highcharts.deg2rad,
 			costheta = Math.cos(rotation * deg2rad),
 			sintheta = Math.sin(rotation * deg2rad);
 					
-		Highcharts.css(this.element, {
+		css(this.element, {
 			filter: rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta,
 				', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
 				', sizingMethod=\'auto expand\')'].join('') : 'none'
@@ -126,10 +147,9 @@ VMLElement = {
 	 */
 	getSpanCorrection: function (width, baseline, alignCorrection, rotation, align) {
 
-		var deg2rad = Highcharts.deg2rad,
-			costheta = rotation ? Math.cos(rotation * deg2rad) : 1,
+		var costheta = rotation ? Math.cos(rotation * deg2rad) : 1,
 			sintheta = rotation ? Math.sin(rotation * deg2rad) : 0,
-			height = Highcharts.pick(this.elemHeight, this.element.offsetHeight),
+			height = pick(this.elemHeight, this.element.offsetHeight),
 			quad,
 			nonLeft = align && align !== 'left';
 
@@ -147,7 +167,7 @@ VMLElement = {
 			if (rotation) {
 				this.yCorr -= height * alignCorrection * (sintheta < 0 ? -1 : 1);
 			}
-			Highcharts.css(this.element, {
+			css(this.element, {
 				textAlign: align
 			});
 		}
@@ -167,7 +187,7 @@ VMLElement = {
 			// Multiply by 10 to allow subpixel precision.
 			// Substracting half a pixel seems to make the coordinates
 			// align with SVG, but this hasn't been tested thoroughly
-			if (Highcharts.isNumber(value[i])) {
+			if (isNumber(value[i])) {
 				path[i] = Math.round(value[i] * 10) - 5;
 			} else if (value[i] === 'Z') { // close the path
 				path[i] = 'x';
@@ -211,7 +231,6 @@ VMLElement = {
 	 */
 	clip: function (clipRect) {
 		var wrapper = this,
-			erase = Highcharts.erase,
 			clipMembers,
 			cssRet;
 
@@ -239,7 +258,7 @@ VMLElement = {
 	 * Set styles for the element
 	 * @param {Object} styles
 	 */
-	css: Highcharts.SVGElement.prototype.htmlCss,
+	css: SVGElement.prototype.htmlCss,
 
 	/**
 	 * Removes a child either by removeChild or move to garbageBin.
@@ -249,7 +268,7 @@ VMLElement = {
 		// discardElement will detach the node from its parent before attaching it
 		// to the garbage bin. Therefore it is important that the node is attached and have parent.
 		if (element.parentNode) {
-			Highcharts.discardElement(element);
+			discardElement(element);
 		}
 	},
 
@@ -261,7 +280,7 @@ VMLElement = {
 			this.destroyClip();
 		}
 
-		return Highcharts.SVGElement.prototype.destroy.apply(this);
+		return SVGElement.prototype.destroy.apply(this);
 	},
 
 	/**
@@ -290,7 +309,7 @@ VMLElement = {
 		len = path.length;
 
 		if (len === 9 || len === 11) {
-			path[len - 4] = path[len - 2] = Highcharts.pInt(path[len - 2]) - 10 * length;
+			path[len - 4] = path[len - 2] = pInt(path[len - 2]) - 10 * length;
 		}
 		return path.join(' ');
 	},
@@ -304,9 +323,6 @@ VMLElement = {
 			i,
 			element = this.element,
 			renderer = this.renderer,
-			createElement = Highcharts.createElement,
-			pInt = Highcharts.pInt,
-			pick = Highcharts.pick,
 			shadow,
 			elemStyle = element.style,
 			markup,
@@ -369,7 +385,7 @@ VMLElement = {
 		}
 		return this;
 	},
-	updateShadows: Highcharts.noop, // Used in SVG only
+	updateShadows: noop, // Used in SVG only
 
 	setAttr: function (key, value) {
 		if (this.docMode8) { // IE8 setAttribute bug
@@ -384,7 +400,7 @@ VMLElement = {
 	},
 	dashstyleSetter: function (value, key, element) {
 		var strokeElem = element.getElementsByTagName('stroke')[0] ||
-			Highcharts.createElement(this.renderer.prepVML(['<stroke/>']), null, null, element);
+			createElement(this.renderer.prepVML(['<stroke/>']), null, null, element);
 		strokeElem[key] = value || 'solid';
 		this[key] = value; /* because changing stroke-width will change the dash length
 			and cause an epileptic effect */
@@ -415,10 +431,9 @@ VMLElement = {
 			this.setAttr('fillcolor', this.renderer.color(value, element, key, this));
 		}
 	},
-	opacitySetter: Highcharts.noop, // Don't bother - animation is too slow and filters introduce artifacts
+	opacitySetter: noop, // Don't bother - animation is too slow and filters introduce artifacts
 	rotationSetter: function (value, key, element) {
-		var style = element.style,
-			deg2rad = Highcharts.deg2rad;
+		var style = element.style;
 		this[key] = style[key] = value; // style is for #1873
 
 		// Correction for the 1x1 size of the shape container. Used in gauge needles.
@@ -431,7 +446,7 @@ VMLElement = {
 	'stroke-widthSetter': function (value, key, element) {
 		element.stroked = !!value; // VML "stroked" attribute
 		this[key] = value; // used in getter, issue #113
-		if (Highcharts.isNumber(value)) {
+		if (isNumber(value)) {
 			value += 'px';
 		}
 		this.setAttr('strokeweight', value);
@@ -448,7 +463,7 @@ VMLElement = {
 		
 		// Let the shadow follow the main element
 		if (this.shadows) {
-			Highcharts.each(this.shadows, function (shadow) {
+			each(this.shadows, function (shadow) {
 				shadow.style[key] = value;
 			});
 		}
@@ -492,7 +507,7 @@ VMLElement = {
 		element.style[key] = value;
 	}
 };
-Highcharts.VMLElement = VMLElement = Highcharts.extendClass(Highcharts.SVGElement, VMLElement);
+H.VMLElement = VMLElement = extendClass(SVGElement, VMLElement);
 
 // Some shared setters
 VMLElement.prototype.ySetter =
@@ -525,7 +540,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 		renderer.alignedObjects = [];
 
 		boxWrapper = renderer.createElement('div')
-			.css(Highcharts.extend(this.getStyle(style), { position: 'relative'}));
+			.css(extend(this.getStyle(style), { position: 'relative'}));
 		box = boxWrapper.element;
 		container.appendChild(boxWrapper.element);
 
@@ -580,10 +595,10 @@ VMLRendererExtension = { // inherit SVGRenderer
 
 		// create a dummy element
 		var clipRect = this.createElement(),
-			isObj = Highcharts.isObject(x);
+			isObj = isObject(x);
 
 		// mimic a rectangle with its style object for automatic updating in attr
-		return Highcharts.extend(clipRect, {
+		return extend(clipRect, {
 			members: [],
 			count: 0,
 			left: (isObj ? x.x : x) + 1,
@@ -610,7 +625,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 
 				// issue 74 workaround
 				if (!inverted && wrapper.docMode8 && nodeName === 'DIV') {
-					Highcharts.extend(ret, {
+					extend(ret, {
 						width: right + 'px',
 						height: bottom + 'px'
 					});
@@ -620,7 +635,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 
 			// used in attr and animation to update the clipping of all members
 			updateClipping: function () {
-				Highcharts.each(clipRect.members, function (member) {
+				each(clipRect.members, function (member) {
 					if (member.element) { // Deleted series, like in stock/members/series-remove demo. Should be removed from members, but this will do.
 						member.css(clipRect.getCSS(member));
 					}
@@ -676,7 +691,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 					// are reversed.
 					markup = ['<fill colors="' + colors.join(',') + '" opacity="', opacity2, '" o:opacity2="', opacity1,
 						'" type="', fillType, '" ', fillAttr, 'focus="100%" method="any" />'];
-					Highcharts.createElement(renderer.prepVML(markup), null, null, elem);
+					createElement(renderer.prepVML(markup), null, null, elem);
 				};
 
 			// Extend from 0 to 1
@@ -696,9 +711,9 @@ VMLRendererExtension = { // inherit SVGRenderer
 			}
 
 			// Compute the stops
-			Highcharts.each(stops, function (stop, i) {
+			each(stops, function (stop, i) {
 				if (regexRgba.test(stop[1])) {
-					colorObject = Highcharts.Color(stop[1]);
+					colorObject = Color(stop[1]);
 					stopColor = colorObject.get('rgb');
 					stopOpacity = colorObject.get('a');
 				} else {
@@ -753,7 +768,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 								sizex *= radialReference[2] / bBox.width;
 								sizey *= radialReference[2] / bBox.height;
 							}
-							fillAttr = 'src="' + Highcharts.defaultOptions.global.VMLRadialGradientURL + '" ' +
+							fillAttr = 'src="' + defaultOptions.global.VMLRadialGradientURL + '" ' +
 								'size="' + sizex + ',' + sizey + '" ' +
 								'origin="0.5,0.5" ' +
 								'position="' + cx + ',' + cy + '" ' +
@@ -784,10 +799,10 @@ VMLRendererExtension = { // inherit SVGRenderer
 		// to hold the opacity component
 		} else if (regexRgba.test(color) && elem.tagName !== 'IMG') {
 
-			colorObject = Highcharts.Color(color);
+			colorObject = Color(color);
 
 			markup = ['<', prop, ' opacity="', colorObject.get('a'), '"/>'];
-			Highcharts.createElement(this.prepVML(markup), null, null, elem);
+			createElement(this.prepVML(markup), null, null, elem);
 
 			ret = colorObject.get('rgb');
 
@@ -835,7 +850,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 	 * @param {Number} x
 	 * @param {Number} y
 	 */
-	text: Highcharts.SVGRenderer.prototype.html,
+	text: SVGRenderer.prototype.html,
 
 	/**
 	 * Create and return a path element
@@ -846,10 +861,10 @@ VMLRendererExtension = { // inherit SVGRenderer
 			// subpixel precision down to 0.1 (width and height = 1px)
 			coordsize: '10 10'
 		};
-		if (Highcharts.isArray(path)) {
+		if (isArray(path)) {
 			attr.d = path;
-		} else if (Highcharts.isObject(path)) { // attributes
-			Highcharts.extend(attr, path);
+		} else if (isObject(path)) { // attributes
+			extend(attr, path);
 		}
 		// create the shape
 		return this.createElement('shape').attr(attr);
@@ -864,7 +879,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 	 */
 	circle: function (x, y, r) {
 		var circle = this.symbol('circle');
-		if (Highcharts.isObject(x)) {
+		if (isObject(x)) {
 			r = x.r;
 			y = x.y;
 			x = x.x;
@@ -923,7 +938,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 	 * For rectangles, VML uses a shape for rect to overcome bugs and rotation problems
 	 */
 	createElement: function (nodeName) {
-		return nodeName === 'rect' ? this.symbol(nodeName) : Highcharts.SVGRenderer.prototype.createElement.call(this, nodeName);	
+		return nodeName === 'rect' ? this.symbol(nodeName) : SVGRenderer.prototype.createElement.call(this, nodeName);	
 	},
 
 	/**
@@ -933,11 +948,10 @@ VMLRendererExtension = { // inherit SVGRenderer
 	 */
 	invertChild: function (element, parentNode) {
 		var ren = this,
-			pInt = Highcharts.pInt,
 			parentStyle = parentNode.style,
 			imgStyle = element.tagName === 'IMG' && element.style; // #1111
 
-		Highcharts.css(element, {
+		css(element, {
 			flip: 'x',
 			left: pInt(parentStyle.width) - (imgStyle ? pInt(imgStyle.top) : 1),
 			top: pInt(parentStyle.height) - (imgStyle ? pInt(imgStyle.left) : 1),
@@ -945,7 +959,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 		});
 
 		// Recursively invert child elements, needed for nested composite shapes like box plots and error bars. #1680, #1806.
-		Highcharts.each(element.childNodes, function (child) {
+		each(element.childNodes, function (child) {
 			ren.invertChild(child, element);
 		});
 	},
@@ -1044,32 +1058,32 @@ VMLRendererExtension = { // inherit SVGRenderer
 		 * use the simpler square path, else use the callout path without the arrow.
 		 */
 		rect: function (x, y, w, h, options) {
-			return Highcharts.SVGRenderer.prototype.symbols[
-				!Highcharts.defined(options) || !options.r ? 'square' : 'callout'
+			return SVGRenderer.prototype.symbols[
+				!defined(options) || !options.r ? 'square' : 'callout'
 			].call(0, x, y, w, h, options);
 		}
 	}
 };
-Highcharts.VMLRenderer = VMLRenderer = function () {
+H.VMLRenderer = VMLRenderer = function () {
 	this.init.apply(this, arguments);
 };
-VMLRenderer.prototype = Highcharts.merge(Highcharts.SVGRenderer.prototype, VMLRendererExtension);
+VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
 
 	// general renderer
-	Highcharts.Renderer = VMLRenderer;
+	H.Renderer = VMLRenderer;
 }
 
 // This method is used with exporting in old IE, when emulating SVG (see #2314)
-Highcharts.SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
+SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
 	var measuringSpan = document.createElement('span'),
 		offsetWidth,
 	textNode = document.createTextNode(text);
 
 	measuringSpan.appendChild(textNode);
-	Highcharts.css(measuringSpan, styles);
+	css(measuringSpan, styles);
 	this.box.appendChild(measuringSpan);
 	offsetWidth = measuringSpan.offsetWidth;
-	Highcharts.discardElement(measuringSpan); // #2463
+	discardElement(measuringSpan); // #2463
 	return offsetWidth;
 };
 

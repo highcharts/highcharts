@@ -1,5 +1,9 @@
 (function (H) {
-	var defined = H.defined,
+	var correctFloat = H.correctFloat,
+		defined = H.defined,
+		destroyObjectProperties = H.destroyObjectProperties,
+		lin2log = H.lin2log,
+		merge = H.merge,
 		pick = H.pick,
 		deg2rad = H.deg2rad;
 
@@ -57,7 +61,7 @@ H.Tick.prototype = {
 			isFirst: isFirst,
 			isLast: isLast,
 			dateTimeLabelFormat: dateTimeLabelFormat,
-			value: axis.isLog ? H.correctFloat(H.lin2log(value)) : value
+			value: axis.isLog ? correctFloat(lin2log(value)) : value
 		});
 
 		// prepare CSS
@@ -76,7 +80,7 @@ H.Tick.prototype = {
 						)
 						//.attr(attr)
 						// without position absolute, IE export sometimes is wrong
-						.css(H.merge(labelOptions.style))
+						.css(merge(labelOptions.style))
 						.add(axis.labelGroup) :
 					null;
 			tick.labelLength = label && label.getBBox().width; // Un-rotated length
@@ -364,7 +368,7 @@ H.Tick.prototype = {
 	 * Destructor for the tick prototype
 	 */
 	destroy: function () {
-		H.destroyObjectProperties(this, this.axis);
+		destroyObjectProperties(this, this.axis);
 	}
 };
 

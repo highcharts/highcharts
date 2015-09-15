@@ -1,8 +1,15 @@
 (function (H) {
-	var each = H.each,
+	var dateFormat = H.dateFormat,
+		each = H.each,
+		extend = H.extend,
+		format = H.format,
+		isNumber = H.isNumber,
 		map = H.map,
 		pick = H.pick,
-		splat = H.splat;
+		pInt = H.pInt,
+		splat = H.splat,
+		timeUnits = H.timeUnits,
+		useCanVG = H.useCanVG;
 /**
  * The tooltip object
  * @param {Object} chart The chart instance
@@ -18,7 +25,7 @@ H.Tooltip.prototype = {
 
 		var borderWidth = options.borderWidth,
 			style = options.style,
-			padding = H.pInt(style.padding);
+			padding = pInt(style.padding);
 
 		// Save the chart and options
 		this.chart = chart;
@@ -53,7 +60,7 @@ H.Tooltip.prototype = {
 
 		// When using canVG the shadow shows up as a gray circle
 		// even if the tooltip is hidden.
-		if (!H.useCanVG) {
+		if (!useCanVG) {
 			this.label.shadow(options.shadow);
 		}
 
@@ -89,7 +96,7 @@ H.Tooltip.prototype = {
 			skipAnchor = tooltip.followPointer || tooltip.len > 1;
 
 		// Get intermediate values for animation
-		H.extend(now, {
+		extend(now, {
 			x: animate ? (2 * now.x + x) / 3 : x,
 			y: animate ? (now.y + y) / 2 : y,
 			anchorX: skipAnchor ? undefined : animate ? (2 * now.anchorX + anchorX) / 3 : anchorX,
@@ -432,7 +439,6 @@ H.Tooltip.prototype = {
 	 */
 	getXDateFormat: function (point, options, xAxis) {
 		var xDateFormat,
-			dateFormat = H.dateFormat,
 			dateTimeLabelFormats = options.dateTimeLabelFormats,
 			closestPointRange = xAxis && xAxis.closestPointRange,
 			n,
@@ -445,7 +451,6 @@ H.Tooltip.prototype = {
 				day: 3
 			},
 			date,
-			timeUnits = H.timeUnits,
 			lastN = 'millisecond'; // for sub-millisecond data, #4223
 
 		if (closestPointRange) {
@@ -495,7 +500,7 @@ H.Tooltip.prototype = {
 			tooltipOptions = series.tooltipOptions,
 			xDateFormat = tooltipOptions.xDateFormat,
 			xAxis = series.xAxis,
-			isDateTime = xAxis && xAxis.options.type === 'datetime' && H.isNumber(point.key),
+			isDateTime = xAxis && xAxis.options.type === 'datetime' && isNumber(point.key),
 			formatString = tooltipOptions[footOrHead+'Format'];
 
 		// Guess the best date format based on the closest point distance (#568, #3418)
@@ -508,7 +513,7 @@ H.Tooltip.prototype = {
 			formatString = formatString.replace('{point.key}', '{point.key:' + xDateFormat + '}');
 		}
 
-		return H.format(formatString, {
+		return format(formatString, {
 			point: point,
 			series: series
 		});

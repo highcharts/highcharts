@@ -1,16 +1,20 @@
 (function (H) {
-	var Series = H.Series,
-		SplineSeries;
+	var defaultPlotOptions = H.defaultPlotOptions,
+		defaultSeriesOptions = H.defaultSeriesOptions,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		Series = H.Series,
+		seriesTypes = H.seriesTypes;
 
 /**
  * Set the default options for spline
  */
-H.defaultPlotOptions.spline = H.merge(H.defaultSeriesOptions);
+defaultPlotOptions.spline = merge(defaultSeriesOptions);
 
 /**
  * SplineSeries object
  */
-SplineSeries = H.extendClass(Series, {
+seriesTypes.spline  = extendClass(Series, {
 	type: 'spline',
 
 	/**
@@ -125,7 +129,7 @@ SplineSeries = H.extendClass(Series, {
 		return ret;
 	}
 });
-H.seriesTypes.spline = SplineSeries;
+
 
 	return H;
 }(Highcharts));

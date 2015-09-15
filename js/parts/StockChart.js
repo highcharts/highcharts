@@ -1,13 +1,23 @@
 (function (H) {
 	var Axis = H.Axis,
 		Chart = H.Chart,
+		defined = H.defined,
+		each = H.each,
+		extend = H.extend,
+		format = H.format,
+		map = H.map,
+		merge = H.merge,
+		pick = H.pick,
 		Point = H.Point,
 		Pointer = H.Pointer,
 		Renderer = H.Renderer,
 		Series = H.Series,
-		StockChart,
+		splat = H.splat,
 		SVGRenderer = H.SVGRenderer,
 		VMLRenderer = H.VMLRenderer,
+		wrap = H.wrap,
+
+
 		seriesProto = Series.prototype,
 		seriesInit = seriesProto.init, 
 		seriesProcessData = seriesProto.processData,
@@ -15,11 +25,9 @@
 /**
  * A wrapper for Chart with all the default values for a Stock chart
  */
-StockChart = H.StockChart = function (options, callback) {
+H.StockChart = function (options, callback) {
 	var seriesOptions = options.series, // to increase performance, don't merge the data 
 		opposite,
-		splat = H.splat,
-		pick = H.pick,
 
 		// Always disable startOnTick:true on the main axis when the navigator is enabled (#1090)
 		navigatorEnabled = pick(options.navigator && options.navigator.enabled, true),
@@ -42,8 +50,8 @@ StockChart = H.StockChart = function (options, callback) {
 		};
 
 	// apply X axis options to both single and multi y axes
-	options.xAxis = H.map(splat(options.xAxis || {}), function (xAxisOptions) {
-		return H.merge({ // defaults
+	options.xAxis = map(splat(options.xAxis || {}), function (xAxisOptions) {
+		return merge({ // defaults
 				minPadding: 0,
 				maxPadding: 0,
 				ordinal: true,
@@ -64,9 +72,9 @@ StockChart = H.StockChart = function (options, callback) {
 	});
 
 	// apply Y axis options to both single and multi y axes
-	options.yAxis = H.map(splat(options.yAxis || {}), function (yAxisOptions) {
+	options.yAxis = map(splat(options.yAxis || {}), function (yAxisOptions) {
 		opposite = pick(yAxisOptions.opposite, true);
-		return H.merge({ // defaults
+		return merge({ // defaults
 			labels: {
 				y: -2
 			},
@@ -81,7 +89,7 @@ StockChart = H.StockChart = function (options, callback) {
 
 	options.series = null;
 
-	options = H.merge({
+	options = merge({
 		chart: {
 			panning: true,
 			pinchType: 'x'
@@ -139,7 +147,7 @@ StockChart = H.StockChart = function (options, callback) {
 };
 
 // Implement the pinchType option
-H.wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
+wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 
 	var pinchType = options.chart.pinchType || '';
 		
@@ -153,7 +161,7 @@ H.wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 
 // Override the automatic label alignment so that the first Y axis' labels
 // are drawn on top of the grid line, and subsequent axes are drawn outside
-H.wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
+wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 	var chart = this.chart,
 		options = this.options,
 		panes = chart._labelPanes = chart._labelPanes || {},
@@ -176,12 +184,10 @@ H.wrap(Axis.prototype, 'autoLabelAlign', function (proceed) {
 });
 
 // Override getPlotLinePath to allow for multipane charts
-H.wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old, force, translatedValue) {
+wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old, force, translatedValue) {
 	var axis = this,
 		series = (this.isLinked && !this.series ? this.linkedParent.series : this.series),
 		chart = axis.chart,
-		defined = H.defined,
-		map = H.map,
 		renderer = chart.renderer,
 		axisLeft = axis.left,
 		axisTop = axis.top,
@@ -213,7 +219,7 @@ H.wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, o
 
 	// Get the related axes based options.*Axis setting #2810
 	axes2 = (axis.isXAxis ? chart.yAxis : chart.xAxis);
-	H.each(axes2, function (A) {
+	each(axes2, function (A) {
 		if (defined(A.options.id) ? A.options.id.indexOf('navigator') === -1 : true) {
 			var a = (A.isXAxis ? 'yAxis' : 'xAxis'),
 				rax = (defined(A.options[a]) ? chart[a][A.options[a]] : chart[a][0]);	
@@ -229,17 +235,17 @@ H.wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, o
 	// we are adding an axis without data, so we need to populate this with grid
 	// lines (#2796).
 	uniqueAxes = axes.length ? [] : [axis.isXAxis ? chart.yAxis[0] : chart.xAxis[0]]; //#3742
-	H.each(axes, function (axis2) {
+	each(axes, function (axis2) {
 		if (HighchartsAdapter.inArray(axis2, uniqueAxes) === -1) {
 			uniqueAxes.push(axis2);
 		}
 	});
 	
-	translatedValue = H.pick(translatedValue, axis.translate(value, null, null, old));
+	translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
 	
 	if (!isNaN(translatedValue)) {
 		if (axis.horiz) {
-			H.each(uniqueAxes, function (axis2) {
+			each(uniqueAxes, function (axis2) {
 				var skip;
 
 				y1 = axis2.pos;
@@ -258,7 +264,7 @@ H.wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, o
 				}
 			});
 		} else {
-			H.each(uniqueAxes, function (axis2) {
+			each(uniqueAxes, function (axis2) {
 				var skip;
 
 				x1 = axis2.pos;
@@ -326,9 +332,8 @@ if (Renderer === VMLRenderer) {
 
 
 // Wrapper to hide the label
-H.wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
-	var defined = H.defined;
-
+wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
+	
 	proceed.call(this, i);
 
 	if (!defined(this.crossLabelArray)) { return; }
@@ -336,15 +341,14 @@ H.wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
 	if (defined(i)) {
 		if (this.crossLabelArray[i]) { this.crossLabelArray[i].hide(); }
 	} else {
-		H.each(this.crossLabelArray, function (crosslabel) {
+		each(this.crossLabelArray, function (crosslabel) {
 			crosslabel.hide();
 		});
 	}
 });
 
 // Wrapper to draw the label
-H.wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
-	var defined = H.defined;
+wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	
 	// Draw the crosshair
 	proceed.call(this, e, point);
@@ -377,11 +381,11 @@ H.wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 			zIndex: 12,
 			height: horiz ? 16 : undefined,
 			fill: options.backgroundColor || (this.series[0] && this.series[0].color) || 'gray',
-			padding: H.pick(options.padding, 2),
+			padding: pick(options.padding, 2),
 			stroke: options.borderColor || null,
 			'stroke-width': options.borderWidth || 0
 		})
-		.css(H.extend({				
+		.css(extend({				
 			color: 'white',
 			fontWeight: 'normal',
 			fontSize: '11px',
@@ -414,7 +418,7 @@ H.wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 
 	// show the label
 	crossLabel.attr({
-		text: formatOption ? H.format(formatOption, {value: point[axis]}) : options.formatter.call(this, point[axis]), 
+		text: formatOption ? format(formatOption, {value: point[axis]}) : options.formatter.call(this, point[axis]), 
 		x: posx, 
 		y: posy, 
 		visibility: 'visible'
@@ -542,7 +546,7 @@ seriesProto.processData = function () {
 /**
  * Modify series extremes
  */
-H.wrap(seriesProto, 'getExtremes', function (proceed) {
+wrap(seriesProto, 'getExtremes', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (this.modifyValue) {
@@ -556,10 +560,10 @@ H.wrap(seriesProto, 'getExtremes', function (proceed) {
  */
 Axis.prototype.setCompare = function (compare, redraw) {
 	if (!this.isXAxis) {
-		H.each(this.series, function (series) {
+		each(this.series, function (series) {
 			series.setCompare(compare);
 		});
-		if (H.pick(redraw, true)) {
+		if (pick(redraw, true)) {
 			this.chart.redraw();
 		}
 	}
@@ -574,7 +578,7 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
 	
 	pointFormat = pointFormat.replace(
 		'{point.change}',
-		(point.change > 0 ? '+' : '') + H.numberFormat(point.change, H.pick(point.series.tooltipOptions.changeDecimals, 2))
+		(point.change > 0 ? '+' : '') + H.numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))
 	); 
 	
 	return pointTooltipFormatter.apply(this, [pointFormat]);
@@ -589,14 +593,14 @@ Point.prototype.tooltipFormatter = function (pointFormat) {
  * Extend the Series prototype to create a separate series clip box. This is related
  * to using multiple panes, and a future pane logic should incorporate this feature (#2754).
  */
-H.wrap(Series.prototype, 'render', function (proceed) {
+wrap(Series.prototype, 'render', function (proceed) {
 	// Only do this on stock charts (#2939), and only if the series type handles clipping
 	// in the animate method (#2975).
 	if (this.chart.options._stock && this.xAxis) {
 
 		// First render, initial clip box
 		if (!this.clipBox && this.animate) {
-			this.clipBox = H.merge(this.chart.clipBox);
+			this.clipBox = merge(this.chart.clipBox);
 			this.clipBox.width = this.xAxis.len;
 			this.clipBox.height = this.yAxis.len;
 

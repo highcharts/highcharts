@@ -1753,24 +1753,34 @@ H.Color = Color = function (input) {
 	return H;
 }(Highcharts));
 (function (H) {
-	var addEvent = H.addEvent,
+	var SVGElement,
+		SVGRenderer,
+
+		addEvent = H.addEvent,
 		attr = H.attr,
 		Color = H.Color,
 		css = H.css,
+		createElement = H.createElement,
 		defined = H.defined,
 		deg2rad = H.deg2rad,
+		destroyObjectProperties = H.destroyObjectProperties,
 		each = H.each,
 		extend = H.extend,
+		erase = H.erase,
+		hasTouch = H.hasTouch,
+		isArray = H.isArray,
 		isFirefox = H.isFirefox,
 		isIE = H.isIE,
 		isObject = H.isObject,
+		isString = H.isString,
 		isWebKit = H.isWebKit,
 		merge = H.merge,
 		pick = H.pick,
 		pInt = H.pInt,
+		removeEvent = H.removeEvent,
 		svg = H.svg,
-		SVGElement,
-		SVGRenderer;
+		SVG_NS = H.SVG_NS,
+		useCanVG = H.useCanVG;
 
 /**
  * A wrapper object for SVG elements
@@ -1780,7 +1790,7 @@ SVGElement.prototype = {
 	
 	// Default base for animation
 	opacity: 1,
-	SVG_NS: H.SVG_NS,
+	SVG_NS: SVG_NS,
 	// For labels, these CSS properties are applied to the <text> node directly
 	textProps: ['fontSize', 'fontWeight', 'fontFamily', 'fontStyle', 'color', 
 		'lineHeight', 'width', 'textDecoration', 'textOverflow', 'textShadow'],
@@ -1793,7 +1803,7 @@ SVGElement.prototype = {
 	init: function (renderer, nodeName) {
 		var wrapper = this;
 		wrapper.element = nodeName === 'span' ?
-			H.createElement(nodeName) :
+			createElement(nodeName) :
 			document.createElementNS(wrapper.SVG_NS, nodeName);
 		wrapper.renderer = renderer;
 	},
@@ -1852,7 +1862,7 @@ SVGElement.prototype = {
 			radialReference = elem.radialReference;
 
 			// Keep < 2.2 kompatibility
-			if (H.isArray(gradAttr)) {
+			if (isArray(gradAttr)) {
 				color[gradName] = gradAttr = {
 					x1: gradAttr[0],
 					y1: gradAttr[1],
@@ -2233,7 +2243,7 @@ SVGElement.prototype = {
 			// store object
 			elemWrapper.styles = styles;
 
-			if (textWidth && (H.useCanVG || (!svg && elemWrapper.renderer.forExport))) {
+			if (textWidth && (useCanVG || (!svg && elemWrapper.renderer.forExport))) {
 				delete styles.width;
 			}
 
@@ -2270,7 +2280,7 @@ SVGElement.prototype = {
 			element = svgElement.element;
 		
 		// touch
-		if (H.hasTouch && eventType === 'click') {
+		if (hasTouch && eventType === 'click') {
 			element.ontouchstart = function (e) {			
 				svgElement.touchEventFired = Date.now();				
 				e.preventDefault();
@@ -2414,9 +2424,9 @@ SVGElement.prototype = {
 		if (alignOptions) {
 			this.alignOptions = alignOptions;
 			this.alignByTranslate = alignByTranslate;
-			if (!box || H.isString(box)) { // boxes other than renderer handle this internally
+			if (!box || isString(box)) { // boxes other than renderer handle this internally
 				this.alignTo = alignTo = box || 'renderer';
-				H.erase(alignedObjects, this); // prevent duplicates, like legendGroup after resize
+				erase(alignedObjects, this); // prevent duplicates, like legendGroup after resize
 				alignedObjects.push(this);
 				box = null; // reassign it below
 			}
@@ -2712,7 +2722,7 @@ SVGElement.prototype = {
 
 		// remove from alignObjects
 		if (wrapper.alignTo) {
-			H.erase(wrapper.renderer.alignedObjects, wrapper);
+			erase(wrapper.renderer.alignedObjects, wrapper);
 		}
 
 		for (key in wrapper) {
@@ -2969,7 +2979,7 @@ SVGRenderer = H.SVGRenderer = function () {
 };
 SVGRenderer.prototype = {
 	Element: SVGElement,
-	SVG_NS: H.SVG_NS,
+	SVG_NS: SVG_NS,
 	/**
 	 * Initialize the SVGRenderer
 	 * @param {Object} container
@@ -3075,7 +3085,7 @@ SVGRenderer.prototype = {
 		renderer.boxWrapper = renderer.boxWrapper.destroy();
 
 		// Call destroy on all gradient elements
-		H.destroyObjectProperties(renderer.gradients || {});
+		destroyObjectProperties(renderer.gradients || {});
 		renderer.gradients = null;
 
 		// Defs are null in VMLRenderer
@@ -3088,7 +3098,7 @@ SVGRenderer.prototype = {
 		// We need to check that there is a handler, otherwise all functions that are registered for event 'resize' are removed
 		// See issue #982
 		if (renderer.subPixelFix) {
-			H.removeEvent(window, 'resize', renderer.subPixelFix);
+			removeEvent(window, 'resize', renderer.subPixelFix);
 		}
 
 		renderer.alignedObjects = null;
@@ -3549,7 +3559,7 @@ SVGRenderer.prototype = {
 		var attr = {
 			fill: 'none'
 		};
-		if (H.isArray(path)) {
+		if (isArray(path)) {
 			attr.d = path;
 		} else if (isObject(path)) { // attributes
 			extend(attr, path);
@@ -3814,7 +3824,7 @@ SVGRenderer.prototype = {
 
 				// Create a dummy JavaScript image to get the width and height. Due to a bug in IE < 8,
 				// the created element must be assigned to a variable in order to load (#292).
-				imageElement = H.createElement('img', {
+				imageElement = createElement('img', {
 					onload: function () {
 
 						// Special case for SVGs on IE11, the width is not accessible until the image is 
@@ -4029,7 +4039,7 @@ SVGRenderer.prototype = {
 
 		// declare variables
 		var renderer = this,
-			fakeSVG = H.useCanVG || (!svg && renderer.forExport),
+			fakeSVG = useCanVG || (!svg && renderer.forExport),
 			wrapper,
 			attr = {};
 
@@ -4384,8 +4394,7 @@ SVGRenderer.prototype = {
 			 * Destroy and release memory.
 			 */
 			destroy: function () {
-				var removeEvent = H.removeEvent;
-
+				
 				// Added by button implementation
 				removeEvent(wrapper.element, 'mouseenter');
 				removeEvent(wrapper.element, 'mouseleave');
@@ -4736,7 +4745,29 @@ extend(SVGRenderer.prototype, {
 (function (H) {
 	var VMLRenderer,
 		VMLRendererExtension,
-		VMLElement;
+		VMLElement,
+
+		Color = H.Color,
+		createElement = H.createElement,
+		css = H.css,
+		defaultOptions = H.defaultOptions,
+		defined = H.defined,
+		deg2rad = H.deg2rad,
+		discardElement = H.discardElement,
+		erase = H.erase,
+		extend = H.extend,
+		extendClass = H.extendClass,
+		isArray = H.isArray,
+		isNumber = H.isNumber,
+		isObject = H.isObject,
+		merge = H.merge,
+		noop = H.noop,
+		pick = H.pick,
+		pInt = H.pInt,
+		svg = H.svg,
+		SVGElement = H.SVGElement,
+		SVGRenderer = H.SVGRenderer,
+		useCanVG = H.useCanVG;
 
 /* ****************************************************************************
  *                                                                            *
@@ -4750,7 +4781,7 @@ extend(SVGRenderer.prototype, {
 /**
  * @constructor
  */
-if (!Highcharts.svg && !Highcharts.useCanVG) {
+if (!svg && !useCanVG) {
 
 /**
  * The VML element wrapper.
@@ -4784,7 +4815,7 @@ VMLElement = {
 			markup = isDiv || nodeName === 'span' || nodeName === 'img' ?
 				markup.join('')
 				: renderer.prepVML(markup);
-			wrapper.element = Highcharts.createElement(markup);
+			wrapper.element = createElement(markup);
 		}
 
 		wrapper.renderer = renderer;
@@ -4832,7 +4863,7 @@ VMLElement = {
 	/**
 	 * VML always uses htmlUpdateTransform
 	 */
-	updateTransform: Highcharts.SVGElement.prototype.htmlUpdateTransform,
+	updateTransform: SVGElement.prototype.htmlUpdateTransform,
 
 	/**
 	 * Set the rotation of a span with oldIE's filter
@@ -4845,11 +4876,10 @@ VMLElement = {
 		// Test case: http://jsfiddle.net/highcharts/Ybt44/
 
 		var rotation = this.rotation,
-			deg2rad = Highcharts.deg2rad,
 			costheta = Math.cos(rotation * deg2rad),
 			sintheta = Math.sin(rotation * deg2rad);
 					
-		Highcharts.css(this.element, {
+		css(this.element, {
 			filter: rotation ? ['progid:DXImageTransform.Microsoft.Matrix(M11=', costheta,
 				', M12=', -sintheta, ', M21=', sintheta, ', M22=', costheta,
 				', sizingMethod=\'auto expand\')'].join('') : 'none'
@@ -4861,10 +4891,9 @@ VMLElement = {
 	 */
 	getSpanCorrection: function (width, baseline, alignCorrection, rotation, align) {
 
-		var deg2rad = Highcharts.deg2rad,
-			costheta = rotation ? Math.cos(rotation * deg2rad) : 1,
+		var costheta = rotation ? Math.cos(rotation * deg2rad) : 1,
 			sintheta = rotation ? Math.sin(rotation * deg2rad) : 0,
-			height = Highcharts.pick(this.elemHeight, this.element.offsetHeight),
+			height = pick(this.elemHeight, this.element.offsetHeight),
 			quad,
 			nonLeft = align && align !== 'left';
 
@@ -4882,7 +4911,7 @@ VMLElement = {
 			if (rotation) {
 				this.yCorr -= height * alignCorrection * (sintheta < 0 ? -1 : 1);
 			}
-			Highcharts.css(this.element, {
+			css(this.element, {
 				textAlign: align
 			});
 		}
@@ -4902,7 +4931,7 @@ VMLElement = {
 			// Multiply by 10 to allow subpixel precision.
 			// Substracting half a pixel seems to make the coordinates
 			// align with SVG, but this hasn't been tested thoroughly
-			if (Highcharts.isNumber(value[i])) {
+			if (isNumber(value[i])) {
 				path[i] = Math.round(value[i] * 10) - 5;
 			} else if (value[i] === 'Z') { // close the path
 				path[i] = 'x';
@@ -4946,7 +4975,6 @@ VMLElement = {
 	 */
 	clip: function (clipRect) {
 		var wrapper = this,
-			erase = Highcharts.erase,
 			clipMembers,
 			cssRet;
 
@@ -4974,7 +5002,7 @@ VMLElement = {
 	 * Set styles for the element
 	 * @param {Object} styles
 	 */
-	css: Highcharts.SVGElement.prototype.htmlCss,
+	css: SVGElement.prototype.htmlCss,
 
 	/**
 	 * Removes a child either by removeChild or move to garbageBin.
@@ -4984,7 +5012,7 @@ VMLElement = {
 		// discardElement will detach the node from its parent before attaching it
 		// to the garbage bin. Therefore it is important that the node is attached and have parent.
 		if (element.parentNode) {
-			Highcharts.discardElement(element);
+			discardElement(element);
 		}
 	},
 
@@ -4996,7 +5024,7 @@ VMLElement = {
 			this.destroyClip();
 		}
 
-		return Highcharts.SVGElement.prototype.destroy.apply(this);
+		return SVGElement.prototype.destroy.apply(this);
 	},
 
 	/**
@@ -5025,7 +5053,7 @@ VMLElement = {
 		len = path.length;
 
 		if (len === 9 || len === 11) {
-			path[len - 4] = path[len - 2] = Highcharts.pInt(path[len - 2]) - 10 * length;
+			path[len - 4] = path[len - 2] = pInt(path[len - 2]) - 10 * length;
 		}
 		return path.join(' ');
 	},
@@ -5039,9 +5067,6 @@ VMLElement = {
 			i,
 			element = this.element,
 			renderer = this.renderer,
-			createElement = Highcharts.createElement,
-			pInt = Highcharts.pInt,
-			pick = Highcharts.pick,
 			shadow,
 			elemStyle = element.style,
 			markup,
@@ -5104,7 +5129,7 @@ VMLElement = {
 		}
 		return this;
 	},
-	updateShadows: Highcharts.noop, // Used in SVG only
+	updateShadows: noop, // Used in SVG only
 
 	setAttr: function (key, value) {
 		if (this.docMode8) { // IE8 setAttribute bug
@@ -5119,7 +5144,7 @@ VMLElement = {
 	},
 	dashstyleSetter: function (value, key, element) {
 		var strokeElem = element.getElementsByTagName('stroke')[0] ||
-			Highcharts.createElement(this.renderer.prepVML(['<stroke/>']), null, null, element);
+			createElement(this.renderer.prepVML(['<stroke/>']), null, null, element);
 		strokeElem[key] = value || 'solid';
 		this[key] = value; /* because changing stroke-width will change the dash length
 			and cause an epileptic effect */
@@ -5150,10 +5175,9 @@ VMLElement = {
 			this.setAttr('fillcolor', this.renderer.color(value, element, key, this));
 		}
 	},
-	opacitySetter: Highcharts.noop, // Don't bother - animation is too slow and filters introduce artifacts
+	opacitySetter: noop, // Don't bother - animation is too slow and filters introduce artifacts
 	rotationSetter: function (value, key, element) {
-		var style = element.style,
-			deg2rad = Highcharts.deg2rad;
+		var style = element.style;
 		this[key] = style[key] = value; // style is for #1873
 
 		// Correction for the 1x1 size of the shape container. Used in gauge needles.
@@ -5166,7 +5190,7 @@ VMLElement = {
 	'stroke-widthSetter': function (value, key, element) {
 		element.stroked = !!value; // VML "stroked" attribute
 		this[key] = value; // used in getter, issue #113
-		if (Highcharts.isNumber(value)) {
+		if (isNumber(value)) {
 			value += 'px';
 		}
 		this.setAttr('strokeweight', value);
@@ -5183,7 +5207,7 @@ VMLElement = {
 		
 		// Let the shadow follow the main element
 		if (this.shadows) {
-			Highcharts.each(this.shadows, function (shadow) {
+			each(this.shadows, function (shadow) {
 				shadow.style[key] = value;
 			});
 		}
@@ -5227,7 +5251,7 @@ VMLElement = {
 		element.style[key] = value;
 	}
 };
-Highcharts.VMLElement = VMLElement = Highcharts.extendClass(Highcharts.SVGElement, VMLElement);
+H.VMLElement = VMLElement = extendClass(SVGElement, VMLElement);
 
 // Some shared setters
 VMLElement.prototype.ySetter =
@@ -5260,7 +5284,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 		renderer.alignedObjects = [];
 
 		boxWrapper = renderer.createElement('div')
-			.css(Highcharts.extend(this.getStyle(style), { position: 'relative'}));
+			.css(extend(this.getStyle(style), { position: 'relative'}));
 		box = boxWrapper.element;
 		container.appendChild(boxWrapper.element);
 
@@ -5315,10 +5339,10 @@ VMLRendererExtension = { // inherit SVGRenderer
 
 		// create a dummy element
 		var clipRect = this.createElement(),
-			isObj = Highcharts.isObject(x);
+			isObj = isObject(x);
 
 		// mimic a rectangle with its style object for automatic updating in attr
-		return Highcharts.extend(clipRect, {
+		return extend(clipRect, {
 			members: [],
 			count: 0,
 			left: (isObj ? x.x : x) + 1,
@@ -5345,7 +5369,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 
 				// issue 74 workaround
 				if (!inverted && wrapper.docMode8 && nodeName === 'DIV') {
-					Highcharts.extend(ret, {
+					extend(ret, {
 						width: right + 'px',
 						height: bottom + 'px'
 					});
@@ -5355,7 +5379,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 
 			// used in attr and animation to update the clipping of all members
 			updateClipping: function () {
-				Highcharts.each(clipRect.members, function (member) {
+				each(clipRect.members, function (member) {
 					if (member.element) { // Deleted series, like in stock/members/series-remove demo. Should be removed from members, but this will do.
 						member.css(clipRect.getCSS(member));
 					}
@@ -5411,7 +5435,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 					// are reversed.
 					markup = ['<fill colors="' + colors.join(',') + '" opacity="', opacity2, '" o:opacity2="', opacity1,
 						'" type="', fillType, '" ', fillAttr, 'focus="100%" method="any" />'];
-					Highcharts.createElement(renderer.prepVML(markup), null, null, elem);
+					createElement(renderer.prepVML(markup), null, null, elem);
 				};
 
 			// Extend from 0 to 1
@@ -5431,9 +5455,9 @@ VMLRendererExtension = { // inherit SVGRenderer
 			}
 
 			// Compute the stops
-			Highcharts.each(stops, function (stop, i) {
+			each(stops, function (stop, i) {
 				if (regexRgba.test(stop[1])) {
-					colorObject = Highcharts.Color(stop[1]);
+					colorObject = Color(stop[1]);
 					stopColor = colorObject.get('rgb');
 					stopOpacity = colorObject.get('a');
 				} else {
@@ -5488,7 +5512,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 								sizex *= radialReference[2] / bBox.width;
 								sizey *= radialReference[2] / bBox.height;
 							}
-							fillAttr = 'src="' + Highcharts.defaultOptions.global.VMLRadialGradientURL + '" ' +
+							fillAttr = 'src="' + defaultOptions.global.VMLRadialGradientURL + '" ' +
 								'size="' + sizex + ',' + sizey + '" ' +
 								'origin="0.5,0.5" ' +
 								'position="' + cx + ',' + cy + '" ' +
@@ -5519,10 +5543,10 @@ VMLRendererExtension = { // inherit SVGRenderer
 		// to hold the opacity component
 		} else if (regexRgba.test(color) && elem.tagName !== 'IMG') {
 
-			colorObject = Highcharts.Color(color);
+			colorObject = Color(color);
 
 			markup = ['<', prop, ' opacity="', colorObject.get('a'), '"/>'];
-			Highcharts.createElement(this.prepVML(markup), null, null, elem);
+			createElement(this.prepVML(markup), null, null, elem);
 
 			ret = colorObject.get('rgb');
 
@@ -5570,7 +5594,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 	 * @param {Number} x
 	 * @param {Number} y
 	 */
-	text: Highcharts.SVGRenderer.prototype.html,
+	text: SVGRenderer.prototype.html,
 
 	/**
 	 * Create and return a path element
@@ -5581,10 +5605,10 @@ VMLRendererExtension = { // inherit SVGRenderer
 			// subpixel precision down to 0.1 (width and height = 1px)
 			coordsize: '10 10'
 		};
-		if (Highcharts.isArray(path)) {
+		if (isArray(path)) {
 			attr.d = path;
-		} else if (Highcharts.isObject(path)) { // attributes
-			Highcharts.extend(attr, path);
+		} else if (isObject(path)) { // attributes
+			extend(attr, path);
 		}
 		// create the shape
 		return this.createElement('shape').attr(attr);
@@ -5599,7 +5623,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 	 */
 	circle: function (x, y, r) {
 		var circle = this.symbol('circle');
-		if (Highcharts.isObject(x)) {
+		if (isObject(x)) {
 			r = x.r;
 			y = x.y;
 			x = x.x;
@@ -5658,7 +5682,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 	 * For rectangles, VML uses a shape for rect to overcome bugs and rotation problems
 	 */
 	createElement: function (nodeName) {
-		return nodeName === 'rect' ? this.symbol(nodeName) : Highcharts.SVGRenderer.prototype.createElement.call(this, nodeName);	
+		return nodeName === 'rect' ? this.symbol(nodeName) : SVGRenderer.prototype.createElement.call(this, nodeName);	
 	},
 
 	/**
@@ -5668,11 +5692,10 @@ VMLRendererExtension = { // inherit SVGRenderer
 	 */
 	invertChild: function (element, parentNode) {
 		var ren = this,
-			pInt = Highcharts.pInt,
 			parentStyle = parentNode.style,
 			imgStyle = element.tagName === 'IMG' && element.style; // #1111
 
-		Highcharts.css(element, {
+		css(element, {
 			flip: 'x',
 			left: pInt(parentStyle.width) - (imgStyle ? pInt(imgStyle.top) : 1),
 			top: pInt(parentStyle.height) - (imgStyle ? pInt(imgStyle.left) : 1),
@@ -5680,7 +5703,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 		});
 
 		// Recursively invert child elements, needed for nested composite shapes like box plots and error bars. #1680, #1806.
-		Highcharts.each(element.childNodes, function (child) {
+		each(element.childNodes, function (child) {
 			ren.invertChild(child, element);
 		});
 	},
@@ -5779,32 +5802,32 @@ VMLRendererExtension = { // inherit SVGRenderer
 		 * use the simpler square path, else use the callout path without the arrow.
 		 */
 		rect: function (x, y, w, h, options) {
-			return Highcharts.SVGRenderer.prototype.symbols[
-				!Highcharts.defined(options) || !options.r ? 'square' : 'callout'
+			return SVGRenderer.prototype.symbols[
+				!defined(options) || !options.r ? 'square' : 'callout'
 			].call(0, x, y, w, h, options);
 		}
 	}
 };
-Highcharts.VMLRenderer = VMLRenderer = function () {
+H.VMLRenderer = VMLRenderer = function () {
 	this.init.apply(this, arguments);
 };
-VMLRenderer.prototype = Highcharts.merge(Highcharts.SVGRenderer.prototype, VMLRendererExtension);
+VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
 
 	// general renderer
-	Highcharts.Renderer = VMLRenderer;
+	H.Renderer = VMLRenderer;
 }
 
 // This method is used with exporting in old IE, when emulating SVG (see #2314)
-Highcharts.SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
+SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
 	var measuringSpan = document.createElement('span'),
 		offsetWidth,
 	textNode = document.createTextNode(text);
 
 	measuringSpan.appendChild(textNode);
-	Highcharts.css(measuringSpan, styles);
+	css(measuringSpan, styles);
 	this.box.appendChild(measuringSpan);
 	offsetWidth = measuringSpan.offsetWidth;
-	Highcharts.discardElement(measuringSpan); // #2463
+	discardElement(measuringSpan); // #2463
 	return offsetWidth;
 };
 
@@ -5890,7 +5913,11 @@ if (useCanVG) {
 	return H;
 }(Highcharts));
 (function (H) {
-	var defined = H.defined,
+	var correctFloat = H.correctFloat,
+		defined = H.defined,
+		destroyObjectProperties = H.destroyObjectProperties,
+		lin2log = H.lin2log,
+		merge = H.merge,
 		pick = H.pick,
 		deg2rad = H.deg2rad;
 
@@ -5948,7 +5975,7 @@ H.Tick.prototype = {
 			isFirst: isFirst,
 			isLast: isLast,
 			dateTimeLabelFormat: dateTimeLabelFormat,
-			value: axis.isLog ? H.correctFloat(H.lin2log(value)) : value
+			value: axis.isLog ? correctFloat(lin2log(value)) : value
 		});
 
 		// prepare CSS
@@ -5967,7 +5994,7 @@ H.Tick.prototype = {
 						)
 						//.attr(attr)
 						// without position absolute, IE export sometimes is wrong
-						.css(H.merge(labelOptions.style))
+						.css(merge(labelOptions.style))
 						.add(axis.labelGroup) :
 					null;
 			tick.labelLength = label && label.getBBox().width; // Un-rotated length
@@ -6255,7 +6282,7 @@ H.Tick.prototype = {
 	 * Destructor for the tick prototype
 	 */
 	destroy: function () {
-		H.destroyObjectProperties(this, this.axis);
+		destroyObjectProperties(this, this.axis);
 	}
 };
 
@@ -9079,10 +9106,17 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 	return H;
 }(Highcharts));
 (function (H) {
-	var each = H.each,
+	var dateFormat = H.dateFormat,
+		each = H.each,
+		extend = H.extend,
+		format = H.format,
+		isNumber = H.isNumber,
 		map = H.map,
 		pick = H.pick,
-		splat = H.splat;
+		pInt = H.pInt,
+		splat = H.splat,
+		timeUnits = H.timeUnits,
+		useCanVG = H.useCanVG;
 /**
  * The tooltip object
  * @param {Object} chart The chart instance
@@ -9098,7 +9132,7 @@ H.Tooltip.prototype = {
 
 		var borderWidth = options.borderWidth,
 			style = options.style,
-			padding = H.pInt(style.padding);
+			padding = pInt(style.padding);
 
 		// Save the chart and options
 		this.chart = chart;
@@ -9133,7 +9167,7 @@ H.Tooltip.prototype = {
 
 		// When using canVG the shadow shows up as a gray circle
 		// even if the tooltip is hidden.
-		if (!H.useCanVG) {
+		if (!useCanVG) {
 			this.label.shadow(options.shadow);
 		}
 
@@ -9169,7 +9203,7 @@ H.Tooltip.prototype = {
 			skipAnchor = tooltip.followPointer || tooltip.len > 1;
 
 		// Get intermediate values for animation
-		H.extend(now, {
+		extend(now, {
 			x: animate ? (2 * now.x + x) / 3 : x,
 			y: animate ? (now.y + y) / 2 : y,
 			anchorX: skipAnchor ? undefined : animate ? (2 * now.anchorX + anchorX) / 3 : anchorX,
@@ -9512,7 +9546,6 @@ H.Tooltip.prototype = {
 	 */
 	getXDateFormat: function (point, options, xAxis) {
 		var xDateFormat,
-			dateFormat = H.dateFormat,
 			dateTimeLabelFormats = options.dateTimeLabelFormats,
 			closestPointRange = xAxis && xAxis.closestPointRange,
 			n,
@@ -9525,7 +9558,6 @@ H.Tooltip.prototype = {
 				day: 3
 			},
 			date,
-			timeUnits = H.timeUnits,
 			lastN = 'millisecond'; // for sub-millisecond data, #4223
 
 		if (closestPointRange) {
@@ -9575,7 +9607,7 @@ H.Tooltip.prototype = {
 			tooltipOptions = series.tooltipOptions,
 			xDateFormat = tooltipOptions.xDateFormat,
 			xAxis = series.xAxis,
-			isDateTime = xAxis && xAxis.options.type === 'datetime' && H.isNumber(point.key),
+			isDateTime = xAxis && xAxis.options.type === 'datetime' && isNumber(point.key),
 			formatString = tooltipOptions[footOrHead+'Format'];
 
 		// Guess the best date format based on the closest point distance (#568, #3418)
@@ -9588,7 +9620,7 @@ H.Tooltip.prototype = {
 			formatString = formatString.replace('{point.key}', '{point.key:' + xDateFormat + '}');
 		}
 
-		return H.format(formatString, {
+		return format(formatString, {
 			point: point,
 			series: series
 		});
@@ -10328,9 +10360,13 @@ H.Pointer.prototype = {
 	var charts = H.charts,
 		each = H.each,
 		extend = H.extend,
-		pick = H.pick;
+		map = H.map,
+		noop = H.noop,
+		pick = H.pick,
+		Pointer = H.Pointer;
+
 /* Support for touch devices */
-extend(H.Pointer.prototype, {
+extend(Pointer.prototype, {
 
 	/**
 	 * Run translation operations
@@ -10452,7 +10488,7 @@ extend(H.Pointer.prototype, {
 		}
 		
 		// Normalize each touch
-		H.map(touches, function (e) {
+		map(touches, function (e) {
 			return self.normalize(e);
 		});
 		
@@ -10488,7 +10524,7 @@ extend(H.Pointer.prototype, {
 			// Set the marker
 			if (!selectionMarker) {
 				self.selectionMarker = selectionMarker = extend({
-					destroy: H.noop,
+					destroy: noop,
 					touch: true
 				}, chart.plotBox);
 			}
@@ -15153,6 +15189,9 @@ H.Series.prototype = {
 	var Axis = H.Axis,
 		Chart = H.Chart,
 		correctFloat = H.correctFloat,
+		destroyObjectProperties = H.destroyObjectProperties,
+		each = H.each,
+		format = H.format,
 		pick = H.pick,
 		Series = H.Series;
 /**
@@ -15197,7 +15236,7 @@ function StackItem(axis, options, isNegative, x, stackOption) {
 
 StackItem.prototype = {
 	destroy: function () {
-		H.destroyObjectProperties(this, this.axis);
+		destroyObjectProperties(this, this.axis);
 	},
 
 	/**
@@ -15207,7 +15246,7 @@ StackItem.prototype = {
 		var options = this.options,
 			formatOption = options.format,
 			str = formatOption ?
-				H.format(formatOption, this) : 
+				format(formatOption, this) : 
 				options.formatter.call(this);  // format the text in the label
 
 		// Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
@@ -15268,13 +15307,13 @@ Chart.prototype.getStacks = function () {
 	var chart = this;
 
 	// reset stacks for each yAxis
-	H.each(chart.yAxis, function (axis) {
+	each(chart.yAxis, function (axis) {
 		if (axis.stacks && axis.hasVisibleSeries) {
 			axis.oldStacks = axis.stacks;
 		}
 	});
 
-	H.each(chart.series, function (series) {
+	each(chart.series, function (series) {
 		if (series.options.stacking && (series.visible === true || chart.options.chart.ignoreHiddenSeries === false)) {
 			series.stackKey = series.type + pick(series.options.stack, '');
 		}
@@ -15497,7 +15536,7 @@ Series.prototype.setPercentStacks = function () {
 		stacks = series.yAxis.stacks,
 		processedXData = series.processedXData;
 
-	H.each([stackKey, '-' + stackKey], function (key) {
+	each([stackKey, '-' + stackKey], function (key) {
 		var i = processedXData.length,
 			x,
 			stack,
@@ -16307,18 +16346,22 @@ seriesTypes.area = extendClass(Series, {
 	return H;
 }(Highcharts));
 (function (H) {
-	var Series = H.Series,
-		SplineSeries;
+	var defaultPlotOptions = H.defaultPlotOptions,
+		defaultSeriesOptions = H.defaultSeriesOptions,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		Series = H.Series,
+		seriesTypes = H.seriesTypes;
 
 /**
  * Set the default options for spline
  */
-H.defaultPlotOptions.spline = H.merge(H.defaultSeriesOptions);
+defaultPlotOptions.spline = merge(defaultSeriesOptions);
 
 /**
  * SplineSeries object
  */
-SplineSeries = H.extendClass(Series, {
+seriesTypes.spline  = extendClass(Series, {
 	type: 'spline',
 
 	/**
@@ -16433,7 +16476,7 @@ SplineSeries = H.extendClass(Series, {
 		return ret;
 	}
 });
-H.seriesTypes.spline = SplineSeries;
+
 
 	return H;
 }(Highcharts));
