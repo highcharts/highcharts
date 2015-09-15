@@ -206,12 +206,12 @@ seriesTypes.area = extendClass(Series, {
 				series[areaKey] = series.chart.renderer.path(areaPath)
 					.addClass('highcharts-area')
 					.attr({
-						/* presentational
+						/*= if (build.classic) { =*/
 						fill: pick(
 							prop[2],
 							Color(prop[1]).setOpacity(pick(options.fillOpacity, 0.75)).get()
 						),
-						*/
+						/*= } =*/
 						zIndex: 0 // #1069
 					}).add(series.group);
 			}

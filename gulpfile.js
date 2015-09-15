@@ -113,10 +113,61 @@ gulp.task('lint-themes', function () {
 /**
  * Proof of concept to parse super code. Move this logic into the standard build when ready.
  */
-gulp.task('supercode', function () {
-    ['./js/highcharts.src.js'].forEach(function (path) {
-        fs.readFile(path, 'utf8', function (err, data) {
-            fs.writeFile(path, data, 'utf8');
+gulp.task('microoptimize', function () {
+    /**
+     * Micro-optimize code based on the build object.
+     */
+    function microOptimize(tpl, build) {
+        // Escape double quotes and backslashes, to be reinserted after parsing
+        tpl = tpl.replace(/"/g, '___doublequote___');
+        tpl = tpl.replace(/\\/g, '\\\\');
+
+
+        // Prepare newlines
+        tpl = tpl.replace(/\n/g, '\\n');
+
+        // Start supercode output, start first output string
+        tpl = tpl.replace(/^/, 'var s = "');
+        // Start supercode block, closes output string
+        tpl = tpl.replace(/\/\*=\s?/g, '";\n');
+        // End of supercode block, starts output string
+        tpl = tpl.replace(/=\*\//g, '\ns += "');
+        // End supercode output, end last output string
+        tpl = tpl.replace(/$/, '";\nreturn s;');
+
+        // Uncomment to preview generated supercode
+        // fs.writeFile('temp.js', tpl, 'utf8');
+
+        // The evaluation function for the ready built supercode
+        func = new Function('build', tpl);
+
+        tpl = func(build);
+        tpl = tpl.replace(/___doublequote___/g, '"');
+
+        return tpl;
+    }
+
+
+    paths.distributions.forEach(function (path) {
+        fs.readFile(path, 'utf8', function (err, tpl) {
+            
+            // Create the classic file
+            fs.writeFile(
+                path,
+                microOptimize(tpl, {
+                    classic: true
+                }), 
+                'utf8'
+            );
+
+            // Create the unstyled file
+            fs.writeFile(
+                path.replace('.src.js', '.unstyled.src.js'), 
+                microOptimize(tpl, {
+                    classic: false
+                }), 
+                'utf8'
+            );
         });
     });
 });
