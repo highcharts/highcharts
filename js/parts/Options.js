@@ -86,10 +86,12 @@ H.defaultOptions = {
 		// x: 0,
 		// verticalAlign: 'top',
 		// y: null,
+		/*= if (build.classic) { =*/
 		style: {
 			color: '#333333',
 			fontSize: '18px'
 		}
+		/*= } =*/
 
 	},
 	subtitle: {
@@ -99,9 +101,11 @@ H.defaultOptions = {
 		// x: 0,
 		// verticalAlign: 'top',
 		// y: null,
+		/*= if (build.classic) { =*/
 		style: {
 			color: '#555555'
 		}
+		/*= } =*/
 	},
 
 	plotOptions: {

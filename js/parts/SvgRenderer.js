@@ -1415,12 +1415,17 @@ SVGRenderer.prototype = {
 			i = childNodes.length,
 			tempParent = width && !wrapper.added && this.box,
 			getLineHeight = function (tspan) {
+				var fontSizeStyle;
+				/*= if (build.classic) { =*/
+				fontSizeStyle = /(px|em)$/.test(tspan && tspan.style.fontSize) ?
+					tspan.style.fontSize :
+					((textStyles && textStyles.fontSize) || renderer.style.fontSize || 12);
+				/*= } =*/
+
 				return textLineHeight ? 
 					pInt(textLineHeight) :
 					renderer.fontMetrics(
-						/(px|em)$/.test(tspan && tspan.style.fontSize) ?
-							tspan.style.fontSize :
-							((textStyles && textStyles.fontSize) || renderer.style.fontSize || 12),
+						fontSizeStyle,
 						tspan
 					).h;
 			},

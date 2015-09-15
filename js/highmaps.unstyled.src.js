@@ -1299,10 +1299,7 @@ H.defaultOptions = {
 		// x: 0,
 		// verticalAlign: 'top',
 		// y: null,
-		style: {
-			color: '#333333',
-			fontSize: '18px'
-		}
+		
 
 	},
 	subtitle: {
@@ -1312,9 +1309,7 @@ H.defaultOptions = {
 		// x: 0,
 		// verticalAlign: 'top',
 		// y: null,
-		style: {
-			color: '#555555'
-		}
+		
 	},
 
 	plotOptions: {
@@ -3155,12 +3150,13 @@ SVGRenderer.prototype = {
 			i = childNodes.length,
 			tempParent = width && !wrapper.added && this.box,
 			getLineHeight = function (tspan) {
+				var fontSizeStyle;
+				
+
 				return textLineHeight ? 
 					pInt(textLineHeight) :
 					renderer.fontMetrics(
-						/(px|em)$/.test(tspan && tspan.style.fontSize) ?
-							tspan.style.fontSize :
-							((textStyles && textStyles.fontSize) || renderer.style.fontSize || 12),
+						fontSizeStyle,
 						tspan
 					).h;
 			},
@@ -11543,13 +11539,15 @@ Chart.prototype = {
 			subtitleOptions = options.subtitle,
 			requiresDirtyBox,
 			renderer = this.renderer,
+			titleFontSize,
 			autoWidth = this.spacingBox.width - 44; // 44 makes room for default context button
 
 		if (title) {
+			
 			title
 				.css({ width: (titleOptions.width || autoWidth) + 'px' })
 				.align(extend({ 
-					y: renderer.fontMetrics(titleOptions.style.fontSize, title).b - 3
+					y: renderer.fontMetrics(titleFontSize, title).b - 3
 				}, titleOptions), false, 'spacingBox');
 			
 			if (!titleOptions.floating && !titleOptions.verticalAlign) {
@@ -11560,7 +11558,7 @@ Chart.prototype = {
 			subtitle
 				.css({ width: (subtitleOptions.width || autoWidth) + 'px' })
 				.align(extend({ 
-					y: titleOffset + (titleOptions.margin - 13) + renderer.fontMetrics(titleOptions.style.fontSize, subtitle).b 
+					y: titleOffset + (titleOptions.margin - 13) + renderer.fontMetrics(titleFontSize, subtitle).b 
 				}, subtitleOptions), false, 'spacingBox');
 			
 			if (!subtitleOptions.floating && !subtitleOptions.verticalAlign) {
