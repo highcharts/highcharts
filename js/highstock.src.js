@@ -1449,6 +1449,7 @@ H.defaultOptions = {
 		/*style: {
 			padding: '5px'
 		},*/
+		/* presentational
 		itemStyle: {			
 			color: '#333333',
 			fontSize: '12px',
@@ -1461,6 +1462,7 @@ H.defaultOptions = {
 		itemHiddenStyle: {
 			color: '#CCC'
 		},
+		*/
 		itemCheckboxStyle: {
 			position: 'absolute',
 			width: '13px', // for IE precision
@@ -2129,15 +2131,14 @@ SVGElement.prototype = {
 		}
 		return this;
 	},
-	/* hasClass and removeClass are not (yet) needed
+	/* hasClass and removeClass are not (yet) needed */
 	hasClass: function (className) {
 		return attr(this.element, 'class').indexOf(className) !== -1;
 	},
 	removeClass: function (className) {
-		attr(this.element, 'class', attr(this.element, 'class').replace(className, ''));
+		attr(this.element, 'class', (attr(this.element, 'class') || '').replace(className, ''));
 		return this;
 	},
-	*/
 
 	/**
 	 * If one of the symbol size affecting parameters are changed,
@@ -2276,6 +2277,13 @@ SVGElement.prototype = {
 		}
 
 		return elemWrapper;
+	},
+
+	/**
+	 * Get a computed style
+	 */
+	getStyle: function (prop) {
+		return window.getComputedStyle(this.element || this, '').getPropertyValue(prop);
 	},
 
 	/**
@@ -3004,9 +3012,12 @@ SVGRenderer.prototype = {
 
 		boxWrapper = renderer.createElement('svg')
 			.attr({
-				version: '1.1'
+				'version': '1.1',
+				'class': 'highcharts-root'
 			})
-			.css(this.getStyle(style));
+			/* presentational
+			.css(this.getStyle(style))
+			*/;
 		element = boxWrapper.element;
 		container.appendChild(element);
 
@@ -3068,13 +3079,16 @@ SVGRenderer.prototype = {
 			addEvent(window, 'resize', subPixelFix);
 		}
 	},
-
+	/* presentational
 	getStyle: function (style) {
 		return (this.style = extend({
+			
 			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif', // default font
 			fontSize: '12px'
+
 		}, style));
 	},
+	*/
 
 	/**
 	 * Detect whether the renderer is hidden. This happens when one of the parent elements
@@ -3566,7 +3580,9 @@ SVGRenderer.prototype = {
 	 */
 	path: function (path) {
 		var attr = {
+			/* presentational
 			fill: 'none'
+			*/
 		};
 		if (isArray(path)) {
 			attr.d = path;
@@ -3688,9 +3704,12 @@ SVGRenderer.prototype = {
 		renderer.width = width;
 		renderer.height = height;
 
-		renderer.boxWrapper[pick(animate, true) ? 'animate' : 'attr']({
+		/**renderer.boxWrapper[pick(animate, true) ? 'animate' : 'attr']({
 			width: width,
 			height: height
+		});*/
+		renderer.boxWrapper.attr({
+			viewBox: '0 0 ' + width + ' ' + height
 		});
 
 		while (i--) {
@@ -4099,15 +4118,9 @@ SVGRenderer.prototype = {
 	 */
 	fontMetrics: function (fontSize, elem) {
 		var lineHeight,
-			baseline,
-			style;
+			baseline;
 
-		fontSize = fontSize || this.style.fontSize;
-		if (elem && window.getComputedStyle) {
-			elem = elem.element || elem; // SVGElement
-			style = window.getComputedStyle(elem, "");
-			fontSize = style && style.fontSize; // #4309, the style doesn't exist inside a hidden iframe in Firefox
-		}
+		fontSize = (elem && SVGElement.prototype.getStyle.call(elem, 'fontSize')) || fontSize || this.style.fontSize;
 		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
 
 		// Empirical values found by comparing font size and bounding box height.
@@ -4652,9 +4665,11 @@ extend(SVGRenderer.prototype, {
 				y: Math.round(y)
 			})
 			.css({
-				position: 'absolute',
+				position: 'absolute'
+				/* presentational 
 				fontFamily: this.style.fontFamily,
 				fontSize: this.style.fontSize
+				*/
 			});
 
 		// Keep the whiteSpace style outside the wrapper.styles collection
@@ -10785,7 +10800,9 @@ Legend.prototype = {
 	init: function (chart, options) {
 		
 		var legend = this,
-			itemStyle = options.itemStyle,
+			/* presentational
+			itemStyle = legend.itemStyle = options.itemStyle,
+			*/
 			padding,
 			itemMarginTop = options.itemMarginTop || 0;
 	
@@ -10795,8 +10812,9 @@ Legend.prototype = {
 			return;
 		}
 	
-		legend.itemStyle = itemStyle;
+		/* presentational
 		legend.itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle);
+		*/
 		legend.itemMarginTop = itemMarginTop;
 		legend.padding = padding = pick(options.padding, 8);
 		legend.initialItemX = padding;
@@ -10824,6 +10842,9 @@ Legend.prototype = {
 	 * @param {Object} visible Dimmed or colored
 	 */
 	colorizeItem: function (item, visible) {
+		item.legendGroup[visible ? 'removeClass' : 'addClass']('highcharts-legend-item-hidden');
+
+		/* presentational
 		var legend = this,
 			options = legend.options,
 			legendItem = item.legendItem,
@@ -10860,6 +10881,7 @@ Legend.prototype = {
 
 			legendSymbol.attr(symbolAttr);
 		}
+		*/
 	},
 
 	/**
@@ -10999,8 +11021,10 @@ Legend.prototype = {
 			horizontal = options.layout === 'horizontal',
 			symbolWidth = legend.symbolWidth,
 			symbolPadding = options.symbolPadding,
+			/* presentational
 			itemStyle = legend.itemStyle,
 			itemHiddenStyle = legend.itemHiddenStyle,
+			*/
 			padding = legend.padding,
 			itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
 			ltr = !options.rtl,
@@ -11022,6 +11046,7 @@ Legend.prototype = {
 			// Generate the group box
 			// A group to hold the symbol and text. Text is to be appended in Legend class.
 			item.legendGroup = renderer.g('legend-item')
+				.addClass('highcharts-series-' + item.index)
 				.attr({ zIndex: 1 })
 				.add(legend.scrollGroup);
 
@@ -11032,7 +11057,9 @@ Legend.prototype = {
 					legend.baseline || 0,
 					useHTML
 				)
+				/* presentational
 				.css(merge(item.visible ? itemStyle : itemHiddenStyle)) // merge to prevent modifying original (#1021)
+				*/
 				.attr({
 					align: ltr ? 'left' : 'right',
 					zIndex: 2
@@ -11041,7 +11068,13 @@ Legend.prototype = {
 
 			// Get the baseline for the first item - the font size is equal for all
 			if (!legend.baseline) {
-				legend.fontMetrics = renderer.fontMetrics(itemStyle.fontSize, li);
+				legend.fontMetrics = renderer.fontMetrics(
+					/* presentational
+					itemStyle.fontSize, 
+					*/
+					12,
+					li
+				);
 				legend.baseline = legend.fontMetrics.f + 3 + itemMarginTop;
 				li.attr('y', legend.baseline);
 			}
@@ -11050,7 +11083,10 @@ Legend.prototype = {
 			series.drawLegendSymbol(legend, item);
 
 			if (legend.setItemEvents) {
+				/* presentational 
 				legend.setItemEvents(item, li, useHTML, itemStyle, itemHiddenStyle);
+				*/
+				legend.setItemEvents(item, li, useHTML);
 			}			
 
 			// Colorize the items
@@ -11267,6 +11303,11 @@ Legend.prototype = {
 
 			// hide the border if no items
 			box[display ? 'show' : 'hide']();
+		}
+
+		// Open for responsiveness
+		if (legendGroup.getStyle('display') === 'none') {
+			legendWidth = legendHeight = 0;
 		}
 		
 		legend.legendWidth = legendWidth;
@@ -11528,7 +11569,9 @@ H.LegendSymbolMixin = {
 		// Draw the line
 		if (options.lineWidth) {
 			attr = {
+				/* presentational
 				'stroke-width': options.lineWidth
+				*/
 			};
 			if (options.dashStyle) {
 				attr.dashstyle = options.dashStyle;
@@ -11541,6 +11584,7 @@ H.LegendSymbolMixin = {
 				symbolWidth,
 				verticalCenter
 			])
+			.addClass('highcharts-graph')
 			.attr(attr)
 			.add(legendItemGroup);
 		}
@@ -11555,6 +11599,7 @@ H.LegendSymbolMixin = {
 				2 * radius,
 				2 * radius
 			)
+			.addClass('highcharts-marker')
 			.add(legendItemGroup);
 			legendSymbol.isMarker = true;
 		}
@@ -12232,10 +12277,11 @@ Chart.prototype = {
 
 		// create the inner container
 		chart.container = container = createElement('div', {
-				className: 'highcharts-' + 'container' +
-					(optionsChart.className ? ' ' + optionsChart.className : ''),
+				className: 'highcharts-container ' + (optionsChart.className || ''),
 				id: containerId
-			}, extend({
+			}
+			/* presentational
+			, extend({
 				position: 'relative',
 				overflow: 'hidden', // needed for context menu (avoid scrollbars) and
 					// content overflow in IE
@@ -12246,6 +12292,8 @@ Chart.prototype = {
 				zIndex: 0, // #1072
 				'-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
 			}, optionsChart.style),
+			*/,
+			null,
 			chart.renderToClone || renderTo
 		);
 
@@ -12419,10 +12467,12 @@ Chart.prototype = {
 		}
 
 		// Resize the container with the global animation applied if enabled (#2503)
+		/* presentational
 		(globalAnimation ? animate : css)(chart.container, {
 			width: chartWidth + 'px',
 			height: chartHeight + 'px'
 		}, globalAnimation);
+		*/
 
 		chart.setChartSize(true);
 		renderer.setSize(chartWidth, chartHeight, animation);
@@ -13397,9 +13447,11 @@ H.Series.prototype = {
 	sorted: true, // requires the data to be sorted
 	requireSorting: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
+		/* presentational
 		stroke: 'lineColor',
 		'stroke-width': 'lineWidth',
 		fill: 'fillColor',
+		*/
 		r: 'radius'
 	},
 	directTouch: false,
@@ -14764,18 +14816,23 @@ H.Series.prototype = {
 
 			} else if ((lineWidth || fillColor) && graphPath.length) { // #1487
 				attribs = {
+					/* presentational
 					stroke: prop[1],
 					'stroke-width': lineWidth,
 					fill: fillColor,
+					*/
 					zIndex: 1 // #1069
 				};
+				/* presentational
 				if (prop[2]) {
 					attribs.dashstyle = prop[2];
 				} else if (roundCap) {
 					attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
 				}
+				*/
 
 				series[graphKey] = series.chart.renderer.path(graphPath)
+					.addClass('highcharts-graph')
 					.attr(attribs)
 					.add(series.group)
 					.shadow((i < 2) && options.shadow); // add shadow to normal series (0) or to first zone (1) #3932
@@ -16400,11 +16457,14 @@ seriesTypes.area = extendClass(Series, {
 	
 			} else { // create
 				series[areaKey] = series.chart.renderer.path(areaPath)
+					.addClass('highcharts-area')
 					.attr({
+						/* presentational
 						fill: pick(
 							prop[2],
 							Color(prop[1]).setOpacity(pick(options.fillOpacity, 0.75)).get()
 						),
+						*/
 						zIndex: 0 // #1069
 					}).add(series.group);
 			}
@@ -18627,14 +18687,19 @@ if (seriesTypes.scatter) {
 extend(Legend.prototype, {
 
 	setItemEvents: function (item, legendItem, useHTML, itemStyle, itemHiddenStyle) {
-	var legend = this;
-	// Set the events on the item group, or in case of useHTML, the item itself (#1249)
-	(useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
+		var legend = this;
+		// Set the events on the item group, or in case of useHTML, the item itself (#1249)
+		(useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
 			item.setState('hover');
+			/* presentational
 			legendItem.css(legend.options.itemHoverStyle);
+			*/
+
 		})
 		.on('mouseout', function () {
+			/* presentational
 			legendItem.css(item.visible ? itemStyle : itemHiddenStyle);
+			*/
 			item.setState();
 		})
 		.on('click', function (event) {
@@ -18683,7 +18748,9 @@ extend(Legend.prototype, {
 /* 
  * Add pointer cursor to legend itemstyle in defaultOptions
  */
+/* presentational
 defaultOptions.legend.itemStyle.cursor = 'pointer';
+*/
 
 
 /* 
@@ -19143,7 +19210,15 @@ extend(Series.prototype, {
 		state = state || '';
 
 		if (series.state !== state) {
+
+			series.group
+				.removeClass('highcharts-state-' + (series.state || 'normal'))
+				.addClass('highcharts-state-' + (state || 'normal'));
+
+
 			series.state = state;
+
+			/* presentational
 
 			if (stateOptions[state] && stateOptions[state].enabled === false) {
 				return;
@@ -19164,6 +19239,7 @@ extend(Series.prototype, {
 					i = i + 1;
 				}
 			}
+			*/
 		}
 	},
 

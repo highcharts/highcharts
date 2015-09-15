@@ -367,15 +367,14 @@ SVGElement.prototype = {
 		}
 		return this;
 	},
-	/* hasClass and removeClass are not (yet) needed
+	/* hasClass and removeClass are not (yet) needed */
 	hasClass: function (className) {
 		return attr(this.element, 'class').indexOf(className) !== -1;
 	},
 	removeClass: function (className) {
-		attr(this.element, 'class', attr(this.element, 'class').replace(className, ''));
+		attr(this.element, 'class', (attr(this.element, 'class') || '').replace(className, ''));
 		return this;
 	},
-	*/
 
 	/**
 	 * If one of the symbol size affecting parameters are changed,
@@ -514,6 +513,13 @@ SVGElement.prototype = {
 		}
 
 		return elemWrapper;
+	},
+
+	/**
+	 * Get a computed style
+	 */
+	getStyle: function (prop) {
+		return window.getComputedStyle(this.element || this, '').getPropertyValue(prop);
 	},
 
 	/**
@@ -1242,9 +1248,12 @@ SVGRenderer.prototype = {
 
 		boxWrapper = renderer.createElement('svg')
 			.attr({
-				version: '1.1'
+				'version': '1.1',
+				'class': 'highcharts-root'
 			})
-			.css(this.getStyle(style));
+			/* presentational
+			.css(this.getStyle(style))
+			*/;
 		element = boxWrapper.element;
 		container.appendChild(element);
 
@@ -1306,13 +1315,16 @@ SVGRenderer.prototype = {
 			addEvent(window, 'resize', subPixelFix);
 		}
 	},
-
+	/* presentational
 	getStyle: function (style) {
 		return (this.style = extend({
+			
 			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif', // default font
 			fontSize: '12px'
+
 		}, style));
 	},
+	*/
 
 	/**
 	 * Detect whether the renderer is hidden. This happens when one of the parent elements
@@ -1804,7 +1816,9 @@ SVGRenderer.prototype = {
 	 */
 	path: function (path) {
 		var attr = {
+			/* presentational
 			fill: 'none'
+			*/
 		};
 		if (isArray(path)) {
 			attr.d = path;
@@ -1926,9 +1940,12 @@ SVGRenderer.prototype = {
 		renderer.width = width;
 		renderer.height = height;
 
-		renderer.boxWrapper[pick(animate, true) ? 'animate' : 'attr']({
+		/**renderer.boxWrapper[pick(animate, true) ? 'animate' : 'attr']({
 			width: width,
 			height: height
+		});*/
+		renderer.boxWrapper.attr({
+			viewBox: '0 0 ' + width + ' ' + height
 		});
 
 		while (i--) {
@@ -2337,15 +2354,9 @@ SVGRenderer.prototype = {
 	 */
 	fontMetrics: function (fontSize, elem) {
 		var lineHeight,
-			baseline,
-			style;
+			baseline;
 
-		fontSize = fontSize || this.style.fontSize;
-		if (elem && window.getComputedStyle) {
-			elem = elem.element || elem; // SVGElement
-			style = window.getComputedStyle(elem, "");
-			fontSize = style && style.fontSize; // #4309, the style doesn't exist inside a hidden iframe in Firefox
-		}
+		fontSize = (elem && SVGElement.prototype.getStyle.call(elem, 'fontSize')) || fontSize || this.style.fontSize;
 		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
 
 		// Empirical values found by comparing font size and bounding box height.

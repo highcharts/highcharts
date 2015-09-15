@@ -28,7 +28,9 @@ Legend.prototype = {
 	init: function (chart, options) {
 		
 		var legend = this,
-			itemStyle = options.itemStyle,
+			/* presentational
+			itemStyle = legend.itemStyle = options.itemStyle,
+			*/
 			padding,
 			itemMarginTop = options.itemMarginTop || 0;
 	
@@ -38,8 +40,9 @@ Legend.prototype = {
 			return;
 		}
 	
-		legend.itemStyle = itemStyle;
+		/* presentational
 		legend.itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle);
+		*/
 		legend.itemMarginTop = itemMarginTop;
 		legend.padding = padding = pick(options.padding, 8);
 		legend.initialItemX = padding;
@@ -67,6 +70,9 @@ Legend.prototype = {
 	 * @param {Object} visible Dimmed or colored
 	 */
 	colorizeItem: function (item, visible) {
+		item.legendGroup[visible ? 'removeClass' : 'addClass']('highcharts-legend-item-hidden');
+
+		/* presentational
 		var legend = this,
 			options = legend.options,
 			legendItem = item.legendItem,
@@ -103,6 +109,7 @@ Legend.prototype = {
 
 			legendSymbol.attr(symbolAttr);
 		}
+		*/
 	},
 
 	/**
@@ -242,8 +249,10 @@ Legend.prototype = {
 			horizontal = options.layout === 'horizontal',
 			symbolWidth = legend.symbolWidth,
 			symbolPadding = options.symbolPadding,
+			/* presentational
 			itemStyle = legend.itemStyle,
 			itemHiddenStyle = legend.itemHiddenStyle,
+			*/
 			padding = legend.padding,
 			itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
 			ltr = !options.rtl,
@@ -265,6 +274,7 @@ Legend.prototype = {
 			// Generate the group box
 			// A group to hold the symbol and text. Text is to be appended in Legend class.
 			item.legendGroup = renderer.g('legend-item')
+				.addClass('highcharts-series-' + item.index)
 				.attr({ zIndex: 1 })
 				.add(legend.scrollGroup);
 
@@ -275,7 +285,9 @@ Legend.prototype = {
 					legend.baseline || 0,
 					useHTML
 				)
+				/* presentational
 				.css(merge(item.visible ? itemStyle : itemHiddenStyle)) // merge to prevent modifying original (#1021)
+				*/
 				.attr({
 					align: ltr ? 'left' : 'right',
 					zIndex: 2
@@ -284,7 +296,13 @@ Legend.prototype = {
 
 			// Get the baseline for the first item - the font size is equal for all
 			if (!legend.baseline) {
-				legend.fontMetrics = renderer.fontMetrics(itemStyle.fontSize, li);
+				legend.fontMetrics = renderer.fontMetrics(
+					/* presentational
+					itemStyle.fontSize, 
+					*/
+					12,
+					li
+				);
 				legend.baseline = legend.fontMetrics.f + 3 + itemMarginTop;
 				li.attr('y', legend.baseline);
 			}
@@ -293,7 +311,10 @@ Legend.prototype = {
 			series.drawLegendSymbol(legend, item);
 
 			if (legend.setItemEvents) {
+				/* presentational 
 				legend.setItemEvents(item, li, useHTML, itemStyle, itemHiddenStyle);
+				*/
+				legend.setItemEvents(item, li, useHTML);
 			}			
 
 			// Colorize the items
@@ -510,6 +531,11 @@ Legend.prototype = {
 
 			// hide the border if no items
 			box[display ? 'show' : 'hide']();
+		}
+
+		// Open for responsiveness
+		if (legendGroup.getStyle('display') === 'none') {
+			legendWidth = legendHeight = 0;
 		}
 		
 		legend.legendWidth = legendWidth;
@@ -771,7 +797,9 @@ H.LegendSymbolMixin = {
 		// Draw the line
 		if (options.lineWidth) {
 			attr = {
+				/* presentational
 				'stroke-width': options.lineWidth
+				*/
 			};
 			if (options.dashStyle) {
 				attr.dashstyle = options.dashStyle;
@@ -784,6 +812,7 @@ H.LegendSymbolMixin = {
 				symbolWidth,
 				verticalCenter
 			])
+			.addClass('highcharts-graph')
 			.attr(attr)
 			.add(legendItemGroup);
 		}
@@ -798,6 +827,7 @@ H.LegendSymbolMixin = {
 				2 * radius,
 				2 * radius
 			)
+			.addClass('highcharts-marker')
 			.add(legendItemGroup);
 			legendSymbol.isMarker = true;
 		}

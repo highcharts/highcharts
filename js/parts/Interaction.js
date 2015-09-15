@@ -192,14 +192,19 @@ if (seriesTypes.scatter) {
 extend(Legend.prototype, {
 
 	setItemEvents: function (item, legendItem, useHTML, itemStyle, itemHiddenStyle) {
-	var legend = this;
-	// Set the events on the item group, or in case of useHTML, the item itself (#1249)
-	(useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
+		var legend = this;
+		// Set the events on the item group, or in case of useHTML, the item itself (#1249)
+		(useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
 			item.setState('hover');
+			/* presentational
 			legendItem.css(legend.options.itemHoverStyle);
+			*/
+
 		})
 		.on('mouseout', function () {
+			/* presentational
 			legendItem.css(item.visible ? itemStyle : itemHiddenStyle);
+			*/
 			item.setState();
 		})
 		.on('click', function (event) {
@@ -248,7 +253,9 @@ extend(Legend.prototype, {
 /* 
  * Add pointer cursor to legend itemstyle in defaultOptions
  */
+/* presentational
 defaultOptions.legend.itemStyle.cursor = 'pointer';
+*/
 
 
 /* 
@@ -708,7 +715,15 @@ extend(Series.prototype, {
 		state = state || '';
 
 		if (series.state !== state) {
+
+			series.group
+				.removeClass('highcharts-state-' + (series.state || 'normal'))
+				.addClass('highcharts-state-' + (state || 'normal'));
+
+
 			series.state = state;
+
+			/* presentational
 
 			if (stateOptions[state] && stateOptions[state].enabled === false) {
 				return;
@@ -729,6 +744,7 @@ extend(Series.prototype, {
 					i = i + 1;
 				}
 			}
+			*/
 		}
 	},
 

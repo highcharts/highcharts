@@ -54,9 +54,11 @@ H.Series.prototype = {
 	sorted: true, // requires the data to be sorted
 	requireSorting: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
+		/* presentational
 		stroke: 'lineColor',
 		'stroke-width': 'lineWidth',
 		fill: 'fillColor',
+		*/
 		r: 'radius'
 	},
 	directTouch: false,
@@ -1421,18 +1423,23 @@ H.Series.prototype = {
 
 			} else if ((lineWidth || fillColor) && graphPath.length) { // #1487
 				attribs = {
+					/* presentational
 					stroke: prop[1],
 					'stroke-width': lineWidth,
 					fill: fillColor,
+					*/
 					zIndex: 1 // #1069
 				};
+				/* presentational
 				if (prop[2]) {
 					attribs.dashstyle = prop[2];
 				} else if (roundCap) {
 					attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
 				}
+				*/
 
 				series[graphKey] = series.chart.renderer.path(graphPath)
+					.addClass('highcharts-graph')
 					.attr(attribs)
 					.add(series.group)
 					.shadow((i < 2) && options.shadow); // add shadow to normal series (0) or to first zone (1) #3932
