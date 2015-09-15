@@ -1,7 +1,9 @@
 (function (H) {
 	var Chart,
 
+		adapterRun = H.adapterRun,
 		addEvent = H.addEvent,
+		animate = H.animate,
 		attr = H.attr,
 		Axis = H.Axis, // @todo add as requirement
 		CanVGController = H.CanVGController,
@@ -15,6 +17,7 @@
 		error = H.error,
 		extend = H.extend,
 		fireEvent = H.fireEvent,
+		grep = H.grep,
 		isString = H.isString,
 		Legend = H.Legend, // @todo add as requirement
 		merge = H.merge,
@@ -188,7 +191,6 @@ Chart.prototype = {
 			pointer = chart.pointer,
 			legend = chart.legend,
 			redrawLegend = chart.isDirtyLegend,
-			fireEvent = HighchartsAdapter.fireEvent,
 			hasStackedSeries,
 			hasDirtyStacks,
 			hasCartesianSeries = chart.hasCartesianSeries,
@@ -409,7 +411,7 @@ Chart.prototype = {
 	getSelectedPoints: function () {
 		var points = [];
 		each(this.series, function (serie) {
-			points = points.concat(HighchartsAdapter.grep(serie.points || [], function (point) {
+			points = points.concat(grep(serie.points || [], function (point) {
 				return point.selected;
 			}));
 		});
@@ -420,7 +422,7 @@ Chart.prototype = {
 	 * Get the currently selected series
 	 */
 	getSelectedSeries: function () {
-		return HighchartsAdapter.grep(this.series, function (serie) {
+		return grep(this.series, function (serie) {
 			return serie.selected;
 		});
 	},
@@ -528,7 +530,6 @@ Chart.prototype = {
 	 */
 	getChartSize: function () {
 		var chart = this,
-			adapterRun = HighchartsAdapter.adapterRun,
 			optionsChart = chart.options.chart,
 			widthOption = optionsChart.width,
 			heightOption = optionsChart.height,
@@ -752,7 +753,6 @@ Chart.prototype = {
 		var chart = this,
 			optionsChart = chart.options.chart,
 			renderTo = chart.renderTo,
-			adapterRun = HighchartsAdapter.adapterRun,
 			width = optionsChart.width || adapterRun(renderTo, 'width'),
 			height = optionsChart.height || adapterRun(renderTo, 'height'),
 			target = e ? e.target : window, // #805 - MooTools doesn't supply e
@@ -833,7 +833,7 @@ Chart.prototype = {
 		}
 
 		// Resize the container with the global animation applied if enabled (#2503)
-		(globalAnimation ? HighchartsAdapter.animate : css)(chart.container, {
+		(globalAnimation ? animate : css)(chart.container, {
 			width: chartWidth + 'px',
 			height: chartHeight + 'px'
 		}, globalAnimation);
@@ -1295,7 +1295,7 @@ Chart.prototype = {
 			parentNode = container && container.parentNode;
 			
 		// fire the chart.destoy event
-		HighchartsAdapter.fireEvent(chart, 'destroy');
+		fireEvent(chart, 'destroy');
 		
 		// Delete the chart from charts lookup array
 		charts[chart.index] = undefined;
@@ -1380,7 +1380,6 @@ Chart.prototype = {
 	firstRender: function () {
 		var chart = this,
 			options = chart.options,
-			fireEvent = HighchartsAdapter.fireEvent,
 			callback = chart.callback;
 
 		// Check whether the chart is ready to render

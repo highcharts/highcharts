@@ -1,5 +1,6 @@
 (function (H) {
 	var addEvent = H.addEvent,
+		animate = H.animate,
 		Axis = H.Axis,
 		Chart = H.Chart,
 		createElement = H.createElement,
@@ -7,6 +8,8 @@
 		each = H.each,
 		erase = H.erase,
 		extend = H.extend,
+		fireEvent = H.fireEvent,
+		inArray = H.inArray,
 		isArray = H.isArray,
 		isObject = H.isObject,
 		merge = H.merge,
@@ -37,7 +40,7 @@ extend(Chart.prototype, {
 		if (options) {
 			redraw = pick(redraw, true); // defaults to true
 
-			HighchartsAdapter.fireEvent(chart, 'addSeries', { options: options }, function () {
+			fireEvent(chart, 'addSeries', { options: options }, function () {
 				series = chart.initSeries(options);
 
 				chart.isDirtyLegend = true; // the series array is out of sync with the display
@@ -124,7 +127,7 @@ extend(Chart.prototype, {
 				opacity: 0,
 				display: ''				
 			});
-			HighchartsAdapter.animate(loadingDiv, {
+			animate(loadingDiv, {
 				opacity: loadingOptions.style.opacity
 			}, {
 				duration: loadingOptions.showDuration || 0
@@ -142,7 +145,7 @@ extend(Chart.prototype, {
 			loadingDiv = this.loadingDiv;
 
 		if (loadingDiv) {
-			HighchartsAdapter.animate(loadingDiv, {
+			animate(loadingDiv, {
 				opacity: 0
 			}, {
 				duration: options.loading.hideDuration || 100,
@@ -238,7 +241,7 @@ extend(Point.prototype, {
 	 *    configuration
 	 */
 	remove: function (redraw, animation) {
-		this.series.removePoint(HighchartsAdapter.inArray(this, this.series.data), redraw, animation);
+		this.series.removePoint(inArray(this, this.series.data), redraw, animation);
 	}
 });
 
@@ -406,7 +409,7 @@ extend(Series.prototype, {
 			series.isRemoving = true;
 
 			// fire the event with a default handler of removing the point
-			HighchartsAdapter.fireEvent(series, 'remove', null, function () {
+			fireEvent(series, 'remove', null, function () {
 
 
 				// destroy elements

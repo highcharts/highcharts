@@ -1196,11 +1196,18 @@ if (globalAdapter) {
 // Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
 // and all the utility functions will be null. In that case they are populated by the
 // default adapters below.
-H.each = adapter.each;
-H.map = adapter.map;
+H.adapterRun = adapter.adapterRun;
+H.addAnimSetter = adapter.addAnimSetter;
 H.addEvent = adapter.addEvent;
+H.animate = adapter.animate;
+H.each = adapter.each;
+H.getScript = adapter.getScript;
+H.grep = adapter.grep;
+H.map = adapter.map;
+H.inArray = adapter.inArray;
 H.fireEvent = adapter.fireEvent;
 H.removeEvent = adapter.removeEvent;
+H.stop = adapter.stop;
 
     return H;
 }(Highcharts));
@@ -5844,7 +5851,9 @@ SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
 }(Highcharts));
 (function (H) {
 	var CanVGRenderer,
+	
 		CanVGController = H.CanVGController,
+		getScript = H.getScript,
 		SVG_NS = H.SVG_NS,
 		useCanVG = H.useCanVG;
 
@@ -5897,7 +5906,7 @@ if (useCanVG) {
 			push: function (func, scriptLocation) {
 				// Only get the script once
 				if (deferredRenderCalls.length === 0) {
-					HighchartsAdapter.getScript(scriptLocation, drawDeferred);
+					getScript(scriptLocation, drawDeferred);
 				}
 				// Register render call
 				deferredRenderCalls.push(func);
@@ -6579,7 +6588,7 @@ H.AxisPlotLineOrBandExtension = {
 		fireEvent = H.fireEvent,
 		format = H.format,
 		getMagnitude = H.getMagnitude,
-		inArray = HighchartsAdapter.inArray,
+		inArray = H.inArray,
 		isNumber = H.isNumber,
 		isString = H.isString,
 		lin2log = H.lin2log,
@@ -8827,6 +8836,7 @@ extend(H.Axis.prototype, AxisPlotLineOrBandExtension);
 		extend = H.extend,
 		getMagnitude = H.getMagnitude,
 		getTZOffset = H.getTZOffset,
+		grep = H.grep,
 		normalizeTickInterval = H.normalizeTickInterval,
 		pick = H.pick,
 		timeUnits = H.timeUnits;
@@ -8940,7 +8950,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 
 
 		// mark new days if the time is dividible by day (#1649, #1760)
-		each(HighchartsAdapter.grep(tickPositions, function (time) {
+		each(grep(tickPositions, function (time) {
 			return interval <= timeUnits.hour && time % timeUnits.day === localTimezoneOffset;
 		}), function (time) {
 			higherRanks[time] = 'day';
@@ -11577,7 +11587,9 @@ if (/Trident\/7\.0/.test(navigator.userAgent) || isFirefox) {
 (function (H) {
 	var Chart,
 
+		adapterRun = H.adapterRun,
 		addEvent = H.addEvent,
+		animate = H.animate,
 		attr = H.attr,
 		Axis = H.Axis, // @todo add as requirement
 		CanVGController = H.CanVGController,
@@ -11591,6 +11603,7 @@ if (/Trident\/7\.0/.test(navigator.userAgent) || isFirefox) {
 		error = H.error,
 		extend = H.extend,
 		fireEvent = H.fireEvent,
+		grep = H.grep,
 		isString = H.isString,
 		Legend = H.Legend, // @todo add as requirement
 		merge = H.merge,
@@ -11764,7 +11777,6 @@ Chart.prototype = {
 			pointer = chart.pointer,
 			legend = chart.legend,
 			redrawLegend = chart.isDirtyLegend,
-			fireEvent = HighchartsAdapter.fireEvent,
 			hasStackedSeries,
 			hasDirtyStacks,
 			hasCartesianSeries = chart.hasCartesianSeries,
@@ -11985,7 +11997,7 @@ Chart.prototype = {
 	getSelectedPoints: function () {
 		var points = [];
 		each(this.series, function (serie) {
-			points = points.concat(HighchartsAdapter.grep(serie.points || [], function (point) {
+			points = points.concat(grep(serie.points || [], function (point) {
 				return point.selected;
 			}));
 		});
@@ -11996,7 +12008,7 @@ Chart.prototype = {
 	 * Get the currently selected series
 	 */
 	getSelectedSeries: function () {
-		return HighchartsAdapter.grep(this.series, function (serie) {
+		return grep(this.series, function (serie) {
 			return serie.selected;
 		});
 	},
@@ -12104,7 +12116,6 @@ Chart.prototype = {
 	 */
 	getChartSize: function () {
 		var chart = this,
-			adapterRun = HighchartsAdapter.adapterRun,
 			optionsChart = chart.options.chart,
 			widthOption = optionsChart.width,
 			heightOption = optionsChart.height,
@@ -12328,7 +12339,6 @@ Chart.prototype = {
 		var chart = this,
 			optionsChart = chart.options.chart,
 			renderTo = chart.renderTo,
-			adapterRun = HighchartsAdapter.adapterRun,
 			width = optionsChart.width || adapterRun(renderTo, 'width'),
 			height = optionsChart.height || adapterRun(renderTo, 'height'),
 			target = e ? e.target : window, // #805 - MooTools doesn't supply e
@@ -12409,7 +12419,7 @@ Chart.prototype = {
 		}
 
 		// Resize the container with the global animation applied if enabled (#2503)
-		(globalAnimation ? HighchartsAdapter.animate : css)(chart.container, {
+		(globalAnimation ? animate : css)(chart.container, {
 			width: chartWidth + 'px',
 			height: chartHeight + 'px'
 		}, globalAnimation);
@@ -12871,7 +12881,7 @@ Chart.prototype = {
 			parentNode = container && container.parentNode;
 			
 		// fire the chart.destoy event
-		HighchartsAdapter.fireEvent(chart, 'destroy');
+		fireEvent(chart, 'destroy');
 		
 		// Delete the chart from charts lookup array
 		charts[chart.index] = undefined;
@@ -12956,7 +12966,6 @@ Chart.prototype = {
 	firstRender: function () {
 		var chart = this,
 			options = chart.options,
-			fireEvent = HighchartsAdapter.fireEvent,
 			callback = chart.callback;
 
 		// Check whether the chart is ready to render
@@ -15619,6 +15628,7 @@ Series.prototype.setPercentStacks = function () {
 }(Highcharts));
 (function (H) {
 	var addEvent = H.addEvent,
+		animate = H.animate,
 		Axis = H.Axis,
 		Chart = H.Chart,
 		createElement = H.createElement,
@@ -15626,6 +15636,8 @@ Series.prototype.setPercentStacks = function () {
 		each = H.each,
 		erase = H.erase,
 		extend = H.extend,
+		fireEvent = H.fireEvent,
+		inArray = H.inArray,
 		isArray = H.isArray,
 		isObject = H.isObject,
 		merge = H.merge,
@@ -15656,7 +15668,7 @@ extend(Chart.prototype, {
 		if (options) {
 			redraw = pick(redraw, true); // defaults to true
 
-			HighchartsAdapter.fireEvent(chart, 'addSeries', { options: options }, function () {
+			fireEvent(chart, 'addSeries', { options: options }, function () {
 				series = chart.initSeries(options);
 
 				chart.isDirtyLegend = true; // the series array is out of sync with the display
@@ -15743,7 +15755,7 @@ extend(Chart.prototype, {
 				opacity: 0,
 				display: ''				
 			});
-			HighchartsAdapter.animate(loadingDiv, {
+			animate(loadingDiv, {
 				opacity: loadingOptions.style.opacity
 			}, {
 				duration: loadingOptions.showDuration || 0
@@ -15761,7 +15773,7 @@ extend(Chart.prototype, {
 			loadingDiv = this.loadingDiv;
 
 		if (loadingDiv) {
-			HighchartsAdapter.animate(loadingDiv, {
+			animate(loadingDiv, {
 				opacity: 0
 			}, {
 				duration: options.loading.hideDuration || 100,
@@ -15857,7 +15869,7 @@ extend(Point.prototype, {
 	 *    configuration
 	 */
 	remove: function (redraw, animation) {
-		this.series.removePoint(HighchartsAdapter.inArray(this, this.series.data), redraw, animation);
+		this.series.removePoint(inArray(this, this.series.data), redraw, animation);
 	}
 });
 
@@ -16025,7 +16037,7 @@ extend(Series.prototype, {
 			series.isRemoving = true;
 
 			// fire the event with a default handler of removing the point
-			HighchartsAdapter.fireEvent(series, 'remove', null, function () {
+			fireEvent(series, 'remove', null, function () {
 
 
 				// destroy elements
@@ -16579,6 +16591,7 @@ seriesTypes.areaspline = extendClass(seriesTypes.spline, {
 		pick = H.pick,
 		Series = H.Series,
 		seriesTypes = H.seriesTypes,
+		stop = H.stop,
 		svg = H.svg;
 /**
  * Set the default options for column
@@ -16870,7 +16883,7 @@ seriesTypes.column = extendClass(Series, {
 				pointAttr = point.pointAttr[point.selected ? 'select' : ''] || series.pointAttr[''];
 				
 				if (graphic) { // update
-					HighchartsAdapter.stop(graphic);
+					stop(graphic);
 					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs));
 
 				} else {
@@ -17016,6 +17029,7 @@ seriesTypes.scatter = extendClass(Series, {
 		each = H.each,
 		extend = H.extend,
 		extendClass = H.extendClass,
+		inArray = H.inArray,
 		LegendSymbolMixin = H.LegendSymbolMixin,
 		merge = H.merge,
 		noop = H.noop,
@@ -17112,7 +17126,7 @@ PiePoint = extendClass(Point, {
 
 			// If called without an argument, toggle visibility
 			point.visible = point.options.visible = vis = vis === undefined ? !point.visible : vis;
-			series.options.data[HighchartsAdapter.inArray(point, series.data)] = point.options; // update userOptions.data
+			series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
 
 			// Show and hide associated elements. This is performed regardless of redraw or not,
 			// because chart.redraw only handles full series.
@@ -18283,12 +18297,12 @@ if (seriesTypes.column) {
  * License: www.highcharts.com/license
  */
 
-/*global Highcharts, HighchartsAdapter */
+/*global Highcharts */
 (function (H) {
 	var Chart = H.Chart,
 		each = H.each,
 		pick = H.pick,
-		addEvent = HighchartsAdapter.addEvent;
+		addEvent = H.addEvent;
 
 	// Collect potensial overlapping data labels. Stack labels probably don't need to be 
 	// considered because they are usually accompanied by data labels that lie inside the columns.
@@ -18429,7 +18443,9 @@ if (seriesTypes.column) {
 		defaultPlotOptions = H.defaultPlotOptions,
 		each = H.each,
 		extend = H.extend,
+		fireEvent = H.fireEvent,
 		hasTouch = H.hasTouch,
+		inArray = H.inArray,
 		isObject = H.isObject,
 		Legend = H.Legend,
 		merge = H.merge,
@@ -18636,7 +18652,7 @@ extend(Legend.prototype, {
 			if (item.firePointEvent) { // point
 				item.firePointEvent(strLegendItemClick, event, fnLegendItemClick);
 			} else {
-				HighchartsAdapter.fireEvent(item, strLegendItemClick, event, fnLegendItemClick);
+				fireEvent(item, strLegendItemClick, event, fnLegendItemClick);
 			}
 		});
 	},
@@ -18652,7 +18668,7 @@ extend(Legend.prototype, {
 
 		addEvent(item.checkbox, 'click', function (event) {
 			var target = event.target;
-			HighchartsAdapter.fireEvent(item.series || item, 'checkboxClick', { // #3712
+			fireEvent(item.series || item, 'checkboxClick', { // #3712
 					checked: target.checked,
 					item: item
 				},
@@ -18701,7 +18717,7 @@ extend(Chart.prototype, {
 	 */
 	zoomOut: function () {
 		var chart = this;
-		HighchartsAdapter.fireEvent(chart, 'selection', { resetSelection: true }, function () { 
+		fireEvent(chart, 'selection', { resetSelection: true }, function () { 
 			chart.zoom();
 		});
 	},
@@ -18812,8 +18828,7 @@ extend(Point.prototype, {
 	select: function (selected, accumulate) {
 		var point = this,
 			series = point.series,
-			chart = series.chart,
-			inArray = HighchartsAdapter.inArray;
+			chart = series.chart;
 
 		selected = pick(selected, !point.selected);
 
@@ -18888,7 +18903,7 @@ extend(Point.prototype, {
 
 		this.firePointEvent('mouseOut');
 
-		if (!hoverPoints || HighchartsAdapter.inArray(this, hoverPoints) === -1) { // #887, #2240
+		if (!hoverPoints || inArray(this, hoverPoints) === -1) { // #887, #2240
 			this.setState();
 			chart.hoverPoint = null;
 		}
@@ -19072,7 +19087,7 @@ extend(Series.prototype, {
 		// trigger the event, but to save processing time,
 		// only if defined
 		if (series.options.events.mouseOver) {
-			HighchartsAdapter.fireEvent(series, 'mouseOver');
+			fireEvent(series, 'mouseOver');
 		}
 
 		// hover this
@@ -19100,7 +19115,7 @@ extend(Series.prototype, {
 
 		// fire the mouse out event
 		if (series && options.events.mouseOut) {
-			HighchartsAdapter.fireEvent(series, 'mouseOut');
+			fireEvent(series, 'mouseOut');
 		}
 
 
@@ -19212,7 +19227,7 @@ extend(Series.prototype, {
 			chart.redraw();
 		}
 
-		HighchartsAdapter.fireEvent(series, showOrHide);
+		fireEvent(series, showOrHide);
 	},
 
 	/**
@@ -19245,7 +19260,7 @@ extend(Series.prototype, {
 			series.checkbox.checked = selected;
 		}
 
-		HighchartsAdapter.fireEvent(series, selected ? 'select' : 'unselect');
+		fireEvent(series, selected ? 'select' : 'unselect');
 	},
 
 	drawTracker: TrackerMixin.drawTrackerGraph

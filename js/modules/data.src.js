@@ -8,14 +8,14 @@
  */
 
 // JSLint options:
-/*global jQuery, HighchartsAdapter */
+/*global jQuery */
 
 (function (Highcharts) {
 	
 	// Utilities
 	var each = Highcharts.each,
 		pick = Highcharts.pick,
-		inArray = HighchartsAdapter.inArray,
+		inArray = Highcharts.inArray,
 		splat = Highcharts.splat,
 		SeriesBuilder;
 	

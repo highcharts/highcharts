@@ -7,13 +7,14 @@
  * Demo: http://jsfiddle.net/highcharts/Vf3yT/
  */
 
-/*global Highcharts,HighchartsAdapter*/
+/*global Highcharts*/
 (function (H) {
 
 	"use strict";
 
-	var noop = H.noop,
-		defaultOptions = H.getOptions(),
+	var addAnimSetter = H.addAnimSetter,
+		noop = H.noop,
+		defaultOptions = H.defaultOptions,
 		each = H.each,
 		extend = H.extend,
 		format = H.format,
@@ -24,8 +25,8 @@
 		PieSeries = seriesTypes.pie,
 		ColumnSeries = seriesTypes.column,
 		Tick = H.Tick,
-		fireEvent = HighchartsAdapter.fireEvent,
-		inArray = HighchartsAdapter.inArray,
+		fireEvent = H.fireEvent,
+		inArray = H.inArray,
 		ddSeriesId = 1;
 
 	// Utilities
@@ -61,7 +62,7 @@
 	 * Handle animation of the color attributes directly
 	 */
 	each(['fill', 'stroke'], function (prop) {
-		HighchartsAdapter.addAnimSetter(prop, function (fx) {
+		addAnimSetter(prop, function (fx) {
 			fx.elem.attr(prop, tweenColors(H.Color(fx.start), H.Color(fx.end), fx.pos));
 		});
 	});

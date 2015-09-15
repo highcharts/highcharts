@@ -15,7 +15,7 @@
 		fireEvent = H.fireEvent,
 		format = H.format,
 		getMagnitude = H.getMagnitude,
-		inArray = HighchartsAdapter.inArray,
+		inArray = H.inArray,
 		isNumber = H.isNumber,
 		isString = H.isString,
 		lin2log = H.lin2log,

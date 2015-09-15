@@ -7,6 +7,7 @@
 		extend = H.extend,
 		getMagnitude = H.getMagnitude,
 		getTZOffset = H.getTZOffset,
+		grep = H.grep,
 		normalizeTickInterval = H.normalizeTickInterval,
 		pick = H.pick,
 		timeUnits = H.timeUnits;
@@ -120,7 +121,7 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 
 
 		// mark new days if the time is dividible by day (#1649, #1760)
-		each(HighchartsAdapter.grep(tickPositions, function (time) {
+		each(grep(tickPositions, function (time) {
 			return interval <= timeUnits.hour && time % timeUnits.day === localTimezoneOffset;
 		}), function (time) {
 			higherRanks[time] = 'day';

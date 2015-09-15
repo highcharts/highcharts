@@ -42,8 +42,8 @@
  *   number of points drawn gets higher, and you may want to set the threshold lower in order to 
  *   use optimizations.
  */
-/*global document, Highcharts, HighchartsAdapter, setTimeout */
-(function (H, HA) {
+/*global document, Highcharts, setTimeout */
+(function (H) {
 
     'use strict';
 
@@ -53,8 +53,8 @@
         seriesTypes = H.seriesTypes,
         each = H.each,
         extend = H.extend,
-        addEvent = HA.addEvent,
-        fireEvent = HA.fireEvent,
+        addEvent = H.addEvent,
+        fireEvent = H.fireEvent,
         merge = H.merge,
         pick = H.pick,
         wrap = H.wrap,
@@ -551,4 +551,4 @@
         }
         return ret;
     });
-}(Highcharts, HighchartsAdapter));
+}(Highcharts));

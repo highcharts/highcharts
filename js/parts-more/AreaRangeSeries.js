@@ -2,6 +2,7 @@
 	var defaultPlotOptions = H.defaultPlotOptions,
 		each = H.each,
 		extendClass = H.extendClass,
+		grep = H.grep,
 		merge = H.merge,
 		noop = H.noop,
 		Series = H.Series,
@@ -135,7 +136,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			higherPath;
 			
 		// Remove nulls from low segment
-		lowSegment = HighchartsAdapter.grep(segment, function (point) {
+		lowSegment = grep(segment, function (point) {
 			return point.plotLow !== null;
 		});
 		

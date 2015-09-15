@@ -7,17 +7,16 @@
  * License: www.highcharts.com/license
  */
 
-/*global HighchartsAdapter */
 (function (H) {
 	var seriesTypes = H.seriesTypes,
 		merge = H.merge,
 		extend = H.extend,
 		extendClass = H.extendClass,
-		defaultOptions = H.getOptions(),
+		defaultOptions = H.defaultOptions,
 		plotOptions = defaultOptions.plotOptions,
 		noop = H.noop,
 		each = H.each,
-		grep = HighchartsAdapter.grep,
+		grep = H.grep,
 		pick = H.pick,
 		Series = H.Series,
 		Color = H.Color;
@@ -148,7 +147,7 @@
 			*  - Add node id to parents children list
 			*/  
 			for (key in parentList) {
-				if ((parentList.hasOwnProperty(key)) && (key !== "") && (HighchartsAdapter.inArray(key, allIds) === -1)) {
+				if ((parentList.hasOwnProperty(key)) && (key !== "") && (H.inArray(key, allIds) === -1)) {
 					insertItem(key);
 					delete parentList[key];
 				}

@@ -8,7 +8,7 @@
  */
 
 // JSLint options:
-/*global Highcharts, HighchartsAdapter, document, window, Blob, MSBlobBuilder */
+/*global Highcharts, document, window, Blob, MSBlobBuilder */
 
 (function (Highcharts) {
 
@@ -183,7 +183,7 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
 					} else {
 						// Must load canVG first
 						chart.showLoading();
-						HighchartsAdapter.getScript(Highcharts.getOptions().global.canvasToolsURL, function () {
+						Highcharts.getScript(Highcharts.getOptions().global.canvasToolsURL, function () {
 							chart.hideLoading();
 							downloadWithCanVG();
 						});

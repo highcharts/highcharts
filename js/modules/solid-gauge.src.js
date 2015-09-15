@@ -11,7 +11,7 @@
 (function (H) {
 	"use strict";
 
-	var defaultPlotOptions = H.getOptions().plotOptions,
+	var defaultPlotOptions = H.defaultPlotOptions,
 		pInt = H.pInt,
 		pick = H.pick,
 		each = H.each,
@@ -152,7 +152,7 @@
 	 * Handle animation of the color attributes directly
 	 */
 	each(['fill', 'stroke'], function (prop) {
-		HighchartsAdapter.addAnimSetter(prop, function (fx) {
+		H.addAnimSetter(prop, function (fx) {
 			fx.elem.attr(prop, colorAxisMethods.tweenColors(H.Color(fx.start), H.Color(fx.end), fx.pos));
 		});
 	});

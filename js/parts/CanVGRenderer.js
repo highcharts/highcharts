@@ -1,6 +1,8 @@
 (function (H) {
 	var CanVGRenderer,
+	
 		CanVGController = H.CanVGController,
+		getScript = H.getScript,
 		SVG_NS = H.SVG_NS,
 		useCanVG = H.useCanVG;
 
@@ -53,7 +55,7 @@ if (useCanVG) {
 			push: function (func, scriptLocation) {
 				// Only get the script once
 				if (deferredRenderCalls.length === 0) {
-					HighchartsAdapter.getScript(scriptLocation, drawDeferred);
+					getScript(scriptLocation, drawDeferred);
 				}
 				// Register render call
 				deferredRenderCalls.push(func);

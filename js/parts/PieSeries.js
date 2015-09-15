@@ -9,6 +9,7 @@
 		each = H.each,
 		extend = H.extend,
 		extendClass = H.extendClass,
+		inArray = H.inArray,
 		LegendSymbolMixin = H.LegendSymbolMixin,
 		merge = H.merge,
 		noop = H.noop,
@@ -105,7 +106,7 @@ PiePoint = extendClass(Point, {
 
 			// If called without an argument, toggle visibility
 			point.visible = point.options.visible = vis = vis === undefined ? !point.visible : vis;
-			series.options.data[HighchartsAdapter.inArray(point, series.data)] = point.options; // update userOptions.data
+			series.options.data[inArray(point, series.data)] = point.options; // update userOptions.data
 
 			// Show and hide associated elements. This is performed regardless of redraw or not,
 			// because chart.redraw only handles full series.

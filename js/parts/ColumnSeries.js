@@ -10,6 +10,7 @@
 		pick = H.pick,
 		Series = H.Series,
 		seriesTypes = H.seriesTypes,
+		stop = H.stop,
 		svg = H.svg;
 /**
  * Set the default options for column
@@ -301,7 +302,7 @@ seriesTypes.column = extendClass(Series, {
 				pointAttr = point.pointAttr[point.selected ? 'select' : ''] || series.pointAttr[''];
 				
 				if (graphic) { // update
-					HighchartsAdapter.stop(graphic);
+					stop(graphic);
 					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs));
 
 				} else {
