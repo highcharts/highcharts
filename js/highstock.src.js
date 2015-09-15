@@ -19245,6 +19245,8 @@ extend(Series.prototype, {
 				.removeClass('highcharts-state-' + (series.state || 'normal'))
 				.addClass('highcharts-state-' + (state || 'normal'));
 
+			// A CSS class to dim or hide other than the hovered series
+			series.chart.seriesGroup[state === 'hover' ? 'addClass' : 'removeClass']('highcharts-has-hover');
 
 			series.state = state;
 

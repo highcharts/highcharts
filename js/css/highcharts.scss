@@ -36,6 +36,11 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
 .highcharts-state-normal path {
 	transition: stroke-width 250ms; /* slow out */
 }
+.highcharts-has-hover g.highcharts-series:not(.highcharts-state-hover) {
+    fill-opacity: 0.5;
+    stroke-opacity: 0.5;
+}
+
 .highcharts-area {
     fill-opacity: 0.75;
 }

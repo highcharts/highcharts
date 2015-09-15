@@ -37,6 +37,10 @@
   transition: stroke-width 250ms;
   /* slow out */ }
 
+.highcharts-has-hover g.highcharts-series:not(.highcharts-state-hover) {
+  fill-opacity: 0.5 !important;
+  stroke-opacity: 0.5 !important; }
+
 .highcharts-area {
   fill-opacity: 0.75; }
 
