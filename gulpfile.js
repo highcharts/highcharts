@@ -1,6 +1,7 @@
 var eslint = require('gulp-eslint'),
     gulp = require('gulp'),
     fs = require('fs'),
+    sass = require('gulp-sass'),
     config = {
         // List of rules at http://eslint.org/docs/rules/
         // @todo Add more rules when ready.
@@ -108,6 +109,18 @@ gulp.task('lint-parts-more', function () {
 
 gulp.task('lint-themes', function () {
     return doLint(paths.themes);
+});
+
+gulp.task('styles', function () {
+    var dir = './js/css/';
+    /*return sass(dir + 'highcharts.scss', { style: 'expanded' })
+        .pipe(concat('highcharts.css'))
+        .pipe(gulp.dest(dir))
+        .pipe(notify({ message: 'Styles task complete '}));*/
+
+    gulp.src(dir + '*.scss')
+        .pipe(sass().on('error', sass.logError))
+        .pipe(gulp.dest(dir));
 });
 
 /**

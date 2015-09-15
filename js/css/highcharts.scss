@@ -1,0 +1,88 @@
+$colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b #91e8e1;
+
+.highcharts-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    text-align: left;
+    line-height: normal;
+    z-index: 0; /* #1072 */
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+.highcharts-root {
+    font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
+    font-size: 12px;
+}
+.highcharts-title {
+    fill: #333333;
+    font-size: 18px;
+}
+.highcharts-subtitle {
+    fill: #555555;
+    font-size: 18px;
+}
+.highcharts-graph {
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.highcharts-state-hover .highcharts-graph {
+	stroke-width: 3;
+}
+.highcharts-state-hover path {
+    transition: stroke-width 50; /* quick in */
+}
+.highcharts-state-normal path {
+	transition: stroke-width 250ms; /* slow out */
+}
+.highcharts-area {
+    fill-opacity: 0.75;
+}
+.highcharts-markers path, .highcharts-marker {
+    stroke-width: 1;
+    stroke: #ffffff;
+}
+.highcharts-column-series rect {
+    stroke: #ffffff;
+    transition: fill-opacity 250ms;
+}
+.highcharts-column-series rect:hover {
+    fill-opacity: 0.75;
+    transition: fill-opacity 50ms;
+}
+
+
+/* Legend */
+.highcharts-legend-item text {
+    fill: #333333;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.highcharts-legend-item:hover text {
+    fill: #000;
+}
+.highcharts-legend-item-hidden * {
+    fill: #cccccc !important;
+    stroke: #cccccc !important;
+    transition: fill 250ms;
+}
+
+
+/* Default colors */
+@for $i from 1 through length($colors) {
+  $color: nth($colors, $i);
+    .highcharts-series-#{$i - 1} .highcharts-graph {
+        stroke: $color;
+    }
+
+    .highcharts-series-#{$i - 1} .highcharts-area, 
+    .highcharts-markers.highcharts-series-#{$i - 1} path,
+    .highcharts-legend .highcharts-series-#{$i - 1} path,
+    .highcharts-legend .highcharts-series-#{$i - 1} rect,
+    .highcharts-series-#{$i - 1}.highcharts-column-series rect {
+        fill: $color;
+    }
+}
+
