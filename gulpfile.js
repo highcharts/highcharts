@@ -113,11 +113,11 @@ gulp.task('lint-themes', function () {
 /**
  * Proof of concept to parse super code. Move this logic into the standard build when ready.
  */
-gulp.task('microoptimize', function () {
+gulp.task('preprocess', function () {
     /**
      * Micro-optimize code based on the build object.
      */
-    function microOptimize(tpl, build) {
+    function preprocess(tpl, build) {
         // Escape double quotes and backslashes, to be reinserted after parsing
         tpl = tpl.replace(/"/g, '___doublequote___');
         tpl = tpl.replace(/\\/g, '\\\\');
@@ -154,7 +154,7 @@ gulp.task('microoptimize', function () {
             // Create the classic file
             fs.writeFile(
                 path,
-                microOptimize(tpl, {
+                preprocess(tpl, {
                     classic: true
                 }), 
                 'utf8'
@@ -163,7 +163,7 @@ gulp.task('microoptimize', function () {
             // Create the unstyled file
             fs.writeFile(
                 path.replace('.src.js', '.unstyled.src.js'), 
-                microOptimize(tpl, {
+                preprocess(tpl, {
                     classic: false
                 }), 
                 'utf8'

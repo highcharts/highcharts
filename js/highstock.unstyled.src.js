@@ -3678,10 +3678,7 @@ SVGRenderer.prototype = {
 		renderer.width = width;
 		renderer.height = height;
 
-		/**renderer.boxWrapper[pick(animate, true) ? 'animate' : 'attr']({
-			width: width,
-			height: height
-		});*/
+		
 		renderer.boxWrapper.attr({
 			viewBox: '0 0 ' + width + ' ' + height
 		});
@@ -4094,7 +4091,7 @@ SVGRenderer.prototype = {
 		var lineHeight,
 			baseline;
 
-		fontSize = (elem && SVGElement.prototype.getStyle.call(elem, 'fontSize')) || fontSize || this.style.fontSize;
+		fontSize = (elem && SVGElement.prototype.getStyle.call(elem, 'font-size')) || fontSize || this.style.fontSize;
 		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
 
 		// Empirical values found by comparing font size and bounding box height.
@@ -10966,7 +10963,8 @@ Legend.prototype = {
 			series = item.series && item.series.drawLegendSymbol ? item.series : item,
 			seriesOptions = series.options,
 			showCheckbox = legend.createCheckboxForItem && seriesOptions && seriesOptions.showCheckbox,
-			useHTML = options.useHTML;
+			useHTML = options.useHTML,
+			fontSize = 12;
 
 		if (!li) { // generate it once, later move it
 
@@ -10993,8 +10991,9 @@ Legend.prototype = {
 
 			// Get the baseline for the first item - the font size is equal for all
 			if (!legend.baseline) {
+				
 				legend.fontMetrics = renderer.fontMetrics(
-					12,
+					fontSize,
 					li
 				);
 				legend.baseline = legend.fontMetrics.f + 3 + itemMarginTop;
@@ -11005,9 +11004,7 @@ Legend.prototype = {
 			series.drawLegendSymbol(legend, item);
 
 			if (legend.setItemEvents) {
-				
 				legend.setItemEvents(item, li, useHTML);
-				
 			}			
 
 			// Colorize the items
@@ -12151,7 +12148,8 @@ Chart.prototype = {
 			indexAttrName = 'data-highcharts-chart',
 			oldChartIndex,
 			Ren,
-			containerId;
+			containerId,
+			containerStyle;
 
 		chart.renderTo = renderTo = optionsChart.renderTo;
 		containerId = 'highcharts-' + H.idCounter++;
@@ -12194,14 +12192,13 @@ Chart.prototype = {
 		chartWidth = chart.chartWidth;
 		chartHeight = chart.chartHeight;
 
-		// create the inner container
+		// Create the inner container
+		
 		chart.container = container = createElement('div', {
 				className: 'highcharts-container ' + (optionsChart.className || ''),
 				id: containerId
 			},
-			
-			null,
-			
+			containerStyle,
 			chart.renderToClone || renderTo
 		);
 
@@ -18570,7 +18567,7 @@ if (seriesTypes.scatter) {
  */ 
 extend(Legend.prototype, {
 
-	setItemEvents: function (item, legendItem, useHTML, itemStyle, itemHiddenStyle) {
+	setItemEvents: function (item, legendItem, useHTML) {
 		var legend = this;
 		// Set the events on the item group, or in case of useHTML, the item itself (#1249)
 		(useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
