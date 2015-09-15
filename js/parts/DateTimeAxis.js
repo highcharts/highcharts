@@ -3,6 +3,7 @@
 		Date = H.Date,
 		defaultOptions = H.defaultOptions,
 		defined = H.defined,
+		each = H.each,
 		extend = H.extend,
 		getMagnitude = H.getMagnitude,
 		getTZOffset = H.getTZOffset,

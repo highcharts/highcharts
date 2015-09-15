@@ -1,12 +1,13 @@
 (function (H) {
-	var addEvent = H.addEvent,
+	var Chart,
+
+		addEvent = H.addEvent,
 		attr = H.attr,
 		Axis = H.Axis, // @todo add as requirement
 		CanVGController = H.CanVGController,
 		createElement = H.createElement,
 		defaultOptions = H.defaultOptions,
 		discardElement = H.discardElement,
-		Chart,
 		charts = H.charts,
 		css = H.css,
 		defined = H.defined,

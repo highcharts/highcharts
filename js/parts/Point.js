@@ -1,6 +1,7 @@
 (function (H) {
 	var Point,
 
+		each = H.each,
 		extend = H.extend,
 		erase = H.erase,
 		format = H.format,

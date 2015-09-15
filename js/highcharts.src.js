@@ -1205,11 +1205,11 @@ H.removeEvent = adapter.removeEvent;
     return H;
 }(Highcharts));
 (function (H) {
-	var getTZOffset = H.getTZOffset,
+	var each = H.each,
+		getTZOffset = H.getTZOffset,
 		isTouchDevice = H.isTouchDevice,
 		merge = H.merge,
 		pick = H.pick,
-		setOptions = H.setOptions,
 		svg = H.svg;
 		
 /* ****************************************************************************
@@ -1564,22 +1564,21 @@ setTimeMethods();
  */
 function setTimeMethods() {
 	var globalOptions = H.defaultOptions.global,
-		hcD,
+		Date,
 		useUTC = globalOptions.useUTC,
 		GET = useUTC ? 'getUTC' : 'get',
 		SET = useUTC ? 'setUTC' : 'set';
 
-	H.Date = globalOptions.Date || window.Date; // Allow using a different Date class
-	hcD = H.Date;
-	hcD.hcTimezoneOffset = useUTC && globalOptions.timezoneOffset;
-	hcD.hcGetTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
-	hcD.hcMakeTime = function (year, month, date, hours, minutes, seconds) {
+	H.Date = Date = globalOptions.Date || window.Date; // Allow using a different Date class
+	Date.hcTimezoneOffset = useUTC && globalOptions.timezoneOffset;
+	Date.hcGetTimezoneOffset = useUTC && globalOptions.getTimezoneOffset;
+	Date.hcMakeTime = function (year, month, date, hours, minutes, seconds) {
 		var d;
 		if (useUTC) {
-			d = hcD.UTC.apply(0, arguments);
+			d = Date.UTC.apply(0, arguments);
 			d += getTZOffset(d);
 		} else {
-			d = new hcD(
+			d = new Date(
 				year,
 				month,
 				pick(date, 1),
@@ -1591,10 +1590,10 @@ function setTimeMethods() {
 		return d;
 	};
 	each(['Minutes', 'Hours', 'Day', 'Date', 'Month', 'FullYear'], function (s) {
-		hcD['hcGet' + s] = GET + s;
+		Date['hcGet' + s] = GET + s;
 	});
 	each(['Milliseconds', 'Seconds', 'Minutes', 'Hours', 'Date', 'Month', 'FullYear'], function (s) {
-		hcD['hcSet' + s] = SET + s;
+		Date['hcSet' + s] = SET + s;
 	});
 }
 
@@ -1602,7 +1601,7 @@ function setTimeMethods() {
  * Merge the default options with custom options and return the new options structure
  * @param {Object} options The new custom options
  */
-setOptions = function (options) {
+H.setOptions = function (options) {
 	
 	// Copy in the default options
 	H.defaultOptions = merge(true, H.defaultOptions, options);
@@ -6296,8 +6295,7 @@ H.Tick.prototype = {
 		each = H.each,
 		erase = H.erase,
 		log2lin = H.log2lin,
-		merge = H.merge,
-		PlotLineOrBand = H.PlotLineOrBand;
+		merge = H.merge;
 /*
  * The object wrapper for plot lines and plot bands
  * @param {Object} options
@@ -6519,7 +6517,7 @@ H.AxisPlotLineOrBandExtension = {
 	 * @param options {Object} The plotBand or plotLine configuration object
 	 */
 	addPlotBandOrLine: function (options, coll) {
-		var obj = new PlotLineOrBand(this, options).render(),
+		var obj = new H.PlotLineOrBand(this, options).render(),
 			userOptions = this.userOptions;
 
 		if (obj) { // #2189
@@ -8781,6 +8779,7 @@ extend(H.Axis.prototype, AxisPlotLineOrBandExtension);
 		Date = H.Date,
 		defaultOptions = H.defaultOptions,
 		defined = H.defined,
+		each = H.each,
 		extend = H.extend,
 		getMagnitude = H.getMagnitude,
 		getTZOffset = H.getTZOffset,
@@ -11529,14 +11528,15 @@ if (/Trident\/7\.0/.test(navigator.userAgent) || isFirefox) {
 	return H;
 }(Highcharts));
 (function (H) {
-	var addEvent = H.addEvent,
+	var Chart,
+
+		addEvent = H.addEvent,
 		attr = H.attr,
 		Axis = H.Axis, // @todo add as requirement
 		CanVGController = H.CanVGController,
 		createElement = H.createElement,
 		defaultOptions = H.defaultOptions,
 		discardElement = H.discardElement,
-		Chart,
 		charts = H.charts,
 		css = H.css,
 		defined = H.defined,
@@ -13022,6 +13022,7 @@ H.CenteredSeriesMixin = {
 (function (H) {
 	var Point,
 
+		each = H.each,
 		extend = H.extend,
 		erase = H.erase,
 		format = H.format,
@@ -16953,6 +16954,7 @@ seriesTypes.scatter = extendClass(Series, {
 		defaultPlotOptions = H.defaultPlotOptions,
 		defaultSeriesOptions = H.defaultSeriesOptions,
 		defined = H.defined,
+		each = H.each,
 		extend = H.extend,
 		extendClass = H.extendClass,
 		LegendSymbolMixin = H.LegendSymbolMixin,

@@ -9,6 +9,7 @@
 		defined = H.defined,
 		destroyObjectProperties = H.destroyObjectProperties,
 		discardElement = H.discardElement,
+		each = H.each,
 		extend = H.extend,
 		HCDate = H.Date,
 		merge = H.merge,

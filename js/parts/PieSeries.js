@@ -6,6 +6,7 @@
 		defaultPlotOptions = H.defaultPlotOptions,
 		defaultSeriesOptions = H.defaultSeriesOptions,
 		defined = H.defined,
+		each = H.each,
 		extend = H.extend,
 		extendClass = H.extendClass,
 		LegendSymbolMixin = H.LegendSymbolMixin,

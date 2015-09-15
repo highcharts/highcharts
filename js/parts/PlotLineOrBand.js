@@ -6,8 +6,7 @@
 		each = H.each,
 		erase = H.erase,
 		log2lin = H.log2lin,
-		merge = H.merge,
-		PlotLineOrBand = H.PlotLineOrBand;
+		merge = H.merge;
 /*
  * The object wrapper for plot lines and plot bands
  * @param {Object} options
@@ -229,7 +228,7 @@ H.AxisPlotLineOrBandExtension = {
 	 * @param options {Object} The plotBand or plotLine configuration object
 	 */
 	addPlotBandOrLine: function (options, coll) {
-		var obj = new PlotLineOrBand(this, options).render(),
+		var obj = new H.PlotLineOrBand(this, options).render(),
 			userOptions = this.userOptions;
 
 		if (obj) { // #2189
