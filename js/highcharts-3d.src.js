@@ -18,7 +18,8 @@
 /**
  *	Mathematical Functionility
  */
-var deg2rad = H.deg2rad, // degrees to radians 
+var deg2rad = H.deg2rad,
+	each = H.each,
 	pick = H.pick;
 /**
  * Transforms a given array of points according to the angles in chart.options.
@@ -29,7 +30,7 @@ var deg2rad = H.deg2rad, // degrees to radians
  * Returns:
  *		- an array of transformed points
  */
-function perspective(points, chart, insidePlotArea) {
+H.perspective = function (points, chart, insidePlotArea) {
 	var options3d = chart.options.chart.options3d,
 		inverted = false,
 		origin;
@@ -66,7 +67,7 @@ function perspective(points, chart, insidePlotArea) {
 	var x, y, z, px, py, pz;
 
 	// Transform each point
-	H.each(points, function (point) {
+	each(points, function (point) {
 		x = (inverted ? point.y : point.x) - xe;
 		y = (inverted ? point.x : point.y) - ye;
 		z = (point.z || 0) - ze;
@@ -94,15 +95,19 @@ function perspective(points, chart, insidePlotArea) {
 		});
 	});
 	return result;
-}
-// Make function acessible to plugins
-H.perspective = perspective;
+};
 
 	return H;
 }(Highcharts));
 (function (H) {
-	var Color = H.Color,
+	var charts = H.charts,
+		Color = H.Color,
 		defined = H.defined,
+		deg2rad = H.deg2rad,
+		each = H.each,
+		map = H.map,
+		merge = H.merge,
+		perspective = H.perspective,
 		SVGElement = H.SVGElement,
 		SVGRenderer = H.SVGRenderer;
 /*** 
@@ -164,7 +169,7 @@ SVGRenderer.prototype.toLinePath = function (points, closed) {
 	var result = [];
 
 	// Put "L x y" for each point
-	H.each(points, function (point) {
+	each(points, function (point) {
 		result.push('L', point.x, point.y);
 	});
 
@@ -269,8 +274,7 @@ SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 		h = shapeArgs.height,
 		w = shapeArgs.width,
 		d = shapeArgs.depth,		
-		chart = H.charts[this.chartIndex],
-		map = H.map;
+		chart = charts[this.chartIndex];
 
 	// The 8 corners of the cube
 	var pArr = [
@@ -285,7 +289,7 @@ SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	];
 
 	// apply perspective
-	pArr = H.perspective(pArr, chart, shapeArgs.insidePlotArea);
+	pArr = perspective(pArr, chart, shapeArgs.insidePlotArea);
 
 	// helper method to decide which side is visible
 	var pickShape = function (path1, path2) {
@@ -321,8 +325,8 @@ SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 ////// SECTORS //////
 SVGRenderer.prototype.arc3d = function (shapeArgs) {
 
-	shapeArgs.alpha *= H.deg2rad;
-	shapeArgs.beta *= H.deg2rad;
+	shapeArgs.alpha *= deg2rad;
+	shapeArgs.beta *= deg2rad;
 	var result = this.g(),
 		paths = this.arc3dPath(shapeArgs),
 		renderer = result.renderer;
@@ -397,7 +401,7 @@ SVGRenderer.prototype.arc3d = function (shapeArgs) {
 						start = result._shapeArgs,
 						end = fx.end,
 						pos = fx.pos,
-						sA = H.merge(start, {
+						sA = merge(start, {
 							x: start.x + ((end.x - start.x) * pos),
 							y: start.y + ((end.y - start.y) * pos),
 							r: start.r + ((end.r - start.r) * pos),
@@ -552,6 +556,8 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 }(Highcharts));
 (function (H) {
 	var Chart = H.Chart,
+		each = H.each,
+		pick = H.pick,
 		wrap = H.wrap;
 
 /*** 
@@ -593,7 +599,7 @@ wrap(Chart.prototype, 'init', function (proceed) {
 		plotOptions = args[0].plotOptions || {};
 		pieOptions = plotOptions.pie || {};
 
-		pieOptions.borderColor = H.pick(pieOptions.borderColor, undefined); 
+		pieOptions.borderColor = pick(pieOptions.borderColor, undefined); 
 	}
 	proceed.apply(this, args);
 });
@@ -647,7 +653,7 @@ Chart.prototype.retrieveStacks = function (stacking) {
 		stackNumber,
 		i = 1;
 
-	H.each(this.series, function (S) {
+	each(this.series, function (S) {
 		stackNumber = stacking ? (S.options.stack || 0) : series.length - 1 - S.index; // #3841
 		if (!stacks[stackNumber]) {
 			stacks[stackNumber] = { series: [S], position: i};
@@ -664,14 +670,18 @@ Chart.prototype.retrieveStacks = function (stacking) {
 	return H;
 }(Highcharts));
 (function (H) {
-	var Axis = H.Axis,
+	var ZAxis,
+
+		Axis = H.Axis,
 		Chart = H.Chart,
+		each = H.each,
 		extend = H.extend,
+		merge = H.merge,
 		perspective = H.perspective,
 		pick = H.pick,
+		splat = H.splat,
 		Tick = H.Tick,
-		wrap = H.wrap,
-		ZAxis;
+		wrap = H.wrap;
 /***
 	EXTENSION TO THE AXIS
 ***/
@@ -939,7 +949,7 @@ ZAxis = H.ZAxis = function () {
 extend(ZAxis.prototype, Axis.prototype);
 extend(ZAxis.prototype, {
 	setOptions: function (userOptions) {
-		userOptions = H.merge({
+		userOptions = merge({
 			offset: 0,
 			lineWidth: 0
 		}, userOptions);
@@ -965,7 +975,7 @@ extend(ZAxis.prototype, {
 		}
 
 		// loop through this axis' series
-		H.each(axis.series, function (series) {
+		each(axis.series, function (series) {
 
 			if (series.visible || !chart.options.chart.ignoreHiddenSeries) {
 
@@ -997,7 +1007,7 @@ extend(ZAxis.prototype, {
 wrap(Chart.prototype, 'getAxes', function (proceed) {
 	var chart = this,
 		options = this.options,
-		zAxisOptions = options.zAxis = H.splat(options.zAxis || {});
+		zAxisOptions = options.zAxis = splat(options.zAxis || {});
 
 	proceed.call(this);
 
@@ -1005,7 +1015,7 @@ wrap(Chart.prototype, 'getAxes', function (proceed) {
 		return;
 	}
 	this.zAxis = [];
-	H.each(zAxisOptions, function (axisOptions, i) {
+	each(zAxisOptions, function (axisOptions, i) {
 		axisOptions.index = i;
 		axisOptions.isX = true; //Z-Axis is shown horizontally, so it's kind of a X-Axis
 		var zAxis = new ZAxis(chart, axisOptions);
@@ -1016,10 +1026,13 @@ wrap(Chart.prototype, 'getAxes', function (proceed) {
 	return H;
 }(Highcharts));
 (function (H) {
-	var each = H.each,
+	var defined = H.defined,
+		each = H.each,
+		perspective = H.perspective,
 		pick = H.pick,
 		Series = H.Series,
 		seriesTypes = H.seriesTypes,
+		svg = H.svg,
 		wrap = H.wrap;
 /***
 	EXTENSION FOR 3D COLUMNS
@@ -1055,7 +1068,7 @@ wrap(seriesTypes.column.prototype, 'translate', function (proceed) {
 			shapeArgs.insidePlotArea = true;
 
 			// Translate the tooltip position in 3d space
-			tooltipPos = H.perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], chart, false)[0];
+			tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], chart, false)[0];
 			point.tooltipPos = [tooltipPos.x, tooltipPos.y];
 		}
 	});
@@ -1073,7 +1086,7 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
 			series = this,
 			reversed = this.yAxis.reversed;
 
-		if (H.svg) { // VML is too slow anyway
+		if (svg) { // VML is too slow anyway
 			if (init) {
 				each(series.data, function (point) {
 					if (point.y !== null) {
@@ -1148,7 +1161,7 @@ function draw3DPoints(proceed) {
 		var options = this.options,
 			states = this.options.states;
 			
-		this.borderWidth = options.borderWidth = H.defined(options.edgeWidth) ? options.edgeWidth : 1; //#4055
+		this.borderWidth = options.borderWidth = defined(options.edgeWidth) ? options.edgeWidth : 1; //#4055
 
 		each(this.data, function (point) {
 			if (point.y !== null) {
@@ -1178,7 +1191,7 @@ wrap(Series.prototype, 'alignDataLabel', function (proceed) {
 			alignTo = args[4];
 		
 		var pos = ({x: alignTo.x, y: alignTo.y, z: series.z});
-		pos = H.perspective([pos], chart, true)[0];
+		pos = perspective([pos], chart, true)[0];
 		alignTo.x = pos.x;
 		alignTo.y = pos.y;
 	}
@@ -1256,6 +1269,7 @@ wrap(seriesTypes.cylinder.prototype, 'translate', function (proceed) {
 		each = H.each,
 		pick = H.pick,
 		seriesTypes = H.seriesTypes,
+		svg = H.svg,
 		wrap = H.wrap;
 
 /*** 
@@ -1401,7 +1415,7 @@ wrap(seriesTypes.pie.prototype, 'animate', function (proceed) {
 			group = this.group,
 			markerGroup = this.markerGroup;
 
-		if (H.svg) { // VML is too slow anyway
+		if (svg) { // VML is too slow anyway
 				
 				if (animation === true) {
 					animation = {};
@@ -1449,7 +1463,9 @@ wrap(seriesTypes.pie.prototype, 'animate', function (proceed) {
 	return H;
 }(Highcharts));
 (function (H) {
-	var seriesTypes = H.seriesTypes,
+	var perspective = H.perspective,
+		pick = H.pick,
+		seriesTypes = H.seriesTypes,
 		wrap = H.wrap;
 
 /*** 
@@ -1466,7 +1482,7 @@ wrap(seriesTypes.scatter.prototype, 'translate', function (proceed) {
 
 	var series = this,
 		chart = series.chart,
-		zAxis = H.pick(series.zAxis, chart.options.zAxis[0]);
+		zAxis = pick(series.zAxis, chart.options.zAxis[0]);
 
 	var raw_points = [],
 		raw_point,
@@ -1486,7 +1502,7 @@ wrap(seriesTypes.scatter.prototype, 'translate', function (proceed) {
 		});
 	}
 
-	projected_points = H.perspective(raw_points, chart, true);
+	projected_points = perspective(raw_points, chart, true);
 
 	for (i = 0; i < series.data.length; i++) {
 		raw_point = series.data[i];
@@ -1530,14 +1546,15 @@ wrap(seriesTypes.scatter.prototype, 'init', function (proceed, chart, options) {
 (function (H) {
 	var Axis = H.Axis,
 		SVGRenderer = H.SVGRenderer,
-		VMLRenderer = H.VMLRenderer;
+		VMLRenderer = H.VMLRenderer,
+		wrap = H.wrap;
 
 /**
  *	Extension to the VML Renderer
  */
 if (VMLRenderer) {
 
-H.setOptions({animate: false});
+H.setOptions({animate: false}); // Does this work at all? Expected chart.animate...
 
 VMLRenderer.prototype.cuboid = SVGRenderer.prototype.cuboid;
 VMLRenderer.prototype.cuboidPath = SVGRenderer.prototype.cuboidPath;
@@ -1554,7 +1571,7 @@ VMLRenderer.prototype.arc3d = function (shapeArgs) {
 
 VMLRenderer.prototype.arc3dPath = SVGRenderer.prototype.arc3dPath;
 
-H.wrap(Axis.prototype, 'render', function (proceed) {
+wrap(Axis.prototype, 'render', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 	// VML doesn't support a negative z-index
 	if (this.sideFrame) {

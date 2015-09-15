@@ -3,6 +3,7 @@
 		each = H.each,
 		pick = H.pick,
 		seriesTypes = H.seriesTypes,
+		svg = H.svg,
 		wrap = H.wrap;
 
 /*** 
@@ -148,7 +149,7 @@ wrap(seriesTypes.pie.prototype, 'animate', function (proceed) {
 			group = this.group,
 			markerGroup = this.markerGroup;
 
-		if (H.svg) { // VML is too slow anyway
+		if (svg) { // VML is too slow anyway
 				
 				if (animation === true) {
 					animation = {};

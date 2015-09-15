@@ -1,14 +1,15 @@
 (function (H) {
 	var Axis = H.Axis,
 		SVGRenderer = H.SVGRenderer,
-		VMLRenderer = H.VMLRenderer;
+		VMLRenderer = H.VMLRenderer,
+		wrap = H.wrap;
 
 /**
  *	Extension to the VML Renderer
  */
 if (VMLRenderer) {
 
-H.setOptions({animate: false});
+H.setOptions({animate: false}); // Does this work at all? Expected chart.animate...
 
 VMLRenderer.prototype.cuboid = SVGRenderer.prototype.cuboid;
 VMLRenderer.prototype.cuboidPath = SVGRenderer.prototype.cuboidPath;
@@ -25,7 +26,7 @@ VMLRenderer.prototype.arc3d = function (shapeArgs) {
 
 VMLRenderer.prototype.arc3dPath = SVGRenderer.prototype.arc3dPath;
 
-H.wrap(Axis.prototype, 'render', function (proceed) {
+wrap(Axis.prototype, 'render', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 	// VML doesn't support a negative z-index
 	if (this.sideFrame) {

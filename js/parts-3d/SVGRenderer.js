@@ -1,6 +1,12 @@
 (function (H) {
-	var Color = H.Color,
+	var charts = H.charts,
+		Color = H.Color,
 		defined = H.defined,
+		deg2rad = H.deg2rad,
+		each = H.each,
+		map = H.map,
+		merge = H.merge,
+		perspective = H.perspective,
 		SVGElement = H.SVGElement,
 		SVGRenderer = H.SVGRenderer;
 /*** 
@@ -62,7 +68,7 @@ SVGRenderer.prototype.toLinePath = function (points, closed) {
 	var result = [];
 
 	// Put "L x y" for each point
-	H.each(points, function (point) {
+	each(points, function (point) {
 		result.push('L', point.x, point.y);
 	});
 
@@ -167,8 +173,7 @@ SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 		h = shapeArgs.height,
 		w = shapeArgs.width,
 		d = shapeArgs.depth,		
-		chart = H.charts[this.chartIndex],
-		map = H.map;
+		chart = charts[this.chartIndex];
 
 	// The 8 corners of the cube
 	var pArr = [
@@ -183,7 +188,7 @@ SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	];
 
 	// apply perspective
-	pArr = H.perspective(pArr, chart, shapeArgs.insidePlotArea);
+	pArr = perspective(pArr, chart, shapeArgs.insidePlotArea);
 
 	// helper method to decide which side is visible
 	var pickShape = function (path1, path2) {
@@ -219,8 +224,8 @@ SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 ////// SECTORS //////
 SVGRenderer.prototype.arc3d = function (shapeArgs) {
 
-	shapeArgs.alpha *= H.deg2rad;
-	shapeArgs.beta *= H.deg2rad;
+	shapeArgs.alpha *= deg2rad;
+	shapeArgs.beta *= deg2rad;
 	var result = this.g(),
 		paths = this.arc3dPath(shapeArgs),
 		renderer = result.renderer;
@@ -295,7 +300,7 @@ SVGRenderer.prototype.arc3d = function (shapeArgs) {
 						start = result._shapeArgs,
 						end = fx.end,
 						pos = fx.pos,
-						sA = H.merge(start, {
+						sA = merge(start, {
 							x: start.x + ((end.x - start.x) * pos),
 							y: start.y + ((end.y - start.y) * pos),
 							r: start.r + ((end.r - start.r) * pos),

@@ -2,7 +2,8 @@
 /**
  *	Mathematical Functionility
  */
-var deg2rad = H.deg2rad, // degrees to radians 
+var deg2rad = H.deg2rad,
+	each = H.each,
 	pick = H.pick;
 /**
  * Transforms a given array of points according to the angles in chart.options.
@@ -13,7 +14,7 @@ var deg2rad = H.deg2rad, // degrees to radians
  * Returns:
  *		- an array of transformed points
  */
-function perspective(points, chart, insidePlotArea) {
+H.perspective = function (points, chart, insidePlotArea) {
 	var options3d = chart.options.chart.options3d,
 		inverted = false,
 		origin;
@@ -50,7 +51,7 @@ function perspective(points, chart, insidePlotArea) {
 	var x, y, z, px, py, pz;
 
 	// Transform each point
-	H.each(points, function (point) {
+	each(points, function (point) {
 		x = (inverted ? point.y : point.x) - xe;
 		y = (inverted ? point.x : point.y) - ye;
 		z = (point.z || 0) - ze;
@@ -78,9 +79,7 @@ function perspective(points, chart, insidePlotArea) {
 		});
 	});
 	return result;
-}
-// Make function acessible to plugins
-H.perspective = perspective;
+};
 
 	return H;
 }(Highcharts));

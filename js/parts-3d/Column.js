@@ -1,8 +1,11 @@
 (function (H) {
-	var each = H.each,
+	var defined = H.defined,
+		each = H.each,
+		perspective = H.perspective,
 		pick = H.pick,
 		Series = H.Series,
 		seriesTypes = H.seriesTypes,
+		svg = H.svg,
 		wrap = H.wrap;
 /***
 	EXTENSION FOR 3D COLUMNS
@@ -38,7 +41,7 @@ wrap(seriesTypes.column.prototype, 'translate', function (proceed) {
 			shapeArgs.insidePlotArea = true;
 
 			// Translate the tooltip position in 3d space
-			tooltipPos = H.perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], chart, false)[0];
+			tooltipPos = perspective([{ x: tooltipPos[0], y: tooltipPos[1], z: z }], chart, false)[0];
 			point.tooltipPos = [tooltipPos.x, tooltipPos.y];
 		}
 	});
@@ -56,7 +59,7 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
 			series = this,
 			reversed = this.yAxis.reversed;
 
-		if (H.svg) { // VML is too slow anyway
+		if (svg) { // VML is too slow anyway
 			if (init) {
 				each(series.data, function (point) {
 					if (point.y !== null) {
@@ -131,7 +134,7 @@ function draw3DPoints(proceed) {
 		var options = this.options,
 			states = this.options.states;
 			
-		this.borderWidth = options.borderWidth = H.defined(options.edgeWidth) ? options.edgeWidth : 1; //#4055
+		this.borderWidth = options.borderWidth = defined(options.edgeWidth) ? options.edgeWidth : 1; //#4055
 
 		each(this.data, function (point) {
 			if (point.y !== null) {
@@ -161,7 +164,7 @@ wrap(Series.prototype, 'alignDataLabel', function (proceed) {
 			alignTo = args[4];
 		
 		var pos = ({x: alignTo.x, y: alignTo.y, z: series.z});
-		pos = H.perspective([pos], chart, true)[0];
+		pos = perspective([pos], chart, true)[0];
 		alignTo.x = pos.x;
 		alignTo.y = pos.y;
 	}

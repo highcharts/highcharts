@@ -1,5 +1,7 @@
 (function (H) {
 	var Chart = H.Chart,
+		each = H.each,
+		pick = H.pick,
 		wrap = H.wrap;
 
 /*** 
@@ -41,7 +43,7 @@ wrap(Chart.prototype, 'init', function (proceed) {
 		plotOptions = args[0].plotOptions || {};
 		pieOptions = plotOptions.pie || {};
 
-		pieOptions.borderColor = H.pick(pieOptions.borderColor, undefined); 
+		pieOptions.borderColor = pick(pieOptions.borderColor, undefined); 
 	}
 	proceed.apply(this, args);
 });
@@ -95,7 +97,7 @@ Chart.prototype.retrieveStacks = function (stacking) {
 		stackNumber,
 		i = 1;
 
-	H.each(this.series, function (S) {
+	each(this.series, function (S) {
 		stackNumber = stacking ? (S.options.stack || 0) : series.length - 1 - S.index; // #3841
 		if (!stacks[stackNumber]) {
 			stacks[stackNumber] = { series: [S], position: i};

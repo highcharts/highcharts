@@ -1,5 +1,7 @@
 (function (H) {
-	var seriesTypes = H.seriesTypes,
+	var perspective = H.perspective,
+		pick = H.pick,
+		seriesTypes = H.seriesTypes,
 		wrap = H.wrap;
 
 /*** 
@@ -16,7 +18,7 @@ wrap(seriesTypes.scatter.prototype, 'translate', function (proceed) {
 
 	var series = this,
 		chart = series.chart,
-		zAxis = H.pick(series.zAxis, chart.options.zAxis[0]);
+		zAxis = pick(series.zAxis, chart.options.zAxis[0]);
 
 	var raw_points = [],
 		raw_point,
@@ -36,7 +38,7 @@ wrap(seriesTypes.scatter.prototype, 'translate', function (proceed) {
 		});
 	}
 
-	projected_points = H.perspective(raw_points, chart, true);
+	projected_points = perspective(raw_points, chart, true);
 
 	for (i = 0; i < series.data.length; i++) {
 		raw_point = series.data[i];

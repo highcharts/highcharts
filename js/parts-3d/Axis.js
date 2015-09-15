@@ -1,12 +1,16 @@
 (function (H) {
-	var Axis = H.Axis,
+	var ZAxis,
+
+		Axis = H.Axis,
 		Chart = H.Chart,
+		each = H.each,
 		extend = H.extend,
+		merge = H.merge,
 		perspective = H.perspective,
 		pick = H.pick,
+		splat = H.splat,
 		Tick = H.Tick,
-		wrap = H.wrap,
-		ZAxis;
+		wrap = H.wrap;
 /***
 	EXTENSION TO THE AXIS
 ***/
@@ -274,7 +278,7 @@ ZAxis = H.ZAxis = function () {
 extend(ZAxis.prototype, Axis.prototype);
 extend(ZAxis.prototype, {
 	setOptions: function (userOptions) {
-		userOptions = H.merge({
+		userOptions = merge({
 			offset: 0,
 			lineWidth: 0
 		}, userOptions);
@@ -300,7 +304,7 @@ extend(ZAxis.prototype, {
 		}
 
 		// loop through this axis' series
-		H.each(axis.series, function (series) {
+		each(axis.series, function (series) {
 
 			if (series.visible || !chart.options.chart.ignoreHiddenSeries) {
 
@@ -332,7 +336,7 @@ extend(ZAxis.prototype, {
 wrap(Chart.prototype, 'getAxes', function (proceed) {
 	var chart = this,
 		options = this.options,
-		zAxisOptions = options.zAxis = H.splat(options.zAxis || {});
+		zAxisOptions = options.zAxis = splat(options.zAxis || {});
 
 	proceed.call(this);
 
@@ -340,7 +344,7 @@ wrap(Chart.prototype, 'getAxes', function (proceed) {
 		return;
 	}
 	this.zAxis = [];
-	H.each(zAxisOptions, function (axisOptions, i) {
+	each(zAxisOptions, function (axisOptions, i) {
 		axisOptions.index = i;
 		axisOptions.isX = true; //Z-Axis is shown horizontally, so it's kind of a X-Axis
 		var zAxis = new ZAxis(chart, axisOptions);
