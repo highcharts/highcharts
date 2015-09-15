@@ -1251,9 +1251,9 @@ SVGRenderer.prototype = {
 				'version': '1.1',
 				'class': 'highcharts-root'
 			})
-			/* presentational
+			/*= if (build.classic) { =*/
 			.css(this.getStyle(style))
-			*/;
+			/*= } =*/;
 		element = boxWrapper.element;
 		container.appendChild(element);
 
@@ -1315,7 +1315,7 @@ SVGRenderer.prototype = {
 			addEvent(window, 'resize', subPixelFix);
 		}
 	},
-	/* presentational
+	/*= if (build.classic) { =*/
 	getStyle: function (style) {
 		return (this.style = extend({
 			
@@ -1324,7 +1324,7 @@ SVGRenderer.prototype = {
 
 		}, style));
 	},
-	*/
+	/*= } =*/
 
 	/**
 	 * Detect whether the renderer is hidden. This happens when one of the parent elements
@@ -1816,9 +1816,9 @@ SVGRenderer.prototype = {
 	 */
 	path: function (path) {
 		var attr = {
-			/* presentational
+			/*= if (build.classic) { =*/
 			fill: 'none'
-			*/
+			/*= } =*/
 		};
 		if (isArray(path)) {
 			attr.d = path;
@@ -1940,10 +1940,12 @@ SVGRenderer.prototype = {
 		renderer.width = width;
 		renderer.height = height;
 
-		/**renderer.boxWrapper[pick(animate, true) ? 'animate' : 'attr']({
+		/*= if (build.classic) { =*/
+		renderer.boxWrapper[pick(animate, true) ? 'animate' : 'attr']({
 			width: width,
 			height: height
-		});*/
+		});
+		/*= } =*/
 		renderer.boxWrapper.attr({
 			viewBox: '0 0 ' + width + ' ' + height
 		});
@@ -2356,7 +2358,7 @@ SVGRenderer.prototype = {
 		var lineHeight,
 			baseline;
 
-		fontSize = (elem && SVGElement.prototype.getStyle.call(elem, 'fontSize')) || fontSize || this.style.fontSize;
+		fontSize = (elem && SVGElement.prototype.getStyle.call(elem, 'font-size')) || fontSize || this.style.fontSize;
 		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
 
 		// Empirical values found by comparing font size and bounding box height.

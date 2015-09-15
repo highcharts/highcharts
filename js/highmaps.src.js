@@ -1449,7 +1449,7 @@ H.defaultOptions = {
 		/*style: {
 			padding: '5px'
 		},*/
-		/* presentational
+		/*= if (build.classic) { =*/
 		itemStyle: {			
 			color: '#333333',
 			fontSize: '12px',
@@ -1462,7 +1462,7 @@ H.defaultOptions = {
 		itemHiddenStyle: {
 			color: '#CCC'
 		},
-		*/
+		/*= } =*/
 		itemCheckboxStyle: {
 			position: 'absolute',
 			width: '13px', // for IE precision
@@ -3015,9 +3015,9 @@ SVGRenderer.prototype = {
 				'version': '1.1',
 				'class': 'highcharts-root'
 			})
-			/* presentational
+			/*= if (build.classic) { =*/
 			.css(this.getStyle(style))
-			*/;
+			/*= } =*/;
 		element = boxWrapper.element;
 		container.appendChild(element);
 
@@ -3079,7 +3079,7 @@ SVGRenderer.prototype = {
 			addEvent(window, 'resize', subPixelFix);
 		}
 	},
-	/* presentational
+	/*= if (build.classic) { =*/
 	getStyle: function (style) {
 		return (this.style = extend({
 			
@@ -3088,7 +3088,7 @@ SVGRenderer.prototype = {
 
 		}, style));
 	},
-	*/
+	/*= } =*/
 
 	/**
 	 * Detect whether the renderer is hidden. This happens when one of the parent elements
@@ -3580,9 +3580,9 @@ SVGRenderer.prototype = {
 	 */
 	path: function (path) {
 		var attr = {
-			/* presentational
+			/*= if (build.classic) { =*/
 			fill: 'none'
-			*/
+			/*= } =*/
 		};
 		if (isArray(path)) {
 			attr.d = path;
@@ -3704,10 +3704,12 @@ SVGRenderer.prototype = {
 		renderer.width = width;
 		renderer.height = height;
 
-		/**renderer.boxWrapper[pick(animate, true) ? 'animate' : 'attr']({
+		/*= if (build.classic) { =*/
+		renderer.boxWrapper[pick(animate, true) ? 'animate' : 'attr']({
 			width: width,
 			height: height
-		});*/
+		});
+		/*= } =*/
 		renderer.boxWrapper.attr({
 			viewBox: '0 0 ' + width + ' ' + height
 		});
@@ -4665,11 +4667,11 @@ extend(SVGRenderer.prototype, {
 				y: Math.round(y)
 			})
 			.css({
-				position: 'absolute'
-				/* presentational 
+				/*= if (build.classic) { =*/
 				fontFamily: this.style.fontFamily,
-				fontSize: this.style.fontSize
-				*/
+				fontSize: this.style.fontSize,
+				/*= } =*/
+				position: 'absolute'
 			});
 
 		// Keep the whiteSpace style outside the wrapper.styles collection
@@ -10308,9 +10310,9 @@ Legend.prototype = {
 	init: function (chart, options) {
 		
 		var legend = this,
-			/* presentational
+			/*= if (build.classic) { =*/
 			itemStyle = legend.itemStyle = options.itemStyle,
-			*/
+			/*= } =*/
 			padding,
 			itemMarginTop = options.itemMarginTop || 0;
 	
@@ -10320,9 +10322,9 @@ Legend.prototype = {
 			return;
 		}
 	
-		/* presentational
+		/*= if (build.classic) { =*/
 		legend.itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle);
-		*/
+		/*= } =*/
 		legend.itemMarginTop = itemMarginTop;
 		legend.padding = padding = pick(options.padding, 8);
 		legend.initialItemX = padding;
@@ -10352,7 +10354,7 @@ Legend.prototype = {
 	colorizeItem: function (item, visible) {
 		item.legendGroup[visible ? 'removeClass' : 'addClass']('highcharts-legend-item-hidden');
 
-		/* presentational
+		/*= if (build.classic) { =*/
 		var legend = this,
 			options = legend.options,
 			legendItem = item.legendItem,
@@ -10389,7 +10391,7 @@ Legend.prototype = {
 
 			legendSymbol.attr(symbolAttr);
 		}
-		*/
+		/*= } =*/
 	},
 
 	/**
@@ -10529,10 +10531,10 @@ Legend.prototype = {
 			horizontal = options.layout === 'horizontal',
 			symbolWidth = legend.symbolWidth,
 			symbolPadding = options.symbolPadding,
-			/* presentational
+			/*= if (build.classic) { =*/
 			itemStyle = legend.itemStyle,
 			itemHiddenStyle = legend.itemHiddenStyle,
-			*/
+			/*= } =*/
 			padding = legend.padding,
 			itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
 			ltr = !options.rtl,
@@ -10547,7 +10549,8 @@ Legend.prototype = {
 			series = item.series && item.series.drawLegendSymbol ? item.series : item,
 			seriesOptions = series.options,
 			showCheckbox = legend.createCheckboxForItem && seriesOptions && seriesOptions.showCheckbox,
-			useHTML = options.useHTML;
+			useHTML = options.useHTML,
+			fontSize = 12;
 
 		if (!li) { // generate it once, later move it
 
@@ -10565,9 +10568,9 @@ Legend.prototype = {
 					legend.baseline || 0,
 					useHTML
 				)
-				/* presentational
+				/*= if (build.classic) { =*/
 				.css(merge(item.visible ? itemStyle : itemHiddenStyle)) // merge to prevent modifying original (#1021)
-				*/
+				/*= } =*/
 				.attr({
 					align: ltr ? 'left' : 'right',
 					zIndex: 2
@@ -10576,11 +10579,11 @@ Legend.prototype = {
 
 			// Get the baseline for the first item - the font size is equal for all
 			if (!legend.baseline) {
+				/*= if (build.classic) { =*/
+				fontSize = itemStyle.fontSize;
+				/*= } =*/
 				legend.fontMetrics = renderer.fontMetrics(
-					/* presentational
-					itemStyle.fontSize, 
-					*/
-					12,
+					fontSize,
 					li
 				);
 				legend.baseline = legend.fontMetrics.f + 3 + itemMarginTop;
@@ -10591,9 +10594,6 @@ Legend.prototype = {
 			series.drawLegendSymbol(legend, item);
 
 			if (legend.setItemEvents) {
-				/* presentational 
-				legend.setItemEvents(item, li, useHTML, itemStyle, itemHiddenStyle);
-				*/
 				legend.setItemEvents(item, li, useHTML);
 			}			
 
@@ -11077,9 +11077,9 @@ H.LegendSymbolMixin = {
 		// Draw the line
 		if (options.lineWidth) {
 			attr = {
-				/* presentational
+				/*= if (build.classic) { =*/
 				'stroke-width': options.lineWidth
-				*/
+				/*= } =*/
 			};
 			if (options.dashStyle) {
 				attr.dashstyle = options.dashStyle;
@@ -11740,7 +11740,8 @@ Chart.prototype = {
 			indexAttrName = 'data-highcharts-chart',
 			oldChartIndex,
 			Ren,
-			containerId;
+			containerId,
+			containerStyle;
 
 		chart.renderTo = renderTo = optionsChart.renderTo;
 		containerId = 'highcharts-' + H.idCounter++;
@@ -11783,25 +11784,25 @@ Chart.prototype = {
 		chartWidth = chart.chartWidth;
 		chartHeight = chart.chartHeight;
 
-		// create the inner container
+		// Create the inner container
+		/*= if (build.classic) { =*/
+		containerStyle = extend({
+			position: 'relative',
+			overflow: 'hidden', // needed for context menu (avoid scrollbars) and
+				// content overflow in IE
+			width: chartWidth + 'px',
+			height: chartHeight + 'px',
+			textAlign: 'left',
+			lineHeight: 'normal', // #427
+			zIndex: 0, // #1072
+			'-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
+		}, optionsChart.style);
+		/*= } =*/
 		chart.container = container = createElement('div', {
 				className: 'highcharts-container ' + (optionsChart.className || ''),
 				id: containerId
-			}
-			/* presentational
-			, extend({
-				position: 'relative',
-				overflow: 'hidden', // needed for context menu (avoid scrollbars) and
-					// content overflow in IE
-				width: chartWidth + 'px',
-				height: chartHeight + 'px',
-				textAlign: 'left',
-				lineHeight: 'normal', // #427
-				zIndex: 0, // #1072
-				'-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
-			}, optionsChart.style),
-			*/,
-			null,
+			},
+			containerStyle,
 			chart.renderToClone || renderTo
 		);
 
@@ -11975,12 +11976,12 @@ Chart.prototype = {
 		}
 
 		// Resize the container with the global animation applied if enabled (#2503)
-		/* presentational
+		/*= if (build.classic) { =*/
 		(globalAnimation ? animate : css)(chart.container, {
 			width: chartWidth + 'px',
 			height: chartHeight + 'px'
 		}, globalAnimation);
-		*/
+		/*= } =*/
 
 		chart.setChartSize(true);
 		renderer.setSize(chartWidth, chartHeight, animation);
@@ -12914,11 +12915,11 @@ H.Series.prototype = {
 	sorted: true, // requires the data to be sorted
 	requireSorting: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		/* presentational
+		/*= if (build.classic) { =*/
 		stroke: 'lineColor',
 		'stroke-width': 'lineWidth',
 		fill: 'fillColor',
-		*/
+		/*= } =*/
 		r: 'radius'
 	},
 	directTouch: false,
@@ -14283,20 +14284,20 @@ H.Series.prototype = {
 
 			} else if ((lineWidth || fillColor) && graphPath.length) { // #1487
 				attribs = {
-					/* presentational
+					/*= if (build.classic) { =*/
 					stroke: prop[1],
 					'stroke-width': lineWidth,
 					fill: fillColor,
-					*/
+					/*= } =*/
 					zIndex: 1 // #1069
 				};
-				/* presentational
+				/*= if (build.classic) { =*/
 				if (prop[2]) {
 					attribs.dashstyle = prop[2];
 				} else if (roundCap) {
 					attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
 				}
-				*/
+				/*= } =*/
 
 				series[graphKey] = series.chart.renderer.path(graphPath)
 					.addClass('highcharts-graph')
@@ -19731,20 +19732,19 @@ if (seriesTypes.scatter) {
  */ 
 extend(Legend.prototype, {
 
-	setItemEvents: function (item, legendItem, useHTML, itemStyle, itemHiddenStyle) {
+	setItemEvents: function (item, legendItem, useHTML) {
 		var legend = this;
 		// Set the events on the item group, or in case of useHTML, the item itself (#1249)
 		(useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
 			item.setState('hover');
-			/* presentational
+			/*= if (build.classic) { =*/
 			legendItem.css(legend.options.itemHoverStyle);
-			*/
-
+			/*= } =*/
 		})
 		.on('mouseout', function () {
-			/* presentational
-			legendItem.css(item.visible ? itemStyle : itemHiddenStyle);
-			*/
+			/*= if (build.classic) { =*/
+			legendItem.css(item.visible ? legend.itemStyle : legend.itemHiddenStyle);
+			/*= } =*/
 			item.setState();
 		})
 		.on('click', function (event) {
@@ -19790,12 +19790,11 @@ extend(Legend.prototype, {
 	}	
 });
 
-/* 
- * Add pointer cursor to legend itemstyle in defaultOptions
- */
-/* presentational
+
+/*= if (build.classic) { =*/
+// Add pointer cursor to legend itemstyle in defaultOptions
 defaultOptions.legend.itemStyle.cursor = 'pointer';
-*/
+/*= } =*/
 
 
 /* 
@@ -20263,7 +20262,7 @@ extend(Series.prototype, {
 
 			series.state = state;
 
-			/* presentational
+			/*= if (build.classic) { =*/
 
 			if (stateOptions[state] && stateOptions[state].enabled === false) {
 				return;
@@ -20284,7 +20283,7 @@ extend(Series.prototype, {
 					i = i + 1;
 				}
 			}
-			*/
+			/*= } =*/
 		}
 	},
 

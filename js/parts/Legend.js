@@ -28,9 +28,9 @@ Legend.prototype = {
 	init: function (chart, options) {
 		
 		var legend = this,
-			/* presentational
+			/*= if (build.classic) { =*/
 			itemStyle = legend.itemStyle = options.itemStyle,
-			*/
+			/*= } =*/
 			padding,
 			itemMarginTop = options.itemMarginTop || 0;
 	
@@ -40,9 +40,9 @@ Legend.prototype = {
 			return;
 		}
 	
-		/* presentational
+		/*= if (build.classic) { =*/
 		legend.itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle);
-		*/
+		/*= } =*/
 		legend.itemMarginTop = itemMarginTop;
 		legend.padding = padding = pick(options.padding, 8);
 		legend.initialItemX = padding;
@@ -72,7 +72,7 @@ Legend.prototype = {
 	colorizeItem: function (item, visible) {
 		item.legendGroup[visible ? 'removeClass' : 'addClass']('highcharts-legend-item-hidden');
 
-		/* presentational
+		/*= if (build.classic) { =*/
 		var legend = this,
 			options = legend.options,
 			legendItem = item.legendItem,
@@ -109,7 +109,7 @@ Legend.prototype = {
 
 			legendSymbol.attr(symbolAttr);
 		}
-		*/
+		/*= } =*/
 	},
 
 	/**
@@ -249,10 +249,10 @@ Legend.prototype = {
 			horizontal = options.layout === 'horizontal',
 			symbolWidth = legend.symbolWidth,
 			symbolPadding = options.symbolPadding,
-			/* presentational
+			/*= if (build.classic) { =*/
 			itemStyle = legend.itemStyle,
 			itemHiddenStyle = legend.itemHiddenStyle,
-			*/
+			/*= } =*/
 			padding = legend.padding,
 			itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
 			ltr = !options.rtl,
@@ -267,7 +267,8 @@ Legend.prototype = {
 			series = item.series && item.series.drawLegendSymbol ? item.series : item,
 			seriesOptions = series.options,
 			showCheckbox = legend.createCheckboxForItem && seriesOptions && seriesOptions.showCheckbox,
-			useHTML = options.useHTML;
+			useHTML = options.useHTML,
+			fontSize = 12;
 
 		if (!li) { // generate it once, later move it
 
@@ -285,9 +286,9 @@ Legend.prototype = {
 					legend.baseline || 0,
 					useHTML
 				)
-				/* presentational
+				/*= if (build.classic) { =*/
 				.css(merge(item.visible ? itemStyle : itemHiddenStyle)) // merge to prevent modifying original (#1021)
-				*/
+				/*= } =*/
 				.attr({
 					align: ltr ? 'left' : 'right',
 					zIndex: 2
@@ -296,11 +297,11 @@ Legend.prototype = {
 
 			// Get the baseline for the first item - the font size is equal for all
 			if (!legend.baseline) {
+				/*= if (build.classic) { =*/
+				fontSize = itemStyle.fontSize;
+				/*= } =*/
 				legend.fontMetrics = renderer.fontMetrics(
-					/* presentational
-					itemStyle.fontSize, 
-					*/
-					12,
+					fontSize,
 					li
 				);
 				legend.baseline = legend.fontMetrics.f + 3 + itemMarginTop;
@@ -311,9 +312,6 @@ Legend.prototype = {
 			series.drawLegendSymbol(legend, item);
 
 			if (legend.setItemEvents) {
-				/* presentational 
-				legend.setItemEvents(item, li, useHTML, itemStyle, itemHiddenStyle);
-				*/
 				legend.setItemEvents(item, li, useHTML);
 			}			
 
@@ -797,9 +795,9 @@ H.LegendSymbolMixin = {
 		// Draw the line
 		if (options.lineWidth) {
 			attr = {
-				/* presentational
+				/*= if (build.classic) { =*/
 				'stroke-width': options.lineWidth
-				*/
+				/*= } =*/
 			};
 			if (options.dashStyle) {
 				attr.dashstyle = options.dashStyle;

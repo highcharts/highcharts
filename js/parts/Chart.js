@@ -601,7 +601,8 @@ Chart.prototype = {
 			indexAttrName = 'data-highcharts-chart',
 			oldChartIndex,
 			Ren,
-			containerId;
+			containerId,
+			containerStyle;
 
 		chart.renderTo = renderTo = optionsChart.renderTo;
 		containerId = 'highcharts-' + H.idCounter++;
@@ -644,25 +645,25 @@ Chart.prototype = {
 		chartWidth = chart.chartWidth;
 		chartHeight = chart.chartHeight;
 
-		// create the inner container
+		// Create the inner container
+		/*= if (build.classic) { =*/
+		containerStyle = extend({
+			position: 'relative',
+			overflow: 'hidden', // needed for context menu (avoid scrollbars) and
+				// content overflow in IE
+			width: chartWidth + 'px',
+			height: chartHeight + 'px',
+			textAlign: 'left',
+			lineHeight: 'normal', // #427
+			zIndex: 0, // #1072
+			'-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
+		}, optionsChart.style);
+		/*= } =*/
 		chart.container = container = createElement('div', {
 				className: 'highcharts-container ' + (optionsChart.className || ''),
 				id: containerId
-			}
-			/* presentational
-			, extend({
-				position: 'relative',
-				overflow: 'hidden', // needed for context menu (avoid scrollbars) and
-					// content overflow in IE
-				width: chartWidth + 'px',
-				height: chartHeight + 'px',
-				textAlign: 'left',
-				lineHeight: 'normal', // #427
-				zIndex: 0, // #1072
-				'-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
-			}, optionsChart.style),
-			*/,
-			null,
+			},
+			containerStyle,
 			chart.renderToClone || renderTo
 		);
 
@@ -836,12 +837,12 @@ Chart.prototype = {
 		}
 
 		// Resize the container with the global animation applied if enabled (#2503)
-		/* presentational
+		/*= if (build.classic) { =*/
 		(globalAnimation ? animate : css)(chart.container, {
 			width: chartWidth + 'px',
 			height: chartHeight + 'px'
 		}, globalAnimation);
-		*/
+		/*= } =*/
 
 		chart.setChartSize(true);
 		renderer.setSize(chartWidth, chartHeight, animation);

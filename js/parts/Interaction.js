@@ -191,20 +191,19 @@ if (seriesTypes.scatter) {
  */ 
 extend(Legend.prototype, {
 
-	setItemEvents: function (item, legendItem, useHTML, itemStyle, itemHiddenStyle) {
+	setItemEvents: function (item, legendItem, useHTML) {
 		var legend = this;
 		// Set the events on the item group, or in case of useHTML, the item itself (#1249)
 		(useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
 			item.setState('hover');
-			/* presentational
+			/*= if (build.classic) { =*/
 			legendItem.css(legend.options.itemHoverStyle);
-			*/
-
+			/*= } =*/
 		})
 		.on('mouseout', function () {
-			/* presentational
-			legendItem.css(item.visible ? itemStyle : itemHiddenStyle);
-			*/
+			/*= if (build.classic) { =*/
+			legendItem.css(item.visible ? legend.itemStyle : legend.itemHiddenStyle);
+			/*= } =*/
 			item.setState();
 		})
 		.on('click', function (event) {
@@ -250,12 +249,11 @@ extend(Legend.prototype, {
 	}	
 });
 
-/* 
- * Add pointer cursor to legend itemstyle in defaultOptions
- */
-/* presentational
+
+/*= if (build.classic) { =*/
+// Add pointer cursor to legend itemstyle in defaultOptions
 defaultOptions.legend.itemStyle.cursor = 'pointer';
-*/
+/*= } =*/
 
 
 /* 
@@ -723,7 +721,7 @@ extend(Series.prototype, {
 
 			series.state = state;
 
-			/* presentational
+			/*= if (build.classic) { =*/
 
 			if (stateOptions[state] && stateOptions[state].enabled === false) {
 				return;
@@ -744,7 +742,7 @@ extend(Series.prototype, {
 					i = i + 1;
 				}
 			}
-			*/
+			/*= } =*/
 		}
 	},
 

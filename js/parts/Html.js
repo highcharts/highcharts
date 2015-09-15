@@ -220,11 +220,11 @@ extend(SVGRenderer.prototype, {
 				y: Math.round(y)
 			})
 			.css({
-				position: 'absolute'
-				/* presentational 
+				/*= if (build.classic) { =*/
 				fontFamily: this.style.fontFamily,
-				fontSize: this.style.fontSize
-				*/
+				fontSize: this.style.fontSize,
+				/*= } =*/
+				position: 'absolute'
 			});
 
 		// Keep the whiteSpace style outside the wrapper.styles collection
