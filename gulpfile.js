@@ -109,3 +109,14 @@ gulp.task('lint-parts-more', function () {
 gulp.task('lint-themes', function () {
     return doLint(paths.themes);
 });
+
+/**
+ * Proof of concept to parse super code. Move this logic into the standard build when ready.
+ */
+gulp.task('supercode', function () {
+    ['./js/highcharts.src.js'].forEach(function (path) {
+        fs.readFile(path, 'utf8', function (err, data) {
+            fs.writeFile(path, data, 'utf8');
+        });
+    });
+});
