@@ -2,7 +2,6 @@
 	var charts = H.charts,
 		each = H.each,
 		extend = H.extend,
-		hoverChartIndex = H.hoverChartIndex,
 		pick = H.pick;
 /* Support for touch devices */
 extend(H.Pointer.prototype, {
@@ -191,7 +190,7 @@ extend(H.Pointer.prototype, {
 	touch: function (e, start) {
 		var chart = this.chart;
 
-		hoverChartIndex = chart.index;
+		H.hoverChartIndex = chart.index;
 
 		if (e.touches.length === 1) {
 
@@ -225,8 +224,8 @@ extend(H.Pointer.prototype, {
 	},
 
 	onDocumentTouchEnd: function (e) {
-		if (charts[hoverChartIndex]) {
-			charts[hoverChartIndex].pointer.drop(e);
+		if (charts[H.hoverChartIndex]) {
+			charts[H.hoverChartIndex].pointer.drop(e);
 		}
 	}
 

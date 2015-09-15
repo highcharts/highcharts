@@ -2,13 +2,29 @@
 /* ****************************************************************************
  * Start Scroller code														*
  *****************************************************************************/
-var Axis = H.Axis,
+var addEvent = H.addEvent,
+	Axis = H.Axis,
 	Chart = H.Chart,
+	defaultDataGroupingUnits = H.defaultDataGroupingUnits,
+	defaultOptions = H.defaultOptions,
+	defined = H.defined,
+	destroyObjectProperties = H.destroyObjectProperties,
 	error = H.error,
-	Series = H.Series,
-	units = [].concat(H.defaultDataGroupingUnits), // copy
-	defaultSeriesType,
+	extend = H.extend,
+	hasTouch = H.hasTouch,
+	isArray = H.isArray,
+	isObject = H.isObject,
 	isTouchDevice = H.isTouchDevice,
+	merge = H.merge,
+	pick = H.pick,
+	removeEvent = H.removeEvent,
+	Series = H.Series,
+	seriesTypes = H.seriesTypes,
+	svg = H.svg,
+	wrap = H.wrap,
+
+	units = [].concat(defaultDataGroupingUnits), // copy
+	defaultSeriesType,
 	
 	// Finding the min or max of a set of variables where we don't know if they are defined,
 	// is a pattern that is repeated several places in Highcharts. Consider making this
@@ -24,9 +40,9 @@ var Axis = H.Axis,
 units[4] = ['day', [1, 2, 3, 4]]; // allow more days
 units[5] = ['week', [1, 2, 3]]; // allow more weeks
 
-defaultSeriesType = H.seriesTypes.areaspline === undefined ? 'line' : 'areaspline';
+defaultSeriesType = seriesTypes.areaspline === undefined ? 'line' : 'areaspline';
 
-H.extend(H.defaultOptions, {
+extend(defaultOptions, {
 	navigator: {
 		//enabled: true,
 		handles: {
@@ -116,7 +132,7 @@ H.extend(H.defaultOptions, {
 		trackBorderColor: '#eeeeee',
 		trackBorderWidth: 1,
 		// trackBorderRadius: 0
-		liveRedraw: H.svg && !isTouchDevice
+		liveRedraw: svg && !isTouchDevice
 	}
 });
 
@@ -271,7 +287,6 @@ Scroller.prototype = {
 		var scroller = this,
 			chart = scroller.chart,
 			renderer = chart.renderer,
-			pick = H.pick,
 			navigatorLeft,
 			navigatorWidth,
 			scrollerLeft,
@@ -307,7 +322,7 @@ Scroller.prototype = {
 			unionExtremes;
 
 		// Don't render the navigator until we have data (#486, #4202)
-		if (!H.defined(min) || isNaN(min)) {
+		if (!defined(min) || isNaN(min)) {
 			return;
 		}
 
@@ -549,7 +564,7 @@ Scroller.prototype = {
 		];
 
 		// Touch events
-		if (H.hasTouch) {
+		if (hasTouch) {
 			_events.push(
 				[container, 'touchstart', mouseDownHandler],
 				[container, 'touchmove', mouseMoveHandler],
@@ -558,8 +573,8 @@ Scroller.prototype = {
 		}
 
 		// Add them all
-		H.each(_events, function (args) {
-			H.addEvent.apply(null, args);
+		each(_events, function (args) {
+			addEvent.apply(null, args);
 		});
 		this._events = _events;
 	},
@@ -568,9 +583,7 @@ Scroller.prototype = {
 	 * Removes the event handlers attached previously with addEvents.
 	 */
 	removeEvents: function () {
-		var removeEvent = H.removeEvent;
-		
-		H.each(this._events, function (args) {
+		each(this._events, function (args) {
 			removeEvent.apply(null, args);
 		});
 		this._events = undefined;
@@ -797,7 +810,7 @@ Scroller.prototype = {
 
 		if (scroller.navigatorEnabled) {
 			// an x axis is required for scrollbar also
-			scroller.xAxis = xAxis = new Axis(chart, H.merge({
+			scroller.xAxis = xAxis = new Axis(chart, merge({
 				// inherit base xAxis' break and ordinal options
 				breaks: baseSeries && baseSeries.xAxis.options.breaks,
 				ordinal: baseSeries && baseSeries.xAxis.options.ordinal 
@@ -818,7 +831,7 @@ Scroller.prototype = {
 				zoomEnabled: false
 			}));
 
-			scroller.yAxis = yAxis = new Axis(chart, H.merge(navigatorOptions.yAxis, {
+			scroller.yAxis = yAxis = new Axis(chart, merge(navigatorOptions.yAxis, {
 				id: 'navigator-y-axis',
 				alignTicks: false,
 				height: height,
@@ -834,7 +847,7 @@ Scroller.prototype = {
 			// If not, set up an event to listen for added series
 			} else if (chart.series.length === 0) {
 
-				H.wrap(chart, 'redraw', function (proceed, animation) {
+				wrap(chart, 'redraw', function (proceed, animation) {
 					// We've got one, now add it as base and reset chart.redraw
 					if (chart.series.length > 0 && !scroller.series) {
 						scroller.setBaseSeries();
@@ -870,7 +883,7 @@ Scroller.prototype = {
 		 * For stock charts, extend the Chart.getMargins method so that we can set the final top position
 		 * of the navigator once the height of the chart, including the legend, is determined. #367.
 		 */
-		H.wrap(chart, 'getMargins', function (proceed) {
+		wrap(chart, 'getMargins', function (proceed) {
 
 			var legend = this.legend,
 				legendOptions = legend.options;
@@ -881,7 +894,7 @@ Scroller.prototype = {
 			scroller.top = top = scroller.navigatorOptions.top ||
 				this.chartHeight - scroller.height - scroller.scrollbarHeight - this.spacing[2] -
 						(legendOptions.verticalAlign === 'bottom' && legendOptions.enabled && !legendOptions.floating ?
-							legend.legendHeight + H.pick(legendOptions.margin, 10) : 0);
+							legend.legendHeight + pick(legendOptions.margin, 10) : 0);
 
 			if (xAxis && yAxis) { // false if navigator is disabled (#904)
 
@@ -905,7 +918,6 @@ Scroller.prototype = {
 			navAxis = this.xAxis,
 			navAxisOptions = navAxis.options,
 			baseAxisOptions = baseAxis.options,
-			pick = H.pick,
 			ret;
 
 		if (!returnFalseOnNoBaseSeries || baseAxis.dataMin !== null) {
@@ -971,7 +983,7 @@ Scroller.prototype = {
 		this.hasNavigatorData = !!navigatorData;
 
 		// Merge the series options
-		mergedNavSeriesOptions = H.merge(baseOptions, navigatorSeriesOptions, {
+		mergedNavSeriesOptions = merge(baseOptions, navigatorSeriesOptions, {
 			enableMouseTracking: false,
 			group: 'nav', // for columns
 			padXAxis: false,
@@ -992,9 +1004,9 @@ Scroller.prototype = {
 		// Respond to updated data in the base series.
 		// Abort if lazy-loading data from the server.
 		if (baseSeries && this.navigatorOptions.adaptToUpdatedData !== false) {
-			H.addEvent(baseSeries, 'updatedData', this.updatedDataHandler);
+			addEvent(baseSeries, 'updatedData', this.updatedDataHandler);
 			// Survive Series.update()
-			baseSeries.userOptions.events = H.extend(baseSeries.userOptions.event, { updatedData: this.updatedDataHandler });
+			baseSeries.userOptions.events = extend(baseSeries.userOptions.event, { updatedData: this.updatedDataHandler });
 
 		}
 	},
@@ -1074,7 +1086,7 @@ Scroller.prototype = {
 		scroller.removeEvents();
 
 		// Destroy properties
-		H.each([scroller.xAxis, scroller.yAxis, scroller.leftShade, scroller.rightShade, scroller.outline, scroller.scrollbarTrack, scroller.scrollbarRifles, scroller.scrollbarGroup, scroller.scrollbar], function (prop) {
+		each([scroller.xAxis, scroller.yAxis, scroller.leftShade, scroller.rightShade, scroller.outline, scroller.scrollbarTrack, scroller.scrollbarRifles, scroller.scrollbarGroup, scroller.scrollbar], function (prop) {
 			if (prop && prop.destroy) {
 				prop.destroy();
 			}
@@ -1082,8 +1094,8 @@ Scroller.prototype = {
 		scroller.xAxis = scroller.yAxis = scroller.leftShade = scroller.rightShade = scroller.outline = scroller.scrollbarTrack = scroller.scrollbarRifles = scroller.scrollbarGroup = scroller.scrollbar = null;
 
 		// Destroy elements in collection
-		H.each([scroller.scrollbarButtons, scroller.handles, scroller.elementsToDestroy], function (coll) {
-			H.destroyObjectProperties(coll);
+		each([scroller.scrollbarButtons, scroller.handles, scroller.elementsToDestroy], function (coll) {
+			destroyObjectProperties(coll);
 		});
 	}
 };
@@ -1095,7 +1107,7 @@ H.Scroller = Scroller;
  * For Stock charts, override selection zooming with some special features because
  * X axis zooming is already allowed by the Navigator and Range selector.
  */
-H.wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
+wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 	var chart = this.chart,
 		chartOptions = chart.options,
 		zoomType = chartOptions.chart.zoomType,
@@ -1120,7 +1132,7 @@ H.wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 		// the reset button is pressed, revert to this state
 		} else if (zoomType === 'xy') {
 			previousZoom = this.previousZoom;
-			if (H.defined(newMin)) {
+			if (defined(newMin)) {
 				this.previousZoom = [this.min, this.max];
 			} else if (previousZoom) {
 				newMin = previousZoom[0];
@@ -1134,9 +1146,9 @@ H.wrap(Axis.prototype, 'zoom', function (proceed, newMin, newMax) {
 });
 
 // Initialize scroller for stock charts
-H.wrap(Chart.prototype, 'init', function (proceed, options, callback) {
+wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 
-	H.addEvent(this, 'beforeRender', function () {
+	addEvent(this, 'beforeRender', function () {
 		var options = this.options;
 		if (options.navigator.enabled || options.scrollbar.enabled) {
 			this.scroller = new Scroller(this);
@@ -1148,9 +1160,9 @@ H.wrap(Chart.prototype, 'init', function (proceed, options, callback) {
 });
 
 // Pick up badly formatted point options to addPoint
-H.wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, animation) {
+wrap(Series.prototype, 'addPoint', function (proceed, options, redraw, shift, animation) {
 	var turboThreshold = this.options.turboThreshold;
-	if (turboThreshold && this.xData.length > turboThreshold && H.isObject(options) && !H.isArray(options) && this.chart.scroller) {
+	if (turboThreshold && this.xData.length > turboThreshold && isObject(options) && !isArray(options) && this.chart.scroller) {
 		error(20, true);
 	}
 	proceed.call(this, options, redraw, shift, animation);

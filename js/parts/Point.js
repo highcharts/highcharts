@@ -1,10 +1,17 @@
 (function (H) {
-	var extend = H.extend,
-		Point = H.Point = function () {};
+	var Point,
+
+		extend = H.extend,
+		erase = H.erase,
+		format = H.format,
+		isArray = H.isArray,
+		pick = H.pick,
+		removeEvent = H.removeEvent;
 
 /**
  * The Point object and prototype. Inheritable and used as base for PiePoint
  */
+Point = H.Point = function () {};
 Point.prototype = {
 
 	/**
@@ -80,7 +87,7 @@ Point.prototype = {
 		if (typeof options === 'number' || options === null) {
 			ret[pointArrayMap[0]] = options;
 
-		} else if (H.isArray(options)) {
+		} else if (isArray(options)) {
 			// with leading x value
 			if (!keys && options.length > valueCount) {
 				firstItemType = typeof options[0];
@@ -125,7 +132,7 @@ Point.prototype = {
 
 		if (hoverPoints) {
 			point.setState();
-			H.erase(hoverPoints, point);
+			erase(hoverPoints, point);
 			if (!hoverPoints.length) {
 				chart.hoverPoints = null;
 			}
@@ -137,7 +144,7 @@ Point.prototype = {
 
 		// remove all events
 		if (point.graphic || point.dataLabel) { // removeEvent and destroyElements are performance expensive
-			H.removeEvent(point);
+			removeEvent(point);
 			point.destroyElements();
 		}
 
@@ -194,12 +201,12 @@ Point.prototype = {
 		// Insert options for valueDecimals, valuePrefix, and valueSuffix
 		var series = this.series,
 			seriesTooltipOptions = series.tooltipOptions,
-			valueDecimals = H.pick(seriesTooltipOptions.valueDecimals, ''),
+			valueDecimals = pick(seriesTooltipOptions.valueDecimals, ''),
 			valuePrefix = seriesTooltipOptions.valuePrefix || '',
 			valueSuffix = seriesTooltipOptions.valueSuffix || '';
 
 		// Loop over the point array map and replace unformatted values with sprintf formatting markup
-		H.each(series.pointArrayMap || ['y'], function (key) {
+		each(series.pointArrayMap || ['y'], function (key) {
 			key = '{point.' + key; // without the closing bracket
 			if (valuePrefix || valueSuffix) {
 				pointFormat = pointFormat.replace(key + '}', valuePrefix + key + '}' + valueSuffix);
@@ -207,7 +214,7 @@ Point.prototype = {
 			pointFormat = pointFormat.replace(key + '}', key + ':,.' + valueDecimals + 'f}');
 		});
 
-		return H.format(pointFormat, {
+		return format(pointFormat, {
 			point: this,
 			series: this.series
 		});

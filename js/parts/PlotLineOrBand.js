@@ -1,9 +1,14 @@
 (function (H) {
-	var log2lin = H.log2lin,
-		defined = H.defined,
+	var arrayMax = H.arrayMax,
 		arrayMin = H.arrayMin,
-		arrayMax = H.arrayMax;
-/**
+		defined = H.defined,
+		destroyObjectProperties = H.destroyObjectProperties,
+		each = H.each,
+		erase = H.erase,
+		log2lin = H.log2lin,
+		merge = H.merge,
+		PlotLineOrBand = H.PlotLineOrBand;
+/*
  * The object wrapper for plot lines and plot bands
  * @param {Object} options
  */
@@ -119,7 +124,7 @@ H.PlotLineOrBand.prototype = {
 		// the plot band/line label
 		if (optionsLabel && defined(optionsLabel.text) && path && path.length && axis.width > 0 && axis.height > 0) {
 			// apply defaults
-			optionsLabel = H.merge({
+			optionsLabel = merge({
 				align: horiz && isBand && 'center',
 				x: horiz ? !isBand && 4 : 10,
 				verticalAlign : !horiz && isBand && 'middle',
@@ -175,10 +180,10 @@ H.PlotLineOrBand.prototype = {
 	 */
 	destroy: function () {
 		// remove it from the lookup
-		H.erase(this.axis.plotLinesAndBands, this);
+		erase(this.axis.plotLinesAndBands, this);
 		
 		delete this.axis;
-		H.destroyObjectProperties(this);
+		destroyObjectProperties(this);
 	}
 };
 
@@ -224,7 +229,7 @@ H.AxisPlotLineOrBandExtension = {
 	 * @param options {Object} The plotBand or plotLine configuration object
 	 */
 	addPlotBandOrLine: function (options, coll) {
-		var obj = new H.PlotLineOrBand(this, options).render(),
+		var obj = new PlotLineOrBand(this, options).render(),
 			userOptions = this.userOptions;
 
 		if (obj) { // #2189
@@ -253,11 +258,11 @@ H.AxisPlotLineOrBandExtension = {
 				plotLinesAndBands[i].destroy();
 			}
 		}
-		H.each([options.plotLines || [], userOptions.plotLines || [], options.plotBands || [], userOptions.plotBands || []], function (arr) {
+		each([options.plotLines || [], userOptions.plotLines || [], options.plotBands || [], userOptions.plotBands || []], function (arr) {
 			i = arr.length;
 			while (i--) {
 				if (arr[i].id === id) {
-					H.erase(arr, arr[i]);
+					erase(arr, arr[i]);
 				}
 			}
 		});

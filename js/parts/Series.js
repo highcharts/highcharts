@@ -1,17 +1,29 @@
 (function (H) {
 	var addEvent = H.addEvent,
+		arrayMax = H.arrayMax,
+		arrayMin = H.arrayMin,
 		Color = H.Color, // @todo add as a requirement
-		d = H.Date,
+		Date = H.Date,
+		defaultOptions = H.defaultOptions,
+		defaultPlotOptions = H.defaultPlotOptions,
 		defined = H.defined,
 		each = H.each,
+		erase = H.erase,
 		error = H.error,
 		extend = H.extend,
+		isArray = H.isArray,
+		isNumber = H.isNumber,
+		isObject = H.isObject,
+		isString = H.isString,
 		LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
+		merge = H.merge,
 		pick = H.pick,
 		Point = H.Point, // @todo  add as a requirement
-		Series = H.Series = function () {}, // @todo return this object
+		removeEvent = H.removeEvent,
+		splat = H.splat,
+		stableSort = H.stableSort,
 		SVGElement = H.SVGElement,
-		stableSort = H.stableSort;
+		useCanVG = H.useCanVG;
 
 /**
  * @classDescription The base function which all other series types inherit from. The data in the series is stored
@@ -32,8 +44,9 @@
  * @param {Object} chart
  * @param {Object} options
  */
+H.Series = function () {}; // @todo return this object
 
-Series.prototype = {
+H.Series.prototype = {
 
 	isCartesian: true,
 	type: 'line',
@@ -76,7 +89,7 @@ Series.prototype = {
 		});
 
 		// special
-		if (H.useCanVG) {
+		if (useCanVG) {
 			options.animation = false;
 		}
 
@@ -205,10 +218,10 @@ Series.prototype = {
 		
 		// Added code for pointInterval strings
 		if (pointIntervalUnit === 'month' || pointIntervalUnit === 'year') {
-			date = new d(xIncrement);
+			date = new Date(xIncrement);
 			date = (pointIntervalUnit === 'month') ?
-				+date[d.hcSetMonth](date[d.hcGetMonth]() + pointInterval) :
-				+date[d.hcSetFullYear](date[d.hcGetFullYear]() + pointInterval);
+				+date[Date.hcSetMonth](date[Date.hcGetMonth]() + pointInterval) :
+				+date[Date.hcSetFullYear](date[Date.hcGetFullYear]() + pointInterval);
 			pointInterval = date - xIncrement;
 
 		}
@@ -281,16 +294,16 @@ Series.prototype = {
 		// type options like column.animation would be overwritten by the general option.
 		// But issues have been raised here (#3881), and the solution may be to distinguish 
 		// between default option and userOptions like in the tooltip below.
-		options = H.merge(
+		options = merge(
 			typeOptions,
 			plotOptions.series,
 			itemOptions
 		);
 
 		// The tooltip options are merged between global and series specific options
-		this.tooltipOptions = H.merge(
-			H.defaultOptions.tooltip,
-			H.defaultOptions.plotOptions[this.type].tooltip,
+		this.tooltipOptions = merge(
+			defaultOptions.tooltip,
+			defaultOptions.plotOptions[this.type].tooltip,
 			userOptions.tooltip,
 			userPlotOptions.series && userPlotOptions.series.tooltip,
 			userPlotOptions[this.type] && userPlotOptions[this.type].tooltip,
@@ -348,7 +361,7 @@ Series.prototype = {
 		if (this.options.colorByPoint) {
 			this.options.color = null; // #4359, selected slice got series.color even when colorByPoint was set.
 		} else {
-			this.getCyclic('color', this.options.color || H.defaultPlotOptions[this.type].color, this.chart.options.colors);
+			this.getCyclic('color', this.options.color || defaultPlotOptions[this.type].color, this.chart.options.colors);
 		}
 	},
 	/**
@@ -430,7 +443,7 @@ Series.prototype = {
 				}
 
 
-				if (H.isNumber(firstPoint)) { // assume all points are numbers
+				if (isNumber(firstPoint)) { // assume all points are numbers
 					var x = pick(options.pointStart, 0),
 						pointInterval = pick(options.pointInterval, 1);
 
@@ -440,7 +453,7 @@ Series.prototype = {
 						x += pointInterval;
 					}
 					series.xIncrement = x;
-				} else if (H.isArray(firstPoint)) { // assume all points are arrays
+				} else if (isArray(firstPoint)) { // assume all points are arrays
 					if (valueCount) { // [x, low, high] or [x, o, h, l, c]
 						for (i = 0; i < dataLength; i++) {
 							pt = data[i];
@@ -471,7 +484,7 @@ Series.prototype = {
 			}
 
 			// Forgetting to cast strings to numbers is a common caveat when handling CSV or JSON
-			if (H.isString(yData[0])) {
+			if (isString(yData[0])) {
 				error(14, true);
 			}
 
@@ -657,7 +670,7 @@ Series.prototype = {
 				points[i] = point;
 			} else {
 				// splat the y data in case of ohlc data array
-				points[i] = (new pointClass()).init(series, [processedXData[i]].concat(H.splat(processedYData[i])));
+				points[i] = (new pointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
 			}
 			points[i].index = cursor; // For faster access in Point.update
 		}
@@ -728,8 +741,8 @@ Series.prototype = {
 				}
 			}
 		}
-		this.dataMin = H.arrayMin(activeYData);
-		this.dataMax = H.arrayMax(activeYData);
+		this.dataMin = arrayMin(activeYData);
+		this.dataMax = arrayMax(activeYData);
 	},
 
 	/**
@@ -752,7 +765,7 @@ Series.prototype = {
 			hasModifyValue = !!series.modifyValue,
 			i,
 			pointPlacement = options.pointPlacement,
-			dynamicallyPlaced = pointPlacement === 'between' || H.isNumber(pointPlacement),
+			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
 			threshold = options.threshold,
 			stackThreshold = options.startFromThreshold ? threshold : 0,
 			plotX,
@@ -911,8 +924,8 @@ Series.prototype = {
 			sharedClipKey;
 
 		// Animation option is set to true
-		if (animation && !H.isObject(animation)) {
-			animation = H.defaultPlotOptions[series.type].animation;
+		if (animation && !isObject(animation)) {
+			animation = defaultPlotOptions[series.type].animation;
 		}
 
 		// Initialize the animation. Set up the clipping rectangle.
@@ -1067,7 +1080,7 @@ Series.prototype = {
 	getAttribs: function () {
 		var series = this,
 			seriesOptions = series.options,
-			normalOptions = H.defaultPlotOptions[series.type].marker ? seriesOptions.marker : seriesOptions,
+			normalOptions = defaultPlotOptions[series.type].marker ? seriesOptions.marker : seriesOptions,
 			stateOptions = normalOptions.states,
 			stateOptionsHover = stateOptions.hover,
 			pointStateOptionsHover,
@@ -1226,7 +1239,6 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			issue134 = /AppleWebKit\/533/.test(navigator.userAgent),
-			erase = H.erase,
 			destroy,
 			i,
 			data = series.data || [],
@@ -1238,7 +1250,7 @@ Series.prototype = {
 		HighchartsAdapter.fireEvent(series, 'destroy');
 
 		// remove all events
-		H.removeEvent(series);
+		removeEvent(series);
 
 		// erase from axes
 		each(series.axisTypes || [], function (AXIS) {
@@ -1570,7 +1582,7 @@ Series.prototype = {
 
 		addEvent(chart, 'resize', setInvert); // do it on resize
 		addEvent(series, 'destroy', function () {
-			H.removeEvent(chart, 'resize', setInvert);
+			removeEvent(chart, 'resize', setInvert);
 		});
 
 		// Do it now

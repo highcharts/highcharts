@@ -9120,14 +9120,17 @@ H.Tooltip.prototype = {
 }(Highcharts));
 (function (H) {
 var addEvent = H.addEvent,
+	attr = H.attr,
 	charts = H.charts,
+	css = H.css,
 	defined = H.defined,
 	each = H.each,
 	extend = H.extend,
-	hoverChartIndex = H.hoverChartIndex,
 	pick = H.pick,
 	removeEvent = H.removeEvent,
-	Tooltip = H.Tooltip;
+	splat = H.splat,
+	Tooltip = H.Tooltip,
+	useCanVG = H.useCanVg;
 
 // Global flag for touch support
 H.hasTouch = document.documentElement.ontouchstart !== undefined;
@@ -9150,7 +9153,7 @@ H.Pointer.prototype = {
 		
 		var chartOptions = options.chart,
 			chartEvents = chartOptions.events,
-			zoomType = H.useCanVG ? '' : chartOptions.zoomType,
+			zoomType = useCanVG ? '' : chartOptions.zoomType,
 			inverted = chart.inverted,
 			zoomX,
 			zoomY;
@@ -9345,8 +9348,8 @@ H.Pointer.prototype = {
 		// Start the event listener to pick up the tooltip 
 		if (tooltip && !pointer._onDocumentMouseMove) {
 			pointer._onDocumentMouseMove = function (e) {
-				if (charts[hoverChartIndex]) {
-					charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
+				if (charts[H.hoverChartIndex]) {
+					charts[H.hoverChartIndex].pointer.onDocumentMouseMove(e);
 				}
 			};
 			addEvent(document, 'mousemove', pointer._onDocumentMouseMove);
@@ -9380,7 +9383,7 @@ H.Pointer.prototype = {
 		allowMove = allowMove && tooltip && tooltipPoints;
 			
 		// Check if the points have moved outside the plot area, #1003		
-		if (allowMove  && H.splat(tooltipPoints)[0].plotX === undefined) {
+		if (allowMove  && splat(tooltipPoints)[0].plotX === undefined) {
 			allowMove = false;
 		}	
 		// Just move the tooltip, #349
@@ -9624,7 +9627,7 @@ H.Pointer.prototype = {
 
 		// Reset all
 		if (chart) { // it may be destroyed on mouse up - #877
-			H.css(chart.container, { cursor: chart._cursor });
+			css(chart.container, { cursor: chart._cursor });
 			chart.cancelClick = this.hasDragged > 10; // #370
 			chart.mouseIsDown = this.hasDragged = this.hasPinched = false;
 			this.pinchDown = [];
@@ -9646,8 +9649,8 @@ H.Pointer.prototype = {
 	
 
 	onDocumentMouseUp: function (e) {
-		if (charts[hoverChartIndex]) {
-			charts[hoverChartIndex].pointer.drop(e);
+		if (charts[H.hoverChartIndex]) {
+			charts[H.hoverChartIndex].pointer.drop(e);
 		}
 	},
 
@@ -9672,7 +9675,7 @@ H.Pointer.prototype = {
 	 * When mouse leaves the container, hide the tooltip.
 	 */
 	onContainerMouseLeave: function () {
-		var chart = charts[hoverChartIndex];
+		var chart = charts[H.hoverChartIndex];
 		if (chart) {
 			chart.pointer.reset();
 			chart.pointer.chartPosition = null; // also reset the chart position, used in #149 fix
@@ -9684,7 +9687,7 @@ H.Pointer.prototype = {
 
 		var chart = this.chart;
 
-		hoverChartIndex = chart.index;
+		H.hoverChartIndex = chart.index;
 
 		e = this.normalize(e);		
 		e.returnValue = false; // #2251, #3224
@@ -9708,7 +9711,7 @@ H.Pointer.prototype = {
 	inClass: function (element, className) {
 		var elemClassName;
 		while (element) {
-			elemClassName = H.attr(element, 'class');
+			elemClassName = attr(element, 'class');
 			if (elemClassName) {
 				if (elemClassName.indexOf(className) !== -1) {
 					return true;
@@ -9834,7 +9837,6 @@ H.Pointer.prototype = {
 	var charts = H.charts,
 		each = H.each,
 		extend = H.extend,
-		hoverChartIndex = H.hoverChartIndex,
 		pick = H.pick;
 /* Support for touch devices */
 extend(H.Pointer.prototype, {
@@ -10023,7 +10025,7 @@ extend(H.Pointer.prototype, {
 	touch: function (e, start) {
 		var chart = this.chart;
 
-		hoverChartIndex = chart.index;
+		H.hoverChartIndex = chart.index;
 
 		if (e.touches.length === 1) {
 
@@ -10057,8 +10059,8 @@ extend(H.Pointer.prototype, {
 	},
 
 	onDocumentTouchEnd: function (e) {
-		if (charts[hoverChartIndex]) {
-			charts[hoverChartIndex].pointer.drop(e);
+		if (charts[H.hoverChartIndex]) {
+			charts[H.hoverChartIndex].pointer.drop(e);
 		}
 	}
 
@@ -10071,7 +10073,6 @@ extend(H.Pointer.prototype, {
 		charts = H.charts,
 		css = H.css,
 		extend = H.extend,
-		hoverChartIndex = H.hoverChartIndex,
 		noop = H.noop,
 		Pointer = H.Pointer,
 		removeEvent = H.removeEvent,
@@ -10099,9 +10100,9 @@ if (window.PointerEvent || window.MSPointerEvent) {
 		translateMSPointer = function (e, method, wktype, callback) {
 			var p;
 			e = e.originalEvent || e;
-			if ((e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) && charts[hoverChartIndex]) {
+			if ((e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) && charts[H.hoverChartIndex]) {
 				callback(e);
-				p = charts[hoverChartIndex].pointer;
+				p = charts[H.hoverChartIndex].pointer;
 				p[method]({
 					type: wktype,
 					target: e.currentTarget,
@@ -12451,12 +12452,19 @@ Chart.prototype = {
 	return H;
 }(Highcharts));
 (function (H) {
-	var extend = H.extend,
-		Point = H.Point = function () {};
+	var Point,
+
+		extend = H.extend,
+		erase = H.erase,
+		format = H.format,
+		isArray = H.isArray,
+		pick = H.pick,
+		removeEvent = H.removeEvent;
 
 /**
  * The Point object and prototype. Inheritable and used as base for PiePoint
  */
+Point = H.Point = function () {};
 Point.prototype = {
 
 	/**
@@ -12532,7 +12540,7 @@ Point.prototype = {
 		if (typeof options === 'number' || options === null) {
 			ret[pointArrayMap[0]] = options;
 
-		} else if (H.isArray(options)) {
+		} else if (isArray(options)) {
 			// with leading x value
 			if (!keys && options.length > valueCount) {
 				firstItemType = typeof options[0];
@@ -12577,7 +12585,7 @@ Point.prototype = {
 
 		if (hoverPoints) {
 			point.setState();
-			H.erase(hoverPoints, point);
+			erase(hoverPoints, point);
 			if (!hoverPoints.length) {
 				chart.hoverPoints = null;
 			}
@@ -12589,7 +12597,7 @@ Point.prototype = {
 
 		// remove all events
 		if (point.graphic || point.dataLabel) { // removeEvent and destroyElements are performance expensive
-			H.removeEvent(point);
+			removeEvent(point);
 			point.destroyElements();
 		}
 
@@ -12646,12 +12654,12 @@ Point.prototype = {
 		// Insert options for valueDecimals, valuePrefix, and valueSuffix
 		var series = this.series,
 			seriesTooltipOptions = series.tooltipOptions,
-			valueDecimals = H.pick(seriesTooltipOptions.valueDecimals, ''),
+			valueDecimals = pick(seriesTooltipOptions.valueDecimals, ''),
 			valuePrefix = seriesTooltipOptions.valuePrefix || '',
 			valueSuffix = seriesTooltipOptions.valueSuffix || '';
 
 		// Loop over the point array map and replace unformatted values with sprintf formatting markup
-		H.each(series.pointArrayMap || ['y'], function (key) {
+		each(series.pointArrayMap || ['y'], function (key) {
 			key = '{point.' + key; // without the closing bracket
 			if (valuePrefix || valueSuffix) {
 				pointFormat = pointFormat.replace(key + '}', valuePrefix + key + '}' + valueSuffix);
@@ -12659,7 +12667,7 @@ Point.prototype = {
 			pointFormat = pointFormat.replace(key + '}', key + ':,.' + valueDecimals + 'f}');
 		});
 
-		return H.format(pointFormat, {
+		return format(pointFormat, {
 			point: this,
 			series: this.series
 		});
@@ -12700,18 +12708,30 @@ Point.prototype = {
 }(Highcharts));
 (function (H) {
 	var addEvent = H.addEvent,
+		arrayMax = H.arrayMax,
+		arrayMin = H.arrayMin,
 		Color = H.Color, // @todo add as a requirement
-		d = H.Date,
+		Date = H.Date,
+		defaultOptions = H.defaultOptions,
+		defaultPlotOptions = H.defaultPlotOptions,
 		defined = H.defined,
 		each = H.each,
+		erase = H.erase,
 		error = H.error,
 		extend = H.extend,
+		isArray = H.isArray,
+		isNumber = H.isNumber,
+		isObject = H.isObject,
+		isString = H.isString,
 		LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
+		merge = H.merge,
 		pick = H.pick,
 		Point = H.Point, // @todo  add as a requirement
-		Series = H.Series = function () {}, // @todo return this object
+		removeEvent = H.removeEvent,
+		splat = H.splat,
+		stableSort = H.stableSort,
 		SVGElement = H.SVGElement,
-		stableSort = H.stableSort;
+		useCanVG = H.useCanVG;
 
 /**
  * @classDescription The base function which all other series types inherit from. The data in the series is stored
@@ -12732,8 +12752,9 @@ Point.prototype = {
  * @param {Object} chart
  * @param {Object} options
  */
+H.Series = function () {}; // @todo return this object
 
-Series.prototype = {
+H.Series.prototype = {
 
 	isCartesian: true,
 	type: 'line',
@@ -12776,7 +12797,7 @@ Series.prototype = {
 		});
 
 		// special
-		if (H.useCanVG) {
+		if (useCanVG) {
 			options.animation = false;
 		}
 
@@ -12905,10 +12926,10 @@ Series.prototype = {
 		
 		// Added code for pointInterval strings
 		if (pointIntervalUnit === 'month' || pointIntervalUnit === 'year') {
-			date = new d(xIncrement);
+			date = new Date(xIncrement);
 			date = (pointIntervalUnit === 'month') ?
-				+date[d.hcSetMonth](date[d.hcGetMonth]() + pointInterval) :
-				+date[d.hcSetFullYear](date[d.hcGetFullYear]() + pointInterval);
+				+date[Date.hcSetMonth](date[Date.hcGetMonth]() + pointInterval) :
+				+date[Date.hcSetFullYear](date[Date.hcGetFullYear]() + pointInterval);
 			pointInterval = date - xIncrement;
 
 		}
@@ -12981,16 +13002,16 @@ Series.prototype = {
 		// type options like column.animation would be overwritten by the general option.
 		// But issues have been raised here (#3881), and the solution may be to distinguish 
 		// between default option and userOptions like in the tooltip below.
-		options = H.merge(
+		options = merge(
 			typeOptions,
 			plotOptions.series,
 			itemOptions
 		);
 
 		// The tooltip options are merged between global and series specific options
-		this.tooltipOptions = H.merge(
-			H.defaultOptions.tooltip,
-			H.defaultOptions.plotOptions[this.type].tooltip,
+		this.tooltipOptions = merge(
+			defaultOptions.tooltip,
+			defaultOptions.plotOptions[this.type].tooltip,
 			userOptions.tooltip,
 			userPlotOptions.series && userPlotOptions.series.tooltip,
 			userPlotOptions[this.type] && userPlotOptions[this.type].tooltip,
@@ -13048,7 +13069,7 @@ Series.prototype = {
 		if (this.options.colorByPoint) {
 			this.options.color = null; // #4359, selected slice got series.color even when colorByPoint was set.
 		} else {
-			this.getCyclic('color', this.options.color || H.defaultPlotOptions[this.type].color, this.chart.options.colors);
+			this.getCyclic('color', this.options.color || defaultPlotOptions[this.type].color, this.chart.options.colors);
 		}
 	},
 	/**
@@ -13130,7 +13151,7 @@ Series.prototype = {
 				}
 
 
-				if (H.isNumber(firstPoint)) { // assume all points are numbers
+				if (isNumber(firstPoint)) { // assume all points are numbers
 					var x = pick(options.pointStart, 0),
 						pointInterval = pick(options.pointInterval, 1);
 
@@ -13140,7 +13161,7 @@ Series.prototype = {
 						x += pointInterval;
 					}
 					series.xIncrement = x;
-				} else if (H.isArray(firstPoint)) { // assume all points are arrays
+				} else if (isArray(firstPoint)) { // assume all points are arrays
 					if (valueCount) { // [x, low, high] or [x, o, h, l, c]
 						for (i = 0; i < dataLength; i++) {
 							pt = data[i];
@@ -13171,7 +13192,7 @@ Series.prototype = {
 			}
 
 			// Forgetting to cast strings to numbers is a common caveat when handling CSV or JSON
-			if (H.isString(yData[0])) {
+			if (isString(yData[0])) {
 				error(14, true);
 			}
 
@@ -13357,7 +13378,7 @@ Series.prototype = {
 				points[i] = point;
 			} else {
 				// splat the y data in case of ohlc data array
-				points[i] = (new pointClass()).init(series, [processedXData[i]].concat(H.splat(processedYData[i])));
+				points[i] = (new pointClass()).init(series, [processedXData[i]].concat(splat(processedYData[i])));
 			}
 			points[i].index = cursor; // For faster access in Point.update
 		}
@@ -13428,8 +13449,8 @@ Series.prototype = {
 				}
 			}
 		}
-		this.dataMin = H.arrayMin(activeYData);
-		this.dataMax = H.arrayMax(activeYData);
+		this.dataMin = arrayMin(activeYData);
+		this.dataMax = arrayMax(activeYData);
 	},
 
 	/**
@@ -13452,7 +13473,7 @@ Series.prototype = {
 			hasModifyValue = !!series.modifyValue,
 			i,
 			pointPlacement = options.pointPlacement,
-			dynamicallyPlaced = pointPlacement === 'between' || H.isNumber(pointPlacement),
+			dynamicallyPlaced = pointPlacement === 'between' || isNumber(pointPlacement),
 			threshold = options.threshold,
 			stackThreshold = options.startFromThreshold ? threshold : 0,
 			plotX,
@@ -13611,8 +13632,8 @@ Series.prototype = {
 			sharedClipKey;
 
 		// Animation option is set to true
-		if (animation && !H.isObject(animation)) {
-			animation = H.defaultPlotOptions[series.type].animation;
+		if (animation && !isObject(animation)) {
+			animation = defaultPlotOptions[series.type].animation;
 		}
 
 		// Initialize the animation. Set up the clipping rectangle.
@@ -13767,7 +13788,7 @@ Series.prototype = {
 	getAttribs: function () {
 		var series = this,
 			seriesOptions = series.options,
-			normalOptions = H.defaultPlotOptions[series.type].marker ? seriesOptions.marker : seriesOptions,
+			normalOptions = defaultPlotOptions[series.type].marker ? seriesOptions.marker : seriesOptions,
 			stateOptions = normalOptions.states,
 			stateOptionsHover = stateOptions.hover,
 			pointStateOptionsHover,
@@ -13926,7 +13947,6 @@ Series.prototype = {
 		var series = this,
 			chart = series.chart,
 			issue134 = /AppleWebKit\/533/.test(navigator.userAgent),
-			erase = H.erase,
 			destroy,
 			i,
 			data = series.data || [],
@@ -13938,7 +13958,7 @@ Series.prototype = {
 		HighchartsAdapter.fireEvent(series, 'destroy');
 
 		// remove all events
-		H.removeEvent(series);
+		removeEvent(series);
 
 		// erase from axes
 		each(series.axisTypes || [], function (AXIS) {
@@ -14270,7 +14290,7 @@ Series.prototype = {
 
 		addEvent(chart, 'resize', setInvert); // do it on resize
 		addEvent(series, 'destroy', function () {
-			H.removeEvent(chart, 'resize', setInvert);
+			removeEvent(chart, 'resize', setInvert);
 		});
 
 		// Do it now
@@ -15540,12 +15560,16 @@ seriesTypes.column = extendClass(Series, {
 	return H;
 }(Highcharts));
 (function (H) {
-	var ScatterSeries,
-		Series = H.Series;
+	var defaultPlotOptions = H.defaultPlotOptions,
+		defaultSeriesOptions = H.defaultSeriesOptions,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		Series = H.Series,
+		seriesTypes = H.seriesTypes;
 /**
  * Set the default options for scatter
  */
-H.defaultPlotOptions.scatter = H.merge(H.defaultSeriesOptions, {
+defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 	lineWidth: 0,
 	marker: {
 		enabled: true // Overrides auto-enabling in line series (#3647)
@@ -15559,7 +15583,7 @@ H.defaultPlotOptions.scatter = H.merge(H.defaultSeriesOptions, {
 /**
  * The scatter series class
  */
-ScatterSeries = H.extendClass(Series, {
+seriesTypes.scatter = extendClass(Series, {
 	type: 'scatter',
 	sorted: false,
 	requireSorting: false,
@@ -15573,8 +15597,6 @@ ScatterSeries = H.extendClass(Series, {
 		}
 	}
 });
-
-H.seriesTypes.scatter = ScatterSeries;
 
 	return H;
 }(Highcharts));

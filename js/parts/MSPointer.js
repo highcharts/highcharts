@@ -3,7 +3,6 @@
 		charts = H.charts,
 		css = H.css,
 		extend = H.extend,
-		hoverChartIndex = H.hoverChartIndex,
 		noop = H.noop,
 		Pointer = H.Pointer,
 		removeEvent = H.removeEvent,
@@ -31,9 +30,9 @@ if (window.PointerEvent || window.MSPointerEvent) {
 		translateMSPointer = function (e, method, wktype, callback) {
 			var p;
 			e = e.originalEvent || e;
-			if ((e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) && charts[hoverChartIndex]) {
+			if ((e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) && charts[H.hoverChartIndex]) {
 				callback(e);
-				p = charts[hoverChartIndex].pointer;
+				p = charts[H.hoverChartIndex].pointer;
 				p[method]({
 					type: wktype,
 					target: e.currentTarget,

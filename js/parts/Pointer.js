@@ -1,13 +1,16 @@
 (function (H) {
 var addEvent = H.addEvent,
+	attr = H.attr,
 	charts = H.charts,
+	css = H.css,
 	defined = H.defined,
 	each = H.each,
 	extend = H.extend,
-	hoverChartIndex = H.hoverChartIndex,
 	pick = H.pick,
 	removeEvent = H.removeEvent,
-	Tooltip = H.Tooltip;
+	splat = H.splat,
+	Tooltip = H.Tooltip,
+	useCanVG = H.useCanVg;
 
 // Global flag for touch support
 H.hasTouch = document.documentElement.ontouchstart !== undefined;
@@ -30,7 +33,7 @@ H.Pointer.prototype = {
 		
 		var chartOptions = options.chart,
 			chartEvents = chartOptions.events,
-			zoomType = H.useCanVG ? '' : chartOptions.zoomType,
+			zoomType = useCanVG ? '' : chartOptions.zoomType,
 			inverted = chart.inverted,
 			zoomX,
 			zoomY;
@@ -225,8 +228,8 @@ H.Pointer.prototype = {
 		// Start the event listener to pick up the tooltip 
 		if (tooltip && !pointer._onDocumentMouseMove) {
 			pointer._onDocumentMouseMove = function (e) {
-				if (charts[hoverChartIndex]) {
-					charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
+				if (charts[H.hoverChartIndex]) {
+					charts[H.hoverChartIndex].pointer.onDocumentMouseMove(e);
 				}
 			};
 			addEvent(document, 'mousemove', pointer._onDocumentMouseMove);
@@ -260,7 +263,7 @@ H.Pointer.prototype = {
 		allowMove = allowMove && tooltip && tooltipPoints;
 			
 		// Check if the points have moved outside the plot area, #1003		
-		if (allowMove  && H.splat(tooltipPoints)[0].plotX === undefined) {
+		if (allowMove  && splat(tooltipPoints)[0].plotX === undefined) {
 			allowMove = false;
 		}	
 		// Just move the tooltip, #349
@@ -504,7 +507,7 @@ H.Pointer.prototype = {
 
 		// Reset all
 		if (chart) { // it may be destroyed on mouse up - #877
-			H.css(chart.container, { cursor: chart._cursor });
+			css(chart.container, { cursor: chart._cursor });
 			chart.cancelClick = this.hasDragged > 10; // #370
 			chart.mouseIsDown = this.hasDragged = this.hasPinched = false;
 			this.pinchDown = [];
@@ -526,8 +529,8 @@ H.Pointer.prototype = {
 	
 
 	onDocumentMouseUp: function (e) {
-		if (charts[hoverChartIndex]) {
-			charts[hoverChartIndex].pointer.drop(e);
+		if (charts[H.hoverChartIndex]) {
+			charts[H.hoverChartIndex].pointer.drop(e);
 		}
 	},
 
@@ -552,7 +555,7 @@ H.Pointer.prototype = {
 	 * When mouse leaves the container, hide the tooltip.
 	 */
 	onContainerMouseLeave: function () {
-		var chart = charts[hoverChartIndex];
+		var chart = charts[H.hoverChartIndex];
 		if (chart) {
 			chart.pointer.reset();
 			chart.pointer.chartPosition = null; // also reset the chart position, used in #149 fix
@@ -564,7 +567,7 @@ H.Pointer.prototype = {
 
 		var chart = this.chart;
 
-		hoverChartIndex = chart.index;
+		H.hoverChartIndex = chart.index;
 
 		e = this.normalize(e);		
 		e.returnValue = false; // #2251, #3224
@@ -588,7 +591,7 @@ H.Pointer.prototype = {
 	inClass: function (element, className) {
 		var elemClassName;
 		while (element) {
-			elemClassName = H.attr(element, 'class');
+			elemClassName = attr(element, 'class');
 			if (elemClassName) {
 				if (elemClassName.indexOf(className) !== -1) {
 					return true;

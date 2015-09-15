@@ -1,10 +1,14 @@
 (function (H) {
-	var ScatterSeries,
-		Series = H.Series;
+	var defaultPlotOptions = H.defaultPlotOptions,
+		defaultSeriesOptions = H.defaultSeriesOptions,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		Series = H.Series,
+		seriesTypes = H.seriesTypes;
 /**
  * Set the default options for scatter
  */
-H.defaultPlotOptions.scatter = H.merge(H.defaultSeriesOptions, {
+defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 	lineWidth: 0,
 	marker: {
 		enabled: true // Overrides auto-enabling in line series (#3647)
@@ -18,7 +22,7 @@ H.defaultPlotOptions.scatter = H.merge(H.defaultSeriesOptions, {
 /**
  * The scatter series class
  */
-ScatterSeries = H.extendClass(Series, {
+seriesTypes.scatter = extendClass(Series, {
 	type: 'scatter',
 	sorted: false,
 	requireSorting: false,
@@ -32,8 +36,6 @@ ScatterSeries = H.extendClass(Series, {
 		}
 	}
 });
-
-H.seriesTypes.scatter = ScatterSeries;
 
 	return H;
 }(Highcharts));
