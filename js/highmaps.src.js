@@ -18478,16 +18478,27 @@ seriesTypes.mappoint = extendClass(seriesTypes.scatter, {
 	return H;
 }(Highcharts));
 (function (H) {
-	var Axis = H.Axis,
+	var arrayMax = H.arrayMax,
+		arrayMin = H.arrayMin,
+		defaultPlotOptions = H.defaultPlotOptions,
+		Axis = H.Axis,
 		Color = H.Color,
+		each = H.each,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		noop = H.noop,
+		pick = H.pick,
+		pInt = H.pInt,
 		Point = H.Point,
-		Series = H.Series;
+		Series = H.Series,
+		seriesTypes = H.seriesTypes;
+
 /* ****************************************************************************
  * Start Bubble series code											          *
  *****************************************************************************/
 
 // 1 - set default options
-H.defaultPlotOptions.bubble = H.merge(H.defaultPlotOptions.scatter, {
+defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	dataLabels: {
 		formatter: function () { // #2945
 			return this.point.z;
@@ -18520,7 +18531,7 @@ H.defaultPlotOptions.bubble = H.merge(H.defaultPlotOptions.scatter, {
 	zoneAxis: 'z'
 });
 
-var BubblePoint = H.extendClass(Point, {
+var BubblePoint = extendClass(Point, {
 	haloPath: function () {
 		return Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
 	},
@@ -18528,7 +18539,7 @@ var BubblePoint = H.extendClass(Point, {
 });
 
 // 2 - Create the series object
-H.seriesTypes.bubble = H.extendClass(H.seriesTypes.scatter, {
+seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	type: 'bubble',
 	pointClass: BubblePoint,
 	pointArrayMap: ['y', 'z'],
@@ -18551,7 +18562,6 @@ H.seriesTypes.bubble = H.extendClass(H.seriesTypes.scatter, {
 	 */
 	applyOpacity: function (fill) {
 		var markerOptions = this.options.marker,
-			pick = H.pick,
 			fillOpacity = pick(markerOptions.fillOpacity, 0.5);
 		
 		// When called from Legend.colorizeItem, the fill isn't predefined
@@ -18614,7 +18624,7 @@ H.seriesTypes.bubble = H.extendClass(H.seriesTypes.scatter, {
 		var animation = this.options.animation;
 		
 		if (!init) { // run the animation
-			H.each(this.points, function (point) {
+			each(this.points, function (point) {
 				var graphic = point.graphic,
 					shapeArgs = point.shapeArgs;
 
@@ -18646,7 +18656,7 @@ H.seriesTypes.bubble = H.extendClass(H.seriesTypes.scatter, {
 			radii = this.radii;
 		
 		// Run the parent method
-		H.seriesTypes.scatter.prototype.translate.call(this);
+		seriesTypes.scatter.prototype.translate.call(this);
 		
 		// Set the shape type and arguments to be picked up in drawPoints
 		i = data.length;
@@ -18684,7 +18694,7 @@ H.seriesTypes.bubble = H.extendClass(H.seriesTypes.scatter, {
 	 * @param {Object} item The series (this) or point
 	 */
 	drawLegendSymbol: function (legend, item) {
-		var radius = H.pInt(legend.itemStyle.fontSize) / 2;
+		var radius = pInt(legend.itemStyle.fontSize) / 2;
 		
 		item.legendSymbol = this.chart.renderer.circle(
 			radius,
@@ -18697,10 +18707,10 @@ H.seriesTypes.bubble = H.extendClass(H.seriesTypes.scatter, {
 		
 	},
 		
-	drawPoints: H.seriesTypes.column.prototype.drawPoints,
-	alignDataLabel: H.seriesTypes.column.prototype.alignDataLabel,
-	buildKDTree: H.noop,
-	applyZones: H.noop
+	drawPoints: seriesTypes.column.prototype.drawPoints,
+	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
+	buildKDTree: noop,
+	applyZones: noop
 });
 
 /**
@@ -18711,8 +18721,6 @@ Axis.prototype.beforePadding = function () {
 	var axis = this,
 		axisLength = this.len,
 		chart = this.chart,
-		pick = H.pick,
-		each = H.each,
 		pxMin = 0, 
 		pxMax = axisLength,
 		isXAxis = this.isXAxis,
@@ -18747,7 +18755,7 @@ Axis.prototype.beforePadding = function () {
 					var length = seriesOptions[prop],
 						isPercent = /%$/.test(length);
 					
-					length = H.pInt(length);
+					length = pInt(length);
 					extremes[prop] = isPercent ?
 						smallestSize * length / 100 :
 						length;
@@ -18762,11 +18770,11 @@ Axis.prototype.beforePadding = function () {
 					zMin = pick(seriesOptions.zMin, Math.min(
 						zMin,
 						Math.max(
-							H.arrayMin(zData), 
+							arrayMin(zData), 
 							seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
 						)
 					));
-					zMax = pick(seriesOptions.zMax, Math.max(zMax, H.arrayMax(zData)));
+					zMax = pick(seriesOptions.zMax, Math.max(zMax, arrayMax(zData)));
 				}
 			}
 		}

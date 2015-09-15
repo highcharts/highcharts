@@ -1,13 +1,23 @@
 (function (H) {
 var Axis = H.Axis,
 	CenteredSeriesMixin = H.CenteredSeriesMixin,
-	hiddenAxisMixin, // @todo Extract this to a new file
+	each = H.each,
+	extend = H.extend,
+	map = H.map,
+	merge = H.merge,
+	noop = H.noop,
 	Pane = H.Pane,
-	radialAxisMixin, // @todo Extract this to a new file
+	pick = H.pick,
+	pInt = H.pInt,
 	Tick = H.Tick,
+	splat = H.splat,
+	wrap = H.wrap,
+	
+
+	hiddenAxisMixin, // @todo Extract this to a new file
+	radialAxisMixin, // @todo Extract this to a new file
 	axisProto = Axis.prototype,
-	tickProto = Tick.prototype,
-	noop = H.noop;
+	tickProto = Tick.prototype;
 	
 /**
  * Augmented methods for the x axis in order to hide it completely, used for the X axis in gauges
@@ -91,7 +101,7 @@ radialAxisMixin = {
 	 */
 	setOptions: function (userOptions) {
 		
-		var options = this.options = H.merge(
+		var options = this.options = merge(
 			this.defaultOptions,
 			this.defaultRadialOptions,
 			userOptions
@@ -126,7 +136,7 @@ radialAxisMixin = {
 	 */
 	getLinePath: function (lineWidth, radius) {
 		var center = this.center;
-		radius = H.pick(radius, center[2] / 2 - this.offset);
+		radius = pick(radius, center[2] / 2 - this.offset);
 		
 		return this.chart.renderer.symbols.arc(
 			this.left + center[0],
@@ -203,7 +213,7 @@ radialAxisMixin = {
 			}
 			
 			// Axis len is used to lay out the ticks
-			this.len = this.width = this.height = this.center[2] * H.pick(this.sector, 1) / 2;
+			this.len = this.width = this.height = this.center[2] * pick(this.sector, 1) / 2;
 
 
 		}
@@ -216,7 +226,7 @@ radialAxisMixin = {
 	getPosition: function (value, length) {
 		return this.postTranslate(
 			this.isCircular ? this.translate(value) : 0, // #2848
-			H.pick(this.isCircular ? length : this.translate(value), this.center[2] / 2) - this.offset
+			pick(this.isCircular ? length : this.translate(value), this.center[2] / 2) - this.offset
 		);		
 	},
 	
@@ -242,7 +252,6 @@ radialAxisMixin = {
 	 */
 	getPlotBandPath: function (from, to, options) {
 		var center = this.center,
-			pick = H.pick,
 			startAngleRad = this.startAngleRad,
 			fullRadius = center[2] / 2,
 			radii = [
@@ -275,9 +284,9 @@ radialAxisMixin = {
 			}
 			
 			// Convert percentages to pixel values
-			radii = H.map(radii, function (radius) {
+			radii = map(radii, function (radius) {
 				if (percentRegex.test(radius)) {
-					radius = (H.pInt(radius, 10) * fullRadius) / 100;
+					radius = (pInt(radius, 10) * fullRadius) / 100;
 				}
 				return radius;
 			});
@@ -318,7 +327,6 @@ radialAxisMixin = {
 			center = axis.center,
 			chart = axis.chart,
 			end = axis.getPosition(value),
-			each = H.each,
 			xAxis,
 			xy,
 			tickPositions,
@@ -383,9 +391,8 @@ radialAxisMixin = {
 /**
  * Override axisProto.init to mix in special axis instance functions and function overrides
  */
-H.wrap(axisProto, 'init', function (proceed, chart, userOptions) {
+wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 	var axis = this,
-		extend = H.extend,
 		angular = chart.angular,
 		polar = chart.polar,
 		isX = userOptions.isX,
@@ -411,7 +418,7 @@ H.wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		//extend(this, userOptions.isX ? radialAxisMixin : radialAxisMixin);
 		extend(this, radialAxisMixin);
 		isCircular = isX;
-		this.defaultRadialOptions = isX ? this.defaultRadialXOptions : H.merge(this.defaultYAxisOptions, this.defaultRadialYOptions);
+		this.defaultRadialOptions = isX ? this.defaultRadialXOptions : merge(this.defaultYAxisOptions, this.defaultRadialYOptions);
 		
 	}
 	
@@ -426,7 +433,7 @@ H.wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 			chart.panes = [];
 		}
 		this.pane = pane = chart.panes[paneIndex] = chart.panes[paneIndex] || new Pane(
-			H.splat(chartOptions.pane)[paneIndex],
+			splat(chartOptions.pane)[paneIndex],
 			chart,
 			axis
 		);
@@ -441,7 +448,7 @@ H.wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		// given in degrees relative to top, while internal computations are
 		// in radians relative to right (like SVG).
 		this.startAngleRad = startAngleRad = (paneOptions.startAngle - 90) * Math.PI / 180;
-		this.endAngleRad = endAngleRad = (H.pick(paneOptions.endAngle, paneOptions.startAngle + 360)  - 90) * Math.PI / 180;
+		this.endAngleRad = endAngleRad = (pick(paneOptions.endAngle, paneOptions.startAngle + 360)  - 90) * Math.PI / 180;
 		this.offset = options.offset || 0;
 		
 		this.isCircular = isCircular;
@@ -457,7 +464,7 @@ H.wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 /**
  * Add special cases within the Tick class' methods for radial axes.
  */	
-H.wrap(tickProto, 'getPosition', function (proceed, horiz, pos, tickmarkOffset, old) {
+wrap(tickProto, 'getPosition', function (proceed, horiz, pos, tickmarkOffset, old) {
 	var axis = this.axis;
 	
 	return axis.getPosition ? 
@@ -469,7 +476,7 @@ H.wrap(tickProto, 'getPosition', function (proceed, horiz, pos, tickmarkOffset, 
  * Wrap the getLabelPosition function to find the center position of the label
  * based on the distance option
  */	
-H.wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, labelOptions, tickmarkOffset, index, step) {
+wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, labelOptions, tickmarkOffset, index, step) {
 	var axis = this.axis,
 		optionsY = labelOptions.y,
 		ret,
@@ -478,7 +485,7 @@ H.wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, lab
 		angle = ((axis.translate(this.pos) + axis.startAngleRad + Math.PI / 2) / Math.PI * 180) % 360;
 
 	if (axis.isRadial) {
-		ret = axis.getPosition(this.pos, (axis.center[2] / 2) + H.pick(labelOptions.distance, -25));
+		ret = axis.getPosition(this.pos, (axis.center[2] / 2) + pick(labelOptions.distance, -25));
 		
 		// Automatically rotated
 		if (labelOptions.rotation === 'auto') {
@@ -524,7 +531,7 @@ H.wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, lab
 /**
  * Wrap the getMarkPath function to return the path of the radial marker
  */
-H.wrap(tickProto, 'getMarkPath', function (proceed, x, y, tickLength, tickWidth, horiz, renderer) {
+wrap(tickProto, 'getMarkPath', function (proceed, x, y, tickLength, tickWidth, horiz, renderer) {
 	var axis = this.axis,
 		endPoint,
 		ret;

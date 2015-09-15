@@ -1,5 +1,11 @@
 (function (H) {
-	var Series = H.Series;
+	var defaultPlotOptions = H.defaultPlotOptions,
+		each = H.each,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		noop = H.noop,
+		Series = H.Series,
+		seriesTypes = H.seriesTypes;
 /* 
  * The AreaRangeSeries class
  * 
@@ -8,7 +14,7 @@
 /**
  * Extend the default options with map options
  */
-H.defaultPlotOptions.arearange = H.merge(H.defaultPlotOptions.area, {
+defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 	lineWidth: 1,
 	marker: null,
 	threshold: null,
@@ -34,7 +40,7 @@ H.defaultPlotOptions.arearange = H.merge(H.defaultPlotOptions.area, {
 /**
  * Add the series type
  */
-H.seriesTypes.arearange = H.extendClass(H.seriesTypes.area, {
+seriesTypes.arearange = extendClass(seriesTypes.area, {
 	type: 'arearange',
 	pointArrayMap: ['low', 'high'],
 	dataLabelCollections: ['dataLabel', 'dataLabelUpper'],
@@ -63,7 +69,7 @@ H.seriesTypes.arearange = H.extendClass(H.seriesTypes.area, {
 	getSegments: function () {
 		var series = this;
 
-		H.each(series.points, function (point) {
+		each(series.points, function (point) {
 			if (!series.options.connectNulls && (point.low === null || point.high === null)) {
 				point.y = null;
 			} else if (point.low === null && point.high !== null) {
@@ -78,10 +84,9 @@ H.seriesTypes.arearange = H.extendClass(H.seriesTypes.area, {
 	 */
 	translate: function () {
 		var series = this,
-			each = H.each,
 			yAxis = series.yAxis;
 
-		H.seriesTypes.area.prototype.translate.apply(series);
+		seriesTypes.area.prototype.translate.apply(series);
 
 		// Set plotLow and plotHigh
 		each(series.points, function (point) {
@@ -258,14 +263,14 @@ H.seriesTypes.arearange = H.extendClass(H.seriesTypes.area, {
 	},
 	
 	alignDataLabel: function () {
-		H.seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
+		seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
 	},
 	
-	setStackedPoints: H.noop,
+	setStackedPoints: noop,
 	
-	getSymbol: H.noop,
+	getSymbol: noop,
 	
-	drawPoints: H.noop
+	drawPoints: noop
 });
 
 	return H;

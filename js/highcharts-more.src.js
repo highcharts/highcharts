@@ -12,6 +12,10 @@
 // JSLint options:
 /*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
 (function (H) {
+	var each = H.each,
+		extend = H.extend,
+		merge = H.merge,
+		splat = H.splat;
 /**
  * The Pane object allows options that are common to a set of X and Y axes.
  * 
@@ -22,7 +26,7 @@ function Pane(options, chart, firstAxis) {
 }
 
 // Extend the Pane prototype
-H.extend(Pane.prototype, {
+extend(Pane.prototype, {
 	
 	/**
 	 * Initiate the Pane object
@@ -30,7 +34,6 @@ H.extend(Pane.prototype, {
 	init: function (options, chart, firstAxis) {
 		var pane = this,
 			backgroundOption,
-			merge = H.merge,
 			defaultOptions = pane.defaultOptions;
 		
 		pane.chart = chart;
@@ -43,7 +46,7 @@ H.extend(Pane.prototype, {
 		// To avoid having weighty logic to place, update and remove the backgrounds,
 		// push them to the first axis' plot bands and borrow the existing logic there.
 		if (backgroundOption) {
-			H.each([].concat(H.splat(backgroundOption)).reverse(), function (config) {
+			each([].concat(splat(backgroundOption)).reverse(), function (config) {
 				var backgroundColor = config.backgroundColor,  // if defined, replace the old one (specific for gradients)
 					axisUserOptions = firstAxis.userOptions;
 				config = merge(pane.defaultBackgroundOptions, config);
@@ -98,13 +101,23 @@ H.Pane = Pane;
 (function (H) {
 var Axis = H.Axis,
 	CenteredSeriesMixin = H.CenteredSeriesMixin,
-	hiddenAxisMixin, // @todo Extract this to a new file
+	each = H.each,
+	extend = H.extend,
+	map = H.map,
+	merge = H.merge,
+	noop = H.noop,
 	Pane = H.Pane,
-	radialAxisMixin, // @todo Extract this to a new file
+	pick = H.pick,
+	pInt = H.pInt,
 	Tick = H.Tick,
+	splat = H.splat,
+	wrap = H.wrap,
+	
+
+	hiddenAxisMixin, // @todo Extract this to a new file
+	radialAxisMixin, // @todo Extract this to a new file
 	axisProto = Axis.prototype,
-	tickProto = Tick.prototype,
-	noop = H.noop;
+	tickProto = Tick.prototype;
 	
 /**
  * Augmented methods for the x axis in order to hide it completely, used for the X axis in gauges
@@ -188,7 +201,7 @@ radialAxisMixin = {
 	 */
 	setOptions: function (userOptions) {
 		
-		var options = this.options = H.merge(
+		var options = this.options = merge(
 			this.defaultOptions,
 			this.defaultRadialOptions,
 			userOptions
@@ -223,7 +236,7 @@ radialAxisMixin = {
 	 */
 	getLinePath: function (lineWidth, radius) {
 		var center = this.center;
-		radius = H.pick(radius, center[2] / 2 - this.offset);
+		radius = pick(radius, center[2] / 2 - this.offset);
 		
 		return this.chart.renderer.symbols.arc(
 			this.left + center[0],
@@ -300,7 +313,7 @@ radialAxisMixin = {
 			}
 			
 			// Axis len is used to lay out the ticks
-			this.len = this.width = this.height = this.center[2] * H.pick(this.sector, 1) / 2;
+			this.len = this.width = this.height = this.center[2] * pick(this.sector, 1) / 2;
 
 
 		}
@@ -313,7 +326,7 @@ radialAxisMixin = {
 	getPosition: function (value, length) {
 		return this.postTranslate(
 			this.isCircular ? this.translate(value) : 0, // #2848
-			H.pick(this.isCircular ? length : this.translate(value), this.center[2] / 2) - this.offset
+			pick(this.isCircular ? length : this.translate(value), this.center[2] / 2) - this.offset
 		);		
 	},
 	
@@ -339,7 +352,6 @@ radialAxisMixin = {
 	 */
 	getPlotBandPath: function (from, to, options) {
 		var center = this.center,
-			pick = H.pick,
 			startAngleRad = this.startAngleRad,
 			fullRadius = center[2] / 2,
 			radii = [
@@ -372,9 +384,9 @@ radialAxisMixin = {
 			}
 			
 			// Convert percentages to pixel values
-			radii = H.map(radii, function (radius) {
+			radii = map(radii, function (radius) {
 				if (percentRegex.test(radius)) {
-					radius = (H.pInt(radius, 10) * fullRadius) / 100;
+					radius = (pInt(radius, 10) * fullRadius) / 100;
 				}
 				return radius;
 			});
@@ -415,7 +427,6 @@ radialAxisMixin = {
 			center = axis.center,
 			chart = axis.chart,
 			end = axis.getPosition(value),
-			each = H.each,
 			xAxis,
 			xy,
 			tickPositions,
@@ -480,9 +491,8 @@ radialAxisMixin = {
 /**
  * Override axisProto.init to mix in special axis instance functions and function overrides
  */
-H.wrap(axisProto, 'init', function (proceed, chart, userOptions) {
+wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 	var axis = this,
-		extend = H.extend,
 		angular = chart.angular,
 		polar = chart.polar,
 		isX = userOptions.isX,
@@ -508,7 +518,7 @@ H.wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		//extend(this, userOptions.isX ? radialAxisMixin : radialAxisMixin);
 		extend(this, radialAxisMixin);
 		isCircular = isX;
-		this.defaultRadialOptions = isX ? this.defaultRadialXOptions : H.merge(this.defaultYAxisOptions, this.defaultRadialYOptions);
+		this.defaultRadialOptions = isX ? this.defaultRadialXOptions : merge(this.defaultYAxisOptions, this.defaultRadialYOptions);
 		
 	}
 	
@@ -523,7 +533,7 @@ H.wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 			chart.panes = [];
 		}
 		this.pane = pane = chart.panes[paneIndex] = chart.panes[paneIndex] || new Pane(
-			H.splat(chartOptions.pane)[paneIndex],
+			splat(chartOptions.pane)[paneIndex],
 			chart,
 			axis
 		);
@@ -538,7 +548,7 @@ H.wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 		// given in degrees relative to top, while internal computations are
 		// in radians relative to right (like SVG).
 		this.startAngleRad = startAngleRad = (paneOptions.startAngle - 90) * Math.PI / 180;
-		this.endAngleRad = endAngleRad = (H.pick(paneOptions.endAngle, paneOptions.startAngle + 360)  - 90) * Math.PI / 180;
+		this.endAngleRad = endAngleRad = (pick(paneOptions.endAngle, paneOptions.startAngle + 360)  - 90) * Math.PI / 180;
 		this.offset = options.offset || 0;
 		
 		this.isCircular = isCircular;
@@ -554,7 +564,7 @@ H.wrap(axisProto, 'init', function (proceed, chart, userOptions) {
 /**
  * Add special cases within the Tick class' methods for radial axes.
  */	
-H.wrap(tickProto, 'getPosition', function (proceed, horiz, pos, tickmarkOffset, old) {
+wrap(tickProto, 'getPosition', function (proceed, horiz, pos, tickmarkOffset, old) {
 	var axis = this.axis;
 	
 	return axis.getPosition ? 
@@ -566,7 +576,7 @@ H.wrap(tickProto, 'getPosition', function (proceed, horiz, pos, tickmarkOffset, 
  * Wrap the getLabelPosition function to find the center position of the label
  * based on the distance option
  */	
-H.wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, labelOptions, tickmarkOffset, index, step) {
+wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, labelOptions, tickmarkOffset, index, step) {
 	var axis = this.axis,
 		optionsY = labelOptions.y,
 		ret,
@@ -575,7 +585,7 @@ H.wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, lab
 		angle = ((axis.translate(this.pos) + axis.startAngleRad + Math.PI / 2) / Math.PI * 180) % 360;
 
 	if (axis.isRadial) {
-		ret = axis.getPosition(this.pos, (axis.center[2] / 2) + H.pick(labelOptions.distance, -25));
+		ret = axis.getPosition(this.pos, (axis.center[2] / 2) + pick(labelOptions.distance, -25));
 		
 		// Automatically rotated
 		if (labelOptions.rotation === 'auto') {
@@ -621,7 +631,7 @@ H.wrap(tickProto, 'getLabelPosition', function (proceed, x, y, label, horiz, lab
 /**
  * Wrap the getMarkPath function to return the path of the radial marker
  */
-H.wrap(tickProto, 'getMarkPath', function (proceed, x, y, tickLength, tickWidth, horiz, renderer) {
+wrap(tickProto, 'getMarkPath', function (proceed, x, y, tickLength, tickWidth, horiz, renderer) {
 	var axis = this.axis,
 		endPoint,
 		ret;
@@ -645,7 +655,13 @@ H.wrap(tickProto, 'getMarkPath', function (proceed, x, y, tickLength, tickWidth,
 	return H;
 }(Highcharts));
 (function (H) {
-	var Series = H.Series;
+	var defaultPlotOptions = H.defaultPlotOptions,
+		each = H.each,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		noop = H.noop,
+		Series = H.Series,
+		seriesTypes = H.seriesTypes;
 /* 
  * The AreaRangeSeries class
  * 
@@ -654,7 +670,7 @@ H.wrap(tickProto, 'getMarkPath', function (proceed, x, y, tickLength, tickWidth,
 /**
  * Extend the default options with map options
  */
-H.defaultPlotOptions.arearange = H.merge(H.defaultPlotOptions.area, {
+defaultPlotOptions.arearange = merge(defaultPlotOptions.area, {
 	lineWidth: 1,
 	marker: null,
 	threshold: null,
@@ -680,7 +696,7 @@ H.defaultPlotOptions.arearange = H.merge(H.defaultPlotOptions.area, {
 /**
  * Add the series type
  */
-H.seriesTypes.arearange = H.extendClass(H.seriesTypes.area, {
+seriesTypes.arearange = extendClass(seriesTypes.area, {
 	type: 'arearange',
 	pointArrayMap: ['low', 'high'],
 	dataLabelCollections: ['dataLabel', 'dataLabelUpper'],
@@ -709,7 +725,7 @@ H.seriesTypes.arearange = H.extendClass(H.seriesTypes.area, {
 	getSegments: function () {
 		var series = this;
 
-		H.each(series.points, function (point) {
+		each(series.points, function (point) {
 			if (!series.options.connectNulls && (point.low === null || point.high === null)) {
 				point.y = null;
 			} else if (point.low === null && point.high !== null) {
@@ -724,10 +740,9 @@ H.seriesTypes.arearange = H.extendClass(H.seriesTypes.area, {
 	 */
 	translate: function () {
 		var series = this,
-			each = H.each,
 			yAxis = series.yAxis;
 
-		H.seriesTypes.area.prototype.translate.apply(series);
+		seriesTypes.area.prototype.translate.apply(series);
 
 		// Set plotLow and plotHigh
 		each(series.points, function (point) {
@@ -904,43 +919,54 @@ H.seriesTypes.arearange = H.extendClass(H.seriesTypes.area, {
 	},
 	
 	alignDataLabel: function () {
-		H.seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
+		seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
 	},
 	
-	setStackedPoints: H.noop,
+	setStackedPoints: noop,
 	
-	getSymbol: H.noop,
+	getSymbol: noop,
 	
-	drawPoints: H.noop
+	drawPoints: noop
 });
 
 	return H;
 }(Highcharts));
 (function (H) {
+	var defaultPlotOptions = H.defaultPlotOptions,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		seriesTypes = H.seriesTypes;
 /**
  * The AreaSplineRangeSeries class
  */
 
-H.defaultPlotOptions.areasplinerange = H.merge(H.defaultPlotOptions.arearange);
+defaultPlotOptions.areasplinerange = merge(defaultPlotOptions.arearange);
 
 /**
  * AreaSplineRangeSeries object
  */
-H.seriesTypes.areasplinerange = H.extendClass(H.seriesTypes.arearange, {
+seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
 	type: 'areasplinerange',
-	getPointSpline: H.seriesTypes.spline.prototype.getPointSpline
+	getPointSpline: seriesTypes.spline.prototype.getPointSpline
 });
 
 	return H;
 }(Highcharts));
 (function (H) {
 	
-	var colProto = H.seriesTypes.column.prototype;
+	var defaultPlotOptions = H.defaultPlotOptions,
+		each = H.each,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		noop = H.noop,
+		seriesTypes = H.seriesTypes,
+
+		colProto = seriesTypes.column.prototype;
 
 	/**
 	 * The ColumnRangeSeries class
 	 */
-	H.defaultPlotOptions.columnrange = H.merge(H.defaultPlotOptions.column, H.defaultPlotOptions.arearange, {
+	defaultPlotOptions.columnrange = merge(defaultPlotOptions.column, defaultPlotOptions.arearange, {
 		lineWidth: 1,
 		pointRange: null
 	});
@@ -948,7 +974,7 @@ H.seriesTypes.areasplinerange = H.extendClass(H.seriesTypes.arearange, {
 	/**
 	 * ColumnRangeSeries object
 	 */
-	H.seriesTypes.columnrange = H.extendClass(H.seriesTypes.arearange, {
+	seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
 		type: 'columnrange',
 		/**
 		 * Translate data points from raw values x and y to plotX and plotY
@@ -961,7 +987,7 @@ H.seriesTypes.areasplinerange = H.extendClass(H.seriesTypes.arearange, {
 			colProto.translate.apply(series);
 
 			// Set plotLow and plotHigh
-			H.each(series.points, function (point) {
+			each(series.points, function (point) {
 				var shapeArgs = point.shapeArgs,
 					minPointLength = series.options.minPointLength,
 					heightDifference,
@@ -994,7 +1020,7 @@ H.seriesTypes.areasplinerange = H.extendClass(H.seriesTypes.arearange, {
 		},
 		directTouch: true,
 		trackerGroups: ['group', 'dataLabelsGroup'],
-		drawGraph: H.noop,
+		drawGraph: noop,
 		pointAttrToOptions: colProto.pointAttrToOptions,
 		drawPoints: colProto.drawPoints,
 		drawTracker: colProto.drawTracker,
@@ -1006,11 +1032,19 @@ H.seriesTypes.areasplinerange = H.extendClass(H.seriesTypes.arearange, {
 }(Highcharts));
 
 (function (H) {
-	var GaugePoint,
-		GaugeSeries,
+	var defaultPlotOptions = H.defaultPlotOptions,
+		each = H.each,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		noop = H.noop,
+		pick = H.pick,
+		pInt = H.pInt,
 		Point = H.Point,
 		Series = H.Series,
-		TrackerMixin = H.TrackerMixin;
+		seriesTypes = H.seriesTypes,
+		TrackerMixin = H.TrackerMixin,
+
+		GaugePoint;
 /* 
  * The GaugeSeries class
  */
@@ -1020,7 +1054,7 @@ H.seriesTypes.areasplinerange = H.extendClass(H.seriesTypes.arearange, {
 /**
  * Extend the default options
  */
-H.defaultPlotOptions.gauge = H.merge(H.defaultPlotOptions.line, {
+defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 	dataLabels: {
 		enabled: true,
 		defer: false,
@@ -1057,7 +1091,7 @@ H.defaultPlotOptions.gauge = H.merge(H.defaultPlotOptions.line, {
 /**
  * Extend the point object
  */
-GaugePoint = H.extendClass(Point, {
+GaugePoint = extendClass(Point, {
 	/**
 	 * Don't do any hover colors or anything
 	 */
@@ -1070,14 +1104,14 @@ GaugePoint = H.extendClass(Point, {
 /**
  * Add the series type
  */
-GaugeSeries = {
+seriesTypes.gauge = extendClass(seriesTypes.line, {
 	type: 'gauge',
 	pointClass: GaugePoint,
 	
 	// chart.angular will be set to true when a gauge series is present, and this will
 	// be used on the axes
 	angular: true, 
-	drawGraph: H.noop,
+	drawGraph: noop,
 	fixedBox: true,
 	forceDL: true,
 	trackerGroups: ['group', 'dataLabelsGroup'],
@@ -1089,16 +1123,14 @@ GaugeSeries = {
 		
 		var series = this,
 			yAxis = series.yAxis,
-			pInt = H.pInt,
-			pick = H.pick,
 			options = series.options,
 			center = yAxis.center;
 			
 		series.generatePoints();
 		
-		H.each(series.points, function (point) {
+		each(series.points, function (point) {
 			
-			var dialOptions = H.merge(options.dial, point.dial),
+			var dialOptions = merge(options.dial, point.dial),
 				radius = (pInt(pick(dialOptions.radius, 80)) * center[2]) / 200,
 				baseLength = (pInt(pick(dialOptions.baseLength, 70)) * radius) / 100,
 				rearLength = (pInt(pick(dialOptions.rearLength, 10)) * radius) / 100,
@@ -1154,12 +1186,12 @@ GaugeSeries = {
 			pivotOptions = options.pivot,
 			renderer = series.chart.renderer;
 		
-		H.each(series.points, function (point) {
+		each(series.points, function (point) {
 			
 			var graphic = point.graphic,
 				shapeArgs = point.shapeArgs,
 				d = shapeArgs.d,
-				dialOptions = H.merge(options.dial, point.dial); // #1233
+				dialOptions = merge(options.dial, point.dial); // #1233
 			
 			if (graphic) {
 				graphic.animate(shapeArgs);
@@ -1183,7 +1215,7 @@ GaugeSeries = {
 				translateY: center[1]
 			});
 		} else {
-			series.pivot = renderer.circle(0, 0, H.pick(pivotOptions.radius, 5))
+			series.pivot = renderer.circle(0, 0, pick(pivotOptions.radius, 5))
 				.attr({
 					'stroke-width': pivotOptions.borderWidth || 0,
 					stroke: pivotOptions.borderColor || 'silver',
@@ -1201,7 +1233,7 @@ GaugeSeries = {
 		var series = this;
 
 		if (!init) {
-			H.each(series.points, function (point) {
+			each(series.points, function (point) {
 				var graphic = point.graphic;
 
 				if (graphic) {
@@ -1242,7 +1274,7 @@ GaugeSeries = {
 		Series.prototype.setData.call(this, data, false);
 		this.processData();
 		this.generatePoints();
-		if (H.pick(redraw, true)) {
+		if (pick(redraw, true)) {
 			this.chart.redraw();
 		}
 	},
@@ -1251,18 +1283,26 @@ GaugeSeries = {
 	 * If the tracking module is loaded, add the point tracker
 	 */
 	drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint
-};
-H.seriesTypes.gauge = H.extendClass(H.seriesTypes.line, GaugeSeries);
+});
+
 
 	return H;
 }(Highcharts));
 (function (H) {
+	var defaultPlotOptions = H.defaultPlotOptions,
+		each = H.each,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		noop = H.noop,
+		pick = H.pick,
+		seriesTypes = H.seriesTypes;
+
 /* ****************************************************************************
  * Start Box plot series code											      *
  *****************************************************************************/
 
 // Set default options
-H.defaultPlotOptions.boxplot = H.merge(H.defaultPlotOptions.column, {
+defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 	fillColor: '#FFFFFF',
 	lineWidth: 1,
 	//medianColor: null,
@@ -1291,7 +1331,7 @@ H.defaultPlotOptions.boxplot = H.merge(H.defaultPlotOptions.column, {
 });
 
 // Create the series object
-H.seriesTypes.boxplot = H.extendClass(H.seriesTypes.column, {
+seriesTypes.boxplot = extendClass(seriesTypes.column, {
 	type: 'boxplot',
 	pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
@@ -1311,7 +1351,7 @@ H.seriesTypes.boxplot = H.extendClass(H.seriesTypes.column, {
 	/**
 	 * Disable data labels for box plot
 	 */
-	drawDataLabels: H.noop,
+	drawDataLabels: noop,
 
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY
@@ -1319,10 +1359,9 @@ H.seriesTypes.boxplot = H.extendClass(H.seriesTypes.column, {
 	translate: function () {
 		var series = this,
 			yAxis = series.yAxis,
-			each = H.each,
 			pointArrayMap = series.pointArrayMap;
 
-		H.seriesTypes.column.prototype.translate.apply(series);
+		seriesTypes.column.prototype.translate.apply(series);
 
 		// do the translation on each point dimension
 		each(series.points, function (point) {
@@ -1343,7 +1382,6 @@ H.seriesTypes.boxplot = H.extendClass(H.seriesTypes.column, {
 			options = series.options,
 			chart = series.chart,
 			renderer = chart.renderer,
-			pick = H.pick,
 			pointAttr,
 			q1Plot,
 			q3Plot,
@@ -1370,7 +1408,7 @@ H.seriesTypes.boxplot = H.extendClass(H.seriesTypes.column, {
 			whiskerLength = parseInt(series.options.whiskerLength, 10) / 100;
 
 
-		H.each(points, function (point) {
+		each(points, function (point) {
 
 			graphic = point.graphic;
 			shapeArgs = point.shapeArgs; // the box
@@ -1521,7 +1559,7 @@ H.seriesTypes.boxplot = H.extendClass(H.seriesTypes.column, {
 		});
 
 	},
-	setStackedPoints: H.noop // #3890
+	setStackedPoints: noop // #3890
 
 
 });
@@ -1533,12 +1571,19 @@ H.seriesTypes.boxplot = H.extendClass(H.seriesTypes.column, {
 	return H;
 }(Highcharts));
 (function (H) {
+	var defaultPlotOptions = H.defaultPlotOptions,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		noop = H.noop,
+		seriesTypes = H.seriesTypes;
+
+
 /* ****************************************************************************
  * Start error bar series code                                                *
  *****************************************************************************/
 
 // 1 - set default options
-H.defaultPlotOptions.errorbar = H.merge(H.defaultPlotOptions.boxplot, {
+defaultPlotOptions.errorbar = merge(defaultPlotOptions.boxplot, {
 	color: '#000000',
 	grouping: false,
 	linkedTo: ':previous',
@@ -1549,7 +1594,7 @@ H.defaultPlotOptions.errorbar = H.merge(H.defaultPlotOptions.boxplot, {
 });
 
 // 2 - Create the series object
-H.seriesTypes.errorbar = H.extendClass(H.seriesTypes.boxplot, {
+seriesTypes.errorbar = extendClass(seriesTypes.boxplot, {
 	type: 'errorbar',
 	pointArrayMap: ['low', 'high'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
@@ -1557,7 +1602,7 @@ H.seriesTypes.errorbar = H.extendClass(H.seriesTypes.boxplot, {
 	},
 	pointValKey: 'high', // defines the top of the tracker
 	doQuartiles: false,
-	drawDataLabels: H.seriesTypes.arearange ? H.seriesTypes.arearange.prototype.drawDataLabels : H.noop,
+	drawDataLabels: seriesTypes.arearange ? seriesTypes.arearange.prototype.drawDataLabels : noop,
 
 	/**
 	 * Get the width and X offset, either on top of the linked series column
@@ -1565,7 +1610,7 @@ H.seriesTypes.errorbar = H.extendClass(H.seriesTypes.boxplot, {
 	 */
 	getColumnMetrics: function () {
 		return (this.linkedParent && this.linkedParent.columnMetrics) || 
-			H.seriesTypes.column.prototype.getColumnMetrics.call(this);
+			seriesTypes.column.prototype.getColumnMetrics.call(this);
 	}
 });
 
@@ -1576,13 +1621,20 @@ H.seriesTypes.errorbar = H.extendClass(H.seriesTypes.boxplot, {
 }(Highcharts));
 (function (H) {
 	var Color = H.Color,
-		Series = H.Series;
+		defaultPlotOptions = H.defaultPlotOptions,
+		each = H.each,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		noop = H.noop,
+		Series = H.Series,
+		seriesTypes = H.seriesTypes;
+
 /* ****************************************************************************
  * Start Waterfall series code                                                *
  *****************************************************************************/
 
 // 1 - set default options
-H.defaultPlotOptions.waterfall = H.merge(H.defaultPlotOptions.column, {
+defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
 	lineWidth: 1,
 	lineColor: '#333',
 	dashStyle: 'dot',
@@ -1599,7 +1651,7 @@ H.defaultPlotOptions.waterfall = H.merge(H.defaultPlotOptions.column, {
 
 
 // 2 - Create the series object
-H.seriesTypes.waterfall = H.extendClass(H.seriesTypes.column, {
+seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	type: 'waterfall',
 
 	upColorProp: 'fill',
@@ -1629,7 +1681,7 @@ H.seriesTypes.waterfall = H.extendClass(H.seriesTypes.column, {
 			tooltipY;
 
 		// run column series translate
-		H.seriesTypes.column.prototype.translate.apply(this);
+		seriesTypes.column.prototype.translate.apply(this);
 
 		previousY = previousIntermediate = threshold;
 		points = series.points;
@@ -1758,21 +1810,21 @@ H.seriesTypes.waterfall = H.extendClass(H.seriesTypes.column, {
 	 * Postprocess mapping between options and SVG attributes
 	 */
 	getAttribs: function () {
-		H.seriesTypes.column.prototype.getAttribs.apply(this, arguments);
+		seriesTypes.column.prototype.getAttribs.apply(this, arguments);
 
 		var series = this,
 			options = series.options,
 			stateOptions = options.states,
 			upColor = options.upColor || series.color,
 			hoverColor = Color(upColor).brighten(0.1).get(),
-			seriesDownPointAttr = H.merge(series.pointAttr),
+			seriesDownPointAttr = merge(series.pointAttr),
 			upColorProp = series.upColorProp;
 
 		seriesDownPointAttr[''][upColorProp] = upColor;
 		seriesDownPointAttr.hover[upColorProp] = stateOptions.hover.upColor || hoverColor;
 		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
 
-		H.each(series.points, function (point) {
+		each(series.points, function (point) {
 			if (!point.options.color) {
 				// Up color
 				if (point.y > 0) {
@@ -1827,7 +1879,7 @@ H.seriesTypes.waterfall = H.extendClass(H.seriesTypes.column, {
 	/**
 	 * Extremes are recorded in processData
 	 */
-	getExtremes: H.noop,
+	getExtremes: noop,
 
 	drawGraph: Series.prototype.drawGraph
 });
@@ -1839,12 +1891,16 @@ H.seriesTypes.waterfall = H.extendClass(H.seriesTypes.column, {
 	return H;
 }(Highcharts));
 (function (H) {
-	var LegendSymbolMixin = H.LegendSymbolMixin,
-		Series = H.Series;
+	var defaultPlotOptions = H.defaultPlotOptions,
+		extendClass = H.extendClass,
+		LegendSymbolMixin = H.LegendSymbolMixin,
+		merge = H.merge,
+		Series = H.Series,
+		seriesTypes = H.seriesTypes;
 /**
  * Set the default options for polygon
  */
-H.defaultPlotOptions.polygon = H.merge(H.defaultPlotOptions.scatter, {
+defaultPlotOptions.polygon = merge(defaultPlotOptions.scatter, {
 	marker: {
 		enabled: false
 	}
@@ -1853,7 +1909,7 @@ H.defaultPlotOptions.polygon = H.merge(H.defaultPlotOptions.scatter, {
 /**
  * The polygon series class
  */
-H.seriesTypes.polygon = H.extendClass(H.seriesTypes.scatter, {
+seriesTypes.polygon = extendClass(seriesTypes.scatter, {
 	type: 'polygon',
 	fillGraph: true,
 	// Close all segments
@@ -1867,16 +1923,27 @@ H.seriesTypes.polygon = H.extendClass(H.seriesTypes.scatter, {
 	return H;
 }(Highcharts));
 (function (H) {
-	var Axis = H.Axis,
+	var arrayMax = H.arrayMax,
+		arrayMin = H.arrayMin,
+		defaultPlotOptions = H.defaultPlotOptions,
+		Axis = H.Axis,
 		Color = H.Color,
+		each = H.each,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		noop = H.noop,
+		pick = H.pick,
+		pInt = H.pInt,
 		Point = H.Point,
-		Series = H.Series;
+		Series = H.Series,
+		seriesTypes = H.seriesTypes;
+
 /* ****************************************************************************
  * Start Bubble series code											          *
  *****************************************************************************/
 
 // 1 - set default options
-H.defaultPlotOptions.bubble = H.merge(H.defaultPlotOptions.scatter, {
+defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	dataLabels: {
 		formatter: function () { // #2945
 			return this.point.z;
@@ -1909,7 +1976,7 @@ H.defaultPlotOptions.bubble = H.merge(H.defaultPlotOptions.scatter, {
 	zoneAxis: 'z'
 });
 
-var BubblePoint = H.extendClass(Point, {
+var BubblePoint = extendClass(Point, {
 	haloPath: function () {
 		return Point.prototype.haloPath.call(this, this.shapeArgs.r + this.series.options.states.hover.halo.size);
 	},
@@ -1917,7 +1984,7 @@ var BubblePoint = H.extendClass(Point, {
 });
 
 // 2 - Create the series object
-H.seriesTypes.bubble = H.extendClass(H.seriesTypes.scatter, {
+seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	type: 'bubble',
 	pointClass: BubblePoint,
 	pointArrayMap: ['y', 'z'],
@@ -1940,7 +2007,6 @@ H.seriesTypes.bubble = H.extendClass(H.seriesTypes.scatter, {
 	 */
 	applyOpacity: function (fill) {
 		var markerOptions = this.options.marker,
-			pick = H.pick,
 			fillOpacity = pick(markerOptions.fillOpacity, 0.5);
 		
 		// When called from Legend.colorizeItem, the fill isn't predefined
@@ -2003,7 +2069,7 @@ H.seriesTypes.bubble = H.extendClass(H.seriesTypes.scatter, {
 		var animation = this.options.animation;
 		
 		if (!init) { // run the animation
-			H.each(this.points, function (point) {
+			each(this.points, function (point) {
 				var graphic = point.graphic,
 					shapeArgs = point.shapeArgs;
 
@@ -2035,7 +2101,7 @@ H.seriesTypes.bubble = H.extendClass(H.seriesTypes.scatter, {
 			radii = this.radii;
 		
 		// Run the parent method
-		H.seriesTypes.scatter.prototype.translate.call(this);
+		seriesTypes.scatter.prototype.translate.call(this);
 		
 		// Set the shape type and arguments to be picked up in drawPoints
 		i = data.length;
@@ -2073,7 +2139,7 @@ H.seriesTypes.bubble = H.extendClass(H.seriesTypes.scatter, {
 	 * @param {Object} item The series (this) or point
 	 */
 	drawLegendSymbol: function (legend, item) {
-		var radius = H.pInt(legend.itemStyle.fontSize) / 2;
+		var radius = pInt(legend.itemStyle.fontSize) / 2;
 		
 		item.legendSymbol = this.chart.renderer.circle(
 			radius,
@@ -2086,10 +2152,10 @@ H.seriesTypes.bubble = H.extendClass(H.seriesTypes.scatter, {
 		
 	},
 		
-	drawPoints: H.seriesTypes.column.prototype.drawPoints,
-	alignDataLabel: H.seriesTypes.column.prototype.alignDataLabel,
-	buildKDTree: H.noop,
-	applyZones: H.noop
+	drawPoints: seriesTypes.column.prototype.drawPoints,
+	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
+	buildKDTree: noop,
+	applyZones: noop
 });
 
 /**
@@ -2100,8 +2166,6 @@ Axis.prototype.beforePadding = function () {
 	var axis = this,
 		axisLength = this.len,
 		chart = this.chart,
-		pick = H.pick,
-		each = H.each,
 		pxMin = 0, 
 		pxMax = axisLength,
 		isXAxis = this.isXAxis,
@@ -2136,7 +2200,7 @@ Axis.prototype.beforePadding = function () {
 					var length = seriesOptions[prop],
 						isPercent = /%$/.test(length);
 					
-					length = H.pInt(length);
+					length = pInt(length);
 					extremes[prop] = isPercent ?
 						smallestSize * length / 100 :
 						length;
@@ -2151,11 +2215,11 @@ Axis.prototype.beforePadding = function () {
 					zMin = pick(seriesOptions.zMin, Math.min(
 						zMin,
 						Math.max(
-							H.arrayMin(zData), 
+							arrayMin(zData), 
 							seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
 						)
 					));
-					zMax = pick(seriesOptions.zMax, Math.max(zMax, H.arrayMax(zData)));
+					zMax = pick(seriesOptions.zMax, Math.max(zMax, arrayMax(zData)));
 				}
 			}
 		}
@@ -2207,12 +2271,16 @@ Axis.prototype.beforePadding = function () {
 	 * 
 	 */
 
-	var Pointer = H.Pointer,
+	var each = H.each,
+		pick = H.pick,
+		Pointer = H.Pointer,
 		Series = H.Series,
+		seriesTypes = H.seriesTypes,
+		wrap = H.wrap,
+
 		seriesProto = Series.prototype,
 		pointerProto = Pointer.prototype,
-		colProto,
-		wrap = H.wrap;
+		colProto;
 
 	/**
 	 * Search a k-d tree by the point angle, used for shared tooltips in polar charts
@@ -2306,18 +2374,18 @@ Axis.prototype.beforePadding = function () {
 	}
 
  
-	if (H.seriesTypes.area) {		
-		wrap(H.seriesTypes.area.prototype, 'init', initArea);	
+	if (seriesTypes.area) {		
+		wrap(seriesTypes.area.prototype, 'init', initArea);	
 	}
-	if (H.seriesTypes.areaspline) {		
-		wrap(H.seriesTypes.areaspline.prototype, 'init', initArea);			
+	if (seriesTypes.areaspline) {		
+		wrap(seriesTypes.areaspline.prototype, 'init', initArea);			
 	}	
 
-	if (H.seriesTypes.spline) {
+	if (seriesTypes.spline) {
 		/**
 		 * Overridden method for calculating a spline from one point to the next
 		 */
-		wrap(H.seriesTypes.spline.prototype, 'getPointSpline', function (proceed, segment, point, i) {
+		wrap(seriesTypes.spline.prototype, 'getPointSpline', function (proceed, segment, point, i) {
 	
 			var ret,
 				smoothing = 1.5, // 1 means control points midway between points, 2 means 1/3 from the point, 3 is 1/4 etc;
@@ -2534,9 +2602,9 @@ Axis.prototype.beforePadding = function () {
 	wrap(seriesProto, 'animate', polarAnimate);
 
 
-	if (H.seriesTypes.column) {
+	if (seriesTypes.column) {
 
-		colProto = H.seriesTypes.column.prototype;
+		colProto = seriesTypes.column.prototype;
 		/**
 		* Define the animate method for columnseries
 		*/
@@ -2580,7 +2648,7 @@ Axis.prototype.beforePadding = function () {
 							{
 								start: start,
 								end: start + point.pointWidth,
-								innerR: len - H.pick(point.yBottom, len)
+								innerR: len - pick(point.yBottom, len)
 							}
 						)
 					};
@@ -2645,7 +2713,7 @@ Axis.prototype.beforePadding = function () {
 	
 		if (chart.polar) {	
 
-			H.each(chart.axes, function (axis) {
+			each(chart.axes, function (axis) {
 				var isXAxis = axis.isXAxis,
 					center = axis.center,
 					x = e.chartX - center[0] - chart.plotLeft,

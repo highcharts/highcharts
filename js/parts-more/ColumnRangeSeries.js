@@ -1,11 +1,18 @@
 (function (H) {
 	
-	var colProto = H.seriesTypes.column.prototype;
+	var defaultPlotOptions = H.defaultPlotOptions,
+		each = H.each,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		noop = H.noop,
+		seriesTypes = H.seriesTypes,
+
+		colProto = seriesTypes.column.prototype;
 
 	/**
 	 * The ColumnRangeSeries class
 	 */
-	H.defaultPlotOptions.columnrange = H.merge(H.defaultPlotOptions.column, H.defaultPlotOptions.arearange, {
+	defaultPlotOptions.columnrange = merge(defaultPlotOptions.column, defaultPlotOptions.arearange, {
 		lineWidth: 1,
 		pointRange: null
 	});
@@ -13,7 +20,7 @@
 	/**
 	 * ColumnRangeSeries object
 	 */
-	H.seriesTypes.columnrange = H.extendClass(H.seriesTypes.arearange, {
+	seriesTypes.columnrange = extendClass(seriesTypes.arearange, {
 		type: 'columnrange',
 		/**
 		 * Translate data points from raw values x and y to plotX and plotY
@@ -26,7 +33,7 @@
 			colProto.translate.apply(series);
 
 			// Set plotLow and plotHigh
-			H.each(series.points, function (point) {
+			each(series.points, function (point) {
 				var shapeArgs = point.shapeArgs,
 					minPointLength = series.options.minPointLength,
 					heightDifference,
@@ -59,7 +66,7 @@
 		},
 		directTouch: true,
 		trackerGroups: ['group', 'dataLabelsGroup'],
-		drawGraph: H.noop,
+		drawGraph: noop,
 		pointAttrToOptions: colProto.pointAttrToOptions,
 		drawPoints: colProto.drawPoints,
 		drawTracker: colProto.drawTracker,

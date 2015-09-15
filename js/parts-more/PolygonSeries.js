@@ -1,10 +1,14 @@
 (function (H) {
-	var LegendSymbolMixin = H.LegendSymbolMixin,
-		Series = H.Series;
+	var defaultPlotOptions = H.defaultPlotOptions,
+		extendClass = H.extendClass,
+		LegendSymbolMixin = H.LegendSymbolMixin,
+		merge = H.merge,
+		Series = H.Series,
+		seriesTypes = H.seriesTypes;
 /**
  * Set the default options for polygon
  */
-H.defaultPlotOptions.polygon = H.merge(H.defaultPlotOptions.scatter, {
+defaultPlotOptions.polygon = merge(defaultPlotOptions.scatter, {
 	marker: {
 		enabled: false
 	}
@@ -13,7 +17,7 @@ H.defaultPlotOptions.polygon = H.merge(H.defaultPlotOptions.scatter, {
 /**
  * The polygon series class
  */
-H.seriesTypes.polygon = H.extendClass(H.seriesTypes.scatter, {
+seriesTypes.polygon = extendClass(seriesTypes.scatter, {
 	type: 'polygon',
 	fillGraph: true,
 	// Close all segments

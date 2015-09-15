@@ -1,9 +1,17 @@
 (function (H) {
-	var GaugePoint,
-		GaugeSeries,
+	var defaultPlotOptions = H.defaultPlotOptions,
+		each = H.each,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		noop = H.noop,
+		pick = H.pick,
+		pInt = H.pInt,
 		Point = H.Point,
 		Series = H.Series,
-		TrackerMixin = H.TrackerMixin;
+		seriesTypes = H.seriesTypes,
+		TrackerMixin = H.TrackerMixin,
+
+		GaugePoint;
 /* 
  * The GaugeSeries class
  */
@@ -13,7 +21,7 @@
 /**
  * Extend the default options
  */
-H.defaultPlotOptions.gauge = H.merge(H.defaultPlotOptions.line, {
+defaultPlotOptions.gauge = merge(defaultPlotOptions.line, {
 	dataLabels: {
 		enabled: true,
 		defer: false,
@@ -50,7 +58,7 @@ H.defaultPlotOptions.gauge = H.merge(H.defaultPlotOptions.line, {
 /**
  * Extend the point object
  */
-GaugePoint = H.extendClass(Point, {
+GaugePoint = extendClass(Point, {
 	/**
 	 * Don't do any hover colors or anything
 	 */
@@ -63,14 +71,14 @@ GaugePoint = H.extendClass(Point, {
 /**
  * Add the series type
  */
-GaugeSeries = {
+seriesTypes.gauge = extendClass(seriesTypes.line, {
 	type: 'gauge',
 	pointClass: GaugePoint,
 	
 	// chart.angular will be set to true when a gauge series is present, and this will
 	// be used on the axes
 	angular: true, 
-	drawGraph: H.noop,
+	drawGraph: noop,
 	fixedBox: true,
 	forceDL: true,
 	trackerGroups: ['group', 'dataLabelsGroup'],
@@ -82,16 +90,14 @@ GaugeSeries = {
 		
 		var series = this,
 			yAxis = series.yAxis,
-			pInt = H.pInt,
-			pick = H.pick,
 			options = series.options,
 			center = yAxis.center;
 			
 		series.generatePoints();
 		
-		H.each(series.points, function (point) {
+		each(series.points, function (point) {
 			
-			var dialOptions = H.merge(options.dial, point.dial),
+			var dialOptions = merge(options.dial, point.dial),
 				radius = (pInt(pick(dialOptions.radius, 80)) * center[2]) / 200,
 				baseLength = (pInt(pick(dialOptions.baseLength, 70)) * radius) / 100,
 				rearLength = (pInt(pick(dialOptions.rearLength, 10)) * radius) / 100,
@@ -147,12 +153,12 @@ GaugeSeries = {
 			pivotOptions = options.pivot,
 			renderer = series.chart.renderer;
 		
-		H.each(series.points, function (point) {
+		each(series.points, function (point) {
 			
 			var graphic = point.graphic,
 				shapeArgs = point.shapeArgs,
 				d = shapeArgs.d,
-				dialOptions = H.merge(options.dial, point.dial); // #1233
+				dialOptions = merge(options.dial, point.dial); // #1233
 			
 			if (graphic) {
 				graphic.animate(shapeArgs);
@@ -176,7 +182,7 @@ GaugeSeries = {
 				translateY: center[1]
 			});
 		} else {
-			series.pivot = renderer.circle(0, 0, H.pick(pivotOptions.radius, 5))
+			series.pivot = renderer.circle(0, 0, pick(pivotOptions.radius, 5))
 				.attr({
 					'stroke-width': pivotOptions.borderWidth || 0,
 					stroke: pivotOptions.borderColor || 'silver',
@@ -194,7 +200,7 @@ GaugeSeries = {
 		var series = this;
 
 		if (!init) {
-			H.each(series.points, function (point) {
+			each(series.points, function (point) {
 				var graphic = point.graphic;
 
 				if (graphic) {
@@ -235,7 +241,7 @@ GaugeSeries = {
 		Series.prototype.setData.call(this, data, false);
 		this.processData();
 		this.generatePoints();
-		if (H.pick(redraw, true)) {
+		if (pick(redraw, true)) {
 			this.chart.redraw();
 		}
 	},
@@ -244,8 +250,8 @@ GaugeSeries = {
 	 * If the tracking module is loaded, add the point tracker
 	 */
 	drawTracker: TrackerMixin && TrackerMixin.drawTrackerPoint
-};
-H.seriesTypes.gauge = H.extendClass(H.seriesTypes.line, GaugeSeries);
+});
+
 
 	return H;
 }(Highcharts));

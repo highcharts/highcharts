@@ -1,12 +1,19 @@
 (function (H) {
 	var Color = H.Color,
-		Series = H.Series;
+		defaultPlotOptions = H.defaultPlotOptions,
+		each = H.each,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		noop = H.noop,
+		Series = H.Series,
+		seriesTypes = H.seriesTypes;
+
 /* ****************************************************************************
  * Start Waterfall series code                                                *
  *****************************************************************************/
 
 // 1 - set default options
-H.defaultPlotOptions.waterfall = H.merge(H.defaultPlotOptions.column, {
+defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
 	lineWidth: 1,
 	lineColor: '#333',
 	dashStyle: 'dot',
@@ -23,7 +30,7 @@ H.defaultPlotOptions.waterfall = H.merge(H.defaultPlotOptions.column, {
 
 
 // 2 - Create the series object
-H.seriesTypes.waterfall = H.extendClass(H.seriesTypes.column, {
+seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	type: 'waterfall',
 
 	upColorProp: 'fill',
@@ -53,7 +60,7 @@ H.seriesTypes.waterfall = H.extendClass(H.seriesTypes.column, {
 			tooltipY;
 
 		// run column series translate
-		H.seriesTypes.column.prototype.translate.apply(this);
+		seriesTypes.column.prototype.translate.apply(this);
 
 		previousY = previousIntermediate = threshold;
 		points = series.points;
@@ -182,21 +189,21 @@ H.seriesTypes.waterfall = H.extendClass(H.seriesTypes.column, {
 	 * Postprocess mapping between options and SVG attributes
 	 */
 	getAttribs: function () {
-		H.seriesTypes.column.prototype.getAttribs.apply(this, arguments);
+		seriesTypes.column.prototype.getAttribs.apply(this, arguments);
 
 		var series = this,
 			options = series.options,
 			stateOptions = options.states,
 			upColor = options.upColor || series.color,
 			hoverColor = Color(upColor).brighten(0.1).get(),
-			seriesDownPointAttr = H.merge(series.pointAttr),
+			seriesDownPointAttr = merge(series.pointAttr),
 			upColorProp = series.upColorProp;
 
 		seriesDownPointAttr[''][upColorProp] = upColor;
 		seriesDownPointAttr.hover[upColorProp] = stateOptions.hover.upColor || hoverColor;
 		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
 
-		H.each(series.points, function (point) {
+		each(series.points, function (point) {
 			if (!point.options.color) {
 				// Up color
 				if (point.y > 0) {
@@ -251,7 +258,7 @@ H.seriesTypes.waterfall = H.extendClass(H.seriesTypes.column, {
 	/**
 	 * Extremes are recorded in processData
 	 */
-	getExtremes: H.noop,
+	getExtremes: noop,
 
 	drawGraph: Series.prototype.drawGraph
 });

@@ -1,10 +1,18 @@
 (function (H) {
+	var defaultPlotOptions = H.defaultPlotOptions,
+		each = H.each,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		noop = H.noop,
+		pick = H.pick,
+		seriesTypes = H.seriesTypes;
+
 /* ****************************************************************************
  * Start Box plot series code											      *
  *****************************************************************************/
 
 // Set default options
-H.defaultPlotOptions.boxplot = H.merge(H.defaultPlotOptions.column, {
+defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 	fillColor: '#FFFFFF',
 	lineWidth: 1,
 	//medianColor: null,
@@ -33,7 +41,7 @@ H.defaultPlotOptions.boxplot = H.merge(H.defaultPlotOptions.column, {
 });
 
 // Create the series object
-H.seriesTypes.boxplot = H.extendClass(H.seriesTypes.column, {
+seriesTypes.boxplot = extendClass(seriesTypes.column, {
 	type: 'boxplot',
 	pointArrayMap: ['low', 'q1', 'median', 'q3', 'high'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
@@ -53,7 +61,7 @@ H.seriesTypes.boxplot = H.extendClass(H.seriesTypes.column, {
 	/**
 	 * Disable data labels for box plot
 	 */
-	drawDataLabels: H.noop,
+	drawDataLabels: noop,
 
 	/**
 	 * Translate data points from raw values x and y to plotX and plotY
@@ -61,10 +69,9 @@ H.seriesTypes.boxplot = H.extendClass(H.seriesTypes.column, {
 	translate: function () {
 		var series = this,
 			yAxis = series.yAxis,
-			each = H.each,
 			pointArrayMap = series.pointArrayMap;
 
-		H.seriesTypes.column.prototype.translate.apply(series);
+		seriesTypes.column.prototype.translate.apply(series);
 
 		// do the translation on each point dimension
 		each(series.points, function (point) {
@@ -85,7 +92,6 @@ H.seriesTypes.boxplot = H.extendClass(H.seriesTypes.column, {
 			options = series.options,
 			chart = series.chart,
 			renderer = chart.renderer,
-			pick = H.pick,
 			pointAttr,
 			q1Plot,
 			q3Plot,
@@ -112,7 +118,7 @@ H.seriesTypes.boxplot = H.extendClass(H.seriesTypes.column, {
 			whiskerLength = parseInt(series.options.whiskerLength, 10) / 100;
 
 
-		H.each(points, function (point) {
+		each(points, function (point) {
 
 			graphic = point.graphic;
 			shapeArgs = point.shapeArgs; // the box
@@ -263,7 +269,7 @@ H.seriesTypes.boxplot = H.extendClass(H.seriesTypes.column, {
 		});
 
 	},
-	setStackedPoints: H.noop // #3890
+	setStackedPoints: noop // #3890
 
 
 });

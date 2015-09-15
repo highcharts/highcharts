@@ -6,12 +6,16 @@
 	 * 
 	 */
 
-	var Pointer = H.Pointer,
+	var each = H.each,
+		pick = H.pick,
+		Pointer = H.Pointer,
 		Series = H.Series,
+		seriesTypes = H.seriesTypes,
+		wrap = H.wrap,
+
 		seriesProto = Series.prototype,
 		pointerProto = Pointer.prototype,
-		colProto,
-		wrap = H.wrap;
+		colProto;
 
 	/**
 	 * Search a k-d tree by the point angle, used for shared tooltips in polar charts
@@ -105,18 +109,18 @@
 	}
 
  
-	if (H.seriesTypes.area) {		
-		wrap(H.seriesTypes.area.prototype, 'init', initArea);	
+	if (seriesTypes.area) {		
+		wrap(seriesTypes.area.prototype, 'init', initArea);	
 	}
-	if (H.seriesTypes.areaspline) {		
-		wrap(H.seriesTypes.areaspline.prototype, 'init', initArea);			
+	if (seriesTypes.areaspline) {		
+		wrap(seriesTypes.areaspline.prototype, 'init', initArea);			
 	}	
 
-	if (H.seriesTypes.spline) {
+	if (seriesTypes.spline) {
 		/**
 		 * Overridden method for calculating a spline from one point to the next
 		 */
-		wrap(H.seriesTypes.spline.prototype, 'getPointSpline', function (proceed, segment, point, i) {
+		wrap(seriesTypes.spline.prototype, 'getPointSpline', function (proceed, segment, point, i) {
 	
 			var ret,
 				smoothing = 1.5, // 1 means control points midway between points, 2 means 1/3 from the point, 3 is 1/4 etc;
@@ -333,9 +337,9 @@
 	wrap(seriesProto, 'animate', polarAnimate);
 
 
-	if (H.seriesTypes.column) {
+	if (seriesTypes.column) {
 
-		colProto = H.seriesTypes.column.prototype;
+		colProto = seriesTypes.column.prototype;
 		/**
 		* Define the animate method for columnseries
 		*/
@@ -379,7 +383,7 @@
 							{
 								start: start,
 								end: start + point.pointWidth,
-								innerR: len - H.pick(point.yBottom, len)
+								innerR: len - pick(point.yBottom, len)
 							}
 						)
 					};
@@ -444,7 +448,7 @@
 	
 		if (chart.polar) {	
 
-			H.each(chart.axes, function (axis) {
+			each(chart.axes, function (axis) {
 				var isXAxis = axis.isXAxis,
 					center = axis.center,
 					x = e.chartX - center[0] - chart.plotLeft,

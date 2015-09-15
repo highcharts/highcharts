@@ -1,10 +1,17 @@
 (function (H) {
+	var defaultPlotOptions = H.defaultPlotOptions,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		noop = H.noop,
+		seriesTypes = H.seriesTypes;
+
+
 /* ****************************************************************************
  * Start error bar series code                                                *
  *****************************************************************************/
 
 // 1 - set default options
-H.defaultPlotOptions.errorbar = H.merge(H.defaultPlotOptions.boxplot, {
+defaultPlotOptions.errorbar = merge(defaultPlotOptions.boxplot, {
 	color: '#000000',
 	grouping: false,
 	linkedTo: ':previous',
@@ -15,7 +22,7 @@ H.defaultPlotOptions.errorbar = H.merge(H.defaultPlotOptions.boxplot, {
 });
 
 // 2 - Create the series object
-H.seriesTypes.errorbar = H.extendClass(H.seriesTypes.boxplot, {
+seriesTypes.errorbar = extendClass(seriesTypes.boxplot, {
 	type: 'errorbar',
 	pointArrayMap: ['low', 'high'], // array point configs are mapped to this
 	toYData: function (point) { // return a plain array for speedy calculation
@@ -23,7 +30,7 @@ H.seriesTypes.errorbar = H.extendClass(H.seriesTypes.boxplot, {
 	},
 	pointValKey: 'high', // defines the top of the tracker
 	doQuartiles: false,
-	drawDataLabels: H.seriesTypes.arearange ? H.seriesTypes.arearange.prototype.drawDataLabels : H.noop,
+	drawDataLabels: seriesTypes.arearange ? seriesTypes.arearange.prototype.drawDataLabels : noop,
 
 	/**
 	 * Get the width and X offset, either on top of the linked series column
@@ -31,7 +38,7 @@ H.seriesTypes.errorbar = H.extendClass(H.seriesTypes.boxplot, {
 	 */
 	getColumnMetrics: function () {
 		return (this.linkedParent && this.linkedParent.columnMetrics) || 
-			H.seriesTypes.column.prototype.getColumnMetrics.call(this);
+			seriesTypes.column.prototype.getColumnMetrics.call(this);
 	}
 });
 

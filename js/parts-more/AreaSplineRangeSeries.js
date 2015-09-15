@@ -1,16 +1,20 @@
 (function (H) {
+	var defaultPlotOptions = H.defaultPlotOptions,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		seriesTypes = H.seriesTypes;
 /**
  * The AreaSplineRangeSeries class
  */
 
-H.defaultPlotOptions.areasplinerange = H.merge(H.defaultPlotOptions.arearange);
+defaultPlotOptions.areasplinerange = merge(defaultPlotOptions.arearange);
 
 /**
  * AreaSplineRangeSeries object
  */
-H.seriesTypes.areasplinerange = H.extendClass(H.seriesTypes.arearange, {
+seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
 	type: 'areasplinerange',
-	getPointSpline: H.seriesTypes.spline.prototype.getPointSpline
+	getPointSpline: seriesTypes.spline.prototype.getPointSpline
 });
 
 	return H;

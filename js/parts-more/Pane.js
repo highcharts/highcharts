@@ -1,4 +1,8 @@
 (function (H) {
+	var each = H.each,
+		extend = H.extend,
+		merge = H.merge,
+		splat = H.splat;
 /**
  * The Pane object allows options that are common to a set of X and Y axes.
  * 
@@ -9,7 +13,7 @@ function Pane(options, chart, firstAxis) {
 }
 
 // Extend the Pane prototype
-H.extend(Pane.prototype, {
+extend(Pane.prototype, {
 	
 	/**
 	 * Initiate the Pane object
@@ -17,7 +21,6 @@ H.extend(Pane.prototype, {
 	init: function (options, chart, firstAxis) {
 		var pane = this,
 			backgroundOption,
-			merge = H.merge,
 			defaultOptions = pane.defaultOptions;
 		
 		pane.chart = chart;
@@ -30,7 +33,7 @@ H.extend(Pane.prototype, {
 		// To avoid having weighty logic to place, update and remove the backgrounds,
 		// push them to the first axis' plot bands and borrow the existing logic there.
 		if (backgroundOption) {
-			H.each([].concat(H.splat(backgroundOption)).reverse(), function (config) {
+			each([].concat(splat(backgroundOption)).reverse(), function (config) {
 				var backgroundColor = config.backgroundColor,  // if defined, replace the old one (specific for gradients)
 					axisUserOptions = firstAxis.userOptions;
 				config = merge(pane.defaultBackgroundOptions, config);
