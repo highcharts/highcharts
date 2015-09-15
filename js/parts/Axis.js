@@ -2230,9 +2230,11 @@ H.Axis.prototype = {
 					stroke: options.color || (categorized ? 'rgba(155,200,255,0.2)' : '#C0C0C0'),
 					zIndex: options.zIndex || 2
 				};
+				/*= if (build.classic) { =*/
 				if (options.dashStyle) {
 					attribs.dashstyle = options.dashStyle;
 				}
+				/*= } =*/
 				this.cross = this.chart.renderer.path(path).attr(attribs).add();
 			}
 

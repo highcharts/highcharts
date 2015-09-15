@@ -38,7 +38,6 @@ H.PlotLineOrBand.prototype = {
 			from = options.from,
 			isBand = defined(from) && defined(to),
 			value = options.value,
-			dashStyle = options.dashStyle,
 			svgElem = plotLine.svgElem,
 			path = [],
 			addEvent,
@@ -67,9 +66,12 @@ H.PlotLineOrBand.prototype = {
 				stroke: color,
 				'stroke-width': width
 			};
-			if (dashStyle) {
-				attribs.dashstyle = dashStyle;
+			/*= if (build.classic) { =*/		
+			if (options.dashStyle) {
+				attribs.dashstyle = options.dashStyle;
 			}
+			/*= } =*/
+			
 		} else if (isBand) { // plot band
 
 			path = axis.getPlotBandPath(from, to, options);

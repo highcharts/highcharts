@@ -2838,6 +2838,7 @@ SVGElement.prototype = {
 
 		this[key] = value;
 	},
+	
 	dashstyleSetter: function (value) {
 		var i;
 		value = value && value.toLowerCase();
@@ -2862,6 +2863,7 @@ SVGElement.prototype = {
 			this.element.setAttribute('stroke-dasharray', value);
 		}
 	},
+	
 	alignSetter: function (value) {
 		this.element.setAttribute('text-anchor', { left: 'start', center: 'middle', right: 'end' }[value]);
 	},
@@ -6200,7 +6202,9 @@ H.Tick.prototype = {
 			tickPrefix = type ? type + 'Tick' : 'tick',
 			gridLineWidth = options[gridPrefix + 'LineWidth'],
 			gridLineColor = options[gridPrefix + 'LineColor'],
+			
 			dashStyle = options[gridPrefix + 'LineDashStyle'],
+			
 			tickLength = options[tickPrefix + 'Length'],
 			tickWidth = pick(options[tickPrefix + 'Width'], !type && axis.isXAxis ? 1 : 0), // X axis defaults to 1
 			tickColor = options[tickPrefix + 'Color'],
@@ -6229,9 +6233,11 @@ H.Tick.prototype = {
 					stroke: gridLineColor,
 					'stroke-width': gridLineWidth
 				};
+				
 				if (dashStyle) {
 					attribs.dashstyle = dashStyle;
 				}
+				
 				if (!type) {
 					attribs.zIndex = 1;
 				}
@@ -6365,7 +6371,6 @@ H.PlotLineOrBand.prototype = {
 			from = options.from,
 			isBand = defined(from) && defined(to),
 			value = options.value,
-			dashStyle = options.dashStyle,
 			svgElem = plotLine.svgElem,
 			path = [],
 			addEvent,
@@ -6394,9 +6399,12 @@ H.PlotLineOrBand.prototype = {
 				stroke: color,
 				'stroke-width': width
 			};
-			if (dashStyle) {
-				attribs.dashstyle = dashStyle;
+					
+			if (options.dashStyle) {
+				attribs.dashstyle = options.dashStyle;
 			}
+			
+			
 		} else if (isBand) { // plot band
 
 			path = axis.getPlotBandPath(from, to, options);
@@ -8829,9 +8837,11 @@ H.Axis.prototype = {
 					stroke: options.color || (categorized ? 'rgba(155,200,255,0.2)' : '#C0C0C0'),
 					zIndex: options.zIndex || 2
 				};
+				
 				if (options.dashStyle) {
 					attribs.dashstyle = options.dashStyle;
 				}
+				
 				this.cross = this.chart.renderer.path(path).attr(attribs).add();
 			}
 
@@ -11573,18 +11583,19 @@ H.LegendSymbolMixin = {
 			renderer = this.chart.renderer,
 			legendItemGroup = this.legendGroup,
 			verticalCenter = legend.baseline - Math.round(legend.fontMetrics.b * 0.3),
-			attr;
+			attr = {};
 
 		// Draw the line
 		if (options.lineWidth) {
+			
 			attr = {
-				
 				'stroke-width': options.lineWidth
-				
 			};
 			if (options.dashStyle) {
 				attr.dashstyle = options.dashStyle;
 			}
+			
+			
 			this.legendLine = renderer.path([
 				'M',
 				0,

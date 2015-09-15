@@ -2816,30 +2816,7 @@ SVGElement.prototype = {
 
 		this[key] = value;
 	},
-	dashstyleSetter: function (value) {
-		var i;
-		value = value && value.toLowerCase();
-		if (value) {
-			value = value
-				.replace('shortdashdotdot', '3,1,1,1,1,1,')
-				.replace('shortdashdot', '3,1,1,1')
-				.replace('shortdot', '1,1,')
-				.replace('shortdash', '3,1,')
-				.replace('longdash', '8,3,')
-				.replace(/dot/g, '1,3,')
-				.replace('dash', '4,3,')
-				.replace(/,$/, '')
-				.split(','); // ending comma
-
-			i = value.length;
-			while (i--) {
-				value[i] = pInt(value[i]) * this['stroke-width'];
-			}
-			value = value.join(',')
-				.replace('NaN', 'none'); // #3226
-			this.element.setAttribute('stroke-dasharray', value);
-		}
-	},
+	
 	alignSetter: function (value) {
 		this.element.setAttribute('text-anchor', { left: 'start', center: 'middle', right: 'end' }[value]);
 	},
@@ -6153,7 +6130,7 @@ H.Tick.prototype = {
 			tickPrefix = type ? type + 'Tick' : 'tick',
 			gridLineWidth = options[gridPrefix + 'LineWidth'],
 			gridLineColor = options[gridPrefix + 'LineColor'],
-			dashStyle = options[gridPrefix + 'LineDashStyle'],
+			
 			tickLength = options[tickPrefix + 'Length'],
 			tickWidth = pick(options[tickPrefix + 'Width'], !type && axis.isXAxis ? 1 : 0), // X axis defaults to 1
 			tickColor = options[tickPrefix + 'Color'],
@@ -6182,9 +6159,7 @@ H.Tick.prototype = {
 					stroke: gridLineColor,
 					'stroke-width': gridLineWidth
 				};
-				if (dashStyle) {
-					attribs.dashstyle = dashStyle;
-				}
+				
 				if (!type) {
 					attribs.zIndex = 1;
 				}
@@ -8510,9 +8485,7 @@ H.Axis.prototype = {
 					stroke: options.color || (categorized ? 'rgba(155,200,255,0.2)' : '#C0C0C0'),
 					zIndex: options.zIndex || 2
 				};
-				if (options.dashStyle) {
-					attribs.dashstyle = options.dashStyle;
-				}
+				
 				this.cross = this.chart.renderer.path(path).attr(attribs).add();
 			}
 
@@ -10986,16 +10959,12 @@ H.LegendSymbolMixin = {
 			renderer = this.chart.renderer,
 			legendItemGroup = this.legendGroup,
 			verticalCenter = legend.baseline - Math.round(legend.fontMetrics.b * 0.3),
-			attr;
+			attr = {};
 
 		// Draw the line
 		if (options.lineWidth) {
-			attr = {
-				
-			};
-			if (options.dashStyle) {
-				attr.dashstyle = options.dashStyle;
-			}
+			
+			
 			this.legendLine = renderer.path([
 				'M',
 				0,
@@ -17222,10 +17191,10 @@ colorPointMixin = H.colorPointMixin = {
 colorSeriesMixin = H.colorSeriesMixin = {
 
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
+		
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
-		fill: 'color',
-		dashstyle: 'dashStyle'
+		fill: 'color'
 	},
 	pointArrayMap: ['value'],
 	axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
@@ -18442,10 +18411,10 @@ defaultPlotOptions.mapline = merge(defaultPlotOptions.map, {
 seriesTypes.mapline = extendClass(seriesTypes.map, {
 	type: 'mapline',
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
+		
 		stroke: 'color',
 		'stroke-width': 'lineWidth',
-		fill: 'fillColor',
-		dashstyle: 'dashStyle'
+		fill: 'fillColor'
 	},
 	drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
 });

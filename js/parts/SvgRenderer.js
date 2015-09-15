@@ -1070,6 +1070,7 @@ SVGElement.prototype = {
 
 		this[key] = value;
 	},
+	/*= if (build.classic) { =*/
 	dashstyleSetter: function (value) {
 		var i;
 		value = value && value.toLowerCase();
@@ -1094,6 +1095,7 @@ SVGElement.prototype = {
 			this.element.setAttribute('stroke-dasharray', value);
 		}
 	},
+	/*= } =*/
 	alignSetter: function (value) {
 		this.element.setAttribute('text-anchor', { left: 'start', center: 'middle', right: 'end' }[value]);
 	},

@@ -12,10 +12,12 @@ defaultPlotOptions.mapline = merge(defaultPlotOptions.map, {
 seriesTypes.mapline = extendClass(seriesTypes.map, {
 	type: 'mapline',
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
+		/*= if (build.classic) { =*/
+		dashstyle: 'dashStyle',
+		/*= } =*/
 		stroke: 'color',
 		'stroke-width': 'lineWidth',
-		fill: 'fillColor',
-		dashstyle: 'dashStyle'
+		fill: 'fillColor'
 	},
 	drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
 });

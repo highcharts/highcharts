@@ -790,18 +790,19 @@ H.LegendSymbolMixin = {
 			renderer = this.chart.renderer,
 			legendItemGroup = this.legendGroup,
 			verticalCenter = legend.baseline - Math.round(legend.fontMetrics.b * 0.3),
-			attr;
+			attr = {};
 
 		// Draw the line
 		if (options.lineWidth) {
+			/*= if (build.classic) { =*/
 			attr = {
-				/*= if (build.classic) { =*/
 				'stroke-width': options.lineWidth
-				/*= } =*/
 			};
 			if (options.dashStyle) {
 				attr.dashstyle = options.dashStyle;
 			}
+			/*= } =*/
+			
 			this.legendLine = renderer.path([
 				'M',
 				0,

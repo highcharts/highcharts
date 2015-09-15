@@ -2838,6 +2838,7 @@ SVGElement.prototype = {
 
 		this[key] = value;
 	},
+	
 	dashstyleSetter: function (value) {
 		var i;
 		value = value && value.toLowerCase();
@@ -2862,6 +2863,7 @@ SVGElement.prototype = {
 			this.element.setAttribute('stroke-dasharray', value);
 		}
 	},
+	
 	alignSetter: function (value) {
 		this.element.setAttribute('text-anchor', { left: 'start', center: 'middle', right: 'end' }[value]);
 	},
@@ -6200,7 +6202,9 @@ H.Tick.prototype = {
 			tickPrefix = type ? type + 'Tick' : 'tick',
 			gridLineWidth = options[gridPrefix + 'LineWidth'],
 			gridLineColor = options[gridPrefix + 'LineColor'],
+			
 			dashStyle = options[gridPrefix + 'LineDashStyle'],
+			
 			tickLength = options[tickPrefix + 'Length'],
 			tickWidth = pick(options[tickPrefix + 'Width'], !type && axis.isXAxis ? 1 : 0), // X axis defaults to 1
 			tickColor = options[tickPrefix + 'Color'],
@@ -6229,9 +6233,11 @@ H.Tick.prototype = {
 					stroke: gridLineColor,
 					'stroke-width': gridLineWidth
 				};
+				
 				if (dashStyle) {
 					attribs.dashstyle = dashStyle;
 				}
+				
 				if (!type) {
 					attribs.zIndex = 1;
 				}
@@ -8557,9 +8563,11 @@ H.Axis.prototype = {
 					stroke: options.color || (categorized ? 'rgba(155,200,255,0.2)' : '#C0C0C0'),
 					zIndex: options.zIndex || 2
 				};
+				
 				if (options.dashStyle) {
 					attribs.dashstyle = options.dashStyle;
 				}
+				
 				this.cross = this.chart.renderer.path(path).attr(attribs).add();
 			}
 
@@ -11081,18 +11089,19 @@ H.LegendSymbolMixin = {
 			renderer = this.chart.renderer,
 			legendItemGroup = this.legendGroup,
 			verticalCenter = legend.baseline - Math.round(legend.fontMetrics.b * 0.3),
-			attr;
+			attr = {};
 
 		// Draw the line
 		if (options.lineWidth) {
+			
 			attr = {
-				
 				'stroke-width': options.lineWidth
-				
 			};
 			if (options.dashStyle) {
 				attr.dashstyle = options.dashStyle;
 			}
+			
+			
 			this.legendLine = renderer.path([
 				'M',
 				0,
@@ -17352,10 +17361,12 @@ colorPointMixin = H.colorPointMixin = {
 colorSeriesMixin = H.colorSeriesMixin = {
 
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
+		
+		dashstyle: 'dashStyle',
+		
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
-		fill: 'color',
-		dashstyle: 'dashStyle'
+		fill: 'color'
 	},
 	pointArrayMap: ['value'],
 	axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
@@ -18572,10 +18583,12 @@ defaultPlotOptions.mapline = merge(defaultPlotOptions.map, {
 seriesTypes.mapline = extendClass(seriesTypes.map, {
 	type: 'mapline',
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
+		
+		dashstyle: 'dashStyle',
+		
 		stroke: 'color',
 		'stroke-width': 'lineWidth',
-		fill: 'fillColor',
-		dashstyle: 'dashStyle'
+		fill: 'fillColor'
 	},
 	drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
 });

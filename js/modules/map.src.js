@@ -665,10 +665,12 @@ colorPointMixin = H.colorPointMixin = {
 colorSeriesMixin = H.colorSeriesMixin = {
 
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
+		/*= if (build.classic) { =*/
+		dashstyle: 'dashStyle',
+		/*= } =*/
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
-		fill: 'color',
-		dashstyle: 'dashStyle'
+		fill: 'color'
 	},
 	pointArrayMap: ['value'],
 	axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
@@ -1740,10 +1742,12 @@ defaultPlotOptions.mapline = merge(defaultPlotOptions.map, {
 seriesTypes.mapline = extendClass(seriesTypes.map, {
 	type: 'mapline',
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
+		/*= if (build.classic) { =*/
+		dashstyle: 'dashStyle',
+		/*= } =*/
 		stroke: 'color',
 		'stroke-width': 'lineWidth',
-		fill: 'fillColor',
-		dashstyle: 'dashStyle'
+		fill: 'fillColor'
 	},
 	drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
 });

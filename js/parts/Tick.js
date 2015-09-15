@@ -249,7 +249,9 @@ H.Tick.prototype = {
 			tickPrefix = type ? type + 'Tick' : 'tick',
 			gridLineWidth = options[gridPrefix + 'LineWidth'],
 			gridLineColor = options[gridPrefix + 'LineColor'],
+			/*= if (build.classic) { =*/
 			dashStyle = options[gridPrefix + 'LineDashStyle'],
+			/*= } =*/
 			tickLength = options[tickPrefix + 'Length'],
 			tickWidth = pick(options[tickPrefix + 'Width'], !type && axis.isXAxis ? 1 : 0), // X axis defaults to 1
 			tickColor = options[tickPrefix + 'Color'],
@@ -278,9 +280,11 @@ H.Tick.prototype = {
 					stroke: gridLineColor,
 					'stroke-width': gridLineWidth
 				};
+				/*= if (build.classic) { =*/
 				if (dashStyle) {
 					attribs.dashstyle = dashStyle;
 				}
+				/*= } =*/
 				if (!type) {
 					attribs.zIndex = 1;
 				}
