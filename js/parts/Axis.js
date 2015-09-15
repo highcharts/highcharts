@@ -132,6 +132,7 @@ H.Axis.prototype = {
 			//y: 0
 		},
 		type: 'linear' // linear, logarithmic or datetime
+		//visible: true // docs, sample created
 	},
 
 	/**
@@ -265,10 +266,9 @@ H.Axis.prototype = {
 
 		//axis.axisTitleMargin = undefined,// = options.title.margin,
 		axis.minPixelPadding = 0;
-		//axis.ignoreMinPadding = undefined; // can be set to true by a column or bar series
-		//axis.ignoreMaxPadding = undefined;
 
 		axis.reversed = options.reversed;
+		axis.visible = options.visible !== false;
 		axis.zoomEnabled = options.zoomEnabled !== false;
 
 		// Initial categories
@@ -462,7 +462,8 @@ H.Axis.prototype = {
 		axis.hasVisibleSeries = false;
 
 		// Reset properties in case we're redrawing (#3353)
-		axis.dataMin = axis.dataMax = axis.ignoreMinPadding = axis.ignoreMaxPadding = null;
+		axis.dataMin = axis.dataMax = axis.threshold = null;
+		axis.softThreshold = !axis.isXAxis;
 		
 		if (axis.buildStacks) {
 			axis.buildStacks();
@@ -512,13 +513,11 @@ H.Axis.prototype = {
 
 					// Adjust to threshold
 					if (defined(threshold)) {
-						if (axis.dataMin >= threshold) {
-							axis.dataMin = threshold;
-							axis.ignoreMinPadding = true;
-						} else if (axis.dataMax < threshold) {
-							axis.dataMax = threshold;
-							axis.ignoreMaxPadding = true;
-						}
+						axis.threshold = threshold;
+					}
+					// If any series has a hard threshold, it takes precedence
+					if (!seriesOptions.softThreshold || axis.isLog) {
+						axis.softThreshold = false;
 					}
 				}
 			}
@@ -928,13 +927,23 @@ H.Axis.prototype = {
 			tickIntervalOption = options.tickInterval,
 			minTickInterval,
 			tickPixelIntervalOption = options.tickPixelInterval,
-			categories = axis.categories;
+			categories = axis.categories,
+			threshold = axis.threshold,
+			softThreshold = axis.softThreshold,
+			thresholdMin,
+			thresholdMax,
+			hardMin,
+			hardMax;
 
 		if (!isDatetimeAxis && !categories && !isLinked) {
 			this.getTickAmount();
 		}
 
-		// linked axis gets the extremes from the parent axis
+		// Min or max set either by zooming/setExtremes or initial options
+		hardMin = pick(axis.userMin, options.min);
+		hardMax = pick(axis.userMax, options.max);
+
+		// Linked axis gets the extremes from the parent axis
 		if (isLinked) {
 			axis.linkedParent = chart[axis.coll][options.linkedTo];
 			linkedParentExtremes = axis.linkedParent.getExtremes();
@@ -943,9 +952,24 @@ H.Axis.prototype = {
 			if (options.type !== axis.linkedParent.options.type) {
 				error(11, 1); // Can't link axes of different type
 			}
-		} else { // initial min and max from the extreme data values
-			axis.min = pick(axis.userMin, options.min, axis.dataMin);
-			axis.max = pick(axis.userMax, options.max, axis.dataMax);
+
+		// Initial min and max from the extreme data values
+		} else {
+
+			// Adjust to hard threshold
+			if (!softThreshold && defined(threshold)) {
+				if (axis.dataMin >= threshold) {
+					thresholdMin = threshold;
+					minPadding = 0;
+				} else if (axis.dataMax <= threshold) {
+					thresholdMax = threshold;
+					maxPadding = 0;
+				}
+			}
+
+			axis.min = pick(hardMin, thresholdMin, axis.dataMin);
+			axis.max = pick(hardMax, thresholdMax, axis.dataMax);
+
 		}
 
 		if (isLog) {
@@ -961,8 +985,8 @@ H.Axis.prototype = {
 
 		// handle zoomed range
 		if (axis.range && defined(axis.max)) {
-			axis.userMin = axis.min = Math.max(axis.min, axis.minFromRange()); // #618
-			axis.userMax = axis.max;
+			axis.userMin = axis.min = hardMin = Math.max(axis.min, axis.minFromRange()); // #618
+			axis.userMax = hardMax = axis.max;
 
 			axis.range = null;  // don't use it when running setExtremes
 		}
@@ -980,10 +1004,10 @@ H.Axis.prototype = {
 		if (!categories && !axis.axisPointRange && !axis.usePercentage && !isLinked && defined(axis.min) && defined(axis.max)) {
 			length = axis.max - axis.min;
 			if (length) {
-				if (!defined(options.min) && !defined(axis.userMin) && minPadding && (axis.dataMin < 0 || !axis.ignoreMinPadding)) {
+				if (!defined(hardMin) && minPadding) {
 					axis.min -= length * minPadding;
 				}
-				if (!defined(options.max) && !defined(axis.userMax)  && maxPadding && (axis.dataMax > 0 || !axis.ignoreMaxPadding)) {
+				if (!defined(hardMax)  && maxPadding) {
 					axis.max += length * maxPadding;
 				}
 			}
@@ -996,6 +1020,21 @@ H.Axis.prototype = {
 		if (isNumber(options.ceiling)) {
 			axis.max = Math.min(axis.max, options.ceiling);
 		}
+
+		// When the threshold is soft, adjust the extreme value only if 
+		// the data extreme and the padded extreme land on either side of the threshold. For example,
+		// a series of [0, 1, 2, 3] would make the yAxis add a tick for -1 because of the
+		// default minPadding and startOnTick options. This is prevented by the softThreshold
+		// option.
+		if (softThreshold && defined(axis.dataMin)) {
+			threshold = threshold || 0;
+			if (!defined(hardMin) && axis.min < threshold && axis.dataMin >= threshold) {
+				axis.min = threshold;
+			} else if (!defined(hardMax) && axis.max > threshold && axis.dataMax <= threshold) {
+				axis.max = threshold;
+			}
+		}
+
 
 		// get tickInterval
 		if (axis.min === axis.max || axis.min === undefined || axis.max === undefined) {
@@ -1968,12 +2007,12 @@ H.Axis.prototype = {
 			// alternate grid color
 			if (alternateGridColor) {
 				each(tickPositions, function (pos, i) {
-					if (i % 2 === 0 && pos < axis.max) {
+					to = tickPositions[i + 1] !== undefined ? tickPositions[i + 1] + tickmarkOffset : axis.max - tickmarkOffset; 
+					if (i % 2 === 0 && pos < axis.max && to <= axis.max - tickmarkOffset) { // #2248
 						if (!alternateBands[pos]) {
 							alternateBands[pos] = new PlotLineOrBand(axis);
 						}
 						from = pos + tickmarkOffset; // #949
-						to = tickPositions[i + 1] !== undefined ? tickPositions[i + 1] + tickmarkOffset : axis.max;
 						alternateBands[pos].options = {
 							from: isLog ? lin2log(from) : from,
 							to: isLog ? lin2log(to) : to,
@@ -2075,13 +2114,15 @@ H.Axis.prototype = {
 	 */
 	redraw: function () {
 		
-		// render the axis
-		this.render();
+		if (this.visible) {
+			// render the axis
+			this.render();
 
-		// move plot lines and bands
-		each(this.plotLinesAndBands, function (plotLine) {
-			plotLine.render();
-		});
+			// move plot lines and bands
+			each(this.plotLinesAndBands, function (plotLine) {
+				plotLine.render();
+			});
+		}
 
 		// mark associated series as dirty and ready for redraw
 		each(this.series, function (series) {

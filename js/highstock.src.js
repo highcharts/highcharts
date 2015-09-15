@@ -1379,6 +1379,7 @@ H.defaultOptions = {
 			//pointStart: 0,
 			//pointInterval: 1,
 			//showInLegend: null, // auto: true for standalone series, false for linked series
+			softThreshold: true, // docs. Also, update the spline-plot-bands demo by removing y.min
 			states: { // states for the entire series
 				hover: {
 					//enabled: false,
@@ -1520,6 +1521,7 @@ H.defaultOptions = {
 			cursor: 'default',
 			fontSize: '12px',
 			padding: '8px',
+			pointerEvents: 'none', // #1686 http://caniuse.com/#feat=pointer-events // docs
 			whiteSpace: 'nowrap'
 		}
 		//xDateFormat: '%A, %b %e, %Y',
@@ -2986,7 +2988,7 @@ SVGRenderer.prototype = {
 	 * @param {Number} height
 	 * @param {Boolean} forExport
 	 */
-	init: function (container, width, height, style, forExport) {
+	init: function (container, width, height, style, forExport, allowHTML) {
 		var renderer = this,
 			loc = location,
 			boxWrapper,
@@ -3026,6 +3028,7 @@ SVGRenderer.prototype = {
 
 
 		renderer.defs = this.createElement('defs').add();
+		renderer.allowHTML = allowHTML;
 		renderer.forExport = forExport;
 		renderer.gradients = {}; // Object where gradient SvgElements are stored
 		renderer.cache = {}; // Cache for numerical bounding boxes
@@ -4042,7 +4045,7 @@ SVGRenderer.prototype = {
 			wrapper,
 			attr = {};
 
-		if (useHTML && !renderer.forExport) {
+		if (useHTML && (renderer.allowHTML || !renderer.forExport)) {
 			return renderer.html(str, x, y);
 		}
 
@@ -6693,6 +6696,7 @@ H.Axis.prototype = {
 			//y: 0
 		},
 		type: 'linear' // linear, logarithmic or datetime
+		//visible: true // docs, sample created
 	},
 
 	/**
@@ -6826,10 +6830,9 @@ H.Axis.prototype = {
 
 		//axis.axisTitleMargin = undefined,// = options.title.margin,
 		axis.minPixelPadding = 0;
-		//axis.ignoreMinPadding = undefined; // can be set to true by a column or bar series
-		//axis.ignoreMaxPadding = undefined;
 
 		axis.reversed = options.reversed;
+		axis.visible = options.visible !== false;
 		axis.zoomEnabled = options.zoomEnabled !== false;
 
 		// Initial categories
@@ -7023,7 +7026,8 @@ H.Axis.prototype = {
 		axis.hasVisibleSeries = false;
 
 		// Reset properties in case we're redrawing (#3353)
-		axis.dataMin = axis.dataMax = axis.ignoreMinPadding = axis.ignoreMaxPadding = null;
+		axis.dataMin = axis.dataMax = axis.threshold = null;
+		axis.softThreshold = !axis.isXAxis;
 		
 		if (axis.buildStacks) {
 			axis.buildStacks();
@@ -7073,13 +7077,11 @@ H.Axis.prototype = {
 
 					// Adjust to threshold
 					if (defined(threshold)) {
-						if (axis.dataMin >= threshold) {
-							axis.dataMin = threshold;
-							axis.ignoreMinPadding = true;
-						} else if (axis.dataMax < threshold) {
-							axis.dataMax = threshold;
-							axis.ignoreMaxPadding = true;
-						}
+						axis.threshold = threshold;
+					}
+					// If any series has a hard threshold, it takes precedence
+					if (!seriesOptions.softThreshold || axis.isLog) {
+						axis.softThreshold = false;
 					}
 				}
 			}
@@ -7489,13 +7491,23 @@ H.Axis.prototype = {
 			tickIntervalOption = options.tickInterval,
 			minTickInterval,
 			tickPixelIntervalOption = options.tickPixelInterval,
-			categories = axis.categories;
+			categories = axis.categories,
+			threshold = axis.threshold,
+			softThreshold = axis.softThreshold,
+			thresholdMin,
+			thresholdMax,
+			hardMin,
+			hardMax;
 
 		if (!isDatetimeAxis && !categories && !isLinked) {
 			this.getTickAmount();
 		}
 
-		// linked axis gets the extremes from the parent axis
+		// Min or max set either by zooming/setExtremes or initial options
+		hardMin = pick(axis.userMin, options.min);
+		hardMax = pick(axis.userMax, options.max);
+
+		// Linked axis gets the extremes from the parent axis
 		if (isLinked) {
 			axis.linkedParent = chart[axis.coll][options.linkedTo];
 			linkedParentExtremes = axis.linkedParent.getExtremes();
@@ -7504,9 +7516,24 @@ H.Axis.prototype = {
 			if (options.type !== axis.linkedParent.options.type) {
 				error(11, 1); // Can't link axes of different type
 			}
-		} else { // initial min and max from the extreme data values
-			axis.min = pick(axis.userMin, options.min, axis.dataMin);
-			axis.max = pick(axis.userMax, options.max, axis.dataMax);
+
+		// Initial min and max from the extreme data values
+		} else {
+
+			// Adjust to hard threshold
+			if (!softThreshold && defined(threshold)) {
+				if (axis.dataMin >= threshold) {
+					thresholdMin = threshold;
+					minPadding = 0;
+				} else if (axis.dataMax <= threshold) {
+					thresholdMax = threshold;
+					maxPadding = 0;
+				}
+			}
+
+			axis.min = pick(hardMin, thresholdMin, axis.dataMin);
+			axis.max = pick(hardMax, thresholdMax, axis.dataMax);
+
 		}
 
 		if (isLog) {
@@ -7522,8 +7549,8 @@ H.Axis.prototype = {
 
 		// handle zoomed range
 		if (axis.range && defined(axis.max)) {
-			axis.userMin = axis.min = Math.max(axis.min, axis.minFromRange()); // #618
-			axis.userMax = axis.max;
+			axis.userMin = axis.min = hardMin = Math.max(axis.min, axis.minFromRange()); // #618
+			axis.userMax = hardMax = axis.max;
 
 			axis.range = null;  // don't use it when running setExtremes
 		}
@@ -7541,10 +7568,10 @@ H.Axis.prototype = {
 		if (!categories && !axis.axisPointRange && !axis.usePercentage && !isLinked && defined(axis.min) && defined(axis.max)) {
 			length = axis.max - axis.min;
 			if (length) {
-				if (!defined(options.min) && !defined(axis.userMin) && minPadding && (axis.dataMin < 0 || !axis.ignoreMinPadding)) {
+				if (!defined(hardMin) && minPadding) {
 					axis.min -= length * minPadding;
 				}
-				if (!defined(options.max) && !defined(axis.userMax)  && maxPadding && (axis.dataMax > 0 || !axis.ignoreMaxPadding)) {
+				if (!defined(hardMax)  && maxPadding) {
 					axis.max += length * maxPadding;
 				}
 			}
@@ -7557,6 +7584,21 @@ H.Axis.prototype = {
 		if (isNumber(options.ceiling)) {
 			axis.max = Math.min(axis.max, options.ceiling);
 		}
+
+		// When the threshold is soft, adjust the extreme value only if 
+		// the data extreme and the padded extreme land on either side of the threshold. For example,
+		// a series of [0, 1, 2, 3] would make the yAxis add a tick for -1 because of the
+		// default minPadding and startOnTick options. This is prevented by the softThreshold
+		// option.
+		if (softThreshold && defined(axis.dataMin)) {
+			threshold = threshold || 0;
+			if (!defined(hardMin) && axis.min < threshold && axis.dataMin >= threshold) {
+				axis.min = threshold;
+			} else if (!defined(hardMax) && axis.max > threshold && axis.dataMax <= threshold) {
+				axis.max = threshold;
+			}
+		}
+
 
 		// get tickInterval
 		if (axis.min === axis.max || axis.min === undefined || axis.max === undefined) {
@@ -8529,12 +8571,12 @@ H.Axis.prototype = {
 			// alternate grid color
 			if (alternateGridColor) {
 				each(tickPositions, function (pos, i) {
-					if (i % 2 === 0 && pos < axis.max) {
+					to = tickPositions[i + 1] !== undefined ? tickPositions[i + 1] + tickmarkOffset : axis.max - tickmarkOffset; 
+					if (i % 2 === 0 && pos < axis.max && to <= axis.max - tickmarkOffset) { // #2248
 						if (!alternateBands[pos]) {
 							alternateBands[pos] = new PlotLineOrBand(axis);
 						}
 						from = pos + tickmarkOffset; // #949
-						to = tickPositions[i + 1] !== undefined ? tickPositions[i + 1] + tickmarkOffset : axis.max;
 						alternateBands[pos].options = {
 							from: isLog ? lin2log(from) : from,
 							to: isLog ? lin2log(to) : to,
@@ -8636,13 +8678,15 @@ H.Axis.prototype = {
 	 */
 	redraw: function () {
 		
-		// render the axis
-		this.render();
+		if (this.visible) {
+			// render the axis
+			this.render();
 
-		// move plot lines and bands
-		each(this.plotLinesAndBands, function (plotLine) {
-			plotLine.render();
-		});
+			// move plot lines and bands
+			each(this.plotLinesAndBands, function (plotLine) {
+				plotLine.render();
+			});
+		}
 
 		// mark associated series as dirty and ready for redraw
 		each(this.series, function (series) {
@@ -9787,6 +9831,7 @@ H.Pointer.prototype = {
 			distance = Number.MAX_VALUE, // #4511
 			anchor,
 			noSharedTooltip,
+			stickToHoverSeries,
 			directTouch,
 			kdpoints = [],
 			kdpoint,
@@ -9802,9 +9847,11 @@ H.Pointer.prototype = {
 			}
 		}
 
-		// If it has a hoverPoint and that series requires direct touch (like columns), 
-		// use the hoverPoint (#3899). Otherwise, search the k-d tree.
-		if (!shared && hoverSeries && hoverSeries.directTouch && hoverPoint) {
+		// If it has a hoverPoint and that series requires direct touch (like columns, #3899), or we're on 
+		// a noSharedTooltip series among shared tooltip series (#4546), use the hoverPoint . Otherwise, 
+		// search the k-d tree.
+		stickToHoverSeries = hoverSeries && (shared ? hoverSeries.noSharedTooltip : hoverSeries.directTouch);
+		if (stickToHoverSeries && hoverPoint) {
 			kdpoint = hoverPoint;
 
 		// Handle shared tooltip or cases where a series is not yet hovered
@@ -11543,6 +11590,7 @@ if (/Trident\/7\.0/.test(navigator.userAgent) || isFirefox) {
 		each = H.each,
 		error = H.error,
 		extend = H.extend,
+		fireEvent = H.fireEvent,
 		isString = H.isString,
 		Legend = H.Legend, // @todo add as requirement
 		merge = H.merge,
@@ -11554,7 +11602,6 @@ if (/Trident\/7\.0/.test(navigator.userAgent) || isFirefox) {
 		splat = H.splat,
 		svg = H.svg,
 		Renderer = H.Renderer,
-		SVGRenderer = H.SVGRenderer,
 		useCanVG = H.useCanVG;
 /**
  * The chart class
@@ -12121,12 +12168,14 @@ Chart.prototype = {
 	getContainer: function () {
 		var chart = this,
 			container,
-			optionsChart = chart.options.chart,
+			options = chart.options,
+			optionsChart = options.chart,
 			chartWidth,
 			chartHeight,
 			renderTo,
 			indexAttrName = 'data-highcharts-chart',
 			oldChartIndex,
+			Ren,
 			containerId;
 
 		chart.renderTo = renderTo = optionsChart.renderTo;
@@ -12193,10 +12242,15 @@ Chart.prototype = {
 		chart._cursor = container.style.cursor;
 
 		// Initialize the renderer
-		chart.renderer =
-			optionsChart.forExport ? // force SVG, used for SVG export
-				new SVGRenderer(container, chartWidth, chartHeight, optionsChart.style, true) :
-				new Renderer(container, chartWidth, chartHeight, optionsChart.style);
+		Ren = Highcharts[optionsChart.renderer] || Renderer;
+		chart.renderer = new Ren(
+			container, 
+			chartWidth, 
+			chartHeight, 
+			optionsChart.style, 
+			optionsChart.forExport, 
+			options.exporting && options.exporting.allowHTML
+		);
 
 		if (useCanVG) {
 			// If we need canvg library, extend and configure the renderer
@@ -12250,7 +12304,9 @@ Chart.prototype = {
 		// pre-render axes to get labels offset width
 		if (chart.hasCartesianSeries) {
 			each(chart.axes, function (axis) {
-				axis.getOffset();
+				if (axis.visible) {
+					axis.getOffset();
+				}
 			});
 		}
 
@@ -12325,7 +12381,6 @@ Chart.prototype = {
 		var chart = this,
 			chartWidth,
 			chartHeight,
-			fireEvent = HighchartsAdapter.fireEvent,
 			fireEndResize,
 			renderer = chart.renderer,
 			globalAnimation = renderer.globalAnimation;
@@ -12754,7 +12809,9 @@ Chart.prototype = {
 		// Axes
 		if (chart.hasCartesianSeries) {
 			each(axes, function (axis) {
-				axis.render();
+				if (axis.visible) {
+					axis.render();	
+				}
 			});
 		}
 
@@ -14141,11 +14198,12 @@ H.Series.prototype = {
 	 */
 	setClip: function (animation) {
 		var chart = this.chart,
+			options = this.options,
 			renderer = chart.renderer,
 			inverted = chart.inverted,
 			seriesClipBox = this.clipBox,
 			clipBox = seriesClipBox || chart.clipBox,
-			sharedClipKey = this.sharedClipKey || ['_sharedClip', animation && animation.duration, animation && animation.easing, clipBox.height].join(','),
+			sharedClipKey = this.sharedClipKey || ['_sharedClip', animation && animation.duration, animation && animation.easing, clipBox.height, options.xAxis, options.yAxis].join(','), // #4526
 			clipRect = chart[sharedClipKey],
 			markerClipRect = chart[sharedClipKey + 'm'];
 
@@ -14170,7 +14228,7 @@ H.Series.prototype = {
 			clipRect.count += 1;
 		}
 
-		if (this.options.clip !== false) {
+		if (options.clip !== false) {
 			this.group.clip(animation || seriesClipBox ? clipRect : chart.clipRect);
 			this.markerGroup.clip(markerClipRect);
 			this.sharedClipKey = sharedClipKey;
@@ -14436,9 +14494,8 @@ H.Series.prototype = {
 						threshold = zones[++j];
 					}
 					
-					if (threshold.color) {
-						point.color = point.fillColor = threshold.color;
-					}
+					point.color = point.fillColor = pick(threshold.color, series.color); // #3636, #4267, #4430 - inherit color from series, when color is undefined
+					
 				}
 
 				hasPointSpecificOptions = seriesOptions.colorByPoint || point.color; // #868
@@ -14461,9 +14518,9 @@ H.Series.prototype = {
 					pointStateOptionsHover = stateOptions.hover = stateOptions.hover || {};
 
 					// Handle colors for column and pies
-					if (!seriesOptions.marker) { // column, bar, point
+					if (!seriesOptions.marker || (point.negative && !pointStateOptionsHover.fillColor && !stateOptionsHover.fillColor)) { // column, bar, point or negative threshold for series with markers (#3636)
 						// If no hover color is given, brighten the normal color. #1619, #2579
-						pointStateOptionsHover.color = pointStateOptionsHover.color || (!point.options.color && stateOptionsHover[(point.negative && seriesNegativeColor ? 'negativeColor' : 'color')]) ||
+						pointStateOptionsHover[series.pointAttrToOptions.fill] = pointStateOptionsHover.color || (!point.options.color && stateOptionsHover[(point.negative && seriesNegativeColor ? 'negativeColor' : 'color')]) ||
 							Color(point.color)
 								.brighten(pointStateOptionsHover.brightness || stateOptionsHover.brightness)
 								.get();
@@ -16141,6 +16198,7 @@ seriesTypes.line = extendClass(Series);
  * Set the default options for area
  */
 defaultPlotOptions.area = merge(defaultSeriesOptions, {
+	softThreshold: false, // docs
 	threshold: 0
 	// trackByArea: false,
 	// lineColor: null, // overrides color, but lets fillColor be unaltered
@@ -16555,7 +16613,8 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 		verticalAlign: null, // auto
 		y: null
 	},
-	startFromThreshold: true, // docs: http://jsfiddle.net/highcharts/hz8fopan/14/
+	softThreshold: false, // docs
+	startFromThreshold: true, // docs (but false doesn't work well): http://jsfiddle.net/highcharts/hz8fopan/14/
 	stickyTracking: false,
 	tooltip: {
 		distance: 6
@@ -20134,6 +20193,7 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 			point,
 			i = points.length,
 			connectNulls = series.options.connectNulls,
+			rebuildStacks = false,
 			nullGap;
 
 
@@ -20143,11 +20203,18 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 
 				nullGap = point.y === null && connectNulls === false; // respect nulls inside the break (#4275)
 				if (!nullGap && (xAxis.isInAnyBreak(point.x, true) || yAxis.isInAnyBreak(point.y, true))) {
+					rebuildStacks = true;
 					points.splice(i, 1);
+					series.updateParallelArrays(point, 'splice', i, 1);
 					if (this.data[i]) {
 						this.data[i].destroyElements(); // removes the graphics for this point if they exist
 					}
 				}
+			}
+			// Rebuild stacks
+			if (rebuildStacks) {
+				series.yAxis.cleanStacks();
+				series.yAxis.buildStacks();
 			}
 		}
 

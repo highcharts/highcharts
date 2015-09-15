@@ -266,7 +266,7 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 		Showing only failed samples. Click "Fails only" again to update. Click "Reload" to release filter.
 	</div>
 	<?php
-	$products = array('highcharts', 'maps', 'stock', 'issues');
+	$products = array('unit-tests', 'highcharts', 'maps', 'stock', 'issues');
 	$samplesDir = dirname(__FILE__). '/../../samples/';
 	
 

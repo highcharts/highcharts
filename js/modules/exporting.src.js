@@ -280,7 +280,8 @@ extend(Chart.prototype, {
 		extend(options.chart, {
 			animation: false,
 			renderTo: sandbox,
-			forExport: !allowHTML,
+			forExport: true,
+			renderer: 'SVGRenderer',
 			width: sourceWidth,
 			height: sourceHeight
 		});
