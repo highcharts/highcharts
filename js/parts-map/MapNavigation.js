@@ -1,7 +1,11 @@
 (function (H) {
-	var Chart = H.Chart,
+	var addEvent = H.addEvent,
+		Chart = H.Chart,
+		each = H.each,
 		extend = H.extend,
-		pick = H.pick;
+		merge = H.merge,
+		pick = H.pick,
+		wrap = H.wrap;
 
 // Add events to the Chart object itself
 extend(Chart.prototype, {
@@ -33,9 +37,9 @@ extend(Chart.prototype, {
 		if (pick(options.enableButtons, options.enabled) && !chart.renderer.forExport) {
 			for (n in buttons) {
 				if (buttons.hasOwnProperty(n)) {
-					buttonOptions = H.merge(options.buttonOptions, buttons[n]);
+					buttonOptions = merge(options.buttonOptions, buttons[n]);
 					attr = buttonOptions.theme;
-					attr.style = H.merge(buttonOptions.theme.style, buttonOptions.style); // #3203
+					attr.style = merge(buttonOptions.theme.style, buttonOptions.style); // #3203
 					states = attr.states;
 					button = chart.renderer.button(
 							buttonOptions.text, 
@@ -57,7 +61,7 @@ extend(Chart.prototype, {
 						.add();
 					button.handler = buttonOptions.onclick;
 					button.align(extend(buttonOptions, { width: button.width, height: 2 * button.height }), null, buttonOptions.alignTo);
-					H.addEvent(button.element, 'dblclick', stopEvent); // Stop double click event (#4444)
+					addEvent(button.element, 'dblclick', stopEvent); // Stop double click event (#4444)
 				}
 			}
 		}
@@ -69,7 +73,7 @@ extend(Chart.prototype, {
 	 * in Highcharts, perhaps it should be elevated to a common utility function.
 	 */
 	fitToBox: function (inner, outer) {
-		H.each([['x', 'width'], ['y', 'height']], function (dim) {
+		each([['x', 'width'], ['y', 'height']], function (dim) {
 			var pos = dim[0],
 				size = dim[1];
 
@@ -170,9 +174,8 @@ extend(Chart.prototype, {
 /**
  * Extend the Chart.render method to add zooming and panning
  */
-H.wrap(Chart.prototype, 'render', function (proceed) {
+wrap(Chart.prototype, 'render', function (proceed) {
 	var chart = this,
-		addEvent = H.addEvent,
 		mapNavigation = chart.options.mapNavigation;
 
 	// Render the plus and minus buttons. Doing this before the shapes makes getBBox much quicker, at least in Chrome.

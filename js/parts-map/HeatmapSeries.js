@@ -1,12 +1,20 @@
 (function (H) {
-	var colorSeriesMixin = H.colorSeriesMixin,
+	var colorPointMixin = H.colorPointMixin,
+		colorSeriesMixin = H.colorSeriesMixin,
+		defaultOptions = H.defaultOptions,
 		each = H.each,
+		extendClass = H.extendClass,
 		LegendSymbolMixin = H.LegendSymbolMixin,
-		Series = H.Series;
+		merge = H.merge,
+		noop = H.noop,
+		pick = H.pick,
+		Point = H.Point,
+		Series = H.Series,
+		seriesTypes = H.seriesTypes;
 /**
  * Extend the default options with map options
  */
-H.defaultOptions.plotOptions.heatmap = H.merge(H.defaultOptions.plotOptions.scatter, {
+defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 	animation: false,
 	borderWidth: 0,
 	nullColor: '#F8F8F8',
@@ -37,11 +45,11 @@ H.defaultOptions.plotOptions.heatmap = H.merge(H.defaultOptions.plotOptions.scat
 });
 
 // The Heatmap series type
-H.seriesTypes.heatmap = H.extendClass(H.seriesTypes.scatter, H.merge(colorSeriesMixin, {
+seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
-	pointClass: H.extendClass(H.Point, H.colorPointMixin),
+	pointClass: extendClass(Point, colorPointMixin),
 	supportsDrilldown: true,
 	getExtremesFromAll: true,
 	directTouch: true,
@@ -51,10 +59,10 @@ H.seriesTypes.heatmap = H.extendClass(H.seriesTypes.scatter, H.merge(colorSeries
 	 */
 	init: function () {
 		var options;
-		H.seriesTypes.scatter.prototype.init.apply(this, arguments);
+		seriesTypes.scatter.prototype.init.apply(this, arguments);
 
 		options = this.options;
-		this.pointRange = options.pointRange = H.pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
+		this.pointRange = options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
 		this.yAxis.axisPointRange = options.rowsize || 1; // general point range
 	},
 	translate: function () {
@@ -95,9 +103,9 @@ H.seriesTypes.heatmap = H.extendClass(H.seriesTypes.scatter, H.merge(colorSeries
 			});
 		}
 	},
-	drawPoints: H.seriesTypes.column.prototype.drawPoints,
-	animate: H.noop,
-	getBox: H.noop,
+	drawPoints: seriesTypes.column.prototype.drawPoints,
+	animate: noop,
+	getBox: noop,
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
 	getExtremes: function () {

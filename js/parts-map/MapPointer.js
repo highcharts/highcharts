@@ -1,7 +1,11 @@
 (function (H) {
-	var Pointer = H.Pointer;
+	var extend = H.extend,
+		pick = H.pick,
+		Pointer = H.Pointer,
+		wrap = H.wrap;
+		
 // Extend the Pointer
-H.extend(Pointer.prototype, {
+extend(Pointer.prototype, {
 
 	/**
 	 * The event handler for the doubleclick event
@@ -51,18 +55,18 @@ H.extend(Pointer.prototype, {
 });
 
 // Implement the pinchType option
-H.wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
+wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 
 	proceed.call(this, chart, options);
 
 	// Pinch status
-	if (H.pick(options.mapNavigation.enableTouchZoom, options.mapNavigation.enabled)) {
+	if (pick(options.mapNavigation.enableTouchZoom, options.mapNavigation.enabled)) {
 		this.pinchX = this.pinchHor = this.pinchY = this.pinchVert = this.hasZoom = true;
 	}
 });
 
 // Extend the pinchTranslate method to preserve fixed ratio when zooming
-H.wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
+wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
 	var xBigger;
 	proceed.call(this, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 

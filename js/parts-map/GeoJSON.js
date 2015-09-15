@@ -1,6 +1,10 @@
 (function (H) {
-	var Chart = H.Chart,
-		error = H.error;
+	var defaultOptions = H.defaultOptions,
+		Chart = H.Chart,
+		each = H.each,
+		extend = H.extend,
+		error = H.error,
+		wrap = H.wrap;
 /** 
  * Test for point in polygon. Polygon defined as array of [x,y] points.
  */
@@ -116,7 +120,6 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
 H.geojson = function (geojson, hType, series) {
 	var mapData = [],
 		path = [],
-		each = H.each,
 		polygonToPath = function (polygon) {
 			var i = 0,
 				len = polygon.length;
@@ -177,7 +180,7 @@ H.geojson = function (geojson, hType, series) {
 			}
 		}
 		if (point) {
-			mapData.push(H.extend(point, {
+			mapData.push(extend(point, {
 				name: properties.name || properties.NAME, 
 				properties: properties
 			}));
@@ -198,9 +201,9 @@ H.geojson = function (geojson, hType, series) {
 /**
  * Override showCredits to include map source by default
  */
-H.wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
+wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
 
-	if (H.defaultOptions.credits.text === this.options.credits.text && this.mapCredits) { // default text and mapCredits is set
+	if (defaultOptions.credits.text === this.options.credits.text && this.mapCredits) { // default text and mapCredits is set
 		credits.text = this.mapCredits;
 		credits.href = null;
 	}

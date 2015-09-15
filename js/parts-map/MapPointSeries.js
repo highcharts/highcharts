@@ -1,8 +1,13 @@
 (function (H) {
-	var Point = H.Point;
+	var defaultPlotOptions = H.defaultPlotOptions,
+		extend = H.extend,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		Point = H.Point,
+		seriesTypes = H.seriesTypes;
 
 // The mappoint series type
-H.defaultPlotOptions.mappoint = H.merge(H.defaultPlotOptions.scatter, {
+defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 	dataLabels: {
 		enabled: true,
 		formatter: function () { // #2945
@@ -16,14 +21,14 @@ H.defaultPlotOptions.mappoint = H.merge(H.defaultPlotOptions.scatter, {
 		}
 	}
 });
-H.seriesTypes.mappoint = H.extendClass(H.seriesTypes.scatter, {
+seriesTypes.mappoint = extendClass(seriesTypes.scatter, {
 	type: 'mappoint',
 	forceDL: true,
-	pointClass: H.extendClass(Point, {
+	pointClass: extendClass(Point, {
 		applyOptions: function (options, x) {
 			var point = Point.prototype.applyOptions.call(this, options, x);
 			if (options.lat !== undefined && options.lon !== undefined) {
-				point = H.extend(point, this.series.chart.fromLatLonToPoint(point));
+				point = extend(point, this.series.chart.fromLatLonToPoint(point));
 			}
 			return point;
 		}

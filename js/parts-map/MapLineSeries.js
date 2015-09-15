@@ -1,11 +1,15 @@
 (function (H) {
+	var defaultPlotOptions = H.defaultPlotOptions,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		seriesTypes = H.seriesTypes;
 
 // The mapline series type
-H.defaultPlotOptions.mapline = H.merge(H.defaultPlotOptions.map, {
+defaultPlotOptions.mapline = merge(defaultPlotOptions.map, {
 	lineWidth: 1,
 	fillColor: 'none'
 });
-H.seriesTypes.mapline = H.extendClass(H.seriesTypes.map, {
+seriesTypes.mapline = extendClass(seriesTypes.map, {
 	type: 'mapline',
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'color',
@@ -13,7 +17,7 @@ H.seriesTypes.mapline = H.extendClass(H.seriesTypes.map, {
 		fill: 'fillColor',
 		dashstyle: 'dashStyle'
 	},
-	drawLegendSymbol: H.seriesTypes.line.prototype.drawLegendSymbol
+	drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
 });
 	return H;
 }(Highcharts));

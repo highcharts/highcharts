@@ -1,13 +1,20 @@
 (function (H) {
 	var Color = H.Color,
 		ColorAxis = H.ColorAxis,
+		colorPointMixin = H.colorPointMixin,
 		colorSeriesMixin = H.colorSeriesMixin,
+		defaultPlotOptions = H.defaultPlotOptions,
 		each = H.each,
+		extend = H.extend,
+		extendClass = H.extendClass,
 		LegendSymbolMixin = H.LegendSymbolMixin,
+		merge = H.merge,
+		noop = H.noop,
 		pick = H.pick,
 		Point = H.Point,
 		Series = H.Series,
-		seriesTypes = H.seriesTypes;
+		seriesTypes = H.seriesTypes,
+		splat = H.splat;
 
 // The vector-effect attribute is not supported in IE <= 11 (at least), so we need 
 // diffent logic (#3218)
@@ -16,7 +23,7 @@ var supportsVectorEffect = document.documentElement.style.vectorEffect !== undef
 /**
  * Extend the default options with map options
  */
-H.defaultPlotOptions.map = H.merge(H.defaultPlotOptions.scatter, {
+defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 	allAreas: true,
 
 	animation: false, // makes the complex shapes slow
@@ -54,7 +61,7 @@ H.defaultPlotOptions.map = H.merge(H.defaultPlotOptions.scatter, {
 /**
  * The MapAreaPoint object
  */
-var MapAreaPoint = H.MapAreaPoint = H.extendClass(Point, H.extend({
+var MapAreaPoint = H.MapAreaPoint = extendClass(Point, extend({
 	/**
 	 * Extend the Point object to split paths
 	 */
@@ -73,7 +80,7 @@ var MapAreaPoint = H.MapAreaPoint = H.extendClass(Point, H.extend({
 					point.x = mapPoint._midX;
 					point.y = mapPoint._midY;
 				}
-				H.extend(point, mapPoint); // copy over properties
+				extend(point, mapPoint); // copy over properties
 			} else {
 				point.value = point.value || null;
 			}
@@ -153,20 +160,20 @@ var MapAreaPoint = H.MapAreaPoint = H.extendClass(Point, H.extend({
 		);
 		series.chart.redraw();
 	}
-}, H.colorPointMixin)
+}, colorPointMixin)
 );
 
 /**
  * Add the series type
  */
-seriesTypes.map = H.extendClass(seriesTypes.scatter, H.merge(colorSeriesMixin, {
+seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	type: 'map',
 	pointClass: MapAreaPoint,
 	supportsDrilldown: true,
 	getExtremesFromAll: true,
 	useMapGeometry: true, // get axis extremes from paths, not values
 	forceDL: true,
-	searchPoint: H.noop,
+	searchPoint: noop,
 	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	preserveAspectRatio: true, // X axis and Y axis must have same translation slope
 	/**
@@ -328,7 +335,7 @@ seriesTypes.map = H.extendClass(seriesTypes.scatter, H.merge(colorSeriesMixin, {
 		if (joinByNull) {
 			joinBy = '_i';
 		}
-		joinBy = this.joinBy = H.splat(joinBy);
+		joinBy = this.joinBy = splat(joinBy);
 		if (!joinBy[1]) {
 			joinBy[1] = joinBy[0];
 		}
@@ -395,7 +402,7 @@ seriesTypes.map = H.extendClass(seriesTypes.scatter, H.merge(colorSeriesMixin, {
 
 				each(mapData, function (mapPoint) {
 					if (!joinBy[0] || dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1) {
-						data.push(H.merge(mapPoint, { value: null }));
+						data.push(merge(mapPoint, { value: null }));
 					}
 				});
 			}
@@ -407,13 +414,13 @@ seriesTypes.map = H.extendClass(seriesTypes.scatter, H.merge(colorSeriesMixin, {
 	/**
 	 * No graph for the map series
 	 */
-	drawGraph: H.noop,
+	drawGraph: noop,
 	
 	/**
 	 * We need the points' bounding boxes in order to draw the data labels, so 
 	 * we skip it now and call it from drawPoints instead.
 	 */
-	drawDataLabels: H.noop,
+	drawDataLabels: noop,
 
 	/**
 	 * Allow a quick redraw by just translating the area group. Used for zooming and panning
@@ -527,7 +534,7 @@ seriesTypes.map = H.extendClass(seriesTypes.scatter, H.merge(colorSeriesMixin, {
 					}
 
 					if (!supportsVectorEffect) {
-						point.graphic['stroke-widthSetter'] = H.noop;
+						point.graphic['stroke-widthSetter'] = noop;
 					}
 				}
 			});

@@ -7,7 +7,10 @@
 		extend = H.extend,
 		Legend = H.Legend,
 		LegendSymbolMixin = H.LegendSymbolMixin,
-		pick = H.pick;
+		noop = H.noop,
+		merge = H.merge,
+		pick = H.pick,
+		wrap = H.wrap;
 
 /**
  * The ColorAxis object for inclusion in gradient legends
@@ -46,7 +49,7 @@ extend(ColorAxis.prototype, {
 			options;
 
 		// Build the options
-		options = H.merge(this.defaultColorAxisOptions, {
+		options = merge(this.defaultColorAxisOptions, {
 			side: horiz ? 2 : 1,
 			reversed: !horiz
 		}, userOptions, {
@@ -115,7 +118,7 @@ extend(ColorAxis.prototype, {
 		each(userOptions.dataClasses, function (dataClass, i) {
 			var colors;
 
-			dataClass = H.merge(dataClass);
+			dataClass = merge(dataClass);
 			dataClasses.push(dataClass);
 			if (!dataClass.color) {
 				if (options.dataClassColor === 'category') {
@@ -310,9 +313,9 @@ extend(ColorAxis.prototype, {
 	/**
 	 * Fool the legend
 	 */
-	setState: H.noop,
+	setState: noop,
 	visible: true,
-	setVisible: H.noop,
+	setVisible: noop,
 	getSeriesExtremes: function () {
 		var series;
 		if (this.series.length) {
@@ -381,7 +384,7 @@ extend(ColorAxis.prototype, {
 
 		// Keep the options structure updated for export. Unlike xAxis and yAxis, the colorAxis is 
 		// not an array. (#3207)
-		chart.options[this.coll] = H.merge(this.userOptions, newOptions);
+		chart.options[this.coll] = merge(this.userOptions, newOptions);
 
 		Axis.prototype.update.call(this, newOptions, redraw);
 		if (this.legendItem) {
@@ -431,7 +434,7 @@ extend(ColorAxis.prototype, {
 					options: {},
 					drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 					visible: true,
-					setState: H.noop,
+					setState: noop,
 					isDataClass: true,
 					setVisible: function () {
 						vis = this.visible = !vis;
@@ -465,7 +468,7 @@ each(['fill', 'stroke'], function (prop) {
 /**
  * Extend the chart getAxes method to also get the color axis
  */
-H.wrap(Chart.prototype, 'getAxes', function (proceed) {
+wrap(Chart.prototype, 'getAxes', function (proceed) {
 
 	var options = this.options,
 		colorAxisOptions = options.colorAxis;
@@ -483,7 +486,7 @@ H.wrap(Chart.prototype, 'getAxes', function (proceed) {
  * Wrap the legend getAllItems method to add the color axis. This also removes the 
  * axis' own series to prevent them from showing up individually.
  */
-H.wrap(Legend.prototype, 'getAllItems', function (proceed) {
+wrap(Legend.prototype, 'getAllItems', function (proceed) {
 	var allItems = [],
 		colorAxis = this.chart.colorAxis[0];
 

@@ -16,7 +16,10 @@
 		extend = H.extend,
 		Legend = H.Legend,
 		LegendSymbolMixin = H.LegendSymbolMixin,
-		pick = H.pick;
+		noop = H.noop,
+		merge = H.merge,
+		pick = H.pick,
+		wrap = H.wrap;
 
 /**
  * The ColorAxis object for inclusion in gradient legends
@@ -55,7 +58,7 @@ extend(ColorAxis.prototype, {
 			options;
 
 		// Build the options
-		options = H.merge(this.defaultColorAxisOptions, {
+		options = merge(this.defaultColorAxisOptions, {
 			side: horiz ? 2 : 1,
 			reversed: !horiz
 		}, userOptions, {
@@ -124,7 +127,7 @@ extend(ColorAxis.prototype, {
 		each(userOptions.dataClasses, function (dataClass, i) {
 			var colors;
 
-			dataClass = H.merge(dataClass);
+			dataClass = merge(dataClass);
 			dataClasses.push(dataClass);
 			if (!dataClass.color) {
 				if (options.dataClassColor === 'category') {
@@ -319,9 +322,9 @@ extend(ColorAxis.prototype, {
 	/**
 	 * Fool the legend
 	 */
-	setState: H.noop,
+	setState: noop,
 	visible: true,
-	setVisible: H.noop,
+	setVisible: noop,
 	getSeriesExtremes: function () {
 		var series;
 		if (this.series.length) {
@@ -390,7 +393,7 @@ extend(ColorAxis.prototype, {
 
 		// Keep the options structure updated for export. Unlike xAxis and yAxis, the colorAxis is 
 		// not an array. (#3207)
-		chart.options[this.coll] = H.merge(this.userOptions, newOptions);
+		chart.options[this.coll] = merge(this.userOptions, newOptions);
 
 		Axis.prototype.update.call(this, newOptions, redraw);
 		if (this.legendItem) {
@@ -440,7 +443,7 @@ extend(ColorAxis.prototype, {
 					options: {},
 					drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 					visible: true,
-					setState: H.noop,
+					setState: noop,
 					isDataClass: true,
 					setVisible: function () {
 						vis = this.visible = !vis;
@@ -474,7 +477,7 @@ each(['fill', 'stroke'], function (prop) {
 /**
  * Extend the chart getAxes method to also get the color axis
  */
-H.wrap(Chart.prototype, 'getAxes', function (proceed) {
+wrap(Chart.prototype, 'getAxes', function (proceed) {
 
 	var options = this.options,
 		colorAxisOptions = options.colorAxis;
@@ -492,7 +495,7 @@ H.wrap(Chart.prototype, 'getAxes', function (proceed) {
  * Wrap the legend getAllItems method to add the color axis. This also removes the 
  * axis' own series to prevent them from showing up individually.
  */
-H.wrap(Legend.prototype, 'getAllItems', function (proceed) {
+wrap(Legend.prototype, 'getAllItems', function (proceed) {
 	var allItems = [],
 		colorAxis = this.chart.colorAxis[0];
 
@@ -520,7 +523,10 @@ H.wrap(Legend.prototype, 'getAllItems', function (proceed) {
 }(Highcharts));
 (function (H) {
 	var colorPointMixin,
-		colorSeriesMixin;	
+		colorSeriesMixin,
+
+		each = H.each,
+		noop = H.noop;	
 
 /**
  * Mixin for maps and heatmaps
@@ -534,7 +540,7 @@ colorPointMixin = H.colorPointMixin = {
 			method = vis ? 'show' : 'hide';
 
 		// Show and hide associated elements
-		H.each(['graphic', 'dataLabel'], function (key) {
+		each(['graphic', 'dataLabel'], function (key) {
 			if (point[key]) {
 				point[key][method]();
 			}
@@ -554,7 +560,7 @@ colorSeriesMixin = H.colorSeriesMixin = {
 	axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
 	optionalAxis: 'colorAxis',
 	trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-	getSymbol: H.noop,
+	getSymbol: noop,
 	parallelArrays: ['x', 'y', 'value'],
 	colorKey: 'value',
 	
@@ -567,7 +573,7 @@ colorSeriesMixin = H.colorSeriesMixin = {
 			colorAxis = this.colorAxis,
 			colorKey = this.colorKey;
 
-		H.each(this.data, function (point) {
+		each(this.data, function (point) {
 			var value = point[colorKey],
 				color;
 
@@ -583,14 +589,22 @@ colorSeriesMixin = H.colorSeriesMixin = {
 	return H;
 }(Highcharts));
 (function (H) {
-	var colorSeriesMixin = H.colorSeriesMixin,
+	var colorPointMixin = H.colorPointMixin,
+		colorSeriesMixin = H.colorSeriesMixin,
+		defaultOptions = H.defaultOptions,
 		each = H.each,
+		extendClass = H.extendClass,
 		LegendSymbolMixin = H.LegendSymbolMixin,
-		Series = H.Series;
+		merge = H.merge,
+		noop = H.noop,
+		pick = H.pick,
+		Point = H.Point,
+		Series = H.Series,
+		seriesTypes = H.seriesTypes;
 /**
  * Extend the default options with map options
  */
-H.defaultOptions.plotOptions.heatmap = H.merge(H.defaultOptions.plotOptions.scatter, {
+defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 	animation: false,
 	borderWidth: 0,
 	nullColor: '#F8F8F8',
@@ -621,11 +635,11 @@ H.defaultOptions.plotOptions.heatmap = H.merge(H.defaultOptions.plotOptions.scat
 });
 
 // The Heatmap series type
-H.seriesTypes.heatmap = H.extendClass(H.seriesTypes.scatter, H.merge(colorSeriesMixin, {
+seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
-	pointClass: H.extendClass(H.Point, H.colorPointMixin),
+	pointClass: extendClass(Point, colorPointMixin),
 	supportsDrilldown: true,
 	getExtremesFromAll: true,
 	directTouch: true,
@@ -635,10 +649,10 @@ H.seriesTypes.heatmap = H.extendClass(H.seriesTypes.scatter, H.merge(colorSeries
 	 */
 	init: function () {
 		var options;
-		H.seriesTypes.scatter.prototype.init.apply(this, arguments);
+		seriesTypes.scatter.prototype.init.apply(this, arguments);
 
 		options = this.options;
-		this.pointRange = options.pointRange = H.pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
+		this.pointRange = options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
 		this.yAxis.axisPointRange = options.rowsize || 1; // general point range
 	},
 	translate: function () {
@@ -679,9 +693,9 @@ H.seriesTypes.heatmap = H.extendClass(H.seriesTypes.scatter, H.merge(colorSeries
 			});
 		}
 	},
-	drawPoints: H.seriesTypes.column.prototype.drawPoints,
-	animate: H.noop,
-	getBox: H.noop,
+	drawPoints: seriesTypes.column.prototype.drawPoints,
+	animate: noop,
+	getBox: noop,
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
 	getExtremes: function () {

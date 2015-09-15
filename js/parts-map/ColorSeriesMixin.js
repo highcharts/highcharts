@@ -1,6 +1,9 @@
 (function (H) {
 	var colorPointMixin,
-		colorSeriesMixin;	
+		colorSeriesMixin,
+
+		each = H.each,
+		noop = H.noop;	
 
 /**
  * Mixin for maps and heatmaps
@@ -14,7 +17,7 @@ colorPointMixin = H.colorPointMixin = {
 			method = vis ? 'show' : 'hide';
 
 		// Show and hide associated elements
-		H.each(['graphic', 'dataLabel'], function (key) {
+		each(['graphic', 'dataLabel'], function (key) {
 			if (point[key]) {
 				point[key][method]();
 			}
@@ -34,7 +37,7 @@ colorSeriesMixin = H.colorSeriesMixin = {
 	axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
 	optionalAxis: 'colorAxis',
 	trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-	getSymbol: H.noop,
+	getSymbol: noop,
 	parallelArrays: ['x', 'y', 'value'],
 	colorKey: 'value',
 	
@@ -47,7 +50,7 @@ colorSeriesMixin = H.colorSeriesMixin = {
 			colorAxis = this.colorAxis,
 			colorKey = this.colorKey;
 
-		H.each(this.data, function (point) {
+		each(this.data, function (point) {
 			var value = point[colorKey],
 				color;
 

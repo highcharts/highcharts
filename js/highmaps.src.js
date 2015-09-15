@@ -16675,7 +16675,10 @@ wrap(Axis.prototype, 'render', function (proceed) {
 		extend = H.extend,
 		Legend = H.Legend,
 		LegendSymbolMixin = H.LegendSymbolMixin,
-		pick = H.pick;
+		noop = H.noop,
+		merge = H.merge,
+		pick = H.pick,
+		wrap = H.wrap;
 
 /**
  * The ColorAxis object for inclusion in gradient legends
@@ -16714,7 +16717,7 @@ extend(ColorAxis.prototype, {
 			options;
 
 		// Build the options
-		options = H.merge(this.defaultColorAxisOptions, {
+		options = merge(this.defaultColorAxisOptions, {
 			side: horiz ? 2 : 1,
 			reversed: !horiz
 		}, userOptions, {
@@ -16783,7 +16786,7 @@ extend(ColorAxis.prototype, {
 		each(userOptions.dataClasses, function (dataClass, i) {
 			var colors;
 
-			dataClass = H.merge(dataClass);
+			dataClass = merge(dataClass);
 			dataClasses.push(dataClass);
 			if (!dataClass.color) {
 				if (options.dataClassColor === 'category') {
@@ -16978,9 +16981,9 @@ extend(ColorAxis.prototype, {
 	/**
 	 * Fool the legend
 	 */
-	setState: H.noop,
+	setState: noop,
 	visible: true,
-	setVisible: H.noop,
+	setVisible: noop,
 	getSeriesExtremes: function () {
 		var series;
 		if (this.series.length) {
@@ -17049,7 +17052,7 @@ extend(ColorAxis.prototype, {
 
 		// Keep the options structure updated for export. Unlike xAxis and yAxis, the colorAxis is 
 		// not an array. (#3207)
-		chart.options[this.coll] = H.merge(this.userOptions, newOptions);
+		chart.options[this.coll] = merge(this.userOptions, newOptions);
 
 		Axis.prototype.update.call(this, newOptions, redraw);
 		if (this.legendItem) {
@@ -17099,7 +17102,7 @@ extend(ColorAxis.prototype, {
 					options: {},
 					drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 					visible: true,
-					setState: H.noop,
+					setState: noop,
 					isDataClass: true,
 					setVisible: function () {
 						vis = this.visible = !vis;
@@ -17133,7 +17136,7 @@ each(['fill', 'stroke'], function (prop) {
 /**
  * Extend the chart getAxes method to also get the color axis
  */
-H.wrap(Chart.prototype, 'getAxes', function (proceed) {
+wrap(Chart.prototype, 'getAxes', function (proceed) {
 
 	var options = this.options,
 		colorAxisOptions = options.colorAxis;
@@ -17151,7 +17154,7 @@ H.wrap(Chart.prototype, 'getAxes', function (proceed) {
  * Wrap the legend getAllItems method to add the color axis. This also removes the 
  * axis' own series to prevent them from showing up individually.
  */
-H.wrap(Legend.prototype, 'getAllItems', function (proceed) {
+wrap(Legend.prototype, 'getAllItems', function (proceed) {
 	var allItems = [],
 		colorAxis = this.chart.colorAxis[0];
 
@@ -17179,7 +17182,10 @@ H.wrap(Legend.prototype, 'getAllItems', function (proceed) {
 }(Highcharts));
 (function (H) {
 	var colorPointMixin,
-		colorSeriesMixin;	
+		colorSeriesMixin,
+
+		each = H.each,
+		noop = H.noop;	
 
 /**
  * Mixin for maps and heatmaps
@@ -17193,7 +17199,7 @@ colorPointMixin = H.colorPointMixin = {
 			method = vis ? 'show' : 'hide';
 
 		// Show and hide associated elements
-		H.each(['graphic', 'dataLabel'], function (key) {
+		each(['graphic', 'dataLabel'], function (key) {
 			if (point[key]) {
 				point[key][method]();
 			}
@@ -17213,7 +17219,7 @@ colorSeriesMixin = H.colorSeriesMixin = {
 	axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
 	optionalAxis: 'colorAxis',
 	trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
-	getSymbol: H.noop,
+	getSymbol: noop,
 	parallelArrays: ['x', 'y', 'value'],
 	colorKey: 'value',
 	
@@ -17226,7 +17232,7 @@ colorSeriesMixin = H.colorSeriesMixin = {
 			colorAxis = this.colorAxis,
 			colorKey = this.colorKey;
 
-		H.each(this.data, function (point) {
+		each(this.data, function (point) {
 			var value = point[colorKey],
 				color;
 
@@ -17244,13 +17250,20 @@ colorSeriesMixin = H.colorSeriesMixin = {
 (function (H) {
 	var Color = H.Color,
 		ColorAxis = H.ColorAxis,
+		colorPointMixin = H.colorPointMixin,
 		colorSeriesMixin = H.colorSeriesMixin,
+		defaultPlotOptions = H.defaultPlotOptions,
 		each = H.each,
+		extend = H.extend,
+		extendClass = H.extendClass,
 		LegendSymbolMixin = H.LegendSymbolMixin,
+		merge = H.merge,
+		noop = H.noop,
 		pick = H.pick,
 		Point = H.Point,
 		Series = H.Series,
-		seriesTypes = H.seriesTypes;
+		seriesTypes = H.seriesTypes,
+		splat = H.splat;
 
 // The vector-effect attribute is not supported in IE <= 11 (at least), so we need 
 // diffent logic (#3218)
@@ -17259,7 +17272,7 @@ var supportsVectorEffect = document.documentElement.style.vectorEffect !== undef
 /**
  * Extend the default options with map options
  */
-H.defaultPlotOptions.map = H.merge(H.defaultPlotOptions.scatter, {
+defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 	allAreas: true,
 
 	animation: false, // makes the complex shapes slow
@@ -17297,7 +17310,7 @@ H.defaultPlotOptions.map = H.merge(H.defaultPlotOptions.scatter, {
 /**
  * The MapAreaPoint object
  */
-var MapAreaPoint = H.MapAreaPoint = H.extendClass(Point, H.extend({
+var MapAreaPoint = H.MapAreaPoint = extendClass(Point, extend({
 	/**
 	 * Extend the Point object to split paths
 	 */
@@ -17316,7 +17329,7 @@ var MapAreaPoint = H.MapAreaPoint = H.extendClass(Point, H.extend({
 					point.x = mapPoint._midX;
 					point.y = mapPoint._midY;
 				}
-				H.extend(point, mapPoint); // copy over properties
+				extend(point, mapPoint); // copy over properties
 			} else {
 				point.value = point.value || null;
 			}
@@ -17396,20 +17409,20 @@ var MapAreaPoint = H.MapAreaPoint = H.extendClass(Point, H.extend({
 		);
 		series.chart.redraw();
 	}
-}, H.colorPointMixin)
+}, colorPointMixin)
 );
 
 /**
  * Add the series type
  */
-seriesTypes.map = H.extendClass(seriesTypes.scatter, H.merge(colorSeriesMixin, {
+seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	type: 'map',
 	pointClass: MapAreaPoint,
 	supportsDrilldown: true,
 	getExtremesFromAll: true,
 	useMapGeometry: true, // get axis extremes from paths, not values
 	forceDL: true,
-	searchPoint: H.noop,
+	searchPoint: noop,
 	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	preserveAspectRatio: true, // X axis and Y axis must have same translation slope
 	/**
@@ -17571,7 +17584,7 @@ seriesTypes.map = H.extendClass(seriesTypes.scatter, H.merge(colorSeriesMixin, {
 		if (joinByNull) {
 			joinBy = '_i';
 		}
-		joinBy = this.joinBy = H.splat(joinBy);
+		joinBy = this.joinBy = splat(joinBy);
 		if (!joinBy[1]) {
 			joinBy[1] = joinBy[0];
 		}
@@ -17638,7 +17651,7 @@ seriesTypes.map = H.extendClass(seriesTypes.scatter, H.merge(colorSeriesMixin, {
 
 				each(mapData, function (mapPoint) {
 					if (!joinBy[0] || dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1) {
-						data.push(H.merge(mapPoint, { value: null }));
+						data.push(merge(mapPoint, { value: null }));
 					}
 				});
 			}
@@ -17650,13 +17663,13 @@ seriesTypes.map = H.extendClass(seriesTypes.scatter, H.merge(colorSeriesMixin, {
 	/**
 	 * No graph for the map series
 	 */
-	drawGraph: H.noop,
+	drawGraph: noop,
 	
 	/**
 	 * We need the points' bounding boxes in order to draw the data labels, so 
 	 * we skip it now and call it from drawPoints instead.
 	 */
-	drawDataLabels: H.noop,
+	drawDataLabels: noop,
 
 	/**
 	 * Allow a quick redraw by just translating the area group. Used for zooming and panning
@@ -17770,7 +17783,7 @@ seriesTypes.map = H.extendClass(seriesTypes.scatter, H.merge(colorSeriesMixin, {
 					}
 
 					if (!supportsVectorEffect) {
-						point.graphic['stroke-widthSetter'] = H.noop;
+						point.graphic['stroke-widthSetter'] = noop;
 					}
 				}
 			});
@@ -18112,9 +18125,13 @@ seriesTypes.map = H.extendClass(seriesTypes.scatter, H.merge(colorSeriesMixin, {
 	};
 
 }(Highcharts));(function (H) {
-	var Chart = H.Chart,
+	var addEvent = H.addEvent,
+		Chart = H.Chart,
+		each = H.each,
 		extend = H.extend,
-		pick = H.pick;
+		merge = H.merge,
+		pick = H.pick,
+		wrap = H.wrap;
 
 // Add events to the Chart object itself
 extend(Chart.prototype, {
@@ -18146,9 +18163,9 @@ extend(Chart.prototype, {
 		if (pick(options.enableButtons, options.enabled) && !chart.renderer.forExport) {
 			for (n in buttons) {
 				if (buttons.hasOwnProperty(n)) {
-					buttonOptions = H.merge(options.buttonOptions, buttons[n]);
+					buttonOptions = merge(options.buttonOptions, buttons[n]);
 					attr = buttonOptions.theme;
-					attr.style = H.merge(buttonOptions.theme.style, buttonOptions.style); // #3203
+					attr.style = merge(buttonOptions.theme.style, buttonOptions.style); // #3203
 					states = attr.states;
 					button = chart.renderer.button(
 							buttonOptions.text, 
@@ -18170,7 +18187,7 @@ extend(Chart.prototype, {
 						.add();
 					button.handler = buttonOptions.onclick;
 					button.align(extend(buttonOptions, { width: button.width, height: 2 * button.height }), null, buttonOptions.alignTo);
-					H.addEvent(button.element, 'dblclick', stopEvent); // Stop double click event (#4444)
+					addEvent(button.element, 'dblclick', stopEvent); // Stop double click event (#4444)
 				}
 			}
 		}
@@ -18182,7 +18199,7 @@ extend(Chart.prototype, {
 	 * in Highcharts, perhaps it should be elevated to a common utility function.
 	 */
 	fitToBox: function (inner, outer) {
-		H.each([['x', 'width'], ['y', 'height']], function (dim) {
+		each([['x', 'width'], ['y', 'height']], function (dim) {
 			var pos = dim[0],
 				size = dim[1];
 
@@ -18283,9 +18300,8 @@ extend(Chart.prototype, {
 /**
  * Extend the Chart.render method to add zooming and panning
  */
-H.wrap(Chart.prototype, 'render', function (proceed) {
+wrap(Chart.prototype, 'render', function (proceed) {
 	var chart = this,
-		addEvent = H.addEvent,
 		mapNavigation = chart.options.mapNavigation;
 
 	// Render the plus and minus buttons. Doing this before the shapes makes getBBox much quicker, at least in Chrome.
@@ -18311,9 +18327,13 @@ H.wrap(Chart.prototype, 'render', function (proceed) {
 	return H;
 }(Highcharts));
 (function (H) {
-	var Pointer = H.Pointer;
+	var extend = H.extend,
+		pick = H.pick,
+		Pointer = H.Pointer,
+		wrap = H.wrap;
+		
 // Extend the Pointer
-H.extend(Pointer.prototype, {
+extend(Pointer.prototype, {
 
 	/**
 	 * The event handler for the doubleclick event
@@ -18363,18 +18383,18 @@ H.extend(Pointer.prototype, {
 });
 
 // Implement the pinchType option
-H.wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
+wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 
 	proceed.call(this, chart, options);
 
 	// Pinch status
-	if (H.pick(options.mapNavigation.enableTouchZoom, options.mapNavigation.enabled)) {
+	if (pick(options.mapNavigation.enableTouchZoom, options.mapNavigation.enabled)) {
 		this.pinchX = this.pinchHor = this.pinchY = this.pinchVert = this.hasZoom = true;
 	}
 });
 
 // Extend the pinchTranslate method to preserve fixed ratio when zooming
-H.wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
+wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch) {
 	var xBigger;
 	proceed.call(this, pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 
@@ -18397,13 +18417,17 @@ H.wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touche
 	return H;
 }(Highcharts));
 (function (H) {
+	var defaultPlotOptions = H.defaultPlotOptions,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		seriesTypes = H.seriesTypes;
 
 // The mapline series type
-H.defaultPlotOptions.mapline = H.merge(H.defaultPlotOptions.map, {
+defaultPlotOptions.mapline = merge(defaultPlotOptions.map, {
 	lineWidth: 1,
 	fillColor: 'none'
 });
-H.seriesTypes.mapline = H.extendClass(H.seriesTypes.map, {
+seriesTypes.mapline = extendClass(seriesTypes.map, {
 	type: 'mapline',
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'color',
@@ -18411,15 +18435,20 @@ H.seriesTypes.mapline = H.extendClass(H.seriesTypes.map, {
 		fill: 'fillColor',
 		dashstyle: 'dashStyle'
 	},
-	drawLegendSymbol: H.seriesTypes.line.prototype.drawLegendSymbol
+	drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
 });
 	return H;
 }(Highcharts));
 (function (H) {
-	var Point = H.Point;
+	var defaultPlotOptions = H.defaultPlotOptions,
+		extend = H.extend,
+		extendClass = H.extendClass,
+		merge = H.merge,
+		Point = H.Point,
+		seriesTypes = H.seriesTypes;
 
 // The mappoint series type
-H.defaultPlotOptions.mappoint = H.merge(H.defaultPlotOptions.scatter, {
+defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
 	dataLabels: {
 		enabled: true,
 		formatter: function () { // #2945
@@ -18433,14 +18462,14 @@ H.defaultPlotOptions.mappoint = H.merge(H.defaultPlotOptions.scatter, {
 		}
 	}
 });
-H.seriesTypes.mappoint = H.extendClass(H.seriesTypes.scatter, {
+seriesTypes.mappoint = extendClass(seriesTypes.scatter, {
 	type: 'mappoint',
 	forceDL: true,
-	pointClass: H.extendClass(Point, {
+	pointClass: extendClass(Point, {
 		applyOptions: function (options, x) {
 			var point = Point.prototype.applyOptions.call(this, options, x);
 			if (options.lat !== undefined && options.lon !== undefined) {
-				point = H.extend(point, this.series.chart.fromLatLonToPoint(point));
+				point = extend(point, this.series.chart.fromLatLonToPoint(point));
 			}
 			return point;
 		}
@@ -18782,25 +18811,30 @@ Axis.prototype.beforePadding = function () {
 	return H;
 }(Highcharts));
 (function (H) {
-	var MapAreaPoint = H.MapAreaPoint,
-		Point = H.Point;
+	var defaultPlotOptions = H.defaultPlotOptions,
+		extend = H.extend,
+		extendClass = H.extendClass,
+		MapAreaPoint = H.MapAreaPoint,
+		merge = H.merge,
+		Point = H.Point,
+		seriesTypes = H.seriesTypes;
 
 // The mapbubble series type
-if (H.seriesTypes.bubble) {
+if (seriesTypes.bubble) {
 
-	H.defaultPlotOptions.mapbubble = H.merge(H.defaultPlotOptions.bubble, {
+	defaultPlotOptions.mapbubble = merge(defaultPlotOptions.bubble, {
 		animationLimit: 500,
 		tooltip: {
 			pointFormat: '{point.name}: {point.z}'
 		}
 	});
-	H.seriesTypes.mapbubble = H.extendClass(H.seriesTypes.bubble, {
-		pointClass: H.extendClass(Point, {
+	seriesTypes.mapbubble = extendClass(seriesTypes.bubble, {
+		pointClass: extendClass(Point, {
 			applyOptions: function (options, x) {
 				var point;
 				if (options && options.lat !== undefined && options.lon !== undefined) {
 					point = Point.prototype.applyOptions.call(this, options, x);
-					point = H.extend(point, this.series.chart.fromLatLonToPoint(point));
+					point = extend(point, this.series.chart.fromLatLonToPoint(point));
 				} else {
 					point = MapAreaPoint.prototype.applyOptions.call(this, options, x);
 				}
@@ -18814,17 +18848,21 @@ if (H.seriesTypes.bubble) {
 		/**
 		 * Return the map area identified by the dataJoinBy option
 		 */
-		getMapData: H.seriesTypes.map.prototype.getMapData,
-		getBox: H.seriesTypes.map.prototype.getBox,
-		setData: H.seriesTypes.map.prototype.setData
+		getMapData: seriesTypes.map.prototype.getMapData,
+		getBox: seriesTypes.map.prototype.getBox,
+		setData: seriesTypes.map.prototype.setData
 	});
 }
 
 	return H;
 }(Highcharts));
 (function (H) {
-	var Chart = H.Chart,
-		error = H.error;
+	var defaultOptions = H.defaultOptions,
+		Chart = H.Chart,
+		each = H.each,
+		extend = H.extend,
+		error = H.error,
+		wrap = H.wrap;
 /** 
  * Test for point in polygon. Polygon defined as array of [x,y] points.
  */
@@ -18940,7 +18978,6 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
 H.geojson = function (geojson, hType, series) {
 	var mapData = [],
 		path = [],
-		each = H.each,
 		polygonToPath = function (polygon) {
 			var i = 0,
 				len = polygon.length;
@@ -19001,7 +19038,7 @@ H.geojson = function (geojson, hType, series) {
 			}
 		}
 		if (point) {
-			mapData.push(H.extend(point, {
+			mapData.push(extend(point, {
 				name: properties.name || properties.NAME, 
 				properties: properties
 			}));
@@ -19022,9 +19059,9 @@ H.geojson = function (geojson, hType, series) {
 /**
  * Override showCredits to include map source by default
  */
-H.wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
+wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
 
-	if (H.defaultOptions.credits.text === this.options.credits.text && this.mapCredits) { // default text and mapCredits is set
+	if (defaultOptions.credits.text === this.options.credits.text && this.mapCredits) { // default text and mapCredits is set
 		credits.text = this.mapCredits;
 		credits.href = null;
 	}
@@ -19042,17 +19079,24 @@ H.wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
 }(Highcharts));
 (function (H) {
 	var Chart = H.Chart,
+		defaultOptions = H.defaultOptions,
+		each = H.each,
+		extend = H.extend,
+		merge = H.merge,
+		Renderer = H.Renderer,
 		SVGRenderer = H.SVGRenderer,
 		VMLRenderer = H.VMLRenderer;
+
+
 // Add language
-H.extend(H.defaultOptions.lang, {
+extend(defaultOptions.lang, {
 	zoomIn: 'Zoom in',
 	zoomOut: 'Zoom out'
 });
 
 
 // Set the default map navigation options
-H.defaultOptions.mapNavigation = {
+defaultOptions.mapNavigation = {
 	buttonOptions: {
 		alignTo: 'plotBox',
 		align: 'left',
@@ -19154,8 +19198,8 @@ SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
 // The symbol callbacks are generated on the SVGRenderer object in all browsers. Even
 // VML browsers need this in order to generate shapes in export. Now share
 // them with the VMLRenderer.
-if (H.Renderer === VMLRenderer) {
-	H.each(['topbutton', 'bottombutton'], function (shape) {
+if (Renderer === VMLRenderer) {
+	each(['topbutton', 'bottombutton'], function (shape) {
 		VMLRenderer.prototype.symbols[shape] = SVGRenderer.prototype.symbols[shape];
 	});
 }
@@ -19188,13 +19232,13 @@ H.Map = function (options, callback) {
 	seriesOptions = options.series;
 	options.series = null;
 	
-	options = H.merge({
+	options = merge({
 		chart: {
 			panning: 'xy',
 			type: 'map'
 		},
 		xAxis: hiddenAxis,
-		yAxis: H.merge(hiddenAxis, { reversed: true })	
+		yAxis: merge(hiddenAxis, { reversed: true })	
 	},
 	options, // user's options
 
@@ -19214,14 +19258,22 @@ H.Map = function (options, callback) {
 	return H;
 }(Highcharts));
 (function (H) {
-	var colorSeriesMixin = H.colorSeriesMixin,
+	var colorPointMixin = H.colorPointMixin,
+		colorSeriesMixin = H.colorSeriesMixin,
+		defaultOptions = H.defaultOptions,
 		each = H.each,
+		extendClass = H.extendClass,
 		LegendSymbolMixin = H.LegendSymbolMixin,
-		Series = H.Series;
+		merge = H.merge,
+		noop = H.noop,
+		pick = H.pick,
+		Point = H.Point,
+		Series = H.Series,
+		seriesTypes = H.seriesTypes;
 /**
  * Extend the default options with map options
  */
-H.defaultOptions.plotOptions.heatmap = H.merge(H.defaultOptions.plotOptions.scatter, {
+defaultOptions.plotOptions.heatmap = merge(defaultOptions.plotOptions.scatter, {
 	animation: false,
 	borderWidth: 0,
 	nullColor: '#F8F8F8',
@@ -19252,11 +19304,11 @@ H.defaultOptions.plotOptions.heatmap = H.merge(H.defaultOptions.plotOptions.scat
 });
 
 // The Heatmap series type
-H.seriesTypes.heatmap = H.extendClass(H.seriesTypes.scatter, H.merge(colorSeriesMixin, {
+seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	type: 'heatmap',
 	pointArrayMap: ['y', 'value'],
 	hasPointSpecificOptions: true,
-	pointClass: H.extendClass(H.Point, H.colorPointMixin),
+	pointClass: extendClass(Point, colorPointMixin),
 	supportsDrilldown: true,
 	getExtremesFromAll: true,
 	directTouch: true,
@@ -19266,10 +19318,10 @@ H.seriesTypes.heatmap = H.extendClass(H.seriesTypes.scatter, H.merge(colorSeries
 	 */
 	init: function () {
 		var options;
-		H.seriesTypes.scatter.prototype.init.apply(this, arguments);
+		seriesTypes.scatter.prototype.init.apply(this, arguments);
 
 		options = this.options;
-		this.pointRange = options.pointRange = H.pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
+		this.pointRange = options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
 		this.yAxis.axisPointRange = options.rowsize || 1; // general point range
 	},
 	translate: function () {
@@ -19310,9 +19362,9 @@ H.seriesTypes.heatmap = H.extendClass(H.seriesTypes.scatter, H.merge(colorSeries
 			});
 		}
 	},
-	drawPoints: H.seriesTypes.column.prototype.drawPoints,
-	animate: H.noop,
-	getBox: H.noop,
+	drawPoints: seriesTypes.column.prototype.drawPoints,
+	animate: noop,
+	getBox: noop,
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
 
 	getExtremes: function () {

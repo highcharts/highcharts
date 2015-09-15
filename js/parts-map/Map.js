@@ -1,16 +1,23 @@
 (function (H) {
 	var Chart = H.Chart,
+		defaultOptions = H.defaultOptions,
+		each = H.each,
+		extend = H.extend,
+		merge = H.merge,
+		Renderer = H.Renderer,
 		SVGRenderer = H.SVGRenderer,
 		VMLRenderer = H.VMLRenderer;
+
+
 // Add language
-H.extend(H.defaultOptions.lang, {
+extend(defaultOptions.lang, {
 	zoomIn: 'Zoom in',
 	zoomOut: 'Zoom out'
 });
 
 
 // Set the default map navigation options
-H.defaultOptions.mapNavigation = {
+defaultOptions.mapNavigation = {
 	buttonOptions: {
 		alignTo: 'plotBox',
 		align: 'left',
@@ -112,8 +119,8 @@ SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
 // The symbol callbacks are generated on the SVGRenderer object in all browsers. Even
 // VML browsers need this in order to generate shapes in export. Now share
 // them with the VMLRenderer.
-if (H.Renderer === VMLRenderer) {
-	H.each(['topbutton', 'bottombutton'], function (shape) {
+if (Renderer === VMLRenderer) {
+	each(['topbutton', 'bottombutton'], function (shape) {
 		VMLRenderer.prototype.symbols[shape] = SVGRenderer.prototype.symbols[shape];
 	});
 }
@@ -146,13 +153,13 @@ H.Map = function (options, callback) {
 	seriesOptions = options.series;
 	options.series = null;
 	
-	options = H.merge({
+	options = merge({
 		chart: {
 			panning: 'xy',
 			type: 'map'
 		},
 		xAxis: hiddenAxis,
-		yAxis: H.merge(hiddenAxis, { reversed: true })	
+		yAxis: merge(hiddenAxis, { reversed: true })	
 	},
 	options, // user's options
 

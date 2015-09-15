@@ -1,23 +1,28 @@
 (function (H) {
-	var MapAreaPoint = H.MapAreaPoint,
-		Point = H.Point;
+	var defaultPlotOptions = H.defaultPlotOptions,
+		extend = H.extend,
+		extendClass = H.extendClass,
+		MapAreaPoint = H.MapAreaPoint,
+		merge = H.merge,
+		Point = H.Point,
+		seriesTypes = H.seriesTypes;
 
 // The mapbubble series type
-if (H.seriesTypes.bubble) {
+if (seriesTypes.bubble) {
 
-	H.defaultPlotOptions.mapbubble = H.merge(H.defaultPlotOptions.bubble, {
+	defaultPlotOptions.mapbubble = merge(defaultPlotOptions.bubble, {
 		animationLimit: 500,
 		tooltip: {
 			pointFormat: '{point.name}: {point.z}'
 		}
 	});
-	H.seriesTypes.mapbubble = H.extendClass(H.seriesTypes.bubble, {
-		pointClass: H.extendClass(Point, {
+	seriesTypes.mapbubble = extendClass(seriesTypes.bubble, {
+		pointClass: extendClass(Point, {
 			applyOptions: function (options, x) {
 				var point;
 				if (options && options.lat !== undefined && options.lon !== undefined) {
 					point = Point.prototype.applyOptions.call(this, options, x);
-					point = H.extend(point, this.series.chart.fromLatLonToPoint(point));
+					point = extend(point, this.series.chart.fromLatLonToPoint(point));
 				} else {
 					point = MapAreaPoint.prototype.applyOptions.call(this, options, x);
 				}
@@ -31,9 +36,9 @@ if (H.seriesTypes.bubble) {
 		/**
 		 * Return the map area identified by the dataJoinBy option
 		 */
-		getMapData: H.seriesTypes.map.prototype.getMapData,
-		getBox: H.seriesTypes.map.prototype.getBox,
-		setData: H.seriesTypes.map.prototype.setData
+		getMapData: seriesTypes.map.prototype.getMapData,
+		getBox: seriesTypes.map.prototype.getBox,
+		setData: seriesTypes.map.prototype.setData
 	});
 }
 
