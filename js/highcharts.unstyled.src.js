@@ -18505,13 +18505,23 @@ if (seriesTypes.scatter) {
 extend(Legend.prototype, {
 
 	setItemEvents: function (item, legendItem, useHTML) {
-		var legend = this;
+		var legend = this,
+			chart = legend.chart;
+
 		// Set the events on the item group, or in case of useHTML, the item itself (#1249)
 		(useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
 			item.setState('hover');
 			
+			// A CSS class to dim or hide other than the hovered series
+			chart.seriesGroup.addClass('highcharts-legend-active');
+			
+			
 		})
 		.on('mouseout', function () {
+			
+
+			// A CSS class to dim or hide other than the hovered series
+			chart.seriesGroup.removeClass('highcharts-legend-active');
 			
 			item.setState();
 		})
@@ -19023,9 +19033,6 @@ extend(Series.prototype, {
 			series.group
 				.removeClass('highcharts-state-' + (series.state || 'normal'))
 				.addClass('highcharts-state-' + (state || 'normal'));
-
-			// A CSS class to dim or hide other than the hovered series
-			series.chart.seriesGroup[state === 'hover' ? 'addClass' : 'removeClass']('highcharts-has-hover');
 
 			series.state = state;
 
