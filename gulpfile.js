@@ -1,5 +1,6 @@
 var eslint = require('gulp-eslint'),
     gulp = require('gulp'),
+    argv = require('yargs').argv,
     fs = require('fs'),
     sass = require('gulp-sass'),
     config = {
@@ -79,36 +80,12 @@ function doLint(paths) {
 
 gulp.task('lint', function () {
     var p = paths,
-        all = p.distributions.concat(p.modules, p.parts, p.parts3D, p.partsMap, p.partsMore, p.themes);
-    return doLint(all);
-});
-
-gulp.task('lint-distributions', function () {
-    return doLint(paths.distributions);
-});
-
-gulp.task('lint-modules', function () {
-    return doLint(paths.modules);
-});
-
-gulp.task('lint-parts', function () {
-    return doLint(paths.parts);
-});
-
-gulp.task('lint-parts-3d', function () {
-    return doLint(paths.parts3D);
-});
-
-gulp.task('lint-parts-map', function () {
-    return doLint(paths.partsMap);
-});
-
-gulp.task('lint-parts-more', function () {
-    return doLint(paths.partsMore);
-});
-
-gulp.task('lint-themes', function () {
-    return doLint(paths.themes);
+        files = argv.path ? p[argv.path] : p.distributions.concat(p.modules, p.parts, p.parts3D, p.partsMap, p.partsMore, p.themes);
+    if (files) {
+        doLint(files);
+    } else {
+        console.log(argv.path + " is not defined in paths.");
+    }
 });
 
 gulp.task('styles', function () {
