@@ -255,10 +255,7 @@ Series.prototype.setStackedPoints = function () {
 		xAxis = series.xAxis,
 		stacks = yAxis.stacks,
 		oldStacks = yAxis.oldStacks,
-		stackIndicator = {
-			x: null,
-			index: 0
-		},
+		stackIndicator,
 		isNegative,
 		stack,
 		other,
@@ -346,10 +343,7 @@ Series.prototype.setPercentStacks = function () {
 		stackKey = series.stackKey,
 		stacks = series.yAxis.stacks,
 		processedXData = series.processedXData,
-		stackIndicator = {
-			x: null,
-			index: 0
-		};
+		stackIndicator;
 
 	each([stackKey, '-' + stackKey], function (key) {
 		var i = processedXData.length,
@@ -377,7 +371,7 @@ Series.prototype.setPercentStacks = function () {
 * Get stack indicator, according to it's x-value, to determine points with the same x-value
 */
 Series.prototype.getStackIndicator = function(stackIndicator, x) {
-	if (stackIndicator.x !== x) {
+	if (!defined(stackIndicator) || stackIndicator.x !== x) {
 		stackIndicator = {
 			x: x,
 			index: 0

@@ -13815,10 +13815,7 @@ Series.prototype = {
 			plotX,
 			plotY,
 			lastPlotX,
-			stackIndicator = {
-				x: null,
-				index: 0
-			},
+			stackIndicator,
 			closestPointRangePx = Number.MAX_VALUE;
 
 		// Translate each point
@@ -15212,10 +15209,7 @@ Series.prototype.setStackedPoints = function () {
 		xAxis = series.xAxis,
 		stacks = yAxis.stacks,
 		oldStacks = yAxis.oldStacks,
-		stackIndicator = {
-			x: null,
-			index: 0
-		},
+		stackIndicator,
 		isNegative,
 		stack,
 		other,
@@ -15303,10 +15297,7 @@ Series.prototype.setPercentStacks = function () {
 		stackKey = series.stackKey,
 		stacks = series.yAxis.stacks,
 		processedXData = series.processedXData,
-		stackIndicator = {
-			x: null,
-			index: 0
-		};
+		stackIndicator;
 
 	each([stackKey, '-' + stackKey], function (key) {
 		var i = processedXData.length,
@@ -15334,7 +15325,7 @@ Series.prototype.setPercentStacks = function () {
 * Get stack indicator, according to it's x-value, to determine points with the same x-value
 */
 Series.prototype.getStackIndicator = function(stackIndicator, x) {
-	if (stackIndicator.x !== x) {
+	if (!defined(stackIndicator) || stackIndicator.x !== x) {
 		stackIndicator = {
 			x: x,
 			index: 0
@@ -15963,10 +15954,7 @@ var AreaSeries = extendClass(Series, {
 					// Loop down the stack to find the series below this one that has
 					// a value (#1991)
 					for (i = series.index; i <= yAxis.series.length; i++) {		
-						stackIndicator = series.getStackIndicator({
-							x: null,
-							index: 0
-						}, x);
+						stackIndicator = series.getStackIndicator(null, x);
 						stackPoint = stack[x].points[i + ',' + x + ',' + stackIndicator.index];
 						if (stackPoint) {
 							y = stackPoint[1];
