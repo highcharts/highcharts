@@ -72,10 +72,7 @@ var AreaSeries = extendClass(Series, {
 					// Loop down the stack to find the series below this one that has
 					// a value (#1991)
 					for (i = series.index; i <= yAxis.series.length; i++) {		
-						stackIndicator = series.getStackIndicator({
-							x: null,
-							index: 0
-						}, x);
+						stackIndicator = series.getStackIndicator(null, x);
 						stackPoint = stack[x].points[i + ',' + x + ',' + stackIndicator.index];
 						if (stackPoint) {
 							y = stackPoint[1];

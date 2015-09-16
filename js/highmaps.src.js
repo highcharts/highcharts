@@ -13313,10 +13313,7 @@ Series.prototype = {
 			plotX,
 			plotY,
 			lastPlotX,
-			stackIndicator = {
-				x: null,
-				index: 0
-			},
+			stackIndicator,
 			closestPointRangePx = Number.MAX_VALUE;
 
 		// Translate each point
