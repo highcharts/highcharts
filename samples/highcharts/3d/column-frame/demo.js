@@ -10,15 +10,15 @@ $(function () {
                 depth: 50,
                 frame: {
                     bottom: {
-                        size: 10,
+                        size: 1,
                         color: '#C0C0C0'
                     },
                     side: {
-                        size: 5,
+                        size: 1,
                         color: '#C0C0C0'
                     },
                     back: {
-                        size: 5,
+                        size: 1,
                         color: '#D0D0D0'
                     }
                 }
