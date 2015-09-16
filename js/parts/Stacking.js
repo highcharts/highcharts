@@ -269,8 +269,8 @@ Series.prototype.setStackedPoints = function () {
 	for (i = 0; i < yDataLength; i++) {
 		x = xData[i];
 		y = yData[i];
-		stackIndicator = series.getStackIndicator(stackIndicator, x);
-		pointKey = series.index + ',' + x + ',' + stackIndicator.index;
+		stackIndicator = series.getStackIndicator(stackIndicator, x, series.index);
+		pointKey = stackIndicator.key;
 		// Read stacked values into a stack based on the x value,
 		// the sign of y and the stack key. Stacking is also handled for null values (#739)
 		isNegative = negStacks && y < (stackThreshold ? 0 : threshold);
@@ -351,9 +351,9 @@ Series.prototype.setPercentStacks = function () {
 
 		while (i--) {
 			x = processedXData[i];
-			stackIndicator = series.getStackIndicator(stackIndicator, x);
+			stackIndicator = series.getStackIndicator(stackIndicator, x, series.index);
 			stack = stacks[key] && stacks[key][x];
-			pointExtremes = stack && stack.points[series.index + ',' + x + ',' + stackIndicator.index];
+			pointExtremes = stack && stack.points[stackIndicator.key];
 			if (pointExtremes) {
 				totalFactor = stack.total ? 100 / stack.total : 0;
 				pointExtremes[0] = correctFloat(pointExtremes[0] * totalFactor); // Y bottom value
@@ -367,7 +367,7 @@ Series.prototype.setPercentStacks = function () {
 /**
 * Get stack indicator, according to it's x-value, to determine points with the same x-value
 */
-Series.prototype.getStackIndicator = function(stackIndicator, x) {
+Series.prototype.getStackIndicator = function(stackIndicator, x, index) {
 	if (!defined(stackIndicator) || stackIndicator.x !== x) {
 		stackIndicator = {
 			x: x,
@@ -376,6 +376,9 @@ Series.prototype.getStackIndicator = function(stackIndicator, x) {
 	} else {
 		stackIndicator.index++;
 	}
+	
+	stackIndicator.key = [index, x, stackIndicator.index].join(',');
+
 	return stackIndicator;
 };
 
