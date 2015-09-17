@@ -189,7 +189,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			while (i--) {
 				point = data[i];
 				if (point) {
-					up = point.plotHigh > point.plotLow;
+					up = inside ? point.plotHigh < point.plotLow : point.plotHigh > point.plotLow;
 					
 					// Set preliminary values
 					point.y = point.high;
@@ -223,7 +223,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			while (i--) {
 				point = data[i];
 				if (point) {
-					up = point.plotHigh > point.plotLow;
+					up = inside ? point.plotHigh < point.plotLow : point.plotHigh > point.plotLow;
 					
 					// Move the generated labels from step 1, and reassign the original data labels
 					point.dataLabelUpper = point.dataLabel;
