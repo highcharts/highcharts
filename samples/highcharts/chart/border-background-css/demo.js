@@ -4,11 +4,13 @@ $(function () {
             type: 'line'
         },
         title: {
-            text: 'Border stroke and stroke-width set with CSS'
+            text: 'Chart border and background by CSS'
         },
+
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
+        
         legend: {
             layout: 'vertical',
             floating: true,

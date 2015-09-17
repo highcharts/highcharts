@@ -417,14 +417,14 @@ SVGElement.prototype = {
 	 * @param {Number} width
 	 * @param {Number} height
 	 */
-	crisp: function (rect) {
+	crisp: function (rect, strokeWidth) {
 
 		var wrapper = this,
 			key,
 			attribs = {},
-			normalizer,
-			strokeWidth = rect.strokeWidth || wrapper.strokeWidth || 0;
+			normalizer;
 
+		strokeWidth = strokeWidth || rect.strokeWidth || wrapper.strokeWidth || 0;
 		normalizer = Math.round(strokeWidth) % 2 / 2; // Math.round because strokeWidth can sometimes have roundoff errors
 
 		// normalize for crisp edges
@@ -432,7 +432,9 @@ SVGElement.prototype = {
 		rect.y = Math.floor(rect.y || wrapper.y || 0) + normalizer;
 		rect.width = Math.floor((rect.width || wrapper.width || 0) - 2 * normalizer);
 		rect.height = Math.floor((rect.height || wrapper.height || 0) - 2 * normalizer);
-		rect.strokeWidth = strokeWidth;
+		if (defined(rect.strokeWidth)) {
+			rect.strokeWidth = strokeWidth;
+		}
 
 		for (key in rect) {
 			if (wrapper[key] !== rect[key]) { // only set attribute if changed

@@ -973,14 +973,14 @@ Chart.prototype = {
 			chartBackground = chart.chartBackground,
 			plotBackground = chart.plotBackground,
 			plotBorder = chart.plotBorder,
-			plotBGImage = chart.plotBGImage,
 			chartBorderWidth,
 			/*= if (build.classic) { =*/
+			plotBGImage = chart.plotBGImage,
 			chartBackgroundColor = optionsChart.backgroundColor,
-			/*= } =*/
 			plotBackgroundColor = optionsChart.plotBackgroundColor,
 			plotBackgroundImage = optionsChart.plotBackgroundImage,
-			plotBorderWidth = optionsChart.plotBorderWidth || 0,
+			/*= } =*/
+			plotBorderWidth,
 			mgn,
 			bgAttr,
 			plotLeft = chart.plotLeft,
@@ -1028,20 +1028,25 @@ Chart.prototype = {
 			r: optionsChart.borderRadius
 		});
 
-
 		// Plot background
-		if (plotBackgroundColor) {
-			if (!plotBackground) {
-				chart.plotBackground = renderer.rect(plotLeft, plotTop, plotWidth, plotHeight, 0)
-					.attr({
-						fill: plotBackgroundColor
-					})
-					.add()
-					.shadow(optionsChart.plotShadow);
-			} else {
-				plotBackground.animate(plotBox);
-			}
+		verb = 'animate';
+		if (!plotBackground) {
+			verb = 'attr';
+			chart.plotBackground = plotBackground = renderer.rect()
+				.addClass('highcharts-plot-background')
+				.add();
 		}
+		plotBackground[verb](plotBox);
+
+		/*= if (build.classic) { =*/
+		// Presentational attributes for the background
+		plotBackground
+			.attr({
+				fill: plotBackgroundColor || 'none'
+			})
+			.shadow(optionsChart.plotShadow);
+		
+		// Create the background image
 		if (plotBackgroundImage) {
 			if (!plotBGImage) {
 				chart.plotBGImage = renderer.image(plotBackgroundImage, plotLeft, plotTop, plotWidth, plotHeight)
@@ -1050,6 +1055,7 @@ Chart.prototype = {
 				plotBGImage.animate(plotBox);
 			}
 		}
+		/*= } =*/
 		
 		// Plot clip
 		if (!clipRect) {
@@ -1062,22 +1068,34 @@ Chart.prototype = {
 		}
 
 		// Plot area border
-		if (plotBorderWidth) {
-			if (!plotBorder) {
-				chart.plotBorder = renderer.rect(plotLeft, plotTop, plotWidth, plotHeight, 0, -plotBorderWidth)
-					.attr({
-						stroke: optionsChart.plotBorderColor,
-						'stroke-width': plotBorderWidth,
-						fill: 'none',
-						zIndex: 1
-					})
-					.add();
-			} else {
-				plotBorder.animate(
-					plotBorder.crisp({ x: plotLeft, y: plotTop, width: plotWidth, height: plotHeight, strokeWidth: -plotBorderWidth }) //#3282 plotBorder should be negative
-				);
-			}
+		verb = 'animate';
+		if (!plotBorder) {
+			verb = 'attr';
+			chart.plotBorder = plotBorder = renderer.rect()
+				.addClass('highcharts-plot-border')
+				.attr({
+					zIndex: 1
+				})
+				.add();
 		}
+		/*= if (!build.classic) { =*/
+		plotBorderWidth = plotBorder.pxStyle('stroke-width');
+
+		/*= } else { =*/
+		plotBorderWidth = optionsChart.plotBorderWidth || 0;
+		plotBorder.attr({
+			stroke: optionsChart.plotBorderColor,
+			'stroke-width': plotBorderWidth,
+			fill: 'none'
+		});
+		/*= } =*/
+
+		plotBorder[verb](plotBorder.crisp({
+			x: plotLeft,
+			y: plotTop,
+			width: plotWidth,
+			height: plotHeight
+		}, -plotBorderWidth)); //#3282 plotBorder should be negative;
 
 		// reset
 		chart.isDirtyBox = false;

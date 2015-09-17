@@ -1,7 +1,7 @@
 ---
  name: Highcharts Demo
- resources:
+ resources: 
    - http://code.highcharts.local/css/highcharts.css
-  authors:
+ authors:
    - Torstein Hønsi
 ...
