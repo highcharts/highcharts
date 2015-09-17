@@ -34,6 +34,10 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 		pieOptions;
 
 	if (args[0].chart.options3d && args[0].chart.options3d.enabled) {
+		// Normalize alpha and beta to (-360, 360) range
+		args[0].chart.options3d.alpha = (args[0].chart.options3d.alpha || 0) % 360;
+		args[0].chart.options3d.beta = (args[0].chart.options3d.beta || 0) % 360;
+
 		plotOptions = args[0].plotOptions || {};
 		pieOptions = plotOptions.pie || {};
 
