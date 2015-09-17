@@ -23611,6 +23611,7 @@ seriesProto.setCompare = function (compare) {
 
 	// Mark dirty
 	if (this.chart.hasRendered) {
+		this.options.compare = compare;
 		this.isDirty = true;
 	}
 
