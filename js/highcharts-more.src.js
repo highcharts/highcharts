@@ -1436,9 +1436,9 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				// Stem attributes
 				stemAttr.stroke = point.stemColor || options.stemColor || color;
 				stemAttr['stroke-width'] = pick(point.stemWidth, options.stemWidth, options.lineWidth);
-				/*= if (build.classic) { =*/
+				
 				stemAttr.dashstyle = point.stemDashStyle || options.stemDashStyle;
-				/*= } =*/
+				
 				
 				// Whiskers attributes
 				whiskersAttr.stroke = point.whiskerColor || options.whiskerColor || color;

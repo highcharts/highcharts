@@ -1074,7 +1074,7 @@ Chart.prototype = {
 			chart.plotBorder = plotBorder = renderer.rect()
 				.addClass('highcharts-plot-border')
 				.attr({
-					zIndex: 1
+					zIndex: 1 // Above the grid
 				})
 				.add();
 		}

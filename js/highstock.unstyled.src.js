@@ -2109,7 +2109,7 @@ SVGElement.prototype = {
 			currentClassName = attr(element, 'class') || '';
 
 		if (currentClassName.indexOf(className) === -1) {
-			attr(element, 'class', currentClassName + ' ' + className);
+			attr(element, 'class', currentClassName + (currentClassName ? ' ' : '') + className);
 		}
 		return this;
 	},
@@ -12538,7 +12538,7 @@ Chart.prototype = {
 			chart.plotBorder = plotBorder = renderer.rect()
 				.addClass('highcharts-plot-border')
 				.attr({
-					zIndex: 1
+					zIndex: 1 // Above the grid
 				})
 				.add();
 		}
