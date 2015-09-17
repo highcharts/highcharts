@@ -527,11 +527,23 @@ SVGElement.prototype = {
 	 * Get a computed style in pixel values
 	 */
 	pxStyle: function (prop) {
-		var val = this.getStyle(prop);
+		var val = this.getStyle(prop),
+			ret,
+			dummy;
 
+		// Read pixel values directly
 		if (val.indexOf('px') === val.length - 2) {
-			return pInt(val);
+			ret = pInt(val);
+
+		// Other values like em, pt etc need to be measured
+		} else {
+			dummy = document.createElementNS(SVG_NS, 'rect');
+			attr(dummy, 'width', val);
+			this.element.parentNode.appendChild(dummy);
+			ret = dummy.getBBox().width;
+			dummy.parentNode.removeChild(dummy);
 		}
+		return ret;
 	},
 	/*= } =*/
 	/**

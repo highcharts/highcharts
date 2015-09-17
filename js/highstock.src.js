@@ -1299,12 +1299,12 @@ H.defaultOptions = {
 		// x: 0,
 		// verticalAlign: 'top',
 		// y: null,
-		
+		/*= if (build.classic) { =*/
 		style: {
 			color: '#333333',
 			fontSize: '18px'
 		}
-		
+		/*= } =*/
 
 	},
 	subtitle: {
@@ -1314,11 +1314,11 @@ H.defaultOptions = {
 		// x: 0,
 		// verticalAlign: 'top',
 		// y: null,
-		
+		/*= if (build.classic) { =*/
 		style: {
 			color: '#555555'
 		}
-		
+		/*= } =*/
 	},
 
 	plotOptions: {
@@ -1453,7 +1453,7 @@ H.defaultOptions = {
 		/*style: {
 			padding: '5px'
 		},*/
-		
+		/*= if (build.classic) { =*/
 		itemStyle: {			
 			color: '#333333',
 			fontSize: '12px',
@@ -1466,7 +1466,7 @@ H.defaultOptions = {
 		itemHiddenStyle: {
 			color: '#CCC'
 		},
-		
+		/*= } =*/
 		itemCheckboxStyle: {
 			position: 'absolute',
 			width: '13px', // for IE precision
@@ -2283,7 +2283,37 @@ SVGElement.prototype = {
 		return elemWrapper;
 	},
 
-	
+	/*= if (!build.classic) { =*/
+	/**
+	 * Get a computed style
+	 */
+	getStyle: function (prop) {
+		return window.getComputedStyle(this.element || this, '').getPropertyValue(prop);
+	},
+
+	/**
+	 * Get a computed style in pixel values
+	 */
+	pxStyle: function (prop) {
+		var val = this.getStyle(prop),
+			ret,
+			dummy;
+
+		// Read pixel values directly
+		if (val.indexOf('px') === val.length - 2) {
+			ret = pInt(val);
+
+		// Other values like em, pt etc need to be measured
+		} else {
+			dummy = document.createElementNS(SVG_NS, 'rect');
+			attr(dummy, 'width', val);
+			this.element.parentNode.appendChild(dummy);
+			ret = dummy.getBBox().width;
+			dummy.parentNode.removeChild(dummy);
+		}
+		return ret;
+	},
+	/*= } =*/
 	/**
 	 * Add an event listener
 	 * @param {String} eventType
@@ -2832,7 +2862,7 @@ SVGElement.prototype = {
 
 		this[key] = value;
 	},
-	
+	/*= if (build.classic) { =*/
 	dashstyleSetter: function (value) {
 		var i;
 		value = value && value.toLowerCase();
@@ -2857,7 +2887,7 @@ SVGElement.prototype = {
 			this.element.setAttribute('stroke-dasharray', value);
 		}
 	},
-	
+	/*= } =*/
 	alignSetter: function (value) {
 		this.element.setAttribute('text-anchor', { left: 'start', center: 'middle', right: 'end' }[value]);
 	},
@@ -2970,7 +3000,7 @@ SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter =
 	this.doTransform = true;
 };
 
-
+/*= if (build.classic) { =*/
 // WebKit and Batik have problems with a stroke-width of zero, so in this case we remove the 
 // stroke attribute altogether. #1270, #1369, #3065, #3072.
 SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter = function (value, key, element) {
@@ -2986,7 +3016,7 @@ SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter =
 		this.hasStroke = false;
 	}
 };
-
+/*= } =*/
 
 /**
  * The default SVG renderer
@@ -3016,9 +3046,9 @@ SVGRenderer.prototype = {
 				'version': '1.1',
 				'class': 'highcharts-root'
 			})
-			
+			/*= if (build.classic) { =*/
 			.css(this.getStyle(style))
-			;
+			/*= } =*/;
 		element = boxWrapper.element;
 		container.appendChild(element);
 
@@ -3080,7 +3110,7 @@ SVGRenderer.prototype = {
 			addEvent(window, 'resize', subPixelFix);
 		}
 	},
-	
+	/*= if (build.classic) { =*/
 	getStyle: function (style) {
 		return (this.style = extend({
 			
@@ -3089,7 +3119,7 @@ SVGRenderer.prototype = {
 
 		}, style));
 	},
-	
+	/*= } =*/
 
 	/**
 	 * Detect whether the renderer is hidden. This happens when one of the parent elements
@@ -3181,11 +3211,11 @@ SVGRenderer.prototype = {
 			tempParent = width && !wrapper.added && this.box,
 			getLineHeight = function (tspan) {
 				var fontSizeStyle;
-				
+				/*= if (build.classic) { =*/
 				fontSizeStyle = /(px|em)$/.test(tspan && tspan.style.fontSize) ?
 					tspan.style.fontSize :
 					((textStyles && textStyles.fontSize) || renderer.style.fontSize || 12);
-				
+				/*= } =*/
 
 				return textLineHeight ? 
 					pInt(textLineHeight) :
@@ -3586,9 +3616,9 @@ SVGRenderer.prototype = {
 	 */
 	path: function (path) {
 		var attr = {
-			
+			/*= if (build.classic) { =*/
 			fill: 'none'
-			
+			/*= } =*/
 		};
 		if (isArray(path)) {
 			attr.d = path;
@@ -3710,12 +3740,12 @@ SVGRenderer.prototype = {
 		renderer.width = width;
 		renderer.height = height;
 
-		
+		/*= if (build.classic) { =*/
 		renderer.boxWrapper[pick(animate, true) ? 'animate' : 'attr']({
 			width: width,
 			height: height
 		});
-		
+		/*= } =*/
 		renderer.boxWrapper.attr({
 			viewBox: '0 0 ' + width + ' ' + height
 		});
@@ -4673,10 +4703,10 @@ extend(SVGRenderer.prototype, {
 				y: Math.round(y)
 			})
 			.css({
-				
+				/*= if (build.classic) { =*/
 				fontFamily: this.style.fontFamily,
 				fontSize: this.style.fontSize,
-				
+				/*= } =*/
 				position: 'absolute'
 			});
 
@@ -6197,9 +6227,9 @@ H.Tick.prototype = {
 			tickPrefix = type ? type + 'Tick' : 'tick',
 			gridLineWidth = options[gridPrefix + 'LineWidth'],
 			gridLineColor = options[gridPrefix + 'LineColor'],
-			
+			/*= if (build.classic) { =*/
 			dashStyle = options[gridPrefix + 'LineDashStyle'],
-			
+			/*= } =*/
 			tickLength = options[tickPrefix + 'Length'],
 			tickWidth = pick(options[tickPrefix + 'Width'], !type && axis.isXAxis ? 1 : 0), // X axis defaults to 1
 			tickColor = options[tickPrefix + 'Color'],
@@ -6228,11 +6258,11 @@ H.Tick.prototype = {
 					stroke: gridLineColor,
 					'stroke-width': gridLineWidth
 				};
-				
+				/*= if (build.classic) { =*/
 				if (dashStyle) {
 					attribs.dashstyle = dashStyle;
 				}
-				
+				/*= } =*/
 				if (!type) {
 					attribs.zIndex = 1;
 				}
@@ -6394,11 +6424,11 @@ H.PlotLineOrBand.prototype = {
 				stroke: color,
 				'stroke-width': width
 			};
-					
+			/*= if (build.classic) { =*/		
 			if (options.dashStyle) {
 				attribs.dashstyle = options.dashStyle;
 			}
-			
+			/*= } =*/
 			
 		} else if (isBand) { // plot band
 
@@ -8832,11 +8862,11 @@ H.Axis.prototype = {
 					stroke: options.color || (categorized ? 'rgba(155,200,255,0.2)' : '#C0C0C0'),
 					zIndex: options.zIndex || 2
 				};
-				
+				/*= if (build.classic) { =*/
 				if (options.dashStyle) {
 					attribs.dashstyle = options.dashStyle;
 				}
-				
+				/*= } =*/
 				this.cross = this.chart.renderer.path(path).attr(attribs).add();
 			}
 
@@ -10816,9 +10846,9 @@ Legend.prototype = {
 	init: function (chart, options) {
 		
 		var legend = this,
-			
+			/*= if (build.classic) { =*/
 			itemStyle = legend.itemStyle = options.itemStyle,
-			
+			/*= } =*/
 			padding,
 			itemMarginTop = options.itemMarginTop || 0;
 	
@@ -10828,9 +10858,9 @@ Legend.prototype = {
 			return;
 		}
 	
-		
+		/*= if (build.classic) { =*/
 		legend.itemHiddenStyle = merge(itemStyle, options.itemHiddenStyle);
-		
+		/*= } =*/
 		legend.itemMarginTop = itemMarginTop;
 		legend.padding = padding = pick(options.padding, 8);
 		legend.initialItemX = padding;
@@ -10860,7 +10890,7 @@ Legend.prototype = {
 	colorizeItem: function (item, visible) {
 		item.legendGroup[visible ? 'removeClass' : 'addClass']('highcharts-legend-item-hidden');
 
-		
+		/*= if (build.classic) { =*/
 		var legend = this,
 			options = legend.options,
 			legendItem = item.legendItem,
@@ -10897,7 +10927,7 @@ Legend.prototype = {
 
 			legendSymbol.attr(symbolAttr);
 		}
-		
+		/*= } =*/
 	},
 
 	/**
@@ -11037,10 +11067,10 @@ Legend.prototype = {
 			horizontal = options.layout === 'horizontal',
 			symbolWidth = legend.symbolWidth,
 			symbolPadding = options.symbolPadding,
-			
+			/*= if (build.classic) { =*/
 			itemStyle = legend.itemStyle,
 			itemHiddenStyle = legend.itemHiddenStyle,
-			
+			/*= } =*/
 			padding = legend.padding,
 			itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
 			ltr = !options.rtl,
@@ -11074,9 +11104,9 @@ Legend.prototype = {
 					legend.baseline || 0,
 					useHTML
 				)
-				
+				/*= if (build.classic) { =*/
 				.css(merge(item.visible ? itemStyle : itemHiddenStyle)) // merge to prevent modifying original (#1021)
-				
+				/*= } =*/
 				.attr({
 					align: ltr ? 'left' : 'right',
 					zIndex: 2
@@ -11085,9 +11115,9 @@ Legend.prototype = {
 
 			// Get the baseline for the first item - the font size is equal for all
 			if (!legend.baseline) {
-				
+				/*= if (build.classic) { =*/
 				fontSize = itemStyle.fontSize;
-				
+				/*= } =*/
 				legend.fontMetrics = renderer.fontMetrics(
 					fontSize,
 					li
@@ -11582,14 +11612,14 @@ H.LegendSymbolMixin = {
 
 		// Draw the line
 		if (options.lineWidth) {
-			
+			/*= if (build.classic) { =*/
 			attr = {
 				'stroke-width': options.lineWidth
 			};
 			if (options.dashStyle) {
 				attr.dashstyle = options.dashStyle;
 			}
-			
+			/*= } =*/
 			
 			this.legendLine = renderer.path([
 				'M',
@@ -12138,9 +12168,9 @@ Chart.prototype = {
 			autoWidth = this.spacingBox.width - 44; // 44 makes room for default context button
 
 		if (title) {
-			
+			/*= if (build.classic) { =*/
 			titleFontSize = titleOptions.style.fontSize;
-			
+			/*= } =*/
 			title
 				.css({ width: (titleOptions.width || autoWidth) + 'px' })
 				.align(extend({ 
@@ -12296,7 +12326,7 @@ Chart.prototype = {
 		chartHeight = chart.chartHeight;
 
 		// Create the inner container
-		
+		/*= if (build.classic) { =*/
 		containerStyle = extend({
 			position: 'relative',
 			overflow: 'hidden', // needed for context menu (avoid scrollbars) and
@@ -12308,7 +12338,7 @@ Chart.prototype = {
 			zIndex: 0, // #1072
 			'-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
 		}, optionsChart.style);
-		
+		/*= } =*/
 		chart.container = container = createElement('div', {
 				className: 'highcharts-container ' + (optionsChart.className || ''),
 				id: containerId
@@ -12487,12 +12517,12 @@ Chart.prototype = {
 		}
 
 		// Resize the container with the global animation applied if enabled (#2503)
-		
+		/*= if (build.classic) { =*/
 		(globalAnimation ? animate : css)(chart.container, {
 			width: chartWidth + 'px',
 			height: chartHeight + 'px'
 		}, globalAnimation);
-		
+		/*= } =*/
 
 		chart.setChartSize(true);
 		renderer.setSize(chartWidth, chartHeight, animation);
@@ -12621,9 +12651,9 @@ Chart.prototype = {
 			plotBorder = chart.plotBorder,
 			plotBGImage = chart.plotBGImage,
 			chartBorderWidth,
-			
+			/*= if (build.classic) { =*/
 			chartBackgroundColor = optionsChart.backgroundColor,
-			
+			/*= } =*/
 			plotBackgroundColor = optionsChart.plotBackgroundColor,
 			plotBackgroundImage = optionsChart.plotBackgroundImage,
 			plotBorderWidth = optionsChart.plotBorderWidth || 0,
@@ -12646,7 +12676,9 @@ Chart.prototype = {
 			verb = 'attr';
 		}
 
-		
+		/*= if (!build.classic) { =*/
+		chartBorderWidth = mgn = chartBackground.pxStyle('stroke-width');
+		/*= } else { =*/
 
 		chartBorderWidth = optionsChart.borderWidth || 0;
 		mgn = chartBorderWidth + (optionsChart.shadow ? 8 : 0);
@@ -12662,7 +12694,7 @@ Chart.prototype = {
 		chartBackground
 			.attr(bgAttr)
 			.shadow(optionsChart.shadow);
-		
+		/*= } =*/
 
 		chartBackground[verb]({
 			x: mgn / 2,
@@ -13477,11 +13509,11 @@ H.Series.prototype = {
 	sorted: true, // requires the data to be sorted
 	requireSorting: true,
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		
+		/*= if (build.classic) { =*/
 		stroke: 'lineColor',
 		'stroke-width': 'lineWidth',
 		fill: 'fillColor',
-		
+		/*= } =*/
 		r: 'radius'
 	},
 	directTouch: false,
@@ -14846,20 +14878,20 @@ H.Series.prototype = {
 
 			} else if ((lineWidth || fillColor) && graphPath.length) { // #1487
 				attribs = {
-					
+					/*= if (build.classic) { =*/
 					stroke: prop[1],
 					'stroke-width': lineWidth,
 					fill: fillColor,
-					
+					/*= } =*/
 					zIndex: 1 // #1069
 				};
-				
+				/*= if (build.classic) { =*/
 				if (prop[2]) {
 					attribs.dashstyle = prop[2];
 				} else if (roundCap) {
 					attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
 				}
-				
+				/*= } =*/
 
 				series[graphKey] = series.chart.renderer.path(graphPath)
 					.addClass('highcharts-graph')
@@ -16489,12 +16521,12 @@ seriesTypes.area = extendClass(Series, {
 				series[areaKey] = series.chart.renderer.path(areaPath)
 					.addClass('highcharts-area')
 					.attr({
-						
+						/*= if (build.classic) { =*/
 						fill: pick(
 							prop[2],
 							Color(prop[1]).setOpacity(pick(options.fillOpacity, 0.75)).get()
 						),
-						
+						/*= } =*/
 						zIndex: 0 // #1069
 					}).add(series.group);
 			}
@@ -16687,10 +16719,10 @@ seriesTypes.areaspline = extendClass(seriesTypes.spline, {
  * Set the default options for column
  */
 defaultPlotOptions.column = merge(defaultSeriesOptions, {
-	
+	/*= if (build.classic) { =*/
 	borderColor: '#FFFFFF',
 	//borderWidth: 1,
-	
+	/*= } =*/
 	borderRadius: 0,
 	//colorByPoint: undefined,
 	groupPadding: 0.2,
@@ -16701,7 +16733,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	minPointLength: 0,
 	cropThreshold: 50, // when there are more points, they will not animate out of the chart on xAxis.setExtremes
 	pointRange: null, // null means auto, meaning 1 in a categorized axis and least distance between points if not categories
-	
+	/*= if (build.classic) { =*/
 	states: {
 		hover: {
 			brightness: 0.1,
@@ -16714,7 +16746,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 			shadow: false
 		}
 	},
-	
+	/*= } =*/
 	dataLabels: {
 		align: null, // auto
 		verticalAlign: null, // auto
@@ -16735,10 +16767,10 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 seriesTypes.column = extendClass(Series, {
 	type: 'column',
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		
+		/*= if (build.classic) { =*/
 		stroke: 'borderColor',
 		fill: 'color',
-		
+		/*= } =*/
 		r: 'borderRadius'
 	},
 	cropShoulder: 0,
@@ -18733,14 +18765,14 @@ extend(Legend.prototype, {
 			// A CSS class to dim or hide other than the hovered series
 			chart.seriesGroup.addClass('highcharts-legend-active');
 			
-			
+			/*= if (build.classic) { =*/
 			legendItem.css(legend.options.itemHoverStyle);
-			
+			/*= } =*/
 		})
 		.on('mouseout', function () {
-			
+			/*= if (build.classic) { =*/
 			legendItem.css(item.visible ? legend.itemStyle : legend.itemHiddenStyle);
-			
+			/*= } =*/
 
 			// A CSS class to dim or hide other than the hovered series
 			chart.seriesGroup.removeClass('highcharts-legend-active');
@@ -18791,10 +18823,10 @@ extend(Legend.prototype, {
 });
 
 
-
+/*= if (build.classic) { =*/
 // Add pointer cursor to legend itemstyle in defaultOptions
 defaultOptions.legend.itemStyle.cursor = 'pointer';
-
+/*= } =*/
 
 
 /* 
@@ -19261,7 +19293,7 @@ extend(Series.prototype, {
 
 			series.state = state;
 
-			
+			/*= if (build.classic) { =*/
 
 			if (stateOptions[state] && stateOptions[state].enabled === false) {
 				return;
@@ -19282,7 +19314,7 @@ extend(Series.prototype, {
 					i = i + 1;
 				}
 			}
-			
+			/*= } =*/
 		}
 	},
 
