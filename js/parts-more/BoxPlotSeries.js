@@ -106,7 +106,8 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			shapeArgs,
 			color,
 			doQuartiles = series.doQuartiles !== false, // error bar inherits this series type but doesn't do quartiles
-			whiskerLength = parseInt(series.options.whiskerLength, 10) / 100;
+			pointWiskerLength,
+			whiskerLength = series.options.whiskerLength;
 
 
 		each(points, function (point) {
@@ -191,21 +192,22 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					crispCorr = (whiskersAttr['stroke-width'] % 2) / 2;
 					highPlot = highPlot + crispCorr;
 					lowPlot = lowPlot + crispCorr;
+					pointWiskerLength = (/%$/).test(whiskerLength) ? halfWidth * parseFloat(whiskerLength) / 100 : whiskerLength / 2;
 					whiskersPath = [
 						// High whisker
 						'M',
-						crispX - halfWidth * whiskerLength, 
+						crispX - pointWiskerLength, 
 						highPlot,
 						'L',
-						crispX + halfWidth * whiskerLength, 
+						crispX + pointWiskerLength, 
 						highPlot,
 						
 						// Low whisker
 						'M',
-						crispX - halfWidth * whiskerLength, 
+						crispX - pointWiskerLength, 
 						lowPlot,
 						'L',
-						crispX + halfWidth * whiskerLength, 
+						crispX + pointWiskerLength, 
 						lowPlot
 					];
 				}
