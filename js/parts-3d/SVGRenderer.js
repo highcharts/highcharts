@@ -396,6 +396,23 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 	
 	var out = ['M', cx + (rx * cos(start2)), cy + (ry * sin(start2))];
 	out = out.concat(curveTo(cx, cy, rx, ry, start2, end2, 0, 0));
+	
+	// When slice goes over middle, need to add both, left and right outer side:
+	if (end > PI - a && start < PI - a) {
+	// Go to outer side
+	out = out.concat([
+	'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
+	]);
+	// Curve to the true end of the slice
+	out = out.concat(curveTo(cx, cy, rx, ry, end2, end, dx, dy));
+	// Go to the inner side
+	out = out.concat([
+	'L', cx + (rx * cos(end)), cy + (ry * sin(end))
+	]);
+	// Go back to the artifical end2
+	out = out.concat(curveTo(cx, cy, rx, ry, end, end2, 0, 0));
+	}
+	
 	out = out.concat([
 		'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
 	]);
@@ -426,21 +443,41 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 		'L', cx + (irx * ce), cy + (iry * se),
 		'Z'
 	];
-
-	var a1 = sin((start + end) / 2),
-		a2 = sin(start),
-		a3 = sin(end);
-
+	
+	// correction for changed position of vanishing point caused by alpha and beta rotations
+	var angleCorr = Math.atan2(dy, -dx),
+		angleEnd = Math.abs(end + angleCorr), 
+		angleStart = Math.abs(start + angleCorr),
+		angleMid = Math.abs((start + end) / 2 + angleCorr);
+	
+	// set to 0-PI range
+	function toZeroPIRange(angle) {
+		angle = angle % (2 * PI);
+		if (angle > PI) {
+			angle = 2 * PI - angle; 
+		}
+		return angle;
+	}
+	angleEnd = toZeroPIRange(angleEnd);
+	angleStart = toZeroPIRange(angleStart);
+	angleMid = toZeroPIRange(angleMid);
+	
+	// *1e5 is to compensate pInt in zIndexSetter
+	var incPrecision = 1e5,
+		a1 = angleMid * incPrecision,
+		a2 = angleStart * incPrecision,
+		a3 = angleEnd * incPrecision;
+		
 	return {
 		top: top,
-		zTop: r,
+		zTop: PI * incPrecision + 1, // max angle is PI, so this is allways higher
 		out: out,
-		zOut: Math.max(a1, a2, a3) * r,
+		zOut: Math.max(a1, a2, a3),
 		inn: inn,
-		zInn: Math.max(a1, a2, a3) * r,
+		zInn: Math.max(a1, a2, a3),
 		side1: side1,
-		zSide1: a2 * (r * 0.99),
+		zSide1: a3 * 0.99, // to keep below zOut and zInn in case of same values
 		side2: side2,
-		zSide2: a3 * (r * 0.99)
+		zSide2: a2 * 0.99
 	};
 };
