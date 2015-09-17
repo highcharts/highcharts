@@ -8013,9 +8013,11 @@ Axis.prototype = {
 			};
 		
 		if (horiz) {
-			autoRotation = defined(rotationOption) ? 
-				[rotationOption] :
-				slotSize < pick(labelOptions.autoRotationLimit, 80) && !labelOptions.staggerLines && !labelOptions.step && labelOptions.autoRotation;
+			autoRotation = !labelOptions.staggerLines && !labelOptions.step && ( // #3971
+				defined(rotationOption) ? 
+					[rotationOption] :
+					slotSize < pick(labelOptions.autoRotationLimit, 80) && labelOptions.autoRotation
+			);
 
 			if (autoRotation) {
 
@@ -12143,7 +12145,7 @@ Chart.prototype = {
 			chartHeight,
 			fireEndResize,
 			renderer = chart.renderer,
-			globalAnimation = renderer.globalAnimation;
+			globalAnimation;
 
 		// Handle the isResizing counter
 		chart.isResizing += 1;
@@ -12169,6 +12171,7 @@ Chart.prototype = {
 		}
 
 		// Resize the container with the global animation applied if enabled (#2503)
+		globalAnimation = renderer.globalAnimation;
 		(globalAnimation ? animate : css)(chart.container, {
 			width: chartWidth + PX,
 			height: chartHeight + PX
@@ -12201,8 +12204,8 @@ Chart.prototype = {
 		chart.oldChartHeight = null;
 		fireEvent(chart, 'resize');
 
-		// fire endResize and set isResizing back
-		// If animation is disabled, fire without delay
+		// Fire endResize and set isResizing back. If animation is disabled, fire without delay
+		globalAnimation = renderer.globalAnimation; // Reassign it before using it, it may have changed since the top of this function.
 		if (globalAnimation === false) {
 			fireEndResize();
 		} else { // else set a timeout with the animation duration
