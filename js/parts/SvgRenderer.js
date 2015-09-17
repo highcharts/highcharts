@@ -515,6 +515,7 @@ SVGElement.prototype = {
 		return elemWrapper;
 	},
 
+	/*= if (!build.classic) { =*/
 	/**
 	 * Get a computed style
 	 */
@@ -522,6 +523,17 @@ SVGElement.prototype = {
 		return window.getComputedStyle(this.element || this, '').getPropertyValue(prop);
 	},
 
+	/**
+	 * Get a computed style in pixel values
+	 */
+	pxStyle: function (prop) {
+		var val = this.getStyle(prop);
+
+		if (val.indexOf('px') === val.length - 2) {
+			return pInt(val);
+		}
+	},
+	/*= } =*/
 	/**
 	 * Add an event listener
 	 * @param {String} eventType

@@ -13,6 +13,9 @@
   font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
   font-size: 12px; }
 
+.highcharts-background {
+  fill: none; }
+
 .highcharts-title {
   fill: #333333;
   font-size: 18px; }
@@ -22,6 +25,7 @@
   font-size: 18px; }
 
 .highcharts-graph {
+  fill: none;
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round; }

@@ -2261,6 +2261,7 @@ SVGElement.prototype = {
 		return elemWrapper;
 	},
 
+	
 	/**
 	 * Get a computed style
 	 */
@@ -2268,6 +2269,17 @@ SVGElement.prototype = {
 		return window.getComputedStyle(this.element || this, '').getPropertyValue(prop);
 	},
 
+	/**
+	 * Get a computed style in pixel values
+	 */
+	pxStyle: function (prop) {
+		var val = this.getStyle(prop);
+
+		if (val.indexOf('px') === val.length - 2) {
+			return pInt(val);
+		}
+	},
+	
 	/**
 	 * Add an event listener
 	 * @param {String} eventType
@@ -11960,8 +11972,8 @@ Chart.prototype = {
 			plotBackground = chart.plotBackground,
 			plotBorder = chart.plotBorder,
 			plotBGImage = chart.plotBGImage,
-			chartBorderWidth = optionsChart.borderWidth || 0,
-			chartBackgroundColor = optionsChart.backgroundColor,
+			chartBorderWidth,
+			
 			plotBackgroundColor = optionsChart.plotBackgroundColor,
 			plotBackgroundImage = optionsChart.plotBackgroundImage,
 			plotBorderWidth = optionsChart.plotBorderWidth || 0,
@@ -11973,34 +11985,28 @@ Chart.prototype = {
 			plotHeight = chart.plotHeight,
 			plotBox = chart.plotBox,
 			clipRect = chart.clipRect,
-			clipBox = chart.clipBox;
+			clipBox = chart.clipBox,
+			verb = 'animate';
 
 		// Chart area
-		mgn = chartBorderWidth + (optionsChart.shadow ? 8 : 0);
-
-		if (chartBorderWidth || chartBackgroundColor) {
-			if (!chartBackground) {
-				
-				bgAttr = {
-					fill: chartBackgroundColor || 'none'
-				};
-				if (chartBorderWidth) { // #980
-					bgAttr.stroke = optionsChart.borderColor;
-					bgAttr['stroke-width'] = chartBorderWidth;
-				}
-				chart.chartBackground = renderer.rect(mgn / 2, mgn / 2, chartWidth - mgn, chartHeight - mgn,
-						optionsChart.borderRadius, chartBorderWidth)
-					.attr(bgAttr)
-					.addClass('highcharts-' + 'background')
-					.add()
-					.shadow(optionsChart.shadow);
-
-			} else { // resize
-				chartBackground.animate(
-					chartBackground.crisp({ width: chartWidth - mgn, height: chartHeight - mgn })
-				);
-			}
+		if (!chartBackground) {
+			chart.chartBackground = chartBackground = renderer.rect()
+				.addClass('highcharts-background')
+				.add();
+			verb = 'attr';
 		}
+
+		
+		chartBorderWidth = mgn = chartBackground.pxStyle('stroke-width');
+		
+
+		chartBackground[verb]({
+			x: mgn / 2,
+			y: mgn / 2,
+			width: chartWidth - mgn - chartBorderWidth % 2,
+			height: chartHeight - mgn - chartBorderWidth % 2,
+			r: optionsChart.borderRadius
+		});
 
 
 		// Plot background
