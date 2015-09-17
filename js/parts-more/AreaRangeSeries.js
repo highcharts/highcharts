@@ -178,6 +178,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			seriesProto = Series.prototype,
 			dataLabelOptions = this.options.dataLabels,
 			align = dataLabelOptions.align,
+			inside = dataLabelOptions.inside,
 			point,
 			up,
 			inverted = this.chart.inverted;
