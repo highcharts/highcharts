@@ -10637,14 +10637,16 @@ Legend.prototype = {
 			
 			// Apply marker options
 			if (markerOptions && legendSymbol.isMarker) { // #585
-				symbolAttr.stroke = symbolColor;
 				markerOptions = item.convertAttribs(markerOptions);
+
 				for (key in markerOptions) {
 					val = markerOptions[key];
 					if (val !== UNDEFINED) {
 						symbolAttr[key] = val;
 					}
 				}
+
+				symbolAttr.stroke = visible ? pick(markerOptions.stroke, symbolColor) : symbolColor; 
 			}
 
 			legendSymbol.attr(symbolAttr);
