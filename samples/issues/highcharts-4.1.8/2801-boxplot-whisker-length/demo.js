@@ -13,6 +13,7 @@ $(function () {
 			},
 			series: [{
 				whiskerLength: '50%',
+				pointWidth: 50,
 				data: [
 					[760, 801, 848, 895, 965],
 					[760, 801, 848, 895, 965]
@@ -28,13 +29,13 @@ $(function () {
         var chart = $('#container').highcharts();
             
         assert.strictEqual(
-            chart.series[0].points[0].whiskers.attr('d'),
-			'M 41 31 L 66 31 M 41 212 L 66 212',
+            chart.series[0].points[0].whiskers.getBBox(true).width,
+			25,
             'whiskerLength set by percent'
         );
 		assert.strictEqual(
-            chart.series[1].points[0].whiskers.attr('d'),
-            'M 239.5 31 L 281.5 31 M 239.5 212 L 281.5 212',
+            chart.series[1].points[0].whiskers.getBBox(true).width,
+            42,
             'whiskerLength set by number'
         );
 
