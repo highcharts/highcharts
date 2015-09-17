@@ -317,11 +317,11 @@ seriesProto.processData = function () {
 		// sure data is not shifted to the left
 		if (dataGroupingOptions.smoothed) {
 			i = groupedXData.length - 1;
-			groupedXData[i] = xMax;
+			groupedXData[i] = Math.min(groupedXData[i], xMax);
 			while (i-- && i > 0) {
 				groupedXData[i] += interval / 2;
 			}
-			groupedXData[0] = xMin;
+			groupedXData[0] = Math.max(groupedXData[0], xMin);
 		}
 
 		// record what data grouping values were used
