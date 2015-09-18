@@ -182,6 +182,11 @@ var PieSeries = {
 		fill: 'color'
 	},
 
+	init: function () {
+		Series.prototype.init.apply(this, arguments);
+		this.initShapes = {};
+	},
+
 	/**
 	 * Animate the pies in
 	 */
@@ -296,6 +301,7 @@ var PieSeries = {
 		// If positions are passed as a parameter, we're in a recursive loop for adjusting
 		// space for data labels.
 		if (!positions) {
+			series.oldCenter = series.center;
 			series.center = positions = series.getCenter();
 		}
 
@@ -331,6 +337,18 @@ var PieSeries = {
 				start: mathRound(start * precision) / precision,
 				end: mathRound(end * precision) / precision
 			};
+
+			if (series.initShapes[point.x]) { 
+				// #1517 - counterclockwise animation, start from the next point's end  or series end
+				point.initialArgs = {
+					start: series.endAngleRad,
+					end: series.endAngleRad,
+					innerR: series.oldCenter[3] / 2,
+					r: series.oldCenter[3] / 2,
+					x: series.oldCenter[0],
+					y: series.oldCenter[1]
+				};
+			}  
 
 			// The angle must stay within -90 and 270 (#2645)
 			angle = (end + start) / 2;
@@ -442,6 +460,13 @@ var PieSeries = {
 						.attr(groupTranslation)
 						.add(series.group)
 						.shadow(shadow, shadowGroup);	
+
+					// #1517 - after adding new points, animate them
+					if (series.initShapes[point.x]) {
+						point.graphic.attr(point.initialArgs).animate(extend(shapeArgs, groupTranslation));
+						delete series.initShapes[point.x];
+						delete point.initialArgs;
+					}	
 				}
 			}
 		});

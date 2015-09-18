@@ -299,6 +299,11 @@ extend(Series.prototype, {
 			series.data.splice(i, 0, null);
 			series.processData();
 		}
+		
+		// When point is a shape, store reference in case of separate animation for that shape. For example pie.
+		if (series.initShapes) {
+			series.initShapes[x] = pick(animation, true);
+		}
 
 		// Generate points to be added to the legend (#1329)
 		if (seriesOptions.legendType === 'point') {
