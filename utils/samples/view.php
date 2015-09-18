@@ -77,7 +77,7 @@ function getResources() {
 				if (preg_match('/\.js$/', $url)) {
 					$html .= "<script src='$url'></script>\n";
 				} elseif (preg_match('/\.css$/', $url)) {
-					$html .= "<link rel='stylesheet' href='$url'></script>\n";
+					$html .= "<link type='text/css' rel='stylesheet' href='$url' />\n";
 				}
 			}
 

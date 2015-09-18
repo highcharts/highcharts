@@ -9,6 +9,9 @@
   /* #1072 */
   -webkit-tap-highlight-color: transparent; }
 
+.highcharts-background {
+  fill: #ffffff; }
+
 .highcharts-root {
   font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
   font-size: 12px;

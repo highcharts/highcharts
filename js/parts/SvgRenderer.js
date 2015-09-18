@@ -1974,12 +1974,12 @@ SVGRenderer.prototype = {
 		renderer.width = width;
 		renderer.height = height;
 
-		/*= if (build.classic) { =*/
+		/* = if (build.classic) { = */
 		renderer.boxWrapper[pick(animate, true) ? 'animate' : 'attr']({
 			width: width,
 			height: height
 		});
-		/*= } =*/
+		/* = } = */
 		renderer.boxWrapper.attr({
 			viewBox: '0 0 ' + width + ' ' + height
 		});
