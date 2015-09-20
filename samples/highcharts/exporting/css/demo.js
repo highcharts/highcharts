@@ -15,6 +15,11 @@ $(function () {
             'x',
             'y'
         ];
+        SVGRenderer.prototype.inlineBlacklist = [
+            /-/, // In Firefox, both hyphened and camelCased names are listed
+            /cssText/,
+            // /^text (border|color|cursor|height|webkitBorder)/
+        ];
         SVGRenderer.prototype.unstyledElements = [
             'clipPath',
             'defs',
@@ -29,8 +34,10 @@ $(function () {
          * @todo: Make it work with IE9 and IE10.
          */
         Chart.prototype.inlineStyles = function () {
-            var inlineToAttributes = this.renderer.inlineToAttributes,
-                unstyledElements = this.renderer.unstyledElements,
+            var renderer = this.renderer,
+                inlineToAttributes = renderer.inlineToAttributes,
+                blacklist = renderer.inlineBlacklist,
+                unstyledElements = renderer.unstyledElements,
                 defaultStyles = {},
                 dummySVG;
             console.time('inlineStyles')
@@ -55,7 +62,9 @@ $(function () {
                     parentStyles,
                     cssText = '',
                     dummy,
-                    styleAttr;
+                    styleAttr,
+                    blacklisted,
+                    i;
                 
                 if (node.nodeType === 1 && unstyledElements.indexOf(node.nodeName) === -1) {
                     styles = window.getComputedStyle(node, null);
@@ -77,7 +86,15 @@ $(function () {
                     // Loop over all the computed styles and check whether they are in the 
                     // white list for styles or atttributes.
                     for (prop in styles) {
-                        if (prop !== 'cssText') {
+
+                        // Check against blacklist
+                        blacklisted = false;
+                        i = blacklist.length
+                        while (i-- && !blacklisted) {
+                            blacklisted = blacklist[i].test(node.nodeName + ' ' + prop);
+                        }
+
+                        if (!blacklisted) {
                             
                              // If parent node has the same style, it gets inherited, no need to inline it
                             if (parentStyles[prop] !== styles[prop] && defaultStyles[node.nodeName][prop] !== styles[prop]) {
@@ -87,7 +104,7 @@ $(function () {
                                     node.setAttribute(hyphenate(prop), styles[prop]);
 
                                 // Styles
-                                } else /*if (exportWhitelist[prop] === 2)*/ {
+                                } else {
                                     cssText += hyphenate(prop) + ':' + styles[prop] + ';';
                                 }
                             }
@@ -100,6 +117,7 @@ $(function () {
                         node.setAttribute('style', (styleAttr ? styleAttr + ';' : '') + cssText);
                     }
 
+                    if (node.nodeName === 'text') return;
                     // Recurse
                     each(node.children || node.childNodes, recurse);
                 }
@@ -117,7 +135,7 @@ $(function () {
 
             console.timeEnd('inlineStyles');
 
-            console.log('SVG length (characters)', this.container.innerHTML.length)
+            console.log('SVG length (characters) ', this.container.innerHTML.length)
 
         };
 
