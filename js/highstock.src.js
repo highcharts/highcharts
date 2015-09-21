@@ -16009,6 +16009,9 @@ var AreaSeries = extendClass(Series, {
 			options = this.options,
 			segLength = segmentPath.length,
 			translatedThreshold = this.yAxis.getThreshold(options.threshold), // #2181
+			step = options.step,
+			middlePlotX,
+			lastPoint,
 			yBottom;
 		
 		if (segLength === 3) { // for animation from 1 to two points
@@ -16020,17 +16023,32 @@ var AreaSeries = extendClass(Series, {
 			// reverse the entire graphPath of the previous series, though may be hard with
 			// splines and with series with different extremes
 			for (i = segment.length - 1; i >= 0; i--) {
-
 				yBottom = pick(segment[i].yBottom, translatedThreshold);
-			
 				// step line?
-				if (i < segment.length - 1 && options.step) {
-					areaSegmentPath.push(segment[i + 1].plotX, yBottom);
+				lastPoint = segment[i + 1];
+				if (step && lastPoint) {
+					if (step === 'right') {
+						areaSegmentPath.push(
+							segment[i].plotX,
+							lastPoint.yBottom
+						);
+					} else if (step === 'center') {
+						middlePlotX = (lastPoint.plotX + segment[i].plotX) / 2;
+						areaSegmentPath.push(
+							middlePlotX,
+							lastPoint.yBottom,
+							middlePlotX,
+							yBottom
+						);
+					} else {
+						areaSegmentPath.push(
+							lastPoint.plotX,
+							yBottom
+						);
+					}
 				}
-				
 				areaSegmentPath.push(segment[i].plotX, yBottom);
 			}
-
 		} else { // follow zero line back
 			this.closeSegment(areaSegmentPath, segment, translatedThreshold);
 		}
