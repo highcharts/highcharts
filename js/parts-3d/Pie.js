@@ -91,13 +91,16 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 		Highcharts.each(this.points, function (point) {
 			var graphic = point.graphic;
 
-			graphic.out.add(seriesGroup);
-			graphic.inn.add(seriesGroup);
-			graphic.side1.add(seriesGroup);
-			graphic.side2.add(seriesGroup);
+			// #4584 Check if has graphic - null points don't have it
+			if (graphic) {
+				graphic.out.add(seriesGroup);
+				graphic.inn.add(seriesGroup);
+				graphic.side1.add(seriesGroup);
+				graphic.side2.add(seriesGroup);
 
-			// Hide null or 0 points (#3006, 3650)
-			graphic[point.y ? 'show' : 'hide']();
+				// Hide null or 0 points (#3006, 3650)
+				graphic[point.y ? 'show' : 'hide']();
+			}
 		});		
 	}
 });
