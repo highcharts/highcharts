@@ -130,12 +130,11 @@
 			this.nodeMap = [];
 
 			// Map children to index
-			// @todo Use data instead of points
-			each(this.points, function (point, index) {
+			each(this.data, function (d, index) {
 				var parent = "";
-				allIds.push(point.id);
-				if (point.parent !== undefined) {
-					parent = point.parent;
+				allIds.push(d.id);
+				if (d.parent !== undefined) {
+					parent = d.parent;
 				}
 				if (parentList[parent] === undefined) {
 					parentList[parent] = [];
