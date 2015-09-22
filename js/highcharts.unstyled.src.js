@@ -1486,8 +1486,6 @@ H.defaultOptions = {
 		enabled: true,
 		animation: svg,
 		//crosshairs: null,
-		backgroundColor: 'rgba(249, 249, 249, .85)',
-		borderWidth: 1,
 		borderRadius: 3,
 		dateTimeLabelFormats: { 
 			millisecond: '%A, %b %e, %H:%M:%S.%L',
@@ -1502,19 +1500,12 @@ H.defaultOptions = {
 		footerFormat: '',
 		//formatter: defaultFormatter,
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
+		padding: 8, // docs
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
-		shadow: true,
 		//shape: 'callout',
 		//shared: false,
 		snap: isTouchDevice ? 25 : 10,
-		style: {
-			color: '#333333',
-			cursor: 'default',
-			fontSize: '12px',
-			padding: '8px',
-			pointerEvents: 'none', // #1686 http://caniuse.com/#feat=pointer-events // docs
-			whiteSpace: 'nowrap'
-		}
+		
 		//xDateFormat: '%A, %b %e, %Y',
 		//valueDecimals: null,
 		//valuePrefix: '',
@@ -4142,6 +4133,11 @@ SVGRenderer.prototype = {
 			baselineOffset,
 			needsBox;
 
+		
+		needsBox = true; // for styling
+		
+
+
 		/**
 		 * This function runs after the label is added to the DOM (when the bounding box is
 		 * available), and after the text of the label is updated to detect the new bounding
@@ -4363,6 +4359,7 @@ SVGRenderer.prototype = {
 			 * Apply the shadow to the box
 			 */
 			shadow: function (b) {
+				updateBoxSize();
 				if (box) {
 					box.shadow(b);
 				}
@@ -9119,7 +9116,6 @@ Axis.prototype.getLogTickPositions = function (interval, min, max, minor) {
 		isNumber = H.isNumber,
 		map = H.map,
 		pick = H.pick,
-		pInt = H.pInt,
 		splat = H.splat,
 		timeUnits = H.timeUnits,
 		useCanVG = H.useCanVG;
@@ -9135,10 +9131,6 @@ H.Tooltip = function () {
 H.Tooltip.prototype = {
 
 	init: function (chart, options) {
-
-		var borderWidth = options.borderWidth,
-			style = options.style,
-			padding = pInt(style.padding);
 
 		// Save the chart and options
 		this.chart = chart;
@@ -9160,22 +9152,14 @@ H.Tooltip.prototype = {
 		// create the label		
 		this.label = chart.renderer.label('', 0, 0, options.shape || 'callout', null, null, options.useHTML, null, 'tooltip')
 			.attr({
-				padding: padding,
-				fill: options.backgroundColor,
-				'stroke-width': borderWidth,
+				padding: options.padding,
 				r: options.borderRadius,
 				zIndex: 8
 			})
-			.css(style)
-			.css({ padding: 0 }) // Remove it from VML, the padding is applied as an attribute instead (#1117)
 			.add()
-			.attr({ y: -9999 }); // #2301, #2657
+			.attr({ y: -9999 });
 
-		// When using canVG the shadow shows up as a gray circle
-		// even if the tooltip is hidden.
-		if (!useCanVG) {
-			this.label.shadow(options.shadow);
-		}
+		
 
 		// Public property for getting the shared state.
 		this.shared = options.shared;

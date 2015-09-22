@@ -295,8 +295,6 @@ H.defaultOptions = {
 		enabled: true,
 		animation: svg,
 		//crosshairs: null,
-		backgroundColor: 'rgba(249, 249, 249, .85)',
-		borderWidth: 1,
 		borderRadius: 3,
 		dateTimeLabelFormats: { 
 			millisecond: '%A, %b %e, %H:%M:%S.%L',
@@ -311,19 +309,23 @@ H.defaultOptions = {
 		footerFormat: '',
 		//formatter: defaultFormatter,
 		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
+		padding: 8, // docs
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
-		shadow: true,
 		//shape: 'callout',
 		//shared: false,
 		snap: isTouchDevice ? 25 : 10,
+		/*= if (build.classic) { =*/
+		backgroundColor: 'rgba(249, 249, 249, .85)',
+		borderWidth: 1,
+		shadow: true,
 		style: {
 			color: '#333333',
 			cursor: 'default',
 			fontSize: '12px',
-			padding: '8px',
 			pointerEvents: 'none', // #1686 http://caniuse.com/#feat=pointer-events // docs
 			whiteSpace: 'nowrap'
 		}
+		/*= } =*/
 		//xDateFormat: '%A, %b %e, %Y',
 		//valueDecimals: null,
 		//valuePrefix: '',

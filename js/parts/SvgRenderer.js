@@ -2458,6 +2458,13 @@ SVGRenderer.prototype = {
 			baselineOffset,
 			needsBox;
 
+		/*= if (!build.classic) { =*/
+		needsBox = true; // for styling
+		/*= } else { =*/
+		needsBox = false;
+		/*= } =*/
+
+
 		/**
 		 * This function runs after the label is added to the DOM (when the bounding box is
 		 * available), and after the text of the label is updated to detect the new bounding
@@ -2679,6 +2686,7 @@ SVGRenderer.prototype = {
 			 * Apply the shadow to the box
 			 */
 			shadow: function (b) {
+				updateBoxSize();
 				if (box) {
 					box.shadow(b);
 				}

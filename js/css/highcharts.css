@@ -38,6 +38,18 @@
   fill: #909090;
   font-size: 9px; }
 
+.highcharts-tooltip {
+  fill: #333333;
+  cursor: default;
+  font-size: 12px;
+  pointer-events: none;
+  white-space: nowrap; }
+
+.highcharts-tooltip path {
+  stroke-width: 1px;
+  fill: #f9f9f9;
+  fill-opacity: 0.85; }
+
 .highcharts-graph {
   fill: none;
   stroke-width: 2;
