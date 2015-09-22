@@ -190,6 +190,7 @@
 		},
 		setTreeValues: function (tree) {
 			var series = this,
+				options = series.options,
 				childrenTotal = 0,
 				sorted = [],
 				val,
@@ -224,6 +225,7 @@
 				// Ignore this node if point is not visible
 				ignore: !(pick(point && point.visible, true) && (val > 0)),
 				isLeaf: tree.visible && !childrenTotal,
+				levelDynamic: (options.levelIsConstant ? tree.level : (tree.level - series.nodeMap[series.rootNode].level)),
 				name: pick(point && point.name, ""),
 				val: val
 			});
@@ -254,8 +256,7 @@
 		calculateChildrenAreas: function (parent, area) {
 			var series = this,
 				options = series.options,
-				levelNumber = (options.levelIsConstant ? parent.level : (parent.level - this.nodeMap[this.rootNode].level)),
-				level = this.levelMap[levelNumber + 1],
+				level = this.levelMap[parent.levelDynamic + 1],
 				algorithm = pick((series[level && level.layoutAlgorithm] && level.layoutAlgorithm), options.layoutAlgorithm),
 				alternate = options.alternateStartingDirection,
 				childrenValues = [],
@@ -273,7 +274,6 @@
 			childrenValues = series[algorithm](area, children);
 			each(children, function (child, index) {
 				point = series.points[child.i];
-				point.level = levelNumber + 1;
 				child.values = merge(childrenValues[index], {
 					val: child.childrenTotal,
 					direction: (alternate ? 1 - area.direction : area.direction)
@@ -362,7 +362,7 @@
 				level;
 			if (node) {
 				point = series.points[node.i];
-				level = series.levelMap[node.level];
+				level = series.levelMap[node.levelDynamic];
 				// Select either point color, level color or inherited color.
 				color = pick(point && point.options.color, level && level.color, color);
 				if (point) {
@@ -596,7 +596,7 @@
 				options,
 				level;
 			each(points, function (point) {
-				level = series.levelMap[point.level];
+				level = series.levelMap[point.node.levelDynamic];
 				// Set options to new object to avoid problems with scope
 				options = {style: {}};
 
@@ -636,7 +636,7 @@
 				hover,
 				level;
 			each(points, function (point) {
-				level = series.levelMap[point.level];
+				level = series.levelMap[point.node.levelDynamic];
 				attr = {
 					stroke: seriesOptions.borderColor,
 					'stroke-width': seriesOptions.borderWidth,
@@ -654,7 +654,7 @@
 				attr.stroke = point.borderColor || attr.stroke;
 				attr['stroke-width'] = point.borderWidth || attr['stroke-width'];
 				attr.dashstyle = point.borderDashStyle || attr.dashstyle;
-				attr.zIndex = (1000 - (point.level * 2));
+				attr.zIndex = (1000 - (point.node.levelDynamic * 2));
 
 				// Make a copy to prevent overwriting individual props
 				point.pointAttr = merge(point.pointAttr);
