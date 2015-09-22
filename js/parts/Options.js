@@ -332,7 +332,6 @@ H.defaultOptions = {
 
 	credits: {
 		enabled: true,
-		text: 'Highcharts.com',
 		href: 'http://www.highcharts.com',
 		position: {
 			align: 'right',
@@ -340,11 +339,14 @@ H.defaultOptions = {
 			verticalAlign: 'bottom',
 			y: -5
 		},
+		/*= if (build.classic) { =*/
 		style: {
 			cursor: 'pointer',
 			color: '#909090',
 			fontSize: '9px'
-		}
+		},
+		/*= } =*/
+		text: 'Highcharts.com'
 	}
 };
 

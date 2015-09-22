@@ -2392,7 +2392,7 @@ SVGRenderer.prototype = {
 		var lineHeight,
 			baseline;
 
-		fontSize = (elem && SVGElement.prototype.getStyle.call(elem, 'font-size')) || fontSize || this.style.fontSize;
+		fontSize = (elem && SVGElement.prototype.getStyle.call(elem, 'font-size')) || fontSize || (this.style && this.style.fontSize);
 		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
 
 		// Empirical values found by comparing font size and bounding box height.

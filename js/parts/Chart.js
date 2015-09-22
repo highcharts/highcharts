@@ -1308,6 +1308,7 @@ Chart.prototype = {
 				0,
 				0
 			)
+			.addClass('highcharts-credits')
 			.on('click', function () {
 				if (credits.href) {
 					location.href = credits.href;
@@ -1317,7 +1318,9 @@ Chart.prototype = {
 				align: credits.position.align,
 				zIndex: 8
 			})
+			/*= if (build.classic) { =*/
 			.css(credits.style)
+			/*= } =*/
 			.add()
 			.align(credits.position);
 		}

@@ -23,7 +23,6 @@
 		merge = H.merge,
 		normalizeTickInterval = H.normalizeTickInterval,
 		pick = H.pick,
-		pInt = H.pInt,
 		PlotLineOrBand = H.PlotLineOrBand,
 		removeEvent = H.removeEvent,
 		splat = H.splat,
@@ -67,11 +66,13 @@ H.Axis.prototype = {
 			// rotation: 0,
 			// align: 'center',
 			// step: null,
+			/*= if (build.classic) { =*/
 			style: {
 				color: '#606060',
 				cursor: 'default',
 				fontSize: '11px'
 			},
+			/*= } =*/
 			x: 0,
 			y: 15
 			/*formatter: function () {
@@ -125,9 +126,11 @@ H.Axis.prototype = {
 			//margin: 0 for horizontal, 10 for vertical axes,
 			//rotation: 0,
 			//side: 'outside',
+			/*= if (build.classic) { =*/
 			style: {
 				color: '#707070'
 			}
+			/*= } =*/
 			//x: 0,
 			//y: 0
 		},
@@ -1541,7 +1544,7 @@ H.Axis.prototype = {
 			slotSize = this.len / (((this.categories ? 1 : 0) + this.max - this.min) / tickInterval),
 			rotation,
 			rotationOption = labelOptions.rotation,
-			labelMetrics = chart.renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
+			labelMetrics = chart.renderer.fontMetrics(labelOptions.style && labelOptions.style.fontSize, ticks[0] && ticks[0].label),
 			step,
 			bestScore = Number.MAX_VALUE,
 			autoRotation,
@@ -1603,8 +1606,8 @@ H.Axis.prototype = {
 				(!horiz && ((margin[3] && (margin[3] - chart.spacing[3])) || chart.chartWidth * 0.33)), // #1580, #1931,
 			innerWidth = Math.max(1, Math.round(slotWidth - 2 * (labelOptions.padding || 5))),
 			attr = {},
-			labelMetrics = renderer.fontMetrics(labelOptions.style.fontSize, ticks[0] && ticks[0].label),
-			textOverflowOption = labelOptions.style.textOverflow,
+			labelMetrics = renderer.fontMetrics(labelOptions.style && labelOptions.style.fontSize, ticks[0] && ticks[0].label),
+			textOverflowOption = labelOptions.style && labelOptions.style.textOverflow,
 			css,
 			labelLength = 0,
 			label,
@@ -1650,7 +1653,7 @@ H.Axis.prototype = {
 					label = ticks[pos].label;
 					if (label) {
 						// Reset ellipsis in order to get the correct bounding box (#4070)
-						if (label.styles.textOverflow === 'ellipsis') {
+						if (label.styles && label.styles.textOverflow === 'ellipsis') {
 							label.css({ textOverflow: 'clip' });
 						}
 						if (label.getBBox().height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f)) {
@@ -1803,8 +1806,10 @@ H.Axis.prototype = {
 						axisTitleOptions.textAlign ||
 						{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
 				})
-				.addClass('highcharts-' + this.coll.toLowerCase() + '-title')
+				.addClass('highcharts-axis-title highcharts-' + this.coll.toLowerCase() + '-title')
+				/*= if (build.classic) { =*/
 				.css(axisTitleOptions.style)
+				/*= } =*/
 				.add(axis.axisGroup);
 				axis.axisTitle.isNew = true;
 			}
@@ -1887,7 +1892,7 @@ H.Axis.prototype = {
 			offset = this.offset,
 			xOption = axisTitleOptions.x || 0,
 			yOption = axisTitleOptions.y || 0,
-			fontSize = pInt(axisTitleOptions.style.fontSize || 12),
+			fontSize = this.chart.renderer.fontMetrics(axisTitleOptions.style && axisTitleOptions.style.fontSize, this.axisTitle).f,
 
 			// the position in the length direction of the axis
 			alongAxis = {

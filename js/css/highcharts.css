@@ -25,6 +25,19 @@
   fill: #555555;
   font-size: 18px; }
 
+.highcharts-axis-title {
+  fill: #707070; }
+
+.highcharts-axis-labels {
+  fill: #606060;
+  cursor: default;
+  font-size: 11px; }
+
+.highcharts-credits {
+  cursor: pointer;
+  fill: #909090;
+  font-size: 9px; }
+
 .highcharts-graph {
   fill: none;
   stroke-width: 2;
