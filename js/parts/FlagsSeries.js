@@ -74,6 +74,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			onData = onSeries && onSeries.points,
 			i = onData && onData.length,
 			xAxis = series.xAxis,
+			yAxis = series.yAxis,
 			xAxisExt = xAxis.getExtremes(),
 			leftPoint,
 			lastX,
@@ -128,9 +129,9 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			// an undefined plotY, but then we must remove the shapeArgs (#847).
 			if (point.plotY === UNDEFINED) {
 				if (point.x >= xAxisExt.min && point.x <= xAxisExt.max) { // we're inside xAxis range
-					point.plotY = chart.chartHeight - xAxis.bottom - (xAxis.opposite ? xAxis.height : 0) + xAxis.offset - chart.plotTop;
+					point.plotY = chart.chartHeight - xAxis.bottom - (xAxis.opposite ? xAxis.height : 0) + xAxis.offset - yAxis.top; // #3517
 				} else {
-					point.shapeArgs = {}; // 847
+					point.shapeArgs = {}; // #847
 				}
 			}
 			// if multiple flags appear at the same x, order them into a stack
