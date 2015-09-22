@@ -8,3 +8,7 @@
 	stroke-dasharray: 2;
 	stroke: black;
 }
+
+.CodeMirror {
+	height: auto !important;
+}

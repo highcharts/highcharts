@@ -17,7 +17,11 @@ $(function () {
         ];
         SVGRenderer.prototype.inlineBlacklist = [
             /-/, // In Firefox, both hyphened and camelCased names are listed
-            /cssText/,
+            /^cssText$/,
+            /^font$/, // more specific props are set
+            /(logical)?(width|height)$/i,
+            /perspective/,
+            /^transition/
             // /^text (border|color|cursor|height|webkitBorder)/
         ];
         SVGRenderer.prototype.unstyledElements = [
@@ -91,7 +95,7 @@ $(function () {
                         blacklisted = false;
                         i = blacklist.length
                         while (i-- && !blacklisted) {
-                            blacklisted = blacklist[i].test(node.nodeName + ' ' + prop);
+                            blacklisted = blacklist[i].test(prop);
                         }
 
                         if (!blacklisted) {
@@ -208,5 +212,14 @@ $(function () {
                 return ret;
             });
     }()));
+
+    CodeMirror.fromTextArea(document.getElementById('pre'), {
+        mode: "xml",
+        theme: "default",
+        lineNumbers: true,
+        lineWrapping: true,
+        readOnly: true,
+        viewportMargin: Infinity
+    });
 
 });
