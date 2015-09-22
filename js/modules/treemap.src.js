@@ -260,8 +260,7 @@
 				algorithm = pick((series[level && level.layoutAlgorithm] && level.layoutAlgorithm), options.layoutAlgorithm),
 				alternate = options.alternateStartingDirection,
 				childrenValues = [],
-				children,
-				point;
+				children;
 
 			// Collect all children which should be included
 			children = grep(parent.children, function (n) {
@@ -273,7 +272,6 @@
 			}
 			childrenValues = series[algorithm](area, children);
 			each(children, function (child, index) {
-				point = series.points[child.i];
 				child.values = merge(childrenValues[index], {
 					val: child.childrenTotal,
 					direction: (alternate ? 1 - area.direction : area.direction)
