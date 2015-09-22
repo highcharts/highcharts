@@ -482,7 +482,7 @@ extend(Point.prototype, {
 	 */
 	setState: function (state, move) {
 		var point = this,
-			plotX = point.plotX,
+			plotX = mathFloor(point.plotX), // #4586
 			plotY = point.plotY,
 			series = point.series,
 			stateOptions = series.options.states,
