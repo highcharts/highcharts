@@ -10,6 +10,7 @@
 /*global HighchartsAdapter */
 (function (H) {
 	var seriesTypes = H.seriesTypes,
+		map = H.map,
 		merge = H.merge,
 		extend = H.extend,
 		extendClass = H.extendClass,
@@ -20,7 +21,24 @@
 		grep = HighchartsAdapter.grep,
 		pick = H.pick,
 		Series = H.Series,
-		Color = H.Color;
+		Color = H.Color,
+		eachObject = function (list, func, context) {
+			var key;
+			context = pick(context, this);
+			for (key in list) {
+				if (list.hasOwnProperty(key)) {
+					func.call(context, list[key], key, list);
+				}
+			}
+		},
+		reduce = function (arr, func, previous, context) {
+			context = pick(context, this);
+			arr = pick(arr, []); // @note should each be able to handle empty values automatically?
+			each(arr, function (current, i) {
+				previous = func.call(context, previous, current, i, arr);
+			});
+			return previous;
+		};
 
 	// Define default options
 	plotOptions.treemap = merge(plotOptions.scatter, {
@@ -106,7 +124,11 @@
 				// Assign variables
 				this.rootNode = pick(this.rootNode, "");
 				tree = this.tree = this.getTree();
-				this.levelMap = this.getLevels();
+				// Create a object map from level to options
+				this.levelMap = reduce(this.options.levels, function (arr, item) {
+					arr[item.level] = item;
+					return arr;
+				}, {});
 				seriesArea = this.getSeriesArea(tree.val);
 				this.calculateChildrenAreas(tree, seriesArea);
 				this.setPointValues();
@@ -118,40 +140,35 @@
 		getTree: function () {
 			var tree,
 				series = this,
-				parentList = [],
-				allIds = [],
-				key,
-				insertItem = function (key) {
-					each(parentList[key], function (item) {
-						parentList[""].push(item);
-					});
-				};
-			// Actions
-			this.nodeMap = [];
-
-			// Map children to index
-			each(this.data, function (d, index) {
-				var parent = "";
-				allIds.push(d.id);
-				if (d.parent !== undefined) {
-					parent = d.parent;
-				}
-				if (parentList[parent] === undefined) {
-					parentList[parent] = [];
-				}
-				parentList[parent].push(index);
+				parentList,
+				allIds;
+			series.nodeMap = [];
+			allIds = map(this.data, function (d) {
+				return d.id;
 			});
+			parentList = reduce(this.data, function (prev, curr, i) {
+				var parent = pick(curr.parent, "");
+				if (prev[parent] === undefined) {
+					prev[parent] = [];
+				}
+				prev[parent].push(i);
+				return prev;
+			}, {});
+
 			/* 
 			*  Quality check:
 			*  - If parent does not exist, then set parent to tree root
 			*  - Add node id to parents children list
-			*/  
-			for (key in parentList) {
-				if ((parentList.hasOwnProperty(key)) && (key !== "") && (HighchartsAdapter.inArray(key, allIds) === -1)) {
-					insertItem(key);
-					delete parentList[key];
+			*/
+			eachObject(parentList, function (children, parent, list) {
+				if ((parent !== "") && (HighchartsAdapter.inArray(parent, allIds) === -1)) {
+					each(children, function (child) {
+						list[""].push(child);
+					});
+					delete list[parent];
 				}
-			}
+			});
+
 			tree = series.buildNode("", -1, 0, parentList, null);
 			this.eachParents(this.nodeMap[this.rootNode], function (node) {
 				node.visible = true;
@@ -341,18 +358,6 @@
 				};
 				this.nodeMap[""].values = seriesArea;
 			return seriesArea;
-		},
-		getLevels: function () {
-			var map = [],
-				levels = this.options.levels;
-			if (levels) {
-				each(levels, function (level) {
-					if (level.level !== undefined) {
-						map[level.level] = level;
-					}
-				});
-			}
-			return map;
 		},
 		setColorRecursive: function (node, color) {
 			var series = this,
