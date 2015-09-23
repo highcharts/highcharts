@@ -843,6 +843,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			seriesProto = Series.prototype,
 			dataLabelOptions = this.options.dataLabels,
 			align = dataLabelOptions.align,
+			inside = dataLabelOptions.inside,
 			point,
 			up,
 			inverted = this.chart.inverted;
@@ -854,7 +855,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			while (i--) {
 				point = data[i];
 				if (point) {
-					up = point.plotHigh > point.plotLow;
+					up = inside ? point.plotHigh < point.plotLow : point.plotHigh > point.plotLow;
 					
 					// Set preliminary values
 					point.y = point.high;
@@ -888,7 +889,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			while (i--) {
 				point = data[i];
 				if (point) {
-					up = point.plotHigh > point.plotLow;
+					up = inside ? point.plotHigh < point.plotLow : point.plotHigh > point.plotLow;
 					
 					// Move the generated labels from step 1, and reassign the original data labels
 					point.dataLabelUpper = point.dataLabel;
@@ -1022,6 +1023,7 @@ seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
 		directTouch: true,
 		trackerGroups: ['group', 'dataLabelsGroup'],
 		drawGraph: noop,
+		crispCol: colProto.crispCol,
 		pointAttrToOptions: colProto.pointAttrToOptions,
 		drawPoints: colProto.drawPoints,
 		drawTracker: colProto.drawTracker,
@@ -1406,7 +1408,8 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			shapeArgs,
 			color,
 			doQuartiles = series.doQuartiles !== false, // error bar inherits this series type but doesn't do quartiles
-			whiskerLength = parseInt(series.options.whiskerLength, 10) / 100;
+			pointWiskerLength,
+			whiskerLength = series.options.whiskerLength;
 
 
 		each(points, function (point) {
@@ -1436,9 +1439,9 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				// Stem attributes
 				stemAttr.stroke = point.stemColor || options.stemColor || color;
 				stemAttr['stroke-width'] = pick(point.stemWidth, options.stemWidth, options.lineWidth);
-				
+				/*= if (build.classic) { =*/
 				stemAttr.dashstyle = point.stemDashStyle || options.stemDashStyle;
-				
+				/*= } =*/
 				
 				// Whiskers attributes
 				whiskersAttr.stroke = point.whiskerColor || options.whiskerColor || color;
@@ -1493,21 +1496,22 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					crispCorr = (whiskersAttr['stroke-width'] % 2) / 2;
 					highPlot = highPlot + crispCorr;
 					lowPlot = lowPlot + crispCorr;
+					pointWiskerLength = (/%$/).test(whiskerLength) ? halfWidth * parseFloat(whiskerLength) / 100 : whiskerLength / 2;
 					whiskersPath = [
 						// High whisker
 						'M',
-						crispX - halfWidth * whiskerLength, 
+						crispX - pointWiskerLength, 
 						highPlot,
 						'L',
-						crispX + halfWidth * whiskerLength, 
+						crispX + pointWiskerLength, 
 						highPlot,
 						
 						// Low whisker
 						'M',
-						crispX - halfWidth * whiskerLength, 
+						crispX - pointWiskerLength, 
 						lowPlot,
 						'L',
-						crispX + halfWidth * whiskerLength, 
+						crispX + pointWiskerLength, 
 						lowPlot
 					];
 				}

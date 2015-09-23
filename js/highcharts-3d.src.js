@@ -503,6 +503,23 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 	
 	var out = ['M', cx + (rx * Math.cos(start2)), cy + (ry * Math.sin(start2))];
 	out = out.concat(curveTo(cx, cy, rx, ry, start2, end2, 0, 0));
+	
+	// When slice goes over middle, need to add both, left and right outer side:
+	if (end > Math.PI - a && start < Math.PI - a) {
+		// Go to outer side
+		out = out.concat([
+		'L', cx + (rx * Math.cos(end2)) + dx, cy + (ry * Math.sin(end2)) + dy
+		]);
+		// Curve to the true end of the slice
+		out = out.concat(curveTo(cx, cy, rx, ry, end2, end, dx, dy));
+		// Go to the inner side
+		out = out.concat([
+		'L', cx + (rx * Math.cos(end)), cy + (ry * Math.sin(end))
+		]);
+		// Go back to the artifical end2
+		out = out.concat(curveTo(cx, cy, rx, ry, end, end2, 0, 0));
+	}
+	
 	out = out.concat([
 		'L', cx + (rx * Math.cos(end2)) + dx, cy + (ry * Math.sin(end2)) + dy
 	]);
@@ -533,22 +550,42 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 		'L', cx + (irx * ce), cy + (iry * se),
 		'Z'
 	];
-
-	var a1 = Math.sin((start + end) / 2),
-		a2 = Math.sin(start),
-		a3 = Math.sin(end);
-
+	
+	// correction for changed position of vanishing point caused by alpha and beta rotations
+	var angleCorr = Math.atan2(dy, -dx),
+		angleEnd = Math.abs(end + angleCorr), 
+		angleStart = Math.abs(start + angleCorr),
+		angleMid = Math.abs((start + end) / 2 + angleCorr);
+	
+	// set to 0-PI range
+	function toZeroPIRange(angle) {
+		angle = angle % (2 * Math.PI);
+		if (angle > Math.PI) {
+			angle = 2 * Math.PI - angle; 
+		}
+		return angle;
+	}
+	angleEnd = toZeroPIRange(angleEnd);
+	angleStart = toZeroPIRange(angleStart);
+	angleMid = toZeroPIRange(angleMid);
+	
+	// *1e5 is to compensate pInt in zIndexSetter
+	var incPrecision = 1e5,
+		a1 = angleMid * incPrecision,
+		a2 = angleStart * incPrecision,
+		a3 = angleEnd * incPrecision;
+		
 	return {
 		top: top,
-		zTop: r,
+		zTop: Math.PI * incPrecision + 1, // max angle is PI, so this is allways higher
 		out: out,
-		zOut: Math.max(a1, a2, a3) * r,
+		zOut: Math.max(a1, a2, a3),
 		inn: inn,
-		zInn: Math.max(a1, a2, a3) * r,
+		zInn: Math.max(a1, a2, a3),
 		side1: side1,
-		zSide1: a2 * (r * 0.99),
+		zSide1: a3 * 0.99, // to keep below zOut and zInn in case of same values
 		side2: side2,
-		zSide2: a3 * (r * 0.99)
+		zSide2: a2 * 0.99
 	};
 };
 
@@ -596,6 +633,10 @@ wrap(Chart.prototype, 'init', function (proceed) {
 		pieOptions;
 
 	if (args[0].chart.options3d && args[0].chart.options3d.enabled) {
+		// Normalize alpha and beta to (-360, 360) range
+		args[0].chart.options3d.alpha = (args[0].chart.options3d.alpha || 0) % 360;
+		args[0].chart.options3d.beta = (args[0].chart.options3d.beta || 0) % 360;
+
 		plotOptions = args[0].plotOptions || {};
 		pieOptions = plotOptions.pie || {};
 
@@ -1493,13 +1534,14 @@ wrap(seriesTypes.scatter.prototype, 'translate', function (proceed) {
 	for (i = 0; i < series.data.length; i++) {
 		rawPoint = series.data[i];
 		zValue = zAxis.isLog && zAxis.val2lin ? zAxis.val2lin(rawPoint.z) : rawPoint.z; // #4562
+		rawPoint.plotZ = zAxis.translate(zValue);
 
 		rawPoint.isInside = rawPoint.isInside ? (zValue >= zAxis.min && zValue <= zAxis.max) : false;
 
 		rawPoints.push({
 			x: rawPoint.plotX,
 			y: rawPoint.plotY,
-			z: zAxis.translate(zValue)
+			z: rawPoint.plotZ
 		});
 	}
 

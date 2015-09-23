@@ -219,7 +219,9 @@ extend(Legend.prototype, {
 		.on('click', function (event) {
 			var strLegendItemClick = 'legendItemClick',
 				fnLegendItemClick = function () {
-					item.setVisible();
+					if (item.setVisible) {
+						item.setVisible();
+					}
 				};
 				
 			// Pass over the click/touch event. #4.
@@ -516,7 +518,7 @@ extend(Point.prototype, {
 	 */
 	setState: function (state, move) {
 		var point = this,
-			plotX = point.plotX,
+			plotX = Math.floor(point.plotX), // #4586
 			plotY = point.plotY,
 			series = point.series,
 			stateOptions = series.options.states,

@@ -165,6 +165,46 @@ seriesTypes.column = extendClass(Series, {
 	},
 
 	/**
+	 * Make the columns crisp. The edges are rounded to the nearest full pixel.
+	 */
+	crispCol: function (x, y, w, h) {
+		var chart = this.chart,
+			borderWidth = this.borderWidth,
+			xCrisp = -(borderWidth % 2 ? 0.5 : 0),
+			yCrisp = borderWidth % 2 ? 0.5 : 1,
+			right,
+			bottom;
+
+		if (chart.inverted && chart.renderer.isVML) {
+			yCrisp += 1;
+		}
+		
+		// Horizontal. We need to first compute the exact right edge, then round it
+		// and compute the width from there.
+		right = Math.round(x + w) + xCrisp;
+		x = Math.round(x) + xCrisp;
+		w = right - x;
+
+		// Vertical
+		bottom = Math.round(y + h) + yCrisp;
+		y = Math.round(y) + yCrisp;
+		h = bottom - y;
+
+		// Top edges are exceptions (#4504)
+		if (Math.abs(y) <= 0.5) {
+			y -= 1;
+			h += 1;
+		}
+
+		return {
+			x: x,
+			y: y,
+			width: w,
+			height: h
+		};
+	},
+
+	/**
 	 * Translate each point to the plot area coordinate system and find shape positions
 	 */
 	translate: function () {
@@ -182,15 +222,10 @@ seriesTypes.column = extendClass(Series, {
 			metrics = series.getColumnMetrics(),
 			pointWidth = metrics.width,
 			seriesBarW = series.barW = Math.max(pointWidth, 1 + 2 * borderWidth), // postprocessed for border width
-			pointXOffset = series.pointXOffset = metrics.offset,
-			xCrisp = -(borderWidth % 2 ? 0.5 : 0),
-			yCrisp = borderWidth % 2 ? 0.5 : 1;
+			pointXOffset = series.pointXOffset = metrics.offset;
 
 		if (chart.inverted) {
 			translatedThreshold -= 0.5; // #3355
-			if (chart.renderer.isVML) {
-				yCrisp += 1;
-			}
 		}
 
 		// When the pointPadding is 0, we want the columns to be packed tightly, so we allow individual
@@ -210,9 +245,6 @@ seriesTypes.column = extendClass(Series, {
 				barX = point.plotX + pointXOffset,
 				barW = seriesBarW,
 				barY = Math.min(plotY, yBottom),
-				right,
-				bottom,
-				fromTop,
 				up,
 				barH = Math.max(plotY, yBottom) - barY;
 
@@ -221,32 +253,15 @@ seriesTypes.column = extendClass(Series, {
 				if (minPointLength) {
 					barH = minPointLength;
 					up = (!yAxis.reversed && !point.negative) || (yAxis.reversed && point.negative);
-					barY =
-						Math.round(Math.abs(barY - translatedThreshold) > minPointLength ? // stacked
+					barY = Math.abs(barY - translatedThreshold) > minPointLength ? // stacked
 							yBottom - minPointLength : // keep position
-							translatedThreshold - (up ? minPointLength : 0)); // #1485, #4051
+							translatedThreshold - (up ? minPointLength : 0); // #1485, #4051
 				}
 			}
 
 			// Cache for access in polar
 			point.barX = barX;
 			point.pointWidth = pointWidth;
-
-			// Round off to obtain crisp edges and avoid overlapping with neighbours (#2694)
-			right = Math.round(barX + barW) + xCrisp;
-			barX = Math.round(barX) + xCrisp;
-			barW = right - barX;
-
-			fromTop = Math.abs(barY) <= 0.5; // #4504
-			bottom = Math.min(Math.round(barY + barH) + yCrisp, 9e4); // #3575
-			barY = Math.round(barY) + yCrisp;
-			barH = bottom - barY;
-
-			// Top edges are exceptions
-			if (fromTop) {
-				barY -= 1;
-				barH += 1;
-			}
 
 			// Fix the tooltip on center of grouped columns (#1216, #424, #3648)
 			point.tooltipPos = chart.inverted ? 
@@ -255,12 +270,7 @@ seriesTypes.column = extendClass(Series, {
 
 			// Register shape type and arguments to be used in drawPoints
 			point.shapeType = 'rect';
-			point.shapeArgs = {
-				x: barX,
-				y: barY,
-				width: barW,
-				height: barH
-			};
+			point.shapeArgs = series.crispCol(barX, barY, barW, barH);
 		});
 
 	},

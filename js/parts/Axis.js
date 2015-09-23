@@ -1556,9 +1556,11 @@ H.Axis.prototype = {
 			};
 		
 		if (horiz) {
-			autoRotation = defined(rotationOption) ? 
-				[rotationOption] :
-				slotSize < pick(labelOptions.autoRotationLimit, 80) && !labelOptions.staggerLines && !labelOptions.step && labelOptions.autoRotation;
+			autoRotation = !labelOptions.staggerLines && !labelOptions.step && ( // #3971
+				defined(rotationOption) ? 
+					[rotationOption] :
+					slotSize < pick(labelOptions.autoRotationLimit, 80) && labelOptions.autoRotation
+			);
 
 			if (autoRotation) {
 

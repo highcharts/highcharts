@@ -512,6 +512,13 @@ H.Series.prototype = {
 			animation = false;
 		}
 
+		// Typically for pie series, points need to be processed and generated 
+		// prior to rendering the legend
+		if (options.legendType === 'point') { // docs: legendType now supported on more series types
+			this.processData();
+			this.generatePoints();
+		}
+
 		if (redraw) {
 			chart.redraw(animation);
 		}
@@ -773,6 +780,7 @@ H.Series.prototype = {
 			plotX,
 			plotY,
 			lastPlotX,
+			stackIndicator,
 			closestPointRangePx = Number.MAX_VALUE;
 
 		// Translate each point
@@ -797,9 +805,9 @@ H.Series.prototype = {
 
 			// Calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
-
+				stackIndicator = series.getStackIndicator(stackIndicator, xValue, series.index);
 				pointStack = stack[xValue];
-				stackValues = pointStack.points[series.index + ',' + i];
+				stackValues = pointStack.points[stackIndicator.key];
 				yBottom = stackValues[0];
 				yValue = stackValues[1];
 

@@ -45,6 +45,7 @@ seriesTypes.area = extendClass(Series, {
 			plotY,
 			points = this.points,
 			connectNulls = this.options.connectNulls,
+			stackIndicator,
 			i,
 			x;
 
@@ -82,8 +83,9 @@ seriesTypes.area = extendClass(Series, {
 
 					// Loop down the stack to find the series below this one that has
 					// a value (#1991)
-					for (i = series.index; i <= yAxis.series.length; i++) {
-						stackPoint = stack[x].points[i + ',' + x];
+					for (i = series.index; i <= yAxis.series.length; i++) {		
+						stackIndicator = series.getStackIndicator(null, x, i);
+						stackPoint = stack[x].points[stackIndicator.key];
 						if (stackPoint) {
 							y = stackPoint[1];
 							break;

@@ -4,6 +4,7 @@
 		each = H.each,
 		extend = H.extend,
 		erase = H.erase,
+		fireEvent = H.fireEvent,
 		format = H.format,
 		isArray = H.isArray,
 		pick = H.pick,
@@ -100,7 +101,11 @@ Point.prototype = {
 				i++;
 			}
 			while (j < valueCount) {
-				ret[pointArrayMap[j++]] = options[i++];
+				if (!keys || options[i] !== undefined) { // Skip undefined positions for keys
+					ret[pointArrayMap[j]] = options[i];
+				}
+				i++;
+				j++;
 			}
 		} else if (typeof options === 'object') {
 			ret = options;
@@ -248,8 +253,9 @@ Point.prototype = {
 			};
 		}
 
-		HighchartsAdapter.fireEvent(this, eventType, eventArgs, defaultFunction);
-	}
+		fireEvent(this, eventType, eventArgs, defaultFunction);
+	},
+	visible: true
 };
 
 	return H;

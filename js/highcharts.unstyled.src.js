@@ -8078,9 +8078,11 @@ H.Axis.prototype = {
 			};
 		
 		if (horiz) {
-			autoRotation = defined(rotationOption) ? 
-				[rotationOption] :
-				slotSize < pick(labelOptions.autoRotationLimit, 80) && !labelOptions.staggerLines && !labelOptions.step && labelOptions.autoRotation;
+			autoRotation = !labelOptions.staggerLines && !labelOptions.step && ( // #3971
+				defined(rotationOption) ? 
+					[rotationOption] :
+					slotSize < pick(labelOptions.autoRotationLimit, 80) && labelOptions.autoRotation
+			);
 
 			if (autoRotation) {
 
@@ -12298,7 +12300,7 @@ Chart.prototype = {
 			chartHeight,
 			fireEndResize,
 			renderer = chart.renderer,
-			globalAnimation = renderer.globalAnimation;
+			globalAnimation;
 
 		// Handle the isResizing counter
 		chart.isResizing += 1;
@@ -12353,8 +12355,8 @@ Chart.prototype = {
 		chart.oldChartHeight = null;
 		fireEvent(chart, 'resize');
 
-		// fire endResize and set isResizing back
-		// If animation is disabled, fire without delay
+		// Fire endResize and set isResizing back. If animation is disabled, fire without delay
+		globalAnimation = renderer.globalAnimation; // Reassign it before using it, it may have changed since the top of this function.
 		if (globalAnimation === false) {
 			fireEndResize();
 		} else { // else set a timeout with the animation duration
@@ -13075,7 +13077,11 @@ Point.prototype = {
 				i++;
 			}
 			while (j < valueCount) {
-				ret[pointArrayMap[j++]] = options[i++];
+				if (!keys || options[i] !== undefined) { // Skip undefined positions for keys
+					ret[pointArrayMap[j]] = options[i];
+				}
+				i++;
+				j++;
 			}
 		} else if (typeof options === 'object') {
 			ret = options;
@@ -13223,13 +13229,13 @@ Point.prototype = {
 			};
 		}
 
-		HighchartsAdapter.fireEvent(this, eventType, eventArgs, defaultFunction);
-	}
+		fireEvent(this, eventType, eventArgs, defaultFunction);
+	},
+	visible: true
 };
 
 	return H;
-}(Highcharts));
-(function (H) {
+}(Highcharts));(function (H) {
 	var addEvent = H.addEvent,
 		arrayMax = H.arrayMax,
 		arrayMin = H.arrayMin,
@@ -13739,6 +13745,13 @@ H.Series.prototype = {
 			animation = false;
 		}
 
+		// Typically for pie series, points need to be processed and generated 
+		// prior to rendering the legend
+		if (options.legendType === 'point') { // docs: legendType now supported on more series types
+			this.processData();
+			this.generatePoints();
+		}
+
 		if (redraw) {
 			chart.redraw(animation);
 		}
@@ -14000,6 +14013,7 @@ H.Series.prototype = {
 			plotX,
 			plotY,
 			lastPlotX,
+			stackIndicator,
 			closestPointRangePx = Number.MAX_VALUE;
 
 		// Translate each point
@@ -14024,9 +14038,9 @@ H.Series.prototype = {
 
 			// Calculate the bottom y value for stacked series
 			if (stacking && series.visible && stack && stack[xValue]) {
-
+				stackIndicator = series.getStackIndicator(stackIndicator, xValue, series.index);
 				pointStack = stack[xValue];
-				stackValues = pointStack.points[series.index + ',' + i];
+				stackValues = pointStack.points[stackIndicator.key];
 				yBottom = stackValues[0];
 				yValue = stackValues[1];
 
@@ -15396,6 +15410,7 @@ Series.prototype.setStackedPoints = function () {
 		yAxis = series.yAxis,
 		stacks = yAxis.stacks,
 		oldStacks = yAxis.oldStacks,
+		stackIndicator,
 		isNegative,
 		stack,
 		other,
@@ -15412,8 +15427,8 @@ Series.prototype.setStackedPoints = function () {
 	for (i = 0; i < yDataLength; i++) {
 		x = xData[i];
 		y = yData[i];
-		pointKey = series.index + ',' + i;
-
+		stackIndicator = series.getStackIndicator(stackIndicator, x, series.index);
+		pointKey = stackIndicator.key;
 		// Read stacked values into a stack based on the x value,
 		// the sign of y and the stack key. Stacking is also handled for null values (#739)
 		isNegative = negStacks && y < (stackThreshold ? 0 : threshold);
@@ -15482,7 +15497,8 @@ Series.prototype.setPercentStacks = function () {
 	var series = this,
 		stackKey = series.stackKey,
 		stacks = series.yAxis.stacks,
-		processedXData = series.processedXData;
+		processedXData = series.processedXData,
+		stackIndicator;
 
 	each([stackKey, '-' + stackKey], function (key) {
 		var i = processedXData.length,
@@ -15493,8 +15509,9 @@ Series.prototype.setPercentStacks = function () {
 
 		while (i--) {
 			x = processedXData[i];
+			stackIndicator = series.getStackIndicator(stackIndicator, x, series.index);
 			stack = stacks[key] && stacks[key][x];
-			pointExtremes = stack && stack.points[series.index + ',' + i];
+			pointExtremes = stack && stack.points[stackIndicator.key];
 			if (pointExtremes) {
 				totalFactor = stack.total ? 100 / stack.total : 0;
 				pointExtremes[0] = correctFloat(pointExtremes[0] * totalFactor); // Y bottom value
@@ -15503,6 +15520,24 @@ Series.prototype.setPercentStacks = function () {
 			}
 		}
 	});
+};
+
+/**
+* Get stack indicator, according to it's x-value, to determine points with the same x-value
+*/
+Series.prototype.getStackIndicator = function(stackIndicator, x, index) {
+	if (!defined(stackIndicator) || stackIndicator.x !== x) {
+		stackIndicator = {
+			x: x,
+			index: 0
+		};
+	} else {
+		stackIndicator.index++;
+	}
+	
+	stackIndicator.key = [index, x, stackIndicator.index].join(',');
+
+	return stackIndicator;
 };
 
 	return H;
@@ -16122,6 +16157,7 @@ seriesTypes.area = extendClass(Series, {
 			plotY,
 			points = this.points,
 			connectNulls = this.options.connectNulls,
+			stackIndicator,
 			i,
 			x;
 
@@ -16159,8 +16195,9 @@ seriesTypes.area = extendClass(Series, {
 
 					// Loop down the stack to find the series below this one that has
 					// a value (#1991)
-					for (i = series.index; i <= yAxis.series.length; i++) {
-						stackPoint = stack[x].points[i + ',' + x];
+					for (i = series.index; i <= yAxis.series.length; i++) {		
+						stackIndicator = series.getStackIndicator(null, x, i);
+						stackPoint = stack[x].points[stackIndicator.key];
 						if (stackPoint) {
 							y = stackPoint[1];
 							break;
@@ -16606,6 +16643,46 @@ seriesTypes.column = extendClass(Series, {
 	},
 
 	/**
+	 * Make the columns crisp. The edges are rounded to the nearest full pixel.
+	 */
+	crispCol: function (x, y, w, h) {
+		var chart = this.chart,
+			borderWidth = this.borderWidth,
+			xCrisp = -(borderWidth % 2 ? 0.5 : 0),
+			yCrisp = borderWidth % 2 ? 0.5 : 1,
+			right,
+			bottom;
+
+		if (chart.inverted && chart.renderer.isVML) {
+			yCrisp += 1;
+		}
+		
+		// Horizontal. We need to first compute the exact right edge, then round it
+		// and compute the width from there.
+		right = Math.round(x + w) + xCrisp;
+		x = Math.round(x) + xCrisp;
+		w = right - x;
+
+		// Vertical
+		bottom = Math.round(y + h) + yCrisp;
+		y = Math.round(y) + yCrisp;
+		h = bottom - y;
+
+		// Top edges are exceptions (#4504)
+		if (Math.abs(y) <= 0.5) {
+			y -= 1;
+			h += 1;
+		}
+
+		return {
+			x: x,
+			y: y,
+			width: w,
+			height: h
+		};
+	},
+
+	/**
 	 * Translate each point to the plot area coordinate system and find shape positions
 	 */
 	translate: function () {
@@ -16623,15 +16700,10 @@ seriesTypes.column = extendClass(Series, {
 			metrics = series.getColumnMetrics(),
 			pointWidth = metrics.width,
 			seriesBarW = series.barW = Math.max(pointWidth, 1 + 2 * borderWidth), // postprocessed for border width
-			pointXOffset = series.pointXOffset = metrics.offset,
-			xCrisp = -(borderWidth % 2 ? 0.5 : 0),
-			yCrisp = borderWidth % 2 ? 0.5 : 1;
+			pointXOffset = series.pointXOffset = metrics.offset;
 
 		if (chart.inverted) {
 			translatedThreshold -= 0.5; // #3355
-			if (chart.renderer.isVML) {
-				yCrisp += 1;
-			}
 		}
 
 		// When the pointPadding is 0, we want the columns to be packed tightly, so we allow individual
@@ -16651,9 +16723,6 @@ seriesTypes.column = extendClass(Series, {
 				barX = point.plotX + pointXOffset,
 				barW = seriesBarW,
 				barY = Math.min(plotY, yBottom),
-				right,
-				bottom,
-				fromTop,
 				up,
 				barH = Math.max(plotY, yBottom) - barY;
 
@@ -16662,32 +16731,15 @@ seriesTypes.column = extendClass(Series, {
 				if (minPointLength) {
 					barH = minPointLength;
 					up = (!yAxis.reversed && !point.negative) || (yAxis.reversed && point.negative);
-					barY =
-						Math.round(Math.abs(barY - translatedThreshold) > minPointLength ? // stacked
+					barY = Math.abs(barY - translatedThreshold) > minPointLength ? // stacked
 							yBottom - minPointLength : // keep position
-							translatedThreshold - (up ? minPointLength : 0)); // #1485, #4051
+							translatedThreshold - (up ? minPointLength : 0); // #1485, #4051
 				}
 			}
 
 			// Cache for access in polar
 			point.barX = barX;
 			point.pointWidth = pointWidth;
-
-			// Round off to obtain crisp edges and avoid overlapping with neighbours (#2694)
-			right = Math.round(barX + barW) + xCrisp;
-			barX = Math.round(barX) + xCrisp;
-			barW = right - barX;
-
-			fromTop = Math.abs(barY) <= 0.5; // #4504
-			bottom = Math.min(Math.round(barY + barH) + yCrisp, 9e4); // #3575
-			barY = Math.round(barY) + yCrisp;
-			barH = bottom - barY;
-
-			// Top edges are exceptions
-			if (fromTop) {
-				barY -= 1;
-				barH += 1;
-			}
 
 			// Fix the tooltip on center of grouped columns (#1216, #424, #3648)
 			point.tooltipPos = chart.inverted ? 
@@ -16696,12 +16748,7 @@ seriesTypes.column = extendClass(Series, {
 
 			// Register shape type and arguments to be used in drawPoints
 			point.shapeType = 'rect';
-			point.shapeArgs = {
-				x: barX,
-				y: barY,
-				width: barW,
-				height: barH
-			};
+			point.shapeArgs = series.crispCol(barX, barY, barW, barH);
 		});
 
 	},
@@ -16960,10 +17007,7 @@ PiePoint = extendClass(Point, {
 		var point = this,
 			toggleSlice;
 
-		extend(point, {
-			visible: point.visible !== false,
-			name: pick(point.name, 'Slice')
-		});
+		point.name = pick(point.name, 'Slice');
 
 		// add event listener for select
 		toggleSlice = function (e) {
@@ -17118,19 +17162,6 @@ seriesTypes.pie = extendClass(Series, {
 			// delete this function to allow it only once
 			series.animate = null;
 		}
-	},
-
-	/**
-	 * Extend the basic setData method by running processData and generatePoints immediately,
-	 * in order to access the points from the legend.
-	 */
-	setData: function (data, redraw, animation, updatePoints) {
-		Series.prototype.setData.call(this, data, false, animation, updatePoints);
-		this.processData();
-		this.generatePoints();
-		if (pick(redraw, true)) {
-			this.chart.redraw(animation);
-		} 
 	},
 
 	/**
@@ -18516,7 +18547,9 @@ extend(Legend.prototype, {
 		.on('click', function (event) {
 			var strLegendItemClick = 'legendItemClick',
 				fnLegendItemClick = function () {
-					item.setVisible();
+					if (item.setVisible) {
+						item.setVisible();
+					}
 				};
 				
 			// Pass over the click/touch event. #4.
@@ -18810,7 +18843,7 @@ extend(Point.prototype, {
 	 */
 	setState: function (state, move) {
 		var point = this,
-			plotX = point.plotX,
+			plotX = mathFloor(point.plotX), // #4586
 			plotY = point.plotY,
 			series = point.series,
 			stateOptions = series.options.states,

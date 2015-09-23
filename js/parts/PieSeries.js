@@ -74,10 +74,7 @@ PiePoint = extendClass(Point, {
 		var point = this,
 			toggleSlice;
 
-		extend(point, {
-			visible: point.visible !== false,
-			name: pick(point.name, 'Slice')
-		});
+		point.name = pick(point.name, 'Slice');
 
 		// add event listener for select
 		toggleSlice = function (e) {
@@ -232,19 +229,6 @@ seriesTypes.pie = extendClass(Series, {
 			// delete this function to allow it only once
 			series.animate = null;
 		}
-	},
-
-	/**
-	 * Extend the basic setData method by running processData and generatePoints immediately,
-	 * in order to access the points from the legend.
-	 */
-	setData: function (data, redraw, animation, updatePoints) {
-		Series.prototype.setData.call(this, data, false, animation, updatePoints);
-		this.processData();
-		this.generatePoints();
-		if (pick(redraw, true)) {
-			this.chart.redraw(animation);
-		} 
 	},
 
 	/**

@@ -10,7 +10,7 @@ $(function () {
                 depth: 50,
                 frame: {
                     bottom: {
-                        size: 20,
+                        size: 2,
                         color: Highcharts.getOptions().colors[0]
                     }
                 }
