@@ -308,7 +308,7 @@ H.defaultOptions = {
 		},
 		footerFormat: '',
 		//formatter: defaultFormatter,
-		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
+		headerFormat: '<span style="font-size: 0.85em">{point.key}</span><br/>',
 		padding: 8, // docs
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 		//shape: 'callout',

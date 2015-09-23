@@ -48,7 +48,7 @@
   pointer-events: none;
   white-space: nowrap; }
 
-.highcharts-tooltip path {
+.highcharts-tooltip-box {
   stroke-width: 1px;
   fill: #f9f9f9;
   fill-opacity: 0.85; }

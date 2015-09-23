@@ -1499,7 +1499,7 @@ H.defaultOptions = {
 		},
 		footerFormat: '',
 		//formatter: defaultFormatter,
-		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
+		headerFormat: '<span style="font-size: 0.85em">{point.key}</span><br/>',
 		padding: 8, // docs
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 		//shape: 'callout',
@@ -4173,7 +4173,11 @@ SVGRenderer.prototype = {
 
 					if (!box.isImg) { // #4324, fill "none" causes it to be ignored by mouse events in IE
 						box.attr('fill', 'none');
+						if (className) {
+							box.addClass('highcharts-' + className + '-box');
+						}
 					}
+					
 					box.add(wrapper);
 				}
 
@@ -16904,7 +16908,7 @@ defaultPlotOptions.scatter = merge(defaultSeriesOptions, {
 		enabled: true // Overrides auto-enabling in line series (#3647)
 	},
 	tooltip: {
-		headerFormat: '<span style="color:{point.color}">\u25CF</span> <span style="font-size: 10px;"> {series.name}</span><br/>',
+		headerFormat: '<span style="color:{point.color}">\u25CF</span> <span style="font-size: 0.85em"> {series.name}</span><br/>',
 		pointFormat: 'x: <b>{point.x}</b><br/>y: <b>{point.y}</b><br/>'
 	}
 });

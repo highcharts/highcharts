@@ -1,0 +1,10 @@
+#container {
+	height: 400px;
+	max-width: 800px;
+	margin: 0 auto;
+}
+.highcharts-legend-box {
+	fill: #f0f0ff;
+	stroke: #8085e9;
+	stroke-width: 2px;
+}

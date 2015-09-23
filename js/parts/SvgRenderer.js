@@ -2500,7 +2500,11 @@ SVGRenderer.prototype = {
 
 					if (!box.isImg) { // #4324, fill "none" causes it to be ignored by mouse events in IE
 						box.attr('fill', 'none');
+						if (className) {
+							box.addClass('highcharts-' + className + '-box');
+						}
 					}
+					
 					box.add(wrapper);
 				}
 
