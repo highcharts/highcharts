@@ -129,7 +129,7 @@
 					arr[item.level] = item;
 					return arr;
 				}, {});
-				tree = this.tree = this.getTree();
+				tree = this.tree = this.getTree(); // @todo Only if series.isDirtyData is true
 
 				// Calculate plotting values.
 				this.axisRatio = (this.xAxis.len / this.yAxis.len);
@@ -140,9 +140,6 @@
 					val: tree.val
 				});
 				this.calculateChildrenAreas(tree, seriesArea);
-
-				// Assign values to points.
-				this.setPointValues();
 			}
 		},
 		/**
@@ -570,6 +567,7 @@
 			return this.alg_func_fill(false, parent, children);
 		},
 		translate: function () {
+			var val;
 			// Call prototype function
 			Series.prototype.translate.call(this);
 			this.handleLayout();
@@ -580,6 +578,16 @@
 			} else if (!this.options.colorByPoint) {
 				this.setColorRecursive(this.tree, undefined);
 			}
+
+			// Update axis extremes according to the root node.
+			val = this.nodeMap[this.rootNode].pointValues;
+			this.xAxis.setExtremes(val.x, val.x + val.width, false);
+			this.yAxis.setExtremes(val.y, val.y + val.height, false);
+			this.xAxis.setScale();
+			this.yAxis.setScale();
+
+			// Assign values to points.
+			this.setPointValues();
 		},
 		/**
 		 * Extend drawDataLabels with logic to handle custom options related to the treemap series:
@@ -812,11 +820,7 @@
 			} 
 		},
 		drillToNode: function (id) {
-			var node = this.nodeMap[id],
-				val = node.pointValues;
 			this.rootNode = id;
-			this.xAxis.setExtremes(val.x, val.x + val.width, false);
-			this.yAxis.setExtremes(val.y, val.y + val.height, false);
 			this.isDirty = true; // Force redraw
 			this.chart.redraw();
 		},
