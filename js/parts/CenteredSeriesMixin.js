@@ -30,6 +30,10 @@ var CenteredSeriesMixin = Highcharts.CenteredSeriesMixin = {
 				(handleSlicingRoom ? slicingRoom : 0);
 
 		}
+		// innerSize cannot be larger than size (#3632)
+		if (positions[3] > positions[2]) {
+			positions[3] = positions[2];
+		}
 		return positions;
 	}
 };

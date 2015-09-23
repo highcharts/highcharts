@@ -16097,6 +16097,10 @@ if (seriesTypes.pie) {
 		if (newSize < center[2]) {
 			center[2] = newSize;
 			center[3] = relativeLength(options.innerSize || 0, newSize);
+			// innerSize cannot be larger than size (#3632)
+			if (center[3] > center[2]) {
+				center[3] = center[2];
+			}
 			this.translate(center);
 			each(this.points, function (point) {
 				if (point.dataLabel) {
