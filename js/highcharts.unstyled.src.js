@@ -11099,8 +11099,7 @@ Legend.prototype = {
 			box = legend.box,
 			options = legend.options,
 			padding = legend.padding,
-			legendBorderWidth = options.borderWidth,
-			legendBackgroundColor = options.backgroundColor;
+			borderWidth;
 
 		legend.itemX = legend.initialItemX;
 		legend.itemY = legend.initialItemY;
@@ -11149,35 +11148,29 @@ Legend.prototype = {
 		legendHeight += padding;
 
 		// Draw the border and/or background
-		if (legendBorderWidth || legendBackgroundColor) {
-
-			if (!box) {
-				legend.box = box = renderer.rect(
-					0,
-					0,
-					legendWidth,
-					legendHeight,
-					options.borderRadius,
-					legendBorderWidth || 0
-				).attr({
-					stroke: options.borderColor,
-					'stroke-width': legendBorderWidth || 0,
-					fill: legendBackgroundColor || 'none'
+		if (!box) {
+			legend.box = box = renderer.rect()
+				.addClass('highcharts-legend-box')
+				.attr({
+					r: options.borderRadius
 				})
-				.add(legendGroup)
-				.shadow(options.shadow);
-				box.isNew = true;
+				.add(legendGroup);
+			box.isNew = true;
+		} 
 
-			} else if (legendWidth > 0 && legendHeight > 0) {
-				box[box.isNew ? 'attr' : 'animate'](
-					box.crisp({ width: legendWidth, height: legendHeight })
-				);
-				box.isNew = false;
-			}
+		
+		borderWidth = box.pxStyle('stroke-width');
+		
 
-			// hide the border if no items
-			box[display ? 'show' : 'hide']();
+		if (legendWidth > 0 && legendHeight > 0) {
+			box[box.isNew ? 'attr' : 'animate'](
+				box.crisp({ x: 0, y: 0, width: legendWidth, height: legendHeight }, borderWidth)
+			);
+			box.isNew = false;
 		}
+
+		// hide the border if no items
+		box[display ? 'show' : 'hide']();
 
 		// Open for responsiveness
 		if (legendGroup.getStyle('display') === 'none') {
@@ -12981,6 +12974,7 @@ H.CenteredSeriesMixin = {
 		each = H.each,
 		extend = H.extend,
 		erase = H.erase,
+		fireEvent = H.fireEvent,
 		format = H.format,
 		isArray = H.isArray,
 		pick = H.pick,
@@ -15151,6 +15145,7 @@ H.Series.prototype = {
 	var Axis = H.Axis,
 		Chart = H.Chart,
 		correctFloat = H.correctFloat,
+		defined = H.defined,
 		destroyObjectProperties = H.destroyObjectProperties,
 		each = H.each,
 		format = H.format,
@@ -18843,7 +18838,7 @@ extend(Point.prototype, {
 	 */
 	setState: function (state, move) {
 		var point = this,
-			plotX = mathFloor(point.plotX), // #4586
+			plotX = Math.floor(point.plotX), // #4586
 			plotY = point.plotY,
 			series = point.series,
 			stateOptions = series.options.states,

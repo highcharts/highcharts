@@ -505,19 +505,19 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 	out = out.concat(curveTo(cx, cy, rx, ry, start2, end2, 0, 0));
 	
 	// When slice goes over middle, need to add both, left and right outer side:
-	if (end > PI - a && start < PI - a) {
-	// Go to outer side
-	out = out.concat([
-	'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
-	]);
-	// Curve to the true end of the slice
-	out = out.concat(curveTo(cx, cy, rx, ry, end2, end, dx, dy));
-	// Go to the inner side
-	out = out.concat([
-	'L', cx + (rx * cos(end)), cy + (ry * sin(end))
-	]);
-	// Go back to the artifical end2
-	out = out.concat(curveTo(cx, cy, rx, ry, end, end2, 0, 0));
+	if (end > Math.PI - a && start < Math.PI - a) {
+		// Go to outer side
+		out = out.concat([
+		'L', cx + (rx * Math.cos(end2)) + dx, cy + (ry * Math.sin(end2)) + dy
+		]);
+		// Curve to the true end of the slice
+		out = out.concat(curveTo(cx, cy, rx, ry, end2, end, dx, dy));
+		// Go to the inner side
+		out = out.concat([
+		'L', cx + (rx * Math.cos(end)), cy + (ry * Math.sin(end))
+		]);
+		// Go back to the artifical end2
+		out = out.concat(curveTo(cx, cy, rx, ry, end, end2, 0, 0));
 	}
 	
 	out = out.concat([
@@ -559,9 +559,9 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 	
 	// set to 0-PI range
 	function toZeroPIRange(angle) {
-		angle = angle % (2 * PI);
-		if (angle > PI) {
-			angle = 2 * PI - angle; 
+		angle = angle % (2 * Math.PI);
+		if (angle > Math.PI) {
+			angle = 2 * Math.PI - angle; 
 		}
 		return angle;
 	}
@@ -577,7 +577,7 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 		
 	return {
 		top: top,
-		zTop: PI * incPrecision + 1, // max angle is PI, so this is allways higher
+		zTop: Math.PI * incPrecision + 1, // max angle is PI, so this is allways higher
 		out: out,
 		zOut: Math.max(a1, a2, a3),
 		inn: inn,

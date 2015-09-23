@@ -451,8 +451,7 @@ Legend.prototype = {
 			box = legend.box,
 			options = legend.options,
 			padding = legend.padding,
-			legendBorderWidth = options.borderWidth,
-			legendBackgroundColor = options.backgroundColor;
+			borderWidth;
 
 		legend.itemX = legend.initialItemX;
 		legend.itemY = legend.initialItemY;
@@ -501,35 +500,37 @@ Legend.prototype = {
 		legendHeight += padding;
 
 		// Draw the border and/or background
-		if (legendBorderWidth || legendBackgroundColor) {
-
-			if (!box) {
-				legend.box = box = renderer.rect(
-					0,
-					0,
-					legendWidth,
-					legendHeight,
-					options.borderRadius,
-					legendBorderWidth || 0
-				).attr({
-					stroke: options.borderColor,
-					'stroke-width': legendBorderWidth || 0,
-					fill: legendBackgroundColor || 'none'
+		if (!box) {
+			legend.box = box = renderer.rect()
+				.addClass('highcharts-legend-box')
+				.attr({
+					r: options.borderRadius
 				})
-				.add(legendGroup)
-				.shadow(options.shadow);
-				box.isNew = true;
+				.add(legendGroup);
+			box.isNew = true;
+		} 
 
-			} else if (legendWidth > 0 && legendHeight > 0) {
-				box[box.isNew ? 'attr' : 'animate'](
-					box.crisp({ width: legendWidth, height: legendHeight })
-				);
-				box.isNew = false;
-			}
+		/*= if (!build.classic) { =*/
+		borderWidth = box.pxStyle('stroke-width');
+		/*= } else { =*/
+		borderWidth = options.borderWidth || 0;
+		box.attr({
+				stroke: options.borderColor,
+				'stroke-width': options.borderWidth || 0,
+				fill: options.backgroundColor || 'none'
+			})
+			.shadow(options.shadow);
+		/*= } =*/
 
-			// hide the border if no items
-			box[display ? 'show' : 'hide']();
+		if (legendWidth > 0 && legendHeight > 0) {
+			box[box.isNew ? 'attr' : 'animate'](
+				box.crisp({ x: 0, y: 0, width: legendWidth, height: legendHeight }, borderWidth)
+			);
+			box.isNew = false;
 		}
+
+		// hide the border if no items
+		box[display ? 'show' : 'hide']();
 
 		// Open for responsiveness
 		if (legendGroup.getStyle('display') === 'none') {
