@@ -38,6 +38,9 @@
   fill: #909090;
   font-size: 9px; }
 
+.highcharts-legend-box {
+  stroke-width: 0; }
+
 .highcharts-tooltip {
   fill: #333333;
   cursor: default;

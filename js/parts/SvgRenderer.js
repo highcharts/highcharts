@@ -540,7 +540,10 @@ SVGElement.prototype = {
 		// Other values like em, pt etc need to be measured
 		} else {
 			dummy = document.createElementNS(SVG_NS, 'rect');
-			attr(dummy, 'width', val);
+			attr(dummy, {
+				'width': val,
+				'stroke-width': 0
+			});
 			this.element.parentNode.appendChild(dummy);
 			ret = dummy.getBBox().width;
 			dummy.parentNode.removeChild(dummy);
