@@ -119,18 +119,29 @@
 		// @todo Move to translate
 		handleLayout: function () {
 			var tree = this.tree,
+				pointValues,
 				seriesArea;
 			if (this.points.length) {
 				// Assign variables
 				this.rootNode = pick(this.rootNode, "");
-				tree = this.tree = this.getTree();
 				// Create a object map from level to options
 				this.levelMap = reduce(this.options.levels, function (arr, item) {
 					arr[item.level] = item;
 					return arr;
 				}, {});
-				seriesArea = this.getSeriesArea(tree.val);
+				tree = this.tree = this.getTree();
+
+				// Calculate plotting values.
+				this.axisRatio = (this.xAxis.len / this.yAxis.len);
+				this.nodeMap[""].pointValues = pointValues = {x: 0, y: 0, width: 100, height: 100 };
+				this.nodeMap[""].values = seriesArea = merge(pointValues, {
+					width: (pointValues.width * this.axisRatio),
+					direction: (this.options.layoutStartingDirection === 'vertical' ? 0 : 1),
+					val: tree.val
+				});
 				this.calculateChildrenAreas(tree, seriesArea);
+
+				// Assign values to points.
 				this.setPointValues();
 			}
 		},
@@ -294,9 +305,14 @@
 			}
 			childrenValues = series[algorithm](area, children);
 			each(children, function (child, index) {
-				child.values = merge(childrenValues[index], {
+				var values = childrenValues[index];
+				child.values = merge(values, {
 					val: child.childrenTotal,
 					direction: (alternate ? 1 - area.direction : area.direction)
+				});
+				child.pointValues = merge(values, {
+					x: (values.x / series.axisRatio),
+					width: (values.width / series.axisRatio) 
 				});
 				// If node has children, then call method recursively
 				if (child.children.length) {
@@ -308,23 +324,15 @@
 			var series = this,
 				xAxis = series.xAxis,
 				yAxis = series.yAxis;
-			series.nodeMap[""].values = {
-				x: 0,
-				y: 0,
-				width: 100,
-				height: 100
-			};
 			each(series.points, function (point) {
 				var node = point.node,
-					values = node.values,
+					values = node.pointValues,
 					x1,
 					x2,
 					y1,
 					y2;
 				// Points which is ignored, have no values.
 				if (values) {
-					values.x = values.x / series.axisRatio;
-					values.width = values.width / series.axisRatio;
 					x1 = Math.round(xAxis.translate(values.x, 0, 0, 0, 1));
 					x2 = Math.round(xAxis.translate(values.x + values.width, 0, 0, 0, 1));
 					y1 = Math.round(yAxis.translate(values.y, 0, 0, 0, 1));
@@ -345,24 +353,6 @@
 					delete point.plotY;
 				}
 			});
-		},
-		getSeriesArea: function (val) {
-			var x = 0,
-				y = 0,
-				h = 100,
-				r = this.axisRatio = (this.xAxis.len / this.yAxis.len),
-				w = 100 * r,
-				d = this.options.layoutStartingDirection === 'vertical' ? 0 : 1,
-				seriesArea = {
-					x: x,
-					y: y,
-					width: w,
-					height: h,
-					direction: d,
-					val: val
-				};
-				this.nodeMap[""].values = seriesArea;
-			return seriesArea;
 		},
 		setColorRecursive: function (node, color) {
 			var series = this,
@@ -823,7 +813,7 @@
 		},
 		drillToNode: function (id) {
 			var node = this.nodeMap[id],
-				val = node.values;
+				val = node.pointValues;
 			this.rootNode = id;
 			this.xAxis.setExtremes(val.x, val.x + val.width, false);
 			this.yAxis.setExtremes(val.y, val.y + val.height, false);
