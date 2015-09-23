@@ -135,18 +135,14 @@
 			}
 		},
 		/**
-		* Creates a tree structured object from the series points
-		*/
-		getTree: function () {
-			var tree,
-				series = this,
-				parentList,
-				allIds;
-			series.nodeMap = [];
-			allIds = map(this.data, function (d) {
-				return d.id;
-			});
-			parentList = reduce(this.data, function (prev, curr, i) {
+		 * Creates an object map from parent id to childrens index.
+		 * @param {Array} data List of points set in options.
+		 * @param {string} data[].parent Parent id of point.
+		 * @param {Array} ids List of all point ids.
+		 * @return {Object} Map from parent id to children index in data.
+		 */
+		getListOfParents: function (data, ids) {
+			var listOfParents = reduce(data, function (prev, curr, i) {
 				var parent = pick(curr.parent, "");
 				if (prev[parent] === undefined) {
 					prev[parent] = [];
@@ -155,20 +151,29 @@
 				return prev;
 			}, {});
 
-			/* 
-			*  Quality check:
-			*  - If parent does not exist, then set parent to tree root
-			*  - Add node id to parents children list
-			*/
-			eachObject(parentList, function (children, parent, list) {
-				if ((parent !== "") && (HighchartsAdapter.inArray(parent, allIds) === -1)) {
+			// If parent does not exist, hoist parent to root of tree.
+			eachObject(listOfParents, function (children, parent, list) {
+				if ((parent !== "") && (HighchartsAdapter.inArray(parent, ids) === -1)) {
 					each(children, function (child) {
 						list[""].push(child);
 					});
 					delete list[parent];
 				}
 			});
+			return listOfParents;
+		},
+		/**
+		* Creates a tree structured object from the series points
+		*/
+		getTree: function () {
+			var tree,
+				series = this,
+				allIds = map(this.data, function (d) {
+					return d.id;
+				}),
+				parentList = series.getListOfParents(this.data, allIds);
 
+			series.nodeMap = [];
 			tree = series.buildNode("", -1, 0, parentList, null);
 			this.eachParents(this.nodeMap[this.rootNode], function (node) {
 				node.visible = true;
