@@ -1,9 +1,10 @@
 
 $(function () {
     QUnit.test('Flags should be properly placed on xAxis when yAxis.top is set.', function (assert) {
-        var chart = $('#container').highcharts('StockChart', {
+        var top = 80,
+            chart = $('#container').highcharts('StockChart', {
             yAxis: {
-                top: '50%',
+                top: top,
                 height: '10%'
             },
             series: [{
@@ -12,15 +13,14 @@ $(function () {
                 type: 'flags',
                 data: [{
                     x: 5,
-                    title: 5,
-                    lineWidth: 5
+                    title: 5
                 }]
             }]
         }).highcharts();
 
         assert.strictEqual(
-            chart.series[1].points[0].plotY,
-            chart.xAxis[0].top,
+            chart.series[1].points[0].plotY + top,
+            chart.plotHeight + chart.plotTop,
             'Flag properly placed.'
         );
     });
