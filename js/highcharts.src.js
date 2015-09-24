@@ -15944,7 +15944,7 @@ var AreaSeries = extendClass(Series, {
 			});
 
 			each(keys, function (x) {
-				var y = 0,
+				var threshold = null,
 					stackPoint;
 
 				if (connectNulls && (!pointMap[x] || pointMap[x].y === null)) { // #1836
@@ -15965,13 +15965,13 @@ var AreaSeries = extendClass(Series, {
 						stackIndicator = series.getStackIndicator(null, x, i);
 						stackPoint = stack[x].points[stackIndicator.key];
 						if (stackPoint) {
-							y = stackPoint[1];
+							threshold = stackPoint[1];
 							break;
 						}
 					}
 
 					plotX = xAxis.translate(x);
-					plotY = yAxis.toPixels(y, true);
+					plotY = yAxis.getThreshold(threshold);
 					segment.push({ 
 						y: null, 
 						plotX: plotX,
