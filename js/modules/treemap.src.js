@@ -38,6 +38,15 @@
 				previous = func.call(context, previous, current, i, arr);
 			});
 			return previous;
+		},
+		// @todo find correct name for this function. 
+		recursive = function (item, func, context) {
+			var next;
+			context = pick(context, this);
+			next = func.call(context, item);
+			if (next !== false) {
+				recursive(next, func, context);
+			}
 		};
 
 	// Define default options
@@ -157,11 +166,24 @@
 
 			series.nodeMap = [];
 			tree = series.buildNode("", -1, 0, parentList, null);
-			this.eachParents(this.nodeMap[this.rootNode], function (node) {
+			recursive(this.nodeMap[this.rootNode], function (node) {
+				var next = false,
+					p = node.parent;
 				node.visible = true;
+				if (p || p === "") {
+					next = series.nodeMap[p];
+				}
+				return next;
 			});
-			this.eachChildren(this.nodeMap[this.rootNode], function (node) {
-				node.visible = true;
+			recursive(this.nodeMap[this.rootNode].children, function (children) {
+				var next = false;
+				each(children, function (child) {
+					child.visible = true;
+					if (child.children.length) {
+						next = (next || []).concat(child.children);
+					}
+				});
+				return next;
 			});
 			this.setTreeValues(tree);
 			return tree;
@@ -234,23 +256,6 @@
 				val: val
 			});
 			return tree;
-		},
-		eachChildren: function (node, callback) {
-			var series = this,
-				children = node.children;
-			callback(node);
-			if (children.length) {
-				each(children, function (child) {
-					series.eachChildren(child, callback);
-				});
-			}
-		},
-		eachParents: function (node, callback) {
-			var parent = this.nodeMap[node.parent];
-			callback(node);
-			if (parent) {
-				this.eachParents(parent, callback);
-			}
 		},
 		/**
 		 * Recursive function which calculates the area for all children of a node.
