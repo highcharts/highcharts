@@ -601,7 +601,9 @@
 		drawDataLabels: function () {
 			var series = this,
 				dataLabelsGroup = series.dataLabelsGroup,
-				points = series.points,
+				points = grep(series.points, function (n) {
+					return n.node.visible;
+				}),
 				options,
 				level;
 			each(points, function (point) {
@@ -639,7 +641,9 @@
 		*/
 		drawPoints: function () {
 			var series = this,
-				points = series.points,
+				points = grep(series.points, function (n) {
+					return n.node.visible;
+				}),
 				seriesOptions = series.options,
 				attr,
 				hover,
