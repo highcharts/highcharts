@@ -13775,7 +13775,7 @@ Series.prototype = {
 			// visible range, consider y extremes
 			validValue = y !== null && y !== UNDEFINED && (!yAxis.isLog || (y.length || y > 0));
 			withinRange = this.getExtremesFromAll || this.options.getExtremesFromAll || this.cropped ||
-				((xData[i + 1] || x) >= xMin &&	(xData[i - 1] || x) <= xMax);
+				((xData[i + 1] || x) >= xMin &&	(xData[i - 1] || x) <= xMax) || (!this.requireSorting && (x >= xMin && x <= xMax)); // #3770
 
 			if (validValue && withinRange) {
 
