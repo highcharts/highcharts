@@ -20,11 +20,10 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
 }
 .highcharts-title {
     fill: #333333;
-    font-size: 18px;
+    font-size: 1.5em;
 }
 .highcharts-subtitle {
     fill: #555555;
-    font-size: 18px;
 }
 .highcharts-axis-title {
     fill: #707070;
@@ -32,12 +31,12 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
 .highcharts-axis-labels {
     fill: #606060;
     cursor: default;
-    font-size: 11px;
+    font-size: 0.9em;
 }
 .highcharts-credits {
     cursor: pointer;
     fill: #909090;
-    font-size: 9px;
+    font-size: 0.7em;
 }
 .highcharts-legend-box {
     stroke-width: 0;
@@ -45,7 +44,6 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
 .highcharts-tooltip {
     fill: #333333;
     cursor: default;
-    font-size: 12px;
     pointer-events: none;
     white-space: nowrap;
 }
@@ -95,7 +93,6 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
 /* Legend */
 .highcharts-legend-item text {
     fill: #333333;
-    font-size: 12px;
     font-weight: bold;
     cursor: pointer;
 }

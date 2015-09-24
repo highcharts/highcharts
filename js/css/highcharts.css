@@ -19,11 +19,10 @@
 
 .highcharts-title {
   fill: #333333;
-  font-size: 18px; }
+  font-size: 1.5em; }
 
 .highcharts-subtitle {
-  fill: #555555;
-  font-size: 18px; }
+  fill: #555555; }
 
 .highcharts-axis-title {
   fill: #707070; }
@@ -31,12 +30,12 @@
 .highcharts-axis-labels {
   fill: #606060;
   cursor: default;
-  font-size: 11px; }
+  font-size: 0.9em; }
 
 .highcharts-credits {
   cursor: pointer;
   fill: #909090;
-  font-size: 9px; }
+  font-size: 0.7em; }
 
 .highcharts-legend-box {
   stroke-width: 0; }
@@ -44,7 +43,6 @@
 .highcharts-tooltip {
   fill: #333333;
   cursor: default;
-  font-size: 12px;
   pointer-events: none;
   white-space: nowrap; }
 
@@ -92,7 +90,6 @@
 /* Legend */
 .highcharts-legend-item text {
   fill: #333333;
-  font-size: 12px;
   font-weight: bold;
   cursor: pointer; }
 
