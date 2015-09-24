@@ -35,10 +35,12 @@
 .highcharts-credits {
   cursor: pointer;
   fill: #909090;
-  font-size: 0.7em; }
+  font-size: 0.7em;
+  transition: fill 250ms, font-size 250ms; }
 
-.highcharts-legend-box {
-  stroke-width: 0; }
+.highcharts-credits:hover {
+  fill: black;
+  font-size: 1em; }
 
 .highcharts-tooltip {
   fill: #333333;
@@ -88,10 +90,14 @@
   transition: fill-opacity 50ms; }
 
 /* Legend */
+.highcharts-legend-box {
+  stroke-width: 0; }
+
 .highcharts-legend-item text {
   fill: #333333;
   font-weight: bold;
-  cursor: pointer; }
+  cursor: pointer;
+  stroke-width: 0; }
 
 .highcharts-legend-item:hover text {
   fill: #000; }

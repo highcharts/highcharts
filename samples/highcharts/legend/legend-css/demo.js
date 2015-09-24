@@ -2,7 +2,7 @@ $(function () {
     $('#container').highcharts({
 
         title: {
-            text: 'Legend background and border by CSS'
+            text: 'Legend styled by CSS'
         },
 
         legend: {
