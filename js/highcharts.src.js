@@ -14394,21 +14394,25 @@ Series.prototype = {
 					if (step === 'right') {
 						segmentPath.push(
 							lastPoint.plotX,
-							plotY
+							plotY,
+							L
 						);
 
 					} else if (step === 'center') {
 						segmentPath.push(
 							(lastPoint.plotX + plotX) / 2,
 							lastPoint.plotY,
+							L,
 							(lastPoint.plotX + plotX) / 2,
-							plotY
+							plotY,
+							L
 						);
 
 					} else {
 						segmentPath.push(
 							plotX,
-							lastPoint.plotY
+							lastPoint.plotY,
+							L
 						);
 					}
 				}
@@ -15615,7 +15619,7 @@ extend(Series.prototype, {
 			}
 			each(shiftShapes, function (shape) {
 				if (series[shape]) {
-					series[shape].shift = currentShift + 1;
+					series[shape].shift = currentShift + (seriesOptions.step ? 2 : 1);
 				}
 			});
 		}

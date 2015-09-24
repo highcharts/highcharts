@@ -1313,21 +1313,25 @@ Series.prototype = {
 					if (step === 'right') {
 						segmentPath.push(
 							lastPoint.plotX,
-							plotY
+							plotY,
+							L
 						);
 
 					} else if (step === 'center') {
 						segmentPath.push(
 							(lastPoint.plotX + plotX) / 2,
 							lastPoint.plotY,
+							L,
 							(lastPoint.plotX + plotX) / 2,
-							plotY
+							plotY,
+							L
 						);
 
 					} else {
 						segmentPath.push(
 							plotX,
-							lastPoint.plotY
+							lastPoint.plotY,
+							L
 						);
 					}
 				}

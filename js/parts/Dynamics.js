@@ -261,7 +261,7 @@ extend(Series.prototype, {
 			}
 			each(shiftShapes, function (shape) {
 				if (series[shape]) {
-					series[shape].shift = currentShift + 1;
+					series[shape].shift = currentShift + (seriesOptions.step ? 2 : 1);
 				}
 			});
 		}
