@@ -13080,6 +13080,7 @@ Series.prototype = {
 			i, // loop variable
 			options = series.options,
 			cropThreshold = options.cropThreshold,
+			getExtremesFromAll = series.getExtremesFromAll || options.getExtremesFromAll, // #4599
 			isCartesian = series.isCartesian,
 			xExtremes,
 			min,
@@ -13098,7 +13099,7 @@ Series.prototype = {
 		}
 
 		// optionally filter out points outside the plot area
-		if (isCartesian && series.sorted && (!cropThreshold || dataLength > cropThreshold || series.forceCrop)) {
+		if (isCartesian && series.sorted && !getExtremesFromAll && (!cropThreshold || dataLength > cropThreshold || series.forceCrop)) {
 			
 			// it's outside current extremes
 			if (processedXData[dataLength - 1] < min || processedXData[0] > max) {
