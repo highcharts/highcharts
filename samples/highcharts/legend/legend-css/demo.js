@@ -6,7 +6,12 @@ $(function () {
         },
 
         legend: {
-            borderWidth: 2
+            align: 'right',
+            layout: 'vertical',
+            title: {
+                text: 'Legend title'
+            },
+            verticalAlign: 'middle'
         },
 
         xAxis: {

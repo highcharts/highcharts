@@ -10,12 +10,14 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
     z-index: 0; /* #1072 */
     -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
-.highcharts-background {
-    fill: #ffffff;
-}
 .highcharts-root {
     font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
     font-size: 12px;
+}
+.highcharts-background {
+    fill: #ffffff;
+}
+.highcharts-plot-border, .highcharts-plot-background {
     fill: none;
 }
 .highcharts-title {
@@ -94,6 +96,7 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
 
 /* Legend */
 .highcharts-legend-box {
+    fill: none;
     stroke-width: 0;
 }
 .highcharts-legend-item text {
@@ -109,6 +112,27 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
     fill: #cccccc !important;
     stroke: #cccccc !important;
     transition: fill 250ms;
+}
+
+/* Loading */
+.highcharts-loading {
+    position: absolute;
+    background-color: white;
+    opacity: 0.5;
+    text-align: center;
+    z-index: 10;
+    transition: opacity 250ms;
+}
+.highcharts-loading-hidden {
+    height: 0 !important;
+    opacity: 0;
+    overflow: hidden;
+    transition: opacity 250ms, height 250ms step-end;
+}
+.highcharts-loading-inner {
+    font-weight: bold;
+    position: relative;
+    top: 45%;
 }
 
 

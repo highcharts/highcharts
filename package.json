@@ -12,6 +12,7 @@
     "grunt-jslint": "^1.1.12",
     "gulp": "^3.9.0",
     "gulp-eslint": "^1.0.0",
+    "gulp-sass": "^2.0.4",
     "requirejs": "^2.1.20",
     "yargs": "^3.25.0"
   }

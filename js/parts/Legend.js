@@ -216,7 +216,9 @@ Legend.prototype = {
 			if (!this.title) {
 				this.title = this.chart.renderer.label(titleOptions.text, padding - 3, padding - 4, null, null, null, null, null, 'legend-title')
 					.attr({ zIndex: 1 })
+					/*= if (build.classic) { =*/
 					.css(titleOptions.style)
+					/*= } =*/
 					.add(this.group);
 			}
 			bBox = this.title.getBBox();

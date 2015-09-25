@@ -269,26 +269,30 @@ H.defaultOptions = {
 		y: 0,
 		title: {
 			//text: null,
+			/*= if (build.classic) { =*/
 			style: {
 				fontWeight: 'bold'
 			}
+			/*= } =*/
 		}			
 	},
 
 	loading: {
 		// hideDuration: 100,
+		// showDuration: 0,
+		/*= if (build.classic) { =*/
 		labelStyle: {
 			fontWeight: 'bold',
 			position: 'relative',
 			top: '45%'
 		},
-		// showDuration: 0,
 		style: {
 			position: 'absolute',
 			backgroundColor: 'white',
 			opacity: 0.5,
 			textAlign: 'center'
 		}
+		/*= } =*/
 	},
 
 	tooltip: {

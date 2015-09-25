@@ -1460,26 +1460,14 @@ H.defaultOptions = {
 		y: 0,
 		title: {
 			//text: null,
-			style: {
-				fontWeight: 'bold'
-			}
+			
 		}			
 	},
 
 	loading: {
 		// hideDuration: 100,
-		labelStyle: {
-			fontWeight: 'bold',
-			position: 'relative',
-			top: '45%'
-		},
 		// showDuration: 0,
-		style: {
-			position: 'absolute',
-			backgroundColor: 'white',
-			opacity: 0.5,
-			textAlign: 'center'
-		}
+		
 	},
 
 	tooltip: {
@@ -10388,7 +10376,7 @@ Legend.prototype = {
 			if (!this.title) {
 				this.title = this.chart.renderer.label(titleOptions.text, padding - 3, padding - 4, null, null, null, null, null, 'legend-title')
 					.attr({ zIndex: 1 })
-					.css(titleOptions.style)
+					
 					.add(this.group);
 			}
 			bBox = this.title.getBBox();
@@ -14717,42 +14705,36 @@ extend(Chart.prototype, {
 						height: chart.plotHeight + 'px'
 					});
 				}
-			};
+			},
+			style,
+			labelStyle;
+
+		
 
 		// create the layer at the first call
 		if (!loadingDiv) {
 			chart.loadingDiv = loadingDiv = createElement('div', {
-				className: 'highcharts-loading'
-			}, extend(loadingOptions.style, {
-				zIndex: 10,
-				display: 'none'
-			}), chart.container);
+				className: 'highcharts-loading highcharts-loading-hidden'
+			}, style, chart.container);
 
 			chart.loadingSpan = createElement(
 				'span',
-				null,
-				loadingOptions.labelStyle,
+				{ className: 'highcharts-loading-inner' },
+				labelStyle,
 				loadingDiv
 			);
 			addEvent(chart, 'redraw', setLoadingSize); // #1080
 		}
+		setTimeout(function () {
+			loadingDiv.className = 'highcharts-loading';
+		});
 
 		// update text
 		chart.loadingSpan.innerHTML = str || options.lang.loading;
 
-		// show it
-		if (!chart.loadingShown) {
-			css(loadingDiv, {
-				opacity: 0,
-				display: ''				
-			});
-			animate(loadingDiv, {
-				opacity: loadingOptions.style.opacity
-			}, {
-				duration: loadingOptions.showDuration || 0
-			});
-			chart.loadingShown = true;
-		}
+		
+
+		chart.loadingShown = true;
 		setLoadingSize();
 	},
 
@@ -14764,14 +14746,8 @@ extend(Chart.prototype, {
 			loadingDiv = this.loadingDiv;
 
 		if (loadingDiv) {
-			animate(loadingDiv, {
-				opacity: 0
-			}, {
-				duration: options.loading.hideDuration || 100,
-				complete: function () {
-					css(loadingDiv, { display: 'none' });
-				}
-			});
+			loadingDiv.className = 'highcharts-loading highcharts-loading-hidden';
+			
 		}
 		this.loadingShown = false;
 	}

@@ -6,12 +6,13 @@
 .highcharts-legend-box {
 	fill: black;
 	fill-opacity: 0.7;
-	stroke: #8085e9;
+	stroke: black;
 	stroke-width: 1px;
 }
 .highcharts-legend-item text {
 	fill: #e0e0e0;
 	transition: fill 250ms;
+	text-shadow: 0 0 2px black, 0 0 2px black;
 }
 .highcharts-legend-item:hover text {
 	fill: white;
@@ -19,4 +20,8 @@
 .highcharts-legend-item-hidden * {
     fill: gray !important;
     stroke: gray !important;
+}
+.highcharts-legend-title {
+	fill: white;
+	font-style: italic;
 }

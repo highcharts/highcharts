@@ -98,29 +98,40 @@ extend(Chart.prototype, {
 						height: chart.plotHeight + 'px'
 					});
 				}
-			};
+			},
+			style,
+			labelStyle;
+
+		/*= if (build.classic) { =*/
+		style = extend(loadingOptions.style, {
+			zIndex: 10,
+			display: 'none'
+		});
+		labelStyle = loadingOptions.labelStyle;
+		/*= } =*/
 
 		// create the layer at the first call
 		if (!loadingDiv) {
 			chart.loadingDiv = loadingDiv = createElement('div', {
-				className: 'highcharts-loading'
-			}, extend(loadingOptions.style, {
-				zIndex: 10,
-				display: 'none'
-			}), chart.container);
+				className: 'highcharts-loading highcharts-loading-hidden'
+			}, style, chart.container);
 
 			chart.loadingSpan = createElement(
 				'span',
-				null,
-				loadingOptions.labelStyle,
+				{ className: 'highcharts-loading-inner' },
+				labelStyle,
 				loadingDiv
 			);
 			addEvent(chart, 'redraw', setLoadingSize); // #1080
 		}
+		setTimeout(function () {
+			loadingDiv.className = 'highcharts-loading';
+		});
 
 		// update text
 		chart.loadingSpan.innerHTML = str || options.lang.loading;
 
+		/*= if (build.classic) { =*/
 		// show it
 		if (!chart.loadingShown) {
 			css(loadingDiv, {
@@ -128,12 +139,14 @@ extend(Chart.prototype, {
 				display: ''				
 			});
 			animate(loadingDiv, {
-				opacity: loadingOptions.style.opacity
+				opacity: style.opacity || 0.5
 			}, {
 				duration: loadingOptions.showDuration || 0
 			});
-			chart.loadingShown = true;
 		}
+		/*= } =*/
+
+		chart.loadingShown = true;
 		setLoadingSize();
 	},
 
@@ -145,6 +158,8 @@ extend(Chart.prototype, {
 			loadingDiv = this.loadingDiv;
 
 		if (loadingDiv) {
+			loadingDiv.className = 'highcharts-loading highcharts-loading-hidden';
+			/*= if (build.classic) { =*/
 			animate(loadingDiv, {
 				opacity: 0
 			}, {
@@ -153,6 +168,7 @@ extend(Chart.prototype, {
 					css(loadingDiv, { display: 'none' });
 				}
 			});
+			/*= } =*/
 		}
 		this.loadingShown = false;
 	}
