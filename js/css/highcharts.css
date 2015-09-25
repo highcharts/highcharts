@@ -55,6 +55,10 @@
   fill: #f9f9f9;
   fill-opacity: 0.85; }
 
+.highcharts-selection-marker {
+  fill: #4572A7;
+  fill-opacity: 0.25; }
+
 .highcharts-graph {
   fill: none;
   stroke-width: 2;
@@ -121,8 +125,8 @@
 
 .highcharts-loading-hidden {
   height: 0 !important;
-  overflow: hidden;
   opacity: 0;
+  overflow: hidden;
   transition: opacity 250ms, height 250ms step-end; }
 
 .highcharts-loading-inner {

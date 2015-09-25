@@ -10052,8 +10052,9 @@ H.Pointer.prototype = {
 						0
 					)
 					.attr({
-						fill: chartOptions.selectionMarkerFill || 'rgba(69,114,167,0.25)',
-						zIndex: 7
+						
+						'class': 'highcharts-selection-marker',						
+						'zIndex': 7
 					})
 					.add();
 				}
