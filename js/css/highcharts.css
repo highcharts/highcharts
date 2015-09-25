@@ -114,6 +114,13 @@
   stroke: #cccccc !important;
   transition: fill 250ms; }
 
+.highcharts-legend-nav-active {
+  fill: #274b6d;
+  cursor: pointer; }
+
+.highcharts-legend-nav-inactive {
+  fill: #c0c0c0; }
+
 /* Loading */
 .highcharts-loading {
   position: absolute;

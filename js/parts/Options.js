@@ -227,10 +227,12 @@ H.defaultOptions = {
 		borderColor: '#909090',
 		borderRadius: 0,
 		navigation: {
-			// animation: true,
+			/*= if (build.classic) { =*/
 			activeColor: '#274b6d',
-			// arrowSize: 12
 			inactiveColor: '#CCC'
+			/*= } =*/
+			// animation: true,
+			// arrowSize: 12
 			// style: {} // text styles
 		},
 		// margin: 20,

@@ -117,6 +117,13 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
     stroke: #cccccc !important;
     transition: fill 250ms;
 }
+.highcharts-legend-nav-active {
+    fill: #274b6d;
+    cursor: pointer;
+}
+.highcharts-legend-nav-inactive {
+    fill: #c0c0c0;
+}
 
 /* Loading */
 .highcharts-loading {

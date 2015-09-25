@@ -1440,10 +1440,12 @@ H.defaultOptions = {
 		borderColor: '#909090',
 		borderRadius: 0,
 		navigation: {
-			// animation: true,
+			
 			activeColor: '#274b6d',
-			// arrowSize: 12
 			inactiveColor: '#CCC'
+			
+			// animation: true,
+			// arrowSize: 12
 			// style: {} // text styles
 		},
 		// margin: 20,
@@ -11478,7 +11480,10 @@ Legend.prototype = {
 					})
 					.add(nav);
 				this.pager = renderer.text('', 15, 10)
+					.addClass('highcharts-legend-navigation')
+					
 					.css(navOptions.style)
+					
 					.add(nav);
 				this.down = renderer.symbol('triangle-down', 0, 0, arrowSize, arrowSize)
 					.on('click', function () {
@@ -11515,8 +11520,6 @@ Legend.prototype = {
 			currentPage = this.currentPage + scrollBy,
 			clipHeight = this.clipHeight,
 			navOptions = this.options.navigation,
-			activeColor = navOptions.activeColor,
-			inactiveColor = navOptions.inactiveColor,
 			pager = this.pager,
 			padding = this.padding,
 			scrollOffset;
@@ -11538,21 +11541,32 @@ Legend.prototype = {
 				visibility: 'visible'
 			});
 			this.up.attr({
-					fill: currentPage === 1 ? inactiveColor : activeColor
-				})
-				.css({
-					cursor: currentPage === 1 ? 'default' : 'pointer'
-				});
+				'class': currentPage === 1 ? 'highcharts-legend-nav-inactive' : 'highcharts-legend-nav-active'
+			});
 			pager.attr({
 				text: currentPage + '/' + pageCount
 			});
 			this.down.attr({
-					x: 18 + this.pager.getBBox().width, // adjust to text width
-					fill: currentPage === pageCount ? inactiveColor : activeColor
+				'x': 18 + this.pager.getBBox().width, // adjust to text width
+				'class': currentPage === pageCount ? 'highcharts-legend-nav-inactive' : 'highcharts-legend-nav-active'
+			});
+
+			
+			this.up
+				.attr({
+					fill: currentPage === 1 ? navOptions.inactiveColor : navOptions.activeColor
+				})
+				.css({
+					cursor: currentPage === 1 ? 'default' : 'pointer'
+				});
+			this.down
+				.attr({
+					fill: currentPage === pageCount ? navOptions.inactiveColor : navOptions.activeColor
 				})
 				.css({
 					cursor: currentPage === pageCount ? 'default' : 'pointer'
 				});
+			
 			
 			scrollOffset = -pages[currentPage - 1] + this.initialItemY;
 

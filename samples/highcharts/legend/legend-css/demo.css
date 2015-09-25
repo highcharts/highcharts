@@ -3,6 +3,9 @@
 	max-width: 800px;
 	margin: 0 auto;
 }
+.highcharts-legend text {
+	text-shadow: 0 0 2px black, 0 0 2px black;
+}
 .highcharts-legend-box {
 	fill: black;
 	fill-opacity: 0.7;
@@ -12,7 +15,6 @@
 .highcharts-legend-item text {
 	fill: #e0e0e0;
 	transition: fill 250ms;
-	text-shadow: 0 0 2px black, 0 0 2px black;
 }
 .highcharts-legend-item:hover text {
 	fill: white;
@@ -24,4 +26,13 @@
 .highcharts-legend-title {
 	fill: white;
 	font-style: italic;
+}
+.highcharts-legend-navigation {
+	fill: white;
+}
+.highcharts-legend-nav-active {
+	fill: white;
+}
+.highcharts-legend-nav-inactive {
+	fill: gray;
 }
