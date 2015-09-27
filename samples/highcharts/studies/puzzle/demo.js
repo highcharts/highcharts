@@ -4,8 +4,15 @@ $(function () {
         var addEvent = H.addEvent,
             Chart = H.Chart,
             each = H.each,
-            seriesTypes = H.seriesTypes;
+            seriesTypes = H.seriesTypes,
+            SVGElement = H.SVGElement;
 
+        if (!SVGElement.prototype.remvoeClass) {
+            SVGElement.prototype.removeClass = function (className) {
+                this.element.setAttribute('class', this.element.getAttribute('class').replace(className, ''));
+                return this;
+            }
+        }
         
         Chart.prototype.callbacks.push(function (chart) {
             var total = 0;
@@ -43,7 +50,10 @@ $(function () {
                     translateY: 0,
                     scaleX: 1,
                     scaleY: 1
-                });
+                })
+                .removeClass('highcharts-puzzle-dragging')
+                .addClass('highcharts-puzzle-dropped');
+
                 point.inPuzzle = false;
                 stopDrag(point);
                 updateCount(-1);
@@ -52,19 +62,23 @@ $(function () {
 
             function pointerDown(e) {
                 var point = e.target.point,
+                    graphic;
+
+                if (point) {
                     graphic = point.graphic;
+                    
+                    graphic.toFront();
 
-                graphic.toFront();
-
-                e = chart.pointer.normalize(e);
-                point.dragStart = {
-                    chartX: e.chartX,
-                    chartY: e.chartY,
-                    scale: graphic.scaleX,
-                    translateX: graphic.translateX,
-                    translateY: graphic.translateY
-                };
-                chart.dragPoint = point;
+                    e = chart.pointer.normalize(e);
+                    point.dragStart = {
+                        chartX: e.chartX,
+                        chartY: e.chartY,
+                        scale: graphic.scaleX,
+                        translateX: graphic.translateX,
+                        translateY: graphic.translateY
+                    };
+                    chart.dragPoint = point;
+                }
             }
 
             function pointerMove(e) {
@@ -81,6 +95,7 @@ $(function () {
                     pos;
 
                 e = chart.pointer.normalize(e);
+                e.preventDefault();
                 if (dragStart) {
                     // Un-scale to find the true pixel translation
                     startTranslateX = dragStart.translateX / dragStart.scale;
@@ -109,7 +124,8 @@ $(function () {
                             scaleY: 1,
                             translateX: translateX,
                             translateY: translateY
-                        });
+                        })
+                        .addClass('highcharts-puzzle-dragging');
                     }
                 }
             }
@@ -143,7 +159,7 @@ $(function () {
                     // Small items are hard to place
                     if (bBox.width > 5 && bBox.height > 5) {
 
-                        // Put it away
+                        // Put it in the dock
                         point.graphic.attr({
                             scaleX: scale,
                             scaleY: scale,
