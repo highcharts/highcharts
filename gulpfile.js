@@ -1,5 +1,6 @@
 var eslint = require('gulp-eslint'),
     gulp = require('gulp'),
+    request = require('request'),
     //argv = require('yargs').argv,
     fs = require('fs'),
     sass = require('gulp-sass'),
@@ -13,7 +14,13 @@ var eslint = require('gulp-eslint'),
     },
     paths = {
         "buildsDir": "./js/builds",
-        "distributions": ['./js/highcharts-3d.src.js', './js/highcharts-more.src.js', './js/highcharts.src.js', './js/highmaps.src.js', './js/highstock.src.js'],
+        "distributions": [
+            './js/highcharts-3d.src.js', 
+            './js/highcharts-more.src.js', 
+            './js/highcharts.src.js', 
+            './js/highmaps.src.js', 
+            './js/highstock.src.js'
+        ],
         "modules": ['./js/modules/*.js'],
         "parts": ['./js/parts/*.js'],
         "parts3D": ['./js/parts-3d/*.js'],
@@ -90,20 +97,23 @@ gulp.task('lint', function () {
 
 gulp.task('styles', function () {
     var dir = './js/css/';
-    /*return sass(dir + 'highcharts.scss', { style: 'expanded' })
-        .pipe(concat('highcharts.css'))
-        .pipe(gulp.dest(dir))
-        .pipe(notify({ message: 'Styles task complete '}));*/
 
     gulp.src(dir + '*.scss')
         .pipe(sass().on('error', sass.logError))
         .pipe(gulp.dest(dir));
 });
 
+// Watch changes to CSS files
+gulp.task('default',function() {
+    gulp.watch('./js/css/*.scss',['styles']);
+    gulp.watch('./js/parts/*.js', ['scripts']);
+});
+
 /**
  * Proof of concept to parse super code. Move this logic into the standard build when ready.
  */
-gulp.task('preprocess', function () {
+gulp.task('scripts', function () {
+
     /**
      * Micro-optimize code based on the build object.
      */
@@ -137,27 +147,70 @@ gulp.task('preprocess', function () {
         return tpl;
     }
 
+    // Parse the build properties files into a structure
+    fs.readFile('./build.properties', 'utf8', function (err, lines) {
+        var products = {};
 
-    paths.distributions.forEach(function (path) {
-        fs.readFile(path, 'utf8', function (err, tpl) {
-            
-            // Create the classic file
-            fs.writeFile(
-                path,
-                preprocess(tpl, {
-                    classic: true
-                }), 
-                'utf8'
-            );
+        lines.split('\n').forEach(function (line) {
+            var prod, key;
+            if (line.indexOf('#') !== 0 && line.indexOf('=') !== -1) {
+                line = line.split('=');
+                key = line[0].split('.');
+                prod = key[0];
+                key = key[2];
+                if (!products[prod]) {
+                    products[prod] = {};
+                }
+                products[prod][key] = line[1];
+            }
+        });
 
-            // Create the unstyled file
-            fs.writeFile(
-                path.replace('.src.js', '.unstyled.src.js'), 
-                preprocess(tpl, {
-                    classic: false
-                }), 
-                'utf8'
-            );
+        // Loop over the source files
+        paths.distributions.forEach(function (path) {
+
+            var prod,
+                inpath = path
+                .replace('./js/', '')
+                .replace('.src.js', '')
+                .replace('-', '');
+
+            // highcharts, highmaps or highstock
+            prod = inpath.indexOf('highcharts') !== -1 ? 'highcharts' : inpath;
+
+            // Load through the local debug.php (todo: require)
+            inpath = 'http://code.highcharts.local/debug.php?target=' + inpath;
+
+            // Load the file
+            request(inpath, function (err, res, tpl) {
+
+                if (err) {
+                    throw err;
+                }
+
+                tpl = tpl
+                    .replace(/@product\.name@/g, products[prod].name)
+                    .replace(/@product\.version@/g, products[prod].version)
+                    .replace(/@product\.date@/g, products[prod].date)
+                    .replace(/@product\.cdnpath@/g, products[prod].cdnpath);
+
+                // Create the classic file
+                fs.writeFile(
+                    path,
+                    preprocess(tpl, {
+                        classic: true
+                    }), 
+                    'utf8'
+                );
+
+                // Create the unstyled file
+                fs.writeFile(
+                    path.replace('.src.js', '.unstyled.src.js'), 
+                    preprocess(tpl, {
+                        classic: false
+                    }), 
+                    'utf8'
+                );
+            });
         });
     });
 });
