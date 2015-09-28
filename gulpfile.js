@@ -104,9 +104,9 @@ gulp.task('styles', function () {
 });
 
 // Watch changes to CSS files
-gulp.task('default',function() {
+gulp.task('default',function () {
     gulp.watch('./js/css/*.scss',['styles']);
-    gulp.watch('./js/parts/*.js', ['scripts']);
+    gulp.watch('./js/*/*.js', ['scripts']);
 });
 
 /**
