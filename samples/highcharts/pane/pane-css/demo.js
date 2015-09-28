@@ -14,14 +14,9 @@ $(function () {
             startAngle: -150,
             endAngle: 150,
             background: [{
-                outerRadius: '109%'
+                outerRadius: '110%'
             }, {
-                outerRadius: '107%'
-            }, {
-                // default background
-            }, {
-                outerRadius: '105%',
-                innerRadius: '103%'
+                outerRadius: '90%'
             }]
         },
 

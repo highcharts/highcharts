@@ -8,14 +8,12 @@
 	fill: #f45b5b;
 }
 .highcharts-pane:nth-child(1) {
-	fill: silver;
+	fill: #efffff;
+	stroke-width: 1px;
+	stroke: gray;
 }
 .highcharts-pane:nth-child(2) {
 	fill: white;
-}
-.highcharts-pane:nth-child(3) {
-	fill: white;
-}
-.highcharts-pane:nth-child(4) {
-	fill: silver;
+	stroke-width: 1px;
+	stroke: #eeeeee;
 }
