@@ -13,7 +13,7 @@ $(function () {
 
 
         title: {
-            text: 'Highcharts heat map study',
+            text: 'Highcharts heat map',
             align: 'left'
         },
 

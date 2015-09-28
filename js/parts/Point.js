@@ -89,7 +89,11 @@ Point.prototype = {
 				i++;
 			}
 			while (j < valueCount) {
-				ret[pointArrayMap[j++]] = options[i++];
+				if (!keys || options[i] !== undefined) { // Skip undefined positions for keys
+					ret[pointArrayMap[j]] = options[i];
+				}
+				i++;
+				j++;
 			}
 		} else if (typeof options === 'object') {
 			ret = options;
@@ -238,5 +242,6 @@ Point.prototype = {
 		}
 
 		fireEvent(this, eventType, eventArgs, defaultFunction);
-	}
+	},
+	visible: true
 };

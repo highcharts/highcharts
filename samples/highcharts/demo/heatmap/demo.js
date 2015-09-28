@@ -5,7 +5,8 @@ $(function () {
         chart: {
             type: 'heatmap',
             marginTop: 40,
-            marginBottom: 80
+            marginBottom: 80,
+            plotBorderWidth: 1
         },
 
 
