@@ -542,6 +542,7 @@ H.Series.prototype = {
 			i, // loop variable
 			options = series.options,
 			cropThreshold = options.cropThreshold,
+			getExtremesFromAll = series.getExtremesFromAll || options.getExtremesFromAll, // #4599
 			isCartesian = series.isCartesian,
 			xExtremes,
 			min,
@@ -560,7 +561,7 @@ H.Series.prototype = {
 		}
 
 		// optionally filter out points outside the plot area
-		if (isCartesian && series.sorted && (!cropThreshold || dataLength > cropThreshold || series.forceCrop)) {
+		if (isCartesian && series.sorted && !getExtremesFromAll && (!cropThreshold || dataLength > cropThreshold || series.forceCrop)) {
 			
 			// it's outside current extremes
 			if (processedXData[dataLength - 1] < min || processedXData[0] > max) {
@@ -1343,21 +1344,25 @@ H.Series.prototype = {
 					if (step === 'right') {
 						segmentPath.push(
 							lastPoint.plotX,
-							plotY
+							plotY,
+							L
 						);
 
 					} else if (step === 'center') {
 						segmentPath.push(
 							(lastPoint.plotX + plotX) / 2,
 							lastPoint.plotY,
+							L,
 							(lastPoint.plotX + plotX) / 2,
-							plotY
+							plotY,
+							L
 						);
 
 					} else {
 						segmentPath.push(
 							plotX,
-							lastPoint.plotY
+							lastPoint.plotY,
+							L
 						);
 					}
 				}
