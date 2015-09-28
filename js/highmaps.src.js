@@ -4699,9 +4699,14 @@ extend(SVGRenderer.prototype, {
 									parentGroup.doTransform = true;
 								}
 							});
-							wrap(parentGroup, 'visibilitySetter', function (proceed, value, key, elem) {
-								proceed.call(this, value, key, elem);
-								htmlGroupStyle[key] = value;
+
+							// These properties are set as attributes on the SVG group, and as
+							// identical CSS properties on the div. (#3542)
+							each(['opacity', 'visibility'], function (prop) {
+								wrap(parentGroup, prop + 'Setter', function (proceed, value, key, elem) {
+									proceed.call(this, value, key, elem);
+									htmlGroupStyle[key] = value;
+								});
 							});
 						});
 
