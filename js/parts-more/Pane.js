@@ -38,7 +38,9 @@ extend(Pane.prototype, {
 				config.color = config.backgroundColor; // due to naming in plotBands
 				firstAxis.options.plotBands.unshift(config);
 				axisUserOptions.plotBands = axisUserOptions.plotBands || []; // #3176
-				axisUserOptions.plotBands.unshift(config);
+				if (axisUserOptions.plotBands !== firstAxis.options.plotBands) {
+					axisUserOptions.plotBands.unshift(config);
+				}
 			});
 		}
 	},
