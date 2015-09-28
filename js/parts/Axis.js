@@ -2085,6 +2085,7 @@ H.Axis.prototype = {
 			linePath = axis.getLinePath(lineWidth);
 			if (!axis.axisLine) {
 				axis.axisLine = renderer.path(linePath)
+					.addClass('highcharts-axis-line')
 					.attr({
 						stroke: options.lineColor,
 						'stroke-width': lineWidth,

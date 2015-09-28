@@ -141,6 +141,13 @@
   position: relative;
   top: 45%; }
 
+/* Plot bands and polar pane backgrounds */
+.highcharts-plot-band {
+  fill: none; }
+
+.highcharts-axis-line {
+  fill: none; }
+
 /* Default colors */
 .highcharts-series-0 .highcharts-graph {
   stroke: #7cb5ec; }

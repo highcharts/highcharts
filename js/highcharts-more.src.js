@@ -47,13 +47,18 @@ extend(Pane.prototype, {
 		// push them to the first axis' plot bands and borrow the existing logic there.
 		if (backgroundOption) {
 			each([].concat(splat(backgroundOption)).reverse(), function (config) {
-				var backgroundColor = config.backgroundColor,  // if defined, replace the old one (specific for gradients)
+				var backgroundColor,
 					axisUserOptions = firstAxis.userOptions;
 				config = merge(pane.defaultBackgroundOptions, config);
+
+				
+				backgroundColor = config.backgroundColor;  // if defined, replace the old one (specific for gradients)
 				if (backgroundColor) {
 					config.backgroundColor = backgroundColor;
 				}
 				config.color = config.backgroundColor; // due to naming in plotBands
+				
+
 				firstAxis.options.plotBands.unshift(config);
 				axisUserOptions.plotBands = axisUserOptions.plotBands || []; // #3176
 				if (axisUserOptions.plotBands !== firstAxis.options.plotBands) {
@@ -78,7 +83,9 @@ extend(Pane.prototype, {
 	 * The default background options
 	 */
 	defaultBackgroundOptions: {
+		className: 'highcharts-pane', // docs
 		shape: 'circle',
+		
 		borderWidth: 1,
 		borderColor: 'silver',
 		backgroundColor: {
@@ -88,6 +95,7 @@ extend(Pane.prototype, {
 				[1, '#DDD']
 			]
 		},
+		
 		from: -Number.MAX_VALUE, // corrected to axis min
 		innerRadius: 0,
 		to: Number.MAX_VALUE, // corrected to axis max
@@ -1441,9 +1449,9 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				// Stem attributes
 				stemAttr.stroke = point.stemColor || options.stemColor || color;
 				stemAttr['stroke-width'] = pick(point.stemWidth, options.stemWidth, options.lineWidth);
-				/*= if (build.classic) { =*/
+				
 				stemAttr.dashstyle = point.stemDashStyle || options.stemDashStyle;
-				/*= } =*/
+				
 				
 				// Whiskers attributes
 				whiskersAttr.stroke = point.whiskerColor || options.whiskerColor || color;

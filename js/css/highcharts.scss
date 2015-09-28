@@ -146,6 +146,14 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
     top: 45%;
 }
 
+/* Plot bands and polar pane backgrounds */
+.highcharts-plot-band {
+    fill: none;
+}
+.highcharts-axis-line {
+    fill: none;
+}
+
 
 /* Default colors */
 @for $i from 1 through length($colors) {

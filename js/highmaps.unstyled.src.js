@@ -4682,9 +4682,14 @@ extend(SVGRenderer.prototype, {
 									parentGroup.doTransform = true;
 								}
 							});
-							wrap(parentGroup, 'visibilitySetter', function (proceed, value, key, elem) {
-								proceed.call(this, value, key, elem);
-								htmlGroupStyle[key] = value;
+
+							// These properties are set as attributes on the SVG group, and as
+							// identical CSS properties on the div. (#3542)
+							each(['opacity', 'visibility'], function (prop) {
+								wrap(parentGroup, prop + 'Setter', function (proceed, value, key, elem) {
+									proceed.call(this, value, key, elem);
+									htmlGroupStyle[key] = value;
+								});
 							});
 						});
 
@@ -8329,6 +8334,7 @@ H.Axis.prototype = {
 			linePath = axis.getLinePath(lineWidth);
 			if (!axis.axisLine) {
 				axis.axisLine = renderer.path(linePath)
+					.addClass('highcharts-axis-line')
 					.attr({
 						stroke: options.lineColor,
 						'stroke-width': lineWidth,
@@ -13228,6 +13234,7 @@ H.Series.prototype = {
 			i, // loop variable
 			options = series.options,
 			cropThreshold = options.cropThreshold,
+			getExtremesFromAll = series.getExtremesFromAll || options.getExtremesFromAll, // #4599
 			isCartesian = series.isCartesian,
 			xExtremes,
 			min,
@@ -13246,7 +13253,7 @@ H.Series.prototype = {
 		}
 
 		// optionally filter out points outside the plot area
-		if (isCartesian && series.sorted && (!cropThreshold || dataLength > cropThreshold || series.forceCrop)) {
+		if (isCartesian && series.sorted && !getExtremesFromAll && (!cropThreshold || dataLength > cropThreshold || series.forceCrop)) {
 			
 			// it's outside current extremes
 			if (processedXData[dataLength - 1] < min || processedXData[0] > max) {
@@ -14029,21 +14036,25 @@ H.Series.prototype = {
 					if (step === 'right') {
 						segmentPath.push(
 							lastPoint.plotX,
-							plotY
+							plotY,
+							L
 						);
 
 					} else if (step === 'center') {
 						segmentPath.push(
 							(lastPoint.plotX + plotX) / 2,
 							lastPoint.plotY,
+							L,
 							(lastPoint.plotX + plotX) / 2,
-							plotY
+							plotY,
+							L
 						);
 
 					} else {
 						segmentPath.push(
 							plotX,
-							lastPoint.plotY
+							lastPoint.plotY,
+							L
 						);
 					}
 				}
@@ -14873,7 +14884,7 @@ extend(Series.prototype, {
 			}
 			each(shiftShapes, function (shape) {
 				if (series[shape]) {
-					series[shape].shift = currentShift + 1;
+					series[shape].shift = currentShift + (seriesOptions.step ? 2 : 1);
 				}
 			});
 		}
@@ -16270,7 +16281,7 @@ if (seriesTypes.pie) {
 		// If the size must be decreased, we need to run translate and drawDataLabels again
 		if (newSize < center[2]) {
 			center[2] = newSize;
-			center[3] = relativeLength(options.innerSize || 0, newSize);
+			center[3] = Math.min(relativeLength(options.innerSize || 0, newSize), newSize); // #3632
 			this.translate(center);
 			each(this.points, function (point) {
 				if (point.dataLabel) {

@@ -1,0 +1,21 @@
+.highcharts-plot-band.good {
+	fill: #90ed7d;
+}
+.highcharts-plot-band.bad {
+	fill: #DDDF0D;
+}
+.highcharts-plot-band.ugly {
+	fill: #f45b5b;
+}
+.highcharts-pane:nth-child(1) {
+	fill: silver;
+}
+.highcharts-pane:nth-child(2) {
+	fill: white;
+}
+.highcharts-pane:nth-child(3) {
+	fill: white;
+}
+.highcharts-pane:nth-child(4) {
+	fill: silver;
+}

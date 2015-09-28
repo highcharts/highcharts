@@ -50,7 +50,10 @@ H.PlotLineOrBand.prototype = {
 			zIndex = options.zIndex,
 			events = options.events,
 			attribs = {},
-			renderer = axis.chart.renderer;
+			groupAttribs = {},
+			renderer = axis.chart.renderer,
+			groupName = isBand ? 'bands' : 'lines',
+			group;
 
 		// logarithmic conversion
 		if (axis.isLog) {
@@ -62,11 +65,11 @@ H.PlotLineOrBand.prototype = {
 		// plot line
 		if (width) {
 			path = axis.getPlotLinePath(value, width);
+			/*= if (build.classic) { =*/
 			attribs = {
 				stroke: color,
 				'stroke-width': width
 			};
-			/*= if (build.classic) { =*/		
 			if (options.dashStyle) {
 				attribs.dashstyle = options.dashStyle;
 			}
@@ -75,6 +78,7 @@ H.PlotLineOrBand.prototype = {
 		} else if (isBand) { // plot band
 
 			path = axis.getPlotBandPath(from, to, options);
+			/*= if (build.classic) { =*/
 			if (color) {
 				attribs.fill = color;
 			}
@@ -82,13 +86,24 @@ H.PlotLineOrBand.prototype = {
 				attribs.stroke = options.borderColor;
 				attribs['stroke-width'] = options.borderWidth;
 			}
+			/*= } =*/
 		} else {
 			return;
 		}
 		// zIndex
 		if (defined(zIndex)) {
-			attribs.zIndex = zIndex;
+			groupAttribs.zIndex = zIndex;
+			groupName += '-' + zIndex;
 		}
+		group = axis[groupName];
+		if (!group) {
+			axis[groupName] = group = renderer.g('plot-' + groupName)
+				.attr(groupAttribs).add();
+		}
+
+
+		// Class
+		attribs['class'] = 'highcharts-plot-' + (isBand ? 'band ' : 'line ') + (options.className || '');
 
 		// common for lines and bands
 		if (svgElem) {
@@ -107,7 +122,7 @@ H.PlotLineOrBand.prototype = {
 			}
 		} else if (path && path.length) {
 			plotLine.svgElem = svgElem = renderer.path(path)
-				.attr(attribs).add();
+				.attr(attribs).add(group);
 
 			// events
 			if (events) {

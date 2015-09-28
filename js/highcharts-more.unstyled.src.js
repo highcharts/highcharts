@@ -47,16 +47,17 @@ extend(Pane.prototype, {
 		// push them to the first axis' plot bands and borrow the existing logic there.
 		if (backgroundOption) {
 			each([].concat(splat(backgroundOption)).reverse(), function (config) {
-				var backgroundColor = config.backgroundColor,  // if defined, replace the old one (specific for gradients)
+				var backgroundColor,
 					axisUserOptions = firstAxis.userOptions;
 				config = merge(pane.defaultBackgroundOptions, config);
-				if (backgroundColor) {
-					config.backgroundColor = backgroundColor;
-				}
-				config.color = config.backgroundColor; // due to naming in plotBands
+
+				
+
 				firstAxis.options.plotBands.unshift(config);
 				axisUserOptions.plotBands = axisUserOptions.plotBands || []; // #3176
-				axisUserOptions.plotBands.unshift(config);
+				if (axisUserOptions.plotBands !== firstAxis.options.plotBands) {
+					axisUserOptions.plotBands.unshift(config);
+				}
 			});
 		}
 	},
@@ -76,16 +77,9 @@ extend(Pane.prototype, {
 	 * The default background options
 	 */
 	defaultBackgroundOptions: {
+		className: 'highcharts-pane', // docs
 		shape: 'circle',
-		borderWidth: 1,
-		borderColor: 'silver',
-		backgroundColor: {
-			linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
-			stops: [
-				[0, '#FFF'],
-				[1, '#DDD']
-			]
-		},
+		
 		from: -Number.MAX_VALUE, // corrected to axis min
 		innerRadius: 0,
 		to: Number.MAX_VALUE, // corrected to axis max
