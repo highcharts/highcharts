@@ -2426,7 +2426,12 @@ SVGRenderer.prototype = {
 		var lineHeight,
 			baseline;
 
-		fontSize = (elem && SVGElement.prototype.getStyle.call(elem, 'font-size')) || fontSize || (this.style && this.style.fontSize);
+		/*= if (build.classic) { =*/
+		fontSize = fontSize || (this.style && this.style.fontSize);
+		/*= } else { =*/
+		fontSize = elem && SVGElement.prototype.getStyle.call(elem, 'font-size');
+		/*= } =*/
+
 		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
 
 		// Empirical values found by comparing font size and bounding box height.
@@ -2477,7 +2482,6 @@ SVGRenderer.prototype = {
 				.attr({
 					zIndex: 1
 				}),
-				//.add(wrapper),
 			box,
 			bBox,
 			alignFactor = 0,
@@ -2493,14 +2497,17 @@ SVGRenderer.prototype = {
 
 		/*= if (!build.classic) { =*/
 		needsBox = true; // for styling
+		function getCrispAdjust() {
+			return box.pxStyle('stroke-width') % 2 / 2;
+		}
 		/*= } else { =*/
 		needsBox = false;
+		function getCrispAdjust() {
+			return (deferredAttr['stroke-width'] || 0) % 2 / 2;
+		}
+
 		/*= } =*/
 
-		function getCrispAdjust() {
-			var ret = box.pxStyle('stroke-width');
-			return ret % 2 / 2;
-		}
 		/**
 		 * This function runs after the label is added to the DOM (when the bounding box is
 		 * available), and after the text of the label is updated to detect the new bounding
@@ -2542,7 +2549,7 @@ SVGRenderer.prototype = {
 				attribs.height = Math.round(wrapper.height);
 				
 				box.attr(extend(attribs, deferredAttr));
-				deferredAttr = null;
+				deferredAttr = {};
 			}
 		}
 

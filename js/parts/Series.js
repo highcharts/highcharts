@@ -1345,24 +1345,24 @@ H.Series.prototype = {
 						segmentPath.push(
 							lastPoint.plotX,
 							plotY,
-							L
+							'L'
 						);
 
 					} else if (step === 'center') {
 						segmentPath.push(
 							(lastPoint.plotX + plotX) / 2,
 							lastPoint.plotY,
-							L,
+							'L',
 							(lastPoint.plotX + plotX) / 2,
 							plotY,
-							L
+							'L'
 						);
 
 					} else {
 						segmentPath.push(
 							plotX,
 							lastPoint.plotY,
-							L
+							'L'
 						);
 					}
 				}

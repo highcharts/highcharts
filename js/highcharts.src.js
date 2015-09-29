@@ -4171,7 +4171,10 @@ SVGRenderer.prototype = {
 		var lineHeight,
 			baseline;
 
-		fontSize = (elem && SVGElement.prototype.getStyle.call(elem, 'font-size')) || fontSize || (this.style && this.style.fontSize);
+		
+		fontSize = fontSize || (this.style && this.style.fontSize);
+		
+
 		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
 
 		// Empirical values found by comparing font size and bounding box height.
@@ -4222,7 +4225,6 @@ SVGRenderer.prototype = {
 				.attr({
 					zIndex: 1
 				}),
-				//.add(wrapper),
 			box,
 			bBox,
 			alignFactor = 0,
@@ -4238,12 +4240,12 @@ SVGRenderer.prototype = {
 
 		
 		needsBox = false;
+		function getCrispAdjust() {
+			return (deferredAttr['stroke-width'] || 0) % 2 / 2;
+		}
+
 		
 
-		function getCrispAdjust() {
-			var ret = box.pxStyle('stroke-width');
-			return ret % 2 / 2;
-		}
 		/**
 		 * This function runs after the label is added to the DOM (when the bounding box is
 		 * available), and after the text of the label is updated to detect the new bounding
@@ -4285,7 +4287,7 @@ SVGRenderer.prototype = {
 				attribs.height = Math.round(wrapper.height);
 				
 				box.attr(extend(attribs, deferredAttr));
-				deferredAttr = null;
+				deferredAttr = {};
 			}
 		}
 
@@ -11402,11 +11404,8 @@ Legend.prototype = {
 		// hide the border if no items
 		box[display ? 'show' : 'hide']();
 
-		// Open for responsiveness
-		if (legendGroup.getStyle('display') === 'none') {
-			legendWidth = legendHeight = 0;
-		}
 		
+
 		legend.legendWidth = legendWidth;
 		legend.legendHeight = legendHeight;
 
@@ -12229,17 +12228,17 @@ Chart.prototype = {
 			subtitleOptions = options.subtitle,
 			requiresDirtyBox,
 			renderer = this.renderer,
-			titleFontSize,
+			fontSize,
 			autoWidth = this.spacingBox.width - 44; // 44 makes room for default context button
 
 		if (title) {
 			
-			titleFontSize = titleOptions.style.fontSize;
+			fontSize = titleOptions.style.fontSize;
 			
 			title
 				.css({ width: (titleOptions.width || autoWidth) + 'px' })
 				.align(extend({ 
-					y: renderer.fontMetrics(titleFontSize, title).b - 3
+					y: renderer.fontMetrics(fontSize, title).b - 3
 				}, titleOptions), false, 'spacingBox');
 			
 			if (!titleOptions.floating && !titleOptions.verticalAlign) {
@@ -12247,10 +12246,13 @@ Chart.prototype = {
 			}
 		}
 		if (subtitle) {
+			
+			fontSize = subtitleOptions.style.fontSize;
+			
 			subtitle
 				.css({ width: (subtitleOptions.width || autoWidth) + 'px' })
 				.align(extend({ 
-					y: titleOffset + (titleOptions.margin - 13) + renderer.fontMetrics(titleFontSize, subtitle).b 
+					y: titleOffset + (titleOptions.margin - 13) + renderer.fontMetrics(fontSize, subtitle).b 
 				}, subtitleOptions), false, 'spacingBox');
 			
 			if (!subtitleOptions.floating && !subtitleOptions.verticalAlign) {
@@ -14891,24 +14893,24 @@ H.Series.prototype = {
 						segmentPath.push(
 							lastPoint.plotX,
 							plotY,
-							L
+							'L'
 						);
 
 					} else if (step === 'center') {
 						segmentPath.push(
 							(lastPoint.plotX + plotX) / 2,
 							lastPoint.plotY,
-							L,
+							'L',
 							(lastPoint.plotX + plotX) / 2,
 							plotY,
-							L
+							'L'
 						);
 
 					} else {
 						segmentPath.push(
 							plotX,
 							lastPoint.plotY,
-							L
+							'L'
 						);
 					}
 				}

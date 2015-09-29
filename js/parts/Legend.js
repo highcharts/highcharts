@@ -534,11 +534,13 @@ Legend.prototype = {
 		// hide the border if no items
 		box[display ? 'show' : 'hide']();
 
+		/*= if (!build.classic) { =*/
 		// Open for responsiveness
 		if (legendGroup.getStyle('display') === 'none') {
 			legendWidth = legendHeight = 0;
 		}
-		
+		/*= } =*/
+
 		legend.legendWidth = legendWidth;
 		legend.legendHeight = legendHeight;
 
