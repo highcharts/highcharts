@@ -47,22 +47,21 @@ extend(Pane.prototype, {
 		// push them to the first axis' plot bands and borrow the existing logic there.
 		if (backgroundOption) {
 			each([].concat(splat(backgroundOption)).reverse(), function (config) {
-				var backgroundColor,
+				var mConfig,
 					axisUserOptions = firstAxis.userOptions;
-				config = merge(pane.defaultBackgroundOptions, config);
+				mConfig = merge(pane.defaultBackgroundOptions, config);
 
 				
-				backgroundColor = config.backgroundColor;  // if defined, replace the old one (specific for gradients)
-				if (backgroundColor) {
-					config.backgroundColor = backgroundColor;
+				if (config.backgroundColor) {
+					mConfig.backgroundColor = config.backgroundColor;
 				}
-				config.color = config.backgroundColor; // due to naming in plotBands
+				mConfig.color = mConfig.backgroundColor; // due to naming in plotBands
 				
 
-				firstAxis.options.plotBands.unshift(config);
+				firstAxis.options.plotBands.unshift(mConfig);
 				axisUserOptions.plotBands = axisUserOptions.plotBands || []; // #3176
 				if (axisUserOptions.plotBands !== firstAxis.options.plotBands) {
-					axisUserOptions.plotBands.unshift(config);
+					axisUserOptions.plotBands.unshift(mConfig);
 				}
 			});
 		}

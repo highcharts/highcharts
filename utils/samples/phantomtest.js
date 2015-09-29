@@ -62,25 +62,30 @@ Status
 
         var msgStack = [msg];
 
+        if (retries === 0) {
+            console.log(i + ' ' + samples[i]);
+        }
+
         if (retries < 2) {
-            console.log('Error detected, trying again...');
+            console.log('  Error detected, trying again...');
             page.reload();
             retries++;
 
         } else {
 
             if (trace && trace.length) {
-                msgStack.push('TRACE:');
+                msgStack.push('Trace:');
                 trace.forEach(function(t) {
                     msgStack.push(' -> ' + t.file + ': ' + t.line + (t['function'] ? ' (in function "' + t['function'] + '")' : ''));
                 });
             }
 
             console.error(
-                '\nError detected in ' + samples[i] + '. To start again from this sample, run with argument --start ' +
-                    i + '\n\n.' + msgStack.join('\n')
+                '\n  To start again from this sample, run with argument --start ' +
+                    i + '.\n\n  ' + msgStack.join('\n   ')
             );
-            phantom.exit();
+            i++;
+            runRecursive();
         }
     };
 

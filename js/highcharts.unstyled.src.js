@@ -3802,8 +3802,6 @@ SVGRenderer.prototype = {
 				});
 			}
 			obj.isImg = true;
-			obj.width = width;
-			obj.symbolHeight = height;
 
 			if (defined(obj.imgwidth) && defined(obj.imgheight)) {
 				centerImage();
@@ -3816,29 +3814,32 @@ SVGRenderer.prototype = {
 				imageElement = createElement('img', {
 					onload: function () {
 
-						// Special case for SVGs on IE11, the width is not accessible until the image is 
-						// part of the DOM (#2854).
-						if (this.width === 0) { 
-							css(this, {
-								position: 'absolute',
-								top: '-999em'
-							});
-							document.body.appendChild(this);
-						}
+						if (obj.element) { // Meaning not destroyed
 
-						// Center the image
-						symbolSizes[imageSrc] = { // Cache for next	
-							width: this.width,
-							height: this.height
-						};
-						obj.imgwidth = this.width;
-						obj.imgheight = this.height;
-						centerImage();
-						
+							// Special case for SVGs on IE11, the width is not accessible until the image is 
+							// part of the DOM (#2854).
+							if (this.width === 0) { 
+								css(this, {
+									position: 'absolute',
+									top: '-999em'
+								});
+								document.body.appendChild(this);
+							}
 
-						// Clean up after #2854 workaround.
-						if (this.parentNode) {
-							this.parentNode.removeChild(this);
+							// Center the image
+							symbolSizes[imageSrc] = { // Cache for next	
+								width: this.width,
+								height: this.height
+							};
+							obj.imgwidth = this.width;
+							obj.imgheight = this.height;
+							centerImage();
+							
+
+							// Clean up after #2854 workaround.
+							if (this.parentNode) {
+								this.parentNode.removeChild(this);
+							}
 						}
 					},
 					src: imageSrc
@@ -4152,6 +4153,7 @@ SVGRenderer.prototype = {
 			wrapperX,
 			wrapperY,
 			deferredAttr = {},
+			strokeWidth,
 			baselineOffset,
 			needsBox;
 
@@ -4190,7 +4192,10 @@ SVGRenderer.prototype = {
 						renderer.rect();
 					if (className) {
 						box.addClass('highcharts-' + className + '-box');
-					}	
+					}
+
+					
+
 					box.add(wrapper);
 
 					crispAdjust = getCrispAdjust();
@@ -4314,15 +4319,10 @@ SVGRenderer.prototype = {
 			if (value) {
 				needsBox = true;
 			}
-			//crispAdjust = value % 2 / 2;
+			strokeWidth = value;
 			boxAttr(key, value);
 		};
-		wrapper.strokeSetter = wrapper.fillSetter = wrapper.rSetter = function (value, key) {
-			if (key === 'fill' && value) {
-				needsBox = true;
-			}
-			boxAttr(key, value);
-		};
+		
 		wrapper.anchorXSetter = function (value, key) {
 			anchorX = value;
 			boxAttr(key, Math.round(value) - getCrispAdjust() - wrapperX);

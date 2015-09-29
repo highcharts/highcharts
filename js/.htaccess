@@ -12,6 +12,8 @@ RewriteRule ^master/(.*?) /$1
 
 # Source files
 RewriteRule (.*?)highcharts.js $1highcharts.src.js
+RewriteRule (.*?)highcharts-more.js $1highcharts-more.src.js
+RewriteRule (.*?)highcharts-3d.js $1highcharts-3d.src.js
 RewriteRule (.*?)highmaps.js $1highmaps.src.js
 RewriteRule (.*?)highstock.js $1highstock.src.js
 
