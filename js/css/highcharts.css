@@ -11,14 +11,20 @@
 
 .highcharts-root {
   font-family: "Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif;
-  font-size: 12px; }
+  font-size: 12px;
+  fill: none; }
+
+.highcharts-root text {
+  fill: black; }
 
 .highcharts-background {
   fill: #ffffff; }
 
+/*
 .highcharts-plot-border, .highcharts-plot-background {
-  fill: none; }
-
+    fill: none;
+}
+*/
 .highcharts-title {
   fill: #333333;
   font-size: 1.5em; }
@@ -60,7 +66,7 @@
   fill-opacity: 0.25; }
 
 .highcharts-graph {
-  fill: none;
+  /* fill: none; */
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round; }

@@ -3802,7 +3802,7 @@ SVGRenderer.prototype = {
 			symbolFn = this.symbols[symbol],
 
 			// check if there's a path defined for this symbol
-			path = symbolFn && symbolFn(
+			path = defined(x) && symbolFn && symbolFn(
 				Math.round(x),
 				Math.round(y),
 				width,
@@ -3817,8 +3817,7 @@ SVGRenderer.prototype = {
 			centerImage,
 			symbolSizes = {};
 
-		if (path) {
-
+		if (symbolFn) {
 			obj = this.path(path);
 			// expando properties for use in animate and attr
 			extend(obj, {
@@ -3836,36 +3835,61 @@ SVGRenderer.prototype = {
 		// image symbols
 		} else if (imageRegex.test(symbol)) {
 
-			// On image load, set the size and position
-			centerImage = function (img, size) {
-				if (img.element) { // it may be destroyed in the meantime (#1390)
-					img.attr({
-						width: size[0],
-						height: size[1]
-					});
+			
+			imageSrc = symbol.match(imageRegex)[1];
 
-					if (!img.alignByTranslate) { // #185
-						img.translate(
-							Math.round((width - size[0]) / 2), // #1378
-							Math.round((height - size[1]) / 2)
-						);
-					}
-				}
+			// Create the image synchronously, add attribs async
+			obj = this.image(imageSrc);
+
+			// The image width is not always the same as the symbol width. The image may be centered within the symbol,
+			// as is the case when image shapes are used as label backgrounds, for example in flags.
+			obj.imgWidth = pick(symbolSizes[imageSrc] && symbolSizes[imageSrc].width, options && options.width);
+			obj.imgHeight = pick(symbolSizes[imageSrc] && symbolSizes[imageSrc].height, options && options.height);
+
+			/**
+			 * Set the size and position
+			 */
+			centerImage = function () {
+				obj.attr({
+					width: obj.width,
+					height: obj.height
+				});
 			};
 
-			imageSrc = symbol.match(imageRegex)[1];
-			imageSize = symbolSizes[imageSrc] || (options && options.width && options.height && [options.width, options.height]);
+			/**
+			 * Width and height setters that take both the image's physical size and the label size into 
+			 * consideration, and translates the image to center within the label.
+			 */
+			each(['width', 'height'], function (key) {
+				obj[key + 'Setter'] = function (value, key) {
+					var attribs = {},
+						imgSize = this['img' + key];
+					this[key] = value;
+					if (defined(imgSize)) {
+						if (this.element) {
+							this.element.setAttribute(key, imgSize);
+						}
+						if (!this.alignByTranslate) {
+							attribs[key === 'width' ? 'translateX' : 'translateY'] = (this[key] - imgSize) / 2;
+							this.attr(attribs);
+						}
+					}
+				};
+			});
+			
 
-			// Ireate the image synchronously, add attribs async
-			obj = this.image(imageSrc)
-				.attr({
+			if (defined(x)) {
+				obj.attr({
 					x: x,
 					y: y
 				});
+			}
 			obj.isImg = true;
+			obj.width = width;
+			obj.symbolHeight = height;
 
-			if (imageSize) {
-				centerImage(obj, imageSize);
+			if (defined(obj.imgwidth) && defined(obj.imgheight)) {
+				centerImage();
 			} else {
 				// Initialize image to be 0 size so export will still function if there's no cached sizes.
 				obj.attr({ width: 0, height: 0 });
@@ -3886,7 +3910,14 @@ SVGRenderer.prototype = {
 						}
 
 						// Center the image
-						centerImage(obj, symbolSizes[imageSrc] = [this.width, this.height]);
+						symbolSizes[imageSrc] = { // Cache for next	
+							width: this.width,
+							height: this.height
+						};
+						obj.imgwidth = this.width;
+						obj.imgheight = this.height;
+						centerImage();
+						
 
 						// Clean up after #2854 workaround.
 						if (this.parentNode) {
@@ -4201,7 +4232,6 @@ SVGRenderer.prototype = {
 			height,
 			wrapperX,
 			wrapperY,
-			crispAdjust = 0,
 			deferredAttr = {},
 			baselineOffset,
 			needsBox;
@@ -4210,54 +4240,51 @@ SVGRenderer.prototype = {
 		needsBox = false;
 		
 
-
+		function getCrispAdjust() {
+			var ret = box.pxStyle('stroke-width');
+			return ret % 2 / 2;
+		}
 		/**
 		 * This function runs after the label is added to the DOM (when the bounding box is
 		 * available), and after the text of the label is updated to detect the new bounding
 		 * box and reflect it in the border box.
 		 */
 		function updateBoxSize() {
-			var boxX,
-				boxY,
-				style = text.element.style;
+			var style = text.element.style,
+				crispAdjust,
+				attribs = {};
 
 			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && defined(text.textStr) && 
 				text.getBBox(); //#3295 && 3514 box failure when string equals 0
 			wrapper.width = (width || bBox.width || 0) + 2 * padding + paddingLeft;
 			wrapper.height = (height || bBox.height || 0) + 2 * padding;
 
-			// update the label-scoped y offset
+			// Update the label-scoped y offset
 			baselineOffset = padding + renderer.fontMetrics(style && style.fontSize, text).b;
 
 			
 			if (needsBox) {
 
-				// create the border box if it is not already present
+				// Create the border box if it is not already present
 				if (!box) {
-					boxX = Math.round(-alignFactor * padding) + crispAdjust;
-					boxY = (baseline ? -baselineOffset : 0) + crispAdjust;
-
 					wrapper.box = box = shape ?
-						renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height, deferredAttr) :
-						renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr['stroke-width']);
-
-					if (!box.isImg) { // #4324, fill "none" causes it to be ignored by mouse events in IE
-						box.attr('fill', 'none');
-						if (className) {
-							box.addClass('highcharts-' + className + '-box');
-						}
-					}
-					
+						renderer.symbol(shape) :
+						renderer.rect();
+					if (className) {
+						box.addClass('highcharts-' + className + '-box');
+					}	
 					box.add(wrapper);
+
+					crispAdjust = getCrispAdjust();
+					attribs.x = Math.round(-alignFactor * padding) + crispAdjust;
+					attribs.y = (baseline ? -baselineOffset : 0) + crispAdjust;
 				}
 
-				// apply the box attributes
-				if (!box.isImg) { // #1630
-					box.attr(extend({
-						width: Math.round(wrapper.width),
-						height: Math.round(wrapper.height)
-					}, deferredAttr));
-				}
+				// Apply the box attributes
+				attribs.width = Math.round(wrapper.width);
+				attribs.height = Math.round(wrapper.height);
+				
+				box.attr(extend(attribs, deferredAttr));
 				deferredAttr = null;
 			}
 		}
@@ -4369,7 +4396,7 @@ SVGRenderer.prototype = {
 			if (value) {
 				needsBox = true;
 			}
-			crispAdjust = value % 2 / 2;
+			//crispAdjust = value % 2 / 2;
 			boxAttr(key, value);
 		};
 		wrapper.strokeSetter = wrapper.fillSetter = wrapper.rSetter = function (value, key) {
@@ -4380,7 +4407,7 @@ SVGRenderer.prototype = {
 		};
 		wrapper.anchorXSetter = function (value, key) {
 			anchorX = value;
-			boxAttr(key, Math.round(value) - crispAdjust - wrapperX);
+			boxAttr(key, Math.round(value) - getCrispAdjust() - wrapperX);
 		};
 		wrapper.anchorYSetter = function (value, key) {
 			anchorY = value;
@@ -23450,7 +23477,7 @@ RangeSelector.prototype = {
 	drawInput: function (name) {
 		var rangeSelector = this,
 			chart = rangeSelector.chart,
-			chartStyle = chart.renderer.style,
+			chartStyle = chart.renderer.style || {},
 			renderer = chart.renderer,
 			options = chart.options.rangeSelector,
 			lang = defaultOptions.lang,
