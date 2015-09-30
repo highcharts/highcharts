@@ -1349,14 +1349,18 @@ H.defaultOptions = {
 				states: { // states for a single point
 					hover: {
 						enabled: true,
-						lineWidthPlus: 1,
-						radiusPlus: 2
+						radiusPlus: 2,
+						
+						lineWidthPlus: 1
+						
 					},
+					
 					select: {
 						fillColor: '#FFFFFF',
 						lineColor: '#000000',
 						lineWidth: 2
 					}
+					
 				}
 			},
 			point: {
@@ -11722,7 +11726,7 @@ H.LegendSymbolMixin = {
 				2 * radius,
 				2 * radius
 			)
-			.addClass('highcharts-marker')
+			.addClass('highcharts-point')
 			.add(legendItemGroup);
 			legendSymbol.isMarker = true;
 		}
@@ -13333,7 +13337,11 @@ Point.prototype = {
 
 		if (series.options.colorByPoint) {
 			colors = series.options.colors || series.chart.options.colors;
-			point.color = point.color || colors[series.colorCounter++];
+			
+			point.color = point.color || colors[series.colorCounter];
+			
+			point.colorIndex = series.colorCounter;
+			series.colorCounter++;
 			// loop back to zero
 			if (series.colorCounter === colors.length) {
 				series.colorCounter = 0;
@@ -13615,13 +13623,13 @@ H.Series.prototype = {
 	pointClass: Point,
 	sorted: true, // requires the data to be sorted
 	requireSorting: true,
+	
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		
 		stroke: 'lineColor',
 		'stroke-width': 'lineWidth',
 		fill: 'fillColor'
-		
 	},
+	
 	directTouch: false,
 	axisTypes: ['xAxis', 'yAxis'],
 	colorCounter: 0,
@@ -14540,7 +14548,6 @@ H.Series.prototype = {
 	 */
 	drawPoints: function () {
 		var series = this,
-			pointAttr,
 			points = series.points,
 			chart = series.chart,
 			plotX,
@@ -14553,7 +14560,6 @@ H.Series.prototype = {
 			graphic,
 			options = series.options,
 			seriesMarkerOptions = options.marker,
-			seriesPointAttr = series.pointAttr[''],
 			pointMarkerOptions,
 			hasPointMarker,
 			enabled,
@@ -14579,11 +14585,10 @@ H.Series.prototype = {
 				enabled = (globallyEnabled && pointMarkerOptions.enabled === undefined) || pointMarkerOptions.enabled;
 				isInside = point.isInside;
 
-				// only draw the point if y is defined
+				// Only draw the point if y is defined
 				if (enabled && plotY !== undefined && !isNaN(plotY) && point.y !== null) {
 
-					// shortcuts
-					pointAttr = point.pointAttr[point.selected ? 'select' : ''] || seriesPointAttr;
+					// Shortcuts
 					radius = seriesMarkerOptions.radius;
 					symbol = pick(pointMarkerOptions.symbol, series.symbol);
 					isImage = symbol.indexOf('url') === 0;
@@ -14606,10 +14611,14 @@ H.Series.prototype = {
 							2 * radius,
 							hasPointMarker ? pointMarkerOptions : seriesMarkerOptions
 						)
-						.addClass('highcharts-point')
-						.attr(pointAttr)
+						.addClass('highcharts-point' + (point.selected ? ' highcharts-point-select' : ''))
 						.attr({ r: radius })
 						.add(markerGroup);
+
+						
+						// Presentational attributes
+						graphic.attr(point.pointAttr[point.selected ? 'select' : ''] || series.pointAttr['']);
+						
 					}
 
 				} else if (graphic) {
@@ -14620,6 +14629,7 @@ H.Series.prototype = {
 
 	},
 
+	
 	/**
 	 * Convert state properties from API naming conventions to SVG attributes
 	 *
@@ -14805,6 +14815,8 @@ H.Series.prototype = {
 			}
 		}
 	},
+
+	
 
 	/**
 	 * Clear DOM objects and free up memory
@@ -15273,8 +15285,10 @@ H.Series.prototype = {
 			series.animate(true);
 		}
 
+		
 		// cache attributes for shapes
 		series.getAttribs();
+		
 
 		// SVGRenderer needs to know this before drawing elements (#1089, #1795)
 		group.inverted = series.isCartesian ? chart.inverted : false;
@@ -16913,20 +16927,22 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	minPointLength: 0,
 	cropThreshold: 50, // when there are more points, they will not animate out of the chart on xAxis.setExtremes
 	pointRange: null, // null means auto, meaning 1 in a categorized axis and least distance between points if not categories
-	
 	states: {
 		hover: {
+			halo: false,
+			
 			brightness: 0.1,
-			shadow: false,
-			halo: false
+			shadow: false
+			
 		},
+		
 		select: {
 			color: '#C0C0C0',
 			borderColor: '#000000',
 			shadow: false
 		}
+		
 	},
-	
 	dataLabels: {
 		align: null, // auto
 		verticalAlign: null, // auto
@@ -16946,12 +16962,12 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
  */
 seriesTypes.column = extendClass(Series, {
 	type: 'column',
+	
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		
 		stroke: 'borderColor',
 		fill: 'color'
-		
 	},
+	
 	cropShoulder: 0,
 	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	trackerGroups: ['group', 'dataLabelsGroup'],
@@ -17182,8 +17198,7 @@ seriesTypes.column = extendClass(Series, {
 			renderer = chart.renderer,
 			animationLimit = options.animationLimit || 250,
 			shapeArgs,
-			borderRadius = options.borderRadius,
-			pointAttr;
+			borderRadius = options.borderRadius;
 
 		// draw the columns
 		each(series.points, function (point) {
@@ -17201,8 +17216,6 @@ seriesTypes.column = extendClass(Series, {
 				if (defined(series.borderWidth)) {
 					borderAttr['stroke-width'] = series.borderWidth;
 				};
-
-				pointAttr = point.pointAttr[point.selected ? 'select' : ''] || series.pointAttr[''];
 				
 				if (graphic) { // update
 					stop(graphic);
@@ -17211,9 +17224,15 @@ seriesTypes.column = extendClass(Series, {
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 						.attr(borderAttr)
-						.attr(pointAttr)
-						.add(series.group)
+						.addClass('highcharts-point' + (point.selected ? ' highcharts-point-select' : ''))
+						.add(series.group);
+
+					
+					// Presentational
+					graphic
+						.attr(point.pointAttr[point.selected ? 'select' : ''] || series.pointAttr[''])
 						.shadow(options.shadow, null, options.stacking && !options.borderRadius);
+					
 				}
 
 			} else if (graphic) {
@@ -17364,8 +17383,6 @@ seriesTypes.scatter = extendClass(Series, {
  * Set the default options for pie
  */
 defaultPlotOptions.pie = merge(defaultSeriesOptions, {
-	borderColor: '#FFFFFF',
-	borderWidth: 1,
 	center: [null, null],
 	clip: false,
 	colorByPoint: true, // always true for pies
@@ -17390,16 +17407,20 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 	size: null,
 	showInLegend: false,
 	slicedOffset: 10,
+	stickyTracking: false,
+	tooltip: {
+		followPointer: true
+	},
+	
+	borderColor: '#FFFFFF',
+	borderWidth: 1,
 	states: {
 		hover: {
 			brightness: 0.1,
 			shadow: false
 		}
-	},
-	stickyTracking: false,
-	tooltip: {
-		followPointer: true
 	}
+	
 });
 
 /**
@@ -17502,10 +17523,11 @@ PiePoint = extendClass(Point, {
 
 		point.graphic.animate(translation);
 		
+		
 		if (point.shadowGroup) {
 			point.shadowGroup.animate(translation);
 		}
-
+		
 	},
 
 	haloPath: function (size) {
@@ -17532,11 +17554,13 @@ seriesTypes.pie = extendClass(Series, {
 	noSharedTooltip: true,
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	axisTypes: [],
+	
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
 		fill: 'color'
 	},
+	
 
 	/**
 	 * Animate the pies in
@@ -17733,8 +17757,7 @@ seriesTypes.pie = extendClass(Series, {
 			//group,
 			shadow = series.options.shadow,
 			shadowGroup,
-			shapeArgs,
-			attr;
+			shapeArgs;
 
 		if (shadow && !series.shadowGroup) {
 			series.shadowGroup = renderer.g('shadow')
@@ -17746,13 +17769,7 @@ seriesTypes.pie = extendClass(Series, {
 			if (point.y !== null) {
 				graphic = point.graphic;
 				shapeArgs = point.shapeArgs;
-				shadowGroup = point.shadowGroup;
 
-				// put the shadow behind all points
-				if (shadow && !shadowGroup) {
-					shadowGroup = point.shadowGroup = renderer.g('shadow')
-						.add(series.shadowGroup);
-				}
 
 				// if the point is sliced, use special translation, else use plot area traslation
 				groupTranslation = point.sliced ? point.slicedTranslation : {
@@ -17760,31 +17777,43 @@ seriesTypes.pie = extendClass(Series, {
 					translateY: 0
 				};
 
-				//group.translate(groupTranslation[0], groupTranslation[1]);
+				
+				// Put the shadow behind all points
+				shadowGroup = point.shadowGroup;
+				if (shadow && !shadowGroup) {
+					shadowGroup = point.shadowGroup = renderer.g('shadow')
+						.add(series.shadowGroup);
+				}
+
 				if (shadowGroup) {
 					shadowGroup.attr(groupTranslation);
 				}
+				
 
-				// draw the slice
+				// Draw the slice
 				if (graphic) {
 					graphic
 						.setRadialReference(series.center)
 						.animate(extend(shapeArgs, groupTranslation));				
 				} else {
-					attr = { 'stroke-linejoin': 'round' };
-					if (!point.visible) {
-						attr.visibility = 'hidden';
-					}
 
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
+						.addClass('highcharts-point' + (point.selected ? ' highcharts-point-select' : ''))
+						.addClass('highcharts-filled-' + point.colorIndex)
 						.setRadialReference(series.center)
-						.attr(
-							point.pointAttr[point.selected ? 'select' : '']
-						)
-						.attr(attr)
 						.attr(groupTranslation)
-						.add(series.group)
-						.shadow(shadow, shadowGroup);	
+						.add(series.group);
+
+					if (!point.visible) {
+						graphic.attr({ visibility: 'hidden' });
+					}
+
+					
+					graphic
+						.attr(point.pointAttr[point.selected ? 'select' : ''])
+						.attr({ 'stroke-linejoin': 'round'})
+						.shadow(shadow, shadowGroup);
+					
 				}
 			}
 		});
@@ -21234,11 +21263,12 @@ seriesTypes.ohlc = extendClass(seriesTypes.column, {
 		return [point.open, point.high, point.low, point.close];
 	},
 	pointValKey: 'high',
-
+	
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'color',
 		'stroke-width': 'lineWidth'
 	},
+	
 	upColorProp: 'stroke',
 
 	/**
@@ -21406,7 +21436,7 @@ defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
 // 2 - Create the CandlestickSeries object
 seriesTypes.candlestick = extendClass(seriesTypes.ohlc, {
 	type: 'candlestick',
-
+	
 	/**
 	 * One-to-one mapping from options to SVG attributes
 	 */
@@ -21415,6 +21445,8 @@ seriesTypes.candlestick = extendClass(seriesTypes.ohlc, {
 		stroke: 'lineColor',
 		'stroke-width': 'lineWidth'
 	},
+	
+		
 	upColorProp: 'fill',
 
 	/**
@@ -21595,7 +21627,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	 * Inherit the initialization from base Series
 	 */
 	init: Series.prototype.init,
-
+	
 	/**
 	 * One-to-one mapping from options to SVG attributes
 	 */
@@ -21604,7 +21636,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 		stroke: 'color',
 		'stroke-width': 'lineWidth'
 	},
-
+	
 	/**
 	 * Extend the translate method by placing the point on the related series
 	 */

@@ -27,7 +27,7 @@ defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
 // 2 - Create the CandlestickSeries object
 seriesTypes.candlestick = extendClass(seriesTypes.ohlc, {
 	type: 'candlestick',
-
+	/*= if (build.classic) { =*/
 	/**
 	 * One-to-one mapping from options to SVG attributes
 	 */
@@ -36,6 +36,8 @@ seriesTypes.candlestick = extendClass(seriesTypes.ohlc, {
 		stroke: 'lineColor',
 		'stroke-width': 'lineWidth'
 	},
+	/*= } =*/
+		
 	upColorProp: 'fill',
 
 	/**

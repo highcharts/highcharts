@@ -27,7 +27,7 @@ defaultPlotOptions.plotband = merge(defaultPlotOptions.column, {
 // 2 - Create the CandlestickSeries object
 seriesTypes.plotband = extendClass(seriesTypes.column, {
 	type: 'plotband',
-
+	/*= if (build.classic) { =*/
 	/**
 	 * One-to-one mapping from options to SVG attributes
 	 */
@@ -36,7 +36,7 @@ seriesTypes.plotband = extendClass(seriesTypes.column, {
 		stroke: 'lineColor',
 		'stroke-width': 'lineWidth'
 	},
-
+	/*= } =*/
 	animate: function () {},
 
 	translate: function () {

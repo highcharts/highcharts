@@ -15,7 +15,8 @@
   fill: none; }
 
 .highcharts-root text {
-  fill: black; }
+  fill: black;
+  stroke-width: 0; }
 
 .highcharts-background {
   fill: #ffffff; }
@@ -87,13 +88,128 @@
   fill-opacity: 0.25;
   stroke-opacity: 0.25; }
 
+/* Series options */
+/* Default colors */
+.highcharts-series-0 .highcharts-graph {
+  stroke: #7cb5ec; }
+
+.highcharts-series-0 .highcharts-area,
+.highcharts-markers.highcharts-series-0 path,
+.highcharts-legend .highcharts-series-0 path,
+.highcharts-legend .highcharts-series-0 rect,
+.highcharts-series-0.highcharts-column-series rect,
+.highcharts-filled-0 {
+  fill: #7cb5ec; }
+
+.highcharts-series-1 .highcharts-graph {
+  stroke: #434348; }
+
+.highcharts-series-1 .highcharts-area,
+.highcharts-markers.highcharts-series-1 path,
+.highcharts-legend .highcharts-series-1 path,
+.highcharts-legend .highcharts-series-1 rect,
+.highcharts-series-1.highcharts-column-series rect,
+.highcharts-filled-1 {
+  fill: #434348; }
+
+.highcharts-series-2 .highcharts-graph {
+  stroke: #90ed7d; }
+
+.highcharts-series-2 .highcharts-area,
+.highcharts-markers.highcharts-series-2 path,
+.highcharts-legend .highcharts-series-2 path,
+.highcharts-legend .highcharts-series-2 rect,
+.highcharts-series-2.highcharts-column-series rect,
+.highcharts-filled-2 {
+  fill: #90ed7d; }
+
+.highcharts-series-3 .highcharts-graph {
+  stroke: #f7a35c; }
+
+.highcharts-series-3 .highcharts-area,
+.highcharts-markers.highcharts-series-3 path,
+.highcharts-legend .highcharts-series-3 path,
+.highcharts-legend .highcharts-series-3 rect,
+.highcharts-series-3.highcharts-column-series rect,
+.highcharts-filled-3 {
+  fill: #f7a35c; }
+
+.highcharts-series-4 .highcharts-graph {
+  stroke: #8085e9; }
+
+.highcharts-series-4 .highcharts-area,
+.highcharts-markers.highcharts-series-4 path,
+.highcharts-legend .highcharts-series-4 path,
+.highcharts-legend .highcharts-series-4 rect,
+.highcharts-series-4.highcharts-column-series rect,
+.highcharts-filled-4 {
+  fill: #8085e9; }
+
+.highcharts-series-5 .highcharts-graph {
+  stroke: #f15c80; }
+
+.highcharts-series-5 .highcharts-area,
+.highcharts-markers.highcharts-series-5 path,
+.highcharts-legend .highcharts-series-5 path,
+.highcharts-legend .highcharts-series-5 rect,
+.highcharts-series-5.highcharts-column-series rect,
+.highcharts-filled-5 {
+  fill: #f15c80; }
+
+.highcharts-series-6 .highcharts-graph {
+  stroke: #e4d354; }
+
+.highcharts-series-6 .highcharts-area,
+.highcharts-markers.highcharts-series-6 path,
+.highcharts-legend .highcharts-series-6 path,
+.highcharts-legend .highcharts-series-6 rect,
+.highcharts-series-6.highcharts-column-series rect,
+.highcharts-filled-6 {
+  fill: #e4d354; }
+
+.highcharts-series-7 .highcharts-graph {
+  stroke: #2b908f; }
+
+.highcharts-series-7 .highcharts-area,
+.highcharts-markers.highcharts-series-7 path,
+.highcharts-legend .highcharts-series-7 path,
+.highcharts-legend .highcharts-series-7 rect,
+.highcharts-series-7.highcharts-column-series rect,
+.highcharts-filled-7 {
+  fill: #2b908f; }
+
+.highcharts-series-8 .highcharts-graph {
+  stroke: #f45b5b; }
+
+.highcharts-series-8 .highcharts-area,
+.highcharts-markers.highcharts-series-8 path,
+.highcharts-legend .highcharts-series-8 path,
+.highcharts-legend .highcharts-series-8 rect,
+.highcharts-series-8.highcharts-column-series rect,
+.highcharts-filled-8 {
+  fill: #f45b5b; }
+
+.highcharts-series-9 .highcharts-graph {
+  stroke: #91e8e1; }
+
+.highcharts-series-9 .highcharts-area,
+.highcharts-markers.highcharts-series-9 path,
+.highcharts-legend .highcharts-series-9 path,
+.highcharts-legend .highcharts-series-9 rect,
+.highcharts-series-9.highcharts-column-series rect,
+.highcharts-filled-9 {
+  fill: #91e8e1; }
+
 .highcharts-area {
   fill-opacity: 0.75; }
 
-.highcharts-markers path, .highcharts-marker {
-  /* TODO: more generic class .highcharts.point */
+.highcharts-markers path, .highcharts-point {
   stroke-width: 1px;
   stroke: #ffffff; }
+
+.highcharts-point-select {
+  fill: #FFFFFF !important;
+  stroke: #000000 !important; }
 
 .highcharts-column-series rect {
   stroke: #ffffff;
@@ -155,104 +271,3 @@
 
 .highcharts-axis-line {
   fill: none; }
-
-/* Default colors */
-.highcharts-series-0 .highcharts-graph {
-  stroke: #7cb5ec; }
-
-.highcharts-series-0 .highcharts-area,
-.highcharts-markers.highcharts-series-0 path,
-.highcharts-legend .highcharts-series-0 path,
-.highcharts-legend .highcharts-series-0 rect,
-.highcharts-series-0.highcharts-column-series rect {
-  fill: #7cb5ec; }
-
-.highcharts-series-1 .highcharts-graph {
-  stroke: #434348; }
-
-.highcharts-series-1 .highcharts-area,
-.highcharts-markers.highcharts-series-1 path,
-.highcharts-legend .highcharts-series-1 path,
-.highcharts-legend .highcharts-series-1 rect,
-.highcharts-series-1.highcharts-column-series rect {
-  fill: #434348; }
-
-.highcharts-series-2 .highcharts-graph {
-  stroke: #90ed7d; }
-
-.highcharts-series-2 .highcharts-area,
-.highcharts-markers.highcharts-series-2 path,
-.highcharts-legend .highcharts-series-2 path,
-.highcharts-legend .highcharts-series-2 rect,
-.highcharts-series-2.highcharts-column-series rect {
-  fill: #90ed7d; }
-
-.highcharts-series-3 .highcharts-graph {
-  stroke: #f7a35c; }
-
-.highcharts-series-3 .highcharts-area,
-.highcharts-markers.highcharts-series-3 path,
-.highcharts-legend .highcharts-series-3 path,
-.highcharts-legend .highcharts-series-3 rect,
-.highcharts-series-3.highcharts-column-series rect {
-  fill: #f7a35c; }
-
-.highcharts-series-4 .highcharts-graph {
-  stroke: #8085e9; }
-
-.highcharts-series-4 .highcharts-area,
-.highcharts-markers.highcharts-series-4 path,
-.highcharts-legend .highcharts-series-4 path,
-.highcharts-legend .highcharts-series-4 rect,
-.highcharts-series-4.highcharts-column-series rect {
-  fill: #8085e9; }
-
-.highcharts-series-5 .highcharts-graph {
-  stroke: #f15c80; }
-
-.highcharts-series-5 .highcharts-area,
-.highcharts-markers.highcharts-series-5 path,
-.highcharts-legend .highcharts-series-5 path,
-.highcharts-legend .highcharts-series-5 rect,
-.highcharts-series-5.highcharts-column-series rect {
-  fill: #f15c80; }
-
-.highcharts-series-6 .highcharts-graph {
-  stroke: #e4d354; }
-
-.highcharts-series-6 .highcharts-area,
-.highcharts-markers.highcharts-series-6 path,
-.highcharts-legend .highcharts-series-6 path,
-.highcharts-legend .highcharts-series-6 rect,
-.highcharts-series-6.highcharts-column-series rect {
-  fill: #e4d354; }
-
-.highcharts-series-7 .highcharts-graph {
-  stroke: #2b908f; }
-
-.highcharts-series-7 .highcharts-area,
-.highcharts-markers.highcharts-series-7 path,
-.highcharts-legend .highcharts-series-7 path,
-.highcharts-legend .highcharts-series-7 rect,
-.highcharts-series-7.highcharts-column-series rect {
-  fill: #2b908f; }
-
-.highcharts-series-8 .highcharts-graph {
-  stroke: #f45b5b; }
-
-.highcharts-series-8 .highcharts-area,
-.highcharts-markers.highcharts-series-8 path,
-.highcharts-legend .highcharts-series-8 path,
-.highcharts-legend .highcharts-series-8 rect,
-.highcharts-series-8.highcharts-column-series rect {
-  fill: #f45b5b; }
-
-.highcharts-series-9 .highcharts-graph {
-  stroke: #91e8e1; }
-
-.highcharts-series-9 .highcharts-area,
-.highcharts-markers.highcharts-series-9 path,
-.highcharts-legend .highcharts-series-9 path,
-.highcharts-legend .highcharts-series-9 rect,
-.highcharts-series-9.highcharts-column-series rect {
-  fill: #91e8e1; }

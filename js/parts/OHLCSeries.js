@@ -36,11 +36,12 @@ seriesTypes.ohlc = extendClass(seriesTypes.column, {
 		return [point.open, point.high, point.low, point.close];
 	},
 	pointValKey: 'high',
-
+	/*= if (build.classic) { =*/
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'color',
 		'stroke-width': 'lineWidth'
 	},
+	/*= } =*/
 	upColorProp: 'stroke',
 
 	/**

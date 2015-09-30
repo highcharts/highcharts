@@ -100,6 +100,8 @@ var MapAreaPoint = H.MapAreaPoint = extendClass(Point, extend({
 			this.series.onMouseOut(e);
 		}
 	},
+	/*= if (build.classic) { =*/
+	// Todo: check unstyled
 	/**
 	 * Custom animation for tweening out the colors. Animation reduces blinking when hovering
 	 * over islands and coast lines. We run a custom implementation of animation becuase we
@@ -140,6 +142,7 @@ var MapAreaPoint = H.MapAreaPoint = extendClass(Point, extend({
 			point.pointAttr[''].fill = fill;
 		}
 	},
+	/*= } =*/
 
 	/**
 	 * Zoom the chart to view a specific area point
@@ -495,7 +498,8 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		// Draw the shapes again
 		if (series.doFullTranslate()) {
 
-			// Individual point actions	
+			// Individual point actions. TODO: Check unstyled.
+			/*= if (build.classic) { =*/
 			if (chart.hasRendered && series.pointAttrToOptions.fill === 'color') {
 				each(series.points, function (point) {
 
@@ -508,7 +512,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 			// If vector-effect is not supported, we set the stroke-width on the group element
 			// and let all point graphics inherit. That way we don't have to iterate over all 
-			// points to update the stroke-width on zooming.
+			// points to update the stroke-width on zooming. TODO: Check unstyled
 			if (!supportsVectorEffect) {
 				each(series.points, function (point) {
 					var attr = point.pointAttr[''];
@@ -517,6 +521,8 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					}
 				});
 			}
+
+			/*= } =*/
 
 			// Draw them in transformGroup
 			series.group = series.transformGroup;

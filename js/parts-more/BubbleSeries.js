@@ -70,6 +70,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	bubblePadding: true,
 	zoneAxis: 'z',
 	
+	/*= if (build.classic) { =*/
 	/**
 	 * Mapping between SVG attributes and the corresponding options
 	 */
@@ -78,7 +79,8 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		'stroke-width': 'lineWidth',
 		fill: 'fillColor'
 	},
-	
+	/*= } =*/
+
 	/**
 	 * Apply the fillOpacity to all fill positions
 	 */

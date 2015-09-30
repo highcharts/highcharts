@@ -68,11 +68,13 @@
 		trackerGroups: ['group', 'dataLabelsGroup'],
 		drawGraph: noop,
 		crispCol: colProto.crispCol,
-		pointAttrToOptions: colProto.pointAttrToOptions,
 		drawPoints: colProto.drawPoints,
 		drawTracker: colProto.drawTracker,
 		animate: colProto.animate,
-		getColumnMetrics: colProto.getColumnMetrics
+		getColumnMetrics: colProto.getColumnMetrics,
+		/*= if (build.classic) { =*/
+		pointAttrToOptions: colProto.pointAttrToOptions
+		/*= } =*/
 	});
 
 	return H;

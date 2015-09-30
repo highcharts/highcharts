@@ -56,7 +56,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	 * Inherit the initialization from base Series
 	 */
 	init: Series.prototype.init,
-
+	/*= if (build.classic) { =*/
 	/**
 	 * One-to-one mapping from options to SVG attributes
 	 */
@@ -65,7 +65,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 		stroke: 'color',
 		'stroke-width': 'lineWidth'
 	},
-
+	/*= } =*/
 	/**
 	 * Extend the translate method by placing the point on the related series
 	 */

@@ -26,15 +26,14 @@ colorPointMixin = H.colorPointMixin = {
 };
 
 colorSeriesMixin = H.colorSeriesMixin = {
-
+	/*= if (build.classic) { =*/
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
-		/*= if (build.classic) { =*/
 		dashstyle: 'dashStyle',
-		/*= } =*/
 		fill: 'color'
 	},
+	/*= } =*/
 	pointArrayMap: ['value'],
 	axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
 	optionalAxis: 'colorAxis',

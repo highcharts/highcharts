@@ -1018,11 +1018,11 @@ seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
 		trackerGroups: ['group', 'dataLabelsGroup'],
 		drawGraph: noop,
 		crispCol: colProto.crispCol,
-		pointAttrToOptions: colProto.pointAttrToOptions,
 		drawPoints: colProto.drawPoints,
 		drawTracker: colProto.drawTracker,
 		animate: colProto.animate,
 		getColumnMetrics: colProto.getColumnMetrics
+		
 	});
 
 	return H;
@@ -1335,16 +1335,9 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 		return [point.low, point.q1, point.median, point.q3, point.high];
 	},
 	pointValKey: 'high', // defines the top of the tracker
+
 	
-	/**
-	 * One-to-one mapping from options to SVG attributes
-	 */
-	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		fill: 'fillColor',
-		stroke: 'color',
-		'stroke-width': 'lineWidth'
-	},
-	
+
 	/**
 	 * Disable data labels for box plot
 	 */
@@ -1993,15 +1986,8 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	bubblePadding: true,
 	zoneAxis: 'z',
 	
-	/**
-	 * Mapping between SVG attributes and the corresponding options
-	 */
-	pointAttrToOptions: { 
-		stroke: 'lineColor',
-		'stroke-width': 'lineWidth',
-		fill: 'fillColor'
-	},
 	
+
 	/**
 	 * Apply the fillOpacity to all fill positions
 	 */

@@ -843,7 +843,7 @@ H.LegendSymbolMixin = {
 				2 * radius,
 				2 * radius
 			)
-			.addClass('highcharts-marker')
+			.addClass('highcharts-point')
 			.add(legendItemGroup);
 			legendSymbol.isMarker = true;
 		}

@@ -48,7 +48,8 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 		return [point.low, point.q1, point.median, point.q3, point.high];
 	},
 	pointValKey: 'high', // defines the top of the tracker
-	
+
+	/*= if (build.classic) { =*/	
 	/**
 	 * One-to-one mapping from options to SVG attributes
 	 */
@@ -57,7 +58,8 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 		stroke: 'color',
 		'stroke-width': 'lineWidth'
 	},
-	
+	/*= } =*/
+
 	/**
 	 * Disable data labels for box plot
 	 */

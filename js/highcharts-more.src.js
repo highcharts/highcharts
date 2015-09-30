@@ -1033,11 +1033,13 @@ seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
 		trackerGroups: ['group', 'dataLabelsGroup'],
 		drawGraph: noop,
 		crispCol: colProto.crispCol,
-		pointAttrToOptions: colProto.pointAttrToOptions,
 		drawPoints: colProto.drawPoints,
 		drawTracker: colProto.drawTracker,
 		animate: colProto.animate,
-		getColumnMetrics: colProto.getColumnMetrics
+		getColumnMetrics: colProto.getColumnMetrics,
+		
+		pointAttrToOptions: colProto.pointAttrToOptions
+		
 	});
 
 	return H;
@@ -1350,7 +1352,8 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 		return [point.low, point.q1, point.median, point.q3, point.high];
 	},
 	pointValKey: 'high', // defines the top of the tracker
-	
+
+		
 	/**
 	 * One-to-one mapping from options to SVG attributes
 	 */
@@ -1360,6 +1363,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 		'stroke-width': 'lineWidth'
 	},
 	
+
 	/**
 	 * Disable data labels for box plot
 	 */
@@ -2010,6 +2014,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	bubblePadding: true,
 	zoneAxis: 'z',
 	
+	
 	/**
 	 * Mapping between SVG attributes and the corresponding options
 	 */
@@ -2019,6 +2024,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 		fill: 'fillColor'
 	},
 	
+
 	/**
 	 * Apply the fillOpacity to all fill positions
 	 */

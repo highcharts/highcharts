@@ -136,14 +136,18 @@ H.defaultOptions = {
 				states: { // states for a single point
 					hover: {
 						enabled: true,
-						lineWidthPlus: 1,
-						radiusPlus: 2
+						radiusPlus: 2,
+						/*= if (build.classic) { =*/
+						lineWidthPlus: 1
+						/*= } =*/
 					},
+					/*= if (build.classic) { =*/
 					select: {
 						fillColor: '#FFFFFF',
 						lineColor: '#000000',
 						lineWidth: 2
 					}
+					/*= } =*/
 				}
 			},
 			point: {

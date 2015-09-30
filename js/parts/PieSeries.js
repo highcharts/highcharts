@@ -22,8 +22,6 @@
  * Set the default options for pie
  */
 defaultPlotOptions.pie = merge(defaultSeriesOptions, {
-	borderColor: '#FFFFFF',
-	borderWidth: 1,
 	center: [null, null],
 	clip: false,
 	colorByPoint: true, // always true for pies
@@ -48,16 +46,20 @@ defaultPlotOptions.pie = merge(defaultSeriesOptions, {
 	size: null,
 	showInLegend: false,
 	slicedOffset: 10,
+	stickyTracking: false,
+	tooltip: {
+		followPointer: true
+	},
+	/*= if (build.classic) { =*/
+	borderColor: '#FFFFFF',
+	borderWidth: 1,
 	states: {
 		hover: {
 			brightness: 0.1,
 			shadow: false
 		}
-	},
-	stickyTracking: false,
-	tooltip: {
-		followPointer: true
 	}
+	/*= } =*/
 });
 
 /**
@@ -160,10 +162,11 @@ PiePoint = extendClass(Point, {
 
 		point.graphic.animate(translation);
 		
+		/*= if (build.classic) { =*/
 		if (point.shadowGroup) {
 			point.shadowGroup.animate(translation);
 		}
-
+		/*= } =*/
 	},
 
 	haloPath: function (size) {
@@ -190,11 +193,13 @@ seriesTypes.pie = extendClass(Series, {
 	noSharedTooltip: true,
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	axisTypes: [],
+	/*= if (build.classic) { =*/
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		stroke: 'borderColor',
 		'stroke-width': 'borderWidth',
 		fill: 'color'
 	},
+	/*= } =*/
 
 	/**
 	 * Animate the pies in
@@ -391,8 +396,7 @@ seriesTypes.pie = extendClass(Series, {
 			//group,
 			shadow = series.options.shadow,
 			shadowGroup,
-			shapeArgs,
-			attr;
+			shapeArgs;
 
 		if (shadow && !series.shadowGroup) {
 			series.shadowGroup = renderer.g('shadow')
@@ -404,13 +408,7 @@ seriesTypes.pie = extendClass(Series, {
 			if (point.y !== null) {
 				graphic = point.graphic;
 				shapeArgs = point.shapeArgs;
-				shadowGroup = point.shadowGroup;
 
-				// put the shadow behind all points
-				if (shadow && !shadowGroup) {
-					shadowGroup = point.shadowGroup = renderer.g('shadow')
-						.add(series.shadowGroup);
-				}
 
 				// if the point is sliced, use special translation, else use plot area traslation
 				groupTranslation = point.sliced ? point.slicedTranslation : {
@@ -418,31 +416,43 @@ seriesTypes.pie = extendClass(Series, {
 					translateY: 0
 				};
 
-				//group.translate(groupTranslation[0], groupTranslation[1]);
+				/*= if (build.classic) { =*/
+				// Put the shadow behind all points
+				shadowGroup = point.shadowGroup;
+				if (shadow && !shadowGroup) {
+					shadowGroup = point.shadowGroup = renderer.g('shadow')
+						.add(series.shadowGroup);
+				}
+
 				if (shadowGroup) {
 					shadowGroup.attr(groupTranslation);
 				}
+				/*= } =*/
 
-				// draw the slice
+				// Draw the slice
 				if (graphic) {
 					graphic
 						.setRadialReference(series.center)
 						.animate(extend(shapeArgs, groupTranslation));				
 				} else {
-					attr = { 'stroke-linejoin': 'round' };
-					if (!point.visible) {
-						attr.visibility = 'hidden';
-					}
 
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
+						.addClass('highcharts-point' + (point.selected ? ' highcharts-point-select' : ''))
+						.addClass('highcharts-filled-' + point.colorIndex)
 						.setRadialReference(series.center)
-						.attr(
-							point.pointAttr[point.selected ? 'select' : '']
-						)
-						.attr(attr)
 						.attr(groupTranslation)
-						.add(series.group)
-						.shadow(shadow, shadowGroup);	
+						.add(series.group);
+
+					if (!point.visible) {
+						graphic.attr({ visibility: 'hidden' });
+					}
+
+					/*= if (build.classic) { =*/
+					graphic
+						.attr(point.pointAttr[point.selected ? 'select' : ''])
+						.attr({ 'stroke-linejoin': 'round'})
+						.shadow(shadow, shadowGroup);
+					/*= } =*/
 				}
 			}
 		});

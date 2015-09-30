@@ -32,7 +32,11 @@ Point.prototype = {
 
 		if (series.options.colorByPoint) {
 			colors = series.options.colors || series.chart.options.colors;
-			point.color = point.color || colors[series.colorCounter++];
+			/*= if (build.classic) { =*/
+			point.color = point.color || colors[series.colorCounter];
+			/*= } =*/
+			point.colorIndex = series.colorCounter;
+			series.colorCounter++;
 			// loop back to zero
 			if (series.colorCounter === colors.length) {
 				series.colorCounter = 0;

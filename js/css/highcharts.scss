@@ -17,6 +17,7 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
 }
 .highcharts-root text {
     fill: black;
+    stroke-width: 0;
 }
 .highcharts-background {
     fill: #ffffff;
@@ -87,14 +88,35 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
     stroke-opacity: 0.25;
 }
 
+/* Series options */
+
+/* Default colors */
+@for $i from 1 through length($colors) {
+  $color: nth($colors, $i);
+  .highcharts-series-#{$i - 1} .highcharts-graph {
+    stroke: $color;
+  }
+
+  .highcharts-series-#{$i - 1} .highcharts-area, 
+  .highcharts-markers.highcharts-series-#{$i - 1} path,
+  .highcharts-legend .highcharts-series-#{$i - 1} path,
+  .highcharts-legend .highcharts-series-#{$i - 1} rect,
+  .highcharts-series-#{$i - 1}.highcharts-column-series rect,
+  .highcharts-filled-#{$i - 1} {
+    fill: $color;
+  }
+}
+
 .highcharts-area {
     fill-opacity: 0.75;
 }
-.highcharts-markers path, .highcharts-marker { /* TODO: more generic class .highcharts.point */
+.highcharts-markers path, .highcharts-point {
     stroke-width: 1px;
     stroke: #ffffff;
 }
-.highcharts-point-hover {
+.highcharts-point-select {
+    fill: #FFFFFF !important;
+    stroke: #000000 !important;
 }
 .highcharts-column-series rect {
     stroke: #ffffff;
@@ -163,19 +185,4 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
 }
 
 
-/* Default colors */
-@for $i from 1 through length($colors) {
-  $color: nth($colors, $i);
-  .highcharts-series-#{$i - 1} .highcharts-graph {
-    stroke: $color;
-  }
-
-  .highcharts-series-#{$i - 1} .highcharts-area, 
-  .highcharts-markers.highcharts-series-#{$i - 1} path,
-  .highcharts-legend .highcharts-series-#{$i - 1} path,
-  .highcharts-legend .highcharts-series-#{$i - 1} rect,
-  .highcharts-series-#{$i - 1}.highcharts-column-series rect {
-    fill: $color;
-  }
-}
 

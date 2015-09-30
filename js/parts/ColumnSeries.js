@@ -30,20 +30,22 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 	minPointLength: 0,
 	cropThreshold: 50, // when there are more points, they will not animate out of the chart on xAxis.setExtremes
 	pointRange: null, // null means auto, meaning 1 in a categorized axis and least distance between points if not categories
-	/*= if (build.classic) { =*/
 	states: {
 		hover: {
+			halo: false,
+			/*= if (build.classic) { =*/
 			brightness: 0.1,
-			shadow: false,
-			halo: false
+			shadow: false
+			/*= } =*/
 		},
+		/*= if (build.classic) { =*/
 		select: {
 			color: '#C0C0C0',
 			borderColor: '#000000',
 			shadow: false
 		}
+		/*= } =*/
 	},
-	/*= } =*/
 	dataLabels: {
 		align: null, // auto
 		verticalAlign: null, // auto
@@ -63,12 +65,12 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
  */
 seriesTypes.column = extendClass(Series, {
 	type: 'column',
+	/*= if (build.classic) { =*/
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		/*= if (build.classic) { =*/
 		stroke: 'borderColor',
 		fill: 'color'
-		/*= } =*/
 	},
+	/*= } =*/
 	cropShoulder: 0,
 	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	trackerGroups: ['group', 'dataLabelsGroup'],
@@ -299,8 +301,7 @@ seriesTypes.column = extendClass(Series, {
 			renderer = chart.renderer,
 			animationLimit = options.animationLimit || 250,
 			shapeArgs,
-			borderRadius = options.borderRadius,
-			pointAttr;
+			borderRadius = options.borderRadius;
 
 		// draw the columns
 		each(series.points, function (point) {
@@ -318,8 +319,6 @@ seriesTypes.column = extendClass(Series, {
 				if (defined(series.borderWidth)) {
 					borderAttr['stroke-width'] = series.borderWidth;
 				};
-
-				pointAttr = point.pointAttr[point.selected ? 'select' : ''] || series.pointAttr[''];
 				
 				if (graphic) { // update
 					stop(graphic);
@@ -328,9 +327,15 @@ seriesTypes.column = extendClass(Series, {
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 						.attr(borderAttr)
-						.attr(pointAttr)
-						.add(series.group)
+						.addClass('highcharts-point' + (point.selected ? ' highcharts-point-select' : ''))
+						.add(series.group);
+
+					/*= if (build.classic) { =*/
+					// Presentational
+					graphic
+						.attr(point.pointAttr[point.selected ? 'select' : ''] || series.pointAttr[''])
 						.shadow(options.shadow, null, options.stacking && !options.borderRadius);
+					/*= } =*/
 				}
 
 			} else if (graphic) {

@@ -53,13 +53,13 @@ H.Series.prototype = {
 	pointClass: Point,
 	sorted: true, // requires the data to be sorted
 	requireSorting: true,
+	/*= if (build.classic) { =*/
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		/*= if (build.classic) { =*/
 		stroke: 'lineColor',
 		'stroke-width': 'lineWidth',
 		fill: 'fillColor'
-		/*= } =*/
 	},
+	/*= } =*/
 	directTouch: false,
 	axisTypes: ['xAxis', 'yAxis'],
 	colorCounter: 0,
@@ -978,7 +978,6 @@ H.Series.prototype = {
 	 */
 	drawPoints: function () {
 		var series = this,
-			pointAttr,
 			points = series.points,
 			chart = series.chart,
 			plotX,
@@ -991,7 +990,6 @@ H.Series.prototype = {
 			graphic,
 			options = series.options,
 			seriesMarkerOptions = options.marker,
-			seriesPointAttr = series.pointAttr[''],
 			pointMarkerOptions,
 			hasPointMarker,
 			enabled,
@@ -1017,11 +1015,10 @@ H.Series.prototype = {
 				enabled = (globallyEnabled && pointMarkerOptions.enabled === undefined) || pointMarkerOptions.enabled;
 				isInside = point.isInside;
 
-				// only draw the point if y is defined
+				// Only draw the point if y is defined
 				if (enabled && plotY !== undefined && !isNaN(plotY) && point.y !== null) {
 
-					// shortcuts
-					pointAttr = point.pointAttr[point.selected ? 'select' : ''] || seriesPointAttr;
+					// Shortcuts
 					radius = seriesMarkerOptions.radius;
 					symbol = pick(pointMarkerOptions.symbol, series.symbol);
 					isImage = symbol.indexOf('url') === 0;
@@ -1044,10 +1041,14 @@ H.Series.prototype = {
 							2 * radius,
 							hasPointMarker ? pointMarkerOptions : seriesMarkerOptions
 						)
-						.addClass('highcharts-point')
-						.attr(pointAttr)
+						.addClass('highcharts-point' + (point.selected ? ' highcharts-point-select' : ''))
 						.attr({ r: radius })
 						.add(markerGroup);
+
+						/*= if (build.classic) { =*/
+						// Presentational attributes
+						graphic.attr(point.pointAttr[point.selected ? 'select' : ''] || series.pointAttr['']);
+						/*= } =*/
 					}
 
 				} else if (graphic) {
@@ -1058,6 +1059,7 @@ H.Series.prototype = {
 
 	},
 
+	/*= if (build.classic) { =*/
 	/**
 	 * Convert state properties from API naming conventions to SVG attributes
 	 *
@@ -1243,6 +1245,8 @@ H.Series.prototype = {
 			}
 		}
 	},
+
+	/*= } =*/
 
 	/**
 	 * Clear DOM objects and free up memory
@@ -1711,8 +1715,10 @@ H.Series.prototype = {
 			series.animate(true);
 		}
 
+		/*= if (build.classic) { =*/
 		// cache attributes for shapes
 		series.getAttribs();
+		/*= } =*/
 
 		// SVGRenderer needs to know this before drawing elements (#1089, #1795)
 		group.inverted = series.isCartesian ? chart.inverted : false;
