@@ -101,15 +101,15 @@
 			 * @param {Function} fn
 			 */
 			this.each = Array.prototype.forEach ?
-				function (arr, fn) { // modern browsers
-					return Array.prototype.forEach.call(arr, fn);
+				function (arr, fn, ctx) { // modern browsers
+					return Array.prototype.forEach.call(arr, fn, ctx);
 					
 				} : 
-				function (arr, fn) { // legacy
+				function (arr, fn, ctx) { // legacy
 					var i, 
 						len = arr.length;
 					for (i = 0; i < len; i++) {
-						if (fn.call(arr[i], arr[i], i, arr) === false) {
+						if (fn.call(ctx || arr[i], arr[i], i, arr) === false) {
 							return i;
 						}
 					}

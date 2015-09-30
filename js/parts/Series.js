@@ -1414,17 +1414,28 @@ H.Series.prototype = {
 	drawGraph: function () {
 		var series = this,
 			options = this.options,
-			props = [['graph', options.lineColor || this.color, options.dashStyle]],
-			lineWidth = options.lineWidth,
-			roundCap = options.linecap !== 'square',
 			graphPath = this.getGraphPath(),
-			fillColor = (this.fillGraph && this.color) || 'none', // polygon series use filled graph
-			zones = this.zones;
+			props = [[
+				'graph', 
+				'highcharts-graph', 
+				/*= if (build.classic) { =*/
+				options.lineColor || this.color, 
+				options.dashStyle
+				/*= } =*/
+			]];
 
-		each(zones, function (threshold, i) {
-			props.push(['zoneGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
+		// Add the zone properties if any
+		each(this.zones, function (zone, i) {
+			props.push([
+				'zone-graph-' + i,
+				'highcharts-graph highcharts-zone-graph-' + i + ' ' + (zone.className || ''),
+				/*= if (build.classic) { =*/
+				zone.color || series.color, 
+				zone.dashStyle || options.dashStyle
+				/*= } =*/
+			]);
 		});
-		
+
 		// Draw the graph
 		each(props, function (prop, i) {
 			var graphKey = prop[0],
@@ -1434,28 +1445,30 @@ H.Series.prototype = {
 			if (graph) {
 				graph.animate({ d: graphPath });
 
-			} else if ((lineWidth || fillColor) && graphPath.length) { // #1487
-				attribs = {
-					/*= if (build.classic) { =*/
-					stroke: prop[1],
-					'stroke-width': lineWidth,
-					fill: fillColor,
-					/*= } =*/
-					zIndex: 1 // #1069
-				};
+			} else if (graphPath.length) { // #1487
+				
+				series[graphKey] = series.chart.renderer.path(graphPath)
+					.addClass('highcharts-graph ' + (prop[1] || ''))
+					.attr({ zIndex: 1 }) // #1069
+					.add(series.group);
+
 				/*= if (build.classic) { =*/
-				if (prop[2]) {
-					attribs.dashstyle = prop[2];
-				} else if (roundCap) {
+				attribs = {
+					'stroke': prop[2],
+					'stroke-width': options.lineWidth,
+					'fill': (this.fillGraph && this.color) || 'none' // Polygon series use filled graph
+				};
+					
+				if (prop[3]) {
+					attribs.dashstyle = prop[3];
+				} else if (options.linecap !== 'square') {
 					attribs['stroke-linecap'] = attribs['stroke-linejoin'] = 'round';
 				}
-				/*= } =*/
 
-				series[graphKey] = series.chart.renderer.path(graphPath)
-					.addClass('highcharts-graph')
+				series[graphKey]
 					.attr(attribs)
-					.add(series.group)
 					.shadow((i < 2) && options.shadow); // add shadow to normal series (0) or to first zone (1) #3932
+				/*= } =*/
 			}
 		});
 	},
@@ -1560,11 +1573,11 @@ H.Series.prototype = {
 					clips[i] = renderer.clipRect(clipAttr);
 
 					if (graph) {
-						series['zoneGraph' + i].clip(clips[i]);
+						series['zone-graph-' + i].clip(clips[i]);
 					}
 
 					if (area) {
-						series['zoneArea' + i].clip(clips[i]);
+						series['zone-area-' + i].clip(clips[i]);
 					}
 				}
 				// if this zone extends out of the axis, ignore the others

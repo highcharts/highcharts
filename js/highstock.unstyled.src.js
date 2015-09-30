@@ -921,15 +921,15 @@ H.pathAnim = {
 			 * @param {Function} fn
 			 */
 			this.each = Array.prototype.forEach ?
-				function (arr, fn) { // modern browsers
-					return Array.prototype.forEach.call(arr, fn);
+				function (arr, fn, ctx) { // modern browsers
+					return Array.prototype.forEach.call(arr, fn, ctx);
 					
 				} : 
-				function (arr, fn) { // legacy
+				function (arr, fn, ctx) { // legacy
 					var i, 
 						len = arr.length;
 					for (i = 0; i < len; i++) {
-						if (fn.call(arr[i], arr[i], i, arr) === false) {
+						if (fn.call(ctx || arr[i], arr[i], i, arr) === false) {
 							return i;
 						}
 					}
@@ -3736,6 +3736,9 @@ SVGRenderer.prototype = {
 
 		if (symbolFn) {
 			obj = this.path(path);
+
+			
+			
 			// expando properties for use in animate and attr
 			extend(obj, {
 				symbolName: symbol,
@@ -4155,13 +4158,14 @@ SVGRenderer.prototype = {
 			deferredAttr = {},
 			strokeWidth,
 			baselineOffset,
-			needsBox;
+			needsBox,
+			getCrispAdjust;
 
 		
 		needsBox = true; // for styling
-		function getCrispAdjust() {
+		getCrispAdjust = function () {
 			return box.pxStyle('stroke-width') % 2 / 2;
-		}
+		};
 		
 
 		/**
@@ -4193,8 +4197,6 @@ SVGRenderer.prototype = {
 					if (className) {
 						box.addClass('highcharts-' + className + '-box');
 					}
-
-					
 
 					box.add(wrapper);
 
@@ -14675,17 +14677,22 @@ H.Series.prototype = {
 	drawGraph: function () {
 		var series = this,
 			options = this.options,
-			props = [['graph', options.lineColor || this.color, options.dashStyle]],
-			lineWidth = options.lineWidth,
-			roundCap = options.linecap !== 'square',
 			graphPath = this.getGraphPath(),
-			fillColor = (this.fillGraph && this.color) || 'none', // polygon series use filled graph
-			zones = this.zones;
+			props = [[
+				'graph', 
+				'highcharts-graph', 
+				
+			]];
 
-		each(zones, function (threshold, i) {
-			props.push(['zoneGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
+		// Add the zone properties if any
+		each(this.zones, function (zone, i) {
+			props.push([
+				'zone-graph-' + i,
+				'highcharts-graph highcharts-zone-graph-' + i + ' ' + (zone.className || ''),
+				
+			]);
 		});
-		
+
 		// Draw the graph
 		each(props, function (prop, i) {
 			var graphKey = prop[0],
@@ -14695,18 +14702,14 @@ H.Series.prototype = {
 			if (graph) {
 				graph.animate({ d: graphPath });
 
-			} else if ((lineWidth || fillColor) && graphPath.length) { // #1487
-				attribs = {
-					
-					zIndex: 1 // #1069
-				};
+			} else if (graphPath.length) { // #1487
 				
-
 				series[graphKey] = series.chart.renderer.path(graphPath)
-					.addClass('highcharts-graph')
-					.attr(attribs)
-					.add(series.group)
-					.shadow((i < 2) && options.shadow); // add shadow to normal series (0) or to first zone (1) #3932
+					.addClass('highcharts-graph ' + (prop[1] || ''))
+					.attr({ zIndex: 1 }) // #1069
+					.add(series.group);
+
+				
 			}
 		});
 	},
@@ -14811,11 +14814,11 @@ H.Series.prototype = {
 					clips[i] = renderer.clipRect(clipAttr);
 
 					if (graph) {
-						series['zoneGraph' + i].clip(clips[i]);
+						series['zone-graph-' + i].clip(clips[i]);
 					}
 
 					if (area) {
-						series['zoneArea' + i].clip(clips[i]);
+						series['zone-area-' + i].clip(clips[i]);
 					}
 				}
 				// if this zone extends out of the axis, ignore the others
@@ -15845,7 +15848,7 @@ extend(Series.prototype, {
 		if (shift) {
 			i = series.zones.length;
 			while (i--) {
-				shiftShapes.push('zoneGraph' + i, 'zoneArea' + i);
+				shiftShapes.push('zone-graph-' + i, 'zone-area-' + i);
 			}
 			each(shiftShapes, function (shape) {
 				if (series[shape]) {
@@ -16325,11 +16328,17 @@ seriesTypes.area = extendClass(Series, {
 			areaPath = this.areaPath,
 			options = this.options,
 			zones = this.zones,
-			props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
+			props = [['area', 'highcharts-area', this.color, options.fillColor]]; // area name, main color, fill color
 		
-		each(zones, function (threshold, i) {
-			props.push(['zoneArea' + i, threshold.color || series.color, threshold.fillColor || options.fillColor]);
+		each(zones, function (zone, i) {
+			props.push([
+				'zone-area-' + i, 
+				'highcharts-area highcharts-zone-area-' + i + ' ' + zone.className, 
+				zone.color || series.color, 
+				zone.fillColor || options.fillColor
+			]);
 		});
+
 		each(props, function (prop) {
 			var areaKey = prop[0],
 				area = series[areaKey];
@@ -16340,7 +16349,7 @@ seriesTypes.area = extendClass(Series, {
 	
 			} else { // create
 				series[areaKey] = series.chart.renderer.path(areaPath)
-					.addClass('highcharts-area')
+					.addClass(prop[1])
 					.attr({
 						
 						zIndex: 0 // #1069

@@ -748,8 +748,8 @@ extend(Series.prototype, {
 				};
 				// use attr because animate will cause any other animation on the graph to stop
 				graph.attr(attribs);
-				while (series['zoneGraph' + i]) {
-					series['zoneGraph' + i].attr(attribs);
+				while (series['zone-graph-' + i]) {
+					series['zone-graph-' + i].attr(attribs);
 					i = i + 1;
 				}
 			}

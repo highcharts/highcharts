@@ -2074,6 +2074,11 @@ SVGRenderer.prototype = {
 
 		if (symbolFn) {
 			obj = this.path(path);
+
+			/*= if (build.classic) { =*/
+			obj.attr('fill', 'none');
+			/*= } =*/
+			
 			// expando properties for use in animate and attr
 			extend(obj, {
 				symbolName: symbol,
@@ -2495,18 +2500,19 @@ SVGRenderer.prototype = {
 			deferredAttr = {},
 			strokeWidth,
 			baselineOffset,
-			needsBox;
+			needsBox,
+			getCrispAdjust;
 
 		/*= if (!build.classic) { =*/
 		needsBox = true; // for styling
-		function getCrispAdjust() {
+		getCrispAdjust = function () {
 			return box.pxStyle('stroke-width') % 2 / 2;
-		}
+		};
 		/*= } else { =*/
 		needsBox = false;
-		function getCrispAdjust() {
+		getCrispAdjust = function () {
 			return (strokeWidth || 0) % 2 / 2;
-		}
+		};
 
 		/*= } =*/
 
@@ -2539,12 +2545,6 @@ SVGRenderer.prototype = {
 					if (className) {
 						box.addClass('highcharts-' + className + '-box');
 					}
-
-					/*= if (build.classic) { =*/
-					if (!box.isImg) {
-						box.attr('fill', 'none');
-					}
-					/*= } =*/
 
 					box.add(wrapper);
 

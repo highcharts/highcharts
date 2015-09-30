@@ -295,7 +295,7 @@ extend(Series.prototype, {
 		if (shift) {
 			i = series.zones.length;
 			while (i--) {
-				shiftShapes.push('zoneGraph' + i, 'zoneArea' + i);
+				shiftShapes.push('zone-graph-' + i, 'zone-area-' + i);
 			}
 			each(shiftShapes, function (shape) {
 				if (series[shape]) {

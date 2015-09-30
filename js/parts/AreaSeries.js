@@ -191,11 +191,17 @@ seriesTypes.area = extendClass(Series, {
 			areaPath = this.areaPath,
 			options = this.options,
 			zones = this.zones,
-			props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
+			props = [['area', 'highcharts-area', this.color, options.fillColor]]; // area name, main color, fill color
 		
-		each(zones, function (threshold, i) {
-			props.push(['zoneArea' + i, threshold.color || series.color, threshold.fillColor || options.fillColor]);
+		each(zones, function (zone, i) {
+			props.push([
+				'zone-area-' + i, 
+				'highcharts-area highcharts-zone-area-' + i + ' ' + zone.className, 
+				zone.color || series.color, 
+				zone.fillColor || options.fillColor
+			]);
 		});
+
 		each(props, function (prop) {
 			var areaKey = prop[0],
 				area = series[areaKey];
@@ -206,12 +212,12 @@ seriesTypes.area = extendClass(Series, {
 	
 			} else { // create
 				series[areaKey] = series.chart.renderer.path(areaPath)
-					.addClass('highcharts-area')
+					.addClass(prop[1])
 					.attr({
 						/*= if (build.classic) { =*/
 						fill: pick(
-							prop[2],
-							Color(prop[1]).setOpacity(pick(options.fillOpacity, 0.75)).get()
+							prop[3],
+							Color(prop[2]).setOpacity(pick(options.fillOpacity, 0.75)).get()
 						),
 						/*= } =*/
 						zIndex: 0 // #1069
