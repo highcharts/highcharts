@@ -8,11 +8,6 @@ require_once('functions.php');
 
 @$path = $_GET['path'];
 
-if (isset($_GET['unstyled'])) {
-	$_SESSION['unstyled'] = $_GET['unstyled'] == 'true' ? true : false;
-}
-$unstyled = $_SESSION['unstyled'];
-
 if (!preg_match('/^[a-z\-]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
 	header('Location: start.php');
 	exit;
@@ -40,13 +35,6 @@ if (strstr($html, "/code.highcharts.$topDomain/mapdata")) {
 } else {
 	$html = str_replace('.js"', '.js?' . time() . '"', $html); // Force no-cache for debugging
 }
-if ($unstyled) {
-	$html = str_replace('highcharts.js', 'highcharts.unstyled.src.js', $html);
-	$html = str_replace('highcharts-more.js', 'highcharts-more.unstyled.src.js', $html);
-	$html = str_replace('highcharts-3d.js', 'highcharts-3d.unstyled.src.js', $html);
-	$html = str_replace('highstock.js', 'highstock.unstyled.src.js', $html);
-	$html = str_replace('highmaps.js', 'highmaps.unstyled.src.js', $html);
-}
 
 
 
@@ -67,7 +55,7 @@ $themes = array(
 
 
 function getResources() {
-	global $fullpath, $unstyled, $topDomain;
+	global $fullpath, $topDomain;
 
 	// No idea why file_get_contents doesn't work here...
 	ob_start();
@@ -99,10 +87,6 @@ function getResources() {
 				$run = true;
 			}
 		}
-	}
-
-	if ($unstyled) {
-		$html .= "<link type='text/css' rel='stylesheet' href='http://code.highcharts.$topDomain/css/highcharts.css' />\n";
 	}
 
 
@@ -347,13 +331,7 @@ function getResources() {
 				</form>
 				<button id="next" disabled="disabled">Next</button>
 				<button id="reload" style="margin-left: 1em" onclick="location.reload()">Reload</button>
-				<?php if (!$unstyled) { ?>
-				<a class="button" 
-					href="view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>&amp;unstyled=true">Unstyled</button>
-				<?php } else { ?>
-				<a class="button active" 
-					href="view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>&amp;unstyled=false">Unstyled</button>
-				<?php } ?>
+				
 				<a class="button"
 					href="compare-view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>">Compare</a>
 				<a class="button"
