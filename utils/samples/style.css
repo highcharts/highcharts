@@ -20,7 +20,6 @@ body.page h1 {
 	color: white;
 	font-size: 0.8em;
 	padding: 0.5em;
-	height: 50px;
 	background: #34343e;
 	box-shadow: 0px 0px 8px #888;
 }
@@ -39,16 +38,19 @@ body.page h1 {
 	border: none;
 	border-radius: 3px;
 	background: #a4edba;
-	padding: 5px;
+	padding: 5px 15px;
 	color: black;
 	text-decoration: none;
 	font-size: 12px;
 	white-space: nowrap;
 	cursor: pointer;
 	margin: 0 3px;
-	line-height: 2.5em;
 }
 .buttons a:hover, a.button:hover, button:hover {
+	background: #40818b;
+	color: white;
+}
+.buttons a.active, a.button.active, button.active {
 	background: #40818b;
 	color: white;
 }

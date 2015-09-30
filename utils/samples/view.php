@@ -7,6 +7,12 @@ define('FRAMEWORK', 'jQuery');
 require_once('functions.php');
 
 @$path = $_GET['path'];
+
+if (isset($_GET['unstyled'])) {
+	$_SESSION['unstyled'] = $_GET['unstyled'] == 'true' ? true : false;
+}
+$unstyled = $_SESSION['unstyled'];
+
 if (!preg_match('/^[a-z\-]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
 	header('Location: start.php');
 	exit;
@@ -34,6 +40,13 @@ if (strstr($html, "/code.highcharts.$topDomain/mapdata")) {
 } else {
 	$html = str_replace('.js"', '.js?' . time() . '"', $html); // Force no-cache for debugging
 }
+if ($unstyled) {
+	$html = str_replace('highcharts.js', 'highcharts.unstyled.src.js', $html);
+	$html = str_replace('highcharts-more.js', 'highcharts-more.unstyled.src.js', $html);
+	$html = str_replace('highcharts-3d.js', 'highcharts-3d.unstyled.src.js', $html);
+	$html = str_replace('highstock.js', 'highstock.unstyled.src.js', $html);
+	$html = str_replace('highmaps.js', 'highmaps.unstyled.src.js', $html);
+}
 
 
 
@@ -54,7 +67,7 @@ $themes = array(
 
 
 function getResources() {
-	global $fullpath;
+	global $fullpath, $unstyled, $topDomain;
 
 	// No idea why file_get_contents doesn't work here...
 	ob_start();
@@ -87,6 +100,12 @@ function getResources() {
 			}
 		}
 	}
+
+	if ($unstyled) {
+		$html .= "<link type='text/css' rel='stylesheet' href='http://code.highcharts.$topDomain/css/highcharts.css' />\n";
+	}
+
+
 	return $html;
 }
 
@@ -160,8 +179,12 @@ function getResources() {
 				}
 
 				// Activate view source button
-				$('#view-source').bind('change', function () {
-					var checked = $(this).attr('checked');
+				$('#view-source').bind('click', function () {
+					var checked;
+
+					$(this).toggleClass('active');
+
+					checked = $(this).hasClass('active')
 					
 					$('#source-box').css({
 						width: checked ? '50%' : 0
@@ -206,6 +229,7 @@ function getResources() {
 
 
 		// Wrappers for recording mouse events in order to write automatic tests 
+		/*
 		$(function () {
 
 			$(window).bind('keydown', parent.keyDown);
@@ -242,7 +266,7 @@ function getResources() {
 				return proceed.call(this, e);
 			});
 		});
-
+		*/
 
 		<?php if (@$_GET['profile']) : ?>
 		$(function () {
@@ -323,20 +347,29 @@ function getResources() {
 				</form>
 				<button id="next" disabled="disabled">Next</button>
 				<button id="reload" style="margin-left: 1em" onclick="location.reload()">Reload</button>
-				<input id="view-source" type="checkbox" />
-				<label for="view-source">View source</label>
-				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
+				<?php if (!$unstyled) { ?>
+				<a class="button" 
+					href="view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>&amp;unstyled=true">Unstyled</button>
+				<?php } else { ?>
+				<a class="button active" 
+					href="view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>&amp;unstyled=false">Unstyled</button>
+				<?php } ?>
+				<a class="button"
 					href="compare-view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>">Compare</a>
-				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
+				<a class="button"
 					href="view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>&amp;profile=1">Profile</a>
-				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
+				<a class="button"
 					href="view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>&amp;time=1">Time</a>
-				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
+				<a class="button"
 					href="http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/<?php echo $path ?>/"
-					target="_blank">» jsFiddle</a>
+					target="_blank">jsFiddle</a>
 
+				<a id="view-source" class="button" href="javascript:;">View source</a>
+				
+				<!--
 				<input id="record" type="checkbox" />
 				<label for="record" title="Record calls to Pointer mouse events that can be added to test.js for automatic testing of tooltip and other mouse operations">Record mouse</label>
+				-->
 			</div>
 		</div>
 		<div id="source-box"></div>
