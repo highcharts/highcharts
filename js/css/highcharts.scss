@@ -83,7 +83,16 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
 .highcharts-state-normal path {
 	transition: stroke-width 250ms; /* slow out */
 }
-.highcharts-legend-active g.highcharts-series:not(.highcharts-state-hover) { /* todo: rename to .highcharts-series-hover? */
+
+/* Legend hover affects points and series */
+g.highcharts-series, .highcharts-point {
+    transition: fill-opacity 250ms, stroke-opacity 250ms;
+}
+.highcharts-legend-series-active g.highcharts-series:not(.highcharts-state-hover) { /* todo: rename to .highcharts-series-hover? */
+    fill-opacity: 0.25;
+    stroke-opacity: 0.25;
+}
+.highcharts-legend-point-active .highcharts-point:not(.highcharts-point-hover) {
     fill-opacity: 0.25;
     stroke-opacity: 0.25;
 }
@@ -125,6 +134,9 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
 .highcharts-column-series rect:hover {
     fill-opacity: 0.75;
     transition: fill-opacity 50ms;
+}
+.highcharts-pie-series .highcharts-point {
+    stroke-linejoin: round;
 }
 
 

@@ -83,8 +83,16 @@
   transition: stroke-width 250ms;
   /* slow out */ }
 
-.highcharts-legend-active g.highcharts-series:not(.highcharts-state-hover) {
+/* Legend hover affects points and series */
+g.highcharts-series, .highcharts-point {
+  transition: fill-opacity 250ms, stroke-opacity 250ms; }
+
+.highcharts-legend-series-active g.highcharts-series:not(.highcharts-state-hover) {
   /* todo: rename to .highcharts-series-hover? */
+  fill-opacity: 0.25;
+  stroke-opacity: 0.25; }
+
+.highcharts-legend-point-active .highcharts-point:not(.highcharts-point-hover) {
   fill-opacity: 0.25;
   stroke-opacity: 0.25; }
 
@@ -218,6 +226,9 @@
 .highcharts-column-series rect:hover {
   fill-opacity: 0.75;
   transition: fill-opacity 50ms; }
+
+.highcharts-pie-series .highcharts-point {
+  stroke-linejoin: round; }
 
 /* Legend */
 .highcharts-legend-box {

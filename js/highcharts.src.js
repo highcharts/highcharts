@@ -18963,14 +18963,15 @@ extend(Legend.prototype, {
 
 	setItemEvents: function (item, legendItem, useHTML) {
 		var legend = this,
-			chart = legend.chart;
+			chart = legend.chart,
+			activeClass = 'highcharts-legend-' + (item.series ? 'point' : 'series') + '-active';
 
 		// Set the events on the item group, or in case of useHTML, the item itself (#1249)
 		(useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
 			item.setState('hover');
 			
 			// A CSS class to dim or hide other than the hovered series
-			chart.seriesGroup.addClass('highcharts-legend-active');
+			chart.seriesGroup.addClass(activeClass);
 			
 			
 			legendItem.css(legend.options.itemHoverStyle);
@@ -18982,7 +18983,7 @@ extend(Legend.prototype, {
 			
 
 			// A CSS class to dim or hide other than the hovered series
-			chart.seriesGroup.removeClass('highcharts-legend-active');
+			chart.seriesGroup.removeClass(activeClass);
 			
 			item.setState();
 		})
