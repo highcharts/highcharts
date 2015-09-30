@@ -82,7 +82,7 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
 .highcharts-state-normal path {
 	transition: stroke-width 250ms; /* slow out */
 }
-.highcharts-legend-active g.highcharts-series:not(.highcharts-state-hover) {
+.highcharts-legend-active g.highcharts-series:not(.highcharts-state-hover) { /* todo: rename to .highcharts-series-hover? */
     fill-opacity: 0.25;
     stroke-opacity: 0.25;
 }
@@ -90,9 +90,11 @@ $colors: #7cb5ec #434348 #90ed7d #f7a35c #8085e9 #f15c80 #e4d354 #2b908f #f45b5b
 .highcharts-area {
     fill-opacity: 0.75;
 }
-.highcharts-markers path, .highcharts-marker {
-    stroke-width: 1;
+.highcharts-markers path, .highcharts-marker { /* TODO: more generic class .highcharts.point */
+    stroke-width: 1px;
     stroke: #ffffff;
+}
+.highcharts-point-hover {
 }
 .highcharts-column-series rect {
     stroke: #ffffff;

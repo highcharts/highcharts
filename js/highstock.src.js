@@ -14604,6 +14604,7 @@ H.Series.prototype = {
 							2 * radius,
 							hasPointMarker ? pointMarkerOptions : seriesMarkerOptions
 						)
+						.addClass('highcharts-point')
 						.attr(pointAttr)
 						.add(markerGroup);
 					}
@@ -19289,6 +19290,11 @@ extend(Point.prototype, {
 
 		// apply hover styles to the existing point
 		if (point.graphic) {
+
+			point.graphic
+				.removeClass('highcharts-point-' + point.state)
+				.addClass('highcharts-point-' + state);
+
 			radius = markerOptions && point.graphic.symbolName && pointAttr.r;
 			point.graphic.attr(merge(
 				pointAttr,

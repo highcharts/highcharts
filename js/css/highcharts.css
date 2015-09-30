@@ -83,6 +83,7 @@
   /* slow out */ }
 
 .highcharts-legend-active g.highcharts-series:not(.highcharts-state-hover) {
+  /* todo: rename to .highcharts-series-hover? */
   fill-opacity: 0.25;
   stroke-opacity: 0.25; }
 
@@ -90,7 +91,8 @@
   fill-opacity: 0.75; }
 
 .highcharts-markers path, .highcharts-marker {
-  stroke-width: 1;
+  /* TODO: more generic class .highcharts.point */
+  stroke-width: 1px;
   stroke: #ffffff; }
 
 .highcharts-column-series rect {

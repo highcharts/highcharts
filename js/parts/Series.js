@@ -1045,6 +1045,7 @@ H.Series.prototype = {
 							2 * radius,
 							hasPointMarker ? pointMarkerOptions : seriesMarkerOptions
 						)
+						.addClass('highcharts-point')
 						.attr(pointAttr)
 						.add(markerGroup);
 					}
