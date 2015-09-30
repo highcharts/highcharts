@@ -233,12 +233,19 @@
 					childrenTotal += child.val;
 				} else {
 					// @todo Add predicate to avoid looping already ignored children
-					series.eachChildren(child, function (node) {
-						extend(node, {
-							ignore: true,
-							isLeaf: false,
-							visible: false
+					recursive(child.children, function (children) {
+						var next = false;
+						each(children, function (node) {
+							extend(node, {
+								ignore: true,
+								isLeaf: false,
+								visible: false
+							});
+							if (node.children.length) {
+								next = (next || []).concat(node.children);
+							}
 						});
+						return next;
 					});
 				}
 			});
