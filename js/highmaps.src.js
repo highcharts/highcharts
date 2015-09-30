@@ -5148,7 +5148,7 @@ VMLElement = {
 
 		var len;
 
-		path = path.split(/[ ,]/);
+		path = path.split(/[ ,]/); // The extra comma tricks the trailing comma remover in "gulp scripts" task
 		len = path.length;
 
 		if (len === 9 || len === 11) {
@@ -19510,7 +19510,7 @@ H.splitPath = function (path) {
 	path = path.replace(/^\s*/, "").replace(/\s*$/, "");
 	
 	// Split on spaces and commas
-	path = path.split(/[ ,]+/);
+	path = path.split(/[ ]+/);
 	
 	// Parse numbers
 	for (i = 0; i < path.length; i++) {

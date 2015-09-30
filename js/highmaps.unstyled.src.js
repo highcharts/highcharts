@@ -1298,7 +1298,7 @@ H.defaultOptions = {
 		margin: 15,
 		// x: 0,
 		// verticalAlign: 'top',
-		// y: null,
+		// y: null
 		
 
 	},
@@ -1308,7 +1308,7 @@ H.defaultOptions = {
 		// floating: false
 		// x: 0,
 		// verticalAlign: 'top',
-		// y: null,
+		// y: null
 		
 	},
 
@@ -1458,14 +1458,14 @@ H.defaultOptions = {
 		x: 0,
 		y: 0,
 		title: {
-			//text: null,
+			//text: null
 			
 		}			
 	},
 
 	loading: {
 		// hideDuration: 100,
-		// showDuration: 0,
+		// showDuration: 0
 		
 	},
 
@@ -5052,7 +5052,7 @@ VMLElement = {
 
 		var len;
 
-		path = path.split(/[ ,]/);
+		path = path.split(/[ ,]/); // The extra comma tricks the trailing comma remover in "gulp scripts" task
 		len = path.length;
 
 		if (len === 9 || len === 11) {
@@ -14142,7 +14142,7 @@ H.Series.prototype = {
 			graphPath = this.getGraphPath(),
 			props = [[
 				'graph', 
-				'highcharts-graph', 
+				'highcharts-graph' 
 				
 			]];
 
@@ -14150,7 +14150,7 @@ H.Series.prototype = {
 		each(this.zones, function (zone, i) {
 			props.push([
 				'zone-graph-' + i,
-				'highcharts-graph highcharts-zone-graph-' + i + ' ' + (zone.className || ''),
+				'highcharts-graph highcharts-zone-graph-' + i + ' ' + (zone.className || '')
 				
 			]);
 		});
@@ -19157,7 +19157,7 @@ H.splitPath = function (path) {
 	path = path.replace(/^\s*/, "").replace(/\s*$/, "");
 	
 	// Split on spaces and commas
-	path = path.split(/[ ,]+/);
+	path = path.split(/[ ]+/);
 	
 	// Parse numbers
 	for (i = 0; i < path.length; i++) {

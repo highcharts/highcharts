@@ -144,6 +144,11 @@ gulp.task('scripts', function () {
         tpl = func(build);
         tpl = tpl.replace(/___doublequote___/g, '"');
 
+        // Collect trailing commas left when the tamplate engine has removed
+        // object literal properties or array items
+        tpl = tpl.replace(/,(\s*(\]|\}))/g, '$1');
+
+
         return tpl;
     }
 
