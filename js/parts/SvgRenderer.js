@@ -1943,10 +1943,13 @@ SVGRenderer.prototype = {
 				height: Math.max(height, 0)
 			};
 
+		/*= if (build.classic) { =*/
 		if (strokeWidth !== undefined) {
 			attribs.strokeWidth = strokeWidth;
 			attribs = wrapper.crisp(attribs);
 		}
+		attribs.fill = 'none';
+		/*= } =*/
 
 		if (r) {
 			attribs.r = r;

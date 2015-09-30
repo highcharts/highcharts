@@ -66,9 +66,8 @@ seriesTypes.column = extendClass(Series, {
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		/*= if (build.classic) { =*/
 		stroke: 'borderColor',
-		fill: 'color',
+		fill: 'color'
 		/*= } =*/
-		r: 'borderRadius'
 	},
 	cropShoulder: 0,
 	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
@@ -300,20 +299,25 @@ seriesTypes.column = extendClass(Series, {
 			renderer = chart.renderer,
 			animationLimit = options.animationLimit || 250,
 			shapeArgs,
+			borderRadius = options.borderRadius,
 			pointAttr;
 
 		// draw the columns
 		each(series.points, function (point) {
 			var plotY = point.plotY,
 				graphic = point.graphic,
-				borderAttr;
+				borderAttr = {};
 
 			if (plotY !== undefined && !isNaN(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
 
-				borderAttr = defined(series.borderWidth) ? {
-					'stroke-width': series.borderWidth
-				} : {};
+				if (borderRadius) {
+					borderAttr.r = borderRadius;
+				}
+
+				if (defined(series.borderWidth)) {
+					borderAttr['stroke-width'] = series.borderWidth;
+				};
 
 				pointAttr = point.pointAttr[point.selected ? 'select' : ''] || series.pointAttr[''];
 				

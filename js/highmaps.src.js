@@ -3688,10 +3688,13 @@ SVGRenderer.prototype = {
 				height: Math.max(height, 0)
 			};
 
+		
 		if (strokeWidth !== undefined) {
 			attribs.strokeWidth = strokeWidth;
 			attribs = wrapper.crisp(attribs);
 		}
+		attribs.fill = 'none';
+		
 
 		if (r) {
 			attribs.r = r;
@@ -13062,9 +13065,8 @@ H.Series.prototype = {
 		
 		stroke: 'lineColor',
 		'stroke-width': 'lineWidth',
-		fill: 'fillColor',
+		fill: 'fillColor'
 		
-		r: 'radius'
 	},
 	directTouch: false,
 	axisTypes: ['xAxis', 'yAxis'],
@@ -14028,7 +14030,7 @@ H.Series.prototype = {
 
 					// shortcuts
 					pointAttr = point.pointAttr[point.selected ? 'select' : ''] || seriesPointAttr;
-					radius = pointAttr.r;
+					radius = seriesMarkerOptions.radius;
 					symbol = pick(pointMarkerOptions.symbol, series.symbol);
 					isImage = symbol.indexOf('url') === 0;
 
@@ -14052,6 +14054,7 @@ H.Series.prototype = {
 						)
 						.addClass('highcharts-point')
 						.attr(pointAttr)
+						.attr({ r: radius })
 						.add(markerGroup);
 					}
 
@@ -14129,7 +14132,7 @@ H.Series.prototype = {
 		if (seriesOptions.marker) { // line, spline, area, areaspline, scatter
 
 			// if no hover radius is given, default to normal radius + 2
-			stateOptionsHover.radius = stateOptionsHover.radius || normalOptions.radius + stateOptionsHover.radiusPlus;
+			//stateOptionsHover.radius = stateOptionsHover.radius || normalOptions.radius + stateOptionsHover.radiusPlus;
 			stateOptionsHover.lineWidth = stateOptionsHover.lineWidth || normalOptions.lineWidth + stateOptionsHover.lineWidthPlus;
 
 		} else { // column, bar, pie
@@ -14462,9 +14465,9 @@ H.Series.prototype = {
 				attribs = {
 					'stroke': prop[2],
 					'stroke-width': options.lineWidth,
-					'fill': (this.fillGraph && this.color) || 'none' // Polygon series use filled graph
+					'fill': (series.fillGraph && series.color) || 'none' // Polygon series use filled graph
 				};
-					
+
 				if (prop[3]) {
 					attribs.dashstyle = prop[3];
 				} else if (options.linecap !== 'square') {
@@ -15600,9 +15603,8 @@ seriesTypes.column = extendClass(Series, {
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		
 		stroke: 'borderColor',
-		fill: 'color',
+		fill: 'color'
 		
-		r: 'borderRadius'
 	},
 	cropShoulder: 0,
 	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
@@ -15834,20 +15836,25 @@ seriesTypes.column = extendClass(Series, {
 			renderer = chart.renderer,
 			animationLimit = options.animationLimit || 250,
 			shapeArgs,
+			borderRadius = options.borderRadius,
 			pointAttr;
 
 		// draw the columns
 		each(series.points, function (point) {
 			var plotY = point.plotY,
 				graphic = point.graphic,
-				borderAttr;
+				borderAttr = {};
 
 			if (plotY !== undefined && !isNaN(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
 
-				borderAttr = defined(series.borderWidth) ? {
-					'stroke-width': series.borderWidth
-				} : {};
+				if (borderRadius) {
+					borderAttr.r = borderRadius;
+				}
+
+				if (defined(series.borderWidth)) {
+					borderAttr['stroke-width'] = series.borderWidth;
+				};
 
 				pointAttr = point.pointAttr[point.selected ? 'select' : ''] || series.pointAttr[''];
 				
@@ -20269,11 +20276,11 @@ extend(Point.prototype, {
 			plotX = Math.floor(point.plotX), // #4586
 			plotY = point.plotY,
 			series = point.series,
-			stateOptions = series.options.states,
-			markerOptions = defaultPlotOptions[series.type].marker && series.options.marker,
-			normalDisabled = markerOptions && !markerOptions.enabled,
-			markerStateOptions = markerOptions && markerOptions.states[state],
-			stateDisabled = markerStateOptions && markerStateOptions.enabled === false,
+			stateOptions = series.options.states[state] || {},
+			markerOptions = (defaultPlotOptions[series.type].marker && series.options.marker) || {},
+			normalDisabled = markerOptions.enabled === false,
+			markerStateOptions = (markerOptions.states && markerOptions.states[state]) || {},
+			stateDisabled = markerStateOptions.enabled === false,
 			stateMarkerGraphic = series.stateMarkerGraphic,
 			pointMarker = point.marker || {},
 			chart = series.chart,
@@ -20292,7 +20299,7 @@ extend(Point.prototype, {
 				// selected points don't respond to hover
 				(point.selected && state !== 'select') ||
 				// series' state options is disabled
-				(stateOptions[state] && stateOptions[state].enabled === false) ||
+				(stateOptions.enabled === false) ||
 				// general point marker's state options is disabled
 				(state && (stateDisabled || (normalDisabled && markerStateOptions.enabled === false))) ||
 				// individual point marker's state options is disabled
@@ -20302,14 +20309,15 @@ extend(Point.prototype, {
 			return;
 		}
 
-		// apply hover styles to the existing point
+		radius = (markerStateOptions.radius || markerOptions.radius) + (markerStateOptions.radiusPlus || 0);
+		
+		// Apply hover styles to the existing point
 		if (point.graphic) {
 
 			point.graphic
 				.removeClass('highcharts-point-' + point.state)
 				.addClass('highcharts-point-' + state);
 
-			radius = markerOptions && point.graphic.symbolName && pointAttr.r;
 			point.graphic.attr(merge(
 				pointAttr,
 				radius ? { // new symbol attributes (#507, #612)
@@ -20328,7 +20336,6 @@ extend(Point.prototype, {
 			// if a graphic is not applied to each point in the normal state, create a shared
 			// graphic for the hover state
 			if (state && markerStateOptions) {
-				radius = markerStateOptions.radius;
 				newSymbol = pointMarker.symbol || series.symbol;
 
 				// If the point has another symbol than the previous one, throw away the
@@ -20368,7 +20375,7 @@ extend(Point.prototype, {
 		}
 
 		// Show me your halo
-		haloOptions = stateOptions[state] && stateOptions[state].halo;
+		haloOptions = stateOptions.halo;
 		if (haloOptions && haloOptions.size) {
 			if (!halo) {
 				series.halo = halo = chart.renderer.path()

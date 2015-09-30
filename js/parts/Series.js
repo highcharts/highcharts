@@ -57,9 +57,8 @@ H.Series.prototype = {
 		/*= if (build.classic) { =*/
 		stroke: 'lineColor',
 		'stroke-width': 'lineWidth',
-		fill: 'fillColor',
+		fill: 'fillColor'
 		/*= } =*/
-		r: 'radius'
 	},
 	directTouch: false,
 	axisTypes: ['xAxis', 'yAxis'],
@@ -1023,7 +1022,7 @@ H.Series.prototype = {
 
 					// shortcuts
 					pointAttr = point.pointAttr[point.selected ? 'select' : ''] || seriesPointAttr;
-					radius = pointAttr.r;
+					radius = seriesMarkerOptions.radius;
 					symbol = pick(pointMarkerOptions.symbol, series.symbol);
 					isImage = symbol.indexOf('url') === 0;
 
@@ -1047,6 +1046,7 @@ H.Series.prototype = {
 						)
 						.addClass('highcharts-point')
 						.attr(pointAttr)
+						.attr({ r: radius })
 						.add(markerGroup);
 					}
 
@@ -1124,7 +1124,7 @@ H.Series.prototype = {
 		if (seriesOptions.marker) { // line, spline, area, areaspline, scatter
 
 			// if no hover radius is given, default to normal radius + 2
-			stateOptionsHover.radius = stateOptionsHover.radius || normalOptions.radius + stateOptionsHover.radiusPlus;
+			//stateOptionsHover.radius = stateOptionsHover.radius || normalOptions.radius + stateOptionsHover.radiusPlus;
 			stateOptionsHover.lineWidth = stateOptionsHover.lineWidth || normalOptions.lineWidth + stateOptionsHover.lineWidthPlus;
 
 		} else { // column, bar, pie
@@ -1457,9 +1457,9 @@ H.Series.prototype = {
 				attribs = {
 					'stroke': prop[2],
 					'stroke-width': options.lineWidth,
-					'fill': (this.fillGraph && this.color) || 'none' // Polygon series use filled graph
+					'fill': (series.fillGraph && series.color) || 'none' // Polygon series use filled graph
 				};
-					
+
 				if (prop[3]) {
 					attribs.dashstyle = prop[3];
 				} else if (options.linecap !== 'square') {

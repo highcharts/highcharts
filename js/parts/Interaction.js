@@ -521,11 +521,11 @@ extend(Point.prototype, {
 			plotX = Math.floor(point.plotX), // #4586
 			plotY = point.plotY,
 			series = point.series,
-			stateOptions = series.options.states,
-			markerOptions = defaultPlotOptions[series.type].marker && series.options.marker,
-			normalDisabled = markerOptions && !markerOptions.enabled,
-			markerStateOptions = markerOptions && markerOptions.states[state],
-			stateDisabled = markerStateOptions && markerStateOptions.enabled === false,
+			stateOptions = series.options.states[state] || {},
+			markerOptions = (defaultPlotOptions[series.type].marker && series.options.marker) || {},
+			normalDisabled = markerOptions.enabled === false,
+			markerStateOptions = (markerOptions.states && markerOptions.states[state]) || {},
+			stateDisabled = markerStateOptions.enabled === false,
 			stateMarkerGraphic = series.stateMarkerGraphic,
 			pointMarker = point.marker || {},
 			chart = series.chart,
@@ -544,7 +544,7 @@ extend(Point.prototype, {
 				// selected points don't respond to hover
 				(point.selected && state !== 'select') ||
 				// series' state options is disabled
-				(stateOptions[state] && stateOptions[state].enabled === false) ||
+				(stateOptions.enabled === false) ||
 				// general point marker's state options is disabled
 				(state && (stateDisabled || (normalDisabled && markerStateOptions.enabled === false))) ||
 				// individual point marker's state options is disabled
@@ -554,14 +554,15 @@ extend(Point.prototype, {
 			return;
 		}
 
-		// apply hover styles to the existing point
+		radius = (markerStateOptions.radius || markerOptions.radius) + (markerStateOptions.radiusPlus || 0);
+		
+		// Apply hover styles to the existing point
 		if (point.graphic) {
 
 			point.graphic
 				.removeClass('highcharts-point-' + point.state)
 				.addClass('highcharts-point-' + state);
 
-			radius = markerOptions && point.graphic.symbolName && pointAttr.r;
 			point.graphic.attr(merge(
 				pointAttr,
 				radius ? { // new symbol attributes (#507, #612)
@@ -580,7 +581,6 @@ extend(Point.prototype, {
 			// if a graphic is not applied to each point in the normal state, create a shared
 			// graphic for the hover state
 			if (state && markerStateOptions) {
-				radius = markerStateOptions.radius;
 				newSymbol = pointMarker.symbol || series.symbol;
 
 				// If the point has another symbol than the previous one, throw away the
@@ -620,7 +620,7 @@ extend(Point.prototype, {
 		}
 
 		// Show me your halo
-		haloOptions = stateOptions[state] && stateOptions[state].halo;
+		haloOptions = stateOptions.halo;
 		if (haloOptions && haloOptions.size) {
 			if (!halo) {
 				series.halo = halo = chart.renderer.path()

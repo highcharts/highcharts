@@ -63,8 +63,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
 		fill: 'fillColor',
 		stroke: 'color',
-		'stroke-width': 'lineWidth',
-		r: 'radius'
+		'stroke-width': 'lineWidth'
 	},
 
 	/**
@@ -211,7 +210,6 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 					graphic.attr({
 						x: plotX,
 						y: plotY,
-						r: pointAttr.r,
 						anchorX: anchorX,
 						anchorY: anchorY
 					});
