@@ -556,7 +556,7 @@
 
 			if (this.points.length) {
 				// Assign variables
-				this.rootNode = pick(this.rootNode, "");
+				this.rootNode = pick(this.options.rootId, "");
 				// Create a object map from level to options
 				this.levelMap = reduce(this.options.levels, function (arr, item) {
 					arr[item.level] = item;
@@ -827,7 +827,7 @@
 			} 
 		},
 		drillToNode: function (id) {
-			this.rootNode = id;
+			this.options.rootId = id;
 			this.isDirty = true; // Force redraw
 			this.chart.redraw();
 		},
