@@ -232,12 +232,19 @@
 					childrenTotal += child.val;
 				} else {
 					// @todo Add predicate to avoid looping already ignored children
-					series.eachChildren(child, function (node) {
-						extend(node, {
-							ignore: true,
-							isLeaf: false,
-							visible: false
+					recursive(child.children, function (children) {
+						var next = false;
+						each(children, function (node) {
+							extend(node, {
+								ignore: true,
+								isLeaf: false,
+								visible: false
+							});
+							if (node.children.length) {
+								next = (next || []).concat(node.children);
+							}
 						});
+						return next;
 					});
 				}
 			});
@@ -555,7 +562,7 @@
 
 			if (this.points.length) {
 				// Assign variables
-				this.rootNode = pick(this.rootNode, "");
+				this.rootNode = pick(this.options.rootId, "");
 				// Create a object map from level to options
 				this.levelMap = reduce(this.options.levels, function (arr, item) {
 					arr[item.level] = item;
@@ -826,7 +833,7 @@
 			} 
 		},
 		drillToNode: function (id) {
-			this.rootNode = id;
+			this.options.rootId = id;
 			this.isDirty = true; // Force redraw
 			this.chart.redraw();
 		},

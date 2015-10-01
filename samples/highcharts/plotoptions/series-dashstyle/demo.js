@@ -10,7 +10,7 @@ $(function () {
 
         plotOptions: {
             series: {
-                color: 'black'
+                color: '#000000'
             }
         },
 
