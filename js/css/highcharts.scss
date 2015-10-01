@@ -129,6 +129,13 @@ g.highcharts-series, .highcharts-point {
 .highcharts-pie-series .highcharts-point {
     stroke-linejoin: round;
 }
+.highcharts-data-labels rect {
+    fill: none;
+    stroke-width: 0;
+}
+.highcharts-halo {
+    fill-opacity: 0.25;
+}
 
 
 /* Legend */

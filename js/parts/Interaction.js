@@ -627,11 +627,19 @@ extend(Point.prototype, {
 				series.halo = halo = chart.renderer.path()
 					.add(chart.seriesGroup);
 			}
-			halo.attr(extend({
-				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
-			}, haloOptions.attributes))[move ? 'animate' : 'attr']({
+			halo[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
 			});
+			halo.attr({
+				'class': 'highcharts-halo highcharts-color-' + pick(point.colorIndex, series.colorIndex) 
+			});
+
+			/*= if (build.classic) { =*/
+			halo.attr(extend({
+				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
+			}, haloOptions.attributes));
+			/*= } =*/
+
 		} else if (halo) {
 			halo.attr({ d: [] });
 		}
@@ -732,11 +740,17 @@ extend(Series.prototype, {
 
 		if (series.state !== state) {
 
+			// Toggle class names
 			each([series.group, series.markerGroup], function (group) {
 				if (group) {
-					group
-						.removeClass('highcharts-series-' + (series.state || 'normal'))
-						.addClass('highcharts-series-' + (state || 'normal'));
+					// Old state
+					if (series.state) {
+						group.removeClass('highcharts-series-' + series.state);	
+					}
+					// New state
+					if (state) {
+						group.addClass('highcharts-series-' + state);
+					}
 				}
 			});
 

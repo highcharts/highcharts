@@ -360,7 +360,9 @@ extend(Series.prototype, {
 		series.isDirty = true;
 		series.isDirtyData = true;
 		if (redraw) {
+			/*= if (build.clasic) { =*/
 			series.getAttribs(); // #1937
+			/*= } =*/
 			chart.redraw();
 		}
 	},

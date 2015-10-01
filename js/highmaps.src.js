@@ -1405,7 +1405,9 @@ H.defaultOptions = {
 					},
 					halo: {
 						size: 10,
+						
 						opacity: 0.25
+						
 					}
 				},
 				select: {
@@ -15333,7 +15335,7 @@ extend(Series.prototype, {
 		series.isDirty = true;
 		series.isDirtyData = true;
 		if (redraw) {
-			series.getAttribs(); // #1937
+			
 			chart.redraw();
 		}
 	},
@@ -15769,9 +15771,10 @@ seriesTypes.column = extendClass(Series, {
 		var series = this,
 			chart = series.chart,
 			options = series.options,
+			dense = series.closestPointRange * series.xAxis.transA < 2,
 			borderWidth = series.borderWidth = pick(
 				options.borderWidth, 
-				series.closestPointRange * series.xAxis.transA < 2 ? 0 : 1 // #3635
+				dense ? 0 : 1  // #3635
 			),
 			yAxis = series.yAxis,
 			threshold = options.threshold,
@@ -20414,11 +20417,19 @@ extend(Point.prototype, {
 				series.halo = halo = chart.renderer.path()
 					.add(chart.seriesGroup);
 			}
-			halo.attr(extend({
-				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
-			}, haloOptions.attributes))[move ? 'animate' : 'attr']({
+			halo[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
 			});
+			halo.attr({
+				'class': 'highcharts-halo highcharts-color-' + pick(point.colorIndex, series.colorIndex) 
+			});
+
+			
+			halo.attr(extend({
+				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
+			}, haloOptions.attributes));
+			
+
 		} else if (halo) {
 			halo.attr({ d: [] });
 		}
@@ -20519,11 +20530,17 @@ extend(Series.prototype, {
 
 		if (series.state !== state) {
 
+			// Toggle class names
 			each([series.group, series.markerGroup], function (group) {
 				if (group) {
-					group
-						.removeClass('highcharts-series-' + (series.state || 'normal'))
-						.addClass('highcharts-series-' + (state || 'normal'));
+					// Old state
+					if (series.state) {
+						group.removeClass('highcharts-series-' + series.state);	
+					}
+					// New state
+					if (state) {
+						group.addClass('highcharts-series-' + state);
+					}
 				}
 			});
 

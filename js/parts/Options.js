@@ -192,7 +192,9 @@ H.defaultOptions = {
 					},
 					halo: {
 						size: 10,
+						/*= if (build.classic) { =*/
 						opacity: 0.25
+						/*= } =*/
 					}
 				},
 				select: {

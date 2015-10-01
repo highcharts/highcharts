@@ -212,9 +212,10 @@ seriesTypes.column = extendClass(Series, {
 		var series = this,
 			chart = series.chart,
 			options = series.options,
+			dense = series.closestPointRange * series.xAxis.transA < 2,
 			borderWidth = series.borderWidth = pick(
 				options.borderWidth, 
-				series.closestPointRange * series.xAxis.transA < 2 ? 0 : 1 // #3635
+				dense ? 0 : 1  // #3635
 			),
 			yAxis = series.yAxis,
 			threshold = options.threshold,
