@@ -1223,8 +1223,10 @@ H.stop = adapter.stop;
  * Handle the options                                                         *
  *****************************************************************************/
 H.defaultOptions = {
+	
 	colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', 
 		    '#8085e9', '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'],
+	
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
 		loading: 'Loading...',
@@ -11169,7 +11171,7 @@ Legend.prototype = {
 			// Generate the group box
 			// A group to hold the symbol and text. Text is to be appended in Legend class.
 			item.legendGroup = renderer.g('legend-item')
-				.addClass('highcharts-' + series.type + '-series highcharts-color-' + item.colorIndex)
+				.addClass('highcharts-' + series.type + '-series highcharts-color-' + item.colorIndex + ' ' + (item.options.className || ''))
 				.attr({ zIndex: 1 })
 				.add(legend.scrollGroup);
 
@@ -11807,6 +11809,8 @@ Chart.prototype = {
 	 * Hook for modules
 	 */
 	callbacks: [],
+
+	
 
 	/**
 	 * Initialize the chart
@@ -13896,15 +13900,20 @@ H.Series.prototype = {
 		if ((options.negativeColor || options.negativeFillColor) && !options.zones) {
 			zones.push({
 				value: options[this.zoneAxis + 'Threshold'] || options.threshold || 0,
+				className: 'highcharts-negative',
+				
 				color: options.negativeColor,
 				fillColor: options.negativeFillColor
+				
 			});
 		}
 		if (zones.length) { // Push one extra zone for the rest
 			if (defined(zones[zones.length - 1].value)) {
 				zones.push({
+					
 					color: this.color,
 					fillColor: this.fillColor
+					
 				});
 			}
 		}
@@ -13915,16 +13924,19 @@ H.Series.prototype = {
 		var i,
 			userOptions = this.userOptions,
 			indexName = prop + 'Index',
-			counterName = prop + 'Counter';
+			counterName = prop + 'Counter',
+			len = defaults ? defaults.length : this.chart[prop + 'Count'];
 
 		if (!value) {
 			if (defined(userOptions['_' + indexName])) { // after Series.update()
 				i = userOptions['_' + indexName];
 			} else {
-				userOptions['_' + indexName] = i = this.chart[counterName] % defaults.length;
+				userOptions['_' + indexName] = i = this.chart[counterName] % len;
 				this.chart[counterName] += 1;
 			}
-			value = defaults[i];
+			if (defaults) {
+				value = defaults[i];
+			}
 		}
 		// Set the colorIndex
 		if (i !== undefined) {
@@ -13936,6 +13948,7 @@ H.Series.prototype = {
 	/**
 	 * Get the series' color
 	 */
+	
 	getColor: function () {
 		if (this.options.colorByPoint) {
 			this.options.color = null; // #4359, selected slice got series.color even when colorByPoint was set.
@@ -13943,6 +13956,7 @@ H.Series.prototype = {
 			this.getCyclic('color', this.options.color || defaultPlotOptions[this.type].color, this.chart.options.colors);
 		}
 	},
+	
 	/**
 	 * Get the series' symbol
 	 */
@@ -15225,7 +15239,8 @@ H.Series.prototype = {
 				})
 				.add(parent);
 
-			group.addClass('highcharts-series-' + this.index + ' highcharts-' + this.type + '-series highcharts-color-' + this.colorIndex);
+			group.addClass('highcharts-series-' + this.index + ' highcharts-' + this.type + '-series highcharts-color-' + this.colorIndex +
+				' ' + (this.options.className || '')); // docs: className
 		}
 		
 		// Place it on first and subsequent (redraw) calls

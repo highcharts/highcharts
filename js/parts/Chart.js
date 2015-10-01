@@ -46,6 +46,10 @@ Chart.prototype = {
 	 */
 	callbacks: [],
 
+	/*= if (!build.classic) { =*/
+	colorCount: 10,
+	/*= } =*/
+
 	/**
 	 * Initialize the chart
 	 */

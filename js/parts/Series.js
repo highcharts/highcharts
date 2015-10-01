@@ -322,15 +322,20 @@ H.Series.prototype = {
 		if ((options.negativeColor || options.negativeFillColor) && !options.zones) {
 			zones.push({
 				value: options[this.zoneAxis + 'Threshold'] || options.threshold || 0,
+				className: 'highcharts-negative',
+				/*= if (build.classic) { =*/
 				color: options.negativeColor,
 				fillColor: options.negativeFillColor
+				/*= } =*/
 			});
 		}
 		if (zones.length) { // Push one extra zone for the rest
 			if (defined(zones[zones.length - 1].value)) {
 				zones.push({
+					/*= if (build.classic) { =*/
 					color: this.color,
 					fillColor: this.fillColor
+					/*= } =*/
 				});
 			}
 		}
@@ -341,16 +346,19 @@ H.Series.prototype = {
 		var i,
 			userOptions = this.userOptions,
 			indexName = prop + 'Index',
-			counterName = prop + 'Counter';
+			counterName = prop + 'Counter',
+			len = defaults ? defaults.length : this.chart[prop + 'Count'];
 
 		if (!value) {
 			if (defined(userOptions['_' + indexName])) { // after Series.update()
 				i = userOptions['_' + indexName];
 			} else {
-				userOptions['_' + indexName] = i = this.chart[counterName] % defaults.length;
+				userOptions['_' + indexName] = i = this.chart[counterName] % len;
 				this.chart[counterName] += 1;
 			}
-			value = defaults[i];
+			if (defaults) {
+				value = defaults[i];
+			}
 		}
 		// Set the colorIndex
 		if (i !== undefined) {
@@ -362,6 +370,12 @@ H.Series.prototype = {
 	/**
 	 * Get the series' color
 	 */
+	/*= if (!build.classic) { =*/
+	getColor: function () {
+		this.getCyclic('color');
+	},
+
+	/*= } else { =*/
 	getColor: function () {
 		if (this.options.colorByPoint) {
 			this.options.color = null; // #4359, selected slice got series.color even when colorByPoint was set.
@@ -369,6 +383,7 @@ H.Series.prototype = {
 			this.getCyclic('color', this.options.color || defaultPlotOptions[this.type].color, this.chart.options.colors);
 		}
 	},
+	/*= } =*/
 	/**
 	 * Get the series' symbol
 	 */
@@ -1651,7 +1666,8 @@ H.Series.prototype = {
 				})
 				.add(parent);
 
-			group.addClass('highcharts-series-' + this.index + ' highcharts-' + this.type + '-series highcharts-color-' + this.colorIndex);
+			group.addClass('highcharts-series-' + this.index + ' highcharts-' + this.type + '-series highcharts-color-' + this.colorIndex +
+				' ' + (this.options.className || '')); // docs: className
 		}
 		
 		// Place it on first and subsequent (redraw) calls

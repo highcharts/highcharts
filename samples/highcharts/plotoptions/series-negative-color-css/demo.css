@@ -1,0 +1,12 @@
+.main-color .highcharts-graph {
+	stroke: red;
+}
+.main-color {
+	fill: red;
+}
+.highcharts-graph.highcharts-negative {
+	stroke: blue;
+}
+.highcharts-area.highcharts-negative {
+	fill: blue;
+}
