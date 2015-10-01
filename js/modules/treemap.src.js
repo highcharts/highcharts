@@ -188,6 +188,13 @@
 			this.setTreeValues(tree);
 			return tree;
 		},
+		init: function (chart, options) {
+			var series = this;
+			Series.prototype.init.call(series, chart, options);
+			if (series.options.allowDrillToNode) {
+				series.drillTo();
+			}
+		},
 		buildNode: function (id, i, level, list, parent) {
 			var series = this,
 				children = [],
@@ -707,15 +714,18 @@
 			seriesTypes.column.prototype.drawPoints.call(this);
 
 			each(points, function (point) {
+				var cursor,
+					drillId;
 				if (point.graphic) {
-					point.graphic.attr(point.pointAttr['']);
+					point.graphic.attr(point.pointAttr['']); // @todo What is the purpose of this?
+					// If drillToNode is allowed, set a point cursor on clickables & add drillId to point 
+					if (series.options.allowDrillToNode) {
+						drillId = point.drillId = series.options.interactByLeaf ? series.drillToByLeaf(point) : series.drillToByGroup(point);
+						cursor = drillId ? "pointer" : "default";
+						point.graphic.css({ cursor: cursor });
+					}
 				}
 			});
-
-			// Set click events on points 
-			if (seriesOptions.allowDrillToNode) {
-				series.drillTo();
-			}
 		},
 		/**
 		 * Inserts an element into an array, sorted by a condition.
@@ -744,34 +754,17 @@
 		* Add drilling on the suitable points
 		*/
 		drillTo: function () {
-			var series = this,
-				points = series.points;
-			each(points, function (point) {
-				var drillId,
+			var series = this;
+			H.addEvent(series, 'click', function (event) {
+				var point = event.point,
+					drillId = point.drillId,
 					drillName;
-				H.removeEvent(point, 'click.drillTo');
-				if (point.graphic) {
-					point.graphic.css({ cursor: 'default' });
-				}
-
-				// Get the drill to id
-				if (series.options.interactByLeaf) {
-					drillId = series.drillToByLeaf(point);
-				} else {
-					drillId = series.drillToByGroup(point);
-				}
-
 				// If a drill id is returned, add click event and cursor. 
 				if (drillId) {
 					drillName = series.nodeMap[series.rootNode].name || series.rootNode;
-					if (point.graphic) {
-						point.graphic.css({ cursor: 'pointer' });
-					}
-					H.addEvent(point, 'click.drillTo', function () {
-						point.setState(''); // Remove hover
-						series.drillToNode(drillId);
-						series.showDrillUpButton(drillName);
-					});
+					point.setState(''); // Remove hover
+					series.drillToNode(drillId);
+					series.showDrillUpButton(drillName);
 				}
 			});
 		},
