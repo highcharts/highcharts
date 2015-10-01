@@ -732,9 +732,13 @@ extend(Series.prototype, {
 
 		if (series.state !== state) {
 
-			series.group
-				.removeClass('highcharts-state-' + (series.state || 'normal'))
-				.addClass('highcharts-state-' + (state || 'normal'));
+			each([series.group, series.markerGroup], function (group) {
+				if (group) {
+					group
+						.removeClass('highcharts-series-' + (series.state || 'normal'))
+						.addClass('highcharts-series-' + (state || 'normal'));
+				}
+			});
 
 			series.state = state;
 

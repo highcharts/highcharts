@@ -10461,7 +10461,7 @@ Legend.prototype = {
 			// Generate the group box
 			// A group to hold the symbol and text. Text is to be appended in Legend class.
 			item.legendGroup = renderer.g('legend-item')
-				.addClass('highcharts-series-' + item.index)
+				.addClass('highcharts-' + series.type + '-series highcharts-color-' + item.colorIndex)
 				.attr({ zIndex: 1 })
 				.add(legend.scrollGroup);
 
@@ -10940,7 +10940,9 @@ H.LegendSymbolMixin = {
 			legend.symbolWidth,
 			symbolHeight,
 			legend.options.symbolRadius || 0
-		).attr({
+		)
+		.addClass('highcharts-point')
+		.attr({
 			zIndex: 3
 		}).add(item.legendGroup);		
 		
@@ -13058,17 +13060,21 @@ H.Series.prototype = {
 	getCyclic: function (prop, value, defaults) {
 		var i,
 			userOptions = this.userOptions,
-			indexName = '_' + prop + 'Index',
+			indexName = prop + 'Index',
 			counterName = prop + 'Counter';
 
 		if (!value) {
-			if (defined(userOptions[indexName])) { // after Series.update()
-				i = userOptions[indexName];
+			if (defined(userOptions['_' + indexName])) { // after Series.update()
+				i = userOptions['_' + indexName];
 			} else {
-				userOptions[indexName] = i = this.chart[counterName] % defaults.length;
+				userOptions['_' + indexName] = i = this.chart[counterName] % defaults.length;
 				this.chart[counterName] += 1;
 			}
 			value = defaults[i];
+		}
+		// Set the colorIndex
+		if (i !== undefined) {
+			this[indexName] = i;
 		}
 		this[prop] = value;
 	},
@@ -14153,7 +14159,7 @@ H.Series.prototype = {
 				})
 				.add(parent);
 
-			group.addClass('highcharts-series-' + this.index + ' highcharts-' + this.type + '-series');
+			group.addClass('highcharts-series-' + this.index + ' highcharts-' + this.type + '-series highcharts-color-' + this.colorIndex);
 		}
 		
 		// Place it on first and subsequent (redraw) calls
@@ -19855,9 +19861,13 @@ extend(Series.prototype, {
 
 		if (series.state !== state) {
 
-			series.group
-				.removeClass('highcharts-state-' + (series.state || 'normal'))
-				.addClass('highcharts-state-' + (state || 'normal'));
+			each([series.group, series.markerGroup], function (group) {
+				if (group) {
+					group
+						.removeClass('highcharts-series-' + (series.state || 'normal'))
+						.addClass('highcharts-series-' + (state || 'normal'));
+				}
+			});
 
 			series.state = state;
 

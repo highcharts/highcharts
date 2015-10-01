@@ -411,10 +411,7 @@ seriesTypes.pie = extendClass(Series, {
 
 
 				// if the point is sliced, use special translation, else use plot area traslation
-				groupTranslation = point.sliced ? point.slicedTranslation : {
-					translateX: 0,
-					translateY: 0
-				};
+				groupTranslation = point.sliced ? point.slicedTranslation : {};
 
 				/*= if (build.classic) { =*/
 				// Put the shadow behind all points
@@ -438,7 +435,7 @@ seriesTypes.pie = extendClass(Series, {
 
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 						.addClass('highcharts-point' + (point.selected ? ' highcharts-point-select' : ''))
-						.addClass('highcharts-filled-' + point.colorIndex)
+						.addClass('highcharts-color-' + point.colorIndex)
 						.setRadialReference(series.center)
 						.attr(groupTranslation)
 						.add(series.group);

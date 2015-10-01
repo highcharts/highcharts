@@ -277,7 +277,7 @@ Legend.prototype = {
 			// Generate the group box
 			// A group to hold the symbol and text. Text is to be appended in Legend class.
 			item.legendGroup = renderer.g('legend-item')
-				.addClass('highcharts-series-' + item.index)
+				.addClass('highcharts-' + series.type + '-series highcharts-color-' + item.colorIndex)
 				.attr({ zIndex: 1 })
 				.add(legend.scrollGroup);
 
@@ -785,7 +785,9 @@ H.LegendSymbolMixin = {
 			legend.symbolWidth,
 			symbolHeight,
 			legend.options.symbolRadius || 0
-		).attr({
+		)
+		.addClass('highcharts-point')
+		.attr({
 			zIndex: 3
 		}).add(item.legendGroup);		
 		

@@ -340,17 +340,21 @@ H.Series.prototype = {
 	getCyclic: function (prop, value, defaults) {
 		var i,
 			userOptions = this.userOptions,
-			indexName = '_' + prop + 'Index',
+			indexName = prop + 'Index',
 			counterName = prop + 'Counter';
 
 		if (!value) {
-			if (defined(userOptions[indexName])) { // after Series.update()
-				i = userOptions[indexName];
+			if (defined(userOptions['_' + indexName])) { // after Series.update()
+				i = userOptions['_' + indexName];
 			} else {
-				userOptions[indexName] = i = this.chart[counterName] % defaults.length;
+				userOptions['_' + indexName] = i = this.chart[counterName] % defaults.length;
 				this.chart[counterName] += 1;
 			}
 			value = defaults[i];
+		}
+		// Set the colorIndex
+		if (i !== undefined) {
+			this[indexName] = i;
 		}
 		this[prop] = value;
 	},
@@ -1647,7 +1651,7 @@ H.Series.prototype = {
 				})
 				.add(parent);
 
-			group.addClass('highcharts-series-' + this.index + ' highcharts-' + this.type + '-series');
+			group.addClass('highcharts-series-' + this.index + ' highcharts-' + this.type + '-series highcharts-color-' + this.colorIndex);
 		}
 		
 		// Place it on first and subsequent (redraw) calls
