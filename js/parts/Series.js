@@ -1112,7 +1112,6 @@ H.Series.prototype = {
 			points = series.points || [], // #927
 			i,
 			j,
-			threshold,
 			point,
 			seriesPointAttr = [],
 			pointAttr,
@@ -1121,6 +1120,7 @@ H.Series.prototype = {
 			defaultLineColor = normalOptions.lineColor,
 			defaultFillColor = normalOptions.fillColor,
 			turboThreshold = seriesOptions.turboThreshold,
+			zone,
 			zones = series.zones,
 			zoneAxis = series.zoneAxis || 'y',
 			attr,
@@ -1173,12 +1173,12 @@ H.Series.prototype = {
 
 				if (zones.length) {
 					j = 0;
-					threshold = zones[j];
-					while (point[zoneAxis] >= threshold.value) {				
-						threshold = zones[++j];
+					zone = zones[j];
+					while (point[zoneAxis] >= zone.value) {				
+						zone = zones[++j];
 					}
 					
-					point.color = point.fillColor = pick(threshold.color, series.color); // #3636, #4267, #4430 - inherit color from series, when color is undefined
+					point.color = point.fillColor = pick(zone.color, series.color); // #3636, #4267, #4430 - inherit color from series, when color is undefined
 					
 				}
 
