@@ -160,7 +160,6 @@
 	// The series prototype
 	H.seriesTypes.solidgauge = H.extendClass(H.seriesTypes.gauge, {
 		type: 'solidgauge',
-		pointAttrToOptions: {}, // #4301, don't inherit line marker's attribs
 		bindAxes: function () {
 			var axis;
 			H.seriesTypes.gauge.prototype.bindAxes.call(this);

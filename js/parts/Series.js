@@ -1071,14 +1071,14 @@ H.Series.prototype = {
 	},
 
 	/**
-	 * Get presentational attributes for marker-based series (line, spline, scatter, mappoint...)
+	 * Get presentational attributes for marker-based series (line, spline, scatter, bubble, mappoint...)
 	 */
 	pointAttribs: function (point, state) {
 		var options = this.options.marker,
 			stateOptions,
 			strokeWidth = options.lineWidth,
 			color = this.color,
-			pointColor = point && point.color,
+			pointColor = point && point.options.color,
 			fill,
 			stroke;
 

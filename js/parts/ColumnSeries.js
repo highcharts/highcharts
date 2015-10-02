@@ -292,10 +292,11 @@ seriesTypes.column = extendClass(Series, {
 		var options = this.options,
 			stateOptions,
 			ret,
-			fill = (point && point.color) || this.color,
-			stroke = options.borderColor || this.color,
-			dashstyle = options.dashStyle,
+			strokeOption = this.strokeOption || 'borderColor',
 			strokeWidthOption = this.strokeWidthOption || 'borderWidth',
+			fill = (point && point.color) || this.color,
+			stroke = options[strokeOption] || this.color,
+			dashstyle = options.dashStyle,
 			zone,
 			brightness;
 
@@ -313,7 +314,7 @@ seriesTypes.column = extendClass(Series, {
 			fill = stateOptions.color || 
 				(brightness !== undefined && Color(fill).brighten(stateOptions.brightness).get()) ||
 				fill;
-			stroke = stateOptions.borderColor || stroke;
+			stroke = stateOptions[strokeOption] || stroke;
 			dashstyle = stateOptions.dashStyle || dashstyle;
 		}
 

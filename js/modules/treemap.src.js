@@ -89,8 +89,6 @@
 	
 	// Stolen from heatmap	
 	var colorSeriesMixin = {
-		// mapping between SVG attributes and the corresponding options
-		pointAttrToOptions: {},
 		pointArrayMap: ['value'],
 		axisTypes: seriesTypes.heatmap ? ['xAxis', 'yAxis', 'colorAxis'] : ['xAxis', 'yAxis'],
 		optionalAxis: 'colorAxis',
@@ -113,7 +111,7 @@
 					}
 				} else {
 					if (this.dataLabel) {
-						this.dataLabel.attr({ zIndex: this.zIndex + 1 });
+						this.dataLabel.attr({ zIndex: this.node.zIndex + 1 });
 					}
 				}
 			},
@@ -221,7 +219,8 @@
 				childrenTotal = 0,
 				sorted = [],
 				val,
-				point = series.points[tree.i];
+				point = series.points[tree.i],
+				levelDynamic;
 
 			// First give the children some values
 			each(tree.children, function (child) {
@@ -253,15 +252,17 @@
 
 			// Set the values
 			val = pick(point && point.value, childrenTotal);
+			levelDynamic = (options.levelIsConstant ? tree.level : (tree.level - series.nodeMap[series.rootNode].level));
 			extend(tree, {
 				children: sorted,
 				childrenTotal: childrenTotal,
 				// Ignore this node if point is not visible
 				ignore: !(pick(point && point.visible, true) && (val > 0)),
 				isLeaf: tree.visible && !childrenTotal,
-				levelDynamic: (options.levelIsConstant ? tree.level : (tree.level - series.nodeMap[series.rootNode].level)),
+				levelDynamic: levelDynamic,
 				name: pick(point && point.name, ""),
-				val: val
+				val: val,
+				zIndex: 1000 - (levelDynamic * 2)
 			});
 			return tree;
 		},
@@ -643,7 +644,16 @@
 			Series.prototype.drawDataLabels.call(this);
 			this.dataLabelsGroup = dataLabelsGroup;
 		},
-		alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
+
+		/**
+		 * Over the alignment method by setting z index
+		 */
+		alignDataLabel: function (point) {
+			seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
+			if (point.dataLabel) {
+				point.dataLabel.attr({ zIndex: point.node.zIndex + 1 });
+			}
+		},
 
 		/**
 		 * Get presentational attributes
@@ -660,7 +670,7 @@
 				'stroke-width': point.borderWidth || level.borderWidth || stateOptions.borderWidth || options.borderWidth,
 				'dashstyle': point.borderDashStyle || level.borderDashStyle || stateOptions.borderDashStyle || options.borderDashStyle,
 				'fill': point.color || this.color,
-				'zIndex': 1000 - (point.node.levelDynamic * 2)
+				'zIndex': point.node.zIndex
 			};
 
 			// Brighten and hoist the hover nodes
@@ -697,11 +707,6 @@
 				}
 			}
 
-			// For data labels
-			if (!state) {
-				point.zIndex = attr.zIndex;
-			}
-
 			return attr;
 		},
 
@@ -714,20 +719,6 @@
 					return n.node.visible;
 				});
 
-			each(points, function (point) {
-
-				// Preliminary code in prepraration for HC5 that uses pointAttribs for all series
-				point.pointAttr = {
-					'': series.pointAttribs(point),
-					'hover': series.pointAttribs(point, 'hover'),
-					'select': {}
-				};
-				
-				// @todo Move this to drawDataLabels
-				if (point.dataLabel) {
-					point.dataLabel.attr({ zIndex: point.zIndex + 1 });
-				}
-			});
 			// Call standard drawPoints
 			seriesTypes.column.prototype.drawPoints.call(this);
 
@@ -735,7 +726,6 @@
 				var cursor,
 					drillId;
 				if (point.graphic) {
-					point.graphic.attr(point.pointAttr['']); // @todo What is the purpose of this?
 					// If drillToNode is allowed, set a point cursor on clickables & add drillId to point 
 					if (series.options.allowDrillToNode) {
 						drillId = point.drillId = series.options.interactByLeaf ? series.drillToByLeaf(point) : series.drillToByGroup(point);
