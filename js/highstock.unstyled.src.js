@@ -22509,6 +22509,7 @@ extend(defaultOptions, {
 				}
 			}
 		},
+		height: 35, // reserved space for buttons and input // docs
 		inputPosition: {
 			align: 'right'
 		},
@@ -22744,7 +22745,7 @@ RangeSelector.prototype = {
 		rangeSelector.options = options;
 		rangeSelector.buttons = [];
 		
-		chart.extraTopMargin = 35;
+		chart.extraTopMargin = options.height;
 		rangeSelector.buttonOptions = buttonOptions;
 
 		addEvent(chart.container, 'mousedown', blurInputs);
@@ -23033,7 +23034,7 @@ RangeSelector.prototype = {
 	getPosition: function () {
 		var chart = this.chart,
 			options = chart.options.rangeSelector,
-			buttonTop = pick((options.buttonPosition || {}).y, chart.plotTop - chart.axisOffset[0] - 35);
+			buttonTop = pick((options.buttonPosition || {}).y, chart.plotTop - chart.axisOffset[0] - options.height);
 			
 		return {
 			buttonTop: buttonTop,
