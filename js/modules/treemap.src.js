@@ -24,7 +24,7 @@
 		Color = H.Color,
 		eachObject = function (list, func, context) {
 			var key;
-			context = pick(context, this);
+			context = context || this;
 			for (key in list) {
 				if (list.hasOwnProperty(key)) {
 					func.call(context, list[key], key, list);
@@ -32,8 +32,8 @@
 			}
 		},
 		reduce = function (arr, func, previous, context) {
-			context = pick(context, this);
-			arr = pick(arr, []); // @note should each be able to handle empty values automatically?
+			context = context || this;
+			arr = arr || []; // @note should each be able to handle empty values automatically?
 			each(arr, function (current, i) {
 				previous = func.call(context, previous, current, i, arr);
 			});
@@ -42,7 +42,7 @@
 		// @todo find correct name for this function. 
 		recursive = function (item, func, context) {
 			var next;
-			context = pick(context, this);
+			context = context || this;
 			next = func.call(context, item);
 			if (next !== false) {
 				recursive(next, func, context);
