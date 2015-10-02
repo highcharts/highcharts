@@ -4098,7 +4098,7 @@ SVGRenderer.prototype = {
 			style;
 
 		fontSize = fontSize || this.style.fontSize;
-		if (elem && win.getComputedStyle) {
+		if (!fontSize && elem && win.getComputedStyle) {
 			elem = elem.element || elem; // SVGElement
 			style = win.getComputedStyle(elem, "");
 			fontSize = style && style.fontSize; // #4309, the style doesn't exist inside a hidden iframe in Firefox
