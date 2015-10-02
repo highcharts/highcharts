@@ -23,7 +23,7 @@
 		Color = H.Color,
 		eachObject = function (list, func, context) {
 			var key;
-			context = pick(context, this);
+			context = context || this;
 			for (key in list) {
 				if (list.hasOwnProperty(key)) {
 					func.call(context, list[key], key, list);
@@ -31,8 +31,8 @@
 			}
 		},
 		reduce = function (arr, func, previous, context) {
-			context = pick(context, this);
-			arr = pick(arr, []); // @note should each be able to handle empty values automatically?
+			context = context || this;
+			arr = arr || []; // @note should each be able to handle empty values automatically?
 			each(arr, function (current, i) {
 				previous = func.call(context, previous, current, i, arr);
 			});
@@ -41,7 +41,7 @@
 		// @todo find correct name for this function. 
 		recursive = function (item, func, context) {
 			var next;
-			context = pick(context, this);
+			context = context || this;
 			next = func.call(context, item);
 			if (next !== false) {
 				recursive(next, func, context);
@@ -90,12 +90,7 @@
 	// Stolen from heatmap	
 	var colorSeriesMixin = {
 		// mapping between SVG attributes and the corresponding options
-		pointAttrToOptions: { 
-			stroke: 'borderColor',
-			'stroke-width': 'borderWidth',
-			fill: 'color',
-			dashstyle: 'borderDashStyle'
-		},
+		pointAttrToOptions: {},
 		pointArrayMap: ['value'],
 		axisTypes: seriesTypes.heatmap ? ['xAxis', 'yAxis', 'colorAxis'] : ['xAxis', 'yAxis'],
 		optionalAxis: 'colorAxis',
@@ -118,7 +113,7 @@
 					}
 				} else {
 					if (this.dataLabel) {
-						this.dataLabel.attr({ zIndex: (this.pointAttr[''].zIndex + 1) });
+						this.dataLabel.attr({ zIndex: this.zIndex + 1 });
 					}
 				}
 			},
@@ -186,6 +181,13 @@
 			});
 			this.setTreeValues(tree);
 			return tree;
+		},
+		init: function (chart, options) {
+			var series = this;
+			Series.prototype.init.call(series, chart, options);
+			if (series.options.allowDrillToNode) {
+				series.drillTo();
+			}
 		},
 		buildNode: function (id, i, level, list, parent) {
 			var series = this,
@@ -642,6 +644,67 @@
 			this.dataLabelsGroup = dataLabelsGroup;
 		},
 		alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
+
+		/**
+		 * Get presentational attributes
+		 */
+		pointAttribs: function (point, state) {
+			var level = this.levelMap[point.node.levelDynamic] || {},
+				options = this.options,
+				attr,
+				stateOptions = (state && options.states[state]) || {};
+
+			// Set attributes by precedence. Point trumps level trumps series.
+			attr = {
+				'stroke': point.borderColor || level.borderColor || stateOptions.borderColor || options.borderColor,
+				'stroke-width': point.borderWidth || level.borderWidth || stateOptions.borderWidth || options.borderWidth,
+				'dashstyle': point.borderDashStyle || level.borderDashStyle || stateOptions.borderDashStyle || options.borderDashStyle,
+				'fill': point.color || this.color,
+				'zIndex': 1000 - (point.node.levelDynamic * 2)
+			};
+
+			// Brighten and hoist the hover nodes
+			if (state) {
+				attr.fill = Color(attr.fill).brighten(stateOptions.brightness).get();
+				if (state === 'hover') {
+					attr.zIndex = 1001;
+				}
+			}
+
+			// If not a leaf, then remove fill
+			if (!point.node.isLeaf) {
+				if (pick(options.interactByLeaf, !options.allowDrillToNode)) {
+					if (state === 'hover') {
+						delete attr.fill;
+					} else {
+						attr.fill = 'none';
+					}
+				} else {
+					// TODO: let users set the opacity
+					attr.fill = Color(attr.fill).setOpacity(
+						state === 'hover' ? 0.75 : 0.15
+					).get();
+				}
+			}
+
+			// Hide levels above the current view
+			if (point.node.level <= this.nodeMap[this.rootNode].level) {
+				if (state === 'hover') {
+					delete attr.fill;
+				} else {
+					attr.fill = 'none';
+					attr.zIndex = 0;
+				}
+			}
+
+			// For data labels
+			if (!state) {
+				point.zIndex = attr.zIndex;
+			}
+
+			return attr;
+		},
+
 		/**
 		* Extending ColumnSeries drawPoints
 		*/
@@ -649,72 +712,38 @@
 			var series = this,
 				points = grep(series.points, function (n) {
 					return n.node.visible;
-				}),
-				seriesOptions = series.options,
-				attr,
-				hover,
-				level;
-			each(points, function (point) {
-				level = series.levelMap[point.node.levelDynamic];
-				attr = {
-					stroke: seriesOptions.borderColor,
-					'stroke-width': seriesOptions.borderWidth,
-					dashstyle: seriesOptions.borderDashStyle,
-					r: 0, // borderRadius gives wrong size relations and should always be disabled
-					fill: pick(point.color, series.color)
-				};
-				// Overwrite standard series options with level options			
-				if (level) {
-					attr.stroke = level.borderColor || attr.stroke;
-					attr['stroke-width'] = level.borderWidth || attr['stroke-width'];
-					attr.dashstyle = level.borderDashStyle || attr.dashstyle;
-				}
-				// Merge with point attributes
-				attr.stroke = point.borderColor || attr.stroke;
-				attr['stroke-width'] = point.borderWidth || attr['stroke-width'];
-				attr.dashstyle = point.borderDashStyle || attr.dashstyle;
-				attr.zIndex = (1000 - (point.node.levelDynamic * 2));
+				});
 
-				// Make a copy to prevent overwriting individual props
-				point.pointAttr = merge(point.pointAttr);
-				hover = point.pointAttr.hover;
-				hover.zIndex = 1001;
-				hover.fill = Color(attr.fill).brighten(seriesOptions.states.hover.brightness).get();
-				// If not a leaf, then remove fill
-				if (!point.node.isLeaf) {
-					if (pick(seriesOptions.interactByLeaf, !seriesOptions.allowDrillToNode)) {
-						attr.fill = 'none';
-						delete hover.fill;
-					} else {
-						// TODO: let users set the opacity
-						attr.fill = Color(attr.fill).setOpacity(0.15).get();
-						hover.fill = Color(hover.fill).setOpacity(0.75).get();
-					}
-				}
-				if (point.node.level <= series.nodeMap[series.rootNode].level) {
-					attr.fill = 'none';
-					attr.zIndex = 0;
-					delete hover.fill;
-				}
-				point.pointAttr[''] = H.extend(point.pointAttr[''], attr);
+			each(points, function (point) {
+
+				// Preliminary code in prepraration for HC5 that uses pointAttribs for all series
+				point.pointAttr = {
+					'': series.pointAttribs(point),
+					'hover': series.pointAttribs(point, 'hover'),
+					'select': {}
+				};
+				
 				// @todo Move this to drawDataLabels
 				if (point.dataLabel) {
-					point.dataLabel.attr({ zIndex: (point.pointAttr[''].zIndex + 1) });
+					point.dataLabel.attr({ zIndex: point.zIndex + 1 });
 				}
 			});
 			// Call standard drawPoints
 			seriesTypes.column.prototype.drawPoints.call(this);
 
 			each(points, function (point) {
+				var cursor,
+					drillId;
 				if (point.graphic) {
-					point.graphic.attr(point.pointAttr['']);
+					point.graphic.attr(point.pointAttr['']); // @todo What is the purpose of this?
+					// If drillToNode is allowed, set a point cursor on clickables & add drillId to point 
+					if (series.options.allowDrillToNode) {
+						drillId = point.drillId = series.options.interactByLeaf ? series.drillToByLeaf(point) : series.drillToByGroup(point);
+						cursor = drillId ? "pointer" : "default";
+						point.graphic.css({ cursor: cursor });
+					}
 				}
 			});
-
-			// Set click events on points 
-			if (seriesOptions.allowDrillToNode) {
-				series.drillTo();
-			}
 		},
 		/**
 		 * Inserts an element into an array, sorted by a condition.
@@ -743,34 +772,17 @@
 		* Add drilling on the suitable points
 		*/
 		drillTo: function () {
-			var series = this,
-				points = series.points;
-			each(points, function (point) {
-				var drillId,
+			var series = this;
+			H.addEvent(series, 'click', function (event) {
+				var point = event.point,
+					drillId = point.drillId,
 					drillName;
-				H.removeEvent(point, 'click.drillTo');
-				if (point.graphic) {
-					point.graphic.css({ cursor: 'default' });
-				}
-
-				// Get the drill to id
-				if (series.options.interactByLeaf) {
-					drillId = series.drillToByLeaf(point);
-				} else {
-					drillId = series.drillToByGroup(point);
-				}
-
 				// If a drill id is returned, add click event and cursor. 
 				if (drillId) {
 					drillName = series.nodeMap[series.rootNode].name || series.rootNode;
-					if (point.graphic) {
-						point.graphic.css({ cursor: 'pointer' });
-					}
-					H.addEvent(point, 'click.drillTo', function () {
-						point.setState(''); // Remove hover
-						series.drillToNode(drillId);
-						series.showDrillUpButton(drillName);
-					});
+					point.setState(''); // Remove hover
+					series.drillToNode(drillId);
+					series.showDrillUpButton(drillName);
 				}
 			});
 		},
