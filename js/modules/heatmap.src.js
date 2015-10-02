@@ -526,7 +526,8 @@ wrap(Legend.prototype, 'getAllItems', function (proceed) {
 		colorSeriesMixin,
 
 		each = H.each,
-		noop = H.noop;	
+		noop = H.noop,
+		seriesTypes = H.seriesTypes;
 
 /**
  * Mixin for maps and heatmaps
@@ -549,15 +550,6 @@ colorPointMixin = H.colorPointMixin = {
 };
 
 colorSeriesMixin = H.colorSeriesMixin = {
-
-	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		stroke: 'borderColor',
-		'stroke-width': 'borderWidth',
-		/*= if (build.classic) { =*/
-		dashstyle: 'dashStyle',
-		/*= } =*/
-		fill: 'color'
-	},
 	pointArrayMap: ['value'],
 	axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
 	optionalAxis: 'colorAxis',
@@ -565,6 +557,8 @@ colorSeriesMixin = H.colorSeriesMixin = {
 	getSymbol: noop,
 	parallelArrays: ['x', 'y', 'value'],
 	colorKey: 'value',
+
+	pointAttribs: seriesTypes.column.prototype.pointAttribs,
 	
 	/**
 	 * In choropleth maps, the color is a result of the value, so this needs translation too

@@ -640,7 +640,8 @@ wrap(Legend.prototype, 'getAllItems', function (proceed) {
 		colorSeriesMixin,
 
 		each = H.each,
-		noop = H.noop;	
+		noop = H.noop,
+		seriesTypes = H.seriesTypes;
 
 /**
  * Mixin for maps and heatmaps
@@ -663,15 +664,6 @@ colorPointMixin = H.colorPointMixin = {
 };
 
 colorSeriesMixin = H.colorSeriesMixin = {
-
-	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		stroke: 'borderColor',
-		'stroke-width': 'borderWidth',
-		/*= if (build.classic) { =*/
-		dashstyle: 'dashStyle',
-		/*= } =*/
-		fill: 'color'
-	},
 	pointArrayMap: ['value'],
 	axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
 	optionalAxis: 'colorAxis',
@@ -679,6 +671,8 @@ colorSeriesMixin = H.colorSeriesMixin = {
 	getSymbol: noop,
 	parallelArrays: ['x', 'y', 'value'],
 	colorKey: 'value',
+
+	pointAttribs: seriesTypes.column.prototype.pointAttribs,
 	
 	/**
 	 * In choropleth maps, the color is a result of the value, so this needs translation too
@@ -1052,6 +1046,9 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 		hover: {
 			brightness: 0.2,
 			halo: null
+		},
+		select: {
+			color: '#C0C0C0'
 		}
 	}
 });
@@ -1098,6 +1095,8 @@ var MapAreaPoint = H.MapAreaPoint = extendClass(Point, extend({
 			this.series.onMouseOut(e);
 		}
 	},
+	/*= if (build.classic) { =*/
+	// Todo: check unstyled
 	/**
 	 * Custom animation for tweening out the colors. Animation reduces blinking when hovering
 	 * over islands and coast lines. We run a custom implementation of animation becuase we
@@ -1108,15 +1107,12 @@ var MapAreaPoint = H.MapAreaPoint = extendClass(Point, extend({
 		var point = this,
 			start = +new Date(),
 			normalColor = Color(point.color),
-			hoverColor = Color(point.pointAttr.hover.fill),
+			hoverColor = Color(point.series.pointAttribs(point, 'hover').fill),
 			animation = point.series.options.states.normal.animation,
 			duration = animation && (animation.duration || 500),
 			fill;
 
 		if (duration && normalColor.rgba.length === 4 && hoverColor.rgba.length === 4 && point.state !== 'select') {
-			fill = point.pointAttr[''].fill;
-			delete point.pointAttr[''].fill; // avoid resetting it in Point.setState
-
 			clearTimeout(point.colorInterval);
 			point.colorInterval = setInterval(function () {
 				var pos = (new Date() - start) / duration,
@@ -1132,12 +1128,11 @@ var MapAreaPoint = H.MapAreaPoint = extendClass(Point, extend({
 				}
 			}, 13);
 		}
+		point.isFading = true;
 		Point.prototype.onMouseOut.call(point);
-
-		if (fill) {
-			point.pointAttr[''].fill = fill;
-		}
+		point.isFading = null;
 	},
+	/*= } =*/
 
 	/**
 	 * Zoom the chart to view a specific area point
@@ -1452,13 +1447,33 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				point.shapeArgs = {
 					d: series.translatePath(point.path)
 				};
-				if (supportsVectorEffect) {
-					point.shapeArgs['vector-effect'] = 'non-scaling-stroke';
-				}
 			}
 		});
 		
 		series.translateColors();
+	},
+
+	/**
+	 * Get presentational attributes
+	 */
+	pointAttribs: function (point, state) {
+		var attr = seriesTypes.column.prototype.pointAttribs.call(this, point, state);
+
+		// Prevent flickering whan called from setState
+		if (point.isFading) {
+			delete attr.fill;
+		}
+
+		// If vector-effect is not supported, we set the stroke-width on the group element
+		// and let all point graphics inherit. That way we don't have to iterate over all 
+		// points to update the stroke-width on zooming. TODO: Check unstyled
+		if (supportsVectorEffect) {
+			attr['vector-effect'] = 'non-scaling-stroke';
+		} else {
+			attr['stroke-width'] = 'inherit';
+		}
+
+		return attr;
 	},
 	
 	/** 
@@ -1493,28 +1508,18 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		// Draw the shapes again
 		if (series.doFullTranslate()) {
 
-			// Individual point actions	
-			if (chart.hasRendered && series.pointAttrToOptions.fill === 'color') {
+			// Individual point actions. TODO: Check unstyled.
+			/*= if (build.classic) { =*/
+			if (chart.hasRendered) {
 				each(series.points, function (point) {
 
-					// Reset color on update/redraw
+					// Restore state color on update/redraw (#3529)
 					if (point.shapeArgs) {
-						point.shapeArgs.fill = point.pointAttr[pick(point.state, '')].fill; // #3529
+						point.shapeArgs.fill = series.pointAttribs(point, point.state).fill;
 					}
 				});
 			}
-
-			// If vector-effect is not supported, we set the stroke-width on the group element
-			// and let all point graphics inherit. That way we don't have to iterate over all 
-			// points to update the stroke-width on zooming.
-			if (!supportsVectorEffect) {
-				each(series.points, function (point) {
-					var attr = point.pointAttr[''];
-					if (attr['stroke-width'] === series.pointAttr['']['stroke-width']) {
-						attr['stroke-width'] = 'inherit';
-					}
-				});
-			}
+			/*= } =*/
 
 			// Draw them in transformGroup
 			series.group = series.transformGroup;
@@ -1741,13 +1746,17 @@ defaultPlotOptions.mapline = merge(defaultPlotOptions.map, {
 });
 seriesTypes.mapline = extendClass(seriesTypes.map, {
 	type: 'mapline',
-	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		/*= if (build.classic) { =*/
-		dashstyle: 'dashStyle',
-		/*= } =*/
-		stroke: 'color',
-		'stroke-width': 'lineWidth',
-		fill: 'fillColor'
+	/**
+	 * Get presentational attributes
+	 */
+	pointAttribs: function (point, state) {
+		var attr = seriesTypes.map.prototype.pointAttribs.call(this, point, state);
+
+		// The difference from a map series is that the stroke takes the point color
+		attr.stroke = attr.fill;
+		attr.fill = this.options.fillColor;
+
+		return attr;
 	},
 	drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
 });

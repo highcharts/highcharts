@@ -49,16 +49,19 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 	},
 	pointValKey: 'high', // defines the top of the tracker
 
-	/*= if (build.classic) { =*/	
 	/**
-	 * One-to-one mapping from options to SVG attributes
+	 * Get presentational attributes
 	 */
-	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		fill: 'fillColor',
-		stroke: 'color',
-		'stroke-width': 'lineWidth'
+	pointAttribs: function (point) {
+		var options = this.options,
+			color = (point && point.color) || this.color;
+
+		return {
+			'fill': options.fillColor || color,
+			'stroke': options.lineColor || color,
+			'stroke-width': options.lineWidth || 0
+		};
 	},
-	/*= } =*/
 
 	/**
 	 * Disable data labels for box plot
@@ -94,7 +97,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			options = series.options,
 			chart = series.chart,
 			renderer = chart.renderer,
-			pointAttr,
+			boxAttr,
 			q1Plot,
 			q3Plot,
 			highPlot,
@@ -131,8 +134,6 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			color = point.color || series.color;
 			
 			if (point.plotY !== undefined) {
-
-				pointAttr = point.pointAttr[point.selected ? 'selected' : ''];
 
 				// crisp vector coordinates
 				width = shapeArgs.width;
@@ -179,7 +180,8 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				
 				// The box
 				if (doQuartiles) {
-					crispCorr = (pointAttr['stroke-width'] % 2) / 2;
+					boxAttr = series.pointAttribs(point);
+					crispCorr = (boxAttr['stroke-width'] % 2) / 2;
 					crispX = Math.floor(crispX) + crispCorr;
 					q1Plot = Math.floor(q1Plot) + crispCorr;
 					q3Plot = Math.floor(q3Plot) + crispCorr;
@@ -264,7 +266,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					}
 					if (doQuartiles) {
 						point.box = renderer.path(boxPath)
-							.attr(pointAttr)
+							.attr(boxAttr)
 							.add(graphic);
 					}	
 					point.medianShape = renderer.path(medianPath)

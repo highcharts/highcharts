@@ -27,49 +27,22 @@ defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
 // 2 - Create the CandlestickSeries object
 seriesTypes.candlestick = extendClass(seriesTypes.ohlc, {
 	type: 'candlestick',
-	/*= if (build.classic) { =*/
-	/**
-	 * One-to-one mapping from options to SVG attributes
-	 */
-	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		fill: 'color',
-		stroke: 'lineColor',
-		'stroke-width': 'lineWidth'
-	},
-	/*= } =*/
-		
-	upColorProp: 'fill',
 
 	/**
 	 * Postprocess mapping between options and SVG attributes
 	 */
-	getAttribs: function () {
-		seriesTypes.ohlc.prototype.getAttribs.apply(this, arguments);
-		var series = this,
-			options = series.options,
-			stateOptions = options.states,			
-			upLineColor = options.upLineColor || options.lineColor,
-			hoverStroke = stateOptions.hover.upLineColor || upLineColor, 
-			selectStroke = stateOptions.select.upLineColor || upLineColor;
+	pointAttribs: function (point, state) {
+		var attribs = seriesTypes.column.prototype.pointAttribs.call(this, point, state),
+			options = this.options,
+			isUp = point.open < point.close,
+			stroke = options.lineColor || this.color;
 
-		// Add custom line color for points going up (close > open).
-		// Fill is handled by OHLCSeries' getAttribs.
-		each(series.points, function (point) {
-			if (point.open < point.close) {
+		attribs['stroke-width'] = options.lineWidth;
 
-				// If an individual line color is set, we need to merge the
-				// point attributes, because they are shared between all up
-				// points by inheritance from OHCLSeries.
-				if (point.lineColor) {
-					point.pointAttr = merge(point.pointAttr);
-					upLineColor = point.lineColor;
-				}
+		attribs.fill = point.options.color || (isUp ? (options.upColor || this.color) : this.color);
+		attribs.stroke = point.lineColor || (isUp ? (options.upLineColor || stroke) : stroke);
 
-				point.pointAttr[''].stroke = upLineColor;
-				point.pointAttr.hover.stroke = hoverStroke;
-				point.pointAttr.select.stroke = selectStroke;
-			}
-		});
+		return attribs;
 	},
 
 	/**
@@ -80,7 +53,6 @@ seriesTypes.candlestick = extendClass(seriesTypes.ohlc, {
 			points = series.points,
 			chart = series.chart,
 			pointAttr,
-			seriesPointAttr = series.pointAttr[''],
 			plotOpen,
 			plotClose,
 			topBox,
@@ -99,7 +71,7 @@ seriesTypes.candlestick = extendClass(seriesTypes.ohlc, {
 			graphic = point.graphic;
 			if (point.plotY !== undefined) {
 
-				pointAttr = point.pointAttr[point.selected ? 'selected' : ''] || seriesPointAttr;
+				pointAttr = series.pointAttribs(point, point.selected && 'select');
 
 				// crisp vector coordinates
 				crispCorr = (pointAttr['stroke-width'] % 2) / 2;

@@ -28,7 +28,6 @@ Point.prototype = {
 		point.series = series;
 		point.color = series.color; // #3445
 		point.applyOptions(options, x);
-		point.pointAttr = {};
 
 		if (series.options.colorByPoint) {
 			colors = series.options.colors || series.chart.options.colors;
@@ -126,6 +125,28 @@ Point.prototype = {
 			}
 		}
 		return ret;
+	},
+
+	/**
+	 * Return the zone that the point belongs to
+	 */
+	getZone: function () {
+		var series = this.series,
+			zones = series.zones,
+			zoneAxis = series.zoneAxis || 'y',
+			i = 0,
+			zone;
+
+		zone = zones[i];
+		while (this[zoneAxis] >= zone.value) {				
+			zone = zones[++i];
+		}
+
+		if (zone && zone.color && !this.options.color) {
+			this.color = zone.color;
+		}
+
+		return zone;
 	},
 
 	/**

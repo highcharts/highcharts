@@ -36,35 +36,20 @@ seriesTypes.ohlc = extendClass(seriesTypes.column, {
 		return [point.open, point.high, point.low, point.close];
 	},
 	pointValKey: 'high',
-	/*= if (build.classic) { =*/
-	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		stroke: 'color',
-		'stroke-width': 'lineWidth'
-	},
-	/*= } =*/
-	upColorProp: 'stroke',
 
 	/**
 	 * Postprocess mapping between options and SVG attributes
 	 */
-	getAttribs: function () {
-		seriesTypes.column.prototype.getAttribs.apply(this, arguments);
-		var series = this,
-			options = series.options,
-			stateOptions = options.states,
-			upColor = options.upColor || series.color,
-			seriesDownPointAttr = merge(series.pointAttr),
-			upColorProp = series.upColorProp;
+	pointAttribs: function (point, state) {
+		var attribs = seriesTypes.column.prototype.pointAttribs.call(this, point, state),
+			options = this.options;
 
-		seriesDownPointAttr[''][upColorProp] = upColor;
-		seriesDownPointAttr.hover[upColorProp] = stateOptions.hover.upColor || upColor;
-		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
+		delete attribs.fill;
+		attribs['stroke-width'] = options.lineWidth;
 
-		each(series.points, function (point) {
-			if (point.open < point.close && !point.options.color) {
-				point.pointAttr = seriesDownPointAttr;
-			}
-		});
+		attribs.stroke = point.options.color || (point.open < point.close ? (options.upColor || this.color) : this.color);
+
+		return attribs;
 	},
 
 	/**
@@ -110,7 +95,7 @@ seriesTypes.ohlc = extendClass(seriesTypes.column, {
 			if (point.plotY !== undefined) {
 
 				graphic = point.graphic;
-				pointAttr = point.pointAttr[point.selected ? 'selected' : ''] || series.pointAttr[''];
+				pointAttr = series.pointAttribs(point, point.selected && 'select');
 
 				// crisp vector coordinates
 				crispCorr = (pointAttr['stroke-width'] % 2) / 2;

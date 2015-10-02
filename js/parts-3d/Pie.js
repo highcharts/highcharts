@@ -64,32 +64,22 @@ wrap(seriesTypes.pie.prototype.pointClass.prototype, 'haloPath', function (proce
 	return this.series.chart.is3d() ? [] : proceed.call(this, args[1]);
 });
 
+wrap(seriesTypes.pie.prototype, 'pointAttribs', function (proceed, point, state) {
+	var attr = proceed.call(this, point, state),
+		options = this.options;
+
+	if (this.chart.is3d()) {
+		attr.stroke = options.edgeColor || options.borderColor || point.color || this.color;
+		attr['stroke-width'] = pick(options.edgeWidth, 1);
+	}
+
+	return attr;
+});
+
 wrap(seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
 	var seriesGroup = this.group,
 		options = this.options,
 		states = options.states;
-
-	// Do not do this if the chart is not 3D
-	if (this.chart.is3d()) {
-		// Set the border color to the fill color to provide a smooth edge
-		this.borderWidth = options.borderWidth = options.edgeWidth || 1;
-		this.borderColor = options.edgeColor = pick(options.edgeColor, options.borderColor, undefined);
-
-		states.hover.borderColor = pick(states.hover.edgeColor, this.borderColor);		
-		states.hover.borderWidth = pick(states.hover.edgeWidth, this.borderWidth);	
-		states.select.borderColor = pick(states.select.edgeColor, this.borderColor);		
-		states.select.borderWidth = pick(states.select.edgeWidth, this.borderWidth);
-
-		each(this.data, function (point) {
-			var pointAttr = point.pointAttr;
-			pointAttr[''].stroke = point.series.borderColor || point.color;
-			pointAttr['']['stroke-width'] = point.series.borderWidth;
-			pointAttr.hover.stroke = states.hover.borderColor;	
-			pointAttr.hover['stroke-width'] = states.hover.borderWidth;
-			pointAttr.select.stroke = states.select.borderColor;
-			pointAttr.select['stroke-width'] = states.select.borderWidth;
-		});	
-	}
 
 	proceed.apply(this, [].slice.call(arguments, 1));
 

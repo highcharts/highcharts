@@ -533,11 +533,9 @@ extend(Point.prototype, {
 			radius,
 			halo = series.halo,
 			haloOptions,
-			newSymbol,
-			pointAttr;
+			newSymbol;
 
 		state = state || ''; // empty string
-		pointAttr = point.pointAttr[state] || series.pointAttr[state];
 
 		if (
 				// already has this state
@@ -555,7 +553,7 @@ extend(Point.prototype, {
 			return;
 		}
 
-		radius = (markerStateOptions.radius || markerOptions.radius) + (markerStateOptions.radiusPlus || 0);
+		radius = markerStateOptions.radius || (markerOptions.radius + (markerStateOptions.radiusPlus || 0));
 		
 		// Apply hover styles to the existing point
 		if (point.graphic) {
@@ -565,7 +563,7 @@ extend(Point.prototype, {
 				.addClass('highcharts-point-' + state);
 
 			point.graphic.attr(merge(
-				pointAttr,
+				series.pointAttribs(point, state),
 				radius ? { // new symbol attributes (#507, #612)
 					x: plotX - radius,
 					y: plotY - radius,
@@ -600,7 +598,7 @@ extend(Point.prototype, {
 							2 * radius,
 							2 * radius
 						)
-						.attr(pointAttr)
+						.attr(series.pointAttribs(point, state))
 						.add(series.markerGroup);
 						stateMarkerGraphic.currentSymbol = newSymbol;
 					}

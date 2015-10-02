@@ -11,14 +11,19 @@ defaultPlotOptions.mapline = merge(defaultPlotOptions.map, {
 });
 seriesTypes.mapline = extendClass(seriesTypes.map, {
 	type: 'mapline',
-	/*= if (build.classic) { =*/
-	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		dashstyle: 'dashStyle',
-		stroke: 'color',
-		'stroke-width': 'lineWidth',
-		fill: 'fillColor'
+	/**
+	 * Get presentational attributes
+	 */
+	strokeWidthOption: 'lineWidth',
+	pointAttribs: function (point, state) {
+		var attr = seriesTypes.map.prototype.pointAttribs.call(this, point, state);
+
+		// The difference from a map series is that the stroke takes the point color
+		attr.stroke = attr.fill;
+		attr.fill = this.options.fillColor;
+
+		return attr;
 	},
-	/*= } =*/
 	drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
 });
 	return H;

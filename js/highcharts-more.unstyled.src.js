@@ -1021,8 +1021,8 @@ seriesTypes.areasplinerange = extendClass(seriesTypes.arearange, {
 		drawPoints: colProto.drawPoints,
 		drawTracker: colProto.drawTracker,
 		animate: colProto.animate,
-		getColumnMetrics: colProto.getColumnMetrics
-		
+		getColumnMetrics: colProto.getColumnMetrics,
+		pointAttribs: colProto.pointAttribs
 	});
 
 	return H;
@@ -1336,7 +1336,19 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 	},
 	pointValKey: 'high', // defines the top of the tracker
 
-	
+	/**
+	 * Get presentational attributes
+	 */
+	pointAttribs: function (point) {
+		var options = this.options,
+			color = (point && point.color) || this.color;
+
+		return {
+			'fill': options.fillColor || color,
+			'stroke': options.lineColor || color,
+			'stroke-width': options.lineWidth || 0
+		};
+	},
 
 	/**
 	 * Disable data labels for box plot
@@ -1372,7 +1384,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			options = series.options,
 			chart = series.chart,
 			renderer = chart.renderer,
-			pointAttr,
+			boxAttr,
 			q1Plot,
 			q3Plot,
 			highPlot,
@@ -1409,8 +1421,6 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			color = point.color || series.color;
 			
 			if (point.plotY !== undefined) {
-
-				pointAttr = point.pointAttr[point.selected ? 'selected' : ''];
 
 				// crisp vector coordinates
 				width = shapeArgs.width;
@@ -1455,7 +1465,8 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				
 				// The box
 				if (doQuartiles) {
-					crispCorr = (pointAttr['stroke-width'] % 2) / 2;
+					boxAttr = series.pointAttribs(point);
+					crispCorr = (boxAttr['stroke-width'] % 2) / 2;
 					crispX = Math.floor(crispX) + crispCorr;
 					q1Plot = Math.floor(q1Plot) + crispCorr;
 					q3Plot = Math.floor(q3Plot) + crispCorr;
@@ -1540,7 +1551,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					}
 					if (doQuartiles) {
 						point.box = renderer.path(boxPath)
-							.attr(pointAttr)
+							.attr(boxAttr)
 							.add(graphic);
 					}	
 					point.medianShape = renderer.path(medianPath)
@@ -1645,8 +1656,6 @@ defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
 // 2 - Create the series object
 seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	type: 'waterfall',
-
-	upColorProp: 'fill',
 
 	pointValKey: 'y',
 
@@ -1801,34 +1810,23 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	/**
 	 * Postprocess mapping between options and SVG attributes
 	 */
-	getAttribs: function () {
-		seriesTypes.column.prototype.getAttribs.apply(this, arguments);
+	pointAttribs: function (point, state) {
 
-		var series = this,
-			options = series.options,
-			stateOptions = options.states,
-			upColor = options.upColor || series.color,
-			hoverColor = Color(upColor).brighten(0.1).get(),
-			seriesDownPointAttr = merge(series.pointAttr),
-			upColorProp = series.upColorProp;
+		var upColor = this.options.upColor,
+			attr;
 
-		seriesDownPointAttr[''][upColorProp] = upColor;
-		seriesDownPointAttr.hover[upColorProp] = stateOptions.hover.upColor || hoverColor;
-		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
+		// Set or reset up color (#3710, update to negative)
+		if (upColor && !point.options.color) {
+			point.color = point.y > 0 ? upColor : null;
+		}
 
-		each(series.points, function (point) {
-			if (!point.options.color) {
-				// Up color
-				if (point.y > 0) {
-					point.pointAttr = seriesDownPointAttr;
-					point.color = upColor;
+		attr = seriesTypes.column.prototype.pointAttribs.call(this, point, state);
 
-				// Down color (#3710, update to negative)
-				} else {
-					point.pointAttr = series.pointAttr;
-				}
-			}
-		});
+		// The dashStyle option in waterfall applies to the graph, not
+		// the points
+		delete attr.dashstyle;
+
+		return attr;
 	},
 
 	/**
@@ -1986,33 +1984,16 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	bubblePadding: true,
 	zoneAxis: 'z',
 	
-	
-
-	/**
-	 * Apply the fillOpacity to all fill positions
-	 */
-	applyOpacity: function (fill) {
+	pointAttribs: function (point, state) {
 		var markerOptions = this.options.marker,
-			fillOpacity = pick(markerOptions.fillOpacity, 0.5);
-		
-		// When called from Legend.colorizeItem, the fill isn't predefined
-		fill = fill || markerOptions.fillColor || this.color; 
-		
+			fillOpacity = pick(markerOptions.fillOpacity, 0.5),
+			attr = Series.prototype.pointAttribs.call(this, point, state);
+
 		if (fillOpacity !== 1) {
-			fill = Color(fill).setOpacity(fillOpacity).get('rgba');
+			attr.fill = Color(attr.fill).setOpacity(fillOpacity).get('rgba');
 		}
-		return fill;
-	},
-	
-	/**
-	 * Extend the convertAttribs method by applying opacity to the fill
-	 */
-	convertAttribs: function () {
-		var obj = Series.prototype.convertAttribs.apply(this, arguments);
-		
-		obj.fill = this.applyOpacity(obj.fill);
-		
-		return obj;
+
+		return attr;
 	},
 
 	/**

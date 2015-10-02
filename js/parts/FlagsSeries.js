@@ -56,16 +56,24 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	 * Inherit the initialization from base Series
 	 */
 	init: Series.prototype.init,
-	/*= if (build.classic) { =*/
 	/**
-	 * One-to-one mapping from options to SVG attributes
+	 * Get presentational attributes
 	 */
-	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		fill: 'fillColor',
-		stroke: 'color',
-		'stroke-width': 'lineWidth'
+	pointAttribs: function (point, state) {
+		var options = this.options,
+			color = (point && point.color) || this.color,
+			fill = options.fillColor;
+
+		if (state) {
+			fill = options.states[state].fillColor;
+		}
+
+		return {
+			'fill': fill || color,
+			'stroke': options.lineColor || color,
+			'stroke-width': (point && point.lineWidth) || options.lineWidth || 0
+		};
 	},
-	/*= } =*/
 	/**
 	 * Extend the translate method by placing the point on the related series
 	 */
@@ -165,7 +173,6 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	drawPoints: function () {
 		var series = this,
 			pointAttr,
-			seriesPointAttr = series.pointAttr[''],
 			points = series.points,
 			chart = series.chart,
 			renderer = chart.renderer,
@@ -205,7 +212,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			// only draw the point if y is defined and the flag is within the visible area
 			if (plotY !== undefined && plotX >= 0 && !outsideRight) {
 				// shortcuts
-				pointAttr = point.pointAttr[point.selected ? 'select' : ''] || seriesPointAttr;
+				pointAttr = series.pointAttribs(point);
 				if (graphic) { // update
 					graphic.attr({
 						x: plotX,

@@ -105,11 +105,11 @@ $(function () {
             color: 'black',
             data: [{
                 name: 'line1',
-                path: 'M0,-4500L2000,-8000',
+                path: 'M 0 -4500 L 2000 -8000',
                 lineWidth: 3
             }, {
                 name: 'line2',
-                path: 'M2200,-4200L0,-4500',
+                path: 'M 2200 -4200 L 0 -4500',
                 lineWidth: 1
             }]
         }]

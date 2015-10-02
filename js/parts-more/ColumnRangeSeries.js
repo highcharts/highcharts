@@ -72,9 +72,7 @@
 		drawTracker: colProto.drawTracker,
 		animate: colProto.animate,
 		getColumnMetrics: colProto.getColumnMetrics,
-		/*= if (build.classic) { =*/
-		pointAttrToOptions: colProto.pointAttrToOptions
-		/*= } =*/
+		pointAttribs: colProto.pointAttribs
 	});
 
 	return H;

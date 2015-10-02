@@ -54,6 +54,9 @@ defaultPlotOptions.map = merge(defaultPlotOptions.scatter, {
 		hover: {
 			brightness: 0.2,
 			halo: null
+		},
+		select: {
+			color: '#C0C0C0'
 		}
 	}
 });
@@ -112,15 +115,12 @@ var MapAreaPoint = H.MapAreaPoint = extendClass(Point, extend({
 		var point = this,
 			start = +new Date(),
 			normalColor = Color(point.color),
-			hoverColor = Color(point.pointAttr.hover.fill),
+			hoverColor = Color(point.series.pointAttribs(point, 'hover').fill),
 			animation = point.series.options.states.normal.animation,
 			duration = animation && (animation.duration || 500),
 			fill;
 
 		if (duration && normalColor.rgba.length === 4 && hoverColor.rgba.length === 4 && point.state !== 'select') {
-			fill = point.pointAttr[''].fill;
-			delete point.pointAttr[''].fill; // avoid resetting it in Point.setState
-
 			clearTimeout(point.colorInterval);
 			point.colorInterval = setInterval(function () {
 				var pos = (new Date() - start) / duration,
@@ -136,11 +136,9 @@ var MapAreaPoint = H.MapAreaPoint = extendClass(Point, extend({
 				}
 			}, 13);
 		}
+		point.isFading = true;
 		Point.prototype.onMouseOut.call(point);
-
-		if (fill) {
-			point.pointAttr[''].fill = fill;
-		}
+		point.isFading = null;
 	},
 	/*= } =*/
 
@@ -457,13 +455,33 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				point.shapeArgs = {
 					d: series.translatePath(point.path)
 				};
-				if (supportsVectorEffect) {
-					point.shapeArgs['vector-effect'] = 'non-scaling-stroke';
-				}
 			}
 		});
 		
 		series.translateColors();
+	},
+
+	/**
+	 * Get presentational attributes
+	 */
+	pointAttribs: function (point, state) {
+		var attr = seriesTypes.column.prototype.pointAttribs.call(this, point, state);
+
+		// Prevent flickering whan called from setState
+		if (point.isFading) {
+			delete attr.fill;
+		}
+
+		// If vector-effect is not supported, we set the stroke-width on the group element
+		// and let all point graphics inherit. That way we don't have to iterate over all 
+		// points to update the stroke-width on zooming. TODO: Check unstyled
+		if (supportsVectorEffect) {
+			attr['vector-effect'] = 'non-scaling-stroke';
+		} else {
+			attr['stroke-width'] = 'inherit';
+		}
+
+		return attr;
 	},
 	
 	/** 
@@ -500,28 +518,15 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 
 			// Individual point actions. TODO: Check unstyled.
 			/*= if (build.classic) { =*/
-			if (chart.hasRendered && series.pointAttrToOptions.fill === 'color') {
+			if (chart.hasRendered) {
 				each(series.points, function (point) {
 
-					// Reset color on update/redraw
+					// Restore state color on update/redraw (#3529)
 					if (point.shapeArgs) {
-						point.shapeArgs.fill = point.pointAttr[pick(point.state, '')].fill; // #3529
+						point.shapeArgs.fill = series.pointAttribs(point, point.state).fill;
 					}
 				});
 			}
-
-			// If vector-effect is not supported, we set the stroke-width on the group element
-			// and let all point graphics inherit. That way we don't have to iterate over all 
-			// points to update the stroke-width on zooming. TODO: Check unstyled
-			if (!supportsVectorEffect) {
-				each(series.points, function (point) {
-					var attr = point.pointAttr[''];
-					if (attr['stroke-width'] === series.pointAttr['']['stroke-width']) {
-						attr['stroke-width'] = 'inherit';
-					}
-				});
-			}
-
 			/*= } =*/
 
 			// Draw them in transformGroup
@@ -537,10 +542,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					}
 					if (point.properties && point.properties['hc-key']) {
 						point.graphic.addClass('highcharts-key-' + point.properties['hc-key'].toLowerCase());
-					}
-
-					if (!supportsVectorEffect) {
-						point.graphic['stroke-widthSetter'] = noop;
 					}
 				}
 			});

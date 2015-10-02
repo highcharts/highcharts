@@ -1,5 +1,6 @@
 (function (H) {
-	var defaultPlotOptions = H.defaultPlotOptions,
+	var Color = H.Color,
+		defaultPlotOptions = H.defaultPlotOptions,
 		defaultSeriesOptions = H.defaultSeriesOptions,
 		defined = H.defined,
 		each = H.each,
@@ -65,12 +66,6 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
  */
 seriesTypes.column = extendClass(Series, {
 	type: 'column',
-	/*= if (build.classic) { =*/
-	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		stroke: 'borderColor',
-		fill: 'color'
-	},
-	/*= } =*/
 	cropShoulder: 0,
 	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	trackerGroups: ['group', 'dataLabelsGroup'],
@@ -291,6 +286,54 @@ seriesTypes.column = extendClass(Series, {
 	drawGraph: noop,
 
 	/**
+	 * Get presentational attributes
+	 */
+	pointAttribs: function (point, state) {
+		var options = this.options,
+			stateOptions,
+			ret,
+			fill = (point && point.color) || this.color,
+			stroke = options.borderColor || this.color,
+			dashstyle = options.dashStyle,
+			strokeWidthOption = this.strokeWidthOption || 'borderWidth',
+			zone,
+			brightness;
+
+		if (point && this.zones.length) {
+			zone = point.getZone();
+			if (zone && zone.color) {
+				fill = zone.color;
+			}
+		}
+
+		// Select or hover states
+		if (state) {
+			stateOptions = options.states[state];
+			brightness = stateOptions.brightness;
+			fill = stateOptions.color || 
+				(brightness !== undefined && Color(fill).brighten(stateOptions.brightness).get()) ||
+				fill;
+			stroke = stateOptions.borderColor || stroke;
+			dashstyle = stateOptions.dashStyle || dashstyle;
+		}
+
+		ret = {
+			'fill': fill,
+			'stroke': stroke,
+			'stroke-width': point[strokeWidthOption] || options[strokeWidthOption] || this[strokeWidthOption] || 0
+		};
+		if (options.borderRadius) {
+			ret.r = options.borderRadius;
+		}
+
+		if (dashstyle) {
+			ret.dashstyle = dashstyle;
+		}
+
+		return ret;
+	},
+
+	/**
 	 * Draw the columns. For bars, the series.group is rotated, so the same coordinates
 	 * apply for columns and bars. This method is inherited by scatter series.
 	 *
@@ -301,40 +344,31 @@ seriesTypes.column = extendClass(Series, {
 			options = series.options,
 			renderer = chart.renderer,
 			animationLimit = options.animationLimit || 250,
-			shapeArgs,
-			borderRadius = options.borderRadius;
+			shapeArgs;
 
 		// draw the columns
 		each(series.points, function (point) {
 			var plotY = point.plotY,
-				graphic = point.graphic,
-				borderAttr = {};
+				graphic = point.graphic;
 
 			if (plotY !== undefined && !isNaN(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
 
-				if (borderRadius) {
-					borderAttr.r = borderRadius;
-				}
-
-				if (defined(series.borderWidth)) {
-					borderAttr['stroke-width'] = series.borderWidth;
-				};
-				
 				if (graphic) { // update
 					stop(graphic);
-					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs));
+					graphic[chart.pointCount < animationLimit ? 'animate' : 'attr'](
+						merge(shapeArgs)
+					);
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
-						.attr(borderAttr)
 						.addClass('highcharts-point' + (point.selected ? ' highcharts-point-select' : ''))
 						.add(series.group);
 
 					/*= if (build.classic) { =*/
 					// Presentational
 					graphic
-						.attr(point.pointAttr[point.selected ? 'select' : ''] || series.pointAttr[''])
+						.attr(series.pointAttribs(point, point.selected && 'select'))
 						.shadow(options.shadow, null, options.stacking && !options.borderRadius);
 					/*= } =*/
 				}

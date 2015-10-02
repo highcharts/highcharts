@@ -70,7 +70,7 @@ H.splitPath = function (path) {
 	path = path.replace(/^\s*/, "").replace(/\s*$/, "");
 	
 	// Split on spaces and commas
-	path = path.split(/[ ,]+/);
+	path = path.split(/[ ,,]+/); // Extra comma to escape gulp.scripts task
 	
 	// Parse numbers
 	for (i = 0; i < path.length; i++) {

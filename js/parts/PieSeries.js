@@ -193,14 +193,7 @@ seriesTypes.pie = extendClass(Series, {
 	noSharedTooltip: true,
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	axisTypes: [],
-	/*= if (build.classic) { =*/
-	pointAttrToOptions: { // mapping between SVG attributes and the corresponding options
-		stroke: 'borderColor',
-		'stroke-width': 'borderWidth',
-		fill: 'color'
-	},
-	/*= } =*/
-
+	pointAttribs: seriesTypes.column.prototype.pointAttribs,
 	/**
 	 * Animate the pies in
 	 */
@@ -446,7 +439,7 @@ seriesTypes.pie = extendClass(Series, {
 
 					/*= if (build.classic) { =*/
 					graphic
-						.attr(point.pointAttr[point.selected ? 'select' : ''])
+						.attr(series.pointAttribs(point, point.selected && 'select'))
 						.attr({ 'stroke-linejoin': 'round'})
 						.shadow(shadow, shadowGroup);
 					/*= } =*/

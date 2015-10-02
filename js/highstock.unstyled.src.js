@@ -1481,7 +1481,10 @@ H.defaultOptions = {
 		},
 		footerFormat: '',
 		//formatter: defaultFormatter,
+		/* todo: em font-size when finished comparing against HC4
 		headerFormat: '<span style="font-size: 0.85em">{point.key}</span><br/>',
+		*/
+		headerFormat: '<span style="font-size: 10px">{point.key}</span><br/>',
 		padding: 8, // docs
 		pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>',
 		//shape: 'callout',
@@ -13032,7 +13035,6 @@ Point.prototype = {
 		point.series = series;
 		point.color = series.color; // #3445
 		point.applyOptions(options, x);
-		point.pointAttr = {};
 
 		if (series.options.colorByPoint) {
 			colors = series.options.colors || series.chart.options.colors;
@@ -13128,6 +13130,28 @@ Point.prototype = {
 			}
 		}
 		return ret;
+	},
+
+	/**
+	 * Return the zone that the point belongs to
+	 */
+	getZone: function () {
+		var series = this.series,
+			zones = series.zones,
+			zoneAxis = series.zoneAxis || 'y',
+			i = 0,
+			zone;
+
+		zone = zones[i];
+		while (this[zoneAxis] >= zone.value) {				
+			zone = zones[++i];
+		}
+
+		if (zone && zone.color && !this.options.color) {
+			this.color = zone.color;
+		}
+
+		return zone;
 	},
 
 	/**
@@ -13320,7 +13344,6 @@ H.Series.prototype = {
 	pointClass: Point,
 	sorted: true, // requires the data to be sorted
 	requireSorting: true,
-	
 	directTouch: false,
 	axisTypes: ['xAxis', 'yAxis'],
 	colorCounter: 0,
@@ -13345,7 +13368,6 @@ H.Series.prototype = {
 		extend(series, {
 			name: options.name,
 			state: '',
-			pointAttr: {},
 			visible: options.visible !== false, // true by default
 			selected: options.selected === true // false by default
 		});
@@ -14322,7 +14344,41 @@ H.Series.prototype = {
 
 	},
 
-	
+	/**
+	 * Get presentational attributes for marker-based series (line, spline, scatter, mappoint...)
+	 */
+	pointAttribs: function (point, state) {
+		var options = this.options.marker,
+			stateOptions,
+			strokeWidth = options.lineWidth,
+			color = this.color,
+			pointColor = point && point.color,
+			fill,
+			stroke;
+
+		if (point && this.zones.length) {
+			zone = point.getZone();
+			if (zone && zone.color) {
+				color = zone.color;
+			}
+		}
+
+		fill = options.fillColor || pointColor || color;
+		stroke = options.lineColor || pointColor || color;
+
+		if (state) {
+			stateOptions = options.states[state];
+			strokeWidth = stateOptions.lineWidth || strokeWidth + stateOptions.lineWidthPlus;
+			fill = stateOptions.fillColor || fill;
+			stroke = stateOptions.lineColor || stroke;
+		}
+
+		return {
+			'stroke': stroke,
+			'stroke-width': strokeWidth,
+			'fill': fill
+		};
+	},
 
 	/**
 	 * Clear DOM objects and free up memory
@@ -16345,7 +16401,8 @@ seriesTypes.areaspline = extendClass(seriesTypes.spline, {
 	return H;
 }(Highcharts));
 (function (H) {
-	var defaultPlotOptions = H.defaultPlotOptions,
+	var Color = H.Color,
+		defaultPlotOptions = H.defaultPlotOptions,
 		defaultSeriesOptions = H.defaultSeriesOptions,
 		defined = H.defined,
 		each = H.each,
@@ -16399,7 +16456,6 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
  */
 seriesTypes.column = extendClass(Series, {
 	type: 'column',
-	
 	cropShoulder: 0,
 	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	trackerGroups: ['group', 'dataLabelsGroup'],
@@ -16620,6 +16676,54 @@ seriesTypes.column = extendClass(Series, {
 	drawGraph: noop,
 
 	/**
+	 * Get presentational attributes
+	 */
+	pointAttribs: function (point, state) {
+		var options = this.options,
+			stateOptions,
+			ret,
+			fill = (point && point.color) || this.color,
+			stroke = options.borderColor || this.color,
+			dashstyle = options.dashStyle,
+			strokeWidthOption = this.strokeWidthOption || 'borderWidth',
+			zone,
+			brightness;
+
+		if (point && this.zones.length) {
+			zone = point.getZone();
+			if (zone && zone.color) {
+				fill = zone.color;
+			}
+		}
+
+		// Select or hover states
+		if (state) {
+			stateOptions = options.states[state];
+			brightness = stateOptions.brightness;
+			fill = stateOptions.color || 
+				(brightness !== undefined && Color(fill).brighten(stateOptions.brightness).get()) ||
+				fill;
+			stroke = stateOptions.borderColor || stroke;
+			dashstyle = stateOptions.dashStyle || dashstyle;
+		}
+
+		ret = {
+			'fill': fill,
+			'stroke': stroke,
+			'stroke-width': point[strokeWidthOption] || options[strokeWidthOption] || this[strokeWidthOption] || 0
+		};
+		if (options.borderRadius) {
+			ret.r = options.borderRadius;
+		}
+
+		if (dashstyle) {
+			ret.dashstyle = dashstyle;
+		}
+
+		return ret;
+	},
+
+	/**
 	 * Draw the columns. For bars, the series.group is rotated, so the same coordinates
 	 * apply for columns and bars. This method is inherited by scatter series.
 	 *
@@ -16630,33 +16734,24 @@ seriesTypes.column = extendClass(Series, {
 			options = series.options,
 			renderer = chart.renderer,
 			animationLimit = options.animationLimit || 250,
-			shapeArgs,
-			borderRadius = options.borderRadius;
+			shapeArgs;
 
 		// draw the columns
 		each(series.points, function (point) {
 			var plotY = point.plotY,
-				graphic = point.graphic,
-				borderAttr = {};
+				graphic = point.graphic;
 
 			if (plotY !== undefined && !isNaN(plotY) && point.y !== null) {
 				shapeArgs = point.shapeArgs;
 
-				if (borderRadius) {
-					borderAttr.r = borderRadius;
-				}
-
-				if (defined(series.borderWidth)) {
-					borderAttr['stroke-width'] = series.borderWidth;
-				};
-				
 				if (graphic) { // update
 					stop(graphic);
-					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs));
+					graphic[chart.pointCount < animationLimit ? 'animate' : 'attr'](
+						merge(shapeArgs)
+					);
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
-						.attr(borderAttr)
 						.addClass('highcharts-point' + (point.selected ? ' highcharts-point-select' : ''))
 						.add(series.group);
 
@@ -16969,8 +17064,7 @@ seriesTypes.pie = extendClass(Series, {
 	noSharedTooltip: true,
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	axisTypes: [],
-	
-
+	pointAttribs: seriesTypes.column.prototype.pointAttribs,
 	/**
 	 * Animate the pies in
 	 */
@@ -18686,11 +18780,9 @@ extend(Point.prototype, {
 			radius,
 			halo = series.halo,
 			haloOptions,
-			newSymbol,
-			pointAttr;
+			newSymbol;
 
 		state = state || ''; // empty string
-		pointAttr = point.pointAttr[state] || series.pointAttr[state];
 
 		if (
 				// already has this state
@@ -18708,7 +18800,7 @@ extend(Point.prototype, {
 			return;
 		}
 
-		radius = (markerStateOptions.radius || markerOptions.radius) + (markerStateOptions.radiusPlus || 0);
+		radius = markerStateOptions.radius || (markerOptions.radius + (markerStateOptions.radiusPlus || 0));
 		
 		// Apply hover styles to the existing point
 		if (point.graphic) {
@@ -18718,7 +18810,7 @@ extend(Point.prototype, {
 				.addClass('highcharts-point-' + state);
 
 			point.graphic.attr(merge(
-				pointAttr,
+				series.pointAttribs(point, state),
 				radius ? { // new symbol attributes (#507, #612)
 					x: plotX - radius,
 					y: plotY - radius,
@@ -18753,7 +18845,7 @@ extend(Point.prototype, {
 							2 * radius,
 							2 * radius
 						)
-						.attr(pointAttr)
+						.attr(series.pointAttribs(point, state))
 						.add(series.markerGroup);
 						stateMarkerGraphic.currentSymbol = newSymbol;
 					}
@@ -20640,30 +20732,20 @@ seriesTypes.ohlc = extendClass(seriesTypes.column, {
 		return [point.open, point.high, point.low, point.close];
 	},
 	pointValKey: 'high',
-	
-	upColorProp: 'stroke',
 
 	/**
 	 * Postprocess mapping between options and SVG attributes
 	 */
-	getAttribs: function () {
-		seriesTypes.column.prototype.getAttribs.apply(this, arguments);
-		var series = this,
-			options = series.options,
-			stateOptions = options.states,
-			upColor = options.upColor || series.color,
-			seriesDownPointAttr = merge(series.pointAttr),
-			upColorProp = series.upColorProp;
+	pointAttribs: function (point, state) {
+		var attribs = seriesTypes.column.prototype.pointAttribs.call(this, point, state),
+			options = this.options;
 
-		seriesDownPointAttr[''][upColorProp] = upColor;
-		seriesDownPointAttr.hover[upColorProp] = stateOptions.hover.upColor || upColor;
-		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
+		delete attribs.fill;
+		attribs['stroke-width'] = options.lineWidth;
 
-		each(series.points, function (point) {
-			if (point.open < point.close && !point.options.color) {
-				point.pointAttr = seriesDownPointAttr;
-			}
-		});
+		attribs.stroke = point.options.color || (point.open < point.close ? (options.upColor || this.color) : this.color);
+
+		return attribs;
 	},
 
 	/**
@@ -20709,7 +20791,7 @@ seriesTypes.ohlc = extendClass(seriesTypes.column, {
 			if (point.plotY !== undefined) {
 
 				graphic = point.graphic;
-				pointAttr = point.pointAttr[point.selected ? 'selected' : ''] || series.pointAttr[''];
+				pointAttr = series.pointAttribs(point, point.selected && 'select');
 
 				// crisp vector coordinates
 				crispCorr = (pointAttr['stroke-width'] % 2) / 2;
@@ -20808,40 +20890,22 @@ defaultPlotOptions.candlestick = merge(defaultPlotOptions.column, {
 // 2 - Create the CandlestickSeries object
 seriesTypes.candlestick = extendClass(seriesTypes.ohlc, {
 	type: 'candlestick',
-	
-		
-	upColorProp: 'fill',
 
 	/**
 	 * Postprocess mapping between options and SVG attributes
 	 */
-	getAttribs: function () {
-		seriesTypes.ohlc.prototype.getAttribs.apply(this, arguments);
-		var series = this,
-			options = series.options,
-			stateOptions = options.states,			
-			upLineColor = options.upLineColor || options.lineColor,
-			hoverStroke = stateOptions.hover.upLineColor || upLineColor, 
-			selectStroke = stateOptions.select.upLineColor || upLineColor;
+	pointAttribs: function (point, state) {
+		var attribs = seriesTypes.column.prototype.pointAttribs.call(this, point, state),
+			options = this.options,
+			isUp = point.open < point.close,
+			stroke = options.lineColor || this.color;
 
-		// Add custom line color for points going up (close > open).
-		// Fill is handled by OHLCSeries' getAttribs.
-		each(series.points, function (point) {
-			if (point.open < point.close) {
+		attribs['stroke-width'] = options.lineWidth;
 
-				// If an individual line color is set, we need to merge the
-				// point attributes, because they are shared between all up
-				// points by inheritance from OHCLSeries.
-				if (point.lineColor) {
-					point.pointAttr = merge(point.pointAttr);
-					upLineColor = point.lineColor;
-				}
+		attribs.fill = point.options.color || (isUp ? (options.upColor || this.color) : this.color);
+		attribs.stroke = point.lineColor || (isUp ? (options.upLineColor || stroke) : stroke);
 
-				point.pointAttr[''].stroke = upLineColor;
-				point.pointAttr.hover.stroke = hoverStroke;
-				point.pointAttr.select.stroke = selectStroke;
-			}
-		});
+		return attribs;
 	},
 
 	/**
@@ -20852,7 +20916,6 @@ seriesTypes.candlestick = extendClass(seriesTypes.ohlc, {
 			points = series.points,
 			chart = series.chart,
 			pointAttr,
-			seriesPointAttr = series.pointAttr[''],
 			plotOpen,
 			plotClose,
 			topBox,
@@ -20871,7 +20934,7 @@ seriesTypes.candlestick = extendClass(seriesTypes.ohlc, {
 			graphic = point.graphic;
 			if (point.plotY !== undefined) {
 
-				pointAttr = point.pointAttr[point.selected ? 'selected' : ''] || seriesPointAttr;
+				pointAttr = series.pointAttribs(point, point.selected && 'select');
 
 				// crisp vector coordinates
 				crispCorr = (pointAttr['stroke-width'] % 2) / 2;
@@ -20990,7 +21053,24 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	 * Inherit the initialization from base Series
 	 */
 	init: Series.prototype.init,
-	
+	/**
+	 * Get presentational attributes
+	 */
+	pointAttribs: function (point, state) {
+		var options = this.options,
+			color = (point && point.color) || this.color,
+			fill = options.fillColor;
+
+		if (state) {
+			fill = options.states[state].fillColor;
+		}
+
+		return {
+			'fill': fill || color,
+			'stroke': options.lineColor || color,
+			'stroke-width': (point && point.lineWidth) || options.lineWidth || 0
+		};
+	},
 	/**
 	 * Extend the translate method by placing the point on the related series
 	 */
@@ -21090,7 +21170,6 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	drawPoints: function () {
 		var series = this,
 			pointAttr,
-			seriesPointAttr = series.pointAttr[''],
 			points = series.points,
 			chart = series.chart,
 			renderer = chart.renderer,
@@ -21130,7 +21209,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			// only draw the point if y is defined and the flag is within the visible area
 			if (plotY !== undefined && plotX >= 0 && !outsideRight) {
 				// shortcuts
-				pointAttr = point.pointAttr[point.selected ? 'select' : ''] || seriesPointAttr;
+				pointAttr = series.pointAttribs(point);
 				if (graphic) { // update
 					graphic.attr({
 						x: plotX,

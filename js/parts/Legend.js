@@ -97,12 +97,11 @@ Legend.prototype = {
 			
 			// Apply marker options
 			if (markerOptions && legendSymbol.isMarker) { // #585
-				symbolAttr.stroke = symbolColor;
-				markerOptions = item.convertAttribs(markerOptions);
-				for (key in markerOptions) {
-					val = markerOptions[key];
-					if (val !== undefined) {
-						symbolAttr[key] = val;
+				//symbolAttr.stroke = symbolColor;
+				symbolAttr = item.pointAttribs();
+				if (!visible) {
+					for (key in symbolAttr) {
+							symbolAttr[key] = hiddenColor;
 					}
 				}
 			}

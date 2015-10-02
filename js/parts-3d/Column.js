@@ -122,32 +122,32 @@ wrap(seriesTypes.column.prototype, 'init', function (proceed) {
 		seriesOptions.zIndex = z;
 	}
 });
+
+function pointAttribs(proceed) {
+	var attr = proceed.apply(this, [].slice.call(arguments, 1));
+
+	if (this.chart.is3d()) {
+		// Set the fill color to the fill color to provide a smooth edge
+		attr.stroke = this.options.edgeColor || attr.fill;
+		attr['stroke-width'] = pick(this.options.edgeWidth, 1); // #4055
+	}
+
+	return attr;
+}
+
+wrap(seriesTypes.column.prototype, 'pointAttribs', pointAttribs);
+if (seriesTypes.columnrange) {
+	wrap(seriesTypes.columnrange.prototype, 'pointAttribs', pointAttribs);
+}
+
 function draw3DPoints(proceed) {
 	// Do not do this if the chart is not 3D
-	if (this.chart.is3d()) {		
+	if (this.chart.is3d()) {
 		var grouping = this.chart.options.plotOptions.column.grouping;
 		if (grouping !== undefined && !grouping && this.group.zIndex !== undefined && !this.zIndexSet) {
 			this.group.attr({zIndex : (this.group.zIndex * 10)});
 			this.zIndexSet = true; // #4062 set zindex only once
-		} 
-
-		var options = this.options,
-			states = this.options.states;
-			
-		this.borderWidth = options.borderWidth = defined(options.edgeWidth) ? options.edgeWidth : 1; //#4055
-
-		each(this.data, function (point) {
-			if (point.y !== null) {
-				var pointAttr = point.pointAttr;
-
-				// Set the border color to the fill color to provide a smooth edge
-				this.borderColor = pick(options.edgeColor, pointAttr[''].fill);
-
-				pointAttr[''].stroke = this.borderColor;
-				pointAttr.hover.stroke = pick(states.hover.edgeColor, this.borderColor);
-				pointAttr.select.stroke = pick(states.select.edgeColor, this.borderColor);
-			}
-		});
+		}
 	}
 
 	proceed.apply(this, [].slice.call(arguments, 1));

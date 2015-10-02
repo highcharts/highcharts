@@ -70,42 +70,16 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	bubblePadding: true,
 	zoneAxis: 'z',
 	
-	/*= if (build.classic) { =*/
-	/**
-	 * Mapping between SVG attributes and the corresponding options
-	 */
-	pointAttrToOptions: { 
-		stroke: 'lineColor',
-		'stroke-width': 'lineWidth',
-		fill: 'fillColor'
-	},
-	/*= } =*/
-
-	/**
-	 * Apply the fillOpacity to all fill positions
-	 */
-	applyOpacity: function (fill) {
+	pointAttribs: function (point, state) {
 		var markerOptions = this.options.marker,
-			fillOpacity = pick(markerOptions.fillOpacity, 0.5);
-		
-		// When called from Legend.colorizeItem, the fill isn't predefined
-		fill = fill || markerOptions.fillColor || this.color; 
-		
+			fillOpacity = pick(markerOptions.fillOpacity, 0.5),
+			attr = Series.prototype.pointAttribs.call(this, point, state);
+
 		if (fillOpacity !== 1) {
-			fill = Color(fill).setOpacity(fillOpacity).get('rgba');
+			attr.fill = Color(attr.fill).setOpacity(fillOpacity).get('rgba');
 		}
-		return fill;
-	},
-	
-	/**
-	 * Extend the convertAttribs method by applying opacity to the fill
-	 */
-	convertAttribs: function () {
-		var obj = Series.prototype.convertAttribs.apply(this, arguments);
-		
-		obj.fill = this.applyOpacity(obj.fill);
-		
-		return obj;
+
+		return attr;
 	},
 
 	/**

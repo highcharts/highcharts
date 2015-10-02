@@ -33,8 +33,6 @@ defaultPlotOptions.waterfall = merge(defaultPlotOptions.column, {
 seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	type: 'waterfall',
 
-	upColorProp: 'fill',
-
 	pointValKey: 'y',
 
 	/**
@@ -188,34 +186,23 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	/**
 	 * Postprocess mapping between options and SVG attributes
 	 */
-	getAttribs: function () {
-		seriesTypes.column.prototype.getAttribs.apply(this, arguments);
+	pointAttribs: function (point, state) {
 
-		var series = this,
-			options = series.options,
-			stateOptions = options.states,
-			upColor = options.upColor || series.color,
-			hoverColor = Color(upColor).brighten(0.1).get(),
-			seriesDownPointAttr = merge(series.pointAttr),
-			upColorProp = series.upColorProp;
+		var upColor = this.options.upColor,
+			attr;
 
-		seriesDownPointAttr[''][upColorProp] = upColor;
-		seriesDownPointAttr.hover[upColorProp] = stateOptions.hover.upColor || hoverColor;
-		seriesDownPointAttr.select[upColorProp] = stateOptions.select.upColor || upColor;
+		// Set or reset up color (#3710, update to negative)
+		if (upColor && !point.options.color) {
+			point.color = point.y > 0 ? upColor : null;
+		}
 
-		each(series.points, function (point) {
-			if (!point.options.color) {
-				// Up color
-				if (point.y > 0) {
-					point.pointAttr = seriesDownPointAttr;
-					point.color = upColor;
+		attr = seriesTypes.column.prototype.pointAttribs.call(this, point, state);
 
-				// Down color (#3710, update to negative)
-				} else {
-					point.pointAttr = series.pointAttr;
-				}
-			}
-		});
+		// The dashStyle option in waterfall applies to the graph, not
+		// the points
+		delete attr.dashstyle;
+
+		return attr;
 	},
 
 	/**
