@@ -27,7 +27,9 @@ $(function () {
                         pointAttr;
 
                     point.graphics = graphics = point.graphics || {};
-                    pointAttr = point.pointAttr[point.selected ? 'selected' : ''] || series.pointAttr[''];
+                    pointAttr = point.pointAttr ? 
+                        point.pointAttr[point.selected ? 'selected' : ''] || series.pointAttr[''] :
+                        series.pointAttribs(point, point.selected && 'select');
                     delete pointAttr.r;
                     
                     if (point.y !== null) {
@@ -91,7 +93,8 @@ $(function () {
 
         series: [{
             name: 'Items bought',
-            data: [5, 3, 4]
+            data: [5, 3, 4],
+            borderWidth: 0
         }]
 
     });

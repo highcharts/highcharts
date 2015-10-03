@@ -515,7 +515,7 @@ Chart.prototype = {
 			subtitle
 				.css({ width: (subtitleOptions.width || autoWidth) + 'px' })
 				.align(extend({ 
-					y: titleOffset + (titleOptions.margin - 13) + titleSize
+					y: titleOffset + (titleOptions.margin - 13) + (titleSize || 0)
 				}, subtitleOptions), false, 'spacingBox');
 			
 			if (!subtitleOptions.floating && !subtitleOptions.verticalAlign) {

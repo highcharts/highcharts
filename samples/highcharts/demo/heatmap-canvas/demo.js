@@ -48,12 +48,15 @@ $(function () {
                 // draw the columns
                 each(this.points, function (point) {
                     var plotY = point.plotY,
-                        shapeArgs;
+                        shapeArgs,
+                        pointAttr;
 
                     if (plotY !== undefined && !isNaN(plotY) && point.y !== null) {
                         shapeArgs = point.shapeArgs;
 
-                        ctx.fillStyle = point.pointAttr[''].fill;
+                        pointAttr = (point.pointAttr && point.pointAttr['']) || point.series.pointAttribs(point);
+
+                        ctx.fillStyle = pointAttr.fill;
                         ctx.fillRect(shapeArgs.x, shapeArgs.y, shapeArgs.width, shapeArgs.height);
                     }
                 });

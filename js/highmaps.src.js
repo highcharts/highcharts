@@ -11770,7 +11770,7 @@ Chart.prototype = {
 			subtitle
 				.css({ width: (subtitleOptions.width || autoWidth) + 'px' })
 				.align(extend({ 
-					y: titleOffset + (titleOptions.margin - 13) + titleSize
+					y: titleOffset + (titleOptions.margin - 13) + (titleSize || 0)
 				}, subtitleOptions), false, 'spacingBox');
 			
 			if (!subtitleOptions.floating && !subtitleOptions.verticalAlign) {
@@ -14119,19 +14119,22 @@ H.Series.prototype = {
 			stateOptions,
 			strokeWidth = options.lineWidth,
 			color = this.color,
-			pointColor = point && point.options.color,
+			pointColorOption = point && point.options.color,
+			pointColor = point && point.color,
+			zoneColor,
 			fill,
 			stroke;
 
 		if (point && this.zones.length) {
 			zone = point.getZone();
 			if (zone && zone.color) {
-				color = zone.color;
+				zoneColor = zone.color;
 			}
 		}
 
-		fill = options.fillColor || pointColor || color;
-		stroke = options.lineColor || pointColor || color;
+		color = pointColorOption || zoneColor || pointColor || color;
+		fill = options.fillColor || color;
+		stroke = options.lineColor || color;
 
 		if (state) {
 			stateOptions = options.states[state];
