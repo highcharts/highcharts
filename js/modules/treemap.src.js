@@ -655,10 +655,11 @@
 				attr,
 				stateOptions = (state && options.states[state]) || {};
 
-			// Set attributes by precedence. Point trumps level trumps series.
+			// Set attributes by precedence. Point trumps level trumps series. Stroke width uses pick
+			// because it can be 0.
 			attr = {
 				'stroke': point.borderColor || level.borderColor || stateOptions.borderColor || options.borderColor,
-				'stroke-width': point.borderWidth || level.borderWidth || stateOptions.borderWidth || options.borderWidth,
+				'stroke-width': pick(point.borderWidth, level.borderWidth, stateOptions.borderWidth, options.borderWidth),
 				'dashstyle': point.borderDashStyle || level.borderDashStyle || stateOptions.borderDashStyle || options.borderDashStyle,
 				'fill': point.color || this.color,
 				'zIndex': 1000 - (point.node.levelDynamic * 2)
