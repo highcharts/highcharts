@@ -11,10 +11,12 @@ defaultPlotOptions.mapline = merge(defaultPlotOptions.map, {
 });
 seriesTypes.mapline = extendClass(seriesTypes.map, {
 	type: 'mapline',
+	pointAttrToOptions: {
+		'stroke-width': 'lineWidth'
+	},
 	/**
 	 * Get presentational attributes
 	 */
-	strokeWidthOption: 'lineWidth',
 	pointAttribs: function (point, state) {
 		var attr = seriesTypes.map.prototype.pointAttribs.call(this, point, state);
 

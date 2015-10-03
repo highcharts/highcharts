@@ -130,8 +130,7 @@ $(function () {
                 'stroke': 'lineColor',
                 'stroke-width': 'lineWidth'
             },
-            strokeWidthOption: 'lineWidth',
-            strokeOption: 'lineColor',
+
             toYData: function (point) { // return a plain array for speedy calculation
                 return [point.open, point.high, point.low, point.close];
             },

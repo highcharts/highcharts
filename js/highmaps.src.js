@@ -15730,14 +15730,15 @@ seriesTypes.column = extendClass(Series, {
 		var options = this.options,
 			stateOptions,
 			ret,
-			strokeOption = this.strokeOption || 'borderColor',
-			strokeWidthOption = this.strokeWidthOption || 'borderWidth',
+			p2o = this.pointAttrToOptions || {},
+			strokeOption = p2o.stroke || 'borderColor',
+			strokeWidthOption = p2o['stroke-width'] || 'borderWidth',
 			fill = (point && point.color) || this.color,
 			stroke = options[strokeOption] || this.color,
 			dashstyle = options.dashStyle,
 			zone,
 			brightness;
-
+		
 		if (point && this.zones.length) {
 			zone = point.getZone();
 			if (zone && zone.color) {
@@ -18714,10 +18715,12 @@ defaultPlotOptions.mapline = merge(defaultPlotOptions.map, {
 });
 seriesTypes.mapline = extendClass(seriesTypes.map, {
 	type: 'mapline',
+	pointAttrToOptions: {
+		'stroke-width': 'lineWidth'
+	},
 	/**
 	 * Get presentational attributes
 	 */
-	strokeWidthOption: 'lineWidth',
 	pointAttribs: function (point, state) {
 		var attr = seriesTypes.map.prototype.pointAttribs.call(this, point, state);
 
