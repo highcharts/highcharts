@@ -11747,17 +11747,19 @@ Chart.prototype = {
 			subtitleOptions = options.subtitle,
 			requiresDirtyBox,
 			renderer = this.renderer,
-			fontSize,
+			titleSize,
 			autoWidth = this.spacingBox.width - 44; // 44 makes room for default context button
 
 		if (title) {
 			
-			fontSize = titleOptions.style.fontSize;
+			titleSize = titleOptions.style.fontSize;
+			
+			titleSize = renderer.fontMetrics(titleSize, title).b;
 			
 			title
 				.css({ width: (titleOptions.width || autoWidth) + 'px' })
 				.align(extend({ 
-					y: renderer.fontMetrics(fontSize, title).b - 3
+					y: titleSize - 3
 				}, titleOptions), false, 'spacingBox');
 			
 			if (!titleOptions.floating && !titleOptions.verticalAlign) {
@@ -11765,13 +11767,10 @@ Chart.prototype = {
 			}
 		}
 		if (subtitle) {
-			
-			fontSize = subtitleOptions.style.fontSize;
-			
 			subtitle
 				.css({ width: (subtitleOptions.width || autoWidth) + 'px' })
 				.align(extend({ 
-					y: titleOffset + (titleOptions.margin - 13) + renderer.fontMetrics(fontSize, subtitle).b 
+					y: titleOffset + (titleOptions.margin - 13) + titleSize
 				}, subtitleOptions), false, 'spacingBox');
 			
 			if (!subtitleOptions.floating && !subtitleOptions.verticalAlign) {
