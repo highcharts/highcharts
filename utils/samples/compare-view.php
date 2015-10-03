@@ -235,7 +235,7 @@
 					console.log([
 						'@proceed',
 						pad(path, 60, false),
-						diff ? pad(String(diff), 4, true) : '   .' // Only a dot when success
+						diff ? pad(String(diff), 5, true) : '    .' // Only a dot when success
 					].join(' '));
 				}		
 			}
