@@ -1649,6 +1649,8 @@ SVGRenderer.prototype = {
 			hoverStyle,
 			pressedStyle,
 			disabledStyle,
+            pressedHoverState,
+            pressedHoverStyle,
 			verticalGradient = { x1: 0, y1: 0, x2: 0, y2: 1 };
 
 		// Normal state - prepare the attributes
@@ -1699,6 +1701,22 @@ SVGRenderer.prototype = {
 		pressedStyle = pressedState.style;
 		delete pressedState.style;
 
+        // Pressed hover state if exists
+        if (pressedState.hover) {
+            pressedHoverState = merge(normalState, {
+                stroke: '#68A',
+                fill: {
+                    linearGradient: verticalGradient,
+                    stops: [
+                        [0, '#9BD'],
+                        [1, '#CDF']
+                    ]
+                }
+            }, pressedState.hover);
+            pressedHoverStyle = pressedHoverState.style;
+            delete pressedHoverState.style;
+        }
+
 		// Disabled state
 		disabledState = merge(normalState, {
 			style: {
@@ -1710,10 +1728,13 @@ SVGRenderer.prototype = {
 
 		// Add the events. IE9 and IE10 need mouseover and mouseout to funciton (#667).
 		addEvent(label.element, isIE ? 'mouseover' : 'mouseenter', function () {
-			if (curState !== 3) {
-				label.attr(hoverState)
+			if (pressedState.hover && curState === 2) {
+				label.attr(pressedHoverState)
+					.css(pressedHoverStyle);
+			} else if (curState !== 3) {
+                label.attr(hoverState)
 					.css(hoverStyle);
-			}
+            }
 		});
 		addEvent(label.element, isIE ? 'mouseout' : 'mouseleave', function () {
 			if (curState !== 3) {
