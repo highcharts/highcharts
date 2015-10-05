@@ -694,19 +694,18 @@
 			// Call standard drawPoints
 			seriesTypes.column.prototype.drawPoints.call(this);
 
-			each(points, function (point) {
-				var cursor,
-					drillId;
-				if (point.graphic) {
-					point.graphic.attr(point.pointAttr['']); // @todo What is the purpose of this?
-					// If drillToNode is allowed, set a point cursor on clickables & add drillId to point 
-					if (series.options.allowDrillToNode) {
+			// If drillToNode is allowed, set a point cursor on clickables & add drillId to point 
+			if (series.options.allowDrillToNode) {
+				each(points, function (point) {
+					var cursor,
+						drillId;
+					if (point.graphic) {
 						drillId = point.drillId = series.options.interactByLeaf ? series.drillToByLeaf(point) : series.drillToByGroup(point);
 						cursor = drillId ? "pointer" : "default";
 						point.graphic.css({ cursor: cursor });
 					}
-				}
-			});
+				});
+			}
 		},
 		/**
 		 * Inserts an element into an array, sorted by a condition.
