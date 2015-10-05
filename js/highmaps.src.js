@@ -15322,7 +15322,7 @@ var ColumnSeries = extendClass(Series, {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 						.attr(borderAttr)
 						.attr(pointAttr)
-						.add(series.group)
+						.add(point.group || series.group)
 						.shadow(options.shadow, null, options.stacking && !options.borderRadius);
 				}
 
