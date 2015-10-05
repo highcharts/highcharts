@@ -8,7 +8,7 @@
 
 
 /*global Highcharts */
-var HighchartsAdapter = (function () {
+var HighchartsAdapter = window.HighchartsAdapter = (function () {
 
 var UNDEFINED,
 	doc = document,
