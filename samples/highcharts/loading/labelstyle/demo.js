@@ -21,7 +21,7 @@ $(function () {
 
         loading: {
             labelStyle: {
-                top: '45%'
+                fontStyle: 'italic'
             }
         },
 

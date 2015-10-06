@@ -16,6 +16,7 @@
 
 	$details = file_get_contents("../../samples/$path/demo.details");
 	$isManual = (strstr($details, 'requiresManualTesting: true') !== false);
+	$skipTest = (strstr($details, 'skipTest: true') !== false);
 
 	if ($isUnitTest) {
 		$bodyClass = 'single-col unit';
@@ -660,6 +661,17 @@
 		</div>
 
 		<div style="margin: 1em">
+
+			<?php if ($skipTest) { ?>
+			<script>onIdentical(); </script>
+			<div class="test-report" style="background: #a4edba; color: black">
+				<p>This sample has been marked <code>skipTest: true</code> in the demo.details file.</p>
+				<p>It means that the sample exists only for demonstration in the docs or the API,
+					and that the feature we are testing is either covered by a unit test or 
+					another visual sample.</p>
+			</div>
+
+			<?php } else { ?>
 		
 			<div id="report" class="test-report"></div>
 			
@@ -679,7 +691,7 @@
 			</div>
 			<button id="overlay-compare" style="display:none">Compare overlaid</button>
 		
-		
+			<?php } ?>
 		</div>
 		
 	</body>
