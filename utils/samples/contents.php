@@ -173,6 +173,9 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 				width: 100%;
 				z-index: 10;
 			}
+			#top-nav .text {
+				padding-top: 0.5em;
+			}
 			#top-nav .text a {
 				color: white;
 				text-decoration: underline;
@@ -301,7 +304,6 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 								if (strstr($yaml, 'requiresManualTesting: true')) {
 									$batchClass = '';
 									$compareClass = 'manual';
-									$suffix = ' <acronym title="Requires manual testing">[m]</acronym>';
 								}
 
 								// Display diff from previous comparison
@@ -326,7 +328,7 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 
 								// No symbol for manual tests
 								if ($compareClass == 'manual') {
-									$dissIndex = '';
+									$dissIndex = '<a title="Requires manual testing" class="dissimilarity-index"><i class="icon-hand-left"></i></a>';
 								}
 
 								// Comments

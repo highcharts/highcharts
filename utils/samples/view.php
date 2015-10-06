@@ -329,8 +329,8 @@ function getResources() {
 					<?php endforeach ?>
 					</select>
 				</form>
-				<button id="next" disabled="disabled">Next</button>
-				<button id="reload" style="margin-left: 1em" onclick="location.reload()">Reload</button>
+				<a class="button" id="next" disabled="disabled">Next</a>
+				<a class="button" id="reload" style="margin-left: 1em" onclick="location.reload()">Reload</a>
 				
 				<a class="button"
 					href="compare-view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>">Compare</a>
