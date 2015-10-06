@@ -645,9 +645,12 @@
 				'stroke': point.borderColor || level.borderColor || stateOptions.borderColor || options.borderColor,
 				'stroke-width': pick(point.borderWidth, level.borderWidth, stateOptions.borderWidth, options.borderWidth),
 				'dashstyle': point.borderDashStyle || level.borderDashStyle || stateOptions.borderDashStyle || options.borderDashStyle,
-				'fill': point.color || this.color,
-				'zIndex': (state === 'hover' ? 1 : 0)
+				'fill': point.color || this.color
 			};
+
+			if (state === 'hover') {
+				attr.zIndex = 1;
+			}
 
 			if (point.node.level <= this.nodeMap[this.rootNode].level) {
 				// Hide levels above the current view
