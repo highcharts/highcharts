@@ -11386,7 +11386,7 @@ Chart.prototype = {
 			subtitle
 				.css({ width: (subtitleOptions.width || autoWidth) + PX })
 				.align(extend({ 
-					y: titleOffset + (titleOptions.margin - 13) + renderer.fontMetrics(titleOptions.style.fontSize, subtitle).b 
+					y: titleOffset + (titleOptions.margin - 13) + renderer.fontMetrics(subtitleOptions.style.fontSize, title).b 
 				}, subtitleOptions), false, 'spacingBox');
 			
 			if (!subtitleOptions.floating && !subtitleOptions.verticalAlign) {
@@ -15170,7 +15170,8 @@ var ColumnSeries = extendClass(Series, {
 			xCrisp = -(borderWidth % 2 ? 0.5 : 0),
 			yCrisp = borderWidth % 2 ? 0.5 : 1,
 			right,
-			bottom;
+			bottom,
+			fromTop;
 
 		if (chart.inverted && chart.renderer.isVML) {
 			yCrisp += 1;
@@ -15183,12 +15184,13 @@ var ColumnSeries = extendClass(Series, {
 		w = right - x;
 
 		// Vertical
+		fromTop = mathAbs(y) <= 0.5; // #4504
 		bottom = Math.round(y + h) + yCrisp;
 		y = Math.round(y) + yCrisp;
 		h = bottom - y;
 
-		// Top edges are exceptions (#4504)
-		if (Math.abs(y) <= 0.5) {
+		// Top edges are exceptions
+		if (fromTop) {
 			y -= 1;
 			h += 1;
 		}

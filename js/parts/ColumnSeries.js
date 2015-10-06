@@ -153,7 +153,8 @@ var ColumnSeries = extendClass(Series, {
 			xCrisp = -(borderWidth % 2 ? 0.5 : 0),
 			yCrisp = borderWidth % 2 ? 0.5 : 1,
 			right,
-			bottom;
+			bottom,
+			fromTop;
 
 		if (chart.inverted && chart.renderer.isVML) {
 			yCrisp += 1;
@@ -166,12 +167,13 @@ var ColumnSeries = extendClass(Series, {
 		w = right - x;
 
 		// Vertical
+		fromTop = mathAbs(y) <= 0.5; // #4504
 		bottom = Math.round(y + h) + yCrisp;
 		y = Math.round(y) + yCrisp;
 		h = bottom - y;
 
-		// Top edges are exceptions (#4504)
-		if (Math.abs(y) <= 0.5) {
+		// Top edges are exceptions
+		if (fromTop) {
 			y -= 1;
 			h += 1;
 		}
