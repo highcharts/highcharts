@@ -1535,10 +1535,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 					if (point.properties && point.properties['hc-key']) {
 						point.graphic.addClass('highcharts-key-' + point.properties['hc-key'].toLowerCase());
 					}
-
-					if (!supportsVectorEffect) {
-						point.graphic['stroke-widthSetter'] = noop;
-					}
 				}
 			});
 
@@ -1746,6 +1742,9 @@ defaultPlotOptions.mapline = merge(defaultPlotOptions.map, {
 });
 seriesTypes.mapline = extendClass(seriesTypes.map, {
 	type: 'mapline',
+	pointAttrToOptions: {
+		'stroke-width': 'lineWidth'
+	},
 	/**
 	 * Get presentational attributes
 	 */
@@ -2266,7 +2265,7 @@ H.splitPath = function (path) {
 	path = path.replace(/^\s*/, "").replace(/\s*$/, "");
 	
 	// Split on spaces and commas
-	path = path.split(/[ ,]+/);
+	path = path.split(/[ ,,]+/); // Extra comma to escape gulp.scripts task
 	
 	// Parse numbers
 	for (i = 0; i < path.length; i++) {

@@ -13811,9 +13811,11 @@ H.Series.prototype = {
 	 * Get presentational attributes for marker-based series (line, spline, scatter, bubble, mappoint...)
 	 */
 	pointAttribs: function (point, state) {
-		var options = this.options.marker,
-			stateOptions,
-			strokeWidth = options.lineWidth,
+		var seriesMarkerOptions = this.options.marker,
+			seriesStateOptions,
+			pointMarkerOptions = (point && point.options && point.options.marker) || {},
+			pointStateOptions,
+			strokeWidth = seriesMarkerOptions.lineWidth,
 			color = this.color,
 			pointColorOption = point && point.options.color,
 			pointColor = point && point.color,
@@ -13829,16 +13831,18 @@ H.Series.prototype = {
 		}
 
 		color = pointColorOption || zoneColor || pointColor || color;
-		fill = options.fillColor || color;
-		stroke = options.lineColor || color;
+		fill = pointMarkerOptions.fillColor || seriesMarkerOptions.fillColor || color;
+		stroke = pointMarkerOptions.lineColor || seriesMarkerOptions.lineColor || color;
 
+		// Handle hover and select states
 		if (state) {
-			stateOptions = options.states[state];
-			strokeWidth = stateOptions.lineWidth || strokeWidth + stateOptions.lineWidthPlus;
-			fill = stateOptions.fillColor || fill;
-			stroke = stateOptions.lineColor || stroke;
+			seriesStateOptions = seriesMarkerOptions.states[state];
+			pointStateOptions = (pointMarkerOptions.states && pointMarkerOptions.states[state]) || {};
+			strokeWidth = seriesStateOptions.lineWidth || strokeWidth + seriesStateOptions.lineWidthPlus;
+			fill = pointStateOptions.fillColor || seriesStateOptions.fillColor || fill;
+			stroke = pointStateOptions.lineColor || seriesStateOptions.lineColor || stroke;
 		}
-
+		
 		return {
 			'stroke': stroke,
 			'stroke-width': strokeWidth,
