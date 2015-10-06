@@ -165,9 +165,10 @@ SVGElement.prototype = {
 			tspans,
 			hasContrast = textShadow.indexOf('contrast') !== -1,
 			styles = {},
+			forExport = this.renderer.forExport,
 			// IE10 and IE11 report textShadow in elem.style even though it doesn't work. Check
 			// this again with new IE release. In exports, the rendering is passed to PhantomJS. 
-			supports = this.renderer.forExport || (elem.style.textShadow !== UNDEFINED && !isIE);
+			supports = forExport || (elem.style.textShadow !== UNDEFINED && !isMS);
 
 		// When the text shadow is set to contrast, use dark stroke for light text and vice versa
 		if (hasContrast) {
@@ -176,7 +177,7 @@ SVGElement.prototype = {
 
 		// Safari with retina displays as well as PhantomJS bug (#3974). Firefox does not tolerate this,
 		// it removes the text shadows.
-		if (isWebKit) {
+		if (isWebKit || forExport) {
 			styles.textRendering = 'geometricPrecision';
 		}
 
@@ -189,7 +190,7 @@ SVGElement.prototype = {
 
 		// No reason to polyfill, we've got native support
 		if (supports) {
-			css(elem, styles); // Apply altered textShadow or textRendering workaround
+			this.css(styles); // Apply altered textShadow or textRendering workaround
 		} else {
 
 			this.fakeTS = true; // Fake text shadow
@@ -465,7 +466,7 @@ SVGElement.prototype = {
 			}
 
 			// serialize and set style attribute
-			if (isIE && !hasSVG) {
+			if (isMS && !hasSVG) {
 				css(elemWrapper.element, styles);
 			} else {
 				/*jslint unparam: true*/
@@ -789,7 +790,7 @@ SVGElement.prototype = {
 				height = bBox.height;
 
 				// Workaround for wrong bounding box in IE9 and IE10 (#1101, #1505, #1669, #2568)
-				if (isIE && styles && styles.fontSize === '11px' && height.toPrecision(3) === '16.9') {
+				if (isMS && styles && styles.fontSize === '11px' && height.toPrecision(3) === '16.9') {
 					bBox.height = height = 14;
 				}
 
@@ -1709,13 +1710,13 @@ SVGRenderer.prototype = {
 		delete disabledState.style;
 
 		// Add the events. IE9 and IE10 need mouseover and mouseout to funciton (#667).
-		addEvent(label.element, isIE ? 'mouseover' : 'mouseenter', function () {
+		addEvent(label.element, isMS ? 'mouseover' : 'mouseenter', function () {
 			if (curState !== 3) {
 				label.attr(hoverState)
 					.css(hoverStyle);
 			}
 		});
-		addEvent(label.element, isIE ? 'mouseout' : 'mouseleave', function () {
+		addEvent(label.element, isMS ? 'mouseout' : 'mouseleave', function () {
 			if (curState !== 3) {
 				stateOptions = [normalState, hoverState, pressedState][curState];
 				stateStyle = [normalStyle, hoverStyle, pressedStyle][curState];

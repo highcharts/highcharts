@@ -33,15 +33,15 @@ var UNDEFINED,
 	// some variables
 	userAgent = navigator.userAgent,
 	isOpera = win.opera,
-	isIE = /(msie|trident)/i.test(userAgent) && !isOpera,
+	isMS = /(msie|trident|edge)/i.test(userAgent) && !isOpera,
 	docMode8 = doc.documentMode === 8,
-	isWebKit = /AppleWebKit/.test(userAgent),
+	isWebKit = !isMS && /AppleWebKit/.test(userAgent),
 	isFirefox = /Firefox/.test(userAgent),
 	isTouchDevice = /(Mobile|Android|Windows Phone)/.test(userAgent),
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	hasSVG = !!doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
 	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
-	useCanVG = !hasSVG && !isIE && !!doc.createElement('canvas').getContext,
+	useCanVG = !hasSVG && !isMS && !!doc.createElement('canvas').getContext,
 	Renderer,
 	hasTouch,
 	symbolSizes = {},
@@ -312,7 +312,7 @@ var pick = Highcharts.pick = function () {
  * @param {Object} styles Style object with camel case property names
  */
 function css(el, styles) {
-	if (isIE && !hasSVG) { // #2686
+	if (isMS && !hasSVG) { // #2686
 		if (styles && styles.opacity !== UNDEFINED) {
 			styles.filter = 'alpha(opacity=' + (styles.opacity * 100) + ')';
 		}
@@ -1118,7 +1118,7 @@ pathAnim = {
 			//
 			// To avoid problems in IE (see #1010) where we cannot delete the properties and avoid
 			// testing if they are there (warning in chrome) the only option is to test if running IE.
-			if (!isIE && eventArguments) {
+			if (!isMS && eventArguments) {
 				delete eventArguments.layerX;
 				delete eventArguments.layerY;
 				delete eventArguments.returnValue;
@@ -1954,9 +1954,10 @@ SVGElement.prototype = {
 			tspans,
 			hasContrast = textShadow.indexOf('contrast') !== -1,
 			styles = {},
+			forExport = this.renderer.forExport,
 			// IE10 and IE11 report textShadow in elem.style even though it doesn't work. Check
 			// this again with new IE release. In exports, the rendering is passed to PhantomJS. 
-			supports = this.renderer.forExport || (elem.style.textShadow !== UNDEFINED && !isIE);
+			supports = forExport || (elem.style.textShadow !== UNDEFINED && !isMS);
 
 		// When the text shadow is set to contrast, use dark stroke for light text and vice versa
 		if (hasContrast) {
@@ -1965,7 +1966,7 @@ SVGElement.prototype = {
 
 		// Safari with retina displays as well as PhantomJS bug (#3974). Firefox does not tolerate this,
 		// it removes the text shadows.
-		if (isWebKit) {
+		if (isWebKit || forExport) {
 			styles.textRendering = 'geometricPrecision';
 		}
 
@@ -1978,7 +1979,7 @@ SVGElement.prototype = {
 
 		// No reason to polyfill, we've got native support
 		if (supports) {
-			css(elem, styles); // Apply altered textShadow or textRendering workaround
+			this.css(styles); // Apply altered textShadow or textRendering workaround
 		} else {
 
 			this.fakeTS = true; // Fake text shadow
@@ -2254,7 +2255,7 @@ SVGElement.prototype = {
 			}
 
 			// serialize and set style attribute
-			if (isIE && !hasSVG) {
+			if (isMS && !hasSVG) {
 				css(elemWrapper.element, styles);
 			} else {
 				/*jslint unparam: true*/
@@ -2578,7 +2579,7 @@ SVGElement.prototype = {
 				height = bBox.height;
 
 				// Workaround for wrong bounding box in IE9 and IE10 (#1101, #1505, #1669, #2568)
-				if (isIE && styles && styles.fontSize === '11px' && height.toPrecision(3) === '16.9') {
+				if (isMS && styles && styles.fontSize === '11px' && height.toPrecision(3) === '16.9') {
 					bBox.height = height = 14;
 				}
 
@@ -3498,13 +3499,13 @@ SVGRenderer.prototype = {
 		delete disabledState.style;
 
 		// Add the events. IE9 and IE10 need mouseover and mouseout to funciton (#667).
-		addEvent(label.element, isIE ? 'mouseover' : 'mouseenter', function () {
+		addEvent(label.element, isMS ? 'mouseover' : 'mouseenter', function () {
 			if (curState !== 3) {
 				label.attr(hoverState)
 					.css(hoverStyle);
 			}
 		});
-		addEvent(label.element, isIE ? 'mouseout' : 'mouseleave', function () {
+		addEvent(label.element, isMS ? 'mouseout' : 'mouseleave', function () {
 			if (curState !== 3) {
 				stateOptions = [normalState, hoverState, pressedState][curState];
 				stateStyle = [normalStyle, hoverStyle, pressedStyle][curState];
@@ -4572,7 +4573,7 @@ extend(SVGElement.prototype, {
 	 */
 	setSpanRotation: function (rotation, alignCorrection, baseline) {
 		var rotationStyle = {},
-			cssTransformKey = isIE ? '-ms-transform' : isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : isOpera ? '-o-transform' : '';
+			cssTransformKey = isMS ? '-ms-transform' : isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : isOpera ? '-o-transform' : '';
 
 		rotationStyle[cssTransformKey] = rotationStyle.transform = 'rotate(' + rotation + 'deg)';
 		rotationStyle[cssTransformKey + (isFirefox ? 'Origin' : '-origin')] = rotationStyle.transformOrigin = (alignCorrection * 100) + '% ' + baseline + 'px';
