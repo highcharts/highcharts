@@ -8050,7 +8050,7 @@ Axis.prototype = {
 		}
 
 		this.autoRotation = autoRotation;
-		this.labelRotation = rotation;
+		this.labelRotation = pick(rotation, rotationOption);
 
 		return newTickInterval;
 	},
