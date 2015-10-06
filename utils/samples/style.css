@@ -111,7 +111,7 @@ body.visual iframe {
 	border: 1px dotted gray;
 }
 
-body.unit #frame-row {
+body.single-col #frame-row {
 	width: auto;
 }
 body.unit iframe {
@@ -119,9 +119,17 @@ body.unit iframe {
 	height: 600px;
 	border: none;
 }
+body.manual iframe {
+	width: calc(100% - 320px);
+	height: 600px;
+	border: none;
+}
 
-body.unit #report, body.unit #svg, body.unit #preview {
+body.single-col #report, body.single-col #svg, body.single-col #preview {
 	display: none;
+}
+body.manual #comment-placeholder {
+	vertical-align: top;
 }
 
 /* QUnit, follow the theme */

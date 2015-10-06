@@ -13,9 +13,23 @@
 
 
 	$isUnitTest = file_exists("../../samples/$path/unit-tests.js") || strstr(@file_get_contents("../../samples/$path/demo.details"), 'qunit') ? true : false;
-	
+
+	$details = file_get_contents("../../samples/$path/demo.details");
+	$isManual = (strstr($details, 'requiresManualTesting: true') !== false);
+
+	if ($isUnitTest) {
+		$bodyClass = 'single-col unit';
+	} elseif ($isManual) {
+		$bodyClass = 'single-col manual';
+	} else {
+		$bodyClass = 'visual';
+	}
+
+
 	$browser = getBrowser();
 	$browserKey = $browser['parent'];
+
+
 
 ?><!DOCTYPE HTML>
 <html>
@@ -35,7 +49,33 @@
 			var diff,
 				path = '<?php echo $path ?>',
 				commentHref = 'compare-comment.php?path=<?php echo $path ?>&i=<?php echo $i ?>&diff=',
-				commentFrame;
+				commentFrame,
+				leftSVG,
+				rightSVG,
+				leftVersion,
+				rightVersion,
+				chartWidth,
+				chartHeight,
+				error,
+				mode = '<?php echo $mode ?>',
+				i = '<?php echo $i ?>',
+				_continue = '<?php echo $continue ?>',
+				isManual = <?php echo ($isManual ? 'true' : 'false'); ?>;
+
+
+			function showCommentBox() {
+				commentHref = commentHref.replace('diff=', 'diff=' + (typeof diff !== 'function' ? diff : '') + '&focus=false');
+				if (!commentFrame) {
+					commentFrame = $('<iframe>')
+						.attr({
+							id: 'comment-iframe',
+							src: commentHref
+						})
+						.appendTo('#comment-placeholder');
+				}
+			}
+
+
 			$(function() {
 				// the reload button
 				$('#reload').click(function() {
@@ -56,17 +96,13 @@
 				});
 				
 				hilightCurrent();
+
+
+				if (isManual) {
+					showCommentBox();
+				}
 			});
-			var leftSVG,
-				rightSVG,
-				leftVersion,
-				rightVersion,
-				chartWidth,
-				chartHeight,
-				error,
-				mode = '<?php echo $mode ?>',
-				i = '<?php echo $i ?>'
-				_continue = '<?php echo $continue ?>';
+
 				
 			function markList(className, difference) {
 
@@ -129,16 +165,7 @@
 								.appendTo(li);
 
 
-							commentHref = commentHref.replace('diff=', 'diff=' + diff + '&focus=false');
-							
-							if (!commentFrame) {
-								commentFrame = $('<iframe>')
-									.attr({
-										id: 'comment-iframe',
-										src: commentHref
-									})
-									.appendTo('#comment-placeholder');
-							}
+							showCommentBox();
 
 						} else {
 							$span = $('<a>')
@@ -619,7 +646,7 @@
 		</script>
 		
 	</head>
-	<body class="<?php echo ($isUnitTest ? 'unit' : 'visual'); ?>">
+	<body class="<?php echo $bodyClass ?>">
 		
 		<div><?php echo @$warning ?></div>
 		<div class="top-bar">
@@ -637,7 +664,7 @@
 			<div id="report" class="test-report"></div>
 			
 			<div id="frame-row">
-				<?php if (!$isUnitTest) : ?>
+				<?php if (!$isUnitTest && !$isManual) : ?>
 				<iframe id="iframe-left" src="compare-iframe.php?which=left&amp;<?php echo $_SERVER['QUERY_STRING'] ?>"></iframe>
 				<?php endif; ?>
 				<iframe id="iframe-right" src="compare-iframe.php?which=right&amp;<?php echo $_SERVER['QUERY_STRING'] ?>"></iframe>

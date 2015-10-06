@@ -328,7 +328,11 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 
 								// No symbol for manual tests
 								if ($compareClass == 'manual') {
-									$dissIndex = '<a title="Requires manual testing" class="dissimilarity-index"><i class="icon-hand-left"></i></a>';
+									$dissIndex = "
+										<a title='Requires manual testing' class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main'>
+											<i class='icon-hand-left'></i>
+										</a>
+									";
 								}
 
 								// Comments
