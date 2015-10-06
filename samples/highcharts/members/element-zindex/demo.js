@@ -1,7 +1,6 @@
-var renderer;
+var renderer,
+    circles = [];
 $(function () {
-
-    var circles = [];
 
     renderer = new Highcharts.Renderer(
         $('#container')[0],
