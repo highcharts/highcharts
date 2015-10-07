@@ -10359,8 +10359,12 @@ extend(Highcharts.Pointer.prototype, {
 
 		// Don't initiate panning until the user has pinched. This prevents us from 
 		// blocking page scrolling as users scroll down a long page (#4210).
-		if (touchesLength > 1) {
+		if (touchesLength > 1
+		        || e.type === 'touchmove') {
 			self.initiated = true;
+		} else if (touchesLength === 1
+		        && e.type === 'touchstart') {
+		    self.initiated = undefined;
 		}
 
 		// On touch devices, only proceed to trigger click if a handler is defined
