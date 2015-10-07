@@ -14,10 +14,17 @@ $(function () {
             type: "line"
         }, true, false);
 
-        chart.pointer.onContainerMouseMove({ 
-            pageX: 150, 
-            pageY: 310, 
-            target: chart.series[0].group.element 
+        var point = chart.series[0].points[2],
+            offset = $(chart.container).offset();
+
+        // Set hoverPoint
+        point.onMouseOver();
+
+        chart.pointer.onContainerMouseMove({
+            type: 'mousemove',
+            pageX: point.plotX + chart.plotLeft + offset.left,
+            pageY: point.plotY + chart.plotTop + offset.top,
+            target: chart.container
         });
 
         assert.strictEqual(
