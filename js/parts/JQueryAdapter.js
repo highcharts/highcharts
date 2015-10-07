@@ -4,7 +4,7 @@
 		attr = H.attr,
 		charts = H.charts,
 		extend = H.extend,
-		isIE = H.isIE,
+		isMS = H.isMS,
 		isString = H.isString,
 		wrap = H.wrap;
 	/**
@@ -264,7 +264,7 @@
 			//
 			// To avoid problems in IE (see #1010) where we cannot delete the properties and avoid
 			// testing if they are there (warning in chrome) the only option is to test if running IE.
-			if (!isIE && eventArguments) {
+			if (!isMS && eventArguments) {
 				delete eventArguments.layerX;
 				delete eventArguments.layerY;
 				delete eventArguments.returnValue;

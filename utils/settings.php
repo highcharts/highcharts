@@ -7,7 +7,7 @@ class Settings {
 
 	static $leftPath = "http://code.highcharts.com";
 	//static $leftPath = "2f426113781d40f0236e66046de4b3022e89f7e8"; // This is how to compare against a commit
-	static $rightPath = "http://code.highcharts.local";
+	static $rightPath = "http://code.highcharts.th";
 	static $exportServer = "http://export.highcharts.com";
 	static $jQueryVersion = "1.8.0";
 }

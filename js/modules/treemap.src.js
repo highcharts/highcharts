@@ -103,18 +103,6 @@
 		type: 'treemap',
 		trackerGroups: ['group', 'dataLabelsGroup'],
 		pointClass: extendClass(H.Point, {
-			setState: function (state, move) {
-				H.Point.prototype.setState.call(this, state, move);
-				if (state === 'hover') {
-					if (this.dataLabel) {
-						this.dataLabel.attr({ zIndex: 1002 });
-					}
-				} else {
-					if (this.dataLabel) {
-						this.dataLabel.attr({ zIndex: this.node.zIndex + 1 });
-					}
-				}
-			},
 			setVisible: seriesTypes.pie.prototype.pointClass.prototype.setVisible
 		}),
 		/**
@@ -609,7 +597,6 @@
 		 */
 		drawDataLabels: function () {
 			var series = this,
-				dataLabelsGroup = series.dataLabelsGroup,
 				points = grep(series.points, function (n) {
 					return n.node.visible;
 				}),
@@ -639,10 +626,7 @@
 				// Merge custom options with point options
 				point.dlOptions = merge(options, point.options.dataLabels);
 			});
-
-			this.dataLabelsGroup = this.group; // Draw dataLabels in same group as points, because of z-index on hover
 			Series.prototype.drawDataLabels.call(this);
-			this.dataLabelsGroup = dataLabelsGroup;
 		},
 
 		/**
@@ -664,47 +648,30 @@
 				attr,
 				stateOptions = (state && options.states[state]) || {};
 
-			// Set attributes by precedence. Point trumps level trumps series.
+			// Set attributes by precedence. Point trumps level trumps series. Stroke width uses pick
+			// because it can be 0.
 			attr = {
 				'stroke': point.borderColor || level.borderColor || stateOptions.borderColor || options.borderColor,
-				'stroke-width': point.borderWidth || level.borderWidth || stateOptions.borderWidth || options.borderWidth,
+				'stroke-width': pick(point.borderWidth, level.borderWidth, stateOptions.borderWidth, options.borderWidth),
 				'dashstyle': point.borderDashStyle || level.borderDashStyle || stateOptions.borderDashStyle || options.borderDashStyle,
-				'fill': point.color || this.color,
-				'zIndex': point.node.zIndex
+				'fill': point.color || this.color
 			};
 
-			// Brighten and hoist the hover nodes
-			if (state) {
-				attr.fill = Color(attr.fill).brighten(stateOptions.brightness).get();
-				if (state === 'hover') {
-					attr.zIndex = 1001;
-				}
+			if (state === 'hover') {
+				attr.zIndex = 1;
 			}
 
-			// If not a leaf, then remove fill
-			if (!point.node.isLeaf) {
-				if (pick(options.interactByLeaf, !options.allowDrillToNode)) {
-					if (state === 'hover') {
-						delete attr.fill;
-					} else {
-						attr.fill = 'none';
-					}
-				} else {
-					// TODO: let users set the opacity
-					attr.fill = Color(attr.fill).setOpacity(
-						state === 'hover' ? 0.75 : 0.15
-					).get();
-				}
-			}
-
-			// Hide levels above the current view
 			if (point.node.level <= this.nodeMap[this.rootNode].level) {
-				if (state === 'hover') {
-					delete attr.fill;
-				} else {
-					attr.fill = 'none';
-					attr.zIndex = 0;
-				}
+				// Hide levels above the current view
+				attr.fill = 'none';
+				attr["stroke-width"] = 0;
+			} else if (!point.node.isLeaf) {
+				// If not a leaf, then remove fill
+				// @todo let users set the opacity
+				attr.fill = pick(options.interactByLeaf, !options.allowDrillToNode) ? 'none' : Color(attr.fill).setOpacity(state === 'hover' ? 0.75 : 0.15).get();
+			} else if (state) {
+				// Brighten and hoist the hover nodes
+				attr.fill = Color(attr.fill).brighten(stateOptions.brightness).get();
 			}
 
 			return attr;
@@ -719,21 +686,33 @@
 					return n.node.visible;
 				});
 
+			each(points, function (point) {
+				var groupKey = "levelGroup-" + point.node.levelDynamic;
+				if (!series[groupKey]) {
+					series[groupKey] = series.chart.renderer.g(groupKey)
+						.attr({
+							zIndex: 1000 - point.node.levelDynamic // @todo Set the zIndex based upon the number of levels, instead of using 1000
+						})
+						.add(series.group);
+				}
+				point.group = series[groupKey];
+				
+			});
 			// Call standard drawPoints
 			seriesTypes.column.prototype.drawPoints.call(this);
 
-			each(points, function (point) {
-				var cursor,
-					drillId;
-				if (point.graphic) {
-					// If drillToNode is allowed, set a point cursor on clickables & add drillId to point 
-					if (series.options.allowDrillToNode) {
+			// If drillToNode is allowed, set a point cursor on clickables & add drillId to point 
+			if (series.options.allowDrillToNode) {
+				each(points, function (point) {
+					var cursor,
+						drillId;
+					if (point.graphic) {
 						drillId = point.drillId = series.options.interactByLeaf ? series.drillToByLeaf(point) : series.drillToByGroup(point);
 						cursor = drillId ? "pointer" : "default";
 						point.graphic.css({ cursor: cursor });
 					}
-				}
-			});
+				});
+			}
 		},
 		/**
 		 * Inserts an element into an array, sorted by a condition.

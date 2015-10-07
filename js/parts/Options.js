@@ -187,7 +187,7 @@ H.defaultOptions = {
 			//pointStart: 0,
 			//pointInterval: 1,
 			//showInLegend: null, // auto: true for standalone series, false for linked series
-			softThreshold: true, // docs. Also, update the spline-plot-bands demo by removing y.min
+			softThreshold: true,
 			states: { // states for the entire series
 				hover: {
 					//enabled: false,
@@ -343,7 +343,7 @@ H.defaultOptions = {
 			color: '#333333',
 			cursor: 'default',
 			fontSize: '12px',
-			pointerEvents: 'none', // #1686 http://caniuse.com/#feat=pointer-events // docs
+			pointerEvents: 'none', // #1686 http://caniuse.com/#feat=pointer-events
 			whiteSpace: 'nowrap'
 		}
 		/*= } =*/

@@ -52,7 +52,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 		verticalAlign: null, // auto
 		y: null
 	},
-	softThreshold: false, // docs
+	softThreshold: false,
 	startFromThreshold: true, // docs (but false doesn't work well): http://jsfiddle.net/highcharts/hz8fopan/14/
 	stickyTracking: false,
 	tooltip: {
@@ -169,7 +169,8 @@ seriesTypes.column = extendClass(Series, {
 			xCrisp = -(borderWidth % 2 ? 0.5 : 0),
 			yCrisp = borderWidth % 2 ? 0.5 : 1,
 			right,
-			bottom;
+			bottom,
+			fromTop;
 
 		if (chart.inverted && chart.renderer.isVML) {
 			yCrisp += 1;
@@ -182,12 +183,13 @@ seriesTypes.column = extendClass(Series, {
 		w = right - x;
 
 		// Vertical
+		fromTop = mathAbs(y) <= 0.5; // #4504
 		bottom = Math.round(y + h) + yCrisp;
 		y = Math.round(y) + yCrisp;
 		h = bottom - y;
 
-		// Top edges are exceptions (#4504)
-		if (Math.abs(y) <= 0.5) {
+		// Top edges are exceptions
+		if (fromTop) {
 			y -= 1;
 			h += 1;
 		}
@@ -365,7 +367,7 @@ seriesTypes.column = extendClass(Series, {
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 						.addClass('highcharts-point' + (point.selected ? ' highcharts-point-select' : ''))
-						.add(series.group);
+						.add(point.group || series.group);
 
 					/*= if (build.classic) { =*/
 					// Presentational

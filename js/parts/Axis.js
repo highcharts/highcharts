@@ -135,7 +135,7 @@ H.Axis.prototype = {
 			//y: 0
 		},
 		type: 'linear' // linear, logarithmic or datetime
-		//visible: true // docs, sample created
+		//visible: true
 	},
 
 	/**
@@ -765,7 +765,8 @@ H.Axis.prototype = {
 			xData,
 			loopLength,
 			minArgs,
-			maxArgs;
+			maxArgs,
+			minRange;
 
 		// Set the automatic minimum range based on the closest point distance
 		if (axis.isXAxis && axis.minRange === undefined && !axis.isLog) {
@@ -793,7 +794,7 @@ H.Axis.prototype = {
 
 		// if minRange is exceeded, adjust
 		if (max - min < axis.minRange) {
-			var minRange = axis.minRange;
+			minRange = axis.minRange;
 			zoomOffset = (minRange - max + min) / 2;
 
 			// if min and max options have been set, don't go beyond it
@@ -851,9 +852,6 @@ H.Axis.prototype = {
 						pointPlacement = series.options.pointPlacement,
 						seriesClosestPointRange = series.closestPointRange;
 
-					if (seriesPointRange > range) { // #1446
-						seriesPointRange = 0;
-					}
 					pointRange = Math.max(pointRange, seriesPointRange);
 
 					if (!axis.single) {
@@ -1589,7 +1587,7 @@ H.Axis.prototype = {
 		}
 
 		this.autoRotation = autoRotation;
-		this.labelRotation = rotation;
+		this.labelRotation = pick(rotation, rotationOption);
 
 		return newTickInterval;
 	},
@@ -1732,6 +1730,7 @@ H.Axis.prototype = {
 			clip,
 			directionFactor = [-1, 1, 1, -1][side],
 			n,
+			axisParent = axis.axisParent, // Used in color axis
 			lineHeightCorrection;
 
 		// For reuse in Axis.render
@@ -1745,14 +1744,14 @@ H.Axis.prototype = {
 		if (!axis.axisGroup) {
 			axis.gridGroup = renderer.g('grid')
 				.attr({ zIndex: options.gridZIndex || 1 })
-				.add();
+				.add(axisParent);
 			axis.axisGroup = renderer.g('axis')
 				.attr({ zIndex: options.zIndex || 2 })
-				.add();
+				.add(axisParent);
 			axis.labelGroup = renderer.g('axis-labels')
 				.attr({ zIndex: labelOptions.zIndex || 7 })
 				.addClass('highcharts-' + axis.coll.toLowerCase() + '-labels')
-				.add();
+				.add(axisParent);
 		}
 
 		if (hasData || axis.isLinked) {

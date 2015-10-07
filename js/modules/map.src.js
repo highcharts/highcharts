@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.8-modified ()
+ * @license Highmaps JS v2.0-dev ()
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2014 Torstein Honsi
@@ -359,20 +359,23 @@ extend(ColorAxis.prototype, {
 		return color;
 	},
 
+	/**
+	 * Override the getOffset method to add the whole axis groups inside the legend.
+	 */
 	getOffset: function () {
 		var group = this.legendGroup,
 			sideOffset = this.chart.axisOffset[this.side];
 		
 		if (group) {
 
-			Axis.prototype.getOffset.call(this);
-			
-			if (!this.axisGroup.parentGroup) {
+			// Hook for the getOffset method to add groups to this parent group
+			this.axisParent = group;
 
-				// Move the axis elements inside the legend group
-				this.axisGroup.add(group);
-				this.gridGroup.add(group);
-				this.labelGroup.add(group);
+			// Call the base
+			Axis.prototype.getOffset.call(this);
+
+			// First time only
+			if (!this.added) {
 
 				this.added = true;
 

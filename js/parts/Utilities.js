@@ -202,7 +202,7 @@ H.pick = function () {
  * @param {Object} styles Style object with camel case property names
  */
 H.css = function (el, styles) {
-	if (H.isIE && !H.svg) { // #2686
+	if (H.isMS && !H.svg) { // #2686
 		if (styles && styles.opacity !== undefined) {
 			styles.filter = 'alpha(opacity=' + (styles.opacity * 100) + ')';
 		}

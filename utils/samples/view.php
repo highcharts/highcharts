@@ -229,7 +229,7 @@ function getResources() {
 
 
 		// Wrappers for recording mouse events in order to write automatic tests 
-		/*
+		
 		$(function () {
 
 			$(window).bind('keydown', parent.keyDown);
@@ -266,7 +266,7 @@ function getResources() {
 				return proceed.call(this, e);
 			});
 		});
-		*/
+		
 
 		<?php if (@$_GET['profile']) : ?>
 		$(function () {
@@ -366,10 +366,9 @@ function getResources() {
 
 				<a id="view-source" class="button" href="javascript:;">View source</a>
 				
-				<!--
 				<input id="record" type="checkbox" />
 				<label for="record" title="Record calls to Pointer mouse events that can be added to test.js for automatic testing of tooltip and other mouse operations">Record mouse</label>
-				-->
+				
 			</div>
 		</div>
 		<div id="source-box"></div>

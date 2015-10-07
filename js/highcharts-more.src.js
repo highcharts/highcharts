@@ -1968,7 +1968,7 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	maxSize: '20%',
 	// negativeColor: null,
 	// sizeBy: 'area'
-	softThreshold: false, // docs
+	softThreshold: false,
 	states: {
 		hover: {
 			halo: {
@@ -2037,7 +2037,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			value = zData[i];
 
 			// When sizing by threshold, the absolute value of z determines the size
-			// of the bubble. // docs. sample created
+			// of the bubble.
 			if (options.sizeByAbsoluteValue) {
 				value = Math.abs(value - zThreshold);
 				zMax = Math.max(zMax - zThreshold, Math.abs(zMin - zThreshold));

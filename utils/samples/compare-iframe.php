@@ -24,6 +24,11 @@ $rightExporting = "$rightPath/modules/exporting.src.js";
 $leftFramework = 'jQuery';
 $rightFramework = 'jQuery';
 
+$httpHost = $_SERVER['HTTP_HOST'];
+$httpHost = explode('.', $httpHost);
+$topDomain = $httpHost[sizeof($httpHost) - 1];
+
+
 
 $path = $_GET['path'];
 if (!preg_match('/^[a-z\-0-9]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
@@ -79,12 +84,16 @@ function getResources() {
 }
 
 function getJS() {
-	global $path;
+	global $path, $topDomain;
 	
 	
 	ob_start();
 	include("$path/demo.js");
 	$s = ob_get_clean();
+
+
+	// Use local data
+	$s = str_replace('http://www.highcharts.com/samples/data', "http://www.highcharts.$topDomain/samples/data", $s);
 	
 	return cachify($s);
 }
@@ -150,8 +159,8 @@ function getExportInnerHTML() {
 		<?php echo getResources(); ?>
 
 		<?php if (is_file("$path/unit-tests.js")) : ?>
-		<script src="http://code.jquery.com/qunit/qunit-1.15.0.js"></script>
-   		<link rel="stylesheet" type="text/css" href="http://code.jquery.com/qunit/qunit-1.15.0.css" />		
+		<script src="http://code.jquery.com/qunit/qunit-1.19.0.js"></script>
+   		<link rel="stylesheet" type="text/css" href="http://code.jquery.com/qunit/qunit-1.19.0.css" />		
    		<?php endif; ?>
 
 		<link rel="stylesheet" type="text/css" href="style.css"/>
@@ -264,10 +273,6 @@ function getExportInnerHTML() {
 				} else if (window.parent) {
 					compareHTML();			
 				}
-			});
-			
-			// Disable animation
-			$(function () {
 
 				// Make sure getJSON content is not cached
 				$.ajaxSetup({
