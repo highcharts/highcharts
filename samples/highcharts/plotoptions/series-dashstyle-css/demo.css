@@ -1,0 +1,24 @@
+#container {
+	height: 400px;
+	min-width: 300px;
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+/* All black, rely on the dashes */
+.highcharts-series-0 .highcharts-graph,
+.highcharts-series-1 .highcharts-graph {
+    stroke: black;
+}
+
+.highcharts-series-0,
+.highcharts-series-1 {
+    fill: black;
+}
+
+.highcharts-series-0 {
+	stroke-dasharray: 10, 12;
+}
+.highcharts-series-1 {
+	stroke-dasharray: 1, 3;
+}

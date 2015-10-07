@@ -11166,7 +11166,8 @@ Legend.prototype = {
 			bBox,
 			itemWidth,
 			li = item.legendItem,
-			series = item.series && item.series.drawLegendSymbol ? item.series : item,
+			isSeries = !item.series,
+			series = !isSeries && item.series.drawLegendSymbol ? item.series : item,
 			seriesOptions = series.options,
 			showCheckbox = legend.createCheckboxForItem && seriesOptions && seriesOptions.showCheckbox,
 			useHTML = options.useHTML,
@@ -11177,7 +11178,10 @@ Legend.prototype = {
 			// Generate the group box
 			// A group to hold the symbol and text. Text is to be appended in Legend class.
 			item.legendGroup = renderer.g('legend-item')
-				.addClass('highcharts-' + series.type + '-series highcharts-color-' + item.colorIndex + ' ' + (item.options.className || ''))
+				.addClass('highcharts-' + series.type + '-series highcharts-color-' + item.colorIndex + ' ' + 
+					(item.options.className || '') +
+					(isSeries ? 'highcharts-series-' + item.index : '')
+				)
 				.attr({ zIndex: 1 })
 				.add(legend.scrollGroup);
 
@@ -11705,28 +11709,26 @@ H.LegendSymbolMixin = {
 			attr = {};
 
 		// Draw the line
-		if (options.lineWidth) {
-			
-			attr = {
-				'stroke-width': options.lineWidth
-			};
-			if (options.dashStyle) {
-				attr.dashstyle = options.dashStyle;
-			}
-			
-			
-			this.legendLine = renderer.path([
-				'M',
-				0,
-				verticalCenter,
-				'L',
-				symbolWidth,
-				verticalCenter
-			])
-			.addClass('highcharts-graph')
-			.attr(attr)
-			.add(legendItemGroup);
+		
+		attr = {
+			'stroke-width': options.lineWidth || 0
+		};
+		if (options.dashStyle) {
+			attr.dashstyle = options.dashStyle;
 		}
+		
+		
+		this.legendLine = renderer.path([
+			'M',
+			0,
+			verticalCenter,
+			'L',
+			symbolWidth,
+			verticalCenter
+		])
+		.addClass('highcharts-graph')
+		.attr(attr)
+		.add(legendItemGroup);
 		
 		// Draw the marker
 		if (markerOptions && markerOptions.enabled !== false) {
