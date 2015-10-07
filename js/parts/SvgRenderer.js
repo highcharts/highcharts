@@ -2675,7 +2675,11 @@ SVGRenderer.prototype = {
 			strokeWidth = value;
 			boxAttr(key, value);
 		};
-		/*= if (build.classic) { =*/
+		/*= if (!build.classic) { =*/
+		wrapper.rSetter = function (value, key) {
+			boxAttr(key, value);
+		};
+		/*= } else { =*/
 		wrapper.strokeSetter = wrapper.fillSetter = wrapper.rSetter = function (value, key) {
 			if (key === 'fill' && value) {
 				needsBox = true;

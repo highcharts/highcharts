@@ -1,0 +1,16 @@
+#container {
+	height: 400px;
+	min-width: 300px;
+	max-width: 800px;
+	margin: 0 auto;
+}
+.highcharts-data-label-box {
+	fill: #a4edba;
+	stroke: gray;
+	stroke-width: 1px;
+}
+.highlight .highcharts-data-label-box {
+	fill: #f7a35c;
+	stroke-width: 2px;
+	stroke: red;
+}

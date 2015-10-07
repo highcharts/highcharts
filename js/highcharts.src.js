@@ -17897,9 +17897,11 @@ Series.prototype.drawDataLabels = function () {
 				} else if (defined(str)) {
 					attr = {
 						//align: align,
+						
 						fill: options.backgroundColor,
 						stroke: options.borderColor,
 						'stroke-width': options.borderWidth,
+						
 						r: options.borderRadius || 0,
 						rotation: rotation,
 						padding: options.padding,
@@ -17934,12 +17936,21 @@ Series.prototype.drawDataLabels = function () {
 						options.shape,
 						null,
 						null,
-						options.useHTML
+						options.useHTML,
+						null, 
+						'data-label'
 					)
 					.attr(attr)
 					.css(extend(style, moreStyle))
 					.add(dataLabelsGroup)
-					.shadow(options.shadow);
+
+					if (options.className) { // docs
+						dataLabel.addClass(options.className);
+					}
+
+					
+					dataLabel.shadow(options.shadow);
+					
 
 				}
 
