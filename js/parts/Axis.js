@@ -102,7 +102,7 @@ Axis.prototype = {
 			//y: 0
 		},
 		type: 'linear' // linear, logarithmic or datetime
-		//visible: true // docs, sample created
+		//visible: true
 	},
 
 	/**

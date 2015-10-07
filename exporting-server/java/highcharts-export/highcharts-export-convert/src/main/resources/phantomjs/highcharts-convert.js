@@ -140,21 +140,21 @@
 
 		messages.optionsParsed = 'Highcharts.options.parsed';
 		messages.callbackParsed = 'Highcharts.cb.parsed';
-
+		
 		window.optionsParsed = false;
 		window.callbackParsed = false;
-
+		
 		//security measures, for not allowing loading iframes
 		page.navigationLocked = true;
-
+		
 		page.onConsoleMessage = function (msg) {
 			console.log(msg);
-
+			
 			/*
 			 * Ugly hack, but only way to get messages out of the 'page.evaluate()'
 			 * sandbox. If any, please contribute with improvements on this!
 			 */
-
+			
 			/* to check options or callback are properly parsed */
 			if (msg === messages.optionsParsed) {
 				window.optionsParsed = true;
@@ -172,7 +172,7 @@
 		/* scale and clip the page */
 		scaleAndClipPage = function (svg) {
 			/*	param: svg: The scg configuration object
-			 */
+			*/
 
 			var zoom = 1,
 				pageWidth = pick(params.width, svg.width),
@@ -184,7 +184,7 @@
 			}
 
 			/* set this line when scale factor has a higher precedence
-			 scale has precedence : page.zoomFactor = params.scale  ? zoom * params.scale : zoom;*/
+			scale has precedence : page.zoomFactor = params.scale  ? zoom * params.scale : zoom;*/
 
 			/* params.width has a higher precedence over scaling, to not break backover compatibility */
 			page.zoomFactor = params.scale && params.width == undefined ? zoom * params.scale : zoom;
@@ -244,38 +244,38 @@
 				exit(base64);
 			}
 		};
-
+		
 		function decrementImgCounter() {
 			counter -= 1;
 			if (counter < 1) {
 				imagesLoaded = true;
 			}
 		}
-
+		
 		function loadImages(imgUrls) {
 			var i, img;
 			counter = imgUrls.length;
-			for (i = 0; i < imgUrls.length; i += 1) {
-				img = new Image();
+			for (i = 0; i < imgUrls.length; i += 1) {                    
+				img = new Image();                    
 				/* onload decrements the counter, also when error (perhaps 404), don't wait for this image to be loaded */
-				img.onload = img.onerror = decrementImgCounter;
-				/* force loading of images by setting the src attr.*/
+				img.onload = img.onerror = decrementImgCounter;                    
+				/* force loading of images by setting the src attr.*/                    
 				img.src = imgUrls[i];
 			}
 		}
-
+		
 		renderSVG = function (svg) {
 			var svgFile;
 			// From this point we have 'loaded' or 'created' a SVG
-
+			
 			// Do we have to load images?
 			if (svg.imgUrls.length > 0) {
 				loadImages(svg.imgUrls);
 			} else  {
-				// no images present, no loading, no waiting
+				 // no images present, no loading, no waiting
 				imagesLoaded = true;
 			}
-
+			
 			try {
 				if (outType.toLowerCase() === 'svg') {
 					// output svg
@@ -333,7 +333,7 @@
 			if (outputType === 'jpeg') {
 				document.body.style.backgroundColor = 'white';
 			}
-
+			
 			nodes = document.querySelectorAll('*[stroke-opacity]');
 
 			for (nodeIter = 0; nodeIter < nodes.length; nodeIter += 1) {
@@ -344,14 +344,14 @@
 			}
 
 			svgElem = document.getElementsByTagName('svg')[0];
-
+			
 			imgs = document.getElementsByTagName('image');
 			imgUrls = [];
-
+			
 			for (imgIndex = 0; imgIndex < imgs.length; imgIndex = imgIndex + 1) {
 				imgUrls.push(imgs[imgIndex].href.baseVal);
-			}
-
+			}           
+			
 			return {
 				html: document.body.innerHTML,
 				width: svgElem.getAttribute("width"),
@@ -414,7 +414,7 @@
 
 			// disable animations
 			Highcharts.SVGRenderer.prototype.Element.prototype.animate = Highcharts.SVGRenderer.prototype.Element.prototype.attr;
-			Highcharts.setOptions({
+			Highcharts.setOptions({ 
 				plotOptions: {
 					series: {
 						animation: false
@@ -463,12 +463,12 @@
 
 				}, options, dataOptions);
 			} else {
-				chart = new Highcharts[constr](options, cb);
+				chart = new Highcharts[constr](options, cb);				
 			}
 
 			/* remove stroke-opacity paths, used by mouse-trackers, they turn up as
-			 *  as fully opaque in the PDF
-			 */
+			*  as fully opaque in the PDF
+			*/
 			nodes = document.querySelectorAll('*[stroke-opacity]');
 
 			for (nodeIter = 0; nodeIter < nodes.length; nodeIter += 1) {
@@ -477,15 +477,15 @@
 				elem.removeAttribute('stroke-opacity');
 				elem.setAttribute('opacity', opacity);
 			}
-
+			
 			imgs = document.getElementsByTagName('image');
 			imgUrls = [];
-
+			
 			for (imgIndex = 0; imgIndex < imgs.length; imgIndex = imgIndex + 1) {
 				imgUrls.push(imgs[imgIndex].href.baseVal);
 			}
-
-			return {
+			
+			return {				
 				html: $('div.highcharts-container')[0].innerHTML,
 				width: chart.chartWidth,
 				height: chart.chartHeight,
@@ -533,12 +533,12 @@
 					 * We have a js file, let's render serverside from Highcharts options and grab the svg from it
 					 */
 
-					// load our javascript dependencies based on the constructor
-					if (constr === 'Map') {
-						jsFiles = config.files.highmaps;
-					} else if (constr === 'StockChart')
+					 // load our javascript dependencies based on the constructor
+					 if (constr === 'Map') {
+						 jsFiles = config.files.highmaps;
+					 } else if (constr === 'StockChart')
 						jsFiles = config.files.highstock;
-					else {
+					 else {
 						jsFiles = config.files.highcharts;
 					}
 

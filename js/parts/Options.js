@@ -307,7 +307,7 @@ defaultOptions = {
 			cursor: 'default',
 			fontSize: '12px',
 			padding: '8px',
-			pointerEvents: 'none', // #1686 http://caniuse.com/#feat=pointer-events // docs
+			pointerEvents: 'none', // #1686 http://caniuse.com/#feat=pointer-events
 			whiteSpace: 'nowrap'
 		}
 		//xDateFormat: '%A, %b %e, %Y',

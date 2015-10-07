@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.8-modified ()
+ * @license Highcharts JS v4.1.9 (2015-10-07)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -55,7 +55,7 @@ var UNDEFINED,
 	charts = [],
 	chartCount = 0,
 	PRODUCT = 'Highcharts',
-	VERSION = '4.1.8-modified',
+	VERSION = '4.1.9',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -1269,8 +1269,8 @@ defaultOptions = {
 	global: {
 		useUTC: true,
 		//timezoneOffset: 0,
-		canvasToolsURL: 'http://code.highcharts.com/4.1.8-modified/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/4.1.8-modified/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/4.1.9/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/4.1.9/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -1413,7 +1413,7 @@ defaultOptions = {
 			//pointStart: 0,
 			//pointInterval: 1,
 			//showInLegend: null, // auto: true for standalone series, false for linked series
-			softThreshold: true, // docs. Also, update the spline-plot-bands demo by removing y.min
+			softThreshold: true,
 			states: { // states for the entire series
 				hover: {
 					//enabled: false,
@@ -1555,7 +1555,7 @@ defaultOptions = {
 			cursor: 'default',
 			fontSize: '12px',
 			padding: '8px',
-			pointerEvents: 'none', // #1686 http://caniuse.com/#feat=pointer-events // docs
+			pointerEvents: 'none', // #1686 http://caniuse.com/#feat=pointer-events
 			whiteSpace: 'nowrap'
 		}
 		//xDateFormat: '%A, %b %e, %Y',
@@ -6596,7 +6596,7 @@ Axis.prototype = {
 			//y: 0
 		},
 		type: 'linear' // linear, logarithmic or datetime
-		//visible: true // docs, sample created
+		//visible: true
 	},
 
 	/**
@@ -13570,7 +13570,7 @@ Series.prototype = {
 
 		// Typically for pie series, points need to be processed and generated 
 		// prior to rendering the legend
-		if (options.legendType === 'point') { // docs: legendType now supported on more series types
+		if (options.legendType === 'point') { // docs: legendType now supported on more series types (at least column and pie)
 			this.processData();
 			this.generatePoints();
 		}
@@ -15906,7 +15906,7 @@ seriesTypes.line = LineSeries;
  * Set the default options for area
  */
 defaultPlotOptions.area = merge(defaultSeriesOptions, {
-	softThreshold: false, // docs
+	softThreshold: false,
 	threshold: 0
 	// trackByArea: false,
 	// lineColor: null, // overrides color, but lets fillColor be unaltered
@@ -16293,7 +16293,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 		verticalAlign: null, // auto
 		y: null
 	},
-	softThreshold: false, // docs
+	softThreshold: false,
 	startFromThreshold: true, // docs (but false doesn't work well): http://jsfiddle.net/highcharts/hz8fopan/14/
 	stickyTracking: false,
 	tooltip: {
@@ -17905,7 +17905,7 @@ if (seriesTypes.column) {
 
 
 /**
- * Highcharts JS v4.1.8-modified ()
+ * Highcharts JS v4.1.9 (2015-10-07)
  * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
  *
  * (c) 2010-2014 Torstein Honsi

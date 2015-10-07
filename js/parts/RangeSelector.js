@@ -33,7 +33,7 @@ extend(defaultOptions, {
 				}
 			}
 		},
-		height: 35, // reserved space for buttons and input // docs
+		height: 35, // reserved space for buttons and input
 		inputPosition: {
 			align: 'right'
 		},
