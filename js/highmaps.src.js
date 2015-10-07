@@ -1325,29 +1325,33 @@ H.defaultOptions = {
 
 	plotOptions: {
 		line: { // base series options
+			
+			//cursor: 'default',
+			//dashStyle: null,
+			//linecap: 'round',
+			lineWidth: 2,
+			//shadow: false,
+			
 			allowPointSelect: false,
 			showCheckbox: false,
 			animation: {
 				duration: 1000
 			},
-			//connectNulls: false,
-			//cursor: 'default',
 			//clip: true,
-			//dashStyle: null,
+			//connectNulls: false,
 			//enableMouseTracking: true,
 			events: {},
 			//legendIndex: 0,
-			//linecap: 'round',
-			lineWidth: 2,
-			//shadow: false,
 			// stacking: null,
 			marker: {
-				//enabled: true,
-				//symbol: null,
+				
 				lineWidth: 0,
-				radius: 4,
 				lineColor: '#FFFFFF',
 				//fillColor: null,
+								
+				//enabled: true,
+				//symbol: null,
+				radius: 4,
 				states: { // states for a single point
 					hover: {
 						enabled: true,
@@ -15942,7 +15946,6 @@ Series.prototype.drawDataLabels = function () {
 
 	var series = this,
 		seriesOptions = series.options,
-		cursor = seriesOptions.cursor,
 		options = seriesOptions.dataLabels,
 		points = series.points,
 		pointOptions,
@@ -16060,9 +16063,12 @@ Series.prototype.drawDataLabels = function () {
 							renderer.getContrast(point.color || series.color) : 
 							'#000000';
 					}
-					if (cursor) {
-						moreStyle.cursor = cursor;
+
+					
+					if (seriesOptions.cursor) {
+						moreStyle.cursor = seriesOptions.cursor;
 					}
+					
 					
 
 					// Remove unused attributes (#947)
@@ -19716,8 +19722,6 @@ TrackerMixin = H.TrackerMixin = {
 		var series = this,
 			chart = series.chart,
 			pointer = chart.pointer,
-			cursor = series.options.cursor,
-			css = cursor && { cursor: cursor },
 			onMouseOver = function (e) {
 				var target = e.target,
 				point;
@@ -19754,6 +19758,12 @@ TrackerMixin = H.TrackerMixin = {
 					if (hasTouch) {
 						series[key].on('touchstart', onMouseOver);
 					}
+
+					
+					if (series.options.cursor) {
+						series[key].css({ cursor: series.options.cursor });
+					}
+					
 				}
 			});
 			series._hasTracking = true;
@@ -19777,11 +19787,10 @@ TrackerMixin = H.TrackerMixin = {
 			renderer = chart.renderer,
 			snap = chart.options.tooltip.snap,
 			tracker = series.tracker,
-			cursor = options.cursor,
-			css = cursor && { cursor: cursor },
 			singlePoints = series.singlePoints,
 			singlePoint,
 			i,
+			lineWidth,
 			onMouseOver = function () {
 				if (chart.hoverSeries !== series) {
 					series.onMouseOver();
@@ -19800,6 +19809,10 @@ TrackerMixin = H.TrackerMixin = {
 			 * Opera: 0.00000000001 (unlimited)
 			 */
 			TRACKER_FILL = 'rgba(192,192,192,' + (svg ? 0.0001 : 0.002) + ')';
+
+		
+		lineWidth = options.lineWidth;
+		
 
 		// Extend end points. A better way would be to use round linecaps,
 		// but those are not clickable in VML.
@@ -19833,7 +19846,7 @@ TrackerMixin = H.TrackerMixin = {
 				visibility: series.visible ? 'visible' : 'hidden',
 				stroke: TRACKER_FILL,
 				fill: trackByArea ? TRACKER_FILL : 'none',
-				'stroke-width' : options.lineWidth + (trackByArea ? 0 : 2 * snap),
+				'stroke-width' : lineWidth + (trackByArea ? 0 : 2 * snap),
 				zIndex: 2
 			})
 			.add(series.group);
@@ -19843,8 +19856,13 @@ TrackerMixin = H.TrackerMixin = {
 			each([series.tracker, series.markerGroup], function (tracker) {
 				tracker.addClass('highcharts-tracker')
 					.on('mouseover', onMouseOver)
-					.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
-					.css(css);
+					.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); });
+
+				
+				if (options.cursor) {
+					tracker.css({ cursor: options.cursor });
+				}
+				
 
 				if (hasTouch) {
 					tracker.on('touchstart', onMouseOver);

@@ -18,7 +18,6 @@ Series.prototype.drawDataLabels = function () {
 
 	var series = this,
 		seriesOptions = series.options,
-		cursor = seriesOptions.cursor,
 		options = seriesOptions.dataLabels,
 		points = series.points,
 		pointOptions,
@@ -136,9 +135,12 @@ Series.prototype.drawDataLabels = function () {
 							renderer.getContrast(point.color || series.color) : 
 							'#000000';
 					}
-					if (cursor) {
-						moreStyle.cursor = cursor;
+
+					/*= if (build.classic) { =*/
+					if (seriesOptions.cursor) {
+						moreStyle.cursor = seriesOptions.cursor;
 					}
+					/*= } =*/
 					
 
 					// Remove unused attributes (#947)

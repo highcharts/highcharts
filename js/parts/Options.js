@@ -112,29 +112,33 @@ H.defaultOptions = {
 
 	plotOptions: {
 		line: { // base series options
+			/*= if (build.classic) { =*/
+			//cursor: 'default',
+			//dashStyle: null,
+			//linecap: 'round',
+			lineWidth: 2,
+			//shadow: false,
+			/*= } =*/
 			allowPointSelect: false,
 			showCheckbox: false,
 			animation: {
 				duration: 1000
 			},
-			//connectNulls: false,
-			//cursor: 'default',
 			//clip: true,
-			//dashStyle: null,
+			//connectNulls: false,
 			//enableMouseTracking: true,
 			events: {},
 			//legendIndex: 0,
-			//linecap: 'round',
-			lineWidth: 2,
-			//shadow: false,
 			// stacking: null,
 			marker: {
-				//enabled: true,
-				//symbol: null,
+				/*= if (build.classic) { =*/
 				lineWidth: 0,
-				radius: 4,
 				lineColor: '#FFFFFF',
 				//fillColor: null,
+				/*= } =*/				
+				//enabled: true,
+				//symbol: null,
+				radius: 4,
 				states: { // states for a single point
 					hover: {
 						enabled: true,
