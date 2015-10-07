@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.8-modified ()
+ * @license Highstock JS v3.0-dev (2015-10-07)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -37,7 +37,7 @@
 
 window.Highcharts = window.Highcharts ? window.Highcharts.error(16, true) : {
 	product: 'Highstock',
-	version: '2.1.8-modified',
+	version: '3.0-dev',
 	deg2rad: Math.PI * 2 / 360,
 	hasBidiBug: hasBidiBug,
 	isIE: isIE,
@@ -1241,8 +1241,8 @@ H.defaultOptions = {
 	global: {
 		useUTC: true,
 		//timezoneOffset: 0,
-		canvasToolsURL: 'http://code.highcharts.com/stock/2.1.8-modified/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/stock/2.1.8-modified/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/stock/3.0-dev/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/stock/3.0-dev/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -2985,7 +2985,7 @@ SVGRenderer.prototype = {
 
 		// Add description
 		desc = this.createElement('desc').add();
-		desc.element.appendChild(document.createTextNode('Created with Highstock 2.1.8-modified'));
+		desc.element.appendChild(document.createTextNode('Created with Highstock 3.0-dev'));
 
 
 		renderer.defs = this.createElement('defs').add();
@@ -18119,7 +18119,7 @@ if (seriesTypes.column) {
 	return H;
 }(Highcharts));
 /**
- * Highstock JS v2.1.8-modified ()
+ * Highstock JS v3.0-dev (2015-10-07)
  * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
  *
  * (c) 2010-2014 Torstein Honsi
@@ -19794,7 +19794,7 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 	return H;
 }(Highcharts));
 /**
- * Highstock JS v2.1.8-modified ()
+ * Highstock JS v3.0-dev (2015-10-07)
  * Highcharts Broken Axis module
  * 
  * Author: Stephane Vanraes, Torstein Honsi

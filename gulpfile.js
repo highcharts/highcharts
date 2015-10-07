@@ -170,6 +170,11 @@ gulp.task('scripts', function () {
             }
         });
 
+        // Avoid gulping files in old branch after checkout
+        if (products.highcharts.version.indexOf('4') === 0) {
+            return;
+        }
+
         // Loop over the source files
         paths.distributions.forEach(function (path) {
 
@@ -192,6 +197,10 @@ gulp.task('scripts', function () {
                     throw err;
                 }
 
+                // Unspecified date, use current
+                if (!products[prod].date) {
+                    products[prod].date = (new Date()).toISOString().substr(0, 10);
+                }
                 tpl = tpl
                     .replace(/@product\.name@/g, products[prod].name)
                     .replace(/@product\.version@/g, products[prod].version)
