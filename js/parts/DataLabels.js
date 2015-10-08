@@ -144,7 +144,7 @@ Series.prototype.drawDataLabels = function () {
 						moreStyle.cursor = seriesOptions.cursor;
 					}
 					/*= } =*/
-					
+
 
 					// Remove unused attributes (#947)
 					for (name in attr) {
@@ -166,7 +166,7 @@ Series.prototype.drawDataLabels = function () {
 					)
 					.attr(attr)
 					.css(extend(style, moreStyle))
-					.add(dataLabelsGroup)
+					.add(dataLabelsGroup);
 
 					if (options.className) { // docs
 						dataLabel.addClass(options.className);

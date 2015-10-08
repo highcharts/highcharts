@@ -1352,6 +1352,11 @@ H.defaultOptions = {
 					return this.y === null ? '' : H.numberFormat(this.y, -1);
 				},
 				
+				style: {
+					color: 'contrast',
+					textShadow: '0 0 6px contrast, 0 0 3px contrast'
+				},
+				
 				verticalAlign: 'bottom', // above singular point
 				x: 0,
 				y: 0,
@@ -15251,7 +15256,7 @@ seriesTypes.column = extendClass(Series, {
 		w = right - x;
 
 		// Vertical
-		fromTop = mathAbs(y) <= 0.5; // #4504
+		fromTop = Math.abs(y) <= 0.5; // #4504
 		bottom = Math.round(y + h) + yCrisp;
 		y = Math.round(y) + yCrisp;
 		h = bottom - y;
@@ -15673,7 +15678,7 @@ Series.prototype.drawDataLabels = function () {
 					};
 					
 					
-					
+
 
 					// Remove unused attributes (#947)
 					for (name in attr) {
@@ -15695,7 +15700,7 @@ Series.prototype.drawDataLabels = function () {
 					)
 					.attr(attr)
 					.css(extend(style, moreStyle))
-					.add(dataLabelsGroup)
+					.add(dataLabelsGroup);
 
 					if (options.className) { // docs
 						dataLabel.addClass(options.className);

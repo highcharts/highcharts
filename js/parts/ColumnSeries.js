@@ -183,7 +183,7 @@ seriesTypes.column = extendClass(Series, {
 		w = right - x;
 
 		// Vertical
-		fromTop = mathAbs(y) <= 0.5; // #4504
+		fromTop = Math.abs(y) <= 0.5; // #4504
 		bottom = Math.round(y + h) + yCrisp;
 		y = Math.round(y) + yCrisp;
 		h = bottom - y;

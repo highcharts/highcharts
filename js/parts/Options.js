@@ -166,7 +166,12 @@ H.defaultOptions = {
 				formatter: function () {
 					return this.y === null ? '' : H.numberFormat(this.y, -1);
 				},
-				/*= if (build.classic) { =*/
+				/*= if (!build.classic) { =*/
+				style: {
+					color: 'contrast',
+					textShadow: '0 0 6px contrast, 0 0 3px contrast'
+				},
+				/*= } else { =*/
 				style: {
 					color: 'contrast',
 					fontSize: '11px',

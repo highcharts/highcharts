@@ -177,8 +177,7 @@ g.highcharts-series, .highcharts-point {
 
 .highcharts-data-label {
   font-size: 0.9em;
-  font-weight: bold;
-  fill: black; }
+  font-weight: bold; }
 
 .highcharts-data-label-box {
   fill: none;
