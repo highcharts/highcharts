@@ -166,19 +166,21 @@ H.defaultOptions = {
 				formatter: function () {
 					return this.y === null ? '' : H.numberFormat(this.y, -1);
 				},
+				/*= if (build.classic) { =*/
 				style: {
 					color: 'contrast',
 					fontSize: '11px',
 					fontWeight: 'bold',
 					textShadow: '0 0 6px contrast, 0 0 3px contrast'
 				},
+				// backgroundColor: undefined,
+				// borderColor: undefined,
+				// borderWidth: undefined,
+				/*= } =*/
 				verticalAlign: 'bottom', // above singular point
 				x: 0,
 				y: 0,
-				// backgroundColor: undefined,
-				// borderColor: undefined,
 				// borderRadius: undefined,
-				// borderWidth: undefined,
 				padding: 5
 				// shadow: false
 			},

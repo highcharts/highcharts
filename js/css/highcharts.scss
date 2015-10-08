@@ -129,6 +129,11 @@ g.highcharts-series, .highcharts-point {
 .highcharts-pie-series .highcharts-point {
     stroke-linejoin: round;
 }
+.highcharts-data-label {
+    font-size: 0.9em;
+    font-weight: bold;
+    fill: black;
+}
 .highcharts-data-label-box {
     fill: none;
     stroke-width: 0;

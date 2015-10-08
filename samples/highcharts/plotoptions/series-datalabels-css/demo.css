@@ -9,8 +9,15 @@
 	stroke: gray;
 	stroke-width: 1px;
 }
+.highcharts-data-label {
+	font-weight: normal;
+}
 .highlight .highcharts-data-label-box {
-	fill: #f7a35c;
+	fill: red;
 	stroke-width: 2px;
-	stroke: red;
+	stroke: black;
+}
+.highlight.highcharts-data-label text {
+	font-weight: bold;
+	fill: white;
 }

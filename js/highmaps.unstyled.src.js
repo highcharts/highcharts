@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highmaps JS v2.0-dev (2015-10-07)
+ * @license Highmaps JS v2.0-dev (2015-10-08)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -1351,19 +1351,11 @@ H.defaultOptions = {
 				formatter: function () {
 					return this.y === null ? '' : H.numberFormat(this.y, -1);
 				},
-				style: {
-					color: 'contrast',
-					fontSize: '11px',
-					fontWeight: 'bold',
-					textShadow: '0 0 6px contrast, 0 0 3px contrast'
-				},
+				
 				verticalAlign: 'bottom', // above singular point
 				x: 0,
 				y: 0,
-				// backgroundColor: undefined,
-				// borderColor: undefined,
 				// borderRadius: undefined,
-				// borderWidth: undefined,
 				padding: 5
 				// shadow: false
 			},
@@ -15650,9 +15642,7 @@ Series.prototype.drawDataLabels = function () {
 					format(options.format, labelConfig) :
 					options.formatter.call(labelConfig, options);
 
-				// Determine the color
-				style.color = pick(options.color, style.color, series.color, 'black');
-
+				
 
 				// update existing label
 				if (dataLabel) {
@@ -15682,13 +15672,6 @@ Series.prototype.drawDataLabels = function () {
 						zIndex: 1
 					};
 					
-					// Get automated contrast color
-					if (style.color === 'contrast') {
-						moreStyle.color = options.inside || options.distance < 0 || !!seriesOptions.stacking ? 
-							renderer.getContrast(point.color || series.color) : 
-							'#000000';
-					}
-
 					
 					
 
@@ -15740,7 +15723,8 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		plotX = pick(point.plotX, -999),
 		plotY = pick(point.plotY, -999),
 		bBox = dataLabel.getBBox(),
-		baseline = chart.renderer.fontMetrics(options.style.fontSize).b,
+		fontSize,
+		baseline,
 		rotCorr, // rotation correction
 		// Math.round for rounding errors (#2683), alignTo to allow column labels (#2700)
 		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, Math.round(plotY), inverted) ||
@@ -15748,6 +15732,10 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		alignAttr; // the final position;
 
 	if (visible) {
+
+		
+
+		baseline = chart.renderer.fontMetrics(fontSize, dataLabel).b;
 
 		// The alignment box is a singular point
 		alignTo = extend({
@@ -16330,7 +16318,7 @@ if (seriesTypes.column) {
 	return H;
 }(Highcharts));
 /**
- * Highmaps JS v2.0-dev (2015-10-07)
+ * Highmaps JS v2.0-dev (2015-10-08)
  * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
  *
  * (c) 2010-2014 Torstein Honsi
@@ -17860,7 +17848,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	return H;
 }(Highcharts));
 /**
- * Highmaps JS v2.0-dev (2015-10-07)
+ * Highmaps JS v2.0-dev (2015-10-08)
  * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
  *
  * (c) 2010-2014 Torstein Honsi

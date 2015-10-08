@@ -95,9 +95,10 @@ Series.prototype.drawDataLabels = function () {
 					format(options.format, labelConfig) :
 					options.formatter.call(labelConfig, options);
 
+				/*= if (build.classic) { =*/
 				// Determine the color
 				style.color = pick(options.color, style.color, series.color, 'black');
-
+				/*= } =*/
 
 				// update existing label
 				if (dataLabel) {
@@ -131,6 +132,7 @@ Series.prototype.drawDataLabels = function () {
 						zIndex: 1
 					};
 					
+					/*= if (build.classic) { =*/
 					// Get automated contrast color
 					if (style.color === 'contrast') {
 						moreStyle.color = options.inside || options.distance < 0 || !!seriesOptions.stacking ? 
@@ -138,7 +140,6 @@ Series.prototype.drawDataLabels = function () {
 							'#000000';
 					}
 
-					/*= if (build.classic) { =*/
 					if (seriesOptions.cursor) {
 						moreStyle.cursor = seriesOptions.cursor;
 					}
@@ -195,7 +196,8 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		plotX = pick(point.plotX, -999),
 		plotY = pick(point.plotY, -999),
 		bBox = dataLabel.getBBox(),
-		baseline = chart.renderer.fontMetrics(options.style.fontSize).b,
+		fontSize,
+		baseline,
 		rotCorr, // rotation correction
 		// Math.round for rounding errors (#2683), alignTo to allow column labels (#2700)
 		visible = this.visible && (point.series.forceDL || chart.isInsidePlot(plotX, Math.round(plotY), inverted) ||
@@ -203,6 +205,12 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 		alignAttr; // the final position;
 
 	if (visible) {
+
+		/*= if (build.classic) { =*/
+		fontSize = options.style.fontSize;
+		/*= } =*/
+
+		baseline = chart.renderer.fontMetrics(fontSize, dataLabel).b;
 
 		// The alignment box is a singular point
 		alignTo = extend({

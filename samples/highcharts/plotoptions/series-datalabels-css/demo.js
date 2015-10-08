@@ -2,11 +2,7 @@ $(function () {
     $('#container').highcharts({
 
         title: {
-            text: 'Data labels box by CSS'
-        },
-
-        subtitle: {
-            text: 'Stroke and fill the box'
+            text: 'Styling data labels by CSS'
         },
 
         xAxis: {
@@ -18,7 +14,8 @@ $(function () {
                 dataLabels: {
                     enabled: true,
                     borderRadius: 2,
-                    y: -5
+                    y: -10,
+                    shape: 'callout'
                 }
             }
         },
