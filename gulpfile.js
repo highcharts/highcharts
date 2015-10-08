@@ -4,6 +4,7 @@ var //eslint = require('gulp-eslint'),
     //argv = require('yargs').argv,
     fs = require('fs'),
     //sass = require('gulp-sass'),
+    ftp = require('vinyl-ftp'),
     config = {
         // List of rules at http://eslint.org/docs/rules/
         // @todo Add more rules when ready.
@@ -109,6 +110,35 @@ gulp.task('styles', function () {
 gulp.task('default',function () {
     //gulp.watch('./js/css/*.scss',['styles']);
     gulp.watch('./js/*/*.js', ['scripts']);
+});
+
+
+gulp.task('ftp', function () {
+    fs.readFile('./git-ignore-me.properties', 'utf8', function (err, lines) {
+        var config = {};
+        lines.split('\n').forEach(function (line) {
+            line = line.split('=');
+            if (line[0]) {
+                config[line[0]] = line[1];
+            }
+        });
+        
+        var conn = ftp.create({
+            host: config['ftp.host'],
+            user: config['ftp.user'],
+            password: config['ftp.password']
+        });
+
+        var globs = paths.distributions.concat(paths.modules);
+
+        return gulp.src(globs, { base: './js', buffer: false })
+            .pipe(conn.newer(config['ftp.dest']))
+            .pipe(conn.dest(config['ftp.dest']));
+    });
+});
+
+gulp.task('ftp-watch', function () {
+    gulp.watch('./js/*/*.js', ['scripts', 'ftp']);
 });
 
 /**
