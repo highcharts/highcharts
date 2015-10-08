@@ -1,8 +1,9 @@
+window.console && console.log('Running highstock.js from parts');
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.9-modified ()
+ * @license Highstock JS v2.1.9-modified (2015-10-12)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -1269,7 +1270,7 @@ defaultOptions = {
 	global: {
 		useUTC: true,
 		//timezoneOffset: 0,
-		canvasToolsURL: 'http://code.highcharts.com/stock/2.1.9-modified/modules/canvas-tools.js',
+		canvasToolsURL: 'http://code.highcharts.com/modules/canvas-tools.js',
 		VMLRadialGradientURL: 'http://code.highcharts.com/stock/2.1.9-modified/gfx/vml-radial-gradient.png'
 	},
 	chart: {
@@ -5254,6 +5255,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		renderer.isVML = true;
 		renderer.box = box;
 		renderer.boxWrapper = boxWrapper;
+		renderer.gradients = {};
 		renderer.cache = {};
 
 
@@ -17905,7 +17907,7 @@ if (seriesTypes.column) {
 
 
 /**
- * Highstock JS v2.1.9-modified ()
+ * Highstock JS v2.1.9-modified (2015-10-12)
  * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
  *
  * (c) 2010-2014 Torstein Honsi
@@ -19525,7 +19527,7 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
  * End ordinal axis logic                                                   *
  *****************************************************************************/
 /**
- * Highstock JS v2.1.9-modified ()
+ * Highstock JS v2.1.9-modified (2015-10-12)
  * Highcharts Broken Axis module
  * 
  * Author: Stephane Vanraes, Torstein Honsi

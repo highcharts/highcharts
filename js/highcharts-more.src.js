@@ -1,8 +1,9 @@
+window.console && console.log('Running highchartsmore.js from parts');
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified ()
+ * @license Highcharts JS v4.1.9-modified (2015-10-12)
  *
  * (c) 2009-2014 Torstein Honsi
  *
