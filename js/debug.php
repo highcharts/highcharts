@@ -26,16 +26,18 @@ if ($target) {
 
 	$files = $xml->xpath("/project/target[@name=\"set.properties\"]/filelist[@id=\"$target.files\"]/file");
 
-	$s = "window.console && console.log('Running $target.js from parts');\n";
+	$s = "";
 	foreach ($files as $file) {
 		$s .= file_get_contents($partsDir . $file['name']);
 	}
 	// Use latest version of canvas-tools
+	/*
 	$s = str_replace(
 		'http://code.highcharts.com@product.cdnpath@/@product.version@/modules/canvas-tools.js',
 		"http://code.highcharts.com/modules/canvas-tools.js",
 		$s
 	);
+	*/
 	echo $s;
 
 } else { // mapdata for instance
