@@ -1,3 +1,99 @@
+
+/**
+ * Generatl distribution algorithm for distributing labels of differing size along a
+ * confined length in two dimensions.
+ */
+Highcharts.distribute = function (boxes, len) {
+	
+	var i, 
+		overlapping = true,
+		origBoxes = boxes, // Original array will be altered with added .pos
+		restBoxes = [], // The outranked overshoot
+		box,
+		target,
+		total = 0;
+	
+	// If the total size exceeds the len, remove those boxes with the lowest rank
+	i = boxes.length;
+	while (i--) {
+		total += boxes[i].size;
+	}
+
+	// Sort by rank, then slice away overshoot
+	if (total > len) {
+		boxes.sort(function (a, b) {
+			return (b.rank || 0) - (a.rank || 0);
+		});
+		i = 0;
+		total = 0;
+		while (total <= len) {
+			total += boxes[i].size;
+			i++;
+		}
+		restBoxes = boxes.splice(i - 1, boxes.length);
+	}
+	
+	// Order by target
+	boxes.sort(function (a, b) {
+		return a.target - b.target;
+	});
+
+
+	// So far we have been mutating the original array. Now
+	// create a copy with target arrays
+	boxes = map(boxes, function (box) {
+		return {
+			size: box.size,
+			targets: [box.target]
+		};
+	});
+	
+	while (overlapping) {
+		// Initial positions: target centered in box
+		i = boxes.length;
+		while (i--) {
+			box = boxes[i];
+			// Composite box, average of targets
+			target = (Math.min.apply(0, box.targets) + Math.max.apply(0, box.targets)) / 2;
+			box.pos = Math.min(Math.max(0, target - box.size / 2), len - box.size);
+		}
+
+		// Detect overlap and join boxes
+		i = boxes.length;
+		overlapping = false;
+		while (i--) {
+			if (i > 0 && boxes[i - 1].pos + boxes[i - 1].size > boxes[i].pos) { // Overlap
+				boxes[i - 1].size += boxes[i].size; // Add this size to the previous box
+				boxes[i - 1].targets = boxes[i - 1].targets.concat(boxes[i].targets);
+				
+				// Overlapping right, push left
+				if (boxes[i - 1].pos + boxes[i - 1].size > len) {
+					boxes[i - 1].pos = len - boxes[i - 1].size;
+				}
+				boxes.splice(i, 1); // Remove this item
+				overlapping = true;
+			}
+		}
+	}
+
+	// Now the composite boxes are placed, we just need to put the original boxes within them
+	i = 0;
+	each(boxes, function (box) {
+		var posInCompositeBox = 0;
+		each(box.targets, function () {
+			origBoxes[i].pos = box.pos + posInCompositeBox;
+			posInCompositeBox += origBoxes[i].size;
+			i++;
+		});
+	});
+	
+	// Add the rest boxes and sort by target
+	origBoxes.push.apply(origBoxes, restBoxes);
+	origBoxes.sort(function (a, b) {
+		return a.target - b.target;
+	});
+};
+
 /**
  * Draw the data labels
  */
@@ -331,13 +427,9 @@ if (seriesTypes.pie) {
 			x,
 			y,
 			visibility,
-			rankArr,
 			i,
 			j,
-			overflow = [0, 0, 0, 0], // top, right, bottom, left
-			sort = function (a, b) {
-				return b.y - a.y;
-			};
+			overflow = [0, 0, 0, 0]; // top, right, bottom, left
 
 		// get out if not enabled
 		if (!series.visible || (!options.enabled && !series._hasPointLabels)) {
@@ -357,140 +449,41 @@ if (seriesTypes.pie) {
 		/* Loop over the points in each half, starting from the top and bottom
 		 * of the pie to detect overlapping labels.
 		 */
-		i = 2;
-		while (i--) {
+		each(halves, function (points, i) {
 
-			var slots = [],
-				slotsLength,
-				usedSlots = [],
-				points = halves[i],
-				pos,
+			var top,
 				bottom,
 				length = points.length,
-				slotIndex;
+				positions,
+				naturalY,
+				size;
 
 			if (!length) {
-				continue;
+				return;
 			}
 
 			// Sort by angle
 			series.sortByAngle(points, i - 0.5);
 
-			// Assume equal label heights on either hemisphere (#2630)
-			j = labelHeight = 0;
-			while (!labelHeight && points[j]) { // #1569
-				labelHeight = points[j] && points[j].dataLabel && (points[j].dataLabel.getBBox().height || 21); // 21 is for #968
-				j++;
-			}
-
 			// Only do anti-collision when we are outside the pie and have connectors (#856)
 			if (distanceOption > 0) {
-
-				// Build the slots
+				top = mathMax(0, centerY - radius - distanceOption);
 				bottom = mathMin(centerY + radius + distanceOption, chart.plotHeight);
-				for (pos = mathMax(0, centerY - radius - distanceOption); pos <= bottom; pos += labelHeight) {
-					slots.push(pos);
-				}
-				slotsLength = slots.length;
-
-
-				/* Visualize the slots
-				if (!series.slotElements) {
-					series.slotElements = [];
-				}
-				if (i === 1) {
-					series.slotElements.forEach(function (elem) {
-						elem.destroy();
-					});
-					series.slotElements.length = 0;
-				}
-					
-				slots.forEach(function (pos, no) {
-					var slotX = series.getX(pos, i) + chart.plotLeft - (i ? 100 : 0),
-						slotY = pos + chart.plotTop;
-					
-					if (!isNaN(slotX)) {
-						series.slotElements.push(chart.renderer.rect(slotX, slotY - 7, 100, labelHeight, 1)
-							.attr({
-								'stroke-width': 1,
-								stroke: 'silver',
-								fill: 'rgba(0,0,255,0.1)'
-							})
-							.add());
-						series.slotElements.push(chart.renderer.text('Slot '+ no, slotX, slotY + 4)
-							.attr({
-								fill: 'silver'
-							}).add());
+				positions = map(points, function (point) {
+					if (point.dataLabel) {
+						size = point.dataLabel.getBBox().height || 21;
+						return {
+							target: point.labelPos[1] - top + size / 2,
+							size: size,
+							rank: point.y
+						};
 					}
 				});
-				// */
-
-				// if there are more values than available slots, remove lowest values
-				if (length > slotsLength) {
-					// create an array for sorting and ranking the points within each quarter
-					rankArr = [].concat(points);
-					rankArr.sort(sort);
-					j = length;
-					while (j--) {
-						rankArr[j].rank = j;
-					}
-					j = length;
-					while (j--) {
-						if (points[j].rank >= slotsLength) {
-							points.splice(j, 1);
-						}
-					}
-					length = points.length;
-				}
-
-				// The label goes to the nearest open slot, but not closer to the edge than
-				// the label's index.
-				for (j = 0; j < length; j++) {
-
-					point = points[j];
-					labelPos = point.labelPos;
-
-					var closest = 9999,
-						distance,
-						slotI;
-
-					// find the closest slot index
-					for (slotI = 0; slotI < slotsLength; slotI++) {
-						distance = mathAbs(slots[slotI] - labelPos[1]);
-						if (distance < closest) {
-							closest = distance;
-							slotIndex = slotI;
-						}
-					}
-
-					// if that slot index is closer to the edges of the slots, move it
-					// to the closest appropriate slot
-					if (slotIndex < j && slots[j] !== null) { // cluster at the top
-						slotIndex = j;
-					} else if (slotsLength  < length - j + slotIndex && slots[j] !== null) { // cluster at the bottom
-						slotIndex = slotsLength - length + j;
-						while (slots[slotIndex] === null) { // make sure it is not taken
-							slotIndex++;
-						}
-					} else {
-						// Slot is taken, find next free slot below. In the next run, the next slice will find the
-						// slot above these, because it is the closest one
-						while (slots[slotIndex] === null) { // make sure it is not taken
-							slotIndex++;
-						}
-					}
-
-					usedSlots.push({ i: slotIndex, y: slots[slotIndex] });
-					slots[slotIndex] = null; // mark as taken
-				}
-				// sort them in order to fill in from the top
-				usedSlots.sort(sort);
+				Highcharts.distribute(positions, bottom + size - top);
 			}
 
 			// now the used slots are sorted, fill them up sequentially
 			for (j = 0; j < length; j++) {
-
-				var slot, naturalY;
 
 				point = points[j];
 				labelPos = point.labelPos;
@@ -498,27 +491,25 @@ if (seriesTypes.pie) {
 				visibility = point.visible === false ? HIDDEN : 'inherit';
 				naturalY = labelPos[1];
 
-				if (distanceOption > 0) {
-					slot = usedSlots.pop();
-					slotIndex = slot.i;
-
-					// if the slot next to currrent slot is free, the y value is allowed
-					// to fall back to the natural position
-					y = slot.y;
-					if ((naturalY > y && slots[slotIndex + 1] !== null) ||
-							(naturalY < y &&  slots[slotIndex - 1] !== null)) {
-						y = mathMin(mathMax(0, naturalY), chart.plotHeight);
+				if (positions) {
+					if (positions[j].pos === undefined) {
+						visibility = 'hidden';
+					} else {
+						labelHeight = positions[j].size;
+						y = top + positions[j].pos;
 					}
 
 				} else {
 					y = naturalY;
 				}
 
-				// get the x - use the natural x position for first and last slot, to prevent the top
+				// get the x - use the natural x position for labels near the top and bottom, to prevent the top
 				// and botton slice connectors from touching each other on either side
-				x = options.justify ?
-					seriesCenter[0] + (i ? -1 : 1) * (radius + distanceOption) :
-					series.getX(y === centerY - radius - distanceOption || y === centerY + radius + distanceOption ? naturalY : y, i);
+				if (options.justify) {
+					x = seriesCenter[0] + (i ? -1 : 1) * (radius + distanceOption);
+				} else {
+					x = series.getX(y < top + 2 || y > bottom - 2 ? naturalY : y, i);
+				}
 
 
 				// Record the placement and visibility
@@ -536,7 +527,7 @@ if (seriesTypes.pie) {
 
 
 				// Detect overflowing data labels
-				if (this.options.size === null) {
+				if (series.options.size === null) {
 					dataLabelWidth = dataLabel.width;
 					// Overflow left
 					if (x - dataLabelWidth < connectorPadding) {
@@ -557,7 +548,7 @@ if (seriesTypes.pie) {
 					}
 				}
 			} // for each point
-		} // for each half
+		}); // for each half
 
 		// Do not apply the final placement and draw the connectors until we have verified
 		// that labels are not spilling over.
