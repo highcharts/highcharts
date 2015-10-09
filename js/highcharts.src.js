@@ -436,6 +436,7 @@ dateFormat = function (format, timestamp, capitalize) {
 			'b': lang.shortMonths[month], // Short month, like 'Jan'
 			'B': lang.months[month], // Long month, like 'January'
 			'm': pad(month + 1), // Two digit month number, 01 through 12
+			'-m': month + 1, // Month number, 1 through 12
 
 			// Year
 			'y': fullYear.toString().substr(2, 2), // Two digits year, like 09 for 2009
