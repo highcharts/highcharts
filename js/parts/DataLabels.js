@@ -1,7 +1,9 @@
 
 /**
  * Generatl distribution algorithm for distributing labels of differing size along a
- * confined length in two dimensions.
+ * confined length in two dimensions. The algorithm takes an array of objects containing
+ * a size, a target and a rank. It will place the labels as close as possible to their 
+ * targets, skipping the lowest ranked labels if necessary.
  */
 Highcharts.distribute = function (boxes, len) {
 	
@@ -12,6 +14,10 @@ Highcharts.distribute = function (boxes, len) {
 		box,
 		target,
 		total = 0;
+
+	function sortByTarget(a, b) {
+		return a.target - b.target;
+	}
 	
 	// If the total size exceeds the len, remove those boxes with the lowest rank
 	i = boxes.length;
@@ -21,7 +27,7 @@ Highcharts.distribute = function (boxes, len) {
 
 	// Sort by rank, then slice away overshoot
 	if (total > len) {
-		boxes.sort(function (a, b) {
+		stableSort(boxes, function (a, b) {
 			return (b.rank || 0) - (a.rank || 0);
 		});
 		i = 0;
@@ -34,9 +40,7 @@ Highcharts.distribute = function (boxes, len) {
 	}
 	
 	// Order by target
-	boxes.sort(function (a, b) {
-		return a.target - b.target;
-	});
+	stableSort(boxes, sortByTarget);
 
 
 	// So far we have been mutating the original array. Now
@@ -76,7 +80,7 @@ Highcharts.distribute = function (boxes, len) {
 		}
 	}
 
-	// Now the composite boxes are placed, we just need to put the original boxes within them
+	// Now the composite boxes are placed, we need to put the original boxes within them
 	i = 0;
 	each(boxes, function (box) {
 		var posInCompositeBox = 0;
@@ -87,11 +91,9 @@ Highcharts.distribute = function (boxes, len) {
 		});
 	});
 	
-	// Add the rest boxes and sort by target
+	// Add the rest (hidden) boxes and sort by target
 	origBoxes.push.apply(origBoxes, restBoxes);
-	origBoxes.sort(function (a, b) {
-		return a.target - b.target;
-	});
+	stableSort(origBoxes, sortByTarget);
 };
 
 /**
