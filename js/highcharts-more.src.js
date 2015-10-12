@@ -2056,9 +2056,10 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	 * @param {Object} item The series (this) or point
 	 */
 	drawLegendSymbol: function (legend, item) {
-		var radius = pInt(legend.itemStyle.fontSize) / 2;
+		var renderer = this.chart.renderer,
+			radius = renderer.fontMetrics(legend.itemStyle.fontSize).f / 2;
 		
-		item.legendSymbol = this.chart.renderer.circle(
+		item.legendSymbol = renderer.circle(
 			radius,
 			legend.baseline - radius,
 			radius
