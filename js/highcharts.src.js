@@ -17207,7 +17207,7 @@ Series.prototype.drawDataLabels = function () {
 
 			// Determine if each data label is enabled
 			pointOptions = point.dlOptions || (point.options && point.options.dataLabels); // dlOptions is used in treemaps
-			enabled = pick(pointOptions && pointOptions.enabled, generalOptions.enabled); // #2282
+			enabled = pick(pointOptions && pointOptions.enabled, generalOptions.enabled) && point.y !== null; // #2282, #4641
 
 
 			// If the point is outside the plot area, destroy it. #678, #820
