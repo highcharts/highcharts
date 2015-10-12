@@ -555,7 +555,9 @@ extend(Chart.prototype, {
 								css(this, menuItemStyle);
 							},
 							onclick: function (e) {
-								e.stopPropagation();
+								if (e) { // IE7
+									e.stopPropagation();
+								}
 								hide();
 								if (item.onclick) {
 									item.onclick.apply(chart, arguments);
