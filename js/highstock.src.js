@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v3.0-dev (2015-10-08)
+ * @license Highstock JS v3.0-dev (2015-10-12)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -18577,7 +18577,7 @@ if (seriesTypes.column) {
 	return H;
 }(Highcharts));
 /**
- * Highstock JS v3.0-dev (2015-10-08)
+ * Highstock JS v3.0-dev (2015-10-12)
  * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
  *
  * (c) 2010-2014 Torstein Honsi
@@ -20296,7 +20296,7 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 	return H;
 }(Highcharts));
 /**
- * Highstock JS v3.0-dev (2015-10-08)
+ * Highstock JS v3.0-dev (2015-10-12)
  * Highcharts Broken Axis module
  * 
  * Author: Stephane Vanraes, Torstein Honsi
@@ -21417,6 +21417,14 @@ seriesTypes.candlestick = extendClass(seriesTypes.ohlc, {
 
 		attribs.fill = point.options.color || (isUp ? (options.upColor || this.color) : this.color);
 		attribs.stroke = point.lineColor || (isUp ? (options.upLineColor || stroke) : stroke);
+
+		// Select or hover states
+		if (state) {
+			stateOptions = options.states[state];
+			attribs.fill = stateOptions.color || attribs.fill;
+			attribs.stroke = stateOptions.stroke || attribs.stroke;
+		}
+
 
 		return attribs;
 	},

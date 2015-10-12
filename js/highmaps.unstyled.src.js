@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highmaps JS v2.0-dev (2015-10-08)
+ * @license Highmaps JS v2.0-dev (2015-10-12)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -16323,7 +16323,7 @@ if (seriesTypes.column) {
 	return H;
 }(Highcharts));
 /**
- * Highmaps JS v2.0-dev (2015-10-08)
+ * Highmaps JS v2.0-dev (2015-10-12)
  * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
  *
  * (c) 2010-2014 Torstein Honsi
@@ -17853,7 +17853,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 	return H;
 }(Highcharts));
 /**
- * Highmaps JS v2.0-dev (2015-10-08)
+ * Highmaps JS v2.0-dev (2015-10-12)
  * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
  *
  * (c) 2010-2014 Torstein Honsi

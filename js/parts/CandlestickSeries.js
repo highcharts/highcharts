@@ -42,6 +42,14 @@ seriesTypes.candlestick = extendClass(seriesTypes.ohlc, {
 		attribs.fill = point.options.color || (isUp ? (options.upColor || this.color) : this.color);
 		attribs.stroke = point.lineColor || (isUp ? (options.upLineColor || stroke) : stroke);
 
+		// Select or hover states
+		if (state) {
+			stateOptions = options.states[state];
+			attribs.fill = stateOptions.color || attribs.fill;
+			attribs.stroke = stateOptions.stroke || attribs.stroke;
+		}
+
+
 		return attribs;
 	},
 
