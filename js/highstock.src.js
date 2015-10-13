@@ -6054,9 +6054,23 @@ Tick.prototype = {
 			reversed = axis.reversed,
 			staggerLines = axis.staggerLines,
 			rotCorr = axis.tickRotCorr || { x: 0, y: 0 },
-			yOffset = pick(labelOptions.y, rotCorr.y + (axis.side === 2 ? 8 : -(label.getBBox().height / 2))),
+			yOffset = labelOptions.y,
 			line;
 
+		if (!defined(yOffset)) {
+			// Centered and rotated labels (#3140)
+			if (axis.labelAlign === 'center' && !axis.horiz && label.rotation) {
+				yOffset = 0;
+
+			// Bottom axis
+			} else if (axis.side === 2) {
+				yOffset = rotCorr.y + 8;
+
+			} else {
+				yOffset = rotCorr.y - label.getBBox().height / 2;
+			}
+		}
+		
 		x = x + labelOptions.x + rotCorr.x - (tickmarkOffset && horiz ?
 			tickmarkOffset * transA * (reversed ? -1 : 1) : 0);
 		y = y + yOffset - (tickmarkOffset && !horiz ?
@@ -8233,7 +8247,7 @@ Axis.prototype = {
 
 			each(tickPositions, function (pos) {
 				// left side must be align: right and right side must have align: left for labels
-				if (side === 0 || side === 2 || { 1: 'left', 3: 'right' }[side] === axis.labelAlign) {
+				if (side === 0 || side === 2 || { 1: 'left', 3: 'right' }[side] === axis.labelAlign || axis.labelAlign === 'center') {
 
 					// get the highest offset
 					labelOffset = mathMax(
