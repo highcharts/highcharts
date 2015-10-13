@@ -188,16 +188,11 @@ Tick.prototype = {
 			line;
 
 		if (!defined(yOffset)) {
-			// Centered and rotated labels (#3140)
-			if (axis.labelAlign === 'center' && !axis.horiz && label.rotation) {
-				yOffset = 0;
-
-			// Bottom axis
-			} else if (axis.side === 2) {
+			if (axis.side === 2) {
 				yOffset = rotCorr.y + 8;
 
-			} else {
-				yOffset = rotCorr.y - label.getBBox().height / 2;
+			} else { // #3140
+				yOffset = mathCos(label.rotation * deg2rad) * (rotCorr.y - label.getBBox().height / 2);
 			}
 		}
 		

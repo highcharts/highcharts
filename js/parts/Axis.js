@@ -1662,7 +1662,7 @@ Axis.prototype = {
 		});
 
 		// TODO: Why not part of getLabelPosition?
-		this.tickRotCorr = renderer.rotCorr(labelMetrics.b, this.labelRotation || 0, this.side === 2);
+		this.tickRotCorr = renderer.rotCorr(labelMetrics.b, this.labelRotation || 0, this.side !== 0);
 	},
 
 	/**
