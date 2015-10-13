@@ -115,7 +115,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 
 			// When sizing by threshold, the absolute value of z determines the size
 			// of the bubble.
-			if (options.sizeByAbsoluteValue) {
+			if (options.sizeByAbsoluteValue && value !== null) {
 				value = Math.abs(value - zThreshold);
 				zMax = Math.max(zMax - zThreshold, Math.abs(zMin - zThreshold));
 				zMin = 0;

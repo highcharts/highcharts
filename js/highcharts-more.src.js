@@ -1,9 +1,8 @@
-window.console && console.log('Running highchartsmore.js from parts');
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-10-12)
+ * @license Highcharts JS v4.1.9-modified (2015-10-13)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -1954,7 +1953,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 
 			// When sizing by threshold, the absolute value of z determines the size
 			// of the bubble.
-			if (options.sizeByAbsoluteValue) {
+			if (options.sizeByAbsoluteValue && value !== null) {
 				value = Math.abs(value - zThreshold);
 				zMax = Math.max(zMax - zThreshold, Math.abs(zMin - zThreshold));
 				zMin = 0;

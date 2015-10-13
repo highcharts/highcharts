@@ -1,9 +1,8 @@
-window.console && console.log('Running highcharts3d.js from parts');
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-10-12)
+ * @license Highcharts JS v4.1.9-modified (2015-10-13)
  *
  * (c) 2009-2013 Torstein Hønsi
  *

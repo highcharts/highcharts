@@ -1,9 +1,8 @@
-window.console && console.log('Running highmaps.js from parts');
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highmaps JS v1.1.9-modified (2015-10-12)
+ * @license Highmaps JS v1.1.9-modified (2015-10-13)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -16187,7 +16186,7 @@ if (seriesTypes.column) {
 
 
 /**
- * Highmaps JS v1.1.9-modified (2015-10-12)
+ * Highmaps JS v1.1.9-modified (2015-10-13)
  * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
  *
  * (c) 2010-2014 Torstein Honsi
@@ -17706,7 +17705,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		seriesTypes.column.prototype.animateDrillupTo.call(this, init);
 	}
 }));/**
- * Highmaps JS v1.1.9-modified (2015-10-12)
+ * Highmaps JS v1.1.9-modified (2015-10-13)
  * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
  *
  * (c) 2010-2014 Torstein Honsi
@@ -18288,7 +18287,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 
 			// When sizing by threshold, the absolute value of z determines the size
 			// of the bubble.
-			if (options.sizeByAbsoluteValue) {
+			if (options.sizeByAbsoluteValue && value !== null) {
 				value = Math.abs(value - zThreshold);
 				zMax = Math.max(zMax - zThreshold, Math.abs(zMin - zThreshold));
 				zMin = 0;

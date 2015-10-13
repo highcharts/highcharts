@@ -1,9 +1,8 @@
-window.console && console.log('Running highcharts.js from parts');
 // ==ClosureCompiler==
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-10-12)
+ * @license Highcharts JS v4.1.9-modified (2015-10-13)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -17907,7 +17906,7 @@ if (seriesTypes.column) {
 
 
 /**
- * Highcharts JS v4.1.9-modified (2015-10-12)
+ * Highcharts JS v4.1.9-modified (2015-10-13)
  * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
  *
  * (c) 2010-2014 Torstein Honsi
