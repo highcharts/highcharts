@@ -2401,9 +2401,9 @@ SVGRenderer.prototype = {
 			
 			if (needsBox) {
 
-				// create the border box if it is not already present
 				if (!box) {
-					boxX = mathRound(-alignFactor * padding) + crispAdjust;
+					// create the border box if it is not already present
+					boxX = crispAdjust;
 					boxY = (baseline ? -baselineOffset : 0) + crispAdjust;
 
 					wrapper.box = box = shape ?
@@ -2433,7 +2433,7 @@ SVGRenderer.prototype = {
 		function updateTextPadding() {
 			var styles = wrapper.styles,
 				textAlign = styles && styles.textAlign,
-				x = paddingLeft + padding * (1 - alignFactor),
+				x = paddingLeft + padding,
 				y;
 
 			// determin y based on the baseline
@@ -2517,7 +2517,13 @@ SVGRenderer.prototype = {
 
 		// change local variable and prevent setting attribute on the group
 		wrapper.alignSetter = function (value) {
-			alignFactor = { left: 0, center: 0.5, right: 1 }[value];
+			value = { left: 0, center: 0.5, right: 1 }[value];
+			if (value !== alignFactor) {
+				alignFactor = value;
+				if (bBox) { // Bounding box exists, means we're dynamically changing
+					wrapper.attr({ x: x });
+				}
+			}
 		};
 
 		// apply these to the box and the text alike
@@ -2556,7 +2562,7 @@ SVGRenderer.prototype = {
 		wrapper.xSetter = function (value) {
 			wrapper.x = value; // for animation getter
 			if (alignFactor) {
-				value -= alignFactor * ((width || bBox.width) + padding);
+				value -= alignFactor * ((width || bBox.width) + 2 * padding);
 			}
 			wrapperX = mathRound(value);
 			wrapper.attr('translateX', wrapperX);
