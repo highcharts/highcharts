@@ -15200,8 +15200,8 @@ var ColumnSeries = extendClass(Series, {
 		w = right - x;
 
 		// Vertical
-		fromTop = mathAbs(y) <= 0.5; // #4504
 		bottom = Math.round(y + h) + yCrisp;
+		fromTop = mathAbs(y) <= 0.5 && bottom > 0.5; // #4504, #4656
 		y = Math.round(y) + yCrisp;
 		h = bottom - y;
 
