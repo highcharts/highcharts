@@ -525,11 +525,14 @@ seriesProto.processData = function () {
  * Modify series extremes
  */
 wrap(seriesProto, 'getExtremes', function (proceed) {
+	var extremes;
+
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (this.modifyValue) {
-		this.dataMax = this.modifyValue(this.dataMax);
-		this.dataMin = this.modifyValue(this.dataMin);
+		extremes = [this.modifyValue(this.dataMin), this.modifyValue(this.dataMax)];
+		this.dataMin = arrayMin(extremes);
+		this.dataMax = arrayMax(extremes);
 	}		
 });
 
