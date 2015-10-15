@@ -1981,7 +1981,7 @@ Axis.prototype = {
 			if (alternateGridColor) {
 				each(tickPositions, function (pos, i) {
 					to = tickPositions[i + 1] !== UNDEFINED ? tickPositions[i + 1] + tickmarkOffset : axis.max - tickmarkOffset; 
-					if (i % 2 === 0 && pos < axis.max && to <= axis.max - tickmarkOffset) { // #2248
+					if (i % 2 === 0 && pos < axis.max && to <= axis.max + (chart.polar ? -tickmarkOffset : tickmarkOffset)) { // #2248, #4660
 						if (!alternateBands[pos]) {
 							alternateBands[pos] = new Highcharts.PlotLineOrBand(axis);
 						}
