@@ -51,13 +51,13 @@ $(function () {
         );
 
         assert.equal(
-            points[2].graphic.element.getAttribute('stroke'),
-            '#FF0000',
+            points[2].graphic.element.getAttribute('stroke').toLowerCase(),
+            '#ff0000',
             'Individual up'
         );
         assert.equal(
-            points[3].graphic.element.getAttribute('stroke'),
-            '#FF0000',
+            points[3].graphic.element.getAttribute('stroke').toLowerCase(),
+            '#ff0000',
             'Individual down'
         );
     });

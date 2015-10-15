@@ -201,15 +201,16 @@
 				height: clipheight
 			};
 
-			/* for pdf we need a bit more paperspace in some cases for example (w:600,h:400), I don't know why.*/
 			if (outType === 'pdf') {
-				// changed to a multiplication with 1.333 to correct systems dpi setting
-				clipwidth = clipwidth * dpiCorrection;
-				clipheight = clipheight * dpiCorrection;
 				// redefine the viewport
 				page.viewportSize = { width: clipwidth, height: clipheight};
-				// make the paper a bit larger than the viewport
-				page.paperSize = { width: clipwidth + 2 , height: clipheight + 2 };
+
+				// simulate zooming to get the right zoomFactor. Using page.zoomFactor doesn't work anymore, see issue here https://github.com/ariya/phantomjs/issues/12685
+				page.evaluate(function(zoom) {
+					document.getElementsByTagName('body')[0].style.zoom = zoom;
+				}, page.zoomFactor);
+
+				page.paperSize = { width: clipwidth, height: clipheight};
 			}
 		};
 

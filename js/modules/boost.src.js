@@ -180,15 +180,26 @@
          * to an SVG image element.
          */
         getContext: function () {
-            var width = this.chart.plotWidth,
-                height = this.chart.plotHeight;
+            var chart = this.chart,
+                width = chart.plotWidth,
+                height = chart.plotHeight,
+                ctx = this.ctx;
+
+            function swapXY(proceed, x, y, a, b, c, d) {
+                proceed.call(this, y, x, a, b, c, d);
+            }
 
             if (!this.canvas) {
                 this.canvas = document.createElement('canvas');
-                this.image = this.chart.renderer.image('', 0, 0, width, height).add(this.group);
-                this.ctx = this.canvas.getContext('2d');
+                this.image = chart.renderer.image('', 0, 0, width, height).add(this.group);
+                this.ctx = ctx = this.canvas.getContext('2d');
+                if (chart.inverted) {
+                    each(['moveTo', 'lineTo', 'rect', 'arc'], function (fn) {
+                        wrap(ctx, fn, swapXY);
+                    });
+                }
             } else {
-                this.ctx.clearRect(0, 0, width, height);
+                ctx.clearRect(0, 0, width, height);
             }
 
             this.canvas.setAttribute('width', width);
@@ -198,7 +209,7 @@
                 height: height
             });
 
-            return this.ctx;
+            return ctx;
         },
 
         /** 
@@ -308,13 +319,19 @@
                     // The k-d tree requires series points. Reduce the amount of points, since the time to build the 
                     // tree increases exponentially.
                     if (enableMouseTracking && !pointTaken[clientX + ',' + plotY]) {
+                        pointTaken[clientX + ',' + plotY] = true;
+
+                        if (chart.inverted) {
+                            clientX = xAxis.len - clientX;
+                            plotY = yAxis.len - plotY;
+                        }
+
                         points.push({
                             clientX: clientX,
                             plotX: clientX,
                             plotY: plotY,
                             i: cropStart + i
                         });
-                        pointTaken[clientX + ',' + plotY] = true;
                     }
                 };
 

@@ -21,7 +21,7 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	maxSize: '20%',
 	// negativeColor: null,
 	// sizeBy: 'area'
-	softThreshold: false, // docs
+	softThreshold: false,
 	states: {
 		hover: {
 			halo: {
@@ -114,8 +114,8 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			value = zData[i];
 
 			// When sizing by threshold, the absolute value of z determines the size
-			// of the bubble. // docs. sample created
-			if (options.sizeByAbsoluteValue) {
+			// of the bubble.
+			if (options.sizeByAbsoluteValue && value !== null) {
 				value = Math.abs(value - zThreshold);
 				zMax = Math.max(zMax - zThreshold, Math.abs(zMin - zThreshold));
 				zMin = 0;
@@ -217,9 +217,10 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	 * @param {Object} item The series (this) or point
 	 */
 	drawLegendSymbol: function (legend, item) {
-		var radius = pInt(legend.itemStyle.fontSize) / 2;
+		var renderer = this.chart.renderer,
+			radius = renderer.fontMetrics(legend.itemStyle.fontSize).f / 2;
 		
-		item.legendSymbol = this.chart.renderer.circle(
+		item.legendSymbol = renderer.circle(
 			radius,
 			legend.baseline - radius,
 			radius

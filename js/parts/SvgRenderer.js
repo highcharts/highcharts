@@ -165,9 +165,10 @@ SVGElement.prototype = {
 			tspans,
 			hasContrast = textShadow.indexOf('contrast') !== -1,
 			styles = {},
+			forExport = this.renderer.forExport,
 			// IE10 and IE11 report textShadow in elem.style even though it doesn't work. Check
 			// this again with new IE release. In exports, the rendering is passed to PhantomJS. 
-			supports = this.renderer.forExport || (elem.style.textShadow !== UNDEFINED && !isIE);
+			supports = forExport || (elem.style.textShadow !== UNDEFINED && !isMS);
 
 		// When the text shadow is set to contrast, use dark stroke for light text and vice versa
 		if (hasContrast) {
@@ -176,7 +177,7 @@ SVGElement.prototype = {
 
 		// Safari with retina displays as well as PhantomJS bug (#3974). Firefox does not tolerate this,
 		// it removes the text shadows.
-		if (isWebKit) {
+		if (isWebKit || forExport) {
 			styles.textRendering = 'geometricPrecision';
 		}
 
@@ -189,7 +190,7 @@ SVGElement.prototype = {
 
 		// No reason to polyfill, we've got native support
 		if (supports) {
-			css(elem, styles); // Apply altered textShadow or textRendering workaround
+			this.css(styles); // Apply altered textShadow or textRendering workaround
 		} else {
 
 			this.fakeTS = true; // Fake text shadow
@@ -465,7 +466,7 @@ SVGElement.prototype = {
 			}
 
 			// serialize and set style attribute
-			if (isIE && !hasSVG) {
+			if (isMS && !hasSVG) {
 				css(elemWrapper.element, styles);
 			} else {
 				/*jslint unparam: true*/
@@ -789,7 +790,7 @@ SVGElement.prototype = {
 				height = bBox.height;
 
 				// Workaround for wrong bounding box in IE9 and IE10 (#1101, #1505, #1669, #2568)
-				if (isIE && styles && styles.fontSize === '11px' && height.toPrecision(3) === '16.9') {
+				if (isMS && styles && styles.fontSize === '11px' && height.toPrecision(3) === '16.9') {
 					bBox.height = height = 14;
 				}
 
@@ -1709,13 +1710,13 @@ SVGRenderer.prototype = {
 		delete disabledState.style;
 
 		// Add the events. IE9 and IE10 need mouseover and mouseout to funciton (#667).
-		addEvent(label.element, isIE ? 'mouseover' : 'mouseenter', function () {
+		addEvent(label.element, isMS ? 'mouseover' : 'mouseenter', function () {
 			if (curState !== 3) {
 				label.attr(hoverState)
 					.css(hoverStyle);
 			}
 		});
-		addEvent(label.element, isIE ? 'mouseout' : 'mouseleave', function () {
+		addEvent(label.element, isMS ? 'mouseout' : 'mouseleave', function () {
 			if (curState !== 3) {
 				stateOptions = [normalState, hoverState, pressedState][curState];
 				stateStyle = [normalStyle, hoverStyle, pressedStyle][curState];
@@ -2309,7 +2310,7 @@ SVGRenderer.prototype = {
 			style;
 
 		fontSize = fontSize || this.style.fontSize;
-		if (elem && win.getComputedStyle) {
+		if (!fontSize && elem && win.getComputedStyle) {
 			elem = elem.element || elem; // SVGElement
 			style = win.getComputedStyle(elem, "");
 			fontSize = style && style.fontSize; // #4309, the style doesn't exist inside a hidden iframe in Firefox
@@ -2400,9 +2401,9 @@ SVGRenderer.prototype = {
 			
 			if (needsBox) {
 
-				// create the border box if it is not already present
 				if (!box) {
-					boxX = mathRound(-alignFactor * padding) + crispAdjust;
+					// create the border box if it is not already present
+					boxX = crispAdjust;
 					boxY = (baseline ? -baselineOffset : 0) + crispAdjust;
 
 					wrapper.box = box = shape ?
@@ -2432,7 +2433,7 @@ SVGRenderer.prototype = {
 		function updateTextPadding() {
 			var styles = wrapper.styles,
 				textAlign = styles && styles.textAlign,
-				x = paddingLeft + padding * (1 - alignFactor),
+				x = paddingLeft + padding,
 				y;
 
 			// determin y based on the baseline
@@ -2516,7 +2517,13 @@ SVGRenderer.prototype = {
 
 		// change local variable and prevent setting attribute on the group
 		wrapper.alignSetter = function (value) {
-			alignFactor = { left: 0, center: 0.5, right: 1 }[value];
+			value = { left: 0, center: 0.5, right: 1 }[value];
+			if (value !== alignFactor) {
+				alignFactor = value;
+				if (bBox) { // Bounding box exists, means we're dynamically changing
+					wrapper.attr({ x: x });
+				}
+			}
 		};
 
 		// apply these to the box and the text alike
@@ -2555,7 +2562,7 @@ SVGRenderer.prototype = {
 		wrapper.xSetter = function (value) {
 			wrapper.x = value; // for animation getter
 			if (alignFactor) {
-				value -= alignFactor * ((width || bBox.width) + padding);
+				value -= alignFactor * ((width || bBox.width) + 2 * padding);
 			}
 			wrapperX = mathRound(value);
 			wrapper.attr('translateX', wrapperX);

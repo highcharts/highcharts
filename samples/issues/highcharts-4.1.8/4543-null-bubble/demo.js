@@ -27,6 +27,15 @@ $(function () {
             3,
             'No element created for null point'
         );
+
+        // Also when sizeByAbsoluteValue is true
+        chart.series[0].update({ sizeByAbsoluteValue: true });
+
+        assert.strictEqual(
+            chart.series[0].group.element.childNodes.length,
+            3,
+            'No element created for null point'
+        );
         
     });
 

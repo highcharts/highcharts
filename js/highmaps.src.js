@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highmaps JS v1.1.8-modified ()
+ * @license Highmaps JS v1.1.9-modified (2015-10-15)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -33,15 +33,15 @@ var UNDEFINED,
 	// some variables
 	userAgent = navigator.userAgent,
 	isOpera = win.opera,
-	isIE = /(msie|trident)/i.test(userAgent) && !isOpera,
+	isMS = /(msie|trident|edge)/i.test(userAgent) && !isOpera,
 	docMode8 = doc.documentMode === 8,
-	isWebKit = /AppleWebKit/.test(userAgent),
+	isWebKit = !isMS && /AppleWebKit/.test(userAgent),
 	isFirefox = /Firefox/.test(userAgent),
 	isTouchDevice = /(Mobile|Android|Windows Phone)/.test(userAgent),
 	SVG_NS = 'http://www.w3.org/2000/svg',
 	hasSVG = !!doc.createElementNS && !!doc.createElementNS(SVG_NS, 'svg').createSVGRect,
 	hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4, // issue #38
-	useCanVG = !hasSVG && !isIE && !!doc.createElement('canvas').getContext,
+	useCanVG = !hasSVG && !isMS && !!doc.createElement('canvas').getContext,
 	Renderer,
 	hasTouch,
 	symbolSizes = {},
@@ -55,7 +55,7 @@ var UNDEFINED,
 	charts = [],
 	chartCount = 0,
 	PRODUCT = 'Highmaps',
-	VERSION = '1.1.8-modified',
+	VERSION = '1.1.9-modified',
 
 	// some constants for frequently used strings
 	DIV = 'div',
@@ -312,7 +312,7 @@ var pick = Highcharts.pick = function () {
  * @param {Object} styles Style object with camel case property names
  */
 function css(el, styles) {
-	if (isIE && !hasSVG) { // #2686
+	if (isMS && !hasSVG) { // #2686
 		if (styles && styles.opacity !== UNDEFINED) {
 			styles.filter = 'alpha(opacity=' + (styles.opacity * 100) + ')';
 		}
@@ -1118,7 +1118,7 @@ pathAnim = {
 			//
 			// To avoid problems in IE (see #1010) where we cannot delete the properties and avoid
 			// testing if they are there (warning in chrome) the only option is to test if running IE.
-			if (!isIE && eventArguments) {
+			if (!isMS && eventArguments) {
 				delete eventArguments.layerX;
 				delete eventArguments.layerY;
 				delete eventArguments.returnValue;
@@ -1269,8 +1269,8 @@ defaultOptions = {
 	global: {
 		useUTC: true,
 		//timezoneOffset: 0,
-		canvasToolsURL: 'http://code.highcharts.com/maps/1.1.8-modified/modules/canvas-tools.js',
-		VMLRadialGradientURL: 'http://code.highcharts.com/maps/1.1.8-modified/gfx/vml-radial-gradient.png'
+		canvasToolsURL: 'http://code.highcharts.com/modules/canvas-tools.js',
+		VMLRadialGradientURL: 'http://code.highcharts.com/maps/1.1.9-modified/gfx/vml-radial-gradient.png'
 	},
 	chart: {
 		//animation: true,
@@ -1413,7 +1413,7 @@ defaultOptions = {
 			//pointStart: 0,
 			//pointInterval: 1,
 			//showInLegend: null, // auto: true for standalone series, false for linked series
-			softThreshold: true, // docs. Also, update the spline-plot-bands demo by removing y.min
+			softThreshold: true,
 			states: { // states for the entire series
 				hover: {
 					//enabled: false,
@@ -1555,7 +1555,7 @@ defaultOptions = {
 			cursor: 'default',
 			fontSize: '12px',
 			padding: '8px',
-			pointerEvents: 'none', // #1686 http://caniuse.com/#feat=pointer-events // docs
+			pointerEvents: 'none', // #1686 http://caniuse.com/#feat=pointer-events
 			whiteSpace: 'nowrap'
 		}
 		//xDateFormat: '%A, %b %e, %Y',
@@ -1954,9 +1954,10 @@ SVGElement.prototype = {
 			tspans,
 			hasContrast = textShadow.indexOf('contrast') !== -1,
 			styles = {},
+			forExport = this.renderer.forExport,
 			// IE10 and IE11 report textShadow in elem.style even though it doesn't work. Check
 			// this again with new IE release. In exports, the rendering is passed to PhantomJS. 
-			supports = this.renderer.forExport || (elem.style.textShadow !== UNDEFINED && !isIE);
+			supports = forExport || (elem.style.textShadow !== UNDEFINED && !isMS);
 
 		// When the text shadow is set to contrast, use dark stroke for light text and vice versa
 		if (hasContrast) {
@@ -1965,7 +1966,7 @@ SVGElement.prototype = {
 
 		// Safari with retina displays as well as PhantomJS bug (#3974). Firefox does not tolerate this,
 		// it removes the text shadows.
-		if (isWebKit) {
+		if (isWebKit || forExport) {
 			styles.textRendering = 'geometricPrecision';
 		}
 
@@ -1978,7 +1979,7 @@ SVGElement.prototype = {
 
 		// No reason to polyfill, we've got native support
 		if (supports) {
-			css(elem, styles); // Apply altered textShadow or textRendering workaround
+			this.css(styles); // Apply altered textShadow or textRendering workaround
 		} else {
 
 			this.fakeTS = true; // Fake text shadow
@@ -2254,7 +2255,7 @@ SVGElement.prototype = {
 			}
 
 			// serialize and set style attribute
-			if (isIE && !hasSVG) {
+			if (isMS && !hasSVG) {
 				css(elemWrapper.element, styles);
 			} else {
 				/*jslint unparam: true*/
@@ -2578,7 +2579,7 @@ SVGElement.prototype = {
 				height = bBox.height;
 
 				// Workaround for wrong bounding box in IE9 and IE10 (#1101, #1505, #1669, #2568)
-				if (isIE && styles && styles.fontSize === '11px' && height.toPrecision(3) === '16.9') {
+				if (isMS && styles && styles.fontSize === '11px' && height.toPrecision(3) === '16.9') {
 					bBox.height = height = 14;
 				}
 
@@ -3498,13 +3499,13 @@ SVGRenderer.prototype = {
 		delete disabledState.style;
 
 		// Add the events. IE9 and IE10 need mouseover and mouseout to funciton (#667).
-		addEvent(label.element, isIE ? 'mouseover' : 'mouseenter', function () {
+		addEvent(label.element, isMS ? 'mouseover' : 'mouseenter', function () {
 			if (curState !== 3) {
 				label.attr(hoverState)
 					.css(hoverStyle);
 			}
 		});
-		addEvent(label.element, isIE ? 'mouseout' : 'mouseleave', function () {
+		addEvent(label.element, isMS ? 'mouseout' : 'mouseleave', function () {
 			if (curState !== 3) {
 				stateOptions = [normalState, hoverState, pressedState][curState];
 				stateStyle = [normalStyle, hoverStyle, pressedStyle][curState];
@@ -4098,7 +4099,7 @@ SVGRenderer.prototype = {
 			style;
 
 		fontSize = fontSize || this.style.fontSize;
-		if (elem && win.getComputedStyle) {
+		if (!fontSize && elem && win.getComputedStyle) {
 			elem = elem.element || elem; // SVGElement
 			style = win.getComputedStyle(elem, "");
 			fontSize = style && style.fontSize; // #4309, the style doesn't exist inside a hidden iframe in Firefox
@@ -4189,9 +4190,9 @@ SVGRenderer.prototype = {
 			
 			if (needsBox) {
 
-				// create the border box if it is not already present
 				if (!box) {
-					boxX = mathRound(-alignFactor * padding) + crispAdjust;
+					// create the border box if it is not already present
+					boxX = crispAdjust;
 					boxY = (baseline ? -baselineOffset : 0) + crispAdjust;
 
 					wrapper.box = box = shape ?
@@ -4221,7 +4222,7 @@ SVGRenderer.prototype = {
 		function updateTextPadding() {
 			var styles = wrapper.styles,
 				textAlign = styles && styles.textAlign,
-				x = paddingLeft + padding * (1 - alignFactor),
+				x = paddingLeft + padding,
 				y;
 
 			// determin y based on the baseline
@@ -4305,7 +4306,13 @@ SVGRenderer.prototype = {
 
 		// change local variable and prevent setting attribute on the group
 		wrapper.alignSetter = function (value) {
-			alignFactor = { left: 0, center: 0.5, right: 1 }[value];
+			value = { left: 0, center: 0.5, right: 1 }[value];
+			if (value !== alignFactor) {
+				alignFactor = value;
+				if (bBox) { // Bounding box exists, means we're dynamically changing
+					wrapper.attr({ x: x });
+				}
+			}
 		};
 
 		// apply these to the box and the text alike
@@ -4344,7 +4351,7 @@ SVGRenderer.prototype = {
 		wrapper.xSetter = function (value) {
 			wrapper.x = value; // for animation getter
 			if (alignFactor) {
-				value -= alignFactor * ((width || bBox.width) + padding);
+				value -= alignFactor * ((width || bBox.width) + 2 * padding);
 			}
 			wrapperX = mathRound(value);
 			wrapper.attr('translateX', wrapperX);
@@ -4572,7 +4579,7 @@ extend(SVGElement.prototype, {
 	 */
 	setSpanRotation: function (rotation, alignCorrection, baseline) {
 		var rotationStyle = {},
-			cssTransformKey = isIE ? '-ms-transform' : isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : isOpera ? '-o-transform' : '';
+			cssTransformKey = isMS ? '-ms-transform' : isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : isOpera ? '-o-transform' : '';
 
 		rotationStyle[cssTransformKey] = rotationStyle.transform = 'rotate(' + rotation + 'deg)';
 		rotationStyle[cssTransformKey + (isFirefox ? 'Origin' : '-origin')] = rotationStyle.transformOrigin = (alignCorrection * 100) + '% ' + baseline + 'px';
@@ -5253,6 +5260,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		renderer.isVML = true;
 		renderer.box = box;
 		renderer.boxWrapper = boxWrapper;
+		renderer.gradients = {};
 		renderer.cache = {};
 
 
@@ -6052,9 +6060,18 @@ Tick.prototype = {
 			reversed = axis.reversed,
 			staggerLines = axis.staggerLines,
 			rotCorr = axis.tickRotCorr || { x: 0, y: 0 },
-			yOffset = pick(labelOptions.y, rotCorr.y + (axis.side === 2 ? 8 : -(label.getBBox().height / 2))),
+			yOffset = labelOptions.y,
 			line;
 
+		if (!defined(yOffset)) {
+			if (axis.side === 2) {
+				yOffset = rotCorr.y + 8;
+
+			} else { // #3140
+				yOffset = mathCos(label.rotation * deg2rad) * (rotCorr.y - label.getBBox().height / 2);
+			}
+		}
+		
 		x = x + labelOptions.x + rotCorr.x - (tickmarkOffset && horiz ?
 			tickmarkOffset * transA * (reversed ? -1 : 1) : 0);
 		y = y + yOffset - (tickmarkOffset && !horiz ?
@@ -6335,7 +6352,7 @@ Axis.prototype = {
 			//y: 0
 		},
 		type: 'linear' // linear, logarithmic or datetime
-		//visible: true // docs, sample created
+		//visible: true
 	},
 
 	/**
@@ -6967,7 +6984,8 @@ Axis.prototype = {
 			xData,
 			loopLength,
 			minArgs,
-			maxArgs;
+			maxArgs,
+			minRange;
 
 		// Set the automatic minimum range based on the closest point distance
 		if (axis.isXAxis && axis.minRange === UNDEFINED && !axis.isLog) {
@@ -6995,7 +7013,7 @@ Axis.prototype = {
 
 		// if minRange is exceeded, adjust
 		if (max - min < axis.minRange) {
-			var minRange = axis.minRange;
+			minRange = axis.minRange;
 			zoomOffset = (minRange - max + min) / 2;
 
 			// if min and max options have been set, don't go beyond it
@@ -7053,9 +7071,6 @@ Axis.prototype = {
 						pointPlacement = series.options.pointPlacement,
 						seriesClosestPointRange = series.closestPointRange;
 
-					if (seriesPointRange > range) { // #1446
-						seriesPointRange = 0;
-					}
 					pointRange = mathMax(pointRange, seriesPointRange);
 
 					if (!axis.single) {
@@ -7791,7 +7806,7 @@ Axis.prototype = {
 		}
 
 		this.autoRotation = autoRotation;
-		this.labelRotation = rotation;
+		this.labelRotation = pick(rotation, rotationOption);
 
 		return newTickInterval;
 	},
@@ -7897,7 +7912,7 @@ Axis.prototype = {
 		});
 
 		// TODO: Why not part of getLabelPosition?
-		this.tickRotCorr = renderer.rotCorr(labelMetrics.b, this.labelRotation || 0, this.side === 2);
+		this.tickRotCorr = renderer.rotCorr(labelMetrics.b, this.labelRotation || 0, this.side !== 0);
 	},
 
 	/**
@@ -7934,6 +7949,7 @@ Axis.prototype = {
 			clip,
 			directionFactor = [-1, 1, 1, -1][side],
 			n,
+			axisParent = axis.axisParent, // Used in color axis
 			lineHeightCorrection;
 
 		// For reuse in Axis.render
@@ -7947,14 +7963,14 @@ Axis.prototype = {
 		if (!axis.axisGroup) {
 			axis.gridGroup = renderer.g('grid')
 				.attr({ zIndex: options.gridZIndex || 1 })
-				.add();
+				.add(axisParent);
 			axis.axisGroup = renderer.g('axis')
 				.attr({ zIndex: options.zIndex || 2 })
-				.add();
+				.add(axisParent);
 			axis.labelGroup = renderer.g('axis-labels')
 				.attr({ zIndex: labelOptions.zIndex || 7 })
 				.addClass(PREFIX + axis.coll.toLowerCase() + '-labels')
-				.add();
+				.add(axisParent);
 		}
 
 		if (hasData || axis.isLinked) {
@@ -7972,7 +7988,7 @@ Axis.prototype = {
 
 			each(tickPositions, function (pos) {
 				// left side must be align: right and right side must have align: left for labels
-				if (side === 0 || side === 2 || { 1: 'left', 3: 'right' }[side] === axis.labelAlign) {
+				if (side === 0 || side === 2 || { 1: 'left', 3: 'right' }[side] === axis.labelAlign || axis.labelAlign === 'center') {
 
 					// get the highest offset
 					labelOffset = mathMax(
@@ -11391,7 +11407,7 @@ Chart.prototype = {
 			subtitle
 				.css({ width: (subtitleOptions.width || autoWidth) + PX })
 				.align(extend({ 
-					y: titleOffset + (titleOptions.margin - 13) + renderer.fontMetrics(titleOptions.style.fontSize, subtitle).b 
+					y: titleOffset + (titleOptions.margin - 13) + renderer.fontMetrics(subtitleOptions.style.fontSize, title).b 
 				}, subtitleOptions), false, 'spacingBox');
 			
 			if (!subtitleOptions.floating && !subtitleOptions.verticalAlign) {
@@ -12500,7 +12516,7 @@ Point.prototype = {
 	 */
 	destroyElements: function () {
 		var point = this,
-			props = ['graphic', 'dataLabel', 'dataLabelUpper', 'group', 'connector', 'shadowGroup'],
+			props = ['graphic', 'dataLabel', 'dataLabelUpper', 'connector', 'shadowGroup'],
 			prop,
 			i = 6;
 		while (i--) {
@@ -13072,7 +13088,7 @@ Series.prototype = {
 
 		// Typically for pie series, points need to be processed and generated 
 		// prior to rendering the legend
-		if (options.legendType === 'point') { // docs: legendType now supported on more series types
+		if (options.legendType === 'point') { // docs: legendType now supported on more series types (at least column and pie)
 			this.processData();
 			this.generatePoints();
 		}
@@ -15062,7 +15078,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 		verticalAlign: null, // auto
 		y: null
 	},
-	softThreshold: false, // docs
+	softThreshold: false,
 	startFromThreshold: true, // docs (but false doesn't work well): http://jsfiddle.net/highcharts/hz8fopan/14/
 	stickyTracking: false,
 	tooltip: {
@@ -15185,7 +15201,8 @@ var ColumnSeries = extendClass(Series, {
 			xCrisp = -(borderWidth % 2 ? 0.5 : 0),
 			yCrisp = borderWidth % 2 ? 0.5 : 1,
 			right,
-			bottom;
+			bottom,
+			fromTop;
 
 		if (chart.inverted && chart.renderer.isVML) {
 			yCrisp += 1;
@@ -15199,11 +15216,12 @@ var ColumnSeries = extendClass(Series, {
 
 		// Vertical
 		bottom = Math.round(y + h) + yCrisp;
+		fromTop = mathAbs(y) <= 0.5 && bottom > 0.5; // #4504, #4656
 		y = Math.round(y) + yCrisp;
 		h = bottom - y;
 
-		// Top edges are exceptions (#4504)
-		if (Math.abs(y) <= 0.5) {
+		// Top edges are exceptions
+		if (fromTop) {
 			y -= 1;
 			h += 1;
 		}
@@ -15337,7 +15355,7 @@ var ColumnSeries = extendClass(Series, {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 						.attr(borderAttr)
 						.attr(pointAttr)
-						.add(series.group)
+						.add(point.group || series.group)
 						.shadow(options.shadow, null, options.stacking && !options.borderRadius);
 				}
 
@@ -15498,7 +15516,7 @@ Series.prototype.drawDataLabels = function () {
 
 			// Determine if each data label is enabled
 			pointOptions = point.dlOptions || (point.options && point.options.dataLabels); // dlOptions is used in treemaps
-			enabled = pick(pointOptions && pointOptions.enabled, generalOptions.enabled); // #2282
+			enabled = pick(pointOptions && pointOptions.enabled, generalOptions.enabled) && point.y !== null; // #2282, #4641
 
 
 			// If the point is outside the plot area, destroy it. #678, #820
@@ -15668,6 +15686,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 
 	// Show or hide based on the final aligned position
 	if (!visible) {
+		stop(dataLabel);
 		dataLabel.attr({ y: -999 });
 		dataLabel.placed = false; // don't animate back in
 	}
@@ -16197,7 +16216,7 @@ if (seriesTypes.column) {
 
 
 /**
- * Highmaps JS v1.1.8-modified ()
+ * Highmaps JS v1.1.9-modified (2015-10-15)
  * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
  *
  * (c) 2010-2014 Torstein Honsi
@@ -16672,20 +16691,23 @@ extend(ColorAxis.prototype, {
 		return color;
 	},
 
+	/**
+	 * Override the getOffset method to add the whole axis groups inside the legend.
+	 */
 	getOffset: function () {
 		var group = this.legendGroup,
 			sideOffset = this.chart.axisOffset[this.side];
 		
 		if (group) {
 
-			Axis.prototype.getOffset.call(this);
-			
-			if (!this.axisGroup.parentGroup) {
+			// Hook for the getOffset method to add groups to this parent group
+			this.axisParent = group;
 
-				// Move the axis elements inside the legend group
-				this.axisGroup.add(group);
-				this.gridGroup.add(group);
-				this.labelGroup.add(group);
+			// Call the base
+			Axis.prototype.getOffset.call(this);
+
+			// First time only
+			if (!this.added) {
 
 				this.added = true;
 
@@ -17713,7 +17735,7 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		seriesTypes.column.prototype.animateDrillupTo.call(this, init);
 	}
 }));/**
- * Highmaps JS v1.1.8-modified ()
+ * Highmaps JS v1.1.9-modified (2015-10-15)
  * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
  *
  * (c) 2010-2014 Torstein Honsi
@@ -18201,7 +18223,7 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	maxSize: '20%',
 	// negativeColor: null,
 	// sizeBy: 'area'
-	softThreshold: false, // docs
+	softThreshold: false,
 	states: {
 		hover: {
 			halo: {
@@ -18294,8 +18316,8 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			value = zData[i];
 
 			// When sizing by threshold, the absolute value of z determines the size
-			// of the bubble. // docs. sample created
-			if (options.sizeByAbsoluteValue) {
+			// of the bubble.
+			if (options.sizeByAbsoluteValue && value !== null) {
 				value = Math.abs(value - zThreshold);
 				zMax = Math.max(zMax - zThreshold, Math.abs(zMin - zThreshold));
 				zMin = 0;
@@ -18397,9 +18419,10 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	 * @param {Object} item The series (this) or point
 	 */
 	drawLegendSymbol: function (legend, item) {
-		var radius = pInt(legend.itemStyle.fontSize) / 2;
+		var renderer = this.chart.renderer,
+			radius = renderer.fontMetrics(legend.itemStyle.fontSize).f / 2;
 		
-		item.legendSymbol = this.chart.renderer.circle(
+		item.legendSymbol = renderer.circle(
 			radius,
 			legend.baseline - radius,
 			radius

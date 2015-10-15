@@ -184,9 +184,18 @@ Tick.prototype = {
 			reversed = axis.reversed,
 			staggerLines = axis.staggerLines,
 			rotCorr = axis.tickRotCorr || { x: 0, y: 0 },
-			yOffset = pick(labelOptions.y, rotCorr.y + (axis.side === 2 ? 8 : -(label.getBBox().height / 2))),
+			yOffset = labelOptions.y,
 			line;
 
+		if (!defined(yOffset)) {
+			if (axis.side === 2) {
+				yOffset = rotCorr.y + 8;
+
+			} else { // #3140
+				yOffset = mathCos(label.rotation * deg2rad) * (rotCorr.y - label.getBBox().height / 2);
+			}
+		}
+		
 		x = x + labelOptions.x + rotCorr.x - (tickmarkOffset && horiz ?
 			tickmarkOffset * transA * (reversed ? -1 : 1) : 0);
 		y = y + yOffset - (tickmarkOffset && !horiz ?

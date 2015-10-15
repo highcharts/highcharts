@@ -20,7 +20,6 @@ body.page h1 {
 	color: white;
 	font-size: 0.8em;
 	padding: 0.5em;
-	height: 50px;
 	background: #34343e;
 	box-shadow: 0px 0px 8px #888;
 }
@@ -37,18 +36,22 @@ body.page h1 {
 
 .buttons a, a.button, button {
 	border: none;
-	border-radius: 3px;
+	border-radius: 0.3em;
 	background: #a4edba;
-	padding: 5px;
+	padding: 0.5em 1.5em;
 	color: black;
 	text-decoration: none;
-	font-size: 12px;
+	font-size: 1em;
 	white-space: nowrap;
 	cursor: pointer;
-	margin: 0 3px;
+	margin: 0 0.3em;
 	line-height: 2.5em;
 }
 .buttons a:hover, a.button:hover, button:hover {
+	background: #40818b;
+	color: white;
+}
+.buttons a.active, a.button.active, button.active {
 	background: #40818b;
 	color: white;
 }
@@ -108,7 +111,7 @@ body.visual iframe {
 	border: 1px dotted gray;
 }
 
-body.unit #frame-row {
+body.single-col #frame-row {
 	width: auto;
 }
 body.unit iframe {
@@ -116,9 +119,17 @@ body.unit iframe {
 	height: 600px;
 	border: none;
 }
+body.manual iframe {
+	width: calc(100% - 320px);
+	height: 600px;
+	border: none;
+}
 
-body.unit #report, body.unit #svg, body.unit #preview {
+body.single-col #report, body.single-col #svg, body.single-col #preview {
 	display: none;
+}
+body.manual #comment-placeholder {
+	vertical-align: top;
 }
 
 /* QUnit, follow the theme */

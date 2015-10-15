@@ -102,7 +102,7 @@ Axis.prototype = {
 			//y: 0
 		},
 		type: 'linear' // linear, logarithmic or datetime
-		//visible: true // docs, sample created
+		//visible: true
 	},
 
 	/**
@@ -734,7 +734,8 @@ Axis.prototype = {
 			xData,
 			loopLength,
 			minArgs,
-			maxArgs;
+			maxArgs,
+			minRange;
 
 		// Set the automatic minimum range based on the closest point distance
 		if (axis.isXAxis && axis.minRange === UNDEFINED && !axis.isLog) {
@@ -762,7 +763,7 @@ Axis.prototype = {
 
 		// if minRange is exceeded, adjust
 		if (max - min < axis.minRange) {
-			var minRange = axis.minRange;
+			minRange = axis.minRange;
 			zoomOffset = (minRange - max + min) / 2;
 
 			// if min and max options have been set, don't go beyond it
@@ -820,9 +821,6 @@ Axis.prototype = {
 						pointPlacement = series.options.pointPlacement,
 						seriesClosestPointRange = series.closestPointRange;
 
-					if (seriesPointRange > range) { // #1446
-						seriesPointRange = 0;
-					}
 					pointRange = mathMax(pointRange, seriesPointRange);
 
 					if (!axis.single) {
@@ -1558,7 +1556,7 @@ Axis.prototype = {
 		}
 
 		this.autoRotation = autoRotation;
-		this.labelRotation = rotation;
+		this.labelRotation = pick(rotation, rotationOption);
 
 		return newTickInterval;
 	},
@@ -1664,7 +1662,7 @@ Axis.prototype = {
 		});
 
 		// TODO: Why not part of getLabelPosition?
-		this.tickRotCorr = renderer.rotCorr(labelMetrics.b, this.labelRotation || 0, this.side === 2);
+		this.tickRotCorr = renderer.rotCorr(labelMetrics.b, this.labelRotation || 0, this.side !== 0);
 	},
 
 	/**
@@ -1701,6 +1699,7 @@ Axis.prototype = {
 			clip,
 			directionFactor = [-1, 1, 1, -1][side],
 			n,
+			axisParent = axis.axisParent, // Used in color axis
 			lineHeightCorrection;
 
 		// For reuse in Axis.render
@@ -1714,14 +1713,14 @@ Axis.prototype = {
 		if (!axis.axisGroup) {
 			axis.gridGroup = renderer.g('grid')
 				.attr({ zIndex: options.gridZIndex || 1 })
-				.add();
+				.add(axisParent);
 			axis.axisGroup = renderer.g('axis')
 				.attr({ zIndex: options.zIndex || 2 })
-				.add();
+				.add(axisParent);
 			axis.labelGroup = renderer.g('axis-labels')
 				.attr({ zIndex: labelOptions.zIndex || 7 })
 				.addClass(PREFIX + axis.coll.toLowerCase() + '-labels')
-				.add();
+				.add(axisParent);
 		}
 
 		if (hasData || axis.isLinked) {
@@ -1739,7 +1738,7 @@ Axis.prototype = {
 
 			each(tickPositions, function (pos) {
 				// left side must be align: right and right side must have align: left for labels
-				if (side === 0 || side === 2 || { 1: 'left', 3: 'right' }[side] === axis.labelAlign) {
+				if (side === 0 || side === 2 || { 1: 'left', 3: 'right' }[side] === axis.labelAlign || axis.labelAlign === 'center') {
 
 					// get the highest offset
 					labelOffset = mathMax(

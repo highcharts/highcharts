@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.8-modified ()
+ * @license Highcharts JS v4.1.9-modified (2015-10-15)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -1880,7 +1880,7 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	maxSize: '20%',
 	// negativeColor: null,
 	// sizeBy: 'area'
-	softThreshold: false, // docs
+	softThreshold: false,
 	states: {
 		hover: {
 			halo: {
@@ -1973,8 +1973,8 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			value = zData[i];
 
 			// When sizing by threshold, the absolute value of z determines the size
-			// of the bubble. // docs. sample created
-			if (options.sizeByAbsoluteValue) {
+			// of the bubble.
+			if (options.sizeByAbsoluteValue && value !== null) {
 				value = Math.abs(value - zThreshold);
 				zMax = Math.max(zMax - zThreshold, Math.abs(zMin - zThreshold));
 				zMin = 0;
@@ -2076,9 +2076,10 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	 * @param {Object} item The series (this) or point
 	 */
 	drawLegendSymbol: function (legend, item) {
-		var radius = pInt(legend.itemStyle.fontSize) / 2;
+		var renderer = this.chart.renderer,
+			radius = renderer.fontMetrics(legend.itemStyle.fontSize).f / 2;
 		
-		item.legendSymbol = this.chart.renderer.circle(
+		item.legendSymbol = renderer.circle(
 			radius,
 			legend.baseline - radius,
 			radius

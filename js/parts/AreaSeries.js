@@ -2,7 +2,7 @@
  * Set the default options for area
  */
 defaultPlotOptions.area = merge(defaultSeriesOptions, {
-	softThreshold: false, // docs
+	softThreshold: false,
 	threshold: 0
 	// trackByArea: false,
 	// lineColor: null, // overrides color, but lets fillColor be unaltered
