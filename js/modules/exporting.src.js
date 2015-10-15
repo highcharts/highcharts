@@ -22,6 +22,7 @@ var Chart = Highcharts.Chart,
 	css = Highcharts.css,
 	merge = Highcharts.merge,
 	each = Highcharts.each,
+	pick = Highcharts.pick,
 	extend = Highcharts.extend,
 	splat = Highcharts.splat,
 	math = Math,
@@ -662,7 +663,7 @@ extend(Chart.prototype, {
 
 
 		if (btnOptions.text && btnOptions.symbol) {
-			attr.paddingLeft = Highcharts.pick(attr.paddingLeft, 25);
+			attr.paddingLeft = pick(attr.paddingLeft, 25);
 
 		} else if (!btnOptions.text) {
 			extend(attr, {
@@ -674,7 +675,7 @@ extend(Chart.prototype, {
 
 		button = renderer.button(btnOptions.text, 0, 0, callback, attr, hover, select)
 			.attr({
-				title: chart.options.lang[btnOptions._titleKey],
+				title: pick(chart.options.lang[btnOptions._titleKey], ''),
 				'stroke-linecap': 'round'
 			});
 		button.menuClassName = options.menuClassName || PREFIX + 'menu-' + chart.btnCount++;
@@ -696,7 +697,7 @@ extend(Chart.prototype, {
 		button.add()
 			.align(extend(btnOptions, {
 				width: button.width,
-				x: Highcharts.pick(btnOptions.x, buttonOffset) // #1654
+				x: pick(btnOptions.x, buttonOffset) // #1654
 			}), true, 'spacingBox');
 
 		buttonOffset += (button.width + btnOptions.buttonSpacing) * (btnOptions.align === 'right' ? -1 : 1);
