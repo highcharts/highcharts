@@ -100,6 +100,7 @@ defaultOptions = {
 		line: { // base series options
 			allowPointSelect: false,
 			showCheckbox: false,
+			checkboxPosition: 'right',
 			animation: {
 				duration: 1000
 			},
