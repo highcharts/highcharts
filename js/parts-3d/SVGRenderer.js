@@ -37,14 +37,12 @@ function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
 	if ((end > start) && (end - start > PI / 2 + 0.0001)) {
 		result = result.concat(curveTo(cx, cy, rx, ry, start, start + (PI / 2), dx, dy));
 		result = result.concat(curveTo(cx, cy, rx, ry, start + (PI / 2), end, dx, dy));
-		return result;
 	} else if ((end < start) && (start - end > PI / 2 + 0.0001)) {			
 		result = result.concat(curveTo(cx, cy, rx, ry, start, start - (PI / 2), dx, dy));
 		result = result.concat(curveTo(cx, cy, rx, ry, start - (PI / 2), end, dx, dy));
-		return result;
 	} else {
 		var arcAngle = end - start;
-		return [
+		result = [
 			'C', 
 			cx + (rx * cos(start)) - ((rx * dFactor * arcAngle) * sin(start)) + dx,
 			cy + (ry * sin(start)) + ((ry * dFactor * arcAngle) * cos(start)) + dy,
@@ -55,6 +53,7 @@ function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
 			cy + (ry * sin(end)) + dy
 		];
 	}
+	return result;
 }
 
 Highcharts.SVGRenderer.prototype.toLinePath = function (points, closed) {
@@ -186,15 +185,17 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 
 	// helper method to decide which side is visible
 	var pickShape = function (path1, path2) {
+		var ret;
 		path1 = map(path1, function (i) { return pArr[i]; });
 		path2 = map(path2, function (i) { return pArr[i]; });
 		if (shapeArea(path1) < 0) {
-			return path1;
+			ret = path1;
 		} else if (shapeArea(path2) < 0) {
-			return path2;
+			ret = path2;
 		} else {
-			return [];
+			ret = [];
 		}
+		return ret;
 	};
 
 	// front or back

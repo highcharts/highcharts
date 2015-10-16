@@ -7,11 +7,7 @@ Highcharts.Chart.prototype.is3d = function () {
 };
 
 Highcharts.wrap(Highcharts.Chart.prototype, 'isInsidePlot', function (proceed) {
-	if (this.is3d()) {
-		return true;
-	} else {
-		return proceed.apply(this, [].slice.call(arguments, 1));
-	}
+	return this.is3d() || proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 var defaultChartOptions = Highcharts.getOptions();

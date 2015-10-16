@@ -672,7 +672,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				translateY: fromBox.y
 			};
 			
-			// TODO: Animate this.group instead
 			each(this.points, function (point) {
 				if (point.graphic) {
 					point.graphic

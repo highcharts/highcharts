@@ -34,7 +34,8 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 
 	if (this.isZAxis) {
 		return;
-	} else if (this.horiz) {
+	}
+	if (this.horiz) {
 		var bottomShape = {
 			x: left,
 			y: top + (chart.xAxis[0].opposite ? -fbottom.size : height),
@@ -138,35 +139,34 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotBandPath', function (proceed)
 	// Do not do this if the chart is not 3D
 	if (!this.chart.is3d()) {
 		return proceed.apply(this, [].slice.call(arguments, 1));
-	} else {
-		var args = arguments,
-			from = args[1],
-			to = args[2];
-	
-		var toPath = this.getPlotLinePath(to),
-			path = this.getPlotLinePath(from);
-			
-		if (path && toPath) {
-			path.push(
-				'L',
-				toPath[10],	// These two do not exist in the regular getPlotLine
-				toPath[11],  // ---- # 3005
-				'L',
-				toPath[7],
-				toPath[8],
-				'L',
-				toPath[4],
-				toPath[5],
-				'L',
-				toPath[1],
-				toPath[2]
-			);
-		} else { // outside the axis area
-			path = null;
-		}
+	} 
+
+	var args = arguments,
+		from = args[1],
+		to = args[2],
+		toPath = this.getPlotLinePath(to),
+		path = this.getPlotLinePath(from);
 		
-		return path;
+	if (path && toPath) {
+		path.push(
+			'L',
+			toPath[10],	// These two do not exist in the regular getPlotLine
+			toPath[11],  // ---- # 3005
+			'L',
+			toPath[7],
+			toPath[8],
+			'L',
+			toPath[4],
+			toPath[5],
+			'L',
+			toPath[1],
+			toPath[2]
+		);
+	} else { // outside the axis area
+		path = null;
 	}
+	
+	return path;
 });
 
 /*** 

@@ -142,14 +142,12 @@ function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
 	if ((end > start) && (end - start > PI / 2 + 0.0001)) {
 		result = result.concat(curveTo(cx, cy, rx, ry, start, start + (PI / 2), dx, dy));
 		result = result.concat(curveTo(cx, cy, rx, ry, start + (PI / 2), end, dx, dy));
-		return result;
 	} else if ((end < start) && (start - end > PI / 2 + 0.0001)) {			
 		result = result.concat(curveTo(cx, cy, rx, ry, start, start - (PI / 2), dx, dy));
 		result = result.concat(curveTo(cx, cy, rx, ry, start - (PI / 2), end, dx, dy));
-		return result;
 	} else {
 		var arcAngle = end - start;
-		return [
+		result = [
 			'C', 
 			cx + (rx * cos(start)) - ((rx * dFactor * arcAngle) * sin(start)) + dx,
 			cy + (ry * sin(start)) + ((ry * dFactor * arcAngle) * cos(start)) + dy,
@@ -160,6 +158,7 @@ function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
 			cy + (ry * sin(end)) + dy
 		];
 	}
+	return result;
 }
 
 Highcharts.SVGRenderer.prototype.toLinePath = function (points, closed) {
@@ -291,15 +290,17 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 
 	// helper method to decide which side is visible
 	var pickShape = function (path1, path2) {
+		var ret;
 		path1 = map(path1, function (i) { return pArr[i]; });
 		path2 = map(path2, function (i) { return pArr[i]; });
 		if (shapeArea(path1) < 0) {
-			return path1;
+			ret = path1;
 		} else if (shapeArea(path2) < 0) {
-			return path2;
+			ret = path2;
 		} else {
-			return [];
+			ret = [];
 		}
+		return ret;
 	};
 
 	// front or back
@@ -595,11 +596,7 @@ Highcharts.Chart.prototype.is3d = function () {
 };
 
 Highcharts.wrap(Highcharts.Chart.prototype, 'isInsidePlot', function (proceed) {
-	if (this.is3d()) {
-		return true;
-	} else {
-		return proceed.apply(this, [].slice.call(arguments, 1));
-	}
+	return this.is3d() || proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 var defaultChartOptions = Highcharts.getOptions();
@@ -733,7 +730,8 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 
 	if (this.isZAxis) {
 		return;
-	} else if (this.horiz) {
+	}
+	if (this.horiz) {
 		var bottomShape = {
 			x: left,
 			y: top + (chart.xAxis[0].opposite ? -fbottom.size : height),
@@ -837,35 +835,34 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotBandPath', function (proceed)
 	// Do not do this if the chart is not 3D
 	if (!this.chart.is3d()) {
 		return proceed.apply(this, [].slice.call(arguments, 1));
-	} else {
-		var args = arguments,
-			from = args[1],
-			to = args[2];
-	
-		var toPath = this.getPlotLinePath(to),
-			path = this.getPlotLinePath(from);
-			
-		if (path && toPath) {
-			path.push(
-				'L',
-				toPath[10],	// These two do not exist in the regular getPlotLine
-				toPath[11],  // ---- # 3005
-				'L',
-				toPath[7],
-				toPath[8],
-				'L',
-				toPath[4],
-				toPath[5],
-				'L',
-				toPath[1],
-				toPath[2]
-			);
-		} else { // outside the axis area
-			path = null;
-		}
+	} 
+
+	var args = arguments,
+		from = args[1],
+		to = args[2],
+		toPath = this.getPlotLinePath(to),
+		path = this.getPlotLinePath(from);
 		
-		return path;
+	if (path && toPath) {
+		path.push(
+			'L',
+			toPath[10],	// These two do not exist in the regular getPlotLine
+			toPath[11],  // ---- # 3005
+			'L',
+			toPath[7],
+			toPath[8],
+			'L',
+			toPath[4],
+			toPath[5],
+			'L',
+			toPath[1],
+			toPath[2]
+		);
+	} else { // outside the axis area
+		path = null;
 	}
+	
+	return path;
 });
 
 /*** 
@@ -952,9 +949,8 @@ Highcharts.Axis.prototype.swapZ = function (p, insidePlotArea) {
 			y: p.y,
 			z: p.x - plotLeft
 		};
-	} else {
-		return p;
 	}
+	return p;
 };
 
 var ZAxis = Highcharts.ZAxis = function () {
