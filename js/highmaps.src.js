@@ -1,17 +1,14 @@
-// ==ClosureCompiler==
-// @compilation_level SIMPLE_OPTIMIZATIONS
-
 /**
  * @license Highmaps JS v1.1.9-modified (2015-10-16)
  *
- * (c) 2009-2014 Torstein Honsi
+ * (c) 2011-2014 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 
-// JSLint options:
 /*global HighchartsAdapter, document, window, navigator, clearInterval, clearTimeout, setInterval, setTimeout, location, console */
 (function () {
+
 // encapsulated variables
 var UNDEFINED,
 	doc = document,
@@ -16200,15 +16197,8 @@ if (seriesTypes.column) {
 
 
 /**
- * Highmaps JS v1.1.9-modified (2015-10-16)
- * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
- *
- * (c) 2010-2014 Torstein Honsi
- *
- * License: www.highcharts.com/license
+ * Highcharts module to hide overlapping data labels. This module is included in Highcharts.
  */
-
-/*global Highcharts, HighchartsAdapter */
 (function (H) {
 	var Chart = H.Chart,
 		each = H.each,
@@ -17719,15 +17709,8 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		seriesTypes.column.prototype.animateDrillupTo.call(this, init);
 	}
 }));/**
- * Highmaps JS v1.1.9-modified (2015-10-16)
- * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
- *
- * (c) 2010-2014 Torstein Honsi
- *
- * License: www.highcharts.com/license
+ * Highcharts module to hide overlapping data labels. This module is included in Highcharts.
  */
-
-/*global Highcharts, HighchartsAdapter */
 (function (H) {
 	var Chart = H.Chart,
 		each = H.each,

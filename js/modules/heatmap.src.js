@@ -6,7 +6,7 @@
  * License: www.highcharts.com/license
  */
 
-/*global HighchartsAdapter, setInterval */
+/*global Highcharts, HighchartsAdapter */
 (function (Highcharts) {
 
 

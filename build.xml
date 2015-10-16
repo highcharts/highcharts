@@ -309,7 +309,7 @@
 
         <!-- This is the list of files for the heatmap module -->
         <filelist id="heatmap.files" dir="${basedir}/js">
-            <file name="parts-map/Intro.js"/>
+            <file name="parts-map/HeatmapIntro.js"/>
             <file name="parts-map/HeatmapGlobals.js"/>
             <!-- file name="parts-map/MapAxis.js"/ -->
             <file name="parts-map/ColorAxis.js"/>
@@ -328,7 +328,7 @@
 
         <!-- This is the list of files for Highmaps -->
         <filelist id="highmaps.files" dir="${basedir}/js">
-            <file name="parts/Intro.js"/>
+            <file name="parts-map/Intro.js"/>
             <file name="parts/Globals.js"/>
             <file name="parts/Utilities.js"/>
             <file name="parts/PathAnimation.js"/>

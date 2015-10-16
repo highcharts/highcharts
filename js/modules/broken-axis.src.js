@@ -5,8 +5,6 @@
  * Author: Stephane Vanraes, Torstein Honsi
  * License: www.highcharts.com/license
  */
-
-/*global Highcharts, HighchartsAdapter */
 (function (H) {	
 
 	"use strict";

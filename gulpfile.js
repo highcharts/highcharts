@@ -5,8 +5,9 @@ var //eslint = require('gulp-eslint'),
     fs = require('fs'),
     //sass = require('gulp-sass'),
     ftp = require('vinyl-ftp'),
-    jshint = require('gulp-jshint'),
-    stylish = require('jshint-stylish'),
+    //jshint = require('gulp-jshint'),
+    //stylish = require('jshint-stylish'),
+    jslint = require('gulp-jslint'),
     /*
     config = {
         // List of rules at http://eslint.org/docs/rules/
@@ -120,16 +121,22 @@ gulp.task('styles', function () {
         .pipe(gulp.dest(dir));
 });
 */
-
-
-// Linting
 gulp.task('lint', function () {
-    return gulp.src(paths.distributions.concat(paths.modules))
-        .pipe(jshint({
+    //paths.distributions.concat(paths.modules)
+    return gulp.src(['./js/highcharts.src.js'])
+        .pipe(jslint({
+            confusion: true,
+            'continue': true,
+            forin: true,
+            newcap: true,
+            nomen: true,
+            plusplus: true,
+            regexp: true,
+            sloppy: true,
             undef: true,
-            unused: true
-        }))
-        .pipe(jshint.reporter(stylish));
+            vars: true,
+            white: true
+        }));
 });
 
 // Watch changes to CSS files
@@ -211,17 +218,18 @@ gulp.task('scripts', function () {
         return tpl;
     }
 
+    function addVersion(tpl, product) {
+        return tpl
+            .replace(/@product\.name@/g, product.name)
+            .replace(/@product\.version@/g, product.version)
+            .replace(/@product\.date@/g, product.date)
+            .replace(/@product\.cdnpath@/g, product.cdnpath);
+    }
+
+
     // Parse the build properties files into a structure
     fs.readFile('./build.properties', 'utf8', function (err, lines) {
         var products = {};
-
-        function addVersion(tpl, product) {
-            return tpl
-                .replace(/@product\.name@/g, product.name)
-                .replace(/@product\.version@/g, product.version)
-                .replace(/@product\.date@/g, product.date)
-                .replace(/@product\.cdnpath@/g, product.cdnpath);
-        }
 
         lines.split('\n').forEach(function (line) {
             var prod, key;
