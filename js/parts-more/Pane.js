@@ -4,7 +4,7 @@
  * In the future, this can be extended to basic Highcharts and Highstock.
  */
 function Pane(options, chart, firstAxis) {
-	this.init.call(this, options, chart, firstAxis);
+	this.init(options, chart, firstAxis);
 }
 
 // Extend the Pane prototype

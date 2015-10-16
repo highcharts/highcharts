@@ -198,7 +198,7 @@ H.extend(H.Data.prototype, {
 				//len: scale,
 				translate: Highcharts.Axis.prototype.translate,
 				options: {},
-				minPixelPadding: 0,
+				minPixelPadding: 0
 				//transA: transA
 			}, 
 			yAxis: {
@@ -206,7 +206,7 @@ H.extend(H.Data.prototype, {
 				//len: scale,
 				translate: Highcharts.Axis.prototype.translate,
 				options: {},
-				minPixelPadding: 0,
+				minPixelPadding: 0
 				//transA: transA
 			}
 		};
@@ -259,9 +259,11 @@ H.extend(H.Data.prototype, {
 		function getPathDefinition(node) {
 			if (node.nodeName === 'path') {
 				return node.getAttribute('d');
-			} else if (node.nodeName === 'polygon') {
+			}
+			if (node.nodeName === 'polygon') {
 				return node.getAttribute('points');
-			} else if (node.nodeName === 'rect') {
+			}
+			if (node.nodeName === 'rect') {
 				var x = +node.getAttribute('x'),
 					y = +node.getAttribute('y'),
 					w = +node.getAttribute('width'),

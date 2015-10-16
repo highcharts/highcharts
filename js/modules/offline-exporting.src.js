@@ -107,7 +107,7 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
 			}
 
 			// Try HTML5 download attr if supported
-			if (typeof a.download !== 'undefined') {
+			if (a.download !== undefined) {
 				a.href = dataURL;
 				a.download = filename; // HTML5 download attribute
 				a.target = '_blank';
@@ -118,7 +118,7 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
 				// No download attr, just opening data URI
 				try {
 					windowRef = window.open(dataURL, 'chart');
-					if (typeof windowRef === 'undefined' || windowRef === null) {
+					if (windowRef === undefined || windowRef === null) {
 						throw 1;
 					}
 				} catch (e) {

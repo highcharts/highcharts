@@ -253,9 +253,8 @@ Highcharts.Axis.prototype.swapZ = function (p, insidePlotArea) {
 			y: p.y,
 			z: p.x - plotLeft
 		};
-	} else {
-		return p;
 	}
+	return p;
 };
 
 var ZAxis = Highcharts.ZAxis = function () {

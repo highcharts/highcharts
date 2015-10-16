@@ -19556,7 +19556,7 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 	var pick = H.pick,
 		wrap = H.wrap,
 		extend = H.extend,
-		fireEvent = HighchartsAdapter.fireEvent,
+		fireEvent = H.fireEvent,
 		Axis = H.Axis,
 		Series = H.Series;
 

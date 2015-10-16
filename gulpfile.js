@@ -122,23 +122,23 @@ gulp.task('styles', function () {
 });
 */
 gulp.task('lint', function () {
-    //paths.distributions.concat(paths.modules)
-    return gulp.src(['./js/highstock.src.js'])
+    return gulp.src(paths.distributions.concat(paths.modules))
         .pipe(jslint({
-            confusion: true,
+            'confusion': true,
             'continue': true,
-            forin: true,
-            newcap: true,
-            nomen: true,
-            plusplus: true,
-            regexp: true,
-            sloppy: true,
-            undef: true,
-            vars: true,
-            white: true,
+            'forin': true,
+            'newcap': true,
+            'nomen': true,
+            'plusplus': true,
+            'regexp': true,
+            'sloppy': true,
+            'todo': true,
+            'undef': true,
+            'vars': true,
+            'white': true,
 
-            edition: '2013-02-03',
-            reporter: function (evt) {
+            'edition': '2013-02-03',
+            'reporter': function (evt) {
                 if (!evt.pass) {
                     console.log(`___________________________________________________________________________\nErrors in ${evt.file}\n`);
                     evt.errors.forEach(function (err) {

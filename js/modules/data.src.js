@@ -723,7 +723,7 @@
 
 				// Iterate down the cells of each column and add data to the series
 				data = [];
-				for (j = 0; j < columns[0].length; j++) { // TODO: which column's length should we use here
+				for (j = 0; j < columns[0].length; j++) {
 					data[j] = builder.read(columns, j);
 				}
 

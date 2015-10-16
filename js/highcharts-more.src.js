@@ -44,7 +44,7 @@ var arrayMin = Highcharts.arrayMin,
  * In the future, this can be extended to basic Highcharts and Highstock.
  */
 function Pane(options, chart, firstAxis) {
-	this.init.call(this, options, chart, firstAxis);
+	this.init(options, chart, firstAxis);
 }
 
 // Extend the Pane prototype
@@ -1724,7 +1724,8 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	toYData: function (pt) {
 		if (pt.isSum) {
 			return (pt.x === 0 ? null : "sum"); //#3245 Error when first element is Sum or Intermediate Sum
-		} else if (pt.isIntermediateSum) {
+		}
+		if (pt.isIntermediateSum) {
 			return (pt.x === 0 ? null : "intermediateSum"); //#3245
 		}
 		return pt.y;

@@ -503,7 +503,7 @@
                 }
 
                 // Pass tests in Pointer. 
-                // TODO: Replace this with a single property, and replace when zooming in
+                // Replace this with a single property, and replace when zooming in
                 // below boostThreshold.
                 series.directTouch = false;
                 series.options.stickyTracking = true;
