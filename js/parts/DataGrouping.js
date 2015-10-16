@@ -1,7 +1,6 @@
 /* ****************************************************************************
  * Start data grouping module												 *
  ******************************************************************************/
-/*jslint white:true */
 var DATA_GROUPING = 'dataGrouping',
 	seriesProto = Series.prototype,
 	tooltipProto = Tooltip.prototype,
@@ -121,7 +120,7 @@ var DATA_GROUPING = 'dataGrouping',
 
 			// If we have a number, return it divided by the length. If not, return
 			// null or undefined based on what the sum method finds.
-			if (typeof ret === NUMBER && len) {
+			if (typeof ret === 'number' && len) {
 				ret = ret / len;
 			}
 
@@ -146,7 +145,7 @@ var DATA_GROUPING = 'dataGrouping',
 			low = approximations.low(low);
 			close = approximations.close(close);
 
-			if (typeof open === NUMBER || typeof high === NUMBER || typeof low === NUMBER || typeof close === NUMBER) {
+			if (typeof open === 'number' || typeof high === 'number' || typeof low === 'number' || typeof close === 'number') {
 				return [open, high, low, close];
 			}
 			// else, return is undefined
@@ -155,14 +154,13 @@ var DATA_GROUPING = 'dataGrouping',
 			low = approximations.low(low);
 			high = approximations.high(high);
 
-			if (typeof low === NUMBER || typeof high === NUMBER) {
+			if (typeof low === 'number' || typeof high === 'number') {
 				return [low, high];
 			}
 			// else, return is undefined
 		}
 	};
 
-/*jslint white:false */
 
 /**
  * Takes parallel arrays of x and y data and groups the data into intervals defined by groupPositions, a collection
@@ -235,7 +233,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 
 			for (j = 0; j < pointArrayMapLength; j++) {
 				val = point[pointArrayMap[j]];
-				if (typeof val === NUMBER) {
+				if (typeof val === 'number') {
 					values[j].push(val);
 				} else if (val === null) {
 					values[j].hasNulls = true;
@@ -245,7 +243,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		} else {
 			pointY = handleYData ? yData[i] : null;
 
-			if (typeof pointY === NUMBER) {
+			if (typeof pointY === 'number') {
 				values[0].push(pointY);
 			} else if (pointY === null) {
 				values[0].hasNulls = true;
@@ -266,7 +264,8 @@ seriesProto.processData = function () {
 		options = series.options,
 		dataGroupingOptions = options[DATA_GROUPING],
 		groupingEnabled = series.allowDG !== false && dataGroupingOptions && pick(dataGroupingOptions.enabled, chart.options._stock),
-		hasGroupedData;
+		hasGroupedData,
+		skip;
 
 	// run base method
 	series.forceCrop = groupingEnabled; // #334
@@ -274,79 +273,77 @@ seriesProto.processData = function () {
 	series.hasProcessed = true; // #2692
 
 	// skip if processData returns false or if grouping is disabled (in that order)
-	if (baseProcessData.apply(series, arguments) === false || !groupingEnabled) {
-		return;
-
-	} else {
+	skip = baseProcessData.apply(series, arguments) === false || !groupingEnabled;
+	if (!skip) {
 		series.destroyGroupedData();
+		
+		var i,
+			processedXData = series.processedXData,
+			processedYData = series.processedYData,
+			plotSizeX = chart.plotSizeX,
+			xAxis = series.xAxis,
+			ordinal = xAxis.options.ordinal,
+			groupPixelWidth = series.groupPixelWidth = xAxis.getGroupPixelWidth && xAxis.getGroupPixelWidth(),
+			nonGroupedPointRange = series.pointRange;
 
-	}
-	var i,
-		processedXData = series.processedXData,
-		processedYData = series.processedYData,
-		plotSizeX = chart.plotSizeX,
-		xAxis = series.xAxis,
-		ordinal = xAxis.options.ordinal,
-		groupPixelWidth = series.groupPixelWidth = xAxis.getGroupPixelWidth && xAxis.getGroupPixelWidth(),
-		nonGroupedPointRange = series.pointRange;
+		// Execute grouping if the amount of points is greater than the limit defined in groupPixelWidth
+		if (groupPixelWidth) {
+			hasGroupedData = true;
 
-	// Execute grouping if the amount of points is greater than the limit defined in groupPixelWidth
-	if (groupPixelWidth) {
-		hasGroupedData = true;
+			series.points = null; // force recreation of point instances in series.translate
 
-		series.points = null; // force recreation of point instances in series.translate
+			var extremes = xAxis.getExtremes(),
+				xMin = extremes.min,
+				xMax = extremes.max,
+				groupIntervalFactor = (ordinal && xAxis.getGroupIntervalFactor(xMin, xMax, series)) || 1,
+				interval = (groupPixelWidth * (xMax - xMin) / plotSizeX) * groupIntervalFactor,
+				groupPositions = xAxis.getTimeTicks(
+					xAxis.normalizeTimeTickInterval(interval, dataGroupingOptions.units || defaultDataGroupingUnits),
+					xMin,
+					xMax,
+					xAxis.options.startOfWeek,
+					processedXData,
+					series.closestPointRange
+				),
+				groupedXandY = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),
+				groupedXData = groupedXandY[0],
+				groupedYData = groupedXandY[1];
 
-		var extremes = xAxis.getExtremes(),
-			xMin = extremes.min,
-			xMax = extremes.max,
-			groupIntervalFactor = (ordinal && xAxis.getGroupIntervalFactor(xMin, xMax, series)) || 1,
-			interval = (groupPixelWidth * (xMax - xMin) / plotSizeX) * groupIntervalFactor,
-			groupPositions = xAxis.getTimeTicks(
-				xAxis.normalizeTimeTickInterval(interval, dataGroupingOptions.units || defaultDataGroupingUnits),
-				xMin,
-				xMax,
-				xAxis.options.startOfWeek,
-				processedXData,
-				series.closestPointRange
-			),
-			groupedXandY = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),
-			groupedXData = groupedXandY[0],
-			groupedYData = groupedXandY[1];
-
-		// prevent the smoothed data to spill out left and right, and make
-		// sure data is not shifted to the left
-		if (dataGroupingOptions.smoothed) {
-			i = groupedXData.length - 1;
-			groupedXData[i] = Math.min(groupedXData[i], xMax);
-			while (i-- && i > 0) {
-				groupedXData[i] += interval / 2;
+			// prevent the smoothed data to spill out left and right, and make
+			// sure data is not shifted to the left
+			if (dataGroupingOptions.smoothed) {
+				i = groupedXData.length - 1;
+				groupedXData[i] = Math.min(groupedXData[i], xMax);
+				while (i-- && i > 0) {
+					groupedXData[i] += interval / 2;
+				}
+				groupedXData[0] = Math.max(groupedXData[0], xMin);
 			}
-			groupedXData[0] = Math.max(groupedXData[0], xMin);
-		}
 
-		// record what data grouping values were used
-		series.currentDataGrouping = groupPositions.info;
-		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
-			series.pointRange = groupPositions.info.totalRange;
-		}
-		series.closestPointRange = groupPositions.info.totalRange;
-
-		// Make sure the X axis extends to show the first group (#2533)
-		if (defined(groupedXData[0]) && groupedXData[0] < xAxis.dataMin) {
-			if (xAxis.min === xAxis.dataMin) {
-				xAxis.min = groupedXData[0];
+			// record what data grouping values were used
+			series.currentDataGrouping = groupPositions.info;
+			if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
+				series.pointRange = groupPositions.info.totalRange;
 			}
-			xAxis.dataMin = groupedXData[0];
-		}
+			series.closestPointRange = groupPositions.info.totalRange;
 
-		// set series props
-		series.processedXData = groupedXData;
-		series.processedYData = groupedYData;
-	} else {
-		series.currentDataGrouping = null;
-		series.pointRange = nonGroupedPointRange;
+			// Make sure the X axis extends to show the first group (#2533)
+			if (defined(groupedXData[0]) && groupedXData[0] < xAxis.dataMin) {
+				if (xAxis.min === xAxis.dataMin) {
+					xAxis.min = groupedXData[0];
+				}
+				xAxis.dataMin = groupedXData[0];
+			}
+
+			// set series props
+			series.processedXData = groupedXData;
+			series.processedYData = groupedYData;
+		} else {
+			series.currentDataGrouping = null;
+			series.pointRange = nonGroupedPointRange;
+		}
+		series.hasGroupedData = hasGroupedData;
 	}
-	series.hasGroupedData = hasGroupedData;
 };
 
 /**

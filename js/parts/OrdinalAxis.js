@@ -286,10 +286,11 @@ extend(Axis.prototype, {
 	 */
 	val2lin: function (val, toIndex) {
 		var axis = this,
-			ordinalPositions = axis.ordinalPositions;
+			ordinalPositions = axis.ordinalPositions,
+			ret;
 
 		if (!ordinalPositions) {
-			return val;
+			ret = val;
 
 		} else {
 
@@ -316,10 +317,11 @@ extend(Axis.prototype, {
 					break;
 				}
 			}
-			return toIndex ?
+			ret = toIndex ?
 				ordinalIndex :
 				axis.ordinalSlope * (ordinalIndex || 0) + axis.ordinalOffset;
 		}
+		return ret;
 	},
 	/**
 	 * Translate from linear (internal) to axis value
@@ -329,10 +331,11 @@ extend(Axis.prototype, {
 	 */
 	lin2val: function (val, fromIndex) {
 		var axis = this,
-			ordinalPositions = axis.ordinalPositions;
+			ordinalPositions = axis.ordinalPositions,
+			ret;
 
 		if (!ordinalPositions) { // the visible range contains only equally spaced values
-			return val;
+			ret = val;
 
 		} else {
 
@@ -372,10 +375,11 @@ extend(Axis.prototype, {
 
 			// If the index is within the range of the ordinal positions, return the associated
 			// or interpolated value. If not, just return the value
-			return distance !== UNDEFINED && ordinalPositions[i] !== UNDEFINED ?
+			ret = distance !== UNDEFINED && ordinalPositions[i] !== UNDEFINED ?
 				ordinalPositions[i] + (distance ? distance * (ordinalPositions[i + 1] - ordinalPositions[i]) : 0) :
 				val;
 		}
+		return ret;
 	},
 	/**
 	 * Get the ordinal positions for the entire data set. This is necessary in chart panning
@@ -513,18 +517,20 @@ extend(Axis.prototype, {
 		// tick labels are spread out per week, but all the gaps reside within weeks. So
 		// we have a situation where the labels are courser than the ordinal gaps, and
 		// thus the tick interval should not be altered
-		var ordinalSlope = this.ordinalSlope;
+		var ordinalSlope = this.ordinalSlope,
+			ret;
 
 
 		if (ordinalSlope) {
 			if (!this.options.breaks) {
-				return tickInterval / (ordinalSlope / this.closestPointRange); 
+				ret = tickInterval / (ordinalSlope / this.closestPointRange); 
 			} else {
-				return this.closestPointRange;
+				ret = this.closestPointRange;
 			}
 		} else {
-			return tickInterval;
+			ret = tickInterval;
 		}
+		return ret;
 	}
 });
 

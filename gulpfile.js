@@ -123,7 +123,7 @@ gulp.task('styles', function () {
 */
 gulp.task('lint', function () {
     //paths.distributions.concat(paths.modules)
-    return gulp.src(['./js/highcharts.src.js'])
+    return gulp.src(['./js/highstock.src.js'])
         .pipe(jslint({
             confusion: true,
             'continue': true,
