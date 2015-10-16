@@ -1,11 +1,12 @@
 /**
  * Highcharts module to hide overlapping data labels. This module is included in Highcharts.
  */
+ /*global Highcharts */
 (function (H) {
 	var Chart = H.Chart,
 		each = H.each,
 		pick = H.pick,
-		addEvent = HighchartsAdapter.addEvent;
+		addEvent = H.addEvent;
 
 	// Collect potensial overlapping data labels. Stack labels probably don't need to be 
 	// considered because they are usually accompanied by data labels that lie inside the columns.

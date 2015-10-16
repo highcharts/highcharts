@@ -1,5 +1,5 @@
 
-/* global Highcharts, HighchartsAdapter */
+/*global Highcharts, HighchartsAdapter */
 
 (function (Highcharts, HighchartsAdapter) {
 

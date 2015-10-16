@@ -124,7 +124,6 @@ gulp.task('styles', function () {
 gulp.task('lint', function () {
     return gulp.src(paths.distributions.concat(paths.modules))
         .pipe(jslint({
-            'confusion': true,
             'continue': true,
             'forin': true,
             'newcap': true,
@@ -133,11 +132,10 @@ gulp.task('lint', function () {
             'regexp': true,
             'sloppy': true,
             'todo': true,
-            'undef': true,
             'vars': true,
             'white': true,
 
-            'edition': '2013-02-03',
+            'edition': '2013-02-03', // in HC5 we can use latest edition with space indentation and no assignment expressions
             'reporter': function (evt) {
                 if (!evt.pass) {
                     console.log(`___________________________________________________________________________\nErrors in ${evt.file}\n`);

@@ -103,6 +103,20 @@ var UNDEFINED,
 	seriesTypes = {},
 	Highcharts;
 
+/**
+ * Provide error messages for debugging, with links to online explanation 
+ */
+function error (code, stop) {
+	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
+	if (stop) {
+		throw msg;
+	}
+	// else ...
+	if (win.console) {
+		console.log(msg);
+	}
+}
+
 // The Highcharts namespace
 Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : {};
 
@@ -692,20 +706,6 @@ function discardElement(element) {
 		garbageBin.appendChild(element);
 	}
 	garbageBin.innerHTML = '';
-}
-
-/**
- * Provide error messages for debugging, with links to online explanation 
- */
-function error (code, stop) {
-	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
-	if (stop) {
-		throw msg;
-	}
-	// else ...
-	if (win.console) {
-		console.log(msg);
-	}
 }
 
 /**
@@ -1584,16 +1584,6 @@ defaultOptions = {
 
 
 
-
-// Series defaults
-var defaultPlotOptions = defaultOptions.plotOptions,
-	defaultSeriesOptions = defaultPlotOptions.line;
-
-// set the default time methods
-setTimeMethods();
-
-
-
 /**
  * Set the time methods globally based on the useUTC option. Time method can be either
  * local time or UTC (default).
@@ -1663,6 +1653,18 @@ function setOptions(options) {
 function getOptions() {
 	return defaultOptions;
 }
+
+
+
+
+
+
+// Series defaults
+var defaultPlotOptions = defaultOptions.plotOptions,
+	defaultSeriesOptions = defaultPlotOptions.line;
+
+// set the default time methods
+setTimeMethods();
 
 
 /**
@@ -17926,11 +17928,12 @@ if (seriesTypes.column) {
 /**
  * Highcharts module to hide overlapping data labels. This module is included in Highcharts.
  */
+ /*global Highcharts */
 (function (H) {
 	var Chart = H.Chart,
 		each = H.each,
 		pick = H.pick,
-		addEvent = HighchartsAdapter.addEvent;
+		addEvent = H.addEvent;
 
 	// Collect potensial overlapping data labels. Stack labels probably don't need to be 
 	// considered because they are usually accompanied by data labels that lie inside the columns.

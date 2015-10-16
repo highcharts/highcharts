@@ -1,5 +1,5 @@
 
-/* global document, Highcharts */
+/*global document, Highcharts */
 Highcharts.extend(Highcharts.SVGElement.prototype, {
     init: function (renderer, nodeName) {
         this.element = {
