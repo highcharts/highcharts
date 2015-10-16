@@ -45,8 +45,6 @@
 /*global document, Highcharts, HighchartsAdapter, setTimeout */
 (function (H, HA) {
 
-    'use strict';
-
     var noop = function () { return undefined; },
         Color = H.Color,
         Series = H.Series,

@@ -8,7 +8,7 @@
  */
 
 // JSLint options:
-/*global Highcharts */
+/*global clearTimeout, Highcharts, setTimeout, window */
 
 (function (Highcharts) { // encapsulate
 	var UNDEFINED,

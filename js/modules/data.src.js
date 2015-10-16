@@ -8,7 +8,7 @@
  */
 
 // JSLint options:
-/*global jQuery, HighchartsAdapter */
+/*global document, Highcharts, jQuery, HighchartsAdapter */
 
 (function (Highcharts) {
 	

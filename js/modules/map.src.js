@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified ()
+ * @license Highmaps JS v1.1.9-modified (2015-10-16)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2014 Torstein Honsi
@@ -7,7 +7,7 @@
  * License: www.highcharts.com/license
  */
 
-/*global HighchartsAdapter*/
+/*global clearTimeout, document, Highcharts, HighchartsAdapter, setInterval, setTimeout, window */
 (function (Highcharts) {
 
 

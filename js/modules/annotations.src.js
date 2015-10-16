@@ -1,3 +1,6 @@
+
+/* global Highcharts, HighchartsAdapter */
+
 (function (Highcharts, HighchartsAdapter) {
 
 var UNDEFINED,

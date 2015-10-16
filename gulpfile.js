@@ -5,6 +5,9 @@ var //eslint = require('gulp-eslint'),
     fs = require('fs'),
     //sass = require('gulp-sass'),
     ftp = require('vinyl-ftp'),
+    jshint = require('gulp-jshint'),
+    stylish = require('jshint-stylish'),
+    /*
     config = {
         // List of rules at http://eslint.org/docs/rules/
         // @todo Add more rules when ready.
@@ -13,6 +16,7 @@ var //eslint = require('gulp-eslint'),
             "no-cond-assign": [1, "always"]
         }
     },
+    */
     paths = {
         "buildsDir": "./js/builds",
         "distributions": [
@@ -21,6 +25,16 @@ var //eslint = require('gulp-eslint'),
             './js/highcharts.src.js', 
             './js/highmaps.src.js', 
             './js/highstock.src.js'
+        ],
+        
+        "assemblies": [
+            './js/highcharts-3d.src.js', 
+            './js/highcharts-more.src.js', 
+            './js/highcharts.src.js', 
+            './js/highmaps.src.js', 
+            './js/highstock.src.js',
+            './js/modules/map.src.js',
+            './js/modules/heatmap.src.js'
         ],
         "modules": ['./js/modules/*.js'],
         "parts": ['./js/parts/*.js'],
@@ -106,6 +120,18 @@ gulp.task('styles', function () {
         .pipe(gulp.dest(dir));
 });
 */
+
+
+// Linting
+gulp.task('lint', function () {
+    return gulp.src(paths.distributions.concat(paths.modules))
+        .pipe(jshint({
+            undef: true,
+            unused: true
+        }))
+        .pipe(jshint.reporter(stylish));
+});
+
 // Watch changes to CSS files
 gulp.task('default',function () {
     //gulp.watch('./js/css/*.scss',['styles']);
@@ -189,6 +215,14 @@ gulp.task('scripts', function () {
     fs.readFile('./build.properties', 'utf8', function (err, lines) {
         var products = {};
 
+        function addVersion(tpl, product) {
+            return tpl
+                .replace(/@product\.name@/g, product.name)
+                .replace(/@product\.version@/g, product.version)
+                .replace(/@product\.date@/g, product.date)
+                .replace(/@product\.cdnpath@/g, product.cdnpath);
+        }
+
         lines.split('\n').forEach(function (line) {
             var prod, key;
             if (line.indexOf('#') !== 0 && line.indexOf('=') !== -1) {
@@ -211,7 +245,7 @@ gulp.task('scripts', function () {
         */
 
         // Loop over the source files
-        paths.distributions.forEach(function (path) {
+        paths.assemblies.forEach(function (path) {
 
             var prod,
                 inpath = path
@@ -220,9 +254,20 @@ gulp.task('scripts', function () {
                 .replace('-', '');
 
             // highcharts, highmaps or highstock
-            prod = inpath.indexOf('highcharts') !== -1 ? 'highcharts' : inpath;
+            if (inpath === 'highmaps' || inpath === 'highstock') {
+                prod = inpath;
+            } else {
+                prod = 'highcharts';
+            }
 
-            // Load through the local debug.php (todo: require)
+            if (inpath === 'modules/heatmap') {
+                inpath = 'heatmap';
+            } else if (inpath === 'modules/map') {
+                inpath = 'maps';
+                prod = 'highmaps';
+            }
+
+            // Load through the local debug.php (todo on HC5: require)
             inpath = 'http://code.highcharts.local/debug.php?target=' + inpath;
 
             // Load the file
@@ -236,11 +281,7 @@ gulp.task('scripts', function () {
                 if (!products[prod].date) {
                     products[prod].date = (new Date()).toISOString().substr(0, 10);
                 }
-                tpl = tpl
-                    .replace(/@product\.name@/g, products[prod].name)
-                    .replace(/@product\.version@/g, products[prod].version)
-                    .replace(/@product\.date@/g, products[prod].date)
-                    .replace(/@product\.cdnpath@/g, products[prod].cdnpath);
+                tpl = addVersion(tpl, products[prod]);
 
                 // Create the classic file
                 fs.writeFile(
@@ -262,6 +303,26 @@ gulp.task('scripts', function () {
                 );
 */
             });
+        });
+
+        // Special case
+        var files = ['./lib/canvg-1.1/rgbcolor.js', './lib/canvg-1.1/canvg.js', './js/modules/canvgrenderer-extended.src.js'],
+            js = '';
+
+        function addFile(i, callback) {
+            fs.readFile(files[i], 'utf8', function (err, file) {
+                js += file;
+                if (i + 1 < files.length) {
+                    addFile(i + 1, callback);
+                } else if (callback) {
+                    callback();
+                }
+            });
+        }
+
+        addFile(0, function () {
+            js = addVersion(js, products.highcharts);
+            fs.writeFile('./build/canvas-tools.src.js', js, 'utf8');
         });
     });
 });

@@ -19,8 +19,6 @@
 /*global Highcharts */
 (function (H) {
 
-    'use strict';
-
     var labelDistance = 3,
         wrap = H.wrap,
         each = H.each,
@@ -264,7 +262,7 @@
 
         proceed.call(this);
 
-        console.time('labelBySeries');
+        //console.time('labelBySeries');
 
         //this.buildTreeToAvoid();
         this.boxesToAvoid = [];
@@ -411,7 +409,7 @@
                 }
             }
         });
-        console.timeEnd('labelBySeries');
+        //console.timeEnd('labelBySeries');
 
     }
     wrap(Chart.prototype, 'render', drawLabels);

@@ -10,6 +10,5 @@
  */
 
 // JSLint options:
-/*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console, each, grep */
-/*jslint ass: true, sloppy: true, forin: true, plusplus: true, nomen: true, vars: true, regexp: true, newcap: true, browser: true, continue: true, white: true */
+/*global HighchartsAdapter, document, window, navigator, clearInterval, clearTimeout, setInterval, setTimeout, location, console */
 (function () {

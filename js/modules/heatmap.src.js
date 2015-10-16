@@ -1,12 +1,12 @@
 /**
- * @license @product.name@ JS v@product.version@ (@product.date@)
+ * @license Highcharts JS v4.1.9-modified (2015-10-16)
  *
  * (c) 2011-2014 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 
-/*global HighchartsAdapter*/
+/*global HighchartsAdapter, setInterval */
 (function (Highcharts) {
 
 

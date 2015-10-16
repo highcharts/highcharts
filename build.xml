@@ -438,127 +438,20 @@
         <delete file="${basedir}/jsTestDriverCoverage.conf" failonerror="false"/>
     </target>
 
-    <!-- Assembles the source parts into one file. -->
-    <target name="assemble" depends="set.properties">
-        <!-- Concat highcharts src and replace the product name and version -->
-        <concat destfile="${highcharts.src.file}" encoding="UTF-8">
-            <filelist refid="highcharts.files"/>
-            <filterchain>
-                <replacetokens>
-                    <token key="product.name" value="${highcharts.product.name}"/>
-                    <token key="product.cdnpath" value="${highcharts.product.cdnpath}"/>
-                    <token key="product.version" value="${highcharts.product.version}"/>
-                    <token key="product.date" value="${highcharts.product.date}"/>
-                </replacetokens>
-            </filterchain>
-        </concat>
-
-        <!-- Concat highstock src and replace the product name and version -->
-        <concat destfile="${highstock.src.file}" encoding="UTF-8">
-            <filelist refid="highstock.files"/>
-            <filterchain>
-                <replacetokens>
-                    <token key="product.name" value="${highstock.product.name}"/>
-                    <token key="product.cdnpath" value="${highstock.product.cdnpath}"/>
-                    <token key="product.version" value="${highstock.product.version}"/>
-                    <token key="product.date" value="${highstock.product.date}"/>
-                </replacetokens>
-            </filterchain>
-        </concat>
-
-        <!-- Concat highmaps src and replace the product name and version -->
-        <concat destfile="${basedir}/js/highmaps.src.js" encoding="UTF-8">
-            <filelist refid="highmaps.files"/>
-            <filterchain>
-                <replacetokens>
-                    <token key="product.name" value="${highmaps.product.name}"/>
-                    <token key="product.cdnpath" value="${highmaps.product.cdnpath}"/>
-                    <token key="product.version" value="${highmaps.product.version}"/>
-                    <token key="product.date" value="${highmaps.product.date}"/>
-                </replacetokens>
-            </filterchain>
-        </concat>
-
-        <!-- Concat maps.src.js and replace the product name and version -->
-        <concat destfile="${basedir}/js/modules/map.src.js" encoding="UTF-8">
-            <filelist refid="maps.files"/>
-            <filterchain>
-                <replacetokens>
-                    <token key="product.name" value="${highmaps.product.name}"/>
-                    <token key="product.cdnpath" value="${highmaps.product.cdnpath}"/>
-                    <token key="product.version" value="${highmaps.product.version}"/>
-                    <token key="product.date" value="${highmaps.product.date}"/>
-                </replacetokens>
-            </filterchain>
-        </concat>
-
-        <!-- Concat heatmap.src.js and replace the product name and version -->
-        <concat destfile="${basedir}/js/modules/heatmap.src.js" encoding="UTF-8">
-            <filelist refid="heatmap.files"/>
-            <!-- filterchain>
-                <replacetokens>
-                    <token key="product.name" value="${highcharts.product.name}"/>
-                    <token key="product.cdnpath" value="${highcharts.product.cdnpath}"/>
-                    <token key="product.version" value="${highcharts.product.version}"/>
-                    <token key="product.date" value="${highcharts.product.date}"/>
-                </replacetokens>
-            </filterchain -->
-        </concat>
-
-        <!-- Concat highcharts-more src and replace the product name and version -->
-        <concat destfile="${highchartsmore.src.file}" encoding="UTF-8">
-            <filelist refid="highchartsmore.files"/>
-            <filterchain>
-                <replacetokens>
-                    <token key="product.name" value="${highcharts.product.name}"/>
-                    <token key="product.cdnpath" value="${highcharts.product.cdnpath}"/>
-                    <token key="product.version" value="${highcharts.product.version}"/>
-                    <token key="product.date" value="${highcharts.product.date}"/>
-                </replacetokens>
-            </filterchain>
-        </concat>
-
-        <!-- Concat highcharts-3d src and replace the product name and version -->
-        <concat destfile="${highcharts3d.src.file}" encoding="UTF-8">
-            <filelist refid="highcharts3d.files"/>
-            <filterchain>
-                <replacetokens>
-                    <token key="product.name" value="${highcharts.product.name}"/>
-                    <token key="product.cdnpath" value="${highcharts.product.cdnpath}"/>
-                    <token key="product.version" value="${highcharts.product.version}"/>
-                    <token key="product.date" value="${highcharts.product.date}"/>
-                </replacetokens>
-            </filterchain>
-        </concat>
-        
-        <!-- Concat canvg library together with rgbcolor script -->
-        <concat destfile="build/canvas-tools.src.js">
-            <filelist dir="lib/canvg-1.1/" files="rgbcolor.js, canvg.js"/>
-            <filelist dir="js/modules/" files="canvgrenderer-extended.src.js"/>
-        </concat>
-    </target>
-
     <!-- This target convert any mixed line endings to crlf. -->
-    <target name="check-crlf" depends="assemble">
+    <target name="check-crlf.deleted" depends="assemble">
         <fixcrlf srcDir="${basedir}/js" includes="**/*.js" encoding="UTF-8" fixlast="false"/>
         <fixcrlf srcDir="${basedir}/test" includes="**/*.js" encoding="UTF-8" fixlast="false"/>
     </target>
 
-
-    <!-- Set a property that tells if there are nbsp. -->
-    <!--
-    <target name="do-check-nbsp">
-        <condition property="has.nbsp">
-            <resourcecontains resource="${highstock.src.file}" substring=""/>
-        </condition>
-    </target>
-    <target name="check-nbsp" depends="do-check-nbsp" if="has.nbsp">
-        <echo message="ERROR: Non-breaking space characters exist in source code."/>
-    </target>
-    -->
-
     <!-- Runs jslint on generated source code. -->
-    <target name="do-lint" depends="check-crlf">
+    <target name="do-lint">
+        <exec dir="${basedir}" executable="gulp" outputproperty="output">
+            <arg line="lint" />
+        </exec>
+        <echo message="${output}" />
+        
+        <!--
         <jslint haltOnFailure="false" options="sloppy, forin, confusion, plusplus, nomen, vars, regexp, newcap, browser, undef, continue" encoding="UTF-8">
             <formatter type="plain"/>
             <formatter type="report" destfile="${build.dir}/lintreport.html"/>
@@ -587,13 +480,14 @@
         </jslint>
 
 
-        <!-- Set a property that tells if there are unused variables. -->
+        < ! - - Set a property that tells if there are unused variables. - - >
         <condition property="lint.variable.error">
             <or>
                 <resourcecontains resource="${build.dir}/lintreport.html" substring="Undefined variable"/>
                 <resourcecontains resource="${build.dir}/lintreport.html" substring="Unused variable"/>
             </or>
         </condition>
+        -->
     </target>
 
     <!-- This target is only run if there are unused variables. -->
@@ -677,7 +571,7 @@
     </target>
 
     <!-- Runs minifiers on source code. -->
-    <target name="minify" depends="assemble">
+    <target name="minify">
         <antcall target="compile">
             <param name="param.src" value="${highcharts.src.file}"/>
             <param name="param.out" value="${dist.dir}/highcharts/js/${highcharts.minified.name}"/>

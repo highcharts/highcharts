@@ -1,3 +1,5 @@
+
+/* global document, Highcharts */
 Highcharts.extend(Highcharts.SVGElement.prototype, {
     init: function (renderer, nodeName) {
         this.element = {
@@ -19,7 +21,7 @@ Highcharts.extend(Highcharts.SVGElement.prototype, {
             },
             removeChild: function (element) {
                 this.childNodes.splice(this.childNodes.indexOf(element), 1);
-                delete element.parentNode;            
+                delete element.parentNode;
             },
             getElementsByTagName: function () {
                 return [];
@@ -31,16 +33,16 @@ Highcharts.extend(Highcharts.SVGElement.prototype, {
             }
         };
         this.renderer = renderer;
-        this.dSetter = function (value, key) {
+        this.dSetter = function (value) {
             value.join = false; // don't join
             return value;
         };
-    }, 
+    },
     getBBox: function () {
-        var ctx = this.renderer.ctx, 
+        var ctx = this.renderer.ctx,
             bBox;
         ctx.font = '12px Arial';
-        fillStyle = 'blue';
+        ctx.fillStyle = 'blue';
         bBox = ctx.measureText(this.element.innerHTML);
         return {x: 0, y: 0, width: bBox.width, height: 20};
     }
@@ -86,12 +88,10 @@ var draw = {
     }
 };
 Highcharts.extend(Highcharts.SVGRenderer.prototype, {
-    init: function (container, width, height, forExport) {
+    init: function (container, width, height) {
         var renderer = this,
-            loc = location,
             boxWrapper,
-            element,
-            desc;
+            element;
 
         boxWrapper = renderer.createElement('svg')
             .attr({

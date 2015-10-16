@@ -3,7 +3,7 @@
  * This file requires data.js.
  */
 
-/*global Highcharts */
+/*global document, Highcharts, jQuery, $ */
 (function (H) {
 
 "use strict";
@@ -299,8 +299,7 @@ H.extend(H.Data.prototype, {
 				allPaths,
 				commonLineage,
 				lastCommonAncestor,
-				handleGroups,
-				clipPaths;
+				handleGroups;
 
 			// Make a hidden frame where the SVG is rendered
 			data.$frame = data.$frame || $('<div>')
@@ -321,7 +320,7 @@ H.extend(H.Data.prototype, {
 			each(['defs', 'clipPath'], function (nodeName) {
 				each(xml.getElementsByTagName(nodeName), function (parent) {
 					each (parent.getElementsByTagName('path'), function (path) {
-						path.skip = true
+						path.skip = true;
 					});
 				});
 			});
