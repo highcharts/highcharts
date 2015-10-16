@@ -21,11 +21,11 @@ var //eslint = require('gulp-eslint'),
     paths = {
         "buildsDir": "./js/builds",
         "distributions": [
-            './js/highcharts-3d.src.js', 
-            './js/highcharts-more.src.js', 
             './js/highcharts.src.js', 
             './js/highmaps.src.js', 
-            './js/highstock.src.js'
+            './js/highstock.src.js',
+            './js/highcharts-3d.src.js', 
+            './js/highcharts-more.src.js'
         ],
         
         "assemblies": [
@@ -134,8 +134,11 @@ gulp.task('lint', function () {
             'todo': true,
             'vars': true,
             'white': true,
+            //'unparam': true,
+            //'unused': true,
 
             'edition': '2013-02-03', // in HC5 we can use latest edition with space indentation and no assignment expressions
+            //'edition': '2013-08-13',
             'reporter': function (evt) {
                 if (!evt.pass) {
                     console.log(`___________________________________________________________________________\nErrors in ${evt.file}\n`);

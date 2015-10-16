@@ -9026,15 +9026,17 @@ Tooltip.prototype = {
 						date.substr(6) === blank.substr(6)) {
 					n = 'week';
 					break;
+				}
 
 				// The first format that is too great for the range
-				} else if (timeUnits[n] > closestPointRange) {
+				if (timeUnits[n] > closestPointRange) {
 					n = lastN;
 					break;
+				}
 				
 				// If the point is placed every day at 23:59, we need to show
 				// the minutes as well. #2637.
-				} else if (strpos[n] && date.substr(strpos[n]) !== blank.substr(strpos[n])) {
+				if (strpos[n] && date.substr(strpos[n]) !== blank.substr(strpos[n])) {
 					break;
 				}
 
