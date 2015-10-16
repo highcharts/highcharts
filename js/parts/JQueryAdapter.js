@@ -39,12 +39,12 @@
 				if (base) { // step.width and step.height don't exist in jQuery < 1.7
 		
 					// create the extended function replacement
-					obj[fn] = function (fx) {
+					obj[fn] = function (effects) {
 
-						var elem;
+						var elem, fx;
 						
 						// Fx.prototype.cur does not use fx argument
-						fx = i ? fx : this;
+						fx = i ? effects : this;
 
 						// Don't run animations on textual properties like align (#1821)
 						if (fx.prop === 'align') {
@@ -127,12 +127,10 @@
 
 					// Create the chart
 					if (options !== UNDEFINED) {
-						/*jslint unused:false*/
 						options.chart = options.chart || {};
 						options.chart.renderTo = this[0];
 						chart = new Highcharts[constr](options, args[1]);
 						ret = this;
-						/*jslint unused:true*/
 					}
 
 					// When called without parameters or with the return argument, get a predefined chart
@@ -195,9 +193,9 @@
 		map: function (arr, fn) {
 			//return jQuery.map(arr, fn);
 			var results = [],
-				i = 0,
+				i,
 				len = arr.length;
-			for (; i < len; i++) {
+			for (i = 0; i < len; i++) {
 				results[i] = fn.call(arr[i], arr[i], i, arr);
 			}
 			return results;

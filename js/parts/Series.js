@@ -596,7 +596,7 @@ Series.prototype = {
 		}
 
 		// proceed to find slice end
-		for (; i < dataLength; i++) {
+		for (i; i < dataLength; i++) {
 			if (xData[i] > max) {
 				cropEnd = i + cropShoulder;
 				break;
@@ -1824,7 +1824,7 @@ Series.prototype = {
 		}
 		delete series.kdTree;
 		
-		if (series.options.kdSync) {  // For testing tooltips, don't build async
+		if (series.options.kdNow) {  // For testing tooltips, don't build async
 			startRecursive();
 		} else {
 			setTimeout(startRecursive);

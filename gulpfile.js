@@ -135,7 +135,19 @@ gulp.task('lint', function () {
             sloppy: true,
             undef: true,
             vars: true,
-            white: true
+            white: true,
+
+            edition: '2013-02-03',
+            reporter: function (evt) {
+                if (!evt.pass) {
+                    console.log(`___________________________________________________________________________\nErrors in ${evt.file}\n`);
+                    evt.errors.forEach(function (err) {
+                        if (err) {
+                            console.log(err.line + ': ' + err.reason + '\n' + err.evidence + '\n');
+                        }
+                    });
+                }
+            }
         }));
 });
 

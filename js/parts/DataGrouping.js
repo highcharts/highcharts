@@ -192,7 +192,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		}
 	}
 
-	for (; i <= dataLength; i++) {
+	for (i; i <= dataLength; i++) {
 
 		// when a new group is entered, summarize and initiate the previous group
 		while ((groupPositions[1] !== UNDEFINED && xData[i] >= groupPositions[1]) ||

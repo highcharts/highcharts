@@ -162,7 +162,7 @@ Chart.prototype = {
 			hasStackedSeries,
 			hasDirtyStacks,
 			hasCartesianSeries = chart.hasCartesianSeries,
-			isDirtyBox = chart.isDirtyBox, // todo: check if it has actually changed?
+			isDirtyBox = chart.isDirtyBox,
 			seriesLength = series.length,
 			i = seriesLength,
 			serie,

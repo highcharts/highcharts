@@ -228,10 +228,11 @@ Tooltip.prototype = {
 			 * align within the chart box.
 			 */
 			secondDimension = function (dim, outerSize, innerSize, point) {
+				var retVal;
+
 				// Too close to the edge, return false and swap dimensions
 				if (point < distance || point > outerSize - distance) {
-					return false;
-				
+					retVal = false;
 				// Align left/top
 				} else if (point < innerSize / 2) {
 					ret[dim] = 1;
@@ -242,6 +243,7 @@ Tooltip.prototype = {
 				} else {
 					ret[dim] = point - innerSize / 2;
 				}
+				return retVal;
 			},
 			/**
 			 * Swap the dimensions 

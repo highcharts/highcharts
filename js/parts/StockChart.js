@@ -382,7 +382,6 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		return;
 	}
 
-	// TODO: Dynamic date formats like in Series.tooltipHeaderFormat. 
 	if (!formatOption && !options.formatter) {
 		if (this.isDatetimeAxis) {
 			formatFormat = '%b %d, %Y';
@@ -496,7 +495,7 @@ seriesProto.setCompare = function (compare) {
  */
 seriesProto.processData = function () {
 	var series = this,
-		i = 0,
+		i,
 		processedXData,
 		processedYData,
 		length;
@@ -512,7 +511,7 @@ seriesProto.processData = function () {
 		length = processedYData.length;
 		
 		// find the first value for comparison
-		for (; i < length; i++) {
+		for (i = 0; i < length; i++) {
 			if (typeof processedYData[i] === NUMBER && processedXData[i] >= series.xAxis.min) {
 				series.compareValue = processedYData[i];
 				break;

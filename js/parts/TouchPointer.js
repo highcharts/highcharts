@@ -78,7 +78,7 @@ extend(Highcharts.Pointer.prototype, {
 		}
 
 		// Set geometry for clipping, selection and transformation
-		if (!inverted) { // TODO: implement clipping for inverted charts
+		if (!inverted) {
 			clip[xy] = clipXY - plotLeftTop;
 			clip[wh] = selectionWH;
 		}

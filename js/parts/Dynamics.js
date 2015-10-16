@@ -42,12 +42,10 @@ extend(Chart.prototype, {
 			chartOptions = this.options,
 			axis;
 
-		/*jslint unused: false*/
 		axis = new Axis(this, merge(options, {
 			index: this[key].length,
 			isX: isX
 		}));
-		/*jslint unused: true*/
 
 		// Push the new axis options to the chart options
 		chartOptions[key] = splat(chartOptions[key] || {});
@@ -306,7 +304,6 @@ extend(Series.prototype, {
 		}
 
 		// Shift the first point off the parallel arrays
-		// todo: consider series.removePoint(i) method
 		if (shift) {
 			if (data[0] && data[0].remove) {
 				data[0].remove(false);

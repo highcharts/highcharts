@@ -30,7 +30,7 @@ wrap(Series.prototype, 'init', function (proceed) {
 wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min, max, startOfWeek, positions, closestDistance, findHigherRanks) {
 
 	var start = 0,
-		end = 0,
+		end,
 		segmentPositions,
 		higherRanks = {},
 		hasCrossedHigherRank,
@@ -52,7 +52,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 	// we reuse that instead of computing it again.
 	posLength = positions.length;
 
-	for (; end < posLength; end++) {
+	for (end = 0; end < posLength; end++) {
 
 		outsideMax = end && positions[end - 1] > max;
 
@@ -472,7 +472,7 @@ extend(Axis.prototype, {
 	 * of the desired group count.
 	 */
 	getGroupIntervalFactor: function (xMin, xMax, series) {
-		var i = 0,
+		var i,
 			processedXData = series.processedXData,
 			len = processedXData.length,
 			distances = [],
@@ -483,7 +483,7 @@ extend(Axis.prototype, {
 		if (!groupIntervalFactor) {
 
 			// Register all the distances in an array
-			for (; i < len - 1; i++) {
+			for (i = 0; i < len - 1; i++) {
 				distances[i] = processedXData[i + 1] - processedXData[i];
 			}
 
@@ -508,7 +508,7 @@ extend(Axis.prototype, {
 	 * Make the tick intervals closer because the ordinal gaps make the ticks spread out or cluster
 	 */
 	postProcessTickInterval: function (tickInterval) {
-		// TODO: http://jsfiddle.net/highcharts/FQm4E/1/
+		// Problem: http://jsfiddle.net/highcharts/FQm4E/1/
 		// This is a case where this algorithm doesn't work optimally. In this case, the
 		// tick labels are spread out per week, but all the gaps reside within weeks. So
 		// we have a situation where the labels are courser than the ordinal gaps, and

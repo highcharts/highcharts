@@ -1243,7 +1243,7 @@ Axis.prototype = {
 			i,
 			len;
 
-		if (currentTickAmount < tickAmount) { // TODO: Check #3411
+		if (currentTickAmount < tickAmount) {
 			while (tickPositions.length < tickAmount) {
 				tickPositions.push(correctFloat(
 					tickPositions[tickPositions.length - 1] + tickInterval
@@ -1661,7 +1661,7 @@ Axis.prototype = {
 			}
 		});
 
-		// TODO: Why not part of getLabelPosition?
+		// Note: Why is this not part of getLabelPosition?
 		this.tickRotCorr = renderer.rotCorr(labelMetrics.b, this.labelRotation || 0, this.side !== 0);
 	},
 

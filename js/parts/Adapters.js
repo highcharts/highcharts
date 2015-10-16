@@ -7,7 +7,7 @@ var globalAdapter = win.HighchartsAdapter,
 	
 // Initialize the adapter
 if (globalAdapter) {
-	globalAdapter.init.call(globalAdapter, pathAnim);
+	globalAdapter.init(pathAnim);
 }
 
 

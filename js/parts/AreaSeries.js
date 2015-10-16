@@ -55,41 +55,42 @@ var AreaSeries = extendClass(Series, {
 
 			each(keys, function (x) {
 				var threshold = null,
-					stackPoint;
+					stackPoint,
+					skip = connectNulls && (!pointMap[x] || pointMap[x].y === null); // #1836
 
-				if (connectNulls && (!pointMap[x] || pointMap[x].y === null)) { // #1836
-					return;
+				if (!skip) {
 
-				// The point exists, push it to the segment
-				} else if (pointMap[x]) {
-					segment.push(pointMap[x]);
+					// The point exists, push it to the segment
+					if (pointMap[x]) {
+						segment.push(pointMap[x]);
 
-				// There is no point for this X value in this series, so we 
-				// insert a dummy point in order for the areas to be drawn
-				// correctly.
-				} else {
+					// There is no point for this X value in this series, so we 
+					// insert a dummy point in order for the areas to be drawn
+					// correctly.
+					} else {
 
-					// Loop down the stack to find the series below this one that has
-					// a value (#1991)
-					for (i = series.index; i <= yAxis.series.length; i++) {		
-						stackIndicator = series.getStackIndicator(null, x, i);
-						stackPoint = stack[x].points[stackIndicator.key];
-						if (stackPoint) {
-							threshold = stackPoint[1];
-							break;
+						// Loop down the stack to find the series below this one that has
+						// a value (#1991)
+						for (i = series.index; i <= yAxis.series.length; i++) {		
+							stackIndicator = series.getStackIndicator(null, x, i);
+							stackPoint = stack[x].points[stackIndicator.key];
+							if (stackPoint) {
+								threshold = stackPoint[1];
+								break;
+							}
 						}
-					}
 
-					plotX = xAxis.translate(x);
-					plotY = yAxis.getThreshold(threshold);
-					segment.push({ 
-						y: null, 
-						plotX: plotX,
-						clientX: plotX, 
-						plotY: plotY, 
-						yBottom: plotY,
-						onMouseOver: noop
-					});
+						plotX = xAxis.translate(x);
+						plotY = yAxis.getThreshold(threshold);
+						segment.push({ 
+							y: null, 
+							plotX: plotX,
+							clientX: plotX, 
+							plotY: plotY, 
+							yBottom: plotY,
+							onMouseOver: noop
+						});
+					}
 				}
 			});
 
@@ -124,7 +125,7 @@ var AreaSeries = extendClass(Series, {
 		}
 		if (options.stacking && !this.closedStacks) {
 			
-			// Follow stack back. Todo: implement areaspline. A general solution could be to 
+			// Follow stack back. Later, implement areaspline. A general solution could be to 
 			// reverse the entire graphPath of the previous series, though may be hard with
 			// splines and with series with different extremes
 			for (i = segment.length - 1; i >= 0; i--) {

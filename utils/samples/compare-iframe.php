@@ -288,7 +288,7 @@ function getExportInnerHTML() {
 						plotOptions: {
 							series: {
 								animation: false,
-								kdSync: true
+								kdNow: true
 							}
 						},
 						tooltip: {
