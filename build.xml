@@ -438,14 +438,8 @@
         <delete file="${basedir}/jsTestDriverCoverage.conf" failonerror="false"/>
     </target>
 
-    <!-- This target convert any mixed line endings to crlf. -->
-    <target name="check-crlf.deleted" depends="assemble">
-        <fixcrlf srcDir="${basedir}/js" includes="**/*.js" encoding="UTF-8" fixlast="false"/>
-        <fixcrlf srcDir="${basedir}/test" includes="**/*.js" encoding="UTF-8" fixlast="false"/>
-    </target>
-
     <!-- Runs jslint on generated source code. -->
-    <target name="do-lint">
+    <target name="lint">
         <exec dir="${basedir}" executable="gulp" outputproperty="output">
             <arg line="lint" />
         </exec>
@@ -488,11 +482,6 @@
             </or>
         </condition>
         -->
-    </target>
-
-    <!-- This target is only run if there are unused variables. -->
-    <target name="lint" depends="do-lint" if="lint.variable.error">
-        <echo message="Warning: undefined or unused variables exist. Open 'build/lintreport.html' and search for 'Undefined variable' and 'Unused variable'."/>
     </target>
 
     <!-- Runs jslint on parts in order to make it easier to find the error by file and line number. -->

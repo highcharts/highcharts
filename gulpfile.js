@@ -144,7 +144,10 @@ gulp.task('lint', function () {
                     console.log(`___________________________________________________________________________\nErrors in ${evt.file}\n`);
                     evt.errors.forEach(function (err) {
                         if (err) {
-                            console.log(err.line + ': ' + err.reason + '\n' + err.evidence + '\n');
+                            console.log(
+                                err.line + ': ' + err.reason + '\n    ' + 
+                                (err.evidence && err.evidence.replace(/^\s+/, '')) + '\n'
+                            );
                         }
                     });
                 }
