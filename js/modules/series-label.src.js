@@ -271,7 +271,7 @@
 
         // Build the interpolated points
         each(this.series, function (series) {
-            if (series.visible) {
+            if (series.visible && series.graph) {
                 series.interpolatedPoints = series.getPointsOnGraph();
             }
         });
