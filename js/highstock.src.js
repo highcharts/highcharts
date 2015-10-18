@@ -53,7 +53,7 @@ var UNDEFINED,
 	timeUnits,
 	noop = function () { return UNDEFINED; },
 	charts = [],
-	chartCount = 0,
+	pointerCount = 0,
 	PRODUCT = 'Highstock',
 	VERSION = '2.1.9-modified',
 
@@ -10223,7 +10223,7 @@ Pointer.prototype = {
 			pointer.onContainerClick(e);
 		};
 		addEvent(container, 'mouseleave', pointer.onContainerMouseLeave);
-		if (chartCount === 1) {
+		if (!pointerCount) {
 			addEvent(doc, 'mouseup', pointer.onDocumentMouseUp);
 		}
 		if (hasTouch) {
@@ -10233,11 +10233,11 @@ Pointer.prototype = {
 			container.ontouchmove = function (e) {
 				pointer.onContainerTouchMove(e);
 			};
-			if (chartCount === 1) {
+			if (!pointerCount) {
 				addEvent(doc, 'touchend', pointer.onDocumentTouchEnd);
 			}
 		}
-		
+		pointerCount++;
 	},
 
 	/**
@@ -10247,7 +10247,7 @@ Pointer.prototype = {
 		var prop;
 
 		removeEvent(this.chart.container, 'mouseleave', this.onContainerMouseLeave);
-		if (!chartCount) {
+		if (pointerCount === 1) {
 			removeEvent(doc, 'mouseup', this.onDocumentMouseUp);
 			removeEvent(doc, 'touchend', this.onDocumentTouchEnd);
 		}
@@ -10258,6 +10258,7 @@ Pointer.prototype = {
 		for (prop in this) {
 			this[prop] = null;
 		}
+		pointerCount--;
 	}
 };
 
@@ -11475,7 +11476,6 @@ Chart.prototype = {
 		// Add the chart to the global lookup
 		chart.index = charts.length;
 		charts.push(chart);
-		chartCount++;
 
 		// Set up auto resize
 		if (optionsChart.reflow !== false) {
@@ -12658,7 +12658,6 @@ Chart.prototype = {
 		
 		// Delete the chart from charts lookup array
 		charts[chart.index] = UNDEFINED;
-		chartCount--;
 		chart.renderTo.removeAttribute('data-highcharts-chart');
 
 		// remove events
