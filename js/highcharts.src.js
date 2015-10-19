@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified ()
+ * @license Highcharts JS v4.1.9-modified (2015-10-16)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -10,8 +10,7 @@
  */
 
 // JSLint options:
-/*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console, each, grep */
-/*jslint ass: true, sloppy: true, forin: true, plusplus: true, nomen: true, vars: true, regexp: true, newcap: true, browser: true, continue: true, white: true */
+/*global HighchartsAdapter, document, window, navigator, clearInterval, clearTimeout, setTimeout, location, console */
 (function () {
 // encapsulated variables
 var UNDEFINED,
@@ -103,6 +102,20 @@ var UNDEFINED,
 	// lookup over the types and the associated classes
 	seriesTypes = {},
 	Highcharts;
+
+/**
+ * Provide error messages for debugging, with links to online explanation 
+ */
+function error (code, stop) {
+	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
+	if (stop) {
+		throw msg;
+	}
+	// else ...
+	if (win.console) {
+		console.log(msg);
+	}
+}
 
 // The Highcharts namespace
 Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : {};
@@ -363,8 +376,11 @@ function extendClass(parent, members) {
  * @param {Number} length
  */
 function pad(number, length) {
+	var arr = [];
 	// Create an array of the remaining length +1 and join it with 0's
-	return new Array((length || 2) + 1 - String(number).length).join(0) + number;
+	length = (length || 2) + 1 - String(number).length;
+	arr.length = length;
+	return arr.join(0) + number;
 }
 
 /**
@@ -693,20 +709,6 @@ function discardElement(element) {
 }
 
 /**
- * Provide error messages for debugging, with links to online explanation 
- */
-function error (code, stop) {
-	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
-	if (stop) {
-		throw msg;
-	}
-	// else ...
-	if (win.console) {
-		console.log(msg);
-	}
-}
-
-/**
  * Fix JS round off float errors
  * @param {Number} num
  */
@@ -901,12 +903,12 @@ pathAnim = {
 				if (base) { // step.width and step.height don't exist in jQuery < 1.7
 		
 					// create the extended function replacement
-					obj[fn] = function (fx) {
+					obj[fn] = function (effects) {
 
-						var elem;
+						var elem, fx;
 						
 						// Fx.prototype.cur does not use fx argument
-						fx = i ? fx : this;
+						fx = i ? effects : this;
 
 						// Don't run animations on textual properties like align (#1821)
 						if (fx.prop === 'align') {
@@ -989,12 +991,10 @@ pathAnim = {
 
 					// Create the chart
 					if (options !== UNDEFINED) {
-						/*jslint unused:false*/
 						options.chart = options.chart || {};
 						options.chart.renderTo = this[0];
 						chart = new Highcharts[constr](options, args[1]);
 						ret = this;
-						/*jslint unused:true*/
 					}
 
 					// When called without parameters or with the return argument, get a predefined chart
@@ -1057,9 +1057,9 @@ pathAnim = {
 		map: function (arr, fn) {
 			//return jQuery.map(arr, fn);
 			var results = [],
-				i = 0,
+				i,
 				len = arr.length;
-			for (; i < len; i++) {
+			for (i = 0; i < len; i++) {
 				results[i] = fn.call(arr[i], arr[i], i, arr);
 			}
 			return results;
@@ -1223,7 +1223,7 @@ var globalAdapter = win.HighchartsAdapter,
 	
 // Initialize the adapter
 if (globalAdapter) {
-	globalAdapter.init.call(globalAdapter, pathAnim);
+	globalAdapter.init(pathAnim);
 }
 
 
@@ -1584,16 +1584,6 @@ defaultOptions = {
 
 
 
-
-// Series defaults
-var defaultPlotOptions = defaultOptions.plotOptions,
-	defaultSeriesOptions = defaultPlotOptions.line;
-
-// set the default time methods
-setTimeMethods();
-
-
-
 /**
  * Set the time methods globally based on the useUTC option. Time method can be either
  * local time or UTC (default).
@@ -1663,6 +1653,18 @@ function setOptions(options) {
 function getOptions() {
 	return defaultOptions;
 }
+
+
+
+
+
+
+// Series defaults
+var defaultPlotOptions = defaultOptions.plotOptions,
+	defaultSeriesOptions = defaultPlotOptions.line;
+
+// set the default time methods
+setTimeMethods();
 
 
 /**
@@ -3068,10 +3070,11 @@ SVGRenderer.prototype = {
 	},
 
 	getStyle: function (style) {
-		return (this.style = extend({
+		this.style = extend({
 			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif', // default font
 			fontSize: '12px'
-		}, style));
+		}, style);
+		return this.style;
 	},
 
 	/**
@@ -3185,7 +3188,6 @@ SVGRenderer.prototype = {
 		// used in text outline hack.
 		if (!hasMarkup && !textShadow && !ellipsis && textStr.indexOf(' ') === -1) {
 			textNode.appendChild(doc.createTextNode(unescapeAngleBrackets(textStr)));
-			return;
 
 		// Complex strings, add more logic
 		} else {
@@ -7753,7 +7755,7 @@ Axis.prototype = {
 			i,
 			len;
 
-		if (currentTickAmount < tickAmount) { // TODO: Check #3411
+		if (currentTickAmount < tickAmount) {
 			while (tickPositions.length < tickAmount) {
 				tickPositions.push(correctFloat(
 					tickPositions[tickPositions.length - 1] + tickInterval
@@ -8171,7 +8173,7 @@ Axis.prototype = {
 			}
 		});
 
-		// TODO: Why not part of getLabelPosition?
+		// Note: Why is this not part of getLabelPosition?
 		this.tickRotCorr = renderer.rotCorr(labelMetrics.b, this.labelRotation || 0, this.side !== 0);
 	},
 
@@ -9266,10 +9268,11 @@ Tooltip.prototype = {
 			 * align within the chart box.
 			 */
 			secondDimension = function (dim, outerSize, innerSize, point) {
+				var retVal;
+
 				// Too close to the edge, return false and swap dimensions
 				if (point < distance || point > outerSize - distance) {
-					return false;
-				
+					retVal = false;
 				// Align left/top
 				} else if (point < innerSize / 2) {
 					ret[dim] = 1;
@@ -9280,6 +9283,7 @@ Tooltip.prototype = {
 				} else {
 					ret[dim] = point - innerSize / 2;
 				}
+				return retVal;
 			},
 			/**
 			 * Swap the dimensions 
@@ -9488,15 +9492,17 @@ Tooltip.prototype = {
 						date.substr(6) === blank.substr(6)) {
 					n = 'week';
 					break;
+				}
 
 				// The first format that is too great for the range
-				} else if (timeUnits[n] > closestPointRange) {
+				if (timeUnits[n] > closestPointRange) {
 					n = lastN;
 					break;
+				}
 				
 				// If the point is placed every day at 23:59, we need to show
 				// the minutes as well. #2637.
-				} else if (strpos[n] && date.substr(strpos[n]) !== blank.substr(strpos[n])) {
+				if (strpos[n] && date.substr(strpos[n]) !== blank.substr(strpos[n])) {
 					break;
 				}
 
@@ -10142,18 +10148,20 @@ Pointer.prototype = {
 	 * hovering the tooltip should cause the active series to mouse out.
 	 */
 	inClass: function (element, className) {
-		var elemClassName;
-		while (element) {
+		var elemClassName,
+			ret;
+		while (element && ret === undefined) {
 			elemClassName = attr(element, 'class');
 			if (elemClassName) {
 				if (elemClassName.indexOf(className) !== -1) {
-					return true;
+					ret = true;
 				} else if (elemClassName.indexOf(PREFIX + 'container') !== -1) {
-					return false;
+					ret = false;
 				}
 			}
 			element = element.parentNode;
-		}		
+		}
+		return false;
 	},
 
 	onTrackerMouseOut: function (e) {
@@ -10344,7 +10352,7 @@ extend(Highcharts.Pointer.prototype, {
 		}
 
 		// Set geometry for clipping, selection and transformation
-		if (!inverted) { // TODO: implement clipping for inverted charts
+		if (!inverted) {
 			clip[xy] = clipXY - plotLeftTop;
 			clip[wh] = selectionWH;
 		}
@@ -11377,7 +11385,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 
 // Workaround for #2030, horizontal legend items not displaying in IE11 Preview,
 // and for #2580, a similar drawing flaw in Firefox 26.
-// TODO: Explore if there's a general cause for this. The problem may be related 
+// Explore if there's a general cause for this. The problem may be related 
 // to nested group elements, as the legend item texts are within 4 group elements.
 if (/Trident\/7\.0/.test(userAgent) || isFirefox) {
 	wrap(Legend.prototype, 'positionItem', function (proceed, item) {
@@ -11559,7 +11567,7 @@ Chart.prototype = {
 			hasStackedSeries,
 			hasDirtyStacks,
 			hasCartesianSeries = chart.hasCartesianSeries,
-			isDirtyBox = chart.isDirtyBox, // todo: check if it has actually changed?
+			isDirtyBox = chart.isDirtyBox,
 			seriesLength = series.length,
 			i = seriesLength,
 			serie,
@@ -13703,7 +13711,7 @@ Series.prototype = {
 		}
 
 		// proceed to find slice end
-		for (; i < dataLength; i++) {
+		for (i; i < dataLength; i++) {
 			if (xData[i] > max) {
 				cropEnd = i + cropShoulder;
 				break;
@@ -14931,7 +14939,7 @@ Series.prototype = {
 		}
 		delete series.kdTree;
 		
-		if (series.options.kdSync) {  // For testing tooltips, don't build async
+		if (series.options.kdNow) {  // For testing tooltips, don't build async
 			startRecursive();
 		} else {
 			setTimeout(startRecursive);
@@ -15430,12 +15438,10 @@ extend(Chart.prototype, {
 			chartOptions = this.options,
 			axis;
 
-		/*jslint unused: false*/
 		axis = new Axis(this, merge(options, {
 			index: this[key].length,
 			isX: isX
 		}));
-		/*jslint unused: true*/
 
 		// Push the new axis options to the chart options
 		chartOptions[key] = splat(chartOptions[key] || {});
@@ -15699,7 +15705,6 @@ extend(Series.prototype, {
 		}
 
 		// Shift the first point off the parallel arrays
-		// todo: consider series.removePoint(i) method
 		if (shift) {
 			if (data[0] && data[0].remove) {
 				data[0].remove(false);
@@ -15992,41 +15997,42 @@ var AreaSeries = extendClass(Series, {
 
 			each(keys, function (x) {
 				var threshold = null,
-					stackPoint;
+					stackPoint,
+					skip = connectNulls && (!pointMap[x] || pointMap[x].y === null); // #1836
 
-				if (connectNulls && (!pointMap[x] || pointMap[x].y === null)) { // #1836
-					return;
+				if (!skip) {
 
-				// The point exists, push it to the segment
-				} else if (pointMap[x]) {
-					segment.push(pointMap[x]);
+					// The point exists, push it to the segment
+					if (pointMap[x]) {
+						segment.push(pointMap[x]);
 
-				// There is no point for this X value in this series, so we 
-				// insert a dummy point in order for the areas to be drawn
-				// correctly.
-				} else {
+					// There is no point for this X value in this series, so we 
+					// insert a dummy point in order for the areas to be drawn
+					// correctly.
+					} else {
 
-					// Loop down the stack to find the series below this one that has
-					// a value (#1991)
-					for (i = series.index; i <= yAxis.series.length; i++) {		
-						stackIndicator = series.getStackIndicator(null, x, i);
-						stackPoint = stack[x].points[stackIndicator.key];
-						if (stackPoint) {
-							threshold = stackPoint[1];
-							break;
+						// Loop down the stack to find the series below this one that has
+						// a value (#1991)
+						for (i = series.index; i <= yAxis.series.length; i++) {		
+							stackIndicator = series.getStackIndicator(null, x, i);
+							stackPoint = stack[x].points[stackIndicator.key];
+							if (stackPoint) {
+								threshold = stackPoint[1];
+								break;
+							}
 						}
-					}
 
-					plotX = xAxis.translate(x);
-					plotY = yAxis.getThreshold(threshold);
-					segment.push({ 
-						y: null, 
-						plotX: plotX,
-						clientX: plotX, 
-						plotY: plotY, 
-						yBottom: plotY,
-						onMouseOver: noop
-					});
+						plotX = xAxis.translate(x);
+						plotY = yAxis.getThreshold(threshold);
+						segment.push({ 
+							y: null, 
+							plotX: plotX,
+							clientX: plotX, 
+							plotY: plotY, 
+							yBottom: plotY,
+							onMouseOver: noop
+						});
+					}
 				}
 			});
 
@@ -16064,7 +16070,7 @@ var AreaSeries = extendClass(Series, {
 		}
 		if (options.stacking && !this.closedStacks) {
 			
-			// Follow stack back. Todo: implement areaspline. A general solution could be to 
+			// Follow stack back. Later, implement areaspline. A general solution could be to 
 			// reverse the entire graphPath of the previous series, though may be hard with
 			// splines and with series with different extremes
 			for (i = segment.length - 1; i >= 0; i--) {
@@ -16451,10 +16457,11 @@ var ColumnSeries = extendClass(Series, {
 				(reversedXAxis ? -1 : 1);
 
 		// Save it for reading in linked series (Error bars particularly)
-		return (series.columnMetrics = { 
+		series.columnMetrics = { 
 			width: pointWidth, 
 			offset: pointXOffset 
-		});
+		};
+		return series.columnMetrics;
 			
 	},
 
@@ -17985,20 +17992,14 @@ if (seriesTypes.column) {
 
 
 /**
- * Highcharts JS v4.1.9-modified ()
- * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
- *
- * (c) 2010-2014 Torstein Honsi
- *
- * License: www.highcharts.com/license
+ * Highcharts module to hide overlapping data labels. This module is included in Highcharts.
  */
-
-/*global Highcharts, HighchartsAdapter */
+ /*global Highcharts */
 (function (H) {
 	var Chart = H.Chart,
 		each = H.each,
 		pick = H.pick,
-		addEvent = HighchartsAdapter.addEvent;
+		addEvent = H.addEvent;
 
 	// Collect potensial overlapping data labels. Stack labels probably don't need to be 
 	// considered because they are usually accompanied by data labels that lie inside the columns.

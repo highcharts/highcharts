@@ -253,8 +253,11 @@ function extendClass(parent, members) {
  * @param {Number} length
  */
 function pad(number, length) {
+	var arr = [];
 	// Create an array of the remaining length +1 and join it with 0's
-	return new Array((length || 2) + 1 - String(number).length).join(0) + number;
+	length = (length || 2) + 1 - String(number).length;
+	arr.length = length;
+	return arr.join(0) + number;
 }
 
 /**
@@ -580,20 +583,6 @@ function discardElement(element) {
 		garbageBin.appendChild(element);
 	}
 	garbageBin.innerHTML = '';
-}
-
-/**
- * Provide error messages for debugging, with links to online explanation 
- */
-function error (code, stop) {
-	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
-	if (stop) {
-		throw msg;
-	}
-	// else ...
-	if (win.console) {
-		console.log(msg);
-	}
 }
 
 /**

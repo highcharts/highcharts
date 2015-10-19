@@ -8,7 +8,7 @@
  */
 
 // JSLint options:
-/*global Highcharts */
+/*global clearTimeout, Highcharts, setTimeout, window */
 
 (function (Highcharts) { // encapsulate
 	var UNDEFINED,
@@ -46,7 +46,7 @@
 				canvas,
 				initialHiddenStyle = { visibility: HIDDEN, position: ABSOLUTE };
 
-			this.init.apply(this, [container, chartWidth, chartHeight]);
+			this.init(container, chartWidth, chartHeight);
 
 			// add the canvas above it
 			canvas = createElement('canvas', {

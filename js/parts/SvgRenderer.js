@@ -1279,10 +1279,11 @@ SVGRenderer.prototype = {
 	},
 
 	getStyle: function (style) {
-		return (this.style = extend({
+		this.style = extend({
 			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif', // default font
 			fontSize: '12px'
-		}, style));
+		}, style);
+		return this.style;
 	},
 
 	/**
@@ -1396,7 +1397,6 @@ SVGRenderer.prototype = {
 		// used in text outline hack.
 		if (!hasMarkup && !textShadow && !ellipsis && textStr.indexOf(' ') === -1) {
 			textNode.appendChild(doc.createTextNode(unescapeAngleBrackets(textStr)));
-			return;
 
 		// Complex strings, add more logic
 		} else {

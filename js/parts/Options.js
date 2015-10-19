@@ -336,16 +336,6 @@ defaultOptions = {
 
 
 
-
-// Series defaults
-var defaultPlotOptions = defaultOptions.plotOptions,
-	defaultSeriesOptions = defaultPlotOptions.line;
-
-// set the default time methods
-setTimeMethods();
-
-
-
 /**
  * Set the time methods globally based on the useUTC option. Time method can be either
  * local time or UTC (default).
@@ -415,4 +405,16 @@ function setOptions(options) {
 function getOptions() {
 	return defaultOptions;
 }
+
+
+
+
+
+
+// Series defaults
+var defaultPlotOptions = defaultOptions.plotOptions,
+	defaultSeriesOptions = defaultPlotOptions.line;
+
+// set the default time methods
+setTimeMethods();
 

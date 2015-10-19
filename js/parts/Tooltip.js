@@ -228,10 +228,11 @@ Tooltip.prototype = {
 			 * align within the chart box.
 			 */
 			secondDimension = function (dim, outerSize, innerSize, point) {
+				var retVal;
+
 				// Too close to the edge, return false and swap dimensions
 				if (point < distance || point > outerSize - distance) {
-					return false;
-				
+					retVal = false;
 				// Align left/top
 				} else if (point < innerSize / 2) {
 					ret[dim] = 1;
@@ -242,6 +243,7 @@ Tooltip.prototype = {
 				} else {
 					ret[dim] = point - innerSize / 2;
 				}
+				return retVal;
 			},
 			/**
 			 * Swap the dimensions 
@@ -450,15 +452,17 @@ Tooltip.prototype = {
 						date.substr(6) === blank.substr(6)) {
 					n = 'week';
 					break;
+				}
 
 				// The first format that is too great for the range
-				} else if (timeUnits[n] > closestPointRange) {
+				if (timeUnits[n] > closestPointRange) {
 					n = lastN;
 					break;
+				}
 				
 				// If the point is placed every day at 23:59, we need to show
 				// the minutes as well. #2637.
-				} else if (strpos[n] && date.substr(strpos[n]) !== blank.substr(strpos[n])) {
+				if (strpos[n] && date.substr(strpos[n]) !== blank.substr(strpos[n])) {
 					break;
 				}
 

@@ -5,6 +5,10 @@ var //eslint = require('gulp-eslint'),
     fs = require('fs'),
     //sass = require('gulp-sass'),
     ftp = require('vinyl-ftp'),
+    //jshint = require('gulp-jshint'),
+    //stylish = require('jshint-stylish'),
+    jslint = require('gulp-jslint'),
+    /*
     config = {
         // List of rules at http://eslint.org/docs/rules/
         // @todo Add more rules when ready.
@@ -13,14 +17,25 @@ var //eslint = require('gulp-eslint'),
             "no-cond-assign": [1, "always"]
         }
     },
+    */
     paths = {
         "buildsDir": "./js/builds",
         "distributions": [
+            './js/highcharts.src.js', 
+            './js/highmaps.src.js', 
+            './js/highstock.src.js',
+            './js/highcharts-3d.src.js', 
+            './js/highcharts-more.src.js'
+        ],
+        
+        "assemblies": [
             './js/highcharts-3d.src.js', 
             './js/highcharts-more.src.js', 
             './js/highcharts.src.js', 
             './js/highmaps.src.js', 
-            './js/highstock.src.js'
+            './js/highstock.src.js',
+            './js/modules/map.src.js',
+            './js/modules/heatmap.src.js'
         ],
         "modules": ['./js/modules/*.js'],
         "parts": ['./js/parts/*.js'],
@@ -106,6 +121,40 @@ gulp.task('styles', function () {
         .pipe(gulp.dest(dir));
 });
 */
+gulp.task('lint', function () {
+    return gulp.src(paths.distributions.concat(paths.modules))
+        .pipe(jslint({
+            'continue': true,
+            'forin': true,
+            'newcap': true,
+            'nomen': true,
+            'plusplus': true,
+            'regexp': true,
+            'sloppy': true,
+            'todo': true,
+            'vars': true,
+            'white': true,
+            //'unparam': true,
+            //'unused': true,
+
+            'edition': '2013-02-03', // in HC5 we can use latest edition with space indentation and no assignment expressions
+            //'edition': '2013-08-13',
+            'reporter': function (evt) {
+                if (!evt.pass) {
+                    console.log('___________________________________________________________________________\nErrors in ' + evt.file + '\n');
+                    evt.errors.forEach(function (err) {
+                        if (err) {
+                            console.log(
+                                err.line + ': ' + err.reason + '\n    ' + 
+                                (err.evidence && err.evidence.replace(/^\s+/, '')) + '\n'
+                            );
+                        }
+                    });
+                }
+            }
+        }));
+});
+
 // Watch changes to CSS files
 gulp.task('default',function () {
     //gulp.watch('./js/css/*.scss',['styles']);
@@ -150,6 +199,9 @@ gulp.task('scripts', function () {
      * Micro-optimize code based on the build object.
      */
     function preprocess(tpl, build) {
+        // Windows newlines
+        tpl = tpl.replace(/\r\n/g, '\n');
+
         /*
         // Escape double quotes and backslashes, to be reinserted after parsing
         tpl = tpl.replace(/"/g, '___doublequote___');
@@ -185,6 +237,15 @@ gulp.task('scripts', function () {
         return tpl;
     }
 
+    function addVersion(tpl, product) {
+        return tpl
+            .replace(/@product\.name@/g, product.name)
+            .replace(/@product\.version@/g, product.version)
+            .replace(/@product\.date@/g, product.date)
+            .replace(/@product\.cdnpath@/g, product.cdnpath);
+    }
+
+
     // Parse the build properties files into a structure
     fs.readFile('./build.properties', 'utf8', function (err, lines) {
         var products = {};
@@ -211,7 +272,7 @@ gulp.task('scripts', function () {
         */
 
         // Loop over the source files
-        paths.distributions.forEach(function (path) {
+        paths.assemblies.forEach(function (path) {
 
             var prod,
                 inpath = path
@@ -220,9 +281,20 @@ gulp.task('scripts', function () {
                 .replace('-', '');
 
             // highcharts, highmaps or highstock
-            prod = inpath.indexOf('highcharts') !== -1 ? 'highcharts' : inpath;
+            if (inpath === 'highmaps' || inpath === 'highstock') {
+                prod = inpath;
+            } else {
+                prod = 'highcharts';
+            }
 
-            // Load through the local debug.php (todo: require)
+            if (inpath === 'modules/heatmap') {
+                inpath = 'heatmap';
+            } else if (inpath === 'modules/map') {
+                inpath = 'maps';
+                prod = 'highmaps';
+            }
+
+            // Load through the local debug.php (todo on HC5: require)
             inpath = 'http://code.highcharts.local/debug.php?target=' + inpath;
 
             // Load the file
@@ -236,11 +308,7 @@ gulp.task('scripts', function () {
                 if (!products[prod].date) {
                     products[prod].date = (new Date()).toISOString().substr(0, 10);
                 }
-                tpl = tpl
-                    .replace(/@product\.name@/g, products[prod].name)
-                    .replace(/@product\.version@/g, products[prod].version)
-                    .replace(/@product\.date@/g, products[prod].date)
-                    .replace(/@product\.cdnpath@/g, products[prod].cdnpath);
+                tpl = addVersion(tpl, products[prod]);
 
                 // Create the classic file
                 fs.writeFile(
@@ -262,6 +330,26 @@ gulp.task('scripts', function () {
                 );
 */
             });
+        });
+
+        // Special case
+        var files = ['./lib/canvg-1.1/rgbcolor.js', './lib/canvg-1.1/canvg.js', './js/modules/canvgrenderer-extended.src.js'],
+            js = '';
+
+        function addFile(i, callback) {
+            fs.readFile(files[i], 'utf8', function (err, file) {
+                js += file;
+                if (i + 1 < files.length) {
+                    addFile(i + 1, callback);
+                } else if (callback) {
+                    callback();
+                }
+            });
+        }
+
+        addFile(0, function () {
+            js = addVersion(js, products.highcharts);
+            fs.writeFile('./build/canvas-tools.src.js', js, 'utf8');
         });
     });
 });

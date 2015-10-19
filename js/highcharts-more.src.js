@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified ()
+ * @license Highcharts JS v4.1.9-modified (2015-10-16)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -10,7 +10,7 @@
  */
 
 // JSLint options:
-/*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
+/*global Highcharts, HighchartsAdapter */
 
 (function (Highcharts, UNDEFINED) {
 var arrayMin = Highcharts.arrayMin,
@@ -44,7 +44,7 @@ var arrayMin = Highcharts.arrayMin,
  * In the future, this can be extended to basic Highcharts and Highstock.
  */
 function Pane(options, chart, firstAxis) {
-	this.init.call(this, options, chart, firstAxis);
+	this.init(options, chart, firstAxis);
 }
 
 // Extend the Pane prototype
@@ -279,7 +279,6 @@ var radialAxisMixin = {
 				this.minPixelPadding = this.transA * this.minPointOffset;
 			} else {
 				// This is a workaround for regression #2593, but categories still don't position correctly.
-				// TODO: Implement true handling of Y axis categories on gauges.
 				this.minPixelPadding = 0; 
 			}
 		}
@@ -1746,7 +1745,8 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	toYData: function (pt) {
 		if (pt.isSum) {
 			return (pt.x === 0 ? null : "sum"); //#3245 Error when first element is Sum or Intermediate Sum
-		} else if (pt.isIntermediateSum) {
+		}
+		if (pt.isIntermediateSum) {
 			return (pt.x === 0 ? null : "intermediateSum"); //#3245
 		}
 		return pt.y;

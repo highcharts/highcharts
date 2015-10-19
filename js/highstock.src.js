@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.9-modified ()
+ * @license Highstock JS v2.1.9-modified (2015-10-16)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -10,8 +10,7 @@
  */
 
 // JSLint options:
-/*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console, each, grep */
-/*jslint ass: true, sloppy: true, forin: true, plusplus: true, nomen: true, vars: true, regexp: true, newcap: true, browser: true, continue: true, white: true */
+/*global HighchartsAdapter, document, window, navigator, clearInterval, clearTimeout, setTimeout, location, console */
 (function () {
 // encapsulated variables
 var UNDEFINED,
@@ -103,6 +102,20 @@ var UNDEFINED,
 	// lookup over the types and the associated classes
 	seriesTypes = {},
 	Highcharts;
+
+/**
+ * Provide error messages for debugging, with links to online explanation 
+ */
+function error (code, stop) {
+	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
+	if (stop) {
+		throw msg;
+	}
+	// else ...
+	if (win.console) {
+		console.log(msg);
+	}
+}
 
 // The Highcharts namespace
 Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : {};
@@ -363,8 +376,11 @@ function extendClass(parent, members) {
  * @param {Number} length
  */
 function pad(number, length) {
+	var arr = [];
 	// Create an array of the remaining length +1 and join it with 0's
-	return new Array((length || 2) + 1 - String(number).length).join(0) + number;
+	length = (length || 2) + 1 - String(number).length;
+	arr.length = length;
+	return arr.join(0) + number;
 }
 
 /**
@@ -693,20 +709,6 @@ function discardElement(element) {
 }
 
 /**
- * Provide error messages for debugging, with links to online explanation 
- */
-function error (code, stop) {
-	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
-	if (stop) {
-		throw msg;
-	}
-	// else ...
-	if (win.console) {
-		console.log(msg);
-	}
-}
-
-/**
  * Fix JS round off float errors
  * @param {Number} num
  */
@@ -901,12 +903,12 @@ pathAnim = {
 				if (base) { // step.width and step.height don't exist in jQuery < 1.7
 		
 					// create the extended function replacement
-					obj[fn] = function (fx) {
+					obj[fn] = function (effects) {
 
-						var elem;
+						var elem, fx;
 						
 						// Fx.prototype.cur does not use fx argument
-						fx = i ? fx : this;
+						fx = i ? effects : this;
 
 						// Don't run animations on textual properties like align (#1821)
 						if (fx.prop === 'align') {
@@ -989,12 +991,10 @@ pathAnim = {
 
 					// Create the chart
 					if (options !== UNDEFINED) {
-						/*jslint unused:false*/
 						options.chart = options.chart || {};
 						options.chart.renderTo = this[0];
 						chart = new Highcharts[constr](options, args[1]);
 						ret = this;
-						/*jslint unused:true*/
 					}
 
 					// When called without parameters or with the return argument, get a predefined chart
@@ -1057,9 +1057,9 @@ pathAnim = {
 		map: function (arr, fn) {
 			//return jQuery.map(arr, fn);
 			var results = [],
-				i = 0,
+				i,
 				len = arr.length;
-			for (; i < len; i++) {
+			for (i = 0; i < len; i++) {
 				results[i] = fn.call(arr[i], arr[i], i, arr);
 			}
 			return results;
@@ -1223,7 +1223,7 @@ var globalAdapter = win.HighchartsAdapter,
 	
 // Initialize the adapter
 if (globalAdapter) {
-	globalAdapter.init.call(globalAdapter, pathAnim);
+	globalAdapter.init(pathAnim);
 }
 
 
@@ -1584,16 +1584,6 @@ defaultOptions = {
 
 
 
-
-// Series defaults
-var defaultPlotOptions = defaultOptions.plotOptions,
-	defaultSeriesOptions = defaultPlotOptions.line;
-
-// set the default time methods
-setTimeMethods();
-
-
-
 /**
  * Set the time methods globally based on the useUTC option. Time method can be either
  * local time or UTC (default).
@@ -1663,6 +1653,18 @@ function setOptions(options) {
 function getOptions() {
 	return defaultOptions;
 }
+
+
+
+
+
+
+// Series defaults
+var defaultPlotOptions = defaultOptions.plotOptions,
+	defaultSeriesOptions = defaultPlotOptions.line;
+
+// set the default time methods
+setTimeMethods();
 
 
 /**
@@ -3068,10 +3070,11 @@ SVGRenderer.prototype = {
 	},
 
 	getStyle: function (style) {
-		return (this.style = extend({
+		this.style = extend({
 			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif', // default font
 			fontSize: '12px'
-		}, style));
+		}, style);
+		return this.style;
 	},
 
 	/**
@@ -3185,7 +3188,6 @@ SVGRenderer.prototype = {
 		// used in text outline hack.
 		if (!hasMarkup && !textShadow && !ellipsis && textStr.indexOf(' ') === -1) {
 			textNode.appendChild(doc.createTextNode(unescapeAngleBrackets(textStr)));
-			return;
 
 		// Complex strings, add more logic
 		} else {
@@ -7753,7 +7755,7 @@ Axis.prototype = {
 			i,
 			len;
 
-		if (currentTickAmount < tickAmount) { // TODO: Check #3411
+		if (currentTickAmount < tickAmount) {
 			while (tickPositions.length < tickAmount) {
 				tickPositions.push(correctFloat(
 					tickPositions[tickPositions.length - 1] + tickInterval
@@ -8171,7 +8173,7 @@ Axis.prototype = {
 			}
 		});
 
-		// TODO: Why not part of getLabelPosition?
+		// Note: Why is this not part of getLabelPosition?
 		this.tickRotCorr = renderer.rotCorr(labelMetrics.b, this.labelRotation || 0, this.side !== 0);
 	},
 
@@ -9266,10 +9268,11 @@ Tooltip.prototype = {
 			 * align within the chart box.
 			 */
 			secondDimension = function (dim, outerSize, innerSize, point) {
+				var retVal;
+
 				// Too close to the edge, return false and swap dimensions
 				if (point < distance || point > outerSize - distance) {
-					return false;
-				
+					retVal = false;
 				// Align left/top
 				} else if (point < innerSize / 2) {
 					ret[dim] = 1;
@@ -9280,6 +9283,7 @@ Tooltip.prototype = {
 				} else {
 					ret[dim] = point - innerSize / 2;
 				}
+				return retVal;
 			},
 			/**
 			 * Swap the dimensions 
@@ -9488,15 +9492,17 @@ Tooltip.prototype = {
 						date.substr(6) === blank.substr(6)) {
 					n = 'week';
 					break;
+				}
 
 				// The first format that is too great for the range
-				} else if (timeUnits[n] > closestPointRange) {
+				if (timeUnits[n] > closestPointRange) {
 					n = lastN;
 					break;
+				}
 				
 				// If the point is placed every day at 23:59, we need to show
 				// the minutes as well. #2637.
-				} else if (strpos[n] && date.substr(strpos[n]) !== blank.substr(strpos[n])) {
+				if (strpos[n] && date.substr(strpos[n]) !== blank.substr(strpos[n])) {
 					break;
 				}
 
@@ -10142,18 +10148,20 @@ Pointer.prototype = {
 	 * hovering the tooltip should cause the active series to mouse out.
 	 */
 	inClass: function (element, className) {
-		var elemClassName;
-		while (element) {
+		var elemClassName,
+			ret;
+		while (element && ret === undefined) {
 			elemClassName = attr(element, 'class');
 			if (elemClassName) {
 				if (elemClassName.indexOf(className) !== -1) {
-					return true;
+					ret = true;
 				} else if (elemClassName.indexOf(PREFIX + 'container') !== -1) {
-					return false;
+					ret = false;
 				}
 			}
 			element = element.parentNode;
-		}		
+		}
+		return false;
 	},
 
 	onTrackerMouseOut: function (e) {
@@ -10344,7 +10352,7 @@ extend(Highcharts.Pointer.prototype, {
 		}
 
 		// Set geometry for clipping, selection and transformation
-		if (!inverted) { // TODO: implement clipping for inverted charts
+		if (!inverted) {
 			clip[xy] = clipXY - plotLeftTop;
 			clip[wh] = selectionWH;
 		}
@@ -11377,7 +11385,7 @@ var LegendSymbolMixin = Highcharts.LegendSymbolMixin = {
 
 // Workaround for #2030, horizontal legend items not displaying in IE11 Preview,
 // and for #2580, a similar drawing flaw in Firefox 26.
-// TODO: Explore if there's a general cause for this. The problem may be related 
+// Explore if there's a general cause for this. The problem may be related 
 // to nested group elements, as the legend item texts are within 4 group elements.
 if (/Trident\/7\.0/.test(userAgent) || isFirefox) {
 	wrap(Legend.prototype, 'positionItem', function (proceed, item) {
@@ -11559,7 +11567,7 @@ Chart.prototype = {
 			hasStackedSeries,
 			hasDirtyStacks,
 			hasCartesianSeries = chart.hasCartesianSeries,
-			isDirtyBox = chart.isDirtyBox, // todo: check if it has actually changed?
+			isDirtyBox = chart.isDirtyBox,
 			seriesLength = series.length,
 			i = seriesLength,
 			serie,
@@ -13703,7 +13711,7 @@ Series.prototype = {
 		}
 
 		// proceed to find slice end
-		for (; i < dataLength; i++) {
+		for (i; i < dataLength; i++) {
 			if (xData[i] > max) {
 				cropEnd = i + cropShoulder;
 				break;
@@ -14931,7 +14939,7 @@ Series.prototype = {
 		}
 		delete series.kdTree;
 		
-		if (series.options.kdSync) {  // For testing tooltips, don't build async
+		if (series.options.kdNow) {  // For testing tooltips, don't build async
 			startRecursive();
 		} else {
 			setTimeout(startRecursive);
@@ -15430,12 +15438,10 @@ extend(Chart.prototype, {
 			chartOptions = this.options,
 			axis;
 
-		/*jslint unused: false*/
 		axis = new Axis(this, merge(options, {
 			index: this[key].length,
 			isX: isX
 		}));
-		/*jslint unused: true*/
 
 		// Push the new axis options to the chart options
 		chartOptions[key] = splat(chartOptions[key] || {});
@@ -15699,7 +15705,6 @@ extend(Series.prototype, {
 		}
 
 		// Shift the first point off the parallel arrays
-		// todo: consider series.removePoint(i) method
 		if (shift) {
 			if (data[0] && data[0].remove) {
 				data[0].remove(false);
@@ -15992,41 +15997,42 @@ var AreaSeries = extendClass(Series, {
 
 			each(keys, function (x) {
 				var threshold = null,
-					stackPoint;
+					stackPoint,
+					skip = connectNulls && (!pointMap[x] || pointMap[x].y === null); // #1836
 
-				if (connectNulls && (!pointMap[x] || pointMap[x].y === null)) { // #1836
-					return;
+				if (!skip) {
 
-				// The point exists, push it to the segment
-				} else if (pointMap[x]) {
-					segment.push(pointMap[x]);
+					// The point exists, push it to the segment
+					if (pointMap[x]) {
+						segment.push(pointMap[x]);
 
-				// There is no point for this X value in this series, so we 
-				// insert a dummy point in order for the areas to be drawn
-				// correctly.
-				} else {
+					// There is no point for this X value in this series, so we 
+					// insert a dummy point in order for the areas to be drawn
+					// correctly.
+					} else {
 
-					// Loop down the stack to find the series below this one that has
-					// a value (#1991)
-					for (i = series.index; i <= yAxis.series.length; i++) {		
-						stackIndicator = series.getStackIndicator(null, x, i);
-						stackPoint = stack[x].points[stackIndicator.key];
-						if (stackPoint) {
-							threshold = stackPoint[1];
-							break;
+						// Loop down the stack to find the series below this one that has
+						// a value (#1991)
+						for (i = series.index; i <= yAxis.series.length; i++) {		
+							stackIndicator = series.getStackIndicator(null, x, i);
+							stackPoint = stack[x].points[stackIndicator.key];
+							if (stackPoint) {
+								threshold = stackPoint[1];
+								break;
+							}
 						}
-					}
 
-					plotX = xAxis.translate(x);
-					plotY = yAxis.getThreshold(threshold);
-					segment.push({ 
-						y: null, 
-						plotX: plotX,
-						clientX: plotX, 
-						plotY: plotY, 
-						yBottom: plotY,
-						onMouseOver: noop
-					});
+						plotX = xAxis.translate(x);
+						plotY = yAxis.getThreshold(threshold);
+						segment.push({ 
+							y: null, 
+							plotX: plotX,
+							clientX: plotX, 
+							plotY: plotY, 
+							yBottom: plotY,
+							onMouseOver: noop
+						});
+					}
 				}
 			});
 
@@ -16064,7 +16070,7 @@ var AreaSeries = extendClass(Series, {
 		}
 		if (options.stacking && !this.closedStacks) {
 			
-			// Follow stack back. Todo: implement areaspline. A general solution could be to 
+			// Follow stack back. Later, implement areaspline. A general solution could be to 
 			// reverse the entire graphPath of the previous series, though may be hard with
 			// splines and with series with different extremes
 			for (i = segment.length - 1; i >= 0; i--) {
@@ -16451,10 +16457,11 @@ var ColumnSeries = extendClass(Series, {
 				(reversedXAxis ? -1 : 1);
 
 		// Save it for reading in linked series (Error bars particularly)
-		return (series.columnMetrics = { 
+		series.columnMetrics = { 
 			width: pointWidth, 
 			offset: pointXOffset 
-		});
+		};
+		return series.columnMetrics;
 			
 	},
 
@@ -17985,20 +17992,14 @@ if (seriesTypes.column) {
 
 
 /**
- * Highstock JS v2.1.9-modified ()
- * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
- *
- * (c) 2010-2014 Torstein Honsi
- *
- * License: www.highcharts.com/license
+ * Highcharts module to hide overlapping data labels. This module is included in Highcharts.
  */
-
-/*global Highcharts, HighchartsAdapter */
+ /*global Highcharts */
 (function (H) {
 	var Chart = H.Chart,
 		each = H.each,
 		pick = H.pick,
-		addEvent = HighchartsAdapter.addEvent;
+		addEvent = H.addEvent;
 
 	// Collect potensial overlapping data labels. Stack labels probably don't need to be 
 	// considered because they are usually accompanied by data labels that lie inside the columns.
@@ -18973,7 +18974,7 @@ wrap(Series.prototype, 'init', function (proceed) {
 wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min, max, startOfWeek, positions, closestDistance, findHigherRanks) {
 
 	var start = 0,
-		end = 0,
+		end,
 		segmentPositions,
 		higherRanks = {},
 		hasCrossedHigherRank,
@@ -18995,7 +18996,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 	// we reuse that instead of computing it again.
 	posLength = positions.length;
 
-	for (; end < posLength; end++) {
+	for (end = 0; end < posLength; end++) {
 
 		outsideMax = end && positions[end - 1] > max;
 
@@ -19229,10 +19230,11 @@ extend(Axis.prototype, {
 	 */
 	val2lin: function (val, toIndex) {
 		var axis = this,
-			ordinalPositions = axis.ordinalPositions;
+			ordinalPositions = axis.ordinalPositions,
+			ret;
 
 		if (!ordinalPositions) {
-			return val;
+			ret = val;
 
 		} else {
 
@@ -19259,10 +19261,11 @@ extend(Axis.prototype, {
 					break;
 				}
 			}
-			return toIndex ?
+			ret = toIndex ?
 				ordinalIndex :
 				axis.ordinalSlope * (ordinalIndex || 0) + axis.ordinalOffset;
 		}
+		return ret;
 	},
 	/**
 	 * Translate from linear (internal) to axis value
@@ -19272,10 +19275,11 @@ extend(Axis.prototype, {
 	 */
 	lin2val: function (val, fromIndex) {
 		var axis = this,
-			ordinalPositions = axis.ordinalPositions;
+			ordinalPositions = axis.ordinalPositions,
+			ret;
 
 		if (!ordinalPositions) { // the visible range contains only equally spaced values
-			return val;
+			ret = val;
 
 		} else {
 
@@ -19315,10 +19319,11 @@ extend(Axis.prototype, {
 
 			// If the index is within the range of the ordinal positions, return the associated
 			// or interpolated value. If not, just return the value
-			return distance !== UNDEFINED && ordinalPositions[i] !== UNDEFINED ?
+			ret = distance !== UNDEFINED && ordinalPositions[i] !== UNDEFINED ?
 				ordinalPositions[i] + (distance ? distance * (ordinalPositions[i + 1] - ordinalPositions[i]) : 0) :
 				val;
 		}
+		return ret;
 	},
 	/**
 	 * Get the ordinal positions for the entire data set. This is necessary in chart panning
@@ -19415,7 +19420,7 @@ extend(Axis.prototype, {
 	 * of the desired group count.
 	 */
 	getGroupIntervalFactor: function (xMin, xMax, series) {
-		var i = 0,
+		var i,
 			processedXData = series.processedXData,
 			len = processedXData.length,
 			distances = [],
@@ -19426,7 +19431,7 @@ extend(Axis.prototype, {
 		if (!groupIntervalFactor) {
 
 			// Register all the distances in an array
-			for (; i < len - 1; i++) {
+			for (i = 0; i < len - 1; i++) {
 				distances[i] = processedXData[i + 1] - processedXData[i];
 			}
 
@@ -19451,23 +19456,25 @@ extend(Axis.prototype, {
 	 * Make the tick intervals closer because the ordinal gaps make the ticks spread out or cluster
 	 */
 	postProcessTickInterval: function (tickInterval) {
-		// TODO: http://jsfiddle.net/highcharts/FQm4E/1/
+		// Problem: http://jsfiddle.net/highcharts/FQm4E/1/
 		// This is a case where this algorithm doesn't work optimally. In this case, the
 		// tick labels are spread out per week, but all the gaps reside within weeks. So
 		// we have a situation where the labels are courser than the ordinal gaps, and
 		// thus the tick interval should not be altered
-		var ordinalSlope = this.ordinalSlope;
+		var ordinalSlope = this.ordinalSlope,
+			ret;
 
 
 		if (ordinalSlope) {
 			if (!this.options.breaks) {
-				return tickInterval / (ordinalSlope / this.closestPointRange); 
+				ret = tickInterval / (ordinalSlope / this.closestPointRange); 
 			} else {
-				return this.closestPointRange;
+				ret = this.closestPointRange;
 			}
 		} else {
-			return tickInterval;
+			ret = tickInterval;
 		}
+		return ret;
 	}
 });
 
@@ -19605,14 +19612,14 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
  * End ordinal axis logic                                                   *
  *****************************************************************************/
 /**
- * Highstock JS v2.1.9-modified ()
+ * Highstock JS v2.1.9-modified (2015-10-16)
  * Highcharts Broken Axis module
  * 
  * Author: Stephane Vanraes, Torstein Honsi
  * License: www.highcharts.com/license
  */
 
-/*global HighchartsAdapter*/
+ /*global Highcharts */
 (function (H) {	
 
 	"use strict";
@@ -19621,7 +19628,7 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 		wrap = H.wrap,
 		each = H.each,
 		extend = H.extend,
-		fireEvent = HighchartsAdapter.fireEvent,
+		fireEvent = H.fireEvent,
 		Axis = H.Axis,
 		Series = H.Series;
 
@@ -19814,11 +19821,13 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 				}
 
 				breakArrayT.sort(function (a, b) {
+					var ret;
 					if (a.value === b.value) {
-						return (a.move === 'in' ? 0 : 1) - (b.move === 'in' ? 0 : 1);
+						ret = (a.move === 'in' ? 0 : 1) - (b.move === 'in' ? 0 : 1);
 					} else {
-						return a.value - b.value;
+						ret = a.value - b.value;
 					}
+					return ret;
 				});
 				
 				// Simplify the breaks
@@ -19928,7 +19937,6 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 /* ****************************************************************************
  * Start data grouping module												 *
  ******************************************************************************/
-/*jslint white:true */
 var DATA_GROUPING = 'dataGrouping',
 	seriesProto = Series.prototype,
 	tooltipProto = Tooltip.prototype,
@@ -20048,7 +20056,7 @@ var DATA_GROUPING = 'dataGrouping',
 
 			// If we have a number, return it divided by the length. If not, return
 			// null or undefined based on what the sum method finds.
-			if (typeof ret === NUMBER && len) {
+			if (typeof ret === 'number' && len) {
 				ret = ret / len;
 			}
 
@@ -20073,7 +20081,7 @@ var DATA_GROUPING = 'dataGrouping',
 			low = approximations.low(low);
 			close = approximations.close(close);
 
-			if (typeof open === NUMBER || typeof high === NUMBER || typeof low === NUMBER || typeof close === NUMBER) {
+			if (typeof open === 'number' || typeof high === 'number' || typeof low === 'number' || typeof close === 'number') {
 				return [open, high, low, close];
 			}
 			// else, return is undefined
@@ -20082,14 +20090,13 @@ var DATA_GROUPING = 'dataGrouping',
 			low = approximations.low(low);
 			high = approximations.high(high);
 
-			if (typeof low === NUMBER || typeof high === NUMBER) {
+			if (typeof low === 'number' || typeof high === 'number') {
 				return [low, high];
 			}
 			// else, return is undefined
 		}
 	};
 
-/*jslint white:false */
 
 /**
  * Takes parallel arrays of x and y data and groups the data into intervals defined by groupPositions, a collection
@@ -20119,7 +20126,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		}
 	}
 
-	for (; i <= dataLength; i++) {
+	for (i; i <= dataLength; i++) {
 
 		// when a new group is entered, summarize and initiate the previous group
 		while ((groupPositions[1] !== UNDEFINED && xData[i] >= groupPositions[1]) ||
@@ -20162,7 +20169,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 
 			for (j = 0; j < pointArrayMapLength; j++) {
 				val = point[pointArrayMap[j]];
-				if (typeof val === NUMBER) {
+				if (typeof val === 'number') {
 					values[j].push(val);
 				} else if (val === null) {
 					values[j].hasNulls = true;
@@ -20172,7 +20179,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 		} else {
 			pointY = handleYData ? yData[i] : null;
 
-			if (typeof pointY === NUMBER) {
+			if (typeof pointY === 'number') {
 				values[0].push(pointY);
 			} else if (pointY === null) {
 				values[0].hasNulls = true;
@@ -20193,7 +20200,8 @@ seriesProto.processData = function () {
 		options = series.options,
 		dataGroupingOptions = options[DATA_GROUPING],
 		groupingEnabled = series.allowDG !== false && dataGroupingOptions && pick(dataGroupingOptions.enabled, chart.options._stock),
-		hasGroupedData;
+		hasGroupedData,
+		skip;
 
 	// run base method
 	series.forceCrop = groupingEnabled; // #334
@@ -20201,79 +20209,77 @@ seriesProto.processData = function () {
 	series.hasProcessed = true; // #2692
 
 	// skip if processData returns false or if grouping is disabled (in that order)
-	if (baseProcessData.apply(series, arguments) === false || !groupingEnabled) {
-		return;
-
-	} else {
+	skip = baseProcessData.apply(series, arguments) === false || !groupingEnabled;
+	if (!skip) {
 		series.destroyGroupedData();
+		
+		var i,
+			processedXData = series.processedXData,
+			processedYData = series.processedYData,
+			plotSizeX = chart.plotSizeX,
+			xAxis = series.xAxis,
+			ordinal = xAxis.options.ordinal,
+			groupPixelWidth = series.groupPixelWidth = xAxis.getGroupPixelWidth && xAxis.getGroupPixelWidth(),
+			nonGroupedPointRange = series.pointRange;
 
-	}
-	var i,
-		processedXData = series.processedXData,
-		processedYData = series.processedYData,
-		plotSizeX = chart.plotSizeX,
-		xAxis = series.xAxis,
-		ordinal = xAxis.options.ordinal,
-		groupPixelWidth = series.groupPixelWidth = xAxis.getGroupPixelWidth && xAxis.getGroupPixelWidth(),
-		nonGroupedPointRange = series.pointRange;
+		// Execute grouping if the amount of points is greater than the limit defined in groupPixelWidth
+		if (groupPixelWidth) {
+			hasGroupedData = true;
 
-	// Execute grouping if the amount of points is greater than the limit defined in groupPixelWidth
-	if (groupPixelWidth) {
-		hasGroupedData = true;
+			series.points = null; // force recreation of point instances in series.translate
 
-		series.points = null; // force recreation of point instances in series.translate
+			var extremes = xAxis.getExtremes(),
+				xMin = extremes.min,
+				xMax = extremes.max,
+				groupIntervalFactor = (ordinal && xAxis.getGroupIntervalFactor(xMin, xMax, series)) || 1,
+				interval = (groupPixelWidth * (xMax - xMin) / plotSizeX) * groupIntervalFactor,
+				groupPositions = xAxis.getTimeTicks(
+					xAxis.normalizeTimeTickInterval(interval, dataGroupingOptions.units || defaultDataGroupingUnits),
+					xMin,
+					xMax,
+					xAxis.options.startOfWeek,
+					processedXData,
+					series.closestPointRange
+				),
+				groupedXandY = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),
+				groupedXData = groupedXandY[0],
+				groupedYData = groupedXandY[1];
 
-		var extremes = xAxis.getExtremes(),
-			xMin = extremes.min,
-			xMax = extremes.max,
-			groupIntervalFactor = (ordinal && xAxis.getGroupIntervalFactor(xMin, xMax, series)) || 1,
-			interval = (groupPixelWidth * (xMax - xMin) / plotSizeX) * groupIntervalFactor,
-			groupPositions = xAxis.getTimeTicks(
-				xAxis.normalizeTimeTickInterval(interval, dataGroupingOptions.units || defaultDataGroupingUnits),
-				xMin,
-				xMax,
-				xAxis.options.startOfWeek,
-				processedXData,
-				series.closestPointRange
-			),
-			groupedXandY = seriesProto.groupData.apply(series, [processedXData, processedYData, groupPositions, dataGroupingOptions.approximation]),
-			groupedXData = groupedXandY[0],
-			groupedYData = groupedXandY[1];
-
-		// prevent the smoothed data to spill out left and right, and make
-		// sure data is not shifted to the left
-		if (dataGroupingOptions.smoothed) {
-			i = groupedXData.length - 1;
-			groupedXData[i] = Math.min(groupedXData[i], xMax);
-			while (i-- && i > 0) {
-				groupedXData[i] += interval / 2;
+			// prevent the smoothed data to spill out left and right, and make
+			// sure data is not shifted to the left
+			if (dataGroupingOptions.smoothed) {
+				i = groupedXData.length - 1;
+				groupedXData[i] = Math.min(groupedXData[i], xMax);
+				while (i-- && i > 0) {
+					groupedXData[i] += interval / 2;
+				}
+				groupedXData[0] = Math.max(groupedXData[0], xMin);
 			}
-			groupedXData[0] = Math.max(groupedXData[0], xMin);
-		}
 
-		// record what data grouping values were used
-		series.currentDataGrouping = groupPositions.info;
-		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
-			series.pointRange = groupPositions.info.totalRange;
-		}
-		series.closestPointRange = groupPositions.info.totalRange;
-
-		// Make sure the X axis extends to show the first group (#2533)
-		if (defined(groupedXData[0]) && groupedXData[0] < xAxis.dataMin) {
-			if (xAxis.min === xAxis.dataMin) {
-				xAxis.min = groupedXData[0];
+			// record what data grouping values were used
+			series.currentDataGrouping = groupPositions.info;
+			if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
+				series.pointRange = groupPositions.info.totalRange;
 			}
-			xAxis.dataMin = groupedXData[0];
-		}
+			series.closestPointRange = groupPositions.info.totalRange;
 
-		// set series props
-		series.processedXData = groupedXData;
-		series.processedYData = groupedYData;
-	} else {
-		series.currentDataGrouping = null;
-		series.pointRange = nonGroupedPointRange;
+			// Make sure the X axis extends to show the first group (#2533)
+			if (defined(groupedXData[0]) && groupedXData[0] < xAxis.dataMin) {
+				if (xAxis.min === xAxis.dataMin) {
+					xAxis.min = groupedXData[0];
+				}
+				xAxis.dataMin = groupedXData[0];
+			}
+
+			// set series props
+			series.processedXData = groupedXData;
+			series.processedYData = groupedYData;
+		} else {
+			series.currentDataGrouping = null;
+			series.pointRange = nonGroupedPointRange;
+		}
+		series.hasGroupedData = hasGroupedData;
 	}
-	series.hasGroupedData = hasGroupedData;
 };
 
 /**
@@ -23386,7 +23392,8 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 		result = [],
 		axes = [], //#3416 need a default array
 		axes2,
-		uniqueAxes;
+		uniqueAxes,
+		transVal;
 
 	// Ignore in case of color Axis. #3360, #3524
 	if (axis.coll === 'colorAxis') {
@@ -23429,16 +23436,16 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 		}
 	});
 	
-	translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
+	transVal = pick(translatedValue, axis.translate(value, null, null, old));
 	
-	if (!isNaN(translatedValue)) {
+	if (!isNaN(transVal)) {
 		if (axis.horiz) {
 			each(uniqueAxes, function (axis2) {
 				var skip;
 
 				y1 = axis2.pos;
 				y2 = y1 + axis2.len;
-				x1 = x2 = mathRound(translatedValue + axis.transB);
+				x1 = x2 = mathRound(transVal + axis.transB);
 
 				if (x1 < axisLeft || x1 > axisLeft + axis.width) { // outside plot area
 					if (force) {
@@ -23457,7 +23464,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 
 				x1 = axis2.pos;
 				x2 = x1 + axis2.len;
-				y1 = y2 = mathRound(axisTop + axis.height - translatedValue);
+				y1 = y2 = mathRound(axisTop + axis.height - transVal);
 
 				if (y1 < axisTop || y1 > axisTop + axis.height) { // outside plot area
 					if (force) {
@@ -23472,11 +23479,9 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 			});
 		}
 	}
-	if (result.length > 0) {
-		return renderer.crispPolyLine(result, lineWidth || 1); 
-	} else {
-		return null; //#3557 getPlotLinePath in regular Highcharts also returns null
-	}
+	return result.length > 0 ?
+		renderer.crispPolyLine(result, lineWidth || 1) :
+		null; //#3557 getPlotLinePath in regular Highcharts also returns null
 });
 
 // Override getPlotBandPath to allow for multipane charts
@@ -23594,7 +23599,6 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		return;
 	}
 
-	// TODO: Dynamic date formats like in Series.tooltipHeaderFormat. 
 	if (!formatOption && !options.formatter) {
 		if (this.isDatetimeAxis) {
 			formatFormat = '%b %d, %Y';
@@ -23709,7 +23713,7 @@ seriesProto.setCompare = function (compare) {
  */
 seriesProto.processData = function () {
 	var series = this,
-		i = 0,
+		i,
 		processedXData,
 		processedYData,
 		length;
@@ -23725,8 +23729,8 @@ seriesProto.processData = function () {
 		length = processedYData.length;
 		
 		// find the first value for comparison
-		for (; i < length; i++) {
-			if (typeof processedYData[i] === NUMBER && processedXData[i] >= series.xAxis.min) {
+		for (i = 0; i < length; i++) {
+			if (typeof processedYData[i] === 'number' && processedXData[i] >= series.xAxis.min) {
 				series.compareValue = processedYData[i];
 				break;
 			}

@@ -138,10 +138,11 @@ var ColumnSeries = extendClass(Series, {
 				(reversedXAxis ? -1 : 1);
 
 		// Save it for reading in linked series (Error bars particularly)
-		return (series.columnMetrics = { 
+		series.columnMetrics = { 
 			width: pointWidth, 
 			offset: pointXOffset 
-		});
+		};
+		return series.columnMetrics;
 			
 	},
 

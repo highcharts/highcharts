@@ -174,7 +174,8 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 		result = [],
 		axes = [], //#3416 need a default array
 		axes2,
-		uniqueAxes;
+		uniqueAxes,
+		transVal;
 
 	// Ignore in case of color Axis. #3360, #3524
 	if (axis.coll === 'colorAxis') {
@@ -217,16 +218,16 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 		}
 	});
 	
-	translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
+	transVal = pick(translatedValue, axis.translate(value, null, null, old));
 	
-	if (!isNaN(translatedValue)) {
+	if (!isNaN(transVal)) {
 		if (axis.horiz) {
 			each(uniqueAxes, function (axis2) {
 				var skip;
 
 				y1 = axis2.pos;
 				y2 = y1 + axis2.len;
-				x1 = x2 = mathRound(translatedValue + axis.transB);
+				x1 = x2 = mathRound(transVal + axis.transB);
 
 				if (x1 < axisLeft || x1 > axisLeft + axis.width) { // outside plot area
 					if (force) {
@@ -245,7 +246,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 
 				x1 = axis2.pos;
 				x2 = x1 + axis2.len;
-				y1 = y2 = mathRound(axisTop + axis.height - translatedValue);
+				y1 = y2 = mathRound(axisTop + axis.height - transVal);
 
 				if (y1 < axisTop || y1 > axisTop + axis.height) { // outside plot area
 					if (force) {
@@ -260,11 +261,9 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 			});
 		}
 	}
-	if (result.length > 0) {
-		return renderer.crispPolyLine(result, lineWidth || 1); 
-	} else {
-		return null; //#3557 getPlotLinePath in regular Highcharts also returns null
-	}
+	return result.length > 0 ?
+		renderer.crispPolyLine(result, lineWidth || 1) :
+		null; //#3557 getPlotLinePath in regular Highcharts also returns null
 });
 
 // Override getPlotBandPath to allow for multipane charts
@@ -382,7 +381,6 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		return;
 	}
 
-	// TODO: Dynamic date formats like in Series.tooltipHeaderFormat. 
 	if (!formatOption && !options.formatter) {
 		if (this.isDatetimeAxis) {
 			formatFormat = '%b %d, %Y';
@@ -497,7 +495,7 @@ seriesProto.setCompare = function (compare) {
  */
 seriesProto.processData = function () {
 	var series = this,
-		i = 0,
+		i,
 		processedXData,
 		processedYData,
 		length;
@@ -513,8 +511,8 @@ seriesProto.processData = function () {
 		length = processedYData.length;
 		
 		// find the first value for comparison
-		for (; i < length; i++) {
-			if (typeof processedYData[i] === NUMBER && processedXData[i] >= series.xAxis.min) {
+		for (i = 0; i < length; i++) {
+			if (typeof processedYData[i] === 'number' && processedXData[i] >= series.xAxis.min) {
 				series.compareValue = processedYData[i];
 				break;
 			}

@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified ()
+ * @license Highmaps JS v1.1.9-modified (2015-10-16)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2014 Torstein Honsi
@@ -7,7 +7,7 @@
  * License: www.highcharts.com/license
  */
 
-/*global HighchartsAdapter*/
+/*global clearTimeout, document, Highcharts, HighchartsAdapter, setInterval, setTimeout, window */
 (function (Highcharts) {
 
 
@@ -403,9 +403,11 @@ extend(ColorAxis.prototype, {
 		var grad,
 			horiz = this.horiz,
 			options = this.options,
-			reversed = this.reversed;
+			reversed = this.reversed,
+			one = reversed ? 1 : 0,
+			zero = reversed ? 0 : 1;
 
-		grad = horiz ? [+reversed, 0, +!reversed, 0] : [0, +!reversed, 0, +reversed]; // #3190
+		grad = horiz ? [one, 0, zero, 0] : [0, zero, 0, one]; // #3190
 		this.legendColor = {
 			linearGradient: { x1: grad[0], y1: grad[1], x2: grad[2], y2: grad[3] },
 			stops: options.stops || [
@@ -490,13 +492,12 @@ extend(ColorAxis.prototype, {
 		}
 	},
 	getPlotLinePath: function (a, b, c, d, pos) {
-		if (typeof pos === 'number') { // crosshairs only // #3969 pos can be 0 !!
-			return this.horiz ? 
+		return typeof pos === 'number' ? // crosshairs only // #3969 pos can be 0 !!
+			(this.horiz ? 
 				['M', pos - 4, this.top - 6, 'L', pos + 4, this.top - 6, pos, this.top, 'Z'] : 
-				['M', this.left, pos, 'L', this.left - 6, pos + 6, this.left - 6, pos - 6, 'Z'];
-		} else {
-			return Axis.prototype.getPlotLinePath.call(this, a, b, c, d);
-		}
+				['M', this.left, pos, 'L', this.left - 6, pos + 6, this.left - 6, pos - 6, 'Z']
+			) :
+			Axis.prototype.getPlotLinePath.call(this, a, b, c, d);
 	},
 
 	update: function (newOptions, redraw) {
@@ -1649,7 +1650,6 @@ seriesTypes.map = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				translateY: fromBox.y
 			};
 			
-			// TODO: Animate this.group instead
 			each(this.points, function (point) {
 				if (point.graphic) {
 					point.graphic
@@ -1998,10 +1998,10 @@ Highcharts.geojson = function (geojson, hType, series) {
 	var mapData = [],
 		path = [],
 		polygonToPath = function (polygon) {
-			var i = 0,
+			var i,
 				len = polygon.length;
 			path.push('M');
-			for (; i < len; i++) {
+			for (i = 0; i < len; i++) {
 				if (i === 1) {
 					path.push('L');
 				}

@@ -115,10 +115,10 @@ Highcharts.geojson = function (geojson, hType, series) {
 	var mapData = [],
 		path = [],
 		polygonToPath = function (polygon) {
-			var i = 0,
+			var i,
 				len = polygon.length;
 			path.push('M');
-			for (; i < len; i++) {
+			for (i = 0; i < len; i++) {
 				if (i === 1) {
 					path.push('L');
 				}

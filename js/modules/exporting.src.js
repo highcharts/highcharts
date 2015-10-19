@@ -8,7 +8,7 @@
  */
 
 // JSLint options:
-/*global Highcharts, HighchartsAdapter, document, window, Math, setTimeout */
+/*global clearTimeout, Highcharts, HighchartsAdapter, document, window, Math, setTimeout */
 
 (function (Highcharts) { // encapsulate
 

@@ -45,8 +45,6 @@
 /*global document, Highcharts, HighchartsAdapter, setTimeout */
 (function (H, HA) {
 
-    'use strict';
-
     var noop = function () { return undefined; },
         Color = H.Color,
         Series = H.Series,
@@ -505,7 +503,7 @@
                 }
 
                 // Pass tests in Pointer. 
-                // TODO: Replace this with a single property, and replace when zooming in
+                // Replace this with a single property, and replace when zooming in
                 // below boostThreshold.
                 series.directTouch = false;
                 series.options.stickyTracking = true;
