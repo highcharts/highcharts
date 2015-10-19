@@ -141,7 +141,7 @@ gulp.task('lint', function () {
             //'edition': '2013-08-13',
             'reporter': function (evt) {
                 if (!evt.pass) {
-                    console.log(`___________________________________________________________________________\nErrors in ${evt.file}\n`);
+                    console.log('___________________________________________________________________________\nErrors in ' + evt.file + '\n');
                     evt.errors.forEach(function (err) {
                         if (err) {
                             console.log(
@@ -199,6 +199,9 @@ gulp.task('scripts', function () {
      * Micro-optimize code based on the build object.
      */
     function preprocess(tpl, build) {
+        // Windows newlines
+        tpl = tpl.replace(/\r\n/g, '\n');
+
         /*
         // Escape double quotes and backslashes, to be reinserted after parsing
         tpl = tpl.replace(/"/g, '___doublequote___');
