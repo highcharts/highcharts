@@ -23607,7 +23607,8 @@ seriesProto.setCompare = function (compare) {
 	// Set or unset the modifyValue method
 	this.modifyValue = (compare === 'value' || compare === 'percent') ? function (value, point) {
 		var compareValue = this.compareValue;
-		
+		var compareXValue = this.compareXValue;
+
 		if (value !== UNDEFINED) { // #2601
 
 			// get the modified value
@@ -23618,6 +23619,8 @@ seriesProto.setCompare = function (compare) {
 			// record for tooltip etc.
 			if (point) {
 				point.change = value;
+				point.compareValue = compareValue;
+				point.compareXValue = compareXValue;
 			}
 			
 		}
@@ -23657,6 +23660,7 @@ seriesProto.processData = function () {
 		for (i = 0; i < length; i++) {
 			if (typeof processedYData[i] === 'number' && processedXData[i] >= series.xAxis.min) {
 				series.compareValue = processedYData[i];
+				series.compareXValue = processedXData[i];
 				break;
 			}
 		}
