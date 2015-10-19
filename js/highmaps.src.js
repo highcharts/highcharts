@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-10-16)
+ * @license Highmaps JS v1.1.9-modified (2015-10-19)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -1230,7 +1230,7 @@ if (globalAdapter) {
 var adapterRun = adapter.adapterRun,
 	getScript = adapter.getScript,
 	inArray = adapter.inArray,
-	each = Highcharts.each = adapter.each,
+	each = adapter.each,
 	grep = adapter.grep,
 	offset = adapter.offset,
 	map = adapter.map,
@@ -1241,8 +1241,10 @@ var adapterRun = adapter.adapterRun,
 	animate = adapter.animate,
 	stop = adapter.stop;
 
-
-
+Highcharts.addEvent = addEvent;
+Highcharts.each = each;
+Highcharts.fireEvent = fireEvent;
+Highcharts.removeEvent = removeEvent;
 /* ****************************************************************************
  * Handle the options                                                         *
  *****************************************************************************/
@@ -9680,20 +9682,19 @@ Pointer.prototype = {
 	 * hovering the tooltip should cause the active series to mouse out.
 	 */
 	inClass: function (element, className) {
-		var elemClassName,
-			ret;
-		while (element && ret === undefined) {
+		var elemClassName;
+		while (element) {
 			elemClassName = attr(element, 'class');
 			if (elemClassName) {
 				if (elemClassName.indexOf(className) !== -1) {
-					ret = true;
-				} else if (elemClassName.indexOf(PREFIX + 'container') !== -1) {
-					ret = false;
+					return true;
+				}
+				if (elemClassName.indexOf(PREFIX + 'container') !== -1) {
+					return false;
 				}
 			}
 			element = element.parentNode;
 		}
-		return false;
 	},
 
 	onTrackerMouseOut: function (e) {

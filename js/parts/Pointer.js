@@ -581,20 +581,19 @@ Pointer.prototype = {
 	 * hovering the tooltip should cause the active series to mouse out.
 	 */
 	inClass: function (element, className) {
-		var elemClassName,
-			ret;
-		while (element && ret === undefined) {
+		var elemClassName;
+		while (element) {
 			elemClassName = attr(element, 'class');
 			if (elemClassName) {
 				if (elemClassName.indexOf(className) !== -1) {
-					ret = true;
-				} else if (elemClassName.indexOf(PREFIX + 'container') !== -1) {
-					ret = false;
+					return true;
+				}
+				if (elemClassName.indexOf(PREFIX + 'container') !== -1) {
+					return false;
 				}
 			}
 			element = element.parentNode;
 		}
-		return false;
 	},
 
 	onTrackerMouseOut: function (e) {
