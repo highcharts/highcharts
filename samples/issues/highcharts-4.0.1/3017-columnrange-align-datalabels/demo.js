@@ -72,7 +72,7 @@ $(function () {
                 inside: true,
                 align: 'center',
                 formatter: function () {
-                    return this.y > this.point.low ? this.point.name : '';
+                    return this.y > this.point.low ? this.point.name : null;
                 },
                 style: {
                     color: 'white'

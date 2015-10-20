@@ -178,6 +178,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			seriesProto = Series.prototype,
 			dataLabelOptions = this.options.dataLabels,
 			align = dataLabelOptions.align,
+			verticalAlign = dataLabelOptions.verticalAlign,
 			inside = dataLabelOptions.inside,
 			point,
 			up,
@@ -210,6 +211,9 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 						}
 						dataLabelOptions.x = dataLabelOptions.xHigh;								
 					} else {
+						if (!verticalAlign) {
+							dataLabelOptions.verticalAlign = up ? 'top' : 'bottom';
+						}
 						dataLabelOptions.y = dataLabelOptions.yHigh;
 					}
 				}
@@ -242,6 +246,9 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 						}
 						dataLabelOptions.x = dataLabelOptions.xLow;
 					} else {
+						if (!verticalAlign) {
+							dataLabelOptions.verticalAlign = up ? 'bottom' : 'top';
+						}
 						dataLabelOptions.y = dataLabelOptions.yLow;
 					}
 				}
@@ -252,7 +259,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 		}
 
 		dataLabelOptions.align = align;
-	
+		dataLabelOptions.verticalAlign = verticalAlign;
 	},
 	
 	alignDataLabel: function () {
