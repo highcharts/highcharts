@@ -332,9 +332,8 @@ $(function () {
                 { x: Date.UTC(2013, 0, 1), y: 7, name: 'Hilde T. joined', image: null },
                 { x: Date.UTC(2013, 7, 1), y: 8, name: 'Jon Arild joined', image: 'JonArild' },
                 { x: Date.UTC(2013, 7, 20), y: 9, name: 'Øystein joined', image: 'Oystein' },
-                { x: Date.UTC(2013, 9, 1), y: 10, name: 'Stephane joined', image: 'Stephane' },
-                { x: Date.UTC(2014, 9, 1), y: 11, name: 'Anita joined', image: 'Anita' },
-                { x: Date.UTC(2014, 10, 27), y: 11, name: ' ', image: null }
+                { x: Date.UTC(2014, 9, 1), y: 10, name: 'Anita joined', image: 'Anita' },
+                { x: Date.UTC(2014, 10, 27), y: 10, name: ' ', image: null }
             ]
 
         }]
