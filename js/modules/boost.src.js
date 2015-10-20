@@ -45,6 +45,8 @@
 /*global document, Highcharts, HighchartsAdapter, setTimeout */
 (function (H, HA) {
 
+    'use strict';
+
     var noop = function () { return undefined; },
         Color = H.Color,
         Series = H.Series,
@@ -159,10 +161,12 @@
                 point,
                 i;
 
-            for (i = 0; i < points.length; i = i + 1) {
-                point = points[i];
-                if (point && point.graphic) {
-                    point.graphic = point.graphic.destroy();
+            if (points) {
+                for (i = 0; i < points.length; i = i + 1) {
+                    point = points[i];
+                    if (point && point.graphic) {
+                        point.graphic = point.graphic.destroy();
+                    }
                 }
             }
 
@@ -334,7 +338,7 @@
                 };
 
             // If we are zooming out from SVG mode, destroy the graphics
-            if (this.points) {
+            if (this.points || this.graph) {
                 this.destroyGraphics();
             }
 
