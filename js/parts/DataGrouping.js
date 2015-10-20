@@ -250,7 +250,7 @@ seriesProto.groupData = function (xData, yData, groupPositions, approximation) {
 			}
 		}
 	}
-		
+
 	return [groupedXData, groupedYData];
 };
 
@@ -276,7 +276,7 @@ seriesProto.processData = function () {
 	skip = baseProcessData.apply(series, arguments) === false || !groupingEnabled;
 	if (!skip) {
 		series.destroyGroupedData();
-		
+
 		var i,
 			processedXData = series.processedXData,
 			processedYData = series.processedYData,
@@ -519,7 +519,7 @@ Axis.prototype.getGroupPixelWidth = function () {
 	i = len;
 	while (i--) {
 		dgOptions = series[i].options.dataGrouping;
-			
+
 		if (dgOptions && series[i].hasProcessed) { // #2692
 
 			dataLength = (series[i].processedXData || series[i].data).length;
@@ -542,7 +542,7 @@ Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
 
 	redraw = pick(redraw, true);
 
-	if (!dataGrouping) {   
+	if (!dataGrouping) {
 		dataGrouping = {
 			forced: false,
 			units: null

@@ -58,7 +58,7 @@ var UNDEFINED,
 	HOVER_STATE = 'hover',
 	SELECT_STATE = 'select',
 	marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
-	
+
 	// Object for extending Axis
 	AxisPlotLineOrBandExtension,
 
@@ -90,9 +90,9 @@ var UNDEFINED,
 	Highcharts;
 
 /**
- * Provide error messages for debugging, with links to online explanation 
+ * Provide error messages for debugging, with links to online explanation
  */
-function error (code, stop) {
+function error(code, stop) {
 	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
 	if (stop) {
 		throw msg;

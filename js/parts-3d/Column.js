@@ -5,9 +5,9 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	// Do not do this if the chart is not 3D
-	if (!this.chart.is3d()) {  
+	if (!this.chart.is3d()) {
 		return;
-	}	
+	}
 
 	var series = this,
 		chart = series.chart,
@@ -55,7 +55,7 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'animate', function (pr
 				Highcharts.each(series.data, function (point) {
 					if (point.y !== null) {
 						point.height = point.shapeArgs.height;
-						point.shapey = point.shapeArgs.y;	//#2968				
+						point.shapey = point.shapeArgs.y;	//#2968
 						point.shapeArgs.height = 1;
 						if (!reversed) {
 							if (point.stackY) {
@@ -67,14 +67,14 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'animate', function (pr
 					}
 				});
 
-			} else { // run the animation				
-				Highcharts.each(series.data, function (point) {					
+			} else { // run the animation
+				Highcharts.each(series.data, function (point) {
 					if (point.y !== null) {
 						point.shapeArgs.height = point.height;
 						point.shapeArgs.y = point.shapey;	//#2968
 						// null value do not have a graphic
 						if (point.graphic) {
-							point.graphic.animate(point.shapeArgs, series.options.animation);					
+							point.graphic.animate(point.shapeArgs, series.options.animation);
 						}
 					}
 				});
@@ -93,11 +93,11 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proce
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (this.chart.is3d()) {
-		var seriesOptions = this.options,	
+		var seriesOptions = this.options,
 			grouping = seriesOptions.grouping,
 			stacking = seriesOptions.stacking,
-			z = 0;	
-		
+			z = 0;
+
 		if (!(grouping !== undefined && !grouping)) {
 			var stacks = this.chart.retrieveStacks(stacking),
 				stack = seriesOptions.stack || 0,
@@ -109,22 +109,22 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proce
 			}
 			z = (stacks.totalStacks * 10) - (10 * (stacks.totalStacks - stacks[stack].position)) - i;
 		}
-				
+
 		seriesOptions.zIndex = z;
 	}
 });
 function draw3DPoints(proceed) {
 	// Do not do this if the chart is not 3D
-	if (this.chart.is3d()) {		
+	if (this.chart.is3d()) {
 		var grouping = this.chart.options.plotOptions.column.grouping;
 		if (grouping !== undefined && !grouping && this.group.zIndex !== undefined && !this.zIndexSet) {
 			this.group.attr({zIndex : (this.group.zIndex * 10)});
 			this.zIndexSet = true; // #4062 set zindex only once
-		} 
+		}
 
 		var options = this.options,
 			states = this.options.states;
-			
+
 		this.borderWidth = options.borderWidth = defined(options.edgeWidth) ? options.edgeWidth : 1; //#4055
 
 		Highcharts.each(this.data, function (point) {
@@ -145,7 +145,7 @@ function draw3DPoints(proceed) {
 }
 
 Highcharts.wrap(Highcharts.Series.prototype, 'alignDataLabel', function (proceed) {
-	
+
 	// Only do this for 3D columns and columnranges
 	if (this.chart.is3d() && (this.type === 'column' || this.type === 'columnrange')) {
 		var series = this,
@@ -153,7 +153,7 @@ Highcharts.wrap(Highcharts.Series.prototype, 'alignDataLabel', function (proceed
 
 		var args = arguments,
 			alignTo = args[4];
-		
+
 		var pos = ({x: alignTo.x, y: alignTo.y, z: series.z});
 		pos = perspective([pos], chart, true)[0];
 		alignTo.x = pos.x;
@@ -169,7 +169,7 @@ if (Highcharts.seriesTypes.columnrange) {
 
 Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'drawPoints', draw3DPoints);
 
-/*** 
+/***
 	EXTENSION FOR 3D CYLINDRICAL COLUMNS
 	Not supported
 ***/
@@ -187,7 +187,7 @@ Highcharts.wrap(Highcharts.seriesTypes.cylinder.prototype, 'translate', function
 	// Do not do this if the chart is not 3D
 	if (!this.chart.is3d()) {
 		return;
-	}	
+	}
 
 	var series = this,
 		chart = series.chart,
@@ -197,7 +197,7 @@ Highcharts.wrap(Highcharts.seriesTypes.cylinder.prototype, 'translate', function
 		depth = cylOptions.depth || 0,
 		origin = {
 			x: chart.inverted ? chart.plotHeight / 2 : chart.plotWidth / 2,
-			y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2, 
+			y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2,
 			z: options3d.depth,
 			vd: options3d.viewDistance
 		},
@@ -220,7 +220,7 @@ Highcharts.wrap(Highcharts.seriesTypes.cylinder.prototype, 'translate', function
 		shapeArgs.depth = shapeArgs.height * (1 / sin((90 - alpha) * deg2rad)) - z;
 		shapeArgs.alpha = 90 - alpha;
 		shapeArgs.beta = 0;
-		shapeArgs.origin = origin;	
+		shapeArgs.origin = origin;
 	});
 });
 */

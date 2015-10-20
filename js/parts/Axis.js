@@ -266,7 +266,7 @@ Axis.prototype = {
 		//axis.tickInterval = UNDEFINED;
 		//axis.minorTickInterval = UNDEFINED;
 
-		
+
 		// Major ticks
 		axis.ticks = {};
 		axis.labelEdge = [];
@@ -436,7 +436,7 @@ Axis.prototype = {
 		// Reset properties in case we're redrawing (#3353)
 		axis.dataMin = axis.dataMax = axis.threshold = null;
 		axis.softThreshold = !axis.isXAxis;
-		
+
 		if (axis.buildStacks) {
 			axis.buildStacks();
 		}
@@ -593,7 +593,7 @@ Axis.prototype = {
 			skip,
 			transB = axis.transB,
 			/**
-			 * Check if x is between a and b. If not, either move to a/b or skip, 
+			 * Check if x is between a and b. If not, either move to a/b or skip,
 			 * depending on the force parameter.
 			 */
 			between = function (x, a, b) {
@@ -677,7 +677,7 @@ Axis.prototype = {
 			minorTickPositions = [],
 			pos,
 			i,
-			pointRangePadding = axis.pointRangePadding || 0, 
+			pointRangePadding = axis.pointRangePadding || 0,
 			min = axis.min - pointRangePadding, // #1498
 			max = axis.max + pointRangePadding, // #1498
 			range = max - min,
@@ -991,7 +991,7 @@ Axis.prototype = {
 			axis.max = mathMin(axis.max, options.ceiling);
 		}
 
-		// When the threshold is soft, adjust the extreme value only if 
+		// When the threshold is soft, adjust the extreme value only if
 		// the data extreme and the padded extreme land on either side of the threshold. For example,
 		// a series of [0, 1, 2, 3] would make the yAxis add a tick for -1 because of the
 		// default minPadding and startOnTick options. This is prevented by the softThreshold
@@ -1058,16 +1058,16 @@ Axis.prototype = {
 		// for linear axes, get magnitude and normalize the interval
 		if (!isDatetimeAxis && !isLog && !tickIntervalOption) {
 			axis.tickInterval = normalizeTickInterval(
-				axis.tickInterval, 
-				null, 
-				getMagnitude(axis.tickInterval), 
+				axis.tickInterval,
+				null,
+				getMagnitude(axis.tickInterval),
 				// If the tick interval is between 0.5 and 5 and the axis max is in the order of
 				// thousands, chances are we are dealing with years. Don't allow decimals. #3363.
 				pick(options.allowDecimals, !(axis.tickInterval > 0.5 && axis.tickInterval < 5 && axis.max > 1000 && axis.max < 9999)),
 				!!this.tickAmount
 			);
 		}
-		
+
 		// Prevent ticks from getting so close that we can't draw the labels
 		if (!this.tickAmount && this.len) { // Color axis with disabled legend has no length
 			axis.tickInterval = axis.unsquish();
@@ -1090,7 +1090,7 @@ Axis.prototype = {
 			single;
 
 		// Set the tickmarkOffset
-		this.tickmarkOffset = (this.categories && options.tickmarkPlacement === 'between' && 
+		this.tickmarkOffset = (this.categories && options.tickmarkPlacement === 'between' &&
 			this.tickInterval === 1) ? 0.5 : 0; // #3202
 
 
@@ -1164,7 +1164,7 @@ Axis.prototype = {
 		var roundedMin = tickPositions[0],
 			roundedMax = tickPositions[tickPositions.length - 1],
 			minPointOffset = this.minPointOffset || 0;
-			
+
 		if (startOnTick) {
 			this.min = roundedMin;
 		} else if (this.min - minPointOffset > roundedMin) {
@@ -1177,10 +1177,10 @@ Axis.prototype = {
 			tickPositions.pop();
 		}
 
-		// If no tick are left, set one tick in the middle (#3195) 
+		// If no tick are left, set one tick in the middle (#3195)
 		if (tickPositions.length === 0 && defined(roundedMin)) {
 			tickPositions.push((roundedMax + roundedMin) / 2);
-		}		
+		}
 	},
 
 	/**
@@ -1204,7 +1204,7 @@ Axis.prototype = {
 				var options = axis.options,
 					horiz = axis.horiz,
 					key = [horiz ? options.left : options.top, horiz ? options.width : options.height, options.pane].join(',');
-				
+
 				if (axis.series.length) { // #4442
 					if (others[key]) {
 						hasOther = true; // #4201
@@ -1226,7 +1226,7 @@ Axis.prototype = {
 			this.finalTickAmt = tickAmount;
 			tickAmount = 5;
 		}
-		
+
 		this.tickAmount = tickAmount;
 	},
 
@@ -1267,7 +1267,7 @@ Axis.prototype = {
 					(finalTickAmt <= 2 && i > 0 && i < len - 1) // Remove all but first and last
 				) {
 					tickPositions.splice(i, 1);
-				}	
+				}
 			}
 			this.finalTickAmt = UNDEFINED;
 		}
@@ -1465,7 +1465,7 @@ Axis.prototype = {
 			realMin = isLog ? lin2log(axis.min) : axis.min,
 			realMax = isLog ? lin2log(axis.max) : axis.max;
 
-		// With a threshold of null, make the columns/areas rise from the top or bottom 
+		// With a threshold of null, make the columns/areas rise from the top or bottom
 		// depending on the value, assuming an actual threshold of 0 (#4233).
 		if (threshold === null) {
 			threshold = realMax < 0 ? realMax : realMin;
@@ -1498,7 +1498,7 @@ Axis.prototype = {
 
 	/**
 	 * Prevent the ticks from getting so close we can't draw the labels. On a horizontal
-	 * axis, this is handled by rotating the labels, removing ticks and adding ellipsis. 
+	 * axis, this is handled by rotating the labels, removing ticks and adding ellipsis.
 	 * On a vertical axis remove ticks and add ellipsis.
 	 */
 	unsquish: function () {
@@ -1521,23 +1521,23 @@ Axis.prototype = {
 				step = step > 1 ? mathCeil(step) : 1;
 				return step * tickInterval;
 			};
-		
+
 		if (horiz) {
 			autoRotation = !labelOptions.staggerLines && !labelOptions.step && ( // #3971
-				defined(rotationOption) ? 
+				defined(rotationOption) ?
 					[rotationOption] :
 					slotSize < pick(labelOptions.autoRotationLimit, 80) && labelOptions.autoRotation
 			);
 
 			if (autoRotation) {
 
-				// Loop over the given autoRotation options, and determine which gives the best score. The 
+				// Loop over the given autoRotation options, and determine which gives the best score. The
 				// best score is that with the lowest number of steps and a rotation closest to horizontal.
 				each(autoRotation, function (rot) {
 					var score;
 
 					if (rot === rotationOption || (rot && rot >= -90 && rot <= 90)) { // #3891
-					
+
 						step = getStep(mathAbs(labelMetrics.h / mathSin(deg2rad * rot)));
 
 						score = step + mathAbs(rot / 360);
@@ -1587,7 +1587,7 @@ Axis.prototype = {
 		if (!isString(labelOptions.rotation)) {
 			attr.rotation = labelOptions.rotation || 0; // #4443
 		}
-		
+
 		// Handle auto rotation on horizontal axis
 		if (this.autoRotation) {
 
@@ -1598,7 +1598,7 @@ Axis.prototype = {
 					labelLength = tick.labelLength;
 				}
 			});
-			
+
 			// Apply rotation only if the label is too wide for the slot, and
 			// the label is wider than its height.
 			if (labelLength > innerWidth && labelLength > labelMetrics.h) {
@@ -1636,7 +1636,7 @@ Axis.prototype = {
 
 		// Add ellipsis if the label length is significantly longer than ideal
 		if (attr.rotation) {
-			css = { 
+			css = {
 				width: (labelLength > chart.chartHeight * 0.5 ? chart.chartHeight * 0.33 : chart.chartHeight) + PX
 			};
 			if (!textOverflowOption) {
@@ -1724,7 +1724,7 @@ Axis.prototype = {
 		}
 
 		if (hasData || axis.isLinked) {
-			
+
 			// Generate ticks
 			each(tickPositions, function (pos) {
 				if (!ticks[pos]) {
@@ -1897,7 +1897,7 @@ Axis.prototype = {
 			isLog = axis.isLog,
 			isLinked = axis.isLinked,
 			tickPositions = axis.tickPositions,
-			axisTitle = axis.axisTitle,			
+			axisTitle = axis.axisTitle,
 			ticks = axis.ticks,
 			minorTicks = axis.minorTicks,
 			alternateBands = axis.alternateBands,
@@ -1980,7 +1980,7 @@ Axis.prototype = {
 			// alternate grid color
 			if (alternateGridColor) {
 				each(tickPositions, function (pos, i) {
-					to = tickPositions[i + 1] !== UNDEFINED ? tickPositions[i + 1] + tickmarkOffset : axis.max - tickmarkOffset; 
+					to = tickPositions[i + 1] !== UNDEFINED ? tickPositions[i + 1] + tickmarkOffset : axis.max - tickmarkOffset;
 					if (i % 2 === 0 && pos < axis.max && to <= axis.max - tickmarkOffset) { // #2248
 						if (!alternateBands[pos]) {
 							alternateBands[pos] = new Highcharts.PlotLineOrBand(axis);
@@ -2086,7 +2086,7 @@ Axis.prototype = {
 	 * Redraw the axis to reflect changes in the data or axis extremes
 	 */
 	redraw: function () {
-		
+
 		if (this.visible) {
 			// render the axis
 			this.render();
@@ -2159,18 +2159,18 @@ Axis.prototype = {
 			pos,
 			attribs,
 			categorized;
-		
+
 		if (
 			// Disabled in options
-			!this.crosshair || 
+			!this.crosshair ||
 			// Snap
-			((defined(point) || !pick(this.crosshair.snap, true)) === false) || 
+			((defined(point) || !pick(this.crosshair.snap, true)) === false) ||
 			// Not on this axis (#4095, #2888)
 			(point && point.series && point.series[this.coll] !== this)
 		) {
 			this.hideCrosshair();
-		
-		} else {			
+
+		} else {
 
 			// Get the path
 			if (!pick(options.snap, true)) {

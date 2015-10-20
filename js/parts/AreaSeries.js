@@ -16,10 +16,10 @@ defaultPlotOptions.area = merge(defaultSeriesOptions, {
 var AreaSeries = extendClass(Series, {
 	type: 'area',
 	/**
-	 * For stacks, don't split segments on null values. Instead, draw null values with 
+	 * For stacks, don't split segments on null values. Instead, draw null values with
 	 * no marker. Also insert dummy points for any X position that exists in other series
 	 * in the stack.
-	 */ 
+	 */
 	getSegments: function () {
 		var series = this,
 			segments = [],
@@ -64,14 +64,14 @@ var AreaSeries = extendClass(Series, {
 					if (pointMap[x]) {
 						segment.push(pointMap[x]);
 
-					// There is no point for this X value in this series, so we 
+					// There is no point for this X value in this series, so we
 					// insert a dummy point in order for the areas to be drawn
 					// correctly.
 					} else {
 
 						// Loop down the stack to find the series below this one that has
 						// a value (#1991)
-						for (i = series.index; i <= yAxis.series.length; i++) {		
+						for (i = series.index; i <= yAxis.series.length; i++) {
 							stackIndicator = series.getStackIndicator(null, x, i);
 							stackPoint = stack[x].points[stackIndicator.key];
 							if (stackPoint) {
@@ -82,11 +82,11 @@ var AreaSeries = extendClass(Series, {
 
 						plotX = xAxis.translate(x);
 						plotY = yAxis.getThreshold(threshold);
-						segment.push({ 
-							y: null, 
+						segment.push({
+							y: null,
 							plotX: plotX,
-							clientX: plotX, 
-							plotY: plotY, 
+							clientX: plotX,
+							plotY: plotY,
 							yBottom: plotY,
 							onMouseOver: noop
 						});
@@ -105,13 +105,13 @@ var AreaSeries = extendClass(Series, {
 
 		this.segments = segments;
 	},
-	
+
 	/**
 	 * Extend the base Series getSegmentPath method by adding the path for the area.
 	 * This path is pushed to the series.areaPath property.
 	 */
 	getSegmentPath: function (segment) {
-		
+
 		var segmentPath = Series.prototype.getSegmentPath.call(this, segment), // call base method
 			areaSegmentPath = [].concat(segmentPath), // work on a copy for the area path
 			i,
@@ -119,24 +119,24 @@ var AreaSeries = extendClass(Series, {
 			segLength = segmentPath.length,
 			translatedThreshold = this.yAxis.getThreshold(options.threshold), // #2181
 			yBottom;
-		
+
 		if (segLength === 3) { // for animation from 1 to two points
 			areaSegmentPath.push(L, segmentPath[1], segmentPath[2]);
 		}
 		if (options.stacking && !this.closedStacks) {
-			
-			// Follow stack back. Later, implement areaspline. A general solution could be to 
+
+			// Follow stack back. Later, implement areaspline. A general solution could be to
 			// reverse the entire graphPath of the previous series, though may be hard with
 			// splines and with series with different extremes
 			for (i = segment.length - 1; i >= 0; i--) {
 
 				yBottom = pick(segment[i].yBottom, translatedThreshold);
-			
+
 				// step line?
 				if (i < segment.length - 1 && options.step) {
 					areaSegmentPath.push(segment[i + 1].plotX, yBottom);
 				}
-				
+
 				areaSegmentPath.push(segment[i].plotX, yBottom);
 			}
 
@@ -146,9 +146,9 @@ var AreaSeries = extendClass(Series, {
 		this.areaPath = this.areaPath.concat(areaSegmentPath);
 		return segmentPath;
 	},
-	
+
 	/**
-	 * Extendable method to close the segment path of an area. This is overridden in polar 
+	 * Extendable method to close the segment path of an area. This is overridden in polar
 	 * charts.
 	 */
 	closeSegment: function (path, segment, translatedThreshold) {
@@ -161,38 +161,38 @@ var AreaSeries = extendClass(Series, {
 			translatedThreshold
 		);
 	},
-	
+
 	/**
 	 * Draw the graph and the underlying area. This method calls the Series base
 	 * function and adds the area. The areaPath is calculated in the getSegmentPath
 	 * method called from Series.prototype.drawGraph.
 	 */
 	drawGraph: function () {
-		
+
 		// Define or reset areaPath
 		this.areaPath = [];
-		
+
 		// Call the base method
 		Series.prototype.drawGraph.apply(this);
-		
+
 		// Define local variables
 		var series = this,
 			areaPath = this.areaPath,
 			options = this.options,
 			zones = this.zones,
 			props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
-		
+
 		each(zones, function (threshold, i) {
 			props.push(['zoneArea' + i, threshold.color || series.color, threshold.fillColor || options.fillColor]);
 		});
 		each(props, function (prop) {
 			var areaKey = prop[0],
 				area = series[areaKey];
-				
+
 			// Create or update the area
 			if (area) { // update
 				area.animate({ d: areaPath });
-	
+
 			} else { // create
 				series[areaKey] = series.chart.renderer.path(areaPath)
 					.attr({

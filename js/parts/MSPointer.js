@@ -1,5 +1,5 @@
 if (win.PointerEvent || win.MSPointerEvent) {
-	
+
 	// The touches object keeps track of the points being touched at all times
 	var touches = {},
 		hasPointerEvent = !!win.PointerEvent,
@@ -28,7 +28,7 @@ if (win.PointerEvent || win.MSPointerEvent) {
 					target: e.currentTarget,
 					preventDefault: noop,
 					touches: getWebkitTouches()
-				});				
+				});
 			}
 		};
 

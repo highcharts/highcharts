@@ -1,5 +1,5 @@
 (function () {
-	
+
 	var colProto = seriesTypes.column.prototype;
 
 	/**

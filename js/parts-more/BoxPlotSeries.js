@@ -24,7 +24,7 @@ defaultPlotOptions.boxplot = merge(defaultPlotOptions.column, {
 			'Median: {point.median}<br/>' +
 			'Lower quartile: {point.q1}<br/>' +
 			'Minimum: {point.low}<br/>'
-			
+
 	},
 	//whiskerColor: null,
 	whiskerLength: '50%',
@@ -39,7 +39,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 		return [point.low, point.q1, point.median, point.q3, point.high];
 	},
 	pointValKey: 'high', // defines the top of the tracker
-	
+
 	/**
 	 * One-to-one mapping from options to SVG attributes
 	 */
@@ -48,7 +48,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 		stroke: 'color',
 		'stroke-width': 'lineWidth'
 	},
-	
+
 	/**
 	 * Disable data labels for box plot
 	 */
@@ -118,7 +118,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 			whiskersAttr = {};
 			medianAttr = {};
 			color = point.color || series.color;
-			
+
 			if (point.plotY !== UNDEFINED) {
 
 				pointAttr = point.pointAttr[point.selected ? 'selected' : ''];
@@ -133,37 +133,37 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 				q3Plot = mathFloor(doQuartiles ? point.q3Plot : point.lowPlot);// + crispCorr;
 				highPlot = mathFloor(point.highPlot);// + crispCorr;
 				lowPlot = mathFloor(point.lowPlot);// + crispCorr;
-				
+
 				// Stem attributes
 				stemAttr.stroke = point.stemColor || options.stemColor || color;
 				stemAttr['stroke-width'] = pick(point.stemWidth, options.stemWidth, options.lineWidth);
 				stemAttr.dashstyle = point.stemDashStyle || options.stemDashStyle;
-				
+
 				// Whiskers attributes
 				whiskersAttr.stroke = point.whiskerColor || options.whiskerColor || color;
 				whiskersAttr['stroke-width'] = pick(point.whiskerWidth, options.whiskerWidth, options.lineWidth);
-				
+
 				// Median attributes
 				medianAttr.stroke = point.medianColor || options.medianColor || color;
 				medianAttr['stroke-width'] = pick(point.medianWidth, options.medianWidth, options.lineWidth);
-				
+
 				// The stem
 				crispCorr = (stemAttr['stroke-width'] % 2) / 2;
-				crispX = left + halfWidth + crispCorr;				
+				crispX = left + halfWidth + crispCorr;
 				stemPath = [
 					// stem up
 					'M',
 					crispX, q3Plot,
 					'L',
 					crispX, highPlot,
-					
+
 					// stem down
 					'M',
 					crispX, q1Plot,
 					'L',
 					crispX, lowPlot
 				];
-				
+
 				// The box
 				if (doQuartiles) {
 					crispCorr = (pointAttr['stroke-width'] % 2) / 2;
@@ -186,7 +186,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 						'z'
 					];
 				}
-				
+
 				// The whiskers
 				if (whiskerLength) {
 					crispCorr = (whiskersAttr['stroke-width'] % 2) / 2;
@@ -196,37 +196,37 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 					whiskersPath = [
 						// High whisker
 						'M',
-						crispX - pointWiskerLength, 
+						crispX - pointWiskerLength,
 						highPlot,
 						'L',
-						crispX + pointWiskerLength, 
+						crispX + pointWiskerLength,
 						highPlot,
-						
+
 						// Low whisker
 						'M',
-						crispX - pointWiskerLength, 
+						crispX - pointWiskerLength,
 						lowPlot,
 						'L',
-						crispX + pointWiskerLength, 
+						crispX + pointWiskerLength,
 						lowPlot
 					];
 				}
-				
+
 				// The median
-				crispCorr = (medianAttr['stroke-width'] % 2) / 2;				
+				crispCorr = (medianAttr['stroke-width'] % 2) / 2;
 				medianPlot = mathRound(point.medianPlot) + crispCorr;
 				medianPath = [
 					'M',
-					left, 
+					left,
 					medianPlot,
 					'L',
-					right, 
+					right,
 					medianPlot
 				];
-				
+
 				// Create or update the graphics
 				if (graphic) { // update
-					
+
 					point.stem.animate({ d: stemPath });
 					if (whiskerLength) {
 						point.whiskers.animate({ d: whiskersPath });
@@ -235,17 +235,17 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 						point.box.animate({ d: boxPath });
 					}
 					point.medianShape.animate({ d: medianPath });
-					
+
 				} else { // create new
 					point.graphic = graphic = renderer.g()
 						.add(series.group);
-					
+
 					point.stem = renderer.path(stemPath)
 						.attr(stemAttr)
 						.add(graphic);
-						
+
 					if (whiskerLength) {
-						point.whiskers = renderer.path(whiskersPath) 
+						point.whiskers = renderer.path(whiskersPath)
 							.attr(whiskersAttr)
 							.add(graphic);
 					}
@@ -253,7 +253,7 @@ seriesTypes.boxplot = extendClass(seriesTypes.column, {
 						point.box = renderer.path(boxPath)
 							.attr(pointAttr)
 							.add(graphic);
-					}	
+					}
 					point.medianShape = renderer.path(medianPath)
 						.attr(medianAttr)
 						.add(graphic);

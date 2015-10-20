@@ -85,10 +85,12 @@ function assemble(assemblies) {
 
                             // Indent all files so we can use jsLints whitespace
                             if (item.$.name.indexOf('Intro') === -1 && item.$.name.indexOf('Outro') === -1) {
-                                file = file.replace(/\n/g, '\n    ').replace(/    \n/g, '\n');
+                                file = file.replace(/\n/g, '\n    ');
                             }
                             tpl += file;
                         });
+
+                        tpl = tpl.replace(/    \n/g, '\n');
 
                         tpl = tpl.replace(
                             'http://code.highcharts.com@product.cdnpath@/@product.version@/modules/canvas-tools.js',

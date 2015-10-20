@@ -38,9 +38,9 @@ var CandlestickSeries = extendClass(OHLCSeries, {
 		seriesTypes.ohlc.prototype.getAttribs.apply(this, arguments);
 		var series = this,
 			options = series.options,
-			stateOptions = options.states,			
+			stateOptions = options.states,
 			upLineColor = options.upLineColor || options.lineColor,
-			hoverStroke = stateOptions.hover.upLineColor || upLineColor, 
+			hoverStroke = stateOptions.hover.upLineColor || upLineColor,
 			selectStroke = stateOptions.select.upLineColor || upLineColor;
 
 		// Add custom line color for points going up (close > open).

@@ -2,7 +2,7 @@
  * The class for stack items
  */
 function StackItem(axis, options, isNegative, x, stackOption) {
-	
+
 	var inverted = axis.chart.inverted;
 
 	this.axis = axis;
@@ -50,7 +50,7 @@ StackItem.prototype = {
 		var options = this.options,
 			formatOption = options.format,
 			str = formatOption ?
-				format(formatOption, this) : 
+				format(formatOption, this) :
 				options.formatter.call(this);  // format the text in the label
 
 		// Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
@@ -65,7 +65,7 @@ StackItem.prototype = {
 						align: this.textAlign,				// fix the text-anchor
 						rotation: options.rotation,	// rotation
 						visibility: HIDDEN					// hidden until setOffset is called
-					})				
+					})
 					.add(group);							// add to the labels-group
 		}
 	},
@@ -93,10 +93,10 @@ StackItem.prototype = {
 			},
 			label = this.label,
 			alignAttr;
-		
+
 		if (label) {
 			label.align(this.alignOptions, null, stackBox);	// align the label to the box
-				
+
 			// Set visibility (#678)
 			alignAttr = label.alignAttr;
 			label[this.options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) ? 'show' : 'hide'](true);
@@ -153,8 +153,8 @@ Axis.prototype.renderStackTotals = function () {
 		chart = axis.chart,
 		renderer = chart.renderer,
 		stacks = axis.stacks,
-		stackKey, 
-		oneStack, 
+		stackKey,
+		oneStack,
 		stackCategory,
 		stackTotalGroup = axis.stackTotalGroup;
 
@@ -296,7 +296,7 @@ Series.prototype.setStackedPoints = function () {
 		//stack.points[pointKey] = [stack.cum || stackThreshold];
 		stack.points[pointKey] = [pick(stack.cum, stackThreshold)];
 		stack.touched = yAxis.stacksTouched;
-		
+
 
 		// Add value to the stack total
 		if (stacking === 'percent') {
@@ -376,7 +376,7 @@ Series.prototype.getStackIndicator = function(stackIndicator, x, index) {
 	} else {
 		stackIndicator.index++;
 	}
-	
+
 	stackIndicator.key = [index, x, stackIndicator.index].join(',');
 
 	return stackIndicator;

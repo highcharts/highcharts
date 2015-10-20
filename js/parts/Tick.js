@@ -57,7 +57,7 @@ Tick.prototype = {
 
 		// prepare CSS
 		//css = width && { width: mathMax(1, mathRound(width - 2 * (labelOptions.padding || 10))) + PX };
-		
+
 		// first call
 		if (!defined(label)) {
 
@@ -130,9 +130,9 @@ Tick.prototype = {
 
 			slotWidth = mathMin(axis.slotWidth, slotWidth); // #4177
 			if (slotWidth < axis.slotWidth && axis.labelAlign === 'center') {
-				xy.x += goRight * (axis.slotWidth - slotWidth - xCorrection * (axis.slotWidth - mathMin(labelWidth, slotWidth)));				
+				xy.x += goRight * (axis.slotWidth - slotWidth - xCorrection * (axis.slotWidth - mathMin(labelWidth, slotWidth)));
 			}
-			// If the label width exceeds the available space, set a text width to be 
+			// If the label width exceeds the available space, set a text width to be
 			// picked up below. Also, if a width has been set before, we need to set a new
 			// one because the reported labelWidth will be limited by the box (#3938).
 			if (labelWidth > slotWidth || (axis.autoRotation && label.styles.width)) {
@@ -195,7 +195,7 @@ Tick.prototype = {
 				yOffset = mathCos(label.rotation * deg2rad) * (rotCorr.y - label.getBBox().height / 2);
 			}
 		}
-		
+
 		x = x + labelOptions.x + rotCorr.x - (tickmarkOffset && horiz ?
 			tickmarkOffset * transA * (reversed ? -1 : 1) : 0);
 		y = y + yOffset - (tickmarkOffset && !horiz ?

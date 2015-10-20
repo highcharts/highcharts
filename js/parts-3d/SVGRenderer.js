@@ -1,4 +1,4 @@
-/*** 
+/***
 	EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
 	***/
 ////// HELPER METHODS //////
@@ -37,13 +37,13 @@ function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
 	if ((end > start) && (end - start > PI / 2 + 0.0001)) {
 		result = result.concat(curveTo(cx, cy, rx, ry, start, start + (PI / 2), dx, dy));
 		result = result.concat(curveTo(cx, cy, rx, ry, start + (PI / 2), end, dx, dy));
-	} else if ((end < start) && (start - end > PI / 2 + 0.0001)) {			
+	} else if ((end < start) && (start - end > PI / 2 + 0.0001)) {
 		result = result.concat(curveTo(cx, cy, rx, ry, start, start - (PI / 2), dx, dy));
 		result = result.concat(curveTo(cx, cy, rx, ry, start - (PI / 2), end, dx, dy));
 	} else {
 		var arcAngle = end - start;
 		result = [
-			'C', 
+			'C',
 			cx + (rx * cos(start)) - ((rx * dFactor * arcAngle) * sin(start)) + dx,
 			cy + (ry * sin(start)) + ((ry * dFactor * arcAngle) * cos(start)) + dy,
 			cx + (rx * cos(end)) + ((rx * dFactor * arcAngle) * sin(end)) + dx,
@@ -73,7 +73,7 @@ Highcharts.SVGRenderer.prototype.toLinePath = function (points, closed) {
 			result.push('Z');
 		}
 	}
-	
+
 	return result;
 };
 
@@ -116,21 +116,21 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 			var paths = this.renderer.cuboidPath(shapeArgs);
 			this.front.attr({d: paths[0], zIndex: paths[3]});
 			this.top.attr({d: paths[1], zIndex: paths[4]});
-			this.side.attr({d: paths[2], zIndex: paths[5]});			
+			this.side.attr({d: paths[2], zIndex: paths[5]});
 		} else {
 			Highcharts.SVGElement.prototype.attr.call(this, args);
 		}
 
 		return this;
 	};
-	
+
 	result.animate = function (args, duration, complete) {
 		if (defined(args.x) && defined(args.y)) {
 			var paths = this.renderer.cuboidPath(args);
 			this.front.attr({zIndex: paths[3]}).animate({d: paths[0]}, duration, complete);
 			this.top.attr({zIndex: paths[4]}).animate({d: paths[1]}, duration, complete);
 			this.side.attr({zIndex: paths[5]}).animate({d: paths[2]}, duration, complete);
-		} else if (args.opacity) {				
+		} else if (args.opacity) {
 				this.front.animate(args, duration, complete);
 				this.top.animate(args, duration, complete);
 				this.side.animate(args, duration, complete);
@@ -164,7 +164,7 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 		z = shapeArgs.z,
 		h = shapeArgs.height,
 		w = shapeArgs.width,
-		d = shapeArgs.depth,		
+		d = shapeArgs.depth,
 		chart = Highcharts.charts[this.chartIndex],
 		map = Highcharts.map;
 
@@ -242,7 +242,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 
 		var c0 = color,
 		c2 = Highcharts.Color(color).brighten(-0.1).get();
-		
+
 		this.side1.attr({fill: c2});
 		this.side2.attr({fill: c2});
 		this.inn.attr({fill: c2});
@@ -250,7 +250,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		this.top.attr({fill: c0});
 		return this;
 	};
-	
+
 	// apply the translation to all
 	result.translateXSetter = function (value) {
 		this.out.attr({translateX: value});
@@ -259,7 +259,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		this.side2.attr({translateX: value});
 		this.top.attr({translateX: value});
 	};
-	
+
 	result.translateYSetter = function (value) {
 		this.out.attr({translateY: value});
 		this.inn.attr({translateY: value});
@@ -273,12 +273,12 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 			this._shapeArgs = this.shapeArgs;
 
 			Highcharts.SVGElement.prototype.animate.call(this, {
-				_args: args	
+				_args: args
 			}, {
 				duration: duration,
 				start: function () {
 					var args = arguments,
-						fx = args[0],					
+						fx = args[0],
 						elem = fx.elem,
 						end = elem._shapeArgs;
 
@@ -291,7 +291,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 				step: function () {
 					var args = arguments,
 						fx = args[1],
-						result = fx.elem,						
+						result = fx.elem,
 						start = result._shapeArgs,
 						end = fx.end,
 						pos = fx.pos,
@@ -316,7 +316,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 
 				}
 			}, complete);
-		} else {			
+		} else {
 			Highcharts.SVGElement.prototype.animate.call(this, args, duration, complete);
 		}
 		return this;
@@ -346,7 +346,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		this.inn.show();
 		this.side1.show();
 		this.side2.show();
-	};	
+	};
 	// show all children
 	result.zIndex = zIndex;
 	result.attr({zIndex: zIndex});
@@ -372,14 +372,14 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 		ss = sin(start),		// sinus of the start angle
 		ce = cos(end),			// cosinus of the end angle
 		se = sin(end),			// sinus of the end angle
-		rx = r * cos(beta),		// x-radius 
+		rx = r * cos(beta),		// x-radius
 		ry = r * cos(alpha),	// y-radius
 		irx = ir * cos(beta),	// x-radius (inner)
 		iry = ir * cos(alpha),	// y-radius (inner)
 		dx = d * sin(beta),		// distance between top and bottom in x
 		dy = d * sin(alpha);	// distance between top and bottom in y
 
-	// TOP	
+	// TOP
 	var top = ['M', cx + (rx * cs), cy + (ry * ss)];
 	top = top.concat(curveTo(cx, cy, rx, ry, start, end, 0, 0));
 	top = top.concat([
@@ -394,10 +394,10 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 
 	var start2 = start > -b ? start : (end > -b ? -b : start),
 		end2 = end < PI - a ? end : (start < PI - a ? PI - a : end);
-	
+
 	var out = ['M', cx + (rx * cos(start2)), cy + (ry * sin(start2))];
 	out = out.concat(curveTo(cx, cy, rx, ry, start2, end2, 0, 0));
-	
+
 	// When slice goes over middle, need to add both, left and right outer side:
 	if (end > PI - a && start < PI - a) {
 	// Go to outer side
@@ -413,7 +413,7 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 	// Go back to the artifical end2
 	out = out.concat(curveTo(cx, cy, rx, ry, end, end2, 0, 0));
 	}
-	
+
 	out = out.concat([
 		'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
 	]);
@@ -444,31 +444,31 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 		'L', cx + (irx * ce), cy + (iry * se),
 		'Z'
 	];
-	
+
 	// correction for changed position of vanishing point caused by alpha and beta rotations
 	var angleCorr = Math.atan2(dy, -dx),
-		angleEnd = Math.abs(end + angleCorr), 
+		angleEnd = Math.abs(end + angleCorr),
 		angleStart = Math.abs(start + angleCorr),
 		angleMid = Math.abs((start + end) / 2 + angleCorr);
-	
+
 	// set to 0-PI range
 	function toZeroPIRange(angle) {
 		angle = angle % (2 * PI);
 		if (angle > PI) {
-			angle = 2 * PI - angle; 
+			angle = 2 * PI - angle;
 		}
 		return angle;
 	}
 	angleEnd = toZeroPIRange(angleEnd);
 	angleStart = toZeroPIRange(angleStart);
 	angleMid = toZeroPIRange(angleMid);
-	
+
 	// *1e5 is to compensate pInt in zIndexSetter
 	var incPrecision = 1e5,
 		a1 = angleMid * incPrecision,
 		a2 = angleStart * incPrecision,
 		a3 = angleEnd * incPrecision;
-		
+
 	return {
 		top: top,
 		zTop: PI * incPrecision + 1, // max angle is PI, so this is allways higher

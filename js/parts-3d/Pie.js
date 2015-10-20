@@ -1,4 +1,4 @@
-/*** 
+/***
 	EXTENSION FOR 3D PIES
 ***/
 
@@ -8,8 +8,8 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 	// Do not do this if the chart is not 3D
 	if (!this.chart.is3d()) {
 		return;
-	}	
-	
+	}
+
 	var series = this,
 		chart = series.chart,
 		options = chart.options,
@@ -42,7 +42,7 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 		shapeArgs.alpha = alpha;
 		shapeArgs.beta = beta;
 		shapeArgs.center = series.center;
-		
+
 		angle = (shapeArgs.end + shapeArgs.start) / 2;
 
 		point.slicedTranslation = {
@@ -69,25 +69,25 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 		this.borderWidth = options.borderWidth = options.edgeWidth || 1;
 		this.borderColor = options.edgeColor = Highcharts.pick(options.edgeColor, options.borderColor, undefined);
 
-		states.hover.borderColor = Highcharts.pick(states.hover.edgeColor, this.borderColor);		
-		states.hover.borderWidth = Highcharts.pick(states.hover.edgeWidth, this.borderWidth);	
-		states.select.borderColor = Highcharts.pick(states.select.edgeColor, this.borderColor);		
+		states.hover.borderColor = Highcharts.pick(states.hover.edgeColor, this.borderColor);
+		states.hover.borderWidth = Highcharts.pick(states.hover.edgeWidth, this.borderWidth);
+		states.select.borderColor = Highcharts.pick(states.select.edgeColor, this.borderColor);
 		states.select.borderWidth = Highcharts.pick(states.select.edgeWidth, this.borderWidth);
 
 		Highcharts.each(this.data, function (point) {
 			var pointAttr = point.pointAttr;
 			pointAttr[''].stroke = point.series.borderColor || point.color;
 			pointAttr['']['stroke-width'] = point.series.borderWidth;
-			pointAttr.hover.stroke = states.hover.borderColor;	
+			pointAttr.hover.stroke = states.hover.borderColor;
 			pointAttr.hover['stroke-width'] = states.hover.borderWidth;
 			pointAttr.select.stroke = states.select.borderColor;
 			pointAttr.select['stroke-width'] = states.select.borderWidth;
-		});	
+		});
 	}
 
 	proceed.apply(this, [].slice.call(arguments, 1));
 
-	if (this.chart.is3d()) {		
+	if (this.chart.is3d()) {
 		Highcharts.each(this.points, function (point) {
 			var graphic = point.graphic;
 
@@ -98,7 +98,7 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 
 			// Hide null or 0 points (#3006, 3650)
 			graphic[point.y ? 'show' : 'hide']();
-		});		
+		});
 	}
 });
 
@@ -118,13 +118,13 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawDataLabels', function
 			labelPos[5] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
 
 		});
-	} 
+	}
 
 	proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'addPoint', function (proceed) {
-	proceed.apply(this, [].slice.call(arguments, 1));	
+	proceed.apply(this, [].slice.call(arguments, 1));
 	if (this.chart.is3d()) {
 		// destroy (and rebuild) everything!!!
 		this.update(this.userOptions, true); // #3845 pass the old options
@@ -144,13 +144,13 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'animate', function (proce
 			markerGroup = this.markerGroup;
 
 		if (Highcharts.svg) { // VML is too slow anyway
-				
+
 				if (animation === true) {
 					animation = {};
 				}
 				// Initialize the animation
 				if (init) {
-				
+
 					// Scale down the group and place it in the center
 					group.oldtranslateX = group.translateX;
 					group.oldtranslateY = group.translateY;
@@ -160,13 +160,13 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'animate', function (proce
 						scaleX: 0.001, // #1499
 						scaleY: 0.001
 					};
-					
+
 					group.attr(attribs);
 					if (markerGroup) {
 						markerGroup.attrSetters = group.attrSetters;
 						markerGroup.attr(attribs);
 					}
-				
+
 				// Run the animation
 				} else {
 					attribs = {
@@ -180,11 +180,11 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'animate', function (proce
 					if (markerGroup) {
 						markerGroup.animate(attribs, animation);
 					}
-				
+
 					// Delete this function to allow it only once
 					this.animate = null;
 				}
-				
+
 		}
 	}
 });

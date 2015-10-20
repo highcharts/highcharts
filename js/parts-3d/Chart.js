@@ -1,4 +1,4 @@
-/*** 
+/***
 	EXTENSION FOR 3D CHARTS
 ***/
 // Shorthand to check the is3d flag
@@ -37,7 +37,7 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 		plotOptions = args[0].plotOptions || {};
 		pieOptions = plotOptions.pie || {};
 
-		pieOptions.borderColor = Highcharts.pick(pieOptions.borderColor, undefined); 
+		pieOptions.borderColor = Highcharts.pick(pieOptions.borderColor, undefined);
 	}
 	proceed.apply(this, args);
 });
@@ -66,19 +66,19 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'redraw', function (proceed) {
 		// Set to force a redraw of all elements
 		this.isDirtyBox = true;
 	}
-	proceed.apply(this, [].slice.call(arguments, 1));	
+	proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 // Draw the series in the reverse order (#3803, #3917)
 Highcharts.wrap(Highcharts.Chart.prototype, 'renderSeries', function (proceed) {
 	var series,
 		i = this.series.length;
-	
+
 	if (this.is3d()) {
-		while (i--) {		
+		while (i--) {
 			series = this.series[i];
 			series.translate();
-			series.render();	
+			series.render();
 		}
 	} else {
 		proceed.call(this);

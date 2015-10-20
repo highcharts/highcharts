@@ -66,7 +66,7 @@ extend(ColorAxis.prototype, {
 
 	/*
 	 * Return an intermediate color between two colors, according to pos where 0
-	 * is the from color and 1 is the to color. 
+	 * is the from color and 1 is the to color.
 	 * NOTE: Changes here should be copied
 	 * to the same function in drilldown.src.js and solid-gauge-src.js.
 	 */
@@ -85,10 +85,10 @@ extend(ColorAxis.prototype, {
 			from = from.rgba;
 			to = to.rgba;
 			hasAlpha = (to[3] !== 1 || from[3] !== 1);
-			ret = (hasAlpha ? 'rgba(' : 'rgb(') + 
-				Math.round(to[0] + (from[0] - to[0]) * (1 - pos)) + ',' + 
-				Math.round(to[1] + (from[1] - to[1]) * (1 - pos)) + ',' + 
-				Math.round(to[2] + (from[2] - to[2]) * (1 - pos)) + 
+			ret = (hasAlpha ? 'rgba(' : 'rgb(') +
+				Math.round(to[0] + (from[0] - to[0]) * (1 - pos)) + ',' +
+				Math.round(to[1] + (from[1] - to[1]) * (1 - pos)) + ',' +
+				Math.round(to[2] + (from[2] - to[2]) * (1 - pos)) +
 				(hasAlpha ? (',' + (to[3] + (from[3] - to[3]) * (1 - pos))) : '') + ')';
 		}
 		return ret;
@@ -119,8 +119,8 @@ extend(ColorAxis.prototype, {
 					}
 				} else {
 					dataClass.color = axis.tweenColors(
-						Color(options.minColor), 
-						Color(options.maxColor), 
+						Color(options.minColor),
+						Color(options.maxColor),
 						len < 2 ? 0.5 : i / (len - 1) // #3219
 					);
 				}
@@ -170,7 +170,7 @@ extend(ColorAxis.prototype, {
 		}
 	},
 
-	/** 
+	/**
 	 * Translate from a value to a color
 	 */
 	toColor: function (value, point) {
@@ -195,7 +195,7 @@ extend(ColorAxis.prototype, {
 						point.dataClass = i;
 					}
 					break;
-				}	
+				}
 			}
 
 		} else {
@@ -217,7 +217,7 @@ extend(ColorAxis.prototype, {
 			pos = 1 - (to[0] - pos) / ((to[0] - from[0]) || 1);
 
 			color = this.tweenColors(
-				from.color, 
+				from.color,
 				to.color,
 				pos
 			);
@@ -231,7 +231,7 @@ extend(ColorAxis.prototype, {
 	getOffset: function () {
 		var group = this.legendGroup,
 			sideOffset = this.chart.axisOffset[this.side];
-		
+
 		if (group) {
 
 			// Hook for the getOffset method to add groups to this parent group
@@ -324,7 +324,7 @@ extend(ColorAxis.prototype, {
 			crossPos,
 			axisPos = this.pos,
 			axisLen = this.len;
-		
+
 		if (point) {
 			crossPos = this.toPixels(point[point.series.colorKey]);
 			if (crossPos < axisPos) {
@@ -332,13 +332,13 @@ extend(ColorAxis.prototype, {
 			} else if (crossPos > axisPos + axisLen) {
 				crossPos = axisPos + axisLen + 2;
 			}
-			
+
 			point.plotX = crossPos;
 			point.plotY = this.len - crossPos;
 			Axis.prototype.drawCrosshair.call(this, e, point);
 			point.plotX = plotX;
 			point.plotY = plotY;
-			
+
 			if (this.cross) {
 				this.cross
 					.attr({
@@ -350,8 +350,8 @@ extend(ColorAxis.prototype, {
 	},
 	getPlotLinePath: function (a, b, c, d, pos) {
 		return typeof pos === 'number' ? // crosshairs only // #3969 pos can be 0 !!
-			(this.horiz ? 
-				['M', pos - 4, this.top - 6, 'L', pos + 4, this.top - 6, pos, this.top, 'Z'] : 
+			(this.horiz ?
+				['M', pos - 4, this.top - 6, 'L', pos + 4, this.top - 6, pos, this.top, 'Z'] :
 				['M', this.left, pos, 'L', this.left - 6, pos + 6, this.left - 6, pos - 6, 'Z']
 			) :
 			Axis.prototype.getPlotLinePath.call(this, a, b, c, d);
@@ -371,11 +371,11 @@ extend(ColorAxis.prototype, {
 				if (item.isDataClass) {
 					item.legendGroup.destroy();
 				}
-			});			
+			});
 			chart.isDirtyLegend = true;
 		}
 
-		// Keep the options structure updated for export. Unlike xAxis and yAxis, the colorAxis is 
+		// Keep the options structure updated for export. Unlike xAxis and yAxis, the colorAxis is
 		// not an array. (#3207)
 		chart.options[this.coll] = merge(this.userOptions, newOptions);
 
@@ -403,7 +403,7 @@ extend(ColorAxis.prototype, {
 				var vis = true,
 					from = dataClass.from,
 					to = dataClass.to;
-				
+
 				// Assemble the default name. This can be overridden by legend.options.labelFormatter
 				name = '';
 				if (from === UNDEFINED) {
@@ -420,7 +420,7 @@ extend(ColorAxis.prototype, {
 				if (to !== UNDEFINED) {
 					name += Highcharts.numberFormat(to, valueDecimals) + valueSuffix;
 				}
-				
+
 				// Add a mock object to the legend items
 				legendItems.push(extend({
 					chart: chart,
@@ -439,7 +439,7 @@ extend(ColorAxis.prototype, {
 								}
 							});
 						});
-						
+
 						chart.legend.colorizeItem(this, vis);
 					}
 				}, dataClass));
@@ -477,7 +477,7 @@ wrap(Chart.prototype, 'getAxes', function (proceed) {
 
 
 /**
- * Wrap the legend getAllItems method to add the color axis. This also removes the 
+ * Wrap the legend getAllItems method to add the color axis. This also removes the
  * axis' own series to prevent them from showing up individually.
  */
 wrap(Legend.prototype, 'getAllItems', function (proceed) {

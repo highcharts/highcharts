@@ -101,7 +101,7 @@ extend(Chart.prototype, {
 		if (!chart.loadingShown) {
 			css(loadingDiv, {
 				opacity: 0,
-				display: ''				
+				display: ''
 			});
 			animate(loadingDiv, {
 				opacity: loadingOptions.style.opacity
@@ -436,7 +436,7 @@ extend(Series.prototype, {
 			pointStart: this.xData[0] // when updating after addPoint
 		}, { data: this.options.data }, newOptions);
 
-		// Destroy the series and delete all properties. Reinsert all methods 
+		// Destroy the series and delete all properties. Reinsert all methods
 		// and properties from the new type prototype (#2270, #3719)
 		this.remove(false);
 		for (n in proto) {

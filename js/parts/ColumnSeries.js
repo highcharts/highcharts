@@ -53,9 +53,9 @@ var ColumnSeries = extendClass(Series, {
 	cropShoulder: 0,
 	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	trackerGroups: ['group', 'dataLabelsGroup'],
-	negStacks: true, // use separate negative stacks, unlike area stacks where a negative 
+	negStacks: true, // use separate negative stacks, unlike area stacks where a negative
 		// point is substracted from previous (#1910)
-	
+
 	/**
 	 * Initialize the series
 	 */
@@ -78,7 +78,7 @@ var ColumnSeries = extendClass(Series, {
 
 	/**
 	 * Return the width and x offset of the columns adjusted for grouping, groupPadding, pointPadding,
-	 * pointWidth etc. 
+	 * pointWidth etc.
 	 */
 	getColumnMetrics: function () {
 
@@ -129,7 +129,7 @@ var ColumnSeries = extendClass(Series, {
 				pick(options.pointWidth, pointOffsetWidth * (1 - 2 * options.pointPadding))
 			),
 			pointPadding = (pointOffsetWidth - pointWidth) / 2,
-			colIndex = (reversedXAxis ? 
+			colIndex = (reversedXAxis ?
 				columnCount - (series.columnIndex || 0) : // #1251
 				series.columnIndex) || 0,
 			pointXOffset = pointPadding + (groupPadding + colIndex *
@@ -137,12 +137,12 @@ var ColumnSeries = extendClass(Series, {
 				(reversedXAxis ? -1 : 1);
 
 		// Save it for reading in linked series (Error bars particularly)
-		series.columnMetrics = { 
-			width: pointWidth, 
-			offset: pointXOffset 
+		series.columnMetrics = {
+			width: pointWidth,
+			offset: pointXOffset
 		};
 		return series.columnMetrics;
-			
+
 	},
 
 	/**
@@ -160,7 +160,7 @@ var ColumnSeries = extendClass(Series, {
 		if (chart.inverted && chart.renderer.isVML) {
 			yCrisp += 1;
 		}
-		
+
 		// Horizontal. We need to first compute the exact right edge, then round it
 		// and compute the width from there.
 		right = Math.round(x + w) + xCrisp;
@@ -195,7 +195,7 @@ var ColumnSeries = extendClass(Series, {
 			chart = series.chart,
 			options = series.options,
 			borderWidth = series.borderWidth = pick(
-				options.borderWidth, 
+				options.borderWidth,
 				series.closestPointRange * series.xAxis.transA < 2 ? 0 : 1 // #3635
 			),
 			yAxis = series.yAxis,
@@ -247,8 +247,8 @@ var ColumnSeries = extendClass(Series, {
 			point.pointWidth = pointWidth;
 
 			// Fix the tooltip on center of grouped columns (#1216, #424, #3648)
-			point.tooltipPos = chart.inverted ? 
-				[yAxis.len + yAxis.pos - chart.plotLeft - plotY, series.xAxis.len - barX - barW / 2, barH] : 
+			point.tooltipPos = chart.inverted ?
+				[yAxis.len + yAxis.pos - chart.plotLeft - plotY, series.xAxis.len - barX - barW / 2, barH] :
 				[barX + barW / 2, plotY + yAxis.pos - chart.plotTop, barH];
 
 			// Register shape type and arguments to be used in drawPoints
@@ -259,13 +259,13 @@ var ColumnSeries = extendClass(Series, {
 	},
 
 	getSymbol: noop,
-	
+
 	/**
 	 * Use a solid rectangle like the area series types
 	 */
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-	
-	
+
+
 	/**
 	 * Columns have no graph
 	 */
@@ -299,7 +299,7 @@ var ColumnSeries = extendClass(Series, {
 				} : {};
 
 				pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE] || series.pointAttr[NORMAL_STATE];
-				
+
 				if (graphic) { // update
 					stop(graphic);
 					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs));
@@ -342,7 +342,7 @@ var ColumnSeries = extendClass(Series, {
 				series.group.attr(attr);
 
 			} else { // run the animation
-				
+
 				attr.scaleY = 1;
 				attr[inverted ? 'translateX' : 'translateY'] = yAxis.pos;
 				series.group.animate(attr, series.options.animation);
@@ -352,7 +352,7 @@ var ColumnSeries = extendClass(Series, {
 			}
 		}
 	},
-	
+
 	/**
 	 * Remove this series from the chart
 	 */

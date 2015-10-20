@@ -93,18 +93,18 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 			while (i-- && points[cursor]) {
 				point = points[cursor];
 				leftPoint = onData[i];
-				
+
 				if (leftPoint.x <= point.x && leftPoint.plotY !== UNDEFINED) {
 					if (point.x <= lastX) { // #803
-					
+
 						point.plotY = leftPoint.plotY;
-					
+
 						// interpolate between points, #666
-						if (leftPoint.x < point.x && !step) { 
+						if (leftPoint.x < point.x && !step) {
 							rightPoint = onData[i + 1];
 							if (rightPoint && rightPoint.plotY !== UNDEFINED) {
-								point.plotY += 
-									((point.x - leftPoint.x) / (rightPoint.x - leftPoint.x)) * // the distance ratio, between 0 and 1 
+								point.plotY +=
+									((point.x - leftPoint.x) / (rightPoint.x - leftPoint.x)) * // the distance ratio, between 0 and 1
 									(rightPoint.plotY - leftPoint.plotY); // the y distance
 							}
 						}
@@ -122,9 +122,9 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 		each(points, function (point, i) {
 
 			var stackIndex;
-			
+
 			// Undefined plotY means the point is either on axis, outside series range or hidden series.
-			// If the series is outside the range of the x axis it should fall through with 
+			// If the series is outside the range of the x axis it should fall through with
 			// an undefined plotY, but then we must remove the shapeArgs (#847).
 			if (point.plotY === UNDEFINED) {
 				if (point.x >= xAxisExt.min && point.x <= xAxisExt.max) { // we're inside xAxis range
@@ -141,7 +141,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 				}
 				stackIndex = lastPoint.stackIndex + 1;
 			}
-			point.stackIndex = stackIndex; // #3639		
+			point.stackIndex = stackIndex; // #3639
 		});
 
 
@@ -240,7 +240,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	drawTracker: function () {
 		var series = this,
 			points = series.points;
-		
+
 		TrackerMixin.drawTrackerPoint.apply(this);
 
 		// Bring each stacked flag up on mouse over, this allows readability of vertically

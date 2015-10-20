@@ -2,7 +2,7 @@
  * Handle the options                                                         *
  *****************************************************************************/
 defaultOptions = {
-	colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', 
+	colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c',
 		    '#8085e9', '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'],
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
@@ -189,7 +189,7 @@ defaultOptions = {
 				//valueDecimals: null,
 				//xDateFormat: '%A, %b %e, %Y',
 				//valuePrefix: '',
-				//ySuffix: ''				
+				//ySuffix: ''
 			//}
 			turboThreshold: 1000
 			// zIndex: null
@@ -228,7 +228,7 @@ defaultOptions = {
 		/*style: {
 			padding: '5px'
 		},*/
-		itemStyle: {			
+		itemStyle: {
 			color: '#333333',
 			fontSize: '12px',
 			fontWeight: 'bold'
@@ -258,7 +258,7 @@ defaultOptions = {
 			style: {
 				fontWeight: 'bold'
 			}
-		}			
+		}
 	},
 
 	loading: {
@@ -284,7 +284,7 @@ defaultOptions = {
 		backgroundColor: 'rgba(249, 249, 249, .85)',
 		borderWidth: 1,
 		borderRadius: 3,
-		dateTimeLabelFormats: { 
+		dateTimeLabelFormats: {
 			millisecond: '%A, %b %e, %H:%M:%S.%L',
 			second: '%A, %b %e, %H:%M:%S',
 			minute: '%A, %b %e, %H:%M',
@@ -388,10 +388,10 @@ function setTimeMethods() {
  * @param {Object} options The new custom options
  */
 function setOptions(options) {
-	
+
 	// Copy in the default options
 	defaultOptions = merge(true, defaultOptions, options);
-	
+
 	// Apply UTC
 	setTimeMethods();
 

@@ -69,7 +69,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 		};
 		if (!this.backFrame) {
 			this.backFrame = renderer.cuboid(backShape).attr({
-				fill: fback.color, 
+				fill: fback.color,
 				zIndex: -3
 			}).css({
 				stroke: fback.color
@@ -88,7 +88,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 		};
 		if (!this.sideFrame) {
 			this.sideFrame = renderer.cuboid(sideShape).attr({
-				fill: fside.color, 
+				fill: fside.color,
 				zIndex: -2
 			}).css({
 				stroke: fside.color
@@ -139,14 +139,14 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotBandPath', function (proceed)
 	// Do not do this if the chart is not 3D
 	if (!this.chart.is3d()) {
 		return proceed.apply(this, [].slice.call(arguments, 1));
-	} 
+	}
 
 	var args = arguments,
 		from = args[1],
 		to = args[2],
 		toPath = this.getPlotLinePath(to),
 		path = this.getPlotLinePath(from);
-		
+
 	if (path && toPath) {
 		path.push(
 			'L',
@@ -165,16 +165,16 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotBandPath', function (proceed)
 	} else { // outside the axis area
 		path = null;
 	}
-	
+
 	return path;
 });
 
-/*** 
+/***
 	EXTENSION TO THE TICKS
 ***/
 
 Highcharts.wrap(Highcharts.Tick.prototype, 'getMarkPath', function (proceed) {
-	var path = proceed.apply(this, [].slice.call(arguments, 1));	
+	var path = proceed.apply(this, [].slice.call(arguments, 1));
 
 	// Do not do this if the chart is not 3D
 	if (!this.axis.chart.is3d()) {
@@ -284,7 +284,7 @@ Highcharts.extend(ZAxis.prototype, {
 
 		// Reset properties in case we're redrawing (#3353)
 		axis.dataMin = axis.dataMax = axis.ignoreMinPadding = axis.ignoreMaxPadding = null;
-		
+
 		if (axis.buildStacks) {
 			axis.buildStacks();
 		}

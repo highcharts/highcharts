@@ -12,7 +12,7 @@ Highcharts.VMLRenderer.prototype.toLinePath = Highcharts.SVGRenderer.prototype.t
 
 Highcharts.VMLRenderer.prototype.createElement3D = Highcharts.SVGRenderer.prototype.createElement3D;
 
-Highcharts.VMLRenderer.prototype.arc3d = function (shapeArgs) { 
+Highcharts.VMLRenderer.prototype.arc3d = function (shapeArgs) {
 	var result = Highcharts.SVGRenderer.prototype.arc3d.call(this, shapeArgs);
 	result.css({zIndex: result.zIndex});
 	return result;
@@ -30,11 +30,11 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 	if (this.bottomFrame) {
 		this.bottomFrame.css({zIndex: 1});
 		this.bottomFrame.front.attr({fill: this.bottomFrame.color});
-	}	
+	}
 	if (this.backFrame) {
 		this.backFrame.css({zIndex: 0});
 		this.backFrame.front.attr({fill: this.backFrame.color});
-	}		
+	}
 });
 
 }

@@ -76,7 +76,7 @@ var PiePoint = extendClass(Point, {
 			series = point.series,
 			chart = series.chart,
 			ignoreHiddenPoint = series.options.ignoreHiddenPoint;
-		
+
 		redraw = pick(redraw, ignoreHiddenPoint);
 
 		if (vis !== point.visible) {
@@ -101,7 +101,7 @@ var PiePoint = extendClass(Point, {
 			if (!vis && point.state === 'hover') {
 				point.setState('');
 			}
-			
+
 			// Handle ignore hidden slices
 			if (ignoreHiddenPoint) {
 				series.isDirty = true;
@@ -139,7 +139,7 @@ var PiePoint = extendClass(Point, {
 		};
 
 		point.graphic.animate(translation);
-		
+
 		if (point.shadowGroup) {
 			point.shadowGroup.animate(translation);
 		}
@@ -244,13 +244,13 @@ var PieSeries = {
 		Series.prototype.generatePoints.call(this);
 		this.updateTotals();
 	},
-	
+
 	/**
 	 * Do translation for pie slices
 	 */
 	translate: function (positions) {
 		this.generatePoints();
-		
+
 		var series = this,
 			cumulative = 0,
 			precision = 1000, // issue #172
@@ -292,9 +292,9 @@ var PieSeries = {
 
 		// Calculate the geometry for each point
 		for (i = 0; i < len; i++) {
-			
+
 			point = points[i];
-			
+
 			// set start and end angle
 			start = startAngleRad + (cumulative * circ);
 			if (!ignoreHiddenPoint || point.visible) {
@@ -334,7 +334,7 @@ var PieSeries = {
 				positions[0] + radiusX * 0.7,
 				positions[1] + radiusY * 0.7
 			];
-			
+
 			point.half = angle < -mathPI / 2 || angle > mathPI / 2 ? 1 : 0;
 			point.angle = angle;
 
@@ -355,7 +355,7 @@ var PieSeries = {
 
 		}
 	},
-	
+
 	drawGraph: null,
 
 	/**
@@ -407,7 +407,7 @@ var PieSeries = {
 				if (graphic) {
 					graphic
 						.setRadialReference(series.center)
-						.animate(extend(shapeArgs, groupTranslation));				
+						.animate(extend(shapeArgs, groupTranslation));
 				} else {
 					attr = { 'stroke-linejoin': 'round' };
 					if (!point.visible) {
@@ -422,7 +422,7 @@ var PieSeries = {
 						.attr(attr)
 						.attr(groupTranslation)
 						.add(series.group)
-						.shadow(shadow, shadowGroup);	
+						.shadow(shadow, shadowGroup);
 				}
 			}
 		});
@@ -439,7 +439,7 @@ var PieSeries = {
 		points.sort(function (a, b) {
 			return a.angle !== undefined && (b.angle - a.angle) * sign;
 		});
-	},		
+	},
 
 	/**
 	 * Use a simple symbol from LegendSymbolMixin
