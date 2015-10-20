@@ -19893,10 +19893,10 @@ wrap(Series.prototype, 'getSegments', function (proceed) {
 
 	});
 
-	function drawPointsWrapped(proceed) {
+	var drawPointsWrapped = function (proceed) {
 		proceed.apply(this);
 		this.drawBreaks();
-	}
+	};	
 
 	H.Series.prototype.drawBreaks = function () {
 		var series = this,
