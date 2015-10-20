@@ -8,6 +8,7 @@ var //eslint = require('gulp-eslint'),
     //jshint = require('gulp-jshint'),
     //stylish = require('jshint-stylish'),
     jslint = require('gulp-jslint'),
+    xml2js = require('xml2js'),
     /*
     config = {
         // List of rules at http://eslint.org/docs/rules/
@@ -44,6 +45,57 @@ var //eslint = require('gulp-eslint'),
         "partsMore": ['./js/parts-more/*.js'],
         "themes": ['./js/themes/*.js']
     };
+
+/**
+ * Look up in build.xml and concatenate the parts files
+ */
+function assemble(assemblies) {
+
+    var xml = fs.readFileSync('./build.xml', 'utf8'),
+        ret = [];
+
+    xml2js.parseString(xml, function (err, result) {
+        xml = result;
+    });
+
+    assemblies.forEach(function (assembly) {
+        xml.project.target.forEach(function (target) {
+            if (target.$.name === 'set.properties') {
+                target.filelist.forEach(function (list) {
+                    var partsDir = '',
+                        tpl = '';
+                    if (list.$.id === assembly + '.files') {
+                        if (assembly == 'highchartsmore') {
+                            partsDir = 'parts-more/';
+
+                        } else if (assembly == 'highmaps') {
+                            partsDir = '';
+                        } else if (assembly == 'highstock') {
+                            partsDir = '';
+                        }
+
+                        if (assembly == 'highcharts3d') {
+                            partsDir = 'parts-3d/';
+                        }
+
+                        list.file.forEach(function (item) {
+                            tpl += fs.readFileSync('./js/' + partsDir + item.$.name, 'utf8');
+                        });
+
+                        tpl = tpl.replace(
+                            'http://code.highcharts.com@product.cdnpath@/@product.version@/modules/canvas-tools.js',
+                            "http://code.highcharts.com/modules/canvas-tools.js"
+                        );
+
+                        ret.push(tpl);
+                    }
+                });
+            };
+        });
+    });
+    
+    return ret;
+}
 
     /*
     optimizeHighcharts = function (fs, path) {
@@ -121,7 +173,7 @@ gulp.task('styles', function () {
         .pipe(gulp.dest(dir));
 });
 */
-gulp.task('lint', function () {
+gulp.task('lint', ['scripts'], function () {
     return gulp.src(paths.distributions.concat(paths.modules))
         .pipe(jslint({
             'continue': true,
@@ -194,6 +246,10 @@ gulp.task('ftp-watch', function () {
  * Proof of concept to parse super code. Move this logic into the standard build when ready.
  */
 gulp.task('scripts', function () {
+    var codes = [],
+        prods = [],
+        assemblies;
+
 
     /**
      * Micro-optimize code based on the build object.
@@ -247,9 +303,10 @@ gulp.task('scripts', function () {
 
 
     // Parse the build properties files into a structure
-    fs.readFile('./build.properties', 'utf8', function (err, lines) {
-        var products = {};
-
+    function getProducts() {
+        var lines = fs.readFileSync('./build.properties', 'utf8'),
+            products = {};
+            
         lines.split('\n').forEach(function (line) {
             var prod, key;
             if (line.indexOf('#') !== 0 && line.indexOf('=') !== -1) {
@@ -263,100 +320,104 @@ gulp.task('scripts', function () {
                 products[prod][key] = line[1];
             }
         });
+        return products;
+    }
 
-        // Avoid gulping files in old branch after checkout
-        /*
-        if (products.highcharts.version.indexOf('4') === 0) {
-            return;
-        }
-        */
+    var products = getProducts();
 
-        // Loop over the source files
-        paths.assemblies.forEach(function (path) {
+    // Avoid gulping files in old branch after checkout
+    /*
+    if (products.highcharts.version.indexOf('4') === 0) {
+        return;
+    }
+    */
+    paths.assemblies.forEach(function (path) {
 
-            var prod,
-                inpath = path
-                .replace('./js/', '')
-                .replace('.src.js', '')
-                .replace('-', '');
+        var prod,
+            inpath = path
+            .replace('./js/', '')
+            .replace('.src.js', '')
+            .replace('-', '');
 
-            // highcharts, highmaps or highstock
-            if (inpath === 'highmaps' || inpath === 'highstock') {
-                prod = inpath;
-            } else {
-                prod = 'highcharts';
-            }
-
-            if (inpath === 'modules/heatmap') {
-                inpath = 'heatmap';
-            } else if (inpath === 'modules/map') {
-                inpath = 'maps';
-                prod = 'highmaps';
-            }
-
-            // Load through the local debug.php (todo on HC5: require)
-            inpath = 'http://code.highcharts.local/debug.php?target=' + inpath;
-
-            // Load the file
-            request(inpath, function (err, res, tpl) {
-
-                if (err) {
-                    throw err;
-                }
-
-                // Unspecified date, use current
-                if (!products[prod].date) {
-                    products[prod].date = (new Date()).toISOString().substr(0, 10);
-                }
-                tpl = addVersion(tpl, products[prod]);
-
-                fs.readFile(path, 'utf8', function (err, file) {
-
-                    // To avoid noisy commits, change dates if there are actual changes in the contents of the file
-                    if (file.replace(/\([0-9]{4}-[0-9]{2}-[0-9]{2}\)/g, '()') !== tpl.replace(/\([0-9]{4}-[0-9]{2}-[0-9]{2}\)/g, '()')) {
-
-                        // Create the classic file
-                        fs.writeFile(
-                            path,
-                            preprocess(tpl, {
-                                classic: true
-                            }), 
-                            'utf8'
-                        );
-
-                        // Create the unstyled file
-                        /*
-                        fs.writeFile(
-                            path.replace('.src.js', '.unstyled.src.js'), 
-                            preprocess(tpl, {
-                                classic: false
-                            }), 
-                            'utf8'
-                        );
-                        */
-                    }
-                });
-            });
-        });
-
-        // Special case
-        var files = ['./lib/canvg-1.1/rgbcolor.js', './lib/canvg-1.1/canvg.js', './js/modules/canvgrenderer-extended.src.js'],
-            js = '';
-
-        function addFile(i, callback) {
-            fs.readFile(files[i], 'utf8', function (err, file) {
-                js += file;
-                if (i + 1 < files.length) {
-                    addFile(i + 1, callback);
-                } else if (callback) {
-                    callback();
-                }
-            });
+        // highcharts, highmaps or highstock
+        if (inpath === 'highmaps' || inpath === 'highstock') {
+            prod = inpath;
+        } else {
+            prod = 'highcharts';
         }
 
-        addFile(0, function () {
-            js = addVersion(js, products.highcharts);
-            fs.writeFile('./build/canvas-tools.src.js', js, 'utf8');
-        });
+        if (inpath === 'modules/heatmap') {
+            inpath = 'heatmap';
+        } else if (inpath === 'modules/map') {
+            inpath = 'maps';
+            prod = 'highmaps';
+        }
+
+        // Load through the local debug.php (todo on HC5: require)
+        codes.push(inpath);
+        prods.push(prod);
+    });
+
+
+    assemblies = assemble(codes);
+
+    
+    // Loop over the source files
+    assemblies.forEach(function (tpl, i) {
+        var prod = prods[i],
+            path = paths.assemblies[i],
+            file;
+        
+        // Unspecified date, use current
+        if (!products[prod].date) {
+            products[prod].date = (new Date()).toISOString().substr(0, 10);
+        }
+        tpl = addVersion(tpl, products[prod]);
+
+        file = fs.readFileSync(path, 'utf8');
+
+        // To avoid noisy commits, change dates if there are actual changes in the contents of the file
+        if (file.replace(/\([0-9]{4}-[0-9]{2}-[0-9]{2}\)/g, '()') !== tpl.replace(/\([0-9]{4}-[0-9]{2}-[0-9]{2}\)/g, '()')) {
+
+            // Create the classic file
+            fs.writeFileSync(
+                path,
+                preprocess(tpl, {
+                    classic: true
+                }), 
+                'utf8'
+            );
+
+            // Create the unstyled file
+            /*
+            fs.writeFileSync(
+                path.replace('.src.js', '.unstyled.src.js'), 
+                preprocess(tpl, {
+                    classic: false
+                }), 
+                'utf8'
+            );
+            */
+        }
+    });
+
+    // Special case
+    var files = ['./lib/canvg-1.1/rgbcolor.js', './lib/canvg-1.1/canvg.js', './js/modules/canvgrenderer-extended.src.js'],
+        js = '';
+
+    function addFile(i, callback) {
+        var file = fs.readFileSync(files[i], 'utf8');
+
+        js += file;
+        if (i + 1 < files.length) {
+            addFile(i + 1, callback);
+        } else if (callback) {
+            callback();
+        }
+    }
+
+    addFile(0, function () {
+        js = addVersion(js, products.highcharts);
+        fs.writeFileSync('./build/canvas-tools.src.js', js, 'utf8');
     });
 });
