@@ -310,25 +310,32 @@ gulp.task('scripts', function () {
                 }
                 tpl = addVersion(tpl, products[prod]);
 
-                // Create the classic file
-                fs.writeFile(
-                    path,
-                    preprocess(tpl, {
-                        classic: true
-                    }), 
-                    'utf8'
-                );
+                fs.readFile(path, 'utf8', function (err, file) {
 
-                // Create the unstyled file
-                /*
-                fs.writeFile(
-                    path.replace('.src.js', '.unstyled.src.js'), 
-                    preprocess(tpl, {
-                        classic: false
-                    }), 
-                    'utf8'
-                );
-*/
+                    // To avoid noisy commits, change dates if there are actual changes in the contents of the file
+                    if (file.replace(/\([0-9]{4}-[0-9]{2}-[0-9]{2}\)/g, '()') !== tpl.replace(/\([0-9]{4}-[0-9]{2}-[0-9]{2}\)/g, '()')) {
+
+                        // Create the classic file
+                        fs.writeFile(
+                            path,
+                            preprocess(tpl, {
+                                classic: true
+                            }), 
+                            'utf8'
+                        );
+
+                        // Create the unstyled file
+                        /*
+                        fs.writeFile(
+                            path.replace('.src.js', '.unstyled.src.js'), 
+                            preprocess(tpl, {
+                                classic: false
+                            }), 
+                            'utf8'
+                        );
+                        */
+                    }
+                });
             });
         });
 
