@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-10-16)
+ * @license Highcharts JS v4.1.9-modified (2015-10-20)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -1269,7 +1269,7 @@ defaultOptions = {
 	global: {
 		useUTC: true,
 		//timezoneOffset: 0,
-		canvasToolsURL: 'http://code.highcharts.com/4.1.9-modified/modules/canvas-tools.js',
+		canvasToolsURL: 'http://code.highcharts.com/modules/canvas-tools.js',
 		VMLRadialGradientURL: 'http://code.highcharts.com/4.1.9-modified/gfx/vml-radial-gradient.png'
 	},
 	chart: {
