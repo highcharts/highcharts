@@ -2,7 +2,7 @@
  * @product.name@ JS v@product.version@ (@product.date@)
  * Highcharts Broken Axis module
  * 
- * Author: Stephane Vanraes, Torstein Honsi
+ * Author: Torstein Honsi
  * License: www.highcharts.com/license
  */
 
