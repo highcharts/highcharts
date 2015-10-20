@@ -79,7 +79,15 @@ function assemble(assemblies) {
                         }
 
                         list.file.forEach(function (item) {
-                            tpl += fs.readFileSync('./js/' + partsDir + item.$.name, 'utf8');
+                            var file = fs.readFileSync('./js/' + partsDir + item.$.name, 'utf8');
+
+                            file = file.replace(/\t/g, '    ');
+
+                            // Indent all files so we can use jsLints whitespace
+                            if (item.$.name.indexOf('Intro') === -1 && item.$.name.indexOf('Outro') === -1) {
+                                file = file.replace(/\n/g, '\n    ').replace(/    \n/g, '\n');
+                            }
+                            tpl += file;
                         });
 
                         tpl = tpl.replace(
