@@ -50,8 +50,25 @@ Pointer.prototype = {
 		}
 
 		this.setDOMEvents();
-	}, 
 
+		this._initialTouch = this._lastTouch = null;
+		this.PRESSMOVETHRESHOLD = 5;
+	}, 
+	_getTouchProps: function(touch) {
+		if (!touch) return {};
+		return {
+			pageX: touch.pageX,
+			pageY: touch.pageY,
+			clientX: touch.clientX,
+			clientY: touch.clientY
+		};
+	},
+	_calculateMovement: function(touch) {
+		return {
+			x: Math.abs(touch.clientX - this._initialTouch.clientX),
+			y: Math.abs(touch.clientY - this._initialTouch.clientY)
+		};
+	},
 	/**
 	 * Add crossbrowser support for chartX and chartY
 	 * @param {Object} e The event object in standard browsers
@@ -449,6 +466,8 @@ Pointer.prototype = {
 		var pointer = this,
 			chart = this.chart,
 			hasPinched = this.hasPinched;
+
+		this._initialTouch = this._lastTouch = null;
 
 		if (this.selectionMarker) {
 			var selectionData = {
