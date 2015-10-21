@@ -7,7 +7,7 @@ var deg2rad = H.deg2rad,
 	pick = H.pick;
 /**
  * Transforms a given array of points according to the angles in chart.options.
- * Parameters: 
+ * Parameters:
  *		- points: the array of points
  *		- chart: the chart
  *		- insidePlotArea: wether to verifiy the points are inside the plotArea

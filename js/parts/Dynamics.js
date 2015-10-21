@@ -64,12 +64,10 @@ extend(Chart.prototype, {
 			chartOptions = this.options,
 			axis;
 
-		/*jslint unused: false*/
 		axis = new Axis(this, merge(options, {
 			index: this[key].length,
 			isX: isX
 		}));
-		/*jslint unused: true*/
 
 		// Push the new axis options to the chart options
 		chartOptions[key] = splat(chartOptions[key] || {});
@@ -136,7 +134,7 @@ extend(Chart.prototype, {
 		if (!chart.loadingShown) {
 			css(loadingDiv, {
 				opacity: 0,
-				display: ''				
+				display: ''
 			});
 			animate(loadingDiv, {
 				opacity: style.opacity || 0.5
@@ -344,7 +342,6 @@ extend(Series.prototype, {
 		}
 
 		// Shift the first point off the parallel arrays
-		// todo: consider series.removePoint(i) method
 		if (shift) {
 			if (data[0] && data[0].remove) {
 				data[0].remove(false);
@@ -479,7 +476,7 @@ extend(Series.prototype, {
 			pointStart: this.xData[0] // when updating after addPoint
 		}, { data: this.options.data }, newOptions);
 
-		// Destroy the series and delete all properties. Reinsert all methods 
+		// Destroy the series and delete all properties. Reinsert all methods
 		// and properties from the new type prototype (#2270, #3719)
 		this.remove(false);
 		for (n in proto) {

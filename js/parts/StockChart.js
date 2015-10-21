@@ -1,5 +1,7 @@
 (function (H) {
-	var Axis = H.Axis,
+	var arrayMax = H.arrayMax,
+		arrayMin = H.arrayMin,
+		Axis = H.Axis,
 		Chart = H.Chart,
 		defined = H.defined,
 		each = H.each,
@@ -62,7 +64,7 @@ H.StockChart = function (options, callback) {
 					overflow: 'justify'
 				},
 				showLastLabel: true
-			}, xAxisOptions, // user options 
+			}, xAxisOptions, // user options
 			{ // forced options
 				type: 'datetime',
 				categories: null
@@ -150,7 +152,7 @@ H.StockChart = function (options, callback) {
 wrap(Pointer.prototype, 'init', function (proceed, chart, options) {
 
 	var pinchType = options.chart.pinchType || '';
-		
+
 	proceed.call(this, chart, options);
 
 	// Pinch status
@@ -198,7 +200,8 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 		result = [],
 		axes = [], //#3416 need a default array
 		axes2,
-		uniqueAxes;
+		uniqueAxes,
+		transVal;
 
 	// Ignore in case of color Axis. #3360, #3524
 	if (axis.coll === 'colorAxis') {
@@ -206,13 +209,13 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 	}
 
 	// Get the related axes based on series
-	axes = (axis.isXAxis ? 
+	axes = (axis.isXAxis ?
 		(defined(axis.options.yAxis) ?
-			[chart.yAxis[axis.options.yAxis]] : 
+			[chart.yAxis[axis.options.yAxis]] :
 			map(series, function (S) { return S.yAxis; })
 		) :
 		(defined(axis.options.xAxis) ?
-			[chart.xAxis[axis.options.xAxis]] : 
+			[chart.xAxis[axis.options.xAxis]] :
 			map(series, function (S) { return S.xAxis; })
 		)
 	);
@@ -222,7 +225,7 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 	each(axes2, function (A) {
 		if (defined(A.options.id) ? A.options.id.indexOf('navigator') === -1 : true) {
 			var a = (A.isXAxis ? 'yAxis' : 'xAxis'),
-				rax = (defined(A.options[a]) ? chart[a][A.options[a]] : chart[a][0]);	
+				rax = (defined(A.options[a]) ? chart[a][A.options[a]] : chart[a][0]);
 
 			if (axis === rax) {
 				axes.push(A);
@@ -240,17 +243,17 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 			uniqueAxes.push(axis2);
 		}
 	});
-	
-	translatedValue = pick(translatedValue, axis.translate(value, null, null, old));
-	
-	if (!isNaN(translatedValue)) {
+
+	transVal = pick(translatedValue, axis.translate(value, null, null, old));
+
+	if (!isNaN(transVal)) {
 		if (axis.horiz) {
 			each(uniqueAxes, function (axis2) {
 				var skip;
 
 				y1 = axis2.pos;
 				y2 = y1 + axis2.len;
-				x1 = x2 = Math.round(translatedValue + axis.transB);
+				x1 = x2 = Math.round(transVal + axis.transB);
 
 				if (x1 < axisLeft || x1 > axisLeft + axis.width) { // outside plot area
 					if (force) {
@@ -284,15 +287,13 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 			});
 		}
 	}
-	if (result.length > 0) {
-		return renderer.crispPolyLine(result, lineWidth || 1); 
-	} else {
-		return null; //#3557 getPlotLinePath in regular Highcharts also returns null
-	}
+	return result.length > 0 ?
+		renderer.crispPolyLine(result, lineWidth || 1) :
+		null; //#3557 getPlotLinePath in regular Highcharts also returns null
 });
 
 // Override getPlotBandPath to allow for multipane charts
-Axis.prototype.getPlotBandPath = function (from, to) {		
+Axis.prototype.getPlotBandPath = function (from, to) {
 	var toPath = this.getPlotLinePath(to, null, null, true),
 		path = this.getPlotLinePath(from, null, null, true),
 		result = [],
@@ -354,8 +355,8 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	proceed.call(this, e, point);
 
 	// Check if the label has to be drawn
-	if (!defined(this.crosshair.label) || !this.crosshair.label.enabled || !defined(point)) { 
-		return; 
+	if (!defined(this.crosshair.label) || !this.crosshair.label.enabled || !defined(point)) {
+		return;
 	}
 
 	var chart = this.chart,
@@ -375,7 +376,7 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 
 	// If the label does not exist yet, create it.
 	if (!crossLabel) {
-		crossLabel = this.crossLabel = chart.renderer.label()			
+		crossLabel = this.crossLabel = chart.renderer.label()
 		.attr({
 			align: options.align || (horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'left') : (this.labelAlign === 'left' ? 'left' : 'center')),
 			zIndex: 12,
@@ -385,7 +386,7 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 			stroke: options.borderColor || null,
 			'stroke-width': options.borderWidth || 0
 		})
-		.css(extend({				
+		.css(extend({
 			color: 'white',
 			fontWeight: 'normal',
 			fontSize: '11px',
@@ -408,7 +409,6 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		return;
 	}
 
-	// TODO: Dynamic date formats like in Series.tooltipHeaderFormat. 
 	if (!formatOption && !options.formatter) {
 		if (this.isDatetimeAxis) {
 			formatFormat = '%b %d, %Y';
@@ -430,7 +430,7 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		if (((this.options.tickPosition === 'inside') && !opposite) ||
 			((this.options.tickPosition !== 'inside') && opposite)) {
 			posy = crossLabel.y - crossBox.height;
-		}	
+		}
 	} else {
 		posy = crossLabel.y - (crossBox.height / 2);
 	}
@@ -471,10 +471,10 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
  * and dataMax, and from the series.translate method.
  */
 seriesProto.init = function () {
-	
+
 	// Call base method
 	seriesInit.apply(this, arguments);
-	
+
 	// Set comparison mode
 	this.setCompare(this.options.compare);
 };
@@ -491,17 +491,17 @@ seriesProto.setCompare = function (compare) {
 		if (value !== undefined) { // #2601
 
 			// get the modified value
-			value = compare === 'value' ? 
+			value = compare === 'value' ?
 				value - compareValue : // compare value
 				value = 100 * (value / compareValue) - 100; // compare percent
-				
+
 			// record for tooltip etc.
 			if (point) {
 				point.change = value;
 			}
-			
+
 		}
-		
+
 		return value;
 	} : null;
 
@@ -514,27 +514,27 @@ seriesProto.setCompare = function (compare) {
 
 /**
  * Extend series.processData by finding the first y value in the plot area,
- * used for comparing the following values 
+ * used for comparing the following values
  */
 seriesProto.processData = function () {
 	var series = this,
-		i = 0,
+		i,
 		processedXData,
 		processedYData,
 		length;
-	
+
 	// call base method
 	seriesProcessData.apply(this, arguments);
 
 	if (series.xAxis && series.processedYData) { // not pies
-		
+
 		// local variables
 		processedXData = series.processedXData;
 		processedYData = series.processedYData;
 		length = processedYData.length;
-		
+
 		// find the first value for comparison
-		for (; i < length; i++) {
+		for (i = 0; i < length; i++) {
 			if (typeof processedYData[i] === 'number' && processedXData[i] >= series.xAxis.min) {
 				series.compareValue = processedYData[i];
 				break;
@@ -547,12 +547,15 @@ seriesProto.processData = function () {
  * Modify series extremes
  */
 wrap(seriesProto, 'getExtremes', function (proceed) {
+	var extremes;
+
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (this.modifyValue) {
-		this.dataMax = this.modifyValue(this.dataMax);
-		this.dataMin = this.modifyValue(this.dataMin);
-	}		
+		extremes = [this.modifyValue(this.dataMin), this.modifyValue(this.dataMax)];
+		this.dataMin = arrayMin(extremes);
+		this.dataMax = arrayMax(extremes);
+	}
 });
 
 /**
@@ -575,7 +578,7 @@ Axis.prototype.setCompare = function (compare, redraw) {
  */
 Point.prototype.tooltipFormatter = function (pointFormat) {
 	var point = this;
-	
+
 	pointFormat = pointFormat.replace(
 		'{point.change}',
 		(point.change > 0 ? '+' : '') + H.numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2))

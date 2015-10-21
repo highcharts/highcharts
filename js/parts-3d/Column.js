@@ -14,9 +14,9 @@ wrap(seriesTypes.column.prototype, 'translate', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	// Do not do this if the chart is not 3D
-	if (!this.chart.is3d()) {  
+	if (!this.chart.is3d()) {
 		return;
-	}	
+	}
 
 	var series = this,
 		chart = series.chart,
@@ -64,7 +64,7 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
 				each(series.data, function (point) {
 					if (point.y !== null) {
 						point.height = point.shapeArgs.height;
-						point.shapey = point.shapeArgs.y;	//#2968				
+						point.shapey = point.shapeArgs.y;	//#2968
 						point.shapeArgs.height = 1;
 						if (!reversed) {
 							if (point.stackY) {
@@ -83,7 +83,7 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
 						point.shapeArgs.y = point.shapey;	//#2968
 						// null value do not have a graphic
 						if (point.graphic) {
-							point.graphic.animate(point.shapeArgs, series.options.animation);					
+							point.graphic.animate(point.shapeArgs, series.options.animation);
 						}
 					}
 				});
@@ -102,11 +102,11 @@ wrap(seriesTypes.column.prototype, 'init', function (proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (this.chart.is3d()) {
-		var seriesOptions = this.options,	
+		var seriesOptions = this.options,
 			grouping = seriesOptions.grouping,
 			stacking = seriesOptions.stacking,
-			z = 0;	
-		
+			z = 0;
+
 		if (!(grouping !== undefined && !grouping)) {
 			var stacks = this.chart.retrieveStacks(stacking),
 				stack = seriesOptions.stack || 0,
@@ -118,7 +118,7 @@ wrap(seriesTypes.column.prototype, 'init', function (proceed) {
 			}
 			z = (stacks.totalStacks * 10) - (10 * (stacks.totalStacks - stacks[stack].position)) - i;
 		}
-				
+
 		seriesOptions.zIndex = z;
 	}
 });
@@ -162,7 +162,7 @@ wrap(Series.prototype, 'alignDataLabel', function (proceed) {
 
 		var args = arguments,
 			alignTo = args[4];
-		
+
 		var pos = ({x: alignTo.x, y: alignTo.y, z: series.z});
 		pos = perspective([pos], chart, true)[0];
 		alignTo.x = pos.x;
@@ -178,7 +178,7 @@ if (seriesTypes.columnrange) {
 
 wrap(seriesTypes.column.prototype, 'drawPoints', draw3DPoints);
 
-/*** 
+/***
 	EXTENSION FOR 3D CYLINDRICAL COLUMNS
 	Not supported
 ***/
@@ -196,7 +196,7 @@ wrap(seriesTypes.cylinder.prototype, 'translate', function (proceed) {
 	// Do not do this if the chart is not 3D
 	if (!this.chart.is3d()) {
 		return;
-	}	
+	}
 
 	var series = this,
 		chart = series.chart,
@@ -206,7 +206,7 @@ wrap(seriesTypes.cylinder.prototype, 'translate', function (proceed) {
 		depth = cylOptions.depth || 0,
 		origin = {
 			x: chart.inverted ? chart.plotHeight / 2 : chart.plotWidth / 2,
-			y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2, 
+			y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2,
 			z: options3d.depth,
 			vd: options3d.viewDistance
 		},
@@ -230,7 +230,7 @@ wrap(seriesTypes.cylinder.prototype, 'translate', function (proceed) {
 		shapeArgs.depth = shapeArgs.height * (1 / sin((90 - alpha) * deg2rad)) - z;
 		shapeArgs.alpha = 90 - alpha;
 		shapeArgs.beta = 0;
-		shapeArgs.origin = origin;	
+		shapeArgs.origin = origin;
 	});
 });
 */

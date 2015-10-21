@@ -16,8 +16,8 @@ wrap(seriesTypes.pie.prototype, 'translate', function (proceed) {
 	// Do not do this if the chart is not 3D
 	if (!this.chart.is3d()) {
 		return;
-	}	
-	
+	}
+
 	var series = this,
 		chart = series.chart,
 		options = chart.options,
@@ -49,7 +49,7 @@ wrap(seriesTypes.pie.prototype, 'translate', function (proceed) {
 		shapeArgs.alpha = alpha;
 		shapeArgs.beta = beta;
 		shapeArgs.center = series.center;
-		
+
 		angle = (shapeArgs.end + shapeArgs.start) / 2;
 
 		point.slicedTranslation = {
@@ -94,7 +94,7 @@ wrap(seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
 
 			// Hide null or 0 points (#3006, 3650)
 			graphic[point.y ? 'show' : 'hide']();
-		});		
+		});
 	}
 });
 
@@ -114,7 +114,7 @@ wrap(seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
 			labelPos[5] += (-r * (1 - Math.cos(a1)) * Math.sin(a2)) + (Math.sin(a2) > 0 ? Math.sin(a1) * d : 0);
 
 		});
-	} 
+	}
 
 	proceed.apply(this, [].slice.call(arguments, 1));
 });
@@ -146,7 +146,7 @@ wrap(seriesTypes.pie.prototype, 'animate', function (proceed) {
 				}
 				// Initialize the animation
 				if (init) {
-				
+
 					// Scale down the group and place it in the center
 					group.oldtranslateX = group.translateX;
 					group.oldtranslateY = group.translateY;
@@ -156,13 +156,13 @@ wrap(seriesTypes.pie.prototype, 'animate', function (proceed) {
 						scaleX: 0.001, // #1499
 						scaleY: 0.001
 					};
-					
+
 					group.attr(attribs);
 					if (markerGroup) {
 						markerGroup.attrSetters = group.attrSetters;
 						markerGroup.attr(attribs);
 					}
-				
+
 				// Run the animation
 				} else {
 					attribs = {
@@ -176,11 +176,11 @@ wrap(seriesTypes.pie.prototype, 'animate', function (proceed) {
 					if (markerGroup) {
 						markerGroup.animate(attribs, animation);
 					}
-				
+
 					// Delete this function to allow it only once
 					this.animate = null;
 				}
-				
+
 		}
 	}
 });

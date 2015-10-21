@@ -16,10 +16,10 @@
 		 * Initialize the adapter by applying some extensions to jQuery
 		 */
 		init: function (pathAnim) {
-			
+
 			// extend the animate function to allow SVG animations
 			var Fx = $.fx;
-			
+
 			/*jslint unparam: true*//* allow unused param x in this function */
 			$.extend($.easing, {
 				easeOutQuad: function (x, t, b, c, d) {
@@ -27,46 +27,46 @@
 				}
 			});
 			/*jslint unparam: false*/
-		
+
 			// extend some methods to check for elem.attr, which means it is a Highcharts SVG object
 			$.each(['cur', '_default', 'width', 'height', 'opacity'], function (i, fn) {
 				var obj = Fx.step,
 					base;
-					
+
 				// Handle different parent objects
 				if (fn === 'cur') {
 					obj = Fx.prototype; // 'cur', the getter, relates to Fx.prototype
-				
+
 				} else if (fn === '_default' && $.Tween) { // jQuery 1.8 model
 					obj = $.Tween.propHooks[fn];
 					fn = 'set';
 				}
-		
+
 				// Overwrite the method
 				base = obj[fn];
 				if (base) { // step.width and step.height don't exist in jQuery < 1.7
-		
-					// create the extended function replacement
-					obj[fn] = function (fx) {
 
-						var elem;
-						
+					// create the extended function replacement
+					obj[fn] = function (effects) {
+
+						var elem, fx;
+
 						// Fx.prototype.cur does not use fx argument
-						fx = i ? fx : this;
+						fx = i ? effects : this;
 
 						// Don't run animations on textual properties like align (#1821)
 						if (fx.prop === 'align') {
 							return;
 						}
-		
+
 						// shortcut
 						elem = fx.elem;
-		
+
 						// Fx.prototype.cur returns the current value. The other ones are setters
 						// and returning a value has no effect.
 						return elem.attr ? // is SVG element wrapper
-							elem.attr(fx.prop, fn === 'cur' ? undefined : fx.now) : // apply the SVG wrapper's method
-							base.apply(this, arguments); // use jQuery's built-in method
+								elem.attr(fx.prop, fn === 'cur' ? undefined : fx.now) : // apply the SVG wrapper's method
+								base.apply(this, arguments); // use jQuery's built-in method
 					};
 				}
 			});
@@ -75,12 +75,12 @@
 			wrap($.cssHooks.opacity, 'get', function (proceed, elem, computed) {
 				return elem.attr ? (elem.opacity || 0) : proceed.call(this, elem, computed);
 			});
-			
+
 			// Define the setter function for d (path definitions)
 			this.addAnimSetter('d', function (fx) {
 				var elem = fx.elem,
 					ends;
-		
+
 				// Normally start and end should be set in state == 0, but sometimes,
 				// for reasons unknown, this doesn't happen. Perhaps state == 0 is skipped
 				// in these cases
@@ -90,31 +90,31 @@
 					fx.end = ends[1];
 					fx.started = true;
 				}
-		
+
 				// Interpolate each value of the path
 				elem.attr('d', pathAnim.step(fx.start, fx.end, fx.pos, elem.toD));
 			});
-			
+
 			/**
 			 * Utility for iterating over an array. Parameters are reversed compared to jQuery.
 			 * @param {Array} arr
 			 * @param {Function} fn
 			 */
 			this.each = Array.prototype.forEach ?
-				function (arr, fn, ctx) { // modern browsers
-					return Array.prototype.forEach.call(arr, fn, ctx);
+					function (arr, fn, ctx) { // modern browsers
+						return Array.prototype.forEach.call(arr, fn, ctx);
 					
-				} : 
-				function (arr, fn, ctx) { // legacy
-					var i, 
-						len = arr.length;
-					for (i = 0; i < len; i++) {
-						if (fn.call(ctx || arr[i], arr[i], i, arr) === false) {
-							return i;
+					} : 
+					function (arr, fn, ctx) { // legacy
+						var i, 
+							len = arr.length;
+						for (i = 0; i < len; i++) {
+							if (fn.call(ctx || arr[i], arr[i], i, arr) === false) {
+								return i;
+							}
 						}
-					}
-				};
-			
+					};
+
 			/**
 			 * Register Highcharts as a plugin in the respective framework
 			 */
@@ -129,18 +129,16 @@
 
 					if (isString(args[0])) {
 						constr = args[0];
-						args = Array.prototype.slice.call(args, 1); 
+						args = Array.prototype.slice.call(args, 1);
 					}
 					options = args[0];
 
 					// Create the chart
 					if (options !== undefined) {
-						/*jslint unused:false*/
 						options.chart = options.chart || {};
 						options.chart.renderTo = this[0];
 						chart = new H[constr](options, args[1]);
 						ret = this;
-						/*jslint unused:true*/
 					}
 
 					// When called without parameters or with the return argument, get a predefined chart
@@ -148,7 +146,7 @@
 						ret = charts[attr(this[0], 'data-highcharts-chart')];
 					}
 				}
-				
+
 				return ret;
 			};
 
@@ -168,19 +166,19 @@
 				$.fx.step[prop] = setter;
 			}
 		},
-		
+
 		/**
 		 * Downloads a script and executes a callback when done.
 		 * @param {String} scriptLocation
 		 * @param {Function} callback
 		 */
 		getScript: $.getScript,
-		
+
 		/**
 		 * Return the index of an item in an array, or -1 if not found
 		 */
 		inArray: $.inArray,
-		
+
 		/**
 		 * A direct link to jQuery methods. MooTools and Prototype adapters must be implemented for each case of method.
 		 * @param {Object} elem The HTML element
@@ -189,12 +187,12 @@
 		adapterRun: function (elem, method) {
 			return $(elem)[method]();
 		},
-	
+
 		/**
 		 * Filter an array
 		 */
 		grep: $.grep,
-	
+
 		/**
 		 * Map an array
 		 * @param {Array} arr
@@ -203,22 +201,22 @@
 		map: function (arr, fn) {
 			//return jQuery.map(arr, fn);
 			var results = [],
-				i = 0,
+				i,
 				len = arr.length;
-			for (; i < len; i++) {
+			for (i = 0; i < len; i++) {
 				results[i] = fn.call(arr[i], arr[i], i, arr);
 			}
 			return results;
-	
+
 		},
-	
+
 		/**
 		 * Get the position of an element relative to the top left of the page
 		 */
 		offset: function (el) {
 			return $(el).offset();
 		},
-	
+
 		/**
 		 * Add an event listener
 		 * @param {Object} el A HTML element or custom object
@@ -228,7 +226,7 @@
 		addEvent: function (el, event, fn) {
 			$(el).bind(event, fn);
 		},
-	
+
 		/**
 		 * Remove event added with addEvent
 		 * @param {Object} el The object
@@ -242,10 +240,10 @@
 			if (document[func] && el && !el[func]) {
 				el[func] = function () {};
 			}
-	
+
 			$(el).unbind(eventType, handler);
 		},
-	
+
 		/**
 		 * Fire an event on a custom object
 		 * @param {Object} el
@@ -257,7 +255,7 @@
 			var event = $.Event(type),
 				detachedType = 'detached' + type,
 				defaultPrevented;
-	
+
 			// Remove warnings in Chrome when accessing returnValue (#2790), layerX and layerY. Although Highcharts
 			// never uses these properties, Chrome includes them in the default click event and
 			// raises the warning when they are copied over in the extend statement below.
@@ -269,9 +267,9 @@
 				delete eventArguments.layerY;
 				delete eventArguments.returnValue;
 			}
-	
+
 			extend(event, eventArguments);
-	
+
 			// Prevent jQuery from triggering the object method that is named the
 			// same as the event. For example, if the event is 'select', jQuery
 			// attempts calling el.select and it goes into a loop.
@@ -279,7 +277,7 @@
 				el[detachedType] = el[type];
 				el[type] = null;
 			}
-	
+
 			// Wrap preventDefault and stopPropagation in try/catch blocks in
 			// order to prevent JS errors when cancelling events on non-DOM
 			// objects. #615.
@@ -297,36 +295,36 @@
 				};
 			});
 			/*jslint unparam: false*/
-	
+
 			// trigger it
 			$(el).trigger(event);
-	
+
 			// attach the method
 			if (el[detachedType]) {
 				el[type] = el[detachedType];
 				el[detachedType] = null;
 			}
-	
+
 			if (defaultFunction && !event.isDefaultPrevented() && !defaultPrevented) {
 				defaultFunction(event);
 			}
 		},
-		
+
 		/**
 		 * Extension method needed for MooTools
 		 */
 		washMouseEvent: function (e) {
 			var ret = e.originalEvent || e;
-			
+
 			// computed by jQuery, needed by IE8
 			if (ret.pageX === undefined) { // #1236
 				ret.pageX = e.pageX;
 				ret.pageY = e.pageY;
 			}
-			
+
 			return ret;
 		},
-	
+
 		/**
 		 * Animate a HTML element or SVG element wrapper
 		 * @param {Object} el
@@ -342,14 +340,14 @@
 				el.toD = params.d; // keep the array form for paths, used in $.fx.step.d
 				params.d = 1; // because in jQuery, animating to an array has a different meaning
 			}
-	
+
 			$el.stop();
 			if (params.opacity !== undefined && el.attr) {
 				params.opacity += 'px'; // force jQuery to use same logic as width and height (#2161)
 			}
 			el.hasAnim = 1; // #3342
 			$el.animate(params, options);
-	
+
 		},
 		/**
 		 * Stop running animation
@@ -361,5 +359,6 @@
 		}
 	});
 	
-	return (window.HighchartsAdapter = HighchartsAdapter);
+	window.HighchartsAdapter = HighchartsAdapter;
+	return HighchartsAdapter;
 }(Highcharts, window.jQuery));

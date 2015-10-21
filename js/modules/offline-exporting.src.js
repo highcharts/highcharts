@@ -8,7 +8,7 @@
  */
 
 // JSLint options:
-/*global Highcharts, document, window, Blob, MSBlobBuilder */
+/*global Highcharts, HighchartsAdapter, document, navigator, Image, window, Blob, MSBlobBuilder */
 
 (function (Highcharts) {
 
@@ -107,7 +107,7 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
 			}
 
 			// Try HTML5 download attr if supported
-			if (typeof a.download !== 'undefined') {
+			if (a.download !== undefined) {
 				a.href = dataURL;
 				a.download = filename; // HTML5 download attribute
 				a.target = '_blank';
@@ -118,7 +118,7 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
 				// No download attr, just opening data URI
 				try {
 					windowRef = window.open(dataURL, 'chart');
-					if (typeof windowRef === 'undefined' || windowRef === null) {
+					if (windowRef === undefined || windowRef === null) {
 						throw 1;
 					}
 				} catch (e) {
@@ -203,6 +203,18 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
 					}
 				});
 			}
+		},
+		// Success handler, we converted image to base64!
+		embeddedSuccess = function (imageURL, callbackArgs) {
+			++imagesEmbedded;
+
+			// Change image href in chart copy
+			callbackArgs.imageElement.setAttributeNS('http://www.w3.org/1999/xlink', 'href', imageURL);
+
+			// Start download when done with the last image
+			if (imagesEmbedded === images.length) {
+				initiateDownload();
+			}
 		};
 
 	// Hook into getSVG to get a copy of the chart copy's container
@@ -219,19 +231,6 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
 		// If there are no images to embed, just go ahead and start the download process
 		if (!images.length) {
 			initiateDownload();
-		}
-
-		// Success handler, we converted image to base64!
-		function embeddedSuccess(imageURL, callbackArgs) {
-			++imagesEmbedded;
-
-			// Change image href in chart copy
-			callbackArgs.imageElement.setAttributeNS('http://www.w3.org/1999/xlink', 'href', imageURL);
-
-			// Start download when done with the last image
-			if (imagesEmbedded === images.length) {
-				initiateDownload();
-			}
 		}
 
 		// Go through the images we want to embed

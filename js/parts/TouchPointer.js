@@ -50,7 +50,7 @@ extend(Pointer.prototype, {
 				if (!singleTouch && Math.abs(touch0Start - touch1Start) > 20) { // Don't zoom if fingers are too close on this axis
 					scale = forcedScale || Math.abs(touch0Now - touch1Now) / Math.abs(touch0Start - touch1Start); 
 				}
-				
+
 				clipXY = ((plotLeftTop - touch0Now) / scale) + touch0Start;
 				selectionWH = chart['plot' + (horiz ? 'Width' : 'Height')] / scale;
 			};
@@ -68,7 +68,7 @@ extend(Pointer.prototype, {
 			selectionXY = bounds.max - selectionWH;
 			outOfBounds = true;
 		}
-		
+
 		// Is the chart dragged off its bounds, determined by dataMin and dataMax?
 		if (outOfBounds) {
 
@@ -87,7 +87,7 @@ extend(Pointer.prototype, {
 		}
 
 		// Set geometry for clipping, selection and transformation
-		if (!inverted) { // TODO: implement clipping for inverted charts
+		if (!inverted) {
 			clip[xy] = clipXY - plotLeftTop;
 			clip[wh] = selectionWH;
 		}
@@ -99,7 +99,7 @@ extend(Pointer.prototype, {
 		transform[scaleKey] = scale;
 		transform['translate' + XY] = (transformScale * plotLeftTop) + (touch0Now - (transformScale * touch0Start));
 	},
-	
+
 	/**
 	 * Handle touch events with two touches
 	 */
@@ -118,7 +118,7 @@ extend(Pointer.prototype, {
 				chart.runTrackerClick) || self.runChartClick),
 			clip = {};
 
-		// Don't initiate panning until the user has pinched. This prevents us from 
+		// Don't initiate panning until the user has pinched. This prevents us from
 		// blocking page scrolling as users scroll down a long page (#4210).
 		if (touchesLength > 1) {
 			self.initiated = true;
@@ -128,12 +128,12 @@ extend(Pointer.prototype, {
 		if (hasZoom && self.initiated && !fireClickEvent) {
 			e.preventDefault();
 		}
-		
+
 		// Normalize each touch
 		map(touches, function (e) {
 			return self.normalize(e);
 		});
-		
+
 		// Register the touch start position
 		if (e.type === 'touchstart') {
 			each(touches, function (e, i) {
@@ -158,10 +158,10 @@ extend(Pointer.prototype, {
 				}
 			});
 			self.res = true; // reset on next move
-		
+
 		// Event type is touchmove, handle panning and pinching
 		} else if (pinchDown.length) { // can be 0 when releasing, if touchend fires first
-			
+
 
 			// Set the marker
 			if (!selectionMarker) {
@@ -170,14 +170,14 @@ extend(Pointer.prototype, {
 					touch: true
 				}, chart.plotBox);
 			}
-			
+
 			self.pinchTranslate(pinchDown, touches, transform, selectionMarker, clip, lastValidTouch);
 
 			self.hasPinched = hasZoom;
 
 			// Scale and translate the groups to provide visual feedback during pinching
 			self.scaleGroups(transform, clip);
-			
+
 			// Optionally move the tooltip on touchmove
 			if (!hasZoom && self.followTouchMove && touchesLength === 1) {
 				this.runPointActions(self.normalize(e));

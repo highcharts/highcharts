@@ -38,7 +38,7 @@ if (window.PointerEvent || window.MSPointerEvent) {
 					target: e.currentTarget,
 					preventDefault: noop,
 					touches: getWebkitTouches()
-				});				
+				});
 			}
 		};
 

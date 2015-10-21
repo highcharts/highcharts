@@ -13,11 +13,7 @@ Chart.prototype.is3d = function () {
 };
 
 wrap(Chart.prototype, 'isInsidePlot', function (proceed) {
-	if (this.is3d()) {
-		return true;
-	} else {
-		return proceed.apply(this, [].slice.call(arguments, 1));
-	}
+	return this.is3d() || proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 var defaultChartOptions = H.getOptions();
@@ -76,19 +72,19 @@ wrap(Chart.prototype, 'redraw', function (proceed) {
 		// Set to force a redraw of all elements
 		this.isDirtyBox = true;
 	}
-	proceed.apply(this, [].slice.call(arguments, 1));	
+	proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 // Draw the series in the reverse order (#3803, #3917)
 wrap(Chart.prototype, 'renderSeries', function (proceed) {
 	var series,
 		i = this.series.length;
-	
+
 	if (this.is3d()) {
-		while (i--) {		
+		while (i--) {
 			series = this.series[i];
 			series.translate();
-			series.render();	
+			series.render();
 		}
 	} else {
 		proceed.call(this);

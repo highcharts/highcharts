@@ -5,16 +5,16 @@
 		splat = H.splat;
 /**
  * The Pane object allows options that are common to a set of X and Y axes.
- * 
+ *
  * In the future, this can be extended to basic Highcharts and Highstock.
  */
 function Pane(options, chart, firstAxis) {
-	this.init.call(this, options, chart, firstAxis);
+	this.init(options, chart, firstAxis);
 }
 
 // Extend the Pane prototype
 extend(Pane.prototype, {
-	
+
 	/**
 	 * Initiate the Pane object
 	 */
@@ -22,14 +22,14 @@ extend(Pane.prototype, {
 		var pane = this,
 			backgroundOption,
 			defaultOptions = pane.defaultOptions;
-		
+
 		pane.chart = chart;
-		
+
 		// Set options. Angular charts have a default background (#3318)
 		pane.options = options = merge(defaultOptions, chart.angular ? { background: {} } : undefined, options);
-		
+
 		backgroundOption = options.background;
-		
+
 		// To avoid having weighty logic to place, update and remove the backgrounds,
 		// push them to the first axis' plot bands and borrow the existing logic there.
 		if (backgroundOption) {
@@ -53,7 +53,7 @@ extend(Pane.prototype, {
 			});
 		}
 	},
-	
+
 	/**
 	 * The default options object
 	 */
@@ -63,8 +63,8 @@ extend(Pane.prototype, {
 		size: '85%',
 		startAngle: 0
 		//endAngle: startAngle + 360
-	},	
-	
+	},
+
 	/**
 	 * The default background options
 	 */

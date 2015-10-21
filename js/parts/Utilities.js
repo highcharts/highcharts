@@ -14,13 +14,13 @@ H.extend = function (a, b) {
 	}
 	return a;
 };
-	
+
 /**
  * Deep merge two or more objects and return a third object. If the first argument is
  * true, the contents of the second object is copied into the first object.
  * Previously this function redirected to jQuery.extend(true), but this had two limitations.
  * First, it deep merged arrays, which lead to workarounds in Highcharts. Second,
- * it copied properties from extended prototypes. 
+ * it copied properties from extended prototypes.
  */
 H.merge = function () {
 	var i,
@@ -43,7 +43,7 @@ H.merge = function () {
 					if (value && typeof value === 'object' && Object.prototype.toString.call(value) !== '[object Array]' &&
 							key !== 'renderTo' && typeof value.nodeType !== 'number') {
 						copy[key] = doCopy(copy[key] || {}, value);
-				
+
 					// Primitives and arrays are copied over directly
 					} else {
 						copy[key] = original[key];
@@ -255,7 +255,9 @@ H.extendClass = function (parent, members) {
  */
 H.pad = function (number, length) {
 	// Create an array of the remaining length +1 and join it with 0's
-	return new Array((length || 2) + 1 - String(number).length).join(0) + number;
+	var arr = [];
+	arr.length = (length || 2) + 1 - String(number).length;
+	return arr.join(0) + number;
 };
 
 /**
@@ -267,11 +269,11 @@ H.relativeLength = function (value, base) {
 
 /**
  * Wrap a method with extended functionality, preserving the original function
- * @param {Object} obj The context object that the method belongs to 
+ * @param {Object} obj The context object that the method belongs to
  * @param {String} method The name of the method to extend
  * @param {Function} func A wrapper function callback. This function is called with the same arguments
- * as the original function, except that the original function is unshifted and passed as the first 
- * argument. 
+ * as the original function, except that the original function is unshifted and passed as the first
+ * argument.
  */
 H.wrap = function (obj, method, func) {
 	var proceed = obj[method];
@@ -359,7 +361,7 @@ H.dateFormat = function (format, timestamp, capitalize) {
 	return capitalize ? format.substr(0, 1).toUpperCase() + format.substr(1) : format;
 };
 
-/** 
+/**
  * Format a single variable. Similar to sprintf, without the % prefix.
  */
 H.formatSingle = function (format, val) {
@@ -399,12 +401,12 @@ H.format = function (str, ctx) {
 		ret = [],
 		val,
 		index;
-	
+
 	while ((index = str.indexOf(splitter)) !== -1) {
-		
+
 		segment = str.slice(0, index);
 		if (isInside) { // we're on the closing bracket looking back
-			
+
 			valueAndFormat = segment.split(':');
 			path = valueAndFormat.shift().split('.'); // get first and leave format
 			len = path.length;
@@ -422,10 +424,10 @@ H.format = function (str, ctx) {
 
 			// Push the result and advance the cursor
 			ret.push(val);
-			
+
 		} else {
 			ret.push(segment);
-			
+
 		}
 		str = str.slice(index + 1); // the rest
 		isInside = !isInside; // toggle
@@ -476,14 +478,14 @@ H.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimal
 	for (i = 0; i < multiples.length; i++) {
 		retInterval = multiples[i];
 		if ((preventExceed && retInterval * magnitude >= interval) || // only allow tick amounts smaller than natural
-			(!preventExceed && (normalized <= (multiples[i] + (multiples[i + 1] || multiples[i])) / 2))) {
+				(!preventExceed && (normalized <= (multiples[i] + (multiples[i + 1] || multiples[i])) / 2))) {
 			break;
 		}
 	}
 
 	// multiply back to the correct magnitude
 	retInterval *= magnitude;
-	
+
 	return retInterval;
 };
 
@@ -588,20 +590,6 @@ H.discardElement = function (element) {
 };
 
 /**
- * Provide error messages for debugging, with links to online explanation 
- */
-H.error = function (code, stop) {
-	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
-	if (stop) {
-		throw msg;
-	}
-	// else ...
-	if (window.console) {
-		console.log(msg);
-	}
-};
-
-/**
  * Fix JS round off float errors
  * @param {Number} num
  */
@@ -647,8 +635,8 @@ H.numberFormat = function (number, decimals, decPoint, thousandsSep) {
 		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
 		n = +number || 0,
 		c = decimals === -1 ?
-			Math.min((n.toString().split('.')[1] || '').length, 20) : // Preserve decimals. Not huge numbers (#3793).
-			(isNaN(decimals = Math.abs(decimals)) ? 2 : decimals),
+				Math.min((n.toString().split('.')[1] || '').length, 20) : // Preserve decimals. Not huge numbers (#3793).
+				(isNaN(decimals = Math.abs(decimals)) ? 2 : decimals),
 		d = decPoint === undefined ? lang.decimalPoint : decPoint,
 		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
 		s = n < 0 ? "-" : "",

@@ -8,6 +8,7 @@
 		each = H.each,
 		extend = H.extend,
 		isFirefox = H.isFirefox,
+		marginNames = H.marginNames,
 		merge = H.merge,
 		pick = H.pick,
 		setAnimation = H.setAnimation,
@@ -21,19 +22,19 @@ Legend = H.Legend = function (chart, options) {
 };
 
 Legend.prototype = {
-	
+
 	/**
 	 * Initialize the legend
 	 */
 	init: function (chart, options) {
-		
+
 		var legend = this,
 			/*= if (build.classic) { =*/
 			itemStyle = legend.itemStyle = options.itemStyle,
 			/*= } =*/
 			padding,
 			itemMarginTop = options.itemMarginTop || 0;
-	
+
 		this.options = options;
 
 		if (!options.enabled) {
@@ -58,7 +59,7 @@ Legend.prototype = {
 		legend.render();
 
 		// move checkboxes
-		addEvent(legend.chart, 'endResize', function () { 
+		addEvent(legend.chart, 'endResize', function () {
 			legend.positionCheckboxes();
 		});
 
@@ -85,16 +86,16 @@ Legend.prototype = {
 			symbolAttr = { fill: symbolColor },
 			key,
 			val;
-		
+
 		if (legendItem) {
 			legendItem.css({ fill: textColor, color: textColor }); // color for #1553, oldIE
 		}
 		if (legendLine) {
 			legendLine.attr({ stroke: symbolColor });
 		}
-		
+
 		if (legendSymbol) {
-			
+
 			// Apply marker options
 			if (markerOptions && legendSymbol.isMarker) { // #585
 				//symbolAttr.stroke = symbolColor;
@@ -188,7 +189,7 @@ Legend.prototype = {
 			each(this.allItems, function (item) {
 				var checkbox = item.checkbox,
 					top;
-				
+
 				if (checkbox) {
 					top = (translateY + checkbox.y + (scrollOffset || 0) + 3);
 					css(checkbox, {
@@ -200,7 +201,7 @@ Legend.prototype = {
 			});
 		}
 	},
-	
+
 	/**
 	 * Render the legend title on top of the legend
 	 */
@@ -210,7 +211,7 @@ Legend.prototype = {
 			titleOptions = options.title,
 			titleHeight = 0,
 			bBox;
-		
+
 		if (titleOptions.text) {
 			if (!this.title) {
 				this.title = this.chart.renderer.label(titleOptions.text, padding - 3, padding - 4, null, null, null, null, null, 'legend-title')
@@ -325,7 +326,7 @@ Legend.prototype = {
 
 			// add the HTML checkbox on top
 			if (showCheckbox) {
-				legend.createCheckboxForItem(item);				
+				legend.createCheckboxForItem(item);
 			}
 		}
 
@@ -335,9 +336,9 @@ Legend.prototype = {
 		// calculate the positions for the next line
 		bBox = li.getBBox();
 
-		itemWidth = item.checkboxOffset = 
-			options.itemWidth || 
-			item.legendItemWidth || 
+		itemWidth = item.checkboxOffset =
+			options.itemWidth ||
+			item.legendItemWidth ||
 			symbolWidth + symbolPadding + bBox.width + itemDistance + (showCheckbox ? 20 : 0);
 		legend.itemHeight = itemHeight = Math.round(item.legendItemHeight || bBox.height);
 
@@ -411,12 +412,11 @@ Legend.prototype = {
 	 * for horizontal legends and left or right for vertical ones.
 	 */
 	adjustMargins: function (margin, spacing) {
-		var chart = this.chart, 
+		var chart = this.chart,
 			options = this.options,
-			marginNames = ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
-			// Use the first letter of each alignment option in order to detect the side 
+			// Use the first letter of each alignment option in order to detect the side
 			alignment = options.align.charAt(0) + options.verticalAlign.charAt(0) + options.layout.charAt(0); // #4189 - use charAt(x) notation instead of [x] for IE7
-			
+
 		if (this.display && !options.floating) {
 
 			each([
@@ -429,8 +429,8 @@ Legend.prototype = {
 					// Now we have detected on which side of the chart we should reserve space for the legend
 					chart[marginNames[side]] = Math.max(
 						chart[marginNames[side]],
-						chart.legend[(side + 1) % 2 ? 'legendHeight' : 'legendWidth'] + 
-							[1, -1, -1, 1][side] * options[(side % 2) ? 'x' : 'y'] + 
+						chart.legend[(side + 1) % 2 ? 'legendHeight' : 'legendWidth'] +
+							[1, -1, -1, 1][side] * options[(side % 2) ? 'x' : 'y'] +
 							pick(options.margin, 12) +
 							spacing[side]
 					);
@@ -465,7 +465,7 @@ Legend.prototype = {
 
 		if (!legendGroup) {
 			legend.group = legendGroup = renderer.g('legend')
-				.attr({ zIndex: 7 }) 
+				.attr({ zIndex: 7 })
 				.add();
 			legend.contentGroup = renderer.g()
 				.attr({ zIndex: 1 }) // above background
@@ -473,7 +473,7 @@ Legend.prototype = {
 			legend.scrollGroup = renderer.g()
 				.add(legend.contentGroup);
 		}
-		
+
 		legend.renderTitle();
 
 		// add each series or point
@@ -495,7 +495,7 @@ Legend.prototype = {
 		// render the items
 		legend.lastLineHeight = 0;
 		each(allItems, function (item) {
-			legend.renderItem(item); 
+			legend.renderItem(item);
 		});
 
 		// Get the box
@@ -547,7 +547,7 @@ Legend.prototype = {
 		legend.legendWidth = legendWidth;
 		legend.legendHeight = legendHeight;
 
-		// Now that the legend width and height are established, put the items in the 
+		// Now that the legend width and height are established, put the items in the
 		// final position
 		each(allItems, function (item) {
 			legend.positionItem(item);
@@ -576,7 +576,7 @@ Legend.prototype = {
 			this.positionCheckboxes();
 		}
 	},
-	
+
 	/**
 	 * Set up the overflow handling by adding navigation with up and down arrows below the
 	 * legend.
@@ -611,7 +611,7 @@ Legend.prototype = {
 				}
 			};
 
-			
+
 		// Adjust the height
 		if (options.layout === 'horizontal') {
 			spaceHeight /= 2;
@@ -619,7 +619,7 @@ Legend.prototype = {
 		if (maxHeight) {
 			spaceHeight = Math.min(spaceHeight, maxHeight);
 		}
-		
+
 		// Reset the legend height and adjust the clipping rectangle
 		pages.length = 0;
 		if (legendHeight > spaceHeight) {
@@ -627,19 +627,19 @@ Legend.prototype = {
 			this.clipHeight = clipHeight = Math.max(spaceHeight - 20 - this.titleHeight - padding, 0);
 			this.currentPage = pick(this.currentPage, 1);
 			this.fullHeight = legendHeight;
-			
+
 			// Fill pages with Y positions so that the top of each a legend item defines
 			// the scroll top for each page (#2098)
 			each(allItems, function (item, i) {
 				var y = item._legendItemPos[1],
 					h = Math.round(item.legendItem.getBBox().height),
 					len = pages.length;
-				
+
 				if (!len || (y - pages[len - 1] > clipHeight && (lastY || y) !== pages[len - 1])) {
 					pages.push(lastY || y);
 					len++;
 				}
-				
+
 				if (i === allItems.length - 1 && y + h - pages[len - 1] > clipHeight) {
 					pages.push(y);
 				}
@@ -653,7 +653,7 @@ Legend.prototype = {
 				clipRect = legend.clipRect = renderer.clipRect(0, padding, 9999, 0);
 				legend.contentGroup.clip(clipRect);
 			}
-				
+
 			clipToHeight(clipHeight);
 
 			// Add navigation elements
@@ -676,12 +676,12 @@ Legend.prototype = {
 					})
 					.add(nav);
 			}
-			
+
 			// Set initial position
 			legend.scroll(0);
-			
+
 			legendHeight = spaceHeight;
-			
+
 		} else if (nav) {
 			clipToHeight(chart.chartHeight);
 			nav.hide();
@@ -690,10 +690,10 @@ Legend.prototype = {
 			});
 			this.clipHeight = 0; // #1379
 		}
-		
+
 		return legendHeight;
 	},
-	
+
 	/**
 	 * Scroll the legend by a number of pages
 	 * @param {Object} scrollBy
@@ -708,18 +708,18 @@ Legend.prototype = {
 			pager = this.pager,
 			padding = this.padding,
 			scrollOffset;
-		
+
 		// When resizing while looking at the last page
 		if (currentPage > pageCount) {
 			currentPage = pageCount;
 		}
-		
+
 		if (currentPage > 0) {
 			
 			if (animation !== undefined) {
 				setAnimation(animation, this.chart);
 			}
-			
+
 			this.nav.attr({
 				translateX: padding,
 				translateY: clipHeight + this.padding + 7 + this.titleHeight,
@@ -757,25 +757,25 @@ Legend.prototype = {
 
 			this.scrollGroup.animate({
 				translateY: scrollOffset
-			});			
-			
+			});
+
 			this.currentPage = currentPage;
 			this.positionCheckboxes(scrollOffset);
 		}
-			
+
 	}
-	
+
 };
 
 /*
  * LegendSymbolMixin
- */ 
+ */
 
 H.LegendSymbolMixin = {
 
 	/**
 	 * Get the series' symbol in the legend
-	 * 
+	 *
 	 * @param {Object} legend The legend object
 	 * @param {Object} item The series (this) or point
 	 */
@@ -792,14 +792,14 @@ H.LegendSymbolMixin = {
 		.addClass('highcharts-point')
 		.attr({
 			zIndex: 3
-		}).add(item.legendGroup);		
-		
+		}).add(item.legendGroup);
+
 	},
 
 	/**
-	 * Get the series' symbol in the legend. This method should be overridable to create custom 
+	 * Get the series' symbol in the legend. This method should be overridable to create custom
 	 * symbols through Highcharts.seriesTypes[type].prototype.drawLegendSymbols.
-	 * 
+	 *
 	 * @param {Object} legend The legend object
 	 */
 	drawLineMarker: function (legend) {
@@ -855,7 +855,7 @@ H.LegendSymbolMixin = {
 
 // Workaround for #2030, horizontal legend items not displaying in IE11 Preview,
 // and for #2580, a similar drawing flaw in Firefox 26.
-// TODO: Explore if there's a general cause for this. The problem may be related 
+// Explore if there's a general cause for this. The problem may be related
 // to nested group elements, as the legend item texts are within 4 group elements.
 if (/Trident\/7\.0/.test(navigator.userAgent) || isFirefox) {
 	wrap(Legend.prototype, 'positionItem', function (proceed, item) {
@@ -868,7 +868,7 @@ if (/Trident\/7\.0/.test(navigator.userAgent) || isFirefox) {
 
 		// Do it now, for export and to get checkbox placement
 		runPositionItem();
-		
+
 		// Do it after to work around the core issue
 		setTimeout(runPositionItem);
 	});

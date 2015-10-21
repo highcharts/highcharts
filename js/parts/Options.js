@@ -220,7 +220,7 @@ H.defaultOptions = {
 				//valueDecimals: null,
 				//xDateFormat: '%A, %b %e, %Y',
 				//valuePrefix: '',
-				//ySuffix: ''				
+				//ySuffix: ''
 			//}
 			turboThreshold: 1000
 			// zIndex: null
@@ -321,7 +321,7 @@ H.defaultOptions = {
 		animation: svg,
 		//crosshairs: null,
 		borderRadius: 3,
-		dateTimeLabelFormats: { 
+		dateTimeLabelFormats: {
 			millisecond: '%A, %b %e, %H:%M:%S.%L',
 			second: '%A, %b %e, %H:%M:%S',
 			minute: '%A, %b %e, %H:%M',
@@ -379,16 +379,6 @@ H.defaultOptions = {
 		text: 'Highcharts.com'
 	}
 };
-
-
-
-
-// Series defaults
-H.defaultPlotOptions = H.defaultOptions.plotOptions;
-H.defaultSeriesOptions = H.defaultPlotOptions.line;
-
-// set the default time methods
-setTimeMethods();
 
 
 
@@ -453,6 +443,14 @@ H.setOptions = function (options) {
 H.getOptions = function() {
 	return H.defaultOptions;
 };
+
+
+// Series defaults
+H.defaultPlotOptions = H.defaultOptions.plotOptions;
+H.defaultSeriesOptions = H.defaultPlotOptions.line;
+
+// set the default time methods
+setTimeMethods();
 
 	return H;
 }(Highcharts));

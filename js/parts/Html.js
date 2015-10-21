@@ -214,7 +214,8 @@ extend(SVGRenderer.prototype, {
 		};
 
 		// Set the default attributes
-		wrapper.attr({
+		wrapper
+			.attr({
 				text: str,
 				x: Math.round(x),
 				y: Math.round(y)

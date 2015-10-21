@@ -41,41 +41,41 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 			minDate[Date.hcSetSeconds](interval >= timeUnits.minute ? 0 : // #3935
 				count * Math.floor(minDate.getSeconds() / count));
 		}
-	
+
 		if (interval >= timeUnits.minute) { // minute
 			minDate[Date.hcSetMinutes](interval >= timeUnits.hour ? 0 :
 				count * Math.floor(minDate[Date.hcGetMinutes]() / count));
 		}
-	
+
 		if (interval >= timeUnits.hour) { // hour
 			minDate[Date.hcSetHours](interval >= timeUnits.day ? 0 :
 				count * Math.floor(minDate[Date.hcGetHours]() / count));
 		}
-	
+
 		if (interval >= timeUnits.day) { // day
 			minDate[Date.hcSetDate](interval >= timeUnits.month ? 1 :
 				count * Math.floor(minDate[Date.hcGetDate]() / count));
 		}
-	
+
 		if (interval >= timeUnits.month) { // month
 			minDate[Date.hcSetMonth](interval >= timeUnits.year ? 0 :
 				count * Math.floor(minDate[Date.hcGetMonth]() / count));
 			minYear = minDate[Date.hcGetFullYear]();
 		}
-	
+
 		if (interval >= timeUnits.year) { // year
 			minYear -= minYear % count;
 			minDate[Date.hcSetFullYear](minYear);
 		}
-	
+
 		// week is a special case that runs outside the hierarchy
 		if (interval === timeUnits.week) {
 			// get start of current week, independent of count
 			minDate[Date.hcSetDate](minDate[Date.hcGetDate]() - minDate[Date.hcGetDay]() +
 				pick(startOfWeek, 1));
 		}
-	
-	
+
+
 		// get tick positions
 		i = 1;
 		if (Date.hcTimezoneOffset || Date.hcGetTimezoneOffset) {
@@ -89,33 +89,33 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 			localTimezoneOffset = (timeUnits.day + 
 					(useUTC ? getTZOffset(minDate) : minDate.getTimezoneOffset() * 60 * 1000)
 				) % timeUnits.day; // #950, #3359
-	
+
 		// iterate and add tick positions at appropriate values
 		while (time < max) {
 			tickPositions.push(time);
-	
+
 			// if the interval is years, use Date.UTC to increase years
 			if (interval === timeUnits.year) {
 				time = makeTime(minYear + i * count, 0);
-	
+
 			// if the interval is months, use Date.UTC to increase months
 			} else if (interval === timeUnits.month) {
 				time = makeTime(minYear, minMonth + i * count);
-	
+
 			// if we're using global time, the interval is not fixed as it jumps
 			// one hour at the DST crossover
 			} else if (!useUTC && (interval === timeUnits.day || interval === timeUnits.week)) {
 				time = makeTime(minYear, minMonth, minDateDate +
 					i * count * (interval === timeUnits.day ? 1 : 7));
-	
+
 			// else, the interval is fixed and we use simple addition
 			} else {
 				time += interval * count;
 			}
-	
+
 			i++;
 		}
-	
+
 		// push the last time
 		tickPositions.push(time);
 
@@ -140,10 +140,10 @@ Axis.prototype.getTimeTicks = function (normalizedInterval, min, max, startOfWee
 
 /**
  * Get a normalized tick interval for dates. Returns a configuration object with
- * unit range (interval), count and name. Used to prepare data for getTimeTicks. 
+ * unit range (interval), count and name. Used to prepare data for getTimeTicks.
  * Previously this logic was part of getTimeTicks, but as getTimeTicks now runs
- * of segments in stock charts, the normalizing logic was extracted in order to 
- * prevent it for running over again for each segment having the same interval. 
+ * of segments in stock charts, the normalizing logic was extracted in order to
+ * prevent it for running over again for each segment having the same interval.
  * #662, #697.
  */
 Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) {
@@ -177,7 +177,7 @@ Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) 
 		multiples = unit[1],
 		count,
 		i;
-		
+
 	// loop through the units to find the one that best fits the tickInterval
 	for (i = 0; i < units.length; i++) {
 		unit = units[i];
@@ -204,11 +204,11 @@ Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) 
 
 	// get the count
 	count = normalizeTickInterval(
-		tickInterval / interval, 
+		tickInterval / interval,
 		multiples,
 		unit[0] === 'year' ? Math.max(getMagnitude(tickInterval / interval), 1) : 1 // #1913, #2360
 	);
-	
+
 	return {
 		unitRange: interval,
 		count: count,

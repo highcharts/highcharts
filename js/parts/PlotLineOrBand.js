@@ -197,7 +197,7 @@ H.PlotLineOrBand.prototype = {
 	destroy: function () {
 		// remove it from the lookup
 		erase(this.axis.plotLinesAndBands, this);
-		
+
 		delete this.axis;
 		destroyObjectProperties(this);
 	}
@@ -212,7 +212,7 @@ H.AxisPlotLineOrBandExtension = {
 
 	/**
 	 * Create the path for a plot band
-	 */ 
+	 */
 	getPlotBandPath: function (from, to) {
 		var toPath = this.getPlotLinePath(to, null, null, true),
 			path = this.getPlotLinePath(from, null, null, true);
@@ -227,14 +227,14 @@ H.AxisPlotLineOrBandExtension = {
 		} else { // outside the axis area
 			path = null;
 		}
-		
+
 		return path;
 	},
 
 	addPlotBand: function (options) {
 		return this.addPlotBandOrLine(options, 'plotBands');
 	},
-	
+
 	addPlotLine: function (options) {
 		return this.addPlotBandOrLine(options, 'plotLines');
 	},
@@ -252,11 +252,11 @@ H.AxisPlotLineOrBandExtension = {
 			// Add it to the user options for exporting and Axis.update
 			if (coll) {
 				userOptions[coll] = userOptions[coll] || [];
-				userOptions[coll].push(options); 
+				userOptions[coll].push(options);
 			}
-			this.plotLinesAndBands.push(obj); 
+			this.plotLinesAndBands.push(obj);
 		}
-		
+
 		return obj;
 	},
 

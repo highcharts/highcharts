@@ -186,7 +186,7 @@ TrackerMixin = H.TrackerMixin = {
 /**
  * Add tracking event listener to the series group, so the point graphics
  * themselves act as trackers
- */ 
+ */
 
 if (seriesTypes.column) {
 	seriesTypes.column.prototype.drawTracker = TrackerMixin.drawTrackerPoint;	
@@ -200,9 +200,9 @@ if (seriesTypes.scatter) {
 	seriesTypes.scatter.prototype.drawTracker = TrackerMixin.drawTrackerPoint;
 }
 
-/* 
- * Extend Legend for item events 
- */ 
+/*
+ * Extend Legend for item events
+ */
 extend(Legend.prototype, {
 
 	setItemEvents: function (item, legendItem, useHTML) {
@@ -238,7 +238,7 @@ extend(Legend.prototype, {
 						item.setVisible();
 					}
 				};
-				
+
 			// Pass over the click/touch event. #4.
 			event = {
 				browserEvent: event
@@ -273,7 +273,7 @@ extend(Legend.prototype, {
 				}
 			);
 		});
-	}	
+	}
 });
 
 
@@ -283,7 +283,7 @@ defaultOptions.legend.itemStyle.cursor = 'pointer';
 /*= } =*/
 
 
-/* 
+/*
  * Extend the Chart object with interaction
  */
 
@@ -298,7 +298,7 @@ extend(Chart.prototype, {
 			theme = btnOptions.theme,
 			states = theme.states,
 			alignTo = btnOptions.relativeTo === 'chart' ? null : 'plotBox';
-			
+
 		this.resetZoomButton = chart.renderer.button(lang.resetZoom, null, null, function () { chart.zoomOut(); }, theme, states && states.hover)
 			.attr({
 				align: btnOptions.position.align,
@@ -306,7 +306,7 @@ extend(Chart.prototype, {
 			})
 			.add()
 			.align(btnOptions.position, false, alignTo);
-			
+
 	},
 
 	/**
@@ -314,7 +314,7 @@ extend(Chart.prototype, {
 	 */
 	zoomOut: function () {
 		var chart = this;
-		fireEvent(chart, 'selection', { resetSelection: true }, function () { 
+		fireEvent(chart, 'selection', { resetSelection: true }, function () {
 			chart.zoom();
 		});
 	},
@@ -349,7 +349,7 @@ extend(Chart.prototype, {
 				}
 			});
 		}
-		
+
 		// Show or hide the Reset zoom button
 		resetZoomButton = chart.resetZoomButton;
 		if (displayButton && !resetZoomButton) {
@@ -357,7 +357,7 @@ extend(Chart.prototype, {
 		} else if (!displayButton && isObject(resetZoomButton)) {
 			chart.resetZoomButton = resetZoomButton.destroy();
 		}
-		
+
 
 		// Redraw
 		if (hasZoomed) {
@@ -454,7 +454,7 @@ extend(Point.prototype, {
 	 * Runs on mouse over the point
 	 *
 	 * @param {Object} e The event arguments
-	 * @param {Boolean} byProximity Falsy for kd points that are closest to the mouse, or to 
+	 * @param {Boolean} byProximity Falsy for kd points that are closest to the mouse, or to
 	 *        actually hovered points. True for other points in shared tooltip.
 	 */
 	onMouseOver: function (e, byProximity) {
@@ -466,7 +466,7 @@ extend(Point.prototype, {
 
 		if (chart.hoverSeries !== series) {
 			series.onMouseOver();
-		}		
+		}
 
 		// set normal state to previous series
 		if (hoverPoint && hoverPoint !== point) {
@@ -666,9 +666,9 @@ extend(Point.prototype, {
 			inverted = chart.inverted;
 
 		return chart.renderer.symbols.circle(
-			plotBox.translateX + (inverted ? series.yAxis.len - this.plotY : this.plotX) - size, 
-			plotBox.translateY + (inverted ? series.xAxis.len - this.plotX : this.plotY) - size, 
-			size * 2, 
+			plotBox.translateX + (inverted ? series.yAxis.len - this.plotY : this.plotX) - size,
+			plotBox.translateY + (inverted ? series.xAxis.len - this.plotX : this.plotY) - size,
+			size * 2,
 			size * 2
 		);
 	}

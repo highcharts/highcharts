@@ -142,7 +142,7 @@ H.Tick.prototype = {
 			if (slotWidth < axis.slotWidth && axis.labelAlign === 'center') {
 				xy.x += goRight * (axis.slotWidth - slotWidth - xCorrection * (axis.slotWidth - Math.min(labelWidth, slotWidth)));				
 			}
-			// If the label width exceeds the available space, set a text width to be 
+			// If the label width exceeds the available space, set a text width to be
 			// picked up below. Also, if a width has been set before, we need to set a new
 			// one because the reported labelWidth will be limited by the box (#3938).
 			if (labelWidth > slotWidth || (axis.autoRotation && label.styles && label.styles.width)) {
@@ -194,8 +194,17 @@ H.Tick.prototype = {
 			reversed = axis.reversed,
 			staggerLines = axis.staggerLines,
 			rotCorr = axis.tickRotCorr || { x: 0, y: 0 },
-			yOffset = pick(labelOptions.y, rotCorr.y + (axis.side === 2 ? 8 : -(label.getBBox().height / 2))),
+			yOffset = labelOptions.y,
 			line;
+
+		if (!defined(yOffset)) {
+			if (axis.side === 2) {
+				yOffset = rotCorr.y + 8;
+
+			} else { // #3140
+				yOffset = Math.cos(label.rotation * deg2rad) * (rotCorr.y - label.getBBox().height / 2);
+			}
+		}
 
 		x = x + labelOptions.x + rotCorr.x - (tickmarkOffset && horiz ?
 			tickmarkOffset * transA * (reversed ? -1 : 1) : 0);

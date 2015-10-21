@@ -39,7 +39,7 @@ H.Tooltip.prototype = {
 		this.isHidden = true;
 
 
-		// create the label		
+		// create the label
 		this.label = chart.renderer.label('', 0, 0, options.shape || 'callout', null, null, options.useHTML, null, 'tooltip')
 			.attr({
 				padding: options.padding,
@@ -91,7 +91,7 @@ H.Tooltip.prototype = {
 	move: function (x, y, anchorX, anchorY) {
 		var tooltip = this,
 			now = tooltip.now,
-			animate = tooltip.options.animation !== false && !tooltip.isHidden && 
+			animate = tooltip.options.animation !== false && !tooltip.isHidden &&
 				// When we get close to the target position, abort animation and land on the right place (#3056)
 				(Math.abs(x - now.x) > 1 || Math.abs(y - now.y) > 1),
 			skipAnchor = tooltip.followPointer || tooltip.len > 1;
@@ -107,13 +107,13 @@ H.Tooltip.prototype = {
 		// Move to the intermediate value
 		tooltip.label.attr(now);
 
-		
+
 		// Run on next tick of the mouse tracker
 		if (animate) {
-		
+
 			// Never allow two timeouts
 			clearTimeout(this.tooltipTimeout);
-			
+
 			// Set the fixed interval ticking for the smooth tooltip
 			this.tooltipTimeout = setTimeout(function () {
 				// The interval function may still be running during destroy, so check that the chart is really there before calling.
@@ -121,7 +121,7 @@ H.Tooltip.prototype = {
 					tooltip.move(x, y, anchorX, anchorY);
 				}
 			}, 32);
-			
+
 		}
 	},
 
@@ -131,7 +131,7 @@ H.Tooltip.prototype = {
 	hide: function (delay) {
 		var tooltip = this,
 			hoverPoints;
-		
+
 		clearTimeout(this.hideTimer); // disallow duplicate timers (#1728, #1766)
 		if (!this.isHidden) {
 			hoverPoints = this.chart.hoverPoints;
@@ -142,8 +142,8 @@ H.Tooltip.prototype = {
 			}, pick(delay, this.options.hideDelay, 500));
 		}
 	},
-	
-	/** 
+
+	/**
 	 * Extendable method to get the anchor position of the tooltip
 	 * from a point or set of points
 	 */
@@ -157,12 +157,12 @@ H.Tooltip.prototype = {
 			plotY = 0,
 			yAxis,
 			xAxis;
-		
+
 		points = splat(points);
-		
+
 		// Pie uses a special tooltipPos
 		ret = points[0].tooltipPos;
-		
+
 		// When tooltip follows mouse, relate the position to the mouse
 		if (this.followPointer && mouseEvent) {
 			if (mouseEvent.chartX === undefined) {
@@ -178,17 +178,17 @@ H.Tooltip.prototype = {
 			each(points, function (point) {
 				yAxis = point.series.yAxis;
 				xAxis = point.series.xAxis;
-				plotX += point.plotX  + (!inverted && xAxis ? xAxis.left - plotLeft : 0); 
+				plotX += point.plotX  + (!inverted && xAxis ? xAxis.left - plotLeft : 0);
 				plotY += (point.plotLow ? (point.plotLow + point.plotHigh) / 2 : point.plotY) +
 					(!inverted && yAxis ? yAxis.top - plotTop : 0); // #1151
 			});
-			
+
 			plotX /= points.length;
 			plotY /= points.length;
-			
+
 			ret = [
 				inverted ? chart.plotWidth - plotY : plotX,
-				this.shared && !inverted && points.length > 1 && mouseEvent ? 
+				this.shared && !inverted && points.length > 1 && mouseEvent ?
 					mouseEvent.chartY - plotTop : // place shared tooltip next to the mouse (#424)
 					inverted ? chart.plotHeight - plotX : plotY
 			];
@@ -196,13 +196,13 @@ H.Tooltip.prototype = {
 
 		return map(ret, Math.round);
 	},
-	
+
 	/**
 	 * Place the tooltip in a chart without spilling over
 	 * and not covering the point it self.
 	 */
 	getPosition: function (boxWidth, boxHeight, point) {
-		
+
 		var chart = this.chart,
 			distance = this.distance,
 			ret = {},
@@ -241,10 +241,11 @@ H.Tooltip.prototype = {
 			 * align within the chart box.
 			 */
 			secondDimension = function (dim, outerSize, innerSize, point) {
+				var retVal;
+
 				// Too close to the edge, return false and swap dimensions
 				if (point < distance || point > outerSize - distance) {
-					return false;
-				
+					retVal = false;
 				// Align left/top
 				} else if (point < innerSize / 2) {
 					ret[dim] = 1;
@@ -255,9 +256,10 @@ H.Tooltip.prototype = {
 				} else {
 					ret[dim] = point - innerSize / 2;
 				}
+				return retVal;
 			},
 			/**
-			 * Swap the dimensions 
+			 * Swap the dimensions
 			 */
 			swap = function (count) {
 				var temp = first;
@@ -286,7 +288,7 @@ H.Tooltip.prototype = {
 		run();
 
 		return ret;
-	
+
 	},
 
 	/**
@@ -329,9 +331,9 @@ H.Tooltip.prototype = {
 			borderColor,
 			shared = tooltip.shared,
 			currentSeries;
-			
+
 		clearTimeout(this.hideTimer);
-		
+
 		// get the reference point coordinates (pie charts use tooltipPos)
 		tooltip.followPointer = splat(point)[0].series.tooltipOptions.followPointer;
 		anchor = tooltip.getAnchor(point, mouseEvent);
@@ -340,9 +342,9 @@ H.Tooltip.prototype = {
 
 		// shared tooltip, array is sent over
 		if (shared && !(point.series && point.series.noSharedTooltip)) {
-			
+
 			// hide previous hoverPoints and set new
-			
+
 			chart.hoverPoints = point;
 			if (hoverPoints) {
 				each(hoverPoints, function (point) {
@@ -395,14 +397,14 @@ H.Tooltip.prototype = {
 			label.attr({
 				stroke: borderColor
 			});
-			tooltip.updatePosition({ 
-				plotX: x, 
-				plotY: y, 
-				negative: point.negative, 
-				ttBelow: point.ttBelow, 
+			tooltip.updatePosition({
+				plotX: x,
+				plotY: y,
+				negative: point.negative,
+				ttBelow: point.ttBelow,
 				h: anchor[2] || 0
 			});
-		
+
 			this.isHidden = false;
 		}
 		HighchartsAdapter.fireEvent(chart, 'tooltipRefresh', {
@@ -412,13 +414,13 @@ H.Tooltip.prototype = {
 				borderColor: borderColor
 			});
 	},
-	
+
 	/**
 	 * Find the new position and perform the move
 	 */
 	updatePosition: function (point) {
 		var chart = this.chart,
-			label = this.label, 
+			label = this.label,
 			pos = (this.options.positioner || this.getPosition).call(
 				this,
 				label.width,
@@ -435,7 +437,7 @@ H.Tooltip.prototype = {
 		);
 	},
 
-	/** 
+	/**
 	 * Get the best X date format based on the closest point range on the axis.
 	 */
 	getXDateFormat: function (point, options, xAxis) {
@@ -459,19 +461,21 @@ H.Tooltip.prototype = {
 			for (n in timeUnits) {
 
 				// If the range is exactly one week and we're looking at a Sunday/Monday, go for the week format
-				if (closestPointRange === timeUnits.week && +dateFormat('%w', point.x) === xAxis.options.startOfWeek && 
+				if (closestPointRange === timeUnits.week && +dateFormat('%w', point.x) === xAxis.options.startOfWeek &&
 						date.substr(6) === blank.substr(6)) {
 					n = 'week';
 					break;
+				}
 
 				// The first format that is too great for the range
-				} else if (timeUnits[n] > closestPointRange) {
+				if (timeUnits[n] > closestPointRange) {
 					n = lastN;
 					break;
-				
+				}
+
 				// If the point is placed every day at 23:59, we need to show
 				// the minutes as well. #2637.
-				} else if (strpos[n] && date.substr(strpos[n]) !== blank.substr(strpos[n])) {
+				if (strpos[n] && date.substr(strpos[n]) !== blank.substr(strpos[n])) {
 					break;
 				}
 
@@ -480,7 +484,7 @@ H.Tooltip.prototype = {
 					lastN = n;
 				}
 			}
-			
+
 			if (n) {
 				xDateFormat = dateTimeLabelFormats[n];
 			}
@@ -522,7 +526,7 @@ H.Tooltip.prototype = {
 
 	/**
      * Build the body (lines) of the tooltip by iterating over the items and returning one entry for each item,
-     * abstracting this functionality allows to easily overwrite and extend it. 
+     * abstracting this functionality allows to easily overwrite and extend it.
 	 */
 	bodyFormatter: function (items) {
         return map(items, function (item) {
@@ -530,7 +534,7 @@ H.Tooltip.prototype = {
             return (tooltipOptions.pointFormatter || item.point.tooltipFormatter).call(item.point, tooltipOptions.pointFormat);
         });
     }
-    
+
 };
 
 	return H;

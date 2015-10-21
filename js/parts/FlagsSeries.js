@@ -116,11 +116,11 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 				
 				if (leftPoint.x <= point.x && leftPoint.plotY !== undefined) {
 					if (point.x <= lastX) { // #803
-					
+
 						point.plotY = leftPoint.plotY;
-					
+
 						// interpolate between points, #666
-						if (leftPoint.x < point.x && !step) { 
+						if (leftPoint.x < point.x && !step) {
 							rightPoint = onData[i + 1];
 							if (rightPoint && rightPoint.plotY !== undefined) {
 								point.plotY += 
@@ -142,9 +142,9 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 		each(points, function (point, i) {
 
 			var stackIndex;
-			
+
 			// Undefined plotY means the point is either on axis, outside series range or hidden series.
-			// If the series is outside the range of the x axis it should fall through with 
+			// If the series is outside the range of the x axis it should fall through with
 			// an undefined plotY, but then we must remove the shapeArgs (#847).
 			if (point.plotY === undefined) {
 				if (point.x >= xAxisExt.min && point.x <= xAxisExt.max) { // we're inside xAxis range
@@ -161,7 +161,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 				}
 				stackIndex = lastPoint.stackIndex + 1;
 			}
-			point.stackIndex = stackIndex; // #3639		
+			point.stackIndex = stackIndex; // #3639
 		});
 
 
@@ -259,7 +259,7 @@ seriesTypes.flags = extendClass(seriesTypes.column, {
 	drawTracker: function () {
 		var series = this,
 			points = series.points;
-		
+
 		TrackerMixin.drawTrackerPoint.apply(this);
 
 		// Bring each stacked flag up on mouse over, this allows readability of vertically

@@ -2,10 +2,10 @@
 // check for a custom HighchartsAdapter defined prior to this file
 var globalAdapter = window.HighchartsAdapter,
 	adapter = globalAdapter || {};
-	
+
 // Initialize the adapter
 if (globalAdapter) {
-	globalAdapter.init.call(globalAdapter, H.pathAnim);
+	globalAdapter.init(H.pathAnim);
 }
 
 

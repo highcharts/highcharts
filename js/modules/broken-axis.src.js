@@ -6,7 +6,7 @@
  * License: www.highcharts.com/license
  */
 
-/*global HighchartsAdapter*/
+ /*global Highcharts */
 (function (H) {	
 
 	"use strict";
@@ -207,11 +207,13 @@
 				}
 
 				breakArrayT.sort(function (a, b) {
+					var ret;
 					if (a.value === b.value) {
-						return (a.move === 'in' ? 0 : 1) - (b.move === 'in' ? 0 : 1);
+						ret = (a.move === 'in' ? 0 : 1) - (b.move === 'in' ? 0 : 1);
 					} else {
-						return a.value - b.value;
+						ret = a.value - b.value;
 					}
+					return ret;
 				});
 				
 				// Simplify the breaks

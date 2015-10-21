@@ -35,7 +35,8 @@ seriesTypes.candlestick = extendClass(seriesTypes.ohlc, {
 		var attribs = seriesTypes.column.prototype.pointAttribs.call(this, point, state),
 			options = this.options,
 			isUp = point.open < point.close,
-			stroke = options.lineColor || this.color;
+			stroke = options.lineColor || this.color,
+			stateOptions;
 
 		attribs['stroke-width'] = options.lineWidth;
 

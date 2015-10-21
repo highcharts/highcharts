@@ -68,7 +68,7 @@ H.splitPath = function (path) {
 	path = path.replace(/([A-Za-z])/g, ' $1 ');
 	// Trim
 	path = path.replace(/^\s*/, "").replace(/\s*$/, "");
-	
+
 	// Split on spaces and commas
 	path = path.split(/[ ,,]+/); // Extra comma to escape gulp.scripts task
 	
@@ -148,18 +148,18 @@ H.Map = function (options, callback) {
 	hiddenAxis.gridZIndex = 10;
 	hiddenAxis.tickPositions = undefined;
 	// */
-	
+
 	// Don't merge the data
 	seriesOptions = options.series;
 	options.series = null;
-	
+
 	options = merge({
 		chart: {
 			panning: 'xy',
 			type: 'map'
 		},
 		xAxis: hiddenAxis,
-		yAxis: merge(hiddenAxis, { reversed: true })	
+		yAxis: merge(hiddenAxis, { reversed: true })
 	},
 	options, // user's options
 

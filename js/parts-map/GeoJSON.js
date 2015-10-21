@@ -40,7 +40,7 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
 		cosAngle = transform.cosAngle || (transform.rotation && Math.cos(transform.rotation)),
 		sinAngle = transform.sinAngle || (transform.rotation && Math.sin(transform.rotation)),
 		rotated = transform.rotation ? [projected[0] * cosAngle + projected[1] * sinAngle, -projected[0] * sinAngle + projected[1] * cosAngle] : projected;
-	
+
 	return {
 		x: ((rotated[0] - (transform.xoffset || 0)) * (transform.scale || 1) + (transform.xpan || 0)) * (transform.jsonres || 1) + (transform.jsonmarginX || 0),
 		y: (((transform.yoffset || 0) - rotated[1]) * (transform.scale || 1) + (transform.ypan || 0)) * (transform.jsonres || 1) - (transform.jsonmarginY || 0)
@@ -121,10 +121,10 @@ H.geojson = function (geojson, hType, series) {
 	var mapData = [],
 		path = [],
 		polygonToPath = function (polygon) {
-			var i = 0,
+			var i,
 				len = polygon.length;
 			path.push('M');
-			for (; i < len; i++) {
+			for (i = 0; i < len; i++) {
 				if (i === 1) {
 					path.push('L');
 				}
@@ -133,7 +133,7 @@ H.geojson = function (geojson, hType, series) {
 		};
 
 	hType = hType || 'map';
-	
+
 	each(geojson.features, function (feature) {
 
 		var geometry = feature.geometry,
@@ -141,7 +141,7 @@ H.geojson = function (geojson, hType, series) {
 			coordinates = geometry.coordinates,
 			properties = feature.properties,
 			point;
-		
+
 		path = [];
 
 		if (hType === 'map' || hType === 'mapbubble') {
@@ -159,7 +159,7 @@ H.geojson = function (geojson, hType, series) {
 			if (path.length) {
 				point = { path: path };
 			}
-		
+
 		} else if (hType === 'mapline') {
 			if (type === 'LineString') {
 				polygonToPath(coordinates);
@@ -170,7 +170,7 @@ H.geojson = function (geojson, hType, series) {
 			if (path.length) {
 				point = { path: path };
 			}
-		
+
 		} else if (hType === 'mappoint') {
 			if (type === 'Point') {
 				point = {
@@ -181,7 +181,7 @@ H.geojson = function (geojson, hType, series) {
 		}
 		if (point) {
 			mapData.push(extend(point, {
-				name: properties.name || properties.NAME, 
+				name: properties.name || properties.NAME,
 				properties: properties
 			}));
 		}
@@ -210,8 +210,8 @@ wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
 
 	proceed.call(this, credits);
 
-	if (this.credits) { 
-		this.credits.attr({ 
+	if (this.credits) {
+		this.credits.attr({
 			title: this.mapCreditsFull
 		});
 	}

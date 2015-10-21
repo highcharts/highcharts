@@ -10,6 +10,7 @@
 		defined = H.defined,
 		deg2rad = H.deg2rad,
 		discardElement = H.discardElement,
+		each = H.each,
 		erase = H.erase,
 		extend = H.extend,
 		extendClass = H.extendClass,
@@ -143,7 +144,7 @@ VMLElement = {
 	},
 
 	/**
-	 * Get the positioning correction for the span after rotating. 
+	 * Get the positioning correction for the span after rotating.
 	 */
 	getSpanCorrection: function (width, baseline, alignCorrection, rotation, align) {
 
@@ -195,7 +196,7 @@ VMLElement = {
 				path[i] = value[i];
 
 				// When the start X and end X coordinates of an arc are too close,
-				// they are rounded to the same value above. In this case, substract or 
+				// they are rounded to the same value above. In this case, substract or
 				// add 1 from the end X and Y positions. #186, #760, #1371, #1410.
 				if (value.isArc && (value[i] === 'wa' || value[i] === 'at')) {
 					// Start and end X
@@ -210,7 +211,7 @@ VMLElement = {
 			}
 		}
 
-		
+
 		// Loop up again to handle path shortcuts (#2132)
 		/*while (i++ < path.length) {
 			if (path[i] === 'H') { // horizontal line to
@@ -460,7 +461,7 @@ VMLElement = {
 		if (value === 'inherit') {
 			value = 'visible';
 		}
-		
+
 		// Let the shadow follow the main element
 		if (this.shadows) {
 			each(this.shadows, function (shadow) {
@@ -511,8 +512,8 @@ H.VMLElement = VMLElement = extendClass(SVGElement, VMLElement);
 
 // Some shared setters
 VMLElement.prototype.ySetter =
-	VMLElement.prototype.widthSetter = 
-	VMLElement.prototype.heightSetter = 
+	VMLElement.prototype.widthSetter =
+	VMLElement.prototype.heightSetter =
 	VMLElement.prototype.xSetter;
 
 
@@ -549,6 +550,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 		renderer.isVML = true;
 		renderer.box = box;
 		renderer.boxWrapper = boxWrapper;
+		renderer.gradients = {};
 		renderer.cache = {};
 
 
@@ -938,7 +940,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 	 * For rectangles, VML uses a shape for rect to overcome bugs and rotation problems
 	 */
 	createElement: function (nodeName) {
-		return nodeName === 'rect' ? this.symbol(nodeName) : SVGRenderer.prototype.createElement.call(this, nodeName);	
+		return nodeName === 'rect' ? this.symbol(nodeName) : SVGRenderer.prototype.createElement.call(this, nodeName);
 	},
 
 	/**

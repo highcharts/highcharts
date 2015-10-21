@@ -40,28 +40,28 @@ function averageZ(vertexes) {
   * Can 'wrap' around more then 180 degrees
   */
 function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
-	var result = [];
+	var result = [], 
+		arcAngle = end - start;
 	if ((end > start) && (end - start > Math.PI / 2 + 0.0001)) {
 		result = result.concat(curveTo(cx, cy, rx, ry, start, start + (Math.PI / 2), dx, dy));
 		result = result.concat(curveTo(cx, cy, rx, ry, start + (Math.PI / 2), end, dx, dy));
 		return result;
-	} else if ((end < start) && (start - end > Math.PI / 2 + 0.0001)) {			
+	}
+	if ((end < start) && (start - end > Math.PI / 2 + 0.0001)) {			
 		result = result.concat(curveTo(cx, cy, rx, ry, start, start - (Math.PI / 2), dx, dy));
 		result = result.concat(curveTo(cx, cy, rx, ry, start - (Math.PI / 2), end, dx, dy));
 		return result;
-	} else {
-		var arcAngle = end - start;
-		return [
-			'C', 
-			cx + (rx * Math.cos(start)) - ((rx * dFactor * arcAngle) * Math.sin(start)) + dx,
-			cy + (ry * Math.sin(start)) + ((ry * dFactor * arcAngle) * Math.cos(start)) + dy,
-			cx + (rx * Math.cos(end)) + ((rx * dFactor * arcAngle) * Math.sin(end)) + dx,
-			cy + (ry * Math.sin(end)) - ((ry * dFactor * arcAngle) * Math.cos(end)) + dy,
+	} 
+	return [
+		'C', 
+		cx + (rx * Math.cos(start)) - ((rx * dFactor * arcAngle) * Math.sin(start)) + dx,
+		cy + (ry * Math.sin(start)) + ((ry * dFactor * arcAngle) * Math.cos(start)) + dy,
+		cx + (rx * Math.cos(end)) + ((rx * dFactor * arcAngle) * Math.sin(end)) + dx,
+		cy + (ry * Math.sin(end)) - ((ry * dFactor * arcAngle) * Math.cos(end)) + dy,
 
-			cx + (rx * Math.cos(end)) + dx,
-			cy + (ry * Math.sin(end)) + dy
-		];
-	}
+		cx + (rx * Math.cos(end)) + dx,
+		cy + (ry * Math.sin(end)) + dy
+	];
 }
 
 SVGRenderer.prototype.toLinePath = function (points, closed) {
@@ -81,7 +81,7 @@ SVGRenderer.prototype.toLinePath = function (points, closed) {
 			result.push('Z');
 		}
 	}
-	
+
 	return result;
 };
 
@@ -124,21 +124,21 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 			var paths = this.renderer.cuboidPath(shapeArgs);
 			this.front.attr({d: paths[0], zIndex: paths[3]});
 			this.top.attr({d: paths[1], zIndex: paths[4]});
-			this.side.attr({d: paths[2], zIndex: paths[5]});			
+			this.side.attr({d: paths[2], zIndex: paths[5]});
 		} else {
 			SVGElement.prototype.attr.call(this, args);
 		}
 
 		return this;
 	};
-	
+
 	result.animate = function (args, duration, complete) {
 		if (defined(args.x) && defined(args.y)) {
 			var paths = this.renderer.cuboidPath(args);
 			this.front.attr({zIndex: paths[3]}).animate({d: paths[0]}, duration, complete);
 			this.top.attr({zIndex: paths[4]}).animate({d: paths[1]}, duration, complete);
 			this.side.attr({zIndex: paths[5]}).animate({d: paths[2]}, duration, complete);
-		} else if (args.opacity) {				
+		} else if (args.opacity) {
 				this.front.animate(args, duration, complete);
 				this.top.animate(args, duration, complete);
 				this.side.animate(args, duration, complete);
@@ -192,15 +192,17 @@ SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 
 	// helper method to decide which side is visible
 	var pickShape = function (path1, path2) {
+		var ret;
 		path1 = map(path1, function (i) { return pArr[i]; });
 		path2 = map(path2, function (i) { return pArr[i]; });
 		if (shapeArea(path1) < 0) {
-			return path1;
+			ret = path1;
 		} else if (shapeArea(path2) < 0) {
-			return path2;
+			ret = path2;
 		} else {
-			return [];
+			ret = [];
 		}
+		return ret;
 	};
 
 	// front or back
@@ -255,7 +257,7 @@ SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		this.top.attr({fill: c0});
 		return this;
 	};
-	
+
 	// apply the translation to all
 	result.translateXSetter = function (value) {
 		this.out.attr({translateX: value});
@@ -264,7 +266,7 @@ SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		this.side2.attr({translateX: value});
 		this.top.attr({translateX: value});
 	};
-	
+
 	result.translateYSetter = function (value) {
 		this.out.attr({translateY: value});
 		this.inn.attr({translateY: value});
@@ -283,7 +285,7 @@ SVGRenderer.prototype.arc3d = function (shapeArgs) {
 				duration: duration,
 				start: function () {
 					var args = arguments,
-						fx = args[0],					
+						fx = args[0],
 						elem = fx.elem,
 						end = elem._shapeArgs;
 
@@ -296,7 +298,7 @@ SVGRenderer.prototype.arc3d = function (shapeArgs) {
 				step: function () {
 					var args = arguments,
 						fx = args[1],
-						result = fx.elem,						
+						result = fx.elem,
 						start = result._shapeArgs,
 						end = fx.end,
 						pos = fx.pos,
@@ -351,7 +353,7 @@ SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		this.inn.show();
 		this.side1.show();
 		this.side2.show();
-	};	
+	};
 	// show all children
 	result.zIndex = zIndex;
 	result.attr({zIndex: zIndex});
@@ -384,7 +386,7 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 		dx = d * Math.sin(beta),		// distance between top and bottom in x
 		dy = d * Math.sin(alpha);	// distance between top and bottom in y
 
-	// TOP	
+	// TOP
 	var top = ['M', cx + (rx * cs), cy + (ry * ss)];
 	top = top.concat(curveTo(cx, cy, rx, ry, start, end, 0, 0));
 	top = top.concat([
@@ -402,7 +404,7 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 	
 	var out = ['M', cx + (rx * Math.cos(start2)), cy + (ry * Math.sin(start2))];
 	out = out.concat(curveTo(cx, cy, rx, ry, start2, end2, 0, 0));
-	
+
 	// When slice goes over middle, need to add both, left and right outer side:
 	if (end > Math.PI - a && start < Math.PI - a) {
 		// Go to outer side
@@ -418,7 +420,7 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 		// Go back to the artifical end2
 		out = out.concat(curveTo(cx, cy, rx, ry, end, end2, 0, 0));
 	}
-	
+
 	out = out.concat([
 		'L', cx + (rx * Math.cos(end2)) + dx, cy + (ry * Math.sin(end2)) + dy
 	]);
@@ -449,13 +451,13 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 		'L', cx + (irx * ce), cy + (iry * se),
 		'Z'
 	];
-	
+
 	// correction for changed position of vanishing point caused by alpha and beta rotations
 	var angleCorr = Math.atan2(dy, -dx),
-		angleEnd = Math.abs(end + angleCorr), 
+		angleEnd = Math.abs(end + angleCorr),
 		angleStart = Math.abs(start + angleCorr),
 		angleMid = Math.abs((start + end) / 2 + angleCorr);
-	
+
 	// set to 0-PI range
 	function toZeroPIRange(angle) {
 		angle = angle % (2 * Math.PI);
@@ -467,13 +469,13 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 	angleEnd = toZeroPIRange(angleEnd);
 	angleStart = toZeroPIRange(angleStart);
 	angleMid = toZeroPIRange(angleMid);
-	
+
 	// *1e5 is to compensate pInt in zIndexSetter
 	var incPrecision = 1e5,
 		a1 = angleMid * incPrecision,
 		a2 = angleStart * incPrecision,
 		a3 = angleEnd * incPrecision;
-		
+
 	return {
 		top: top,
 		zTop: Math.PI * incPrecision + 1, // max angle is PI, so this is allways higher

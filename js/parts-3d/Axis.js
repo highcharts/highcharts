@@ -47,7 +47,8 @@ wrap(Axis.prototype, 'render', function (proceed) {
 
 	if (this.isZAxis) {
 		return;
-	} else if (this.horiz) {
+	}
+	if (this.horiz) {
 		var bottomShape = {
 			x: left,
 			y: top + (chart.xAxis[0].opposite ? -fbottom.size : height),
@@ -81,7 +82,7 @@ wrap(Axis.prototype, 'render', function (proceed) {
 		};
 		if (!this.backFrame) {
 			this.backFrame = renderer.cuboid(backShape).attr({
-				fill: fback.color, 
+				fill: fback.color,
 				zIndex: -3
 			}).css({
 				stroke: fback.color
@@ -100,7 +101,7 @@ wrap(Axis.prototype, 'render', function (proceed) {
 		};
 		if (!this.sideFrame) {
 			this.sideFrame = renderer.cuboid(sideShape).attr({
-				fill: fside.color, 
+				fill: fside.color,
 				zIndex: -2
 			}).css({
 				stroke: fside.color
@@ -151,38 +152,37 @@ wrap(Axis.prototype, 'getPlotBandPath', function (proceed) {
 	// Do not do this if the chart is not 3D
 	if (!this.chart.is3d()) {
 		return proceed.apply(this, [].slice.call(arguments, 1));
-	} else {
-		var args = arguments,
-			from = args[1],
-			to = args[2];
-	
-		var toPath = this.getPlotLinePath(to),
-			path = this.getPlotLinePath(from);
-			
-		if (path && toPath) {
-			path.push(
-				'L',
-				toPath[10],	// These two do not exist in the regular getPlotLine
-				toPath[11],  // ---- # 3005
-				'L',
-				toPath[7],
-				toPath[8],
-				'L',
-				toPath[4],
-				toPath[5],
-				'L',
-				toPath[1],
-				toPath[2]
-			);
-		} else { // outside the axis area
-			path = null;
-		}
-		
-		return path;
 	}
+
+	var args = arguments,
+		from = args[1],
+		to = args[2],
+		toPath = this.getPlotLinePath(to),
+		path = this.getPlotLinePath(from);
+
+	if (path && toPath) {
+		path.push(
+			'L',
+			toPath[10],	// These two do not exist in the regular getPlotLine
+			toPath[11],  // ---- # 3005
+			'L',
+			toPath[7],
+			toPath[8],
+			'L',
+			toPath[4],
+			toPath[5],
+			'L',
+			toPath[1],
+			toPath[2]
+		);
+	} else { // outside the axis area
+		path = null;
+	}
+
+	return path;
 });
 
-/*** 
+/***
 	EXTENSION TO THE TICKS
 ***/
 
@@ -266,9 +266,8 @@ Axis.prototype.swapZ = function (p, insidePlotArea) {
 			y: p.y,
 			z: p.x - plotLeft
 		};
-	} else {
-		return p;
 	}
+	return p;
 };
 
 ZAxis = H.ZAxis = function () {
@@ -298,7 +297,7 @@ extend(ZAxis.prototype, {
 
 		// Reset properties in case we're redrawing (#3353)
 		axis.dataMin = axis.dataMax = axis.ignoreMinPadding = axis.ignoreMaxPadding = null;
-		
+
 		if (axis.buildStacks) {
 			axis.buildStacks();
 		}

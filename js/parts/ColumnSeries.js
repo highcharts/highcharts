@@ -69,9 +69,9 @@ seriesTypes.column = extendClass(Series, {
 	cropShoulder: 0,
 	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	trackerGroups: ['group', 'dataLabelsGroup'],
-	negStacks: true, // use separate negative stacks, unlike area stacks where a negative 
+	negStacks: true, // use separate negative stacks, unlike area stacks where a negative
 		// point is substracted from previous (#1910)
-	
+
 	/**
 	 * Initialize the series
 	 */
@@ -94,7 +94,7 @@ seriesTypes.column = extendClass(Series, {
 
 	/**
 	 * Return the width and x offset of the columns adjusted for grouping, groupPadding, pointPadding,
-	 * pointWidth etc. 
+	 * pointWidth etc.
 	 */
 	getColumnMetrics: function () {
 
@@ -145,7 +145,7 @@ seriesTypes.column = extendClass(Series, {
 				pick(options.pointWidth, pointOffsetWidth * (1 - 2 * options.pointPadding))
 			),
 			pointPadding = (pointOffsetWidth - pointWidth) / 2,
-			colIndex = (reversedXAxis ? 
+			colIndex = (reversedXAxis ?
 				columnCount - (series.columnIndex || 0) : // #1251
 				series.columnIndex) || 0,
 			pointXOffset = pointPadding + (groupPadding + colIndex *
@@ -153,11 +153,12 @@ seriesTypes.column = extendClass(Series, {
 				(reversedXAxis ? -1 : 1);
 
 		// Save it for reading in linked series (Error bars particularly)
-		return (series.columnMetrics = { 
-			width: pointWidth, 
-			offset: pointXOffset 
-		});
-			
+		series.columnMetrics = {
+			width: pointWidth,
+			offset: pointXOffset
+		};
+		return series.columnMetrics;
+
 	},
 
 	/**
@@ -175,7 +176,7 @@ seriesTypes.column = extendClass(Series, {
 		if (chart.inverted && chart.renderer.isVML) {
 			yCrisp += 1;
 		}
-		
+
 		// Horizontal. We need to first compute the exact right edge, then round it
 		// and compute the width from there.
 		right = Math.round(x + w) + xCrisp;
@@ -183,8 +184,8 @@ seriesTypes.column = extendClass(Series, {
 		w = right - x;
 
 		// Vertical
-		fromTop = Math.abs(y) <= 0.5; // #4504
 		bottom = Math.round(y + h) + yCrisp;
+		fromTop = Math.abs(y) <= 0.5 && bottom > 0.5; // #4504, #4656
 		y = Math.round(y) + yCrisp;
 		h = bottom - y;
 
@@ -263,8 +264,8 @@ seriesTypes.column = extendClass(Series, {
 			point.pointWidth = pointWidth;
 
 			// Fix the tooltip on center of grouped columns (#1216, #424, #3648)
-			point.tooltipPos = chart.inverted ? 
-				[yAxis.len + yAxis.pos - chart.plotLeft - plotY, series.xAxis.len - barX - barW / 2, barH] : 
+			point.tooltipPos = chart.inverted ?
+				[yAxis.len + yAxis.pos - chart.plotLeft - plotY, series.xAxis.len - barX - barW / 2, barH] :
 				[barX + barW / 2, plotY + yAxis.pos - chart.plotTop, barH];
 
 			// Register shape type and arguments to be used in drawPoints
@@ -275,13 +276,13 @@ seriesTypes.column = extendClass(Series, {
 	},
 
 	getSymbol: noop,
-	
+
 	/**
 	 * Use a solid rectangle like the area series types
 	 */
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-	
-	
+
+
 	/**
 	 * Columns have no graph
 	 */
@@ -407,7 +408,7 @@ seriesTypes.column = extendClass(Series, {
 				series.group.attr(attr);
 
 			} else { // run the animation
-				
+
 				attr.scaleY = 1;
 				attr[inverted ? 'translateX' : 'translateY'] = yAxis.pos;
 				series.group.animate(attr, series.options.animation);
@@ -417,7 +418,7 @@ seriesTypes.column = extendClass(Series, {
 			}
 		}
 	},
-	
+
 	/**
 	 * Remove this series from the chart
 	 */

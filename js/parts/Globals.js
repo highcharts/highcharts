@@ -1,10 +1,10 @@
 (function () {
 	var SVG_NS = 'http://www.w3.org/2000/svg',
+		userAgent = navigator.userAgent,
 		svg = !!document.createElementNS && !!document.createElementNS(SVG_NS, 'svg').createSVGRect,
 		isMS = /(edge|msie|trident)/i.test(userAgent) && !window.opera,
 		useCanVG = !svg && !isMS && !!document.createElement('canvas').getContext,
 		vml = !svg && !useCanVG,
-		userAgent = navigator.userAgent,
 		isFirefox = /Firefox/.test(userAgent),
 		hasBidiBug = isFirefox && parseInt(userAgent.split('Firefox/')[1], 10) < 4; // issue #38
 
@@ -25,6 +25,7 @@ window.Highcharts = window.Highcharts ? window.Highcharts.error(16, true) : {
 	useCanVG: useCanVG,
 	vml: vml,
 	charts: [],
+	marginNames: ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
 	noop: function () {}
 };
 

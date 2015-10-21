@@ -98,7 +98,7 @@ PiePoint = extendClass(Point, {
 			series = point.series,
 			chart = series.chart,
 			ignoreHiddenPoint = series.options.ignoreHiddenPoint;
-		
+
 		redraw = pick(redraw, ignoreHiddenPoint);
 
 		if (vis !== point.visible) {
@@ -123,7 +123,7 @@ PiePoint = extendClass(Point, {
 			if (!vis && point.state === 'hover') {
 				point.setState('');
 			}
-			
+
 			// Handle ignore hidden slices
 			if (ignoreHiddenPoint) {
 				series.isDirty = true;
@@ -262,13 +262,13 @@ seriesTypes.pie = extendClass(Series, {
 		Series.prototype.generatePoints.call(this);
 		this.updateTotals();
 	},
-	
+
 	/**
 	 * Do translation for pie slices
 	 */
 	translate: function (positions) {
 		this.generatePoints();
-		
+
 		var series = this,
 			cumulative = 0,
 			precision = 1000, // issue #172
@@ -310,9 +310,9 @@ seriesTypes.pie = extendClass(Series, {
 
 		// Calculate the geometry for each point
 		for (i = 0; i < len; i++) {
-			
+
 			point = points[i];
-			
+
 			// set start and end angle
 			start = startAngleRad + (cumulative * circ);
 			if (!ignoreHiddenPoint || point.visible) {
@@ -373,7 +373,7 @@ seriesTypes.pie = extendClass(Series, {
 
 		}
 	},
-	
+
 	drawGraph: null,
 
 	/**
@@ -423,7 +423,7 @@ seriesTypes.pie = extendClass(Series, {
 				if (graphic) {
 					graphic
 						.setRadialReference(series.center)
-						.animate(extend(shapeArgs, groupTranslation));				
+						.animate(extend(shapeArgs, groupTranslation));
 				} else {
 
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
@@ -459,7 +459,7 @@ seriesTypes.pie = extendClass(Series, {
 		points.sort(function (a, b) {
 			return a.angle !== undefined && (b.angle - a.angle) * sign;
 		});
-	},		
+	},
 
 	/**
 	 * Use a simple symbol from LegendSymbolMixin

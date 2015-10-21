@@ -86,7 +86,7 @@
      * run the original method. If not, check for a canvas version or do nothing.
      */
     each(['translate', 'generatePoints', 'drawTracker', 'drawPoints', 'render'], function (method) {
-        function branch(proceed) {
+        var branch = function (proceed) {
             var letItPass = this.options.stacking && (method === 'translate' || method === 'generatePoints');
             if ((this.processedXData || this.options.data).length < (this.options.boostThreshold || Number.MAX_VALUE) ||
                     letItPass) {
@@ -104,7 +104,7 @@
 
                 this[method + 'Canvas']();
             }
-        }
+        };
         wrap(Series.prototype, method, branch);
 
         // A special case for some types - its translate method is already wrapped
@@ -161,10 +161,12 @@
                 point,
                 i;
 
-            for (i = 0; i < points.length; i = i + 1) {
-                point = points[i];
-                if (point && point.graphic) {
-                    point.graphic = point.graphic.destroy();
+            if (points) {
+                for (i = 0; i < points.length; i = i + 1) {
+                    point = points[i];
+                    if (point && point.graphic) {
+                        point.graphic = point.graphic.destroy();
+                    }
                 }
             }
 
@@ -180,15 +182,25 @@
          * to an SVG image element.
          */
         getContext: function () {
-            var width = this.chart.plotWidth,
-                height = this.chart.plotHeight;
+            var chart = this.chart,
+                width = chart.plotWidth,
+                height = chart.plotHeight,
+                ctx = this.ctx,
+                swapXY = function (proceed, x, y, a, b, c, d) {
+                    proceed.call(this, y, x, a, b, c, d);
+                };
 
             if (!this.canvas) {
                 this.canvas = document.createElement('canvas');
-                this.image = this.chart.renderer.image('', 0, 0, width, height).add(this.group);
-                this.ctx = this.canvas.getContext('2d');
+                this.image = chart.renderer.image('', 0, 0, width, height).add(this.group);
+                this.ctx = ctx = this.canvas.getContext('2d');
+                if (chart.inverted) {
+                    each(['moveTo', 'lineTo', 'rect', 'arc'], function (fn) {
+                        wrap(ctx, fn, swapXY);
+                    });
+                }
             } else {
-                this.ctx.clearRect(0, 0, width, height);
+                ctx.clearRect(0, 0, width, height);
             }
 
             this.canvas.setAttribute('width', width);
@@ -198,7 +210,7 @@
                 height: height
             });
 
-            return this.ctx;
+            return ctx;
         },
 
         /** 
@@ -308,18 +320,24 @@
                     // The k-d tree requires series points. Reduce the amount of points, since the time to build the 
                     // tree increases exponentially.
                     if (enableMouseTracking && !pointTaken[clientX + ',' + plotY]) {
+                        pointTaken[clientX + ',' + plotY] = true;
+
+                        if (chart.inverted) {
+                            clientX = xAxis.len - clientX;
+                            plotY = yAxis.len - plotY;
+                        }
+
                         points.push({
                             clientX: clientX,
                             plotX: clientX,
                             plotY: plotY,
                             i: cropStart + i
                         });
-                        pointTaken[clientX + ',' + plotY] = true;
                     }
                 };
 
             // If we are zooming out from SVG mode, destroy the graphics
-            if (this.points) {
+            if (this.points || this.graph) {
                 this.destroyGraphics();
             }
 
@@ -488,7 +506,7 @@
                 }
 
                 // Pass tests in Pointer. 
-                // TODO: Replace this with a single property, and replace when zooming in
+                // Replace this with a single property, and replace when zooming in
                 // below boostThreshold.
                 series.directTouch = false;
                 series.options.stickyTracking = true;

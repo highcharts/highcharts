@@ -36,11 +36,11 @@ wrap(Axis.prototype, 'render', function (proceed) {
 	if (this.bottomFrame) {
 		this.bottomFrame.css({zIndex: 1});
 		this.bottomFrame.front.attr({fill: this.bottomFrame.color});
-	}	
+	}
 	if (this.backFrame) {
 		this.backFrame.css({zIndex: 0});
 		this.backFrame.front.attr({fill: this.backFrame.color});
-	}		
+	}
 });
 
 }

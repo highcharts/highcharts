@@ -50,7 +50,7 @@ colorSeriesMixin = H.colorSeriesMixin = {
 			var value = point[colorKey],
 				color;
 
-			color = point.options.color || 
+			color = point.options.color ||
 				(value === null ? nullColor : (colorAxis && value !== undefined) ? colorAxis.toColor(value, point) : point.color || series.color);
 
 			if (color) {

@@ -26,7 +26,7 @@ var addEvent = H.addEvent,
 
 	units = [].concat(defaultDataGroupingUnits), // copy
 	defaultSeriesType,
-	
+
 	// Finding the min or max of a set of variables where we don't know if they are defined,
 	// is a pattern that is repeated several places in Highcharts. Consider making this
 	// a global utility method.
@@ -387,7 +387,7 @@ Scroller.prototype = {
 					.attr({
 						fill: navigatorOptions.maskFill
 					}).add(navigatorGroup);
-				
+
 				if (navigatorOptions.maskInside) {
 					scroller.leftShade.css({ cursor: 'ew-resize '});
 				} else {
@@ -467,7 +467,7 @@ Scroller.prototype = {
 					height: height
 				});
 			}
-	
+
 			scroller.outline[verb]({ d: [
 				'M',
 				scrollerLeft, outlineTop, // left
@@ -665,18 +665,18 @@ Scroller.prototype = {
 					// Center around the clicked point
 					if (isOnNavigator) {
 						left = chartX - navigatorLeft - range / 2;
-					
+
 					// Click on scrollbar
 					} else {
 
 						// Click left scrollbar button
-						if (chartX < navigatorLeft) { 
+						if (chartX < navigatorLeft) {
 							left = zoomedMin - range * 0.2;
 
 						// Click right scrollbar button
 						} else if (chartX > scrollerLeft + scrollerWidth - scrollbarHeight) {
 							left = zoomedMin + range * 0.2;
-						
+
 						// Click on scrollbar track, shift the scrollbar by one range
 						} else {
 							left = chartX < navigatorLeft + zoomedMin ? // on the left
@@ -779,7 +779,7 @@ Scroller.prototype = {
 				} else if (scroller.zoomedMax === scroller.otherHandlePos) {
 					fixedMax = scroller.fixedExtreme;
 				}
-				
+
 				ext = xAxis.toFixedRange(scroller.zoomedMin, scroller.zoomedMax, fixedMin, fixedMax);
 				chart.xAxis[0].setExtremes(
 					ext.min,
@@ -814,7 +814,7 @@ Scroller.prototype = {
 			scroller.xAxis = xAxis = new Axis(chart, merge({
 				// inherit base xAxis' break and ordinal options
 				breaks: baseSeries && baseSeries.xAxis.options.breaks,
-				ordinal: baseSeries && baseSeries.xAxis.options.ordinal 
+				ordinal: baseSeries && baseSeries.xAxis.options.ordinal
 			}, navigatorOptions.xAxis, {
 				id: 'navigator-x-axis',
 				isX: true,
@@ -924,11 +924,11 @@ Scroller.prototype = {
 		if (!returnFalseOnNoBaseSeries || baseAxis.dataMin !== null) {
 			ret = {
 				dataMin: pick( // #4053
-					navAxisOptions && navAxisOptions.min, 
+					navAxisOptions && navAxisOptions.min,
 					numExt(
 						'min',
 						baseAxisOptions.min,
-						baseAxis.dataMin, 
+						baseAxis.dataMin,
 						navAxis.dataMin
 					)
 				),
@@ -937,7 +937,7 @@ Scroller.prototype = {
 					numExt(
 						'max',
 						baseAxisOptions.max,
-						baseAxis.dataMax, 
+						baseAxis.dataMax,
 						navAxis.dataMax
 					)
 				)

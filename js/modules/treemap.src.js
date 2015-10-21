@@ -7,6 +7,7 @@
  * License: www.highcharts.com/license
  */
 
+/*global Highcharts, HighchartsAdapter */
 (function (H) {
 	var seriesTypes = H.seriesTypes,
 		map = H.map,

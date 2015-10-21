@@ -33,7 +33,7 @@ H.Color = Color = function (input) {
 			result = rgbaRegEx.exec(input);
 			if (result) {
 				rgba = [pInt(result[1]), pInt(result[2]), pInt(result[3]), parseFloat(result[4], 10)];
-			} else { 
+			} else {
 				// hex
 				result = hexRegEx.exec(input);
 				if (result) {
@@ -46,7 +46,7 @@ H.Color = Color = function (input) {
 					}
 				}
 			}
-		}		
+		}
 
 	}
 	/**
@@ -87,7 +87,7 @@ H.Color = Color = function (input) {
 			each(stops, function (stop) {
 				stop.brighten(alpha);
 			});
-		
+
 		} else if (isNumber(alpha) && alpha !== 0) {
 			var i;
 			for (i = 0; i < 3; i++) {

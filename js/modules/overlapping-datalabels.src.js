@@ -1,13 +1,7 @@
 /**
- * @product.name@ JS v@product.version@ (@product.date@)
- * Highcharts module to hide overlapping data labels. This module is included by default in Highmaps.
- *
- * (c) 2010-2014 Torstein Honsi
- *
- * License: www.highcharts.com/license
+ * Highcharts module to hide overlapping data labels. This module is included in Highcharts.
  */
-
-/*global Highcharts */
+ /*global Highcharts */
 (function (H) {
 	var Chart = H.Chart,
 		each = H.each,

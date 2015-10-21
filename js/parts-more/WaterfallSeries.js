@@ -71,7 +71,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 			// get current stack
 			stack = stacking && yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey];
-			range = stack ? 
+			range = stack ?
 				stack[point.x].points[series.index + ',' + i] :
 				[0, yValue];
 
@@ -97,11 +97,11 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 				shapeArgs.height = Math.min(yAxis.translate(previousIntermediate, 0, 1), yAxis.len) - shapeArgs.y;
 				previousIntermediate = range[1];
 
-			// If it's not the sum point, update previous stack end position and get 
+			// If it's not the sum point, update previous stack end position and get
 			// shape height (#3886)
 			} else {
 				if (previousY !== 0) { // Not the first point
-					shapeArgs.height = yValue > 0 ? 
+					shapeArgs.height = yValue > 0 ?
 						yAxis.translate(previousY, 0, 1) - shapeArgs.y :
 						yAxis.translate(previousY, 0, 1) - yAxis.translate(previousY - yValue, 0, 1);
 				}
@@ -177,7 +177,8 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 	toYData: function (pt) {
 		if (pt.isSum) {
 			return (pt.x === 0 ? null : "sum"); //#3245 Error when first element is Sum or Intermediate Sum
-		} else if (pt.isIntermediateSum) {
+		}
+		if (pt.isIntermediateSum) {
 			return (pt.x === 0 ? null : "intermediateSum"); //#3245
 		}
 		return pt.y;

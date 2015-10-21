@@ -96,7 +96,7 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 				height: Math.abs(y2 - y1)
 			};
 		});
-		
+
 		series.translateColors();
 
 		// Make sure colors are updated on colorAxis update (#2893)
@@ -120,7 +120,7 @@ seriesTypes.heatmap = extendClass(seriesTypes.scatter, merge(colorSeriesMixin, {
 		// Get the extremes from the y data
 		Series.prototype.getExtremes.call(this);
 	}
-		
+
 }));
 
 	return H;
