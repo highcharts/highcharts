@@ -6,6 +6,7 @@
 		extend = H.extend,
 		isMS = H.isMS,
 		isString = H.isString,
+		noop = H.noop,
 		wrap = H.wrap;
 	/**
 	 * The default HighchartsAdapter for jQuery
@@ -20,10 +21,11 @@
 			// extend the animate function to allow SVG animations
 			var Fx = $.fx;
 
-			/*jslint unparam: true*//* allow unused param x in this function */
+			/*jslint unparam: true*/
 			$.extend($.easing, {
-				easeOutQuad: function (x, t, b, c, d) {
-					return -c * (t /= d) * (t - 2) + b;
+				easeOutQuad: function (ignore, t, b, c, d) {
+					t /= d;
+					return -c * t * (t - 2) + b;
 				}
 			});
 			/*jslint unparam: false*/
@@ -122,8 +124,7 @@
 				var constr = 'Chart', // default constructor
 					args = arguments,
 					options,
-					ret,
-					chart;
+					ret;
 
 				if (this[0]) {
 
@@ -137,7 +138,7 @@
 					if (options !== undefined) {
 						options.chart = options.chart || {};
 						options.chart.renderTo = this[0];
-						chart = new H[constr](options, args[1]);
+						ret = new H[constr](options, args[1]);
 						ret = this;
 					}
 
@@ -238,7 +239,7 @@
 			// http://forum.jQuery.com/topic/javascript-error-when-unbinding-a-custom-event-using-jQuery-1-4-2
 			var func = document.removeEventListener ? 'removeEventListener' : 'detachEvent';
 			if (document[func] && el && !el[func]) {
-				el[func] = function () {};
+				el[func] = noop;
 			}
 
 			$(el).unbind(eventType, handler);

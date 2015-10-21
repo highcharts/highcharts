@@ -52,7 +52,9 @@
         vml: vml,
         charts: [],
         marginNames: ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
-        noop: function () {}
+        noop: function () {
+            return undefined;
+        }
     };
 
         return window.Highcharts;
@@ -301,7 +303,7 @@
      * @param {Object} members
      */
     H.extendClass = function (parent, members) {
-        var object = function () {};
+        var object = function () { return undefined; };
         object.prototype = new parent();
         H.extend(object.prototype, members);
         return object;
@@ -461,7 +463,11 @@
             val,
             index;
 
-        while ((index = str.indexOf(splitter)) !== -1) {
+        while (str) {
+            index = str.indexOf(splitter);
+            if (index === -1) {
+                break;
+            }
 
             segment = str.slice(0, index);
             if (isInside) { // we're on the closing bracket looking back
@@ -695,12 +701,16 @@
             n = +number || 0,
             c = decimals === -1 ?
                     Math.min((n.toString().split('.')[1] || '').length, 20) : // Preserve decimals. Not huge numbers (#3793).
-                    (isNaN(decimals = Math.abs(decimals)) ? 2 : decimals),
+                    (isNaN(Math.abs(decimals)) ? 2 : Math.abs(decimals)),
             d = decPoint === undefined ? lang.decimalPoint : decPoint,
             t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
             s = n < 0 ? "-" : "",
-            i = String(H.pInt(n = Math.abs(n).toFixed(c))),
-            j = i.length > 3 ? i.length % 3 : 0;
+            i,
+            j;
+
+        n = Math.abs(n).toFixed(c);
+        i = String(H.pInt(n));
+        j = i.length > 3 ? i.length % 3 : 0;
 
         return (s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
                 (c ? d + Math.abs(n - i).toFixed(c).slice(2) : ""));
@@ -815,6 +825,7 @@
             extend = H.extend,
             isMS = H.isMS,
             isString = H.isString,
+            noop = H.noop,
             wrap = H.wrap;
         /**
          * The default HighchartsAdapter for jQuery
@@ -829,10 +840,11 @@
                 // extend the animate function to allow SVG animations
                 var Fx = $.fx;
 
-                /*jslint unparam: true*//* allow unused param x in this function */
+                /*jslint unparam: true*/
                 $.extend($.easing, {
-                    easeOutQuad: function (x, t, b, c, d) {
-                        return -c * (t /= d) * (t - 2) + b;
+                    easeOutQuad: function (ignore, t, b, c, d) {
+                        t /= d;
+                        return -c * t * (t - 2) + b;
                     }
                 });
                 /*jslint unparam: false*/
@@ -931,8 +943,7 @@
                     var constr = 'Chart', // default constructor
                         args = arguments,
                         options,
-                        ret,
-                        chart;
+                        ret;
 
                     if (this[0]) {
 
@@ -946,7 +957,7 @@
                         if (options !== undefined) {
                             options.chart = options.chart || {};
                             options.chart.renderTo = this[0];
-                            chart = new H[constr](options, args[1]);
+                            ret = new H[constr](options, args[1]);
                             ret = this;
                         }
 
@@ -1047,7 +1058,7 @@
                 // http://forum.jQuery.com/topic/javascript-error-when-unbinding-a-custom-event-using-jQuery-1-4-2
                 var func = document.removeEventListener ? 'removeEventListener' : 'detachEvent';
                 if (document[func] && el && !el[func]) {
-                    el[func] = function () {};
+                    el[func] = noop;
                 }
 
                 $(el).unbind(eventType, handler);
@@ -1717,6 +1728,7 @@
             isString = H.isString,
             isWebKit = H.isWebKit,
             merge = H.merge,
+            noop = H.noop,
             pick = H.pick,
             pInt = H.pInt,
             removeEvent = H.removeEvent,
@@ -1727,7 +1739,7 @@
     /**
      * A wrapper object for SVG elements
      */
-    SVGElement = H.SVGElement = function () {};
+    SVGElement = H.SVGElement = function () { return this; };
     SVGElement.prototype = {
 
         // Default base for animation
@@ -2396,7 +2408,9 @@
                 attribs = {},
                 alignTo,
                 renderer = this.renderer,
-                alignedObjects = renderer.alignedObjects;
+                alignedObjects = renderer.alignedObjects,
+                alignFactor,
+                vAlignFactor;
 
             // First call on instanciate
             if (alignOptions) {
@@ -2425,18 +2439,25 @@
             y = (box.y || 0) + (alignOptions.y || 0); // default: top align
 
             // Align
-            if (align === 'right' || align === 'center') {
-                x += (box.width - (alignOptions.width || 0)) /
-                        { right: 1, center: 2 }[align];
+            if (align === 'right') {
+                alignFactor = 1;
+            } else if (align === 'center') {
+                alignFactor = 2;
+            }
+            if (alignFactor) {
+                x += (box.width - (alignOptions.width || 0)) / alignFactor;
             }
             attribs[alignByTranslate ? 'translateX' : 'x'] = Math.round(x);
 
 
             // Vertical align
-            if (vAlign === 'bottom' || vAlign === 'middle') {
-                y += (box.height - (alignOptions.height || 0)) /
-                        ({ bottom: 1, middle: 2 }[vAlign] || 1);
-
+            if (vAlign === 'bottom') {
+                vAlignFactor = 1;
+            } else if (vAlign === 'middle') {
+                vAlignFactor = 2;
+            }
+            if (vAlignFactor) {
+                y += (box.height - (alignOptions.height || 0)) / vAlignFactor;
             }
             attribs[alignByTranslate ? 'translateY' : 'y'] = Math.round(y);
 
@@ -2528,7 +2549,7 @@
                         } else if (toggleTextShadowShim) {
                             toggleTextShadowShim('');
                         }
-                    } catch (e) {}
+                    } catch (ignore) {}
 
                     // If the bBox is not set, the try-catch block above failed. The other condition
                     // is for Opera that returns a width of -Infinity on hidden elements.
@@ -2766,7 +2787,11 @@
 
         xGetter: function (key) {
             if (this.element.nodeName === 'circle') {
-                key = { x: 'cx', y: 'cy' }[key] || key;
+                if (key === 'x') {
+                    key = 'cx';
+                } else if (key === 'y') {
+                    key = 'cy';
+                }
             }
             return this._defaultGetter(key);
         },
@@ -2798,7 +2823,8 @@
         },
         
         alignSetter: function (value) {
-            this.element.setAttribute('text-anchor', { left: 'start', center: 'middle', right: 'end' }[value]);
+            var convert = { left: 'start', center: 'middle', right: 'end' };
+            this.element.setAttribute('text-anchor', convert[value]);
         },
         opacitySetter: function (value, key, element) {
             this[key] = value;
@@ -3055,7 +3081,7 @@
         /**
          * Dummy function for use in canvas renderer
          */
-        draw: function () {},
+        draw: noop,
 
         /**
          * Get converted radial gradient attributes
@@ -3218,7 +3244,6 @@
                                         actualWidth,
                                         rest = [],
                                         dy = getLineHeight(tspan),
-                                        softLineNo = 1,
                                         rotation = wrapper.rotation,
                                         wordStr = span, // for ellipsis
                                         cursor = wordStr.length, // binary search cursor
@@ -3262,7 +3287,6 @@
                                             rest = [];
 
                                             if (words.length) {
-                                                softLineNo++;
                                             
                                                 tspan = document.createElementNS(renderer.SVG_NS, 'tspan');
                                                 attr(tspan, {
@@ -3437,8 +3461,10 @@
             });
             addEvent(label.element, isMS ? 'mouseout' : 'mouseleave', function () {
                 if (curState !== 3) {
-                    stateOptions = [normalState, hoverState, pressedState][curState];
-                    stateStyle = [normalStyle, hoverStyle, pressedStyle][curState];
+                    stateOptions = [normalState, hoverState, pressedState];
+                    stateOptions = stateOptions[curState];
+                    stateStyle = [normalStyle, hoverStyle, pressedStyle];
+                    stateStyle = stateStyle[curState];
                     label.attr(stateOptions)
                         .css(stateStyle);
                 }
@@ -3492,15 +3518,15 @@
          * @param {Array} path An SVG path in array form
          */
         path: function (path) {
-            var attr = {
+            var attribs = {
                 
             };
             if (isArray(path)) {
-                attr.d = path;
+                attribs.d = path;
             } else if (isObject(path)) { // attributes
-                extend(attr, path);
+                extend(attribs, path);
             }
-            return this.createElement('path').attr(attr);
+            return this.createElement('path').attr(attribs);
         },
 
         /**
@@ -3510,7 +3536,7 @@
          * @param {Number} r The radius
          */
         circle: function (x, y, r) {
-            var attr = isObject(x) ?
+            var attribs = isObject(x) ?
                         x :
                         {
                             x: x,
@@ -3525,7 +3551,7 @@
             wrapper.ySetter = function (value) {
                 this.element.setAttribute('cy', value);
             };
-            return wrapper.attr(attr);
+            return wrapper.attr(attribs);
         },
 
         /**
@@ -3700,10 +3726,8 @@
                     options
                 ),
 
-                imageElement,
                 imageRegex = /^url\((.*?)\)$/,
                 imageSrc,
-                imageSize,
                 centerImage,
                 symbolSizes = {};
 
@@ -3787,7 +3811,7 @@
 
                     // Create a dummy JavaScript image to get the width and height. Due to a bug in IE < 8,
                     // the created element must be assigned to a variable in order to load (#292).
-                    imageElement = createElement('img', {
+                    createElement('img', {
                         onload: function () {
 
                             if (obj.element) { // Meaning not destroyed
@@ -4014,22 +4038,22 @@
             var renderer = this,
                 fakeSVG = useCanVG || (!svg && renderer.forExport),
                 wrapper,
-                attr = {};
+                attribs = {};
 
             if (useHTML && (renderer.allowHTML || !renderer.forExport)) {
                 return renderer.html(str, x, y);
             }
 
-            attr.x = Math.round(x || 0); // X is always needed for line-wrap logic
+            attribs.x = Math.round(x || 0); // X is always needed for line-wrap logic
             if (y) {
-                attr.y = Math.round(y);
+                attribs.y = Math.round(y);
             }
             if (str || str === 0) {
-                attr.text = str;
+                attribs.text = str;
             }
 
             wrapper = renderer.createElement('text')
-                .attr(attr);
+                .attr(attribs);
 
             // Prevent wrapping from creating false offsetWidths in export in legacy IE (#1079, #1063)
             if (fakeSVG) {
@@ -4061,6 +4085,7 @@
         /**
          * Utility to return the baseline offset and total line height from the font size
          */
+        /*jslint unparam: true*/
         fontMetrics: function (fontSize, elem) {
             var lineHeight,
                 baseline;
@@ -4082,6 +4107,7 @@
                 f: fontSize
             };
         },
+        /*jslint unparam: false*/
 
         /**
          * Correct X and Y positioning of a label for rotation (#1764)
@@ -4193,28 +4219,28 @@
             function updateTextPadding() {
                 var styles = wrapper.styles,
                     textAlign = styles && styles.textAlign,
-                    x = paddingLeft + padding,
-                    y;
+                    textX = paddingLeft + padding,
+                    textY;
 
                 // determin y based on the baseline
-                y = baseline ? 0 : baselineOffset;
+                textY = baseline ? 0 : baselineOffset;
 
                 // compensate for alignment
                 if (defined(width) && bBox && (textAlign === 'center' || textAlign === 'right')) {
-                    x += { center: 0.5, right: 1 }[textAlign] * (width - bBox.width);
+                    textX += { center: 0.5, right: 1 }[textAlign] * (width - bBox.width);
                 }
 
                 // update if anything changed
-                if (x !== text.x || y !== text.y) {
-                    text.attr('x', x);
-                    if (y !== undefined) {
-                        text.attr('y', y);
+                if (textX !== text.x || textY !== text.y) {
+                    text.attr('x', textX);
+                    if (textY !== undefined) {
+                        text.attr('y', textY);
                     }
                 }
 
                 // record current values
-                text.x = x;
-                text.y = y;
+                text.x = textX;
+                text.y = textY;
             }
 
             /**

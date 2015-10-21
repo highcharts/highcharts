@@ -26,7 +26,9 @@ window.Highcharts = window.Highcharts ? window.Highcharts.error(16, true) : {
 	vml: vml,
 	charts: [],
 	marginNames: ['plotTop', 'marginRight', 'marginBottom', 'plotLeft'],
-	noop: function () {}
+	noop: function () {
+		return undefined;
+	}
 };
 
 	return window.Highcharts;

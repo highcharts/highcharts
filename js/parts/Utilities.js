@@ -242,7 +242,7 @@ H.createElement = function (tag, attribs, styles, parent, nopad) {
  * @param {Object} members
  */
 H.extendClass = function (parent, members) {
-	var object = function () {};
+	var object = function () { return undefined; };
 	object.prototype = new parent();
 	H.extend(object.prototype, members);
 	return object;
@@ -402,7 +402,11 @@ H.format = function (str, ctx) {
 		val,
 		index;
 
-	while ((index = str.indexOf(splitter)) !== -1) {
+	while (str) {
+		index = str.indexOf(splitter);
+		if (index === -1) {
+			break;
+		}
 
 		segment = str.slice(0, index);
 		if (isInside) { // we're on the closing bracket looking back
@@ -636,12 +640,16 @@ H.numberFormat = function (number, decimals, decPoint, thousandsSep) {
 		n = +number || 0,
 		c = decimals === -1 ?
 				Math.min((n.toString().split('.')[1] || '').length, 20) : // Preserve decimals. Not huge numbers (#3793).
-				(isNaN(decimals = Math.abs(decimals)) ? 2 : decimals),
+				(isNaN(Math.abs(decimals)) ? 2 : Math.abs(decimals)),
 		d = decPoint === undefined ? lang.decimalPoint : decPoint,
 		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
 		s = n < 0 ? "-" : "",
-		i = String(H.pInt(n = Math.abs(n).toFixed(c))),
-		j = i.length > 3 ? i.length % 3 : 0;
+		i,
+		j;
+
+	n = Math.abs(n).toFixed(c);
+	i = String(H.pInt(n));
+	j = i.length > 3 ? i.length % 3 : 0;
 
 	return (s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
 			(c ? d + Math.abs(n - i).toFixed(c).slice(2) : ""));

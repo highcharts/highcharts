@@ -199,7 +199,7 @@ gulp.task('lint', ['scripts'], function () {
             //'unparam': true,
             //'unused': true,
 
-            'edition': '2013-02-03', // in HC5 we can use latest edition with space indentation and no assignment expressions
+            //'edition': '2014-07-08',
             //'edition': '2013-08-13',
             'reporter': function (evt) {
                 if (!evt.pass) {
