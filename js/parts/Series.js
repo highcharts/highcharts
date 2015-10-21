@@ -184,11 +184,11 @@ Series.prototype = {
 			date,
 			pointInterval,
 			pointIntervalUnit = options.pointIntervalUnit;
-		
+
 		xIncrement = pick(xIncrement, options.pointStart, 0);
-		
+
 		this.pointInterval = pointInterval = pick(this.pointInterval, options.pointInterval, 1);
-		
+
 		// Added code for pointInterval strings
 		if (pointIntervalUnit === 'month' || pointIntervalUnit === 'year') {
 			date = new Date(xIncrement);
@@ -197,7 +197,7 @@ Series.prototype = {
 				+date[setFullYear](date[getFullYear]() + pointInterval);
 			pointInterval = date - xIncrement;
 		}
-		
+
 		this.xIncrement = xIncrement + pointInterval;
 		return xIncrement;
 	},
@@ -264,7 +264,7 @@ Series.prototype = {
 
 		// General series options take precedence over type options because otherwise, default
 		// type options like column.animation would be overwritten by the general option.
-		// But issues have been raised here (#3881), and the solution may be to distinguish 
+		// But issues have been raised here (#3881), and the solution may be to distinguish
 		// between default option and userOptions like in the tooltip below.
 		options = merge(
 			typeOptions,
@@ -395,7 +395,7 @@ Series.prototype = {
 			series.pointRange = hasCategories ? 1 : options.pointRange;
 
 			series.colorCounter = 0; // for series with colorByPoint (#1547)
-			
+
 			// Update parallel arrays
 			each(this.parallelArrays, function (key) {
 				series[key + 'Data'].length = 0;
@@ -482,7 +482,7 @@ Series.prototype = {
 			animation = false;
 		}
 
-		// Typically for pie series, points need to be processed and generated 
+		// Typically for pie series, points need to be processed and generated
 		// prior to rendering the legend
 		if (options.legendType === 'point') { // docs: legendType now supported on more series types (at least column and pie)
 			this.processData();
@@ -532,7 +532,7 @@ Series.prototype = {
 
 		// optionally filter out points outside the plot area
 		if (isCartesian && series.sorted && !getExtremesFromAll && (!cropThreshold || dataLength > cropThreshold || series.forceCrop)) {
-			
+
 			// it's outside current extremes
 			if (processedXData[dataLength - 1] < min || processedXData[0] > max) {
 				processedXData = [];
@@ -552,7 +552,7 @@ Series.prototype = {
 		// Find the closest distance between processed points
 		for (i = processedXData.length - 1; i >= 0; i--) {
 			distance = processedXData[i] - processedXData[i - 1];
-			
+
 			if (distance > 0 && (closestPointRange === UNDEFINED || distance < closestPointRange)) {
 				closestPointRange = distance;
 
@@ -858,7 +858,7 @@ Series.prototype = {
 		if (!clipRect) {
 
 			// When animation is set, prepare the initial positions
-			if (animation) { 
+			if (animation) {
 				clipBox.width = 0;
 
 				chart[sharedClipKey + 'm'] = markerClipRect = renderer.clipRect(
@@ -869,7 +869,7 @@ Series.prototype = {
 				);
 			}
 			chart[sharedClipKey] = clipRect = renderer.clipRect(clipBox);
-			
+
 		}
 		if (animation) {
 			clipRect.count += 1;
@@ -932,7 +932,7 @@ Series.prototype = {
 
 			// Delete this function to allow it only once
 			series.animate = null;
- 
+
 		}
 	},
 
@@ -970,7 +970,7 @@ Series.prototype = {
 			markerGroup = series.markerGroup,
 			xAxis = series.xAxis,
 			globallyEnabled = pick(
-				seriesMarkerOptions.enabled, 
+				seriesMarkerOptions.enabled,
 				xAxis.isRadial,
 				series.closestPointRangePx > 2 * seriesMarkerOptions.radius
 			);
@@ -1137,12 +1137,12 @@ Series.prototype = {
 				if (zones.length) {
 					j = 0;
 					threshold = zones[j];
-					while (point[zoneAxis] >= threshold.value) {				
+					while (point[zoneAxis] >= threshold.value) {
 						threshold = zones[++j];
 					}
-					
+
 					point.color = point.fillColor = pick(threshold.color, series.color); // #3636, #4267, #4430 - inherit color from series, when color is undefined
-					
+
 				}
 
 				hasPointSpecificOptions = seriesOptions.colorByPoint || point.color; // #868
@@ -1394,7 +1394,7 @@ Series.prototype = {
 		each(zones, function (threshold, i) {
 			props.push(['zoneGraph' + i, threshold.color || series.color, threshold.dashStyle || options.dashStyle]);
 		});
-		
+
 		// Draw the graph
 		each(props, function (prop, i) {
 			var graphKey = prop[0],
@@ -1456,20 +1456,20 @@ Series.prototype = {
 			if (graph) {
 				graph.hide();
 			}
-			if (area) { 
-				area.hide(); 
+			if (area) {
+				area.hide();
 			}
 
 			// Create the clips
 			extremes = axis.getExtremes();
 			each(zones, function (threshold, i) {
 
-				translatedFrom = reversed ? 
-					(horiz ? chart.plotWidth : 0) : 
+				translatedFrom = reversed ?
+					(horiz ? chart.plotWidth : 0) :
 					(horiz ? 0 : axis.toPixels(extremes.min));
 				translatedFrom = mathMin(mathMax(pick(translatedTo, translatedFrom), 0), chartSizeMax);
 				translatedTo = mathMin(mathMax(mathRound(axis.toPixels(pick(threshold.value, extremes.max), true)), 0), chartSizeMax);
-				
+
 				if (ignoreZones) {
 					translatedFrom = translatedTo = axis.toPixels(extremes.max);
 				}
@@ -1481,7 +1481,7 @@ Series.prototype = {
 					clipAttr = {
 						x: inverted ? pxPosMax : pxPosMin,
 						y: 0,
-						width: pxRange, 
+						width: pxRange,
 						height: chartSizeMax
 					};
 					if (!horiz) {
@@ -1491,9 +1491,9 @@ Series.prototype = {
 					clipAttr = {
 						x: 0,
 						y: inverted ? pxPosMax : pxPosMin,
-						width: chartSizeMax, 
+						width: chartSizeMax,
 						height: pxRange
-					};					
+					};
 					if (horiz) {
 						clipAttr.y = chart.plotWidth - clipAttr.y;
 					}
@@ -1501,21 +1501,21 @@ Series.prototype = {
 
 				/// VML SUPPPORT
 				if (chart.inverted && renderer.isVML) {
-					if (axis.isXAxis) {			
+					if (axis.isXAxis) {
 						clipAttr = {
 							x: 0,
 							y: reversed ? pxPosMin : pxPosMax,
 							height: clipAttr.width,
 							width: chart.chartWidth
-						};		
-					} else {				
+						};
+					} else {
 						clipAttr = {
 							x: clipAttr.y - chart.plotLeft - chart.spacingBox.x,
 							y: 0,
 							width: clipAttr.height,
 							height: chart.chartHeight
-						};	
-					}				
+						};
+					}
 				}
 				/// END OF VML SUPPORT
 
@@ -1596,7 +1596,7 @@ Series.prototype = {
 
 			group.addClass('highcharts-series-' + this.index);
 		}
-		
+
 		// Place it on first and subsequent (redraw) calls
 		group[isNew ? 'attr' : 'animate'](this.getPlotBox());
 		return group;
@@ -1709,7 +1709,7 @@ Series.prototype = {
 		// Run the animation
 		if (animDuration) {
 			series.animate();
-		} 
+		}
 
 		// Call the afterAnimate function on animation complete (but don't overwrite the animation.complete option
 		// which should be available to the user).
@@ -1777,7 +1777,7 @@ Series.prototype = {
 			xAxis = series.xAxis,
 			yAxis = series.yAxis,
 			inverted = series.chart.inverted;
-		
+
 		return this.searchKDTree({
 			clientX: inverted ? xAxis.len - e.chartY + xAxis.pos : e.chartX - xAxis.pos,
 			plotY: inverted ? yAxis.len - e.chartX + yAxis.pos : e.chartY - yAxis.pos
@@ -1801,16 +1801,16 @@ Series.prototype = {
 				points.sort(function(a, b) {
 					return a[axis] - b[axis];
 				});
-			
+
 				median = Math.floor(length / 2);
-				
+
 				// build and return nod
 				return {
 					point: points[median],
 					left: _kdtree(points.slice(0, median), depth + 1, dimensions),
 					right: _kdtree(points.slice(median + 1), depth + 1, dimensions)
 				};
-			
+
 			}
 		}
 
@@ -1823,7 +1823,7 @@ Series.prototype = {
 			series.kdTree = _kdtree(points, dimensions, dimensions);
 		}
 		delete series.kdTree;
-		
+
 		if (series.options.kdNow) {  // For testing tooltips, don't build async
 			startRecursive();
 		} else {
@@ -1855,7 +1855,7 @@ Series.prototype = {
 				ret = point,
 				nPoint1,
 				nPoint2;
-			
+
 			setDistance(search, point);
 
 			// Pick side based on distance to splitting point
@@ -1868,7 +1868,7 @@ Series.prototype = {
 				nPoint1 =_search(search, tree[sideA], depth + 1, dimensions);
 
 				ret = (nPoint1[kdComparer] < ret[kdComparer] ? nPoint1 : point);
-			} 
+			}
 			if (tree[sideB]) {
 				// compare distance to current best to splitting point to decide wether to check side B or not
 				if (Math.sqrt(tdist * tdist) < ret[kdComparer]) {
@@ -1876,7 +1876,7 @@ Series.prototype = {
 					ret = (nPoint2[kdComparer] < ret[kdComparer] ? nPoint2 : ret);
 				}
 			}
-			
+
 			return ret;
 		}
 
@@ -1885,7 +1885,7 @@ Series.prototype = {
 		}
 
 		if (this.kdTree) {
-			return _search(point, 
+			return _search(point,
 				this.kdTree, this.kdDimensions, this.kdDimensions);
 		}
 	}

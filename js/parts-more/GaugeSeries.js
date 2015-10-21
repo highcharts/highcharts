@@ -1,4 +1,4 @@
-/* 
+/*
  * The GaugeSeries class
  */
 
@@ -60,29 +60,29 @@ var GaugePoint = extendClass(Point, {
 var GaugeSeries = {
 	type: 'gauge',
 	pointClass: GaugePoint,
-	
+
 	// chart.angular will be set to true when a gauge series is present, and this will
 	// be used on the axes
-	angular: true, 
+	angular: true,
 	drawGraph: noop,
 	fixedBox: true,
 	forceDL: true,
 	trackerGroups: ['group', 'dataLabelsGroup'],
-	
+
 	/**
 	 * Calculate paths etc
 	 */
 	translate: function () {
-		
+
 		var series = this,
 			yAxis = series.yAxis,
 			options = series.options,
 			center = yAxis.center;
-			
+
 		series.generatePoints();
-		
+
 		each(series.points, function (point) {
-			
+
 			var dialOptions = merge(options.dial, point.dial),
 				radius = (pInt(pick(dialOptions.radius, 80)) * center[2]) / 200,
 				baseLength = (pInt(pick(dialOptions.baseLength, 70)) * radius) / 100,
@@ -95,20 +95,20 @@ var GaugeSeries = {
 			// Handle the wrap and overshoot options
 			if (overshoot && typeof overshoot === 'number') {
 				overshoot = overshoot / 180 * Math.PI;
-				rotation = Math.max(yAxis.startAngleRad - overshoot, Math.min(yAxis.endAngleRad + overshoot, rotation));			
-			
+				rotation = Math.max(yAxis.startAngleRad - overshoot, Math.min(yAxis.endAngleRad + overshoot, rotation));
+
 			} else if (options.wrap === false) {
 				rotation = Math.max(yAxis.startAngleRad, Math.min(yAxis.endAngleRad, rotation));
 			}
 
 			rotation = rotation * 180 / Math.PI;
-				
+
 			point.shapeType = 'path';
 			point.shapeArgs = {
 				d: dialOptions.path || [
-					'M', 
-					-rearLength, -baseWidth / 2, 
-					'L', 
+					'M',
+					-rearLength, -baseWidth / 2,
+					'L',
 					baseLength, -baseWidth / 2,
 					radius, -topWidth / 2,
 					radius, topWidth / 2,
@@ -120,32 +120,32 @@ var GaugeSeries = {
 				translateY: center[1],
 				rotation: rotation
 			};
-			
+
 			// Positions for data label
 			point.plotX = center[0];
 			point.plotY = center[1];
 		});
 	},
-	
+
 	/**
 	 * Draw the points where each point is one needle
 	 */
 	drawPoints: function () {
-		
+
 		var series = this,
 			center = series.yAxis.center,
 			pivot = series.pivot,
 			options = series.options,
 			pivotOptions = options.pivot,
 			renderer = series.chart.renderer;
-		
+
 		each(series.points, function (point) {
-			
+
 			var graphic = point.graphic,
 				shapeArgs = point.shapeArgs,
 				d = shapeArgs.d,
 				dialOptions = merge(options.dial, point.dial); // #1233
-			
+
 			if (graphic) {
 				graphic.animate(shapeArgs);
 				shapeArgs.d = d; // animate alters it
@@ -160,7 +160,7 @@ var GaugeSeries = {
 					.add(series.group);
 			}
 		});
-		
+
 		// Add or move the pivot
 		if (pivot) {
 			pivot.animate({ // #1235
@@ -178,7 +178,7 @@ var GaugeSeries = {
 				.add(series.group);
 		}
 	},
-	
+
 	/**
 	 * Animate the arrow up from startAngle
 	 */
@@ -206,19 +206,19 @@ var GaugeSeries = {
 			series.animate = null;
 		}
 	},
-	
+
 	render: function () {
 		this.group = this.plotGroup(
-			'group', 
-			'series', 
-			this.visible ? 'visible' : 'hidden', 
-			this.options.zIndex, 
+			'group',
+			'series',
+			this.visible ? 'visible' : 'hidden',
+			this.options.zIndex,
 			this.chart.seriesGroup
 		);
 		Series.prototype.render.call(this);
 		this.group.clip(this.chart.clipRect);
 	},
-	
+
 	/**
 	 * Extend the basic setData method by running processData and generatePoints immediately,
 	 * in order to access the points from the legend.

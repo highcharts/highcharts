@@ -116,17 +116,17 @@ Series.prototype.drawDataLabels = function () {
 						padding: options.padding,
 						zIndex: 1
 					};
-					
+
 					// Get automated contrast color
 					if (style.color === 'contrast') {
-						moreStyle.color = options.inside || options.distance < 0 || !!seriesOptions.stacking ? 
-							renderer.getContrast(point.color || series.color) : 
+						moreStyle.color = options.inside || options.distance < 0 || !!seriesOptions.stacking ?
+							renderer.getContrast(point.color || series.color) :
 							'#000000';
 					}
 					if (cursor) {
 						moreStyle.cursor = cursor;
 					}
-					
+
 
 					// Remove unused attributes (#947)
 					for (name in attr) {
@@ -404,11 +404,11 @@ if (seriesTypes.pie) {
 					});
 					series.slotElements.length = 0;
 				}
-					
+
 				slots.forEach(function (pos, no) {
 					var slotX = series.getX(pos, i) + chart.plotLeft - (i ? 100 : 0),
 						slotY = pos + chart.plotTop;
-					
+
 					if (!isNaN(slotX)) {
 						series.slotElements.push(chart.renderer.rect(slotX, slotY - 7, 100, labelHeight, 1)
 							.attr({
@@ -712,11 +712,21 @@ if (seriesTypes.column) {
 			series = point.series,
 			dlBox = point.dlBox || point.shapeArgs, // data label box for alignment
 			below = pick(point.below, point.plotY > pick(this.translatedThreshold, series.yAxis.len)), // point.below is used in range series
-			inside = pick(options.inside, !!this.options.stacking); // draw it inside the box?
+			inside = pick(options.inside, !!this.options.stacking), // draw it inside the box?
+			overshoot;
 
 		// Align to the column itself, or the top of it
 		if (dlBox) { // Area range uses this method but not alignTo
 			alignTo = merge(dlBox);
+
+			if (alignTo.y < 0) {
+				alignTo.height += alignTo.y;
+				alignTo.y = 0;
+			}
+			overshoot = alignTo.y + alignTo.height - series.yAxis.len;
+			if (overshoot > 0) {
+				alignTo.height -= overshoot;
+			}
 
 			if (inverted) {
 				alignTo = {

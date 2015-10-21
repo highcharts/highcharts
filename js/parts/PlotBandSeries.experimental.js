@@ -75,7 +75,7 @@ seriesTypes.plotband = extendClass(seriesTypes.column, {
 	 * Draw the data points
 	 */
 	_drawPoints: function () {
-		
+
 	}
 
 

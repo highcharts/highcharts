@@ -14,13 +14,13 @@ var extend = Highcharts.extend = function (a, b) {
 	}
 	return a;
 };
-	
+
 /**
  * Deep merge two or more objects and return a third object. If the first argument is
  * true, the contents of the second object is copied into the first object.
  * Previously this function redirected to jQuery.extend(true), but this had two limitations.
  * First, it deep merged arrays, which lead to workarounds in Highcharts. Second,
- * it copied properties from extended prototypes. 
+ * it copied properties from extended prototypes.
  */
 function merge() {
 	var i,
@@ -43,7 +43,7 @@ function merge() {
 					if (value && typeof value === 'object' && Object.prototype.toString.call(value) !== '[object Array]' &&
 							key !== 'renderTo' && typeof value.nodeType !== 'number') {
 						copy[key] = doCopy(copy[key] || {}, value);
-				
+
 					// Primitives and arrays are copied over directly
 					} else {
 						copy[key] = original[key];
@@ -263,17 +263,17 @@ function pad(number, length) {
 /**
  * Return a length based on either the integer value, or a percentage of a base.
  */
-function relativeLength (value, base) {
+function relativeLength(value, base) {
 	return (/%$/).test(value) ? base * parseFloat(value) / 100 : parseFloat(value);
 }
 
 /**
  * Wrap a method with extended functionality, preserving the original function
- * @param {Object} obj The context object that the method belongs to 
+ * @param {Object} obj The context object that the method belongs to
  * @param {String} method The name of the method to extend
  * @param {Function} func A wrapper function callback. This function is called with the same arguments
- * as the original function, except that the original function is unshifted and passed as the first 
- * argument. 
+ * as the original function, except that the original function is unshifted and passed as the first
+ * argument.
  */
 var wrap = Highcharts.wrap = function (obj, method, func) {
 	var proceed = obj[method];
@@ -312,7 +312,7 @@ dateFormat = function (format, timestamp, capitalize) {
 		lang = defaultOptions.lang,
 		langWeekdays = lang.weekdays,
 
-		// List all format keys. Custom formats can be added from the outside. 
+		// List all format keys. Custom formats can be added from the outside.
 		replacements = extend({
 
 			// Day
@@ -358,7 +358,7 @@ dateFormat = function (format, timestamp, capitalize) {
 	return capitalize ? format.substr(0, 1).toUpperCase() + format.substr(1) : format;
 };
 
-/** 
+/**
  * Format a single variable. Similar to sprintf, without the % prefix.
  */
 function formatSingle(format, val) {
@@ -398,12 +398,12 @@ function format(str, ctx) {
 		ret = [],
 		val,
 		index;
-	
+
 	while ((index = str.indexOf(splitter)) !== -1) {
-		
+
 		segment = str.slice(0, index);
 		if (isInside) { // we're on the closing bracket looking back
-			
+
 			valueAndFormat = segment.split(':');
 			path = valueAndFormat.shift().split('.'); // get first and leave format
 			len = path.length;
@@ -421,10 +421,10 @@ function format(str, ctx) {
 
 			// Push the result and advance the cursor
 			ret.push(val);
-			
+
 		} else {
 			ret.push(segment);
-			
+
 		}
 		str = str.slice(index + 1); // the rest
 		isInside = !isInside; // toggle
@@ -449,7 +449,7 @@ function getMagnitude(num) {
  * @param {Object} options
  */
 function normalizeTickInterval(interval, multiples, magnitude, allowDecimals, preventExceed) {
-	var normalized, 
+	var normalized,
 		i,
 		retInterval = interval;
 
@@ -475,14 +475,14 @@ function normalizeTickInterval(interval, multiples, magnitude, allowDecimals, pr
 	for (i = 0; i < multiples.length; i++) {
 		retInterval = multiples[i];
 		if ((preventExceed && retInterval * magnitude >= interval) || // only allow tick amounts smaller than natural
-			(!preventExceed && (normalized <= (multiples[i] + (multiples[i + 1] || multiples[i])) / 2))) {
+				(!preventExceed && (normalized <= (multiples[i] + (multiples[i + 1] || multiples[i])) / 2))) {
 			break;
 		}
 	}
 
 	// multiply back to the correct magnitude
 	retInterval *= magnitude;
-	
+
 	return retInterval;
 }
 
@@ -632,8 +632,8 @@ Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
 		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
 		n = +number || 0,
 		c = decimals === -1 ?
-			mathMin((n.toString().split('.')[1] || '').length, 20) : // Preserve decimals. Not huge numbers (#3793).
-			(isNaN(decimals = mathAbs(decimals)) ? 2 : decimals),
+				Math.min((n.toString().split('.')[1] || '').length, 20) : // Preserve decimals. Not huge numbers (#3793).
+				(isNaN(decimals = Math.abs(decimals)) ? 2 : decimals),
 		d = decPoint === undefined ? lang.decimalPoint : decPoint,
 		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
 		s = n < 0 ? "-" : "",

@@ -183,7 +183,7 @@ Point.prototype = {
 			percentage: this.percentage,
 			total: this.total || this.stackTotal
 		};
-	},	
+	},
 
 	/**
 	 * Extendable method for formatting each point's tooltip line

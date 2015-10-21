@@ -20,7 +20,7 @@ extend(Pointer.prototype, {
 				0.5,
 				chart.xAxis[0].toValue(e.chartX),
 				chart.yAxis[0].toValue(e.chartY),
-				e.chartX, 
+				e.chartX,
 				e.chartY
 			);
 		}
@@ -70,13 +70,13 @@ wrap(Pointer.prototype, 'pinchTranslate', function (proceed, pinchDown, touches,
 	if (this.chart.options.chart.type === 'map' && this.hasZoom) {
 		xBigger = transform.scaleX > transform.scaleY;
 		this.pinchTranslateDirection(
-			!xBigger, 
-			pinchDown, 
-			touches, 
-			transform, 
-			selectionMarker, 
-			clip, 
-			lastValidTouch, 
+			!xBigger,
+			pinchDown,
+			touches,
+			transform,
+			selectionMarker,
+			clip,
+			lastValidTouch,
 			xBigger ? transform.scaleX : transform.scaleY
 		);
 	}

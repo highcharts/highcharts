@@ -45,6 +45,8 @@
 /*global document, Highcharts, HighchartsAdapter, setTimeout */
 (function (H, HA) {
 
+    'use strict';
+
     var noop = function () { return undefined; },
         Color = H.Color,
         Series = H.Series,
@@ -84,7 +86,7 @@
      * run the original method. If not, check for a canvas version or do nothing.
      */
     each(['translate', 'generatePoints', 'drawTracker', 'drawPoints', 'render'], function (method) {
-        function branch(proceed) {
+        var branch = function (proceed) {
             var letItPass = this.options.stacking && (method === 'translate' || method === 'generatePoints');
             if ((this.processedXData || this.options.data).length < (this.options.boostThreshold || Number.MAX_VALUE) ||
                     letItPass) {
@@ -102,7 +104,7 @@
 
                 this[method + 'Canvas']();
             }
-        }
+        };
         wrap(Series.prototype, method, branch);
 
         // A special case for some types - its translate method is already wrapped
@@ -159,10 +161,12 @@
                 point,
                 i;
 
-            for (i = 0; i < points.length; i = i + 1) {
-                point = points[i];
-                if (point && point.graphic) {
-                    point.graphic = point.graphic.destroy();
+            if (points) {
+                for (i = 0; i < points.length; i = i + 1) {
+                    point = points[i];
+                    if (point && point.graphic) {
+                        point.graphic = point.graphic.destroy();
+                    }
                 }
             }
 
@@ -181,11 +185,10 @@
             var chart = this.chart,
                 width = chart.plotWidth,
                 height = chart.plotHeight,
-                ctx = this.ctx;
-
-            function swapXY(proceed, x, y, a, b, c, d) {
-                proceed.call(this, y, x, a, b, c, d);
-            }
+                ctx = this.ctx,
+                swapXY = function (proceed, x, y, a, b, c, d) {
+                    proceed.call(this, y, x, a, b, c, d);
+                };
 
             if (!this.canvas) {
                 this.canvas = document.createElement('canvas');
@@ -334,7 +337,7 @@
                 };
 
             // If we are zooming out from SVG mode, destroy the graphics
-            if (this.points) {
+            if (this.points || this.graph) {
                 this.destroyGraphics();
             }
 

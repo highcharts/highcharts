@@ -1,14 +1,14 @@
-/*** 
+/***
 	EXTENSION FOR 3D SCATTER CHART
 ***/
 
 Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function (proceed) {
 //function translate3d(proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
-	
+
 	if (!this.chart.is3d()) {
 		return;
-	}	
+	}
 
 	var series = this,
 		chart = series.chart,

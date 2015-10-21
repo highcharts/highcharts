@@ -11,7 +11,7 @@ var UNDEFINED,
 	Series = Highcharts.Series,
 	SVGRenderer = Highcharts.SVGRenderer,
 	VMLRenderer = Highcharts.VMLRenderer,
-	
+
 	addEvent = Highcharts.addEvent,
 	each = Highcharts.each,
 	error = Highcharts.error,

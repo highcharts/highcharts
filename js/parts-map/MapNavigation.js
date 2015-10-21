@@ -34,14 +34,14 @@ extend(Chart.prototype, {
 					attr.style = merge(buttonOptions.theme.style, buttonOptions.style); // #3203
 					states = attr.states;
 					button = chart.renderer.button(
-							buttonOptions.text, 
-							0, 
-							0, 
-							outerHandler, 
-							attr, 
+							buttonOptions.text,
+							0,
+							0,
+							outerHandler,
+							attr,
 							states && states.hover,
-							states && states.select, 
-							0, 
+							states && states.select,
+							0,
 							n === 'zoomIn' ? 'topbutton' : 'bottombutton'
 						)
 						.attr({
@@ -49,7 +49,7 @@ extend(Chart.prototype, {
 							height: buttonOptions.height,
 							title: chart.options.lang[n],
 							zIndex: 5
-						})					
+						})
 						.add();
 					button.handler = buttonOptions.onclick;
 					button.align(extend(buttonOptions, { width: button.width, height: 2 * button.height }), null, buttonOptions.alignTo);
@@ -84,7 +84,7 @@ extend(Chart.prototype, {
 				inner[pos] = outer[pos];
 			}
 		});
-		
+
 
 		return inner;
 	},
@@ -141,7 +141,7 @@ extend(Chart.prototype, {
 			xAxis.setExtremes(undefined, undefined, false);
 			yAxis.setExtremes(undefined, undefined, false);
 		}
-		
+
 		// Prevent zooming until this one is finished animating
 		/*chart.holdMapZoom = true;
 		setTimeout(function () {
