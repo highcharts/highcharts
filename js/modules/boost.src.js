@@ -171,7 +171,7 @@
                 }
             }
 
-            each(['graph', 'area'], function (prop) {
+            each(['graph', 'area', 'tracker'], function (prop) {
                 if (series[prop]) {
                     series[prop] = series[prop].destroy();
                 }
