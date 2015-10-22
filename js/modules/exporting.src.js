@@ -7,10 +7,7 @@
  * License: www.highcharts.com/license
  */
 
-// JSLint options:
-/*global clearTimeout, Highcharts, HighchartsAdapter, document, window, Math, setTimeout */
-
-(function (Highcharts) { // encapsulate
+(function (Highcharts) {
 
 // create shortcuts
 var Chart = Highcharts.Chart,

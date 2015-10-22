@@ -1,4 +1,4 @@
-var //eslint = require('gulp-eslint'),
+var eslint = require('gulp-eslint'),
     gulp = require('gulp'),
     request = require('request'),
     //argv = require('yargs').argv,
@@ -7,7 +7,7 @@ var //eslint = require('gulp-eslint'),
     ftp = require('vinyl-ftp'),
     //jshint = require('gulp-jshint'),
     //stylish = require('jshint-stylish'),
-    jslint = require('gulp-jslint'),
+    //jslint = require('gulp-jslint'),
     xml2js = require('xml2js'),
     /*
     config = {
@@ -30,11 +30,11 @@ var //eslint = require('gulp-eslint'),
         ],
         
         "assemblies": [
+            './js/highcharts.src.js', 
+            './js/highstock.src.js',
             './js/highcharts-3d.src.js', 
             './js/highcharts-more.src.js', 
-            './js/highcharts.src.js', 
             './js/highmaps.src.js', 
-            './js/highstock.src.js',
             './js/modules/map.src.js',
             './js/modules/heatmap.src.js'
         ],
@@ -184,7 +184,50 @@ gulp.task('styles', function () {
 });
 */
 gulp.task('lint', ['scripts'], function () {
-    return gulp.src(paths.distributions.concat(paths.modules))
+    return gulp.src(paths.assemblies.concat(paths.modules))
+
+        .pipe(eslint({
+            envs: ['browser'],
+
+            globals: {
+                'Highcharts': true,
+                'HighchartsAdapter': true
+            },
+
+            // List of rules at http://eslint.org/docs/rules/
+            rules: {
+                'camelcase': [2, {"properties": "always"}],
+                'comma-dangle': [2, 'never'],
+                'consistent-return': 0,
+                'func-style': 0,
+                'guard-for-in': 0, // @todo: Make each handle objects, then run a guarded for-in there.
+                'indent': 0, // @todo: Before release HC5, do a pure whitespace commit
+                'new-cap': 0, // The ill-named Color object. Rewrite for HC5?
+                'no-alert': 2,
+                'no-console': 2,
+                'no-debugger': 2,
+                'no-empty': 0, // The noop function
+                'no-func-assign': 0, // Setting local functions to null on Label.destoy
+                'no-invalid-this': 0,
+                'no-multi-spaces': 0,
+                'no-nested-ternary': 0,
+                'no-new': 0,
+                'no-shadow': 0, // Same variable names in nested scopes. @todo: Fix this, it is useful
+                'no-trailing-spaces': 0,
+                'no-undefined': 0,
+                'no-underscore-dangle': 0,
+                'space-before-function-paren': [2, {"anonymous": "always", "named": "never"}], // JSLint style
+                'quotes': 0, // @todo: Set to single
+                'spaced-comment': 0,
+                'require-jsdoc': 0,
+                'strict': 0,
+                'valid-jsdoc': 0
+                //"one-var": [1, "always"] // @todo: Before launch HC5
+            }
+        }))
+        //.pipe(eslint.failOnError())
+        .pipe(eslint.formatEach());
+        /*
         .pipe(jslint({
             'continue': true,
             'forin': true,
@@ -215,6 +258,7 @@ gulp.task('lint', ['scripts'], function () {
                 }
             }
         }));
+        */
 });
 
 // Watch changes to CSS files

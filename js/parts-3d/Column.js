@@ -17,7 +17,9 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'translate', function (
 	var stack = seriesOptions.stacking ? (seriesOptions.stack || 0) : series._i;
 	var z = stack * (depth + (seriesOptions.groupZPadding || 1));
 
-	if (seriesOptions.grouping !== false) { z = 0; }
+	if (seriesOptions.grouping !== false) {
+		z = 0;
+	}
 
 	z += (seriesOptions.groupZPadding || 1);
 
@@ -118,7 +120,7 @@ function draw3DPoints(proceed) {
 	if (this.chart.is3d()) {
 		var grouping = this.chart.options.plotOptions.column.grouping;
 		if (grouping !== undefined && !grouping && this.group.zIndex !== undefined && !this.zIndexSet) {
-			this.group.attr({zIndex : (this.group.zIndex * 10)});
+			this.group.attr({ zIndex: this.group.zIndex * 10 });
 			this.zIndexSet = true; // #4062 set zindex only once
 		}
 

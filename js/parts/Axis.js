@@ -709,7 +709,7 @@ Axis.prototype = {
 			}
 		}
 
-		if(minorTickPositions.length !== 0) { // don't change the extremes, when there is no minor ticks
+		if (minorTickPositions.length !== 0) { // don't change the extremes, when there is no minor ticks
 			axis.trimTicks(minorTickPositions, options.startOnTick, options.endOnTick); // #3652 #3743 #1498
 		}
 		return minorTickPositions;

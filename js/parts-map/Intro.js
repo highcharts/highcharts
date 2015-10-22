@@ -6,6 +6,6 @@
  * License: www.highcharts.com/license
  */
 
-/*global HighchartsAdapter, document, window, navigator, clearInterval, clearTimeout, setInterval, setTimeout, location, console */
+/*eslint no-unused-vars: 0 */ // @todo: Not needed in HC5
 (function () {
 

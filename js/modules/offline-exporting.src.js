@@ -7,9 +7,7 @@
  * License: www.highcharts.com/license
  */
 
-// JSLint options:
-/*global Highcharts, HighchartsAdapter, document, navigator, Image, window, Blob, MSBlobBuilder */
-
+/*global MSBlobBuilder */
 (function (Highcharts) {
 
 // Dummy object so we can reuse our canvas-tools.js without errors

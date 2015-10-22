@@ -1,5 +1,4 @@
 
-/*global Highcharts, HighchartsAdapter */
 
 (function (Highcharts, HighchartsAdapter) {
 
@@ -164,7 +163,6 @@ Annotation.prototype = {
 			height = options.height,
 			anchorY = ALIGN_FACTOR[options.anchorY],
 			anchorX = ALIGN_FACTOR[options.anchorX],
-			resetBBox = false,
 			shapeParams,
 			linkType,
 			series,
@@ -205,7 +203,6 @@ Annotation.prototype = {
 		if (title) {
 			title.attr(options.title);
 			title.css(options.title.style);
-			resetBBox = true;
 		}
 
 		if (shape) {
@@ -239,7 +236,6 @@ Annotation.prototype = {
 				shapeParams.y += shapeParams.r;
 			}
 
-			resetBBox = true;
 			shape.attr(shapeParams);
 		}
 

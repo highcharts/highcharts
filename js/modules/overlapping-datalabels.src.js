@@ -1,7 +1,6 @@
 /**
  * Highcharts module to hide overlapping data labels. This module is included in Highcharts.
  */
- /*global Highcharts */
 (function (H) {
 	var Chart = H.Chart,
 		each = H.each,
@@ -136,5 +135,4 @@
 			}
 		});
 	};
-
 }(Highcharts));

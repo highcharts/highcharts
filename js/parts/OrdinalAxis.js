@@ -431,7 +431,7 @@ extend(Axis.prototype, {
 					destroyGroupedData: noop
 				};
 				fakeSeries.options = {
-					dataGrouping : grouping ? {
+					dataGrouping: grouping ? {
 						enabled: true,
 						forced: true,
 						approximation: 'open', // doesn't matter which, use the fastest

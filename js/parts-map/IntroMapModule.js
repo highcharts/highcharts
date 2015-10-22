@@ -7,6 +7,5 @@
  * License: www.highcharts.com/license
  */
 
-/*global clearTimeout, document, Highcharts, HighchartsAdapter, setInterval, setTimeout, window */
 (function (Highcharts) {
 

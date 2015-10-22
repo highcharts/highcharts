@@ -9,7 +9,4 @@
  * License: www.highcharts.com/license
  */
 
-// JSLint options:
-/*global Highcharts, HighchartsAdapter */
-
 (function (Highcharts, UNDEFINED) {

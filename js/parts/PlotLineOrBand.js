@@ -117,7 +117,7 @@ Highcharts.PlotLineOrBand.prototype = {
 			optionsLabel = merge({
 				align: horiz && isBand && 'center',
 				x: horiz ? !isBand && 4 : 10,
-				verticalAlign : !horiz && isBand && 'middle',
+				verticalAlign: !horiz && isBand && 'middle',
 				y: horiz ? isBand ? 16 : 10 : isBand ? 6 : -4,
 				rotation: horiz && !isBand && 90
 			}, optionsLabel);

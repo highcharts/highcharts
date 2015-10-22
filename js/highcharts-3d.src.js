@@ -2,15 +2,13 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-10-20)
+ * @license Highcharts JS v4.1.9-modified (2015-10-22)
  *
- * (c) 2009-2013 Torstein Hønsi
+ * 3D features for Highcharts JS
  *
- * License: www.highcharts.com/license
+ * @author: Stephane Vanraes, Torstein Honsi
+ * @license: www.highcharts.com/license
  */
-
-// JSLint options:
-/*global Highcharts */
 
 (function (Highcharts) {
     /**
@@ -289,10 +287,13 @@
         pArr = perspective(pArr, chart, shapeArgs.insidePlotArea);
 
         // helper method to decide which side is visible
+        function mapPath(i) {
+            return pArr[i];
+        }
         var pickShape = function (path1, path2) {
             var ret;
-            path1 = map(path1, function (i) { return pArr[i]; });
-            path2 = map(path2, function (i) { return pArr[i]; });
+            path1 = map(path1, mapPath);
+            path2 = map(path2, mapPath);
             if (shapeArea(path1) < 0) {
                 ret = path1;
             } else if (shapeArea(path2) < 0) {
@@ -803,12 +804,13 @@
             return path;
         }
 
-        if (path === null) { return path; }
+        if (path === null) {
+            return path;
+        }
 
         var chart = this.chart,
-            options3d = chart.options.chart.options3d;
-
-        var d = this.isZAxis ? this.chart.plotWidth : options3d.depth,
+            options3d = chart.options.chart.options3d,
+            d = this.isZAxis ? chart.plotWidth : options3d.depth,
             opposite = this.opposite;
         if (this.horiz) {
             opposite = !opposite;
@@ -898,10 +900,10 @@
             return pos;
         }
 
-        var new_pos = perspective([this.axis.swapZ({x: pos.x, y: pos.y, z: 0})], this.axis.chart, false)[0];
-        new_pos.x = new_pos.x - (!this.axis.horiz && this.axis.opposite ? this.axis.transA : 0); //#3788
-        new_pos.old = pos;
-        return new_pos;
+        var newPos = perspective([this.axis.swapZ({x: pos.x, y: pos.y, z: 0})], this.axis.chart, false)[0];
+        newPos.x = newPos.x - (!this.axis.horiz && this.axis.opposite ? this.axis.transA : 0); //#3788
+        newPos.old = pos;
+        return newPos;
     });
 
     Highcharts.wrap(Highcharts.Tick.prototype, 'handleOverflow', function (proceed, xy) {
@@ -1052,7 +1054,9 @@
         var stack = seriesOptions.stacking ? (seriesOptions.stack || 0) : series._i;
         var z = stack * (depth + (seriesOptions.groupZPadding || 1));
 
-        if (seriesOptions.grouping !== false) { z = 0; }
+        if (seriesOptions.grouping !== false) {
+            z = 0;
+        }
 
         z += (seriesOptions.groupZPadding || 1);
 
@@ -1153,7 +1157,7 @@
         if (this.chart.is3d()) {
             var grouping = this.chart.options.plotOptions.column.grouping;
             if (grouping !== undefined && !grouping && this.group.zIndex !== undefined && !this.zIndexSet) {
-                this.group.attr({zIndex : (this.group.zIndex * 10)});
+                this.group.attr({ zIndex: this.group.zIndex * 10 });
                 this.zIndexSet = true; // #4062 set zindex only once
             }
 
@@ -1287,7 +1291,9 @@
 
         z += depth / 2;
 
-        if (seriesOptions.grouping !== false) { z = 0; }
+        if (seriesOptions.grouping !== false) {
+            z = 0;
+        }
 
         Highcharts.each(series.data, function (point) {
 
@@ -1306,8 +1312,8 @@
             angle = (shapeArgs.end + shapeArgs.start) / 2;
 
             point.slicedTranslation = {
-                translateX : round(cos(angle) * seriesOptions.slicedOffset * cos(alpha * deg2rad)),
-                translateY : round(sin(angle) * seriesOptions.slicedOffset * cos(alpha * deg2rad))
+                translateX: round(cos(angle) * seriesOptions.slicedOffset * cos(alpha * deg2rad)),
+                translateY: round(sin(angle) * seriesOptions.slicedOffset * cos(alpha * deg2rad))
             };
         });
     });

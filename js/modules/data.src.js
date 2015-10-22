@@ -7,9 +7,7 @@
  * License: www.highcharts.com/license
  */
 
-// JSLint options:
-/*global document, Highcharts, jQuery, HighchartsAdapter */
-
+/*global jQuery */
 (function (Highcharts) {
 	
 	// Utilities
@@ -275,8 +273,8 @@
 			jQuery.ajax({
 				dataType: 'json', 
 				url: 'https://spreadsheets.google.com/feeds/cells/' + 
-				  googleSpreadsheetKey + '/' + (options.googleSpreadsheetWorksheet || 'od6') +
-					  '/public/values?alt=json-in-script&callback=?',
+					googleSpreadsheetKey + '/' + (options.googleSpreadsheetWorksheet || 'od6') +
+					'/public/values?alt=json-in-script&callback=?',
 				error: options.error,
 				success: function (json) {
 					// Prepare the data from the spreadsheat

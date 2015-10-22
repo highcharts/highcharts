@@ -39,10 +39,9 @@ extend(Chart.prototype, {
      */
 	addAxis: function (options, isX, redraw, animation) {
 		var key = isX ? 'xAxis' : 'yAxis',
-			chartOptions = this.options,
-			axis;
+			chartOptions = this.options;
 
-		axis = new Axis(this, merge(options, {
+		new Axis(this, merge(options, {
 			index: this[key].length,
 			isX: isX
 		}));

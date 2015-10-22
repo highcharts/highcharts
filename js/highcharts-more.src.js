@@ -2,15 +2,12 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-10-20)
+ * @license Highcharts JS v4.1.9-modified (2015-10-22)
  *
  * (c) 2009-2014 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
-
-// JSLint options:
-/*global Highcharts, HighchartsAdapter */
 
 (function (Highcharts, UNDEFINED) {
 var arrayMin = Highcharts.arrayMin,

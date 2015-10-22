@@ -80,7 +80,7 @@ Chart.prototype.fromPointToLatLon = function (point) {
 		}
 	}
 
-	return this.transformToLatLon(point, transforms['default']);
+	return this.transformToLatLon(point, transforms.default);
 };
 
 Chart.prototype.fromLatLonToPoint = function (latLon) {
@@ -105,7 +105,7 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
 		}
 	}
 
-	return this.transformFromLatLon(latLon, transforms['default']);
+	return this.transformFromLatLon(latLon, transforms.default);
 };
 
 /**
