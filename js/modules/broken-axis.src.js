@@ -12,6 +12,7 @@
 
 	var pick = H.pick,
 		wrap = H.wrap,
+		each = H.each,
 		extend = H.extend,
 		fireEvent = H.fireEvent,
 		Axis = H.Axis,
@@ -278,38 +279,44 @@
 
 	});
 
-	wrap(H.seriesTypes.column.prototype, 'drawPoints', function (proceed) {
+	function drawPointsWrapped(proceed) {
 		proceed.apply(this);
+		this.drawBreaks();
+	}
 
+	H.Series.prototype.drawBreaks = function () {
 		var series = this,
 			points = series.points,
-			yAxis = series.yAxis,
-			breaks = yAxis.breakArray || [],
-			threshold = pick(this.options.threshold, yAxis.min),
+			axis,
+			breaks,
+			threshold,
+			axisName = 'Axis',
 			eventName,
-			point,
-			brk,
-			i,
-			j,
 			y;
 
-		for (i = 0; i < points.length; i++) {
-			point = points[i];
-			y = point.stackY || point.y;
-			for (j = 0; j < breaks.length; j++) {
-				brk = breaks[j];
-				eventName = false;
+		each(['y', 'x'], function (key) {
+			axis = series[key + axisName];
+			breaks = axis.breakArray || [];
+			threshold = axis.isXAxis ? axis.min : pick(series.options.threshold, axis.min);
+			each(points, function (point) {
+				y = pick(point['stack' + key.toUpperCase()], point[key]);
+				each(breaks, function (brk) {
+					eventName = false;
 
-				if ((threshold < brk.from && y > brk.to) || (threshold > brk.from && y < brk.from)) { 
-						eventName = 'pointBreak';
-				} else if ((threshold < brk.from && y > brk.from && y < brk.to) || (threshold > brk.from && y > brk.to && y < brk.from)) { // point falls inside the break
-						eventName = 'pointInBreak'; // docs
-				} 
-				if (eventName) {
-					fireEvent(yAxis, eventName, {point: point, brk: brk});
-				}
-			}
-		}
+					if ((threshold < brk.from && y > brk.to) || (threshold > brk.from && y < brk.from)) { 
+							eventName = 'pointBreak';
+					} else if ((threshold < brk.from && y > brk.from && y < brk.to) || (threshold > brk.from && y > brk.to && y < brk.from)) { // point falls inside the break
+							eventName = 'pointInBreak'; // docs
+					} 
+					if (eventName) {
+						fireEvent(axis, eventName, {point: point, brk: brk});
+					}
+				});
+			});
+		});
+	};
 
-	});
+	wrap(H.seriesTypes.column.prototype, 'drawPoints', drawPointsWrapped);
+	wrap(H.Series.prototype, 'drawPoints', drawPointsWrapped);
+
 }(Highcharts));
