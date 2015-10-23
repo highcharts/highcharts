@@ -225,7 +225,7 @@ gulp.task('lint', ['scripts'], function () {
                 //"one-var": [1, "always"] // @todo: Before launch HC5
             }
         }))
-        //.pipe(eslint.failOnError())
+        .pipe(eslint.failOnError())
         .pipe(eslint.formatEach());
         /*
         .pipe(jslint({

@@ -63,7 +63,8 @@ SVGElement.prototype = {
 			radialReference,
 			n,
 			id,
-			key = [];
+			key = [],
+			value;
 
 		// Apply linear or radial gradients
 		if (color.linearGradient) {
@@ -147,8 +148,14 @@ SVGElement.prototype = {
 			}
 
 			// Set the reference to the gradient object
-			elem.setAttribute(prop, 'url(' + renderer.url + '#' + id + ')');
+			value = 'url(' + renderer.url + '#' + id + ')';
+			elem.setAttribute(prop, value);
 			elem.gradient = key;
+
+			// Allow the color to be concatenated into tooltips formatters etc. (#2995)
+			color.toString = function () {
+				return value;
+			};
 		}
 	},
 
