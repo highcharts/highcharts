@@ -81,9 +81,9 @@
 		},
 		drillUpButton: {
 			position: { 
-				align: 'left',
-				x: 10,
-				y: -50
+				align: 'right',
+				x: -10,
+				y: 10
 			}
 		}
 	});
