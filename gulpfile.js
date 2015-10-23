@@ -90,7 +90,7 @@ function assemble(assemblies) {
                             tpl += file;
                         });
 
-                        tpl = tpl.replace(/    \n/g, '\n');
+                        tpl = tpl.replace(/    [\r]?\n/g, '\n');
 
                         tpl = tpl.replace(
                             'http://code.highcharts.com@product.cdnpath@/@product.version@/modules/canvas-tools.js',
@@ -363,6 +363,7 @@ gulp.task('scripts', function () {
             
         lines.split('\n').forEach(function (line) {
             var prod, key;
+            line = line.replace(/\r/, '');
             if (line.indexOf('#') !== 0 && line.indexOf('=') !== -1) {
                 line = line.split('=');
                 key = line[0].split('.');
