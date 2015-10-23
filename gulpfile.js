@@ -5,20 +5,7 @@ var eslint = require('gulp-eslint'),
     fs = require('fs'),
     //sass = require('gulp-sass'),
     ftp = require('vinyl-ftp'),
-    //jshint = require('gulp-jshint'),
-    //stylish = require('jshint-stylish'),
-    //jslint = require('gulp-jslint'),
     xml2js = require('xml2js'),
-    /*
-    config = {
-        // List of rules at http://eslint.org/docs/rules/
-        // @todo Add more rules when ready.
-        rules: {
-            "comma-dangle": [2, "never"],
-            "no-cond-assign": [1, "always"]
-        }
-    },
-    */
     paths = {
         "buildsDir": "./js/builds",
         "distributions": [
@@ -200,7 +187,7 @@ gulp.task('lint', ['scripts'], function () {
                 'comma-dangle': [2, 'never'],
                 'consistent-return': 0,
                 'func-style': 0,
-                'guard-for-in': 0, // @todo: Make each handle objects, then run a guarded for-in there.
+                'guard-for-in': 0, // @todo: Make the each function handle objects, then run a guarded for-in there.
                 'indent': 0, // @todo: Before release HC5, do a pure whitespace commit
                 'new-cap': 0, // The ill-named Color object. Rewrite for HC5?
                 'no-alert': 2,
@@ -217,7 +204,7 @@ gulp.task('lint', ['scripts'], function () {
                 'no-undefined': 0,
                 'no-underscore-dangle': 0,
                 'space-before-function-paren': [2, {"anonymous": "always", "named": "never"}], // JSLint style
-                'quotes': [2, 'single'], // @todo: Set to single
+                'quotes': [2, 'single'],
                 'spaced-comment': 0,
                 'require-jsdoc': 0,
                 'strict': 0,
@@ -227,38 +214,7 @@ gulp.task('lint', ['scripts'], function () {
         }))
         .pipe(eslint.failOnError())
         .pipe(eslint.formatEach());
-        /*
-        .pipe(jslint({
-            'continue': true,
-            'forin': true,
-            'newcap': true,
-            'nomen': true,
-            'plusplus': true,
-            'regexp': true,
-            'sloppy': true,
-            'todo': true,
-            'vars': true,
-            'white': true,
-            //'unparam': true,
-            //'unused': true,
-
-            'edition': '2013-02-03', // in HC5 we can use latest edition with space indentation and no assignment expressions
-            //'edition': '2013-08-13',
-            'reporter': function (evt) {
-                if (!evt.pass) {
-                    console.log('___________________________________________________________________________\nErrors in ' + evt.file + '\n');
-                    evt.errors.forEach(function (err) {
-                        if (err) {
-                            console.log(
-                                err.line + ': ' + err.reason + '\n    ' + 
-                                (err.evidence && err.evidence.replace(/^\s+/, '')) + '\n'
-                            );
-                        }
-                    });
-                }
-            }
-        }));
-        */
+        
 });
 
 // Watch changes to CSS files
