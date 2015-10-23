@@ -281,7 +281,6 @@ extend(ColorAxis.prototype, {
 		var padding = legend.padding,
 			legendOptions = legend.options,
 			horiz = this.horiz,
-			box,
 			width = pick(legendOptions.symbolWidth, horiz ? 200 : 12),
 			height = pick(legendOptions.symbolHeight, horiz ? 12 : 200),
 			labelPadding = pick(legendOptions.labelPadding, horiz ? 16 : 30),
@@ -298,7 +297,6 @@ extend(ColorAxis.prototype, {
 		).attr({
 			zIndex: 1
 		}).add(item.legendGroup);
-		box = item.legendSymbol.getBBox();
 
 		// Set how much space this legend item takes up
 		this.legendItemWidth = width + padding + (horiz ? itemDistance : labelPadding);

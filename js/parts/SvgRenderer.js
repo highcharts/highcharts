@@ -469,9 +469,9 @@ SVGElement.prototype = {
 			if (isMS && !hasSVG) {
 				css(elemWrapper.element, styles);
 			} else {
-				/*jslint unparam: true*/
-				hyphenate = function (a, b) { return '-' + b.toLowerCase(); };
-				/*jslint unparam: false*/
+				hyphenate = function (a, b) {
+					return '-' + b.toLowerCase();
+				};
 				for (n in styles) {
 					serializedCss += n.replace(/([A-Z])/g, hyphenate) + ':' + styles[n] + ';';
 				}
@@ -1979,7 +1979,6 @@ SVGRenderer.prototype = {
 				options
 			),
 
-			imageElement,
 			imageRegex = /^url\((.*?)\)$/,
 			imageSrc,
 			imageSize,
@@ -2040,7 +2039,7 @@ SVGRenderer.prototype = {
 
 				// Create a dummy JavaScript image to get the width and height. Due to a bug in IE < 8,
 				// the created element must be assigned to a variable in order to load (#292).
-				imageElement = createElement('img', {
+				createElement('img', {
 					onload: function () {
 
 						// Special case for SVGs on IE11, the width is not accessible until the image is

@@ -186,11 +186,15 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed, value, lineWidth, old
 	axes = (axis.isXAxis ?
 		(defined(axis.options.yAxis) ?
 			[chart.yAxis[axis.options.yAxis]] :
-			map(series, function (S) { return S.yAxis; })
+			map(series, function (s) {
+				return s.yAxis;
+			})
 		) :
 		(defined(axis.options.xAxis) ?
 			[chart.xAxis[axis.options.xAxis]] :
-			map(series, function (S) { return S.xAxis; })
+			map(series, function (s) {
+				return s.xAxis;
+			})
 		)
 	);
 
@@ -310,10 +314,14 @@ if (Renderer === Highcharts.VMLRenderer) {
 wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
 	proceed.call(this, i);
 
-	if (!defined(this.crossLabelArray)) { return; }
+	if (!defined(this.crossLabelArray)) {
+		return;
+	}
 
 	if (defined(i)) {
-		if (this.crossLabelArray[i]) { this.crossLabelArray[i].hide(); }
+		if (this.crossLabelArray[i]) {
+			this.crossLabelArray[i].hide();
+		}
 	} else {
 		each(this.crossLabelArray, function (crosslabel) {
 			crosslabel.hide();

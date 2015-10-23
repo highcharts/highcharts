@@ -41,7 +41,9 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 					series[key]
 						.addClass(PREFIX + 'tracker')
 						.on('mouseover', onMouseOver)
-						.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
+						.on('mouseout', function (e) {
+							pointer.onTrackerMouseOut(e);
+						})
 						.css(css);
 					if (hasTouch) {
 						series[key].on('touchstart', onMouseOver);
@@ -125,7 +127,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 				visibility: series.visible ? VISIBLE : HIDDEN,
 				stroke: TRACKER_FILL,
 				fill: trackByArea ? TRACKER_FILL : NONE,
-				'stroke-width' : options.lineWidth + (trackByArea ? 0 : 2 * snap),
+				'stroke-width': options.lineWidth + (trackByArea ? 0 : 2 * snap),
 				zIndex: 2
 			})
 			.add(series.group);
@@ -135,7 +137,9 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			each([series.tracker, series.markerGroup], function (tracker) {
 				tracker.addClass(PREFIX + 'tracker')
 					.on('mouseover', onMouseOver)
-					.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
+					.on('mouseout', function (e) {
+						pointer.onTrackerMouseOut(e);
+					})
 					.css(css);
 
 				if (hasTouch) {
@@ -248,7 +252,11 @@ extend(Chart.prototype, {
 			states = theme.states,
 			alignTo = btnOptions.relativeTo === 'chart' ? null : 'plotBox';
 
-		this.resetZoomButton = chart.renderer.button(lang.resetZoom, null, null, function () { chart.zoomOut(); }, theme, states && states.hover)
+		function zoomOut() {
+			chart.zoomOut();
+		}
+
+		this.resetZoomButton = chart.renderer.button(lang.resetZoom, null, null, zoomOut, theme, states && states.hover)
 			.attr({
 				align: btnOptions.position.align,
 				title: lang.resetZoomTitle

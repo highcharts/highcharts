@@ -5,7 +5,6 @@
  * Author: Torstein Honsi
  */
 
-/*global Highcharts */
 (function (Highcharts) {
 
 	var defaultOptions = Highcharts.getOptions(),
@@ -127,6 +126,5 @@
 			'Z'
 		]);
 	};
-
 
 }(Highcharts));

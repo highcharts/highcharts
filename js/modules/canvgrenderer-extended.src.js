@@ -7,9 +7,6 @@
  * License: www.highcharts.com/license
  */
 
-// JSLint options:
-/*global clearTimeout, Highcharts, setTimeout, window */
-
 (function (Highcharts) { // encapsulate
 	var UNDEFINED,
 		DIV = 'div',

@@ -10,5 +10,4 @@
  */
 
 // JSLint options:
-/*global HighchartsAdapter, document, window, navigator, clearInterval, clearTimeout, setTimeout, location, console */
 (function () {

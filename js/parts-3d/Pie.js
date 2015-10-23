@@ -27,7 +27,9 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 
 	z += depth / 2;
 
-	if (seriesOptions.grouping !== false) { z = 0; }
+	if (seriesOptions.grouping !== false) {
+		z = 0;
+	}
 
 	Highcharts.each(series.data, function (point) {
 
@@ -46,8 +48,8 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 		angle = (shapeArgs.end + shapeArgs.start) / 2;
 
 		point.slicedTranslation = {
-			translateX : round(cos(angle) * seriesOptions.slicedOffset * cos(alpha * deg2rad)),
-			translateY : round(sin(angle) * seriesOptions.slicedOffset * cos(alpha * deg2rad))
+			translateX: round(cos(angle) * seriesOptions.slicedOffset * cos(alpha * deg2rad)),
+			translateY: round(sin(angle) * seriesOptions.slicedOffset * cos(alpha * deg2rad))
 		};
 	});
 });

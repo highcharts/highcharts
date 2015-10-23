@@ -1,12 +1,11 @@
 /**
- * @license Highcharts JS v4.1.9-modified (2015-10-20)
+ * @license Highcharts JS v4.1.9-modified (2015-10-22)
  *
  * (c) 2011-2014 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 
-/*global Highcharts, HighchartsAdapter */
 (function (Highcharts) {
 
 
@@ -312,7 +311,6 @@
             var padding = legend.padding,
                 legendOptions = legend.options,
                 horiz = this.horiz,
-                box,
                 width = pick(legendOptions.symbolWidth, horiz ? 200 : 12),
                 height = pick(legendOptions.symbolHeight, horiz ? 12 : 200),
                 labelPadding = pick(legendOptions.labelPadding, horiz ? 16 : 30),
@@ -329,7 +327,6 @@
             ).attr({
                 zIndex: 1
             }).add(item.legendGroup);
-            box = item.legendSymbol.getBBox();
 
             // Set how much space this legend item takes up
             this.legendItemWidth = width + padding + (horiz ? itemDistance : labelPadding);

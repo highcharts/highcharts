@@ -107,12 +107,13 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed)
 		return path;
 	}
 
-	if (path === null) { return path; }
+	if (path === null) {
+		return path;
+	}
 
 	var chart = this.chart,
-		options3d = chart.options.chart.options3d;
-
-	var d = this.isZAxis ? this.chart.plotWidth : options3d.depth,
+		options3d = chart.options.chart.options3d,
+		d = this.isZAxis ? chart.plotWidth : options3d.depth,
 		opposite = this.opposite;
 	if (this.horiz) {
 		opposite = !opposite;
@@ -202,10 +203,10 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getLabelPosition', function (proceed
 		return pos;
 	}
 
-	var new_pos = perspective([this.axis.swapZ({x: pos.x, y: pos.y, z: 0})], this.axis.chart, false)[0];
-	new_pos.x = new_pos.x - (!this.axis.horiz && this.axis.opposite ? this.axis.transA : 0); //#3788
-	new_pos.old = pos;
-	return new_pos;
+	var newPos = perspective([this.axis.swapZ({x: pos.x, y: pos.y, z: 0})], this.axis.chart, false)[0];
+	newPos.x = newPos.x - (!this.axis.horiz && this.axis.opposite ? this.axis.transA : 0); //#3788
+	newPos.old = pos;
+	return newPos;
 });
 
 Highcharts.wrap(Highcharts.Tick.prototype, 'handleOverflow', function (proceed, xy) {

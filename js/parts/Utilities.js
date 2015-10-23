@@ -240,9 +240,10 @@ function createElement(tag, attribs, styles, parent, nopad) {
  * @param {Object} parent
  * @param {Object} members
  */
-function extendClass(parent, members) {
-	var object = function () { return UNDEFINED; };
-	object.prototype = new parent();
+function extendClass(Parent, members) {
+	var object = function () {
+	};
+	object.prototype = new Parent();
 	extend(object.prototype, members);
 	return object;
 }
@@ -253,11 +254,7 @@ function extendClass(parent, members) {
  * @param {Number} length
  */
 function pad(number, length) {
-	var arr = [];
-	// Create an array of the remaining length +1 and join it with 0's
-	length = (length || 2) + 1 - String(number).length;
-	arr.length = length;
-	return arr.join(0) + number;
+	return new Array((length || 2) + 1 - String(number).length).join(0) + number;
 }
 
 /**
@@ -498,17 +495,17 @@ function stableSort(arr, sortFunction) {
 
 	// Add index to each item
 	for (i = 0; i < length; i++) {
-		arr[i].ss_i = i; // stable sort index
+		arr[i].safeI = i; // stable sort index
 	}
 
 	arr.sort(function (a, b) {
 		sortValue = sortFunction(a, b);
-		return sortValue === 0 ? a.ss_i - b.ss_i : sortValue;
+		return sortValue === 0 ? a.safeI - b.safeI : sortValue;
 	});
 
 	// Remove index from items
 	for (i = 0; i < length; i++) {
-		delete arr[i].ss_i; // stable sort index
+		delete arr[i].safeI; // stable sort index
 	}
 }
 

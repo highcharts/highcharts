@@ -116,17 +116,12 @@ Tooltip.prototype = {
 	 * Hide the tooltip
 	 */
 	hide: function (delay) {
-		var tooltip = this,
-			hoverPoints;
-
 		clearTimeout(this.hideTimer); // disallow duplicate timers (#1728, #1766)
 		if (!this.isHidden) {
-			hoverPoints = this.chart.hoverPoints;
-
-			this.hideTimer = setTimeout(function () {
+			this.hideTimer = setTimeout(function (tooltip) {
 				tooltip.label.fadeOut();
 				tooltip.isHidden = true;
-			}, pick(delay, this.options.hideDelay, 500));
+			}, pick(delay, this.options.hideDelay, 500), this);
 		}
 	},
 
@@ -493,7 +488,7 @@ Tooltip.prototype = {
 			xDateFormat = tooltipOptions.xDateFormat,
 			xAxis = series.xAxis,
 			isDateTime = xAxis && xAxis.options.type === 'datetime' && isNumber(point.key),
-			formatString = tooltipOptions[footOrHead+'Format'];
+			formatString = tooltipOptions[footOrHead + 'Format'];
 
 		// Guess the best date format based on the closest point distance (#568, #3418)
 		if (isDateTime && !xDateFormat) {

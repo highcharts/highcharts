@@ -16,7 +16,6 @@
  * http://jsfiddle.net/highcharts/y5A37/
  */
 
-/*global Highcharts */
 (function (H) {
 
     var labelDistance = 3,
@@ -283,8 +282,7 @@
                 clearPoint,
                 i,
                 best,
-                points = series.interpolatedPoints,
-                isNew;
+                points = series.interpolatedPoints;
 
             if (series.visible) {
 
@@ -298,7 +296,6 @@
                             padding: 0
                         })
                         .add(series.group);
-                    isNew = true;
                     /*series.labelConnector = chart.renderer.path([]).attr({
                         stroke: series.color,
                         'stroke-width': 1

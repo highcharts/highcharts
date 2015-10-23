@@ -7,7 +7,6 @@
  * License: www.highcharts.com/license
  */
 
-/*global Highcharts, HighchartsAdapter */
 (function (H) {
 	var seriesTypes = H.seriesTypes,
 		map = H.map,
@@ -16,7 +15,8 @@
 		extendClass = H.extendClass,
 		defaultOptions = H.getOptions(),
 		plotOptions = defaultOptions.plotOptions,
-		noop = function () { return; },
+		noop = function () {
+		},
 		each = H.each,
 		grep = HighchartsAdapter.grep,
 		pick = H.pick,
@@ -81,9 +81,9 @@
 		},
 		drillUpButton: {
 			position: { 
-				align: 'left',
-				x: 10,
-				y: -50
+				align: 'right',
+				x: -10,
+				y: 10
 			}
 		}
 	});
@@ -347,7 +347,7 @@
 				}
 			}
 		},
-		alg_func_group: function (h, w, d, p) {
+		algorithmGroup: function (h, w, d, p) {
 			this.height = h;
 			this.width = w;
 			this.plot = p;
@@ -402,7 +402,7 @@
 				this.total = 0;
 			};
 		},
-		alg_func_calcPoints: function (directionChange, last, group, childrenArea) {
+		algorithmCalcPoints: function (directionChange, last, group, childrenArea) {
 			var pX,
 				pY,
 				pW,
@@ -463,7 +463,7 @@
 				group.addElement(keep);
 			}
 		},
-		alg_func_lowAspectRatio: function (directionChange, parent, children) {
+		algorithmLowAspectRatio: function (directionChange, parent, children) {
 			var childrenArea = [],
 				series = this,
 				pTot,
@@ -475,23 +475,23 @@
 				direction = parent.direction,
 				i = 0,
 				end = children.length - 1,
-				group = new this.alg_func_group(parent.height, parent.width, direction, plot);
+				group = new this.algorithmGroup(parent.height, parent.width, direction, plot);
 			// Loop through and calculate all areas
 			each(children, function (child) {
 				pTot = (parent.width * parent.height) * (child.val / parent.val);
 				group.addElement(pTot);
 				if (group.lP.nR > group.lP.lR) {
-					series.alg_func_calcPoints(directionChange, false, group, childrenArea, plot);
+					series.algorithmCalcPoints(directionChange, false, group, childrenArea, plot);
 				}
 				// If last child, then calculate all remaining areas
 				if (i === end) {
-					series.alg_func_calcPoints(directionChange, true, group, childrenArea, plot);
+					series.algorithmCalcPoints(directionChange, true, group, childrenArea, plot);
 				}
 				i = i + 1;
 			});
 			return childrenArea;
 		},
-		alg_func_fill: function (directionChange, parent, children) {
+		algorithmFill: function (directionChange, parent, children) {
 			var childrenArea = [],
 				pTot,
 				direction = parent.direction,
@@ -531,16 +531,16 @@
 			return childrenArea;
 		},
 		strip: function (parent, children) {
-			return this.alg_func_lowAspectRatio(false, parent, children);
+			return this.algorithmLowAspectRatio(false, parent, children);
 		},
 		squarified: function (parent, children) {
-			return this.alg_func_lowAspectRatio(true, parent, children);
+			return this.algorithmLowAspectRatio(true, parent, children);
 		},
 		sliceAndDice: function (parent, children) {
-			return this.alg_func_fill(true, parent, children);
+			return this.algorithmFill(true, parent, children);
 		},
 		stripes: function (parent, children) {
-			return this.alg_func_fill(false, parent, children);
+			return this.algorithmFill(false, parent, children);
 		},
 		translate: function () {
 			var pointValues,
@@ -551,26 +551,24 @@
 			// Call prototype function
 			Series.prototype.translate.call(this);
 
-			if (this.points.length) {
-				// Assign variables
-				this.rootNode = pick(this.options.rootId, "");
-				// Create a object map from level to options
-				this.levelMap = reduce(this.options.levels, function (arr, item) {
-					arr[item.level] = item;
-					return arr;
-				}, {});
-				tree = this.tree = this.getTree(); // @todo Only if series.isDirtyData is true
+			// Assign variables
+			this.rootNode = pick(this.options.rootId, "");
+			// Create a object map from level to options
+			this.levelMap = reduce(this.options.levels, function (arr, item) {
+				arr[item.level] = item;
+				return arr;
+			}, {});
+			tree = this.tree = this.getTree(); // @todo Only if series.isDirtyData is true
 
-				// Calculate plotting values.
-				this.axisRatio = (this.xAxis.len / this.yAxis.len);
-				this.nodeMap[""].pointValues = pointValues = {x: 0, y: 0, width: 100, height: 100 };
-				this.nodeMap[""].values = seriesArea = merge(pointValues, {
-					width: (pointValues.width * this.axisRatio),
-					direction: (this.options.layoutStartingDirection === 'vertical' ? 0 : 1),
-					val: tree.val
-				});
-				this.calculateChildrenAreas(tree, seriesArea);
-			}
+			// Calculate plotting values.
+			this.axisRatio = (this.xAxis.len / this.yAxis.len);
+			this.nodeMap[""].pointValues = pointValues = {x: 0, y: 0, width: 100, height: 100 };
+			this.nodeMap[""].values = seriesArea = merge(pointValues, {
+				width: (pointValues.width * this.axisRatio),
+				direction: (this.options.layoutStartingDirection === 'vertical' ? 0 : 1),
+				val: tree.val
+			});
+			this.calculateChildrenAreas(tree, seriesArea);
 
 			// Logic for point colors
 			if (this.colorAxis) {

@@ -202,7 +202,7 @@ Pointer.prototype = {
 				if (tooltip) {
 					tooltip.refresh(kdpoint, e);
 				}
-				if(!hoverSeries || !hoverSeries.directTouch) { // #4448
+				if (!hoverSeries || !hoverSeries.directTouch) { // #4448
 					kdpoint.onMouseOver(e);
 				}
 			}
@@ -470,7 +470,7 @@ Pointer.prototype = {
 				each(chart.axes, function (axis) {
 					if (axis.zoomEnabled && defined(axis.min) && (hasPinched || pointer[{ xAxis: 'zoomX', yAxis: 'zoomY' }[axis.coll]])) { // #859, #3569
 						var horiz = axis.horiz,
-							minPixelPadding = e.type === 'touchend' ? axis.minPixelPadding: 0, // #1207, #3075
+							minPixelPadding = e.type === 'touchend' ? axis.minPixelPadding : 0, // #1207, #3075
 							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop) + minPixelPadding),
 							selectionMax = axis.toValue((horiz ? selectionLeft + selectionWidth : selectionTop + selectionHeight) - minPixelPadding);
 

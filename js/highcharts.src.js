@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-10-21)
+ * @license Highcharts JS v4.1.9-modified (2015-10-23)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -10,7 +10,6 @@
  */
 
 // JSLint options:
-/*global HighchartsAdapter, document, window, navigator, clearInterval, clearTimeout, setTimeout, location, console */
 (function () {
 // encapsulated variables
     var UNDEFINED,
@@ -50,7 +49,7 @@
         dateFormat, // function
         pathAnim,
         timeUnits,
-        noop = function () { return UNDEFINED; },
+        noop = function () {},
         charts = [],
         chartCount = 0,
         PRODUCT = 'Highcharts',
@@ -113,7 +112,7 @@
         }
         // else ...
         if (win.console) {
-            console.log(msg);
+            console.log(msg); // eslint-disable-line no-console
         }
     }
 
@@ -363,9 +362,10 @@
      * @param {Object} parent
      * @param {Object} members
      */
-    function extendClass(parent, members) {
-        var object = function () { return UNDEFINED; };
-        object.prototype = new parent();
+    function extendClass(Parent, members) {
+        var object = function () {
+        };
+        object.prototype = new Parent();
         extend(object.prototype, members);
         return object;
     }
@@ -376,11 +376,7 @@
      * @param {Number} length
      */
     function pad(number, length) {
-        var arr = [];
-        // Create an array of the remaining length +1 and join it with 0's
-        length = (length || 2) + 1 - String(number).length;
-        arr.length = length;
-        return arr.join(0) + number;
+        return new Array((length || 2) + 1 - String(number).length).join(0) + number;
     }
 
     /**
@@ -621,17 +617,17 @@
 
         // Add index to each item
         for (i = 0; i < length; i++) {
-            arr[i].ss_i = i; // stable sort index
+            arr[i].safeI = i; // stable sort index
         }
 
         arr.sort(function (a, b) {
             sortValue = sortFunction(a, b);
-            return sortValue === 0 ? a.ss_i - b.ss_i : sortValue;
+            return sortValue === 0 ? a.safeI - b.safeI : sortValue;
         });
 
         // Remove index from items
         for (i = 0; i < length; i++) {
-            delete arr[i].ss_i; // stable sort index
+            delete arr[i].safeI; // stable sort index
         }
     }
 
@@ -978,8 +974,7 @@
                     var constr = 'Chart', // default constructor
                         args = arguments,
                         options,
-                        ret,
-                        chart;
+                        ret;
 
                     if (this[0]) {
 
@@ -993,7 +988,7 @@
                         if (options !== UNDEFINED) {
                             options.chart = options.chart || {};
                             options.chart.renderTo = this[0];
-                            chart = new Highcharts[constr](options, args[1]);
+                            ret = new Highcharts[constr](options, args[1]);
                             ret = this;
                         }
 
@@ -2262,9 +2257,9 @@
                 if (isMS && !hasSVG) {
                     css(elemWrapper.element, styles);
                 } else {
-                    /*jslint unparam: true*/
-                    hyphenate = function (a, b) { return '-' + b.toLowerCase(); };
-                    /*jslint unparam: false*/
+                    hyphenate = function (a, b) {
+                        return '-' + b.toLowerCase();
+                    };
                     for (n in styles) {
                         serializedCss += n.replace(/([A-Z])/g, hyphenate) + ':' + styles[n] + ';';
                     }
@@ -3772,7 +3767,6 @@
                     options
                 ),
 
-                imageElement,
                 imageRegex = /^url\((.*?)\)$/,
                 imageSrc,
                 imageSize,
@@ -3833,7 +3827,7 @@
 
                     // Create a dummy JavaScript image to get the width and height. Due to a bug in IE < 8,
                     // the created element must be assigned to a variable in order to load (#292).
-                    imageElement = createElement('img', {
+                    createElement('img', {
                         onload: function () {
 
                             // Special case for SVGs on IE11, the width is not accessible until the image is
@@ -6372,7 +6366,7 @@
                 optionsLabel = merge({
                     align: horiz && isBand && 'center',
                     x: horiz ? !isBand && 4 : 10,
-                    verticalAlign : !horiz && isBand && 'middle',
+                    verticalAlign: !horiz && isBand && 'middle',
                     y: horiz ? isBand ? 16 : 10 : isBand ? 6 : -4,
                     rotation: horiz && !isBand && 90
                 }, optionsLabel);
@@ -9159,17 +9153,12 @@
          * Hide the tooltip
          */
         hide: function (delay) {
-            var tooltip = this,
-                hoverPoints;
-
             clearTimeout(this.hideTimer); // disallow duplicate timers (#1728, #1766)
             if (!this.isHidden) {
-                hoverPoints = this.chart.hoverPoints;
-
-                this.hideTimer = setTimeout(function () {
+                this.hideTimer = setTimeout(function (tooltip) {
                     tooltip.label.fadeOut();
                     tooltip.isHidden = true;
-                }, pick(delay, this.options.hideDelay, 500));
+                }, pick(delay, this.options.hideDelay, 500), this);
             }
         },
 
@@ -9536,7 +9525,7 @@
                 xDateFormat = tooltipOptions.xDateFormat,
                 xAxis = series.xAxis,
                 isDateTime = xAxis && xAxis.options.type === 'datetime' && isNumber(point.key),
-                formatString = tooltipOptions[footOrHead+'Format'];
+                formatString = tooltipOptions[footOrHead + 'Format'];
 
             // Guess the best date format based on the closest point distance (#568, #3418)
             if (isDateTime && !xDateFormat) {
@@ -9770,7 +9759,7 @@
                     if (tooltip) {
                         tooltip.refresh(kdpoint, e);
                     }
-                    if(!hoverSeries || !hoverSeries.directTouch) { // #4448
+                    if (!hoverSeries || !hoverSeries.directTouch) { // #4448
                         kdpoint.onMouseOver(e);
                     }
                 }
@@ -10038,7 +10027,7 @@
                     each(chart.axes, function (axis) {
                         if (axis.zoomEnabled && defined(axis.min) && (hasPinched || pointer[{ xAxis: 'zoomX', yAxis: 'zoomY' }[axis.coll]])) { // #859, #3569
                             var horiz = axis.horiz,
-                                minPixelPadding = e.type === 'touchend' ? axis.minPixelPadding: 0, // #1207, #3075
+                                minPixelPadding = e.type === 'touchend' ? axis.minPixelPadding : 0, // #1207, #3075
                                 selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop) + minPixelPadding),
                                 selectionMax = axis.toValue((horiz ? selectionLeft + selectionWidth : selectionTop + selectionHeight) - minPixelPadding);
 
@@ -10508,7 +10497,9 @@
             hasPointerEvent = !!win.PointerEvent,
             getWebkitTouches = function () {
                 var key, fake = [];
-                fake.item = function (i) { return this[i]; };
+                fake.item = function (i) {
+                    return this[i];
+                };
                 for (key in touches) {
                     if (touches.hasOwnProperty(key)) {
                         fake.push({
@@ -10520,11 +10511,11 @@
                 }
                 return fake;
             },
-            translateMSPointer = function (e, method, wktype, callback) {
+            translateMSPointer = function (e, method, wktype, func) {
                 var p;
                 e = e.originalEvent || e;
                 if ((e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) && charts[hoverChartIndex]) {
-                    callback(e);
+                    func(e);
                     p = charts[hoverChartIndex].pointer;
                     p[method]({
                         type: wktype,
@@ -11757,8 +11748,7 @@
                 options = this.options,
                 xAxisOptions = options.xAxis = splat(options.xAxis || {}),
                 yAxisOptions = options.yAxis = splat(options.yAxis || {}),
-                optionsArray,
-                axis;
+                optionsArray;
 
             // make sure the options are arrays and add some members
             each(xAxisOptions, function (axis, i) {
@@ -11774,7 +11764,7 @@
             optionsArray = xAxisOptions.concat(yAxisOptions);
 
             each(optionsArray, function (axisOptions) {
-                axis = new Axis(chart, axisOptions);
+                new Axis(chart, axisOptions);
             });
         },
 
@@ -12728,12 +12718,12 @@
             var chart = this;
 
             // Note: in spite of JSLint's complaints, win == win.top is required
-            /*jslint eqeq: true*/
-            if ((!hasSVG && (win == win.top && doc.readyState !== 'complete')) || (useCanVG && !win.canvg)) {
-            /*jslint eqeq: false*/
+            if ((!hasSVG && (win == win.top && doc.readyState !== 'complete')) || (useCanVG && !win.canvg)) { // eslint-disable-line eqeqeq
                 if (useCanVG) {
                     // Delay rendering until canvg library is downloaded and ready
-                    CanVGController.push(function () { chart.firstRender(); }, chart.options.global.canvasToolsURL);
+                    CanVGController.push(function () {
+                        chart.firstRender();
+                    }, chart.options.global.canvasToolsURL);
                 } else {
                     doc.attachEvent('onreadystatechange', function () {
                         doc.detachEvent('onreadystatechange', chart.firstRender);
@@ -14914,7 +14904,7 @@
                     axis = series.kdAxisArray[depth % dimensions];
 
                     // sort point array
-                    points.sort(function(a, b) {
+                    points.sort(function (a, b) {
                         return a[axis] - b[axis];
                     });
 
@@ -14981,7 +14971,7 @@
 
                 // End of tree
                 if (tree[sideA]) {
-                    nPoint1 =_search(search, tree[sideA], depth + 1, dimensions);
+                    nPoint1 = _search(search, tree[sideA], depth + 1, dimensions);
 
                     ret = (nPoint1[kdComparer] < ret[kdComparer] ? nPoint1 : point);
                 }
@@ -15380,7 +15370,7 @@
     /**
     * Get stack indicator, according to it's x-value, to determine points with the same x-value
     */
-    Series.prototype.getStackIndicator = function(stackIndicator, x, index) {
+    Series.prototype.getStackIndicator = function (stackIndicator, x, index) {
         if (!defined(stackIndicator) || stackIndicator.x !== x) {
             stackIndicator = {
                 x: x,
@@ -15436,10 +15426,9 @@
          */
         addAxis: function (options, isX, redraw, animation) {
             var key = isX ? 'xAxis' : 'yAxis',
-                chartOptions = this.options,
-                axis;
+                chartOptions = this.options;
 
-            axis = new Axis(this, merge(options, {
+            new Axis(this, merge(options, {
                 index: this[key].length,
                 isX: isX
             }));
@@ -17999,7 +17988,6 @@
     /**
      * Highcharts module to hide overlapping data labels. This module is included in Highcharts.
      */
-     /*global Highcharts */
     (function (H) {
         var Chart = H.Chart,
             each = H.each,
@@ -18134,8 +18122,8 @@
                 }
             });
         };
-
-    }(Highcharts));/**
+    }(Highcharts));
+    /**
      * TrackerMixin for points and graphs
      */
 
@@ -18178,7 +18166,9 @@
                         series[key]
                             .addClass(PREFIX + 'tracker')
                             .on('mouseover', onMouseOver)
-                            .on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
+                            .on('mouseout', function (e) {
+                                pointer.onTrackerMouseOut(e);
+                            })
                             .css(css);
                         if (hasTouch) {
                             series[key].on('touchstart', onMouseOver);
@@ -18262,7 +18252,7 @@
                     visibility: series.visible ? VISIBLE : HIDDEN,
                     stroke: TRACKER_FILL,
                     fill: trackByArea ? TRACKER_FILL : NONE,
-                    'stroke-width' : options.lineWidth + (trackByArea ? 0 : 2 * snap),
+                    'stroke-width': options.lineWidth + (trackByArea ? 0 : 2 * snap),
                     zIndex: 2
                 })
                 .add(series.group);
@@ -18272,7 +18262,9 @@
                 each([series.tracker, series.markerGroup], function (tracker) {
                     tracker.addClass(PREFIX + 'tracker')
                         .on('mouseover', onMouseOver)
-                        .on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
+                        .on('mouseout', function (e) {
+                            pointer.onTrackerMouseOut(e);
+                        })
                         .css(css);
 
                     if (hasTouch) {
@@ -18385,7 +18377,11 @@
                 states = theme.states,
                 alignTo = btnOptions.relativeTo === 'chart' ? null : 'plotBox';
 
-            this.resetZoomButton = chart.renderer.button(lang.resetZoom, null, null, function () { chart.zoomOut(); }, theme, states && states.hover)
+            function zoomOut() {
+                chart.zoomOut();
+            }
+
+            this.resetZoomButton = chart.renderer.button(lang.resetZoom, null, null, zoomOut, theme, states && states.hover)
                 .attr({
                     align: btnOptions.position.align,
                     title: lang.resetZoomTitle

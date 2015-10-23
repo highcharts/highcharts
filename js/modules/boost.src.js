@@ -42,12 +42,13 @@
  *   number of points drawn gets higher, and you may want to set the threshold lower in order to 
  *   use optimizations.
  */
-/*global document, Highcharts, HighchartsAdapter, setTimeout */
+
 (function (H, HA) {
 
     'use strict';
 
-    var noop = function () { return undefined; },
+    var noop = function () {
+        },
         Color = H.Color,
         Series = H.Series,
         seriesTypes = H.seriesTypes,
@@ -61,16 +62,16 @@
         plotOptions = H.getOptions().plotOptions,
         CHUNK_SIZE = 50000;
 
-    function eachAsync(arr, fn, callback, chunkSize, i) {
+    function eachAsync(arr, fn, finalFunc, chunkSize, i) {
         i = i || 0;
         chunkSize = chunkSize || CHUNK_SIZE;
         each(arr.slice(i, i + chunkSize), fn);
         if (i + chunkSize < arr.length) {
             setTimeout(function () {
-                eachAsync(arr, fn, callback, chunkSize, i + chunkSize);
+                eachAsync(arr, fn, finalFunc, chunkSize, i + chunkSize);
             });
-        } else if (callback) {
-            callback();
+        } else if (finalFunc) {
+            finalFunc();
         }
     }
 
@@ -86,7 +87,7 @@
      * run the original method. If not, check for a canvas version or do nothing.
      */
     each(['translate', 'generatePoints', 'drawTracker', 'drawPoints', 'render'], function (method) {
-        var branch = function (proceed) {
+        function branch(proceed) {
             var letItPass = this.options.stacking && (method === 'translate' || method === 'generatePoints');
             if ((this.processedXData || this.options.data).length < (this.options.boostThreshold || Number.MAX_VALUE) ||
                     letItPass) {
@@ -104,7 +105,7 @@
 
                 this[method + 'Canvas']();
             }
-        };
+        }
         wrap(Series.prototype, method, branch);
 
         // A special case for some types - its translate method is already wrapped

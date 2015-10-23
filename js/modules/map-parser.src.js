@@ -33,10 +33,10 @@ H.extend(H.Data.prototype, {
 			isString,
 			operator,
 			matrixTransform = function (p, m) {
-			    return [
-			        m.a * p[0] + m.c * p[1] + m.e,
-			        m.b * p[0] + m.d * p[1] + m.f
-			    ];
+				return [
+					m.a * p[0] + m.c * p[1] + m.e,
+					m.b * p[0] + m.d * p[1] + m.f
+				];
 			};
 
 		path = path
@@ -99,11 +99,11 @@ H.extend(H.Data.prototype, {
 					isRelative = true;
 					path[i] = 'L';
 					path.splice(i + 1, 0, 0);
-				} else if (operator === 's') {
+				} else if (operator === 's') {
 					isRelative = true;
 					path[i] = 'L';
 					path.splice(i + 1, 2);
-				} else if (operator === 'S') {
+				} else if (operator === 'S') {
 					isRelative = false;
 					path[i] = 'L';
 					path.splice(i + 1, 2);
@@ -321,7 +321,7 @@ H.extend(H.Data.prototype, {
 			// Skip clip paths
 			each(['defs', 'clipPath'], function (nodeName) {
 				each(xml.getElementsByTagName(nodeName), function (parent) {
-					each (parent.getElementsByTagName('path'), function (path) {
+					each(parent.getElementsByTagName('path'), function (path) {
 						path.skip = true;
 					});
 				});

@@ -8,7 +8,6 @@ var DATA_GROUPING = 'dataGrouping',
 	baseGeneratePoints = seriesProto.generatePoints,
 	baseDestroy = seriesProto.destroy,
 	baseTooltipFooterHeaderFormatter = tooltipProto.tooltipFooterHeaderFormatter,
-	NUMBER = 'number',
 
 	commonOptions = {
 		approximation: 'average', // average, open, high, low, close, sum

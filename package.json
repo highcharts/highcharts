@@ -9,6 +9,10 @@
   },
   "devDependencies": {
     "grunt": "^0.4.5",
-    "grunt-jslint": "^1.1.12"
+    "grunt-jslint": "^1.1.12",
+    "gulp-eslint": "^1.0.0",
+    "request": "^2.65.0",
+    "vinyl-ftp": "^0.4.5",
+    "xml2js": "^0.4.13"
   }
 }

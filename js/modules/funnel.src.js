@@ -7,7 +7,6 @@
  * License: www.highcharts.com/license
  */
 
-/*global Highcharts */
 (function (Highcharts) {
 	
 'use strict';

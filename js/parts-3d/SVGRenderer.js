@@ -184,10 +184,13 @@ Highcharts.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 	pArr = perspective(pArr, chart, shapeArgs.insidePlotArea);
 
 	// helper method to decide which side is visible
+	function mapPath(i) {
+		return pArr[i];
+	}
 	var pickShape = function (path1, path2) {
 		var ret;
-		path1 = map(path1, function (i) { return pArr[i]; });
-		path2 = map(path2, function (i) { return pArr[i]; });
+		path1 = map(path1, mapPath);
+		path2 = map(path2, mapPath);
 		if (shapeArea(path1) < 0) {
 			ret = path1;
 		} else if (shapeArea(path2) < 0) {

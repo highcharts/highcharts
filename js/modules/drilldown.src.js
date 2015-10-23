@@ -7,7 +7,6 @@
  * Demo: http://jsfiddle.net/highcharts/Vf3yT/
  */
 
-/*global Highcharts, HighchartsAdapter, setTimeout */
 (function (H) {
 
 	"use strict";

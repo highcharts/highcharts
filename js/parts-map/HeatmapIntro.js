@@ -6,6 +6,5 @@
  * License: www.highcharts.com/license
  */
 
-/*global Highcharts, HighchartsAdapter */
 (function (Highcharts) {
 

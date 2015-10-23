@@ -114,8 +114,7 @@
 				var constr = 'Chart', // default constructor
 					args = arguments,
 					options,
-					ret,
-					chart;
+					ret;
 
 				if (this[0]) {
 
@@ -129,7 +128,7 @@
 					if (options !== UNDEFINED) {
 						options.chart = options.chart || {};
 						options.chart.renderTo = this[0];
-						chart = new Highcharts[constr](options, args[1]);
+						ret = new Highcharts[constr](options, args[1]);
 						ret = this;
 					}
 

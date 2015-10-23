@@ -36,7 +36,7 @@ var UNDEFINED,
 	dateFormat, // function
 	pathAnim,
 	timeUnits,
-	noop = function () { return UNDEFINED; },
+	noop = function () {},
 	charts = [],
 	chartCount = 0,
 	PRODUCT = '@product.name@',
@@ -99,7 +99,7 @@ function error(code, stop) {
 	}
 	// else ...
 	if (win.console) {
-		console.log(msg);
+		console.log(msg); // eslint-disable-line no-console
 	}
 }
 
