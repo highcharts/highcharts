@@ -2493,6 +2493,8 @@
                 textShadow,
                 elemStyle = element.style,
                 toggleTextShadowShim,
+                cache = renderer.cache,
+                cacheKeys = renderer.cacheKeys,
                 cacheKey;
 
             if (textStr !== UNDEFINED) {
@@ -2513,7 +2515,7 @@
             }
 
             if (cacheKey && !reload) {
-                bBox = renderer.cache[cacheKey];
+                bBox = cache[cacheKey];
             }
 
             // No cache found
@@ -2591,7 +2593,16 @@
 
                 // Cache it
                 if (cacheKey) {
-                    renderer.cache[cacheKey] = bBox;
+
+                    // Rotate (#4681)
+                    while (cacheKeys.length > 250) {
+                        delete cache[cacheKeys.shift()];
+                    }
+
+                    if (!cache[cacheKey]) {
+                        cacheKeys.push(cacheKey);
+                    }
+                    cache[cacheKey] = bBox;
                 }
             }
             return bBox;
@@ -3036,6 +3047,7 @@
             renderer.forExport = forExport;
             renderer.gradients = {}; // Object where gradient SvgElements are stored
             renderer.cache = {}; // Cache for numerical bounding boxes
+            renderer.cacheKeys = [];
 
             renderer.setSize(width, height, false);
 
