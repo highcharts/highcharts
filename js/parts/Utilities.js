@@ -254,11 +254,7 @@ function extendClass(Parent, members) {
  * @param {Number} length
  */
 function pad(number, length) {
-	var arr = [];
-	// Create an array of the remaining length +1 and join it with 0's
-	length = (length || 2) + 1 - String(number).length;
-	arr.length = length;
-	return arr.join(0) + number;
+	return new Array((length || 2) + 1 - String(number).length).join(0) + number;
 }
 
 /**

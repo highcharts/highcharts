@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.9-modified (2015-10-22)
+ * @license Highstock JS v2.1.9-modified (2015-10-23)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -376,11 +376,7 @@
      * @param {Number} length
      */
     function pad(number, length) {
-        var arr = [];
-        // Create an array of the remaining length +1 and join it with 0's
-        length = (length || 2) + 1 - String(number).length;
-        arr.length = length;
-        return arr.join(0) + number;
+        return new Array((length || 2) + 1 - String(number).length).join(0) + number;
     }
 
     /**
@@ -19560,7 +19556,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v2.1.9-modified (2015-10-22)
+     * Highstock JS v2.1.9-modified (2015-10-23)
      * Highcharts Broken Axis module
      * 
      * Author: Stephane Vanraes, Torstein Honsi

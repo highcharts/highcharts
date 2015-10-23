@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-10-22)
+ * @license Highmaps JS v1.1.9-modified (2015-10-23)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -374,11 +374,7 @@
      * @param {Number} length
      */
     function pad(number, length) {
-        var arr = [];
-        // Create an array of the remaining length +1 and join it with 0's
-        length = (length || 2) + 1 - String(number).length;
-        arr.length = length;
-        return arr.join(0) + number;
+        return new Array((length || 2) + 1 - String(number).length).join(0) + number;
     }
 
     /**

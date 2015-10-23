@@ -87,7 +87,7 @@
      * run the original method. If not, check for a canvas version or do nothing.
      */
     each(['translate', 'generatePoints', 'drawTracker', 'drawPoints', 'render'], function (method) {
-        var branch = function (proceed) {
+        function branch(proceed) {
             var letItPass = this.options.stacking && (method === 'translate' || method === 'generatePoints');
             if ((this.processedXData || this.options.data).length < (this.options.boostThreshold || Number.MAX_VALUE) ||
                     letItPass) {
@@ -105,7 +105,7 @@
 
                 this[method + 'Canvas']();
             }
-        };
+        }
         wrap(Series.prototype, method, branch);
 
         // A special case for some types - its translate method is already wrapped
