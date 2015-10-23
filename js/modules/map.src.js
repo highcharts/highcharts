@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-10-22)
+ * @license Highmaps JS v1.1.9-modified (2015-10-23)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2014 Torstein Honsi
@@ -2149,7 +2149,7 @@
         // Move letters apart
         path = path.replace(/([A-Za-z])/g, ' $1 ');
         // Trim
-        path = path.replace(/^\s*/, "").replace(/\s*$/, "");
+        path = path.replace(/^\s*/, '').replace(/\s*$/, '');
 
         // Split on spaces and commas
         path = path.split(/[ ,]+/);

@@ -58,7 +58,7 @@ Highcharts.splitPath = function (path) {
 	// Move letters apart
 	path = path.replace(/([A-Za-z])/g, ' $1 ');
 	// Trim
-	path = path.replace(/^\s*/, "").replace(/\s*$/, "");
+	path = path.replace(/^\s*/, '').replace(/\s*$/, '');
 
 	// Split on spaces and commas
 	path = path.split(/[ ,]+/);

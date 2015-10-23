@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-10-22)
+ * @license Highcharts JS v4.1.9-modified (2015-10-23)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -1703,9 +1703,9 @@ var arrayMin = Highcharts.arrayMin,
                 y = yData[i];
                 point = points && points[i] ? points[i] : {};
 
-                if (y === "sum" || point.isSum) {
+                if (y === 'sum' || point.isSum) {
                     yData[i] = sum;
-                } else if (y === "intermediateSum" || point.isIntermediateSum) {
+                } else if (y === 'intermediateSum' || point.isIntermediateSum) {
                     yData[i] = subSum;
                 } else {
                     sum += y;
@@ -1727,10 +1727,10 @@ var arrayMin = Highcharts.arrayMin,
          */
         toYData: function (pt) {
             if (pt.isSum) {
-                return (pt.x === 0 ? null : "sum"); //#3245 Error when first element is Sum or Intermediate Sum
+                return (pt.x === 0 ? null : 'sum'); //#3245 Error when first element is Sum or Intermediate Sum
             }
             if (pt.isIntermediateSum) {
-                return (pt.x === 0 ? null : "intermediateSum"); //#3245
+                return (pt.x === 0 ? null : 'intermediateSum'); //#3245
             }
             return pt.y;
         },

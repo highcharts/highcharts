@@ -9,7 +9,7 @@ var UNDEFINED,
 	extend = Highcharts.extend,
 	each = Highcharts.each;
 
-ALLOWED_SHAPES = ["path", "rect", "circle"];
+ALLOWED_SHAPES = ['path', 'rect', 'circle'];
 
 ALIGN_FACTOR = {
 	top: 0,
@@ -34,14 +34,14 @@ function defaultOptions(shapeType) {
 		yAxis: 0,
 		title: {
 			style: {},
-			text: "",
+			text: '',
 			x: 0,
 			y: 0
 		},
 		shape: {
 			params: {
-				stroke: "#000000",
-				fill: "transparent",
+				stroke: '#000000',
+				fill: 'transparent',
 				strokeWidth: 2
 			}
 		}
@@ -373,7 +373,7 @@ Chart.prototype.callbacks.push(function (chart) {
 	var options = chart.options.annotations,
 		group;
 
-	group = chart.renderer.g("annotations");
+	group = chart.renderer.g('annotations');
 	group.attr({
 		zIndex: 7
 	});

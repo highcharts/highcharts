@@ -753,12 +753,12 @@
                     (isNaN(decimals = Math.abs(decimals)) ? 2 : decimals),
             d = decPoint === undefined ? lang.decimalPoint : decPoint,
             t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
-            s = n < 0 ? "-" : "",
+            s = n < 0 ? '-' : '',
             i = String(pInt(n = mathAbs(n).toFixed(c))),
             j = i.length > 3 ? i.length % 3 : 0;
 
-        return (s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
-                (c ? d + mathAbs(n - i).toFixed(c).slice(2) : ""));
+        return (s + (j ? i.substr(0, j) + t : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + t) +
+                (c ? d + mathAbs(n - i).toFixed(c).slice(2) : ''));
     };
     /**
      * Path interpolation algorithm used across adapters
@@ -4116,7 +4116,7 @@
             fontSize = fontSize || this.style.fontSize;
             if (!fontSize && elem && win.getComputedStyle) {
                 elem = elem.element || elem; // SVGElement
-                style = win.getComputedStyle(elem, "");
+                style = win.getComputedStyle(elem, '');
                 fontSize = style && style.fontSize; // #4309, the style doesn't exist inside a hidden iframe in Firefox
             }
             fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
@@ -18845,7 +18845,7 @@
         // Move letters apart
         path = path.replace(/([A-Za-z])/g, ' $1 ');
         // Trim
-        path = path.replace(/^\s*/, "").replace(/\s*$/, "");
+        path = path.replace(/^\s*/, '').replace(/\s*$/, '');
 
         // Split on spaces and commas
         path = path.split(/[ ,]+/);

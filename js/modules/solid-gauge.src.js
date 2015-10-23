@@ -8,7 +8,7 @@
  */
 
 (function (H) {
-	"use strict";
+	'use strict';
 
 	var defaultPlotOptions = H.getOptions().plotOptions,
 		pInt = H.pInt,

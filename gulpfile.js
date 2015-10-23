@@ -217,7 +217,7 @@ gulp.task('lint', ['scripts'], function () {
                 'no-undefined': 0,
                 'no-underscore-dangle': 0,
                 'space-before-function-paren': [2, {"anonymous": "always", "named": "never"}], // JSLint style
-                'quotes': 0, // @todo: Set to single
+                'quotes': [2, 'single'], // @todo: Set to single
                 'spaced-comment': 0,
                 'require-jsdoc': 0,
                 'strict': 0,

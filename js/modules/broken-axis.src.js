@@ -8,7 +8,7 @@
 
 (function (H) {	
 
-	"use strict";
+	'use strict';
 
 	var pick = H.pick,
 		wrap = H.wrap,

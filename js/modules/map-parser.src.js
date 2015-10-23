@@ -6,7 +6,7 @@
 /*global document, Highcharts, jQuery, $ */
 (function (H) {
 
-"use strict";
+'use strict';
 
 var each = H.each;
 
@@ -49,9 +49,9 @@ H.extend(H.Data.prototype, {
 			// Add space before minus
 			.replace(/-/g, ' -')
 			// Trim
-			.replace(/^\s*/, "").replace(/\s*$/, "")
+			.replace(/^\s*/, '').replace(/\s*$/, '')
 			// Remove newlines, tabs etc
-			.replace(/\s+/g, " ")
+			.replace(/\s+/g, ' ')
 		
 			// Split on spaces, minus and commas
 			.split(/[ ,]+/);

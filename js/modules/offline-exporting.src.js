@@ -19,7 +19,7 @@ Highcharts.CanVGRenderer = {};
 Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartOptions) {
 	var chart = this,
 		options = Highcharts.merge(chart.options.exporting, exportingOptions),
-		webKit = navigator.userAgent.indexOf('WebKit') > -1 && navigator.userAgent.indexOf("Chrome") < 0, // Webkit and not chrome
+		webKit = navigator.userAgent.indexOf('WebKit') > -1 && navigator.userAgent.indexOf('Chrome') < 0, // Webkit and not chrome
 		scale = options.scale || 2,
 		chartCopyContainer,
 		domurl = window.URL || window.webkitURL || window,

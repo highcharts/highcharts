@@ -188,9 +188,9 @@
 		if (csv) {
 			
 			lines = csv
-				.replace(/\r\n/g, "\n") // Unix
-				.replace(/\r/g, "\n") // Mac
-				.split(options.lineDelimiter || "\n");
+				.replace(/\r\n/g, '\n') // Unix
+				.replace(/\r/g, '\n') // Mac
+				.split(options.lineDelimiter || '\n');
 
 			itemDelimiter = options.itemDelimiter || (csv.indexOf('\t') !== -1 ? '\t' : ',');
 			

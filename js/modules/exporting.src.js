@@ -365,7 +365,7 @@ extend(Chart.prototype, {
 
 		// IE9 beta bugs with innerHTML. Test again with final IE9.
 		svg = svg.replace(/(url\(#highcharts-[0-9]+)&quot;/g, '$1')
-			.replace(/&quot;/g, "'");
+			.replace(/&quot;/g, '\'');
 
 		return svg;
 	},

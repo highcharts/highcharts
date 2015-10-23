@@ -117,7 +117,7 @@
 		 */
 		getListOfParents: function (data, ids) {
 			var listOfParents = reduce(data, function (prev, curr, i) {
-				var parent = pick(curr.parent, "");
+				var parent = pick(curr.parent, '');
 				if (prev[parent] === undefined) {
 					prev[parent] = [];
 				}
@@ -127,9 +127,9 @@
 
 			// If parent does not exist, hoist parent to root of tree.
 			eachObject(listOfParents, function (children, parent, list) {
-				if ((parent !== "") && (HighchartsAdapter.inArray(parent, ids) === -1)) {
+				if ((parent !== '') && (HighchartsAdapter.inArray(parent, ids) === -1)) {
 					each(children, function (child) {
-						list[""].push(child);
+						list[''].push(child);
 					});
 					delete list[parent];
 				}
@@ -148,12 +148,12 @@
 				parentList = series.getListOfParents(this.data, allIds);
 
 			series.nodeMap = [];
-			tree = series.buildNode("", -1, 0, parentList, null);
+			tree = series.buildNode('', -1, 0, parentList, null);
 			recursive(this.nodeMap[this.rootNode], function (node) {
 				var next = false,
 					p = node.parent;
 				node.visible = true;
-				if (p || p === "") {
+				if (p || p === '') {
 					next = series.nodeMap[p];
 				}
 				return next;
@@ -249,7 +249,7 @@
 				ignore: !(pick(point && point.visible, true) && (val > 0)),
 				isLeaf: tree.visible && !childrenTotal,
 				levelDynamic: (options.levelIsConstant ? tree.level : (tree.level - series.nodeMap[series.rootNode].level)),
-				name: pick(point && point.name, ""),
+				name: pick(point && point.name, ''),
 				val: val
 			});
 			return tree;
@@ -552,7 +552,7 @@
 			Series.prototype.translate.call(this);
 
 			// Assign variables
-			this.rootNode = pick(this.options.rootId, "");
+			this.rootNode = pick(this.options.rootId, '');
 			// Create a object map from level to options
 			this.levelMap = reduce(this.options.levels, function (arr, item) {
 				arr[item.level] = item;
@@ -562,8 +562,8 @@
 
 			// Calculate plotting values.
 			this.axisRatio = (this.xAxis.len / this.yAxis.len);
-			this.nodeMap[""].pointValues = pointValues = {x: 0, y: 0, width: 100, height: 100 };
-			this.nodeMap[""].values = seriesArea = merge(pointValues, {
+			this.nodeMap[''].pointValues = pointValues = {x: 0, y: 0, width: 100, height: 100 };
+			this.nodeMap[''].values = seriesArea = merge(pointValues, {
 				width: (pointValues.width * this.axisRatio),
 				direction: (this.options.layoutStartingDirection === 'vertical' ? 0 : 1),
 				val: tree.val
@@ -650,7 +650,7 @@
 			if (point.node.level <= this.nodeMap[this.rootNode].level) {
 				// Hide levels above the current view
 				attr.fill = 'none';
-				attr["stroke-width"] = 0;
+				attr['stroke-width'] = 0;
 			} else if (!point.node.isLeaf) {
 				// If not a leaf, then remove fill
 				// @todo let users set the opacity
@@ -673,7 +673,7 @@
 				});
 
 			each(points, function (point) {
-				var groupKey = "levelGroup-" + point.node.levelDynamic;
+				var groupKey = 'levelGroup-' + point.node.levelDynamic;
 				if (!series[groupKey]) {
 					series[groupKey] = series.chart.renderer.g(groupKey)
 						.attr({
@@ -699,7 +699,7 @@
 						drillId;
 					if (point.graphic) {
 						drillId = point.drillId = series.options.interactByLeaf ? series.drillToByLeaf(point) : series.drillToByGroup(point);
-						cursor = drillId ? "pointer" : "default";
+						cursor = drillId ? 'pointer' : 'default';
 						point.graphic.css({ cursor: cursor });
 					}
 				});
@@ -790,13 +790,13 @@
 				if (node.parent !== null) {
 					drillPoint = this.nodeMap[node.parent];
 				} else {
-					drillPoint = this.nodeMap[""];
+					drillPoint = this.nodeMap[''];
 				}
 			}
 
 			if (drillPoint !== null) {
 				this.drillToNode(drillPoint.id);
-				if (drillPoint.id === "") {
+				if (drillPoint.id === '') {
 					this.drillUpButton = this.drillUpButton.destroy();
 				} else {
 					parent = this.nodeMap[drillPoint.parent];
