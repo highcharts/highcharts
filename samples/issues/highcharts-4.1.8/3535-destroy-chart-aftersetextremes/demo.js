@@ -16,22 +16,23 @@ $(function () {
                 series: [{
                     data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
                 }]
-            }).highcharts();
+            }).highcharts(),
+            offset = $("#container").offset();
 
         chart.pointer.onContainerMouseDown({
-            pageX: 100, 
-            pageY: 310,
+            pageX: offset.left + 100, 
+            pageY: offset.top + 100,
             type: "mousedown",
             target: chart.series[0].group.element 
         });
         chart.pointer.onContainerMouseMove({ 
-            pageX: 150, 
-            pageY: 310, 
+            pageX: offset.left + 150, 
+            pageY: offset.top + 100, 
             target: chart.series[0].group.element 
         });
         chart.pointer.onDocumentMouseUp({ 
-            pageX: 150, 
-            pageY: 310, 
+            pageX: offset.left + 150, 
+            pageY: offset.top + 100, 
             target: chart.series[0].group.element 
         });
 
