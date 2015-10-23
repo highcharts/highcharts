@@ -551,26 +551,24 @@
 			// Call prototype function
 			Series.prototype.translate.call(this);
 
-			if (this.points.length) {
-				// Assign variables
-				this.rootNode = pick(this.options.rootId, "");
-				// Create a object map from level to options
-				this.levelMap = reduce(this.options.levels, function (arr, item) {
-					arr[item.level] = item;
-					return arr;
-				}, {});
-				tree = this.tree = this.getTree(); // @todo Only if series.isDirtyData is true
+			// Assign variables
+			this.rootNode = pick(this.options.rootId, "");
+			// Create a object map from level to options
+			this.levelMap = reduce(this.options.levels, function (arr, item) {
+				arr[item.level] = item;
+				return arr;
+			}, {});
+			tree = this.tree = this.getTree(); // @todo Only if series.isDirtyData is true
 
-				// Calculate plotting values.
-				this.axisRatio = (this.xAxis.len / this.yAxis.len);
-				this.nodeMap[""].pointValues = pointValues = {x: 0, y: 0, width: 100, height: 100 };
-				this.nodeMap[""].values = seriesArea = merge(pointValues, {
-					width: (pointValues.width * this.axisRatio),
-					direction: (this.options.layoutStartingDirection === 'vertical' ? 0 : 1),
-					val: tree.val
-				});
-				this.calculateChildrenAreas(tree, seriesArea);
-			}
+			// Calculate plotting values.
+			this.axisRatio = (this.xAxis.len / this.yAxis.len);
+			this.nodeMap[""].pointValues = pointValues = {x: 0, y: 0, width: 100, height: 100 };
+			this.nodeMap[""].values = seriesArea = merge(pointValues, {
+				width: (pointValues.width * this.axisRatio),
+				direction: (this.options.layoutStartingDirection === 'vertical' ? 0 : 1),
+				val: tree.val
+			});
+			this.calculateChildrenAreas(tree, seriesArea);
 
 			// Logic for point colors
 			if (this.colorAxis) {
