@@ -4750,6 +4750,7 @@
         }
     });
 
+
     /* ****************************************************************************
      *                                                                            *
      * START OF INTERNET EXPLORER <= 8 SPECIFIC CODE                              *
@@ -5802,7 +5803,7 @@
     SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
         var measuringSpan = doc.createElement('span'),
             offsetWidth,
-        textNode = doc.createTextNode(text);
+            textNode = doc.createTextNode(text);
 
         measuringSpan.appendChild(textNode);
         css(measuringSpan, styles);
@@ -8353,7 +8354,8 @@
                 lineWidth *= -1; // crispify the other way - #1480, #1687
             }
 
-            return chart.renderer.crispLine([
+            return chart.renderer
+                .crispLine([
                     M,
                     horiz ?
                         this.left :
@@ -8885,30 +8887,30 @@
      */
     Axis.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) {
         var units = unitsOption || [[
-                    'millisecond', // unit name
-                    [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
-                ], [
-                    'second',
-                    [1, 2, 5, 10, 15, 30]
-                ], [
-                    'minute',
-                    [1, 2, 5, 10, 15, 30]
-                ], [
-                    'hour',
-                    [1, 2, 3, 4, 6, 8, 12]
-                ], [
-                    'day',
-                    [1, 2]
-                ], [
-                    'week',
-                    [1, 2]
-                ], [
-                    'month',
-                    [1, 2, 3, 4, 6]
-                ], [
-                    'year',
-                    null
-                ]],
+                'millisecond', // unit name
+                [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
+            ], [
+                'second',
+                [1, 2, 5, 10, 15, 30]
+            ], [
+                'minute',
+                [1, 2, 5, 10, 15, 30]
+            ], [
+                'hour',
+                [1, 2, 3, 4, 6, 8, 12]
+            ], [
+                'day',
+                [1, 2]
+            ], [
+                'week',
+                [1, 2]
+            ], [
+                'month',
+                [1, 2, 3, 4, 6]
+            ], [
+                'year',
+                null
+            ]],
             unit = units[units.length - 1], // default unit is years
             interval = timeUnits[unit[0]],
             multiples = unit[1],
@@ -8951,7 +8953,8 @@
             count: count,
             unitName: unit[0]
         };
-    };/**
+    };
+    /**
      * Methods defined on the Axis prototype
      */
 
@@ -13277,7 +13280,7 @@
             var series = point.series,
                 args = arguments,
                 fn = typeof i === 'number' ?
-                     // Insert the value in the given position
+                    // Insert the value in the given position
                     function (key) {
                         var val = key === 'y' && series.toYData ? series.toYData(point) : point[key];
                         series[key + 'Data'][i] = val;
@@ -18095,7 +18098,7 @@
                 css = cursor && { cursor: cursor },
                 onMouseOver = function (e) {
                     var target = e.target,
-                    point;
+                        point;
 
                     while (target && !point) {
                         point = target.point;
@@ -18258,9 +18261,9 @@
     extend(Legend.prototype, {
 
         setItemEvents: function (item, legendItem, useHTML, itemStyle, itemHiddenStyle) {
-        var legend = this;
-        // Set the events on the item group, or in case of useHTML, the item itself (#1249)
-        (useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
+            var legend = this;
+            // Set the events on the item group, or in case of useHTML, the item itself (#1249)
+            (useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
                 item.setState(HOVER_STATE);
                 legendItem.css(legend.options.itemHoverStyle);
             })
@@ -18301,7 +18304,10 @@
 
             addEvent(item.checkbox, 'click', function (event) {
                 var target = event.target;
-                fireEvent(item.series || item, 'checkboxClick', { // #3712
+                fireEvent(
+                    item.series || item, 
+                    'checkboxClick', 
+                    { // #3712
                         checked: target.checked,
                         item: item
                     },
@@ -18483,7 +18489,7 @@
                             loopPoint.selected = loopPoint.options.selected = false;
                             series.options.data[inArray(loopPoint, series.data)] = loopPoint.options;
                             loopPoint.setState(NORMAL_STATE);
-                                loopPoint.firePointEvent('unselect');
+                            loopPoint.firePointEvent('unselect');
                         }
                     });
                 }
@@ -18902,6 +18908,7 @@
 
         drawTracker: TrackerMixin.drawTrackerGraph
     });
+
     // global variables
     extend(Highcharts, {
 

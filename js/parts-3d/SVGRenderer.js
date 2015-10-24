@@ -81,7 +81,7 @@ Highcharts.SVGRenderer.prototype.toLinePath = function (points, closed) {
 Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 
 	var result = this.g(),
-	paths = this.cuboidPath(shapeArgs);
+		paths = this.cuboidPath(shapeArgs);
 
 	// create the 3 sides
 	result.front = this.path(paths[0]).attr({ zIndex: paths[3], 'stroke-linejoin': 'round' }).add(result);
@@ -91,8 +91,8 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 	// apply the fill everywhere, the top a bit brighter, the side a bit darker
 	result.fillSetter = function (color) {
 		var c0 = color,
-		c1 = Highcharts.Color(color).brighten(0.1).get(),
-		c2 = Highcharts.Color(color).brighten(-0.1).get();
+			c1 = Highcharts.Color(color).brighten(0.1).get(),
+			c2 = Highcharts.Color(color).brighten(-0.1).get();
 
 		this.front.attr({ fill: c0 });
 		this.top.attr({ fill: c1 });
@@ -131,9 +131,9 @@ Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 			this.top.attr({ zIndex: paths[4] }).animate({ d: paths[1] }, duration, complete);
 			this.side.attr({ zIndex: paths[5] }).animate({ d: paths[2] }, duration, complete);
 		} else if (args.opacity) {
-				this.front.animate(args, duration, complete);
-				this.top.animate(args, duration, complete);
-				this.side.animate(args, duration, complete);
+			this.front.animate(args, duration, complete);
+			this.top.animate(args, duration, complete);
+			this.side.animate(args, duration, complete);
 		} else {
 			Highcharts.SVGElement.prototype.animate.call(this, args, duration, complete);
 		}
@@ -244,7 +244,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		this.color = color;
 
 		var c0 = color,
-		c2 = Highcharts.Color(color).brighten(-0.1).get();
+			c2 = Highcharts.Color(color).brighten(-0.1).get();
 
 		this.side1.attr({ fill: c2 });
 		this.side2.attr({ fill: c2 });
@@ -403,18 +403,18 @@ Highcharts.SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 
 	// When slice goes over middle, need to add both, left and right outer side:
 	if (end > PI - a && start < PI - a) {
-	// Go to outer side
-	out = out.concat([
-	'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
-	]);
-	// Curve to the true end of the slice
-	out = out.concat(curveTo(cx, cy, rx, ry, end2, end, dx, dy));
-	// Go to the inner side
-	out = out.concat([
-	'L', cx + (rx * cos(end)), cy + (ry * sin(end))
-	]);
-	// Go back to the artifical end2
-	out = out.concat(curveTo(cx, cy, rx, ry, end, end2, 0, 0));
+		// Go to outer side
+		out = out.concat([
+			'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
+		]);
+		// Curve to the true end of the slice
+		out = out.concat(curveTo(cx, cy, rx, ry, end2, end, dx, dy));
+		// Go to the inner side
+		out = out.concat([
+			'L', cx + (rx * cos(end)), cy + (ry * sin(end))
+		]);
+		// Go back to the artifical end2
+		out = out.concat(curveTo(cx, cy, rx, ry, end, end2, 0, 0));
 	}
 
 	out = out.concat([

@@ -184,7 +184,7 @@
     Highcharts.SVGRenderer.prototype.cuboid = function (shapeArgs) {
 
         var result = this.g(),
-        paths = this.cuboidPath(shapeArgs);
+            paths = this.cuboidPath(shapeArgs);
 
         // create the 3 sides
         result.front = this.path(paths[0]).attr({ zIndex: paths[3], 'stroke-linejoin': 'round' }).add(result);
@@ -194,8 +194,8 @@
         // apply the fill everywhere, the top a bit brighter, the side a bit darker
         result.fillSetter = function (color) {
             var c0 = color,
-            c1 = Highcharts.Color(color).brighten(0.1).get(),
-            c2 = Highcharts.Color(color).brighten(-0.1).get();
+                c1 = Highcharts.Color(color).brighten(0.1).get(),
+                c2 = Highcharts.Color(color).brighten(-0.1).get();
 
             this.front.attr({ fill: c0 });
             this.top.attr({ fill: c1 });
@@ -234,9 +234,9 @@
                 this.top.attr({ zIndex: paths[4] }).animate({ d: paths[1] }, duration, complete);
                 this.side.attr({ zIndex: paths[5] }).animate({ d: paths[2] }, duration, complete);
             } else if (args.opacity) {
-                    this.front.animate(args, duration, complete);
-                    this.top.animate(args, duration, complete);
-                    this.side.animate(args, duration, complete);
+                this.front.animate(args, duration, complete);
+                this.top.animate(args, duration, complete);
+                this.side.animate(args, duration, complete);
             } else {
                 Highcharts.SVGElement.prototype.animate.call(this, args, duration, complete);
             }
@@ -347,7 +347,7 @@
             this.color = color;
 
             var c0 = color,
-            c2 = Highcharts.Color(color).brighten(-0.1).get();
+                c2 = Highcharts.Color(color).brighten(-0.1).get();
 
             this.side1.attr({ fill: c2 });
             this.side2.attr({ fill: c2 });
@@ -506,18 +506,18 @@
 
         // When slice goes over middle, need to add both, left and right outer side:
         if (end > PI - a && start < PI - a) {
-        // Go to outer side
-        out = out.concat([
-        'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
-        ]);
-        // Curve to the true end of the slice
-        out = out.concat(curveTo(cx, cy, rx, ry, end2, end, dx, dy));
-        // Go to the inner side
-        out = out.concat([
-        'L', cx + (rx * cos(end)), cy + (ry * sin(end))
-        ]);
-        // Go back to the artifical end2
-        out = out.concat(curveTo(cx, cy, rx, ry, end, end2, 0, 0));
+            // Go to outer side
+            out = out.concat([
+                'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
+            ]);
+            // Curve to the true end of the slice
+            out = out.concat(curveTo(cx, cy, rx, ry, end2, end, dx, dy));
+            // Go to the inner side
+            out = out.concat([
+                'L', cx + (rx * cos(end)), cy + (ry * sin(end))
+            ]);
+            // Go back to the artifical end2
+            out = out.concat(curveTo(cx, cy, rx, ry, end, end2, 0, 0));
         }
 
         out = out.concat([
@@ -1262,7 +1262,8 @@
             shapeArgs.origin = origin;
         });
     });
-    *//***
+    */
+    /***
         EXTENSION FOR 3D PIES
     ***/
 
@@ -1411,49 +1412,50 @@
 
             if (Highcharts.svg) { // VML is too slow anyway
 
-                    if (animation === true) {
-                        animation = {};
+                if (animation === true) {
+                    animation = {};
+                }
+                // Initialize the animation
+                if (init) {
+
+                    // Scale down the group and place it in the center
+                    group.oldtranslateX = group.translateX;
+                    group.oldtranslateY = group.translateY;
+                    attribs = {
+                        translateX: center[0],
+                        translateY: center[1],
+                        scaleX: 0.001, // #1499
+                        scaleY: 0.001
+                    };
+
+                    group.attr(attribs);
+                    if (markerGroup) {
+                        markerGroup.attrSetters = group.attrSetters;
+                        markerGroup.attr(attribs);
                     }
-                    // Initialize the animation
-                    if (init) {
 
-                        // Scale down the group and place it in the center
-                        group.oldtranslateX = group.translateX;
-                        group.oldtranslateY = group.translateY;
-                        attribs = {
-                            translateX: center[0],
-                            translateY: center[1],
-                            scaleX: 0.001, // #1499
-                            scaleY: 0.001
-                        };
+                // Run the animation
+                } else {
+                    attribs = {
+                        translateX: group.oldtranslateX,
+                        translateY: group.oldtranslateY,
+                        scaleX: 1,
+                        scaleY: 1
+                    };
+                    group.animate(attribs, animation);
 
-                        group.attr(attribs);
-                        if (markerGroup) {
-                            markerGroup.attrSetters = group.attrSetters;
-                            markerGroup.attr(attribs);
-                        }
-
-                    // Run the animation
-                    } else {
-                        attribs = {
-                            translateX: group.oldtranslateX,
-                            translateY: group.oldtranslateY,
-                            scaleX: 1,
-                            scaleY: 1
-                        };
-                        group.animate(attribs, animation);
-
-                        if (markerGroup) {
-                            markerGroup.animate(attribs, animation);
-                        }
-
-                        // Delete this function to allow it only once
-                        this.animate = null;
+                    if (markerGroup) {
+                        markerGroup.animate(attribs, animation);
                     }
+
+                    // Delete this function to allow it only once
+                    this.animate = null;
+                }
 
             }
         }
-    });/***
+    });
+    /***
         EXTENSION FOR 3D SCATTER CHART
     ***/
 
@@ -1533,39 +1535,39 @@
      */
     if (Highcharts.VMLRenderer) {
 
-    Highcharts.setOptions({ animate: false });
+        Highcharts.setOptions({ animate: false });
 
-    Highcharts.VMLRenderer.prototype.cuboid = Highcharts.SVGRenderer.prototype.cuboid;
-    Highcharts.VMLRenderer.prototype.cuboidPath = Highcharts.SVGRenderer.prototype.cuboidPath;
+        Highcharts.VMLRenderer.prototype.cuboid = Highcharts.SVGRenderer.prototype.cuboid;
+        Highcharts.VMLRenderer.prototype.cuboidPath = Highcharts.SVGRenderer.prototype.cuboidPath;
 
-    Highcharts.VMLRenderer.prototype.toLinePath = Highcharts.SVGRenderer.prototype.toLinePath;
+        Highcharts.VMLRenderer.prototype.toLinePath = Highcharts.SVGRenderer.prototype.toLinePath;
 
-    Highcharts.VMLRenderer.prototype.createElement3D = Highcharts.SVGRenderer.prototype.createElement3D;
+        Highcharts.VMLRenderer.prototype.createElement3D = Highcharts.SVGRenderer.prototype.createElement3D;
 
-    Highcharts.VMLRenderer.prototype.arc3d = function (shapeArgs) {
-        var result = Highcharts.SVGRenderer.prototype.arc3d.call(this, shapeArgs);
-        result.css({ zIndex: result.zIndex });
-        return result;
-    };
+        Highcharts.VMLRenderer.prototype.arc3d = function (shapeArgs) {
+            var result = Highcharts.SVGRenderer.prototype.arc3d.call(this, shapeArgs);
+            result.css({ zIndex: result.zIndex });
+            return result;
+        };
 
-    Highcharts.VMLRenderer.prototype.arc3dPath = Highcharts.SVGRenderer.prototype.arc3dPath;
+        Highcharts.VMLRenderer.prototype.arc3dPath = Highcharts.SVGRenderer.prototype.arc3dPath;
 
-    Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
-        proceed.apply(this, [].slice.call(arguments, 1));
-        // VML doesn't support a negative z-index
-        if (this.sideFrame) {
-            this.sideFrame.css({ zIndex: 0 });
-            this.sideFrame.front.attr({ fill: this.sideFrame.color });
-        }
-        if (this.bottomFrame) {
-            this.bottomFrame.css({ zIndex: 1 });
-            this.bottomFrame.front.attr({ fill: this.bottomFrame.color });
-        }
-        if (this.backFrame) {
-            this.backFrame.css({ zIndex: 0 });
-            this.backFrame.front.attr({ fill: this.backFrame.color });
-        }
-    });
+        Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
+            proceed.apply(this, [].slice.call(arguments, 1));
+            // VML doesn't support a negative z-index
+            if (this.sideFrame) {
+                this.sideFrame.css({ zIndex: 0 });
+                this.sideFrame.front.attr({ fill: this.sideFrame.color });
+            }
+            if (this.bottomFrame) {
+                this.bottomFrame.css({ zIndex: 1 });
+                this.bottomFrame.front.attr({ fill: this.bottomFrame.color });
+            }
+            if (this.backFrame) {
+                this.backFrame.css({ zIndex: 0 });
+                this.backFrame.front.attr({ fill: this.backFrame.color });
+            }
+        });
 
     }
 

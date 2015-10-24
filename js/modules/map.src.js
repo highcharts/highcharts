@@ -642,7 +642,8 @@
         }
 
         return allItems.concat(proceed.call(this));
-    });/**
+    });
+    /**
      * Mixin for maps and heatmaps
      */
     var colorPointMixin = {
@@ -699,6 +700,7 @@
             });
         }
     };
+
     // Add events to the Chart object itself
     extend(Chart.prototype, {
         renderMapNavigation: function () {
@@ -890,6 +892,7 @@
             });
         }
     });
+
 
     // Extend the Pointer
     extend(Pointer.prototype, {
@@ -1686,6 +1689,7 @@
     }));
 
 
+
     // The mapline series type
     defaultPlotOptions.mapline = merge(defaultPlotOptions.map, {
         lineWidth: 1,
@@ -1701,6 +1705,7 @@
         },
         drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
     });
+
 
     // The mappoint series type
     defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
@@ -1730,6 +1735,7 @@
             }
         })
     });
+
 
     // The mapbubble series type
     if (seriesTypes.bubble) {
@@ -2091,6 +2097,7 @@
             });
         }
     });
+
 
     // Add language
     extend(defaultOptions.lang, {

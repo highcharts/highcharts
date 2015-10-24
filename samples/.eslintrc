@@ -1,0 +1,11 @@
+env:
+    browser: true
+
+globals:
+    $: true
+    Highcharts: true
+    HighchartsAdapter: true
+
+rules:
+    eol-last: 0
+    strict: 0

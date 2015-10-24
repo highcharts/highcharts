@@ -530,7 +530,8 @@
         }
 
         return allItems.concat(proceed.call(this));
-    });/**
+    });
+    /**
      * Mixin for maps and heatmaps
      */
     var colorPointMixin = {
@@ -587,6 +588,7 @@
             });
         }
     };
+
     /**
      * Extend the default options with map options
      */

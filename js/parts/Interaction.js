@@ -12,7 +12,7 @@ var TrackerMixin = Highcharts.TrackerMixin = {
 			css = cursor && { cursor: cursor },
 			onMouseOver = function (e) {
 				var target = e.target,
-				point;
+					point;
 
 				while (target && !point) {
 					point = target.point;
@@ -175,9 +175,9 @@ if (seriesTypes.scatter) {
 extend(Legend.prototype, {
 
 	setItemEvents: function (item, legendItem, useHTML, itemStyle, itemHiddenStyle) {
-	var legend = this;
-	// Set the events on the item group, or in case of useHTML, the item itself (#1249)
-	(useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
+		var legend = this;
+		// Set the events on the item group, or in case of useHTML, the item itself (#1249)
+		(useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
 			item.setState(HOVER_STATE);
 			legendItem.css(legend.options.itemHoverStyle);
 		})
@@ -218,7 +218,10 @@ extend(Legend.prototype, {
 
 		addEvent(item.checkbox, 'click', function (event) {
 			var target = event.target;
-			fireEvent(item.series || item, 'checkboxClick', { // #3712
+			fireEvent(
+				item.series || item, 
+				'checkboxClick', 
+				{ // #3712
 					checked: target.checked,
 					item: item
 				},
@@ -400,7 +403,7 @@ extend(Point.prototype, {
 						loopPoint.selected = loopPoint.options.selected = false;
 						series.options.data[inArray(loopPoint, series.data)] = loopPoint.options;
 						loopPoint.setState(NORMAL_STATE);
-							loopPoint.firePointEvent('unselect');
+						loopPoint.firePointEvent('unselect');
 					}
 				});
 			}

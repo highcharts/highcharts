@@ -1,13 +1,6 @@
 extends:
     "./tools/eslint-default-config.yml"
 
-globals:
-    Highcharts: true
-    HighchartsAdapter: true
-
-env:
-    browser: true
-
 rules:
     camelcase: [2, {"properties": "always"}]
     comma-dangle: [2, "never"]

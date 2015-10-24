@@ -112,8 +112,8 @@ var arrayMin = Highcharts.arrayMin,
             to: Number.MAX_VALUE, // corrected to axis max
             outerRadius: '105%'
         }
-
     });
+
     var axisProto = Axis.prototype,
         tickProto = Tick.prototype;
 
@@ -918,7 +918,8 @@ var arrayMin = Highcharts.arrayMin,
         getSymbol: noop,
 
         drawPoints: noop
-    });/**
+    });
+    /**
      * The AreaSplineRangeSeries class
      */
 

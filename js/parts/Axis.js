@@ -1830,7 +1830,8 @@ Axis.prototype = {
 			lineWidth *= -1; // crispify the other way - #1480, #1687
 		}
 
-		return chart.renderer.crispLine([
+		return chart.renderer
+			.crispLine([
 				M,
 				horiz ?
 					this.left :

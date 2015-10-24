@@ -4749,6 +4749,7 @@
         }
     });
 
+
     /* ****************************************************************************
      *                                                                            *
      * START OF INTERNET EXPLORER <= 8 SPECIFIC CODE                              *
@@ -5801,7 +5802,7 @@
     SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
         var measuringSpan = doc.createElement('span'),
             offsetWidth,
-        textNode = doc.createTextNode(text);
+            textNode = doc.createTextNode(text);
 
         measuringSpan.appendChild(textNode);
         css(measuringSpan, styles);
@@ -8092,7 +8093,8 @@
                 lineWidth *= -1; // crispify the other way - #1480, #1687
             }
 
-            return chart.renderer.crispLine([
+            return chart.renderer
+                .crispLine([
                     M,
                     horiz ?
                         this.left :
@@ -12773,7 +12775,7 @@
             var series = point.series,
                 args = arguments,
                 fn = typeof i === 'number' ?
-                     // Insert the value in the given position
+                    // Insert the value in the given position
                     function (key) {
                         var val = key === 'y' && series.toYData ? series.toYData(point) : point[key];
                         series[key + 'Data'][i] = val;
@@ -16965,7 +16967,8 @@
         }
 
         return allItems.concat(proceed.call(this));
-    });/**
+    });
+    /**
      * Mixin for maps and heatmaps
      */
     var colorPointMixin = {
@@ -17022,6 +17025,7 @@
             });
         }
     };
+
     // The vector-effect attribute is not supported in IE <= 11 (at least), so we need
     // diffent logic (#3218)
     var supportsVectorEffect = document.documentElement.style.vectorEffect !== undefined;
@@ -17731,7 +17735,8 @@
         animateDrillupTo: function (init) {
             seriesTypes.column.prototype.animateDrillupTo.call(this, init);
         }
-    }));/**
+    }));
+    /**
      * Highcharts module to hide overlapping data labels. This module is included in Highcharts.
      */
     (function (H) {
@@ -18062,6 +18067,7 @@
         }
     });
 
+
     // Extend the Pointer
     extend(Pointer.prototype, {
 
@@ -18163,6 +18169,7 @@
         drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
     });
 
+
     // The mappoint series type
     defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
         dataLabels: {
@@ -18190,7 +18197,8 @@
                 return point;
             }
         })
-    });/* ****************************************************************************
+    });
+    /* ****************************************************************************
      * Start Bubble series code                                                      *
      *****************************************************************************/
 
@@ -18782,6 +18790,7 @@
         }
     });
 
+
     // Add language
     extend(defaultOptions.lang, {
         zoomIn: 'Zoom in',
@@ -19075,7 +19084,7 @@
                 css = cursor && { cursor: cursor },
                 onMouseOver = function (e) {
                     var target = e.target,
-                    point;
+                        point;
 
                     while (target && !point) {
                         point = target.point;
@@ -19238,9 +19247,9 @@
     extend(Legend.prototype, {
 
         setItemEvents: function (item, legendItem, useHTML, itemStyle, itemHiddenStyle) {
-        var legend = this;
-        // Set the events on the item group, or in case of useHTML, the item itself (#1249)
-        (useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
+            var legend = this;
+            // Set the events on the item group, or in case of useHTML, the item itself (#1249)
+            (useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
                 item.setState(HOVER_STATE);
                 legendItem.css(legend.options.itemHoverStyle);
             })
@@ -19281,7 +19290,10 @@
 
             addEvent(item.checkbox, 'click', function (event) {
                 var target = event.target;
-                fireEvent(item.series || item, 'checkboxClick', { // #3712
+                fireEvent(
+                    item.series || item, 
+                    'checkboxClick', 
+                    { // #3712
                         checked: target.checked,
                         item: item
                     },
@@ -19463,7 +19475,7 @@
                             loopPoint.selected = loopPoint.options.selected = false;
                             series.options.data[inArray(loopPoint, series.data)] = loopPoint.options;
                             loopPoint.setState(NORMAL_STATE);
-                                loopPoint.firePointEvent('unselect');
+                            loopPoint.firePointEvent('unselect');
                         }
                     });
                 }
@@ -19882,6 +19894,7 @@
 
         drawTracker: TrackerMixin.drawTrackerGraph
     });
+
     // global variables
     extend(Highcharts, {
 

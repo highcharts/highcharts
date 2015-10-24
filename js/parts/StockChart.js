@@ -27,7 +27,8 @@ Highcharts.StockChart = function (options, callback) {
 
 	// apply X axis options to both single and multi y axes
 	options.xAxis = map(splat(options.xAxis || {}), function (xAxisOptions) {
-		return merge({ // defaults
+		return merge(
+			{ // defaults
 				minPadding: 0,
 				maxPadding: 0,
 				ordinal: true,
