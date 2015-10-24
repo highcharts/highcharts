@@ -578,8 +578,8 @@
 					if (request.url == "/status") {						
 						response.statusCode = 200;
 						response.headers = {
-    							'Content-Type': 'text/html',
-    							'Content-Length': 2
+							'Content-Type': 'text/html',
+							'Content-Length': 2
 						};
 						response.write('OK');
 						response.close();
@@ -594,6 +594,10 @@
 					} else {
 						render(params, function (result) {
 							response.statusCode = 200;
+							response.headers = {
+    							'Content-Type': 'text/html',
+    							'Content-Length': result.length
+							};
 							response.write(result);
 							response.close();
 						});
