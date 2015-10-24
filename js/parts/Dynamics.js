@@ -41,7 +41,7 @@ extend(Chart.prototype, {
 		var key = isX ? 'xAxis' : 'yAxis',
 			chartOptions = this.options;
 
-		new Axis(this, merge(options, {
+		new Axis(this, merge(options, { // eslint-disable-line no-new
 			index: this[key].length,
 			isX: isX
 		}));

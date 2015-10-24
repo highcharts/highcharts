@@ -1,4 +1,3 @@
-/*jslint todo: true */
 /**
  * EXPERIMENTAL Highcharts module to place labels next to a series in a natural position.
  *

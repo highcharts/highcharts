@@ -2179,9 +2179,7 @@ Axis.prototype = {
 			if (!pick(options.snap, true)) {
 				pos = (this.horiz ? e.chartX - this.pos : this.len - e.chartY + this.pos);
 			} else if (defined(point)) {
-				/*jslint eqeq: true*/
 				pos = this.isXAxis ? point.plotX : this.len - point.plotY; // #3834
-				/*jslint eqeq: false*/
 			}
 
 			if (this.isRadial) {

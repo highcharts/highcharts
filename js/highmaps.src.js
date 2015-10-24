@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-10-23)
+ * @license Highmaps JS v1.1.9-modified (2015-10-24)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -870,13 +870,11 @@
                 // extend the animate function to allow SVG animations
                 var Fx = $.fx;
 
-                /*jslint unparam: true*//* allow unused param x in this function */
                 $.extend($.easing, {
                     easeOutQuad: function (x, t, b, c, d) {
                         return -c * (t /= d) * (t - 2) + b;
                     }
                 });
-                /*jslint unparam: false*/
 
                 // extend some methods to check for elem.attr, which means it is a Highcharts SVG object
                 $.each(['cur', '_default', 'width', 'height', 'opacity'], function (i, fn) {
@@ -1130,7 +1128,6 @@
                 // Wrap preventDefault and stopPropagation in try/catch blocks in
                 // order to prevent JS errors when cancelling events on non-DOM
                 // objects. #615.
-                /*jslint unparam: true*/
                 $.each(['preventDefault', 'stopPropagation'], function (i, fn) {
                     var base = event[fn];
                     event[fn] = function () {
@@ -1143,7 +1140,6 @@
                         }
                     };
                 });
-                /*jslint unparam: false*/
 
                 // trigger it
                 $(el).trigger(event);
@@ -4581,7 +4577,7 @@
 
                 // force reflow in webkit to apply the left and top on useHTML element (#1249)
                 if (isWebKit) {
-                    baseline = elem.offsetHeight; // assigned to baseline for JSLint purpose
+                    baseline = elem.offsetHeight; // assigned to baseline for lint purpose
                 }
 
                 // record current text transform
@@ -8445,9 +8441,7 @@
                 if (!pick(options.snap, true)) {
                     pos = (this.horiz ? e.chartX - this.pos : this.len - e.chartY + this.pos);
                 } else if (defined(point)) {
-                    /*jslint eqeq: true*/
                     pos = this.isXAxis ? point.plotX : this.len - point.plotY; // #3834
-                    /*jslint eqeq: false*/
                 }
 
                 if (this.isRadial) {
@@ -11317,7 +11311,7 @@
             optionsArray = xAxisOptions.concat(yAxisOptions);
 
             each(optionsArray, function (axisOptions) {
-                new Axis(chart, axisOptions);
+                new Axis(chart, axisOptions); // eslint-disable-line no-new
             });
         },
 
@@ -12270,7 +12264,7 @@
         isReadyToRender: function () {
             var chart = this;
 
-            // Note: in spite of JSLint's complaints, win == win.top is required
+            // Note: win == win.top is required
             if ((!hasSVG && (win == win.top && doc.readyState !== 'complete')) || (useCanVG && !win.canvg)) { // eslint-disable-line eqeqeq
                 if (useCanVG) {
                     // Delay rendering until canvg library is downloaded and ready
@@ -14554,7 +14548,7 @@
             var key = isX ? 'xAxis' : 'yAxis',
                 chartOptions = this.options;
 
-            new Axis(this, merge(options, {
+            new Axis(this, merge(options, { // eslint-disable-line no-new
                 index: this[key].length,
                 isX: isX
             }));
@@ -16940,7 +16934,7 @@
 
         this.colorAxis = [];
         if (colorAxisOptions) {
-            proceed = new ColorAxis(this, colorAxisOptions); // Fake assignment for jsLint
+            new ColorAxis(this, colorAxisOptions); // eslint-disable-line no-new
         }
     });
 

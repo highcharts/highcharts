@@ -9,5 +9,4 @@
  * License: www.highcharts.com/license
  */
 
-// JSLint options:
 (function () {

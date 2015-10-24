@@ -259,11 +259,9 @@ extend(Chart.prototype, {
 
 		// IE compatibility hack for generating SVG content that it doesn't really understand
 		if (!doc.createElementNS) {
-			/*jslint unparam: true*//* allow unused parameter ns in function below */
 			doc.createElementNS = function (ns, tagName) {
 				return doc.createElement(tagName);
 			};
-			/*jslint unparam: false*/
 		}
 
 		// create a sandbox where a new chart will be generated

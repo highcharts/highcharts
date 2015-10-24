@@ -198,7 +198,6 @@ gulp.task('lint', ['scripts'], function () {
                 'no-invalid-this': 0,
                 'no-multi-spaces': 0,
                 'no-nested-ternary': 0,
-                'no-new': 0,
                 'no-shadow': 0, // Same variable names in nested scopes. @todo: Fix this, it is useful
                 'no-trailing-spaces': 0,
                 'no-undefined': 0,

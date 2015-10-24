@@ -135,7 +135,7 @@ extend(SVGElement.prototype, {
 
 			// force reflow in webkit to apply the left and top on useHTML element (#1249)
 			if (isWebKit) {
-				baseline = elem.offsetHeight; // assigned to baseline for JSLint purpose
+				baseline = elem.offsetHeight; // assigned to baseline for lint purpose
 			}
 
 			// record current text transform

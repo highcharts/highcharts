@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-10-23)
+ * @license Highcharts JS v4.1.9-modified (2015-10-24)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -136,7 +136,6 @@ var arrayMin = Highcharts.arrayMin,
     /**
      * Augmented methods for the value axis
      */
-    /*jslint unparam: true*/
     var radialAxisMixin = {
         isRadial: true,
 
@@ -483,7 +482,6 @@ var arrayMin = Highcharts.arrayMin,
         }
 
     };
-    /*jslint unparam: false*/
 
     /**
      * Override axisProto.init to mix in special axis instance functions and function overrides

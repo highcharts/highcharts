@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-10-23)
+ * @license Highmaps JS v1.1.9-modified (2015-10-24)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2014 Torstein Honsi
@@ -611,7 +611,7 @@
 
         this.colorAxis = [];
         if (colorAxisOptions) {
-            proceed = new ColorAxis(this, colorAxisOptions); // Fake assignment for jsLint
+            new ColorAxis(this, colorAxisOptions); // eslint-disable-line no-new
         }
     });
 
