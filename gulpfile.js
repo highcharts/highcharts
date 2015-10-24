@@ -202,6 +202,7 @@ gulp.task('lint', ['scripts'], function () {
                 'no-trailing-spaces': 0,
                 'no-undefined': 0,
                 'no-underscore-dangle': 0,
+                'object-curly-spacing': [2, 'always'],
                 'space-before-function-paren': [2, {"anonymous": "always", "named": "never"}], // JSLint style
                 'quotes': [2, 'single'],
                 'spaced-comment': 0,

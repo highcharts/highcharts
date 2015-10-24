@@ -344,7 +344,7 @@
             extend(el, attribs);
         }
         if (nopad) {
-            css(el, {padding: 0, border: NONE, margin: 0});
+            css(el, { padding: 0, border: 'none', margin: 0 });
         }
         if (styles) {
             css(el, styles);
@@ -5263,7 +5263,7 @@
             renderer.alignedObjects = [];
 
             boxWrapper = renderer.createElement(DIV)
-                .css(extend(this.getStyle(style), { position: RELATIVE}));
+                .css(extend(this.getStyle(style), { position: 'relative' }));
             box = boxWrapper.element;
             container.appendChild(boxWrapper.element);
 
@@ -18632,7 +18632,7 @@
                 y: normalized.x * sinAngle + normalized.y * cosAngle
             } : normalized);
 
-        return {lat: projected.y, lon: projected.x};
+        return { lat: projected.y, lon: projected.x };
     };
 
     Chart.prototype.fromPointToLatLon = function (point) {
@@ -18645,7 +18645,8 @@
         }
 
         for (transform in transforms) {
-            if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone && pointInPolygon({x: point.x, y: -point.y}, transforms[transform].hitZone.coordinates[0])) {
+            if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone && 
+                    pointInPolygon({ x: point.x, y: -point.y }, transforms[transform].hitZone.coordinates[0])) {
                 return this.transformToLatLon(point, transforms[transform]);
             }
         }
@@ -18669,7 +18670,7 @@
         for (transform in transforms) {
             if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone) {
                 coords = this.transformFromLatLon(latLon, transforms[transform]);
-                if (pointInPolygon({x: coords.x, y: -coords.y}, transforms[transform].hitZone.coordinates[0])) {
+                if (pointInPolygon({ x: coords.x, y: -coords.y }, transforms[transform].hitZone.coordinates[0])) {
                     return coords;
                 }
             }

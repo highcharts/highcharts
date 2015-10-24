@@ -345,7 +345,7 @@
             extend(el, attribs);
         }
         if (nopad) {
-            css(el, {padding: 0, border: NONE, margin: 0});
+            css(el, { padding: 0, border: 'none', margin: 0 });
         }
         if (styles) {
             css(el, styles);
@@ -5264,7 +5264,7 @@
             renderer.alignedObjects = [];
 
             boxWrapper = renderer.createElement(DIV)
-                .css(extend(this.getStyle(style), { position: RELATIVE}));
+                .css(extend(this.getStyle(style), { position: 'relative' }));
             box = boxWrapper.element;
             container.appendChild(boxWrapper.element);
 
@@ -15066,7 +15066,7 @@
 
             // Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
             if (this.label) {
-                this.label.attr({text: str, visibility: HIDDEN});
+                this.label.attr({ text: str, visibility: 'hidden' });
             // Create new label
             } else {
                 this.label =

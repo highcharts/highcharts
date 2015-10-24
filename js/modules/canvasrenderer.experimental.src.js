@@ -43,7 +43,7 @@ Highcharts.extend(Highcharts.SVGElement.prototype, {
         ctx.font = '12px Arial';
         ctx.fillStyle = 'blue';
         bBox = ctx.measureText(this.element.innerHTML);
-        return {x: 0, y: 0, width: bBox.width, height: 20};
+        return { x: 0, y: 0, width: bBox.width, height: 20 };
     }
 });
 

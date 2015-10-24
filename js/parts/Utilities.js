@@ -224,7 +224,7 @@ function createElement(tag, attribs, styles, parent, nopad) {
 		extend(el, attribs);
 	}
 	if (nopad) {
-		css(el, {padding: 0, border: NONE, margin: 0});
+		css(el, { padding: 0, border: 'none', margin: 0 });
 	}
 	if (styles) {
 		css(el, styles);

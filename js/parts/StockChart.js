@@ -398,7 +398,7 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 
 	// show the label
 	crossLabel.attr({
-		text: formatOption ? format(formatOption, {value: point[axis]}) : options.formatter.call(this, point[axis]),
+		text: formatOption ? format(formatOption, { value: point[axis] }) : options.formatter.call(this, point[axis]),
 		x: posx,
 		y: posy,
 		visibility: VISIBLE
@@ -438,7 +438,7 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	}
 
 	// show the crosslabel
-	crossLabel.attr({x: posx, y: posy, visibility: VISIBLE});
+	crossLabel.attr({ x: posx, y: posy, visibility: 'visible' });
 });
 
 /* ****************************************************************************

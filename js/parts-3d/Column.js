@@ -156,7 +156,7 @@ Highcharts.wrap(Highcharts.Series.prototype, 'alignDataLabel', function (proceed
 		var args = arguments,
 			alignTo = args[4];
 
-		var pos = ({x: alignTo.x, y: alignTo.y, z: series.z});
+		var pos = ({ x: alignTo.x, y: alignTo.y, z: series.z });
 		pos = perspective([pos], chart, true)[0];
 		alignTo.x = pos.x;
 		alignTo.y = pos.y;

@@ -756,7 +756,7 @@ Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
 Axis.prototype.minFromRange = function () {
 	var rangeOptions = this.range,
 		type = rangeOptions.type,
-		timeName = { month: 'Month', year: 'FullYear'}[type],
+		timeName = { month: 'Month', year: 'FullYear' }[type],
 		min,
 		max = this.max,
 		dataMin,

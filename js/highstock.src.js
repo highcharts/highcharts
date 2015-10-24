@@ -345,7 +345,7 @@
             extend(el, attribs);
         }
         if (nopad) {
-            css(el, {padding: 0, border: NONE, margin: 0});
+            css(el, { padding: 0, border: 'none', margin: 0 });
         }
         if (styles) {
             css(el, styles);
@@ -5264,7 +5264,7 @@
             renderer.alignedObjects = [];
 
             boxWrapper = renderer.createElement(DIV)
-                .css(extend(this.getStyle(style), { position: RELATIVE}));
+                .css(extend(this.getStyle(style), { position: 'relative' }));
             box = boxWrapper.element;
             container.appendChild(boxWrapper.element);
 
@@ -15066,7 +15066,7 @@
 
             // Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
             if (this.label) {
-                this.label.attr({text: str, visibility: HIDDEN});
+                this.label.attr({ text: str, visibility: 'hidden' });
             // Create new label
             } else {
                 this.label =
@@ -19881,7 +19881,7 @@
                                 eventName = 'pointInBreak'; // docs
                         } 
                         if (eventName) {
-                            fireEvent(axis, eventName, {point: point, brk: brk});
+                            fireEvent(axis, eventName, { point: point, brk: brk });
                         }
                     });
                 });
@@ -21503,7 +21503,7 @@
                         }).add(navigatorGroup);
 
                     if (navigatorOptions.maskInside) {
-                        scroller.leftShade.css({ cursor: 'ew-resize '});
+                        scroller.leftShade.css({ cursor: 'ew-resize' });
                     } else {
                         scroller.rightShade = renderer.rect()
                             .attr({
@@ -21598,7 +21598,7 @@
                     navigatorLeft + zoomedMin + halfOutline, outlineTop, // upper left of zoomed range
                     L,
                     navigatorLeft + zoomedMax - halfOutline, outlineTop // upper right of z.r.
-                ] : [])});
+                ] : []) });
                 // draw handles
                 scroller.drawHandle(zoomedMin + halfOutline, 0);
                 scroller.drawHandle(zoomedMax + halfOutline, 1);
@@ -23045,7 +23045,7 @@
     Axis.prototype.minFromRange = function () {
         var rangeOptions = this.range,
             type = rangeOptions.type,
-            timeName = { month: 'Month', year: 'FullYear'}[type],
+            timeName = { month: 'Month', year: 'FullYear' }[type],
             min,
             max = this.max,
             dataMin,
@@ -23572,7 +23572,7 @@
 
         // show the label
         crossLabel.attr({
-            text: formatOption ? format(formatOption, {value: point[axis]}) : options.formatter.call(this, point[axis]),
+            text: formatOption ? format(formatOption, { value: point[axis] }) : options.formatter.call(this, point[axis]),
             x: posx,
             y: posy,
             visibility: VISIBLE
@@ -23612,7 +23612,7 @@
         }
 
         // show the crosslabel
-        crossLabel.attr({x: posx, y: posy, visibility: VISIBLE});
+        crossLabel.attr({ x: posx, y: posy, visibility: 'visible' });
     });
 
     /* ****************************************************************************

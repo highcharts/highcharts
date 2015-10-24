@@ -514,7 +514,7 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		renderer.alignedObjects = [];
 
 		boxWrapper = renderer.createElement(DIV)
-			.css(extend(this.getStyle(style), { position: RELATIVE}));
+			.css(extend(this.getStyle(style), { position: 'relative' }));
 		box = boxWrapper.element;
 		container.appendChild(boxWrapper.element);
 

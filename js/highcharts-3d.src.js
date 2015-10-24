@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-10-22)
+ * @license Highcharts JS v4.1.9-modified (2015-10-24)
  *
  * 3D features for Highcharts JS
  *
@@ -187,9 +187,9 @@
         paths = this.cuboidPath(shapeArgs);
 
         // create the 3 sides
-        result.front = this.path(paths[0]).attr({zIndex: paths[3], 'stroke-linejoin': 'round'}).add(result);
-        result.top = this.path(paths[1]).attr({zIndex: paths[4], 'stroke-linejoin': 'round'}).add(result);
-        result.side = this.path(paths[2]).attr({zIndex: paths[5], 'stroke-linejoin': 'round'}).add(result);
+        result.front = this.path(paths[0]).attr({ zIndex: paths[3], 'stroke-linejoin': 'round' }).add(result);
+        result.top = this.path(paths[1]).attr({ zIndex: paths[4], 'stroke-linejoin': 'round' }).add(result);
+        result.side = this.path(paths[2]).attr({ zIndex: paths[5], 'stroke-linejoin': 'round' }).add(result);
 
         // apply the fill everywhere, the top a bit brighter, the side a bit darker
         result.fillSetter = function (color) {
@@ -197,9 +197,9 @@
             c1 = Highcharts.Color(color).brighten(0.1).get(),
             c2 = Highcharts.Color(color).brighten(-0.1).get();
 
-            this.front.attr({fill: c0});
-            this.top.attr({fill: c1});
-            this.side.attr({fill: c2});
+            this.front.attr({ fill: c0 });
+            this.top.attr({ fill: c1 });
+            this.side.attr({ fill: c2 });
 
             this.color = color;
             return this;
@@ -207,9 +207,9 @@
 
         // apply opacaity everywhere
         result.opacitySetter = function (opacity) {
-            this.front.attr({opacity: opacity});
-            this.top.attr({opacity: opacity});
-            this.side.attr({opacity: opacity});
+            this.front.attr({ opacity: opacity });
+            this.top.attr({ opacity: opacity });
+            this.side.attr({ opacity: opacity });
             return this;
         };
 
@@ -217,9 +217,9 @@
             if (args.shapeArgs || defined(args.x)) {
                 var shapeArgs = args.shapeArgs || args;
                 var paths = this.renderer.cuboidPath(shapeArgs);
-                this.front.attr({d: paths[0], zIndex: paths[3]});
-                this.top.attr({d: paths[1], zIndex: paths[4]});
-                this.side.attr({d: paths[2], zIndex: paths[5]});
+                this.front.attr({ d: paths[0], zIndex: paths[3] });
+                this.top.attr({ d: paths[1], zIndex: paths[4] });
+                this.side.attr({ d: paths[2], zIndex: paths[5] });
             } else {
                 Highcharts.SVGElement.prototype.attr.call(this, args);
             }
@@ -230,9 +230,9 @@
         result.animate = function (args, duration, complete) {
             if (defined(args.x) && defined(args.y)) {
                 var paths = this.renderer.cuboidPath(args);
-                this.front.attr({zIndex: paths[3]}).animate({d: paths[0]}, duration, complete);
-                this.top.attr({zIndex: paths[4]}).animate({d: paths[1]}, duration, complete);
-                this.side.attr({zIndex: paths[5]}).animate({d: paths[2]}, duration, complete);
+                this.front.attr({ zIndex: paths[3] }).animate({ d: paths[0] }, duration, complete);
+                this.top.attr({ zIndex: paths[4] }).animate({ d: paths[1] }, duration, complete);
+                this.side.attr({ zIndex: paths[5] }).animate({ d: paths[2] }, duration, complete);
             } else if (args.opacity) {
                     this.front.animate(args, duration, complete);
                     this.top.animate(args, duration, complete);
@@ -273,14 +273,14 @@
 
         // The 8 corners of the cube
         var pArr = [
-            {x: x, y: y, z: z},
-            {x: x + w, y: y, z: z},
-            {x: x + w, y: y + h, z: z},
-            {x: x, y: y + h, z: z},
-            {x: x, y: y + h, z: z + d},
-            {x: x + w, y: y + h, z: z + d},
-            {x: x + w, y: y, z: z + d},
-            {x: x, y: y, z: z + d}
+            { x: x, y: y, z: z },
+            { x: x + w, y: y, z: z },
+            { x: x + w, y: y + h, z: z },
+            { x: x, y: y + h, z: z },
+            { x: x, y: y + h, z: z + d },
+            { x: x + w, y: y + h, z: z + d },
+            { x: x + w, y: y, z: z + d },
+            { x: x, y: y, z: z + d }
         ];
 
         // apply perspective
@@ -336,11 +336,11 @@
         result.shapeArgs = shapeArgs;    // Store for later use
 
         // create the different sub sections of the shape
-        result.top = renderer.path(paths.top).setRadialReference(shapeArgs.center).attr({zIndex: paths.zTop}).add(result);
-        result.side1 = renderer.path(paths.side2).attr({zIndex: paths.zSide1});
-        result.side2 = renderer.path(paths.side1).attr({zIndex: paths.zSide2});
-        result.inn = renderer.path(paths.inn).attr({zIndex: paths.zInn});
-        result.out = renderer.path(paths.out).attr({zIndex: paths.zOut});
+        result.top = renderer.path(paths.top).setRadialReference(shapeArgs.center).attr({ zIndex: paths.zTop }).add(result);
+        result.side1 = renderer.path(paths.side2).attr({ zIndex: paths.zSide1 });
+        result.side2 = renderer.path(paths.side1).attr({ zIndex: paths.zSide2 });
+        result.inn = renderer.path(paths.inn).attr({ zIndex: paths.zInn });
+        result.out = renderer.path(paths.out).attr({ zIndex: paths.zOut });
 
         // apply the fill to the top and a darker shade to the sides
         result.fillSetter = function (color) {
@@ -349,29 +349,29 @@
             var c0 = color,
             c2 = Highcharts.Color(color).brighten(-0.1).get();
 
-            this.side1.attr({fill: c2});
-            this.side2.attr({fill: c2});
-            this.inn.attr({fill: c2});
-            this.out.attr({fill: c2});
-            this.top.attr({fill: c0});
+            this.side1.attr({ fill: c2 });
+            this.side2.attr({ fill: c2 });
+            this.inn.attr({ fill: c2 });
+            this.out.attr({ fill: c2 });
+            this.top.attr({ fill: c0 });
             return this;
         };
 
         // apply the translation to all
         result.translateXSetter = function (value) {
-            this.out.attr({translateX: value});
-            this.inn.attr({translateX: value});
-            this.side1.attr({translateX: value});
-            this.side2.attr({translateX: value});
-            this.top.attr({translateX: value});
+            this.out.attr({ translateX: value });
+            this.inn.attr({ translateX: value });
+            this.side1.attr({ translateX: value });
+            this.side2.attr({ translateX: value });
+            this.top.attr({ translateX: value });
         };
 
         result.translateYSetter = function (value) {
-            this.out.attr({translateY: value});
-            this.inn.attr({translateY: value});
-            this.side1.attr({translateY: value});
-            this.side2.attr({translateY: value});
-            this.top.attr({translateY: value});
+            this.out.attr({ translateY: value });
+            this.inn.attr({ translateY: value });
+            this.side1.attr({ translateY: value });
+            this.side2.attr({ translateY: value });
+            this.top.attr({ translateY: value });
         };
 
         result.animate = function (args, duration, complete) {
@@ -414,11 +414,11 @@
 
                         result.shapeArgs = sA;
 
-                        result.top.attr({d: paths.top, zIndex: paths.zTop});
-                        result.inn.attr({d: paths.inn, zIndex: paths.zInn});
-                        result.out.attr({d: paths.out, zIndex: paths.zOut});
-                        result.side1.attr({d: paths.side1, zIndex: paths.zSide1});
-                        result.side2.attr({d: paths.side2, zIndex: paths.zSide2});
+                        result.top.attr({ d: paths.top, zIndex: paths.zTop });
+                        result.inn.attr({ d: paths.inn, zIndex: paths.zInn });
+                        result.out.attr({ d: paths.out, zIndex: paths.zOut });
+                        result.side1.attr({ d: paths.side1, zIndex: paths.zSide1 });
+                        result.side2.attr({ d: paths.side2, zIndex: paths.zSide2 });
 
                     }
                 }, complete);
@@ -455,7 +455,7 @@
         };
         // show all children
         result.zIndex = zIndex;
-        result.attr({zIndex: zIndex});
+        result.attr({ zIndex: zIndex });
         return result;
     };
 
@@ -684,7 +684,7 @@
         Highcharts.each(this.series, function (s) {
             stackNumber = pick(s.options.stack, (stacking ? 0 : series.length - 1 - s.index)); // #3841, #4532
             if (!stacks[stackNumber]) {
-                stacks[stackNumber] = { series: [s], position: i};
+                stacks[stackNumber] = { series: [s], position: i };
                 i++;
             } else {
                 stacks[stackNumber].series.push(s);
@@ -816,10 +816,10 @@
             opposite = !opposite;
         }
         var pArr = [
-            this.swapZ({ x: path[1], y: path[2], z: (opposite ? d : 0)}),
+            this.swapZ({ x: path[1], y: path[2], z: (opposite ? d : 0) }),
             this.swapZ({ x: path[1], y: path[2], z: d }),
             this.swapZ({ x: path[4], y: path[5], z: d }),
-            this.swapZ({ x: path[4], y: path[5], z: (opposite ? 0 : d)})
+            this.swapZ({ x: path[4], y: path[5], z: (opposite ? 0 : d) })
         ];
 
         pArr = perspective(pArr, this.chart, false);
@@ -880,8 +880,8 @@
         }
 
         var pArr = [
-            this.axis.swapZ({x: path[1], y: path[2], z: 0}),
-            this.axis.swapZ({x: path[4], y: path[5], z: 0})
+            this.axis.swapZ({ x: path[1], y: path[2], z: 0 }),
+            this.axis.swapZ({ x: path[4], y: path[5], z: 0 })
         ];
 
         pArr = perspective(pArr, this.axis.chart, false);
@@ -900,7 +900,7 @@
             return pos;
         }
 
-        var newPos = perspective([this.axis.swapZ({x: pos.x, y: pos.y, z: 0})], this.axis.chart, false)[0];
+        var newPos = perspective([this.axis.swapZ({ x: pos.x, y: pos.y, z: 0 })], this.axis.chart, false)[0];
         newPos.x = newPos.x - (!this.axis.horiz && this.axis.opposite ? this.axis.transA : 0); //#3788
         newPos.old = pos;
         return newPos;
@@ -921,7 +921,7 @@
             return pos;
         }
 
-        pos = perspective([this.swapZ({x: pos.x, y: pos.y, z: 0})], this.chart, false)[0];
+        pos = perspective([this.swapZ({ x: pos.x, y: pos.y, z: 0 })], this.chart, false)[0];
         return pos;
     });
 
@@ -1193,7 +1193,7 @@
             var args = arguments,
                 alignTo = args[4];
 
-            var pos = ({x: alignTo.x, y: alignTo.y, z: series.z});
+            var pos = ({ x: alignTo.x, y: alignTo.y, z: series.z });
             pos = perspective([pos], chart, true)[0];
             alignTo.x = pos.x;
             alignTo.y = pos.y;
@@ -1533,7 +1533,7 @@
      */
     if (Highcharts.VMLRenderer) {
 
-    Highcharts.setOptions({animate: false});
+    Highcharts.setOptions({ animate: false });
 
     Highcharts.VMLRenderer.prototype.cuboid = Highcharts.SVGRenderer.prototype.cuboid;
     Highcharts.VMLRenderer.prototype.cuboidPath = Highcharts.SVGRenderer.prototype.cuboidPath;
@@ -1544,7 +1544,7 @@
 
     Highcharts.VMLRenderer.prototype.arc3d = function (shapeArgs) {
         var result = Highcharts.SVGRenderer.prototype.arc3d.call(this, shapeArgs);
-        result.css({zIndex: result.zIndex});
+        result.css({ zIndex: result.zIndex });
         return result;
     };
 
@@ -1554,16 +1554,16 @@
         proceed.apply(this, [].slice.call(arguments, 1));
         // VML doesn't support a negative z-index
         if (this.sideFrame) {
-            this.sideFrame.css({zIndex: 0});
-            this.sideFrame.front.attr({fill: this.sideFrame.color});
+            this.sideFrame.css({ zIndex: 0 });
+            this.sideFrame.front.attr({ fill: this.sideFrame.color });
         }
         if (this.bottomFrame) {
-            this.bottomFrame.css({zIndex: 1});
-            this.bottomFrame.front.attr({fill: this.bottomFrame.color});
+            this.bottomFrame.css({ zIndex: 1 });
+            this.bottomFrame.front.attr({ fill: this.bottomFrame.color });
         }
         if (this.backFrame) {
-            this.backFrame.css({zIndex: 0});
-            this.backFrame.front.attr({fill: this.backFrame.color});
+            this.backFrame.css({ zIndex: 0 });
+            this.backFrame.front.attr({ fill: this.backFrame.color });
         }
     });
 

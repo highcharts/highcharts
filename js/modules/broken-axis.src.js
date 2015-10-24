@@ -309,7 +309,7 @@
 							eventName = 'pointInBreak'; // docs
 					} 
 					if (eventName) {
-						fireEvent(axis, eventName, {point: point, brk: brk});
+						fireEvent(axis, eventName, { point: point, brk: brk });
 					}
 				});
 			});

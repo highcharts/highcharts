@@ -562,7 +562,7 @@
 
 			// Calculate plotting values.
 			this.axisRatio = (this.xAxis.len / this.yAxis.len);
-			this.nodeMap[''].pointValues = pointValues = {x: 0, y: 0, width: 100, height: 100 };
+			this.nodeMap[''].pointValues = pointValues = { x: 0, y: 0, width: 100, height: 100 };
 			this.nodeMap[''].values = seriesArea = merge(pointValues, {
 				width: (pointValues.width * this.axisRatio),
 				direction: (this.options.layoutStartingDirection === 'vertical' ? 0 : 1),
@@ -603,7 +603,7 @@
 			each(points, function (point) {
 				level = series.levelMap[point.node.levelDynamic];
 				// Set options to new object to avoid problems with scope
-				options = {style: {}};
+				options = { style: {} };
 
 				// If not a leaf, then label should be disabled as default
 				if (!point.node.isLeaf) {

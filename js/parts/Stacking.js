@@ -55,7 +55,7 @@ StackItem.prototype = {
 
 		// Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
 		if (this.label) {
-			this.label.attr({text: str, visibility: HIDDEN});
+			this.label.attr({ text: str, visibility: 'hidden' });
 		// Create new label
 		} else {
 			this.label =
