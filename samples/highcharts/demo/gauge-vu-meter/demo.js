@@ -116,7 +116,7 @@ $(function () {
                         rightVal,
                         inc = (Math.random() - 0.5) * 3;
 
-                    leftVal =  left.y + inc;
+                    leftVal = left.y + inc;
                     rightVal = leftVal + inc / 3;
                     if (leftVal < -20 || leftVal > 6) {
                         leftVal = left.y - inc;

@@ -169,6 +169,15 @@ gulp.task('lint', ['scripts'], function () {
         .pipe(eslint.formatEach());
 
 });
+gulp.task('lint-samples', function () {
+    return gulp.src(['./samples/*/*/*/demo.js'])
+
+        // ESLint config is found in .eslintrc file(s)
+        .pipe(eslint())
+        .pipe(eslint.failOnError())
+        .pipe(eslint.formatEach());
+
+});
 
 // Watch changes to CSS files
 gulp.task('default', function () {

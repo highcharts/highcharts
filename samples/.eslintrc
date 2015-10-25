@@ -5,7 +5,14 @@ globals:
     $: true
     Highcharts: true
     HighchartsAdapter: true
+    hs: true # Highslide
 
 rules:
     eol-last: 0
+    indent: [2, 4]
+    new-cap: 0 # The ill-named Color object. Fix in HC5
+    no-undefined: 0
+    require-jsdoc: 0
+    spaced-comment: 0
     strict: 0
+    valid-jsdoc: 0
