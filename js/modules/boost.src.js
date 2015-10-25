@@ -43,6 +43,7 @@
  *   use optimizations.
  */
 
+/* eslint indent: [2, 4] */
 (function (H, HA) {
 
     'use strict';

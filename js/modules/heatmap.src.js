@@ -5,7 +5,7 @@
  *
  * License: www.highcharts.com/license
  */
-
+/* eslint indent: [2, 4] */
 (function (Highcharts) {
 
 

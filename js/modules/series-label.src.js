@@ -14,7 +14,7 @@
  * http://jsfiddle.net/highcharts/264Nm/
  * http://jsfiddle.net/highcharts/y5A37/
  */
-
+/* eslint indent: [2, 4] */
 (function (H) {
 
     var labelDistance = 3,
@@ -169,11 +169,11 @@
         // First check for collision with existing labels
         for (i = 0; i < chart.boxesToAvoid.length; i += 1) {
             if (intersectRect(chart.boxesToAvoid[i], {
-                    left: x,
-                    right: x + bBox.width,
-                    top: y,
-                    bottom: y + bBox.height
-                })) {
+                left: x,
+                right: x + bBox.width,
+                top: y,
+                bottom: y + bBox.height
+            })) {
                 return false;
             }
         }

@@ -4,9 +4,11 @@ extends:
 rules:
     camelcase: [2, {"properties": "always"}]
     comma-dangle: [2, "never"]
+    dot-location: [2, "property"]
     no-alert: 2
     no-console: 2
     no-debugger: 2
+    no-else-return: 2
     object-curly-spacing: [2, "always"]
     space-before-function-paren: [2, {"anonymous": "always", "named": "never"}] # JSLint style
     quotes: [2, "single"]

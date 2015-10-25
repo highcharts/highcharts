@@ -1,10 +1,9 @@
 /**
- * Highcharts Drilldown plugin
+ * Highcharts Drilldown module
  * 
  * Author: Torstein Honsi
- * License: MIT License
+ * License: www.highcharts.com/license
  *
- * Demo: http://jsfiddle.net/highcharts/Vf3yT/
  */
 
 (function (H) {
