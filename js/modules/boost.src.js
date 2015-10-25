@@ -48,8 +48,7 @@
 
     'use strict';
 
-    var noop = function () {
-        },
+    var noop = function () {},
         Color = H.Color,
         Series = H.Series,
         seriesTypes = H.seriesTypes,

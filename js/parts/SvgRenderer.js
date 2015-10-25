@@ -761,14 +761,14 @@ SVGElement.prototype = {
 					}
 
 					bBox = element.getBBox ?
-							// SVG: use extend because IE9 is not allowed to change width and height in case
-							// of rotation (below)
-							extend({}, element.getBBox()) :
-							// Canvas renderer and legacy IE in export mode
-							{
-								width: element.offsetWidth,
-								height: element.offsetHeight
-							};
+						// SVG: use extend because IE9 is not allowed to change width and height in case
+						// of rotation (below)
+						extend({}, element.getBBox()) :
+						// Canvas renderer and legacy IE in export mode
+						{
+							width: element.offsetWidth,
+							height: element.offsetHeight	
+						};
 
 					// #3842
 					if (textShadow) {
@@ -1185,9 +1185,9 @@ SVGElement.prototype.yGetter = SVGElement.prototype.xGetter;
 SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter =
 		SVGElement.prototype.rotationSetter = SVGElement.prototype.verticalAlignSetter =
 		SVGElement.prototype.scaleXSetter = SVGElement.prototype.scaleYSetter = function (value, key) {
-		this[key] = value;
-		this.doTransform = true;
-	};
+			this[key] = value;
+			this.doTransform = true;
+		};
 
 // WebKit and Batik have problems with a stroke-width of zero, so in this case we remove the
 // stroke attribute altogether. #1270, #1369, #3065, #3072.
@@ -1810,13 +1810,7 @@ SVGRenderer.prototype = {
 	 * @param {Number} r The radius
 	 */
 	circle: function (x, y, r) {
-		var attr = isObject(x) ?
-					x :
-					{
-						x: x,
-						y: y,
-						r: r
-					},
+		var attr = isObject(x) ? x : { x: x, y: y, r: r },
 			wrapper = this.createElement('circle');
 
 		wrapper.xSetter = function (value) {
@@ -2396,14 +2390,17 @@ SVGRenderer.prototype = {
 			crispAdjust = 0,
 			deferredAttr = {},
 			baselineOffset,
-			needsBox;
+			needsBox,
+			updateBoxSize,
+			updateTextPadding,
+			boxAttr;
 
 		/**
 		 * This function runs after the label is added to the DOM (when the bounding box is
 		 * available), and after the text of the label is updated to detect the new bounding
 		 * box and reflect it in the border box.
 		 */
-		function updateBoxSize() {
+		updateBoxSize = function () {
 			var boxX,
 				boxY,
 				style = text.element.style;
@@ -2443,12 +2440,12 @@ SVGRenderer.prototype = {
 				}
 				deferredAttr = null;
 			}
-		}
+		};
 
 		/**
 		 * This function runs after setting text or padding, but only if padding is changed
 		 */
-		function updateTextPadding() {
+		updateTextPadding = function () {
 			var styles = wrapper.styles,
 				textAlign = styles && styles.textAlign,
 				x = paddingLeft + padding,
@@ -2473,20 +2470,20 @@ SVGRenderer.prototype = {
 			// record current values
 			text.x = x;
 			text.y = y;
-		}
+		};
 
 		/**
 		 * Set a box attribute, or defer it if the box is not yet created
 		 * @param {Object} key
 		 * @param {Object} value
 		 */
-		function boxAttr(key, value) {
+		boxAttr = function (key, value) {
 			if (box) {
 				box.attr(key, value);
 			} else {
 				deferredAttr[key] = value;
 			}
-		}
+		};
 
 		/**
 		 * After the text element is added, get the desired size of the border box

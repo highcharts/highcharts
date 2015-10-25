@@ -1,12 +1,12 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-10-24)
+ * @license Highmaps JS v1.1.9-modified (2015-10-25)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2014 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
-
+/* eslint indent: [2, 4] */
 (function (Highcharts) {
 
 
@@ -2243,22 +2243,24 @@
         seriesOptions = options.series;
         options.series = null;
 
-        options = merge({
-            chart: {
-                panning: 'xy',
-                type: 'map'
+        options = merge(
+            {
+                chart: {
+                    panning: 'xy',
+                    type: 'map'
+                },
+                xAxis: hiddenAxis,
+                yAxis: merge(hiddenAxis, { reversed: true })
             },
-            xAxis: hiddenAxis,
-            yAxis: merge(hiddenAxis, { reversed: true })
-        },
-        options, // user's options
+            options, // user's options
 
-        { // forced options
-            chart: {
-                inverted: false,
-                alignTicks: false
+            { // forced options
+                chart: {
+                    inverted: false,
+                    alignTicks: false
+                }
             }
-        });
+        );
 
         options.series = seriesOptions;
 

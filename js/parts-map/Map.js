@@ -144,22 +144,24 @@ Highcharts.Map = function (options, callback) {
 	seriesOptions = options.series;
 	options.series = null;
 
-	options = merge({
-		chart: {
-			panning: 'xy',
-			type: 'map'
+	options = merge(
+		{
+			chart: {
+				panning: 'xy',
+				type: 'map'
+			},
+			xAxis: hiddenAxis,
+			yAxis: merge(hiddenAxis, { reversed: true })
 		},
-		xAxis: hiddenAxis,
-		yAxis: merge(hiddenAxis, { reversed: true })
-	},
-	options, // user's options
+		options, // user's options
 
-	{ // forced options
-		chart: {
-			inverted: false,
-			alignTicks: false
+		{ // forced options
+			chart: {
+				inverted: false,
+				alignTicks: false
+			}
 		}
-	});
+	);
 
 	options.series = seriesOptions;
 

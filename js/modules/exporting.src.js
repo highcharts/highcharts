@@ -7,6 +7,7 @@
  * License: www.highcharts.com/license
  */
 
+/* eslint indent:0 */
 (function (Highcharts) {
 
 // create shortcuts

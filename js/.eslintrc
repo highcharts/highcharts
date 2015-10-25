@@ -17,7 +17,6 @@ rules:
     no-console: 2
     no-debugger: 2
     no-empty: 0 # The noop function. @todo: esling-disable-line?
-    no-func-assign: 0 # @todo: Fix it. Setting local functions to null on Label.destoy
     no-invalid-this: 0
     no-multi-spaces: 0 # Should be fixed
     no-nested-ternary: 0
