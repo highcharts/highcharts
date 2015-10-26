@@ -598,6 +598,7 @@ return {
 		while (i--) {
 			timer = timers[i];
 			if (timer.elem === el) {
+				//timer(true)
 				timers.splice(i, 1);
 			}
 		}
