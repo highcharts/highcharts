@@ -4791,8 +4791,8 @@
             // create element with default attributes and style
             if (nodeName) {
                 markup = isDiv || nodeName === 'span' || nodeName === 'img' ?
-                    markup.join('')
-                    : renderer.prepVML(markup);
+                    markup.join('')    :
+                    renderer.prepVML(markup);
                 wrapper.element = createElement(markup);
             }
 
