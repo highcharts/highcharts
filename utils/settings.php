@@ -3,7 +3,7 @@
 class Settings {
 	// Path to the Git Executable
 	//static $git = "C:\Git\bin\git"; // Typical Windows path
-	static $git = '/usr/local/git/bin/git';
+	static $git = '/usr/bin/git';
 
 	static $leftPath = "http://code.highcharts.com";
 	//static $leftPath = "2f426113781d40f0236e66046de4b3022e89f7e8"; // This is how to compare against a commit

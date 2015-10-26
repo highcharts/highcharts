@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-10-25)
+ * @license Highcharts JS v4.1.9-modified (2015-10-26)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -9708,6 +9708,7 @@
                 noSharedTooltip,
                 stickToHoverSeries,
                 directTouch,
+                pointDistance,
                 kdpoints = [],
                 kdpoint,
                 kdpointT;
@@ -9745,8 +9746,10 @@
                 });
                 // Find absolute nearest point
                 each(kdpoints, function (p) {
-                    if (p && typeof p.dist === 'number' && p.dist < distance) {
-                        distance = p.dist;
+                    pointDistance = !shared && p.series.kdDimensions === 1 ? p.dist : p.distX; // #4645
+
+                    if (p && typeof pointDistance === 'number' && pointDistance < distance) {
+                        distance = pointDistance;
                         kdpoint = p;
                     }
                 });
