@@ -166,7 +166,7 @@ PiePoint = extendClass(Point, {
 		if (point.shadowGroup) {
 			point.shadowGroup.animate(translation);
 		}
-		/*= } =*/
+		/*= } =*/
 	},
 
 	haloPath: function (size) {
@@ -440,7 +440,7 @@ seriesTypes.pie = extendClass(Series, {
 					/*= if (build.classic) { =*/
 					graphic
 						.attr(series.pointAttribs(point, point.selected && 'select'))
-						.attr({ 'stroke-linejoin': 'round'})
+						.attr({ 'stroke-linejoin': 'round' })
 						.shadow(shadow, shadowGroup);
 					/*= } =*/
 				}

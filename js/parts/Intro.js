@@ -10,7 +10,6 @@
  */
 
 // JSLint options:
-/*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console, each, grep */
 /*(function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define(function () {

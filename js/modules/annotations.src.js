@@ -1,8 +1,11 @@
 
 
-(function (Highcharts, HighchartsAdapter) {
+(function (H) {
 
-	var UNDEFINED,
+	var defined = H.defined,
+		isNumber = H.isNumber,
+		isArray = H.isArray,
+
 		ALIGN_FACTOR,
 		ALLOWED_SHAPES,
 		Chart = Highcharts.Chart,
@@ -385,4 +388,4 @@
 			chart.annotations.redraw();
 		});
 	});
-}(Highcharts, HighchartsAdapter));
+}(Highcharts));

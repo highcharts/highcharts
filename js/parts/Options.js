@@ -12,7 +12,7 @@
 H.defaultOptions = {
 	/*= if (build.classic) { =*/
 	colors: ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', 
-		    '#8085e9', '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'],
+		'#8085e9', '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1'],
 	/*= } =*/
 	symbols: ['circle', 'diamond', 'square', 'triangle', 'triangle-down'],
 	lang: {
@@ -173,9 +173,9 @@ H.defaultOptions = {
 				},
 				/*= } else { =*/
 				style: {
-					color: 'contrast',
 					fontSize: '11px',
 					fontWeight: 'bold',
+					color: 'contrast',
 					textShadow: '0 0 6px contrast, 0 0 3px contrast'
 				},
 				// backgroundColor: undefined,
@@ -440,7 +440,7 @@ H.setOptions = function (options) {
  * Get the updated default options. Until 3.0.7, merely exposing defaultOptions for outside modules
  * wasn't enough because the setOptions method created a new object.
  */
-H.getOptions = function() {
+H.getOptions = function () {
 	return H.defaultOptions;
 };
 

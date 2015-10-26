@@ -1,9 +1,7 @@
 (function (H) {
 	var CanVGRenderer,
 	
-		CanVGController = H.CanVGController,
 		getScript = H.getScript,
-		SVG_NS = H.SVG_NS,
 		useCanVG = H.useCanVG;
 
 /* ****************************************************************************
@@ -20,7 +18,7 @@ if (useCanVG) {
 	 */
 	H.Renderer = CanVGRenderer = function () {
 		// Override the global SVG namespace to fake SVG/HTML that accepts CSS
-		SVG_NS = 'http://www.w3.org/1999/xhtml';
+		H.SVG_NS = 'http://www.w3.org/1999/xhtml';
 	};
 
 	/**
@@ -32,7 +30,7 @@ if (useCanVG) {
 	/**
 	 * Handles on demand download of canvg rendering support.
 	 */
-	CanVGController = (function () {
+	H.CanVGController = (function () {
 		// List of renderering calls
 		var deferredRenderCalls = [];
 

@@ -1,6 +1,5 @@
 (function (H) {
-	var defined = H.defined,
-		each = H.each,
+	var each = H.each,
 		perspective = H.perspective,
 		pick = H.pick,
 		Series = H.Series,

@@ -169,6 +169,16 @@ gulp.task('lint', ['scripts'], function () {
         .pipe(eslint.formatEach());
 
 });
+
+gulp.task('lint-parts', function () {
+    return gulp.src(paths.parts.concat(paths.partsMore, paths.partsMap, paths.parts3D))
+
+        // ESLint config is found in .eslintrc file(s)
+        .pipe(eslint())
+        .pipe(eslint.formatEach());
+
+});
+
 gulp.task('lint-samples', function () {
     return gulp.src(['./samples/*/*/*/demo.js'])
 
@@ -233,7 +243,10 @@ gulp.task('scripts', function () {
      *
      * @returns {String} The processed JavaScript
      */
-    function preprocess(tpl) {
+    function preprocess(tpl, build) {
+
+        var func;
+
         // Windows newlines
         tpl = tpl.replace(/\r\n/g, '\n');
 
@@ -255,10 +268,10 @@ gulp.task('scripts', function () {
         tpl = tpl.replace(/$/, '";\nreturn s;');
 
         // Uncomment to preview generated supercode
-        // fs.writeFile('temp.js', tpl, 'utf8');
+         fs.writeFile('temp.js', tpl, 'utf8');
 
         // The evaluation function for the ready built supercode
-        func = new Function('build', tpl);
+        func = new Function('build', tpl); // eslint-disable-line no-new-func
 
         tpl = func(build);
         tpl = tpl.replace(/___doublequote___/g, '"');
@@ -266,7 +279,6 @@ gulp.task('scripts', function () {
         // Collect trailing commas left when the tamplate engine has removed
         // object literal properties or array items
         tpl = tpl.replace(/,(\s*(\]|\}))/g, '$1');
-        
 
         return tpl;
     }

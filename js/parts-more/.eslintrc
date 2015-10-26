@@ -1,3 +1,2 @@
 rules:
-    indent: [2, "tab"]
-    no-undef: 0
+    indent: 0 # [2, "tab"]

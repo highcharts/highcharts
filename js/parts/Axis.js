@@ -1865,7 +1865,7 @@ H.Axis.prototype = {
 
 		return chart.renderer
 			.crispLine([
-				M,
+				'M',
 				horiz ?
 					this.left :
 					lineLeft,

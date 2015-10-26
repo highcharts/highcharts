@@ -84,8 +84,7 @@ Legend.prototype = {
 			symbolColor = visible ? (item.legendColor || item.color || '#CCC') : hiddenColor,
 			markerOptions = item.options && item.options.marker,
 			symbolAttr = { fill: symbolColor },
-			key,
-			val;
+			key;
 
 		if (legendItem) {
 			legendItem.css({ fill: textColor, color: textColor }); // color for #1553, oldIE

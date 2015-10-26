@@ -241,11 +241,10 @@ H.createElement = function (tag, attribs, styles, parent, nopad) {
  * @param {Object} parent
  * @param {Object} members
  */
-function extendClass(Parent, members) {
-	var object = function () {
-	};
+H.extendClass = function (Parent, members) {
+	var object = function () {};
 	object.prototype = new Parent();
-	extend(object.prototype, members);
+	H.extend(object.prototype, members);
 	return object;
 };
 
@@ -256,7 +255,7 @@ function extendClass(Parent, members) {
  */
 H.pad = function (number, length) {
 	return new Array((length || 2) + 1 - String(number).length).join(0) + number;
-}
+};
 
 /**
  * Return a length based on either the integer value, or a percentage of a base.
@@ -642,7 +641,7 @@ H.numberFormat = function (number, decimals, decPoint, thousandsSep) {
 		d = decPoint === undefined ? lang.decimalPoint : decPoint,
 		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
 		s = n < 0 ? '-' : '',
-		i = String(pInt(n = Math.abs(n).toFixed(c))),
+		i = String(parseInt(n = Math.abs(n).toFixed(c), 10)),
 		j = i.length > 3 ? i.length % 3 : 0;
 
 	return (s + (j ? i.substr(0, j) + t : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + t) +

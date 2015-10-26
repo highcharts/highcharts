@@ -2,15 +2,13 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v5.0-dev (2015-10-21)
+ * @license Highcharts JS v5.0-dev (2015-10-26)
  *
  * (c) 2009-2014 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 
-// JSLint options:
-/*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
 (function (H) {
         var each = H.each,
             extend = H.extend,
@@ -132,7 +130,6 @@
     /**
      * Augmented methods for the value axis
      */
-    /*jslint unparam: true*/
     radialAxisMixin = {
         isRadial: true,
 
@@ -479,7 +476,6 @@
         }
 
     };
-    /*jslint unparam: false*/
 
     /**
      * Override axisProto.init to mix in special axis instance functions and function overrides
@@ -1629,9 +1625,7 @@
 
     }(Highcharts));
     (function (H) {
-        var Color = H.Color,
-            defaultPlotOptions = H.defaultPlotOptions,
-            each = H.each,
+        var defaultPlotOptions = H.defaultPlotOptions,
             extendClass = H.extendClass,
             merge = H.merge,
             noop = H.noop,
@@ -1782,9 +1776,9 @@
                 y = yData[i];
                 point = points && points[i] ? points[i] : {};
 
-                if (y === "sum" || point.isSum) {
+                if (y === 'sum' || point.isSum) {
                     yData[i] = sum;
-                } else if (y === "intermediateSum" || point.isIntermediateSum) {
+                } else if (y === 'intermediateSum' || point.isIntermediateSum) {
                     yData[i] = subSum;
                 } else {
                     sum += y;
@@ -1806,10 +1800,10 @@
          */
         toYData: function (pt) {
             if (pt.isSum) {
-                return (pt.x === 0 ? null : "sum"); //#3245 Error when first element is Sum or Intermediate Sum
+                return (pt.x === 0 ? null : 'sum'); //#3245 Error when first element is Sum or Intermediate Sum
             }
             if (pt.isIntermediateSum) {
-                return (pt.x === 0 ? null : "intermediateSum"); //#3245
+                return (pt.x === 0 ? null : 'intermediateSum'); //#3245
             }
             return pt.y;
         },
@@ -2731,4 +2725,4 @@
 
         return H;
     }(Highcharts));
-    
+

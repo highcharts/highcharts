@@ -1,13 +1,13 @@
 /**
- * @license Highmaps JS v2.0-dev (2015-10-21)
+ * @license Highmaps JS v2.0-dev (2015-10-26)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2014 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
+/* eslint indent: 0 */
 
-/*global clearTimeout, document, Highcharts, HighchartsAdapter, setInterval, setTimeout, window */
 (function (H) {
         var Axis = H.Axis,
             each = H.each,
@@ -415,7 +415,6 @@
             var padding = legend.padding,
                 legendOptions = legend.options,
                 horiz = this.horiz,
-                box,
                 width = pick(legendOptions.symbolWidth, horiz ? 200 : 12),
                 height = pick(legendOptions.symbolHeight, horiz ? 12 : 200),
                 labelPadding = pick(legendOptions.labelPadding, horiz ? 16 : 30),
@@ -432,7 +431,6 @@
             ).attr({
                 zIndex: 1
             }).add(item.legendGroup);
-            box = item.legendSymbol.getBBox();
 
             // Set how much space this legend item takes up
             this.legendItemWidth = width + padding + (horiz ? itemDistance : labelPadding);
@@ -604,7 +602,7 @@
 
         this.colorAxis = [];
         if (colorAxisOptions) {
-            proceed = new ColorAxis(this, colorAxisOptions); // Fake assignment for jsLint
+            new ColorAxis(this, colorAxisOptions); // eslint-disable-line no-new
         }
     });
 
@@ -640,17 +638,14 @@
         return H;
     }(Highcharts));
     (function (H) {
-        var colorPointMixin,
-            colorSeriesMixin,
-
-            each = H.each,
+        var each = H.each,
             noop = H.noop,
             seriesTypes = H.seriesTypes;
 
     /**
      * Mixin for maps and heatmaps
      */
-    colorPointMixin = H.colorPointMixin = {
+    H.colorPointMixin = {
         /**
          * Set the visibility of a single point
          */
@@ -667,7 +662,7 @@
         }
     };
 
-    colorSeriesMixin = H.colorSeriesMixin = {
+    H.colorSeriesMixin = {
         pointArrayMap: ['value'],
         axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
         optionalAxis: 'colorAxis',
@@ -995,8 +990,8 @@
         return H;
     }(Highcharts));
     (function (H) {
-        var Color = H.Color,
-            ColorAxis = H.ColorAxis,
+        var 
+            
             colorPointMixin = H.colorPointMixin,
             colorSeriesMixin = H.colorSeriesMixin,
             defaultPlotOptions = H.defaultPlotOptions,
@@ -1998,7 +1993,7 @@
                 y: normalized.x * sinAngle + normalized.y * cosAngle
             } : normalized);
 
-        return {lat: projected.y, lon: projected.x};
+        return { lat: projected.y, lon: projected.x };
     };
 
     Chart.prototype.fromPointToLatLon = function (point) {
@@ -2011,12 +2006,13 @@
         }
 
         for (transform in transforms) {
-            if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone && pointInPolygon({x: point.x, y: -point.y}, transforms[transform].hitZone.coordinates[0])) {
+            if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone && 
+                    pointInPolygon({ x: point.x, y: -point.y }, transforms[transform].hitZone.coordinates[0])) {
                 return this.transformToLatLon(point, transforms[transform]);
             }
         }
 
-        return this.transformToLatLon(point, transforms['default']);
+        return this.transformToLatLon(point, transforms.default);
     };
 
     Chart.prototype.fromLatLonToPoint = function (latLon) {
@@ -2035,13 +2031,13 @@
         for (transform in transforms) {
             if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone) {
                 coords = this.transformFromLatLon(latLon, transforms[transform]);
-                if (pointInPolygon({x: coords.x, y: -coords.y}, transforms[transform].hitZone.coordinates[0])) {
+                if (pointInPolygon({ x: coords.x, y: -coords.y }, transforms[transform].hitZone.coordinates[0])) {
                     return coords;
                 }
             }
         }
 
-        return this.transformFromLatLon(latLon, transforms['default']);
+        return this.transformFromLatLon(latLon, transforms.default);
     };
 
     /**
@@ -2218,7 +2214,7 @@
         // Move letters apart
         path = path.replace(/([A-Za-z])/g, ' $1 ');
         // Trim
-        path = path.replace(/^\s*/, "").replace(/\s*$/, "");
+        path = path.replace(/^\s*/, '').replace(/\s*$/, '');
 
         // Split on spaces and commas
         path = path.split(/[ ,]+/); // Extra comma to escape gulp.scripts task
@@ -2304,22 +2300,24 @@
         seriesOptions = options.series;
         options.series = null;
 
-        options = merge({
-            chart: {
-                panning: 'xy',
-                type: 'map'
+        options = merge(
+            {
+                chart: {
+                    panning: 'xy',
+                    type: 'map'
+                },
+                xAxis: hiddenAxis,
+                yAxis: merge(hiddenAxis, { reversed: true })
             },
-            xAxis: hiddenAxis,
-            yAxis: merge(hiddenAxis, { reversed: true })
-        },
-        options, // user's options
+            options, // user's options
 
-        { // forced options
-            chart: {
-                inverted: false,
-                alignTicks: false
+            { // forced options
+                chart: {
+                    inverted: false,
+                    alignTicks: false
+                }
             }
-        });
+        );
 
         options.series = seriesOptions;
 
@@ -2329,4 +2327,4 @@
 
         return H;
     }(Highcharts));
-    
+

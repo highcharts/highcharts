@@ -1,8 +1,7 @@
 (function (H) {
 	var Axis = H.Axis,
 		SVGRenderer = H.SVGRenderer,
-		VMLRenderer = H.VMLRenderer,
-		wrap = H.wrap;
+		VMLRenderer = H.VMLRenderer;
 
 /**
  *	Extension to the VML Renderer

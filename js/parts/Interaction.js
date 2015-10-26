@@ -167,7 +167,9 @@ TrackerMixin = H.TrackerMixin = {
 			each([series.tracker, series.markerGroup], function (tracker) {
 				tracker.addClass('highcharts-tracker')
 					.on('mouseover', onMouseOver)
-					.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); });
+					.on('mouseout', function (e) {
+						pointer.onTrackerMouseOut(e);
+					});
 
 				/*= if (build.classic) { =*/
 				if (options.cursor) {

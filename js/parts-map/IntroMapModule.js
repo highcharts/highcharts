@@ -6,5 +6,5 @@
  *
  * License: www.highcharts.com/license
  */
-/* eslint indent: [2, 4] */
+/* eslint indent: 0 */
 

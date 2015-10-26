@@ -1,15 +1,12 @@
 (function (H) {
-	var colorPointMixin,
-		colorSeriesMixin,
-
-		each = H.each,
+	var each = H.each,
 		noop = H.noop,
 		seriesTypes = H.seriesTypes;
 
 /**
  * Mixin for maps and heatmaps
  */
-colorPointMixin = H.colorPointMixin = {
+H.colorPointMixin = {
 	/**
 	 * Set the visibility of a single point
 	 */
@@ -26,7 +23,7 @@ colorPointMixin = H.colorPointMixin = {
 	}
 };
 
-colorSeriesMixin = H.colorSeriesMixin = {
+H.colorSeriesMixin = {
 	pointArrayMap: ['value'],
 	axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
 	optionalAxis: 'colorAxis',

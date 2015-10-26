@@ -418,7 +418,7 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
 		out = out.concat(curveTo(cx, cy, rx, ry, end2, end, dx, dy));
 		// Go to the inner side
 		out = out.concat([
-			'L', cx + (rx * cos(end)), cy + (ry * sin(end))
+			'L', cx + (rx * Math.cos(end)), cy + (ry * Math.sin(end))
 		]);
 		// Go back to the artifical end2
 		out = out.concat(curveTo(cx, cy, rx, ry, end, end2, 0, 0));

@@ -55,8 +55,8 @@ wrap(seriesTypes.pie.prototype, 'translate', function (proceed) {
 		angle = (shapeArgs.end + shapeArgs.start) / 2;
 
 		point.slicedTranslation = {
-			translateX : Math.round(Math.cos(angle) * seriesOptions.slicedOffset * Math.cos(alpha * deg2rad)),
-			translateY : Math.round(Math.sin(angle) * seriesOptions.slicedOffset * Math.cos(alpha * deg2rad))
+			translateX: Math.round(Math.cos(angle) * seriesOptions.slicedOffset * Math.cos(alpha * deg2rad)),
+			translateY: Math.round(Math.sin(angle) * seriesOptions.slicedOffset * Math.cos(alpha * deg2rad))
 		};
 	});
 });
@@ -79,9 +79,7 @@ wrap(seriesTypes.pie.prototype, 'pointAttribs', function (proceed, point, state)
 });
 
 wrap(seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
-	var seriesGroup = this.group,
-		options = this.options,
-		states = options.states;
+	var seriesGroup = this.group;
 
 	proceed.apply(this, [].slice.call(arguments, 1));
 

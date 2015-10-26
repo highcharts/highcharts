@@ -32,7 +32,9 @@
 /**
  * A wrapper object for SVG elements
  */
-SVGElement = H.SVGElement = function () { return this; };
+SVGElement = H.SVGElement = function () {
+	return this;
+};
 SVGElement.prototype = {
 
 	// Default base for animation
@@ -822,7 +824,7 @@ SVGElement.prototype = {
 					// When the text shadow shim is used, we need to hide the fake shadows
 					// to get the correct bounding box (#3872)
 					toggleTextShadowShim = this.fakeTS && function (display) {
-						each(element.querySelectorAll('.' + 'highcharts-text-shadow'), function (tspan) {
+						each(element.querySelectorAll('.highcharts-text-shadow'), function (tspan) {
 							tspan.style.display = display;
 						});
 					};
@@ -1907,7 +1909,7 @@ SVGRenderer.prototype = {
 	 * @param {Number} r The radius
 	 */
 	circle: function (x, y, r) {
-		var attr = isObject(x) ? x : { x: x, y: y, r: r },
+		var attribs = isObject(x) ? x : { x: x, y: y, r: r },
 			wrapper = this.createElement('circle');
 
 		wrapper.xSetter = function (value) {
@@ -2458,7 +2460,7 @@ SVGRenderer.prototype = {
 	/**
 	 * Utility to return the baseline offset and total line height from the font size
 	 */
-	fontMetrics: function (fontSize, elem) {
+	fontMetrics: function (fontSize, elem) { // eslint-disable-line no-unused-vars
 		var lineHeight,
 			baseline;
 
@@ -2623,7 +2625,7 @@ SVGRenderer.prototype = {
 			// record current values
 			text.x = textX;
 			text.y = textY;
-		}
+		};
 
 		/**
 		 * Set a box attribute, or defer it if the box is not yet created

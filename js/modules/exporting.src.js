@@ -88,7 +88,7 @@ defaultOptions.exporting = {
 	//scale: 2
 	buttons: {
 		contextButton: {
-			menuClassName: 'highcharts-' + 'contextmenu',
+			menuClassName: 'highcharts-contextmenu',
 			//x: -10,
 			symbol: 'menu',
 			_titleKey: 'contextButtonTitle',
@@ -246,9 +246,9 @@ extend(Chart.prototype, {
 			
 
 		// IE compatibility hack for generating SVG content that it doesn't really understand
-		if (!doc.createElementNS) {
-			doc.createElementNS = function (ns, tagName) {
-				return doc.createElement(tagName);
+		if (!document.createElementNS) {
+			document.createElementNS = function (ns, tagName) {
+				return document.createElement(tagName);
 			};
 		}
 

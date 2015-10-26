@@ -1,12 +1,11 @@
 /**
- * @license Highcharts JS v5.0-dev (2015-10-21)
+ * @license Highcharts JS v5.0-dev (2015-10-26)
  *
  * (c) 2011-2014 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
-
-/*global Highcharts, HighchartsAdapter */
+/* eslint indent: 0 */
 
 (function (H) {
         var Axis = H.Axis,
@@ -302,7 +301,6 @@
             var padding = legend.padding,
                 legendOptions = legend.options,
                 horiz = this.horiz,
-                box,
                 width = pick(legendOptions.symbolWidth, horiz ? 200 : 12),
                 height = pick(legendOptions.symbolHeight, horiz ? 12 : 200),
                 labelPadding = pick(legendOptions.labelPadding, horiz ? 16 : 30),
@@ -319,7 +317,6 @@
             ).attr({
                 zIndex: 1
             }).add(item.legendGroup);
-            box = item.legendSymbol.getBBox();
 
             // Set how much space this legend item takes up
             this.legendItemWidth = width + padding + (horiz ? itemDistance : labelPadding);
@@ -491,7 +488,7 @@
 
         this.colorAxis = [];
         if (colorAxisOptions) {
-            proceed = new ColorAxis(this, colorAxisOptions); // Fake assignment for jsLint
+            new ColorAxis(this, colorAxisOptions); // eslint-disable-line no-new
         }
     });
 
@@ -527,17 +524,14 @@
         return H;
     }(Highcharts));
     (function (H) {
-        var colorPointMixin,
-            colorSeriesMixin,
-
-            each = H.each,
+        var each = H.each,
             noop = H.noop,
             seriesTypes = H.seriesTypes;
 
     /**
      * Mixin for maps and heatmaps
      */
-    colorPointMixin = H.colorPointMixin = {
+    H.colorPointMixin = {
         /**
          * Set the visibility of a single point
          */
@@ -554,7 +548,7 @@
         }
     };
 
-    colorSeriesMixin = H.colorSeriesMixin = {
+    H.colorSeriesMixin = {
         pointArrayMap: ['value'],
         axisTypes: ['xAxis', 'yAxis', 'colorAxis'],
         optionalAxis: 'colorAxis',
@@ -716,4 +710,4 @@
 
         return H;
     }(Highcharts));
-    
+

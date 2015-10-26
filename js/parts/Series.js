@@ -2,7 +2,6 @@
 	var addEvent = H.addEvent,
 		arrayMax = H.arrayMax,
 		arrayMin = H.arrayMin,
-		Color = H.Color, // @todo add as a requirement
 		Date = H.Date,
 		defaultOptions = H.defaultOptions,
 		defaultPlotOptions = H.defaultPlotOptions,

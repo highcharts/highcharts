@@ -103,7 +103,7 @@ H.PlotLineOrBand.prototype = {
 
 
 		// Class
-		attribs['class'] = 'highcharts-plot-' + (isBand ? 'band ' : 'line ') + (options.className || '');
+		attribs.class = 'highcharts-plot-' + (isBand ? 'band ' : 'line ') + (options.className || '');
 
 		// common for lines and bands
 		if (svgElem) {

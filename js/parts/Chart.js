@@ -1403,7 +1403,7 @@ Chart.prototype = {
 		var chart = this;
 
 		// Note: win == win.top is required
-		if ((!hasSVG && (window == window.top && document.readyState !== 'complete')) || (useCanVG && !window.canvg)) { // eslint-disable-line eqeqeq
+		if ((!svg && (window == window.top && document.readyState !== 'complete')) || (useCanVG && !window.canvg)) { // eslint-disable-line eqeqeq
 			if (useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready
 				CanVGController.push(function () {

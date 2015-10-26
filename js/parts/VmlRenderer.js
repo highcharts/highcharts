@@ -1079,7 +1079,7 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
 SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
 	var measuringSpan = document.createElement('span'),
 		offsetWidth,
-		textNode = doc.createTextNode(text);
+		textNode = document.createTextNode(text);
 
 	measuringSpan.appendChild(textNode);
 	css(measuringSpan, styles);

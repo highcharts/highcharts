@@ -1,7 +1,5 @@
 (function (H) {
-	var Color = H.Color,
-		defaultPlotOptions = H.defaultPlotOptions,
-		each = H.each,
+	var defaultPlotOptions = H.defaultPlotOptions,
 		extendClass = H.extendClass,
 		merge = H.merge,
 		noop = H.noop,
