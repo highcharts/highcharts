@@ -6,6 +6,7 @@ globals:
     Highcharts: true
     HighchartsAdapter: true
     hs: true # Highslide
+    QUnit: true
 
 rules:
     eol-last: 0
