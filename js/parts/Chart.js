@@ -388,8 +388,7 @@ Chart.prototype = {
 			options = this.options,
 			xAxisOptions = options.xAxis = splat(options.xAxis || {}),
 			yAxisOptions = options.yAxis = splat(options.yAxis || {}),
-			optionsArray,
-			axis;
+			optionsArray;
 
 		// make sure the options are arrays and add some members
 		each(xAxisOptions, function (axis, i) {
@@ -405,7 +404,7 @@ Chart.prototype = {
 		optionsArray = xAxisOptions.concat(yAxisOptions);
 
 		each(optionsArray, function (axisOptions) {
-			axis = new Axis(chart, axisOptions);
+			new Axis(chart, axisOptions); // eslint-disable-line no-new
 		});
 	},
 
@@ -1403,13 +1402,13 @@ Chart.prototype = {
 	isReadyToRender: function () {
 		var chart = this;
 
-		// Note: in spite of JSLint's complaints, window == window.top is required
-		/*jslint eqeq: true*/
-		if ((!svg && (window == window.top && document.readyState !== 'complete')) || (useCanVG && !window.canvg)) {
-		/*jslint eqeq: false*/
+		// Note: win == win.top is required
+		if ((!hasSVG && (window == window.top && document.readyState !== 'complete')) || (useCanVG && !window.canvg)) { // eslint-disable-line eqeqeq
 			if (useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready
-				CanVGController.push(function () { chart.firstRender(); }, chart.options.global.canvasToolsURL);
+				CanVGController.push(function () {
+					chart.firstRender();
+				}, chart.options.global.canvasToolsURL);
 			} else {
 				document.attachEvent('onreadystatechange', function () {
 					document.detachEvent('onreadystatechange', chart.firstRender);

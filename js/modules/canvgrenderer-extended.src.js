@@ -7,9 +7,6 @@
  * License: www.highcharts.com/license
  */
 
-// JSLint options:
-/*global clearTimeout, Highcharts, setTimeout, window */
-
 (function (Highcharts) { // encapsulate
 	var css = Highcharts.css,
 		CanVGRenderer = Highcharts.CanVGRenderer,
@@ -117,7 +114,11 @@
 				tooltipDiv.innerHTML = args.text;
 
 				// Compute the best position for the tooltip based on the divs size and container size.
-				position = chart.tooltip.getPosition(tooltipDiv.offsetWidth, tooltipDiv.offsetHeight, {plotX: args.x, plotY: args.y});
+				position = chart.tooltip.getPosition(
+					tooltipDiv.offsetWidth, 
+					tooltipDiv.offsetHeight, 
+					{ plotX: args.x, plotY: args.y }
+				);
 
 				css(tooltipDiv, {
 					visibility: 'visible',

@@ -35,7 +35,9 @@ wrap(seriesTypes.pie.prototype, 'translate', function (proceed) {
 
 	z += depth / 2;
 
-	if (seriesOptions.grouping !== false) { z = 0; }
+	if (seriesOptions.grouping !== false) {
+		z = 0;
+	}
 
 	each(series.data, function (point) {
 		var shapeArgs = point.shapeArgs,
@@ -141,45 +143,45 @@ wrap(seriesTypes.pie.prototype, 'animate', function (proceed) {
 
 		if (svg) { // VML is too slow anyway
 				
-				if (animation === true) {
-					animation = {};
+			if (animation === true) {
+				animation = {};
+			}
+			// Initialize the animation
+			if (init) {
+
+				// Scale down the group and place it in the center
+				group.oldtranslateX = group.translateX;
+				group.oldtranslateY = group.translateY;
+				attribs = {
+					translateX: center[0],
+					translateY: center[1],
+					scaleX: 0.001, // #1499
+					scaleY: 0.001
+				};
+
+				group.attr(attribs);
+				if (markerGroup) {
+					markerGroup.attrSetters = group.attrSetters;
+					markerGroup.attr(attribs);
 				}
-				// Initialize the animation
-				if (init) {
 
-					// Scale down the group and place it in the center
-					group.oldtranslateX = group.translateX;
-					group.oldtranslateY = group.translateY;
-					attribs = {
-						translateX: center[0],
-						translateY: center[1],
-						scaleX: 0.001, // #1499
-						scaleY: 0.001
-					};
+			// Run the animation
+			} else {
+				attribs = {
+					translateX: group.oldtranslateX,
+					translateY: group.oldtranslateY,
+					scaleX: 1,
+					scaleY: 1
+				};
+				group.animate(attribs, animation);
 
-					group.attr(attribs);
-					if (markerGroup) {
-						markerGroup.attrSetters = group.attrSetters;
-						markerGroup.attr(attribs);
-					}
-
-				// Run the animation
-				} else {
-					attribs = {
-						translateX: group.oldtranslateX,
-						translateY: group.oldtranslateY,
-						scaleX: 1,
-						scaleY: 1
-					};
-					group.animate(attribs, animation);
-
-					if (markerGroup) {
-						markerGroup.animate(attribs, animation);
-					}
-
-					// Delete this function to allow it only once
-					this.animate = null;
+				if (markerGroup) {
+					markerGroup.animate(attribs, animation);
 				}
+
+				// Delete this function to allow it only once
+				this.animate = null;
+			}
 
 		}
 	}

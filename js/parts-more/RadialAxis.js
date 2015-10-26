@@ -38,7 +38,6 @@ hiddenAxisMixin = {
 /**
  * Augmented methods for the value axis
  */
-/*jslint unparam: true*/
 radialAxisMixin = {
 	isRadial: true,
 
@@ -385,7 +384,6 @@ radialAxisMixin = {
 	}
 
 };
-/*jslint unparam: false*/
 
 /**
  * Override axisProto.init to mix in special axis instance functions and function overrides

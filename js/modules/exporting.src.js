@@ -7,10 +7,8 @@
  * License: www.highcharts.com/license
  */
 
-// JSLint options:
-/*global clearTimeout, Highcharts, HighchartsAdapter, document, window, Math, setTimeout */
-
-(function (Highcharts) { // encapsulate
+/* eslint indent:0 */
+(function (Highcharts) {
 
 // create shortcuts
 var Chart = Highcharts.Chart,
@@ -248,12 +246,10 @@ extend(Chart.prototype, {
 			
 
 		// IE compatibility hack for generating SVG content that it doesn't really understand
-		if (!document.createElementNS) {
-			/*jslint unparam: true*//* allow unused parameter ns in function below */
-			document.createElementNS = function (ns, tagName) {
-				return document.createElement(tagName);
+		if (!doc.createElementNS) {
+			doc.createElementNS = function (ns, tagName) {
+				return doc.createElement(tagName);
 			};
-			/*jslint unparam: false*/
 		}
 
 		// create a sandbox where a new chart will be generated
@@ -355,7 +351,7 @@ extend(Chart.prototype, {
 
 		// IE9 beta bugs with innerHTML. Test again with final IE9.
 		svg = svg.replace(/(url\(#highcharts-[0-9]+)&quot;/g, '$1')
-			.replace(/&quot;/g, "'");
+			.replace(/&quot;/g, '\'');
 
 		return svg;
 	},

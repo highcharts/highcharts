@@ -23,7 +23,6 @@ var seriesProto = Series.prototype,
 	baseGeneratePoints = seriesProto.generatePoints,
 	baseDestroy = seriesProto.destroy,
 	baseTooltipFooterHeaderFormatter = tooltipProto.tooltipFooterHeaderFormatter,
-	NUMBER = 'number',
 
 	commonOptions = {
 		approximation: 'average', // average, open, high, low, close, sum

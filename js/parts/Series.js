@@ -180,7 +180,7 @@ H.Series.prototype = {
 		var series = point.series,
 			args = arguments,
 			fn = typeof i === 'number' ?
-				 // Insert the value in the given position
+				// Insert the value in the given position
 				function (key) {
 					var val = key === 'y' && series.toYData ? series.toYData(point) : point[key];
 					series[key + 'Data'][i] = val;
@@ -1720,7 +1720,7 @@ H.Series.prototype = {
 				axis = series.kdAxisArray[depth % dimensions];
 
 				// sort point array
-				points.sort(function(a, b) {
+				points.sort(function (a, b) {
 					return a[axis] - b[axis];
 				});
 
@@ -1787,7 +1787,7 @@ H.Series.prototype = {
 
 			// End of tree
 			if (tree[sideA]) {
-				nPoint1 =_search(search, tree[sideA], depth + 1, dimensions);
+				nPoint1 = _search(search, tree[sideA], depth + 1, dimensions);
 
 				ret = (nPoint1[kdComparer] < ret[kdComparer] ? nPoint1 : point);
 			}

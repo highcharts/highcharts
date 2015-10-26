@@ -21,14 +21,11 @@
 			// extend the animate function to allow SVG animations
 			var Fx = $.fx;
 
-			/*jslint unparam: true*/
 			$.extend($.easing, {
-				easeOutQuad: function (ignore, t, b, c, d) {
-					t /= d;
-					return -c * t * (t - 2) + b;
+				easeOutQuad: function (x, t, b, c, d) {
+					return -c * (t /= d) * (t - 2) + b;
 				}
 			});
-			/*jslint unparam: false*/
 
 			// extend some methods to check for elem.attr, which means it is a Highcharts SVG object
 			$.each(['cur', '_default', 'width', 'height', 'opacity'], function (i, fn) {
@@ -138,7 +135,7 @@
 					if (options !== undefined) {
 						options.chart = options.chart || {};
 						options.chart.renderTo = this[0];
-						ret = new H[constr](options, args[1]);
+						ret = new Highcharts[constr](options, args[1]);
 						ret = this;
 					}
 
@@ -282,7 +279,6 @@
 			// Wrap preventDefault and stopPropagation in try/catch blocks in
 			// order to prevent JS errors when cancelling events on non-DOM
 			// objects. #615.
-			/*jslint unparam: true*/
 			$.each(['preventDefault', 'stopPropagation'], function (i, fn) {
 				var base = event[fn];
 				event[fn] = function () {
@@ -295,7 +291,6 @@
 					}
 				};
 			});
-			/*jslint unparam: false*/
 
 			// trigger it
 			$(el).trigger(event);

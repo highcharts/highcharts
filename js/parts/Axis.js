@@ -740,7 +740,7 @@ H.Axis.prototype = {
 			}
 		}
 
-		if(minorTickPositions.length !== 0) { // don't change the extremes, when there is no minor ticks
+		if (minorTickPositions.length !== 0) { // don't change the extremes, when there is no minor ticks
 			axis.trimTicks(minorTickPositions, options.startOnTick, options.endOnTick); // #3652 #3743 #1498
 		}
 		return minorTickPositions;
@@ -1611,6 +1611,7 @@ H.Axis.prototype = {
 			css,
 			labelLength = 0,
 			label,
+			bBox,
 			i,
 			pos;
 
@@ -1652,11 +1653,13 @@ H.Axis.prototype = {
 					pos = tickPositions[i];
 					label = ticks[pos].label;
 					if (label) {
+						bBox = label.getBBox();
 						// Reset ellipsis in order to get the correct bounding box (#4070)
 						if (label.styles && label.styles.textOverflow === 'ellipsis') {
 							label.css({ textOverflow: 'clip' });
 						}
-						if (label.getBBox().height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f)) {
+						if (bBox.height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f) ||
+								bBox.width > slotWidth) { // #4678
 							label.specCss = { textOverflow: 'ellipsis' };
 						}
 					}
@@ -1860,8 +1863,9 @@ H.Axis.prototype = {
 			lineWidth *= -1; // crispify the other way - #1480, #1687
 		}
 
-		return chart.renderer.crispLine([
-				'M',
+		return chart.renderer
+			.crispLine([
+				M,
 				horiz ?
 					this.left :
 					lineLeft,
@@ -2014,7 +2018,7 @@ H.Axis.prototype = {
 			if (alternateGridColor) {
 				each(tickPositions, function (pos, i) {
 					to = tickPositions[i + 1] !== undefined ? tickPositions[i + 1] + tickmarkOffset : axis.max - tickmarkOffset; 
-					if (i % 2 === 0 && pos < axis.max && to <= axis.max - tickmarkOffset) { // #2248
+					if (i % 2 === 0 && pos < axis.max && to <= axis.max + (chart.polar ? -tickmarkOffset : tickmarkOffset)) { // #2248, #4660
 						if (!alternateBands[pos]) {
 							alternateBands[pos] = new PlotLineOrBand(axis);
 						}
@@ -2210,9 +2214,7 @@ H.Axis.prototype = {
 			if (!pick(options.snap, true)) {
 				pos = (this.horiz ? e.chartX - this.pos : this.len - e.chartY + this.pos);
 			} else if (defined(point)) {
-				/*jslint eqeq: true*/
 				pos = this.isXAxis ? point.plotX : this.len - point.plotY; // #3834
-				/*jslint eqeq: false*/
 			}
 
 			if (this.isRadial) {

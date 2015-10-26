@@ -120,21 +120,22 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed) {
 		return path;
 	}
 
-	if (path === null) { return path; }
+	if (path === null) {
+		return path;
+	}
 
 	var chart = this.chart,
-		options3d = chart.options.chart.options3d;
-
-	var d = this.isZAxis ? this.chart.plotWidth : options3d.depth,
+		options3d = chart.options.chart.options3d,
+		d = this.isZAxis ? chart.plotWidth : options3d.depth,
 		opposite = this.opposite;
 	if (this.horiz) {
 		opposite = !opposite;
 	}
 	var pArr = [
-		this.swapZ({ x: path[1], y: path[2], z: (opposite ? d : 0)}),
+		this.swapZ({ x: path[1], y: path[2], z: (opposite ? d : 0) }),
 		this.swapZ({ x: path[1], y: path[2], z: d }),
 		this.swapZ({ x: path[4], y: path[5], z: d }),
-		this.swapZ({ x: path[4], y: path[5], z: (opposite ? 0 : d)})
+		this.swapZ({ x: path[4], y: path[5], z: (opposite ? 0 : d) })
 	];
 
 	pArr = perspective(pArr, this.chart, false);
@@ -195,8 +196,8 @@ wrap(Tick.prototype, 'getMarkPath', function (proceed) {
 	}
 
 	var pArr = [
-		this.axis.swapZ({x: path[1], y: path[2], z: 0}),
-		this.axis.swapZ({x: path[4], y: path[5], z: 0})
+		this.axis.swapZ({ x: path[1], y: path[2], z: 0 }),
+		this.axis.swapZ({ x: path[4], y: path[5], z: 0 })
 	];
 
 	pArr = perspective(pArr, this.axis.chart, false);
@@ -215,10 +216,10 @@ wrap(Tick.prototype, 'getLabelPosition', function (proceed) {
 		return pos;
 	}
 
-	var new_pos = perspective([this.axis.swapZ({x: pos.x, y: pos.y, z: 0})], this.axis.chart, false)[0];
-	new_pos.x = new_pos.x - (!this.axis.horiz && this.axis.opposite ? this.axis.transA : 0); //#3788
-	new_pos.old = pos;
-	return new_pos;
+	var newPos = perspective([this.axis.swapZ({ x: pos.x, y: pos.y, z: 0 })], this.axis.chart, false)[0];
+	newPos.x = newPos.x - (!this.axis.horiz && this.axis.opposite ? this.axis.transA : 0); //#3788
+	newPos.old = pos;
+	return newPos;
 });
 
 wrap(Tick.prototype, 'handleOverflow', function (proceed, xy) {
@@ -236,7 +237,7 @@ wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
 		return pos;
 	}
 
-	pos = perspective([this.swapZ({x: pos.x, y: pos.y, z: 0})], this.chart, false)[0];
+	pos = perspective([this.swapZ({ x: pos.x, y: pos.y, z: 0 })], this.chart, false)[0];
 	return pos;
 });
 

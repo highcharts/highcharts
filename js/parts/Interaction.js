@@ -31,7 +31,7 @@ TrackerMixin = H.TrackerMixin = {
 			pointer = chart.pointer,
 			onMouseOver = function (e) {
 				var target = e.target,
-				point;
+					point;
 
 				while (target && !point) {
 					point = target.point;
@@ -60,7 +60,9 @@ TrackerMixin = H.TrackerMixin = {
 					series[key]
 						.addClass('highcharts-tracker')
 						.on('mouseover', onMouseOver)
-						.on('mouseout', function (e) { pointer.onTrackerMouseOut(e); })
+						.on('mouseout', function (e) {
+							pointer.onTrackerMouseOut(e);
+						})
 						.css(css);
 					if (hasTouch) {
 						series[key].on('touchstart', onMouseOver);
@@ -155,7 +157,7 @@ TrackerMixin = H.TrackerMixin = {
 				visibility: series.visible ? 'visible' : 'hidden',
 				stroke: TRACKER_FILL,
 				fill: trackByArea ? TRACKER_FILL : 'none',
-				'stroke-width' : lineWidth + (trackByArea ? 0 : 2 * snap),
+				'stroke-width': lineWidth + (trackByArea ? 0 : 2 * snap),
 				zIndex: 2
 			})
 			.add(series.group);
@@ -264,7 +266,10 @@ extend(Legend.prototype, {
 
 		addEvent(item.checkbox, 'click', function (event) {
 			var target = event.target;
-			fireEvent(item.series || item, 'checkboxClick', { // #3712
+			fireEvent(
+				item.series || item, 
+				'checkboxClick', 
+				{ // #3712
 					checked: target.checked,
 					item: item
 				},
@@ -299,7 +304,11 @@ extend(Chart.prototype, {
 			states = theme.states,
 			alignTo = btnOptions.relativeTo === 'chart' ? null : 'plotBox';
 
-		this.resetZoomButton = chart.renderer.button(lang.resetZoom, null, null, function () { chart.zoomOut(); }, theme, states && states.hover)
+		function zoomOut() {
+			chart.zoomOut();
+		}
+
+		this.resetZoomButton = chart.renderer.button(lang.resetZoom, null, null, zoomOut, theme, states && states.hover)
 			.attr({
 				align: btnOptions.position.align,
 				title: lang.resetZoomTitle
@@ -443,7 +452,7 @@ extend(Point.prototype, {
 						loopPoint.selected = loopPoint.options.selected = false;
 						series.options.data[inArray(loopPoint, series.data)] = loopPoint.options;
 						loopPoint.setState('');
-							loopPoint.firePointEvent('unselect');
+						loopPoint.firePointEvent('unselect');
 					}
 				});
 			}

@@ -6,8 +6,7 @@
  *
  * License: www.highcharts.com/license
  */
-
-/*global Highcharts */
+/* eslint indent:0 */
 (function (Highcharts) {
 	
 'use strict';
@@ -232,13 +231,13 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 				shapeArgs = point.shapeArgs;
 
 			if (!graphic) { // Create the shapes				
-				point.graphic = renderer.path(shapeArgs).
-					attr({
+				point.graphic = renderer.path(shapeArgs)
+					.attr({
 						fill: point.color,
 						stroke: pick(pointOptions.borderColor, options.borderColor),
 						'stroke-width': pick(pointOptions.borderWidth, options.borderWidth)
-					}).
-					add(series.group);
+					})
+					.add(series.group);
 					
 			} else { // Update the shapes
 				graphic.animate(shapeArgs);

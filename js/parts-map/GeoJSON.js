@@ -68,7 +68,7 @@ Chart.prototype.transformToLatLon = function (point, transform) {
 			y: normalized.x * sinAngle + normalized.y * cosAngle
 		} : normalized);
 
-	return {lat: projected.y, lon: projected.x};
+	return { lat: projected.y, lon: projected.x };
 };
 
 Chart.prototype.fromPointToLatLon = function (point) {
@@ -81,12 +81,13 @@ Chart.prototype.fromPointToLatLon = function (point) {
 	}
 
 	for (transform in transforms) {
-		if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone && pointInPolygon({x: point.x, y: -point.y}, transforms[transform].hitZone.coordinates[0])) {
+		if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone && 
+				pointInPolygon({ x: point.x, y: -point.y }, transforms[transform].hitZone.coordinates[0])) {
 			return this.transformToLatLon(point, transforms[transform]);
 		}
 	}
 
-	return this.transformToLatLon(point, transforms['default']);
+	return this.transformToLatLon(point, transforms.default);
 };
 
 Chart.prototype.fromLatLonToPoint = function (latLon) {
@@ -105,13 +106,13 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
 	for (transform in transforms) {
 		if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone) {
 			coords = this.transformFromLatLon(latLon, transforms[transform]);
-			if (pointInPolygon({x: coords.x, y: -coords.y}, transforms[transform].hitZone.coordinates[0])) {
+			if (pointInPolygon({ x: coords.x, y: -coords.y }, transforms[transform].hitZone.coordinates[0])) {
 				return coords;
 			}
 		}
 	}
 
-	return this.transformFromLatLon(latLon, transforms['default']);
+	return this.transformFromLatLon(latLon, transforms.default);
 };
 
 /**

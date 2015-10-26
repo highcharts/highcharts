@@ -1,5 +1,5 @@
 * {
-	font-family: sans-serif;
+    font-family: sans-serif;
 }
 #container {
     border: 1px solid silver;
@@ -13,10 +13,10 @@
     color: gray;
 }
 .highcharts-puzzle-dragging {
-	stroke-dasharray: 2px;
+    stroke-dasharray: 2px;
 }
 .highcharts-puzzle-dropped {
-	stroke: #e0e0e0;
+    stroke: #e0e0e0;
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1">

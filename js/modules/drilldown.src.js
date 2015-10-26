@@ -1,16 +1,14 @@
 /**
- * Highcharts Drilldown plugin
+ * Highcharts Drilldown module
  * 
  * Author: Torstein Honsi
- * License: MIT License
+ * License: www.highcharts.com/license
  *
- * Demo: http://jsfiddle.net/highcharts/Vf3yT/
  */
 
-/*global Highcharts, HighchartsAdapter, setTimeout */
 (function (H) {
 
-	"use strict";
+	'use strict';
 
 	var addAnimSetter = H.addAnimSetter,
 		noop = H.noop,

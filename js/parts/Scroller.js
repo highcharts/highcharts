@@ -12,6 +12,7 @@ var addEvent = H.addEvent,
 	each = H.each,
 	error = H.error,
 	extend = H.extend,
+	grep = H.grep,
 	hasTouch = H.hasTouch,
 	isArray = H.isArray,
 	isObject = H.isObject,
@@ -31,7 +32,9 @@ var addEvent = H.addEvent,
 	// is a pattern that is repeated several places in Highcharts. Consider making this
 	// a global utility method.
 	numExt = function (extreme) {
-		var numbers = HighchartsAdapter.grep(arguments, function (n) { return typeof n === 'number'; });
+		var numbers = grep(arguments, function (n) {
+			return typeof n === 'number';
+		});
 		if (numbers.length) {
 			return Math[extreme].apply(0, numbers);
 		}
@@ -389,7 +392,7 @@ Scroller.prototype = {
 					}).add(navigatorGroup);
 
 				if (navigatorOptions.maskInside) {
-					scroller.leftShade.css({ cursor: 'ew-resize '});
+					scroller.leftShade.css({ cursor: 'ew-resize' });
 				} else {
 					scroller.rightShade = renderer.rect()
 						.attr({
@@ -484,7 +487,7 @@ Scroller.prototype = {
 				navigatorLeft + zoomedMin + halfOutline, outlineTop, // upper left of zoomed range
 				'L',
 				navigatorLeft + zoomedMax - halfOutline, outlineTop // upper right of z.r.
-			] : [])});
+			] : []) });
 			// draw handles
 			scroller.drawHandle(zoomedMin + halfOutline, 0);
 			scroller.drawHandle(zoomedMax + halfOutline, 1);

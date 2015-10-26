@@ -6,4 +6,3 @@
  * License: www.highcharts.com/license
  */
 
-/*global clearInterval, clearTimeout, document, Highcharts, HighchartsAdapter, location, navigator, setInterval, setTimeout, window*/

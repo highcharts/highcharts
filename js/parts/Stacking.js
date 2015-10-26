@@ -65,7 +65,7 @@ StackItem.prototype = {
 
 		// Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
 		if (this.label) {
-			this.label.attr({text: str, visibility: 'hidden'});
+			this.label.attr({ text: str, visibility: 'hidden' });
 		// Create new label
 		} else {
 			this.label =
@@ -377,7 +377,7 @@ Series.prototype.setPercentStacks = function () {
 /**
 * Get stack indicator, according to it's x-value, to determine points with the same x-value
 */
-Series.prototype.getStackIndicator = function(stackIndicator, x, index) {
+Series.prototype.getStackIndicator = function (stackIndicator, x, index) {
 	if (!defined(stackIndicator) || stackIndicator.x !== x) {
 		stackIndicator = {
 			x: x,

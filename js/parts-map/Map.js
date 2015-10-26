@@ -67,7 +67,7 @@ H.splitPath = function (path) {
 	// Move letters apart
 	path = path.replace(/([A-Za-z])/g, ' $1 ');
 	// Trim
-	path = path.replace(/^\s*/, "").replace(/\s*$/, "");
+	path = path.replace(/^\s*/, '').replace(/\s*$/, '');
 
 	// Split on spaces and commas
 	path = path.split(/[ ,,]+/); // Extra comma to escape gulp.scripts task
@@ -153,22 +153,24 @@ H.Map = function (options, callback) {
 	seriesOptions = options.series;
 	options.series = null;
 
-	options = merge({
-		chart: {
-			panning: 'xy',
-			type: 'map'
+	options = merge(
+		{
+			chart: {
+				panning: 'xy',
+				type: 'map'
+			},
+			xAxis: hiddenAxis,
+			yAxis: merge(hiddenAxis, { reversed: true })
 		},
-		xAxis: hiddenAxis,
-		yAxis: merge(hiddenAxis, { reversed: true })
-	},
-	options, // user's options
+		options, // user's options
 
-	{ // forced options
-		chart: {
-			inverted: false,
-			alignTicks: false
+		{ // forced options
+			chart: {
+				inverted: false,
+				alignTicks: false
+			}
 		}
-	});
+	);
 
 	options.series = seriesOptions;
 

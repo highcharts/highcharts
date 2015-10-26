@@ -5,6 +5,5 @@
  *
  * License: www.highcharts.com/license
  */
-
-/*global Highcharts, HighchartsAdapter */
+/* eslint indent: [2, 4] */
 

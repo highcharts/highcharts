@@ -1,53 +1,45 @@
-var //eslint = require('gulp-eslint'),
+/* eslint-env node */
+
+'use strict';
+var eslint = require('gulp-eslint'),
     gulp = require('gulp'),
-    request = require('request'),
-    //argv = require('yargs').argv,
+    // argv = require('yargs').argv,
     fs = require('fs'),
     sass = require('gulp-sass'),
     ftp = require('vinyl-ftp'),
-    //jshint = require('gulp-jshint'),
-    //stylish = require('jshint-stylish'),
-    jslint = require('gulp-jslint'),
-    xml2js = require('xml2js'),
-    /*
-    config = {
-        // List of rules at http://eslint.org/docs/rules/
-        // @todo Add more rules when ready.
-        rules: {
-            "comma-dangle": [2, "never"],
-            "no-cond-assign": [1, "always"]
-        }
-    },
-    */
-    paths = {
-        "buildsDir": "./js/builds",
-        "distributions": [
-            './js/highcharts.src.js', 
-            './js/highmaps.src.js', 
-            './js/highstock.src.js',
-            './js/highcharts-3d.src.js', 
-            './js/highcharts-more.src.js'
-        ],
-        
-        "assemblies": [
-            './js/highcharts-3d.src.js', 
-            './js/highcharts-more.src.js', 
-            './js/highcharts.src.js', 
-            './js/highmaps.src.js', 
-            './js/highstock.src.js',
-            './js/modules/map.src.js',
-            './js/modules/heatmap.src.js'
-        ],
-        "modules": ['./js/modules/*.js'],
-        "parts": ['./js/parts/*.js'],
-        "parts3D": ['./js/parts-3d/*.js'],
-        "partsMap": ['./js/parts-map/*.js'],
-        "partsMore": ['./js/parts-more/*.js'],
-        "themes": ['./js/themes/*.js']
-    };
+    xml2js = require('xml2js');
+
+var paths = {
+    buildsDir: './js/builds',
+    distributions: [
+        './js/highcharts.src.js',
+        './js/highmaps.src.js',
+        './js/highstock.src.js',
+        './js/highcharts-3d.src.js',
+        './js/highcharts-more.src.js'
+    ],
+    assemblies: [
+        './js/highcharts.src.js',
+        './js/highstock.src.js',
+        './js/highcharts-3d.src.js',
+        './js/highcharts-more.src.js',
+        './js/highmaps.src.js',
+        './js/modules/map.src.js',
+        './js/modules/heatmap.src.js'
+    ],
+    modules: ['./js/modules/*.js'],
+    parts: ['./js/parts/*.js'],
+    parts3D: ['./js/parts-3d/*.js'],
+    partsMap: ['./js/parts-map/*.js'],
+    partsMore: ['./js/parts-more/*.js'],
+    themes: ['./js/themes/*.js']
+};
 
 /**
  * Look up in build.xml and concatenate the parts files
+ *
+ * @param {Array} assemblies An array of assembly file names
+ * @returns {Array} A parallel array containing the concatenated files
  */
 function assemble(assemblies) {
 
@@ -55,6 +47,9 @@ function assemble(assemblies) {
         ret = [];
 
     xml2js.parseString(xml, function (err, result) {
+        if (err) {
+            throw err;
+        }
         xml = result;
     });
 
@@ -65,16 +60,16 @@ function assemble(assemblies) {
                     var partsDir = '',
                         tpl = '';
                     if (list.$.id === assembly + '.files') {
-                        if (assembly == 'highchartsmore') {
+                        if (assembly === 'highchartsmore') {
                             partsDir = 'parts-more/';
 
-                        } else if (assembly == 'highmaps') {
+                        } else if (assembly === 'highmaps') {
                             partsDir = '';
-                        } else if (assembly == 'highstock') {
+                        } else if (assembly === 'highstock') {
                             partsDir = '';
                         }
 
-                        if (assembly == 'highcharts3d') {
+                        if (assembly === 'highcharts3d') {
                             partsDir = 'parts-3d/';
                         }
 
@@ -90,20 +85,19 @@ function assemble(assemblies) {
                             tpl += file;
                         });
 
-                        tpl = tpl.replace(/    \n/g, '\n');
+                        tpl = tpl.replace(/ {4}[\r]?\n/g, '\n');
 
                         tpl = tpl.replace(
                             'http://code.highcharts.com@product.cdnpath@/@product.version@/modules/canvas-tools.js',
-                            "http://code.highcharts.com/modules/canvas-tools.js"
+                            'http://code.highcharts.com/modules/canvas-tools.js'
                         );
 
                         ret.push(tpl);
                     }
                 });
-            };
+            }
         });
     });
-    
     return ret;
 }
 
@@ -158,23 +152,6 @@ gulp.task('build', function () {
     buildFiles.forEach(bundleHighcharts);
 });
 
-function doLint(paths) {
-    return gulp.src(paths)
-        .pipe(eslint(config))
-        .pipe(eslint.formatEach())
-        .pipe(eslint.failOnError());
-}
-
-gulp.task('lint', function () {
-    var p = paths,
-        files = argv.path ? p[argv.path] : p.distributions.concat(p.modules, p.parts, p.parts3D, p.partsMap, p.partsMore, p.themes);
-    if (files) {
-        doLint(files);
-    } else {
-        console.log(argv.path + " is not defined in paths.");
-    }
-});
-
 gulp.task('styles', function () {
     var dir = './js/css/';
 
@@ -184,48 +161,36 @@ gulp.task('styles', function () {
 });
 */
 gulp.task('lint', ['scripts'], function () {
-    return gulp.src(paths.distributions.concat(paths.modules))
-        .pipe(jslint({
-            'continue': true,
-            'forin': true,
-            'newcap': true,
-            'nomen': true,
-            'plusplus': true,
-            'regexp': true,
-            'sloppy': true,
-            'todo': true,
-            'vars': true,
-            'white': true,
-            //'unparam': true,
-            //'unused': true,
+    return gulp.src(paths.assemblies.concat(paths.modules))
 
-            //'edition': '2014-07-08',
-            //'edition': '2013-08-13',
-            'reporter': function (evt) {
-                if (!evt.pass) {
-                    console.log('___________________________________________________________________________\nErrors in ' + evt.file + '\n');
-                    evt.errors.forEach(function (err) {
-                        if (err) {
-                            console.log(
-                                err.line + ': ' + err.reason + '\n    ' + 
-                                (err.evidence && err.evidence.replace(/^\s+/, '')) + '\n'
-                            );
-                        }
-                    });
-                }
-            }
-        }));
+        // ESLint config is found in .eslintrc file(s)
+        .pipe(eslint())
+        .pipe(eslint.failOnError())
+        .pipe(eslint.formatEach());
+
+});
+gulp.task('lint-samples', function () {
+    return gulp.src(['./samples/*/*/*/demo.js'])
+
+        // ESLint config is found in .eslintrc file(s)
+        .pipe(eslint())
+        .pipe(eslint.failOnError())
+        .pipe(eslint.formatEach());
+
 });
 
 // Watch changes to CSS files
-gulp.task('default',function () {
-    //gulp.watch('./js/css/*.scss',['styles']);
+gulp.task('default', function () {
+    // gulp.watch('./js/css/*.scss',['styles']);
     gulp.watch('./js/*/*.js', ['scripts']);
 });
 
 
 gulp.task('ftp', function () {
     fs.readFile('./git-ignore-me.properties', 'utf8', function (err, lines) {
+        if (err) {
+            throw err;
+        }
         var config = {};
         lines.split('\n').forEach(function (line) {
             line = line.split('=');
@@ -233,7 +198,7 @@ gulp.task('ftp', function () {
                 config[line[0]] = line[1];
             }
         });
-        
+
         var conn = ftp.create({
             host: config['ftp.host'],
             user: config['ftp.user'],
@@ -263,8 +228,12 @@ gulp.task('scripts', function () {
 
     /**
      * Micro-optimize code based on the build object.
+     *
+     * @param {String} tpl The concatenated JavaScript template to process
+     *
+     * @returns {String} The processed JavaScript
      */
-    function preprocess(tpl, build) {
+    function preprocess(tpl) {
         // Windows newlines
         tpl = tpl.replace(/\r\n/g, '\n');
 
@@ -302,6 +271,14 @@ gulp.task('scripts', function () {
         return tpl;
     }
 
+    /**
+     * Replace function variables with actual product info
+     *
+     * @param {String} tpl The JavaScript template
+     * @param {Object} product An object containing product info
+     *
+     * @returns {String} JavaScript with replaced content
+     */
     function addVersion(tpl, product) {
         return tpl
             .replace(/@product\.name@/g, product.name)
@@ -311,13 +288,18 @@ gulp.task('scripts', function () {
     }
 
 
-    // Parse the build properties files into a structure
+    /**
+     * Parse the build properties files into a structure
+     *
+     * @returns {Object} An object containing product info
+     */
     function getProducts() {
         var lines = fs.readFileSync('./build.properties', 'utf8'),
             products = {};
-            
+
         lines.split('\n').forEach(function (line) {
             var prod, key;
+            line = line.replace(/\r/, '');
             if (line.indexOf('#') !== 0 && line.indexOf('=') !== -1) {
                 line = line.split('=');
                 key = line[0].split('.');
@@ -370,13 +352,13 @@ gulp.task('scripts', function () {
 
     assemblies = assemble(codes);
 
-    
+
     // Loop over the source files
     assemblies.forEach(function (tpl, i) {
         var prod = prods[i],
             path = paths.assemblies[i],
             file;
-        
+
         // Unspecified date, use current
         if (!products[prod].date) {
             products[prod].date = (new Date()).toISOString().substr(0, 10);
@@ -393,16 +375,16 @@ gulp.task('scripts', function () {
                 path,
                 preprocess(tpl, {
                     classic: true
-                }), 
+                }),
                 'utf8'
             );
 
             // Create the unstyled file
             fs.writeFileSync(
-                path.replace('.src.js', '.unstyled.src.js'), 
+                path.replace('.src.js', '.unstyled.src.js'),
                 preprocess(tpl, {
                     classic: false
-                }), 
+                }),
                 'utf8'
             );
         }
@@ -412,14 +394,22 @@ gulp.task('scripts', function () {
     var files = ['./lib/canvg-1.1/rgbcolor.js', './lib/canvg-1.1/canvg.js', './js/modules/canvgrenderer-extended.src.js'],
         js = '';
 
-    function addFile(i, callback) {
+    /**
+     * Add a file to the assembly
+     *
+     * @param {Number} i The index
+     * @param {Function} finished Continue when ready
+     *
+     * @returns {undefined}
+     */
+    function addFile(i, finished) {
         var file = fs.readFileSync(files[i], 'utf8');
 
         js += file;
         if (i + 1 < files.length) {
-            addFile(i + 1, callback);
-        } else if (callback) {
-            callback();
+            addFile(i + 1, finished);
+        } else if (finished) {
+            finished();
         }
     }
 

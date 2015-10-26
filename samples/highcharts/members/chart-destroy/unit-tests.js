@@ -1,10 +1,10 @@
 QUnit.test('Chart destroy', function (assert) {
 
-	var chart = Highcharts.charts[0];
+    var chart = Highcharts.charts[0];
 
-	chart.destroy();
+    chart.destroy();
 
-	assert.strictEqual(
+    assert.strictEqual(
         chart.series,
         undefined,
         'Properties deleted'

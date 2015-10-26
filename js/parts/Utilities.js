@@ -225,7 +225,7 @@ H.createElement = function (tag, attribs, styles, parent, nopad) {
 		H.extend(el, attribs);
 	}
 	if (nopad) {
-		css(el, {padding: 0, border: 'none', margin: 0});
+		css(el, { padding: 0, border: 'none', margin: 0 });
 	}
 	if (styles) {
 		css(el, styles);
@@ -241,10 +241,11 @@ H.createElement = function (tag, attribs, styles, parent, nopad) {
  * @param {Object} parent
  * @param {Object} members
  */
-H.extendClass = function (parent, members) {
-	var object = function () { return undefined; };
-	object.prototype = new parent();
-	H.extend(object.prototype, members);
+function extendClass(Parent, members) {
+	var object = function () {
+	};
+	object.prototype = new Parent();
+	extend(object.prototype, members);
 	return object;
 };
 
@@ -254,11 +255,8 @@ H.extendClass = function (parent, members) {
  * @param {Number} length
  */
 H.pad = function (number, length) {
-	// Create an array of the remaining length +1 and join it with 0's
-	var arr = [];
-	arr.length = (length || 2) + 1 - String(number).length;
-	return arr.join(0) + number;
-};
+	return new Array((length || 2) + 1 - String(number).length).join(0) + number;
+}
 
 /**
  * Return a length based on either the integer value, or a percentage of a base.
@@ -505,17 +503,17 @@ H.stableSort = function (arr, sortFunction) {
 
 	// Add index to each item
 	for (i = 0; i < length; i++) {
-		arr[i].ss_i = i; // stable sort index
+		arr[i].safeI = i; // stable sort index
 	}
 
 	arr.sort(function (a, b) {
 		sortValue = sortFunction(a, b);
-		return sortValue === 0 ? a.ss_i - b.ss_i : sortValue;
+		return sortValue === 0 ? a.safeI - b.safeI : sortValue;
 	});
 
 	// Remove index from items
 	for (i = 0; i < length; i++) {
-		delete arr[i].ss_i; // stable sort index
+		delete arr[i].safeI; // stable sort index
 	}
 };
 
@@ -643,16 +641,12 @@ H.numberFormat = function (number, decimals, decPoint, thousandsSep) {
 				(isNaN(Math.abs(decimals)) ? 2 : Math.abs(decimals)),
 		d = decPoint === undefined ? lang.decimalPoint : decPoint,
 		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
-		s = n < 0 ? "-" : "",
-		i,
-		j;
+		s = n < 0 ? '-' : '',
+		i = String(pInt(n = Math.abs(n).toFixed(c))),
+		j = i.length > 3 ? i.length % 3 : 0;
 
-	n = Math.abs(n).toFixed(c);
-	i = String(H.pInt(n));
-	j = i.length > 3 ? i.length % 3 : 0;
-
-	return (s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
-			(c ? d + Math.abs(n - i).toFixed(c).slice(2) : ""));
+	return (s + (j ? i.substr(0, j) + t : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + t) +
+			(c ? d + Math.abs(n - i).toFixed(c).slice(2) : ''));
 };
 
 	return H;

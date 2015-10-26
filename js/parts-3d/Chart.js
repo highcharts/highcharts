@@ -100,7 +100,7 @@ Chart.prototype.retrieveStacks = function (stacking) {
 	each(this.series, function (s) {
 		stackNumber = stacking ? (s.options.stack || 0) : series.length - 1 - s.index; // #3841
 		if (!stacks[stackNumber]) {
-			stacks[stackNumber] = { series: [s], position: i};
+			stacks[stackNumber] = { series: [s], position: i };
 			i++;
 		} else {
 			stacks[stackNumber].series.push(s);

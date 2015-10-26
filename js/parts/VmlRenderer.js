@@ -541,7 +541,7 @@ VMLRendererExtension = { // inherit SVGRenderer
 		renderer.alignedObjects = [];
 
 		boxWrapper = renderer.createElement('div')
-			.css(extend(this.getStyle(style), { position: 'relative'}));
+			.css(extend(this.getStyle(style), { position: 'relative' }));
 		box = boxWrapper.element;
 		container.appendChild(boxWrapper.element);
 
@@ -1079,7 +1079,7 @@ VMLRenderer.prototype = merge(SVGRenderer.prototype, VMLRendererExtension);
 SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
 	var measuringSpan = document.createElement('span'),
 		offsetWidth,
-	textNode = document.createTextNode(text);
+		textNode = doc.createTextNode(text);
 
 	measuringSpan.appendChild(textNode);
 	css(measuringSpan, styles);
