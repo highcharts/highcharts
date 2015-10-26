@@ -398,8 +398,13 @@ RangeSelector.prototype = {
 			this[name + 'Input'].HCTime = time;
 		}
 
-		this[name + 'Input'].value = dateFormat(options.inputEditDateFormat || '%Y-%m-%d', this[name + 'Input'].HCTime);
-		this[name + 'DateBox'].attr({ text: dateFormat(options.inputDateFormat || '%b %e, %Y', this[name + 'Input'].HCTime) });
+		this[name + 'Input'].value = dateFormat(
+			options.inputEditDateFormat || '%Y-%m-%d',
+			this[name + 'Input'].HCTime
+		);
+		this[name + 'DateBox'].attr({
+			text: dateFormat(options.inputDateFormat || '%b %e, %Y', this[name + 'Input'].HCTime)
+		});
 	},
 
 	showInput: function (name) {
