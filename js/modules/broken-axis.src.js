@@ -8,7 +8,7 @@
 
 (function (H) {	
 
-	"use strict";
+	'use strict';
 
 	var pick = H.pick,
 		wrap = H.wrap,
@@ -304,12 +304,12 @@
 					eventName = false;
 
 					if ((threshold < brk.from && y > brk.to) || (threshold > brk.from && y < brk.from)) { 
-							eventName = 'pointBreak';
+						eventName = 'pointBreak';
 					} else if ((threshold < brk.from && y > brk.from && y < brk.to) || (threshold > brk.from && y > brk.to && y < brk.from)) { // point falls inside the break
-							eventName = 'pointInBreak'; // docs
+						eventName = 'pointInBreak'; // docs
 					} 
 					if (eventName) {
-						fireEvent(axis, eventName, {point: point, brk: brk});
+						fireEvent(axis, eventName, { point: point, brk: brk });
 					}
 				});
 			});

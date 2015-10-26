@@ -1,6 +1,6 @@
 function test(chart) {
 
-	chart.getSVG = function () {
-		return chart.container.innerHTML;
-	};
+    chart.getSVG = function () {
+        return chart.container.innerHTML;
+    };
 }

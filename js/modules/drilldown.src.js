@@ -1,15 +1,14 @@
 /**
- * Highcharts Drilldown plugin
+ * Highcharts Drilldown module
  * 
  * Author: Torstein Honsi
- * License: MIT License
+ * License: www.highcharts.com/license
  *
- * Demo: http://jsfiddle.net/highcharts/Vf3yT/
  */
 
 (function (H) {
 
-	"use strict";
+	'use strict';
 
 	var noop = function () {},
 		defaultOptions = H.getOptions(),

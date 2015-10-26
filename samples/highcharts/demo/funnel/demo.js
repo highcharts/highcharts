@@ -31,11 +31,11 @@ $(function () {
         series: [{
             name: 'Unique users',
             data: [
-                ['Website visits',   15654],
-                ['Downloads',       4064],
+                ['Website visits', 15654],
+                ['Downloads', 4064],
                 ['Requested price list', 1987],
-                ['Invoice sent',    976],
-                ['Finalized',    846]
+                ['Invoice sent', 976],
+                ['Finalized', 846]
             ]
         }]
     });

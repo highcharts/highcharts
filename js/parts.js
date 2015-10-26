@@ -1,4 +1,3 @@
-/*jslint node: true, white: true */
 'use strict';
 var HighchartsConfig = {
 	"version": [{

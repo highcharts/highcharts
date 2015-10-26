@@ -18,12 +18,12 @@ $(document).ready(function () {
     MapSeriesData.push(MapSeries1);
 
     $('#container').highcharts('Map', {
-    	title: {
-    		text: 'Highmaps combined with 3D module'
-    	},
-    	subtitle: {
-    		text: 'United States got null color'
-    	},
+        title: {
+            text: 'Highmaps combined with 3D module'
+        },
+        subtitle: {
+            text: 'United States got null color'
+        },
         plotOptions: {
             series: {
                 showEmpty: false,

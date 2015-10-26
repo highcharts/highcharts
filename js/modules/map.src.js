@@ -1,12 +1,12 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-10-22)
+ * @license Highmaps JS v1.1.9-modified (2015-10-25)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2014 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
-
+/* eslint indent: [2, 4] */
 (function (Highcharts) {
 
 
@@ -611,7 +611,7 @@
 
         this.colorAxis = [];
         if (colorAxisOptions) {
-            proceed = new ColorAxis(this, colorAxisOptions); // Fake assignment for jsLint
+            new ColorAxis(this, colorAxisOptions); // eslint-disable-line no-new
         }
     });
 
@@ -642,7 +642,8 @@
         }
 
         return allItems.concat(proceed.call(this));
-    });/**
+    });
+    /**
      * Mixin for maps and heatmaps
      */
     var colorPointMixin = {
@@ -699,6 +700,7 @@
             });
         }
     };
+
     // Add events to the Chart object itself
     extend(Chart.prototype, {
         renderMapNavigation: function () {
@@ -890,6 +892,7 @@
             });
         }
     });
+
 
     // Extend the Pointer
     extend(Pointer.prototype, {
@@ -1686,6 +1689,7 @@
     }));
 
 
+
     // The mapline series type
     defaultPlotOptions.mapline = merge(defaultPlotOptions.map, {
         lineWidth: 1,
@@ -1701,6 +1705,7 @@
         },
         drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
     });
+
 
     // The mappoint series type
     defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
@@ -1730,6 +1735,7 @@
             }
         })
     });
+
 
     // The mapbubble series type
     if (seriesTypes.bubble) {
@@ -1942,7 +1948,7 @@
                 y: normalized.x * sinAngle + normalized.y * cosAngle
             } : normalized);
 
-        return {lat: projected.y, lon: projected.x};
+        return { lat: projected.y, lon: projected.x };
     };
 
     Chart.prototype.fromPointToLatLon = function (point) {
@@ -1955,7 +1961,8 @@
         }
 
         for (transform in transforms) {
-            if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone && pointInPolygon({x: point.x, y: -point.y}, transforms[transform].hitZone.coordinates[0])) {
+            if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone && 
+                    pointInPolygon({ x: point.x, y: -point.y }, transforms[transform].hitZone.coordinates[0])) {
                 return this.transformToLatLon(point, transforms[transform]);
             }
         }
@@ -1979,7 +1986,7 @@
         for (transform in transforms) {
             if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone) {
                 coords = this.transformFromLatLon(latLon, transforms[transform]);
-                if (pointInPolygon({x: coords.x, y: -coords.y}, transforms[transform].hitZone.coordinates[0])) {
+                if (pointInPolygon({ x: coords.x, y: -coords.y }, transforms[transform].hitZone.coordinates[0])) {
                     return coords;
                 }
             }
@@ -2091,6 +2098,7 @@
         }
     });
 
+
     // Add language
     extend(defaultOptions.lang, {
         zoomIn: 'Zoom in',
@@ -2149,7 +2157,7 @@
         // Move letters apart
         path = path.replace(/([A-Za-z])/g, ' $1 ');
         // Trim
-        path = path.replace(/^\s*/, "").replace(/\s*$/, "");
+        path = path.replace(/^\s*/, '').replace(/\s*$/, '');
 
         // Split on spaces and commas
         path = path.split(/[ ,]+/);
@@ -2235,22 +2243,24 @@
         seriesOptions = options.series;
         options.series = null;
 
-        options = merge({
-            chart: {
-                panning: 'xy',
-                type: 'map'
+        options = merge(
+            {
+                chart: {
+                    panning: 'xy',
+                    type: 'map'
+                },
+                xAxis: hiddenAxis,
+                yAxis: merge(hiddenAxis, { reversed: true })
             },
-            xAxis: hiddenAxis,
-            yAxis: merge(hiddenAxis, { reversed: true })
-        },
-        options, // user's options
+            options, // user's options
 
-        { // forced options
-            chart: {
-                inverted: false,
-                alignTicks: false
+            { // forced options
+                chart: {
+                    inverted: false,
+                    alignTicks: false
+                }
             }
-        });
+        );
 
         options.series = seriesOptions;
 

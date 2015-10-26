@@ -75,5 +75,4 @@ extend(Pane.prototype, {
 		to: Number.MAX_VALUE, // corrected to axis max
 		outerRadius: '105%'
 	}
-
 });

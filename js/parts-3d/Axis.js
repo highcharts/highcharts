@@ -119,10 +119,10 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed)
 		opposite = !opposite;
 	}
 	var pArr = [
-		this.swapZ({ x: path[1], y: path[2], z: (opposite ? d : 0)}),
+		this.swapZ({ x: path[1], y: path[2], z: (opposite ? d : 0) }),
 		this.swapZ({ x: path[1], y: path[2], z: d }),
 		this.swapZ({ x: path[4], y: path[5], z: d }),
-		this.swapZ({ x: path[4], y: path[5], z: (opposite ? 0 : d)})
+		this.swapZ({ x: path[4], y: path[5], z: (opposite ? 0 : d) })
 	];
 
 	pArr = perspective(pArr, this.chart, false);
@@ -183,8 +183,8 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getMarkPath', function (proceed) {
 	}
 
 	var pArr = [
-		this.axis.swapZ({x: path[1], y: path[2], z: 0}),
-		this.axis.swapZ({x: path[4], y: path[5], z: 0})
+		this.axis.swapZ({ x: path[1], y: path[2], z: 0 }),
+		this.axis.swapZ({ x: path[4], y: path[5], z: 0 })
 	];
 
 	pArr = perspective(pArr, this.axis.chart, false);
@@ -203,7 +203,7 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getLabelPosition', function (proceed
 		return pos;
 	}
 
-	var newPos = perspective([this.axis.swapZ({x: pos.x, y: pos.y, z: 0})], this.axis.chart, false)[0];
+	var newPos = perspective([this.axis.swapZ({ x: pos.x, y: pos.y, z: 0 })], this.axis.chart, false)[0];
 	newPos.x = newPos.x - (!this.axis.horiz && this.axis.opposite ? this.axis.transA : 0); //#3788
 	newPos.old = pos;
 	return newPos;
@@ -224,7 +224,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getTitlePosition', function (proceed
 		return pos;
 	}
 
-	pos = perspective([this.swapZ({x: pos.x, y: pos.y, z: 0})], this.chart, false)[0];
+	pos = perspective([this.swapZ({ x: pos.x, y: pos.y, z: 0 })], this.chart, false)[0];
 	return pos;
 });
 

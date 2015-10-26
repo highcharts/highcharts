@@ -63,7 +63,8 @@ SVGElement.prototype = {
 			radialReference,
 			n,
 			id,
-			key = [];
+			key = [],
+			value;
 
 		// Apply linear or radial gradients
 		if (color.linearGradient) {
@@ -147,8 +148,14 @@ SVGElement.prototype = {
 			}
 
 			// Set the reference to the gradient object
-			elem.setAttribute(prop, 'url(' + renderer.url + '#' + id + ')');
+			value = 'url(' + renderer.url + '#' + id + ')';
+			elem.setAttribute(prop, value);
 			elem.gradient = key;
+
+			// Allow the color to be concatenated into tooltips formatters etc. (#2995)
+			color.toString = function () {
+				return value;
+			};
 		}
 	},
 
@@ -705,6 +712,8 @@ SVGElement.prototype = {
 			textShadow,
 			elemStyle = element.style,
 			toggleTextShadowShim,
+			cache = renderer.cache,
+			cacheKeys = renderer.cacheKeys,
 			cacheKey;
 
 		if (textStr !== UNDEFINED) {
@@ -725,7 +734,7 @@ SVGElement.prototype = {
 		}
 
 		if (cacheKey && !reload) {
-			bBox = renderer.cache[cacheKey];
+			bBox = cache[cacheKey];
 		}
 
 		// No cache found
@@ -752,14 +761,14 @@ SVGElement.prototype = {
 					}
 
 					bBox = element.getBBox ?
-							// SVG: use extend because IE9 is not allowed to change width and height in case
-							// of rotation (below)
-							extend({}, element.getBBox()) :
-							// Canvas renderer and legacy IE in export mode
-							{
-								width: element.offsetWidth,
-								height: element.offsetHeight
-							};
+						// SVG: use extend because IE9 is not allowed to change width and height in case
+						// of rotation (below)
+						extend({}, element.getBBox()) :
+						// Canvas renderer and legacy IE in export mode
+						{
+							width: element.offsetWidth,
+							height: element.offsetHeight	
+						};
 
 					// #3842
 					if (textShadow) {
@@ -803,7 +812,16 @@ SVGElement.prototype = {
 
 			// Cache it
 			if (cacheKey) {
-				renderer.cache[cacheKey] = bBox;
+
+				// Rotate (#4681)
+				while (cacheKeys.length > 250) {
+					delete cache[cacheKeys.shift()];
+				}
+
+				if (!cache[cacheKey]) {
+					cacheKeys.push(cacheKey);
+				}
+				cache[cacheKey] = bBox;
 			}
 		}
 		return bBox;
@@ -1167,9 +1185,9 @@ SVGElement.prototype.yGetter = SVGElement.prototype.xGetter;
 SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter =
 		SVGElement.prototype.rotationSetter = SVGElement.prototype.verticalAlignSetter =
 		SVGElement.prototype.scaleXSetter = SVGElement.prototype.scaleYSetter = function (value, key) {
-		this[key] = value;
-		this.doTransform = true;
-	};
+			this[key] = value;
+			this.doTransform = true;
+		};
 
 // WebKit and Batik have problems with a stroke-width of zero, so in this case we remove the
 // stroke attribute altogether. #1270, #1369, #3065, #3072.
@@ -1248,6 +1266,7 @@ SVGRenderer.prototype = {
 		renderer.forExport = forExport;
 		renderer.gradients = {}; // Object where gradient SvgElements are stored
 		renderer.cache = {}; // Cache for numerical bounding boxes
+		renderer.cacheKeys = [];
 
 		renderer.setSize(width, height, false);
 
@@ -1791,13 +1810,7 @@ SVGRenderer.prototype = {
 	 * @param {Number} r The radius
 	 */
 	circle: function (x, y, r) {
-		var attr = isObject(x) ?
-					x :
-					{
-						x: x,
-						y: y,
-						r: r
-					},
+		var attr = isObject(x) ? x : { x: x, y: y, r: r },
 			wrapper = this.createElement('circle');
 
 		wrapper.xSetter = function (value) {
@@ -2311,7 +2324,7 @@ SVGRenderer.prototype = {
 		fontSize = fontSize || this.style.fontSize;
 		if (!fontSize && elem && win.getComputedStyle) {
 			elem = elem.element || elem; // SVGElement
-			style = win.getComputedStyle(elem, "");
+			style = win.getComputedStyle(elem, '');
 			fontSize = style && style.fontSize; // #4309, the style doesn't exist inside a hidden iframe in Firefox
 		}
 		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
@@ -2377,14 +2390,17 @@ SVGRenderer.prototype = {
 			crispAdjust = 0,
 			deferredAttr = {},
 			baselineOffset,
-			needsBox;
+			needsBox,
+			updateBoxSize,
+			updateTextPadding,
+			boxAttr;
 
 		/**
 		 * This function runs after the label is added to the DOM (when the bounding box is
 		 * available), and after the text of the label is updated to detect the new bounding
 		 * box and reflect it in the border box.
 		 */
-		function updateBoxSize() {
+		updateBoxSize = function () {
 			var boxX,
 				boxY,
 				style = text.element.style;
@@ -2424,12 +2440,12 @@ SVGRenderer.prototype = {
 				}
 				deferredAttr = null;
 			}
-		}
+		};
 
 		/**
 		 * This function runs after setting text or padding, but only if padding is changed
 		 */
-		function updateTextPadding() {
+		updateTextPadding = function () {
 			var styles = wrapper.styles,
 				textAlign = styles && styles.textAlign,
 				x = paddingLeft + padding,
@@ -2454,20 +2470,20 @@ SVGRenderer.prototype = {
 			// record current values
 			text.x = x;
 			text.y = y;
-		}
+		};
 
 		/**
 		 * Set a box attribute, or defer it if the box is not yet created
 		 * @param {Object} key
 		 * @param {Object} value
 		 */
-		function boxAttr(key, value) {
+		boxAttr = function (key, value) {
 			if (box) {
 				box.attr(key, value);
 			} else {
 				deferredAttr[key] = value;
 			}
-		}
+		};
 
 		/**
 		 * After the text element is added, get the desired size of the border box

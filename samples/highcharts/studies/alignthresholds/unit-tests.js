@@ -1,7 +1,7 @@
 QUnit.test('alignThreshold', function (assert) {
-	var chart;
+    var chart;
 
-	$('#container').highcharts({
+    $('#container').highcharts({
         chart: {
             alignThresholds: true,
             type: 'area'
@@ -26,11 +26,11 @@ QUnit.test('alignThreshold', function (assert) {
         }]
     });
 
-	chart = $('#container').highcharts();
+    chart = $('#container').highcharts();
     assert.equal(
-    	chart.yAxis[0].tickPositions.indexOf(0),
-    	chart.yAxis[1].tickPositions.indexOf(0),
-    	'Same threshold position'
+        chart.yAxis[0].tickPositions.indexOf(0),
+        chart.yAxis[1].tickPositions.indexOf(0),
+        'Same threshold position'
     );
 
 
@@ -60,11 +60,11 @@ QUnit.test('alignThreshold', function (assert) {
         }]
     });
 
-	chart = $('#container').highcharts();
+    chart = $('#container').highcharts();
     assert.equal(
-    	chart.yAxis[0].tickPositions.indexOf(0),
-    	chart.yAxis[1].tickPositions.indexOf(0),
-    	'Same threshold position'
+        chart.yAxis[0].tickPositions.indexOf(0),
+        chart.yAxis[1].tickPositions.indexOf(0),
+        'Same threshold position'
     );
 
 
@@ -93,11 +93,11 @@ QUnit.test('alignThreshold', function (assert) {
         }]
     });
 
-	chart = $('#container').highcharts();
+    chart = $('#container').highcharts();
     assert.equal(
-    	chart.yAxis[0].tickPositions.indexOf(0),
-    	chart.yAxis[1].tickPositions.indexOf(0),
-    	'Same threshold position'
+        chart.yAxis[0].tickPositions.indexOf(0),
+        chart.yAxis[1].tickPositions.indexOf(0),
+        'Same threshold position'
     );*/
 
 });

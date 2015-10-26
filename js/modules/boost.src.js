@@ -43,12 +43,12 @@
  *   use optimizations.
  */
 
+/* eslint indent: [2, 4] */
 (function (H, HA) {
 
     'use strict';
 
-    var noop = function () {
-        },
+    var noop = function () {},
         Color = H.Color,
         Series = H.Series,
         seriesTypes = H.seriesTypes,

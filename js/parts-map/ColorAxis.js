@@ -469,7 +469,7 @@ wrap(Chart.prototype, 'getAxes', function (proceed) {
 
 	this.colorAxis = [];
 	if (colorAxisOptions) {
-		proceed = new ColorAxis(this, colorAxisOptions); // Fake assignment for jsLint
+		new ColorAxis(this, colorAxisOptions); // eslint-disable-line no-new
 	}
 });
 

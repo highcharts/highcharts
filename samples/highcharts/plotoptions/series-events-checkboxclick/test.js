@@ -1,3 +1,3 @@
 function test(chart) {
-	$('#container input').click();
+    $('#container input').click();
 }

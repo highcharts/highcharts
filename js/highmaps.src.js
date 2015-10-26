@@ -344,7 +344,7 @@
             extend(el, attribs);
         }
         if (nopad) {
-            css(el, {padding: 0, border: NONE, margin: 0});
+            css(el, { padding: 0, border: 'none', margin: 0 });
         }
         if (styles) {
             css(el, styles);
@@ -753,12 +753,12 @@
                     (isNaN(decimals = Math.abs(decimals)) ? 2 : decimals),
             d = decPoint === undefined ? lang.decimalPoint : decPoint,
             t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
-            s = n < 0 ? "-" : "",
+            s = n < 0 ? '-' : '',
             i = String(pInt(n = mathAbs(n).toFixed(c))),
             j = i.length > 3 ? i.length % 3 : 0;
 
-        return (s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
-                (c ? d + mathAbs(n - i).toFixed(c).slice(2) : ""));
+        return (s + (j ? i.substr(0, j) + t : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + t) +
+                (c ? d + mathAbs(n - i).toFixed(c).slice(2) : ''));
     };
     /**
      * Path interpolation algorithm used across adapters
@@ -870,13 +870,11 @@
                 // extend the animate function to allow SVG animations
                 var Fx = $.fx;
 
-                /*jslint unparam: true*//* allow unused param x in this function */
                 $.extend($.easing, {
                     easeOutQuad: function (x, t, b, c, d) {
                         return -c * (t /= d) * (t - 2) + b;
                     }
                 });
-                /*jslint unparam: false*/
 
                 // extend some methods to check for elem.attr, which means it is a Highcharts SVG object
                 $.each(['cur', '_default', 'width', 'height', 'opacity'], function (i, fn) {
@@ -1130,7 +1128,6 @@
                 // Wrap preventDefault and stopPropagation in try/catch blocks in
                 // order to prevent JS errors when cancelling events on non-DOM
                 // objects. #615.
-                /*jslint unparam: true*/
                 $.each(['preventDefault', 'stopPropagation'], function (i, fn) {
                     var base = event[fn];
                     event[fn] = function () {
@@ -1143,7 +1140,6 @@
                         }
                     };
                 });
-                /*jslint unparam: false*/
 
                 // trigger it
                 $(el).trigger(event);
@@ -1849,7 +1845,8 @@
                 radialReference,
                 n,
                 id,
-                key = [];
+                key = [],
+                value;
 
             // Apply linear or radial gradients
             if (color.linearGradient) {
@@ -1933,8 +1930,14 @@
                 }
 
                 // Set the reference to the gradient object
-                elem.setAttribute(prop, 'url(' + renderer.url + '#' + id + ')');
+                value = 'url(' + renderer.url + '#' + id + ')';
+                elem.setAttribute(prop, value);
                 elem.gradient = key;
+
+                // Allow the color to be concatenated into tooltips formatters etc. (#2995)
+                color.toString = function () {
+                    return value;
+                };
             }
         },
 
@@ -2491,6 +2494,8 @@
                 textShadow,
                 elemStyle = element.style,
                 toggleTextShadowShim,
+                cache = renderer.cache,
+                cacheKeys = renderer.cacheKeys,
                 cacheKey;
 
             if (textStr !== UNDEFINED) {
@@ -2511,7 +2516,7 @@
             }
 
             if (cacheKey && !reload) {
-                bBox = renderer.cache[cacheKey];
+                bBox = cache[cacheKey];
             }
 
             // No cache found
@@ -2538,14 +2543,14 @@
                         }
 
                         bBox = element.getBBox ?
-                                // SVG: use extend because IE9 is not allowed to change width and height in case
-                                // of rotation (below)
-                                extend({}, element.getBBox()) :
-                                // Canvas renderer and legacy IE in export mode
-                                {
-                                    width: element.offsetWidth,
-                                    height: element.offsetHeight
-                                };
+                            // SVG: use extend because IE9 is not allowed to change width and height in case
+                            // of rotation (below)
+                            extend({}, element.getBBox()) :
+                            // Canvas renderer and legacy IE in export mode
+                            {
+                                width: element.offsetWidth,
+                                height: element.offsetHeight
+                            };
 
                         // #3842
                         if (textShadow) {
@@ -2589,7 +2594,16 @@
 
                 // Cache it
                 if (cacheKey) {
-                    renderer.cache[cacheKey] = bBox;
+
+                    // Rotate (#4681)
+                    while (cacheKeys.length > 250) {
+                        delete cache[cacheKeys.shift()];
+                    }
+
+                    if (!cache[cacheKey]) {
+                        cacheKeys.push(cacheKey);
+                    }
+                    cache[cacheKey] = bBox;
                 }
             }
             return bBox;
@@ -2953,9 +2967,9 @@
     SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter =
             SVGElement.prototype.rotationSetter = SVGElement.prototype.verticalAlignSetter =
             SVGElement.prototype.scaleXSetter = SVGElement.prototype.scaleYSetter = function (value, key) {
-            this[key] = value;
-            this.doTransform = true;
-        };
+                this[key] = value;
+                this.doTransform = true;
+            };
 
     // WebKit and Batik have problems with a stroke-width of zero, so in this case we remove the
     // stroke attribute altogether. #1270, #1369, #3065, #3072.
@@ -3034,6 +3048,7 @@
             renderer.forExport = forExport;
             renderer.gradients = {}; // Object where gradient SvgElements are stored
             renderer.cache = {}; // Cache for numerical bounding boxes
+            renderer.cacheKeys = [];
 
             renderer.setSize(width, height, false);
 
@@ -3577,13 +3592,7 @@
          * @param {Number} r The radius
          */
         circle: function (x, y, r) {
-            var attr = isObject(x) ?
-                        x :
-                        {
-                            x: x,
-                            y: y,
-                            r: r
-                        },
+            var attr = isObject(x) ? x : { x: x, y: y, r: r },
                 wrapper = this.createElement('circle');
 
             wrapper.xSetter = function (value) {
@@ -4097,7 +4106,7 @@
             fontSize = fontSize || this.style.fontSize;
             if (!fontSize && elem && win.getComputedStyle) {
                 elem = elem.element || elem; // SVGElement
-                style = win.getComputedStyle(elem, "");
+                style = win.getComputedStyle(elem, '');
                 fontSize = style && style.fontSize; // #4309, the style doesn't exist inside a hidden iframe in Firefox
             }
             fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
@@ -4163,14 +4172,17 @@
                 crispAdjust = 0,
                 deferredAttr = {},
                 baselineOffset,
-                needsBox;
+                needsBox,
+                updateBoxSize,
+                updateTextPadding,
+                boxAttr;
 
             /**
              * This function runs after the label is added to the DOM (when the bounding box is
              * available), and after the text of the label is updated to detect the new bounding
              * box and reflect it in the border box.
              */
-            function updateBoxSize() {
+            updateBoxSize = function () {
                 var boxX,
                     boxY,
                     style = text.element.style;
@@ -4210,12 +4222,12 @@
                     }
                     deferredAttr = null;
                 }
-            }
+            };
 
             /**
              * This function runs after setting text or padding, but only if padding is changed
              */
-            function updateTextPadding() {
+            updateTextPadding = function () {
                 var styles = wrapper.styles,
                     textAlign = styles && styles.textAlign,
                     x = paddingLeft + padding,
@@ -4240,20 +4252,20 @@
                 // record current values
                 text.x = x;
                 text.y = y;
-            }
+            };
 
             /**
              * Set a box attribute, or defer it if the box is not yet created
              * @param {Object} key
              * @param {Object} value
              */
-            function boxAttr(key, value) {
+            boxAttr = function (key, value) {
                 if (box) {
                     box.attr(key, value);
                 } else {
                     deferredAttr[key] = value;
                 }
-            }
+            };
 
             /**
              * After the text element is added, get the desired size of the border box
@@ -4562,7 +4574,7 @@
 
                 // force reflow in webkit to apply the left and top on useHTML element (#1249)
                 if (isWebKit) {
-                    baseline = elem.offsetHeight; // assigned to baseline for JSLint purpose
+                    baseline = elem.offsetHeight; // assigned to baseline for lint purpose
                 }
 
                 // record current text transform
@@ -4733,6 +4745,7 @@
             return wrapper;
         }
     });
+
 
     /* ****************************************************************************
      *                                                                            *
@@ -5248,7 +5261,7 @@
             renderer.alignedObjects = [];
 
             boxWrapper = renderer.createElement(DIV)
-                .css(extend(this.getStyle(style), { position: RELATIVE}));
+                .css(extend(this.getStyle(style), { position: 'relative' }));
             box = boxWrapper.element;
             container.appendChild(boxWrapper.element);
 
@@ -5786,7 +5799,7 @@
     SVGRenderer.prototype.measureSpanWidth = function (text, styles) {
         var measuringSpan = doc.createElement('span'),
             offsetWidth,
-        textNode = doc.createTextNode(text);
+            textNode = doc.createTextNode(text);
 
         measuringSpan.appendChild(textNode);
         css(measuringSpan, styles);
@@ -7827,6 +7840,7 @@
                 css,
                 labelLength = 0,
                 label,
+                bBox,
                 i,
                 pos;
 
@@ -7868,11 +7882,13 @@
                         pos = tickPositions[i];
                         label = ticks[pos].label;
                         if (label) {
+                            bBox = label.getBBox();
                             // Reset ellipsis in order to get the correct bounding box (#4070)
                             if (label.styles.textOverflow === 'ellipsis') {
                                 label.css({ textOverflow: 'clip' });
                             }
-                            if (label.getBBox().height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f)) {
+                            if (bBox.height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f) ||
+                                    bBox.width > slotWidth) { // #4678
                                 label.specCss = { textOverflow: 'ellipsis' };
                             }
                         }
@@ -8074,7 +8090,8 @@
                 lineWidth *= -1; // crispify the other way - #1480, #1687
             }
 
-            return chart.renderer.crispLine([
+            return chart.renderer
+                .crispLine([
                     M,
                     horiz ?
                         this.left :
@@ -8423,9 +8440,7 @@
                 if (!pick(options.snap, true)) {
                     pos = (this.horiz ? e.chartX - this.pos : this.len - e.chartY + this.pos);
                 } else if (defined(point)) {
-                    /*jslint eqeq: true*/
                     pos = this.isXAxis ? point.plotX : this.len - point.plotY; // #3834
-                    /*jslint eqeq: false*/
                 }
 
                 if (this.isRadial) {
@@ -11302,7 +11317,7 @@
             optionsArray = xAxisOptions.concat(yAxisOptions);
 
             each(optionsArray, function (axisOptions) {
-                new Axis(chart, axisOptions);
+                new Axis(chart, axisOptions); // eslint-disable-line no-new
             });
         },
 
@@ -12255,7 +12270,7 @@
         isReadyToRender: function () {
             var chart = this;
 
-            // Note: in spite of JSLint's complaints, win == win.top is required
+            // Note: win == win.top is required
             if ((!hasSVG && (win == win.top && doc.readyState !== 'complete')) || (useCanVG && !win.canvg)) { // eslint-disable-line eqeqeq
                 if (useCanVG) {
                     // Delay rendering until canvg library is downloaded and ready
@@ -12764,7 +12779,7 @@
             var series = point.series,
                 args = arguments,
                 fn = typeof i === 'number' ?
-                     // Insert the value in the given position
+                    // Insert the value in the given position
                     function (key) {
                         var val = key === 'y' && series.toYData ? series.toYData(point) : point[key];
                         series[key + 'Data'][i] = val;
@@ -14539,7 +14554,7 @@
             var key = isX ? 'xAxis' : 'yAxis',
                 chartOptions = this.options;
 
-            new Axis(this, merge(options, {
+            new Axis(this, merge(options, { // eslint-disable-line no-new
                 index: this[key].length,
                 isX: isX
             }));
@@ -16935,7 +16950,7 @@
 
         this.colorAxis = [];
         if (colorAxisOptions) {
-            proceed = new ColorAxis(this, colorAxisOptions); // Fake assignment for jsLint
+            new ColorAxis(this, colorAxisOptions); // eslint-disable-line no-new
         }
     });
 
@@ -16966,7 +16981,8 @@
         }
 
         return allItems.concat(proceed.call(this));
-    });/**
+    });
+    /**
      * Mixin for maps and heatmaps
      */
     var colorPointMixin = {
@@ -17023,6 +17039,7 @@
             });
         }
     };
+
     // The vector-effect attribute is not supported in IE <= 11 (at least), so we need
     // diffent logic (#3218)
     var supportsVectorEffect = document.documentElement.style.vectorEffect !== undefined;
@@ -17732,7 +17749,8 @@
         animateDrillupTo: function (init) {
             seriesTypes.column.prototype.animateDrillupTo.call(this, init);
         }
-    }));/**
+    }));
+    /**
      * Highcharts module to hide overlapping data labels. This module is included in Highcharts.
      */
     (function (H) {
@@ -18063,6 +18081,7 @@
         }
     });
 
+
     // Extend the Pointer
     extend(Pointer.prototype, {
 
@@ -18164,6 +18183,7 @@
         drawLegendSymbol: seriesTypes.line.prototype.drawLegendSymbol
     });
 
+
     // The mappoint series type
     defaultPlotOptions.mappoint = merge(defaultPlotOptions.scatter, {
         dataLabels: {
@@ -18191,7 +18211,8 @@
                 return point;
             }
         })
-    });/* ****************************************************************************
+    });
+    /* ****************************************************************************
      * Start Bubble series code                                                      *
      *****************************************************************************/
 
@@ -18635,7 +18656,7 @@
                 y: normalized.x * sinAngle + normalized.y * cosAngle
             } : normalized);
 
-        return {lat: projected.y, lon: projected.x};
+        return { lat: projected.y, lon: projected.x };
     };
 
     Chart.prototype.fromPointToLatLon = function (point) {
@@ -18648,7 +18669,8 @@
         }
 
         for (transform in transforms) {
-            if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone && pointInPolygon({x: point.x, y: -point.y}, transforms[transform].hitZone.coordinates[0])) {
+            if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone && 
+                    pointInPolygon({ x: point.x, y: -point.y }, transforms[transform].hitZone.coordinates[0])) {
                 return this.transformToLatLon(point, transforms[transform]);
             }
         }
@@ -18672,7 +18694,7 @@
         for (transform in transforms) {
             if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone) {
                 coords = this.transformFromLatLon(latLon, transforms[transform]);
-                if (pointInPolygon({x: coords.x, y: -coords.y}, transforms[transform].hitZone.coordinates[0])) {
+                if (pointInPolygon({ x: coords.x, y: -coords.y }, transforms[transform].hitZone.coordinates[0])) {
                     return coords;
                 }
             }
@@ -18784,6 +18806,7 @@
         }
     });
 
+
     // Add language
     extend(defaultOptions.lang, {
         zoomIn: 'Zoom in',
@@ -18842,7 +18865,7 @@
         // Move letters apart
         path = path.replace(/([A-Za-z])/g, ' $1 ');
         // Trim
-        path = path.replace(/^\s*/, "").replace(/\s*$/, "");
+        path = path.replace(/^\s*/, '').replace(/\s*$/, '');
 
         // Split on spaces and commas
         path = path.split(/[ ,]+/);
@@ -18928,22 +18951,24 @@
         seriesOptions = options.series;
         options.series = null;
 
-        options = merge({
-            chart: {
-                panning: 'xy',
-                type: 'map'
+        options = merge(
+            {
+                chart: {
+                    panning: 'xy',
+                    type: 'map'
+                },
+                xAxis: hiddenAxis,
+                yAxis: merge(hiddenAxis, { reversed: true })
             },
-            xAxis: hiddenAxis,
-            yAxis: merge(hiddenAxis, { reversed: true })
-        },
-        options, // user's options
+            options, // user's options
 
-        { // forced options
-            chart: {
-                inverted: false,
-                alignTicks: false
+            { // forced options
+                chart: {
+                    inverted: false,
+                    alignTicks: false
+                }
             }
-        });
+        );
 
         options.series = seriesOptions;
 
@@ -19077,7 +19102,7 @@
                 css = cursor && { cursor: cursor },
                 onMouseOver = function (e) {
                     var target = e.target,
-                    point;
+                        point;
 
                     while (target && !point) {
                         point = target.point;
@@ -19240,9 +19265,9 @@
     extend(Legend.prototype, {
 
         setItemEvents: function (item, legendItem, useHTML, itemStyle, itemHiddenStyle) {
-        var legend = this;
-        // Set the events on the item group, or in case of useHTML, the item itself (#1249)
-        (useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
+            var legend = this;
+            // Set the events on the item group, or in case of useHTML, the item itself (#1249)
+            (useHTML ? legendItem : item.legendGroup).on('mouseover', function () {
                 item.setState(HOVER_STATE);
                 legendItem.css(legend.options.itemHoverStyle);
             })
@@ -19283,7 +19308,10 @@
 
             addEvent(item.checkbox, 'click', function (event) {
                 var target = event.target;
-                fireEvent(item.series || item, 'checkboxClick', { // #3712
+                fireEvent(
+                    item.series || item, 
+                    'checkboxClick', 
+                    { // #3712
                         checked: target.checked,
                         item: item
                     },
@@ -19465,7 +19493,7 @@
                             loopPoint.selected = loopPoint.options.selected = false;
                             series.options.data[inArray(loopPoint, series.data)] = loopPoint.options;
                             loopPoint.setState(NORMAL_STATE);
-                                loopPoint.firePointEvent('unselect');
+                            loopPoint.firePointEvent('unselect');
                         }
                     });
                 }
@@ -19884,6 +19912,7 @@
 
         drawTracker: TrackerMixin.drawTrackerGraph
     });
+
     // global variables
     extend(Highcharts, {
 

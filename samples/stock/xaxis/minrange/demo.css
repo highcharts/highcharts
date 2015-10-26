@@ -1,15 +1,15 @@
 .info {
-	font: 0.7em sans-serif;
-	padding: 0.5em;
-	margin: 0.5em;
-	background: #FCFFC5;
-	border-radius: 0.5em;
-	border: 1px solid gray;
+    font: 0.7em sans-serif;
+    padding: 0.5em;
+    margin: 0.5em;
+    background: #FCFFC5;
+    border-radius: 0.5em;
+    border: 1px solid gray;
 }
 .info:before {
-	content: 'i';
-	margin: 0.5em;
-	font: 1.5em serif bold;
-	font-style: italic;
-	color: green;
+    content: 'i';
+    margin: 0.5em;
+    font: 1.5em serif bold;
+    font-style: italic;
+    color: green;
 }

@@ -160,7 +160,7 @@ Series.prototype = {
 		var series = point.series,
 			args = arguments,
 			fn = typeof i === 'number' ?
-				 // Insert the value in the given position
+				// Insert the value in the given position
 				function (key) {
 					var val = key === 'y' && series.toYData ? series.toYData(point) : point[key];
 					series[key + 'Data'][i] = val;

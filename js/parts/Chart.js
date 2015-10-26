@@ -367,7 +367,7 @@ Chart.prototype = {
 		optionsArray = xAxisOptions.concat(yAxisOptions);
 
 		each(optionsArray, function (axisOptions) {
-			new Axis(chart, axisOptions);
+			new Axis(chart, axisOptions); // eslint-disable-line no-new
 		});
 	},
 
@@ -1320,7 +1320,7 @@ Chart.prototype = {
 	isReadyToRender: function () {
 		var chart = this;
 
-		// Note: in spite of JSLint's complaints, win == win.top is required
+		// Note: win == win.top is required
 		if ((!hasSVG && (win == win.top && doc.readyState !== 'complete')) || (useCanVG && !win.canvg)) { // eslint-disable-line eqeqeq
 			if (useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready

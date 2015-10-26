@@ -27,7 +27,8 @@ Highcharts.StockChart = function (options, callback) {
 
 	// apply X axis options to both single and multi y axes
 	options.xAxis = map(splat(options.xAxis || {}), function (xAxisOptions) {
-		return merge({ // defaults
+		return merge(
+			{ // defaults
 				minPadding: 0,
 				maxPadding: 0,
 				ordinal: true,
@@ -398,7 +399,7 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 
 	// show the label
 	crossLabel.attr({
-		text: formatOption ? format(formatOption, {value: point[axis]}) : options.formatter.call(this, point[axis]),
+		text: formatOption ? format(formatOption, { value: point[axis] }) : options.formatter.call(this, point[axis]),
 		x: posx,
 		y: posy,
 		visibility: VISIBLE
@@ -438,7 +439,7 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	}
 
 	// show the crosslabel
-	crossLabel.attr({x: posx, y: posy, visibility: VISIBLE});
+	crossLabel.attr({ x: posx, y: posy, visibility: 'visible' });
 });
 
 /* ****************************************************************************

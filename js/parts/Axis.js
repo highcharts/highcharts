@@ -1580,6 +1580,7 @@ Axis.prototype = {
 			css,
 			labelLength = 0,
 			label,
+			bBox,
 			i,
 			pos;
 
@@ -1621,11 +1622,13 @@ Axis.prototype = {
 					pos = tickPositions[i];
 					label = ticks[pos].label;
 					if (label) {
+						bBox = label.getBBox();
 						// Reset ellipsis in order to get the correct bounding box (#4070)
 						if (label.styles.textOverflow === 'ellipsis') {
 							label.css({ textOverflow: 'clip' });
 						}
-						if (label.getBBox().height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f)) {
+						if (bBox.height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f) ||
+								bBox.width > slotWidth) { // #4678
 							label.specCss = { textOverflow: 'ellipsis' };
 						}
 					}
@@ -1827,7 +1830,8 @@ Axis.prototype = {
 			lineWidth *= -1; // crispify the other way - #1480, #1687
 		}
 
-		return chart.renderer.crispLine([
+		return chart.renderer
+			.crispLine([
 				M,
 				horiz ?
 					this.left :
@@ -2176,9 +2180,7 @@ Axis.prototype = {
 			if (!pick(options.snap, true)) {
 				pos = (this.horiz ? e.chartX - this.pos : this.len - e.chartY + this.pos);
 			} else if (defined(point)) {
-				/*jslint eqeq: true*/
 				pos = this.isXAxis ? point.plotX : this.len - point.plotY; // #3834
-				/*jslint eqeq: false*/
 			}
 
 			if (this.isRadial) {
