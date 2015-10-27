@@ -1697,6 +1697,7 @@ Axis.prototype = {
 			labelOptions = options.labels,
 			labelOffset = 0, // reset
 			labelOffsetPadded,
+			opposite = axis.opposite,
 			axisOffset = chart.axisOffset,
 			clipOffset = chart.clipOffset,
 			clip,
@@ -1775,9 +1776,13 @@ Axis.prototype = {
 				.attr({
 					zIndex: 7,
 					rotation: axisTitleOptions.rotation || 0,
-					align:
+					align: 
 						axisTitleOptions.textAlign ||
-						{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
+						{ 
+							low: opposite ? 'right' : 'left',
+							middle: 'center',
+							high: opposite ? 'left' : 'right'
+						}[axisTitleOptions.align]
 				})
 				.addClass(PREFIX + this.coll.toLowerCase() + '-title')
 				.css(axisTitleOptions.style)
@@ -2158,7 +2163,7 @@ Axis.prototype = {
 	 * @param  {Object} e The event arguments from the modified pointer event
 	 * @param  {Object} point The Point object
 	 */
-	drawCrosshair: function (e, point) { // docs: Missing docs for Axis.crosshair. Also for properties.
+	drawCrosshair: function (e, point) {
 
 		var path,
 			options = this.crosshair,
