@@ -1,8 +1,12 @@
 $(function () {
     $('#container').highcharts({
 
-        tooltip: {
-            crosshairs: [true, true]
+        xAxis: {
+            crosshair: true
+        },
+
+        yAxis: {
+            crosshair: true
         },
 
         series: [{
