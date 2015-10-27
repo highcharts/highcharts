@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-10-26)
+ * @license Highmaps JS v1.1.9-modified (2015-10-27)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -19929,6 +19929,7 @@
         map: map,
         merge: merge,
         splat: splat,
+        stableSort: stableSort,
         extendClass: extendClass,
         pInt: pInt,
         svg: hasSVG,

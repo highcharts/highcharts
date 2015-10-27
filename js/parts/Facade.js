@@ -31,6 +31,7 @@ extend(Highcharts, {
 	map: map,
 	merge: merge,
 	splat: splat,
+	stableSort: stableSort,
 	extendClass: extendClass,
 	pInt: pInt,
 	svg: hasSVG,

@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-10-26)
+ * @license Highcharts JS v4.1.9-modified (2015-10-27)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -18941,6 +18941,7 @@
         map: map,
         merge: merge,
         splat: splat,
+        stableSort: stableSort,
         extendClass: extendClass,
         pInt: pInt,
         svg: hasSVG,
