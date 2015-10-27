@@ -21,6 +21,7 @@
 		grep = HighchartsAdapter.grep,
 		pick = H.pick,
 		Series = H.Series,
+		stableSort = H.stableSort,
 		Color = H.Color,
 		eachObject = function (list, func, context) {
 			var key;
@@ -208,16 +209,14 @@
 			var series = this,
 				options = series.options,
 				childrenTotal = 0,
-				sorted = [],
+				children = [],
 				val,
 				point = series.points[tree.i];
 
 			// First give the children some values
 			each(tree.children, function (child) {
 				child = series.setTreeValues(child);
-				series.insertElementSorted(sorted, child, function (el, el2) {
-					return el.val > el2.val; 
-				});
+				children.push(child);
 
 				if (!child.ignore) {
 					childrenTotal += child.val;
@@ -239,17 +238,21 @@
 					});
 				}
 			});
-
+			// Sort the children
+			stableSort(children, function (a, b) {
+				return a.sortIndex - b.sortIndex;
+			});
 			// Set the values
 			val = pick(point && point.value, childrenTotal);
 			extend(tree, {
-				children: sorted,
+				children: children,
 				childrenTotal: childrenTotal,
 				// Ignore this node if point is not visible
 				ignore: !(pick(point && point.visible, true) && (val > 0)),
 				isLeaf: tree.visible && !childrenTotal,
 				levelDynamic: (options.levelIsConstant ? tree.level : (tree.level - series.nodeMap[series.rootNode].level)),
 				name: pick(point && point.name, ''),
+				sortIndex: pick(point && point.sortIndex, -val),
 				val: val
 			});
 			return tree;
@@ -703,29 +706,6 @@
 						point.graphic.css({ cursor: cursor });
 					}
 				});
-			}
-		},
-		/**
-		 * Inserts an element into an array, sorted by a condition.
-		 * Modifies the referenced array
-		 * @param {*[]} arr The array which the element is inserted into.
-		 * @param {*} el The element to insert.
-		 * @param {function} cond The condition to sort on. First parameter is el, second parameter is array element
-		 */
-		insertElementSorted: function (arr, el, cond) {
-			var i = 0,
-				inserted = false;
-			if (arr.length !== 0) {
-				each(arr, function (arrayElement) {
-					if (cond(el, arrayElement) && !inserted) {
-						arr.splice(i, 0, el);
-						inserted = true;
-					}
-					i = i + 1;					
-				});
-			} 
-			if (!inserted) {
-				arr.push(el);
 			}
 		},
 		/**
