@@ -8675,12 +8675,14 @@
 
         /**
          * Draw the crosshair
+         * 
+         * @param  {Object} e The event arguments from the modified pointer event
+         * @param  {Object} point The Point object
          */
         drawCrosshair: function (e, point) { // docs: Missing docs for Axis.crosshair. Also for properties.
 
             var path,
                 options = this.crosshair,
-                animation = options.animation,
                 pos,
                 attribs,
                 categorized;
@@ -8689,7 +8691,7 @@
                 // Disabled in options
                 !this.crosshair ||
                 // Snap
-                ((defined(point) || !pick(this.crosshair.snap, true)) === false) ||
+                ((defined(point) || !pick(options.snap, true)) === false) ||
                 // Not on this axis (#4095, #2888)
                 (point && point.series && point.series[this.coll] !== this)
             ) {
@@ -8718,13 +8720,16 @@
                 // Draw the cross
                 if (this.cross) {
                     this.cross
-                        .attr({ visibility: VISIBLE })[animation ? 'animate' : 'attr']({ d: path }, animation);
+                        .attr({
+                            d: path,
+                            visibility: 'visible'
+                        });
                 } else {
                     categorized = this.categories && !this.isRadial;
                     attribs = {
                         'stroke-width': options.width || (categorized ? this.transA : 1),
                         stroke: options.color || (categorized ? 'rgba(155,200,255,0.2)' : '#C0C0C0'),
-                        zIndex: options.zIndex || 2
+                        zIndex: pick(options.zIndex, 2)
                     };
                     if (options.dashStyle) {
                         attribs.dashstyle = options.dashStyle;
@@ -23540,18 +23545,22 @@
             crossBox,
             formatOption = options.format,
             formatFormat = '',
-            limit;
+            limit,
+            align,
+            tickInside = this.options.tickPosition === 'inside';
+
+        align = (horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'left') : (this.labelAlign === 'left' ? 'left' : 'center'));
 
         // If the label does not exist yet, create it.
         if (!crossLabel) {
-            crossLabel = this.crossLabel = chart.renderer.label()
+            crossLabel = this.crossLabel = chart.renderer.label(null, null, null, options.shape || 'callout')
             .attr({
-                align: options.align || (horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'left') : (this.labelAlign === 'left' ? 'left' : 'center')),
+                align: options.align || align,
                 zIndex: 12,
                 height: horiz ? 16 : UNDEFINED,
                 fill: options.backgroundColor || (this.series[0] && this.series[0].color) || 'gray',
                 padding: pick(options.padding, 2),
-                stroke: options.borderColor || null,
+                stroke: options.borderColor || '',
                 'stroke-width': options.borderWidth || 0
             })
             .css(extend({
@@ -23587,6 +23596,8 @@
         // show the label
         crossLabel.attr({
             text: formatOption ? format(formatOption, { value: point[axis] }) : options.formatter.call(this, point[axis]),
+            anchorX: posx + { center: 0, left: -20, right: 20 }[align],
+            anchorY: posy + { center: -20, left: 0, right: 0 }[align],
             x: posx,
             y: posy,
             visibility: VISIBLE
@@ -23595,8 +23606,7 @@
 
         // now it is placed we can correct its position
         if (horiz) {
-            if (((this.options.tickPosition === 'inside') && !opposite) ||
-                ((this.options.tickPosition !== 'inside') && opposite)) {
+            if ((tickInside && !opposite) || (!tickInside && opposite)) {
                 posy = crossLabel.y - crossBox.height;
             }
         } else {

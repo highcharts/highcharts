@@ -5,8 +5,9 @@ globals:
     $: true
     Highcharts: true
     HighchartsAdapter: true
-    hs: true # Highslide
+    hs: true                    # Highslide
     QUnit: true
+    usdeur: true
 
 rules:
     eol-last: 0
