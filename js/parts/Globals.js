@@ -95,7 +95,7 @@ var UNDEFINED,
 function error(code, stop) {
 	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
 	if (stop) {
-		throw msg;
+		throw new Error(msg);
 	}
 	// else ...
 	if (win.console) {
