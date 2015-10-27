@@ -7,7 +7,7 @@ small variation for each data set, and a mouse/touch event handler to bind the c
 $(function () {
 
     /**
-     * In order to synchronize tooltips and crosshairs, override the 
+     * In order to synchronize tooltips and crosshairs, override the
      * built-in events with handlers defined on the parent element.
      */
     $('#container').bind('mousemove touchmove', function (e) {
@@ -49,14 +49,14 @@ $(function () {
         });
     }
 
-    // Get the data. The contents of the data file can be viewed at 
+    // Get the data. The contents of the data file can be viewed at
     // https://github.com/highslide-software/highcharts.com/blob/master/samples/data/activity.json
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=activity.json&callback=?', function (activity) {
         $.each(activity.datasets, function (i, dataset) {
 
             // Add X values
-            dataset.data = Highcharts.map(dataset.data, function (val, i) {
-                return [activity.xData[i], val];
+            dataset.data = Highcharts.map(dataset.data, function (val, j) {
+                return [activity.xData[j], val];
             });
 
             $('<div class="chart">')
