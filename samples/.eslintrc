@@ -3,12 +3,17 @@ env:
 
 globals:
     $: true
+    ADBE: true
+    GOOGL: true
     Highcharts: true
     HighchartsAdapter: true
     hs: true                    # Highslide
     jQuery: true
     moment: true                # moment.js, used in gettimezoneoffset demo
+    MSFT: true
+    ohlcdata: true
     QUnit: true
+    temperatures: true          # pointinterval-pointstart demo
     usdeur: true
 
 rules:
@@ -26,7 +31,6 @@ rules:
     no-multi-spaces: 0          # Consider key-spacing and exception to align arrays
     no-redeclare: 0             # TODO: Fix manually
     no-spaced-func: 0           # TODO: Isolate and auto fix
-    no-undef: 0                 # TODO: Fix manually
     no-undefined: 0
     no-underscore-dangle: 0     # Maps demos use underscore. TODO: Check out.
     no-unused-vars: 0           # TODO: Fix manually

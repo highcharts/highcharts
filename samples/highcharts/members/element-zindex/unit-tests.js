@@ -1,3 +1,4 @@
+/* global circles */
 QUnit.test('Element Z index', function (assert) {
     
     function getIndex(element) {

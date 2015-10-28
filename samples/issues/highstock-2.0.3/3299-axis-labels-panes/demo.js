@@ -4,7 +4,8 @@ $(function() {
         // split the data set into ohlc and volume
         var ohlc = [],
             volume = [],
-            dataLength = data.length;
+            dataLength = data.length,
+            i;
             
         for (i = 0; i < dataLength; i++) {
             ohlc.push([

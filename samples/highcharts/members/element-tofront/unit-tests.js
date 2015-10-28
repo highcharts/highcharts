@@ -1,3 +1,4 @@
+/* global circ, rect */
 QUnit.test('Element to front', function (assert) {
     
     function getIndex(element) {

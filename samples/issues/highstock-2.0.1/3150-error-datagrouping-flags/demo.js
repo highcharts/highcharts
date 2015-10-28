@@ -1,5 +1,5 @@
 $(function () {
-    data = [];
+    var data = [];
 
     for (var i = 0; i < 100; i++) {
         data[i] = i;

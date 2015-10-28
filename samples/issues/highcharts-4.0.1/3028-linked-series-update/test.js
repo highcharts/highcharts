@@ -1,3 +1,4 @@
+/* global toggleDataLabels */
 function test(chart) {
     toggleDataLabels(chart);
     chart.series[0].hide();

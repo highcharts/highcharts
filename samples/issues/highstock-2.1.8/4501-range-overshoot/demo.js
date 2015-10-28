@@ -1,7 +1,8 @@
 $(function () {
 
     QUnit.test('Stock chart with overshooting range', function (assert) {
-        var chart;
+        var chart,
+            i;
 
         
         var eps = [{

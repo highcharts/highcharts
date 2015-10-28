@@ -46,7 +46,7 @@ $(function () {
 
                 if (typeof options === 'object' && typeof options.length !== 'number') {
                     // TODO implement object input support?
-                    throw new ObjectInputNotYetSupported();
+                    throw new Error('Object input not yet supported');
                 } else if (options.length) { // array
                     // with leading x value
                     if (options.length % 2 === 1) {
@@ -171,6 +171,9 @@ $(function () {
                     halfWidth;
 
                 each(points, function (point) {
+                    var boxpath,
+                        numberOfBoxes,
+                        boxes;
                     graphic = point.graphic;
                     if (point.plotY !== UNDEFINED) {
 
@@ -181,8 +184,8 @@ $(function () {
                         crispX = mathRound(point.plotX) + crispCorr;
 
                         // create path for boxes
-                        var numberOfBoxes = point.plotYValues.length / 2 - 1;
-                        var boxes = [];
+                        numberOfBoxes = point.plotYValues.length / 2 - 1;
+                        boxes = [];
                         for (var i = 0; i < numberOfBoxes; i++) {
                             bottomBox = mathRound(point.plotYValues[i + 1]) + crispCorr;
                             topBox = mathRound(point.plotYValues[point.plotYValues.length - 2 - i]) + crispCorr;
@@ -254,7 +257,7 @@ $(function () {
     }());
 
         // --- create the chart
-        chart = new Highcharts.StockChart({
+        window.chart = new Highcharts.StockChart({
             "chart": {
                 "ignoreHiddenSeries": false,
                     "width": null,
