@@ -38,7 +38,7 @@ Status
 
     i = params.start;
 
-    ['highcharts', 'maps', 'stock', 'issues'].forEach(function (section) {
+    ['unit-tests', 'highcharts', 'maps', 'stock', 'issues'].forEach(function (section) {
         section = section + '/';
         fs.list('../../samples/' + section).forEach(function (group) {
             if (/^[a-z0-9][a-z0-9\.\-]+$/.test(group) &&  fs.isDirectory('../../samples/' + section + group)) {
