@@ -174,7 +174,7 @@ Scroller.prototype = {
 			// the group
 			handles[index] = renderer.g('navigator-handle-' + ['left', 'right'][index])
 				.css({ cursor: 'ew-resize' })
-				.attr({ zIndex: 4 - index }) // zIndex = 3 for right handle, 4 for left
+				.attr({ zIndex: 10 - index }) // zIndex = 3 for right handle, 4 for left / 10 - #2908
 				.add();
 
 			// the rectangle
