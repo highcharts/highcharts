@@ -1,0 +1,6 @@
+---
+ name: Highcharts 3D setSize animation
+ authors:
+   - Paweł Fus
+ requiresManualTesting: true
+...

@@ -271,14 +271,16 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		this.top.attr({ translateY: value });
 	};
 
-	result.animate = function (args, duration, complete) {
+	result.animate = function (args, options, complete) {
+		var animation = pick(options, this.renderer.globalAnimation);
+
 		if (defined(args.end) || defined(args.start)) {
 			this._shapeArgs = this.shapeArgs;
 
 			Highcharts.SVGElement.prototype.animate.call(this, {
 				_args: args
 			}, {
-				duration: duration,
+				duration: animation ? animation.duration || null : 0, // #4404
 				start: function () {
 					var args = arguments,
 						fx = args[0],
@@ -320,7 +322,7 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 				}
 			}, complete);
 		} else {
-			Highcharts.SVGElement.prototype.animate.call(this, args, duration, complete);
+			Highcharts.SVGElement.prototype.animate.call(this, args, options, complete);
 		}
 		return this;
 	};

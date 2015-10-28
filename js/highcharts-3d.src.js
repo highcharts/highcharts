@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-10-26)
+ * @license Highcharts JS v4.1.9-modified (2015-10-28)
  *
  * 3D features for Highcharts JS
  *
@@ -374,14 +374,16 @@
             this.top.attr({ translateY: value });
         };
 
-        result.animate = function (args, duration, complete) {
+        result.animate = function (args, options, complete) {
+            var animation = pick(options, this.renderer.globalAnimation);
+
             if (defined(args.end) || defined(args.start)) {
                 this._shapeArgs = this.shapeArgs;
 
                 Highcharts.SVGElement.prototype.animate.call(this, {
                     _args: args
                 }, {
-                    duration: duration,
+                    duration: animation ? animation.duration || null : 0, // #4404
                     start: function () {
                         var args = arguments,
                             fx = args[0],
@@ -423,7 +425,7 @@
                     }
                 }, complete);
             } else {
-                Highcharts.SVGElement.prototype.animate.call(this, args, duration, complete);
+                Highcharts.SVGElement.prototype.animate.call(this, args, options, complete);
             }
             return this;
         };
