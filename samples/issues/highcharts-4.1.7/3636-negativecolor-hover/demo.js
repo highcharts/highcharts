@@ -31,7 +31,7 @@ $(function () {
         var sColumn = chart.series[1];
         seriesNegColor = Highcharts.Color(sColumn.options.negativeColor).brighten(0.1).get();
         seriesPosColor = Highcharts.Color(sColumn.options.color).brighten(0.1).get();
-        $.each(sColumn.points, function(j, point) {
+        $.each(sColumn.points, function (j, point) {
             point.setState("hover");
             pointColor = Highcharts.Color(point.graphic.attr("fill")).brighten(sColumn.options.brightness).get();
             assert.strictEqual(
@@ -45,7 +45,7 @@ $(function () {
         var sLine = chart.series[0];
         seriesNegColor = Highcharts.Color(sLine.options.negativeColor).get();
         seriesPosColor = Highcharts.Color(sLine.options.color).get();
-        $.each(sLine.points, function(j, point) {
+        $.each(sLine.points, function (j, point) {
             point.setState("hover");
             pointColor = Highcharts.Color(point.graphic.attr("fill")).get();
             assert.strictEqual(
@@ -59,7 +59,7 @@ $(function () {
         // Higher priority for states.fillColor than series.negativeColor
         sLine = chart.series[2];
         seriesPosColor = Highcharts.Color(sLine.options.marker.states.hover.fillColor).get();
-        $.each(sLine.points, function(j, point) {
+        $.each(sLine.points, function (j, point) {
             point.setState("hover");
             pointColor = Highcharts.Color(point.graphic.attr("fill")).get();
             assert.strictEqual(

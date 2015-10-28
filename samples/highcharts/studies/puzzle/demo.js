@@ -16,7 +16,7 @@ $(function () {
         
         Chart.prototype.callbacks.push(function (chart) {
             var total = 0;
-            each(chart.series, function(series) {
+            each(chart.series, function (series) {
                 if (series.initPuzzle) {
                     total += series.initPuzzle();
                 }

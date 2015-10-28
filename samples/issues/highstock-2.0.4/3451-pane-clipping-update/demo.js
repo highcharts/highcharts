@@ -29,7 +29,7 @@ $(function () {
         }]
     });
     
-    $('#setsize').click(function() {
+    $('#setsize').click(function () {
         $('#container').highcharts().setSize(500,300);        
     });
 

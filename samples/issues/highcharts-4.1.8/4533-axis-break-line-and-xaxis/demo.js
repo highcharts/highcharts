@@ -12,10 +12,10 @@ $(function () {
                     breakSize: 1
                 }],
                 events: {
-                    pointBreak: function() {
+                    pointBreak: function () {
                         iteratorPB++;
                     },
-                    afterBreaks: function() {
+                    afterBreaks: function () {
                         iteratorAB++;
                     }
                 }
@@ -27,10 +27,10 @@ $(function () {
                     breakSize: 1
                 }],
                 events: {
-                    pointBreak: function() {
+                    pointBreak: function () {
                         iteratorPB++;
                     },
-                    afterBreaks: function() {
+                    afterBreaks: function () {
                         iteratorAB++;
                     }
                 }

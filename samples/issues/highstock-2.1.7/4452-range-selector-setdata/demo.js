@@ -3,7 +3,7 @@ $(function () {
     QUnit.test('Stock chart with empty data initially', function (assert) {
         var chart;
 
-        function setData () {
+        function setData() {
             // generate an array of random data
             var data = [],
                 time = new Date().getTime();

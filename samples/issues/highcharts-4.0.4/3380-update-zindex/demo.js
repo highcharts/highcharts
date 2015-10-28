@@ -1,5 +1,5 @@
 $(function () {
-    $("#b").click(function() {
+    $("#b").click(function () {
         $('#container').highcharts().series[0].update({
             zIndex: 1
         });

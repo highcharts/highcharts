@@ -29,7 +29,7 @@ $(function () {
         options.yAxis.reversed = false;  
         charts[3] = $("#container_4").highcharts(options).highcharts();   
 
-        $.each([charts[0], charts[3]], function(i, chart) {
+        $.each([charts[0], charts[3]], function (i, chart) {
             point = chart.series[0].data[1].graphic;
             y = parseFloat(point.attr("y"));
             height = parseFloat(point.attr("height"));
@@ -51,7 +51,7 @@ $(function () {
             );
         });
 
-        $.each([charts[1], charts[2]], function(i, chart) {
+        $.each([charts[1], charts[2]], function (i, chart) {
             point = chart.series[0].data[1].graphic;
             y = parseFloat(point.attr("y"));
             assert.strictEqual(

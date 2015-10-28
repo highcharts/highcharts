@@ -306,7 +306,7 @@ $(function () {
                     "index": 0
             }],
                 "tooltip": {
-                    formatter: function() { 
+                    formatter: function () { 
                         return "test";
                     }
             },

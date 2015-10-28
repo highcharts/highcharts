@@ -3,7 +3,7 @@ $(function () {
         // series dataLabels can start on or off -- the problem seems to be in the update redraw
         var labelsOn = true;
 
-        function toggle (chart) {
+        function toggle(chart) {
             labelsOn = !labelsOn;
             chart.series[0].update({
                 dataLabels: {

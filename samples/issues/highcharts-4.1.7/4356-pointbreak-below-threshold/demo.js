@@ -19,7 +19,7 @@ $(function () {
                 tickInterval: 5000,
                 breaks: breaks,
                 events: {
-                    pointBreak: function(e) {
+                    pointBreak: function (e) {
                         var point = e.point,
                             brk = e.brk,
                             shapeArgs = point.shapeArgs,

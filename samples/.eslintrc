@@ -41,6 +41,6 @@ rules:
     require-jsdoc: 0
     semi: 0                     # TODO: Isolate and auto fix
     spaced-comment: 0
-    space-before-function-paren: 0 # TODO: Isolate and auto fix
+    space-before-function-paren: [2, {"anonymous": "always", "named": "never"}] # JSLint style
     strict: 0
     valid-jsdoc: 0
