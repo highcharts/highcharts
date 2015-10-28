@@ -41,17 +41,17 @@ $(function () {
                     }]
                 }
             },
-            chart, chart_3d;
+            chart, chart3d;
 
         chart = $('#container').highcharts(options).highcharts();
         options.chart.options3d.enabled = true;
-        chart_3d = $('#container_2').highcharts(options).highcharts();
+        chart3d = $('#container_2').highcharts(options).highcharts();
 
         chart.series[0].points[1].doDrilldown();
         chart.series[0].points[0].select();
 
-        chart_3d.series[0].points[1].doDrilldown();
-        chart_3d.series[0].points[0].select();
+        chart3d.series[0].points[1].doDrilldown();
+        chart3d.series[0].points[0].select();
 
         assert.strictEqual(
             chart.series[0].points[0].graphic.attr("fill"),
@@ -60,8 +60,8 @@ $(function () {
         );
 
         assert.strictEqual(
-            chart_3d.series[0].points[0].graphic.top.attr("fill"),
-            chart_3d.series[0].options.colors[0],
+            chart3d.series[0].points[0].graphic.top.attr("fill"),
+            chart3d.series[0].options.colors[0],
             'Proper select-state color'
         );
     });

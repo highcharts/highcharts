@@ -51,7 +51,7 @@ $(function () {
                 });
             }
         });
-    })(Highcharts);
+    }(Highcharts));
 
     $('#container').highcharts({
         chart: {

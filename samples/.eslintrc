@@ -6,16 +6,39 @@ globals:
     Highcharts: true
     HighchartsAdapter: true
     hs: true                    # Highslide
+    jQuery: true
+    moment: true                # moment.js, used in gettimezoneoffset demo
     QUnit: true
     usdeur: true
 
 rules:
+    comma-dangle: 0             # TODO: Fix manually
+    comma-spacing: 0            # TODO: Fix manually
     eol-last: 0
-    indent: [2, 4]
+    func-style: 0               # TODO: Fix manually
+    indent: 0                   # TODO: Isolate and auto fix. Set to [2, 4].
+    key-spacing: 0              # TODO: Fix manually
     new-cap: 0                  # The ill-named Color object. Fix in HC5
+    no-alert: 0
+    no-console: 0               # TODO: Fix manually. Output to a visible div instead.
+    no-extra-semi: 0            # TODO: Isolate and auto fix
+    no-loop-func: 0             # TODO: Fix manually
     no-multi-spaces: 0          # Consider key-spacing and exception to align arrays
+    no-redeclare: 0             # TODO: Fix manually
+    no-spaced-func: 0           # TODO: Isolate and auto fix
+    no-undef: 0                 # TODO: Fix manually
     no-undefined: 0
+    no-underscore-dangle: 0     # Maps demos use underscore. TODO: Check out.
+    no-unused-vars: 0           # TODO: Fix manually
+    no-trailing-spaces: 0       # TODO: Isolate and auto fix
+    no-shadow: 0                # TODO: Fix manually
+    object-curly-spacing: 0     # TODO: Isolate and auto fix
+    operator-linebreak: 0       # TODO: Fix manually
+    quotes: 0                   # TODO: Consider single, but maybe not where we use JSON data
+    radix: 0                    # TODO: Fix manually
     require-jsdoc: 0
+    semi: 0                     # TODO: Isolate and auto fix
     spaced-comment: 0
+    space-before-function-paren: 0 # TODO: Isolate and auto fix
     strict: 0
     valid-jsdoc: 0

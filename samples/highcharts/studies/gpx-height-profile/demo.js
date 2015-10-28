@@ -30,15 +30,15 @@ var dl = {
  * Utility function to get the distance between two points
  * http://stackoverflow.com/questions/27928/how-do-i-calculate-distance-between-two-latitude-longitude-points
  */
-function getDistance(pt1, pt2) { return 1;
+function getDistance(pt1, pt2) {
     var toRad = Math.PI / 180;
     var R = 6371; // Radius of the earth in km
     var dLat = (pt2.lat - pt1.lat) * toRad;  // Javascript functions in radians
     var dLon = (pt2.lon - pt1.lon) * toRad; 
-    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
             Math.cos(pt1.lat * toRad) * Math.cos(pt2.lat * toRad) * 
-            Math.sin(dLon/2) * Math.sin(dLon/2); 
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+            Math.sin(dLon / 2) * Math.sin(dLon / 2); 
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); 
     var d = R * c; // Distance in km
     
     return d;

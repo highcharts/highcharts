@@ -4,7 +4,7 @@ $(function () {
      * A small Highcharts snippet/plugin for adding images to axis labels
      */
     (function (H) {
-        function addImages (proceed) {
+        function addImages(proceed) {
 
             proceed.call(this)
 

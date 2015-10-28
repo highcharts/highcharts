@@ -14,7 +14,7 @@ $(function () {
             extendClass = HC.extendClass,
             Point = HC.Point,
             ColumnSeries = seriesTypes.column,
-            UNDEFINED = undefined,
+            UNDEFINED,
             mathRound = Math.round;
 
         // 1 - Set default options
@@ -46,7 +46,7 @@ $(function () {
 
                 if (typeof options === 'object' && typeof options.length !== 'number') {
                     // TODO implement object input support?
-                    throw new ObjectInputNotYetSupported;
+                    throw new ObjectInputNotYetSupported();
                 } else if (options.length) { // array
                     // with leading x value
                     if (options.length % 2 === 1) {
@@ -58,7 +58,7 @@ $(function () {
                         i++;
                     }
 
-                    var yValues = new Array();
+                    var yValues = [];
                     while (i < options.length) {
                         yValues.push(options[i]);
                         i++;
@@ -146,7 +146,7 @@ $(function () {
 
                 // do the translation
                 each(series.points, function (point) {
-                    var plotYValues = new Array();
+                    var plotYValues = [];
                     for (var i = 0; i < point.yValues.length; i++) {
                         plotYValues.push(yAxis.translate(point.yValues[i], 0, 1, 0, 1));
                     }
@@ -182,7 +182,7 @@ $(function () {
 
                         // create path for boxes
                         var numberOfBoxes = point.plotYValues.length / 2 - 1;
-                        var boxes = new Array();
+                        var boxes = [];
                         for (var i = 0; i < numberOfBoxes; i++) {
                             bottomBox = mathRound(point.plotYValues[i + 1]) + crispCorr;
                             topBox = mathRound(point.plotYValues[point.plotYValues.length - 2 - i]) + crispCorr;
@@ -251,7 +251,7 @@ $(function () {
 
         });
         seriesTypes.genericcandlestick = GenericCandlestickSeries;
-    })();
+    }());
 
         // --- create the chart
         chart = new Highcharts.StockChart({
@@ -303,7 +303,9 @@ $(function () {
                     "index": 0
             }],
                 "tooltip": {
-                    formatter: function() { return "test" }
+                    formatter: function() { 
+                        return "test";
+                    }
             },
                 "series": [{
                 "id": "ge_swh_0pct",

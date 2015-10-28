@@ -13,12 +13,13 @@ $(function () {
         }];
 
         var buttons = [];
-        for (i = 11; i > 6; i--)
-        buttons.push({
-            type: "year",
-            count: i,
-            text: i + "y"
-        })
+        for (i = 11; i > 6; i--) {
+            buttons.push({
+                type: "year",
+                count: i,
+                text: i + "y"
+            })
+        }
 
         $('#container').highcharts('StockChart', {
             rangeSelector: {

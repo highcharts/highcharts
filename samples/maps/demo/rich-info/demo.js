@@ -52,24 +52,26 @@ $(function () {
         // For each country, use the latest value for current population
         var data = [];
         for (var code3 in countries) {
-            var value = null,
-                year,
-                itemData = countries[code3].data,
-                i = itemData.length;
+            if (countries.hasOwnProperty(code3)) {
+                var value = null,
+                    year,
+                    itemData = countries[code3].data,
+                    i = itemData.length;
 
-            while (i--) {
-                if (typeof itemData[i] === 'number') {
-                    value = itemData[i];
-                    year = categories[i];
-                    break;
+                while (i--) {
+                    if (typeof itemData[i] === 'number') {
+                        value = itemData[i];
+                        year = categories[i];
+                        break;
+                    }
                 }
+                data.push({
+                    name: countries[code3].name,
+                    code3: code3,
+                    value: value,
+                    year: year
+                });
             }
-            data.push({
-                name: countries[code3].name,
-                code3: code3,
-                value: value,
-                year: year
-            });
         }
         
         // Add lower case codes to the data set for inclusion in the tooltip.pointFormat

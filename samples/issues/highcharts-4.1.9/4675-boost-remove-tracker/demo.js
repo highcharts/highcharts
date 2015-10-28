@@ -11,7 +11,7 @@ $(function () {
                             d.push(Math.random())
                         }
                         return d;
-                    })()
+                    }())
                 }]
             }).highcharts();
 
