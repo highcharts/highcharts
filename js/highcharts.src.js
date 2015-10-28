@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-10-27)
+ * @license Highcharts JS v4.1.9-modified (2015-10-28)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -107,7 +107,7 @@
     function error(code, stop) {
         var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
         if (stop) {
-            throw msg;
+            throw new Error(msg);
         }
         // else ...
         if (win.console) {
@@ -16605,7 +16605,7 @@
 
                     if (graphic) { // update
                         stop(graphic);
-                        graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs));
+                        graphic.attr(borderAttr).attr(pointAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs)); // #4267
 
                     } else {
                         point.graphic = graphic = renderer[point.shapeType](shapeArgs)
