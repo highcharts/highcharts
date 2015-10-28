@@ -28,8 +28,8 @@ $(function () {
                     true,
                     'Radius within range'
                 );
-            })
-        })
+            });
+        });
 
 
     });

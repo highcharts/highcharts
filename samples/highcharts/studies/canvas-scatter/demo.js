@@ -17,7 +17,7 @@ $(function () {
     }
 
     console.time('scatter');
-    console.time('asyncRender')
+    console.time('asyncRender');
     $('#container').highcharts({
 
         chart: {

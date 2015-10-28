@@ -11,7 +11,7 @@ $(function () {
             SVGElement.prototype.removeClass = function (className) {
                 this.element.setAttribute('class', this.element.getAttribute('class').replace(className, ''));
                 return this;
-            }
+            };
         }
 
         Chart.prototype.callbacks.push(function (chart) {
@@ -174,7 +174,7 @@ $(function () {
                 });
             }
             return total;
-        }
+        };
 
     }(Highcharts));
 
@@ -190,7 +190,7 @@ $(function () {
         data.push({
             'hc-key': feature.properties['hc-key'],
             'value': 1
-        })
+        });
     });
 
 

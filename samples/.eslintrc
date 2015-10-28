@@ -38,7 +38,6 @@ rules:
     quotes: 0                   # TODO: Consider single, but maybe not where we use JSON data
     radix: 0                    # TODO: Fix manually
     require-jsdoc: 0
-    semi: 0                     # TODO: Isolate and auto fix
     spaced-comment: 0
     space-before-function-paren: [2, {"anonymous": "always", "named": "never"}] # JSLint style
     strict: 0

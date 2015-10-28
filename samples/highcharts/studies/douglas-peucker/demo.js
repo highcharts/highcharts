@@ -35,7 +35,7 @@ function simplifyPath(data, epsilon) {
             result = [start];
         }
         return result;
-    }
+    };
     // CALL RDP Function
     var arr = DouglasPecker(data, epsilon);
     arr.push(data[data.length - 1]);

@@ -19,7 +19,7 @@ $(function () {
             volume.push([
                 data[i][0], // the date
                 data[i][5] // the volume
-            ])
+            ]);
         }
 
         // create the chart

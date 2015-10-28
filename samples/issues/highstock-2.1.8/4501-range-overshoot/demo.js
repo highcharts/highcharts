@@ -19,7 +19,7 @@ $(function () {
                 type: "year",
                 count: i,
                 text: i + "y"
-            })
+            });
         }
 
         $('#container').highcharts('StockChart', {

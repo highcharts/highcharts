@@ -6,7 +6,7 @@ $(function () {
     (function (H) {
         function addImages(proceed) {
 
-            proceed.call(this)
+            proceed.call(this);
 
             var chart = this,
                 axis = chart.xAxis[0],
@@ -59,5 +59,5 @@ $(function () {
             data: [29.9, 71.5, 106.4]
         }]
 
-    })
+    });
 });

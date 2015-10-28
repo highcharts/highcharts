@@ -39,7 +39,7 @@
 					})
 					.append( $( "<a>" ).text( item.label ) )
 					.appendTo( ul );
-			}
+			};
 
 			// Update input text if underlying select changes
 			this.element.change(function () {

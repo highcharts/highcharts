@@ -63,7 +63,7 @@ $(function () {
             allLabelsVisible(chart),
             true,
             'All labels are visible when inverted'
-        )
+        );
 
 
     });

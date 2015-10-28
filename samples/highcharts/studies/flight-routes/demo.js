@@ -106,7 +106,7 @@ $(function () {
     function pointsToPath(from, to, invertArc) {
         var arcPointX = (from.x + to.x) / (invertArc ? 2.4 : 1.6),
             arcPointY = (from.y + to.y) / (invertArc ? 2.4 : 1.6);
-        return 'M' + from.x + ',' + from.y + 'Q' + arcPointX + ' ' + arcPointY + ',' + to.x + ' ' + to.y
+        return 'M' + from.x + ',' + from.y + 'Q' + arcPointX + ' ' + arcPointY + ',' + to.x + ' ' + to.y;
     }
 
     var chart = $('#container').highcharts(),

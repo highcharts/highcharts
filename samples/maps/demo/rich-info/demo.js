@@ -97,7 +97,7 @@ $(function () {
                     $('#info h2').html('Comparing countries');
 
                 }
-                $('#info .subheader').html('<h4>Historical population</h4><small><em>Shift + Click on map to compare countries</em></small>')
+                $('#info .subheader').html('<h4>Historical population</h4><small><em>Shift + Click on map to compare countries</em></small>');
 
                 if (!countryChart) {
                     countryChart = $('#country-chart').highcharts({

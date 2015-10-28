@@ -28,7 +28,7 @@ $(function () {
                     [1296172800000,1],
                     [1296432000000,1]
                 ]
-            }
+            };
         });
 
         $('#container').highcharts('StockChart', {
