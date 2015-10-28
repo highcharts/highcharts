@@ -17,8 +17,8 @@ $(function () {
         }]
     }, function (chart) {
 
-        chart.series[0].update({stacking: 'normal' }, false);
-        chart.series[1].update({stacking: 'normal' }, false);
+        chart.series[0].update({ stacking: 'normal' }, false);
+        chart.series[1].update({ stacking: 'normal' }, false);
         chart.redraw();
     });
 

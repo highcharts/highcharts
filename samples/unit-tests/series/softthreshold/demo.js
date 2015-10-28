@@ -48,7 +48,7 @@ $(function () {
         );
 
 
-        chart.series[0].update({ type: 'area'});
+        chart.series[0].update({ type: 'area' });
         chart.series[0].setData([1001, 1002, 1003]);
 
 

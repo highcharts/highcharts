@@ -4,7 +4,7 @@ $(function () {
             type: 'column',
             events: {
                 load: function () {
-                    this.series[0].update({data: [1, 0, 1] });
+                    this.series[0].update({ data: [1, 0, 1] });
                 }
             }
         },

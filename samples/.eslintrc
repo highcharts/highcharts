@@ -33,7 +33,7 @@ rules:
     no-underscore-dangle: 0     # Maps demos use underscore. TODO: Check out.
     no-unused-vars: 0           # TODO: Fix manually
     no-shadow: 0                # TODO: Fix manually
-    object-curly-spacing: 0     # TODO: Isolate and auto fix
+    object-curly-spacing: [2, "always"]
     operator-linebreak: 0       # TODO: Fix manually
     quotes: 0                   # TODO: Consider single, but maybe not where we use JSON data
     radix: 0                    # TODO: Fix manually
