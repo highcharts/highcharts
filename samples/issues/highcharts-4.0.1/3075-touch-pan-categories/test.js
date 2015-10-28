@@ -4,7 +4,7 @@ function test(chart) {
         return this[i];
     };
 
-    
+
     chart.pointer.onContainerTouchStart({
         type: 'touchstart',
         touches: [{

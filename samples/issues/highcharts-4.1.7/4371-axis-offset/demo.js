@@ -1,7 +1,7 @@
 $(function () {
-    QUnit.test("Axis offsets - test series clips." , function (assert) { 
+    QUnit.test("Axis offsets - test series clips." , function (assert) {
         var chart = $('#container').highcharts({
-                xAxis: {    
+                xAxis: {
                     offset: -150
                 },
                 yAxis: {
@@ -34,5 +34,5 @@ $(function () {
             "CLip path has proper width and height"
         );
     });
-    
+
 });

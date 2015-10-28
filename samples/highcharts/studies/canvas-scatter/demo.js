@@ -32,7 +32,7 @@ $(function () {
 
         yAxis: {
             // Renders faster when we don't have to compute min and max
-            min: 0, 
+            min: 0,
             max: 100,
             minPadding: 0,
             maxPadding: 0

@@ -59,7 +59,7 @@ $(function () {
                 data: [{
                     name: "A",
                     y: 30
-                }, 
+                },
                 {
                     name: "B",
                     y: 0

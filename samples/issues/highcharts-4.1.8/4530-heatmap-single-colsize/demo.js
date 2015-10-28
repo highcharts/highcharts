@@ -8,7 +8,7 @@ $(function () {
                 width: 400,
                 height: 400
             },
-            
+
             series: [{
                 data: [[
                     Date.UTC(2012, 12, 2),
@@ -48,7 +48,7 @@ $(function () {
                 height: 400,
                 inverted: true
             },
-            
+
             series: [{
                 data: [[
                     Date.UTC(2012, 12, 2),
@@ -75,7 +75,7 @@ $(function () {
             true,
             'Element height is acceptable'
         );
-        
+
 
 
 
@@ -94,7 +94,7 @@ $(function () {
             xAxis: {
                 minRange: 1
             },
-            
+
             series: [{
                 data: [[
                     Date.UTC(2012, 12, 2),

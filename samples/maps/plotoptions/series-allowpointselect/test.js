@@ -7,7 +7,7 @@ function test(chart) {
     // Now click it
     chart.pointer.onContainerClick({
         type: 'click',
-        target: point.graphic.element 
+        target: point.graphic.element
     });
 
     // Second point, in order to unselect the first
@@ -19,6 +19,6 @@ function test(chart) {
     // Now click it
     chart.pointer.onContainerClick({
         type: 'click',
-        target: point.graphic.element 
+        target: point.graphic.element
     });
 }

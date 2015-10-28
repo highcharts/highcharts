@@ -9,7 +9,7 @@ $(function () {
                     id: "A"
                 }, {
                     id: "B",
-                    value: 2            
+                    value: 2
                 }, {
                     id: "A1",
                     parent: "A",
@@ -39,5 +39,5 @@ $(function () {
         assert.strictEqual(root.x + root.width, extremesX.max, "xAxis.max equals root.x + root.width");
         assert.strictEqual(root.y, extremesY.min, "yAxis.min equals root.y");
         assert.strictEqual(root.y + root.height, extremesY.max, "yAxis.max equals root.y + root.height");
-    });    
+    });
 });

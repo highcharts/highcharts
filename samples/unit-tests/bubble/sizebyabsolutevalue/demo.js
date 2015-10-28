@@ -1,7 +1,7 @@
 $(function () {
 
     QUnit.test('Size by threshold', function (assert) {
-        var chart, 
+        var chart,
             $container = $('#container');
 
         $container.highcharts({
@@ -32,7 +32,7 @@ $(function () {
         });
 
         chart = $container.highcharts();
-        
+
         assert.strictEqual(
             chart.series[0].points[0].graphic.attr('r'),
             chart.series[0].points[10].graphic.attr('r'),

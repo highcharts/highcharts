@@ -19,7 +19,7 @@ $(function () {
             0,
             'Without extra padding'
         );
-        
+
     });
 
 });

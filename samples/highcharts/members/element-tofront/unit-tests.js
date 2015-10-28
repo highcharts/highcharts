@@ -1,6 +1,6 @@
 /* global circ, rect */
 QUnit.test('Element to front', function (assert) {
-    
+
     function getIndex(element) {
         var i = 0,
             nodes = element.parentNode.childNodes;
@@ -44,5 +44,5 @@ QUnit.test('Element to front', function (assert) {
         true,
         'Circle is above rect'
     );
-    
+
 });

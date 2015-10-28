@@ -8,7 +8,7 @@ $(function () {
             }, {
                 id: 'yAxis-2',
                 top: '50%',
-                height: '30%' 
+                height: '30%'
             }],
             series: [{
                 data: [5, 4, 3, 2, 1, 2, 3, 4, 5]

@@ -37,5 +37,5 @@ $(function () {
             UNDEFINED,
             "Zero extra bands.");
     });
-    
+
 });

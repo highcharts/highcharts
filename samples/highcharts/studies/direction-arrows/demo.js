@@ -99,7 +99,7 @@ $(function () {
                 y: -8000
             }]
         }, {
-            // Specify the lines here. The design of the arrowheads is defined in SVG (see HTML). Which line gets which marker is set with CSS. 
+            // Specify the lines here. The design of the arrowheads is defined in SVG (see HTML). Which line gets which marker is set with CSS.
             type: 'mapline',
             name: 'Lines',
             color: 'black',
@@ -121,7 +121,7 @@ $(function () {
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
-    
+
         series: [{
             id: 'Series1',
             data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4],
@@ -129,8 +129,8 @@ $(function () {
                 enabled: false
             }
         }]
-        
-    }, function (chart) {        
-        chart.get('Series1').graph.addClass('highcharts-arrows');        
+
+    }, function (chart) {
+        chart.get('Series1').graph.addClass('highcharts-arrows');
     });
 });

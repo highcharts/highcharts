@@ -71,10 +71,10 @@ $(function () {
             }
         }]
     });
-    
+
     chart = $('#container').highcharts();
-    
-    /** 
+
+    /**
      * Pause the timeline, either when the range is ended, or when clicking the pause button.
      * Pausing stops the timer and resets the button to play mode.
      */
@@ -114,7 +114,7 @@ $(function () {
         }, 500);
 
     }
-    
+
     /**
      * Toggle play and pause from the button
      */
@@ -125,7 +125,7 @@ $(function () {
             pause(this);
         }
     });
-    
+
     /**
      * Update the chart when the input is changed
      */

@@ -47,7 +47,7 @@ $(function () {
             return allVis;
         }
 
-        
+
 
         chart = $('#container').highcharts(options).highcharts();
         assert.equal(
@@ -65,6 +65,6 @@ $(function () {
             'All labels are visible when inverted'
         )
 
-        
+
     });
 });

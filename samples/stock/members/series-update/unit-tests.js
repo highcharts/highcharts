@@ -54,7 +54,7 @@ QUnit.test('Series.update', function (assert) {
         'path',
         'Markers changed'
     );
-    
+
 
     // Color
     assert.strictEqual(
@@ -88,7 +88,7 @@ QUnit.test('Series.update', function (assert) {
         'circle',
         'Line point'
     );
-    
+
     // Type spline
     $('#spline').click();
     assert.strictEqual(
@@ -101,7 +101,7 @@ QUnit.test('Series.update', function (assert) {
         true,
         'Curved path'
     );
-    
+
     // Type area
     $('#area').click();
     assert.strictEqual(
@@ -114,7 +114,7 @@ QUnit.test('Series.update', function (assert) {
         'path',
         'Has area'
     );
-    
+
     // Type areaspline
     $('#areaspline').click();
     assert.strictEqual(
@@ -132,7 +132,7 @@ QUnit.test('Series.update', function (assert) {
         'path',
         'Has area'
     );
-    
+
     // Type arearange
     $('#arearange').click();
     assert.strictEqual(
@@ -145,7 +145,7 @@ QUnit.test('Series.update', function (assert) {
         'path',
         'Has area'
     );
-    
+
     // Type columnrange
     $('#columnrange').click();
     assert.strictEqual(
@@ -163,7 +163,7 @@ QUnit.test('Series.update', function (assert) {
         'rect',
         'Has column'
     );
-    
+
     // Type ohlc
     $('#ohlc').click();
     assert.strictEqual(
@@ -181,7 +181,7 @@ QUnit.test('Series.update', function (assert) {
         'path',
         'Has path points'
     );
-    
+
     // Type candlestick
     $('#candlestick').click();
     assert.strictEqual(
@@ -194,7 +194,7 @@ QUnit.test('Series.update', function (assert) {
         Highcharts.getOptions().colors[1],
         'Filled last point'
     );
-    
 
-    
+
+
 });

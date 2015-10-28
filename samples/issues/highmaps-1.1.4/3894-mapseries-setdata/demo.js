@@ -849,12 +849,12 @@ $(function () {
         Highcharts.charts[0].series[0].setData(data);
 
         assert.equal(
-            typeof $('#container').highcharts().yAxis[0].min,    
+            typeof $('#container').highcharts().yAxis[0].min,
             'number',
             'Y axis min is number'
         );
     });
 
-    
+
 
 });

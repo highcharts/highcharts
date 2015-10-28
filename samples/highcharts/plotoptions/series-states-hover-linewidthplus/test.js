@@ -3,7 +3,7 @@ function test(chart) {
         offset = $(chart.container).offset();
 
     // Set hoverPoint
-    
+
     chart.series[0].onMouseOver();
     point.onMouseOver();
 

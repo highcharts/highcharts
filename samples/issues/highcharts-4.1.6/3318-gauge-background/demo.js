@@ -8,7 +8,7 @@ $(function () {
                 data: [10],
             }],
         });
-        $('#container').highcharts({ 
+        $('#container').highcharts({
             id: 'LINE',
             chart: {
                 polar: true,
@@ -24,7 +24,7 @@ $(function () {
             0,
             'No plot bands exist'
         );
-        
+
     });
 
 });

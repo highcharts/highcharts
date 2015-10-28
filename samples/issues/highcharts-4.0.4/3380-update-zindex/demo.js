@@ -4,12 +4,12 @@ $(function () {
             zIndex: 1
         });
     });
-    
+
     $('#container').highcharts({
         title: {
             text: 'Yellow line should be on top after click'
         },
-        
+
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },

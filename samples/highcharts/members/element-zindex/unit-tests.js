@@ -1,6 +1,6 @@
 /* global circles */
 QUnit.test('Element Z index', function (assert) {
-    
+
     function getIndex(element) {
         var i = 0,
             nodes = element.parentNode.childNodes;
@@ -49,5 +49,5 @@ QUnit.test('Element Z index', function (assert) {
         true,
         'Yellow in front of blue'
     );
-    
+
 });

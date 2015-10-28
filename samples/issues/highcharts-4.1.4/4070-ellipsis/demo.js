@@ -117,7 +117,7 @@ $(function () {
 
         // After update, long labels should have the same height as short ones because they should have ellipsis
         assert.equal(
-            chart.xAxis[0].ticks[10].label.getBBox().height,     
+            chart.xAxis[0].ticks[10].label.getBBox().height,
             chart.xAxis[0].ticks[0].label.getBBox().height,
             'Label height'
         );

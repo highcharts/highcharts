@@ -36,7 +36,7 @@ $(function () {
             3,
             'No element created for null point'
         );
-        
+
     });
 
 });

@@ -1,7 +1,7 @@
 $(function () {
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=us-counties-unemployment.json&callback=?', function (data) {
 
-        /** 
+        /**
          * Data parsed from http://www.bls.gov/lau/#tables
          *
          * 1. Go to http://www.bls.gov/lau/laucntycur14.txt (or similar, updated datasets)

@@ -29,7 +29,7 @@ $(function () {
         // Set testing extremes:
         chart.xAxis[0].setExtremes(Date.UTC(2010, 1),Date.UTC(2013, 1), true, false);
 
-        // Imitate left side zooming: 
+        // Imitate left side zooming:
         chart.pointer.selectionMarker = chart.renderer.rect(chart.plotLeft + 50, chart.plotTop, 200, chart.plotHeight).add();
         chart.pointer.hasDragged = true;
         chart.pointer.drop({});
@@ -44,7 +44,7 @@ $(function () {
         // Reset extremes for a second test:
         chart.xAxis[0].setExtremes(Date.UTC(2010, 1),Date.UTC(2013, 1), true, false);
 
-        // Imitate right side zooming: 
+        // Imitate right side zooming:
         chart.pointer.selectionMarker = chart.renderer.rect(chart.plotLeft + 200, chart.plotTop, 200, chart.plotHeight).add();
         chart.pointer.hasDragged = true;
         chart.pointer.drop({});

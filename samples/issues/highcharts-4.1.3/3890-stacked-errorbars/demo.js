@@ -20,7 +20,7 @@ $(function () {
         });
 
         assert.equal(
-            $('#container').highcharts().series[0].type,    
+            $('#container').highcharts().series[0].type,
             'boxplot',
             'Successful boxplot'
         );
@@ -50,7 +50,7 @@ $(function () {
         });
 
         assert.equal(
-            $('#container').highcharts().series[1].type,    
+            $('#container').highcharts().series[1].type,
             'errorbar',
             'Successful error bar'
         );

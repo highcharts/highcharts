@@ -12,7 +12,7 @@ $(function () {
                         color: '#BADA55'
                     },
                     select: {
-                        color: "#ff00ff"   
+                        color: "#ff00ff"
                     }
                 },
                 data: [{
@@ -66,6 +66,6 @@ $(function () {
             chart.series[0].data[4].graphic.attr('fill'),
             '#ff00ff',
             'Point use selected color.'
-        );        
+        );
     });
 });

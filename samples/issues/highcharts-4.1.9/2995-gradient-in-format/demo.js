@@ -28,6 +28,6 @@ $(function () {
             'fill="url(#highcharts-1)"',
             'Gradient is preserved in string handling'
         );
-       
+
     });
 });

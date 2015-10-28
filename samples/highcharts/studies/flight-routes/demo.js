@@ -12,17 +12,17 @@ $(function () {
             layout: 'vertical',
             floating: true
         },
-        
+
         mapNavigation: {
             enabled: true
         },
-        
-        tooltip: {            
+
+        tooltip: {
             formatter: function () {
                 return this.point.id + (this.point.lat ? '<br>Lat: ' + this.point.lat + ' Lon: ' + this.point.lon : '');
             },
         },
-        
+
         plotOptions: {
             series: {
                 marker: {
@@ -50,9 +50,9 @@ $(function () {
         }, {
             // Specify points using lat/lon
             type: 'mappoint',
-            name: 'Cities',       
+            name: 'Cities',
             dataLabels: {
-                formatter: function () {                    
+                formatter: function () {
                     return this.point.id;
                 }
             },
@@ -101,18 +101,18 @@ $(function () {
             }]
         }]
     });
-    
+
     // Function to return a path with an arc between two points
     function pointsToPath(from, to, invertArc) {
         var arcPointX = (from.x + to.x) / (invertArc ? 2.4 : 1.6),
-            arcPointY = (from.y + to.y) / (invertArc ? 2.4 : 1.6);            
+            arcPointY = (from.y + to.y) / (invertArc ? 2.4 : 1.6);
         return 'M' + from.x + ',' + from.y + 'Q' + arcPointX + ' ' + arcPointY + ',' + to.x + ' ' + to.y
     }
-    
+
     var chart = $('#container').highcharts(),
         londonPoint = chart.get('London'),
         lerwickPoint = chart.get('Lerwick');
-    
+
     // Add the flight routes series for London and Lerwick using the already defined points
     chart.addSeries({
         name: 'London flight routes',
@@ -121,25 +121,25 @@ $(function () {
         color: Highcharts.getOptions().colors[3],
         data: [{
             id: 'London - Glasgow',
-            path: pointsToPath(londonPoint, chart.get('Glasgow')) 
+            path: pointsToPath(londonPoint, chart.get('Glasgow'))
         }, {
             id: 'London - Belfast',
-            path: pointsToPath(londonPoint, chart.get('Belfast'), true) 
+            path: pointsToPath(londonPoint, chart.get('Belfast'), true)
         }, {
             id: 'London - Leeds',
-            path: pointsToPath(londonPoint, chart.get('Leeds')) 
+            path: pointsToPath(londonPoint, chart.get('Leeds'))
         }, {
             id: 'London - Liverpool',
-            path: pointsToPath(londonPoint, chart.get('Liverpool'), true) 
+            path: pointsToPath(londonPoint, chart.get('Liverpool'), true)
         }, {
             id: 'London - Sheffield',
-            path: pointsToPath(londonPoint, chart.get('Sheffield')) 
+            path: pointsToPath(londonPoint, chart.get('Sheffield'))
         }, {
             id: 'London - Birmingham',
-            path: pointsToPath(londonPoint, chart.get('Birmingham'), true) 
+            path: pointsToPath(londonPoint, chart.get('Birmingham'), true)
         }, {
             id: 'London - Bristol',
-            path: pointsToPath(londonPoint, chart.get('Bristol'), true) 
+            path: pointsToPath(londonPoint, chart.get('Bristol'), true)
         }]
     });
     chart.addSeries({
@@ -149,16 +149,16 @@ $(function () {
         color: Highcharts.getOptions().colors[5],
         data: [{
             id: 'Lerwick - Glasgow',
-            path: pointsToPath(lerwickPoint, chart.get('Glasgow')) 
+            path: pointsToPath(lerwickPoint, chart.get('Glasgow'))
         }, {
             id: 'Lerwick - Belfast',
-            path: pointsToPath(lerwickPoint, chart.get('Belfast')) 
+            path: pointsToPath(lerwickPoint, chart.get('Belfast'))
         }, {
             id: 'Lerwick - Leeds',
-            path: pointsToPath(lerwickPoint, chart.get('Leeds')) 
+            path: pointsToPath(lerwickPoint, chart.get('Leeds'))
         }, {
             id: 'Lerwick - Liverpool',
-            path: pointsToPath(lerwickPoint, chart.get('Liverpool')) 
+            path: pointsToPath(lerwickPoint, chart.get('Liverpool'))
         }]
     });
 });

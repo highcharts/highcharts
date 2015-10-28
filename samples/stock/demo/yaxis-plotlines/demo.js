@@ -11,7 +11,7 @@ $(function () {
 
         startDate.setMonth(startDate.getMonth() - 3); // a quarter of a year before last data point
         startPeriod = Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-        
+
         for (index = data.length - 1; index >= 0; index = index - 1) {
             date = data[index][0]; // data[i][0] is date
             rate = data[index][1]; // data[i][1] is exchange rate

@@ -4,7 +4,7 @@ $(function () {
             chart: {
                 type: 'solidgauge'
             },
-            
+
             title: {
                 text: 'Reversed gauge'
             },

@@ -7,7 +7,7 @@ function test(chart) {
 
     // Back to Cars
     chart.drillUp();
-    
+
     // Back to top
     chart.drillUp();
 

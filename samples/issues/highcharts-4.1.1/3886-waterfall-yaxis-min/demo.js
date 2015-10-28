@@ -11,7 +11,7 @@ $(function () {
         "yAxis": {
             "min": 4
         },
-        
+
         "series": [{
             "data": [{
                 "y": 6

@@ -65,13 +65,13 @@ $(function () {
 
         chart = $('#container').highcharts();
 
-        
+
         assert.equal(
             chart.series[0].points[0].graphic.attr('y') + chart.series[0].points[0].graphic.attr('height') < 0,
             true,
             'Column is above plot area'
         );
-        
+
     });
 
 });

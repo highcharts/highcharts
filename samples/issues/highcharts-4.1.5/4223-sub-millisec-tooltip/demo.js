@@ -19,13 +19,13 @@ $(function () {
             }]
         });
 
-        
+
         assert.equal(
             Highcharts.Tooltip.prototype.getXDateFormat.call(chart.tooltip, chart.series[0].points[0], chart.options.tooltip, chart.xAxis[0]),
             '%A, %b %e, %H:%M:%S.%L',
             'Milliseconds are preserved in tooltip'
         )
-        
+
     });
 
 });

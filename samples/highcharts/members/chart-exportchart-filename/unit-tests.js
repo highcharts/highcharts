@@ -17,7 +17,7 @@ QUnit.test('Capture POST', function (assert) {
         'application/pdf',
         'Posting for PDF'
     );
-    
+
     assert.strictEqual(
         postData.filename,
         'my-pdf',

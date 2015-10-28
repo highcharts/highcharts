@@ -1,5 +1,5 @@
 function test(chart) {
-    
+
     // First drill down, emulate category click
     chart.series[0].points[0].doDrilldown(true);
     chart.series[1].points[0].doDrilldown(true);

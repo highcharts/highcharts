@@ -1,6 +1,6 @@
 $(function () {
 
-    // Load the data from a Google Spreadsheet 
+    // Load the data from a Google Spreadsheet
     // https://docs.google.com/a/highsoft.com/spreadsheet/pub?hl=en_GB&hl=en_GB&key=0AoIaUO7wH1HwdDFXSlpjN2J4aGg5MkVHWVhsYmtyVWc&output=html
     Highcharts.data({
 
@@ -10,7 +10,7 @@ $(function () {
         parsed: function (columns) {
 
             /**
-             * Event handler for clicking points. Use jQuery UI to pop up 
+             * Event handler for clicking points. Use jQuery UI to pop up
              * a pie chart showing the details for each state.
              */
             function pointClick() {

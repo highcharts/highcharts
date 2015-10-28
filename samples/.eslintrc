@@ -32,7 +32,6 @@ rules:
     no-undefined: 0
     no-underscore-dangle: 0     # Maps demos use underscore. TODO: Check out.
     no-unused-vars: 0           # TODO: Fix manually
-    no-trailing-spaces: 0       # TODO: Isolate and auto fix
     no-shadow: 0                # TODO: Fix manually
     object-curly-spacing: 0     # TODO: Isolate and auto fix
     operator-linebreak: 0       # TODO: Fix manually

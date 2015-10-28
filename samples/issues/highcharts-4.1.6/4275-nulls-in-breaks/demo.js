@@ -22,7 +22,7 @@ $(function () {
             },
             series: [{
                 marker: {
-                    enabled: true  
+                    enabled: true
                 },
                 data: (function () {
                     var _data = [],
@@ -70,7 +70,7 @@ $(function () {
             },
             series: [{
                 marker: {
-                    enabled: true  
+                    enabled: true
                 },
                 data: (function () {
                     var _data = [],
@@ -93,7 +93,7 @@ $(function () {
             -1,
             'Graph does not have moveTo operator'
         );
-        
+
     });
 
 });

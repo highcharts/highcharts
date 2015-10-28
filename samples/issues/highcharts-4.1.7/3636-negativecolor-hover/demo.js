@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test("Negative color shoud be respected for hover state" , function (assert) {
-   
+
         var chart = $('#container').highcharts({
                 series: [{
                     color: '#FF0000',
@@ -54,7 +54,7 @@ $(function () {
                 "Color matched with options (series with marker)"
             );
         });
-        
+
 
         // Higher priority for states.fillColor than series.negativeColor
         sLine = chart.series[2];

@@ -4,7 +4,7 @@ $(function () {
         title: {
             text: 'Highcharts export width test'
         },
-        
+
         subtitle: {
             text: 'Exported chart should be 200px wide'
         },

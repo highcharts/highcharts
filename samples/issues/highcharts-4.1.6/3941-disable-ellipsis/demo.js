@@ -101,7 +101,7 @@ $(function () {
             'LongTextWithNoEllipsis',
             'No ellipsis'
         );
-        
+
     });
 
 });

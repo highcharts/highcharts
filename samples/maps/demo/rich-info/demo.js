@@ -33,7 +33,7 @@ $(function () {
                 data = row.slice(4);
 
             $.each(data, function (i, val) {
-                
+
                 val = val.replace(quoteRegex, '');
                 if (numRegex.test(val)) {
                     val = parseInt(val);
@@ -73,7 +73,7 @@ $(function () {
                 });
             }
         }
-        
+
         // Add lower case codes to the data set for inclusion in the tooltip.pointFormat
         var mapData = Highcharts.geojson(Highcharts.maps['custom/world']);
         $.each(mapData, function () {
@@ -173,13 +173,13 @@ $(function () {
                 }
             }
 
-            
+
 
         });
-        
+
         // Initiate the map chart
         mapChart = $('#container').highcharts('Map', {
-            
+
             title : {
                 text : 'Population history by country'
             },

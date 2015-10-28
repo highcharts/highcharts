@@ -80,6 +80,6 @@ QUnit.test('Zoom and pan key', function (assert) {
     );
 
 
-    
+
 
 });

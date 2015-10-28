@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Ticks were drawn in break', function (assert) {
-        
+
         $('#container').highcharts({
             title: {
                 text: 'Sample of a simple break'
@@ -19,7 +19,7 @@ $(function () {
                 labels: {
                     format: '{value}{value}{value}'
                 }
-                    
+
             },
             series: [{
                 gapSize: 1,
@@ -35,7 +35,7 @@ $(function () {
         });
 
         var chart = $('#container').highcharts();
-            
+
         assert.strictEqual(
             chart.xAxis[0].tickPositions.join(','),
             '0,1,2,3,4,5,10,11,12,13,14,15,16,17,18,19',

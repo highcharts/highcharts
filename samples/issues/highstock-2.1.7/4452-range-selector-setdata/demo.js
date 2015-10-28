@@ -7,7 +7,7 @@ $(function () {
             // generate an array of random data
             var data = [],
                 time = new Date().getTime();
-            
+
             for (var i = -9999; i <= 0; i += 1) {
                 data.push([
                     time + i * 10000,

@@ -4,7 +4,7 @@ $(function () {
         var chart,
             i;
 
-        
+
         var eps = [{
             x: Date.UTC(2005, 11, 31, 12, 0, 0, 0),
             y: 15.3

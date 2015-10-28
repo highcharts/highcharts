@@ -6,7 +6,7 @@ $(function () {
             500,
             300
         );
-            
+
         var lbl = ren.label('Hello World', 100, 100)
             .attr({
                 //align: 'right',
@@ -17,13 +17,13 @@ $(function () {
 
         var g = ren.box.querySelector('g');
 
-        
+
         assert.strictEqual(
             g.getBoundingClientRect().left,
             100,
             "Box is left aligned"
         );
-        
+
 
         lbl.attr({ align: 'right' });
 
@@ -32,6 +32,6 @@ $(function () {
             100,
             "Box is right aligned"
         );
-        
+
     });
 });

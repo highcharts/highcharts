@@ -38,7 +38,7 @@ $(function () {
             }]
         }).highcharts();
 
-        
+
         assert.strictEqual(
             typeof chart.series[0].points[0].dataLabel,
             'undefined',

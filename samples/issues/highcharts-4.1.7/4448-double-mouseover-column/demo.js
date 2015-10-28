@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test("Hover on column should call mouseOver only once." , function (assert) {
-   
+
         var iter = 0,
             chart = $('#container').highcharts({
                 series: [{
@@ -18,12 +18,12 @@ $(function () {
 
         chart.hoverSeries = chart.series[0];
         chart.hoverPoint = chart.series[0].points[0];
-        chart.pointer.onContainerMouseMove({ 
-            pageX: 150, 
-            pageY: 310, 
-            target: chart.series[0].group.element 
+        chart.pointer.onContainerMouseMove({
+            pageX: 150,
+            pageY: 310,
+            target: chart.series[0].group.element
         });
-        
+
         assert.strictEqual(
             iter,
             0,

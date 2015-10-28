@@ -231,7 +231,7 @@ $(function () {
                                     d: boxes[i]
                                 });
                             }
-                            
+
                         } else {
                             graphic = chart.renderer.g().add();
                             graphic.path = chart.renderer.path(path)
@@ -306,7 +306,7 @@ $(function () {
                     "index": 0
             }],
                 "tooltip": {
-                    formatter: function () { 
+                    formatter: function () {
                         return "test";
                     }
             },

@@ -37,7 +37,7 @@ $(function () {
 
         var chart = $('#container').highcharts(),
             points = chart.series[0].points;
-        
+
 
         assert.equal(
             points[0].graphic.element.getAttribute('stroke'),
