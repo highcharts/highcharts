@@ -16,7 +16,7 @@ $(function () {
             return text.replace(/^"/, '')
                 .replace(/",$/, '')
                 .split('","');
-        };
+        }
 
         csv = csv.split(/\n/);
 

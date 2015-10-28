@@ -26,4 +26,4 @@ function test(chart) {
     $.each(chart.getSelectedPoints(), function () {
         this.remove();
     });
-};
+}

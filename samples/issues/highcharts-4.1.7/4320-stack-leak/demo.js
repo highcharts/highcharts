@@ -7,7 +7,7 @@ $(function () {
             }
         }
         return size;
-    };
+    }
 
 
     QUnit.test('Stack memory build-up', function (assert) {

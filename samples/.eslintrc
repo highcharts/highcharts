@@ -26,7 +26,6 @@ rules:
     new-cap: 0                  # The ill-named Color object. Fix in HC5
     no-alert: 0
     no-console: 0               # TODO: Fix manually. Output to a visible div instead.
-    no-extra-semi: 0            # TODO: Isolate and auto fix
     no-loop-func: 0             # TODO: Fix manually
     no-multi-spaces: 0          # Consider key-spacing and exception to align arrays
     no-redeclare: 0             # TODO: Fix manually

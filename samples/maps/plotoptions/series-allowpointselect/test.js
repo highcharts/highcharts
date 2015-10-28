@@ -21,4 +21,4 @@ function test(chart) {
         type: 'click',
         target: point.graphic.element 
     });
-};
+}
