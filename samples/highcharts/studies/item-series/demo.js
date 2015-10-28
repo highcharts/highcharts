@@ -45,7 +45,7 @@ $(function () {
                             if (graphics[i]) {
                                 stop(graphics[i]);
                                 graphics[i].attr(attr);
-                            } else {
+                            } else {
                                 graphics[i] = renderer.circle(attr)
                                     .attr(pointAttr)
                                     .add(point.graphic);

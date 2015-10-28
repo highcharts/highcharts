@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-10-26)
+ * @license Highcharts JS v4.1.9-modified (2015-10-28)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -107,7 +107,7 @@
     function error(code, stop) {
         var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
         if (stop) {
-            throw msg;
+            throw new Error(msg);
         }
         // else ...
         if (win.console) {
@@ -4791,8 +4791,8 @@
             // create element with default attributes and style
             if (nodeName) {
                 markup = isDiv || nodeName === 'span' || nodeName === 'img' ?
-                    markup.join('')
-                    : renderer.prepVML(markup);
+                    markup.join('')    :
+                    renderer.prepVML(markup);
                 wrapper.element = createElement(markup);
             }
 
@@ -8218,6 +8218,7 @@
                 labelOptions = options.labels,
                 labelOffset = 0, // reset
                 labelOffsetPadded,
+                opposite = axis.opposite,
                 axisOffset = chart.axisOffset,
                 clipOffset = chart.clipOffset,
                 clip,
@@ -8296,9 +8297,13 @@
                     .attr({
                         zIndex: 7,
                         rotation: axisTitleOptions.rotation || 0,
-                        align:
+                        align: 
                             axisTitleOptions.textAlign ||
-                            { low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
+                            { 
+                                low: opposite ? 'right' : 'left',
+                                middle: 'center',
+                                high: opposite ? 'left' : 'right'
+                            }[axisTitleOptions.align]
                     })
                     .addClass(PREFIX + this.coll.toLowerCase() + '-title')
                     .css(axisTitleOptions.style)
@@ -8675,12 +8680,14 @@
 
         /**
          * Draw the crosshair
+         * 
+         * @param  {Object} e The event arguments from the modified pointer event
+         * @param  {Object} point The Point object
          */
-        drawCrosshair: function (e, point) { // docs: Missing docs for Axis.crosshair. Also for properties.
+        drawCrosshair: function (e, point) {
 
             var path,
                 options = this.crosshair,
-                animation = options.animation,
                 pos,
                 attribs,
                 categorized;
@@ -8689,7 +8696,7 @@
                 // Disabled in options
                 !this.crosshair ||
                 // Snap
-                ((defined(point) || !pick(this.crosshair.snap, true)) === false) ||
+                ((defined(point) || !pick(options.snap, true)) === false) ||
                 // Not on this axis (#4095, #2888)
                 (point && point.series && point.series[this.coll] !== this)
             ) {
@@ -8718,13 +8725,16 @@
                 // Draw the cross
                 if (this.cross) {
                     this.cross
-                        .attr({ visibility: VISIBLE })[animation ? 'animate' : 'attr']({ d: path }, animation);
+                        .attr({
+                            d: path,
+                            visibility: 'visible'
+                        });
                 } else {
                     categorized = this.categories && !this.isRadial;
                     attribs = {
                         'stroke-width': options.width || (categorized ? this.transA : 1),
                         stroke: options.color || (categorized ? 'rgba(155,200,255,0.2)' : '#C0C0C0'),
-                        zIndex: options.zIndex || 2
+                        zIndex: pick(options.zIndex, 2)
                     };
                     if (options.dashStyle) {
                         attribs.dashstyle = options.dashStyle;
@@ -18998,6 +19008,7 @@
         map: map,
         merge: merge,
         splat: splat,
+        stableSort: stableSort,
         extendClass: extendClass,
         pInt: pInt,
         svg: hasSVG,

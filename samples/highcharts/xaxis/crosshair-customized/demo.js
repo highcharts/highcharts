@@ -1,14 +1,17 @@
 $(function () {
     $('#container').highcharts({
 
-        tooltip: {
-            crosshairs: [{
+        xAxis: {
+            crosshair: {
                 width: 3,
                 color: 'green'
-            }, {
+            }
+        },
+        yAxis: {
+            crosshair: {
                 width: 3,
                 color: 'green'
-            }]
+            }
         },
 
         series: [{

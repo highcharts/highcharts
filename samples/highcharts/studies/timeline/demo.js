@@ -74,6 +74,17 @@ $(function () {
     
     chart = $('#container').highcharts();
     
+    /** 
+     * Pause the timeline, either when the range is ended, or when clicking the pause button.
+     * Pausing stops the timer and resets the button to play mode.
+     */
+    function pause(button) {
+        button.title = 'play';
+        button.className = 'fa fa-play';
+        clearTimeout(chart.sequenceTimer);
+        chart.sequenceTimer = undefined;
+    }
+
     /**
      * Update the chart. This happens either on updating (moving) the range input,
      * or from a timer when the timeline is playing.
@@ -102,17 +113,6 @@ $(function () {
             update(1);
         }, 500);
 
-    }
-    
-    /** 
-     * Pause the timeline, either when the range is ended, or when clicking the pause button.
-     * Pausing stops the timer and resets the button to play mode.
-     */
-    function pause(button) {
-        button.title = 'play';
-        button.className = 'fa fa-play';
-        clearTimeout(chart.sequenceTimer);
-        chart.sequenceTimer = undefined;
     }
     
     /**

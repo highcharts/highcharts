@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.9-modified (2015-10-26)
+ * @license Highstock JS v2.1.9-modified (2015-10-28)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -107,7 +107,7 @@
     function error(code, stop) {
         var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
         if (stop) {
-            throw msg;
+            throw new Error(msg);
         }
         // else ...
         if (win.console) {
@@ -4791,8 +4791,8 @@
             // create element with default attributes and style
             if (nodeName) {
                 markup = isDiv || nodeName === 'span' || nodeName === 'img' ?
-                    markup.join('')
-                    : renderer.prepVML(markup);
+                    markup.join('')    :
+                    renderer.prepVML(markup);
                 wrapper.element = createElement(markup);
             }
 
@@ -8218,6 +8218,7 @@
                 labelOptions = options.labels,
                 labelOffset = 0, // reset
                 labelOffsetPadded,
+                opposite = axis.opposite,
                 axisOffset = chart.axisOffset,
                 clipOffset = chart.clipOffset,
                 clip,
@@ -8296,9 +8297,13 @@
                     .attr({
                         zIndex: 7,
                         rotation: axisTitleOptions.rotation || 0,
-                        align:
+                        align: 
                             axisTitleOptions.textAlign ||
-                            { low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
+                            { 
+                                low: opposite ? 'right' : 'left',
+                                middle: 'center',
+                                high: opposite ? 'left' : 'right'
+                            }[axisTitleOptions.align]
                     })
                     .addClass(PREFIX + this.coll.toLowerCase() + '-title')
                     .css(axisTitleOptions.style)
@@ -8675,12 +8680,14 @@
 
         /**
          * Draw the crosshair
+         * 
+         * @param  {Object} e The event arguments from the modified pointer event
+         * @param  {Object} point The Point object
          */
-        drawCrosshair: function (e, point) { // docs: Missing docs for Axis.crosshair. Also for properties.
+        drawCrosshair: function (e, point) {
 
             var path,
                 options = this.crosshair,
-                animation = options.animation,
                 pos,
                 attribs,
                 categorized;
@@ -8689,7 +8696,7 @@
                 // Disabled in options
                 !this.crosshair ||
                 // Snap
-                ((defined(point) || !pick(this.crosshair.snap, true)) === false) ||
+                ((defined(point) || !pick(options.snap, true)) === false) ||
                 // Not on this axis (#4095, #2888)
                 (point && point.series && point.series[this.coll] !== this)
             ) {
@@ -8718,13 +8725,16 @@
                 // Draw the cross
                 if (this.cross) {
                     this.cross
-                        .attr({ visibility: VISIBLE })[animation ? 'animate' : 'attr']({ d: path }, animation);
+                        .attr({
+                            d: path,
+                            visibility: 'visible'
+                        });
                 } else {
                     categorized = this.categories && !this.isRadial;
                     attribs = {
                         'stroke-width': options.width || (categorized ? this.transA : 1),
                         stroke: options.color || (categorized ? 'rgba(155,200,255,0.2)' : '#C0C0C0'),
-                        zIndex: options.zIndex || 2
+                        zIndex: pick(options.zIndex, 2)
                     };
                     if (options.dashStyle) {
                         attribs.dashstyle = options.dashStyle;
@@ -19635,7 +19645,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v2.1.9-modified (2015-10-26)
+     * Highstock JS v2.1.9-modified (2015-10-28)
      * Highcharts Broken Axis module
      * 
      * Author: Stephane Vanraes, Torstein Honsi
@@ -22533,6 +22543,7 @@
             // Select this button
             if (buttons[i]) {
                 buttons[i].setState(2);
+                rangeSelector.lastSelected = i;
             }
 
             // Update the chart
@@ -22702,7 +22713,7 @@
                 // The new zoom area happens to match the range for a button - mark it selected.
                 // This happens when scrolling across an ordinal gap. It can be seen in the intraday
                 // demos when selecting 1h and scroll across the night gap.
-                if (isSelectedForExport || (isSameRange && i !== selected)) {
+                if (isSelectedForExport || (isSameRange && i !== selected) && i === rangeSelector.lastSelected) {
                     rangeSelector.setSelected(i);
                     buttons[i].setState(2);
 
@@ -22753,8 +22764,13 @@
                 this[name + 'Input'].HCTime = time;
             }
 
-            this[name + 'Input'].value = dateFormat(options.inputEditDateFormat || '%Y-%m-%d', this[name + 'Input'].HCTime);
-            this[name + 'DateBox'].attr({ text: dateFormat(options.inputDateFormat || '%b %e, %Y', this[name + 'Input'].HCTime) });
+            this[name + 'Input'].value = dateFormat(
+                options.inputEditDateFormat || '%Y-%m-%d',
+                this[name + 'Input'].HCTime
+            );
+            this[name + 'DateBox'].attr({
+                text: dateFormat(options.inputDateFormat || '%b %e, %Y', this[name + 'Input'].HCTime)
+            });
         },
 
         showInput: function (name) {
@@ -23594,18 +23610,22 @@
             crossBox,
             formatOption = options.format,
             formatFormat = '',
-            limit;
+            limit,
+            align,
+            tickInside = this.options.tickPosition === 'inside';
+
+        align = (horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'left') : (this.labelAlign === 'left' ? 'left' : 'center'));
 
         // If the label does not exist yet, create it.
         if (!crossLabel) {
-            crossLabel = this.crossLabel = chart.renderer.label()
+            crossLabel = this.crossLabel = chart.renderer.label(null, null, null, options.shape || 'callout')
             .attr({
-                align: options.align || (horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'left') : (this.labelAlign === 'left' ? 'left' : 'center')),
+                align: options.align || align,
                 zIndex: 12,
                 height: horiz ? 16 : UNDEFINED,
                 fill: options.backgroundColor || (this.series[0] && this.series[0].color) || 'gray',
                 padding: pick(options.padding, 2),
-                stroke: options.borderColor || null,
+                stroke: options.borderColor || '',
                 'stroke-width': options.borderWidth || 0
             })
             .css(extend({
@@ -23641,6 +23661,8 @@
         // show the label
         crossLabel.attr({
             text: formatOption ? format(formatOption, { value: point[axis] }) : options.formatter.call(this, point[axis]),
+            anchorX: posx + { center: 0, left: -20, right: 20 }[align],
+            anchorY: posy + { center: -20, left: 0, right: 0 }[align],
             x: posx,
             y: posy,
             visibility: VISIBLE
@@ -23649,8 +23671,7 @@
 
         // now it is placed we can correct its position
         if (horiz) {
-            if (((this.options.tickPosition === 'inside') && !opposite) ||
-                ((this.options.tickPosition !== 'inside') && opposite)) {
+            if ((tickInside && !opposite) || (!tickInside && opposite)) {
                 posy = crossLabel.y - crossBox.height;
             }
         } else {
@@ -23878,6 +23899,7 @@
         map: map,
         merge: merge,
         splat: splat,
+        stableSort: stableSort,
         extendClass: extendClass,
         pInt: pInt,
         svg: hasSVG,

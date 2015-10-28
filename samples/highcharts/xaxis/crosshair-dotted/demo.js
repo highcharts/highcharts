@@ -1,8 +1,8 @@
 $(function () {
     $('#container').highcharts({
 
-        tooltip: {
-            crosshairs: {
+        xAxis: {
+            crosshair: {
                 width: 2,
                 color: 'gray',
                 dashStyle: 'shortdot'

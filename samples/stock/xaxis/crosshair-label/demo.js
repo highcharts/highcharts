@@ -7,12 +7,12 @@ $(function () {
             chart: {
                 marginRight: 50
             },
-            rangeSelector : {
-                selected : 1
+            rangeSelector: {
+                selected: 1
             },
 
-            title : {
-                text : 'AAPL Stock Price'
+            title: {
+                text: 'AAPL Stock Price'
             },
 
             xAxis: {
@@ -40,9 +40,9 @@ $(function () {
                 }
             },
 
-            series : [{
-                name : 'AAPL',
-                data : data,
+            series: [{
+                name: 'AAPL',
+                data: data,
                 tooltip: {
                     valueDecimals: 2
                 }

@@ -33,7 +33,7 @@ $(function () {
 
                 for (i = 0; i < points; i += 1) {
                     x = min + (i * ((max - min) / points));
-                    y = dataFunction (x);
+                    y = dataFunction(x);
                     data.push([x, y]);
                 }
 
@@ -71,7 +71,7 @@ $(function () {
         i;
 
     for (i = 0; i < 100; i += 0.1) {
-        scatterData.push([i, Math.sin(i/10) + Math.random() - 0.5]);
+        scatterData.push([i, Math.sin(i / 10) + Math.random() - 0.5]);
     }
 
     var chart = new Highcharts.Chart(
@@ -99,7 +99,7 @@ $(function () {
             min: 0,
             max: 100,
             dataFunction: function (x) {
-                return Math.sin(x/10);
+                return Math.sin(x / 10);
             }
         }]
     });

@@ -1,6 +1,6 @@
 function test(chart) {
 
-    Array.prototype.item = function (i) {
+    Array.prototype.item = function (i) { // eslint-disable-line no-extend-native
         return this[i];
     };
 

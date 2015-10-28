@@ -30,13 +30,12 @@ $(function () {
                     for (i = 0; i < 20; i++) {
                         if (i <= 5 || i >= 10) {
                             _data.push(i);
-                        }
-                        else {
+                        } else {
                             _data.push(null);
                         }
                     }
                     return _data;
-                })()
+                }())
             }]
         }).highcharts();
 
@@ -79,13 +78,12 @@ $(function () {
                     for (i = 0; i < 20; i++) {
                         if (i <= 5 || i >= 10) {
                             _data.push(i);
-                        }
-                        else {
+                        } else {
                             _data.push(null);
                         }
                     }
                     return _data;
-                })()
+                }())
             }]
         }).highcharts();
 

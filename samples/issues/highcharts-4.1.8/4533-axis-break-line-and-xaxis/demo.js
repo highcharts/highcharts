@@ -12,8 +12,12 @@ $(function () {
                     breakSize: 1
                 }],
                 events: {
-                    pointBreak: function() { iteratorPB++; },
-                    afterBreaks: function() { iteratorAB++; }
+                    pointBreak: function() {
+                        iteratorPB++;
+                    },
+                    afterBreaks: function() {
+                        iteratorAB++;
+                    }
                 }
             },
             xAxis:{
@@ -23,8 +27,12 @@ $(function () {
                     breakSize: 1
                 }],
                 events: {
-                    pointBreak: function() { iteratorPB++; },
-                    afterBreaks: function() { iteratorAB++; }
+                    pointBreak: function() {
+                        iteratorPB++;
+                    },
+                    afterBreaks: function() {
+                        iteratorAB++;
+                    }
                 }
             },
             series: [{

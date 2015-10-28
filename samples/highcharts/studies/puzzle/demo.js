@@ -179,10 +179,12 @@ $(function () {
     }(Highcharts));
 
     // Initiate the chart
-    var n, mapData, data = [];
-    for (n in Highcharts.maps) {
-        mapData = Highcharts.maps[n];
-        break;
+    var n, mapData, data = [], maps = Highcharts.maps;
+    for (n in maps) {
+        if (maps.hasOwnPropery(n)) {
+            mapData = maps[n];
+            break;
+        }
     }
     Highcharts.each(mapData.features, function (feature) {
         data.push({

@@ -1,8 +1,8 @@
 $(function () {
     $('#container').highcharts('StockChart', {
 
-        tooltip: {
-            crosshairs: [true, true]
+        yAxis: {
+            crosshair: true
         },
 
         rangeSelector: {
