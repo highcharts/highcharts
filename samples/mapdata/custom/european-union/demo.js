@@ -132,7 +132,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/custom/european-union.js">European Union</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/custom/european-union.js">European Union</a>'
         },
 
         mapNavigation: {

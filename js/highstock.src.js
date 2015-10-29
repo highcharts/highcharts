@@ -18762,16 +18762,22 @@
             point.state = state;
         },
 
+        /**
+         * Get the circular path definition for the halo
+         * @param  {Number} size The radius of the circular halo
+         * @returns {Array} The path definition
+         */
         haloPath: function (size) {
             var series = this.series,
                 chart = series.chart,
                 plotBox = series.getPlotBox(),
-                inverted = chart.inverted;
+                inverted = chart.inverted,
+                plotX = Math.floor(this.plotX);
 
             return chart.renderer.symbols.circle(
-                plotBox.translateX + (inverted ? series.yAxis.len - this.plotY : this.plotX) - size,
-                plotBox.translateY + (inverted ? series.xAxis.len - this.plotX : this.plotY) - size,
-                size * 2,
+                plotBox.translateX + (inverted ? series.yAxis.len - this.plotY : plotX) - size, 
+                plotBox.translateY + (inverted ? series.xAxis.len - plotX : this.plotY) - size, 
+                size * 2, 
                 size * 2
             );
         }
@@ -21974,17 +21980,19 @@
                     }
 
                     ext = xAxis.toFixedRange(scroller.zoomedMin, scroller.zoomedMax, fixedMin, fixedMax);
-                    chart.xAxis[0].setExtremes(
-                        ext.min,
-                        ext.max,
-                        true,
-                        false,
-                        {
-                            trigger: 'navigator',
-                            triggerOp: 'navigator-drag',
-                            DOMEvent: e // #1838
-                        }
-                    );
+                    if (defined(ext.min)) {
+                        chart.xAxis[0].setExtremes(
+                            ext.min,
+                            ext.max,
+                            true,
+                            false,
+                            {
+                                trigger: 'navigator',
+                                triggerOp: 'navigator-drag',
+                                DOMEvent: e // #1838
+                            }
+                        );
+                    }
                 }
 
                 if (e.type !== 'mousemove') {
@@ -22704,7 +22712,9 @@
                     // Set a button on export
                     isSelectedForExport = chart.renderer.forExport && i === selected,
 
-                    isSameRange = range === actualRange;
+                    isSameRange = range === actualRange,
+
+                    hasNoData = !baseAxis.hasVisibleSeries;
 
                 // Months and years have a variable range so we check the extremes
                 if ((type === 'month' || type === 'year') && (actualRange >= { month: 28, year: 365 }[type] * 24 * 36e5 * count) &&
@@ -22718,7 +22728,7 @@
                     rangeSelector.setSelected(i);
                     buttons[i].setState(2);
 
-                } else if (!allButtonsEnabled && (isTooGreatRange || isTooSmallRange || isAllButAlreadyShowingAll || isYTDButNotAvailable)) {
+                } else if (!allButtonsEnabled && (isTooGreatRange || isTooSmallRange || isAllButAlreadyShowingAll || isYTDButNotAvailable || hasNoData)) {
                     buttons[i].setState(3);
 
                 } else if (buttons[i].state === 3) {
@@ -23118,6 +23128,9 @@
             } else {
                 newMax = newMin + fixedRange;
             }
+        }
+        if (isNaN(newMin)) { // #1195
+            newMin = newMax = undefined;
         }
 
         return {

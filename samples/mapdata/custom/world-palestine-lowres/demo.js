@@ -872,7 +872,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/custom/world-palestine-lowres.js">World with Palestine areas, low resolution</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/custom/world-palestine-lowres.js">World with Palestine areas, low resolution</a>'
         },
 
         mapNavigation: {

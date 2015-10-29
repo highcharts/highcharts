@@ -80,7 +80,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/kz/kz-all.js">Kazakhstan</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/kz/kz-all.js">Kazakhstan</a>'
         },
 
         mapNavigation: {

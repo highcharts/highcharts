@@ -13,7 +13,7 @@ $(function () {
             fill: 'none'
         })
         .add();
-        
+
     var txt = renderer.text('Initial text adapts to box width', 100, 120)
         .css({
             width: '100px'

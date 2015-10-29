@@ -52,7 +52,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/dm/dm-all.js">Dominica</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/dm/dm-all.js">Dominica</a>'
         },
 
         mapNavigation: {

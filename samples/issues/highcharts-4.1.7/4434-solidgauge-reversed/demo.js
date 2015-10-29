@@ -4,7 +4,7 @@ $(function () {
             chart: {
                 type: 'solidgauge'
             },
-            
+
             title: {
                 text: 'Reversed gauge'
             },
@@ -28,7 +28,7 @@ $(function () {
 
             series: [{
                 name: 'Speed',
-                data: [50],
+                data: [50]
             }]
 
         }).highcharts();

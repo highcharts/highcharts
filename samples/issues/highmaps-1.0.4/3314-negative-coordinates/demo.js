@@ -111,7 +111,7 @@ $(function () {
             text: 'Negative coordinats failed'
         },
 
-        
+
         series: [{
             data: data,
             mapData: geojson,

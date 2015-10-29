@@ -1,7 +1,7 @@
 $(function () {
     QUnit.test('Reversed axis range', function (assert) {
 
-        var chart = new Highcharts.Chart({   
+        var chart = new Highcharts.Chart({
 
             chart: {
                 renderTo: 'container',
@@ -44,13 +44,13 @@ $(function () {
             Math.round(point.dataLabelUpper.y) >= Math.round(point.plotHigh),
             true,
             '"High" data label is drawn below point'
-        );        
+        );
     });
 
 
     QUnit.test('Reversed axis range - inverted', function (assert) {
 
-        var chart = new Highcharts.Chart({   
+        var chart = new Highcharts.Chart({
 
             chart: {
                 renderTo: 'container',
@@ -82,7 +82,7 @@ $(function () {
             parseInt(point.graphic.element.getAttribute('height'), 10) > 25,
             true,
             'First element has a height'
-        );  
+        );
     });
 
 });

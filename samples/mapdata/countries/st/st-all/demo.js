@@ -20,7 +20,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/st/st-all.js">Sao Tome and Principe</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/st/st-all.js">Sao Tome and Principe</a>'
         },
 
         mapNavigation: {

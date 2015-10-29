@@ -156,7 +156,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/de/de-rp-all.js">Rheinland-Pfalz</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/de/de-rp-all.js">Rheinland-Pfalz</a>'
         },
 
         mapNavigation: {

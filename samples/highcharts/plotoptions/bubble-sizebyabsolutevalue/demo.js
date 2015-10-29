@@ -8,11 +8,11 @@ $(function () {
         title: {
             text: 'Size by absolute value'
         },
-        
+
         subtitle: {
             text: 'Size is computed by absolute value on negative bubbles'
-        },  
-        
+        },
+
         series: [{
             data: [
                 [-5, 0, -5],
@@ -32,8 +32,8 @@ $(function () {
         }]
 
     });
-    
-    
+
+
     // Add the slider to view changes
     $('input#zthreshold').bind('input', function () {
         $('#container').highcharts().series[0].update({

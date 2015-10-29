@@ -1,10 +1,11 @@
 $(function () {
-    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv.json&callback=?', function (data) {
+    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv.json&callback=?', function (data) {
 
         // split the data set into ohlc and volume
         var ohlc = [],
             volume = [],
-            dataLength = data.length;
+            dataLength = data.length,
+            i;
 
         for (i = 0; i < dataLength; i++) {
             ohlc.push([
@@ -18,7 +19,7 @@ $(function () {
             volume.push([
                 data[i][0], // the date
                 data[i][5] // the volume
-            ])
+            ]);
         }
 
         // create the chart
@@ -42,7 +43,7 @@ $(function () {
             },
 
             xAxis: {
-                maxZoom: 14 * 24 * 3600000,
+                maxZoom: 14 * 24 * 3600000
             },
             yAxis: [{
                 title: {

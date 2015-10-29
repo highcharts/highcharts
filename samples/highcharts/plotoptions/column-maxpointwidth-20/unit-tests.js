@@ -1,5 +1,5 @@
 QUnit.test('Max point width', function (assert) {
-    
+
     var chart,
         point;
 
@@ -14,11 +14,11 @@ QUnit.test('Max point width', function (assert) {
 
     // Now try a bar chart
     $('#container').highcharts({
-        
+
         chart: {
             type: 'bar'
         },
-        
+
         title: {
             text: 'Max point width in Highcharts'
         },
@@ -44,7 +44,7 @@ QUnit.test('Max point width', function (assert) {
         'Bar width (flipped) less than 50'
     );
 
-    
+
 
 
 });

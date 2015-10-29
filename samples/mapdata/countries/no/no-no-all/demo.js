@@ -188,7 +188,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/no/no-no-all.js">Nordland</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/no/no-no-all.js">Nordland</a>'
         },
 
         mapNavigation: {

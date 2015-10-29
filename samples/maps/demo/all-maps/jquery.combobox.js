@@ -31,7 +31,7 @@
 					tooltipClass: "ui-state-highlight"
 				});
 
-			this.input.data('uiAutocomplete')._renderItem = function( ul, item ) {
+			this.input.data('uiAutocomplete')._renderItem = function ( ul, item ) {
 				return $( "<li>" )
 					.attr({
 						"data-value": item.value,
@@ -39,7 +39,7 @@
 					})
 					.append( $( "<a>" ).text( item.label ) )
 					.appendTo( ul );
-			}
+			};
 
 			// Update input text if underlying select changes
 			this.element.change(function () {

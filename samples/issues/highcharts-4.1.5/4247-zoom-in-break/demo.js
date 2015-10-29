@@ -30,7 +30,7 @@ $(function () {
 
         chart = $('#container').highcharts();
 
-        
+
         assert.equal(
             chart.yAxis[0].min,
             0,
@@ -41,7 +41,7 @@ $(function () {
             3,
             'Max stops at break'
         );
-        
+
     });
 
 });

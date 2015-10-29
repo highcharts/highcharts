@@ -26,7 +26,7 @@ $(function () {
 
         var chart = $('#container').highcharts(),
             xAxis = chart.xAxis[0];
-        
+
 
         assert.equal(
             xAxis.max - xAxis.min,

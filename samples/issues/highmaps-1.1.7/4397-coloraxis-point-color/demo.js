@@ -92,9 +92,9 @@ $(function () {
             'Point color takes precedence after redraw'
         );
 
-        
+
     });
 
-    
+
 
 });

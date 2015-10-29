@@ -4,7 +4,7 @@ $(function () {
 
         var chart;
 
-        chart = new Highcharts.Chart({            
+        chart = new Highcharts.Chart({
             chart: {
                 type: 'pie',
                 renderTo: 'container'
@@ -26,7 +26,7 @@ $(function () {
 
         var chart;
 
-        chart = new Highcharts.StockChart({            
+        chart = new Highcharts.StockChart({
             chart: {
                 renderTo: "container"
             },

@@ -44,7 +44,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/fr/fr-v-all.js">Rhône-Alpes</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/fr/fr-v-all.js">Rhône-Alpes</a>'
         },
 
         mapNavigation: {

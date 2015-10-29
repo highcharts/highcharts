@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Parts of 3d pie should have correct zIndexes.', function (assert) {
-        
+
         $('#container').highcharts({
             chart: {
                 type: 'pie',
@@ -31,13 +31,13 @@ $(function () {
 
         var chart = $('#container').highcharts(),
             points = chart.series[0].points;
-            
+
         assert.strictEqual(
             points[1].graphic.side2.zIndex < points[3].graphic.out.zIndex,
             true,
             'Correct sequence of pie\'s parts - 1/2'
         );
-        
+
         assert.strictEqual(
             points[0].graphic.side2.zIndex < points[4].graphic.out.zIndex,
             true,

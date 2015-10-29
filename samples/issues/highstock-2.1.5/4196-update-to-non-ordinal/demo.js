@@ -38,7 +38,7 @@ $(function () {
             title : {
                 text : 'AAPL Stock Price'
             },
-            
+
             xAxis: {
                 ordinal: true
             },
@@ -61,21 +61,21 @@ $(function () {
         var chart = $('#container').highcharts(),
             xAxis = chart.xAxis[0],
             points = chart.series[0].points;
-        
 
-        // In an ordinal axis, the point distance is the same even though the actual time distance is 
+
+        // In an ordinal axis, the point distance is the same even though the actual time distance is
         // different.
         assert.equal(
             Math.round(points[1].plotX - points[0].plotX),
             Math.round(points[2].plotX - points[1].plotX),
             'Ordinal'
         );
-    
+
         xAxis.update({
             ordinal: !xAxis.options.ordinal
         });
 
-        // In a non-ordinal axis, the point distance reflects the time distance.        
+        // In a non-ordinal axis, the point distance reflects the time distance.
         assert.equal(
             3 * (points[1].plotX - points[0].plotX),
             points[2].plotX - points[1].plotX,

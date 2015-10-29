@@ -29,9 +29,9 @@ $(function () {
             'No left padding'
         );
 
-        
+
     });
 
-    
+
 
 });

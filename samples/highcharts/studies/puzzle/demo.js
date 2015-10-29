@@ -1,5 +1,5 @@
 $(function () {
-    
+
     (function (H) {
         var addEvent = H.addEvent,
             Chart = H.Chart,
@@ -11,17 +11,17 @@ $(function () {
             SVGElement.prototype.removeClass = function (className) {
                 this.element.setAttribute('class', this.element.getAttribute('class').replace(className, ''));
                 return this;
-            }
+            };
         }
-        
+
         Chart.prototype.callbacks.push(function (chart) {
             var total = 0;
-            each(chart.series, function(series) {
+            each(chart.series, function (series) {
                 if (series.initPuzzle) {
                     total += series.initPuzzle();
                 }
             });
-            chart.puzzle = { 
+            chart.puzzle = {
                 total: total,
                 remaining: total
             };
@@ -66,7 +66,7 @@ $(function () {
 
                 if (point) {
                     graphic = point.graphic;
-                    
+
                     graphic.toFront();
 
                     e = chart.pointer.normalize(e);
@@ -101,10 +101,10 @@ $(function () {
                     startTranslateX = dragStart.translateX / dragStart.scale;
                     startTranslateY = dragStart.translateY / dragStart.scale;
 
-                    // Get the movement                    
+                    // Get the movement
                     translateX = startTranslateX + e.chartX - dragStart.chartX;
                     translateY = startTranslateY + e.chartY - dragStart.chartY;
-                    
+
 
                     // Pixel distance to target
                     dist = Math.sqrt(
@@ -112,7 +112,7 @@ $(function () {
                         Math.pow(translateY, 2)
                     );
 
-                    
+
                     // Proximity snap to the true position
                     if (dist < 20) {
                         drop(point);
@@ -145,7 +145,7 @@ $(function () {
             addEvent(this.container, 'mouseup', pointerUp);
             addEvent(this.container, 'touchend', pointerUp);
         });
-        
+
         seriesTypes.map.prototype.initPuzzle = function () {
             var chart = this.chart,
                 total = 0;
@@ -174,8 +174,8 @@ $(function () {
                 });
             }
             return total;
-        }
-        
+        };
+
     }(Highcharts));
 
     // Initiate the chart
@@ -190,10 +190,10 @@ $(function () {
         data.push({
             'hc-key': feature.properties['hc-key'],
             'value': 1
-        })
+        });
     });
 
-    
+
     $('#container').highcharts('Map', {
 
         title : {

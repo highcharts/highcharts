@@ -9,7 +9,7 @@ $(function () {
             chart: {
                 type: 'heatmap'
             },
-            
+
             colorAxis: {
                 min: 0,
                 minColor: '#FFFFFF',
@@ -52,7 +52,7 @@ $(function () {
         ]);
 
         assert.equal(
-            chart.series[0].pointRange,     
+            chart.series[0].pointRange,
             initialPointRange,
             'Point range should not change'
         );

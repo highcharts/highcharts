@@ -1,6 +1,6 @@
 $(function () {
     $('#container').highcharts({
-        
+
         chart: {
             type: 'column',
             inverted: true
@@ -15,7 +15,7 @@ $(function () {
             offset: 0,
             lineWidth: 2
         }],
-        
+
         plotOptions: {
             series: {
                 dataLabels: {
@@ -26,7 +26,7 @@ $(function () {
                         color: 'white',
                         textShadow: '0 0 3px black'
                     },
-                    format: '{series.name} - {y}'                    
+                    format: '{series.name} - {y}'
                 }
             }
         },

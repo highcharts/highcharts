@@ -18,7 +18,7 @@ QUnit.test('Capture POST', function (assert) {
         'image/png',
         'Posting for PNG'
     );
-    
+
     assert.strictEqual(
         typeof postData.svg,
         'string',

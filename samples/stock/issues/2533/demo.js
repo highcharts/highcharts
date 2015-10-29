@@ -4,7 +4,7 @@ $(function () {
             text: 'In Highstock <= 1.3.9 the first point was not visible as the group start was outside the dataMin'
         },
 
-        
+
         rangeSelector: {
             inputEnabled: false
         },

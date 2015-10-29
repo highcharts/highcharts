@@ -148,7 +148,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/in/in-all.js">India</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/in/in-all.js">India</a>'
         },
 
         mapNavigation: {

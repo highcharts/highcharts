@@ -20,17 +20,17 @@ $(function () {
         }).highcharts(),
         radius;
 
-        $.each(chart.series, function(i, s) {
-            $.each(s.points, function(j, p) {
+        $.each(chart.series, function (i, s) {
+            $.each(s.points, function (j, p) {
                 radius = parseFloat(p.graphic.attr("r")) * 2;
                 assert.strictEqual(
                     radius <= s.options.maxSize && radius >= s.options.minSize,
                     true,
                     'Radius within range'
                 );
-            })
-        })
+            });
+        });
 
-        
+
     });
 });

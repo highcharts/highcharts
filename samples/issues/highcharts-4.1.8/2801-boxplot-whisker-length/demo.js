@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Whiskers set by number and by percentage (string)', function (assert) {
-        
+
         $('#container').highcharts({
             chart: {
                 type: 'boxplot',
@@ -27,7 +27,7 @@ $(function () {
         });
 
         var chart = $('#container').highcharts();
-            
+
         assert.strictEqual(
             chart.series[0].points[0].whiskers.getBBox(true).width,
             25,

@@ -40,7 +40,7 @@ $(function () {
         },
 
         subtitle: {
-            text: 'Source map: <a href="http://code.highcharts.com/mapdata/countries/au/au-all.js">Australia</a>'
+            text: 'Source map: <a href="https://code.highcharts.com/mapdata/countries/au/au-all.js">Australia</a>'
         },
 
         mapNavigation: {
@@ -71,10 +71,10 @@ $(function () {
             }
         }]
     });
-    
+
     chart = $('#container').highcharts();
-    
-    /** 
+
+    /**
      * Pause the timeline, either when the range is ended, or when clicking the pause button.
      * Pausing stops the timer and resets the button to play mode.
      */
@@ -109,12 +109,12 @@ $(function () {
     function play(button) {
         button.title = 'pause';
         button.className = 'fa fa-pause';
-        chart.sequenceTimer = setInterval ( function () {
+        chart.sequenceTimer = setInterval( function () {
             update(1);
         }, 500);
 
     }
-    
+
     /**
      * Toggle play and pause from the button
      */
@@ -125,7 +125,7 @@ $(function () {
             pause(this);
         }
     });
-    
+
     /**
      * Update the chart when the input is changed
      */

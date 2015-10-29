@@ -168,7 +168,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-wa-all.js">Washington</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-wa-all.js">Washington</a>'
         },
 
         mapNavigation: {

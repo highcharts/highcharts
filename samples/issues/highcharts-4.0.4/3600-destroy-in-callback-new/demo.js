@@ -18,13 +18,13 @@ $(function () {
                 text: 'New chart title'
             });
         });
-        
+
         assert.equal(
             newChart.options.title.text,
             'New chart title',
             'New chart generated'
         );
-        
+
     });
 
 });

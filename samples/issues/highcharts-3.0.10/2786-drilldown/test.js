@@ -7,12 +7,12 @@ function test(chart) {
 
     // Back to Cars
     chart.drillUp();
-    
+
     // Back to top
     chart.drillUp();
 
 
     chart.getSVG = function () {
         return chart.container.innerHTML;
-    }
+    };
 }

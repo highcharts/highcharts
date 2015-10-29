@@ -116,7 +116,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/no/no-sf-all.js">Sogn og Fjordane</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/no/no-sf-all.js">Sogn og Fjordane</a>'
         },
 
         mapNavigation: {

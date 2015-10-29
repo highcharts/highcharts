@@ -35,7 +35,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/as/as-all.js">American Samoa</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/as/as-all.js">American Samoa</a>'
         },
 
         mapNavigation: {

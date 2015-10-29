@@ -11,13 +11,13 @@ $(function () {
         title: {
             text: 'Wrong clipping after resize'
         },
-        
+
         rangeSelector : {
             selected : 1
         },
 
         series : [{
-            animation: false,                
+            animation: false,
             name : 'AAPL',
             type: 'area',
             data : [1,2,3,3,4,5,5,6,5,4,3,4,3,2],
@@ -28,9 +28,9 @@ $(function () {
             }
         }]
     });
-    
-    $('#setsize').click(function() {
-        $('#container').highcharts().setSize(500,300);        
+
+    $('#setsize').click(function () {
+        $('#container').highcharts().setSize(500,300);
     });
 
 });

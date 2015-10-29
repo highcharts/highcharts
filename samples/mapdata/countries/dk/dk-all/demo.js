@@ -32,7 +32,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/dk/dk-all.js">Denmark</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/dk/dk-all.js">Denmark</a>'
         },
 
         mapNavigation: {

@@ -216,7 +216,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/cn/custom/cn-all-sar.js">China with Hong Kong and Macau</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/cn/custom/cn-all-sar.js">China with Hong Kong and Macau</a>'
         },
 
         mapNavigation: {

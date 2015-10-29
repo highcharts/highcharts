@@ -820,7 +820,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/custom/world-robinson-lowres.js">World, Robinson projection, low resolution</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/custom/world-robinson-lowres.js">World, Robinson projection, low resolution</a>'
         },
 
         mapNavigation: {

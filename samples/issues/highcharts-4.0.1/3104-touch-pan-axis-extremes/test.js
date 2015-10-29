@@ -4,7 +4,7 @@ function test(chart) {
         return this[i];
     };
 
-    
+
     chart.pointer.onContainerTouchStart({
         type: 'touchstart',
         touches: [{
@@ -33,5 +33,5 @@ function test(chart) {
 
     chart.getSVG = function () {
         return this.container.innerHTML;
-    }
+    };
 }

@@ -36,7 +36,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ca/ca-nt-all.js">Northwest Territories</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ca/ca-nt-all.js">Northwest Territories</a>'
         },
 
         mapNavigation: {

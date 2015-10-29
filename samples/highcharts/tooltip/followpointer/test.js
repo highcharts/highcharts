@@ -12,5 +12,5 @@ function test(chart) {
         pageY: 300,
         target: chart.container
     });
-    
+
 }

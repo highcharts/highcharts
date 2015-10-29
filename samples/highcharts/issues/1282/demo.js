@@ -23,8 +23,8 @@ $(function () {
             stops: [
                 [0, 'rgb(136, 219, 5)'],
                 [1, 'rgb(112, 180, 5)']
-                ]},
-        ]
+                ] }
+        ];
 
         $('#container').highcharts({
             chart: {
@@ -52,7 +52,7 @@ $(function () {
                 }],
                 color: 'white'
             }],
-            legend: {enabled:false},
+            legend: { enabled:false },
             yAxis: {
                 min: 0,
                 title: {
@@ -61,6 +61,6 @@ $(function () {
                 stackLabels: {
                     enabled: false
                 }
-            },
+            }
         });
     });

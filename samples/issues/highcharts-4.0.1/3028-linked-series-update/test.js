@@ -1,3 +1,4 @@
+/* global toggleDataLabels */
 function test(chart) {
     toggleDataLabels(chart);
     chart.series[0].hide();
@@ -6,5 +7,5 @@ function test(chart) {
 
     chart.getSVG = function () {
         return this.container.innerHTML;
-    }
+    };
 }

@@ -11,7 +11,8 @@ function simplifyPath(data, epsilon) {
             start = data[0],
             end = data[data.length - 1],
             point,
-            i;
+            i,
+            d;
 
         // recurring factors
         var m = (end.y - start.y) / (end.x - start.x),
@@ -34,7 +35,7 @@ function simplifyPath(data, epsilon) {
             result = [start];
         }
         return result;
-    }
+    };
     // CALL RDP Function
     var arr = DouglasPecker(data, epsilon);
     arr.push(data[data.length - 1]);

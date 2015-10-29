@@ -10,17 +10,17 @@ $(function () {
 
             xAxis: {
                 categories: [
-                    'Jan Jan Jan Jan Jan Jan Jan Jan Jan Jan Jan Jan ', 
-                    'Feb Feb Feb Feb Feb Feb Feb Feb Feb Feb Feb Feb ', 
-                    'Mar Mar Mar Mar Mar Mar Mar Mar Mar Mar Mar Mar ', 
-                    'Apr Apr Apr Apr Apr Apr Apr Apr Apr Apr Apr Apr ', 
-                    'May May May May May May May May May May May May ', 
-                    'Jun Jun Jun Jun Jun Jun Jun Jun Jun Jun Jun Jun ', 
-                    'Jul Jul Jul Jul Jul Jul Jul Jul Jul Jul Jul Jul ', 
-                    'Aug Aug Aug Aug Aug Aug Aug Aug Aug Aug Aug Aug ', 
-                    'Sep Sep Sep Sep Sep Sep Sep Sep Sep Sep Sep Sep ', 
-                    'Oct Oct Oct Oct Oct Oct Oct Oct Oct Oct Oct Oct ', 
-                    'Nov Nov Nov Nov Nov Nov Nov Nov Nov Nov Nov Nov ', 
+                    'Jan Jan Jan Jan Jan Jan Jan Jan Jan Jan Jan Jan ',
+                    'Feb Feb Feb Feb Feb Feb Feb Feb Feb Feb Feb Feb ',
+                    'Mar Mar Mar Mar Mar Mar Mar Mar Mar Mar Mar Mar ',
+                    'Apr Apr Apr Apr Apr Apr Apr Apr Apr Apr Apr Apr ',
+                    'May May May May May May May May May May May May ',
+                    'Jun Jun Jun Jun Jun Jun Jun Jun Jun Jun Jun Jun ',
+                    'Jul Jul Jul Jul Jul Jul Jul Jul Jul Jul Jul Jul ',
+                    'Aug Aug Aug Aug Aug Aug Aug Aug Aug Aug Aug Aug ',
+                    'Sep Sep Sep Sep Sep Sep Sep Sep Sep Sep Sep Sep ',
+                    'Oct Oct Oct Oct Oct Oct Oct Oct Oct Oct Oct Oct ',
+                    'Nov Nov Nov Nov Nov Nov Nov Nov Nov Nov Nov Nov ',
                     'Dec Dec Dec Dec Dec Dec Dec Dec Dec Dec Dec Dec '
                 ],
                 labels: {
@@ -62,6 +62,6 @@ $(function () {
             'Same height labels'
         );
 
-        
+
     });
 });

@@ -84,7 +84,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/iq/iq-all.js">Iraq</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/iq/iq-all.js">Iraq</a>'
         },
 
         mapNavigation: {

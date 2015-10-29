@@ -20,17 +20,17 @@ $(function () {
 
 
     $('#title').click(function () {
-        chart.setTitle({ text: 'New title ' + i});
+        chart.setTitle({ text: 'New title ' + i });
         i += 1;
     });
     $('#subtitle').click(function () {
-        chart.setTitle(null, { text: 'New title ' + i});
+        chart.setTitle(null, { text: 'New title ' + i });
         i += 1;
     });
     $('#color').click(function () {
         chart.setTitle(
-            { style: { color: 'red' }},
-            { style: { color: 'green' }}
+            { style: { color: 'red' } },
+            { style: { color: 'green' } }
         );
     });
 });

@@ -820,7 +820,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/custom/world-eckert3-highres.js">World, Eckert III projection, high resolution</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/custom/world-eckert3-highres.js">World, Eckert III projection, high resolution</a>'
         },
 
         mapNavigation: {

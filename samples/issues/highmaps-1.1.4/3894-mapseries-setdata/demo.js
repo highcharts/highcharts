@@ -814,7 +814,7 @@ $(function () {
             },
 
             subtitle : {
-                text : 'Source map: <a href="http://code.highcharts.com/mapdata/custom/world.js">World</a>'
+                text : 'Source map: <a href="https://code.highcharts.com/mapdata/custom/world.js">World</a>'
             },
 
             mapNavigation: {
@@ -849,12 +849,12 @@ $(function () {
         Highcharts.charts[0].series[0].setData(data);
 
         assert.equal(
-            typeof $('#container').highcharts().yAxis[0].min,    
+            typeof $('#container').highcharts().yAxis[0].min,
             'number',
             'Y axis min is number'
         );
     });
 
-    
+
 
 });

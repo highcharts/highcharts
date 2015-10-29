@@ -1,12 +1,12 @@
 $(function () {
     QUnit.test('Column update', function (assert) {
-        var chart = $('#container').highcharts({ 
+        var chart = $('#container').highcharts({
             chart: {
                 animation: false
             },
 
             xAxis: {
-                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
             },
 
@@ -27,7 +27,7 @@ $(function () {
             'hidden',
             'Point is visible'
         );
-        
+
     });
 
 });

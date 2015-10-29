@@ -120,7 +120,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/nl/nl-fr-all.js">Friesland</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/nl/nl-fr-all.js">Friesland</a>'
         },
 
         mapNavigation: {

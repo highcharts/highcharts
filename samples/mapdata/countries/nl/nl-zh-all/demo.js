@@ -284,7 +284,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/nl/nl-zh-all.js">Zuid-Holland</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/nl/nl-zh-all.js">Zuid-Holland</a>'
         },
 
         mapNavigation: {

@@ -6,11 +6,11 @@ $(function () {
         function getOptions() {
 
             return {
-    
+
                 chart: {
                     type: 'gauge'
                 },
-                
+
                 pane: {
                     startAngle: -150,
                     endAngle: 150,
@@ -43,21 +43,21 @@ $(function () {
                         innerRadius: '103%'
                     }]
                 },
-                   
+
                 // the value axis
                 yAxis: [{
                     min: 0,
                     max: 200
-                    
+
                 }],
-            
+
                 series: [{
                     data: [80]
                 }]
-            
+
             };
         }
-        
+
         chart = $('#container').highcharts(getOptions()).highcharts();
 
         assert.strictEqual(

@@ -4,11 +4,11 @@ $(function () {
         var chart = $('#container').highcharts({
                 series: [{
                     boostThreshold: 100,
-                    data: (function() {
+                    data: (function () {
                         var d = [],
                             n = 5000;
                         while (n--) {
-                            d.push(Math.random())
+                            d.push(Math.random());
                         }
                         return d;
                     }())

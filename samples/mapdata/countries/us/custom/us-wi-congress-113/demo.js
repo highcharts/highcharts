@@ -44,7 +44,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-wi-congress-113.js">Wisconsin congressional districts</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-wi-congress-113.js">Wisconsin congressional districts</a>'
         },
 
         mapNavigation: {

@@ -24,7 +24,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/nc/nc-all.js">New Caledonia</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/nc/nc-all.js">New Caledonia</a>'
         },
 
         mapNavigation: {

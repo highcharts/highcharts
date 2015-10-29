@@ -1,11 +1,11 @@
 $(function () {
-    
+
     $('#container').highcharts({
-        
+
         chart: {
             type: 'column'
         },
-        
+
         title: {
             text: 'Round legend symbols'
         },
@@ -13,7 +13,7 @@ $(function () {
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar', 'Apr']
         },
-        
+
         legend: {
             symbolHeight: 12,
             symbolWidth: 12,

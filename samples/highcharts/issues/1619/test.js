@@ -10,5 +10,5 @@ function test(chart) {
     // Get actual SVG
     chart.getSVG = function () {
         return chart.container.innerHTML;
-    }
+    };
 }

@@ -88,7 +88,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ci/ci-all.js">Ivory Coast</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ci/ci-all.js">Ivory Coast</a>'
         },
 
         mapNavigation: {

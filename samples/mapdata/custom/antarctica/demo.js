@@ -20,7 +20,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/custom/antarctica.js">Antarctica</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/custom/antarctica.js">Antarctica</a>'
         },
 
         mapNavigation: {
