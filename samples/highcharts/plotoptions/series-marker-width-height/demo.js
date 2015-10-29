@@ -30,7 +30,7 @@ $(function () {
         series: [{
             name: 'Tokyo',
             marker: {
-                symbol: 'url(http://www.highcharts.com/demo/gfx/sun.png)',
+                symbol: 'url(http://www.highcharts.com/samples/graphics/sun.png)',
                 width: 16,
                 height: 16
             },
