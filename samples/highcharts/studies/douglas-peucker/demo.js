@@ -1,7 +1,7 @@
 $(function () {
 
 function simplifyPath(data, epsilon) {
-    var DouglasPecker = function (data, epsilon) {
+    function douglasPecker(data, epsilon) {
         if (data.length <= 2) {
             return [data[0]];
         }
@@ -29,15 +29,15 @@ function simplifyPath(data, epsilon) {
         }
         // Evaluate
         if (dmax >= epsilon) {
-            result = result.concat(DouglasPecker(data.slice(0, index + 1), epsilon));
-            result = result.concat(DouglasPecker(data.slice(index + 1, data.length), epsilon));
+            result = result.concat(douglasPecker(data.slice(0, index + 1), epsilon));
+            result = result.concat(douglasPecker(data.slice(index + 1, data.length), epsilon));
         } else {
             result = [start];
         }
         return result;
-    };
+    }
     // CALL RDP Function
-    var arr = DouglasPecker(data, epsilon);
+    var arr = douglasPecker(data, epsilon);
     arr.push(data[data.length - 1]);
     return arr;
 }
