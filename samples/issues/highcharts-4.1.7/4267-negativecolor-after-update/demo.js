@@ -8,7 +8,7 @@ $(function () {
                     type: 'column',
                     data: [5, 10, -5, -10],
                     color: color,
-                    negativeColor: negativeColor,
+                    negativeColor: negativeColor
                 }]
             }).highcharts(),
             points = chart.series[0].points;

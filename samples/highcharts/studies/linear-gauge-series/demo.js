@@ -110,7 +110,7 @@ $(function () {
                 enabled: true,
                 align: 'center',
                 format: '{point.y}%',
-                y: 10,
+                y: 10
             }
         }]
 

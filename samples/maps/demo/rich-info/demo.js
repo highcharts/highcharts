@@ -134,7 +134,7 @@ $(function () {
                                     enabled: false
                                 },
                                 threshold: 0,
-                                pointStart: parseInt(categories[0]),
+                                pointStart: parseInt(categories[0])
                             }
                         }
                     }).highcharts();

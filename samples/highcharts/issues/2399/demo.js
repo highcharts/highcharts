@@ -2,7 +2,7 @@ $(function () {
     $('#container').highcharts({
         chart: {
             type: "bar",
-            height: 200,
+            height: 200
         },
 
         title: {

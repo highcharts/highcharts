@@ -20,7 +20,7 @@ $(function () {
         tooltip: {
             formatter: function () {
                 return this.point.id + (this.point.lat ? '<br>Lat: ' + this.point.lat + ' Lon: ' + this.point.lon : '');
-            },
+            }
         },
 
         plotOptions: {

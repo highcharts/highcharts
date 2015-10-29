@@ -64,7 +64,7 @@ $(function () {
                     name: "B",
                     y: 0
                 }]
-            }],
+            }]
         });
 
         assert.strictEqual(

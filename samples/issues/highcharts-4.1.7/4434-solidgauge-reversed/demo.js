@@ -28,7 +28,7 @@ $(function () {
 
             series: [{
                 name: 'Speed',
-                data: [50],
+                data: [50]
             }]
 
         }).highcharts();

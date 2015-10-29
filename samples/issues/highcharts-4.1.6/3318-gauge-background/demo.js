@@ -5,8 +5,8 @@ $(function () {
                 type: "gauge"
             },
             "series": [{
-                data: [10],
-            }],
+                data: [10]
+            }]
         });
         $('#container').highcharts({
             id: 'LINE',
@@ -15,7 +15,7 @@ $(function () {
                 type: 'line'
             },
             series: [{
-                data: [1,1,1,1],
+                data: [1,1,1,1]
             }]
         });
 

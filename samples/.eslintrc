@@ -17,7 +17,6 @@ globals:
     usdeur: true
 
 rules:
-    comma-dangle: 0             # TODO: Fix manually
     comma-spacing: 0            # TODO: Fix manually
     eol-last: 0
     func-style: 0               # TODO: Fix manually

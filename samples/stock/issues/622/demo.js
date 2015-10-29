@@ -43,7 +43,7 @@ $(function () {
             },
 
             xAxis: {
-                maxZoom: 14 * 24 * 3600000,
+                maxZoom: 14 * 24 * 3600000
             },
             yAxis: [{
                 title: {

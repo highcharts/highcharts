@@ -20,7 +20,7 @@ $(function () {
                     ]
                 },
                 data: [1, 2, 3]
-            }],
+            }]
         }).highcharts();
 
         assert.strictEqual(

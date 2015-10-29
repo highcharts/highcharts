@@ -33,7 +33,7 @@ $(function () {
                     count: 6,
                     text: '6h'
                 }],
-                selected: 2,
+                selected: 2
             },
             navigator: {
                 enabled: false

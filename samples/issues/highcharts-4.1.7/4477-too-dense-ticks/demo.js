@@ -11,7 +11,7 @@ $(function () {
             },
             "yAxis": [{
                 "labels": {
-                    "staggerLines": 1,
+                    "staggerLines": 1
                 },
                 "tickInterval": 1
             }],
