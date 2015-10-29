@@ -46,9 +46,9 @@ $(function () {
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar'],
             images: [
-                'http://highcharts.com/demo/gfx/sun.png',
-                'http://highcharts.com/demo/gfx/sun.png',
-                'http://highcharts.com/demo/gfx/sun.png'
+                'https://www.highcharts.com/samples/graphics/sun.png',
+                'https://www.highcharts.com/samples/graphics/snow.png',
+                'https://www.highcharts.com/samples/graphics/sun.png'
             ],
             labels: {
                 x: 16

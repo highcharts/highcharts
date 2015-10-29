@@ -140,7 +140,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ir/ir-all.js">Iran</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ir/ir-all.js">Iran</a>'
         },
 
         mapNavigation: {

@@ -492,7 +492,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ph/ph-all.js">Philippines</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ph/ph-all.js">Philippines</a>'
         },
 
         mapNavigation: {

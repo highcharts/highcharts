@@ -32,7 +32,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-ok-congress-113.js">Oklahoma congressional districts</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-ok-congress-113.js">Oklahoma congressional districts</a>'
         },
 
         mapNavigation: {

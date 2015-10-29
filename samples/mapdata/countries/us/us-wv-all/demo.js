@@ -232,7 +232,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-wv-all.js">West Virginia</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-wv-all.js">West Virginia</a>'
         },
 
         mapNavigation: {

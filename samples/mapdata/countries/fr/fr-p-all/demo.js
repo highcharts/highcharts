@@ -24,7 +24,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/fr/fr-p-all.js">Basse-Normandie</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/fr/fr-p-all.js">Basse-Normandie</a>'
         },
 
         mapNavigation: {

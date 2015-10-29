@@ -36,7 +36,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/vc/vc-all.js">Saint Vincent and the Grenadines</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/vc/vc-all.js">Saint Vincent and the Grenadines</a>'
         },
 
         mapNavigation: {

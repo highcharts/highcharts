@@ -16,7 +16,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/eh/eh-all.js">Western Sahara</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/eh/eh-all.js">Western Sahara</a>'
         },
 
         mapNavigation: {

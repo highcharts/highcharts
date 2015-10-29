@@ -16,7 +16,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-sd-congress-113.js">South Dakota congressional districts</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-sd-congress-113.js">South Dakota congressional districts</a>'
         },
 
         mapNavigation: {

@@ -267,7 +267,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/custom/usa-and-canada.js">Canada and United States of America</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/custom/usa-and-canada.js">Canada and United States of America</a>'
         },
 
         mapNavigation: {

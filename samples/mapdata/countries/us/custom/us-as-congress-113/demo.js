@@ -16,7 +16,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-as-congress-113.js">American Samoa congressional districts</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-as-congress-113.js">American Samoa congressional districts</a>'
         },
 
         mapNavigation: {

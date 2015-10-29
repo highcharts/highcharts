@@ -100,7 +100,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ye/ye-all.js">Yemen</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ye/ye-all.js">Yemen</a>'
         },
 
         mapNavigation: {

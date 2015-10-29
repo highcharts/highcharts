@@ -99,7 +99,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/no/custom/no-all-svalbard-and-jan-mayen.js">Norway with Svalbard and Jan Mayen</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/no/custom/no-all-svalbard-and-jan-mayen.js">Norway with Svalbard and Jan Mayen</a>'
         },
 
         mapNavigation: {

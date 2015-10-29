@@ -40,7 +40,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/custom/central-america.js">Central America</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/custom/central-america.js">Central America</a>'
         },
 
         mapNavigation: {

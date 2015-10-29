@@ -2,7 +2,7 @@ $(function () {
     $('#container').highcharts({
         chart: {
             type: 'line',
-            plotBackgroundImage: 'http://www.highcharts.com/samples/graphics/skies.jpg'
+            plotBackgroundImage: 'https://www.highcharts.com/samples/graphics/skies.jpg'
         },
 
         title: {

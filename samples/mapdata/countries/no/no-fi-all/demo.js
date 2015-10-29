@@ -88,7 +88,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/no/no-fi-all.js">Finnmark</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/no/no-fi-all.js">Finnmark</a>'
         },
 
         mapNavigation: {

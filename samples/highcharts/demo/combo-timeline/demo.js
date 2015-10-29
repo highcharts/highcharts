@@ -162,7 +162,7 @@ function onChartLoad() {
                     height: 400
                 }).add(renderer.defs);
                 renderer.image(
-                    'http://www.highcharts.com/images/employees2014/' + point.image + '.jpg',
+                    'https://www.highcharts.com/images/employees2014/' + point.image + '.jpg',
                     centerX - 80,
                     centerY - 80,
                     160,

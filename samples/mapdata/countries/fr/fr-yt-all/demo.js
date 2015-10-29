@@ -16,7 +16,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/fr/fr-yt-all.js">Mayotte</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/fr/fr-yt-all.js">Mayotte</a>'
         },
 
         mapNavigation: {

@@ -56,7 +56,7 @@ $(function () {
 
     $.each(names, function (i, name) {
 
-        $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=' + name.toLowerCase() + '-c.json&callback=?',   function (data) {
+        $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=' + name.toLowerCase() + '-c.json&callback=?',   function (data) {
 
             seriesOptions[i] = {
                 name: name,

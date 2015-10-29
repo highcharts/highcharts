@@ -60,7 +60,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/bj/bj-all.js">Benin</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/bj/bj-all.js">Benin</a>'
         },
 
         mapNavigation: {

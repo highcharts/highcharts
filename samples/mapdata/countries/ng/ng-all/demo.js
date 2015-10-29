@@ -160,7 +160,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ng/ng-all.js">Nigeria</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ng/ng-all.js">Nigeria</a>'
         },
 
         mapNavigation: {

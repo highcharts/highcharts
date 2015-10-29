@@ -96,7 +96,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/me/me-all.js">Montenegro</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/me/me-all.js">Montenegro</a>'
         },
 
         mapNavigation: {

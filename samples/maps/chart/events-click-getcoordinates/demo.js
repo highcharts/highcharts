@@ -147,7 +147,7 @@ $(function () {
     }
     $select.change(function () {
         var mapKey = $select.val().replace(/\.js$/, '');
-        $.getScript('http://code.highcharts.com/mapdata/' + mapKey + '.js', function () {
+        $.getScript('https://code.highcharts.com/mapdata/' + mapKey + '.js', function () {
             showMap(mapKey);
         });
     });

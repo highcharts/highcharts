@@ -100,7 +100,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/mn/mn-all.js">Mongolia</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/mn/mn-all.js">Mongolia</a>'
         },
 
         mapNavigation: {

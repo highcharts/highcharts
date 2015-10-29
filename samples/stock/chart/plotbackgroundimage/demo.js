@@ -2,7 +2,7 @@ $(function () {
     $('#container').highcharts('StockChart', {
 
         chart: {
-            plotBackgroundImage: 'http://www.highcharts.com/samples/graphics/skies.jpg'
+            plotBackgroundImage: 'https://www.highcharts.com/samples/graphics/skies.jpg'
         },
 
         rangeSelector: {
