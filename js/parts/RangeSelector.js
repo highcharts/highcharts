@@ -337,7 +337,9 @@ RangeSelector.prototype = {
 				// Set a button on export
 				isSelectedForExport = chart.renderer.forExport && i === selected,
 
-				isSameRange = range === actualRange;
+				isSameRange = range === actualRange,
+
+				hasNoData = !baseAxis.hasVisibleSeries;
 
 			// Months and years have a variable range so we check the extremes
 			if ((type === 'month' || type === 'year') && (actualRange >= { month: 28, year: 365 }[type] * 24 * 36e5 * count) &&
@@ -351,7 +353,7 @@ RangeSelector.prototype = {
 				rangeSelector.setSelected(i);
 				buttons[i].setState(2);
 
-			} else if (!allButtonsEnabled && (isTooGreatRange || isTooSmallRange || isAllButAlreadyShowingAll || isYTDButNotAvailable)) {
+			} else if (!allButtonsEnabled && (isTooGreatRange || isTooSmallRange || isAllButAlreadyShowingAll || isYTDButNotAvailable || hasNoData)) {
 				buttons[i].setState(3);
 
 			} else if (buttons[i].state === 3) {
@@ -751,6 +753,9 @@ Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
 		} else {
 			newMax = newMin + fixedRange;
 		}
+	}
+	if (isNaN(newMin)) { // #1195
+		newMin = newMax = undefined;
 	}
 
 	return {

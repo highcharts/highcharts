@@ -761,17 +761,19 @@ Scroller.prototype = {
 				}
 
 				ext = xAxis.toFixedRange(scroller.zoomedMin, scroller.zoomedMax, fixedMin, fixedMax);
-				chart.xAxis[0].setExtremes(
-					ext.min,
-					ext.max,
-					true,
-					false,
-					{
-						trigger: 'navigator',
-						triggerOp: 'navigator-drag',
-						DOMEvent: e // #1838
-					}
-				);
+				if (defined(ext.min)) {
+					chart.xAxis[0].setExtremes(
+						ext.min,
+						ext.max,
+						true,
+						false,
+						{
+							trigger: 'navigator',
+							triggerOp: 'navigator-drag',
+							DOMEvent: e // #1838
+						}
+					);
+				}
 			}
 
 			if (e.type !== 'mousemove') {
