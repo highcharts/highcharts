@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.9-modified (2015-10-28)
+ * @license Highstock JS v2.1.9-modified (2015-10-29)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -6091,6 +6091,7 @@
             // Correct for staggered labels
             if (staggerLines) {
                 line = (index / (step || 1) % staggerLines);
+                line = axis.opposite ? staggerLines - line - 1 : line;
                 y += line * (axis.labelOffset / staggerLines);
             }
 
@@ -8275,7 +8276,7 @@
 
                 if (axis.staggerLines) {
                     labelOffset *= axis.staggerLines;
-                    axis.labelOffset = labelOffset;
+                    axis.labelOffset = labelOffset * (axis.opposite ? -1 : 1);
                 }
 
 
@@ -8326,7 +8327,7 @@
 
             axis.tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 }; // polar
             lineHeightCorrection = side === 2 ? axis.tickRotCorr.y : 0;
-            labelOffsetPadded = labelOffset + titleMargin +
+            labelOffsetPadded = mathAbs(labelOffset) + titleMargin +
                 (labelOffset && (directionFactor * (horiz ? pick(labelOptions.y, axis.tickRotCorr.y + 8) : labelOptions.x) - lineHeightCorrection));
             axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);
 
@@ -19645,7 +19646,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v2.1.9-modified (2015-10-28)
+     * Highstock JS v2.1.9-modified (2015-10-29)
      * Highcharts Broken Axis module
      * 
      * Author: Stephane Vanraes, Torstein Honsi

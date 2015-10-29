@@ -204,6 +204,7 @@ Tick.prototype = {
 		// Correct for staggered labels
 		if (staggerLines) {
 			line = (index / (step || 1) % staggerLines);
+			line = axis.opposite ? staggerLines - line - 1 : line;
 			y += line * (axis.labelOffset / staggerLines);
 		}
 

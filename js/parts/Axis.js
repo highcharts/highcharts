@@ -1754,7 +1754,7 @@ Axis.prototype = {
 
 			if (axis.staggerLines) {
 				labelOffset *= axis.staggerLines;
-				axis.labelOffset = labelOffset;
+				axis.labelOffset = labelOffset * (axis.opposite ? -1 : 1);
 			}
 
 
@@ -1805,7 +1805,7 @@ Axis.prototype = {
 
 		axis.tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 }; // polar
 		lineHeightCorrection = side === 2 ? axis.tickRotCorr.y : 0;
-		labelOffsetPadded = labelOffset + titleMargin +
+		labelOffsetPadded = mathAbs(labelOffset) + titleMargin +
 			(labelOffset && (directionFactor * (horiz ? pick(labelOptions.y, axis.tickRotCorr.y + 8) : labelOptions.x) - lineHeightCorrection));
 		axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);
 
