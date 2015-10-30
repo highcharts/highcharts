@@ -392,6 +392,7 @@ var PieSeries = {
 			//group,
 			shadow = series.options.shadow,
 			shadowGroup,
+			pointAttr,
 			shapeArgs,
 			attr;
 
@@ -406,6 +407,7 @@ var PieSeries = {
 				graphic = point.graphic;
 				shapeArgs = point.shapeArgs;
 				shadowGroup = point.shadowGroup;
+				pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE];
 
 				// put the shadow behind all points
 				if (shadow && !shadowGroup) {
@@ -428,6 +430,7 @@ var PieSeries = {
 				if (graphic) {
 					graphic
 						.setRadialReference(series.center)
+						.attr(pointAttr)
 						.animate(extend(shapeArgs, groupTranslation));
 				} else {
 					attr = { 'stroke-linejoin': 'round' };
@@ -437,9 +440,7 @@ var PieSeries = {
 
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 						.setRadialReference(series.center)
-						.attr(
-							point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE]
-						)
+						.attr(pointAttr)
 						.attr(attr)
 						.attr(groupTranslation)
 						.add(series.group)
