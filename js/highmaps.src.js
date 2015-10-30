@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-10-29)
+ * @license Highmaps JS v1.1.9-modified (2015-10-30)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -13008,7 +13008,8 @@
             // cheaper, allows animation, and keeps references to points.
             if (updatePoints !== false && dataLength && oldDataLength === dataLength && !series.cropped && !series.hasGroupedData && series.visible) {
                 each(data, function (point, i) {
-                    if (oldData[i].update) { // Linked, previously hidden series (#3709)
+                    // .update doesn't exist on a linked, hidden series (#3709)
+                    if (oldData[i].update && point !== options.data[i]) {
                         oldData[i].update(point, false, null, false);
                     }
                 });
@@ -14704,7 +14705,8 @@
                     names[point.x] = point.name;
                 }
 
-                seriesOptions.data[i] = point.options;
+                // Record the raw options to options.data (#4701)
+                seriesOptions.data[i] = options;
 
                 // redraw
                 series.isDirty = series.isDirtyData = true;
