@@ -21857,7 +21857,7 @@
 
                 // In iOS, a mousemove event with e.pageX === 0 is fired when holding the finger
                 // down in the center of the scrollbar. This should be ignored.
-                if (e.pageX !== 0) {
+                if (!e.touches || e.touches[0].pageX !== 0) { // #4696, scrollbar failed on Android
 
                     e = chart.pointer.normalize(e);
                     chartX = e.chartX;
