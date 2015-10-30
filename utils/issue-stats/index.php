@@ -156,8 +156,15 @@ $plotLines = array_values($plotLines);
 				series: [{
 					type: 'area',
 					name: 'Open issues',
-					fillOpacity: 0.1,
-					data: <?php echo json_encode($openByDate) ?>
+					fillColor: {
+						linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
+						stops: [
+							[0, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.1).get()],
+							[1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get()]
+						]
+					},
+					data: <?php echo json_encode($openByDate) ?>,
+					threshold: null
 				}, {
 					type: 'column',
 					name: 'Opened',
