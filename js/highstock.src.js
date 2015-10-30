@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.9-modified (2015-10-29)
+ * @license Highstock JS v2.1.9-modified (2015-10-30)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -19594,7 +19594,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v2.1.9-modified (2015-10-29)
+     * Highstock JS v2.1.9-modified (2015-10-30)
      * Highcharts Broken Axis module
      * 
      * Author: Stephane Vanraes, Torstein Honsi
@@ -19920,11 +19920,9 @@
      ******************************************************************************/
     var DATA_GROUPING = 'dataGrouping',
         seriesProto = Series.prototype,
-        tooltipProto = Tooltip.prototype,
         baseProcessData = seriesProto.processData,
         baseGeneratePoints = seriesProto.generatePoints,
         baseDestroy = seriesProto.destroy,
-        baseTooltipFooterHeaderFormatter = tooltipProto.tooltipFooterHeaderFormatter,
 
         commonOptions = {
             approximation: 'average', // average, open, high, low, close, sum
@@ -20293,7 +20291,7 @@
     /**
      * Extend the original method, make the tooltip's header reflect the grouped range
      */
-    tooltipProto.tooltipFooterHeaderFormatter = function (point, isFooter) {
+    wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, point, isFooter) {
         var tooltip = this,
             series = point.series,
             options = series.options,
@@ -20305,8 +20303,7 @@
             currentDataGrouping,
             dateTimeLabelFormats,
             labelFormats,
-            formattedKey,
-            ret;
+            formattedKey;
 
         // apply only to grouped series
         if (xAxis && xAxis.options.type === 'datetime' && dataGroupingOptions && isNumber(point.key)) {
@@ -20338,15 +20335,16 @@
             }
 
             // return the replaced format
-            ret = tooltipOptions[(isFooter ? 'footer' : 'header') + 'Format'].replace('{point.key}', formattedKey);
-
-        // else, fall back to the regular formatter
-        } else {
-            ret = baseTooltipFooterHeaderFormatter.call(tooltip, point, isFooter);
+            return format(tooltipOptions[(isFooter ? 'footer' : 'header') + 'Format'], {
+                point: extend(point, { key: formattedKey }),
+                series: series
+            });
+    
         }
 
-        return ret;
-    };
+        // else, fall back to the regular formatter
+        return proceed.call(tooltip, point, isFooter);
+    });
 
     /**
      * Extend the series destroyer
