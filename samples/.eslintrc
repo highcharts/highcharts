@@ -20,7 +20,7 @@ rules:
     comma-spacing: 0            # 5333 errors. Wait for --fix, https://github.com/eslint/eslint/pull/4233
     eol-last: 0
     indent: [2, 4]
-    key-spacing: 0              # TODO: Fix manually
+    key-spacing: 0              # TODO: Fix manually. Wait for --fix.
     new-cap: 0                  # The ill-named Color object. Fix in HC5
     no-alert: 0
     no-console: 0               # TODO: Fix manually. Output to a visible div instead.
