@@ -7,11 +7,11 @@ $(function () {
             plotOptions: {
                 column: {
                     stacking: 'normal',
-                        dataGrouping: {
-                            enabled: false
-                        }
+                    dataGrouping: {
+                        enabled: false
                     }
-                },
+                }
+            },
             xAxis: {
                 type: 'datetime'
             },

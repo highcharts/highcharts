@@ -17,11 +17,11 @@ $(function () {
             "legend": {
                 "enabled": false
             },
-                "xAxis": {
+            "xAxis": {
                 "title": {
                     "enabled": false
                 },
-                    "categories": [
+                "categories": [
                     "Not enough to choose from",
                     "Can't edit colors",
                     "I like it so far",
@@ -41,9 +41,9 @@ $(function () {
                     "I think it is great - so easy to use",
                     "I can't find these. Where are they?"]
             },
-                "yAxis": [{
+            "yAxis": [{
                 "type": "linear",
-                    "title": {
+                "title": {
                     "enabled": false
                 }
             }],
@@ -56,58 +56,58 @@ $(function () {
                 "data": [
                     [
                         "Not enough to choose from",
-                    21],
+                        21],
                     [
                         "Can't edit colors",
-                    19],
+                        19],
                     [
                         "I like it so far",
-                    14],
+                        14],
                     [
                         "Can't edit icons",
-                    10],
+                        10],
                     [
                         "Don't like the content/text",
-                    2],
+                        2],
                     [
                         "Don't like the colors",
-                    2],
+                        2],
                     [
                         "It worked nicely.",
-                    1],
+                        1],
                     [
                         "Don't like the icons",
-                    1],
+                        1],
                     [
                         "If I had to make a suggestion. For the most part they seem OK",
-                    1],
+                        1],
                     [
                         "For the text frames with images",
-                    1],
+                        1],
                     [
                         "the tag with Happy Easter on it would be much more useful if you could take the bunny off of it.",
-                    1],
+                        1],
                     [
                         "it would be a great improvement if you could actually delete the image and replace it with another. For example",
-                    1],
+                        1],
                     [
                         "this seems like a great feature and would like to see more choices",
-                    1],
+                        1],
                     [
                         "Many businesses using this tool have company colors that they need to use",
-                    1],
+                        1],
                     [
                         "there needs to be a paint brush option or some way to edit the colors of the icons within the text frames.  Other than that",
-                    1],
+                        1],
                     [
                         "much more powerful than powerpoint.",
-                    1],
+                        1],
                     [
                         "I think it is great - so easy to use",
-                    1],
+                        1],
                     [
                         "I can't find these. Where are they?",
-                    1]
+                        1]
                 ]
             }]
         });

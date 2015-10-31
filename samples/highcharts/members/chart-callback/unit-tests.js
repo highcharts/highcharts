@@ -1,31 +1,31 @@
 QUnit.test('Mouse interaction', function (assert) {
 
-	var chart = Highcharts.charts[0],
-		offset,
-		x,
-		y,
-		ext;
+    var chart = Highcharts.charts[0],
+        offset,
+        x,
+        y,
+        ext;
 
-	chart.setSize(800, 300, false);
+    chart.setSize(800, 300, false);
 
-	assert.strictEqual(
-		chart.xAxis[0].getExtremes().min,
-		0,
-		'Initial min'
-	);
+    assert.strictEqual(
+        chart.xAxis[0].getExtremes().min,
+        0,
+        'Initial min'
+    );
 
-	assert.strictEqual(
-		chart.xAxis[0].getExtremes().max,
-		11,
-		'Initial min'
-	);
+    assert.strictEqual(
+        chart.xAxis[0].getExtremes().max,
+        11,
+        'Initial min'
+    );
 
-	// Drag
-	offset = $(chart.container).offset();
-	x = 300 + offset.left;
-	y = 200 + offset.top;
+    // Drag
+    offset = $(chart.container).offset();
+    x = 300 + offset.left;
+    y = 200 + offset.top;
 
-	chart.pointer.onContainerMouseDown({
+    chart.pointer.onContainerMouseDown({
         type: 'mousedown',
         pageX: x,
         pageY: y

@@ -40,7 +40,7 @@ $(function () {
 
         $.each(chart.xAxis[0].tickPositions, function (i, pos) {
             console.log(chart.xAxis[0].ticks[pos]);
-                assert.strictEqual(
+            assert.strictEqual(
                     chart.xAxis[0].ticks[pos].label.textStr.toString(),
                     labels[pos].toString(),
                     'Right label.'

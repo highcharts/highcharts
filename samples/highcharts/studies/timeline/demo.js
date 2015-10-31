@@ -1,8 +1,7 @@
 $(function () {
 
     var chart,
-        dataSequence = [
-        {
+        dataSequence = [{
             name: '2009',
             data: [1, 2, 2, 1, 1, 2, 2, 2, 1, 1]
         }, {

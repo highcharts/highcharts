@@ -10,7 +10,7 @@ $(function () {
             }]
         }).highcharts();
 
-        
+
         assert.strictEqual(
             chart.scroller.handles[0].zIndex > chart.scroller.xAxis.labelGroup.zIndex,
             true,
