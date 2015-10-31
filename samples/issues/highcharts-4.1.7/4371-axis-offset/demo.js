@@ -28,8 +28,8 @@ $(function () {
             };
 
         assert.strictEqual(
-            chart.plotWidth === parseInt(clip.width) &&
-            chart.plotHeight === parseInt(clip.height),
+            chart.plotWidth === parseInt(clip.width, 10) &&
+            chart.plotHeight === parseInt(clip.height, 10),
             true,
             "CLip path has proper width and height"
         );

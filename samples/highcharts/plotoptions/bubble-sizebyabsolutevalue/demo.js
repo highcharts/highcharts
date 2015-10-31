@@ -37,7 +37,7 @@ $(function () {
     // Add the slider to view changes
     $('input#zthreshold').bind('input', function () {
         $('#container').highcharts().series[0].update({
-            zThreshold: parseInt(this.value)
+            zThreshold: parseInt(this.value, 10)
         });
     });
 });

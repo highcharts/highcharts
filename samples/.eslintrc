@@ -31,8 +31,7 @@ rules:
     no-unused-vars: 0           # TODO: Fix manually. 200 problems, mostly the test function in test.js files.
     no-shadow: 0                # TODO: Fix manually
     object-curly-spacing: [2, "always"]
-    quotes: 0                   # TODO: Consider single, but maybe not where we use JSON data
-    radix: 0                    # TODO: Fix manually
+    quotes: 0                   # We use single quotes in Highcharts, but need to allow JSON data in the demos.
     require-jsdoc: 0
     spaced-comment: 0
     space-before-function-paren: [2, {"anonymous": "always", "named": "never"}] # JSLint style

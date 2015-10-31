@@ -68,7 +68,7 @@ $(function () {
     $.each(trackPoints, function (i, trkpt) {
 
         var time = Date.parse(trkpt.getElementsByTagName('time')[0].textContent),
-            ele = parseInt(trkpt.getElementsByTagName('ele')[0].textContent),
+            ele = parseInt(trkpt.getElementsByTagName('ele')[0].textContent, 10),
             lat = parseFloat(trkpt.getAttribute('lat')),
             lon = parseFloat(trkpt.getAttribute('lon')),
             point = {
