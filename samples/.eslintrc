@@ -21,6 +21,7 @@ rules:
     eol-last: 0
     indent: [2, 4]
     key-spacing: 0              # TODO: Fix manually. Wait for --fix.
+    max-len: 0                  # TODO: Check
     new-cap: 0                  # The ill-named Color object. Fix in HC5
     no-alert: 0
     no-console: 0               # TODO: Fix manually. Output to a visible div instead.
@@ -30,7 +31,6 @@ rules:
     no-unused-vars: 0           # TODO: Fix manually. 200 problems, mostly the test function in test.js files.
     no-shadow: 0                # TODO: Fix manually
     object-curly-spacing: [2, "always"]
-    operator-linebreak: 0       # TODO: Fix manually
     quotes: 0                   # TODO: Consider single, but maybe not where we use JSON data
     radix: 0                    # TODO: Fix manually
     require-jsdoc: 0

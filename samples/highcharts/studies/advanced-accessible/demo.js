@@ -50,9 +50,9 @@ $(function () {
             typeStartsWithVowel = !chartType || 'aeiouy'.indexOf(chartType.charAt(0)) > -1;
 
             // Build chart description
-            chartDesc = (typeStartsWithVowel ? 'An ' : 'A ') + chartType + ' chart.'
-                        + (options.title.text ? ' Title: ' + options.title.text + '.' : '')
-                        + (options.subtitle.text ? ' ' + options.subtitle.text + '.' : '');
+            chartDesc = (typeStartsWithVowel ? 'An ' : 'A ') + chartType + ' chart.' +
+                        (options.title.text ? ' Title: ' + options.title.text + '.' : '') +
+                        (options.subtitle.text ? ' ' + options.subtitle.text + '.' : '');
             chartDesc += options.accessibility.description ? ' ' + options.accessibility.description : '';
             if (chartDesc.slice(-1) !== '.') {
                 chartDesc += '.';
@@ -65,11 +65,11 @@ $(function () {
                     chartDesc += '"' + (chart.xAxis[0].options.title && chart.xAxis[0].options.title.text) + '".';
                 } else {
                     for (i = 0; i < numXAxes - 1; ++i) {
-                        chartDesc += (i > 0 ? ', "' : '"') + (chart.xAxis[i].options.title
-                                && chart.xAxis[i].options.title.text) + '"';
+                        chartDesc += (i > 0 ? ', "' : '"') + (chart.xAxis[i].options.title &&
+                                chart.xAxis[i].options.title.text) + '"';
                     }
-                    chartDesc += ' and "' + (chart.xAxis[numXAxes - 1].options.title && chart.xAxis[numXAxes - 1].options.title.text)
-                                + '" respectively.';
+                    chartDesc += ' and "' + (chart.xAxis[numXAxes - 1].options.title && chart.xAxis[numXAxes - 1].options.title.text) +
+                                '" respectively.';
                 }
             }
             if (numYAxes) {
@@ -78,11 +78,11 @@ $(function () {
                     chartDesc += '"' + (chart.yAxis[0].options.title && chart.yAxis[0].options.title.text) + '".';
                 } else {
                     for (i = 0; i < numYAxes - 1; ++i) {
-                        chartDesc += (i > 0 ? ', "' : '"') + (chart.yAxis[i].options.title
-                                && chart.yAxis[i].options.title.text) + '"';
+                        chartDesc += (i > 0 ? ', "' : '"') + (chart.yAxis[i].options.title +
+                                chart.yAxis[i].options.title.text) + '"';
                     }
-                    chartDesc += ' and "' + (chart.yAxis[numYAxes - 1].options.title && chart.yAxis[numYAxes - 1].options.title.text)
-                                + '" respectively.';
+                    chartDesc += ' and "' + (chart.yAxis[numYAxes - 1].options.title && chart.yAxis[numYAxes - 1].options.title.text) +
+                                '" respectively.';
                 }
             }
 
@@ -310,8 +310,8 @@ $(function () {
                         ix = highlightedExportItem = highlightedExportItem || 0;
                         reachedEnd = true;
                         while (ix--) {
-                            if (exportList[ix] && exportList[ix].tagName === 'DIV'
-                                    && !(exportList[ix].children && exportList[ix].children.length)) {
+                            if (exportList[ix] && exportList[ix].tagName === 'DIV' &&
+                                    !(exportList[ix].children && exportList[ix].children.length)) {
                                 exportList[ix].focus();
                                 exportList[chart.highlightedExportItem].onmouseout();
                                 exportList[ix].onmouseover();
@@ -345,8 +345,8 @@ $(function () {
                         highlightedExportItem = highlightedExportItem || 0;
                         reachedEnd = true;
                         for (ix = highlightedExportItem + 1; ix < exportList.length; ++ix) {
-                            if (exportList[ix] && exportList[ix].tagName === 'DIV'
-                                    && !(exportList[ix].children && exportList[ix].children.length)) {
+                            if (exportList[ix] && exportList[ix].tagName === 'DIV' &&
+                                    !(exportList[ix].children && exportList[ix].children.length)) {
                                 exportList[ix].focus();
                                 exportList[chart.highlightedExportItem].onmouseout();
                                 exportList[ix].onmouseover();

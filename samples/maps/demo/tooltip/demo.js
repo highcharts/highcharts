@@ -36,8 +36,8 @@ $(function () {
                 shadow: false,
                 useHTML: true,
                 padding: 0,
-                pointFormat: '<span class="f32"><span class="flag {point.flag}"></span></span>'
-                    + ' {point.name}: <b>{point.value}</b>/km²',
+                pointFormat: '<span class="f32"><span class="flag {point.flag}"></span></span>' +
+                    ' {point.name}: <b>{point.value}</b>/km²',
                 positioner: function () {
                     return { x: 0, y: 250 };
                 }
