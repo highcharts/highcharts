@@ -13,9 +13,27 @@ function Color(input) {
 }
 Color.prototype = {
 
-	rgbaRegEx: /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
-	hexRegEx: /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/,
-	rgbRegEx: /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/,
+	// Collection of parsers. This can be extended from the outside by pushing parsers
+	// to Highcharts.Colors.prototype.parsers.
+	parsers: [{
+		// RGBA color
+		regex: /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
+		parse: function (result) {
+			return [pInt(result[1]), pInt(result[2]), pInt(result[3]), parseFloat(result[4], 10)];
+		}
+	}, {
+		// HEX color
+		regex: /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/,
+		parse: function (result) {
+			return [pInt(result[1], 16), pInt(result[2], 16), pInt(result[3], 16), 1];
+		}
+	}, {
+		// RGB color
+		regex: /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/,
+		parse: function (result) {
+			return [pInt(result[1]), pInt(result[2]), pInt(result[3]), 1];
+		}
+	}],
 
 	/**
 	 * Parse the input color to rgba array
@@ -23,7 +41,9 @@ Color.prototype = {
 	 */
 	init: function (input) {
 		var result,
-			rgba;
+			rgba,
+			i,
+			parser;
 
 		this.input = input;
 
@@ -35,21 +55,12 @@ Color.prototype = {
 
 		// Solid colors
 		} else {
-			// rgba
-			result = this.rgbaRegEx.exec(input);
-			if (result) {
-				rgba = [pInt(result[1]), pInt(result[2]), pInt(result[3]), parseFloat(result[4], 10)];
-			} else {
-				// hex
-				result = this.hexRegEx.exec(input);
+			for (i = 0; i < this.parsers.length; i++) {
+				parser = this.parsers[i];
+				result = parser.regex.exec(input);
 				if (result) {
-					rgba = [pInt(result[1], 16), pInt(result[2], 16), pInt(result[3], 16), 1];
-				} else {
-					// rgb
-					result = this.rgbRegEx.exec(input);
-					if (result) {
-						rgba = [pInt(result[1]), pInt(result[2]), pInt(result[3]), 1];
-					}
+					rgba = parser.parse(result);
+					break;
 				}
 			}
 		}
