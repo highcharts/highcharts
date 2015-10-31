@@ -25,10 +25,9 @@ rules:
     no-alert: 0
     no-console: 0               # TODO: Fix manually. Output to a visible div instead.
     no-multi-spaces: 0          # Consider key-spacing and exception to align arrays
-    no-redeclare: 0             # TODO: Fix manually
     no-undefined: 0
     no-underscore-dangle: 0     # Maps demos use underscore. TODO: Check out.
-    no-unused-vars: 0           # TODO: Fix manually
+    no-unused-vars: 0           # TODO: Fix manually. 200 problems, mostly the test function in test.js files.
     no-shadow: 0                # TODO: Fix manually
     object-curly-spacing: [2, "always"]
     operator-linebreak: 0       # TODO: Fix manually

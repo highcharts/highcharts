@@ -226,7 +226,7 @@ $(function () {
                             graphic.path.animate({
                                 d: path
                             });
-                            for (var i = 0; i < boxes.length; i++) {
+                            for (i = 0; i < boxes.length; i++) {
                                 graphic['path' + i].animate({
                                     d: boxes[i]
                                 });
@@ -237,7 +237,7 @@ $(function () {
                             graphic.path = chart.renderer.path(path)
                                 .attr(pointAttr)
                                 .add(graphic);
-                            for (var i = 0; i < boxes.length; i++) {
+                            for (i = 0; i < boxes.length; i++) {
                                 graphic['path' + i] = chart.renderer.path(boxes[i])
                                     .attr(pointAttr)
                                     .add(graphic);

@@ -39,7 +39,7 @@ $(function () {
 
 
 
-        var chart = new Highcharts.Chart({
+        chart = new Highcharts.Chart({
 
             chart: {
                 type: 'heatmap',
@@ -81,7 +81,7 @@ $(function () {
 
 
 
-        var chart = new Highcharts.Chart({
+        chart = new Highcharts.Chart({
 
             chart: {
                 type: 'heatmap',
