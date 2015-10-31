@@ -1714,12 +1714,12 @@
 
             // Solid colors
             } else {
-                for (i = 0; i < this.parsers.length; i++) {
+                i = this.parsers.length;
+                while (i-- && !rgba) {
                     parser = this.parsers[i];
                     result = parser.regex.exec(input);
                     if (result) {
                         rgba = parser.parse(result);
-                        break;
                     }
                 }
             }
