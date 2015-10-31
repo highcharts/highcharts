@@ -25,16 +25,16 @@ $(function () {
                     enabled: true
                 },
                 data: (function () {
-                    var _data = [],
+                    var arr = [],
                         i;
                     for (i = 0; i < 20; i++) {
                         if (i <= 5 || i >= 10) {
-                            _data.push(i);
+                            arr.push(i);
                         } else {
-                            _data.push(null);
+                            arr.push(null);
                         }
                     }
-                    return _data;
+                    return arr;
                 }())
             }]
         }).highcharts();
@@ -73,16 +73,16 @@ $(function () {
                     enabled: true
                 },
                 data: (function () {
-                    var _data = [],
+                    var arr = [],
                         i;
                     for (i = 0; i < 20; i++) {
                         if (i <= 5 || i >= 10) {
-                            _data.push(i);
+                            arr.push(i);
                         } else {
-                            _data.push(null);
+                            arr.push(null);
                         }
                     }
-                    return _data;
+                    return arr;
                 }())
             }]
         }).highcharts();

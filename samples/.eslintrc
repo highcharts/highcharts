@@ -21,15 +21,14 @@ rules:
     eol-last: 0
     indent: [2, 4]
     key-spacing: 0              # TODO: Fix manually. Wait for --fix.
-    max-len: 0                  # TODO: Check
+    max-len: 0                  # Should be reduced, but there are 1200 violations by 2015-10-31.
     new-cap: 0                  # The ill-named Color object. Fix in HC5
     no-alert: 0
     no-console: 0               # TODO: Fix manually. Output to a visible div instead.
     no-multi-spaces: 0          # Consider key-spacing and exception to align arrays
     no-undefined: 0
-    no-underscore-dangle: 0     # Maps demos use underscore. TODO: Check out.
     no-unused-vars: 0           # TODO: Fix manually. 200 problems, mostly the test function in test.js files.
-    no-shadow: 0                # TODO: Fix manually
+    no-shadow: 0                # 10 violations as of 2015-10-31
     object-curly-spacing: [2, "always"]
     quotes: 0                   # We use single quotes in Highcharts, but need to allow JSON data in the demos.
     require-jsdoc: 0

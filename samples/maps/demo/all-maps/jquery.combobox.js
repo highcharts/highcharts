@@ -1,5 +1,6 @@
 // The following code is based on the jQuery UI combobox demo from
 // http://jqueryui.com/autocomplete/#combobox
+/* eslint no-underscore-dangle: 0 */
 (function ($) {
     $.widget("custom.combobox", {
         _create: function () {
