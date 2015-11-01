@@ -159,8 +159,8 @@ function getExportInnerHTML() {
 		<?php echo getResources(); ?>
 
 		<?php if (is_file("$path/unit-tests.js")) : ?>
-		<script src="http://code.jquery.com/qunit/qunit-1.19.0.js"></script>
-   		<link rel="stylesheet" type="text/css" href="http://code.jquery.com/qunit/qunit-1.19.0.css" />		
+		<script src="cache.php?file=http://code.jquery.com/qunit/qunit-1.19.0.js"></script>
+   		<link rel="stylesheet" type="text/css" href="cache.php?file=http://code.jquery.com/qunit/qunit-1.19.0.css" />		
    		<?php endif; ?>
 
 		<link rel="stylesheet" type="text/css" href="style.css"/>
