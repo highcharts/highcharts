@@ -124,7 +124,7 @@ function getHTML($which) {
 	$s = str_replace($bogus, 'cache.php?file=https://code.highcharts.com/mapdata', $s);
 	
 	if (strlen($s) > 0 && strpos($s, 'exporting.js') === false) {
-		$s .= '<script src="' . $exporting . '"></script>';
+		//$s .= '<script src="cache.php?file=' . $exporting . '"></script>';
 	}
 	
 	return $s;
