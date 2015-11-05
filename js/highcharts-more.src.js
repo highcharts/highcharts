@@ -1670,6 +1670,7 @@ var arrayMin = Highcharts.arrayMin,
                             yAxis.translate(previousY, 0, 1) - yAxis.translate(previousY - yValue, 0, 1);
                     }
                     previousY += yValue;
+                    point.below = previousY < pick(threshold, 0) ? true : false;
                 }
                 // #3952 Negative sum or intermediate sum not rendered correctly
                 if (shapeArgs.height < 0) {
