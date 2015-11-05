@@ -48,7 +48,6 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			minPointLength = pick(options.minPointLength, 5),
 			threshold = options.threshold,
 			stacking = options.stacking,
-			stackIndicator,
 			tooltipY;
 
 		// run column series translate
@@ -66,9 +65,8 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 			// get current stack
 			stack = stacking && yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey];
-			stackIndicator = series.getStackIndicator(stackIndicator, point.x, series.index);
 			range = stack ?
-				stack[point.x].points[stackIndicator.key] :
+				stack[point.x].points[series.index + ',' + i] :
 				[0, yValue];
 
 			// override point value for sums
@@ -230,6 +228,7 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			length = data.length,
 			lineWidth = this.options.lineWidth + this.borderWidth,
 			normalizer = mathRound(lineWidth) % 2 / 2,
+			horiz = this.xAxis.horiz, // #4699
 			path = [],
 			M = 'M',
 			L = 'L',
@@ -244,9 +243,9 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 
 			d = [
 				M,
-				prevArgs.x + prevArgs.width, prevArgs.y + normalizer,
+				prevArgs.x + (horiz ? prevArgs.width : 0), prevArgs.y + normalizer,
 				L,
-				pointArgs.x, prevArgs.y + normalizer
+				pointArgs.x + (horiz ? 0 : pointArgs.width), prevArgs.y + normalizer
 			];
 
 			if (data[i - 1].y < 0) {
