@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-10-26)
+ * @license Highcharts JS v4.1.9-modified (2015-11-05)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -1618,6 +1618,7 @@ var arrayMin = Highcharts.arrayMin,
                 minPointLength = pick(options.minPointLength, 5),
                 threshold = options.threshold,
                 stacking = options.stacking,
+                stackIndicator,
                 tooltipY;
 
             // run column series translate
@@ -1635,8 +1636,9 @@ var arrayMin = Highcharts.arrayMin,
 
                 // get current stack
                 stack = stacking && yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey];
+                stackIndicator = series.getStackIndicator(stackIndicator, point.x, series.index);
                 range = stack ?
-                    stack[point.x].points[series.index + ',' + i] :
+                    stack[point.x].points[stackIndicator.key] :
                     [0, yValue];
 
                 // override point value for sums
