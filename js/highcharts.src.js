@@ -5273,6 +5273,7 @@
             renderer.boxWrapper = boxWrapper;
             renderer.gradients = {};
             renderer.cache = {};
+            renderer.cacheKeys = [];
 
 
             renderer.setSize(width, height, false);
