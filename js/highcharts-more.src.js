@@ -1618,6 +1618,7 @@ var arrayMin = Highcharts.arrayMin,
                 minPointLength = pick(options.minPointLength, 5),
                 threshold = options.threshold,
                 stacking = options.stacking,
+                stackIndicator,
                 tooltipY;
 
             // run column series translate
@@ -1635,8 +1636,9 @@ var arrayMin = Highcharts.arrayMin,
 
                 // get current stack
                 stack = stacking && yAxis.stacks[(series.negStacks && yValue < threshold ? '-' : '') + series.stackKey];
+                stackIndicator = series.getStackIndicator(stackIndicator, point.x, series.index);
                 range = stack ?
-                    stack[point.x].points[series.index + ',' + i] :
+                    stack[point.x].points[stackIndicator.key] :
                     [0, yValue];
 
                 // override point value for sums
@@ -1798,7 +1800,6 @@ var arrayMin = Highcharts.arrayMin,
                 length = data.length,
                 lineWidth = this.options.lineWidth + this.borderWidth,
                 normalizer = mathRound(lineWidth) % 2 / 2,
-                horiz = this.xAxis.horiz, // #4699
                 path = [],
                 M = 'M',
                 L = 'L',
@@ -1813,9 +1814,9 @@ var arrayMin = Highcharts.arrayMin,
 
                 d = [
                     M,
-                    prevArgs.x + (horiz ? prevArgs.width : 0), prevArgs.y + normalizer,
+                    prevArgs.x + prevArgs.width, prevArgs.y + normalizer,
                     L,
-                    pointArgs.x + (horiz ? 0 : pointArgs.width), prevArgs.y + normalizer
+                    pointArgs.x, prevArgs.y + normalizer
                 ];
 
                 if (data[i - 1].y < 0) {
