@@ -1740,17 +1740,19 @@ Axis.prototype = {
 
 			axis.renderUnsquish();
 
-			each(tickPositions, function (pos) {
-				// left side must be align: right and right side must have align: left for labels
-				if (side === 0 || side === 2 || { 1: 'left', 3: 'right' }[side] === axis.labelAlign || axis.labelAlign === 'center') {
+
+			// Left side must be align: right and right side must have align: left for labels
+			if (labelOptions.reserveSpace !== false && (side === 0 || side === 2 || // docs: reserveSpace (demo at highcharts/xaxis/labels-reservespace)
+					{ 1: 'left', 3: 'right' }[side] === axis.labelAlign || axis.labelAlign === 'center')) {
+				each(tickPositions, function (pos) {
 
 					// get the highest offset
 					labelOffset = mathMax(
 						ticks[pos].getLabelSize(),
 						labelOffset
 					);
-				}
-			});
+				});
+			}
 
 			if (axis.staggerLines) {
 				labelOffset *= axis.staggerLines;

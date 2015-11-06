@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.9-modified (2015-10-31)
+ * @license Highstock JS v2.1.9-modified (2015-11-06)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -8276,17 +8276,19 @@
 
                 axis.renderUnsquish();
 
-                each(tickPositions, function (pos) {
-                    // left side must be align: right and right side must have align: left for labels
-                    if (side === 0 || side === 2 || { 1: 'left', 3: 'right' }[side] === axis.labelAlign || axis.labelAlign === 'center') {
+
+                // Left side must be align: right and right side must have align: left for labels
+                if (labelOptions.reserveSpace !== false && (side === 0 || side === 2 || // docs: reserveSpace (demo at highcharts/xaxis/labels-reservespace)
+                        { 1: 'left', 3: 'right' }[side] === axis.labelAlign || axis.labelAlign === 'center')) {
+                    each(tickPositions, function (pos) {
 
                         // get the highest offset
                         labelOffset = mathMax(
                             ticks[pos].getLabelSize(),
                             labelOffset
                         );
-                    }
-                });
+                    });
+                }
 
                 if (axis.staggerLines) {
                     labelOffset *= axis.staggerLines;
@@ -19611,7 +19613,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v2.1.9-modified (2015-10-31)
+     * Highstock JS v2.1.9-modified (2015-11-06)
      * Highcharts Broken Axis module
      * 
      * Author: Stephane Vanraes, Torstein Honsi
