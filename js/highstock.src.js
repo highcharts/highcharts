@@ -913,9 +913,13 @@
 
                             // Fx.prototype.cur returns the current value. The other ones are setters
                             // and returning a value has no effect.
-                            return elem.attr ? // is SVG element wrapper
-                                    elem.attr(fx.prop, fn === 'cur' ? UNDEFINED : fx.now) : // apply the SVG wrapper's method
-                                    base.apply(this, arguments); // use jQuery's built-in method
+                            if (elem.attr) { // is SVG element wrapper
+                                return elem.attr(fx.prop.replace(/([A-Z])/g, function (a, b) {
+                                    return '-' + b.toLowerCase(); // jQuery camelizes, now hyphenate back (#4721)
+                                }), fn === 'cur' ? undefined : fx.now);
+                            }
+
+                            return base.apply(this, arguments); // use jQuery's built-in method
                         };
                     }
                 });
