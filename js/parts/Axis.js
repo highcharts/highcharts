@@ -2048,10 +2048,8 @@ Axis.prototype = {
 			}
 
 			// When the objects are finished fading out, destroy them
-			if (coll === alternateBands || !chart.hasRendered || !delay) {
-				destroyInactiveItems();
-			} else if (delay) {
-				setTimeout(destroyInactiveItems, delay);
+			if (coll === alternateBands || !chart.hasRendered) {
+				syncTimeout(destroyInactiveItems, delay);
 			}
 		});
 

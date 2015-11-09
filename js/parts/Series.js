@@ -1715,13 +1715,9 @@ Series.prototype = {
 		// Call the afterAnimate function on animation complete (but don't overwrite the animation.complete option
 		// which should be available to the user).
 		if (!hasRendered) {
-			if (animDuration) {
-				series.animationTimeout = setTimeout(function () {
-					series.afterAnimate();
-				}, animDuration);
-			} else {
+			series.animationTimeout = syncTimeout(function () {
 				series.afterAnimate();
-			}
+			}, animDuration);
 		}
 
 		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
@@ -1825,11 +1821,8 @@ Series.prototype = {
 		}
 		delete series.kdTree;
 
-		if (series.options.kdNow) {  // For testing tooltips, don't build async
-			startRecursive();
-		} else {
-			setTimeout(startRecursive);
-		}
+		// For testing tooltips, don't build async
+		syncTimeout(startRecursive, series.options.kdNow ? 0 : 1);
 	},
 
 	searchKDTree: function (point, compareX) {

@@ -721,24 +721,20 @@ Chart.prototype = {
 			renderTo = chart.renderTo,
 			width = optionsChart.width || adapterRun(renderTo, 'width'),
 			height = optionsChart.height || adapterRun(renderTo, 'height'),
-			target = e ? e.target : win, // #805 - MooTools doesn't supply e
-			doReflow = function () {
-				if (chart.container) { // It may have been destroyed in the meantime (#1257)
-					chart.setSize(width, height, false);
-					chart.hasUserSize = null;
-				}
-			};
+			target = e ? e.target : win; // #805 - MooTools doesn't supply e
 
 		// Width and height checks for display:none. Target is doc in IE8 and Opera,
 		// win in Firefox, Chrome and IE9.
 		if (!chart.hasUserSize && !chart.isPrinting && width && height && (target === win || target === doc)) { // #1093
 			if (width !== chart.containerWidth || height !== chart.containerHeight) {
 				clearTimeout(chart.reflowTimeout);
-				if (e) { // Called from window.resize
-					chart.reflowTimeout = setTimeout(doReflow, 100);
-				} else { // Called directly (#2224)
-					doReflow();
-				}
+				// When called from window.resize, e is set, else it's called directly (#2224)
+				chart.reflowTimeout = syncTimeout(function () {
+					if (chart.container) { // It may have been destroyed in the meantime (#1257)
+						chart.setSize(width, height, false);
+						chart.hasUserSize = null;
+					}
+				}, e ? 100 : 0);
 			}
 			chart.containerWidth = width;
 			chart.containerHeight = height;
@@ -771,20 +767,12 @@ Chart.prototype = {
 		var chart = this,
 			chartWidth,
 			chartHeight,
-			fireEndResize,
 			renderer = chart.renderer,
 			globalAnimation;
 
 		// Handle the isResizing counter
 		chart.isResizing += 1;
-		fireEndResize = function () {
-			if (chart) {
-				fireEvent(chart, 'endResize', null, function () {
-					chart.isResizing -= 1;
-				});
-			}
-		};
-
+		
 		// set the animation for the current process
 		setAnimation(animation, chart);
 
@@ -834,11 +822,13 @@ Chart.prototype = {
 
 		// Fire endResize and set isResizing back. If animation is disabled, fire without delay
 		globalAnimation = renderer.globalAnimation; // Reassign it before using it, it may have changed since the top of this function.
-		if (globalAnimation === false) {
-			fireEndResize();
-		} else { // else set a timeout with the animation duration
-			setTimeout(fireEndResize, (globalAnimation && globalAnimation.duration) || 500);
-		}
+		syncTimeout(function () {
+			if (chart) {
+				fireEvent(chart, 'endResize', null, function () {
+					chart.isResizing -= 1;
+				});
+			}
+		}, globalAnimation === false ? 0 : ((globalAnimation && globalAnimation.duration) || 500));
 	},
 
 	/**
