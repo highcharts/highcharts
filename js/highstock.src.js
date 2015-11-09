@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.9-modified (2015-11-06)
+ * @license Highstock JS v2.1.9-modified (2015-11-09)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -298,6 +298,20 @@
      */
     function splat(obj) {
         return isArray(obj) ? obj : [obj];
+    }
+
+    /**
+     * Set a timeout if the delay is given, otherwise perform the function synchronously
+     * @param   {Function} fn      The function to perform
+     * @param   {Number}   delay   Delay in milliseconds
+     * @param   {Ojbect}   context The context
+     * @returns {Nubmer}           An identifier for the timeout
+     */
+    function syncTimeout(fn, delay, context) {
+        if (delay) {
+            return setTimeout(fn, delay, context);
+        }
+        fn.call(0, context);
     }
 
 
@@ -9203,11 +9217,12 @@
          */
         hide: function (delay) {
             clearTimeout(this.hideTimer); // disallow duplicate timers (#1728, #1766)
+            delay = pick(delay, this.options.hideDelay, 500);
             if (!this.isHidden) {
-                this.hideTimer = setTimeout(function (tooltip) {
-                    tooltip.label.fadeOut();
+                this.hideTimer = syncTimeout(function (tooltip) {
+                    tooltip.label[delay ? 'fadeOut' : 'hide']();
                     tooltip.isHidden = true;
-                }, pick(delay, this.options.hideDelay, 500), this);
+                }, delay, this);
             }
         },
 
@@ -19620,7 +19635,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v2.1.9-modified (2015-11-06)
+     * Highstock JS v2.1.9-modified (2015-11-09)
      * Highcharts Broken Axis module
      * 
      * Author: Stephane Vanraes, Torstein Honsi

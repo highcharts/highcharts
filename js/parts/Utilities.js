@@ -179,6 +179,20 @@ function splat(obj) {
 	return isArray(obj) ? obj : [obj];
 }
 
+/**
+ * Set a timeout if the delay is given, otherwise perform the function synchronously
+ * @param   {Function} fn      The function to perform
+ * @param   {Number}   delay   Delay in milliseconds
+ * @param   {Ojbect}   context The context
+ * @returns {Nubmer}           An identifier for the timeout
+ */
+function syncTimeout(fn, delay, context) {
+	if (delay) {
+		return setTimeout(fn, delay, context);
+	}
+	fn.call(0, context);
+}
+
 
 /**
  * Return the first value that is defined. Like MooTools' $.pick.
