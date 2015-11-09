@@ -2,6 +2,8 @@
 	EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
 	***/
 ////// HELPER METHODS //////
+var each = Highcharts.each;
+
 var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
 
 function defined(obj) {
@@ -224,20 +226,60 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 
 	shapeArgs.alpha *= deg2rad;
 	shapeArgs.beta *= deg2rad;
+	
 	var result = this.g(),
-		paths = this.arc3dPath(shapeArgs),
 		renderer = result.renderer;
 
-	var zIndex = paths.zTop * 100;
-
-	result.shapeArgs = shapeArgs;	// Store for later use
-
 	// create the different sub sections of the shape
-	result.top = renderer.path(paths.top).setRadialReference(shapeArgs.center).attr({ zIndex: paths.zTop }).add(result);
-	result.side1 = renderer.path(paths.side2).attr({ zIndex: paths.zSide1 });
-	result.side2 = renderer.path(paths.side1).attr({ zIndex: paths.zSide2 });
-	result.inn = renderer.path(paths.inn).attr({ zIndex: paths.zInn });
-	result.out = renderer.path(paths.out).attr({ zIndex: paths.zOut });
+	result.top = renderer.path().add(result);
+	result.side1 = renderer.path();
+	result.side2 = renderer.path();
+	result.inn = renderer.path();
+	result.out = renderer.path();
+
+	/**
+	 * Compute the transformed paths and set them to the composite shapes
+	 */
+	result.setPaths = function (shapeArgs) {
+
+		var paths = result.renderer.arc3dPath(shapeArgs),
+			zIndex = paths.zTop * 100;
+
+		result.shapeArgs = shapeArgs;
+
+		result.top.attr({ d: paths.top, zIndex: paths.zTop }).setRadialReference(shapeArgs.center);
+		result.inn.attr({ d: paths.inn, zIndex: paths.zInn });
+		result.out.attr({ d: paths.out, zIndex: paths.zOut });
+		result.side1.attr({ d: paths.side1, zIndex: paths.zSide1 });
+		result.side2.attr({ d: paths.side2, zIndex: paths.zSide2 });
+
+
+		// show all children
+		result.zIndex = zIndex;
+		result.attr({ zIndex: zIndex });
+	};
+	result.setPaths(shapeArgs);
+
+	/**
+	 * Override attr to remove shape attributes and use those to set child paths
+	 * WIP. Continue to test animation on #3534.
+	 * /
+	Highcharts.wrap(result, 'attr', function (proceed, params) {
+		var setPaths = false;
+		for (var key in params) {
+			if (key in { x: 1, y: 1, r: 1, innerR: 1, start: 1, end: 1 }) {
+				result.shapeArgs[key] = params[key];
+				delete params[key];
+				setPaths = true;
+			}
+		}
+		if (setPaths) {
+			result.setPaths(result.shapeArgs);
+		}
+		return proceed.call(this, params);
+	});
+*/
+
 
 	// apply the fill to the top and a darker shade to the sides
 	result.fillSetter = function (color) {
@@ -254,36 +296,28 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		return this;
 	};
 
-	// apply the translation to all
-	result.translateXSetter = function (value) {
-		this.out.attr({ translateX: value });
-		this.inn.attr({ translateX: value });
-		this.side1.attr({ translateX: value });
-		this.side2.attr({ translateX: value });
-		this.top.attr({ translateX: value });
-	};
+	// Apply the same value to all. These properties cascade down to the children
+	// when set to the composite arc3d.
+	each(['opacity', 'translateX', 'translateY', 'visibility'], function (setter) {
+		result[setter + 'Setter'] = function (value, key) {
+			var wrapper = this;
+			each(['out', 'inn', 'side1', 'side2', 'top'], function (el) {
+				wrapper[el].attr(key, value);
+			});
+		};
+	});
 
-	result.translateYSetter = function (value) {
-		this.out.attr({ translateY: value });
-		this.inn.attr({ translateY: value });
-		this.side1.attr({ translateY: value });
-		this.side2.attr({ translateY: value });
-		this.top.attr({ translateY: value });
-	};
-
-	result.animate = function (args, duration, complete) {
-		if (defined(args.end) || defined(args.start)) {
-			this._shapeArgs = this.shapeArgs;
+	result.animate = function (params, animation, complete) {
+		if (defined(params.end) || defined(params.start)) {
+			var start = this.shapeArgs,
+				end = params;
 
 			Highcharts.SVGElement.prototype.animate.call(this, {
-				_args: args
+				shape: 1
 			}, {
-				duration: duration,
-				start: function () {
-					var args = arguments,
-						fx = args[0],
-						elem = fx.elem,
-						end = elem._shapeArgs;
+				duration: animation && animation.duration,
+				start: function (fx) {
+					var elem = fx.elem;
 
 					if (end.fill !== elem.color) {
 						elem.attr({
@@ -291,36 +325,22 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 						});
 					}
 				},
-				step: function () {
-					var args = arguments,
-						fx = args[1],
-						result = fx.elem,
-						start = result._shapeArgs,
-						end = fx.end,
-						pos = fx.pos,
-						sA = Highcharts.merge(start, {
-							x: start.x + ((end.x - start.x) * pos),
-							y: start.y + ((end.y - start.y) * pos),
-							r: start.r + ((end.r - start.r) * pos),
-							innerR: start.innerR + ((end.innerR - start.innerR) * pos),
-							start: start.start + ((end.start - start.start) * pos),
-							end: start.end + ((end.end - start.end) * pos)
-						});
+				step: function (a, fx) {
+					var result = fx.elem,
+						pos = fx.pos;
 
-					var paths = result.renderer.arc3dPath(sA);
-
-					result.shapeArgs = sA;
-
-					result.top.attr({ d: paths.top, zIndex: paths.zTop });
-					result.inn.attr({ d: paths.inn, zIndex: paths.zInn });
-					result.out.attr({ d: paths.out, zIndex: paths.zOut });
-					result.side1.attr({ d: paths.side1, zIndex: paths.zSide1 });
-					result.side2.attr({ d: paths.side2, zIndex: paths.zSide2 });
-
+					result.setPaths(Highcharts.merge(start, {
+						x: start.x + ((end.x - start.x) * pos),
+						y: start.y + ((end.y - start.y) * pos),
+						r: start.r + ((end.r - start.r) * pos),
+						innerR: start.innerR + ((end.innerR - start.innerR) * pos),
+						start: start.start + ((end.start - start.start) * pos),
+						end: start.end + ((end.end - start.end) * pos)
+					}));
 				}
 			}, complete);
 		} else {
-			Highcharts.SVGElement.prototype.animate.call(this, args, duration, complete);
+			Highcharts.SVGElement.prototype.animate.call(this, params, animation, complete);
 		}
 		return this;
 	};
@@ -350,9 +370,6 @@ Highcharts.SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		this.side1.show();
 		this.side2.show();
 	};
-	// show all children
-	result.zIndex = zIndex;
-	result.attr({ zIndex: zIndex });
 	return result;
 };
 
