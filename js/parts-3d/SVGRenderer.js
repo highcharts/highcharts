@@ -358,7 +358,8 @@ Highcharts.SVGRenderer.prototype.arc3d = function (attribs) {
 		delete params.beta;
 
 		animation = {
-			duration: (animation && animation.duration) || 0
+			duration: (animation && animation.duration) || 0,
+			complete: animation && animation.complete
 		};
 
 		if (ca) {

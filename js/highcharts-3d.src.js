@@ -485,7 +485,8 @@
             delete params.beta;
 
             animation = {
-                duration: (animation && animation.duration) || 0
+                duration: (animation && animation.duration) || 0,
+                complete: animation && animation.complete
             };
 
             if (ca) {
