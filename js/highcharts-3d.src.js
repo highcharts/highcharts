@@ -1421,9 +1421,12 @@
             each(this.points, function (point) {
                 var graphic = point.graphic;
 
-                // Hide null or 0 points (#3006, 3650)
-                graphic[point.y ? 'show' : 'hide']();
-            });
+                // #4584 Check if has graphic - null points don't have it
+                if (graphic) {
+                    // Hide null or 0 points (#3006, 3650)
+                    graphic[point.y ? 'show' : 'hide']();
+                }
+            });    
         }
     });
 
