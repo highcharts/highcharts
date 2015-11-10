@@ -16,11 +16,6 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 		seriesOptions = series.options,
 		depth = seriesOptions.depth || 0,
 		options3d = options.chart.options3d,
-		origin = {
-			x: chart.plotWidth / 2,
-			y: chart.plotHeight / 2,
-			z: options3d.depth
-		},
 		alpha = options3d.alpha,
 		beta = options3d.beta,
 		z = seriesOptions.stacking ? (seriesOptions.stack || 0) * depth : series._i * depth;
@@ -40,7 +35,6 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 
 		shapeArgs.z = z;
 		shapeArgs.depth = depth * 0.75;
-		shapeArgs.origin = origin;
 		shapeArgs.alpha = alpha;
 		shapeArgs.beta = beta;
 		shapeArgs.center = series.center;
