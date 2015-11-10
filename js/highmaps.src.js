@@ -8345,9 +8345,10 @@
                 }
 
                 // When the objects are finished fading out, destroy them
-                if (coll === alternateBands || !chart.hasRendered) {
-                    syncTimeout(destroyInactiveItems, delay);
-                }
+                syncTimeout(
+                    destroyInactiveItems, 
+                    coll === alternateBands || !chart.hasRendered || !delay ? 0 : delay
+                );
             });
 
             // Static items. As the axis group is cleared on subsequent calls
