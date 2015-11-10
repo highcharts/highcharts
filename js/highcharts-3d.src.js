@@ -14,6 +14,12 @@
     /**
         Shorthands for often used function
     */
+    var each = Highcharts.each,
+        extend = Highcharts.extend,
+        inArray = HighchartsAdapter.inArray,
+        merge = Highcharts.merge,
+        pick = Highcharts.pick,
+        wrap = Highcharts.wrap;
     /**
      *    Mathematical Functionility
      */
@@ -21,7 +27,6 @@
         deg2rad = (PI / 180), // degrees to radians
         sin = Math.sin,
         cos = Math.cos,
-        pick = Highcharts.pick,
         round = Math.round;
 
     /**
@@ -70,17 +75,36 @@
         var x, y, z, px, py, pz;
 
         // Transform each point
-        Highcharts.each(points, function (point) {
+        each(points, function (point) {
             x = (inverted ? point.y : point.x) - xe;
             y = (inverted ? point.x : point.y) - ye;
             z = (point.z || 0) - ze;
 
-            //Apply 3-D rotation
+            // Apply 3-D rotation
+            // Euler Angles (XYZ): cosA = cos(Alfa|Roll), cosB = cos(Beta|Pitch), cosG = cos(Gamma|Yaw) 
+            // 
+            // Composite rotation:
+            // |          cosB * cosG             |           cosB * sinG            |    -sinB    |
+            // | sinA * sinB * cosG - cosA * sinG | sinA * sinB * sinG + cosA * cosG | sinA * cosB |
+            // | cosA * sinB * cosG + sinA * sinG | cosA * sinB * sinG - sinA * cosG | cosA * cosB |
+            // 
+            // Now, Gamma/Yaw is not used (angle=0), so we assume cosG = 1 and sinG = 0, so we get:
+            // |     cosB    |   0    |   - sinB    |
+            // | sinA * sinB |  cosA  | sinA * cosB |
+            // | cosA * sinB | - sinA | cosA * cosB |
+            // 
+            // But in browsers, y is reversed, so we get sinA => -sinA. The general result is:
+            // |      cosB     |   0    |    - sinB     |     | x |     | px |
+            // | - sinA * sinB |  cosA  | - sinA * cosB |  x  | y |  =  | py | 
+            // |  cosA * sinB  |  sinA  |  cosA * cosB  |     | z |     | pz |
+            //
+            // Result: 
             px = c1 * x - s1 * z;
-            py = -s1 * s2 * x - c1 * s2 * z + c2 * y;
-            pz = s1 * c2 * x + c1 * c2 * z + s2 * y;
+            py = -s1 * s2 * x + c2 * y - c1 * s2 * z;
+            pz = s1 * c2 * x + s2 * y + c1 * c2 * z;
 
-            //Apply perspective
+
+            // Apply perspective
             if ((vd > 0) && (vd < Number.POSITIVE_INFINITY)) {
                 px = px * (vd / (pz + ze + vd));
                 py = py * (vd / (pz + ze + vd));
@@ -105,11 +129,6 @@
         EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
         ***/
     ////// HELPER METHODS //////
-    var each = Highcharts.each,
-        extend = Highcharts.extend,
-        inArray = HighchartsAdapter.inArray,
-        merge = Highcharts.merge,
-        wrap = Highcharts.wrap;
 
     var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
 
@@ -1341,7 +1360,7 @@
             z = 0;
         }
 
-        Highcharts.each(series.data, function (point) {
+        each(series.data, function (point) {
 
             var shapeArgs = point.shapeArgs,
                 angle;
@@ -1384,7 +1403,7 @@
             states.select.borderColor = Highcharts.pick(states.select.edgeColor, this.borderColor);
             states.select.borderWidth = Highcharts.pick(states.select.edgeWidth, this.borderWidth);
 
-            Highcharts.each(this.data, function (point) {
+            each(this.data, function (point) {
                 var pointAttr = point.pointAttr;
                 pointAttr[''].stroke = point.series.borderColor || point.color;
                 pointAttr['']['stroke-width'] = point.series.borderWidth;
@@ -1398,7 +1417,7 @@
         proceed.apply(this, [].slice.call(arguments, 1));
 
         if (this.chart.is3d()) {
-            Highcharts.each(this.points, function (point) {
+            each(this.points, function (point) {
                 var graphic = point.graphic;
 
                 // Hide null or 0 points (#3006, 3650)
@@ -1409,19 +1428,27 @@
 
     Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
         if (this.chart.is3d()) {
-            var series = this;
-            Highcharts.each(series.data, function (point) {
+            var series = this,
+                chart = series.chart,
+                options3d = chart.options.chart.options3d;
+            each(series.data, function (point) {
                 var shapeArgs = point.shapeArgs,
                     r = shapeArgs.r,
                     d = shapeArgs.depth,
-                    a1 = (shapeArgs.alpha || series.chart.options.chart.options3d.alpha) * deg2rad, //#3240 issue with datalabels for 0 and null values
+                    a1 = (shapeArgs.alpha || options3d.alpha) * deg2rad, //#3240 issue with datalabels for 0 and null values
+                    b1 = (shapeArgs.beta || options3d.beta) * deg2rad,
                     a2 = (shapeArgs.start + shapeArgs.end) / 2,
-                    labelPos = point.labelPos;
+                    labelPos = point.labelPos,
+                    labelIndexes = [0, 2, 4], // [x1, y1, x2, y2, x3, y3]
+                    points = [],
+                    yOffset = (-r * (1 - cos(a1)) * sin(a2)) /*+ (sin(a2) > 0 ? sin(a1) * d : 0)*/,
+                    xOffset = r * (cos(b1) - 1) * cos(a2);
 
-                labelPos[1] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
-                labelPos[3] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
-                labelPos[5] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
-
+                // Apply perspective on label positions
+                each(labelIndexes, function (index, i) {
+                    labelPos[index] += xOffset;
+                    labelPos[index + 1] += yOffset;
+                });
             });
         }
 
