@@ -345,10 +345,6 @@ Highcharts.SVGRenderer.prototype.arc3d = function (attribs) {
 			from = this.attribs,
 			to;
 
-		params = merge(params); // Don't mutate the original object
-		
-		ca = suckOutCustom(params);
-
 		// Attribute-line properties connected to 3D. These shouldn't have been in the 
 		// attribs collection in the first place.
 		delete params.center;
@@ -357,26 +353,32 @@ Highcharts.SVGRenderer.prototype.arc3d = function (attribs) {
 		delete params.alpha;
 		delete params.beta;
 
-		animation = {
-			duration: (animation && animation.duration) || 0,
-			complete: animation && animation.complete
-		};
-
-		if (ca) {
-			to = ca;
-			animation.step = function (a, fx) {
-				function interpolate(key) {
-					return from[key] + (pick(to[key], from[key]) - from[key]) * fx.pos;
-				}
-				fx.elem.setPaths(merge(from, {
-					x: interpolate('x'),
-					y: interpolate('y'),
-					r: interpolate('r'),
-					innerR: interpolate('innerR'),
-					start: interpolate('start'),
-					end: interpolate('end')
-				}));
-			};
+		animation = pick(animation, this.renderer.globalAnimation);
+		
+		if (animation) {
+			if (typeof animation !== 'object') {
+				animation = {};	
+			}
+			
+			params = merge(params); // Don't mutate the original object
+			ca = suckOutCustom(params);
+			
+			if (ca) {
+				to = ca;
+				animation.step = function (a, fx) {
+					function interpolate(key) {
+						return from[key] + (pick(to[key], from[key]) - from[key]) * fx.pos;
+					}
+					fx.elem.setPaths(merge(from, {
+						x: interpolate('x'),
+						y: interpolate('y'),
+						r: interpolate('r'),
+						innerR: interpolate('innerR'),
+						start: interpolate('start'),
+						end: interpolate('end')
+					}));
+				};
+			}
 		}
 		return proceed.call(this, params, animation, complete);
 	});
