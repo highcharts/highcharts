@@ -254,11 +254,23 @@ Highcharts.SVGRenderer.prototype.arc3d = function (attribs) {
 	attribs.beta *= deg2rad;
 	
 	// Create the different sub sections of the shape
-	wrapper.top = renderer.path().add(wrapper);
+	wrapper.top = renderer.path();
 	wrapper.side1 = renderer.path();
 	wrapper.side2 = renderer.path();
 	wrapper.inn = renderer.path();
 	wrapper.out = renderer.path();
+
+	/**
+	 * Add all faces
+	 */
+	wrapper.onAdd = function () {
+		var parent = wrapper.parentGroup;
+		wrapper.top.add(wrapper);
+		wrapper.out.add(parent);
+		wrapper.inn.add(parent);
+		wrapper.side1.add(parent);
+		wrapper.side2.add(parent);
+	};
 
 	/**
 	 * Compute the transformed paths and set them to the composite shapes

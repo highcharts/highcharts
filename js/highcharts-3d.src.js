@@ -357,11 +357,23 @@
         attribs.beta *= deg2rad;
     
         // Create the different sub sections of the shape
-        wrapper.top = renderer.path().add(wrapper);
+        wrapper.top = renderer.path();
         wrapper.side1 = renderer.path();
         wrapper.side2 = renderer.path();
         wrapper.inn = renderer.path();
         wrapper.out = renderer.path();
+
+        /**
+         * Add all faces
+         */
+        wrapper.onAdd = function () {
+            var parent = wrapper.parentGroup;
+            wrapper.top.add(wrapper);
+            wrapper.out.add(parent);
+            wrapper.inn.add(parent);
+            wrapper.side1.add(parent);
+            wrapper.side2.add(parent);
+        };
 
         /**
          * Compute the transformed paths and set them to the composite shapes
@@ -1358,8 +1370,7 @@
 
     Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
 
-        var seriesGroup = this.group,
-            options = this.options,
+        var options = this.options,
             states = options.states;
 
         // Do not do this if the chart is not 3D
@@ -1389,11 +1400,6 @@
         if (this.chart.is3d()) {
             Highcharts.each(this.points, function (point) {
                 var graphic = point.graphic;
-
-                graphic.out.add(seriesGroup);
-                graphic.inn.add(seriesGroup);
-                graphic.side1.add(seriesGroup);
-                graphic.side2.add(seriesGroup);
 
                 // Hide null or 0 points (#3006, 3650)
                 graphic[point.y ? 'show' : 'hide']();
