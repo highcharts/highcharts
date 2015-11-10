@@ -16,11 +16,6 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 		seriesOptions = series.options,
 		depth = seriesOptions.depth || 0,
 		options3d = options.chart.options3d,
-		origin = {
-			x: chart.plotWidth / 2,
-			y: chart.plotHeight / 2,
-			z: options3d.depth
-		},
 		alpha = options3d.alpha,
 		beta = options3d.beta,
 		z = seriesOptions.stacking ? (seriesOptions.stack || 0) * depth : series._i * depth;
@@ -40,7 +35,6 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 
 		shapeArgs.z = z;
 		shapeArgs.depth = depth * 0.75;
-		shapeArgs.origin = origin;
 		shapeArgs.alpha = alpha;
 		shapeArgs.beta = beta;
 		shapeArgs.center = series.center;
@@ -61,8 +55,7 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype.pointClass.prototype, 'halo
 
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (proceed) {
 
-	var seriesGroup = this.group,
-		options = this.options,
+	var options = this.options,
 		states = options.states;
 
 	// Do not do this if the chart is not 3D
@@ -93,16 +86,8 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 		Highcharts.each(this.points, function (point) {
 			var graphic = point.graphic;
 
-			// #4584 Check if has graphic - null points don't have it
-			if (graphic) {
-				graphic.out.add(seriesGroup);
-				graphic.inn.add(seriesGroup);
-				graphic.side1.add(seriesGroup);
-				graphic.side2.add(seriesGroup);
-
-				// Hide null or 0 points (#3006, 3650)
-				graphic[point.y ? 'show' : 'hide']();
-			}
+			// Hide null or 0 points (#3006, 3650)
+			graphic[point.y ? 'show' : 'hide']();
 		});
 	}
 });

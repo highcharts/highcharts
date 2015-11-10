@@ -1,12 +1,12 @@
 $(function () {
     QUnit.test('PointBreak with different thresholds', function (assert) {
         var breaks = [{
-                from: -40000,
-                to: -20000
-            }, {
-                from: 20000,
-                to: 40000
-            }];
+            from: -40000,
+            to: -20000
+        }, {
+            from: 20000,
+            to: 40000
+        }];
 
         var chart = $('#container').highcharts({
             chart: {
@@ -32,15 +32,15 @@ $(function () {
                         if (!point[key]) {
                             point[key] = this.chart.renderer.path(path)
                                 .attr({
-                                'stroke-width': 3,
-                                stroke: "red"
-                            }).add(point.graphic.parentGroup);
+                                    'stroke-width': 3,
+                                    stroke: "red"
+                                }).add(point.graphic.parentGroup);
                         } else {
                             point[key].attr({
                                 d: path
                             });
                         }
-                     }
+                    }
                 }
             },
             series: [{

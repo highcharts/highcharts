@@ -41,7 +41,7 @@ $(function () {
 
         chart.series[0].update({ sizeByAbsoluteValue: false });
         assert.strictEqual(
-            parseInt(chart.series[0].points[0].graphic.attr('r')) < parseInt(chart.series[0].points[10].graphic.attr('r')),
+            parseInt(chart.series[0].points[0].graphic.attr('r'), 10) < parseInt(chart.series[0].points[10].graphic.attr('r'), 10),
             true,
             'Size by threshold: false give different sizes'
         );
@@ -50,7 +50,7 @@ $(function () {
         chart.series[0].update({ sizeByAbsoluteValue: true });
         chart.series[0].points[10].update({ z: 4 });
         assert.strictEqual(
-            parseInt(chart.series[0].points[0].graphic.attr('r')) > parseInt(chart.series[0].points[10].graphic.attr('r')),
+            parseInt(chart.series[0].points[0].graphic.attr('r'), 10) > parseInt(chart.series[0].points[10].graphic.attr('r'), 10),
             true,
             'Negative absolute value gives greater bubble size'
         );

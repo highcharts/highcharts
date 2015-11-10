@@ -14,12 +14,12 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Highcharts samples</title>
 
-		<script type='text/javascript' src='//code.jquery.com/jquery-1.9.1.js'></script>
-  		<script type="text/javascript" src="//code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
-  		<link rel="stylesheet" type="text/css" href="//code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css"/>
+		<script type='text/javascript' src='http://code.jquery.com/jquery-1.9.1.js'></script>
+  		<script type="text/javascript" src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+  		<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css"/>
   		<link rel="stylesheet" type="text/css" href="style.css"/>
 
-		<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+		<link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 		
 		<script>
 			var diffThreshold = 0;

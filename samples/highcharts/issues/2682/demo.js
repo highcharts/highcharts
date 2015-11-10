@@ -15,11 +15,11 @@ $(function () {
             stacking: 'percent',
             data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0].reverse()
         }]
-    }, function (chart) {
+    }, function () {
 
-        chart.series[0].update({ stacking: 'normal' }, false);
-        chart.series[1].update({ stacking: 'normal' }, false);
-        chart.redraw();
+        this.series[0].update({ stacking: 'normal' }, false);
+        this.series[1].update({ stacking: 'normal' }, false);
+        this.redraw();
     });
 
 

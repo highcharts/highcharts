@@ -24,7 +24,7 @@ $symbols = array('check', 'exclamation-sign');
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Comparison comment :: Highcharts Utils</title>
-		<script src="http://code.jquery.com/jquery.js"></script>
+		<script src="cache.php?file=http://code.jquery.com/jquery.js"></script>
 		<link type="text/css" rel="stylesheet" href="style.css" />
 		
 		<style type="text/css">

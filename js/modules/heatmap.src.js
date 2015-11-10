@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v4.1.9-modified (2015-10-25)
+ * @license Highcharts JS v4.1.9-modified (2015-10-31)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -108,7 +108,7 @@
 
             // Unsupported color, return to-color (#3920)
             if (!to.rgba.length || !from.rgba.length) {
-                ret = to.raw || 'none';
+                ret = to.input || 'none';
 
             // Interpolate
             } else {

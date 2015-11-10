@@ -1,6 +1,6 @@
 {
     "name": "Highcharts Working Repo",
-    "main": "bower-info.js",
+    "main": "main.js",
     "ignore": [
         "build",
         "errors",

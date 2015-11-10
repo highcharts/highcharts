@@ -1,7 +1,7 @@
 {
   "name": "Highcharts",
   "version": "4.0.3",
-  "main": "js/highcharts.src.js",
+  "main": "main.js",
   "author": "",
   "repository": {
     "type": "git",

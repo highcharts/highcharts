@@ -36,7 +36,7 @@ $(function () {
 
                 val = val.replace(quoteRegex, '');
                 if (numRegex.test(val)) {
-                    val = parseInt(val);
+                    val = parseInt(val, 10);
                 } else if (!val) {
                     val = null;
                 }
@@ -134,7 +134,7 @@ $(function () {
                                     enabled: false
                                 },
                                 threshold: 0,
-                                pointStart: parseInt(categories[0])
+                                pointStart: parseInt(categories[0], 10)
                             }
                         }
                     }).highcharts();

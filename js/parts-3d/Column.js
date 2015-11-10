@@ -198,12 +198,6 @@ Highcharts.wrap(Highcharts.seriesTypes.cylinder.prototype, 'translate', function
 		cylOptions = options.plotOptions.cylinder,
 		options3d = options.chart.options3d,
 		depth = cylOptions.depth || 0,
-		origin = {
-			x: chart.inverted ? chart.plotHeight / 2 : chart.plotWidth / 2,
-			y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2,
-			z: options3d.depth,
-			vd: options3d.viewDistance
-		},
 		alpha = options3d.alpha;
 
 	var z = cylOptions.stacking ? (this.options.stack || 0) * depth : series._i * depth;
@@ -223,7 +217,6 @@ Highcharts.wrap(Highcharts.seriesTypes.cylinder.prototype, 'translate', function
 		shapeArgs.depth = shapeArgs.height * (1 / sin((90 - alpha) * deg2rad)) - z;
 		shapeArgs.alpha = 90 - alpha;
 		shapeArgs.beta = 0;
-		shapeArgs.origin = origin;
 	});
 });
 */

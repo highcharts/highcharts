@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-11-05)
+ * @license Highmaps JS v1.1.9-modified (2015-11-10)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -297,6 +297,20 @@
      */
     function splat(obj) {
         return isArray(obj) ? obj : [obj];
+    }
+
+    /**
+     * Set a timeout if the delay is given, otherwise perform the function synchronously
+     * @param   {Function} fn      The function to perform
+     * @param   {Number}   delay   Delay in milliseconds
+     * @param   {Ojbect}   context The context
+     * @returns {Nubmer}           An identifier for the timeout
+     */
+    function syncTimeout(fn, delay, context) {
+        if (delay) {
+            return setTimeout(fn, delay, context);
+        }
+        fn.call(0, context);
     }
 
 
@@ -912,9 +926,14 @@
 
                             // Fx.prototype.cur returns the current value. The other ones are setters
                             // and returning a value has no effect.
-                            return elem.attr ? // is SVG element wrapper
-                                    elem.attr(fx.prop, fn === 'cur' ? UNDEFINED : fx.now) : // apply the SVG wrapper's method
-                                    base.apply(this, arguments); // use jQuery's built-in method
+                            if (elem.attr) { // is SVG element wrapper
+                                return elem.attr(
+                                    fx.prop.replace('strokeWidth', 'stroke-width'), // #4721
+                                    fn === 'cur' ? undefined : fx.now
+                                );
+                            }
+
+                            return base.apply(this, arguments); // use jQuery's built-in method
                         };
                     }
                 });
@@ -1662,65 +1681,89 @@
      * Handle color operations. The object methods are chainable.
      * @param {String} input The input color in either rbga or hex format
      */
-    var rgbaRegEx = /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
-        hexRegEx = /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/,
-        rgbRegEx = /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/;
+    function Color(input) {
+        // Backwards compatibility, allow instanciation without new
+        if (!(this instanceof Color)) {
+            return new Color(input);
+        }
+        // Initialize
+        this.init(input);
+    }
+    Color.prototype = {
 
-    var Color = function (input) {
-        // declare variables
-        var rgba = [], result, stops;
+        // Collection of parsers. This can be extended from the outside by pushing parsers
+        // to Highcharts.Colors.prototype.parsers.
+        parsers: [{
+            // RGBA color
+            regex: /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
+            parse: function (result) {
+                return [pInt(result[1]), pInt(result[2]), pInt(result[3]), parseFloat(result[4], 10)];
+            }
+        }, {
+            // HEX color
+            regex: /#([a-fA-F0-9]{2})([a-fA-F0-9]{2})([a-fA-F0-9]{2})/,
+            parse: function (result) {
+                return [pInt(result[1], 16), pInt(result[2], 16), pInt(result[3], 16), 1];
+            }
+        }, {
+            // RGB color
+            regex: /rgb\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*\)/,
+            parse: function (result) {
+                return [pInt(result[1]), pInt(result[2]), pInt(result[3]), 1];
+            }
+        }],
 
         /**
          * Parse the input color to rgba array
          * @param {String} input
          */
-        function init(input) {
+        init: function (input) {
+            var result,
+                rgba,
+                i,
+                parser;
+
+            this.input = input;
 
             // Gradients
             if (input && input.stops) {
-                stops = map(input.stops, function (stop) {
-                    return Color(stop[1]);
+                this.stops = map(input.stops, function (stop) {
+                    return new Color(stop[1]);
                 });
 
             // Solid colors
             } else {
-                // rgba
-                result = rgbaRegEx.exec(input);
-                if (result) {
-                    rgba = [pInt(result[1]), pInt(result[2]), pInt(result[3]), parseFloat(result[4], 10)];
-                } else {
-                    // hex
-                    result = hexRegEx.exec(input);
+                i = this.parsers.length;
+                while (i-- && !rgba) {
+                    parser = this.parsers[i];
+                    result = parser.regex.exec(input);
                     if (result) {
-                        rgba = [pInt(result[1], 16), pInt(result[2], 16), pInt(result[3], 16), 1];
-                    } else {
-                        // rgb
-                        result = rgbRegEx.exec(input);
-                        if (result) {
-                            rgba = [pInt(result[1]), pInt(result[2]), pInt(result[3]), 1];
-                        }
+                        rgba = parser.parse(result);
                     }
                 }
             }
+            this.rgba = rgba || [];
+        },
 
-        }
         /**
          * Return the color a specified format
          * @param {String} format
          */
-        function get(format) {
-            var ret;
+        get: function (format) {
+            var input = this.input,
+                rgba = this.rgba,
+                ret;
 
-            if (stops) {
+            if (this.stops) {
                 ret = merge(input);
                 ret.stops = [].concat(ret.stops);
-                each(stops, function (stop, i) {
+                each(this.stops, function (stop, i) {
                     ret.stops[i] = [ret.stops[i][0], stop.get(format)];
                 });
 
             // it's NaN if gradient colors on a column chart
             } else if (rgba && !isNaN(rgba[0])) {
-                if (format === 'rgb') {
+                if (format === 'rgb' || (!format && rgba[3] === 1)) {
                     ret = 'rgb(' + rgba[0] + ',' + rgba[1] + ',' + rgba[2] + ')';
                 } else if (format === 'a') {
                     ret = rgba[3];
@@ -1731,20 +1774,22 @@
                 ret = input;
             }
             return ret;
-        }
+        },
 
         /**
          * Brighten the color
          * @param {Number} alpha
          */
-        function brighten(alpha) {
-            if (stops) {
-                each(stops, function (stop) {
+        brighten: function (alpha) {
+            var i, 
+                rgba = this.rgba;
+
+            if (this.stops) {
+                each(this.stops, function (stop) {
                     stop.brighten(alpha);
                 });
 
             } else if (isNumber(alpha) && alpha !== 0) {
-                var i;
                 for (i = 0; i < 3; i++) {
                     rgba[i] += pInt(alpha * 255);
 
@@ -1757,27 +1802,16 @@
                 }
             }
             return this;
-        }
+        },
+
         /**
          * Set the color's opacity to a given alpha value
          * @param {Number} alpha
          */
-        function setOpacity(alpha) {
-            rgba[3] = alpha;
+        setOpacity: function (alpha) {
+            this.rgba[3] = alpha;
             return this;
         }
-
-        // initialize: parse the input
-        init(input);
-
-        // public methods
-        return {
-            get: get,
-            brighten: brighten,
-            rgba: rgba,
-            setOpacity: setOpacity,
-            raw: input
-        };
     };
 
 
@@ -6091,7 +6125,9 @@
             // Correct for staggered labels
             if (staggerLines) {
                 line = (index / (step || 1) % staggerLines);
-                line = axis.opposite ? staggerLines - line - 1 : line;
+                if (axis.opposite) {
+                    line = staggerLines - line - 1;
+                }
                 y += line * (axis.labelOffset / staggerLines);
             }
 
@@ -8002,17 +8038,19 @@
 
                 axis.renderUnsquish();
 
-                each(tickPositions, function (pos) {
-                    // left side must be align: right and right side must have align: left for labels
-                    if (side === 0 || side === 2 || { 1: 'left', 3: 'right' }[side] === axis.labelAlign || axis.labelAlign === 'center') {
+
+                // Left side must be align: right and right side must have align: left for labels
+                if (labelOptions.reserveSpace !== false && (side === 0 || side === 2 || // docs: reserveSpace (demo at highcharts/xaxis/labels-reservespace)
+                        { 1: 'left', 3: 'right' }[side] === axis.labelAlign || axis.labelAlign === 'center')) {
+                    each(tickPositions, function (pos) {
 
                         // get the highest offset
                         labelOffset = mathMax(
                             ticks[pos].getLabelSize(),
                             labelOffset
                         );
-                    }
-                });
+                    });
+                }
 
                 if (axis.staggerLines) {
                     labelOffset *= axis.staggerLines;
@@ -8067,7 +8105,7 @@
 
             axis.tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 }; // polar
             lineHeightCorrection = side === 2 ? axis.tickRotCorr.y : 0;
-            labelOffsetPadded = mathAbs(labelOffset) + titleMargin +
+            labelOffsetPadded = Math.abs(labelOffset) + titleMargin +
                 (labelOffset && (directionFactor * (horiz ? pick(labelOptions.y, axis.tickRotCorr.y + 8) : labelOptions.x) - lineHeightCorrection));
             axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);
 
@@ -8308,10 +8346,8 @@
                 }
 
                 // When the objects are finished fading out, destroy them
-                if (coll === alternateBands || !chart.hasRendered || !delay) {
-                    destroyInactiveItems();
-                } else if (delay) {
-                    setTimeout(destroyInactiveItems, delay);
+                if (coll === alternateBands || !chart.hasRendered) {
+                    syncTimeout(destroyInactiveItems, delay);
                 }
             });
 
@@ -8716,11 +8752,12 @@
          */
         hide: function (delay) {
             clearTimeout(this.hideTimer); // disallow duplicate timers (#1728, #1766)
+            delay = pick(delay, this.options.hideDelay, 500);
             if (!this.isHidden) {
-                this.hideTimer = setTimeout(function (tooltip) {
-                    tooltip.label.fadeOut();
+                this.hideTimer = syncTimeout(function (tooltip) {
+                    tooltip.label[delay ? 'fadeOut' : 'hide']();
                     tooltip.isHidden = true;
-                }, pick(delay, this.options.hideDelay, 500), this);
+                }, delay, this);
             }
         },
 
@@ -11683,24 +11720,20 @@
                 renderTo = chart.renderTo,
                 width = optionsChart.width || adapterRun(renderTo, 'width'),
                 height = optionsChart.height || adapterRun(renderTo, 'height'),
-                target = e ? e.target : win, // #805 - MooTools doesn't supply e
-                doReflow = function () {
-                    if (chart.container) { // It may have been destroyed in the meantime (#1257)
-                        chart.setSize(width, height, false);
-                        chart.hasUserSize = null;
-                    }
-                };
+                target = e ? e.target : win; // #805 - MooTools doesn't supply e
 
             // Width and height checks for display:none. Target is doc in IE8 and Opera,
             // win in Firefox, Chrome and IE9.
             if (!chart.hasUserSize && !chart.isPrinting && width && height && (target === win || target === doc)) { // #1093
                 if (width !== chart.containerWidth || height !== chart.containerHeight) {
                     clearTimeout(chart.reflowTimeout);
-                    if (e) { // Called from window.resize
-                        chart.reflowTimeout = setTimeout(doReflow, 100);
-                    } else { // Called directly (#2224)
-                        doReflow();
-                    }
+                    // When called from window.resize, e is set, else it's called directly (#2224)
+                    chart.reflowTimeout = syncTimeout(function () {
+                        if (chart.container) { // It may have been destroyed in the meantime (#1257)
+                            chart.setSize(width, height, false);
+                            chart.hasUserSize = null;
+                        }
+                    }, e ? 100 : 0);
                 }
                 chart.containerWidth = width;
                 chart.containerHeight = height;
@@ -11733,20 +11766,12 @@
             var chart = this,
                 chartWidth,
                 chartHeight,
-                fireEndResize,
                 renderer = chart.renderer,
                 globalAnimation;
 
             // Handle the isResizing counter
             chart.isResizing += 1;
-            fireEndResize = function () {
-                if (chart) {
-                    fireEvent(chart, 'endResize', null, function () {
-                        chart.isResizing -= 1;
-                    });
-                }
-            };
-
+        
             // set the animation for the current process
             setAnimation(animation, chart);
 
@@ -11796,11 +11821,13 @@
 
             // Fire endResize and set isResizing back. If animation is disabled, fire without delay
             globalAnimation = renderer.globalAnimation; // Reassign it before using it, it may have changed since the top of this function.
-            if (globalAnimation === false) {
-                fireEndResize();
-            } else { // else set a timeout with the animation duration
-                setTimeout(fireEndResize, (globalAnimation && globalAnimation.duration) || 500);
-            }
+            syncTimeout(function () {
+                if (chart) {
+                    fireEvent(chart, 'endResize', null, function () {
+                        chart.isResizing -= 1;
+                    });
+                }
+            }, globalAnimation === false ? 0 : ((globalAnimation && globalAnimation.duration) || 500));
         },
 
         /**
@@ -13014,7 +13041,8 @@
             // cheaper, allows animation, and keeps references to points.
             if (updatePoints !== false && dataLength && oldDataLength === dataLength && !series.cropped && !series.hasGroupedData && series.visible) {
                 each(data, function (point, i) {
-                    if (oldData[i].update) { // Linked, previously hidden series (#3709)
+                    // .update doesn't exist on a linked, hidden series (#3709)
+                    if (oldData[i].update && point !== options.data[i]) {
                         oldData[i].update(point, false, null, false);
                     }
                 });
@@ -14345,13 +14373,9 @@
             // Call the afterAnimate function on animation complete (but don't overwrite the animation.complete option
             // which should be available to the user).
             if (!hasRendered) {
-                if (animDuration) {
-                    series.animationTimeout = setTimeout(function () {
-                        series.afterAnimate();
-                    }, animDuration);
-                } else {
+                series.animationTimeout = syncTimeout(function () {
                     series.afterAnimate();
-                }
+                }, animDuration);
             }
 
             series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
@@ -14455,11 +14479,8 @@
             }
             delete series.kdTree;
 
-            if (series.options.kdNow) {  // For testing tooltips, don't build async
-                startRecursive();
-            } else {
-                setTimeout(startRecursive);
-            }
+            // For testing tooltips, don't build async
+            syncTimeout(startRecursive, series.options.kdNow ? 0 : 1);
         },
 
         searchKDTree: function (point, compareX) {
@@ -14710,7 +14731,8 @@
                     names[point.x] = point.name;
                 }
 
-                seriesOptions.data[i] = point.options;
+                // Record the raw options to options.data (#4701)
+                seriesOptions.data[i] = options;
 
                 // redraw
                 series.isDirty = series.isDirtyData = true;
@@ -16571,7 +16593,7 @@
 
             // Unsupported color, return to-color (#3920)
             if (!to.rgba.length || !from.rgba.length) {
-                ret = to.raw || 'none';
+                ret = to.input || 'none';
 
             // Interpolate
             } else {

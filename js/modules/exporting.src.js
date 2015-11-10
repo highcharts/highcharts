@@ -426,6 +426,7 @@ extend(Chart.prototype, {
 		}
 
 		chart.isPrinting = true;
+		chart.pointer.reset(null, 0);
 
 		fireEvent(chart, 'beforePrint');
 

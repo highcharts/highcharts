@@ -40,10 +40,10 @@ $(function () {
                     var path = inverted ? ['M', 0, 0, 'L', -5, -5, 'L', 5, -5, 'L', 0, 0, 'L', 0, 0 + xAxis.len] : ['M', 0, 0, 'L', -5, -5, 'L', -5, 5,'L', 0, 0, 'L', xAxis.len, 0];
                     markLine = this.markLine = chart.renderer.path(path)
                         .attr({
-                        fill: series.color,
-                        stroke: series.color,
+                            'fill': series.color,
+                            'stroke': series.color,
                             'stroke-width': 1
-                    }).add();
+                        }).add();
                 }
                 markLine[ani]({
                     translateX: inverted ? xAxis.left + yAxis.translate(point.y) : xAxis.left,

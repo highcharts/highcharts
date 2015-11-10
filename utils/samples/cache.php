@@ -23,7 +23,9 @@ if (!is_file($cachePath)) {
 }
 
 if (substr($file, strlen($file) - 2) == 'js') {
-	header("Content-type: text/javascript");	
+	header("Content-type: text/javascript");
+} else if (substr($file, strlen($file) - 3) == 'css') {
+	header("Content-type: text/css");
 }
 
 echo file_get_contents($cachePath);

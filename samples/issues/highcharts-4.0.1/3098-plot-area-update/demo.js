@@ -23,8 +23,8 @@ $(function () {
                 "color": "#222222"
             }
         },
-            "legend": {
-                backgroundColor: 'rgba(255,0,255,0.25)',
+        "legend": {
+            backgroundColor: 'rgba(255,0,255,0.25)',
             "enabled": true,
             "borderWidth": 0,
             "itemMarginBottom": 10,

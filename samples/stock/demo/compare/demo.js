@@ -1,43 +1,47 @@
 $(function () {
     var seriesOptions = [],
         seriesCounter = 0,
-        names = ['MSFT', 'AAPL', 'GOOG'],
-        // create the chart when all data is loaded
-        createChart = function () {
+        names = ['MSFT', 'AAPL', 'GOOG'];
 
-            $('#container').highcharts('StockChart', {
+    /**
+     * Create the chart when all data is loaded
+     * @returns {undefined}
+     */
+    function createChart() {
 
-                rangeSelector: {
-                    selected: 4
-                },
+        $('#container').highcharts('StockChart', {
 
-                yAxis: {
-                    labels: {
-                        formatter: function () {
-                            return (this.value > 0 ? ' + ' : '') + this.value + '%';
-                        }
-                    },
-                    plotLines: [{
-                        value: 0,
-                        width: 2,
-                        color: 'silver'
-                    }]
-                },
+            rangeSelector: {
+                selected: 4
+            },
 
-                plotOptions: {
-                    series: {
-                        compare: 'percent'
+            yAxis: {
+                labels: {
+                    formatter: function () {
+                        return (this.value > 0 ? ' + ' : '') + this.value + '%';
                     }
                 },
+                plotLines: [{
+                    value: 0,
+                    width: 2,
+                    color: 'silver'
+                }]
+            },
 
-                tooltip: {
-                    pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
-                    valueDecimals: 2
-                },
+            plotOptions: {
+                series: {
+                    compare: 'percent'
+                }
+            },
 
-                series: seriesOptions
-            });
-        };
+            tooltip: {
+                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
+                valueDecimals: 2
+            },
+
+            series: seriesOptions
+        });
+    }
 
     $.each(names, function (i, name) {
 

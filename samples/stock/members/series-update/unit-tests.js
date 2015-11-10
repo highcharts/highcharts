@@ -1,10 +1,11 @@
 QUnit.test('Series.update', function (assert) {
 
     var chart = Highcharts.charts[0],
-        lastPoint = function () {
-            return chart.series[0].points[chart.series[0].points.length - 1];
-        },
         data;
+
+    function lastPoint() {
+        return chart.series[0].points[chart.series[0].points.length - 1];
+    }
 
     // Add reliable data for the test
     data = [

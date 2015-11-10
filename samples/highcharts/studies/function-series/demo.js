@@ -74,8 +74,7 @@ $(function () {
         scatterData.push([i, Math.sin(i / 10) + Math.random() - 0.5]);
     }
 
-    var chart = new Highcharts.Chart(
-    {
+    var chart = new Highcharts.Chart({
         chart: {
             renderTo: 'container',
             zoomType: 'x'

@@ -123,7 +123,7 @@ $(function () {
             formatter: function () {
                 var heading = this.series.name === 'Snitt' ?
                     'Snitt' :
-                    "Vinteren " + (parseInt(this.series.name) - 1) + "-" + this.series.name;
+                    "Vinteren " + (parseInt(this.series.name, 10) - 1) + "-" + this.series.name;
 
                 return "<b>" + heading + "</b><br/>" + Highcharts.dateFormat('%e. %b', this.x, true) + ":<br/>" + Highcharts.numberFormat(100 * this.y, 0) + " cm snjo";
             },

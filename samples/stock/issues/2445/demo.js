@@ -3,9 +3,9 @@ $(function () {
         names = ['Serie 1', 'Serie 2'];
 
     $.each(names, function (i, name) {
-            seriesOptions[i] = {
-                name: name,
-                data: [
+        seriesOptions[i] = {
+            name: name,
+            data: [
                     /* Jan 2011 */
                     [1294012800000,1],
                     [1294099200000,1],
@@ -27,39 +27,39 @@ $(function () {
                     [1296086400000,1],
                     [1296172800000,1],
                     [1296432000000,1]
-                ]
-            };
-        });
+            ]
+        };
+    });
 
-        $('#container').highcharts('StockChart', {
-            chart: {
-                type: 'column'
-            },
-            title: {
-                text: 'In Highstock 1.3.6-1.3.9, stacking percent failed with data grouping'
-            },
-            rangeSelector: {
-                enabled: false
-            },
-            navigator: {
-                enabled: false
-            },
-            scrollbar: {
-                enabled: false
-            },
-            plotOptions: {
-                series: {
-                    stacking: 'percent',
-                    dataGrouping: {
-                        forced: true,
-                        units: [[
-                            'week',
+    $('#container').highcharts('StockChart', {
+        chart: {
+            type: 'column'
+        },
+        title: {
+            text: 'In Highstock 1.3.6-1.3.9, stacking percent failed with data grouping'
+        },
+        rangeSelector: {
+            enabled: false
+        },
+        navigator: {
+            enabled: false
+        },
+        scrollbar: {
+            enabled: false
+        },
+        plotOptions: {
+            series: {
+                stacking: 'percent',
+                dataGrouping: {
+                    forced: true,
+                    units: [[
+                        'week',
                             [1]
-                        ]]
-                    }
+                    ]]
                 }
-            },
-            series: seriesOptions
-        });
+            }
+        },
+        series: seriesOptions
+    });
 
 });

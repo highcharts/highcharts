@@ -1,8 +1,7 @@
 $(function () {
 
     var chart,
-        dataSequence = [
-        {
+        dataSequence = [{
             name: 'Week 1',
             data: [1, 2, 2, 1, 1, 2, 2]
         }, {
@@ -113,7 +112,7 @@ $(function () {
             output = $('#play-output')[0];
 
         if (increment) {
-            input.value = parseInt(input.value) + increment;
+            input.value = parseInt(input.value, 10) + increment;
         }
         chart.series[0].setData(dataSequence[input.value].data); // Increment dataset (updates chart)
         output.innerHTML = dataSequence[input.value].name; // Output value

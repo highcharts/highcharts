@@ -15,6 +15,14 @@ $(function () {
             origBoxes,
             total = 0;
 
+        /**
+         * Create a composite box, average of targets
+         */
+        function joinBoxes(box, i) {
+            var target = (Math.min.apply(0, box.targets) + Math.max.apply(0, box.targets)) / 2;
+            box.pos = Math.min(Math.max(0, target - box.size / 2), len - box.size);
+        }
+
         // If the total size exceeds the len, remove those boxes with the lowest rank
         i = boxes.length;
         while (i--) {
@@ -51,11 +59,7 @@ $(function () {
 
         while (overlapping) {
             // Initial positions: target centered in box
-            each(boxes, function (box, i) {
-                // Composite box, average of targets
-                var target = (Math.min.apply(0, box.targets) + Math.max.apply(0, box.targets)) / 2;
-                box.pos = Math.min(Math.max(0, target - box.size / 2), len - box.size);
-            });
+            each(boxes, joinBoxes);
 
             // Detect overlap and join boxes
             i = boxes.length;

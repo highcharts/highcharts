@@ -1740,17 +1740,19 @@ Axis.prototype = {
 
 			axis.renderUnsquish();
 
-			each(tickPositions, function (pos) {
-				// left side must be align: right and right side must have align: left for labels
-				if (side === 0 || side === 2 || { 1: 'left', 3: 'right' }[side] === axis.labelAlign || axis.labelAlign === 'center') {
+
+			// Left side must be align: right and right side must have align: left for labels
+			if (labelOptions.reserveSpace !== false && (side === 0 || side === 2 || // docs: reserveSpace (demo at highcharts/xaxis/labels-reservespace)
+					{ 1: 'left', 3: 'right' }[side] === axis.labelAlign || axis.labelAlign === 'center')) {
+				each(tickPositions, function (pos) {
 
 					// get the highest offset
 					labelOffset = mathMax(
 						ticks[pos].getLabelSize(),
 						labelOffset
 					);
-				}
-			});
+				});
+			}
 
 			if (axis.staggerLines) {
 				labelOffset *= axis.staggerLines;
@@ -1805,7 +1807,7 @@ Axis.prototype = {
 
 		axis.tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 }; // polar
 		lineHeightCorrection = side === 2 ? axis.tickRotCorr.y : 0;
-		labelOffsetPadded = mathAbs(labelOffset) + titleMargin +
+		labelOffsetPadded = Math.abs(labelOffset) + titleMargin +
 			(labelOffset && (directionFactor * (horiz ? pick(labelOptions.y, axis.tickRotCorr.y + 8) : labelOptions.x) - lineHeightCorrection));
 		axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);
 
@@ -2046,10 +2048,8 @@ Axis.prototype = {
 			}
 
 			// When the objects are finished fading out, destroy them
-			if (coll === alternateBands || !chart.hasRendered || !delay) {
-				destroyInactiveItems();
-			} else if (delay) {
-				setTimeout(destroyInactiveItems, delay);
+			if (coll === alternateBands || !chart.hasRendered) {
+				syncTimeout(destroyInactiveItems, delay);
 			}
 		});
 

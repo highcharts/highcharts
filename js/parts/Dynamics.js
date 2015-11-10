@@ -185,7 +185,8 @@ extend(Point.prototype, {
 				names[point.x] = point.name;
 			}
 
-			seriesOptions.data[i] = point.options;
+			// Record the raw options to options.data (#4701)
+			seriesOptions.data[i] = options;
 
 			// redraw
 			series.isDirty = series.isDirtyData = true;

@@ -32,8 +32,8 @@ $(function () {
                 borderWidth: 0,
                 shadow: false,
                 useHTML: true,
-                pointFormat: '<span class="f32"><span class="flag {point.flag}"></span></span>'
-                    + ' {point.name}: <b>{point.value}</b>/km²'
+                pointFormat: '<span class="f32"><span class="flag {point.flag}"></span></span>' +
+                    ' {point.name}: <b>{point.value}</b>/km²'
             },
 
             colorAxis: {

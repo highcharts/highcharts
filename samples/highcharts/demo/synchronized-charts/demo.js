@@ -40,13 +40,15 @@ $(function () {
     function syncExtremes(e) {
         var thisChart = this.chart;
 
-        Highcharts.each(Highcharts.charts, function (chart) {
-            if (chart !== thisChart) {
-                if (chart.xAxis[0].setExtremes) { // It is null while updating
-                    chart.xAxis[0].setExtremes(e.min, e.max);
+        if (e.trigger !== 'syncExtremes') { // Prevent feedback loop
+            Highcharts.each(Highcharts.charts, function (chart) {
+                if (chart !== thisChart) {
+                    if (chart.xAxis[0].setExtremes) { // It is null while updating
+                        chart.xAxis[0].setExtremes(e.min, e.max, undefined, false, { trigger: 'syncExtremes' });
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     // Get the data. The contents of the data file can be viewed at
@@ -65,9 +67,8 @@ $(function () {
                     chart: {
                         marginLeft: 40, // Keep all charts left aligned
                         spacingTop: 20,
-                        spacingBottom: 20
-                        // zoomType: 'x',
-                        // pinchType: null // Disable zoom on touch devices
+                        spacingBottom: 20,
+                        zoomType: 'x'
                     },
                     title: {
                         text: dataset.name,
