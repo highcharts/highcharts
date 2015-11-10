@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-11-09)
+ * @license Highmaps JS v1.1.9-modified (2015-11-10)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -927,9 +927,10 @@
                             // Fx.prototype.cur returns the current value. The other ones are setters
                             // and returning a value has no effect.
                             if (elem.attr) { // is SVG element wrapper
-                                return elem.attr(fx.prop.replace(/([A-Z])/g, function (a, b) {
-                                    return '-' + b.toLowerCase(); // jQuery camelizes, now hyphenate back (#4721)
-                                }), fn === 'cur' ? undefined : fx.now);
+                                return elem.attr(
+                                    fx.prop.replace('strokeWidth', 'stroke-width'), // #4721
+                                    fn === 'cur' ? undefined : fx.now
+                                );
                             }
 
                             return base.apply(this, arguments); // use jQuery's built-in method
