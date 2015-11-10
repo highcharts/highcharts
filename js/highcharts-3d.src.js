@@ -1440,7 +1440,6 @@
                     a2 = (shapeArgs.start + shapeArgs.end) / 2,
                     labelPos = point.labelPos,
                     labelIndexes = [0, 2, 4], // [x1, y1, x2, y2, x3, y3]
-                    points = [],
                     yOffset = (-r * (1 - cos(a1)) * sin(a2)) /*+ (sin(a2) > 0 ? sin(a1) * d : 0)*/,
                     xOffset = r * (cos(b1) - 1) * cos(a2);
 
