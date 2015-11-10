@@ -5,7 +5,6 @@ var PI = Math.PI,
 	deg2rad = (PI / 180), // degrees to radians
 	sin = Math.sin,
 	cos = Math.cos,
-	pick = Highcharts.pick,
 	round = Math.round;
 
 /**
@@ -54,17 +53,36 @@ function perspective(points, chart, insidePlotArea) {
 	var x, y, z, px, py, pz;
 
 	// Transform each point
-	Highcharts.each(points, function (point) {
+	each(points, function (point) {
 		x = (inverted ? point.y : point.x) - xe;
 		y = (inverted ? point.x : point.y) - ye;
 		z = (point.z || 0) - ze;
 
-		//Apply 3-D rotation
+		// Apply 3-D rotation
+		// Euler Angles (XYZ): cosA = cos(Alfa|Roll), cosB = cos(Beta|Pitch), cosG = cos(Gamma|Yaw) 
+		// 
+		// Composite rotation:
+		// |          cosB * cosG             |           cosB * sinG            |    -sinB    |
+		// | sinA * sinB * cosG - cosA * sinG | sinA * sinB * sinG + cosA * cosG | sinA * cosB |
+		// | cosA * sinB * cosG + sinA * sinG | cosA * sinB * sinG - sinA * cosG | cosA * cosB |
+		// 
+		// Now, Gamma/Yaw is not used (angle=0), so we assume cosG = 1 and sinG = 0, so we get:
+		// |     cosB    |   0    |   - sinB    |
+		// | sinA * sinB |  cosA  | sinA * cosB |
+		// | cosA * sinB | - sinA | cosA * cosB |
+		// 
+		// But in browsers, y is reversed, so we get sinA => -sinA. The general result is:
+		// |      cosB     |   0    |    - sinB     |     | x |     | px |
+		// | - sinA * sinB |  cosA  | - sinA * cosB |  x  | y |  =  | py | 
+		// |  cosA * sinB  |  sinA  |  cosA * cosB  |     | z |     | pz |
+		//
+		// Result: 
 		px = c1 * x - s1 * z;
-		py = -s1 * s2 * x - c1 * s2 * z + c2 * y;
-		pz = s1 * c2 * x + c1 * c2 * z + s2 * y;
+		py = -s1 * s2 * x + c2 * y - c1 * s2 * z;
+		pz = s1 * c2 * x + s2 * y + c1 * c2 * z;
 
-		//Apply perspective
+
+		// Apply perspective
 		if ((vd > 0) && (vd < Number.POSITIVE_INFINITY)) {
 			px = px * (vd / (pz + ze + vd));
 			py = py * (vd / (pz + ze + vd));

@@ -2,11 +2,6 @@
 	EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
 	***/
 ////// HELPER METHODS //////
-var each = Highcharts.each,
-	extend = Highcharts.extend,
-	inArray = HighchartsAdapter.inArray,
-	merge = Highcharts.merge,
-	wrap = Highcharts.wrap;
 
 var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
 

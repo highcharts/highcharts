@@ -26,7 +26,7 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'translate', function (pro
 		z = 0;
 	}
 
-	Highcharts.each(series.data, function (point) {
+	each(series.data, function (point) {
 
 		var shapeArgs = point.shapeArgs,
 			angle;
@@ -69,7 +69,7 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 		states.select.borderColor = Highcharts.pick(states.select.edgeColor, this.borderColor);
 		states.select.borderWidth = Highcharts.pick(states.select.edgeWidth, this.borderWidth);
 
-		Highcharts.each(this.data, function (point) {
+		each(this.data, function (point) {
 			var pointAttr = point.pointAttr;
 			pointAttr[''].stroke = point.series.borderColor || point.color;
 			pointAttr['']['stroke-width'] = point.series.borderWidth;
@@ -83,7 +83,7 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 	proceed.apply(this, [].slice.call(arguments, 1));
 
 	if (this.chart.is3d()) {
-		Highcharts.each(this.points, function (point) {
+		each(this.points, function (point) {
 			var graphic = point.graphic;
 
 			// Hide null or 0 points (#3006, 3650)
@@ -94,19 +94,27 @@ Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawPoints', function (pr
 
 Highcharts.wrap(Highcharts.seriesTypes.pie.prototype, 'drawDataLabels', function (proceed) {
 	if (this.chart.is3d()) {
-		var series = this;
-		Highcharts.each(series.data, function (point) {
+		var series = this,
+			chart = series.chart,
+			options3d = chart.options.chart.options3d;
+		each(series.data, function (point) {
 			var shapeArgs = point.shapeArgs,
 				r = shapeArgs.r,
 				d = shapeArgs.depth,
-				a1 = (shapeArgs.alpha || series.chart.options.chart.options3d.alpha) * deg2rad, //#3240 issue with datalabels for 0 and null values
+				a1 = (shapeArgs.alpha || options3d.alpha) * deg2rad, //#3240 issue with datalabels for 0 and null values
+				b1 = (shapeArgs.beta || options3d.beta) * deg2rad,
 				a2 = (shapeArgs.start + shapeArgs.end) / 2,
-				labelPos = point.labelPos;
+				labelPos = point.labelPos,
+				labelIndexes = [0, 2, 4], // [x1, y1, x2, y2, x3, y3]
+				points = [],
+				yOffset = (-r * (1 - cos(a1)) * sin(a2)) /*+ (sin(a2) > 0 ? sin(a1) * d : 0)*/,
+				xOffset = r * (cos(b1) - 1) * cos(a2);
 
-			labelPos[1] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
-			labelPos[3] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
-			labelPos[5] += (-r * (1 - cos(a1)) * sin(a2)) + (sin(a2) > 0 ? sin(a1) * d : 0);
-
+			// Apply perspective on label positions
+			each(labelIndexes, function (index, i) {
+				labelPos[index] += xOffset;
+				labelPos[index + 1] += yOffset;
+			});
 		});
 	}
 
