@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-11-10)
+ * @license Highcharts JS v4.1.9-modified (2015-11-11)
  *
  * 3D features for Highcharts JS
  *
@@ -1440,17 +1440,16 @@
             each(series.data, function (point) {
                 var shapeArgs = point.shapeArgs,
                     r = shapeArgs.r,
-                    d = shapeArgs.depth,
                     a1 = (shapeArgs.alpha || options3d.alpha) * deg2rad, //#3240 issue with datalabels for 0 and null values
                     b1 = (shapeArgs.beta || options3d.beta) * deg2rad,
                     a2 = (shapeArgs.start + shapeArgs.end) / 2,
                     labelPos = point.labelPos,
                     labelIndexes = [0, 2, 4], // [x1, y1, x2, y2, x3, y3]
-                    yOffset = (-r * (1 - cos(a1)) * sin(a2)) /*+ (sin(a2) > 0 ? sin(a1) * d : 0)*/,
+                    yOffset = (-r * (1 - cos(a1)) * sin(a2)), // + (sin(a2) > 0 ? sin(a1) * d : 0)
                     xOffset = r * (cos(b1) - 1) * cos(a2);
 
                 // Apply perspective on label positions
-                each(labelIndexes, function (index, i) {
+                each(labelIndexes, function (index) {
                     labelPos[index] += xOffset;
                     labelPos[index + 1] += yOffset;
                 });
