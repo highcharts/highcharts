@@ -13254,7 +13254,8 @@
                 cropStart = 0,
                 cropEnd = dataLength,
                 cropShoulder = pick(this.cropShoulder, 1), // line-type series need one point outside
-                i;
+                i,
+                j;
 
             // iterate up to find slice start
             for (i = 0; i < dataLength; i++) {
@@ -13265,9 +13266,9 @@
             }
 
             // proceed to find slice end
-            for (i; i < dataLength; i++) {
-                if (xData[i] > max) {
-                    cropEnd = i + cropShoulder;
+            for (j = i; j < dataLength; j++) {
+                if (xData[j] > max) {
+                    cropEnd = j + cropShoulder;
                     break;
                 }
             }

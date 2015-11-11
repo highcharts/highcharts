@@ -3,10 +3,12 @@
 'use strict';
 var eslint = require('gulp-eslint'),
     gulp = require('gulp'),
+    closureCompiler = require('gulp-closure-compiler'),
     // argv = require('yargs').argv,
     fs = require('fs'),
     // sass = require('gulp-sass'),
     ftp = require('vinyl-ftp'),
+    size = require('gulp-size'),
     xml2js = require('xml2js');
 
 var paths = {
@@ -215,6 +217,19 @@ gulp.task('ftp', function () {
 
 gulp.task('ftp-watch', function () {
     gulp.watch('./js/*/*.js', ['scripts', 'ftp']);
+});
+
+gulp.task('filesize', ['scripts'], function () {
+    return gulp.src('js/highcharts.src.js')
+        .pipe(closureCompiler({
+            compilerPath: 'tools/google-closure-compiler/compiler.jar',
+            fileName: 'highcharts.js'
+        }))
+        .pipe(size({
+            showFiles: true,
+            gzip: true,
+            pretty: false
+        }));
 });
 
 /**
