@@ -8109,7 +8109,7 @@
                 }
 
                 // hide or show the title depending on whether showEmpty is set
-                axis.axisTitle[showAxis ? 'show' : 'hide']();
+                axis.axisTitle[showAxis ? 'show' : 'hide'](true);
             }
 
             // handle automatic or user set offset
@@ -8382,7 +8382,7 @@
                 }
 
                 // show or hide the line depending on options.showEmpty
-                axis.axisLine[showAxis ? 'show' : 'hide']();
+                axis.axisLine[showAxis ? 'show' : 'hide'](true);
             }
 
             if (axisTitle && showAxis) {
@@ -14304,7 +14304,7 @@
                 // Animation doesn't work in IE8 quirks when the group div is hidden,
                 // and looks bad in other oldIE
                 animDuration = (animation && !!series.animate && chart.renderer.isSVG && pick(animation.duration, 500)) || 0,
-                visibility = series.visible ? VISIBLE : HIDDEN,
+                visibility = series.visible ? 'inherit' : 'hidden', // #2597
                 zIndex = options.zIndex,
                 hasRendered = series.hasRendered,
                 chartSeriesGroup = chart.seriesGroup;

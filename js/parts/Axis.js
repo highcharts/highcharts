@@ -1811,7 +1811,7 @@ Axis.prototype = {
 			}
 
 			// hide or show the title depending on whether showEmpty is set
-			axis.axisTitle[showAxis ? 'show' : 'hide']();
+			axis.axisTitle[showAxis ? 'show' : 'hide'](true);
 		}
 
 		// handle automatic or user set offset
@@ -2084,7 +2084,7 @@ Axis.prototype = {
 			}
 
 			// show or hide the line depending on options.showEmpty
-			axis.axisLine[showAxis ? 'show' : 'hide']();
+			axis.axisLine[showAxis ? 'show' : 'hide'](true);
 		}
 
 		if (axisTitle && showAxis) {
