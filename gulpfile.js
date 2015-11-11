@@ -2,13 +2,14 @@
 
 'use strict';
 var eslint = require('gulp-eslint'),
+    exec = require('child_process').exec,
     gulp = require('gulp'),
-    closureCompiler = require('gulp-closure-compiler'),
+    gzipSize = require('gzip-size'),
+    closureCompiler = require('closurecompiler'),
     // argv = require('yargs').argv,
     fs = require('fs'),
     // sass = require('gulp-sass'),
     ftp = require('vinyl-ftp'),
-    size = require('gulp-size'),
     xml2js = require('xml2js');
 
 var paths = {
@@ -219,17 +220,52 @@ gulp.task('ftp-watch', function () {
     gulp.watch('./js/*/*.js', ['scripts', 'ftp']);
 });
 
-gulp.task('filesize', ['scripts'], function () {
-    return gulp.src('js/highcharts.src.js')
-        .pipe(closureCompiler({
-            compilerPath: 'tools/google-closure-compiler/compiler.jar',
-            fileName: 'highcharts.js'
-        }))
-        .pipe(size({
-            showFiles: true,
-            gzip: true,
-            pretty: false
-        }));
+gulp.task('filesize', function () {
+    var oldSize,
+        newSize;
+
+    function report() {
+        var diff = newSize - oldSize,
+            sign = diff > 0 ? '+' : '';
+        console.log(
+            'HEAD size: ' + oldSize +
+            ', new size: ' + newSize +
+            ', difference: ' + sign + diff + ' B (gzipped)');
+    }
+
+    closureCompiler.compile(
+        ['js/highcharts.src.js'],
+        null,
+        function (error, result) {
+            if (result) {
+
+                newSize = gzipSize.sync(result);
+
+                exec('git stash', function (error, stdout, stderr) {
+                    if (error !== null) {
+                        console.log('exec error: ' + error);
+                    }
+
+                    closureCompiler.compile(
+                        ['js/highcharts.src.js'],
+                        null,
+                        function (error, result) {
+                            if (result) {
+                                oldSize = gzipSize.sync(result);
+                                report();
+                                exec('git stash apply && git stash drop');
+                            } else {
+                                console.log('Compilation error: ' + error);
+                            }
+                        }
+                    );
+                });
+
+            } else {
+                console.log('Compilation error: ' + error);
+            }
+        }
+    );
 });
 
 /**
