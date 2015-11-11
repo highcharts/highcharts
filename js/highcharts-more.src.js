@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-10-24)
+ * @license Highcharts JS v4.1.9-modified (2015-11-11)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -856,13 +856,14 @@ var arrayMin = Highcharts.arrayMin,
                             if (!align) {
                                 dataLabelOptions.align = up ? 'right' : 'left';
                             }
-                            dataLabelOptions.x = dataLabelOptions.xHigh;
                         } else {
                             if (!verticalAlign) {
                                 dataLabelOptions.verticalAlign = up ? 'top' : 'bottom';
                             }
-                            dataLabelOptions.y = dataLabelOptions.yHigh;
                         }
+
+                        dataLabelOptions.x = dataLabelOptions.xHigh;
+                        dataLabelOptions.y = dataLabelOptions.yHigh;
                     }
                 }
 
@@ -891,13 +892,15 @@ var arrayMin = Highcharts.arrayMin,
                             if (!align) {
                                 dataLabelOptions.align = up ? 'left' : 'right';
                             }
-                            dataLabelOptions.x = dataLabelOptions.xLow;
                         } else {
                             if (!verticalAlign) {
                                 dataLabelOptions.verticalAlign = up ? 'bottom' : 'top';
                             }
-                            dataLabelOptions.y = dataLabelOptions.yLow;
+                        
                         }
+
+                        dataLabelOptions.x = dataLabelOptions.xLow;
+                        dataLabelOptions.y = dataLabelOptions.yLow;
                     }
                 }
                 if (seriesProto.drawDataLabels) {

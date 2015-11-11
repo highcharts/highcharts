@@ -7529,7 +7529,7 @@
                 // Add 1 because 4 tick intervals require 5 ticks (including first and last)
                 tickAmount = mathCeil(this.len / tickPixelInterval) + 1;
             }
-    this.coll === 'yAxis' && console.log(this.len)
+
             // For tick amounts of 2 and 3, compute five ticks and remove the intermediate ones. This
             // prevents the axis from adding ticks that are too far away from the data extremes.
             if (tickAmount < 4) {
