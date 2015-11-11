@@ -1159,7 +1159,7 @@ Chart.prototype = {
 
 		// Record preliminary dimensions for later comparison
 		tempWidth = chart.plotWidth;
-		tempHeight = chart.plotHeight = chart.plotHeight - 13; // 13 is the most common height of X axis labels
+		tempHeight = chart.plotHeight = chart.plotHeight - 21; // 21 is the most common correction for X axis labels
 
 		// Get margins by pre-rendering axes
 		each(axes, function (axis) {

@@ -7482,26 +7482,23 @@
         },
 
         /**
-         * Set the max ticks of either the x and y axis collection
+         * Check if there are multiple axes in the same pane
+         * @returns {Boolean} There are other axes
          */
-        getTickAmount: function () {
+        alignToOthers: function () {
             var others = {}, // Whether there is another axis to pair with this one
                 hasOther,
-                options = this.options,
-                tickAmount = options.tickAmount,
-                tickPixelInterval = options.tickPixelInterval;
+                options = this.options;
 
-            if (!defined(options.tickInterval) && this.len < tickPixelInterval && !this.isRadial &&
-                    !this.isLog && options.startOnTick && options.endOnTick) {
-                tickAmount = 2;
-            }
-
-            if (!tickAmount && this.chart.options.chart.alignTicks !== false && options.alignTicks !== false) {
-                // Check if there are multiple axes in the same pane
+            if (this.chart.options.chart.alignTicks !== false && options.alignTicks !== false) {
                 each(this.chart[this.coll], function (axis) {
-                    var options = axis.options,
+                    var otherOptions = axis.options,
                         horiz = axis.horiz,
-                        key = [horiz ? options.left : options.top, horiz ? options.width : options.height, options.pane].join(',');
+                        key = [
+                            horiz ? otherOptions.left : otherOptions.top, 
+                            horiz ? otherOptions.width : otherOptions.height, 
+                            otherOptions.pane
+                        ].join(',');
 
                     if (axis.series.length) { // #4442
                         if (others[key]) {
@@ -7511,13 +7508,28 @@
                         }
                     }
                 });
+            }
+            return hasOther;
+        },
 
-                if (hasOther) {
-                    // Add 1 because 4 tick intervals require 5 ticks (including first and last)
-                    tickAmount = mathCeil(this.len / tickPixelInterval) + 1;
-                }
+        /**
+         * Set the max ticks of either the x and y axis collection
+         */
+        getTickAmount: function () {
+            var options = this.options,
+                tickAmount = options.tickAmount,
+                tickPixelInterval = options.tickPixelInterval;
+
+            if (!defined(options.tickInterval) && this.len < tickPixelInterval && !this.isRadial &&
+                    !this.isLog && options.startOnTick && options.endOnTick) {
+                tickAmount = 2;
             }
 
+            if (!tickAmount && this.alignToOthers()) {
+                // Add 1 because 4 tick intervals require 5 ticks (including first and last)
+                tickAmount = mathCeil(this.len / tickPixelInterval) + 1;
+            }
+    this.coll === 'yAxis' && console.log(this.len)
             // For tick amounts of 2 and 3, compute five ticks and remove the intermediate ones. This
             // prevents the axis from adding ticks that are too far away from the data extremes.
             if (tickAmount < 4) {
@@ -7599,7 +7611,7 @@
 
             // do we really need to go through all this?
             if (isDirtyAxisLength || isDirtyData || axis.isLinked || axis.forceRedraw ||
-                axis.userMin !== axis.oldUserMin || axis.userMax !== axis.oldUserMax) {
+                axis.userMin !== axis.oldUserMin || axis.userMax !== axis.oldUserMax || axis.alignToOthers()) {
 
                 if (axis.resetStacks) {
                     axis.resetStacks();
@@ -12156,7 +12168,7 @@
 
             // Record preliminary dimensions for later comparison
             tempWidth = chart.plotWidth;
-            tempHeight = chart.plotHeight = chart.plotHeight - 13; // 13 is the most common height of X axis labels
+            tempHeight = chart.plotHeight = chart.plotHeight - 21; // 21 is the most common correction for X axis labels
 
             // Get margins by pre-rendering axes
             each(axes, function (axis) {
