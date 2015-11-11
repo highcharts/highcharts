@@ -66,56 +66,58 @@ Highcharts.StockChart = function (options, callback) {
 
 	options.series = null;
 
-	options = merge({
-		chart: {
-			panning: true,
-			pinchType: 'x'
-		},
-		navigator: {
-			enabled: true
-		},
-		scrollbar: {
-			enabled: true
-		},
-		rangeSelector: {
-			enabled: true
-		},
-		title: {
-			text: null,
-			style: {
-				fontSize: '16px'
+	options = merge(
+		{
+			chart: {
+				panning: true,
+				pinchType: 'x'
+			},
+			navigator: {
+				enabled: true
+			},
+			scrollbar: {
+				enabled: true
+			},
+			rangeSelector: {
+				enabled: true
+			},
+			title: {
+				text: null,
+				style: {
+					fontSize: '16px'
+				}
+			},
+			tooltip: {
+				shared: true,
+				crosshairs: true
+			},
+			legend: {
+				enabled: false
+			},
+
+			plotOptions: {
+				line: lineOptions,
+				spline: lineOptions,
+				area: lineOptions,
+				areaspline: lineOptions,
+				arearange: lineOptions,
+				areasplinerange: lineOptions,
+				column: columnOptions,
+				columnrange: columnOptions,
+				candlestick: columnOptions,
+				ohlc: columnOptions
 			}
-		},
-		tooltip: {
-			shared: true,
-			crosshairs: true
-		},
-		legend: {
-			enabled: false
-		},
 
-		plotOptions: {
-			line: lineOptions,
-			spline: lineOptions,
-			area: lineOptions,
-			areaspline: lineOptions,
-			arearange: lineOptions,
-			areasplinerange: lineOptions,
-			column: columnOptions,
-			columnrange: columnOptions,
-			candlestick: columnOptions,
-			ohlc: columnOptions
+		},
+		options, // user's options
+
+		{ // forced options
+			_stock: true, // internal flag
+			chart: {
+				inverted: false
+			}
 		}
-
-	},
-	options, // user's options
-
-	{ // forced options
-		_stock: true, // internal flag
-		chart: {
-			inverted: false
-		}
-	});
+	);
 
 	options.series = seriesOptions;
 
@@ -315,18 +317,8 @@ if (Renderer === Highcharts.VMLRenderer) {
 wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
 	proceed.call(this, i);
 
-	if (!defined(this.crossLabelArray)) {
-		return;
-	}
-
-	if (defined(i)) {
-		if (this.crossLabelArray[i]) {
-			this.crossLabelArray[i].hide();
-		}
-	} else {
-		each(this.crossLabelArray, function (crosslabel) {
-			crosslabel.hide();
-		});
+	if (this.crossLabel) {
+		this.crossLabel = this.crossLabel.hide();
 	}
 });
 
@@ -342,7 +334,6 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 
 	var chart = this.chart,
 		options = this.options.crosshair.label,		// the label's options
-		axis = this.isXAxis ? 'x' : 'y',			// axis name
 		horiz = this.horiz,							// axis orientation
 		opposite = this.opposite,					// axis position
 		left = this.left,							// left position
@@ -355,7 +346,9 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		formatFormat = '',
 		limit,
 		align,
-		tickInside = this.options.tickPosition === 'inside';
+		tickInside = this.options.tickPosition === 'inside',
+		snap = this.crosshair.snap !== false,
+		value;
 
 	align = (horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'left') : (this.labelAlign === 'left' ? 'left' : 'center'));
 
@@ -365,11 +358,11 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		.attr({
 			align: options.align || align,
 			zIndex: 12,
-			height: horiz ? 16 : UNDEFINED,
 			fill: options.backgroundColor || (this.series[0] && this.series[0].color) || 'gray',
-			padding: pick(options.padding, 2),
+			padding: pick(options.padding, 8), // docs: new default
 			stroke: options.borderColor || '',
-			'stroke-width': options.borderWidth || 0
+			'stroke-width': options.borderWidth || 0,
+			r: pick(options.borderRadius, 3) // docs
 		})
 		.css(extend({
 			color: 'white',
@@ -381,18 +374,18 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	}
 
 	if (horiz) {
-		posx = point.plotX + left;
+		posx = snap ? point.plotX + left : e.chartX;
 		posy = top + (opposite ? 0 : this.height);
 	} else {
 		posx = opposite ? this.width + left : 0;
-		posy = point.plotY + top;
+		posy = snap ? point.plotY + top : e.chartY;
 	}
 
 	// if the crosshair goes out of view (too high or too low, hide it and hide the label)
-	if (posy < top || posy > top + this.height) {
+	/*if (posy < top || posy > top + this.height) {
 		this.hideCrosshair();
 		return;
-	}
+	}*/
 
 	if (!formatOption && !options.formatter) {
 		if (this.isDatetimeAxis) {
@@ -401,11 +394,12 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		formatOption = '{value' + (formatFormat ? ':' + formatFormat : '') + '}';
 	}
 
-	// show the label
+	// Show the label
+	value = snap ? point[this.isXAxis ? 'x' : 'y'] : this.toValue(horiz ? e.chartX : e.chartY);
 	crossLabel.attr({
-		text: formatOption ? format(formatOption, { value: point[axis] }) : options.formatter.call(this, point[axis]),
-		anchorX: posx + { center: 0, left: -20, right: 20 }[align],
-		anchorY: posy + { center: -20, left: 0, right: 0 }[align],
+		text: formatOption ? format(formatOption, { value: value }) : options.formatter.call(this, value),
+		anchorX: horiz ? posx : (this.opposite ? 0 : chart.chartWidth),
+		anchorY: horiz ? (this.opposite ? chart.chartHeight : 0) : posy,
 		x: posx,
 		y: posy,
 		visibility: VISIBLE
