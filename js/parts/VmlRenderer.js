@@ -524,7 +524,8 @@ var VMLRendererExtension = { // inherit SVGRenderer
 		renderer.box = box;
 		renderer.boxWrapper = boxWrapper;
 		renderer.gradients = {};
-		renderer.cache = {};
+		renderer.cache = {}; // Cache for numerical bounding boxes
+		renderer.cacheKeys = [];
 
 
 		renderer.setSize(width, height, false);

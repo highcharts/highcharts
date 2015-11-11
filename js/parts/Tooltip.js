@@ -116,13 +116,14 @@ Tooltip.prototype = {
 	 * Hide the tooltip
 	 */
 	hide: function (delay) {
+		var tooltip = this;
 		clearTimeout(this.hideTimer); // disallow duplicate timers (#1728, #1766)
 		delay = pick(delay, this.options.hideDelay, 500);
 		if (!this.isHidden) {
-			this.hideTimer = syncTimeout(function (tooltip) {
+			this.hideTimer = syncTimeout(function () {
 				tooltip.label[delay ? 'fadeOut' : 'hide']();
 				tooltip.isHidden = true;
-			}, delay, this);
+			}, delay);
 		}
 	},
 

@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-11-10)
+ * @license Highmaps JS v1.1.9-modified (2015-11-11)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -5305,7 +5305,8 @@
             renderer.box = box;
             renderer.boxWrapper = boxWrapper;
             renderer.gradients = {};
-            renderer.cache = {};
+            renderer.cache = {}; // Cache for numerical bounding boxes
+            renderer.cacheKeys = [];
 
 
             renderer.setSize(width, height, false);
@@ -8751,13 +8752,14 @@
          * Hide the tooltip
          */
         hide: function (delay) {
+            var tooltip = this;
             clearTimeout(this.hideTimer); // disallow duplicate timers (#1728, #1766)
             delay = pick(delay, this.options.hideDelay, 500);
             if (!this.isHidden) {
-                this.hideTimer = syncTimeout(function (tooltip) {
+                this.hideTimer = syncTimeout(function () {
                     tooltip.label[delay ? 'fadeOut' : 'hide']();
                     tooltip.isHidden = true;
-                }, delay, this);
+                }, delay);
             }
         },
 
