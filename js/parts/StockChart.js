@@ -328,7 +328,7 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 	proceed.call(this, e, point);
 
 	// Check if the label has to be drawn
-	if (!defined(this.crosshair.label) || !this.crosshair.label.enabled || !defined(point)) {
+	if (!defined(this.crosshair.label) || !this.crosshair.label.enabled) {
 		return;
 	}
 
@@ -380,12 +380,6 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 		posx = opposite ? this.width + left : 0;
 		posy = snap ? point.plotY + top : e.chartY;
 	}
-
-	// if the crosshair goes out of view (too high or too low, hide it and hide the label)
-	/*if (posy < top || posy > top + this.height) {
-		this.hideCrosshair();
-		return;
-	}*/
 
 	if (!formatOption && !options.formatter) {
 		if (this.isDatetimeAxis) {
