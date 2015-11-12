@@ -597,7 +597,8 @@ extend(Point.prototype, {
 					.add(chart.seriesGroup);
 			}
 			halo.attr(extend({
-				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
+				fill: point.color || series.color,
+				'fill-opacity': haloOptions.opacity
 			}, haloOptions.attributes))[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
 			});

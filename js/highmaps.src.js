@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-11-11)
+ * @license Highmaps JS v1.1.9-modified (2015-11-12)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -19720,7 +19720,8 @@
                         .add(chart.seriesGroup);
                 }
                 halo.attr(extend({
-                    fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
+                    fill: point.color || series.color,
+                    'fill-opacity': haloOptions.opacity
                 }, haloOptions.attributes))[move ? 'animate' : 'attr']({
                     d: point.haloPath(haloOptions.size)
                 });
