@@ -1,7 +1,9 @@
 /* eslint-env node */
+/* eslint no-console:0 */
 
 'use strict';
-var eslint = require('gulp-eslint'),
+var colors = require('colors'),
+    eslint = require('gulp-eslint'),
     exec = require('child_process').exec,
     gulp = require('gulp'),
     gzipSize = require('gzip-size'),
@@ -224,13 +226,32 @@ gulp.task('filesize', function () {
     var oldSize,
         newSize;
 
+    /**
+     * Pad a string to a given length by adding spaces to the beginning
+     * @param {Number} number
+     * @param {Number} length
+     * @returns {String} Padded string
+     */
+    function pad(number, length) {
+        return new Array((length || 2) + 1 - String(number).length).join(' ') + number;
+    }
+
+    /**
+     * Log the results of the comparison
+     * @returns {undefined}
+     */
     function report() {
         var diff = newSize - oldSize,
-            sign = diff > 0 ? '+' : '';
-        console.log(
-            'HEAD size: ' + oldSize +
-            ', new size: ' + newSize +
-            ', difference: ' + sign + diff + ' B (gzipped)');
+            sign = diff > 0 ? '+' : '',
+            color = diff > 0 ? 'yellow' : 'green';
+        console.log([
+            '',
+            colors.cyan('highcharts.js ') + colors.gray('(gzipped)'),
+            'HEAD: ' + pad(oldSize.toLocaleString(), 7) + ' B',
+            'New:  ' + pad(newSize.toLocaleString(), 7) + ' B',
+            colors[color]('Diff: ' + pad(sign + diff, 7) + ' B'),
+            ''
+        ].join('\n'));
     }
 
     closureCompiler.compile(
