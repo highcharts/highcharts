@@ -586,7 +586,8 @@ Series.prototype = {
 			cropStart = 0,
 			cropEnd = dataLength,
 			cropShoulder = pick(this.cropShoulder, 1), // line-type series need one point outside
-			i;
+			i,
+			j;
 
 		// iterate up to find slice start
 		for (i = 0; i < dataLength; i++) {
@@ -597,9 +598,9 @@ Series.prototype = {
 		}
 
 		// proceed to find slice end
-		for (i; i < dataLength; i++) {
-			if (xData[i] > max) {
-				cropEnd = i + cropShoulder;
+		for (j = i; j < dataLength; j++) {
+			if (xData[j] > max) {
+				cropEnd = j + cropShoulder;
 				break;
 			}
 		}
@@ -1636,7 +1637,7 @@ Series.prototype = {
 			// Animation doesn't work in IE8 quirks when the group div is hidden,
 			// and looks bad in other oldIE
 			animDuration = (animation && !!series.animate && chart.renderer.isSVG && pick(animation.duration, 500)) || 0,
-			visibility = series.visible ? VISIBLE : HIDDEN,
+			visibility = series.visible ? 'inherit' : 'hidden', // #2597
 			zIndex = options.zIndex,
 			hasRendered = series.hasRendered,
 			chartSeriesGroup = chart.seriesGroup;

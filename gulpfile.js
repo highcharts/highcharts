@@ -1,8 +1,13 @@
 /* eslint-env node */
+/* eslint no-console:0 */
 
 'use strict';
-var eslint = require('gulp-eslint'),
+var colors = require('colors'),
+    eslint = require('gulp-eslint'),
+    exec = require('child_process').exec,
     gulp = require('gulp'),
+    gzipSize = require('gzip-size'),
+    closureCompiler = require('closurecompiler'),
     // argv = require('yargs').argv,
     fs = require('fs'),
     // sass = require('gulp-sass'),
@@ -215,6 +220,73 @@ gulp.task('ftp', function () {
 
 gulp.task('ftp-watch', function () {
     gulp.watch('./js/*/*.js', ['scripts', 'ftp']);
+});
+
+gulp.task('filesize', function () {
+    var oldSize,
+        newSize;
+
+    /**
+     * Pad a string to a given length by adding spaces to the beginning
+     * @param {Number} number
+     * @param {Number} length
+     * @returns {String} Padded string
+     */
+    function pad(number, length) {
+        return new Array((length || 2) + 1 - String(number).length).join(' ') + number;
+    }
+
+    /**
+     * Log the results of the comparison
+     * @returns {undefined}
+     */
+    function report() {
+        var diff = newSize - oldSize,
+            sign = diff > 0 ? '+' : '',
+            color = diff > 0 ? 'yellow' : 'green';
+        console.log([
+            '',
+            colors.cyan('highcharts.js ') + colors.gray('(gzipped)'),
+            'HEAD: ' + pad(oldSize.toLocaleString(), 7) + ' B',
+            'New:  ' + pad(newSize.toLocaleString(), 7) + ' B',
+            colors[color]('Diff: ' + pad(sign + diff, 7) + ' B'),
+            ''
+        ].join('\n'));
+    }
+
+    closureCompiler.compile(
+        ['js/highcharts.src.js'],
+        null,
+        function (error, result) {
+            if (result) {
+
+                newSize = gzipSize.sync(result);
+
+                exec('git stash', function (error, stdout, stderr) {
+                    if (error !== null) {
+                        console.log('exec error: ' + error);
+                    }
+
+                    closureCompiler.compile(
+                        ['js/highcharts.src.js'],
+                        null,
+                        function (error, result) {
+                            if (result) {
+                                oldSize = gzipSize.sync(result);
+                                report();
+                                exec('git stash apply && git stash drop');
+                            } else {
+                                console.log('Compilation error: ' + error);
+                            }
+                        }
+                    );
+                });
+
+            } else {
+                console.log('Compilation error: ' + error);
+            }
+        }
+    );
 });
 
 /**

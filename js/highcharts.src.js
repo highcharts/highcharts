@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-11-10)
+ * @license Highcharts JS v4.1.9-modified (2015-11-13)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -5306,7 +5306,7 @@
             renderer.box = box;
             renderer.boxWrapper = boxWrapper;
             renderer.gradients = {};
-            renderer.cache = {};
+            renderer.cache = {}; // Cache for numerical bounding boxes
             renderer.cacheKeys = [];
 
 
@@ -7743,26 +7743,23 @@
         },
 
         /**
-         * Set the max ticks of either the x and y axis collection
+         * Check if there are multiple axes in the same pane
+         * @returns {Boolean} There are other axes
          */
-        getTickAmount: function () {
+        alignToOthers: function () {
             var others = {}, // Whether there is another axis to pair with this one
                 hasOther,
-                options = this.options,
-                tickAmount = options.tickAmount,
-                tickPixelInterval = options.tickPixelInterval;
+                options = this.options;
 
-            if (!defined(options.tickInterval) && this.len < tickPixelInterval && !this.isRadial &&
-                    !this.isLog && options.startOnTick && options.endOnTick) {
-                tickAmount = 2;
-            }
-
-            if (!tickAmount && this.chart.options.chart.alignTicks !== false && options.alignTicks !== false) {
-                // Check if there are multiple axes in the same pane
+            if (this.chart.options.chart.alignTicks !== false && options.alignTicks !== false) {
                 each(this.chart[this.coll], function (axis) {
-                    var options = axis.options,
+                    var otherOptions = axis.options,
                         horiz = axis.horiz,
-                        key = [horiz ? options.left : options.top, horiz ? options.width : options.height, options.pane].join(',');
+                        key = [
+                            horiz ? otherOptions.left : otherOptions.top, 
+                            horiz ? otherOptions.width : otherOptions.height, 
+                            otherOptions.pane
+                        ].join(',');
 
                     if (axis.series.length) { // #4442
                         if (others[key]) {
@@ -7772,11 +7769,26 @@
                         }
                     }
                 });
+            }
+            return hasOther;
+        },
 
-                if (hasOther) {
-                    // Add 1 because 4 tick intervals require 5 ticks (including first and last)
-                    tickAmount = mathCeil(this.len / tickPixelInterval) + 1;
-                }
+        /**
+         * Set the max ticks of either the x and y axis collection
+         */
+        getTickAmount: function () {
+            var options = this.options,
+                tickAmount = options.tickAmount,
+                tickPixelInterval = options.tickPixelInterval;
+
+            if (!defined(options.tickInterval) && this.len < tickPixelInterval && !this.isRadial &&
+                    !this.isLog && options.startOnTick && options.endOnTick) {
+                tickAmount = 2;
+            }
+
+            if (!tickAmount && this.alignToOthers()) {
+                // Add 1 because 4 tick intervals require 5 ticks (including first and last)
+                tickAmount = mathCeil(this.len / tickPixelInterval) + 1;
             }
 
             // For tick amounts of 2 and 3, compute five ticks and remove the intermediate ones. This
@@ -7860,7 +7872,7 @@
 
             // do we really need to go through all this?
             if (isDirtyAxisLength || isDirtyData || axis.isLinked || axis.forceRedraw ||
-                axis.userMin !== axis.oldUserMin || axis.userMax !== axis.oldUserMax) {
+                axis.userMin !== axis.oldUserMin || axis.userMax !== axis.oldUserMax || axis.alignToOthers()) {
 
                 if (axis.resetStacks) {
                     axis.resetStacks();
@@ -8358,7 +8370,7 @@
                 }
 
                 // hide or show the title depending on whether showEmpty is set
-                axis.axisTitle[showAxis ? 'show' : 'hide']();
+                axis.axisTitle[showAxis ? 'show' : 'hide'](true);
             }
 
             // handle automatic or user set offset
@@ -8607,9 +8619,10 @@
                 }
 
                 // When the objects are finished fading out, destroy them
-                if (coll === alternateBands || !chart.hasRendered) {
-                    syncTimeout(destroyInactiveItems, delay);
-                }
+                syncTimeout(
+                    destroyInactiveItems, 
+                    coll === alternateBands || !chart.hasRendered || !delay ? 0 : delay
+                );
             });
 
             // Static items. As the axis group is cleared on subsequent calls
@@ -8630,7 +8643,7 @@
                 }
 
                 // show or hide the line depending on options.showEmpty
-                axis.axisLine[showAxis ? 'show' : 'hide']();
+                axis.axisLine[showAxis ? 'show' : 'hide'](true);
             }
 
             if (axisTitle && showAxis) {
@@ -9216,13 +9229,14 @@
          * Hide the tooltip
          */
         hide: function (delay) {
+            var tooltip = this;
             clearTimeout(this.hideTimer); // disallow duplicate timers (#1728, #1766)
             delay = pick(delay, this.options.hideDelay, 500);
             if (!this.isHidden) {
-                this.hideTimer = syncTimeout(function (tooltip) {
+                this.hideTimer = syncTimeout(function () {
                     tooltip.label[delay ? 'fadeOut' : 'hide']();
                     tooltip.isHidden = true;
-                }, delay, this);
+                }, delay);
             }
         },
 
@@ -9841,8 +9855,8 @@
                 }
             }
 
-            // Start the event listener to pick up the tooltip
-            if (tooltip && !pointer._onDocumentMouseMove) {
+            // Start the event listener to pick up the tooltip and crosshairs
+            if (!pointer._onDocumentMouseMove) {
                 pointer._onDocumentMouseMove = function (e) {
                     if (charts[hoverChartIndex]) {
                         charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
@@ -12623,7 +12637,7 @@
 
             // Record preliminary dimensions for later comparison
             tempWidth = chart.plotWidth;
-            tempHeight = chart.plotHeight = chart.plotHeight - 13; // 13 is the most common height of X axis labels
+            tempHeight = chart.plotHeight = chart.plotHeight - 21; // 21 is the most common correction for X axis labels
 
             // Get margins by pre-rendering axes
             each(axes, function (axis) {
@@ -13749,7 +13763,8 @@
                 cropStart = 0,
                 cropEnd = dataLength,
                 cropShoulder = pick(this.cropShoulder, 1), // line-type series need one point outside
-                i;
+                i,
+                j;
 
             // iterate up to find slice start
             for (i = 0; i < dataLength; i++) {
@@ -13760,9 +13775,9 @@
             }
 
             // proceed to find slice end
-            for (i; i < dataLength; i++) {
-                if (xData[i] > max) {
-                    cropEnd = i + cropShoulder;
+            for (j = i; j < dataLength; j++) {
+                if (xData[j] > max) {
+                    cropEnd = j + cropShoulder;
                     break;
                 }
             }
@@ -14799,7 +14814,7 @@
                 // Animation doesn't work in IE8 quirks when the group div is hidden,
                 // and looks bad in other oldIE
                 animDuration = (animation && !!series.animate && chart.renderer.isSVG && pick(animation.duration, 500)) || 0,
-                visibility = series.visible ? VISIBLE : HIDDEN,
+                visibility = series.visible ? 'inherit' : 'hidden', // #2597
                 zIndex = options.zIndex,
                 hasRendered = series.hasRendered,
                 chartSeriesGroup = chart.seriesGroup;
@@ -18775,7 +18790,8 @@
                         .add(chart.seriesGroup);
                 }
                 halo.attr(extend({
-                    fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
+                    fill: point.color || series.color,
+                    'fill-opacity': haloOptions.opacity
                 }, haloOptions.attributes))[move ? 'animate' : 'attr']({
                     d: point.haloPath(haloOptions.size)
                 });

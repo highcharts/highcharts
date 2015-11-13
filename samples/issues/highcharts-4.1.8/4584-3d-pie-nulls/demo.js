@@ -18,8 +18,8 @@ $(function () {
 		}).highcharts();
 			
         assert.strictEqual(
-            !!chart.series[0].points[2],
-            true,
+            chart.series[0].points.length,
+            2,
             'Rendered succesfully'
         );
         assert.strictEqual(

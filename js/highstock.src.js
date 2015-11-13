@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.9-modified (2015-11-10)
+ * @license Highstock JS v2.1.9-modified (2015-11-13)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -5306,7 +5306,7 @@
             renderer.box = box;
             renderer.boxWrapper = boxWrapper;
             renderer.gradients = {};
-            renderer.cache = {};
+            renderer.cache = {}; // Cache for numerical bounding boxes
             renderer.cacheKeys = [];
 
 
@@ -7743,26 +7743,23 @@
         },
 
         /**
-         * Set the max ticks of either the x and y axis collection
+         * Check if there are multiple axes in the same pane
+         * @returns {Boolean} There are other axes
          */
-        getTickAmount: function () {
+        alignToOthers: function () {
             var others = {}, // Whether there is another axis to pair with this one
                 hasOther,
-                options = this.options,
-                tickAmount = options.tickAmount,
-                tickPixelInterval = options.tickPixelInterval;
+                options = this.options;
 
-            if (!defined(options.tickInterval) && this.len < tickPixelInterval && !this.isRadial &&
-                    !this.isLog && options.startOnTick && options.endOnTick) {
-                tickAmount = 2;
-            }
-
-            if (!tickAmount && this.chart.options.chart.alignTicks !== false && options.alignTicks !== false) {
-                // Check if there are multiple axes in the same pane
+            if (this.chart.options.chart.alignTicks !== false && options.alignTicks !== false) {
                 each(this.chart[this.coll], function (axis) {
-                    var options = axis.options,
+                    var otherOptions = axis.options,
                         horiz = axis.horiz,
-                        key = [horiz ? options.left : options.top, horiz ? options.width : options.height, options.pane].join(',');
+                        key = [
+                            horiz ? otherOptions.left : otherOptions.top, 
+                            horiz ? otherOptions.width : otherOptions.height, 
+                            otherOptions.pane
+                        ].join(',');
 
                     if (axis.series.length) { // #4442
                         if (others[key]) {
@@ -7772,11 +7769,26 @@
                         }
                     }
                 });
+            }
+            return hasOther;
+        },
 
-                if (hasOther) {
-                    // Add 1 because 4 tick intervals require 5 ticks (including first and last)
-                    tickAmount = mathCeil(this.len / tickPixelInterval) + 1;
-                }
+        /**
+         * Set the max ticks of either the x and y axis collection
+         */
+        getTickAmount: function () {
+            var options = this.options,
+                tickAmount = options.tickAmount,
+                tickPixelInterval = options.tickPixelInterval;
+
+            if (!defined(options.tickInterval) && this.len < tickPixelInterval && !this.isRadial &&
+                    !this.isLog && options.startOnTick && options.endOnTick) {
+                tickAmount = 2;
+            }
+
+            if (!tickAmount && this.alignToOthers()) {
+                // Add 1 because 4 tick intervals require 5 ticks (including first and last)
+                tickAmount = mathCeil(this.len / tickPixelInterval) + 1;
             }
 
             // For tick amounts of 2 and 3, compute five ticks and remove the intermediate ones. This
@@ -7860,7 +7872,7 @@
 
             // do we really need to go through all this?
             if (isDirtyAxisLength || isDirtyData || axis.isLinked || axis.forceRedraw ||
-                axis.userMin !== axis.oldUserMin || axis.userMax !== axis.oldUserMax) {
+                axis.userMin !== axis.oldUserMin || axis.userMax !== axis.oldUserMax || axis.alignToOthers()) {
 
                 if (axis.resetStacks) {
                     axis.resetStacks();
@@ -8358,7 +8370,7 @@
                 }
 
                 // hide or show the title depending on whether showEmpty is set
-                axis.axisTitle[showAxis ? 'show' : 'hide']();
+                axis.axisTitle[showAxis ? 'show' : 'hide'](true);
             }
 
             // handle automatic or user set offset
@@ -8607,9 +8619,10 @@
                 }
 
                 // When the objects are finished fading out, destroy them
-                if (coll === alternateBands || !chart.hasRendered) {
-                    syncTimeout(destroyInactiveItems, delay);
-                }
+                syncTimeout(
+                    destroyInactiveItems, 
+                    coll === alternateBands || !chart.hasRendered || !delay ? 0 : delay
+                );
             });
 
             // Static items. As the axis group is cleared on subsequent calls
@@ -8630,7 +8643,7 @@
                 }
 
                 // show or hide the line depending on options.showEmpty
-                axis.axisLine[showAxis ? 'show' : 'hide']();
+                axis.axisLine[showAxis ? 'show' : 'hide'](true);
             }
 
             if (axisTitle && showAxis) {
@@ -9216,13 +9229,14 @@
          * Hide the tooltip
          */
         hide: function (delay) {
+            var tooltip = this;
             clearTimeout(this.hideTimer); // disallow duplicate timers (#1728, #1766)
             delay = pick(delay, this.options.hideDelay, 500);
             if (!this.isHidden) {
-                this.hideTimer = syncTimeout(function (tooltip) {
+                this.hideTimer = syncTimeout(function () {
                     tooltip.label[delay ? 'fadeOut' : 'hide']();
                     tooltip.isHidden = true;
-                }, delay, this);
+                }, delay);
             }
         },
 
@@ -9841,8 +9855,8 @@
                 }
             }
 
-            // Start the event listener to pick up the tooltip
-            if (tooltip && !pointer._onDocumentMouseMove) {
+            // Start the event listener to pick up the tooltip and crosshairs
+            if (!pointer._onDocumentMouseMove) {
                 pointer._onDocumentMouseMove = function (e) {
                     if (charts[hoverChartIndex]) {
                         charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
@@ -12623,7 +12637,7 @@
 
             // Record preliminary dimensions for later comparison
             tempWidth = chart.plotWidth;
-            tempHeight = chart.plotHeight = chart.plotHeight - 13; // 13 is the most common height of X axis labels
+            tempHeight = chart.plotHeight = chart.plotHeight - 21; // 21 is the most common correction for X axis labels
 
             // Get margins by pre-rendering axes
             each(axes, function (axis) {
@@ -13749,7 +13763,8 @@
                 cropStart = 0,
                 cropEnd = dataLength,
                 cropShoulder = pick(this.cropShoulder, 1), // line-type series need one point outside
-                i;
+                i,
+                j;
 
             // iterate up to find slice start
             for (i = 0; i < dataLength; i++) {
@@ -13760,9 +13775,9 @@
             }
 
             // proceed to find slice end
-            for (i; i < dataLength; i++) {
-                if (xData[i] > max) {
-                    cropEnd = i + cropShoulder;
+            for (j = i; j < dataLength; j++) {
+                if (xData[j] > max) {
+                    cropEnd = j + cropShoulder;
                     break;
                 }
             }
@@ -14799,7 +14814,7 @@
                 // Animation doesn't work in IE8 quirks when the group div is hidden,
                 // and looks bad in other oldIE
                 animDuration = (animation && !!series.animate && chart.renderer.isSVG && pick(animation.duration, 500)) || 0,
-                visibility = series.visible ? VISIBLE : HIDDEN,
+                visibility = series.visible ? 'inherit' : 'hidden', // #2597
                 zIndex = options.zIndex,
                 hasRendered = series.hasRendered,
                 chartSeriesGroup = chart.seriesGroup;
@@ -18775,7 +18790,8 @@
                         .add(chart.seriesGroup);
                 }
                 halo.attr(extend({
-                    fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
+                    fill: point.color || series.color,
+                    'fill-opacity': haloOptions.opacity
                 }, haloOptions.attributes))[move ? 'animate' : 'attr']({
                     d: point.haloPath(haloOptions.size)
                 });
@@ -19676,7 +19692,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v2.1.9-modified (2015-11-10)
+     * Highstock JS v2.1.9-modified (2015-11-13)
      * Highcharts Broken Axis module
      * 
      * Author: Stephane Vanraes, Torstein Honsi
@@ -21542,8 +21558,8 @@
                 verb,
                 unionExtremes;
 
-            // Don't render the navigator until we have data (#486, #4202)
-            if (!defined(min) || isNaN(min)) {
+            // Don't render the navigator until we have data (#486, #4202). Don't redraw while moving the handles (#4703).
+            if (!defined(min) || isNaN(min) || (scroller.hasDragged && !defined(pxMin))) {
                 return;
             }
 
@@ -21827,7 +21843,6 @@
                 height = scroller.height,
                 top = scroller.top,
                 dragOffset,
-                hasDragged,
                 baseSeries = scroller.baseSeries;
 
             /**
@@ -21938,7 +21953,8 @@
                     scrollerLeft = scroller.scrollerLeft,
                     scrollerWidth = scroller.scrollerWidth,
                     range = scroller.range,
-                    chartX;
+                    chartX,
+                    hasDragged;
 
                 // In iOS, a mousemove event with e.pageX === 0 is fired when holding the finger
                 // down in the center of the scrollbar. This should be ignored.
@@ -21982,6 +21998,7 @@
                             scroller.mouseUpHandler(e);
                         }, 0);
                     }
+                    scroller.hasDragged = hasDragged;
                 }
             };
 
@@ -21993,7 +22010,7 @@
                     fixedMin,
                     fixedMax;
 
-                if (hasDragged) {
+                if (scroller.hasDragged) {
                     // When dragging one handle, make sure the other one doesn't change
                     if (scroller.zoomedMin === scroller.otherHandlePos) {
                         fixedMin = scroller.fixedExtreme;
@@ -22019,7 +22036,7 @@
 
                 if (e.type !== 'mousemove') {
                     scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = scroller.fixedWidth =
-                        scroller.fixedExtreme = scroller.otherHandlePos = hasDragged = dragOffset = null;
+                        scroller.fixedExtreme = scroller.otherHandlePos = scroller.hasDragged = dragOffset = null;
                 }
 
             };
@@ -23359,56 +23376,58 @@
 
         options.series = null;
 
-        options = merge({
-            chart: {
-                panning: true,
-                pinchType: 'x'
-            },
-            navigator: {
-                enabled: true
-            },
-            scrollbar: {
-                enabled: true
-            },
-            rangeSelector: {
-                enabled: true
-            },
-            title: {
-                text: null,
-                style: {
-                    fontSize: '16px'
+        options = merge(
+            {
+                chart: {
+                    panning: true,
+                    pinchType: 'x'
+                },
+                navigator: {
+                    enabled: true
+                },
+                scrollbar: {
+                    enabled: true
+                },
+                rangeSelector: {
+                    enabled: true
+                },
+                title: {
+                    text: null,
+                    style: {
+                        fontSize: '16px'
+                    }
+                },
+                tooltip: {
+                    shared: true,
+                    crosshairs: true
+                },
+                legend: {
+                    enabled: false
+                },
+
+                plotOptions: {
+                    line: lineOptions,
+                    spline: lineOptions,
+                    area: lineOptions,
+                    areaspline: lineOptions,
+                    arearange: lineOptions,
+                    areasplinerange: lineOptions,
+                    column: columnOptions,
+                    columnrange: columnOptions,
+                    candlestick: columnOptions,
+                    ohlc: columnOptions
                 }
-            },
-            tooltip: {
-                shared: true,
-                crosshairs: true
-            },
-            legend: {
-                enabled: false
-            },
 
-            plotOptions: {
-                line: lineOptions,
-                spline: lineOptions,
-                area: lineOptions,
-                areaspline: lineOptions,
-                arearange: lineOptions,
-                areasplinerange: lineOptions,
-                column: columnOptions,
-                columnrange: columnOptions,
-                candlestick: columnOptions,
-                ohlc: columnOptions
+            },
+            options, // user's options
+
+            { // forced options
+                _stock: true, // internal flag
+                chart: {
+                    inverted: false
+                }
             }
-
-        },
-        options, // user's options
-
-        { // forced options
-            _stock: true, // internal flag
-            chart: {
-                inverted: false
-            }
-        });
+        );
 
         options.series = seriesOptions;
 
@@ -23608,18 +23627,8 @@
     wrap(Axis.prototype, 'hideCrosshair', function (proceed, i) {
         proceed.call(this, i);
 
-        if (!defined(this.crossLabelArray)) {
-            return;
-        }
-
-        if (defined(i)) {
-            if (this.crossLabelArray[i]) {
-                this.crossLabelArray[i].hide();
-            }
-        } else {
-            each(this.crossLabelArray, function (crosslabel) {
-                crosslabel.hide();
-            });
+        if (this.crossLabel) {
+            this.crossLabel = this.crossLabel.hide();
         }
     });
 
@@ -23629,13 +23638,12 @@
         proceed.call(this, e, point);
 
         // Check if the label has to be drawn
-        if (!defined(this.crosshair.label) || !this.crosshair.label.enabled || !defined(point)) {
+        if (!defined(this.crosshair.label) || !this.crosshair.label.enabled) {
             return;
         }
 
         var chart = this.chart,
             options = this.options.crosshair.label,        // the label's options
-            axis = this.isXAxis ? 'x' : 'y',            // axis name
             horiz = this.horiz,                            // axis orientation
             opposite = this.opposite,                    // axis position
             left = this.left,                            // left position
@@ -23648,7 +23656,9 @@
             formatFormat = '',
             limit,
             align,
-            tickInside = this.options.tickPosition === 'inside';
+            tickInside = this.options.tickPosition === 'inside',
+            snap = this.crosshair.snap !== false,
+            value;
 
         align = (horiz ? 'center' : opposite ? (this.labelAlign === 'right' ? 'right' : 'left') : (this.labelAlign === 'left' ? 'left' : 'center'));
 
@@ -23658,11 +23668,11 @@
             .attr({
                 align: options.align || align,
                 zIndex: 12,
-                height: horiz ? 16 : UNDEFINED,
                 fill: options.backgroundColor || (this.series[0] && this.series[0].color) || 'gray',
-                padding: pick(options.padding, 2),
+                padding: pick(options.padding, 8), // docs: new default
                 stroke: options.borderColor || '',
-                'stroke-width': options.borderWidth || 0
+                'stroke-width': options.borderWidth || 0,
+                r: pick(options.borderRadius, 3) // docs
             })
             .css(extend({
                 color: 'white',
@@ -23674,17 +23684,11 @@
         }
 
         if (horiz) {
-            posx = point.plotX + left;
+            posx = snap ? point.plotX + left : e.chartX;
             posy = top + (opposite ? 0 : this.height);
         } else {
             posx = opposite ? this.width + left : 0;
-            posy = point.plotY + top;
-        }
-
-        // if the crosshair goes out of view (too high or too low, hide it and hide the label)
-        if (posy < top || posy > top + this.height) {
-            this.hideCrosshair();
-            return;
+            posy = snap ? point.plotY + top : e.chartY;
         }
 
         if (!formatOption && !options.formatter) {
@@ -23694,11 +23698,12 @@
             formatOption = '{value' + (formatFormat ? ':' + formatFormat : '') + '}';
         }
 
-        // show the label
+        // Show the label
+        value = snap ? point[this.isXAxis ? 'x' : 'y'] : this.toValue(horiz ? e.chartX : e.chartY);
         crossLabel.attr({
-            text: formatOption ? format(formatOption, { value: point[axis] }) : options.formatter.call(this, point[axis]),
-            anchorX: posx + { center: 0, left: -20, right: 20 }[align],
-            anchorY: posy + { center: -20, left: 0, right: 0 }[align],
+            text: formatOption ? format(formatOption, { value: value }) : options.formatter.call(this, value),
+            anchorX: horiz ? posx : (this.opposite ? 0 : chart.chartWidth),
+            anchorY: horiz ? (this.opposite ? chart.chartHeight : 0) : posy,
             x: posx,
             y: posy,
             visibility: VISIBLE

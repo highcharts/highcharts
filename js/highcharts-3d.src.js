@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-11-10)
+ * @license Highcharts JS v4.1.9-modified (2015-11-13)
  *
  * 3D features for Highcharts JS
  *
@@ -472,10 +472,6 @@
                 from = this.attribs,
                 to;
 
-            params = merge(params); // Don't mutate the original object
-        
-            ca = suckOutCustom(params);
-
             // Attribute-line properties connected to 3D. These shouldn't have been in the 
             // attribs collection in the first place.
             delete params.center;
@@ -484,25 +480,32 @@
             delete params.alpha;
             delete params.beta;
 
-            animation = {
-                duration: (animation && animation.duration) || 0
-            };
-
-            if (ca) {
-                to = ca;
-                animation.step = function (a, fx) {
-                    function interpolate(key) {
-                        return from[key] + (pick(to[key], from[key]) - from[key]) * fx.pos;
-                    }
-                    fx.elem.setPaths(merge(from, {
-                        x: interpolate('x'),
-                        y: interpolate('y'),
-                        r: interpolate('r'),
-                        innerR: interpolate('innerR'),
-                        start: interpolate('start'),
-                        end: interpolate('end')
-                    }));
-                };
+            animation = pick(animation, this.renderer.globalAnimation);
+        
+            if (animation) {
+                if (typeof animation !== 'object') {
+                    animation = {};
+                }
+            
+                params = merge(params); // Don't mutate the original object
+                ca = suckOutCustom(params);
+            
+                if (ca) {
+                    to = ca;
+                    animation.step = function (a, fx) {
+                        function interpolate(key) {
+                            return from[key] + (pick(to[key], from[key]) - from[key]) * fx.pos;
+                        }
+                        fx.elem.setPaths(merge(from, {
+                            x: interpolate('x'),
+                            y: interpolate('y'),
+                            r: interpolate('r'),
+                            innerR: interpolate('innerR'),
+                            start: interpolate('start'),
+                            end: interpolate('end')
+                        }));
+                    };
+                }
             }
             return proceed.call(this, params, animation, complete);
         });
@@ -1465,9 +1468,12 @@
             each(this.points, function (point) {
                 var graphic = point.graphic;
 
-                // Hide null or 0 points (#3006, 3650)
-                graphic[point.y ? 'show' : 'hide']();
-            });
+                // #4584 Check if has graphic - null points don't have it
+                if (graphic) {
+                    // Hide null or 0 points (#3006, 3650)
+                    graphic[point.y ? 'show' : 'hide']();
+                }
+            });    
         }
     });
 
@@ -1479,17 +1485,16 @@
             each(series.data, function (point) {
                 var shapeArgs = point.shapeArgs,
                     r = shapeArgs.r,
-                    d = shapeArgs.depth,
                     a1 = (shapeArgs.alpha || options3d.alpha) * deg2rad, //#3240 issue with datalabels for 0 and null values
                     b1 = (shapeArgs.beta || options3d.beta) * deg2rad,
                     a2 = (shapeArgs.start + shapeArgs.end) / 2,
                     labelPos = point.labelPos,
                     labelIndexes = [0, 2, 4], // [x1, y1, x2, y2, x3, y3]
-                    yOffset = (-r * (1 - cos(a1)) * sin(a2)) /*+ (sin(a2) > 0 ? sin(a1) * d : 0)*/,
+                    yOffset = (-r * (1 - cos(a1)) * sin(a2)), // + (sin(a2) > 0 ? sin(a1) * d : 0)
                     xOffset = r * (cos(b1) - 1) * cos(a2);
 
                 // Apply perspective on label positions
-                each(labelIndexes, function (index, i) {
+                each(labelIndexes, function (index) {
                     labelPos[index] += xOffset;
                     labelPos[index + 1] += yOffset;
                 });

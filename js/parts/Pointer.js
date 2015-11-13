@@ -220,8 +220,8 @@ Pointer.prototype = {
 			}
 		}
 
-		// Start the event listener to pick up the tooltip
-		if (tooltip && !pointer._onDocumentMouseMove) {
+		// Start the event listener to pick up the tooltip and crosshairs
+		if (!pointer._onDocumentMouseMove) {
 			pointer._onDocumentMouseMove = function (e) {
 				if (charts[hoverChartIndex]) {
 					charts[hoverChartIndex].pointer.onDocumentMouseMove(e);

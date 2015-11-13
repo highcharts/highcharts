@@ -1184,26 +1184,23 @@ Axis.prototype = {
 	},
 
 	/**
-	 * Set the max ticks of either the x and y axis collection
+	 * Check if there are multiple axes in the same pane
+	 * @returns {Boolean} There are other axes
 	 */
-	getTickAmount: function () {
+	alignToOthers: function () {
 		var others = {}, // Whether there is another axis to pair with this one
 			hasOther,
-			options = this.options,
-			tickAmount = options.tickAmount,
-			tickPixelInterval = options.tickPixelInterval;
+			options = this.options;
 
-		if (!defined(options.tickInterval) && this.len < tickPixelInterval && !this.isRadial &&
-				!this.isLog && options.startOnTick && options.endOnTick) {
-			tickAmount = 2;
-		}
-
-		if (!tickAmount && this.chart.options.chart.alignTicks !== false && options.alignTicks !== false) {
-			// Check if there are multiple axes in the same pane
+		if (this.chart.options.chart.alignTicks !== false && options.alignTicks !== false) {
 			each(this.chart[this.coll], function (axis) {
-				var options = axis.options,
+				var otherOptions = axis.options,
 					horiz = axis.horiz,
-					key = [horiz ? options.left : options.top, horiz ? options.width : options.height, options.pane].join(',');
+					key = [
+						horiz ? otherOptions.left : otherOptions.top, 
+						horiz ? otherOptions.width : otherOptions.height, 
+						otherOptions.pane
+					].join(',');
 
 				if (axis.series.length) { // #4442
 					if (others[key]) {
@@ -1213,11 +1210,26 @@ Axis.prototype = {
 					}
 				}
 			});
+		}
+		return hasOther;
+	},
 
-			if (hasOther) {
-				// Add 1 because 4 tick intervals require 5 ticks (including first and last)
-				tickAmount = mathCeil(this.len / tickPixelInterval) + 1;
-			}
+	/**
+	 * Set the max ticks of either the x and y axis collection
+	 */
+	getTickAmount: function () {
+		var options = this.options,
+			tickAmount = options.tickAmount,
+			tickPixelInterval = options.tickPixelInterval;
+
+		if (!defined(options.tickInterval) && this.len < tickPixelInterval && !this.isRadial &&
+				!this.isLog && options.startOnTick && options.endOnTick) {
+			tickAmount = 2;
+		}
+
+		if (!tickAmount && this.alignToOthers()) {
+			// Add 1 because 4 tick intervals require 5 ticks (including first and last)
+			tickAmount = mathCeil(this.len / tickPixelInterval) + 1;
 		}
 
 		// For tick amounts of 2 and 3, compute five ticks and remove the intermediate ones. This
@@ -1301,7 +1313,7 @@ Axis.prototype = {
 
 		// do we really need to go through all this?
 		if (isDirtyAxisLength || isDirtyData || axis.isLinked || axis.forceRedraw ||
-			axis.userMin !== axis.oldUserMin || axis.userMax !== axis.oldUserMax) {
+			axis.userMin !== axis.oldUserMin || axis.userMax !== axis.oldUserMax || axis.alignToOthers()) {
 
 			if (axis.resetStacks) {
 				axis.resetStacks();
@@ -1799,7 +1811,7 @@ Axis.prototype = {
 			}
 
 			// hide or show the title depending on whether showEmpty is set
-			axis.axisTitle[showAxis ? 'show' : 'hide']();
+			axis.axisTitle[showAxis ? 'show' : 'hide'](true);
 		}
 
 		// handle automatic or user set offset
@@ -2048,9 +2060,10 @@ Axis.prototype = {
 			}
 
 			// When the objects are finished fading out, destroy them
-			if (coll === alternateBands || !chart.hasRendered) {
-				syncTimeout(destroyInactiveItems, delay);
-			}
+			syncTimeout(
+				destroyInactiveItems, 
+				coll === alternateBands || !chart.hasRendered || !delay ? 0 : delay
+			);
 		});
 
 		// Static items. As the axis group is cleared on subsequent calls
@@ -2071,7 +2084,7 @@ Axis.prototype = {
 			}
 
 			// show or hide the line depending on options.showEmpty
-			axis.axisLine[showAxis ? 'show' : 'hide']();
+			axis.axisLine[showAxis ? 'show' : 'hide'](true);
 		}
 
 		if (axisTitle && showAxis) {

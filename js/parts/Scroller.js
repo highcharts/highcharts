@@ -301,8 +301,8 @@ Scroller.prototype = {
 			verb,
 			unionExtremes;
 
-		// Don't render the navigator until we have data (#486, #4202)
-		if (!defined(min) || isNaN(min)) {
+		// Don't render the navigator until we have data (#486, #4202). Don't redraw while moving the handles (#4703).
+		if (!defined(min) || isNaN(min) || (scroller.hasDragged && !defined(pxMin))) {
 			return;
 		}
 
@@ -586,7 +586,6 @@ Scroller.prototype = {
 			height = scroller.height,
 			top = scroller.top,
 			dragOffset,
-			hasDragged,
 			baseSeries = scroller.baseSeries;
 
 		/**
@@ -697,7 +696,8 @@ Scroller.prototype = {
 				scrollerLeft = scroller.scrollerLeft,
 				scrollerWidth = scroller.scrollerWidth,
 				range = scroller.range,
-				chartX;
+				chartX,
+				hasDragged;
 
 			// In iOS, a mousemove event with e.pageX === 0 is fired when holding the finger
 			// down in the center of the scrollbar. This should be ignored.
@@ -741,6 +741,7 @@ Scroller.prototype = {
 						scroller.mouseUpHandler(e);
 					}, 0);
 				}
+				scroller.hasDragged = hasDragged;
 			}
 		};
 
@@ -752,7 +753,7 @@ Scroller.prototype = {
 				fixedMin,
 				fixedMax;
 
-			if (hasDragged) {
+			if (scroller.hasDragged) {
 				// When dragging one handle, make sure the other one doesn't change
 				if (scroller.zoomedMin === scroller.otherHandlePos) {
 					fixedMin = scroller.fixedExtreme;
@@ -778,7 +779,7 @@ Scroller.prototype = {
 
 			if (e.type !== 'mousemove') {
 				scroller.grabbedLeft = scroller.grabbedRight = scroller.grabbedCenter = scroller.fixedWidth =
-					scroller.fixedExtreme = scroller.otherHandlePos = hasDragged = dragOffset = null;
+					scroller.fixedExtreme = scroller.otherHandlePos = scroller.hasDragged = dragOffset = null;
 			}
 
 		};
