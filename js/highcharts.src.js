@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-11-12)
+ * @license Highcharts JS v4.1.9-modified (2015-11-13)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -9892,10 +9892,15 @@
             // Narrow in allowMove
             allowMove = allowMove && tooltip && tooltipPoints;
 
-            // Check if the points have moved outside the plot area, #1003
-            if (allowMove  && splat(tooltipPoints)[0].plotX === UNDEFINED) {
-                allowMove = false;
+            // Check if the points have moved outside the plot area (#1003, #4736)
+            if (allowMove) {
+                each(splat(tooltipPoints), function (point) {
+                    if (point.plotX === undefined) {
+                        allowMove = false;
+                    }
+                });
             }
+        
             // Just move the tooltip, #349
             if (allowMove) {
                 tooltip.refresh(tooltipPoints);
