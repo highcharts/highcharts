@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.9-modified (2015-11-13)
+ * @license Highstock JS v2.1.9-modified (2015-11-16)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -8141,7 +8141,7 @@
                 horiz = this.horiz,
                 margin = chart.margin,
                 slotCount = this.categories ? tickPositions.length : tickPositions.length - 1,
-                slotWidth = this.slotWidth = (horiz && !labelOptions.step && !labelOptions.rotation &&
+                slotWidth = this.slotWidth = (horiz && (labelOptions.step || 0) < 2 && !labelOptions.rotation && // #4415
                     ((this.staggerLines || 1) * chart.plotWidth) / slotCount) ||
                     (!horiz && ((margin[3] && (margin[3] - chart.spacing[3])) || chart.chartWidth * 0.33)), // #1580, #1931,
                 innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))),
@@ -19643,7 +19643,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v2.1.9-modified (2015-11-13)
+     * Highstock JS v2.1.9-modified (2015-11-16)
      * Highcharts Broken Axis module
      * 
      * Author: Stephane Vanraes, Torstein Honsi

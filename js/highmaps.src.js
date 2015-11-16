@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-11-13)
+ * @license Highmaps JS v1.1.9-modified (2015-11-16)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -7880,7 +7880,7 @@
                 horiz = this.horiz,
                 margin = chart.margin,
                 slotCount = this.categories ? tickPositions.length : tickPositions.length - 1,
-                slotWidth = this.slotWidth = (horiz && !labelOptions.step && !labelOptions.rotation &&
+                slotWidth = this.slotWidth = (horiz && (labelOptions.step || 0) < 2 && !labelOptions.rotation && // #4415
                     ((this.staggerLines || 1) * chart.plotWidth) / slotCount) ||
                     (!horiz && ((margin[3] && (margin[3] - chart.spacing[3])) || chart.chartWidth * 0.33)), // #1580, #1931,
                 innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))),
