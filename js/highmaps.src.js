@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-11-13)
+ * @license Highmaps JS v1.1.9-modified (2015-11-16)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -8696,7 +8696,7 @@
                 .css(style)
                 .css({ padding: 0 }) // Remove it from VML, the padding is applied as an attribute instead (#1117)
                 .add()
-                .attr({ y: -9999 }); // #2301, #2657
+                .attr({ y: -9e9 }); // #2301, #2657, #3532
 
             // When using canVG the shadow shows up as a gray circle
             // even if the tooltip is hidden.

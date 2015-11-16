@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.9-modified (2015-11-13)
+ * @license Highstock JS v2.1.9-modified (2015-11-16)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -9161,7 +9161,7 @@
                 .css(style)
                 .css({ padding: 0 }) // Remove it from VML, the padding is applied as an attribute instead (#1117)
                 .add()
-                .attr({ y: -9999 }); // #2301, #2657
+                .attr({ y: -9e9 }); // #2301, #2657, #3532
 
             // When using canVG the shadow shows up as a gray circle
             // even if the tooltip is hidden.
@@ -19696,7 +19696,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v2.1.9-modified (2015-11-13)
+     * Highstock JS v2.1.9-modified (2015-11-16)
      * Highcharts Broken Axis module
      * 
      * Author: Stephane Vanraes, Torstein Honsi
