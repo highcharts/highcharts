@@ -1592,7 +1592,6 @@ Axis.prototype = {
 			css,
 			labelLength = 0,
 			label,
-			bBox,
 			i,
 			pos;
 
@@ -1634,13 +1633,12 @@ Axis.prototype = {
 					pos = tickPositions[i];
 					label = ticks[pos].label;
 					if (label) {
-						bBox = label.getBBox();
 						// Reset ellipsis in order to get the correct bounding box (#4070)
 						if (label.styles.textOverflow === 'ellipsis') {
 							label.css({ textOverflow: 'clip' });
 						}
-						if (bBox.height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f) ||
-								bBox.width > slotWidth) { // #4678
+						if (label.getBBox().height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f) ||
+								ticks[pos].labelLength > slotWidth) { // #4678
 							label.specCss = { textOverflow: 'ellipsis' };
 						}
 					}
