@@ -182,7 +182,7 @@
 						} else {
 							// Must load canVG first
 							chart.showLoading();
-							HighchartsAdapter.getScript(Highcharts.getOptions().global.canvasToolsURL, function () {
+							Highcharts.getScript(Highcharts.getOptions().global.canvasToolsURL, function () {
 								chart.hideLoading();
 								downloadWithCanVG();
 							});

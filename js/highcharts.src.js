@@ -1241,7 +1241,6 @@
     // and all the utility functions will be null. In that case they are populated by the
     // default adapters below.
     var adapterRun = Highcharts.adapterRun,
-        getScript = Highcharts.getScript,
         inArray = Highcharts.inArray,
         each = Highcharts.each,
         grep = Highcharts.grep,
@@ -5899,7 +5898,7 @@
                 push: function (func, scriptLocation) {
                     // Only get the script once
                     if (deferredRenderCalls.length === 0) {
-                        getScript(scriptLocation, drawDeferred);
+                        Highcharts.getScript(scriptLocation, drawDeferred);
                     }
                     // Register render call
                     deferredRenderCalls.push(func);
