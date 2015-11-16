@@ -98,8 +98,9 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proce
 		var seriesOptions = this.options,
 			grouping = seriesOptions.grouping,
 			stacking = seriesOptions.stacking,
-			z = 0;
-
+			reversedStacks = pick(this.yAxis.options.reversedStacks, true),
+			z = 0;	
+		
 		if (!(grouping !== undefined && !grouping)) {
 			var stacks = this.chart.retrieveStacks(stacking),
 				stack = seriesOptions.stack || 0,
@@ -109,7 +110,7 @@ Highcharts.wrap(Highcharts.seriesTypes.column.prototype, 'init', function (proce
 					break;
 				}
 			}
-			z = (stacks.totalStacks * 10) - (10 * (stacks.totalStacks - stacks[stack].position)) - i;
+			z = (stacks.totalStacks * 10) - (10 * (stacks.totalStacks - stacks[stack].position)) - (reversedStacks ? i : -i); // #4369
 		}
 
 		seriesOptions.zIndex = z;

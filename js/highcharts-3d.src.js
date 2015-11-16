@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-11-11)
+ * @license Highcharts JS v4.1.9-modified (2015-11-16)
  *
  * 3D features for Highcharts JS
  *
@@ -1214,8 +1214,9 @@
             var seriesOptions = this.options,
                 grouping = seriesOptions.grouping,
                 stacking = seriesOptions.stacking,
+                reversedStacks = pick(this.yAxis.options.reversedStacks, true),
                 z = 0;
-
+        
             if (!(grouping !== undefined && !grouping)) {
                 var stacks = this.chart.retrieveStacks(stacking),
                     stack = seriesOptions.stack || 0,
@@ -1225,7 +1226,7 @@
                         break;
                     }
                 }
-                z = (stacks.totalStacks * 10) - (10 * (stacks.totalStacks - stacks[stack].position)) - i;
+                z = (stacks.totalStacks * 10) - (10 * (stacks.totalStacks - stacks[stack].position)) - (reversedStacks ? i : -i); // #4369
             }
 
             seriesOptions.zIndex = z;
