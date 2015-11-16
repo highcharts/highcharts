@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-10-31)
+ * @license Highmaps JS v1.1.9-modified (2015-11-16)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2014 Torstein Honsi
@@ -870,13 +870,20 @@
      */
     wrap(Chart.prototype, 'render', function (proceed) {
         var chart = this,
-            mapNavigation = chart.options.mapNavigation;
+            mapNavigation = chart.options.mapNavigation,
+            alignedObjects = chart.renderer.alignedObjects;
 
         // Render the plus and minus buttons. Doing this before the shapes makes getBBox much quicker, at least in Chrome.
         chart.renderMapNavigation();
 
         proceed.call(chart);
 
+        // #4740, realign the zoom buttons after chart is rendered 
+        each([alignedObjects[0], alignedObjects[1]], function (button) {
+            button.placed = false;
+            button.align(button.alignOptions, false, button.alignTo);
+        });
+    
         // Add the double click event
         if (pick(mapNavigation.enableDoubleClickZoom, mapNavigation.enabled) || mapNavigation.enableDoubleClickZoomTo) {
             addEvent(chart.container, 'dblclick', function (e) {
