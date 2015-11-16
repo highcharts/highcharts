@@ -8741,7 +8741,8 @@
                 options = this.crosshair,
                 pos,
                 attribs,
-                categorized;
+                categorized,
+                strokeWidth;
 
             if (
                 // Disabled in options
@@ -8773,17 +8774,20 @@
                     return;
                 }
 
+                categorized = this.categories && !this.isRadial;
+                strokeWidth = pick(options.width, (categorized ? this.transA : 1));
+
                 // Draw the cross
                 if (this.cross) {
                     this.cross
                         .attr({
                             d: path,
-                            visibility: 'visible'
+                            visibility: 'visible',
+                            'stroke-width': strokeWidth // #4737
                         });
                 } else {
-                    categorized = this.categories && !this.isRadial;
                     attribs = {
-                        'stroke-width': options.width || (categorized ? this.transA : 1),
+                        'stroke-width': strokeWidth,
                         stroke: options.color || (categorized ? 'rgba(155,200,255,0.2)' : '#C0C0C0'),
                         zIndex: pick(options.zIndex, 2)
                     };
