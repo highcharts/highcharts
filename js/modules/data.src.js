@@ -34,7 +34,7 @@
 			this.chartOptions = chartOptions;
 			this.columns = options.columns || this.rowsToColumns(options.rows) || [];
 			this.firstRowAsNames = pick(options.firstRowAsNames, true);
-			this.decimalRegex = options.decimalPoint && new RegExp('^([0-9]+)' + options.decimalPoint + '([0-9]+)$');
+			this.decimalRegex = options.decimalPoint && new RegExp('^(-?[0-9]+)' + options.decimalPoint + '([0-9]+)$');
 
 			// This is a two-dimensional array holding the raw, trimmed string values
 			// with the same organisation as the columns array. It makes it possible
