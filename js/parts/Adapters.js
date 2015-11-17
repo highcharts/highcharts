@@ -16,10 +16,14 @@ var adapterRun,
 
 /**
  * Helper function to load and extend Highcharts with adapter functionality. 
- * @param  {Mixed} adapter Highcharts Adapter to be loaded
+ * @param  {object|function} adapter - HighchartsAdapter or jQuery
  */
 Highcharts.loadAdapter = function (adapter) {
 	var H = this;
+	// If jQuery, then load our default jQueryAdapter
+	if (adapter.fn && adapter.fn.jquery) {
+		adapter = loadJQueryAdapter(adapter);
+	}
 	// Initialize the adapter.
 	if (adapter.init) {
 		adapter.init(pathAnim);
@@ -42,7 +46,9 @@ Highcharts.loadAdapter = function (adapter) {
 	stop = H.stop;
 };
 
-// Load adapter set on the window
+// Load adapter if HighchartsAdapter or jQuery is set on the window.
 if (win.HighchartsAdapter) {
 	Highcharts.loadAdapter(win.HighchartsAdapter);
+} else if (win.jQuery) {
+	Highcharts.loadAdapter(win.jQuery);
 }

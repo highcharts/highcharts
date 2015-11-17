@@ -874,11 +874,11 @@
         }
     };
 
-    (function ($) {
+    function loadJQueryAdapter($) {
         /**
          * The default HighchartsAdapter for jQuery
          */
-        win.HighchartsAdapter = win.HighchartsAdapter || ($ && {
+        return {
 
             /**
              * Initialize the adapter by applying some extensions to jQuery
@@ -1225,8 +1225,9 @@
                     $(el).stop();
                 }
             }
-        });
-    }(win.jQuery));// Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
+        };
+    }
+    // Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
     // and all the utility functions will be null. In that case they are populated by the
     // default adapters below.
     var adapterRun,
@@ -1244,10 +1245,14 @@
 
     /**
      * Helper function to load and extend Highcharts with adapter functionality. 
-     * @param  {Mixed} adapter Highcharts Adapter to be loaded
+     * @param  {object|function} adapter - HighchartsAdapter or jQuery
      */
     Highcharts.loadAdapter = function (adapter) {
         var H = this;
+        // If jQuery, then load our default jQueryAdapter
+        if (adapter.fn && adapter.fn.jquery) {
+            adapter = loadJQueryAdapter(adapter);
+        }
         // Initialize the adapter.
         if (adapter.init) {
             adapter.init(pathAnim);
@@ -1270,9 +1275,11 @@
         stop = H.stop;
     };
 
-    // Load adapter set on the window
+    // Load adapter if HighchartsAdapter or jQuery is set on the window.
     if (win.HighchartsAdapter) {
         Highcharts.loadAdapter(win.HighchartsAdapter);
+    } else if (win.jQuery) {
+        Highcharts.loadAdapter(win.jQuery);
     }
     /* ****************************************************************************
      * Handle the options                                                         *

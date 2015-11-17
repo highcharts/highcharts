@@ -1,8 +1,8 @@
-(function ($) {
+function loadJQueryAdapter($) {
 	/**
 	 * The default HighchartsAdapter for jQuery
 	 */
-	win.HighchartsAdapter = win.HighchartsAdapter || ($ && {
+	return {
 
 		/**
 		 * Initialize the adapter by applying some extensions to jQuery
@@ -349,5 +349,5 @@
 				$(el).stop();
 			}
 		}
-	});
-}(win.jQuery));
+	};
+}
