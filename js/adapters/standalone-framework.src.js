@@ -12,6 +12,7 @@ var HighchartsAdapter = (function () {
 var UNDEFINED,
 	doc = document,
 	emptyArray = [],
+	_getStyle,
 	timers = [],
 	animSetters = {},
 	Fx;
@@ -20,6 +21,13 @@ Math.easeInOutSine = function (t, b, c, d) {
 	return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
 };
 
+/**
+ * Internal method to return CSS value for given element and property
+ */
+_getStyle = function (el, prop) {
+	var style = window.getComputedStyle(el, undefined);
+	return style && style.getPropertyValue(prop);
+};
 
 
 /**
@@ -192,7 +200,7 @@ return {
 		 * support is not needed.
 		 */
 		if (!doc.defaultView) {
-			this._getStyle = function (el, prop) {
+			_getStyle = function (el, prop) {
 				var val;
 				if (el.style[prop]) {
 					return el.style[prop];
@@ -220,7 +228,7 @@ return {
 
 				if (alias) {
 					elem.style.zoom = 1;
-					return elem[alias] - 2 * parseInt(HighchartsAdapter._getStyle(elem, 'padding'), 10);
+					return elem[alias] - 2 * parseInt(_getStyle(elem, 'padding'), 10);
 				}
 			};
 		}
@@ -442,7 +450,7 @@ return {
 				} else if (el.attr) {
 					start = el.attr(name);
 				} else {
-					start = parseFloat(HighchartsAdapter._getStyle(el, name)) || 0;
+					start = parseFloat(_getStyle(el, name)) || 0;
 					if (name !== 'opacity') {
 						unit = PX;
 					}
@@ -457,14 +465,6 @@ return {
 				fx.custom(start, end, unit);
 			}	
 		};
-	},
-
-	/**
-	 * Internal method to return CSS value for given element and property
-	 */
-	_getStyle: function (el, prop) {
-		var style = window.getComputedStyle(el, undefined);
-		return style && style.getPropertyValue(prop);
 	},
 
 	/**
@@ -503,7 +503,7 @@ return {
 	 * A direct link to adapter methods
 	 */
 	adapterRun: function (elem, method) {
-		return parseInt(HighchartsAdapter._getStyle(elem, method), 10);
+		return parseInt(_getStyle(elem, method), 10);
 	},
 
 	/**
