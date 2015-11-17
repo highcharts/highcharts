@@ -104,6 +104,9 @@ function error(code, stop) {
 }
 
 // The Highcharts namespace
-Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : {};
+Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : function (adapter) {
+	Highcharts.loadAdapter(adapter);
+	return Highcharts;
+};
 
 Highcharts.seriesTypes = seriesTypes;

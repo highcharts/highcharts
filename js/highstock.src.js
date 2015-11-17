@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.9-modified (2015-11-16)
+ * @license Highstock JS v2.1.9-modified (2015-11-17)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -116,7 +116,10 @@
     }
 
     // The Highcharts namespace
-    Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : {};
+    Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : function (adapter) {
+        Highcharts.loadAdapter(adapter);
+        return Highcharts;
+    };
 
     Highcharts.seriesTypes = seriesTypes;
 
@@ -1223,35 +1226,54 @@
                 }
             }
         });
-    }(win.jQuery));
-
-
-    // check for a custom HighchartsAdapter defined prior to this file
-    HighchartsAdapter = win.HighchartsAdapter || {};
-
-    // Initialize the adapter
-    if (HighchartsAdapter) {
-        HighchartsAdapter.init(pathAnim);
-        delete HighchartsAdapter.intit;
-    }
-    extend(Highcharts, HighchartsAdapter);
-
-
-    // Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
+    }(win.jQuery));// Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
     // and all the utility functions will be null. In that case they are populated by the
     // default adapters below.
-    var adapterRun = Highcharts.adapterRun,
-        inArray = Highcharts.inArray,
-        each = Highcharts.each,
-        grep = Highcharts.grep,
-        offset = Highcharts.offset,
-        map = Highcharts.map,
-        addEvent = Highcharts.addEvent,
-        removeEvent = Highcharts.removeEvent,
-        fireEvent = Highcharts.fireEvent,
-        washMouseEvent = Highcharts.washMouseEvent,
-        animate = Highcharts.animate,
-        stop = Highcharts.stop;
+    var adapterRun,
+        inArray,
+        each,
+        grep,
+        offset,
+        map,
+        addEvent,
+        removeEvent,
+        fireEvent,
+        washMouseEvent,
+        animate,
+        stop;
+
+    /**
+     * Helper function to load and extend Highcharts with adapter functionality. 
+     * @param  {Mixed} adapter Highcharts Adapter to be loaded
+     */
+    Highcharts.loadAdapter = function (adapter) {
+        var H = this;
+        // Initialize the adapter.
+        if (adapter.init) {
+            adapter.init(pathAnim);
+            delete adapter.init;
+        }
+        // Extend Highcharts with adapter functionality.
+        H.extend(H, adapter);
+        // Assign values to utility functions.
+        adapterRun = H.adapterRun;
+        inArray = H.inArray;
+        each = H.each;
+        grep = H.grep;
+        offset = H.offset;
+        map = H.map;
+        addEvent = H.addEvent;
+        removeEvent = H.removeEvent;
+        fireEvent = H.fireEvent;
+        washMouseEvent = H.washMouseEvent;
+        animate = H.animate;
+        stop = H.stop;
+    };
+
+    // Load adapter set on the window
+    if (win.HighchartsAdapter) {
+        Highcharts.loadAdapter(win.HighchartsAdapter);
+    }
     /* ****************************************************************************
      * Handle the options                                                         *
      *****************************************************************************/
@@ -19636,7 +19658,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v2.1.9-modified (2015-11-16)
+     * Highstock JS v2.1.9-modified (2015-11-17)
      * Highcharts Broken Axis module
      * 
      * Author: Stephane Vanraes, Torstein Honsi
