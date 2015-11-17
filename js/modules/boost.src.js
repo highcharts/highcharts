@@ -44,7 +44,7 @@
  */
 
 /* eslint indent: [2, 4] */
-(function (H, HA) {
+(function (H) {
 
     'use strict';
 
@@ -54,8 +54,8 @@
         seriesTypes = H.seriesTypes,
         each = H.each,
         extend = H.extend,
-        addEvent = HA.addEvent,
-        fireEvent = HA.fireEvent,
+        addEvent = H.addEvent,
+        fireEvent = H.fireEvent,
         merge = H.merge,
         pick = H.pick,
         wrap = H.wrap,
@@ -570,4 +570,4 @@
         }
         return ret;
     });
-}(Highcharts, HighchartsAdapter));
+}(Highcharts));

@@ -13,7 +13,7 @@
 	// Utilities
 	var each = Highcharts.each,
 		pick = Highcharts.pick,
-		inArray = HighchartsAdapter.inArray,
+		inArray = Highcharts.inArray,
 		splat = Highcharts.splat,
 		SeriesBuilder;
 	

@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-11-11)
+ * @license Highcharts JS v4.1.9-modified (2015-11-17)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -774,7 +774,7 @@ var arrayMin = Highcharts.arrayMin,
                 higherPath;
 
             // Remove nulls from low segment
-            lowSegment = HighchartsAdapter.grep(segment, function (point) {
+            lowSegment = Highcharts.grep(segment, function (point) {
                 return point.plotLow !== null;
             });
 
