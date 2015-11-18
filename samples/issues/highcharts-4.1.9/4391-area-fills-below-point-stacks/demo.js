@@ -1,4 +1,3 @@
-
 $(function () {
     $('#container').highcharts({
         chart: {
@@ -73,7 +72,7 @@ $(function () {
             }, {
                 x: 2,
                 y: 12
-            }],
+            }]
         }]
     });
 });

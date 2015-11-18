@@ -293,10 +293,14 @@ Series.prototype.setStackedPoints = function () {
 
 		// If the StackItem doesn't exist, create it first
 		stack = stacks[key][x];
-		//stack.points[pointKey] = [stack.cum || stackThreshold];
 		stack.points[pointKey] = [pick(stack.cum, stackThreshold)];
 		stack.touched = yAxis.stacksTouched;
 
+		// In area charts, if there are multiple points on the same X value, let the 
+		// area fill the full span of those points
+		if (stackIndicator.index > 0 && series.singleStacks === false) {
+			stack.points[pointKey][0] = stack.points[series.index + ',' + x + ',0'][0];
+		}
 
 		// Add value to the stack total
 		if (stacking === 'percent') {

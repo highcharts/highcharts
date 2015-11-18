@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.9-modified (2015-11-16)
+ * @license Highstock JS v2.1.9-modified (2015-11-18)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -15362,10 +15362,14 @@
 
             // If the StackItem doesn't exist, create it first
             stack = stacks[key][x];
-            //stack.points[pointKey] = [stack.cum || stackThreshold];
             stack.points[pointKey] = [pick(stack.cum, stackThreshold)];
             stack.touched = yAxis.stacksTouched;
 
+            // In area charts, if there are multiple points on the same X value, let the 
+            // area fill the full span of those points
+            if (stackIndicator.index > 0 && series.singleStacks === false) {
+                stack.points[pointKey][0] = stack.points[series.index + ',' + x + ',0'][0];
+            }
 
             // Add value to the stack total
             if (stacking === 'percent') {
@@ -16005,6 +16009,7 @@
      */
     var AreaSeries = extendClass(Series, {
         type: 'area',
+        singleStacks: false,
         /**
          * For stacks, don't split segments on null values. Instead, draw null values with
          * no marker. Also insert dummy points for any X position that exists in other series
@@ -19641,7 +19646,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v2.1.9-modified (2015-11-16)
+     * Highstock JS v2.1.9-modified (2015-11-18)
      * Highcharts Broken Axis module
      * 
      * Author: Stephane Vanraes, Torstein Honsi
