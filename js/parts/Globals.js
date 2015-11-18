@@ -1,7 +1,7 @@
 // encapsulated variables
 var UNDEFINED,
-	doc = document,
-	win = window,
+	win = w || window,
+	doc = win.document,
 	math = Math,
 	mathRound = math.round,
 	mathFloor = math.floor,

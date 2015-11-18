@@ -2,18 +2,28 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.9-modified (2015-11-17)
+ * @license Highstock JS v2.1.9-modified (2015-11-18)
  *
  * (c) 2009-2014 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 
-(function () {
+(function (root, factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = root.document ? 
+        factory(root) :
+        function (w) {
+            return factory(w);
+        };
+    } else {
+        root.Highcharts = factory();
+    }
+}(typeof window !== 'undefined' ? window : this, function (w) {
 // encapsulated variables
     var UNDEFINED,
-        doc = document,
-        win = window,
+        win = w || window,
+        doc = win.document,
         math = Math,
         mathRound = math.round,
         mathFloor = math.floor,
@@ -19665,7 +19675,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v2.1.9-modified (2015-11-17)
+     * Highstock JS v2.1.9-modified (2015-11-18)
      * Highcharts Broken Axis module
      * 
      * Author: Stephane Vanraes, Torstein Honsi
@@ -23918,5 +23928,6 @@
         product: PRODUCT,
         version: VERSION
     });
-
-}());
+    
+    return Highcharts;
+}));

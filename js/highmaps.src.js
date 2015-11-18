@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-11-17)
+ * @license Highmaps JS v1.1.9-modified (2015-11-18)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -7,12 +7,21 @@
  */
 
 /*eslint no-unused-vars: 0 */ // @todo: Not needed in HC5
-(function () {
-
+(function (root, factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = root.document ? 
+        factory(root) :
+        function (w) {
+            return factory(w);
+        };
+    } else {
+        root.Highcharts = factory();
+    }
+}(typeof window !== 'undefined' ? window : this, function (w) {
 // encapsulated variables
     var UNDEFINED,
-        doc = document,
-        win = window,
+        win = w || window,
+        doc = win.document,
         math = Math,
         mathRound = math.round,
         mathFloor = math.floor,
@@ -20025,5 +20034,6 @@
         product: PRODUCT,
         version: VERSION
     });
-
-}());
+    
+    return Highcharts;
+}));
