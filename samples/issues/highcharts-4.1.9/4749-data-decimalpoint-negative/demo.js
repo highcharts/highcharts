@@ -1,79 +1,29 @@
 
 $(function () {
-    $('#container').highcharts({
-        chart: {
-            type: "area"
-        },
-        title: {
-            text: 'Stacking multiple points on same X'
-        },
-        yAxis: {
-            type: "linear",
-            reversedStacks: false,
-            min: 0,
-            minTickInterval: 1,
-            allowDecimals: false,
-            title: {
-                text: 'Counts'
+    QUnit.test("Data module with decimapPoint and negative numbers", function (assert) {
+        var chart = $("#container").highcharts({
+            data: {
+                table: 'datatable',
+                decimalPoint: ','
+            },
+            chart: {
+                type: 'column'
             }
-        },
-        plotOptions: {
-            area: {
-                fillOpacity: 0.1,
-                stacking: "normal",
-                marker: {
-                    enabled: true
-                }
-            }
-        },
-        series: [{
-            name: "Series 01",
-            data: [{
-                x: 0,
-                y: 0
-            }, {
-                x: 0,
-                y: 12
-            }, {
-                x: 1,
-                y: 1
-            }, {
-                x: 1,
-                y: 0
-            }, {
-                x: 1,
-                y: 5
-            }, {
-                x: 2,
-                y: 9
-            }, {
-                x: 2,
-                y: 2
-            }, ],
-        }, {
-            name: "Series 02",
-            data: [{
-                x: 0,
-                y: 2
-            }, {
-                x: 0,
-                y: 2
-            }, {
-                x: 1,
-                y: 11
-            }, {
-                x: 1,
-                y: 10
-            }, {
-                x: 1,
-                y: 0
-            }, {
-                x: 2,
-                y: 19
-            }, {
-                x: 2,
-                y: 12
-            }],
-        }]
+        }).highcharts();
+
+        assert.equal(
+            chart.series[0].points.map(function (point) {
+                return point.y;
+            }).join(','),
+            '-3.4,-1.2,5.1,-1.1,-3.12',
+            'Series 1 correct data'
+        );
+        assert.equal(
+            chart.series[1].points.map(function (point) {
+                return point.y;
+            }).join(','),
+            '-4.24,-1.5,11.1,-1.1,-2.9',
+            'Series 2 correct data'
+        );
     });
 });
