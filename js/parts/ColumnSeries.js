@@ -129,9 +129,7 @@ var ColumnSeries = extendClass(Series, {
 				pick(options.pointWidth, pointOffsetWidth * (1 - 2 * options.pointPadding))
 			),
 			pointPadding = (pointOffsetWidth - pointWidth) / 2,
-			colIndex = (reversedXAxis ?
-				columnCount - (series.columnIndex || 0) : // #1251
-				series.columnIndex) || 0,
+			colIndex = (series.columnIndex || 0) + (reversedXAxis ? 1 : 0), // #1251, #3737
 			pointXOffset = pointPadding + (groupPadding + colIndex *
 				pointOffsetWidth - (categoryWidth / 2)) *
 				(reversedXAxis ? -1 : 1);

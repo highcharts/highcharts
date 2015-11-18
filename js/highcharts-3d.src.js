@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-11-16)
+ * @license Highcharts JS v4.1.9-modified (2015-11-18)
  *
  * 3D features for Highcharts JS
  *
@@ -1239,7 +1239,12 @@
                         break;
                     }
                 }
-                z = (stacks.totalStacks * 10) - (10 * (stacks.totalStacks - stacks[stack].position)) - (reversedStacks ? i : -i); // #4369
+                z = (10 * (stacks.totalStacks - stacks[stack].position)) - (reversedStacks ? i : -i); // #4369
+
+                // In case when axis is reversed, columns are also reversed inside the group (#3737)
+                if (!this.xAxis.reversed) {
+                    z = (stacks.totalStacks * 10) - z;
+                }
             }
 
             seriesOptions.zIndex = z;

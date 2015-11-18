@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-11-16)
+ * @license Highmaps JS v1.1.9-modified (2015-11-18)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -15230,9 +15230,7 @@
                     pick(options.pointWidth, pointOffsetWidth * (1 - 2 * options.pointPadding))
                 ),
                 pointPadding = (pointOffsetWidth - pointWidth) / 2,
-                colIndex = (reversedXAxis ?
-                    columnCount - (series.columnIndex || 0) : // #1251
-                    series.columnIndex) || 0,
+                colIndex = (series.columnIndex || 0) + (reversedXAxis ? 1 : 0), // #1251, #3737
                 pointXOffset = pointPadding + (groupPadding + colIndex *
                     pointOffsetWidth - (categoryWidth / 2)) *
                     (reversedXAxis ? -1 : 1);
