@@ -574,6 +574,17 @@
 					params,
 					msg;
 				try {
+					// for server health validation
+					if (request.url == "/status") {						
+						response.statusCode = 200;
+						response.headers = {
+							'Content-Type': 'text/html',
+							'Content-Length': 2
+						};
+						response.write('OK');
+						response.close();
+						return;
+					}
 					params = JSON.parse(jsonStr);
 					if (params.status) {
 						// for server health validation
@@ -583,6 +594,10 @@
 					} else {
 						render(params, function (result) {
 							response.statusCode = 200;
+							response.headers = {
+    							'Content-Type': 'text/html',
+    							'Content-Length': result.length
+							};
 							response.write(result);
 							response.close();
 						});
