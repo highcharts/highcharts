@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-11-16)
+ * @license Highcharts JS v4.1.9-modified (2015-11-20)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -14182,6 +14182,7 @@
 
                         if (graphic) { // update
                             graphic[isInside ? 'show' : 'hide'](true) // Since the marker group isn't clipped, each individual marker must be toggled
+                                .attr(pointAttr) // #4759
                                 .animate(extend({
                                     x: plotX - radius,
                                     y: plotY - radius
