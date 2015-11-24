@@ -6,11 +6,20 @@
  * License: MIT License
  */
 
-
-var HighchartsAdapter = (function () {
+(function (root, factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = root.document ? 
+        factory(root) :
+        function (w) {
+            return factory(w);
+        };
+    } else {
+        root.HighchartsAdapter = factory();
+    }
+}(typeof window !== 'undefined' ? window : this, function (w) {
 
 var UNDEFINED,
-    win = window,
+    win = w || window,
 	doc = win.document,
 	emptyArray = [],
 	_getStyle,
@@ -621,4 +630,4 @@ return {
 		return Array.prototype.forEach.call(arr, fn);
 	}
 };
-}());
+}));
