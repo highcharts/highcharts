@@ -67,51 +67,51 @@ $(function () {
             "value": 15
         },
         {
-            "hc-key": "so",
+            "hc-key": "gq",
             "value": 16
         },
         {
-            "hc-key": "sx",
+            "hc-key": "mu",
             "value": 17
         },
         {
-            "hc-key": "gq",
+            "hc-key": "sn",
             "value": 18
         },
         {
-            "hc-key": "mu",
+            "hc-key": "km",
             "value": 19
         },
         {
-            "hc-key": "sn",
+            "hc-key": "et",
             "value": 20
         },
         {
-            "hc-key": "km",
+            "hc-key": "ci",
             "value": 21
         },
         {
-            "hc-key": "et",
+            "hc-key": "gh",
             "value": 22
         },
         {
-            "hc-key": "ci",
+            "hc-key": "zm",
             "value": 23
         },
         {
-            "hc-key": "gh",
+            "hc-key": "na",
             "value": 24
         },
         {
-            "hc-key": "zm",
+            "hc-key": "rw",
             "value": 25
         },
         {
-            "hc-key": "na",
+            "hc-key": "sx",
             "value": 26
         },
         {
-            "hc-key": "rw",
+            "hc-key": "so",
             "value": 27
         },
         {
@@ -139,91 +139,91 @@ $(function () {
             "value": 33
         },
         {
-            "hc-key": "ss",
+            "hc-key": "ne",
             "value": 34
         },
         {
-            "hc-key": "ne",
+            "hc-key": "ly",
             "value": 35
         },
         {
-            "hc-key": "ly",
+            "hc-key": "lr",
             "value": 36
         },
         {
-            "hc-key": "lr",
+            "hc-key": "mw",
             "value": 37
         },
         {
-            "hc-key": "mw",
+            "hc-key": "gm",
             "value": 38
         },
         {
-            "hc-key": "gm",
+            "hc-key": "td",
             "value": 39
         },
         {
-            "hc-key": "td",
+            "hc-key": "ga",
             "value": 40
         },
         {
-            "hc-key": "ga",
+            "hc-key": "dj",
             "value": 41
         },
         {
-            "hc-key": "dj",
+            "hc-key": "bi",
             "value": 42
         },
         {
-            "hc-key": "bi",
+            "hc-key": "ao",
             "value": 43
         },
         {
-            "hc-key": "ao",
+            "hc-key": "gn",
             "value": 44
         },
         {
-            "hc-key": "ml",
+            "hc-key": "zw",
             "value": 45
         },
         {
-            "hc-key": "gn",
+            "hc-key": "za",
             "value": 46
         },
         {
-            "hc-key": "zw",
+            "hc-key": "mz",
             "value": 47
         },
         {
-            "hc-key": "za",
+            "hc-key": "sz",
             "value": 48
         },
         {
-            "hc-key": "mz",
+            "hc-key": "ml",
             "value": 49
         },
         {
-            "hc-key": "sz",
+            "hc-key": "bw",
             "value": 50
         },
         {
-            "hc-key": "bw",
+            "hc-key": "sd",
             "value": 51
         },
         {
-            "hc-key": "sd",
+            "hc-key": "ma",
             "value": 52
         },
         {
-            "hc-key": "ma",
+            "hc-key": "eg",
             "value": 53
         },
         {
-            "hc-key": "eg",
+            "hc-key": "ls",
             "value": 54
         },
         {
-            "hc-key": "ls",
+            "hc-key": "ss",
             "value": 55
         },
         {
@@ -240,7 +240,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/custom/africa.js">Africa</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/custom/africa.js">Africa</a>'
         },
 
         mapNavigation: {

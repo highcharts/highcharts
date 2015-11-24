@@ -1,0 +1,16 @@
+extends:
+    "./tools/eslint-default-config.yml"
+
+rules:
+    camelcase: [2, {"properties": "always"}]
+    comma-dangle: [2, "never"]
+    dot-location: [2, "property"]
+    no-alert: 2
+    no-console: 2
+    no-debugger: 2
+    no-else-return: 2
+    object-curly-spacing: [2, "always"]
+    operator-linebreak: [2, "after"]
+    space-before-function-paren: [2, {"anonymous": "always", "named": "never"}] # JSLint style
+    strict: 0
+    quotes: [2, "single"]

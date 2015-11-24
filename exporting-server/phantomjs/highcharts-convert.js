@@ -135,18 +135,21 @@
 			convert,
 			exit,
 			interval,
-            counter,
-            imagesLoaded = false;
+			counter,
+			imagesLoaded = false;
 
 		messages.optionsParsed = 'Highcharts.options.parsed';
 		messages.callbackParsed = 'Highcharts.cb.parsed';
 		
 		window.optionsParsed = false;
 		window.callbackParsed = false;
-        
+		
+		//security measures, for not allowing loading iframes
+		page.navigationLocked = true;
+		
 		page.onConsoleMessage = function (msg) {
 			console.log(msg);
-            
+			
 			/*
 			 * Ugly hack, but only way to get messages out of the 'page.evaluate()'
 			 * sandbox. If any, please contribute with improvements on this!
@@ -198,15 +201,16 @@
 				height: clipheight
 			};
 
-			/* for pdf we need a bit more paperspace in some cases for example (w:600,h:400), I don't know why.*/
 			if (outType === 'pdf') {
-				// changed to a multiplication with 1.333 to correct systems dpi setting
-				clipwidth = clipwidth * dpiCorrection;
-				clipheight = clipheight * dpiCorrection;
 				// redefine the viewport
 				page.viewportSize = { width: clipwidth, height: clipheight};
-				// make the paper a bit larger than the viewport
-				page.paperSize = { width: clipwidth + 2 , height: clipheight + 2 };
+
+				// simulate zooming to get the right zoomFactor. Using page.zoomFactor doesn't work anymore, see issue here https://github.com/ariya/phantomjs/issues/12685
+				page.evaluate(function(zoom) {
+					document.getElementsByTagName('body')[0].style.zoom = zoom;
+				}, page.zoomFactor);
+
+				page.paperSize = { width: clipwidth, height: clipheight};
 			}
 		};
 
@@ -224,47 +228,54 @@
 			if (outType === 'pdf' || output !== undefined || !serverMode) {
 				if (output === undefined) {
 					// in case of pdf files
-					output = config.tmpDir + '/chart.' + outType;
+					output = 'chart.' + outType;
 				}
-				page.render(output);
+
+				if (config.tmpDir) {
+					// assume only output is a filename, not a path.
+					page.render(config.tmpDir + '/' + output);
+				} else {
+					page.render(output)
+				}
+
 				exit(output);
 			} else {
 				base64 = page.renderBase64(outType);
 				exit(base64);
 			}
 		};
-        
-        function decrementImgCounter() {
-            counter -= 1;
-            if (counter < 1) {
-                imagesLoaded = true;
-            }
-        }
-        
-        function loadImages(imgUrls) {
-            var i, img;
-            counter = imgUrls.length;
-            for (i = 0; i < imgUrls.length; i += 1) {                    
-                img = new Image();                    
-                /* onload decrements the counter, also when error (perhaps 404), don't wait for this image to be loaded */
-                img.onload = img.onerror = decrementImgCounter;                    
-                /* force loading of images by setting the src attr.*/                    
-                img.src = imgUrls[i];
-            }
-        }
-        
+		
+		function decrementImgCounter() {
+			counter -= 1;
+			if (counter < 1) {
+				imagesLoaded = true;
+			}
+		}
+		
+		function loadImages(imgUrls) {
+			var i, img;
+			counter = imgUrls.length;
+			for (i = 0; i < imgUrls.length; i += 1) {                    
+				img = new Image();                    
+				/* onload decrements the counter, also when error (perhaps 404), don't wait for this image to be loaded */
+				img.onload = img.onerror = decrementImgCounter;                    
+				/* force loading of images by setting the src attr.*/                    
+				img.src = imgUrls[i];
+			}
+		}
+		
 		renderSVG = function (svg) {
 			var svgFile;
 			// From this point we have 'loaded' or 'created' a SVG
-            
-            // Do we have to load images?
-            if (svg.imgUrls.length > 0) {
-                loadImages(svg.imgUrls);
-            } else  {
-                 // no images present, no loading, no waiting
-                imagesLoaded = true;
-            }
-            
+			
+			// Do we have to load images?
+			if (svg.imgUrls.length > 0) {
+				loadImages(svg.imgUrls);
+			} else  {
+				 // no images present, no loading, no waiting
+				imagesLoaded = true;
+			}
+			
 			try {
 				if (outType.toLowerCase() === 'svg') {
 					// output svg
@@ -274,6 +285,9 @@
 
 					if (output !== undefined) {
 						// write the file
+						if (config.tmpDir) {
+							output = config.tmpDir + '/' + output;
+						}
 						svgFile = fs.open(output, "w");
 						svgFile.write(svg);
 						svgFile.close();
@@ -319,7 +333,7 @@
 			if (outputType === 'jpeg') {
 				document.body.style.backgroundColor = 'white';
 			}
-            
+			
 			nodes = document.querySelectorAll('*[stroke-opacity]');
 
 			for (nodeIter = 0; nodeIter < nodes.length; nodeIter += 1) {
@@ -330,19 +344,19 @@
 			}
 
 			svgElem = document.getElementsByTagName('svg')[0];
-            
-            imgs = document.getElementsByTagName('image');
-            imgUrls = [];
-            
-            for (imgIndex = 0; imgIndex < imgs.length; imgIndex = imgIndex + 1) {
-                imgUrls.push(imgs[imgIndex].href.baseVal);
-            }           
+			
+			imgs = document.getElementsByTagName('image');
+			imgUrls = [];
+			
+			for (imgIndex = 0; imgIndex < imgs.length; imgIndex = imgIndex + 1) {
+				imgUrls.push(imgs[imgIndex].href.baseVal);
+			}           
 			
 			return {
-			    html: document.body.innerHTML,
-			    width: svgElem.getAttribute("width"),
-			    height: svgElem.getAttribute("height"),
-                imgUrls: imgUrls
+				html: document.body.innerHTML,
+				width: svgElem.getAttribute("width"),
+				height: svgElem.getAttribute("height"),
+				imgUrls: imgUrls
 			};
 		};
 
@@ -350,7 +364,7 @@
 
 			var $container, chart, nodes, nodeIter, elem, opacity, imgIndex, imgs, imgUrls;
 
-            // dynamic script insertion
+			// dynamic script insertion
 			function loadScript(varStr, codeStr) {
 				var $script = $('<script>').attr('type', 'text/javascript');
 				$script.html('var ' + varStr + ' = ' + codeStr);
@@ -463,19 +477,19 @@
 				elem.removeAttribute('stroke-opacity');
 				elem.setAttribute('opacity', opacity);
 			}
-            
-            imgs = document.getElementsByTagName('image');
-            imgUrls = [];
-            
-            for (imgIndex = 0; imgIndex < imgs.length; imgIndex = imgIndex + 1) {
-                imgUrls.push(imgs[imgIndex].href.baseVal);
-            }
-            
+			
+			imgs = document.getElementsByTagName('image');
+			imgUrls = [];
+			
+			for (imgIndex = 0; imgIndex < imgs.length; imgIndex = imgIndex + 1) {
+				imgUrls.push(imgs[imgIndex].href.baseVal);
+			}
+			
 			return {				
 				html: $('div.highcharts-container')[0].innerHTML,
 				width: chart.chartWidth,
 				height: chart.chartHeight,
-                imgUrls: imgUrls
+				imgUrls: imgUrls
 			};
 		};
 
@@ -523,7 +537,7 @@
 					 if (constr === 'Map') {
 						 jsFiles = config.files.highmaps;
 					 } else if (constr === 'StockChart')
-					    jsFiles = config.files.highstock;
+						jsFiles = config.files.highstock;
 					 else {
 						jsFiles = config.files.highcharts;
 					}
@@ -591,22 +605,20 @@
 
 	args = mapCLArguments();
 
-	// set tmpDir, for output temporary files.
-	if (args.tmpdir === undefined) {
-		config.tmpDir = fs.workingDirectory + '/tmp';
-	} else {
-		config.tmpDir = args.tmpdir;
-	}
+	// set tmpDir, for outputting temporary files.
+	if (args.tmpdir !== undefined) {
 
-	// exists tmpDir and is it writable?
-	if (!fs.exists(config.tmpDir)) {
-		try{
-			fs.makeDirectory(config.tmpDir);
-		} catch (e) {
-			console.log('ERROR: Cannot create temp directory for ' + config.tmpDir);
+		config.tmpDir = args.tmpdir;
+
+		// Make sure tmpDir exist and is writable
+		if (!fs.exists(config.tmpDir)) {
+			try{
+				fs.makeDirectory(config.tmpDir);
+			} catch (e) {
+				console.log('ERROR: Cannot create temp directory for ' + config.tmpDir);
+			}
 		}
 	}
-
 
 	if (args.host !== undefined && args.port !== undefined) {
 		startServer(args.host, args.port);

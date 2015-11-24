@@ -10,7 +10,7 @@ $(function () {
         chart: {
             width: 600
         },
-        
+
         title: {
             text: 'Monthly ticks'
         },
@@ -23,7 +23,7 @@ $(function () {
             startOnTick: true,
             endOnTick: true
         },
-        
+
         series: [{
             data: [{
                 x: Date.UTC(2014, 0, 1),

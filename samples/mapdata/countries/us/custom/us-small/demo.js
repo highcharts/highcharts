@@ -75,123 +75,123 @@ $(function () {
             "value": 17
         },
         {
-            "hc-key": "us-az",
+            "hc-key": "us-ar",
             "value": 18
         },
         {
-            "hc-key": "us-ar",
+            "hc-key": "us-tx",
             "value": 19
         },
         {
-            "hc-key": "us-tx",
+            "hc-key": "us-ri",
             "value": 20
         },
         {
-            "hc-key": "us-ri",
+            "hc-key": "us-al",
             "value": 21
         },
         {
-            "hc-key": "us-al",
+            "hc-key": "us-ms",
             "value": 22
         },
         {
-            "hc-key": "us-ga",
+            "hc-key": "us-nc",
             "value": 23
         },
         {
-            "hc-key": "us-ms",
+            "hc-key": "us-va",
             "value": 24
         },
         {
-            "hc-key": "us-sc",
+            "hc-key": "us-ia",
             "value": 25
         },
         {
-            "hc-key": "us-nc",
+            "hc-key": "us-md",
             "value": 26
         },
         {
-            "hc-key": "us-va",
+            "hc-key": "us-de",
             "value": 27
         },
         {
-            "hc-key": "us-ia",
+            "hc-key": "us-pa",
             "value": 28
         },
         {
-            "hc-key": "us-md",
+            "hc-key": "us-nj",
             "value": 29
         },
         {
-            "hc-key": "us-de",
+            "hc-key": "us-ny",
             "value": 30
         },
         {
-            "hc-key": "us-nj",
+            "hc-key": "us-id",
             "value": 31
         },
         {
-            "hc-key": "us-pa",
+            "hc-key": "us-sd",
             "value": 32
         },
         {
-            "hc-key": "us-ny",
+            "hc-key": "us-ct",
             "value": 33
         },
         {
-            "hc-key": "us-id",
+            "hc-key": "us-nh",
             "value": 34
         },
         {
-            "hc-key": "us-sd",
+            "hc-key": "us-ky",
             "value": 35
         },
         {
-            "hc-key": "us-ct",
+            "hc-key": "us-oh",
             "value": 36
         },
         {
-            "hc-key": "us-nh",
+            "hc-key": "us-tn",
             "value": 37
         },
         {
-            "hc-key": "us-ky",
+            "hc-key": "us-wv",
             "value": 38
         },
         {
-            "hc-key": "us-oh",
+            "hc-key": "us-dc",
             "value": 39
         },
         {
-            "hc-key": "us-tn",
+            "hc-key": "us-la",
             "value": 40
         },
         {
-            "hc-key": "us-wv",
+            "hc-key": "us-fl",
             "value": 41
         },
         {
-            "hc-key": "us-dc",
+            "hc-key": "us-ga",
             "value": 42
         },
         {
-            "hc-key": "us-la",
+            "hc-key": "us-sc",
             "value": 43
         },
         {
-            "hc-key": "us-fl",
+            "hc-key": "us-mn",
             "value": 44
         },
         {
-            "hc-key": "us-mn",
+            "hc-key": "us-mt",
             "value": 45
         },
         {
-            "hc-key": "us-mt",
+            "hc-key": "us-nd",
             "value": 46
         },
         {
-            "hc-key": "us-nd",
+            "hc-key": "us-az",
             "value": 47
         },
         {
@@ -246,7 +246,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-small.js">United States of America, small</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-small.js">United States of America, small</a>'
         },
 
         mapNavigation: {

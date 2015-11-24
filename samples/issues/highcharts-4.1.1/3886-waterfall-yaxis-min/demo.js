@@ -1,4 +1,4 @@
-$(function() {
+$(function () {
     $('#container').highcharts({
         "chart": {
             "type": "waterfall"
@@ -11,7 +11,7 @@ $(function() {
         "yAxis": {
             "min": 4
         },
-        
+
         "series": [{
             "data": [{
                 "y": 6

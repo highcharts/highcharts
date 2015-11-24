@@ -14,12 +14,12 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Highcharts samples</title>
 
-		<script type='text/javascript' src='//code.jquery.com/jquery-1.9.1.js'></script>
-  		<script type="text/javascript" src="//code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
-  		<link rel="stylesheet" type="text/css" href="//code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css"/>
+		<script type='text/javascript' src='http://code.jquery.com/jquery-1.9.1.js'></script>
+  		<script type="text/javascript" src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+  		<link rel="stylesheet" type="text/css" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css"/>
   		<link rel="stylesheet" type="text/css" href="style.css"/>
 
-		<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+		<link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 		
 		<script>
 			var diffThreshold = 0;
@@ -35,11 +35,16 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 				$('#batch-stop').toggle();
 			}
 
+			function countFails() {
+				$('#count-fails').html('(' + ($('#main-nav li').length - 
+					$('#main-nav li.identical, #main-nav li.approved').length) + ')');
+			}
 
 			$(function () {
 
 				$(window).bind('keydown', parent.keyDown);
 
+				
 				$("#batch-compare").click(runBatch);
 
 				$("#batch-stop").click(function() {
@@ -91,6 +96,8 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 				});
 
 				$('#main-nav').css('margin-top', $('#top-nav').height());
+
+				countFails();
 				
 			});
 			
@@ -166,6 +173,9 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 				width: 100%;
 				z-index: 10;
 			}
+			#top-nav .text {
+				padding-top: 0.5em;
+			}
 			#top-nav .text a {
 				color: white;
 				text-decoration: underline;
@@ -238,6 +248,7 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 		<a class="button" id="fails-only" title="Show only fails">
 			<i class="icon-filter"></i>
 			Fails only
+			<span id="count-fails"></span>
 		</a>
 
 		<div class="text">
@@ -258,7 +269,7 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 		Showing only failed samples. Click "Fails only" again to update. Click "Reload" to release filter.
 	</div>
 	<?php
-	$products = array('highcharts', 'maps', 'stock', 'issues');
+	$products = array('unit-tests', 'highcharts', 'maps', 'stock', 'issues');
 	$samplesDir = dirname(__FILE__). '/../../samples/';
 	
 
@@ -293,7 +304,6 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 								if (strstr($yaml, 'requiresManualTesting: true')) {
 									$batchClass = '';
 									$compareClass = 'manual';
-									$suffix = ' <acronym title="Requires manual testing">[m]</acronym>';
 								}
 
 								// Display diff from previous comparison
@@ -314,7 +324,16 @@ $compare = @json_decode(file_get_contents('temp/compare.json'));
 									} else {
 										$compareClass = 'identical';
 									}
-								} 
+								}
+
+								// No symbol for manual tests
+								if ($compareClass == 'manual') {
+									$dissIndex = "
+										<a title='Requires manual testing' class='dissimilarity-index' href='compare-view.php?path=$path&amp;i=$i' target='main'>
+											<i class='icon-hand-left'></i>
+										</a>
+									";
+								}
 
 								// Comments
 								if (isset($compare->$path->comment)) {

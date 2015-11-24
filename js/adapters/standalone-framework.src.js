@@ -7,14 +7,12 @@
  */
 
 
-/*global Highcharts */
 var HighchartsAdapter = (function () {
 
 var UNDEFINED,
 	doc = document,
 	emptyArray = [],
 	timers = [],
-	timerId,
 	animSetters = {},
 	Fx;
 
@@ -71,113 +69,111 @@ function augment(obj) {
 	}
 
 	if (!obj.HCExtended) {
-		Highcharts.extend(obj, {
-			HCExtended: true,
+		obj.HCExtended = true;
 
-			HCEvents: {},
+		obj.HCEvents = {};
 
-			bind: function (name, fn) {
-				var el = this,
-					events = this.HCEvents,
-					wrappedFn;
+		obj.bind = function (name, fn) {
+			var el = this,
+				events = this.HCEvents,
+				wrappedFn;
 
-				// handle DOM events in modern browsers
-				if (el.addEventListener) {
-					el.addEventListener(name, fn, false);
+			// handle DOM events in modern browsers
+			if (el.addEventListener) {
+				el.addEventListener(name, fn, false);
 
-				// handle old IE implementation
-				} else if (el.attachEvent) {
-					
-					wrappedFn = function (e) {
-						e.target = e.srcElement || window; // #2820
-						fn.call(el, e);
-					};
+			// handle old IE implementation
+			} else if (el.attachEvent) {
+				
+				wrappedFn = function (e) {
+					e.target = e.srcElement || window; // #2820
+					fn.call(el, e);
+				};
 
-					if (!el.HCProxiedMethods) {
-						el.HCProxiedMethods = {};
+				if (!el.HCProxiedMethods) {
+					el.HCProxiedMethods = {};
+				}
+
+				// link wrapped fn with original fn, so we can get this in removeEvent
+				el.HCProxiedMethods[fn.toString()] = wrappedFn;
+
+				el.attachEvent('on' + name, wrappedFn);
+			}
+
+
+			if (events[name] === UNDEFINED) {
+				events[name] = [];
+			}
+
+			events[name].push(fn);
+		};
+
+		obj.unbind = function (name, fn) {
+			var events,
+				index;
+
+			if (name) {
+				events = this.HCEvents[name] || [];
+				if (fn) {
+					index = HighchartsAdapter.inArray(fn, events);
+					if (index > -1) {
+						events.splice(index, 1);
+						this.HCEvents[name] = events;
 					}
-
-					// link wrapped fn with original fn, so we can get this in removeEvent
-					el.HCProxiedMethods[fn.toString()] = wrappedFn;
-
-					el.attachEvent('on' + name, wrappedFn);
-				}
-
-
-				if (events[name] === UNDEFINED) {
-					events[name] = [];
-				}
-
-				events[name].push(fn);
-			},
-
-			unbind: function (name, fn) {
-				var events,
-					index;
-
-				if (name) {
-					events = this.HCEvents[name] || [];
-					if (fn) {
-						index = HighchartsAdapter.inArray(fn, events);
-						if (index > -1) {
-							events.splice(index, 1);
-							this.HCEvents[name] = events;
-						}
-						if (this.removeEventListener) {
-							removeOneEvent(this, name, fn);
-						} else if (this.attachEvent) {
-							IERemoveOneEvent(this, name, fn);
-						}
-					} else {
-						removeAllEvents(this, name);
-						this.HCEvents[name] = [];
+					if (this.removeEventListener) {
+						removeOneEvent(this, name, fn);
+					} else if (this.attachEvent) {
+						IERemoveOneEvent(this, name, fn);
 					}
 				} else {
-					removeAllEvents(this);
-					this.HCEvents = {};
+					removeAllEvents(this, name);
+					this.HCEvents[name] = [];
 				}
-			},
+			} else {
+				removeAllEvents(this);
+				this.HCEvents = {};
+			}
+		};
 
-			trigger: function (name, args) {
-				var events = this.HCEvents[name] || [],
-					target = this,
-					len = events.length,
-					i,
-					preventDefault,
-					fn;
+		obj.trigger = function (name, args) {
+			var events = this.HCEvents[name] || [],
+				target = this,
+				len = events.length,
+				i,
+				preventDefault,
+				fn;
 
-				// Attach a simple preventDefault function to skip default handler if called
-				preventDefault = function () {
-					args.defaultPrevented = true;
-				};
+			// Attach a simple preventDefault function to skip default handler if called
+			preventDefault = function () {
+				args.defaultPrevented = true;
+			};
+			
+			for (i = 0; i < len; i++) {
+				fn = events[i];
+
+				// args is never null here
+				if (args.stopped) {
+					return;
+				}
+
+				args.preventDefault = preventDefault;
+				args.target = target;
+
+				// If the type is not set, we're running a custom event (#2297). If it is set,
+				// we're running a browser event, and setting it will cause en error in
+				// IE8 (#2465).
+				if (!args.type) {
+					args.type = name;
+				}
 				
-				for (i = 0; i < len; i++) {
-					fn = events[i];
 
-					// args is never null here
-					if (args.stopped) {
-						return;
-					}
-
-					args.preventDefault = preventDefault;
-					args.target = target;
-
-					// If the type is not set, we're running a custom event (#2297). If it is set,
-					// we're running a browser event, and setting it will cause en error in
-					// IE8 (#2465).
-					if (!args.type) {
-						args.type = name;
-					}
-					
-
-					
-					// If the event handler return false, prevent the default handler from executing
-					if (fn.call(this, args) === false) {
-						args.preventDefault();
-					}
+				
+				// If the event handler return false, prevent the default handler from executing
+				if (fn.call(this, args) === false) {
+					args.preventDefault();
 				}
 			}
-		});
+		};
 	}
 
 	return obj;
@@ -200,23 +196,24 @@ return {
 				var val;
 				if (el.style[prop]) {
 					return el.style[prop];
-				} else {
-					if (prop === 'opacity') {
-						prop = 'filter';
-					}
-					/*jslint unparam: true*/
-					val = el.currentStyle[prop.replace(/\-(\w)/g, function (a, b) { return b.toUpperCase(); })];
-					if (prop === 'filter') {
-						val = val.replace(
-							/alpha\(opacity=([0-9]+)\)/, 
-							function (a, b) { 
-								return b / 100; 
-							}
-						);
-					}
-					/*jslint unparam: false*/
-					return val === '' ? 1 : val;
-				} 
+				}
+				if (prop === 'opacity') {
+					prop = 'filter';
+				}
+				
+				val = el.currentStyle[prop.replace(/\-(\w)/g, function (a, b) {
+					return b.toUpperCase();
+				})];
+				if (prop === 'filter') {
+					val = val.replace(
+						/alpha\(opacity=([0-9]+)\)/, 
+						function (a, b) { 
+							return b / 100; 
+						}
+					);
+				}
+				
+				return val === '' ? 1 : val;
 			};
 			this.adapterRun = function (elem, method) {
 				var alias = { width: 'clientWidth', height: 'clientHeight' }[method];
@@ -260,13 +257,13 @@ return {
 		}
 
 		if (!Array.prototype.filter) {
-			this.grep = function (elements, callback) {
+			this.grep = function (elements, fn) {
 				var ret = [],
 					i = 0,
 					length = elements.length;
 
 				for (; i < length; i++) {
-					if (!!callback(elements[i], i)) {
+					if (!!fn(elements[i], i)) {
 						ret.push(elements[i]);
 					}
 				}
@@ -292,7 +289,8 @@ return {
 				var styles,
 					paths = this.paths,
 					elem = this.elem,
-					elemelem = elem.element; // if destroyed, it is null
+					elemelem = elem.element,
+					prop; // if destroyed, it is null
 
 				// Animation setter defined from outside
 				if (animSetters[this.prop]) {
@@ -308,11 +306,13 @@ return {
 						elem.attr(this.prop, this.now);
 					}
 
-				// HTML styles
+				// HTML styles, raw HTML content like container size
 				} else {
 					styles = {};
 					styles[this.prop] = this.now + this.unit;
-					Highcharts.css(elem, styles);
+					for (prop in styles) {
+						elem.style[prop] = styles[prop];
+					}
 				}
 				
 				if (this.options.step) {
@@ -337,7 +337,7 @@ return {
 				t.elem = this.elem;
 
 				if (t() && timers.push(t) === 1) {
-					timerId = setInterval(function () {
+					t.timerId = setInterval(function () {
 						
 						for (i = 0; i < timers.length; i++) {
 							if (!timers[i]()) {
@@ -346,7 +346,7 @@ return {
 						}
 
 						if (!timers.length) {
-							clearInterval(timerId);
+							clearInterval(t.timerId);
 						}
 					}, 13);
 				}
@@ -360,7 +360,7 @@ return {
 					elem = this.elem,
 					i;
 				
-				if (elem.stopAnimation || (elem.attr && !elem.element)) { // #2616, element including flag is destroyed
+				if (elem.attr && !elem.element) { // #2616, element including flag is destroyed
 					ret = false;
 
 				} else if (gotoEnd || t >= options.duration + this.startTime) {
@@ -406,9 +406,8 @@ return {
 				fx,
 				args,
 				name,
+				key,
 				PX = 'px';
-
-			el.stopAnimation = false; // ready for new
 
 			if (typeof opt !== 'object' || opt === null) {
 				args = arguments;
@@ -422,7 +421,10 @@ return {
 				opt.duration = 400;
 			}
 			opt.easing = Math[opt.easing] || Math.easeInOutSine;
-			opt.curAnim = Highcharts.extend({}, prop);
+			opt.curAnim = {};
+			for (key in prop) {
+				opt.curAnim[key] = prop[key];
+			}
 			
 			for (name in prop) {
 				fx = new Fx(el, opt, name);
@@ -461,7 +463,8 @@ return {
 	 * Internal method to return CSS value for given element and property
 	 */
 	_getStyle: function (el, prop) {
-		return window.getComputedStyle(el, undefined).getPropertyValue(prop);
+		var style = window.getComputedStyle(el, undefined);
+		return style && style.getPropertyValue(prop);
 	},
 
 	/**
@@ -554,14 +557,17 @@ return {
 	 * Fire an event on a custom object
 	 */
 	fireEvent: function (el, type, eventArguments, defaultFunction) {
-		var e;
+		var e,
+			key;
 
 		if (doc.createEvent && (el.dispatchEvent || el.fireEvent)) {
 			e = doc.createEvent('Events');
 			e.initEvent(type, true, true);
 			e.target = el;
 
-			Highcharts.extend(e, eventArguments);
+			for (key in eventArguments) {
+				e[key] = eventArguments[key];
+			}
 
 			if (el.dispatchEvent) {
 				el.dispatchEvent(e);
@@ -592,7 +598,17 @@ return {
 	 * Stop running animation
 	 */
 	stop: function (el) {
-		el.stopAnimation = true;
+
+		var i = timers.length,
+			timer;
+
+		// Remove timers related to this element (#4519)
+		while (i--) {
+			timer = timers[i];
+			if (timer.elem === el) {
+				timers.splice(i, 1);
+			}
+		}
 	},
 
 	/**

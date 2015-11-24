@@ -5,7 +5,7 @@ $(function () {
             maxColor: Highcharts.getOptions().colors[0]
         },
         series: [{
-            type: "treemap",
+            type: 'treemap',
             layoutAlgorithm: 'squarified',
             data: [{
                 name: 'A',

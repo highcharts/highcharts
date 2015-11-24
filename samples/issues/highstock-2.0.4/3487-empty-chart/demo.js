@@ -1,7 +1,7 @@
 $(function () {
     $('#container').highcharts('StockChart', {
         navigator: {
-            adaptToUpdatedData: false,
+            adaptToUpdatedData: false
         },
         scrollbar: {
             enabled: false

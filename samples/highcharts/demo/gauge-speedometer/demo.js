@@ -94,22 +94,22 @@ $(function () {
         }]
 
     },
-        // Add some life
-        function (chart) {
-            if (!chart.renderer.forExport) {
-                setInterval(function () {
-                    var point = chart.series[0].points[0],
-                        newVal,
-                        inc = Math.round((Math.random() - 0.5) * 20);
+    // Add some life
+    function (chart) {
+        if (!chart.renderer.forExport) {
+            setInterval(function () {
+                var point = chart.series[0].points[0],
+                    newVal,
+                    inc = Math.round((Math.random() - 0.5) * 20);
 
-                    newVal = point.y + inc;
-                    if (newVal < 0 || newVal > 200) {
-                        newVal = point.y - inc;
-                    }
+                newVal = point.y + inc;
+                if (newVal < 0 || newVal > 200) {
+                    newVal = point.y - inc;
+                }
 
-                    point.update(newVal);
+                point.update(newVal);
 
-                }, 3000);
-            }
-        });
+            }, 3000);
+        }
+    });
 });

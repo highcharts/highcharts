@@ -123,7 +123,7 @@ $(function () {
                 formatter: function () {
                     return this.y > 5 ? this.point.name : null;
                 },
-                color: 'white',
+                color: '#ffffff',
                 distance: -30
             }
         }, {

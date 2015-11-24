@@ -21,5 +21,5 @@ var $tag = $('script[src$="highcharts-more.debug.js"]'),
 
 // Include the individual files
 $.each(files, function (i, file) {
-	document.write('<script src="' + path + file + '"></script>')	
+	document.write('<script src="' + path + file + '"></script>')
 });

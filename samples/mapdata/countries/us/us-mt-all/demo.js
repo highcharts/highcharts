@@ -159,43 +159,43 @@ $(function () {
             "value": 38
         },
         {
-            "hc-key": "us-mt-069",
+            "hc-key": "us-mt-099",
             "value": 39
         },
         {
-            "hc-key": "us-mt-099",
+            "hc-key": "us-mt-073",
             "value": 40
         },
         {
-            "hc-key": "us-mt-073",
+            "hc-key": "us-mt-021",
             "value": 41
         },
         {
-            "hc-key": "us-mt-021",
+            "hc-key": "us-mt-083",
             "value": 42
         },
         {
-            "hc-key": "us-mt-083",
+            "hc-key": "us-mt-055",
             "value": 43
         },
         {
-            "hc-key": "us-mt-055",
+            "hc-key": "us-mt-061",
             "value": 44
         },
         {
-            "hc-key": "us-mt-061",
+            "hc-key": "us-mt-035",
             "value": 45
         },
         {
-            "hc-key": "us-mt-035",
+            "hc-key": "us-mt-047",
             "value": 46
         },
         {
-            "hc-key": "us-mt-047",
+            "hc-key": "us-mt-049",
             "value": 47
         },
         {
-            "hc-key": "us-mt-049",
+            "hc-key": "us-mt-093",
             "value": 48
         },
         {
@@ -219,11 +219,11 @@ $(function () {
             "value": 53
         },
         {
-            "hc-key": "us-mt-045",
+            "hc-key": "us-mt-069",
             "value": 54
         },
         {
-            "hc-key": "us-mt-093",
+            "hc-key": "us-mt-045",
             "value": 55
         }
     ];
@@ -236,7 +236,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-mt-all.js">Montana</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-mt-all.js">Montana</a>'
         },
 
         mapNavigation: {

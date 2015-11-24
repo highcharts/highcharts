@@ -39,163 +39,163 @@ $(function () {
             "value": 8
         },
         {
-            "hc-key": "us-mn-053",
+            "hc-key": "us-mn-173",
             "value": 9
         },
         {
-            "hc-key": "us-mn-171",
+            "hc-key": "us-mn-041",
             "value": 10
         },
         {
-            "hc-key": "us-mn-173",
+            "hc-key": "us-mn-121",
             "value": 11
         },
         {
-            "hc-key": "us-mn-041",
+            "hc-key": "us-mn-077",
             "value": 12
         },
         {
-            "hc-key": "us-mn-121",
+            "hc-key": "us-mn-007",
             "value": 13
         },
         {
-            "hc-key": "us-mn-077",
+            "hc-key": "us-mn-037",
             "value": 14
         },
         {
-            "hc-key": "us-mn-007",
+            "hc-key": "us-mn-131",
             "value": 15
         },
         {
-            "hc-key": "us-mn-037",
+            "hc-key": "us-mn-147",
             "value": 16
         },
         {
-            "hc-key": "us-mn-131",
+            "hc-key": "us-mn-013",
             "value": 17
         },
         {
-            "hc-key": "us-mn-147",
+            "hc-key": "us-mn-161",
             "value": 18
         },
         {
-            "hc-key": "us-mn-013",
+            "hc-key": "us-mn-033",
             "value": 19
         },
         {
-            "hc-key": "us-mn-161",
+            "hc-key": "us-mn-127",
             "value": 20
         },
         {
-            "hc-key": "us-mn-033",
+            "hc-key": "us-mn-081",
             "value": 21
         },
         {
-            "hc-key": "us-mn-127",
+            "hc-key": "us-mn-135",
             "value": 22
         },
         {
-            "hc-key": "us-mn-081",
+            "hc-key": "us-mn-089",
             "value": 23
         },
         {
-            "hc-key": "us-mn-135",
+            "hc-key": "us-mn-113",
             "value": 24
         },
         {
-            "hc-key": "us-mn-089",
+            "hc-key": "us-mn-159",
             "value": 25
         },
         {
-            "hc-key": "us-mn-113",
+            "hc-key": "us-mn-111",
             "value": 26
         },
         {
-            "hc-key": "us-mn-159",
+            "hc-key": "us-mn-153",
             "value": 27
         },
         {
-            "hc-key": "us-mn-111",
+            "hc-key": "us-mn-097",
             "value": 28
         },
         {
-            "hc-key": "us-mn-153",
+            "hc-key": "us-mn-021",
             "value": 29
         },
         {
-            "hc-key": "us-mn-097",
+            "hc-key": "us-mn-101",
             "value": 30
         },
         {
-            "hc-key": "us-mn-021",
+            "hc-key": "us-mn-167",
             "value": 31
         },
         {
-            "hc-key": "us-mn-101",
+            "hc-key": "us-mn-155",
             "value": 32
         },
         {
-            "hc-key": "us-mn-167",
+            "hc-key": "us-mn-165",
             "value": 33
         },
         {
-            "hc-key": "us-mn-155",
+            "hc-key": "us-mn-053",
             "value": 34
         },
         {
-            "hc-key": "us-mn-165",
+            "hc-key": "us-mn-079",
             "value": 35
         },
         {
-            "hc-key": "us-mn-079",
+            "hc-key": "us-mn-065",
             "value": 36
         },
         {
-            "hc-key": "us-mn-065",
+            "hc-key": "us-mn-059",
             "value": 37
         },
         {
-            "hc-key": "us-mn-059",
+            "hc-key": "us-mn-115",
             "value": 38
         },
         {
-            "hc-key": "us-mn-115",
+            "hc-key": "us-mn-063",
             "value": 39
         },
         {
-            "hc-key": "us-mn-063",
+            "hc-key": "us-mn-011",
             "value": 40
         },
         {
-            "hc-key": "us-mn-011",
+            "hc-key": "us-mn-107",
             "value": 41
         },
         {
-            "hc-key": "us-mn-107",
+            "hc-key": "us-mn-055",
             "value": 42
         },
         {
-            "hc-key": "us-mn-055",
+            "hc-key": "us-mn-099",
             "value": 43
         },
         {
-            "hc-key": "us-mn-099",
+            "hc-key": "us-mn-109",
             "value": 44
         },
         {
-            "hc-key": "us-mn-109",
+            "hc-key": "us-mn-047",
             "value": 45
         },
         {
-            "hc-key": "us-mn-047",
+            "hc-key": "us-mn-039",
             "value": 46
         },
         {
-            "hc-key": "us-mn-039",
+            "hc-key": "us-mn-093",
             "value": 47
         },
         {
-            "hc-key": "us-mn-093",
+            "hc-key": "us-mn-171",
             "value": 48
         },
         {
@@ -211,51 +211,51 @@ $(function () {
             "value": 51
         },
         {
-            "hc-key": "us-mn-105",
+            "hc-key": "us-mn-137",
             "value": 52
         },
         {
-            "hc-key": "us-mn-049",
+            "hc-key": "us-mn-105",
             "value": 53
         },
         {
-            "hc-key": "us-mn-139",
+            "hc-key": "us-mn-071",
             "value": 54
         },
         {
-            "hc-key": "us-mn-025",
+            "hc-key": "us-mn-049",
             "value": 55
         },
         {
-            "hc-key": "us-mn-003",
+            "hc-key": "us-mn-025",
             "value": 56
         },
         {
-            "hc-key": "us-mn-015",
+            "hc-key": "us-mn-003",
             "value": 57
         },
         {
-            "hc-key": "us-mn-083",
+            "hc-key": "us-mn-015",
             "value": 58
         },
         {
-            "hc-key": "us-mn-133",
+            "hc-key": "us-mn-083",
             "value": 59
         },
         {
-            "hc-key": "us-mn-117",
+            "hc-key": "us-mn-133",
             "value": 60
         },
         {
-            "hc-key": "us-mn-163",
+            "hc-key": "us-mn-117",
             "value": 61
         },
         {
-            "hc-key": "us-mn-069",
+            "hc-key": "us-mn-163",
             "value": 62
         },
         {
-            "hc-key": "us-mn-071",
+            "hc-key": "us-mn-069",
             "value": 63
         },
         {
@@ -299,55 +299,55 @@ $(function () {
             "value": 73
         },
         {
-            "hc-key": "us-mn-137",
+            "hc-key": "us-mn-017",
             "value": 74
         },
         {
-            "hc-key": "us-mn-017",
+            "hc-key": "us-mn-075",
             "value": 75
         },
         {
-            "hc-key": "us-mn-075",
+            "hc-key": "us-mn-001",
             "value": 76
         },
         {
-            "hc-key": "us-mn-001",
+            "hc-key": "us-mn-091",
             "value": 77
         },
         {
-            "hc-key": "us-mn-091",
+            "hc-key": "us-mn-027",
             "value": 78
         },
         {
-            "hc-key": "us-mn-027",
+            "hc-key": "us-mn-087",
             "value": 79
         },
         {
-            "hc-key": "us-mn-087",
+            "hc-key": "us-mn-157",
             "value": 80
         },
         {
-            "hc-key": "us-mn-157",
+            "hc-key": "us-mn-031",
             "value": 81
         },
         {
-            "hc-key": "us-mn-031",
+            "hc-key": "us-mn-103",
             "value": 82
         },
         {
-            "hc-key": "us-mn-103",
+            "hc-key": "us-mn-125",
             "value": 83
         },
         {
-            "hc-key": "us-mn-125",
+            "hc-key": "us-mn-061",
             "value": 84
         },
         {
-            "hc-key": "us-mn-061",
+            "hc-key": "us-mn-035",
             "value": 85
         },
         {
-            "hc-key": "us-mn-035",
+            "hc-key": "us-mn-139",
             "value": 86
         }
     ];
@@ -360,7 +360,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-mn-all.js">Minnesota</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-mn-all.js">Minnesota</a>'
         },
 
         mapNavigation: {

@@ -34,7 +34,8 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 
 	if (this.isZAxis) {
 		return;
-	} else if (this.horiz) {
+	}
+	if (this.horiz) {
 		var bottomShape = {
 			x: left,
 			y: top + (chart.xAxis[0].opposite ? -fbottom.size : height),
@@ -68,7 +69,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 		};
 		if (!this.backFrame) {
 			this.backFrame = renderer.cuboid(backShape).attr({
-				fill: fback.color, 
+				fill: fback.color,
 				zIndex: -3
 			}).css({
 				stroke: fback.color
@@ -87,7 +88,7 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'render', function (proceed) {
 		};
 		if (!this.sideFrame) {
 			this.sideFrame = renderer.cuboid(sideShape).attr({
-				fill: fside.color, 
+				fill: fside.color,
 				zIndex: -2
 			}).css({
 				stroke: fside.color
@@ -106,21 +107,22 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotLinePath', function (proceed)
 		return path;
 	}
 
-	if (path === null) { return path; }
+	if (path === null) {
+		return path;
+	}
 
 	var chart = this.chart,
-		options3d = chart.options.chart.options3d;
-
-	var d = this.isZAxis ? this.chart.plotWidth : options3d.depth,
+		options3d = chart.options.chart.options3d,
+		d = this.isZAxis ? chart.plotWidth : options3d.depth,
 		opposite = this.opposite;
 	if (this.horiz) {
 		opposite = !opposite;
 	}
 	var pArr = [
-		this.swapZ({ x: path[1], y: path[2], z: (opposite ? d : 0)}),
+		this.swapZ({ x: path[1], y: path[2], z: (opposite ? d : 0) }),
 		this.swapZ({ x: path[1], y: path[2], z: d }),
 		this.swapZ({ x: path[4], y: path[5], z: d }),
-		this.swapZ({ x: path[4], y: path[5], z: (opposite ? 0 : d)})
+		this.swapZ({ x: path[4], y: path[5], z: (opposite ? 0 : d) })
 	];
 
 	pArr = perspective(pArr, this.chart, false);
@@ -138,43 +140,42 @@ Highcharts.wrap(Highcharts.Axis.prototype, 'getPlotBandPath', function (proceed)
 	// Do not do this if the chart is not 3D
 	if (!this.chart.is3d()) {
 		return proceed.apply(this, [].slice.call(arguments, 1));
-	} else {
-		var args = arguments,
-			from = args[1],
-			to = args[2];
-	
-		var toPath = this.getPlotLinePath(to),
-			path = this.getPlotLinePath(from);
-			
-		if (path && toPath) {
-			path.push(
-				'L',
-				toPath[10],	// These two do not exist in the regular getPlotLine
-				toPath[11],  // ---- # 3005
-				'L',
-				toPath[7],
-				toPath[8],
-				'L',
-				toPath[4],
-				toPath[5],
-				'L',
-				toPath[1],
-				toPath[2]
-			);
-		} else { // outside the axis area
-			path = null;
-		}
-		
-		return path;
 	}
+
+	var args = arguments,
+		from = args[1],
+		to = args[2],
+		toPath = this.getPlotLinePath(to),
+		path = this.getPlotLinePath(from);
+
+	if (path && toPath) {
+		path.push(
+			'L',
+			toPath[10],	// These two do not exist in the regular getPlotLine
+			toPath[11],  // ---- # 3005
+			'L',
+			toPath[7],
+			toPath[8],
+			'L',
+			toPath[4],
+			toPath[5],
+			'L',
+			toPath[1],
+			toPath[2]
+		);
+	} else { // outside the axis area
+		path = null;
+	}
+
+	return path;
 });
 
-/*** 
+/***
 	EXTENSION TO THE TICKS
 ***/
 
 Highcharts.wrap(Highcharts.Tick.prototype, 'getMarkPath', function (proceed) {
-	var path = proceed.apply(this, [].slice.call(arguments, 1));	
+	var path = proceed.apply(this, [].slice.call(arguments, 1));
 
 	// Do not do this if the chart is not 3D
 	if (!this.axis.chart.is3d()) {
@@ -182,8 +183,8 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getMarkPath', function (proceed) {
 	}
 
 	var pArr = [
-		this.axis.swapZ({x: path[1], y: path[2], z: 0}),
-		this.axis.swapZ({x: path[4], y: path[5], z: 0})
+		this.axis.swapZ({ x: path[1], y: path[2], z: 0 }),
+		this.axis.swapZ({ x: path[4], y: path[5], z: 0 })
 	];
 
 	pArr = perspective(pArr, this.axis.chart, false);
@@ -202,10 +203,10 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'getLabelPosition', function (proceed
 		return pos;
 	}
 
-	var new_pos = perspective([this.axis.swapZ({x: pos.x, y: pos.y, z: 0})], this.axis.chart, false)[0];
-	new_pos.x = new_pos.x - (!this.axis.horiz && this.axis.opposite ? this.axis.transA : 0); //#3788
-	new_pos.old = pos;
-	return new_pos;
+	var newPos = perspective([this.axis.swapZ({ x: pos.x, y: pos.y, z: 0 })], this.axis.chart, false)[0];
+	newPos.x = newPos.x - (!this.axis.horiz && this.axis.opposite ? this.axis.transA : 0); //#3788
+	newPos.old = pos;
+	return newPos;
 });
 
 Highcharts.wrap(Highcharts.Tick.prototype, 'handleOverflow', function (proceed, xy) {
@@ -216,14 +217,27 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'handleOverflow', function (proceed, 
 });
 
 Highcharts.wrap(Highcharts.Axis.prototype, 'getTitlePosition', function (proceed) {
-	var pos = proceed.apply(this, [].slice.call(arguments, 1));
+	var is3d = this.chart.is3d(),
+		pos,
+		axisTitleMargin;
 
-	// Do not do this if the chart is not 3D
-	if (!this.chart.is3d()) {
-		return pos;
+	// Pull out the axis title margin, that is not subject to the perspective
+	if (is3d) {
+		axisTitleMargin = this.axisTitleMargin;
+		this.axisTitleMargin = 0;
 	}
 
-	pos = perspective([this.swapZ({x: pos.x, y: pos.y, z: 0})], this.chart, false)[0];
+	pos = proceed.apply(this, [].slice.call(arguments, 1));
+
+	if (is3d) {
+		pos = perspective([this.swapZ({ x: pos.x, y: pos.y, z: 0 })], this.chart, false)[0];
+
+		// Re-apply the axis title margin outside the perspective
+		pos[this.horiz ? 'y' : 'x'] += (this.horiz ? 1 : -1) * // horizontal axis reverses the margin ...
+			(this.opposite ? -1 : 1) * // ... so does opposite axes
+			axisTitleMargin;
+		this.axisTitleMargin = axisTitleMargin;
+	}
 	return pos;
 });
 
@@ -253,9 +267,8 @@ Highcharts.Axis.prototype.swapZ = function (p, insidePlotArea) {
 			y: p.y,
 			z: p.x - plotLeft
 		};
-	} else {
-		return p;
 	}
+	return p;
 };
 
 var ZAxis = Highcharts.ZAxis = function () {
@@ -285,7 +298,7 @@ Highcharts.extend(ZAxis.prototype, {
 
 		// Reset properties in case we're redrawing (#3353)
 		axis.dataMin = axis.dataMax = axis.ignoreMinPadding = axis.ignoreMaxPadding = null;
-		
+
 		if (axis.buildStacks) {
 			axis.buildStacks();
 		}

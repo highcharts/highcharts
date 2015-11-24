@@ -26,7 +26,7 @@ if ($target) {
 
 	$files = $xml->xpath("/project/target[@name=\"set.properties\"]/filelist[@id=\"$target.files\"]/file");
 
-	$s = "window.console && console.log('Running $target.js from parts');\n";
+	$s = "";
 	foreach ($files as $file) {
 		$s .= file_get_contents($partsDir . $file['name']);
 	}

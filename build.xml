@@ -70,6 +70,7 @@
         <property name="standalone.src.name" value="standalone-framework.src.js"/>
         <property name="exporting.src.name" value="exporting.src.js"/>
         <property name="offline-exporting.src.name" value="offline-exporting.src.js"/>
+        <property name="boost.src.name" value="boost.src.js"/>
         <property name="broken-axis.src.name" value="broken-axis.src.js"/>
         <property name="data.src.name" value="data.src.js"/>
         <property name="drilldown.src.name" value="drilldown.src.js"/>
@@ -85,6 +86,7 @@
         <property name="standalone.minified.name" value="standalone-framework.js"/>
         <property name="exporting.minified.name" value="exporting.js"/>
         <property name="offline-exporting.minified.name" value="offline-exporting.js"/>        
+        <property name="boost.minified.name" value="boost.js"/>
         <property name="broken-axis.minified.name" value="broken-axis.js"/>
         <property name="data.minified.name" value="data.js"/>
         <property name="drilldown.minified.name" value="drilldown.js"/>
@@ -100,6 +102,7 @@
         <property name="standalone.src.file" value="${basedir}/js/adapters/${standalone.src.name}"/>
         <property name="exporting.src.file" value="${basedir}/js/modules/${exporting.src.name}"/>
         <property name="offline-exporting.src.file" value="${basedir}/js/modules/${offline-exporting.src.name}"/>
+        <property name="boost.src.file" value="${basedir}/js/modules/boost.src.js"/>
         <property name="broken-axis.src.file" value="${basedir}/js/modules/broken-axis.src.js"/>
         <property name="data.src.file" value="${basedir}/js/modules/${data.src.name}"/>
         <property name="drilldown.src.file" value="${basedir}/js/modules/${drilldown.src.name}"/>
@@ -306,7 +309,7 @@
 
         <!-- This is the list of files for the heatmap module -->
         <filelist id="heatmap.files" dir="${basedir}/js">
-            <file name="parts-map/Intro.js"/>
+            <file name="parts-map/HeatmapIntro.js"/>
             <file name="parts-map/HeatmapGlobals.js"/>
             <!-- file name="parts-map/MapAxis.js"/ -->
             <file name="parts-map/ColorAxis.js"/>
@@ -325,7 +328,7 @@
 
         <!-- This is the list of files for Highmaps -->
         <filelist id="highmaps.files" dir="${basedir}/js">
-            <file name="parts/Intro.js"/>
+            <file name="parts-map/Intro.js"/>
             <file name="parts/Globals.js"/>
             <file name="parts/Utilities.js"/>
             <file name="parts/PathAnimation.js"/>
@@ -435,127 +438,14 @@
         <delete file="${basedir}/jsTestDriverCoverage.conf" failonerror="false"/>
     </target>
 
-    <!-- Assembles the source parts into one file. -->
-    <target name="assemble" depends="set.properties">
-        <!-- Concat highcharts src and replace the product name and version -->
-        <concat destfile="${highcharts.src.file}" encoding="UTF-8">
-            <filelist refid="highcharts.files"/>
-            <filterchain>
-                <replacetokens>
-                    <token key="product.name" value="${highcharts.product.name}"/>
-                    <token key="product.cdnpath" value="${highcharts.product.cdnpath}"/>
-                    <token key="product.version" value="${highcharts.product.version}"/>
-                    <token key="product.date" value="${highcharts.product.date}"/>
-                </replacetokens>
-            </filterchain>
-        </concat>
-
-        <!-- Concat highstock src and replace the product name and version -->
-        <concat destfile="${highstock.src.file}" encoding="UTF-8">
-            <filelist refid="highstock.files"/>
-            <filterchain>
-                <replacetokens>
-                    <token key="product.name" value="${highstock.product.name}"/>
-                    <token key="product.cdnpath" value="${highstock.product.cdnpath}"/>
-                    <token key="product.version" value="${highstock.product.version}"/>
-                    <token key="product.date" value="${highstock.product.date}"/>
-                </replacetokens>
-            </filterchain>
-        </concat>
-
-        <!-- Concat highmaps src and replace the product name and version -->
-        <concat destfile="${basedir}/js/highmaps.src.js" encoding="UTF-8">
-            <filelist refid="highmaps.files"/>
-            <filterchain>
-                <replacetokens>
-                    <token key="product.name" value="${highmaps.product.name}"/>
-                    <token key="product.cdnpath" value="${highmaps.product.cdnpath}"/>
-                    <token key="product.version" value="${highmaps.product.version}"/>
-                    <token key="product.date" value="${highmaps.product.date}"/>
-                </replacetokens>
-            </filterchain>
-        </concat>
-
-        <!-- Concat maps.src.js and replace the product name and version -->
-        <concat destfile="${basedir}/js/modules/map.src.js" encoding="UTF-8">
-            <filelist refid="maps.files"/>
-            <filterchain>
-                <replacetokens>
-                    <token key="product.name" value="${highmaps.product.name}"/>
-                    <token key="product.cdnpath" value="${highmaps.product.cdnpath}"/>
-                    <token key="product.version" value="${highmaps.product.version}"/>
-                    <token key="product.date" value="${highmaps.product.date}"/>
-                </replacetokens>
-            </filterchain>
-        </concat>
-
-        <!-- Concat heatmap.src.js and replace the product name and version -->
-        <concat destfile="${basedir}/js/modules/heatmap.src.js" encoding="UTF-8">
-            <filelist refid="heatmap.files"/>
-            <!-- filterchain>
-                <replacetokens>
-                    <token key="product.name" value="${highcharts.product.name}"/>
-                    <token key="product.cdnpath" value="${highcharts.product.cdnpath}"/>
-                    <token key="product.version" value="${highcharts.product.version}"/>
-                    <token key="product.date" value="${highcharts.product.date}"/>
-                </replacetokens>
-            </filterchain -->
-        </concat>
-
-        <!-- Concat highcharts-more src and replace the product name and version -->
-        <concat destfile="${highchartsmore.src.file}" encoding="UTF-8">
-            <filelist refid="highchartsmore.files"/>
-            <filterchain>
-                <replacetokens>
-                    <token key="product.name" value="${highcharts.product.name}"/>
-                    <token key="product.cdnpath" value="${highcharts.product.cdnpath}"/>
-                    <token key="product.version" value="${highcharts.product.version}"/>
-                    <token key="product.date" value="${highcharts.product.date}"/>
-                </replacetokens>
-            </filterchain>
-        </concat>
-
-        <!-- Concat highcharts-3d src and replace the product name and version -->
-        <concat destfile="${highcharts3d.src.file}" encoding="UTF-8">
-            <filelist refid="highcharts3d.files"/>
-            <filterchain>
-                <replacetokens>
-                    <token key="product.name" value="${highcharts.product.name}"/>
-                    <token key="product.cdnpath" value="${highcharts.product.cdnpath}"/>
-                    <token key="product.version" value="${highcharts.product.version}"/>
-                    <token key="product.date" value="${highcharts.product.date}"/>
-                </replacetokens>
-            </filterchain>
-        </concat>
-        
-        <!-- Concat canvg library together with rgbcolor script -->
-        <concat destfile="build/canvas-tools.src.js">
-            <filelist dir="lib/canvg-1.1/" files="rgbcolor.js, canvg.js"/>
-            <filelist dir="js/modules/" files="canvgrenderer-extended.src.js"/>
-        </concat>
-    </target>
-
-    <!-- This target convert any mixed line endings to crlf. -->
-    <target name="check-crlf" depends="assemble">
-        <fixcrlf srcDir="${basedir}/js" includes="**/*.js" encoding="UTF-8" fixlast="false"/>
-        <fixcrlf srcDir="${basedir}/test" includes="**/*.js" encoding="UTF-8" fixlast="false"/>
-    </target>
-
-
-    <!-- Set a property that tells if there are nbsp. -->
-    <!--
-    <target name="do-check-nbsp">
-        <condition property="has.nbsp">
-            <resourcecontains resource="${highstock.src.file}" substring=""/>
-        </condition>
-    </target>
-    <target name="check-nbsp" depends="do-check-nbsp" if="has.nbsp">
-        <echo message="ERROR: Non-breaking space characters exist in source code."/>
-    </target>
-    -->
-
     <!-- Runs jslint on generated source code. -->
-    <target name="do-lint" depends="check-crlf">
+    <target name="lint">
+        <exec dir="${basedir}" executable="gulp" outputproperty="output">
+            <arg line="lint" />
+        </exec>
+        <echo message="${output}" />
+        
+        <!--
         <jslint haltOnFailure="false" options="sloppy, forin, confusion, plusplus, nomen, vars, regexp, newcap, browser, undef, continue" encoding="UTF-8">
             <formatter type="plain"/>
             <formatter type="report" destfile="${build.dir}/lintreport.html"/>
@@ -584,18 +474,14 @@
         </jslint>
 
 
-        <!-- Set a property that tells if there are unused variables. -->
+        < ! - - Set a property that tells if there are unused variables. - - >
         <condition property="lint.variable.error">
             <or>
                 <resourcecontains resource="${build.dir}/lintreport.html" substring="Undefined variable"/>
                 <resourcecontains resource="${build.dir}/lintreport.html" substring="Unused variable"/>
             </or>
         </condition>
-    </target>
-
-    <!-- This target is only run if there are unused variables. -->
-    <target name="lint" depends="do-lint" if="lint.variable.error">
-        <echo message="Warning: undefined or unused variables exist. Open 'build/lintreport.html' and search for 'Undefined variable' and 'Unused variable'."/>
+        -->
     </target>
 
     <!-- Runs jslint on parts in order to make it easier to find the error by file and line number. -->
@@ -674,7 +560,7 @@
     </target>
 
     <!-- Runs minifiers on source code. -->
-    <target name="minify" depends="assemble">
+    <target name="minify">
         <antcall target="compile">
             <param name="param.src" value="${highcharts.src.file}"/>
             <param name="param.out" value="${dist.dir}/highcharts/js/${highcharts.minified.name}"/>
@@ -726,6 +612,10 @@
         <antcall target="compile">
             <param name="param.src" value="${overlapping-datalabels.src.file}"/>
             <param name="param.out" value="${dist.dir}/js/modules/overlapping-datalabels.js"/>
+        </antcall>
+        <antcall target="compile">
+            <param name="param.src" value="${boost.src.file}"/>
+            <param name="param.out" value="${dist.dir}/js/modules/boost.js"/>
         </antcall>
         <antcall target="compile">
             <param name="param.src" value="${broken-axis.src.file}"/>
@@ -956,6 +846,13 @@
         <copy file="${dist.dir}/js/modules/${offline-exporting.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
         <copy file="${offline-exporting.src.file}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${offline-exporting.minified.name}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
+
+        <copy file="${boost.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${boost.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
+        <copy file="${boost.src.file}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${boost.minified.name}" todir="${dist.dir}/highstock/js/modules"><filterset refid="highstock.filter"/></copy>
+        <copy file="${boost.src.file}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
+        <copy file="${dist.dir}/js/modules/${boost.minified.name}" todir="${dist.dir}/highmaps/js/modules"><filterset refid="highmaps.filter"/></copy>
 
         <copy file="${broken-axis.src.file}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>
         <copy file="${dist.dir}/js/modules/${broken-axis.minified.name}" todir="${dist.dir}/highcharts/js/modules"><filterset refid="highcharts.filter"/></copy>

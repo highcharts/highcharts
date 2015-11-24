@@ -5,13 +5,13 @@
 function SVGElement() {}
 
 SVGElement.prototype = {
-	
+
 	// Default base for animation
 	opacity: 1,
 	// For labels, these CSS properties are applied to the <text> node directly
-	textProps: ['fontSize', 'fontWeight', 'fontFamily', 'fontStyle', 'color', 
+	textProps: ['fontSize', 'fontWeight', 'fontFamily', 'fontStyle', 'color',
 		'lineHeight', 'width', 'textDecoration', 'textOverflow', 'textShadow'],
-	
+
 	/**
 	 * Initialize the SVG renderer
 	 * @param {Object} renderer
@@ -20,11 +20,11 @@ SVGElement.prototype = {
 	init: function (renderer, nodeName) {
 		var wrapper = this;
 		wrapper.element = nodeName === 'span' ?
-			createElement(nodeName) :
-			doc.createElementNS(SVG_NS, nodeName);
+				createElement(nodeName) :
+				doc.createElementNS(SVG_NS, nodeName);
 		wrapper.renderer = renderer;
 	},
-	
+
 	/**
 	 * Animate a given attribute
 	 * @param {Object} params
@@ -63,7 +63,8 @@ SVGElement.prototype = {
 			radialReference,
 			n,
 			id,
-			key = [];
+			key = [],
+			value;
 
 		// Apply linear or radial gradients
 		if (color.linearGradient) {
@@ -92,10 +93,10 @@ SVGElement.prototype = {
 			// Correct the radial gradient for the radial reference system
 			if (gradName === 'radialGradient' && radialReference && !defined(gradAttr.gradientUnits)) {
 				radAttr = gradAttr; // Save the radial attributes for updating
-				gradAttr = merge(gradAttr, 
+				gradAttr = merge(gradAttr,
 					renderer.getRadialAttr(radialReference, radAttr),
 					{ gradientUnits: 'userSpaceOnUse' }
-				);
+					);
 			}
 
 			// Build the unique key to detect whether we need to create a new element (#1282)
@@ -147,27 +148,34 @@ SVGElement.prototype = {
 			}
 
 			// Set the reference to the gradient object
-			elem.setAttribute(prop, 'url(' + renderer.url + '#' + id + ')');
+			value = 'url(' + renderer.url + '#' + id + ')';
+			elem.setAttribute(prop, value);
 			elem.gradient = key;
-		} 
+
+			// Allow the color to be concatenated into tooltips formatters etc. (#2995)
+			color.toString = function () {
+				return value;
+			};
+		}
 	},
 
 	/**
 	 * Apply a polyfill to the text-stroke CSS property, by copying the text element
 	 * and apply strokes to the copy.
 	 *
+	 * Contrast checks at http://jsfiddle.net/highcharts/43soe9m1/2/
+	 *
 	 * docs: update default, document the polyfill and the limitations on hex colors and pixel values, document contrast pseudo-color
-	 * TODO: 
-	 * - update defaults
 	 */
 	applyTextShadow: function (textShadow) {
 		var elem = this.element,
 			tspans,
 			hasContrast = textShadow.indexOf('contrast') !== -1,
 			styles = {},
+			forExport = this.renderer.forExport,
 			// IE10 and IE11 report textShadow in elem.style even though it doesn't work. Check
-			// this again with new IE release. In exports, the rendering is passed to PhantomJS. 
-			supports = this.renderer.forExport || (elem.style.textShadow !== UNDEFINED && !isIE);
+			// this again with new IE release. In exports, the rendering is passed to PhantomJS.
+			supports = forExport || (elem.style.textShadow !== UNDEFINED && !isMS);
 
 		// When the text shadow is set to contrast, use dark stroke for light text and vice versa
 		if (hasContrast) {
@@ -176,7 +184,7 @@ SVGElement.prototype = {
 
 		// Safari with retina displays as well as PhantomJS bug (#3974). Firefox does not tolerate this,
 		// it removes the text shadows.
-		if (isWebKit) {
+		if (isWebKit || forExport) {
 			styles.textRendering = 'geometricPrecision';
 		}
 
@@ -189,12 +197,12 @@ SVGElement.prototype = {
 
 		// No reason to polyfill, we've got native support
 		if (supports) {
-			css(elem, styles); // Apply altered textShadow or textRendering workaround
+			this.css(styles); // Apply altered textShadow or textRendering workaround
 		} else {
 
 			this.fakeTS = true; // Fake text shadow
 
-			// In order to get the right y position of the clones, 
+			// In order to get the right y position of the clones,
 			// copy over the y setter
 			this.ySetter = this.xSetter;
 
@@ -203,7 +211,7 @@ SVGElement.prototype = {
 				var firstChild = elem.firstChild,
 					color,
 					strokeWidth;
-				
+
 				textShadow = textShadow.split(' ');
 				color = textShadow[textShadow.length - 1];
 
@@ -264,7 +272,7 @@ SVGElement.prototype = {
 		// used as a getter: first argument is a string, second is undefined
 		if (typeof hash === 'string') {
 			ret = (this[hash + 'Getter'] || this._defaultGetter).call(this, hash, element);
-		
+
 		// setter
 		} else {
 
@@ -285,7 +293,7 @@ SVGElement.prototype = {
 				if (this.rotation && (key === 'x' || key === 'y')) {
 					this.doTransform = true;
 				}
-				
+
 				if (!skipAttr) {
 					(this[key + 'Setter'] || this._defaultSetter).call(this, value, key, element);
 				}
@@ -320,8 +328,8 @@ SVGElement.prototype = {
 			shadows[i].setAttribute(
 				key,
 				key === 'height' ?
-					mathMax(value - (shadows[i].cutHeight || 0), 0) :
-					key === 'd' ? this.d : value
+						Math.max(value - (shadows[i].cutHeight || 0), 0) :
+						key === 'd' ? this.d : value
 			);
 		}
 	},
@@ -445,8 +453,8 @@ SVGElement.prototype = {
 			}
 		}
 		if (hasNew) {
-			textWidth = elemWrapper.textWidth = 
-				(styles && styles.width && elem.nodeName.toLowerCase() === 'text' && pInt(styles.width)) || 
+			textWidth = elemWrapper.textWidth =
+				(styles && styles.width && elem.nodeName.toLowerCase() === 'text' && pInt(styles.width)) ||
 				elemWrapper.textWidth; // #3501
 
 			// Merge the new styles with the old ones
@@ -455,7 +463,7 @@ SVGElement.prototype = {
 					oldStyles,
 					newStyles
 				);
-			}		
+			}
 
 			// store object
 			elemWrapper.styles = styles;
@@ -465,12 +473,12 @@ SVGElement.prototype = {
 			}
 
 			// serialize and set style attribute
-			if (isIE && !hasSVG) {
+			if (isMS && !hasSVG) {
 				css(elemWrapper.element, styles);
 			} else {
-				/*jslint unparam: true*/
-				hyphenate = function (a, b) { return '-' + b.toLowerCase(); };
-				/*jslint unparam: false*/
+				hyphenate = function (a, b) {
+					return '-' + b.toLowerCase();
+				};
 				for (n in styles) {
 					serializedCss += n.replace(/([A-Z])/g, hyphenate) + ':' + styles[n] + ';';
 				}
@@ -495,19 +503,19 @@ SVGElement.prototype = {
 	on: function (eventType, handler) {
 		var svgElement = this,
 			element = svgElement.element;
-		
+
 		// touch
 		if (hasTouch && eventType === 'click') {
-			element.ontouchstart = function (e) {			
-				svgElement.touchEventFired = Date.now();				
+			element.ontouchstart = function (e) {
+				svgElement.touchEventFired = Date.now();
 				e.preventDefault();
 				handler.call(element, e);
 			};
-			element.onclick = function (e) {												
+			element.onclick = function (e) {
 				if (userAgent.indexOf('Android') === -1 || Date.now() - (svgElement.touchEventFired || 0) > 1100) { // #2269
 					handler.call(element, e);
 				}
-			};			
+			};
 		} else {
 			// simplest possible event model for internal use
 			element['on' + eventType] = handler;
@@ -524,13 +532,13 @@ SVGElement.prototype = {
 		var existingGradient = this.renderer.gradients[this.element.gradient];
 
 		this.element.radialReference = coordinates;
-		
+
 		// On redrawing objects with an existing gradient, the gradient needs
 		// to be repositioned (#3801)
 		if (existingGradient && existingGradient.radAttr) {
 			existingGradient.animate(
 				this.renderer.getRadialAttr(
-					coordinates, 
+					coordinates,
 					existingGradient.radAttr
 				)
 			);
@@ -591,7 +599,7 @@ SVGElement.prototype = {
 			transform.push('rotate(90) scale(-1,1)');
 		} else if (rotation) { // text rotation
 			transform.push('rotate(' + rotation + ' ' + (element.getAttribute('x') || 0) + ' ' + (element.getAttribute('y') || 0) + ')');
-			
+
 			// Delete bBox memo when the rotation changes
 			//delete wrapper.bBox;
 		}
@@ -690,13 +698,13 @@ SVGElement.prototype = {
 	/**
 	 * Get the bounding box (width, height, x and y) for the element
 	 */
-	getBBox: function (reload) {
+	getBBox: function (reload, rotation) {
 		var wrapper = this,
 			bBox,// = wrapper.bBox,
 			renderer = wrapper.renderer,
 			width,
 			height,
-			rotation = wrapper.rotation,
+			rotation = pick(rotation, wrapper.rotation),
 			element = wrapper.element,
 			styles = wrapper.styles,
 			rad = rotation * deg2rad,
@@ -704,6 +712,8 @@ SVGElement.prototype = {
 			textShadow,
 			elemStyle = element.style,
 			toggleTextShadowShim,
+			cache = renderer.cache,
+			cacheKeys = renderer.cacheKeys,
 			cacheKey;
 
 		if (textStr !== UNDEFINED) {
@@ -712,7 +722,7 @@ SVGElement.prototype = {
 			cacheKey = ['', rotation || 0, styles && styles.fontSize, element.style.width].join(',');
 
 			// Since numbers are monospaced, and numerical labels appear a lot in a chart,
-			// we assume that a label of n characters has the same bounding box as others 
+			// we assume that a label of n characters has the same bounding box as others
 			// of the same length.
 			if (textStr === '' || numRegex.test(textStr)) {
 				cacheKey = 'num:' + textStr.toString().length + cacheKey;
@@ -724,7 +734,7 @@ SVGElement.prototype = {
 		}
 
 		if (cacheKey && !reload) {
-			bBox = renderer.cache[cacheKey];
+			bBox = cache[cacheKey];
 		}
 
 		// No cache found
@@ -757,7 +767,7 @@ SVGElement.prototype = {
 						// Canvas renderer and legacy IE in export mode
 						{
 							width: element.offsetWidth,
-							height: element.offsetHeight
+							height: element.offsetHeight	
 						};
 
 					// #3842
@@ -789,7 +799,7 @@ SVGElement.prototype = {
 				height = bBox.height;
 
 				// Workaround for wrong bounding box in IE9 and IE10 (#1101, #1505, #1669, #2568)
-				if (isIE && styles && styles.fontSize === '11px' && height.toPrecision(3) === '16.9') {
+				if (isMS && styles && styles.fontSize === '11px' && height.toPrecision(3) === '16.9') {
 					bBox.height = height = 14;
 				}
 
@@ -802,7 +812,16 @@ SVGElement.prototype = {
 
 			// Cache it
 			if (cacheKey) {
-				renderer.cache[cacheKey] = bBox;
+
+				// Rotate (#4681)
+				while (cacheKeys.length > 250) {
+					delete cache[cacheKeys.shift()];
+				}
+
+				if (!cache[cacheKey]) {
+					cacheKeys.push(cacheKey);
+				}
+				cache[cacheKey] = bBox;
 			}
 		}
 		return bBox;
@@ -860,7 +879,7 @@ SVGElement.prototype = {
 		// Mark as added
 		this.added = true;
 
-		// If we're adding to renderer root, or other elements in the group 
+		// If we're adding to renderer root, or other elements in the group
 		// have a z index, we need to handle it
 		if (!parent || parent.handleZ || this.zIndex) {
 			inserted = this.zIndexSetter();
@@ -969,8 +988,8 @@ SVGElement.prototype = {
 			shadowWidth = pick(shadowOptions.width, 3);
 			shadowElementOpacity = (shadowOptions.opacity || 0.15) / shadowWidth;
 			transform = this.parentInverted ?
-				'(-1,-1)' :
-				'(' + pick(shadowOptions.offsetX, 1) + ', ' + pick(shadowOptions.offsetY, 1) + ')';
+					'(-1,-1)' :
+					'(' + pick(shadowOptions.offsetX, 1) + ', ' + pick(shadowOptions.offsetY, 1) + ')';
 			for (i = 1; i <= shadowWidth; i++) {
 				shadow = element.cloneNode(0);
 				strokeWidth = (shadowWidth * 2) + 1 - (2 * i);
@@ -1009,7 +1028,7 @@ SVGElement.prototype = {
 		return this._defaultGetter(key);
 	},
 
-	/** 
+	/**
 	 * Get the current value of an attribute or pseudo attribute, used mainly
 	 * for animation.
 	 */
@@ -1081,7 +1100,7 @@ SVGElement.prototype = {
 		if (value !== this.textStr) {
 			// Delete bBox memo when the text changes
 			delete this.bBox;
-		
+
 			this.textStr = value;
 			if (this.added) {
 				this.renderer.buildText(this);
@@ -1099,7 +1118,7 @@ SVGElement.prototype = {
 		// IE9-11 doesn't handle visibilty:inherit well, so we remove the attribute instead (#2881, #3909)
 		if (value === 'inherit') {
 			element.removeAttribute(key);
-		} else {
+		} else {
 			element.setAttribute(key, value);
 		}
 	},
@@ -1115,7 +1134,7 @@ SVGElement.prototype = {
 			inserted,
 			run = this.added,
 			i;
-		
+
 		if (defined(value)) {
 			element.setAttribute(key, value); // So we can read it for other elements in the group
 			value = +value;
@@ -1134,7 +1153,7 @@ SVGElement.prototype = {
 			if (value && parentGroup) {
 				parentGroup.handleZ = true;
 			}
-		
+
 			childNodes = parentNode.childNodes;
 			for (i = 0; i < childNodes.length && !inserted; i++) {
 				otherElement = childNodes[i];
@@ -1145,7 +1164,7 @@ SVGElement.prototype = {
 						// If no zIndex given, insert before the first element with a zIndex
 						(!defined(value) && defined(otherZIndex))
 
-						)) {
+					)) {
 					parentNode.insertBefore(element, otherElement);
 					inserted = true;
 				}
@@ -1163,14 +1182,14 @@ SVGElement.prototype = {
 
 // Some shared setters and getters
 SVGElement.prototype.yGetter = SVGElement.prototype.xGetter;
-SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter = 
-		SVGElement.prototype.rotationSetter = SVGElement.prototype.verticalAlignSetter = 
+SVGElement.prototype.translateXSetter = SVGElement.prototype.translateYSetter =
+		SVGElement.prototype.rotationSetter = SVGElement.prototype.verticalAlignSetter =
 		SVGElement.prototype.scaleXSetter = SVGElement.prototype.scaleYSetter = function (value, key) {
-	this[key] = value;
-	this.doTransform = true;
-};
+			this[key] = value;
+			this.doTransform = true;
+		};
 
-// WebKit and Batik have problems with a stroke-width of zero, so in this case we remove the 
+// WebKit and Batik have problems with a stroke-width of zero, so in this case we remove the
 // stroke attribute altogether. #1270, #1369, #3065, #3072.
 SVGElement.prototype['stroke-widthSetter'] = SVGElement.prototype.strokeSetter = function (value, key, element) {
 	this[key] = value;
@@ -1203,7 +1222,7 @@ SVGRenderer.prototype = {
 	 * @param {Number} height
 	 * @param {Boolean} forExport
 	 */
-	init: function (container, width, height, style, forExport) {
+	init: function (container, width, height, style, forExport, allowHTML) {
 		var renderer = this,
 			loc = location,
 			boxWrapper,
@@ -1231,11 +1250,11 @@ SVGRenderer.prototype = {
 
 		// Page url used for internal references. #24, #672, #1070
 		renderer.url = (isFirefox || isWebKit) && doc.getElementsByTagName('base').length ?
-			loc.href
-				.replace(/#.*?$/, '') // remove the hash
-				.replace(/([\('\)])/g, '\\$1') // escape parantheses and quotes
-				.replace(/ /g, '%20') : // replace spaces (needed for Safari only)
-			'';
+				loc.href
+					.replace(/#.*?$/, '') // remove the hash
+					.replace(/([\('\)])/g, '\\$1') // escape parantheses and quotes
+					.replace(/ /g, '%20') : // replace spaces (needed for Safari only)
+				'';
 
 		// Add description
 		desc = this.createElement('desc').add();
@@ -1243,9 +1262,11 @@ SVGRenderer.prototype = {
 
 
 		renderer.defs = this.createElement('defs').add();
+		renderer.allowHTML = allowHTML;
 		renderer.forExport = forExport;
 		renderer.gradients = {}; // Object where gradient SvgElements are stored
 		renderer.cache = {}; // Cache for numerical bounding boxes
+		renderer.cacheKeys = [];
 
 		renderer.setSize(width, height, false);
 
@@ -1277,10 +1298,11 @@ SVGRenderer.prototype = {
 	},
 
 	getStyle: function (style) {
-		return (this.style = extend({
+		this.style = extend({
 			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif', // default font
 			fontSize: '12px'
-		}, style));
+		}, style);
+		return this.style;
 	},
 
 	/**
@@ -1372,14 +1394,14 @@ SVGRenderer.prototype = {
 			i = childNodes.length,
 			tempParent = width && !wrapper.added && this.box,
 			getLineHeight = function (tspan) {
-				return textLineHeight ? 
-					pInt(textLineHeight) :
-					renderer.fontMetrics(
-						/(px|em)$/.test(tspan && tspan.style.fontSize) ?
-							tspan.style.fontSize :
-							((textStyles && textStyles.fontSize) || renderer.style.fontSize || 12),
-						tspan
-					).h;
+				return textLineHeight ?
+						pInt(textLineHeight) :
+						renderer.fontMetrics(
+							/(px|em)$/.test(tspan && tspan.style.fontSize) ?
+									tspan.style.fontSize :
+									((textStyles && textStyles.fontSize) || renderer.style.fontSize || 12),
+							tspan
+						).h;
 			},
 			unescapeAngleBrackets = function (inputStr) {
 				return inputStr.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
@@ -1390,11 +1412,10 @@ SVGRenderer.prototype = {
 			textNode.removeChild(childNodes[i]);
 		}
 
-		// Skip tspans, add text directly to text node. The forceTSpan is a hook 
+		// Skip tspans, add text directly to text node. The forceTSpan is a hook
 		// used in text outline hack.
 		if (!hasMarkup && !textShadow && !ellipsis && textStr.indexOf(' ') === -1) {
 			textNode.appendChild(doc.createTextNode(unescapeAngleBrackets(textStr)));
-			return;
 
 		// Complex strings, add more logic
 		} else {
@@ -1424,7 +1445,7 @@ SVGRenderer.prototype = {
 				lines.pop();
 			}
 
-			
+
 			// build the lines
 			each(lines, function (line, lineNo) {
 				var spans, spanNo = 0;
@@ -1539,10 +1560,10 @@ SVGRenderer.prototype = {
 									} else if (!tooLong || words.length === 1) {
 										words = rest;
 										rest = [];
-												
+
 										if (words.length) {
 											softLineNo++;
-											
+
 											tspan = doc.createElementNS(SVG_NS, 'tspan');
 											attr(tspan, {
 												dy: dy,
@@ -1586,7 +1607,7 @@ SVGRenderer.prototype = {
 		}
 	},
 
-	
+
 
 	/*
 	breakText: function (wrapper, width) {
@@ -1621,7 +1642,7 @@ SVGRenderer.prototype = {
 	},
 	*/
 
-	/** 
+	/**
 	 * Returns white for dark colors and black for bright colors
 	 */
 	getContrast: function (color) {
@@ -1708,13 +1729,13 @@ SVGRenderer.prototype = {
 		delete disabledState.style;
 
 		// Add the events. IE9 and IE10 need mouseover and mouseout to funciton (#667).
-		addEvent(label.element, isIE ? 'mouseover' : 'mouseenter', function () {
+		addEvent(label.element, isMS ? 'mouseover' : 'mouseenter', function () {
 			if (curState !== 3) {
 				label.attr(hoverState)
 					.css(hoverStyle);
 			}
 		});
-		addEvent(label.element, isIE ? 'mouseout' : 'mouseleave', function () {
+		addEvent(label.element, isMS ? 'mouseout' : 'mouseleave', function () {
 			if (curState !== 3) {
 				stateOptions = [normalState, hoverState, pressedState][curState];
 				stateStyle = [normalStyle, hoverStyle, pressedStyle][curState];
@@ -1789,13 +1810,7 @@ SVGRenderer.prototype = {
 	 * @param {Number} r The radius
 	 */
 	circle: function (x, y, r) {
-		var attr = isObject(x) ?
-			x :
-			{
-				x: x,
-				y: y,
-				r: r
-			},
+		var attr = isObject(x) ? x : { x: x, y: y, r: r },
 			wrapper = this.createElement('circle');
 
 		wrapper.xSetter = function (value) {
@@ -1875,7 +1890,7 @@ SVGRenderer.prototype = {
 				ry: value
 			});
 		};
-		
+
 		return wrapper.attr(attribs);
 	},
 
@@ -1977,7 +1992,6 @@ SVGRenderer.prototype = {
 				options
 			),
 
-			imageElement,
 			imageRegex = /^url\((.*?)\)$/,
 			imageSrc,
 			imageSize,
@@ -2038,9 +2052,26 @@ SVGRenderer.prototype = {
 
 				// Create a dummy JavaScript image to get the width and height. Due to a bug in IE < 8,
 				// the created element must be assigned to a variable in order to load (#292).
-				imageElement = createElement('img', {
+				createElement('img', {
 					onload: function () {
+
+						// Special case for SVGs on IE11, the width is not accessible until the image is
+						// part of the DOM (#2854).
+						if (this.width === 0) {
+							css(this, {
+								position: ABSOLUTE,
+								top: '-999em'
+							});
+							document.body.appendChild(this);
+						}
+
+						// Center the image
 						centerImage(obj, symbolSizes[imageSrc] = [this.width, this.height]);
+
+						// Clean up after #2854 workaround.
+						if (this.parentNode) {
+							this.parentNode.removeChild(this);
+						}
 					},
 					src: imageSrc
 				});
@@ -2153,7 +2184,7 @@ SVGRenderer.prototype = {
 				path;
 
 			path = [
-				'M', x + r, y, 
+				'M', x + r, y,
 				'L', x + w - r, y, // top side
 				'C', x + w, y, x + w, y, x + w, y + r, // top-right corner
 				'L', x + w, y + h - r, // right side
@@ -2163,35 +2194,35 @@ SVGRenderer.prototype = {
 				'L', x, y + r, // left side
 				'C', x, y, x, y, x + r, y // top-right corner
 			];
-			
+
 			if (anchorX && anchorX > w && anchorY > y + safeDistance && anchorY < y + h - safeDistance) { // replace right side
 				path.splice(13, 3,
-					'L', x + w, anchorY - halfDistance, 
+					'L', x + w, anchorY - halfDistance,
 					x + w + arrowLength, anchorY,
 					x + w, anchorY + halfDistance,
 					x + w, y + h - r
-				);
+					);
 			} else if (anchorX && anchorX < 0 && anchorY > y + safeDistance && anchorY < y + h - safeDistance) { // replace left side
-				path.splice(33, 3, 
-					'L', x, anchorY + halfDistance, 
+				path.splice(33, 3,
+					'L', x, anchorY + halfDistance,
 					x - arrowLength, anchorY,
 					x, anchorY - halfDistance,
 					x, y + r
-				);
+					);
 			} else if (anchorY && anchorY > h && anchorX > x + safeDistance && anchorX < x + w - safeDistance) { // replace bottom
 				path.splice(23, 3,
 					'L', anchorX + halfDistance, y + h,
 					anchorX, y + h + arrowLength,
 					anchorX - halfDistance, y + h,
 					x + r, y + h
-				);
+					);
 			} else if (anchorY && anchorY < 0 && anchorX > x + safeDistance && anchorX < x + w - safeDistance) { // replace top
 				path.splice(3, 3,
 					'L', anchorX - halfDistance, y,
 					anchorX, y - arrowLength,
 					anchorX + halfDistance, y,
 					w - r, y
-				);
+					);
 			}
 			return path;
 		}
@@ -2222,7 +2253,7 @@ SVGRenderer.prototype = {
 	},
 
 
-	
+
 
 
 	/**
@@ -2240,7 +2271,7 @@ SVGRenderer.prototype = {
 			wrapper,
 			attr = {};
 
-		if (useHTML && !renderer.forExport) {
+		if (useHTML && (renderer.allowHTML || !renderer.forExport)) {
 			return renderer.html(str, x, y);
 		}
 
@@ -2278,7 +2309,7 @@ SVGRenderer.prototype = {
 				element.setAttribute(key, value);
 			};
 		}
-		
+
 		return wrapper;
 	},
 
@@ -2291,9 +2322,9 @@ SVGRenderer.prototype = {
 			style;
 
 		fontSize = fontSize || this.style.fontSize;
-		if (elem && win.getComputedStyle) {
+		if (!fontSize && elem && win.getComputedStyle) {
 			elem = elem.element || elem; // SVGElement
-			style = win.getComputedStyle(elem, "");
+			style = win.getComputedStyle(elem, '');
 			fontSize = style && style.fontSize; // #4309, the style doesn't exist inside a hidden iframe in Firefox
 		}
 		fontSize = /px/.test(fontSize) ? pInt(fontSize) : /em/.test(fontSize) ? parseFloat(fontSize) * 12 : 12;
@@ -2359,19 +2390,22 @@ SVGRenderer.prototype = {
 			crispAdjust = 0,
 			deferredAttr = {},
 			baselineOffset,
-			needsBox;
+			needsBox,
+			updateBoxSize,
+			updateTextPadding,
+			boxAttr;
 
 		/**
 		 * This function runs after the label is added to the DOM (when the bounding box is
 		 * available), and after the text of the label is updated to detect the new bounding
 		 * box and reflect it in the border box.
 		 */
-		function updateBoxSize() {
+		updateBoxSize = function () {
 			var boxX,
 				boxY,
 				style = text.element.style;
 
-			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && defined(text.textStr) && 
+			bBox = (width === undefined || height === undefined || wrapper.styles.textAlign) && defined(text.textStr) &&
 				text.getBBox(); //#3295 && 3514 box failure when string equals 0
 			wrapper.width = (width || bBox.width || 0) + 2 * padding + paddingLeft;
 			wrapper.height = (height || bBox.height || 0) + 2 * padding;
@@ -2379,17 +2413,17 @@ SVGRenderer.prototype = {
 			// update the label-scoped y offset
 			baselineOffset = padding + renderer.fontMetrics(style && style.fontSize, text).b;
 
-			
+
 			if (needsBox) {
 
-				// create the border box if it is not already present
 				if (!box) {
-					boxX = mathRound(-alignFactor * padding) + crispAdjust;
+					// create the border box if it is not already present
+					boxX = crispAdjust;
 					boxY = (baseline ? -baselineOffset : 0) + crispAdjust;
 
 					wrapper.box = box = shape ?
-						renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height, deferredAttr) :
-						renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
+							renderer.symbol(shape, boxX, boxY, wrapper.width, wrapper.height, deferredAttr) :
+							renderer.rect(boxX, boxY, wrapper.width, wrapper.height, 0, deferredAttr[STROKE_WIDTH]);
 
 					if (!box.isImg) { // #4324, fill "none" causes it to be ignored by mouse events in IE
 						box.attr('fill', NONE);
@@ -2406,15 +2440,15 @@ SVGRenderer.prototype = {
 				}
 				deferredAttr = null;
 			}
-		}
+		};
 
 		/**
 		 * This function runs after setting text or padding, but only if padding is changed
 		 */
-		function updateTextPadding() {
+		updateTextPadding = function () {
 			var styles = wrapper.styles,
 				textAlign = styles && styles.textAlign,
-				x = paddingLeft + padding * (1 - alignFactor),
+				x = paddingLeft + padding,
 				y;
 
 			// determin y based on the baseline
@@ -2436,20 +2470,20 @@ SVGRenderer.prototype = {
 			// record current values
 			text.x = x;
 			text.y = y;
-		}
+		};
 
 		/**
 		 * Set a box attribute, or defer it if the box is not yet created
 		 * @param {Object} key
 		 * @param {Object} value
 		 */
-		function boxAttr(key, value) {
+		boxAttr = function (key, value) {
 			if (box) {
 				box.attr(key, value);
 			} else {
 				deferredAttr[key] = value;
 			}
-		}
+		};
 
 		/**
 		 * After the text element is added, get the desired size of the border box
@@ -2498,7 +2532,13 @@ SVGRenderer.prototype = {
 
 		// change local variable and prevent setting attribute on the group
 		wrapper.alignSetter = function (value) {
-			alignFactor = { left: 0, center: 0.5, right: 1 }[value];
+			value = { left: 0, center: 0.5, right: 1 }[value];
+			if (value !== alignFactor) {
+				alignFactor = value;
+				if (bBox) { // Bounding box exists, means we're dynamically changing
+					wrapper.attr({ x: x });
+				}
+			}
 		};
 
 		// apply these to the box and the text alike
@@ -2537,7 +2577,7 @@ SVGRenderer.prototype = {
 		wrapper.xSetter = function (value) {
 			wrapper.x = value; // for animation getter
 			if (alignFactor) {
-				value -= alignFactor * ((width || bBox.width) + padding);
+				value -= alignFactor * ((width || bBox.width) + 2 * padding);
 			}
 			wrapperX = mathRound(value);
 			wrapper.attr('translateX', wrapperX);

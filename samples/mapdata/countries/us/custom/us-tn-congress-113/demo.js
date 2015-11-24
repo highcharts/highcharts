@@ -19,19 +19,19 @@ $(function () {
             "value": 3
         },
         {
-            "hc-key": "us-tn-03",
+            "hc-key": "us-tn-08",
             "value": 4
         },
         {
-            "hc-key": "us-tn-08",
+            "hc-key": "us-tn-01",
             "value": 5
         },
         {
-            "hc-key": "us-tn-01",
+            "hc-key": "us-tn-09",
             "value": 6
         },
         {
-            "hc-key": "us-tn-09",
+            "hc-key": "us-tn-03",
             "value": 7
         },
         {
@@ -48,7 +48,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-tn-congress-113.js">Tennessee congressional districts</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-tn-congress-113.js">Tennessee congressional districts</a>'
         },
 
         mapNavigation: {

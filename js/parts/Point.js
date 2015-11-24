@@ -90,7 +90,11 @@ Point.prototype = {
 				i++;
 			}
 			while (j < valueCount) {
-				ret[pointArrayMap[j++]] = options[i++];
+				if (!keys || options[i] !== undefined) { // Skip undefined positions for keys
+					ret[pointArrayMap[j]] = options[i];
+				}
+				i++;
+				j++;
 			}
 		} else if (typeof options === 'object') {
 			ret = options;
@@ -155,7 +159,7 @@ Point.prototype = {
 	 */
 	destroyElements: function () {
 		var point = this,
-			props = ['graphic', 'dataLabel', 'dataLabelUpper', 'group', 'connector', 'shadowGroup'],
+			props = ['graphic', 'dataLabel', 'dataLabelUpper', 'connector', 'shadowGroup'],
 			prop,
 			i = 6;
 		while (i--) {
@@ -180,7 +184,7 @@ Point.prototype = {
 			percentage: this.percentage,
 			total: this.total || this.stackTotal
 		};
-	},	
+	},
 
 	/**
 	 * Extendable method for formatting each point's tooltip line
@@ -239,5 +243,6 @@ Point.prototype = {
 		}
 
 		fireEvent(this, eventType, eventArgs, defaultFunction);
-	}
+	},
+	visible: true
 };

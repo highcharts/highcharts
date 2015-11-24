@@ -1,45 +1,46 @@
 $(function () {
 
-function simplifyPath(data, epsilon) {
-    var DouglasPecker = function (data, epsilon) {
-        if (data.length <= 2) {
-            return [data[0]];
-        }
-        var result = [],
-            dmax = 0,
-            index = 0,
-            start = data[0],
-            end = data[data.length - 1],
-            point,
-            i;
-
-        // recurring factors
-        var m = (end.y - start.y) / (end.x - start.x),
-            b = start.y - (m * start.x);
-
-        // Find furthest point
-        for (i = 1; i <= data.length - 2; i++) {
-            point = data[i];
-            d = Math.abs(point.y - (m * point.x) - b) / Math.sqrt(Math.pow(m, 2) + 1);
-            if (d > dmax) {
-                dmax = d;
-                index = i;
+    function simplifyPath(data, epsilon) {
+        function douglasPecker(data, epsilon) {
+            if (data.length <= 2) {
+                return [data[0]];
             }
+            var result = [],
+                dmax = 0,
+                index = 0,
+                start = data[0],
+                end = data[data.length - 1],
+                point,
+                i,
+                d;
+
+            // recurring factors
+            var m = (end.y - start.y) / (end.x - start.x),
+                b = start.y - (m * start.x);
+
+            // Find furthest point
+            for (i = 1; i <= data.length - 2; i++) {
+                point = data[i];
+                d = Math.abs(point.y - (m * point.x) - b) / Math.sqrt(Math.pow(m, 2) + 1);
+                if (d > dmax) {
+                    dmax = d;
+                    index = i;
+                }
+            }
+            // Evaluate
+            if (dmax >= epsilon) {
+                result = result.concat(douglasPecker(data.slice(0, index + 1), epsilon));
+                result = result.concat(douglasPecker(data.slice(index + 1, data.length), epsilon));
+            } else {
+                result = [start];
+            }
+            return result;
         }
-        // Evaluate
-        if (dmax >= epsilon) {
-            result = result.concat(DouglasPecker(data.slice(0, index + 1), epsilon));
-            result = result.concat(DouglasPecker(data.slice(index + 1, data.length), epsilon));
-        } else {
-            result = [start];
-        }
-        return result;
+        // CALL RDP Function
+        var arr = douglasPecker(data, epsilon);
+        arr.push(data[data.length - 1]);
+        return arr;
     }
-    // CALL RDP Function
-    var arr = DouglasPecker(data, epsilon);
-    arr.push(data[data.length - 1]);
-    return arr;
-}
 
 
     function getData(n) {

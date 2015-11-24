@@ -6,6 +6,6 @@
  * License: www.highcharts.com/license
  */
 
-/*global HighchartsAdapter*/
-(function (Highcharts) {
+/*eslint no-unused-vars: 0 */ // @todo: Not needed in HC5
+(function () {
 

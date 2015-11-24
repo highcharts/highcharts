@@ -47,75 +47,75 @@ $(function () {
             "value": 10
         },
         {
-            "hc-key": "nl-3557-gm0375",
+            "hc-key": "nl-3557-gm0479",
             "value": 11
         },
         {
-            "hc-key": "nl-3557-gm0479",
+            "hc-key": "nl-3557-gm0362",
             "value": 12
         },
         {
-            "hc-key": "nl-3557-gm0358",
+            "hc-key": "nl-3557-gm0393",
             "value": 13
         },
         {
-            "hc-key": "nl-3557-gm0362",
+            "hc-key": "nl-3557-gm0498",
             "value": 14
         },
         {
-            "hc-key": "nl-3557-gm0393",
+            "hc-key": "nl-3557-gm0405",
             "value": 15
         },
         {
-            "hc-key": "nl-3557-gm0498",
+            "hc-key": "nl-3557-gm0388",
             "value": 16
         },
         {
-            "hc-key": "nl-3557-gm0405",
+            "hc-key": "nl-3557-gm0425",
             "value": 17
         },
         {
-            "hc-key": "nl-3557-gm0388",
+            "hc-key": "nl-3557-gm0402",
             "value": 18
         },
         {
-            "hc-key": "nl-3557-gm0425",
+            "hc-key": "nl-3557-gm0457",
             "value": 19
         },
         {
-            "hc-key": "nl-3557-gm0402",
+            "hc-key": "nl-3557-gm0406",
             "value": 20
         },
         {
-            "hc-key": "nl-3557-gm0457",
+            "hc-key": "nl-3557-gm0392",
             "value": 21
         },
         {
-            "hc-key": "nl-3557-gm0406",
+            "hc-key": "nl-3557-gm0394",
             "value": 22
         },
         {
-            "hc-key": "nl-3557-gm0392",
+            "hc-key": "nl-3557-gm0375",
             "value": 23
         },
         {
-            "hc-key": "nl-3557-gm0394",
+            "hc-key": "nl-3557-gm0437",
             "value": 24
         },
         {
-            "hc-key": "nl-3557-gm0437",
+            "hc-key": "nl-3557-gm1598",
             "value": 25
         },
         {
-            "hc-key": "nl-3557-gm1598",
+            "hc-key": "nl-3557-gm0417",
             "value": 26
         },
         {
-            "hc-key": "nl-3557-gm0417",
+            "hc-key": "nl-3557-gm0432",
             "value": 27
         },
         {
-            "hc-key": "nl-3557-gm0432",
+            "hc-key": "nl-3557-gm0358",
             "value": 28
         },
         {
@@ -187,7 +187,7 @@ $(function () {
             "value": 45
         },
         {
-            "hc-key": "nl-3557-gm0458",
+            "hc-key": "nl-3557-gm0399",
             "value": 46
         },
         {
@@ -207,7 +207,7 @@ $(function () {
             "value": 50
         },
         {
-            "hc-key": "nl-3557-gm0399",
+            "hc-key": "nl-3557-gm0458",
             "value": 51
         },
         {
@@ -224,7 +224,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/nl/nl-nh-all.js">Noord-Holland</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/nl/nl-nh-all.js">Noord-Holland</a>'
         },
 
         mapNavigation: {

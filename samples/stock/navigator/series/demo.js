@@ -3,7 +3,8 @@ $(function () {
 
         navigator: {
             series: {
-                color: 'green'
+                color: '#FF00FF',
+                lineWidth: 2
             }
         },
 

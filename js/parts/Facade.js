@@ -1,15 +1,15 @@
 
 // global variables
 extend(Highcharts, {
-	
+
 	// Constructors
 	Color: Color,
 	Point: Point,
-	Tick: Tick,	
+	Tick: Tick,
 	Renderer: Renderer,
 	SVGElement: SVGElement,
 	SVGRenderer: SVGRenderer,
-	
+
 	// Various
 	arrayMin: arrayMin,
 	arrayMax: arrayMax,
@@ -31,6 +31,7 @@ extend(Highcharts, {
 	map: map,
 	merge: merge,
 	splat: splat,
+	stableSort: stableSort,
 	extendClass: extendClass,
 	pInt: pInt,
 	svg: hasSVG,

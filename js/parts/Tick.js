@@ -57,7 +57,7 @@ Tick.prototype = {
 
 		// prepare CSS
 		//css = width && { width: mathMax(1, mathRound(width - 2 * (labelOptions.padding || 10))) + PX };
-		
+
 		// first call
 		if (!defined(label)) {
 
@@ -130,9 +130,9 @@ Tick.prototype = {
 
 			slotWidth = mathMin(axis.slotWidth, slotWidth); // #4177
 			if (slotWidth < axis.slotWidth && axis.labelAlign === 'center') {
-				xy.x += goRight * (axis.slotWidth - slotWidth - xCorrection * (axis.slotWidth - mathMin(labelWidth, slotWidth)));				
+				xy.x += goRight * (axis.slotWidth - slotWidth - xCorrection * (axis.slotWidth - mathMin(labelWidth, slotWidth)));
 			}
-			// If the label width exceeds the available space, set a text width to be 
+			// If the label width exceeds the available space, set a text width to be
 			// picked up below. Also, if a width has been set before, we need to set a new
 			// one because the reported labelWidth will be limited by the box (#3938).
 			if (labelWidth > slotWidth || (axis.autoRotation && label.styles.width)) {
@@ -184,8 +184,15 @@ Tick.prototype = {
 			reversed = axis.reversed,
 			staggerLines = axis.staggerLines,
 			rotCorr = axis.tickRotCorr || { x: 0, y: 0 },
-			yOffset = pick(labelOptions.y, rotCorr.y + (axis.side === 2 ? 8 : -(label.getBBox().height / 2))),
+			yOffset = labelOptions.y,
 			line;
+
+		if (!defined(yOffset)) {
+			yOffset = axis.side === 2 ? 
+				rotCorr.y + 8 :
+				// #3140, #3140
+				yOffset = mathCos(label.rotation * deg2rad) * (rotCorr.y - label.getBBox(false, 0).height / 2);
+		}
 
 		x = x + labelOptions.x + rotCorr.x - (tickmarkOffset && horiz ?
 			tickmarkOffset * transA * (reversed ? -1 : 1) : 0);
@@ -195,6 +202,9 @@ Tick.prototype = {
 		// Correct for staggered labels
 		if (staggerLines) {
 			line = (index / (step || 1) % staggerLines);
+			if (axis.opposite) {
+				line = staggerLines - line - 1;
+			}
 			y += line * (axis.labelOffset / staggerLines);
 		}
 

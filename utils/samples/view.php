@@ -7,8 +7,9 @@ define('FRAMEWORK', 'jQuery');
 require_once('functions.php');
 
 @$path = $_GET['path'];
+
 if (!preg_match('/^[a-z\-]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
-	header('Location: index.php');
+	header('Location: start.php');
 	exit;
 }
 
@@ -26,7 +27,7 @@ $httpHost = $_SERVER['HTTP_HOST'];
 $httpHost = explode('.', $httpHost);
 $topDomain = $httpHost[sizeof($httpHost) - 1];
 $html = ob_get_clean();
-$html = str_replace('/code.highcharts.com/', "/code.highcharts.$topDomain/", $html);
+$html = str_replace('https://code.highcharts.com/', "http://code.highcharts.$topDomain/", $html);
 
 
 if (strstr($html, "/code.highcharts.$topDomain/mapdata")) {
@@ -54,7 +55,7 @@ $themes = array(
 
 
 function getResources() {
-	global $fullpath;
+	global $fullpath, $topDomain;
 
 	// No idea why file_get_contents doesn't work here...
 	ob_start();
@@ -87,6 +88,8 @@ function getResources() {
 			}
 		}
 	}
+
+
 	return $html;
 }
 
@@ -160,8 +163,12 @@ function getResources() {
 				}
 
 				// Activate view source button
-				$('#view-source').bind('change', function () {
-					var checked = $(this).attr('checked');
+				$('#view-source').bind('click', function () {
+					var checked;
+
+					$(this).toggleClass('active');
+
+					checked = $(this).hasClass('active')
 					
 					$('#source-box').css({
 						width: checked ? '50%' : 0
@@ -206,6 +213,7 @@ function getResources() {
 
 
 		// Wrappers for recording mouse events in order to write automatic tests 
+		
 		$(function () {
 
 			$(window).bind('keydown', parent.keyDown);
@@ -242,7 +250,7 @@ function getResources() {
 				return proceed.call(this, e);
 			});
 		});
-
+		
 
 		<?php if (@$_GET['profile']) : ?>
 		$(function () {
@@ -321,22 +329,24 @@ function getResources() {
 					<?php endforeach ?>
 					</select>
 				</form>
-				<button id="next" disabled="disabled">Next</button>
-				<button id="reload" style="margin-left: 1em" onclick="location.reload()">Reload</button>
-				<input id="view-source" type="checkbox" />
-				<label for="view-source">View source</label>
-				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
+				<a class="button" id="next" disabled="disabled">Next</a>
+				<a class="button" id="reload" style="margin-left: 1em" onclick="location.reload()">Reload</a>
+				
+				<a class="button"
 					href="compare-view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>">Compare</a>
-				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
+				<a class="button"
 					href="view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>&amp;profile=1">Profile</a>
-				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
+				<a class="button"
 					href="view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>&amp;time=1">Time</a>
-				<a style="color: white; font-weight: bold; text-decoration: none; margin-left: 1em"
+				<a class="button"
 					href="http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/<?php echo $path ?>/"
-					target="_blank">» jsFiddle</a>
+					target="_blank">jsFiddle</a>
 
+				<a id="view-source" class="button" href="javascript:;">View source</a>
+				
 				<input id="record" type="checkbox" />
 				<label for="record" title="Record calls to Pointer mouse events that can be added to test.js for automatic testing of tooltip and other mouse operations">Record mouse</label>
+				
 			</div>
 		</div>
 		<div id="source-box"></div>

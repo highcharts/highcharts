@@ -1,6 +1,6 @@
 $(function () {
 
-    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
+    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-population-density.json&callback=?', function (data) {
 
         // Add lower case codes to the data set for inclusion in the tooltip.pointFormat
         $.each(data, function () {
@@ -32,8 +32,8 @@ $(function () {
                 borderWidth: 0,
                 shadow: false,
                 useHTML: true,
-                pointFormat: '<span class="f32"><span class="flag {point.flag}"></span></span>'
-                    + ' {point.name}: <b>{point.value}</b>/km²'
+                pointFormat: '<span class="f32"><span class="flag {point.flag}"></span></span>' +
+                    ' {point.name}: <b>{point.value}</b>/km²'
             },
 
             colorAxis: {

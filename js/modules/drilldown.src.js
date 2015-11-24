@@ -1,16 +1,14 @@
 /**
- * Highcharts Drilldown plugin
+ * Highcharts Drilldown module
  * 
  * Author: Torstein Honsi
- * License: MIT License
+ * License: www.highcharts.com/license
  *
- * Demo: http://jsfiddle.net/highcharts/Vf3yT/
  */
 
-/*global Highcharts,HighchartsAdapter*/
 (function (H) {
 
-	"use strict";
+	'use strict';
 
 	var noop = function () {},
 		defaultOptions = H.getOptions(),
@@ -144,7 +142,7 @@
 		
 			
 		ddOptions = extend({
-			color: oldSeries.options.colorByPoint ? null : color, // #4359 - pie chart slices shouldn't have the same color
+			color: color,
 			_ddSeriesId: ddSeriesId++
 		}, ddOptions);
 		pointIndex = inArray(point, oldSeries.points);

@@ -31,31 +31,31 @@ $(function () {
             "value": 6
         },
         {
-            "hc-key": "us-pa-10",
+            "hc-key": "us-pa-05",
             "value": 7
         },
         {
-            "hc-key": "us-pa-04",
+            "hc-key": "us-pa-10",
             "value": 8
         },
         {
-            "hc-key": "us-pa-17",
+            "hc-key": "us-pa-04",
             "value": 9
         },
         {
-            "hc-key": "us-pa-06",
+            "hc-key": "us-pa-17",
             "value": 10
         },
         {
-            "hc-key": "us-pa-14",
+            "hc-key": "us-pa-06",
             "value": 11
         },
         {
-            "hc-key": "us-pa-16",
+            "hc-key": "us-pa-14",
             "value": 12
         },
         {
-            "hc-key": "us-pa-05",
+            "hc-key": "us-pa-16",
             "value": 13
         },
         {
@@ -84,7 +84,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-pa-congress-113.js">Pennsylvania congressional districts</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-pa-congress-113.js">Pennsylvania congressional districts</a>'
         },
 
         mapNavigation: {

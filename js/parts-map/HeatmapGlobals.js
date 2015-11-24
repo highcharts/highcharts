@@ -7,7 +7,7 @@ var UNDEFINED,
 	LegendSymbolMixin = Highcharts.LegendSymbolMixin,
 	Series = Highcharts.Series,
 	Point = Highcharts.Point,
-	
+
 	defaultOptions = Highcharts.getOptions(),
 	each = Highcharts.each,
 	extend = Highcharts.extend,

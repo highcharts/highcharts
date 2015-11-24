@@ -12,17 +12,17 @@ $(function () {
             background: {
                 innerRadius: '60%',
                 outerRadius: '100%',
-                shape: 'arc',
+                shape: 'arc'
             }
         },
 
         yAxis: {
             min: -5,
-            max: 5,
+            max: 5
         },
 
         series: [{
-            data: [-1],
+            data: [-1]
         }]
     });
 });

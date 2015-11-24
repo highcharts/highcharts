@@ -59,15 +59,15 @@ $(function () {
             "value": 13
         },
         {
-            "hc-key": "nl-li-gm0957",
+            "hc-key": "nl-li-gm1641",
             "value": 14
         },
         {
-            "hc-key": "nl-li-gm1669",
+            "hc-key": "nl-li-gm0957",
             "value": 15
         },
         {
-            "hc-key": "nl-li-gm1641",
+            "hc-key": "nl-li-gm1669",
             "value": 16
         },
         {
@@ -144,7 +144,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/nl/nl-li-all.js">Limburg</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/nl/nl-li-all.js">Limburg</a>'
         },
 
         mapNavigation: {

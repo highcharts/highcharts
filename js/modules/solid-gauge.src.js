@@ -7,9 +7,8 @@
  * License: www.highcharts.com/license
  */
 
-/*global Highcharts, HighchartsAdapter*/
 (function (H) {
-	"use strict";
+	'use strict';
 
 	var defaultPlotOptions = H.getOptions().plotOptions,
 		pInt = H.pInt,
@@ -196,7 +195,6 @@
 					shapeArgs,
 					d,
 					toColor = yAxis.toColor(point.y, point),
-					fromColor,
 					axisMinAngle = Math.min(yAxis.startAngleRad, yAxis.endAngleRad),
 					axisMaxAngle = Math.max(yAxis.startAngleRad, yAxis.endAngleRad),
 					minAngle,
@@ -206,7 +204,6 @@
 					toColor = point.color || series.color || 'none';
 				}
 				if (toColor !== 'none') {
-					fromColor = point.color;
 					point.color = toColor;
 				}
 

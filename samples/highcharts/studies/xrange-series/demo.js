@@ -12,6 +12,7 @@ $(function () {
         H.seriesTypes.xrange = H.extendClass(columnType, {
             type: 'xrange',
             parallelArrays: ['x', 'x2', 'y'],
+            requireSorting: false,
             animate: H.seriesTypes.line.prototype.animate,
 
             /**
@@ -20,14 +21,15 @@ $(function () {
              */
             getColumnMetrics: function () {
                 var metrics,
-                    chart = this.chart,
-                    swapAxes = function () {
-                        each(chart.series, function (s) {
-                            var xAxis = s.xAxis;
-                            s.xAxis = s.yAxis;
-                            s.yAxis = xAxis;
-                        });
-                    };
+                    chart = this.chart;
+
+                function swapAxes() {
+                    each(chart.series, function (s) {
+                        var xAxis = s.xAxis;
+                        s.xAxis = s.yAxis;
+                        s.yAxis = xAxis;
+                    });
+                }
 
                 swapAxes();
 

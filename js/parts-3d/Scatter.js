@@ -1,49 +1,51 @@
-/*** 
+/***
 	EXTENSION FOR 3D SCATTER CHART
 ***/
 
 Highcharts.wrap(Highcharts.seriesTypes.scatter.prototype, 'translate', function (proceed) {
 //function translate3d(proceed) {
 	proceed.apply(this, [].slice.call(arguments, 1));
-	
+
 	if (!this.chart.is3d()) {
 		return;
-	}	
+	}
 
 	var series = this,
 		chart = series.chart,
-		zAxis = Highcharts.pick(series.zAxis, chart.options.zAxis[0]);
-
-	var raw_points = [],
-		raw_point,
-		projected_points,
-		projected_point,
+		zAxis = Highcharts.pick(series.zAxis, chart.options.zAxis[0]),
+		rawPoints = [],
+		rawPoint,
+		projectedPoints,
+		projectedPoint,
+		zValue,
 		i;
 
 	for (i = 0; i < series.data.length; i++) {
-		raw_point = series.data[i];
+		rawPoint = series.data[i];
+		zValue = zAxis.isLog && zAxis.val2lin ? zAxis.val2lin(rawPoint.z) : rawPoint.z; // #4562
+		rawPoint.plotZ = zAxis.translate(zValue);
 
-		raw_point.isInside = raw_point.isInside ? (raw_point.z >= zAxis.min && raw_point.z <= zAxis.max) : false;
+		rawPoint.isInside = rawPoint.isInside ? (zValue >= zAxis.min && zValue <= zAxis.max) : false;
 
-		raw_points.push({
-			x: raw_point.plotX,
-			y: raw_point.plotY,
-			z: zAxis.translate(raw_point.z)
+		rawPoints.push({
+			x: rawPoint.plotX,
+			y: rawPoint.plotY,
+			z: rawPoint.plotZ
 		});
 	}
 
-	projected_points = perspective(raw_points, chart, true);
+	projectedPoints = perspective(rawPoints, chart, true);
 
 	for (i = 0; i < series.data.length; i++) {
-		raw_point = series.data[i];
-		projected_point = projected_points[i];
+		rawPoint = series.data[i];
+		projectedPoint = projectedPoints[i];
 
-		raw_point.plotXold = raw_point.plotX;
-		raw_point.plotYold = raw_point.plotY;
+		rawPoint.plotXold = rawPoint.plotX;
+		rawPoint.plotYold = rawPoint.plotY;
 
-		raw_point.plotX = projected_point.x;
-		raw_point.plotY = projected_point.y;
-		raw_point.plotZ = projected_point.z;
+		rawPoint.plotX = projectedPoint.x;
+		rawPoint.plotY = projectedPoint.y;
+		rawPoint.plotZ = projectedPoint.z;
 
 
 	}

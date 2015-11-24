@@ -93,8 +93,8 @@ pathAnim = {
 				startVal = parseFloat(start[i]);
 				ret[i] =
 					isNaN(startVal) ? // a letter instruction like M or L
-						start[i] :
-						pos * (parseFloat(end[i] - startVal)) + startVal;
+							start[i] :
+							pos * (parseFloat(end[i] - startVal)) + startVal;
 
 			}
 		} else { // if animation is finished or length not matching, land on right value

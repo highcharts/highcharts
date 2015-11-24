@@ -9,7 +9,4 @@
  * License: www.highcharts.com/license
  */
 
-// JSLint options:
-/*global Highcharts, HighchartsAdapter, document, window, navigator, setInterval, clearInterval, clearTimeout, setTimeout, location, jQuery, $, console */
-
 (function (Highcharts, UNDEFINED) {

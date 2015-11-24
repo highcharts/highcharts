@@ -23,7 +23,7 @@ $(function () {
                 borderWidth: 0,
                 colorByPoint: true,
                 dataLabels: {
-                    enabled: true,
+                    enabled: true
                 }
             }
         },
@@ -79,5 +79,5 @@ $(function () {
                 ]
             }]
         }
-    })
+    });
 });

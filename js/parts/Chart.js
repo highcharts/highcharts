@@ -29,7 +29,7 @@ Chart.prototype = {
 		this.userOptions = userOptions;
 
 		var optionsChart = options.chart;
-		
+
 		// Create margin & spacing array
 		this.margin = this.splashArray('margin', optionsChart);
 		this.spacing = this.splashArray('spacing', optionsChart);
@@ -139,7 +139,7 @@ Chart.prototype = {
 	isInsidePlot: function (plotX, plotY, inverted) {
 		var x = inverted ? plotY : plotX,
 			y = inverted ? plotX : plotY;
-			
+
 		return x >= 0 &&
 			x <= this.plotWidth &&
 			y >= 0 &&
@@ -162,16 +162,16 @@ Chart.prototype = {
 			hasStackedSeries,
 			hasDirtyStacks,
 			hasCartesianSeries = chart.hasCartesianSeries,
-			isDirtyBox = chart.isDirtyBox, // todo: check if it has actually changed?
+			isDirtyBox = chart.isDirtyBox,
 			seriesLength = series.length,
 			i = seriesLength,
 			serie,
 			renderer = chart.renderer,
 			isHiddenChart = renderer.isHidden(),
 			afterRedraw = [];
-			
+
 		setAnimation(animation, chart);
-		
+
 		if (isHiddenChart) {
 			chart.cloneRenderTo();
 		}
@@ -185,7 +185,7 @@ Chart.prototype = {
 
 			if (serie.options.stacking) {
 				hasStackedSeries = true;
-				
+
 				if (serie.isDirty) {
 					hasDirtyStacks = true;
 					break;
@@ -268,7 +268,7 @@ Chart.prototype = {
 				}
 			});
 		}
-		
+
 		// the plot areas size has changed
 		if (isDirtyBox) {
 			chart.drawChartBox();
@@ -293,11 +293,11 @@ Chart.prototype = {
 
 		// fire the event
 		fireEvent(chart, 'redraw'); // jQuery breaks this when calling it from addEvent. Overwrites chart.redraw
-		
+
 		if (isHiddenChart) {
 			chart.cloneRenderTo(true);
 		}
-		
+
 		// Fire callbacks that are put on hold until after the redraw
 		each(afterRedraw, function (callback) {
 			callback.call();
@@ -351,8 +351,7 @@ Chart.prototype = {
 			options = this.options,
 			xAxisOptions = options.xAxis = splat(options.xAxis || {}),
 			yAxisOptions = options.yAxis = splat(options.yAxis || {}),
-			optionsArray,
-			axis;
+			optionsArray;
 
 		// make sure the options are arrays and add some members
 		each(xAxisOptions, function (axis, i) {
@@ -368,7 +367,7 @@ Chart.prototype = {
 		optionsArray = xAxisOptions.concat(yAxisOptions);
 
 		each(optionsArray, function (axisOptions) {
-			axis = new Axis(chart, axisOptions);
+			new Axis(chart, axisOptions); // eslint-disable-line no-new
 		});
 	},
 
@@ -424,7 +423,7 @@ Chart.prototype = {
 			if (title && titleOptions) {
 				chart[name] = title = title.destroy(); // remove old
 			}
-			
+
 			if (chartTitleOptions && chartTitleOptions.text && !title) {
 				chart[name] = chart.renderer.text(
 					chartTitleOptions.text,
@@ -439,7 +438,7 @@ Chart.prototype = {
 				})
 				.css(chartTitleOptions.style)
 				.add();
-			}	
+			}
 		});
 		chart.layOutTitles(redraw);
 	},
@@ -461,10 +460,10 @@ Chart.prototype = {
 		if (title) {
 			title
 				.css({ width: (titleOptions.width || autoWidth) + PX })
-				.align(extend({ 
+				.align(extend({
 					y: renderer.fontMetrics(titleOptions.style.fontSize, title).b - 3
 				}, titleOptions), false, 'spacingBox');
-			
+
 			if (!titleOptions.floating && !titleOptions.verticalAlign) {
 				titleOffset = title.getBBox().height;
 			}
@@ -472,21 +471,21 @@ Chart.prototype = {
 		if (subtitle) {
 			subtitle
 				.css({ width: (subtitleOptions.width || autoWidth) + PX })
-				.align(extend({ 
-					y: titleOffset + (titleOptions.margin - 13) + renderer.fontMetrics(titleOptions.style.fontSize, subtitle).b 
+				.align(extend({
+					y: titleOffset + (titleOptions.margin - 13) + renderer.fontMetrics(subtitleOptions.style.fontSize, title).b
 				}, subtitleOptions), false, 'spacingBox');
-			
+
 			if (!subtitleOptions.floating && !subtitleOptions.verticalAlign) {
 				titleOffset = mathCeil(titleOffset + subtitle.getBBox().height);
 			}
 		}
 
-		requiresDirtyBox = this.titleOffset !== titleOffset;				
+		requiresDirtyBox = this.titleOffset !== titleOffset;
 		this.titleOffset = titleOffset; // used in getMargins
 
 		if (!this.isDirtyBox && requiresDirtyBox) {
 			this.isDirtyBox = requiresDirtyBox;
-			// Redraw if necessary (#2719, #2744)		
+			// Redraw if necessary (#2719, #2744)
 			if (this.hasRendered && pick(redraw, true) && this.isDirtyBox) {
 				this.redraw();
 			}
@@ -510,7 +509,7 @@ Chart.prototype = {
 		if (!defined(heightOption)) {
 			chart.containerHeight = adapterRun(renderTo, 'height');
 		}
-		
+
 		chart.chartWidth = mathMax(0, widthOption || chart.containerWidth || 600); // #1393, 1460
 		chart.chartHeight = mathMax(0, pick(heightOption,
 			// the offsetHeight of an empty container is 0 in standard browsers, but 19 in IE7:
@@ -524,7 +523,7 @@ Chart.prototype = {
 	cloneRenderTo: function (revert) {
 		var clone = this.renderToClone,
 			container = this.container;
-		
+
 		// Destroy the clone and bring the container back to the real renderTo div
 		if (revert) {
 			if (clone) {
@@ -532,7 +531,7 @@ Chart.prototype = {
 				discardElement(clone);
 				delete this.renderToClone;
 			}
-		
+
 		// Set up the clone
 		} else {
 			if (container && container.parentNode === this.renderTo) {
@@ -561,12 +560,14 @@ Chart.prototype = {
 	getContainer: function () {
 		var chart = this,
 			container,
-			optionsChart = chart.options.chart,
+			options = chart.options,
+			optionsChart = options.chart,
 			chartWidth,
 			chartHeight,
 			renderTo,
 			indexAttrName = 'data-highcharts-chart',
 			oldChartIndex,
+			Ren,
 			containerId;
 
 		chart.renderTo = renderTo = optionsChart.renderTo;
@@ -575,12 +576,12 @@ Chart.prototype = {
 		if (isString(renderTo)) {
 			chart.renderTo = renderTo = doc.getElementById(renderTo);
 		}
-		
+
 		// Display an error if the renderTo is wrong
 		if (!renderTo) {
 			error(13, true);
 		}
-		
+
 		// If the container already holds a chart, destroy it. The check for hasRendered is there
 		// because web pages that are saved to disk from the browser, will preserve the data-highcharts-chart
 		// attribute and the SVG contents, but not an interactive chart. So in this case,
@@ -588,8 +589,8 @@ Chart.prototype = {
 		oldChartIndex = pInt(attr(renderTo, indexAttrName));
 		if (!isNaN(oldChartIndex) && charts[oldChartIndex] && charts[oldChartIndex].hasRendered) {
 			charts[oldChartIndex].destroy();
-		}		
-		
+		}
+
 		// Make a reference to the chart from the div
 		attr(renderTo, indexAttrName, chart.index);
 
@@ -633,10 +634,15 @@ Chart.prototype = {
 		chart._cursor = container.style.cursor;
 
 		// Initialize the renderer
-		chart.renderer =
-			optionsChart.forExport ? // force SVG, used for SVG export
-				new SVGRenderer(container, chartWidth, chartHeight, optionsChart.style, true) :
-				new Renderer(container, chartWidth, chartHeight, optionsChart.style);
+		Ren = Highcharts[optionsChart.renderer] || Renderer;
+		chart.renderer = new Ren(
+			container,
+			chartWidth,
+			chartHeight,
+			optionsChart.style,
+			optionsChart.forExport,
+			options.exporting && options.exporting.allowHTML
+		);
 
 		if (useCanVG) {
 			// If we need canvg library, extend and configure the renderer
@@ -664,7 +670,7 @@ Chart.prototype = {
 		if (titleOffset && !defined(margin[0])) {
 			chart.plotTop = mathMax(chart.plotTop, titleOffset + chart.options.title.margin + spacing[0]);
 		}
-		
+
 		// Adjust for legend
 		chart.legend.adjustMargins(margin, spacing);
 
@@ -685,11 +691,13 @@ Chart.prototype = {
 		var chart = this,
 			axisOffset = chart.axisOffset = [0, 0, 0, 0], // top, right, bottom, left
 			margin = chart.margin;
-		
+
 		// pre-render axes to get labels offset width
 		if (chart.hasCartesianSeries) {
 			each(chart.axes, function (axis) {
-				axis.getOffset();
+				if (axis.visible) {
+					axis.getOffset();
+				}
 			});
 		}
 
@@ -697,7 +705,7 @@ Chart.prototype = {
 		each(marginNames, function (m, side) {
 			if (!defined(margin[side])) {
 				chart[m] += axisOffset[side];
-			}		
+			}
 		});
 
 		chart.setChartSize();
@@ -713,24 +721,20 @@ Chart.prototype = {
 			renderTo = chart.renderTo,
 			width = optionsChart.width || adapterRun(renderTo, 'width'),
 			height = optionsChart.height || adapterRun(renderTo, 'height'),
-			target = e ? e.target : win, // #805 - MooTools doesn't supply e
-			doReflow = function () {
-				if (chart.container) { // It may have been destroyed in the meantime (#1257)
-					chart.setSize(width, height, false);
-					chart.hasUserSize = null;
-				}
-			};
-			
+			target = e ? e.target : win; // #805 - MooTools doesn't supply e
+
 		// Width and height checks for display:none. Target is doc in IE8 and Opera,
 		// win in Firefox, Chrome and IE9.
 		if (!chart.hasUserSize && !chart.isPrinting && width && height && (target === win || target === doc)) { // #1093
 			if (width !== chart.containerWidth || height !== chart.containerHeight) {
 				clearTimeout(chart.reflowTimeout);
-				if (e) { // Called from window.resize
-					chart.reflowTimeout = setTimeout(doReflow, 100);
-				} else { // Called directly (#2224)
-					doReflow();
-				}
+				// When called from window.resize, e is set, else it's called directly (#2224)
+				chart.reflowTimeout = syncTimeout(function () {
+					if (chart.container) { // It may have been destroyed in the meantime (#1257)
+						chart.setSize(width, height, false);
+						chart.hasUserSize = null;
+					}
+				}, e ? 100 : 0);
 			}
 			chart.containerWidth = width;
 			chart.containerHeight = height;
@@ -745,8 +749,8 @@ Chart.prototype = {
 			reflow = function (e) {
 				chart.reflow(e);
 			};
-			
-		
+
+
 		addEvent(win, 'resize', reflow);
 		addEvent(chart, 'destroy', function () {
 			removeEvent(win, 'resize', reflow);
@@ -763,20 +767,12 @@ Chart.prototype = {
 		var chart = this,
 			chartWidth,
 			chartHeight,
-			fireEndResize,
 			renderer = chart.renderer,
-			globalAnimation = renderer.globalAnimation;
+			globalAnimation;
 
 		// Handle the isResizing counter
 		chart.isResizing += 1;
-		fireEndResize = function () {
-			if (chart) {
-				fireEvent(chart, 'endResize', null, function () {
-					chart.isResizing -= 1;
-				});
-			}
-		};
-
+		
 		// set the animation for the current process
 		setAnimation(animation, chart);
 
@@ -791,6 +787,7 @@ Chart.prototype = {
 		}
 
 		// Resize the container with the global animation applied if enabled (#2503)
+		globalAnimation = renderer.globalAnimation;
 		(globalAnimation ? animate : css)(chart.container, {
 			width: chartWidth + PX,
 			height: chartHeight + PX
@@ -823,13 +820,15 @@ Chart.prototype = {
 		chart.oldChartHeight = null;
 		fireEvent(chart, 'resize');
 
-		// fire endResize and set isResizing back
-		// If animation is disabled, fire without delay
-		if (globalAnimation === false) {
-			fireEndResize();
-		} else { // else set a timeout with the animation duration
-			setTimeout(fireEndResize, (globalAnimation && globalAnimation.duration) || 500);
-		}
+		// Fire endResize and set isResizing back. If animation is disabled, fire without delay
+		globalAnimation = renderer.globalAnimation; // Reassign it before using it, it may have changed since the top of this function.
+		syncTimeout(function () {
+			if (chart) {
+				fireEvent(chart, 'endResize', null, function () {
+					chart.isResizing -= 1;
+				});
+			}
+		}, globalAnimation === false ? 0 : ((globalAnimation && globalAnimation.duration) || 500));
 	},
 
 	/**
@@ -860,7 +859,7 @@ Chart.prototype = {
 
 		chart.plotSizeX = inverted ? plotHeight : plotWidth;
 		chart.plotSizeY = inverted ? plotWidth : plotHeight;
-		
+
 		chart.plotBorderWidth = optionsChart.plotBorderWidth || 0;
 
 		// Set boxes used for alignment
@@ -881,9 +880,9 @@ Chart.prototype = {
 		clipX = mathCeil(mathMax(plotBorderWidth, clipOffset[3]) / 2);
 		clipY = mathCeil(mathMax(plotBorderWidth, clipOffset[0]) / 2);
 		chart.clipBox = {
-			x: clipX, 
-			y: clipY, 
-			width: mathFloor(chart.plotSizeX - mathMax(plotBorderWidth, clipOffset[1]) / 2 - clipX), 
+			x: clipX,
+			y: clipY,
+			width: mathFloor(chart.plotSizeX - mathMax(plotBorderWidth, clipOffset[1]) / 2 - clipX),
 			height: mathMax(0, mathFloor(chart.plotSizeY - mathMax(plotBorderWidth, clipOffset[2]) / 2 - clipY))
 		};
 
@@ -941,7 +940,7 @@ Chart.prototype = {
 
 		if (chartBorderWidth || chartBackgroundColor) {
 			if (!chartBackground) {
-				
+
 				bgAttr = {
 					fill: chartBackgroundColor || NONE
 				};
@@ -985,7 +984,7 @@ Chart.prototype = {
 				plotBGImage.animate(plotBox);
 			}
 		}
-		
+
 		// Plot clip
 		if (!clipRect) {
 			chart.clipRect = renderer.clipRect(clipBox);
@@ -1020,7 +1019,7 @@ Chart.prototype = {
 
 	/**
 	 * Detect whether a certain chart property is needed based on inspecting its options
-	 * and series. This mainly applies to the chart.invert property, and in extensions to 
+	 * and series. This mainly applies to the chart.invert property, and in extensions to
 	 * the chart.angular and chart.polar properties.
 	 */
 	propFromSeries: function () {
@@ -1030,20 +1029,20 @@ Chart.prototype = {
 			seriesOptions = chart.options.series,
 			i,
 			value;
-			
-			
+
+
 		each(['inverted', 'angular', 'polar'], function (key) {
-			
+
 			// The default series type's class
 			klass = seriesTypes[optionsChart.type || optionsChart.defaultSeriesType];
-			
+
 			// Get the value from available chart-wide properties
 			value = (
 				chart[key] || // 1. it is set before
 				optionsChart[key] || // 2. it is set in the options
 				(klass && klass.prototype[key]) // 3. it's default series class requires it
 			);
-	
+
 			// 4. Check if any the chart's series require it
 			i = seriesOptions && seriesOptions.length;
 			while (!value && i--) {
@@ -1052,11 +1051,11 @@ Chart.prototype = {
 					value = true;
 				}
 			}
-	
+
 			// Set the chart property
-			chart[key] = value;	
+			chart[key] = value;
 		});
-		
+
 	},
 
 	/**
@@ -1084,6 +1083,7 @@ Chart.prototype = {
 				if (linkedTo) {
 					linkedTo.linkedSeries.push(series);
 					series.linkedParent = linkedTo;
+					series.visible = pick(series.options.visible, linkedTo.options.visible, series.visible); // #3879
 				}
 			}
 		});
@@ -1098,7 +1098,7 @@ Chart.prototype = {
 			serie.render();
 		});
 	},
-		
+
 	/**
 	 * Render labels for the chart
 	 */
@@ -1159,7 +1159,7 @@ Chart.prototype = {
 
 		// Record preliminary dimensions for later comparison
 		tempWidth = chart.plotWidth;
-		tempHeight = chart.plotHeight = chart.plotHeight - 13; // 13 is the most common height of X axis labels
+		tempHeight = chart.plotHeight = chart.plotHeight - 21; // 21 is the most common correction for X axis labels
 
 		// Get margins by pre-rendering axes
 		each(axes, function (axis) {
@@ -1183,13 +1183,15 @@ Chart.prototype = {
 		}
 
 		// Draw the borders and backgrounds
-		chart.drawChartBox();		
+		chart.drawChartBox();
 
 
 		// Axes
 		if (chart.hasCartesianSeries) {
 			each(axes, function (axis) {
-				axis.render();
+				if (axis.visible) {
+					axis.render();
+				}
 			});
 		}
 
@@ -1247,10 +1249,10 @@ Chart.prototype = {
 			container = chart.container,
 			i,
 			parentNode = container && container.parentNode;
-			
+
 		// fire the chart.destoy event
 		fireEvent(chart, 'destroy');
-		
+
 		// Delete the chart from charts lookup array
 		charts[chart.index] = UNDEFINED;
 		chartCount--;
@@ -1273,8 +1275,8 @@ Chart.prototype = {
 		}
 
 		// ==== Destroy chart properties:
-		each(['title', 'subtitle', 'chartBackground', 'plotBackground', 'plotBGImage', 
-				'plotBorder', 'seriesGroup', 'clipRect', 'credits', 'pointer', 'scroller', 
+		each(['title', 'subtitle', 'chartBackground', 'plotBackground', 'plotBGImage',
+				'plotBorder', 'seriesGroup', 'clipRect', 'credits', 'pointer', 'scroller',
 				'rangeSelector', 'legend', 'resetZoomButton', 'tooltip', 'renderer'], function (name) {
 			var prop = chart[name];
 
@@ -1308,13 +1310,13 @@ Chart.prototype = {
 	isReadyToRender: function () {
 		var chart = this;
 
-		// Note: in spite of JSLint's complaints, win == win.top is required
-		/*jslint eqeq: true*/
-		if ((!hasSVG && (win == win.top && doc.readyState !== 'complete')) || (useCanVG && !win.canvg)) {
-		/*jslint eqeq: false*/
+		// Note: win == win.top is required
+		if ((!hasSVG && (win == win.top && doc.readyState !== 'complete')) || (useCanVG && !win.canvg)) { // eslint-disable-line eqeqeq
 			if (useCanVG) {
 				// Delay rendering until canvg library is downloaded and ready
-				CanVGController.push(function () { chart.firstRender(); }, chart.options.global.canvasToolsURL);
+				CanVGController.push(function () {
+					chart.firstRender();
+				}, chart.options.global.canvasToolsURL);
 			} else {
 				doc.attachEvent('onreadystatechange', function () {
 					doc.detachEvent('onreadystatechange', chart.firstRender);
@@ -1347,7 +1349,7 @@ Chart.prototype = {
 		// Run an early event after the container and renderer are established
 		fireEvent(chart, 'init');
 
-		
+
 		chart.resetMargins();
 		chart.setChartSize();
 
@@ -1366,8 +1368,8 @@ Chart.prototype = {
 
 		// Run an event after axes and series are initialized, but before render. At this stage,
 		// the series data is indexed and cached in the xData and yData arrays, so we can access
-		// those before rendering. Used in Highstock. 
-		fireEvent(chart, 'beforeRender'); 
+		// those before rendering. Used in Highstock.
+		fireEvent(chart, 'beforeRender');
 
 		// depends on inverted and on margins being set
 		if (Highcharts.Pointer) {
@@ -1387,10 +1389,10 @@ Chart.prototype = {
 				fn.apply(chart, [chart]);
 			}
 		});
-		
+
 		// Fire the load event
-		fireEvent(chart, 'load');		
-		
+		fireEvent(chart, 'load');
+
 		// If the chart was rendered outside the top container, put it back in (#3679)
 		chart.cloneRenderTo(true);
 

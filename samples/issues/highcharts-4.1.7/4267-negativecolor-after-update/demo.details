@@ -1,0 +1,5 @@
+---
+ resources:
+   - https://code.jquery.com/qunit/qunit-1.15.0.js
+   - https://code.jquery.com/qunit/qunit-1.15.0.css
+...

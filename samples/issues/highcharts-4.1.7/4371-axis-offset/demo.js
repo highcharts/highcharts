@@ -1,7 +1,7 @@
 $(function () {
-    QUnit.test("Axis offsets - test series clips." , function (assert) { 
+    QUnit.test("Axis offsets - test series clips." , function (assert) {
         var chart = $('#container').highcharts({
-                xAxis: {    
+                xAxis: {
                     offset: -150
                 },
                 yAxis: {
@@ -28,11 +28,11 @@ $(function () {
             };
 
         assert.strictEqual(
-            chart.plotWidth === parseInt(clip.width) &&
-            chart.plotHeight === parseInt(clip.height),
+            chart.plotWidth === parseInt(clip.width, 10) &&
+            chart.plotHeight === parseInt(clip.height, 10),
             true,
             "CLip path has proper width and height"
         );
     });
-    
+
 });

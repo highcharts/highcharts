@@ -60,7 +60,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/kp/kp-all.js">North Korea</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/kp/kp-all.js">North Korea</a>'
         },
 
         mapNavigation: {

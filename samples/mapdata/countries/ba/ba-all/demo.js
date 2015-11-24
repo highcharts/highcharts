@@ -63,11 +63,11 @@ $(function () {
             "value": 14
         },
         {
-            "hc-key": "ba-sr",
+            "hc-key": "ba-3181",
             "value": 15
         },
         {
-            "hc-key": "ba-3181",
+            "hc-key": "ba-sr",
             "value": 16
         },
         {
@@ -84,7 +84,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ba/ba-all.js">Bosnia and Herzegovina</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ba/ba-all.js">Bosnia and Herzegovina</a>'
         },
 
         mapNavigation: {

@@ -147,95 +147,95 @@ $(function () {
             "value": 35
         },
         {
-            "hc-key": "us-sd-095",
+            "hc-key": "us-sd-013",
             "value": 36
         },
         {
-            "hc-key": "us-sd-013",
+            "hc-key": "us-sd-049",
             "value": 37
         },
         {
-            "hc-key": "us-sd-049",
+            "hc-key": "us-sd-077",
             "value": 38
         },
         {
-            "hc-key": "us-sd-077",
+            "hc-key": "us-sd-111",
             "value": 39
         },
         {
-            "hc-key": "us-sd-111",
+            "hc-key": "us-sd-003",
             "value": 40
         },
         {
-            "hc-key": "us-sd-003",
+            "hc-key": "us-sd-021",
             "value": 41
         },
         {
-            "hc-key": "us-sd-021",
+            "hc-key": "us-sd-117",
             "value": 42
         },
         {
-            "hc-key": "us-sd-117",
+            "hc-key": "us-sd-119",
             "value": 43
         },
         {
-            "hc-key": "us-sd-119",
+            "hc-key": "us-sd-027",
             "value": 44
         },
         {
-            "hc-key": "us-sd-027",
+            "hc-key": "us-sd-017",
             "value": 45
         },
         {
-            "hc-key": "us-sd-017",
+            "hc-key": "us-sd-071",
             "value": 46
         },
         {
-            "hc-key": "us-sd-071",
+            "hc-key": "us-sd-127",
             "value": 47
         },
         {
-            "hc-key": "us-sd-127",
+            "hc-key": "us-sd-081",
             "value": 48
         },
         {
-            "hc-key": "us-sd-081",
+            "hc-key": "us-sd-029",
             "value": 49
         },
         {
-            "hc-key": "us-sd-029",
+            "hc-key": "us-sd-033",
             "value": 50
         },
         {
-            "hc-key": "us-sd-033",
+            "hc-key": "us-sd-007",
             "value": 51
         },
         {
-            "hc-key": "us-sd-007",
+            "hc-key": "us-sd-035",
             "value": 52
         },
         {
-            "hc-key": "us-sd-035",
+            "hc-key": "us-sd-009",
             "value": 53
         },
         {
-            "hc-key": "us-sd-009",
+            "hc-key": "us-sd-101",
             "value": 54
         },
         {
-            "hc-key": "us-sd-101",
+            "hc-key": "us-sd-125",
             "value": 55
         },
         {
-            "hc-key": "us-sd-125",
+            "hc-key": "us-sd-135",
             "value": 56
         },
         {
-            "hc-key": "us-sd-135",
+            "hc-key": "us-sd-121",
             "value": 57
         },
         {
-            "hc-key": "us-sd-121",
+            "hc-key": "us-sd-095",
             "value": 58
         },
         {
@@ -276,7 +276,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-sd-all.js">South Dakota</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-sd-all.js">South Dakota</a>'
         },
 
         mapNavigation: {

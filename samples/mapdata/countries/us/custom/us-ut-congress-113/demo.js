@@ -3,7 +3,7 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "us-ut-04",
+            "hc-key": "us-ut-01",
             "value": 0
         },
         {
@@ -11,7 +11,7 @@ $(function () {
             "value": 1
         },
         {
-            "hc-key": "us-ut-01",
+            "hc-key": "us-ut-04",
             "value": 2
         },
         {
@@ -28,7 +28,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-ut-congress-113.js">Utah congressional districts</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-ut-congress-113.js">Utah congressional districts</a>'
         },
 
         mapNavigation: {

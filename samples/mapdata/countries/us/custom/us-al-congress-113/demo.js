@@ -7,11 +7,11 @@ $(function () {
             "value": 0
         },
         {
-            "hc-key": "us-al-05",
+            "hc-key": "us-al-04",
             "value": 1
         },
         {
-            "hc-key": "us-al-04",
+            "hc-key": "us-al-05",
             "value": 2
         },
         {
@@ -40,7 +40,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-al-congress-113.js">Alabama congressional districts</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-al-congress-113.js">Alabama congressional districts</a>'
         },
 
         mapNavigation: {

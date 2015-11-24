@@ -1,14 +1,17 @@
 $(function () {
-    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.json&callback=?', function (data) {
+    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=usdeur.json&callback=?', function (data) {
 
         var startDate = new Date(data[data.length - 1][0]), // Get year of last data point
             minRate = 1,
             maxRate = 0,
-            startPeriod = Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()),
+            startPeriod,
             date,
             rate,
             index;
+
         startDate.setMonth(startDate.getMonth() - 3); // a quarter of a year before last data point
+        startPeriod = Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+
         for (index = data.length - 1; index >= 0; index = index - 1) {
             date = data[index][0]; // data[i][0] is date
             rate = data[index][1]; // data[i][1] is exchange rate

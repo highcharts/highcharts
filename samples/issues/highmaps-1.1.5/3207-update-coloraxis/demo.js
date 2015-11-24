@@ -78,12 +78,12 @@ $(function () {
         chart = $('#container').highcharts();
 
         assert.equal(
-            chart.series[0].points[1].color,    
+            chart.series[0].points[1].color,
             'black',
             'Tasmania is initially black'
         );
         assert.equal(
-            chart.legend.allItems.length,    
+            chart.legend.allItems.length,
             3,
             'Three legend items'
         );
@@ -101,12 +101,12 @@ $(function () {
         });
 
         assert.equal(
-            chart.series[0].points[1].color,    
+            chart.series[0].points[1].color,
             'blue',
             'Tasmania is now blue'
         );
         assert.equal(
-            chart.legend.allItems.length,    
+            chart.legend.allItems.length,
             2,
             'Two legend items'
         );
@@ -118,14 +118,14 @@ $(function () {
 
 
         assert.equal(
-            $('.highcharts-legend-item', '#container').length,    
+            $('.highcharts-legend-item', '#container').length,
             2,
             'Export has two legend items'
         );
 
-        
+
     });
 
-    
+
 
 });

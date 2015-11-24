@@ -3,79 +3,79 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "br-pa",
+            "hc-key": "br-sp",
             "value": 0
         },
         {
-            "hc-key": "br-sc",
+            "hc-key": "br-ma",
             "value": 1
         },
         {
-            "hc-key": "br-ap",
+            "hc-key": "br-pa",
             "value": 2
         },
         {
-            "hc-key": "br-ms",
+            "hc-key": "br-sc",
             "value": 3
         },
         {
-            "hc-key": "br-mg",
+            "hc-key": "br-ba",
             "value": 4
         },
         {
-            "hc-key": "br-go",
+            "hc-key": "br-ap",
             "value": 5
         },
         {
-            "hc-key": "br-rs",
+            "hc-key": "br-ms",
             "value": 6
         },
         {
-            "hc-key": "br-to",
+            "hc-key": "br-mg",
             "value": 7
         },
         {
-            "hc-key": "br-pi",
+            "hc-key": "br-go",
             "value": 8
         },
         {
-            "hc-key": "br-al",
+            "hc-key": "br-rs",
             "value": 9
         },
         {
-            "hc-key": "br-pb",
+            "hc-key": "br-to",
             "value": 10
         },
         {
-            "hc-key": "br-ce",
+            "hc-key": "br-pi",
             "value": 11
         },
         {
-            "hc-key": "br-se",
+            "hc-key": "br-al",
             "value": 12
         },
         {
-            "hc-key": "br-rr",
+            "hc-key": "br-pb",
             "value": 13
         },
         {
-            "hc-key": "br-sp",
+            "hc-key": "br-ce",
             "value": 14
         },
         {
-            "hc-key": "br-pe",
+            "hc-key": "br-se",
             "value": 15
         },
         {
-            "hc-key": "br-ma",
+            "hc-key": "br-rr",
             "value": 16
         },
         {
-            "hc-key": "br-pr",
+            "hc-key": "br-pe",
             "value": 17
         },
         {
-            "hc-key": "br-ba",
+            "hc-key": "br-pr",
             "value": 18
         },
         {
@@ -120,7 +120,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/br/br-all.js">Brazil</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/br/br-all.js">Brazil</a>'
         },
 
         mapNavigation: {

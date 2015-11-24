@@ -27,15 +27,15 @@ $(function () {
             "value": 5
         },
         {
-            "hc-key": "eg",
+            "hc-key": "kw",
             "value": 6
         },
         {
-            "hc-key": "il",
+            "hc-key": "eg",
             "value": 7
         },
         {
-            "hc-key": "kw",
+            "hc-key": "il",
             "value": 8
         },
         {
@@ -80,7 +80,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/custom/middle-east.js">Middle East</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/custom/middle-east.js">Middle East</a>'
         },
 
         mapNavigation: {

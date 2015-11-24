@@ -4,9 +4,9 @@ $(function () {
             chart: {
                 type: 'pie'
             },
-            
+
             plotOptions: {
-                series: { 
+                series: {
                     colorByPoint: true
                 }
             },
@@ -18,9 +18,9 @@ $(function () {
                 }, 4]
             }]
         }).highcharts();
-        
+
         assert.strictEqual(
-            chart.series[0].points[2].graphic.attr('fill'),     
+            chart.series[0].points[2].graphic.attr('fill'),
             Highcharts.getOptions().colors[2],
             'Null'
         );
@@ -32,9 +32,9 @@ $(function () {
             chart: {
                 type: 'column'
             },
-            
+
             plotOptions: {
-                series: { 
+                series: {
                     colorByPoint: true
                 }
             },
@@ -46,9 +46,9 @@ $(function () {
                 }, 4]
             }]
         }).highcharts();
-        
+
         assert.strictEqual(
-            chart.series[0].points[2].graphic.attr('fill'),     
+            chart.series[0].points[2].graphic.attr('fill'),
             Highcharts.getOptions().colors[2],
             'Null'
         );

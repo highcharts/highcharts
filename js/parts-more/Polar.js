@@ -4,7 +4,7 @@
 	/**
 	 * Extensions for polar charts. Additionally, much of the geometry required for polar charts is
 	 * gathered in RadialAxes.js.
-	 * 
+	 *
 	 */
 
 	var seriesProto = Series.prototype,
@@ -27,7 +27,7 @@
 		});
 
 	};
-	
+
 	/**
 	 * Wrap the buildKDTree function so that it searches by angle (clientX) in case of shared tooltip,
 	 * and by two dimensional distance in case of non-shared.
@@ -44,7 +44,7 @@
 	});
 
 	/**
-	 * Translate a point's plotX and plotY from the internal angle and radius measures to 
+	 * Translate a point's plotX and plotY from the internal angle and radius measures to
 	 * true plotX, plotY coordinates
 	 */
 	seriesProto.toXY = function (point) {
@@ -53,11 +53,11 @@
 			plotX = point.plotX,
 			plotY = point.plotY,
 			clientX;
-	
+
 		// Save rectangular plotX, plotY for later computation
 		point.rectPlotX = plotX;
 		point.rectPlotY = plotY;
-	
+
 		// Find the polar plotX and plotY
 		xy = this.xAxis.postTranslate(point.plotX, this.yAxis.len - plotY);
 		point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
@@ -81,11 +81,11 @@
 		 * Overridden method for calculating a spline from one point to the next
 		 */
 		wrap(seriesTypes.spline.prototype, 'getPointSpline', function (proceed, segment, point, i) {
-	
+
 			var ret,
 				smoothing = 1.5, // 1 means control points midway between points, 2 means 1/3 from the point, 3 is 1/4 etc;
 				denom = smoothing + 1,
-				plotX, 
+				plotX,
 				plotY,
 				lastPoint,
 				nextPoint,
@@ -102,15 +102,15 @@
 				leftContAngle,
 				rightContAngle,
 				jointAngle;
-		
-		
+
+
 			if (this.chart.polar) {
-		
+
 				plotX = point.plotX;
 				plotY = point.plotY;
 				lastPoint = segment[i - 1];
 				nextPoint = segment[i + 1];
-			
+
 				// Connect ends
 				if (this.connectEnds) {
 					if (!lastPoint) {
@@ -118,12 +118,12 @@
 					}
 					if (!nextPoint) {
 						nextPoint = segment[1];
-					}	
+					}
 				}
 
 				// find control points
 				if (lastPoint && nextPoint) {
-		
+
 					lastX = lastPoint.plotX;
 					lastY = lastPoint.plotY;
 					nextX = nextPoint.plotX;
@@ -137,26 +137,26 @@
 					leftContAngle = Math.atan2(leftContY - plotY, leftContX - plotX);
 					rightContAngle = Math.atan2(rightContY - plotY, rightContX - plotX);
 					jointAngle = (Math.PI / 2) + ((leftContAngle + rightContAngle) / 2);
-				
-				
+
+
 					// Ensure the right direction, jointAngle should be in the same quadrant as leftContAngle
 					if (Math.abs(leftContAngle - jointAngle) > Math.PI / 2) {
 						jointAngle -= Math.PI;
 					}
-			
+
 					// Find the corrected control points for a spline straight through the point
 					leftContX = plotX + Math.cos(jointAngle) * distanceLeftControlPoint;
 					leftContY = plotY + Math.sin(jointAngle) * distanceLeftControlPoint;
 					rightContX = plotX + Math.cos(Math.PI + jointAngle) * distanceRightControlPoint;
 					rightContY = plotY + Math.sin(Math.PI + jointAngle) * distanceRightControlPoint;
-			
+
 					// Record for drawing in next point
 					point.rightContX = rightContX;
 					point.rightContY = rightContY;
 
 				}
-		
-		
+
+
 				// moveTo or lineTo
 				if (!i) {
 					ret = ['M', plotX, plotY];
@@ -172,8 +172,8 @@
 					];
 					lastPoint.rightContX = lastPoint.rightContY = null; // reset for updating series later
 				}
-		
-		
+
+
 			} else {
 				ret = proceed.call(this, segment, point, i);
 			}
@@ -184,7 +184,7 @@
 	/**
 	 * Extend translate. The plotX and plotY values are computed as if the polar chart were a
 	 * cartesian plane, where plotX denotes the angle in radians and (yAxis.len - plotY) is the pixel distance from
-	 * center. 
+	 * center.
 	 */
 	wrap(seriesProto, 'translate', function (proceed) {
 		var chart = this.chart,
@@ -193,11 +193,11 @@
 
 		// Run uber method
 		proceed.call(this);
-	
+
 		// Postprocess plot coordinates
 		if (chart.polar) {
 			this.kdByAngle = chart.tooltip && chart.tooltip.shared;
-	
+
 			if (!this.preventPostTranslate) {
 				points = this.points;
 				i = points.length;
@@ -210,8 +210,8 @@
 		}
 	});
 
-	/** 
-	 * Extend getSegmentPath to allow connecting ends across 0 to provide a closed circle in 
+	/**
+	 * Extend getSegmentPath to allow connecting ends across 0 to provide a closed circle in
 	 * line-like series.
 	 */
 	wrap(seriesProto, 'getGraphPath', function (proceed, points, nullsAsZeroes) {
@@ -233,7 +233,7 @@
 				}
 			});
 		}
-	
+
 		// Run uber method
 		return proceed.call(this, points, nullsAsZeroes);
 	
@@ -252,7 +252,7 @@
 
 		// Specific animation for polar charts
 		if (chart.polar) {
-		
+
 			// Enable animation on polar charts only in SVG. In VML, the scaling is different, plus animation
 			// would be so slow it would't matter.
 			if (chart.renderer.isSVG) {
@@ -260,10 +260,10 @@
 				if (animation === true) {
 					animation = {};
 				}
-	
+
 				// Initialize the animation
 				if (init) {
-				
+
 					// Scale down the group and place it in the center
 					attribs = {
 						translateX: center[0] + plotLeft,
@@ -271,13 +271,13 @@
 						scaleX: 0.001, // #1499
 						scaleY: 0.001
 					};
-					
+
 					group.attr(attribs);
 					if (markerGroup) {
 						//markerGroup.attrSetters = group.attrSetters;
 						markerGroup.attr(attribs);
 					}
-				
+
 				// Run the animation
 				} else {
 					attribs = {
@@ -290,16 +290,16 @@
 					if (markerGroup) {
 						markerGroup.animate(attribs, animation);
 					}
-				
+
 					// Delete this function to allow it only once
 					this.animate = null;
 				}
 			}
-	
+
 		// For non-polar charts, revert to the basic animation
 		} else {
 			proceed.call(this, init);
-		} 
+		}
 	}
 
 	// Define the animate method for regular series
@@ -319,7 +319,7 @@
 		 * Extend the column prototype's translate method
 		 */
 		wrap(colProto, 'translate', function (proceed) {
-		
+
 			var xAxis = this.xAxis,
 				len = this.yAxis.len,
 				center = xAxis.center,
@@ -329,12 +329,12 @@
 				points,
 				point,
 				i;
-	
+
 			this.preventPostTranslate = true;
-	
+
 			// Run uber method
 			proceed.call(this);
-	
+
 			// Postprocess plot coordinates
 			if (xAxis.isRadial) {
 				points = this.points;
@@ -348,7 +348,7 @@
 							center[0],
 							center[1],
 							len - point.plotY,
-							null, 
+							null,
 							{
 								start: start,
 								end: start + point.pointWidth,
@@ -357,7 +357,7 @@
 						)
 					};
 					// Provide correct plotX, plotY for tooltip
-					this.toXY(point); 
+					this.toXY(point);
 					point.tooltipPos = [point.plotX, point.plotY];
 					point.ttBelow = point.plotY > center[1];
 				}
@@ -369,12 +369,12 @@
 		 * Align column data labels outside the columns. #1199.
 		 */
 		wrap(colProto, 'alignDataLabel', function (proceed, point, dataLabel, options, alignTo, isNew) {
-	
+
 			if (this.chart.polar) {
 				var angle = point.rectPlotX / Math.PI * 180,
 					align,
 					verticalAlign;
-		
+
 				// Align nicely outside the perimeter of the columns
 				if (options.align === null) {
 					if (angle > 20 && angle < 160) {
@@ -396,13 +396,13 @@
 					}
 					options.verticalAlign = verticalAlign;
 				}
-		
+
 				seriesProto.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
 			} else {
 				proceed.call(this, point, dataLabel, options, alignTo, isNew);
 			}
-	
-		});		
+
+		});
 	}
 
 	/**
@@ -414,30 +414,30 @@
 				xAxis: [],
 				yAxis: []
 			};
-	
-		if (chart.polar) {	
+
+		if (chart.polar) {
 
 			each(chart.axes, function (axis) {
 				var isXAxis = axis.isXAxis,
 					center = axis.center,
 					x = e.chartX - center[0] - chart.plotLeft,
 					y = e.chartY - center[1] - chart.plotTop;
-			
+
 				ret[isXAxis ? 'xAxis' : 'yAxis'].push({
 					axis: axis,
 					value: axis.translate(
 						isXAxis ?
-							Math.PI - Math.atan2(x, y) : // angle 
+							Math.PI - Math.atan2(x, y) : // angle
 							Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)), // distance from center
 						true
 					)
 				});
 			});
-		
+
 		} else {
 			ret = proceed.call(this, e);
 		}
-	
+
 		return ret;
 	});
 

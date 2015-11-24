@@ -11,51 +11,51 @@ $(function () {
             "value": 1
         },
         {
-            "hc-key": "no-te-814",
+            "hc-key": "no-te-826",
             "value": 2
         },
         {
-            "hc-key": "no-te-815",
+            "hc-key": "no-te-814",
             "value": 3
         },
         {
-            "hc-key": "no-te-817",
+            "hc-key": "no-te-815",
             "value": 4
         },
         {
-            "hc-key": "no-te-831",
+            "hc-key": "no-te-817",
             "value": 5
         },
         {
-            "hc-key": "no-te-807",
+            "hc-key": "no-te-831",
             "value": 6
         },
         {
-            "hc-key": "no-te-821",
+            "hc-key": "no-te-807",
             "value": 7
         },
         {
-            "hc-key": "no-te-805",
+            "hc-key": "no-te-821",
             "value": 8
         },
         {
-            "hc-key": "no-te-834",
+            "hc-key": "no-te-805",
             "value": 9
         },
         {
-            "hc-key": "no-te-811",
+            "hc-key": "no-te-834",
             "value": 10
         },
         {
-            "hc-key": "no-te-829",
+            "hc-key": "no-te-811",
             "value": 11
         },
         {
-            "hc-key": "no-te-828",
+            "hc-key": "no-te-829",
             "value": 12
         },
         {
-            "hc-key": "no-te-826",
+            "hc-key": "no-te-828",
             "value": 13
         },
         {
@@ -84,7 +84,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/no/no-te-all.js">Telemark</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/no/no-te-all.js">Telemark</a>'
         },
 
         mapNavigation: {

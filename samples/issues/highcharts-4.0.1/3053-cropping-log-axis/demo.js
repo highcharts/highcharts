@@ -1,6 +1,6 @@
 
 $(function () {
-    new Highcharts.Chart({
+    window.chart = new Highcharts.Chart({
         chart: {
             renderTo: 'container',
             type: 'area'
@@ -18,7 +18,7 @@ $(function () {
                     points.push([i, i]);
                 }
                 return points;
-            })()
+            }())
         }]
     });
 });

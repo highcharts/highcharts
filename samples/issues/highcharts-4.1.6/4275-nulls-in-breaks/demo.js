@@ -22,21 +22,20 @@ $(function () {
             },
             series: [{
                 marker: {
-                    enabled: true  
+                    enabled: true
                 },
                 data: (function () {
-                    var _data = [],
+                    var arr = [],
                         i;
                     for (i = 0; i < 20; i++) {
                         if (i <= 5 || i >= 10) {
-                            _data.push(i);
-                        }
-                        else {
-                            _data.push(null);
+                            arr.push(i);
+                        } else {
+                            arr.push(null);
                         }
                     }
-                    return _data;
-                })()
+                    return arr;
+                }())
             }]
         }).highcharts();
 
@@ -49,7 +48,7 @@ $(function () {
 
 
 
-        var chart = $('#container').highcharts({
+        chart = $('#container').highcharts({
             title: {
                 text: 'Sample of a simple break'
             },
@@ -71,21 +70,20 @@ $(function () {
             },
             series: [{
                 marker: {
-                    enabled: true  
+                    enabled: true
                 },
                 data: (function () {
-                    var _data = [],
+                    var arr = [],
                         i;
                     for (i = 0; i < 20; i++) {
                         if (i <= 5 || i >= 10) {
-                            _data.push(i);
-                        }
-                        else {
-                            _data.push(null);
+                            arr.push(i);
+                        } else {
+                            arr.push(null);
                         }
                     }
-                    return _data;
-                })()
+                    return arr;
+                }())
             }]
         }).highcharts();
 
@@ -95,7 +93,7 @@ $(function () {
             -1,
             'Graph does not have moveTo operator'
         );
-        
+
     });
 
 });

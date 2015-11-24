@@ -6,7 +6,7 @@ $(function () {
 
 
     // Add series with state capital bubbles
-    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=us-capitals.json&callback=?', function (json) {
+    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=us-capitals.json&callback=?', function (json) {
         var data = [];
         $.each(json, function () {
             this.z = this.population;

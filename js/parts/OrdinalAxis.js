@@ -30,7 +30,7 @@ wrap(Series.prototype, 'init', function (proceed) {
 wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min, max, startOfWeek, positions, closestDistance, findHigherRanks) {
 
 	var start = 0,
-		end = 0,
+		end,
 		segmentPositions,
 		higherRanks = {},
 		hasCrossedHigherRank,
@@ -52,7 +52,7 @@ wrap(Axis.prototype, 'getTimeTicks', function (proceed, normalizedInterval, min,
 	// we reuse that instead of computing it again.
 	posLength = positions.length;
 
-	for (; end < posLength; end++) {
+	for (end = 0; end < posLength; end++) {
 
 		outsideMax = end && positions[end - 1] > max;
 
@@ -286,10 +286,11 @@ extend(Axis.prototype, {
 	 */
 	val2lin: function (val, toIndex) {
 		var axis = this,
-			ordinalPositions = axis.ordinalPositions;
+			ordinalPositions = axis.ordinalPositions,
+			ret;
 
 		if (!ordinalPositions) {
-			return val;
+			ret = val;
 
 		} else {
 
@@ -316,10 +317,11 @@ extend(Axis.prototype, {
 					break;
 				}
 			}
-			return toIndex ?
+			ret = toIndex ?
 				ordinalIndex :
 				axis.ordinalSlope * (ordinalIndex || 0) + axis.ordinalOffset;
 		}
+		return ret;
 	},
 	/**
 	 * Translate from linear (internal) to axis value
@@ -329,10 +331,11 @@ extend(Axis.prototype, {
 	 */
 	lin2val: function (val, fromIndex) {
 		var axis = this,
-			ordinalPositions = axis.ordinalPositions;
+			ordinalPositions = axis.ordinalPositions,
+			ret;
 
 		if (!ordinalPositions) { // the visible range contains only equally spaced values
-			return val;
+			ret = val;
 
 		} else {
 
@@ -372,10 +375,11 @@ extend(Axis.prototype, {
 
 			// If the index is within the range of the ordinal positions, return the associated
 			// or interpolated value. If not, just return the value
-			return distance !== UNDEFINED && ordinalPositions[i] !== UNDEFINED ?
+			ret = distance !== UNDEFINED && ordinalPositions[i] !== UNDEFINED ?
 				ordinalPositions[i] + (distance ? distance * (ordinalPositions[i + 1] - ordinalPositions[i]) : 0) :
 				val;
 		}
+		return ret;
 	},
 	/**
 	 * Get the ordinal positions for the entire data set. This is necessary in chart panning
@@ -427,7 +431,7 @@ extend(Axis.prototype, {
 					destroyGroupedData: noop
 				};
 				fakeSeries.options = {
-					dataGrouping : grouping ? {
+					dataGrouping: grouping ? {
 						enabled: true,
 						forced: true,
 						approximation: 'open', // doesn't matter which, use the fastest
@@ -472,7 +476,7 @@ extend(Axis.prototype, {
 	 * of the desired group count.
 	 */
 	getGroupIntervalFactor: function (xMin, xMax, series) {
-		var i = 0,
+		var i,
 			processedXData = series.processedXData,
 			len = processedXData.length,
 			distances = [],
@@ -483,7 +487,7 @@ extend(Axis.prototype, {
 		if (!groupIntervalFactor) {
 
 			// Register all the distances in an array
-			for (; i < len - 1; i++) {
+			for (i = 0; i < len - 1; i++) {
 				distances[i] = processedXData[i + 1] - processedXData[i];
 			}
 
@@ -508,23 +512,25 @@ extend(Axis.prototype, {
 	 * Make the tick intervals closer because the ordinal gaps make the ticks spread out or cluster
 	 */
 	postProcessTickInterval: function (tickInterval) {
-		// TODO: http://jsfiddle.net/highcharts/FQm4E/1/
+		// Problem: http://jsfiddle.net/highcharts/FQm4E/1/
 		// This is a case where this algorithm doesn't work optimally. In this case, the
 		// tick labels are spread out per week, but all the gaps reside within weeks. So
 		// we have a situation where the labels are courser than the ordinal gaps, and
 		// thus the tick interval should not be altered
-		var ordinalSlope = this.ordinalSlope;
+		var ordinalSlope = this.ordinalSlope,
+			ret;
 
 
 		if (ordinalSlope) {
 			if (!this.options.breaks) {
-				return tickInterval / (ordinalSlope / this.closestPointRange); 
+				ret = tickInterval / (ordinalSlope / this.closestPointRange);
 			} else {
-				return this.closestPointRange;
+				ret = this.closestPointRange;
 			}
 		} else {
-			return tickInterval;
+			ret = tickInterval;
 		}
+		return ret;
 	}
 });
 

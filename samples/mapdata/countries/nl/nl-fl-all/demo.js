@@ -7,23 +7,23 @@ $(function () {
             "value": 0
         },
         {
-            "hc-key": "nl-fl-gm0184",
+            "hc-key": "nl-fl-gm0995",
             "value": 1
         },
         {
-            "hc-key": "nl-fl-gm0995",
+            "hc-key": "nl-fl-gm0171",
             "value": 2
         },
         {
-            "hc-key": "nl-fl-gm0171",
+            "hc-key": "nl-fl-gm0303",
             "value": 3
         },
         {
-            "hc-key": "nl-fl-gm0303",
+            "hc-key": "nl-fl-gm0034",
             "value": 4
         },
         {
-            "hc-key": "nl-fl-gm0034",
+            "hc-key": "nl-fl-gm0184",
             "value": 5
         }
     ];
@@ -36,7 +36,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/nl/nl-fl-all.js">Flevoland</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/nl/nl-fl-all.js">Flevoland</a>'
         },
 
         mapNavigation: {

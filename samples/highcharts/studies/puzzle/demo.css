@@ -1,0 +1,23 @@
+* {
+    font-family: sans-serif;
+}
+#container {
+    border: 1px solid silver;
+    height: 500px; 
+    width: 600px;
+    margin: 0 auto; 
+}
+.loading {
+    margin-top: 10em;
+    text-align: center;
+    color: gray;
+}
+.highcharts-puzzle-dragging {
+    stroke-dasharray: 2px;
+}
+.highcharts-puzzle-dropped {
+    stroke: #e0e0e0;
+}
+</style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>

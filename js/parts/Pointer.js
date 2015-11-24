@@ -5,7 +5,7 @@ var hoverChartIndex;
 hasTouch = doc.documentElement.ontouchstart !== UNDEFINED;
 
 /**
- * The mouse tracker object. All methods starting with "on" are primary DOM event handlers. 
+ * The mouse tracker object. All methods starting with "on" are primary DOM event handlers.
  * Subsequent methods should be named differently from what they are doing.
  * @param {Object} chart The Chart instance
  * @param {Object} options The root options object
@@ -19,7 +19,7 @@ Pointer.prototype = {
 	 * Initialize Pointer
 	 */
 	init: function (chart, options) {
-		
+
 		var chartOptions = options.chart,
 			chartEvents = chartOptions.events,
 			zoomType = useCanVG ? '' : chartOptions.zoomType,
@@ -30,7 +30,7 @@ Pointer.prototype = {
 		// Store references
 		this.options = options;
 		this.chart = chart;
-		
+
 		// Zoom status
 		this.zoomX = zoomX = /x/.test(zoomType);
 		this.zoomY = zoomY = /y/.test(zoomType);
@@ -50,7 +50,7 @@ Pointer.prototype = {
 		}
 
 		this.setDOMEvents();
-	}, 
+	},
 
 	/**
 	 * Add crossbrowser support for chartX and chartY
@@ -71,7 +71,7 @@ Pointer.prototype = {
 		if (!e.target) {
 			e.target = e.srcElement;
 		}
-		
+
 		// iOS (#2757)
 		ePos = e.touches ?  (e.touches.length ? e.touches.item(0) : e.changedTouches[0]) : e;
 
@@ -82,7 +82,7 @@ Pointer.prototype = {
 
 		// chartX and chartY
 		if (ePos.pageX === UNDEFINED) { // IE < 9. #886.
-			chartX = mathMax(e.x, e.clientX - chartPosition.left); // #2005, #2129: the second case is 
+			chartX = mathMax(e.x, e.clientX - chartPosition.left); // #2005, #2129: the second case is
 				// for IE10 quirks mode within framesets
 			chartY = e.y;
 		} else {
@@ -115,7 +115,7 @@ Pointer.prototype = {
 		});
 		return coordinates;
 	},
-	
+
 	/**
 	 * With line type charts with a single tracker, get the point closest to the mouse.
 	 * Run Point.onMouseOver and display tooltip for the point or points.
@@ -131,15 +131,17 @@ Pointer.prototype = {
 			hoverPoint = chart.hoverPoint,
 			hoverSeries = chart.hoverSeries,
 			i,
-			distance = chart.chartWidth,
+			distance = Number.MAX_VALUE, // #4511
 			anchor,
 			noSharedTooltip,
+			stickToHoverSeries,
 			directTouch,
+			pointDistance,
 			kdpoints = [],
 			kdpoint,
 			kdpointT;
 
-		// For hovering over the empty parts of the plot area (hoverSeries is undefined). 
+		// For hovering over the empty parts of the plot area (hoverSeries is undefined).
 		// If there is one series with point tracking (combo chart), don't go to nearest neighbour.
 		if (!shared && !hoverSeries) {
 			for (i = 0; i < series.length; i++) {
@@ -149,9 +151,11 @@ Pointer.prototype = {
 			}
 		}
 
-		// If it has a hoverPoint and that series requires direct touch (like columns), 
-		// use the hoverPoint (#3899). Otherwise, search the k-d tree.
-		if (!shared && hoverSeries && hoverSeries.directTouch && hoverPoint) {
+		// If it has a hoverPoint and that series requires direct touch (like columns, #3899), or we're on
+		// a noSharedTooltip series among shared tooltip series (#4546), use the hoverPoint . Otherwise,
+		// search the k-d tree.
+		stickToHoverSeries = hoverSeries && (shared ? hoverSeries.noSharedTooltip : hoverSeries.directTouch);
+		if (stickToHoverSeries && hoverPoint) {
 			kdpoint = hoverPoint;
 
 		// Handle shared tooltip or cases where a series is not yet hovered
@@ -170,8 +174,10 @@ Pointer.prototype = {
 			});
 			// Find absolute nearest point
 			each(kdpoints, function (p) {
-				if (p && typeof p.dist === 'number' && p.dist < distance) {
-					distance = p.dist;
+				pointDistance = !shared && p.series.kdDimensions === 1 ? p.dist : p.distX; // #4645
+
+				if (p && typeof pointDistance === 'number' && pointDistance < distance) {
+					distance = pointDistance;
 					kdpoint = p;
 				}
 			});
@@ -194,26 +200,28 @@ Pointer.prototype = {
 				// Do mouseover on all points (#3919, #3985, #4410)
 				each(kdpoints, function (point) {
 					point.onMouseOver(e, point !== ((hoverSeries && hoverSeries.directTouch && hoverPoint) || kdpoint));
-				}); 
+				});
 			} else {
-				if (tooltip) { 
+				if (tooltip) {
 					tooltip.refresh(kdpoint, e);
 				}
-				kdpoint.onMouseOver(e); 
+				if (!hoverSeries || !hoverSeries.directTouch) { // #4448
+					kdpoint.onMouseOver(e);
+				}
 			}
 			this.prevKDPoint = kdpoint;
-		
+
 		// Update positions (regardless of kdpoint or hoverPoint)
 		} else {
 			followPointer = hoverSeries && hoverSeries.tooltipOptions.followPointer;
 			if (tooltip && followPointer && !tooltip.isHidden) {
 				anchor = tooltip.getAnchor([{}], e);
-				tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });			
+				tooltip.updatePosition({ plotX: anchor[0], plotY: anchor[1] });
 			}
 		}
 
-		// Start the event listener to pick up the tooltip 
-		if (tooltip && !pointer._onDocumentMouseMove) {
+		// Start the event listener to pick up the tooltip and crosshairs
+		if (!pointer._onDocumentMouseMove) {
 			pointer._onDocumentMouseMove = function (e) {
 				if (charts[hoverChartIndex]) {
 					charts[hoverChartIndex].pointer.onDocumentMouseMove(e);
@@ -221,12 +229,12 @@ Pointer.prototype = {
 			};
 			addEvent(doc, 'mousemove', pointer._onDocumentMouseMove);
 		}
-		
+
 		// Crosshair
 		each(chart.axes, function (axis) {
 			axis.drawCrosshair(e, pick(kdpoint, hoverPoint));
-		});	
-		
+		});
+
 
 	},
 
@@ -234,7 +242,7 @@ Pointer.prototype = {
 
 	/**
 	 * Reset the tracking by hiding the tooltip, the hover series state and the hover point
-	 * 
+	 *
 	 * @param allowMove {Boolean} Instead of destroying the tooltip altogether, allow moving it if possible
 	 */
 	reset: function (allowMove, delay) {
@@ -245,14 +253,19 @@ Pointer.prototype = {
 			hoverPoints = chart.hoverPoints,
 			tooltip = chart.tooltip,
 			tooltipPoints = tooltip && tooltip.shared ? hoverPoints : hoverPoint;
-			
+
 		// Narrow in allowMove
 		allowMove = allowMove && tooltip && tooltipPoints;
-			
-		// Check if the points have moved outside the plot area, #1003		
-		if (allowMove  && splat(tooltipPoints)[0].plotX === UNDEFINED) {
-			allowMove = false;
-		}	
+
+		// Check if the points have moved outside the plot area (#1003, #4736)
+		if (allowMove) {
+			each(splat(tooltipPoints), function (point) {
+				if (point.plotX === undefined) {
+					allowMove = false;
+				}
+			});
+		}
+		
 		// Just move the tooltip, #349
 		if (allowMove) {
 			tooltip.refresh(tooltipPoints);
@@ -265,7 +278,7 @@ Pointer.prototype = {
 						axis.hideCrosshair();
 					}
 				});
-				
+
 			}
 
 		// Full reset
@@ -298,7 +311,7 @@ Pointer.prototype = {
 			each(chart.axes, function (axis) {
 				axis.hideCrosshair();
 			});
-			
+
 			pointer.hoverX = chart.hoverPoints = chart.hoverPoint = null;
 
 		}
@@ -326,7 +339,7 @@ Pointer.prototype = {
 				}
 			}
 		});
-		
+
 		// Clip
 		chart.clipRect.attr(clip || chart.clipBox);
 	},
@@ -385,13 +398,13 @@ Pointer.prototype = {
 		} else if (chartY > plotTop + plotHeight) {
 			chartY = plotTop + plotHeight;
 		}
-		
+
 		// determine if the mouse has moved more than 10px
 		this.hasDragged = Math.sqrt(
 			Math.pow(mouseDownX - chartX, 2) +
 			Math.pow(mouseDownY - chartY, 2)
 		);
-		
+
 		if (this.hasDragged > 10) {
 			clickedInside = chart.isInsidePlot(mouseDownX - plotLeft, mouseDownY - plotTop);
 
@@ -465,7 +478,7 @@ Pointer.prototype = {
 				each(chart.axes, function (axis) {
 					if (axis.zoomEnabled && defined(axis.min) && (hasPinched || pointer[{ xAxis: 'zoomX', yAxis: 'zoomY' }[axis.coll]])) { // #859, #3569
 						var horiz = axis.horiz,
-							minPixelPadding = e.type === 'touchend' ? axis.minPixelPadding: 0, // #1207, #3075
+							minPixelPadding = e.type === 'touchend' ? axis.minPixelPadding : 0, // #1207, #3075
 							selectionMin = axis.toValue((horiz ? selectionLeft : selectionTop) + minPixelPadding),
 							selectionMax = axis.toValue((horiz ? selectionLeft + selectionWidth : selectionTop + selectionHeight) - minPixelPadding);
 
@@ -478,8 +491,8 @@ Pointer.prototype = {
 					}
 				});
 				if (runZoom) {
-					fireEvent(chart, 'selection', selectionData, function (args) { 
-						chart.zoom(extend(args, hasPinched ? { animation: false } : null)); 
+					fireEvent(chart, 'selection', selectionData, function (args) {
+						chart.zoom(extend(args, hasPinched ? { animation: false } : null));
 					});
 				}
 
@@ -509,11 +522,11 @@ Pointer.prototype = {
 		if (e.preventDefault) {
 			e.preventDefault();
 		}
-		
+
 		this.dragStart(e);
 	},
 
-	
+
 
 	onDocumentMouseUp: function (e) {
 		if (charts[hoverChartIndex]) {
@@ -523,7 +536,7 @@ Pointer.prototype = {
 
 	/**
 	 * Special handler for mouse move that will hide the tooltip when the mouse leaves the plotarea.
-	 * Issue #149 workaround. The mouseleave event does not always fire. 
+	 * Issue #149 workaround. The mouseleave event does not always fire.
 	 */
 	onDocumentMouseMove: function (e) {
 		var chart = this.chart,
@@ -556,15 +569,15 @@ Pointer.prototype = {
 
 		hoverChartIndex = chart.index;
 
-		e = this.normalize(e);		
+		e = this.normalize(e);
 		e.returnValue = false; // #2251, #3224
-		
+
 		if (chart.mouseIsDown === 'mousedown') {
 			this.drag(e);
-		} 
-		
+		}
+
 		// Show the tooltip and run mouse over events (#977)
-		if ((this.inClass(e.target, 'highcharts-tracker') || 
+		if ((this.inClass(e.target, 'highcharts-tracker') ||
 				chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) && !chart.openMenu) {
 			this.runPointActions(e);
 		}
@@ -582,36 +595,37 @@ Pointer.prototype = {
 			if (elemClassName) {
 				if (elemClassName.indexOf(className) !== -1) {
 					return true;
-				} else if (elemClassName.indexOf(PREFIX + 'container') !== -1) {
+				}
+				if (elemClassName.indexOf(PREFIX + 'container') !== -1) {
 					return false;
 				}
 			}
 			element = element.parentNode;
-		}		
+		}
 	},
 
 	onTrackerMouseOut: function (e) {
 		var series = this.chart.hoverSeries,
-			relatedTarget = e.relatedTarget || e.toElement,
-			relatedSeries = relatedTarget && relatedTarget.point && relatedTarget.point.series; // #2499
-		
-		if (series && !series.options.stickyTracking && !this.inClass(relatedTarget, PREFIX + 'tooltip') &&
-				relatedSeries !== series) {
+			relatedTarget = e.relatedTarget || e.toElement;
+
+		if (series && !series.options.stickyTracking &&
+				!this.inClass(relatedTarget, PREFIX + 'tooltip') &&
+				!this.inClass(relatedTarget, PREFIX + 'series-' + series.index)) { // #2499, #4465
 			series.onMouseOut();
 		}
 	},
 
 	onContainerClick: function (e) {
 		var chart = this.chart,
-			hoverPoint = chart.hoverPoint, 
+			hoverPoint = chart.hoverPoint,
 			plotLeft = chart.plotLeft,
 			plotTop = chart.plotTop;
-		
+
 		e = this.normalize(e);
 		e.originalEvent = e; // #3913
 
 		if (!chart.cancelClick) {
-			
+
 			// On tracker click, fire the series and point events. #783, #1583
 			if (hoverPoint && this.inClass(e.target, PREFIX + 'tracker')) {
 
@@ -673,7 +687,7 @@ Pointer.prototype = {
 				addEvent(doc, 'touchend', pointer.onDocumentTouchEnd);
 			}
 		}
-		
+
 	},
 
 	/**

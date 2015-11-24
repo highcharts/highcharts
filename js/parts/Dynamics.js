@@ -39,15 +39,12 @@ extend(Chart.prototype, {
      */
 	addAxis: function (options, isX, redraw, animation) {
 		var key = isX ? 'xAxis' : 'yAxis',
-			chartOptions = this.options,
-			axis;
+			chartOptions = this.options;
 
-		/*jslint unused: false*/
-		axis = new Axis(this, merge(options, {
+		new Axis(this, merge(options, { // eslint-disable-line no-new
 			index: this[key].length,
 			isX: isX
 		}));
-		/*jslint unused: true*/
 
 		// Push the new axis options to the chart options
 		chartOptions[key] = splat(chartOptions[key] || {});
@@ -103,7 +100,7 @@ extend(Chart.prototype, {
 		if (!chart.loadingShown) {
 			css(loadingDiv, {
 				opacity: 0,
-				display: ''				
+				display: ''
 			});
 			animate(loadingDiv, {
 				opacity: loadingOptions.style.opacity
@@ -188,7 +185,8 @@ extend(Point.prototype, {
 				names[point.x] = point.name;
 			}
 
-			seriesOptions.data[i] = point.options;
+			// Record the raw options to options.data (#4701)
+			seriesOptions.data[i] = options;
 
 			// redraw
 			series.isDirty = series.isDirtyData = true;
@@ -261,7 +259,7 @@ extend(Series.prototype, {
 			}
 			each(shiftShapes, function (shape) {
 				if (series[shape]) {
-					series[shape].shift = currentShift + 1;
+					series[shape].shift = currentShift + (seriesOptions.step ? 2 : 1);
 				}
 			});
 		}
@@ -306,7 +304,6 @@ extend(Series.prototype, {
 		}
 
 		// Shift the first point off the parallel arrays
-		// todo: consider series.removePoint(i) method
 		if (shift) {
 			if (data[0] && data[0].remove) {
 				data[0].remove(false);
@@ -439,7 +436,7 @@ extend(Series.prototype, {
 			pointStart: this.xData[0] // when updating after addPoint
 		}, { data: this.options.data }, newOptions);
 
-		// Destroy the series and delete all properties. Reinsert all methods 
+		// Destroy the series and delete all properties. Reinsert all methods
 		// and properties from the new type prototype (#2270, #3719)
 		this.remove(false);
 		for (n in proto) {

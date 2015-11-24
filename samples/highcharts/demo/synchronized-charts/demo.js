@@ -5,10 +5,9 @@ small variation for each data set, and a mouse/touch event handler to bind the c
 */
 
 $(function () {
-    
 
     /**
-     * In order to synchronize tooltips and crosshairs, override the 
+     * In order to synchronize tooltips and crosshairs, override the
      * built-in events with handlers defined on the parent element.
      */
     $('#container').bind('mousemove touchmove', function (e) {
@@ -16,7 +15,7 @@ $(function () {
             point,
             i;
 
-        for (i = 0; i < Highcharts.charts.length; i++) {
+        for (i = 0; i < Highcharts.charts.length; i = i + 1) {
             chart = Highcharts.charts[i];
             e = chart.pointer.normalize(e); // Find coordinates within the chart
             point = chart.series[0].searchPoint(e, true); // Get the hovered point
@@ -31,7 +30,9 @@ $(function () {
     /**
      * Override the reset function, we don't need to hide the tooltips and crosshairs.
      */
-    Highcharts.Pointer.prototype.reset = function () {};
+    Highcharts.Pointer.prototype.reset = function () {
+        return undefined;
+    };
 
     /**
      * Synchronize zooming through the setExtremes event handler.
@@ -39,23 +40,25 @@ $(function () {
     function syncExtremes(e) {
         var thisChart = this.chart;
 
-        Highcharts.each(Highcharts.charts, function (chart) {
-            if (chart !== thisChart) {
-                if (chart.xAxis[0].setExtremes) { // It is null while updating
-                    chart.xAxis[0].setExtremes(e.min, e.max);
+        if (e.trigger !== 'syncExtremes') { // Prevent feedback loop
+            Highcharts.each(Highcharts.charts, function (chart) {
+                if (chart !== thisChart) {
+                    if (chart.xAxis[0].setExtremes) { // It is null while updating
+                        chart.xAxis[0].setExtremes(e.min, e.max, undefined, false, { trigger: 'syncExtremes' });
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
-    // Get the data. The contents of the data file can be viewed at 
+    // Get the data. The contents of the data file can be viewed at
     // https://github.com/highslide-software/highcharts.com/blob/master/samples/data/activity.json
-    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=activity.json&callback=?', function (activity) {
+    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=activity.json&callback=?', function (activity) {
         $.each(activity.datasets, function (i, dataset) {
 
             // Add X values
-            dataset.data = Highcharts.map(dataset.data, function (val, i) {
-                return [activity.xData[i], val];
+            dataset.data = Highcharts.map(dataset.data, function (val, j) {
+                return [activity.xData[j], val];
             });
 
             $('<div class="chart">')
@@ -64,9 +67,8 @@ $(function () {
                     chart: {
                         marginLeft: 40, // Keep all charts left aligned
                         spacingTop: 20,
-                        spacingBottom: 20
-                        // zoomType: 'x',
-                        // pinchType: null // Disable zoom on touch devices
+                        spacingBottom: 20,
+                        zoomType: 'x'
                     },
                     title: {
                         text: dataset.name,

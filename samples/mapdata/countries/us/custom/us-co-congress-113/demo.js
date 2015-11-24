@@ -40,7 +40,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-co-congress-113.js">Colorado congressional districts</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-co-congress-113.js">Colorado congressional districts</a>'
         },
 
         mapNavigation: {

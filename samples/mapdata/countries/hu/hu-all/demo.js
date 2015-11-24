@@ -99,55 +99,55 @@ $(function () {
             "value": 23
         },
         {
-            "hc-key": "hu-eg",
+            "hc-key": "hu-va",
             "value": 24
         },
         {
-            "hc-key": "hu-va",
+            "hc-key": "hu-sh",
             "value": 25
         },
         {
-            "hc-key": "hu-sh",
+            "hc-key": "hu-ba",
             "value": 26
         },
         {
-            "hc-key": "hu-ba",
+            "hc-key": "hu-gs",
             "value": 27
         },
         {
-            "hc-key": "hu-gs",
+            "hc-key": "hu-to",
             "value": 28
         },
         {
-            "hc-key": "hu-gy",
+            "hc-key": "hu-za",
             "value": 29
         },
         {
-            "hc-key": "hu-to",
+            "hc-key": "hu-ze",
             "value": 30
         },
         {
-            "hc-key": "hu-za",
+            "hc-key": "hu-ss",
             "value": 31
         },
         {
-            "hc-key": "hu-ze",
+            "hc-key": "hu-mc",
             "value": 32
         },
         {
-            "hc-key": "hu-ss",
+            "hc-key": "hu-ny",
             "value": 33
         },
         {
-            "hc-key": "hu-mc",
+            "hc-key": "hu-de",
             "value": 34
         },
         {
-            "hc-key": "hu-ny",
+            "hc-key": "hu-eg",
             "value": 35
         },
         {
-            "hc-key": "hu-de",
+            "hc-key": "hu-gy",
             "value": 36
         },
         {
@@ -184,7 +184,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/hu/hu-all.js">Hungary</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/hu/hu-all.js">Hungary</a>'
         },
 
         mapNavigation: {

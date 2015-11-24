@@ -11,19 +11,19 @@ $(function () {
             "value": 1
         },
         {
-            "hc-key": "de-mv-13074000",
+            "hc-key": "de-mv-13073000",
             "value": 2
         },
         {
-            "hc-key": "de-mv-13073000",
+            "hc-key": "de-mv-13076000",
             "value": 3
         },
         {
-            "hc-key": "de-mv-13076000",
+            "hc-key": "de-mv-13072000",
             "value": 4
         },
         {
-            "hc-key": "de-mv-13072000",
+            "hc-key": "de-mv-13074000",
             "value": 5
         },
         {
@@ -44,7 +44,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/de/de-mv-all.js">Mecklenburg-Vorpommern</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/de/de-mv-all.js">Mecklenburg-Vorpommern</a>'
         },
 
         mapNavigation: {

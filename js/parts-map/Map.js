@@ -58,11 +58,11 @@ Highcharts.splitPath = function (path) {
 	// Move letters apart
 	path = path.replace(/([A-Za-z])/g, ' $1 ');
 	// Trim
-	path = path.replace(/^\s*/, "").replace(/\s*$/, "");
-	
+	path = path.replace(/^\s*/, '').replace(/\s*$/, '');
+
 	// Split on spaces and commas
 	path = path.split(/[ ,]+/);
-	
+
 	// Parse numbers
 	for (i = 0; i < path.length; i++) {
 		if (!/[a-zA-Z]/.test(path[i])) {
@@ -121,7 +121,7 @@ if (Renderer === VMLRenderer) {
  * A wrapper for Chart with all the default values for a Map
  */
 Highcharts.Map = function (options, callback) {
-	
+
 	var hiddenAxis = {
 			endOnTick: false,
 			gridLineWidth: 0,
@@ -139,27 +139,29 @@ Highcharts.Map = function (options, callback) {
 	hiddenAxis.gridZIndex = 10;
 	hiddenAxis.tickPositions = undefined;
 	// */
-	
+
 	// Don't merge the data
 	seriesOptions = options.series;
 	options.series = null;
-	
-	options = merge({
-		chart: {
-			panning: 'xy',
-			type: 'map'
-		},
-		xAxis: hiddenAxis,
-		yAxis: merge(hiddenAxis, { reversed: true })	
-	},
-	options, // user's options
 
-	{ // forced options
-		chart: {
-			inverted: false,
-			alignTicks: false
+	options = merge(
+		{
+			chart: {
+				panning: 'xy',
+				type: 'map'
+			},
+			xAxis: hiddenAxis,
+			yAxis: merge(hiddenAxis, { reversed: true })
+		},
+		options, // user's options
+
+		{ // forced options
+			chart: {
+				inverted: false,
+				alignTicks: false
+			}
 		}
-	});
+	);
 
 	options.series = seriesOptions;
 

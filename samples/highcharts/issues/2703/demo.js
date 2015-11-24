@@ -20,7 +20,7 @@ $(function () {
                 "color": "#222222"
             }
         },
-            "legend": {
+        "legend": {
             "enabled": false,
             "borderWidth": 0,
             "itemMarginBottom": 10,

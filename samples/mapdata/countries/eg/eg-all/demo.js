@@ -124,7 +124,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/eg/eg-all.js">Egypt</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/eg/eg-all.js">Egypt</a>'
         },
 
         mapNavigation: {

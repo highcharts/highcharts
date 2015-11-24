@@ -15,31 +15,31 @@ $(function () {
             "value": 2
         },
         {
-            "hc-key": "gh-cp",
+            "hc-key": "gh-aa",
             "value": 3
         },
         {
-            "hc-key": "gh-aa",
+            "hc-key": "gh-tv",
             "value": 4
         },
         {
-            "hc-key": "gh-tv",
+            "hc-key": "gh-np",
             "value": 5
         },
         {
-            "hc-key": "gh-np",
+            "hc-key": "gh-ue",
             "value": 6
         },
         {
-            "hc-key": "gh-ue",
+            "hc-key": "gh-uw",
             "value": 7
         },
         {
-            "hc-key": "gh-uw",
+            "hc-key": "gh-ba",
             "value": 8
         },
         {
-            "hc-key": "gh-ba",
+            "hc-key": "gh-cp",
             "value": 9
         }
     ];
@@ -52,7 +52,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/gh/gh-all.js">Ghana</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/gh/gh-all.js">Ghana</a>'
         },
 
         mapNavigation: {

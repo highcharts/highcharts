@@ -3,91 +3,91 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "hr-kz",
+            "hc-key": "hr-5926",
             "value": 0
         },
         {
-            "hc-key": "hr-gz",
+            "hc-key": "hr-sb",
             "value": 1
         },
         {
-            "hc-key": "hr-5926",
+            "hc-key": "hr-zd",
             "value": 2
         },
         {
-            "hc-key": "hr-sb",
+            "hc-key": "hr-pg",
             "value": 3
         },
         {
-            "hc-key": "hr-zd",
+            "hc-key": "hr-ka",
             "value": 4
         },
         {
-            "hc-key": "hr-pg",
+            "hc-key": "hr-kz",
             "value": 5
         },
         {
-            "hc-key": "hr-ka",
+            "hc-key": "hr-zg",
             "value": 6
         },
         {
-            "hc-key": "hr-zg",
+            "hc-key": "hr-gz",
             "value": 7
         },
         {
-            "hc-key": "hr-2228",
+            "hc-key": "hr-va",
             "value": 8
         },
         {
-            "hc-key": "hr-vs",
+            "hc-key": "hr-is",
             "value": 9
         },
         {
-            "hc-key": "hr-va",
+            "hc-key": "hr-2228",
             "value": 10
         },
         {
-            "hc-key": "hr-is",
+            "hc-key": "hr-ob",
             "value": 11
         },
         {
-            "hc-key": "hr-ob",
+            "hc-key": "hr-sp",
             "value": 12
         },
         {
-            "hc-key": "hr-vp",
+            "hc-key": "hr-vs",
             "value": 13
         },
         {
-            "hc-key": "hr-sp",
+            "hc-key": "hr-vp",
             "value": 14
         },
         {
-            "hc-key": "hr-bb",
+            "hc-key": "hr-kk",
             "value": 15
         },
         {
-            "hc-key": "hr-kk",
+            "hc-key": "hr-me",
             "value": 16
         },
         {
-            "hc-key": "hr-me",
+            "hc-key": "hr-dn",
             "value": 17
         },
         {
-            "hc-key": "hr-dn",
+            "hc-key": "hr-sd",
             "value": 18
         },
         {
-            "hc-key": "hr-sd",
+            "hc-key": "hr-ls",
             "value": 19
         },
         {
-            "hc-key": "hr-ls",
+            "hc-key": "hr-sm",
             "value": 20
         },
         {
-            "hc-key": "hr-sm",
+            "hc-key": "hr-bb",
             "value": 21
         }
     ];
@@ -100,7 +100,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/hr/hr-all.js">Croatia</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/hr/hr-all.js">Croatia</a>'
         },
 
         mapNavigation: {

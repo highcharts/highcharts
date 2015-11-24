@@ -70,6 +70,26 @@ for ($time = $startDate; $time < $endDate; $time += 24 * 3600) {
 }
 
 
+// Transform opened by date and closed by date
+function compareKeys($a, $b) {
+    if ($a[0] == $b[0]) {
+        return 0;
+    }
+    return ($a[0] < $b[0]) ? -1 : 1;
+}
+$opened = array();
+foreach ($openedByDate as $date => $count) {
+	$opened[] = array((strtotime($date) + 7200) * 1000, $count);
+}
+usort($opened, 'compareKeys');
+$closed = array();
+foreach ($closedByDate as $date => $count) {
+	$closed[] = array((strtotime($date) + 7200) * 1000, $count);
+}
+usort($closed, 'compareKeys');
+
+
+
 // Create flags for tags
 $tags = json_decode(file_get_contents('pages/tags.json'));
 $plotLines = array();
@@ -78,9 +98,9 @@ foreach ($tags as $tag) {
 	$time = strtotime($date);
 	$text = $tag->name;
 	if ($text[0] === 'v') {
-		$text = '<span style="color:#AA1919">Highcharts ' . substr($text, 1) . '</span>';
+		$text = '<span style="color:#AA1919">HC ' . substr($text, 1) . '</span>';
 	} else {
-		$text = '<span style="color:#8BBC21">Highstock ' . substr($text, 11) . '</span>';
+		$text = '<span style="color:#8BBC21">HSK ' . substr($text, 11) . '</span>';
 	}
 
 	if (isset($plotLines[$time])) {
@@ -91,7 +111,10 @@ foreach ($tags as $tag) {
 			'width' => 1,
 			'color' => 'silver',
 			'label' => array(
-				'text' => $text
+				'text' => $text,
+				'style' => array(
+					'fontSize' => '8px'
+				)
 			)
 		);
 	}
@@ -103,27 +126,61 @@ $plotLines = array_values($plotLines);
 
 	<title>Issue statistics</title>
 
-	<script src="http://www.highcharts.local/lib/jquery-1.10.1.js"></script>
-	<script src="http://code.highcharts.local/stock/highstock.js"></script>
-	<link rel="stylesheet" href="http://www.highcharts.com/templates/yoo_symphony/css/template.css"/>
+	<script src="http://www.highcharts.com/lib/jquery-1.10.1.js"></script>
+	<script src="http://code.highcharts.com/stock/highstock.js"></script>
+	<script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
+	<link rel="stylesheet" href="http://www.highcharts.com/joomla/templates/highsoft_bootstrap/assets/css/template.css"/>
 	<script>
 		$(function () {
 			$('#container').highcharts('StockChart', {
 				chart: {
-					marginRight: 50
-				},
-				rangeSelector: {
-					selected: 4
+					marginRight: 50,
+					zoomType: 'x',
+					panKey: 'shift'
 				},
 				xAxis: {
+					ordinal: false,
 					plotLines: <?php echo json_encode($plotLines) ?>
 				},
+				tooltip: {
+					valueDecimals: 0
+				},
+				legend: {
+					enabled: true
+				},
+				yAxis: [{
+
+				}, {
+
+				}],
 				series: [{
 					type: 'area',
 					name: 'Open issues',
-					fillOpacity: 0.1,
-					data: <?php echo json_encode($openByDate) ?>
-				}]
+					fillColor: {
+						linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
+						stops: [
+							[0, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.1).get()],
+							[1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get()]
+						]
+					},
+					data: <?php echo json_encode($openByDate) ?>,
+					threshold: null
+				}, {
+					type: 'column',
+					name: 'Opened',
+					data: <?php echo json_encode($opened) ?>,
+					yAxis: 1,
+					color: '#f7a35c'
+				}, {
+					type: 'column',
+					name: 'Closed',
+					data: <?php echo json_encode($closed) ?>,
+					yAxis: 1,
+					color: '#90ed7d'
+				}],
+				exporting: {
+					sourceWidth: 1000
+				}
 			});
 
 			$('#import').click(function () {
@@ -135,11 +192,18 @@ $plotLines = array_values($plotLines);
 		});
 	</script>
 	<style type="text/css">
+		body {
+			background: white;
+		}
 		li {
 			list-style: none;
+			padding: 0.3em 0;
 		}
 		li a {
 			text-decoration: none;
+		}
+		#keywords li a {
+			font-weight: normal;
 		}
 		.issue-number {
 			display: inline-block;

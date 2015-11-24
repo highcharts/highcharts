@@ -1,4 +1,3 @@
-/*jslint todo: true */
 /**
  * EXPERIMENTAL Highcharts module to place labels next to a series in a natural position.
  *
@@ -15,11 +14,8 @@
  * http://jsfiddle.net/highcharts/264Nm/
  * http://jsfiddle.net/highcharts/y5A37/
  */
-
-/*global Highcharts */
+/* eslint indent: [2, 4] */
 (function (H) {
-
-    'use strict';
 
     var labelDistance = 3,
         wrap = H.wrap,
@@ -173,11 +169,11 @@
         // First check for collision with existing labels
         for (i = 0; i < chart.boxesToAvoid.length; i += 1) {
             if (intersectRect(chart.boxesToAvoid[i], {
-                    left: x,
-                    right: x + bBox.width,
-                    top: y,
-                    bottom: y + bBox.height
-                })) {
+                left: x,
+                right: x + bBox.width,
+                top: y,
+                bottom: y + bBox.height
+            })) {
                 return false;
             }
         }
@@ -264,14 +260,14 @@
 
         proceed.call(this);
 
-        console.time('labelBySeries');
+        //console.time('labelBySeries');
 
         //this.buildTreeToAvoid();
         this.boxesToAvoid = [];
 
         // Build the interpolated points
         each(this.series, function (series) {
-            if (series.visible) {
+            if (series.visible && series.graph) {
                 series.interpolatedPoints = series.getPointsOnGraph();
             }
         });
@@ -285,8 +281,7 @@
                 clearPoint,
                 i,
                 best,
-                points = series.interpolatedPoints,
-                isNew;
+                points = series.interpolatedPoints;
 
             if (series.visible) {
 
@@ -300,7 +295,6 @@
                             padding: 0
                         })
                         .add(series.group);
-                    isNew = true;
                     /*series.labelConnector = chart.renderer.path([]).attr({
                         stroke: series.color,
                         'stroke-width': 1
@@ -411,7 +405,7 @@
                 }
             }
         });
-        console.timeEnd('labelBySeries');
+        //console.timeEnd('labelBySeries');
 
     }
     wrap(Chart.prototype, 'render', drawLabels);

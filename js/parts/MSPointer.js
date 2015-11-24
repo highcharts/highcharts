@@ -1,11 +1,13 @@
 if (win.PointerEvent || win.MSPointerEvent) {
-	
+
 	// The touches object keeps track of the points being touched at all times
 	var touches = {},
 		hasPointerEvent = !!win.PointerEvent,
 		getWebkitTouches = function () {
 			var key, fake = [];
-			fake.item = function (i) { return this[i]; };
+			fake.item = function (i) {
+				return this[i];
+			};
 			for (key in touches) {
 				if (touches.hasOwnProperty(key)) {
 					fake.push({
@@ -17,18 +19,18 @@ if (win.PointerEvent || win.MSPointerEvent) {
 			}
 			return fake;
 		},
-		translateMSPointer = function (e, method, wktype, callback) {
+		translateMSPointer = function (e, method, wktype, func) {
 			var p;
 			e = e.originalEvent || e;
 			if ((e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) && charts[hoverChartIndex]) {
-				callback(e);
+				func(e);
 				p = charts[hoverChartIndex].pointer;
 				p[method]({
 					type: wktype,
 					target: e.currentTarget,
 					preventDefault: noop,
 					touches: getWebkitTouches()
-				});				
+				});
 			}
 		};
 

@@ -43,7 +43,7 @@ $(function () {
                 y: 2,
                 drilldown: 'fruits'
             }, {
-                name: "Auto's",
+                name: 'Auto\'s',
                 y: 4
             }]
         }],

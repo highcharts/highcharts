@@ -14,13 +14,13 @@ var extend = Highcharts.extend = function (a, b) {
 	}
 	return a;
 };
-	
+
 /**
  * Deep merge two or more objects and return a third object. If the first argument is
  * true, the contents of the second object is copied into the first object.
  * Previously this function redirected to jQuery.extend(true), but this had two limitations.
  * First, it deep merged arrays, which lead to workarounds in Highcharts. Second,
- * it copied properties from extended prototypes. 
+ * it copied properties from extended prototypes.
  */
 function merge() {
 	var i,
@@ -43,7 +43,7 @@ function merge() {
 					if (value && typeof value === 'object' && Object.prototype.toString.call(value) !== '[object Array]' &&
 							key !== 'renderTo' && typeof value.nodeType !== 'number') {
 						copy[key] = doCopy(copy[key] || {}, value);
-				
+
 					// Primitives and arrays are copied over directly
 					} else {
 						copy[key] = original[key];
@@ -179,6 +179,20 @@ function splat(obj) {
 	return isArray(obj) ? obj : [obj];
 }
 
+/**
+ * Set a timeout if the delay is given, otherwise perform the function synchronously
+ * @param   {Function} fn      The function to perform
+ * @param   {Number}   delay   Delay in milliseconds
+ * @param   {Ojbect}   context The context
+ * @returns {Nubmer}           An identifier for the timeout
+ */
+function syncTimeout(fn, delay, context) {
+	if (delay) {
+		return setTimeout(fn, delay, context);
+	}
+	fn.call(0, context);
+}
+
 
 /**
  * Return the first value that is defined. Like MooTools' $.pick.
@@ -202,7 +216,7 @@ var pick = Highcharts.pick = function () {
  * @param {Object} styles Style object with camel case property names
  */
 function css(el, styles) {
-	if (isIE && !hasSVG) { // #2686
+	if (isMS && !hasSVG) { // #2686
 		if (styles && styles.opacity !== UNDEFINED) {
 			styles.filter = 'alpha(opacity=' + (styles.opacity * 100) + ')';
 		}
@@ -224,7 +238,7 @@ function createElement(tag, attribs, styles, parent, nopad) {
 		extend(el, attribs);
 	}
 	if (nopad) {
-		css(el, {padding: 0, border: NONE, margin: 0});
+		css(el, { padding: 0, border: 'none', margin: 0 });
 	}
 	if (styles) {
 		css(el, styles);
@@ -240,9 +254,10 @@ function createElement(tag, attribs, styles, parent, nopad) {
  * @param {Object} parent
  * @param {Object} members
  */
-function extendClass(parent, members) {
-	var object = function () { return UNDEFINED; };
-	object.prototype = new parent();
+function extendClass(Parent, members) {
+	var object = function () {
+	};
+	object.prototype = new Parent();
 	extend(object.prototype, members);
 	return object;
 }
@@ -253,24 +268,23 @@ function extendClass(parent, members) {
  * @param {Number} length
  */
 function pad(number, length) {
-	// Create an array of the remaining length +1 and join it with 0's
 	return new Array((length || 2) + 1 - String(number).length).join(0) + number;
 }
 
 /**
  * Return a length based on either the integer value, or a percentage of a base.
  */
-function relativeLength (value, base) {
+function relativeLength(value, base) {
 	return (/%$/).test(value) ? base * parseFloat(value) / 100 : parseFloat(value);
 }
 
 /**
  * Wrap a method with extended functionality, preserving the original function
- * @param {Object} obj The context object that the method belongs to 
+ * @param {Object} obj The context object that the method belongs to
  * @param {String} method The name of the method to extend
  * @param {Function} func A wrapper function callback. This function is called with the same arguments
- * as the original function, except that the original function is unshifted and passed as the first 
- * argument. 
+ * as the original function, except that the original function is unshifted and passed as the first
+ * argument.
  */
 var wrap = Highcharts.wrap = function (obj, method, func) {
 	var proceed = obj[method];
@@ -309,7 +323,7 @@ dateFormat = function (format, timestamp, capitalize) {
 		lang = defaultOptions.lang,
 		langWeekdays = lang.weekdays,
 
-		// List all format keys. Custom formats can be added from the outside. 
+		// List all format keys. Custom formats can be added from the outside.
 		replacements = extend({
 
 			// Day
@@ -333,6 +347,7 @@ dateFormat = function (format, timestamp, capitalize) {
 
 			// Time
 			'H': pad(hours), // Two digits hours in 24h format, 00 through 23
+			'k': hours, // Hours in 24h format, 0 through 23
 			'I': pad((hours % 12) || 12), // Two digits hours in 12h format, 00 through 11
 			'l': (hours % 12) || 12, // Hours in 12h format, 1 through 12
 			'M': pad(date[getMinutes]()), // Two digits minutes, 00 through 59
@@ -354,7 +369,7 @@ dateFormat = function (format, timestamp, capitalize) {
 	return capitalize ? format.substr(0, 1).toUpperCase() + format.substr(1) : format;
 };
 
-/** 
+/**
  * Format a single variable. Similar to sprintf, without the % prefix.
  */
 function formatSingle(format, val) {
@@ -394,12 +409,12 @@ function format(str, ctx) {
 		ret = [],
 		val,
 		index;
-	
+
 	while ((index = str.indexOf(splitter)) !== -1) {
-		
+
 		segment = str.slice(0, index);
 		if (isInside) { // we're on the closing bracket looking back
-			
+
 			valueAndFormat = segment.split(':');
 			path = valueAndFormat.shift().split('.'); // get first and leave format
 			len = path.length;
@@ -417,10 +432,10 @@ function format(str, ctx) {
 
 			// Push the result and advance the cursor
 			ret.push(val);
-			
+
 		} else {
 			ret.push(segment);
-			
+
 		}
 		str = str.slice(index + 1); // the rest
 		isInside = !isInside; // toggle
@@ -445,7 +460,7 @@ function getMagnitude(num) {
  * @param {Object} options
  */
 function normalizeTickInterval(interval, multiples, magnitude, allowDecimals, preventExceed) {
-	var normalized, 
+	var normalized,
 		i,
 		retInterval = interval;
 
@@ -471,14 +486,14 @@ function normalizeTickInterval(interval, multiples, magnitude, allowDecimals, pr
 	for (i = 0; i < multiples.length; i++) {
 		retInterval = multiples[i];
 		if ((preventExceed && retInterval * magnitude >= interval) || // only allow tick amounts smaller than natural
-			(!preventExceed && (normalized <= (multiples[i] + (multiples[i + 1] || multiples[i])) / 2))) {
+				(!preventExceed && (normalized <= (multiples[i] + (multiples[i + 1] || multiples[i])) / 2))) {
 			break;
 		}
 	}
 
 	// multiply back to the correct magnitude
 	retInterval *= magnitude;
-	
+
 	return retInterval;
 }
 
@@ -494,17 +509,17 @@ function stableSort(arr, sortFunction) {
 
 	// Add index to each item
 	for (i = 0; i < length; i++) {
-		arr[i].ss_i = i; // stable sort index
+		arr[i].safeI = i; // stable sort index
 	}
 
 	arr.sort(function (a, b) {
 		sortValue = sortFunction(a, b);
-		return sortValue === 0 ? a.ss_i - b.ss_i : sortValue;
+		return sortValue === 0 ? a.safeI - b.safeI : sortValue;
 	});
 
 	// Remove index from items
 	for (i = 0; i < length; i++) {
-		delete arr[i].ss_i; // stable sort index
+		delete arr[i].safeI; // stable sort index
 	}
 }
 
@@ -582,20 +597,6 @@ function discardElement(element) {
 }
 
 /**
- * Provide error messages for debugging, with links to online explanation 
- */
-function error (code, stop) {
-	var msg = 'Highcharts error #' + code + ': www.highcharts.com/errors/' + code;
-	if (stop) {
-		throw msg;
-	}
-	// else ...
-	if (win.console) {
-		console.log(msg);
-	}
-}
-
-/**
  * Fix JS round off float errors
  * @param {Number} num
  */
@@ -642,14 +643,14 @@ Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
 		// http://kevin.vanzonneveld.net/techblog/article/javascript_equivalent_for_phps_number_format/
 		n = +number || 0,
 		c = decimals === -1 ?
-			mathMin((n.toString().split('.')[1] || '').length, 20) : // Preserve decimals. Not huge numbers (#3793).
-			(isNaN(decimals = mathAbs(decimals)) ? 2 : decimals),
+				Math.min((n.toString().split('.')[1] || '').length, 20) : // Preserve decimals. Not huge numbers (#3793).
+				(isNaN(decimals = Math.abs(decimals)) ? 2 : decimals),
 		d = decPoint === undefined ? lang.decimalPoint : decPoint,
 		t = thousandsSep === undefined ? lang.thousandsSep : thousandsSep,
-		s = n < 0 ? "-" : "",
+		s = n < 0 ? '-' : '',
 		i = String(pInt(n = mathAbs(n).toFixed(c))),
 		j = i.length > 3 ? i.length % 3 : 0;
 
-	return (s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) +
-			(c ? d + mathAbs(n - i).toFixed(c).slice(2) : ""));
+	return (s + (j ? i.substr(0, j) + t : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + t) +
+			(c ? d + mathAbs(n - i).toFixed(c).slice(2) : ''));
 };

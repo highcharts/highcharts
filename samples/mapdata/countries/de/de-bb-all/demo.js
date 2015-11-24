@@ -3,43 +3,43 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "de-bb-12052000",
+            "hc-key": "de-bb-12065000",
             "value": 0
         },
         {
-            "hc-key": "de-bb-12062000",
+            "hc-key": "de-bb-12052000",
             "value": 1
         },
         {
-            "hc-key": "de-bb-12053000",
+            "hc-key": "de-bb-12062000",
             "value": 2
         },
         {
-            "hc-key": "de-bb-12072000",
+            "hc-key": "de-bb-12053000",
             "value": 3
         },
         {
-            "hc-key": "de-bb-12063000",
+            "hc-key": "de-bb-12072000",
             "value": 4
         },
         {
-            "hc-key": "de-bb-12060000",
+            "hc-key": "de-bb-12063000",
             "value": 5
         },
         {
-            "hc-key": "de-bb-12066000",
+            "hc-key": "de-bb-12060000",
             "value": 6
         },
         {
-            "hc-key": "de-bb-12068000",
+            "hc-key": "de-bb-12066000",
             "value": 7
         },
         {
-            "hc-key": "de-bb-12054000",
+            "hc-key": "de-bb-12068000",
             "value": 8
         },
         {
-            "hc-key": "de-bb-12065000",
+            "hc-key": "de-bb-12054000",
             "value": 9
         },
         {
@@ -84,7 +84,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/de/de-bb-all.js">Brandenburg</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/de/de-bb-all.js">Brandenburg</a>'
         },
 
         mapNavigation: {

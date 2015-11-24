@@ -7,16 +7,16 @@ $(function () {
         var chart = $('#container').highcharts();
 
         chart.showLoading('Loading data from server...');
-        $.getJSON('http://www.highcharts.com/samples/data/from-sql.php?start=' + Math.round(e.min) +
+        $.getJSON('https://www.highcharts.com/samples/data/from-sql.php?start=' + Math.round(e.min) +
                 '&end=' + Math.round(e.max) + '&callback=?', function (data) {
 
-                chart.series[0].setData(data);
-                chart.hideLoading();
-            });
+            chart.series[0].setData(data);
+            chart.hideLoading();
+        });
     }
 
     // See source code from the JSONP handler at https://github.com/highslide-software/highcharts.com/blob/master/samples/data/from-sql.php
-    $.getJSON('http://www.highcharts.com/samples/data/from-sql.php?callback=?', function (data) {
+    $.getJSON('https://www.highcharts.com/samples/data/from-sql.php?callback=?', function (data) {
 
         // Add a null value for the end date
         data = [].concat(data, [[Date.UTC(2011, 9, 14, 19, 59), null, null, null, null]]);

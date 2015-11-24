@@ -41,7 +41,7 @@ $(function () {
                         chart.showLoading('<i class="icon-spinner icon-spin icon-3x"></i>'); // Font Awesome spinner
 
                         // Load the drilldown map
-                        $.getScript('http://code.highcharts.com/mapdata/' + mapKey + '.js', function () {
+                        $.getScript('https://code.highcharts.com/mapdata/' + mapKey + '.js', function () {
 
                             data = Highcharts.geojson(Highcharts.maps[mapKey]);
 

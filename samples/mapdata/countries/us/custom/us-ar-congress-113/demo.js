@@ -11,11 +11,11 @@ $(function () {
             "value": 1
         },
         {
-            "hc-key": "us-ar-01",
+            "hc-key": "us-ar-02",
             "value": 2
         },
         {
-            "hc-key": "us-ar-02",
+            "hc-key": "us-ar-01",
             "value": 3
         }
     ];
@@ -28,7 +28,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-ar-congress-113.js">Arkansas congressional districts</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-ar-congress-113.js">Arkansas congressional districts</a>'
         },
 
         mapNavigation: {

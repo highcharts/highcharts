@@ -31,11 +31,11 @@ $(function () {
             "value": 6
         },
         {
-            "hc-key": "mm-kh",
+            "hc-key": "mm-sh",
             "value": 7
         },
         {
-            "hc-key": "mm-sh",
+            "hc-key": "mm-kh",
             "value": 8
         },
         {
@@ -72,7 +72,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/mm/mm-all.js">Myanmar</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/mm/mm-all.js">Myanmar</a>'
         },
 
         mapNavigation: {

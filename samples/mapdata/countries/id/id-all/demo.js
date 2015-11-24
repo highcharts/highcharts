@@ -103,15 +103,15 @@ $(function () {
             "value": 24
         },
         {
-            "hc-key": "id-1024",
+            "hc-key": "id-jr",
             "value": 25
         },
         {
-            "hc-key": "id-jk",
+            "hc-key": "id-1024",
             "value": 26
         },
         {
-            "hc-key": "id-jr",
+            "hc-key": "id-jk",
             "value": 27
         },
         {
@@ -148,7 +148,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/id/id-all.js">Indonesia</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/id/id-all.js">Indonesia</a>'
         },
 
         mapNavigation: {

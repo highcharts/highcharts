@@ -2,7 +2,7 @@
  * The class for stack items
  */
 function StackItem(axis, options, isNegative, x, stackOption) {
-	
+
 	var inverted = axis.chart.inverted;
 
 	this.axis = axis;
@@ -52,12 +52,12 @@ StackItem.prototype = {
 		var options = this.options,
 			formatOption = options.format,
 			str = formatOption ?
-				format(formatOption, this) : 
+				format(formatOption, this) :
 				options.formatter.call(this);  // format the text in the label
 
 		// Change the text to reflect the new total and set visibility to hidden in case the serie is hidden
 		if (this.label) {
-			this.label.attr({text: str, visibility: HIDDEN});
+			this.label.attr({ text: str, visibility: 'hidden' });
 		// Create new label
 		} else {
 			this.label =
@@ -67,7 +67,7 @@ StackItem.prototype = {
 						align: this.textAlign,				// fix the text-anchor
 						rotation: options.rotation,	// rotation
 						visibility: HIDDEN					// hidden until setOffset is called
-					})				
+					})
 					.add(group);							// add to the labels-group
 		}
 	},
@@ -95,10 +95,10 @@ StackItem.prototype = {
 			},
 			label = this.label,
 			alignAttr;
-		
+
 		if (label) {
 			label.align(this.alignOptions, null, stackBox);	// align the label to the box
-				
+
 			// Set visibility (#678)
 			alignAttr = label.alignAttr;
 			label[this.options.crop === false || chart.isInsidePlot(alignAttr.x, alignAttr.y) ? 'show' : 'hide'](true);
@@ -166,8 +166,8 @@ Axis.prototype.renderStackTotals = function () {
 		chart = axis.chart,
 		renderer = chart.renderer,
 		stacks = axis.stacks,
-		stackKey, 
-		oneStack, 
+		stackKey,
+		oneStack,
 		stackCategory,
 		stackTotalGroup = axis.stackTotalGroup;
 
@@ -265,6 +265,7 @@ Series.prototype.setStackedPoints = function () {
 		yAxis = series.yAxis,
 		stacks = yAxis.stacks,
 		oldStacks = yAxis.oldStacks,
+		stackIndicator,
 		isNegative,
 		stack,
 		other,
@@ -281,8 +282,8 @@ Series.prototype.setStackedPoints = function () {
 	for (i = 0; i < yDataLength; i++) {
 		x = xData[i];
 		y = yData[i];
-		pointKey = series.index + ',' + i;
-
+		stackIndicator = series.getStackIndicator(stackIndicator, x, series.index);
+		pointKey = stackIndicator.key;
 		// Read stacked values into a stack based on the x value,
 		// the sign of y and the stack key. Stacking is also handled for null values (#739)
 		isNegative = negStacks && y < (stackThreshold ? 0 : threshold);
@@ -308,6 +309,13 @@ Series.prototype.setStackedPoints = function () {
 		if (y !== null) {
 			stack.points[pointKey] = stack.points[series.index] = [pick(stack.cum, stackThreshold)];
 			stack.touched = yAxis.stacksTouched;
+		
+
+			// In area charts, if there are multiple points on the same X value, let the 
+			// area fill the full span of those points
+			if (stackIndicator.index > 0 && series.singleStacks === false) {
+				stack.points[pointKey][0] = stack.points[series.index + ',' + x + ',0'][0];
+			}
 		}
 
 		// Add value to the stack total
@@ -353,7 +361,8 @@ Series.prototype.setPercentStacks = function () {
 	var series = this,
 		stackKey = series.stackKey,
 		stacks = series.yAxis.stacks,
-		processedXData = series.processedXData;
+		processedXData = series.processedXData,
+		stackIndicator;
 
 	each([stackKey, '-' + stackKey], function (key) {
 		var i = processedXData.length,
@@ -364,8 +373,9 @@ Series.prototype.setPercentStacks = function () {
 
 		while (i--) {
 			x = processedXData[i];
+			stackIndicator = series.getStackIndicator(stackIndicator, x, series.index);
 			stack = stacks[key] && stacks[key][x];
-			pointExtremes = stack && stack.points[series.index + ',' + i];
+			pointExtremes = stack && stack.points[stackIndicator.key];
 			if (pointExtremes) {
 				totalFactor = stack.total ? 100 / stack.total : 0;
 				pointExtremes[0] = correctFloat(pointExtremes[0] * totalFactor); // Y bottom value
@@ -374,5 +384,23 @@ Series.prototype.setPercentStacks = function () {
 			}
 		}
 	});
+};
+
+/**
+* Get stack indicator, according to it's x-value, to determine points with the same x-value
+*/
+Series.prototype.getStackIndicator = function (stackIndicator, x, index) {
+	if (!defined(stackIndicator) || stackIndicator.x !== x) {
+		stackIndicator = {
+			x: x,
+			index: 0
+		};
+	} else {
+		stackIndicator.index++;
+	}
+
+	stackIndicator.key = [index, x, stackIndicator.index].join(',');
+
+	return stackIndicator;
 };
 

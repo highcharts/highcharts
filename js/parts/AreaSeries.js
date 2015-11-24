@@ -2,6 +2,7 @@
  * Set the default options for area
  */
 defaultPlotOptions.area = merge(defaultSeriesOptions, {
+	softThreshold: false,
 	threshold: 0
 	// trackByArea: false,
 	// lineColor: null, // overrides color, but lets fillColor be unaltered
@@ -52,7 +53,9 @@ var AreaSeries = extendClass(Series, {
 				return a - b;
 			});
 
-			visibleSeries = map(yAxisSeries, function () { return this.visible; });
+			visibleSeries = map(yAxisSeries, function () {
+				return this.visible;
+			});
 
 			each(keys, function (x, idx) {
 				var y = 0,
@@ -239,38 +242,38 @@ var AreaSeries = extendClass(Series, {
 		this.areaPath = areaPath;
 		return graphPath;
 	},
-	
+
 	/**
 	 * Draw the graph and the underlying area. This method calls the Series base
 	 * function and adds the area. The areaPath is calculated in the getSegmentPath
 	 * method called from Series.prototype.drawGraph.
 	 */
 	drawGraph: function () {
-		
+
 		// Define or reset areaPath
 		this.areaPath = [];
-		
+
 		// Call the base method
 		Series.prototype.drawGraph.apply(this);
-		
+
 		// Define local variables
 		var series = this,
 			areaPath = this.areaPath,
 			options = this.options,
 			zones = this.zones,
 			props = [['area', this.color, options.fillColor]]; // area name, main color, fill color
-		
+
 		each(zones, function (threshold, i) {
 			props.push(['zoneArea' + i, threshold.color || series.color, threshold.fillColor || options.fillColor]);
 		});
 		each(props, function (prop) {
 			var areaKey = prop[0],
 				area = series[areaKey];
-				
+
 			// Create or update the area
 			if (area) { // update
 				area.animate({ d: areaPath });
-	
+
 			} else { // create
 				series[areaKey] = series.chart.renderer.path(areaPath)
 					.attr({

@@ -3,59 +3,59 @@ $(function () {
     // Prepare demo data
     var data = [
         {
-            "hc-key": "no-ho-1253",
+            "hc-key": "no-ho-1251",
             "value": 0
         },
         {
-            "hc-key": "no-ho-1251",
+            "hc-key": "no-ho-1231",
             "value": 1
         },
         {
-            "hc-key": "no-ho-1231",
+            "hc-key": "no-ho-1233",
             "value": 2
         },
         {
-            "hc-key": "no-ho-1233",
+            "hc-key": "no-ho-1227",
             "value": 3
         },
         {
-            "hc-key": "no-ho-1227",
+            "hc-key": "no-ho-1241",
             "value": 4
         },
         {
-            "hc-key": "no-ho-1241",
+            "hc-key": "no-ho-1238",
             "value": 5
         },
         {
-            "hc-key": "no-ho-1238",
+            "hc-key": "no-ho-1252",
             "value": 6
         },
         {
-            "hc-key": "no-ho-1252",
+            "hc-key": "no-ho-1243",
             "value": 7
         },
         {
-            "hc-key": "no-ho-1243",
+            "hc-key": "no-ho-1245",
             "value": 8
         },
         {
-            "hc-key": "no-ho-1245",
+            "hc-key": "no-ho-1201",
             "value": 9
         },
         {
-            "hc-key": "no-ho-1201",
+            "hc-key": "no-ho-1246",
             "value": 10
         },
         {
-            "hc-key": "no-ho-1246",
+            "hc-key": "no-ho-1244",
             "value": 11
         },
         {
-            "hc-key": "no-ho-1244",
+            "hc-key": "no-ho-1242",
             "value": 12
         },
         {
-            "hc-key": "no-ho-1242",
+            "hc-key": "no-ho-1253",
             "value": 13
         },
         {
@@ -140,7 +140,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/no/no-ho-all.js">Hordaland</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/no/no-ho-all.js">Hordaland</a>'
         },
 
         mapNavigation: {

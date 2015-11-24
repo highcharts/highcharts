@@ -21,6 +21,7 @@ defaultPlotOptions.bubble = merge(defaultPlotOptions.scatter, {
 	maxSize: '20%',
 	// negativeColor: null,
 	// sizeBy: 'area'
+	softThreshold: false,
 	states: {
 		hover: {
 			halo: {
@@ -52,46 +53,46 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 	trackerGroups: ['group', 'dataLabelsGroup'],
 	bubblePadding: true,
 	zoneAxis: 'z',
-	
+
 	/**
 	 * Mapping between SVG attributes and the corresponding options
 	 */
-	pointAttrToOptions: { 
+	pointAttrToOptions: {
 		stroke: 'lineColor',
 		'stroke-width': 'lineWidth',
 		fill: 'fillColor'
 	},
-	
+
 	/**
 	 * Apply the fillOpacity to all fill positions
 	 */
 	applyOpacity: function (fill) {
 		var markerOptions = this.options.marker,
 			fillOpacity = pick(markerOptions.fillOpacity, 0.5);
-		
+
 		// When called from Legend.colorizeItem, the fill isn't predefined
-		fill = fill || markerOptions.fillColor || this.color; 
-		
+		fill = fill || markerOptions.fillColor || this.color;
+
 		if (fillOpacity !== 1) {
 			fill = Color(fill).setOpacity(fillOpacity).get('rgba');
 		}
 		return fill;
 	},
-	
+
 	/**
 	 * Extend the convertAttribs method by applying opacity to the fill
 	 */
 	convertAttribs: function () {
 		var obj = Series.prototype.convertAttribs.apply(this, arguments);
-		
+
 		obj.fill = this.applyOpacity(obj.fill);
-		
+
 		return obj;
 	},
 
 	/**
 	 * Get the radius for each point based on the minSize, maxSize and each point's Z value. This
-	 * must be done prior to Series.translate because the axis needs to add padding in 
+	 * must be done prior to Series.translate because the axis needs to add padding in
 	 * accordance with the point sizes.
 	 */
 	getRadii: function (zMin, zMax, minSize, maxSize) {
@@ -100,34 +101,51 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			pos,
 			zData = this.zData,
 			radii = [],
-			sizeByArea = this.options.sizeBy !== 'width',
-			zRange = zMax - zMin;
+			options = this.options,
+			sizeByArea = options.sizeBy !== 'width',
+			zThreshold = options.zThreshold,
+			zRange = zMax - zMin,
+			value,
+			radius;
 
 		// Set the shape type and arguments to be picked up in drawPoints
 		for (i = 0, len = zData.length; i < len; i++) {
+
+			value = zData[i];
+
+			// When sizing by threshold, the absolute value of z determines the size
+			// of the bubble.
+			if (options.sizeByAbsoluteValue && value !== null) {
+				value = Math.abs(value - zThreshold);
+				zMax = Math.max(zMax - zThreshold, Math.abs(zMin - zThreshold));
+				zMin = 0;
+			}
+
+			if (value === null) {
+				radius = null;
 			// Issue #4419 - if value is less than zMin, push a radius that's always smaller than the minimum size
-			if (zData[i] < zMin) {
-				radii.push(minSize / 2 - 1);
+			} else if (value < zMin) {
+				radius = minSize / 2 - 1;
 			} else {
 				// Relative size, a number between 0 and 1
-				pos = zRange > 0 ? (zData[i] - zMin) / zRange : 0.5; 
-				
+				pos = zRange > 0 ? (value - zMin) / zRange : 0.5;
+
 				if (sizeByArea && pos >= 0) {
 					pos = Math.sqrt(pos);
 				}
-		
-				radii.push(math.ceil(minSize + pos * (maxSize - minSize)) / 2);
+				radius = math.ceil(minSize + pos * (maxSize - minSize)) / 2;
 			}
+			radii.push(radius);
 		}
 		this.radii = radii;
 	},
-	
+
 	/**
 	 * Perform animation on the bubbles
 	 */
 	animate: function (init) {
 		var animation = this.options.animation;
-		
+
 		if (!init) { // run the animation
 			each(this.points, function (point) {
 				var graphic = point.graphic,
@@ -148,29 +166,29 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 			this.animate = null;
 		}
 	},
-	
+
 	/**
 	 * Extend the base translate method to handle bubble size
 	 */
 	translate: function () {
-		
+
 		var i,
 			data = this.data,
 			point,
 			radius,
 			radii = this.radii;
-		
+
 		// Run the parent method
 		seriesTypes.scatter.prototype.translate.call(this);
-		
+
 		// Set the shape type and arguments to be picked up in drawPoints
 		i = data.length;
-		
+
 		while (i--) {
 			point = data[i];
 			radius = radii ? radii[i] : 0; // #1737
-			
-			if (radius >= this.minPxSize / 2) {
+
+			if (typeof radius === 'number' && radius >= this.minPxSize / 2) {
 				// Shape arguments
 				point.shapeType = 'circle';
 				point.shapeArgs = {
@@ -178,7 +196,7 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 					y: point.plotY,
 					r: radius
 				};
-				
+
 				// Alignment box for the data label
 				point.dlBox = {
 					x: point.plotX - radius,
@@ -186,32 +204,33 @@ seriesTypes.bubble = extendClass(seriesTypes.scatter, {
 					width: 2 * radius,
 					height: 2 * radius
 				};
-			} else { // below zThreshold
+			} else { // below zThreshold or z = null
 				point.shapeArgs = point.plotY = point.dlBox = UNDEFINED; // #1691
 			}
 		}
 	},
-	
+
 	/**
 	 * Get the series' symbol in the legend
-	 * 
+	 *
 	 * @param {Object} legend The legend object
 	 * @param {Object} item The series (this) or point
 	 */
 	drawLegendSymbol: function (legend, item) {
-		var radius = pInt(legend.itemStyle.fontSize) / 2;
-		
-		item.legendSymbol = this.chart.renderer.circle(
+		var renderer = this.chart.renderer,
+			radius = renderer.fontMetrics(legend.itemStyle.fontSize).f / 2;
+
+		item.legendSymbol = renderer.circle(
 			radius,
 			legend.baseline - radius,
 			radius
 		).attr({
 			zIndex: 3
 		}).add(item.legendGroup);
-		item.legendSymbol.isMarker = true;	
-		
+		item.legendSymbol.isMarker = true;
+
 	},
-		
+
 	drawPoints: seriesTypes.column.prototype.drawPoints,
 	alignDataLabel: seriesTypes.column.prototype.alignDataLabel,
 	buildKDTree: noop,
@@ -226,7 +245,7 @@ Axis.prototype.beforePadding = function () {
 	var axis = this,
 		axisLength = this.len,
 		chart = this.chart,
-		pxMin = 0, 
+		pxMin = 0,
 		pxMax = axisLength,
 		isXAxis = this.isXAxis,
 		dataKey = isXAxis ? 'xData' : 'yData',
@@ -254,28 +273,28 @@ Axis.prototype.beforePadding = function () {
 			activeSeries.push(series);
 
 			if (isXAxis) { // because X axis is evaluated first
-			
+
 				// For each series, translate the size extremes to pixel values
 				each(['minSize', 'maxSize'], function (prop) {
 					var length = seriesOptions[prop],
 						isPercent = /%$/.test(length);
-					
+
 					length = pInt(length);
 					extremes[prop] = isPercent ?
 						smallestSize * length / 100 :
 						length;
-					
+
 				});
 				series.minPxSize = extremes.minSize;
 				series.maxPxSize = extremes.maxSize;
-				
+
 				// Find the min and max Z
 				zData = series.zData;
 				if (zData.length) { // #1735
 					zMin = pick(seriesOptions.zMin, math.min(
 						zMin,
 						math.max(
-							arrayMin(zData), 
+							arrayMin(zData),
 							seriesOptions.displayNegative === false ? seriesOptions.zThreshold : -Number.MAX_VALUE
 						)
 					));
@@ -294,7 +313,7 @@ Axis.prototype.beforePadding = function () {
 		if (isXAxis) {
 			series.getRadii(zMin, zMax, series.minPxSize, series.maxPxSize);
 		}
-		
+
 		if (range > 0) {
 			while (i--) {
 				if (typeof data[i] === 'number') {
@@ -305,14 +324,14 @@ Axis.prototype.beforePadding = function () {
 			}
 		}
 	});
-	
+
 
 	if (activeSeries.length && range > 0 && !this.isLog) {
 		pxMax -= axisLength;
 		transA *= (axisLength + pxMin - pxMax) / axisLength;
 		each([['min', 'userMin', pxMin], ['max', 'userMax', pxMax]], function (keys) {
 			if (pick(axis.options[keys[0]], axis[keys[1]]) === UNDEFINED) {
-				axis[keys[0]] += keys[2] / transA; 
+				axis[keys[0]] += keys[2] / transA;
 			}
 		});
 	}

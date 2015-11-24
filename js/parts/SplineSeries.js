@@ -68,7 +68,7 @@ var SplineSeries = extendClass(Series, {
 
 			
 		}
-		
+
 		// Visualize control points for debugging
 		/*
 		if (leftContX) {

@@ -31,7 +31,8 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 		verticalAlign: null, // auto
 		y: null
 	},
-	startFromThreshold: true, // docs: http://jsfiddle.net/highcharts/hz8fopan/14/
+	softThreshold: false,
+	startFromThreshold: true, // docs (but false doesn't work well): http://jsfiddle.net/highcharts/hz8fopan/14/
 	stickyTracking: false,
 	tooltip: {
 		distance: 6
@@ -52,9 +53,9 @@ var ColumnSeries = extendClass(Series, {
 	cropShoulder: 0,
 	directTouch: true, // When tooltip is not shared, this series (and derivatives) requires direct touch/hover. KD-tree does not apply.
 	trackerGroups: ['group', 'dataLabelsGroup'],
-	negStacks: true, // use separate negative stacks, unlike area stacks where a negative 
+	negStacks: true, // use separate negative stacks, unlike area stacks where a negative
 		// point is substracted from previous (#1910)
-	
+
 	/**
 	 * Initialize the series
 	 */
@@ -77,7 +78,7 @@ var ColumnSeries = extendClass(Series, {
 
 	/**
 	 * Return the width and x offset of the columns adjusted for grouping, groupPadding, pointPadding,
-	 * pointWidth etc. 
+	 * pointWidth etc.
 	 */
 	getColumnMetrics: function () {
 
@@ -124,23 +125,64 @@ var ColumnSeries = extendClass(Series, {
 			groupWidth = categoryWidth - 2 * groupPadding,
 			pointOffsetWidth = groupWidth / columnCount,
 			pointWidth = mathMin(
-				options.maxPointWidth || xAxis.len, // docs: Sample created. Add "See also" to pointWidth. Close UserVoice.
+				options.maxPointWidth || xAxis.len,
 				pick(options.pointWidth, pointOffsetWidth * (1 - 2 * options.pointPadding))
 			),
 			pointPadding = (pointOffsetWidth - pointWidth) / 2,
-			colIndex = (reversedXAxis ? 
-				columnCount - (series.columnIndex || 0) : // #1251
-				series.columnIndex) || 0,
+			colIndex = (series.columnIndex || 0) + (reversedXAxis ? 1 : 0), // #1251, #3737
 			pointXOffset = pointPadding + (groupPadding + colIndex *
 				pointOffsetWidth - (categoryWidth / 2)) *
 				(reversedXAxis ? -1 : 1);
 
 		// Save it for reading in linked series (Error bars particularly)
-		return (series.columnMetrics = { 
-			width: pointWidth, 
-			offset: pointXOffset 
-		});
-			
+		series.columnMetrics = {
+			width: pointWidth,
+			offset: pointXOffset
+		};
+		return series.columnMetrics;
+
+	},
+
+	/**
+	 * Make the columns crisp. The edges are rounded to the nearest full pixel.
+	 */
+	crispCol: function (x, y, w, h) {
+		var chart = this.chart,
+			borderWidth = this.borderWidth,
+			xCrisp = -(borderWidth % 2 ? 0.5 : 0),
+			yCrisp = borderWidth % 2 ? 0.5 : 1,
+			right,
+			bottom,
+			fromTop;
+
+		if (chart.inverted && chart.renderer.isVML) {
+			yCrisp += 1;
+		}
+
+		// Horizontal. We need to first compute the exact right edge, then round it
+		// and compute the width from there.
+		right = Math.round(x + w) + xCrisp;
+		x = Math.round(x) + xCrisp;
+		w = right - x;
+
+		// Vertical
+		bottom = Math.round(y + h) + yCrisp;
+		fromTop = mathAbs(y) <= 0.5 && bottom > 0.5; // #4504, #4656
+		y = Math.round(y) + yCrisp;
+		h = bottom - y;
+
+		// Top edges are exceptions
+		if (fromTop) {
+			y -= 1;
+			h += 1;
+		}
+
+		return {
+			x: x,
+			y: y,
+			width: w,
+			height: h
+		};
 	},
 
 	/**
@@ -151,7 +193,7 @@ var ColumnSeries = extendClass(Series, {
 			chart = series.chart,
 			options = series.options,
 			borderWidth = series.borderWidth = pick(
-				options.borderWidth, 
+				options.borderWidth,
 				series.closestPointRange * series.xAxis.transA < 2 ? 0 : 1 // #3635
 			),
 			yAxis = series.yAxis,
@@ -161,15 +203,10 @@ var ColumnSeries = extendClass(Series, {
 			metrics = series.getColumnMetrics(),
 			pointWidth = metrics.width,
 			seriesBarW = series.barW = mathMax(pointWidth, 1 + 2 * borderWidth), // postprocessed for border width
-			pointXOffset = series.pointXOffset = metrics.offset,
-			xCrisp = -(borderWidth % 2 ? 0.5 : 0),
-			yCrisp = borderWidth % 2 ? 0.5 : 1;
+			pointXOffset = series.pointXOffset = metrics.offset;
 
 		if (chart.inverted) {
 			translatedThreshold -= 0.5; // #3355
-			if (chart.renderer.isVML) {
-				yCrisp += 1;
-			}
 		}
 
 		// When the pointPadding is 0, we want the columns to be packed tightly, so we allow individual
@@ -183,15 +220,12 @@ var ColumnSeries = extendClass(Series, {
 
 		// Record the new values
 		each(series.points, function (point) {
-			var yBottom = pick(point.yBottom, translatedThreshold),
+			var yBottom = mathMin(pick(point.yBottom, translatedThreshold), 9e4), // #3575
 				safeDistance = 999 + mathAbs(yBottom),
 				plotY = mathMin(mathMax(-safeDistance, point.plotY), yAxis.len + safeDistance), // Don't draw too far outside plot area (#1303, #2241, #4264)
 				barX = point.plotX + pointXOffset,
 				barW = seriesBarW,
 				barY = mathMin(plotY, yBottom),
-				right,
-				bottom,
-				fromTop,
 				up,
 				barH = mathMax(plotY, yBottom) - barY;
 
@@ -200,10 +234,9 @@ var ColumnSeries = extendClass(Series, {
 				if (minPointLength) {
 					barH = minPointLength;
 					up = (!yAxis.reversed && !point.negative) || (yAxis.reversed && point.negative);
-					barY =
-						mathRound(mathAbs(barY - translatedThreshold) > minPointLength ? // stacked
+					barY = mathAbs(barY - translatedThreshold) > minPointLength ? // stacked
 							yBottom - minPointLength : // keep position
-							translatedThreshold - (up ? minPointLength : 0)); // #1485, #4051
+							translatedThreshold - (up ? minPointLength : 0); // #1485, #4051
 				}
 			}
 
@@ -211,47 +244,26 @@ var ColumnSeries = extendClass(Series, {
 			point.barX = barX;
 			point.pointWidth = pointWidth;
 
-			// Round off to obtain crisp edges and avoid overlapping with neighbours (#2694)
-			right = mathRound(barX + barW) + xCrisp;
-			barX = mathRound(barX) + xCrisp;
-			barW = right - barX;
-
-			fromTop = mathAbs(barY) < 0.5;
-			bottom = mathMin(mathRound(barY + barH) + yCrisp, 9e4); // #3575
-			barY = mathRound(barY) + yCrisp;
-			barH = bottom - barY;
-
-			// Top edges are exceptions
-			if (fromTop) {
-				barY -= 1;
-				barH += 1;
-			}
-
 			// Fix the tooltip on center of grouped columns (#1216, #424, #3648)
-			point.tooltipPos = chart.inverted ? 
-				[yAxis.len + yAxis.pos - chart.plotLeft - plotY, series.xAxis.len - barX - barW / 2, barH] : 
+			point.tooltipPos = chart.inverted ?
+				[yAxis.len + yAxis.pos - chart.plotLeft - plotY, series.xAxis.len - barX - barW / 2, barH] :
 				[barX + barW / 2, plotY + yAxis.pos - chart.plotTop, barH];
 
 			// Register shape type and arguments to be used in drawPoints
 			point.shapeType = 'rect';
-			point.shapeArgs = {
-				x: barX,
-				y: barY,
-				width: barW,
-				height: barH
-			};
+			point.shapeArgs = series.crispCol(barX, barY, barW, barH);
 		});
 
 	},
 
 	getSymbol: noop,
-	
+
 	/**
 	 * Use a solid rectangle like the area series types
 	 */
 	drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-	
-	
+
+
 	/**
 	 * Columns have no graph
 	 */
@@ -285,16 +297,16 @@ var ColumnSeries = extendClass(Series, {
 				} : {};
 
 				pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE] || series.pointAttr[NORMAL_STATE];
-				
+
 				if (graphic) { // update
 					stop(graphic);
-					graphic.attr(borderAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs));
+					graphic.attr(borderAttr).attr(pointAttr)[chart.pointCount < animationLimit ? 'animate' : 'attr'](merge(shapeArgs)); // #4267
 
 				} else {
 					point.graphic = graphic = renderer[point.shapeType](shapeArgs)
 						.attr(borderAttr)
 						.attr(pointAttr)
-						.add(series.group)
+						.add(point.group || series.group)
 						.shadow(options.shadow, null, options.stacking && !options.borderRadius);
 				}
 
@@ -328,7 +340,7 @@ var ColumnSeries = extendClass(Series, {
 				series.group.attr(attr);
 
 			} else { // run the animation
-				
+
 				attr.scaleY = 1;
 				attr[inverted ? 'translateX' : 'translateY'] = yAxis.pos;
 				series.group.animate(attr, series.options.animation);
@@ -338,7 +350,7 @@ var ColumnSeries = extendClass(Series, {
 			}
 		}
 	},
-	
+
 	/**
 	 * Remove this series from the chart
 	 */

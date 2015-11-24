@@ -15,7 +15,7 @@ $(function () {
             },
             data: [1, 1, {
                 dataLabels: {
-                    enabled: false,
+                    enabled: false
                 },
                 y: 1
             }, 1]
@@ -26,7 +26,7 @@ $(function () {
             },
             data: [2, 2, {
                 dataLabels: {
-                    enabled: true,
+                    enabled: true
                 },
                 y: 2
             }, 2]

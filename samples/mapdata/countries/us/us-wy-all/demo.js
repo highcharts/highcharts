@@ -63,11 +63,11 @@ $(function () {
             "value": 14
         },
         {
-            "hc-key": "us-wy-001",
+            "hc-key": "us-wy-007",
             "value": 15
         },
         {
-            "hc-key": "us-wy-007",
+            "hc-key": "us-wy-001",
             "value": 16
         },
         {
@@ -104,7 +104,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-wy-all.js">Wyoming</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-wy-all.js">Wyoming</a>'
         },
 
         mapNavigation: {

@@ -1,14 +1,14 @@
 $(function () {
     $('#container').highcharts({
-        
+
         chart: {
             type: 'column'
-        },  
-        
+        },
+
         title: {
             text: 'Test for data labels allowOverlap'
         },
-        
+
         plotOptions: {
             series: {
                 dataLabels: {
@@ -17,7 +17,7 @@ $(function () {
                 }
             }
         },
-        
+
         series: [{
             data: [1, 2, 3, 4, 5, 6],
             name: '1. Click me'

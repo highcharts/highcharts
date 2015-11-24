@@ -1,10 +1,10 @@
 $(function () {
     $('#container').highcharts({
-        
+
         chart: {
             type: 'column'
         },
-        
+
         title: {
             text: 'Max point width in Highcharts'
         },

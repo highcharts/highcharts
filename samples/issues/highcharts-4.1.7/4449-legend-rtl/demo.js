@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('Legend rtl and useHTML', function (assert) {
-        
+
         var ren = new Highcharts.Renderer(
             document.getElementById('container'),
             500,
@@ -13,7 +13,7 @@ $(function () {
                 fill: 'red'
             })
             .add();
-            
+
         // Add an empty text with useHTML, align it to the right
         var text = ren.text('', 100, 100, true)
             .attr({
@@ -25,8 +25,8 @@ $(function () {
         text.attr({
             text: 'Hello World'
         });
-            
-        
+
+
         assert.strictEqual(
             text.element.offsetLeft + text.element.offsetWidth,
             100,

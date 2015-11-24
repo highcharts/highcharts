@@ -22,13 +22,13 @@ $(function () {
         series[i] = {
             data: [Math.random(), Math.random()],
             id: ids[i]
-        }
+        };
     }
     for (; i < 9; i += 1) {
         series[i] = {
             data: [Math.random(), Math.random()],
             linkedTo: ids[i % 3]
-        }
+        };
     }
 
     var chart = new Highcharts.Chart({

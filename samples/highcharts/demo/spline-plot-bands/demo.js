@@ -20,7 +20,6 @@ $(function () {
             title: {
                 text: 'Wind speed (m/s)'
             },
-            min: 0,
             minorGridLineWidth: 0,
             gridLineWidth: 0,
             alternateGridColor: null,

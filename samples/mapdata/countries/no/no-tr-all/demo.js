@@ -15,35 +15,35 @@ $(function () {
             "value": 2
         },
         {
-            "hc-key": "no-tr-1923",
+            "hc-key": "no-tr-1936",
             "value": 3
         },
         {
-            "hc-key": "no-tr-1925",
+            "hc-key": "no-tr-1940",
             "value": 4
         },
         {
-            "hc-key": "no-tr-1936",
+            "hc-key": "no-tr-1938",
             "value": 5
         },
         {
-            "hc-key": "no-tr-1940",
+            "hc-key": "no-tr-1917",
             "value": 6
         },
         {
-            "hc-key": "no-tr-1938",
+            "hc-key": "no-tr-1926",
             "value": 7
         },
         {
-            "hc-key": "no-tr-1917",
+            "hc-key": "no-tr-1923",
             "value": 8
         },
         {
-            "hc-key": "no-tr-1926",
+            "hc-key": "no-tr-1931",
             "value": 9
         },
         {
-            "hc-key": "no-tr-1931",
+            "hc-key": "no-tr-1925",
             "value": 10
         },
         {
@@ -108,7 +108,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/no/no-tr-all.js">Troms</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/no/no-tr-all.js">Troms</a>'
         },
 
         mapNavigation: {

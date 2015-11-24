@@ -7,23 +7,23 @@ $(function () {
             "value": 0
         },
         {
-            "hc-key": "ca-on-3560",
+            "hc-key": "ca-on-3558",
             "value": 1
         },
         {
-            "hc-key": "ca-on-3558",
+            "hc-key": "ca-on-3511",
             "value": 2
         },
         {
-            "hc-key": "ca-on-3511",
+            "hc-key": "ca-on-3510",
             "value": 3
         },
         {
-            "hc-key": "ca-on-3510",
+            "hc-key": "ca-on-3544",
             "value": 4
         },
         {
-            "hc-key": "ca-on-3544",
+            "hc-key": "ca-on-3560",
             "value": 5
         },
         {
@@ -167,31 +167,31 @@ $(function () {
             "value": 40
         },
         {
-            "hc-key": "ca-on-3526",
+            "hc-key": "ca-on-3546",
             "value": 41
         },
         {
-            "hc-key": "ca-on-3524",
+            "hc-key": "ca-on-3526",
             "value": 42
         },
         {
-            "hc-key": "ca-on-3525",
+            "hc-key": "ca-on-3524",
             "value": 43
         },
         {
-            "hc-key": "ca-on-3522",
+            "hc-key": "ca-on-3525",
             "value": 44
         },
         {
-            "hc-key": "ca-on-3501",
+            "hc-key": "ca-on-3522",
             "value": 45
         },
         {
-            "hc-key": "ca-on-3554",
+            "hc-key": "ca-on-3501",
             "value": 46
         },
         {
-            "hc-key": "ca-on-3546",
+            "hc-key": "ca-on-3554",
             "value": 47
         },
         {
@@ -208,7 +208,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ca/ca-on-all.js">Ontario</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ca/ca-on-all.js">Ontario</a>'
         },
 
         mapNavigation: {

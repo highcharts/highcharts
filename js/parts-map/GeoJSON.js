@@ -1,5 +1,5 @@
 
-/** 
+/**
  * Test for point in polygon. Polygon defined as array of [x,y] points.
  */
 function pointInPolygon(point, polygon) {
@@ -34,7 +34,7 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
 		cosAngle = transform.cosAngle || (transform.rotation && Math.cos(transform.rotation)),
 		sinAngle = transform.sinAngle || (transform.rotation && Math.sin(transform.rotation)),
 		rotated = transform.rotation ? [projected[0] * cosAngle + projected[1] * sinAngle, -projected[0] * sinAngle + projected[1] * cosAngle] : projected;
-	
+
 	return {
 		x: ((rotated[0] - (transform.xoffset || 0)) * (transform.scale || 1) + (transform.xpan || 0)) * (transform.jsonres || 1) + (transform.jsonmarginX || 0),
 		y: (((transform.yoffset || 0) - rotated[1]) * (transform.scale || 1) + (transform.ypan || 0)) * (transform.jsonres || 1) - (transform.jsonmarginY || 0)
@@ -62,7 +62,7 @@ Chart.prototype.transformToLatLon = function (point, transform) {
 			y: normalized.x * sinAngle + normalized.y * cosAngle
 		} : normalized);
 
-	return {lat: projected.y, lon: projected.x};
+	return { lat: projected.y, lon: projected.x };
 };
 
 Chart.prototype.fromPointToLatLon = function (point) {
@@ -75,12 +75,13 @@ Chart.prototype.fromPointToLatLon = function (point) {
 	}
 
 	for (transform in transforms) {
-		if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone && pointInPolygon({x: point.x, y: -point.y}, transforms[transform].hitZone.coordinates[0])) {
+		if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone && 
+				pointInPolygon({ x: point.x, y: -point.y }, transforms[transform].hitZone.coordinates[0])) {
 			return this.transformToLatLon(point, transforms[transform]);
 		}
 	}
 
-	return this.transformToLatLon(point, transforms['default']);
+	return this.transformToLatLon(point, transforms.default);
 };
 
 Chart.prototype.fromLatLonToPoint = function (latLon) {
@@ -99,13 +100,13 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
 	for (transform in transforms) {
 		if (transforms.hasOwnProperty(transform) && transforms[transform].hitZone) {
 			coords = this.transformFromLatLon(latLon, transforms[transform]);
-			if (pointInPolygon({x: coords.x, y: -coords.y}, transforms[transform].hitZone.coordinates[0])) {
+			if (pointInPolygon({ x: coords.x, y: -coords.y }, transforms[transform].hitZone.coordinates[0])) {
 				return coords;
 			}
 		}
 	}
 
-	return this.transformFromLatLon(latLon, transforms['default']);
+	return this.transformFromLatLon(latLon, transforms.default);
 };
 
 /**
@@ -115,10 +116,10 @@ Highcharts.geojson = function (geojson, hType, series) {
 	var mapData = [],
 		path = [],
 		polygonToPath = function (polygon) {
-			var i = 0,
+			var i,
 				len = polygon.length;
 			path.push('M');
-			for (; i < len; i++) {
+			for (i = 0; i < len; i++) {
 				if (i === 1) {
 					path.push('L');
 				}
@@ -127,7 +128,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 		};
 
 	hType = hType || 'map';
-	
+
 	each(geojson.features, function (feature) {
 
 		var geometry = feature.geometry,
@@ -135,7 +136,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 			coordinates = geometry.coordinates,
 			properties = feature.properties,
 			point;
-		
+
 		path = [];
 
 		if (hType === 'map' || hType === 'mapbubble') {
@@ -153,7 +154,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 			if (path.length) {
 				point = { path: path };
 			}
-		
+
 		} else if (hType === 'mapline') {
 			if (type === 'LineString') {
 				polygonToPath(coordinates);
@@ -164,7 +165,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 			if (path.length) {
 				point = { path: path };
 			}
-		
+
 		} else if (hType === 'mappoint') {
 			if (type === 'Point') {
 				point = {
@@ -175,7 +176,7 @@ Highcharts.geojson = function (geojson, hType, series) {
 		}
 		if (point) {
 			mapData.push(extend(point, {
-				name: properties.name || properties.NAME, 
+				name: properties.name || properties.NAME,
 				properties: properties
 			}));
 		}
@@ -204,8 +205,8 @@ wrap(Chart.prototype, 'showCredits', function (proceed, credits) {
 
 	proceed.call(this, credits);
 
-	if (this.credits) { 
-		this.credits.attr({ 
+	if (this.credits) {
+		this.credits.attr({
 			title: this.mapCreditsFull
 		});
 	}

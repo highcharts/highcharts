@@ -2,7 +2,7 @@ $(function () {
     $('#container').highcharts('StockChart', {
 
         chart: {
-            plotBackgroundImage: 'http://www.highcharts.com/demo/gfx/skies.jpg'
+            plotBackgroundImage: 'https://www.highcharts.com/samples/graphics/skies.jpg'
         },
 
         rangeSelector: {
@@ -11,7 +11,8 @@ $(function () {
 
         series: [{
             name: 'USD to EUR',
-            data: usdeur
+            data: usdeur,
+            color: '#202040'
         }]
     });
 });

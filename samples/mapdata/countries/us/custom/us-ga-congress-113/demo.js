@@ -68,7 +68,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-ga-congress-113.js">Georgia congressional districts</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-ga-congress-113.js">Georgia congressional districts</a>'
         },
 
         mapNavigation: {

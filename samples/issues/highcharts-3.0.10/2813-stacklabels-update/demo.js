@@ -30,7 +30,7 @@ $(function () {
                     color: '#6E6E6E'
                 },
                 formatter: function () {
-                    return this.stack
+                    return this.stack;
                 }
             }
         },
@@ -52,7 +52,7 @@ $(function () {
                         textShadow: '0 0 2px black'
                     },
                     formatter: function () {
-                        return this.y
+                        return this.y;
                     }
                 },
                 groupPadding: 0

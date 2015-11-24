@@ -135,7 +135,7 @@ extend(SVGElement.prototype, {
 
 			// force reflow in webkit to apply the left and top on useHTML element (#1249)
 			if (isWebKit) {
-				baseline = elem.offsetHeight; // assigned to baseline for JSLint purpose
+				baseline = elem.offsetHeight; // assigned to baseline for lint purpose
 			}
 
 			// record current text transform
@@ -148,7 +148,7 @@ extend(SVGElement.prototype, {
 	 */
 	setSpanRotation: function (rotation, alignCorrection, baseline) {
 		var rotationStyle = {},
-			cssTransformKey = isIE ? '-ms-transform' : isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : isOpera ? '-o-transform' : '';
+			cssTransformKey = isMS ? '-ms-transform' : isWebKit ? '-webkit-transform' : isFirefox ? 'MozTransform' : isOpera ? '-o-transform' : '';
 
 		rotationStyle[cssTransformKey] = rotationStyle.transform = 'rotate(' + rotation + 'deg)';
 		rotationStyle[cssTransformKey + (isFirefox ? 'Origin' : '-origin')] = rotationStyle.transformOrigin = (alignCorrection * 100) + '% ' + baseline + 'px';
@@ -198,7 +198,8 @@ extend(SVGRenderer.prototype, {
 		};
 
 		// Set the default attributes
-		wrapper.attr({
+		wrapper
+			.attr({
 				text: str,
 				x: mathRound(x),
 				y: mathRound(y)
@@ -275,9 +276,14 @@ extend(SVGRenderer.prototype, {
 									parentGroup.doTransform = true;
 								}
 							});
-							wrap(parentGroup, 'visibilitySetter', function (proceed, value, key, elem) {
-								proceed.call(this, value, key, elem);
-								htmlGroupStyle[key] = value;
+
+							// These properties are set as attributes on the SVG group, and as
+							// identical CSS properties on the div. (#3542)
+							each(['opacity', 'visibility'], function (prop) {
+								wrap(parentGroup, prop + 'Setter', function (proceed, value, key, elem) {
+									proceed.call(this, value, key, elem);
+									htmlGroupStyle[key] = value;
+								});
 							});
 						});
 

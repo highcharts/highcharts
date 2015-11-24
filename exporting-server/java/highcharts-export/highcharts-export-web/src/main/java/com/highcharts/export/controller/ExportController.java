@@ -9,43 +9,35 @@
  */
 package com.highcharts.export.controller;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.NoSuchElementException;
-import java.util.concurrent.TimeoutException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-
 import com.highcharts.export.converter.SVGConverter;
 import com.highcharts.export.converter.SVGConverterException;
 import com.highcharts.export.pool.PoolException;
 import com.highcharts.export.util.MimeType;
 import com.highcharts.export.util.TempDir;
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import javax.servlet.http.HttpSession;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.NoSuchElementException;
+import java.util.concurrent.TimeoutException;
 
 @Controller
 @RequestMapping("/")
@@ -92,7 +84,7 @@ public class ExportController extends HttpServlet {
 			session.removeAttribute("tempFile");
 
 			if (tempFile != null && !tempFile.isEmpty()) {
-				logger.debug("filename stored in session, read and stream from filesystem");				
+				logger.debug("filename stored in session, read and stream from filesystem");
 				String basename = FilenameUtils.getBaseName(tempFile);
 				String extension = FilenameUtils.getExtension(tempFile);
 
@@ -128,8 +120,8 @@ public class ExportController extends HttpServlet {
 
 		/* If randomFilename is not null, then we want to save the filename in session, in case of GET is used later on*/
 		if (isAndroid) {
-			logger.debug("storing randomfile in session: " +  FilenameUtils.getName(randomFilename));
-			session.setAttribute("tempFile", FilenameUtils.getName(randomFilename));
+			logger.debug("storing randomfile in session: " + randomFilename);
+			session.setAttribute("tempFile", randomFilename);
 		}
 
 		String output = convert(svg, mime, width, scale, options, constructor, callback, globalOptions, randomFilename);
@@ -171,10 +163,9 @@ public class ExportController extends HttpServlet {
 
 	@RequestMapping(value = "/files/{name}.{ext}", method = RequestMethod.GET)
 	public HttpEntity<byte[]> getFile(@PathVariable("name") String name, @PathVariable("ext") String extension) throws SVGConverterException, IOException {
-		
-		Path path = Paths.get(TempDir.getOutputDir().toString(), name + "." + extension);
-		String filename = path.toString();
-		MimeType mime = getMime(extension);
+
+		String filename =  name + "." + extension;		
+		MimeType mime = MimeType.valueOf(extension.toUpperCase());
 
 		ByteArrayOutputStream stream = writeFileToStream(filename);
 
@@ -189,12 +180,14 @@ public class ExportController extends HttpServlet {
 	public HttpEntity<byte[]> exportFromJson(
 		@PathVariable("name") String name,
 		@PathVariable("ext") String extension,
-		@RequestBody String requestBody) throws SVGConverterException, TimeoutException, NoSuchElementException, PoolException {
+		@RequestBody String requestBody) throws SVGConverterException, TimeoutException, NoSuchElementException, PoolException, ServletException {
 
 		String randomFilename;
 		randomFilename = null;
 		String json = requestBody;
 		MimeType mime = getMime(extension);
+
+		if (json.indexOf("outfile") > -1) throw new ServletException("Detected illegal \'outfile\' property in json");
 
 		// add outfile parameter to the json with a simple string replace
 		if (MimeType.PDF.equals(mime)) {
@@ -269,11 +262,7 @@ public class ExportController extends HttpServlet {
 	}
 
 	private static MimeType getMime(String mime) {
-		MimeType type = MimeType.get(mime);
-		if (type != null) {
-			return type;
-		}
-		return MimeType.PNG;
+		return MimeType.get(mime);
 	}
 
 	private static String sanitize(String parameter) {
@@ -323,8 +312,7 @@ public class ExportController extends HttpServlet {
 	}
 
 	public String createRandomFileName(String extension) {
-		Path path = Paths.get(TempDir.outputDir.toString(), RandomStringUtils.randomAlphanumeric(8) + "." + extension);
-		return path.toString();
+		return RandomStringUtils.randomAlphanumeric(8) + "." + extension;
 	}
 
 	private ByteArrayOutputStream outputToStream(String output, boolean base64) throws SVGConverterException {
@@ -334,7 +322,7 @@ public class ExportController extends HttpServlet {
 				 //decode the base64 string
 				stream.write(Base64.decodeBase64(output));
 			} else {
-				stream.write(output.getBytes());
+				stream.write(output.getBytes(Charset.forName("UTF-8")));
 			}
 		} catch (IOException ex) {
 			logger.error("Error in outputToStream: " + ex.getMessage());
@@ -348,7 +336,8 @@ public class ExportController extends HttpServlet {
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
 		try {
-			stream.write(FileUtils.readFileToByteArray(new File(filename)));
+			String tmpFile = TempDir.outputDir + String.valueOf(File.separatorChar) + filename;
+			stream.write(FileUtils.readFileToByteArray(new File(tmpFile)));
 		} catch (IOException ioex) {
 			logger.error("Tried to read file from filesystem: " + ioex.getMessage());
 			throw new SVGConverterException("IOException: cannot find your file to download...");

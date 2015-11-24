@@ -79,39 +79,39 @@ $(function () {
             "value": 18
         },
         {
-            "hc-key": "at",
+            "hc-key": "hu",
             "value": 19
         },
         {
-            "hc-key": "hu",
+            "hc-key": "lu",
             "value": 20
         },
         {
-            "hc-key": "lu",
+            "hc-key": "si",
             "value": 21
         },
         {
-            "hc-key": "si",
+            "hc-key": "be",
             "value": 22
         },
         {
-            "hc-key": "be",
+            "hc-key": "cnm",
             "value": 23
         },
         {
-            "hc-key": "cnm",
+            "hc-key": "bg",
             "value": 24
         },
         {
-            "hc-key": "bg",
+            "hc-key": "ro",
             "value": 25
         },
         {
-            "hc-key": "ro",
+            "hc-key": "lv",
             "value": 26
         },
         {
-            "hc-key": "lv",
+            "hc-key": "at",
             "value": 27
         },
         {
@@ -132,7 +132,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/custom/european-union.js">European Union</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/custom/european-union.js">European Union</a>'
         },
 
         mapNavigation: {

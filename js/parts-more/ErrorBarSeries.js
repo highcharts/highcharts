@@ -29,7 +29,7 @@ seriesTypes.errorbar = extendClass(seriesTypes.boxplot, {
 	 * or standalone
 	 */
 	getColumnMetrics: function () {
-		return (this.linkedParent && this.linkedParent.columnMetrics) || 
+		return (this.linkedParent && this.linkedParent.columnMetrics) ||
 			seriesTypes.column.prototype.getColumnMetrics.call(this);
 	}
 });

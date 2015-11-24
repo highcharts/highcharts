@@ -47,123 +47,123 @@ $(function () {
             "value": 10
         },
         {
-            "hc-key": "us-ms-159",
+            "hc-key": "us-ms-059",
             "value": 11
         },
         {
-            "hc-key": "us-ms-007",
+            "hc-key": "us-ms-159",
             "value": 12
         },
         {
-            "hc-key": "us-ms-127",
+            "hc-key": "us-ms-007",
             "value": 13
         },
         {
-            "hc-key": "us-ms-121",
+            "hc-key": "us-ms-127",
             "value": 14
         },
         {
-            "hc-key": "us-ms-139",
+            "hc-key": "us-ms-121",
             "value": 15
         },
         {
-            "hc-key": "us-ms-117",
+            "hc-key": "us-ms-011",
             "value": 16
         },
         {
-            "hc-key": "us-ms-003",
+            "hc-key": "us-ms-027",
             "value": 17
         },
         {
-            "hc-key": "us-ms-109",
+            "hc-key": "us-ms-139",
             "value": 18
         },
         {
-            "hc-key": "us-ms-035",
+            "hc-key": "us-ms-117",
             "value": 19
         },
         {
-            "hc-key": "us-ms-027",
+            "hc-key": "us-ms-003",
             "value": 20
         },
         {
-            "hc-key": "us-ms-011",
+            "hc-key": "us-ms-109",
             "value": 21
         },
         {
-            "hc-key": "us-ms-113",
+            "hc-key": "us-ms-035",
             "value": 22
         },
         {
-            "hc-key": "us-ms-147",
+            "hc-key": "us-ms-113",
             "value": 23
         },
         {
-            "hc-key": "us-ms-103",
+            "hc-key": "us-ms-147",
             "value": 24
         },
         {
-            "hc-key": "us-ms-105",
+            "hc-key": "us-ms-103",
             "value": 25
         },
         {
-            "hc-key": "us-ms-135",
+            "hc-key": "us-ms-105",
             "value": 26
         },
         {
-            "hc-key": "us-ms-021",
+            "hc-key": "us-ms-135",
             "value": 27
         },
         {
-            "hc-key": "us-ms-149",
+            "hc-key": "us-ms-021",
             "value": 28
         },
         {
-            "hc-key": "us-ms-155",
+            "hc-key": "us-ms-149",
             "value": 29
         },
         {
-            "hc-key": "us-ms-077",
+            "hc-key": "us-ms-155",
             "value": 30
         },
         {
-            "hc-key": "us-ms-029",
+            "hc-key": "us-ms-077",
             "value": 31
         },
         {
-            "hc-key": "us-ms-115",
+            "hc-key": "us-ms-029",
             "value": 32
         },
         {
-            "hc-key": "us-ms-071",
+            "hc-key": "us-ms-115",
             "value": 33
         },
         {
-            "hc-key": "us-ms-033",
+            "hc-key": "us-ms-071",
             "value": 34
         },
         {
-            "hc-key": "us-ms-137",
+            "hc-key": "us-ms-033",
             "value": 35
         },
         {
-            "hc-key": "us-ms-039",
+            "hc-key": "us-ms-137",
             "value": 36
         },
         {
-            "hc-key": "us-ms-019",
+            "hc-key": "us-ms-039",
             "value": 37
         },
         {
-            "hc-key": "us-ms-141",
+            "hc-key": "us-ms-019",
             "value": 38
         },
         {
-            "hc-key": "us-ms-131",
+            "hc-key": "us-ms-141",
             "value": 39
         },
         {
-            "hc-key": "us-ms-059",
+            "hc-key": "us-ms-131",
             "value": 40
         },
         {
@@ -340,7 +340,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-ms-all.js">Mississippi</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-ms-all.js">Mississippi</a>'
         },
 
         mapNavigation: {

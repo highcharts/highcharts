@@ -1,16 +1,16 @@
 QUnit.test('Drill-up text', function (assert) {
 
-	var chart = Highcharts.charts[0];
+    var chart = Highcharts.charts[0];
     chart.options.drilldown.animation = false;
 
-	assert.equal(
+    assert.equal(
         chart.series.length,
         1,
         'Chart created'
     );
 
-	chart.series[0].points[0].doDrilldown();
-	assert.equal(
+    chart.series[0].points[0].doDrilldown();
+    assert.equal(
         chart.drillUpButton.element.textContent,
         '<< Terug naar Things',
         'Button text'

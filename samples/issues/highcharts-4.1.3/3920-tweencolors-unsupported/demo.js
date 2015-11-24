@@ -3,7 +3,7 @@ $(function () {
 
         var Color = Highcharts.Color,
             tweenColors = Highcharts.ColorAxis.prototype.tweenColors;
-        
+
         assert.equal(
             tweenColors(Color('#FF0000'), Color('#0000FF'), 0.5),
             'rgb(128,0,128)',
@@ -40,7 +40,7 @@ $(function () {
                     [0, '#FFFF00'],
                     [1, '#00FFFF']
                 ]
-            }), 0.5)),    
+            }), 0.5)),
             '{"radialGradient":{"cx":0.5,"cy":0.3,"r":0.7},"stops":[[0,"#FFFF00"],[1,"#00FFFF"]]}',
             'Gradients'
         );
@@ -49,7 +49,7 @@ $(function () {
             'none',
             'Undefined colors'
         );
-        
+
     });
 
 });

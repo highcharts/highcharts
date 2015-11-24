@@ -12,8 +12,9 @@ if (isset($_GET['commit'])) {
 }
 $rightPath = isset($_SESSION['rightPath']) ? $_SESSION['rightPath'] : Settings::$rightPath;
 
+// A commit is given, insert the full path
 if (preg_match('/^[a-z0-9]+$/', $leftPath)) {
-	$leftPath = "/samples/github-cache.php?commit=$leftPath&file=";
+	$leftPath = "cache.php?file=http://github.highcharts.com/$leftPath";
 }
 
 
@@ -22,6 +23,11 @@ $rightExporting = "$rightPath/modules/exporting.src.js";
 
 $leftFramework = 'jQuery';
 $rightFramework = 'jQuery';
+
+$httpHost = $_SERVER['HTTP_HOST'];
+$httpHost = explode('.', $httpHost);
+$topDomain = $httpHost[sizeof($httpHost) - 1];
+
 
 
 $path = $_GET['path'];
@@ -32,6 +38,13 @@ if (!preg_match('/^[a-z\-0-9]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
 $path = "../../samples/$path";
 
 require_once('functions.php');
+
+// Rewrite all external files to load via cache.php
+function cachify($s) {
+
+	$s = preg_replace('/(src|href)="([^"]+)"/', '$1="cache.php?file=$2"', $s);
+	return $s;
+}
 
 function getResources() {
 	global $path;
@@ -55,9 +68,9 @@ function getResources() {
 				$url = trim($line, " -\r");
 				
 				if (preg_match('/\.js$/', $url)) {
-					$html .= "<script src='$url'></script>\n";
+					$html .= "<script src=\"$url\"></script>\n";
 				} elseif (preg_match('/\.css$/', $url)) {
-					$html .= "<link rel='stylesheet' href='$url'></script>\n";
+					$html .= "<link rel=\"stylesheet\" href=\"$url\"></script>\n";
 				}
 			}
 			
@@ -67,18 +80,22 @@ function getResources() {
 			}
 		}
 	}
-	return $html;
+	return cachify($html);
 }
 
 function getJS() {
-	global $path;
+	global $path, $topDomain;
 	
 	
 	ob_start();
 	include("$path/demo.js");
 	$s = ob_get_clean();
+
+
+	// Use local data
+	$s = str_replace('http://www.highcharts.com/samples/data', "http://www.highcharts.$topDomain/samples/data", $s);
 	
-	return $s;
+	return cachify($s);
 }
 
 function getHTML($which) {
@@ -90,22 +107,24 @@ function getHTML($which) {
 	include("$path/demo.html");
 	$s = ob_get_clean();
 
-	$s = str_replace('http://code.highcharts.com/mapdata', $bogus, $s);
+	$s = cachify($s);
+
+	$s = str_replace('cache.php?file=https://code.highcharts.com/mapdata', $bogus, $s);
 	
 	if ($which == 'left') {
-		$s = str_replace('http://code.highcharts.com', $leftPath, $s);
+		$s = str_replace('cache.php?file=https://code.highcharts.com', $leftPath, $s);
 		$exporting = $rightExporting;
 		
 	} else {
 		
-		$s = str_replace('http://code.highcharts.com', $rightPath, $s);
+		$s = str_replace('cache.php?file=https://code.highcharts.com', $rightPath, $s);
 		$exporting = $leftExporting;
 	}
 
-	$s = str_replace($bogus, 'http://code.highcharts.com/mapdata', $s);
+	$s = str_replace($bogus, 'cache.php?file=https://code.highcharts.com/mapdata', $s);
 	
 	if (strlen($s) > 0 && strpos($s, 'exporting.js') === false) {
-		$s .= '<script src="' . $exporting . '"></script>';
+		$s .= '<script src="cache.php?file=' . $exporting . '"></script>';
 	}
 	
 	return $s;
@@ -140,8 +159,8 @@ function getExportInnerHTML() {
 		<?php echo getResources(); ?>
 
 		<?php if (is_file("$path/unit-tests.js")) : ?>
-		<script src="http://code.jquery.com/qunit/qunit-1.15.0.js"></script>
-   		<link rel="stylesheet" type="text/css" href="http://code.jquery.com/qunit/qunit-1.15.0.css" />		
+		<script src="cache.php?file=http://code.jquery.com/qunit/qunit-1.19.0.js"></script>
+   		<link rel="stylesheet" type="text/css" href="cache.php?file=http://code.jquery.com/qunit/qunit-1.19.0.css" />		
    		<?php endif; ?>
 
 		<link rel="stylesheet" type="text/css" href="style.css"/>
@@ -254,10 +273,6 @@ function getExportInnerHTML() {
 				} else if (window.parent) {
 					compareHTML();			
 				}
-			});
-			
-			// Disable animation
-			$(function () {
 
 				// Make sure getJSON content is not cached
 				$.ajaxSetup({
@@ -273,7 +288,8 @@ function getExportInnerHTML() {
 						plotOptions: {
 							series: {
 								animation: false,
-								kdSync: true
+								kdNow: true,
+								kdSync: true // 4.1.9 and older, remove when not testing against those
 							}
 						},
 						tooltip: {

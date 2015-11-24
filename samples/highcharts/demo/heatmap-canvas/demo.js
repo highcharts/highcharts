@@ -9,12 +9,10 @@ $(function () {
      */
     (function (H) {
         var Series = H.Series,
-            each = H.each,
-            wrap = H.wrap,
-            seriesTypes = H.seriesTypes;
+            each = H.each;
 
         /**
-         * Create a hidden canvas to draw the graph on. The contents is later copied over 
+         * Create a hidden canvas to draw the graph on. The contents is later copied over
          * to an SVG image element.
          */
         Series.prototype.getContext = function () {
@@ -28,9 +26,9 @@ $(function () {
             return this.ctx;
         };
 
-        /** 
+        /**
          * Draw the canvas image inside an SVG image
-         */ 
+         */
         Series.prototype.canvasToSVG = function () {
             this.image.attr({ href: this.canvas.toDataURL('image/png') });
         };
@@ -39,10 +37,10 @@ $(function () {
          * Wrap the drawPoints method to draw the points in canvas instead of the slower SVG,
          * that requires one shape each point.
          */
-        H.wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function (proceed) {
+        H.wrap(H.seriesTypes.heatmap.prototype, 'drawPoints', function () {
 
             var ctx = this.getContext();
-            
+
             if (ctx) {
 
                 // draw the columns
@@ -61,11 +59,11 @@ $(function () {
                 this.canvasToSVG();
 
             } else {
-                this.chart.showLoading("Your browser doesn't support HTML5 canvas, <br>please use a modern browser");
+                this.chart.showLoading('Your browser doesn\'t support HTML5 canvas, <br>please use a modern browser');
 
                 // Uncomment this to provide low-level (slow) support in oldIE. It will cause script errors on
                 // charts with more than a few thousand points.
-                //proceed.call(this);
+                // arguments[0].call(this);
             }
         });
         H.seriesTypes.heatmap.prototype.directTouch = false; // Use k-d-tree
@@ -160,6 +158,6 @@ $(function () {
         }]
 
     });
-    console.log('Rendered in ' + (new Date() - start) + ' ms');
+    console.log('Rendered in ' + (new Date() - start) + ' ms'); // eslint-disable-line no-console
 
 });

@@ -55,71 +55,71 @@ $(function () {
             "value": 12
         },
         {
-            "hc-key": "vn-tb",
+            "hc-key": "vn-ty",
             "value": 13
         },
         {
-            "hc-key": "vn-3623",
+            "hc-key": "vn-318",
             "value": 14
         },
         {
-            "hc-key": "vn-ty",
+            "hc-key": "vn-hd",
             "value": 15
         },
         {
-            "hc-key": "vn-318",
+            "hc-key": "vn-bn",
             "value": 16
         },
         {
-            "hc-key": "vn-hd",
+            "hc-key": "vn-317",
             "value": 17
         },
         {
-            "hc-key": "vn-bn",
+            "hc-key": "vn-vc",
             "value": 18
         },
         {
-            "hc-key": "vn-317",
+            "hc-key": "vn-nb",
             "value": 19
         },
         {
-            "hc-key": "vn-nb",
+            "hc-key": "vn-hm",
             "value": 20
         },
         {
-            "hc-key": "vn-hm",
+            "hc-key": "vn-ho",
             "value": 21
         },
         {
-            "hc-key": "vn-ho",
+            "hc-key": "vn-bg",
             "value": 22
         },
         {
-            "hc-key": "vn-vc",
+            "hc-key": "vn-tb",
             "value": 23
         },
         {
-            "hc-key": "vn-bg",
+            "hc-key": "vn-ld",
             "value": 24
         },
         {
-            "hc-key": "vn-ld",
+            "hc-key": "vn-bp",
             "value": 25
         },
         {
-            "hc-key": "vn-bp",
+            "hc-key": "vn-tn",
             "value": 26
         },
         {
-            "hc-key": "vn-tn",
+            "hc-key": "vn-py",
             "value": 27
         },
         {
-            "hc-key": "vn-py",
+            "hc-key": "vn-bd",
             "value": 28
         },
         {
-            "hc-key": "vn-bd",
+            "hc-key": "vn-3623",
             "value": 29
         },
         {
@@ -131,103 +131,103 @@ $(function () {
             "value": 31
         },
         {
-            "hc-key": "vn-333",
+            "hc-key": "vn-331",
             "value": 32
         },
         {
-            "hc-key": "vn-kg",
+            "hc-key": "vn-dt",
             "value": 33
         },
         {
-            "hc-key": "vn-331",
+            "hc-key": "vn-333",
             "value": 34
         },
         {
-            "hc-key": "vn-dt",
+            "hc-key": "vn-la",
             "value": 35
         },
         {
-            "hc-key": "vn-la",
+            "hc-key": "vn-337",
             "value": 36
         },
         {
-            "hc-key": "vn-337",
+            "hc-key": "vn-bl",
             "value": 37
         },
         {
-            "hc-key": "vn-bl",
+            "hc-key": "vn-vl",
             "value": 38
         },
         {
-            "hc-key": "vn-vl",
+            "hc-key": "vn-hg",
             "value": 39
         },
         {
-            "hc-key": "vn-hg",
+            "hc-key": "vn-nd",
             "value": 40
         },
         {
-            "hc-key": "vn-nd",
+            "hc-key": "vn-db",
             "value": 41
         },
         {
-            "hc-key": "vn-db",
+            "hc-key": "vn-ls",
             "value": 42
         },
         {
-            "hc-key": "vn-ls",
+            "hc-key": "vn-th",
             "value": 43
         },
         {
-            "hc-key": "vn-th",
+            "hc-key": "vn-307",
             "value": 44
         },
         {
-            "hc-key": "vn-307",
+            "hc-key": "vn-tq",
             "value": 45
         },
         {
-            "hc-key": "vn-tq",
+            "hc-key": "vn-328",
             "value": 46
         },
         {
-            "hc-key": "vn-328",
+            "hc-key": "vn-na",
             "value": 47
         },
         {
-            "hc-key": "vn-na",
+            "hc-key": "vn-qb",
             "value": 48
         },
         {
-            "hc-key": "vn-qb",
+            "hc-key": "vn-723",
             "value": 49
         },
         {
-            "hc-key": "vn-723",
+            "hc-key": "vn-nt",
             "value": 50
         },
         {
-            "hc-key": "vn-nt",
+            "hc-key": "vn-6365",
             "value": 51
         },
         {
-            "hc-key": "vn-6365",
+            "hc-key": "vn-299",
             "value": 52
         },
         {
-            "hc-key": "vn-299",
+            "hc-key": "vn-300",
             "value": 53
         },
         {
-            "hc-key": "vn-300",
+            "hc-key": "vn-qt",
             "value": 54
         },
         {
-            "hc-key": "vn-qt",
+            "hc-key": "vn-tt",
             "value": 55
         },
         {
-            "hc-key": "vn-tt",
+            "hc-key": "vn-kg",
             "value": 56
         },
         {
@@ -268,7 +268,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/vn/vn-all.js">Vietnam</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/vn/vn-all.js">Vietnam</a>'
         },
 
         mapNavigation: {

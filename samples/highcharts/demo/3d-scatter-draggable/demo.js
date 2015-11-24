@@ -75,11 +75,11 @@ $(function () {
 
 
     // Add mouse events for rotation
-    $(chart.container).bind('mousedown.hc touchstart.hc', function (e) {
-        e = chart.pointer.normalize(e);
+    $(chart.container).bind('mousedown.hc touchstart.hc', function (eStart) {
+        eStart = chart.pointer.normalize(eStart);
 
-        var posX = e.pageX,
-            posY = e.pageY,
+        var posX = eStart.pageX,
+            posY = eStart.pageY,
             alpha = chart.options.chart.options3d.alpha,
             beta = chart.options.chart.options3d.beta,
             newAlpha,

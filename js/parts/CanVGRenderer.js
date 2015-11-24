@@ -19,7 +19,7 @@ if (useCanVG) {
 	};
 
 	/**
-	 * Start with an empty symbols object. This is needed when exporting is used (exporting.src.js will add a few symbols), but 
+	 * Start with an empty symbols object. This is needed when exporting is used (exporting.src.js will add a few symbols), but
 	 * the implementation from SvgRenderer will not be merged in until first render.
 	 */
 	CanVGRenderer.prototype.symbols = {};

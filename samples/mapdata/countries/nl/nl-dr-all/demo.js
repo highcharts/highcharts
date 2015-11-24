@@ -56,7 +56,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/nl/nl-dr-all.js">Drenthe</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/nl/nl-dr-all.js">Drenthe</a>'
         },
 
         mapNavigation: {

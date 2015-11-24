@@ -4,6 +4,7 @@
  * License: MIT
  * Author: Torstein Honsi
  */
+
 (function (Highcharts) {
 
 	var defaultOptions = Highcharts.getOptions(),
@@ -125,6 +126,5 @@
 			'Z'
 		]);
 	};
-
 
 }(Highcharts));

@@ -4,7 +4,7 @@ $(function () {
 
         var chart;
 
-            $('#container').highcharts({
+        $('#container').highcharts({
 
             chart: {
                 type: 'heatmap'
@@ -29,9 +29,9 @@ $(function () {
             'No left padding'
         );
 
-        
+
     });
 
-    
+
 
 });

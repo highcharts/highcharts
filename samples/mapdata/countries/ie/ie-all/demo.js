@@ -11,39 +11,39 @@ $(function () {
             "value": 1
         },
         {
-            "hc-key": "ie-ky",
+            "hc-key": "ie-mo",
             "value": 2
         },
         {
-            "hc-key": "ie-dl",
+            "hc-key": "ie-ky",
             "value": 3
         },
         {
-            "hc-key": "ie-491",
+            "hc-key": "ie-dl",
             "value": 4
         },
         {
-            "hc-key": "ie-ce",
+            "hc-key": "ie-491",
             "value": 5
         },
         {
-            "hc-key": "ie-7034",
+            "hc-key": "ie-ce",
             "value": 6
         },
         {
-            "hc-key": "ie-7035",
+            "hc-key": "ie-7034",
             "value": 7
         },
         {
-            "hc-key": "ie-ld",
+            "hc-key": "ie-7035",
             "value": 8
         },
         {
-            "hc-key": "ie-cn",
+            "hc-key": "ie-ld",
             "value": 9
         },
         {
-            "hc-key": "ie-mo",
+            "hc-key": "ie-cn",
             "value": 10
         },
         {
@@ -152,7 +152,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ie/ie-all.js">Ireland</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ie/ie-all.js">Ireland</a>'
         },
 
         mapNavigation: {

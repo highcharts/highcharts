@@ -1,4 +1,4 @@
-/*** 
+/***
 	EXTENSION FOR 3D CHARTS
 ***/
 // Shorthand to check the is3d flag
@@ -7,11 +7,7 @@ Highcharts.Chart.prototype.is3d = function () {
 };
 
 Highcharts.wrap(Highcharts.Chart.prototype, 'isInsidePlot', function (proceed) {
-	if (this.is3d()) {
-		return true;
-	} else {
-		return proceed.apply(this, [].slice.call(arguments, 1));
-	}
+	return this.is3d() || proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 var defaultChartOptions = Highcharts.getOptions();
@@ -34,10 +30,14 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'init', function (proceed) {
 		pieOptions;
 
 	if (args[0].chart.options3d && args[0].chart.options3d.enabled) {
+		// Normalize alpha and beta to (-360, 360) range
+		args[0].chart.options3d.alpha = (args[0].chart.options3d.alpha || 0) % 360;
+		args[0].chart.options3d.beta = (args[0].chart.options3d.beta || 0) % 360;
+
 		plotOptions = args[0].plotOptions || {};
 		pieOptions = plotOptions.pie || {};
 
-		pieOptions.borderColor = Highcharts.pick(pieOptions.borderColor, undefined); 
+		pieOptions.borderColor = Highcharts.pick(pieOptions.borderColor, undefined);
 	}
 	proceed.apply(this, args);
 });
@@ -66,19 +66,19 @@ Highcharts.wrap(Highcharts.Chart.prototype, 'redraw', function (proceed) {
 		// Set to force a redraw of all elements
 		this.isDirtyBox = true;
 	}
-	proceed.apply(this, [].slice.call(arguments, 1));	
+	proceed.apply(this, [].slice.call(arguments, 1));
 });
 
 // Draw the series in the reverse order (#3803, #3917)
 Highcharts.wrap(Highcharts.Chart.prototype, 'renderSeries', function (proceed) {
 	var series,
 		i = this.series.length;
-	
+
 	if (this.is3d()) {
-		while (i--) {		
+		while (i--) {
 			series = this.series[i];
 			series.translate();
-			series.render();	
+			series.render();
 		}
 	} else {
 		proceed.call(this);
@@ -91,13 +91,13 @@ Highcharts.Chart.prototype.retrieveStacks = function (stacking) {
 		stackNumber,
 		i = 1;
 
-	Highcharts.each(this.series, function (S) {
-		stackNumber = stacking ? (S.options.stack || 0) : series.length - 1 - S.index; // #3841
+	Highcharts.each(this.series, function (s) {
+		stackNumber = pick(s.options.stack, (stacking ? 0 : series.length - 1 - s.index)); // #3841, #4532
 		if (!stacks[stackNumber]) {
-			stacks[stackNumber] = { series: [S], position: i};
+			stacks[stackNumber] = { series: [s], position: i };
 			i++;
 		} else {
-			stacks[stackNumber].series.push(S);
+			stacks[stackNumber].series.push(s);
 		}
 	});
 

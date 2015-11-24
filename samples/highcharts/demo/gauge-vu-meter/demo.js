@@ -34,6 +34,10 @@ $(function () {
             size: 300
         }],
 
+        tooltip: {
+            enabled: false
+        },
+
         yAxis: [{
             min: -20,
             max: 6,
@@ -91,9 +95,11 @@ $(function () {
 
 
         series: [{
+            name: 'Channel A',
             data: [-20],
             yAxis: 0
         }, {
+            name: 'Channel B',
             data: [-20],
             yAxis: 1
         }]
@@ -110,7 +116,7 @@ $(function () {
                         rightVal,
                         inc = (Math.random() - 0.5) * 3;
 
-                    leftVal =  left.y + inc;
+                    leftVal = left.y + inc;
                     rightVal = leftVal + inc / 3;
                     if (leftVal < -20 || leftVal > 6) {
                         leftVal = left.y - inc;

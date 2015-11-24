@@ -46,5 +46,5 @@ for (var i = 0; i < scripts.length; i++) {
 console.log('--- Running individual parts ---')
 // Include the individual files
 for (var i = 0; i < files.length; i++) {
-	document.write('<script src="' + path + files[i] + '?' + (new Date()).getTime() +'"></script>')	
+	document.write('<script src="' + path + files[i] + '?' + (new Date()).getTime() +'"></script>')
 }

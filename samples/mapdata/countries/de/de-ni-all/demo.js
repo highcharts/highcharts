@@ -55,103 +55,103 @@ $(function () {
             "value": 12
         },
         {
-            "hc-key": "de-ni-03360000",
+            "hc-key": "de-ni-03462000",
             "value": 13
         },
         {
-            "hc-key": "de-ni-03152000",
+            "hc-key": "de-ni-03360000",
             "value": 14
         },
         {
-            "hc-key": "de-ni-03153000",
+            "hc-key": "de-ni-03152000",
             "value": 15
         },
         {
-            "hc-key": "de-ni-03158000",
+            "hc-key": "de-ni-03153000",
             "value": 16
         },
         {
-            "hc-key": "de-ni-03401000",
+            "hc-key": "de-ni-03158000",
             "value": 17
         },
         {
-            "hc-key": "de-ni-03358000",
+            "hc-key": "de-ni-03401000",
             "value": 18
         },
         {
-            "hc-key": "de-ni-03355000",
+            "hc-key": "de-ni-03451000",
             "value": 19
         },
         {
-            "hc-key": "de-ni-03402000",
+            "hc-key": "de-ni-03458000",
             "value": 20
         },
         {
-            "hc-key": "de-ni-03254000",
+            "hc-key": "de-ni-03358000",
             "value": 21
         },
         {
-            "hc-key": "de-ni-03102000",
+            "hc-key": "de-ni-03355000",
             "value": 22
         },
         {
-            "hc-key": "de-ni-03154000",
+            "hc-key": "de-ni-03402000",
             "value": 23
         },
         {
-            "hc-key": "de-ni-03151000",
+            "hc-key": "de-ni-03254000",
             "value": 24
         },
         {
-            "hc-key": "de-ni-03241000",
+            "hc-key": "de-ni-03102000",
             "value": 25
         },
         {
-            "hc-key": "de-ni-03101000",
+            "hc-key": "de-ni-03241000",
             "value": 26
         },
         {
-            "hc-key": "de-ni-03251000",
+            "hc-key": "de-ni-03151000",
             "value": 27
         },
         {
-            "hc-key": "de-ni-03156000",
+            "hc-key": "de-ni-03154000",
             "value": 28
         },
         {
-            "hc-key": "de-ni-03359000",
+            "hc-key": "de-ni-03101000",
             "value": 29
         },
         {
-            "hc-key": "de-ni-03256000",
+            "hc-key": "de-ni-03251000",
             "value": 30
         },
         {
-            "hc-key": "de-ni-03451000",
+            "hc-key": "de-ni-03156000",
             "value": 31
         },
         {
-            "hc-key": "de-ni-03454000",
+            "hc-key": "de-ni-03359000",
             "value": 32
         },
         {
-            "hc-key": "de-ni-03462000",
+            "hc-key": "de-ni-03256000",
             "value": 33
         },
         {
-            "hc-key": "de-ni-03354000",
+            "hc-key": "de-ni-03454000",
             "value": 34
         },
         {
-            "hc-key": "de-ni-03257000",
+            "hc-key": "de-ni-03354000",
             "value": 35
         },
         {
-            "hc-key": "de-ni-03405000",
+            "hc-key": "de-ni-03257000",
             "value": 36
         },
         {
-            "hc-key": "de-ni-03351000",
+            "hc-key": "de-ni-03405000",
             "value": 37
         },
         {
@@ -171,23 +171,23 @@ $(function () {
             "value": 41
         },
         {
-            "hc-key": "de-ni-03453000",
+            "hc-key": "de-ni-03103000",
             "value": 42
         },
         {
-            "hc-key": "de-ni-03460000",
+            "hc-key": "de-ni-03453000",
             "value": 43
         },
         {
-            "hc-key": "de-ni-03458000",
+            "hc-key": "de-ni-03460000",
             "value": 44
         },
         {
-            "hc-key": "de-ni-03157000",
+            "hc-key": "de-ni-03351000",
             "value": 45
         },
         {
-            "hc-key": "de-ni-03103000",
+            "hc-key": "de-ni-03157000",
             "value": 46
         }
     ];
@@ -200,7 +200,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/de/de-ni-all.js">Niedersachsen</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/de/de-ni-all.js">Niedersachsen</a>'
         },
 
         mapNavigation: {

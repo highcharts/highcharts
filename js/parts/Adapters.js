@@ -4,10 +4,10 @@
 // check for a custom HighchartsAdapter defined prior to this file
 var globalAdapter = win.HighchartsAdapter,
 	adapter = globalAdapter || {};
-	
+
 // Initialize the adapter
 if (globalAdapter) {
-	globalAdapter.init.call(globalAdapter, pathAnim);
+	globalAdapter.init(pathAnim);
 }
 
 
@@ -17,7 +17,7 @@ if (globalAdapter) {
 var adapterRun = adapter.adapterRun,
 	getScript = adapter.getScript,
 	inArray = adapter.inArray,
-	each = Highcharts.each = adapter.each,
+	each = adapter.each,
 	grep = adapter.grep,
 	offset = adapter.offset,
 	map = adapter.map,
@@ -28,5 +28,7 @@ var adapterRun = adapter.adapterRun,
 	animate = adapter.animate,
 	stop = adapter.stop;
 
-
-
+Highcharts.addEvent = addEvent;
+Highcharts.each = each;
+Highcharts.fireEvent = fireEvent;
+Highcharts.removeEvent = removeEvent;
