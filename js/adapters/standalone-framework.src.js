@@ -10,7 +10,8 @@
 var HighchartsAdapter = (function () {
 
 var UNDEFINED,
-	doc = document,
+    win = window,
+	doc = win.document,
 	emptyArray = [],
 	_getStyle,
 	timers = [],
@@ -25,7 +26,7 @@ Math.easeInOutSine = function (t, b, c, d) {
  * Internal method to return CSS value for given element and property
  */
 _getStyle = function (el, prop) {
-	var style = window.getComputedStyle(el, undefined);
+	var style = win.getComputedStyle(el, undefined);
 	return style && style.getPropertyValue(prop);
 };
 
@@ -94,7 +95,7 @@ function augment(obj) {
 			} else if (el.attachEvent) {
 				
 				wrappedFn = function (e) {
-					e.target = e.srcElement || window; // #2820
+					e.target = e.srcElement || win; // #2820
 					fn.call(el, e);
 				};
 
@@ -534,8 +535,8 @@ return {
 			box = el.getBoundingClientRect();
 
 		return {
-			top: box.top  + (window.pageYOffset || docElem.scrollTop)  - (docElem.clientTop  || 0),
-			left: box.left + (window.pageXOffset || docElem.scrollLeft) - (docElem.clientLeft || 0)
+			top: box.top  + (win.pageYOffset || docElem.scrollTop)  - (docElem.clientTop  || 0),
+			left: box.left + (win.pageXOffset || docElem.scrollLeft) - (docElem.clientLeft || 0)
 		};
 	},
 
