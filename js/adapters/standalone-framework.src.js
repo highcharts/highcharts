@@ -25,6 +25,7 @@ var UNDEFINED,
 	_getStyle,
 	timers = [],
 	animSetters = {},
+	HighchartsAdapter,
 	Fx;
 
 Math.easeInOutSine = function (t, b, c, d) {
@@ -198,7 +199,7 @@ function augment(obj) {
 }
 
 
-return {
+HighchartsAdapter = {
 
 	/**
 	 * Initialize the adapter. This is run once as Highcharts is first run.
@@ -630,4 +631,5 @@ return {
 		return Array.prototype.forEach.call(arr, fn);
 	}
 };
+	return HighchartsAdapter;
 }));
