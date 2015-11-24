@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-11-18)
+ * @license Highcharts JS v4.1.9-modified (2015-11-24)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -2515,13 +2515,13 @@
         /**
          * Get the bounding box (width, height, x and y) for the element
          */
-        getBBox: function (reload) {
+        getBBox: function (reload, rotation) {
             var wrapper = this,
                 bBox,// = wrapper.bBox,
                 renderer = wrapper.renderer,
                 width,
                 height,
-                rotation = wrapper.rotation,
+                rotation = pick(rotation, wrapper.rotation),
                 element = wrapper.element,
                 styles = wrapper.styles,
                 rad = rotation * deg2rad,
@@ -6110,12 +6110,10 @@
                 line;
 
             if (!defined(yOffset)) {
-                if (axis.side === 2) {
-                    yOffset = rotCorr.y + 8;
-
-                } else { // #3140
-                    yOffset = mathCos(label.rotation * deg2rad) * (rotCorr.y - label.getBBox().height / 2);
-                }
+                yOffset = axis.side === 2 ? 
+                    rotCorr.y + 8 :
+                    // #3140, #3140
+                    yOffset = mathCos(label.rotation * deg2rad) * (rotCorr.y - label.getBBox(false, 0).height / 2);
             }
 
             x = x + labelOptions.x + rotCorr.x - (tickmarkOffset && horiz ?

@@ -698,13 +698,13 @@ SVGElement.prototype = {
 	/**
 	 * Get the bounding box (width, height, x and y) for the element
 	 */
-	getBBox: function (reload) {
+	getBBox: function (reload, rotation) {
 		var wrapper = this,
 			bBox,// = wrapper.bBox,
 			renderer = wrapper.renderer,
 			width,
 			height,
-			rotation = wrapper.rotation,
+			rotation = pick(rotation, wrapper.rotation),
 			element = wrapper.element,
 			styles = wrapper.styles,
 			rad = rotation * deg2rad,
