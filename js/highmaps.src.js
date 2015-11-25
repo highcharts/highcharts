@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-11-24)
+ * @license Highmaps JS v1.1.9-modified (2015-11-25)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -968,11 +968,11 @@
                  * @param {Function} fn
                  */
                 this.each = Array.prototype.forEach ?
-                        function (arr, fn) { // modern browsers
+                        function each(arr, fn) { // modern browsers
                             return Array.prototype.forEach.call(arr, fn);
 
                         } :
-                        function (arr, fn) { // legacy
+                        function each(arr, fn) { // legacy
                             var i,
                                 len = arr.length;
                             for (i = 0; i < len; i++) {

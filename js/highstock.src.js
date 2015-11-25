@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.9-modified (2015-11-24)
+ * @license Highstock JS v2.1.9-modified (2015-11-25)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -969,11 +969,11 @@
                  * @param {Function} fn
                  */
                 this.each = Array.prototype.forEach ?
-                        function (arr, fn) { // modern browsers
+                        function each(arr, fn) { // modern browsers
                             return Array.prototype.forEach.call(arr, fn);
 
                         } :
-                        function (arr, fn) { // legacy
+                        function each(arr, fn) { // legacy
                             var i,
                                 len = arr.length;
                             for (i = 0; i < len; i++) {
@@ -6409,7 +6409,8 @@
             }
 
             // the plot band/line label
-            if (optionsLabel && defined(optionsLabel.text) && path && path.length && axis.width > 0 && axis.height > 0) {
+            if (optionsLabel && defined(optionsLabel.text) && path && path.length && 
+                    axis.width > 0 && axis.height > 0 && !path.flat) {
                 // apply defaults
                 optionsLabel = merge({
                     align: horiz && isBand && 'center',
@@ -6487,7 +6488,11 @@
             var toPath = this.getPlotLinePath(to, null, null, true),
                 path = this.getPlotLinePath(from, null, null, true);
 
-            if (path && toPath && path.toString() !== toPath.toString()) { // #3836
+            if (path && toPath) {
+
+                // Flat paths don't need labels (#3836)
+                path.flat = path.toString() === toPath.toString();
+
                 path.push(
                     toPath[4],
                     toPath[5],
@@ -19643,7 +19648,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v2.1.9-modified (2015-11-24)
+     * Highstock JS v2.1.9-modified (2015-11-25)
      * Highcharts Broken Axis module
      * 
      * Author: Stephane Vanraes, Torstein Honsi

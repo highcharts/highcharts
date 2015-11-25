@@ -96,11 +96,11 @@
 			 * @param {Function} fn
 			 */
 			this.each = Array.prototype.forEach ?
-					function (arr, fn) { // modern browsers
+					function each(arr, fn) { // modern browsers
 						return Array.prototype.forEach.call(arr, fn);
 
 					} :
-					function (arr, fn) { // legacy
+					function each(arr, fn) { // legacy
 						var i,
 							len = arr.length;
 						for (i = 0; i < len; i++) {
