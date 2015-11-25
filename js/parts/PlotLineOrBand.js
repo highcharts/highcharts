@@ -82,14 +82,10 @@ Highcharts.PlotLineOrBand.prototype = {
 		// common for lines and bands
 		if (svgElem) {
 			if (path) {
-				svgElem.animate({
-					d: path
-				}, null, svgElem.onGetPath);
+				svgElem.show();
+				svgElem.animate({ d: path });
 			} else {
 				svgElem.hide();
-				svgElem.onGetPath = function () {
-					svgElem.show();
-				};
 				if (label) {
 					plotLine.label = label = label.destroy();
 				}
