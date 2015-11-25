@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-11-18)
+ * @license Highcharts JS v4.1.9-modified (2015-11-24)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -126,7 +126,7 @@
     }
 
     // The Highcharts namespace
-    Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : function (adapter) {
+    Highcharts = win.Highcharts ? error(16, true) : function (adapter) {
         Highcharts.loadAdapter(adapter);
         return Highcharts;
     };

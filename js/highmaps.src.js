@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-11-18)
+ * @license Highmaps JS v1.1.9-modified (2015-11-24)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -124,7 +124,7 @@
     }
 
     // The Highcharts namespace
-    Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : function (adapter) {
+    Highcharts = win.Highcharts ? error(16, true) : function (adapter) {
         Highcharts.loadAdapter(adapter);
         return Highcharts;
     };
