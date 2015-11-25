@@ -493,3 +493,14 @@ gulp.task('scripts', function () {
         fs.writeFileSync('./build/canvas-tools.src.js', js, 'utf8');
     });
 });
+
+gulp.task('common', function () {
+    var browserify = require('browserify');
+    browserify('./samples/highcharts/common-js/browserify/app.js')
+        .bundle(function (err, buf) {
+            if (err) {
+                // @todo Do something meaningful with err
+            }
+            fs.writeFileSync('./samples/highcharts/common-js/browserify/demo.js', buf);
+        });
+});
