@@ -2514,16 +2514,16 @@
         /**
          * Get the bounding box (width, height, x and y) for the element
          */
-        getBBox: function (reload, rotation) {
+        getBBox: function (reload, rot) {
             var wrapper = this,
                 bBox,// = wrapper.bBox,
                 renderer = wrapper.renderer,
                 width,
                 height,
-                rotation = pick(rotation, wrapper.rotation),
+                rotation,
+                rad,
                 element = wrapper.element,
                 styles = wrapper.styles,
-                rad = rotation * deg2rad,
                 textStr = wrapper.textStr,
                 textShadow,
                 elemStyle = element.style,
@@ -2531,6 +2531,9 @@
                 cache = renderer.cache,
                 cacheKeys = renderer.cacheKeys,
                 cacheKey;
+
+            rotation = pick(rot, wrapper.rotation);
+            rad = rotation * deg2rad;
 
             if (textStr !== UNDEFINED) {
 
