@@ -43,6 +43,8 @@ QUnit.test('Async drilldown', function (assert) {
             false,
             '1200 ms - loading hidden'
         );
+
+        done();
     }, 1200);
 
 });
