@@ -7349,8 +7349,8 @@
                 axis.tickInterval = axis.postProcessTickInterval(axis.tickInterval);
             }
 
-            // In column-like charts, don't cramp in more ticks than there are points (#1943)
-            if (axis.pointRange) {
+            // In column-like charts, don't cramp in more ticks than there are points (#1943, #4184)
+            if (axis.pointRange && !tickIntervalOption) {
                 axis.tickInterval = mathMax(axis.pointRange, axis.tickInterval);
             }
 
