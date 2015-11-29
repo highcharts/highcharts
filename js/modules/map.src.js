@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-10-31)
+ * @license Highmaps JS v1.1.9-modified (2015-11-27)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2014 Torstein Honsi
@@ -1823,7 +1823,7 @@
             seriesTypes.scatter.prototype.init.apply(this, arguments);
 
             options = this.options;
-            this.pointRange = options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
+            options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
             this.yAxis.axisPointRange = options.rowsize || 1; // general point range
         },
         translate: function () {

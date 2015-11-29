@@ -816,10 +816,23 @@ Axis.prototype = {
 				pointRangePadding = linkedParent.pointRangePadding;
 
 			} else {
+				// Find the closestPointRange across all series
 				each(axis.series, function (series) {
-					var seriesPointRange = hasCategories ? 1 : (isXAxis ? series.pointRange : (axis.axisPointRange || 0)), // #2806
-						pointPlacement = series.options.pointPlacement,
-						seriesClosestPointRange = series.closestPointRange;
+					var seriesClosest = series.closestPointRange;
+					if (!series.noSharedTooltip && defined(seriesClosest)) {
+						closestPointRange = defined(closestPointRange) ?
+							mathMin(closestPointRange, seriesClosest) :
+							seriesClosest;
+					}
+				});
+
+				each(axis.series, function (series) {
+					var seriesPointRange = hasCategories ? 
+						1 : 
+						(isXAxis ? 
+							pick(series.options.pointRange, closestPointRange, 0) : 
+							(axis.axisPointRange || 0)), // #2806
+						pointPlacement = series.options.pointPlacement;
 
 					pointRange = mathMax(pointRange, seriesPointRange);
 
@@ -838,13 +851,6 @@ Axis.prototype = {
 							pointRangePadding,
 							pointPlacement === 'on' ? 0 : seriesPointRange
 						);
-					}
-
-					// Set the closestPointRange
-					if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
-						closestPointRange = defined(closestPointRange) ?
-							mathMin(closestPointRange, seriesClosestPointRange) :
-							seriesClosestPointRange;
 					}
 				});
 			}

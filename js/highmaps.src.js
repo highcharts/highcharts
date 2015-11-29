@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-11-26)
+ * @license Highmaps JS v1.1.9-modified (2015-11-29)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -7115,10 +7115,23 @@
                     pointRangePadding = linkedParent.pointRangePadding;
 
                 } else {
+                    // Find the closestPointRange across all series
                     each(axis.series, function (series) {
-                        var seriesPointRange = hasCategories ? 1 : (isXAxis ? series.pointRange : (axis.axisPointRange || 0)), // #2806
-                            pointPlacement = series.options.pointPlacement,
-                            seriesClosestPointRange = series.closestPointRange;
+                        var seriesClosest = series.closestPointRange;
+                        if (!series.noSharedTooltip && defined(seriesClosest)) {
+                            closestPointRange = defined(closestPointRange) ?
+                                mathMin(closestPointRange, seriesClosest) :
+                                seriesClosest;
+                        }
+                    });
+
+                    each(axis.series, function (series) {
+                        var seriesPointRange = hasCategories ? 
+                            1 : 
+                            (isXAxis ? 
+                                pick(series.options.pointRange, closestPointRange, 0) : 
+                                (axis.axisPointRange || 0)), // #2806
+                            pointPlacement = series.options.pointPlacement;
 
                         pointRange = mathMax(pointRange, seriesPointRange);
 
@@ -7137,13 +7150,6 @@
                                 pointRangePadding,
                                 pointPlacement === 'on' ? 0 : seriesPointRange
                             );
-                        }
-
-                        // Set the closestPointRange
-                        if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
-                            closestPointRange = defined(closestPointRange) ?
-                                mathMin(closestPointRange, seriesClosestPointRange) :
-                                seriesClosestPointRange;
                         }
                     });
                 }
@@ -13069,7 +13075,6 @@
 
                 // Reset properties
                 series.xIncrement = null;
-                series.pointRange = hasCategories ? 1 : options.pointRange;
 
                 series.colorCounter = 0; // for series with colorByPoint (#1547)
 
@@ -13246,9 +13251,6 @@
             series.processedXData = processedXData;
             series.processedYData = processedYData;
 
-            if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
-                series.pointRange = closestPointRange || 1;
-            }
             series.closestPointRange = closestPointRange;
 
         },
@@ -19066,7 +19068,7 @@
             seriesTypes.scatter.prototype.init.apply(this, arguments);
 
             options = this.options;
-            this.pointRange = options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
+            options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
             this.yAxis.axisPointRange = options.rowsize || 1; // general point range
         },
         translate: function () {
