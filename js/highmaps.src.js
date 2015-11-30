@@ -13771,6 +13771,7 @@
                 turboThreshold = seriesOptions.turboThreshold,
                 zones = series.zones,
                 zoneAxis = series.zoneAxis || 'y',
+                zoneColor, 
                 attr,
                 key;
 
@@ -13819,6 +13820,7 @@
                         normalOptions.radius = 0;
                     }
 
+                    zoneColor = null;
                     if (zones.length) {
                         j = 0;
                         threshold = zones[j];
@@ -13826,7 +13828,7 @@
                             threshold = zones[++j];
                         }
 
-                        point.color = point.fillColor = pick(threshold.color, series.color); // #3636, #4267, #4430 - inherit color from series, when color is undefined
+                        point.color = point.fillColor = zoneColor = pick(threshold.color, series.color); // #3636, #4267, #4430 - inherit color from series, when color is undefined
 
                     }
 
@@ -13870,6 +13872,12 @@
                         if (normalOptions.hasOwnProperty('color') && !normalOptions.color) {
                             delete normalOptions.color;
                         }
+
+                        // When zone is set, but series.states.hover.color is not set, apply zone color on hover, #4670: 
+                        if (zoneColor && !stateOptionsHover.fillColor) {
+                            pointStateOptionsHover.fillColor = zoneColor;
+                        }
+
                         pointAttr[NORMAL_STATE] = series.convertAttribs(extend(attr, normalOptions), seriesPointAttr[NORMAL_STATE]);
 
                         // inherit from point normal and series hover
