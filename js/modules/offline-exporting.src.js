@@ -8,7 +8,13 @@
  */
 
 /*global MSBlobBuilder */
-(function (Highcharts) {
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (Highcharts) {
 
 	// Dummy object so we can reuse our canvas-tools.js without errors
 	Highcharts.CanVGRenderer = {};
@@ -271,4 +277,4 @@
 		}
 	}];
 
-}(Highcharts));
+}));
