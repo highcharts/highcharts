@@ -44,7 +44,13 @@
  */
 
 /* eslint indent: [2, 4] */
-(function (H) {
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (H) {
 
     'use strict';
 
@@ -570,4 +576,4 @@
         }
         return ret;
     });
-}(Highcharts));
+}));
