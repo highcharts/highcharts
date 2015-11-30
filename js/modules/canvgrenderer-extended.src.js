@@ -7,7 +7,13 @@
  * License: www.highcharts.com/license
  */
 
-(function (Highcharts) { // encapsulate
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (Highcharts) {
 	var UNDEFINED,
 		DIV = 'div',
 		ABSOLUTE = 'absolute',
@@ -202,4 +208,4 @@
 			window.canvg(renderer.canvas, renderer.hiddenSvg.innerHTML);
 		}
 	});
-}(Highcharts));
+}));
