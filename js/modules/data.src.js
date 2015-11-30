@@ -8,7 +8,13 @@
  */
 
 /*global jQuery */
-(function (Highcharts) {
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (Highcharts) {
 	
 	// Utilities
 	var each = Highcharts.each,
@@ -948,4 +954,4 @@
 
 
 
-}(Highcharts));
+}));
