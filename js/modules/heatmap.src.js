@@ -1,5 +1,5 @@
 /**
- * @license Highcharts JS v4.1.9-modified (2015-10-31)
+ * @license Highcharts JS v4.1.9-modified (2015-11-27)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -640,7 +640,7 @@
             seriesTypes.scatter.prototype.init.apply(this, arguments);
 
             options = this.options;
-            this.pointRange = options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
+            options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
             this.yAxis.axisPointRange = options.rowsize || 1; // general point range
         },
         translate: function () {

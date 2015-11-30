@@ -188,12 +188,10 @@ Tick.prototype = {
 			line;
 
 		if (!defined(yOffset)) {
-			if (axis.side === 2) {
-				yOffset = rotCorr.y + 8;
-
-			} else { // #3140
-				yOffset = mathCos(label.rotation * deg2rad) * (rotCorr.y - label.getBBox().height / 2);
-			}
+			yOffset = axis.side === 2 ? 
+				rotCorr.y + 8 :
+				// #3140, #3140
+				yOffset = mathCos(label.rotation * deg2rad) * (rotCorr.y - label.getBBox(false, 0).height / 2);
 		}
 
 		x = x + labelOptions.x + rotCorr.x - (tickmarkOffset && horiz ?

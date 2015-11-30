@@ -10,8 +10,8 @@ $(function () {
 
             xAxis: {
                 categories: [
-                    'Jan Jan Jan Jan Jan Jan Jan Jan Jan Jan Jan Jan ',
-                    'Feb Feb Feb Feb Feb Feb Feb Feb Feb Feb Feb Feb ',
+                    'Jan Jan Jan ',
+                    'Feb Feb Feb ',
                     'Mar Mar Mar Mar Mar Mar Mar Mar Mar Mar Mar Mar ',
                     'Apr Apr Apr Apr Apr Apr Apr Apr Apr Apr Apr Apr ',
                     'May May May May May May May May May May May May ',

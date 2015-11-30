@@ -81,7 +81,7 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 			height = getLength(options.height, plotHeight),
 			neckWidth = getLength(options.neckWidth, plotWidth),
 			neckHeight = getLength(options.neckHeight, plotHeight),
-			neckY = height - neckHeight,
+			neckY = (centerY - height / 2) + height - neckHeight,
 			data = series.data,
 			path,
 			fraction,
@@ -97,12 +97,14 @@ seriesTypes.funnel = Highcharts.extendClass(seriesTypes.pie, {
 
 		// Return the width at a specific y coordinate
 		series.getWidthAt = getWidthAt = function (y) {
-			return y > height - neckHeight || height === neckHeight ?
+			var top = (centerY - height / 2);
+			
+			return y > neckY || height === neckHeight ?
 				neckWidth :
-				neckWidth + (width - neckWidth) * ((height - neckHeight - y) / (height - neckHeight));
+				neckWidth + (width - neckWidth) * (1 - (y - top) / (height - neckHeight));
 		};
 		series.getX = function (y, half) {
-					return centerX + (half ? -1 : 1) * ((getWidthAt(reversed ? plotHeight - y : y) / 2) + options.dataLabels.distance);
+			return centerX + (half ? -1 : 1) * ((getWidthAt(reversed ? plotHeight - y : y) / 2) + options.dataLabels.distance);
 		};
 
 		// Expose

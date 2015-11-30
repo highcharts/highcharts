@@ -393,7 +393,6 @@ Series.prototype = {
 
 			// Reset properties
 			series.xIncrement = null;
-			series.pointRange = hasCategories ? 1 : options.pointRange;
 
 			series.colorCounter = 0; // for series with colorByPoint (#1547)
 
@@ -570,9 +569,6 @@ Series.prototype = {
 		series.processedXData = processedXData;
 		series.processedYData = processedYData;
 
-		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
-			series.pointRange = closestPointRange || 1;
-		}
 		series.closestPointRange = closestPointRange;
 
 	},

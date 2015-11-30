@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-11-13)
+ * @license Highcharts JS v4.1.9-modified (2015-11-30)
  *
  * 3D features for Highcharts JS
  *
@@ -1037,14 +1037,27 @@
     });
 
     Highcharts.wrap(Highcharts.Axis.prototype, 'getTitlePosition', function (proceed) {
-        var pos = proceed.apply(this, [].slice.call(arguments, 1));
+        var is3d = this.chart.is3d(),
+            pos,
+            axisTitleMargin;
 
-        // Do not do this if the chart is not 3D
-        if (!this.chart.is3d()) {
-            return pos;
+        // Pull out the axis title margin, that is not subject to the perspective
+        if (is3d) {
+            axisTitleMargin = this.axisTitleMargin;
+            this.axisTitleMargin = 0;
         }
 
-        pos = perspective([this.swapZ({ x: pos.x, y: pos.y, z: 0 })], this.chart, false)[0];
+        pos = proceed.apply(this, [].slice.call(arguments, 1));
+
+        if (is3d) {
+            pos = perspective([this.swapZ({ x: pos.x, y: pos.y, z: 0 })], this.chart, false)[0];
+
+            // Re-apply the axis title margin outside the perspective
+            pos[this.horiz ? 'y' : 'x'] += (this.horiz ? 1 : -1) * // horizontal axis reverses the margin ...
+                (this.opposite ? -1 : 1) * // ... so does opposite axes
+                axisTitleMargin;
+            this.axisTitleMargin = axisTitleMargin;
+        }
         return pos;
     });
 
@@ -1270,7 +1283,13 @@
                         break;
                     }
                 }
-                z = (stacks.totalStacks * 10) - (10 * (stacks.totalStacks - stacks[stack].position)) - (reversedStacks ? i : -i); // #4369
+            
+                z = (10 * (stacks.totalStacks - stacks[stack].position)) - (reversedStacks ? i : -i); // #4369
+
+                // In case when axis is reversed, columns are also reversed inside the group (#3737)
+                if (!this.xAxis.reversed) {
+                    z = (stacks.totalStacks * 10) - z;
+                }
             }
 
             seriesOptions.zIndex = z;

@@ -17,7 +17,8 @@ Status
 
     'use strict';
 
-    var page = require('webpage').create(),
+    var colors = require('colors'),
+        page = require('webpage').create(),
         fs = require('fs'),
         samples = [],
         system = require('system'),
@@ -113,11 +114,11 @@ Status
                     i + '\n\n.' + msgStack.join('\n')
             );
             */
-            console.log([
+            console.log(colors.red([
                 pad(i, 4, true),
                 pad(samples[i], 60, false),
                 'Error'
-            ].join(' '));
+            ].join(' ')));
 
             i++;
             runRecursive();
@@ -138,10 +139,14 @@ Status
     }
 
     page.onConsoleMessage = function (m) {
+        var color = m[m.length - 1] === '.' ? 'green' : 'red';
         if (m.indexOf('@proceed') === 0) {
 
             // Output the results of the finished test
-            console.log(pad(i, 4, true) + ' ' + m.replace('@proceed ', ''));
+            console.log(
+                colors.gray(pad(i, 4, true)) + 
+                colors[color](' ' + m.replace('@proceed ', ''))
+            );
 
             i = i + 1;
             if (samples[i]) {

@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-11-20)
+ * @license Highmaps JS v1.1.9-modified (2015-11-30)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -968,11 +968,11 @@
                  * @param {Function} fn
                  */
                 this.each = Array.prototype.forEach ?
-                        function (arr, fn) { // modern browsers
+                        function each(arr, fn) { // modern browsers
                             return Array.prototype.forEach.call(arr, fn);
 
                         } :
-                        function (arr, fn) { // legacy
+                        function each(arr, fn) { // legacy
                             var i,
                                 len = arr.length;
                             for (i = 0; i < len; i++) {
@@ -2514,16 +2514,16 @@
         /**
          * Get the bounding box (width, height, x and y) for the element
          */
-        getBBox: function (reload) {
+        getBBox: function (reload, rot) {
             var wrapper = this,
                 bBox,// = wrapper.bBox,
                 renderer = wrapper.renderer,
                 width,
                 height,
-                rotation = wrapper.rotation,
+                rotation,
+                rad,
                 element = wrapper.element,
                 styles = wrapper.styles,
-                rad = rotation * deg2rad,
                 textStr = wrapper.textStr,
                 textShadow,
                 elemStyle = element.style,
@@ -2531,6 +2531,9 @@
                 cache = renderer.cache,
                 cacheKeys = renderer.cacheKeys,
                 cacheKey;
+
+            rotation = pick(rot, wrapper.rotation);
+            rad = rotation * deg2rad;
 
             if (textStr !== UNDEFINED) {
 
@@ -6109,12 +6112,10 @@
                 line;
 
             if (!defined(yOffset)) {
-                if (axis.side === 2) {
-                    yOffset = rotCorr.y + 8;
-
-                } else { // #3140
-                    yOffset = mathCos(label.rotation * deg2rad) * (rotCorr.y - label.getBBox().height / 2);
-                }
+                yOffset = axis.side === 2 ? 
+                    rotCorr.y + 8 :
+                    // #3140, #3140
+                    yOffset = mathCos(label.rotation * deg2rad) * (rotCorr.y - label.getBBox(false, 0).height / 2);
             }
 
             x = x + labelOptions.x + rotCorr.x - (tickmarkOffset && horiz ?
@@ -7114,10 +7115,23 @@
                     pointRangePadding = linkedParent.pointRangePadding;
 
                 } else {
+                    // Find the closestPointRange across all series
                     each(axis.series, function (series) {
-                        var seriesPointRange = hasCategories ? 1 : (isXAxis ? series.pointRange : (axis.axisPointRange || 0)), // #2806
-                            pointPlacement = series.options.pointPlacement,
-                            seriesClosestPointRange = series.closestPointRange;
+                        var seriesClosest = series.closestPointRange;
+                        if (!series.noSharedTooltip && defined(seriesClosest)) {
+                            closestPointRange = defined(closestPointRange) ?
+                                mathMin(closestPointRange, seriesClosest) :
+                                seriesClosest;
+                        }
+                    });
+
+                    each(axis.series, function (series) {
+                        var seriesPointRange = hasCategories ? 
+                            1 : 
+                            (isXAxis ? 
+                                pick(series.options.pointRange, closestPointRange, 0) : 
+                                (axis.axisPointRange || 0)), // #2806
+                            pointPlacement = series.options.pointPlacement;
 
                         pointRange = mathMax(pointRange, seriesPointRange);
 
@@ -7136,13 +7150,6 @@
                                 pointRangePadding,
                                 pointPlacement === 'on' ? 0 : seriesPointRange
                             );
-                        }
-
-                        // Set the closestPointRange
-                        if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
-                            closestPointRange = defined(closestPointRange) ?
-                                mathMin(closestPointRange, seriesClosestPointRange) :
-                                seriesClosestPointRange;
                         }
                     });
                 }
@@ -7342,8 +7349,8 @@
                 axis.tickInterval = axis.postProcessTickInterval(axis.tickInterval);
             }
 
-            // In column-like charts, don't cramp in more ticks than there are points (#1943)
-            if (axis.pointRange) {
+            // In column-like charts, don't cramp in more ticks than there are points (#1943, #4184)
+            if (axis.pointRange && !tickIntervalOption) {
                 axis.tickInterval = mathMax(axis.pointRange, axis.tickInterval);
             }
 
@@ -7880,7 +7887,7 @@
                 horiz = this.horiz,
                 margin = chart.margin,
                 slotCount = this.categories ? tickPositions.length : tickPositions.length - 1,
-                slotWidth = this.slotWidth = (horiz && !labelOptions.step && !labelOptions.rotation &&
+                slotWidth = this.slotWidth = (horiz && (labelOptions.step || 0) < 2 && !labelOptions.rotation && // #4415
                     ((this.staggerLines || 1) * chart.plotWidth) / slotCount) ||
                     (!horiz && ((margin[3] && (margin[3] - chart.spacing[3])) || chart.chartWidth * 0.33)), // #1580, #1931,
                 innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))),
@@ -7890,7 +7897,6 @@
                 css,
                 labelLength = 0,
                 label,
-                bBox,
                 i,
                 pos;
 
@@ -7932,13 +7938,12 @@
                         pos = tickPositions[i];
                         label = ticks[pos].label;
                         if (label) {
-                            bBox = label.getBBox();
                             // Reset ellipsis in order to get the correct bounding box (#4070)
                             if (label.styles.textOverflow === 'ellipsis') {
                                 label.css({ textOverflow: 'clip' });
                             }
-                            if (bBox.height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f) ||
-                                    bBox.width > slotWidth) { // #4678
+                            if (label.getBBox().height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f) ||
+                                    ticks[pos].labelLength > slotWidth) { // #4678
                                 label.specCss = { textOverflow: 'ellipsis' };
                             }
                         }
@@ -9431,10 +9436,15 @@
             // Narrow in allowMove
             allowMove = allowMove && tooltip && tooltipPoints;
 
-            // Check if the points have moved outside the plot area, #1003
-            if (allowMove  && splat(tooltipPoints)[0].plotX === UNDEFINED) {
-                allowMove = false;
+            // Check if the points have moved outside the plot area (#1003, #4736)
+            if (allowMove) {
+                each(splat(tooltipPoints), function (point) {
+                    if (point.plotX === undefined) {
+                        allowMove = false;
+                    }
+                });
             }
+        
             // Just move the tooltip, #349
             if (allowMove) {
                 tooltip.refresh(tooltipPoints);
@@ -13069,7 +13079,6 @@
 
                 // Reset properties
                 series.xIncrement = null;
-                series.pointRange = hasCategories ? 1 : options.pointRange;
 
                 series.colorCounter = 0; // for series with colorByPoint (#1547)
 
@@ -13246,9 +13255,6 @@
             series.processedXData = processedXData;
             series.processedYData = processedYData;
 
-            if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
-                series.pointRange = closestPointRange || 1;
-            }
             series.closestPointRange = closestPointRange;
 
         },
@@ -15242,9 +15248,7 @@
                     pick(options.pointWidth, pointOffsetWidth * (1 - 2 * options.pointPadding))
                 ),
                 pointPadding = (pointOffsetWidth - pointWidth) / 2,
-                colIndex = (reversedXAxis ?
-                    columnCount - (series.columnIndex || 0) : // #1251
-                    series.columnIndex) || 0,
+                colIndex = (series.columnIndex || 0) + (reversedXAxis ? 1 : 0), // #1251, #3737
                 pointXOffset = pointPadding + (groupPadding + colIndex *
                     pointOffsetWidth - (categoryWidth / 2)) *
                     (reversedXAxis ? -1 : 1);
@@ -15661,7 +15665,7 @@
                         dataLabel = point.dataLabel = renderer[rotation ? 'text' : 'label']( // labels don't support rotation
                             str,
                             0,
-                            -999,
+                            -9999,
                             options.shape,
                             null,
                             null,
@@ -15689,8 +15693,8 @@
     Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, isNew) {
         var chart = this.chart,
             inverted = chart.inverted,
-            plotX = pick(point.plotX, -999),
-            plotY = pick(point.plotY, -999),
+            plotX = pick(point.plotX, -9999),
+            plotY = pick(point.plotY, -9999),
             bBox = dataLabel.getBBox(),
             baseline = chart.renderer.fontMetrics(options.style.fontSize).b,
             rotCorr, // rotation correction
@@ -15753,7 +15757,7 @@
         // Show or hide based on the final aligned position
         if (!visible) {
             stop(dataLabel);
-            dataLabel.attr({ y: -999 });
+            dataLabel.attr({ y: -9999 });
             dataLabel.placed = false; // don't animate back in
         }
 
@@ -16154,7 +16158,7 @@
                         dataLabel[dataLabel.moved ? 'animate' : 'attr'](_pos);
                         dataLabel.moved = true;
                     } else if (dataLabel) {
-                        dataLabel.attr({ y: -999 });
+                        dataLabel.attr({ y: -9999 });
                     }
                 }
             });
@@ -19088,7 +19092,7 @@
             seriesTypes.scatter.prototype.init.apply(this, arguments);
 
             options = this.options;
-            this.pointRange = options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
+            options.pointRange = pick(options.pointRange, options.colsize || 1); // #3758, prevent resetting in setData
             this.yAxis.axisPointRange = options.rowsize || 1; // general point range
         },
         translate: function () {

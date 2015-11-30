@@ -217,14 +217,27 @@ Highcharts.wrap(Highcharts.Tick.prototype, 'handleOverflow', function (proceed, 
 });
 
 Highcharts.wrap(Highcharts.Axis.prototype, 'getTitlePosition', function (proceed) {
-	var pos = proceed.apply(this, [].slice.call(arguments, 1));
+	var is3d = this.chart.is3d(),
+		pos,
+		axisTitleMargin;
 
-	// Do not do this if the chart is not 3D
-	if (!this.chart.is3d()) {
-		return pos;
+	// Pull out the axis title margin, that is not subject to the perspective
+	if (is3d) {
+		axisTitleMargin = this.axisTitleMargin;
+		this.axisTitleMargin = 0;
 	}
 
-	pos = perspective([this.swapZ({ x: pos.x, y: pos.y, z: 0 })], this.chart, false)[0];
+	pos = proceed.apply(this, [].slice.call(arguments, 1));
+
+	if (is3d) {
+		pos = perspective([this.swapZ({ x: pos.x, y: pos.y, z: 0 })], this.chart, false)[0];
+
+		// Re-apply the axis title margin outside the perspective
+		pos[this.horiz ? 'y' : 'x'] += (this.horiz ? 1 : -1) * // horizontal axis reverses the margin ...
+			(this.opposite ? -1 : 1) * // ... so does opposite axes
+			axisTitleMargin;
+		this.axisTitleMargin = axisTitleMargin;
+	}
 	return pos;
 });
 

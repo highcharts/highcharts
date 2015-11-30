@@ -816,10 +816,23 @@ Axis.prototype = {
 				pointRangePadding = linkedParent.pointRangePadding;
 
 			} else {
+				// Find the closestPointRange across all series
 				each(axis.series, function (series) {
-					var seriesPointRange = hasCategories ? 1 : (isXAxis ? series.pointRange : (axis.axisPointRange || 0)), // #2806
-						pointPlacement = series.options.pointPlacement,
-						seriesClosestPointRange = series.closestPointRange;
+					var seriesClosest = series.closestPointRange;
+					if (!series.noSharedTooltip && defined(seriesClosest)) {
+						closestPointRange = defined(closestPointRange) ?
+							mathMin(closestPointRange, seriesClosest) :
+							seriesClosest;
+					}
+				});
+
+				each(axis.series, function (series) {
+					var seriesPointRange = hasCategories ? 
+						1 : 
+						(isXAxis ? 
+							pick(series.options.pointRange, closestPointRange, 0) : 
+							(axis.axisPointRange || 0)), // #2806
+						pointPlacement = series.options.pointPlacement;
 
 					pointRange = mathMax(pointRange, seriesPointRange);
 
@@ -838,13 +851,6 @@ Axis.prototype = {
 							pointRangePadding,
 							pointPlacement === 'on' ? 0 : seriesPointRange
 						);
-					}
-
-					// Set the closestPointRange
-					if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
-						closestPointRange = defined(closestPointRange) ?
-							mathMin(closestPointRange, seriesClosestPointRange) :
-							seriesClosestPointRange;
 					}
 				});
 			}
@@ -1044,8 +1050,8 @@ Axis.prototype = {
 			axis.tickInterval = axis.postProcessTickInterval(axis.tickInterval);
 		}
 
-		// In column-like charts, don't cramp in more ticks than there are points (#1943)
-		if (axis.pointRange) {
+		// In column-like charts, don't cramp in more ticks than there are points (#1943, #4184)
+		if (axis.pointRange && !tickIntervalOption) {
 			axis.tickInterval = mathMax(axis.pointRange, axis.tickInterval);
 		}
 
@@ -1582,7 +1588,7 @@ Axis.prototype = {
 			horiz = this.horiz,
 			margin = chart.margin,
 			slotCount = this.categories ? tickPositions.length : tickPositions.length - 1,
-			slotWidth = this.slotWidth = (horiz && !labelOptions.step && !labelOptions.rotation &&
+			slotWidth = this.slotWidth = (horiz && (labelOptions.step || 0) < 2 && !labelOptions.rotation && // #4415
 				((this.staggerLines || 1) * chart.plotWidth) / slotCount) ||
 				(!horiz && ((margin[3] && (margin[3] - chart.spacing[3])) || chart.chartWidth * 0.33)), // #1580, #1931,
 			innerWidth = mathMax(1, mathRound(slotWidth - 2 * (labelOptions.padding || 5))),
@@ -1592,7 +1598,6 @@ Axis.prototype = {
 			css,
 			labelLength = 0,
 			label,
-			bBox,
 			i,
 			pos;
 
@@ -1634,13 +1639,12 @@ Axis.prototype = {
 					pos = tickPositions[i];
 					label = ticks[pos].label;
 					if (label) {
-						bBox = label.getBBox();
 						// Reset ellipsis in order to get the correct bounding box (#4070)
 						if (label.styles.textOverflow === 'ellipsis') {
 							label.css({ textOverflow: 'clip' });
 						}
-						if (bBox.height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f) ||
-								bBox.width > slotWidth) { // #4678
+						if (label.getBBox().height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f) ||
+								ticks[pos].labelLength > slotWidth) { // #4678
 							label.specCss = { textOverflow: 'ellipsis' };
 						}
 					}

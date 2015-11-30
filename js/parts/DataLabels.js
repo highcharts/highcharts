@@ -138,7 +138,7 @@ Series.prototype.drawDataLabels = function () {
 					dataLabel = point.dataLabel = renderer[rotation ? 'text' : 'label']( // labels don't support rotation
 						str,
 						0,
-						-999,
+						-9999,
 						options.shape,
 						null,
 						null,
@@ -166,8 +166,8 @@ Series.prototype.drawDataLabels = function () {
 Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, isNew) {
 	var chart = this.chart,
 		inverted = chart.inverted,
-		plotX = pick(point.plotX, -999),
-		plotY = pick(point.plotY, -999),
+		plotX = pick(point.plotX, -9999),
+		plotY = pick(point.plotY, -9999),
 		bBox = dataLabel.getBBox(),
 		baseline = chart.renderer.fontMetrics(options.style.fontSize).b,
 		rotCorr, // rotation correction
@@ -230,7 +230,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
 	// Show or hide based on the final aligned position
 	if (!visible) {
 		stop(dataLabel);
-		dataLabel.attr({ y: -999 });
+		dataLabel.attr({ y: -9999 });
 		dataLabel.placed = false; // don't animate back in
 	}
 
@@ -631,7 +631,7 @@ if (seriesTypes.pie) {
 					dataLabel[dataLabel.moved ? 'animate' : 'attr'](_pos);
 					dataLabel.moved = true;
 				} else if (dataLabel) {
-					dataLabel.attr({ y: -999 });
+					dataLabel.attr({ y: -9999 });
 				}
 			}
 		});
