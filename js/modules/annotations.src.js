@@ -1,6 +1,12 @@
 
 
-(function (Highcharts) {
+(function (factory) {
+	if (typeof module === 'object' && module.exports) {
+		module.exports = factory;
+	} else {
+		factory(Highcharts);
+	}
+}(function (Highcharts) {
 
 	var UNDEFINED,
 		ALIGN_FACTOR,
@@ -397,4 +403,4 @@
 			chart.annotations.redraw();
 		});
 	});
-}(Highcharts));
+}));
