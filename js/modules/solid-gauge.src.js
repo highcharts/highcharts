@@ -7,7 +7,13 @@
  * License: www.highcharts.com/license
  */
 
-(function (H) {
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (H) {
 	'use strict';
 
 	var defaultPlotOptions = H.getOptions().plotOptions,
@@ -264,4 +270,4 @@
 		}
 	});
 
-}(Highcharts));
+}));
