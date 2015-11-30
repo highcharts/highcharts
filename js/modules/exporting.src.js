@@ -8,7 +8,13 @@
  */
 
 /* eslint indent:0 */
-(function (Highcharts) {
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (Highcharts) {
 
 // create shortcuts
 var Chart = Highcharts.Chart,
@@ -771,4 +777,4 @@ Chart.prototype.callbacks.push(function (chart) {
 });
 
 
-}(Highcharts));
+}));
