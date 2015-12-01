@@ -170,8 +170,8 @@ QUnit.test("Highcharts in use with modules.", function (assert) {
     // Boost
     require('../../../../js/modules/boost.src')(H);
     assert.strictEqual(
-        false,
-        true,
+        typeof H.Series.prototype.getContext,
+        'function',
         "Boost is loaded."
     );
     // Broken Axis
@@ -180,20 +180,6 @@ QUnit.test("Highcharts in use with modules.", function (assert) {
         !!H.Series.prototype.drawBreaks,
         true,
         "Broken Axis is loaded."
-    );
-    // Canvas Renderer
-    // require('../../../../js/modules/canvasrenderer.experimental.src')(H);
-    assert.strictEqual(
-        false,
-        true,
-        "Canvas Renderer is loaded."
-    );
-    // Canvg Renderer
-    // require('../../../../js/modules/canvgrenderer-extended.src')(H);
-    assert.strictEqual(
-        false,
-        true,
-        "Canvg Renderer is loaded."
     );
     // Data
     require('../../../../js/modules/data.src')(H);
@@ -215,13 +201,6 @@ QUnit.test("Highcharts in use with modules.", function (assert) {
         !!H.getOptions().exporting,
         true,
         "Exporting is loaded."
-    );
-    // Exporting Old Look
-    require('../../../../js/modules/exporting-old-look.src')(H);
-    assert.strictEqual(
-        false,
-        true,
-        "Exporting Old Look is loaded."
     );
     // Funnel
     require('../../../../js/modules/funnel.src')(H);
@@ -259,18 +238,11 @@ QUnit.test("Highcharts in use with modules.", function (assert) {
         "No Data To Display is loaded."
     );
     // Offline Exporting
-    // require('../../../../js/modules/offline-exporting.src')(H);
+    require('../../../../js/modules/offline-exporting.src')(H);
     assert.strictEqual(
         !!H.Chart.prototype.exportChartLocal,
         true,
         "Offline Exporting is loaded."
-    );
-    // Overlapping Datalabels. NB! Should be a parts file
-    // require('../../../../js/modules/overlapping-datalabels.src')(H);
-    assert.strictEqual(
-        false,
-        true,
-        "Overlapping Datalabels is loaded."
     );
     // Series Label
     require('../../../../js/modules/series-label.src')(H);
@@ -280,7 +252,7 @@ QUnit.test("Highcharts in use with modules.", function (assert) {
         "Series Label is loaded."
     );
     // Solid Gauge
-    // require('../../../../js/modules/solid-gauge.src')(H);
+    require('../../../../js/modules/solid-gauge.src')(H);
     assert.strictEqual(
         !!H.seriesTypes.solidgauge,
         true,
