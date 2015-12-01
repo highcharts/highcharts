@@ -96,11 +96,9 @@ seriesTypes.waterfall = extendClass(seriesTypes.column, {
 			// If it's not the sum point, update previous stack end position and get
 			// shape height (#3886)
 			} else {
-				if (previousY !== 0) { // Not the first point
-					shapeArgs.height = yValue > 0 ?
-						yAxis.translate(previousY, 0, 1) - shapeArgs.y :
-						yAxis.translate(previousY, 0, 1) - yAxis.translate(previousY - yValue, 0, 1);
-				}
+				shapeArgs.height = yValue > 0 ?
+					yAxis.translate(previousY, 0, 1) - shapeArgs.y :
+					yAxis.translate(previousY, 0, 1) - yAxis.translate(previousY - yValue, 0, 1);
 				previousY += yValue;
 				point.below = previousY < pick(threshold, 0) ? true : false;
 			}
