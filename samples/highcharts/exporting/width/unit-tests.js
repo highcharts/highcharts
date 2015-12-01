@@ -1,27 +1,35 @@
-// TODO: When Gert has allowed cache-control in the HTTP header, try this again.
-
 QUnit.test('Exported chart width', function (assert) {
     var chart = Highcharts.charts[0],
         done = assert.async();
 
-
     Highcharts.post = function (url, data) {
 
-        var dataString = encodeURI('async=true&type=jpeg&width=400&svg=' + data.svg);
+        function serialize(obj) {
+            var str = [];
+            for (var p in obj) {
+                if (obj.hasOwnProperty(p)) {
+                    str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+                }
+            }
+            return str.join("&");
+        }
 
+        data.async = true;
         $.ajax({
             type: 'POST',
-            data: dataString,
+            data: serialize(data),
             url: url,
             success: function (result) {
                 var img = new Image();
-                img.src = result;
+                img.src = url + result;
                 img.onload = function () {
                     assert.strictEqual(
                         this.width,
                         200,
                         'Generated image is 200px'
                     );
+
+                    document.body.appendChild(img);
 
                     done();
                 };
