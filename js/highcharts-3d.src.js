@@ -1238,7 +1238,7 @@
                         break;
                     }
                 }
-                z = (10 * (stacks.totalStacks - stacks[stack].position)) - (reversedStacks ? i : -i); // #4369
+                z = (10 * (stacks.totalStacks - stacks[stack].position)) + (reversedStacks ? i : -i); // #4369
 
                 // In case when axis is reversed, columns are also reversed inside the group (#3737)
                 if (!this.xAxis.reversed) {
