@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-11-29)
+ * @license Highcharts JS v4.1.9-modified (2015-12-01)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -17166,6 +17166,9 @@
                     shapeArgs = point.shapeArgs;
                     shadowGroup = point.shadowGroup;
                     pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE];
+                    if (!pointAttr.stroke) { // docs: When pie.borderColor is null, the slice color is used. Use that to fill antialiasing gaps.
+                        pointAttr.stroke = pointAttr.fill;
+                    }
 
                     // put the shadow behind all points
                     if (shadow && !shadowGroup) {

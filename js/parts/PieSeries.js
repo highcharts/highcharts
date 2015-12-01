@@ -387,6 +387,9 @@ var PieSeries = {
 				shapeArgs = point.shapeArgs;
 				shadowGroup = point.shadowGroup;
 				pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE];
+				if (!pointAttr.stroke) { // docs: When pie.borderColor is null, the slice color is used. Use that to fill antialiasing gaps.
+					pointAttr.stroke = pointAttr.fill;
+				}
 
 				// put the shadow behind all points
 				if (shadow && !shadowGroup) {
