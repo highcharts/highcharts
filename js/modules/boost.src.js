@@ -561,12 +561,15 @@
      * @returns {Object}   A Point object as per http://api.highcharts.com/highcharts#Point
      */
     Series.prototype.getPoint = function (boostPoint) {
+        var point = boostPoint;
 
-        var point = (new this.pointClass()).init(this, this.options.data[boostPoint.i]);
-        point.dist = boostPoint.dist;
-        point.category = point.x;
-        point.plotX = boostPoint.plotX;
-        point.plotY = boostPoint.plotY;
+        if (boostPoint && !(boostPoint instanceof this.pointClass)) {
+            point = (new this.pointClass()).init(this, this.options.data[boostPoint.i]);
+            point.dist = boostPoint.dist;
+            point.category = point.x;
+            point.plotX = boostPoint.plotX;
+            point.plotY = boostPoint.plotY;
+        }
 
         return point;
     };
@@ -575,12 +578,8 @@
      * Return a point instance from the k-d-tree
      */
     wrap(Series.prototype, 'searchPoint', function (proceed) {
-        var point = proceed.apply(this, [].slice.call(arguments, 1)),
-            ret = point;
-
-        if (point && !(point instanceof this.pointClass)) {
-            ret = this.getPoint(point);
-        }
-        return ret;
+        return this.getPoint(
+            proceed.apply(this, [].slice.call(arguments, 1))
+        );
     });
 }(Highcharts, HighchartsAdapter));
