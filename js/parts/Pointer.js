@@ -148,6 +148,7 @@ H.Pointer.prototype = {
 			noSharedTooltip,
 			stickToHoverSeries,
 			directTouch,
+			pointDistance,
 			kdpoints = [],
 			kdpoint,
 			kdpointT;
@@ -185,8 +186,10 @@ H.Pointer.prototype = {
 			});
 			// Find absolute nearest point
 			each(kdpoints, function (p) {
-				if (p && typeof p.dist === 'number' && p.dist < distance) {
-					distance = p.dist;
+				pointDistance = !shared && p.series.kdDimensions === 1 ? p.dist : p.distX; // #4645
+
+				if (p && typeof pointDistance === 'number' && pointDistance < distance) {
+					distance = pointDistance;
 					kdpoint = p;
 				}
 			});
@@ -229,8 +232,8 @@ H.Pointer.prototype = {
 			}
 		}
 
-		// Start the event listener to pick up the tooltip
-		if (tooltip && !pointer._onDocumentMouseMove) {
+		// Start the event listener to pick up the tooltip and crosshairs
+		if (!pointer._onDocumentMouseMove) {
 			pointer._onDocumentMouseMove = function (e) {
 				if (charts[H.hoverChartIndex]) {
 					charts[H.hoverChartIndex].pointer.onDocumentMouseMove(e);
@@ -265,11 +268,16 @@ H.Pointer.prototype = {
 
 		// Narrow in allowMove
 		allowMove = allowMove && tooltip && tooltipPoints;
-			
-		// Check if the points have moved outside the plot area, #1003		
-		if (allowMove  && splat(tooltipPoints)[0].plotX === undefined) {
-			allowMove = false;
+
+		// Check if the points have moved outside the plot area (#1003, #4736)
+		if (allowMove) {
+			each(splat(tooltipPoints), function (point) {
+				if (point.plotX === undefined) {
+					allowMove = false;
+				}
+			});
 		}
+		
 		// Just move the tooltip, #349
 		if (allowMove) {
 			tooltip.refresh(tooltipPoints);

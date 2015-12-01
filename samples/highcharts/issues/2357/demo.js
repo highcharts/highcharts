@@ -37,7 +37,7 @@ $(function () {
             }],
             "name": "Gamma"
         }],
-            "xAxis": {
+        "xAxis": {
             "type": "category"
         }
     });

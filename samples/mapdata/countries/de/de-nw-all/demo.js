@@ -224,7 +224,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/de/de-nw-all.js">Nordrhein-Westfalen</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/de/de-nw-all.js">Nordrhein-Westfalen</a>'
         },
 
         mapNavigation: {

@@ -1,9 +1,10 @@
 $(function () {
 
     QUnit.test('Stock chart with overshooting range', function (assert) {
-        var chart;
+        var chart,
+            i;
 
-        
+
         var eps = [{
             x: Date.UTC(2005, 11, 31, 12, 0, 0, 0),
             y: 15.3
@@ -13,12 +14,13 @@ $(function () {
         }];
 
         var buttons = [];
-        for (i = 11; i > 6; i--)
-        buttons.push({
-            type: "year",
-            count: i,
-            text: i + "y"
-        })
+        for (i = 11; i > 6; i--) {
+            buttons.push({
+                type: "year",
+                count: i,
+                text: i + "y"
+            });
+        }
 
         $('#container').highcharts('StockChart', {
             rangeSelector: {

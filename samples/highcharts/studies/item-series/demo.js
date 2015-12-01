@@ -1,6 +1,6 @@
 $(function () {
 
-    /** 
+    /**
      * Proof of concept for a Highcharts item chart
      *
      * TODO:
@@ -31,7 +31,7 @@ $(function () {
                         point.pointAttr[point.selected ? 'selected' : ''] || series.pointAttr[''] :
                         series.pointAttribs(point, point.selected && 'select');
                     delete pointAttr.r;
-                    
+
                     if (point.y !== null) {
 
                         if (!point.graphic) {
@@ -47,7 +47,7 @@ $(function () {
                             if (graphics[i]) {
                                 stop(graphics[i]);
                                 graphics[i].attr(attr);
-                            } else {
+                            } else {
                                 graphics[i] = renderer.circle(attr)
                                     .attr(pointAttr)
                                     .add(point.graphic);
@@ -55,15 +55,15 @@ $(function () {
                         }
                     }
                 });
-                
+
             }
         });
-        
+
     }(Highcharts, HighchartsAdapter));
 
 
     $('#container').highcharts({
-        
+
         chart: {
             type: 'item'
         },
@@ -73,7 +73,7 @@ $(function () {
         },
 
         xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
 

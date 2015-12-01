@@ -26,6 +26,7 @@
 		PlotLineOrBand = H.PlotLineOrBand,
 		removeEvent = H.removeEvent,
 		splat = H.splat,
+		syncTimeout = H.syncTimeout,
 		Tick = H.Tick;
 /**
  * Create a new axis object
@@ -847,10 +848,23 @@ H.Axis.prototype = {
 				pointRangePadding = linkedParent.pointRangePadding;
 
 			} else {
+				// Find the closestPointRange across all series
 				each(axis.series, function (series) {
-					var seriesPointRange = hasCategories ? 1 : (isXAxis ? series.pointRange : (axis.axisPointRange || 0)), // #2806
-						pointPlacement = series.options.pointPlacement,
-						seriesClosestPointRange = series.closestPointRange;
+					var seriesClosest = series.closestPointRange;
+					if (!series.noSharedTooltip && defined(seriesClosest)) {
+						closestPointRange = defined(closestPointRange) ?
+							Math.min(closestPointRange, seriesClosest) :
+							seriesClosest;
+					}
+				});
+
+				each(axis.series, function (series) {
+					var seriesPointRange = hasCategories ? 
+						1 : 
+						(isXAxis ? 
+							pick(series.options.pointRange, closestPointRange, 0) : 
+							(axis.axisPointRange || 0)), // #2806
+						pointPlacement = series.options.pointPlacement;
 
 					pointRange = Math.max(pointRange, seriesPointRange);
 
@@ -869,13 +883,6 @@ H.Axis.prototype = {
 							pointRangePadding,
 							pointPlacement === 'on' ? 0 : seriesPointRange
 						);
-					}
-
-					// Set the closestPointRange
-					if (!series.noSharedTooltip && defined(seriesClosestPointRange)) {
-						closestPointRange = defined(closestPointRange) ?
-							Math.min(closestPointRange, seriesClosestPointRange) :
-							seriesClosestPointRange;
 					}
 				});
 			}
@@ -1075,8 +1082,8 @@ H.Axis.prototype = {
 			axis.tickInterval = axis.postProcessTickInterval(axis.tickInterval);
 		}
 
-		// In column-like charts, don't cramp in more ticks than there are points (#1943)
-		if (axis.pointRange) {
+		// In column-like charts, don't cramp in more ticks than there are points (#1943, #4184)
+		if (axis.pointRange && !tickIntervalOption) {
 			axis.tickInterval = Math.max(axis.pointRange, axis.tickInterval);
 		}
 
@@ -1215,26 +1222,23 @@ H.Axis.prototype = {
 	},
 
 	/**
-	 * Set the max ticks of either the x and y axis collection
+	 * Check if there are multiple axes in the same pane
+	 * @returns {Boolean} There are other axes
 	 */
-	getTickAmount: function () {
+	alignToOthers: function () {
 		var others = {}, // Whether there is another axis to pair with this one
 			hasOther,
-			options = this.options,
-			tickAmount = options.tickAmount,
-			tickPixelInterval = options.tickPixelInterval;
+			options = this.options;
 
-		if (!defined(options.tickInterval) && this.len < tickPixelInterval && !this.isRadial &&
-				!this.isLog && options.startOnTick && options.endOnTick) {
-			tickAmount = 2;
-		}
-
-		if (!tickAmount && this.chart.options.chart.alignTicks !== false && options.alignTicks !== false) {
-			// Check if there are multiple axes in the same pane
+		if (this.chart.options.chart.alignTicks !== false && options.alignTicks !== false) {
 			each(this.chart[this.coll], function (axis) {
-				var options = axis.options,
+				var otherOptions = axis.options,
 					horiz = axis.horiz,
-					key = [horiz ? options.left : options.top, horiz ? options.width : options.height, options.pane].join(',');
+					key = [
+						horiz ? otherOptions.left : otherOptions.top, 
+						horiz ? otherOptions.width : otherOptions.height, 
+						otherOptions.pane
+					].join(',');
 
 				if (axis.series.length) { // #4442
 					if (others[key]) {
@@ -1244,11 +1248,26 @@ H.Axis.prototype = {
 					}
 				}
 			});
+		}
+		return hasOther;
+	},
 
-			if (hasOther) {
-				// Add 1 because 4 tick intervals require 5 ticks (including first and last)
-				tickAmount = Math.ceil(this.len / tickPixelInterval) + 1;
-			}
+	/**
+	 * Set the max ticks of either the x and y axis collection
+	 */
+	getTickAmount: function () {
+		var options = this.options,
+			tickAmount = options.tickAmount,
+			tickPixelInterval = options.tickPixelInterval;
+
+		if (!defined(options.tickInterval) && this.len < tickPixelInterval && !this.isRadial &&
+				!this.isLog && options.startOnTick && options.endOnTick) {
+			tickAmount = 2;
+		}
+
+		if (!tickAmount && this.alignToOthers()) {
+			// Add 1 because 4 tick intervals require 5 ticks (including first and last)
+			tickAmount = Math.ceil(this.len / tickPixelInterval) + 1;
 		}
 
 		// For tick amounts of 2 and 3, compute five ticks and remove the intermediate ones. This
@@ -1332,7 +1351,7 @@ H.Axis.prototype = {
 
 		// do we really need to go through all this?
 		if (isDirtyAxisLength || isDirtyData || axis.isLinked || axis.forceRedraw ||
-			axis.userMin !== axis.oldUserMin || axis.userMax !== axis.oldUserMax) {
+			axis.userMin !== axis.oldUserMin || axis.userMax !== axis.oldUserMax || axis.alignToOthers()) {
 
 			if (axis.resetStacks) {
 				axis.resetStacks();
@@ -1601,7 +1620,7 @@ H.Axis.prototype = {
 			horiz = this.horiz,
 			margin = chart.margin,
 			slotCount = this.categories ? tickPositions.length : tickPositions.length - 1,
-			slotWidth = this.slotWidth = (horiz && !labelOptions.step && !labelOptions.rotation &&
+			slotWidth = this.slotWidth = (horiz && (labelOptions.step || 0) < 2 && !labelOptions.rotation && // #4415
 				((this.staggerLines || 1) * chart.plotWidth) / slotCount) ||
 				(!horiz && ((margin[3] && (margin[3] - chart.spacing[3])) || chart.chartWidth * 0.33)), // #1580, #1931,
 			innerWidth = Math.max(1, Math.round(slotWidth - 2 * (labelOptions.padding || 5))),
@@ -1611,7 +1630,6 @@ H.Axis.prototype = {
 			css,
 			labelLength = 0,
 			label,
-			bBox,
 			i,
 			pos;
 
@@ -1653,13 +1671,12 @@ H.Axis.prototype = {
 					pos = tickPositions[i];
 					label = ticks[pos].label;
 					if (label) {
-						bBox = label.getBBox();
 						// Reset ellipsis in order to get the correct bounding box (#4070)
 						if (label.styles && label.styles.textOverflow === 'ellipsis') {
 							label.css({ textOverflow: 'clip' });
 						}
-						if (bBox.height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f) ||
-								bBox.width > slotWidth) { // #4678
+						if (label.getBBox().height > this.len / tickPositions.length - (labelMetrics.h - labelMetrics.f) ||
+								ticks[pos].labelLength > slotWidth) { // #4678
 							label.specCss = { textOverflow: 'ellipsis' };
 						}
 					}
@@ -1728,6 +1745,7 @@ H.Axis.prototype = {
 			labelOptions = options.labels,
 			labelOffset = 0, // reset
 			labelOffsetPadded,
+			opposite = axis.opposite,
 			axisOffset = chart.axisOffset,
 			clipOffset = chart.clipOffset,
 			clip,
@@ -1770,21 +1788,23 @@ H.Axis.prototype = {
 
 			axis.renderUnsquish();
 
-			each(tickPositions, function (pos) {
-				// left side must be align: right and right side must have align: left for labels
-				if (side === 0 || side === 2 || { 1: 'left', 3: 'right' }[side] === axis.labelAlign || axis.labelAlign === 'center') {
+
+			// Left side must be align: right and right side must have align: left for labels
+			if (labelOptions.reserveSpace !== false && (side === 0 || side === 2 || // docs: reserveSpace (demo at highcharts/xaxis/labels-reservespace)
+					{ 1: 'left', 3: 'right' }[side] === axis.labelAlign || axis.labelAlign === 'center')) {
+				each(tickPositions, function (pos) {
 
 					// get the highest offset
 					labelOffset = Math.max(
 						ticks[pos].getLabelSize(),
 						labelOffset
 					);
-				}
-			});
+				});
+			}
 
 			if (axis.staggerLines) {
 				labelOffset *= axis.staggerLines;
-				axis.labelOffset = labelOffset;
+				axis.labelOffset = labelOffset * (axis.opposite ? -1 : 1);
 			}
 
 
@@ -1806,9 +1826,13 @@ H.Axis.prototype = {
 				.attr({
 					zIndex: 7,
 					rotation: axisTitleOptions.rotation || 0,
-					align:
+					align: 
 						axisTitleOptions.textAlign ||
-						{ low: 'left', middle: 'center', high: 'right' }[axisTitleOptions.align]
+						{ 
+							low: opposite ? 'right' : 'left',
+							middle: 'center',
+							high: opposite ? 'left' : 'right'
+						}[axisTitleOptions.align]
 				})
 				.addClass('highcharts-axis-title highcharts-' + this.coll.toLowerCase() + '-title')
 				/*= if (build.classic) { =*/
@@ -1825,7 +1849,7 @@ H.Axis.prototype = {
 			}
 
 			// hide or show the title depending on whether showEmpty is set
-			axis.axisTitle[showAxis ? 'show' : 'hide']();
+			axis.axisTitle[showAxis ? 'show' : 'hide'](true);
 		}
 
 		// handle automatic or user set offset
@@ -1833,7 +1857,7 @@ H.Axis.prototype = {
 
 		axis.tickRotCorr = axis.tickRotCorr || { x: 0, y: 0 }; // polar
 		lineHeightCorrection = side === 2 ? axis.tickRotCorr.y : 0;
-		labelOffsetPadded = labelOffset + titleMargin +
+		labelOffsetPadded = Math.abs(labelOffset) + titleMargin +
 			(labelOffset && (directionFactor * (horiz ? pick(labelOptions.y, axis.tickRotCorr.y + 8) : labelOptions.x) - lineHeightCorrection));
 		axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);
 
@@ -2074,11 +2098,10 @@ H.Axis.prototype = {
 			}
 
 			// When the objects are finished fading out, destroy them
-			if (coll === alternateBands || !chart.hasRendered || !delay) {
-				destroyInactiveItems();
-			} else if (delay) {
-				setTimeout(destroyInactiveItems, delay);
-			}
+			syncTimeout(
+				destroyInactiveItems, 
+				coll === alternateBands || !chart.hasRendered || !delay ? 0 : delay
+			);
 		});
 
 		// Static items. As the axis group is cleared on subsequent calls
@@ -2100,7 +2123,7 @@ H.Axis.prototype = {
 			}
 
 			// show or hide the line depending on options.showEmpty
-			axis.axisLine[showAxis ? 'show' : 'hide']();
+			axis.axisLine[showAxis ? 'show' : 'hide'](true);
 		}
 
 		if (axisTitle && showAxis) {
@@ -2188,21 +2211,24 @@ H.Axis.prototype = {
 
 	/**
 	 * Draw the crosshair
+	 * 
+	 * @param  {Object} e The event arguments from the modified pointer event
+	 * @param  {Object} point The Point object
 	 */
-	drawCrosshair: function (e, point) { // docs: Missing docs for Axis.crosshair. Also for properties.
+	drawCrosshair: function (e, point) {
 
 		var path,
 			options = this.crosshair,
-			animation = options.animation,
 			pos,
 			attribs,
-			categorized;
+			categorized,
+			strokeWidth;
 
 		if (
 			// Disabled in options
 			!this.crosshair ||
 			// Snap
-			((defined(point) || !pick(this.crosshair.snap, true)) === false) ||
+			((defined(point) || !pick(options.snap, true)) === false) ||
 			// Not on this axis (#4095, #2888)
 			(point && point.series && point.series[this.coll] !== this)
 		) {
@@ -2228,16 +2254,22 @@ H.Axis.prototype = {
 				return;
 			}
 
+			categorized = this.categories && !this.isRadial;
+			strokeWidth = pick(options.width, (categorized ? this.transA : 1));
+
 			// Draw the cross
 			if (this.cross) {
 				this.cross
-					.attr({ visibility: 'visible' })[animation ? 'animate' : 'attr']({ d: path }, animation);
+					.attr({
+						d: path,
+						visibility: 'visible',
+						'stroke-width': strokeWidth // #4737
+					});
 			} else {
-				categorized = this.categories && !this.isRadial;
 				attribs = {
-					'stroke-width': options.width || (categorized ? this.transA : 1),
+					'stroke-width': strokeWidth,
 					stroke: options.color || (categorized ? 'rgba(155,200,255,0.2)' : '#C0C0C0'),
-					zIndex: options.zIndex || 2
+					zIndex: pick(options.zIndex, 2)
 				};
 				/*= if (build.classic) { =*/
 				if (options.dashStyle) {

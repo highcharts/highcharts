@@ -197,6 +197,7 @@ RangeSelector.prototype = {
 		// Select this button
 		if (buttons[i]) {
 			buttons[i].setState(2);
+			rangeSelector.lastSelected = i;
 		}
 
 		// Update the chart
@@ -357,7 +358,9 @@ RangeSelector.prototype = {
 				// Set a button on export
 				isSelectedForExport = chart.renderer.forExport && i === selected,
 
-				isSameRange = range === actualRange;
+				isSameRange = range === actualRange,
+
+				hasNoData = !baseAxis.hasVisibleSeries;
 
 			// Months and years have a variable range so we check the extremes
 			if ((type === 'month' || type === 'year') && (actualRange >= { month: 28, year: 365 }[type] * 24 * 36e5 * count) &&
@@ -367,11 +370,11 @@ RangeSelector.prototype = {
 			// The new zoom area happens to match the range for a button - mark it selected.
 			// This happens when scrolling across an ordinal gap. It can be seen in the intraday
 			// demos when selecting 1h and scroll across the night gap.
-			if (isSelectedForExport || (isSameRange && i !== selected)) {
+			if (isSelectedForExport || (isSameRange && i !== selected) && i === rangeSelector.lastSelected) {
 				rangeSelector.setSelected(i);
 				buttons[i].setState(2);
 
-			} else if (!allButtonsEnabled && (isTooGreatRange || isTooSmallRange || isAllButAlreadyShowingAll || isYTDButNotAvailable)) {
+			} else if (!allButtonsEnabled && (isTooGreatRange || isTooSmallRange || isAllButAlreadyShowingAll || isYTDButNotAvailable || hasNoData)) {
 				buttons[i].setState(3);
 
 			} else if (buttons[i].state === 3) {
@@ -418,8 +421,13 @@ RangeSelector.prototype = {
 			this[name + 'Input'].HCTime = time;
 		}
 
-		this[name + 'Input'].value = dateFormat(options.inputEditDateFormat || '%Y-%m-%d', this[name + 'Input'].HCTime);
-		this[name + 'DateBox'].attr({ text: dateFormat(options.inputDateFormat || '%b %e, %Y', this[name + 'Input'].HCTime) });
+		this[name + 'Input'].value = dateFormat(
+			options.inputEditDateFormat || '%Y-%m-%d',
+			this[name + 'Input'].HCTime
+		);
+		this[name + 'DateBox'].attr({
+			text: dateFormat(options.inputDateFormat || '%b %e, %Y', this[name + 'Input'].HCTime)
+		});
 	},
 
 	showInput: function (name) {
@@ -766,6 +774,9 @@ Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
 		} else {
 			newMax = newMin + fixedRange;
 		}
+	}
+	if (isNaN(newMin)) { // #1195
+		newMin = newMax = undefined;
 	}
 
 	return {

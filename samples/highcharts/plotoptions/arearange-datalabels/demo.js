@@ -1,5 +1,5 @@
 $(function () {
-    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=range.json&callback=?', function (data) {
+    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=range.json&callback=?', function (data) {
 
         // Shorten the data
         data = data.splice(181, 14);

@@ -5,26 +5,6 @@ $(function () {
         names = ['MSFT', 'AAPL', 'GOOG'],
         colors = Highcharts.getOptions().colors;
 
-    $.each(names, function (i, name) {
-
-        $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=' + name.toLowerCase() + '-c.json&callback=?',   function (data) {
-
-            seriesOptions[i] = {
-                name: name,
-                data: data
-            };
-
-            // As we're loading the data asynchronously, we don't know what order it will arrive. So
-            // we keep a counter and create the chart when all the data is loaded.
-            seriesCounter++;
-
-            if (seriesCounter == names.length) {
-                createChart();
-            }
-        });
-    });
-
-
     // create the chart when all data is loaded
     function createChart() {
 
@@ -73,5 +53,24 @@ $(function () {
             series: seriesOptions
         });
     }
+
+    $.each(names, function (i, name) {
+
+        $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=' + name.toLowerCase() + '-c.json&callback=?',   function (data) {
+
+            seriesOptions[i] = {
+                name: name,
+                data: data
+            };
+
+            // As we're loading the data asynchronously, we don't know what order it will arrive. So
+            // we keep a counter and create the chart when all the data is loaded.
+            seriesCounter++;
+
+            if (seriesCounter === names.length) {
+                createChart();
+            }
+        });
+    });
 
 });

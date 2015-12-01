@@ -72,7 +72,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/no/no-aa-all.js">Aust-Agder</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/no/no-aa-all.js">Aust-Agder</a>'
         },
 
         mapNavigation: {

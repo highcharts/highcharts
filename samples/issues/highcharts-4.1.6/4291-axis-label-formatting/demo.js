@@ -14,7 +14,7 @@ $(function () {
             '79 962.57',
             'Preserved decimals'
         );
-        
+
     });
 
 });

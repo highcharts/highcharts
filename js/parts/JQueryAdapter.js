@@ -63,9 +63,14 @@
 
 						// Fx.prototype.cur returns the current value. The other ones are setters
 						// and returning a value has no effect.
-						return elem.attr ? // is SVG element wrapper
-								elem.attr(fx.prop, fn === 'cur' ? undefined : fx.now) : // apply the SVG wrapper's method
-								base.apply(this, arguments); // use jQuery's built-in method
+						if (elem.attr) { // is SVG element wrapper
+							return elem.attr(
+								fx.prop.replace('strokeWidth', 'stroke-width'), // #4721
+								fn === 'cur' ? undefined : fx.now
+							);
+						}
+
+						return base.apply(this, arguments); // use jQuery's built-in method
 					};
 				}
 			});
@@ -100,12 +105,12 @@
 			 * @param {Function} fn
 			 */
 			this.each = Array.prototype.forEach ?
-					function (arr, fn, ctx) { // modern browsers
+					function each(arr, fn, ctx) { // modern browsers
 						return Array.prototype.forEach.call(arr, fn, ctx);
-					
-					} : 
-					function (arr, fn, ctx) { // legacy
-						var i, 
+
+					} :
+					function each(arr, fn, ctx) { // legacy
+						var i,
 							len = arr.length;
 						for (i = 0; i < len; i++) {
 							if (fn.call(ctx || arr[i], arr[i], i, arr) === false) {

@@ -5,7 +5,7 @@ $(function () {
         500,
         300
     );
-        
+
     var lbl = renderer.label('<span>Header</span><br>Body', 100, 100)
         .attr({
             'stroke-width': 1,

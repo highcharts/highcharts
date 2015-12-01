@@ -1,12 +1,12 @@
 $(function () {
-    
+
     /**
      * A small Highcharts snippet/plugin for adding images to axis labels
      */
     (function (H) {
-        function addImages (proceed) {
+        function addImages(proceed) {
 
-            proceed.call(this)
+            proceed.call(this);
 
             var chart = this,
                 axis = chart.xAxis[0],
@@ -46,9 +46,9 @@ $(function () {
         xAxis: {
             categories: ['Jan', 'Feb', 'Mar'],
             images: [
-                'http://highcharts.com/demo/gfx/sun.png',
-                'http://highcharts.com/demo/gfx/sun.png',
-                'http://highcharts.com/demo/gfx/sun.png'
+                'https://www.highcharts.com/samples/graphics/sun.png',
+                'https://www.highcharts.com/samples/graphics/snow.png',
+                'https://www.highcharts.com/samples/graphics/sun.png'
             ],
             labels: {
                 x: 16
@@ -59,5 +59,5 @@ $(function () {
             data: [29.9, 71.5, 106.4]
         }]
 
-    })
+    });
 });

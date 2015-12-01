@@ -36,7 +36,7 @@ $(function () {
 
         function allLabelsVisible(chart) {
 
-            allVis = true;
+            var allVis = true;
 
             chart.series[0].points.forEach(function (point) {
                 if (point.dataLabelUpper.attr('y') < -10 || point.dataLabel.attr('y') < -10) {
@@ -47,7 +47,7 @@ $(function () {
             return allVis;
         }
 
-        
+
 
         chart = $('#container').highcharts(options).highcharts();
         assert.equal(
@@ -63,8 +63,8 @@ $(function () {
             allLabelsVisible(chart),
             true,
             'All labels are visible when inverted'
-        )
+        );
 
-        
+
     });
 });

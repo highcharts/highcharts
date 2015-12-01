@@ -11,14 +11,14 @@ $(function () {
             },
             credits: {
                 enabled: false
-            },        
+            },
             scrollbar: {
                 enabled: true
             }
         });
-        
 
-        // In an ordinal axis, the point distance is the same even though the actual time distance is 
+
+        // In an ordinal axis, the point distance is the same even though the actual time distance is
         // different.
         assert.equal(
             typeof chart.scroller.scrollbarGroup,

@@ -106,8 +106,9 @@ wrap(seriesTypes.column.prototype, 'init', function (proceed) {
 		var seriesOptions = this.options,
 			grouping = seriesOptions.grouping,
 			stacking = seriesOptions.stacking,
-			z = 0;
-
+			reversedStacks = pick(this.yAxis.options.reversedStacks, true),
+			z = 0;	
+		
 		if (!(grouping !== undefined && !grouping)) {
 			var stacks = this.chart.retrieveStacks(stacking),
 				stack = seriesOptions.stack || 0,
@@ -117,7 +118,12 @@ wrap(seriesTypes.column.prototype, 'init', function (proceed) {
 					break;
 				}
 			}
-			z = (stacks.totalStacks * 10) - (10 * (stacks.totalStacks - stacks[stack].position)) - i;
+			z = (10 * (stacks.totalStacks - stacks[stack].position)) - (reversedStacks ? i : -i); // #4369
+
+			// In case when axis is reversed, columns are also reversed inside the group (#3737)
+			if (!this.xAxis.reversed) {
+				z = (stacks.totalStacks * 10) - z;
+			}
 		}
 
 		seriesOptions.zIndex = z;
@@ -205,12 +211,6 @@ wrap(seriesTypes.cylinder.prototype, 'translate', function (proceed) {
 		cylOptions = options.plotOptions.cylinder,
 		options3d = options.chart.options3d,
 		depth = cylOptions.depth || 0,
-		origin = {
-			x: chart.inverted ? chart.plotHeight / 2 : chart.plotWidth / 2,
-			y: chart.inverted ? chart.plotWidth / 2 : chart.plotHeight / 2,
-			z: options3d.depth,
-			vd: options3d.viewDistance
-		},
 		alpha = options3d.alpha;
 
 	var z = cylOptions.stacking ? (this.options.stack || 0) * depth : series._i * depth;
@@ -231,7 +231,6 @@ wrap(seriesTypes.cylinder.prototype, 'translate', function (proceed) {
 		shapeArgs.depth = shapeArgs.height * (1 / sin((90 - alpha) * deg2rad)) - z;
 		shapeArgs.alpha = 90 - alpha;
 		shapeArgs.beta = 0;
-		shapeArgs.origin = origin;
 	});
 });
 */

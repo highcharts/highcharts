@@ -198,12 +198,10 @@ H.Tick.prototype = {
 			line;
 
 		if (!defined(yOffset)) {
-			if (axis.side === 2) {
-				yOffset = rotCorr.y + 8;
-
-			} else { // #3140
-				yOffset = Math.cos(label.rotation * deg2rad) * (rotCorr.y - label.getBBox().height / 2);
-			}
+			yOffset = axis.side === 2 ? 
+				rotCorr.y + 8 :
+				// #3140, #3140
+				yOffset = Math.cos(label.rotation * deg2rad) * (rotCorr.y - label.getBBox(false, 0).height / 2);
 		}
 
 		x = x + labelOptions.x + rotCorr.x - (tickmarkOffset && horiz ?
@@ -214,6 +212,9 @@ H.Tick.prototype = {
 		// Correct for staggered labels
 		if (staggerLines) {
 			line = (index / (step || 1) % staggerLines);
+			if (axis.opposite) {
+				line = staggerLines - line - 1;
+			}
 			y += line * (axis.labelOffset / staggerLines);
 		}
 

@@ -11,7 +11,6 @@ $(function () {
         chart: {
             renderTo: 'container',
             borderColor: '#4572A7',
-            backgroundColor: null,
             plotBorderWidth: 1,
             plotBorderColor: '#CCCCCC',
             backgroundColor: '#222',
@@ -40,7 +39,7 @@ $(function () {
                 x: 3
             },
             plotLines: [{
-                value: Date.UTC(1971, 0, 01),
+                value: Date.UTC(1971, 0, 1),
                 color: '#444444',
                 width: 3
             }],
@@ -85,8 +84,10 @@ $(function () {
             showLastLabel: true,
             labels: {
                 formatter: function () {
-                    if (this.value % 1 == 0) return Highcharts.numberFormat(this.value, 0) + 'm';
-                    else return '';
+                    if (this.value % 1 === 0) {
+                        return Highcharts.numberFormat(this.value, 0) + 'm';
+                    }
+                    return '';
                 }
             },
             title: {
@@ -120,9 +121,9 @@ $(function () {
         },
         tooltip: {
             formatter: function () {
-                var heading = this.series.name == 'Snitt' ?
+                var heading = this.series.name === 'Snitt' ?
                     'Snitt' :
-                    "Vinteren " + (parseInt(this.series.name) - 1) + "-" + this.series.name;
+                    "Vinteren " + (parseInt(this.series.name, 10) - 1) + "-" + this.series.name;
 
                 return "<b>" + heading + "</b><br/>" + Highcharts.dateFormat('%e. %b', this.x, true) + ":<br/>" + Highcharts.numberFormat(100 * this.y, 0) + " cm snjo";
             },

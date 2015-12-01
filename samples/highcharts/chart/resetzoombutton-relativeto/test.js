@@ -12,5 +12,5 @@ function test(chart) {
     chart.pointer.onDocumentMouseUp({});
     chart.getSVG = function () {
         return this.container.innerHTML;
-    }
+    };
 }

@@ -30,7 +30,7 @@ $(function () {
 
             title: {
                 text: 'Values',
-                margin: 16,
+                margin: 16
             },
             min: 0,
             lineWidth: 1,

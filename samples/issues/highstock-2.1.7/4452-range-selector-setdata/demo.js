@@ -3,11 +3,11 @@ $(function () {
     QUnit.test('Stock chart with empty data initially', function (assert) {
         var chart;
 
-        function setData () {
+        function setData() {
             // generate an array of random data
             var data = [],
                 time = new Date().getTime();
-            
+
             for (var i = -9999; i <= 0; i += 1) {
                 data.push([
                     time + i * 10000,
@@ -33,7 +33,7 @@ $(function () {
                     count: 6,
                     text: '6h'
                 }],
-                selected: 2,
+                selected: 2
             },
             navigator: {
                 enabled: false

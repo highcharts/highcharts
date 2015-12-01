@@ -614,7 +614,7 @@ $(function () {
 
     var chart = new Highcharts.StockChart({
         chart: {
-            renderTo: 'container',
+            renderTo: 'container'
         },
         plotOptions: {
             series: {

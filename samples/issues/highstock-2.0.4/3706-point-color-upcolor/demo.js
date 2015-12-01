@@ -2,7 +2,7 @@ $(function () {
     $('#container').highcharts({
 
         xAxis: {
-            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+            categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         },
 
@@ -14,13 +14,13 @@ $(function () {
             type: 'ohlc',
             color: 'blue',
             upColor: 'green',
-            data: [{ 
-                open: 1, 
-                high: 4, 
-                low: 0, 
+            data: [{
+                open: 1,
+                high: 4,
+                low: 0,
                 close: 2
             }, {
-                open: 4, 
+                open: 4,
                 high: 6,
                 low: 2,
                 close: 5,

@@ -24,12 +24,12 @@ $(function () {
         chart.series[0].points[0].setVisible(false);
 
         assert.equal(
-            chart.series[0].points[0].graphic.attr('visibility'),     
+            chart.series[0].points[0].graphic.attr('visibility'),
             'hidden',
             'Hidden pie on setVisible false'
         );
         assert.equal(
-            chart.series[0].points[0].dataLabel.attr('visibility'),     
+            chart.series[0].points[0].dataLabel.attr('visibility'),
             'hidden',
             'Hidden data label on setVisible false'
         );
@@ -48,12 +48,12 @@ $(function () {
         chart.series[0].points[0].setVisible(true, false);
         chart.redraw();
         assert.strictEqual(
-            chart.series[0].points[0].graphic.element.getAttribute('visibility'),     
+            chart.series[0].points[0].graphic.element.getAttribute('visibility'),
             null,
             'Visible pie on setVisible true'
         );
         assert.strictEqual(
-            chart.series[0].points[0].dataLabel.element.getAttribute('visibility'),     
+            chart.series[0].points[0].dataLabel.element.getAttribute('visibility'),
             null,
             'Visible data label on setVisible true'
         );
@@ -65,7 +65,7 @@ $(function () {
 
 
 
-        
+
     });
 
 });

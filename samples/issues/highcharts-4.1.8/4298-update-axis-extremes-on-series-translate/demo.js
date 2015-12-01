@@ -1,26 +1,26 @@
 $(function () {
     QUnit.test("Axis extremes should be reset after updated data." , function (assert) {
         var chart = $('#container').highcharts({
-            series: [{
-                type: "treemap",
-                layoutAlgorithm: 'squarified',
-                allowDrillToNode: true,
-                data: [{
-                    id: "A"
-                }, {
-                    id: "B",
-                    value: 2            
-                }, {
-                    id: "A1",
-                    parent: "A",
-                    value: 1
+                series: [{
+                    type: "treemap",
+                    layoutAlgorithm: 'squarified',
+                    allowDrillToNode: true,
+                    data: [{
+                        id: "A"
+                    }, {
+                        id: "B",
+                        value: 2
+                    }, {
+                        id: "A1",
+                        parent: "A",
+                        value: 1
+                    }]
                 }]
-            }]
-        }).highcharts(),
-        series = chart.series[0],
-        extremesX,
-        extremesY,
-        root;
+            }).highcharts(),
+            series = chart.series[0],
+            extremesX,
+            extremesY,
+            root;
 
         // Actions
         series.drillToNode("A");
@@ -39,5 +39,5 @@ $(function () {
         assert.strictEqual(root.x + root.width, extremesX.max, "xAxis.max equals root.x + root.width");
         assert.strictEqual(root.y, extremesY.min, "yAxis.min equals root.y");
         assert.strictEqual(root.y + root.height, extremesY.max, "yAxis.max equals root.y + root.height");
-    });    
+    });
 });

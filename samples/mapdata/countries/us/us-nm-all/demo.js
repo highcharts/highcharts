@@ -144,7 +144,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-nm-all.js">New Mexico</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-nm-all.js">New Mexico</a>'
         },
 
         mapNavigation: {

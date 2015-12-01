@@ -20,7 +20,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-hi-congress-113.js">Hawaii congressional districts</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-hi-congress-113.js">Hawaii congressional districts</a>'
         },
 
         mapNavigation: {

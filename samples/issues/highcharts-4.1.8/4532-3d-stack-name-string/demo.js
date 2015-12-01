@@ -22,11 +22,11 @@ $(function () {
 
 
         assert.strictEqual(
-            chart.series[0].points && chart.series[0].points.length == 2,
+            chart.series[0].points && chart.series[0].points.length === 2,
             true,
             'No error.'
         );
-        
+
     });
 
 });

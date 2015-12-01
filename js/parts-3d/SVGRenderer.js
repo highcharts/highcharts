@@ -4,16 +4,23 @@
 		defined = H.defined,
 		deg2rad = H.deg2rad,
 		each = H.each,
+		extend = H.extend,
+		inArray = H.inArray,
 		map = H.map,
 		merge = H.merge,
 		perspective = H.perspective,
+		PI = Math.PI,
+		pick = H.pick,
 		SVGElement = H.SVGElement,
-		SVGRenderer = H.SVGRenderer;
+		SVGRenderer = H.SVGRenderer,
+		wrap = H.wrap;
 /*** 
 	EXTENSION TO THE SVG-RENDERER TO ENABLE 3D SHAPES
 	***/
 ////// HELPER METHODS //////
-var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (Math.PI / 2);
+
+var dFactor = (4 * (Math.sqrt(2) - 1) / 3) / (PI / 2);
+
 
 //Shoelace algorithm -- http://en.wikipedia.org/wiki/Shoelace_formula
 function shapeArea(vertexes) {
@@ -227,113 +234,170 @@ SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 };
 
 ////// SECTORS //////
-SVGRenderer.prototype.arc3d = function (shapeArgs) {
+Highcharts.SVGRenderer.prototype.arc3d = function (attribs) {
 
-	shapeArgs.alpha *= deg2rad;
-	shapeArgs.beta *= deg2rad;
-	var result = this.g(),
-		paths = this.arc3dPath(shapeArgs),
-		renderer = result.renderer;
+	var wrapper = this.g(),
+		renderer = wrapper.renderer,
+		customAttribs = ['x', 'y', 'r', 'innerR', 'start', 'end'];
 
-	var zIndex = paths.zTop * 100;
-
-	result.shapeArgs = shapeArgs;	// Store for later use
-
-	// create the different sub sections of the shape
-	result.top = renderer.path(paths.top).setRadialReference(shapeArgs.center).attr({ zIndex: paths.zTop }).add(result);
-	result.side1 = renderer.path(paths.side2).attr({ zIndex: paths.zSide1 });
-	result.side2 = renderer.path(paths.side1).attr({ zIndex: paths.zSide2 });
-	result.inn = renderer.path(paths.inn).attr({ zIndex: paths.zInn });
-	result.out = renderer.path(paths.out).attr({ zIndex: paths.zOut });
-
-	// apply the fill to the top and a darker shade to the sides
-	result.fillSetter = function (color) {
-		this.color = color;
-
-		var c0 = color,
-			c2 = Highcharts.Color(color).brighten(-0.1).get();
-
-		this.side1.attr({ fill: c2 });
-		this.side2.attr({ fill: c2 });
-		this.inn.attr({ fill: c2 });
-		this.out.attr({ fill: c2 });
-		this.top.attr({ fill: c0 });
-		return this;
-	};
-
-	// apply the translation to all
-	result.translateXSetter = function (value) {
-		this.out.attr({ translateX: value });
-		this.inn.attr({ translateX: value });
-		this.side1.attr({ translateX: value });
-		this.side2.attr({ translateX: value });
-		this.top.attr({ translateX: value });
-	};
-
-	result.translateYSetter = function (value) {
-		this.out.attr({ translateY: value });
-		this.inn.attr({ translateY: value });
-		this.side1.attr({ translateY: value });
-		this.side2.attr({ translateY: value });
-		this.top.attr({ translateY: value });
-	};
-
-	result.animate = function (args, duration, complete) {
-		if (defined(args.end) || defined(args.start)) {
-			this._shapeArgs = this.shapeArgs;
-
-			SVGElement.prototype.animate.call(this, {
-				_args: args	
-			}, {
-				duration: duration,
-				start: function () {
-					var args = arguments,
-						fx = args[0],
-						elem = fx.elem,
-						end = elem._shapeArgs;
-
-					if (end.fill !== elem.color) {
-						elem.attr({
-							fill: end.fill
-						});
-					}
-				},
-				step: function () {
-					var args = arguments,
-						fx = args[1],
-						result = fx.elem,
-						start = result._shapeArgs,
-						end = fx.end,
-						pos = fx.pos,
-						sA = merge(start, {
-							x: start.x + ((end.x - start.x) * pos),
-							y: start.y + ((end.y - start.y) * pos),
-							r: start.r + ((end.r - start.r) * pos),
-							innerR: start.innerR + ((end.innerR - start.innerR) * pos),
-							start: start.start + ((end.start - start.start) * pos),
-							end: start.end + ((end.end - start.end) * pos)
-						});
-
-					var paths = result.renderer.arc3dPath(sA);
-
-					result.shapeArgs = sA;
-
-					result.top.attr({ d: paths.top, zIndex: paths.zTop });
-					result.inn.attr({ d: paths.inn, zIndex: paths.zInn });
-					result.out.attr({ d: paths.out, zIndex: paths.zOut });
-					result.side1.attr({ d: paths.side1, zIndex: paths.zSide1 });
-					result.side2.attr({ d: paths.side2, zIndex: paths.zSide2 });
-
-				}
-			}, complete);
-		} else {			
-			SVGElement.prototype.animate.call(this, args, duration, complete);
+	/**
+	 * Get custom attributes. Mutate the original object and return an object with only custom attr.
+	 */
+	function suckOutCustom(params) {
+		var hasCA = false,
+			ca = {};
+		for (var key in params) {
+			if (inArray(key, customAttribs) !== -1) {
+				ca[key] = params[key];
+				delete params[key];
+				hasCA = true;
+			}
 		}
+		return hasCA ? ca : false;
+	}
+
+	attribs = merge(attribs);
+
+	attribs.alpha *= deg2rad;
+	attribs.beta *= deg2rad;
+	
+	// Create the different sub sections of the shape
+	wrapper.top = renderer.path();
+	wrapper.side1 = renderer.path();
+	wrapper.side2 = renderer.path();
+	wrapper.inn = renderer.path();
+	wrapper.out = renderer.path();
+
+	/**
+	 * Add all faces
+	 */
+	wrapper.onAdd = function () {
+		var parent = wrapper.parentGroup;
+		wrapper.top.add(wrapper);
+		wrapper.out.add(parent);
+		wrapper.inn.add(parent);
+		wrapper.side1.add(parent);
+		wrapper.side2.add(parent);
+	};
+
+	/**
+	 * Compute the transformed paths and set them to the composite shapes
+	 */
+	wrapper.setPaths = function (attribs) {
+
+		var paths = wrapper.renderer.arc3dPath(attribs),
+			zIndex = paths.zTop * 100;
+
+		wrapper.attribs = attribs;
+
+		wrapper.top.attr({ d: paths.top, zIndex: paths.zTop });
+		wrapper.inn.attr({ d: paths.inn, zIndex: paths.zInn });
+		wrapper.out.attr({ d: paths.out, zIndex: paths.zOut });
+		wrapper.side1.attr({ d: paths.side1, zIndex: paths.zSide1 });
+		wrapper.side2.attr({ d: paths.side2, zIndex: paths.zSide2 });
+
+
+		// show all children
+		wrapper.zIndex = zIndex;
+		wrapper.attr({ zIndex: zIndex });
+
+		// Set the radial gradient center the first time
+		if (attribs.center) {
+			wrapper.top.setRadialReference(attribs.center);
+			delete attribs.center;
+		}
+	};
+	wrapper.setPaths(attribs);
+
+	// Apply the fill to the top and a darker shade to the sides
+	wrapper.fillSetter = function (value) {
+		var darker = Highcharts.Color(value).brighten(-0.1).get();
+		
+		this.fill = value;
+
+		this.side1.attr({ fill: darker });
+		this.side2.attr({ fill: darker });
+		this.inn.attr({ fill: darker });
+		this.out.attr({ fill: darker });
+		this.top.attr({ fill: value });
 		return this;
 	};
+
+	// Apply the same value to all. These properties cascade down to the children
+	// when set to the composite arc3d.
+	each(['opacity', 'translateX', 'translateY', 'visibility'], function (setter) {
+		wrapper[setter + 'Setter'] = function (value, key) {
+			wrapper[key] = value;
+			each(['out', 'inn', 'side1', 'side2', 'top'], function (el) {
+				wrapper[el].attr(key, value);
+			});
+		};
+	});
+
+	/**
+	 * Override attr to remove shape attributes and use those to set child paths
+	 */
+	wrap(wrapper, 'attr', function (proceed, params, val) {
+		var ca;
+		if (typeof params === 'object') {
+			ca = suckOutCustom(params);
+			if (ca) {
+				extend(wrapper.attribs, ca);
+				wrapper.setPaths(wrapper.attribs);
+			}
+		}
+		return proceed.call(this, params, val);
+	});
+
+	/**
+	 * Override the animate function by sucking out custom parameters related to the shapes directly,
+	 * and update the shapes from the animation step.
+	 */
+	wrap(wrapper, 'animate', function (proceed, params, animation, complete) {
+		var ca,
+			from = this.attribs,
+			to;
+
+		// Attribute-line properties connected to 3D. These shouldn't have been in the 
+		// attribs collection in the first place.
+		delete params.center;
+		delete params.z;
+		delete params.depth;
+		delete params.alpha;
+		delete params.beta;
+
+		animation = pick(animation, this.renderer.globalAnimation);
+		
+		if (animation) {
+			if (typeof animation !== 'object') {
+				animation = {};	
+			}
+			
+			params = merge(params); // Don't mutate the original object
+			ca = suckOutCustom(params);
+			
+			if (ca) {
+				to = ca;
+				animation.step = function (a, fx) {
+					function interpolate(key) {
+						return from[key] + (pick(to[key], from[key]) - from[key]) * fx.pos;
+					}
+					fx.elem.setPaths(merge(from, {
+						x: interpolate('x'),
+						y: interpolate('y'),
+						r: interpolate('r'),
+						innerR: interpolate('innerR'),
+						start: interpolate('start'),
+						end: interpolate('end')
+					}));
+				};
+			}
+		}
+		return proceed.call(this, params, animation, complete);
+	});
 
 	// destroy all children
-	result.destroy = function () {
+	wrapper.destroy = function () {
 		this.top.destroy();
 		this.out.destroy();
 		this.inn.destroy();
@@ -343,24 +407,21 @@ SVGRenderer.prototype.arc3d = function (shapeArgs) {
 		SVGElement.prototype.destroy.call(this);
 	};
 	// hide all children
-	result.hide = function () {
+	wrapper.hide = function () {
 		this.top.hide();
 		this.out.hide();
 		this.inn.hide();
 		this.side1.hide();
 		this.side2.hide();
 	};
-	result.show = function () {
+	wrapper.show = function () {
 		this.top.show();
 		this.out.show();
 		this.inn.show();
 		this.side1.show();
 		this.side2.show();
 	};
-	// show all children
-	result.zIndex = zIndex;
-	result.attr({ zIndex: zIndex });
-	return result;
+	return wrapper;
 };
 
 /**

@@ -4,7 +4,9 @@ $(function () {
             text: 'Zones were not applied correctly if they were out of range'
         },
         yAxis: {
-            tickPositioner: function () { return [-6, -4, -2]; }
+            tickPositioner: function () {
+                return [-6, -4, -2];
+            }
         },
         series: [{
             type: 'spline',

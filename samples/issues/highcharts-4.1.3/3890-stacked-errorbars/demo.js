@@ -15,12 +15,12 @@ $(function () {
                 "name": "Box plot",
                 "data": [
                     [1,2,3,4,5]
-                ],
+                ]
             }]
         });
 
         assert.equal(
-            $('#container').highcharts().series[0].type,    
+            $('#container').highcharts().series[0].type,
             'boxplot',
             'Successful boxplot'
         );
@@ -45,12 +45,12 @@ $(function () {
                 "type": "errorbar",
                 "data": [
                     [1, 3]
-                ],
+                ]
             }]
         });
 
         assert.equal(
-            $('#container').highcharts().series[1].type,    
+            $('#container').highcharts().series[1].type,
             'errorbar',
             'Successful error bar'
         );

@@ -6,6 +6,8 @@
 		defaultPlotOptions = H.defaultPlotOptions,
 		defined = H.defined,
 		each = H.each,
+		extend = H.extend,
+		format = H.format,
 		isNumber = H.isNumber,
 		merge = H.merge,
 		pick = H.pick,
@@ -18,11 +20,9 @@
  ******************************************************************************/
 
 var seriesProto = Series.prototype,
-	tooltipProto = Tooltip.prototype,
 	baseProcessData = seriesProto.processData,
 	baseGeneratePoints = seriesProto.generatePoints,
 	baseDestroy = seriesProto.destroy,
-	baseTooltipFooterHeaderFormatter = tooltipProto.tooltipFooterHeaderFormatter,
 
 	commonOptions = {
 		approximation: 'average', // average, open, high, low, close, sum
@@ -297,8 +297,7 @@ seriesProto.processData = function () {
 			plotSizeX = chart.plotSizeX,
 			xAxis = series.xAxis,
 			ordinal = xAxis.options.ordinal,
-			groupPixelWidth = series.groupPixelWidth = xAxis.getGroupPixelWidth && xAxis.getGroupPixelWidth(),
-			nonGroupedPointRange = series.pointRange;
+			groupPixelWidth = series.groupPixelWidth = xAxis.getGroupPixelWidth && xAxis.getGroupPixelWidth();
 
 		// Execute grouping if the amount of points is greater than the limit defined in groupPixelWidth
 		if (groupPixelWidth) {
@@ -336,9 +335,6 @@ seriesProto.processData = function () {
 
 			// record what data grouping values were used
 			series.currentDataGrouping = groupPositions.info;
-			if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
-				series.pointRange = groupPositions.info.totalRange;
-			}
 			series.closestPointRange = groupPositions.info.totalRange;
 
 			// Make sure the X axis extends to show the first group (#2533)
@@ -354,7 +350,6 @@ seriesProto.processData = function () {
 			series.processedYData = groupedYData;
 		} else {
 			series.currentDataGrouping = null;
-			series.pointRange = nonGroupedPointRange;
 		}
 		series.hasGroupedData = hasGroupedData;
 	}
@@ -391,7 +386,7 @@ seriesProto.generatePoints = function () {
 /**
  * Extend the original method, make the tooltip's header reflect the grouped range
  */
-tooltipProto.tooltipFooterHeaderFormatter = function (point, isFooter) {
+wrap(Tooltip.prototype, 'tooltipFooterHeaderFormatter', function (proceed, point, isFooter) {
 	var tooltip = this,
 		series = point.series,
 		options = series.options,
@@ -404,8 +399,7 @@ tooltipProto.tooltipFooterHeaderFormatter = function (point, isFooter) {
 		currentDataGrouping,
 		dateTimeLabelFormats,
 		labelFormats,
-		formattedKey,
-		ret;
+		formattedKey;
 
 	// apply only to grouped series
 	if (xAxis && xAxis.options.type === 'datetime' && dataGroupingOptions && isNumber(point.key)) {
@@ -437,15 +431,16 @@ tooltipProto.tooltipFooterHeaderFormatter = function (point, isFooter) {
 		}
 
 		// return the replaced format
-		ret = tooltipOptions[(isFooter ? 'footer' : 'header') + 'Format'].replace('{point.key}', formattedKey);
-
-	// else, fall back to the regular formatter
-	} else {
-		ret = baseTooltipFooterHeaderFormatter.call(tooltip, point, isFooter);
+		return format(tooltipOptions[(isFooter ? 'footer' : 'header') + 'Format'], {
+			point: extend(point, { key: formattedKey }),
+			series: series
+		});
+	
 	}
 
-	return ret;
-};
+	// else, fall back to the regular formatter
+	return proceed.call(tooltip, point, isFooter);
+});
 
 /**
  * Extend the series destroyer

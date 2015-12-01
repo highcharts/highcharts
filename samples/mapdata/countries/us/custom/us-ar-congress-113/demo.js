@@ -28,7 +28,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/custom/us-ar-congress-113.js">Arkansas congressional districts</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/custom/us-ar-congress-113.js">Arkansas congressional districts</a>'
         },
 
         mapNavigation: {

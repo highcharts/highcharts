@@ -33,8 +33,8 @@ $(function () {
             Highcharts.seriesTypes.map.prototype.getBox.call(0, [copy]);
 
             // Place the center of the data label in the center of the point legend box
-            this.middleX = ((path[1] + path[4]) / 2 - copy._minX) / (copy._maxX - copy._minX);
-            this.middleY = ((path[2] + path[7]) / 2 - copy._minY) / (copy._maxY - copy._minY);
+            this.middleX = ((path[1] + path[4]) / 2 - copy._minX) / (copy._maxX - copy._minX); // eslint-disable-line no-underscore-dangle
+            this.middleY = ((path[2] + path[7]) / 2 - copy._minY) / (copy._maxY - copy._minY); // eslint-disable-line no-underscore-dangle
 
         }
         // Tag it for joining

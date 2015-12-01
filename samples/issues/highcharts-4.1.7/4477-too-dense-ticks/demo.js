@@ -1,7 +1,7 @@
 $(function () {
     QUnit.test('Prevent dense ticks', function (assert) {
-        
-        
+
+
         $('#container').highcharts({
             "chart": {
                 "type": "bar"
@@ -11,7 +11,7 @@ $(function () {
             },
             "yAxis": [{
                 "labels": {
-                    "staggerLines": 1,
+                    "staggerLines": 1
                 },
                 "tickInterval": 1
             }],
@@ -22,7 +22,7 @@ $(function () {
         });
 
         var chart = $('#container').highcharts();
-            
+
         assert.strictEqual(
             chart.yAxis[0].tickPositions.length < chart.yAxis[0].len,
             true,

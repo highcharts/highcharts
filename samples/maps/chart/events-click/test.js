@@ -10,5 +10,5 @@ function test(chart) {
         pageY: 320,
         type: 'click',
         target: $('svg rect')[0]
-    })
+    });
 }

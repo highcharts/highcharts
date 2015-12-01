@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test('innerSize cannot be greater than size.', function (assert) {
-        
+
         $('#container').highcharts({
             chart: {
                 width: 200,
@@ -18,7 +18,7 @@ $(function () {
 
         var chart = $('#container').highcharts(),
             center = chart.series[0].center;
-            
+
         assert.strictEqual(
             center[3] > center[2],
             false,

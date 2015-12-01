@@ -68,7 +68,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/jm/jm-all.js">Jamaica</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/jm/jm-all.js">Jamaica</a>'
         },
 
         mapNavigation: {

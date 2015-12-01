@@ -21,7 +21,7 @@ $(function () {
                     y: null
                 }, {
                     name: "Chrome",
-                    y: 24.03,
+                    y: 24.03
                 }, {
                     name: "Firefox",
                     y: 10.38
@@ -38,7 +38,7 @@ $(function () {
             }]
         }).highcharts();
 
-        
+
         assert.strictEqual(
             typeof chart.series[0].points[0].dataLabel,
             'undefined',

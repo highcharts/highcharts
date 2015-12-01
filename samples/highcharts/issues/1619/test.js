@@ -1,6 +1,6 @@
 function test(chart) {
 
-    for (var i = 0; i < 3; i ++) {
+    for (var i = 0; i < 3; i++) {
         chart.setSize(chart.chartWidth - 1, chart.chartHeight - 1);
     }
 
@@ -10,5 +10,5 @@ function test(chart) {
     // Get actual SVG
     chart.getSVG = function () {
         return chart.container.innerHTML;
-    }
+    };
 }

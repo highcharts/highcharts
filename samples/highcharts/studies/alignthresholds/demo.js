@@ -18,12 +18,13 @@ $(function () {
                 primaryIndex,
                 index,
                 newTickPos,
-                threshold,
-                // Find the index and return boolean result
-                isAligned = function (axis) {
-                    index = inArray(threshold, axis.tickPositions); // used in while-loop
-                    return axis.tickPositions.length === axis.tickAmount && index === primaryIndex;
-                };
+                threshold;
+
+            // Find the index and return boolean result
+            function isAligned(axis) {
+                index = inArray(threshold, axis.tickPositions); // used in while-loop
+                return axis.tickPositions.length === axis.tickAmount && index === primaryIndex;
+            }
 
             if (chart.options.chart.alignThresholds && this !== primaryAxis) {
                 primaryThreshold = (primaryAxis.series[0] && primaryAxis.series[0].options.threshold) || 0;

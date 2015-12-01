@@ -3,7 +3,7 @@ $(function () {
     Highcharts.setOptions({
         global: {
             /**
-             * Use moment-timezone.js to return the timezone offset for individual 
+             * Use moment-timezone.js to return the timezone offset for individual
              * timestamps, used in the X axis labels and the tooltip header.
              */
             getTimezoneOffset: function (timestamp) {

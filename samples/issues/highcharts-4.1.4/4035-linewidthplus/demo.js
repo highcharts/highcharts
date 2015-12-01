@@ -16,7 +16,7 @@ $(function () {
         });
 
         assert.equal(
-            chart.series[0].graph.element.getAttribute('stroke-width'),     
+            chart.series[0].graph.element.getAttribute('stroke-width'),
             '2',
             'normal'
         );
@@ -24,7 +24,7 @@ $(function () {
         chart.series[0].points[0].onMouseOver();
 
         assert.equal(
-            chart.series[0].graph.element.getAttribute('stroke-width'),     
+            chart.series[0].graph.element.getAttribute('stroke-width'),
             '4',
             'hover'
         );
@@ -48,7 +48,7 @@ $(function () {
         });
 
         assert.equal(
-            chart.series[0].graph.element.getAttribute('stroke-width'),     
+            chart.series[0].graph.element.getAttribute('stroke-width'),
             '2',
             'normal'
         );
@@ -56,7 +56,7 @@ $(function () {
         chart.series[0].points[0].onMouseOver();
 
         assert.equal(
-            chart.series[0].graph.element.getAttribute('stroke-width'),     
+            chart.series[0].graph.element.getAttribute('stroke-width'),
             '4',
             'hover'
         );
@@ -79,7 +79,7 @@ $(function () {
         });
 
         assert.equal(
-            chart.series[0].graph.element.getAttribute('stroke-width'),     
+            chart.series[0].graph.element.getAttribute('stroke-width'),
             '3',
             'normal'
         );
@@ -87,7 +87,7 @@ $(function () {
         chart.series[0].points[0].onMouseOver();
 
         assert.equal(
-            chart.series[0].graph.element.getAttribute('stroke-width'),     
+            chart.series[0].graph.element.getAttribute('stroke-width'),
             '6',
             'hover'
         );

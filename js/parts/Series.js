@@ -22,6 +22,7 @@
 		splat = H.splat,
 		stableSort = H.stableSort,
 		SVGElement = H.SVGElement,
+		syncTimeout = H.syncTimeout,
 		useCanVG = H.useCanVG;
 
 /**
@@ -422,7 +423,8 @@ H.Series.prototype = {
 		// cheaper, allows animation, and keeps references to points.
 		if (updatePoints !== false && dataLength && oldDataLength === dataLength && !series.cropped && !series.hasGroupedData && series.visible) {
 			each(data, function (point, i) {
-				if (oldData[i].update) { // Linked, previously hidden series (#3709)
+				// .update doesn't exist on a linked, hidden series (#3709)
+				if (oldData[i].update && point !== options.data[i]) {
 					oldData[i].update(point, false, null, false);
 				}
 			});
@@ -431,7 +433,6 @@ H.Series.prototype = {
 
 			// Reset properties
 			series.xIncrement = null;
-			series.pointRange = hasCategories ? 1 : options.pointRange;
 
 			series.colorCounter = 0; // for series with colorByPoint (#1547)
 
@@ -608,9 +609,6 @@ H.Series.prototype = {
 		series.processedXData = processedXData;
 		series.processedYData = processedYData;
 
-		if (options.pointRange === null) { // null means auto, as for columns, candlesticks and OHLC
-			series.pointRange = closestPointRange || 1;
-		}
 		series.closestPointRange = closestPointRange;
 
 	},
@@ -624,7 +622,8 @@ H.Series.prototype = {
 			cropStart = 0,
 			cropEnd = dataLength,
 			cropShoulder = pick(this.cropShoulder, 1), // line-type series need one point outside
-			i;
+			i,
+			j;
 
 		// iterate up to find slice start
 		for (i = 0; i < dataLength; i++) {
@@ -635,9 +634,9 @@ H.Series.prototype = {
 		}
 
 		// proceed to find slice end
-		for (i; i < dataLength; i++) {
-			if (xData[i] > max) {
-				cropEnd = i + cropShoulder;
+		for (j = i; j < dataLength; j++) {
+			if (xData[j] > max) {
+				cropEnd = j + cropShoulder;
 				break;
 			}
 		}
@@ -1554,7 +1553,7 @@ H.Series.prototype = {
 			// Animation doesn't work in IE8 quirks when the group div is hidden,
 			// and looks bad in other oldIE
 			animDuration = (animation && !!series.animate && chart.renderer.isSVG && pick(animation.duration, 500)) || 0,
-			visibility = series.visible ? 'visible' : 'hidden',
+			visibility = series.visible ? 'inherit' : 'hidden', // #2597
 			zIndex = options.zIndex,
 			hasRendered = series.hasRendered,
 			chartSeriesGroup = chart.seriesGroup;
@@ -1635,13 +1634,9 @@ H.Series.prototype = {
 		// Call the afterAnimate function on animation complete (but don't overwrite the animation.complete option
 		// which should be available to the user).
 		if (!hasRendered) {
-			if (animDuration) {
-				series.animationTimeout = setTimeout(function () {
-					series.afterAnimate();
-				}, animDuration);
-			} else {
+			series.animationTimeout = syncTimeout(function () {
 				series.afterAnimate();
-			}
+			}, animDuration);
 		}
 
 		series.isDirty = series.isDirtyData = false; // means data is in accordance with what you see
@@ -1745,11 +1740,8 @@ H.Series.prototype = {
 		}
 		delete series.kdTree;
 
-		if (series.options.kdNow) {  // For testing tooltips, don't build async
-			startRecursive();
-		} else {
-			setTimeout(startRecursive);
-		}
+		// For testing tooltips, don't build async
+		syncTimeout(startRecursive, series.options.kdNow ? 0 : 1);
 	},
 
 	searchKDTree: function (point, compareX) {

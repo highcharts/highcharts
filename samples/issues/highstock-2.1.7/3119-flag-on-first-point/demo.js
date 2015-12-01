@@ -24,7 +24,7 @@ $(function () {
 
         var chart = $('#container').highcharts(),
             points = chart.series[1].points;
-        
+
 
         assert.strictEqual(
             typeof points[0].graphic,

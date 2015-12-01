@@ -389,6 +389,7 @@ seriesTypes.pie = extendClass(Series, {
 			//group,
 			shadow = series.options.shadow,
 			shadowGroup,
+			pointAttr,
 			shapeArgs;
 
 		if (shadow && !series.shadowGroup) {
@@ -423,6 +424,7 @@ seriesTypes.pie = extendClass(Series, {
 				if (graphic) {
 					graphic
 						.setRadialReference(series.center)
+						.attr(pointAttr)
 						.animate(extend(shapeArgs, groupTranslation));
 				} else {
 

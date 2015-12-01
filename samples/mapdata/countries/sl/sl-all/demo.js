@@ -28,7 +28,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/sl/sl-all.js">Sierra Leone</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/sl/sl-all.js">Sierra Leone</a>'
         },
 
         mapNavigation: {

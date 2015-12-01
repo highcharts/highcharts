@@ -32,7 +32,7 @@ $(document).ready(function () {
                 },
                 tooltip: {
                     pointFormat: '{point.value} '
-                },
+                }
             },
             map: {
                 allAreas: false,
@@ -40,7 +40,7 @@ $(document).ready(function () {
                 nullColor: '#B3BCC0',
                 borderColor: '#DCDCDC',
                 borderWidth: 1,
-                mapData: Highcharts.maps['custom/world'],
+                mapData: Highcharts.maps['custom/world']
             }
         },
         series: MapSeriesData

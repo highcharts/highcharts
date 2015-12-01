@@ -1,12 +1,12 @@
 $(function () {
     QUnit.test('Pie with zeroes', function (assert) {
-        var chart = $('#container').highcharts({ 
+        var chart = $('#container').highcharts({
             series: [{
                 type: 'pie',
                 borderColor: 'green',
                 data: [
                     ['Firefox',   0],
-                    ['IE',      0],                    
+                    ['IE',      0],
                     ['Safari',    0],
                     ['Opera',     0],
                     ['Others',   0]
@@ -29,17 +29,17 @@ $(function () {
             true,
             'Has data label'
         );
-        
+
     });
 
     QUnit.test('Pie with nulls', function (assert) {
-        var chart = $('#container').highcharts({ 
+        var chart = $('#container').highcharts({
             series: [{
                 type: 'pie',
                 borderColor: 'green',
                 data: [
                     ['Firefox',   null],
-                    ['IE',      null],                    
+                    ['IE',      null],
                     ['Safari',    null],
                     ['Opera',     null],
                     ['Others',   null]
@@ -62,7 +62,7 @@ $(function () {
             undefined,
             'No data label'
         );
-        
+
     });
 
 });

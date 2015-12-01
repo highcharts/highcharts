@@ -15,7 +15,7 @@ QUnit.test('Series.update', function (assert) {
         'First',
         'Name changed'
     );
-    
+
 
     assert.strictEqual(
         chart.series[0].points[0].dataLabel,
@@ -45,7 +45,7 @@ QUnit.test('Series.update', function (assert) {
         'path',
         'Markers changed'
     );
-    
+
 
     // Color
     assert.strictEqual(
@@ -79,7 +79,7 @@ QUnit.test('Series.update', function (assert) {
         'rect',
         'Column point'
     );
-    
+
     // Type line
     $('#line').click();
     assert.strictEqual(
@@ -92,7 +92,7 @@ QUnit.test('Series.update', function (assert) {
         'circle',
         'Line point'
     );
-    
+
     // Type spline
     $('#spline').click();
     assert.strictEqual(
@@ -105,7 +105,7 @@ QUnit.test('Series.update', function (assert) {
         true,
         'Curved path'
     );
-    
+
     // Type area
     $('#area').click();
     assert.strictEqual(
@@ -118,7 +118,7 @@ QUnit.test('Series.update', function (assert) {
         'path',
         'Has area'
     );
-    
+
     // Type areaspline
     $('#areaspline').click();
     assert.strictEqual(
@@ -138,7 +138,7 @@ QUnit.test('Series.update', function (assert) {
     );
 
 
-    
+
     // Type scatter
     $('#scatter').click();
     assert.strictEqual(
@@ -153,7 +153,7 @@ QUnit.test('Series.update', function (assert) {
     );
 
 
-    
+
     // Type pie
     $('#pie').click();
     assert.strictEqual(
@@ -176,5 +176,5 @@ QUnit.test('Series.update', function (assert) {
         true,
         'Sliced slice'
     );
-    
+
 });

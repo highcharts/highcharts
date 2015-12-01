@@ -32,7 +32,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-ri-all.js">Rhode Island</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-ri-all.js">Rhode Island</a>'
         },
 
         mapNavigation: {

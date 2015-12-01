@@ -41,17 +41,17 @@ $(function () {
         chart = $('#container').highcharts(options).highcharts();
 
         assert.equal(
-            typeof chart.xAxis[0].plotLinesAndBands[0].label,     
+            typeof chart.xAxis[0].plotLinesAndBands[0].label,
             'undefined',
             'Highcharts - before'
         );
         assert.equal(
-            typeof chart.xAxis[0].plotLinesAndBands[1].label,     
+            typeof chart.xAxis[0].plotLinesAndBands[1].label,
             'object',
             'Highcharts - within'
         );
         assert.equal(
-            typeof chart.xAxis[0].plotLinesAndBands[2].label,     
+            typeof chart.xAxis[0].plotLinesAndBands[2].label,
             'undefined',
             'Highcharts - after'
         );
@@ -60,17 +60,17 @@ $(function () {
         chart = $('#container').highcharts('StockChart', options).highcharts();
 
         assert.equal(
-            typeof chart.xAxis[0].plotLinesAndBands[0].label,     
+            typeof chart.xAxis[0].plotLinesAndBands[0].label,
             'undefined',
             'Highcharts - before'
         );
         assert.equal(
-            typeof chart.xAxis[0].plotLinesAndBands[1].label,     
+            typeof chart.xAxis[0].plotLinesAndBands[1].label,
             'object',
             'Highcharts - within'
         );
         assert.equal(
-            typeof chart.xAxis[0].plotLinesAndBands[2].label,     
+            typeof chart.xAxis[0].plotLinesAndBands[2].label,
             'undefined',
             'Highcharts - after'
         );

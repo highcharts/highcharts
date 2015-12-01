@@ -109,19 +109,19 @@ function getHTML($which) {
 
 	$s = cachify($s);
 
-	$s = str_replace('cache.php?file=http://code.highcharts.com/mapdata', $bogus, $s);
+	$s = str_replace('cache.php?file=https://code.highcharts.com/mapdata', $bogus, $s);
 	
 	if ($which == 'left') {
-		$s = str_replace('cache.php?file=http://code.highcharts.com', $leftPath, $s);
+		$s = str_replace('cache.php?file=https://code.highcharts.com', $leftPath, $s);
 		$exporting = $rightExporting;
 		
 	} else {
 		
-		$s = str_replace('cache.php?file=http://code.highcharts.com', $rightPath, $s);
+		$s = str_replace('cache.php?file=https://code.highcharts.com', $rightPath, $s);
 		$exporting = $leftExporting;
 	}
 
-	$s = str_replace($bogus, 'cache.php?file=http://code.highcharts.com/mapdata', $s);
+	$s = str_replace($bogus, 'cache.php?file=https://code.highcharts.com/mapdata', $s);
 	
 	if (strlen($s) > 0 && strpos($s, 'exporting.js') === false) {
 		$s .= '<script src="' . $exporting . '"></script>';
@@ -159,8 +159,8 @@ function getExportInnerHTML() {
 		<?php echo getResources(); ?>
 
 		<?php if (is_file("$path/unit-tests.js")) : ?>
-		<script src="http://code.jquery.com/qunit/qunit-1.19.0.js"></script>
-   		<link rel="stylesheet" type="text/css" href="http://code.jquery.com/qunit/qunit-1.19.0.css" />		
+		<script src="cache.php?file=http://code.jquery.com/qunit/qunit-1.19.0.js"></script>
+   		<link rel="stylesheet" type="text/css" href="cache.php?file=http://code.jquery.com/qunit/qunit-1.19.0.css" />		
    		<?php endif; ?>
 
 		<link rel="stylesheet" type="text/css" href="style.css"/>

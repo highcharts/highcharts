@@ -26,4 +26,4 @@ $(function () {
             "Proper last minor tick."
         );
     });
-}); 
+});

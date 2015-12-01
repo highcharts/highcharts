@@ -10,7 +10,7 @@ $(function () {
                     }
                 }
             },
-            
+
             series: [
                 {
                     lineWidth: 0,
@@ -56,7 +56,7 @@ $(function () {
             markerX,
             'Correct position'
         );
-        
+
     });
 
 });

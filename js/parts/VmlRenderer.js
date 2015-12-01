@@ -70,8 +70,8 @@ VMLElement = {
 		// create element with default attributes and style
 		if (nodeName) {
 			markup = isDiv || nodeName === 'span' || nodeName === 'img' ?
-				markup.join('')
-				: renderer.prepVML(markup);
+				markup.join('')	:
+				renderer.prepVML(markup);
 			wrapper.element = createElement(markup);
 		}
 
@@ -551,7 +551,8 @@ VMLRendererExtension = { // inherit SVGRenderer
 		renderer.box = box;
 		renderer.boxWrapper = boxWrapper;
 		renderer.gradients = {};
-		renderer.cache = {};
+		renderer.cache = {}; // Cache for numerical bounding boxes
+		renderer.cacheKeys = [];
 
 
 		renderer.setSize(width, height, false);

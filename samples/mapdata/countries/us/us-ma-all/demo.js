@@ -68,7 +68,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/us/us-ma-all.js">Massachusetts</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/us/us-ma-all.js">Massachusetts</a>'
         },
 
         mapNavigation: {

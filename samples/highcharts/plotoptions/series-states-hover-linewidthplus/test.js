@@ -3,7 +3,7 @@ function test(chart) {
         offset = $(chart.container).offset();
 
     // Set hoverPoint
-    
+
     chart.series[0].onMouseOver();
     point.onMouseOver();
 
@@ -15,5 +15,5 @@ function test(chart) {
     });
     chart.getSVG = function () {
         return chart.container.innerHTML;
-    }
+    };
 }

@@ -5,17 +5,17 @@ $(function () {
                 type: "gauge"
             },
             "series": [{
-                data: [10],
-            }],
+                data: [10]
+            }]
         });
-        $('#container').highcharts({ 
+        $('#container').highcharts({
             id: 'LINE',
             chart: {
                 polar: true,
                 type: 'line'
             },
             series: [{
-                data: [1,1,1,1],
+                data: [1,1,1,1]
             }]
         });
 
@@ -24,7 +24,7 @@ $(function () {
             0,
             'No plot bands exist'
         );
-        
+
     });
 
 });

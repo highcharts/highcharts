@@ -108,7 +108,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/nl/nl-gr-all.js">Groningen</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/nl/nl-gr-all.js">Groningen</a>'
         },
 
         mapNavigation: {

@@ -152,7 +152,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/ie/ie-all.js">Ireland</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/ie/ie-all.js">Ireland</a>'
         },
 
         mapNavigation: {

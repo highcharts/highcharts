@@ -1,8 +1,8 @@
 $(function () {
 
 
-    var chartP_ComposerPart0_ChartColors = ['#4D92B4', '#B89D83', '#585148', '#BDC6D4', '#6A7D39', '#BBB3AC', '#9A3D37', '#B4B77B', '#807266', '#d7c2aa', '#a36650'];
-    var chartP_ComposerPart0_ChartSetup = {
+    var colors = ['#4D92B4', '#B89D83', '#585148', '#BDC6D4', '#6A7D39', '#BBB3AC', '#9A3D37', '#B4B77B', '#807266', '#d7c2aa', '#a36650'];
+    var setup = {
         chart: {
             "type": "pie",
             "alignTicks": false,
@@ -13,7 +13,7 @@ $(function () {
         credits: {
             enabled: false
         },
-        colors: chartP_ComposerPart0_ChartColors,
+        colors: colors,
         title: {
             "text": null,
             "style": {
@@ -23,8 +23,8 @@ $(function () {
                 "color": "#222222"
             }
         },
-            "legend": {
-                backgroundColor: 'rgba(255,0,255,0.25)',
+        "legend": {
+            backgroundColor: 'rgba(255,0,255,0.25)',
             "enabled": true,
             "borderWidth": 0,
             "itemMarginBottom": 10,
@@ -112,50 +112,50 @@ $(function () {
             data: [{
                 name: "Stamm 1 (AM Level) (Stamm 1 (AM Level) Desc)",
                 y: 783842291.00,
-                "color": chartP_ComposerPart0_ChartColors[0]
+                "color": colors[0]
             }, {
                 name: "Stamm 1 / AM 3 (AM Level) (Asset manager 3)",
                 y: 688035357.00,
-                "color": chartP_ComposerPart0_ChartColors[1]
+                "color": colors[1]
             }, {
                 name: "10821 (Description 10821)",
                 y: 413786164.00,
-                "color": chartP_ComposerPart0_ChartColors[2]
+                "color": colors[2]
             }, {
                 name: "10822 (Description 10822)",
                 y: 217199588.00,
-                "color": chartP_ComposerPart0_ChartColors[3]
+                "color": colors[3]
             }, {
                 name: "Stamm 1 / AM 1 (AM Level) (Asset manager 1)",
                 y: 196689593.00,
-                "color": chartP_ComposerPart0_ChartColors[4]
+                "color": colors[4]
             }, {
                 name: "Stamm 1 / AM 4 (AM Level)",
                 y: 124974272.00,
-                "color": chartP_ComposerPart0_ChartColors[5]
+                "color": colors[5]
             }, {
                 name: "2851 (Description 2851)",
                 y: 111758966.00,
-                "color": chartP_ComposerPart0_ChartColors[6]
+                "color": colors[6]
             }, {
                 name: "10826 (Description 10826)",
                 y: 64569428.00,
-                "color": chartP_ComposerPart0_ChartColors[7]
+                "color": colors[7]
             }, {
                 name: "10827 (Description 10827)",
                 y: 38127860.00,
-                "color": chartP_ComposerPart0_ChartColors[8]
+                "color": colors[8]
             }, {
                 name: "Rest",
                 y: 104615493.00,
-                "color": chartP_ComposerPart0_ChartColors[9]
+                "color": colors[9]
             }]
         }]
     };
 
-    var chartP_ComposerPart0_Chart = new Highcharts.Chart(chartP_ComposerPart0_ChartSetup);
+    var chart = new Highcharts.Chart(setup);
 
     $('#resize').click(function () {
-        chartP_ComposerPart0_Chart.setSize(550, 255, false);
+        chart.setSize(550, 255, false);
     });
 });

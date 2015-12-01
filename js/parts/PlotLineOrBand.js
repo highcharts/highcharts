@@ -108,14 +108,10 @@ H.PlotLineOrBand.prototype = {
 		// common for lines and bands
 		if (svgElem) {
 			if (path) {
-				svgElem.animate({
-					d: path
-				}, null, svgElem.onGetPath);
+				svgElem.show();
+				svgElem.animate({ d: path });
 			} else {
 				svgElem.hide();
-				svgElem.onGetPath = function () {
-					svgElem.show();
-				};
 				if (label) {
 					plotLine.label = label = label.destroy();
 				}
@@ -138,7 +134,8 @@ H.PlotLineOrBand.prototype = {
 		}
 
 		// the plot band/line label
-		if (optionsLabel && defined(optionsLabel.text) && path && path.length && axis.width > 0 && axis.height > 0) {
+		if (optionsLabel && defined(optionsLabel.text) && path && path.length && 
+				axis.width > 0 && axis.height > 0 && !path.flat) {
 			// apply defaults
 			optionsLabel = merge({
 				align: horiz && isBand && 'center',
@@ -217,7 +214,11 @@ H.AxisPlotLineOrBandExtension = {
 		var toPath = this.getPlotLinePath(to, null, null, true),
 			path = this.getPlotLinePath(from, null, null, true);
 
-		if (path && toPath && path.toString() !== toPath.toString()) { // #3836
+		if (path && toPath) {
+
+			// Flat paths don't need labels (#3836)
+			path.flat = path.toString() === toPath.toString();
+
 			path.push(
 				toPath[4],
 				toPath[5],

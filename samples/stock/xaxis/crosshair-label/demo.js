@@ -1,18 +1,18 @@
 $(function () {
 
-    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
+    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
         // Create the chart
         $('#container').highcharts('StockChart', {
 
             chart: {
                 marginRight: 50
             },
-            rangeSelector : {
-                selected : 1
+            rangeSelector: {
+                selected: 1
             },
 
-            title : {
-                text : 'AAPL Stock Price'
+            title: {
+                text: 'AAPL Stock Price'
             },
 
             xAxis: {
@@ -40,9 +40,9 @@ $(function () {
                 }
             },
 
-            series : [{
-                name : 'AAPL',
-                data : data,
+            series: [{
+                name: 'AAPL',
+                data: data,
                 tooltip: {
                     valueDecimals: 2
                 }

@@ -15,5 +15,5 @@ function test(chart) {
     // Don't go through the export server
     chart.getSVG = function () {
         return this.container.innerHTML;
-    }
+    };
 }

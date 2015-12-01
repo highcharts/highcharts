@@ -8,7 +8,7 @@ $(function () {
                    [1349004169000, 16.4],
                    [1349004426000, 2.84],
                    [1349004725000, 2.79]]
-            }],
+        }],
         xAxis: {
             type: 'datetime',
             minorTickInterval: 'auto',

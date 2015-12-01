@@ -2,8 +2,8 @@ $(function () {
     QUnit.test('Text height', function (assert) {
 
         var ren = new Highcharts.Renderer(
-            document.getElementById('container'), 
-            400, 
+            document.getElementById('container'),
+            400,
             400
         );
 

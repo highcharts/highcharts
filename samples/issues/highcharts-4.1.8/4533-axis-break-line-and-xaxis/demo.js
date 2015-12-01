@@ -1,6 +1,6 @@
 $(function () {
     QUnit.test("pointBreak callback wasn't called for xAxis and different series than column.", function (assert) {
-        
+
         var iteratorPB = 0,
             iteratorAB = 0;
 
@@ -12,8 +12,12 @@ $(function () {
                     breakSize: 1
                 }],
                 events: {
-                    pointBreak: function() { iteratorPB++; },
-                    afterBreaks: function() { iteratorAB++; }
+                    pointBreak: function () {
+                        iteratorPB++;
+                    },
+                    afterBreaks: function () {
+                        iteratorAB++;
+                    }
                 }
             },
             xAxis:{
@@ -23,8 +27,12 @@ $(function () {
                     breakSize: 1
                 }],
                 events: {
-                    pointBreak: function() { iteratorPB++; },
-                    afterBreaks: function() { iteratorAB++; }
+                    pointBreak: function () {
+                        iteratorPB++;
+                    },
+                    afterBreaks: function () {
+                        iteratorAB++;
+                    }
                 }
             },
             series: [{
@@ -40,7 +48,7 @@ $(function () {
         });
 
         var chart = $('#container').highcharts();
-            
+
         assert.strictEqual(
             iteratorAB,
             9,

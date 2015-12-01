@@ -29,6 +29,7 @@
 		seriesTypes = H.seriesTypes,
 		splat = H.splat,
 		svg = H.svg,
+		syncTimeout = H.syncTimeout,
 		Renderer = H.Renderer,
 		useCanVG = H.useCanVG;
 /**
@@ -768,24 +769,20 @@ Chart.prototype = {
 			renderTo = chart.renderTo,
 			width = optionsChart.width || adapterRun(renderTo, 'width'),
 			height = optionsChart.height || adapterRun(renderTo, 'height'),
-			target = e ? e.target : window, // #805 - MooTools doesn't supply e
-			doReflow = function () {
-				if (chart.container) { // It may have been destroyed in the meantime (#1257)
-					chart.setSize(width, height, false);
-					chart.hasUserSize = null;
-				}
-			};
-			
-		// Width and height checks for display:none. Target is document in IE8 and Opera,
-		// window in Firefox, Chrome and IE9.
+			target = e ? e.target : window; // #805 - MooTools doesn't supply e
+
+		// Width and height checks for display:none. Target is doc in IE8 and Opera,
+		// win in Firefox, Chrome and IE9.
 		if (!chart.hasUserSize && !chart.isPrinting && width && height && (target === window || target === document)) { // #1093
 			if (width !== chart.containerWidth || height !== chart.containerHeight) {
 				clearTimeout(chart.reflowTimeout);
-				if (e) { // Called from window.resize
-					chart.reflowTimeout = setTimeout(doReflow, 100);
-				} else { // Called directly (#2224)
-					doReflow();
-				}
+				// When called from window.resize, e is set, else it's called directly (#2224)
+				chart.reflowTimeout = syncTimeout(function () {
+					if (chart.container) { // It may have been destroyed in the meantime (#1257)
+						chart.setSize(width, height, false);
+						chart.hasUserSize = null;
+					}
+				}, e ? 100 : 0);
 			}
 			chart.containerWidth = width;
 			chart.containerHeight = height;
@@ -818,20 +815,12 @@ Chart.prototype = {
 		var chart = this,
 			chartWidth,
 			chartHeight,
-			fireEndResize,
 			renderer = chart.renderer,
 			globalAnimation;
 
 		// Handle the isResizing counter
 		chart.isResizing += 1;
-		fireEndResize = function () {
-			if (chart) {
-				fireEvent(chart, 'endResize', null, function () {
-					chart.isResizing -= 1;
-				});
-			}
-		};
-
+		
 		// set the animation for the current process
 		H.setAnimation(animation, chart);
 
@@ -883,11 +872,13 @@ Chart.prototype = {
 
 		// Fire endResize and set isResizing back. If animation is disabled, fire without delay
 		globalAnimation = renderer.globalAnimation; // Reassign it before using it, it may have changed since the top of this function.
-		if (globalAnimation === false) {
-			fireEndResize();
-		} else { // else set a timeout with the animation duration
-			setTimeout(fireEndResize, (globalAnimation && globalAnimation.duration) || 500);
-		}
+		syncTimeout(function () {
+			if (chart) {
+				fireEvent(chart, 'endResize', null, function () {
+					chart.isResizing -= 1;
+				});
+			}
+		}, globalAnimation === false ? 0 : ((globalAnimation && globalAnimation.duration) || 500));
 	},
 
 	/**
@@ -1248,7 +1239,7 @@ Chart.prototype = {
 
 		// Record preliminary dimensions for later comparison
 		tempWidth = chart.plotWidth;
-		tempHeight = chart.plotHeight = chart.plotHeight - 13; // 13 is the most common height of X axis labels
+		tempHeight = chart.plotHeight = chart.plotHeight - 21; // 21 is the most common correction for X axis labels
 
 		// Get margins by pre-rendering axes
 		each(axes, function (axis) {

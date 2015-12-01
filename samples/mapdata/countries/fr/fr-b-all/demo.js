@@ -32,7 +32,7 @@ $(function () {
         },
 
         subtitle : {
-            text : 'Source map: <a href="http://code.highcharts.com/mapdata/countries/fr/fr-b-all.js">Aquitaine</a>'
+            text : 'Source map: <a href="https://code.highcharts.com/mapdata/countries/fr/fr-b-all.js">Aquitaine</a>'
         },
 
         mapNavigation: {

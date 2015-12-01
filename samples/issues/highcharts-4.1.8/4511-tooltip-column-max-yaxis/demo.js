@@ -16,11 +16,11 @@ $(function () {
                 }]
             }).highcharts();
 
-        
-        chart.pointer.onContainerMouseMove({ 
-            pageX: 150, 
-            pageY: 310, 
-            target: chart.series[0].group.element 
+
+        chart.pointer.onContainerMouseMove({
+            pageX: 150,
+            pageY: 310,
+            target: chart.series[0].group.element
         });
 
         assert.strictEqual(
@@ -28,7 +28,7 @@ $(function () {
             false,
             'Tooltip displayed properly'
         );
-        
+
     });
 
 });

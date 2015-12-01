@@ -1,7 +1,6 @@
 (function (H) {
 	var addEvent = H.addEvent,
 		Chart = H.Chart,
-		Color = H.Color,
 		createElement = H.createElement,
 		css = H.css,
 		defaultOptions = H.defaultOptions,
@@ -659,7 +658,8 @@ extend(Point.prototype, {
 
 			/*= if (build.classic) { =*/
 			halo.attr(extend({
-				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
+				fill: point.color || series.color,
+				'fill-opacity': haloOptions.opacity
 			}, haloOptions.attributes));
 			/*= } =*/
 
@@ -670,16 +670,22 @@ extend(Point.prototype, {
 		point.state = state;
 	},
 
+	/**
+	 * Get the circular path definition for the halo
+	 * @param  {Number} size The radius of the circular halo
+	 * @returns {Array} The path definition
+	 */
 	haloPath: function (size) {
 		var series = this.series,
 			chart = series.chart,
 			plotBox = series.getPlotBox(),
-			inverted = chart.inverted;
+			inverted = chart.inverted,
+			plotX = Math.floor(this.plotX);
 
 		return chart.renderer.symbols.circle(
-			plotBox.translateX + (inverted ? series.yAxis.len - this.plotY : this.plotX) - size,
-			plotBox.translateY + (inverted ? series.xAxis.len - this.plotX : this.plotY) - size,
-			size * 2,
+			plotBox.translateX + (inverted ? series.yAxis.len - this.plotY : plotX) - size, 
+			plotBox.translateY + (inverted ? series.xAxis.len - plotX : this.plotY) - size, 
+			size * 2, 
 			size * 2
 		);
 	}

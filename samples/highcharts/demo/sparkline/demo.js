@@ -59,7 +59,7 @@ $(function () {
                 shared: true,
                 padding: 0,
                 positioner: function (w, h, point) {
-                    return { x: point.plotX - w / 2, y: point.plotY - h};
+                    return { x: point.plotX - w / 2, y: point.plotY - h };
                 }
             },
             plotOptions: {
@@ -94,7 +94,7 @@ $(function () {
     };
 
     var start = +new Date(),
-        $tds = $("td[data-sparkline]"),
+        $tds = $('td[data-sparkline]'),
         fullLen = $tds.length,
         n = 0;
 

@@ -1,8 +1,8 @@
 $(function () {
-    
-    
+
+
     $('#container').highcharts({
-        
+
         xAxis: {
             minRange: 1,
             plotBands: [{
@@ -14,18 +14,18 @@ $(function () {
                 }
             }]
         },
-        
+
         yAxis: {
             gridLineWidth: 0
         },
-        
+
         series: [{
             type:"column",
             data: [1,2,3,4,5,6],
             pointPlacement: "between"
         }]
     });
-    
+
     $('#zoom-in').click(function () {
         $('#container').highcharts().xAxis[0].setExtremes(2, 5);
     });

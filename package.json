@@ -1,7 +1,7 @@
 {
   "name": "Highcharts",
   "version": "4.0.3",
-  "main": "js/highcharts.src.js",
+  "main": "main.js",
   "author": "",
   "repository": {
     "type": "git",
@@ -16,6 +16,7 @@
     "xml2js": "^0.4.13",
     "gulp-sass": "^2.0.4",
     "requirejs": "^2.1.20",
-    "yargs": "^3.25.0"
+    "yargs": "^3.25.0",
+    "colors": "~1.1.2"
   }
 }
