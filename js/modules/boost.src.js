@@ -555,6 +555,23 @@
     });
 
     /**
+     * Return a full Point object based on the index. The boost module uses stripped point objects
+     * for performance reasons.
+     * @param   {Number} boostPoint A stripped-down point object
+     * @returns {Object}   A Point object as per http://api.highcharts.com/highcharts#Point
+     */
+    Series.prototype.getPoint = function (boostPoint) {
+
+        var point = (new this.pointClass()).init(this, this.options.data[boostPoint.i]);
+        point.dist = boostPoint.dist;
+        point.category = point.x;
+        point.plotX = boostPoint.plotX;
+        point.plotY = boostPoint.plotY;
+
+        return point;
+    };
+
+    /**
      * Return a point instance from the k-d-tree
      */
     wrap(Series.prototype, 'searchPoint', function (proceed) {
@@ -562,11 +579,7 @@
             ret = point;
 
         if (point && !(point instanceof this.pointClass)) {
-            ret = (new this.pointClass()).init(this, this.options.data[point.i]);
-            ret.dist = point.dist;
-            ret.category = ret.x;
-            ret.plotX = point.plotX;
-            ret.plotY = point.plotY;
+            ret = this.getPoint(point);
         }
         return ret;
     });
