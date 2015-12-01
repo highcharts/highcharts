@@ -1,9 +1,10 @@
 /* eslint-env node*/
 QUnit.test("Highcharts in use with the standalone-framework.", function (assert) {
-    var Highcharts = require('../../../../js/highcharts.src'),
-        standalone = require('../../../../js/adapters/standalone-framework.src');
-    var H = new Highcharts(standalone),
-        chart = new H.Chart({
+
+    var hcFramework = require('../../../../js/adapters/standalone-framework.src'),
+        Highcharts = require('../../../../js/highcharts.src')(hcFramework);
+
+    var chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'container'
             },
@@ -66,7 +67,7 @@ QUnit.test("Highcharts in use with the standalone-framework.", function (assert)
     );
 
     assert.strictEqual(
-        H.product,
+        Highcharts.product,
         'Highcharts',
         'Highcharts is loaded.'
     );
@@ -79,9 +80,9 @@ QUnit.test("Highcharts in use with the standalone-framework.", function (assert)
 });
 
 QUnit.test("Highcharts in use with the jQuery adapter.", function (assert) {
-    var Highcharts = require('../../../../js/highcharts.src');
-    var H = new Highcharts(jQuery),
-        chart = new H.Chart({
+    var Highcharts = require('../../../../js/highcharts.src')(jQuery);
+    
+    var chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'container2'
             },
@@ -144,7 +145,7 @@ QUnit.test("Highcharts in use with the jQuery adapter.", function (assert) {
     );
 
     assert.strictEqual(
-        H.product,
+        Highcharts.product,
         'Highcharts',
         'Highcharts is loaded.'
     );
