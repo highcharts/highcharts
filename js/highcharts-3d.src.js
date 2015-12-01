@@ -1187,7 +1187,7 @@
             seriesOptions = series.options,
             depth = seriesOptions.depth || 25;
 
-        var stack = seriesOptions.stacking ? (seriesOptions.stack || 0) : series._i;
+        var stack = seriesOptions.stacking ? (seriesOptions.stack || 0) : series.index;
         var z = stack * (depth + (seriesOptions.groupZPadding || 1));
 
         if (seriesOptions.grouping !== false) {
@@ -1297,20 +1297,15 @@
     function draw3DPoints(proceed) {
         // Do not do this if the chart is not 3D
         if (this.chart.is3d()) {
-            var grouping = this.chart.options.plotOptions.column.grouping;
-            if (grouping !== undefined && !grouping && this.group.zIndex !== undefined && !this.zIndexSet) {
-                this.group.attr({ zIndex: this.group.zIndex * 10 });
-                this.zIndexSet = true; // #4062 set zindex only once
-            }
-
             var options = this.options,
-                states = this.options.states;
+                states = this.options.states,
+                pointAttr;
 
-            this.borderWidth = options.borderWidth = defined(options.edgeWidth) ? options.edgeWidth : 1; //#4055
+            this.borderWidth = options.borderWidth = pick(options.edgeWidth, 1); //#4055
 
             Highcharts.each(this.data, function (point) {
                 if (point.y !== null) {
-                    var pointAttr = point.pointAttr;
+                    pointAttr = point.pointAttr;
 
                     // Set the border color to the fill color to provide a smooth edge
                     this.borderColor = Highcharts.pick(options.edgeColor, pointAttr[''].fill);
