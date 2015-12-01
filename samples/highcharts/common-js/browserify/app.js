@@ -160,8 +160,134 @@ QUnit.test("Highcharts in use with the jQuery adapter.", function (assert) {
 QUnit.test("Highcharts in use with modules.", function (assert) {
     var Highcharts = require('../../../../js/highcharts.src');
     var H = new Highcharts(jQuery);
+    // Annotations
+    require('../../../../js/modules/annotations.src')(H);
+    assert.strictEqual(
+        !!H.Chart.prototype.annotations,
+        true,
+        "Annotations is loaded."
+    );
+    // Boost
+    require('../../../../js/modules/boost.src')(H);
+    assert.strictEqual(
+        false,
+        true,
+        "Boost is loaded."
+    );
+    // Broken Axis
+    require('../../../../js/modules/broken-axis.src')(H);
+    assert.strictEqual(
+        !!H.Series.prototype.drawBreaks,
+        true,
+        "Broken Axis is loaded."
+    );
+    // Canvas Renderer
+    // require('../../../../js/modules/canvasrenderer.experimental.src')(H);
+    assert.strictEqual(
+        false,
+        true,
+        "Canvas Renderer is loaded."
+    );
+    // Canvg Renderer
+    // require('../../../../js/modules/canvgrenderer-extended.src')(H);
+    assert.strictEqual(
+        false,
+        true,
+        "Canvg Renderer is loaded."
+    );
+    // Data
+    require('../../../../js/modules/data.src')(H);
+    assert.strictEqual(
+        !!H.Data,
+        true,
+        "Data is loaded."
+    );
+    // Drilldown
+    require('../../../../js/modules/drilldown.src')(H);
+    assert.strictEqual(
+        !!H.Point.prototype.doDrilldown,
+        true,
+        "Drilldown is loaded."
+    );
+    // Exporting
+    require('../../../../js/modules/exporting.src')(H);
+    assert.strictEqual(
+        !!H.getOptions().exporting,
+        true,
+        "Exporting is loaded."
+    );
+    // Exporting Old Look
+    require('../../../../js/modules/exporting-old-look.src')(H);
+    assert.strictEqual(
+        false,
+        true,
+        "Exporting Old Look is loaded."
+    );
+    // Funnel
+    require('../../../../js/modules/funnel.src')(H);
+    assert.strictEqual(
+        !!H.seriesTypes.funnel,
+        true,
+        "Funnel is loaded."
+    );
+    // Heatmap
+    require('../../../../js/modules/heatmap.src')(H);
+    assert.strictEqual(
+        !!H.seriesTypes.heatmap,
+        true,
+        "Heatmap is loaded."
+    );
+    // Map Parser
+    require('../../../../js/modules/map-parser.src')(H);
+    assert.strictEqual(
+        !!H.Data.prototype.loadSVG,
+        true,
+        "Map Parser is loaded."
+    );
+    // Map
+    require('../../../../js/modules/map.src')(H);
+    assert.strictEqual(
+        !!H.seriesTypes.map,
+        true,
+        "Map is loaded."
+    );
+    // No Data To Display
+    require('../../../../js/modules/no-data-to-display.src')(H);
+    assert.strictEqual(
+        !!H.Series.prototype.hasData,
+        true,
+        "No Data To Display is loaded."
+    );
+    // Offline Exporting
+    // require('../../../../js/modules/offline-exporting.src')(H);
+    assert.strictEqual(
+        !!H.Chart.prototype.exportChartLocal,
+        true,
+        "Offline Exporting is loaded."
+    );
+    // Overlapping Datalabels. NB! Should be a parts file
+    // require('../../../../js/modules/overlapping-datalabels.src')(H);
+    assert.strictEqual(
+        false,
+        true,
+        "Overlapping Datalabels is loaded."
+    );
+    // Series Label
+    require('../../../../js/modules/series-label.src')(H);
+    assert.strictEqual(
+        !!H.Series.prototype.checkClearPoint,
+        true,
+        "Series Label is loaded."
+    );
+    // Solid Gauge
+    // require('../../../../js/modules/solid-gauge.src')(H);
+    assert.strictEqual(
+        !!H.seriesTypes.solidgauge,
+        true,
+        "Solid Gauge is loaded."
+    );
+    // Treemap
     require('../../../../js/modules/treemap.src')(H);
-    
     assert.strictEqual(
         !!H.seriesTypes.treemap,
         true,
