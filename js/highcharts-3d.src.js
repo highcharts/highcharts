@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-11-17)
+ * @license Highcharts JS v4.1.9-modified (2015-12-01)
  *
  * 3D features for Highcharts JS
  *
@@ -10,8 +10,14 @@
  * @license: www.highcharts.com/license
  */
 
-(function (Highcharts) {
-    /**
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (H) {
+/**
         Shorthands for often used function
     */
     var each = Highcharts.each,
@@ -1654,4 +1660,4 @@
 
     }
 
-}(Highcharts));
+}));
