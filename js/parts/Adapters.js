@@ -19,7 +19,7 @@ var adapterRun,
  * @param  {object|function} adapter - HighchartsAdapter or jQuery
  */
 Highcharts.loadAdapter = function (adapter) {
-	var H = this;
+	
 	// If jQuery, then load our default jQueryAdapter
 	if (adapter.fn && adapter.fn.jquery) {
 		adapter = loadJQueryAdapter(adapter);
@@ -27,28 +27,25 @@ Highcharts.loadAdapter = function (adapter) {
 	// Initialize the adapter.
 	if (adapter.init) {
 		adapter.init(pathAnim);
-		delete adapter.init;
+		delete adapter.init; // Avoid copying to Highcharts object
 	}
 	// Extend Highcharts with adapter functionality.
-	H.extend(H, adapter);
-	// Assign values to utility functions.
-	adapterRun = H.adapterRun;
-	inArray = H.inArray;
-	each = H.each;
-	grep = H.grep;
-	offset = H.offset;
-	map = H.map;
-	addEvent = H.addEvent;
-	removeEvent = H.removeEvent;
-	fireEvent = H.fireEvent;
-	washMouseEvent = H.washMouseEvent;
-	animate = H.animate;
-	stop = H.stop;
+	Highcharts.extend(Highcharts, adapter);
+
+	// Assign values to local functions.
+	adapterRun = Highcharts.adapterRun;
+	inArray = Highcharts.inArray;
+	each = Highcharts.each;
+	grep = Highcharts.grep;
+	offset = Highcharts.offset;
+	map = Highcharts.map;
+	addEvent = Highcharts.addEvent;
+	removeEvent = Highcharts.removeEvent;
+	fireEvent = Highcharts.fireEvent;
+	washMouseEvent = Highcharts.washMouseEvent;
+	animate = Highcharts.animate;
+	stop = Highcharts.stop;
 };
 
 // Load adapter if HighchartsAdapter or jQuery is set on the window.
-if (win.HighchartsAdapter) {
-	Highcharts.loadAdapter(win.HighchartsAdapter);
-} else if (win.jQuery) {
-	Highcharts.loadAdapter(win.jQuery);
-}
+Highcharts.loadAdapter(win.HighchartsAdapter || win.jQuery);
