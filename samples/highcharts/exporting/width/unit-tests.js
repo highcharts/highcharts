@@ -34,8 +34,8 @@ QUnit.test('Exported chart width', function (assert) {
                     done();
                 };
             },
-            error: function (err) {
-                throw new Error(err.statusText);
+            error: function () {
+                done();
             }
         });
     };
