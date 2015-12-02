@@ -39,7 +39,7 @@ Status
 
     i = params.start;
 
-    ['highcharts', 'maps', 'stock', 'issues'].forEach(function (section) {
+    ['unit-tests', 'highcharts', 'maps', 'stock', 'issues'].forEach(function (section) {
         section = section + '/';
         fs.list('../../samples/' + section).forEach(function (group) {
             if (/^[a-z0-9][a-z0-9\.\-]+$/.test(group) &&  fs.isDirectory('../../samples/' + section + group)) {
@@ -114,11 +114,11 @@ Status
                     i + '\n\n.' + msgStack.join('\n')
             );
             */
-            console.log(colors.red([
-                pad(i, 4, true),
-                pad(samples[i], 60, false),
+            console.log(
+                colors.gray(pad(i, 4, true)) + ' ' +
+                colors.red(pad(samples[i], 60, false)) + ' ' +
                 'Error'
-            ].join(' ')));
+            );
 
             i++;
             runRecursive();

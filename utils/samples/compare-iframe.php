@@ -113,12 +113,12 @@ function getHTML($which) {
 	
 	if ($which == 'left') {
 		$s = str_replace('cache.php?file=https://code.highcharts.com', $leftPath, $s);
-		$exporting = $rightExporting;
+		$exporting = $leftExporting;
 		
 	} else {
 		
 		$s = str_replace('cache.php?file=https://code.highcharts.com', $rightPath, $s);
-		$exporting = $leftExporting;
+		$exporting = $rightExporting;
 	}
 
 	$s = str_replace($bogus, 'cache.php?file=https://code.highcharts.com/mapdata', $s);
