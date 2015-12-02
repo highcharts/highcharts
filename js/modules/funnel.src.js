@@ -7,7 +7,13 @@
  * License: www.highcharts.com/license
  */
 /* eslint indent:0 */
-(function (Highcharts) {
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (Highcharts) {
 	
 'use strict';
 
@@ -313,4 +319,4 @@ Highcharts.seriesTypes.pyramid = Highcharts.extendClass(Highcharts.seriesTypes.f
 	type: 'pyramid'
 });
 
-}(Highcharts));
+}));

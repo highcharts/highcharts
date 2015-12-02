@@ -3,7 +3,7 @@
 */
 var each = Highcharts.each,
 	extend = Highcharts.extend,
-	inArray = HighchartsAdapter.inArray,
+	inArray = Highcharts.inArray,
 	merge = Highcharts.merge,
 	pick = Highcharts.pick,
 	wrap = Highcharts.wrap;

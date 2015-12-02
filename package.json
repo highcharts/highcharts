@@ -8,6 +8,7 @@
     "url": "https://github.com/highslide-software/highcharts.com.git"
   },
   "devDependencies": {
+    "browserify": "^12.0.1",
     "colors": "~1.1.2",
     "grunt": "^0.4.5",
     "grunt-jslint": "^1.1.12",

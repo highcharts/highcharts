@@ -8,7 +8,13 @@
  */
 
 /*global MSBlobBuilder */
-(function (Highcharts) {
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (Highcharts) {
 
 	// Dummy object so we can reuse our canvas-tools.js without errors
 	Highcharts.CanVGRenderer = {};
@@ -182,7 +188,7 @@
 						} else {
 							// Must load canVG first
 							chart.showLoading();
-							HighchartsAdapter.getScript(Highcharts.getOptions().global.canvasToolsURL, function () {
+							Highcharts.getScript(Highcharts.getOptions().global.canvasToolsURL, function () {
 								chart.hideLoading();
 								downloadWithCanVG();
 							});
@@ -271,4 +277,4 @@
 		}
 	}];
 
-}(Highcharts));
+}));

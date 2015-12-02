@@ -6,20 +6,39 @@
  * License: MIT License
  */
 
-
-var HighchartsAdapter = (function () {
+(function (root, factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = root.document ? 
+        factory(root) :
+        function (w) {
+            return factory(w);
+        };
+    } else {
+        root.HighchartsAdapter = factory();
+    }
+}(typeof window !== 'undefined' ? window : this, function (w) {
 
 var UNDEFINED,
-	doc = document,
+    win = w || window,
+	doc = win.document,
 	emptyArray = [],
+	_getStyle,
 	timers = [],
 	animSetters = {},
+	HighchartsAdapter,
 	Fx;
 
 Math.easeInOutSine = function (t, b, c, d) {
 	return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
 };
 
+/**
+ * Internal method to return CSS value for given element and property
+ */
+_getStyle = function (el, prop) {
+	var style = win.getComputedStyle(el, undefined);
+	return style && style.getPropertyValue(prop);
+};
 
 
 /**
@@ -86,7 +105,7 @@ function augment(obj) {
 			} else if (el.attachEvent) {
 				
 				wrappedFn = function (e) {
-					e.target = e.srcElement || window; // #2820
+					e.target = e.srcElement || win; // #2820
 					fn.call(el, e);
 				};
 
@@ -180,7 +199,7 @@ function augment(obj) {
 }
 
 
-return {
+HighchartsAdapter = {
 
 	/**
 	 * Initialize the adapter. This is run once as Highcharts is first run.
@@ -192,7 +211,7 @@ return {
 		 * support is not needed.
 		 */
 		if (!doc.defaultView) {
-			this._getStyle = function (el, prop) {
+			_getStyle = function (el, prop) {
 				var val;
 				if (el.style[prop]) {
 					return el.style[prop];
@@ -220,7 +239,7 @@ return {
 
 				if (alias) {
 					elem.style.zoom = 1;
-					return elem[alias] - 2 * parseInt(HighchartsAdapter._getStyle(elem, 'padding'), 10);
+					return elem[alias] - 2 * parseInt(_getStyle(elem, 'padding'), 10);
 				}
 			};
 		}
@@ -442,7 +461,7 @@ return {
 				} else if (el.attr) {
 					start = el.attr(name);
 				} else {
-					start = parseFloat(HighchartsAdapter._getStyle(el, name)) || 0;
+					start = parseFloat(_getStyle(el, name)) || 0;
 					if (name !== 'opacity') {
 						unit = PX;
 					}
@@ -457,14 +476,6 @@ return {
 				fx.custom(start, end, unit);
 			}	
 		};
-	},
-
-	/**
-	 * Internal method to return CSS value for given element and property
-	 */
-	_getStyle: function (el, prop) {
-		var style = window.getComputedStyle(el, undefined);
-		return style && style.getPropertyValue(prop);
 	},
 
 	/**
@@ -503,7 +514,7 @@ return {
 	 * A direct link to adapter methods
 	 */
 	adapterRun: function (elem, method) {
-		return parseInt(HighchartsAdapter._getStyle(elem, method), 10);
+		return parseInt(_getStyle(elem, method), 10);
 	},
 
 	/**
@@ -534,8 +545,8 @@ return {
 			box = el.getBoundingClientRect();
 
 		return {
-			top: box.top  + (window.pageYOffset || docElem.scrollTop)  - (docElem.clientTop  || 0),
-			left: box.left + (window.pageXOffset || docElem.scrollLeft) - (docElem.clientLeft || 0)
+			top: box.top  + (win.pageYOffset || docElem.scrollTop)  - (docElem.clientTop  || 0),
+			left: box.left + (win.pageXOffset || docElem.scrollLeft) - (docElem.clientLeft || 0)
 		};
 	},
 
@@ -620,4 +631,5 @@ return {
 		return Array.prototype.forEach.call(arr, fn);
 	}
 };
-}());
+	return HighchartsAdapter;
+}));

@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-12-01)
+ * @license Highmaps JS v1.1.9-modified (2015-12-02)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -7,12 +7,21 @@
  */
 
 /*eslint no-unused-vars: 0 */ // @todo: Not needed in HC5
-(function () {
-
+(function (root, factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = root.document ? 
+        factory(root) :
+        function (w) {
+            return factory(w);
+        };
+    } else {
+        root.Highcharts = factory();
+    }
+}(typeof window !== 'undefined' ? window : this, function (w) {
 // encapsulated variables
     var UNDEFINED,
-        doc = document,
-        win = window,
+        win = w || window,
+        doc = win.document,
         math = Math,
         mathRound = math.round,
         mathFloor = math.floor,
@@ -115,7 +124,10 @@
     }
 
     // The Highcharts namespace
-    Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : {};
+    Highcharts = win.Highcharts ? error(16, true) : function (adapter) {
+        Highcharts.loadAdapter(adapter);
+        return Highcharts;
+    };
 
     Highcharts.seriesTypes = seriesTypes;
 
@@ -870,11 +882,11 @@
         }
     };
 
-    (function ($) {
+    function loadJQueryAdapter($) {
         /**
          * The default HighchartsAdapter for jQuery
          */
-        win.HighchartsAdapter = win.HighchartsAdapter || ($ && {
+        return {
 
             /**
              * Initialize the adapter by applying some extensions to jQuery
@@ -1221,41 +1233,62 @@
                     $(el).stop();
                 }
             }
-        });
-    }(win.jQuery));
-
-
-    // check for a custom HighchartsAdapter defined prior to this file
-    var globalAdapter = win.HighchartsAdapter,
-        adapter = globalAdapter || {};
-
-    // Initialize the adapter
-    if (globalAdapter) {
-        globalAdapter.init(pathAnim);
+        };
     }
-
-
     // Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
     // and all the utility functions will be null. In that case they are populated by the
     // default adapters below.
-    var adapterRun = adapter.adapterRun,
-        getScript = adapter.getScript,
-        inArray = adapter.inArray,
-        each = adapter.each,
-        grep = adapter.grep,
-        offset = adapter.offset,
-        map = adapter.map,
-        addEvent = adapter.addEvent,
-        removeEvent = adapter.removeEvent,
-        fireEvent = adapter.fireEvent,
-        washMouseEvent = adapter.washMouseEvent,
-        animate = adapter.animate,
-        stop = adapter.stop;
+    var adapterRun,
+        inArray,
+        each,
+        grep,
+        offset,
+        map,
+        addEvent,
+        removeEvent,
+        fireEvent,
+        washMouseEvent,
+        animate,
+        stop;
 
-    Highcharts.addEvent = addEvent;
-    Highcharts.each = each;
-    Highcharts.fireEvent = fireEvent;
-    Highcharts.removeEvent = removeEvent;
+    /**
+     * Helper function to load and extend Highcharts with adapter functionality. 
+     * @param  {object|function} adapter - HighchartsAdapter or jQuery
+     */
+    Highcharts.loadAdapter = function (adapter) {
+        var H = this;
+        // If jQuery, then load our default jQueryAdapter
+        if (adapter.fn && adapter.fn.jquery) {
+            adapter = loadJQueryAdapter(adapter);
+        }
+        // Initialize the adapter.
+        if (adapter.init) {
+            adapter.init(pathAnim);
+            delete adapter.init;
+        }
+        // Extend Highcharts with adapter functionality.
+        H.extend(H, adapter);
+        // Assign values to utility functions.
+        adapterRun = H.adapterRun;
+        inArray = H.inArray;
+        each = H.each;
+        grep = H.grep;
+        offset = H.offset;
+        map = H.map;
+        addEvent = H.addEvent;
+        removeEvent = H.removeEvent;
+        fireEvent = H.fireEvent;
+        washMouseEvent = H.washMouseEvent;
+        animate = H.animate;
+        stop = H.stop;
+    };
+
+    // Load adapter if HighchartsAdapter or jQuery is set on the window.
+    if (win.HighchartsAdapter) {
+        Highcharts.loadAdapter(win.HighchartsAdapter);
+    } else if (win.jQuery) {
+        Highcharts.loadAdapter(win.jQuery);
+    }
     /* ****************************************************************************
      * Handle the options                                                         *
      *****************************************************************************/
@@ -5905,7 +5938,7 @@
                 push: function (func, scriptLocation) {
                     // Only get the script once
                     if (deferredRenderCalls.length === 0) {
-                        getScript(scriptLocation, drawDeferred);
+                        Highcharts.getScript(scriptLocation, drawDeferred);
                     }
                     // Register render call
                     deferredRenderCalls.push(func);
@@ -16976,7 +17009,7 @@
      * Handle animation of the color attributes directly
      */
     each(['fill', 'stroke'], function (prop) {
-        HighchartsAdapter.addAnimSetter(prop, function (fx) {
+        Highcharts.addAnimSetter(prop, function (fx) {
             fx.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(fx.start), Color(fx.end), fx.pos));
         });
     });
@@ -20002,5 +20035,6 @@
         product: PRODUCT,
         version: VERSION
     });
-
-}());
+    
+    return Highcharts;
+}));

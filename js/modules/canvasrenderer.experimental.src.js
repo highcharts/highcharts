@@ -1,4 +1,11 @@
 /* eslint indent: [2, 4] */
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (Highcharts) {
 Highcharts.extend(Highcharts.SVGElement.prototype, {
     init: function (renderer, nodeName) {
         this.element = {
@@ -151,3 +158,4 @@ Highcharts.extend(Highcharts.SVGRenderer.prototype, {
         wrapper.element.innerHTML = wrapper.textStr;
     }
 });
+}));

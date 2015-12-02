@@ -6,7 +6,13 @@
  *
  */
 
-(function (H) {
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (H) {
 
 	'use strict';
 
@@ -22,8 +28,8 @@
 		PieSeries = seriesTypes.pie,
 		ColumnSeries = seriesTypes.column,
 		Tick = H.Tick,
-		fireEvent = HighchartsAdapter.fireEvent,
-		inArray = HighchartsAdapter.inArray,
+		fireEvent = H.fireEvent,
+		inArray = H.inArray,
 		ddSeriesId = 1;
 
 	// Utilities
@@ -59,7 +65,7 @@
 	 * Handle animation of the color attributes directly
 	 */
 	each(['fill', 'stroke'], function (prop) {
-		HighchartsAdapter.addAnimSetter(prop, function (fx) {
+		H.addAnimSetter(prop, function (fx) {
 			fx.elem.attr(prop, tweenColors(H.Color(fx.start), H.Color(fx.end), fx.pos));
 		});
 	});
@@ -708,4 +714,4 @@
 		}
 	}
 		
-}(Highcharts));
+}));

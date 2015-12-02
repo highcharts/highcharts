@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-12-01)
+ * @license Highcharts JS v4.1.9-modified (2015-12-02)
  *
  * 3D features for Highcharts JS
  *
@@ -15,7 +15,7 @@
     */
     var each = Highcharts.each,
         extend = Highcharts.extend,
-        inArray = HighchartsAdapter.inArray,
+        inArray = Highcharts.inArray,
         merge = Highcharts.merge,
         pick = Highcharts.pick,
         wrap = Highcharts.wrap;
