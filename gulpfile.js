@@ -179,7 +179,7 @@ gulp.task('lint-samples', function () {
 
         // ESLint config is found in .eslintrc file(s)
         .pipe(eslint())
-        .pipe(eslint.failOnError())
+        //.pipe(eslint.failOnError())
         .pipe(eslint.formatEach());
 
 });

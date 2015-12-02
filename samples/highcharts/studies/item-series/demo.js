@@ -8,11 +8,11 @@ $(function () {
      * - Check update, remove etc.
      * - Custom icons like persons, carts etc. Either as images, font icons or Highcharts symbols.
      */
-    (function (H, HA) {
+    (function (H) {
         var seriesTypes = H.seriesTypes,
             extendClass = H.extendClass,
             each = H.each,
-            stop = HA.stop;
+            stop = H.stop;
 
         seriesTypes.item = extendClass(seriesTypes.column, {
             drawPoints: function () {
@@ -57,7 +57,7 @@ $(function () {
             }
         });
 
-    }(Highcharts, HighchartsAdapter));
+    }(Highcharts));
 
 
     $('#container').highcharts({
