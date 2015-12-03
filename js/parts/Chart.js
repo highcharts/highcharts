@@ -1169,7 +1169,7 @@ Chart.prototype = {
 
 		// If the plot area size has changed significantly, calculate tick positions again
 		redoHorizontal = tempWidth / chart.plotWidth > 1.1;
-		redoVertical = tempHeight / chart.plotHeight > 1.1;
+		redoVertical = tempHeight / chart.plotHeight > 1.05; // Height is more sensitive
 
 		if (redoHorizontal || redoVertical) {
 

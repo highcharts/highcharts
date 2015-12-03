@@ -12693,7 +12693,7 @@
 
             // If the plot area size has changed significantly, calculate tick positions again
             redoHorizontal = tempWidth / chart.plotWidth > 1.1;
-            redoVertical = tempHeight / chart.plotHeight > 1.1;
+            redoVertical = tempHeight / chart.plotHeight > 1.05; // Height is more sensitive
 
             if (redoHorizontal || redoVertical) {
 
@@ -15681,8 +15681,9 @@
                     names[point.x] = point.name;
                 }
 
-                // Record the raw options to options.data (#4701)
-                seriesOptions.data[i] = options;
+                // Record the options to options.data. If there is an object from before,
+                // use point options, otherwise use raw options. (#4701)
+                seriesOptions.data[i] = isObject(seriesOptions.data[i]) ? point.options : options;
 
                 // redraw
                 series.isDirty = series.isDirtyData = true;
