@@ -156,7 +156,8 @@ QUnit.test("Highcharts in use with the jQuery adapter.", function (assert) {
 });
 
 QUnit.test("Highcharts More.", function (assert) {
-    var Highcharts = require('../../../../js/highcharts-more.src')(jQuery);
+    var Highcharts = require('../../../../js/highcharts.src')(jQuery);
+    require('../../../../js/highcharts-more.src')(Highcharts);
 
     assert.strictEqual(
         window.HighchartsAdapter,
@@ -172,8 +173,22 @@ QUnit.test("Highcharts More.", function (assert) {
 
     assert.strictEqual(
         Highcharts.product,
-        'Highstock',
-        'Highstock is loaded.'
+        'Highcharts',
+        'Highcharts is loaded.'
+    );
+
+    assert.strictEqual(
+        typeof Highcharts.seriesTypes.gauge,
+        'function',
+        'Gauge is present.'
+    );
+
+    // Solid Gauge
+    require('../../../../js/modules/solid-gauge.src')(Highcharts);
+    assert.strictEqual(
+        typeof Highcharts.seriesTypes.solidgauge,
+        'function',
+        "Solid Gauge is loaded."
     );
 });
 
@@ -390,13 +405,6 @@ QUnit.test("Highcharts in use with modules.", function (assert) {
         true,
         "Series Label is loaded."
     );
-    // // Solid Gauge
-    // require('../../../../js/modules/solid-gauge.src')(Highcharts);
-    // assert.strictEqual(
-    //     !!Highcharts.seriesTypes.solidgauge,
-    //     true,
-    //     "Solid Gauge is loaded."
-    // );
     // Treemap
     require('../../../../js/modules/treemap.src')(Highcharts);
     assert.strictEqual(
