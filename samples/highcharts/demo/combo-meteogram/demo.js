@@ -745,7 +745,7 @@ $(function () { // On DOM ready...
     }
 
     // Then get the XML file through Highcharts' jsonp provider, see
-    // https://github.com/highslide-software/highcharts.com/blob/master/samples/data/jsonp.php
+    // https://github.com/highcharts/highcharts/blob/master/samples/data/jsonp.php
     // for source code.
     $.getJSON(
         'https://www.highcharts.com/samples/data/jsonp.php?url=' + location.hash.substr(1) + '&callback=?',

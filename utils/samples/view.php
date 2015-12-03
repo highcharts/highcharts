@@ -348,7 +348,7 @@ function getResources() {
 				<a class="button"
 					href="view.php?path=<?php echo $path ?>&amp;i=<?php echo $i ?>&amp;time=1">Time</a>
 				<a class="button"
-					href="http://jsfiddle.net/gh/get/jquery/1.7.2/highslide-software/highcharts.com/tree/master/samples/<?php echo $path ?>/"
+					href="http://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/<?php echo $path ?>/"
 					target="_blank">jsFiddle</a>
 
 				<a id="view-source" class="button" href="javascript:;">View source</a>
