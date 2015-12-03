@@ -389,7 +389,7 @@ extend(Point.prototype, {
 
 		selected = pick(selected, !point.selected);
 
-		// fire the event with the defalut handler
+		// fire the event with the default handler
 		point.firePointEvent(selected ? 'select' : 'unselect', { accumulate: accumulate }, function () {
 			point.selected = point.options.selected = selected;
 			series.options.data[inArray(point, series.data)] = point.options;
