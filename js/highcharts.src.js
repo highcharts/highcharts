@@ -7798,9 +7798,11 @@
                         horiz = axis.horiz,
                         key = [
                             horiz ? otherOptions.left : otherOptions.top, 
-                            horiz ? otherOptions.width : otherOptions.height, 
+                            otherOptions.width,
+                            otherOptions.height, 
                             otherOptions.pane
                         ].join(',');
+
 
                     if (axis.series.length) { // #4442
                         if (others[key]) {
