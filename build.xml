@@ -127,11 +127,6 @@
         <property name="gcc.dir" value="${tools.dir}/google-closure-compiler"/>
         <property name="gcc.jar" location="${gcc.dir}/compiler.jar"/>
 
-        <!-- YUI compressor -->
-        <property name="yuicomp.dir" value="${tools.dir}/yui-compressor"/>
-        <property name="yuicomp.jar" location="${yuicomp.dir}/yuicompressor-2.4.6.jar"/>
-        <property name="yuicomp.output.name" value="highcharts.min-yui.js"/>
-
         <!-- google js-test-driver -->
         <property name="jstestdriver.dir" value="${tools.dir}/js-test-driver"/>
         <property name="jstestdriver.jar" location="${jstestdriver.dir}/JsTestDriver-1.3.5.jar"/>
@@ -520,7 +515,7 @@
         <echo message="Warning: Unused variables exist. Run 'start build/lintreport.html', search for 'Unused'."/>
     </target>
 
-    <!-- Runs google closure compiler and yui compressor on src. -->
+    <!-- Runs google closure compiler on src. -->
     <target name="compile">
         <!-- This command sets the logging level in current task to only include echo messages. -->
         <script language="javascript">project.getBuildListeners().firstElement().setMessageOutputLevel(1);</script>
@@ -534,31 +529,16 @@
             <arg value="--js_output_file"/>
             <arg value="${param.out}"/>
         </java>
-        <java jar="${yuicomp.jar}" fork="true">
-            <arg value="--type"/>
-            <arg value="js"/>
-            <arg value="-o"/>
-            <arg value="${param.out}.yui-min.js"/>
-            <arg value="--charset"/>
-            <arg value="UTF-8"/>
-            <arg value="${param.src}"/>
-        </java>
-
+        
         <length file="${param.src}" property="input.length"/>
         <length file="${param.out}" property="gcc.output.length"/>
         <!-- Create a temporary zipfile to get the zipped size -->
         <copy file="${param.out}" tofile="${build.dir}/zipme.js"/>
         <zip destfile="${build.dir}/zipped.zip" basedir="${build.dir}" includes="zipme.js"/>
         <length file="${build.dir}/zipped.zip" property="zipped.output.length"/>
-        <length file="${param.out}.yui-min.js" property="yuicomp.output.length"/>
         <!-- Create a temporary zipfile to get the zipped size -->
-        <copy file="${param.out}.yui-min.js" tofile="${build.dir}/yuizipme.js"/>
-        <zip destfile="${build.dir}/yuizipped.zip" basedir="${build.dir}" includes="yuizipme.js"/>
-        <length file="${build.dir}/yuizipped.zip" property="yui.zipped.output.length"/>
         <!-- We are not distributing this file, its only used to make sure compilation works. -->
-        <delete file="${param.out}.yui-min.js" quiet="true"/>
         <echo message="Google Closure compiler: ${input.length} bytes -&gt; ${gcc.output.length} bytes (${zipped.output.length} bytes zipped)."/>
-        <echo message="Yahoo YUI Compressor: ${input.length} bytes -&gt; ${yuicomp.output.length} bytes (${yui.zipped.output.length} bytes zipped)."/>
         <echo message=""/>
     </target>
 
