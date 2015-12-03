@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-12-02)
+ * @license Highcharts JS v4.1.9-modified (2015-12-03)
  *
  * 3D features for Highcharts JS
  *
@@ -571,19 +571,63 @@
         ]);
         top = top.concat(curveTo(cx, cy, irx, iry, end, start, 0, 0));
         top = top.concat(['Z']);
-
         // OUTSIDE
         var b = (beta > 0 ? PI / 2 : 0),
             a = (alpha > 0 ? 0 : PI / 2);
 
         var start2 = start > -b ? start : (end > -b ? -b : start),
-            end2 = end < PI - a ? end : (start < PI - a ? PI - a : end);
+            end2 = end < PI - a ? end : (start < PI - a ? PI - a : end),
+            midEnd = 2 * PI - a;
+    
+        // When slice goes over bottom middle, need to add both, left and right outer side.
+        // Additionally, when we cross right hand edge, create sharp edge. Outer shape/wall:
+        //
+        //            -------
+        //          /    ^    \
+        //    4)   /   /   \   \  1)
+        //        /   /     \   \
+        //       /   /       \   \
+        // (c)=> ====         ==== <=(d) 
+        //       \   \       /   /
+        //        \   \<=(a)/   /
+        //         \   \   /   / <=(b)
+        //    3)    \    v    /  2)
+        //            -------
+        //
+        // (a) - inner side
+        // (b) - outer side
+        // (c) - left edge (sharp)
+        // (d) - right edge (sharp)
+        // 1..n - rendering order for startAngle = 0, when set to e.g 90, order changes clockwise (1->2, 2->3, n->1) and counterclockwise for negative startAngle
 
         var out = ['M', cx + (rx * cos(start2)), cy + (ry * sin(start2))];
         out = out.concat(curveTo(cx, cy, rx, ry, start2, end2, 0, 0));
 
-        // When slice goes over middle, need to add both, left and right outer side:
-        if (end > PI - a && start < PI - a) {
+        if (end > midEnd && start < midEnd) { // When shape is wide, it can cross both, (c) and (d) edges, when using startAngle
+            // Go to outer side
+            out = out.concat([
+                'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
+            ]);
+            // Curve to the right edge of the slice (d)
+            out = out.concat(curveTo(cx, cy, rx, ry, end2, midEnd, dx, dy));
+            // Go to the inner side
+            out = out.concat([
+                'L', cx + (rx * cos(midEnd)), cy + (ry * sin(midEnd))
+            ]);
+            // Curve to the true end of the slice
+            out = out.concat(curveTo(cx, cy, rx, ry, midEnd, end, 0, 0));
+            // Go to the outer side
+            out = out.concat([
+                'L', cx + (rx * cos(end)) + dx, cy + (ry * sin(end)) + dy
+            ]);
+            // Go back to middle (d)
+            out = out.concat(curveTo(cx, cy, rx, ry, end, midEnd, dx, dy));
+            out = out.concat([
+                'L', cx + (rx * cos(midEnd)), cy + (ry * sin(midEnd))
+            ]);
+            // Go back to the left edge
+            out = out.concat(curveTo(cx, cy, rx, ry, midEnd, end2, 0, 0));
+        } else if (end > PI - a && start < PI - a) { // But shape can cross also only (c) edge:
             // Go to outer side
             out = out.concat([
                 'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
