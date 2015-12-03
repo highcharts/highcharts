@@ -714,6 +714,32 @@
         <listfiles></listfiles>
     </target>
 
+    <target name="create-dist" depends="set.properties">
+        <mkdir dir="${basedir}/dist"/>
+        <!-- Delete all files in dist -->
+        <delete includeemptydirs="true">
+            <fileset dir="${basedir}/dist" includes="**/*"/>
+        </delete>
+        <!-- Additional distribution files in Highstock -->
+        <filelist id="dist.additional.stock" dir="${dist.dir}/highstock/js">
+            <file name="highstock.js"/>
+            <file name="highstock.src.js"/>
+        </filelist>        
+        <!-- Additional distribution files in Highmaps -->
+        <filelist id="dist.additional.maps" dir="${dist.dir}/highmaps/js">
+            <file name="highmaps.js"/>
+            <file name="highmaps.src.js"/>
+            <file name="modules/map.js"/>
+            <file name="modules/map.src.js"/>
+        </filelist>
+        <!-- Copy all distribution files to dist folder -->
+        <copy todir="${basedir}/dist">
+            <fileset dir="${dist.dir}/highcharts/js"/>
+            <filelist refid="dist.additional.stock"/>
+            <filelist refid="dist.additional.maps"/>
+        </copy>
+    </target>
+
     <!-- Builds the source and assembles a distribution package. -->
     <target name="dist" depends="build" description="Builds the source and assembles distribution packages.">
         <echo message=""/>
@@ -790,7 +816,7 @@
                 }
             }
         </echo>
-        <!-- 2. Copy highcharts source and minified versions, adapters, modules, themes. Replace product and version at the same time -->
+        <!-- 2.1 Copy highcharts source and minified versions, adapters, modules, themes. Replace product and version at the same time -->
         <copy file="${highcharts.src.file}" todir="${dist.dir}/highcharts/js"><filterset refid="highcharts.filter"/></copy>
         <copy file="${highcharts.src.file}" todir="${dist.dir}/highmaps/js"><filterset refid="highmaps.filter"/></copy>
         <copy file="${dist.dir}/highcharts/js/highcharts.js" todir="${dist.dir}/highmaps/js"><filterset refid="highmaps.filter"/></copy>
@@ -917,6 +943,9 @@
         <copy todir="${dist.dir}/highmaps/js/themes">
             <fileset dir="${themes.dir}"/>
         </copy>
+
+        <!-- 2.2 Copy all release files to dist folder -->
+        <antcall target="create-dist" />
 
         <!-- 3. Create samples -->
         <!-- Assemble the demo.html and demo.js files into example files for highcharts and highstock -->
