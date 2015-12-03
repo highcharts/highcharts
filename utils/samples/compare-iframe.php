@@ -118,6 +118,7 @@ function getHTML($which) {
 	} else {
 		
 		$s = str_replace('cache.php?file=https://code.highcharts.com', $rightPath, $s);
+		$s = str_replace('.js"', '.js?' . mktime() . '"', $s);
 		$exporting = $rightExporting;
 	}
 
