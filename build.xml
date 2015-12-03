@@ -440,8 +440,11 @@
 
     <!-- Runs jslint on generated source code. -->
     <target name="lint">
-        <exec dir="${basedir}" executable="gulp" outputproperty="output">
+        <exec osfamily="mac" dir="${basedir}" executable="gulp" outputproperty="output">
             <arg line="lint" />
+        </exec>
+        <exec osfamily="windows" dir="${basedir}" executable="cmd" outputproperty="output">
+            <arg value="/c gulp lint"/>
         </exec>
         <echo message="${output}" />
         
