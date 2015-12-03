@@ -9,5 +9,10 @@
  * @license: www.highcharts.com/license
  */
 
-(function (Highcharts) {
-	
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (H) {

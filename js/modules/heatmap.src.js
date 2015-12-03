@@ -1,12 +1,18 @@
 /**
- * @license Highcharts JS v4.1.9-modified (2015-12-02)
+ * @license Highcharts JS v4.1.9-modified (2015-12-03)
  *
  * (c) 2011-2014 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 /* eslint indent: [2, 4] */
-(function (Highcharts) {
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (Highcharts) {
 
 
     var UNDEFINED,
@@ -702,4 +708,4 @@
     }));
 
 
-}(Highcharts));
+}));
