@@ -34,6 +34,7 @@ $path = $_GET['path'];
 if (!preg_match('/^[a-z\-0-9]+\/[a-z0-9\-\.]+\/[a-z0-9\-,]+$/', $path)) {
 	die ('Invalid sample path input: ' . $path);
 }
+$isUnitTest = file_exists("../../samples/$path/unit-tests.js") || strstr(@file_get_contents("../../samples/$path/demo.details"), 'qunit') ? true : false;
 
 $path = "../../samples/$path";
 
@@ -99,7 +100,7 @@ function getJS() {
 }
 
 function getHTML($which) {
-	global $path, $leftPath, $rightPath, $rightExporting, $leftExporting;
+	global $path, $leftPath, $rightPath, $rightExporting, $leftExporting, $isUnitTest;
 	$bogus = md5('bogus');
 	
 	// No idea why file_get_contents doesn't work here...
@@ -131,7 +132,8 @@ function getHTML($which) {
 
 	$s = str_replace($bogus, 'cache.php?file=https://code.highcharts.com/mapdata', $s);
 	
-	if (strlen($s) > 0 && strpos($s, 'exporting.js') === false) {
+	// If the export module is not loaded, add it so we can run compare
+	if (strlen($s) > 0 && strpos($s, 'exporting.js') === false && !$isUnitTest) {
 		$s .= '<script src="' . $exporting . '"></script>';
 	}
 	
