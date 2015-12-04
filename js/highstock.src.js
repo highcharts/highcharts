@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highstock JS v2.1.9-modified (2015-12-03)
+ * @license Highstock JS v2.1.9-modified (2015-12-04)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -4885,6 +4885,9 @@
                     parent.element || parent :
                     box;
 
+            if (parent) {
+                this.parentGroup = parent;
+            }
 
             // if the parent group is inverted, apply inversion on all children
             if (inverted) { // only on groups
@@ -19688,7 +19691,7 @@
      * End ordinal axis logic                                                   *
      *****************************************************************************/
     /**
-     * Highstock JS v2.1.9-modified (2015-12-03)
+     * Highstock JS v2.1.9-modified (2015-12-04)
      * Highcharts Broken Axis module
      * 
      * License: www.highcharts.com/license

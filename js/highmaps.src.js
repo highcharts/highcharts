@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-12-03)
+ * @license Highmaps JS v1.1.9-modified (2015-12-04)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -4883,6 +4883,9 @@
                     parent.element || parent :
                     box;
 
+            if (parent) {
+                this.parentGroup = parent;
+            }
 
             // if the parent group is inverted, apply inversion on all children
             if (inverted) { // only on groups

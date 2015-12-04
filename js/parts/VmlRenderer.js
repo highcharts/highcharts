@@ -67,6 +67,9 @@ VMLElement = {
 				parent.element || parent :
 				box;
 
+		if (parent) {
+			this.parentGroup = parent;
+		}
 
 		// if the parent group is inverted, apply inversion on all children
 		if (inverted) { // only on groups
