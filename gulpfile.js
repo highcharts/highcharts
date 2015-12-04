@@ -494,7 +494,7 @@ gulp.task('scripts', function () {
     });
 });
 
-gulp.task('common', function () {
+gulp.task('browserify', function () {
     var browserify = require('browserify');
     browserify('./samples/highcharts/common-js/browserify/app.js')
         .bundle(function (err, buf) {
@@ -504,3 +504,19 @@ gulp.task('common', function () {
             fs.writeFileSync('./samples/highcharts/common-js/browserify/demo.js', buf);
         });
 });
+
+gulp.task('webpack', function () {
+    var webpack = require('webpack');
+    webpack({
+        entry: './samples/highcharts/common-js/app.js',
+        output: {
+            filename: './samples/highcharts/common-js/demo.js'
+        }
+    }, function (err) {
+        if (err) {
+            throw new Error('Webpack failed.');
+        }
+    });
+});
+
+gulp.task('common', ['browserify', 'webpack']);
