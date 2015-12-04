@@ -33,7 +33,6 @@ $(function () {
                 width: 2,
                 value: 65,
                 label: {
-                    align: 'middle',
                     rotation: 0,
                     y: 15,
                     style: {

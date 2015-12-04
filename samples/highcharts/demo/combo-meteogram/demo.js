@@ -691,7 +691,7 @@ Meteogram.prototype.parseYrData = function () {
         }
 
         // Populate the parallel arrays
-        meteogram.symbols.push(time.symbol['@attributes'].var.match(/[0-9]{2}[dnm]?/)[0]);
+        meteogram.symbols.push(time.symbol['@attributes']['var'].match(/[0-9]{2}[dnm]?/)[0]); // eslint-disable-line dot-notation
         meteogram.symbolNames.push(time.symbol['@attributes'].name);
 
         meteogram.temperatures.push({

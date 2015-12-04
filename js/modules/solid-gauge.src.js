@@ -137,7 +137,7 @@
 
 			// Unsupported color, return to-color (#3920)
 			if (!to.rgba.length || !from.rgba.length) {
-				ret = to.raw || 'none';
+				ret = to.input || 'none';
 
 			// Interpolate
 			} else {
