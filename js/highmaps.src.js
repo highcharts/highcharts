@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-12-01)
+ * @license Highmaps JS v1.1.9-modified (2015-12-04)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -17416,6 +17416,7 @@
                 joinBy = options.joinBy,
                 joinByNull = joinBy === null,
                 dataUsed = [],
+                mapMap = {},
                 mapPoint,
                 transform,
                 mapTransforms,
@@ -17460,9 +17461,7 @@
                     mapData = Highcharts.geojson(mapData, this.type, this);
                 }
 
-                this.getBox(mapData);
                 this.mapData = mapData;
-                this.mapMap = {};
 
                 for (i = 0; i < mapData.length; i++) {
                     mapPoint = mapData[i];
@@ -17473,28 +17472,35 @@
                     if (joinBy[0] && props && props[joinBy[0]]) {
                         mapPoint[joinBy[0]] = props[joinBy[0]];
                     }
-                    this.mapMap[mapPoint[joinBy[0]]] = mapPoint;
+                    mapMap[mapPoint[joinBy[0]]] = mapPoint;
+                }
+                this.mapMap = mapMap;
+
+                // Registered the point codes that actually hold data
+                if (joinBy[1]) {
+                    each(data, function (point) {
+                        if (mapMap[point[joinBy[1]]]) {
+                            dataUsed.push(mapMap[point[joinBy[1]]]);
+                        }
+                    });
                 }
 
                 if (options.allAreas) {
-
-                    data = data || [];
-
-                    // Registered the point codes that actually hold data
-                    if (joinBy[1]) {
-                        each(data, function (point) {
-                            dataUsed.push(point[joinBy[1]]);
-                        });
-                    }
+                    this.getBox(mapData);
+                    data = data || [];            
 
                     // Add those map points that don't correspond to data, which will be drawn as null points
-                    dataUsed = '|' + dataUsed.join('|') + '|'; // String search is faster than array.indexOf
-
+                    dataUsed = '|' + dataUsed.map(function (point) { 
+                        return point[joinBy[0]]; 
+                    }).join('|') + '|'; // String search is faster than array.indexOf
+                
                     each(mapData, function (mapPoint) {
                         if (!joinBy[0] || dataUsed.indexOf('|' + mapPoint[joinBy[0]] + '|') === -1) {
                             data.push(merge(mapPoint, { value: null }));
                         }
                     });
+                } else {
+                    this.getBox(dataUsed); // Issue #4784
                 }
             }
             Series.prototype.setData.call(this, data, redraw);
