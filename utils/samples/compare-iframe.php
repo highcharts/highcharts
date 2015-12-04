@@ -202,7 +202,10 @@ function getExportInnerHTML() {
 				// If running QUnit, use the built-in callback
 				if (QUnit) {
 					QUnit.done(function (e) {
-						if (e.passed === e.total) {
+						if (e.total === 0) {
+							window.parent.onDifferent('Error');
+							console.warn('No unit tests ran');
+						} else if (e.passed === e.total) {
 							window.parent.onIdentical();
 						} else {
 							window.parent.onDifferent(e.passed + '/' + e.total);

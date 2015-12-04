@@ -181,7 +181,7 @@ $(function () {
     // Initiate the chart
     var n, mapData, data = [], maps = Highcharts.maps;
     for (n in maps) {
-        if (maps.hasOwnPropery(n)) {
+        if (maps.hasOwnProperty(n)) {
             mapData = maps[n];
             break;
         }
