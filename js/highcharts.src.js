@@ -18788,10 +18788,14 @@
                     series.halo = halo = chart.renderer.path()
                         .add(chart.seriesGroup);
                 }
-                halo.attr(extend({
+                halo.attr(extend(hasSVG ? {
                     fill: point.color || series.color,
                     'fill-opacity': haloOptions.opacity
-                }, haloOptions.attributes))[move ? 'animate' : 'attr']({
+                } : {
+                    // Old IE doesn't take fill-opacity
+                    fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
+                },
+                haloOptions.attributes))[move ? 'animate' : 'attr']({
                     d: point.haloPath(haloOptions.size)
                 });
             } else if (halo) {
