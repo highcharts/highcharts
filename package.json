@@ -1,12 +1,21 @@
 {
-  "name": "Highcharts",
-  "version": "4.0.3",
-  "main": "main.js",
-  "author": "",
+  "name": "highcharts",
+  "version": "4.1.9",
+  "description": "JavaScript charting framework",
+  "main": "dist/highcharts",
+  "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",
   "repository": {
     "type": "git",
-    "url": "https://github.com/highslide-software/highcharts.com.git"
+    "url": "https://github.com/highcharts/highcharts.git"
   },
+  "keywords": [
+    "charts",
+    "graphs",
+    "visualization",
+    "data",
+    "browserify",
+    "webpack"
+  ],
   "devDependencies": {
     "browserify": "^12.0.1",
     "colors": "~1.1.2",
@@ -17,5 +26,6 @@
     "request": "^2.65.0",
     "vinyl-ftp": "^0.4.5",
     "xml2js": "^0.4.13"
-  }
+  },
+  "license": "https://www.highcharts.com/license"
 }
