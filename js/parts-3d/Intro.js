@@ -15,4 +15,4 @@
     } else {
         factory(Highcharts);
     }
-}(function (H) {
+}(function (Highcharts) {
