@@ -21,7 +21,7 @@ if (!is_dir('cache')) {
 if (!is_file($cachePath)) {
 	$content = file_get_contents($file);
 	if (!$content) {
-		$content = 'console.log("Could not download ' . $file . '");';
+		$content = 'console.log("Could not download ' . $file . '. Make sure PHP server is set up for SSL.");';
 	}
 	file_put_contents($cachePath, $content);
 }
