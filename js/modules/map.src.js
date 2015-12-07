@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-12-03)
+ * @license Highmaps JS v1.1.9-modified (2015-12-07)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2014 Torstein Honsi
@@ -1973,7 +1973,7 @@
             }
         }
 
-        return this.transformToLatLon(point, transforms.default);
+        return this.transformToLatLon(point, transforms['default']); // eslint-disable-line dot-notation
     };
 
     Chart.prototype.fromLatLonToPoint = function (latLon) {
@@ -1998,7 +1998,7 @@
             }
         }
 
-        return this.transformFromLatLon(latLon, transforms.default);
+        return this.transformFromLatLon(latLon, transforms['default']); // eslint-disable-line dot-notation
     };
 
     /**
