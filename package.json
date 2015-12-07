@@ -2,12 +2,14 @@
   "name": "highcharts",
   "version": "4.1.9",
   "description": "JavaScript charting framework",
-  "main": "dist/highcharts",
+  "main": "lib/highcharts",
   "author": "Highsoft AS <support@highcharts.com> (http://www.highcharts.com/about)",
   "repository": {
     "type": "git",
     "url": "https://github.com/highcharts/highcharts.git"
   },
+  "bugs": "https://github.com/highcharts/highcharts/issues",
+  "homepage": "http://www.highcharts.com",
   "keywords": [
     "charts",
     "graphs",
@@ -15,6 +17,12 @@
     "data",
     "browserify",
     "webpack"
+  ],
+  "files": [
+    "errors",
+    "gfx",
+    "js",
+    "lib"
   ],
   "devDependencies": {
     "browserify": "^12.0.1",

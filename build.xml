@@ -715,10 +715,10 @@
     </target>
 
     <target name="create-dist" depends="set.properties">
-        <mkdir dir="${basedir}/dist"/>
-        <!-- Delete all files in dist -->
+        <mkdir dir="${basedir}/lib"/>
+        <!-- Delete all files in lib -->
         <delete includeemptydirs="true">
-            <fileset dir="${basedir}/dist" includes="**/*"/>
+            <fileset dir="${basedir}/lib" includes="**/*"/>
         </delete>
         <!-- Additional distribution files in Highstock -->
         <filelist id="dist.additional.stock" dir="${dist.dir}/highstock/js">
@@ -733,7 +733,7 @@
             <file name="modules/map.src.js"/>
         </filelist>
         <!-- Copy all distribution files to dist folder -->
-        <copy todir="${basedir}/dist">
+        <copy todir="${basedir}/lib">
             <fileset dir="${dist.dir}/highcharts/js"/>
             <filelist refid="dist.additional.stock"/>
             <filelist refid="dist.additional.maps"/>
