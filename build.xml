@@ -1664,7 +1664,7 @@
     </target>
 
     <!-- Copy the folders and content of /samples and /studies to higcharts.com.site -->
-    <target name="copy-to-site" depends="set.properties" description="Copy files from this repo to repository highcharts.com.site">
+    <target name="copy-to-site" depends="set.properties" description="Copy files from this repo to repository www.highcharts.com">
         <property file="git-ignore-me.properties"/>
         <copy todir="${highcharts.site.dir}/samples">
             <fileset dir="samples"/>
@@ -1678,8 +1678,8 @@
         <copy todir="${highcharts.site.dir}/errors">
             <fileset dir="errors"/>
         </copy>
-        <copy todir="${highcharts.site.dir}/vendor">
-            <fileset dir="lib"/>
+        <copy todir="${highcharts.site.dir}/lib">
+            <fileset dir="vendor"/>
         </copy>
     </target>
 
