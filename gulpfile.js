@@ -466,7 +466,7 @@ gulp.task('scripts', function () {
     });
 
     // Special case
-    var files = ['./lib/canvg-1.1/rgbcolor.js', './lib/canvg-1.1/canvg.js', './js/modules/canvgrenderer-extended.src.js'],
+    var files = ['./vendor/canvg-1.1/rgbcolor.js', './vendor/canvg-1.1/canvg.js', './js/modules/canvgrenderer-extended.src.js'],
         js = '';
 
     /**

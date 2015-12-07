@@ -7,7 +7,7 @@
         "exporting-server",
         "gfx",
         "js",
-        "lib",
+        "vendor",
         "samples",
         "studies",
         "test",
@@ -17,7 +17,6 @@
         "ant",
         "build.md",
         "build.properties",
-        "build.xml",
-        "readme.md"
+        "build.xml"
     ]
 }

@@ -1678,7 +1678,7 @@
         <copy todir="${highcharts.site.dir}/errors">
             <fileset dir="errors"/>
         </copy>
-        <copy todir="${highcharts.site.dir}/lib">
+        <copy todir="${highcharts.site.dir}/vendor">
             <fileset dir="lib"/>
         </copy>
     </target>
