@@ -5226,6 +5226,14 @@
                 this.setAttr('fillcolor', this.renderer.color(value, element, key, this));
             }
         },
+        'fill-opacitySetter': function (value, key, element) {
+            createElement(
+                this.renderer.prepVML(['<', key.split('-')[0], ' opacity="', value, '"/>']),
+                null,
+                null,
+                element
+            );
+        },
         opacitySetter: noop, // Don't bother - animation is too slow and filters introduce artifacts
         rotationSetter: function (value, key, element) {
             var style = element.style;
@@ -5236,7 +5244,7 @@
             style.top = mathRound(mathCos(value * deg2rad)) + PX;
         },
         strokeSetter: function (value, key, element) {
-            this.setAttr('strokecolor', this.renderer.color(value, element, key));
+            this.setAttr('strokecolor', this.renderer.color(value, element, key, this));
         },
         'stroke-widthSetter': function (value, key, element) {
             element.stroked = !!value; // VML "stroked" attribute
@@ -5302,6 +5310,8 @@
             element.style[key] = value;
         }
     };
+    VMLElement['stroke-opacitySetter'] = VMLElement['fill-opacitySetter'];
+
     Highcharts.VMLElement = VMLElement = extendClass(SVGElement, VMLElement);
 
     // Some shared setters
@@ -5592,14 +5602,13 @@
                     ret = stopColor;
                 }
 
-            // if the color is an rgba color, split it and add a fill node
+            // If the color is an rgba color, split it and add a fill node
             // to hold the opacity component
             } else if (regexRgba.test(color) && elem.tagName !== 'IMG') {
 
                 colorObject = Color(color);
 
-                markup = ['<', prop, ' opacity="', colorObject.get('a'), '"/>'];
-                createElement(this.prepVML(markup), null, null, elem);
+                wrapper[prop + '-opacitySetter'](colorObject.get('a'), prop, elem);
 
                 ret = colorObject.get('rgb');
 
@@ -10881,7 +10890,8 @@
         positionCheckboxes: function (scrollOffset) {
             var alignAttr = this.group.alignAttr,
                 translateY,
-                clipHeight = this.clipHeight || this.legendHeight;
+                clipHeight = this.clipHeight || this.legendHeight,
+                titleHeight = this.titleHeight;
 
             if (alignAttr) {
                 translateY = alignAttr.translateY;
@@ -10890,7 +10900,7 @@
                         top;
 
                     if (checkbox) {
-                        top = (translateY + checkbox.y + (scrollOffset || 0) + 3);
+                        top = translateY + titleHeight + checkbox.y + (scrollOffset || 0) + 3;
                         css(checkbox, {
                             left: (alignAttr.translateX + item.checkboxOffset + checkbox.x - 20) + PX,
                             top: top + PX,
@@ -16269,21 +16279,24 @@
             });
             each(props, function (prop) {
                 var areaKey = prop[0],
-                    area = series[areaKey];
+                    area = series[areaKey],
+                    attr;
 
                 // Create or update the area
                 if (area) { // update
                     area.animate({ d: areaPath });
 
                 } else { // create
+                    attr = {
+                        fill: prop[2] || prop[1],
+                        zIndex: 0 // #1069
+                    };
+                    if (!prop[2]) {
+                        attr['fill-opacity'] = options.fillOpacity || 0.75;
+                    }
                     series[areaKey] = series.chart.renderer.path(areaPath)
-                        .attr({
-                            fill: pick(
-                                prop[2],
-                                Color(prop[1]).setOpacity(pick(options.fillOpacity, 0.75)).get()
-                            ),
-                            zIndex: 0 // #1069
-                        }).add(series.group);
+                        .attr(attr)
+                        .add(series.group);
                 }
             });
         },
@@ -18855,12 +18868,9 @@
                     series.halo = halo = chart.renderer.path()
                         .add(chart.seriesGroup);
                 }
-                halo.attr(extend(hasSVG ? {
+                halo.attr(extend({
                     fill: point.color || series.color,
                     'fill-opacity': haloOptions.opacity
-                } : {
-                    // Old IE doesn't take fill-opacity
-                    fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
                 },
                 haloOptions.attributes))[move ? 'animate' : 'attr']({
                     d: point.haloPath(haloOptions.size)
@@ -22979,6 +22989,7 @@
                 textAlign: 'center',
                 fontSize: chartStyle.fontSize,
                 fontFamily: chartStyle.fontFamily,
+                left: '-9em', // #4798
                 top: chart.plotTop + PX // prevent jump on focus in Firefox
             }, options.inputStyle), div);
 

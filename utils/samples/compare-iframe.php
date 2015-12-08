@@ -109,10 +109,10 @@ function getHTML($which) {
 	$s = ob_get_clean();
 
 	if (strstr($s, 'http://')) {
-		$s .= '<script>console.error("Do not use http in demo.html. Use secure https.")</script>';
+		$s .= '<script>console.warn("Do not use http in demo.html. Use secure https.")</script>';
 	}
 	if (strstr($s, '.src.js')) {
-		$s .= '<script>console.error("Do not use src.js files in demos. Use .js compiled files.")</script>';
+		$s .= '<script>console.warn("Do not use src.js files in demos. Use .js compiled files.")</script>';
 	}
 
 	$s = cachify($s);

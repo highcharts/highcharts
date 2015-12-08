@@ -16,9 +16,12 @@
     ],
     "ignore": [
         "build",
+        "copy-release.js",
         "errors",
         "exporting-server",
-        "gfx",
+        "generate-changelog.js",
+        "grunt-tasks",
+        "gruntfile.js",
         "js",
         "vendor",
         "samples",
