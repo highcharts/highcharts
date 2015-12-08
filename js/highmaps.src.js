@@ -14329,7 +14329,6 @@
             if (isNew) {
                 this[prop] = group = this.chart.renderer.g(name)
                     .attr({
-                        visibility: visibility,
                         zIndex: zIndex || 0.1 // IE8 needs this
                     })
                     .add(parent);
@@ -14338,7 +14337,7 @@
             }
 
             // Place it on first and subsequent (redraw) calls
-            group[isNew ? 'attr' : 'animate'](this.getPlotBox());
+            group.attr({ visibility: visibility })[isNew ? 'attr' : 'animate'](this.getPlotBox());
             return group;
         },
 
