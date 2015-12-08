@@ -8,7 +8,7 @@ $(function () {
      */
     (function (H) {
         var Axis = H.Axis,
-            inArray = HighchartsAdapter.inArray,
+            inArray = H.inArray,
             wrap = H.wrap;
 
         wrap(Axis.prototype, 'adjustTickAmount', function (proceed) {

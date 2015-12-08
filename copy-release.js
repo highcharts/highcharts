@@ -20,7 +20,7 @@
      * Commit, tag and push 
      */
     function runGit(product, version) {
-        var options = { cwd: __dirname.replace('/highcharts.com', '/' + product + '-release') },
+        var options = { cwd: __dirname.replace('/highcharts', '/' + product + '-release') },
             puts = function (err, stdout) {
                 if (err) {
                     throw err;

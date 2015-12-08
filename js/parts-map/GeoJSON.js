@@ -81,7 +81,7 @@ Chart.prototype.fromPointToLatLon = function (point) {
 		}
 	}
 
-	return this.transformToLatLon(point, transforms.default);
+	return this.transformToLatLon(point, transforms['default']); // eslint-disable-line dot-notation
 };
 
 Chart.prototype.fromLatLonToPoint = function (latLon) {
@@ -106,7 +106,7 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
 		}
 	}
 
-	return this.transformFromLatLon(latLon, transforms.default);
+	return this.transformFromLatLon(latLon, transforms['default']); // eslint-disable-line dot-notation
 };
 
 /**

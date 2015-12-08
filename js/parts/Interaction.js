@@ -389,7 +389,7 @@ extend(Point.prototype, {
 
 		selected = pick(selected, !point.selected);
 
-		// fire the event with the defalut handler
+		// fire the event with the default handler
 		point.firePointEvent(selected ? 'select' : 'unselect', { accumulate: accumulate }, function () {
 			point.selected = point.options.selected = selected;
 			series.options.data[inArray(point, series.data)] = point.options;
@@ -596,10 +596,14 @@ extend(Point.prototype, {
 				series.halo = halo = chart.renderer.path()
 					.add(chart.seriesGroup);
 			}
-			halo.attr(extend({
+			halo.attr(extend(hasSVG ? {
 				fill: point.color || series.color,
 				'fill-opacity': haloOptions.opacity
-			}, haloOptions.attributes))[move ? 'animate' : 'attr']({
+			} : {
+				// Old IE doesn't take fill-opacity
+				fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
+			},
+			haloOptions.attributes))[move ? 'animate' : 'attr']({
 				d: point.haloPath(haloOptions.size)
 			});
 		} else if (halo) {

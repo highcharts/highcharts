@@ -1,6 +1,6 @@
 globals:
     Highcharts: true
-    HighchartsAdapter: true
+    module: true
 
 env:
     browser: true

@@ -170,7 +170,7 @@ gulp.task('lint', ['scripts'], function () {
 
         // ESLint config is found in .eslintrc file(s)
         .pipe(eslint())
-        .pipe(eslint.failOnError())
+        //.pipe(eslint.failOnError())
         .pipe(eslint.formatEach());
 
 });
@@ -179,7 +179,7 @@ gulp.task('lint-samples', function () {
 
         // ESLint config is found in .eslintrc file(s)
         .pipe(eslint())
-        .pipe(eslint.failOnError())
+        //.pipe(eslint.failOnError())
         .pipe(eslint.formatEach());
 
 });
@@ -466,7 +466,7 @@ gulp.task('scripts', function () {
     });
 
     // Special case
-    var files = ['./lib/canvg-1.1/rgbcolor.js', './lib/canvg-1.1/canvg.js', './js/modules/canvgrenderer-extended.src.js'],
+    var files = ['./vendor/canvg-1.1/rgbcolor.js', './vendor/canvg-1.1/canvg.js', './js/modules/canvgrenderer-extended.src.js'],
         js = '';
 
     /**
@@ -492,4 +492,15 @@ gulp.task('scripts', function () {
         js = addVersion(js, products.highcharts);
         fs.writeFileSync('./build/canvas-tools.src.js', js, 'utf8');
     });
+});
+
+gulp.task('common', function () {
+    var browserify = require('browserify');
+    browserify('./samples/highcharts/common-js/browserify/app.js')
+        .bundle(function (err, buf) {
+            if (err) {
+                // @todo Do something meaningful with err
+            }
+            fs.writeFileSync('./samples/highcharts/common-js/browserify/demo.js', buf);
+        });
 });

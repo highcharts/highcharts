@@ -47,3 +47,4 @@ nbproject/
 *.access_log
 
 *.log
+samples/highcharts/common-js/browserify/demo.js

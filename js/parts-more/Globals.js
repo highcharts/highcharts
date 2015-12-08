@@ -23,4 +23,5 @@ var arrayMin = Highcharts.arrayMin,
 	mathFloor = math.floor,
 	mathMax = math.max,
 	Color = Highcharts.Color,
-	noop = function () {};
+	noop = function () {},
+	UNDEFINED;

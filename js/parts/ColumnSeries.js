@@ -32,7 +32,7 @@ defaultPlotOptions.column = merge(defaultSeriesOptions, {
 		y: null
 	},
 	softThreshold: false,
-	startFromThreshold: true, // docs (but false doesn't work well): http://jsfiddle.net/highcharts/hz8fopan/14/
+	startFromThreshold: true, // false doesn't work well: http://jsfiddle.net/highcharts/hz8fopan/14/
 	stickyTracking: false,
 	tooltip: {
 		distance: 6

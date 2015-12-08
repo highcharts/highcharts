@@ -127,7 +127,7 @@ seriesTypes.arearange = extendClass(seriesTypes.area, {
 			higherPath;
 
 		// Remove nulls from low segment
-		lowSegment = HighchartsAdapter.grep(segment, function (point) {
+		lowSegment = Highcharts.grep(segment, function (point) {
 			return point.plotLow !== null;
 		});
 

@@ -8,7 +8,13 @@
  * License: www.highcharts.com/license
  */
 
-(function (H) {
+(function (factory) {
+	if (typeof module === 'object' && module.exports) {
+		module.exports = factory;
+	} else {
+		factory(Highcharts);
+	}
+}(function (H) {
 	
 	var seriesTypes = H.seriesTypes,
 		chartPrototype = H.Chart.prototype,
@@ -36,7 +42,7 @@
 			fontSize: '12px',
 			color: '#60606a'		
 		}
-		// useHTML: false // docs
+		// useHTML: false
 	};
 
 	/**
@@ -134,4 +140,4 @@
 		H.addEvent(chart, 'redraw', handleNoData);
 	});
 
-}(Highcharts));
+}));

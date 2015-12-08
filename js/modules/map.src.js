@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-11-30)
+ * @license Highmaps JS v1.1.10-modified (2015-12-08)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2014 Torstein Honsi
@@ -7,7 +7,13 @@
  * License: www.highcharts.com/license
  */
 /* eslint indent: [2, 4] */
-(function (Highcharts) {
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (Highcharts) {
 
 
     var UNDEFINED,
@@ -594,7 +600,7 @@
      * Handle animation of the color attributes directly
      */
     each(['fill', 'stroke'], function (prop) {
-        HighchartsAdapter.addAnimSetter(prop, function (fx) {
+        Highcharts.addAnimSetter(prop, function (fx) {
             fx.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(fx.start), Color(fx.end), fx.pos));
         });
     });
@@ -1974,7 +1980,7 @@
             }
         }
 
-        return this.transformToLatLon(point, transforms.default);
+        return this.transformToLatLon(point, transforms['default']); // eslint-disable-line dot-notation
     };
 
     Chart.prototype.fromLatLonToPoint = function (latLon) {
@@ -1999,7 +2005,7 @@
             }
         }
 
-        return this.transformFromLatLon(latLon, transforms.default);
+        return this.transformFromLatLon(latLon, transforms['default']); // eslint-disable-line dot-notation
     };
 
     /**
@@ -2275,4 +2281,4 @@
         return new Chart(options, callback);
     };
 
-}(Highcharts));
+}));

@@ -359,10 +359,10 @@ wrap(Axis.prototype, 'drawCrosshair', function (proceed, e, point) {
 			align: options.align || align,
 			zIndex: 12,
 			fill: options.backgroundColor || (this.series[0] && this.series[0].color) || 'gray',
-			padding: pick(options.padding, 8), // docs: new default
+			padding: pick(options.padding, 8),
 			stroke: options.borderColor || '',
 			'stroke-width': options.borderWidth || 0,
-			r: pick(options.borderRadius, 3) // docs
+			r: pick(options.borderRadius, 3)
 		})
 		.css(extend({
 			color: 'white',

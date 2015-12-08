@@ -114,11 +114,11 @@ Status
                     i + '\n\n.' + msgStack.join('\n')
             );
             */
-            console.log(colors.red([
-                pad(i, 4, true),
-                pad(samples[i], 60, false),
+            console.log(
+                colors.gray(pad(i, 4, true)) + ' ' +
+                colors.red(pad(samples[i], 60, false)) + ' ' +
                 'Error'
-            ].join(' ')));
+            );
 
             i++;
             runRecursive();

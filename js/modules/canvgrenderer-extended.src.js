@@ -7,7 +7,7 @@
  * License: www.highcharts.com/license
  */
 
-(function (Highcharts) { // encapsulate
+(function (Highcharts) {
 	var UNDEFINED,
 		DIV = 'div',
 		ABSOLUTE = 'absolute',

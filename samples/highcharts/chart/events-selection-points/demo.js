@@ -40,7 +40,7 @@ $(function () {
         });
 
         // Fire a custom event
-        HighchartsAdapter.fireEvent(this, 'selectedpoints', { points: this.getSelectedPoints() });
+        Highcharts.fireEvent(this, 'selectedpoints', { points: this.getSelectedPoints() });
 
         return false; // Don't zoom
     }

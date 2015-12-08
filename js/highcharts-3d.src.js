@@ -2,21 +2,26 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-12-03)
+ * @license Highcharts JS v4.1.10-modified (2015-12-08)
  *
  * 3D features for Highcharts JS
  *
- * @author: Stephane Vanraes, Torstein Honsi
  * @license: www.highcharts.com/license
  */
 
-(function (Highcharts) {
-    /**
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (Highcharts) {
+/**
         Shorthands for often used function
     */
     var each = Highcharts.each,
         extend = Highcharts.extend,
-        inArray = HighchartsAdapter.inArray,
+        inArray = Highcharts.inArray,
         merge = Highcharts.merge,
         pick = Highcharts.pick,
         wrap = Highcharts.wrap;
@@ -1283,7 +1288,8 @@
                         break;
                     }
                 }
-                z = (10 * (stacks.totalStacks - stacks[stack].position)) - (reversedStacks ? i : -i); // #4369
+            
+                z = (10 * (stacks.totalStacks - stacks[stack].position)) + (reversedStacks ? i : -i); // #4369
 
                 // In case when axis is reversed, columns are also reversed inside the group (#3737)
                 if (!this.xAxis.reversed) {
@@ -1698,4 +1704,4 @@
 
     }
 
-}(Highcharts));
+}));

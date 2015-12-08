@@ -50,7 +50,7 @@ if (useCanVG) {
 			push: function (func, scriptLocation) {
 				// Only get the script once
 				if (deferredRenderCalls.length === 0) {
-					getScript(scriptLocation, drawDeferred);
+					Highcharts.getScript(scriptLocation, drawDeferred);
 				}
 				// Register render call
 				deferredRenderCalls.push(func);

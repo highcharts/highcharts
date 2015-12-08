@@ -6,9 +6,13 @@
  *
  * 3D features for Highcharts JS
  *
- * @author: Stephane Vanraes, Torstein Honsi
  * @license: www.highcharts.com/license
  */
 
-(function (Highcharts) {
-	
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (Highcharts) {

@@ -1204,9 +1204,11 @@ Axis.prototype = {
 					horiz = axis.horiz,
 					key = [
 						horiz ? otherOptions.left : otherOptions.top, 
-						horiz ? otherOptions.width : otherOptions.height, 
+						otherOptions.width,
+						otherOptions.height, 
 						otherOptions.pane
 					].join(',');
+
 
 				if (axis.series.length) { // #4442
 					if (others[key]) {
@@ -1758,7 +1760,7 @@ Axis.prototype = {
 
 
 			// Left side must be align: right and right side must have align: left for labels
-			if (labelOptions.reserveSpace !== false && (side === 0 || side === 2 || // docs: reserveSpace (demo at highcharts/xaxis/labels-reservespace)
+			if (labelOptions.reserveSpace !== false && (side === 0 || side === 2 ||
 					{ 1: 'left', 3: 'right' }[side] === axis.labelAlign || axis.labelAlign === 'center')) {
 				each(tickPositions, function (pos) {
 

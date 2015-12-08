@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.9-modified (2015-12-01)
+ * @license Highmaps JS v1.1.10-modified (2015-12-08)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -7,12 +7,21 @@
  */
 
 /*eslint no-unused-vars: 0 */ // @todo: Not needed in HC5
-(function () {
-
+(function (root, factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = root.document ? 
+        factory(root) :
+        function (w) {
+            return factory(w);
+        };
+    } else {
+        root.Highcharts = factory();
+    }
+}(typeof window !== 'undefined' ? window : this, function (w) {
 // encapsulated variables
     var UNDEFINED,
-        doc = document,
-        win = window,
+        win = w || window,
+        doc = win.document,
         math = Math,
         mathRound = math.round,
         mathFloor = math.floor,
@@ -51,7 +60,7 @@
         charts = [],
         chartCount = 0,
         PRODUCT = 'Highmaps',
-        VERSION = '1.1.9-modified',
+        VERSION = '1.1.10-modified',
 
         // some constants for frequently used strings
         DIV = 'div',
@@ -115,7 +124,10 @@
     }
 
     // The Highcharts namespace
-    Highcharts = win.Highcharts = win.Highcharts ? error(16, true) : {};
+    Highcharts = win.Highcharts ? error(16, true) : function (adapter) {
+        Highcharts.loadAdapter(adapter);
+        return Highcharts;
+    };
 
     Highcharts.seriesTypes = seriesTypes;
 
@@ -870,11 +882,11 @@
         }
     };
 
-    (function ($) {
+    function loadJQueryAdapter($) {
         /**
          * The default HighchartsAdapter for jQuery
          */
-        win.HighchartsAdapter = win.HighchartsAdapter || ($ && {
+        return {
 
             /**
              * Initialize the adapter by applying some extensions to jQuery
@@ -1221,41 +1233,61 @@
                     $(el).stop();
                 }
             }
-        });
-    }(win.jQuery));
-
-
-    // check for a custom HighchartsAdapter defined prior to this file
-    var globalAdapter = win.HighchartsAdapter,
-        adapter = globalAdapter || {};
-
-    // Initialize the adapter
-    if (globalAdapter) {
-        globalAdapter.init(pathAnim);
+        };
     }
-
-
     // Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
     // and all the utility functions will be null. In that case they are populated by the
     // default adapters below.
-    var adapterRun = adapter.adapterRun,
-        getScript = adapter.getScript,
-        inArray = adapter.inArray,
-        each = adapter.each,
-        grep = adapter.grep,
-        offset = adapter.offset,
-        map = adapter.map,
-        addEvent = adapter.addEvent,
-        removeEvent = adapter.removeEvent,
-        fireEvent = adapter.fireEvent,
-        washMouseEvent = adapter.washMouseEvent,
-        animate = adapter.animate,
-        stop = adapter.stop;
+    var adapterRun,
+        inArray,
+        each,
+        grep,
+        offset,
+        map,
+        addEvent,
+        removeEvent,
+        fireEvent,
+        washMouseEvent,
+        animate,
+        stop;
 
-    Highcharts.addEvent = addEvent;
-    Highcharts.each = each;
-    Highcharts.fireEvent = fireEvent;
-    Highcharts.removeEvent = removeEvent;
+    /**
+     * Helper function to load and extend Highcharts with adapter functionality. 
+     * @param  {object|function} adapter - HighchartsAdapter or jQuery
+     */
+    Highcharts.loadAdapter = function (adapter) {
+    
+        if (adapter) {
+            // If jQuery, then load our default jQueryAdapter
+            if (adapter.fn && adapter.fn.jquery) {
+                adapter = loadJQueryAdapter(adapter);
+            }
+            // Initialize the adapter.
+            if (adapter.init) {
+                adapter.init(pathAnim);
+                delete adapter.init; // Avoid copying to Highcharts object
+            }
+            // Extend Highcharts with adapter functionality.
+            Highcharts.extend(Highcharts, adapter);
+
+            // Assign values to local functions.
+            adapterRun = Highcharts.adapterRun;
+            inArray = Highcharts.inArray;
+            each = Highcharts.each;
+            grep = Highcharts.grep;
+            offset = Highcharts.offset;
+            map = Highcharts.map;
+            addEvent = Highcharts.addEvent;
+            removeEvent = Highcharts.removeEvent;
+            fireEvent = Highcharts.fireEvent;
+            washMouseEvent = Highcharts.washMouseEvent;
+            animate = Highcharts.animate;
+            stop = Highcharts.stop;
+        }
+    };
+
+    // Load adapter if HighchartsAdapter or jQuery is set on the window.
+    Highcharts.loadAdapter(win.HighchartsAdapter || win.jQuery);
     /* ****************************************************************************
      * Handle the options                                                         *
      *****************************************************************************/
@@ -1280,7 +1312,7 @@
             useUTC: true,
             //timezoneOffset: 0,
             canvasToolsURL: 'http://code.highcharts.com/modules/canvas-tools.js',
-            VMLRadialGradientURL: 'http://code.highcharts.com/maps/1.1.9-modified/gfx/vml-radial-gradient.png'
+            VMLRadialGradientURL: 'http://code.highcharts.com/maps/1.1.10-modified/gfx/vml-radial-gradient.png'
         },
         chart: {
             //animation: true,
@@ -1825,7 +1857,7 @@
         // Default base for animation
         opacity: 1,
         // For labels, these CSS properties are applied to the <text> node directly
-        textProps: ['fontSize', 'fontWeight', 'fontFamily', 'fontStyle', 'color',
+        textProps: ['direction', 'fontSize', 'fontWeight', 'fontFamily', 'fontStyle', 'color',
             'lineHeight', 'width', 'textDecoration', 'textOverflow', 'textShadow'],
 
         /**
@@ -4851,6 +4883,9 @@
                     parent.element || parent :
                     box;
 
+            if (parent) {
+                this.parentGroup = parent;
+            }
 
             // if the parent group is inverted, apply inversion on all children
             if (inverted) { // only on groups
@@ -5905,7 +5940,7 @@
                 push: function (func, scriptLocation) {
                     // Only get the script once
                     if (deferredRenderCalls.length === 0) {
-                        getScript(scriptLocation, drawDeferred);
+                        Highcharts.getScript(scriptLocation, drawDeferred);
                     }
                     // Register render call
                     deferredRenderCalls.push(func);
@@ -7503,9 +7538,11 @@
                         horiz = axis.horiz,
                         key = [
                             horiz ? otherOptions.left : otherOptions.top, 
-                            horiz ? otherOptions.width : otherOptions.height, 
+                            otherOptions.width,
+                            otherOptions.height, 
                             otherOptions.pane
                         ].join(',');
+
 
                     if (axis.series.length) { // #4442
                         if (others[key]) {
@@ -8057,7 +8094,7 @@
 
 
                 // Left side must be align: right and right side must have align: left for labels
-                if (labelOptions.reserveSpace !== false && (side === 0 || side === 2 || // docs: reserveSpace (demo at highcharts/xaxis/labels-reservespace)
+                if (labelOptions.reserveSpace !== false && (side === 0 || side === 2 ||
                         { 1: 'left', 3: 'right' }[side] === axis.labelAlign || axis.labelAlign === 'center')) {
                     each(tickPositions, function (pos) {
 
@@ -12196,7 +12233,7 @@
 
             // If the plot area size has changed significantly, calculate tick positions again
             redoHorizontal = tempWidth / chart.plotWidth > 1.1;
-            redoVertical = tempHeight / chart.plotHeight > 1.1;
+            redoVertical = tempHeight / chart.plotHeight > 1.05; // Height is more sensitive
 
             if (redoHorizontal || redoVertical) {
 
@@ -14765,8 +14802,9 @@
                     names[point.x] = point.name;
                 }
 
-                // Record the raw options to options.data (#4701)
-                seriesOptions.data[i] = options;
+                // Record the options to options.data. If there is an object from before,
+                // use point options, otherwise use raw options. (#4701)
+                seriesOptions.data[i] = isObject(seriesOptions.data[i]) ? point.options : options;
 
                 // redraw
                 series.isDirty = series.isDirtyData = true;
@@ -15158,7 +15196,7 @@
             y: null
         },
         softThreshold: false,
-        startFromThreshold: true, // docs (but false doesn't work well): http://jsfiddle.net/highcharts/hz8fopan/14/
+        startFromThreshold: true, // false doesn't work well: http://jsfiddle.net/highcharts/hz8fopan/14/
         stickyTracking: false,
         tooltip: {
             distance: 6
@@ -16999,7 +17037,7 @@
      * Handle animation of the color attributes directly
      */
     each(['fill', 'stroke'], function (prop) {
-        HighchartsAdapter.addAnimSetter(prop, function (fx) {
+        Highcharts.addAnimSetter(prop, function (fx) {
             fx.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(fx.start), Color(fx.end), fx.pos));
         });
     });
@@ -18748,7 +18786,7 @@
             }
         }
 
-        return this.transformToLatLon(point, transforms.default);
+        return this.transformToLatLon(point, transforms['default']); // eslint-disable-line dot-notation
     };
 
     Chart.prototype.fromLatLonToPoint = function (latLon) {
@@ -18773,7 +18811,7 @@
             }
         }
 
-        return this.transformFromLatLon(latLon, transforms.default);
+        return this.transformFromLatLon(latLon, transforms['default']); // eslint-disable-line dot-notation
     };
 
     /**
@@ -19552,7 +19590,7 @@
 
             selected = pick(selected, !point.selected);
 
-            // fire the event with the defalut handler
+            // fire the event with the default handler
             point.firePointEvent(selected ? 'select' : 'unselect', { accumulate: accumulate }, function () {
                 point.selected = point.options.selected = selected;
                 series.options.data[inArray(point, series.data)] = point.options;
@@ -19759,10 +19797,14 @@
                     series.halo = halo = chart.renderer.path()
                         .add(chart.seriesGroup);
                 }
-                halo.attr(extend({
+                halo.attr(extend(hasSVG ? {
                     fill: point.color || series.color,
                     'fill-opacity': haloOptions.opacity
-                }, haloOptions.attributes))[move ? 'animate' : 'attr']({
+                } : {
+                    // Old IE doesn't take fill-opacity
+                    fill: Color(point.color || series.color).setOpacity(haloOptions.opacity).get()
+                },
+                haloOptions.attributes))[move ? 'animate' : 'attr']({
                     d: point.haloPath(haloOptions.size)
                 });
             } else if (halo) {
@@ -20034,5 +20076,6 @@
         product: PRODUCT,
         version: VERSION
     });
-
-}());
+    
+    return Highcharts;
+}));

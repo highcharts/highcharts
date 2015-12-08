@@ -7,7 +7,13 @@
  * License: www.highcharts.com/license
  */
 
-(function (H) {
+(function (factory) {
+	if (typeof module === 'object' && module.exports) {
+		module.exports = factory;
+	} else {
+		factory(Highcharts);
+	}
+}(function (H) {
 	var seriesTypes = H.seriesTypes,
 		map = H.map,
 		merge = H.merge,
@@ -18,7 +24,7 @@
 		noop = function () {
 		},
 		each = H.each,
-		grep = HighchartsAdapter.grep,
+		grep = H.grep,
 		pick = H.pick,
 		Series = H.Series,
 		stableSort = H.stableSort,
@@ -128,7 +134,7 @@
 
 			// If parent does not exist, hoist parent to root of tree.
 			eachObject(listOfParents, function (children, parent, list) {
-				if ((parent !== '') && (HighchartsAdapter.inArray(parent, ids) === -1)) {
+				if ((parent !== '') && (H.inArray(parent, ids) === -1)) {
 					each(children, function (child) {
 						list[''].push(child);
 					});
@@ -859,4 +865,4 @@
 			H.extend(this.xAxis.options, treeAxis);
 		}
 	}));
-}(Highcharts));
+}));

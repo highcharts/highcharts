@@ -2,14 +2,20 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.9-modified (2015-12-01)
+ * @license Highcharts JS v4.1.10-modified (2015-12-08)
  *
  * (c) 2009-2014 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 
-(function (Highcharts, UNDEFINED) {
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (Highcharts) {
 var arrayMin = Highcharts.arrayMin,
         arrayMax = Highcharts.arrayMax,
         each = Highcharts.each,
@@ -35,7 +41,8 @@ var arrayMin = Highcharts.arrayMin,
         mathFloor = math.floor,
         mathMax = math.max,
         Color = Highcharts.Color,
-        noop = function () {};/**
+        noop = function () {},
+        UNDEFINED;/**
      * The Pane object allows options that are common to a set of X and Y axes.
      *
      * In the future, this can be extended to basic Highcharts and Highstock.
@@ -774,7 +781,7 @@ var arrayMin = Highcharts.arrayMin,
                 higherPath;
 
             // Remove nulls from low segment
-            lowSegment = HighchartsAdapter.grep(segment, function (point) {
+            lowSegment = Highcharts.grep(segment, function (point) {
                 return point.plotLow !== null;
             });
 
@@ -1176,7 +1183,8 @@ var arrayMin = Highcharts.arrayMin,
                             stroke: dialOptions.borderColor || 'none',
                             'stroke-width': dialOptions.borderWidth || 0,
                             fill: dialOptions.backgroundColor || 'black',
-                            rotation: shapeArgs.rotation // required by VML when animation is false
+                            rotation: shapeArgs.rotation, // required by VML when animation is false
+                            zIndex: 1
                         })
                         .add(series.group);
                 }
@@ -1193,7 +1201,8 @@ var arrayMin = Highcharts.arrayMin,
                     .attr({
                         'stroke-width': pivotOptions.borderWidth || 0,
                         stroke: pivotOptions.borderColor || 'silver',
-                        fill: pivotOptions.backgroundColor || 'black'
+                        fill: pivotOptions.backgroundColor || 'black',
+                        zIndex: 2
                     })
                     .translate(center[0], center[1])
                     .add(series.group);
@@ -2679,4 +2688,4 @@ var arrayMin = Highcharts.arrayMin,
 
     }());
 
-}(Highcharts));
+}));

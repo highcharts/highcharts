@@ -8,13 +8,19 @@
  */
 
 /* eslint indent:0 */
-(function (Highcharts) {
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (Highcharts) {
 
 // create shortcuts
 var Chart = Highcharts.Chart,
 	addEvent = Highcharts.addEvent,
 	removeEvent = Highcharts.removeEvent,
-	fireEvent = HighchartsAdapter.fireEvent,
+	fireEvent = Highcharts.fireEvent,
 	createElement = Highcharts.createElement,
 	discardElement = Highcharts.discardElement,
 	css = Highcharts.css,
@@ -256,7 +262,7 @@ extend(Chart.prototype, {
 			cssHeight,
 			html,
 			options = merge(chart.options, additionalOptions), // copy the options and add extra options
-			allowHTML = options.exporting.allowHTML; // docs: experimental, see #2473
+			allowHTML = options.exporting.allowHTML;
 			
 
 		// IE compatibility hack for generating SVG content that it doesn't really understand
@@ -772,4 +778,4 @@ Chart.prototype.callbacks.push(function (chart) {
 });
 
 
-}(Highcharts));
+}));

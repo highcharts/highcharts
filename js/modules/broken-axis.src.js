@@ -2,11 +2,16 @@
  * @product.name@ JS v@product.version@ (@product.date@)
  * Highcharts Broken Axis module
  * 
- * Author: Stephane Vanraes, Torstein Honsi
  * License: www.highcharts.com/license
  */
 
-(function (H) {	
+(function (factory) {
+	if (typeof module === 'object' && module.exports) {
+		module.exports = factory;
+	} else {
+		factory(Highcharts);
+	}
+}(function (H) {
 
 	'use strict';
 
@@ -319,4 +324,4 @@
 	wrap(H.seriesTypes.column.prototype, 'drawPoints', drawPointsWrapped);
 	wrap(H.Series.prototype, 'drawPoints', drawPointsWrapped);
 
-}(Highcharts));
+}));

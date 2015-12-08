@@ -9,7 +9,7 @@ $(function () {
                         beta: 15,
                         viewDistance: 25,
                         depth: 40
-                    },
+                    }
                 },
                 yAxis: {
                     reversedStacks: false
@@ -34,28 +34,28 @@ $(function () {
                     data: [3, 0, 4, 4, 3, 3, 0, 4, 4, 3, 3, 0, 4, 4, 3]
                 }]
             },
-            chart_1, chart_2;
+            chart1, chart2;
 
-        chart_1 = $("#container_1").highcharts(options).highcharts();
+        chart1 = $("#container_1").highcharts(options).highcharts();
         options.yAxis.reversedStacks = true;
-        chart_2 = $("#container_2").highcharts(options).highcharts();
+        chart2 = $("#container_2").highcharts(options).highcharts();
 
         // non-reversed stacks
-        for (var i = chart_1.series.length - 1; i >= 1; i--) {
+        for (var i = chart1.series.length - 1; i >= 1; i--) {
             assert.strictEqual(
-                chart_1.series[i].options.zIndex > chart_1.series[i - 1].options.zIndex,
+                chart1.series[i].options.zIndex > chart1.series[i - 1].options.zIndex,
                 true,
                 'Series ascending order'
             );
-        };
+        }
 
         // reversed stacks
-        for (var j = chart_2.series.length - 1; j >= 1; j--) {
+        for (var j = chart2.series.length - 1; j >= 1; j--) {
             assert.strictEqual(
-                chart_2.series[j].options.zIndex < chart_2.series[j - 1].options.zIndex,
+                chart2.series[j].options.zIndex < chart2.series[j - 1].options.zIndex,
                 true,
                 'Series descendig order'
             );
-        };
+        }
     });
 });

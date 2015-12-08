@@ -1,12 +1,18 @@
 /**
- * @license Highcharts JS v4.1.9-modified (2015-11-27)
+ * @license Highcharts JS v4.1.10-modified (2015-12-08)
  *
  * (c) 2011-2014 Torstein Honsi
  *
  * License: www.highcharts.com/license
  */
 /* eslint indent: [2, 4] */
-(function (Highcharts) {
+(function (factory) {
+    if (typeof module === 'object' && module.exports) {
+        module.exports = factory;
+    } else {
+        factory(Highcharts);
+    }
+}(function (Highcharts) {
 
 
     var UNDEFINED,
@@ -482,7 +488,7 @@
      * Handle animation of the color attributes directly
      */
     each(['fill', 'stroke'], function (prop) {
-        HighchartsAdapter.addAnimSetter(prop, function (fx) {
+        Highcharts.addAnimSetter(prop, function (fx) {
             fx.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(fx.start), Color(fx.end), fx.pos));
         });
     });
@@ -702,4 +708,4 @@
     }));
 
 
-}(Highcharts));
+}));

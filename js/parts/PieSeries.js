@@ -409,6 +409,10 @@ var PieSeries = {
 				shadowGroup = point.shadowGroup;
 				pointAttr = point.pointAttr[point.selected ? SELECT_STATE : NORMAL_STATE];
 
+				if (!pointAttr.stroke) {
+					pointAttr.stroke = pointAttr.fill;
+				}
+
 				// put the shadow behind all points
 				if (shadow && !shadowGroup) {
 					shadowGroup = point.shadowGroup = renderer.g('shadow')
