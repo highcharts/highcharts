@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.10-modified (2015-12-07)
+ * @license Highmaps JS v1.1.10-modified (2015-12-08)
  *
  * (c) 2011-2014 Torstein Honsi
  *
@@ -10410,7 +10410,8 @@
         positionCheckboxes: function (scrollOffset) {
             var alignAttr = this.group.alignAttr,
                 translateY,
-                clipHeight = this.clipHeight || this.legendHeight;
+                clipHeight = this.clipHeight || this.legendHeight,
+                titleHeight = this.titleHeight;
 
             if (alignAttr) {
                 translateY = alignAttr.translateY;
@@ -10419,7 +10420,7 @@
                         top;
 
                     if (checkbox) {
-                        top = (translateY + checkbox.y + (scrollOffset || 0) + 3);
+                        top = translateY + titleHeight + checkbox.y + (scrollOffset || 0) + 3;
                         css(checkbox, {
                             left: (alignAttr.translateX + item.checkboxOffset + checkbox.x - 20) + PX,
                             top: top + PX,
@@ -19558,7 +19559,7 @@
 
             selected = pick(selected, !point.selected);
 
-            // fire the event with the defalut handler
+            // fire the event with the default handler
             point.firePointEvent(selected ? 'select' : 'unselect', { accumulate: accumulate }, function () {
                 point.selected = point.options.selected = selected;
                 series.options.data[inArray(point, series.data)] = point.options;

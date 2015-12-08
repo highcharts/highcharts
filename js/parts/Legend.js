@@ -160,7 +160,8 @@ Legend.prototype = {
 	positionCheckboxes: function (scrollOffset) {
 		var alignAttr = this.group.alignAttr,
 			translateY,
-			clipHeight = this.clipHeight || this.legendHeight;
+			clipHeight = this.clipHeight || this.legendHeight,
+			titleHeight = this.titleHeight;
 
 		if (alignAttr) {
 			translateY = alignAttr.translateY;
@@ -169,7 +170,7 @@ Legend.prototype = {
 					top;
 
 				if (checkbox) {
-					top = (translateY + checkbox.y + (scrollOffset || 0) + 3);
+					top = translateY + titleHeight + checkbox.y + (scrollOffset || 0) + 3;
 					css(checkbox, {
 						left: (alignAttr.translateX + item.checkboxOffset + checkbox.x - 20) + PX,
 						top: top + PX,
