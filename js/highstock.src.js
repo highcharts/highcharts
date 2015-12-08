@@ -22919,6 +22919,7 @@
                 textAlign: 'center',
                 fontSize: chartStyle.fontSize,
                 fontFamily: chartStyle.fontFamily,
+                left: '-9em', // #4798
                 top: chart.plotTop + PX // prevent jump on focus in Firefox
             }, options.inputStyle), div);
 
