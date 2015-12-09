@@ -11507,7 +11507,8 @@
                     (symbolWidth / 2) - radius,
                     verticalCenter - radius,
                     2 * radius,
-                    2 * radius
+                    2 * radius,
+                    markerOptions
                 )
                 .add(legendItemGroup);
                 legendSymbol.isMarker = true;
