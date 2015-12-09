@@ -184,7 +184,8 @@ Scroller.prototype = {
 			elementsToDestroy.push(tempElem);
 
 			// the rifles
-			tempElem = renderer.path([
+			tempElem = renderer
+				.path([
 					'M',
 					-1.5, 4,
 					'L',
@@ -236,7 +237,8 @@ Scroller.prototype = {
 				}).add(scrollbarButtons[index]);
 			elementsToDestroy.push(tempElem);
 
-			tempElem = renderer.path([
+			tempElem = renderer
+				.path([
 					'M',
 					scrollbarHeight / 2 + (index ? -1 : 1), scrollbarHeight / 2 - 3,
 					'L',
