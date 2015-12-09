@@ -18557,11 +18557,21 @@
                     extremes = axis.getExtremes(),
                     newMin = axis.toValue(startPos - mousePos, true) + halfPointRange,
                     newMax = axis.toValue(startPos + chart[isX ? 'plotWidth' : 'plotHeight'] - mousePos, true) - halfPointRange,
+                    minBound = mathMin(extremes.dataMin, extremes.min),
+                    maxBound = mathMax(extremes.dataMax, extremes.max),
+                    range = newMax - newMin,
                     goingLeft = startPos > mousePos; // #3613
+            
+                // Keep within bounds
+                if (newMin < minBound && !goingLeft) {
+                    newMin = minBound;
+                    newMax = newMin + range;
+                } else if (newMax > maxBound && goingLeft) {
+                    newMax = maxBound;
+                    newMin = newMax - range;
+                }
 
-                if (axis.series.length &&
-                        (goingLeft || newMin > mathMin(extremes.dataMin, extremes.min)) &&
-                        (!goingLeft || newMax < mathMax(extremes.dataMax, extremes.max))) {
+                if (axis.series.length) {
                     axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
                     doRedraw = true;
                 }
@@ -22027,6 +22037,11 @@
                         fixedMin = scroller.fixedExtreme;
                     } else if (scroller.zoomedMax === scroller.otherHandlePos) {
                         fixedMax = scroller.fixedExtreme;
+                    }
+
+                    // Snap to right edge (#4076)
+                    if (scroller.zoomedMax === scroller.navigatorWidth) {
+                        fixedMax = scroller.getUnionExtremes().dataMax;
                     }
 
                     ext = xAxis.toFixedRange(scroller.zoomedMin, scroller.zoomedMax, fixedMin, fixedMax);

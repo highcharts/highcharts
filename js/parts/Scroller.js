@@ -763,6 +763,11 @@ Scroller.prototype = {
 					fixedMax = scroller.fixedExtreme;
 				}
 
+				// Snap to right edge (#4076)
+				if (scroller.zoomedMax === scroller.navigatorWidth) {
+					fixedMax = scroller.getUnionExtremes().dataMax;
+				}
+
 				ext = xAxis.toFixedRange(scroller.zoomedMin, scroller.zoomedMax, fixedMin, fixedMax);
 				if (defined(ext.min)) {
 					chart.xAxis[0].setExtremes(
