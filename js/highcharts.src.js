@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.10-modified (2015-12-08)
+ * @license Highcharts JS v4.1.10-modified (2015-12-09)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -16499,7 +16499,6 @@
                 reversedXAxis = xAxis.reversed,
                 stackKey,
                 stackGroups = {},
-                columnIndex,
                 columnCount = 0;
 
             // Get the total number of column type series.
@@ -16510,7 +16509,8 @@
             } else {
                 each(series.chart.series, function (otherSeries) {
                     var otherOptions = otherSeries.options,
-                        otherYAxis = otherSeries.yAxis;
+                        otherYAxis = otherSeries.yAxis,
+                        columnIndex;
                     if (otherSeries.type === series.type && otherSeries.visible &&
                             yAxis.len === otherYAxis.len && yAxis.pos === otherYAxis.pos) {  // #642, #2086
                         if (otherOptions.stacking) {

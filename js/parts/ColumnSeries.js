@@ -89,7 +89,6 @@ var ColumnSeries = extendClass(Series, {
 			reversedXAxis = xAxis.reversed,
 			stackKey,
 			stackGroups = {},
-			columnIndex,
 			columnCount = 0;
 
 		// Get the total number of column type series.
@@ -100,7 +99,8 @@ var ColumnSeries = extendClass(Series, {
 		} else {
 			each(series.chart.series, function (otherSeries) {
 				var otherOptions = otherSeries.options,
-					otherYAxis = otherSeries.yAxis;
+					otherYAxis = otherSeries.yAxis,
+					columnIndex;
 				if (otherSeries.type === series.type && otherSeries.visible &&
 						yAxis.len === otherYAxis.len && yAxis.pos === otherYAxis.pos) {  // #642, #2086
 					if (otherOptions.stacking) {
