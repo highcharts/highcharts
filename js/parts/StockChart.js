@@ -513,7 +513,7 @@ seriesProto.processData = function () {
 
 		// find the first value for comparison
 		for (i = 0; i < length; i++) {
-			if (typeof processedYData[i] === 'number' && processedXData[i] >= series.xAxis.min) {
+			if (typeof processedYData[i] === 'number' && processedXData[i] >= series.xAxis.min && processedYData[i] !== 0) {
 				series.compareValue = processedYData[i];
 				break;
 			}
