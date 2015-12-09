@@ -6379,10 +6379,6 @@
                 path = [],
                 addEvent,
                 eventType,
-                xs,
-                ys,
-                x,
-                y,
                 color = options.color,
                 zIndex = options.zIndex,
                 events = options.events,
@@ -6464,40 +6460,7 @@
                     rotation: horiz && !isBand && 90
                 }, optionsLabel);
 
-                // add the SVG element
-                if (!label) {
-                    attribs = {
-                        align: optionsLabel.textAlign || optionsLabel.align,
-                        rotation: optionsLabel.rotation
-                    };
-                    if (defined(zIndex)) {
-                        attribs.zIndex = zIndex;
-                    }
-                    plotLine.label = label = renderer.text(
-                            optionsLabel.text,
-                            0,
-                            0,
-                            optionsLabel.useHTML
-                        )
-                        .attr(attribs)
-                        .css(optionsLabel.style)
-                        .add();
-                }
-
-                // get the bounding box and align the label
-                // #3000 changed to better handle choice between plotband or plotline
-                xs = [path[1], path[4], (isBand ? path[6] : path[1])];
-                ys = [path[2], path[5], (isBand ? path[7] : path[2])];
-                x = arrayMin(xs);
-                y = arrayMin(ys);
-
-                label.align(optionsLabel, false, {
-                    x: x,
-                    y: y,
-                    width: arrayMax(xs) - x,
-                    height: arrayMax(ys) - y
-                });
-                label.show();
+                this.renderLabel(optionsLabel, path, isBand, zIndex);
 
             } else if (label) { // move out of sight
                 label.hide();
@@ -6505,6 +6468,56 @@
 
             // chainable
             return plotLine;
+        },
+
+        /**
+         * Render and align label for plot line or band.
+         */
+        renderLabel: function (optionsLabel, path, isBand, zIndex) {
+            var plotLine = this,
+                label = plotLine.label,
+                renderer = plotLine.axis.chart.renderer,
+                attribs,
+                zIndex,
+                xs,
+                ys,
+                x,
+                y;
+
+            // add the SVG element
+            if (!label) {
+                attribs = {
+                    align: optionsLabel.textAlign || optionsLabel.align,
+                    rotation: optionsLabel.rotation
+                };
+                if (defined(zIndex)) {
+                    attribs.zIndex = zIndex;
+                }
+                plotLine.label = label = renderer.text(
+                        optionsLabel.text,
+                        0,
+                        0,
+                        optionsLabel.useHTML
+                    )
+                    .attr(attribs)
+                    .css(optionsLabel.style)
+                    .add();
+            }
+
+            // get the bounding box and align the label
+            // #3000 changed to better handle choice between plotband or plotline
+            xs = [path[1], path[4], (isBand ? path[6] : path[1])];
+            ys = [path[2], path[5], (isBand ? path[7] : path[2])];
+            x = arrayMin(xs);
+            y = arrayMin(ys);
+
+            label.align(optionsLabel, false, {
+                x: x,
+                y: y,
+                width: arrayMax(xs) - x,
+                height: arrayMax(ys) - y
+            });
+            label.show();
         },
 
         /**
