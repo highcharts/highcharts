@@ -786,14 +786,474 @@
         return (s + (j ? i.substr(0, j) + t : '') + i.substr(j).replace(/(\d{3})(?=\d)/g, '$1' + t) +
                 (c ? d + mathAbs(n - i).toFixed(c).slice(2) : ''));
     };
+
+
+    var emptyArray = [],
+        _getStyle,
+        timers = [],
+        animSetters = {},
+        Fx;
+
+    // Adapter functions
+    var adapterRun,
+        addAnimSetter,
+        inArray,
+        each,
+        getScript,
+        grep,
+        offset,
+        map,
+        addEvent,
+        removeEvent,
+        fireEvent,
+        washMouseEvent,
+        animate,
+        stop;
+
+
+
+    Math.easeInOutSine = function (t, b, c, d) {
+        return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
+    };
+
     /**
-     * Path interpolation algorithm used across adapters
+     * Internal method to return CSS value for given element and property
      */
-    pathAnim = {
+    _getStyle = function (el, prop) {
+        var style = win.getComputedStyle(el, undefined);
+        return style && style.getPropertyValue(prop);
+    };
+
+
+
+    /**
+     * Downloads a script and executes a callback when done.
+     * @param {String} scriptLocation
+     * @param {Function} callback
+     */
+    getScript = function (scriptLocation, callback) {
+        // We cannot assume that Assets class from mootools-more is available so instead insert a script tag to download script.
+        var head = doc.getElementsByTagName('head')[0],
+            script = doc.createElement('script');
+
+        script.type = 'text/javascript';
+        script.src = scriptLocation;
+        script.onload = callback;
+
+        head.appendChild(script);
+    };
+
+    /**
+     * Return the index of an item in an array, or -1 if not found
+     */
+    inArray = function (item, arr) {
+        return arr.indexOf ? arr.indexOf(item) : emptyArray.indexOf.call(arr, item);
+    };
+
+
+    /**
+     * A direct link to adapter methods
+     */
+    adapterRun = function (elem, method) {
+        return parseInt(_getStyle(elem, method), 10);
+    };
+
+    /**
+     * Filter an array
+     */
+    grep = function (elements, callback) {
+        return emptyArray.filter.call(elements, callback);
+    };
+
+    /**
+     * Map an array
+     */
+    map = function (arr, fn) {
+        var results = [], i = 0, len = arr.length;
+
+        for (; i < len; i++) {
+            results[i] = fn.call(arr[i], arr[i], i, arr);
+        }
+
+        return results;
+    };
+
+    /**
+     * Get the element's offset position, corrected by overflow:auto. Loosely based on jQuery's offset method.
+     */
+    offset = function (el) {
+        var docElem = document.documentElement,
+            box = el.getBoundingClientRect();
+
+        return {
+            top: box.top  + (win.pageYOffset || docElem.scrollTop)  - (docElem.clientTop  || 0),
+            left: box.left + (win.pageXOffset || docElem.scrollLeft) - (docElem.clientLeft || 0)
+        };
+    };
+
+    washMouseEvent = function (e) {
+        return e;
+    };
+
+    /**
+     * Stop running animation
+     */
+    stop = function (el) {
+
+        var i = timers.length,
+            timer;
+
+        // Remove timers related to this element (#4519)
+        while (i--) {
+            timer = timers[i];
+            if (timer.elem === el) {
+                timers.splice(i, 1);
+            }
+        }
+    };
+
+    /**
+     * Utility for iterating over an array. Parameters are reversed compared to jQuery.
+     * @param {Array} arr
+     * @param {Function} fn
+     */
+    each = function (arr, fn) { // modern browsers
+        return Array.prototype.forEach.call(arr, fn);
+    };
+
+
+    /**
+     * Extend given object with custom events
+     */
+    function augment(obj) {
+        function removeOneEvent(el, type, fn) {
+            el.removeEventListener(type, fn, false);
+        }
+
+        function IERemoveOneEvent(el, type, fn) {
+            fn = el.HCProxiedMethods[fn.toString()];
+            el.detachEvent('on' + type, fn);
+        }
+
+        function removeAllEvents(el, type) {
+            var events = el.HCEvents,
+                remove,
+                types,
+                len,
+                n;
+
+            if (el.removeEventListener) {
+                remove = removeOneEvent;
+            } else if (el.attachEvent) {
+                remove = IERemoveOneEvent;
+            } else {
+                return; // break on non-DOM events
+            }
+
+
+            if (type) {
+                types = {};
+                types[type] = true;
+            } else {
+                types = events;
+            }
+
+            for (n in types) {
+                if (events[n]) {
+                    len = events[n].length;
+                    while (len--) {
+                        remove(el, n, events[n][len]);
+                    }
+                }
+            }
+        }
+
+        if (!obj.HCExtended) {
+            obj.HCExtended = true;
+
+            obj.HCEvents = {};
+
+            obj.bind = function (name, fn) {
+                var el = this,
+                    events = this.HCEvents,
+                    wrappedFn;
+
+                // handle DOM events in modern browsers
+                if (el.addEventListener) {
+                    el.addEventListener(name, fn, false);
+
+                // handle old IE implementation
+                } else if (el.attachEvent) {
+                
+                    wrappedFn = function (e) {
+                        e.target = e.srcElement || win; // #2820
+                        fn.call(el, e);
+                    };
+
+                    if (!el.HCProxiedMethods) {
+                        el.HCProxiedMethods = {};
+                    }
+
+                    // link wrapped fn with original fn, so we can get this in removeEvent
+                    el.HCProxiedMethods[fn.toString()] = wrappedFn;
+
+                    el.attachEvent('on' + name, wrappedFn);
+                }
+
+
+                if (events[name] === UNDEFINED) {
+                    events[name] = [];
+                }
+
+                events[name].push(fn);
+            };
+
+            obj.unbind = function (name, fn) {
+                var events,
+                    index;
+
+                if (name) {
+                    events = this.HCEvents[name] || [];
+                    if (fn) {
+                        index = inArray(fn, events);
+                        if (index > -1) {
+                            events.splice(index, 1);
+                            this.HCEvents[name] = events;
+                        }
+                        if (this.removeEventListener) {
+                            removeOneEvent(this, name, fn);
+                        } else if (this.attachEvent) {
+                            IERemoveOneEvent(this, name, fn);
+                        }
+                    } else {
+                        removeAllEvents(this, name);
+                        this.HCEvents[name] = [];
+                    }
+                } else {
+                    removeAllEvents(this);
+                    this.HCEvents = {};
+                }
+            };
+
+            obj.trigger = function (name, args) {
+                var events = this.HCEvents[name] || [],
+                    target = this,
+                    len = events.length,
+                    i,
+                    preventDefault,
+                    fn;
+
+                // Attach a simple preventDefault function to skip default handler if called
+                preventDefault = function () {
+                    args.defaultPrevented = true;
+                };
+            
+                for (i = 0; i < len; i++) {
+                    fn = events[i];
+
+                    // args is never null here
+                    if (args.stopped) {
+                        return;
+                    }
+
+                    args.preventDefault = preventDefault;
+                    args.target = target;
+
+                    // If the type is not set, we're running a custom event (#2297). If it is set,
+                    // we're running a browser event, and setting it will cause en error in
+                    // IE8 (#2465).
+                    if (!args.type) {
+                        args.type = name;
+                    }
+                
+
+                
+                    // If the event handler return false, prevent the default handler from executing
+                    if (fn.call(this, args) === false) {
+                        args.preventDefault();
+                    }
+                }
+            };
+        }
+
+        return obj;
+    }
+
+    /**
+     * Add an event listener
+     */
+    addEvent = function (el, type, fn) {
+        augment(el).bind(type, fn);
+    };
+
+    /**
+     * Remove event added with addEvent
+     */
+    removeEvent = function (el, type, fn) {
+        augment(el).unbind(type, fn);
+    };
+
+    /**
+     * Fire an event on a custom object
+     */
+    fireEvent = function (el, type, eventArguments, defaultFunction) {
+        var e,
+            key;
+
+        if (doc.createEvent && (el.dispatchEvent || el.fireEvent)) {
+            e = doc.createEvent('Events');
+            e.initEvent(type, true, true);
+            e.target = el;
+
+            for (key in eventArguments) {
+                e[key] = eventArguments[key];
+            }
+
+            if (el.dispatchEvent) {
+                el.dispatchEvent(e);
+            } else {
+                el.fireEvent(type, e);
+            }
+
+        } else if (el.HCExtended === true) {
+            eventArguments = eventArguments || {};
+            el.trigger(type, eventArguments);
+        }
+
+        if (eventArguments && eventArguments.defaultPrevented) {
+            defaultFunction = null;
+        }
+
+        if (defaultFunction) {
+            defaultFunction(eventArguments);
+        }
+    };
+
+
+    /**
+     * Start of animation specific code
+     */
+    Fx = function (elem, options, prop) {
+        this.options = options;
+        this.elem = elem;
+        this.prop = prop;
+    };
+    Fx.prototype = {
+    
+        update: function () {
+            var styles,
+                paths = this.paths,
+                elem = this.elem,
+                elemelem = elem.element,
+                prop; // if destroyed, it is null
+
+            // Animation setter defined from outside
+            if (animSetters[this.prop]) {
+                animSetters[this.prop](this);
+
+            // Animating a path definition on SVGElement
+            } else if (paths && elemelem) {
+                elem.attr('d', this.pathStep(paths[0], paths[1], this.now, this.toD));
+
+            // Other animations on SVGElement
+            } else if (elem.attr) {
+                if (elemelem) {
+                    elem.attr(this.prop, this.now);
+                }
+
+            // HTML styles, raw HTML content like container size
+            } else {
+                styles = {};
+                styles[this.prop] = this.now + this.unit;
+                for (prop in styles) {
+                    elem.style[prop] = styles[prop];
+                }
+            }
+        
+            if (this.options.step) {
+                this.options.step.call(this.elem, this.now, this);
+            }
+
+        },
+        custom: function (from, to, unit) {
+            var self = this,
+                t = function (gotoEnd) {
+                    return self.step(gotoEnd);
+                },
+                i;
+
+            this.startTime = +new Date();
+            this.start = from;
+            this.end = to;
+            this.unit = unit;
+            this.now = this.start;
+            this.pos = this.state = 0;
+
+            t.elem = this.elem;
+
+            if (t() && timers.push(t) === 1) {
+                t.timerId = setInterval(function () {
+                
+                    for (i = 0; i < timers.length; i++) {
+                        if (!timers[i]()) {
+                            timers.splice(i--, 1);
+                        }
+                    }
+
+                    if (!timers.length) {
+                        clearInterval(t.timerId);
+                    }
+                }, 13);
+            }
+        },
+    
+        step: function (gotoEnd) {
+            var t = +new Date(),
+                ret,
+                done,
+                options = this.options,
+                elem = this.elem,
+                i;
+        
+            if (elem.attr && !elem.element) { // #2616, element including flag is destroyed
+                ret = false;
+
+            } else if (gotoEnd || t >= options.duration + this.startTime) {
+                this.now = this.end;
+                this.pos = this.state = 1;
+                this.update();
+
+                this.options.curAnim[this.prop] = true;
+
+                done = true;
+                for (i in options.curAnim) {
+                    if (options.curAnim[i] !== true) {
+                        done = false;
+                    }
+                }
+
+                if (done) {
+                    if (options.complete) {
+                        options.complete.call(elem);
+                    }
+                }
+                ret = false;
+
+            } else {
+                var n = t - this.startTime;
+                this.state = n / options.duration;
+                this.pos = options.easing(n, 0, 1, options.duration);
+                this.now = this.start + ((this.end - this.start) * this.pos);
+                this.update();
+                ret = true;
+            }
+            return ret;
+        },
+
         /**
          * Prepare start and end values so that the path can be animated one to one
          */
-        init: function (elem, fromD, toD) {
+        initPath: function (elem, fromD, toD) {
             fromD = fromD || '';
             var shift = elem.shift,
                 bezier = fromD.indexOf('C') > -1,
@@ -858,7 +1318,7 @@
         /**
          * Interpolate each value of the path and return the array
          */
-        step: function (start, end, pos, complete) {
+        pathStep: function (start, end, pos, complete) {
             var ret = [],
                 i = start.length,
                 startVal;
@@ -882,412 +1342,215 @@
         }
     };
 
-    function loadJQueryAdapter($) {
-        /**
-         * The default HighchartsAdapter for jQuery
-         */
-        return {
+    /**
+     * The adapter animate method
+     */
+    animate = function (el, prop, opt) {
+        var start,
+            unit = '',
+            end,
+            fx,
+            args,
+            name,
+            key,
+            PX = 'px';
 
-            /**
-             * Initialize the adapter by applying some extensions to jQuery
-             */
-            init: function (pathAnim) {
+        if (typeof opt !== 'object' || opt === null) {
+            args = arguments;
+            opt = {
+                duration: args[2],
+                easing: args[3],
+                complete: args[4]
+            };
+        }
+        if (typeof opt.duration !== 'number') {
+            opt.duration = 400;
+        }
+        opt.easing = Math[opt.easing] || Math.easeInOutSine;
+        opt.curAnim = {};
+        for (key in prop) {
+            opt.curAnim[key] = prop[key];
+        }
+    
+        for (name in prop) {
+            fx = new Fx(el, opt, name);
+            end = null;
+        
+            if (name === 'd') {
+                fx.paths = fx.initPath(
+                    el,
+                    el.d,
+                    prop.d
+                );
+                fx.toD = prop.d;
+                start = 0;
+                end = 1;
+            } else if (el.attr) {
+                start = el.attr(name);
+            } else {
+                start = parseFloat(_getStyle(el, name)) || 0;
+                if (name !== 'opacity') {
+                    unit = PX;
+                }
+            }
 
-                // extend the animate function to allow SVG animations
-                var Fx = $.fx;
+            if (!end) {
+                end = prop[name];
+            }
+            if (end.match && end.match(PX)) {
+                end = end.replace(/px/g, ''); // #4351
+            }
+            fx.custom(start, end, unit);
+        }
+    };
 
-                $.extend($.easing, {
-                    easeOutQuad: function (x, t, b, c, d) {
-                        return -c * (t /= d) * (t - 2) + b;
+    /**
+     * Add an animation setter for a specific property
+     */
+    addAnimSetter = function (prop, fn) {
+        animSetters[prop] = fn;
+    };
+
+    /**
+     * Register Highcharts as a plugin in jQuery
+     */
+    if (win.jQuery) {
+        win.jQuery.fn.highcharts = function () {
+            var constr = 'Chart', // default constructor
+                args = arguments,
+                options,
+                ret;
+
+            if (this[0]) {
+
+                if (isString(args[0])) {
+                    constr = args[0];
+                    args = Array.prototype.slice.call(args, 1);
+                }
+                options = args[0];
+
+                // Create the chart
+                if (options !== UNDEFINED) {
+                    options.chart = options.chart || {};
+                    options.chart.renderTo = this[0];
+                    ret = new Highcharts[constr](options, args[1]);
+                    ret = this;
+                }
+
+                // When called without parameters or with the return argument, get a predefined chart
+                if (options === UNDEFINED) {
+                    ret = charts[attr(this[0], 'data-highcharts-chart')];
+                }
+            }
+
+            return ret;
+        };
+    }
+
+
+    /**
+     * Compatibility section to add support for legacy IE. This can be removed if old IE 
+     * support is not needed.
+     */
+    if (!doc.defaultView) {
+        _getStyle = function (el, prop) {
+            var val;
+            if (el.style[prop]) {
+                return el.style[prop];
+            }
+            if (prop === 'opacity') {
+                prop = 'filter';
+            }
+        
+            val = el.currentStyle[prop.replace(/\-(\w)/g, function (a, b) {
+                return b.toUpperCase();
+            })];
+            if (prop === 'filter') {
+                val = val.replace(
+                    /alpha\(opacity=([0-9]+)\)/, 
+                    function (a, b) { 
+                        return b / 100; 
                     }
-                });
+                );
+            }
+        
+            return val === '' ? 1 : val;
+        };
+        adapterRun = function (elem, method) {
+            var alias = { width: 'clientWidth', height: 'clientHeight' }[method];
 
-                // extend some methods to check for elem.attr, which means it is a Highcharts SVG object
-                $.each(['cur', '_default', 'width', 'height', 'opacity'], function (i, fn) {
-                    var obj = Fx.step,
-                        base;
+            if (alias) {
+                elem.style.zoom = 1;
+                return elem[alias] - 2 * parseInt(_getStyle(elem, 'padding'), 10);
+            }
+        };
+    }
 
-                    // Handle different parent objects
-                    if (fn === 'cur') {
-                        obj = Fx.prototype; // 'cur', the getter, relates to Fx.prototype
-
-                    } else if (fn === '_default' && $.Tween) { // jQuery 1.8 model
-                        obj = $.Tween.propHooks[fn];
-                        fn = 'set';
-                    }
-
-                    // Overwrite the method
-                    base = obj[fn];
-                    if (base) { // step.width and step.height don't exist in jQuery < 1.7
-
-                        // create the extended function replacement
-                        obj[fn] = function (effects) {
-
-                            var elem, fx;
-
-                            // Fx.prototype.cur does not use fx argument
-                            fx = i ? effects : this;
-
-                            // Don't run animations on textual properties like align (#1821)
-                            if (fx.prop === 'align') {
-                                return;
-                            }
-
-                            // shortcut
-                            elem = fx.elem;
-
-                            // Fx.prototype.cur returns the current value. The other ones are setters
-                            // and returning a value has no effect.
-                            if (elem.attr) { // is SVG element wrapper
-                                return elem.attr(
-                                    fx.prop.replace('strokeWidth', 'stroke-width'), // #4721
-                                    fn === 'cur' ? undefined : fx.now
-                                );
-                            }
-
-                            return base.apply(this, arguments); // use jQuery's built-in method
-                        };
-                    }
-                });
-
-                // Extend the opacity getter, needed for fading opacity with IE9 and jQuery 1.10+
-                wrap($.cssHooks.opacity, 'get', function (proceed, elem, computed) {
-                    return elem.attr ? (elem.opacity || 0) : proceed.call(this, elem, computed);
-                });
-
-                // Define the setter function for d (path definitions)
-                this.addAnimSetter('d', function (fx) {
-                    var elem = fx.elem,
-                        ends;
-
-                    // Normally start and end should be set in state == 0, but sometimes,
-                    // for reasons unknown, this doesn't happen. Perhaps state == 0 is skipped
-                    // in these cases
-                    if (!fx.started) {
-                        ends = pathAnim.init(elem, elem.d, elem.toD);
-                        fx.start = ends[0];
-                        fx.end = ends[1];
-                        fx.started = true;
-                    }
-
-                    // Interpolate each value of the path
-                    elem.attr('d', pathAnim.step(fx.start, fx.end, fx.pos, elem.toD));
-                });
-
-                /**
-                 * Utility for iterating over an array. Parameters are reversed compared to jQuery.
-                 * @param {Array} arr
-                 * @param {Function} fn
-                 */
-                this.each = Array.prototype.forEach ?
-                        function each(arr, fn) { // modern browsers
-                            return Array.prototype.forEach.call(arr, fn);
-
-                        } :
-                        function each(arr, fn) { // legacy
-                            var i,
-                                len = arr.length;
-                            for (i = 0; i < len; i++) {
-                                if (fn.call(arr[i], arr[i], i, arr) === false) {
-                                    return i;
-                                }
-                            }
-                        };
-
-                /**
-                 * Register Highcharts as a plugin in the respective framework
-                 */
-                $.fn.highcharts = function () {
-                    var constr = 'Chart', // default constructor
-                        args = arguments,
-                        options,
-                        ret;
-
-                    if (this[0]) {
-
-                        if (isString(args[0])) {
-                            constr = args[0];
-                            args = Array.prototype.slice.call(args, 1);
-                        }
-                        options = args[0];
-
-                        // Create the chart
-                        if (options !== UNDEFINED) {
-                            options.chart = options.chart || {};
-                            options.chart.renderTo = this[0];
-                            ret = new Highcharts[constr](options, args[1]);
-                            ret = this;
-                        }
-
-                        // When called without parameters or with the return argument, get a predefined chart
-                        if (options === UNDEFINED) {
-                            ret = charts[attr(this[0], 'data-highcharts-chart')];
-                        }
-                    }
-
-                    return ret;
-                };
-
-            },
-
-            /**
-             * Add an animation setter for a specific property
-             */
-            addAnimSetter: function (prop, setter) {
-                // jQuery 1.8 style
-                if ($.Tween) {
-                    $.Tween.propHooks[prop] = {
-                        set: setter
-                    };
-                // pre 1.8
-                } else {
-                    $.fx.step[prop] = setter;
-                }
-            },
-
-            /**
-             * Downloads a script and executes a callback when done.
-             * @param {String} scriptLocation
-             * @param {Function} callback
-             */
-            getScript: $.getScript,
-
-            /**
-             * Return the index of an item in an array, or -1 if not found
-             */
-            inArray: $.inArray,
-
-            /**
-             * A direct link to jQuery methods. MooTools and Prototype adapters must be implemented for each case of method.
-             * @param {Object} elem The HTML element
-             * @param {String} method Which method to run on the wrapped element
-             */
-            adapterRun: function (elem, method) {
-                return $(elem)[method]();
-            },
-
-            /**
-             * Filter an array
-             */
-            grep: $.grep,
-
-            /**
-             * Map an array
-             * @param {Array} arr
-             * @param {Function} fn
-             */
-            map: function (arr, fn) {
-                //return jQuery.map(arr, fn);
-                var results = [],
-                    i,
-                    len = arr.length;
-                for (i = 0; i < len; i++) {
-                    results[i] = fn.call(arr[i], arr[i], i, arr);
-                }
-                return results;
-
-            },
-
-            /**
-             * Get the position of an element relative to the top left of the page
-             */
-            offset: function (el) {
-                return $(el).offset();
-            },
-
-            /**
-             * Add an event listener
-             * @param {Object} el A HTML element or custom object
-             * @param {String} event The event type
-             * @param {Function} fn The event handler
-             */
-            addEvent: function (el, event, fn) {
-                $(el).bind(event, fn);
-            },
-
-            /**
-             * Remove event added with addEvent
-             * @param {Object} el The object
-             * @param {String} eventType The event type. Leave blank to remove all events.
-             * @param {Function} handler The function to remove
-             */
-            removeEvent: function (el, eventType, handler) {
-                // workaround for jQuery issue with unbinding custom events:
-                // http://forum.jQuery.com/topic/javascript-error-when-unbinding-a-custom-event-using-jQuery-1-4-2
-                var func = doc.removeEventListener ? 'removeEventListener' : 'detachEvent';
-                if (doc[func] && el && !el[func]) {
-                    el[func] = function () {};
-                }
-
-                $(el).unbind(eventType, handler);
-            },
-
-            /**
-             * Fire an event on a custom object
-             * @param {Object} el
-             * @param {String} type
-             * @param {Object} eventArguments
-             * @param {Function} defaultFunction
-             */
-            fireEvent: function (el, type, eventArguments, defaultFunction) {
-                var event = $.Event(type),
-                    detachedType = 'detached' + type,
-                    defaultPrevented;
-
-                // Remove warnings in Chrome when accessing returnValue (#2790), layerX and layerY. Although Highcharts
-                // never uses these properties, Chrome includes them in the default click event and
-                // raises the warning when they are copied over in the extend statement below.
-                //
-                // To avoid problems in IE (see #1010) where we cannot delete the properties and avoid
-                // testing if they are there (warning in chrome) the only option is to test if running IE.
-                if (!isMS && eventArguments) {
-                    delete eventArguments.layerX;
-                    delete eventArguments.layerY;
-                    delete eventArguments.returnValue;
-                }
-
-                extend(event, eventArguments);
-
-                // Prevent jQuery from triggering the object method that is named the
-                // same as the event. For example, if the event is 'select', jQuery
-                // attempts calling el.select and it goes into a loop.
-                if (el[type]) {
-                    el[detachedType] = el[type];
-                    el[type] = null;
-                }
-
-                // Wrap preventDefault and stopPropagation in try/catch blocks in
-                // order to prevent JS errors when cancelling events on non-DOM
-                // objects. #615.
-                $.each(['preventDefault', 'stopPropagation'], function (i, fn) {
-                    var base = event[fn];
-                    event[fn] = function () {
-                        try {
-                            base.call(event);
-                        } catch (e) {
-                            if (fn === 'preventDefault') {
-                                defaultPrevented = true;
-                            }
-                        }
-                    };
-                });
-
-                // trigger it
-                $(el).trigger(event);
-
-                // attach the method
-                if (el[detachedType]) {
-                    el[type] = el[detachedType];
-                    el[detachedType] = null;
-                }
-
-                if (defaultFunction && !event.isDefaultPrevented() && !defaultPrevented) {
-                    defaultFunction(event);
-                }
-            },
-
-            /**
-             * Extension method needed for MooTools
-             */
-            washMouseEvent: function (e) {
-                var ret = e.originalEvent || e;
-
-                // computed by jQuery, needed by IE8
-                if (ret.pageX === UNDEFINED) { // #1236
-                    ret.pageX = e.pageX;
-                    ret.pageY = e.pageY;
-                }
-
-                return ret;
-            },
-
-            /**
-             * Animate a HTML element or SVG element wrapper
-             * @param {Object} el
-             * @param {Object} params
-             * @param {Object} options jQuery-like animation options: duration, easing, callback
-             */
-            animate: function (el, params, options) {
-                var $el = $(el);
-                if (!el.style) {
-                    el.style = {}; // #1881
-                }
-                if (params.d) {
-                    el.toD = params.d; // keep the array form for paths, used in $.fx.step.d
-                    params.d = 1; // because in jQuery, animating to an array has a different meaning
-                }
-
-                $el.stop();
-                if (params.opacity !== UNDEFINED && el.attr) {
-                    params.opacity += 'px'; // force jQuery to use same logic as width and height (#2161)
-                }
-                el.hasAnim = 1; // #3342
-                $el.animate(params, options);
-
-            },
-            /**
-             * Stop running animation
-             */
-            stop: function (el) {
-                if (el.hasAnim) { // #3342, memory leak on calling $(el) from destroy
-                    $(el).stop();
+    if (!Array.prototype.forEach) {
+        each = function (arr, fn) { // legacy
+            var i = 0, 
+                len = arr.length;
+            for (; i < len; i++) {
+                if (fn.call(arr[i], arr[i], i, arr) === false) {
+                    return i;
                 }
             }
         };
     }
-    // Utility functions. If the HighchartsAdapter is not defined, adapter is an empty object
-    // and all the utility functions will be null. In that case they are populated by the
-    // default adapters below.
-    var adapterRun,
-        inArray,
-        each,
-        grep,
-        offset,
-        map,
-        addEvent,
-        removeEvent,
-        fireEvent,
-        washMouseEvent,
-        animate,
-        stop;
 
-    /**
-     * Helper function to load and extend Highcharts with adapter functionality. 
-     * @param  {object|function} adapter - HighchartsAdapter or jQuery
-     */
-    Highcharts.loadAdapter = function (adapter) {
-    
-        if (adapter) {
-            // If jQuery, then load our default jQueryAdapter
-            if (adapter.fn && adapter.fn.jquery) {
-                adapter = loadJQueryAdapter(adapter);
+    if (!Array.prototype.indexOf) {
+        inArray = function (item, arr) {
+            var len, 
+                i = 0;
+
+            if (arr) {
+                len = arr.length;
+            
+                for (; i < len; i++) {
+                    if (arr[i] === item) {
+                        return i;
+                    }
+                }
             }
-            // Initialize the adapter.
-            if (adapter.init) {
-                adapter.init(pathAnim);
-                delete adapter.init; // Avoid copying to Highcharts object
+
+            return -1;
+        };
+    }
+
+    if (!Array.prototype.filter) {
+        grep = function (elements, fn) {
+            var ret = [],
+                i = 0,
+                length = elements.length;
+
+            for (; i < length; i++) {
+                if (fn(elements[i], i)) {
+                    ret.push(elements[i]);
+                }
             }
-            // Extend Highcharts with adapter functionality.
-            Highcharts.extend(Highcharts, adapter);
 
-            // Assign values to local functions.
-            adapterRun = Highcharts.adapterRun;
-            inArray = Highcharts.inArray;
-            each = Highcharts.each;
-            grep = Highcharts.grep;
-            offset = Highcharts.offset;
-            map = Highcharts.map;
-            addEvent = Highcharts.addEvent;
-            removeEvent = Highcharts.removeEvent;
-            fireEvent = Highcharts.fireEvent;
-            washMouseEvent = Highcharts.washMouseEvent;
-            animate = Highcharts.animate;
-            stop = Highcharts.stop;
-        }
-    };
+            return ret;
+        };
+    }
 
-    // Load adapter if HighchartsAdapter or jQuery is set on the window.
-    Highcharts.loadAdapter(win.HighchartsAdapter || win.jQuery);
+    //--- End compatibility section ---
+
+    // Expose utilities
+    Highcharts.adapterRun = adapterRun;
+    Highcharts.addAnimSetter = addAnimSetter;
+    Highcharts.inArray = inArray;
+    Highcharts.each = each;
+    Highcharts.getScript = getScript;
+    Highcharts.grep = grep;
+    Highcharts.offset = offset;
+    Highcharts.map = map;
+    Highcharts.addEvent = addEvent;
+    Highcharts.removeEvent = removeEvent;
+    Highcharts.fireEvent = fireEvent;
+    Highcharts.washMouseEvent = washMouseEvent;
+    Highcharts.animate = animate;
+    Highcharts.stop = stop;
+
     /* ****************************************************************************
      * Handle the options                                                         *
      *****************************************************************************/
