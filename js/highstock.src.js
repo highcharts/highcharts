@@ -852,7 +852,7 @@
      * Get the element's offset position, corrected by overflow:auto. Loosely based on jQuery's offset method.
      */
     offset = function (el) {
-        var docElem = document.documentElement,
+        var docElem = doc.documentElement,
             box = el.getBoundingClientRect();
 
         return {
@@ -896,51 +896,8 @@
      * Extend given object with custom events
      */
     function augment(obj) {
-        function removeOneEvent(el, type, fn) {
-            el.removeEventListener(type, fn, false);
-        }
 
-        function IERemoveOneEvent(el, type, fn) {
-            fn = el.HCProxiedMethods[fn.toString()];
-            el.detachEvent('on' + type, fn);
-        }
-
-        function removeAllEvents(el, type) {
-            var events = el.HCEvents,
-                remove,
-                types,
-                len,
-                n;
-
-            if (el.removeEventListener) {
-                remove = removeOneEvent;
-            } else if (el.attachEvent) {
-                remove = IERemoveOneEvent;
-            } else {
-                return; // break on non-DOM events
-            }
-
-
-            if (type) {
-                types = {};
-                types[type] = true;
-            } else {
-                types = events;
-            }
-
-            for (n in types) {
-                if (events[n]) {
-                    len = events[n].length;
-                    while (len--) {
-                        remove(el, n, events[n][len]);
-                    }
-                }
-            }
-        }
-
-        if (!obj.HCExtended) {
-            obj.HCExtended = true;
-
+        if (!obj.HCEvents) {
             obj.HCEvents = {};
 
             obj.bind = function (name, fn) {
@@ -976,33 +933,6 @@
                 }
 
                 events[name].push(fn);
-            };
-
-            obj.unbind = function (name, fn) {
-                var events,
-                    index;
-
-                if (name) {
-                    events = this.HCEvents[name] || [];
-                    if (fn) {
-                        index = inArray(fn, events);
-                        if (index > -1) {
-                            events.splice(index, 1);
-                            this.HCEvents[name] = events;
-                        }
-                        if (this.removeEventListener) {
-                            removeOneEvent(this, name, fn);
-                        } else if (this.attachEvent) {
-                            IERemoveOneEvent(this, name, fn);
-                        }
-                    } else {
-                        removeAllEvents(this, name);
-                        this.HCEvents[name] = [];
-                    }
-                } else {
-                    removeAllEvents(this);
-                    this.HCEvents = {};
-                }
             };
 
             obj.trigger = function (name, args) {
@@ -1060,7 +990,64 @@
      * Remove event added with addEvent
      */
     removeEvent = function (el, type, fn) {
-        augment(el).unbind(type, fn);
+    
+        var events,
+            HCEvents = el.HCEvents,
+            index;
+
+        function removeOneEvent(type, fn) {
+            if (el.removeEventListener) {
+                el.removeEventListener(type, fn, false);
+            } else if (el.attachEvent) {
+                fn = el.HCProxiedMethods[fn.toString()];
+                el.detachEvent('on' + type, fn);
+            }
+        }
+
+        function removeAllEvents() {
+            var types,
+                len,
+                n;
+
+            if (!el.nodeName) {
+                return; // break on non-DOM events
+            }
+
+            if (type) {
+                types = {};
+                types[type] = true;
+            } else {
+                types = HCEvents;
+            }
+
+            for (n in types) {
+                if (HCEvents[n]) {
+                    len = HCEvents[n].length;
+                    while (len--) {
+                        removeOneEvent(n, HCEvents[n][len]);
+                    }
+                }
+            }
+        }
+
+        if (type) {
+            events = HCEvents[type] || [];
+            if (fn) {
+                index = inArray(fn, events);
+                if (index > -1) {
+                    events.splice(index, 1);
+                    HCEvents[type] = events;
+                }
+                removeOneEvent(type, fn);
+            
+            } else {
+                removeAllEvents();
+                HCEvents[type] = [];
+            }
+        } else {
+            removeAllEvents();
+            el.HCEvents = {};
+        }
     };
 
     /**
@@ -1085,7 +1072,7 @@
                 el.fireEvent(type, e);
             }
 
-        } else if (el.HCExtended === true) {
+        } else if (el.HCEvents) {
             eventArguments = eventArguments || {};
             el.trigger(type, eventArguments);
         }

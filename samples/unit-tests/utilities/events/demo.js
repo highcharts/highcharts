@@ -10,7 +10,7 @@ $(function () {
      * Wrapper because of fast migration from earlier system
      */
     function assertEquals(assert, message, actual, expected) {
-        assert.equal(actual, expected, message);
+        assert.equal(expected, actual, message);
     }
 
     /**
