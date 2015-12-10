@@ -656,15 +656,13 @@ Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
 };
 
 
-var emptyArray = [],
-	_getStyle,
-	timers = [],
+var timers = [],
 	animSetters = {},
-	Fx;
+	Fx,
+	getStyle;
 
 // Adapter functions
-var adapterRun,
-	addAnimSetter,
+var addAnimSetter,
 	inArray,
 	each,
 	getScript,
@@ -687,9 +685,9 @@ Math.easeInOutSine = function (t, b, c, d) {
 /**
  * Internal method to return CSS value for given element and property
  */
-_getStyle = function (el, prop) {
+getStyle = function (el, prop) {
 	var style = win.getComputedStyle(el, undefined);
-	return style && style.getPropertyValue(prop);
+	return style && pInt(style.getPropertyValue(prop));
 };
 
 
@@ -715,22 +713,14 @@ getScript = function (scriptLocation, callback) {
  * Return the index of an item in an array, or -1 if not found
  */
 inArray = function (item, arr) {
-	return arr.indexOf ? arr.indexOf(item) : emptyArray.indexOf.call(arr, item);
-};
-
-
-/**
- * A direct link to adapter methods
- */
-adapterRun = function (elem, method) {
-	return parseInt(_getStyle(elem, method), 10);
+	return arr.indexOf ? arr.indexOf(item) : [].indexOf.call(arr, item);
 };
 
 /**
  * Filter an array
  */
 grep = function (elements, callback) {
-	return emptyArray.filter.call(elements, callback);
+	return [].filter.call(elements, callback);
 };
 
 /**
@@ -1256,7 +1246,7 @@ animate = function (el, prop, opt) {
 		} else if (el.attr) {
 			start = el.attr(name);
 		} else {
-			start = parseFloat(_getStyle(el, name)) || 0;
+			start = parseFloat(getStyle(el, name)) || 0;
 			if (name !== 'opacity') {
 				unit = PX;
 			}
@@ -1321,13 +1311,21 @@ if (win.jQuery) {
  * support is not needed.
  */
 if (!doc.defaultView) {
-	_getStyle = function (el, prop) {
-		var val;
+	getStyle = function (el, prop) {
+		var val,
+			alias = { width: 'clientWidth', height: 'clientHeight' }[prop];
+			
 		if (el.style[prop]) {
-			return el.style[prop];
+			return pInt(el.style[prop]);
 		}
 		if (prop === 'opacity') {
 			prop = 'filter';
+		}
+
+		// Getting the rendered width and height
+		if (alias) {
+			el.style.zoom = 1;
+			return el[alias] - 2 * getStyle(el, 'padding');
 		}
 		
 		val = el.currentStyle[prop.replace(/\-(\w)/g, function (a, b) {
@@ -1342,15 +1340,7 @@ if (!doc.defaultView) {
 			);
 		}
 		
-		return val === '' ? 1 : val;
-	};
-	adapterRun = function (elem, method) {
-		var alias = { width: 'clientWidth', height: 'clientHeight' }[method];
-
-		if (alias) {
-			elem.style.zoom = 1;
-			return elem[alias] - 2 * parseInt(_getStyle(elem, 'padding'), 10);
-		}
+		return val === '' ? 1 : pInt(val);
 	};
 }
 
@@ -1404,7 +1394,6 @@ if (!Array.prototype.filter) {
 //--- End compatibility section ---
 
 // Expose utilities
-Highcharts.adapterRun = adapterRun;
 Highcharts.addAnimSetter = addAnimSetter;
 Highcharts.inArray = inArray;
 Highcharts.each = each;

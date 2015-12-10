@@ -2,7 +2,7 @@
 // @compilation_level SIMPLE_OPTIMIZATIONS
 
 /**
- * @license Highcharts JS v4.1.10-modified (2015-12-09)
+ * @license Highcharts JS v4.1.10-modified (2015-12-10)
  *
  * (c) 2009-2014 Torstein Honsi
  *
@@ -790,15 +790,13 @@
     };
 
 
-    var emptyArray = [],
-        _getStyle,
-        timers = [],
+    var timers = [],
         animSetters = {},
-        Fx;
+        Fx,
+        getStyle;
 
     // Adapter functions
-    var adapterRun,
-        addAnimSetter,
+    var addAnimSetter,
         inArray,
         each,
         getScript,
@@ -821,9 +819,9 @@
     /**
      * Internal method to return CSS value for given element and property
      */
-    _getStyle = function (el, prop) {
+    getStyle = function (el, prop) {
         var style = win.getComputedStyle(el, undefined);
-        return style && style.getPropertyValue(prop);
+        return style && pInt(style.getPropertyValue(prop));
     };
 
 
@@ -849,22 +847,14 @@
      * Return the index of an item in an array, or -1 if not found
      */
     inArray = function (item, arr) {
-        return arr.indexOf ? arr.indexOf(item) : emptyArray.indexOf.call(arr, item);
-    };
-
-
-    /**
-     * A direct link to adapter methods
-     */
-    adapterRun = function (elem, method) {
-        return parseInt(_getStyle(elem, method), 10);
+        return arr.indexOf ? arr.indexOf(item) : [].indexOf.call(arr, item);
     };
 
     /**
      * Filter an array
      */
     grep = function (elements, callback) {
-        return emptyArray.filter.call(elements, callback);
+        return [].filter.call(elements, callback);
     };
 
     /**
@@ -1390,7 +1380,7 @@
             } else if (el.attr) {
                 start = el.attr(name);
             } else {
-                start = parseFloat(_getStyle(el, name)) || 0;
+                start = parseFloat(getStyle(el, name)) || 0;
                 if (name !== 'opacity') {
                     unit = PX;
                 }
@@ -1455,13 +1445,21 @@
      * support is not needed.
      */
     if (!doc.defaultView) {
-        _getStyle = function (el, prop) {
-            var val;
+        getStyle = function (el, prop) {
+            var val,
+                alias = { width: 'clientWidth', height: 'clientHeight' }[prop];
+            
             if (el.style[prop]) {
-                return el.style[prop];
+                return pInt(el.style[prop]);
             }
             if (prop === 'opacity') {
                 prop = 'filter';
+            }
+
+            // Getting the rendered width and height
+            if (alias) {
+                el.style.zoom = 1;
+                return el[alias] - 2 * getStyle(el, 'padding');
             }
         
             val = el.currentStyle[prop.replace(/\-(\w)/g, function (a, b) {
@@ -1476,15 +1474,7 @@
                 );
             }
         
-            return val === '' ? 1 : val;
-        };
-        adapterRun = function (elem, method) {
-            var alias = { width: 'clientWidth', height: 'clientHeight' }[method];
-
-            if (alias) {
-                elem.style.zoom = 1;
-                return elem[alias] - 2 * parseInt(_getStyle(elem, 'padding'), 10);
-            }
+            return val === '' ? 1 : pInt(val);
         };
     }
 
@@ -1538,7 +1528,6 @@
     //--- End compatibility section ---
 
     // Expose utilities
-    Highcharts.adapterRun = adapterRun;
     Highcharts.addAnimSetter = addAnimSetter;
     Highcharts.inArray = inArray;
     Highcharts.each = each;
@@ -12303,12 +12292,12 @@
                 heightOption = optionsChart.height,
                 renderTo = chart.renderToClone || chart.renderTo;
 
-            // get inner width and height from jQuery (#824)
+            // Get inner width and height
             if (!defined(widthOption)) {
-                chart.containerWidth = adapterRun(renderTo, 'width');
+                chart.containerWidth = getStyle(renderTo, 'width');
             }
             if (!defined(heightOption)) {
-                chart.containerHeight = adapterRun(renderTo, 'height');
+                chart.containerHeight = getStyle(renderTo, 'height');
             }
 
             chart.chartWidth = mathMax(0, widthOption || chart.containerWidth || 600); // #1393, 1460
@@ -12520,8 +12509,8 @@
             var chart = this,
                 optionsChart = chart.options.chart,
                 renderTo = chart.renderTo,
-                width = optionsChart.width || adapterRun(renderTo, 'width'),
-                height = optionsChart.height || adapterRun(renderTo, 'height'),
+                width = optionsChart.width || getStyle(renderTo, 'width'),
+                height = optionsChart.height || getStyle(renderTo, 'height'),
                 target = e ? e.target : win; // #805 - MooTools doesn't supply e
 
             // Width and height checks for display:none. Target is doc in IE8 and Opera,

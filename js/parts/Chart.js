@@ -502,12 +502,12 @@ Chart.prototype = {
 			heightOption = optionsChart.height,
 			renderTo = chart.renderToClone || chart.renderTo;
 
-		// get inner width and height from jQuery (#824)
+		// Get inner width and height
 		if (!defined(widthOption)) {
-			chart.containerWidth = adapterRun(renderTo, 'width');
+			chart.containerWidth = getStyle(renderTo, 'width');
 		}
 		if (!defined(heightOption)) {
-			chart.containerHeight = adapterRun(renderTo, 'height');
+			chart.containerHeight = getStyle(renderTo, 'height');
 		}
 
 		chart.chartWidth = mathMax(0, widthOption || chart.containerWidth || 600); // #1393, 1460
@@ -719,8 +719,8 @@ Chart.prototype = {
 		var chart = this,
 			optionsChart = chart.options.chart,
 			renderTo = chart.renderTo,
-			width = optionsChart.width || adapterRun(renderTo, 'width'),
-			height = optionsChart.height || adapterRun(renderTo, 'height'),
+			width = optionsChart.width || getStyle(renderTo, 'width'),
+			height = optionsChart.height || getStyle(renderTo, 'height'),
 			target = e ? e.target : win; // #805 - MooTools doesn't supply e
 
 		// Width and height checks for display:none. Target is doc in IE8 and Opera,
