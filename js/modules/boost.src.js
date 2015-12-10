@@ -571,8 +571,10 @@
 
         if (boostPoint && !(boostPoint instanceof this.pointClass)) {
             point = (new this.pointClass()).init(this, this.options.data[boostPoint.i]);
-            point.dist = boostPoint.dist;
             point.category = point.x;
+
+            point.dist = boostPoint.dist;
+            point.distX = boostPoint.distX;
             point.plotX = boostPoint.plotX;
             point.plotY = boostPoint.plotY;
         }
