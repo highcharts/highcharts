@@ -657,14 +657,12 @@ Highcharts.numberFormat = function (number, decimals, decPoint, thousandsSep) {
 
 
 var timers = [],
-	animSetters = {},
-	Fx,
 	getStyle;
 
 // Adapter functions
-var addAnimSetter,
-	inArray,
+var inArray,
 	each,
+	Fx,
 	getScript,
 	grep,
 	offset,
@@ -989,7 +987,7 @@ fireEvent = function (el, type, eventArguments, defaultFunction) {
 
 
 /**
- * Start of animation specific code
+ * Create an animator object. One instance is created per property, per object.
  */
 Fx = function (elem, options, prop) {
 	this.options = options;
@@ -998,42 +996,71 @@ Fx = function (elem, options, prop) {
 };
 Fx.prototype = {
 	
+	/**
+	 * Animating a path definition on SVGElement
+	 * @returns {undefined} 
+	 */
+	dSetter: function () {
+		var start = this.paths[0],
+			end = this.paths[1],
+			ret = [],
+			now = this.now,
+			i = start.length,
+			startVal;
+
+		if (now === 1) { // land on the final path without adjustment points appended in the ends
+			ret = this.toD;
+
+		} else if (i === end.length && now < 1) {
+			while (i--) {
+				startVal = parseFloat(start[i]);
+				ret[i] =
+					isNaN(startVal) ? // a letter instruction like M or L
+							start[i] :
+							now * (parseFloat(end[i] - startVal)) + startVal;
+
+			}
+		} else { // if animation is finished or length not matching, land on right value
+			ret = end;
+		}
+		this.elem.attr('d', ret);
+	},
+
+	/**
+	 * Update the element with the current animation step
+	 * @returns {undefined}
+	 */
 	update: function () {
-		var styles,
-			paths = this.paths,
-			elem = this.elem,
-			elemelem = elem.element,
-			prop; // if destroyed, it is null
+		var elem = this.elem,
+			prop = this.prop, // if destroyed, it is null
+			now = this.now,
+			step = this.options.step;
 
 		// Animation setter defined from outside
-		if (animSetters[this.prop]) {
-			animSetters[this.prop](this);
-
-		// Animating a path definition on SVGElement
-		} else if (paths && elemelem) {
-			elem.attr('d', this.pathStep(paths[0], paths[1], this.now, this.toD));
+		if (this[prop + 'Setter']) {
+			this[prop + 'Setter']();
 
 		// Other animations on SVGElement
 		} else if (elem.attr) {
-			if (elemelem) {
-				elem.attr(this.prop, this.now);
+			if (elem.element) {
+				elem.attr(prop, now);
 			}
 
 		// HTML styles, raw HTML content like container size
 		} else {
-			styles = {};
-			styles[this.prop] = this.now + this.unit;
-			for (prop in styles) {
-				elem.style[prop] = styles[prop];
-			}
+			elem.style[prop] = now + this.unit;
 		}
 		
-		if (this.options.step) {
-			this.options.step.call(this.elem, this.now, this);
+		if (step) {
+			step.call(elem, now, this);
 		}
 
 	},
-	custom: function (from, to, unit) {
+
+	/**
+	 * Run an animation
+	 */
+	run: function (from, to, unit) {
 		var self = this,
 			t = function (gotoEnd) {
 				return self.step(gotoEnd);
@@ -1065,6 +1092,11 @@ Fx.prototype = {
 		}
 	},
 	
+	/**
+	 * Run a single step in the animation
+	 * @param   {Boolean} gotoEnd Whether to go to then endpoint of the animation after abort
+	 * @returns {Boolean} True if animation continues
+	 */
 	step: function (gotoEnd) {
 		var t = +new Date(),
 			ret,
@@ -1171,32 +1203,6 @@ Fx.prototype = {
 			end = end.concat(endBaseLine);
 		}
 		return [start, end];
-	},
-
-	/**
-	 * Interpolate each value of the path and return the array
-	 */
-	pathStep: function (start, end, pos, complete) {
-		var ret = [],
-			i = start.length,
-			startVal;
-
-		if (pos === 1) { // land on the final path without adjustment points appended in the ends
-			ret = complete;
-
-		} else if (i === end.length && pos < 1) {
-			while (i--) {
-				startVal = parseFloat(start[i]);
-				ret[i] =
-					isNaN(startVal) ? // a letter instruction like M or L
-							start[i] :
-							pos * (parseFloat(end[i] - startVal)) + startVal;
-
-			}
-		} else { // if animation is finished or length not matching, land on right value
-			ret = end;
-		}
-		return ret;
 	}
 };
 
@@ -1258,15 +1264,8 @@ animate = function (el, prop, opt) {
 		if (end.match && end.match(PX)) {
 			end = end.replace(/px/g, ''); // #4351
 		}
-		fx.custom(start, end, unit);
+		fx.run(start, end, unit);
 	}
-};
-
-/**
- * Add an animation setter for a specific property
- */
-addAnimSetter = function (prop, fn) {
-	animSetters[prop] = fn;
 };
 
 /**
@@ -1394,7 +1393,7 @@ if (!Array.prototype.filter) {
 //--- End compatibility section ---
 
 // Expose utilities
-Highcharts.addAnimSetter = addAnimSetter;
+Highcharts.Fx = Fx;
 Highcharts.inArray = inArray;
 Highcharts.each = each;
 Highcharts.getScript = getScript;

@@ -1,5 +1,5 @@
 /**
- * @license Highmaps JS v1.1.10-modified (2015-12-07)
+ * @license Highmaps JS v1.1.10-modified (2015-12-10)
  * Highmaps as a plugin for Highcharts 4.1.x or Highstock 2.1.x (x being the patch version of this file)
  *
  * (c) 2011-2014 Torstein Honsi
@@ -600,9 +600,9 @@
      * Handle animation of the color attributes directly
      */
     each(['fill', 'stroke'], function (prop) {
-        Highcharts.addAnimSetter(prop, function (fx) {
-            fx.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(fx.start), Color(fx.end), fx.pos));
-        });
+        Highcharts.Fx.prototype[prop + 'Setter'] = function () {
+            this.elem.attr(prop, ColorAxis.prototype.tweenColors(Color(this.start), Color(this.end), this.pos));
+        };
     });
 
     /**

@@ -158,9 +158,9 @@
 	 * Handle animation of the color attributes directly
 	 */
 	each(['fill', 'stroke'], function (prop) {
-		H.addAnimSetter(prop, function (fx) {
-			fx.elem.attr(prop, colorAxisMethods.tweenColors(H.Color(fx.start), H.Color(fx.end), fx.pos));
-		});
+		H.Fx.prototype[prop + 'Setter'] = function () {
+			this.elem.attr(prop, colorAxisMethods.tweenColors(H.Color(this.start), H.Color(this.end), this.pos));
+		};
 	});
 
 	// The series prototype
