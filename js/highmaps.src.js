@@ -889,99 +889,40 @@
         return Array.prototype.forEach.call(arr, fn);
     };
 
-
-    /**
-     * Extend given object with custom events
-     */
-    function augment(obj) {
-
-        if (!obj.HCEvents) {
-            obj.HCEvents = {};
-
-            obj.bind = function (name, fn) {
-                var el = this,
-                    events = this.HCEvents,
-                    wrappedFn;
-
-                // handle DOM events in modern browsers
-                if (el.addEventListener) {
-                    el.addEventListener(name, fn, false);
-
-                // handle old IE implementation
-                } else if (el.attachEvent) {
-                
-                    wrappedFn = function (e) {
-                        e.target = e.srcElement || win; // #2820
-                        fn.call(el, e);
-                    };
-
-                    if (!el.HCProxiedMethods) {
-                        el.HCProxiedMethods = {};
-                    }
-
-                    // link wrapped fn with original fn, so we can get this in removeEvent
-                    el.HCProxiedMethods[fn.toString()] = wrappedFn;
-
-                    el.attachEvent('on' + name, wrappedFn);
-                }
-
-
-                if (events[name] === UNDEFINED) {
-                    events[name] = [];
-                }
-
-                events[name].push(fn);
-            };
-
-            obj.trigger = function (name, args) {
-                var events = this.HCEvents[name] || [],
-                    target = this,
-                    len = events.length,
-                    i,
-                    preventDefault,
-                    fn;
-
-                // Attach a simple preventDefault function to skip default handler if called
-                preventDefault = function () {
-                    args.defaultPrevented = true;
-                };
-            
-                for (i = 0; i < len; i++) {
-                    fn = events[i];
-
-                    // args is never null here
-                    if (args.stopped) {
-                        return;
-                    }
-
-                    args.preventDefault = preventDefault;
-                    args.target = target;
-
-                    // If the type is not set, we're running a custom event (#2297). If it is set,
-                    // we're running a browser event, and setting it will cause en error in
-                    // IE8 (#2465).
-                    if (!args.type) {
-                        args.type = name;
-                    }
-                
-
-                
-                    // If the event handler return false, prevent the default handler from executing
-                    if (fn.call(this, args) === false) {
-                        args.preventDefault();
-                    }
-                }
-            };
-        }
-
-        return obj;
-    }
-
     /**
      * Add an event listener
      */
     addEvent = function (el, type, fn) {
-        augment(el).bind(type, fn);
+    
+        var events = el.hcEvents = {};
+
+        function wrappedFn(e) {
+            e.target = e.srcElement || win; // #2820
+            fn.call(el, e);
+        }
+
+        // Handle DOM events in modern browsers
+        if (el.addEventListener) {
+            el.addEventListener(type, fn, false);
+
+        // Handle old IE implementation
+        } else if (el.attachEvent) {
+
+            if (!el.hcProxiedMethods) {
+                el.hcProxiedMethods = {};
+            }
+
+            // Link wrapped fn with original fn, so we can get this in removeEvent
+            el.hcProxiedMethods[fn.toString()] = wrappedFn;
+
+            el.attachEvent('on' + type, wrappedFn);
+        }
+
+        if (!events[type]) {
+            events[type] = [];
+        }
+
+        events[type].push(fn);
     };
 
     /**
@@ -990,14 +931,14 @@
     removeEvent = function (el, type, fn) {
     
         var events,
-            HCEvents = el.HCEvents,
+            hcEvents = el.hcEvents,
             index;
 
         function removeOneEvent(type, fn) {
             if (el.removeEventListener) {
                 el.removeEventListener(type, fn, false);
             } else if (el.attachEvent) {
-                fn = el.HCProxiedMethods[fn.toString()];
+                fn = el.hcProxiedMethods[fn.toString()];
                 el.detachEvent('on' + type, fn);
             }
         }
@@ -1015,36 +956,36 @@
                 types = {};
                 types[type] = true;
             } else {
-                types = HCEvents;
+                types = hcEvents;
             }
 
             for (n in types) {
-                if (HCEvents[n]) {
-                    len = HCEvents[n].length;
+                if (hcEvents[n]) {
+                    len = hcEvents[n].length;
                     while (len--) {
-                        removeOneEvent(n, HCEvents[n][len]);
+                        removeOneEvent(n, hcEvents[n][len]);
                     }
                 }
             }
         }
 
         if (type) {
-            events = HCEvents[type] || [];
+            events = hcEvents[type] || [];
             if (fn) {
                 index = inArray(fn, events);
                 if (index > -1) {
                     events.splice(index, 1);
-                    HCEvents[type] = events;
+                    hcEvents[type] = events;
                 }
                 removeOneEvent(type, fn);
             
             } else {
                 removeAllEvents();
-                HCEvents[type] = [];
+                hcEvents[type] = [];
             }
         } else {
             removeAllEvents();
-            el.HCEvents = {};
+            el.hcEvents = {};
         }
     };
 
@@ -1053,16 +994,21 @@
      */
     fireEvent = function (el, type, eventArguments, defaultFunction) {
         var e,
-            key;
+            hcEvents = el.hcEvents,
+            events,
+            len,
+            i,
+            preventDefault,
+            fn;
+
+        eventArguments = eventArguments || {};
 
         if (doc.createEvent && (el.dispatchEvent || el.fireEvent)) {
             e = doc.createEvent('Events');
             e.initEvent(type, true, true);
             e.target = el;
 
-            for (key in eventArguments) {
-                e[key] = eventArguments[key];
-            }
+            extend(e, eventArguments);
 
             if (el.dispatchEvent) {
                 el.dispatchEvent(e);
@@ -1070,16 +1016,43 @@
                 el.fireEvent(type, e);
             }
 
-        } else if (el.HCEvents) {
-            eventArguments = eventArguments || {};
-            el.trigger(type, eventArguments);
+        } else if (hcEvents) {
+        
+            events = hcEvents[type] || [];
+            len = events.length;
+
+            // Attach a simple preventDefault function to skip default handler if called
+            preventDefault = function () {
+                eventArguments.defaultPrevented = true;
+            };
+        
+            for (i = 0; i < len; i++) {
+                fn = events[i];
+
+                // eventArguments is never null here
+                if (eventArguments.stopped) {
+                    return;
+                }
+
+                eventArguments.preventDefault = preventDefault;
+                eventArguments.target = el;
+
+                // If the type is not set, we're running a custom event (#2297). If it is set,
+                // we're running a browser event, and setting it will cause en error in
+                // IE8 (#2465).
+                if (!eventArguments.type) {
+                    eventArguments.type = type;
+                }
+            
+                // If the event handler return false, prevent the default handler from executing
+                if (fn.call(this, eventArguments) === false) {
+                    eventArguments.preventDefault();
+                }
+            }
         }
 
-        if (eventArguments && eventArguments.defaultPrevented) {
-            defaultFunction = null;
-        }
-
-        if (defaultFunction) {
+        // Run the default if not prevented
+        if (defaultFunction && !eventArguments.defaultPrevented) {
             defaultFunction(eventArguments);
         }
     };
