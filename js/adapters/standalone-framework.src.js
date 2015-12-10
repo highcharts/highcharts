@@ -459,7 +459,7 @@ HighchartsAdapter = {
 					start = 0;
 					end = 1;
 				} else if (el.attr) {
-					start = el.attr(name);
+					start = parseFloat(el.attr(name)) || 0;
 				} else {
 					start = parseFloat(_getStyle(el, name)) || 0;
 					if (name !== 'opacity') {
