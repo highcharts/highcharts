@@ -19,6 +19,24 @@
 	// Dummy object so we can reuse our canvas-tools.js without errors
 	Highcharts.CanVGRenderer = {};
 
+
+	/**
+	 * Downloads a script and executes a callback when done.
+	 * @param {String} scriptLocation
+	 * @param {Function} callback
+	 */
+	function getScript(scriptLocation, callback) {
+		// We cannot assume that Assets class from mootools-more is available so instead insert a script tag to download script.
+		var head = document.getElementsByTagName('head')[0],
+			script = document.createElement('script');
+
+		script.type = 'text/javascript';
+		script.src = scriptLocation;
+		script.onload = callback;
+
+		head.appendChild(script);
+	}
+
 	/**
 	 * Add a new method to the Chart object to perform a local download
 	 */
@@ -188,7 +206,7 @@
 						} else {
 							// Must load canVG first
 							chart.showLoading();
-							Highcharts.getScript(Highcharts.getOptions().global.canvasToolsURL, function () {
+							getScript(Highcharts.getOptions().global.canvasToolsURL, function () {
 								chart.hideLoading();
 								downloadWithCanVG();
 							});

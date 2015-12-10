@@ -663,7 +663,6 @@ var timers = [],
 var inArray,
 	each,
 	Fx,
-	getScript,
 	grep,
 	offset,
 	map,
@@ -686,25 +685,6 @@ Math.easeInOutSine = function (t, b, c, d) {
 getStyle = function (el, prop) {
 	var style = win.getComputedStyle(el, undefined);
 	return style && pInt(style.getPropertyValue(prop));
-};
-
-
-
-/**
- * Downloads a script and executes a callback when done.
- * @param {String} scriptLocation
- * @param {Function} callback
- */
-getScript = function (scriptLocation, callback) {
-	// We cannot assume that Assets class from mootools-more is available so instead insert a script tag to download script.
-	var head = doc.getElementsByTagName('head')[0],
-		script = doc.createElement('script');
-
-	script.type = 'text/javascript';
-	script.src = scriptLocation;
-	script.onload = callback;
-
-	head.appendChild(script);
 };
 
 /**
@@ -1392,7 +1372,6 @@ if (!Array.prototype.filter) {
 Highcharts.Fx = Fx;
 Highcharts.inArray = inArray;
 Highcharts.each = each;
-Highcharts.getScript = getScript;
 Highcharts.grep = grep;
 Highcharts.offset = offset;
 Highcharts.map = map;

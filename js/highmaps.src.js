@@ -795,7 +795,6 @@
     var inArray,
         each,
         Fx,
-        getScript,
         grep,
         offset,
         map,
@@ -818,25 +817,6 @@
     getStyle = function (el, prop) {
         var style = win.getComputedStyle(el, undefined);
         return style && pInt(style.getPropertyValue(prop));
-    };
-
-
-
-    /**
-     * Downloads a script and executes a callback when done.
-     * @param {String} scriptLocation
-     * @param {Function} callback
-     */
-    getScript = function (scriptLocation, callback) {
-        // We cannot assume that Assets class from mootools-more is available so instead insert a script tag to download script.
-        var head = doc.getElementsByTagName('head')[0],
-            script = doc.createElement('script');
-
-        script.type = 'text/javascript';
-        script.src = scriptLocation;
-        script.onload = callback;
-
-        head.appendChild(script);
     };
 
     /**
@@ -1524,7 +1504,6 @@
     Highcharts.Fx = Fx;
     Highcharts.inArray = inArray;
     Highcharts.each = each;
-    Highcharts.getScript = getScript;
     Highcharts.grep = grep;
     Highcharts.offset = offset;
     Highcharts.map = map;
@@ -6153,6 +6132,23 @@
     var CanVGRenderer,
         CanVGController;
 
+    /**
+     * Downloads a script and executes a callback when done.
+     * @param {String} scriptLocation
+     * @param {Function} callback
+     */
+    function getScript(scriptLocation, callback) {
+        // We cannot assume that Assets class from mootools-more is available so instead insert a script tag to download script.
+        var head = doc.getElementsByTagName('head')[0],
+            script = doc.createElement('script');
+
+        script.type = 'text/javascript';
+        script.src = scriptLocation;
+        script.onload = callback;
+
+        head.appendChild(script);
+    }
+
     if (useCanVG) {
         /**
          * The CanVGRenderer is empty from start to keep the source footprint small.
@@ -6196,7 +6192,7 @@
                 push: function (func, scriptLocation) {
                     // Only get the script once
                     if (deferredRenderCalls.length === 0) {
-                        Highcharts.getScript(scriptLocation, drawDeferred);
+                        getScript(scriptLocation, drawDeferred);
                     }
                     // Register render call
                     deferredRenderCalls.push(func);
