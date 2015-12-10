@@ -1209,17 +1209,15 @@ Fx.prototype = {
 /**
  * The adapter animate method
  */
-animate = function (el, prop, opt) {
+animate = function (el, params, opt) {
 	var start,
 		unit = '',
 		end,
 		fx,
 		args,
-		name,
-		key,
-		PX = 'px';
+		prop;
 
-	if (typeof opt !== 'object' || opt === null) {
+	if (!isObject(opt)) { // Number or undefined/null
 		args = arguments;
 		opt = {
 			duration: args[2],
@@ -1227,41 +1225,39 @@ animate = function (el, prop, opt) {
 			complete: args[4]
 		};
 	}
-	if (typeof opt.duration !== 'number') {
+	if (!isNumber(opt.duration)) {
 		opt.duration = 400;
 	}
 	opt.easing = Math[opt.easing] || Math.easeInOutSine;
 	opt.curAnim = {};
-	for (key in prop) {
-		opt.curAnim[key] = prop[key];
-	}
 	
-	for (name in prop) {
-		fx = new Fx(el, opt, name);
+	for (prop in params) {
+		fx = new Fx(el, opt, prop);
 		end = null;
+		opt.curAnim[prop] = params[prop];
 		
-		if (name === 'd') {
+		if (prop === 'd') {
 			fx.paths = fx.initPath(
 				el,
 				el.d,
-				prop.d
+				params.d
 			);
-			fx.toD = prop.d;
+			fx.toD = params.d;
 			start = 0;
 			end = 1;
 		} else if (el.attr) {
 			start = el.attr(name);
 		} else {
-			start = parseFloat(getStyle(el, name)) || 0;
-			if (name !== 'opacity') {
-				unit = PX;
+			start = parseFloat(getStyle(el, prop)) || 0;
+			if (prop !== 'opacity') {
+				unit = 'px';
 			}
 		}
 
 		if (!end) {
-			end = prop[name];
+			end = params[prop];
 		}
-		if (end.match && end.match(PX)) {
+		if (end.match && end.match('px')) {
 			end = end.replace(/px/g, ''); // #4351
 		}
 		fx.run(start, end, unit);
