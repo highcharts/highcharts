@@ -1141,7 +1141,7 @@
             this.end = to;
             this.unit = unit;
             this.now = this.start;
-            this.pos = this.state = 0;
+            this.pos = 0;
 
             t.elem = this.elem;
 
@@ -1172,36 +1172,37 @@
                 done,
                 options = this.options,
                 elem = this.elem,
-                i;
+                complete = options.complete,
+                duration = options.duration,
+                curAnim = options.curAnim,
+                i,
+                n;
         
             if (elem.attr && !elem.element) { // #2616, element including flag is destroyed
                 ret = false;
 
-            } else if (gotoEnd || t >= options.duration + this.startTime) {
+            } else if (gotoEnd || t >= duration + this.startTime) {
                 this.now = this.end;
-                this.pos = this.state = 1;
+                this.pos = 1;
                 this.update();
 
-                this.options.curAnim[this.prop] = true;
+                curAnim[this.prop] = true;
 
                 done = true;
-                for (i in options.curAnim) {
-                    if (options.curAnim[i] !== true) {
+                for (i in curAnim) {
+                    if (curAnim[i] !== true) {
                         done = false;
                     }
                 }
 
-                if (done) {
-                    if (options.complete) {
-                        options.complete.call(elem);
-                    }
+                if (done && complete) {
+                    complete.call(elem);
                 }
                 ret = false;
 
             } else {
-                var n = t - this.startTime;
-                this.state = n / options.duration;
-                this.pos = options.easing(n, 0, 1, options.duration);
+                n = t - this.startTime;
+                this.pos = options.easing(n, 0, 1, duration);
                 this.now = this.start + ((this.end - this.start) * this.pos);
                 this.update();
                 ret = true;
