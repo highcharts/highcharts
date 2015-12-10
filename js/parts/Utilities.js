@@ -669,7 +669,6 @@ var inArray,
 	addEvent,
 	removeEvent,
 	fireEvent,
-	washMouseEvent,
 	animate,
 	stop;
 
@@ -725,10 +724,6 @@ offset = function (el) {
 		top: box.top  + (win.pageYOffset || docElem.scrollTop)  - (docElem.clientTop  || 0),
 		left: box.left + (win.pageXOffset || docElem.scrollLeft) - (docElem.clientLeft || 0)
 	};
-};
-
-washMouseEvent = function (e) {
-	return e;
 };
 
 /**
@@ -1338,7 +1333,6 @@ Highcharts.map = map;
 Highcharts.addEvent = addEvent;
 Highcharts.removeEvent = removeEvent;
 Highcharts.fireEvent = fireEvent;
-Highcharts.washMouseEvent = washMouseEvent;
 Highcharts.animate = animate;
 Highcharts.stop = stop;
 

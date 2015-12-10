@@ -801,7 +801,6 @@
         addEvent,
         removeEvent,
         fireEvent,
-        washMouseEvent,
         animate,
         stop;
 
@@ -857,10 +856,6 @@
             top: box.top  + (win.pageYOffset || docElem.scrollTop)  - (docElem.clientTop  || 0),
             left: box.left + (win.pageXOffset || docElem.scrollLeft) - (docElem.clientLeft || 0)
         };
-    };
-
-    washMouseEvent = function (e) {
-        return e;
     };
 
     /**
@@ -1470,7 +1465,6 @@
     Highcharts.addEvent = addEvent;
     Highcharts.removeEvent = removeEvent;
     Highcharts.fireEvent = fireEvent;
-    Highcharts.washMouseEvent = washMouseEvent;
     Highcharts.animate = animate;
     Highcharts.stop = stop;
 
@@ -9489,13 +9483,8 @@
                 chartY,
                 ePos;
 
-            // common IE normalizing
+            // IE normalizing
             e = e || window.event;
-
-            // Framework specific normalizing (#1165)
-            e = washMouseEvent(e);
-
-            // More IE normalizing, needs to go after washMouseEvent
             if (!e.target) {
                 e.target = e.srcElement;
             }
@@ -9889,8 +9878,7 @@
             if (this.selectionMarker) {
                 var selectionData = {
                         xAxis: [],
-                        yAxis: [],
-                        originalEvent: e.originalEvent || e
+                        yAxis: []
                     },
                     selectionBox = this.selectionMarker,
                     selectionLeft = selectionBox.attr ? selectionBox.attr('x') : selectionBox.x,
@@ -10050,7 +10038,6 @@
                 plotTop = chart.plotTop;
 
             e = this.normalize(e);
-            e.originalEvent = e; // #3913
 
             if (!chart.cancelClick) {
 
@@ -10390,7 +10377,6 @@
             },
             translateMSPointer = function (e, method, wktype, func) {
                 var p;
-                e = e.originalEvent || e;
                 if ((e.pointerType === 'touch' || e.pointerType === e.MSPOINTER_TYPE_TOUCH) && charts[hoverChartIndex]) {
                     func(e);
                     p = charts[hoverChartIndex].pointer;

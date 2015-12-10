@@ -61,13 +61,8 @@ Pointer.prototype = {
 			chartY,
 			ePos;
 
-		// common IE normalizing
+		// IE normalizing
 		e = e || window.event;
-
-		// Framework specific normalizing (#1165)
-		e = washMouseEvent(e);
-
-		// More IE normalizing, needs to go after washMouseEvent
 		if (!e.target) {
 			e.target = e.srcElement;
 		}
@@ -461,8 +456,7 @@ Pointer.prototype = {
 		if (this.selectionMarker) {
 			var selectionData = {
 					xAxis: [],
-					yAxis: [],
-					originalEvent: e.originalEvent || e
+					yAxis: []
 				},
 				selectionBox = this.selectionMarker,
 				selectionLeft = selectionBox.attr ? selectionBox.attr('x') : selectionBox.x,
@@ -622,7 +616,6 @@ Pointer.prototype = {
 			plotTop = chart.plotTop;
 
 		e = this.normalize(e);
-		e.originalEvent = e; // #3913
 
 		if (!chart.cancelClick) {
 
