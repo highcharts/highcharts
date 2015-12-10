@@ -1299,13 +1299,12 @@
             opt.duration = 400;
         }
         opt.easing = Math[opt.easing] || Math.easeInOutSine;
-        opt.curAnim = {};
-    
+        opt.curAnim = merge(params);
+
         for (prop in params) {
             fx = new Fx(el, opt, prop);
             end = null;
-            opt.curAnim[prop] = params[prop];
-        
+
             if (prop === 'd') {
                 fx.paths = fx.initPath(
                     el,
@@ -1316,7 +1315,7 @@
                 start = 0;
                 end = 1;
             } else if (el.attr) {
-                start = el.attr(name);
+                start = el.attr(prop);
             } else {
                 start = parseFloat(getStyle(el, prop)) || 0;
                 if (prop !== 'opacity') {

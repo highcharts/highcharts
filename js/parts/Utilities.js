@@ -181,10 +181,10 @@ function splat(obj) {
 
 /**
  * Set a timeout if the delay is given, otherwise perform the function synchronously
- * @param   {Function} fn      The function to perform
+ * @param   {Function} fn	  The function to perform
  * @param   {Number}   delay   Delay in milliseconds
  * @param   {Ojbect}   context The context
- * @returns {Nubmer}           An identifier for the timeout
+ * @returns {Nubmer}		   An identifier for the timeout
  */
 function syncTimeout(fn, delay, context) {
 	if (delay) {
@@ -1165,13 +1165,12 @@ animate = function (el, params, opt) {
 		opt.duration = 400;
 	}
 	opt.easing = Math[opt.easing] || Math.easeInOutSine;
-	opt.curAnim = {};
-	
+	opt.curAnim = merge(params);
+
 	for (prop in params) {
 		fx = new Fx(el, opt, prop);
 		end = null;
-		opt.curAnim[prop] = params[prop];
-		
+
 		if (prop === 'd') {
 			fx.paths = fx.initPath(
 				el,
@@ -1182,7 +1181,7 @@ animate = function (el, params, opt) {
 			start = 0;
 			end = 1;
 		} else if (el.attr) {
-			start = el.attr(name);
+			start = el.attr(prop);
 		} else {
 			start = parseFloat(getStyle(el, prop)) || 0;
 			if (prop !== 'opacity') {
