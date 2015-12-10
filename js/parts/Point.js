@@ -215,8 +215,7 @@ Point.prototype = {
 	},
 
 	/**
-	 * Fire an event on the Point object. Must not be renamed to fireEvent, as this
-	 * causes a name clash in MooTools
+	 * Fire an event on the Point object.
 	 * @param {String} eventType
 	 * @param {Object} eventArgs Additional event arguments
 	 * @param {Function} defaultFunction Default event handler

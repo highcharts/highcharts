@@ -133,7 +133,7 @@ function erase(arr, item) {
 }
 
 /**
- * Returns true if the object is not null or undefined. Like MooTools' $.defined.
+ * Returns true if the object is not null or undefined.
  * @param {Object} obj
  */
 function defined(obj) {
@@ -172,8 +172,7 @@ function attr(elem, prop, value) {
 	return ret;
 }
 /**
- * Check if an element is an array, and if not, make it into an array. Like
- * MooTools' $.splat.
+ * Check if an element is an array, and if not, make it into an array.
  */
 function splat(obj) {
 	return isArray(obj) ? obj : [obj];
@@ -195,7 +194,7 @@ function syncTimeout(fn, delay, context) {
 
 
 /**
- * Return the first value that is defined. Like MooTools' $.pick.
+ * Return the first value that is defined.
  */
 var pick = Highcharts.pick = function () {
 	var args = arguments,
@@ -714,7 +713,7 @@ map = function (arr, fn) {
 };
 
 /**
- * Get the element's offset position, corrected by overflow:auto. Loosely based on jQuery's offset method.
+ * Get the element's offset position, corrected by overflow:auto.
  */
 offset = function (el) {
 	var docElem = doc.documentElement,
@@ -744,7 +743,7 @@ stop = function (el) {
 };
 
 /**
- * Utility for iterating over an array. Parameters are reversed compared to jQuery.
+ * Utility for iterating over an array.
  * @param {Array} arr
  * @param {Function} fn
  */

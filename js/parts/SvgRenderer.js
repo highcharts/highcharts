@@ -28,7 +28,7 @@ SVGElement.prototype = {
 	/**
 	 * Animate a given attribute
 	 * @param {Object} params
-	 * @param {Number} options The same options as in jQuery animation
+	 * @param {Number} options Options include duration, easing, step and complete
 	 * @param {Function} complete Function to perform at the end of animation
 	 */
 	animate: function (params, options, complete) {

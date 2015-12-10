@@ -292,7 +292,7 @@ Chart.prototype = {
 		renderer.draw();
 
 		// fire the event
-		fireEvent(chart, 'redraw'); // jQuery breaks this when calling it from addEvent. Overwrites chart.redraw
+		fireEvent(chart, 'redraw');
 
 		if (isHiddenChart) {
 			chart.cloneRenderTo(true);
@@ -721,7 +721,7 @@ Chart.prototype = {
 			renderTo = chart.renderTo,
 			width = optionsChart.width || getStyle(renderTo, 'width'),
 			height = optionsChart.height || getStyle(renderTo, 'height'),
-			target = e ? e.target : win; // #805 - MooTools doesn't supply e
+			target = e.target;
 
 		// Width and height checks for display:none. Target is doc in IE8 and Opera,
 		// win in Firefox, Chrome and IE9.
