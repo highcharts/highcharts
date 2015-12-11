@@ -494,7 +494,7 @@ gulp.task('scripts', function () {
     });
 });
 
-gulp.task('common', function () {
+gulp.task('common', ['scripts'], function () {
     var browserify = require('browserify');
     browserify('./samples/highcharts/common-js/browserify/app.js')
         .bundle(function (err, buf) {
