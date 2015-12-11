@@ -508,9 +508,9 @@ gulp.task('browserify', function () {
 gulp.task('webpack', function () {
     var webpack = require('webpack');
     webpack({
-        entry: './samples/highcharts/common-js/app.js',
+        entry: './samples/highcharts/common-js/browserify/app.js', // Share the same unit tests
         output: {
-            filename: './samples/highcharts/common-js/demo.js'
+            filename: './samples/highcharts/common-js/webpack/demo.js'
         }
     }, function (err) {
         if (err) {
