@@ -962,23 +962,25 @@
             }
         }
 
-        if (type) {
-            events = hcEvents[type] || [];
-            if (fn) {
-                index = inArray(fn, events);
-                if (index > -1) {
-                    events.splice(index, 1);
-                    hcEvents[type] = events;
+        if (hcEvents) {
+            if (type) {
+                events = hcEvents[type] || [];
+                if (fn) {
+                    index = inArray(fn, events);
+                    if (index > -1) {
+                        events.splice(index, 1);
+                        hcEvents[type] = events;
+                    }
+                    removeOneEvent(type, fn);
+
+                } else {
+                    removeAllEvents();
+                    hcEvents[type] = [];
                 }
-                removeOneEvent(type, fn);
-            
             } else {
                 removeAllEvents();
-                hcEvents[type] = [];
+                el.hcEvents = {};
             }
-        } else {
-            removeAllEvents();
-            el.hcEvents = {};
         }
     };
 
